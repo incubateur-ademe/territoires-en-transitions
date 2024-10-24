@@ -1,26 +1,29 @@
-import {getAuthPaths} from '@tet/api';
+import { getAuthPaths } from '@tet/api';
 import {
   finaliserMonInscriptionUrl,
-  homePath,
   makeCollectiviteAccueilUrl,
-  makeTableauBordLandingUrl,
+  makeTableauBordUrl,
+  signUpPath,
 } from 'app/paths';
 import { useAuth } from 'core-logic/api/auth/AuthProvider';
 import {
   acceptAgentInvitation,
   useInvitationState,
 } from 'core-logic/hooks/useInvitationState';
-import { useMesCollectivitesEtPlans } from 'core-logic/hooks/useOwnedCollectivites';
+import { usePlanActionsPilotableFetch } from 'core-logic/hooks/useOwnedCollectivites';
 import { useEffect } from 'react';
 import { useHistory, useLocation } from 'react-router-dom';
 
 export const Redirector = () => {
   const history = useHistory();
   const { pathname } = useLocation();
-  const { isConnected } = useAuth();
+  const { isConnected, user } = useAuth();
   const { invitationId, invitationEmail, consume } = useInvitationState();
-  const { data: userInfo } = useMesCollectivitesEtPlans();
-  const isLandingConnected = isConnected && pathname === '/'; // L'utilisateur est connecté et arrive sur '/'.
+
+  const collectiviteId = user?.collectivites?.[0]?.collectivite_id;
+  const { data: plansData } = usePlanActionsPilotableFetch(collectiviteId);
+
+  const isLandingConnected = user && pathname === '/'; // L'utilisateur est connecté et arrive sur '/'.
 
   // Quand l'utilisateur connecté
   // - est associé à aucune collectivité :
@@ -30,21 +33,38 @@ export const Redirector = () => {
   //      - tableau de bord des plans d'action si il y a au moins un plan d'actions pilotables
   //      - et sinon vers la synthèse de l'état des lieux
   useEffect(() => {
-    if (isLandingConnected && userInfo) {
-      const collectiviteId = userInfo?.collectivites?.[0]?.collectivite_id;
-      const auMoinsUnPlanActionsPilotable = !!userInfo?.plans?.length;
+    if (!plansData?.plans) return;
 
-      if (collectiviteId) {
-        if (auMoinsUnPlanActionsPilotable) {
-          history.push(makeTableauBordLandingUrl({ collectiviteId }));
-        } else {
-          history.push(makeCollectiviteAccueilUrl({ collectiviteId }));
-        }
-      } else {
-        history.push(finaliserMonInscriptionUrl);
-      }
+    if (user && !user.dcp) {
+      // Redirige l'utilisateur vers la page de saisie des DCP si nécessaire
+      document.location.replace(`${signUpPath}&view=etape3`);
     }
-  }, [isLandingConnected, userInfo]);
+
+    if (!isLandingConnected) {
+      return;
+    }
+
+    if (!collectiviteId) {
+      history.push(finaliserMonInscriptionUrl);
+      return;
+    }
+
+    if (plansData.plans.length > 0) {
+      history.push(
+        makeTableauBordUrl({
+          collectiviteId,
+          view:
+            user.collectivites?.find((c) => c.collectivite_id)?.membre
+              ?.fonction === 'politique'
+              ? 'collectivite'
+              : 'personnel',
+        })
+      );
+      return;
+    }
+
+    history.push(makeCollectiviteAccueilUrl({ collectiviteId }));
+  }, [isLandingConnected, collectiviteId, user, plansData]);
 
   // réagit aux changements de l'état "invitation"
   useEffect(() => {

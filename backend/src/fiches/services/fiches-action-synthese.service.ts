@@ -25,6 +25,7 @@ import { ficheActionServiceTagTable } from '../models/fiche-action-service.table
 import {
   FicheActionStatutsEnumType,
   ficheActionTable,
+  SANS_STATUT_FICHE_ACTION_SYNTHESE_KEY,
 } from '../models/fiche-action.table';
 import { GetFichesActionSyntheseResponseType } from '../models/get-fiches-action-synthese.response';
 import { GetFichesActionFilterRequestType } from '../models/get-fiches-actions-filter.request';
@@ -40,30 +41,27 @@ export default class FichesActionSyntheseService {
 
   constructor(
     private readonly databaseService: DatabaseService,
-    private readonly authService: AuthService,
+    private readonly authService: AuthService
   ) {}
 
   async getFichesActionSynthese(
     collectiviteId: number,
     filter: GetFichesActionFilterRequestType,
-    tokenInfo: SupabaseJwtPayload,
+    tokenInfo: SupabaseJwtPayload
   ): Promise<GetFichesActionSyntheseResponseType> {
     this.logger.log(
-      `Récupération de la synthese des fiches action pour la collectivité ${collectiviteId}: filtre ${JSON.stringify(filter)}`,
+      `Récupération de la synthese des fiches action pour la collectivité ${collectiviteId}: filtre ${JSON.stringify(
+        filter
+      )}`
     );
 
-    // Vérification des droits
-    await this.authService.verifieAccesAuxCollectivites(
-      tokenInfo,
-      [collectiviteId],
-      NiveauAcces.LECTURE,
-    );
-
+    const listeValeurs = Object.values(FicheActionStatutsEnumType) as string[];
     const conditions = this.getConditions(collectiviteId, filter);
     const statutSynthese = await this.getSynthesePourPropriete(
       ficheActionTable.statut,
       conditions,
-      Object.values(FicheActionStatutsEnumType),
+      listeValeurs,
+      SANS_STATUT_FICHE_ACTION_SYNTHESE_KEY
     );
 
     const synthese: GetFichesActionSyntheseResponseType = {
@@ -78,7 +76,7 @@ export default class FichesActionSyntheseService {
         fiche_id: ficheActionPartenaireTagTable.fiche_id,
         partenaire_tag_ids:
           sql`array_agg(${ficheActionPartenaireTagTable.partenaire_tag_id})`.as(
-            this.FICHE_ACTION_PARTENAIRE_TAGS_QUERY_FIELD,
+            this.FICHE_ACTION_PARTENAIRE_TAGS_QUERY_FIELD
           ),
       })
       .from(ficheActionPartenaireTagTable)
@@ -105,7 +103,7 @@ export default class FichesActionSyntheseService {
         fiche_id: ficheActionServiceTagTable.fiche_id,
         service_tag_ids:
           sql`array_agg(${ficheActionServiceTagTable.service_tag_id})`.as(
-            'service_tag_ids',
+            'service_tag_ids'
           ),
       })
       .from(ficheActionServiceTagTable)
@@ -119,11 +117,11 @@ export default class FichesActionSyntheseService {
         fiche_id: ficheActionPiloteTable.fiche_id,
         pilote_user_ids:
           sql`array_remove(array_agg(${ficheActionPiloteTable.user_id}), NULL)`.as(
-            'pilote_user_ids',
+            'pilote_user_ids'
           ),
         pilote_tag_ids:
           sql`array_remove(array_agg(${ficheActionPiloteTable.tag_id}), NULL)`.as(
-            'pilote_tag_ids',
+            'pilote_tag_ids'
           ),
       })
       .from(ficheActionPiloteTable)
@@ -134,17 +132,12 @@ export default class FichesActionSyntheseService {
   async getFichesAction(
     collectiviteId: number,
     filter: GetFichesActionFilterRequestType,
-    tokenInfo: SupabaseJwtPayload,
+    tokenInfo: SupabaseJwtPayload
   ): Promise<any> {
     this.logger.log(
-      `Récupération des fiches action pour la collectivité ${collectiviteId}: filtre ${JSON.stringify(filter)}`,
-    );
-
-    // Vérification des droits
-    await this.authService.verifieAccesAuxCollectivites(
-      tokenInfo,
-      [collectiviteId],
-      NiveauAcces.LECTURE,
+      `Récupération des fiches action pour la collectivité ${collectiviteId}: filtre ${JSON.stringify(
+        filter
+      )}`
     );
 
     const ficheActionPartenaireTags = this.getFicheActionPartenaireTagsQuery();
@@ -167,19 +160,19 @@ export default class FichesActionSyntheseService {
       .from(ficheActionTable)
       .leftJoin(
         ficheActionPartenaireTags,
-        eq(ficheActionPartenaireTags.fiche_id, ficheActionTable.id),
+        eq(ficheActionPartenaireTags.fiche_id, ficheActionTable.id)
       )
       .leftJoin(
         ficheActionPilotes,
-        eq(ficheActionPilotes.fiche_id, ficheActionTable.id),
+        eq(ficheActionPilotes.fiche_id, ficheActionTable.id)
       )
       .leftJoin(
         ficheActionServiceTags,
-        eq(ficheActionServiceTags.fiche_id, ficheActionTable.id),
+        eq(ficheActionServiceTags.fiche_id, ficheActionTable.id)
       )
       .leftJoin(
         ficheActionAxes,
-        eq(ficheActionAxes.fiche_id, ficheActionTable.id),
+        eq(ficheActionAxes.fiche_id, ficheActionTable.id)
       )
       .where(and(...conditions));
 
@@ -188,7 +181,7 @@ export default class FichesActionSyntheseService {
 
   getConditions(
     collectiviteId: number,
-    filter: GetFichesActionFilterRequestType,
+    filter: GetFichesActionFilterRequestType
   ): (SQLWrapper | SQL)[] {
     const conditions: (SQLWrapper | SQL)[] = [
       eq(ficheActionTable.collectiviteId, collectiviteId),
@@ -199,7 +192,7 @@ export default class FichesActionSyntheseService {
     if (filter.modified_since) {
       const modifiedSinceDate = getModifiedSinceDate(filter.modified_since);
       conditions.push(
-        gte(ficheActionTable.modifiedAt, modifiedSinceDate.toISOString()),
+        gte(ficheActionTable.modifiedAt, modifiedSinceDate.toISOString())
       );
     }
     if (filter.modified_after) {
@@ -209,14 +202,14 @@ export default class FichesActionSyntheseService {
       // Vraiment étrange, probable bug de drizzle, on le peut pas lui donner le tableau directement
       const sqlNumberArray = `{${filter.partenaire_tag_ids.join(',')}}`;
       conditions.push(
-        arrayOverlaps(sql`partenaire_tag_ids`, sql`${sqlNumberArray}`),
+        arrayOverlaps(sql`partenaire_tag_ids`, sql`${sqlNumberArray}`)
       );
     }
     if (filter.service_tag_ids?.length) {
       // Vraiment étrange, probable bug de drizzle, on le peut pas lui donner le tableau directement
       const sqlNumberArray = `{${filter.service_tag_ids.join(',')}}`;
       conditions.push(
-        arrayOverlaps(sql`service_tag_ids`, sql`${sqlNumberArray}`),
+        arrayOverlaps(sql`service_tag_ids`, sql`${sqlNumberArray}`)
       );
     }
     if (filter.plan_ids?.length) {
@@ -229,13 +222,13 @@ export default class FichesActionSyntheseService {
     if (filter.pilote_user_ids?.length) {
       const sqlNumberArray = `{${filter.pilote_user_ids.join(',')}}`;
       piloteConditions.push(
-        arrayOverlaps(sql`pilote_user_ids`, sql`${sqlNumberArray}`),
+        arrayOverlaps(sql`pilote_user_ids`, sql`${sqlNumberArray}`)
       );
     }
     if (filter.pilote_tag_ids?.length) {
       const sqlNumberArray = `{${filter.pilote_tag_ids.join(',')}}`;
       piloteConditions.push(
-        arrayOverlaps(sql`pilote_tag_ids`, sql`${sqlNumberArray}`),
+        arrayOverlaps(sql`pilote_tag_ids`, sql`${sqlNumberArray}`)
       );
     }
     if (piloteConditions.length) {
@@ -253,11 +246,16 @@ export default class FichesActionSyntheseService {
     propriete: PgColumn,
     conditions: (SQLWrapper | SQL)[],
     listeValeurs?: string[],
+    nullValue?: string
   ): Promise<CountSyntheseType> {
     const ficheActionPartenaireTags = this.getFicheActionPartenaireTagsQuery();
     const ficheActionPilotes = this.getFicheActionPilotesQuery();
     const ficheActionServiceTags = this.getFicheActionServiceTagsQuery();
     const ficheActionAxes = this.getFicheActionAxesQuery();
+
+    if (listeValeurs && nullValue && !listeValeurs.includes(nullValue)) {
+      listeValeurs.push(nullValue);
+    }
 
     const fichesActionSyntheseQuery = this.databaseService.db
       .select({
@@ -267,19 +265,19 @@ export default class FichesActionSyntheseService {
       .from(ficheActionTable)
       .leftJoin(
         ficheActionPartenaireTags,
-        eq(ficheActionPartenaireTags.fiche_id, ficheActionTable.id),
+        eq(ficheActionPartenaireTags.fiche_id, ficheActionTable.id)
       )
       .leftJoin(
         ficheActionPilotes,
-        eq(ficheActionPilotes.fiche_id, ficheActionTable.id),
+        eq(ficheActionPilotes.fiche_id, ficheActionTable.id)
       )
       .leftJoin(
         ficheActionServiceTags,
-        eq(ficheActionServiceTags.fiche_id, ficheActionTable.id),
+        eq(ficheActionServiceTags.fiche_id, ficheActionTable.id)
       )
       .leftJoin(
         ficheActionAxes,
-        eq(ficheActionAxes.fiche_id, ficheActionTable.id),
+        eq(ficheActionAxes.fiche_id, ficheActionTable.id)
       )
       .where(and(...conditions))
       .groupBy(propriete);
@@ -295,8 +293,8 @@ export default class FichesActionSyntheseService {
       });
     }
     fichesActionSynthese.forEach((syntheseRow) => {
-      synthese[syntheseRow.valeur] = {
-        valeur: syntheseRow.valeur,
+      synthese[syntheseRow.valeur || nullValue] = {
+        valeur: syntheseRow.valeur || nullValue,
         count: syntheseRow.count,
       };
     });

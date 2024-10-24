@@ -11,6 +11,7 @@ import { Metadata, ResolvingMetadata } from 'next';
 import { getUpdatedMetadata } from '@tet/site/src/utils/getUpdatedMetadata';
 import PanierActionsImpact from './PanierActionsImpact';
 import Trajectoire from '@tet/site/app/outil-numerique/Trajectoire';
+import { TrackPageView } from '@tet/ui';
 
 export async function generateMetadata(
   { params }: { params: unknown },
@@ -30,26 +31,32 @@ export async function generateMetadata(
 const OutilNumerique = async () => {
   const strapiData = await getStrapiData();
 
-  return strapiData ? (
-    <div className="grow">
-      <HeaderPlateforme {...strapiData.header} />
+  return (
+    <>
+      <TrackPageView pageName={'site/outil-numerique'} properties={{}} />
 
-      <AvantagesPlateforme avantages={strapiData.avantages} />
+      {strapiData ? (
+        <div className="grow">
+          <HeaderPlateforme {...strapiData.header} />
 
-      <PanierActionsImpact {...strapiData.panier} />
+          <AvantagesPlateforme avantages={strapiData.avantages} />
 
-      <Trajectoire {...strapiData.trajectoire} />
+          <PanierActionsImpact {...strapiData.panier} />
 
-      {strapiData.temoignages.length > 0 && (
-        <TemoignagesPlateforme temoignages={strapiData.temoignages} />
+          <Trajectoire {...strapiData.trajectoire} />
+
+          {strapiData.temoignages.length > 0 && (
+            <TemoignagesPlateforme temoignages={strapiData.temoignages} />
+          )}
+
+          <EquipePlateforme {...strapiData.equipe} />
+
+          <QuestionsPlateforme {...strapiData.questions} />
+        </div>
+      ) : (
+        <NoResult />
       )}
-
-      <EquipePlateforme {...strapiData.equipe} />
-
-      <QuestionsPlateforme {...strapiData.questions} />
-    </div>
-  ) : (
-    <NoResult />
+    </>
   );
 };
 

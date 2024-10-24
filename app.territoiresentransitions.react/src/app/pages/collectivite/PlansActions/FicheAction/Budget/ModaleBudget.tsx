@@ -1,4 +1,4 @@
-import {useEffect, useState} from 'react';
+import { useEffect, useState } from 'react';
 import _ from 'lodash';
 import {
   Field,
@@ -8,7 +8,7 @@ import {
   ModalFooterOKCancel,
   Textarea,
 } from '@tet/ui';
-import {FicheAction} from '../data/types';
+import { FicheAction } from '@tet/api/plan-actions';
 import FinanceursInput from './FinanceursInput';
 
 type ModaleBudgetProps = {
@@ -38,21 +38,21 @@ const ModaleBudget = ({
 
   return (
     <Modal
-      openState={{isOpen, setIsOpen}}
+      openState={{ isOpen, setIsOpen }}
       title="Budget"
       size="lg"
-      render={({descriptionId}) => (
+      render={({ descriptionId }) => (
         <FormSectionGrid formSectionId={descriptionId}>
           {/* Budget prévisionnel total */}
           <Field title="Budget prévisionnel total" className="col-span-2">
             <Input
               type="number"
-              icon={{text: 'TTC'}}
-              value={editedFiche.budget_previsionnel?.toString() ?? ''}
-              onValueChange={values =>
-                setEditedFiche(prevState => ({
+              icon={{ text: 'TTC' }}
+              value={editedFiche.budgetPrevisionnel?.toString() ?? ''}
+              onValueChange={(values) =>
+                setEditedFiche((prevState) => ({
                   ...prevState,
-                  budget_previsionnel: values.value
+                  budgetPrevisionnel: values.value
                     ? Number(values.value)
                     : null,
                 }))
@@ -63,8 +63,8 @@ const ModaleBudget = ({
           {/* Financeurs */}
           <FinanceursInput
             financeurs={editedFiche.financeurs}
-            onUpdate={financeurs =>
-              setEditedFiche(prevState => ({...prevState, financeurs}))
+            onUpdate={(financeurs) =>
+              setEditedFiche((prevState) => ({ ...prevState, financeurs }))
             }
           />
 
@@ -77,8 +77,8 @@ const ModaleBudget = ({
             <Textarea
               className="min-h-[120px]"
               value={editedFiche.financements ?? ''}
-              onChange={evt =>
-                setEditedFiche(prevState => ({
+              onChange={(evt) =>
+                setEditedFiche((prevState) => ({
                   ...prevState,
                   financements: (evt.target as HTMLTextAreaElement).value,
                 }))
@@ -88,9 +88,9 @@ const ModaleBudget = ({
         </FormSectionGrid>
       )}
       // Boutons pour valider / annuler les modifications
-      renderFooter={({close}) => (
+      renderFooter={({ close }) => (
         <ModalFooterOKCancel
-          btnCancelProps={{onClick: close}}
+          btnCancelProps={{ onClick: close }}
           btnOKProps={{
             onClick: () => {
               handleSave();

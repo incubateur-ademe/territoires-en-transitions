@@ -1,12 +1,13 @@
-import {Meta} from '@storybook/react';
-import {Table, TRow, THead, THeadCell, TCell, TBody} from './Table';
-import {Input} from '@design-system/Input';
+import { Meta } from '@storybook/react';
+import { Table, TRow, THead, THeadCell, TCell, TBody } from './Table';
+import { TableProps } from './types';
+import { Input } from '../Input';
 
 export default {
   component: Table,
 } as Meta;
 
-const Template = args => <Table {...args} />;
+const Template = (args: TableProps) => <Table {...args} />;
 
 export const Exemple1 = Template.bind({});
 Exemple1.args = {

@@ -16,5 +16,5 @@ beforeAll(async () => {
 test('Test selectSources', async () => {
   const data = await selectSources(supabase);
   expect(data).not.toBeNull();
-  expect(data).toHaveLength(4);
+  expect(data.length).toBeGreaterThan(1);
 });

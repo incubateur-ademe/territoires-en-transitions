@@ -1,11 +1,11 @@
-import {useCollectiviteId} from 'core-logic/hooks/params';
-import {FicheResume} from '../data/types';
+import { useCollectiviteId } from 'core-logic/hooks/params';
 import {
   makeCollectiviteFicheNonClasseeUrl,
   makeCollectivitePlanActionFicheUrl,
 } from 'app/paths';
 import FicheActionCard from '../Carte/FicheActionCard';
 import classNames from 'classnames';
+import { FicheResume } from '@tet/api/plan-actions';
 
 type FichesLieesListeProps = {
   fiches: FicheResume[];
@@ -31,7 +31,7 @@ const FichesLieesListe = ({
           className
         )}
       >
-        {fiches.map(fiche => (
+        {fiches.map((fiche) => (
           <FicheActionCard
             key={fiche.id}
             openInNewTab

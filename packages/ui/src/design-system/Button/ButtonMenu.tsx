@@ -26,6 +26,8 @@ type Props = {
   menuPlacement?: Placement;
   /** Rend le composant controllable */
   openState?: OpenState;
+  /** Permet de donner un text au bouton d'ouverture car children est déjà utilisé pour le contenu du menu */
+  text?: string;
 } & ButtonProps;
 
 /**
@@ -37,6 +39,7 @@ export const ButtonMenu = ({
   menuPlacement = 'bottom-end',
   openState,
   children,
+  text,
   ...props
 }: Props) => {
   const isControlled = !!openState;
@@ -87,7 +90,7 @@ export const ButtonMenu = ({
   return (
     <>
       {cloneElement(
-        <Button {...props} />,
+        <Button {...props} children={text} />,
         getReferenceProps({
           ref: refs.setReference,
         })

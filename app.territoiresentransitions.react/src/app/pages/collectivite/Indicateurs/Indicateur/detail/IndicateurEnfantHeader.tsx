@@ -1,8 +1,9 @@
 import classNames from 'classnames';
-import {TIndicateurPredefini} from '../../types';
-import {BadgeACompleter} from 'ui/shared/Badge/BadgeACompleter';
-import {ExpandToggle} from 'ui/icons/ExpandToggle';
-import {Badge} from '@tet/ui';
+import { TIndicateurPredefini } from '../../types';
+import { BadgeACompleter } from 'ui/shared/Badge/BadgeACompleter';
+import { ExpandToggle } from 'ui/icons/ExpandToggle';
+import { Badge } from '@tet/ui';
+import BadgeOpenData from 'app/pages/collectivite/Indicateurs/components/BadgeOpenData';
 
 /** Affiche l'en-tête du détail d'un indicateur enfant */
 export const IndicateurEnfantHeader = ({
@@ -30,6 +31,7 @@ export const IndicateurEnfantHeader = ({
         <span className="font-bold">{definition.titre}</span>
       </div>
       <div className="flex gap-2">
+        {definition.hasOpenData && <BadgeOpenData />}
         {definition.participationScore && (
           <Badge title="Participe au score" state="grey" />
         )}

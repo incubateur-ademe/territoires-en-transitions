@@ -1,6 +1,6 @@
 'use client';
 
-import { Button } from '@tet/ui';
+import { Button, useEventTracker } from '@tet/ui';
 import { StrapiItem } from '@tet/site/src/strapi/StrapiItem';
 import { StrapiImage } from '@tet/site/components/strapiImage/StrapiImage';
 import Section from '@tet/site/components/sections/Section';
@@ -22,6 +22,8 @@ const Accompagnement = ({
   description,
   contenu,
 }: AccompagnementProps) => {
+  const tracker = useEventTracker('site/accueil');
+
   return (
     <Section
       containerClassName="max-md:!py-6 md:!pt-14"
@@ -56,7 +58,16 @@ const Accompagnement = ({
                 />
               </div>
 
-              <Button href={c.button.href} size="xs">
+              <Button
+                href={c.button.href}
+                onClick={() => {
+                  if (c.button.href === '/programme')
+                    tracker('decouvrir_programme', {});
+                  if (c.button.href === '/outil-numerique')
+                    tracker('decouvrir_plateforme', {});
+                }}
+                size="xs"
+              >
                 {c.button.titre}
               </Button>
             </div>

@@ -1,4 +1,4 @@
-import {Indicateurs} from '@tet/api';
+import { Indicateurs } from '@tet/api';
 
 /** type de données importées */
 export type SourceType = 'resultat' | 'objectif';
@@ -22,7 +22,3 @@ export type TIndicateurPersonnalise =
   Indicateurs.domain.IndicateurDefinitionPersonalise;
 
 export type TIndicateurDefinition = Indicateurs.domain.IndicateurDefinition;
-/*
-  | TIndicateurPredefini
-  | TIndicateurPersonnalise;
-*/

@@ -5,7 +5,7 @@ import { StrapiImage } from '@tet/site/components/strapiImage/StrapiImage';
 import { useEvolutionTotalActivation } from '@tet/site/app/stats/EvolutionTotalActivationParType';
 import { StrapiItem } from '@tet/site/src/strapi/StrapiItem';
 import Arrow from './Arrow';
-import { Button } from '@tet/ui';
+import { Button, useEventTracker } from '@tet/ui';
 
 type HeaderPlateformeProps = {
   titre: string;
@@ -28,6 +28,7 @@ const HeaderPlateforme = ({
 }: HeaderPlateformeProps) => {
   const { data } = useEvolutionTotalActivation('', '');
   const collectivitesActivees = data ? data.courant.total : undefined;
+  const tracker = useEventTracker('site/outil-numerique');
 
   return (
     <Section containerClassName="bg-gradient-to-b from-[#F4F5FD] to-[#FFFFFF] !pb-0">
@@ -39,7 +40,12 @@ const HeaderPlateforme = ({
       </p>
       <div className="flex max-md:flex-col gap-y-4 gap-x-8 justify-center items-center">
         <div className="max-md:flex max-md:flex-col max-md:items-center">
-          <Button href={url_inscription}>{cta_inscription}</Button>
+          <Button
+            href={url_inscription}
+            onClick={() => tracker('inscription_plateforme', {})}
+          >
+            {cta_inscription}
+          </Button>
           {!!collectivitesActivees && (
             <p className="md:hidden text-primary-9 text-[13px] font-bold mb-0 pt-2">
               Déjà {collectivitesActivees} collectivités utilisatrices
@@ -47,7 +53,12 @@ const HeaderPlateforme = ({
           )}
         </div>
 
-        <Button href={url_demo} variant="outlined" icon="play-circle-line">
+        <Button
+          href={url_demo}
+          onClick={() => tracker('inscription_demo', {})}
+          variant="outlined"
+          icon="play-circle-line"
+        >
           {cta_demo}
         </Button>
       </div>

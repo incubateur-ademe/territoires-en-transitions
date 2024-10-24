@@ -1,10 +1,11 @@
-import {supabaseClient} from 'core-logic/api/supabase';
-import {QueryKey, useMutation, useQueryClient} from 'react-query';
+import { supabaseClient } from 'core-logic/api/supabase';
+import { QueryKey, useMutation, useQueryClient } from 'react-query';
+import { objectToSnake } from 'ts-case-convert';
 
 type Pilote = {
-  fiche_id: number;
-  user_id?: string | null;
-  tag_id?: number | null;
+  ficheId: number;
+  userId?: string | null;
+  tagId?: number | null;
 };
 
 export const useFicheActionAddPilote = (keysToInvalidate?: QueryKey[]) => {
@@ -14,11 +15,11 @@ export const useFicheActionAddPilote = (keysToInvalidate?: QueryKey[]) => {
     async (pilotes: Pilote[]) => {
       await supabaseClient
         .from('fiche_action_pilote')
-        .upsert(pilotes, {onConflict: 'fiche_id,user_id'});
+        .upsert(objectToSnake(pilotes), { onConflict: 'fiche_id,user_id' });
     },
     {
       onSuccess: () => {
-        keysToInvalidate?.forEach(key => queryClient.invalidateQueries(key));
+        keysToInvalidate?.forEach((key) => queryClient.invalidateQueries(key));
       },
     }
   );
@@ -36,16 +37,16 @@ export const useFicheActionRemoveUserPilote = (
         .delete()
         .in(
           'fiche_id',
-          pilotes.map(pilote => pilote.fiche_id)
+          pilotes.map((pilote) => pilote.ficheId)
         )
         .in(
           'user_id',
-          pilotes.map(pilote => pilote.user_id)
+          pilotes.map((pilote) => pilote.userId)
         );
     },
     {
       onSuccess: () => {
-        keysToInvalidate?.forEach(key => queryClient.invalidateQueries(key));
+        keysToInvalidate?.forEach((key) => queryClient.invalidateQueries(key));
       },
     }
   );
@@ -63,16 +64,16 @@ export const useFicheActionRemoveTagPilote = (
         .delete()
         .in(
           'fiche_id',
-          pilotes.map(pilote => pilote.fiche_id)
+          pilotes.map((pilote) => pilote.ficheId)
         )
         .in(
           'tag_id',
-          pilotes.map(pilote => pilote.tag_id)
+          pilotes.map((pilote) => pilote.tagId)
         );
     },
     {
       onSuccess: () => {
-        keysToInvalidate?.forEach(key => queryClient.invalidateQueries(key));
+        keysToInvalidate?.forEach((key) => queryClient.invalidateQueries(key));
       },
     }
   );

@@ -44,12 +44,19 @@ const CollectiviteHeader = ({
     <div className="flex flex-col md:rounded-[10px] bg-primary-7">
       <div className="relative w-full h-[314px] overflow-hidden md:rounded-t-[10px]">
         {couverture ? (
-          <StrapiImage
-            data={couverture}
-            className="object-cover object-center h-full w-full"
-            containerClassName="h-full w-full object-cover object-center"
-            displayCaption={false}
-          />
+          <>
+            <StrapiImage
+              data={couverture}
+              className="object-cover object-center h-full w-full"
+              containerClassName="h-full w-full object-cover object-center"
+              displayCaption={false}
+            />
+            {(couverture.attributes.caption as unknown as string) && (
+              <div className="text-right text-grey-1 text-[14px] leading-4 py-1 px-2 absolute right-0 top-[290px] bg-grey-8/50 rounded-tl-sm">
+                {couverture.attributes.caption as unknown as string}
+              </div>
+            )}
+          </>
         ) : (
           <div className="bg-primary-3 h-full w-full relative">
             <div className="h-full w-full absolute top-0 left-0 flex flex-col justify-center items-center">

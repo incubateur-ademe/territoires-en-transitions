@@ -1,0 +1,8 @@
+{
+  "recommendations": [
+    "editorconfig.editorconfig",
+    "esbenp.prettier-vscode",
+    "vitest.explorer",
+    "GitHub.vscode-pull-request-github"
+  ]
+}

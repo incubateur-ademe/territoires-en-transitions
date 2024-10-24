@@ -1,29 +1,7 @@
-import {z} from 'zod';
-import {valeurSchema} from './valeur.schema';
-import {tagSchema} from '../../shared/domain/tag.schema';
-import {actionSchema} from '../../referentiel/domain/action.schema';
-import {categorieSchema} from './categorie.schema';
-import {thematiqueSchema} from '../../shared/domain/thematique.schema';
-import {resumeSchema} from '../../fiche_actions/domain/resume.schema';
-import {personneSchema} from '../../shared/domain/personne.schema';
-
-/**
- * Schéma zod à fusionner à une définition pour avoir les valeurs
- */
-const plusValeur = z.object({
-  valeurs: valeurSchema.array(),
-});
-
-/**
- * Schéma zod à fusionner à une définition pour avoir les données annexes aux indicateurs
- */
-const plusDetailsCollectivite = z.object({
-  services: z.number().array(), // Lise d'id
-  pilotes: personneSchema.array(),
-  fiches: resumeSchema.array(),
-  fichesNonClassees: resumeSchema.array(),
-  categoriesUtilisateur: tagSchema.array(),
-});
+import { z } from 'zod';
+import { actionSchema } from '../../referentiel/domain/action.schema';
+import { thematiqueSchema } from '../../shared/domain/thematique.schema';
+import { categorieSchema } from './categorie.schema';
 
 /**
  * Schéma zod de la définition d'un indicateur à créer
@@ -33,6 +11,7 @@ export const indicateurDefinitionSchemaInsert = z.object({
   collectiviteId: z.number(),
   unite: z.string().optional(),
   description: z.string().optional(),
+  commentaire: z.string().optional(),
   thematiques: thematiqueSchema.array().optional(),
 });
 
@@ -44,15 +23,51 @@ export type IndicateurDefinitionInsert = z.input<
 >;
 
 /**
+ * Schéma zod de la définition d'un indicateur
+ */
+export const definitionSchema = z.object({
+  id: z.number(),
+  groupementId: z.number().nullish(),
+  collectiviteId: z.number().nullish(), // perso
+  identifiant: z.string().nullish(),
+  titre: z.string(),
+  titreLong: z.string().nullish(),
+  description: z.string().nullish(),
+  unite: z.string(),
+  borneMin: z.number().nullish(),
+  borneMax: z.number().nullish(),
+  participationScore: z.boolean(),
+  sansValeur: z.boolean(),
+  commentaire: z.string().nullish(),
+  confidentiel: z.boolean(),
+  rempli: z.boolean(),
+  estPerso: z.boolean(),
+  actions: actionSchema.array(),
+  type: categorieSchema,
+  programmes: categorieSchema.array().nullish(),
+  prioritaire: z.boolean(),
+  thematiques: thematiqueSchema.array().nullish(),
+  enfants: z.number().array().nullish(),
+  parents: z.number().array().nullish(),
+  hasOpenData: z.boolean().nullish(),
+});
+
+/**
+ * Type TS de la définition d'un indicateur
+ */
+export type IndicateurDefinition = z.input<typeof definitionSchema>;
+
+/**
  * Schéma zod d'un élément d'une liste d'indicateurs
  */
-export const indicateurListItemSchema = z.object({
-  id: z.number(),
-  titre: z.string(),
-  estPerso: z.boolean(),
-  hasOpenData: z.boolean(),
-  identifiant: z.string().nullable(),
+export const indicateurListItemSchema = definitionSchema.pick({
+  id: true,
+  titre: true,
+  estPerso: true,
+  identifiant: true,
+  hasOpenData: true,
 });
+
 /**
  * Type TS d'un élément d'une liste d'indicateurs
  */
@@ -61,9 +76,7 @@ export type IndicateurListItem = z.input<typeof indicateurListItemSchema>;
 /**
  * Schéma zod d'un indicateur pour un affichage en graphique
  */
-export const IndicateurChartInfoSchema = z.object({
-  id: z.number(),
-  titre: z.string(),
+export const indicateurChartInfoSchema = indicateurListItemSchema.extend({
   titreLong: z.string().nullable(),
   unite: z.string(),
   rempli: z.boolean(),
@@ -93,54 +106,7 @@ export const IndicateurChartInfoSchema = z.object({
 /**
  * Type TS d'un indicateur pour un affichage en graphique
  */
-export type IndicateurChartInfo = z.input<typeof IndicateurChartInfoSchema>;
-
-/**
- * Schéma zod de la définition d'un indicateur
- */
-export const definitionSchema = z.object({
-  id: z.number(),
-  groupementId: z.number().nullable(),
-  collectiviteId: z.number().nullable(), // perso
-  identifiant: z.string().nullable(),
-  titre: z.string(),
-  titreLong: z.string().nullable(),
-  description: z.string().nullable(),
-  unite: z.string(),
-  borneMin: z.number().nullable(),
-  borneMax: z.number().nullable(),
-  participationScore: z.boolean(),
-  sansValeur: z.boolean(),
-  commentaire: z.string().nullable(),
-  confidentiel: z.boolean(),
-  rempli: z.boolean(),
-  estPerso: z.boolean(),
-  actions: actionSchema.array(),
-  type: categorieSchema,
-  programmes: categorieSchema.array(),
-  prioritaire: z.boolean(),
-  thematiques: thematiqueSchema.array(),
-  enfants: z.number().array(),
-  parents: z.number().array(),
-});
-
-/**
- * Type TS de la définition d'un indicateur
- */
-export type IndicateurDefinition = z.input<typeof definitionSchema>;
-
-/**
- * Schéma zod d'un indicateur avec toutes les informations annexes liées
- */
-export const definitionCompleteSchema = definitionSchema
-  .merge(plusValeur)
-  .merge(plusDetailsCollectivite);
-/**
- * Type TS d'un indicateur avec toutes les informations annexes liées
- */
-export type IndicateurDefinitionComplet = z.input<
-  typeof definitionCompleteSchema
->;
+export type IndicateurChartInfo = z.input<typeof indicateurChartInfoSchema>;
 
 /**
  * Schéma zod d'un indicateur personnalisé

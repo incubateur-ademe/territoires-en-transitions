@@ -1,7 +1,7 @@
 import { INestApplication } from '@nestjs/common';
 import { Test } from '@nestjs/testing';
 import { createClient, SupabaseClient } from '@supabase/supabase-js';
-import * as request from 'supertest';
+import { default as request } from 'supertest';
 import { AppModule } from '../../src/app.module';
 import { UpsertIndicateursValeursRequest } from '../../src/indicateurs/models/upsertIndicateurs.models';
 import { YOLO_DODO_CREDENTIALS } from '../auth/test-users.samples';
@@ -21,12 +21,16 @@ describe('Route de lecture / ecriture des indicateurs', () => {
 
     supabase = createClient(
       process.env.SUPABASE_URL!,
-      process.env.SUPABASE_ANON_KEY!,
+      process.env.SUPABASE_ANON_KEY!
     );
     const signinResponse = await supabase.auth.signInWithPassword(
-      YOLO_DODO_CREDENTIALS,
+      YOLO_DODO_CREDENTIALS
     );
     yoloDodoToken = signinResponse.data.session?.access_token || '';
+  });
+
+  afterAll(async () => {
+    await app.close();
   });
 
   it(`Lecture sans acces`, () => {
@@ -70,9 +74,5 @@ describe('Route de lecture / ecriture des indicateurs', () => {
         error: 'Unauthorized',
         statusCode: 401,
       });
-  });
-
-  afterAll(async () => {
-    await app.close();
   });
 });

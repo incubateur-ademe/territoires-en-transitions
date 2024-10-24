@@ -1,24 +1,17 @@
-import {useState} from 'react';
-import {Button, Divider, useEventTracker} from '@tet/ui';
-import {FicheAction} from '../data/types';
+import { useState } from 'react';
+import { Button, Divider, useEventTracker } from '@tet/ui';
+import { FicheAction } from '@tet/api/plan-actions';
 import Content from './SideMenu/Content';
 import EmptyCard from '../EmptyCard';
 import DatavizPicto from './DatavizPicto';
 import ModaleCreerIndicateur from './ModaleCreerIndicateur';
 import SideMenu from '../SideMenu';
 import LoadingCard from '../LoadingCard';
-import {TIndicateurListItem} from 'app/pages/collectivite/Indicateurs/types';
-import {
-  getIndicateurGroup,
-  selectIndicateur,
-} from 'app/pages/collectivite/Indicateurs/lists/IndicateurCard/utils';
+import { TIndicateurListItem } from 'app/pages/collectivite/Indicateurs/types';
+import { getIndicateurGroup } from 'app/pages/collectivite/Indicateurs/lists/IndicateurCard/utils';
 import IndicateurCard from 'app/pages/collectivite/Indicateurs/lists/IndicateurCard/IndicateurCard';
-import {makeCollectiviteIndicateursUrl} from 'app/paths';
-import {useCollectiviteId} from 'core-logic/hooks/params';
-import {
-  factoryIndicateurInsertToIndicateurListItem,
-  factoryIndicateurListItemToIndicateurInsert,
-} from 'app/pages/collectivite/PlansActions/FicheAction/Indicateurs/utils';
+import { makeCollectiviteIndicateursUrl } from 'app/paths';
+import { useCollectiviteId } from 'core-logic/hooks/params';
 
 type IndicateursAssociesProps = {
   isReadonly: boolean;
@@ -42,41 +35,35 @@ const IndicateursAssocies = ({
 
   if (isFicheLoading) return <LoadingCard />;
 
-  const selectedIndicateurs =
-    fiche.indicateurs?.map(i =>
-      factoryIndicateurInsertToIndicateurListItem(i)
-    ) ?? [];
+  const selectedIndicateurs = fiche.indicateurs ?? [];
 
   const isEmpty = selectedIndicateurs.length === 0;
 
   const updateIndicateurs = (indicateur: TIndicateurListItem) => {
-    const selected =
-      selectedIndicateurs?.some(i => i.id === indicateur.id) ?? false;
-    const newIndicateurs = selectIndicateur({
-      indicateur,
-      selected,
-      selectedIndicateurs,
-    });
-    updateFiche({
-      ...fiche,
-      indicateurs: newIndicateurs.map(i =>
-        factoryIndicateurListItemToIndicateurInsert(i)
-      ),
-    });
+    // Check si l'indicateur est déjà associé
+    const isAssocie =
+      selectedIndicateurs?.some((i) => i.id === indicateur.id) ?? false;
+
+    // Ajoute ou retire l'indicateur de la liste
+    const indicateurs = isAssocie
+      ? selectedIndicateurs?.filter((i) => i.id !== indicateur.id) ?? []
+      : [...(selectedIndicateurs ?? []), indicateur];
+
+    updateFiche({ ...fiche, indicateurs });
   };
 
   return (
     <>
       {isEmpty ? (
         <EmptyCard
-          picto={className => <DatavizPicto className={className} />}
+          picto={(className) => <DatavizPicto className={className} />}
           title="Aucun indicateur associé !"
           subTitle="Observez votre progression grâce aux indicateurs"
           isReadonly={isReadonly}
           action={{
             label: 'Associer des indicateurs',
             icon: 'link',
-            onClick: () => setIsPanelOpen(prevState => !prevState),
+            onClick: () => setIsPanelOpen((prevState) => !prevState),
           }}
           secondaryAction={{
             label: 'Créer un indicateur',
@@ -121,7 +108,7 @@ const IndicateursAssocies = ({
                   <Button
                     size="xs"
                     icon="link"
-                    onClick={() => setIsPanelOpen(prevState => !prevState)}
+                    onClick={() => setIsPanelOpen((prevState) => !prevState)}
                   >
                     Associer des indicateurs
                   </Button>
@@ -131,16 +118,15 @@ const IndicateursAssocies = ({
           </div>
 
           {/* Liste des indicateurs */}
-          {/* <IndicateursListe {...{isReadonly, fiche, updateIndicateurs}} /> */}
           <div className="grid sm:grid-cols-2 lg:grid-cols-2 xl:grid-cols-2 gap-3">
-            {selectedIndicateurs.map(indicateur => (
+            {selectedIndicateurs.map((indicateur) => (
               <IndicateurCard
                 key={`${indicateur.id}-${indicateur.titre}`}
                 readonly={isReadonly}
                 definition={indicateur}
                 autoRefresh
                 isEditable
-                card={{external: true}}
+                card={{ external: true }}
                 href={makeCollectiviteIndicateursUrl({
                   collectiviteId,
                   indicateurView: getIndicateurGroup(indicateur.identifiant),
@@ -150,9 +136,9 @@ const IndicateursAssocies = ({
                 selectState={{
                   // Dissocier
                   selected: true,
-                  setSelected: i => updateIndicateurs(i),
+                  setSelected: (i) => updateIndicateurs(i),
                 }}
-                otherMenuActions={indicateur => [
+                otherMenuActions={(indicateur) => [
                   <Button
                     onClick={() => updateIndicateurs(indicateur)} // Ajouter
                     icon="link-unlink"
@@ -175,7 +161,7 @@ const IndicateursAssocies = ({
       >
         <Content
           selectedIndicateurs={selectedIndicateurs}
-          onSelect={indicateur => updateIndicateurs(indicateur)}
+          onSelect={(indicateur) => updateIndicateurs(indicateur)}
         />
       </SideMenu>
 

@@ -10,8 +10,8 @@ import slugify from 'slugify';
 import { SupabaseJwtPayload } from '../../auth/models/auth.models';
 import { EpciType } from '../../collectivites/models/collectivite.models';
 import GroupementsService from '../../collectivites/services/groupements.service';
-import { BackendConfigurationType } from '../../common/models/backend-configuration.models';
-import BackendConfigurationService from '../../common/services/backend-configuration.service';
+import { BackendConfigurationType } from '../../config/configuration.model';
+import ConfigurationService from '../../config/configuration.service';
 import SheetService from '../../spreadsheets/services/sheet.service';
 import {
   CalculTrajectoireRequestType,
@@ -33,25 +33,21 @@ import TrajectoiresDataService from './trajectoires-data.service';
 export default class TrajectoiresSpreadsheetService {
   private readonly logger = new Logger(TrajectoiresSpreadsheetService.name);
   private readonly TRAJECTOIRE_GROUPEMENT = 'trajectoire';
-  private readonly backendConfiguration: BackendConfigurationType;
   constructor(
-    backendConfigurationService: BackendConfigurationService,
+    private readonly configService: ConfigurationService,
     private readonly indicateurSourcesService: IndicateurSourcesService,
     private readonly indicateursService: IndicateursService,
     private readonly trajectoiresDataService: TrajectoiresDataService,
     private readonly sheetService: SheetService,
     private readonly groupementsService: GroupementsService
-  ) {
-    this.backendConfiguration =
-      backendConfigurationService.getBackendConfiguration();
-  }
+  ) {}
 
   getIdentifiantSpreadsheetCalcul() {
-    return this.backendConfiguration.TRAJECTOIRE_SNBC_SHEET_ID;
+    return this.configService.get('TRAJECTOIRE_SNBC_SHEET_ID');
   }
 
   getIdentifiantDossierResultat() {
-    return this.backendConfiguration.TRAJECTOIRE_SNBC_RESULT_FOLDER_ID;
+    return this.configService.get('TRAJECTOIRE_SNBC_RESULT_FOLDER_ID');
   }
 
   getNomFichierTrajectoire(epci: EpciType) {

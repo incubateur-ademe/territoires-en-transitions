@@ -30,20 +30,21 @@ export const SelectMultiple = ({
     <SelectBase
       {...props}
       onChange={(v) => {
-        let allValues: OptionValue[] | undefined = values as OptionValue[];
+        let allValues = values;
 
         if (allValues) {
           if (allValues.includes(v)) {
             // retrait d'une valeur
-            allValues.length === 1
-              ? // renvoie undefined si la seule valeur présente dans les valeurs du sélecteur est la même que la valeur de l'option
-                (allValues = undefined)
-              : (allValues = allValues.filter((val) => val !== v));
+            // renvoie undefined si la seule valeur présente dans les valeurs du sélecteur est la même que la valeur de l'option
+            allValues =
+              allValues.length === 1
+                ? undefined
+                : allValues.filter((val) => val !== v);
           } else {
             // ajoût d'une valeur
             allValues = [...allValues, v];
           }
-          // si aucune valeur n'était déjà sélectionnée alors on renvoie directement la veleur de l'option dans un tableau
+          // si aucune valeur n'était déjà sélectionnée alors on renvoie directement la valeur de l'option dans un tableau
         } else {
           allValues = [v];
         }

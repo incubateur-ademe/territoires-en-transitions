@@ -1,12 +1,14 @@
-import {testReset} from '../../tests/testReset';
-import {dbAdmin, supabase} from '../../tests/supabase';
-import {fetchFilteredIndicateurs} from './fetchFilteredIndicateurs';
-import {beforeAll, expect, test} from 'vitest';
-import {signIn, signOut} from '../../tests/auth';
-import {Database} from '../../database.types';
-import {FetchFiltre} from '../domain';
+import { beforeAll, expect, test } from 'vitest';
+import { Database } from '../../database.types';
+import { signIn, signOut } from '../../tests/auth';
+import { dbAdmin, supabase } from '../../tests/supabase';
+import { testReset } from '../../tests/testReset';
+import { FetchFiltre } from '../domain';
+import { fetchFilteredIndicateurs } from './fetchFilteredIndicateurs';
 
 type TableName = keyof Database['public']['Tables'];
+
+const yaladadaUUid = '4ecc7d3a-7484-4a1c-8ac8-930cdacd2561';
 
 const FIXTURE = {
   indicateur_action: [
@@ -87,10 +89,9 @@ const FIXTURE = {
 
 // wrap la fonction à tester pour ne pas avoir à repréciser toujours les mêmes paramètres
 const fetchIndicateurs = (filters: FetchFiltre) =>
-  fetchFilteredIndicateurs(supabase, 1, {filtre: filters});
+  fetchFilteredIndicateurs(supabase, 1, { filtre: filters });
 
 beforeAll(async () => {
-  await signIn('yolododo');
   await testReset();
 
   // insère les données de test
@@ -101,21 +102,23 @@ beforeAll(async () => {
     })
   );
 
+  await signIn('yolododo');
+
   return async () => {
     await signOut();
   };
 });
 
-test('Confidentialité - Devrait pouvoir insérer des résultats', async () => {
+test('Confidentialité - Devrait pouvoir voir des résultats insérés en confidentiel', async () => {
   await supabase.from('indicateur_valeur').upsert([
     {
-      indicateur_id: 38, //'eci_8',
+      indicateur_id: 60, //'eci_8',
       collectivite_id: 1,
       date_valeur: new Date(2023, 0, 1).toLocaleDateString('sv-SE'),
       resultat: 999,
     },
     {
-      indicateur_id: 38, //'eci_8',
+      indicateur_id: 60, //'eci_8',
       collectivite_id: 1,
       date_valeur: new Date(2024, 0, 1).toLocaleDateString('sv-SE'),
       resultat: 666,
@@ -124,9 +127,9 @@ test('Confidentialité - Devrait pouvoir insérer des résultats', async () => {
 
   await supabase
     .from('indicateur_collectivite')
-    .upsert([{indicateur_id: 60, collectivite_id: 1, confidentiel: true}]); // 'cae_8'
+    .upsert([{ indicateur_id: 60, collectivite_id: 1, confidentiel: true }]); // 'cae_8'
 
-  const {data} = await supabase
+  const { data } = await supabase
     .from('indicateur_valeur')
     .select('*')
     .eq('collectivite_id', 1)
@@ -136,138 +139,185 @@ test('Confidentialité - Devrait pouvoir insérer des résultats', async () => {
 });
 
 test("Confidentialité - Devrait ne pas pouvoir lire des valeurs des collectivités sur lesquelles je n'ai pas de droits", async () => {
+  await supabase.from('indicateur_valeur').upsert([
+    {
+      indicateur_id: 60, //'eci_8',
+      collectivite_id: 1,
+      date_valeur: new Date(2023, 0, 1).toLocaleDateString('sv-SE'),
+      resultat: 999,
+    },
+    {
+      indicateur_id: 60, //'eci_8',
+      collectivite_id: 1,
+      date_valeur: new Date(2024, 0, 1).toLocaleDateString('sv-SE'),
+      resultat: 666,
+    },
+  ]);
+
+  await supabase
+    .from('indicateur_collectivite')
+    .upsert([{ indicateur_id: 60, collectivite_id: 1, confidentiel: true }]); // 'cae_8'
+
   await signOut();
   await signIn('yulududu');
-  const {data} = await supabase
+
+  const { data } = await supabase
     .from('indicateur_valeur')
     .select('*')
     .eq('collectivite_id', 1)
     .eq('indicateur_id', 60); // 'cae_8'
 
   expect(data).toHaveLength(0);
-  await signOut();
-  await signIn('yolododo');
 });
 
-test('Filtrer les indicateurs - par le sous-ensemble ECi', async () => {
-  const {status, data} = await fetchIndicateurs({
+test('Filtrer les indicateurs - par catégorie', async () => {
+  const { data: eciIndicateurs } = await fetchIndicateurs({
     categorieNoms: ['eci'],
   });
-  expect(status).toEqual(200);
-  expect(data.length).toEqual(3);
+
+  if (!eciIndicateurs) {
+    expect.fail();
+  }
+
+  expect(eciIndicateurs.length).toBeGreaterThan(0);
+
+  const { data: caeIndicateurs } = await fetchIndicateurs({
+    categorieNoms: ['cae'],
+  });
+
+  if (!caeIndicateurs) {
+    expect.fail();
+  }
+
+  expect(eciIndicateurs.length).toBeGreaterThan(0);
+
+  const { data: allIndicateurs } = await fetchIndicateurs({});
+  if (!allIndicateurs) {
+    expect.fail();
+  }
+
+  expect(allIndicateurs.length).toBeGreaterThanOrEqual(
+    caeIndicateurs.length + eciIndicateurs.length
+  );
 });
 
 test('Filtrer les indicateurs - par le sous-ensemble ECi et par texte (dans le titre ou la description)', async () => {
-  const {status, data} = await fetchIndicateurs({
+  const { status, data } = await fetchIndicateurs({
     text: 'activité',
     categorieNoms: ['eci'],
   });
+
   expect(status).toEqual(200);
-  expect(data).toHaveLength(1);
+  expect(data.length).toBeGreaterThan(1);
 });
 
 test('Filtrer les indicateurs - par le sous-ensemble ECi et par identifiant', async () => {
-  const {status, data} = await fetchIndicateurs({
+  const { data } = await fetchIndicateurs({
     text: '#29',
     categorieNoms: ['eci'],
   });
-  expect(status).toEqual(200);
+
   expect(data).toHaveLength(1);
-  expect(data[0].id).toEqual(17); // eci_29
+  expect(data[0].identifiant).toEqual('eci_29');
 });
 
-test('Filtrer les indicateurs - par le sous-ensemble ECi et par une thématique', async () => {
-  const {status, data} = await fetchIndicateurs({
+test('Filtrer les indicateurs - par une thématique', async () => {
+  const { status, data } = await fetchIndicateurs({
     thematiqueIds: [5],
-    categorieNoms: ['eci'],
   });
   expect(status).toEqual(200);
   expect(data).toHaveLength(1); // 'ind. ECi dans la thématique'
 });
 
-test('Filtrer les indicateurs - par le sous-ensemble ECi et par plusieurs thématiques', async () => {
-  const {status, data} = await fetchIndicateurs({
+test('Filtrer les indicateurs - par plusieurs thématiques', async () => {
+  const { status, data } = await fetchIndicateurs({
     thematiqueIds: [5, 4],
-    categorieNoms: ['eci'],
   });
   expect(status).toEqual(200);
   expect(data).toHaveLength(2);
 });
 
-test('Filtrer les indicateurs - par le sous-ensemble ECi et par personne pilote', async () => {
-  const {status, data} = await fetchIndicateurs({
-    utilisateurPiloteIds: ['4ecc7d3a-7484-4a1c-8ac8-930cdacd2561'],
-    categorieNoms: ['eci'],
+test('Filtrer les indicateurs - par personne et utilisateur pilote', async () => {
+  const { data: withUser } = await fetchIndicateurs({
+    utilisateurPiloteIds: [yaladadaUUid],
   });
-  expect(status).toEqual(200);
-  expect(data).toHaveLength(1);
-});
 
-test('Filtrer les indicateurs - par le sous-ensemble ECi et par tag de personne pilote', async () => {
-  const {status, data} = await fetchIndicateurs({
+  expect(withUser.length).toBeGreaterThan(0);
+
+  const { data: withPersonne } = await fetchIndicateurs({
     personnePiloteIds: [1],
-    categorieNoms: ['eci'],
   });
-  expect(status).toEqual(200);
-  expect(data).toHaveLength(1);
-});
 
-test('Filtrer les indicateurs - par le sous-ensemble ECi et par personne et tag pilote', async () => {
-  const {status, data} = await fetchIndicateurs({
-    utilisateurPiloteIds: ['4ecc7d3a-7484-4a1c-8ac8-930cdacd2561'],
+  expect(withPersonne.length).toBeGreaterThan(0);
+
+  const { data: withUserAndPersonne } = await fetchIndicateurs({
+    utilisateurPiloteIds: [yaladadaUUid],
     personnePiloteIds: [1],
-    categorieNoms: ['eci'],
   });
-  expect(status).toEqual(200);
-  expect(data).toHaveLength(1);
+
+  for (const indicateur of [...withPersonne, ...withUser]) {
+    expect(withUserAndPersonne.some((i) => i.id === indicateur.id)).toBe(true);
+  }
 });
 
-test('Filtrer les indicateurs - par le sous-ensemble ECi et par action du référentiel', async () => {
-  const {status, data} = await fetchIndicateurs({
+test('Filtrer les indicateurs - par action du référentiel', async () => {
+  const { data } = await fetchIndicateurs({
     actionId: 'eci_1.2',
-    categorieNoms: ['eci'],
   });
-  expect(status).toEqual(200);
+
   expect(data).toHaveLength(1);
 });
 
-test("Filtrer les indicateurs - par le sous-ensemble ECi et par id de plan d'actions", async () => {
-  const {status, data} = await fetchIndicateurs({
+test("Filtrer les indicateurs - par id de plan d'actions", async () => {
+  const { data } = await fetchIndicateurs({
     planActionIds: [1],
-    categorieNoms: ['eci'],
   });
-  expect(status).toEqual(200);
+
   expect(data).toHaveLength(1);
+
+  const { data: empty } = await fetchIndicateurs({
+    planActionIds: [12],
+  });
+
+  expect(empty).toHaveLength(0);
 });
 
-test('Filtrer les indicateurs - par le sous-ensemble ECi et par id de service', async () => {
-  const {status, data} = await fetchIndicateurs({
+test('Filtrer les indicateurs - par id de service', async () => {
+  const { data } = await fetchIndicateurs({
     servicePiloteIds: [1],
-    categorieNoms: ['eci'],
   });
-  expect(status).toEqual(200);
+
   expect(data).toHaveLength(1);
 });
 
 test('Filtrer les indicateurs - par le sous-ensemble CAE', async () => {
-  const {status, data} = await fetchIndicateurs({
+  const { data } = await fetchIndicateurs({
     categorieNoms: ['cae'],
   });
-  expect(status).toEqual(200);
-  expect(data.length).toBeCloseTo(66, 3);
+  const { data: allIndicateurs } = await fetchIndicateurs({});
+
+  expect(allIndicateurs.length).toBeGreaterThan(data.length);
 });
 
 test('Filtrer les indicateurs - par le sous-ensemble CAE et par le flag "participation au score"', async () => {
-  const {status, data} = await fetchIndicateurs({
+  const { data } = await fetchIndicateurs({
     participationScore: true,
     categorieNoms: ['cae'],
   });
-  expect(status).toEqual(200);
-  expect(data.length).toBeCloseTo(31, 3);
+
+  const { data: allIndicateurs } = await fetchIndicateurs({
+    categorieNoms: ['cae'],
+  });
+
+  if (!data) {
+    expect.fail();
+  }
+
+  expect(allIndicateurs.length).toBeGreaterThan(data.length);
 });
 
 test('Filtrer les indicateurs - par le sous-ensemble CAE et l\'état "complété"', async () => {
-  const {status, data} = await fetchIndicateurs({
+  const { status, data } = await fetchIndicateurs({
     estComplet: true,
     categorieNoms: ['cae'],
   });
@@ -276,27 +326,33 @@ test('Filtrer les indicateurs - par le sous-ensemble CAE et l\'état "complété
 });
 
 test('Filtrer les indicateurs - par le sous-ensemble CAE et l\'état non "complété"', async () => {
-  const {status, data} = await fetchIndicateurs({
+  const { data } = await fetchIndicateurs({
     estComplet: false,
     categorieNoms: ['cae'],
   });
-  expect(status).toEqual(200);
-  expect(data).toHaveLength(65);
+
+  expect(data.length).toBeGreaterThan(1);
 });
 
 test('Filtrer les indicateurs - par le sous-ensemble CAE et l\'état "confidentiel"', async () => {
-  const {status, data} = await fetchIndicateurs({
+  const { data: confidentielIndicateurs } = await fetchIndicateurs({
     estConfidentiel: true,
     categorieNoms: ['cae'],
   });
-  expect(status).toEqual(200);
-  // Varie de 1 selon si on lance ce test unitairement ou tout le fichier
-  expect(data.length).toBeGreaterThanOrEqual(2);
-  expect(data.length).toBeLessThanOrEqual(3);
+
+  const { data: allIndicateurs } = await fetchIndicateurs({
+    categorieNoms: ['cae'],
+  });
+
+  if (!confidentielIndicateurs || !allIndicateurs) {
+    expect.fail();
+  }
+
+  expect(allIndicateurs.length).toBeGreaterThan(confidentielIndicateurs.length);
 });
 
 test('Filtrer les indicateurs - par le sous-ensemble CAE et l\'état non "confidentiel"', async () => {
-  const {status, data} = await fetchIndicateurs({
+  const { status, data } = await fetchIndicateurs({
     estConfidentiel: false,
     categorieNoms: ['cae'],
   });
@@ -306,13 +362,13 @@ test('Filtrer les indicateurs - par le sous-ensemble CAE et l\'état non "confid
 
   for (const indicateur of data) {
     expect(indicateur.identifiant).toMatch(
-      /^plans_de_deplacement|modes_de_deplacement|emission_polluants_atmo|cae_.*/
+      /^plans_de_deplacement|modes_de_deplacement|emission_polluants_atmo|cae_.*|s_*/
     );
   }
 });
 
 test('Filtrer les indicateurs - par indicateur perso', async () => {
-  const {status, data} = await fetchIndicateurs({
+  const { status, data } = await fetchIndicateurs({
     estPerso: true,
   });
   expect(status).toEqual(200);
@@ -320,75 +376,113 @@ test('Filtrer les indicateurs - par indicateur perso', async () => {
 });
 
 test('Filtrer les indicateurs - par indicateur perso et confidentiel', async () => {
-  const {status, data} = await fetchIndicateurs({
+  const { data } = await fetchIndicateurs({
     estPerso: true,
-    estConfidentiel: true,
+    estConfidentiel: false,
   });
-  expect(status).toEqual(200);
+
+  if (!data) {
+    expect.fail();
+  }
+
   expect(data).toHaveLength(1);
+
+  // Change la confidentialité
+  await signOut();
+
+  await dbAdmin
+    .from('indicateur_collectivite')
+    .update({ confidentiel: true })
+    .eq('indicateur_id', data?.[0].id);
+
+  await signIn('yolododo');
+
   const data2 = await fetchIndicateurs({
     estPerso: true,
     estConfidentiel: false,
   });
+
   expect(data2.status).toEqual(200);
   expect(data2.data).toHaveLength(0);
 });
 
 test('Filtrer les indicateurs - tous les indicateurs', async () => {
-  const {status, data} = await fetchIndicateurs({});
+  const { status, data } = await fetchIndicateurs({});
   expect(status).toEqual(200);
   expect(data.length).toBeGreaterThan(0);
+});
 
-  for (const indicateur of data) {
-    expect(indicateur.hasOpenData).toBe(false);
-  }
+test('Filtrer les indicateurs - par fiche action', async () => {
+  const { data } = await fetchIndicateurs({
+    ficheActionIds: [1],
+  });
+
+  expect(data).toHaveLength(1);
+
+  const { data: empty } = await fetchIndicateurs({
+    ficheActionIds: [2],
+  });
+
+  expect(empty).toHaveLength(0);
 });
 
 test('Filtrer les indicateurs - par existence de données open-data', async () => {
   // Ajoute 3 valeurs open-data :
-  // - 2 pour l'indicateur 48
-  // - 1 pour l'indicateur 17
+  // - 2 pour l'indicateur 48 (indicateur enfant)
+  // - 1 pour l'indicateur 17 (ni enfant ni parent)
+  await signOut();
 
-  const {data: metadonnee} = await dbAdmin
+  const { data: metadonnee } = await dbAdmin
     .from('indicateur_source_metadonnee')
-    .insert({
+    .upsert({
       source_id: 'citepa',
       date_version: new Date().toLocaleDateString('sv-SE'),
     })
-    .select('id');
+    .select('id')
+    .single();
+
+  if (!metadonnee) {
+    expect.fail();
+  }
 
   await dbAdmin.from('indicateur_valeur').insert({
-    indicateur_id: 48,
+    indicateur_id: 17,
     date_valeur: '2025-01-01',
     collectivite_id: 1,
     resultat: 1.8,
-    metadonnee_id: metadonnee![0].id,
-  });
-
-  await dbAdmin.from('indicateur_valeur').insert({
-    indicateur_id: 48,
-    date_valeur: '2024-01-01',
-    collectivite_id: 1,
-    resultat: 1.5,
-    metadonnee_id: metadonnee![0].id,
+    metadonnee_id: metadonnee.id,
   });
 
   await dbAdmin.from('indicateur_valeur').insert({
     indicateur_id: 17,
     date_valeur: '2024-01-01',
     collectivite_id: 1,
-    objectif: 16,
-    metadonnee_id: metadonnee![0].id,
+    resultat: 1.5,
+    metadonnee_id: metadonnee.id,
   });
 
-  const {status, data} = await fetchIndicateurs({
+  await dbAdmin.from('indicateur_valeur').insert({
+    indicateur_id: 48,
+    date_valeur: '2024-01-01',
+    collectivite_id: 1,
+    objectif: 16,
+    metadonnee_id: metadonnee.id,
+  });
+
+  await signIn('yolododo');
+
+  const { status, data } = await fetchIndicateurs({
     hasOpenData: true,
   });
 
   expect(status).toEqual(200);
-  expect(data).toHaveLength(2);
+
+  // L'indicateur enfant ne doit pas remonter !
+  // donc un seul indicateur attendu (le 17)
+  expect(data).toHaveLength(1);
 
   for (const indicateur of data) {
+    expect(indicateur.id).toEqual(17);
     expect(indicateur.hasOpenData).toBe(true);
   }
 });

@@ -1,11 +1,11 @@
-import {FicheAction} from '../../../data/types';
+import { FicheAction } from '@tet/api/plan-actions';
 import CheminEmplacement from './CheminEmplacement';
 
 type EmplacementActuelFicheProps = {
   fiche: FicheAction;
 };
 
-const EmplacementActuelFiche = ({fiche}: EmplacementActuelFicheProps) => {
+const EmplacementActuelFiche = ({ fiche }: EmplacementActuelFicheProps) => {
   const nbEmplacements = fiche.axes?.length ?? 0;
 
   return (
@@ -22,7 +22,7 @@ const EmplacementActuelFiche = ({fiche}: EmplacementActuelFicheProps) => {
       {/* Liste des emplacements */}
       <div className="flex flex-col gap-6 overflow-x-auto pb-4">
         {fiche.axes?.map(
-          axe =>
+          (axe) =>
             !!axe.id && (
               <CheminEmplacement
                 key={`${fiche.id}-${axe.id}`}

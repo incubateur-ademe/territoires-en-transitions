@@ -12,11 +12,13 @@ import IndicateurSourcesService from './services/indicateurSources.service';
 import TrajectoiresDataService from './services/trajectoires-data.service';
 import TrajectoiresSpreadsheetService from './services/trajectoires-spreadsheet.service';
 import TrajectoiresXlsxService from './services/trajectoires-xlsx.service';
+import { ConfigurationModule } from '../config/configuration.module';
 
 @Module({
   imports: [
-    TrpcModule,
+    ConfigurationModule,
     CommonModule,
+    TrpcModule,
     AuthModule,
     CollectivitesModule,
     SheetModule,

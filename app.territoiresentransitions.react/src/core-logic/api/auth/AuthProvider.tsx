@@ -1,23 +1,28 @@
 import {
+  Session,
+  SignInWithPasswordCredentials,
+  User,
+} from '@supabase/supabase-js';
+import {
+  clearAuthTokens,
+  getRootDomain,
+  MaCollectivite,
+  restoreSessionFromAuthTokens,
+  setAuthTokens,
+} from '@tet/api';
+import { Tables } from '@tet/api/database.types';
+import { dcpFetch } from '@tet/api/utilisateurs/shared/data_access/dcp.fetch';
+import { fetchOwnedCollectivites } from 'core-logic/hooks/useOwnedCollectivites';
+import { ENV } from 'environmentVariables';
+import {
   createContext,
   ReactNode,
   useContext,
   useEffect,
-  useMemo,
   useState,
 } from 'react';
-import { User, SignInWithPasswordCredentials } from '@supabase/supabase-js';
 import { useQuery } from 'react-query';
-import {
-  clearAuthTokens,
-  getRootDomain,
-  restoreSessionFromAuthTokens,
-  setAuthTokens,
-} from '@tet/api';
 import { supabaseClient } from '../supabase';
-import { signUpPath } from 'app/paths';
-import { dcpFetch } from '@tet/api/utilisateurs/shared/data_access/dcp.fetch';
-import { ENV } from 'environmentVariables';
 
 // typage du contexte exposé par le fournisseur
 export type TAuthContext = {
@@ -28,12 +33,64 @@ export type TAuthContext = {
   authHeaders: { authorization: string; apikey: string } | null;
   isConnected: boolean;
 };
-export type UserData = User & DCP & { isSupport: boolean | undefined };
+
 export type DCP = {
   nom?: string;
   prenom?: string;
   cgu_acceptees_le?: string | null;
 };
+
+export interface UserData extends User, DCP {
+  dcp?: DCP;
+  isSupport?: boolean;
+  collectivites?: Array<
+    MaCollectivite & { membre?: Tables<'private_collectivite_membre'> }
+  >;
+}
+
+function useUserData(session: Session | null) {
+  const { user } = session ?? {};
+
+  return useQuery(['user_data', user?.id], async () => {
+    if (!user?.id) {
+      return null;
+    }
+
+    const [
+      dcp,
+      { data: isSupport },
+      collectivites,
+      { data: collectiviteMembres },
+    ] = await Promise.all([
+      dcpFetch({ dbClient: supabaseClient, user_id: user.id }),
+      supabaseClient.rpc('est_support'),
+      fetchOwnedCollectivites(),
+      supabaseClient
+        .from('private_collectivite_membre')
+        .select('*')
+        .eq('user_id', user.id),
+    ]);
+
+    if (!dcp) {
+      return {
+        ...user,
+      };
+    }
+
+    return {
+      ...user,
+      ...dcp,
+      dcp,
+      isSupport: isSupport ?? false,
+      collectivites: collectivites.map((c) => ({
+        ...c,
+        membre: collectiviteMembres?.find(
+          (m) => m.collectivite_id === c.collectivite_id
+        ),
+      })),
+    };
+  });
+}
 
 // crée le contexte
 export const AuthContext = createContext<TAuthContext | null>(null);
@@ -46,20 +103,12 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
   // récupère la session courante
   const currentSession = useCurrentSession();
   const [session, setSession] = useState(currentSession);
-  const user = session?.user;
 
   // pour stocker la dernière erreur d'authentification
   const [authError, setAuthError] = useState<string | null>(null);
 
-  // charge les données associées à l'utilisateur courant
-  const { data: dcp, isSuccess: dcpLoaded } = useDCP(user?.id);
-  const { data: isSupport } = useIsSupport(user?.id);
-  const userData = useMemo(
-    () => (user && dcp ? { ...user, ...dcp, isSupport } : null),
-    [user, dcp]
-  );
+  const { data: userData = null } = useUserData(session);
 
-  // initialisation : enregistre l'écouteur de changements d'état
   useEffect(() => {
     // écoute les changements d'état (connecté, déconnecté, etc.)
     const {
@@ -126,28 +175,21 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
       return true;
     });
 
-  // les données exposées par le fournisseur de contexte
-  const isConnected = Boolean(user);
   const authHeaders = session?.access_token
     ? {
         authorization: `Bearer ${session.access_token}`,
         apikey: `${ENV.supabase_anon_key}`,
       }
     : null;
+
   const value = {
     connect,
     disconnect,
     user: userData,
+    isConnected: userData !== null,
     authError,
-    isConnected,
     authHeaders,
   };
-
-  // Redirige l'utilisateur vers la page de saisie des DCP si nécessaire
-  const userInfoRequired = session && dcpLoaded && !dcp;
-  if (userInfoRequired) {
-    document.location.replace(`${signUpPath}&view=etape3`);
-  }
 
   return <AuthContext.Provider value={value}>{children}</AuthContext.Provider>;
 };
@@ -185,38 +227,27 @@ const clearCrispUserData = () => {
   }
 };
 
-// hook qui utilise les queries DCP
-export const useDCP = (user_id?: string) => {
-  return useQuery(['dcp', user_id], () =>
-    user_id ? dcpFetch({ dbClient: supabaseClient, user_id }) : null
-  );
-};
+export async function getSession() {
+  const { data, error } = await supabaseClient.auth.getSession();
+  if (data?.session) {
+    return data.session;
+  }
+  if (error) throw error;
 
-// vérifie si l'utilisateur courant à le droit "support"
-const useIsSupport = (user_id?: string) =>
-  useQuery(['is_support', user_id], async () => {
-    if (!user_id) return false;
-    const { data } = await supabaseClient.rpc('est_support');
-    return data || false;
-  });
-
-const useCurrentSession = () => {
-  const { data, error } = useQuery(['session'], async () => {
-    const { data, error } = await supabaseClient.auth.getSession();
+  // restaure une éventuelle session précédente
+  const ret = await restoreSessionFromAuthTokens(supabaseClient);
+  if (ret) {
+    const { data, error } = ret;
     if (data?.session) {
       return data.session;
     }
     if (error) throw error;
+  }
+}
 
-    // restaure une éventuelle session précédente
-    const ret = await restoreSessionFromAuthTokens(supabaseClient);
-    if (ret) {
-      const { data, error } = ret;
-      if (data?.session) {
-        return data.session;
-      }
-      if (error) throw error;
-    }
+const useCurrentSession = () => {
+  const { data, error } = useQuery(['session'], async () => {
+    return getSession();
   });
 
   if (error || !data) {
@@ -225,3 +256,13 @@ const useCurrentSession = () => {
 
   return data;
 };
+
+export async function getAuthHeaders() {
+  const session = await getSession();
+  return session?.access_token
+    ? {
+        authorization: `Bearer ${session.access_token}`,
+        apikey: `${ENV.supabase_anon_key}`,
+      }
+    : null;
+}

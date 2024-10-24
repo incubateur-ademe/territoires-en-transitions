@@ -1,9 +1,9 @@
-import {useCurrentCollectivite} from 'core-logic/hooks/useCurrentCollectivite';
-import {useFichesActionLiees} from './useFichesActionLiees';
-import {useUpdateFichesActionLiees} from './useUpdateFichesActionLiees';
-import {useCreateFicheResume} from '../PlansActions/FicheAction/data/useCreateFicheResume';
+import { useCurrentCollectivite } from 'core-logic/hooks/useCurrentCollectivite';
+import { useFichesActionLiees } from './useFichesActionLiees';
+import { useUpdateFichesActionLiees } from './useUpdateFichesActionLiees';
+import { useCreateFicheResume } from '../PlansActions/FicheAction/data/useCreateFicheResume';
 import FichesLieesListe from '../PlansActions/FicheAction/FichesLiees/FichesLieesListe';
-import {Field} from '@tet/ui';
+import { Field } from '@tet/ui';
 import FichesActionsDropdown from 'ui/dropdownLists/FichesActionsDropdown/FichesActionsDropdown';
 
 export type TFichesActionProps = {
@@ -14,14 +14,14 @@ export type TFichesActionProps = {
  * Affiche les fiches actions liées à une action du référentiel
  */
 export const FichesActionLiees = (props: TFichesActionProps) => {
-  const {actionId} = props;
+  const { actionId } = props;
   const collectivite = useCurrentCollectivite();
-  const {data: fiches} = useFichesActionLiees(actionId);
-  const {mutate: createFicheResume} = useCreateFicheResume({
+  const { data: fiches } = useFichesActionLiees(actionId);
+  const { mutate: createFicheResume } = useCreateFicheResume({
     actionId,
     openInNewTab: true,
   });
-  const {mutate: updateFichesActionLiees} =
+  const { mutate: updateFichesActionLiees } =
     useUpdateFichesActionLiees(actionId);
   const isReadonly = collectivite?.readonly ?? false;
 
@@ -40,9 +40,9 @@ export const FichesActionLiees = (props: TFichesActionProps) => {
         <FichesActionsDropdown
           disabled={isReadonly}
           ficheCouranteId={null}
-          values={fiches.map(f => f.id.toString())}
-          onChange={({fiches: nouvellesFiches}) =>
-            updateFichesActionLiees({fiches, fiches_liees: nouvellesFiches})
+          values={fiches.map((f) => f.id.toString())}
+          onChange={({ fiches: nouvellesFiches }) =>
+            updateFichesActionLiees({ fiches, fiches_liees: nouvellesFiches })
           }
         />
       </Field>

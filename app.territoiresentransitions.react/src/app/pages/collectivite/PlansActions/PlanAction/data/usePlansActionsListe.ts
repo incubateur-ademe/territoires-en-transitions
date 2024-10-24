@@ -1,18 +1,32 @@
 import { useQuery } from 'react-query';
 
-import { planActionsFetch } from '@tet/api/fiche_actions/plan_actions.list/data_access/plan_actions.fetch';
-import { supabaseClient } from 'core-logic/api/supabase';
+import {
+  planActionsFetch,
+  WithSelect,
+} from '@tet/api/plan-actions/plan-actions.list/data-access/plan-actions.fetch';
+import { supabaseClient as dbClient } from 'core-logic/api/supabase';
+import { useCollectiviteId } from 'core-logic/hooks/params';
+import { FetchOptions } from '@tet/api/plan-actions/plan-actions.list/domain/fetch-options.schema';
 
-/** Récupère uniquement les axes racines des plans d'action.
- * Ce hook ne donne pas les enfants de ces axes.
+type Props = {
+  options?: FetchOptions;
+  withSelect?: WithSelect[];
+};
+
+/**
+ * Récupère uniquement les axes racines des plans d'action.
+ *
+ * Pour ajouter les axes enfants il faut donner `withSelect: ['axes']` en paramètre.
  */
-export const usePlansActionsListe = (collectiviteId: number) => {
-  const { data } = useQuery(['plans_actions', collectiviteId], () =>
+export const usePlansActionsListe = ({ options, withSelect }: Props) => {
+  const collectiviteId = useCollectiviteId();
+
+  return useQuery(['plans_actions', collectiviteId!, options, withSelect], () =>
     planActionsFetch({
-      dbClient: supabaseClient,
-      collectiviteId,
+      dbClient,
+      collectiviteId: collectiviteId!,
+      options,
+      withSelect,
     })
   );
-
-  return data;
 };

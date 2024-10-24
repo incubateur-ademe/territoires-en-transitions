@@ -73,10 +73,10 @@ const StatisticsDisplay = ({
         <div className="flex justify-around flex-wrap gap-y-20">
           {nationalStats && (
             <div className="fr-col-xs-12 fr-col-sm-12 fr-col-md-4 fr-col-lg-4 fr-ratio-1x1">
-              <ChartTitle>Collectivités engagées</ChartTitle>
+              <ChartTitle>Collectivités actives</ChartTitle>
               <div className="w-[420px] h-[420px] mt-14">
                 <CarteCollectivites
-                  filtre={'engagees'}
+                  filtre={'toutes'}
                   etoiles={[1, 2, 3, 4, 5]}
                   forcedZoom={5.3}
                 />

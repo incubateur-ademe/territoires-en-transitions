@@ -82,10 +82,10 @@ type IndicateursFiltres = {
 export interface TrackingPlan extends Record<never, Page> {
   /** Page "Tous les indicateurs" */
   'app/indicateurs/tous': {
-    properties: {collectivite_id: number};
+    properties: { collectivite_id: number };
     onglets: never;
     events: {
-      toggle_graphique: {actif: boolean};
+      toggle_graphique: { actif: boolean };
       filtres: {
         filtreValues: IndicateursFiltres;
       };
@@ -94,7 +94,7 @@ export interface TrackingPlan extends Record<never, Page> {
 
   /** Page "Indicateurs de la collectivité" */
   'app/indicateurs/collectivite': {
-    properties: {collectivite_id: number};
+    properties: { collectivite_id: number };
     onglets: never;
     events: {
       explorerIndicateursClick: {};
@@ -136,7 +136,11 @@ export interface TrackingPlan extends Record<never, Page> {
   'app/tdb/collectivite': {
     properties: { collectivite_id: number };
     onglets: never;
-    events: never;
+    events: {
+      // clic sur le bouton "éditer" de chaque module
+      tdb_modifier_filtres_avancement_actions: {};
+      tdb_modifier_filtres_suivi_plans: {};
+    };
   };
 
   /** Page tableau de bord personnel */
@@ -181,9 +185,27 @@ export interface TrackingPlan extends Record<never, Page> {
     };
   };
 
+  /** Page TDB "avancement des fiches action" */
+  'app/tdb/collectivite/fiche-actions-par-statut': {
+    properties: { collectivite_id: number };
+    onglets: never;
+    events: {
+      tdb_modifier_filtres_avancement_actions: {};
+    };
+  };
+
+  /** Page TDB "suivi des plans d'actions" */
+  'app/tdb/collectivite/suivi-plan-actions': {
+    properties: { collectivite_id: number };
+    onglets: never;
+    events: {
+      tdb_modifier_filtres_suivi_plan_actions: {};
+    };
+  };
+
   /** Page fiche action */
   'app/fiche-action': {
-    properties: {collectivite_id: number};
+    properties: { collectivite_id: number };
     onglets: never;
     events: {
       validation_modale_modifier_fa: {};
@@ -218,9 +240,9 @@ export interface TrackingPlan extends Record<never, Page> {
     };
     onglets: 'emissions_ges' | 'consommations_finales';
     events: {
-      cta_lancer_calcul: {source: 'open_data' | 'collectivite'};
-      cta_download: {file: 'modele' | 'donnees' | 'methodo'};
-      selection_secteur: {secteur: string};
+      cta_lancer_calcul: { source: 'open_data' | 'collectivite' };
+      cta_download: { file: 'modele' | 'donnees' | 'methodo' };
+      selection_secteur: { secteur: string };
     };
   };
 
@@ -322,6 +344,54 @@ export interface TrackingPlan extends Record<never, Page> {
         niveau_temps_ids?: OptionValue[];
         match_competences?: boolean;
       };
+    };
+  };
+
+  /** Tracking du site */
+
+  /* Page d'accueil du site */
+  'site/accueil': {
+    properties: {};
+    onglets: never;
+    events: {
+      decouvrir_programme: {};
+      decouvrir_plateforme: {};
+      demande_contact: {};
+      inscription_newsletter: {};
+    };
+  };
+
+  /* Page programme du site */
+  'site/programme': {
+    properties: {};
+    onglets: never;
+    events: {
+      contact_programme: {};
+      demarrer_programme: {};
+      inscription_plateforme: {};
+      voir_collectivites: {};
+    };
+  };
+
+  /* Page outil numérique du site */
+  'site/outil-numerique': {
+    properties: {};
+    onglets: never;
+    events: {
+      inscription_plateforme: {};
+      inscription_demo: {};
+      decouvrir_pai: {};
+      decouvrir_trajectoire: {};
+      contact_plateforme: {};
+    };
+  };
+
+  /* Page contact du site */
+  'site/contact': {
+    properties: {};
+    onglets: never;
+    events: {
+      envoyer_message: {};
     };
   };
 }

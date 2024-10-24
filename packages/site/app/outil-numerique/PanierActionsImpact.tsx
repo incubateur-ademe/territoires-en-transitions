@@ -1,6 +1,6 @@
 'use client';
 
-import { Button } from '@tet/ui';
+import { Button, useEventTracker } from '@tet/ui';
 import Section from '@tet/site/components/sections/Section';
 import { StrapiItem } from '@tet/site/src/strapi/StrapiItem';
 import { StrapiImage } from '@tet/site/components/strapiImage/StrapiImage';
@@ -19,6 +19,8 @@ const PanierActionsImpact = ({
   cta,
   image,
 }: PanierActionsImpactProps) => {
+  const tracker = useEventTracker('site/outil-numerique');
+
   return (
     <Section
       className="flex lg:!flex-row justify-between items-center !gap-12"
@@ -39,6 +41,7 @@ const PanierActionsImpact = ({
         />
         <Button
           href={`${process.env.NEXT_PUBLIC_PANIER_URL}/landing`}
+          onClick={() => tracker('decouvrir_pai', {})}
           className="mt-6 max-lg:mx-auto"
         >
           {cta}

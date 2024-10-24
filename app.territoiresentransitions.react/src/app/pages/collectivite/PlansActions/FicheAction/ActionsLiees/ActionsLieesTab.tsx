@@ -1,7 +1,7 @@
-import {useState} from 'react';
-import {Button} from '@tet/ui';
+import { useState } from 'react';
+import { Button } from '@tet/ui';
 import SpinnerLoader from 'ui/shared/SpinnerLoader';
-import {FicheAction} from '../data/types';
+import { FicheAction } from '@tet/api/plan-actions';
 import EmptyCard from '../EmptyCard';
 import ActionPicto from './ActionPicto';
 import ActionsLieesListe from './ActionsLieesListe';
@@ -23,7 +23,7 @@ const ActionsLieesTab = ({
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [isLoading, setIsLoading] = useState(false);
 
-  const {actions} = fiche;
+  const { actions } = fiche;
 
   const isEmpty = !actions || actions.length === 0;
 
@@ -31,7 +31,7 @@ const ActionsLieesTab = ({
     <>
       {isEmpty ? (
         <EmptyCard
-          picto={className => <ActionPicto className={className} />}
+          picto={(className) => <ActionPicto className={className} />}
           title="Aucune action des référentiels n'est liée !"
           subTitle="Ici vous pouvez lier votre action avec une action des référentiels Climat Air Energie et Economie Circulaire de l’ADEME"
           isReadonly={isReadonly}
@@ -65,13 +65,15 @@ const ActionsLieesTab = ({
           {/* Liste des actions des référentiels liées */}
           <ActionsLieesListe
             isReadonly={isReadonly}
-            actionsIds={actions?.map(action => action.id)}
+            actionsIds={actions?.map((action) => action.id)}
             className="sm:grid-cols-2 md:grid-cols-3"
             onLoad={setIsLoading}
-            onUnlink={actionsLieeId =>
+            onUnlink={(actionsLieeId) =>
               updateFiche({
                 ...fiche,
-                actions: actions.filter(action => action.id !== actionsLieeId),
+                actions: actions.filter(
+                  (action) => action.id !== actionsLieeId
+                ),
               })
             }
           />

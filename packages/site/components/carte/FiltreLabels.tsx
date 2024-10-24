@@ -1,6 +1,6 @@
 'use client';
 
-import RadioAsButton from '@tet/site/components/dstet/buttons/RadioAsButton';
+import { RadioButton } from '@tet/ui';
 import { FiltresLabels } from './CarteCollectivites';
 
 type FiltreLabelsProps = {
@@ -13,34 +13,49 @@ const FiltreLabels = ({
   onChangeFilter,
 }: FiltreLabelsProps) => {
   return (
-    <div className="flex flex-col gap-4 w-[280px]">
-      <RadioAsButton
-        id="engagees"
+    <div className="flex flex-col gap-4 w-fit">
+      {/** Toutes les collectivitées :
+       * - engagées labellisées CAE ou ECI
+       * - engagées non labellisées (= COT non labellisées)
+       * - actives sur la plateforme, engagées ou non
+       */}
+      <RadioButton
         label="Toutes les collectivités"
+        id="toutes"
+        value="toutes"
         name="filtre"
-        checked={selectedFilter === 'engagees'}
-        onCheck={() => onChangeFilter('engagees')}
+        checked={selectedFilter === 'toutes'}
+        onChange={() => onChangeFilter('toutes')}
       />
-      <RadioAsButton
+
+      {/* Labellisées CAE */}
+      <RadioButton
+        label="Labellisées Climat-Air-Énergie"
         id="labellisees_cae"
-        label="Labellisées Climat Air Energie"
+        value="labellisees_cae"
         name="filtre"
         checked={selectedFilter === 'labellisees_cae'}
-        onCheck={() => onChangeFilter('labellisees_cae')}
+        onChange={() => onChangeFilter('labellisees_cae')}
       />
-      <RadioAsButton
-        id="labellisees_eci"
+
+      {/* Labellisées ECI */}
+      <RadioButton
         label="Labellisées Économie Circulaire"
+        id="labellisees_eci"
+        value="labellisees_eci"
         name="filtre"
         checked={selectedFilter === 'labellisees_eci'}
-        onCheck={() => onChangeFilter('labellisees_eci')}
+        onChange={() => onChangeFilter('labellisees_eci')}
       />
-      <RadioAsButton
-        id="cot"
-        label="Collectivités non labellisées"
+
+      {/* Collectivités COT non labellisées */}
+      <RadioButton
+        label="Collectivités engagées non labellisées"
+        id="cot_non_labellisees"
+        value="cot_non_labellisees"
         name="filtre"
-        checked={selectedFilter === 'cot'}
-        onCheck={() => onChangeFilter('cot')}
+        checked={selectedFilter === 'cot_non_labellisees'}
+        onChange={() => onChangeFilter('cot_non_labellisees')}
       />
     </div>
   );

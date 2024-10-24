@@ -1,6 +1,0 @@
-.button input[type='radio']:checked + label {
-  @apply bg-primary-1;
-  @apply text-primary-8;
-  @apply border-primary-8;
-  border-radius: 10px;
-}

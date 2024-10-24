@@ -26,7 +26,7 @@ describe('TrajectoiresDataService test', () => {
           return {};
         } else if (token === SheetService) {
           return {
-            getFileData: jest.fn().mockResolvedValue(null),
+            getFileData: vi.fn().mockResolvedValue(null),
           };
         }
       })
@@ -193,7 +193,7 @@ describe('TrajectoiresDataService test', () => {
 
       const sourceIdentifiantManquants =
         trajectoiresDataService.extractSourceIdentifiantManquantsFromCommentaire(
-          commentaire,
+          commentaire
         );
       expect(sourceIdentifiantManquants).toEqual({
         source: 'rare',
@@ -207,7 +207,7 @@ describe('TrajectoiresDataService test', () => {
 
       const sourceIdentifiantManquants =
         trajectoiresDataService.extractSourceIdentifiantManquantsFromCommentaire(
-          commentaire,
+          commentaire
         );
       expect(sourceIdentifiantManquants).toEqual({
         source: 'collectivite',
@@ -220,7 +220,7 @@ describe('TrajectoiresDataService test', () => {
 
       const sourceIdentifiantManquants =
         trajectoiresDataService.extractSourceIdentifiantManquantsFromCommentaire(
-          commentaire,
+          commentaire
         );
       expect(sourceIdentifiantManquants).toEqual({
         source: 'collectivite',
@@ -233,7 +233,7 @@ describe('TrajectoiresDataService test', () => {
 
       const sourceIdentifiantManquants =
         trajectoiresDataService.extractSourceIdentifiantManquantsFromCommentaire(
-          commentaire,
+          commentaire
         );
       expect(sourceIdentifiantManquants).toEqual({
         source: 'collectivite',
@@ -246,7 +246,7 @@ describe('TrajectoiresDataService test', () => {
 
       const sourceIdentifiantManquants =
         trajectoiresDataService.extractSourceIdentifiantManquantsFromCommentaire(
-          commentaire,
+          commentaire
         );
       expect(sourceIdentifiantManquants).toEqual({
         source: 'collectivite',
@@ -259,7 +259,7 @@ describe('TrajectoiresDataService test', () => {
 
       const sourceIdentifiantManquants =
         trajectoiresDataService.extractSourceIdentifiantManquantsFromCommentaire(
-          commentaire,
+          commentaire
         );
       expect(sourceIdentifiantManquants).toEqual(null);
     });

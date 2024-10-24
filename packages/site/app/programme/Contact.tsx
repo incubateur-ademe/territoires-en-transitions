@@ -1,7 +1,7 @@
 'use client';
 
 import Section from '@tet/site/components/sections/Section';
-import { Button } from '@tet/ui';
+import { Button, useEventTracker } from '@tet/ui';
 
 type ContactProps = {
   description: string;
@@ -9,6 +9,8 @@ type ContactProps = {
 };
 
 const Contact = ({ description, cta }: ContactProps) => {
+  const tracker = useEventTracker('site/programme');
+
   return (
     <Section
       className="items-center justify-center !gap-8"
@@ -17,6 +19,7 @@ const Contact = ({ description, cta }: ContactProps) => {
       <h2 className="text-white text-center max-w-3xl mb-0">{description}</h2>
       <Button
         href="/contact?objet=programme"
+        onClick={() => tracker('contact_programme', {})}
         variant="secondary"
         className="!bg-[#FFE8BD] !border-[#FFE8BD] !text-primary-7 hover:!text-primary-8"
       >

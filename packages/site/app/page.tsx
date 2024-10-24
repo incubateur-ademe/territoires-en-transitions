@@ -9,28 +9,35 @@ import DemandeContact from './DemandeContact';
 import Communaute from './Communaute';
 import Objectifs from './Objectifs';
 import { getData } from './utils';
+import { TrackPageView } from '@tet/ui';
 
 const Accueil = async () => {
   const data = await getData();
 
-  return data ? (
+  return (
     <>
-      <AccueilBanner {...data.banner} />
+      <TrackPageView pageName={'site/accueil'} properties={{}} />
 
-      <Accompagnement {...data.accompagnement} />
+      {data ? (
+        <>
+          <AccueilBanner {...data.banner} />
 
-      <Objectifs {...data.objectifs} />
+          <Accompagnement {...data.accompagnement} />
 
-      <Communaute {...data.collectivites} />
+          <Objectifs {...data.objectifs} />
 
-      <DemandeContact {...data.contact} />
+          <Communaute {...data.collectivites} />
 
-      {data.temoignages && <Temoignages {...data.temoignages} />}
+          <DemandeContact {...data.contact} />
 
-      <Newsletter {...data.newsletter} />
+          {data.temoignages && <Temoignages {...data.temoignages} />}
+
+          <Newsletter {...data.newsletter} />
+        </>
+      ) : (
+        <NoResult />
+      )}
     </>
-  ) : (
-    <NoResult />
   );
 };
 

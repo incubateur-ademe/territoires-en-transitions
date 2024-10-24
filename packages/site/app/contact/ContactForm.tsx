@@ -5,7 +5,16 @@ import classNames from 'classnames';
 import { useEffect, useState } from 'react';
 import { supabase } from '../initSupabase';
 import { options } from './data';
-import { Button } from '@tet/ui';
+import {
+  Button,
+  Field,
+  FormSectionGrid,
+  Input,
+  OptionValue,
+  Select,
+  Textarea,
+  useEventTracker,
+} from '@tet/ui';
 import { useRouter, useSearchParams } from 'next/navigation';
 
 type FormData = {
@@ -14,6 +23,7 @@ type FormData = {
   prenom: string;
   nom: string;
   email: string;
+  tel: string;
   message: string;
 };
 
@@ -23,15 +33,18 @@ const initFormData: FormData = {
   prenom: '',
   nom: '',
   email: '',
+  tel: '',
   message: '',
 };
 
 const ContactForm = () => {
   const [formData, setFormData] = useState<FormData>(initFormData);
   const [status, setStatus] = useState<'success' | 'error' | null>(null);
+  const [isError, setIsError] = useState(false);
 
   const searchParams = useSearchParams();
   const router = useRouter();
+  const tracker = useEventTracker('site/contact');
 
   const objet = searchParams.get('objet');
 
@@ -46,44 +59,54 @@ const ContactForm = () => {
     });
   };
 
-  const handleChangeSelect = (event: React.ChangeEvent<HTMLSelectElement>) => {
-    const option = event.target.options[event.target.selectedIndex];
-    const categorie = option.closest('optgroup')?.label ?? '';
+  const handleChangeSelect = (value?: OptionValue) => {
+    const categorie = options.find((opt) =>
+      opt.options.some((o) => o.value === value)
+    );
+    const option = categorie?.options.find((opt) => opt.value === value);
 
     setFormData((prevState) => ({
       ...prevState,
-      categorie,
-      objet: { value: event.target.value, label: option.innerText },
+      categorie: categorie?.title ?? '',
+      objet: option ?? { value: '', label: '' },
     }));
   };
 
   const handleSubmit = async (event: React.FormEvent<HTMLFormElement>) => {
     event.preventDefault();
 
-    const sentData = {
-      ...formData,
-      objet: formData.objet.label,
-    };
-
-    const { data, error } = await supabase.functions.invoke(
-      'site_send_message',
-      {
-        body: sentData,
-      }
-    );
-
-    if (data) {
-      setStatus('success');
-      setFormData(initFormData);
-      if (objet !== null) {
-        router.push('/contact');
-      }
-    } else if (error) {
-      console.error(error);
-      setStatus('error');
+    if (
+      !formData.objet ||
+      !formData.nom ||
+      !formData.prenom ||
+      !formData.email
+    ) {
+      setIsError(true);
     } else {
-      console.error('site_send_message : aucune donnée reçue');
-      setStatus('error');
+      setIsError(false);
+      const sentData = {
+        ...formData,
+        objet: formData.objet.label,
+      };
+      const { data, error } = await supabase.functions.invoke(
+        'site_send_message',
+        {
+          body: sentData,
+        }
+      );
+      if (data) {
+        setStatus('success');
+        setFormData(initFormData);
+        if (objet !== null) {
+          router.push('/contact');
+        }
+      } else if (error) {
+        console.error(error);
+        setStatus('error');
+      } else {
+        console.error('site_send_message : aucune donnée reçue');
+        setStatus('error');
+      }
     }
   };
 
@@ -104,7 +127,7 @@ const ContactForm = () => {
       if (optionGroup && option) {
         setFormData((prevState) => ({
           ...prevState,
-          categorie: optionGroup.group,
+          categorie: optionGroup.title,
           objet: option,
           message:
             objet === 'panier'
@@ -118,97 +141,115 @@ const ContactForm = () => {
 
   return (
     <>
-      <form onSubmit={handleSubmit}>
-        <div className="fr-input-group">
-          <label className="fr-label" htmlFor="input-objet">
-            Objet de votre message
-          </label>
-          <select
-            className="fr-select"
-            id="objet"
-            name="objet"
-            required
-            onChange={handleChangeSelect}
-            value={formData.objet.value}
-            disabled={objet !== null}
+      <form
+        onSubmit={(event) => {
+          handleSubmit(event);
+          tracker('envoyer_message', {});
+        }}
+        className="border border-grey-4 rounded-lg max-md:p-4 md:max-lg:p-10 p-20"
+      >
+        <FormSectionGrid>
+          <Field
+            title="Objet de votre message *"
+            className="col-span-2"
+            state={isError && !formData.objet.value ? 'error' : 'default'}
+            message={
+              isError && !formData.objet.value
+                ? 'Ce champ est obligatoire'
+                : undefined
+            }
           >
-            <option value="" disabled hidden>
-              Selectionnez une option
-            </option>
-            {options.map((group) => (
-              <optgroup key={group.group} label={group.group}>
-                {group.options.map((opt) => (
-                  <option key={opt.value} value={opt.value}>
-                    {opt.label}
-                  </option>
-                ))}
-              </optgroup>
-            ))}
-          </select>
-        </div>
+            <Select
+              options={options}
+              onChange={handleChangeSelect}
+              values={formData.objet.value}
+              disabled={objet !== null}
+            />
+          </Field>
 
-        <div className="fr-input-group">
-          <label className="fr-label" htmlFor="input-name">
-            Votre prénom
-          </label>
-          <input
-            className="fr-input"
-            type="text"
-            id="prenom"
-            name="prenom"
-            required
-            onChange={handleChange}
-            value={formData.prenom}
-          />
-        </div>
+          <Field
+            title="Votre prénom *"
+            className="max-md:col-span-2"
+            state={isError && !formData.prenom ? 'error' : 'default'}
+            message={
+              isError && !formData.prenom
+                ? 'Ce champ est obligatoire'
+                : undefined
+            }
+          >
+            <Input
+              type="text"
+              id="prenom"
+              name="prenom"
+              onChange={handleChange}
+              value={formData.prenom}
+            />
+          </Field>
 
-        <div className="fr-input-group">
-          <label className="fr-label" htmlFor="input-surname">
-            Votre nom
-          </label>
-          <input
-            className="fr-input"
-            type="text"
-            id="nom"
-            name="nom"
-            required
-            onChange={handleChange}
-            value={formData.nom}
-          />
-        </div>
+          <Field
+            title="Votre nom *"
+            className="max-md:col-span-2"
+            state={isError && !formData.nom ? 'error' : 'default'}
+            message={
+              isError && !formData.nom ? 'Ce champ est obligatoire' : undefined
+            }
+          >
+            <Input
+              type="text"
+              id="nom"
+              name="nom"
+              onChange={handleChange}
+              value={formData.nom}
+            />
+          </Field>
 
-        <div className="fr-input-group">
-          <label className="fr-label" htmlFor="input-email">
-            Votre adresse email professionnelle
-          </label>
-          <input
-            className="fr-input"
-            type="email"
-            id="email"
-            name="email"
-            required
-            onChange={handleChange}
-            value={formData.email}
-          />
-        </div>
+          <Field
+            title="Votre adresse email professionnelle *"
+            className="max-md:col-span-2"
+            state={isError && !formData.email ? 'error' : 'default'}
+            message={
+              isError && !formData.email
+                ? 'Ce champ est obligatoire'
+                : undefined
+            }
+          >
+            <Input
+              type="text"
+              id="email"
+              name="email"
+              onChange={handleChange}
+              value={formData.email}
+            />
+          </Field>
 
-        <div className="fr-input-group">
-          <label className="fr-label" htmlFor="input-message">
-            Votre message
-          </label>
-          <textarea
-            className="fr-input"
-            id="message"
-            name="message"
-            required
-            onChange={handleChange}
-            value={formData.message}
-          />
-        </div>
+          <Field
+            title="Votre numéro de téléphone"
+            className="max-md:col-span-2"
+            message="Ce champ nous permet de vous recontacter plus rapidement en fonction de votre demande"
+          >
+            <Input
+              type="tel"
+              id="tel"
+              name="tel"
+              onChange={handleChange}
+              value={formData.tel}
+            />
+          </Field>
 
-        <div className="flex justify-end">
-          <Button>Envoyer</Button>
-        </div>
+          <Field title="Votre message" className="col-span-2">
+            <Textarea
+              id="message"
+              name="message"
+              onChange={handleChange}
+              value={formData.message}
+              rows={5}
+            />
+          </Field>
+        </FormSectionGrid>
+
+        <Button type="submit" className="ml-auto mt-6">
+          Envoyer
+        </Button>
       </form>
 
       <ToastFloater

@@ -1,20 +1,23 @@
-import {useQuery} from 'react-query';
-import {supabaseClient} from 'core-logic/api/supabase';
-import {useCollectiviteId} from 'core-logic/hooks/params';
-import {TFicheActionStructureRow} from 'types/alias';
+import { Tag } from '@tet/api/shared/domain';
+import { supabaseClient } from 'core-logic/api/supabase';
+import { useCollectiviteId } from 'core-logic/hooks/params';
+import { useQuery } from 'react-query';
+import { objectToCamel } from 'ts-case-convert';
 
 export const useStructuresListe = () => {
-  const collectivite_id = useCollectiviteId()!;
+  const collectiviteId = useCollectiviteId()!;
 
-  return useQuery(['structures', collectivite_id], async () => {
-    const {error, data} = await supabaseClient
+  return useQuery(['structures', collectiviteId], async () => {
+    const { error, data } = await supabaseClient
       .from('structure_tag')
       .select()
-      .eq('collectivite_id', collectivite_id)
+      .eq('collectivite_id', collectiviteId)
       .order('nom');
 
-    if (error) throw new Error(error.message);
+    if (error) {
+      throw new Error(error.message);
+    }
 
-    return data as TFicheActionStructureRow[];
+    return objectToCamel(data) as Tag[];
   });
 };

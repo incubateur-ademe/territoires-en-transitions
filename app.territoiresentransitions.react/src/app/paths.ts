@@ -1,6 +1,6 @@
-import {Referentiel} from 'types/litterals';
-import {getAuthPaths} from '@tet/api';
-import {ENV} from '../environmentVariables';
+import { Referentiel } from 'types/litterals';
+import { getAuthPaths } from '@tet/api';
+import { ENV } from '../environmentVariables';
 
 const authPaths = getAuthPaths(
   document.location.hostname,
@@ -71,6 +71,7 @@ export const collectiviteIndicateursCollectivitePath = `${collectiviteIndicateur
 export const collectiviteIndicateurPath = `${collectiviteIndicateursBasePath}/:${indicateurViewParam}/id/:${indicateurIdParam}?`;
 export const collectiviteIndicateurReferentielPath = `${collectiviteIndicateursBasePath}/:${indicateurViewParam}/:${indicateurIdentiantReferentielParam}?`;
 export const collectiviteTrajectoirePath = `${collectivitePath}/trajectoire`;
+export const collectiviteSyntheseReferentielPath = `${collectivitePath}/referentiels/accueil`;
 export const collectiviteReferentielPath = `${collectivitePath}/referentiels/:${referentielParam}/:${referentielVueParam}`;
 export const collectiviteAccueilPath = `${collectivitePath}/accueil`;
 export const collectiviteActionPath = `${collectivitePath}/action/:${referentielParam}/:${actionParam}/:${actionVueParam}?`;
@@ -110,17 +111,6 @@ export const collectiviteTDBCollectivitePath = `${collectiviteTDBBasePath}/colle
 export const collectiviteTDBPersonnelPath = `${collectiviteTDBBasePath}/personnel`;
 export const TDBModuleId = 'tdbModule';
 export const collectiviteTDBModulePath = `${collectiviteTDBPath}/:${TDBModuleId}`;
-
-export const makeTableauBordLandingUrl = ({
-  collectiviteId,
-}: {
-  collectiviteId: number;
-}) => {
-  return collectiviteTDBBasePath.replace(
-    `:${collectiviteParam}`,
-    collectiviteId.toString()
-  );
-};
 
 export const makeTableauBordUrl = ({
   collectiviteId,
@@ -202,7 +192,6 @@ export const makeCollectiviteTrajectoirelUrl = ({
     `:${collectiviteParam}`,
     collectiviteId.toString()
   );
-
 
 export const makeCollectiviteRootUrl = (collectiviteId: number) =>
   collectivitePath.replace(':collectiviteId', collectiviteId.toString());
@@ -443,6 +432,16 @@ export const makeCollectivitePlanActionAxeUrl = ({
     .replace(`:${planParam}`, planActionUid)
     .replace(`:${axeParam}`, axeUid);
 
+export const makeCollectiviteSyntheseReferentielUrl = ({
+  collectiviteId,
+}: {
+  collectiviteId: number;
+}) =>
+  collectiviteSyntheseReferentielPath.replace(
+    `:${collectiviteParam}`,
+    collectiviteId.toString()
+  );
+
 export const makeCollectiviteAccueilUrl = ({
   collectiviteId,
 }: {
@@ -511,9 +510,16 @@ export const makeCollectiviteJournalUrl = ({
 
 export const makeCollectivitePanierUrl = ({
   collectiviteId,
+  panierId,
 }: {
-  collectiviteId: number;
-}) => `${ENV.panier_url}/landing/collectivite/${collectiviteId}`;
+  collectiviteId?: number | null;
+  panierId?: string;
+}) =>
+  panierId
+    ? `${ENV.panier_url}/panier/${panierId}`
+    : collectiviteId
+    ? `${ENV.panier_url}/landing/collectivite/${collectiviteId}`
+    : `${ENV.panier_url}/landing`;
 
 export const makeInvitationLandingPath = (
   invitationId: string,
