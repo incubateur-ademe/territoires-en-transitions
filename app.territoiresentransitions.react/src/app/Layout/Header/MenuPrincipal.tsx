@@ -61,7 +61,7 @@ export const MenuPrincipal = (props: HeaderPropsWithModalState) => {
     >
       <ul className="fr-nav__list">
         {items.map((item, i) =>
-          item.hasOwnProperty('to') ? (
+          Object.prototype.hasOwnProperty.call(item, 'to') ? (
             <NavItem key={i} item={item as TNavItem} {...props} />
           ) : (
             <NavDropdown key={i} item={item as TNavDropdown} {...props} />
@@ -92,7 +92,7 @@ export const MenuPrincipal = (props: HeaderPropsWithModalState) => {
       </ul>
       <ul className="fr-nav__list">
         {secondaryItems.map((item, i) =>
-          item.hasOwnProperty('to') ? (
+          Object.prototype.hasOwnProperty.call(item, 'to') ? (
             <NavItem key={i} item={item as TNavItem} {...props} />
           ) : (
             <NavDropdown key={i} item={item as TNavDropdown} {...props} />

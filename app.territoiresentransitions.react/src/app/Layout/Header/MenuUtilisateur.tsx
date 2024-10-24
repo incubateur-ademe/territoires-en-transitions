@@ -94,6 +94,8 @@ const MenuUtilisateurBtn = forwardRef(
   )
 );
 
+MenuUtilisateurBtn.displayName = 'MenuUtilisateurBtn';
+
 /**
  * Bouton "Déconnexion"
  */
