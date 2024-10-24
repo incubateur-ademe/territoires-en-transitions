@@ -106,6 +106,9 @@ export const preset = {
         dropdown: '999',
         tooltip: '1001',
       },
+      animation: {
+        'spin-slow': 'spin 1.5s linear infinite',
+      },
       backgroundImage: {
         // malheureusement on n'arrive pas à styler le bouton de ràz des input.search directement avec remixicon
         // ni à exporter correctement des svg définis localement dans le package ui

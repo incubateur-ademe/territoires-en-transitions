@@ -25,6 +25,8 @@ export type ButtonContentProps = {
   size?: ButtonSize;
   /** Icône à intégrer au bouton, au format SVG ou avec la nomenclature Remix Icon */
   icon?: IconValue;
+  /** Affiche un loader à la place de l'icône */
+  loading?: boolean;
   /** Désactive les interractions avec le bouton */
   disabled?: boolean;
   /** À donner pour afficher une notification */
@@ -34,6 +36,8 @@ export type ButtonContentProps = {
 type BaseButtonProps = {
   /** Position de l'icône dans le bouton */
   iconPosition?: IconPosition;
+  /** Affiche un loader à la place de l'icône */
+  loading?: boolean;
   /** Lien externe */
   external?: boolean;
   /** Donné par le dropdownfloater si utilisé pour afficher un élément floating-ui */

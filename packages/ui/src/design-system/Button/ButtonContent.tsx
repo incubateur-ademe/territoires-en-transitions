@@ -26,6 +26,7 @@ const ButtonContent = ({
   variant = 'primary',
   size = 'md',
   icon,
+  loading,
   children,
   disabled,
   notification,
@@ -44,9 +45,9 @@ const ButtonContent = ({
           )}
         />
       )}
-      {!!icon && (
+      {(!!icon || loading) && (
         <Icon
-          icon={icon}
+          icon={loading || !icon ? 'loader-3-line' : icon}
           size={getIconSize(size, variant)}
           className={classNames(
             buttonThemeClassnames[variant][buttonState].icon,
@@ -54,6 +55,7 @@ const ButtonContent = ({
               'mb-1': variant === 'underlined' && size === 'sm',
               'mb-0.5':
                 variant === 'underlined' && (size === 'xs' || size === 'md'),
+              'animate-spin-slow': loading,
             }
           )}
         />
