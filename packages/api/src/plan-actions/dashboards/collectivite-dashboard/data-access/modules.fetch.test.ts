@@ -4,18 +4,17 @@ import { modulesFetch } from './modules.fetch';
 import { modulesSave } from './modules.save';
 import { signIn, signOut } from '@tet/api/tests/auth';
 import { supabase } from '@tet/api/tests/supabase';
-import { moduleNew, resetTableauDeBordModules } from './modules.fixture.test';
+import { moduleNew, resetModules } from './modules.test-fixture';
 
 const params = {
   dbClient: supabase,
   collectiviteId: 1,
-  // userId: '17440546-f389-4d4f-bfdb-b0c94a1bd0f9',
 };
 
 const numberOfModulesByDefault = 2;
 
 beforeEach(async () => {
-  await resetTableauDeBordModules(params);
+  await resetModules(params);
   await signIn('yolododo');
 
   return async () => {

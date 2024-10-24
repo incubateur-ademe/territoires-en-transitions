@@ -45,7 +45,7 @@ const ModalSuiviPlansAction = ({
   );
 
   const [filtreState, setFiltreState] = useState<FetchFilter>(
-    module.options.filtre
+    module.options.filtre ?? {}
   );
 
   return (

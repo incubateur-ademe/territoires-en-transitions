@@ -1,6 +1,6 @@
 import { beforeAll, expect, test } from 'vitest';
 import { signIn, signOut } from '../../../tests/auth';
-import { supabase } from '../../../tests/supabase';
+import { dbAdmin, supabase } from '../../../tests/supabase';
 import { ficheResumesFetch } from './fiche-resumes.fetch';
 
 const params = {
@@ -39,7 +39,9 @@ test('Fetch avec filtre sur une personne', async () => {
 
   for (const fiche of data) {
     expect(fiche).toMatchObject({
-      pilotes: expect.arrayContaining([{ tag_id: 1, nom: 'Lou Piote' }]),
+      pilotes: expect.arrayContaining([
+        expect.objectContaining({ tagId: 1, nom: 'Lou Piote' }),
+      ]),
     });
   }
 });
@@ -61,11 +63,11 @@ test('Fetch avec filtre sur un utilisateur', async () => {
   for (const fiche of data) {
     expect(fiche).toMatchObject({
       pilotes: expect.arrayContaining([
-        {
-          user_id: yoloDodoUuid,
-          nom: expect.any(String),
-          prenom: expect.any(String),
-        },
+        expect.objectContaining({
+          userId: yoloDodoUuid,
+          nom: 'Yolo Dodo',
+          tagId: null,
+        }),
       ]),
     });
   }
@@ -105,7 +107,7 @@ test('Fetch avec filtre sur un service', async () => {
   for (const fiche of data) {
     expect(fiche).toMatchObject({
       services: expect.arrayContaining([
-        { id: 2, nom: 'Ultra service', collectivite_id: 1 },
+        { id: 2, nom: 'Ultra service', collectiviteId: 1 },
       ]),
     });
   }
@@ -130,7 +132,7 @@ test('Fetch avec filtre sur un plan', async () => {
   expect(data[0].plans?.[0]).toMatchObject({
     nom: 'Plan Vélo 2020-2024', // correspond au plan racine
     parent: null,
-    collectivite_id: 1,
+    collectiviteId: 1,
   });
 });
 
@@ -169,12 +171,38 @@ test('Fetch avec filtre sur une action du referentiel associée', async () => {
 });
 
 test('Fetch avec filtre sur une fiche liée', async () => {
+  await dbAdmin.from('fiche_action_lien').insert([
+    { fiche_une: 1, fiche_deux: 5 },
+    { fiche_une: 5, fiche_deux: 3 },
+  ]);
+
+  onTestFinished(async () => {
+    await dbAdmin.from('fiche_action_lien').delete().match({ fiche_une: 1 });
+    await dbAdmin.from('fiche_action_lien').delete().match({ fiche_une: 5 });
+  });
+
+  // Test avec une action associée à plusieurs fiches
+  const { data: fichesWithAction } = await ficheResumesFetch({
+    ...params,
+    options: {
+      filtre: {
+        linkedFicheActionIds: [5],
+      },
+    },
+  });
+
+  if (!fichesWithAction) {
+    expect.fail();
+  }
+
+  expect(fichesWithAction).toHaveLength(2);
+
   // Test avec une fiche associée à aucune autre fiche
   const { data: noFichesFound } = await ficheResumesFetch({
     ...params,
     options: {
       filtre: {
-        linkedFicheActionIds: [5],
+        linkedFicheActionIds: [10],
       },
     },
   });
@@ -184,22 +212,6 @@ test('Fetch avec filtre sur une fiche liée', async () => {
   }
 
   expect(noFichesFound).toHaveLength(0);
-
-  // Test avec une action associée à plusieurs fiches
-  const { data: fichesWithAction } = await ficheResumesFetch({
-    ...params,
-    options: {
-      filtre: {
-        linkedFicheActionIds: [10],
-      },
-    },
-  });
-
-  if (!fichesWithAction) {
-    expect.fail();
-  }
-
-  expect(fichesWithAction.length).toBeGreaterThan(0);
 });
 
 test('Fetch avec filtre sur un statut', async () => {
