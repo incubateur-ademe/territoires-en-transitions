@@ -7,11 +7,21 @@ import './global.css';
 
 export const dynamic = 'force-dynamic';
 
-export const metadata: Metadata = {
+const shared = {
   title: 'Territoires en Transitions',
   description: "Prioriser - Mettre en œuvre - Planifier - Suivre l'impact",
-  robots:
-    'index, follow, max-video-preview:-1, max-image-preview:large, max-snippet:-1',
+};
+
+export const metadata: Metadata = {
+  title: shared.title,
+  description: shared.description,
+  robots: {
+    index: true,
+    follow: true,
+    'max-video-preview': -1,
+    'max-image-preview': 'large',
+    'max-snippet': -1,
+  },
   icons: {
     icon: [
       {
@@ -23,6 +33,32 @@ export const metadata: Metadata = {
         url: '/favicon-32x32.png',
       },
     ],
+  },
+  openGraph: {
+    title: shared.title,
+    description: shared.description,
+    url: 'https://app.territoiresentransitions.fr/',
+    siteName: shared.title,
+    locale: 'fr_FR',
+    images: [
+      {
+        url: '/territoires_en_transitions.png',
+        width: 491,
+        height: 439,
+        alt: shared.title,
+      },
+    ],
+    type: 'website',
+  },
+  twitter: {
+    card: 'summary_large_image',
+    title: shared.title,
+    description: shared.description,
+    images: {
+      url: 'https://app.territoiresentransitions.fr/territoires_en_transitions.png', // Must be an absolute URL
+      width: 491,
+      height: 439,
+    },
   },
 };
 
