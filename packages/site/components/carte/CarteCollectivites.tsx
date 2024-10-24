@@ -14,7 +14,7 @@ export type FiltresLabels =
   | 'toutes'
   | 'labellisees_cae'
   | 'labellisees_eci'
-  | 'cot'
+  | 'cot_non_labellisees'
   | 'actives';
 
 type CarteCollectivitesProps = {
@@ -84,8 +84,10 @@ const CarteCollectivites = ({
         tempCollectivites = tempCollectivites.filter(
           (c) => c.eci_etoiles && etoiles.includes(c.eci_etoiles)
         );
-      if (filtre === 'cot')
-        tempCollectivites = tempCollectivites.filter((c) => c.cot === true);
+      if (filtre === 'cot_non_labellisees')
+        tempCollectivites = tempCollectivites.filter(
+          (c) => c.cot === true && c.labellisee === false
+        );
       setLocalData((prevData) => {
         if (!prevData) return prevData;
         else

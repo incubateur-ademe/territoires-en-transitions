@@ -2,7 +2,7 @@ import { createZodDto } from '@anatine/zod-nestjs';
 import { Body, Controller, Get, Param, Post, Put, Query } from '@nestjs/common';
 import { ApiOkResponse, ApiTags } from '@nestjs/swagger';
 import { TokenInfo } from '../../auth/decorators/token-info.decorators';
-import { SupabaseJwtPayload } from '../../auth/models/auth.models';
+import type { SupabaseJwtPayload } from '../../auth/models/auth.models';
 import { getFichesActionSyntheseSchema } from '../models/get-fiches-action-synthese.response';
 import { getFichesActionFilterRequestSchema } from '../models/get-fiches-actions-filter.request';
 import FichesActionSyntheseService from '../services/fiches-action-synthese.service';

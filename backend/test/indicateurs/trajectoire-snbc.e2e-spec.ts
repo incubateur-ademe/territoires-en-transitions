@@ -1,8 +1,8 @@
 import { INestApplication } from '@nestjs/common';
 import { Test } from '@nestjs/testing';
 import { createClient, SupabaseClient } from '@supabase/supabase-js';
-import * as _ from 'lodash';
-import * as request from 'supertest';
+import { default as _ } from 'lodash';
+import { default as request } from 'supertest';
 import { AppModule } from '../../src/app.module';
 import {
   CalculTrajectoireResultatMode,
@@ -27,11 +27,13 @@ describe('Calcul de trajectoire SNBC', () => {
 
     supabase = createClient(
       process.env.SUPABASE_URL!,
-      process.env.SUPABASE_ANON_KEY!,
+      process.env.SUPABASE_ANON_KEY!
     );
+
     const signinResponse = await supabase.auth.signInWithPassword(
-      YOLO_DODO_CREDENTIALS,
+      YOLO_DODO_CREDENTIALS
     );
+
     yoloDodoToken = signinResponse.data.session?.access_token || '';
   });
 
@@ -262,7 +264,7 @@ describe('Calcul de trajectoire SNBC', () => {
     };
     return request(app.getHttpServer())
       .get(
-        '/trajectoires/snbc/verification?collectivite_id=3829&epci_info=true',
+        '/trajectoires/snbc/verification?collectivite_id=3829&epci_info=true'
       )
       .set('Authorization', `Bearer ${process.env.SUPABASE_SERVICE_ROLE_KEY}`)
       .expect(200)
@@ -478,7 +480,7 @@ describe('Calcul de trajectoire SNBC', () => {
     };
     request(app.getHttpServer())
       .get(
-        '/trajectoires/snbc/verification?collectivite_id=4936&epci_info=true',
+        '/trajectoires/snbc/verification?collectivite_id=4936&epci_info=true'
       )
       .set('Authorization', `Bearer ${yoloDodoToken}`)
       .expect(200)
@@ -517,7 +519,7 @@ describe('Calcul de trajectoire SNBC', () => {
 
     // Si on requête de nouveau le calcul, il doit provenir de la base de données
     const trajectoireSnbcCalculRetourExistant = _.cloneDeep(
-      trajectoireSnbcCalculRetour,
+      trajectoireSnbcCalculRetour
     );
     trajectoireSnbcCalculRetourExistant.mode =
       CalculTrajectoireResultatMode.DONNEES_EN_BDD;
@@ -545,7 +547,7 @@ describe('Calcul de trajectoire SNBC', () => {
       .split('filename=')[1]
       .split(';')[0];
     expect(fileName).toBe(
-      '"Trajectoire SNBC - 246700488 - Eurome?tropole de Strasbourg.xlsx"',
+      '"Trajectoire SNBC - 246700488 - Eurome?tropole de Strasbourg.xlsx"'
     );
   }, 30000);
 

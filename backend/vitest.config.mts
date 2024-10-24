@@ -1,22 +1,22 @@
 /// <reference types='vitest' />
-import { defineConfig } from 'vitest/config';
+
 import { nxViteTsPaths } from '@nx/vite/plugins/nx-tsconfig-paths.plugin';
+import swc from 'unplugin-swc';
+import { loadEnv } from 'vite';
+import { defineConfig } from 'vitest/config';
 
-export default defineConfig({
+export default defineConfig(({ mode }) => ({
   root: __dirname,
-  cacheDir: '../node_modules/.vite/backend',
+  cacheDir: '../node_modules/.vite/apps/backend',
 
-  plugins: [nxViteTsPaths()],
-
-  // Uncomment this if you are using workers.
-  // worker: {
-  //  plugins: [ nxViteTsPaths() ],
-  // },
+  plugins: [nxViteTsPaths(), swc.vite()],
 
   test: {
+    fileParallelism: false,
     watch: false,
     globals: true,
-    environment: 'jsdom',
+    env: loadEnv(mode, process.cwd(), ''),
+
     include: [
       'src/**/*.{test,spec,e2e-spec}.{js,mjs,cjs,ts,mts,cts,jsx,tsx}',
       './test/**/*.e2e-spec.ts',
@@ -24,8 +24,8 @@ export default defineConfig({
 
     reporters: ['default'],
     coverage: {
-      reportsDirectory: '../coverage/backend',
+      reportsDirectory: '../coverage/apps/backend',
       provider: 'v8',
     },
   },
-});
+}));

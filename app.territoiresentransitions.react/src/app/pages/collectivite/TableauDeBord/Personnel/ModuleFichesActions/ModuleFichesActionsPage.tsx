@@ -52,6 +52,7 @@ const ModuleFichesActionsPage = ({ view, slug, sortSettings }: Props) => {
               variant="outlined"
               icon="equalizer-line"
               size="sm"
+              children="Filtrer"
               onClick={() => {
                 openState.setIsOpen(true);
                 trackEvent(

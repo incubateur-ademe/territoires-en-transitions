@@ -111,6 +111,7 @@ const ToutesLesFichesAction = () => {
             variant="outlined"
             icon="equalizer-line"
             size="sm"
+            text="Filtrer"
           >
             <MenuFiltresToutesLesFichesAction
               filters={filters}

@@ -1,6 +1,6 @@
 import { Injectable, Logger } from '@nestjs/common';
 import { createClient } from '@supabase/supabase-js';
-import BackendConfigurationService from './backend-configuration.service';
+import ConfigurationService from '../../config/configuration.service';
 import { Database, DBClient } from '@tet/api';
 
 @Injectable()
@@ -9,15 +9,12 @@ export default class SupabaseService {
 
   public readonly client: DBClient;
 
-  constructor(backendConfigurationService: BackendConfigurationService) {
-    const backendConfiguration =
-      backendConfigurationService.getBackendConfiguration();
-    this.logger.log(
-      `Initializing supabase service with url: ${backendConfiguration.SUPABASE_URL}`
-    );
+  constructor(configService: ConfigurationService) {
+    const supabaseUrl = configService.get('SUPABASE_URL');
+    this.logger.log(`Initializing supabase service with url: ${supabaseUrl}`);
     this.client = createClient<Database>(
-      backendConfiguration.SUPABASE_URL,
-      backendConfiguration.SUPABASE_SERVICE_ROLE_KEY
+      supabaseUrl,
+      configService.get('SUPABASE_SERVICE_ROLE_KEY')
     );
   }
 }

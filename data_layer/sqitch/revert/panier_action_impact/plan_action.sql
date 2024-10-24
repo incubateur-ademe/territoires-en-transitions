@@ -76,7 +76,24 @@ begin
 end;
 $$ language plpgsql;
 
+drop function public.fiche_action_plan(public.fiche_action);
+
 -- Enlève le lien plan-panier
 alter table axe drop column panier_id;
+
+CREATE OR REPLACE FUNCTION public.fiche_action_plan(public.fiche_action)
+  RETURNS SETOF public.axe
+  LANGUAGE SQL
+  STABLE
+  SECURITY DEFINER
+  SET search_path TO ''
+BEGIN ATOMIC
+SELECT plan.*
+FROM public.fiche_action_axe
+JOIN public.axe ON fiche_action_axe.axe_id = axe.id
+JOIN public.axe AS plan ON axe.plan = plan.id
+WHERE fiche_action_axe.fiche_id = $1.id
+;
+END;
 
 COMMIT;

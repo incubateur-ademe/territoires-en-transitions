@@ -29,6 +29,10 @@ describe('Route de lecture / ecriture des indicateurs', () => {
     yoloDodoToken = signinResponse.data.session?.access_token || '';
   });
 
+  afterAll(async () => {
+    await app.close();
+  });
+
   it(`Lecture sans acces`, () => {
     return request(app.getHttpServer())
       .get('/indicateurs?collectivite_id=3')
@@ -70,9 +74,5 @@ describe('Route de lecture / ecriture des indicateurs', () => {
         error: 'Unauthorized',
         statusCode: 401,
       });
-  });
-
-  afterAll(async () => {
-    await app.close();
   });
 });

@@ -87,10 +87,9 @@ describe('Fetch avec select', () => {
     await dbAdmin.from('axe').update({ type: null }).eq('plan', PLAN_ID);
   });
 
-  test("Fetch avec l'objet type de plan", async () => {
+  test("Fetch contient toujours l'objet type de plan", async () => {
     const { plans } = await planActionsFetch({
       ...params,
-      withSelect: ['type'],
     });
 
     for (const plan of plans) {
@@ -112,8 +111,6 @@ describe('Fetch avec select', () => {
       ...params,
       withSelect: ['axes'],
     });
-
-    console.log(plans);
 
     for (const plan of plans) {
       expect(plan.axes).toEqual(expect.any(Array));

@@ -7,6 +7,5 @@ from axe
 where false;
 
 select has_function_privilege('plan_from_panier(integer, uuid, integer)', 'execute');
-select has_function_privilege('plan_from_panier(integer, uuid)', 'execute');
 
 ROLLBACK;
