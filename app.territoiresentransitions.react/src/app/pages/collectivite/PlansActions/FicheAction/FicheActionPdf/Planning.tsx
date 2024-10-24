@@ -2,6 +2,7 @@ import { isBefore, startOfToday } from 'date-fns';
 
 import Card from 'ui/exportPdf/components/Card';
 import Divider from 'ui/exportPdf/components/Divider';
+import Stack from 'ui/exportPdf/components/Stack';
 import { twToCss } from 'ui/exportPdf/utils';
 
 import { getTextFormattedDate } from '../utils';
@@ -23,83 +24,78 @@ const Planning = ({ fiche }: FicheActionPdfProps) => {
 
   return (
     <Card className="text-center">
-      {/* Date de début */}
-      <div>
-        <h6 style={twToCss('text-xs text-primary-9 uppercase mt-0 mb-2')}>
-          Date de début
-        </h6>
-        <p
-          style={twToCss(
-            `text-xs my-0 ${dateDebut ? 'text-primary-10' : 'text-grey-7'}`
-          )}
-        >
-          {!!dateDebut
-            ? getTextFormattedDate({ date: dateDebut })
-            : 'Non renseignée'}
-        </p>
-      </div>
-
-      {/* Date de fin prévisionnelle */}
-      {!ameliorationContinue && (
-        <div style={twToCss('mt-4')}>
+      <Stack>
+        {/* Date de début */}
+        <div>
           <h6 style={twToCss('text-xs text-primary-9 uppercase mt-0 mb-2')}>
-            Date de fin prévisionnelle
+            Date de début
           </h6>
           <p
             style={twToCss(
-              `text-xs my-0 ${
-                dateFinPrevisionnelle
-                  ? isLate
-                    ? 'text-error-1'
-                    : 'text-primary-10'
-                  : 'text-grey-7'
-              }`
+              `text-xs my-0 ${dateDebut ? 'text-primary-10' : 'text-grey-7'}`
             )}
           >
-            {!!dateFinPrevisionnelle
-              ? getTextFormattedDate({ date: dateFinPrevisionnelle })
+            {!!dateDebut
+              ? getTextFormattedDate({ date: dateDebut })
               : 'Non renseignée'}
           </p>
         </div>
-      )}
 
-      {(!!statut || !!niveauPriorite || !!ameliorationContinue) && (
-        <Divider className="my-4" />
-      )}
-
-      {/* Statut et niveau de priorité */}
-      {(!!statut || !!niveauPriorite) && (
-        <div style={twToCss('uppercase font-medium mt-0 mb-1')}>
-          {niveauPriorite ?? ''}
-          {niveauPriorite && statut ? ' - ' : ''}
-          {statut ?? ''}
-        </div>
-      )}
-
-      {/* Action récurrente */}
-      {!!ameliorationContinue && (
-        <div
-          style={twToCss(
-            `text-primary-10 font-medium mb-1 ${
-              statut || niveauPriorite ? 'mt-3' : ''
-            }`
-          )}
-        >
-          l'action se répète tous les ans
-        </div>
-      )}
-
-      {/* Justification si l'action est en pause ou abandonnée  */}
-      {!!justificationCalendrier && (
-        <div>
-          <Divider className="my-4" />
+        {/* Date de fin prévisionnelle */}
+        {!ameliorationContinue && (
           <div>
-            <h6
+            <h6 style={twToCss('text-xs text-primary-9 uppercase mt-0 mb-2')}>
+              Date de fin prévisionnelle
+            </h6>
+            <p
               style={twToCss(
-                'text-xs text-left text-primary-9 uppercase mt-0 mb-2'
+                `text-xs my-0 ${
+                  dateFinPrevisionnelle
+                    ? isLate
+                      ? 'text-error-1'
+                      : 'text-primary-10'
+                    : 'text-grey-7'
+                }`
               )}
             >
-              Précisions statut
+              {!!dateFinPrevisionnelle
+                ? getTextFormattedDate({ date: dateFinPrevisionnelle })
+                : 'Non renseignée'}
+            </p>
+          </div>
+        )}
+
+        {(!!statut || !!niveauPriorite || !!ameliorationContinue) && (
+          <Divider />
+        )}
+
+        <Stack>
+          {/* Statut et niveau de priorité */}
+          {(!!statut || !!niveauPriorite) && (
+            <div style={twToCss('uppercase font-medium')}>
+              {niveauPriorite ?? ''}
+              {niveauPriorite && statut ? ' - ' : ''}
+              {statut ?? ''}
+            </div>
+          )}
+
+          {/* Action récurrente */}
+          {!!ameliorationContinue && (
+            <div style={twToCss('text-primary-10 font-medium')}>
+              l'action se répète tous les ans
+            </div>
+          )}
+        </Stack>
+
+        {!!justificationCalendrier && <Divider />}
+
+        {/* Justification si l'action est en pause ou abandonnée  */}
+        {!!justificationCalendrier && (
+          <Stack gap={2}>
+            <h6
+              style={twToCss('text-xs text-left text-primary-9 uppercase my-0')}
+            >
+              Précisions statut :
             </h6>
             <p
               style={twToCss(
@@ -108,9 +104,9 @@ const Planning = ({ fiche }: FicheActionPdfProps) => {
             >
               {justificationCalendrier}
             </p>
-          </div>
-        </div>
-      )}
+          </Stack>
+        )}
+      </Stack>
     </Card>
   );
 };

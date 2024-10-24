@@ -9,7 +9,7 @@ const CreationFiche = ({ fiche }: FicheActionPdfProps) => {
   if (!modifiedAt && !createdAt) return null;
 
   return (
-    <Card className="text-primary-10 italic mb-4 py-3">
+    <Card className="text-primary-10 italic py-3">
       {modifiedAt && (
         <div style={twToCss(createdAt ? 'mb-2' : 'mb-1')}>
           Dernière modification le {format(new Date(modifiedAt), 'dd/MM/yyyy')}
