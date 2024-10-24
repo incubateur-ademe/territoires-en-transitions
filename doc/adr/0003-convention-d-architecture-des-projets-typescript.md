@@ -47,9 +47,9 @@ Les conventions de nommage et d'architecture choisies suivent les standards par 
 
   → résultat à l'import : `import { FicheAction } from '@tet/api/fiche-actions'`
 
-### Les domaines métiers territoires en Transition
+### Les domaines métiers Territoires en Transitions
 
-Les domaines correspondent aux principaux contextes métiers de la plateforme Territoires en Transition.
+Les domaines correspondent aux principaux contextes métiers de la plateforme Territoires en Transitions.
 
 Voici les domaines définis actuellement :
 
