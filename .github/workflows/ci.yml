@@ -255,7 +255,6 @@ jobs:
           --API_URL=${{ secrets.API_URL }}
 
   test-package-ui:
-    environment: dev
     runs-on: ubuntu-latest
     timeout-minutes: 30
 
