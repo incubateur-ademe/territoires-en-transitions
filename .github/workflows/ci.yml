@@ -14,6 +14,7 @@ concurrency:
 
 jobs:
   build-tools:
+    environment: dev
     runs-on: ubuntu-latest
     timeout-minutes: 30
 
@@ -27,7 +28,7 @@ jobs:
           version: 0.8.1
 
       - name: Login into registry
-        run: earthly --use-inline-cache +docker-dev-login --GH_USER=${{ secrets.GH_USER }} --GH_TOKEN=${{ secrets.GH_TOKEN }}
+        run: echo "${{ secrets.GH_TOKEN }} qwqw ${{ secrets.GH_USER }}" | earthly --use-inline-cache +docker-dev-login --GH_USER=${{ secrets.GITHUB_USER }} --GH_TOKEN=${{ secrets.GITHUB_TOKEN }}
 
       - name: Build and push Sqitch
         run: earthly --use-inline-cache --save-inline-cache --push +sqitch-builder
