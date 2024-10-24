@@ -523,62 +523,19 @@ auth-run: ## construit et lance l'image du module d'authentification en local
         --publish 3003:80 \
         $AUTH_IMG_NAME
 
-storybook-build: ## construit l'image du storybook du module `ui`
+package-ui-storybook-test:
     ARG PLATFORM
     ARG PORT=6007
+
     FROM +front-deps
-    COPY $UI_DIR/. $UI_DIR
-    RUN pnpx nx build-storybook @tet/ui
+    RUN pnpm exec playwright install --with-deps chromium
+    RUN pnpm nx build-storybook @tet/ui --quiet
     EXPOSE $PORT
-    #CMD ["npm", "run", "serve", "-w", "@tet/ui"]
-    WORKDIR $UI_DIR
-    CMD ["pnpx", "serve", "-p", "6007", "./storybook-static"]
-    SAVE IMAGE --cache-from=$STORYBOOK_IMG_NAME --push $STORYBOOK_IMG_NAME
 
-storybook-run: ## construit et lance l'image du storybook du module `ui` en local
-    ARG network=host
-    LOCALLY
-    DO +BUILD_IF_NO_IMG --IMG_NAME=front-deps --IMG_TAG=$FRONT_DEPS_TAG --BUILD_TARGET=front-deps
-    DO +BUILD_IF_NO_IMG --IMG_NAME=storybook --IMG_TAG=$STORYBOOK_TAG --BUILD_TARGET=storybook-build
-    RUN docker run -d --rm \
-        --name storybook_tet \
-        --network $network \
-        --publish 6007:6007 \
-        $STORYBOOK_IMG_NAME
+    RUN pnpx concurrently -k -s first -n "SB,TEST" \
+      "pnpx http-server $UI_DIR/storybook-static --port $PORT --silent" \
+      "pnpx wait-on tcp:127.0.0.1:$PORT && pnpm nx test-storybook @tet/ui --url http://127.0.0.1:$PORT" || true
 
-# storybook-test-build:   ## construit l'env. pour lancer les tests storybook avec playwright
-#     ARG PORT=6007
-#     # pour avoir playwright déjà pré-installé
-#     FROM mcr.microsoft.com/playwright:v1.40.0-jammy
-#     # installe les outils de build nécessaire à l'installation de certains packages npm
-#     RUN apt update
-#     RUN apt install -y build-essential
-#     # répertoire de travail
-#     RUN mkdir storybook
-#     WORKDIR storybook
-#     # installe les deps
-#     COPY ./package.json ./
-#     COPY ./package-lock.json ./
-#     COPY $UI_DIR/package.json $UI_DIR/
-#     RUN npm i
-#     # réinstalle swc pour avoir le bon bindings natif
-#     RUN npm i -D @swc/cli @swc/core
-#     # installe le navigateur utilisé pour les tests
-#     RUN npx playwright install --with-deps chromium
-#     # copie les sources
-#     COPY $UI_DIR $UI_DIR
-#     # commande utilisée pour exécuter les tests
-#     CMD npx nx test-storybook @tet/ui -- --no-index-json --url http://127.0.0.1:6007
-#     SAVE IMAGE storybook-test:latest
-
-# storybook-test-run: # lance les tests du module `ui`
-#     ARG network=host
-#     LOCALLY
-#     DO +BUILD_IF_NO_IMG --IMG_NAME=storybook-test --IMG_TAG=storybook-test:latest --BUILD_TARGET=storybook-test-build
-#     RUN docker run --rm \
-#         --name storybook_test \
-#         --network $network \
-#         storybook-test:latest
 
 curl-test-build:
     FROM curlimages/curl:8.1.0
