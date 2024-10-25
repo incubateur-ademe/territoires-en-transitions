@@ -1,20 +1,18 @@
-import { twToCss } from '../utils';
+import classNames from 'classnames';
+import { Stack, StackProps } from '../components';
 
-type CardProps = {
-  children: React.ReactNode;
-  className?: string;
-};
+type CardProps = StackProps;
 
-const Card = ({ children, className }: CardProps) => {
+export const Card = ({ children, className, ...props }: CardProps) => {
   return (
-    <div
-      style={twToCss(
-        `border border-grey-3 rounded-lg py-5 px-4 text-xs ${className}`
+    <Stack
+      className={classNames(
+        'border border-grey-3 rounded-lg py-5 px-4',
+        className
       )}
+      {...props}
     >
       {children}
-    </div>
+    </Stack>
   );
 };
-
-export default Card;

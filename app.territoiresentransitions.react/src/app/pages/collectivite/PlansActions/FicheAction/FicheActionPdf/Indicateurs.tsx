@@ -1,67 +1,46 @@
-import Card from 'ui/exportPdf/components/Card';
-import Stack from 'ui/exportPdf/components/Stack';
-import { twToCss } from 'ui/exportPdf/utils';
+import classNames from 'classnames';
+import { Card, Paragraph, Title } from 'ui/exportPdf/components';
 import { FicheActionPdfProps } from './FicheActionPdf';
 
 const Indicateurs = ({ fiche }: FicheActionPdfProps) => {
   const { objectifs, resultatsAttendus: effetsAttendus } = fiche;
 
-  if (!objectifs && (!effetsAttendus || effetsAttendus.length === 0))
-    return null;
+  const emptyObjectifs = !objectifs || objectifs.length === 0;
+  const emptyEffetsAttendus = !effetsAttendus || effetsAttendus.length === 0;
+
+  if (emptyObjectifs && emptyEffetsAttendus) return null;
 
   return (
-    <Card>
-      <Stack>
-        <h5 style={twToCss('my-0 text-primary-8 text-base')}>
-          Indicateurs de suivi
-        </h5>
+    <Card wrap={false}>
+      <Title variant="h4" className="text-primary-8">
+        Indicateurs de suivi
+      </Title>
 
-        {/* Objectifs */}
-        <div>
-          <span
-            style={twToCss(
-              'text-xs text-primary-9 font-bold uppercase my-0 mr-1'
-            )}
-          >
-            Objectifs :{' '}
-          </span>
-          <span
-            style={twToCss(
-              `text-xs leading-6 my-0 ${
-                objectifs && objectifs.length
-                  ? 'text-primary-10'
-                  : 'text-grey-7'
-              }`
-            )}
-          >
-            {objectifs && objectifs?.length ? objectifs : 'Non renseignés'}
-          </span>
-        </div>
+      {/* Objectifs */}
+      <Paragraph
+        className={classNames({
+          'text-grey-7': emptyObjectifs,
+        })}
+      >
+        <Paragraph className="text-primary-9 font-bold uppercase">
+          Objectifs :{' '}
+        </Paragraph>
+        {!emptyObjectifs ? objectifs : 'Non renseignés'}
+      </Paragraph>
 
-        {/* Effets attendus */}
-        <div>
-          <span
-            style={twToCss(
-              'text-xs text-primary-9 font-bold uppercase my-0 mr-1'
-            )}
-          >
-            Effets attendus :{' '}
-          </span>
-          <span
-            style={twToCss(
-              `text-xs leading-6 my-0 ${
-                effetsAttendus && effetsAttendus.length
-                  ? 'text-primary-10'
-                  : 'text-grey-7'
-              }`
-            )}
-          >
-            {effetsAttendus && effetsAttendus.length
-              ? effetsAttendus.map((res) => res.nom).join(', ')
-              : 'Non renseignés'}
-          </span>
-        </div>
-      </Stack>
+      {/* Effets attendus */}
+      <Paragraph
+        className={classNames({
+          'text-grey-7': emptyEffetsAttendus,
+        })}
+      >
+        <Paragraph className="text-primary-9 font-bold uppercase">
+          Effets attendus :{' '}
+        </Paragraph>
+        {!emptyEffetsAttendus
+          ? effetsAttendus.map((res) => res.nom).join(', ')
+          : 'Non renseignés'}
+      </Paragraph>
     </Card>
   );
 };

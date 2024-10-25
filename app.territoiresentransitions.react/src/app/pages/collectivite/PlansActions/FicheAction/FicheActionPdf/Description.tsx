@@ -1,5 +1,4 @@
-import { twToCss } from 'ui/exportPdf/utils';
-import Card from 'ui/exportPdf/components/Card';
+import { Card, Paragraph, Stack, Title } from 'ui/exportPdf/components';
 import { FicheActionPdfProps } from './FicheActionPdf';
 
 const Description = ({ fiche }: FicheActionPdfProps) => {
@@ -9,33 +8,35 @@ const Description = ({ fiche }: FicheActionPdfProps) => {
     <Card className="bg-primary-6 border-primary-6">
       {/* Liste des thématiques et sous-thématiques sous forme de badges */}
       {(thematiques?.length || sousThematiques?.length) && (
-        <p style={twToCss('mt-0 mb-4 text-xs font-bold text-info-2')}>
+        <Paragraph className="font-bold text-info-2">
           {[
             ...(thematiques ?? []).map((t) => t.nom),
             ...(sousThematiques ?? []).map((st) => st.sousThematique),
           ].join(', ')}
-        </p>
+        </Paragraph>
       )}
 
-      {/* Description */}
-      <div style={twToCss('mb-3')}>
-        <h6 style={twToCss('text-sm text-grey-1 mt-0 mb-1.5')}>
-          Description de l'action :
-        </h6>
-        <p style={twToCss('text-xs leading-6 text-grey-1 my-0')}>
-          {description ?? 'Non renseigné'}
-        </p>
-      </div>
+      <Stack gap={3}>
+        {/* Description */}
+        <Stack gap={1}>
+          <Title variant="h5" className="text-grey-1">
+            Description de l'action :
+          </Title>
+          <Paragraph className="text-grey-1">
+            {description ?? 'Non renseigné'}
+          </Paragraph>
+        </Stack>
 
-      {/* Moyens humains et technqiues */}
-      <div>
-        <h6 style={twToCss('text-sm text-grey-1 mt-0 mb-1.5')}>
-          Moyens humains et techniques :
-        </h6>
-        <p style={twToCss('text-xs leading-6 text-grey-1 my-0')}>
-          {ressources ?? 'Non renseigné'}
-        </p>
-      </div>
+        {/* Moyens humains et technqiues */}
+        <Stack gap={1}>
+          <Title variant="h5" className="text-grey-1">
+            Moyens humains et techniques :
+          </Title>
+          <Paragraph className="text-grey-1">
+            {ressources ?? 'Non renseigné'}
+          </Paragraph>
+        </Stack>
+      </Stack>
     </Card>
   );
 };

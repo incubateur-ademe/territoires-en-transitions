@@ -1,5 +1,4 @@
-import Card from 'ui/exportPdf/components/Card';
-import { twToCss } from 'ui/exportPdf/utils';
+import { Card, Title } from 'ui/exportPdf/components';
 import { FicheActionPdfProps } from './FicheActionPdf';
 
 const ActionsLiees = ({ fiche }: FicheActionPdfProps) => {
@@ -8,10 +7,10 @@ const ActionsLiees = ({ fiche }: FicheActionPdfProps) => {
   if (!actions || actions.length === 0) return null;
 
   return (
-    <Card>
-      <h5 style={twToCss('my-0 text-primary-8 text-base')}>
+    <Card wrap={false}>
+      <Title variant="h4" className="text-primary-8">
         Actions des référentiels liées
-      </h5>
+      </Title>
     </Card>
   );
 };

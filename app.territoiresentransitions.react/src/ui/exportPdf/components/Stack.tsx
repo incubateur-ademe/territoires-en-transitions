@@ -1,25 +1,41 @@
-import { twToCss } from '../utils';
+import { View, ViewProps } from '@react-pdf/renderer';
+import { tw } from '../utils';
 
-type StackProps = {
-  children: React.ReactNode[];
-  gap?: 0 | 1 | 2 | 3 | 4;
+type GapValue =
+  | 0
+  | 'px'
+  | 0.5
+  | 1
+  | 1.5
+  | 2
+  | 2.5
+  | 3
+  | 3.5
+  | 4
+  | 5
+  | 6
+  | 7
+  | 8;
+
+export type StackProps = ViewProps & {
+  children: React.ReactNode | React.ReactNode[];
+  gap?: GapValue;
+  direction?: 'col' | 'row';
   className?: string;
 };
 
-/** Flex column display */
-const Stack = ({ children, gap = 4, className }: StackProps) => {
+export const Stack = ({
+  children,
+  gap = 4,
+  direction = 'col',
+  className,
+  ...props
+}: StackProps) => {
+  const style = className ? ` ${className}` : '';
+
   return (
-    <div style={twToCss(`flex flex-col ${className}`)}>
-      {children.map((child, index) => (
-        <div
-          key={index}
-          style={index !== children.length - 1 ? twToCss(`mb-${gap}`) : {}}
-        >
-          {child}
-        </div>
-      ))}
-    </div>
+    <View style={tw(`flex flex-${direction} gap-${gap}${style}`)} {...props}>
+      {children}
+    </View>
   );
 };
-
-export default Stack;

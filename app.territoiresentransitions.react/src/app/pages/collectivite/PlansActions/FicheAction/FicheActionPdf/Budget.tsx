@@ -1,100 +1,63 @@
-import Card from 'ui/exportPdf/components/Card';
-import Stack from 'ui/exportPdf/components/Stack';
-import { twToCss } from 'ui/exportPdf/utils';
-import { FicheActionPdfProps } from './FicheActionPdf';
+import classNames from 'classnames';
+import { Card, Paragraph, Title } from 'ui/exportPdf/components';
 import { getFormattedNumber } from '../utils';
+import { FicheActionPdfProps } from './FicheActionPdf';
 
 const Budget = ({ fiche }: FicheActionPdfProps) => {
   const { budgetPrevisionnel, financeurs, financements } = fiche;
 
-  if (
-    !budgetPrevisionnel &&
-    !financements &&
-    (!financeurs || financeurs.length === 0)
-  ) {
+  const emptyBudgetPrevisionnel = !budgetPrevisionnel;
+  const emptyFinancements = !financements;
+  const emptyFinanceurs = !financeurs || financeurs.length === 0;
+
+  if (emptyBudgetPrevisionnel && emptyFinancements && emptyFinanceurs) {
     return null;
   }
 
+  const financeursList = !emptyFinanceurs
+    ? financeurs
+        .map(
+          (f) =>
+            `${f.financeurTag.nom}${
+              f.montantTtc ? ` (${getFormattedNumber(f.montantTtc)} € TTC)` : ''
+            }`
+        )
+        .join(', ')
+    : 'Non renseignés';
+
   return (
-    <Card>
-      <Stack>
-        <h5 style={twToCss('my-0 text-primary-8 text-base')}>Budget</h5>
+    <Card wrap={false}>
+      <Title variant="h4" className="text-primary-8">
+        Budget
+      </Title>
 
-        {/* Budget prévisionnel total */}
-        <div>
-          <span
-            style={twToCss(
-              'text-xs text-primary-9 font-bold uppercase my-0 mr-1'
-            )}
-          >
-            Budget prévisionnel total :{' '}
-          </span>
-          <span
-            style={twToCss(
-              `text-xs leading-6 my-0 ${
-                !!budgetPrevisionnel ? 'text-primary-10' : 'text-grey-7'
-              }`
-            )}
-          >
-            {!!budgetPrevisionnel
-              ? `${getFormattedNumber(budgetPrevisionnel)}€ TTC `
-              : 'Non renseigné'}
-          </span>
-        </div>
+      {/* Budget prévisionnel total */}
+      <Paragraph
+        className={classNames({ 'text-grey-7': emptyBudgetPrevisionnel })}
+      >
+        <Paragraph className="text-primary-9 font-bold uppercase">
+          Budget prévisionnel total :{' '}
+        </Paragraph>
+        {!emptyBudgetPrevisionnel
+          ? `${getFormattedNumber(budgetPrevisionnel)}€ TTC `
+          : 'Non renseigné'}
+      </Paragraph>
 
-        {/* Financeurs */}
-        <div>
-          <span
-            style={twToCss(
-              'text-xs text-primary-9 font-bold uppercase my-0 mr-1'
-            )}
-          >
-            Financeurs :{' '}
-          </span>
-          <span
-            style={twToCss(
-              `text-xs leading-6 my-0 ${
-                financeurs && financeurs.length
-                  ? 'text-primary-10'
-                  : 'text-grey-7'
-              }`
-            )}
-          >
-            {financeurs && financeurs.length
-              ? financeurs
-                  .map(
-                    (f) =>
-                      `${f.financeurTag.nom}${
-                        f.montantTtc
-                          ? ` (${getFormattedNumber(f.montantTtc)} € TTC)`
-                          : ''
-                      }`
-                  )
-                  .join(', ')
-              : 'Non renseignés'}
-          </span>
-        </div>
+      {/* Financeurs */}
+      <Paragraph className={classNames({ 'text-grey-7': emptyFinanceurs })}>
+        <Paragraph className="text-primary-9 font-bold uppercase">
+          Financeurs :{' '}
+        </Paragraph>
+        {financeursList}
+      </Paragraph>
 
-        {/* Financements */}
-        <div>
-          <span
-            style={twToCss(
-              'text-xs text-primary-9 font-bold uppercase my-0 mr-1'
-            )}
-          >
-            Financements :{' '}
-          </span>
-          <span
-            style={twToCss(
-              `text-xs leading-6 my-0 ${
-                !!financements ? 'text-primary-10' : 'text-grey-7'
-              }`
-            )}
-          >
-            {!!financements ? financements : 'Non renseignés '}
-          </span>
-        </div>
-      </Stack>
+      {/* Financements */}
+      <Paragraph className={classNames({ 'text-grey-7': emptyFinancements })}>
+        <Paragraph className="text-primary-9 font-bold uppercase">
+          Financements :{' '}
+        </Paragraph>
+        {!emptyFinancements ? financements : 'Non renseignés '}
+      </Paragraph>
     </Card>
   );
 };

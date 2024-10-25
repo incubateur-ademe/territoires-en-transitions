@@ -1,10 +1,12 @@
-import { twToCss } from '../utils';
+import { View, ViewProps } from '@react-pdf/renderer';
+import { tw } from '../utils';
 
-type DividerProps = {
+type DividerProps = ViewProps & {
   className?: string;
 };
-const Divider = ({ className }: DividerProps) => {
-  return <div style={twToCss(`bg-primary-3 h-px ${className}`)} />;
-};
 
-export default Divider;
+export const Divider = ({ className, ...props }: DividerProps) => {
+  const style = className ? ` ${className}` : '';
+
+  return <View style={tw(`bg-primary-3 h-px${style}`)} {...props} />;
+};

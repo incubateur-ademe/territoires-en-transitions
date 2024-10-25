@@ -1,6 +1,5 @@
 import { format } from 'date-fns';
-import { twToCss } from 'ui/exportPdf/utils';
-import Card from 'ui/exportPdf/components/Card';
+import { Card, Paragraph } from 'ui/exportPdf/components';
 import { FicheActionPdfProps } from './FicheActionPdf';
 
 const CreationFiche = ({ fiche }: FicheActionPdfProps) => {
@@ -9,16 +8,16 @@ const CreationFiche = ({ fiche }: FicheActionPdfProps) => {
   if (!modifiedAt && !createdAt) return null;
 
   return (
-    <Card className="text-primary-10 italic py-3">
+    <Card gap={1} className="py-3 italic">
       {modifiedAt && (
-        <div style={twToCss(createdAt ? 'mb-2' : 'mb-1')}>
+        <Paragraph>
           Dernière modification le {format(new Date(modifiedAt), 'dd/MM/yyyy')}
-        </div>
+        </Paragraph>
       )}
       {createdAt && (
-        <div style={twToCss('mb-1')}>
+        <Paragraph>
           Fiche action créée le {format(new Date(createdAt), 'dd/MM/yyyy')}
-        </div>
+        </Paragraph>
       )}
     </Card>
   );
