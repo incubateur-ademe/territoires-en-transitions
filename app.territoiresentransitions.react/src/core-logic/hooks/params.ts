@@ -1,26 +1,19 @@
 import {
   ActionVueParamOption,
-  collectivitePath,
   LabellisationVueParamOption,
   ReferentielVueParamOption,
 } from 'app/paths';
+import { usePathname } from 'next/navigation';
 import { useParams } from 'react-router-dom';
 
+// TODO: Utiliser un react context here basé sur les useParams quand toutes les routes seront sous Next
 export const useCollectiviteId = (): number | null => {
-  // on utilise ici useRouteMatch au lieu de useParams car le header
-  // n'est plus encapsulé dans la <Route> "/:collectiviteId/*"
-  // ce qui fait que le paramètre est toujours vide avec useParams
-  // const match = useRouteMatch<{collectiviteId: string}>(collectivitePath);
-  // const collectiviteId = match?.params?.collectiviteId;
-  // return collectiviteId ? parseInt(collectiviteId) : null;
+  const pathname = usePathname();
+  // Match /collectivite/123 or /collectivite/123/
+  const match = pathname.match(/^\/collectivite\/(\d+)/);
+  const collectiviteId = match ? parseInt(match[1]) : null;
 
-  // TODO: maybe use a react context here
-  return 1;
-};
-
-export const useReferentielId = (): string | null => {
-  const { referentielId } = useParams<{ referentielId?: string }>();
-  return referentielId || null;
+  return collectiviteId;
 };
 
 export const useReferentielVue = (): ReferentielVueParamOption | null => {
