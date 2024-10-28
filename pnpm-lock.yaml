@@ -149,6 +149,9 @@ importers:
       classnames:
         specifier: ^2.3.1
         version: 2.5.1
+      crisp-sdk-web:
+        specifier: ^1.0.25
+        version: 1.0.25
       date-fns:
         specifier: ^2.16.1
         version: 2.30.0
@@ -5869,6 +5872,9 @@ packages:
 
   create-require@1.1.1:
     resolution: {integrity: sha512-dcKFX3jn0MpIaXjisoRvexIJVEKzaq7z2rZKxf+MSr9TkdmHmsU4m2lcLojrj/FHl8mk5VxMmYA+ftRkP/3oKQ==}
+
+  crisp-sdk-web@1.0.25:
+    resolution: {integrity: sha512-CWTHFFeHRV0oqiXoPh/aIAKhFs6xcIM4NenGPnClAMCZUDQgQsF1OWmZWmnVNjJriXUmWRgDfeUxcxygS0dCRA==}
 
   cron-parser@4.9.0:
     resolution: {integrity: sha512-p0SaNjrHOnQeR8/VnfGbmg9te2kfyYSQ7Sc/j/6DtPL3JQvKxmjO9TSjNFpujqV3vEYYBvNNvXSxzyksBWAx1Q==}
@@ -20135,6 +20141,8 @@ snapshots:
       - ts-node
 
   create-require@1.1.1: {}
+
+  crisp-sdk-web@1.0.25: {}
 
   cron-parser@4.9.0:
     dependencies:

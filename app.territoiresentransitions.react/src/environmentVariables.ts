@@ -10,6 +10,7 @@ export const ENV = {
     key: process.env.NEXT_PUBLIC_POSTHOG_KEY,
     env: process.env.NODE_ENV,
   },
+  crisp_website_id: process.env.NEXT_PUBLIC_CRISP_WEBSITE_ID,
 };
 
 if (ENV.node_env !== 'test') {

@@ -1,4 +1,5 @@
 import { Metadata } from 'next';
+import nextDynamic from 'next/dynamic';
 import Script from 'next/script';
 import Footer from './Layout/Footer';
 import Header from './Layout/Header';
@@ -67,6 +68,8 @@ export default function RootLayout({
 }: {
   children: React.ReactNode;
 }) {
+  const CrispWithNoSSR = nextDynamic(() => import('../lib/crisp.widget'));
+
   return (
     <html lang="fr" translate="no" data-fr-scheme="light">
       <body>
@@ -85,6 +88,7 @@ export default function RootLayout({
           </div>
         </div>
       </body>
+      <CrispWithNoSSR />
       <Script id="stonly-widget">
         {`window.STONLY_WID = "1b1b2533-383c-11ef-a9d4-06cb0cb2a85e";!function(s,t,o,n,l,y,w,g,d,e){s.StonlyWidget||((d=s.StonlyWidget=function(){
   d._api?d._api.apply(d,arguments):d.queue.push(arguments)}).scriptPath=n,d.apiPath=l,d.sPath=y,d.queue=[],
