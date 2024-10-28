@@ -42,6 +42,6 @@ Si vos documents sont confidentiels, vous pouvez activer cette option : seuls le
 
 Si la fiche action est en mode privé, les documents ne seront pas accessibles par des personnes n’étant pas membres de votre collectivité, que le document soit en mode privé ou non.`;
 
-export const MSG_DOC_CONFIDENTIEL = `Nous vous encourageons à partager vos documents : ils permettent à d’autres collectivités de s’inspirer de vos actions, de vos pratiques.
+export const MSG_DOC_CONFIDENTIEL = `Nous vous encourageons à partager vos documents : ils permettent à d’autres collectivités de s’inspirer de vos actions, vos pratiques, etc.
 
-Si vos documents sont confidentiels, vous pouvez activer cette option : seuls les membres de votre collectivité, votre conseiller, votre auditeur, les membres de la CNL (Commission National du Label) et le service support de la plateforme pourront y accéder.`;
+Si vos documents sont confidentiels, vous pouvez activer cette option : seuls les membres de votre collectivité, votre conseiller, votre auditeur et le service support de la plateforme pourront y accéder`;

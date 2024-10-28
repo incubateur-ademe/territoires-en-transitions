@@ -84,7 +84,7 @@ export const PreuvesAction = (props: TPreuvesActionProps) => {
         />
         {complementaires?.length ? (
           <div data-test="complementaires" className="flex flex-col gap-3">
-            {complementaires?.map(preuve => (
+            {complementaires?.map((preuve) => (
               <PreuveDoc
                 key={preuve.id}
                 preuve={preuve}
@@ -100,8 +100,8 @@ export const PreuvesAction = (props: TPreuvesActionProps) => {
         <>
           <YellowDivider />
           <p className="text-xs grey-6 py-4 mb-0">
-            Tous les documents ajoutés seront visibles par les membres de la
-            communauté Territoires en Transitions
+            Tous les documents sont visibles par les membres de la communauté
+            Territoires en Transitions, sauf les documents confidentiels
           </p>
         </>
       )}
