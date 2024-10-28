@@ -7,7 +7,7 @@ import {
 } from 'app/paths';
 import { useAuth } from 'core-logic/api/auth/AuthProvider';
 import {
-  acceptAgentInvitation,
+  useConsumeInvitation,
   useInvitationState,
 } from 'core-logic/hooks/useInvitationState';
 import { usePlanActionsPilotableFetch } from 'core-logic/hooks/useOwnedCollectivites';
@@ -24,6 +24,8 @@ export const Redirector = () => {
   const { data: plansData } = usePlanActionsPilotableFetch(collectiviteId);
 
   const isLandingConnected = user && pathname === '/'; // L'utilisateur est connecté et arrive sur '/'.
+
+  const { mutateAsync: consumeInvitation } = useConsumeInvitation();
 
   // Quand l'utilisateur connecté
   // - est associé à aucune collectivité :
@@ -73,8 +75,8 @@ export const Redirector = () => {
     if (invitationId) {
       if (isConnected && consume) {
         // si connecté on consomme l'invitation
-        acceptAgentInvitation(invitationId).then(() => {
-          history.replace('/');
+        consumeInvitation(invitationId).then(() => {
+          history.push('/');
         });
       } else if (!isConnected && !consume) {
         // si déconnecté on redirige sur la page "créer un compte"
