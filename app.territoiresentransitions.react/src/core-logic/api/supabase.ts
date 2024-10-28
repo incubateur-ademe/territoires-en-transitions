@@ -1,7 +1,7 @@
-import {createClient} from '@supabase/supabase-js';
-import * as Sentry from '@sentry/react';
-import {ENV} from 'environmentVariables';
-import {Database} from '@tet/api';
+import { createClient } from '@supabase/supabase-js';
+import * as Sentry from '@sentry/nextjs';
+import { ENV } from 'environmentVariables';
+import { Database } from '@tet/api';
 
 /**
  * Supabase client
@@ -13,7 +13,7 @@ export const supabaseClient = createClient<Database>(
     global: {
       // intercepte les requêtes pour traiter les erreurs globalement
       fetch: (input, init) => {
-        return fetch(input as RequestInfo | URL, init).then(res => {
+        return fetch(input as RequestInfo | URL, init).then((res) => {
           // en cas d'erreur
           if (res.status >= 400) {
             res
@@ -21,7 +21,7 @@ export const supabaseClient = createClient<Database>(
               .clone()
               .json()
               // et log l'erreur dans sentry
-              .then(({code, message}) => {
+              .then(({ code, message }) => {
                 Sentry.captureException(
                   new Error(`Supabase error ${code}: ${message}`)
                 );
