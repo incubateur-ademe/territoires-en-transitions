@@ -47,7 +47,10 @@ const Accueil = (): JSX.Element => {
   const { collectivite_id: collectiviteId } = collectivite;
 
   return (
-    <main className="grow -mb-8 py-12 px-4 lg:px-6 bg-grey-2">
+    <main
+      className="grow -mb-8 py-12 px-4 lg:px-6 bg-grey-2"
+      data-test="accueil-collectivite"
+    >
       <CollectivitePageLayout>
         <h2 className="mb-4">Bonjour {user?.prenom} !</h2>
         <div className="mb-12 text-lg text-grey-8">
@@ -137,7 +140,7 @@ const Accueil = (): JSX.Element => {
           <SectionCard
             picto={<PictoIndicateurs />}
             title="Indicateurs"
-            description="Complétez et suivez les indicateurs liés à vos plans et à vos actions. 
+            description="Complétez et suivez les indicateurs liés à vos plans et à vos actions.
             Nous proposons une bibliothèque d'indicateurs pré-définis par l'ADEME et certains sont déjà remplis via l'open data !"
             buttons={[
               {
