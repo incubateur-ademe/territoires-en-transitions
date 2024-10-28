@@ -57,12 +57,16 @@ const addFileToBucket = async ({
 
   // appelé quand le transfert est terminé
   xhr.onreadystatechange = function () {
-    if (this.readyState === XMLHttpRequest.DONE && this.status === 200) {
-      onStatusChange({
-        code: UploadStatusCode.uploaded,
-        hash,
-        filename: file.name,
-      });
+    if (this.readyState === XMLHttpRequest.DONE) {
+      if (this.status === 200) {
+        onStatusChange({
+          code: UploadStatusCode.uploaded,
+          hash,
+          filename: file.name,
+        });
+      } else {
+        setError();
+      }
     }
   };
 
