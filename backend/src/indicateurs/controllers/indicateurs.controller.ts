@@ -2,7 +2,6 @@ import { createZodDto } from '@anatine/zod-nestjs';
 import { Body, Controller, Get, Logger, Post, Query } from '@nestjs/common';
 import { ApiCreatedResponse, ApiResponse, ApiTags } from '@nestjs/swagger';
 import { TokenInfo } from '../../auth/decorators/token-info.decorators';
-import type { SupabaseJwtPayload } from '../../auth/models/auth.models';
 import {
   getIndicateursValeursRequestSchema,
   getIndicateursValeursResponseSchema,
@@ -12,6 +11,7 @@ import {
   UpsertIndicateursValeursResponse,
 } from '../models/upsertIndicateurs.models';
 import IndicateursService from '../services/indicateurs.service';
+import type { SupabaseJwtPayload } from '../../auth/models/supabase-jwt.models';
 
 /**
  * Création des classes de requête/réponse à partir du schema pour générer automatiquement la documentation OpenAPI et la validation des entrées

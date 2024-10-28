@@ -2,26 +2,27 @@ import { createZodDto } from '@anatine/zod-nestjs';
 import { Controller, Get, Param, Query } from '@nestjs/common';
 import { ApiOkResponse, ApiTags } from '@nestjs/swagger';
 import { TokenInfo } from '../../auth/decorators/token-info.decorators';
-import { SupabaseJwtPayload } from '../../auth/models/auth.models';
 import { getFichesActionSyntheseSchema } from '../models/get-fiches-action-synthese.response';
 import { getFichesActionFilterRequestSchema } from '../models/get-fiches-actions-filter.request';
 import FichesActionSyntheseService from '../services/fiches-action-synthese.service';
+import type { SupabaseJwtPayload } from '../../auth/models/supabase-jwt.models';
 
 /**
  * Création des classes de réponse à partir du schema pour générer automatiquement la documentation OpenAPI
  */
 export class GetFichesActionSyntheseResponseClass extends createZodDto(
-  getFichesActionSyntheseSchema,
+  getFichesActionSyntheseSchema
 ) {}
+
 export class GetFichesActionFilterRequestClass extends createZodDto(
-  getFichesActionFilterRequestSchema,
+  getFichesActionFilterRequestSchema
 ) {}
 
 @ApiTags('Fiches action')
 @Controller('collectivites/:collectivite_id/fiches-action')
 export class FichesActionController {
   constructor(
-    private readonly fichesActionSyntheseService: FichesActionSyntheseService,
+    private readonly fichesActionSyntheseService: FichesActionSyntheseService
   ) {}
 
   @Get('synthese')
@@ -33,12 +34,12 @@ export class FichesActionController {
   async getFichesActionSynthese(
     @Param('collectivite_id') collectiviteId: number,
     @Query() request: GetFichesActionFilterRequestClass,
-    @TokenInfo() tokenInfo: SupabaseJwtPayload,
+    @TokenInfo() tokenInfo: SupabaseJwtPayload
   ) {
     return this.fichesActionSyntheseService.getFichesActionSynthese(
       collectiviteId,
       request,
-      tokenInfo,
+      tokenInfo
     );
   }
 
@@ -50,12 +51,12 @@ export class FichesActionController {
   async getFichesAction(
     @Param('collectivite_id') collectiviteId: number,
     @Query() request: GetFichesActionFilterRequestClass,
-    @TokenInfo() tokenInfo: SupabaseJwtPayload,
+    @TokenInfo() tokenInfo: SupabaseJwtPayload
   ) {
     return this.fichesActionSyntheseService.getFichesAction(
       collectiviteId,
       request,
-      tokenInfo,
+      tokenInfo
     );
   }
 }

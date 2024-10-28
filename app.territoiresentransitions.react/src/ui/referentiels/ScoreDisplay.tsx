@@ -1,6 +1,6 @@
 import classNames from 'classnames';
-import {IconDoubleCheck} from 'ui/icons/IconDoubleCheck';
-import {toLocaleFixed} from 'utils/toFixed';
+import { IconDoubleCheck } from 'ui/icons/IconDoubleCheck';
+import { toLocaleFixed } from 'utils/toFixed';
 
 type ScoreDisplayProps = {
   score: number | null;
@@ -46,21 +46,13 @@ const ScoreDisplay = ({
       )}
     >
       {icon === 'check' ? (
-        <IconDoubleCheck
-          className={classNames('h-4 inline-block', {
-            'mr-1': size === 'xs',
-            'mr-2': size === 'sm',
-          })}
-        />
+        <IconDoubleCheck className="h-4 inline-block mr-1" />
       ) : (
         <div
           className={classNames(
             'h-4 inline-block scale-75 -mt-1 before:text-[#417DC4]',
             icon,
-            {
-              'mr-1': size === 'xs',
-              'mr-2': size === 'sm',
-            }
+            'mr-1'
           )}
         />
       )}
@@ -71,7 +63,7 @@ const ScoreDisplay = ({
             'font-bold': bold === 'legend' || bold === 'all',
           })}
         >
-          {legend ? `${legend} : ` : ''}
+          {legend ? `${legend}\u00A0: ` : '\u00A0'}
         </span>
         <span
           className={classNames({
@@ -82,7 +74,7 @@ const ScoreDisplay = ({
             ? `${toLocaleFixed(
                 Math.round((score ?? 0) * 10000) / 100,
                 (score ?? 0) < 0.01 ? 2 : 0
-              )} %`
+              )}\u00A0%`
             : `${toLocaleFixed(score ?? 0, 2)} / ${toLocaleFixed(
                 scoreMax ?? 0,
                 2

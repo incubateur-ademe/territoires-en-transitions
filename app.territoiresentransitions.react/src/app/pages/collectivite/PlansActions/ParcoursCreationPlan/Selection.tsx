@@ -11,12 +11,15 @@ import { useRouter } from 'next/navigation';
 import { ReactComponent as DocumentAddPicto } from './document-add.svg';
 import { ReactComponent as DocumentDownloadPicto } from './document-download.svg';
 import { ReactComponent as ShoppingBasket } from './shopping-basket.svg';
+import { useNbActionsDansPanier } from '@tet/app/Layout/Header/AccesPanierAction';
 
 const Selection = () => {
   const collectivite_id = useCollectiviteId();
   const router = useRouter();
 
   const tracker = useFonctionTracker();
+
+  const { data: panier } = useNbActionsDansPanier(collectivite_id);
 
   return (
     <div className="max-w-5xl mx-auto flex flex-col grow py-12">
@@ -52,7 +55,8 @@ const Selection = () => {
               subTitle="grâce au Panier d'Actions à Impact"
               icon={<ShoppingBasket className="my-3" />}
               url={makeCollectivitePanierUrl({
-                collectiviteId: collectivite_id!,
+                collectiviteId: collectivite_id,
+                panierId: panier?.panierId,
               })}
               trackingId="cta_commencer_pai"
             />

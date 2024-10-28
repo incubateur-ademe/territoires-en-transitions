@@ -1,5 +1,5 @@
 import { pgTable, serial, text, uniqueIndex } from 'drizzle-orm/pg-core';
-import { planActionTypeCategorieTable } from './plan-action-type-category.table';
+import { planActionTypeCategorieTable } from './plan-action-type-categorie.table';
 
 export const planActionTypeTable = pgTable(
   'plan_action_type',
@@ -13,9 +13,9 @@ export const planActionTypeTable = pgTable(
   },
   (table) => {
     return {
-      plan_action_type_categorie_type_key: uniqueIndex(
-        'plan_action_type_categorie_type_key',
+      planActionTypeCategorieTypeKey: uniqueIndex(
+        'plan_action_type_categorie_type_key'
       ).on(table.categorie, table.type),
     };
-  },
+  }
 );

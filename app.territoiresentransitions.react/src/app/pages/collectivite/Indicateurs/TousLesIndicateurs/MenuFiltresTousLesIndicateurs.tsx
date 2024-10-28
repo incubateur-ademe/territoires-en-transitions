@@ -19,6 +19,89 @@ type Props = {
 const MenuFiltresTousLesIndicateurs = ({ filters, setFilters }: Props) => {
   return (
     <div className="w-96 flex flex-col gap-8 p-4">
+      <FormSection title="Typologie :" className="!grid-cols-1">
+        <Checkbox
+          label="Données Open Data"
+          checked={filters.hasOpenData}
+          onChange={() => {
+            const { hasOpenData, ...rest } = filters;
+            setFilters({
+              ...rest,
+              ...(!hasOpenData ? { hasOpenData: true } : {}),
+            });
+          }}
+        />
+        <Field title="Catégorie">
+          <IndicateurCategoriesDropdown
+            values={filters.categorieNoms}
+            onChange={({ categories }) => {
+              const { categorieNoms, ...rest } = filters;
+              setFilters({
+                ...rest,
+                ...(categories?.length > 0
+                  ? { categorieNoms: categories }
+                  : {}),
+              });
+            }}
+          />
+        </Field>
+        <Field title="Indicateur complété">
+          <IndicateurCompletsDropdown
+            values={
+              filters.estComplet === undefined
+                ? undefined
+                : filters.estComplet
+                ? 'rempli'
+                : 'incomplet'
+            }
+            onChange={(value) => {
+              const { estComplet, ...rest } = filters;
+              setFilters({
+                ...rest,
+                ...(value
+                  ? {
+                      estComplet: value === 'rempli' ? true : false,
+                    }
+                  : {}),
+              });
+            }}
+          />
+        </Field>
+        <Checkbox
+          label="Participe au score Climat Air Énergie"
+          checked={filters.participationScore}
+          onChange={() => {
+            const { participationScore, ...rest } = filters;
+            setFilters({
+              ...rest,
+              ...(!participationScore ? { participationScore: true } : {}),
+            });
+          }}
+        />
+        <Checkbox
+          label="Indicateur privé"
+          checked={filters.estConfidentiel}
+          onChange={() => {
+            const { estConfidentiel, ...rest } = filters;
+            setFilters({
+              ...rest,
+              ...(!estConfidentiel ? { estConfidentiel: true } : {}),
+            });
+          }}
+        />
+        <Checkbox
+          label="Indicateur personnalisé"
+          checked={filters.estPerso}
+          onChange={() => {
+            const { estPerso, ...rest } = filters;
+            setFilters({
+              ...rest,
+              ...(!estPerso ? { estPerso: true } : {}),
+            });
+          }}
+        />
+      </FormSection>
+
       <FormSection title="Pilotage :" className="!grid-cols-1">
         <Field title="Plan d'action">
           <PlansActionDropdown
@@ -80,90 +163,6 @@ const MenuFiltresTousLesIndicateurs = ({ filters, setFilters }: Props) => {
             }}
           />
         </Field>
-      </FormSection>
-
-      <FormSection title="Typologie :" className="!grid-cols-1">
-        <Field title="Catégorie">
-          <IndicateurCategoriesDropdown
-            values={filters.categorieNoms}
-            onChange={({ categories }) => {
-              const { categorieNoms, ...rest } = filters;
-              setFilters({
-                ...rest,
-                ...(categories?.length > 0
-                  ? { categorieNoms: categories }
-                  : {}),
-              });
-            }}
-          />
-        </Field>
-        <Field title="Indicateur complété">
-          <IndicateurCompletsDropdown
-            values={
-              filters.estComplet === undefined
-                ? undefined
-                : filters.estComplet
-                ? 'rempli'
-                : 'incomplet'
-            }
-            onChange={(value) => {
-              const { estComplet, ...rest } = filters;
-              setFilters({
-                ...rest,
-                ...(value
-                  ? {
-                      estComplet: value === 'rempli' ? true : false,
-                    }
-                  : {}),
-              });
-            }}
-          />
-        </Field>
-        <Checkbox
-          label="Participe au score Climat Air Énergie"
-          checked={filters.participationScore}
-          onChange={() => {
-            const { participationScore, ...rest } = filters;
-            setFilters({
-              ...rest,
-              ...(!participationScore ? { participationScore: true } : {}),
-            });
-          }}
-        />
-        <div className="w-full border-t border-primary-3" />
-        <Checkbox
-          label="Données Open Data"
-          checked={filters.hasOpenData}
-          onChange={() => {
-            const { hasOpenData, ...rest } = filters;
-            setFilters({
-              ...rest,
-              ...(!hasOpenData ? { hasOpenData: true } : {}),
-            });
-          }}
-        />
-        <Checkbox
-          label="Indicateur privé"
-          checked={filters.estConfidentiel}
-          onChange={() => {
-            const { estConfidentiel, ...rest } = filters;
-            setFilters({
-              ...rest,
-              ...(!estConfidentiel ? { estConfidentiel: true } : {}),
-            });
-          }}
-        />
-        <Checkbox
-          label="Indicateur personnalisé"
-          checked={filters.estPerso}
-          onChange={() => {
-            const { estPerso, ...rest } = filters;
-            setFilters({
-              ...rest,
-              ...(!estPerso ? { estPerso: true } : {}),
-            });
-          }}
-        />
       </FormSection>
     </div>
   );

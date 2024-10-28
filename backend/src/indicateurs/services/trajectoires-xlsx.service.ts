@@ -5,12 +5,12 @@ import {
   UnprocessableEntityException,
 } from '@nestjs/common';
 import { NextFunction, Response } from 'express';
+import { JSZipGeneratorOptions } from 'jszip';
 import { default as XlsxTemplate } from 'xlsx-template';
-import { SupabaseJwtPayload } from '../../auth/models/auth.models';
-import { EpciType } from '../../collectivites/models/collectivite.models';
+import { SupabaseJwtPayload } from '../../auth/models/supabase-jwt.models';
+import { EpciType } from '../../collectivites/models/epci.table';
 import { CollectiviteRequestType } from '../../collectivites/models/collectivite.request';
-import { BackendConfigurationType } from '../../common/models/backend-configuration.models';
-import BackendConfigurationService from '../../common/services/backend-configuration.service';
+import BackendConfigurationService from '../../config/configuration.service';
 import SheetService from '../../spreadsheets/services/sheet.service';
 import {
   DonneesCalculTrajectoireARemplirType,
@@ -25,20 +25,17 @@ export default class TrajectoiresXlsxService {
 
   private xlsxModeleBuffer: Buffer | null = null;
   private xlsxVideBuffer: Buffer | null = null;
-  private readonly backendConfiguration: BackendConfigurationType;
 
   constructor(
-    backendConfigurationService: BackendConfigurationService,
+    private readonly configService: BackendConfigurationService,
     private readonly sheetService: SheetService,
     private readonly trajectoiresDataService: TrajectoiresDataService
   ) {
-    this.backendConfiguration =
-      backendConfigurationService.getBackendConfiguration();
     this.initXlsxBuffers();
   }
 
   getIdentifiantXlsxCalcul() {
-    return this.backendConfiguration.TRAJECTOIRE_SNBC_XLSX_ID;
+    return this.configService.get('TRAJECTOIRE_SNBC_XLSX_ID');
   }
 
   getNomFichierTrajectoire(epci: EpciType) {

@@ -1,18 +1,18 @@
 import { extendApi } from '@anatine/zod-openapi';
 import { z } from 'zod';
-import { indicateurAvecValeursParSourceSchema } from './indicateur.models';
+import { indicateurAvecValeursParSourceSchema } from './indicateur-valeur.table';
 
 export const getIndicateursValeursRequestSchema = extendApi(
   z
     .object({
-      collectivite_id: z.coerce.number().int().openapi({
+      collectiviteId: z.coerce.number().int().openapi({
         description: 'Identifiant de la collectivité',
       }),
-      indicateur_id: z.coerce.number().int().optional().openapi({
+      indicateurId: z.coerce.number().int().optional().openapi({
         description: "Identifiant de l'indicateur",
       }),
 
-      identifiants_referentiel: z
+      identifiantsReferentiel: z
         .string()
         .transform((value) => value.split(','))
         .pipe(z.string().array())
@@ -29,13 +29,13 @@ export const getIndicateursValeursRequestSchema = extendApi(
           description:
             'Liste des sources (séparées par des virgules). collectivite pour les valeurs renseignées par la collectivité',
         }),
-      date_debut: z.string().length(10).optional().openapi({
+      dateDebut: z.string().length(10).optional().openapi({
         description: 'Date de début (format YYYY-MM-DD)',
       }),
-      date_fin: z.string().length(10).optional().openapi({
+      dateFin: z.string().length(10).optional().openapi({
         description: 'Date de fin (format YYYY-MM-DD)',
       }), // z.string().date() only supported in 3.23
-      ignore_dedoublonnage: z
+      ignoreDedoublonnage: z
         .enum(['true', 'false'])
         .transform((value) => value === 'true')
         .optional()
@@ -45,7 +45,7 @@ export const getIndicateursValeursRequestSchema = extendApi(
     })
     .openapi({
       title: 'Filtre de récupération des valeurs des indicateurs',
-    }),
+    })
 );
 export type GetIndicateursValeursRequestType = z.infer<
   typeof getIndicateursValeursRequestSchema
@@ -58,7 +58,7 @@ export const getIndicateursValeursResponseSchema = extendApi(
     })
     .openapi({
       title: 'Valeurs par indicateur et par source',
-    }),
+    })
 );
 
 export type GetIndicateursValeursResponseType = z.infer<

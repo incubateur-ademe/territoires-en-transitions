@@ -1,15 +1,13 @@
-import {Suspense} from 'react';
-import {lazy} from 'utils/lazy';
-import {renderLoader} from 'utils/renderLoader';
+import { Suspense } from 'react';
+import { lazy } from 'utils/lazy';
+import { renderLoader } from 'utils/renderLoader';
 
 const Accueil = lazy(() => import('app/pages/collectivite/Accueil/Accueil'));
 
-const AccueilPage = () => {
+export const AccueilPage = () => {
   return (
     <Suspense fallback={renderLoader()}>
       <Accueil />
     </Suspense>
   );
 };
-
-export default AccueilPage;

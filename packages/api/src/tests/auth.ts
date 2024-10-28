@@ -1,4 +1,4 @@
-import {supabase} from './supabase';
+import { supabase } from './supabase';
 
 type credentials = {
   email: string;
@@ -43,4 +43,4 @@ export async function signOut() {
 }
 
 const delay = (time: number) =>
-  new Promise(resolve => setTimeout(resolve, time));
+  new Promise((resolve) => setTimeout(resolve, time));

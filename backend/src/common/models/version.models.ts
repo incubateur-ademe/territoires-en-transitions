@@ -1,5 +1,6 @@
 import { extendApi, extendZodWithOpenApi } from '@anatine/zod-openapi';
 import { z } from 'zod';
+
 extendZodWithOpenApi(z);
 
 export enum AppEnvironment {
@@ -25,6 +26,6 @@ export const versionResponseSchema = extendApi(
     deploy_time: z.string().openapi({
       description: 'Date de déploiement au format ISO 8601',
     }),
-  }),
+  })
 );
 export type VersionResponseType = z.infer<typeof versionResponseSchema>;

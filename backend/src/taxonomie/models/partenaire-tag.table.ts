@@ -6,9 +6,9 @@ export const partenaireTagTable = pgTable(
   TagBase,
   (table) => {
     return {
-      partenaire_tag_nom_collectivite_id_key: uniqueIndex(
-        'partenaire_tag_nom_collectivite_id_key',
-      ).on(table.nom, table.collectivite_id),
+      partenaireTagNomCollectiviteIdKey: uniqueIndex(
+        'partenaire_tag_nom_collectivite_id_key'
+      ).on(table.nom, table.collectiviteId),
     };
-  },
+  }
 );

@@ -43,7 +43,7 @@ const ModuleSuiviPlansActionPage = ({ view, slug }: Props) => {
         properties={{ collectivite_id: module.collectiviteId }}
       />
       <PlansActionListe
-        filtres={module.options.filtre}
+        filtres={module.options.filtre ?? {}}
         displaySettings={{ display, setDisplay }}
         // settings={collectivite?.niveau_acces === 'admin' ? (openState) => (
         //   <>
@@ -51,6 +51,7 @@ const ModuleSuiviPlansActionPage = ({ view, slug }: Props) => {
         //       variant="outlined"
         //       icon="equalizer-line"
         //       size="sm"
+        //       children="Filtrer"
         //       onClick={() => {
         //         openState.setIsOpen(true);
         //         trackEvent('tdb_modifier_filtres_suivi_plan_actions', {

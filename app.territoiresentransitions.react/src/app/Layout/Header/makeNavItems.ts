@@ -15,6 +15,7 @@ import {
   makeCollectiviteTousLesIndicateursUrl,
   makeCollectiviteIndicateursCollectiviteUrl,
   makeTableauBordUrl,
+  makeCollectiviteSyntheseReferentielUrl,
 } from 'app/paths';
 import { UserData } from 'core-logic/api/auth/AuthProvider';
 import { CurrentCollectivite } from 'core-logic/hooks/useCurrentCollectivite';
@@ -50,6 +51,10 @@ const makeNavItemsBase = (
 
   // items communs qque soient les droits de l'utilisateur courant
   return [
+    {
+      label: 'Accueil',
+      to: makeCollectiviteAccueilUrl({ collectiviteId }),
+    },
     {
       confidentiel,
       title: 'État des lieux',
@@ -87,7 +92,7 @@ const makeNavItemsBase = (
       items: [
         {
           label: "Synthèse de l'état des lieux",
-          to: makeCollectiviteAccueilUrl({ collectiviteId }),
+          to: makeCollectiviteSyntheseReferentielUrl({ collectiviteId }),
         },
         {
           label: 'Personnalisation des référentiels',

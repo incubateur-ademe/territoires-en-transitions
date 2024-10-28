@@ -3,11 +3,13 @@ import { and, eq } from 'drizzle-orm';
 import DatabaseService from '../../common/services/database.service';
 import {
   CreateIndicateurSourceMetadonneeType,
-  CreateIndicateurSourceType,
   indicateurSourceMetadonneeTable,
   IndicateurSourceMetadonneeType,
+} from '../models/indicateur-source-metadonnee.table';
+import {
+  CreateIndicateurSourceType,
   indicateurSourceTable,
-} from '../models/indicateur.models';
+} from '../models/indicateur-source.table';
 
 @Injectable()
 export default class IndicateurSourcesService {
@@ -16,10 +18,12 @@ export default class IndicateurSourcesService {
   constructor(private readonly databaseService: DatabaseService) {}
 
   async createIndicateurSourceMetadonnee(
-    indicateurSourceMetadonneeType: CreateIndicateurSourceMetadonneeType,
+    indicateurSourceMetadonneeType: CreateIndicateurSourceMetadonneeType
   ) {
     this.logger.log(
-      `Création de la metadonnees pour la source d'indicateur ${indicateurSourceMetadonneeType.source_id} et la date ${indicateurSourceMetadonneeType.date_version.toISOString()}`,
+      `Création de la metadonnees pour la source d'indicateur ${
+        indicateurSourceMetadonneeType.sourceId
+      } et la date ${indicateurSourceMetadonneeType.dateVersion.toISOString()}`
     );
     const request = this.databaseService.db
       .insert(indicateurSourceMetadonneeTable)
@@ -32,19 +36,19 @@ export default class IndicateurSourcesService {
 
   async getIndicateurSourceMetadonnee(
     sourceId: string,
-    dateVersion: Date,
+    dateVersion: Date
   ): Promise<IndicateurSourceMetadonneeType | null> {
     this.logger.log(
-      `Récupération de la metadonnees pour la source d'indicateur ${sourceId} et la date ${dateVersion.toISOString()}`,
+      `Récupération de la metadonnees pour la source d'indicateur ${sourceId} et la date ${dateVersion.toISOString()}`
     );
     const indicateurSourceMetadonnees = await this.databaseService.db
       .select()
       .from(indicateurSourceMetadonneeTable)
       .where(
         and(
-          eq(indicateurSourceMetadonneeTable.source_id, sourceId),
-          eq(indicateurSourceMetadonneeTable.date_version, dateVersion),
-        ),
+          eq(indicateurSourceMetadonneeTable.sourceId, sourceId),
+          eq(indicateurSourceMetadonneeTable.dateVersion, dateVersion)
+        )
       )
       .limit(1);
     return indicateurSourceMetadonnees.length > 0

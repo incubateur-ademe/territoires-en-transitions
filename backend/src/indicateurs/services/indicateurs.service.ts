@@ -2,6 +2,7 @@ import { Injectable, Logger } from '@nestjs/common';
 import {
   and,
   eq,
+  getTableColumns,
   gte,
   inArray,
   isNotNull,
@@ -14,11 +15,7 @@ import {
 } from 'drizzle-orm';
 import { groupBy, partition } from 'es-toolkit';
 import * as _ from 'lodash';
-import {
-  NiveauAcces,
-  SupabaseJwtPayload,
-  SupabaseRole,
-} from '../../auth/models/auth.models';
+import { NiveauAcces } from '../../auth/models/private-utilisateur-droit.table';
 import { AuthService } from '../../auth/services/auth.service';
 import DatabaseService from '../../common/services/database.service';
 import { DeleteIndicateursValeursRequestType } from '../models/deleteIndicateurs.models';
@@ -26,28 +23,38 @@ import {
   GetIndicateursValeursRequestType,
   GetIndicateursValeursResponseType,
 } from '../models/getIndicateurs.models';
+import { groupementTable } from '../../collectivites/models/groupement.table';
+import { groupementCollectiviteTable } from '../../collectivites/models/groupement-collectivite.table';
 import {
   CreateIndicateurValeurType,
   IndicateurAvecValeursParSource,
   IndicateurAvecValeursType,
-  indicateurDefinitionTable,
-  IndicateurDefinitionType,
-  indicateurSourceMetadonneeTable,
-  IndicateurSourceMetadonneeType,
   IndicateurValeurAvecMetadonnesDefinition,
   IndicateurValeurGroupee,
   IndicateurValeursGroupeeParSource,
   indicateurValeurTable,
   IndicateurValeurType,
+} from '../models/indicateur-valeur.table';
+import {
+  indicateurDefinitionTable,
+  IndicateurDefinitionType,
   MinimalIndicateurDefinitionType,
-} from '../models/indicateur.models';
+} from '../models/indicateur-definition.table';
+import {
+  indicateurSourceMetadonneeTable,
+  IndicateurSourceMetadonneeType,
+} from '../models/indicateur-source-metadonnee.table';
+import {
+  SupabaseJwtPayload,
+  SupabaseRole,
+} from '../../auth/models/supabase-jwt.models';
 
 @Injectable()
 export default class IndicateursService {
   private readonly logger = new Logger(IndicateursService.name);
 
   /**
-   * Quand la source_id est NULL, cela signifie que ce sont des donnees saisies par la collectivite
+   * Quand la sourceId est NULL, cela signifie que ce sont des donnees saisies par la collectivite
    */
   public readonly NULL_SOURCE_ID = 'collectivite';
 
@@ -55,57 +62,55 @@ export default class IndicateursService {
 
   constructor(
     private readonly databaseService: DatabaseService,
-    private readonly authService: AuthService,
+    private readonly authService: AuthService
   ) {}
 
   private getIndicateurValeursSqlConditions(
-    options: GetIndicateursValeursRequestType,
+    options: GetIndicateursValeursRequestType
   ): (SQLWrapper | SQL)[] {
     const conditions: (SQLWrapper | SQL)[] = [
-      eq(indicateurValeurTable.collectivite_id, options.collectivite_id),
+      eq(indicateurValeurTable.collectiviteId, options.collectiviteId),
     ];
     if (
-      options.identifiants_referentiel &&
-      options.identifiants_referentiel.length > 0
+      options.identifiantsReferentiel &&
+      options.identifiantsReferentiel.length > 0
     ) {
       conditions.push(
         inArray(
-          indicateurDefinitionTable.identifiant_referentiel,
-          options.identifiants_referentiel,
-        ),
+          indicateurDefinitionTable.identifiantReferentiel,
+          options.identifiantsReferentiel
+        )
       );
     }
-    if (options.date_debut) {
-      conditions.push(
-        gte(indicateurValeurTable.date_valeur, options.date_debut),
-      );
+    if (options.dateDebut) {
+      conditions.push(gte(indicateurValeurTable.dateValeur, options.dateDebut));
     }
-    if (options.date_fin) {
-      conditions.push(lte(indicateurValeurTable.date_valeur, options.date_fin));
+    if (options.dateFin) {
+      conditions.push(lte(indicateurValeurTable.dateValeur, options.dateFin));
     }
-    if (options.indicateur_id) {
-      conditions.push(eq(indicateurValeurTable.id, options.indicateur_id));
+    if (options.indicateurId) {
+      conditions.push(eq(indicateurValeurTable.id, options.indicateurId));
     }
     if (options.sources?.length) {
       const nullSourceId = options.sources.includes(this.NULL_SOURCE_ID);
       if (nullSourceId) {
         const autreSourceIds = options.sources.filter(
-          (s) => s !== this.NULL_SOURCE_ID,
+          (s) => s !== this.NULL_SOURCE_ID
         );
         if (autreSourceIds.length) {
           const orCondition = or(
-            isNull(indicateurSourceMetadonneeTable.source_id),
-            inArray(indicateurSourceMetadonneeTable.source_id, autreSourceIds),
+            isNull(indicateurSourceMetadonneeTable.sourceId),
+            inArray(indicateurSourceMetadonneeTable.sourceId, autreSourceIds)
           );
           if (orCondition) {
             conditions.push(orCondition);
           }
         } else {
-          conditions.push(isNull(indicateurSourceMetadonneeTable.source_id));
+          conditions.push(isNull(indicateurSourceMetadonneeTable.sourceId));
         }
       } else {
         conditions.push(
-          inArray(indicateurSourceMetadonneeTable.source_id, options.sources),
+          inArray(indicateurSourceMetadonneeTable.sourceId, options.sources)
         );
       }
     }
@@ -118,7 +123,9 @@ export default class IndicateursService {
    */
   async getIndicateursValeurs(options: GetIndicateursValeursRequestType) {
     this.logger.log(
-      `Récupération des valeurs des indicateurs selon ces options : ${JSON.stringify(options)}`,
+      `Récupération des valeurs des indicateurs selon ces options : ${JSON.stringify(
+        options
+      )}`
     );
 
     const conditions = this.getIndicateurValeursSqlConditions(options);
@@ -128,24 +135,24 @@ export default class IndicateursService {
       .from(indicateurValeurTable)
       .leftJoin(
         indicateurDefinitionTable,
-        eq(indicateurValeurTable.indicateur_id, indicateurDefinitionTable.id),
+        eq(indicateurValeurTable.indicateurId, indicateurDefinitionTable.id)
       )
       .leftJoin(
         indicateurSourceMetadonneeTable,
         eq(
-          indicateurValeurTable.metadonnee_id,
-          indicateurSourceMetadonneeTable.id,
-        ),
+          indicateurValeurTable.metadonneeId,
+          indicateurSourceMetadonneeTable.id
+        )
       )
       .where(and(...conditions));
 
     this.logger.log(`Récupération de ${result.length} valeurs d'indicateurs`);
-    if (!options.ignore_dedoublonnage) {
+    if (!options.ignoreDedoublonnage) {
       // Gère le cas où plusieurs fois la même source avec des métadonnées différentes > on garde les données de la métadonnée la plus récente
       result = this.dedoublonnageIndicateurValeursParSource(result);
 
       this.logger.log(
-        `${result.length} valeurs d'indicateurs après dédoublonnage`,
+        `${result.length} valeurs d'indicateurs après dédoublonnage`
       );
     }
 
@@ -154,20 +161,22 @@ export default class IndicateursService {
 
   async deleteIndicateurValeurs(options: DeleteIndicateursValeursRequestType) {
     this.logger.log(
-      `Suppression des valeurs des indicateurs selon ces options : ${JSON.stringify(options)}`,
+      `Suppression des valeurs des indicateurs selon ces options : ${JSON.stringify(
+        options
+      )}`
     );
 
     const conditions: (SQLWrapper | SQL)[] = [
-      eq(indicateurValeurTable.collectivite_id, options.collectivite_id),
+      eq(indicateurValeurTable.collectiviteId, options.collectiviteId),
     ];
-    if (options.indicateur_id) {
+    if (options.indicateurId) {
       conditions.push(
-        eq(indicateurValeurTable.indicateur_id, options.indicateur_id),
+        eq(indicateurValeurTable.indicateurId, options.indicateurId)
       );
     }
-    if (options.metadonnee_id) {
+    if (options.metadonneeId) {
       conditions.push(
-        eq(indicateurValeurTable.metadonnee_id, options.metadonnee_id),
+        eq(indicateurValeurTable.metadonneeId, options.metadonneeId)
       );
     }
 
@@ -179,29 +188,29 @@ export default class IndicateursService {
       id: indicateurValeurTable.id,
     });
     this.logger.log(
-      `${deletedIds.length} valeurs d'indicateurs ont été supprimées`,
+      `${deletedIds.length} valeurs d'indicateurs ont été supprimées`
     );
-    return { indicateur_valeur_ids_supprimes: deletedIds };
+    return { indicateurValeurIdsSupprimes: deletedIds };
   }
 
   async getIndicateurValeursGroupees(
     options: GetIndicateursValeursRequestType,
-    tokenInfo: SupabaseJwtPayload,
+    tokenInfo: SupabaseJwtPayload
   ): Promise<GetIndicateursValeursResponseType> {
     await this.authService.verifieAccesAuxCollectivites(
       tokenInfo,
-      [options.collectivite_id],
-      NiveauAcces.LECTURE,
+      [options.collectiviteId],
+      NiveauAcces.LECTURE
     );
 
     const indicateurValeurs = await this.getIndicateursValeurs(options);
     const indicateurValeursSeules = indicateurValeurs.map(
-      (v) => v.indicateur_valeur,
+      (v) => v.indicateur_valeur
     );
     const initialDefinitionsAcc: { [key: string]: IndicateurDefinitionType } =
       {};
     let uniqueIndicateurDefinitions: IndicateurDefinitionType[];
-    if (!options.identifiants_referentiel?.length) {
+    if (!options.identifiantsReferentiel?.length) {
       uniqueIndicateurDefinitions = Object.values(
         indicateurValeurs.reduce((acc, v) => {
           if (v.indicateur_definition?.id) {
@@ -209,37 +218,37 @@ export default class IndicateursService {
               v.indicateur_definition;
           }
           return acc;
-        }, initialDefinitionsAcc),
+        }, initialDefinitionsAcc)
       ) as IndicateurDefinitionType[];
     } else {
       uniqueIndicateurDefinitions =
         await this.getReferentielIndicateurDefinitions(
-          options.identifiants_referentiel,
+          options.identifiantsReferentiel
         );
-      options.identifiants_referentiel.forEach((identifiant) => {
+      options.identifiantsReferentiel.forEach((identifiant) => {
         if (
           !uniqueIndicateurDefinitions.find(
-            (d) => d.identifiant_referentiel === identifiant,
+            (d) => d.identifiantReferentiel === identifiant
           )
         ) {
           this.logger.warn(
-            `Définition de l'indicateur avec l'identifiant référentiel ${identifiant} introuvable`,
+            `Définition de l'indicateur avec l'identifiant référentiel ${identifiant} introuvable`
           );
         }
       });
     }
 
     uniqueIndicateurDefinitions.sort((a, b) => {
-      if (!a.identifiant_referentiel && !b.identifiant_referentiel) {
+      if (!a.identifiantReferentiel && !b.identifiantReferentiel) {
         return 0;
       }
-      if (!a.identifiant_referentiel) {
+      if (!a.identifiantReferentiel) {
         return 1;
       }
-      if (!b.identifiant_referentiel) {
+      if (!b.identifiantReferentiel) {
         return -1;
       }
-      return a.identifiant_referentiel.localeCompare(b.identifiant_referentiel);
+      return a.identifiantReferentiel.localeCompare(b.identifiantReferentiel);
     });
 
     const initialMetadonneesAcc: {
@@ -252,7 +261,7 @@ export default class IndicateursService {
             v.indicateur_source_metadonnee;
         }
         return acc;
-      }, initialMetadonneesAcc),
+      }, initialMetadonneesAcc)
     ) as IndicateurSourceMetadonneeType[];
 
     const indicateurValeurGroupeesParSource =
@@ -260,23 +269,25 @@ export default class IndicateursService {
         indicateurValeursSeules,
         uniqueIndicateurDefinitions,
         uniqueIndicateurMetadonnees,
-        false,
+        false
       );
     return { indicateurs: indicateurValeurGroupeesParSource };
   }
 
   async getReferentielIndicateurDefinitions(identifiantsReferentiel: string[]) {
     this.logger.log(
-      `Récupération des définitions des indicateurs ${identifiantsReferentiel.join(',')}`,
+      `Récupération des définitions des indicateurs ${identifiantsReferentiel.join(
+        ','
+      )}`
     );
     const definitions = await this.databaseService.db
       .select()
       .from(indicateurDefinitionTable)
       .where(
         inArray(
-          indicateurDefinitionTable.identifiant_referentiel,
-          identifiantsReferentiel,
-        ),
+          indicateurDefinitionTable.identifiantReferentiel,
+          identifiantsReferentiel
+        )
       );
     this.logger.log(`${definitions.length} définitions trouvées`);
     return definitions;
@@ -284,43 +295,47 @@ export default class IndicateursService {
 
   async upsertIndicateurValeurs(
     indicateurValeurs: CreateIndicateurValeurType[],
-    tokenInfo?: SupabaseJwtPayload,
+    tokenInfo?: SupabaseJwtPayload
   ): Promise<IndicateurValeurType[]> {
     if (tokenInfo) {
       const collectiviteIds = [
-        ...new Set(indicateurValeurs.map((v) => v.collectivite_id)),
+        ...new Set(indicateurValeurs.map((v) => v.collectiviteId)),
       ];
       await this.authService.verifieAccesAuxCollectivites(
         tokenInfo,
         collectiviteIds,
-        NiveauAcces.EDITION,
+        NiveauAcces.EDITION
       );
 
       if (tokenInfo.role === SupabaseRole.AUTHENTICATED && tokenInfo.sub) {
         indicateurValeurs.forEach((v) => {
-          v.created_by = tokenInfo.sub;
-          v.modified_by = tokenInfo.sub;
+          v.createdBy = tokenInfo.sub;
+          v.modifiedBy = tokenInfo.sub;
         });
       }
     }
 
     this.logger.log(
-      `Upsert des ${indicateurValeurs.length} valeurs des indicateurs pour l'utilisateur ${tokenInfo?.sub} (role ${tokenInfo?.role})`,
+      `Upsert des ${indicateurValeurs.length} valeurs des indicateurs pour l'utilisateur ${tokenInfo?.sub} (role ${tokenInfo?.role})`
     );
     // On doit distinguer les valeurs avec et sans métadonnées car la clause d'unicité est différente (onConflictDoUpdate)
     const [indicateurValeursAvecMetadonnees, indicateurValeursSansMetadonnees] =
-      partition(indicateurValeurs, (v) => Boolean(v.metadonnee_id));
+      partition(indicateurValeurs, (v) => Boolean(v.metadonneeId));
 
     const indicateurValeursResultat: IndicateurValeurType[] = [];
     if (indicateurValeursAvecMetadonnees.length) {
       this.logger.log(
-        `Upsert des ${indicateurValeursAvecMetadonnees.length} valeurs avec métadonnées des indicateurs ${[
+        `Upsert des ${
+          indicateurValeursAvecMetadonnees.length
+        } valeurs avec métadonnées des indicateurs ${[
           ...new Set(
-            indicateurValeursAvecMetadonnees.map((v) => v.indicateur_id),
+            indicateurValeursAvecMetadonnees.map((v) => v.indicateurId)
           ),
-        ].join(
-          ',',
-        )} pour les collectivités ${[...new Set(indicateurValeursAvecMetadonnees.map((v) => v.collectivite_id))].join(',')}`,
+        ].join(',')} pour les collectivités ${[
+          ...new Set(
+            indicateurValeursAvecMetadonnees.map((v) => v.collectiviteId)
+          ),
+        ].join(',')}`
       );
       const indicateurValeursAvecMetadonneesResultat =
         await this.databaseService.db
@@ -328,45 +343,49 @@ export default class IndicateursService {
           .values(indicateurValeursAvecMetadonnees)
           .onConflictDoUpdate({
             target: [
-              indicateurValeurTable.indicateur_id,
-              indicateurValeurTable.collectivite_id,
-              indicateurValeurTable.date_valeur,
-              indicateurValeurTable.metadonnee_id,
+              indicateurValeurTable.indicateurId,
+              indicateurValeurTable.collectiviteId,
+              indicateurValeurTable.dateValeur,
+              indicateurValeurTable.metadonneeId,
             ],
-            targetWhere: isNotNull(indicateurValeurTable.metadonnee_id),
+            targetWhere: isNotNull(indicateurValeurTable.metadonneeId),
             set: {
               resultat: sql.raw(
-                `excluded.${indicateurValeurTable.resultat.name}`,
+                `excluded.${indicateurValeurTable.resultat.name}`
               ),
-              resultat_commentaire: sql.raw(
-                `excluded.${indicateurValeurTable.resultat_commentaire.name}`,
+              resultatCommentaire: sql.raw(
+                `excluded.${indicateurValeurTable.resultatCommentaire.name}`
               ),
               objectif: sql.raw(
-                `excluded.${indicateurValeurTable.objectif.name}`,
+                `excluded.${indicateurValeurTable.objectif.name}`
               ),
-              objectif_commentaire: sql.raw(
-                `excluded.${indicateurValeurTable.objectif_commentaire.name}`,
+              objectifCommentaire: sql.raw(
+                `excluded.${indicateurValeurTable.objectifCommentaire.name}`
               ),
-              modified_by: sql.raw(
-                `excluded.${indicateurValeurTable.modified_by.name}`,
+              modifiedBy: sql.raw(
+                `excluded.${indicateurValeurTable.modifiedBy.name}`
               ),
             },
           })
           .returning();
       indicateurValeursResultat.push(
-        ...indicateurValeursAvecMetadonneesResultat,
+        ...indicateurValeursAvecMetadonneesResultat
       );
     }
 
     if (indicateurValeursSansMetadonnees.length) {
       this.logger.log(
-        `Upsert des ${indicateurValeursSansMetadonnees.length} valeurs sans métadonnées des indicateurs ${[
+        `Upsert des ${
+          indicateurValeursSansMetadonnees.length
+        } valeurs sans métadonnées des indicateurs ${[
           ...new Set(
-            indicateurValeursSansMetadonnees.map((v) => v.indicateur_id),
+            indicateurValeursSansMetadonnees.map((v) => v.indicateurId)
           ),
-        ].join(
-          ',',
-        )} pour les collectivités ${[...new Set(indicateurValeursSansMetadonnees.map((v) => v.collectivite_id))].join(',')}`,
+        ].join(',')} pour les collectivités ${[
+          ...new Set(
+            indicateurValeursSansMetadonnees.map((v) => v.collectiviteId)
+          ),
+        ].join(',')}`
       );
       const indicateurValeursSansMetadonneesResultat =
         await this.databaseService.db
@@ -374,46 +393,50 @@ export default class IndicateursService {
           .values(indicateurValeursSansMetadonnees)
           .onConflictDoUpdate({
             target: [
-              indicateurValeurTable.indicateur_id,
-              indicateurValeurTable.collectivite_id,
-              indicateurValeurTable.date_valeur,
+              indicateurValeurTable.indicateurId,
+              indicateurValeurTable.collectiviteId,
+              indicateurValeurTable.dateValeur,
             ],
-            targetWhere: isNull(indicateurValeurTable.metadonnee_id),
+            targetWhere: isNull(indicateurValeurTable.metadonneeId),
             set: {
               resultat: sql.raw(
-                `excluded.${indicateurValeurTable.resultat.name}`,
+                `excluded.${indicateurValeurTable.resultat.name}`
               ),
-              resultat_commentaire: sql.raw(
-                `excluded.${indicateurValeurTable.resultat_commentaire.name}`,
+              resultatCommentaire: sql.raw(
+                `excluded.${indicateurValeurTable.resultatCommentaire.name}`
               ),
               objectif: sql.raw(
-                `excluded.${indicateurValeurTable.objectif.name}`,
+                `excluded.${indicateurValeurTable.objectif.name}`
               ),
-              objectif_commentaire: sql.raw(
-                `excluded.${indicateurValeurTable.objectif_commentaire.name}`,
+              objectifCommentaire: sql.raw(
+                `excluded.${indicateurValeurTable.objectifCommentaire.name}`
               ),
-              modified_by: sql.raw(
-                `excluded.${indicateurValeurTable.modified_by.name}`,
+              modifiedBy: sql.raw(
+                `excluded.${indicateurValeurTable.modifiedBy.name}`
               ),
             },
           })
           .returning();
       indicateurValeursResultat.push(
-        ...indicateurValeursSansMetadonneesResultat,
+        ...indicateurValeursSansMetadonneesResultat
       );
     }
     return indicateurValeursResultat;
   }
 
   dedoublonnageIndicateurValeursParSource(
-    indicateurValeurs: IndicateurValeurAvecMetadonnesDefinition[],
+    indicateurValeurs: IndicateurValeurAvecMetadonnesDefinition[]
   ): IndicateurValeurAvecMetadonnesDefinition[] {
     const initialAcc: {
       [key: string]: IndicateurValeurAvecMetadonnesDefinition;
     } = {};
     const uniqueIndicateurValeurs = Object.values(
       indicateurValeurs.reduce((acc, v) => {
-        const cleUnicite = `${v.indicateur_valeur.indicateur_id}_${v.indicateur_valeur.collectivite_id}_${v.indicateur_valeur.date_valeur}_${v.indicateur_source_metadonnee?.source_id || this.NULL_SOURCE_ID}`;
+        const cleUnicite = `${v.indicateur_valeur.indicateurId}_${
+          v.indicateur_valeur.collectiviteId
+        }_${v.indicateur_valeur.dateValeur}_${
+          v.indicateur_source_metadonnee?.sourceId || this.NULL_SOURCE_ID
+        }`;
         if (!acc[cleUnicite]) {
           acc[cleUnicite] = v;
         } else {
@@ -421,14 +444,14 @@ export default class IndicateursService {
           if (
             v.indicateur_source_metadonnee &&
             acc[cleUnicite].indicateur_source_metadonnee &&
-            v.indicateur_source_metadonnee.date_version >
-              acc[cleUnicite].indicateur_source_metadonnee.date_version
+            v.indicateur_source_metadonnee.dateVersion >
+              acc[cleUnicite].indicateur_source_metadonnee!.dateVersion
           ) {
             acc[cleUnicite] = v;
           }
         }
         return acc;
-      }, initialAcc),
+      }, initialAcc)
     ) as IndicateurValeurAvecMetadonnesDefinition[];
     return uniqueIndicateurValeurs;
   }
@@ -436,7 +459,7 @@ export default class IndicateursService {
   groupeIndicateursValeursParIndicateur(
     indicateurValeurs: IndicateurValeurType[],
     indicateurDefinitions: IndicateurDefinitionType[],
-    commentairesNonInclus = false,
+    commentairesNonInclus = false
   ): IndicateurAvecValeursType[] {
     const initialDefinitionsAcc: {
       [key: string]: MinimalIndicateurDefinitionType;
@@ -448,54 +471,54 @@ export default class IndicateursService {
             def,
             [
               'id',
-              'identifiant_referentiel',
+              'identifiantReferentiel',
               'titre',
-              'titre_long',
+              'titreLong',
               'description',
               'unite',
-              'borne_min',
-              'borne_max',
-            ],
+              'borneMin',
+              'borneMax',
+            ]
           ) as MinimalIndicateurDefinitionType;
           acc[def.id.toString()] = minimaleIndicateurDefinition;
         }
         return acc;
-      }, initialDefinitionsAcc),
+      }, initialDefinitionsAcc)
     ) as IndicateurDefinitionType[];
 
     const indicateurAvecValeurs = uniqueIndicateurDefinitions.map(
       (indicateurDefinition) => {
         const valeurs = indicateurValeurs
-          .filter((v) => v.indicateur_id === indicateurDefinition.id)
+          .filter((v) => v.indicateurId === indicateurDefinition.id)
           .map((v) => {
             const indicateurValeurGroupee: IndicateurValeurGroupee = {
               id: v.id,
-              date_valeur: v.date_valeur,
+              dateValeur: v.dateValeur,
               resultat: v.resultat,
               objectif: v.objectif,
-              metadonnee_id: null,
+              metadonneeId: null,
             };
             if (!commentairesNonInclus) {
-              indicateurValeurGroupee.resultat_commentaire =
-                v.resultat_commentaire;
-              indicateurValeurGroupee.objectif_commentaire =
-                v.objectif_commentaire;
+              indicateurValeurGroupee.resultatCommentaire =
+                v.resultatCommentaire;
+              indicateurValeurGroupee.objectifCommentaire =
+                v.objectifCommentaire;
             }
             return _.omitBy(
               indicateurValeurGroupee,
-              _.isNil,
+              _.isNil
             ) as IndicateurValeurGroupee;
           });
         // Trie les valeurs par date
         valeurs.sort((a, b) => {
-          return a.date_valeur.localeCompare(b.date_valeur);
+          return a.dateValeur.localeCompare(b.dateValeur);
         });
         const indicateurAvecValeurs: IndicateurAvecValeursType = {
           definition: indicateurDefinition,
           valeurs,
         };
         return indicateurAvecValeurs;
-      },
+      }
     );
     return indicateurAvecValeurs.filter((i) => i.valeurs.length > 0);
   }
@@ -504,7 +527,7 @@ export default class IndicateursService {
     indicateurValeurs: IndicateurValeurType[],
     indicateurDefinitions: IndicateurDefinitionType[],
     indicateurMetadonnees: IndicateurSourceMetadonneeType[],
-    supprimeIndicateursSansValeurs = true,
+    supprimeIndicateursSansValeurs = true
   ): IndicateurAvecValeursParSource[] {
     const initialDefinitionsAcc: { [key: string]: IndicateurDefinitionType } =
       {};
@@ -514,26 +537,26 @@ export default class IndicateursService {
           acc[def.id.toString()] = def;
         }
         return acc;
-      }, initialDefinitionsAcc),
+      }, initialDefinitionsAcc)
     ) as IndicateurDefinitionType[];
 
     const indicateurAvecValeurs = uniqueIndicateurDefinitions.map(
       (indicateurDefinition) => {
         const valeurs = indicateurValeurs
-          .filter((v) => v.indicateur_id === indicateurDefinition.id)
+          .filter((v) => v.indicateurId === indicateurDefinition.id)
           .map((v) => {
             const indicateurValeurGroupee: IndicateurValeurGroupee = {
               id: v.id,
-              date_valeur: v.date_valeur,
+              dateValeur: v.dateValeur,
               resultat: v.resultat,
-              resultat_commentaire: v.resultat_commentaire,
+              resultatCommentaire: v.resultatCommentaire,
               objectif: v.objectif,
-              objectif_commentaire: v.objectif_commentaire,
-              metadonnee_id: v.metadonnee_id,
+              objectifCommentaire: v.objectifCommentaire,
+              metadonneeId: v.metadonneeId,
             };
             return _.omitBy(
               indicateurValeurGroupee,
-              _.isNil,
+              _.isNil
             ) as IndicateurValeurGroupee;
           });
 
@@ -542,26 +565,26 @@ export default class IndicateursService {
           Record<string, IndicateurSourceMetadonneeType>
         > = {};
         const valeursParSource = groupBy(valeurs, (valeur) => {
-          if (!valeur.metadonnee_id) {
+          if (!valeur.metadonneeId) {
             return this.NULL_SOURCE_ID;
           }
           const metadonnee = indicateurMetadonnees.find(
-            (m) => m.id === valeur.metadonnee_id,
+            (m) => m.id === valeur.metadonneeId
           );
           if (!metadonnee) {
             this.logger.warn(
-              `Metadonnée introuvable pour l'identifiant ${valeur.metadonnee_id}`,
+              `Metadonnée introuvable pour l'identifiant ${valeur.metadonneeId}`
             );
             return this.UNKOWN_SOURCE_ID;
           } else {
-            if (!metadonneesUtilisees[metadonnee.source_id]) {
-              metadonneesUtilisees[metadonnee.source_id] = {};
+            if (!metadonneesUtilisees[metadonnee.sourceId]) {
+              metadonneesUtilisees[metadonnee.sourceId] = {};
             }
-            if (!metadonneesUtilisees[metadonnee.source_id][metadonnee.id]) {
-              metadonneesUtilisees[metadonnee.source_id][metadonnee.id] =
+            if (!metadonneesUtilisees[metadonnee.sourceId][metadonnee.id]) {
+              metadonneesUtilisees[metadonnee.sourceId][metadonnee.id] =
                 metadonnee;
             }
-            return metadonnee.source_id;
+            return metadonnee.sourceId;
           }
         });
         const sourceMap: Record<string, IndicateurValeursGroupeeParSource> = {};
@@ -569,8 +592,8 @@ export default class IndicateursService {
           // Trie les valeurs par date
           valeursParSource[sourceId] = valeursParSource[sourceId].sort(
             (a, b) => {
-              return a.date_valeur.localeCompare(b.date_valeur);
-            },
+              return a.dateValeur.localeCompare(b.dateValeur);
+            }
           );
           sourceMap[sourceId] = {
             source: sourceId,
@@ -583,12 +606,12 @@ export default class IndicateursService {
           sources: sourceMap,
         };
         return IndicateurAvecValeursParSource;
-      },
+      }
     );
 
     if (supprimeIndicateursSansValeurs) {
       return indicateurAvecValeurs.filter(
-        (i) => Object.keys(i.sources).length > 0,
+        (i) => Object.keys(i.sources).length > 0
       );
     } else {
       return indicateurAvecValeurs;

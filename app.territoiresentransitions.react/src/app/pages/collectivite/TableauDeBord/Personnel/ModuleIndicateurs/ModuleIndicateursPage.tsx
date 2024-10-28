@@ -49,6 +49,7 @@ const ModuleIndicateursPage = ({ view, slug }: Props) => {
               variant="outlined"
               icon="equalizer-line"
               size="sm"
+              children="Filtrer"
               onClick={() => {
                 openState.setIsOpen(true);
                 trackEvent('tdb_modifier_filtres_indicateurs', {

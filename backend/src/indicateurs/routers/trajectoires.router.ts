@@ -3,7 +3,7 @@ import { z } from 'zod';
 import {
   SupabaseJwtPayload,
   SupabaseRole,
-} from '../../auth/models/auth.models';
+} from '../../auth/models/supabase-jwt.models';
 import { TrpcService } from '../../trpc/services/trpc.service';
 import TrajectoiresSpreadsheetService from '../services/trajectoires-spreadsheet.service';
 
@@ -11,7 +11,7 @@ import TrajectoiresSpreadsheetService from '../services/trajectoires-spreadsheet
 export class TrajectoiresRouter {
   constructor(
     private readonly trpc: TrpcService,
-    private readonly trajectoiresSpreadsheetService: TrajectoiresSpreadsheetService,
+    private readonly trajectoiresSpreadsheetService: TrajectoiresSpreadsheetService
   ) {}
 
   router = this.trpc.router({
@@ -20,7 +20,7 @@ export class TrajectoiresRouter {
         z.object({
           collectivite_id: z.number(),
           conserve_fichier_temporaire: z.boolean().optional(),
-        }),
+        })
       )
       .query(({ input }) => {
         // TODO: token
@@ -31,7 +31,7 @@ export class TrajectoiresRouter {
         };
         return this.trajectoiresSpreadsheetService.calculeTrajectoireSnbc(
           input,
-          tokenInfo,
+          tokenInfo
         );
       }),
   });

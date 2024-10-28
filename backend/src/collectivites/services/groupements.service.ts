@@ -7,11 +7,11 @@ import {
 } from '@nestjs/common';
 import { eq } from 'drizzle-orm';
 import DatabaseService from '../../common/services/database.service';
+import { groupementTable } from '../models/groupement.table';
 import {
   CreateGroupementCollectiviteType,
   groupementCollectiviteTable,
-  groupementTable,
-} from '../models/groupement.models';
+} from '../models/groupement-collectivite.table';
 
 @Injectable()
 export default class GroupementsService {
@@ -32,7 +32,7 @@ export default class GroupementsService {
     if (groupementResult.length > 1) {
       throw new HttpException(
         `Plusieurs groupements trouvés avec le nom ${nom}`,
-        HttpStatus.INTERNAL_SERVER_ERROR,
+        HttpStatus.INTERNAL_SERVER_ERROR
       );
     }
 
@@ -42,14 +42,14 @@ export default class GroupementsService {
 
   async ajouteCollectiviteAuGroupement(
     groupementId: number,
-    collectiviteId: number,
+    collectiviteId: number
   ) {
     this.logger.log(
-      `Ajout de la collectivite ${collectiviteId} au groupement ${groupementId}`,
+      `Ajout de la collectivite ${collectiviteId} au groupement ${groupementId}`
     );
     const createGroupementCollectivite: CreateGroupementCollectiviteType = {
-      collectivite_id: collectiviteId,
-      groupement_id: groupementId,
+      collectiviteId: collectiviteId,
+      groupementId: groupementId,
     };
 
     await this.databaseService.db

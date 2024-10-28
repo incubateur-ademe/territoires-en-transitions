@@ -2,10 +2,11 @@ import { Test } from '@nestjs/testing';
 import DatabaseService from '../../common/services/database.service';
 import {
   NiveauAcces,
-  SupabaseRole,
   UtilisateurDroitType,
-} from '../models/auth.models';
+} from '../models/private-utilisateur-droit.table';
 import { AuthService } from './auth.service';
+import { SupabaseRole } from '../models/supabase-jwt.models';
+import CollectivitesService from '../../collectivites/services/collectivites.service';
 
 describe('AuthService', () => {
   let authService: AuthService;
@@ -15,7 +16,7 @@ describe('AuthService', () => {
       controllers: [AuthService],
     })
       .useMocker((token) => {
-        if (token === DatabaseService) {
+        if (token === DatabaseService || token === CollectivitesService) {
           return {};
         }
       })
@@ -31,8 +32,8 @@ describe('AuthService', () => {
           SupabaseRole.AUTHENTICATED,
           [],
           [1],
-          NiveauAcces.LECTURE,
-        ),
+          NiveauAcces.LECTURE
+        )
       ).toBe(false);
     });
 
@@ -42,8 +43,8 @@ describe('AuthService', () => {
           SupabaseRole.ANON,
           [],
           [],
-          NiveauAcces.LECTURE,
-        ),
+          NiveauAcces.LECTURE
+        )
       ).toBe(false);
     });
 
@@ -53,8 +54,8 @@ describe('AuthService', () => {
           SupabaseRole.SERVICE_ROLE,
           [],
           [1, 2, 3],
-          NiveauAcces.ADMIN,
-        ),
+          NiveauAcces.ADMIN
+        )
       ).toBe(true);
     });
 
@@ -62,23 +63,23 @@ describe('AuthService', () => {
       const droits: UtilisateurDroitType[] = [
         {
           id: 1,
-          user_id: '1',
-          collectivite_id: 1,
-          niveau_acces: NiveauAcces.EDITION,
+          userId: '1',
+          collectiviteId: 1,
+          niveauAcces: NiveauAcces.EDITION,
           active: true,
-          created_at: new Date(),
-          modified_at: null,
-          invitation_id: null,
+          createdAt: new Date(),
+          modifiedAt: null,
+          invitationId: null,
         },
         {
           id: 1,
-          user_id: '1',
-          collectivite_id: 2,
-          niveau_acces: NiveauAcces.ADMIN,
+          userId: '1',
+          collectiviteId: 2,
+          niveauAcces: NiveauAcces.ADMIN,
           active: true,
-          created_at: new Date(),
-          modified_at: null,
-          invitation_id: null,
+          createdAt: new Date(),
+          modifiedAt: null,
+          invitationId: null,
         },
       ];
 
@@ -87,8 +88,8 @@ describe('AuthService', () => {
           SupabaseRole.AUTHENTICATED,
           droits,
           [1, 2],
-          NiveauAcces.EDITION,
-        ),
+          NiveauAcces.EDITION
+        )
       ).toBe(true);
     });
 
@@ -96,23 +97,23 @@ describe('AuthService', () => {
       const droits: UtilisateurDroitType[] = [
         {
           id: 1,
-          user_id: '1',
-          collectivite_id: 1,
-          niveau_acces: NiveauAcces.EDITION,
+          userId: '1',
+          collectiviteId: 1,
+          niveauAcces: NiveauAcces.EDITION,
           active: true,
-          created_at: new Date(),
-          modified_at: null,
-          invitation_id: null,
+          createdAt: new Date(),
+          modifiedAt: null,
+          invitationId: null,
         },
         {
           id: 1,
-          user_id: '1',
-          collectivite_id: 2,
-          niveau_acces: NiveauAcces.ADMIN,
+          userId: '1',
+          collectiviteId: 2,
+          niveauAcces: NiveauAcces.ADMIN,
           active: false,
-          created_at: new Date(),
-          modified_at: null,
-          invitation_id: null,
+          createdAt: new Date(),
+          modifiedAt: null,
+          invitationId: null,
         },
       ];
 
@@ -121,8 +122,8 @@ describe('AuthService', () => {
           SupabaseRole.AUTHENTICATED,
           droits,
           [1, 2],
-          NiveauAcces.EDITION,
-        ),
+          NiveauAcces.EDITION
+        )
       ).toBe(false);
     });
 
@@ -130,23 +131,23 @@ describe('AuthService', () => {
       const droits: UtilisateurDroitType[] = [
         {
           id: 1,
-          user_id: '1',
-          collectivite_id: 1,
-          niveau_acces: NiveauAcces.LECTURE,
+          userId: '1',
+          collectiviteId: 1,
+          niveauAcces: NiveauAcces.LECTURE,
           active: true,
-          created_at: new Date(),
-          modified_at: null,
-          invitation_id: null,
+          createdAt: new Date(),
+          modifiedAt: null,
+          invitationId: null,
         },
         {
           id: 1,
-          user_id: '1',
-          collectivite_id: 2,
-          niveau_acces: NiveauAcces.ADMIN,
+          userId: '1',
+          collectiviteId: 2,
+          niveauAcces: NiveauAcces.ADMIN,
           active: true,
-          created_at: new Date(),
-          modified_at: null,
-          invitation_id: null,
+          createdAt: new Date(),
+          modifiedAt: null,
+          invitationId: null,
         },
       ];
 
@@ -155,8 +156,8 @@ describe('AuthService', () => {
           SupabaseRole.AUTHENTICATED,
           droits,
           [1, 2],
-          NiveauAcces.EDITION,
-        ),
+          NiveauAcces.EDITION
+        )
       ).toBe(false);
     });
 
@@ -164,13 +165,13 @@ describe('AuthService', () => {
       const droits: UtilisateurDroitType[] = [
         {
           id: 1,
-          user_id: '1',
-          collectivite_id: 2,
-          niveau_acces: NiveauAcces.EDITION,
+          userId: '1',
+          collectiviteId: 2,
+          niveauAcces: NiveauAcces.EDITION,
           active: true,
-          created_at: new Date(),
-          modified_at: null,
-          invitation_id: null,
+          createdAt: new Date(),
+          modifiedAt: null,
+          invitationId: null,
         },
       ];
 
@@ -179,8 +180,8 @@ describe('AuthService', () => {
           SupabaseRole.AUTHENTICATED,
           droits,
           [1, 2],
-          NiveauAcces.EDITION,
-        ),
+          NiveauAcces.EDITION
+        )
       ).toBe(false);
     });
   });

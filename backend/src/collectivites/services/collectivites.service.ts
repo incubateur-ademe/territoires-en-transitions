@@ -1,11 +1,9 @@
 import { Injectable, Logger, NotFoundException } from '@nestjs/common';
 import { eq } from 'drizzle-orm';
 import DatabaseService from '../../common/services/database.service';
-import {
-  collectiviteTable,
-  communeTable,
-  epciTable,
-} from '../models/collectivite.models';
+import { collectiviteTable } from '../models/collectivite.table';
+import { epciTable } from '../models/epci.table';
+import { communeTable } from '../models/commune.table';
 
 @Injectable()
 export default class CollectivitesService {
@@ -17,40 +15,40 @@ export default class CollectivitesService {
 
   async getCollectivite(collectiviteId: number) {
     this.logger.log(
-      `Récupération de la collectivite avec l'identifiant ${collectiviteId}`,
+      `Récupération de la collectivite avec l'identifiant ${collectiviteId}`
     );
     const collectiviteByIdResult = await this.databaseService.db
       .select()
       .from(collectiviteTable)
       .leftJoin(
         communeTable,
-        eq(communeTable.collectivite_id, collectiviteTable.id),
+        eq(communeTable.collectiviteId, collectiviteTable.id)
       )
-      .leftJoin(epciTable, eq(epciTable.collectivite_id, collectiviteTable.id))
+      .leftJoin(epciTable, eq(epciTable.collectiviteId, collectiviteTable.id))
       .where(eq(collectiviteTable.id, collectiviteId));
     if (!collectiviteByIdResult?.length) {
       throw new NotFoundException(
-        `Commune avec l'identifiant de collectivite ${collectiviteId} introuvable`,
+        `Commune avec l'identifiant de collectivite ${collectiviteId} introuvable`
       );
     }
 
     this.logger.log(
-      `Commune trouvé avec l'id ${collectiviteByIdResult[0].collectivite.id}`,
+      `Commune trouvé avec l'id ${collectiviteByIdResult[0].collectivite.id}`
     );
     return collectiviteByIdResult[0];
   }
 
   async getEpciByCollectiviteId(collectiviteId: number) {
     this.logger.log(
-      `Récupération de l'epci avec l'identifiant ${collectiviteId}`,
+      `Récupération de l'epci avec l'identifiant ${collectiviteId}`
     );
     const epciByIdResult = await this.databaseService.db
       .select()
       .from(epciTable)
-      .where(eq(epciTable.collectivite_id, collectiviteId));
+      .where(eq(epciTable.collectiviteId, collectiviteId));
     if (!epciByIdResult?.length) {
       throw new NotFoundException(
-        `EPCI avec l'identifiant de collectivite ${collectiviteId} introuvable`,
+        `EPCI avec l'identifiant de collectivite ${collectiviteId} introuvable`
       );
     }
 

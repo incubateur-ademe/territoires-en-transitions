@@ -12,7 +12,6 @@ import { ApiOkResponse, ApiResponse, ApiTags } from '@nestjs/swagger';
 import { NextFunction, Response } from 'express';
 import { PublicEndpoint } from '../../auth/decorators/public-endpoint.decorator';
 import { TokenInfo } from '../../auth/decorators/token-info.decorators';
-import type { SupabaseJwtPayload } from '../../auth/models/auth.models';
 import { CollectiviteRequestClass } from '../../collectivites/models/collectivite.request';
 import {
   calculTrajectoireRequestSchema,
@@ -24,6 +23,7 @@ import {
 import TrajectoiresDataService from '../services/trajectoires-data.service';
 import TrajectoiresSpreadsheetService from '../services/trajectoires-spreadsheet.service';
 import TrajectoiresXlsxService from '../services/trajectoires-xlsx.service';
+import type { SupabaseJwtPayload } from '../../auth/models/supabase-jwt.models';
 
 /**
  * Création des classes de requête/réponse à partir du schema pour générer automatiquement la documentation OpenAPI et la validation des entrées
@@ -31,6 +31,7 @@ import TrajectoiresXlsxService from '../services/trajectoires-xlsx.service';
 export class CalculTrajectoireResponseClass extends createZodDto(
   calculTrajectoireResponseSchema
 ) {}
+
 export class CalculTrajectoireRequestClass extends createZodDto(
   calculTrajectoireRequestSchema
 ) {}
@@ -42,6 +43,7 @@ export class ModeleTrajectoireTelechargementRequestClass extends createZodDto(
 export class VerificationTrajectoireRequestClass extends createZodDto(
   verificationTrajectoireRequestSchema
 ) {}
+
 export class VerificationDonneesSNBCResponseClass extends createZodDto(
   verificationDonneesSNBCResponseSchema
 ) {}
