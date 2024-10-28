@@ -11,7 +11,10 @@ export const IndicateurCompose = ({
   definition: IndicateurDefinition;
 }) => {
   const { enfants: enfantIds } = definition;
-  const enfants = useIndicateurDefinitions(definition.id, enfantIds || []);
+  const { data: enfants } = useIndicateurDefinitions(
+    definition.id,
+    enfantIds || []
+  );
 
   if (!enfants?.length) return null;
 

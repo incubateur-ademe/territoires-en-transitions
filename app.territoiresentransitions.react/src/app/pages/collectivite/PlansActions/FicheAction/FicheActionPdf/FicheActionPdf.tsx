@@ -1,4 +1,6 @@
-import { FicheAction } from '@tet/api/plan-actions';
+import { FicheAction, FicheResume } from '@tet/api/plan-actions';
+import { TActionStatutsRow } from 'types/alias';
+import { IndicateurDefinition } from '@tet/api/indicateurs/domain';
 import { Stack, Title } from 'ui/exportPdf/components';
 
 import Acteurs from './Acteurs';
@@ -15,7 +17,18 @@ export type FicheActionPdfProps = {
   fiche: FicheAction;
 };
 
-const FicheActionPdf = ({ fiche }: FicheActionPdfProps) => {
+export type FicheActionPdfExtendedProps = FicheActionPdfProps & {
+  indicateursListe: IndicateurDefinition[] | undefined | null;
+  fichesLiees: FicheResume[];
+  actionsLiees: TActionStatutsRow[];
+};
+
+const FicheActionPdf = ({
+  fiche,
+  indicateursListe,
+  fichesLiees,
+  actionsLiees,
+}: FicheActionPdfExtendedProps) => {
   const { titre } = fiche;
 
   return (
@@ -43,16 +56,16 @@ const FicheActionPdf = ({ fiche }: FicheActionPdfProps) => {
       </Stack>
 
       {/* Indicateurs */}
-      <Indicateurs fiche={fiche} />
+      <Indicateurs fiche={fiche} indicateursListe={indicateursListe} />
 
       {/* Budget */}
       <Budget fiche={fiche} />
 
       {/* Fiches des plans liées */}
-      <FichesLiees fiche={fiche} />
+      <FichesLiees fichesLiees={fichesLiees} />
 
       {/* Actions des référentiels liées */}
-      <ActionsLiees fiche={fiche} />
+      <ActionsLiees actionsLiees={actionsLiees} />
 
       {/* Notes */}
       <Notes fiche={fiche} />

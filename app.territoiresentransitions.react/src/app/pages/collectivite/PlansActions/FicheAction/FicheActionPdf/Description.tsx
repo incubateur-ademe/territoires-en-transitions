@@ -23,7 +23,7 @@ const Description = ({ fiche }: FicheActionPdfProps) => {
             Description de l'action :
           </Title>
           <Paragraph className="text-grey-1">
-            {description ?? 'Non renseigné'}
+            {description || 'Non renseigné'}
           </Paragraph>
         </Stack>
 
@@ -33,7 +33,7 @@ const Description = ({ fiche }: FicheActionPdfProps) => {
             Moyens humains et techniques :
           </Title>
           <Paragraph className="text-grey-1">
-            {ressources ?? 'Non renseigné'}
+            {ressources || 'Non renseigné'}
           </Paragraph>
         </Stack>
       </Stack>

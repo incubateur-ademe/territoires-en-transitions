@@ -29,7 +29,7 @@ export const Title = ({
   return (
     <Text
       style={tw(
-        `text-primary-9 font-bold ${variantToClassname[variant]}${style}`
+        `text-primary-9 font-bold ${variantToClassname[variant]} leading-6${style}`
       )}
       {...props}
     >

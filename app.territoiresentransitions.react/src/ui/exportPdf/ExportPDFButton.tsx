@@ -4,16 +4,35 @@ import { Button } from '@tet/ui';
 import { saveBlob } from '../shared/preuves/Bibliotheque/saveBlob';
 import DocumentToExport from './DocumentToExport';
 
-const TEST_MODE = true;
+const TEST_MODE = false;
 
-type ExportPDFButtonType = {
-  content: JSX.Element;
+export type ExportPDFButtonType = {
+  /** Content of the pdf - Content shouldn't be undefined if requestData isn't used */
+  content: JSX.Element | undefined;
+  /** Name of the generated pdf */
   fileName: string;
+  /** Allows to request data to the parent component when the user requests a download */
+  requestData?: () => void;
 };
 
-const ExportPDFButton = ({ content, fileName }: ExportPDFButtonType) => {
+const ExportPDFButton = ({
+  content,
+  fileName,
+  requestData,
+}: ExportPDFButtonType) => {
   const [instance, updateInstance] = usePDF({ document: undefined });
   const [isDownloadRequested, setIsDownloadRequested] = useState(false);
+
+  const handleDownloadRequest = () => {
+    setIsDownloadRequested(true);
+    requestData?.();
+  };
+
+  useEffect(() => {
+    if (content && !!requestData) {
+      updateInstance(<DocumentToExport content={content} />);
+    }
+  }, [content]);
 
   useEffect(() => {
     if (instance.blob && isDownloadRequested) {
@@ -24,7 +43,7 @@ const ExportPDFButton = ({ content, fileName }: ExportPDFButtonType) => {
       }
       setIsDownloadRequested(false);
     }
-  }, [instance.blob, isDownloadRequested]);
+  }, [instance.blob]);
 
   return (
     <Button
@@ -33,9 +52,11 @@ const ExportPDFButton = ({ content, fileName }: ExportPDFButtonType) => {
       variant="white"
       size="xs"
       loading={instance.loading}
+      disabled={!requestData && !content}
       onClick={() => {
-        updateInstance(<DocumentToExport content={content} />);
-        setIsDownloadRequested(true);
+        handleDownloadRequest();
+        if (!requestData && content)
+          updateInstance(<DocumentToExport content={content} />);
       }}
     />
   );
