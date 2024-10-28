@@ -739,3 +739,4 @@ indicateur/indicateurs_gaz_effet_serre [indicateur/indicateurs_gaz_effet_serre@v
 @v4.17.0 2024-10-16T17:05:46Z System Administrator <root@AirdeThibaut2.lan> # uniquement donnees citepa pour la page publique
 
 labellisation/preuve_v2 [labellisation/preuve_v2@v4.5.0] 2024-08-13T15:07:27Z ,,, <jacquelina@LanceLibre> # Ajoute la notion de confidentialité à un document
+@v4.18.0 2024-10-28T09:32:41Z Marc Rutkowski <marc@attractive-media.fr> # Ajoute la notion de confidentialité à un document
