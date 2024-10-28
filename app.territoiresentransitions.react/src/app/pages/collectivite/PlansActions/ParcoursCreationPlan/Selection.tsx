@@ -12,6 +12,7 @@ import { ReactComponent as DocumentAddPicto } from './document-add.svg';
 import { ReactComponent as DocumentDownloadPicto } from './document-download.svg';
 import { ReactComponent as ShoppingBasket } from './shopping-basket.svg';
 import { useNbActionsDansPanier } from '@tet/app/Layout/Header/AccesPanierAction';
+import Link from 'next/link';
 
 const Selection = () => {
   const collectivite_id = useCollectiviteId();
@@ -108,7 +109,7 @@ const SelectFlowButton = ({
         { '!bg-primary hover:!bg-primary-6': isPrimary }
       )}
     >
-      <a
+      <Link
         data-test={dataTest}
         className="flex flex-col w-full py-6 items-center text-center text-sm !bg-none"
         href={url}
@@ -131,7 +132,7 @@ const SelectFlowButton = ({
         >
           {subTitle}
         </div>
-      </a>
+      </Link>
     </div>
   );
 };
