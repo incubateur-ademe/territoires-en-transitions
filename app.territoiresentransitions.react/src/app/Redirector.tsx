@@ -33,8 +33,6 @@ export const Redirector = () => {
   //      - tableau de bord des plans d'action si il y a au moins un plan d'actions pilotables
   //      - et sinon vers la synthèse de l'état des lieux
   useEffect(() => {
-    if (!plansData?.plans) return;
-
     if (user && !user.dcp) {
       // Redirige l'utilisateur vers la page de saisie des DCP si nécessaire
       document.location.replace(`${signUpPath}&view=etape3`);
@@ -49,7 +47,7 @@ export const Redirector = () => {
       return;
     }
 
-    if (plansData.plans.length > 0) {
+    if (plansData?.plans?.length) {
       history.push(
         makeTableauBordUrl({
           collectiviteId,
@@ -62,6 +60,8 @@ export const Redirector = () => {
       );
       return;
     }
+
+    if (!plansData?.plans) return;
 
     history.push(makeCollectiviteAccueilUrl({ collectiviteId }));
   }, [isLandingConnected, collectiviteId, user, plansData]);
