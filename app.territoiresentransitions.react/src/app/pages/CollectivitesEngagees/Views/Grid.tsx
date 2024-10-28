@@ -1,7 +1,8 @@
 import noResultIllustration from 'app/static/img/no-results-astronaut-bro.svg';
 import SpinnerLoader from 'ui/shared/SpinnerLoader';
-import {Data} from 'app/pages/CollectivitesEngagees/Views/View';
-import {RecherchesViewParam} from 'app/paths';
+import { Data } from 'app/pages/CollectivitesEngagees/Views/View';
+import { RecherchesViewParam } from 'app/paths';
+import Image from 'next/image';
 
 type Props = {
   view: RecherchesViewParam;
@@ -58,7 +59,7 @@ export const Grid = ({
           <div className="text-xl">
             Modifiez ou désactivez les filtres pour obtenir plus de résultats
           </div>
-          <img
+          <Image
             className="w-[24rem] self-center mt-10"
             src={noResultIllustration}
             alt=""
@@ -67,7 +68,7 @@ export const Grid = ({
       ) : (
         // Grille des cartes
         <div className="grid xl:grid-cols-2 gap-6">
-          {data.map(data => renderCard(data))}
+          {data.map((data) => renderCard(data))}
         </div>
       )}
     </>
