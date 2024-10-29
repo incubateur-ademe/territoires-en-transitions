@@ -1,5 +1,6 @@
 import { createElement, useEffect, useState } from 'react';
 import { FicheAction } from '@tet/api/plan-actions';
+import { useFicheActionChemins } from '../../PlanAction/data/usePlanActionChemin';
 import { useIndicateurDefinitions } from '../../../Indicateurs/Indicateur/useIndicateurDefinition';
 import { useFichesActionLiees } from '../data/useFichesActionLiees';
 import { useActionListe } from '../data/options/useActionListe';
@@ -15,6 +16,10 @@ const FicheActionPdfContent = ({
   fiche,
   generateContent,
 }: FicheActionPdfContentProps) => {
+  const { data: axes, isLoading: isLoadingAxes } = useFicheActionChemins(
+    (fiche.axes ?? []).map((axe) => axe.id)
+  );
+
   const { data: indicateursListe, isLoading: isLoadingIndicateurs } =
     useIndicateurDefinitions(
       0,
@@ -31,7 +36,8 @@ const FicheActionPdfContent = ({
     if (
       !isLoadingIndicateurs &&
       !isLoadingFichesLiees &&
-      !isLoadignActionsListe
+      !isLoadignActionsListe &&
+      !isLoadingAxes
     ) {
       const { actions } = fiche;
       const actionsIds = (actions ?? []).map((action) => action.id);
@@ -42,13 +48,21 @@ const FicheActionPdfContent = ({
       generateContent(
         createElement(FicheActionPdf, {
           fiche,
+          chemins: (axes ?? [])
+            .filter((a) => a.chemin !== null)
+            .map((a) => a.chemin!),
           indicateursListe,
           fichesLiees,
           actionsLiees,
         })
       );
     }
-  }, [isLoadingIndicateurs, isLoadingFichesLiees, isLoadignActionsListe]);
+  }, [
+    isLoadingIndicateurs,
+    isLoadingFichesLiees,
+    isLoadignActionsListe,
+    isLoadingAxes,
+  ]);
 
   return <></>;
 };

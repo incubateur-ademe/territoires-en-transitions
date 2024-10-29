@@ -1,11 +1,12 @@
 import { FicheAction, FicheResume } from '@tet/api/plan-actions';
-import { TActionStatutsRow } from 'types/alias';
+import { TActionStatutsRow, TAxeRow } from 'types/alias';
 import { IndicateurDefinition } from '@tet/api/indicateurs/domain';
 import { Stack, Title } from 'ui/exportPdf/components';
 
 import Acteurs from './Acteurs';
 import ActionsLiees from './ActionsLiees';
 import Budget from './Budget';
+import Chemins from './Chemins';
 import CreationFiche from './CreationFiche';
 import Description from './Description';
 import FichesLiees from './FichesLiees';
@@ -18,6 +19,7 @@ export type FicheActionPdfProps = {
 };
 
 export type FicheActionPdfExtendedProps = FicheActionPdfProps & {
+  chemins: TAxeRow[][];
   indicateursListe: IndicateurDefinition[] | undefined | null;
   fichesLiees: FicheResume[];
   actionsLiees: TActionStatutsRow[];
@@ -25,6 +27,7 @@ export type FicheActionPdfExtendedProps = FicheActionPdfProps & {
 
 const FicheActionPdf = ({
   fiche,
+  chemins,
   indicateursListe,
   fichesLiees,
   actionsLiees,
@@ -33,10 +36,13 @@ const FicheActionPdf = ({
 
   return (
     <Stack>
-      {/* Titre */}
-      <Title variant="h1" fixed>
-        {titre || 'Sans titre'}
-      </Title>
+      <Stack gap={2} className="mb-4" fixed>
+        {/* Titre */}
+        <Title variant="h1">{titre || 'Sans titre'}</Title>
+
+        {/* Emplacements de la fiche */}
+        <Chemins chemins={chemins} />
+      </Stack>
 
       {/* Description de la fiche */}
       <Description fiche={fiche} />

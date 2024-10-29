@@ -1,12 +1,12 @@
-import {useQuery} from 'react-query';
+import { useQuery } from 'react-query';
 
-import {supabaseClient} from 'core-logic/api/supabase';
+import { supabaseClient } from 'core-logic/api/supabase';
 import {
   makeCollectivitePlanActionAxeUrl,
   makeCollectivitePlanActionUrl,
 } from 'app/paths';
-import {TAxeRow} from 'types/alias';
-import {generateTitle} from '../../FicheAction/data/utils';
+import { TAxeRow } from 'types/alias';
+import { generateTitle } from '../../FicheAction/data/utils';
 
 type FilArianeLink = {
   label: string;
@@ -58,7 +58,7 @@ export const generateFilArianeLinks = ({
         label: generateTitle(axe.nom),
       };
     }),
-    {label: generateTitle(titreFiche)},
+    { label: generateTitle(titreFiche) },
   ];
 };
 
@@ -69,10 +69,24 @@ export const generateFilArianeLinks = ({
  */
 export const usePlanActionChemin = (axe_id: number) => {
   return useQuery(['plan_action_chemin', axe_id], async () => {
-    const {data} = await supabaseClient
+    const { data } = await supabaseClient
       .from('plan_action_chemin')
       .select()
       .eq('axe_id', axe_id);
     return data && data[0];
   });
+};
+
+export const useFicheActionChemins = (axesIds: number[]) => {
+  const { data, isLoading } = useQuery(
+    ['fiche_action_chemins', axesIds],
+    async () => {
+      return await supabaseClient
+        .from('plan_action_chemin')
+        .select()
+        .in('axe_id', axesIds);
+    }
+  );
+
+  return { data: data?.data, isLoading };
 };
