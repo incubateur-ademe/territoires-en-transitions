@@ -93,7 +93,11 @@ jobs:
         run: earthly --use-inline-cache +docker-dev-login --GH_USER=${{ secrets.GH_USER }} --GH_TOKEN=${{ secrets.GH_TOKEN }}
 
       - name: Build and push app image
-        run: earthly --use-inline-cache --save-inline-cache --push +app-docker --ANON_KEY=${{ secrets.ANON_KEY }} --API_URL=${{ secrets.API_URL }}
+        run: earthly --use-inline-cache --save-inline-cache --push +app-docker
+          --ANON_KEY=${{ secrets.ANON_KEY }}
+          --API_URL=${{ secrets.API_URL }}
+          --BACKEND_URL=${{ vars.BACKEND_URL }}
+          --PANIER_URL=${{ vars.PANIER_URL }}
 
   build-auth-dev:
     needs: prepare-front-deps
