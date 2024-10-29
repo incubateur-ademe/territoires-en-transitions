@@ -1,24 +1,19 @@
-import { Redirect, Route } from 'react-router-dom';
+import { Route } from 'react-router-dom';
 
-import { usePlansActionsListe } from 'app/pages/collectivite/PlansActions/PlanAction/data/usePlansActionsListe';
 import ModulePageRoutes from '@tet/app/pages/collectivite/TableauDeBord/ModulePageRoutes';
+import { usePlansActionsListe } from 'app/pages/collectivite/PlansActions/PlanAction/data/usePlansActionsListe';
+import Collectivite from 'app/pages/collectivite/TableauDeBord/Collectivite/Collectivite';
 import {
-  collectiviteTDBBasePath,
   collectiviteTDBCollectivitePath,
   collectiviteTDBModulePath,
   collectiviteTDBPersonnelPath,
-  makeTableauBordUrl,
 } from 'app/paths';
-import { useCollectiviteId } from 'core-logic/hooks/params';
 import Personnel from './Personnel/Personnel';
-import View from './components/View';
 import TdbVide from './components/TdbVide';
-import Collectivite from 'app/pages/collectivite/TableauDeBord/Collectivite/Collectivite';
+import View from './components/View';
 
 /** Tableau de bord plans d'action */
 const TableauDeBord = () => {
-  const collectivite_id = useCollectiviteId();
-
   const { data: plansActions } = usePlansActionsListe({});
 
   const isEmpty = plansActions?.plans.length === 0;
@@ -26,16 +21,6 @@ const TableauDeBord = () => {
   return (
     <div className="grow bg-grey-2 -mb-8 py-12">
       <div className="fr-container">
-        {/** Si l'on vient de la navigation principale de l'app,
-         * alors on redirige vers la vue par défaut enregistrée par l'utilisateur */}
-        <Route exact path={collectiviteTDBBasePath}>
-          <Redirect
-            to={makeTableauBordUrl({
-              collectiviteId: collectivite_id!,
-              view: 'personnel',
-            })}
-          />
-        </Route>
         {/** Tableau de bord personnel */}
         <Route exact path={collectiviteTDBPersonnelPath}>
           <View
