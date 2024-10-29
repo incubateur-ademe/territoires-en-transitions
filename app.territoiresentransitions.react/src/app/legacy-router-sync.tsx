@@ -9,7 +9,9 @@ export default function LegacyRouterSync() {
   const search = useSearchParams();
 
   useEffect(() => {
-    history.replace(`${pathname}?${search.toString()}`);
+    if (pathname !== history.location.pathname) {
+      history.replace(`${pathname}?${search.toString()}`);
+    }
 
     const unlisten = history.listen((location, action) => {
       if (action === 'POP' && pathname === location.pathname) {

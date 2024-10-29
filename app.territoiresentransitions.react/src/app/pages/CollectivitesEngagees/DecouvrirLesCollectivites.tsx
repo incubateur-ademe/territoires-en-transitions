@@ -21,7 +21,7 @@ const DecouvrirLesCollectivites = ({ sansCollectivite }: Props) => {
 
   /** Filters */
   const [filters, setFilters] = useSearchParams<CollectiviteEngagee.Filters>(
-    '',
+    recherchesCollectivitesUrl,
     initialFilters,
     nameToShortNames
   );
