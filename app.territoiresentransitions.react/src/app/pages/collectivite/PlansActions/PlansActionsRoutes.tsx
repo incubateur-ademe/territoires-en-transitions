@@ -1,4 +1,4 @@
-import { Link, Redirect, Route } from 'react-router-dom';
+import { Link, Redirect, Route, useHistory } from 'react-router-dom';
 import FichesNonClassees from 'app/pages/collectivite/PlansActions/FichesNonClassees';
 import {
   collectiviteFichesNonClasseesPath,
@@ -22,6 +22,7 @@ import {
   usePlansNavigation,
 } from './PlanAction/data/usePlansNavigation';
 import { useCreateFicheAction } from '@tet/app/pages/collectivite/PlansActions/FicheAction/data/useCreateFicheAction';
+import { Button } from '@tet/ui';
 
 type Props = {
   collectivite_id: number;
@@ -32,6 +33,8 @@ type Props = {
  * Routes starting with collectivite/:collectiviteId/plans see CollectiviteRoutes.tsx
  */
 export const PlansActionsRoutes = ({ collectivite_id, readonly }: Props) => {
+  const history = useHistory();
+
   const { data: axes } = usePlansNavigation();
   const { data: fichesNonClasseesListe } =
     useFichesNonClasseesListe(collectivite_id);
@@ -40,6 +43,8 @@ export const PlansActionsRoutes = ({ collectivite_id, readonly }: Props) => {
 
   const hasFicheNonClassees =
     (fichesNonClasseesListe && fichesNonClasseesListe.length > 0) || false;
+
+  if (!axes) return null;
 
   return (
     <CollectivitePageLayout
@@ -50,7 +55,11 @@ export const PlansActionsRoutes = ({ collectivite_id, readonly }: Props) => {
           hasFicheNonClassees,
           axes
         ),
-        actions: !readonly && (
+        actions: readonly ? (
+          <Button variant="outlined" size="xs" onClick={() => history.goBack()}>
+            Revenir en arrière
+          </Button>
+        ) : (
           <>
             <li className="fr-sidemenu_item p-0 list-none">
               <button
@@ -77,16 +86,32 @@ export const PlansActionsRoutes = ({ collectivite_id, readonly }: Props) => {
       }}
     >
       <Route exact path={collectivitePlanActionLandingPath}>
-        <Redirect
-          to={makeCollectivitePlanActionUrl({
-            collectiviteId: collectivite_id,
-            planActionUid:
-              axes
-                ?.filter((axe) => axe.depth === 0)
-                .at(0)
-                ?.id.toString() || '',
-          })}
-        />
+        {readonly && axes.length === 0 ? (
+          <div className="flex">
+            <div className="mt-64 mx-auto leading-relaxed text-grey-6 text-center">
+              Aucun plan d'action n'a été ajouté
+              <br />
+              par cette collectivité pour le moment.
+            </div>
+          </div>
+        ) : (
+          <Redirect
+            to={
+              axes.length > 0
+                ? makeCollectivitePlanActionUrl({
+                    collectiviteId: collectivite_id,
+                    planActionUid:
+                      axes
+                        .filter((axe) => axe.depth === 0)
+                        .at(0)
+                        ?.id.toString() || '',
+                  })
+                : makeCollectivitePlansActionsNouveauUrl({
+                    collectiviteId: collectivite_id,
+                  })
+            }
+          />
+        )}
       </Route>
 
       {/* Menu de création d'un plan */}
