@@ -14,6 +14,7 @@ import TrajectoiresDataService from './services/trajectoires-data.service';
 import TrajectoiresSpreadsheetService from './services/trajectoires-spreadsheet.service';
 import TrajectoiresXlsxService from './services/trajectoires-xlsx.service';
 import { ConfigurationModule } from '../config/configuration.module';
+import IndicateurFiltreService from './services/indicateur-filtre.service';
 
 @Module({
   imports: [
@@ -28,12 +29,13 @@ import { ConfigurationModule } from '../config/configuration.module';
     ExportIndicateursService,
     IndicateurSourcesService,
     IndicateursService,
+    IndicateurFiltreService,
     TrajectoiresDataService,
     TrajectoiresSpreadsheetService,
     TrajectoiresXlsxService,
     TrajectoiresRouter,
   ],
-  exports: [IndicateurSourcesService, IndicateursService, TrajectoiresRouter],
+  exports: [IndicateurSourcesService, IndicateursService, TrajectoiresRouter, IndicateurFiltreService],
   controllers: [IndicateursController, TrajectoiresController],
 })
 export class IndicateursModule {}
