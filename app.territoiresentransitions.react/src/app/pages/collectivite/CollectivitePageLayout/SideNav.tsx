@@ -2,7 +2,7 @@ import { Icon } from '@tet/ui';
 import classNames from 'classnames';
 import Link from 'next/link';
 import { usePathname } from 'next/navigation';
-import React, { useState } from 'react';
+import React from 'react';
 
 export type TSideNavLink = {
   link: string;
@@ -51,7 +51,9 @@ type SectionProps = {
 };
 
 const Section = ({ section }: SectionProps) => {
-  const [isOpen, setIsOpen] = useState(false);
+  const pathname = usePathname();
+  const isOpen =
+    pathname === section.link || pathname.startsWith(`${section.link}/`);
 
   return (
     <li key={section.link} data-test="SideNav-section" className="p-0">
@@ -60,7 +62,6 @@ const Section = ({ section }: SectionProps) => {
         title="Ouvrir la section"
         className="flex justify-between items-center"
         href={section.link}
-        onClick={() => setIsOpen(!isOpen)}
       >
         {section.displayName}
         <Icon
@@ -98,7 +99,8 @@ const NavLink = ({
 }) => {
   const pathname = usePathname();
 
-  const isActive = pathname === props.href;
+  const isActive =
+    pathname === props.href || pathname.startsWith(`${props.href}/`);
 
   return (
     <Link
