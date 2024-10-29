@@ -5,7 +5,7 @@ import CollectivitesService from '../../collectivites/services/collectivites.ser
 import SheetService from '../../spreadsheets/services/sheet.service';
 import { IndicateurValeurType } from '../models/indicateur-valeur.table';
 import IndicateursService from './indicateurs.service';
-import IndicateurSourcesService from './indicateurSources.service';
+import IndicateurSourcesService from './indicateur-sources.service';
 import TrajectoiresDataService from './trajectoires-data.service';
 
 describe('TrajectoiresDataService test', () => {

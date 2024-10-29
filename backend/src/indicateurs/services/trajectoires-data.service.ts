@@ -11,7 +11,7 @@ import { AuthService } from '../../auth/services/auth.service';
 import { EpciType } from '../../collectivites/models/epci.table';
 import CollectivitesService from '../../collectivites/services/collectivites.service';
 import IndicateursService from './indicateurs.service';
-import IndicateurSourcesService from './indicateurSources.service';
+import IndicateurSourcesService from './indicateur-sources.service';
 import { CreateIndicateurSourceType } from '../models/indicateur-source.table';
 import {
   CreateIndicateurSourceMetadonneeType,
