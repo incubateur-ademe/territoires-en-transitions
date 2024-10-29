@@ -125,6 +125,10 @@ const FichesActionListe = ({
     setCurrentPage(1);
   }, [filtres]);
 
+  useEffect(() => {
+    setCurrentPage(1);
+  }, [debouncedSearch]);
+
   const countTotal = data?.count || 0;
 
   return (
