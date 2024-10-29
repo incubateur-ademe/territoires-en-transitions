@@ -12,7 +12,3 @@ export const ENV = {
   },
   crisp_website_id: process.env.NEXT_PUBLIC_CRISP_WEBSITE_ID,
 };
-
-if (ENV.node_env !== 'test') {
-  console.log('ENV :', JSON.stringify(ENV, null, 2));
-}

@@ -14,6 +14,7 @@ const shared = {
 };
 
 export const metadata: Metadata = {
+  metadataBase: new URL('https://app.territoiresentransitions.fr'),
   title: shared.title,
   description: shared.description,
   robots: {
@@ -38,7 +39,7 @@ export const metadata: Metadata = {
   openGraph: {
     title: shared.title,
     description: shared.description,
-    url: 'https://app.territoiresentransitions.fr/',
+    url: 'https://app.territoiresentransitions.fr',
     siteName: shared.title,
     locale: 'fr_FR',
     images: [

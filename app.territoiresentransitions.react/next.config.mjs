@@ -11,6 +11,10 @@ const nextConfig = {
     svgr: true,
   },
 
+  typescript: {
+    tsconfigPath: 'tsconfig.app.json',
+  },
+
   // Useful for self-hosting in a Docker container
   // See https://nextjs.org/docs/app/api-reference/next-config-js/output#automatically-copying-traced-files
   output: 'standalone',
