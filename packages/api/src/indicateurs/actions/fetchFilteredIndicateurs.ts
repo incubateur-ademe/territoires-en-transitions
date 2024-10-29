@@ -124,6 +124,7 @@ export async function fetchFilteredIndicateurs(
   // sélectionne uniquement les indicateurs parent (sauf pour CRTE et perso ou si on fait
   // une recherche par id ou si un des filtres complémentaires est actif)
   const filtrerParParent =
+    !filters.withChildren &&
     !filtresOptions.estPerso &&
     !filters.categorieNoms?.find((nom) => nom === 'crte') &&
     !searchById &&
