@@ -123,7 +123,7 @@ const FichesActionListe = ({
 
   useEffect(() => {
     setCurrentPage(1);
-  }, [isLoading]);
+  }, [filtres]);
 
   const countTotal = data?.count || 0;
 
