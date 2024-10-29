@@ -57,7 +57,7 @@ export const useResultatTrajectoire = ({
   coef?: number;
 }) => {
   // données de la trajectoire
-  const {data, isLoading: isLoadingTrajectoire} = useTrajectoire();
+  const { data, isLoading: isLoadingTrajectoire } = useTrajectoire();
   const trajectoire =
     data?.trajectoire && Object.values(data.trajectoire).flat();
 
@@ -77,7 +77,7 @@ export const useResultatTrajectoire = ({
   // dataset du secteur sélectionné
   const valeursSecteur =
     valeursTousSecteurs && secteurIdx > 0
-      ? valeursTousSecteurs.find(s => s?.id === identifiant)
+      ? valeursTousSecteurs.find((s) => s?.id === identifiant)
       : null;
 
   // crée les datasets par sous-secteur si un secteur est sélectionné
@@ -88,10 +88,10 @@ export const useResultatTrajectoire = ({
     prepareDonneesParSecteur(secteur.sousSecteurs, trajectoire, coef);
 
   // charge les données objectifs/résultats de la collectivité et open data
-  const {data: indicateursEtValeurs, isLoading: isLoadingObjectifsResultats} =
+  const { data: indicateursEtValeurs, isLoading: isLoadingObjectifsResultats } =
     useIndicateurValeurs({
-      identifiants_referentiel: [identifiant],
-      date_fin: DATE_FIN,
+      identifiantsReferentiel: [identifiant],
+      dateFin: DATE_FIN,
       sources: [
         SourceIndicateur.COLLECTIVITE,
         SourceIndicateur.RARE,
@@ -127,8 +127,8 @@ export const useResultatTrajectoire = ({
     name: LAYERS.objectifs.label,
     color: LAYERS.objectifs.color,
     source:
-      objectifsCollectiviteOuPCAET?.map(v => ({
-        x: v.date_valeur,
+      objectifsCollectiviteOuPCAET?.map((v) => ({
+        x: v.dateValeur,
         y: (v.objectif as number) * (coef || 1),
       })) || [],
   };
@@ -137,8 +137,8 @@ export const useResultatTrajectoire = ({
     name: LAYERS.resultats.label,
     color: LAYERS.resultats.color,
     source:
-      resultatsCollectiviteOuRARE?.map(v => ({
-        x: v.date_valeur,
+      resultatsCollectiviteOuRARE?.map((v) => ({
+        x: v.dateValeur,
         y: (v.resultat as number) * (coef || 1),
       })) || [],
   };
@@ -154,7 +154,7 @@ export const useResultatTrajectoire = ({
     indicateur.id === 'emissions_ges' &&
     !secteur &&
     trajectoire?.find(
-      (t) => t.definition.identifiant_referentiel === EMISSIONS_NETTES.id
+      (t) => t.definition.identifiantReferentiel === EMISSIONS_NETTES.id
     );
   const emissionsNettes = dataEmissionsNettes
     ? {
@@ -162,7 +162,7 @@ export const useResultatTrajectoire = ({
         name: EMISSIONS_NETTES.nom,
         color: EMISSIONS_NETTES.color,
         source: dataEmissionsNettes.valeurs.map((v) => ({
-          x: v.date_valeur,
+          x: v.dateValeur,
           y: v.objectif * (EMISSIONS_NETTES.coef || 1),
         })),
       }
@@ -185,7 +185,7 @@ export const useResultatTrajectoire = ({
 // crée les datasets par secteur pour le graphique
 const prepareDonneesParSecteur = (
   /** (sous-)secteurs à inclure */
-  secteurs: Readonly<Array<{nom: string; identifiant: string}>>,
+  secteurs: Readonly<Array<{ nom: string; identifiant: string }>>,
   /** données de la trajectoire */
   indicateurs: IndicateurAvecValeurs[],
   /** coefficient pour normaliser les données */
@@ -196,14 +196,14 @@ const prepareDonneesParSecteur = (
   return secteurs
     .map((s, i) => {
       const valeurs = indicateurs.find(
-        t => t.definition.identifiant_referentiel === s.identifiant
+        (t) => t.definition.identifiantReferentiel === s.identifiant
       )?.valeurs;
       return valeurs
         ? {
             id: s.identifiant,
             name: s.nom,
-            source: valeurs.map(v => ({
-              x: v.date_valeur,
+            source: valeurs.map((v) => ({
+              x: v.dateValeur,
               y: v.objectif * (coef || 1),
             })),
             dimensions: ['x', 'y'],
@@ -211,7 +211,7 @@ const prepareDonneesParSecteur = (
           }
         : null;
     })
-    .filter(v => !!v);
+    .filter((v) => !!v);
 };
 
 /** Sélectionne le jeu de données le plus approprié pour l'affichage des objectifs/résultats */

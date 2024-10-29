@@ -4,34 +4,34 @@ import {useCollectiviteId} from 'core-logic/hooks/params';
 
 type ValeurIndicateur = {
   id?: number;
-  indicateur_id: number;
-  date_valeur: string;
+  indicateurId: number;
+  dateValeur: string;
   resultat?: number | null;
-  resultat_commentaire?: string | null;
+  resultatCommentaire?: string | null;
   objectif?: number | null;
-  objectif_commentaire?: string | null;
-  metadonnee_id?: number | null;
+  objectifCommentaire?: string | null;
+  metadonneeId?: number | null;
 };
 
 // renvoie une fonction de modification de ValeurIndicateur
 export const useUpsertValeurIndicateur = () => {
   const queryClient = useQueryClient();
   const api = useApiClient();
-  const collectivite_id = useCollectiviteId();
+  const collectiviteId = useCollectiviteId();
 
   return useMutation(
     async (valeurIndicateur: ValeurIndicateur) => {
-      return collectivite_id
+      return collectiviteId
         ? api.post({
             route: '/indicateurs',
-            params: {valeurs: [{collectivite_id, ...valeurIndicateur}]},
+            params: { valeurs: [{ collectiviteId, ...valeurIndicateur }] },
           })
         : null;
     },
     {
       mutationKey: 'upsert_valeur_indicateur',
       onSuccess: (...args) => {
-        queryClient.invalidateQueries(['indicateur_valeurs', collectivite_id]);
+        queryClient.invalidateQueries(['indicateur_valeurs', collectiviteId]);
       },
     }
   );

@@ -61,11 +61,11 @@ const useDonneesSectoriseesIndicateur = (
   const identifiants = secteurs.map(s => s.identifiant);
   const sourcesVoulues = indicateurTrajectoire.sources;
 
-  const {data, ...rest} = useIndicateurValeurs({
-    identifiants_referentiel: identifiants,
+  const { data, ...rest } = useIndicateurValeurs({
+    identifiantsReferentiel: identifiants,
     sources: sourcesVoulues as unknown as string[],
-    date_debut: DATE_DEBUT,
-    date_fin: `${ANNEE_REFERENCE}-12-31`,
+    dateDebut: DATE_DEBUT,
+    dateFin: `${ANNEE_REFERENCE}-12-31`,
   });
 
   const indicateurs = data?.indicateurs ?? null;
@@ -87,32 +87,32 @@ const useDonneesSectoriseesIndicateur = (
     // il y a des données
     !!indicateurs?.length &&
     // la liste des identifiants filtrés est complète
-    identifiants.filter(identifiant => {
+    identifiants.filter((identifiant) => {
       const indicateur = indicateurs.find(
-        ind => ind.definition.identifiant_referentiel === identifiant
+        (ind) => ind.definition.identifiantReferentiel === identifiant
       );
       return (
         // l'indicateur existe
         indicateur &&
         // et il y a au moins une valeur renseignée
         !!indicateur.sources[SourceIndicateur.COLLECTIVITE]?.valeurs?.filter(
-          v => typeof v.resultat === 'number'
+          (v) => typeof v.resultat === 'number'
         ).length
       );
     }).length === identifiants.length;
 
   // prépare les données pour le composant TableauDonnees
-  const valeursSecteurs = identifiants?.map(identifiant => {
+  const valeursSecteurs = identifiants?.map((identifiant) => {
     const ind = indicateurs?.find(
-      i => i.definition.identifiant_referentiel === identifiant
+      (i) => i.definition.identifiantReferentiel === identifiant
     );
-    const indicateur_id = ind?.definition.id;
-    return indicateur_id
+    const indicateurId = ind?.definition.id;
+    return indicateurId
       ? {
-          indicateur_id,
+          indicateurId,
           identifiant,
           valeurs: ind
-            ? Object.entries(ind.sources).map(([source, {valeurs}]) => ({
+            ? Object.entries(ind.sources).map(([source, { valeurs }]) => ({
                 source,
                 valeur: normalizeValue(
                   valeurs?.[0].resultat ?? valeurs?.[0].objectif ?? null,
