@@ -31,6 +31,8 @@ export const Tab = ({
   index,
   activeTab = 0,
   children,
+  iconPosition,
+  iconClassName,
   ...remainingProps
 }: TabProps) =>
   index === activeTab && (
