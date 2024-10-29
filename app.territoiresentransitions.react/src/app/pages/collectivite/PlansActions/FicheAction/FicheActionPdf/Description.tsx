@@ -1,4 +1,4 @@
-import { Card, Paragraph, Stack, Title } from 'ui/exportPdf/components';
+import { Badge, Card, Paragraph, Stack, Title } from 'ui/exportPdf/components';
 import { FicheActionPdfProps } from './FicheActionPdf';
 
 const Description = ({ fiche }: FicheActionPdfProps) => {
@@ -8,12 +8,18 @@ const Description = ({ fiche }: FicheActionPdfProps) => {
     <Card className="bg-primary-6 border-primary-6">
       {/* Liste des thématiques et sous-thématiques sous forme de badges */}
       {(thematiques?.length || sousThematiques?.length) && (
-        <Paragraph className="font-bold text-info-2">
-          {[
-            ...(thematiques ?? []).map((t) => t.nom),
-            ...(sousThematiques ?? []).map((st) => st.sousThematique),
-          ].join(', ')}
-        </Paragraph>
+        <Stack direction="row" gap={2.5} className="flex-wrap">
+          {thematiques?.map((thematique) => (
+            <Badge key={thematique.id} title={thematique.nom} state="info" />
+          ))}
+          {sousThematiques?.map((ssThematique) => (
+            <Badge
+              key={ssThematique.id}
+              title={ssThematique.sousThematique}
+              state="info"
+            />
+          ))}
+        </Stack>
       )}
 
       <Stack gap={3}>

@@ -1,3 +1,4 @@
+export * from './Badge';
 export * from './Box';
 export * from './Card';
 export * from './Divider';

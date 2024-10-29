@@ -9,11 +9,16 @@ const CreationFiche = ({ fiche }: FicheActionPdfProps) => {
 
   return (
     <Card gap={1} className="py-3 italic">
-      {modifiedAt && (
-        <Paragraph>
-          Dernière modification le {format(new Date(modifiedAt), 'dd/MM/yyyy')}
-        </Paragraph>
-      )}
+      <Paragraph>
+        {modifiedAt && (
+          <>
+            Dernière modification le{' '}
+            {format(new Date(modifiedAt), 'dd/MM/yyyy')},{' '}
+          </>
+        )}
+        {modifiedAt ? 't' : 'T'}éléchargée le {format(new Date(), 'dd/MM/yyyy')}
+      </Paragraph>
+
       {createdAt && (
         <Paragraph>
           Fiche action créée le {format(new Date(createdAt), 'dd/MM/yyyy')}

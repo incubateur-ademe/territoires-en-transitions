@@ -2,6 +2,8 @@ import { format, isBefore, startOfToday } from 'date-fns';
 import classNames from 'classnames';
 import { FicheResume } from '@tet/api/plan-actions';
 import {
+  BadgePriorite,
+  BadgeStatut,
   Box,
   Card,
   Divider,
@@ -36,11 +38,12 @@ const FicheLieeCard = ({ ficheLiee }: FicheLieeCardProps) => {
   return (
     <Card wrap={false} gap={1.5} className="w-[31%] p-3">
       {/* Statut et niveau de priorité */}
-      <Paragraph className="uppercase">
-        {niveauPriorite}
-        {niveauPriorite && statut ? ' - ' : ''}
-        {statut}
-      </Paragraph>
+      <Stack direction="row" gap={2}>
+        {!!niveauPriorite && (
+          <BadgePriorite priorite={niveauPriorite} size="sm" />
+        )}
+        {<BadgeStatut statut={statut ?? 'Sans statut'} size="sm" />}
+      </Stack>
 
       <Stack gap={1}>
         {/* Titre de la fiche */}

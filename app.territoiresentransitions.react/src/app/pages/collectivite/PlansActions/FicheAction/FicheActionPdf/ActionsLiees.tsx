@@ -1,8 +1,13 @@
-import classNames from 'classnames';
-import { avancementToLabel, referentielToName } from '@tet/app/labels';
+import { referentielToName } from '@tet/app/labels';
 import { TActionStatutsRow } from 'types/alias';
 import { getActionStatut } from 'ui/referentiels/utils';
-import { Card, Paragraph, Stack, Title } from 'ui/exportPdf/components';
+import {
+  BadgeStatutAction,
+  Card,
+  Paragraph,
+  Stack,
+  Title,
+} from 'ui/exportPdf/components';
 
 type ActionLieeCardProps = {
   action: TActionStatutsRow;
@@ -15,9 +20,7 @@ const ActionLieeCard = ({ action }: ActionLieeCardProps) => {
   return (
     <Card wrap={false} gap={1.5} className="w-[31%] p-3">
       {/* Avancement */}
-      <Paragraph className={classNames('uppercase')}>
-        {avancementToLabel[statut]}
-      </Paragraph>
+      <BadgeStatutAction statut={statut} size="sm" />
 
       <Stack gap={1}>
         {/* Référentiel associé */}

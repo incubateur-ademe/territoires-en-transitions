@@ -1,5 +1,12 @@
 import classNames from 'classnames';
-import { Card, Paragraph, Title } from 'ui/exportPdf/components';
+import {
+  BadgeBudget,
+  BadgeFinanceur,
+  Card,
+  Paragraph,
+  Stack,
+  Title,
+} from 'ui/exportPdf/components';
 import { getFormattedNumber } from '../utils';
 import { FicheActionPdfProps } from './FicheActionPdf';
 
@@ -32,24 +39,41 @@ const Budget = ({ fiche }: FicheActionPdfProps) => {
       </Title>
 
       {/* Budget prévisionnel total */}
-      <Paragraph
-        className={classNames({ 'text-grey-7': emptyBudgetPrevisionnel })}
+      <Stack
+        gap={emptyBudgetPrevisionnel ? 'px' : 2}
+        direction="row"
+        className="flex-wrap items-center"
       >
         <Paragraph className="text-primary-9 font-bold uppercase">
           Budget prévisionnel total :{' '}
         </Paragraph>
-        {!emptyBudgetPrevisionnel
-          ? `${getFormattedNumber(budgetPrevisionnel)}€ TTC `
-          : 'Non renseigné'}
-      </Paragraph>
+        {emptyBudgetPrevisionnel ? (
+          <Paragraph className="text-grey-7">Non renseigné</Paragraph>
+        ) : (
+          <BadgeBudget montantTtc={budgetPrevisionnel} />
+        )}
+      </Stack>
 
       {/* Financeurs */}
-      <Paragraph className={classNames({ 'text-grey-7': emptyFinanceurs })}>
+      <Stack
+        gap={emptyFinanceurs ? 'px' : 2}
+        direction="row"
+        className="flex-wrap items-center"
+      >
         <Paragraph className="text-primary-9 font-bold uppercase">
           Financeurs :{' '}
         </Paragraph>
-        {financeursList}
-      </Paragraph>
+        {emptyFinanceurs ? (
+          <Paragraph className="text-grey-7">Non renseignés</Paragraph>
+        ) : (
+          financeurs.map((f) => (
+            <BadgeFinanceur
+              nom={f.financeurTag.nom}
+              montantTtc={f.montantTtc}
+            />
+          ))
+        )}
+      </Stack>
 
       {/* Financements */}
       <Paragraph className={classNames({ 'text-grey-7': emptyFinancements })}>

@@ -1,6 +1,8 @@
 import { isBefore, startOfToday } from 'date-fns';
 import classNames from 'classnames';
 import {
+  BadgePriorite,
+  BadgeStatut,
   Card,
   Divider,
   Paragraph,
@@ -61,13 +63,12 @@ const Planning = ({ fiche }: FicheActionPdfProps) => {
 
       <Stack gap={2} className="text-center">
         {/* Statut et niveau de priorité */}
-        {(!!statut || !!niveauPriorite) && (
-          <Paragraph className="uppercase font-medium">
-            {niveauPriorite ?? ''}
-            {niveauPriorite && statut ? ' - ' : ''}
-            {statut ?? ''}
-          </Paragraph>
-        )}
+        {
+          <Stack direction="row" className="mx-auto">
+            {!!niveauPriorite && <BadgePriorite priorite={niveauPriorite} />}
+            {<BadgeStatut statut={statut ?? 'Sans statut'} />}
+          </Stack>
+        }
 
         {/* Action récurrente */}
         {!!ameliorationContinue && (
