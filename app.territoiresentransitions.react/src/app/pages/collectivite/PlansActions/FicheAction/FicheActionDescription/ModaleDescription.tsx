@@ -10,13 +10,12 @@ import {
   Textarea,
   useEventTracker,
 } from '@tet/ui';
-import { TSousThematiqueRow, TThematiqueRow } from 'types/alias';
 import { FicheAction } from '@tet/api/plan-actions';
 import ThematiquesDropdown from 'ui/dropdownLists/ThematiquesDropdown/ThematiquesDropdown';
 import SousThematiquesDropdown from 'ui/dropdownLists/SousThematiquesDropdown/SousThematiquesDropdown';
 import { useCurrentCollectivite } from 'core-logic/hooks/useCurrentCollectivite';
-import { getMaxLengthMessage } from '../utils';
-import { SousThematique, Thematique } from '@tet/api/shared/domain';
+import { getMaxLengthMessage } from 'utils/formatUtils';
+import { Thematique } from '@tet/api/shared/domain';
 
 const DESCRIPTION_MAX_LENGTH = 20000;
 const MOYENS_MAX_LENGTH = 10000;

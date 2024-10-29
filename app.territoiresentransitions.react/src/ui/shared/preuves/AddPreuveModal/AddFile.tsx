@@ -1,18 +1,27 @@
 /**
  * Affiche le composant d'upload de fichiers
  */
-import {ChangeEvent, FormEvent, useState} from 'react';
-import {Button, Field, Input} from '@tet/ui';
-import {HINT, EXPECTED_FORMATS_LIST} from './constants';
-import {filesToUploadList} from './filesToUploadList';
-import {TFileItem} from './FileItem';
-import {FileItemsList} from './FileItemsList';
-import {UploadStatus, UploadStatusCode, UploadStatusCompleted} from './types';
-import {useCollectiviteId} from 'core-logic/hooks/params';
+import { ChangeEvent, FormEvent, useEffect, useState } from 'react';
+import { Button, Field, Input } from '@tet/ui';
+import { HINT, EXPECTED_FORMATS_LIST } from './constants';
+import { filesToUploadList } from './filesToUploadList';
+import { TFileItem } from './FileItem';
+import { FileItemsList } from './FileItemsList';
+import {
+  DocType,
+  UploadStatus,
+  UploadStatusCode,
+  UploadStatusCompleted,
+} from './types';
+import { useCollectiviteId } from 'core-logic/hooks/params';
+import { CheckboxConfidentiel } from './CheckboxConfidentiel';
+import { useUpdateBibliothequeFichierConfidentiel } from '../Bibliotheque/useEditPreuve';
 
 export type TAddFileFromLib = (fichier_id: number) => void;
 
 export type TAddFileProps = {
+  /** Type des documents attendus */
+  docType?: DocType;
   /** Fichiers initialement sélectionnés (pour les tests) */
   initialSelection?: Array<TFileItem>;
   onAddFileFromLib: TAddFileFromLib;
@@ -20,17 +29,22 @@ export type TAddFileProps = {
 };
 
 const getFileByName = (fileName: string, selection: Array<TFileItem>): number =>
-  selection.findIndex(({file}) => file.name === fileName);
+  selection.findIndex(({ file }) => file.name === fileName);
 
 export const AddFile = (props: TAddFileProps) => {
-  const {initialSelection, onAddFileFromLib, onClose} = props;
+  const { docType, initialSelection, onAddFileFromLib, onClose } = props;
   const [currentSelection, setCurrentSelection] = useState<Array<TFileItem>>(
     initialSelection || []
   );
+  const [confidentiel, setConfidentiel] = useState(false);
+
   const collectivite_id = useCollectiviteId();
 
+  const { mutate: updateConfidentiel } =
+    useUpdateBibliothequeFichierConfidentiel();
+
   const onChange = async (e: ChangeEvent<HTMLInputElement>) => {
-    const {files} = e.target;
+    const { files } = e.target;
     const filesToUpload = await filesToUploadList(collectivite_id, files);
     if (files) {
       setCurrentSelection([...currentSelection, ...filesToUpload]);
@@ -43,7 +57,7 @@ export const AddFile = (props: TAddFileProps) => {
     if (index !== -1) {
       // met à jour la sélection courante
       const updatedSelection = [...currentSelection];
-      updatedSelection[index] = {...currentSelection[index], status};
+      updatedSelection[index] = { ...currentSelection[index], status };
       setCurrentSelection(updatedSelection);
     }
   };
@@ -60,7 +74,7 @@ export const AddFile = (props: TAddFileProps) => {
   };
 
   const validFiles = currentSelection.filter(
-    ({status}) =>
+    ({ status }) =>
       status.code === UploadStatusCode.completed ||
       status.code === UploadStatusCode.duplicated
   );
@@ -68,11 +82,31 @@ export const AddFile = (props: TAddFileProps) => {
 
   const onSubmit = (e: FormEvent) => {
     e.preventDefault();
-    validFiles.map(({status}) =>
-      onAddFileFromLib((status as UploadStatusCompleted).fichier_id)
-    );
+    validFiles.map(({ status }) => {
+      onAddFileFromLib((status as UploadStatusCompleted).fichier_id);
+    });
     onClose();
   };
+
+  // Synchronise le flag "confidentiel" des fichiers uploadés avec l'état du
+  // bouton celui-ci pouvant être changé avant/après upload.
+  // Permet de gérer aussi le cas des documents déjà uploadés
+  useEffect(() => {
+    const update = async () => {
+      if (collectivite_id && validFiles?.length) {
+        await Promise.all(
+          validFiles.map(({ status }) =>
+            updateConfidentiel({
+              collectivite_id,
+              fichier: { hash: (status as UploadStatusCompleted).hash },
+              updatedConfidentiel: confidentiel,
+            })
+          )
+        );
+      }
+    };
+    update();
+  }, [collectivite_id, confidentiel, validFiles?.length]);
 
   return (
     <div data-test="AddFile" className="flex flex-col gap-8">
@@ -88,7 +122,11 @@ export const AddFile = (props: TAddFileProps) => {
           onChange={onChange}
         />
       </Field>
-
+      <CheckboxConfidentiel
+        docType={docType}
+        confidentiel={confidentiel}
+        setConfidentiel={setConfidentiel}
+      />
       <FileItemsList
         items={currentSelection}
         onRunningStopped={onRunningStopped}

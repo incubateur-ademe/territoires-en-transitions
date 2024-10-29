@@ -101,10 +101,8 @@ Fonctionnalité: Gérer les fiches et les plans d'action
     Et que je suis sur la page "Plans action" de la collectivité "1"
     Et que je navigue vers le plan "Plan test"
     # les fiches doivent etre privées
-    Alors la carte "Fiche test 1" est privée
-    Et la carte "Fiche test 2" est privée
-    # les fiches ne sont pas clickable
-    Et je ne peux pas cliquer sur la carte "Fiche test 1"
+    Alors la fiche "Fiche test 1" n'est plus présente
+    Et la fiche "Fiche test 2" n'est plus présente
 
   Scénario: Ajouter, éditer et supprimer un plan d'action
     Etant donné que je suis connecté en tant que "yolo"
@@ -208,13 +206,13 @@ Fonctionnalité: Gérer les fiches et les plans d'action
     Alors "6" fiches action s'affichent
 
     Quand je filtre par "Sans pilote"
-    Alors "6" fiches action s'affichent
+    Alors "2" fiches action s'affichent
 
     Quand je filtre par "Harry Cot"
-    Alors "0" fiches action s'affichent
+    Alors "2" fiches action s'affichent
 
     Quand je filtre les fiches par "Sans élu·e référent·e" du filtre "personne-referentes"
-    Alors "0" fiches action s'affichent
+    Alors "1" fiches action s'affichent
 
     Quand je clique sur le bouton "Désactiver tous les filtres"
     Alors un message demandant à l'utilisateur de sélectionner un filtre s'affiche

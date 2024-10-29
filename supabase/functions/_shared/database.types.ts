@@ -859,18 +859,21 @@ export type Database = {
       bibliotheque_fichier: {
         Row: {
           collectivite_id: number | null
+          confidentiel: boolean
           filename: string | null
           hash: string | null
           id: number
         }
         Insert: {
           collectivite_id?: number | null
+          confidentiel?: boolean
           filename?: string | null
           hash?: string | null
           id?: number
         }
         Update: {
           collectivite_id?: number | null
+          confidentiel?: boolean
           filename?: string | null
           hash?: string | null
           id?: number
@@ -3658,6 +3661,7 @@ export type Database = {
           action_impact_fourchette_budgetaire: unknown | null
           action_impact_temps_de_mise_en_oeuvre: unknown | null
           action_impact_thematique: unknown | null
+          action_impact_typologie: unknown | null
           matches_competences: boolean | null
           thematique: unknown | null
         }
@@ -24082,6 +24086,7 @@ export type Database = {
         Row: {
           bucket_id: string | null
           collectivite_id: number | null
+          confidentiel: boolean | null
           file_id: string | null
           filename: string | null
           filesize: number | null
@@ -29674,6 +29679,15 @@ export type Database = {
           thematique_id: number
         }[]
       }
+      action_impact_typologie: {
+        Args: {
+          "": unknown
+        }
+        Returns: {
+          id: number
+          nom: string
+        }[]
+      }
       action_perimetre_evaluation: {
         Args: {
           id: unknown
@@ -29709,10 +29723,12 @@ export type Database = {
           collectivite_id: number
           hash: string
           filename: string
+          confidentiel?: boolean
         }
         Returns: {
           bucket_id: string | null
           collectivite_id: number | null
+          confidentiel: boolean | null
           file_id: string | null
           filename: string | null
           filesize: number | null
@@ -31966,10 +31982,6 @@ export type Database = {
           type: Database["public"]["Enums"]["action_type"] | null
         }[]
       }
-      refresh_stats_locales: {
-        Args: Record<PropertyKey, never>
-        Returns: undefined
-      }
       remove_compression_policy: {
         Args: {
           hypertable: unknown
@@ -32617,6 +32629,14 @@ export type Database = {
           "": unknown
         }
         Returns: unknown
+      }
+      update_bibliotheque_fichier_confidentiel: {
+        Args: {
+          collectivite_id: number
+          hash: string
+          confidentiel: boolean
+        }
+        Returns: undefined
       }
       update_bibliotheque_fichier_filename: {
         Args: {

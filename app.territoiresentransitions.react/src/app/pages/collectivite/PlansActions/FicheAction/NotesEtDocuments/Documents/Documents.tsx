@@ -5,20 +5,20 @@ import {useAnnexesFicheAction} from '../../data/useAnnexesFicheAction';
 import EmptyCard from '../../EmptyCard';
 import DocumentPicto from './DocumentPicto';
 import ModaleAjoutDocument from './ModaleAjoutDocument';
-import CarteDocument from './CarteDocument';
+import CarteDocument from 'ui/shared/preuves/Bibliotheque/CarteDocument';
 import LoadingCard from '../../LoadingCard';
-import {useAddAnnexe} from '../../data/useAddAnnexe';
+import { useAddAnnexe } from '../../data/useAddAnnexe';
 
 type DocumentsProps = {
   isReadonly: boolean;
   ficheId: number;
 };
 
-const Documents = ({isReadonly, ficheId}: DocumentsProps) => {
+const Documents = ({ isReadonly, ficheId }: DocumentsProps) => {
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [isEditLoading, setIsEditLoading] = useState(false);
 
-  const {data: documents, isLoading} = useAnnexesFicheAction(ficheId);
+  const { data: documents, isLoading } = useAnnexesFicheAction(ficheId);
   const handlers = useAddAnnexe(ficheId);
 
   useEffect(() => {
@@ -43,7 +43,7 @@ const Documents = ({isReadonly, ficheId}: DocumentsProps) => {
     <>
       {isEmpty ? (
         <EmptyCard
-          picto={className => <DocumentPicto className={className} />}
+          picto={(className) => <DocumentPicto className={className} />}
           title="Aucun document ajouté"
           isReadonly={isReadonly}
           action={{
@@ -76,8 +76,8 @@ const Documents = ({isReadonly, ficheId}: DocumentsProps) => {
               Impossible de charger les documents...
             </span>
           ) : (
-            <div className="grid grid-cols-2 gap-3">
-              {documents.map(doc => (
+            <div className="grid grid-cols-1 gap-8">
+              {documents.map((doc) => (
                 <CarteDocument
                   key={doc.id}
                   isReadonly={isReadonly}
