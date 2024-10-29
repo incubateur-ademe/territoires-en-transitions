@@ -1,7 +1,7 @@
 VERSION 0.8
 
 build:
-  FROM ../../+node-alpine-with-all-deps
+  FROM ../+node-alpine-with-all-deps
 
   ARG --required ANON_KEY
   ARG --required API_URL
@@ -33,7 +33,7 @@ build:
 
 # See official Dockerfile at https://github.com/vercel/next.js/blob/canary/examples/with-docker/Dockerfile
 docker:
-  FROM ../../+node-alpine
+  FROM ../+node-alpine
 
   ARG --required ANON_KEY
   ARG --required API_URL
@@ -87,6 +87,6 @@ docker:
 
 deploy:
   ARG --required KOYEB_API_KEY
-  FROM ../../+koyeb --KOYEB_API_KEY=$KOYEB_API_KEY
+  FROM ../+koyeb --KOYEB_API_KEY=$KOYEB_API_KEY
   RUN ./koyeb services update $ENV_NAME-app/front --docker $APP_IMG_NAME
 
