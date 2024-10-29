@@ -38,8 +38,8 @@ export const GrapheTousSecteurs = ({
     ...makeStackedSeries(secteursNonVides),
   ];
   if (emissionsNettes) {
-    dataset.push(emissionsNettes);
-    series.push(...makeLineSeries([emissionsNettes]));
+    dataset.unshift(emissionsNettes);
+    series.unshift(...makeLineSeries([emissionsNettes]));
   }
 
   const option = makeOption({
