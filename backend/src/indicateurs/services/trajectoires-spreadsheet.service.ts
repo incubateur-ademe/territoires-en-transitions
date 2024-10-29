@@ -23,7 +23,7 @@ import { IndicateurDefinitionType } from '../models/indicateur-definition.table'
 import { CreateIndicateurValeurType } from '../models/indicateur-valeur.table';
 import { VerificationTrajectoireStatus } from '../models/verification-trajectoire.response';
 import IndicateursService from './indicateurs.service';
-import IndicateurSourcesService from './indicateurSources.service';
+import IndicateurSourcesService from './indicateur-sources.service';
 import TrajectoiresDataService from './trajectoires-data.service';
 
 @Injectable()

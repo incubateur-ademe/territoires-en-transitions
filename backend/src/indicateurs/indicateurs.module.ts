@@ -8,7 +8,7 @@ import { IndicateursController } from './controllers/indicateurs.controller';
 import { TrajectoiresController } from './controllers/trajectoires.controller';
 import { TrajectoiresRouter } from './routers/trajectoires.router';
 import IndicateursService from './services/indicateurs.service';
-import IndicateurSourcesService from './services/indicateurSources.service';
+import IndicateurSourcesService from './services/indicateur-sources.service';
 import ExportIndicateursService from './services/export-indicateurs.service';
 import TrajectoiresDataService from './services/trajectoires-data.service';
 import TrajectoiresSpreadsheetService from './services/trajectoires-spreadsheet.service';
