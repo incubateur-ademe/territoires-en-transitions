@@ -880,7 +880,6 @@ app-deploy-test: ## Déploie une app de test et crée une app Koyeb si nécessai
         RUN /koyeb apps init "test-app-$name" \
          --docker "$APP_IMG_NAME" --docker-private-registry-secret ghcr \
          --type web --port 3000:http --route /:3000 --env PORT=3000 \
-         --env STATIC_DIR=/app/dist/apps/app-front \
          --regions par
     END
 
