@@ -409,8 +409,8 @@ app-run: ## construit et lance l'image de l'app en local
 
 app-test-build: ## construit une image pour exécuter les tests unitaires de l'app
     FROM +front-deps
-    ENV NX_PUBLIC_SUPABASE_URL
-    ENV NX_PUBLIC_SUPABASE_KEY
+    ENV NEXT_PUBLIC_SUPABASE_URL
+    ENV NEXT_PUBLIC_SUPABASE_KEY
     ENV ZIP_ORIGIN_OVERRIDE
     # copie les sources du module à tester
     COPY $APP_DIR $APP_DIR
@@ -428,8 +428,8 @@ app-test: ## lance les tests unitaires de l'app
     RUN docker run --rm \
         --name app-test_tet \
         --env CI=true \ # désactive le mode watch quand on lance la commande en local
-        --env NX_PUBLIC_SUPABASE_URL='http://fake' \
-        --env NX_PUBLIC_SUPABASE_KEY='fake' \
+        --env NEXT_PUBLIC_SUPABASE_URL='http://fake' \
+        --env NEXT_PUBLIC_SUPABASE_KEY='fake' \
         app-test:latest
 
 package-api-test-build: ## construit une image pour exécuter les tests d'intégration de l'api
