@@ -10,6 +10,16 @@ const nextConfig = {
     // See: https://github.com/gregberge/svgr
     svgr: true,
   },
+
+  // Reverse Proxy vers PostHog : https://posthog.com/docs/advanced/proxy/nextjs
+  async rewrites() {
+    return [
+      {
+        source: '/ingest/:path*',
+        destination: 'https://eu.posthog.com/:path*',
+      },
+    ];
+  },
 };
 
 const sentryConfig = {
