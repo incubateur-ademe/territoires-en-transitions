@@ -17,13 +17,13 @@ export type IndicateurAvecValeurs = {
   definition: Omit<
     Indicateurs.domain.IndicateurDefinitionPredefini,
     'identifiant'
-  > & {identifiant_referentiel: string};
+  > & { identifiantReferentiel: string };
   valeurs: IndicateurValeurGroupee[];
 };
 
 type IndicateurValeurGroupee = {
   id: number;
-  date_valeur: string;
+  dateValeur: string;
   objectif: number;
 };
 
