@@ -62,6 +62,8 @@ export const Grid = ({
           <Image
             className="w-[24rem] self-center mt-10"
             src={noResultIllustration}
+            width={384}
+            height={384}
             alt=""
           />
         </div>
