@@ -62,14 +62,14 @@ const Selection = () => {
             />
           </div>
           <Button
-            className="mt-4 self-center"
+            className="mt-12 self-center"
             variant="outlined"
             onClick={() => {
               history.goBack();
               tracker({ fonction: 'annulation', action: 'clic' });
             }}
           >
-            Annuler
+            Revenir en arrière
           </Button>
         </div>
       </div>
