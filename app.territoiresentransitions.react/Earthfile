@@ -1,0 +1,92 @@
+VERSION 0.8
+
+build:
+  FROM ../../+node-alpine-with-all-deps
+
+  ARG --required ANON_KEY
+  ARG --required API_URL
+  ARG --required PANIER_URL
+  ARG --required BACKEND_URL
+  ARG POSTHOG_HOST
+  ARG POSTHOG_KEY
+  ARG CRISP_WEBSITE_ID
+  ARG SENTRY_DSN
+
+  COPY . ./app.territoiresentransitions.react
+
+  # Disable telemetry during build
+  ENV NEXT_TELEMETRY_DISABLED=1
+
+  ENV NEXT_PUBLIC_SUPABASE_ANON_KEY=$ANON_KEY
+  ENV NEXT_PUBLIC_SUPABASE_URL=$API_URL
+  ENV NEXT_PUBLIC_PANIER_URL=$PANIER_URL
+  ENV NEXT_PUBLIC_BACKEND_URL=$BACKEND_URL
+  ENV NEXT_PUBLIC_POSTHOG_HOST=$POSTHOG_HOST
+  ENV NEXT_PUBLIC_POSTHOG_KEY=$POSTHOG_KEY
+  ENV NEXT_PUBLIC_CRISP_WEBSITE_ID=$CRISP_WEBSITE_ID
+  ENV NEXT_PUBLIC_SENTRY_DSN=$SENTRY_DSN
+
+  RUN pnpm build:app
+
+  SAVE ARTIFACT ./app.territoiresentransitions.react/.next
+  SAVE ARTIFACT ./app.territoiresentransitions.react/public
+
+# See official Dockerfile at https://github.com/vercel/next.js/blob/canary/examples/with-docker/Dockerfile
+docker:
+  FROM ../../+node-alpine
+
+  ARG --required ANON_KEY
+  ARG --required API_URL
+  ARG --required PANIER_URL
+  ARG --required BACKEND_URL
+  ARG POSTHOG_HOST
+  ARG POSTHOG_KEY
+  ARG CRISP_WEBSITE_ID
+  ARG SENTRY_DSN
+
+  ENV NEXT_PUBLIC_SUPABASE_ANON_KEY=$ANON_KEY
+  ENV NEXT_PUBLIC_SUPABASE_URL=$API_URL
+  ENV NEXT_PUBLIC_PANIER_URL=$PANIER_URL
+  ENV NEXT_PUBLIC_BACKEND_URL=$BACKEND_URL
+  ENV NEXT_PUBLIC_POSTHOG_HOST=$POSTHOG_HOST
+  ENV NEXT_PUBLIC_POSTHOG_KEY=$POSTHOG_KEY
+  ENV NEXT_PUBLIC_CRISP_WEBSITE_ID=$CRISP_WEBSITE_ID
+  ENV NEXT_PUBLIC_SENTRY_DSN=$SENTRY_DSN
+
+  ARG DOCKER_IMAGE=$APP_IMG_NAME
+
+  RUN addgroup --system --gid 1001 nodejs
+  RUN adduser --system --uid 1001 nextjs
+
+  COPY +build/public ./public
+
+  # Set the correct permission for prerender cache
+  RUN mkdir .next
+  RUN chown nextjs:nodejs .next
+
+  # Automatically leverage output traces to reduce docker image size
+  # https://nextjs.org/docs/advanced-features/output-file-tracing
+  COPY --chown=nextjs:nodejs +build/.next/standalone ./
+  COPY --chown=nextjs:nodejs +build/.next/static ./packages/site/.next/static
+
+  USER nextjs
+
+  # Prepare the app for production
+  ENV NEXT_TELEMETRY_DISABLED=1
+  ENV HOSTNAME="0.0.0.0"
+  ENV NODE_ENV production
+
+  ENV PORT=3000
+  EXPOSE 3000
+
+  # server.js is created by next build from the standalone output
+  # https://nextjs.org/docs/pages/api-reference/next-config-js/output
+  CMD ["node", "packages/site/server.js"]
+
+  SAVE IMAGE --push $DOCKER_IMAGE
+
+deploy:
+  ARG --required KOYEB_API_KEY
+  FROM ../../+koyeb --KOYEB_API_KEY=$KOYEB_API_KEY
+  RUN ./koyeb services update $ENV_NAME-app/front --docker $APP_IMG_NAME
+

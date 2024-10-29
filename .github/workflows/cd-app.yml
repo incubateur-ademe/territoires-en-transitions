@@ -1,4 +1,4 @@
-name: Déploiement à la demande de l'app
+name: Déploiement de l'app
 run-name: Déploiement de l'app sur ${{ github.event.inputs.target }}
 
 on:
@@ -19,7 +19,6 @@ jobs:
     name: Build l'app
     environment: ${{ github.event.inputs.target }}
     runs-on: ubuntu-latest
-    timeout-minutes: 20
 
     steps:
       - uses: actions/checkout@v4
@@ -35,7 +34,7 @@ jobs:
           earthly
           --use-inline-cache --save-inline-cache --push
           --platform=linux/amd64
-          +app-build
+          +app-docker
           --ENV_NAME=${{ github.event.inputs.target }}
           --ANON_KEY=${{ secrets.ANON_KEY }} --API_URL=${{ secrets.API_URL }}
           --SENTRY_DSN=${{ vars.SENTRY_DSN }}
@@ -50,7 +49,6 @@ jobs:
     needs: build-app
     environment: ${{ github.event.inputs.target }}
     runs-on: ubuntu-latest
-    timeout-minutes: 20
 
     steps:
       - uses: actions/checkout@v4
@@ -75,7 +73,6 @@ jobs:
     needs: build-app
     environment: ${{ github.event.inputs.target }}
     runs-on: ubuntu-latest
-    timeout-minutes: 20
 
     steps:
       - uses: actions/checkout@v4

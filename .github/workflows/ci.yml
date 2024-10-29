@@ -80,25 +80,20 @@ jobs:
         run: earthly --use-inline-cache --save-inline-cache --push +front-deps-builder
 
   build-app-dev:
-    needs: prepare-front-deps
     environment: dev
     runs-on: ubuntu-latest
-    timeout-minutes: 30
 
     steps:
       - uses: actions/checkout@v4
-        with:
-          ref: ${{ github.event.pull_request.head.sha }}
-          fetch-depth: 0
       - uses: earthly/actions-setup@v1
         with:
-          version: 0.8.1
+          version: ^0.8.0
 
       - name: Login into registry
         run: earthly --use-inline-cache +docker-dev-login --GH_USER=${{ secrets.GH_USER }} --GH_TOKEN=${{ secrets.GH_TOKEN }}
 
       - name: Build and push app image
-        run: earthly --use-inline-cache --save-inline-cache --push +app-build --ANON_KEY=${{ secrets.ANON_KEY }} --API_URL=${{ secrets.API_URL }}
+        run: earthly --use-inline-cache --save-inline-cache --push +app-docker --ANON_KEY=${{ secrets.ANON_KEY }} --API_URL=${{ secrets.API_URL }}
 
   build-auth-dev:
     needs: prepare-front-deps

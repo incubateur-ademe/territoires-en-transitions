@@ -346,6 +346,27 @@ front-deps-builder:
     LOCALLY
     DO +BUILD_IF_NO_IMG --IMG_NAME=front-deps --IMG_TAG=$FRONT_DEPS_TAG --BUILD_TARGET=front-deps
 
+
+# APP ENTRYPOINTS
+# ---------------
+
+app-build:
+  BUILD --pass-args ./app.territoiresentransitions.react+build
+
+app-docker:
+  BUILD --pass-args ./app.territoiresentransitions.react+docker
+
+app-deploy:
+  ARG --required KOYEB_API_KEY
+  ARG --required TRAJECTOIRE_SNBC_SHEET_ID
+  ARG --required TRAJECTOIRE_SNBC_XLSX_ID
+  ARG --required TRAJECTOIRE_SNBC_RESULT_FOLDER_ID
+  BUILD --pass-args ./app.territoiresentransitions.react+deploy
+
+
+# BACKEND ENTRYPOINTS
+# -------------------
+
 backend-build:
   BUILD --pass-args ./backend+build
 
@@ -359,53 +380,27 @@ backend-deploy:
   ARG --required TRAJECTOIRE_SNBC_RESULT_FOLDER_ID
   BUILD --pass-args ./backend+deploy
 
-app-build: ## construit l'image de l'app
-    ARG PLATFORM
-    ARG --required ANON_KEY
-    ARG --required API_URL
-    ARG CRISP_WEBSITE_ID
-    ARG SENTRY_DSN
-    ARG POSTHOG_HOST
-    ARG POSTHOG_KEY
-    ARG BACKEND_URL
-    ARG PANIER_URL
-    FROM +front-deps
-    ENV NEXT_PUBLIC_SUPABASE_URL=$API_URL
-    ENV NEXT_PUBLIC_SUPABASE_KEY=$ANON_KEY
-    ENV NEXT_PUBLIC_CRISP_WEBSITE_ID=$CRISP_WEBSITE_ID
-    ENV NEXT_PUBLIC_SENTRY_DSN=$SENTRY_DSN
-    ENV NEXT_PUBLIC_POSTHOG_HOST=$POSTHOG_HOST
-    ENV NEXT_PUBLIC_POSTHOG_KEY=$POSTHOG_KEY
-    ENV NEXT_PUBLIC_BACKEND_URL=$BACKEND_URL
-    ENV NEXT_PUBLIC_PANIER_URL=$PANIER_URL
-    LABEL org.opencontainers.image.description="Front-end $ENV_NAME, build depuis $GIT_BRANCH. API: $API_URL"
-    # copie les sources des modules à construire
-    COPY $APP_DIR/. $APP_DIR/
-    COPY $UI_DIR/. $UI_DIR
-    COPY $API_DIR/. $API_DIR
-    COPY $BACKEND_DIR/. $BACKEND_DIR
-    RUN pnpm run build:app
-    EXPOSE 3000
-    WORKDIR $APP_DIR
-    CMD ["dumb-init", "node", "server.js"]
-    SAVE IMAGE --cache-from=$APP_IMG_NAME --push $APP_IMG_NAME
 
-app-run: ## construit et lance l'image de l'app en local
-    ARG --required ANON_KEY
-    ARG --required API_URL
+# SITE ENTRYPOINTS
+# ----------------
+
+site-docker:
+  BUILD --pass-args ./packages/site+docker
+
+site-deploy:
+  ARG --required KOYEB_API_KEY
+  BUILD --pass-args ./packages/site+deploy
+
+site-run: ## construit et lance l'image du site en local
     ARG network=supabase_network_tet
-    ARG STATIC_DIR=/app/dist/apps/app-front
     LOCALLY
-    DO +BUILD_IF_NO_IMG --IMG_NAME=front-deps --IMG_TAG=$FRONT_DEPS_TAG --BUILD_TARGET=front-deps
-    DO +BUILD_IF_NO_IMG --IMG_NAME=app --IMG_TAG=$APP_TAG --BUILD_TARGET=app-build
-    ARG kong_url=http://supabase_kong_tet:8000
     RUN docker run -d --rm \
-        --name app_tet \
+        --name site_tet \
         --network $network \
-        --publish 3000:3000 \
-        --env ZIP_ORIGIN_OVERRIDE=$kong_url \
-        --env STATIC_DIR=$STATIC_DIR \
-        $APP_IMG_NAME
+        --publish 3001:80 \
+        $SITE_IMG_NAME
+
+
 
 app-test-build: ## construit une image pour exécuter les tests unitaires de l'app
     FROM +front-deps
@@ -474,21 +469,7 @@ panier-run: ## lance l'image du panier en local
         --publish 3002:3000 \
         $PANIER_IMG_NAME
 
-site-docker:
-  BUILD --pass-args ./packages/site+docker
 
-site-deploy:
-  ARG --required KOYEB_API_KEY
-  BUILD --pass-args ./packages/site+deploy
-
-site-run: ## construit et lance l'image du site en local
-    ARG network=supabase_network_tet
-    LOCALLY
-    RUN docker run -d --rm \
-        --name site_tet \
-        --network $network \
-        --publish 3001:80 \
-        $SITE_IMG_NAME
 
 auth-build: ## construit l'image du module d'authentification
     ARG PLATFORM
@@ -712,10 +693,6 @@ dev:
         RUN earthly +update-scores --DB_URL=$DB_URL
     END
 
-    IF [ "$app" = "yes" ]
-        RUN earthly +app-run --API_URL=$API_URL --ANON_KEY=$ANON_KEY
-    END
-
     IF [ "$auth" = "yes" ]
         RUN earthly +auth-run --API_URL=$API_URL --ANON_KEY=$ANON_KEY
     END
@@ -881,11 +858,6 @@ auth-deploy:
     ARG --required KOYEB_API_KEY
     FROM +koyeb
     RUN ./koyeb services update $ENV_NAME-auth/front --docker $AUTH_IMG_NAME
-
-app-deploy: ## Déploie le front dans une app Koyeb existante
-    ARG --required KOYEB_API_KEY
-    FROM +koyeb
-    RUN ./koyeb services update $ENV_NAME-app/front --docker $APP_IMG_NAME
 
 app-deploy-test: ## Déploie une app de test et crée une app Koyeb si nécessaire
     ARG --required KOYEB_API_KEY
