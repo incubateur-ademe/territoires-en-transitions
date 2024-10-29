@@ -299,6 +299,9 @@ node-alpine-with-all-deps:
   # Copy shared libraries
   COPY $API_DIR $API_DIR
   COPY $UI_DIR $UI_DIR
+  # Temporarily consider the Backend as a shared library.
+  # The app build needs it to resolve the import of the trpc AppRouter.
+  COPY $BACKEND_DIR $BACKEND_DIR
 
 
 # construit l'image de base pour les images utilisant node
