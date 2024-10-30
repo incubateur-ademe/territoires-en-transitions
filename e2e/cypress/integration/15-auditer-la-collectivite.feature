@@ -8,10 +8,25 @@ Fonctionnalité: Auditer la collectivité
     Et un score permettant d'obtenir la 2ème étoile
 
     Quand je suis connecté avec les droits en "edition"
-    Et que je demande un audit de labellisation "eci" pour la 2ème étoile
+    Et que je suis sur la page "Labellisation ECi" de la collectivité courante
+    Et que je clique sur le bouton "Ajouter un document de labellisation"
+    Et que je transfère à partir du "dialogue d'ajout d'une preuve" le fichier nommé "doc labellisation.pdf" et contenant "contenu du fichier"
+    Et que je clique sur le bouton "Ajouter" du "formulaire Fichier"
+    Alors la liste des documents de la page Labellisation contient les lignes suivantes :
+    | Titre                 | Commentaire |
+    | doc labellisation.pdf |             |
+    Et le bouton "Demander un audit" est activé
+
+    Quand je demande un audit de labellisation "eci" pour la 2ème étoile
     Et que je suis sur la page "Labellisation ECi" de la collectivité courante
     Alors le bouton "Demander un audit" est absent
     Et le "message d'en-tête" contient "Demande envoyée"
+
+    Quand je suis sur la page "Bibliothèque de documents" de la collectivité courante
+    # le document reste éditable pour l'utilisateur
+    Alors la liste des documents de labellisation contient les lignes suivantes :
+    | Titre                 | Commentaire | Lecture seule |
+    | doc labellisation.pdf |             |               |
 
     Quand je me reconnecte en tant qu'auditeur de la collectivité
     Et que je suis sur la page "Labellisation ECi" de la collectivité courante
@@ -23,8 +38,18 @@ Fonctionnalité: Auditer la collectivité
 
     ## On revient sur la page
     ## le parcours arrive avant le commencement de l'audit
-    Et que je suis sur la page "Labellisation ECi" de la collectivité courante
-    Et le bouton "Valider l'audit" est visible
+    Quand je suis sur la page "Labellisation ECi" de la collectivité courante
+    Alors le bouton "Valider l'audit" est visible
+
+    # le document reste éditable pour l'auditeur
+    Quand je suis sur la page "Bibliothèque de documents" de la collectivité courante
+    Alors la liste des documents de labellisation contient les lignes suivantes :
+    # audit non validé => le document de labellisation est éditable par l'auditeur
+    | Titre                 | Commentaire | Lecture seule |
+    | doc labellisation.pdf |             |               |
+
+    Quand je demande la suppression du document "doc labellisation.pdf"
+    Alors il n'y a pas de documents de labellisation
 
   Scénario: Suivre l'audit en tant qu'auditeur
     Etant donné une collectivité nommée "Collectivité de test"

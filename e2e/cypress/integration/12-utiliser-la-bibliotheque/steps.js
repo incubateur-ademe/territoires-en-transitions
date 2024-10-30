@@ -93,6 +93,15 @@ When(
   }
 );
 
+When('je demande la suppression du document {string}', (docName) => {
+  cy.get('[data-test=carte-doc] [data-test=name]')
+    .contains(docName)
+    .parents('[data-test=carte-doc]')
+    .get('[data-test=btn-delete]')
+    .click();
+  cy.get('[data-test=confirm-suppr] button[type=submit]').click();
+});
+
 const getLib = () => cy.get('[data-test=BibliothequeDocs]');
 const getRefentielIdentifiants = referentiel =>
   getLib().find(
