@@ -8,9 +8,9 @@ import {
   Paragraph,
   Stack,
   Title,
-} from 'ui/exportPdf/components';
-import { LoopLeftIcon } from 'ui/exportPdf/assets/icons';
-import { CalendarPicto } from 'ui/exportPdf/assets/picto';
+} from 'ui/export-pdf/components';
+import { LoopLeftIcon } from 'ui/export-pdf/assets/icons';
+import { CalendarPicto } from 'ui/export-pdf/assets/picto';
 import { getTextFormattedDate } from '../utils';
 import { FicheActionPdfProps } from './FicheActionPdf';
 

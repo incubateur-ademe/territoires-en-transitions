@@ -11,12 +11,12 @@ import {
   Paragraph,
   Stack,
   Title,
-} from 'ui/exportPdf/components';
+} from 'ui/export-pdf/components';
 import {
   CalendarIcon,
   LoopLeftIcon,
   UserIcon,
-} from 'ui/exportPdf/assets/icons';
+} from 'ui/export-pdf/assets/icons';
 import { generateTitle } from '../data/utils';
 import { getTextFormattedDate } from '../utils';
 

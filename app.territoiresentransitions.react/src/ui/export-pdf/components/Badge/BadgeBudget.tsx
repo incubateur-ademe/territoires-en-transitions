@@ -1,7 +1,7 @@
 import classNames from 'classnames';
 import { Text } from '@react-pdf/renderer';
 import { getFormattedNumber } from '@tet/app/pages/collectivite/PlansActions/FicheAction/utils';
-import { Badge } from '../../components';
+import { Badge } from 'ui/export-pdf/components';
 import { tw } from '../../utils';
 
 type BadgeBudgetProps = {

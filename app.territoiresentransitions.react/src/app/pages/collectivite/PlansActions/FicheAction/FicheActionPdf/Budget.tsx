@@ -6,7 +6,7 @@ import {
   Paragraph,
   Stack,
   Title,
-} from 'ui/exportPdf/components';
+} from 'ui/export-pdf/components';
 import { getFormattedNumber } from '../utils';
 import { FicheActionPdfProps } from './FicheActionPdf';
 

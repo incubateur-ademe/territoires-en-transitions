@@ -4,7 +4,7 @@ import { useFicheActionChemins } from '../../PlanAction/data/usePlanActionChemin
 import { useIndicateurDefinitions } from '../../../Indicateurs/Indicateur/useIndicateurDefinition';
 import { useFichesActionLiees } from '../data/useFichesActionLiees';
 import { useActionListe } from '../data/options/useActionListe';
-import ExportPDFButton from 'ui/exportPdf/ExportPDFButton';
+import ExportPDFButton from 'ui/export-pdf/ExportPDFButton';
 import FicheActionPdf from '../FicheActionPdf/FicheActionPdf';
 
 type FicheActionPdfContentProps = {

@@ -1,7 +1,7 @@
 import { FicheAction, FicheResume } from '@tet/api/plan-actions';
 import { TActionStatutsRow, TAxeRow } from 'types/alias';
 import { IndicateurDefinition } from '@tet/api/indicateurs/domain';
-import { Stack, Title } from 'ui/exportPdf/components';
+import { Stack, Title } from 'ui/export-pdf/components';
 
 import Acteurs from './Acteurs';
 import ActionsLiees from './ActionsLiees';

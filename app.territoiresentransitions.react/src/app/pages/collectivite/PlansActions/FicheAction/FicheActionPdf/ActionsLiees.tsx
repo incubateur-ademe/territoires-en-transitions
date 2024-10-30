@@ -7,7 +7,7 @@ import {
   Paragraph,
   Stack,
   Title,
-} from 'ui/exportPdf/components';
+} from 'ui/export-pdf/components';
 
 type ActionLieeCardProps = {
   action: TActionStatutsRow;

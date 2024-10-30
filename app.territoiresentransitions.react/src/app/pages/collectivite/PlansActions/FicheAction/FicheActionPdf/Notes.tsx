@@ -1,4 +1,4 @@
-import { Card, Paragraph, Title } from 'ui/exportPdf/components';
+import { Card, Paragraph, Title } from 'ui/export-pdf/components';
 import { FicheActionPdfProps } from './FicheActionPdf';
 
 const Notes = ({ fiche }: FicheActionPdfProps) => {

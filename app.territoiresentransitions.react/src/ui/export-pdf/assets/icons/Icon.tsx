@@ -1,6 +1,6 @@
 import { Path, SVGProps, Svg } from '@react-pdf/renderer';
 import { preset } from '@tet/ui';
-import { tw } from 'ui/exportPdf/utils';
+import { tw } from 'ui/export-pdf/utils';
 
 const { colors } = preset.theme.extend;
 

@@ -1,4 +1,10 @@
-import { Card, List, ListElement, Stack, Title } from 'ui/exportPdf/components';
+import {
+  Card,
+  List,
+  ListElement,
+  Stack,
+  Title,
+} from 'ui/export-pdf/components';
 import { FicheActionPdfProps } from './FicheActionPdf';
 import {
   CiblePicto,
@@ -7,7 +13,7 @@ import {
   PersonnePilotePicto,
   ServicePilotePicto,
   StructurePilotePicto,
-} from 'ui/exportPdf/assets/picto';
+} from 'ui/export-pdf/assets/picto';
 
 type ListeActeursProps = {
   titre: string;
