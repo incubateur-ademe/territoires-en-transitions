@@ -1,4 +1,4 @@
-import { getAuthBaseUrl } from '@tet/api';
+import { ENV } from 'environmentVariables';
 import type { NextRequest } from 'next/server';
 import { NextResponse } from 'next/server';
 import { resetPwdPath, signInPath, signUpPath } from './app/paths';
@@ -26,10 +26,13 @@ export const config = {
 
 // This function can be marked `async` if using `await` inside
 export function middleware(request: NextRequest) {
-  const nextPathname = request.nextUrl.pathname;
+  const pathname = request.nextUrl.pathname;
   const requestUrl = new URL(request.url);
 
-  if (isAuthUrl(nextPathname)) {
+  // console.log('middleware.requestUrl', request.url);
+  // console.log('middleware.nextPathname', pathname);
+
+  if (isAuthUrl(pathname)) {
     return redirectToAuthDomain(requestUrl);
   }
 }
@@ -43,9 +46,7 @@ function isAuthUrl(pathname: string) {
 }
 
 function redirectToAuthDomain(requestUrl: URL) {
-  const authBaseUrl = getAuthBaseUrl(requestUrl.hostname);
-
-  const authUrl = new URL(requestUrl.pathname, authBaseUrl);
+  const authUrl = new URL(requestUrl.pathname, ENV.auth_url);
   authUrl.search = requestUrl.search;
 
   return NextResponse.redirect(authUrl);

@@ -370,9 +370,6 @@ app-deploy:
 # BACKEND ENTRYPOINTS
 # -------------------
 
-backend-build:
-  BUILD --pass-args ./backend+build
-
 backend-docker:
   BUILD --pass-args ./backend+docker
 
@@ -382,6 +379,28 @@ backend-deploy:
   ARG --required TRAJECTOIRE_SNBC_XLSX_ID
   ARG --required TRAJECTOIRE_SNBC_RESULT_FOLDER_ID
   BUILD --pass-args ./backend+deploy
+
+
+# PANIER ENTRYPOINTS
+# ------------------
+
+panier-docker:
+  BUILD --pass-args ./packages/panier+docker
+
+panier-deploy:
+  ARG --required KOYEB_API_KEY
+  BUILD --pass-args ./packages/panier+deploy
+
+# lance l'image du panier en local
+panier-run:
+    ARG network=supabase_network_tet
+    LOCALLY
+    RUN docker run -d --rm \
+        --name panier_tet \
+        --network $network \
+        --publish 3002:3000 \
+        $PANIER_IMG_NAME
+
 
 
 # SITE ENTRYPOINTS
@@ -402,7 +421,6 @@ site-run: ## construit et lance l'image du site en local
         --network $network \
         --publish 3001:80 \
         $SITE_IMG_NAME
-
 
 
 app-test-build: ## construit une image pour exécuter les tests unitaires de l'app
@@ -455,23 +473,6 @@ package-api-test: ## lance les tests d'intégration de l'api
         --env SUPABASE_KEY=$ANON_KEY \
         --env SUPABASE_SERVICE_ROLE_KEY=$SERVICE_ROLE_KEY \
         package-api-test:latest
-
-panier-docker: ## construit l'image du panier
-  BUILD --pass-args ./packages/panier+docker
-
-panier-deploy:
-  ARG --required KOYEB_API_KEY
-  BUILD --pass-args ./packages/panier+deploy
-
-panier-run: ## lance l'image du panier en local
-    ARG network=supabase_network_tet
-    LOCALLY
-    RUN docker run -d --rm \
-        --name panier_tet \
-        --network $network \
-        --publish 3002:3000 \
-        $PANIER_IMG_NAME
-
 
 
 auth-build: ## construit l'image du module d'authentification

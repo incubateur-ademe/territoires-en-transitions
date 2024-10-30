@@ -81,10 +81,7 @@ export const Redirector = () => {
       } else if (!isConnected && !consume) {
         // si déconnecté on redirige sur la page "créer un compte"
         const signUpPathFromInvitation = new URL(
-          getAuthPaths(
-            document.location.hostname,
-            `${document.location.href}?consume=1`
-          ).signUp
+          getAuthPaths(`${document.location.href}?consume=1`).signUp
         );
         // ajoute l'email associé à l'invitation afin que le formulaire soit pré-rempli
         if (invitationEmail) {

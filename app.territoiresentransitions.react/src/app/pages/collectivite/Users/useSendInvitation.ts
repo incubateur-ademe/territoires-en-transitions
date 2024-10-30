@@ -1,8 +1,11 @@
-import {useMutation} from 'react-query';
-import {makeCollectiviteAccueilUrl, makeInvitationLandingPath} from 'app/paths';
-import {CurrentCollectivite} from 'core-logic/hooks/useCurrentCollectivite';
-import {getAuthBaseUrl} from '@tet/api';
-import {useAuth, UserData} from 'core-logic/api/auth/AuthProvider';
+import {
+  makeCollectiviteAccueilUrl,
+  makeInvitationLandingPath,
+} from 'app/paths';
+import { useAuth, UserData } from 'core-logic/api/auth/AuthProvider';
+import { CurrentCollectivite } from 'core-logic/hooks/useCurrentCollectivite';
+import { ENV } from 'environmentVariables';
+import { useMutation } from 'react-query';
 
 export type SendInvitationArgs = {
   email: string;
@@ -16,11 +19,11 @@ export const useSendInvitation = (
   collectivite: CurrentCollectivite,
   user: UserData
 ) => {
-  const {nom: nomCollectivite} = collectivite;
-  const {authHeaders} = useAuth();
+  const { nom: nomCollectivite } = collectivite;
+  const { authHeaders } = useAuth();
 
   return useMutation(
-    async ({invitationId, email: rawEmail}: SendInvitationArgs) => {
+    async ({ invitationId, email: rawEmail }: SendInvitationArgs) => {
       const email = rawEmail.toLowerCase();
       const url =
         window.location.origin +
@@ -32,9 +35,9 @@ export const useSendInvitation = (
       const urlType = invitationId ? 'invitation' : 'rattachement';
 
       // envoi le mail d'invitation
-      const invitePath = `${getAuthBaseUrl(document.location.hostname)}/invite`;
-      const {prenom, nom, email: emailFrom} = user;
-      const {status} = await fetch(invitePath, {
+      const invitePath = `${ENV.auth_url}/invite`;
+      const { prenom, nom, email: emailFrom } = user;
+      const { status } = await fetch(invitePath, {
         method: 'POST',
         headers: {
           'content-type': 'application/json',
@@ -42,14 +45,14 @@ export const useSendInvitation = (
         },
         body: JSON.stringify({
           to: email,
-          from: {prenom, nom, email: emailFrom},
+          from: { prenom, nom, email: emailFrom },
           collectivite: nomCollectivite,
           url,
           urlType,
         }),
       });
       if (status > 200) {
-        return {error: "Echec de l'envoi d'email", sent: false as const};
+        return { error: "Echec de l'envoi d'email", sent: false as const };
       }
       return {
         email,

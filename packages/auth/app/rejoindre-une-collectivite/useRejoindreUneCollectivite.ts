@@ -8,9 +8,9 @@ import {
   CollectiviteNom,
   RejoindreUneCollectiviteData,
 } from '@tet/auth/components/RejoindreUneCollectivite';
-import {supabase} from '@tet/auth/src/clientAPI';
-import {useRouter} from 'next/navigation';
-import {useState} from 'react';
+import { supabase } from '@tet/auth/src/clientAPI';
+import { useRouter } from 'next/navigation';
+import { useState } from 'react';
 
 export const NB_COLLECTIVITES_FETCH = 10;
 
@@ -43,7 +43,7 @@ export const useRejoindreUneCollectivite = ({
 
     // demande le rattachement
     setIsLoading(true);
-    const {error} = await supabase.rpc('claim_collectivite', {
+    const { error } = await supabase.rpc('claim_collectivite', {
       collectivite_id: formData.collectiviteId,
       champ_intervention: formData.champ_intervention || [],
       role: formData.role,
@@ -76,27 +76,30 @@ export const useRejoindreUneCollectivite = ({
       query.or(processedSearch);
     }
 
-    const {error, data} = await query;
+    const { error, data } = await query;
     setIsLoading(false);
     if (!error && data) {
       setCollectivites(
-        data.filter(c => !c.collectivite_test?.length) as CollectiviteNom[]
+        data.filter((c) => !c.collectivite_test?.length) as CollectiviteNom[]
       );
     }
   };
 
   const onSelectCollectivite = async (id: number | null) => {
     if (id) {
-      const {data: contacts, error} = await supabase.rpc('referent_contacts', {
-        id,
-      });
+      const { data: contacts, error } = await supabase.rpc(
+        'referent_contacts',
+        {
+          id,
+        }
+      );
 
-      const nom = collectivites?.find(c => c.collectivite_id === id)?.nom;
+      const nom = collectivites?.find((c) => c.collectivite_id === id)?.nom;
       if (!error && nom) {
         setCollectiviteSelectionnee({
           id,
           nom,
-          url: getCollectivitePath(document.location.hostname, id),
+          url: getCollectivitePath(id),
           contacts,
         });
       }
@@ -109,7 +112,7 @@ export const useRejoindreUneCollectivite = ({
     collectiviteSelectionnee?.id &&
     collectivites &&
     !collectivites?.find(
-      c => c.collectivite_id === collectiviteSelectionnee?.id
+      (c) => c.collectivite_id === collectiviteSelectionnee?.id
     );
 
   return {

@@ -9,7 +9,7 @@ import { createTrackingClient, TrackingProvider } from '@tet/ui';
 import { QueryClient, QueryClientProvider } from 'react-query';
 import { ReactQueryDevtools } from 'react-query/devtools';
 import { AuthProvider } from '../core-logic/api/auth/AuthProvider';
-import { ENV } from '../environmentVariables';
+import { ENV } from 'environmentVariables';
 import { trpc, trpcClient } from '../utils/trpc';
 
 const theme = createTheme({

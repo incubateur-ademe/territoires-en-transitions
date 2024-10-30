@@ -27,9 +27,7 @@
       "@tet/ui/*": ["./packages/ui/src/*"],
       "app/*": ["./app.territoiresentransitions.react/src/app/*"],
       "core-logic/*": ["./app.territoiresentransitions.react/src/core-logic/*"],
-      "environmentVariables": [
-        "./app.territoiresentransitions.react/src/environmentVariables"
-      ],
+      "environmentVariables": ["./packages/api/src/environmentVariables"],
       "types/*": ["./app.territoiresentransitions.react/src/types/*"],
       "ui": ["./app.territoiresentransitions.react/src/ui/*"],
       "ui/*": ["./app.territoiresentransitions.react/src/ui/*"],

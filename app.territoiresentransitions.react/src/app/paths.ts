@@ -1,5 +1,5 @@
 import { Referentiel } from 'types/litterals';
-import { ENV } from '../environmentVariables';
+import { ENV } from 'environmentVariables';
 
 export const signInPath = '/login';
 export const signUpPath = '/signup';

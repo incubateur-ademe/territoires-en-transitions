@@ -1,5 +1,5 @@
-import {getRejoindreCollectivitePath} from '@tet/api';
-import {Alert, Button} from '@tet/ui';
+import { getRejoindreCollectivitePath } from '@tet/api';
+import { Alert, Button } from '@tet/ui';
 
 const AssocierCollectiviteBandeau = () => {
   return (
@@ -14,10 +14,7 @@ const AssocierCollectiviteBandeau = () => {
         <Button
           data-test="btn-AssocierCollectivite"
           size="sm"
-          href={getRejoindreCollectivitePath(
-            document.location.hostname,
-            document.location.origin
-          )}
+          href={getRejoindreCollectivitePath(document.location.origin)}
         >
           Rejoindre une collectivité
         </Button>

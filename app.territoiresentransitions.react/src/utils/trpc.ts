@@ -5,8 +5,9 @@ import { getAuthHeaders } from 'core-logic/api/auth/AuthProvider';
 // For more information, see the Typescript docs: https://www.typescriptlang.org/docs/handbook/release-notes/typescript-3-8.html#type-only-imports-and-export
 // eslint-disable-next-line @nx/enforce-module-boundaries
 import type { AppRouter } from './../../../backend/src/trpc.router';
+import { ENV } from 'environmentVariables';
 
-const BASE_URL = `${process.env.NEXT_PUBLIC_BACKEND_URL}/trpc`;
+const BASE_URL = `${ENV.backend_url}/trpc`;
 
 export const trpc = createTRPCReact<AppRouter>();
 

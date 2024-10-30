@@ -1,11 +1,11 @@
 'use client';
 
-import {useState} from 'react';
-import {panierAPI} from '@tet/panier/src/clientAPI';
-import {useParams, usePathname, useRouter} from 'next/navigation';
-import {useEventTracker, Button, Icon} from '@tet/ui';
+import { useState } from 'react';
+import { panierAPI } from '@tet/panier/src/clientAPI';
+import { useParams, usePathname, useRouter } from 'next/navigation';
+import { useEventTracker, Button, Icon } from '@tet/ui';
 import SelectCollectivite from './SelectCollectivite';
-import {useCollectiviteInfo} from './useCollectiviteInfo';
+import { useCollectiviteInfo } from './useCollectiviteInfo';
 import { getAuthPaths } from '@tet/api';
 import { useUserContext } from '../../providers';
 
@@ -40,7 +40,7 @@ const CestParti = () => {
   if (typeof window !== 'undefined') {
     const redirectTo = new URL(document.location.href);
     redirectTo.pathname = `/landing/collectivite/${collectiviteId}`;
-    authPaths = getAuthPaths(document.location.hostname, redirectTo.toString());
+    authPaths = getAuthPaths(redirectTo.toString());
   }
 
   const nonRattache =

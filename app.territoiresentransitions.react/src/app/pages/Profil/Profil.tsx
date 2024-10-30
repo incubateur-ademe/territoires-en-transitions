@@ -1,7 +1,7 @@
-import { monComptePath } from 'app/paths';
-import { ProfilRoutes } from './ProfileRoutes';
 import { getRejoindreCollectivitePath } from '@tet/api';
 import CollectivitePageLayout from '@tet/app/pages/collectivite/CollectivitePageLayout/CollectivitePageLayout';
+import { monComptePath } from 'app/paths';
+import { ProfilRoutes } from './ProfileRoutes';
 
 const Profil = () => {
   return (
@@ -14,10 +14,7 @@ const Profil = () => {
             displayName: 'Mon compte',
           },
           {
-            link: getRejoindreCollectivitePath(
-              document.location.hostname,
-              document.location.origin
-            ),
+            link: getRejoindreCollectivitePath(document.location.origin),
             displayName: 'Rejoindre une collectivité',
           },
         ],

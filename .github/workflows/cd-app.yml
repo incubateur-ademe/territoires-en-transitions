@@ -39,6 +39,7 @@ jobs:
           --ANON_KEY=${{ secrets.ANON_KEY }} --API_URL=${{ secrets.API_URL }}
           --SENTRY_DSN=${{ vars.SENTRY_DSN }}
           --CRISP_WEBSITE_ID=${{ vars.CRISP_WEBSITE_ID }}
+          --AUTH_URL=${{ vars.AUTH_URL }}
           --BACKEND_URL=${{ vars.BACKEND_URL }}
           --PANIER_URL=${{ vars.PANIER_URL }}
           --POSTHOG_HOST=${{ secrets.POSTHOG_HOST }} --POSTHOG_KEY=${{ secrets.POSTHOG_KEY }}

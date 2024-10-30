@@ -1,14 +1,14 @@
-import {Route} from 'react-router-dom';
-import {Button, Card} from '@tet/ui';
-import {getRejoindreCollectivitePath} from '@tet/api';
-import {useSansCollectivite} from 'core-logic/hooks/useOwnedCollectivites';
-import DecouvrirLesCollectivites from './DecouvrirLesCollectivites';
-import {ReactComponent as PictoCarte} from './carte.svg';
+import { getRejoindreCollectivitePath } from '@tet/api';
+import { Button, Card } from '@tet/ui';
 import {
   finaliserMonInscriptionUrl,
   recherchesCollectivitesUrl,
   recherchesPath,
 } from 'app/paths';
+import { useSansCollectivite } from 'core-logic/hooks/useOwnedCollectivites';
+import { Route } from 'react-router-dom';
+import DecouvrirLesCollectivites from './DecouvrirLesCollectivites';
+import { ReactComponent as PictoCarte } from './carte.svg';
 
 const CollectivitesEngagees = () => {
   const sansCollectivite = useSansCollectivite();
@@ -41,12 +41,7 @@ const FinaliserMonInscription = () => (
         <Button variant="outlined" href={recherchesCollectivitesUrl}>
           Découvrir les collectivités
         </Button>
-        <Button
-          href={getRejoindreCollectivitePath(
-            document.location.hostname,
-            document.location.origin
-          )}
-        >
+        <Button href={getRejoindreCollectivitePath(document.location.origin)}>
           Rejoindre une collectivité
         </Button>
       </div>
