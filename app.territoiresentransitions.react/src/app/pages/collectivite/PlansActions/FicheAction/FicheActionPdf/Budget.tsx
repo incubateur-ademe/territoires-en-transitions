@@ -21,17 +21,6 @@ const Budget = ({ fiche }: FicheActionPdfProps) => {
     return null;
   }
 
-  const financeursList = !emptyFinanceurs
-    ? financeurs
-        .map(
-          (f) =>
-            `${f.financeurTag.nom}${
-              f.montantTtc ? ` (${getFormattedNumber(f.montantTtc)} € TTC)` : ''
-            }`
-        )
-        .join(', ')
-    : 'Non renseignés';
-
   return (
     <Card wrap={false}>
       <Title variant="h4" className="text-primary-8">
@@ -68,6 +57,7 @@ const Budget = ({ fiche }: FicheActionPdfProps) => {
         ) : (
           financeurs.map((f) => (
             <BadgeFinanceur
+              key={f.financeurTag.id}
               nom={f.financeurTag.nom}
               montantTtc={f.montantTtc}
             />

@@ -44,7 +44,7 @@ const FicheLieeCard = ({ ficheLiee }: FicheLieeCardProps) => {
   const isLate = hasDateDeFin && isBefore(new Date(dateDeFin), startOfToday());
 
   return (
-    <Card wrap={false} gap={1.5} className="w-[31%] p-3">
+    <Card wrap={false} gap={1.5} className="w-[32%] p-3">
       {/* Statut et niveau de priorité */}
       <Stack direction="row" gap={2}>
         {!!niveauPriorite && (
@@ -55,7 +55,7 @@ const FicheLieeCard = ({ ficheLiee }: FicheLieeCardProps) => {
 
       <Stack gap={1}>
         {/* Titre de la fiche */}
-        <Title variant="h6" className="leading-5">
+        <Title variant="h6" className="leading-5 text-primary-8">
           {generateTitle(titre)}
         </Title>
 
@@ -77,67 +77,69 @@ const FicheLieeCard = ({ ficheLiee }: FicheLieeCardProps) => {
         </Paragraph>
       </Stack>
 
-      {/* Pilotes et date de fin prévisionnelle */}
-      {(hasPilotes || hasDateDeFin || ameliorationContinue) && (
-        <Stack direction="row" gap={2}>
-          {/* Personnes pilote */}
-          {hasPilotes && (
-            <Stack gap={1} direction="row" className="items-center">
-              <UserIcon />
-              <Paragraph className="text-[0.65rem]">
-                {pilotes[0].nom}
-                {pilotes.length > 1 && (
-                  <Paragraph className="text-[0.65rem] text-primary-8">
-                    {' '}
-                    +{pilotes.length - 1}
-                  </Paragraph>
-                )}
-              </Paragraph>
-            </Stack>
-          )}
-
-          {/* Date de fin prévisionnelle */}
-          {!!dateDeFin && (
-            <>
-              {hasPilotes && <Box className="w-[0.5px] h-4 bg-grey-5" />}
+      <Stack className="mt-auto" gap={1}>
+        {/* Pilotes et date de fin prévisionnelle */}
+        {(hasPilotes || hasDateDeFin || ameliorationContinue) && (
+          <Stack direction="row" gap={2}>
+            {/* Personnes pilote */}
+            {hasPilotes && (
               <Stack gap={1} direction="row" className="items-center">
-                <CalendarIcon fill={isLate ? colors.error[1] : undefined} />
-                <Paragraph
-                  className={classNames('text-[0.65rem]', {
-                    'text-error-1': isLate,
-                  })}
-                >
-                  {getTextFormattedDate({
-                    date: dateDeFin,
-                    shortMonth: true,
-                  })}
+                <UserIcon />
+                <Paragraph className="text-[0.65rem]">
+                  {pilotes[0].nom}
+                  {pilotes.length > 1 && (
+                    <Paragraph className="text-[0.65rem] text-primary-8">
+                      {' '}
+                      +{pilotes.length - 1}
+                    </Paragraph>
+                  )}
                 </Paragraph>
               </Stack>
-            </>
-          )}
+            )}
 
-          {/* Action récurrente */}
-          {!hasDateDeFin && ameliorationContinue && (
-            <>
-              {hasPilotes && <Box className="w-[0.5px] h-4 bg-grey-5" />}
-              <Stack gap={1} direction="row" className="items-center">
-                <LoopLeftIcon />
-                <Paragraph className="text-[0.65rem]">Tous les ans</Paragraph>
-              </Stack>
-            </>
-          )}
-        </Stack>
-      )}
+            {/* Date de fin prévisionnelle */}
+            {!!dateDeFin && (
+              <>
+                {hasPilotes && <Box className="w-[0.5px] h-4 bg-primary-3" />}
+                <Stack gap={1} direction="row" className="items-center">
+                  <CalendarIcon fill={isLate ? colors.error[1] : undefined} />
+                  <Paragraph
+                    className={classNames('text-[0.65rem]', {
+                      'text-error-1': isLate,
+                    })}
+                  >
+                    {getTextFormattedDate({
+                      date: dateDeFin,
+                      shortMonth: true,
+                    })}
+                  </Paragraph>
+                </Stack>
+              </>
+            )}
 
-      {/* Date de modification */}
-      {!!modifiedAt && (
-        <Stack gap={1} className="mt-auto">
-          <Divider className="h-[0.5px]" />
-          <Paragraph className="text-[0.65rem] text-grey-6 font-medium italic">
-            Modifié le {format(new Date(modifiedAt), 'dd/MM/yyyy')}
-          </Paragraph>
-        </Stack>
-      )}
+            {/* Action récurrente */}
+            {!hasDateDeFin && ameliorationContinue && (
+              <>
+                {hasPilotes && <Box className="w-[0.5px] h-4 bg-primary-3" />}
+                <Stack gap={1} direction="row" className="items-center">
+                  <LoopLeftIcon />
+                  <Paragraph className="text-[0.65rem]">Tous les ans</Paragraph>
+                </Stack>
+              </>
+            )}
+          </Stack>
+        )}
+
+        {/* Date de modification */}
+        {!!modifiedAt && (
+          <Stack gap={2}>
+            <Divider className="h-[0.5px]" />
+            <Paragraph className="text-[0.65rem] text-grey-6 font-medium italic">
+              Modifié le {format(new Date(modifiedAt), 'dd/MM/yyyy')}
+            </Paragraph>
+          </Stack>
+        )}
+      </Stack>
     </Card>
   );
 };
@@ -155,7 +157,7 @@ const FichesLiees = ({ fichesLiees }: FichesLieesProps) => {
         Fiches des plans liées
       </Title>
       {fichesLiees.length > 0 && (
-        <Stack direction="row" className="flex-wrap">
+        <Stack gap={3} direction="row" className="flex-wrap">
           {fichesLiees.map((ficheLiee) => (
             <FicheLieeCard key={ficheLiee.id} ficheLiee={ficheLiee} />
           ))}

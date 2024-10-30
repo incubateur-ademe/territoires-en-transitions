@@ -20,7 +20,7 @@ export const ListElement = ({
       )}
       {...props}
     >
-      <Text style={tw('mx-2')}>•</Text>
+      <Text style={tw('ml-1 mr-2')}>•</Text>
       <Text>{children}</Text>
     </View>
   );

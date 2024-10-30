@@ -18,22 +18,25 @@ const IndicateurCard = ({ indicateur }: IndicateurCardProps) => {
   const { titre, unite, rempli, participationScore } = indicateur;
 
   return (
-    <Card wrap={false} gap={1.5} className="w-[31%] p-3">
+    <Card wrap={false} gap={1.5} className="w-[32%] p-3">
       <Badge
         title={rempli ? 'Complété' : 'À compléter'}
         state={rempli ? 'success' : 'info'}
         size="sm"
         uppercase
       />
-      <Title variant="h6" className="leading-5">
+      <Title variant="h6" className="leading-5 text-primary-8">
         {titre}
-        <Paragraph className="text-grey-6 font-normal"> ({unite})</Paragraph>
+        <Paragraph className="text-grey-6 text-[0.7rem] font-normal">
+          {' '}
+          ({unite})
+        </Paragraph>
       </Title>
 
       {participationScore && (
-        <Stack gap={1} className="mt-auto">
+        <Stack gap={2} className="mt-auto">
           <Divider className="h-[0.5px]" />
-          <Paragraph className="text-[0.65rem] text-grey-8">
+          <Paragraph className="text-[0.65rem] text-grey-6">
             Participe au score Climat Air Énergie
           </Paragraph>
         </Stack>
@@ -102,7 +105,7 @@ const Indicateurs = ({ fiche, indicateursListe }: IndicateursProps) => {
           <Paragraph className="text-primary-9 font-bold uppercase">
             Indicateurs associés :
           </Paragraph>
-          <Stack direction="row" className="flex-wrap">
+          <Stack gap={3} direction="row" className="flex-wrap">
             {indicateursListe.map((indicateur) => (
               <IndicateurCard key={indicateur.id} indicateur={indicateur} />
             ))}

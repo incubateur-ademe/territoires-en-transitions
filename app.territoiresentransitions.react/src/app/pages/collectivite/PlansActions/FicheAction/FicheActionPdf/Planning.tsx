@@ -33,7 +33,7 @@ const Planning = ({ fiche }: FicheActionPdfProps) => {
       <CalendarPicto className="h-14 w-14 mx-auto" />
 
       {/* Date de début */}
-      <Stack gap={2} className="text-center">
+      <Stack gap={1} className="text-center">
         <Title variant="h6" className="uppercase">
           Date de début
         </Title>
@@ -46,7 +46,7 @@ const Planning = ({ fiche }: FicheActionPdfProps) => {
 
       {/* Date de fin prévisionnelle */}
       {!ameliorationContinue && (
-        <Stack gap={2} className="text-center">
+        <Stack gap={1} className="text-center">
           <Title variant="h6" className="uppercase">
             Date de fin prévisionnelle
           </Title>

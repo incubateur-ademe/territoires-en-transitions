@@ -18,7 +18,7 @@ const ActionLieeCard = ({ action }: ActionLieeCardProps) => {
   const statut = getActionStatut(action);
 
   return (
-    <Card wrap={false} gap={1.5} className="w-[31%] p-3">
+    <Card wrap={false} gap={1.5} className="w-[32%] p-3">
       {/* Avancement */}
       <BadgeStatutAction statut={statut} size="sm" />
 
@@ -29,7 +29,7 @@ const ActionLieeCard = ({ action }: ActionLieeCardProps) => {
         </Paragraph>
 
         {/* Nom de l'action */}
-        <Title variant="h6" className="leading-5">
+        <Title variant="h6" className="leading-5 text-primary-8">
           {identifiant} {nom}
         </Title>
       </Stack>
@@ -50,7 +50,7 @@ const ActionsLiees = ({ actionsLiees }: ActionsLieesProps) => {
         Actions des référentiels liées
       </Title>
       {actionsLiees.length > 0 && (
-        <Stack direction="row" className="flex-wrap">
+        <Stack gap={3} direction="row" className="flex-wrap">
           {actionsLiees.map((action) => (
             <ActionLieeCard key={action.action_id} action={action} />
           ))}
