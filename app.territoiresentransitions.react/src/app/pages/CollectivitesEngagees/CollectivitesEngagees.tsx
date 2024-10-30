@@ -1,9 +1,8 @@
-import {Route} from 'react-router-dom';
-import {Button, Card} from '@tet/ui';
-import {getRejoindreCollectivitePath} from '@tet/api';
-import {useSansCollectivite} from 'core-logic/hooks/useOwnedCollectivites';
+import { Route } from 'react-router-dom';
+import { Button, Card } from '@tet/ui';
+import { getRejoindreCollectivitePath } from '@tet/api';
 import DecouvrirLesCollectivites from './DecouvrirLesCollectivites';
-import {ReactComponent as PictoCarte} from './carte.svg';
+import { ReactComponent as PictoCarte } from './carte.svg';
 import {
   finaliserMonInscriptionUrl,
   recherchesCollectivitesUrl,
@@ -11,15 +10,13 @@ import {
 } from 'app/paths';
 
 const CollectivitesEngagees = () => {
-  const sansCollectivite = useSansCollectivite();
-
   return (
     <>
       <Route path={finaliserMonInscriptionUrl}>
         <FinaliserMonInscription />
       </Route>
       <Route path={recherchesPath}>
-        <DecouvrirLesCollectivites sansCollectivite={sansCollectivite} />
+        <DecouvrirLesCollectivites />
       </Route>
     </>
   );
