@@ -27,7 +27,7 @@ export const config = {
 // This function can be marked `async` if using `await` inside
 export function middleware(request: NextRequest) {
   const pathname = request.nextUrl.pathname;
-  const requestUrl = new URL(request.url);
+  const requestUrl = new URL(request.nextUrl.href);
 
   // console.log('middleware.requestUrl', request.url);
   // console.log('middleware.nextPathname', pathname);
