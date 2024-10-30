@@ -97,10 +97,10 @@ deploy:
 
   FROM ../+koyeb --KOYEB_API_KEY=$KOYEB_API_KEY
 
-  RUN ./koyeb services update $ENV_NAME-app/front
-    --docker $APP_IMG_NAME
+  RUN ./koyeb services update $ENV_NAME-app/front \
+    --docker $APP_IMG_NAME \
     --env NEXT_PUBLIC_AUTH_URL=$AUTH_URL \
     --env NEXT_PUBLIC_BACKEND_URL=$BACKEND_URL \
-    --env NEXT_PUBLIC_PANIER_URL=$PANIER_URL \
+    --env NEXT_PUBLIC_PANIER_URL=$PANIER_URL
 
 
