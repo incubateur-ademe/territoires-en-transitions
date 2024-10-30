@@ -46,8 +46,15 @@ function isAuthUrl(pathname: string) {
 }
 
 function redirectToAuthDomain(requestUrl: URL) {
+  const search = new URLSearchParams(requestUrl.search);
+  if (!search.has('redirect_to')) {
+    // Returns to the current URL if nothing is specified.
+    // This ensures that the user is redirected to the domain it came from after authentication.
+    search.append('redirect_to', requestUrl.href);
+  }
+
   const authUrl = new URL(requestUrl.pathname, ENV.auth_url);
-  authUrl.search = requestUrl.search;
+  authUrl.search = search.toString();
 
   return NextResponse.redirect(authUrl);
 }
