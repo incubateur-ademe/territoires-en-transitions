@@ -5,72 +5,55 @@ import {
 } from 'app/paths';
 import classNames from 'classnames';
 import { useCollectiviteId } from 'core-logic/hooks/params';
-import { useFonctionTracker } from 'core-logic/hooks/useFonctionTracker';
-import { useHistory } from 'react-router-dom';
 import { ReactComponent as DocumentAddPicto } from './document-add.svg';
 import { ReactComponent as DocumentDownloadPicto } from './document-download.svg';
 import { ReactComponent as ShoppingBasket } from './shopping-basket.svg';
-import { Button, TrackingPlan, useEventTracker } from '@tet/ui';
+import { TrackingPlan, useEventTracker } from '@tet/ui';
 import { useNbActionsDansPanier } from '@tet/app/Layout/Header/AccesPanierAction';
 
 const Selection = () => {
   const collectivite_id = useCollectiviteId();
-  const history = useHistory();
-
-  const tracker = useFonctionTracker();
 
   const { data: panier } = useNbActionsDansPanier(collectivite_id);
 
   return (
     <div className="max-w-5xl mx-auto flex flex-col grow py-12">
-      <div className="w-full mx-auto">
-        <div className="flex flex-col mt-2 mb-10 py-14 px-24 text-center bg-primary-0">
-          <h3 className="mb-4">Créer un plan d’action</h3>
-          <p className="text-lg text-grey-6">Vous souhaitez</p>
-          <div className="flex justify-between gap-6 mt-4">
-            <SelectFlowButton
-              isPrimary
-              dataTest="CreerPlan"
-              title="Créer un plan d’action"
-              subTitle="directement sur la plateforme"
-              icon={<DocumentAddPicto />}
-              url={makeCollectivitePlansActionsCreerUrl({
-                collectiviteId: collectivite_id!,
-              })}
-              trackingId="cta_creer"
-            />
-            <SelectFlowButton
-              dataTest="ImporterPlan"
-              title="Importer un plan d’action"
-              subTitle="à partir d’un modèle"
-              icon={<DocumentDownloadPicto />}
-              url={makeCollectivitePlansActionsImporterUrl({
-                collectiviteId: collectivite_id!,
-              })}
-              trackingId="cta_importer"
-            />
-            <SelectFlowButton
-              dataTest="InitierPlan"
-              title="Initier votre plan d’action"
-              subTitle="grâce au Panier d'Actions à Impact"
-              icon={<ShoppingBasket className="my-3" />}
-              url={makeCollectivitePanierUrl({
-                collectiviteId: collectivite_id,
-                panierId: panier?.panierId,
-              })}
-              trackingId="cta_commencer_pai"
-            />
-          </div>
-          <Button
-            className="mt-12 self-center"
-            variant="outlined"
-            onClick={() => {
-              history.goBack();
-              tracker({ fonction: 'annulation', action: 'clic' });
-            }}
-          >
-            Revenir en arrière
-          </Button>
+      <div className="flex flex-col py-14 px-24 text-center bg-primary-0">
+        <h3 className="mb-4">Créer un plan d’action</h3>
+        <p className="text-lg text-grey-6">Vous souhaitez</p>
+        <div className="flex justify-between gap-6 mt-4">
+          <SelectFlowButton
+            isPrimary
+            dataTest="CreerPlan"
+            title="Créer un plan d’action"
+            subTitle="directement sur la plateforme"
+            icon={<DocumentAddPicto />}
+            url={makeCollectivitePlansActionsCreerUrl({
+              collectiviteId: collectivite_id!,
+            })}
+            trackingId="cta_creer"
+          />
+          <SelectFlowButton
+            dataTest="ImporterPlan"
+            title="Importer un plan d’action"
+            subTitle="à partir d’un modèle"
+            icon={<DocumentDownloadPicto />}
+            url={makeCollectivitePlansActionsImporterUrl({
+              collectiviteId: collectivite_id!,
+            })}
+            trackingId="cta_importer"
+          />
+          <SelectFlowButton
+            dataTest="InitierPlan"
+            title="Initier votre plan d’action"
+            subTitle="grâce au Panier d'Actions à Impact"
+            icon={<ShoppingBasket className="my-3" />}
+            url={makeCollectivitePanierUrl({
+              collectiviteId: collectivite_id,
+              panierId: panier?.panierId,
+            })}
+            trackingId="cta_commencer_pai"
+          />
         </div>
       </div>
     </div>

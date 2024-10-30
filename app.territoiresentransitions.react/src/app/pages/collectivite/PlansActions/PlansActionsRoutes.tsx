@@ -1,4 +1,4 @@
-import { Link, Redirect, Route, useHistory } from 'react-router-dom';
+import { Link, Redirect, Route } from 'react-router-dom';
 import FichesNonClassees from 'app/pages/collectivite/PlansActions/FichesNonClassees';
 import {
   collectiviteFichesNonClasseesPath,
@@ -22,7 +22,6 @@ import {
   usePlansNavigation,
 } from './PlanAction/data/usePlansNavigation';
 import { useCreateFicheAction } from '@tet/app/pages/collectivite/PlansActions/FicheAction/data/useCreateFicheAction';
-import { Button } from '@tet/ui';
 
 type Props = {
   collectivite_id: number;
@@ -33,8 +32,6 @@ type Props = {
  * Routes starting with collectivite/:collectiviteId/plans see CollectiviteRoutes.tsx
  */
 export const PlansActionsRoutes = ({ collectivite_id, readonly }: Props) => {
-  const history = useHistory();
-
   const { data: axes } = usePlansNavigation();
   const { data: fichesNonClasseesListe } =
     useFichesNonClasseesListe(collectivite_id);
@@ -55,11 +52,7 @@ export const PlansActionsRoutes = ({ collectivite_id, readonly }: Props) => {
           hasFicheNonClassees,
           axes
         ),
-        actions: readonly ? (
-          <Button variant="outlined" size="xs" onClick={() => history.goBack()}>
-            Revenir en arrière
-          </Button>
-        ) : (
+        actions: !readonly && (
           <>
             <li className="fr-sidemenu_item p-0 list-none">
               <button
