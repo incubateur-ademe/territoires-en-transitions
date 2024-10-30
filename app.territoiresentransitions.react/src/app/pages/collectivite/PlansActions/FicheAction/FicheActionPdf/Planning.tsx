@@ -10,6 +10,7 @@ import {
   Title,
 } from 'ui/exportPdf/components';
 import { LoopLeftIcon } from 'ui/exportPdf/assets/icons';
+import { CalendarPicto } from 'ui/exportPdf/assets/picto';
 import { getTextFormattedDate } from '../utils';
 import { FicheActionPdfProps } from './FicheActionPdf';
 
@@ -29,6 +30,8 @@ const Planning = ({ fiche }: FicheActionPdfProps) => {
 
   return (
     <Card>
+      <CalendarPicto className="h-14 w-14 mx-auto" />
+
       {/* Date de début */}
       <Stack gap={2} className="text-center">
         <Title variant="h6" className="uppercase">
