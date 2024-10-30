@@ -51,5 +51,5 @@ export const GrapheTousSecteurs = ({
     unite,
   });
 
-  return <ReactECharts option={option} settings={{ notMerge: true }} />;
+  return <ReactECharts option={option} />;
 };
