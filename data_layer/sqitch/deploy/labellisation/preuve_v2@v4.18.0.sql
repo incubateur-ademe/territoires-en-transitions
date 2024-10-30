@@ -2,6 +2,32 @@
 
 BEGIN;
 
+alter table labellisation.bibliotheque_fichier
+    add column confidentiel boolean default false not null;
+
+create or replace view bibliotheque_fichier as
+SELECT bf.id,
+       bf.collectivite_id,
+       bf.hash,
+       bf.filename,
+       o.bucket_id,
+       o.id                                   AS file_id,
+       (o.metadata ->> 'size'::text)::integer AS filesize,
+       bf.confidentiel
+FROM labellisation.bibliotheque_fichier bf
+JOIN collectivite_bucket cb ON cb.collectivite_id = bf.collectivite_id
+JOIN storage.objects o ON o.name = bf.hash::text AND o.bucket_id = cb.bucket_id
+WHERE can_read_acces_restreint(bf.collectivite_id)
+and (bf.confidentiel is false or have_lecture_acces(bf.collectivite_id) or
+     private.est_auditeur(bf.collectivite_id));
+
+create or replace view labellisation.bibliotheque_fichier_snippet(id, snippet) as
+SELECT bibliotheque_fichier.id,
+       jsonb_build_object('filename', bibliotheque_fichier.filename, 'hash', bibliotheque_fichier.hash, 'bucket_id',
+                          bibliotheque_fichier.bucket_id, 'filesize', bibliotheque_fichier.filesize,
+                          'confidentiel', confidentiel) AS snippet
+FROM bibliotheque_fichier;
+
 create or replace view preuve
             (preuve_type, id, collectivite_id, fichier, lien, commentaire, created_at, created_by, created_by_nom,
              action, preuve_reglementaire, demande, rapport, audit)
@@ -138,5 +164,107 @@ WHERE can_read_acces_restreint(a.collectivite_id)
         or have_lecture_acces(a.collectivite_id)
         or private.est_auditeur(a.collectivite_id)
     );
+
+create or replace view bibliotheque_annexe
+            (id, collectivite_id, plan_ids, fiche_id, fichier, lien, commentaire, created_at, created_by,
+             created_by_nom) as
+WITH plan AS (
+             SELECT faa.fiche_id,
+                    array_agg(d.plan_id) AS ids
+             FROM fiche_action_axe faa
+             JOIN plan_action_chemin d ON faa.axe_id = d.axe_id
+             GROUP BY faa.fiche_id
+             )
+SELECT a.id,
+       a.collectivite_id,
+       plan.ids                                   AS plan_ids,
+       a.fiche_id,
+       fs.snippet                                 AS fichier,
+       a.lien,
+       a.commentaire,
+       a.modified_at                              AS created_at,
+       a.modified_by                              AS created_by,
+       utilisateur.modified_by_nom(a.modified_by) AS created_by_nom
+FROM annexe a
+LEFT JOIN labellisation.bibliotheque_fichier_snippet fs ON fs.id = a.fichier_id
+LEFT JOIN plan USING (fiche_id)
+WHERE can_read_acces_restreint(a.collectivite_id)
+  AND (
+    fs.snippet is null
+        or (fs.snippet ->> 'confidentiel'::text)::boolean is false
+        or have_lecture_acces(a.collectivite_id)
+        or private.est_auditeur(a.collectivite_id)
+    );
+
+create or replace function update_bibliotheque_fichier_confidentiel(collectivite_id integer, hash character varying, confidentiel boolean) returns void
+    security definer
+    language plpgsql
+as
+$$
+begin
+    if have_edition_acces(update_bibliotheque_fichier_confidentiel.collectivite_id) or
+       private.est_auditeur(update_bibliotheque_fichier_confidentiel.collectivite_id)
+    then
+        update labellisation.bibliotheque_fichier
+        set confidentiel = update_bibliotheque_fichier_confidentiel.confidentiel
+        where labellisation.bibliotheque_fichier.hash = update_bibliotheque_fichier_confidentiel.hash
+          and labellisation.bibliotheque_fichier.collectivite_id = update_bibliotheque_fichier_confidentiel.collectivite_id;
+
+        perform set_config('response.status', '201', true);
+    else
+        perform set_config('response.status', '403', true);
+    end if;
+end;
+$$;
+
+drop function add_bibliotheque_fichier;
+create or replace function add_bibliotheque_fichier(
+    collectivite_id integer,
+    hash character varying,
+    filename text,
+    confidentiel boolean default false
+) returns bibliotheque_fichier
+    security definer
+    language plpgsql
+as
+$$
+declare
+    inserted     integer;
+    return_value bibliotheque_fichier;
+begin
+    if have_edition_acces(add_bibliotheque_fichier.collectivite_id) or
+       private.est_auditeur(add_bibliotheque_fichier.collectivite_id)
+    then
+        if (select count(o.id) > 0
+            from storage.objects o
+            join collectivite_bucket cb on o.bucket_id = cb.bucket_id
+            where cb.collectivite_id = add_bibliotheque_fichier.collectivite_id
+              and o.name = add_bibliotheque_fichier.hash) is not null
+        then
+            insert into labellisation.bibliotheque_fichier(collectivite_id, hash, filename, confidentiel)
+            values (add_bibliotheque_fichier.collectivite_id,
+                    add_bibliotheque_fichier.hash,
+                    add_bibliotheque_fichier.filename,
+                    add_bibliotheque_fichier.confidentiel)
+            returning id into inserted;
+
+            select *
+            from bibliotheque_fichier bf
+            where bf.id = inserted
+            into return_value;
+
+            perform set_config('response.status', '201', true);
+            return return_value;
+        else
+            perform set_config('response.status', '404', true);
+            return null;
+        end if;
+    else
+        perform set_config('response.status', '403', true);
+        return null;
+    end if;
+end;
+$$;
+
 
 COMMIT;

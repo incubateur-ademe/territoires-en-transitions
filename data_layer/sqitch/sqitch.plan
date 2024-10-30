@@ -740,3 +740,4 @@ indicateur/indicateurs_gaz_effet_serre [indicateur/indicateurs_gaz_effet_serre@v
 
 labellisation/preuve_v2 [labellisation/preuve_v2@v4.5.0] 2024-08-13T15:07:27Z ,,, <jacquelina@LanceLibre> # Ajoute la notion de confidentialité à un document
 @v4.18.0 2024-10-28T09:32:41Z Marc Rutkowski <marc@attractive-media.fr> # Ajoute la notion de confidentialité à un document
+labellisation/preuve_v2 [labellisation/preuve_v2@v4.18.0] 2024-10-30T09:43:55Z Marc Rutkowski <marc@attractive-media.fr> # Ajoute l'audit lié à une demande d'audit pour les documents de labellisation dans la vue `preuve`
