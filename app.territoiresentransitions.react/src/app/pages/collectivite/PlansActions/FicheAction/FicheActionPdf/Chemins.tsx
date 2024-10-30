@@ -1,6 +1,10 @@
+import { preset } from '@tet/ui';
 import { TAxeRow } from 'types/alias';
 import { Paragraph, Stack } from 'ui/exportPdf/components';
+import { ArrowRightIcon } from 'ui/exportPdf/assets/icons';
 import { generateTitle } from '../data/utils';
+
+const { colors } = preset.theme.extend;
 
 type CheminsProps = {
   chemins: TAxeRow[][];
@@ -9,16 +13,24 @@ type CheminsProps = {
 const Chemins = ({ chemins }: CheminsProps) => {
   return (
     <Stack gap={2}>
-      {chemins.map((chemin, index) => (
-        <Paragraph key={index} className="text-grey-6 text-[0.7rem] leading-5">
-          {chemin.map((elt, index) => {
-            let text = generateTitle(elt.nom);
-            if (index !== chemin.length - 1) {
-              text += ' > ';
-            }
-            return text;
-          })}
-        </Paragraph>
+      {chemins.map((emplacement, index) => (
+        <Stack key={index} gap={1} direction="row" className="flex-wrap">
+          {emplacement.map((elt, i) => (
+            <Stack
+              key={i}
+              gap={'px'}
+              direction="row"
+              className="flex-wrap items-end"
+            >
+              <Paragraph className="text-grey-6 text-[0.7rem] leading-5">
+                {generateTitle(elt.nom)}
+              </Paragraph>
+              {i !== emplacement.length - 1 && (
+                <ArrowRightIcon fill={colors.grey[6]} />
+              )}
+            </Stack>
+          ))}
+        </Stack>
       ))}
     </Stack>
   );

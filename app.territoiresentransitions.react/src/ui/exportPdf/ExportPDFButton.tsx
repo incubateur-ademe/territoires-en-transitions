@@ -4,7 +4,7 @@ import { Button } from '@tet/ui';
 import { saveBlob } from '../shared/preuves/Bibliotheque/saveBlob';
 import DocumentToExport from './DocumentToExport';
 
-const TEST_MODE = false;
+const TEST_MODE = true;
 
 export type ExportPDFButtonType = {
   /** Content of the pdf - Content shouldn't be undefined if requestData isn't used */

@@ -1,6 +1,7 @@
 import { format, isBefore, startOfToday } from 'date-fns';
 import classNames from 'classnames';
 import { FicheResume } from '@tet/api/plan-actions';
+import { preset } from '@tet/ui';
 import {
   BadgePriorite,
   BadgeStatut,
@@ -11,8 +12,15 @@ import {
   Stack,
   Title,
 } from 'ui/exportPdf/components';
+import {
+  CalendarIcon,
+  LoopLeftIcon,
+  UserIcon,
+} from 'ui/exportPdf/assets/icons';
 import { generateTitle } from '../data/utils';
 import { getTextFormattedDate } from '../utils';
+
+const { colors } = preset.theme.extend;
 
 type FicheLieeCardProps = {
   ficheLiee: FicheResume;
@@ -74,31 +82,37 @@ const FicheLieeCard = ({ ficheLiee }: FicheLieeCardProps) => {
         <Stack direction="row" gap={2}>
           {/* Personnes pilote */}
           {hasPilotes && (
-            <Paragraph className="text-[0.65rem]">
-              {pilotes[0].nom}
-              {pilotes.length > 1 && (
-                <Paragraph className="text-[0.65rem] text-primary-8">
-                  {' '}
-                  +{pilotes.length - 1}
-                </Paragraph>
-              )}
-            </Paragraph>
+            <Stack gap={1} direction="row" className="items-center">
+              <UserIcon />
+              <Paragraph className="text-[0.65rem]">
+                {pilotes[0].nom}
+                {pilotes.length > 1 && (
+                  <Paragraph className="text-[0.65rem] text-primary-8">
+                    {' '}
+                    +{pilotes.length - 1}
+                  </Paragraph>
+                )}
+              </Paragraph>
+            </Stack>
           )}
 
           {/* Date de fin prévisionnelle */}
           {!!dateDeFin && (
             <>
               {hasPilotes && <Box className="w-[0.5px] h-4 bg-grey-5" />}
-              <Paragraph
-                className={classNames('text-[0.65rem]', {
-                  'text-error-1': isLate,
-                })}
-              >
-                {getTextFormattedDate({
-                  date: dateDeFin,
-                  shortMonth: true,
-                })}
-              </Paragraph>
+              <Stack gap={1} direction="row" className="items-center">
+                <CalendarIcon fill={isLate ? colors.error[1] : undefined} />
+                <Paragraph
+                  className={classNames('text-[0.65rem]', {
+                    'text-error-1': isLate,
+                  })}
+                >
+                  {getTextFormattedDate({
+                    date: dateDeFin,
+                    shortMonth: true,
+                  })}
+                </Paragraph>
+              </Stack>
             </>
           )}
 
@@ -106,7 +120,10 @@ const FicheLieeCard = ({ ficheLiee }: FicheLieeCardProps) => {
           {!hasDateDeFin && ameliorationContinue && (
             <>
               {hasPilotes && <Box className="w-[0.5px] h-4 bg-grey-5" />}
-              <Paragraph className="text-[0.65rem]">Tous les ans</Paragraph>
+              <Stack gap={1} direction="row" className="items-center">
+                <LoopLeftIcon />
+                <Paragraph className="text-[0.65rem]">Tous les ans</Paragraph>
+              </Stack>
             </>
           )}
         </Stack>

@@ -9,6 +9,7 @@ import {
   Stack,
   Title,
 } from 'ui/exportPdf/components';
+import { LoopLeftIcon } from 'ui/exportPdf/assets/icons';
 import { getTextFormattedDate } from '../utils';
 import { FicheActionPdfProps } from './FicheActionPdf';
 
@@ -72,9 +73,16 @@ const Planning = ({ fiche }: FicheActionPdfProps) => {
 
         {/* Action récurrente */}
         {!!ameliorationContinue && (
-          <Paragraph className="font-medium">
-            l'action se répète tous les ans
-          </Paragraph>
+          <Stack
+            direction="row"
+            gap={1}
+            className="items-center justify-center"
+          >
+            <LoopLeftIcon />
+            <Paragraph className="font-medium">
+              l'action se répète tous les ans
+            </Paragraph>
+          </Stack>
         )}
       </Stack>
 
