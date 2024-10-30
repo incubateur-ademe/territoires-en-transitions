@@ -353,17 +353,11 @@ front-deps-builder:
 # APP ENTRYPOINTS
 # ---------------
 
-app-build:
-  BUILD --pass-args ./app.territoiresentransitions.react+build
-
 app-docker:
   BUILD --pass-args ./app.territoiresentransitions.react+docker
 
 app-deploy:
   ARG --required KOYEB_API_KEY
-  ARG --required TRAJECTOIRE_SNBC_SHEET_ID
-  ARG --required TRAJECTOIRE_SNBC_XLSX_ID
-  ARG --required TRAJECTOIRE_SNBC_RESULT_FOLDER_ID
   BUILD --pass-args ./app.territoiresentransitions.react+deploy
 
 
@@ -865,6 +859,9 @@ auth-deploy:
 
 app-deploy-test: ## Déploie une app de test et crée une app Koyeb si nécessaire
     ARG --required KOYEB_API_KEY
+    ARG --required AUTH_URL
+    ARG --required BACKEND_URL
+    ARG --required PANIER_URL
     LOCALLY
     # Limite des noms dans Koyeb : 23 caractères.
     # Comme on prefixe avec `test-app-`, on garde 14 caractères max dans le nom de la branche.
@@ -881,6 +878,9 @@ app-deploy-test: ## Déploie une app de test et crée une app Koyeb si nécessai
         RUN /koyeb apps init "test-app-$name" \
          --docker "$APP_IMG_NAME" --docker-private-registry-secret ghcr \
          --type web --port 3000:http --route /:3000 --env PORT=3000 \
+         --env NEXT_PUBLIC_AUTH_URL=$AUTH_URL \
+         --env NEXT_PUBLIC_BACKEND_URL=$BACKEND_URL \
+         --env NEXT_PUBLIC_PANIER_URL=$PANIER_URL \
          --regions par
     END
 

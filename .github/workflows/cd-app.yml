@@ -35,14 +35,12 @@ jobs:
           --use-inline-cache --save-inline-cache --push
           --platform=linux/amd64
           +app-docker
-          --ENV_NAME=${{ github.event.inputs.target }}
-          --ANON_KEY=${{ secrets.ANON_KEY }} --API_URL=${{ secrets.API_URL }}
+          --ANON_KEY=${{ secrets.ANON_KEY }}
+          --API_URL=${{ secrets.API_URL }}
           --SENTRY_DSN=${{ vars.SENTRY_DSN }}
           --CRISP_WEBSITE_ID=${{ vars.CRISP_WEBSITE_ID }}
-          --AUTH_URL=${{ vars.AUTH_URL }}
-          --BACKEND_URL=${{ vars.BACKEND_URL }}
-          --PANIER_URL=${{ vars.PANIER_URL }}
-          --POSTHOG_HOST=${{ secrets.POSTHOG_HOST }} --POSTHOG_KEY=${{ secrets.POSTHOG_KEY }}
+          --POSTHOG_HOST=${{ secrets.POSTHOG_HOST }}
+          --POSTHOG_KEY=${{ secrets.POSTHOG_KEY }}
 
   deploy-app:
     name: Déploie l'app
@@ -67,12 +65,15 @@ jobs:
           +app-deploy
           --ENV_NAME=${{ github.event.inputs.target }}
           --KOYEB_API_KEY=${{ secrets.KOYEB_API_KEY }}
+          --AUTH_URL=${{ vars.AUTH_URL }}
+          --BACKEND_URL=${{ vars.BACKEND_URL }}
+          --PANIER_URL=${{ vars.PANIER_URL }}
 
   deploy-test-app:
     name: Déploie l'app de test
     if: ${{ github.event.inputs.is-test-app == 'true' }}
     needs: build-app
-    environment: ${{ github.event.inputs.target }}
+    environment: preprod-koyeb
     runs-on: ubuntu-latest
 
     steps:
@@ -89,5 +90,7 @@ jobs:
           earthly
           --use-inline-cache --save-inline-cache
           +app-deploy-test
-          --ENV_NAME=${{ github.event.inputs.target }}
           --KOYEB_API_KEY=${{ secrets.KOYEB_API_KEY }}
+          --AUTH_URL=${{ vars.AUTH_URL }}
+          --BACKEND_URL=${{ vars.BACKEND_URL }}
+          --PANIER_URL=${{ vars.PANIER_URL }}
