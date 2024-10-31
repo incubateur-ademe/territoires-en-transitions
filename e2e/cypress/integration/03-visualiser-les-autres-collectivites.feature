@@ -24,7 +24,9 @@ Fonctionnalité: Collectivités engagées
     Etant donné que je suis connecté en tant que "yolo"
 
     Quand je visite la vue "Toutes les collectivités"
-    Et que je clique sur le toggle "ToggleVuePlan"
+    Alors la page contient au moins 3 collectivités
+
+    Quand je clique sur le toggle "ToggleVuePlan"
     Alors la page contient au moins 2 plans d'action
 
     Quand je clique sur la carte du plan
