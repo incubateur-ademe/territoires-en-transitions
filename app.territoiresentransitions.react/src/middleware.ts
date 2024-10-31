@@ -28,14 +28,14 @@ export function middleware(request: NextRequest) {
 
   const pathname = url.pathname;
   const hostname = request.headers.get('host') as string;
-  const requestUrl = new URL(url, hostname);
+  // const requestUrl = new URL(url, hostname);
 
-  console.log('middleware.requestUrl', url.href);
-  console.log('middleware.headers.host', hostname);
+  console.info('middleware.requestUrl', url.href);
+  console.info('middleware.headers.host', hostname);
   // console.log('middleware.nextPathname', pathname);
 
   if (isAuthUrl(pathname)) {
-    return redirectToAuthDomain(requestUrl);
+    return redirectToAuthDomain(url);
   }
 }
 
@@ -60,8 +60,8 @@ function redirectToAuthDomain(url: URL) {
   }`;
 
   const authUrl = new URL(path, process.env.NEXT_PUBLIC_AUTH_URL);
-  console.log('NEXT_PUBLIC_AUTH_URL', process.env.NEXT_PUBLIC_AUTH_URL);
-  console.log('authUrl', authUrl.href);
+  console.info('NEXT_PUBLIC_AUTH_URL', process.env.NEXT_PUBLIC_AUTH_URL);
+  console.info('authUrl', authUrl.href);
   // authUrl.search = search.toString();
 
   return NextResponse.redirect(authUrl);
