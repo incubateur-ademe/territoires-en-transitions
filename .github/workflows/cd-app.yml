@@ -82,8 +82,8 @@ jobs:
         with:
           github-token: ${{ secrets.GITHUB_TOKEN }}
           version: ^0.8.0
-      # - name: Login into registry
-      #   run: docker login ghcr.io/territoiresentransitions --username "${{ secrets.GH_USER }}" --password "${{ secrets.GH_TOKEN }}"
+      - name: Login into registry
+        run: docker login ghcr.io/territoiresentransitions --username "${{ secrets.GH_USER }}" --password "${{ secrets.GH_TOKEN }}"
 
       - name: Deploy test app on Koyeb
         run: >
