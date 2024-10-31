@@ -121,13 +121,10 @@ export const PreuvesTable = (props: TPreuvesTableProps) => {
                       title={(nom as string) || ''}
                       {...rowProps}
                     >
-                      {row.cells.map((cell, index) => {
+                      {row.cells.map(cell => {
+                        const { key, ...cellProps } = cell.getCellProps();
                         return (
-                          <div
-                            className="cell"
-                            {...cell.getCellProps()}
-                            key={index}
-                          >
+                          <div className="cell" key={key} {...cellProps}>
                             {cell.render('Cell', {
                               collectiviteId,
                               referentielId,
