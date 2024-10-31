@@ -80,6 +80,7 @@ const createItemDuplicated = (
     code: UploadStatusCode.duplicated,
     fichier_id: fichier.id,
     filename: fichier.filename,
+    hash: fichier.hash,
   },
 });
 

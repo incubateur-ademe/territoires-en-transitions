@@ -10,14 +10,13 @@ import { useSearchParams } from 'core-logic/hooks/query';
 import { CollectiviteEngagee } from '@tet/api';
 import { recherchesCollectivitesUrl, recherchesPlansUrl } from 'app/paths';
 import { initialFilters, nameToShortNames } from './data/filters';
+import { useSansCollectivite } from 'core-logic/hooks/useOwnedCollectivites';
 
-type Props = {
-  sansCollectivite: boolean;
-};
-
-const DecouvrirLesCollectivites = ({ sansCollectivite }: Props) => {
+const DecouvrirLesCollectivites = () => {
   const auth = useAuth();
   const { isConnected } = auth;
+
+  const sansCollectivite = useSansCollectivite();
 
   /** Filters */
   const [filters, setFilters] = useSearchParams<CollectiviteEngagee.Filters>(
@@ -28,7 +27,7 @@ const DecouvrirLesCollectivites = ({ sansCollectivite }: Props) => {
 
   return (
     <div className="bg-primary-1 -mb-8">
-      {sansCollectivite && <AssocierCollectiviteBandeau />}
+      {!!sansCollectivite && <AssocierCollectiviteBandeau />}
       <div
         data-test="ToutesLesCollectivites"
         className="app fr-container py-16"

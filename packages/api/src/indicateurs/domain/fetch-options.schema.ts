@@ -14,6 +14,8 @@ export const filtreSpecifiqueSchema = z.object({
   estPerso: z.coerce.boolean().default(false).optional(),
   categorieNoms: z.array(categorieSchema.shape.nom).optional(),
   hasOpenData: z.coerce.boolean().optional(),
+  /** Permet de forcer l'inclusion des indicateurs enfants */
+  withChildren: z.coerce.boolean().optional(),
 });
 
 export type FiltreSpecifique = z.infer<typeof filtreSpecifiqueSchema>;

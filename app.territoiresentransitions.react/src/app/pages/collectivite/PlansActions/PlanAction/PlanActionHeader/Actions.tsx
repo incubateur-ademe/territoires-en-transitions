@@ -9,17 +9,17 @@ import RestreindreFichesModal from '../RestreindreFichesModal';
 
 import {
   makeCollectivitePlanActionUrl,
-  makeCollectivitePlansActionsSyntheseUrl,
+  makeCollectivitePlansActionsLandingUrl,
 } from 'app/paths';
-import {PlanNode} from '../data/types';
-import {useExportPlanAction} from '../data/useExportPlanAction';
+import { PlanNode } from '../data/types';
+import { useExportPlanAction } from '../data/useExportPlanAction';
 import ModifierPlanModale from './ModifierPlanModale';
-import {TPlanType} from 'types/alias';
-import {Tooltip} from '@tet/ui';
+import { TPlanType } from 'types/alias';
+import { Tooltip } from '@tet/ui';
 
 const EXPORT_OPTIONS = [
-  {value: 'xlsx', label: 'Format Excel (.xlsx)'},
-  {value: 'docx', label: 'Format Word (.docx)'},
+  { value: 'xlsx', label: 'Format Excel (.xlsx)' },
+  { value: 'docx', label: 'Format Word (.docx)' },
 ];
 
 type Props = {
@@ -42,7 +42,7 @@ const Actions = ({
   isAxePage,
   axeHasFiches,
 }: Props) => {
-  const {mutate: exportPlanAction, isLoading} = useExportPlanAction(axe.id);
+  const { mutate: exportPlanAction, isLoading } = useExportPlanAction(axe.id);
 
   return (
     <div className="flex items-center gap-3 ml-auto">
@@ -62,7 +62,7 @@ const Actions = ({
           options={EXPORT_OPTIONS}
           buttonClassname="flex p-2 bg-white hover:bg-primary-1 rounded-lg fr-icon-download-line text-primary before:!w-4 before:!h-4"
           hideDefaultIcon
-          onSelect={format => exportPlanAction(format as any)}
+          onSelect={(format) => exportPlanAction(format as any)}
         />
       ) : null}
       <SupprimerAxeModal
@@ -75,8 +75,8 @@ const Actions = ({
                 collectiviteId: collectivite_id,
                 planActionUid: plan.id.toString(),
               })
-            : makeCollectivitePlansActionsSyntheseUrl({
-                collectiviteId: collectivite_id!,
+            : makeCollectivitePlansActionsLandingUrl({
+                collectiviteId: collectivite_id,
               })
         }
       >

@@ -1,4 +1,4 @@
-import { collectiviteTable } from 'backend/src/collectivites/models/collectivite.models';
+import { collectiviteTable } from 'backend/src/collectivites/models/collectivite.table';
 import { InferInsertModel, sql } from 'drizzle-orm';
 import {
   boolean,

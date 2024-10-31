@@ -22,14 +22,13 @@ import { ficheActionPartenaireTagTable } from '../models/fiche-action-partenaire
 import { ficheActionPiloteTable } from '../models/fiche-action-pilote.table';
 import { ficheActionServiceTagTable } from '../models/fiche-action-service.table';
 import {
-  CreateFicheActionType,
   FicheActionStatutsEnumType,
   ficheActionTable,
   SANS_STATUT_FICHE_ACTION_SYNTHESE_KEY,
 } from '../models/fiche-action.table';
 import { GetFichesActionSyntheseResponseType } from '../models/get-fiches-action-synthese.response';
 import { GetFichesActionFilterRequestType } from '../models/get-fiches-actions-filter.request';
-import { SupabaseJwtPayload } from 'backend/src/auth/models/auth.models';
+import { SupabaseJwtPayload } from '../../auth/models/supabase-jwt.models';
 
 @Injectable()
 export default class FichesActionSyntheseService {
@@ -88,13 +87,13 @@ export default class FichesActionSyntheseService {
   getFicheActionAxesQuery() {
     return this.databaseService.db
       .select({
-        fiche_id: ficheActionAxeTable.fiche_id,
-        axe_ids: sql`array_agg(${ficheActionAxeTable.axe_id})`.as('axe_ids'),
+        fiche_id: ficheActionAxeTable.ficheId,
+        axe_ids: sql`array_agg(${ficheActionAxeTable.axeId})`.as('axe_ids'),
         plan_ids: sql`array_agg(${axeTable.plan})`.as('plan_ids'),
       })
       .from(ficheActionAxeTable)
-      .leftJoin(axeTable, eq(axeTable.id, ficheActionAxeTable.axe_id))
-      .groupBy(ficheActionAxeTable.fiche_id)
+      .leftJoin(axeTable, eq(axeTable.id, ficheActionAxeTable.axeId))
+      .groupBy(ficheActionAxeTable.ficheId)
       .as('ficheActionAxes');
   }
 

@@ -18,7 +18,7 @@ Fonctionnalité: Collectivités engagées
     Alors la page contient 1 collectivité
 
     Quand je clique sur la carte de la collectivité
-    Alors la page "Tableau de bord" est visible
+    Alors la page "Accueil" est visible
 
   Scénario: Filtrer les plans d'action
     Etant donné que je suis connecté en tant que "yolo"

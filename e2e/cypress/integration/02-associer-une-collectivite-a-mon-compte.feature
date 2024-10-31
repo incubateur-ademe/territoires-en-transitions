@@ -29,7 +29,7 @@ Fonctionnalité: Associer une collectivité à mon compte
     Quand je clique sur le bouton "Valider" du "dialogue Associer une collectivité à mon compte"
     Alors je suis redirigé sur l'app
     Et le "dialogue Associer une collectivité à mon compte" est absent
-    Et le "le tableau de bord de la collectivité" est visible
+    Et la page "Accueil" est visible
 
   Scénario: Rejoindre une collectivité qui n'est pas activée
     Etant donné que je suis connecté en tant que "yolo"
@@ -52,7 +52,7 @@ Fonctionnalité: Associer une collectivité à mon compte
     Quand je visite la vue "Mon compte"
     Et que je clique sur le lien "Rejoindre une collectivité"
     Alors le "dialogue Associer une collectivité à mon compte" est visible
-    
+
     Quand je recherche la collectivité "Ambérieu-en-Bugey" dans le champ "select-collectivite"
     Alors le "dialogue Associer une collectivité à mon compte" contient "Contactez l'une des personnes admin par mail pour recevoir un lien d’invitation"
     Et le bouton "Valider" du "dialogue Associer une collectivité à mon compte" est désactivé

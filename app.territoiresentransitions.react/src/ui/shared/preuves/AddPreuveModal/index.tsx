@@ -5,6 +5,7 @@ import {Tab, Tabs} from '@tet/ui';
 import {AddLink, TAddLink} from './AddLink';
 import {AddFile, TAddFileFromLib} from './AddFile';
 import AddFromLib from './AddFromLib';
+import { DocType } from './types';
 
 export type TAddPreuveModalHandlers = {
   /** ajoute un fichier sélectionné depuis la bibliothèque */
@@ -16,6 +17,8 @@ export type TAddPreuveModalHandlers = {
 export type TAddPreuveModalProps = {
   /** Index de l'onglet actif */
   defaultActiveTab?: number;
+  /** Type des documents attendus */
+  docType?: DocType;
   /** Gestionnaires d'événements */
   handlers: TAddPreuveModalHandlers;
   onClose: () => void;

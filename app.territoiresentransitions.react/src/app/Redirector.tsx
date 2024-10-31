@@ -7,7 +7,7 @@ import {
 } from 'app/paths';
 import { useAuth } from 'core-logic/api/auth/AuthProvider';
 import {
-  acceptAgentInvitation,
+  useConsumeInvitation,
   useInvitationState,
 } from 'core-logic/hooks/useInvitationState';
 import { usePlanActionsPilotableFetch } from 'core-logic/hooks/useOwnedCollectivites';
@@ -25,6 +25,8 @@ export const Redirector = () => {
 
   const isLandingConnected = user && pathname === '/'; // L'utilisateur est connecté et arrive sur '/'.
 
+  const { mutateAsync: consumeInvitation } = useConsumeInvitation();
+
   // Quand l'utilisateur connecté
   // - est associé à aucune collectivité :
   //    on redirige vers la page "Collectivités"
@@ -33,8 +35,6 @@ export const Redirector = () => {
   //      - tableau de bord des plans d'action si il y a au moins un plan d'actions pilotables
   //      - et sinon vers la synthèse de l'état des lieux
   useEffect(() => {
-    if (!plansData?.plans) return;
-
     if (user && !user.dcp) {
       // Redirige l'utilisateur vers la page de saisie des DCP si nécessaire
       document.location.replace(`${signUpPath}&view=etape3`);
@@ -49,7 +49,7 @@ export const Redirector = () => {
       return;
     }
 
-    if (plansData.plans.length > 0) {
+    if (plansData?.plans?.length) {
       history.push(
         makeTableauBordUrl({
           collectiviteId,
@@ -63,6 +63,8 @@ export const Redirector = () => {
       return;
     }
 
+    if (!plansData?.plans) return;
+
     history.push(makeCollectiviteAccueilUrl({ collectiviteId }));
   }, [isLandingConnected, collectiviteId, user, plansData]);
 
@@ -73,8 +75,8 @@ export const Redirector = () => {
     if (invitationId) {
       if (isConnected && consume) {
         // si connecté on consomme l'invitation
-        acceptAgentInvitation(invitationId).then(() => {
-          history.replace('/');
+        consumeInvitation(invitationId).then(() => {
+          history.push('/');
         });
       } else if (!isConnected && !consume) {
         // si déconnecté on redirige sur la page "créer un compte"

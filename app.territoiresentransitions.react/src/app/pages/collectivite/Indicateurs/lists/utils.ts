@@ -17,4 +17,5 @@ export const indicateursNameToParams: Record<keyof FetchFiltre, string> = {
   estPerso: 'p',
   hasOpenData: 'od',
   estFavorisCollectivite: 'favCol',
+  withChildren: 'wc',
 };

@@ -10,11 +10,12 @@ export type TBibliothequeFichier = {
   filename: string;
   bucket_id: string;
   filesize: number;
+  confidentiel: boolean;
 };
 
 export type TFichier = Pick<
   TBibliothequeFichier,
-  'bucket_id' | 'filename' | 'filesize' | 'hash'
+  'bucket_id' | 'filename' | 'filesize' | 'hash' | 'confidentiel'
 >;
 
 // champs propres aux fichiers
@@ -33,7 +34,7 @@ export type TPreuveLienFields = {
 };
 
 // ni fichier ni lien (cas des preuves réglementaires non renseignées)
-type TPreuveNonRenseignee = {fichier: null; lien: null};
+type TPreuveNonRenseignee = { fichier: null; lien: null };
 
 // champs communs à tous les types de preuves
 type TPreuveBase = (

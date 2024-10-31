@@ -35,7 +35,7 @@ export const useSansCollectivite = () => {
       return count === null ? null : count === 0;
     }
   );
-  return sansCollectivite ?? true;
+  return sansCollectivite;
 };
 
 // une variante qui renvoi aussi les plans d'actions pilotables de la 1ère collectivité

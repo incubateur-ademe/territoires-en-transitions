@@ -31,7 +31,7 @@ export const Tabs = ({
   className,
   tabsListClassName,
   tabPanelClassName,
-  children,
+  children: childrenBase,
   defaultActiveTab = 0,
   size = 'md',
   onChange,
@@ -52,6 +52,7 @@ export const Tabs = ({
   };
 
   // copie le contenu des panneaux en ajoutant les props nécessaire
+  const children = childrenBase.filter(Boolean);
   const tabsPanel = Children.toArray(children).map((child, index) =>
     cloneElement(child as ReactElement, {
       activeTab,

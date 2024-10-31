@@ -1,5 +1,5 @@
-import React, {useEffect, useMemo, useState} from 'react';
-import SideNavContainer, {SideNavContainerProps} from './SideNavContainer';
+import React, { useEffect, useMemo, useState } from 'react';
+import SideNavContainer, { SideNavContainerProps } from './SideNavContainer';
 import {
   PanelProvider,
   usePanelDispatch,
@@ -14,7 +14,7 @@ type Props = {
   dataTest?: string;
 };
 
-const PageLayout = ({children, sideNav, dataTest}: Props) => {
+const PageLayout = ({ children, sideNav, dataTest }: Props) => {
   const [isSideNavOpen, setIsSideNavOpen] = useState(true);
 
   const panelState = usePanelState();
@@ -32,7 +32,7 @@ const PageLayout = ({children, sideNav, dataTest}: Props) => {
   // ferme le panel quand la side nav s'ouvre
   useEffect(() => {
     if (isSideNavOpen) {
-      panelDispatch({type: 'close'});
+      panelDispatch({ type: 'close' });
     }
   }, [isSideNavOpen]);
 
@@ -69,13 +69,13 @@ const PageLayout = ({children, sideNav, dataTest}: Props) => {
         <div
           data-test="SideNavigation"
           className={classNames(
-            {'2xl:-ml-12': !isSideNavOpen},
-            {'pl-6 2xl:pl-0': isSideNavOpen}
+            { '2xl:-ml-12': !isSideNavOpen },
+            { 'pl-6 2xl:pl-0': isSideNavOpen }
           )}
         >
           <SideNavContainer
             isOpen={isSideNavOpen}
-            setIsOpen={isOpen => setIsSideNavOpen(isOpen)}
+            setIsOpen={(isOpen) => setIsSideNavOpen(isOpen)}
             sideNav={sideNav}
           />
         </div>
@@ -88,12 +88,10 @@ const PageLayout = ({children, sideNav, dataTest}: Props) => {
   );
 };
 
-const CollectivitePageLayout = ({children, sideNav, dataTest}: Props) => {
+const CollectivitePageLayout = (props: Props) => {
   return (
     <PanelProvider>
-      <PageLayout dataTest={dataTest} sideNav={sideNav}>
-        {children}
-      </PageLayout>
+      <PageLayout {...props} />
     </PanelProvider>
   );
 };

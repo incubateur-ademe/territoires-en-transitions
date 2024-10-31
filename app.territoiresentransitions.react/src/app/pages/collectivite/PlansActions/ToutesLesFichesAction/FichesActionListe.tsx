@@ -123,7 +123,11 @@ const FichesActionListe = ({
 
   useEffect(() => {
     setCurrentPage(1);
-  }, [isLoading]);
+  }, [filtres]);
+
+  useEffect(() => {
+    setCurrentPage(1);
+  }, [debouncedSearch]);
 
   const countTotal = data?.count || 0;
 

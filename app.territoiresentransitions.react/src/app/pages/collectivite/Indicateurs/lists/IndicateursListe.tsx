@@ -130,6 +130,10 @@ const IndicateursListe = ({
     setCurrentPage(1);
   }, [filtres]);
 
+  useEffect(() => {
+    setCurrentPage(1);
+  }, [debouncedSearch]);
+
   /** Nombre total d'indicateurs filtrés */
   const countTotal = data?.length || 0;
 

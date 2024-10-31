@@ -1,6 +1,6 @@
 import {useEffect, useState} from 'react';
 import {Field, Modal, ModalFooterOKCancel, Textarea} from '@tet/ui';
-import {getMaxLengthMessage} from '../../utils';
+import { getMaxLengthMessage } from 'utils/formatUtils';
 
 export const NOTES_MAX_LENGTH = 20000;
 

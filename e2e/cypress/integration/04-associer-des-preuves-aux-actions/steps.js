@@ -90,44 +90,46 @@ When(
 When(
   /je clique sur le bouton "([^"]+)" de la preuve "([^"]+)" de l'action "([^"]+)"/,
   (btn, preuve, action) => {
-    getPreuvePanel(action)
-      .find(`[data-test^=preuves] > div`)
-      .contains(preuve)
-      .parentsUntil('[data-test=item]')
-      .find(`button[title=${btn}]`)
-      .click({force: true}); // force car les boutons ne sont visibles qu'au survol (difficile à simuler dans cypress)
+    getPreuveCarte(action, preuve).find(LocalSelectors[btn].selector).click();
   }
 );
 
-const updateCommentOrName = (newValue, preuve, action) => {
-  getPreuvePanel(action).within(() => {
+const updateComment = (newValue, preuve, action) => {
+  getPreuveCarte(action, preuve).within(() => {
     // efface le contenu du champ commentaire
-    const inputSelector = '[data-test^=preuves] input';
+    const inputSelector = 'textarea';
     cy.get(inputSelector).clear();
     // saisi une nouvelle valeur + ENTREE
-    cy.get(inputSelector).type(newValue + '{enter}');
+    cy.get(inputSelector).type(`${newValue}{enter}`);
     // le champ doit avoir disparu (le nouveau commentaire est en lecture seule)
     cy.get(inputSelector).should('not.exist');
   });
 };
 When(
   /je saisi "([^"]+)" comme commentaire de la preuve "([^"]+)" de l'action "([^"]+)"/,
-  updateCommentOrName
+  updateComment
 );
 When(
   /je saisi "([^"]+)" comme nom de la preuve "([^"]+)" de l'action "([^"]+)"/,
-  updateCommentOrName
+  (newValue) => {
+    cy.get('[data-test=edit-doc] input[type=text]')
+      .clear()
+      .type(newValue)
+      .blur();
+    cy.get('[data-test=edit-doc] button[type=submit]').click();
+    cy.get('[data-test=edit-doc]').should('not.exist');
+  }
 );
 
-When(/l'ouverture du lien "([^"]+)" doit avoir été demandée/, url => {
+When(/l'ouverture du lien "([^"]+)" doit avoir été demandée/, (url) => {
   cy.get('@open').should('have.been.calledOnceWithExactly', url);
 });
 
 When(
   /clique sur le bouton "Ajouter une preuve" à l'action "([^"]+)"/,
-  action => {
+  (action) => {
     // utilise le paramètre "force" pour le clic (sinon il ne se produit jamais ?)
-    getAddPreuveButton(action).click({force: true});
+    getAddPreuveButton(action).click({ force: true });
   }
 );
 
@@ -139,7 +141,7 @@ When(
       `[data-test="preuves-${action}"] [data-test=attendues] [data-test=preuve]:nth(${
         num - 1
       }) [data-test=AddPreuveReglementaire]`
-    ).click({force: true});
+    ).click({ force: true });
   }
 );
 
@@ -161,7 +163,7 @@ When(
 
 When(
   /je sélectionne la sous-action "([^"]+)" dans la liste déroulante/,
-  value => {
+  (value) => {
     cy.get('[data-test=SelectSubAction]').should('be.visible').click();
     cy.get(`[data-test=SelectSubAction-options] [data-test="${value}"]`)
       .should('be.visible')
@@ -200,7 +202,7 @@ When(
     // le téléchargement peut prendre du temps, on utilise donc `cy.readFile`
     // pour ré-essayer jusqu'à ce que le fichier existe et contienne quelques octets
     // en présumant qu'à ce moment le téléchargement sera terminé
-    cy.readFile(filename, {timeout: 15000})
+    cy.readFile(filename, { timeout: 15000 })
       .should('have.length.gt', 100)
       // vérifie le contenu du fichier téléchargé
       .then(() =>
@@ -214,17 +216,24 @@ When(
 );
 
 When('je confirme la suppression de la preuve', () => {
-  cy.get('[data-test=ConfirmSupprPreuve]').within(() => {
+  cy.get('[data-test=confirm-suppr]').within(() => {
     cy.root().should('be.visible');
-    cy.get('button[data-test=ok]').click();
+    cy.get('button[type=submit]').click();
     cy.root().should('not.exist');
   });
 });
 
-const getAddPreuveButton = action =>
+const getAddPreuveButton = (action) =>
   getPreuvePanel(action).find('[data-test=AddPreuveComplementaire]');
 
-const getPreuvePanel = action => cy.get(`[data-test="PreuvesPanel-${action}"]`);
+const getPreuvePanel = (action) =>
+  cy.get(`[data-test="PreuvesPanel-${action}"]`);
 
-const getPreuveTab = action =>
+const getPreuveTab = (action) =>
   cy.get(`[role=tabpanel] [data-test^=preuves-]`).parent();
+
+const getPreuveCarte = (action, nom) =>
+  getPreuvePanel(action)
+    .find(`[data-test^=preuves] > div`)
+    .contains(nom)
+    .parents('[data-test=carte-doc]');

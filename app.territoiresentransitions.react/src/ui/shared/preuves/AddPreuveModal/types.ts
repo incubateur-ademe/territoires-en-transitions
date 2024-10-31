@@ -42,6 +42,7 @@ export type UploadStatusUploaded = {
 export type UploadStatusCompleted = {
   code: UploadStatusCode.completed;
   fichier_id: number;
+  hash: string;
 };
 
 // fichier déjà téléversé
@@ -49,6 +50,7 @@ export type UploadStatusDuplicated = {
   code: UploadStatusCode.duplicated;
   fichier_id: number;
   filename: string;
+  hash: string;
 };
 
 // téléversement interrompu par l'utilisateur
@@ -61,3 +63,6 @@ export type UploadStatus =
   | UploadStatusDuplicated
   | UploadStatusFailed
   | UploadStatusAborted;
+
+  /** type des documents attendus */
+export type DocType = 'reglementaire' | 'complementaire' | 'annexe' | 'labellisation' | 'audit' | 'rapport';

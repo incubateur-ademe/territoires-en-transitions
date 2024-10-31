@@ -26,6 +26,10 @@ export const CollectivitePages = {
     route: 'tableau_bord',
     selector: '[data-test=TableauBord]',
   },
+  Accueil: {
+    route: 'accueil',
+    selector: '[data-test="accueil-collectivite"]',
+  },
   'Bibliothèque de documents': {
     route: 'bibliotheque',
     selector: '[data-test=BibliothequeDocs]',

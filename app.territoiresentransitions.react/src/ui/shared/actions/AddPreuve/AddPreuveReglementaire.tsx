@@ -32,7 +32,13 @@ export const AddPreuveReglementaire = (props: TAddPreuveButtonProps) => {
       openState={{isOpen: opened, setIsOpen: setOpened}}
       title="Ajouter un document attendu"
       render={({close}) => {
-        return <AddPreuveModal onClose={close} handlers={handlers} />;
+        return (
+          <AddPreuveModal
+            docType="reglementaire"
+            onClose={close}
+            handlers={handlers}
+          />
+        );
       }}
     >
       <button
