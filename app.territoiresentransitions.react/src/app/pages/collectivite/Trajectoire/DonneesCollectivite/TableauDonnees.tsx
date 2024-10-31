@@ -1,7 +1,6 @@
 import classNames from 'classnames';
-import {useDebouncedCallback} from 'use-debounce';
-import {Table, THead, TBody, TRow, THeadCell, TCell, Input} from '@tet/ui';
-import {getNomSource, SourceIndicateur} from '../constants';
+import { Table, THead, TBody, TRow, THeadCell, TCell, Input } from '@tet/ui';
+import { getNomSource, SourceIndicateur } from '../constants';
 
 type Source = {
   id: string;
@@ -123,17 +122,6 @@ const CellNumber = ({
   const valNumber = entry?.valeur;
   const val = valNumber?.toString() ?? '';
 
-  const handleChange = useDebouncedCallback((value) => {
-    return (
-      indicateurId &&
-      onChange?.({
-        id: entry?.id,
-        indicateurId,
-        valeur: isNaN(value) ? null : value,
-      })
-    );
-  }, 500);
-
   return (
     <TCell key={source.id} variant={estSourceCollectivite ? 'input' : 'number'}>
       {estSourceCollectivite ? (
@@ -141,9 +129,19 @@ const CellNumber = ({
           type="number"
           numType="float"
           value={val}
-          onValueChange={(values, sourceInfo) => {
-            if (sourceInfo.source === 'event') {
-              handleChange(values.floatValue);
+          onBlur={(e) => {
+            if (indicateurId) {
+              const value = parseFloat(
+                e.currentTarget.value
+                  .trim()
+                  .replaceAll(',', '.')
+                  .replaceAll(' ', '')
+              );
+              onChange?.({
+                id: entry?.id,
+                indicateurId,
+                valeur: isNaN(value) ? null : value,
+              });
             }
           }}
         />
