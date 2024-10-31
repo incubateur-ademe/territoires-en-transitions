@@ -74,7 +74,7 @@ const Aide = () => {
 
   return (
     <Button
-      data-test="help"
+      data-test="nav-help"
       className="text-primary-9"
       variant="white"
       size="sm"

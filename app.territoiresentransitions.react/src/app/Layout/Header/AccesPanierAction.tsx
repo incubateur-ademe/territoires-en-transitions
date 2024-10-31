@@ -20,6 +20,7 @@ export const AccesPanierAction = () => {
   return (
     <Button
       variant="white"
+      data-test="nav-panier"
       className={classNames('text-primary-9', { 'mr-2': !!count })}
       size="sm"
       icon="shopping-basket-2-line"

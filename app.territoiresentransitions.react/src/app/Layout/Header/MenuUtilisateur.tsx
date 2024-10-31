@@ -39,6 +39,7 @@ const MenuUtilisateur = (props: HeaderPropsWithModalState) => {
           <Link
             href={monComptePath}
             className="fr-nav__link"
+            data-test="user-profile"
             aria-current={isUserPath ? 'page' : undefined}
           >
             <span className="px-6">Profil</span>
@@ -72,7 +73,7 @@ const MenuUtilisateurBtn = forwardRef(
     <Button
       ref={ref}
       {...props}
-      data-test="connectedMenu"
+      data-test="nav-user"
       variant="white"
       size="sm"
       className={classNames('user-menu text-primary-9 pr-2', {
@@ -106,7 +107,7 @@ const Deconnexion = ({ auth }: { auth: TAuthContext }) => {
     <Link
       className="fr-nav__link"
       style={{ backgroundImage: 'none' }}
-      data-test="logoutBtn"
+      data-test="user-logout"
       href="/"
       onClick={() => {
         auth.disconnect().then(() => {

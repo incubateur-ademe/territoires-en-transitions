@@ -35,6 +35,7 @@ export const SelectCollectivite = (props: HeaderPropsWithModalState) => {
       <li className="fr-nav__item !relative">
         <Tooltip label={currentCollectivite.nom} withArrow={false}>
           <button
+            data-test="nav-select-collectivite"
             className={classNames(
               {
                 'fr-nav__btn': listCollectivites.length,

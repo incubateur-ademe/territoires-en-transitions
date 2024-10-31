@@ -82,6 +82,7 @@ export const MenuPrincipal = (props: HeaderPropsWithModalState) => {
               key="collectivites"
               item={{
                 label: 'Collectivités',
+                dataTest: 'nav-collectivites',
                 to: recherchesCollectivitesUrl,
                 urlPrefix: ['/recherches/'],
               }}
@@ -123,6 +124,7 @@ const NavItem = (props: HeaderPropsWithModalState & { item: TNavItem }) => {
   return (
     <li className="fr-nav__item">
       <Link
+        data-test={item.dataTest}
         href={to}
         target="_self"
         className="fr-nav__link"
@@ -162,6 +164,7 @@ const NavDropdown = (
   return (
     <li className="fr-nav__item">
       <button
+        data-test={item.dataTest}
         className="fr-nav__btn"
         aria-controls={id}
         aria-expanded={opened}

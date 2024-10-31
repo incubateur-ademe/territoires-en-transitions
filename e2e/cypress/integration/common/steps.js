@@ -56,9 +56,9 @@ const SignInPage = Selectors['formulaire de connexion'];
 When(/je suis connecté en tant que "([^"]*)"/, login);
 function login(userName) {
   const u = genUser(userName);
-  cy.get('@auth').then(auth => auth.connect(u));
+  cy.get('@auth').then((auth) => auth.connect(u));
   cy.get(SignInPage.selector).should('not.exist');
-  cy.get('[data-test=connectedMenu]').should('be.visible');
+  cy.get('[data-test=nav-user]').should('be.visible');
 }
 
 When(
@@ -67,12 +67,12 @@ When(
     return cy
       .task('supabase_rpc', {
         name: 'test_add_random_user',
-        params: {collectivite_id, niveau: 'edition', cgu_acceptees: false},
+        params: { collectivite_id, niveau: 'edition', cgu_acceptees: false },
       })
-      .then(({data: user}) => {
-        cy.get('@auth').then(auth => auth.connect(user));
+      .then(({ data: user }) => {
+        cy.get('@auth').then((auth) => auth.connect(user));
         cy.get(SignInPage.selector).should('not.exist');
-        cy.get('[data-test=connectedMenu]').should('be.visible');
+        cy.get('[data-test=nav-user]').should('be.visible');
       });
   }
 );
