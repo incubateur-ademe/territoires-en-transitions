@@ -140,6 +140,7 @@ const IndicateursAssocies = ({
                 }}
                 otherMenuActions={(indicateur) => [
                   <Button
+                    key={indicateur.id}
                     onClick={() => updateIndicateurs(indicateur)} // Ajouter
                     icon="link-unlink"
                     title="Dissocier l'indicateur"

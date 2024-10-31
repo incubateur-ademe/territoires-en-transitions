@@ -98,7 +98,7 @@ const SyntheseGraphsList = ({
               collectiviteId,
             })}
           >
-            Créer ou importer un plan d'action
+            Créer ou importer un plan d&apos;action
           </Link>
         </div>
       )}

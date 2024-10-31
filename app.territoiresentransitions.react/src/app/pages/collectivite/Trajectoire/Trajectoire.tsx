@@ -1,14 +1,17 @@
-import {Alert, Button, Card, Modal, TrackPageView} from '@tet/ui';
+import { Alert, Button, Card, Modal, TrackPageView } from '@tet/ui';
 import SpinnerLoader from 'ui/shared/SpinnerLoader';
-import {StatutTrajectoire, useStatutTrajectoire} from './useStatutTrajectoire';
-import {useCalculTrajectoire} from './useCalculTrajectoire';
-import {TrajectoireCalculee} from './TrajectoireCalculee';
-import {CommuneNonSupportee} from './CommuneNonSupportee';
-import {HELPDESK_URL} from './constants';
-import {ReactComponent as DbErrorPicto} from './db-error.svg';
-import {ReactComponent as TrajectoirePicto} from './trajectoire.svg';
-import {DonneesCollectivite} from './DonneesCollectivite/DonneesCollectivite';
-import {useCollectiviteId} from 'core-logic/hooks/params';
+import {
+  StatutTrajectoire,
+  useStatutTrajectoire,
+} from './useStatutTrajectoire';
+import { useCalculTrajectoire } from './useCalculTrajectoire';
+import { TrajectoireCalculee } from './TrajectoireCalculee';
+import { CommuneNonSupportee } from './CommuneNonSupportee';
+import { HELPDESK_URL } from './constants';
+import { ReactComponent as DbErrorPicto } from './db-error.svg';
+import { ReactComponent as TrajectoirePicto } from './trajectoire.svg';
+import { DonneesCollectivite } from './DonneesCollectivite/DonneesCollectivite';
+import { useCollectiviteId } from 'core-logic/hooks/params';
 
 /**
  * Affiche l'écran approprié en fonction du statut du calcul de la trajectoire SNBC
@@ -16,7 +19,7 @@ import {useCollectiviteId} from 'core-logic/hooks/params';
 const TrajectoireContent = (props: {
   statut: ReturnType<typeof useStatutTrajectoire>;
 }) => {
-  const {data, error, isLoading} = props.statut;
+  const { data, error, isLoading } = props.statut;
   if (isLoading) {
     return (
       <div className="h-56 flex justify-center items-center">
@@ -71,7 +74,7 @@ const DonneesNonDispo = () => {
       </p>
       <Modal
         size="xl"
-        render={props => <DonneesCollectivite modalProps={props} />}
+        render={(props) => <DonneesCollectivite modalProps={props} />}
       >
         <Button>Compléter mes données</Button>
       </Modal>
@@ -111,7 +114,7 @@ const ErreurDeChargement = () => {
  * Affiche le message de présentation
  */
 const Presentation = () => {
-  const {mutate: calcul, isLoading} = useCalculTrajectoire();
+  const { mutate: calcul, isLoading } = useCalculTrajectoire();
 
   return (
     <div className="flex flex-row gap-14 py-12">
@@ -125,14 +128,14 @@ const Presentation = () => {
         </p>
         <ul className="w-11/12 text-lg list-disc ml-4 mb-0">
           <li>
-            Définir ou évaluer vos objectifs, par exemple lors d'un suivi annuel
-            ou d'un bilan à mi-parcours de PCAET
+            Définir ou évaluer vos objectifs, par exemple lors d&apos;un suivi
+            annuel ou d&apos;un bilan à mi-parcours de PCAET
           </li>
           <li>Quantifier les efforts nécessaires secteur par secteur</li>
           <li>Identifier votre contribution à la SNBC</li>
         </ul>
         <p className="text-lg mt-2">
-          Cette trajectoire n'est pas prescriptive, mais peut constituer un
+          Cette trajectoire n&apos;est pas prescriptive, mais peut constituer un
           repère pour guider votre stratégie, vos actions.
         </p>
         <Button
@@ -166,7 +169,7 @@ const Presentation = () => {
  */
 const Trajectoire = () => {
   const statut = useStatutTrajectoire();
-  const {data, isLoading} = statut;
+  const { data, isLoading } = statut;
   const collectivite_id = useCollectiviteId()!;
 
   return (

@@ -1,6 +1,6 @@
-import {Button, Card, Icon} from '@tet/ui';
+import { Button, Card, Icon } from '@tet/ui';
 import ModaleEditionNote from './ModaleEditionNote';
-import {useState} from 'react';
+import { useState } from 'react';
 import AlerteSuppression from 'ui/shared/preuves/Bibliotheque/AlerteSuppression';
 import DeleteButton from '../../DeleteButton';
 import { getTruncatedText } from 'utils/formatUtils';
@@ -11,11 +11,11 @@ type CarteNoteProps = {
   updateNotes: (notes: string | null) => void;
 };
 
-const CarteNote = ({isReadonly, notes, updateNotes}: CarteNoteProps) => {
+const CarteNote = ({ isReadonly, notes, updateNotes }: CarteNoteProps) => {
   const [openAlert, setOpenAlert] = useState(false);
   const [isFullNotes, setIsFullNotes] = useState(false);
 
-  const {truncatedText: truncatedNotes, isTextTruncated: isNotesTruncated} =
+  const { truncatedText: truncatedNotes, isTextTruncated: isNotesTruncated } =
     getTruncatedText(notes, 300);
 
   return (
@@ -48,7 +48,7 @@ const CarteNote = ({isReadonly, notes, updateNotes}: CarteNoteProps) => {
               variant="underlined"
               size="xs"
               className="ml-auto"
-              onClick={() => setIsFullNotes(prevState => !prevState)}
+              onClick={() => setIsFullNotes((prevState) => !prevState)}
             >
               {isFullNotes ? 'Voir moins' : 'Voir plus'}
             </Button>

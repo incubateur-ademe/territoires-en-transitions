@@ -104,7 +104,7 @@ const CarteDocument = ({
                 <SpinnerLoader className="mx-auto my-auto" />
               ) : (
                 <Icon
-                  icon={!!fichier ? 'file-2-line' : 'links-line'}
+                  icon={fichier ? 'file-2-line' : 'links-line'}
                   className="text-primary-10"
                 />
               )}
@@ -116,7 +116,7 @@ const CarteDocument = ({
               <span
                 className="text-primary-10 hover:text-primary-8 transition text-base font-bold cursor-pointer"
                 data-test="name"
-                title={!!fichier ? 'Télécharger le fichier' : 'Ouvrir le lien'}
+                title={fichier ? 'Télécharger le fichier' : 'Ouvrir le lien'}
                 onClick={() => openPreuve(document)}
               >
                 {getFormattedTitle(document)}

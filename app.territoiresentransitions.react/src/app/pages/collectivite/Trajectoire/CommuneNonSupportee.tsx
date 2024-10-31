@@ -1,19 +1,19 @@
-import {Button, Card, useEventTracker} from '@tet/ui';
-import {useDownloadFile} from 'utils/useDownloadFile';
+import { Button, Card, useEventTracker } from '@tet/ui';
+import { useDownloadFile } from 'utils/useDownloadFile';
 import SpinnerLoader from 'ui/shared/SpinnerLoader';
-import {useTelechargementModele} from './useTelechargementModele';
-import {DOC_METHODO} from './constants';
-import {ReactComponent as DbErrorPicto} from './db-error.svg';
-import {useCollectiviteId} from 'core-logic/hooks/params';
+import { useTelechargementModele } from './useTelechargementModele';
+import { DOC_METHODO } from './constants';
+import { ReactComponent as DbErrorPicto } from './db-error.svg';
+import { useCollectiviteId } from 'core-logic/hooks/params';
 
 /**
  * Affiche un message pour les communes.
  */
 export const CommuneNonSupportee = () => {
   // pour télécharger les fichiers
-  const {mutate: download, isLoading: isDownloading} =
+  const { mutate: download, isLoading: isDownloading } =
     useTelechargementModele();
-  const {mutate: downloadFile, isLoading: isDownloadingFile} =
+  const { mutate: downloadFile, isLoading: isDownloadingFile } =
     useDownloadFile();
   const trackEvent = useEventTracker('app/trajectoires/snbc');
   const collectivite_id = useCollectiviteId()!;
@@ -25,7 +25,7 @@ export const CommuneNonSupportee = () => {
       <p className="font-normal text-lg text-center">
         La méthodologie de territorialisation de la SNBC est conçue pour les
         niveaux allant de l’EPCI à la région. Bien que les principes et les
-        calculs soient applicables à l'échelle communale, certaines données
+        calculs soient applicables à l&apos;échelle communale, certaines données
         nécessaires ne sont pas disponibles pour ce niveau.
       </p>
       <p className="font-normal text-lg text-center">
@@ -52,7 +52,7 @@ export const CommuneNonSupportee = () => {
         <Button
           variant="outlined"
           onClick={() => {
-            trackEvent('cta_download', {collectivite_id, file: 'methodo'});
+            trackEvent('cta_download', { collectivite_id, file: 'methodo' });
             downloadFile(DOC_METHODO);
           }}
           disabled={isDownloadingFile}
