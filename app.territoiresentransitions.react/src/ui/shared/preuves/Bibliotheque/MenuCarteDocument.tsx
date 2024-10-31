@@ -4,6 +4,7 @@ import { TPreuve } from 'ui/shared/preuves/Bibliotheque/types';
 import { EditerDocumentModal } from 'ui/shared/preuves/Bibliotheque/EditerDocumentModal';
 import DeleteButton from '../../../../app/pages/collectivite/PlansActions/FicheAction/DeleteButton';
 import { useState } from 'react';
+import { EditerLienModal } from './EditerLienModal';
 
 type MenuCarteDocumentProps = {
   document: TPreuve;
@@ -27,23 +28,28 @@ const MenuCarteDocument = ({
     <>
       <div className={classNames('flex gap-2', className)}>
         {/* Modifier le titre du document */}
-        {!!fichier && (
-          <Button
-            data-test="btn-edit"
-            icon="edit-line"
-            title="Editer le document"
-            variant="grey"
-            size="xs"
-            onClick={() => setIsOpen(true)}
-          />
-        )}
-        {isOpen && (
-          <EditerDocumentModal
-            isOpen={isOpen}
-            setIsOpen={setIsOpen}
-            preuve={document}
-          />
-        )}
+        <Button
+          data-test="btn-edit"
+          icon="edit-line"
+          title={fichier ? 'Editer le document' : 'Editer le lien'}
+          variant="grey"
+          size="xs"
+          onClick={() => setIsOpen(true)}
+        />
+        {isOpen &&
+          (fichier ? (
+            <EditerDocumentModal
+              isOpen={isOpen}
+              setIsOpen={setIsOpen}
+              preuve={document}
+            />
+          ) : (
+            <EditerLienModal
+              isOpen={isOpen}
+              setIsOpen={setIsOpen}
+              preuve={document}
+            />
+          ))}
 
         {/* Commenter */}
         <Button
