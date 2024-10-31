@@ -1,5 +1,5 @@
 import { createZodDto } from '@anatine/zod-nestjs';
-import { Body, Controller, Get, Param, Post, Put, Query } from '@nestjs/common';
+import { Body, Controller, Get, Param, Put, Query } from '@nestjs/common';
 import { ApiOkResponse, ApiTags } from '@nestjs/swagger';
 import { TokenInfo } from '../../auth/decorators/token-info.decorators';
 import { getFichesActionSyntheseSchema } from '../models/get-fiches-action-synthese.response';
@@ -11,7 +11,8 @@ import {
   updateFicheActionRequestSchema,
   UpdateFicheActionRequestType,
 } from '../models/update-fiche-action.request';
-import { SupabaseJwtPayload } from 'backend/src/auth/models/auth.models';
+import type { SupabaseJwtPayload } from '../../auth/models/supabase-jwt.models';
+import { CamelCasePipe } from 'backend/src/common/pipes/camel-case.pipe';
 
 /**
  * Création des classes de réponse à partir du schema pour générer automatiquement la documentation OpenAPI
@@ -78,7 +79,7 @@ export class FichesActionController {
   })
   async updateFichesAction(
     @Param('id') id: number,
-    @Body() body: UpdateFicheActionRequestType,
+    @Body(CamelCasePipe) body: UpdateFicheActionRequestType,
     @TokenInfo() tokenInfo: SupabaseJwtPayload
   ) {
     return await this.fichesActionUpdateService.updateFicheAction(
