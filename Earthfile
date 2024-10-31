@@ -420,24 +420,20 @@ app-run: ## construit et lance l'image de l'app en local
     ARG --required ANON_KEY
     ARG --required API_URL
     ARG network=supabase_network_tet
-    ARG STATIC_DIR=/app/dist/apps/app-front
     LOCALLY
-    DO +BUILD_IF_NO_IMG --IMG_NAME=front-deps --IMG_TAG=$FRONT_DEPS_TAG --BUILD_TARGET=front-deps
-    DO +BUILD_IF_NO_IMG --IMG_NAME=app --IMG_TAG=$APP_TAG --BUILD_TARGET=app-build
+    # DO +BUILD_IF_NO_IMG --IMG_NAME=front-deps --IMG_TAG=$FRONT_DEPS_TAG --BUILD_TARGET=front-deps
+    DO +BUILD_IF_NO_IMG --IMG_NAME=app --IMG_TAG=$APP_TAG --BUILD_TARGET=app-docker
     ARG kong_url=http://supabase_kong_tet:8000
     RUN docker run -d --rm \
         --name app_tet \
         --network $network \
         --publish 3000:3000 \
-        --env ZIP_ORIGIN_OVERRIDE=$kong_url \
-        --env STATIC_DIR=$STATIC_DIR \
         $APP_IMG_NAME
 
 app-test-build: ## construit une image pour exécuter les tests unitaires de l'app
     FROM +front-deps
     ENV NEXT_PUBLIC_SUPABASE_URL
     ENV NEXT_PUBLIC_SUPABASE_KEY
-    ENV ZIP_ORIGIN_OVERRIDE
     # copie les sources du module à tester
     COPY $APP_DIR $APP_DIR
     COPY $API_DIR $API_DIR
