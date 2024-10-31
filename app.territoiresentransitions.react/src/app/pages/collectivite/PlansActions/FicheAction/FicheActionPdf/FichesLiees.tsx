@@ -2,6 +2,7 @@ import { format, isBefore, startOfToday } from 'date-fns';
 import classNames from 'classnames';
 import { FicheResume } from '@tet/api/plan-actions';
 import { preset } from '@tet/ui';
+import { getTextFormattedDate } from 'utils/formatUtils';
 import {
   BadgePriorite,
   BadgeStatut,
@@ -18,7 +19,6 @@ import {
   UserIcon,
 } from 'ui/export-pdf/assets/icons';
 import { generateTitle } from '../data/utils';
-import { getTextFormattedDate } from '../utils';
 
 const { colors } = preset.theme.extend;
 

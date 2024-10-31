@@ -1,6 +1,6 @@
 import classNames from 'classnames';
 import { Text } from '@react-pdf/renderer';
-import { getFormattedNumber } from '@tet/app/pages/collectivite/PlansActions/FicheAction/utils';
+import { getFormattedNumber } from 'utils/formatUtils';
 import { Badge } from 'ui/export-pdf/components';
 import { tw } from '../../utils';
 

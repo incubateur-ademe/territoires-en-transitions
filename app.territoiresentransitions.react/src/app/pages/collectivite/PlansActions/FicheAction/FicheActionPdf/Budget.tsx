@@ -7,7 +7,6 @@ import {
   Stack,
   Title,
 } from 'ui/export-pdf/components';
-import { getFormattedNumber } from '../utils';
 import { FicheActionPdfProps } from './FicheActionPdf';
 
 const Budget = ({ fiche }: FicheActionPdfProps) => {
