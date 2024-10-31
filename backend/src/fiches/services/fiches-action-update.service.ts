@@ -289,7 +289,7 @@ export default class FichesActionUpdateService {
     ficheIdColumn: ColumnType,
     relationIdColumns: ColumnType[]
   ) {
-    const valuesToInsert = this.buildRelationsToUpdate(
+    const relationsToUpdate = this.buildRelationsToUpdate(
       ficheActionId,
       ficheIdColumn,
       relationIdColumns,
@@ -301,7 +301,7 @@ export default class FichesActionUpdateService {
     await tx.delete(table).where(eq(ficheIdColumn, ficheActionId));
 
     // Adds new relations to fiche action
-    await tx.insert(table).values(valuesToInsert);
+    await tx.insert(table).values(relationsToUpdate);
   }
 
   private buildRelationsToUpdate(
