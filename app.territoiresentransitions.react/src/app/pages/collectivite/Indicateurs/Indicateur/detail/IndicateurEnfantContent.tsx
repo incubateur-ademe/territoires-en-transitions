@@ -1,12 +1,11 @@
-import {TIndicateurDefinition} from '../../types';
-import {Spacer} from 'ui/dividers/Spacer';
-import {FichesActionLiees} from '../FichesActionLiees';
-import {IndicateurValuesTabs} from './IndicateurValuesTabs';
-import {IndicateurInfoLiees} from './IndicateurInfoLiees';
-import {useIndicateurImportSources} from './useImportSources';
-import {ImportSourcesSelector} from './ImportSourcesSelector';
+import { TIndicateurDefinition } from '../../types';
+import { FichesActionLiees } from '../FichesActionLiees';
+import { IndicateurValuesTabs } from './IndicateurValuesTabs';
+import { IndicateurInfoLiees } from './IndicateurInfoLiees';
+import { useIndicateurImportSources } from './useImportSources';
+import { ImportSourcesSelector } from './ImportSourcesSelector';
 import IndicateurDetailChart from 'app/pages/collectivite/Indicateurs/Indicateur/detail/IndicateurDetailChart';
-import {Field} from '@tet/ui';
+import { Field } from '@tet/ui';
 import ActionsLieesListe from 'app/pages/collectivite/PlansActions/FicheAction/ActionsLiees/ActionsLieesListe';
 
 /** Affiche le contenu du détail d'un indicateur enfant */
@@ -19,12 +18,11 @@ export const IndicateurEnfantContent = ({
 }) => {
   // charge les actions liées à l'indicateur
   const actionsLiees = definition.actions
-    ?.map(action => action.id)
-    .filter(actionId => !actionsLieesCommunes.includes(actionId));
+    ?.map((action) => action.id)
+    .filter((actionId) => !actionsLieesCommunes.includes(actionId));
 
-  const {sources, currentSource, setCurrentSource} = useIndicateurImportSources(
-    definition.id
-  );
+  const { sources, currentSource, setCurrentSource } =
+    useIndicateurImportSources(definition.id);
 
   return (
     <div className="p-6">
@@ -51,7 +49,7 @@ export const IndicateurEnfantContent = ({
       <div className="flex flex-col gap-8 mt-10">
         {
           /** actions liées */
-          actionsLiees?.length ? (
+          actionsLiees && actionsLiees.length > 0 && (
             <Field
               title={
                 actionsLiees.length > 1
@@ -61,8 +59,6 @@ export const IndicateurEnfantContent = ({
             >
               <ActionsLieesListe actionsIds={actionsLiees} />
             </Field>
-          ) : (
-            <Spacer size={3} />
           )
         }
         <IndicateurInfoLiees definition={definition} />
