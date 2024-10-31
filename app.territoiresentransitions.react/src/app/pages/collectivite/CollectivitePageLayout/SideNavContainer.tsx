@@ -1,8 +1,6 @@
 import classNames from 'classnames';
-import SideNav, {
-  SideNavLinks,
-} from '@tet/app/pages/collectivite/CollectivitePageLayout/SideNav';
 import { useFonctionTracker } from 'core-logic/hooks/useFonctionTracker';
+import SideNav, { SideNavLinks } from './SideNav';
 
 export type SideNavContainerProps = {
   links: SideNavLinks;
@@ -43,7 +41,9 @@ const SideNavContainer = ({ isOpen, setIsOpen, sideNav }: Props) => {
             />
           )}
           <SideNav links={links} />
-          <div className="mb-8 pt-8">{actions}</div>
+          <div className={classNames('mb-8', { 'pt-8': links.length > 0 })}>
+            {actions}
+          </div>
         </div>
       ) : (
         <button

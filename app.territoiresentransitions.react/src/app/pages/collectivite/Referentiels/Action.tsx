@@ -10,6 +10,7 @@ import { ActionDefinitionSummary } from 'core-logic/api/endpoints/ActionDefiniti
 import { useActionVue, useReferentielId } from 'core-logic/hooks/params';
 import { useCurrentCollectivite } from 'core-logic/hooks/useCurrentCollectivite';
 import Link from 'next/link';
+import { useRouter } from 'next/navigation';
 import ScrollTopButton from 'ui/buttons/ScrollTopButton';
 import ActionPreuvePanel from 'ui/shared/actions/ActionPreuvePanel/ActionPreuvePanel';
 import { useActionPreuvesCount } from 'ui/shared/preuves/Bibliotheque/usePreuves';
@@ -28,7 +29,6 @@ import { DownloadDocs } from './DownloadDocs';
 import { FichesActionLiees } from './FichesActionLiees';
 import IndicateurChartsGrid from './IndicateurChartsGrid';
 import { usePrevAndNextActionLinks } from './usePrevAndNextActionLinks';
-import { useRouter } from 'next/navigation';
 
 // index des onglets de la page Action
 const TABS_INDEX: Record<ActionVueParamOption, number> = {
@@ -54,6 +54,7 @@ const Action = ({ action }: { action: ActionDefinitionSummary }) => {
   const { data: indicateursLies } = useFilteredIndicateurDefinitions({
     filtre: {
       actionId: action.id,
+      withChildren: true,
     },
   });
 
@@ -158,7 +159,7 @@ const Action = ({ action }: { action: ActionDefinitionSummary }) => {
             {activeTab === TABS_INDEX['indicateurs'] && !noIndicateursTab ? (
               <section>
                 {indicateursLies?.length === 0 ? (
-                  <p>Cette action ne comporte pas d'indicateur</p>
+                  <p>{"Cette action ne comporte pas d'indicateur"}</p>
                 ) : (
                   <IndicateurChartsGrid
                     definitions={indicateursLies!}

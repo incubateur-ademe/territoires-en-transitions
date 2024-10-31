@@ -84,6 +84,7 @@ export async function ficheActionFetch({ dbClient, ficheActionId }: Props) {
     {
       filtre: {
         ficheActionIds: [rawFicheAction.id],
+        withChildren: true,
       },
     }
   );

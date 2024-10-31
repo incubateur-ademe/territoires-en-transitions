@@ -7,7 +7,6 @@ import {
 } from 'app/paths';
 import { supabaseClient } from 'core-logic/api/supabase';
 import { useCollectiviteId } from 'core-logic/hooks/params';
-import { SideNavLinks } from '@tet/app/pages/collectivite/CollectivitePageLayout/SideNav';
 import { generateTitle } from '../../FicheAction/data/utils';
 import { FlatAxe, PlanNode } from './types';
 import {
@@ -15,6 +14,7 @@ import {
   flatAxesToPlanNodes,
   sortPlanNodes,
 } from './utils';
+import { SideNavLinks } from '../../../CollectivitePageLayout/SideNav';
 
 export const usePlansNavigation = () => {
   const collectivite_id = useCollectiviteId();
@@ -24,7 +24,7 @@ export const usePlansNavigation = () => {
       collectivite_id: collectivite_id!,
     });
     const planNodes = data && flatAxesToPlanNodes(data as FlatAxe[]);
-    return planNodes;
+    return planNodes ?? [];
   });
 };
 

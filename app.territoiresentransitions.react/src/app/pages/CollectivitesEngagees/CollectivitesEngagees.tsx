@@ -5,21 +5,18 @@ import {
   recherchesCollectivitesUrl,
   recherchesPath,
 } from 'app/paths';
-import { useSansCollectivite } from 'core-logic/hooks/useOwnedCollectivites';
 import { Route } from 'react-router-dom';
 import DecouvrirLesCollectivites from './DecouvrirLesCollectivites';
 import { ReactComponent as PictoCarte } from './carte.svg';
 
 const CollectivitesEngagees = () => {
-  const sansCollectivite = useSansCollectivite();
-
   return (
     <>
       <Route path={finaliserMonInscriptionUrl}>
         <FinaliserMonInscription />
       </Route>
       <Route path={recherchesPath}>
-        <DecouvrirLesCollectivites sansCollectivite={sansCollectivite} />
+        <DecouvrirLesCollectivites />
       </Route>
     </>
   );

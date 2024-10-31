@@ -42,6 +42,8 @@ export const PlansActionsRoutes = ({ collectivite_id, readonly }: Props) => {
   const hasFicheNonClassees =
     (fichesNonClasseesListe && fichesNonClasseesListe.length > 0) || false;
 
+  if (!axes) return null;
+
   return (
     <CollectivitePageLayout
       dataTest="PlansAction"
@@ -78,16 +80,32 @@ export const PlansActionsRoutes = ({ collectivite_id, readonly }: Props) => {
       }}
     >
       <Route exact path={collectivitePlanActionLandingPath}>
-        <Redirect
-          to={makeCollectivitePlanActionUrl({
-            collectiviteId: collectivite_id,
-            planActionUid:
-              axes
-                ?.filter((axe) => axe.depth === 0)
-                .at(0)
-                ?.id.toString() || '',
-          })}
-        />
+        {readonly && axes.length === 0 ? (
+          <div className="flex">
+            <div className="mt-64 mx-auto leading-relaxed text-grey-6 text-center">
+              Aucun plan d'action n'a été ajouté
+              <br />
+              par cette collectivité pour le moment.
+            </div>
+          </div>
+        ) : (
+          <Redirect
+            to={
+              axes.length > 0
+                ? makeCollectivitePlanActionUrl({
+                    collectiviteId: collectivite_id,
+                    planActionUid:
+                      axes
+                        .filter((axe) => axe.depth === 0)
+                        .at(0)
+                        ?.id.toString() || '',
+                  })
+                : makeCollectivitePlansActionsNouveauUrl({
+                    collectiviteId: collectivite_id,
+                  })
+            }
+          />
+        )}
       </Route>
 
       {/* Menu de création d'un plan */}
