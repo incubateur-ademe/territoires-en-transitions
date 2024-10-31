@@ -1,5 +1,6 @@
 import { pgTable, uniqueIndex } from 'drizzle-orm/pg-core';
 import { TagBase } from './tag.basetable';
+import { createSelectSchema } from 'drizzle-zod';
 
 export const partenaireTagTable = pgTable(
   'partenaire_tag',
@@ -12,3 +13,5 @@ export const partenaireTagTable = pgTable(
     };
   }
 );
+
+export const partenaireTagSchema = createSelectSchema(partenaireTagTable);

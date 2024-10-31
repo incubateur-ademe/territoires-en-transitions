@@ -147,3 +147,4 @@ export type UpdateFicheActionType = Partial<
 
 export const ficheActionSchema = createSelectSchema(ficheActionTable);
 export const createFicheActionSchema = createInsertSchema(ficheActionTable);
+export const updateFicheActionSchema = createFicheActionSchema.partial();

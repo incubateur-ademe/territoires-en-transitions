@@ -61,9 +61,7 @@ type RelationObjectType =
 export default class FichesActionUpdateService {
   private readonly logger = new Logger(FichesActionUpdateService.name);
 
-  constructor(
-    private readonly databaseService: DatabaseService // private readonly keyConverterService: KeyConverterService
-  ) {}
+  constructor(private readonly databaseService: DatabaseService) {}
 
   async updateFicheAction(
     ficheActionId: number,
