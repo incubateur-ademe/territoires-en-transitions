@@ -1,8 +1,8 @@
 import { Referentiel } from 'types/litterals';
 
-export const signInPath = '/login';
-export const signUpPath = '/signup';
-export const resetPwdPath = '/recover';
+export const signInPath = `${process.env.NEXT_PUBLIC_AUTH_URL}/login`;
+export const signUpPath = `${process.env.NEXT_PUBLIC_AUTH_URL}/signup`;
+export const resetPwdPath = `${process.env.NEXT_PUBLIC_AUTH_URL}/recover`;
 
 export const invitationPath = '/invitation';
 export const invitationIdParam = 'invitationId';

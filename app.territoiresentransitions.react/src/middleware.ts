@@ -1,6 +1,5 @@
 import type { NextRequest } from 'next/server';
 import { NextResponse } from 'next/server';
-import { resetPwdPath, signInPath, signUpPath } from './app/paths';
 
 export const config = {
   matcher: [
@@ -25,10 +24,14 @@ export const config = {
 
 // This function can be marked `async` if using `await` inside
 export function middleware(request: NextRequest) {
-  const pathname = request.nextUrl.pathname;
-  const requestUrl = new URL(request.nextUrl.href);
+  const url = request.nextUrl;
 
-  console.log('middleware.requestUrl', request.nextUrl.href);
+  const pathname = url.pathname;
+  const hostname = request.headers.get('host') as string;
+  const requestUrl = new URL(url, hostname);
+
+  console.log('middleware.requestUrl', url.href);
+  console.log('middleware.headers.host', hostname);
   // console.log('middleware.nextPathname', pathname);
 
   if (isAuthUrl(pathname)) {
@@ -38,25 +41,28 @@ export function middleware(request: NextRequest) {
 
 function isAuthUrl(pathname: string) {
   return (
-    pathname.startsWith(signInPath) ||
-    pathname.startsWith(signUpPath) ||
-    pathname.startsWith(resetPwdPath)
+    pathname.startsWith('/login') ||
+    pathname.startsWith('/signup') ||
+    pathname.startsWith('/recover')
   );
 }
 
-function redirectToAuthDomain(requestUrl: URL) {
-  const search = new URLSearchParams(requestUrl.search);
-  if (!search.has('redirect_to')) {
-    // Returns to the current URL if nothing is specified.
-    // This ensures that the user is redirected to the domain it came from after authentication.
-    search.append('redirect_to', requestUrl.href);
-  }
+function redirectToAuthDomain(url: URL) {
+  const searchParams = url.search.toString();
+  // if (!search.has('redirect_to')) {
+  // Returns to the current URL if nothing is specified.
+  // This ensures that the user is redirected to the domain it came from after authentication.
+  // search.append('redirect_to', '/');
+  // }
 
-  const authUrl = new URL(
-    requestUrl.pathname,
-    process.env.NEXT_PUBLIC_AUTH_URL
-  );
-  authUrl.search = search.toString();
+  const path = `${url.pathname}${
+    searchParams.length > 0 ? `?${searchParams}` : ''
+  }`;
+
+  const authUrl = new URL(path, process.env.NEXT_PUBLIC_AUTH_URL);
+  console.log('NEXT_PUBLIC_AUTH_URL', process.env.NEXT_PUBLIC_AUTH_URL);
+  console.log('authUrl', authUrl.href);
+  // authUrl.search = search.toString();
 
   return NextResponse.redirect(authUrl);
 }
