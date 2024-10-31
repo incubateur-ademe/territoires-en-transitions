@@ -59,8 +59,9 @@ function redirectToAuthDomain(url: URL) {
     searchParams.length > 0 ? `?${searchParams}` : ''
   }`;
 
-  const authUrl = new URL(path, process.env.NEXT_PUBLIC_AUTH_URL);
+  console.info('path', path);
   console.info('NEXT_PUBLIC_AUTH_URL', process.env.NEXT_PUBLIC_AUTH_URL);
+  const authUrl = new URL(path, process.env.NEXT_PUBLIC_AUTH_URL);
   console.info('authUrl', authUrl.href);
   // authUrl.search = search.toString();
 
