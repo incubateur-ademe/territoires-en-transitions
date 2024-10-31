@@ -22,16 +22,20 @@ export const makeRowRenderer: RowRendererFactory =
       isLast ? 'last' : ''
     }`;
 
+    const { key, ...rowProps } = row.getRowProps();
+
     return (
       <div
-        {...row.getRowProps()}
+        {...rowProps}
+        key={key}
         onClick={() => row.toggleRowExpanded()}
-        className={classNames(className, {'cursor-pointer': canExpand})}
+        className={classNames(className, { 'cursor-pointer': canExpand })}
         title={(nom as string) || ''}
       >
-        {row.cells.map(cell => {
+        {row.cells.map((cell) => {
+          const { key, ...cellProps } = cell.getCellProps();
           return (
-            <div className="cell" {...cell.getCellProps()}>
+            <div className="cell" key={key} {...cellProps}>
               {cell.render('Cell', customCellProps)}
             </div>
           );
