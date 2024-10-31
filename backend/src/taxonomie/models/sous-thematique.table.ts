@@ -7,6 +7,7 @@ import {
 } from 'drizzle-orm/pg-core';
 import { InferSelectModel } from 'drizzle-orm';
 import { thematiqueTable } from './thematique.table';
+import { createSelectSchema } from 'drizzle-zod';
 
 export const sousThematiqueTable = pgTable(
   'sous_thematique',
@@ -26,3 +27,4 @@ export const sousThematiqueTable = pgTable(
   }
 );
 export type SousThematiqueType = InferSelectModel<typeof sousThematiqueTable>;
+export const sousThematiqueSchema = createSelectSchema(sousThematiqueTable);
