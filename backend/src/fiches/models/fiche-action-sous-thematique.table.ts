@@ -1,18 +1,18 @@
 import { integer, pgTable, primaryKey } from 'drizzle-orm/pg-core';
 import { ficheActionTable } from './fiche-action.table';
-import { thematiqueTable } from 'backend/src/taxonomie/models/thematique.table';
+import { sousThematiqueTable } from '../../taxonomie/models/sous-thematique.table';
 
 export const ficheActionSousThematiqueTable = pgTable(
   'fiche_action_sous_thematique',
   {
-    fiche_id: integer('fiche_id').references(() => ficheActionTable.id),
-    thematique_id: integer('thematique_id').references(
-      () => thematiqueTable.id
+    ficheId: integer('fiche_id').references(() => ficheActionTable.id),
+    thematiqueId: integer('thematique_id').references(
+      () => sousThematiqueTable.id
     ),
   },
   (table) => {
     return {
-      pk: primaryKey({ columns: [table.fiche_id, table.thematique_id] }),
+      pk: primaryKey({ columns: [table.ficheId, table.thematiqueId] }),
     };
   }
 );
