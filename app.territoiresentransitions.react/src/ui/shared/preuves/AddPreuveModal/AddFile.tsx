@@ -1,7 +1,7 @@
 /**
  * Affiche le composant d'upload de fichiers
  */
-import { ChangeEvent, FormEvent, useEffect, useState } from 'react';
+import { FormEvent, useEffect, useState } from 'react';
 import { Button, Field, Input } from '@tet/ui';
 import { HINT, EXPECTED_FORMATS_LIST } from './constants';
 import { filesToUploadList } from './filesToUploadList';
@@ -43,8 +43,7 @@ export const AddFile = (props: TAddFileProps) => {
   const { mutate: updateConfidentiel } =
     useUpdateBibliothequeFichierConfidentiel();
 
-  const onChange = async (e: ChangeEvent<HTMLInputElement>) => {
-    const { files } = e.target;
+  const onDropFiles = async (files: FileList | null) => {
     const filesToUpload = await filesToUploadList(collectivite_id, files);
     if (files) {
       setCurrentSelection([...currentSelection, ...filesToUpload]);
@@ -118,8 +117,10 @@ export const AddFile = (props: TAddFileProps) => {
         <Input
           type="file"
           accept={EXPECTED_FORMATS_LIST}
+          displaySize="md"
           multiple
-          onChange={onChange}
+          onChange={(e) => onDropFiles(e.target.files)}
+          onDropFiles={(files) => onDropFiles(files)}
         />
       </Field>
       <CheckboxConfidentiel
