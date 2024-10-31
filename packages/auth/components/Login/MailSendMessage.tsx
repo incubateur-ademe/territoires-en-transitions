@@ -1,3 +1,4 @@
+import { Alert } from '@tet/ui';
 import MailSend from './MailSend';
 
 /** Affiche un message suite à l'envoi du mail de connexion ou de
@@ -18,6 +19,7 @@ export const MailSendMessage = ({
         {message1}{' '}
         <span className="font-extrabold text-primary-6">{message2}</span>
       </p>
+      <Alert title="N’oubliez pas de vérifier dans vos spams" state="warning" />
     </div>
   );
 };
