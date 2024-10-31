@@ -1,5 +1,4 @@
 import { restoreSessionFromAuthTokens } from '@tet/api';
-import { ENV } from '@tet/api/environmentVariables';
 import { dcpFetch } from '@tet/api/utilisateurs/shared/data_access/dcp.fetch';
 import { supabase } from '@tet/auth/src/clientAPI';
 import { useRouter } from 'next/navigation';
@@ -30,7 +29,7 @@ export const useRedirectTo = (redirectTo: string) => {
       }
 
       if (redirectTo.startsWith('/')) {
-        const url = ENV.app_url + redirectTo;
+        const url = process.env.NEXT_PUBLIC_APP_URL + redirectTo;
         router.replace(url);
         return;
       }

@@ -1,5 +1,4 @@
 import { Referentiel } from 'types/litterals';
-import { ENV } from 'environmentVariables';
 
 export const signInPath = '/login';
 export const signUpPath = '/signup';
@@ -509,12 +508,14 @@ export const makeCollectivitePanierUrl = ({
 }: {
   collectiviteId?: number | null;
   panierId?: string;
-}) =>
-  panierId
-    ? `${ENV.panier_url}/panier/${panierId}`
+}) => {
+  const PANIER_URL = process.env.NEXT_PUBLIC_PANIER_URL;
+  return panierId
+    ? `${PANIER_URL}/panier/${panierId}`
     : collectiviteId
-    ? `${ENV.panier_url}/landing/collectivite/${collectiviteId}`
-    : `${ENV.panier_url}/landing`;
+    ? `${PANIER_URL}/landing/collectivite/${collectiviteId}`
+    : `${PANIER_URL}/landing`;
+};
 
 export const makeInvitationLandingPath = (
   invitationId: string,

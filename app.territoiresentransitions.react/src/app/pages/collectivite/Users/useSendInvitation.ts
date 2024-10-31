@@ -4,7 +4,6 @@ import {
 } from 'app/paths';
 import { useAuth, UserData } from 'core-logic/api/auth/AuthProvider';
 import { CurrentCollectivite } from 'core-logic/hooks/useCurrentCollectivite';
-import { ENV } from 'environmentVariables';
 import { useMutation } from 'react-query';
 
 export type SendInvitationArgs = {
@@ -35,7 +34,7 @@ export const useSendInvitation = (
       const urlType = invitationId ? 'invitation' : 'rattachement';
 
       // envoi le mail d'invitation
-      const invitePath = `${ENV.auth_url}/invite`;
+      const invitePath = `${process.env.NEXT_PUBLIC_AUTH_URL}/invite`;
       const { prenom, nom, email: emailFrom } = user;
       const { status } = await fetch(invitePath, {
         method: 'POST',

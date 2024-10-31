@@ -4,10 +4,6 @@ export const ENV = {
   supabase_anon_key: process.env.NEXT_PUBLIC_SUPABASE_KEY,
   supabase_url: process.env.NEXT_PUBLIC_SUPABASE_URL,
   sentry_dsn: process.env.NEXT_PUBLIC_SENTRY_DSN,
-  app_url: process.env.NEXT_PUBLIC_APP_URL,
-  auth_url: process.env.NEXT_PUBLIC_AUTH_URL,
-  panier_url: process.env.NEXT_PUBLIC_PANIER_URL,
-  backend_url: process.env.NEXT_PUBLIC_BACKEND_URL,
   posthog: {
     host: process.env.NEXT_PUBLIC_POSTHOG_HOST,
     key: process.env.NEXT_PUBLIC_POSTHOG_KEY,
