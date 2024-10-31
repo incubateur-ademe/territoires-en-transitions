@@ -1,5 +1,6 @@
 import classNames from 'classnames';
-import { AnchorHTMLProps, DivHTMLProps, isAnchor } from '@tet/ui/utils/types';
+import { DivHTMLProps, isLink, LinkFullProps } from '@tet/ui/utils/types';
+import Link from 'next/link';
 
 /** Types custom de Card */
 type BaseCardProps = {
@@ -17,15 +18,17 @@ type BaseCardProps = {
   disabled?: boolean;
   /** Pourque le lien ouvre un nouvel onglet */
   external?: boolean;
+  /** Classe CSS */
+  className?: string;
 };
 
 /** Type carte bouton */
 type DivCardProps = BaseCardProps & DivHTMLProps;
 /** Type carte lien */
-type AnchorCardProps = BaseCardProps & AnchorHTMLProps;
+type LinkCardProps = BaseCardProps & LinkFullProps;
 
 /** Props du composant générique <Card> */
-export type CardProps = DivCardProps | AnchorCardProps;
+export type CardProps = DivCardProps | LinkCardProps;
 
 /** Affiche une carte avec header et/ou footer
  * Pour appliquer des classnames au header ou au footer en fonction
@@ -44,12 +47,12 @@ export const Card = ({
   external,
   ...otherProps
 }: CardProps) => {
-  const isLink = isAnchor(otherProps);
+  const isLinkElement = isLink(otherProps);
 
   const hasHoverEffect =
     (isSelected !== undefined ||
       !!otherProps.onClick ||
-      (isLink && !!otherProps.href)) &&
+      (isLinkElement && !!otherProps.href)) &&
     !disabled;
 
   const appliedClassname = classNames(
@@ -65,9 +68,9 @@ export const Card = ({
     className
   );
 
-  if (isLink) {
+  if (isLinkElement) {
     return (
-      <a
+      <Link
         {...otherProps}
         data-test={dataTest}
         className={classNames('bg-none after:hidden', appliedClassname)}
@@ -75,7 +78,7 @@ export const Card = ({
         rel={external ? 'noreferrer noopener' : otherProps.rel}
       >
         <CardContent header={header} footer={footer} children={children} />
-      </a>
+      </Link>
     );
   } else {
     const divCardProps = { ...otherProps } as DivHTMLProps;

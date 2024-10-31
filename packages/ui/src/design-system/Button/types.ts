@@ -1,5 +1,5 @@
 import { IconValue } from '@tet/ui/design-system/Icon';
-import { AnchorHTMLProps, ButtonHTMLProps } from '@tet/ui/utils/types';
+import { ButtonHTMLProps, LinkFullProps } from '@tet/ui/utils/types';
 import { NotificationProps } from '../Notification';
 
 export type ButtonState = 'default' | 'disabled';
@@ -42,7 +42,7 @@ type BaseButtonProps = {
 
 // On définit les types des props du composant <Button>
 export type DefaultButtonProps = BaseButtonProps & ButtonHTMLProps;
-type AnchorButtonProps = BaseButtonProps & AnchorHTMLProps;
+type AnchorButtonProps = BaseButtonProps & LinkFullProps;
 
 /** Props données au composant générique <Button> */
 export type ButtonProps = DefaultButtonProps | AnchorButtonProps;

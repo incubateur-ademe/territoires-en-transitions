@@ -1,3 +1,4 @@
+import { LinkProps } from 'next/link';
 import {
   AnchorHTMLAttributes,
   ButtonHTMLAttributes,
@@ -14,11 +15,20 @@ export type ButtonHTMLProps = ButtonHTMLAttributes<HTMLButtonElement> & {
 /** Propriétés HTML d'un lien */
 export type AnchorHTMLProps = AnchorHTMLAttributes<HTMLAnchorElement>;
 
+/** Props du Link de Nextjs reconstituée car non exportées entièrement */
+export type LinkFullProps = Omit<
+  React.AnchorHTMLAttributes<HTMLAnchorElement>,
+  keyof LinkProps
+> &
+  LinkProps & {
+    children?: React.ReactNode;
+  } & React.RefAttributes<HTMLAnchorElement>;
+
 /** Détermine si les proriétés appartiennent à un lien */
-export function isAnchor(
-  props: ButtonHTMLProps | AnchorHTMLProps | DivHTMLProps
-): props is AnchorHTMLProps {
-  return (props as AnchorHTMLProps).href !== undefined;
+export function isLink(
+  props: ButtonHTMLProps | LinkFullProps | DivHTMLProps
+): props is LinkFullProps {
+  return (props as LinkFullProps).href !== undefined;
 }
 
 /** Type générique pour la gestion d'un état d'ouverture  */

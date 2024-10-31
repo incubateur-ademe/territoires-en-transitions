@@ -1,10 +1,11 @@
 import classNames from 'classnames';
 import { Ref, forwardRef } from 'react';
 
-import { ButtonHTMLProps, isAnchor } from '@tet/ui/utils/types';
+import { ButtonHTMLProps, isLink } from '@tet/ui/utils/types';
 import ButtonContent from './ButtonContent';
 import { buttonSizeClassnames, buttonThemeClassnames } from './theme';
 import { ButtonContentProps, ButtonProps } from './types';
+import Link from 'next/link';
 
 /**
  * Composant bouton par défaut, ayant pour props toutes les props habituelles d'un button tag.
@@ -76,7 +77,7 @@ export const Button = forwardRef<
       notification,
     };
 
-    const isButton = !isAnchor(props);
+    const isButton = !isLink(props);
 
     /** On affiche un bouton par défaut */
     if (isButton) {
@@ -99,41 +100,40 @@ export const Button = forwardRef<
           <ButtonContent {...buttonContentProps} />
         </button>
       );
-
-      /** Ou bien une ancre si un lien href est donné (cf ./types.ts) */
-    } else {
-      const anchorProps = props;
-      const openInNewTab = external || props.target === '_blank';
-      return (
-        <a
-          {...anchorProps}
-          ref={ref as Ref<HTMLAnchorElement>}
-          // bg-none permet d'effacer un style dsfr appliqué à la balise <a/>
-          // after:hidden supprime l'icône external par défaut du dsfr
-          className={classNames(
-            'bg-none after:hidden',
-            buttonClassname,
-            {
-              'flex-row-reverse':
-                iconPosition === 'right' ||
-                (openInNewTab && iconPosition !== 'left'),
-            },
-            className
-          )}
-          target={openInNewTab ? '_blank' : anchorProps.target}
-          rel={openInNewTab ? 'noreferrer noopener' : anchorProps.rel}
-          onClick={(evt) => {
-            evt.stopPropagation();
-            if (disabled) evt.preventDefault();
-            else anchorProps.onClick?.(evt);
-          }}
-        >
-          <ButtonContent
-            {...buttonContentProps}
-            icon={openInNewTab ? 'external-link-line' : icon}
-          />
-        </a>
-      );
     }
+
+    /** Ou bien une ancre si un lien href est donné (cf ./types.ts) */
+    const anchorProps = props;
+    const openInNewTab = external || props.target === '_blank';
+    return (
+      <Link
+        {...anchorProps}
+        ref={ref as Ref<HTMLAnchorElement>}
+        // bg-none permet d'effacer un style dsfr appliqué à la balise <a/>
+        // after:hidden supprime l'icône external par défaut du dsfr
+        className={classNames(
+          'bg-none after:hidden',
+          buttonClassname,
+          {
+            'flex-row-reverse':
+              iconPosition === 'right' ||
+              (openInNewTab && iconPosition !== 'left'),
+          },
+          className
+        )}
+        target={openInNewTab ? '_blank' : anchorProps.target}
+        rel={openInNewTab ? 'noreferrer noopener' : anchorProps.rel}
+        onClick={(evt) => {
+          evt.stopPropagation();
+          if (disabled) evt.preventDefault();
+          else anchorProps.onClick?.(evt);
+        }}
+      >
+        <ButtonContent
+          {...buttonContentProps}
+          icon={openInNewTab ? 'external-link-line' : icon}
+        />
+      </Link>
+    );
   }
 );

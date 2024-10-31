@@ -1,9 +1,9 @@
-import {Button, Card} from '@tet/ui';
-import {referentielToName} from 'app/labels';
-import {makeCollectiviteTacheUrl} from 'app/paths';
-import {useCollectiviteId} from 'core-logic/hooks/params';
-import {TActionStatutsRow} from 'types/alias';
-import {getActionStatut} from 'ui/referentiels/utils';
+import { Button, Card } from '@tet/ui';
+import { referentielToName } from 'app/labels';
+import { makeCollectiviteTacheUrl } from 'app/paths';
+import { useCollectiviteId } from 'core-logic/hooks/params';
+import { TActionStatutsRow } from 'types/alias';
+import { getActionStatut } from 'ui/referentiels/utils';
 import ActionStatutBadge from 'ui/shared/actions/ActionStatutBadge';
 
 type ActionCardProps = {
@@ -20,7 +20,7 @@ const ActionCard = ({
   onUnlink,
 }: ActionCardProps) => {
   const collectiviteId = useCollectiviteId()!;
-  const {action_id: actionId, identifiant, nom, referentiel} = action;
+  const { action_id: actionId, identifiant, nom, referentiel } = action;
   const statut = getActionStatut(action);
 
   const link = makeCollectiviteTacheUrl({
@@ -44,7 +44,7 @@ const ActionCard = ({
       </div>
 
       <Card
-        data-test="ActionCarte"
+        dataTest="ActionCarte"
         id={`action-${action.action_id}`}
         className="h-full px-4 py-[1.125rem] !gap-3 text-grey-8 hover:border-primary-3 hover:!bg-primary-1 !shadow-none transition"
         href={link}
