@@ -1,13 +1,21 @@
-import { Injectable } from '@nestjs/common';
-import { eq, ExtractTablesWithRelations } from 'drizzle-orm';
+import { Injectable, Logger } from '@nestjs/common';
+import {
+  Column,
+  ColumnBaseConfig,
+  ColumnDataType,
+  eq,
+  ExtractTablesWithRelations,
+  TableConfig,
+} from 'drizzle-orm';
 import { SupabaseJwtPayload } from '../../auth/models/supabase-jwt.models';
 import DatabaseService from '../../common/services/database.service';
 import {
   ficheActionTable,
+  updateFicheActionSchema,
   UpdateFicheActionType,
 } from '../models/fiche-action.table';
 import { ficheActionAxeTable } from '../models/fiche-action-axe.table';
-import { PgTransaction } from 'drizzle-orm/pg-core';
+import { PgTable, PgTransaction } from 'drizzle-orm/pg-core';
 import { PostgresJsQueryResultHKT } from 'drizzle-orm/postgres-js';
 import { UpdateFicheActionRequestType } from '../models/update-fiche-action.request';
 import { ficheActionThematiqueTable } from '../models/fiche-action-thematique.table';
@@ -20,18 +28,52 @@ import { ficheActionActionTable } from '../models/fiche-action-action.table';
 import { ficheActionIndicateurTable } from '../models/fiche-action-indicateur.table';
 import { ficheActionServiceTagTable } from '../models/fiche-action-service-tag.table';
 import { ficheActionFinanceurTagTable } from '../models/fiche-action-financeur-tag.table';
+import { ficheActionLienTable } from '../models/fiche-action-lien.table';
+import { ficheActionEffetAttenduTable } from '../models/fiche-action-effet-attendu.table';
+import { snakeToCamelCase } from 'backend/src/common/services/key-converter.helper';
+
+type TxType = PgTransaction<
+  PostgresJsQueryResultHKT,
+  Record<string, never>,
+  ExtractTablesWithRelations<Record<string, never>>
+>;
+
+type ColumnType = Column<
+  ColumnBaseConfig<ColumnDataType, string>,
+  object,
+  object
+>;
+
+type RelationObjectType =
+  | { ficheId: number | string; axeId: number }
+  | { ficheId: number | string; thematiqueId: number }
+  | { ficheId: number | string; partenaireTagId: number }
+  | { ficheId: number | string; structureTagId: number }
+  | { ficheId: number | string; tagId: number; userId: string }
+  | { ficheId: number | string; actionId: string }
+  | { ficheId: number | string; indicateurId: number }
+  | { ficheId: number | string; serviceTagId: number }
+  | { ficheId: number | string; financeurTagId: number; montantTtc: number }
+  | { ficheUne: number | string; ficheDeux: number }
+  | { ficheId: number | string; effetAttenduId: number };
 
 @Injectable()
 export default class FichesActionUpdateService {
-  constructor(private readonly databaseService: DatabaseService) {}
+  private readonly logger = new Logger(FichesActionUpdateService.name);
+
+  constructor(
+    private readonly databaseService: DatabaseService // private readonly keyConverterService: KeyConverterService
+  ) {}
 
   async updateFicheAction(
     ficheActionId: number,
     body: UpdateFicheActionRequestType,
     tokenInfo: SupabaseJwtPayload
   ) {
-    const camelCaseBody = this.convertObjectKeysToCamelCase(body);
-    // PARSE
+    this.logger.log(
+      `Mise à jour de la fiche action dont l'id est ${ficheActionId}`
+    );
+
     const {
       axes,
       thematiques,
@@ -44,13 +86,22 @@ export default class FichesActionUpdateService {
       indicateurs,
       services,
       financeurs,
+      fichesLiees,
+      resultatAttendu,
       ...ficheAction
-    } = camelCaseBody;
+    } = body;
 
     return await this.databaseService.db.transaction(async (tx) => {
+      /**
+       * Updates fiche action properties
+       */
+
+      // Removes all props that are not in the schema
+      const validFicheAction = updateFicheActionSchema.parse(ficheAction);
+
       const updatedFicheAction = await tx
         .update(ficheActionTable)
-        .set(ficheAction as UpdateFicheActionType)
+        .set(validFicheAction as UpdateFicheActionType)
         .where(eq(ficheActionTable.id, ficheActionId));
 
       /**
@@ -62,10 +113,10 @@ export default class FichesActionUpdateService {
           ficheActionId,
           axes,
           tx,
-          ficheActionAxeTable, // table we want to update
-          ['id'], // id key for axes
-          ficheActionAxeTable.ficheId, // we want to update this column
-          [ficheActionAxeTable.axeId] // and this column
+          ficheActionAxeTable,
+          ['id'],
+          ficheActionAxeTable.ficheId,
+          [ficheActionAxeTable.axeId]
         );
       }
 
@@ -193,37 +244,56 @@ export default class FichesActionUpdateService {
         );
       }
 
+      if (fichesLiees && fichesLiees.length > 0) {
+        await this.updateRelations(
+          ficheActionId,
+          fichesLiees,
+          tx,
+          ficheActionLienTable,
+          ['id'],
+          ficheActionLienTable.ficheUne,
+          [ficheActionLienTable.ficheDeux]
+        );
+      }
+
+      if (resultatAttendu && resultatAttendu.length > 0) {
+        await this.updateRelations(
+          ficheActionId,
+          resultatAttendu,
+          tx,
+          ficheActionEffetAttenduTable,
+          ['id'],
+          ficheActionEffetAttenduTable.ficheId,
+          [ficheActionEffetAttenduTable.effetAttenduId]
+        );
+      }
+
       return updatedFicheAction;
     });
   }
 
-  private extractIdsAndMontants(
-    financeurs: any[]
-  ): { financeurTagId: number; montantTtc: number }[] {
-    return financeurs.map((financeur) => ({
-      financeurTagId: financeur.financeur_tag.id,
-      montantTtc: financeur.montant_ttc,
-    }));
-  }
-
   /**
-   * Updates many-to-many relations in a junction table.
+   *
+   * @param ficheActionId - the id of the fiche action we're updating
+   * @param relations - object we receive from the client
+   * @param tx - current database transaction
+   * @param table - table we want to update
+   * @param relationIdKeys - in the relations object, key(s) of the value(s) we want to use for the update
+   * @param ficheIdColumn - fiche action's column we want to update
+   * @param relationIdColumns - relation's column we want to update
    */
   private async updateRelations(
     ficheActionId: number,
-    relations: { [key: string]: number }[],
-    tx: PgTransaction<
-      PostgresJsQueryResultHKT,
-      Record<string, never>,
-      ExtractTablesWithRelations<Record<string, never>>
-    >,
-    table: any,
-    relationIdKeys: string[], // array of keys to identify relations
-    ficheIdColumn: any,
-    relationIdColumns: any[] // array of relation columns
+    relations: any[],
+    tx: TxType,
+    table: PgTable<TableConfig>,
+    relationIdKeys: string[],
+    ficheIdColumn: ColumnType,
+    relationIdColumns: ColumnType[]
   ) {
-    const valuesToInsert = this.buildValues(
+    const valuesToInsert = this.buildRelationsToUpdate(
       ficheActionId,
+      ficheIdColumn,
       relationIdColumns,
       relations,
       relationIdKeys
@@ -236,50 +306,57 @@ export default class FichesActionUpdateService {
     await tx.insert(table).values(valuesToInsert);
   }
 
-  private buildValues(
+  private buildRelationsToUpdate(
     ficheActionId: number,
-    relationIdColumns: any[],
-    relations: { [key: string]: number }[],
+    ficheIdColumn: ColumnType,
+    relationIdColumns: ColumnType[],
+    relations: unknown[],
     relationIdKeys: string[]
-  ) {
-    const relationIds = this.collectIds(relations, relationIdKeys);
-    const allRelationsToInsert = relationIds.map((relationId) => {
-      const relationObject: any = {
-        ficheId: ficheActionId,
+  ): RelationObjectType[] {
+    const values = this.extractValuesForGivenIdKeys(relations, relationIdKeys);
+    const allRelationsToUpdate = values.map((value) => {
+      const relationObject: Partial<RelationObjectType> = {
+        [snakeToCamelCase(ficheIdColumn.name) as keyof RelationObjectType]:
+          ficheActionId,
       };
 
-      relationIdColumns.forEach((column, index) => {
-        relationObject[this.snakeToCamelCase(column.name)] = relationId[index];
-      });
-
-      return relationObject;
-    });
-    return allRelationsToInsert;
-  }
-
-  private collectIds(
-    objects: { [key: string]: number }[],
-    keys: string[]
-  ): any[] {
-    return objects
-      .map((object) => keys.map((key) => object[key]))
-      .filter((values) => values.every((value) => value !== undefined));
-  }
-
-  private snakeToCamelCase(snakeCase: string): string {
-    return snakeCase.replace(/_([a-z])/g, (_, letter) => letter.toUpperCase());
-  }
-
-  private convertObjectKeysToCamelCase(
-    obj: Record<string, any>
-  ): Record<string, any> {
-    const newObj: Record<string, any> = {};
-    for (const key in obj) {
-      if (Object.hasOwnProperty.call(obj, key)) {
-        const camelCaseKey = this.snakeToCamelCase(key);
-        newObj[camelCaseKey] = obj[key];
+      if (this.isMultipleRelationsToUpdate(value)) {
+        relationIdColumns.forEach((column, index) => {
+          const key = snakeToCamelCase(column.name) as keyof RelationObjectType;
+          (relationObject[key] as any) = value[index];
+        });
+      } else {
+        const key = snakeToCamelCase(
+          relationIdColumns[0].name
+        ) as keyof RelationObjectType;
+        (relationObject[key] as any) = value;
       }
-    }
-    return newObj;
+
+      return relationObject as RelationObjectType;
+    });
+
+    return allRelationsToUpdate;
+  }
+
+  private isMultipleRelationsToUpdate(value: string | number) {
+    return Array.isArray(value);
+  }
+
+  private extractValuesForGivenIdKeys(
+    objects: any[],
+    idKeys: string[]
+  ): (string | number)[] {
+    return objects.map((object) =>
+      idKeys.length === 1 ? object[idKeys[0]] : idKeys.map((key) => object[key])
+    );
+  }
+
+  private extractIdsAndMontants(
+    financeurs: any[]
+  ): { financeurTagId: number; montantTtc: number }[] {
+    return financeurs.map((financeur) => ({
+      financeurTagId: financeur.financeur_tag.id,
+      montantTtc: financeur.montant_ttc,
+    }));
   }
 }
