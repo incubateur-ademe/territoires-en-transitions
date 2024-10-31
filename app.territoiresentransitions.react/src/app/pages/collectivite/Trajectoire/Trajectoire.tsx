@@ -1,17 +1,15 @@
 import { Alert, Button, Card, Modal, TrackPageView } from '@tet/ui';
 import SpinnerLoader from 'ui/shared/SpinnerLoader';
-import {
-  StatutTrajectoire,
-  useStatutTrajectoire,
-} from './useStatutTrajectoire';
-import { useCalculTrajectoire } from './useCalculTrajectoire';
-import { TrajectoireCalculee } from './TrajectoireCalculee';
-import { CommuneNonSupportee } from './CommuneNonSupportee';
-import { HELPDESK_URL } from './constants';
-import { ReactComponent as DbErrorPicto } from './db-error.svg';
-import { ReactComponent as TrajectoirePicto } from './trajectoire.svg';
-import { DonneesCollectivite } from './DonneesCollectivite/DonneesCollectivite';
-import { useCollectiviteId } from 'core-logic/hooks/params';
+import {StatutTrajectoire, useStatutTrajectoire} from './useStatutTrajectoire';
+import {useCalculTrajectoire} from './useCalculTrajectoire';
+import {TrajectoireCalculee} from './TrajectoireCalculee';
+import {CommuneNonSupportee} from './CommuneNonSupportee';
+import {HELPDESK_URL} from './constants';
+import {ReactComponent as DbErrorPicto} from './db-error.svg';
+import {ReactComponent as TrajectoirePicto} from './trajectoire.svg';
+import {DonneesCollectivite} from './DonneesCollectivite/DonneesCollectivite';
+import {useCollectiviteId} from 'core-logic/hooks/params';
+import { useEffect } from 'react';
 
 /**
  * Affiche l'écran approprié en fonction du statut du calcul de la trajectoire SNBC
@@ -115,6 +113,13 @@ const ErreurDeChargement = () => {
  */
 const Presentation = () => {
   const { mutate: calcul, isLoading } = useCalculTrajectoire();
+
+  // démarre le calcul au chargement de la page
+  useEffect(() => {
+    if (!isLoading) {
+      calcul();
+    }
+  }, []);
 
   return (
     <div className="flex flex-row gap-14 py-12">
