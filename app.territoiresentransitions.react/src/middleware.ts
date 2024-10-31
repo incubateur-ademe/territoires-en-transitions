@@ -1,4 +1,3 @@
-import { ENV } from 'environmentVariables';
 import type { NextRequest } from 'next/server';
 import { NextResponse } from 'next/server';
 import { resetPwdPath, signInPath, signUpPath } from './app/paths';
@@ -29,7 +28,7 @@ export function middleware(request: NextRequest) {
   const pathname = request.nextUrl.pathname;
   const requestUrl = new URL(request.nextUrl.href);
 
-  // console.log('middleware.requestUrl', request.url);
+  console.log('middleware.requestUrl', request.nextUrl.href);
   // console.log('middleware.nextPathname', pathname);
 
   if (isAuthUrl(pathname)) {
@@ -53,7 +52,10 @@ function redirectToAuthDomain(requestUrl: URL) {
     search.append('redirect_to', requestUrl.href);
   }
 
-  const authUrl = new URL(requestUrl.pathname, ENV.auth_url);
+  const authUrl = new URL(
+    requestUrl.pathname,
+    process.env.NEXT_PUBLIC_AUTH_URL
+  );
   authUrl.search = search.toString();
 
   return NextResponse.redirect(authUrl);

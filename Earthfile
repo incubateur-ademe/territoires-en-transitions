@@ -869,19 +869,22 @@ app-deploy-test: ## Déploie une app de test et crée une app Koyeb si nécessai
     # ^[a-z0-9]+([.-][a-z0-9]+)*$ and from 3 to 23 chars
     # (info récupérée auprès du service support)
     ARG name=$(git rev-parse --abbrev-ref HEAD | sed 's/[^a-zA-Z1-9]//g' | head -c 14 | tr '[:upper:]' '[:lower:]')
-    FROM +koyeb
+    FROM +koyeb --KOYEB_API_KEY=$KOYEB_API_KEY
     IF [ "./koyeb apps list | grep test-app-$name" ]
         RUN echo "Test app already deployed on Koyeb at test-app-$name, updating..."
-        RUN /koyeb services update test-app-$name/test-app-$name --docker $APP_IMG_NAME
+        RUN /koyeb services update test-app-$name/test-app-$name --docker $APP_IMG_NAME \
+          --env NEXT_PUBLIC_AUTH_URL=$AUTH_URL \
+          --env NEXT_PUBLIC_BACKEND_URL=$BACKEND_URL \
+          --env NEXT_PUBLIC_PANIER_URL=$PANIER_URL
     ELSE
         RUN echo "Test app not found on Koyeb at test-app-$name, creating with $APP_IMG_NAME..."
         RUN /koyeb apps init "test-app-$name" \
-         --docker "$APP_IMG_NAME" --docker-private-registry-secret ghcr \
-         --type web --port 3000:http --route /:3000 --env PORT=3000 \
-         --env NEXT_PUBLIC_AUTH_URL=$AUTH_URL \
-         --env NEXT_PUBLIC_BACKEND_URL=$BACKEND_URL \
-         --env NEXT_PUBLIC_PANIER_URL=$PANIER_URL \
-         --regions par
+          --docker "$APP_IMG_NAME" --docker-private-registry-secret ghcr \
+          --type web --port 3000:http --route /:3000 --env PORT=3000 \
+          --env NEXT_PUBLIC_AUTH_URL=$AUTH_URL \
+          --env NEXT_PUBLIC_BACKEND_URL=$BACKEND_URL \
+          --env NEXT_PUBLIC_PANIER_URL=$PANIER_URL \
+          --regions par
     END
 
 app-destroy-test: ## Supprime l'app de test
