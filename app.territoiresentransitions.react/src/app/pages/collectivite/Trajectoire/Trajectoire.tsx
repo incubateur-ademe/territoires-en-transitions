@@ -173,23 +173,25 @@ const Presentation = () => {
  * Point d'entrée
  */
 const Trajectoire = () => {
-  const statut = useStatutTrajectoire();
-  const { data, isLoading } = statut;
+  const statutTrajectoire = useStatutTrajectoire();
+  const { data, error, isLoading } = statutTrajectoire;
   const collectivite_id = useCollectiviteId()!;
+  const statut = isLoading ? undefined : data?.status ? data.status : 'error';
+  const errorProps =
+    statut === 'error'
+      ? { error: error?.error, statusCode: error?.statusCode }
+      : {};
 
   return (
     <div className="bg-grey-2 -mb-8">
       {!isLoading && (
         <TrackPageView
           pageName="app/trajectoires/snbc"
-          properties={{
-            collectivite_id,
-            statut: data && data.status ? data.status : 'error',
-          }}
+          properties={{ collectivite_id, statut, ...errorProps }}
         />
       )}
       <div className="fr-container flex flex-col gap-16">
-        <TrajectoireContent statut={statut} />
+        <TrajectoireContent statut={statutTrajectoire} />
       </div>
     </div>
   );
