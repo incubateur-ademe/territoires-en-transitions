@@ -428,6 +428,8 @@ app-run: ## construit et lance l'image de l'app en local
         --name app_tet \
         --network $network \
         --publish 3000:3000 \
+        --env NEXT_PUBLIC_SUPABASE_URL=$API_URL \
+        --env NEXT_PUBLIC_SUPABASE_KEY=$ANON_KEY \
         $APP_IMG_NAME
 
 app-test-build: ## construit une image pour exécuter les tests unitaires de l'app
