@@ -11,7 +11,7 @@ import {
 import { collectiviteTable } from '../../collectivites/models/collectivite.table';
 import { panierTable } from '../../panier/models/panier.table';
 import { planActionTypeTable } from './plan-action-type.table';
-import { createInsertSchema, createSelectSchema } from 'drizzle-zod';
+import { createSelectSchema } from 'drizzle-zod';
 
 export const axeTable: ReturnType<typeof pgTable> = pgTable('axe', {
   id: serial('id').primaryKey(),

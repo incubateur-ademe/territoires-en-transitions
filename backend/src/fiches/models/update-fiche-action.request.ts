@@ -22,7 +22,6 @@ const piloteOrReferentSchema = z.object({
   user_id: z.string().uuid(),
 });
 
-// Used for API documentation
 export const updateFicheActionRequestSchema = updateFicheActionSchema.extend({
   axes: axeSchema.array().optional(),
   thematiques: thematiqueSchema.array().optional(),
@@ -39,7 +38,6 @@ export const updateFicheActionRequestSchema = updateFicheActionSchema.extend({
   resultatAttendu: effetAttenduSchema.array().optional(),
 });
 
-// Used as DTO in the controller
 export type UpdateFicheActionRequestType = z.infer<
   typeof updateFicheActionRequestSchema
 >;

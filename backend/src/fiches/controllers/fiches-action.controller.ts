@@ -77,7 +77,7 @@ export class FichesActionController {
     type: UpdateFicheActionRequestClass,
     description: "Mise à jour d'une fiche action",
   })
-  async updateFichesAction(
+  async updateFicheAction(
     @Param('id') id: number,
     @Body(CamelCasePipe) body: UpdateFicheActionRequestType,
     @TokenInfo() tokenInfo: SupabaseJwtPayload
