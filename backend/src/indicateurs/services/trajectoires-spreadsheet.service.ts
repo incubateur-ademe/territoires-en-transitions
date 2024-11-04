@@ -16,16 +16,16 @@ import SheetService from '../../spreadsheets/services/sheet.service';
 import {
   CalculTrajectoireRequestType,
   CalculTrajectoireReset,
-  CalculTrajectoireResultType,
   CalculTrajectoireResultatMode,
-  DonneesCalculTrajectoireARemplirType,
-  VerificationDonneesSNBCStatus,
-} from '../models/calcultrajectoire.models';
+} from '../models/calcul-trajectoire.request';
 import { CreateIndicateurValeurType } from '../models/indicateur-valeur.table';
 import { IndicateurDefinitionType } from '../models/indicateur-definition.table';
 import IndicateursService from './indicateurs.service';
 import IndicateurSourcesService from './indicateurSources.service';
 import TrajectoiresDataService from './trajectoires-data.service';
+import { VerificationTrajectoireStatus } from '../models/verification-trajectoire.response';
+import { DonneesCalculTrajectoireARemplirType } from '../models/donnees-calcul-trajectoire-a-remplir.dto';
+import { CalculTrajectoireResultType } from '../models/calcul-trajectoire.response';
 
 @Injectable()
 export default class TrajectoiresSpreadsheetService {
@@ -97,7 +97,7 @@ export default class TrajectoiresSpreadsheetService {
 
     if (
       resultatVerification.status ===
-        VerificationDonneesSNBCStatus.COMMUNE_NON_SUPPORTEE ||
+      VerificationTrajectoireStatus.COMMUNE_NON_SUPPORTEE ||
       !resultatVerification.epci
     ) {
       throw new UnprocessableEntityException(
@@ -105,7 +105,7 @@ export default class TrajectoiresSpreadsheetService {
       );
     } else if (
       resultatVerification.status ===
-        VerificationDonneesSNBCStatus.DEJA_CALCULE &&
+        VerificationTrajectoireStatus.DEJA_CALCULE &&
       resultatVerification.valeurs &&
       resultatVerification.epci &&
       request.mode !== CalculTrajectoireReset.NOUVEAU_SPREADSHEET && // L'utilisateur veut recréer un nouveau spreadsheet de calcul, on ne retourne pas les résultats existants
@@ -170,15 +170,15 @@ export default class TrajectoiresSpreadsheetService {
         mode = CalculTrajectoireResultatMode.DONNEES_EN_BDD;
         const result: CalculTrajectoireResultType = {
           mode: mode,
-          source_donnees_entree:
-            resultatVerification.source_donnees_entree || '',
-          indentifiants_referentiel_manquants_donnees_entree:
-            resultatVerification.indentifiants_referentiel_manquants_donnees_entree ||
+          sourceDonneesEntree:
+            resultatVerification.sourceDonneesEntree || '',
+          indentifiantsReferentielManquantsDonneesEntree:
+            resultatVerification.indentifiantsReferentielManquantsDonneesEntree ||
             [],
-          spreadsheet_id: trajectoireCalculSheetId,
+            spreadsheetId: trajectoireCalculSheetId,
           trajectoire: {
-            emissions_ges: emissionGesTrajectoire,
-            consommations_finales: consommationsTrajectoire,
+            emissionsGes: emissionGesTrajectoire,
+            consommationsFinales: consommationsTrajectoire,
             sequestrations: sequestrationTrajectoire,
           },
         };
@@ -188,14 +188,14 @@ export default class TrajectoiresSpreadsheetService {
       }
     } else if (
       resultatVerification.status ===
-        VerificationDonneesSNBCStatus.DONNEES_MANQUANTES ||
-      !resultatVerification.donnees_entree
+      VerificationTrajectoireStatus.DONNEES_MANQUANTES ||
+      !resultatVerification.donneesEntree
     ) {
       const identifiantsReferentielManquants = [
-        ...(resultatVerification.donnees_entree?.emissions_ges
-          .identifiants_referentiel_manquants || []),
-        ...(resultatVerification.donnees_entree?.consommations_finales
-          .identifiants_referentiel_manquants || []),
+        ...(resultatVerification.donneesEntree?.emissionsGes
+          .identifiantsReferentielManquants || []),
+        ...(resultatVerification.donneesEntree?.consommationsFinales
+          .identifiantsReferentielManquants || []),
       ];
       throw new UnprocessableEntityException(
         `Les indicateurs suivants n'ont pas de valeur pour l'année 2015 ou avec une interpolation possible : ${identifiantsReferentielManquants.join(
@@ -203,14 +203,14 @@ export default class TrajectoiresSpreadsheetService {
         )}, impossible de calculer la trajectoire SNBC.`
       );
     } else if (
-      resultatVerification.status === VerificationDonneesSNBCStatus.DEJA_CALCULE
+      resultatVerification.status === VerificationTrajectoireStatus.DEJA_CALCULE
     ) {
       this.logger.log(
         `Résultats de la trajectoire SNBC déjà calculés, recalcul des données (request mode: ${request.mode}) après suppression des données existantes`
       );
       // Suppression des données existantes
       await this.trajectoiresDataService.deleteTrajectoireSnbc(
-        request.collectivite_id,
+        request.collectiviteId,
         indicateurSourceMetadonnee.id
       );
     }
@@ -263,7 +263,7 @@ export default class TrajectoiresSpreadsheetService {
     // Ecriture des informations d'émission GES
     // les valeurs à remplir doivent être en ktCO2 et les données dans la plateforme sont en tCO2
     const emissionGesSpreadsheetData =
-      resultatVerification.donnees_entree!.emissions_ges.valeurs.map(
+      resultatVerification.donneesEntree!.emissionsGes.valeurs.map(
         (valeur) => [(valeur.valeur || 0) / 1000]
       );
     await this.sheetService.overwriteRawDataToSheet(
@@ -276,7 +276,7 @@ export default class TrajectoiresSpreadsheetService {
     // les valeurs à remplir doivent être en ktCO2 et les données dans la plateforme sont en tCO2
     // Les valeurs de séquestration sont positives en base quand il y a une séquestration mais doivent être écrites avec le signe opposé
     const sequestrationSpreadsheetData =
-      resultatVerification.donnees_entree!.sequestrations.valeurs.map(
+      resultatVerification.donneesEntree!.sequestrations.valeurs.map(
         (valeur) => [((valeur.valeur || 0) * -1) / 1000]
       );
     await this.sheetService.overwriteRawDataToSheet(
@@ -287,7 +287,7 @@ export default class TrajectoiresSpreadsheetService {
 
     // Ecriture des informations de consommation finales
     const consommationSpreadsheetData =
-      resultatVerification.donnees_entree!.consommations_finales.valeurs.map(
+      resultatVerification.donneesEntree!.consommationsFinales.valeurs.map(
         (valeur) => [valeur.valeur || 0]
       );
     await this.sheetService.overwriteRawDataToSheet(
@@ -311,17 +311,17 @@ export default class TrajectoiresSpreadsheetService {
 
     const indicateurValeursTrajectoireResultat =
       this.getIndicateurValeursACreer(
-        request.collectivite_id,
+        request.collectiviteId,
         indicateurSourceMetadonnee.id,
         trajectoireCalculResultat.data,
         this.trajectoiresDataService
           .SNBC_TRAJECTOIRE_RESULTAT_IDENTIFIANTS_REFERENTIEL,
         indicateurResultatDefinitions,
-        resultatVerification.donnees_entree!
+        resultatVerification.donneesEntree!
       );
 
     this.logger.log(
-      `Ecriture des ${indicateurValeursTrajectoireResultat.length} valeurs des indicateurs correspondant à la trajectoire SNBC pour la collectivité ${request.collectivite_id}`
+      `Ecriture des ${indicateurValeursTrajectoireResultat.length} valeurs des indicateurs correspondant à la trajectoire SNBC pour la collectivité ${request.collectiviteId}`
     );
     const upsertedTrajectoireIndicateurValeurs =
       await this.indicateursService.upsertIndicateurValeurs(
@@ -331,7 +331,7 @@ export default class TrajectoiresSpreadsheetService {
     // Maintenant que les indicateurs ont été créés, on peut ajouter la collectivité au groupement
     await this.groupementsService.ajouteCollectiviteAuGroupement(
       groupement.id,
-      request.collectivite_id
+      request.collectiviteId
     );
 
     const [
@@ -379,19 +379,19 @@ export default class TrajectoiresSpreadsheetService {
 
     const result: CalculTrajectoireResultType = {
       mode: mode,
-      source_donnees_entree: resultatVerification.donnees_entree!.source,
-      indentifiants_referentiel_manquants_donnees_entree: [
-        ...resultatVerification.donnees_entree!.emissions_ges
-          .identifiants_referentiel_manquants,
-        ...resultatVerification.donnees_entree!.sequestrations
-          .identifiants_referentiel_manquants,
-        ...resultatVerification.donnees_entree!.consommations_finales
-          .identifiants_referentiel_manquants,
+      sourceDonneesEntree: resultatVerification.donneesEntree!.source,
+      indentifiantsReferentielManquantsDonneesEntree: [
+        ...resultatVerification.donneesEntree!.emissionsGes
+          .identifiantsReferentielManquants,
+        ...resultatVerification.donneesEntree!.sequestrations
+          .identifiantsReferentielManquants,
+        ...resultatVerification.donneesEntree!.consommationsFinales
+          .identifiantsReferentielManquants,
       ],
-      spreadsheet_id: trajectoireCalculSheetId,
+      spreadsheetId: trajectoireCalculSheetId,
       trajectoire: {
-        emissions_ges: emissionGesTrajectoire,
-        consommations_finales: consommationsTrajectoire,
+        emissionsGes: emissionGesTrajectoire,
+        consommationsFinales: consommationsTrajectoire,
         sequestrations: sequestrationTrajectoire,
       },
     };
@@ -402,7 +402,7 @@ export default class TrajectoiresSpreadsheetService {
 
   inverseSigneSequestrations(result: CalculTrajectoireResultType) {
     // Il y a le cae_1.csc qui est une exception
-    result.trajectoire.emissions_ges.forEach((emissionGes) => {
+    result.trajectoire.emissionsGes.forEach((emissionGes) => {
       if (
         this.signeInversionSequestration(
           emissionGes.definition.identifiantReferentiel
@@ -478,8 +478,8 @@ export default class TrajectoiresSpreadsheetService {
     donneesCalculTrajectoire: DonneesCalculTrajectoireARemplirType
   ): CreateIndicateurValeurType[] {
     const donneesEntree = [
-      ...donneesCalculTrajectoire.emissions_ges.valeurs,
-      ...donneesCalculTrajectoire.consommations_finales.valeurs,
+      ...donneesCalculTrajectoire.emissionsGes.valeurs,
+      ...donneesCalculTrajectoire.consommationsFinales.valeurs,
       ...donneesCalculTrajectoire.sequestrations.valeurs,
     ];
     const objectifCommentaire =
@@ -549,7 +549,7 @@ export default class TrajectoiresSpreadsheetService {
         const valeursEntreeManquantes = identifiantsReferentielEntree.filter(
           (identifiant) => {
             const donneeEntree = donneesEntree.find((v) =>
-              v.identifiants_referentiel.includes(identifiant)
+              v.identifiantsReferentiel.includes(identifiant)
             );
             if (!donneeEntree) {
               return true;

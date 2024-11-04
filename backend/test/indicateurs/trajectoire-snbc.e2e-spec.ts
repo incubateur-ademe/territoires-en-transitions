@@ -6,11 +6,10 @@ import { default as request } from 'supertest';
 import { AppModule } from '../../src/app.module';
 import {
   CalculTrajectoireResultatMode,
-  VerificationDonneesSNBCResponseType,
-  VerificationDonneesSNBCStatus,
-} from '../../src/indicateurs/models/calcultrajectoire.models';
+} from '../../src/indicateurs/models/calcul-trajectoire.request';
 import { YOLO_DODO_CREDENTIALS } from '../auth/test-users.samples';
 import { trajectoireSnbcCalculRetour } from './test-data/trajectoire-snbc-calcul-retour';
+import { VerificationTrajectoireResponseType, VerificationTrajectoireStatus } from '../../src/indicateurs/models/verification-trajectoire.response';
 
 describe('Calcul de trajectoire SNBC', () => {
   let app: INestApplication;
@@ -39,7 +38,7 @@ describe('Calcul de trajectoire SNBC', () => {
 
   it(`Verification sans acces`, () => {
     return request(app.getHttpServer())
-      .get('/trajectoires/snbc/verification?collectivite_id=3')
+      .get('/trajectoires/snbc/verification?collectiviteId=3')
       .set('Authorization', `Bearer ${yoloDodoToken}`)
       .expect(401)
       .expect({
@@ -51,7 +50,7 @@ describe('Calcul de trajectoire SNBC', () => {
 
   it(`Suppression sans acces`, () => {
     return request(app.getHttpServer())
-      .delete('/trajectoires/snbc?collectivite_id=3')
+      .delete('/trajectoires/snbc?collectiviteId=3')
       .set('Authorization', `Bearer ${yoloDodoToken}`)
       .expect(401)
       .expect({
@@ -63,7 +62,7 @@ describe('Calcul de trajectoire SNBC', () => {
 
   it(`Verification avec une commune`, () => {
     return request(app.getHttpServer())
-      .get('/trajectoires/snbc/verification?collectivite_id=1')
+      .get('/trajectoires/snbc/verification?collectiviteId=1')
       .set('Authorization', `Bearer ${process.env.SUPABASE_SERVICE_ROLE_KEY}`)
       .expect(200)
       .expect({ status: 'commune_non_supportee' });
@@ -71,7 +70,7 @@ describe('Calcul de trajectoire SNBC', () => {
 
   it(`Calcul avec une commune`, () => {
     return request(app.getHttpServer())
-      .get('/trajectoires/snbc?collectivite_id=1')
+      .get('/trajectoires/snbc?collectiviteId=1')
       .set('Authorization', `Bearer ${process.env.SUPABASE_SERVICE_ROLE_KEY}`)
       .expect(422)
       .expect({
@@ -83,8 +82,8 @@ describe('Calcul de trajectoire SNBC', () => {
   });
 
   it(`Verification avec donnees manquantes`, () => {
-    const verifcationReponseAttendue: VerificationDonneesSNBCResponseType = {
-      status: VerificationDonneesSNBCStatus.DONNEES_MANQUANTES,
+    const verifcationReponseAttendue: VerificationTrajectoireResponseType = {
+      status: VerificationTrajectoireStatus.DONNEES_MANQUANTES,
       epci: {
         id: 2,
         collectiviteId: 3812,
@@ -92,60 +91,60 @@ describe('Calcul de trajectoire SNBC', () => {
         siren: '200071751',
         nature: 'CA',
       },
-      donnees_entree: {
+      donneesEntree: {
         source: 'rare',
-        emissions_ges: {
+        emissionsGes: {
           valeurs: [
             {
-              identifiants_referentiel: ['cae_1.c'],
+              identifiantsReferentiel: ['cae_1.c'],
               valeur: null,
-              date_min: null,
-              date_max: null,
+              dateMin: null,
+              dateMax: null,
             },
             {
-              identifiants_referentiel: ['cae_1.d'],
+              identifiantsReferentiel: ['cae_1.d'],
               valeur: null,
-              date_min: null,
-              date_max: null,
+              dateMin: null,
+              dateMax: null,
             },
             {
-              identifiants_referentiel: ['cae_1.i'],
+              identifiantsReferentiel: ['cae_1.i'],
               valeur: null,
-              date_min: null,
-              date_max: null,
+              dateMin: null,
+              dateMax: null,
             },
             {
-              identifiants_referentiel: ['cae_1.g'],
+              identifiantsReferentiel: ['cae_1.g'],
               valeur: null,
-              date_min: null,
-              date_max: null,
+              dateMin: null,
+              dateMax: null,
             },
             {
-              identifiants_referentiel: ['cae_1.e'],
+              identifiantsReferentiel: ['cae_1.e'],
               valeur: null,
-              date_min: null,
-              date_max: null,
+              dateMin: null,
+              dateMax: null,
             },
             {
-              identifiants_referentiel: ['cae_1.f'],
+              identifiantsReferentiel: ['cae_1.f'],
               valeur: null,
-              date_min: null,
-              date_max: null,
+              dateMin: null,
+              dateMax: null,
             },
             {
-              identifiants_referentiel: ['cae_1.h'],
+              identifiantsReferentiel: ['cae_1.h'],
               valeur: null,
-              date_min: null,
-              date_max: null,
+              dateMin: null,
+              dateMax: null,
             },
             {
-              identifiants_referentiel: ['cae_1.j'],
+              identifiantsReferentiel: ['cae_1.j'],
               valeur: null,
-              date_min: null,
-              date_max: null,
+              dateMin: null,
+              dateMax: null,
             },
           ],
-          identifiants_referentiel_manquants: [
+          identifiantsReferentielManquants: [
             'cae_1.c',
             'cae_1.d',
             'cae_1.i',
@@ -156,52 +155,52 @@ describe('Calcul de trajectoire SNBC', () => {
             'cae_1.j',
           ],
         },
-        consommations_finales: {
+        consommationsFinales: {
           valeurs: [
             {
-              identifiants_referentiel: ['cae_2.e'],
+              identifiantsReferentiel: ['cae_2.e'],
               valeur: null,
-              date_min: null,
-              date_max: null,
+              dateMin: null,
+              dateMax: null,
             },
             {
-              identifiants_referentiel: ['cae_2.f'],
+              identifiantsReferentiel: ['cae_2.f'],
               valeur: null,
-              date_min: null,
-              date_max: null,
+              dateMin: null,
+              dateMax: null,
             },
             {
-              identifiants_referentiel: ['cae_2.k'],
+              identifiantsReferentiel: ['cae_2.k'],
               valeur: null,
-              date_min: null,
-              date_max: null,
+              dateMin: null,
+              dateMax: null,
             },
             {
-              identifiants_referentiel: ['cae_2.i'],
+              identifiantsReferentiel: ['cae_2.i'],
               valeur: null,
-              date_min: null,
-              date_max: null,
+              dateMin: null,
+              dateMax: null,
             },
             {
-              identifiants_referentiel: ['cae_2.g', 'cae_2.h'],
+              identifiantsReferentiel: ['cae_2.g', 'cae_2.h'],
               valeur: null,
-              date_min: null,
-              date_max: null,
+              dateMin: null,
+              dateMax: null,
             },
             {
-              identifiants_referentiel: ['cae_2.j'],
+              identifiantsReferentiel: ['cae_2.j'],
               valeur: null,
-              date_min: null,
-              date_max: null,
+              dateMin: null,
+              dateMax: null,
             },
             {
-              identifiants_referentiel: ['cae_2.l_pcaet'],
+              identifiantsReferentiel: ['cae_2.l_pcaet'],
               valeur: null,
-              date_min: null,
-              date_max: null,
+              dateMin: null,
+              dateMax: null,
             },
           ],
-          identifiants_referentiel_manquants: [
+          identifiantsReferentielManquants: [
             'cae_2.e',
             'cae_2.f',
             'cae_2.k',
@@ -215,55 +214,55 @@ describe('Calcul de trajectoire SNBC', () => {
         sequestrations: {
           valeurs: [
             {
-              identifiants_referentiel: ['cae_63.ca'],
+              identifiantsReferentiel: ['cae_63.ca'],
               valeur: null,
-              date_min: null,
-              date_max: null,
+              dateMin: null,
+              dateMax: null,
             },
             {
-              identifiants_referentiel: ['cae_63.cb'],
+              identifiantsReferentiel: ['cae_63.cb'],
               valeur: null,
-              date_min: null,
-              date_max: null,
+              dateMin: null,
+              dateMax: null,
             },
             {
-              identifiants_referentiel: ['cae_63.da'],
+              identifiantsReferentiel: ['cae_63.da'],
               valeur: null,
-              date_min: null,
-              date_max: null,
+              dateMin: null,
+              dateMax: null,
             },
             {
-              identifiants_referentiel: ['cae_63.cd'],
+              identifiantsReferentiel: ['cae_63.cd'],
               valeur: null,
-              date_min: null,
-              date_max: null,
+              dateMin: null,
+              dateMax: null,
             },
             {
-              identifiants_referentiel: ['cae_63.cc'],
+              identifiantsReferentiel: ['cae_63.cc'],
               valeur: null,
-              date_min: null,
-              date_max: null,
+              dateMin: null,
+              dateMax: null,
             },
             {
-              identifiants_referentiel: ['cae_63.db'],
+              identifiantsReferentiel: ['cae_63.db'],
               valeur: null,
-              date_min: null,
-              date_max: null,
+              dateMin: null,
+              dateMax: null,
             },
             {
-              identifiants_referentiel: ['cae_63.b'],
+              identifiantsReferentiel: ['cae_63.b'],
               valeur: null,
-              date_min: null,
-              date_max: null,
+              dateMin: null,
+              dateMax: null,
             },
             {
-              identifiants_referentiel: ['cae_63.e'],
+              identifiantsReferentiel: ['cae_63.e'],
               valeur: null,
-              date_min: null,
-              date_max: null,
+              dateMin: null,
+              dateMax: null,
             },
           ],
-          identifiants_referentiel_manquants: [
+          identifiantsReferentielManquants: [
             'cae_63.ca',
             'cae_63.cb',
             'cae_63.da',
@@ -278,7 +277,7 @@ describe('Calcul de trajectoire SNBC', () => {
     };
     return request(app.getHttpServer())
       .get(
-        '/trajectoires/snbc/verification?collectivite_id=3812&epci_info=true'
+        '/trajectoires/snbc/verification?collectiviteId=3812&epciInfo=true'
       )
       .set('Authorization', `Bearer ${process.env.SUPABASE_SERVICE_ROLE_KEY}`)
       .expect(200)
@@ -287,7 +286,7 @@ describe('Calcul de trajectoire SNBC', () => {
 
   it(`Calcul avec donnees manquantes`, () => {
     return request(app.getHttpServer())
-      .get('/trajectoires/snbc?collectivite_id=3812')
+      .get('/trajectoires/snbc?collectiviteId=3812')
       .set('Authorization', `Bearer ${process.env.SUPABASE_SERVICE_ROLE_KEY}`)
       .expect(422)
       .expect({
@@ -300,7 +299,7 @@ describe('Calcul de trajectoire SNBC', () => {
 
   it(`Calcul sans droit suffisant (uniquement lecture)`, () => {
     return request(app.getHttpServer())
-      .get('/trajectoires/snbc?collectivite_id=3895')
+      .get('/trajectoires/snbc?collectiviteId=3895')
       .set('Authorization', `Bearer ${yoloDodoToken}`)
       .expect(401)
       .expect({
@@ -313,12 +312,12 @@ describe('Calcul de trajectoire SNBC', () => {
   it(`Verification et calcul avec donnees completes`, () => {
     // Suppression de la trajectoire snbc existante si le test est joué plusieurs fois
     request(app.getHttpServer())
-      .delete('/trajectoires/snbc/verification?collectivite_id=4936')
+      .delete('/trajectoires/snbc/verification?collectiviteId=4936')
       .set('Authorization', `Bearer ${yoloDodoToken}`)
       .expect(200);
 
-    const verifcationReponseAttendue: VerificationDonneesSNBCResponseType = {
-      status: VerificationDonneesSNBCStatus.PRET_A_CALCULER,
+    const verifcationReponseAttendue: VerificationTrajectoireResponseType = {
+      status: VerificationTrajectoireStatus.PRET_A_CALCULER,
       epci: {
         id: 1126,
         collectiviteId: 4936,
@@ -326,160 +325,160 @@ describe('Calcul de trajectoire SNBC', () => {
         siren: '246700488',
         nature: 'METRO',
       },
-      donnees_entree: {
+      donneesEntree: {
         source: 'rare',
-        emissions_ges: {
+        emissionsGes: {
           valeurs: [
             {
-              identifiants_referentiel: ['cae_1.c'],
+              identifiantsReferentiel: ['cae_1.c'],
               valeur: 447868,
-              date_min: '2015-01-01',
-              date_max: '2015-01-01',
+              dateMin: '2015-01-01',
+              dateMax: '2015-01-01',
             },
             {
-              identifiants_referentiel: ['cae_1.d'],
+              identifiantsReferentiel: ['cae_1.d'],
               valeur: 471107,
-              date_min: '2015-01-01',
-              date_max: '2015-01-01',
+              dateMin: '2015-01-01',
+              dateMax: '2015-01-01',
             },
             {
-              identifiants_referentiel: ['cae_1.i'],
+              identifiantsReferentiel: ['cae_1.i'],
               valeur: 348525,
-              date_min: '2015-01-01',
-              date_max: '2015-01-01',
+              dateMin: '2015-01-01',
+              dateMax: '2015-01-01',
             },
             {
-              identifiants_referentiel: ['cae_1.g'],
+              identifiantsReferentiel: ['cae_1.g'],
               valeur: 28839,
-              date_min: '2015-01-01',
-              date_max: '2015-01-01',
+              dateMin: '2015-01-01',
+              dateMax: '2015-01-01',
             },
             {
-              identifiants_referentiel: ['cae_1.e'],
+              identifiantsReferentiel: ['cae_1.e'],
               valeur: 653598,
-              date_min: '2015-01-01',
-              date_max: '2015-01-01',
+              dateMin: '2015-01-01',
+              dateMax: '2015-01-01',
             },
             {
-              identifiants_referentiel: ['cae_1.f'],
+              identifiantsReferentiel: ['cae_1.f'],
               valeur: 21492,
-              date_min: '2015-01-01',
-              date_max: '2015-01-01',
+              dateMin: '2015-01-01',
+              dateMax: '2015-01-01',
             },
             {
-              identifiants_referentiel: ['cae_1.h'],
+              identifiantsReferentiel: ['cae_1.h'],
               valeur: 39791,
-              date_min: '2015-01-01',
-              date_max: '2015-01-01',
+              dateMin: '2015-01-01',
+              dateMax: '2015-01-01',
             },
             {
-              identifiants_referentiel: ['cae_1.j'],
+              identifiantsReferentiel: ['cae_1.j'],
               valeur: 13500,
-              date_min: '2015-01-01',
-              date_max: '2015-01-01',
+              dateMin: '2015-01-01',
+              dateMax: '2015-01-01',
             },
           ],
-          identifiants_referentiel_manquants: [],
+          identifiantsReferentielManquants: [],
         },
-        consommations_finales: {
+        consommationsFinales: {
           valeurs: [
             {
-              identifiants_referentiel: ['cae_2.e'],
+              identifiantsReferentiel: ['cae_2.e'],
               valeur: 3092.7,
-              date_min: '2015-01-01',
-              date_max: '2015-01-01',
+              dateMin: '2015-01-01',
+              dateMax: '2015-01-01',
             },
             {
-              identifiants_referentiel: ['cae_2.f'],
+              identifiantsReferentiel: ['cae_2.f'],
               valeur: 3295.15,
-              date_min: '2015-01-01',
-              date_max: '2015-01-01',
+              dateMin: '2015-01-01',
+              dateMax: '2015-01-01',
             },
             {
-              identifiants_referentiel: ['cae_2.k'],
+              identifiantsReferentiel: ['cae_2.k'],
               valeur: null,
-              date_min: null,
-              date_max: null,
+              dateMin: null,
+              dateMax: null,
             },
             {
-              identifiants_referentiel: ['cae_2.i'],
+              identifiantsReferentiel: ['cae_2.i'],
               valeur: 61,
-              date_min: '2015-01-01',
-              date_max: '2015-01-01',
+              dateMin: '2015-01-01',
+              dateMax: '2015-01-01',
             },
             {
-              identifiants_referentiel: ['cae_2.g', 'cae_2.h'],
+              identifiantsReferentiel: ['cae_2.g', 'cae_2.h'],
               valeur: 2668.6499999999996,
-              date_min: '2015-01-01',
-              date_max: '2015-01-01',
+              dateMin: '2015-01-01',
+              dateMax: '2015-01-01',
             },
             {
-              identifiants_referentiel: ['cae_2.j'],
+              identifiantsReferentiel: ['cae_2.j'],
               valeur: 0,
-              date_min: '2015-01-01',
-              date_max: '2015-01-01',
+              dateMin: '2015-01-01',
+              dateMax: '2015-01-01',
             },
             {
-              identifiants_referentiel: ['cae_2.l_pcaet'],
+              identifiantsReferentiel: ['cae_2.l_pcaet'],
               valeur: null,
-              date_min: null,
-              date_max: null,
+              dateMin: null,
+              dateMax: null,
             },
           ],
-          identifiants_referentiel_manquants: ['cae_2.k', 'cae_2.l_pcaet'],
+          identifiantsReferentielManquants: ['cae_2.k', 'cae_2.l_pcaet'],
         },
         sequestrations: {
           valeurs: [
             {
-              identifiants_referentiel: ['cae_63.ca'],
+              identifiantsReferentiel: ['cae_63.ca'],
               valeur: null,
-              date_min: null,
-              date_max: null,
+              dateMin: null,
+              dateMax: null,
             },
             {
-              identifiants_referentiel: ['cae_63.cb'],
+              identifiantsReferentiel: ['cae_63.cb'],
               valeur: null,
-              date_min: null,
-              date_max: null,
+              dateMin: null,
+              dateMax: null,
             },
             {
-              identifiants_referentiel: ['cae_63.da'],
+              identifiantsReferentiel: ['cae_63.da'],
               valeur: null,
-              date_min: null,
-              date_max: null,
+              dateMin: null,
+              dateMax: null,
             },
             {
-              identifiants_referentiel: ['cae_63.cc'],
+              identifiantsReferentiel: ['cae_63.cc'],
               valeur: null,
-              date_min: null,
-              date_max: null,
+              dateMin: null,
+              dateMax: null,
             },
             {
-              identifiants_referentiel: ['cae_63.cd'],
+              identifiantsReferentiel: ['cae_63.cd'],
               valeur: null,
-              date_min: null,
-              date_max: null,
+              dateMin: null,
+              dateMax: null,
             },
             {
-              identifiants_referentiel: ['cae_63.db'],
+              identifiantsReferentiel: ['cae_63.db'],
               valeur: null,
-              date_min: null,
-              date_max: null,
+              dateMin: null,
+              dateMax: null,
             },
             {
-              identifiants_referentiel: ['cae_63.b'],
+              identifiantsReferentiel: ['cae_63.b'],
               valeur: null,
-              date_min: null,
-              date_max: null,
+              dateMin: null,
+              dateMax: null,
             },
             {
-              identifiants_referentiel: ['cae_63.e'],
+              identifiantsReferentiel: ['cae_63.e'],
               valeur: null,
-              date_min: null,
-              date_max: null,
+              dateMin: null,
+              dateMax: null,
             },
           ],
-          identifiants_referentiel_manquants: [
+          identifiantsReferentielManquants: [
             'cae_63.ca',
             'cae_63.cb',
             'cae_63.da',
@@ -494,7 +493,7 @@ describe('Calcul de trajectoire SNBC', () => {
     };
     request(app.getHttpServer())
       .get(
-        '/trajectoires/snbc/verification?collectivite_id=4936&epci_info=true'
+        '/trajectoires/snbc/verification?collectiviteId=4936&epciInfo=true'
       )
       .set('Authorization', `Bearer ${yoloDodoToken}`)
       .expect(200)
@@ -502,17 +501,17 @@ describe('Calcul de trajectoire SNBC', () => {
 
     // Calcul de la trajectoire
     request(app.getHttpServer())
-      .get('/trajectoires/snbc?collectivite_id=4936')
+      .get('/trajectoires/snbc?collectiviteId=4936')
       .set('Authorization', `Bearer ${yoloDodoToken}`)
       .expect(200)
       .expect(trajectoireSnbcCalculRetour);
 
     // La vérification doit maintenant retourner "calculé"
-    const verificationReponseAttendueApresCalcul: VerificationDonneesSNBCResponseType =
+    const verificationReponseAttendueApresCalcul: VerificationTrajectoireResponseType =
       {
-        status: VerificationDonneesSNBCStatus.DEJA_CALCULE,
-        source_donnees_entree: 'rare',
-        indentifiants_referentiel_manquants_donnees_entree: [
+        status: VerificationTrajectoireStatus.DEJA_CALCULE,
+        sourceDonneesEntree: 'rare',
+        indentifiantsReferentielManquantsDonneesEntree: [
           'cae_2.k',
           'cae_2.l_pcaet',
           'cae_63.ca',
@@ -526,7 +525,7 @@ describe('Calcul de trajectoire SNBC', () => {
         ],
       };
     request(app.getHttpServer())
-      .get('/trajectoires/snbc/verification?collectivite_id=4936')
+      .get('/trajectoires/snbc/verification?collectiviteId=4936')
       .set('Authorization', `Bearer ${yoloDodoToken}`)
       .expect(200)
       .expect(verificationReponseAttendueApresCalcul);
@@ -538,7 +537,7 @@ describe('Calcul de trajectoire SNBC', () => {
     trajectoireSnbcCalculRetourExistant.mode =
       CalculTrajectoireResultatMode.DONNEES_EN_BDD;
     request(app.getHttpServer())
-      .get('/trajectoires/snbc?collectivite_id=4936')
+      .get('/trajectoires/snbc?collectiviteId=4936')
       .set('Authorization', `Bearer ${yoloDodoToken}`)
       .expect(200)
       .expect(trajectoireSnbcCalculRetourExistant);
@@ -552,7 +551,7 @@ describe('Calcul de trajectoire SNBC', () => {
 
   it(`Téléchargement du fichier xlsx prérempli pour un epci avec donnees completes`, async () => {
     const response = await request(app.getHttpServer())
-      .get('/trajectoires/snbc/telechargement?collectivite_id=4936')
+      .get('/trajectoires/snbc/telechargement?collectiviteId=4936')
       .set('Authorization', `Bearer ${yoloDodoToken}`)
       .expect(200)
       .responseType('blob');
