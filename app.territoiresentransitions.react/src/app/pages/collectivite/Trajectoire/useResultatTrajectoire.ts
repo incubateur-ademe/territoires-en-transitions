@@ -160,7 +160,7 @@ export const useResultatTrajectoire = ({
     ? {
         id: EMISSIONS_NETTES.id,
         name: EMISSIONS_NETTES.nom,
-        color: EMISSIONS_NETTES.color,
+        color: LAYERS.trajectoire.color,
         source: dataEmissionsNettes.valeurs.map((v) => ({
           x: v.dateValeur,
           y: v.objectif * (EMISSIONS_NETTES.coef || 1),
