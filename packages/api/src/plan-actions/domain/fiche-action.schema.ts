@@ -29,6 +29,8 @@ export const niveauPrioriteSchema = z.enum(['Élevé', 'Moyen', 'Bas']);
 export type NiveauPriorite = z.infer<typeof niveauPrioriteSchema>;
 
 export const cibleSchema = z.enum([
+  'Grand public',
+  'Associations',
   'Grand public et associations',
   'Public Scolaire',
   'Autres collectivités du territoire',
