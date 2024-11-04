@@ -13,7 +13,6 @@ import {
 import { Tables } from '@tet/api/database.types';
 import { dcpFetch } from '@tet/api/utilisateurs/shared/data_access/dcp.fetch';
 import { fetchOwnedCollectivites } from 'core-logic/hooks/useOwnedCollectivites';
-import { ENV } from 'environmentVariables';
 import {
   createContext,
   ReactNode,
@@ -178,7 +177,7 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
   const authHeaders = session?.access_token
     ? {
         authorization: `Bearer ${session.access_token}`,
-        apikey: `${ENV.supabase_anon_key}`,
+        apikey: `${process.env.NEXT_PUBLIC_SUPABASE_KEY}`,
       }
     : null;
 
@@ -262,7 +261,7 @@ export async function getAuthHeaders() {
   return session?.access_token
     ? {
         authorization: `Bearer ${session.access_token}`,
-        apikey: `${ENV.supabase_anon_key}`,
+        apikey: `${process.env.NEXT_PUBLIC_SUPABASE_KEY}`,
       }
     : null;
 }

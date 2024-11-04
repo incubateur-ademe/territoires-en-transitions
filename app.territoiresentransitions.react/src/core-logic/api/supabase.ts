@@ -1,14 +1,13 @@
-import { createClient } from '@supabase/supabase-js';
 import * as Sentry from '@sentry/nextjs';
-import { ENV } from 'environmentVariables';
+import { createClient } from '@supabase/supabase-js';
 import { Database } from '@tet/api';
 
 /**
  * Supabase client
  */
 export const supabaseClient = createClient<Database>(
-  ENV.supabase_url!,
-  ENV.supabase_anon_key!,
+  process.env.NEXT_PUBLIC_SUPABASE_URL!,
+  process.env.NEXT_PUBLIC_SUPABASE_KEY!,
   {
     global: {
       // intercepte les requêtes pour traiter les erreurs globalement
