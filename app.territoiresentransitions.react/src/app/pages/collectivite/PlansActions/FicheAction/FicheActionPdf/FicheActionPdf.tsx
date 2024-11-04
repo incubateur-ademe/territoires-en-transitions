@@ -1,6 +1,7 @@
 import { FicheAction, FicheResume } from '@tet/api/plan-actions';
 import { TActionStatutsRow, TAxeRow } from 'types/alias';
 import { IndicateurDefinition } from '@tet/api/indicateurs/domain';
+import { AnnexeInfo } from '../data/useAnnexesFicheActionInfos';
 import { Stack, Title } from 'ui/export-pdf/components';
 
 import Acteurs from './Acteurs';
@@ -13,6 +14,7 @@ import FichesLiees from './FichesLiees';
 import Indicateurs from './Indicateurs';
 import Notes from './Notes';
 import Planning from './Planning';
+import Documents from './Documents';
 
 export type FicheActionPdfProps = {
   fiche: FicheAction;
@@ -23,6 +25,7 @@ export type FicheActionPdfExtendedProps = FicheActionPdfProps & {
   indicateursListe: IndicateurDefinition[] | undefined | null;
   fichesLiees: FicheResume[];
   actionsLiees: TActionStatutsRow[];
+  annexes: AnnexeInfo[] | undefined;
 };
 
 const FicheActionPdf = ({
@@ -31,6 +34,7 @@ const FicheActionPdf = ({
   indicateursListe,
   fichesLiees,
   actionsLiees,
+  annexes,
 }: FicheActionPdfExtendedProps) => {
   const { titre } = fiche;
 
@@ -75,6 +79,9 @@ const FicheActionPdf = ({
 
       {/* Notes */}
       <Notes fiche={fiche} />
+
+      {/* Documents */}
+      <Documents annexes={annexes} />
     </Stack>
   );
 };

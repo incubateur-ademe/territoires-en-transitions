@@ -4,6 +4,7 @@ import { useFicheActionChemins } from '../../PlanAction/data/usePlanActionChemin
 import { useIndicateurDefinitions } from '../../../Indicateurs/Indicateur/useIndicateurDefinition';
 import { useFichesActionLiees } from '../data/useFichesActionLiees';
 import { useActionListe } from '../data/options/useActionListe';
+import { useAnnexesFicheActionInfos } from '../data/useAnnexesFicheActionInfos';
 import ExportPDFButton from 'ui/export-pdf/ExportPDFButton';
 import FicheActionPdf from '../FicheActionPdf/FicheActionPdf';
 
@@ -32,12 +33,16 @@ const FicheActionPdfContent = ({
   const { data: actionListe, isLoading: isLoadignActionsListe } =
     useActionListe();
 
+  const { data: annexes, isLoading: isLoadingAnnexes } =
+    useAnnexesFicheActionInfos(fiche.id);
+
   useEffect(() => {
     if (
       !isLoadingIndicateurs &&
       !isLoadingFichesLiees &&
       !isLoadignActionsListe &&
-      !isLoadingAxes
+      !isLoadingAxes &&
+      !isLoadingAnnexes
     ) {
       const { actions } = fiche;
       const actionsIds = (actions ?? []).map((action) => action.id);
@@ -54,6 +59,7 @@ const FicheActionPdfContent = ({
           indicateursListe,
           fichesLiees,
           actionsLiees,
+          annexes,
         })
       );
     }
