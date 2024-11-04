@@ -22,7 +22,11 @@ const NotesEtDocumentsTab = ({
           updateFiche({ ...fiche, notesComplementaires: notes })
         }
       />
-      <Documents isReadonly={isReadonly} ficheId={fiche.id} />
+      <Documents
+        isReadonly={isReadonly}
+        collectiviteId={fiche.collectiviteId}
+        ficheId={fiche.id}
+      />
     </div>
   );
 };
