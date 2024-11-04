@@ -35,6 +35,7 @@ jobs:
           --use-inline-cache --save-inline-cache --push
           --platform=linux/amd64
           +app-docker
+          --ENV_NAME=${{ github.event.inputs.target }}
           --ANON_KEY=${{ secrets.ANON_KEY }}
           --API_URL=${{ secrets.API_URL }}
           --SENTRY_DSN=${{ vars.SENTRY_DSN }}
