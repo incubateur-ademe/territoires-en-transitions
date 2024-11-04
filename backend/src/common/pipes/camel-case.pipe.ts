@@ -1,9 +1,9 @@
 import { PipeTransform, Injectable, ArgumentMetadata } from '@nestjs/common';
-import { convertObjectKeysToCamelCase } from '../services/key-converter.helper';
+import { objectToCamel } from 'ts-case-convert';
 
 @Injectable()
 export class CamelCasePipe implements PipeTransform {
   transform(value: any) {
-    return convertObjectKeysToCamelCase(value);
+    return objectToCamel(value);
   }
 }
