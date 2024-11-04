@@ -95,11 +95,11 @@ export default class FichesActionUpdateService {
        */
 
       // Removes all props that are not in the schema
-      const validFicheAction = updateFicheActionSchema.parse(ficheAction);
+      // const validFicheAction = updateFicheActionSchema.parse(ficheAction);
 
       const updatedFicheAction = await tx
         .update(ficheActionTable)
-        .set(validFicheAction as UpdateFicheActionType)
+        .set(ficheAction)
         .where(eq(ficheActionTable.id, ficheActionId));
 
       /**
@@ -353,8 +353,8 @@ export default class FichesActionUpdateService {
     financeurs: any[]
   ): { financeurTagId: number; montantTtc: number }[] {
     return financeurs.map((financeur) => ({
-      financeurTagId: financeur.financeur_tag.id,
-      montantTtc: financeur.montant_ttc,
+      financeurTagId: financeur.financeurTag.id,
+      montantTtc: financeur.montantTtc,
     }));
   }
 }

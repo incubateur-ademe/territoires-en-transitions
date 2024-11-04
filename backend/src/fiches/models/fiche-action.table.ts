@@ -13,6 +13,7 @@ import {
   varchar,
 } from 'drizzle-orm/pg-core';
 import { createInsertSchema, createSelectSchema } from 'drizzle-zod';
+import { z } from 'zod';
 
 export const ficheActionPiliersEciEnum = pgEnum('fiche_action_piliers_eci', [
   'Approvisionnement durable',
@@ -138,13 +139,12 @@ export const ficheActionTable = pgTable('fiche_action', {
 export type FicheActionTableType = typeof ficheActionTable;
 
 export type CreateFicheActionType = InferInsertModel<typeof ficheActionTable>;
-export type UpdateFicheActionType = Partial<
-  Omit<
-    InferInsertModel<typeof ficheActionTable>,
-    'id' | 'createdAt' | 'modifiedAt' | 'modifiedBy'
-  >
->;
 
 export const ficheActionSchema = createSelectSchema(ficheActionTable);
 export const createFicheActionSchema = createInsertSchema(ficheActionTable);
-export const updateFicheActionSchema = createFicheActionSchema.partial();
+
+export const updateFicheActionSchema = createFicheActionSchema
+  .omit({ id: true, createdAt: true, modifiedAt: true, modifiedBy: true })
+  .partial();
+
+export type UpdateFicheActionType = z.infer<typeof updateFicheActionSchema>;
