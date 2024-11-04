@@ -10,14 +10,6 @@ import { NiveauAcces } from '../../auth/models/private-utilisateur-droit.table';
 import { AuthService } from '../../auth/services/auth.service';
 import { EpciType } from '../../collectivites/models/epci.table';
 import CollectivitesService from '../../collectivites/services/collectivites.service';
-import {
-  DonneesARemplirResultType,
-  DonneesARemplirValeurType,
-  DonneesCalculTrajectoireARemplirType,
-  VerificationDonneesSNBCResult,
-  VerificationDonneesSNBCStatus,
-  VerificationTrajectoireRequestType,
-} from '../models/calcultrajectoire.models';
 import IndicateursService from './indicateurs.service';
 import IndicateurSourcesService from './indicateurSources.service';
 import { CreateIndicateurSourceType } from '../models/indicateur-source.table';
@@ -30,6 +22,11 @@ import {
   IndicateurValeurType,
 } from '../models/indicateur-valeur.table';
 import { SupabaseJwtPayload } from '../../auth/models/supabase-jwt.models';
+import { VerificationTrajectoireResultType, VerificationTrajectoireStatus } from '../models/verification-trajectoire.response';
+import { VerificationTrajectoireRequestType } from '../models/verification-trajectoire.request';
+import { DonneesCalculTrajectoireARemplirType } from '../models/donnees-calcul-trajectoire-a-remplir.dto';
+import { DonneesARemplirValeurType } from '../models/donnees-a-remplir-valeur.dto';
+import { DonneesARemplirResultType } from '../models/donnees-a-remplir-result.dto';
 
 @Injectable()
 export default class TrajectoiresDataService {
@@ -249,12 +246,12 @@ export default class TrajectoiresDataService {
     donneesCalculTrajectoire: DonneesCalculTrajectoireARemplirType
   ): string {
     const identifiantsManquants = [
-      ...donneesCalculTrajectoire.emissions_ges
-        .identifiants_referentiel_manquants,
-      ...donneesCalculTrajectoire.consommations_finales
-        .identifiants_referentiel_manquants,
+      ...donneesCalculTrajectoire.emissionsGes
+        .identifiantsReferentielManquants,
+      ...donneesCalculTrajectoire.consommationsFinales
+        .identifiantsReferentielManquants,
       ...donneesCalculTrajectoire.sequestrations
-        .identifiants_referentiel_manquants,
+        .identifiantsReferentielManquants,
     ];
 
     let commentaitre = `${this.OBJECTIF_COMMENTAIRE_SOURCE} ${donneesCalculTrajectoire.source}`;
@@ -350,8 +347,8 @@ export default class TrajectoiresDataService {
     );
     return {
       source: source,
-      emissions_ges: donneesEmissionsGes,
-      consommations_finales: donneesConsommationsFinales,
+      emissionsGes: donneesEmissionsGes,
+      consommationsFinales: donneesConsommationsFinales,
       sequestrations: donneesSequestration,
     };
   }
@@ -368,10 +365,10 @@ export default class TrajectoiresDataService {
     const identifiantsReferentielManquants: string[] = [];
     identifiantsReferentiel.forEach((identifiants, index) => {
       const valeurARemplir: DonneesARemplirValeurType = {
-        identifiants_referentiel: identifiants,
+        identifiantsReferentiel: identifiants,
         valeur: 0,
-        date_min: null,
-        date_max: null,
+        dateMin: null,
+        dateMax: null,
       };
       valeursARemplir[index] = valeurARemplir;
       identifiants.forEach((identifiant) => {
@@ -400,19 +397,19 @@ export default class TrajectoiresDataService {
             valeurARemplir.valeur +=
               identifiantIndicateurValeur2015.indicateur_valeur.resultat;
             if (
-              !valeurARemplir.date_max ||
+              !valeurARemplir.dateMax ||
               identifiantIndicateurValeur2015.indicateur_valeur.dateValeur >
-                valeurARemplir.date_max
+                valeurARemplir.dateMax
             ) {
-              valeurARemplir.date_max =
+              valeurARemplir.dateMax =
                 identifiantIndicateurValeur2015.indicateur_valeur.dateValeur;
             }
             if (
-              !valeurARemplir.date_min ||
+              !valeurARemplir.dateMin ||
               identifiantIndicateurValeur2015.indicateur_valeur.dateValeur <
-                valeurARemplir.date_min
+                valeurARemplir.dateMin
             ) {
-              valeurARemplir.date_min =
+              valeurARemplir.dateMin =
                 identifiantIndicateurValeur2015.indicateur_valeur.dateValeur;
             }
           }
@@ -429,18 +426,18 @@ export default class TrajectoiresDataService {
             if (valeurARemplir.valeur !== null) {
               valeurARemplir.valeur += interpolationResultat.valeur;
               if (
-                !valeurARemplir.date_max ||
+                !valeurARemplir.dateMax ||
                 (interpolationResultat.date_max &&
-                  interpolationResultat.date_max > valeurARemplir.date_max)
+                  interpolationResultat.date_max > valeurARemplir.dateMax)
               ) {
-                valeurARemplir.date_max = interpolationResultat.date_max;
+                valeurARemplir.dateMax = interpolationResultat.date_max;
               }
               if (
-                !valeurARemplir.date_min ||
+                !valeurARemplir.dateMin ||
                 (interpolationResultat.date_min &&
-                  interpolationResultat.date_min < valeurARemplir.date_min)
+                  interpolationResultat.date_min < valeurARemplir.dateMin)
               ) {
-                valeurARemplir.date_min = interpolationResultat.date_min;
+                valeurARemplir.dateMin = interpolationResultat.date_min;
               }
             }
           }
@@ -449,7 +446,7 @@ export default class TrajectoiresDataService {
     });
     return {
       valeurs: valeursARemplir,
-      identifiants_referentiel_manquants: identifiantsReferentielManquants,
+      identifiantsReferentielManquants: identifiantsReferentielManquants,
     };
   }
 
@@ -514,12 +511,12 @@ export default class TrajectoiresDataService {
   verificationDonneesARemplirSuffisantes(
     donnees: DonneesCalculTrajectoireARemplirType
   ): boolean {
-    const { emissions_ges, consommations_finales } = donnees;
-    const valeurEmissionGesValides = emissions_ges.valeurs.filter(
+    const { emissionsGes, consommationsFinales } = donnees;
+    const valeurEmissionGesValides = emissionsGes.valeurs.filter(
       (v) => v.valeur !== null
     ).length;
     const valeurConsommationFinalesValides =
-      consommations_finales.valeurs.filter((v) => v.valeur !== null).length;
+    consommationsFinales.valeurs.filter((v) => v.valeur !== null).length;
     return (
       valeurEmissionGesValides >= 4 && valeurConsommationFinalesValides >= 3
     );
@@ -536,29 +533,29 @@ export default class TrajectoiresDataService {
     tokenInfo: SupabaseJwtPayload,
     epci?: EpciType,
     forceRecuperationDonnees = false
-  ): Promise<VerificationDonneesSNBCResult> {
+  ): Promise<VerificationTrajectoireResultType> {
     // Vérification des droits
     await this.authService.verifieAccesAuxCollectivites(
       tokenInfo,
-      [request.collectivite_id],
+      [request.collectiviteId],
       NiveauAcces.EDITION
     );
 
-    const response: VerificationDonneesSNBCResult = {
-      status: VerificationDonneesSNBCStatus.COMMUNE_NON_SUPPORTEE,
+    const response: VerificationTrajectoireResultType = {
+      status: VerificationTrajectoireStatus.COMMUNE_NON_SUPPORTEE,
     };
 
-    if (request.force_recuperation_donnees) {
+    if (request.forceRecuperationDonnees) {
       forceRecuperationDonnees = true;
     }
 
     if (!epci) {
       // Vérifie si la collectivité est une commune :
       const collectivite = await this.collectivitesService.getCollectivite(
-        request.collectivite_id
+        request.collectiviteId
       );
       if (collectivite.commune || !collectivite.epci) {
-        response.status = VerificationDonneesSNBCStatus.COMMUNE_NON_SUPPORTEE;
+        response.status = VerificationTrajectoireStatus.COMMUNE_NON_SUPPORTEE;
         return response;
       }
       response.epci = collectivite.epci;
@@ -578,7 +575,7 @@ export default class TrajectoiresDataService {
 
     // sinon, vérifie s'il existe déjà des données trajectoire SNBC calculées :
     const valeurs = await this.indicateursService.getIndicateursValeurs({
-      collectiviteId: request.collectivite_id,
+      collectiviteId: request.collectiviteId,
       sources: [this.SNBC_SOURCE.id],
     });
     if (valeurs.length > 0) {
@@ -590,13 +587,13 @@ export default class TrajectoiresDataService {
         this.extractSourceIdentifiantManquantsFromCommentaire(
           premierCommentaire || ''
         );
-      response.source_donnees_entree = sourceIdentifiantManquants?.source || '';
+      response.sourceDonneesEntree = sourceIdentifiantManquants?.source || '';
       this.logger.log(
-        `Source des données SNBC déjà calculées : ${response.source_donnees_entree}`
+        `Source des données SNBC déjà calculées : ${response.sourceDonneesEntree}`
       );
-      response.indentifiants_referentiel_manquants_donnees_entree =
+      response.indentifiantsReferentielManquantsDonneesEntree =
         sourceIdentifiantManquants?.identifiants_referentiel_manquants || [];
-      response.status = VerificationDonneesSNBCStatus.DEJA_CALCULE;
+      response.status = VerificationTrajectoireStatus.DEJA_CALCULE;
       if (!forceRecuperationDonnees) {
         return response;
       }
@@ -605,10 +602,10 @@ export default class TrajectoiresDataService {
     // Si jamais les données ont déjà été calculées et que l'on a pas défini le flag forceUtilisationDonneesCollectivite, on utilise la meme source
     const donneesCalculTrajectoireARemplir =
       await this.getValeursPourCalculTrajectoire(
-        request.collectivite_id,
-        !isNil(request.force_utilisation_donnees_collectivite)
-          ? request.force_utilisation_donnees_collectivite
-          : response.source_donnees_entree ===
+        request.collectiviteId,
+        !isNil(request.forceUtilisationDonneesCollectivite)
+          ? request.forceUtilisationDonneesCollectivite
+          : response.sourceDonneesEntree ===
             this.indicateursService.NULL_SOURCE_ID
           ? true
           : false
@@ -617,16 +614,16 @@ export default class TrajectoiresDataService {
     const donneesSuffisantes = this.verificationDonneesARemplirSuffisantes(
       donneesCalculTrajectoireARemplir
     );
-    response.donnees_entree = donneesCalculTrajectoireARemplir;
+    response.donneesEntree = donneesCalculTrajectoireARemplir;
     // si oui, retourne 'pret a calculer'
     if (donneesSuffisantes) {
-      if (response.status !== VerificationDonneesSNBCStatus.DEJA_CALCULE) {
-        response.status = VerificationDonneesSNBCStatus.PRET_A_CALCULER;
+      if (response.status !== VerificationTrajectoireStatus.DEJA_CALCULE) {
+        response.status = VerificationTrajectoireStatus.PRET_A_CALCULER;
       }
       return response;
     }
     // sinon, retourne 'données manquantes'
-    response.status = VerificationDonneesSNBCStatus.DONNEES_MANQUANTES;
+    response.status = VerificationTrajectoireStatus.DONNEES_MANQUANTES;
     return response;
   }
 

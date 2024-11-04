@@ -2,7 +2,6 @@ import { Injectable, Logger } from '@nestjs/common';
 import {
   and,
   eq,
-  getTableColumns,
   gte,
   inArray,
   isNotNull,
@@ -18,11 +17,9 @@ import * as _ from 'lodash';
 import { NiveauAcces } from '../../auth/models/private-utilisateur-droit.table';
 import { AuthService } from '../../auth/services/auth.service';
 import DatabaseService from '../../common/services/database.service';
-import { DeleteIndicateursValeursRequestType } from '../models/deleteIndicateurs.models';
 import {
-  GetIndicateursValeursRequestType,
   GetIndicateursValeursResponseType,
-} from '../models/getIndicateurs.models';
+} from '../models/get-indicateurs.response';
 import { groupementTable } from '../../collectivites/models/groupement.table';
 import { groupementCollectiviteTable } from '../../collectivites/models/groupement-collectivite.table';
 import {
@@ -48,6 +45,8 @@ import {
   SupabaseJwtPayload,
   SupabaseRole,
 } from '../../auth/models/supabase-jwt.models';
+import { DeleteIndicateursValeursRequestType } from '../models/delete-indicateurs.request';
+import { GetIndicateursValeursRequestType } from '../models/get-indicateurs.request';
 
 @Injectable()
 export default class IndicateursService {

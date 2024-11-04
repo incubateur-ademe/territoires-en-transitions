@@ -22,17 +22,3 @@ export const deleteIndicateursValeursRequestSchema = extendApi(
 export type DeleteIndicateursValeursRequestType = z.infer<
   typeof deleteIndicateursValeursRequestSchema
 >;
-
-export const deleteIndicateursValeursResponseSchema = extendApi(
-  z
-    .object({
-      indicateurValeurIdsSupprimes: z.array(z.number().int()),
-    })
-    .openapi({
-      title: 'Identifiant des valeurs supprimées',
-    })
-);
-
-export type DeleteIndicateursValeursResponseType = z.infer<
-  typeof deleteIndicateursValeursResponseSchema
->;
