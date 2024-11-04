@@ -29,7 +29,7 @@ export const useStatutTrajectoire = () => {
       collectiviteId
         ? api.get<ResponseType>({
             route: '/trajectoires/snbc/verification',
-            params: {collectivite_id: collectiviteId},
+            params: { collectiviteId },
           })
         : null,
     {

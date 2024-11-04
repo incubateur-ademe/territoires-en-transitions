@@ -30,7 +30,7 @@ const useTrajectoire = () => {
       collectiviteId
         ? api.get<ResultatTrajectoire>({
             route: '/trajectoires/snbc',
-            params: {collectivite_id: collectiviteId},
+            params: { collectiviteId },
           })
         : null,
     {
@@ -145,8 +145,7 @@ export const useResultatTrajectoire = ({
 
   // détermine si les données d'entrée sont dispos pour tous les secteurs
   const donneesSectoriellesIncompletes =
-    (data &&
-      !!data?.indentifiants_referentiel_manquants_donnees_entree?.length) ||
+    (data && !!data?.indentifiantsReferentielManquantsDonneesEntree?.length) ||
     false;
 
   // extrait les données des émissions nettes pour le graphe tous secteurs
