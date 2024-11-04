@@ -6,17 +6,23 @@ const { colors } = preset.theme.extend;
 Font.register({
   family: 'Marianne',
   fonts: [
-    { src: '/Marianne-Regular.woff2' },
-    { src: '/Marianne-Regular_Italic.woff2', fontStyle: 'italic' },
-    { src: '/Marianne-Medium.woff2', fontWeight: 500 },
+    { src: '/fonts/Marianne-Regular.woff2' },
     {
-      src: '/Marianne-Medium_Italic.woff2',
+      src: '/fonts/Marianne-Regular_Italic.woff2',
+      fontStyle: 'italic',
+    },
+    {
+      src: '/fonts/Marianne-Medium.woff2',
+      fontWeight: 500,
+    },
+    {
+      src: '/fonts/Marianne-Medium_Italic.woff2',
       fontWeight: 500,
       fontStyle: 'italic',
     },
-    { src: '/Marianne-Bold.woff2', fontWeight: 700 },
+    { src: '/fonts/Marianne-Bold.woff2', fontWeight: 700 },
     {
-      src: '/Marianne-Bold_Italic.woff2',
+      src: '/fonts/Marianne-Bold_Italic.woff2',
       fontWeight: 700,
       fontStyle: 'italic',
     },
