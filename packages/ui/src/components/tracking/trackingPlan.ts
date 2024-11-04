@@ -218,7 +218,7 @@ export interface TrackingPlan extends Record<never, Page> {
 
   /** Page "créer un plan" */
   'app/creer-plan': {
-    properties: {collectivite_id: number};
+    properties: { collectivite_id: number };
     onglets: never;
     events: {
       cta_creer: {};
@@ -231,13 +231,17 @@ export interface TrackingPlan extends Record<never, Page> {
   'app/trajectoires/snbc': {
     properties: {
       collectivite_id: number;
-      statut?:
-        | 'commune_non_supportee'
-        | 'deja_calcule'
-        | 'pret_a_calculer'
-        | 'donnees_manquantes'
-        | 'error';
-    };
+    } & (
+      | {
+          statut:
+            | 'commune_non_supportee'
+            | 'deja_calcule'
+            | 'pret_a_calculer'
+            | 'donnees_manquantes';
+        }
+      | { statut: 'error'; error?: string; statusCode?: number }
+      | { statut?: undefined }
+    );
     onglets: 'emissions_ges' | 'consommations_finales';
     events: {
       cta_lancer_calcul: { source: 'open_data' | 'collectivite' };
