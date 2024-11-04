@@ -33,7 +33,6 @@ export const EMISSIONS_NETTES = {
   id: 'cae_1.aa',
   nom: 'Émissions nettes',
   coef: 0.001, // pour normaliser les données résultats/objectifs (tCO2 => ktCO2)
-  color: '#111',
 };
 
 // liste des indicateurs Trajectoire
