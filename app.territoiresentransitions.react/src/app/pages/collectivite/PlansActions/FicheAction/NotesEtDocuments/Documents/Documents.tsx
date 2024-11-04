@@ -11,14 +11,18 @@ import { useAddAnnexe } from '../../data/useAddAnnexe';
 
 type DocumentsProps = {
   isReadonly: boolean;
+  collectiviteId: number;
   ficheId: number;
 };
 
-const Documents = ({ isReadonly, ficheId }: DocumentsProps) => {
+const Documents = ({ isReadonly, ficheId, collectiviteId }: DocumentsProps) => {
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [isEditLoading, setIsEditLoading] = useState(false);
 
-  const { data: documents, isLoading } = useAnnexesFicheAction(ficheId);
+  const { data: documents, isLoading } = useAnnexesFicheAction(
+    collectiviteId,
+    ficheId
+  );
   const handlers = useAddAnnexe(ficheId);
 
   useEffect(() => {
