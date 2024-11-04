@@ -64,7 +64,7 @@ const CarteDocument = ({
   return (
     <>
       <div
-        className={classNames('relative group h-full max-w-screen-md', {
+        className={classNames('relative group max-w-screen-md', {
           'mt-3': fichier?.confidentiel,
         })}
         data-test="carte-doc"
