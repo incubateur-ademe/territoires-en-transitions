@@ -15,15 +15,15 @@ import { TokenInfo } from '../../auth/decorators/token-info.decorators';
 import { CollectiviteRequestClass } from '../../collectivites/models/collectivite.request';
 import {
   calculTrajectoireRequestSchema,
-  calculTrajectoireResponseSchema,
-  modeleTrajectoireTelechargementRequestSchema,
-  verificationDonneesSNBCResponseSchema,
-  verificationTrajectoireRequestSchema,
-} from '../models/calcultrajectoire.models';
+} from '../models/calcul-trajectoire.request';
 import TrajectoiresDataService from '../services/trajectoires-data.service';
 import TrajectoiresSpreadsheetService from '../services/trajectoires-spreadsheet.service';
 import TrajectoiresXlsxService from '../services/trajectoires-xlsx.service';
 import type { SupabaseJwtPayload } from '../../auth/models/supabase-jwt.models';
+import { verificationTrajectoireResponseSchema } from '../models/verification-trajectoire.response';
+import { modeleTrajectoireTelechargementRequestSchema } from '../models/modele-trajectoire-telechargement.request';
+import { verificationTrajectoireRequestSchema } from '../models/verification-trajectoire.request';
+import { calculTrajectoireResponseSchema } from '../models/calcul-trajectoire.response';
 
 /**
  * Création des classes de requête/réponse à partir du schema pour générer automatiquement la documentation OpenAPI et la validation des entrées
@@ -44,8 +44,8 @@ export class VerificationTrajectoireRequestClass extends createZodDto(
   verificationTrajectoireRequestSchema
 ) {}
 
-export class VerificationDonneesSNBCResponseClass extends createZodDto(
-  verificationDonneesSNBCResponseSchema
+export class VerificationTrajectoireResponseClass extends createZodDto(
+  verificationTrajectoireResponseSchema
 ) {}
 
 @ApiTags('Trajectoires')
@@ -66,10 +66,10 @@ export class TrajectoiresController {
     @TokenInfo() tokenInfo: SupabaseJwtPayload
   ): Promise<CalculTrajectoireResponseClass> {
     this.logger.log(
-      `Calcul de la trajectoire SNBC pour la collectivité ${request.collectivite_id}`
+      `Calcul de la trajectoire SNBC pour la collectivité ${request.collectiviteId}`
     );
     // eslint-disable-next-line @typescript-eslint/no-unused-vars
-    const { spreadsheet_id, ...response } =
+    const { spreadsheetId, ...response } =
       await this.trajectoiresSpreadsheetService.calculeTrajectoireSnbc(
         request,
         tokenInfo
@@ -83,10 +83,10 @@ export class TrajectoiresController {
     @TokenInfo() tokenInfo: SupabaseJwtPayload
   ): Promise<void> {
     this.logger.log(
-      `Suppression de la trajectoire SNBC pour la collectivité ${request.collectivite_id}`
+      `Suppression de la trajectoire SNBC pour la collectivité ${request.collectiviteId}`
     );
     await this.trajectoiresDataService.deleteTrajectoireSnbc(
-      request.collectivite_id,
+      request.collectiviteId,
       undefined,
       tokenInfo
     );
@@ -123,7 +123,7 @@ export class TrajectoiresController {
     @Next() next: NextFunction
   ) {
     this.logger.log(
-      `Téléchargement de la trajectoire SNBC pour la collectivité ${request.collectivite_id}`
+      `Téléchargement de la trajectoire SNBC pour la collectivité ${request.collectiviteId}`
     );
     this.trajectoiresXlsxService.downloadTrajectoireSnbc(
       request,
@@ -135,16 +135,16 @@ export class TrajectoiresController {
 
   @Get('verification')
   @ApiOkResponse({
-    type: VerificationDonneesSNBCResponseClass,
+    type: VerificationTrajectoireResponseClass,
     description:
       'Status pour savoir si le calcul de la trajectoire SNBC est possible et données qui seront utilisées',
   })
   async verificationDonneesSnbc(
     @Query() request: VerificationTrajectoireRequestClass,
     @TokenInfo() tokenInfo: SupabaseJwtPayload
-  ): Promise<VerificationDonneesSNBCResponseClass> {
+  ): Promise<VerificationTrajectoireResponseClass> {
     this.logger.log(
-      `Vérifie la possibilité de lancer le calcul de la trajectoire SNBC pour la collectivité ${request.collectivite_id}`
+      `Vérifie la possibilité de lancer le calcul de la trajectoire SNBC pour la collectivité ${request.collectiviteId}`
     );
     // eslint-disable-next-line @typescript-eslint/no-unused-vars
     const { valeurs, ...response } =
@@ -152,7 +152,7 @@ export class TrajectoiresController {
         request,
         tokenInfo
       );
-    if (!request.epci_info) {
+    if (!request.epciInfo) {
       delete response.epci;
     }
     return response;

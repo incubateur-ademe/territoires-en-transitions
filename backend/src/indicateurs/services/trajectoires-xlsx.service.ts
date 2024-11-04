@@ -12,12 +12,10 @@ import { EpciType } from '../../collectivites/models/epci.table';
 import { CollectiviteRequestType } from '../../collectivites/models/collectivite.request';
 import BackendConfigurationService from '../../config/configuration.service';
 import SheetService from '../../spreadsheets/services/sheet.service';
-import {
-  DonneesCalculTrajectoireARemplirType,
-  ModeleTrajectoireTelechargementRequestType,
-  VerificationDonneesSNBCStatus,
-} from '../models/calcultrajectoire.models';
 import TrajectoiresDataService from './trajectoires-data.service';
+import { VerificationTrajectoireStatus } from '../models/verification-trajectoire.response';
+import { ModeleTrajectoireTelechargementRequestType } from '../models/modele-trajectoire-telechargement.request';
+import { DonneesCalculTrajectoireARemplirType } from '../models/donnees-calcul-trajectoire-a-remplir.dto';
 
 @Injectable()
 export default class TrajectoiresXlsxService {
@@ -54,7 +52,7 @@ export default class TrajectoiresXlsxService {
         );
       }
 
-      await this.initXlsxBuffers(request.force_recuperation_xlsx);
+      await this.initXlsxBuffers(request.forceRecuperationXlsx);
       const nomFichier = await this.sheetService.getFileName(
         this.getIdentifiantXlsxCalcul()
       );
@@ -160,23 +158,23 @@ export default class TrajectoiresXlsxService {
         ] = 0;
       }
     );
-    valeurIndicateurs?.emissions_ges.valeurs.forEach((valeur) => {
+    valeurIndicateurs?.emissionsGes.valeurs.forEach((valeur) => {
       const cleSubstitution = this.getXlsxCleSubstitution(
-        valeur.identifiants_referentiel
+        valeur.identifiantsReferentiel
       );
       emissionGesSequestrationConsommationsSubstitionValeurs[cleSubstitution] =
         (valeur.valeur || 0) / 1000;
     });
     valeurIndicateurs?.sequestrations.valeurs.forEach((valeur) => {
       const cleSubstitution = this.getXlsxCleSubstitution(
-        valeur.identifiants_referentiel
+        valeur.identifiantsReferentiel
       );
       emissionGesSequestrationConsommationsSubstitionValeurs[cleSubstitution] =
         ((valeur.valeur || 0) * -1) / 1000;
     });
-    valeurIndicateurs?.consommations_finales.valeurs.forEach((valeur) => {
+    valeurIndicateurs?.consommationsFinales.valeurs.forEach((valeur) => {
       const cleSubstitution = this.getXlsxCleSubstitution(
-        valeur.identifiants_referentiel
+        valeur.identifiantsReferentiel
       );
       emissionGesSequestrationConsommationsSubstitionValeurs[cleSubstitution] =
         valeur.valeur || 0;
@@ -225,7 +223,7 @@ export default class TrajectoiresXlsxService {
 
       if (
         resultatVerification.status ===
-          VerificationDonneesSNBCStatus.COMMUNE_NON_SUPPORTEE ||
+        VerificationTrajectoireStatus.COMMUNE_NON_SUPPORTEE ||
         !resultatVerification.epci
       ) {
         throw new UnprocessableEntityException(
@@ -233,14 +231,14 @@ export default class TrajectoiresXlsxService {
         );
       } else if (
         resultatVerification.status ===
-          VerificationDonneesSNBCStatus.DONNEES_MANQUANTES ||
-        !resultatVerification.donnees_entree
+          VerificationTrajectoireStatus.DONNEES_MANQUANTES ||
+        !resultatVerification.donneesEntree
       ) {
         const identifiantsReferentielManquants = [
-          ...(resultatVerification.donnees_entree?.emissions_ges
-            .identifiants_referentiel_manquants || []),
-          ...(resultatVerification.donnees_entree?.consommations_finales
-            .identifiants_referentiel_manquants || []),
+          ...(resultatVerification.donneesEntree?.emissionsGes
+            .identifiantsReferentielManquants || []),
+          ...(resultatVerification.donneesEntree?.consommationsFinales
+            .identifiantsReferentielManquants || []),
         ];
         throw new UnprocessableEntityException(
           `Les indicateurs suivants n'ont pas de valeur pour l'année 2015 ou avec une interpolation possible : ${identifiantsReferentielManquants.join(
@@ -263,7 +261,7 @@ export default class TrajectoiresXlsxService {
       const generatedData = await this.generationXlsxDonneesSubstituees(
         xlsxBuffer,
         sirenData,
-        resultatVerification.donnees_entree
+        resultatVerification.donneesEntree
       );
 
       this.logger.log(`Renvoi du fichier Xlsx généré`);

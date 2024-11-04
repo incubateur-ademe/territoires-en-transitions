@@ -3,15 +3,15 @@ import { Body, Controller, Get, Logger, Post, Query } from '@nestjs/common';
 import { ApiCreatedResponse, ApiResponse, ApiTags } from '@nestjs/swagger';
 import { TokenInfo } from '../../auth/decorators/token-info.decorators';
 import {
-  getIndicateursValeursRequestSchema,
   getIndicateursValeursResponseSchema,
-} from '../models/getIndicateurs.models';
+} from '../models/get-indicateurs.response';
 import {
   UpsertIndicateursValeursRequest,
   UpsertIndicateursValeursResponse,
-} from '../models/upsertIndicateurs.models';
+} from '../models/upsert-indicateurs-valeurs.request';
 import IndicateursService from '../services/indicateurs.service';
 import type { SupabaseJwtPayload } from '../../auth/models/supabase-jwt.models';
+import { getIndicateursValeursRequestSchema } from '../models/get-indicateurs.request';
 
 /**
  * Création des classes de requête/réponse à partir du schema pour générer automatiquement la documentation OpenAPI et la validation des entrées

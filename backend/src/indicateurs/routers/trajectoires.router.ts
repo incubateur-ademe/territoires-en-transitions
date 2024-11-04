@@ -18,7 +18,7 @@ export class TrajectoiresRouter {
     snbc: this.trpc.procedure
       .input(
         z.object({
-          collectivite_id: z.number(),
+          collectiviteId: z.number(),
           conserve_fichier_temporaire: z.boolean().optional(),
         })
       )
