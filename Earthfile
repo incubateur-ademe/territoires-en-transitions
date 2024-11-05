@@ -877,10 +877,6 @@ auth-deploy:
 
 app-deploy-test: ## Déploie une app de test et crée une app Koyeb si nécessaire
     ARG --required KOYEB_API_KEY
-
-    ARG --required API_URL
-    ARG --required ANON_KEY
-
     ARG --required AUTH_URL
     ARG --required BACKEND_URL
     ARG --required PANIER_URL
@@ -895,8 +891,6 @@ app-deploy-test: ## Déploie une app de test et crée une app Koyeb si nécessai
     IF [ "./koyeb apps list | grep test-app-$name" ]
         RUN echo "Test app already deployed on Koyeb at test-app-$name, updating..."
         RUN /koyeb services update test-app-$name/test-app-$name --docker $APP_IMG_NAME \
-          --env NEXT_PUBLIC_SUPABASE_URL=$API_URL \
-          --env NEXT_PUBLIC_SUPABASE_KEY=$ANON_KEY \
           --env NEXT_PUBLIC_AUTH_URL=$AUTH_URL \
           --env NEXT_PUBLIC_BACKEND_URL=$BACKEND_URL \
           --env NEXT_PUBLIC_PANIER_URL=$PANIER_URL
@@ -905,8 +899,6 @@ app-deploy-test: ## Déploie une app de test et crée une app Koyeb si nécessai
         RUN /koyeb apps init "test-app-$name" \
           --docker "$APP_IMG_NAME" --docker-private-registry-secret ghcr \
           --type web --port 3000:http --route /:3000 --env PORT=3000 \
-          --env NEXT_PUBLIC_SUPABASE_URL=$API_URL \
-          --env NEXT_PUBLIC_SUPABASE_KEY=$ANON_KEY \
           --env NEXT_PUBLIC_AUTH_URL=$AUTH_URL \
           --env NEXT_PUBLIC_BACKEND_URL=$BACKEND_URL \
           --env NEXT_PUBLIC_PANIER_URL=$PANIER_URL \
