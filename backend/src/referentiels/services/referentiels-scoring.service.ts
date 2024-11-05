@@ -6,7 +6,7 @@ import {
 } from '@nestjs/common';
 //import { default as camelcaseKeys } from 'camelcase-keys';
 import { and, asc, desc, eq, like, lte, SQL, SQLWrapper } from 'drizzle-orm';
-import { isNil } from 'es-toolkit';
+import { chunk, isNil } from 'es-toolkit';
 import * as _ from 'lodash';
 import { NiveauAcces } from '../../auth/models/private-utilisateur-droit.table';
 import { SupabaseJwtPayload } from '../../auth/models/supabase-jwt.models';
@@ -29,7 +29,10 @@ import { clientScoresTable } from '../models/client-scores.table';
 import { GetActionScoresResponseType } from '../models/get-action-scores.response';
 import { GetActionStatutsResponseType } from '../models/get-action-statuts.response';
 import { GetCheckScoresResponseType } from '../models/get-check-scores.response';
+import { GetReferentielMultipleScoresRequestType } from '../models/get-referentiel-multiple-scores.request';
+import { GetReferentielMultipleScoresResponseType } from '../models/get-referentiel-multiple-scores.response';
 import { GetReferentielScoresRequestType } from '../models/get-referentiel-scores.request';
+import { GetReferentielScoresResponseType } from '../models/get-referentiel-scores.response';
 import { historiqueActionStatutTable } from '../models/historique-action-statut.table';
 import { ReferentielActionWithScoreType } from '../models/referentiel-action-avec-score.dto';
 import { ReferentielActionOrigineWithScoreType } from '../models/referentiel-action-origine-with-score.dto';
@@ -42,6 +45,7 @@ export default class ReferentielsScoringService {
   private readonly logger = new Logger(ReferentielsScoringService.name);
 
   private static DEFAULT_ROUNDING_DIGITS = 3;
+  private static MULTIPLE_COLLECTIVITE_CHUNK_SIZE = 10;
 
   constructor(
     private readonly authService: AuthService,
@@ -680,13 +684,55 @@ export default class ReferentielsScoringService {
     };
   }
 
+  async computeScoreForMultipleCollectivite(
+    referentielId: ReferentielType,
+    parameters: GetReferentielMultipleScoresRequestType,
+    tokenInfo?: SupabaseJwtPayload
+  ): Promise<GetReferentielMultipleScoresResponseType> {
+    this.logger.log(
+      `Calcul des scores pour les collectivités ${parameters.collectiviteIds.join(
+        ','
+      )} pour le referentiel ${referentielId} à la date ${
+        parameters.date
+      } (Depuis referentiels origine: ${parameters.avecReferentielsOrigine})`
+    );
+
+    const getReferentielMultipleScoresResponseType: GetReferentielMultipleScoresResponseType =
+      {
+        collectiviteScores: [],
+      };
+
+    const collectiviteChunks = chunk(
+      parameters.collectiviteIds,
+      ReferentielsScoringService.MULTIPLE_COLLECTIVITE_CHUNK_SIZE
+    );
+    for (const collectiviteChunk of collectiviteChunks) {
+      const collectiviteScores = await Promise.all(
+        collectiviteChunk.map((collectiviteId) =>
+          this.computeScoreForCollectivite(
+            referentielId,
+            collectiviteId,
+            parameters,
+            tokenInfo,
+            true
+          )
+        )
+      );
+      getReferentielMultipleScoresResponseType.collectiviteScores.push(
+        ...collectiviteScores
+      );
+    }
+
+    return getReferentielMultipleScoresResponseType;
+  }
+
   async computeScoreForCollectivite(
     referentielId: ReferentielType,
     collectiviteId: number,
     parameters: GetReferentielScoresRequestType,
     tokenInfo?: SupabaseJwtPayload,
     noCheck?: boolean
-  ): Promise<ReferentielActionWithScoreType> {
+  ): Promise<GetReferentielScoresResponseType> {
     this.logger.log(
       `Calcul du score de la collectivité ${collectiviteId} pour le referentiel ${referentielId} à la date ${parameters.date} (Depuis referentiels origine: ${parameters.avecReferentielsOrigine})`
     );
@@ -734,12 +780,17 @@ export default class ReferentielsScoringService {
           500
         );
       }
-      return this.computeScore(
+      const scores = this.computeScore(
         referentiel.itemsTree!,
         personnalisationConsequences,
         actionStatuts,
         actionLevel
       );
+      return {
+        collectiviteId,
+        date: parameters.date || new Date().toISOString(),
+        scores,
+      };
     } else {
       const actionsOrigineMap: {
         [origineActionId: string]: ReferentielActionOrigineWithScoreType;
@@ -754,7 +805,7 @@ export default class ReferentielsScoringService {
       // TODO: get already computed scores from database
       const referentielsOrigine =
         referentiel.itemsTree!.referentielsOrigine || [];
-      const referentielsOriginePromiseScores: Promise<ReferentielActionWithScoreType>[] =
+      const referentielsOriginePromiseScores: Promise<GetReferentielScoresResponseType>[] =
         [];
       referentielsOrigine.forEach((referentielOrigine) => {
         referentielsOriginePromiseScores.push(
@@ -773,7 +824,7 @@ export default class ReferentielsScoringService {
       );
       const scoreMap: GetActionScoresResponseType = {};
       referentielsOrigineScores.forEach((referentielOrigineScore) => {
-        this.fillScoreMap(referentielOrigineScore, scoreMap);
+        this.fillScoreMap(referentielOrigineScore.scores, scoreMap);
       });
 
       // Apply scores to origine actions
@@ -799,11 +850,16 @@ export default class ReferentielsScoringService {
       this.affectScoreRecursivelyFromOrigineActions(referentielAvecScore);
       //Reset original scores at the root level (not exactly the same in case some action have been removed in new referentiel)
       referentielsOrigineScores.forEach((referentielOrigineScore) => {
-        referentielAvecScore.scoresOrigine![referentielOrigineScore.actionId!] =
-          this.getActionPointScore(referentielOrigineScore.score);
+        referentielAvecScore.scoresOrigine![
+          referentielOrigineScore.scores.actionId!
+        ] = this.getActionPointScore(referentielOrigineScore.scores.score);
       });
 
-      return referentielAvecScore;
+      return {
+        collectiviteId,
+        date: parameters.date || new Date().toISOString(),
+        scores: referentielAvecScore,
+      };
     }
   }
 
@@ -1197,7 +1253,7 @@ export default class ReferentielsScoringService {
       collectiviteId
     );
 
-    const scores = await this.computeScoreForCollectivite(
+    const { scores } = await this.computeScoreForCollectivite(
       referentielId,
       collectiviteId,
       { date: savedScoreResult.date }
