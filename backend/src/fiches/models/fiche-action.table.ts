@@ -1,4 +1,4 @@
-import { collectiviteTable } from 'backend/src/collectivites/models/collectivite.table';
+import { collectiviteTable } from '../../collectivites/models/collectivite.table';
 import { InferInsertModel, sql } from 'drizzle-orm';
 import {
   boolean,
@@ -15,30 +15,55 @@ import {
 import { createInsertSchema, createSelectSchema } from 'drizzle-zod';
 import { z } from 'zod';
 
+export enum ficheActionPiliersEciEnumType {
+  APPROVISIONNEMENT_DURABLE = 'Approvisionnement durable',
+  ECOCONCEPTION = 'Écoconception',
+  ECOLOGIE_INDUSTRIELLE = 'Écologie industrielle (et territoriale)',
+  ECONOMIE_DE_LA_FONCTIONNALITE = 'Économie de la fonctionnalité',
+  CONSOMMATION_RESPONSABLE = 'Consommation responsable',
+  ALLONGEMENT_DUREE_USAGE = 'Allongement de la durée d’usage',
+  RECYCLAGE = 'Recyclage',
+}
+
 export const ficheActionPiliersEciEnum = pgEnum('fiche_action_piliers_eci', [
-  'Approvisionnement durable',
-  'Écoconception',
-  'Écologie industrielle (et territoriale)',
-  'Économie de la fonctionnalité',
-  'Consommation responsable',
-  'Allongement de la durée d’usage',
-  'Recyclage',
+  ficheActionPiliersEciEnumType.APPROVISIONNEMENT_DURABLE,
+  ficheActionPiliersEciEnumType.ECOCONCEPTION,
+  ficheActionPiliersEciEnumType.ECOLOGIE_INDUSTRIELLE,
+  ficheActionPiliersEciEnumType.ECONOMIE_DE_LA_FONCTIONNALITE,
+  ficheActionPiliersEciEnumType.CONSOMMATION_RESPONSABLE,
+  ficheActionPiliersEciEnumType.ALLONGEMENT_DUREE_USAGE,
+  ficheActionPiliersEciEnumType.RECYCLAGE,
 ]);
+
+export enum ficheActionResultatsAttendusEnumType {
+  ADAPTATION_CHANGEMENT_CLIMATIQUE = 'Adaptation au changement climatique',
+  ALLONGEMENT_DUREE_USAGE = 'Allongement de la durée d’usage',
+  AMELIORATION_QUALITE_VIE = 'Amélioration de la qualité de vie',
+  DEVELOPPEMENT_ENERGIES_RENOUVELABLES = 'Développement des énergies renouvelables',
+  EFFICACITE_ENERGETIQUE = 'Efficacité énergétique',
+  PRESERVATION_BIODIVERSITE = 'Préservation de la biodiversité',
+  REDUCTION_CONSOMMATIONS_ENERGETIQUES = 'Réduction des consommations énergétiques',
+  REDUCTION_DECHETS = 'Réduction des déchets',
+  REDUCTION_EMISSIONS_GES = 'Réduction des émissions de gaz à effet de serre',
+  REDUCTION_POLLUANTS_ATMOSPHERIQUES = 'Réduction des polluants atmosphériques',
+  SOBRIETE_ENERGETIQUE = 'Sobriété énergétique',
+}
 
 export const ficheActionResultatsAttendusEnum = pgEnum(
   'fiche_action_resultats_attendus',
   [
-    'Adaptation au changement climatique',
-    'Allongement de la durée d’usage',
-    'Amélioration de la qualité de vie',
-    'Développement des énergies renouvelables',
-    'Efficacité énergétique',
-    'Préservation de la biodiversité',
-    'Réduction des consommations énergétiques',
-    'Réduction des déchets',
-    'Réduction des émissions de gaz à effet de serre',
-    'Réduction des polluants atmosphériques',
-    'Sobriété énergétique',
+    ficheActionResultatsAttendusEnumType.ADAPTATION_CHANGEMENT_CLIMATIQUE,
+    ficheActionResultatsAttendusEnumType.ALLONGEMENT_DUREE_USAGE,
+    ficheActionResultatsAttendusEnumType.AMELIORATION_QUALITE_VIE,
+    ficheActionResultatsAttendusEnumType.DEVELOPPEMENT_ENERGIES_RENOUVELABLES,
+    ficheActionResultatsAttendusEnumType.EFFICACITE_ENERGETIQUE,
+    ficheActionResultatsAttendusEnumType.PRESERVATION_BIODIVERSITE,
+    ficheActionResultatsAttendusEnumType.REDUCTION_CONSOMMATIONS_ENERGETIQUES,
+    ficheActionResultatsAttendusEnumType.REDUCTION_DECHETS,
+    ficheActionResultatsAttendusEnumType.REDUCTION_DECHETS,
+    ficheActionResultatsAttendusEnumType.REDUCTION_EMISSIONS_GES,
+    ficheActionResultatsAttendusEnumType.REDUCTION_POLLUANTS_ATMOSPHERIQUES,
+    ficheActionResultatsAttendusEnumType.SOBRIETE_ENERGETIQUE,
   ]
 );
 
