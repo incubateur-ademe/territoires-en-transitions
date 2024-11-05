@@ -4,12 +4,12 @@ import { actionScoreSchema } from './action-score.dto';
 
 export const actionPointScoreSchema = extendApi(
   actionScoreSchema.pick({
-    point_fait: true,
-    point_non_renseigne: true,
-    point_pas_fait: true,
-    point_potentiel: true,
-    point_programme: true,
-    point_referentiel: true,
+    pointFait: true,
+    pointNonRenseigne: true,
+    pointPasFait: true,
+    pointPotentiel: true,
+    pointProgramme: true,
+    pointReferentiel: true,
   })
 );
 export type ActionPointScoreType = z.infer<typeof actionPointScoreSchema>;

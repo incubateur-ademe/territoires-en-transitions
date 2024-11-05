@@ -4,10 +4,10 @@ import { createInsertSchema, createSelectSchema } from 'drizzle-zod';
 import { actionIdReference } from './action-definition.table';
 
 export const actionComputedPointsTable = pgTable('action_computed_points', {
-  modified_at: timestamp('modified_at', { withTimezone: true, mode: 'string' })
+  modifiedAt: timestamp('modified_at', { withTimezone: true, mode: 'string' })
     .default(sql`CURRENT_TIMESTAMP`)
     .notNull(),
-  action_id: actionIdReference.primaryKey().notNull(),
+  actionId: actionIdReference.primaryKey().notNull(),
   value: doublePrecision('value').notNull(),
 });
 
@@ -19,8 +19,8 @@ export type CreateActionComputedPointsType = InferInsertModel<
 >;
 
 export const actionComputedPointsSchema = createSelectSchema(
-  actionComputedPointsTable,
+  actionComputedPointsTable
 );
 export const createActionComputedPointsSchema = createInsertSchema(
-  actionComputedPointsTable,
+  actionComputedPointsTable
 );

@@ -9,8 +9,8 @@ import {
   uuid,
 } from 'drizzle-orm/pg-core';
 import { createInsertSchema, createSelectSchema } from 'drizzle-zod';
-import { actionIdReference } from './action-definition.table';
 import { collectiviteTable } from '../../collectivites/models/collectivite.table';
+import { actionIdReference } from './action-definition.table';
 
 export const avancementEnum = pgEnum('avancement', [
   'fait',
@@ -21,17 +21,17 @@ export const avancementEnum = pgEnum('avancement', [
 ]);
 
 export const actionStatutTable = pgTable('action_statut', {
-  collectivite_id: integer('collectivite_id')
+  collectiviteId: integer('collectivite_id')
     .notNull()
     .references(() => collectiviteTable.id),
-  action_id: actionIdReference.notNull(),
+  actionId: actionIdReference.notNull(),
   avancement: avancementEnum('avancement').notNull(),
-  avancement_detaille: doublePrecision('avancement_detaille').array(),
+  avancementDetaille: doublePrecision('avancement_detaille').array(),
   concerne: boolean('concerne').notNull(),
-  modified_by: uuid('modified_by')
+  modifiedBy: uuid('modified_by')
     .default(sql`auth.uid()`)
     .notNull(),
-  modified_at: timestamp('modified_at', { withTimezone: true, mode: 'string' })
+  modifiedAt: timestamp('modified_at', { withTimezone: true, mode: 'string' })
     .default(sql`CURRENT_TIMESTAMP`)
     .notNull(),
 });

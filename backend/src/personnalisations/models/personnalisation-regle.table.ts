@@ -11,11 +11,11 @@ export const regleTypeEnum = pgEnum('regle_type', [
 ]);
 
 export const personnalisationRegleTable = pgTable('personnalisation_regle', {
-  action_id: actionIdReference.notNull(),
+  actionId: actionIdReference.notNull(),
   type: regleTypeEnum('type').notNull(),
   formule: text('formule').notNull(),
   description: text('description').notNull(),
-  modified_at: timestamp('modified_at', { withTimezone: true, mode: 'string' })
+  modifiedAt: timestamp('modified_at', { withTimezone: true, mode: 'string' })
     .default(sql`CURRENT_TIMESTAMP`)
     .notNull(),
 });
@@ -27,8 +27,8 @@ export type CreatePersonnalisationRegleType = InferInsertModel<
   typeof personnalisationRegleTable
 >;
 export const personnalisationRegleSchema = createSelectSchema(
-  personnalisationRegleTable,
+  personnalisationRegleTable
 );
 export const createPersonnalisationRegleSchema = createInsertSchema(
-  personnalisationRegleTable,
+  personnalisationRegleTable
 );

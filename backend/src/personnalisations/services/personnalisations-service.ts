@@ -1,6 +1,12 @@
 import { Injectable, Logger } from '@nestjs/common';
 import { and, asc, desc, eq, like, lte, SQL, SQLWrapper } from 'drizzle-orm';
+import { NiveauAcces } from '../../auth/models/private-utilisateur-droit.table';
+import { SupabaseJwtPayload } from '../../auth/models/supabase-jwt.models';
 import { AuthService } from '../../auth/services/auth.service';
+import {
+  CollectiviteAvecType,
+  IdentiteCollectivite,
+} from '../../collectivites/models/identite-collectivite.dto';
 import CollectivitesService from '../../collectivites/services/collectivites.service';
 import DatabaseService from '../../common/services/database.service';
 import { GetPersonnalisationConsequencesRequestType } from '../models/get-personnalisation-consequences.request';
@@ -18,9 +24,6 @@ import { reponseBinaireTable } from '../models/reponse-binaire.table';
 import { reponseChoixTable } from '../models/reponse-choix.table';
 import { reponseProportionTable } from '../models/reponse-proportion.table';
 import ExpressionParserService from './expression-parser.service';
-import { NiveauAcces } from '../../auth/models/private-utilisateur-droit.table';
-import { SupabaseJwtPayload } from '../../auth/models/supabase-jwt.models';
-import { CollectiviteAvecType, IdentiteCollectivite } from '../../collectivites/models/identite-collectivite.dto';
 
 export type ReponseTables =
   | typeof reponseBinaireTable
@@ -44,21 +47,21 @@ export default class PersonnalisationsService {
   async getPersonnalisationReponsesForTable(
     table: ReponseTables,
     collectiviteId: number,
-    reponsesDate?: string,
+    reponsesDate?: string
   ) {
     const reponsesConditions: (SQLWrapper | SQL)[] = [
-      eq(table.collectivite_id, collectiviteId),
+      eq(table.collectiviteId, collectiviteId),
     ];
     if (reponsesDate) {
-      reponsesConditions.push(lte(table.modified_at, reponsesDate));
+      reponsesConditions.push(lte(table.modifiedAt, reponsesDate));
     }
     const reponses = await this.databaseService.db
       .select()
       .from(table)
       .where(and(...reponsesConditions))
-      .orderBy(desc(table.modified_at));
+      .orderBy(desc(table.modifiedAt));
     this.logger.log(
-      `${reponses.length} reponses (table) pour la collectivite ${collectiviteId} et la date ${reponsesDate}`,
+      `${reponses.length} reponses (table) pour la collectivite ${collectiviteId} et la date ${reponsesDate}`
     );
     return reponses;
   }
@@ -67,17 +70,17 @@ export default class PersonnalisationsService {
     table: ReponseTables,
     collectiviteId: number,
     reponses: GetPersonnalisationReponsesResponseType,
-    reponsesDate?: string,
+    reponsesDate?: string
   ): Promise<void> {
     const reponsesTable = await this.getPersonnalisationReponsesForTable(
       table,
       collectiviteId,
-      reponsesDate,
+      reponsesDate
     );
     reponsesTable.forEach((row) => {
       // Si la question est déjà dans les réponses, on ne la remplace pas (ordonné par date de modification décroissante)
-      if (!(row.question_id in reponses)) {
-        reponses[row.question_id] = row.reponse;
+      if (!(row.questionId in reponses)) {
+        reponses[row.questionId] = row.reponse;
       }
     });
   }
@@ -85,12 +88,12 @@ export default class PersonnalisationsService {
   async getPersonnalisationReponses(
     collectiviteId: number,
     reponsesDate?: string,
-    tokenInfo?: SupabaseJwtPayload,
+    tokenInfo?: SupabaseJwtPayload
   ): Promise<GetPersonnalisationReponsesResponseType> {
     const reponses: GetPersonnalisationReponsesResponseType = {};
 
     this.logger.log(
-      `Getting responses for collectivite ${collectiviteId} and date ${reponsesDate}`,
+      `Getting responses for collectivite ${collectiviteId} and date ${reponsesDate}`
     );
 
     // Seulement les personnes ayant l'accès en lecture à la collectivité peuvent voir les réponses historiques
@@ -107,7 +110,7 @@ export default class PersonnalisationsService {
       reponsesDate ? historiqueReponseChoixTable : reponseChoixTable,
       collectiviteId,
       reponses,
-      reponsesDate,
+      reponsesDate
     );
 
     // reponse binaires
@@ -115,7 +118,7 @@ export default class PersonnalisationsService {
       reponsesDate ? historiqueReponseBinaireTable : reponseBinaireTable,
       collectiviteId,
       reponses,
-      reponsesDate,
+      reponsesDate
     );
 
     // reponses proportion
@@ -123,14 +126,14 @@ export default class PersonnalisationsService {
       reponsesDate ? historiqueReponseProportionTable : reponseProportionTable,
       collectiviteId,
       reponses,
-      reponsesDate,
+      reponsesDate
     );
 
     return reponses;
   }
 
   async getPersonnalisationRegles(
-    referentiel?: string,
+    referentiel?: string
   ): Promise<GetPersonnalisationReglesResponseType> {
     const reglesQuery = this.databaseService.db
       .select()
@@ -140,11 +143,11 @@ export default class PersonnalisationsService {
     if (referentiel) {
       // TODO: add referentiel to personnalisationTable
       regles = await reglesQuery
-        .where(like(personnalisationRegleTable.action_id, `${referentiel}%`))
-        .orderBy(asc(personnalisationRegleTable.action_id));
+        .where(like(personnalisationRegleTable.actionId, `${referentiel}%`))
+        .orderBy(asc(personnalisationRegleTable.actionId));
     } else {
       regles = await reglesQuery.orderBy(
-        asc(personnalisationRegleTable.action_id),
+        asc(personnalisationRegleTable.actionId)
       );
     }
 
@@ -158,7 +161,6 @@ export default class PersonnalisationsService {
     tokenInfo?: SupabaseJwtPayload,
     collectiviteInfo?: CollectiviteAvecType
   ): Promise<GetPersonnalitionConsequencesResponseType> {
-
     // Seulement les personnes ayant l'accès en lecture à la collectivité peuvent voir les réponses historiques
     if (request.date && tokenInfo) {
       await this.authService.verifieAccesAuxCollectivites(
@@ -169,54 +171,55 @@ export default class PersonnalisationsService {
     }
 
     if (!collectiviteInfo) {
-      collectiviteInfo = await this.collectivitesService.getCollectiviteAvecType(collectiviteId);
+      collectiviteInfo =
+        await this.collectivitesService.getCollectiviteAvecType(collectiviteId);
     }
     const reponses = await this.getPersonnalisationReponses(
       collectiviteId,
-      request.date,
+      request.date
     );
     const regles = await this.getPersonnalisationRegles(request.referentiel);
 
     return this.getPersonnalisationConsequences(
       regles,
       reponses,
-      collectiviteInfo,
+      collectiviteInfo
     );
   }
 
   async getPersonnalisationConsequences(
     regles: GetPersonnalisationReglesResponseType,
     reponses: GetPersonnalisationReponsesResponseType,
-    collectiviteInfo: IdentiteCollectivite,
+    collectiviteInfo: IdentiteCollectivite
   ): Promise<GetPersonnalitionConsequencesResponseType> {
     const consequences: GetPersonnalitionConsequencesResponseType = {};
 
     regles.regles.forEach((regle) => {
-      if (!consequences[regle.action_id]) {
-        consequences[regle.action_id] = {
+      if (!consequences[regle.actionId]) {
+        consequences[regle.actionId] = {
           desactive: null,
-          score_formule: null,
-          potentiel_perso: null,
+          scoreFormule: null,
+          potentielPerso: null,
         };
       }
       if (regle.formule) {
         this.logger.log(
-          `Evaluation de la formule de type ${regle.type} pour l'action ${regle.action_id}: ${regle.formule}`,
+          `Evaluation de la formule de type ${regle.type} pour l'action ${regle.actionId}: ${regle.formule}`
         );
         const evaluatedExpression =
           this.expressionParserService.parseAndEvaluateExpression(
             regle.formule,
             reponses,
-            collectiviteInfo,
+            collectiviteInfo
           );
         if (regle.type === 'score') {
-          consequences[regle.action_id].score_formule =
+          consequences[regle.actionId].scoreFormule =
             evaluatedExpression as string;
         } else if (regle.type === 'desactivation') {
-          consequences[regle.action_id].desactive =
+          consequences[regle.actionId].desactive =
             evaluatedExpression as boolean;
         } else if (regle.type === 'reduction') {
-          consequences[regle.action_id].potentiel_perso =
+          consequences[regle.actionId].potentielPerso =
             evaluatedExpression as number;
         }
       }

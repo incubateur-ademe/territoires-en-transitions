@@ -8,12 +8,12 @@ import {
 
 export const actionRelationTable = pgTable('action_relation', {
   id: varchar('id', { length: 30 })
-    .references(() => actionDefinitionTable.action_id)
+    .references(() => actionDefinitionTable.actionId)
     .primaryKey()
     .notNull(),
   referentiel: referentielEnum('referentiel').notNull(),
   parent: varchar('parent', { length: 30 }).references(
-    () => actionDefinitionTable.action_id,
+    () => actionDefinitionTable.actionId
   ),
 });
 

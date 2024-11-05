@@ -2,59 +2,59 @@ import { ActionType } from '../action-type.enum';
 import { ReferentielActionType } from '../referentiel-action.dto';
 
 export const simpleReferentiel: ReferentielActionType = {
-  action_id: 'eci',
+  actionId: 'eci',
   points: 100,
   level: 0,
-  action_type: ActionType.REFERENTIEL,
-  actions_enfant: [
+  actionType: ActionType.REFERENTIEL,
+  actionsEnfant: [
     {
-      action_id: 'eci_1',
+      actionId: 'eci_1',
       points: 30,
       level: 1,
-      action_type: ActionType.ACTION,
-      actions_enfant: [
+      actionType: ActionType.ACTION,
+      actionsEnfant: [
         {
-          action_id: 'eci_1.1',
+          actionId: 'eci_1.1',
           points: 10,
           level: 2,
-          action_type: ActionType.SOUS_ACTION,
-          actions_enfant: [],
+          actionType: ActionType.SOUS_ACTION,
+          actionsEnfant: [],
         },
         {
-          action_id: 'eci_1.2',
+          actionId: 'eci_1.2',
           points: 20,
           level: 2,
-          action_type: ActionType.SOUS_ACTION,
-          actions_enfant: [],
+          actionType: ActionType.SOUS_ACTION,
+          actionsEnfant: [],
         },
       ],
     },
     {
-      action_id: 'eci_2',
+      actionId: 'eci_2',
       points: 70,
       level: 1,
-      action_type: ActionType.ACTION,
-      actions_enfant: [
+      actionType: ActionType.ACTION,
+      actionsEnfant: [
         {
-          action_id: 'eci_2.0',
+          actionId: 'eci_2.0',
           points: 0,
           level: 2,
-          action_type: ActionType.SOUS_ACTION,
-          actions_enfant: [],
+          actionType: ActionType.SOUS_ACTION,
+          actionsEnfant: [],
         },
         {
-          action_id: 'eci_2.1',
+          actionId: 'eci_2.1',
           points: 65,
           level: 2,
-          action_type: ActionType.SOUS_ACTION,
-          actions_enfant: [],
+          actionType: ActionType.SOUS_ACTION,
+          actionsEnfant: [],
         },
         {
-          action_id: 'eci_2.2',
+          actionId: 'eci_2.2',
           points: 5,
           level: 2,
-          action_type: ActionType.SOUS_ACTION,
-          actions_enfant: [],
+          actionType: ActionType.SOUS_ACTION,
+          actionsEnfant: [],
         },
       ],
     },

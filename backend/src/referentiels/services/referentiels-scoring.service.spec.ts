@@ -1,5 +1,9 @@
 import { Test } from '@nestjs/testing';
 import { AuthService } from '../../auth/services/auth.service';
+import {
+  CollectiviteTypeEnum,
+  IdentiteCollectivite,
+} from '../../collectivites/models/identite-collectivite.dto';
 import CollectivitesService from '../../collectivites/services/collectivites.service';
 import DatabaseService from '../../common/services/database.service';
 import { roundTo } from '../../common/services/number.helper';
@@ -17,7 +21,6 @@ import { eciReferentiel } from '../models/samples/eci-referentiel';
 import { simpleReferentiel } from '../models/samples/simple-referentiel';
 import ReferentielsScoringService from './referentiels-scoring.service';
 import ReferentielsService from './referentiels.service';
-import { CollectiviteTypeEnum, IdentiteCollectivite } from '../../collectivites/models/identite-collectivite.dto';
 
 describe('ReferentielsScoringService', () => {
   let referentielsScoringService: ReferentielsScoringService;
@@ -51,107 +54,86 @@ describe('ReferentielsScoringService', () => {
     it('Standard test without change in total points in new referentiel', async () => {
       // 3 pts + 4 pts * 0.5 = 5 pts in total
       const referectielActionWithScore: ReferentielActionWithScoreType = {
-        action_id: 'te_1.3.1.3',
+        actionId: 'te_1.3.1.3',
         nom: 'Mettre la politique d’urbanisme en cohérence avec les objectifs de transition écologique',
         points: 5,
         pourcentage: 21.760391198044008,
-        actions_enfant: [],
+        actionsEnfant: [],
         level: 4,
-        action_type: ActionType.SOUS_ACTION,
-        actions_origine: [
+        actionType: ActionType.SOUS_ACTION,
+        actionsOrigine: [
           {
-            referentiel_id: 'cae',
-            action_id: 'cae_1.3.1.3',
+            referentielId: 'cae',
+            actionId: 'cae_1.3.1.3',
             ponderation: 1,
             nom: 'Mettre la politique d’urbanisme et les objectifs de développement en cohérence avec la politique climat-air-énergie',
             score: {
-              action_id: 'cae_1.3.1.3',
-              point_referentiel: 3,
-              point_potentiel: 3,
-              point_potentiel_perso: null,
-              point_fait: 2,
-              point_pas_fait: 0,
-              point_non_renseigne: 1,
-              point_programme: 0,
-              concerne: true,
-              completed_taches_count: 0,
-              total_taches_count: 6,
-              fait_taches_avancement: 0,
-              programme_taches_avancement: 0,
-              pas_fait_taches_avancement: 0,
-              pas_concerne_taches_avancement: 0,
-              desactive: false,
-              renseigne: false,
+              pointReferentiel: 3,
+              pointPotentiel: 3,
+              pointFait: 2,
+              pointPasFait: 0,
+              pointNonRenseigne: 1,
+              pointProgramme: 0,
             },
           },
           {
-            referentiel_id: 'cae',
-            action_id: 'cae_6.3.1.3.2',
+            referentielId: 'cae',
+            actionId: 'cae_6.3.1.3.2',
             ponderation: 0.5,
             nom: "Décliner des orientations stratégiques fortes en matière de localisation et de qualité environnementale des zones d'activités dans les documents d’urbanisme",
             score: {
-              action_id: 'cae_6.3.1.3.2',
-              point_referentiel: 4,
-              point_potentiel: 4,
-              point_potentiel_perso: null,
-              point_fait: 3,
-              point_pas_fait: 0,
-              point_non_renseigne: 1,
-              point_programme: 0,
-              concerne: true,
-              completed_taches_count: 0,
-              total_taches_count: 6,
-              fait_taches_avancement: 0,
-              programme_taches_avancement: 0,
-              pas_fait_taches_avancement: 0,
-              pas_concerne_taches_avancement: 0,
-              desactive: false,
-              renseigne: false,
+              pointReferentiel: 4,
+              pointPotentiel: 4,
+              pointFait: 3,
+              pointPasFait: 0,
+              pointNonRenseigne: 1,
+              pointProgramme: 0,
             },
           },
         ],
-        referentiels_origine: [],
+        referentielsOrigine: [],
         score: {
-          action_id: 'te_1.3.1.3',
-          point_referentiel: 5,
-          point_potentiel: null,
-          point_potentiel_perso: null,
-          point_fait: null,
-          point_pas_fait: null,
-          point_non_renseigne: null,
-          point_programme: null,
+          actionId: 'te_1.3.1.3',
+          pointReferentiel: 5,
+          pointPotentiel: null,
+          pointPotentielPerso: null,
+          pointFait: null,
+          pointPasFait: null,
+          pointNonRenseigne: null,
+          pointProgramme: null,
           concerne: true,
-          completed_taches_count: null,
-          total_taches_count: 1,
-          fait_taches_avancement: null,
-          programme_taches_avancement: null,
-          pas_fait_taches_avancement: null,
-          pas_concerne_taches_avancement: null,
+          completedTachesCount: null,
+          totalTachesCount: 1,
+          faitTachesAvancement: null,
+          programmeTachesAvancement: null,
+          pasFaitTachesAvancement: null,
+          pasConcerneTachesAvancement: null,
           desactive: false,
           renseigne: true,
         },
+        scoresTag: {},
       };
       referentielsScoringService.updateFromOrigineActions(
         referectielActionWithScore
       );
       expect(referectielActionWithScore.score).toEqual({
-        action_id: 'te_1.3.1.3',
-        completed_taches_count: null,
+        actionId: 'te_1.3.1.3',
+        completedTachesCount: null,
         concerne: true,
         desactive: false,
-        fait_taches_avancement: null,
-        pas_concerne_taches_avancement: null,
-        pas_fait_taches_avancement: null,
-        point_fait: 3.5,
-        point_non_renseigne: 1.5,
-        point_pas_fait: 0,
-        point_potentiel: null,
-        point_potentiel_perso: null,
-        point_programme: 0,
-        point_referentiel: 5,
-        programme_taches_avancement: null,
+        faitTachesAvancement: null,
+        pasConcerneTachesAvancement: null,
+        pasFaitTachesAvancement: null,
+        pointFait: 3.5,
+        pointNonRenseigne: 1.5,
+        pointPasFait: 0,
+        pointPotentiel: null,
+        pointPotentielPerso: null,
+        pointProgramme: 0,
+        pointReferentiel: 5,
+        programmeTachesAvancement: null,
         renseigne: true,
-        total_taches_count: 1,
+        totalTachesCount: 1,
       });
     });
 
@@ -159,7 +141,7 @@ describe('ReferentielsScoringService', () => {
       // 3 pts + 4 pts * 0.5 = 5 pts in total but we have 4 pts in the new referentiel
 
       const referectielActionWithScore: ReferentielActionWithScoreType = {
-        action_id: 'te_1.3.1.3',
+        actionId: 'te_1.3.1.3',
         nom: 'Mettre la politique d’urbanisme en cohérence avec les objectifs de transition écologique',
         points: 4,
         pourcentage: 21.760391198044008,
@@ -169,50 +151,50 @@ describe('ReferentielsScoringService', () => {
         actions_origine: [
           {
             referentiel_id: 'cae',
-            action_id: 'cae_1.3.1.3',
+            actionId: 'cae_1.3.1.3',
             ponderation: 1,
             nom: 'Mettre la politique d’urbanisme et les objectifs de développement en cohérence avec la politique climat-air-énergie',
             score: {
-              action_id: 'cae_1.3.1.3',
-              point_referentiel: 3,
-              point_potentiel: 3,
-              point_potentiel_perso: null,
-              point_fait: 2,
-              point_pas_fait: 0,
-              point_non_renseigne: 1,
-              point_programme: 0,
+              actionId: 'cae_1.3.1.3',
+              pointReferentiel: 3,
+              pointPotentiel: 3,
+              pointPotentielPerso: null,
+              pointFait: 2,
+              pointPasFait: 0,
+              pointNonRenseigne: 1,
+              pointProgramme: 0,
               concerne: true,
-              completed_taches_count: 0,
-              total_taches_count: 6,
-              fait_taches_avancement: 0,
-              programme_taches_avancement: 0,
-              pas_fait_taches_avancement: 0,
-              pas_concerne_taches_avancement: 0,
+              completedTachesCount: 0,
+              totalTachesCount: 6,
+              faitTachesAvancement: 0,
+              programmeTachesAvancement: 0,
+              pasFaitTachesAvancement: 0,
+              pasConcerneTachesAvancement: 0,
               desactive: false,
               renseigne: false,
             },
           },
           {
             referentiel_id: 'cae',
-            action_id: 'cae_6.3.1.3.2',
+            actionId: 'cae_6.3.1.3.2',
             ponderation: 0.5,
             nom: "Décliner des orientations stratégiques fortes en matière de localisation et de qualité environnementale des zones d'activités dans les documents d’urbanisme",
             score: {
-              action_id: 'cae_6.3.1.3.2',
-              point_referentiel: 4,
-              point_potentiel: 4,
-              point_potentiel_perso: null,
-              point_fait: 3,
-              point_pas_fait: 0,
-              point_non_renseigne: 1,
-              point_programme: 0,
+              actionId: 'cae_6.3.1.3.2',
+              pointReferentiel: 4,
+              pointPotentiel: 4,
+              pointPotentielPerso: null,
+              pointFait: 3,
+              pointPasFait: 0,
+              pointNonRenseigne: 1,
+              pointProgramme: 0,
               concerne: true,
-              completed_taches_count: 0,
-              total_taches_count: 6,
-              fait_taches_avancement: 0,
-              programme_taches_avancement: 0,
-              pas_fait_taches_avancement: 0,
-              pas_concerne_taches_avancement: 0,
+              completedTachesCount: 0,
+              totalTachesCount: 6,
+              faitTachesAvancement: 0,
+              programmeTachesAvancement: 0,
+              pasFaitTachesAvancement: 0,
+              pasConcerneTachesAvancement: 0,
               desactive: false,
               renseigne: false,
             },
@@ -220,21 +202,21 @@ describe('ReferentielsScoringService', () => {
         ],
         referentiels_origine: [],
         score: {
-          action_id: 'te_1.3.1.3',
-          point_referentiel: 4,
-          point_potentiel: null,
-          point_potentiel_perso: null,
-          point_fait: null,
-          point_pas_fait: null,
-          point_non_renseigne: null,
-          point_programme: null,
+          actionId: 'te_1.3.1.3',
+          pointReferentiel: 4,
+          pointPotentiel: null,
+          pointPotentielPerso: null,
+          pointFait: null,
+          pointPasFait: null,
+          pointNonRenseigne: null,
+          pointProgramme: null,
           concerne: true,
-          completed_taches_count: null,
-          total_taches_count: 1,
-          fait_taches_avancement: null,
-          programme_taches_avancement: null,
-          pas_fait_taches_avancement: null,
-          pas_concerne_taches_avancement: null,
+          completedTachesCount: null,
+          totalTachesCount: 1,
+          faitTachesAvancement: null,
+          programmeTachesAvancement: null,
+          pasFaitTachesAvancement: null,
+          pasConcerneTachesAvancement: null,
           desactive: false,
           renseigne: true,
         },
@@ -243,23 +225,23 @@ describe('ReferentielsScoringService', () => {
         referectielActionWithScore
       );
       expect(referectielActionWithScore.score).toEqual({
-        action_id: 'te_1.3.1.3',
-        completed_taches_count: null,
+        actionId: 'te_1.3.1.3',
+        completedTachesCount: null,
         concerne: true,
         desactive: false,
-        fait_taches_avancement: null,
-        pas_concerne_taches_avancement: null,
-        pas_fait_taches_avancement: null,
-        point_fait: 2.8,
-        point_non_renseigne: 1.2,
-        point_pas_fait: 0,
-        point_potentiel: null,
-        point_potentiel_perso: null,
-        point_programme: 0,
-        point_referentiel: 4,
-        programme_taches_avancement: null,
+        faitTachesAvancement: null,
+        pasConcerneTachesAvancement: null,
+        pasFaitTachesAvancement: null,
+        pointFait: 2.8,
+        pointNonRenseigne: 1.2,
+        pointPasFait: 0,
+        pointPotentiel: null,
+        pointPotentielPerso: null,
+        pointProgramme: 0,
+        pointReferentiel: 4,
+        programmeTachesAvancement: null,
         renseigne: true,
-        total_taches_count: 1,
+        totalTachesCount: 1,
       });
     });
   });
@@ -272,7 +254,7 @@ describe('ReferentielsScoringService', () => {
         'eci_1.1': {
           concerne: true,
           avancement: 'fait',
-          avancement_detaille: [1, 0, 0],
+          avancementDetaille: [1, 0, 0],
         },
       };
 
@@ -287,94 +269,94 @@ describe('ReferentielsScoringService', () => {
       expect(scoreLength).toEqual(8);
 
       expect(scoresMap['eci_1.1']).toEqual({
-        action_id: 'eci_1.1',
-        point_fait: 10,
-        point_programme: 0.0,
-        point_pas_fait: 0.0,
-        point_non_renseigne: 0.0,
-        point_potentiel: 10,
-        point_referentiel: 10,
+        actionId: 'eci_1.1',
+        pointFait: 10,
+        pointProgramme: 0.0,
+        pointPasFait: 0.0,
+        pointNonRenseigne: 0.0,
+        pointPotentiel: 10,
+        pointReferentiel: 10,
         concerne: true,
-        total_taches_count: 1,
-        completed_taches_count: 1,
-        fait_taches_avancement: 1,
-        programme_taches_avancement: 0,
-        pas_fait_taches_avancement: 0,
-        pas_concerne_taches_avancement: 0,
+        totalTachesCount: 1,
+        completedTachesCount: 1,
+        faitTachesAvancement: 1,
+        programmeTachesAvancement: 0,
+        pasFaitTachesAvancement: 0,
+        pasConcerneTachesAvancement: 0,
         desactive: false,
-        point_potentiel_perso: null,
+        pointPotentielPerso: null,
         renseigne: true,
       });
 
       expect(scoresMap['eci_1']).toEqual({
-        action_id: 'eci_1',
-        point_fait: 10,
-        point_programme: 0.0,
-        point_pas_fait: 0.0,
-        point_non_renseigne: 20,
-        point_potentiel: 30,
-        point_referentiel: 30,
+        actionId: 'eci_1',
+        pointFait: 10,
+        pointProgramme: 0.0,
+        pointPasFait: 0.0,
+        pointNonRenseigne: 20,
+        pointPotentiel: 30,
+        pointReferentiel: 30,
         concerne: true,
-        total_taches_count: 2,
-        completed_taches_count: 1,
-        fait_taches_avancement: 1,
-        programme_taches_avancement: 0,
-        pas_fait_taches_avancement: 0,
-        pas_concerne_taches_avancement: 0,
+        totalTachesCount: 2,
+        completedTachesCount: 1,
+        faitTachesAvancement: 1,
+        programmeTachesAvancement: 0,
+        pasFaitTachesAvancement: 0,
+        pasConcerneTachesAvancement: 0,
         desactive: false,
-        point_potentiel_perso: null,
+        pointPotentielPerso: null,
         renseigne: false,
       });
 
       expect(scoresMap['eci_2']).toEqual({
-        action_id: 'eci_2',
-        point_fait: 0,
-        point_programme: 0.0,
-        point_pas_fait: 0.0,
-        point_non_renseigne: 70,
-        point_potentiel: 70,
-        point_referentiel: 70,
+        actionId: 'eci_2',
+        pointFait: 0,
+        pointProgramme: 0.0,
+        pointPasFait: 0.0,
+        pointNonRenseigne: 70,
+        pointPotentiel: 70,
+        pointReferentiel: 70,
         concerne: true,
-        total_taches_count: 3,
-        completed_taches_count: 0,
-        fait_taches_avancement: 0,
-        programme_taches_avancement: 0,
-        pas_fait_taches_avancement: 0,
-        pas_concerne_taches_avancement: 0,
+        totalTachesCount: 3,
+        completedTachesCount: 0,
+        faitTachesAvancement: 0,
+        programmeTachesAvancement: 0,
+        pasFaitTachesAvancement: 0,
+        pasConcerneTachesAvancement: 0,
         desactive: false,
-        point_potentiel_perso: null,
+        pointPotentielPerso: null,
         renseigne: false,
       });
 
       expect(scoresMap['eci']).toEqual({
-        action_id: 'eci',
-        point_fait: 10,
-        point_programme: 0.0,
-        point_pas_fait: 0.0,
-        point_non_renseigne: 90,
-        point_potentiel: 100,
-        point_referentiel: 100,
+        actionId: 'eci',
+        pointFait: 10,
+        pointProgramme: 0.0,
+        pointPasFait: 0.0,
+        pointNonRenseigne: 90,
+        pointPotentiel: 100,
+        pointReferentiel: 100,
         concerne: true,
-        total_taches_count: 5,
-        completed_taches_count: 1,
-        fait_taches_avancement: 1,
-        programme_taches_avancement: 0,
-        pas_fait_taches_avancement: 0,
-        pas_concerne_taches_avancement: 0,
+        totalTachesCount: 5,
+        completedTachesCount: 1,
+        faitTachesAvancement: 1,
+        programmeTachesAvancement: 0,
+        pasFaitTachesAvancement: 0,
+        pasConcerneTachesAvancement: 0,
         desactive: false,
-        point_potentiel_perso: null,
+        pointPotentielPerso: null,
         renseigne: false,
       });
     });
 
-    it('notation_when_one_tache_is_fait_avancement_detaille_non_renseigne', async () => {
+    it('notation_when_one_tache_is_fait_avancementDetaille_non_renseigne', async () => {
       const personnalisationConsequences: GetPersonnalitionConsequencesResponseType =
         {};
       const actionStatuts: GetActionStatutsResponseType = {
         'eci_1.1': {
           concerne: true,
           avancement: 'fait',
-          avancement_detaille: null,
+          avancementDetaille: null,
         },
       };
 
@@ -389,82 +371,82 @@ describe('ReferentielsScoringService', () => {
       expect(scoreLength).toEqual(8);
 
       expect(scoresMap['eci_1.1']).toEqual({
-        action_id: 'eci_1.1',
-        point_fait: 10,
-        point_programme: 0.0,
-        point_pas_fait: 0.0,
-        point_non_renseigne: 0.0,
-        point_potentiel: 10,
-        point_referentiel: 10,
+        actionId: 'eci_1.1',
+        pointFait: 10,
+        pointProgramme: 0.0,
+        pointPasFait: 0.0,
+        pointNonRenseigne: 0.0,
+        pointPotentiel: 10,
+        pointReferentiel: 10,
         concerne: true,
-        total_taches_count: 1,
-        completed_taches_count: 1,
-        fait_taches_avancement: 1,
-        programme_taches_avancement: 0,
-        pas_fait_taches_avancement: 0,
-        pas_concerne_taches_avancement: 0,
+        totalTachesCount: 1,
+        completedTachesCount: 1,
+        faitTachesAvancement: 1,
+        programmeTachesAvancement: 0,
+        pasFaitTachesAvancement: 0,
+        pasConcerneTachesAvancement: 0,
         desactive: false,
-        point_potentiel_perso: null,
+        pointPotentielPerso: null,
         renseigne: true,
       });
 
       expect(scoresMap['eci_1']).toEqual({
-        action_id: 'eci_1',
-        point_fait: 10,
-        point_programme: 0.0,
-        point_pas_fait: 0.0,
-        point_non_renseigne: 20,
-        point_potentiel: 30,
-        point_referentiel: 30,
+        actionId: 'eci_1',
+        pointFait: 10,
+        pointProgramme: 0.0,
+        pointPasFait: 0.0,
+        pointNonRenseigne: 20,
+        pointPotentiel: 30,
+        pointReferentiel: 30,
         concerne: true,
-        total_taches_count: 2,
-        completed_taches_count: 1,
-        fait_taches_avancement: 1,
-        programme_taches_avancement: 0,
-        pas_fait_taches_avancement: 0,
-        pas_concerne_taches_avancement: 0,
+        totalTachesCount: 2,
+        completedTachesCount: 1,
+        faitTachesAvancement: 1,
+        programmeTachesAvancement: 0,
+        pasFaitTachesAvancement: 0,
+        pasConcerneTachesAvancement: 0,
         desactive: false,
-        point_potentiel_perso: null,
+        pointPotentielPerso: null,
         renseigne: false,
       });
 
       expect(scoresMap['eci_2']).toEqual({
-        action_id: 'eci_2',
-        point_fait: 0,
-        point_programme: 0.0,
-        point_pas_fait: 0.0,
-        point_non_renseigne: 70,
-        point_potentiel: 70,
-        point_referentiel: 70,
+        actionId: 'eci_2',
+        pointFait: 0,
+        pointProgramme: 0.0,
+        pointPasFait: 0.0,
+        pointNonRenseigne: 70,
+        pointPotentiel: 70,
+        pointReferentiel: 70,
         concerne: true,
-        total_taches_count: 3,
-        completed_taches_count: 0,
-        fait_taches_avancement: 0,
-        programme_taches_avancement: 0,
-        pas_fait_taches_avancement: 0,
-        pas_concerne_taches_avancement: 0,
+        totalTachesCount: 3,
+        completedTachesCount: 0,
+        faitTachesAvancement: 0,
+        programmeTachesAvancement: 0,
+        pasFaitTachesAvancement: 0,
+        pasConcerneTachesAvancement: 0,
         desactive: false,
-        point_potentiel_perso: null,
+        pointPotentielPerso: null,
         renseigne: false,
       });
 
       expect(scoresMap['eci']).toEqual({
-        action_id: 'eci',
-        point_fait: 10,
-        point_programme: 0.0,
-        point_pas_fait: 0.0,
-        point_non_renseigne: 90,
-        point_potentiel: 100,
-        point_referentiel: 100,
+        actionId: 'eci',
+        pointFait: 10,
+        pointProgramme: 0.0,
+        pointPasFait: 0.0,
+        pointNonRenseigne: 90,
+        pointPotentiel: 100,
+        pointReferentiel: 100,
         concerne: true,
-        total_taches_count: 5,
-        completed_taches_count: 1,
-        fait_taches_avancement: 1,
-        programme_taches_avancement: 0,
-        pas_fait_taches_avancement: 0,
-        pas_concerne_taches_avancement: 0,
+        totalTachesCount: 5,
+        completedTachesCount: 1,
+        faitTachesAvancement: 1,
+        programmeTachesAvancement: 0,
+        pasFaitTachesAvancement: 0,
+        pasConcerneTachesAvancement: 0,
         desactive: false,
-        point_potentiel_perso: null,
+        pointPotentielPerso: null,
         renseigne: false,
       });
     });
@@ -476,7 +458,7 @@ describe('ReferentielsScoringService', () => {
         'eci_1.1': {
           concerne: true,
           avancement: 'programme',
-          avancement_detaille: [0, 1, 0],
+          avancementDetaille: [0, 1, 0],
         },
       };
 
@@ -491,82 +473,82 @@ describe('ReferentielsScoringService', () => {
       expect(scoreLength).toEqual(8);
 
       expect(scoresMap['eci_1.1']).toEqual({
-        action_id: 'eci_1.1',
-        point_fait: 0,
-        point_programme: 10,
-        point_pas_fait: 0.0,
-        point_non_renseigne: 0.0,
-        point_potentiel: 10,
-        point_referentiel: 10,
+        actionId: 'eci_1.1',
+        pointFait: 0,
+        pointProgramme: 10,
+        pointPasFait: 0.0,
+        pointNonRenseigne: 0.0,
+        pointPotentiel: 10,
+        pointReferentiel: 10,
         concerne: true,
-        total_taches_count: 1,
-        completed_taches_count: 1,
-        fait_taches_avancement: 0,
-        programme_taches_avancement: 1,
-        pas_fait_taches_avancement: 0,
-        pas_concerne_taches_avancement: 0,
+        totalTachesCount: 1,
+        completedTachesCount: 1,
+        faitTachesAvancement: 0,
+        programmeTachesAvancement: 1,
+        pasFaitTachesAvancement: 0,
+        pasConcerneTachesAvancement: 0,
         desactive: false,
-        point_potentiel_perso: null,
+        pointPotentielPerso: null,
         renseigne: true,
       });
 
       expect(scoresMap['eci_1']).toEqual({
-        action_id: 'eci_1',
-        point_fait: 0,
-        point_programme: 10,
-        point_pas_fait: 0.0,
-        point_non_renseigne: 20,
-        point_potentiel: 30,
-        point_referentiel: 30,
+        actionId: 'eci_1',
+        pointFait: 0,
+        pointProgramme: 10,
+        pointPasFait: 0.0,
+        pointNonRenseigne: 20,
+        pointPotentiel: 30,
+        pointReferentiel: 30,
         concerne: true,
-        total_taches_count: 2,
-        completed_taches_count: 1,
-        fait_taches_avancement: 0,
-        programme_taches_avancement: 1,
-        pas_fait_taches_avancement: 0,
-        pas_concerne_taches_avancement: 0,
+        totalTachesCount: 2,
+        completedTachesCount: 1,
+        faitTachesAvancement: 0,
+        programmeTachesAvancement: 1,
+        pasFaitTachesAvancement: 0,
+        pasConcerneTachesAvancement: 0,
         desactive: false,
-        point_potentiel_perso: null,
+        pointPotentielPerso: null,
         renseigne: false,
       });
 
       expect(scoresMap['eci_2']).toEqual({
-        action_id: 'eci_2',
-        point_fait: 0,
-        point_programme: 0.0,
-        point_pas_fait: 0.0,
-        point_non_renseigne: 70,
-        point_potentiel: 70,
-        point_referentiel: 70,
+        actionId: 'eci_2',
+        pointFait: 0,
+        pointProgramme: 0.0,
+        pointPasFait: 0.0,
+        pointNonRenseigne: 70,
+        pointPotentiel: 70,
+        pointReferentiel: 70,
         concerne: true,
-        total_taches_count: 3,
-        completed_taches_count: 0,
-        fait_taches_avancement: 0,
-        programme_taches_avancement: 0,
-        pas_fait_taches_avancement: 0,
-        pas_concerne_taches_avancement: 0,
+        totalTachesCount: 3,
+        completedTachesCount: 0,
+        faitTachesAvancement: 0,
+        programmeTachesAvancement: 0,
+        pasFaitTachesAvancement: 0,
+        pasConcerneTachesAvancement: 0,
         desactive: false,
-        point_potentiel_perso: null,
+        pointPotentielPerso: null,
         renseigne: false,
       });
 
       expect(scoresMap['eci']).toEqual({
-        action_id: 'eci',
-        point_fait: 0,
-        point_programme: 10,
-        point_pas_fait: 0.0,
-        point_non_renseigne: 90,
-        point_potentiel: 100,
-        point_referentiel: 100,
+        actionId: 'eci',
+        pointFait: 0,
+        pointProgramme: 10,
+        pointPasFait: 0.0,
+        pointNonRenseigne: 90,
+        pointPotentiel: 100,
+        pointReferentiel: 100,
         concerne: true,
-        total_taches_count: 5,
-        completed_taches_count: 1,
-        fait_taches_avancement: 0,
-        programme_taches_avancement: 1,
-        pas_fait_taches_avancement: 0,
-        pas_concerne_taches_avancement: 0,
+        totalTachesCount: 5,
+        completedTachesCount: 1,
+        faitTachesAvancement: 0,
+        programmeTachesAvancement: 1,
+        pasFaitTachesAvancement: 0,
+        pasConcerneTachesAvancement: 0,
         desactive: false,
-        point_potentiel_perso: null,
+        pointPotentielPerso: null,
         renseigne: false,
       });
     });
@@ -578,7 +560,7 @@ describe('ReferentielsScoringService', () => {
         'eci_1.1': {
           concerne: true,
           avancement: 'pas_fait',
-          avancement_detaille: [0, 0, 1],
+          avancementDetaille: [0, 0, 1],
         },
       };
 
@@ -593,82 +575,82 @@ describe('ReferentielsScoringService', () => {
       expect(scoreLength).toEqual(8);
 
       expect(scoresMap['eci_1.1']).toEqual({
-        action_id: 'eci_1.1',
-        point_fait: 0,
-        point_programme: 0,
-        point_pas_fait: 10.0,
-        point_non_renseigne: 0.0,
-        point_potentiel: 10,
-        point_referentiel: 10,
+        actionId: 'eci_1.1',
+        pointFait: 0,
+        pointProgramme: 0,
+        pointPasFait: 10.0,
+        pointNonRenseigne: 0.0,
+        pointPotentiel: 10,
+        pointReferentiel: 10,
         concerne: true,
-        total_taches_count: 1,
-        completed_taches_count: 1,
-        fait_taches_avancement: 0,
-        programme_taches_avancement: 0,
-        pas_fait_taches_avancement: 1,
-        pas_concerne_taches_avancement: 0,
+        totalTachesCount: 1,
+        completedTachesCount: 1,
+        faitTachesAvancement: 0,
+        programmeTachesAvancement: 0,
+        pasFaitTachesAvancement: 1,
+        pasConcerneTachesAvancement: 0,
         desactive: false,
-        point_potentiel_perso: null,
+        pointPotentielPerso: null,
         renseigne: true,
       });
 
       expect(scoresMap['eci_1']).toEqual({
-        action_id: 'eci_1',
-        point_fait: 0,
-        point_programme: 0,
-        point_pas_fait: 10,
-        point_non_renseigne: 20,
-        point_potentiel: 30,
-        point_referentiel: 30,
+        actionId: 'eci_1',
+        pointFait: 0,
+        pointProgramme: 0,
+        pointPasFait: 10,
+        pointNonRenseigne: 20,
+        pointPotentiel: 30,
+        pointReferentiel: 30,
         concerne: true,
-        total_taches_count: 2,
-        completed_taches_count: 1,
-        fait_taches_avancement: 0,
-        programme_taches_avancement: 0,
-        pas_fait_taches_avancement: 1,
-        pas_concerne_taches_avancement: 0,
+        totalTachesCount: 2,
+        completedTachesCount: 1,
+        faitTachesAvancement: 0,
+        programmeTachesAvancement: 0,
+        pasFaitTachesAvancement: 1,
+        pasConcerneTachesAvancement: 0,
         desactive: false,
-        point_potentiel_perso: null,
+        pointPotentielPerso: null,
         renseigne: false,
       });
 
       expect(scoresMap['eci_2']).toEqual({
-        action_id: 'eci_2',
-        point_fait: 0,
-        point_programme: 0.0,
-        point_pas_fait: 0.0,
-        point_non_renseigne: 70,
-        point_potentiel: 70,
-        point_referentiel: 70,
+        actionId: 'eci_2',
+        pointFait: 0,
+        pointProgramme: 0.0,
+        pointPasFait: 0.0,
+        pointNonRenseigne: 70,
+        pointPotentiel: 70,
+        pointReferentiel: 70,
         concerne: true,
-        total_taches_count: 3,
-        completed_taches_count: 0,
-        fait_taches_avancement: 0,
-        programme_taches_avancement: 0,
-        pas_fait_taches_avancement: 0,
-        pas_concerne_taches_avancement: 0,
+        totalTachesCount: 3,
+        completedTachesCount: 0,
+        faitTachesAvancement: 0,
+        programmeTachesAvancement: 0,
+        pasFaitTachesAvancement: 0,
+        pasConcerneTachesAvancement: 0,
         desactive: false,
-        point_potentiel_perso: null,
+        pointPotentielPerso: null,
         renseigne: false,
       });
 
       expect(scoresMap['eci']).toEqual({
-        action_id: 'eci',
-        point_fait: 0,
-        point_programme: 0,
-        point_pas_fait: 10,
-        point_non_renseigne: 90,
-        point_potentiel: 100,
-        point_referentiel: 100,
+        actionId: 'eci',
+        pointFait: 0,
+        pointProgramme: 0,
+        pointPasFait: 10,
+        pointNonRenseigne: 90,
+        pointPotentiel: 100,
+        pointReferentiel: 100,
         concerne: true,
-        total_taches_count: 5,
-        completed_taches_count: 1,
-        fait_taches_avancement: 0,
-        programme_taches_avancement: 0,
-        pas_fait_taches_avancement: 1,
-        pas_concerne_taches_avancement: 0,
+        totalTachesCount: 5,
+        completedTachesCount: 1,
+        faitTachesAvancement: 0,
+        programmeTachesAvancement: 0,
+        pasFaitTachesAvancement: 1,
+        pasConcerneTachesAvancement: 0,
         desactive: false,
-        point_potentiel_perso: null,
+        pointPotentielPerso: null,
         renseigne: false,
       });
     });
@@ -680,7 +662,7 @@ describe('ReferentielsScoringService', () => {
         'eci_1.1': {
           concerne: true,
           avancement: 'detaille',
-          avancement_detaille: [0.2, 0.7, 0.1],
+          avancementDetaille: [0.2, 0.7, 0.1],
         },
       };
 
@@ -695,82 +677,82 @@ describe('ReferentielsScoringService', () => {
       expect(scoreLength).toEqual(8);
 
       expect(scoresMap['eci_1.1']).toEqual({
-        action_id: 'eci_1.1',
-        point_fait: 2,
-        point_programme: 7,
-        point_pas_fait: 1,
-        point_non_renseigne: 0.0,
-        point_potentiel: 10,
-        point_referentiel: 10,
+        actionId: 'eci_1.1',
+        pointFait: 2,
+        pointProgramme: 7,
+        pointPasFait: 1,
+        pointNonRenseigne: 0.0,
+        pointPotentiel: 10,
+        pointReferentiel: 10,
         concerne: true,
-        total_taches_count: 1,
-        completed_taches_count: 1,
-        fait_taches_avancement: 0.2,
-        programme_taches_avancement: 0.7,
-        pas_fait_taches_avancement: 0.1,
-        pas_concerne_taches_avancement: 0,
+        totalTachesCount: 1,
+        completedTachesCount: 1,
+        faitTachesAvancement: 0.2,
+        programmeTachesAvancement: 0.7,
+        pasFaitTachesAvancement: 0.1,
+        pasConcerneTachesAvancement: 0,
         desactive: false,
-        point_potentiel_perso: null,
+        pointPotentielPerso: null,
         renseigne: true,
       });
 
       expect(scoresMap['eci_1']).toEqual({
-        action_id: 'eci_1',
-        point_fait: 2,
-        point_programme: 7,
-        point_pas_fait: 1,
-        point_non_renseigne: 20,
-        point_potentiel: 30,
-        point_referentiel: 30,
+        actionId: 'eci_1',
+        pointFait: 2,
+        pointProgramme: 7,
+        pointPasFait: 1,
+        pointNonRenseigne: 20,
+        pointPotentiel: 30,
+        pointReferentiel: 30,
         concerne: true,
-        total_taches_count: 2,
-        completed_taches_count: 1,
-        fait_taches_avancement: 0.2,
-        programme_taches_avancement: 0.7,
-        pas_fait_taches_avancement: 0.1,
-        pas_concerne_taches_avancement: 0,
+        totalTachesCount: 2,
+        completedTachesCount: 1,
+        faitTachesAvancement: 0.2,
+        programmeTachesAvancement: 0.7,
+        pasFaitTachesAvancement: 0.1,
+        pasConcerneTachesAvancement: 0,
         desactive: false,
-        point_potentiel_perso: null,
+        pointPotentielPerso: null,
         renseigne: false,
       });
 
       expect(scoresMap['eci_2']).toEqual({
-        action_id: 'eci_2',
-        point_fait: 0,
-        point_programme: 0.0,
-        point_pas_fait: 0.0,
-        point_non_renseigne: 70,
-        point_potentiel: 70,
-        point_referentiel: 70,
+        actionId: 'eci_2',
+        pointFait: 0,
+        pointProgramme: 0.0,
+        pointPasFait: 0.0,
+        pointNonRenseigne: 70,
+        pointPotentiel: 70,
+        pointReferentiel: 70,
         concerne: true,
-        total_taches_count: 3,
-        completed_taches_count: 0,
-        fait_taches_avancement: 0,
-        programme_taches_avancement: 0,
-        pas_fait_taches_avancement: 0,
-        pas_concerne_taches_avancement: 0,
+        totalTachesCount: 3,
+        completedTachesCount: 0,
+        faitTachesAvancement: 0,
+        programmeTachesAvancement: 0,
+        pasFaitTachesAvancement: 0,
+        pasConcerneTachesAvancement: 0,
         desactive: false,
-        point_potentiel_perso: null,
+        pointPotentielPerso: null,
         renseigne: false,
       });
 
       expect(scoresMap['eci']).toEqual({
-        action_id: 'eci',
-        point_fait: 2,
-        point_programme: 7,
-        point_pas_fait: 1,
-        point_non_renseigne: 90,
-        point_potentiel: 100,
-        point_referentiel: 100,
+        actionId: 'eci',
+        pointFait: 2,
+        pointProgramme: 7,
+        pointPasFait: 1,
+        pointNonRenseigne: 90,
+        pointPotentiel: 100,
+        pointReferentiel: 100,
         concerne: true,
-        total_taches_count: 5,
-        completed_taches_count: 1,
-        fait_taches_avancement: 0.2,
-        programme_taches_avancement: 0.7,
-        pas_fait_taches_avancement: 0.1,
-        pas_concerne_taches_avancement: 0,
+        totalTachesCount: 5,
+        completedTachesCount: 1,
+        faitTachesAvancement: 0.2,
+        programmeTachesAvancement: 0.7,
+        pasFaitTachesAvancement: 0.1,
+        pasConcerneTachesAvancement: 0,
         desactive: false,
-        point_potentiel_perso: null,
+        pointPotentielPerso: null,
         renseigne: false,
       });
     });
@@ -782,7 +764,7 @@ describe('ReferentielsScoringService', () => {
         'eci_1.1': {
           concerne: false,
           avancement: 'non_renseigne',
-          avancement_detaille: null,
+          avancementDetaille: null,
         },
       };
 
@@ -797,103 +779,103 @@ describe('ReferentielsScoringService', () => {
       expect(scoreLength).toEqual(8);
 
       expect(scoresMap['eci_1.1']).toEqual({
-        action_id: 'eci_1.1',
-        point_fait: 0,
-        point_programme: 0,
-        point_pas_fait: 0,
-        point_non_renseigne: 0.0,
-        point_potentiel: 0,
-        point_referentiel: 10,
+        actionId: 'eci_1.1',
+        pointFait: 0,
+        pointProgramme: 0,
+        pointPasFait: 0,
+        pointNonRenseigne: 0.0,
+        pointPotentiel: 0,
+        pointReferentiel: 10,
         concerne: false,
-        total_taches_count: 1,
-        completed_taches_count: 1,
-        fait_taches_avancement: 0,
-        programme_taches_avancement: 0,
-        pas_fait_taches_avancement: 0,
-        pas_concerne_taches_avancement: 1,
+        totalTachesCount: 1,
+        completedTachesCount: 1,
+        faitTachesAvancement: 0,
+        programmeTachesAvancement: 0,
+        pasFaitTachesAvancement: 0,
+        pasConcerneTachesAvancement: 1,
         desactive: false,
-        point_potentiel_perso: null,
+        pointPotentielPerso: null,
         renseigne: true,
       });
 
       // Redistribution des points
       expect(scoresMap['eci_1.2']).toEqual({
-        action_id: 'eci_1.2',
-        point_fait: 0,
-        point_programme: 0,
-        point_pas_fait: 0,
-        point_non_renseigne: 30,
-        point_potentiel: 30,
-        point_referentiel: 20,
+        actionId: 'eci_1.2',
+        pointFait: 0,
+        pointProgramme: 0,
+        pointPasFait: 0,
+        pointNonRenseigne: 30,
+        pointPotentiel: 30,
+        pointReferentiel: 20,
         concerne: true,
-        total_taches_count: 1,
-        completed_taches_count: 0,
-        fait_taches_avancement: 0,
-        programme_taches_avancement: 0,
-        pas_fait_taches_avancement: 0,
-        pas_concerne_taches_avancement: 0,
+        totalTachesCount: 1,
+        completedTachesCount: 0,
+        faitTachesAvancement: 0,
+        programmeTachesAvancement: 0,
+        pasFaitTachesAvancement: 0,
+        pasConcerneTachesAvancement: 0,
         desactive: false,
-        point_potentiel_perso: null,
+        pointPotentielPerso: null,
         renseigne: false,
       });
 
       expect(scoresMap['eci_1']).toEqual({
-        action_id: 'eci_1',
-        point_fait: 0,
-        point_programme: 0,
-        point_pas_fait: 0,
-        point_non_renseigne: 30,
-        point_potentiel: 30,
-        point_referentiel: 30,
+        actionId: 'eci_1',
+        pointFait: 0,
+        pointProgramme: 0,
+        pointPasFait: 0,
+        pointNonRenseigne: 30,
+        pointPotentiel: 30,
+        pointReferentiel: 30,
         concerne: true,
-        total_taches_count: 2,
-        completed_taches_count: 1,
-        fait_taches_avancement: 0,
-        programme_taches_avancement: 0,
-        pas_fait_taches_avancement: 0,
-        pas_concerne_taches_avancement: 1,
+        totalTachesCount: 2,
+        completedTachesCount: 1,
+        faitTachesAvancement: 0,
+        programmeTachesAvancement: 0,
+        pasFaitTachesAvancement: 0,
+        pasConcerneTachesAvancement: 1,
         desactive: false,
-        point_potentiel_perso: null,
+        pointPotentielPerso: null,
         renseigne: false,
       });
 
       expect(scoresMap['eci_2']).toEqual({
-        action_id: 'eci_2',
-        point_fait: 0,
-        point_programme: 0.0,
-        point_pas_fait: 0.0,
-        point_non_renseigne: 70,
-        point_potentiel: 70,
-        point_referentiel: 70,
+        actionId: 'eci_2',
+        pointFait: 0,
+        pointProgramme: 0.0,
+        pointPasFait: 0.0,
+        pointNonRenseigne: 70,
+        pointPotentiel: 70,
+        pointReferentiel: 70,
         concerne: true,
-        total_taches_count: 3,
-        completed_taches_count: 0,
-        fait_taches_avancement: 0,
-        programme_taches_avancement: 0,
-        pas_fait_taches_avancement: 0,
-        pas_concerne_taches_avancement: 0,
+        totalTachesCount: 3,
+        completedTachesCount: 0,
+        faitTachesAvancement: 0,
+        programmeTachesAvancement: 0,
+        pasFaitTachesAvancement: 0,
+        pasConcerneTachesAvancement: 0,
         desactive: false,
-        point_potentiel_perso: null,
+        pointPotentielPerso: null,
         renseigne: false,
       });
 
       expect(scoresMap['eci']).toEqual({
-        action_id: 'eci',
-        point_fait: 0,
-        point_programme: 0,
-        point_pas_fait: 0,
-        point_non_renseigne: 100,
-        point_potentiel: 100,
-        point_referentiel: 100,
+        actionId: 'eci',
+        pointFait: 0,
+        pointProgramme: 0,
+        pointPasFait: 0,
+        pointNonRenseigne: 100,
+        pointPotentiel: 100,
+        pointReferentiel: 100,
         concerne: true,
-        total_taches_count: 5,
-        completed_taches_count: 1,
-        fait_taches_avancement: 0,
-        programme_taches_avancement: 0,
-        pas_fait_taches_avancement: 0,
-        pas_concerne_taches_avancement: 1,
+        totalTachesCount: 5,
+        completedTachesCount: 1,
+        faitTachesAvancement: 0,
+        programmeTachesAvancement: 0,
+        pasFaitTachesAvancement: 0,
+        pasConcerneTachesAvancement: 1,
         desactive: false,
-        point_potentiel_perso: null,
+        pointPotentielPerso: null,
         renseigne: false,
       });
     });
@@ -905,12 +887,12 @@ describe('ReferentielsScoringService', () => {
         'eci_1.1': {
           concerne: false,
           avancement: 'non_renseigne',
-          avancement_detaille: null,
+          avancementDetaille: null,
         },
         'eci_1.2': {
           concerne: false,
           avancement: 'non_renseigne',
-          avancement_detaille: null,
+          avancementDetaille: null,
         },
       };
 
@@ -925,102 +907,102 @@ describe('ReferentielsScoringService', () => {
       expect(scoreLength).toEqual(8);
 
       expect(scoresMap['eci_1.1']).toEqual({
-        action_id: 'eci_1.1',
-        point_fait: 0,
-        point_programme: 0,
-        point_pas_fait: 0,
-        point_non_renseigne: 0.0,
-        point_potentiel: 0,
-        point_referentiel: 10,
+        actionId: 'eci_1.1',
+        pointFait: 0,
+        pointProgramme: 0,
+        pointPasFait: 0,
+        pointNonRenseigne: 0.0,
+        pointPotentiel: 0,
+        pointReferentiel: 10,
         concerne: false,
-        total_taches_count: 1,
-        completed_taches_count: 1,
-        fait_taches_avancement: 0,
-        programme_taches_avancement: 0,
-        pas_fait_taches_avancement: 0,
-        pas_concerne_taches_avancement: 1,
+        totalTachesCount: 1,
+        completedTachesCount: 1,
+        faitTachesAvancement: 0,
+        programmeTachesAvancement: 0,
+        pasFaitTachesAvancement: 0,
+        pasConcerneTachesAvancement: 1,
         desactive: false,
-        point_potentiel_perso: null,
+        pointPotentielPerso: null,
         renseigne: true,
       });
 
       expect(scoresMap['eci_1.2']).toEqual({
-        action_id: 'eci_1.2',
-        point_fait: 0,
-        point_programme: 0,
-        point_pas_fait: 0,
-        point_non_renseigne: 0,
-        point_potentiel: 0,
-        point_referentiel: 20,
+        actionId: 'eci_1.2',
+        pointFait: 0,
+        pointProgramme: 0,
+        pointPasFait: 0,
+        pointNonRenseigne: 0,
+        pointPotentiel: 0,
+        pointReferentiel: 20,
         concerne: false,
-        total_taches_count: 1,
-        completed_taches_count: 1,
-        fait_taches_avancement: 0,
-        programme_taches_avancement: 0,
-        pas_fait_taches_avancement: 0,
-        pas_concerne_taches_avancement: 1,
+        totalTachesCount: 1,
+        completedTachesCount: 1,
+        faitTachesAvancement: 0,
+        programmeTachesAvancement: 0,
+        pasFaitTachesAvancement: 0,
+        pasConcerneTachesAvancement: 1,
         desactive: false,
-        point_potentiel_perso: null,
+        pointPotentielPerso: null,
         renseigne: true,
       });
 
       expect(scoresMap['eci_1']).toEqual({
-        action_id: 'eci_1',
-        point_fait: 0,
-        point_programme: 0,
-        point_pas_fait: 0,
-        point_non_renseigne: 0,
-        point_potentiel: 0,
-        point_referentiel: 30,
+        actionId: 'eci_1',
+        pointFait: 0,
+        pointProgramme: 0,
+        pointPasFait: 0,
+        pointNonRenseigne: 0,
+        pointPotentiel: 0,
+        pointReferentiel: 30,
         concerne: false,
-        total_taches_count: 2,
-        completed_taches_count: 2,
-        fait_taches_avancement: 0,
-        programme_taches_avancement: 0,
-        pas_fait_taches_avancement: 0,
-        pas_concerne_taches_avancement: 2,
+        totalTachesCount: 2,
+        completedTachesCount: 2,
+        faitTachesAvancement: 0,
+        programmeTachesAvancement: 0,
+        pasFaitTachesAvancement: 0,
+        pasConcerneTachesAvancement: 2,
         desactive: false,
-        point_potentiel_perso: null,
+        pointPotentielPerso: null,
         renseigne: true,
       });
 
       expect(scoresMap['eci_2']).toEqual({
-        action_id: 'eci_2',
-        point_fait: 0,
-        point_programme: 0.0,
-        point_pas_fait: 0.0,
-        point_non_renseigne: 70,
-        point_potentiel: 70,
-        point_referentiel: 70,
+        actionId: 'eci_2',
+        pointFait: 0,
+        pointProgramme: 0.0,
+        pointPasFait: 0.0,
+        pointNonRenseigne: 70,
+        pointPotentiel: 70,
+        pointReferentiel: 70,
         concerne: true,
-        total_taches_count: 3,
-        completed_taches_count: 0,
-        fait_taches_avancement: 0,
-        programme_taches_avancement: 0,
-        pas_fait_taches_avancement: 0,
-        pas_concerne_taches_avancement: 0,
+        totalTachesCount: 3,
+        completedTachesCount: 0,
+        faitTachesAvancement: 0,
+        programmeTachesAvancement: 0,
+        pasFaitTachesAvancement: 0,
+        pasConcerneTachesAvancement: 0,
         desactive: false,
-        point_potentiel_perso: null,
+        pointPotentielPerso: null,
         renseigne: false,
       });
 
       expect(scoresMap['eci']).toEqual({
-        action_id: 'eci',
-        point_fait: 0,
-        point_programme: 0,
-        point_pas_fait: 0,
-        point_non_renseigne: 70,
-        point_potentiel: 70,
-        point_referentiel: 100,
+        actionId: 'eci',
+        pointFait: 0,
+        pointProgramme: 0,
+        pointPasFait: 0,
+        pointNonRenseigne: 70,
+        pointPotentiel: 70,
+        pointReferentiel: 100,
         concerne: true,
-        total_taches_count: 5,
-        completed_taches_count: 2,
-        fait_taches_avancement: 0,
-        programme_taches_avancement: 0,
-        pas_fait_taches_avancement: 0,
-        pas_concerne_taches_avancement: 2,
+        totalTachesCount: 5,
+        completedTachesCount: 2,
+        faitTachesAvancement: 0,
+        programmeTachesAvancement: 0,
+        pasFaitTachesAvancement: 0,
+        pasConcerneTachesAvancement: 2,
         desactive: false,
-        point_potentiel_perso: null,
+        pointPotentielPerso: null,
         renseigne: false,
       });
     });
@@ -1032,12 +1014,12 @@ describe('ReferentielsScoringService', () => {
         'eci_2.1': {
           concerne: false,
           avancement: 'non_renseigne',
-          avancement_detaille: null,
+          avancementDetaille: null,
         },
         'eci_2.2': {
           concerne: true,
           avancement: 'fait',
-          avancement_detaille: [1, 0, 0],
+          avancementDetaille: [1, 0, 0],
         },
       };
 
@@ -1052,104 +1034,104 @@ describe('ReferentielsScoringService', () => {
       expect(scoreLength).toEqual(8);
 
       expect(scoresMap['eci_2.0']).toEqual({
-        action_id: 'eci_2.0',
-        point_fait: 0,
-        point_programme: 0,
-        point_pas_fait: 0,
-        point_non_renseigne: 0.0,
-        point_potentiel: 0,
-        point_referentiel: 0,
+        actionId: 'eci_2.0',
+        pointFait: 0,
+        pointProgramme: 0,
+        pointPasFait: 0,
+        pointNonRenseigne: 0.0,
+        pointPotentiel: 0,
+        pointReferentiel: 0,
         concerne: true,
-        total_taches_count: 1,
-        completed_taches_count: 0,
-        fait_taches_avancement: 0,
-        programme_taches_avancement: 0,
-        pas_fait_taches_avancement: 0,
-        pas_concerne_taches_avancement: 0,
+        totalTachesCount: 1,
+        completedTachesCount: 0,
+        faitTachesAvancement: 0,
+        programmeTachesAvancement: 0,
+        pasFaitTachesAvancement: 0,
+        pasConcerneTachesAvancement: 0,
         desactive: false,
-        point_potentiel_perso: null,
+        pointPotentielPerso: null,
         renseigne: false, // WARNING: in python code, it is true but seems to be a mistake
       });
 
       // Désactivé donc point potentiel à 0
       expect(scoresMap['eci_2.1']).toEqual({
-        action_id: 'eci_2.1',
-        point_fait: 0,
-        point_programme: 0,
-        point_pas_fait: 0,
-        point_non_renseigne: 0,
-        point_potentiel: 0,
-        point_referentiel: 65,
+        actionId: 'eci_2.1',
+        pointFait: 0,
+        pointProgramme: 0,
+        pointPasFait: 0,
+        pointNonRenseigne: 0,
+        pointPotentiel: 0,
+        pointReferentiel: 65,
         concerne: false,
-        total_taches_count: 1,
-        completed_taches_count: 1,
-        fait_taches_avancement: 0,
-        programme_taches_avancement: 0,
-        pas_fait_taches_avancement: 0,
-        pas_concerne_taches_avancement: 1,
+        totalTachesCount: 1,
+        completedTachesCount: 1,
+        faitTachesAvancement: 0,
+        programmeTachesAvancement: 0,
+        pasFaitTachesAvancement: 0,
+        pasConcerneTachesAvancement: 1,
         desactive: false,
-        point_potentiel_perso: null,
+        pointPotentielPerso: null,
         renseigne: true,
       });
 
       // Points de eci_2.1 sont redistribués sur eci_2.2
       expect(scoresMap['eci_2.2']).toEqual({
-        action_id: 'eci_2.2',
-        point_fait: 70,
-        point_programme: 0,
-        point_pas_fait: 0,
-        point_non_renseigne: 0,
-        point_potentiel: 70,
-        point_referentiel: 5,
+        actionId: 'eci_2.2',
+        pointFait: 70,
+        pointProgramme: 0,
+        pointPasFait: 0,
+        pointNonRenseigne: 0,
+        pointPotentiel: 70,
+        pointReferentiel: 5,
         concerne: true,
-        total_taches_count: 1,
-        completed_taches_count: 1,
-        fait_taches_avancement: 1,
-        programme_taches_avancement: 0,
-        pas_fait_taches_avancement: 0,
-        pas_concerne_taches_avancement: 0,
+        totalTachesCount: 1,
+        completedTachesCount: 1,
+        faitTachesAvancement: 1,
+        programmeTachesAvancement: 0,
+        pasFaitTachesAvancement: 0,
+        pasConcerneTachesAvancement: 0,
         desactive: false,
-        point_potentiel_perso: null,
+        pointPotentielPerso: null,
         renseigne: true,
       });
 
       expect(scoresMap['eci_2']).toEqual({
-        action_id: 'eci_2',
-        point_fait: 70,
-        point_programme: 0.0,
-        point_pas_fait: 0.0,
-        point_non_renseigne: 0,
-        point_potentiel: 70,
-        point_referentiel: 70,
+        actionId: 'eci_2',
+        pointFait: 70,
+        pointProgramme: 0.0,
+        pointPasFait: 0.0,
+        pointNonRenseigne: 0,
+        pointPotentiel: 70,
+        pointReferentiel: 70,
         concerne: true,
-        total_taches_count: 3,
-        completed_taches_count: 2,
-        fait_taches_avancement: 1,
-        programme_taches_avancement: 0,
-        pas_fait_taches_avancement: 0,
-        pas_concerne_taches_avancement: 1,
+        totalTachesCount: 3,
+        completedTachesCount: 2,
+        faitTachesAvancement: 1,
+        programmeTachesAvancement: 0,
+        pasFaitTachesAvancement: 0,
+        pasConcerneTachesAvancement: 1,
         desactive: false,
-        point_potentiel_perso: null,
+        pointPotentielPerso: null,
         renseigne: true,
       });
 
       expect(scoresMap['eci']).toEqual({
-        action_id: 'eci',
-        point_fait: 70,
-        point_programme: 0,
-        point_pas_fait: 0,
-        point_non_renseigne: 30,
-        point_potentiel: 100,
-        point_referentiel: 100,
+        actionId: 'eci',
+        pointFait: 70,
+        pointProgramme: 0,
+        pointPasFait: 0,
+        pointNonRenseigne: 30,
+        pointPotentiel: 100,
+        pointReferentiel: 100,
         concerne: true,
-        total_taches_count: 5,
-        completed_taches_count: 2,
-        fait_taches_avancement: 1,
-        programme_taches_avancement: 0,
-        pas_fait_taches_avancement: 0,
-        pas_concerne_taches_avancement: 1,
+        totalTachesCount: 5,
+        completedTachesCount: 2,
+        faitTachesAvancement: 1,
+        programmeTachesAvancement: 0,
+        pasFaitTachesAvancement: 0,
+        pasConcerneTachesAvancement: 1,
         desactive: false,
-        point_potentiel_perso: null,
+        pointPotentielPerso: null,
         renseigne: false,
       });
     });
@@ -1162,22 +1144,22 @@ describe('ReferentielsScoringService', () => {
         'eci_2.2.1': {
           concerne: false,
           avancement: 'non_renseigne',
-          avancement_detaille: null,
+          avancementDetaille: null,
         },
         'eci_2.2.2': {
           concerne: false,
           avancement: 'non_renseigne',
-          avancement_detaille: null,
+          avancementDetaille: null,
         },
         'eci_2.2.3': {
           concerne: false,
           avancement: 'non_renseigne',
-          avancement_detaille: null,
+          avancementDetaille: null,
         },
         'eci_1.1': {
           concerne: true,
           avancement: 'programme',
-          avancement_detaille: [0, 1, 0],
+          avancementDetaille: [0, 1, 0],
         },
       };
 
@@ -1192,144 +1174,144 @@ describe('ReferentielsScoringService', () => {
       expect(scoreLength).toEqual(14);
 
       expect(scoresMap['eci_2.2']).toEqual({
-        action_id: 'eci_2.2',
-        point_fait: 0,
-        point_programme: 0,
-        point_pas_fait: 0,
-        point_non_renseigne: 0,
-        point_potentiel: 0,
-        point_referentiel: 5,
-        completed_taches_count: 3,
-        total_taches_count: 3,
-        fait_taches_avancement: 0,
-        programme_taches_avancement: 0,
-        pas_fait_taches_avancement: 0,
-        pas_concerne_taches_avancement: 3,
+        actionId: 'eci_2.2',
+        pointFait: 0,
+        pointProgramme: 0,
+        pointPasFait: 0,
+        pointNonRenseigne: 0,
+        pointPotentiel: 0,
+        pointReferentiel: 5,
+        completedTachesCount: 3,
+        totalTachesCount: 3,
+        faitTachesAvancement: 0,
+        programmeTachesAvancement: 0,
+        pasFaitTachesAvancement: 0,
+        pasConcerneTachesAvancement: 3,
         concerne: false,
-        point_potentiel_perso: null,
+        pointPotentielPerso: null,
         desactive: false,
         renseigne: true,
       });
 
-      // point_referentiel of 2.2 is redistributed on 2.1
+      // pointReferentiel of 2.2 is redistributed on 2.1
       expect(scoresMap['eci_2.1']).toEqual({
-        action_id: 'eci_2.1',
-        point_fait: 0,
-        point_programme: 0,
-        point_pas_fait: 0,
-        point_non_renseigne: 70,
-        point_potentiel: 70,
-        point_referentiel: 65,
-        completed_taches_count: 0,
-        total_taches_count: 3,
-        fait_taches_avancement: 0,
-        programme_taches_avancement: 0,
-        pas_fait_taches_avancement: 0,
-        pas_concerne_taches_avancement: 0,
+        actionId: 'eci_2.1',
+        pointFait: 0,
+        pointProgramme: 0,
+        pointPasFait: 0,
+        pointNonRenseigne: 70,
+        pointPotentiel: 70,
+        pointReferentiel: 65,
+        completedTachesCount: 0,
+        totalTachesCount: 3,
+        faitTachesAvancement: 0,
+        programmeTachesAvancement: 0,
+        pasFaitTachesAvancement: 0,
+        pasConcerneTachesAvancement: 0,
         concerne: true,
-        point_potentiel_perso: null,
+        pointPotentielPerso: null,
         desactive: false,
         renseigne: false,
       });
 
       expect(scoresMap['eci_2.1.0']).toEqual({
-        action_id: 'eci_2.1.0',
-        point_fait: 0,
-        point_programme: 0,
-        point_pas_fait: 0,
-        point_non_renseigne: 0,
-        point_potentiel: 0,
-        point_referentiel: 0,
-        completed_taches_count: 0,
-        total_taches_count: 1,
-        fait_taches_avancement: 0,
-        programme_taches_avancement: 0,
-        pas_fait_taches_avancement: 0,
-        pas_concerne_taches_avancement: 0,
+        actionId: 'eci_2.1.0',
+        pointFait: 0,
+        pointProgramme: 0,
+        pointPasFait: 0,
+        pointNonRenseigne: 0,
+        pointPotentiel: 0,
+        pointReferentiel: 0,
+        completedTachesCount: 0,
+        totalTachesCount: 1,
+        faitTachesAvancement: 0,
+        programmeTachesAvancement: 0,
+        pasFaitTachesAvancement: 0,
+        pasConcerneTachesAvancement: 0,
         concerne: true,
-        point_potentiel_perso: null,
+        pointPotentielPerso: null,
         desactive: false,
         renseigne: false,
       });
 
       expect(scoresMap['eci_2.1.1']).toEqual({
-        action_id: 'eci_2.1.1',
-        point_fait: 0,
-        point_programme: 0,
-        point_pas_fait: 0,
-        point_non_renseigne: roundTo((40 / 65) * 70, 3),
-        point_potentiel: roundTo((40 / 65) * 70, 3),
-        point_referentiel: 40,
-        completed_taches_count: 0,
-        total_taches_count: 1,
-        fait_taches_avancement: 0,
-        programme_taches_avancement: 0,
-        pas_fait_taches_avancement: 0,
-        pas_concerne_taches_avancement: 0,
+        actionId: 'eci_2.1.1',
+        pointFait: 0,
+        pointProgramme: 0,
+        pointPasFait: 0,
+        pointNonRenseigne: roundTo((40 / 65) * 70, 3),
+        pointPotentiel: roundTo((40 / 65) * 70, 3),
+        pointReferentiel: 40,
+        completedTachesCount: 0,
+        totalTachesCount: 1,
+        faitTachesAvancement: 0,
+        programmeTachesAvancement: 0,
+        pasFaitTachesAvancement: 0,
+        pasConcerneTachesAvancement: 0,
         concerne: true,
-        point_potentiel_perso: null,
+        pointPotentielPerso: null,
         desactive: false,
         renseigne: false,
       });
 
       expect(scoresMap['eci_2.1.2']).toEqual({
-        action_id: 'eci_2.1.2',
-        point_fait: 0,
-        point_programme: 0,
-        point_pas_fait: 0,
-        point_non_renseigne: roundTo((25 / 65) * 70, 3),
-        point_potentiel: roundTo((25 / 65) * 70, 3),
-        point_referentiel: 25,
-        completed_taches_count: 0,
-        total_taches_count: 1,
-        fait_taches_avancement: 0,
-        programme_taches_avancement: 0,
-        pas_fait_taches_avancement: 0,
-        pas_concerne_taches_avancement: 0,
+        actionId: 'eci_2.1.2',
+        pointFait: 0,
+        pointProgramme: 0,
+        pointPasFait: 0,
+        pointNonRenseigne: roundTo((25 / 65) * 70, 3),
+        pointPotentiel: roundTo((25 / 65) * 70, 3),
+        pointReferentiel: 25,
+        completedTachesCount: 0,
+        totalTachesCount: 1,
+        faitTachesAvancement: 0,
+        programmeTachesAvancement: 0,
+        pasFaitTachesAvancement: 0,
+        pasConcerneTachesAvancement: 0,
         concerne: true,
-        point_potentiel_perso: null,
+        pointPotentielPerso: null,
         desactive: false,
         renseigne: false,
       });
 
-      // axe 2 point_fait should remain unchanged
+      // axe 2 pointFait should remain unchanged
       expect(scoresMap['eci_2']).toEqual({
-        action_id: 'eci_2',
-        point_fait: 0,
-        point_pas_fait: 0,
-        point_programme: 0,
-        point_non_renseigne: 70,
-        point_potentiel: 70,
-        point_referentiel: 70,
-        completed_taches_count: 3,
-        total_taches_count: 7,
-        fait_taches_avancement: 0,
-        programme_taches_avancement: 0,
-        pas_fait_taches_avancement: 0,
-        pas_concerne_taches_avancement: 3,
+        actionId: 'eci_2',
+        pointFait: 0,
+        pointPasFait: 0,
+        pointProgramme: 0,
+        pointNonRenseigne: 70,
+        pointPotentiel: 70,
+        pointReferentiel: 70,
+        completedTachesCount: 3,
+        totalTachesCount: 7,
+        faitTachesAvancement: 0,
+        programmeTachesAvancement: 0,
+        pasFaitTachesAvancement: 0,
+        pasConcerneTachesAvancement: 3,
         concerne: true,
-        point_potentiel_perso: null,
+        pointPotentielPerso: null,
         desactive: false,
         renseigne: false,
       });
 
-      // root point_fait should remain unchanged
+      // root pointFait should remain unchanged
       expect(scoresMap['eci']).toEqual({
-        action_id: 'eci',
-        point_fait: 0,
-        point_programme: 10,
-        point_pas_fait: 0,
-        point_non_renseigne: 90,
-        point_potentiel: 100,
-        point_referentiel: 100,
-        completed_taches_count: 4,
-        total_taches_count: 9,
-        fait_taches_avancement: 0,
-        programme_taches_avancement: 1,
-        pas_fait_taches_avancement: 0,
-        pas_concerne_taches_avancement: 3,
+        actionId: 'eci',
+        pointFait: 0,
+        pointProgramme: 10,
+        pointPasFait: 0,
+        pointNonRenseigne: 90,
+        pointPotentiel: 100,
+        pointReferentiel: 100,
+        completedTachesCount: 4,
+        totalTachesCount: 9,
+        faitTachesAvancement: 0,
+        programmeTachesAvancement: 1,
+        pasFaitTachesAvancement: 0,
+        pasConcerneTachesAvancement: 3,
         concerne: true,
-        point_potentiel_perso: null,
+        pointPotentielPerso: null,
         desactive: false,
         renseigne: false,
       });
@@ -1340,15 +1322,15 @@ describe('ReferentielsScoringService', () => {
         {
           eci_1: {
             desactive: true,
-            score_formule: null,
-            potentiel_perso: null,
+            scoreFormule: null,
+            potentielPerso: null,
           },
         };
       const actionStatuts: GetActionStatutsResponseType = {
         'eci_2.2': {
           concerne: true,
           avancement: 'fait',
-          avancement_detaille: [1, 0, 0],
+          avancementDetaille: [1, 0, 0],
         },
       };
 
@@ -1361,36 +1343,36 @@ describe('ReferentielsScoringService', () => {
 
       //  Only action eci_1 should de desactive and potentiel reduced to 0
       expect(scoresMap['eci_1'].desactive).toEqual(true);
-      expect(scoresMap['eci_1'].point_potentiel_perso).toEqual(null);
+      expect(scoresMap['eci_1'].pointPotentielPerso).toEqual(null);
       // Point potentiel is impacted by desactivation
-      expect(scoresMap['eci_1'].point_potentiel).toEqual(0);
+      expect(scoresMap['eci_1'].pointPotentiel).toEqual(0);
       // Point referentiel is not impacted by desactivation
-      expect(scoresMap['eci_1'].point_referentiel).toEqual(30);
+      expect(scoresMap['eci_1'].pointReferentiel).toEqual(30);
 
-      // Consequences on action children should affect point_potentiel (reduced to 0) but not point_potentiel_perso that is null
+      // Consequences on action children should affect pointPotentiel (reduced to 0) but not pointPotentielPerso that is null
       expect(scoresMap['eci_1.1'].desactive).toEqual(true);
-      expect(scoresMap['eci_1.1'].point_potentiel_perso).toEqual(null);
+      expect(scoresMap['eci_1.1'].pointPotentielPerso).toEqual(null);
       // Point potentiel is impacted by desactivation
-      expect(scoresMap['eci_1.1'].point_potentiel).toEqual(0);
+      expect(scoresMap['eci_1.1'].pointPotentiel).toEqual(0);
       // Point referentiel is not impacted by desactivation
-      expect(scoresMap['eci_1.1'].point_referentiel).toEqual(10);
+      expect(scoresMap['eci_1.1'].pointReferentiel).toEqual(10);
       expect(scoresMap['eci_1.2'].desactive).toEqual(true);
-      expect(scoresMap['eci_1.2'].point_potentiel_perso).toEqual(null);
+      expect(scoresMap['eci_1.2'].pointPotentielPerso).toEqual(null);
       // Point potentiel is impacted by desactivation
-      expect(scoresMap['eci_1.2'].point_potentiel).toEqual(0);
+      expect(scoresMap['eci_1.2'].pointPotentiel).toEqual(0);
       // Point referentiel is not impacted by desactivation
-      expect(scoresMap['eci_1.2'].point_referentiel).toEqual(20);
+      expect(scoresMap['eci_1.2'].pointReferentiel).toEqual(20);
 
       // Consequences should also affect action parent potentiel points
-      expect(scoresMap['eci'].point_potentiel).toEqual(70);
-      // Consequences should not affect parent point referentiel, desactive and point_potentiel_perso
+      expect(scoresMap['eci'].pointPotentiel).toEqual(70);
+      // Consequences should not affect parent point referentiel, desactive and pointPotentielPerso
       expect(scoresMap['eci'].desactive).toEqual(false);
-      expect(scoresMap['eci'].point_potentiel_perso).toEqual(null);
-      expect(scoresMap['eci'].point_referentiel).toEqual(100);
+      expect(scoresMap['eci'].pointPotentielPerso).toEqual(null);
+      expect(scoresMap['eci'].pointReferentiel).toEqual(100);
 
       // Check scores are still calculated correctly
-      expect(scoresMap['eci'].point_fait).toEqual(5);
-      expect(scoresMap['eci_2.2'].point_fait).toEqual(5);
+      expect(scoresMap['eci'].pointFait).toEqual(5);
+      expect(scoresMap['eci_2.2'].pointFait).toEqual(5);
     });
 
     it('notation_when_one_action_is_reduced', async () => {
@@ -1398,15 +1380,15 @@ describe('ReferentielsScoringService', () => {
         {
           eci_1: {
             desactive: null,
-            score_formule: null,
-            potentiel_perso: 0.2, // Action eci_1 officially worse 30 points, so will be reduced to 6 points
+            scoreFormule: null,
+            potentielPerso: 0.2, // Action eci_1 officially worse 30 points, so will be reduced to 6 points
           },
         };
       const actionStatuts: GetActionStatutsResponseType = {
         'eci_1.1': {
           concerne: true,
           avancement: 'fait',
-          avancement_detaille: [1, 0, 0],
+          avancementDetaille: [1, 0, 0],
         },
       };
 
@@ -1419,82 +1401,82 @@ describe('ReferentielsScoringService', () => {
 
       // Actions eci_1.1 and eci_1.2 should also have been reduced with a factor of 0.2
       expect(scoresMap['eci_1.1']).toEqual({
-        action_id: 'eci_1.1',
-        point_fait: 2.0,
-        point_programme: 0.0,
-        point_pas_fait: 0.0,
-        point_non_renseigne: 0.0,
-        point_potentiel: 2.0,
-        point_referentiel: 10,
+        actionId: 'eci_1.1',
+        pointFait: 2.0,
+        pointProgramme: 0.0,
+        pointPasFait: 0.0,
+        pointNonRenseigne: 0.0,
+        pointPotentiel: 2.0,
+        pointReferentiel: 10,
         concerne: true,
-        total_taches_count: 1,
-        completed_taches_count: 1,
-        fait_taches_avancement: 1,
-        programme_taches_avancement: 0,
-        pas_fait_taches_avancement: 0,
-        pas_concerne_taches_avancement: 0,
+        totalTachesCount: 1,
+        completedTachesCount: 1,
+        faitTachesAvancement: 1,
+        programmeTachesAvancement: 0,
+        pasFaitTachesAvancement: 0,
+        pasConcerneTachesAvancement: 0,
         desactive: false,
-        point_potentiel_perso: null,
+        pointPotentielPerso: null,
         renseigne: true,
       });
 
       expect(scoresMap['eci_1.2']).toEqual({
-        action_id: 'eci_1.2',
-        point_fait: 0.0,
-        point_programme: 0.0,
-        point_pas_fait: 0.0,
-        point_non_renseigne: 4.0,
-        point_potentiel: 4.0,
-        point_referentiel: 20,
+        actionId: 'eci_1.2',
+        pointFait: 0.0,
+        pointProgramme: 0.0,
+        pointPasFait: 0.0,
+        pointNonRenseigne: 4.0,
+        pointPotentiel: 4.0,
+        pointReferentiel: 20,
         concerne: true,
-        total_taches_count: 1,
-        completed_taches_count: 0,
-        fait_taches_avancement: 0,
-        programme_taches_avancement: 0,
-        pas_fait_taches_avancement: 0,
-        pas_concerne_taches_avancement: 0,
+        totalTachesCount: 1,
+        completedTachesCount: 0,
+        faitTachesAvancement: 0,
+        programmeTachesAvancement: 0,
+        pasFaitTachesAvancement: 0,
+        pasConcerneTachesAvancement: 0,
         desactive: false,
-        point_potentiel_perso: null,
+        pointPotentielPerso: null,
         renseigne: false,
       });
 
       expect(scoresMap['eci_1']).toEqual({
-        action_id: 'eci_1',
-        point_fait: 2.0,
-        point_programme: 0.0,
-        point_pas_fait: 0.0,
-        point_non_renseigne: 4.0,
-        point_potentiel: 6.0,
-        point_referentiel: 30,
+        actionId: 'eci_1',
+        pointFait: 2.0,
+        pointProgramme: 0.0,
+        pointPasFait: 0.0,
+        pointNonRenseigne: 4.0,
+        pointPotentiel: 6.0,
+        pointReferentiel: 30,
         concerne: true,
-        total_taches_count: 2,
-        completed_taches_count: 1,
-        fait_taches_avancement: 1,
-        programme_taches_avancement: 0,
-        pas_fait_taches_avancement: 0,
-        pas_concerne_taches_avancement: 0,
+        totalTachesCount: 2,
+        completedTachesCount: 1,
+        faitTachesAvancement: 1,
+        programmeTachesAvancement: 0,
+        pasFaitTachesAvancement: 0,
+        pasConcerneTachesAvancement: 0,
         desactive: false,
-        point_potentiel_perso: 6.0,
+        pointPotentielPerso: 6.0,
         renseigne: false,
       });
 
       expect(scoresMap['eci']).toEqual({
-        action_id: 'eci',
-        point_fait: 2.0,
-        point_programme: 0.0,
-        point_pas_fait: 0.0,
-        point_non_renseigne: 74.0,
-        point_potentiel: 76.0,
-        point_referentiel: 100,
+        actionId: 'eci',
+        pointFait: 2.0,
+        pointProgramme: 0.0,
+        pointPasFait: 0.0,
+        pointNonRenseigne: 74.0,
+        pointPotentiel: 76.0,
+        pointReferentiel: 100,
         concerne: true,
-        total_taches_count: 5,
-        completed_taches_count: 1,
-        fait_taches_avancement: 1,
-        programme_taches_avancement: 0,
-        pas_fait_taches_avancement: 0,
-        pas_concerne_taches_avancement: 0,
+        totalTachesCount: 5,
+        completedTachesCount: 1,
+        faitTachesAvancement: 1,
+        programmeTachesAvancement: 0,
+        pasFaitTachesAvancement: 0,
+        pasConcerneTachesAvancement: 0,
         desactive: false,
-        point_potentiel_perso: null,
+        pointPotentielPerso: null,
         renseigne: false,
       });
     });
@@ -1504,15 +1486,15 @@ describe('ReferentielsScoringService', () => {
         {
           eci_1: {
             desactive: null,
-            score_formule: null,
-            potentiel_perso: 1.2, // Action eci_1 officially worse 30 points, so will be increased to 36 points
+            scoreFormule: null,
+            potentielPerso: 1.2, // Action eci_1 officially worse 30 points, so will be increased to 36 points
           },
         };
       const actionStatuts: GetActionStatutsResponseType = {
         'eci_1.1': {
           concerne: true,
           avancement: 'fait',
-          avancement_detaille: [1, 0, 0],
+          avancementDetaille: [1, 0, 0],
         },
       };
 
@@ -1525,110 +1507,110 @@ describe('ReferentielsScoringService', () => {
 
       // Actions eci_1.1 and eci_1.2 should also have been reduced with a factor of 1.2
       expect(scoresMap['eci_1.1']).toEqual({
-        action_id: 'eci_1.1',
-        point_fait: 12.0,
-        point_programme: 0.0,
-        point_pas_fait: 0.0,
-        point_non_renseigne: 0.0,
-        point_potentiel: 12.0, // 10 * 1.2
-        point_referentiel: 10,
+        actionId: 'eci_1.1',
+        pointFait: 12.0,
+        pointProgramme: 0.0,
+        pointPasFait: 0.0,
+        pointNonRenseigne: 0.0,
+        pointPotentiel: 12.0, // 10 * 1.2
+        pointReferentiel: 10,
         concerne: true,
-        total_taches_count: 1,
-        completed_taches_count: 1,
-        fait_taches_avancement: 1,
-        programme_taches_avancement: 0,
-        pas_fait_taches_avancement: 0,
-        pas_concerne_taches_avancement: 0,
+        totalTachesCount: 1,
+        completedTachesCount: 1,
+        faitTachesAvancement: 1,
+        programmeTachesAvancement: 0,
+        pasFaitTachesAvancement: 0,
+        pasConcerneTachesAvancement: 0,
         desactive: false,
-        point_potentiel_perso: null,
+        pointPotentielPerso: null,
         renseigne: true,
       });
 
       expect(scoresMap['eci_1.2']).toEqual({
-        action_id: 'eci_1.2',
-        point_fait: 0.0,
-        point_programme: 0.0,
-        point_pas_fait: 0.0,
-        point_non_renseigne: 24.0,
-        point_potentiel: 24.0, // 20 * 1.2
-        point_referentiel: 20,
+        actionId: 'eci_1.2',
+        pointFait: 0.0,
+        pointProgramme: 0.0,
+        pointPasFait: 0.0,
+        pointNonRenseigne: 24.0,
+        pointPotentiel: 24.0, // 20 * 1.2
+        pointReferentiel: 20,
         concerne: true,
-        total_taches_count: 1,
-        completed_taches_count: 0,
-        fait_taches_avancement: 0,
-        programme_taches_avancement: 0,
-        pas_fait_taches_avancement: 0,
-        pas_concerne_taches_avancement: 0,
+        totalTachesCount: 1,
+        completedTachesCount: 0,
+        faitTachesAvancement: 0,
+        programmeTachesAvancement: 0,
+        pasFaitTachesAvancement: 0,
+        pasConcerneTachesAvancement: 0,
         desactive: false,
-        point_potentiel_perso: null,
+        pointPotentielPerso: null,
         renseigne: false,
       });
 
       expect(scoresMap['eci_1']).toEqual({
-        action_id: 'eci_1',
-        point_fait: 12.0,
-        point_programme: 0.0,
-        point_pas_fait: 0.0,
-        point_non_renseigne: 24.0,
-        point_potentiel: 36, //  (30 * 1.2)
-        point_referentiel: 30,
+        actionId: 'eci_1',
+        pointFait: 12.0,
+        pointProgramme: 0.0,
+        pointPasFait: 0.0,
+        pointNonRenseigne: 24.0,
+        pointPotentiel: 36, //  (30 * 1.2)
+        pointReferentiel: 30,
         concerne: true,
-        total_taches_count: 2,
-        completed_taches_count: 1,
-        fait_taches_avancement: 1,
-        programme_taches_avancement: 0,
-        pas_fait_taches_avancement: 0,
-        pas_concerne_taches_avancement: 0,
+        totalTachesCount: 2,
+        completedTachesCount: 1,
+        faitTachesAvancement: 1,
+        programmeTachesAvancement: 0,
+        pasFaitTachesAvancement: 0,
+        pasConcerneTachesAvancement: 0,
         desactive: false,
-        point_potentiel_perso: 36.0, // Consequence applied here ! (30 * 1.2)
+        pointPotentielPerso: 36.0, // Consequence applied here ! (30 * 1.2)
         renseigne: false,
       });
 
       expect(scoresMap['eci']).toEqual({
-        action_id: 'eci',
-        point_fait: 12.0,
-        point_programme: 0.0,
-        point_pas_fait: 0.0,
-        point_non_renseigne: 94.0,
-        point_potentiel: 106.0, //  (70 from eci_2 and 36 from eci_1)
-        point_referentiel: 100,
+        actionId: 'eci',
+        pointFait: 12.0,
+        pointProgramme: 0.0,
+        pointPasFait: 0.0,
+        pointNonRenseigne: 94.0,
+        pointPotentiel: 106.0, //  (70 from eci_2 and 36 from eci_1)
+        pointReferentiel: 100,
         concerne: true,
-        total_taches_count: 5,
-        completed_taches_count: 1,
-        fait_taches_avancement: 1,
-        programme_taches_avancement: 0,
-        pas_fait_taches_avancement: 0,
-        pas_concerne_taches_avancement: 0,
+        totalTachesCount: 5,
+        completedTachesCount: 1,
+        faitTachesAvancement: 1,
+        programmeTachesAvancement: 0,
+        pasFaitTachesAvancement: 0,
+        pasConcerneTachesAvancement: 0,
         desactive: false,
-        point_potentiel_perso: null,
+        pointPotentielPerso: null,
         renseigne: false,
       });
     });
 
-    it('notation_when_potentiel_perso_formule_is_given', async () => {
+    it('notation_when_potentielPerso_formule_is_given', async () => {
       const personnalisationConsequences: GetPersonnalitionConsequencesResponseType =
         {
           eci_1: {
             desactive: null,
-            score_formule: 'min(score(eci_1), score(eci_2))',
-            potentiel_perso: null,
+            scoreFormule: 'min(score(eci_1), score(eci_2))',
+            potentielPerso: null,
           },
         };
       const actionStatuts: GetActionStatutsResponseType = {
         'eci_2.2': {
           concerne: true,
           avancement: 'fait',
-          avancement_detaille: [1, 0, 0], // 5 points
+          avancementDetaille: [1, 0, 0], // 5 points
         },
         'eci_1.1': {
           concerne: true,
           avancement: 'fait',
-          avancement_detaille: [1, 0, 0], // 10 points
+          avancementDetaille: [1, 0, 0], // 10 points
         },
         'eci_1.2': {
           concerne: true,
           avancement: 'fait',
-          avancement_detaille: [1, 0, 0], // 20 points
+          avancementDetaille: [1, 0, 0], // 20 points
         },
       };
 
@@ -1641,41 +1623,41 @@ describe('ReferentielsScoringService', () => {
 
       // Action eci_2 should not have been changed
       expect(scoresMap['eci_2']).toEqual({
-        action_id: 'eci_2',
-        point_fait: 5,
-        point_programme: 0.0,
-        point_pas_fait: 0.0,
-        point_non_renseigne: 65,
-        point_potentiel: 70,
-        point_referentiel: 70,
+        actionId: 'eci_2',
+        pointFait: 5,
+        pointProgramme: 0.0,
+        pointPasFait: 0.0,
+        pointNonRenseigne: 65,
+        pointPotentiel: 70,
+        pointReferentiel: 70,
         concerne: true,
-        total_taches_count: 3,
-        completed_taches_count: 1,
-        fait_taches_avancement: 1,
-        programme_taches_avancement: 0,
-        pas_fait_taches_avancement: 0,
-        pas_concerne_taches_avancement: 0,
+        totalTachesCount: 3,
+        completedTachesCount: 1,
+        faitTachesAvancement: 1,
+        programmeTachesAvancement: 0,
+        pasFaitTachesAvancement: 0,
+        pasConcerneTachesAvancement: 0,
         desactive: false,
-        point_potentiel_perso: null,
+        pointPotentielPerso: null,
         renseigne: false,
       });
 
       expect(
         roundTo(
-          scoresMap['eci_1'].point_fait! / scoresMap['eci_1'].point_potentiel!,
+          scoresMap['eci_1'].pointFait! / scoresMap['eci_1'].pointPotentiel!,
           5
         )
       ).toEqual(
         roundTo(
-          scoresMap['eci_2'].point_fait! / scoresMap['eci_2'].point_potentiel!,
+          scoresMap['eci_2'].pointFait! / scoresMap['eci_2'].pointPotentiel!,
           5
         )
       );
 
-      expect(scoresMap['eci_1'].point_fait).toEqual(2.143);
-      expect(scoresMap['eci_1.1'].point_fait).toEqual(0.714);
-      expect(scoresMap['eci_1.2'].point_fait).toEqual(1.429);
-      expect(scoresMap['eci'].point_fait).toEqual(7.143);
+      expect(scoresMap['eci_1'].pointFait).toEqual(2.143);
+      expect(scoresMap['eci_1.1'].pointFait).toEqual(0.714);
+      expect(scoresMap['eci_1.2'].pointFait).toEqual(1.429);
+      expect(scoresMap['eci'].pointFait).toEqual(7.143);
     });
 
     it('eci_desactivation_of_sous_action_242_should_redistribute_points_amongst_siblings', async () => {
@@ -1683,8 +1665,8 @@ describe('ReferentielsScoringService', () => {
         {
           'eci_2.4.2': {
             desactive: true,
-            score_formule: null,
-            potentiel_perso: null,
+            scoreFormule: null,
+            potentielPerso: null,
           },
         };
       const actionStatuts: GetActionStatutsResponseType = {};
@@ -1697,51 +1679,51 @@ describe('ReferentielsScoringService', () => {
       );
 
       expect(scoresMap['eci_2.4.2']).toEqual({
-        action_id: 'eci_2.4.2',
-        point_fait: 0.0,
-        point_programme: 0.0,
-        point_pas_fait: 0.0,
-        point_non_renseigne: 0.0,
-        point_potentiel: 0.0,
-        point_referentiel: 4,
+        actionId: 'eci_2.4.2',
+        pointFait: 0.0,
+        pointProgramme: 0.0,
+        pointPasFait: 0.0,
+        pointNonRenseigne: 0.0,
+        pointPotentiel: 0.0,
+        pointReferentiel: 4,
         concerne: false,
-        total_taches_count: 4,
-        completed_taches_count: 4,
-        fait_taches_avancement: 0,
-        programme_taches_avancement: 0,
-        pas_fait_taches_avancement: 0,
-        pas_concerne_taches_avancement: 4,
+        totalTachesCount: 4,
+        completedTachesCount: 4,
+        faitTachesAvancement: 0,
+        programmeTachesAvancement: 0,
+        pasFaitTachesAvancement: 0,
+        pasConcerneTachesAvancement: 4,
         desactive: true,
-        point_potentiel_perso: null,
+        pointPotentielPerso: null,
         renseigne: true,
       });
 
       // Points correctement redistribués
-      expect(scoresMap['eci_2.4.0'].point_potentiel).toEqual(0); // action réglementaire
-      expect(scoresMap['eci_2.4.1'].point_potentiel).toEqual(5); // 4 + 1
-      expect(scoresMap['eci_2.4.2'].point_potentiel).toEqual(0); // désactivé
-      expect(scoresMap['eci_2.4.3'].point_potentiel).toEqual(3); // 2 + 1
-      expect(scoresMap['eci_2.4.4'].point_potentiel).toEqual(7); // 6 + 1
-      expect(scoresMap['eci_2.4.5'].point_potentiel).toEqual(5); // 4 + 1
+      expect(scoresMap['eci_2.4.0'].pointPotentiel).toEqual(0); // action réglementaire
+      expect(scoresMap['eci_2.4.1'].pointPotentiel).toEqual(5); // 4 + 1
+      expect(scoresMap['eci_2.4.2'].pointPotentiel).toEqual(0); // désactivé
+      expect(scoresMap['eci_2.4.3'].pointPotentiel).toEqual(3); // 2 + 1
+      expect(scoresMap['eci_2.4.4'].pointPotentiel).toEqual(7); // 6 + 1
+      expect(scoresMap['eci_2.4.5'].pointPotentiel).toEqual(5); // 4 + 1
 
       // Toujours 20 points pour eci_2.4
       expect(scoresMap['eci_2.4']).toEqual({
-        action_id: 'eci_2.4',
-        point_fait: 0.0,
-        point_programme: 0.0,
-        point_pas_fait: 0.0,
-        point_non_renseigne: 20.0,
-        point_potentiel: 20.0,
-        point_referentiel: 20,
+        actionId: 'eci_2.4',
+        pointFait: 0.0,
+        pointProgramme: 0.0,
+        pointPasFait: 0.0,
+        pointNonRenseigne: 20.0,
+        pointPotentiel: 20.0,
+        pointReferentiel: 20,
         concerne: true,
-        total_taches_count: 17,
-        completed_taches_count: 4,
-        fait_taches_avancement: 0,
-        programme_taches_avancement: 0,
-        pas_fait_taches_avancement: 0,
-        pas_concerne_taches_avancement: 4,
+        totalTachesCount: 17,
+        completedTachesCount: 4,
+        faitTachesAvancement: 0,
+        programmeTachesAvancement: 0,
+        pasFaitTachesAvancement: 0,
+        pasConcerneTachesAvancement: 4,
         desactive: false,
-        point_potentiel_perso: null,
+        pointPotentielPerso: null,
         renseigne: false,
       });
     });
@@ -1773,17 +1755,17 @@ describe('ReferentielsScoringService', () => {
       );
 
       // Si la récupération recuperation_cogeneration est NON, alors, cae_3.2.1.2 et cae_3.2.1.3 sont désactivées et cae_3.2.1.1 vaut 2 points
-      expect(scoresMap['cae_3.2.1.2'].point_potentiel).toEqual(0);
+      expect(scoresMap['cae_3.2.1.2'].pointPotentiel).toEqual(0);
       expect(scoresMap['cae_3.2.1.2'].desactive).toEqual(true);
       expect(scoresMap['cae_3.2.1.3'].concerne).toEqual(false);
-      expect(scoresMap['cae_3.2.1.3'].point_potentiel).toEqual(0);
+      expect(scoresMap['cae_3.2.1.3'].pointPotentiel).toEqual(0);
       expect(scoresMap['cae_3.2.1.3'].desactive).toEqual(true);
       expect(scoresMap['cae_3.2.1.3'].concerne).toEqual(false);
 
-      expect(scoresMap['cae_3.2.1'].point_potentiel_perso).toEqual(2);
-      expect(scoresMap['cae_3.2.1'].point_potentiel).toEqual(2);
-      expect(scoresMap['cae_3.2.1.1'].point_potentiel).toEqual(2);
-      expect(scoresMap['cae_3.2.1.1.1'].point_potentiel).toEqual(0.25);
+      expect(scoresMap['cae_3.2.1'].pointPotentielPerso).toEqual(2);
+      expect(scoresMap['cae_3.2.1'].pointPotentiel).toEqual(2);
+      expect(scoresMap['cae_3.2.1.1'].pointPotentiel).toEqual(2);
+      expect(scoresMap['cae_3.2.1.1.1'].pointPotentiel).toEqual(0.25);
     });
 
     it('cae_631_when_dev_eco_2_is_0', async () => {
@@ -1812,8 +1794,8 @@ describe('ReferentielsScoringService', () => {
         3
       );
 
-      expect(scoresMap['cae_6.3.1'].point_potentiel).toEqual(2);
-      expect(scoresMap['cae_6.3.1'].point_potentiel_perso).toEqual(2);
+      expect(scoresMap['cae_6.3.1'].pointPotentiel).toEqual(2);
+      expect(scoresMap['cae_6.3.1'].pointPotentielPerso).toEqual(2);
     });
 
     it('cae_631_when_cae_6314_if_dev_eco_4_is_NON', async () => {
@@ -1859,34 +1841,34 @@ describe('ReferentielsScoringService', () => {
       );
 
       expect(scoresMap['cae_6.3.1.4'].desactive).toEqual(true);
-      expect(scoresMap['cae_6.3.1.4'].point_potentiel).toEqual(0);
+      expect(scoresMap['cae_6.3.1.4'].pointPotentiel).toEqual(0);
       expect(scoresMap['cae_6.3.1.4'].concerne).toEqual(false);
 
       // Pas de redistribution automatique de potentiel (car on a des règles de personnalisation) donc les points de cae_6.3.1.1 et cae_6.3.1.2 restent inchangés
-      expect(scoresMap['cae_6.3.1.1'].point_potentiel).toEqual(
-        scoresMap['cae_6.3.1.1'].point_referentiel
+      expect(scoresMap['cae_6.3.1.1'].pointPotentiel).toEqual(
+        scoresMap['cae_6.3.1.1'].pointReferentiel
       );
-      expect(scoresMap['cae_6.3.1.2'].point_potentiel).toEqual(
-        scoresMap['cae_6.3.1.2'].point_referentiel
+      expect(scoresMap['cae_6.3.1.2'].pointPotentiel).toEqual(
+        scoresMap['cae_6.3.1.2'].pointReferentiel
       );
 
       // Les points de  cae_6.3.1.3 et cae_6.3.1.5 ont été augmentés de 1 point chacun (facteur 1.625 dans les règles de personnalisation)
-      expect(scoresMap['cae_6.3.1.3'].point_potentiel).toEqual(
-        (scoresMap['cae_6.3.1.3'].point_referentiel || 0) + 1
+      expect(scoresMap['cae_6.3.1.3'].pointPotentiel).toEqual(
+        (scoresMap['cae_6.3.1.3'].pointReferentiel || 0) + 1
       );
-      expect(scoresMap['cae_6.3.1.3'].point_potentiel).toEqual(
-        (scoresMap['cae_6.3.1.3'].point_referentiel || 0) * 1.625
+      expect(scoresMap['cae_6.3.1.3'].pointPotentiel).toEqual(
+        (scoresMap['cae_6.3.1.3'].pointReferentiel || 0) * 1.625
       );
-      expect(scoresMap['cae_6.3.1.5'].point_potentiel).toEqual(
-        (scoresMap['cae_6.3.1.5'].point_referentiel || 0) + 1
+      expect(scoresMap['cae_6.3.1.5'].pointPotentiel).toEqual(
+        (scoresMap['cae_6.3.1.5'].pointReferentiel || 0) + 1
       );
-      expect(scoresMap['cae_6.3.1.5'].point_potentiel).toEqual(
-        (scoresMap['cae_6.3.1.5'].point_referentiel || 0) * 1.625
+      expect(scoresMap['cae_6.3.1.5'].pointPotentiel).toEqual(
+        (scoresMap['cae_6.3.1.5'].pointReferentiel || 0) * 1.625
       );
 
       // Les points de cae_6.3.1 restent inchangés
-      expect(scoresMap['cae_6.3.1'].point_potentiel).toEqual(
-        scoresMap['cae_6.3.1'].point_referentiel
+      expect(scoresMap['cae_6.3.1'].pointPotentiel).toEqual(
+        scoresMap['cae_6.3.1'].pointReferentiel
       );
     });
 
@@ -1929,11 +1911,11 @@ describe('ReferentielsScoringService', () => {
         3
       );
 
-      expect(scoresMap['cae_6.4.1'].point_potentiel).toEqual(
-        (scoresMap['cae_6.4.1'].point_referentiel || 0) * 0.5
+      expect(scoresMap['cae_6.4.1'].pointPotentiel).toEqual(
+        (scoresMap['cae_6.4.1'].pointReferentiel || 0) * 0.5
       );
-      expect(scoresMap['cae_6.4.1'].point_potentiel_perso).toEqual(
-        (scoresMap['cae_6.4.1'].point_referentiel || 0) * 0.5
+      expect(scoresMap['cae_6.4.1'].pointPotentielPerso).toEqual(
+        (scoresMap['cae_6.4.1'].pointReferentiel || 0) * 0.5
       );
 
       // Seulement affecté par la réduction de potentiel du parent pour ces actions
@@ -1946,22 +1928,22 @@ describe('ReferentielsScoringService', () => {
         'cae_6.4.1.7',
       ];
       actionIdsWithoutAugmentation.forEach((actionId) => {
-        expect(scoresMap[actionId].point_potentiel).toEqual(
-          (scoresMap[actionId].point_referentiel || 0) * 0.5
+        expect(scoresMap[actionId].pointPotentiel).toEqual(
+          (scoresMap[actionId].pointReferentiel || 0) * 0.5
         );
       });
 
       // 6.4.1.6 passe de 15% à 20%
-      expect(scoresMap['cae_6.4.1.6'].point_potentiel).toEqual(
-        ((scoresMap['cae_6.4.1'].point_potentiel || 0) * 20) / 100
+      expect(scoresMap['cae_6.4.1.6'].pointPotentiel).toEqual(
+        ((scoresMap['cae_6.4.1'].pointPotentiel || 0) * 20) / 100
       );
-      expect(scoresMap['cae_6.4.1.6'].point_potentiel).toEqual(1.2);
+      expect(scoresMap['cae_6.4.1.6'].pointPotentiel).toEqual(1.2);
 
       // 6.4.1.8 passe de 15% à 10%
-      expect(scoresMap['cae_6.4.1.8'].point_potentiel).toEqual(
-        ((scoresMap['cae_6.4.1'].point_potentiel || 0) * 10) / 100
+      expect(scoresMap['cae_6.4.1.8'].pointPotentiel).toEqual(
+        ((scoresMap['cae_6.4.1'].pointPotentiel || 0) * 10) / 100
       );
-      expect(scoresMap['cae_6.4.1.8'].point_potentiel).toEqual(0.6);
+      expect(scoresMap['cae_6.4.1.8'].pointPotentiel).toEqual(0.6);
     });
 
     it('cae_621_when_type_commune', async () => {
@@ -2006,7 +1988,7 @@ describe('ReferentielsScoringService', () => {
         3
       );
 
-      expect(scoresMapCas1['cae_6.2.1'].point_potentiel).toEqual(3);
+      expect(scoresMapCas1['cae_6.2.1'].pointPotentiel).toEqual(3);
 
       /**
        Cas 2 :  Si une commune est à 50 % de l'EPCI et qu'elle participe au conseil d'administration d'un bailleur social, elle est notée sur 6 points
@@ -2032,7 +2014,7 @@ describe('ReferentielsScoringService', () => {
         3
       );
 
-      expect(scoresMapCas2['cae_6.2.1'].point_potentiel).toEqual(6);
+      expect(scoresMapCas2['cae_6.2.1'].pointPotentiel).toEqual(6);
 
       /**
        Cas 3 :  Si une commune est à 10 % de l'EPCI et qu'elle ne participe pas au conseil d'administration d'un bailleur social, elle est notée sur 2 points
@@ -2058,7 +2040,7 @@ describe('ReferentielsScoringService', () => {
         3
       );
 
-      expect(scoresMapCas3['cae_6.2.1'].point_potentiel).toEqual(2);
+      expect(scoresMapCas3['cae_6.2.1'].pointPotentiel).toEqual(2);
     });
 
     it('cae_335_with_score_taken_into_account', async () => {
@@ -2097,32 +2079,32 @@ describe('ReferentielsScoringService', () => {
         'cae_1.2.3.3.1': {
           concerne: true,
           avancement: 'fait',
-          avancement_detaille: [1, 0, 0],
+          avancementDetaille: [1, 0, 0],
         },
         'cae_1.2.3.3.2': {
           concerne: true,
           avancement: 'fait',
-          avancement_detaille: [1, 0, 0],
+          avancementDetaille: [1, 0, 0],
         },
         'cae_1.2.3.3.3': {
           concerne: true,
           avancement: 'fait',
-          avancement_detaille: [1, 0, 0],
+          avancementDetaille: [1, 0, 0],
         },
         'cae_1.2.3.3.4': {
           concerne: true,
           avancement: 'fait',
-          avancement_detaille: [1, 0, 0],
+          avancementDetaille: [1, 0, 0],
         },
         'cae_1.2.3.3.5': {
           concerne: true,
           avancement: 'fait',
-          avancement_detaille: [1, 0, 0],
+          avancementDetaille: [1, 0, 0],
         },
         'cae_3.3.5.3.1': {
           concerne: true,
           avancement: 'fait',
-          avancement_detaille: [1, 0, 0],
+          avancementDetaille: [1, 0, 0],
         },
       };
 
@@ -2145,8 +2127,8 @@ describe('ReferentielsScoringService', () => {
         3
       );
 
-      expect(scoresMapCas1['cae_1.2.3'].point_fait).toEqual(2.25);
-      expect(scoresMapCas1['cae_3.3.5'].point_fait).toEqual(1.2);
+      expect(scoresMapCas1['cae_1.2.3'].pointFait).toEqual(2.25);
+      expect(scoresMapCas1['cae_3.3.5'].pointFait).toEqual(1.2);
 
       /**
        Cas 2 :  Si commune avec compétence déchets, il n'y a pas de réduction de potentiel mais le score de la 3.3.5 est majoré par celui de la 1.2.3
@@ -2160,7 +2142,7 @@ describe('ReferentielsScoringService', () => {
         'cae_3.3.5.3.1': {
           concerne: true,
           avancement: 'fait',
-          avancement_detaille: [1, 0, 0],
+          avancementDetaille: [1, 0, 0],
         },
       };
 
@@ -2181,8 +2163,8 @@ describe('ReferentielsScoringService', () => {
         3
       );
 
-      expect(scoresMapCas2['cae_1.2.3'].point_fait).toEqual(0);
-      expect(scoresMapCas2['cae_3.3.5'].point_fait).toEqual(0); // Au lieu de 1.2 !
+      expect(scoresMapCas2['cae_1.2.3'].pointFait).toEqual(0);
+      expect(scoresMapCas2['cae_3.3.5'].pointFait).toEqual(0); // Au lieu de 1.2 !
 
       /**
        Cas 3 :  Si EPCI sans compétence déchets et participation dans syndicat compétent de 10% et points_fait(cae_1.2.3, 2.25) alors potentiel(cae_3.3.5) = 2
@@ -2194,27 +2176,27 @@ describe('ReferentielsScoringService', () => {
         'cae_1.2.3.3.1': {
           concerne: true,
           avancement: 'fait',
-          avancement_detaille: [1, 0, 0],
+          avancementDetaille: [1, 0, 0],
         },
         'cae_1.2.3.3.2': {
           concerne: true,
           avancement: 'fait',
-          avancement_detaille: [1, 0, 0],
+          avancementDetaille: [1, 0, 0],
         },
         'cae_1.2.3.3.3': {
           concerne: true,
           avancement: 'fait',
-          avancement_detaille: [1, 0, 0],
+          avancementDetaille: [1, 0, 0],
         },
         'cae_1.2.3.3.4': {
           concerne: true,
           avancement: 'fait',
-          avancement_detaille: [1, 0, 0],
+          avancementDetaille: [1, 0, 0],
         },
         'cae_1.2.3.3.5': {
           concerne: true,
           avancement: 'fait',
-          avancement_detaille: [1, 0, 0],
+          avancementDetaille: [1, 0, 0],
         },
       };
 
@@ -2238,9 +2220,9 @@ describe('ReferentielsScoringService', () => {
         3
       );
 
-      expect(scoresMapCas3['cae_1.2.3'].point_fait).toEqual(2.25);
-      expect(scoresMapCas3['cae_3.3.5'].point_fait).toEqual(0);
-      expect(scoresMapCas3['cae_3.3.5'].point_potentiel).toEqual(2.0);
+      expect(scoresMapCas3['cae_1.2.3'].pointFait).toEqual(2.25);
+      expect(scoresMapCas3['cae_3.3.5'].pointFait).toEqual(0);
+      expect(scoresMapCas3['cae_3.3.5'].pointPotentiel).toEqual(2.0);
 
       /**
        Cas 4 :  Si EPCI et non concernée à la 3.3.5, la règle n'a pas de conséquence
@@ -2251,21 +2233,21 @@ describe('ReferentielsScoringService', () => {
         actionStatutsCas4[`cae_3.3.5.1.${i}`] = {
           concerne: false,
           avancement: 'detaille',
-          avancement_detaille: [0, 0, 0],
+          avancementDetaille: [0, 0, 0],
         };
       }
       for (let i = 1; i < 10; i++) {
         actionStatutsCas4[`cae_3.3.5.2.${i}`] = {
           concerne: false,
           avancement: 'detaille',
-          avancement_detaille: [0, 0, 0],
+          avancementDetaille: [0, 0, 0],
         };
       }
       for (let i = 1; i < 5; i++) {
         actionStatutsCas4[`cae_3.3.5.3.${i}`] = {
           concerne: false,
           avancement: 'detaille',
-          avancement_detaille: [0, 0, 0],
+          avancementDetaille: [0, 0, 0],
         };
       }
 
@@ -2288,7 +2270,7 @@ describe('ReferentielsScoringService', () => {
       );
 
       expect(scoresMapCas4['cae_3.3.5'].concerne).toEqual(false);
-      expect(scoresMapCas4['cae_3.3.5'].point_potentiel).toEqual(0);
+      expect(scoresMapCas4['cae_3.3.5'].pointPotentiel).toEqual(0);
     });
   });
 
@@ -2296,42 +2278,42 @@ describe('ReferentielsScoringService', () => {
     it('python rounding issue', async () => {
       const scoreDiff = referentielsScoringService.getScoreDiff(
         {
-          action_id: 'cae_6.5.1.2.8',
-          point_referentiel: 0.338,
-          point_potentiel: 0.338,
-          point_potentiel_perso: null,
-          point_fait: 0,
-          point_pas_fait: 0,
-          point_non_renseigne: 0.338,
-          point_programme: 0,
+          actionId: 'cae_6.5.1.2.8',
+          pointReferentiel: 0.338,
+          pointPotentiel: 0.338,
+          pointPotentielPerso: null,
+          pointFait: 0,
+          pointPasFait: 0,
+          pointNonRenseigne: 0.338,
+          pointProgramme: 0,
           concerne: true,
-          completed_taches_count: 0,
-          total_taches_count: 1,
-          fait_taches_avancement: 0,
-          programme_taches_avancement: 0,
-          pas_fait_taches_avancement: 0,
-          pas_concerne_taches_avancement: 0,
+          completedTachesCount: 0,
+          totalTachesCount: 1,
+          faitTachesAvancement: 0,
+          programmeTachesAvancement: 0,
+          pasFaitTachesAvancement: 0,
+          pasConcerneTachesAvancement: 0,
           desactive: false,
           renseigne: false,
         },
         {
           concerne: true,
-          action_id: 'cae_6.5.1.2.8',
+          actionId: 'cae_6.5.1.2.8',
           desactive: false,
           renseigne: false,
-          point_fait: 0,
-          point_pas_fait: 0,
-          point_potentiel: 0.337,
-          point_programme: 0,
-          point_referentiel: 0.338,
-          total_taches_count: 1,
-          point_non_renseigne: 0.337,
-          point_potentiel_perso: null,
-          completed_taches_count: 0,
-          fait_taches_avancement: 0,
-          pas_fait_taches_avancement: 0,
-          programme_taches_avancement: 0,
-          pas_concerne_taches_avancement: 0,
+          pointFait: 0,
+          pointPasFait: 0,
+          pointPotentiel: 0.337,
+          pointProgramme: 0,
+          pointReferentiel: 0.338,
+          totalTachesCount: 1,
+          pointNonRenseigne: 0.337,
+          pointPotentielPerso: null,
+          completedTachesCount: 0,
+          faitTachesAvancement: 0,
+          pasFaitTachesAvancement: 0,
+          programmeTachesAvancement: 0,
+          pasConcerneTachesAvancement: 0,
         }
       );
       // Even if the difference is 0.001, it should not be considered as a difference because due to python issue

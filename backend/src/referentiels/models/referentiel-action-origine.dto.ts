@@ -1,8 +1,8 @@
 import { z } from 'zod';
 
 export const referentielActionOrigineSchema = z.object({
-  referentiel_id: z.string(),
-  action_id: z.string(),
+  referentielId: z.string(),
+  actionId: z.string(),
   ponderation: z.number(),
   nom: z.string().nullable(),
 });

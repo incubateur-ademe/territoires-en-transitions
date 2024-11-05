@@ -7,10 +7,10 @@ import { referentielActionDtoSchema } from './referentiel-action.dto';
 export const getReferentielResponseSchema = extendApi(
   z.object({
     version: z.string(),
-    ordered_item_types: z.array(z.nativeEnum(ActionType)),
-    items_list: z.array(actionDefinitionMinimalWithTypeLevel).optional(),
-    items_tree: referentielActionDtoSchema.optional(),
-    items_map: z
+    orderedItemTypes: z.array(z.nativeEnum(ActionType)),
+    itemsList: z.array(actionDefinitionMinimalWithTypeLevel).optional(),
+    itemsTree: referentielActionDtoSchema.optional(),
+    itemsMap: z
       .record(z.string(), actionDefinitionMinimalWithTypeLevel)
       .optional(),
   })
