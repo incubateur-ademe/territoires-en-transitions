@@ -12,6 +12,7 @@ import {
   varchar,
 } from 'drizzle-orm/pg-core';
 import { collectiviteTable } from '../../collectivites/models/collectivite.table';
+import { z } from 'zod';
 
 export const ficheActionPiliersEciEnum = pgEnum('fiche_action_piliers_eci', [
   'Approvisionnement durable',
@@ -62,6 +63,8 @@ export const ficheActionStatutsEnum = pgEnum('fiche_action_statuts', [
 ]);
 
 export enum FicheActionCiblesEnumType {
+  GRAND_PUBLIC = 'Grand public',
+  ASSOCIATIONS = 'Associations',
   GRAND_PUBLIC_ET_ASSOCIATIONS = 'Grand public et associations',
   PUBLIC_SCOLAIRE = 'Public Scolaire',
   AUTRES_COLLECTIVITES_DU_TERRITOIRE = 'Autres collectivités du territoire',
@@ -75,7 +78,9 @@ export enum FicheActionCiblesEnumType {
   AGENTS = 'Agents',
 }
 
-export const ficheActionCiblesEnum = pgEnum('fiche_action_cibles', [
+export const ficheActionCiblesEnumValues = [
+  FicheActionCiblesEnumType.GRAND_PUBLIC,
+  FicheActionCiblesEnumType.ASSOCIATIONS,
   FicheActionCiblesEnumType.GRAND_PUBLIC_ET_ASSOCIATIONS,
   FicheActionCiblesEnumType.PUBLIC_SCOLAIRE,
   FicheActionCiblesEnumType.AUTRES_COLLECTIVITES_DU_TERRITOIRE,
@@ -87,7 +92,14 @@ export const ficheActionCiblesEnum = pgEnum('fiche_action_cibles', [
   FicheActionCiblesEnumType.COLLECTIVITE_ELLE_MEME,
   FicheActionCiblesEnumType.ELUS_LOCAUX,
   FicheActionCiblesEnumType.AGENTS,
-]);
+] as const;
+
+export const ficheActionCiblesEnumSchema = z.enum(ficheActionCiblesEnumValues);
+
+export const ficheActionCiblesEnum = pgEnum(
+  'fiche_action_cibles',
+  ficheActionCiblesEnumValues
+);
 
 export const ficheActionNiveauxPrioriteEnum = pgEnum(
   'fiche_action_niveaux_priorite',
@@ -105,7 +117,9 @@ export const ficheActionTable = pgTable('fiche_action', {
   objectifs: varchar('objectifs', { length: 10000 }),
   resultatsAttendus:
     ficheActionResultatsAttendusEnum('resultats_attendus').array(),
-  cibles: ficheActionCiblesEnum('cibles').array(),
+  cibles: text('cibles', {
+    enum: ficheActionCiblesEnumValues,
+  }).array(),
   ressources: varchar('ressources', { length: 10000 }),
   financements: text('financements'),
   budgetPrevisionnel: numeric('budget_previsionnel', {
