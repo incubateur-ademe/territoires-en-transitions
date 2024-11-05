@@ -1,11 +1,12 @@
 'use client';
 
-import { usePathname } from 'next/navigation';
-import Image from 'next/image';
-import { MenuPrincipal } from './MenuPrincipal';
-import { Dispatch, SetStateAction, useEffect, useState } from 'react';
+import { getAuthPaths } from '@tet/api';
+import { ENV } from '@tet/api/environmentVariables';
 import classNames from 'classnames';
-import { getAuthPaths, getAppBaseUrl } from '@tet/api';
+import Image from 'next/image';
+import { usePathname } from 'next/navigation';
+import { Dispatch, SetStateAction, useState } from 'react';
+import { MenuPrincipal } from './MenuPrincipal';
 
 export type MenuProps = {
   menuOpened: boolean;
@@ -51,18 +52,7 @@ function Brand({ menuOpened, setMenuOpened }: MenuProps) {
 }
 
 function Links() {
-  const [authPaths, setAuthPaths] = useState<null | ReturnType<
-    typeof getAuthPaths
-  >>(null);
-  useEffect(() => {
-    setAuthPaths(
-      getAuthPaths(
-        document.location.hostname,
-        getAppBaseUrl(document.location.hostname)
-      )
-    );
-  }, []);
-
+  const authPaths = getAuthPaths(ENV.app_url!);
   const pathName = usePathname();
   const isFAQ = pathName.startsWith('/faq');
 

@@ -4,7 +4,6 @@ import classNames from 'classnames';
 import { useCurrentCollectivite } from 'core-logic/hooks/useCurrentCollectivite';
 import { useState } from 'react';
 import { QueryKey } from 'react-query';
-import { useHistory } from 'react-router-dom';
 import BadgePriorite from '../../components/BadgePriorite';
 import BadgeStatut from '../../components/BadgeStatut';
 import { generateTitle } from '../data/utils';
@@ -39,7 +38,6 @@ const FicheActionCard = ({
   onUnlink,
 }: FicheActionCardProps) => {
   const collectivite = useCurrentCollectivite();
-  const history = useHistory();
 
   const [isEditOpen, setIsEditOpen] = useState(false);
 
@@ -119,7 +117,7 @@ const FicheActionCard = ({
             'hover:border-primary-3 hover:!bg-primary-1': !isNotClickable,
           }
         )}
-        onClick={!isNotClickable && link ? () => history.push(link) : undefined}
+        href={link}
         disabled={isNotClickable}
         external={openInNewTab}
         header={

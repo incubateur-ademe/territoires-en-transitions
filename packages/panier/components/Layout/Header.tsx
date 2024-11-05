@@ -2,10 +2,10 @@
 
 import useLandingPathname from '@tet/panier/hooks/useLandingPathname';
 import { Button, HeaderTeT, SITE_BASE_URL } from '@tet/ui';
-import { getAppBaseUrl } from '@tet/api';
 import { useCollectiviteInfo } from '@tet/panier/components/Landing/useCollectiviteInfo';
 import { usePanierContext } from '@tet/panier/providers';
 import classNames from 'classnames';
+import { ENV } from '@tet/api/environmentVariables';
 
 const Header = () => {
   const landingPathname = useLandingPathname();
@@ -40,9 +40,7 @@ const Header = () => {
               })}
               href={
                 collectiviteInfo.isOwnCollectivite
-                  ? `${getAppBaseUrl(
-                      document.location.hostname
-                    )}/collectivite/${collectiviteInfo.collectivite_id}/accueil`
+                  ? `${ENV.app_url}/collectivite/${collectiviteInfo.collectivite_id}/accueil`
                   : undefined
               }
             >

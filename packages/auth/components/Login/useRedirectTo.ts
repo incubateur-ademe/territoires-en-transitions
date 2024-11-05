@@ -1,8 +1,8 @@
-import {getAppBaseUrl, restoreSessionFromAuthTokens} from '@tet/api';
-import {dcpFetch} from '@tet/api/utilisateurs/shared/data_access/dcp.fetch';
-import {supabase} from '@tet/auth/src/clientAPI';
-import {useRouter} from 'next/navigation';
-import {useEffect} from 'react';
+import { restoreSessionFromAuthTokens } from '@tet/api';
+import { dcpFetch } from '@tet/api/utilisateurs/shared/data_access/dcp.fetch';
+import { supabase } from '@tet/auth/src/clientAPI';
+import { useRouter } from 'next/navigation';
+import { useEffect } from 'react';
 
 // redirige sur l'url donnée si la session de l'utilisateur peut être restaurée depuis les cookies
 export const useRedirectTo = (redirectTo: string) => {
@@ -23,13 +23,13 @@ export const useRedirectTo = (redirectTo: string) => {
       });
 
       if (user && !dcpData) {
-        const searchParams = new URLSearchParams({redirect_to: redirectTo});
+        const searchParams = new URLSearchParams({ redirect_to: redirectTo });
         router.replace(`/signup?view=etape3&${searchParams}`);
         return;
       }
 
       if (redirectTo.startsWith('/')) {
-        const url = getAppBaseUrl(window.location.hostname) + redirectTo;
+        const url = process.env.NEXT_PUBLIC_APP_URL + redirectTo;
         router.replace(url);
         return;
       }
