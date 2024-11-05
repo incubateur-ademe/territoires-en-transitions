@@ -47,40 +47,66 @@ export const useDonneesSectorisees = () => {
   };
 };
 
+
 /** Charge les données sectorisées pour un onglet du dialogue "Lancer un calcul" */
 const useDonneesSectoriseesIndicateur = (
   id: IndicateurTrajectoireId | typeof SEQUESTRATION_CARBONE.id
 ) => {
   const indicateurTrajectoire = getIndicateurTrajectoire(id);
 
-  const onglet = TABS.find(t => t.id === id);
+  const onglet = TABS.find((t) => t.id === id);
   const secteurs =
     onglet && 'secteurs' in onglet
       ? onglet.secteurs
       : indicateurTrajectoire.secteurs;
-  const identifiants = secteurs.map(s => s.identifiant);
+  const identifiants = secteurs.map((s) => s.identifiant);
   const sourcesVoulues = indicateurTrajectoire.sources;
 
+  const sourceIds = sourcesVoulues as unknown as string[];
   const { data, ...rest } = useIndicateurValeurs({
     identifiantsReferentiel: identifiants,
-    sources: sourcesVoulues as unknown as string[],
+    sources: sourceIds,
     dateDebut: DATE_DEBUT,
     dateFin: `${ANNEE_REFERENCE}-12-31`,
   });
 
-  const indicateurs = data?.indicateurs ?? null;
+  // cas particulier : les données ALDO ne sont pas disponibles pour l'année de
+  // référence (2015) mais pour l'année 2018
+  // TODO: l'agrégation des données de référence devraient être réalisée dans le backend
+  const { data: dataAldo } = useIndicateurValeurs({
+    disabled: !sourceIds.includes(SourceIndicateur.ALDO),
+    identifiantsReferentiel: identifiants,
+    sources: [SourceIndicateur.ALDO],
+    dateDebut: '2018-01-01',
+    dateFin: '2018-12-31',
+  });
+
+  const indicateurs = data?.indicateurs ?? [];
+  if (dataAldo?.indicateurs?.length && indicateurs.length) {
+    // fusionne les données ALDO avec les autres sources
+    dataAldo.indicateurs.forEach((indSourceAldo) => {
+      if (indSourceAldo.sources[SourceIndicateur.ALDO]) {
+        const indicateur = indicateurs.find(
+          (ind) => ind.definition.id === indSourceAldo.definition.id
+        );
+        if (indicateur) {
+          indicateur.sources = {
+            ...indicateur.sources,
+            ...indSourceAldo.sources,
+          };
+        }
+      }
+    });
+  }
 
   // sources distinctes disponibles
-  const sourcesDispo = indicateurs
-    ? [...new Set(indicateurs.flatMap(i => Object.keys(i.sources)))].map(
-        id => ({id, nom: getNomSource(id)})
-      )
-    : null;
-  const sources = sourcesDispo
-    ? (sourcesVoulues
-        .map(s => sourcesDispo.find(sd => sd.id === s))
-        .filter(s => !!s) as Source[])
-    : null;
+  const sourcesDispo = [
+    ...new Set(indicateurs.flatMap((i) => Object.keys(i.sources))),
+  ].map((id) => ({ id, nom: getNomSource(id) }));
+
+  const sources = sourcesVoulues
+    .map((s) => sourcesDispo.find((sd) => sd.id === s))
+    .filter((s) => !!s) as Source[];
 
   // détermine si il existe une valeur saisie par la collectivité pour chaque indicateur
   const donneesCompletes =
