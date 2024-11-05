@@ -36,6 +36,8 @@ jobs:
           --platform=linux/amd64
           +app-docker
           --ENV_NAME=${{ github.event.inputs.target }}
+          --ANON_KEY=${{ secrets.ANON_KEY }}
+          --API_URL=${{ secrets.API_URL }}
           --SENTRY_DSN=${{ vars.SENTRY_DSN }}
           --CRISP_WEBSITE_ID=${{ vars.CRISP_WEBSITE_ID }}
           --POSTHOG_HOST=${{ secrets.POSTHOG_HOST }}
@@ -64,8 +66,6 @@ jobs:
           +app-deploy
           --ENV_NAME=${{ github.event.inputs.target }}
           --KOYEB_API_KEY=${{ secrets.KOYEB_API_KEY }}
-          --ANON_KEY=${{ secrets.ANON_KEY }}
-          --API_URL=${{ secrets.API_URL }}
           --AUTH_URL=${{ vars.AUTH_URL }}
           --BACKEND_URL=${{ vars.BACKEND_URL }}
           --PANIER_URL=${{ vars.PANIER_URL }}
@@ -91,10 +91,7 @@ jobs:
           earthly
           --use-inline-cache --save-inline-cache
           +app-deploy-test
-          --ENV_NAME=${{ github.event.inputs.target }}
           --KOYEB_API_KEY=${{ secrets.KOYEB_API_KEY }}
-          --ANON_KEY=${{ secrets.SUPABASE_ANON_KEY }}
-          --API_URL=${{ vars.SUPABASE_API_URL }}
           --AUTH_URL=${{ vars.AUTH_URL }}
           --BACKEND_URL=${{ vars.BACKEND_URL }}
           --PANIER_URL=${{ vars.PANIER_URL }}
