@@ -4,6 +4,7 @@ import {useApiClient} from 'core-logic/api/useApiClient';
 import {Indicateurs, Tables} from '@tet/api';
 
 type GetIndicateurValeursRequest = {
+  disabled?: boolean;
   identifiantsReferentiel?: string[];
   indicateurId?: number;
   dateDebut?: string;
@@ -41,12 +42,15 @@ export type IndicateurValeurGroupee = {
 };
 
 /** Charge toutes les valeurs associées à un indicateur id (ou à un ou plusieurs identifiants d'indicateurs prédéfinis) */
-export const useIndicateurValeurs = (params: GetIndicateurValeursRequest) => {
+export const useIndicateurValeurs = ({
+  disabled,
+  ...params
+}: GetIndicateurValeursRequest) => {
   const collectiviteId = useCollectiviteId();
   const api = useApiClient();
 
   return useQuery(['indicateur_valeurs', collectiviteId, params], async () => {
-    if (!collectiviteId) return;
+    if (!collectiviteId || disabled) return;
     return api.get<GetIndicateursValeursResponse>({
       route: '/indicateurs',
       params: { collectiviteId, ...params },
