@@ -8,10 +8,10 @@ export const referentielDefinitionTable = pgTable('referentiel_definition', {
   nom: varchar('nom', { length: 300 }).notNull(),
   version: varchar('version', { length: 16 }).notNull().default('1.0.0'),
   hierarchie: actionTypeEnum('hierarchie').array().notNull(),
-  created_at: timestamp('created_at', { withTimezone: true, mode: 'string' })
+  createdAt: timestamp('created_at', { withTimezone: true, mode: 'string' })
     .default(sql`CURRENT_TIMESTAMP`)
     .notNull(),
-  modified_at: timestamp('modified_at', { withTimezone: true, mode: 'string' })
+  modifiedAt: timestamp('modified_at', { withTimezone: true, mode: 'string' })
     .default(sql`CURRENT_TIMESTAMP`)
     .notNull(),
 });

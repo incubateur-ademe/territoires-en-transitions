@@ -6,7 +6,7 @@ export const simpleActionStatutSchema = extendApi(
   actionStatutSchema.pick({
     concerne: true,
     avancement: true,
-    avancement_detaille: true,
+    avancementDetaille: true,
   })
 );
 export type SimpleActionStatutType = z.infer<typeof simpleActionStatutSchema>;

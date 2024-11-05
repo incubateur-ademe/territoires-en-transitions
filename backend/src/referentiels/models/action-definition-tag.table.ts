@@ -10,16 +10,16 @@ import { referentielDefinitionTable } from './referentiel-definition.table';
 export const actionDefinitionTagTable = pgTable(
   'action_definition_tag',
   {
-    referentiel_id: varchar('referentiel_id', { length: 30 })
+    referentielId: varchar('referentiel_id', { length: 30 })
       .references(() => referentielDefinitionTable.id)
       .notNull(),
-    action_id: varchar('action_id', { length: 30 })
-      .references(() => actionDefinitionTable.action_id)
+    actionId: varchar('action_id', { length: 30 })
+      .references(() => actionDefinitionTable.actionId)
       .notNull(),
-    tag_ref: varchar('tag_ref', { length: 300 }).notNull(),
+    tagRef: varchar('tag_ref', { length: 300 }).notNull(),
   },
   (t) => ({
-    unq: unique().on(t.referentiel_id, t.action_id, t.tag_ref),
+    unq: unique().on(t.referentielId, t.actionId, t.tagRef),
   })
 );
 

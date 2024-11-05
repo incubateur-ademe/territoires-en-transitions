@@ -5,7 +5,7 @@ export const getReferentielScoresRequestSchema = extendApi(
   z.object({
     date: z.string().datetime().optional(),
 
-    avec_referentiels_origine: z
+    avecReferentielsOrigine: z
       .enum(['true', 'false'])
       .transform((value) => value === 'true')
       .optional()

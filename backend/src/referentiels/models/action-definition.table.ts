@@ -28,27 +28,27 @@ export const actionCategorieEnum = pgEnum('action_categorie', [
 ]);
 export const actionIdVarchar = varchar('action_id', { length: 30 });
 export const actionIdReference = actionIdVarchar.references(
-  () => actionDefinitionTable.action_id
+  () => actionDefinitionTable.actionId
 );
 
 export const actionDefinitionTable = pgTable('action_definition', {
   modified_at: timestamp('modified_at', { withTimezone: true, mode: 'string' })
     .default(sql`CURRENT_TIMESTAMP`)
     .notNull(),
-  action_id: actionIdVarchar.primaryKey().notNull(),
+  actionId: actionIdVarchar.primaryKey().notNull(),
   referentiel: referentielEnum('referentiel').notNull(),
-  referentiel_id: varchar('referentiel_id', { length: 30 })
+  referentielId: varchar('referentiel_id', { length: 30 })
     .notNull()
     .references(() => referentielDefinitionTable.id),
-  referentiel_version: varchar('referentiel_version', { length: 16 }).notNull(),
+  referentielVersion: varchar('referentiel_version', { length: 16 }).notNull(),
   identifiant: text('identifiant').notNull(),
   nom: text('nom').notNull(),
   description: text('description').notNull(),
   contexte: text('contexte').notNull(),
   exemples: text('exemples').notNull(),
   ressources: text('ressources').notNull(),
-  reduction_potentiel: text('reduction_potentiel').notNull(),
-  perimetre_evaluation: text('perimetre_evaluation').notNull(),
+  reductionPotentiel: text('reduction_potentiel').notNull(),
+  perimetreEvaluation: text('perimetre_evaluation').notNull(),
   preuve: text('preuve'),
   points: doublePrecision('points'),
   pourcentage: doublePrecision('pourcentage'),
@@ -68,7 +68,7 @@ export const actionDefinitionSeulementIdObligatoireSchema =
 export const actionDefinitionMinimalWithTypeLevel =
   actionDefinitionSchema.extend({
     level: z.number(),
-    action_type: z.nativeEnum(ActionType),
+    actionType: z.nativeEnum(ActionType),
   });
 
 export const createActionDefinitionSchema = createInsertSchema(
@@ -81,17 +81,17 @@ export enum ImportActionDefinitionCoremeasureType {
 
 export const importActionDefinitionSchema = createActionDefinitionSchema
   .partial({
-    action_id: true,
+    actionId: true,
     description: true,
     nom: true,
     contexte: true,
     exemples: true,
     ressources: true,
     referentiel: true,
-    referentiel_id: true,
-    referentiel_version: true,
-    reduction_potentiel: true,
-    perimetre_evaluation: true,
+    referentielId: true,
+    referentielVersion: true,
+    reductionPotentiel: true,
+    perimetreEvaluation: true,
   })
   .extend({
     categorie: z
@@ -108,8 +108,8 @@ export type ImportActionDefinitionType = z.infer<
 
 export type ActionDefinitionAvecParentType = Pick<
   ActionDefinitionType,
-  'action_id'
+  'actionId'
 > &
   Partial<ActionDefinitionType> & {
-    parent_action_id: string | null;
+    parentActionId: string | null;
   };

@@ -10,28 +10,28 @@ import { referentielDefinitionTable } from './referentiel-definition.table';
 export const actionOrigineTable = pgTable(
   'action_origine',
   {
-    referentiel_id: varchar('referentiel_id', { length: 30 })
+    referentielId: varchar('referentiel_id', { length: 30 })
       .references(() => referentielDefinitionTable.id)
       .notNull(),
-    action_id: varchar('action_id', { length: 30 })
-      .references(() => actionDefinitionTable.action_id)
+    actionId: varchar('action_id', { length: 30 })
+      .references(() => actionDefinitionTable.actionId)
       .notNull(),
-    origine_referentiel_id: varchar('origine_referentiel_id', {
+    origineReferentielId: varchar('origine_referentiel_id', {
       length: 30,
     })
       .references(() => referentielDefinitionTable.id)
       .notNull(),
-    origine_action_id: varchar('origine_action_id', { length: 30 })
-      .references(() => actionDefinitionTable.action_id)
+    origineActionId: varchar('origine_action_id', { length: 30 })
+      .references(() => actionDefinitionTable.actionId)
       .notNull(),
     ponderation: doublePrecision('ponderation').notNull().default(1),
   },
   (t) => ({
     unq: unique().on(
-      t.referentiel_id,
-      t.action_id,
-      t.origine_referentiel_id,
-      t.origine_action_id
+      t.referentielId,
+      t.actionId,
+      t.origineReferentielId,
+      t.origineActionId
     ),
   })
 );

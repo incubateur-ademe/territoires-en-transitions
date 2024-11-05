@@ -11,6 +11,7 @@ import { isNil } from 'es-toolkit';
 import * as _ from 'lodash';
 import * as semver from 'semver';
 import DatabaseService from '../../common/services/database.service';
+import ConfigurationService from '../../config/configuration.service';
 import SheetService from '../../spreadsheets/services/sheet.service';
 import {
   actionDefinitionTagTable,
@@ -49,7 +50,6 @@ import {
   referentielTagTable,
 } from '../models/referentiel-tag.table';
 import { ReferentielType } from '../models/referentiel.enum';
-import ConfigurationService from '../../config/configuration.service';
 
 @Injectable()
 export default class ReferentielsService {
@@ -73,17 +73,17 @@ export default class ReferentielsService {
     actionOrigines?: GetActionOrigineDtoSchema[] | null
   ): ReferentielActionType {
     const rootAction = actionDefinitions.find(
-      (action) => !action.parent_action_id
+      (action) => !action.parentActionId
     );
     if (!rootAction) {
       throw new NotFoundException(`Referentiel not found`);
     }
-    const { parent_action_id, ...rootActionSansParent } = rootAction;
+    const { parentActionId, ...rootActionSansParent } = rootAction;
     const referentiel: ReferentielActionType = {
       ...rootActionSansParent,
       level: 0,
-      action_type: orderedActionTypes[0],
-      actions_enfant: [],
+      actionType: orderedActionTypes[0],
+      actionsEnfant: [],
       tags: [],
     };
     this.attacheActionsEnfant(
@@ -105,7 +105,7 @@ export default class ReferentielsService {
     actionOrigines?: GetActionOrigineDtoSchema[] | null
   ): void {
     const actionsEnfant = actionDefinitions.filter(
-      (action) => action.parent_action_id === referentiel.action_id
+      (action) => action.parentActionId === referentiel.actionId
     );
 
     if (!referentiel.tags) {
@@ -118,18 +118,18 @@ export default class ReferentielsService {
 
     if (actionOrigines) {
       const associatedActionOrigines = actionOrigines.filter(
-        (origine) => origine.action_id === referentiel.action_id
+        (origine) => origine.actionId === referentiel.actionId
       );
-      referentiel.actions_origine = associatedActionOrigines.map((origine) => ({
-        referentiel_id: origine.origine_referentiel_id,
-        action_id: origine.origine_action_id,
+      referentiel.actionsOrigine = associatedActionOrigines.map((origine) => ({
+        referentielId: origine.origineReferentielId,
+        actionId: origine.origineActionId,
         ponderation: origine.ponderation,
-        nom: origine.origine_action_nom || null,
+        nom: origine.origineActionNom || null,
       }));
-      referentiel.referentiels_origine = [
+      referentiel.referentielsOrigine = [
         ...new Set(
           associatedActionOrigines.map(
-            (actionOrigine) => actionOrigine.origine_referentiel_id
+            (actionOrigine) => actionOrigine.origineReferentielId
           )
         ).values(),
       ];
@@ -172,7 +172,7 @@ export default class ReferentielsService {
           );
           if (totalPourcentage !== 100) {
             throw new HttpException(
-              `Total pourcentage des actions enfant de ${referentiel.action_id} doit être égal à 100`,
+              `Total pourcentage des actions enfant de ${referentiel.actionId} doit être égal à 100`,
               HttpStatus.INTERNAL_SERVER_ERROR
             );
           }
@@ -180,12 +180,12 @@ export default class ReferentielsService {
       }
 
       actionsEnfant.forEach((actionEnfant) => {
-        const { parent_action_id, ...actionEnfantSansParent } = actionEnfant;
+        const { parentActionId, ...actionEnfantSansParent } = actionEnfant;
         const actionEnfantDansReferentiel: ReferentielActionType = {
           ...actionEnfantSansParent,
-          actions_enfant: [],
+          actionsEnfant: [],
           level: levelEnfant,
-          action_type: actionTypeEnfant,
+          actionType: actionTypeEnfant,
         };
         if (
           _.isNil(actionEnfantDansReferentiel.points) &&
@@ -195,13 +195,8 @@ export default class ReferentielsService {
           actionEnfantDansReferentiel.points =
             (referentiel.points * actionEnfantDansReferentiel.pourcentage) /
             100;
-          if (actionEnfantDansReferentiel.action_id === 'cae_3.1.2.3.1') {
-            this.logger.log(
-              `Calcul du score de ${actionEnfantDansReferentiel.action_id} : ${referentiel.points} * ${actionEnfantDansReferentiel.pourcentage} / 100 = ${actionEnfantDansReferentiel.points}`
-            );
-          }
         }
-        referentiel.actions_enfant.push(actionEnfantDansReferentiel);
+        referentiel.actionsEnfant.push(actionEnfantDansReferentiel);
         this.attacheActionsEnfant(
           actionEnfantDansReferentiel,
           actionDefinitions,
@@ -212,16 +207,16 @@ export default class ReferentielsService {
       });
 
       // Maintenant que la recursion est terminée, on recalcule le score du parent et on met à jour le referentiel origine
-      if (referentiel.actions_enfant.length > 0) {
+      if (referentiel.actionsEnfant.length > 0) {
         if (_.isNil(referentiel.points)) {
           // Only if not already computed
 
-          referentiel.points = referentiel.actions_enfant.reduce(
+          referentiel.points = referentiel.actionsEnfant.reduce(
             (acc, action) => acc + (action.points || 0),
             0
           );
         }
-        referentiel.actions_enfant.forEach((action) => {
+        referentiel.actionsEnfant.forEach((action) => {
           if (action.points && referentiel.points) {
             action.pourcentage = (action.points / referentiel.points) * 100;
           }
@@ -229,12 +224,12 @@ export default class ReferentielsService {
 
         // We update the origine referentiels too
         if (actionOrigines) {
-          referentiel.referentiels_origine = [
+          referentiel.referentielsOrigine = [
             ...new Set(
-              referentiel.actions_enfant
-                .map((actionEnfant) => actionEnfant.referentiels_origine || [])
+              referentiel.actionsEnfant
+                .map((actionEnfant) => actionEnfant.referentielsOrigine || [])
                 .flat()
-                .concat(referentiel.referentiels_origine || [])
+                .concat(referentiel.referentielsOrigine || [])
             ).values(),
           ];
         }
@@ -253,28 +248,25 @@ export default class ReferentielsService {
       .from(actionOrigineTable)
       .leftJoin(
         actionDefinitionTable,
-        eq(
-          actionOrigineTable.origine_action_id,
-          actionDefinitionTable.action_id
-        )
+        eq(actionOrigineTable.origineActionId, actionDefinitionTable.actionId)
       )
       .where(
-        eq(actionOrigineTable.referentiel_id, referentielId as ReferentielType)
+        eq(actionOrigineTable.referentielId, referentielId as ReferentielType)
       )
-      .orderBy(asc(actionOrigineTable.action_id));
+      .orderBy(asc(actionOrigineTable.actionId));
   }
 
   getActionDefinitionTagsQuery() {
     return this.databaseService.db
       .select({
-        action_id: actionDefinitionTagTable.action_id,
-        referentiel_id: actionDefinitionTagTable.referentiel_id,
-        tags: sql`array_agg(${actionDefinitionTagTable.tag_ref})`.as('tags'),
+        actionId: actionDefinitionTagTable.actionId,
+        referentielId: actionDefinitionTagTable.referentielId,
+        tags: sql`array_agg(${actionDefinitionTagTable.tagRef})`.as('tags'),
       })
       .from(actionDefinitionTagTable)
       .groupBy(
-        actionDefinitionTagTable.action_id,
-        actionDefinitionTagTable.referentiel_id
+        actionDefinitionTagTable.actionId,
+        actionDefinitionTagTable.referentielId
       )
       .as('action_tags');
   }
@@ -296,7 +288,7 @@ export default class ReferentielsService {
 
     const colonnes = onlyForScoring
       ? {
-          action_id: actionDefinitionTable.action_id,
+          actionId: actionDefinitionTable.actionId,
           nom: actionDefinitionTable.nom,
           points: actionDefinitionTable.points,
           categorie: actionDefinitionTable.categorie,
@@ -306,34 +298,31 @@ export default class ReferentielsService {
     const actionDefinitions = await this.databaseService.db
       .select({
         ...colonnes,
-        parent_action_id: actionRelationTable.parent,
+        parentActionId: actionRelationTable.parent,
         tags: actionTagsQuery.tags,
       })
       .from(actionDefinitionTable)
       .leftJoin(
         actionRelationTable,
-        eq(actionDefinitionTable.action_id, actionRelationTable.id)
+        eq(actionDefinitionTable.actionId, actionRelationTable.id)
       )
       .leftJoin(
         actionTagsQuery,
         and(
-          eq(actionDefinitionTable.action_id, actionTagsQuery.action_id),
-          eq(
-            actionDefinitionTable.referentiel_id,
-            actionTagsQuery.referentiel_id
-          )
+          eq(actionDefinitionTable.actionId, actionTagsQuery.actionId),
+          eq(actionDefinitionTable.referentielId, actionTagsQuery.referentielId)
         )
       )
       .where(
         and(
-          eq(actionDefinitionTable.referentiel_id, referentielId),
+          eq(actionDefinitionTable.referentielId, referentielId),
           eq(
-            actionDefinitionTable.referentiel_version,
+            actionDefinitionTable.referentielVersion,
             referentielDefinition.version
           )
         )
       )
-      .orderBy(asc(actionDefinitionTable.action_id));
+      .orderBy(asc(actionDefinitionTable.actionId));
     this.logger.log(
       `${actionDefinitions.length} actions trouvees pour le referentiel ${referentielId}`
     );
@@ -349,9 +338,9 @@ export default class ReferentielsService {
     );
 
     return {
-      items_tree: actionsTree,
+      itemsTree: actionsTree,
       version: referentielDefinition.version,
-      ordered_item_types: referentielDefinition.hierarchie,
+      orderedItemTypes: referentielDefinition.hierarchie,
     };
   }
 
@@ -492,19 +481,19 @@ export default class ReferentielsService {
         }
 
         const createActionOrigine: CreateActionOrigineType = {
-          referentiel_id: referentielId,
-          action_id: actionId,
-          origine_referentiel_id: origineReferentielId,
-          origine_action_id: origineActionId,
+          referentielId: referentielId,
+          actionId: actionId,
+          origineReferentielId: origineReferentielId,
+          origineActionId: origineActionId,
           ponderation: ponderation,
         };
 
-        if (!createActionOrigines[createActionOrigine.origine_action_id]) {
-          createActionOrigines[createActionOrigine.origine_action_id] =
+        if (!createActionOrigines[createActionOrigine.origineActionId]) {
+          createActionOrigines[createActionOrigine.origineActionId] =
             createActionOrigine;
         } else {
           throw new UnprocessableEntityException(
-            `Duplicate origine ${createActionOrigine.origine_action_id} for action ${actionId}`
+            `Duplicate origine ${createActionOrigine.origineActionId} for action ${actionId}`
           );
         }
       });
@@ -611,30 +600,30 @@ export default class ReferentielsService {
     importActionDefinitions.data.forEach((action) => {
       const actionId = `${referentielId}_${action.identifiant}`;
       const alreadyExists = actionDefinitions.find(
-        (action) => action.action_id === actionId
+        (action) => action.actionId === actionId
       );
       if (!alreadyExists) {
         const createActionDefinition: CreateActionDefinitionType = {
           identifiant: action.identifiant,
-          action_id: `${referentielId}_${action.identifiant}`,
+          actionId: `${referentielId}_${action.identifiant}`,
           nom: action.nom || '',
           description: action.description || '',
           contexte: action.contexte || '',
           exemples: action.exemples || '',
           ressources: action.ressources || '',
-          reduction_potentiel: action.reduction_potentiel || '',
-          perimetre_evaluation: action.perimetre_evaluation || '',
+          reductionPotentiel: action.reductionPotentiel || '',
+          perimetreEvaluation: action.perimetreEvaluation || '',
           preuve: action.preuve || '',
           points: null,
           pourcentage: null,
           categorie: action.categorie || null,
           referentiel: referentielId,
-          referentiel_id: referentielDefinition.id,
-          referentiel_version: referentielDefinition.version,
+          referentielId: referentielDefinition.id,
+          referentielVersion: referentielDefinition.version,
         };
 
         const actionType = this.getActionTypeFromActionId(
-          createActionDefinition.action_id,
+          createActionDefinition.actionId,
           referentielDefinition.hierarchie
         );
         if (actionType === ActionType.SOUS_ACTION) {
@@ -653,9 +642,9 @@ export default class ReferentielsService {
         ) {
           // add associated tag
           const coremeasureTag: CreateActionDefinitionTagType = {
-            referentiel_id: referentielId,
-            action_id: createActionDefinition.action_id,
-            tag_ref: ImportActionDefinitionCoremeasureType.COREMEASURE,
+            referentielId: referentielId,
+            actionId: createActionDefinition.actionId,
+            tagRef: ImportActionDefinitionCoremeasureType.COREMEASURE,
           };
           createActionTags.push(coremeasureTag);
         }
@@ -663,7 +652,7 @@ export default class ReferentielsService {
         if (action.origine) {
           const parsedActionOrigines = this.parseActionsOrigine(
             referentielId,
-            createActionDefinition.action_id,
+            createActionDefinition.actionId,
             action.origine,
             referentielDefinitions,
             existingActionIds
@@ -673,15 +662,15 @@ export default class ReferentielsService {
           const origineReferentiels = [
             ...new Set(
               parsedActionOrigines.map(
-                (origine) => origine.origine_referentiel_id
+                (origine) => origine.origineReferentielId
               )
             ).values(),
           ];
           origineReferentiels.forEach((origineReferentiel) => {
             const origineTag: CreateActionDefinitionTagType = {
-              referentiel_id: referentielId,
-              action_id: createActionDefinition.action_id,
-              tag_ref: origineReferentiel,
+              referentielId: referentielId,
+              actionId: createActionDefinition.actionId,
+              tagRef: origineReferentiel,
             };
             createActionTags.push(origineTag);
           });
@@ -694,48 +683,48 @@ export default class ReferentielsService {
     });
     // Add root action
     actionDefinitions.push({
-      action_id: referentielId,
+      actionId: referentielId,
       identifiant: '',
       nom: referentielDefinition.nom,
       description: '',
       contexte: '',
       exemples: '',
       ressources: '',
-      reduction_potentiel: '',
-      perimetre_evaluation: '',
+      reductionPotentiel: '',
+      perimetreEvaluation: '',
       preuve: '',
       referentiel: referentielId,
-      referentiel_id: referentielDefinition.id,
-      referentiel_version: referentielDefinition.version,
+      referentielId: referentielDefinition.id,
+      referentielVersion: referentielDefinition.version,
     });
 
     // Sort to create parent relations in the right order
     actionDefinitions.sort((a, b) => {
-      return a.action_id.localeCompare(b.action_id);
+      return a.actionId.localeCompare(b.actionId);
     });
     const actionRelations: CreateActionRelationType[] = [];
     actionDefinitions.forEach((action) => {
-      const parent = this.getActionParent(action.action_id);
+      const parent = this.getActionParent(action.actionId);
       if (parent) {
         const foundParent = actionDefinitions.find(
-          (action) => action.action_id === parent
+          (action) => action.actionId === parent
         );
         if (foundParent) {
           const actionRelation: CreateActionRelationType = {
-            id: action.action_id,
+            id: action.actionId,
             parent: parent,
             referentiel: referentielId,
           };
           actionRelations.push(actionRelation);
         } else {
           throw new UnprocessableEntityException(
-            `Action parent ${parent} not found for action ${action.action_id}`
+            `Action parent ${parent} not found for action ${action.actionId}`
           );
         }
       } else {
         // Root action
         const actionRelation: CreateActionRelationType = {
-          id: action.action_id,
+          id: action.actionId,
           parent: null,
           referentiel: referentielId,
         };
@@ -753,7 +742,7 @@ export default class ReferentielsService {
         .insert(actionDefinitionTable)
         .values(actionDefinitions)
         .onConflictDoUpdate({
-          target: [actionDefinitionTable.action_id],
+          target: [actionDefinitionTable.actionId],
           set: {
             nom: sql.raw(`excluded.${actionDefinitionTable.nom.name}`),
             description: sql.raw(
@@ -771,33 +760,33 @@ export default class ReferentielsService {
             ressources: sql.raw(
               `excluded.${actionDefinitionTable.ressources.name}`
             ),
-            reduction_potentiel: sql.raw(
-              `excluded.${actionDefinitionTable.reduction_potentiel.name}`
+            reductionPotentiel: sql.raw(
+              `excluded.${actionDefinitionTable.reductionPotentiel.name}`
             ),
-            perimetre_evaluation: sql.raw(
-              `excluded.${actionDefinitionTable.perimetre_evaluation.name}`
+            perimetreEvaluation: sql.raw(
+              `excluded.${actionDefinitionTable.perimetreEvaluation.name}`
             ),
             preuve: sql.raw(`excluded.${actionDefinitionTable.preuve.name}`),
             points: sql.raw(`excluded.${actionDefinitionTable.points.name}`),
             pourcentage: sql.raw(
               `excluded.${actionDefinitionTable.pourcentage.name}`
             ),
-            referentiel_version: sql.raw(
-              `excluded.${actionDefinitionTable.referentiel_version.name}`
+            referentielVersion: sql.raw(
+              `excluded.${actionDefinitionTable.referentielVersion.name}`
             ),
           },
         });
 
       await tx
         .delete(actionOrigineTable)
-        .where(eq(actionOrigineTable.referentiel_id, referentielId));
+        .where(eq(actionOrigineTable.referentielId, referentielId));
 
       await tx.insert(actionOrigineTable).values(createActionOrigines);
 
       // Delete & recreate tags
       await tx
         .delete(actionDefinitionTagTable)
-        .where(eq(actionDefinitionTagTable.referentiel_id, referentielId));
+        .where(eq(actionDefinitionTagTable.referentielId, referentielId));
       await tx.insert(actionDefinitionTagTable).values(createActionTags);
 
       await tx

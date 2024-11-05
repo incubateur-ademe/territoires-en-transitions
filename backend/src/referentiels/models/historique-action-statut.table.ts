@@ -7,35 +7,35 @@ import {
   uuid,
 } from 'drizzle-orm/pg-core';
 import { createInsertSchema, createSelectSchema } from 'drizzle-zod';
+import { collectiviteTable } from '../../collectivites/models/collectivite.table';
 import { historiqueSchema } from '../../personnalisations/models/historique-reponse-choix.table';
 import { actionIdReference } from './action-definition.table';
 import { avancementEnum } from './action-statut.table';
-import { collectiviteTable } from '../../collectivites/models/collectivite.table';
 
 export const historiqueActionStatutTable = historiqueSchema.table(
   'action_statut',
   {
-    collectivite_id: integer('collectivite_id')
+    collectiviteId: integer('collectivite_id')
       .notNull()
       .references(() => collectiviteTable.id),
-    action_id: actionIdReference.notNull(),
+    actionId: actionIdReference.notNull(),
     avancement: avancementEnum('avancement').notNull(),
-    previous_avancement: avancementEnum('previous_avancement'),
-    avancement_detaille: doublePrecision('avancement_detaille').array(),
-    previous_avancement_detaille: doublePrecision(
+    previousQvancement: avancementEnum('previous_avancement'),
+    avancementDetaille: doublePrecision('avancement_detaille').array(),
+    previousAvancementDetaille: doublePrecision(
       'previous_avancement_detaille'
     ).array(),
     concerne: boolean('concerne').notNull(),
-    previous_concerne: boolean('previous_concerne'),
-    modified_by: uuid('modified_by'),
-    previous_modified_by: uuid('previous_modified_by').default(sql`auth.uid()`),
-    modified_at: timestamp('modified_at', {
+    previousConcerne: boolean('previous_concerne'),
+    modifiedBy: uuid('modified_by'),
+    previousModifiedBy: uuid('previous_modified_by').default(sql`auth.uid()`),
+    modifiedAt: timestamp('modified_at', {
       withTimezone: true,
       mode: 'string',
     })
       .default(sql`CURRENT_TIMESTAMP`)
       .notNull(),
-    previous_modified_at: timestamp('previous_modified_at', {
+    previousModifiedAt: timestamp('previous_modified_at', {
       withTimezone: true,
       mode: 'string',
     }).default(sql`CURRENT_TIMESTAMP`),

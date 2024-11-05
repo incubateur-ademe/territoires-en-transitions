@@ -5,24 +5,24 @@ import {
   timestamp,
   varchar,
 } from 'drizzle-orm/pg-core';
-import { historiqueSchema } from './historique-reponse-choix.table';
 import { collectiviteTable } from '../../collectivites/models/collectivite.table';
+import { historiqueSchema } from './historique-reponse-choix.table';
 
 export const historiqueReponseProportionTable = historiqueSchema.table(
   'reponse_proportion',
   {
-    modified_at: timestamp('modified_at', {
+    modifiedAt: timestamp('modified_at', {
       withTimezone: true,
       mode: 'string',
     })
       .default(sql`CURRENT_TIMESTAMP`)
       .notNull(),
-    collectivite_id: integer('collectivite_id')
+    collectiviteId: integer('collectivite_id')
       .references(() => collectiviteTable.id)
       .notNull(),
     // TODO: Reference question
-    question_id: varchar('question_id', { length: 30 }).notNull(),
+    questionId: varchar('question_id', { length: 30 }).notNull(),
     reponse: doublePrecision('reponse'),
-    previous_reponse: doublePrecision('previous_reponse'),
-  },
+    previousReponse: doublePrecision('previous_reponse'),
+  }
 );

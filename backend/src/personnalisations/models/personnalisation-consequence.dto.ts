@@ -6,13 +6,13 @@ export const personnalisationConsequenceSchema = extendApi(
   z
     .object({
       desactive: z.boolean().nullable(),
-      score_formule: z.string().nullable(),
-      potentiel_perso: z.number().nullable(),
+      scoreFormule: z.string().nullable(),
+      potentielPerso: z.number().nullable(),
     })
     .openapi({
       title:
         'Consequence des règles de personnalisation pour une action donnée',
-    }),
+    })
 );
 
 export type PersonnalisationConsequenceType = z.infer<

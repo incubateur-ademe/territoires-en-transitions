@@ -5,34 +5,34 @@ extendZodWithOpenApi(z);
 export const actionScoreSchema = extendApi(
   z
     .object({
-      action_id: z.string().describe("L'id de l'action, ex: eci_1.1"),
-      point_referentiel: z
+      actionId: z.string().describe("L'id de l'action, ex: eci_1.1"),
+      pointReferentiel: z
         .number()
         .nullable()
         .describe('La valeur de base tel que calculé à partir des markdowns'),
-      point_fait: z
+      pointFait: z
         .number()
         .nullable()
         .describe(
           'Pour une tache avec un statut fait, est égal au point référentiel'
         ),
-      point_programme: z
+      pointProgramme: z
         .number()
         .nullable()
         .describe(
           'Pour une tache avec un statut programmé, est égal au point référentiel'
         ),
-      point_pas_fait: z
+      pointPasFait: z
         .number()
         .nullable()
         .describe(
           'Pour une tache avec un statut pas fait, est égal au point référentiel'
         ),
-      point_non_renseigne: z
+      pointNonRenseigne: z
         .number()
         .nullable()
         .describe('Pour une tache sans statut, est égal au point référentiel'),
-      point_potentiel: z
+      pointPotentiel: z
         .number()
         .nullable()
         .describe(
@@ -43,36 +43,36 @@ export const actionScoreSchema = extendApi(
         .describe(
           "Faux si la collectivité s'est déclarée comme non concernée pour cette action ou pour tous ses enfants. A noter qu'une désactivation par personnalisation entraine également un non concerné"
         ),
-      total_taches_count: z
+      totalTachesCount: z
         .number()
         .int()
         .describe(
           "Le nombre de taches d'une action, est égal à 1 si l'action est une tache"
         ),
-      completed_taches_count: z
+      completedTachesCount: z
         .number()
         .int()
         .nullable()
         .describe('Le nombre de taches renseignées'),
-      fait_taches_avancement: z
+      faitTachesAvancement: z
         .number()
         .nullable()
         .describe(
           'La somme des proportions du fait des tâches, si une tache à un statut fait à 50% equal à 0.5'
         ),
-      programme_taches_avancement: z
+      programmeTachesAvancement: z
         .number()
         .nullable()
         .describe(
           'La somme des proportions du programme des tâches, si une tache à un statut programmé à 50% est égal à 0.5'
         ),
-      pas_fait_taches_avancement: z
+      pasFaitTachesAvancement: z
         .number()
         .nullable()
         .describe(
           'La somme des proportions du pas fait des tâches, si une tache à un statut pas fait à 50% est égal à 0.5'
         ),
-      pas_concerne_taches_avancement: z
+      pasConcerneTachesAvancement: z
         .number()
         .nullable()
         .describe(
@@ -83,13 +83,13 @@ export const actionScoreSchema = extendApi(
         .describe(
           "Vrai si l'action ou un de ses ancêtres est désactivé du fait de la personnalisation"
         ),
-      point_potentiel_perso: z
+      pointPotentielPerso: z
         .number()
         .nullable()
         .describe(
           'Le potentiel est calculé à partir des conséquences de la personnalisation, soit point référentiel x facteur de la personnalisation'
         ),
-      a_statut: z
+      aStatut: z
         .boolean()
         .optional()
         .describe(

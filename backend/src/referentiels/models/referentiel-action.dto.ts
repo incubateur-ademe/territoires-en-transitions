@@ -12,11 +12,11 @@ export type ReferentielActionType = z.infer<
   typeof actionDefinitionSeulementIdObligatoireSchema
 > & {
   level: number;
-  action_type: ActionType;
-  referentiels_origine?: string[];
+  actionType: ActionType;
+  referentielsOrigine?: string[];
   tags?: string[]; // action tags include cae, eci but also biodiversite, eau, coremeasure
-  actions_origine?: ReferentielActionOrigineType[];
-  actions_enfant: ReferentielActionType[];
+  actionsOrigine?: ReferentielActionOrigineType[];
+  actionsEnfant: ReferentielActionType[];
 };
 
 export const referentielActionDtoSchema: z.ZodType<ReferentielActionType> =
@@ -24,12 +24,12 @@ export const referentielActionDtoSchema: z.ZodType<ReferentielActionType> =
     actionDefinitionSeulementIdObligatoireSchema
       .extend({
         level: z.number(),
-        action_type: z.nativeEnum(ActionType),
-        referentiels_origine: z.string().array().optional(),
+        actionType: z.nativeEnum(ActionType),
+        referentielsOrigine: z.string().array().optional(),
         tags: z.string().array().optional(),
-        actions_origine: referentielActionOrigineSchema.array().optional(),
-        points_catalogue: z.record(z.string(), z.number()).optional(),
-        actions_enfant: z.lazy(() => referentielActionDtoSchema.array()),
+        actionsOrigine: referentielActionOrigineSchema.array().optional(),
+        pointsCatalogue: z.record(z.string(), z.number()).optional(),
+        actionsEnfant: z.lazy(() => referentielActionDtoSchema.array()),
       })
       .openapi({
         title: "Référentiel d'actions",
