@@ -4,9 +4,10 @@ import { referentielActionAvecScoreDtoSchema } from './referentiel-action-avec-s
 
 export const getReferentielScoresResponseSchema = extendApi(
   z.object({
+    collectiviteId: z.number(),
     date: z.string().datetime().optional(),
     scores: referentielActionAvecScoreDtoSchema,
-  }),
+  })
 ).openapi({
   title: 'Score de la collectivité pour un référentiel et la date donnée',
 });
