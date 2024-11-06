@@ -20,7 +20,7 @@ export const historiqueActionStatutTable = historiqueSchema.table(
       .references(() => collectiviteTable.id),
     actionId: actionIdReference.notNull(),
     avancement: avancementEnum('avancement').notNull(),
-    previousQvancement: avancementEnum('previous_avancement'),
+    previousAvancement: avancementEnum('previous_avancement'),
     avancementDetaille: doublePrecision('avancement_detaille').array(),
     previousAvancementDetaille: doublePrecision(
       'previous_avancement_detaille'

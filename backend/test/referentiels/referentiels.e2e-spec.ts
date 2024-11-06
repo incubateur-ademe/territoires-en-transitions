@@ -17,7 +17,7 @@ describe('Referentiels routes', () => {
       .get('/referentiels/cae')
       .expect(200);
     const referentiel = response.body as GetReferentielResponseType;
-    expect(referentiel.ordered_item_types).toEqual([
+    expect(referentiel.orderedItemTypes).toEqual([
       ActionType.REFERENTIEL,
       ActionType.AXE,
       ActionType.SOUS_AXE,
@@ -25,20 +25,22 @@ describe('Referentiels routes', () => {
       ActionType.SOUS_ACTION,
       ActionType.TACHE,
     ]);
-    const { actions_enfant, ...referentielWithoutActionsEnfant } =
-      referentiel.items_tree!;
-    expect(actions_enfant.length).toBe(6);
+    const { actionsEnfant, ...referentielWithoutActionsEnfant } =
+      referentiel.itemsTree!;
+    expect(actionsEnfant.length).toBe(6);
     const {
-      actions_enfant: expectedActionEnfants,
+      actionsEnfant: expectedActionEnfants,
       ...referentielCaeRoot
     }: ReferentielActionType = {
-      action_id: 'cae',
-      action_type: 'referentiel',
+      actionId: 'cae',
+      actionType: ActionType.REFERENTIEL,
+      categorie: null,
       level: 0,
       nom: 'Climat Air Énergie',
       points: 500,
       pourcentage: null,
-      actions_enfant: [],
+      actionsEnfant: [],
+      tags: [],
     };
     expect(referentielWithoutActionsEnfant).toEqual(referentielCaeRoot);
   });
@@ -48,7 +50,7 @@ describe('Referentiels routes', () => {
       .get('/referentiels/inconnu')
       .expect(404)
       .expect({
-        message: 'Referentiel inconnu not found',
+        message: 'Referentiel definition inconnu not found',
         error: 'Not Found',
         statusCode: 404,
       });

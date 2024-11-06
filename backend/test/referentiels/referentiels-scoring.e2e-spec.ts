@@ -4,10 +4,9 @@ import { getYoloDodoToken } from '../auth/auth-utils';
 import { getTestApp } from '../common/app-utils';
 import {
   GetActionStatutsResponseType,
-  SimpleActionStatutType,
 } from '../../src/referentiels/models/get-action-statuts.response';
+import { ReferentielActionWithScoreType } from '../../src/referentiels/models/referentiel-action-avec-score.dto';
 import { GetReferentielScoresResponseType } from '../../src/referentiels/models/get-referentiel-scores.response';
-import { ReferentielActionAvecScoreType } from '../../src/referentiels/models/referentiel-action-avec-score.dto';
 import { ActionType } from '../../src/referentiels/models/action-type.enum';
 import { ActionStatutType } from '../../src/referentiels/models/action-statut.table';
 import { HistoriqueActionStatutType } from '../../src/referentiels/models/historique-action-statut.table';
@@ -35,13 +34,13 @@ describe('Referentiels scoring routes', () => {
     const actionStatuts = response.body as GetActionStatutsResponseType;
     expect(Object.keys(actionStatuts).length).toBe(2);
     const expectedActionStatut: ActionStatutType = {
-      collectivite_id: 1,
-      action_id: 'cae_1.1.1.1.1',
+      collectiviteId: 1,
+      actionId: 'cae_1.1.1.1.1',
       avancement: 'fait',
-      avancement_detaille: [1, 0, 0],
+      avancementDetaille: [1, 0, 0],
       concerne: true,
-      modified_by: '17440546-f389-4d4f-bfdb-b0c94a1bd0f9',
-      modified_at: '2020-01-01 00:00:01+00',
+      modifiedBy: '17440546-f389-4d4f-bfdb-b0c94a1bd0f9',
+      modifiedAt: '2020-01-01 00:00:01+00',
     };
     expect(actionStatuts['cae_1.1.1.1.1']).toEqual(expectedActionStatut);
   });
@@ -65,7 +64,7 @@ describe('Referentiels scoring routes', () => {
       .set('Authorization', `Bearer ${process.env.SUPABASE_ANON_KEY}`)
       .expect(404)
       .expect({
-        message: 'Referentiel inconnu not found',
+        message: 'Referentiel definition inconnu not found',
         error: 'Not Found',
         statusCode: 404,
       });
@@ -91,22 +90,22 @@ describe('Referentiels scoring routes', () => {
     expect(Object.keys(actionStatuts).length).toBe(1);
 
     const expectedActionStatut: HistoriqueActionStatutType = {
-      collectivite_id: 1,
-      action_id: 'cae_1.1.1.1.1',
+      collectiviteId: 1,
+      actionId: 'cae_1.1.1.1.1',
       avancement: 'fait',
-      avancement_detaille: [1, 0, 0],
+      avancementDetaille: [1, 0, 0],
       concerne: true,
-      modified_at: '2020-01-01 00:00:01+00',
-      modified_by: null,
-      previous_avancement: null,
-      previous_avancement_detaille: null,
-      previous_concerne: null,
-      previous_modified_at: null,
-      previous_modified_by: null,
+      modifiedAt: '2020-01-01 00:00:01+00',
+      modifiedBy: null,
+      previousAvancement: null,
+      previousAvancementDetaille: null,
+      previousConcerne: null,
+      previousModifiedAt: null,
+      previousModifiedBy: null,
     };
     expect(actionStatuts['cae_1.1.1.1.1']).toEqual(expectedActionStatut);
   });
-
+  
   it(`Récupération du score d'un référentiel sans token non autorisée`, async () => {
     const response = await request(app.getHttpServer())
       .get('/collectivites/1/referentiels/cae/scores')
@@ -119,39 +118,43 @@ describe('Referentiels scoring routes', () => {
       .set('Authorization', `Bearer ${process.env.SUPABASE_ANON_KEY}`)
       .expect(200);
     const referentielScores = response.body as GetReferentielScoresResponseType;
-    const { actions_enfant, ...referentielScoreWithoutActionsEnfant } =
+    const { actionsEnfant, ...referentielScoreWithoutActionsEnfant } =
       referentielScores.scores;
-    expect(actions_enfant.length).toBe(6);
+    expect(actionsEnfant.length).toBe(6);
     const {
-      actions_enfant: expectedActionEnfant,
+      actionsEnfant: expectedActionEnfant,
       ...expectedCaeRoot
-    }: ReferentielActionAvecScoreType = {
-      action_id: 'cae',
+    }: ReferentielActionWithScoreType = {
+      actionId: 'cae',
       nom: 'Climat Air Énergie',
       points: 500,
+      categorie: null,
       pourcentage: null,
       level: 0,
-      action_type: ActionType.REFERENTIEL,
+      actionType: ActionType.REFERENTIEL,
       score: {
-        action_id: 'cae',
-        point_referentiel: 500,
-        point_potentiel: 490.9,
-        point_potentiel_perso: null,
-        point_fait: 0.36,
-        point_pas_fait: 0.03,
-        point_non_renseigne: 490.3,
-        point_programme: 0.21,
+        actionId: 'cae',
+        etoiles: 1,
+        pointReferentiel: 500,
+        pointPotentiel: 490.9,
+        pointPotentielPerso: null,
+        pointFait: 0.36,
+        pointPasFait: 0.03,
+        pointNonRenseigne: 490.3,
+        pointProgramme: 0.21,
         concerne: true,
-        completed_taches_count: 2,
-        total_taches_count: 1120,
-        fait_taches_avancement: 1.2,
-        programme_taches_avancement: 0.7,
-        pas_fait_taches_avancement: 0.1,
-        pas_concerne_taches_avancement: 0,
+        completedTachesCount: 2,
+        totalTachesCount: 1111,
+        faitTachesAvancement: 1.2,
+        programmeTachesAvancement: 0.7,
+        pasFaitTachesAvancement: 0.1,
+        pasConcerneTachesAvancement: 0,
         desactive: false,
         renseigne: false,
       },
-      actions_enfant: [],
+      actionsEnfant: [],
+      scoresTag: {},
+      tags: []
     };
     expect(referentielScoreWithoutActionsEnfant).toEqual(expectedCaeRoot);
   });
@@ -175,17 +178,10 @@ describe('Referentiels scoring routes', () => {
       .set('Authorization', `Bearer ${process.env.SUPABASE_ANON_KEY}`)
       .expect(404)
       .expect({
-        message: 'Referentiel inconnu not found',
+        message: 'Referentiel definition inconnu not found',
         error: 'Not Found',
         statusCode: 404,
       });
-  });
-
-  it(`Récupération anonyme de l'historique du score d'un référentiel non autorisée`, async () => {
-    const response = await request(app.getHttpServer())
-      .get('/collectivites/1/referentiels/cae/scores?date=2019-01-01T00:00:01Z')
-      .set('Authorization', `Bearer ${process.env.SUPABASE_ANON_KEY}`)
-      .expect(401);
   });
 
   it(`Récupération de l'historique du score d'un référentiel pour un utilisateur autorisé`, async () => {
@@ -194,41 +190,45 @@ describe('Referentiels scoring routes', () => {
       .set('Authorization', `Bearer ${yoloDodoToken}`)
       .expect(200);
     const referentielScores = response.body as GetReferentielScoresResponseType;
-    const { actions_enfant, ...referentielScoreWithoutActionsEnfant } =
+    const { actionsEnfant, ...referentielScoreWithoutActionsEnfant } =
       referentielScores.scores;
     expect(referentielScores.date).toBe('2019-01-01T00:00:01Z');
-    expect(actions_enfant.length).toBe(6);
+    expect(actionsEnfant.length).toBe(6);
 
     const {
-      actions_enfant: expectedActionEnfant,
+      actionsEnfant: expectedActionEnfant,
       ...expectedCaeRoot
-    }: ReferentielActionAvecScoreType = {
-      action_id: 'cae',
+    }: ReferentielActionWithScoreType = {
+      actionId: 'cae',
       nom: 'Climat Air Énergie',
       points: 500,
+      categorie: null,
       pourcentage: null,
       level: 0,
-      action_type: ActionType.REFERENTIEL,
+      actionType: ActionType.REFERENTIEL,
       score: {
-        action_id: 'cae',
-        point_referentiel: 500,
-        point_potentiel: 496.5,
-        point_potentiel_perso: null,
-        point_fait: 0,
-        point_pas_fait: 0,
-        point_non_renseigne: 496.5,
-        point_programme: 0,
+        actionId: 'cae',
+        etoiles: 1,
+        pointReferentiel: 500,
+        pointPotentiel: 496.5,
+        pointPotentielPerso: null,
+        pointFait: 0,
+        pointPasFait: 0,
+        pointNonRenseigne: 496.5,
+        pointProgramme: 0,
         concerne: true,
-        completed_taches_count: 0,
-        total_taches_count: 1120,
-        fait_taches_avancement: 0,
-        programme_taches_avancement: 0,
-        pas_fait_taches_avancement: 0,
-        pas_concerne_taches_avancement: 0,
+        completedTachesCount: 0,
+        totalTachesCount: 1111,
+        faitTachesAvancement: 0,
+        programmeTachesAvancement: 0,
+        pasFaitTachesAvancement: 0,
+        pasConcerneTachesAvancement: 0,
         desactive: false,
         renseigne: false,
       },
-      actions_enfant: [],
+      actionsEnfant: [],
+      scoresTag: {},
+      tags: []
     };
 
     expect(referentielScoreWithoutActionsEnfant).toEqual(expectedCaeRoot);

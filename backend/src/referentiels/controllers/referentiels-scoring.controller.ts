@@ -66,7 +66,7 @@ export class ReferentielsScoringController {
     );
   }
 
-  @AllowPublicAccess()
+  @AllowAnonymousAccess()
   @Get('referentiels/:referentiel_id/scores')
   @ApiResponse({ type: GetReferentielMultipleScoresResponseClass })
   async getReferentielMultipleScorings(
@@ -81,7 +81,7 @@ export class ReferentielsScoringController {
     );
   }
 
-  @AllowPublicAccess()
+  @AllowAnonymousAccess()
   @Get('collectivites/:collectivite_id/referentiels/:referentiel_id/scores')
   @ApiResponse({ type: GetReferentielScoresResponseClass })
   async getReferentielScoring(
@@ -98,7 +98,7 @@ export class ReferentielsScoringController {
     );
   }
 
-  @AllowPublicAccess()
+  @AllowAnonymousAccess()
   @ApiExcludeEndpoint() // Not in documentation
   @Get(
     'collectivites/:collectivite_id/referentiels/:referentiel_id/check-scores'

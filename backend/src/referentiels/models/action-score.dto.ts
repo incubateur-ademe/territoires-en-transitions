@@ -6,6 +6,12 @@ export const actionScoreSchema = extendApi(
   z
     .object({
       actionId: z.string().describe("L'id de l'action, ex: eci_1.1"),
+      etoiles: z
+        .number()
+        .optional()
+        .describe(
+          "Le nombre d'étoiles correspondant à des seuils de score en pourcentage"
+        ),
       pointReferentiel: z
         .number()
         .nullable()

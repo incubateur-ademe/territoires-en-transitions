@@ -8,8 +8,8 @@ import {
   timestamp,
 } from 'drizzle-orm/pg-core';
 import { createInsertSchema, createSelectSchema } from 'drizzle-zod';
-import { referentielEnum } from './action-definition.table';
 import { collectiviteTable } from '../../collectivites/models/collectivite.table';
+import { referentielEnum } from './referentiel.enum';
 
 export const clientScoresTable = pgTable(
   'client_scores',

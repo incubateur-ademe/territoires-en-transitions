@@ -1,5 +1,11 @@
 import { HttpException, Injectable, Logger } from '@nestjs/common';
-import { createToken, CstParser, Lexer, tokenMatcher } from 'chevrotain';
+import {
+  createToken,
+  CstNode,
+  CstParser,
+  Lexer,
+  tokenMatcher,
+} from 'chevrotain';
 import * as _ from 'lodash';
 import { IdentiteCollectivite } from '../../collectivites/models/identite-collectivite.dto';
 
@@ -453,7 +459,7 @@ class CollectiviteExpressionVisitor extends BaseCSTVisitor {
     const primary = this.visit(ctx.primary);
     if (!this.identiteCollectivite) {
       throw new Error(
-        `Information ${identifier} d'identité de la commune non trouvée`,
+        `Information ${identifier} d'identité de la collectivité non trouvée`
       );
     }
     if (identifier === 'type') {
@@ -503,30 +509,35 @@ const visitor = new CollectiviteExpressionVisitor();
 export default class ExpressionParserService {
   private readonly logger = new Logger(ExpressionParserService.name);
 
-  parseAndEvaluateExpression(
-    inputText: string,
-    reponses: { [key: string]: boolean | number | string | null } | null = null,
-    identiteCollectivite: IdentiteCollectivite | null = null,
-    scores: { [key: string]: number } | null = null,
-  ): number | boolean | string | null {
+  parseExpression(inputText: string): CstNode {
     const lexingResult = exprLexer.tokenize(inputText);
-
+    //console.log(JSON.stringify(lexingResult.tokens));
     parser.input = lexingResult.tokens;
     const cst = parser.statement();
 
     if (parser.errors.length > 0) {
       this.logger.error(
-        `Parsing errors detected: ${JSON.stringify(parser.errors)}`,
+        `Parsing errors detected: ${JSON.stringify(parser.errors)}`
       );
       throw new HttpException('Invalid expression', 500, {
         cause: parser.errors,
       });
     } else {
-      visitor.reponses = reponses;
-      visitor.identiteCollectivite = identiteCollectivite;
-      visitor.scores = scores;
-      const result = visitor.visit(cst);
-      return result;
+      return cst;
     }
+  }
+
+  parseAndEvaluateExpression(
+    inputText: string,
+    reponses: { [key: string]: boolean | number | string | null } | null = null,
+    identiteCollectivite: IdentiteCollectivite | null = null,
+    scores: { [key: string]: number } | null = null
+  ): number | boolean | string | null {
+    const cst = this.parseExpression(inputText);
+    visitor.reponses = reponses;
+    visitor.identiteCollectivite = identiteCollectivite;
+    visitor.scores = scores;
+    const result = visitor.visit(cst);
+    return result;
   }
 }

@@ -1,9 +1,9 @@
 import { Test } from '@nestjs/testing';
-import ExpressionParserService from './expression-parser.service';
 import {
   CollectivitePopulationTypeEnum,
   CollectiviteTypeEnum,
 } from '../../collectivites/models/identite-collectivite.dto';
+import ExpressionParserService from './expression-parser.service';
 
 describe('ExpressionParserService', () => {
   let expressionParserService: ExpressionParserService;
@@ -215,6 +215,34 @@ describe('ExpressionParserService', () => {
           null
         )
       ).toBe('score(eci_1) - 0.2');
+    });
+
+    it('si identite(type, EPCI) ou identite(type, commune) alors FAUX sinon VRAI', async () => {
+      expect(
+        expressionParserService.parseAndEvaluateExpression(
+          'si identite(type, EPCI) ou identite(type, commune) alors FAUX sinon VRAI',
+          null,
+          {
+            type: CollectiviteTypeEnum.EPCI,
+            soustype: null,
+            population_tags: [CollectivitePopulationTypeEnum.MOINS_DE_50000],
+            drom: false,
+          }
+        )
+      ).toBe(false);
+
+      expect(
+        expressionParserService.parseAndEvaluateExpression(
+          'si identite(type, EPCI) alors FAUX sinon si identite(type, commune) alors FAUX sinon VRAI',
+          null,
+          {
+            type: CollectiviteTypeEnum.EPCI,
+            soustype: null,
+            population_tags: [CollectivitePopulationTypeEnum.MOINS_DE_50000],
+            drom: false,
+          }
+        )
+      ).toBe(false);
     });
 
     it('Règle cae_1.2.3', async () => {

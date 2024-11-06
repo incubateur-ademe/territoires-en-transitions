@@ -9,12 +9,10 @@ import {
 } from 'drizzle-orm/pg-core';
 import { createInsertSchema, createSelectSchema } from 'drizzle-zod';
 import { z } from 'zod';
+import { actionRelationTable } from './action-relation.table';
 import { ActionType } from './action-type.enum';
 import { referentielDefinitionTable } from './referentiel-definition.table';
-import { referentielList } from './referentiel.enum';
-
-// Todo: change it reference another table instead
-export const referentielEnum = pgEnum('referentiel', referentielList);
+import { referentielEnum } from './referentiel.enum';
 
 export enum ActionCategoryType {
   BASES = 'bases',
@@ -28,7 +26,7 @@ export const actionCategorieEnum = pgEnum('action_categorie', [
 ]);
 export const actionIdVarchar = varchar('action_id', { length: 30 });
 export const actionIdReference = actionIdVarchar.references(
-  () => actionDefinitionTable.actionId
+  () => actionRelationTable.id
 );
 
 export const actionDefinitionTable = pgTable('action_definition', {
@@ -101,6 +99,7 @@ export const importActionDefinitionSchema = createActionDefinitionSchema
       .optional(),
     origine: z.string().optional(),
     coremeasure: z.string().optional(),
+    desactivation: z.string().optional(),
   });
 export type ImportActionDefinitionType = z.infer<
   typeof importActionDefinitionSchema

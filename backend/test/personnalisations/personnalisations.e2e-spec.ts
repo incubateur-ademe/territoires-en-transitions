@@ -2,6 +2,7 @@ import { INestApplication } from '@nestjs/common';
 import { default as request } from 'supertest';
 import { GetPersonnalitionConsequencesResponseType } from '../../src/personnalisations/models/get-personnalisation-consequences.response';
 import { GetPersonnalisationReglesResponseType } from '../../src/personnalisations/models/get-personnalisation-regles.response';
+import { PersonnalisationConsequenceType } from '../../src/personnalisations/models/personnalisation-consequence.dto';
 import { getYoloDodoToken } from '../auth/auth-utils';
 import { getTestApp } from '../common/app-utils';
 
@@ -30,7 +31,7 @@ describe('Personnalisations routes', () => {
     const getPersonnalisationregles =
       response.body as GetPersonnalisationReglesResponseType;
     const caeRegles = getPersonnalisationregles.regles.filter((regle) =>
-      regle.action_id.startsWith('cae')
+      regle.actionId.startsWith('cae')
     );
     expect(getPersonnalisationregles.regles.length).toBe(caeRegles.length);
   });
@@ -106,16 +107,25 @@ describe('Personnalisations routes', () => {
       response.body;
 
     // Do not check the whole response, just a few values
-    expect(getPersonnalisationConsequences['eci_3.7.1']).toEqual({
-      desactive: null,
-      score_formule: null,
-      potentiel_perso: 3,
-    });
-    expect(getPersonnalisationConsequences['eci_4.2.1']).toEqual({
-      desactive: true,
-      score_formule: null,
-      potentiel_perso: null,
-    });
+    const expectedPersonnalisationConsequences_3_7_1: PersonnalisationConsequenceType =
+      {
+        desactive: null,
+        scoreFormule: null,
+        potentielPerso: 3,
+      };
+    expect(getPersonnalisationConsequences['eci_3.7.1']).toEqual(
+      expectedPersonnalisationConsequences_3_7_1
+    );
+
+    const expectedPersonnalisationConsequences_4_2_1: PersonnalisationConsequenceType =
+      {
+        desactive: true,
+        scoreFormule: null,
+        potentielPerso: null,
+      };
+    expect(getPersonnalisationConsequences['eci_4.2.1']).toEqual(
+      expectedPersonnalisationConsequences_4_2_1
+    );
   });
 
   afterAll(async () => {
