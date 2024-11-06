@@ -65,7 +65,6 @@ export const useCalculTrajectoire = (args?: { nouveauCalcul: boolean }) => {
       onSuccess: (data) => {
         // met à jour le cache
         queryClient.setQueryData(getKey(collectiviteId), data);
-        queryClient.invalidateQueries(getStatusKey(collectiviteId));
       },
     }
   );
