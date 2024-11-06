@@ -25,6 +25,7 @@ export const Button = forwardRef<
       className,
       icon,
       iconPosition,
+      loading,
       external,
       notification,
       // eslint-disable-next-line @typescript-eslint/no-unused-vars
@@ -73,6 +74,7 @@ export const Button = forwardRef<
       variant,
       size,
       icon,
+      loading,
       disabled,
       notification,
     };

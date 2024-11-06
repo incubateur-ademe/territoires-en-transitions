@@ -1,13 +1,13 @@
-import {useQuery} from 'react-query';
-import {DISABLE_AUTO_REFETCH, supabaseClient} from 'core-logic/api/supabase';
-import {useCollectiviteId} from 'core-logic/hooks/params';
-import {Indicateurs} from '@tet/api';
+import { useQuery } from 'react-query';
+import { DISABLE_AUTO_REFETCH, supabaseClient } from 'core-logic/api/supabase';
+import { useCollectiviteId } from 'core-logic/hooks/params';
+import { Indicateurs } from '@tet/api';
 
 /** Charge la définition détaillée d'un indicateur */
 export const useIndicateurDefinition = (indicateurId: number | string) => {
   const collectiviteId = useCollectiviteId();
 
-  const {data} = useQuery(
+  const { data } = useQuery(
     ['indicateur_definition', collectiviteId, indicateurId],
     async () => {
       if (!collectiviteId) return;
@@ -36,7 +36,7 @@ export const useIndicateurDefinitions = (
 ) => {
   const collectiviteId = useCollectiviteId();
 
-  const {data} = useQuery(
+  const { data, isLoading } = useQuery(
     ['indicateur_definitions', collectiviteId, parentId, indicateurIds],
     async () => {
       if (!collectiviteId) return;
@@ -48,7 +48,7 @@ export const useIndicateurDefinitions = (
     },
     DISABLE_AUTO_REFETCH
   );
-  return data;
+  return { data, isLoading };
 };
 
 /** Charge la définition détaillée de plusieurs indicateurs référentiels */
@@ -57,7 +57,7 @@ export const useIndicateurReferentielDefinitions = (
 ) => {
   const collectiviteId = useCollectiviteId();
 
-  const {data} = useQuery(
+  const { data } = useQuery(
     ['indicateur_definitions', collectiviteId, identifiantsReferentiel],
     async () => {
       if (!collectiviteId || !identifiantsReferentiel?.length) return;

@@ -1,7 +1,7 @@
 import classNames from 'classnames';
-import {avancementToLabel} from 'app/labels';
-import {TActionAvancementExt} from 'types/alias';
-import {Badge, BadgeState} from '@tet/ui';
+import { avancementToLabel } from 'app/labels';
+import { TActionAvancementExt } from 'types/alias';
+import { Badge, BadgeState } from '@tet/ui';
 
 type Props = {
   className?: string;
@@ -12,7 +12,7 @@ type Props = {
   size?: 'sm' | 'md';
 };
 
-const statusToState: Record<TActionAvancementExt, BadgeState> = {
+export const statusToState: Record<TActionAvancementExt, BadgeState> = {
   non_renseigne: 'grey',
   pas_fait: 'error',
   programme: 'info',
@@ -21,7 +21,12 @@ const statusToState: Record<TActionAvancementExt, BadgeState> = {
   non_concerne: 'grey',
 };
 
-const ActionStatutBadge = ({className, statut, barre, size = 'sm'}: Props) => {
+const ActionStatutBadge = ({
+  className,
+  statut,
+  barre,
+  size = 'sm',
+}: Props) => {
   return (
     <Badge
       dataTest="ActionStatutBadge"
@@ -30,7 +35,7 @@ const ActionStatutBadge = ({className, statut, barre, size = 'sm'}: Props) => {
       state={statusToState[statut]}
       light={statut === 'non_renseigne'}
       trim={false}
-      className={classNames('min-w-fit', {'line-through': barre}, className)}
+      className={classNames('min-w-fit', { 'line-through': barre }, className)}
     />
   );
 };

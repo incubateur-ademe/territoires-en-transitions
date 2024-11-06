@@ -61,6 +61,14 @@ export const WithCustomSVGIcon: Story = {
   },
 };
 
+/** Bouton avec loader. */
+export const WithLoader: Story = {
+  args: {
+    children: 'Loading',
+    loading: true,
+  },
+};
+
 /** Différentes valeurs pour la props size. */
 export const Sizes: Story = {
   render: () => (
@@ -261,7 +269,7 @@ export const WithNotification: Story = {
   render: () => (
     <div
       className="grid gap-5 items-end bg-grey-2 p-10"
-      style={{gridTemplateColumns: 'repeat(6,fit-content(0))'}}
+      style={{ gridTemplateColumns: 'repeat(6,fit-content(0))' }}
     >
       <Button
         icon="leaf-line"
