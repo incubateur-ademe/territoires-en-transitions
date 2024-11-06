@@ -6,12 +6,18 @@ import {
   NotFoundException,
   UnprocessableEntityException,
 } from '@nestjs/common';
-import { and, asc, eq, getTableColumns, sql } from 'drizzle-orm';
+import { and, asc, eq, getTableColumns, inArray, sql } from 'drizzle-orm';
 import { isNil } from 'es-toolkit';
 import * as _ from 'lodash';
 import * as semver from 'semver';
 import DatabaseService from '../../common/services/database.service';
+import { getErrorMessage } from '../../common/services/errors.helper';
 import ConfigurationService from '../../config/configuration.service';
+import {
+  CreatePersonnalisationRegleType,
+  personnalisationRegleTable,
+} from '../../personnalisations/models/personnalisation-regle.table';
+import ExpressionParserService from '../../personnalisations/services/expression-parser.service';
 import SheetService from '../../spreadsheets/services/sheet.service';
 import {
   actionDefinitionTagTable,
@@ -64,7 +70,8 @@ export default class ReferentielsService {
   constructor(
     private readonly backendConfigurationService: ConfigurationService,
     private readonly databaseService: DatabaseService,
-    private readonly sheetService: SheetService
+    private readonly sheetService: SheetService,
+    private readonly expressionParserService: ExpressionParserService
   ) {}
 
   buildReferentielTree(
@@ -596,6 +603,8 @@ export default class ReferentielsService {
 
     const actionDefinitions: CreateActionDefinitionType[] = [];
     const createActionOrigines: CreateActionOrigineType[] = [];
+    const createPersonnalisationRegles: CreatePersonnalisationRegleType[] = [];
+    const deletePersonnalisationReglesActionIds: string[] = [];
     const createActionTags: CreateActionDefinitionTagType[] = [];
     importActionDefinitions.data.forEach((action) => {
       const actionId = `${referentielId}_${action.identifiant}`;
@@ -647,6 +656,33 @@ export default class ReferentielsService {
             tagRef: ImportActionDefinitionCoremeasureType.COREMEASURE,
           };
           createActionTags.push(coremeasureTag);
+        }
+
+        if (action.desactivation) {
+          const desactivationRegle: CreatePersonnalisationRegleType = {
+            actionId: createActionDefinition.actionId,
+            type: 'desactivation',
+            formule: action.desactivation.toLowerCase(),
+            description: '',
+          };
+          // Check that we can parse the expression
+          try {
+            this.expressionParserService.parseExpression(
+              desactivationRegle.formule
+            );
+          } catch (e) {
+            throw new UnprocessableEntityException(
+              `Invalid desactivation expression ${
+                action.desactivation
+              } for action ${actionId}: ${getErrorMessage(e)}`
+            );
+          }
+          createPersonnalisationRegles.push(desactivationRegle);
+        } else {
+          // If no desactivation, we remove the desactivation rule
+          deletePersonnalisationReglesActionIds.push(
+            createActionDefinition.actionId
+          );
         }
 
         if (action.origine) {
@@ -788,6 +824,34 @@ export default class ReferentielsService {
         .delete(actionDefinitionTagTable)
         .where(eq(actionDefinitionTagTable.referentielId, referentielId));
       await tx.insert(actionDefinitionTagTable).values(createActionTags);
+
+      // Delete desactivation rules not needed anymore
+      await tx
+        .delete(personnalisationRegleTable)
+        .where(
+          inArray(
+            personnalisationRegleTable.actionId,
+            deletePersonnalisationReglesActionIds
+          )
+        );
+      // Create desactivation rules
+      await tx
+        .insert(personnalisationRegleTable)
+        .values(createPersonnalisationRegles)
+        .onConflictDoUpdate({
+          target: [
+            personnalisationRegleTable.actionId,
+            personnalisationRegleTable.type,
+          ],
+          set: {
+            formule: sql.raw(
+              `excluded.${personnalisationRegleTable.formule.name}`
+            ),
+            description: sql.raw(
+              `excluded.${personnalisationRegleTable.description.name}`
+            ),
+          },
+        });
 
       await tx
         .insert(referentielDefinitionTable)

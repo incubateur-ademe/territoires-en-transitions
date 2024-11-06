@@ -1,9 +1,12 @@
 import { Test } from '@nestjs/testing';
-import BackendConfigurationService from '../../common/services/backend-configuration.service';
 import DatabaseService from '../../common/services/database.service';
+import ConfigurationService from '../../config/configuration.service';
+import ExpressionParserService from '../../personnalisations/services/expression-parser.service';
 import SheetService from '../../spreadsheets/services/sheet.service';
 import { ActionDefinitionAvecParentType } from '../models/action-definition.table';
+import { CreateActionOrigineType } from '../models/action-origine.table';
 import { ActionType } from '../models/action-type.enum';
+import { ReferentielActionType } from '../models/referentiel-action.dto';
 import { ReferentielDefinitionType } from '../models/referentiel-definition.table';
 import { ReferentielType } from '../models/referentiel.enum';
 import ReferentielsService from './referentiels.service';
@@ -19,8 +22,9 @@ describe('ReferentielsService', () => {
       .useMocker((token) => {
         if (
           token === DatabaseService ||
-          token === BackendConfigurationService ||
-          token === SheetService
+          token === ConfigurationService ||
+          token === SheetService ||
+          token === ExpressionParserService
         ) {
           return {};
         }
@@ -40,8 +44,8 @@ describe('ReferentielsService', () => {
           ActionType.SOUS_ACTION,
           ActionType.TACHE,
         ],
-        created_at: new Date().toISOString(),
-        modified_at: new Date().toISOString(),
+        createdAt: new Date().toISOString(),
+        modifiedAt: new Date().toISOString(),
       },
       {
         id: 'cae',
@@ -55,8 +59,8 @@ describe('ReferentielsService', () => {
           ActionType.SOUS_ACTION,
           ActionType.TACHE,
         ],
-        created_at: new Date().toISOString(),
-        modified_at: new Date().toISOString(),
+        createdAt: new Date().toISOString(),
+        modifiedAt: new Date().toISOString(),
       },
     ];
   });
@@ -65,45 +69,45 @@ describe('ReferentielsService', () => {
     it('une tache réglementaire', async () => {
       const actionDefinitions: ActionDefinitionAvecParentType[] = [
         {
-          action_id: 'eci',
-          parent_action_id: null,
+          actionId: 'eci',
+          parentActionId: null,
         },
         {
-          action_id: 'eci_1',
-          parent_action_id: 'eci',
+          actionId: 'eci_1',
+          parentActionId: 'eci',
           points: 30,
         },
         {
-          action_id: 'eci_1.0',
-          parent_action_id: 'eci_1',
+          actionId: 'eci_1.0',
+          parentActionId: 'eci_1',
           pourcentage: 0,
         },
         {
-          action_id: 'eci_1.1',
-          parent_action_id: 'eci_1',
+          actionId: 'eci_1.1',
+          parentActionId: 'eci_1',
         },
         {
-          action_id: 'eci_1.2',
-          parent_action_id: 'eci_1',
+          actionId: 'eci_1.2',
+          parentActionId: 'eci_1',
         },
         {
-          action_id: 'eci_2',
-          parent_action_id: 'eci',
+          actionId: 'eci_2',
+          parentActionId: 'eci',
           points: 70,
         },
         {
-          action_id: 'eci_2.1',
-          parent_action_id: 'eci_2',
+          actionId: 'eci_2.1',
+          parentActionId: 'eci_2',
           pourcentage: 20,
         },
         {
-          action_id: 'eci_2.2',
-          parent_action_id: 'eci_2',
+          actionId: 'eci_2.2',
+          parentActionId: 'eci_2',
           pourcentage: 30,
         },
         {
-          action_id: 'eci_2.3',
-          parent_action_id: 'eci_2',
+          actionId: 'eci_2.3',
+          parentActionId: 'eci_2',
           pourcentage: 50,
         },
       ];
@@ -117,80 +121,92 @@ describe('ReferentielsService', () => {
         actionDefinitions,
         orderedActionTypes
       );
-      expect(referentielTree).toEqual({
-        action_id: 'eci',
+
+      const expectedActionEnfant: ReferentielActionType = {
+        actionId: 'eci',
         points: 100,
         level: 0,
-        action_type: ActionType.REFERENTIEL,
-        actions_enfant: [
+        actionType: ActionType.REFERENTIEL,
+        actionsEnfant: [
           {
-            action_id: 'eci_1',
+            actionId: 'eci_1',
             points: 30,
             pourcentage: 30,
             level: 1,
-            action_type: ActionType.ACTION,
-            actions_enfant: [
+            actionType: ActionType.ACTION,
+            actionsEnfant: [
               {
-                action_id: 'eci_1.0',
+                actionId: 'eci_1.0',
                 points: 0,
                 pourcentage: 0,
                 level: 2,
-                action_type: ActionType.SOUS_ACTION,
-                actions_enfant: [],
+                actionType: ActionType.SOUS_ACTION,
+                actionsEnfant: [],
+                tags: [],
               },
               {
-                action_id: 'eci_1.1',
+                actionId: 'eci_1.1',
                 points: 15,
                 pourcentage: 50,
                 level: 2,
-                action_type: ActionType.SOUS_ACTION,
-                actions_enfant: [],
+                actionType: ActionType.SOUS_ACTION,
+                actionsEnfant: [],
+                tags: [],
               },
               {
-                action_id: 'eci_1.2',
+                actionId: 'eci_1.2',
                 points: 15,
                 pourcentage: 50,
                 level: 2,
-                action_type: ActionType.SOUS_ACTION,
-                actions_enfant: [],
+                actionType: ActionType.SOUS_ACTION,
+                actionsEnfant: [],
+                tags: [],
               },
             ],
+            tags: [],
           },
           {
-            action_id: 'eci_2',
+            actionId: 'eci_2',
             points: 70,
             pourcentage: 70,
             level: 1,
-            action_type: ActionType.ACTION,
-            actions_enfant: [
+            actionType: ActionType.ACTION,
+            actionsEnfant: [
               {
-                action_id: 'eci_2.1',
+                actionId: 'eci_2.1',
                 points: 14,
                 pourcentage: 20,
                 level: 2,
-                action_type: ActionType.SOUS_ACTION,
-                actions_enfant: [],
+                actionType: ActionType.SOUS_ACTION,
+                actionsEnfant: [],
+                tags: [],
               },
               {
-                action_id: 'eci_2.2',
+                actionId: 'eci_2.2',
                 points: 21,
                 pourcentage: 30,
                 level: 2,
-                action_type: ActionType.SOUS_ACTION,
-                actions_enfant: [],
+                actionType: ActionType.SOUS_ACTION,
+                actionsEnfant: [],
+                tags: [],
               },
               {
-                action_id: 'eci_2.3',
+                actionId: 'eci_2.3',
                 points: 35,
                 pourcentage: 50,
                 level: 2,
-                action_type: ActionType.SOUS_ACTION,
-                actions_enfant: [],
+                actionType: ActionType.SOUS_ACTION,
+                actionsEnfant: [],
+                tags: [],
               },
             ],
+            tags: [],
           },
         ],
-      });
+        tags: [],
+      };
+
+      expect(referentielTree).toEqual(expectedActionEnfant);
     });
   });
 
@@ -268,6 +284,22 @@ describe('ReferentielsService', () => {
 
   describe('parseActionsOrigine', () => {
     it('Standard test without ponderation', async () => {
+      const expectedCreateActionOrigines: CreateActionOrigineType[] = [
+        {
+          actionId: 'te_3.5.4',
+          origineActionId: 'eci_3.5.3.6',
+          origineReferentielId: 'eci',
+          ponderation: 1,
+          referentielId: 'te',
+        },
+        {
+          actionId: 'te_3.5.4',
+          origineActionId: 'eci_3.5.4.2',
+          origineReferentielId: 'eci',
+          ponderation: 1,
+          referentielId: 'te',
+        },
+      ];
       expect(
         referentielsService.parseActionsOrigine(
           ReferentielType.TE,
@@ -276,25 +308,34 @@ describe('ReferentielsService', () => {
 Eci_3.5.4.2`,
           refentielDefinitions
         )
-      ).toEqual([
-        {
-          action_id: 'te_3.5.4',
-          origine_action_id: 'eci_3.5.3.6',
-          origine_referentiel_id: 'eci',
-          ponderation: 1,
-          referentiel_id: 'te',
-        },
-        {
-          action_id: 'te_3.5.4',
-          origine_action_id: 'eci_3.5.4.2',
-          origine_referentiel_id: 'eci',
-          ponderation: 1,
-          referentiel_id: 'te',
-        },
-      ]);
+      ).toEqual(expectedCreateActionOrigines);
     });
 
     it('Standard test with ponderation', async () => {
+      const expectedCreateActionOrigines: CreateActionOrigineType[] = [
+        {
+          actionId: 'te_3.5.4',
+          origineActionId: 'cae_5.1.4.4.1',
+          origineReferentielId: 'cae',
+          ponderation: 1,
+          referentielId: 'te',
+        },
+        {
+          actionId: 'te_3.5.4',
+          origineActionId: 'cae_5.1.4.4.2',
+          origineReferentielId: 'cae',
+          ponderation: 0.5,
+          referentielId: 'te',
+        },
+        {
+          actionId: 'te_3.5.4',
+          origineActionId: 'eci_1.3.2.4',
+          origineReferentielId: 'eci',
+          ponderation: 1,
+          referentielId: 'te',
+        },
+      ];
+
       expect(
         referentielsService.parseActionsOrigine(
           ReferentielType.TE,
@@ -304,29 +345,7 @@ Cae_5.1.4.4.2 (0,5)
 Eci_1.3.2.4 (1)`,
           refentielDefinitions
         )
-      ).toEqual([
-        {
-          action_id: 'te_3.5.4',
-          origine_action_id: 'cae_5.1.4.4.1',
-          origine_referentiel_id: 'cae',
-          ponderation: 1,
-          referentiel_id: 'te',
-        },
-        {
-          action_id: 'te_3.5.4',
-          origine_action_id: 'cae_5.1.4.4.2',
-          origine_referentiel_id: 'cae',
-          ponderation: 0.5,
-          referentiel_id: 'te',
-        },
-        {
-          action_id: 'te_3.5.4',
-          origine_action_id: 'eci_1.3.2.4',
-          origine_referentiel_id: 'eci',
-          ponderation: 1,
-          referentiel_id: 'te',
-        },
-      ]);
+      ).toEqual(expectedCreateActionOrigines);
     });
 
     it('Invalid action id', async () => {

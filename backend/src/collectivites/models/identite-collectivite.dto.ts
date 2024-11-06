@@ -2,9 +2,10 @@
 import {
   pgEnum,
 } from 'drizzle-orm/pg-core';
-import { CollectiviteType } from './collectivite.table';
-import { CommuneType } from './commune.table';
-import { EpciType } from './epci.table';
+import { collectiviteSchema, CollectiviteType } from './collectivite.table';
+import { communeSchema, CommuneType } from './commune.table';
+import { epciSchema, EpciType } from './epci.table';
+import { z } from 'zod';
 
 
 export enum CollectiviteTypeEnum {
@@ -15,18 +16,6 @@ export enum CollectiviteTypeEnum {
 export enum CollectiviteSousTypeEnum {
   SYNDICAT = 'syndicat',
 }
-
-export type CollectiviteAvecType = Omit<
-  CollectiviteType &
-    Partial<CommuneType> &
-    Partial<EpciType> & {
-      type: CollectiviteTypeEnum;
-      soustype: CollectiviteSousTypeEnum | null;
-      population_tags: CollectivitePopulationTypeEnum[];
-      drom: boolean;
-    },
-  'collectivite_id'
->;
 
 export enum CollectivitePopulationTypeEnum {
   MOINS_DE_5000 = 'moins_de_5000',
@@ -56,12 +45,29 @@ export const typeLocalisationEnum = pgEnum('type_localisation', [
   CollectiviteLocalisationTypeEnum.METROPOLE,
 ]);
 
-export interface IdentiteCollectivite {
-  type: CollectiviteTypeEnum;
-  soustype: CollectiviteSousTypeEnum | null;
-  population_tags: CollectivitePopulationTypeEnum[];
-  drom: boolean;
-}
+export const identiteCollectiviteSchema = z.object({
+  type: z.nativeEnum(CollectiviteTypeEnum),
+  soustype: z.nativeEnum(CollectiviteSousTypeEnum).nullable(),
+  population_tags: z.array(z.nativeEnum(CollectivitePopulationTypeEnum)),
+  drom: z.boolean(),
+});
+
+export type IdentiteCollectivite = z.infer<typeof identiteCollectiviteSchema>;
+
+
+export const collectiviteAvecTypeSchema = collectiviteSchema
+.merge(communeSchema.partial())
+.merge(epciSchema.partial())
+.merge(identiteCollectiviteSchema)
+.omit({
+  collectiviteId: true,
+});
+
+export type CollectiviteAvecType = z.infer<typeof collectiviteAvecTypeSchema>;
+
+
+
+
 
 
 

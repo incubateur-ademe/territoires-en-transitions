@@ -1,3 +1,5 @@
+import { pgEnum } from 'drizzle-orm/pg-core';
+
 export enum ReferentielType {
   ECI = 'eci',
   CAE = 'cae',
@@ -11,3 +13,6 @@ export const referentielList = [
   ReferentielType.TE,
   ReferentielType.TE_TEST,
 ] as const;
+
+// Todo: to be removed
+export const referentielEnum = pgEnum('referentiel', referentielList);

@@ -19,6 +19,7 @@ import { caeReferentiel } from '../models/samples/cae-referentiel';
 import { deeperReferentiel } from '../models/samples/deeper-referentiel';
 import { eciReferentiel } from '../models/samples/eci-referentiel';
 import { simpleReferentiel } from '../models/samples/simple-referentiel';
+import LabellisationService from './labellisation.service';
 import ReferentielsScoringService from './referentiels-scoring.service';
 import ReferentielsService from './referentiels.service';
 
@@ -39,7 +40,8 @@ describe('ReferentielsScoringService', () => {
           token === DatabaseService ||
           token === AuthService ||
           token === ReferentielsService ||
-          token === CollectivitesService
+          token === CollectivitesService ||
+          token === LabellisationService
         ) {
           return {};
         }
@@ -52,7 +54,6 @@ describe('ReferentielsScoringService', () => {
 
   describe('updateFromOrigineActions', () => {
     it('Standard test without change in total points in new referentiel', async () => {
-      // 3 pts + 4 pts * 0.5 = 5 pts in total
       const referectielActionWithScore: ReferentielActionWithScoreType = {
         actionId: 'te_1.3.1.3',
         nom: 'Mettre la politique d’urbanisme en cohérence avec les objectifs de transition écologique',
@@ -74,6 +75,11 @@ describe('ReferentielsScoringService', () => {
               pointPasFait: 0,
               pointNonRenseigne: 1,
               pointProgramme: 0,
+              faitTachesAvancement: 2,
+              programmeTachesAvancement: 0,
+              pasFaitTachesAvancement: 0,
+              pasConcerneTachesAvancement: 0,
+              totalTachesCount: 3,
             },
           },
           {
@@ -88,6 +94,11 @@ describe('ReferentielsScoringService', () => {
               pointPasFait: 0,
               pointNonRenseigne: 1,
               pointProgramme: 0,
+              faitTachesAvancement: 0.75,
+              programmeTachesAvancement: 0,
+              pasFaitTachesAvancement: 0,
+              pasConcerneTachesAvancement: 0,
+              totalTachesCount: 1,
             },
           },
         ],
@@ -145,62 +156,50 @@ describe('ReferentielsScoringService', () => {
         nom: 'Mettre la politique d’urbanisme en cohérence avec les objectifs de transition écologique',
         points: 4,
         pourcentage: 21.760391198044008,
-        actions_enfant: [],
+        actionsEnfant: [],
         level: 4,
-        action_type: ActionType.SOUS_ACTION,
-        actions_origine: [
+        actionType: ActionType.SOUS_ACTION,
+        actionsOrigine: [
           {
-            referentiel_id: 'cae',
+            referentielId: 'cae',
             actionId: 'cae_1.3.1.3',
             ponderation: 1,
             nom: 'Mettre la politique d’urbanisme et les objectifs de développement en cohérence avec la politique climat-air-énergie',
             score: {
-              actionId: 'cae_1.3.1.3',
               pointReferentiel: 3,
               pointPotentiel: 3,
-              pointPotentielPerso: null,
               pointFait: 2,
               pointPasFait: 0,
               pointNonRenseigne: 1,
               pointProgramme: 0,
-              concerne: true,
-              completedTachesCount: 0,
-              totalTachesCount: 6,
-              faitTachesAvancement: 0,
+              faitTachesAvancement: 2,
               programmeTachesAvancement: 0,
               pasFaitTachesAvancement: 0,
               pasConcerneTachesAvancement: 0,
-              desactive: false,
-              renseigne: false,
+              totalTachesCount: 3,
             },
           },
           {
-            referentiel_id: 'cae',
+            referentielId: 'cae',
             actionId: 'cae_6.3.1.3.2',
             ponderation: 0.5,
             nom: "Décliner des orientations stratégiques fortes en matière de localisation et de qualité environnementale des zones d'activités dans les documents d’urbanisme",
             score: {
-              actionId: 'cae_6.3.1.3.2',
               pointReferentiel: 4,
               pointPotentiel: 4,
-              pointPotentielPerso: null,
               pointFait: 3,
               pointPasFait: 0,
               pointNonRenseigne: 1,
               pointProgramme: 0,
-              concerne: true,
-              completedTachesCount: 0,
-              totalTachesCount: 6,
-              faitTachesAvancement: 0,
+              faitTachesAvancement: 0.75,
               programmeTachesAvancement: 0,
               pasFaitTachesAvancement: 0,
               pasConcerneTachesAvancement: 0,
-              desactive: false,
-              renseigne: false,
+              totalTachesCount: 1,
             },
           },
         ],
-        referentiels_origine: [],
+        referentielsOrigine: [],
         score: {
           actionId: 'te_1.3.1.3',
           pointReferentiel: 4,
@@ -220,6 +219,7 @@ describe('ReferentielsScoringService', () => {
           desactive: false,
           renseigne: true,
         },
+        scoresTag: {},
       };
       referentielsScoringService.updateFromOrigineActions(
         referectielActionWithScore
@@ -269,6 +269,7 @@ describe('ReferentielsScoringService', () => {
       expect(scoreLength).toEqual(8);
 
       expect(scoresMap['eci_1.1']).toEqual({
+        aStatut: true,
         actionId: 'eci_1.1',
         pointFait: 10,
         pointProgramme: 0.0,
@@ -371,6 +372,7 @@ describe('ReferentielsScoringService', () => {
       expect(scoreLength).toEqual(8);
 
       expect(scoresMap['eci_1.1']).toEqual({
+        aStatut: true,
         actionId: 'eci_1.1',
         pointFait: 10,
         pointProgramme: 0.0,
@@ -473,6 +475,7 @@ describe('ReferentielsScoringService', () => {
       expect(scoreLength).toEqual(8);
 
       expect(scoresMap['eci_1.1']).toEqual({
+        aStatut: true,
         actionId: 'eci_1.1',
         pointFait: 0,
         pointProgramme: 10,
@@ -575,6 +578,7 @@ describe('ReferentielsScoringService', () => {
       expect(scoreLength).toEqual(8);
 
       expect(scoresMap['eci_1.1']).toEqual({
+        aStatut: true,
         actionId: 'eci_1.1',
         pointFait: 0,
         pointProgramme: 0,
@@ -677,6 +681,7 @@ describe('ReferentielsScoringService', () => {
       expect(scoreLength).toEqual(8);
 
       expect(scoresMap['eci_1.1']).toEqual({
+        aStatut: true,
         actionId: 'eci_1.1',
         pointFait: 2,
         pointProgramme: 7,
@@ -1076,6 +1081,7 @@ describe('ReferentielsScoringService', () => {
 
       // Points de eci_2.1 sont redistribués sur eci_2.2
       expect(scoresMap['eci_2.2']).toEqual({
+        aStatut: true,
         actionId: 'eci_2.2',
         pointFait: 70,
         pointProgramme: 0,
@@ -1401,6 +1407,7 @@ describe('ReferentielsScoringService', () => {
 
       // Actions eci_1.1 and eci_1.2 should also have been reduced with a factor of 0.2
       expect(scoresMap['eci_1.1']).toEqual({
+        aStatut: true,
         actionId: 'eci_1.1',
         pointFait: 2.0,
         pointProgramme: 0.0,
@@ -1507,6 +1514,7 @@ describe('ReferentielsScoringService', () => {
 
       // Actions eci_1.1 and eci_1.2 should also have been reduced with a factor of 1.2
       expect(scoresMap['eci_1.1']).toEqual({
+        aStatut: true,
         actionId: 'eci_1.1',
         pointFait: 12.0,
         pointProgramme: 0.0,

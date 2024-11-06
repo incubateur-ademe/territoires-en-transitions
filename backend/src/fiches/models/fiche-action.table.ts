@@ -13,7 +13,7 @@ import {
 } from 'drizzle-orm/pg-core';
 import { collectiviteTable } from '../../collectivites/models/collectivite.table';
 import { z } from 'zod';
-import { tempsDeMiseEnOeuvreTable } from 'backend/src/taxonomie/models/temps-de-mise-en-oeuvre.table';
+import { tempsDeMiseEnOeuvreTable } from '../../taxonomie/models/temps-de-mise-en-oeuvre.table';
 
 export const ficheActionPiliersEciEnum = pgEnum('fiche_action_piliers_eci', [
   'Approvisionnement durable',
