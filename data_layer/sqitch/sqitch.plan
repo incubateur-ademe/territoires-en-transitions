@@ -743,3 +743,4 @@ labellisation/preuve_v2 [labellisation/preuve_v2@v4.5.0] 2024-08-13T15:07:27Z ,,
 plan_action/fiches [plan_action/fiches@v4.18.0] 2024-11-04T16:05:14Z Frederic Arnoux <frederic.arnoux@beta.gouv.fr> # Refactor enum fiche_action_cibles
 @v4.19.0 2024-11-05T15:59:33Z Frederic Arnoux <frederic.arnoux@beta.gouv.fr> # Tag en @v4.19.0
 
+plan_action/historique [plan_action/historique@v4.19.0] 2024-11-05T18:41:01Z Marc Rutkowski <marc@attractive-media.fr> # Met à jour la date de modification d'une fiche action lors de l'ajout/suppression d'un document annexe
