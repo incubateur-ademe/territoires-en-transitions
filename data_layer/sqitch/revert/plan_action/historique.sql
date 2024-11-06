@@ -1,34 +1,27 @@
--- Revert tet:plan_action/historique from pg
+-- Deploy tet:plan_action/historique to pg
 
 BEGIN;
 
-create or replace function delete_fiche_action() returns trigger
-    language plpgsql
+-- supprime les triggers et la fonction associée
+drop trigger save_history on fiche_action_pilote;
+drop trigger update_fa_modification_date on annexe;
+drop function historique.set_fiche_action_modified_at;
+
+-- recrée la fonction
+create or replace function historique.save_fiche_action_pilote() returns trigger
 as
 $$
-declare
 begin
-    delete from fiche_action_thematique where fiche_id = old.id;
-    delete from fiche_action_sous_thematique where fiche_id = old.id;
-    delete from fiche_action_partenaire_tag where fiche_id = old.id;
-    delete from fiche_action_structure_tag where fiche_id = old.id;
-    delete from fiche_action_pilote where fiche_id = old.id;
-    delete from fiche_action_referent where fiche_id = old.id;
-    delete from fiche_action_indicateur where fiche_id = old.id;
-    delete from fiche_action_action where fiche_id = old.id;
-    delete from fiche_action_axe where fiche_id = old.id;
-    delete from fiche_action_financeur_tag where fiche_id = old.id;
-    delete from fiche_action_service_tag where fiche_id = old.id;
-    delete from fiche_action_lien where fiche_une = old.id or fiche_deux = old.id;
-    return old;
-end;
-$$;
+    update fiche_action set modified_at = now() where id = new.fiche_id or id = old.fiche_id;
+    return coalesce(new, old);
+end ;
+$$ language plpgsql security definer;
 
-drop trigger save_history on fiche_action_pilote;
-drop trigger save_history on fiche_action;
-drop function historique.save_fiche_action_pilote();
-drop function historique.save_fiche_action();
-drop table historique.fiche_action_pilote;
-drop table historique.fiche_action;
+-- et le trigger
+create trigger save_history
+    after insert or delete
+    on fiche_action_pilote
+    for each row
+execute procedure historique.save_fiche_action_pilote();
 
 COMMIT;
