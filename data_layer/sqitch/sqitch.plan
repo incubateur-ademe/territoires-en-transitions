@@ -745,3 +745,4 @@ plan_action/fiches [plan_action/fiches@v4.18.0] 2024-11-04T16:05:14Z Frederic Ar
 
 plan_action/historique [plan_action/historique@v4.19.0] 2024-11-05T18:41:01Z Marc Rutkowski <marc@attractive-media.fr> # Met à jour la date de modification d'une fiche action lors de l'ajout/suppression d'un document annexe
 labellisation/preuve_v2 [labellisation/preuve_v2@v4.19.0] 2024-11-06T14:36:53Z Marc Rutkowski <marc@attractive-media.fr> # Optimise la vue sur les docs annexes aux fiches action
+@v4.20.0 2024-11-06T15:23:31Z Marc Rutkowski <marc@attractive-media.fr> # Tag en @v4.20.0
