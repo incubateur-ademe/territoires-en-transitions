@@ -1,10 +1,10 @@
-import {Breadcrumbs} from '@tet/ui';
+import { Breadcrumbs } from '@tet/ui';
+import { useRouter } from 'next/navigation';
+import { TAxeRow } from 'types/alias';
 import {
   generateFilArianeLinks,
   usePlanActionChemin,
 } from '../../PlanAction/data/usePlanActionChemin';
-import {TAxeRow} from 'types/alias';
-import {useHistory} from 'react-router-dom';
 
 type CheminFicheProps = {
   titre: string;
@@ -12,9 +12,9 @@ type CheminFicheProps = {
   collectiviteId: number;
 };
 
-const CheminFiche = ({titre, axeId, collectiviteId}: CheminFicheProps) => {
-  const history = useHistory();
-  const {data} = usePlanActionChemin(axeId);
+const CheminFiche = ({ titre, axeId, collectiviteId }: CheminFicheProps) => {
+  const router = useRouter();
+  const { data } = usePlanActionChemin(axeId);
 
   return (
     <Breadcrumbs
@@ -22,9 +22,9 @@ const CheminFiche = ({titre, axeId, collectiviteId}: CheminFicheProps) => {
         collectiviteId,
         chemin: (data?.chemin ?? []) as TAxeRow[],
         titreFiche: titre,
-      }).map(item => ({
+      }).map((item) => ({
         label: item.label,
-        onClick: item.href ? () => history.push(item.href!) : undefined,
+        onClick: item.href ? () => router.push(item.href!) : undefined,
       }))}
     />
   );

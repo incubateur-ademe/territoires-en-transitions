@@ -1,11 +1,12 @@
-import {useState} from 'react';
-import {Link} from 'react-router-dom';
 import classNames from 'classnames';
-import {HeaderProps, HeaderPropsWithModalState} from './types';
-import {MenuPrincipal} from './MenuPrincipal';
-import {AccesRapide} from './AccesRapide';
-import {MaintenanceNotice} from './MaintenanceNotice';
-import ademeSrc from 'app/static/img/ademe.svg';
+import Image from 'next/image';
+import Link from 'next/link';
+import { useState } from 'react';
+import ademeSrc from '../../static/img/ademe.svg';
+import { AccesRapide } from './AccesRapide';
+import { MaintenanceNotice } from './MaintenanceNotice';
+import { MenuPrincipal } from './MenuPrincipal';
+import { HeaderProps, HeaderPropsWithModalState } from './types';
 
 /** Valeur de la hauteur sur header de l'application */
 export const appHeaderHeight = 183;
@@ -14,7 +15,7 @@ export const appHeaderHeight = 183;
  * Affiche l'en-tête
  */
 export const Header = (props: HeaderProps) => {
-  const {maintenance} = props;
+  const { maintenance } = props;
   // état ouverture menu mobile
   const [modalOpened, setModalOpened] = useState(false);
   // id du menu ouvert
@@ -50,7 +51,7 @@ const Body = (props: HeaderPropsWithModalState) => {
           <div className="fr-header__brand fr-enlarge-link">
             <Brand {...props} />
             <div className="fr-header__service">
-              <Link to="/" title="Accueil - Territoires en Transitions">
+              <Link href="/" title="Accueil - Territoires en Transitions">
                 <p className="fr-header__service-title m-0">
                   Territoires en Transitions
                 </p>
@@ -74,7 +75,7 @@ const Body = (props: HeaderPropsWithModalState) => {
 /** Affiche les liens de la navigation principale. Les liens sont présentés dans
  * une modale sur mobile, accompagnés des liens "accès rapides". */
 const Menu = (props: HeaderPropsWithModalState) => {
-  const {modalOpened, setModalOpened} = props;
+  const { modalOpened, setModalOpened } = props;
 
   return (
     <div
@@ -103,7 +104,7 @@ const Menu = (props: HeaderPropsWithModalState) => {
 
 /** Affiche le bloc "marque" */
 const Brand = (props: HeaderPropsWithModalState) => {
-  const {modalOpened, setModalOpened} = props;
+  const { modalOpened, setModalOpened } = props;
 
   return (
     <div className="fr-header__brand-top">
@@ -116,7 +117,7 @@ const Brand = (props: HeaderPropsWithModalState) => {
       </div>
       <div className="fr-header__operator">
         <div className="fr-grid-row">
-          <img src={ademeSrc} alt="ADEME" width="70" height="80" />
+          <Image src={ademeSrc} alt="ADEME" width="70" height="80" />
         </div>
       </div>
       <div className="fr-header__navbar">

@@ -1,24 +1,4 @@
 /**
- * Extrait le domaine racine
- * - transforme `app.territoiresentransitions.fr` en `territoiresentransitions.fr`
- * - garde `territoiresentransitions.fr` inchangé
- * - garde `localhost` inchangé
- */
-export const getRootDomain = (hostname: string) => {
-  // Si le hostname est une IP, on le renvoie tel quel
-  if (/^\d{1,3}\.\d{1,3}\.\d{1,3}\.\d{1,3}$/.test(hostname)) {
-    return hostname;
-  }
-
-  const parts = hostname.split('.');
-  if (parts.length < 3) {
-    return hostname;
-  }
-
-  return parts.slice(-2).join('.');
-};
-
-/**
  * URL DES MODULES SUIVANT L'ENVIRONNEMENT
  *
  * DEV
@@ -55,24 +35,33 @@ export const getBaseUrl = (
   return `https://${subdomain}.${domain}`;
 };
 
-/** Donne l'URL du module d'authentification */
-const DEV_AUTH_PORT = 3003; // port pour le mode dev
-export const getAuthBaseUrl = (hostname: string) =>
-  getBaseUrl(hostname, 'auth', DEV_AUTH_PORT);
+/**
+ * Extrait le domaine racine
+ * - transforme `app.territoiresentransitions.fr` en `territoiresentransitions.fr`
+ * - garde `territoiresentransitions.fr` inchangé
+ * - garde `localhost` inchangé
+ */
+export const getRootDomain = (hostname: string) => {
+  // Si le hostname est une IP, on le renvoie tel quel
+  if (/^\d{1,3}\.\d{1,3}\.\d{1,3}\.\d{1,3}$/.test(hostname)) {
+    return hostname;
+  }
 
-/** Donne l'URL de l'app pour rediriger après la connexion depuis le site */
-const DEV_APP_PORT = 3000;
-export const getAppBaseUrl = (hostname: string) =>
-  getBaseUrl(hostname, 'app', DEV_APP_PORT);
+  const parts = hostname.split('.');
+  if (parts.length < 3) {
+    return hostname;
+  }
+
+  return parts.slice(-2).join('.');
+};
 
 /**
  * Donne les URLs des pages d'authentification
- * @param hostname URL de la page courante pour pouvoir déterminer les chemins.
  * @param redirect_to URL de la page vers laquelle rediriger après l'authentification.
  * @returns
  */
-export const getAuthPaths = (hostname: string, redirect_to: string) => {
-  const base = getAuthBaseUrl(hostname);
+export const getAuthPaths = (redirect_to: string) => {
+  const base = process.env.NEXT_PUBLIC_AUTH_URL;
   const params = new URLSearchParams({ redirect_to });
   return {
     base,
@@ -82,27 +71,19 @@ export const getAuthPaths = (hostname: string, redirect_to: string) => {
   };
 };
 
-/** Donne l'url de la page "rejoindre une collectivité" */
-export const getRejoindreCollectivitePath = (
-  hostname: string,
-  redirect_to: string
-) => {
-  const params = new URLSearchParams({ redirect_to });
-  return `${getAuthBaseUrl(hostname)}/rejoindre-une-collectivite?${params}`;
-};
-
 /** Donne l'url d'une page collectivité */
-export const getCollectivitePath = (
-  hostname: string,
-  collectivite_id: number
-) => `${getAppBaseUrl(hostname)}/collectivite/${collectivite_id}/accueil`;
+export const getCollectivitePath = (collectivite_id: number) =>
+  `${process.env.NEXT_PUBLIC_APP_URL}/collectivite/${collectivite_id}/accueil`;
 
 /** Donne l'url d'un plan d'action */
 export const getCollectivitePlanPath = (
-  hostname: string,
   collectivite_id: number,
   plan_id: number
 ) =>
-  `${getAppBaseUrl(
-    hostname
-  )}/collectivite/${collectivite_id}/plans/plan/${plan_id}`;
+  `${process.env.NEXT_PUBLIC_APP_URL}/collectivite/${collectivite_id}/plans/plan/${plan_id}`;
+
+/** Donne l'url de la page "rejoindre une collectivité" */
+export const getRejoindreCollectivitePath = (redirectTo: string) => {
+  const params = new URLSearchParams({ redirect_to: redirectTo });
+  return `${process.env.NEXT_PUBLIC_AUTH_URL}/rejoindre-une-collectivite?${params}`;
+};

@@ -299,6 +299,9 @@ node-alpine-with-all-deps:
   # Copy shared libraries
   COPY $API_DIR $API_DIR
   COPY $UI_DIR $UI_DIR
+  # Temporarily consider the Backend as a shared library.
+  # The app build needs it to resolve the import of the trpc AppRouter.
+  COPY $BACKEND_DIR $BACKEND_DIR
 
 
 # construit l'image de base pour les images utilisant node
@@ -346,8 +349,20 @@ front-deps-builder:
     LOCALLY
     DO +BUILD_IF_NO_IMG --IMG_NAME=front-deps --IMG_TAG=$FRONT_DEPS_TAG --BUILD_TARGET=front-deps
 
-backend-build:
-  BUILD --pass-args ./backend+build
+
+# APP ENTRYPOINTS
+# ---------------
+
+app-docker:
+  BUILD --pass-args ./app.territoiresentransitions.react+docker
+
+app-deploy:
+  ARG --required KOYEB_API_KEY
+  BUILD --pass-args ./app.territoiresentransitions.react+deploy
+
+
+# BACKEND ENTRYPOINTS
+# -------------------
 
 backend-docker:
   BUILD --pass-args ./backend+docker
@@ -359,59 +374,66 @@ backend-deploy:
   ARG --required TRAJECTOIRE_SNBC_RESULT_FOLDER_ID
   BUILD --pass-args ./backend+deploy
 
-app-build: ## construit l'image de l'app
-    ARG PLATFORM
-    ARG --required ANON_KEY
-    ARG --required API_URL
-    ARG CRISP_WEBSITE_ID
-    ARG SENTRY_DSN
-    ARG POSTHOG_HOST
-    ARG POSTHOG_KEY
-    ARG BACKEND_URL
-    ARG PANIER_URL
-    FROM +front-deps
-    ENV NX_PUBLIC_SUPABASE_URL=$API_URL
-    ENV NX_PUBLIC_SUPABASE_KEY=$ANON_KEY
-    ENV NX_PUBLIC_CRISP_WEBSITE_ID=$CRISP_WEBSITE_ID
-    ENV NX_PUBLIC_SENTRY_DSN=$SENTRY_DSN
-    ENV NX_PUBLIC_POSTHOG_HOST=$POSTHOG_HOST
-    ENV NX_PUBLIC_POSTHOG_KEY=$POSTHOG_KEY
-    ENV NX_PUBLIC_BACKEND_URL=$BACKEND_URL
-    ENV NX_PUBLIC_PANIER_URL=$PANIER_URL
-    LABEL org.opencontainers.image.description="Front-end $ENV_NAME, build depuis $GIT_BRANCH. API: $API_URL"
-    # copie les sources des modules à construire
-    COPY $APP_DIR/. $APP_DIR/
-    COPY $UI_DIR/. $UI_DIR
-    COPY $API_DIR/. $API_DIR
-    COPY $BACKEND_DIR/. $BACKEND_DIR
-    RUN pnpm run build:app
-    EXPOSE 3000
-    WORKDIR $APP_DIR
-    CMD ["dumb-init", "node", "server.js"]
-    SAVE IMAGE --cache-from=$APP_IMG_NAME --push $APP_IMG_NAME
+
+# PANIER ENTRYPOINTS
+# ------------------
+
+panier-docker:
+  BUILD --pass-args ./packages/panier+docker
+
+panier-deploy:
+  ARG --required KOYEB_API_KEY
+  BUILD --pass-args ./packages/panier+deploy
+
+# lance l'image du panier en local
+panier-run:
+    ARG network=supabase_network_tet
+    LOCALLY
+    RUN docker run -d --rm \
+        --name panier_tet \
+        --network $network \
+        --publish 3002:3000 \
+        $PANIER_IMG_NAME
+
+
+
+# SITE ENTRYPOINTS
+# ----------------
+
+site-docker:
+  BUILD --pass-args ./packages/site+docker
+
+site-deploy:
+  ARG --required KOYEB_API_KEY
+  BUILD --pass-args ./packages/site+deploy
+
+site-run: ## construit et lance l'image du site en local
+    ARG network=supabase_network_tet
+    LOCALLY
+    RUN docker run -d --rm \
+        --name site_tet \
+        --network $network \
+        --publish 3001:80 \
+        $SITE_IMG_NAME
 
 app-run: ## construit et lance l'image de l'app en local
     ARG --required ANON_KEY
     ARG --required API_URL
     ARG network=supabase_network_tet
-    ARG STATIC_DIR=/app/dist/apps/app-front
     LOCALLY
-    DO +BUILD_IF_NO_IMG --IMG_NAME=front-deps --IMG_TAG=$FRONT_DEPS_TAG --BUILD_TARGET=front-deps
-    DO +BUILD_IF_NO_IMG --IMG_NAME=app --IMG_TAG=$APP_TAG --BUILD_TARGET=app-build
+    # DO +BUILD_IF_NO_IMG --IMG_NAME=front-deps --IMG_TAG=$FRONT_DEPS_TAG --BUILD_TARGET=front-deps
+    DO +BUILD_IF_NO_IMG --IMG_NAME=app --IMG_TAG=$APP_TAG --BUILD_TARGET=app-docker
     ARG kong_url=http://supabase_kong_tet:8000
     RUN docker run -d --rm \
         --name app_tet \
         --network $network \
         --publish 3000:3000 \
-        --env ZIP_ORIGIN_OVERRIDE=$kong_url \
-        --env STATIC_DIR=$STATIC_DIR \
         $APP_IMG_NAME
 
 app-test-build: ## construit une image pour exécuter les tests unitaires de l'app
     FROM +front-deps
-    ENV NX_PUBLIC_SUPABASE_URL
-    ENV NX_PUBLIC_SUPABASE_KEY
-    ENV ZIP_ORIGIN_OVERRIDE
+    ENV NEXT_PUBLIC_SUPABASE_URL
+    ENV NEXT_PUBLIC_SUPABASE_KEY
     # copie les sources du module à tester
     COPY $APP_DIR $APP_DIR
     COPY $API_DIR $API_DIR
@@ -428,8 +450,8 @@ app-test: ## lance les tests unitaires de l'app
     RUN docker run --rm \
         --name app-test_tet \
         --env CI=true \ # désactive le mode watch quand on lance la commande en local
-        --env NX_PUBLIC_SUPABASE_URL='http://fake' \
-        --env NX_PUBLIC_SUPABASE_KEY='fake' \
+        --env NEXT_PUBLIC_SUPABASE_URL='http://fake' \
+        --env NEXT_PUBLIC_SUPABASE_KEY='fake' \
         app-test:latest
 
 package-api-test-build: ## construit une image pour exécuter les tests d'intégration de l'api
@@ -458,37 +480,6 @@ package-api-test: ## lance les tests d'intégration de l'api
         --env SUPABASE_SERVICE_ROLE_KEY=$SERVICE_ROLE_KEY \
         package-api-test:latest
 
-panier-docker: ## construit l'image du panier
-  BUILD --pass-args ./packages/panier+docker
-
-panier-deploy:
-  ARG --required KOYEB_API_KEY
-  BUILD --pass-args ./packages/panier+deploy
-
-panier-run: ## lance l'image du panier en local
-    ARG network=supabase_network_tet
-    LOCALLY
-    RUN docker run -d --rm \
-        --name panier_tet \
-        --network $network \
-        --publish 3002:3000 \
-        $PANIER_IMG_NAME
-
-site-docker:
-  BUILD --pass-args ./packages/site+docker
-
-site-deploy:
-  ARG --required KOYEB_API_KEY
-  BUILD --pass-args ./packages/site+deploy
-
-site-run: ## construit et lance l'image du site en local
-    ARG network=supabase_network_tet
-    LOCALLY
-    RUN docker run -d --rm \
-        --name site_tet \
-        --network $network \
-        --publish 3001:80 \
-        $SITE_IMG_NAME
 
 auth-build: ## construit l'image du module d'authentification
     ARG PLATFORM
@@ -882,13 +873,11 @@ auth-deploy:
     FROM +koyeb
     RUN ./koyeb services update $ENV_NAME-auth/front --docker $AUTH_IMG_NAME
 
-app-deploy: ## Déploie le front dans une app Koyeb existante
-    ARG --required KOYEB_API_KEY
-    FROM +koyeb
-    RUN ./koyeb services update $ENV_NAME-app/front --docker $APP_IMG_NAME
-
 app-deploy-test: ## Déploie une app de test et crée une app Koyeb si nécessaire
     ARG --required KOYEB_API_KEY
+    ARG --required AUTH_URL
+    ARG --required BACKEND_URL
+    ARG --required PANIER_URL
     LOCALLY
     # Limite des noms dans Koyeb : 23 caractères.
     # Comme on prefixe avec `test-app-`, on garde 14 caractères max dans le nom de la branche.
@@ -896,17 +885,22 @@ app-deploy-test: ## Déploie une app de test et crée une app Koyeb si nécessai
     # ^[a-z0-9]+([.-][a-z0-9]+)*$ and from 3 to 23 chars
     # (info récupérée auprès du service support)
     ARG name=$(git rev-parse --abbrev-ref HEAD | sed 's/[^a-zA-Z1-9]//g' | head -c 14 | tr '[:upper:]' '[:lower:]')
-    FROM +koyeb
+    FROM +koyeb --KOYEB_API_KEY=$KOYEB_API_KEY
     IF [ "./koyeb apps list | grep test-app-$name" ]
         RUN echo "Test app already deployed on Koyeb at test-app-$name, updating..."
-        RUN /koyeb services update test-app-$name/test-app-$name --docker $APP_IMG_NAME
+        RUN /koyeb services update test-app-$name/test-app-$name --docker $APP_IMG_NAME \
+          --env NEXT_PUBLIC_AUTH_URL=$AUTH_URL \
+          --env NEXT_PUBLIC_BACKEND_URL=$BACKEND_URL \
+          --env NEXT_PUBLIC_PANIER_URL=$PANIER_URL
     ELSE
         RUN echo "Test app not found on Koyeb at test-app-$name, creating with $APP_IMG_NAME..."
         RUN /koyeb apps init "test-app-$name" \
-         --docker "$APP_IMG_NAME" --docker-private-registry-secret ghcr \
-         --type web --port 3000:http --route /:3000 --env PORT=3000 \
-         --env STATIC_DIR=/app/dist/apps/app-front \
-         --regions par
+          --docker "$APP_IMG_NAME" --docker-private-registry-secret ghcr \
+          --type web --port 3000:http --route /:3000 --env PORT=3000 \
+          --env NEXT_PUBLIC_AUTH_URL=$AUTH_URL \
+          --env NEXT_PUBLIC_BACKEND_URL=$BACKEND_URL \
+          --env NEXT_PUBLIC_PANIER_URL=$PANIER_URL \
+          --regions par
     END
 
 app-destroy-test: ## Supprime l'app de test

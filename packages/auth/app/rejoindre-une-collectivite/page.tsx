@@ -28,9 +28,7 @@ const RejoindreUneCollectivitePage = ({
     const restore = async () => {
       const ret = await restoreSessionFromAuthTokens(supabase);
       if (!ret?.data.session) {
-        document.location.replace(
-          getAuthPaths(document.location.hostname, redirect_to).login
-        );
+        document.location.replace(getAuthPaths(redirect_to).login);
       }
     };
     restore();

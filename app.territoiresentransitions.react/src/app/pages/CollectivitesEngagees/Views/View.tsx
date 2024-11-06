@@ -1,20 +1,20 @@
 import classNames from 'classnames';
 
-import {Button, Pagination, Select} from '@tet/ui';
+import { Button, Pagination, Select } from '@tet/ui';
 
-import {TCollectiviteCarte} from '../data/useFilteredCollectivites';
-import {getNumberOfActiveFilters, SetFilters} from '../data/filters';
-import {Grid} from 'app/pages/CollectivitesEngagees/Views/Grid';
-import {NB_CARDS_PER_PAGE} from 'app/pages/CollectivitesEngagees/data/utils';
-import {trierParOptions} from 'app/pages/CollectivitesEngagees/data/filtreOptions';
-import {CollectiviteEngagee} from '@tet/api';
+import { CollectiviteEngagee } from '@tet/api';
+import { Grid } from 'app/pages/CollectivitesEngagees/Views/Grid';
+import { trierParOptions } from 'app/pages/CollectivitesEngagees/data/filtreOptions';
+import { NB_CARDS_PER_PAGE } from 'app/pages/CollectivitesEngagees/data/utils';
 import {
   recherchesCollectivitesUrl,
   recherchesPlansUrl,
   RecherchesViewParam,
 } from 'app/paths';
-import {useHistory, useLocation} from 'react-router-dom';
-import {useFonctionTracker} from 'core-logic/hooks/useFonctionTracker';
+import { useFonctionTracker } from 'core-logic/hooks/useFonctionTracker';
+import { useRouter, useSearchParams } from 'next/navigation';
+import { getNumberOfActiveFilters, SetFilters } from '../data/filters';
+import { TCollectiviteCarte } from '../data/useFilteredCollectivites';
 
 export type CollectivitesEngageesView = {
   initialFilters: CollectiviteEngagee.Filters;
@@ -46,8 +46,8 @@ const View = ({
   renderCard,
   isConnected,
 }: ViewProps) => {
-  const history = useHistory();
-  const location = useLocation();
+  const router = useRouter();
+  const search = useSearchParams();
   const tracker = useFonctionTracker();
 
   const viewToText: Record<RecherchesViewParam, string> = {
@@ -56,7 +56,7 @@ const View = ({
   };
 
   const getTrierParOptions = () => {
-    const options = [{value: 'nom', label: 'Ordre alphabétique'}];
+    const options = [{ value: 'nom', label: 'Ordre alphabétique' }];
     return view === 'collectivites' ? trierParOptions : options;
   };
 
@@ -68,7 +68,7 @@ const View = ({
           <div className="mr-auto">
             <Select
               options={getTrierParOptions()}
-              onChange={value => {
+              onChange={(value) => {
                 value &&
                   setFilters({
                     ...filters,
@@ -76,7 +76,7 @@ const View = ({
                   });
               }}
               values={filters.trierPar?.[0]}
-              customItem={v => <span className="text-grey-9">{v.label}</span>}
+              customItem={(v) => <span className="text-grey-9">{v.label}</span>}
               disabled={view === 'plans'}
             />
           </div>
@@ -90,8 +90,10 @@ const View = ({
                 '!bg-primary-2': view === 'collectivites',
               })}
               onClick={() => {
-                setFilters({...filters, page: 1});
-                history.push(`${recherchesCollectivitesUrl}${location.search}`);
+                setFilters({ ...filters, page: 1 });
+                router.push(
+                  `${recherchesCollectivitesUrl}?${search.toString()}`
+                );
               }}
             >
               Collectivités
@@ -105,8 +107,8 @@ const View = ({
                 '!bg-primary-2': view === 'plans',
               })}
               onClick={() => {
-                setFilters({...filters, page: 1});
-                history.push(`${recherchesPlansUrl}${location.search}`);
+                setFilters({ ...filters, page: 1 });
+                router.push(`${recherchesPlansUrl}?${search.toString()}`);
               }}
             >
               Plans d'action
@@ -160,9 +162,9 @@ const View = ({
         selectedPage={filters.page ?? 1}
         nbOfElements={dataCount}
         maxElementsPerPage={NB_CARDS_PER_PAGE}
-        onChange={selected => {
-          setFilters({...filters, page: selected});
-          tracker({fonction: 'pagination', action: 'clic'});
+        onChange={(selected) => {
+          setFilters({ ...filters, page: selected });
+          tracker({ fonction: 'pagination', action: 'clic' });
         }}
         idToScrollTo="app-header"
       />
