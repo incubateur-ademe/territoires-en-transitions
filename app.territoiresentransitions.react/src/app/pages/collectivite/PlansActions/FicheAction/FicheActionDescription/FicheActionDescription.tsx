@@ -29,6 +29,7 @@ const FicheActionDescription = ({
     description,
     ressources,
     instanceGouvernance,
+    libresTag,
   } = fiche;
 
   const {
@@ -75,6 +76,14 @@ const FicheActionDescription = ({
                 title={ssThematique.sousThematique}
                 uppercase={false}
                 state="info"
+              />
+            ))}
+            {libresTag?.map((tagPerso) => (
+              <Badge
+                key={tagPerso.id}
+                title={tagPerso.nom}
+                uppercase={false}
+                state="default"
               />
             ))}
           </div>

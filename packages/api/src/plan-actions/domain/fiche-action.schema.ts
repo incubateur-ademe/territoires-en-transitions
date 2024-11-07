@@ -140,6 +140,7 @@ export const ficheActionSchema = z.object({
   actions: actionSchema.array().nullish(),
   financeurs: financeurSchema.array().nullish(),
   indicateurs: indicateurListItemSchema.array().nullish(),
+  libresTag: tagSchema.array().nullish(),
 });
 
 export type FicheAction = z.infer<typeof ficheActionSchema>;
