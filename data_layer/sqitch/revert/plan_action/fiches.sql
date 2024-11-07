@@ -29,7 +29,7 @@ ALTER TABLE fiche_action DROP COLUMN participation_citoyenne_type;
 
 --
 -- Revert 4. TEMPS DE MISE EN OEUVRE
-ALTER TABLE fiche_action DROP COLUMN temps_mise_en_oeuvre_id;
+ALTER TABLE fiche_action DROP COLUMN temps_de_mise_en_oeuvre_id;
 
 
 --
