@@ -5,10 +5,10 @@ import {
   timestamp,
   uuid,
 } from 'drizzle-orm/pg-core';
-import { TagBase } from './tag.basetable';
+import { tagTableBase } from './tag.table-base';
 
 export const categorieTagTable = pgTable('categorie_tag', {
-  ...TagBase,
+  ...tagTableBase,
   groupementId: integer('groupement_id'), // TODO .references(() => groupementTable.id)
   visible: boolean('visible').default(true),
   createdAt: timestamp('created_at', { withTimezone: true })

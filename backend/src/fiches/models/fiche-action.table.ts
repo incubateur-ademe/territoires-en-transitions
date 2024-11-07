@@ -138,6 +138,11 @@ export const ficheActionTable = pgTable('fiche_action', {
   ameliorationContinue: boolean('amelioration_continue'),
   calendrier: varchar('calendrier', { length: 10000 }),
   notesComplementaires: varchar('notes_complementaires', { length: 20000 }),
+  instanceGouvernance: text('instance_gouvernance'),
+  participationCitoyenne: text('participation_citoyenne'),
+  participationCitoyenneType: varchar('participation_citoyenne', {
+    length: 30,
+  }),
   majTermine: boolean('maj_termine'),
   collectiviteId: integer('collectivite_id')
     .notNull()
