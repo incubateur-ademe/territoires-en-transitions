@@ -107,6 +107,14 @@ export const ficheActionNiveauxPrioriteEnum = pgEnum(
   ['Élevé', 'Moyen', 'Bas']
 );
 
+export const ficheActionParticipationCitoyenneTypeEnumValues = [
+  'Pas de participation citoyenne',
+  'Information',
+  'Consultation',
+  'Concertation',
+  'Co-construction',
+] as const;
+
 export const ficheActionTable = pgTable('fiche_action', {
   modifiedAt: timestamp('modified_at', { withTimezone: true, mode: 'string' })
     .default(sql`CURRENT_TIMESTAMP`)
@@ -143,6 +151,7 @@ export const ficheActionTable = pgTable('fiche_action', {
   participationCitoyenne: text('participation_citoyenne'),
   participationCitoyenneType: varchar('participation_citoyenne', {
     length: 30,
+    enum: ficheActionParticipationCitoyenneTypeEnumValues,
   }),
   tempsDeMiseEnOeuvre: integer('temps_de_mise_en_oeuvre').references(
     () => tempsDeMiseEnOeuvreTable.niveau
