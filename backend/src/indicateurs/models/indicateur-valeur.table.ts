@@ -5,11 +5,9 @@ import {
   pgTable,
   serial,
   text,
-  timestamp,
-  uuid,
 } from 'drizzle-orm/pg-core';
 import { collectiviteTable } from '../../collectivites/models/collectivite.table';
-import { InferInsertModel, InferSelectModel, sql } from 'drizzle-orm';
+import { InferInsertModel, InferSelectModel } from 'drizzle-orm';
 import { createInsertSchema, createSelectSchema } from 'drizzle-zod';
 import { extendApi, extendZodWithOpenApi } from '@anatine/zod-openapi';
 import { z } from 'zod';
@@ -25,6 +23,12 @@ import {
   indicateurSourceMetadonneeTable,
   IndicateurSourceMetadonneeType,
 } from './indicateur-source-metadonnee.table';
+import {
+  createdAt,
+  createdBy,
+  modifiedAt,
+  modifiedBy,
+} from '../../common/models/column.helpers';
 
 extendZodWithOpenApi(z);
 
@@ -52,14 +56,10 @@ export const indicateurValeurTable = pgTable('indicateur_valeur', {
   objectif: doublePrecision('objectif'),
   objectifCommentaire: text('objectif_commentaire'),
   estimation: doublePrecision('estimation'),
-  modifiedAt: timestamp('modified_at', { withTimezone: true })
-    .default(sql.raw(`CURRENT_TIMESTAMP`))
-    .notNull(), // with time zone default CURRENT_TIMESTAMP
-  createdAt: timestamp('created_at', { withTimezone: true })
-    .default(sql.raw(`CURRENT_TIMESTAMP`))
-    .notNull(), // with time zone default CURRENT_TIMESTAMP
-  modifiedBy: uuid('modified_by'), // TODO: default auth.uid() references auth.users
-  createdBy: uuid('created_by'), // TODO: default auth.uid() references auth.users
+  createdAt,
+  modifiedAt,
+  createdBy,
+  modifiedBy,
 });
 
 export type IndicateurValeurType = InferSelectModel<

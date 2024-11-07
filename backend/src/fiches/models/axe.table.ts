@@ -1,16 +1,14 @@
 import { InferInsertModel } from 'drizzle-orm';
-import {
-  integer,
-  pgTable,
-  serial,
-  text,
-  timestamp,
-  uuid,
-} from 'drizzle-orm/pg-core';
+import { integer, pgTable, serial, text } from 'drizzle-orm/pg-core';
 import { createSelectSchema } from 'drizzle-zod';
 import { collectiviteTable } from '../../collectivites/models/collectivite.table';
 import { panierTable } from '../../panier/models/panier.table';
 import { planActionTypeTable } from './plan-action-type.table';
+import {
+  createdAt,
+  modifiedAt,
+  modifiedBy,
+} from '../../common/models/column.helpers';
 
 export const axeTable: ReturnType<typeof pgTable> = pgTable('axe', {
   id: serial('id').primaryKey(),
@@ -21,13 +19,9 @@ export const axeTable: ReturnType<typeof pgTable> = pgTable('axe', {
   parent: integer('parent').references(() => axeTable.id),
   plan: integer('plan').references(() => axeTable.id),
   type: integer('type').references(() => planActionTypeTable.id),
-  createdAt: timestamp('created_at', { withTimezone: true })
-    .notNull()
-    .defaultNow(),
-  modifiedAt: timestamp('modified_at', { withTimezone: true })
-    .notNull()
-    .defaultNow(),
-  modifiedBy: uuid('modified_by'), // TODO references auth.uid
+  createdAt,
+  modifiedAt,
+  modifiedBy,
   panierId: integer('panier_id').references(() => panierTable.id),
 });
 export type CreateAxeType = InferInsertModel<typeof axeTable>;
