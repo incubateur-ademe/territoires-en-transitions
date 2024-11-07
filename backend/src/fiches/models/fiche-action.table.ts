@@ -13,6 +13,7 @@ import {
 } from 'drizzle-orm/pg-core';
 import { collectiviteTable } from '../../collectivites/models/collectivite.table';
 import { z } from 'zod';
+import { tempsDeMiseEnOeuvreTable } from 'backend/src/taxonomie/models/temps-de-mise-en-oeuvre.table';
 
 export const ficheActionPiliersEciEnum = pgEnum('fiche_action_piliers_eci', [
   'Approvisionnement durable',
@@ -143,6 +144,9 @@ export const ficheActionTable = pgTable('fiche_action', {
   participationCitoyenneType: varchar('participation_citoyenne', {
     length: 30,
   }),
+  tempsDeMiseEnOeuvre: integer('temps_de_mise_en_oeuvre').references(
+    () => tempsDeMiseEnOeuvreTable.niveau
+  ),
   majTermine: boolean('maj_termine'),
   collectiviteId: integer('collectivite_id')
     .notNull()

@@ -17,5 +17,9 @@ ALTER TABLE fiche_action DROP COLUMN instance_gouvernance;
 ALTER TABLE fiche_action DROP COLUMN participation_citoyenne;
 ALTER TABLE fiche_action DROP COLUMN participation_citoyenne_type;
 
+--
+-- Revert 4. TEMPS DE MISE EN OEUVRE
+ALTER TABLE fiche_action DROP COLUMN temps_mise_en_oeuvre;
+
 COMMIT;
 

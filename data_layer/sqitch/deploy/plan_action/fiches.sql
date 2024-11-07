@@ -36,15 +36,17 @@ create policy allow_delete on fiche_action_libre_tag for delete using(peut_modif
 
 --
 -- 2. INSTANCES DE GOUVERNANCE
-
 alter table fiche_action add column instance_gouvernance text;
 
 --
 -- 3. PARTICIPATION CITOYENNE
-
 alter table fiche_action add column participation_citoyenne text;
 alter table fiche_action add column participation_citoyenne_type varchar(30);
 
+--
+-- 4. TEMPS DE MISE EN OEUVRE
+alter table fiche_action add column temps_mise_en_oeuvre integer
+REFERENCES action_impact_temps_de_mise_en_oeuvre(niveau);
 
 COMMIT;
 
