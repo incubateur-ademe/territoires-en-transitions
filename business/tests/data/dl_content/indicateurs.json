@@ -33,7 +33,7 @@
       "id": "cae_1.aa",
       "identifiant": "1.aa",
       "nom": "Emissions de gaz \u00e0 effet de serre totales nettes",
-      "parent": null,
+      "parent": "cae_1.a",
       "participation_score": false,
       "programmes": [
         "cae"
@@ -1382,7 +1382,7 @@
       "id": "cae_2.ea",
       "identifiant": "2.ea",
       "nom": "Consommation \u00e9nerg\u00e9tique - r\u00e9sidentiel - Chauffage / Maisons individuelles",
-      "parent": null,
+      "parent": "cae_2.e",
       "participation_score": false,
       "programmes": [
         "cae"
@@ -1402,7 +1402,7 @@
       "id": "cae_2.eb",
       "identifiant": "2.eb",
       "nom": "Consommation \u00e9nerg\u00e9tique - r\u00e9sidentiel - Chauffage / Logement collectif",
-      "parent": null,
+      "parent": "cae_2.e",
       "participation_score": false,
       "programmes": [
         "cae"
@@ -1422,7 +1422,7 @@
       "id": "cae_2.ec",
       "identifiant": "2.ec",
       "nom": "Consommation \u00e9nerg\u00e9tique - r\u00e9sidentiel - Autres usages",
-      "parent": null,
+      "parent": "cae_2.e",
       "participation_score": false,
       "programmes": [
         "cae"
@@ -1465,7 +1465,7 @@
       "id": "cae_2.fa",
       "identifiant": "2.fa",
       "nom": "Consommation \u00e9nerg\u00e9tique - tertiaire - Chauffage",
-      "parent": null,
+      "parent": "cae_2.f",
       "participation_score": false,
       "programmes": [
         "cae"
@@ -1485,7 +1485,7 @@
       "id": "cae_2.fb",
       "identifiant": "2.fb",
       "nom": "Consommation \u00e9nerg\u00e9tique - tertiaire - Autres usages",
-      "parent": null,
+      "parent": "cae_2.f",
       "participation_score": false,
       "programmes": [
         "cae"
@@ -3677,7 +3677,7 @@
       "description": "<p>L'indicateur suit une estimation de la s\u00e9questration nette de dioxyde de carbone, identifiant au moins les sols agricoles et la for\u00eat, en tenant compte des changements d\u2019affectation des terres (d\u00e9cret n\u00b02016-849 du 28 juin 2016 et arr\u00eat\u00e9 du 4 ao\u00fbt 2016 relatifs au plan climat-air-\u00e9nergie territorial).</p>\n",
       "id": "cae_63.a",
       "identifiant": "63.a",
-      "nom": "S\u00e9questration de CO2 dans les sols et la for\u00eat",
+      "nom": "S\u00e9questration nette de CO2 dans les sols et la for\u00eat",
       "parent": null,
       "participation_score": false,
       "programmes": [
@@ -3703,7 +3703,7 @@
       "description": "",
       "id": "cae_63.b",
       "identifiant": "63.b",
-      "nom": "S\u00e9questration de la for\u00eat",
+      "nom": "S\u00e9questration de CO2 dans la for\u00eat",
       "parent": "cae_63.a",
       "participation_score": false,
       "programmes": [
@@ -3714,7 +3714,7 @@
       "selection": false,
       "source": null,
       "thematiques": [],
-      "titre_long": "S\u00e9questration de la for\u00eat",
+      "titre_long": "S\u00e9questration nette de CO2 dans la for\u00eat",
       "type": null,
       "unite": "teq CO2",
       "valeur_indicateur": null
@@ -3726,7 +3726,7 @@
       "description": "",
       "id": "cae_63.c",
       "identifiant": "63.c",
-      "nom": "S\u00e9questration dans les terres agricoles et les prairies",
+      "nom": "S\u00e9questration de CO2 dans les terres agricoles et les prairies",
       "parent": "cae_63.a",
       "participation_score": false,
       "programmes": [
@@ -3737,7 +3737,7 @@
       "selection": false,
       "source": null,
       "thematiques": [],
-      "titre_long": "S\u00e9questration dans les terres agricoles et les prairies",
+      "titre_long": "S\u00e9questration nette de CO2 dans les terres agricoles et les prairies",
       "type": null,
       "unite": "teq CO2",
       "valeur_indicateur": null
@@ -3757,7 +3757,7 @@
       "selection": false,
       "source": null,
       "thematiques": [],
-      "titre_long": "S\u00e9questration de CO2 dans les cultures",
+      "titre_long": "S\u00e9questration nette de CO2 dans les cultures",
       "type": null,
       "unite": "teq CO2",
       "valeur_indicateur": null
@@ -3777,7 +3777,7 @@
       "selection": false,
       "source": null,
       "thematiques": [],
-      "titre_long": "S\u00e9questration de CO2 dans les prairies",
+      "titre_long": "S\u00e9questration nette de CO2 dans les prairies",
       "type": null,
       "unite": "teq CO2",
       "valeur_indicateur": null
@@ -3797,7 +3797,7 @@
       "selection": false,
       "source": null,
       "thematiques": [],
-      "titre_long": "S\u00e9questration de CO2 dans les vignes",
+      "titre_long": "S\u00e9questration nette de CO2 dans les vignes",
       "type": null,
       "unite": "teq CO2",
       "valeur_indicateur": null
@@ -3817,7 +3817,7 @@
       "selection": false,
       "source": null,
       "thematiques": [],
-      "titre_long": "S\u00e9questration de CO2 dans les vergers",
+      "titre_long": "S\u00e9questration nette de CO2 dans les vergers",
       "type": null,
       "unite": "teq CO2",
       "valeur_indicateur": null
@@ -3829,7 +3829,7 @@
       "description": "",
       "id": "cae_63.d",
       "identifiant": "63.d",
-      "nom": "S\u00e9questration dans les autres sols",
+      "nom": "S\u00e9questration de CO2 dans les autres sols",
       "parent": "cae_63.a",
       "participation_score": false,
       "programmes": [
@@ -3840,7 +3840,7 @@
       "selection": false,
       "source": null,
       "thematiques": [],
-      "titre_long": "S\u00e9questration dans les autres sols",
+      "titre_long": "S\u00e9questration nette de CO2 dans les autres sols",
       "type": null,
       "unite": "teq CO2",
       "valeur_indicateur": null
@@ -3860,7 +3860,7 @@
       "selection": false,
       "source": null,
       "thematiques": [],
-      "titre_long": "S\u00e9questration de CO2 dans les zones humides",
+      "titre_long": "S\u00e9questration nette de CO2 dans les zones humides",
       "type": null,
       "unite": "teq CO2",
       "valeur_indicateur": null
@@ -3880,7 +3880,7 @@
       "selection": false,
       "source": null,
       "thematiques": [],
-      "titre_long": "S\u00e9questration de CO2 dans les sols artificiels",
+      "titre_long": "S\u00e9questration nette de CO2 dans les sols artificiels",
       "type": null,
       "unite": "teq CO2",
       "valeur_indicateur": null
@@ -3891,7 +3891,7 @@
       "id": "cae_63.e",
       "identifiant": "63.e",
       "nom": "S\u00e9questration de CO2 dans les produits bois",
-      "parent": null,
+      "parent": "cae_63.a",
       "participation_score": false,
       "programmes": [
         "cae"
@@ -3900,7 +3900,7 @@
       "selection": false,
       "source": null,
       "thematiques": [],
-      "titre_long": "S\u00e9questration de CO2 dans les produits bois",
+      "titre_long": "S\u00e9questration nette de CO2 dans les produits bois",
       "type": null,
       "unite": "teq CO2",
       "valeur_indicateur": null
