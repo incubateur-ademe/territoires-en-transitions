@@ -45,46 +45,11 @@ export type Database = {
         }
         Relationships: [
           {
-            foreignKeyName: "action_audit_state_action_id_fkey"
-            columns: ["action_id"]
-            isOneToOne: false
-            referencedRelation: "action_relation"
-            referencedColumns: ["id"]
-          },
-          {
-            foreignKeyName: "action_audit_state_audit_id_fkey"
-            columns: ["audit_id"]
-            isOneToOne: false
-            referencedRelation: "action_audit_state"
-            referencedColumns: ["audit_id"]
-          },
-          {
             foreignKeyName: "action_audit_state_audit_id_fkey"
             columns: ["audit_id"]
             isOneToOne: false
             referencedRelation: "audit"
             referencedColumns: ["id"]
-          },
-          {
-            foreignKeyName: "action_audit_state_audit_id_fkey"
-            columns: ["audit_id"]
-            isOneToOne: false
-            referencedRelation: "audit"
-            referencedColumns: ["id"]
-          },
-          {
-            foreignKeyName: "action_audit_state_audit_id_fkey"
-            columns: ["audit_id"]
-            isOneToOne: false
-            referencedRelation: "audit_en_cours"
-            referencedColumns: ["id"]
-          },
-          {
-            foreignKeyName: "action_audit_state_audit_id_fkey"
-            columns: ["audit_id"]
-            isOneToOne: false
-            referencedRelation: "retool_audit"
-            referencedColumns: ["audit_id"]
           },
           {
             foreignKeyName: "action_audit_state_collectivite_id_fkey"
@@ -92,356 +57,6 @@ export type Database = {
             isOneToOne: false
             referencedRelation: "action_snippet"
             referencedColumns: ["collectivite_id"]
-          },
-          {
-            foreignKeyName: "action_audit_state_collectivite_id_fkey"
-            columns: ["collectivite_id"]
-            isOneToOne: false
-            referencedRelation: "action_statuts"
-            referencedColumns: ["collectivite_id"]
-          },
-          {
-            foreignKeyName: "action_audit_state_collectivite_id_fkey"
-            columns: ["collectivite_id"]
-            isOneToOne: false
-            referencedRelation: "active_collectivite"
-            referencedColumns: ["collectivite_id"]
-          },
-          {
-            foreignKeyName: "action_audit_state_collectivite_id_fkey"
-            columns: ["collectivite_id"]
-            isOneToOne: false
-            referencedRelation: "auditeurs"
-            referencedColumns: ["collectivite_id"]
-          },
-          {
-            foreignKeyName: "action_audit_state_collectivite_id_fkey"
-            columns: ["collectivite_id"]
-            isOneToOne: false
-            referencedRelation: "audits"
-            referencedColumns: ["collectivite_id"]
-          },
-          {
-            foreignKeyName: "action_audit_state_collectivite_id_fkey"
-            columns: ["collectivite_id"]
-            isOneToOne: false
-            referencedRelation: "carte_collectivite_active"
-            referencedColumns: ["collectivite_id"]
-          },
-          {
-            foreignKeyName: "action_audit_state_collectivite_id_fkey"
-            columns: ["collectivite_id"]
-            isOneToOne: false
-            referencedRelation: "collectivite"
-            referencedColumns: ["id"]
-          },
-          {
-            foreignKeyName: "action_audit_state_collectivite_id_fkey"
-            columns: ["collectivite_id"]
-            isOneToOne: false
-            referencedRelation: "collectivite"
-            referencedColumns: ["collectivite_id"]
-          },
-          {
-            foreignKeyName: "action_audit_state_collectivite_id_fkey"
-            columns: ["collectivite_id"]
-            isOneToOne: false
-            referencedRelation: "collectivite_action_statut"
-            referencedColumns: ["collectivite_id"]
-          },
-          {
-            foreignKeyName: "action_audit_state_collectivite_id_fkey"
-            columns: ["collectivite_id"]
-            isOneToOne: false
-            referencedRelation: "collectivite_card"
-            referencedColumns: ["collectivite_id"]
-          },
-          {
-            foreignKeyName: "action_audit_state_collectivite_id_fkey"
-            columns: ["collectivite_id"]
-            isOneToOne: false
-            referencedRelation: "collectivite_carte_identite"
-            referencedColumns: ["collectivite_id"]
-          },
-          {
-            foreignKeyName: "action_audit_state_collectivite_id_fkey"
-            columns: ["collectivite_id"]
-            isOneToOne: false
-            referencedRelation: "collectivite_identite"
-            referencedColumns: ["id"]
-          },
-          {
-            foreignKeyName: "action_audit_state_collectivite_id_fkey"
-            columns: ["collectivite_id"]
-            isOneToOne: false
-            referencedRelation: "collectivite_labellisation"
-            referencedColumns: ["collectivite_id"]
-          },
-          {
-            foreignKeyName: "action_audit_state_collectivite_id_fkey"
-            columns: ["collectivite_id"]
-            isOneToOne: false
-            referencedRelation: "collectivite_membre_crm"
-            referencedColumns: ["collectivite_id"]
-          },
-          {
-            foreignKeyName: "action_audit_state_collectivite_id_fkey"
-            columns: ["collectivite_id"]
-            isOneToOne: false
-            referencedRelation: "collectivite_niveau_acces"
-            referencedColumns: ["collectivite_id"]
-          },
-          {
-            foreignKeyName: "action_audit_state_collectivite_id_fkey"
-            columns: ["collectivite_id"]
-            isOneToOne: false
-            referencedRelation: "collectivite_plan_action"
-            referencedColumns: ["collectivite_id"]
-          },
-          {
-            foreignKeyName: "action_audit_state_collectivite_id_fkey"
-            columns: ["collectivite_id"]
-            isOneToOne: false
-            referencedRelation: "collectivite_plan_action"
-            referencedColumns: ["collectivite_id"]
-          },
-          {
-            foreignKeyName: "action_audit_state_collectivite_id_fkey"
-            columns: ["collectivite_id"]
-            isOneToOne: false
-            referencedRelation: "collectivite_referentiel"
-            referencedColumns: ["collectivite_id"]
-          },
-          {
-            foreignKeyName: "action_audit_state_collectivite_id_fkey"
-            columns: ["collectivite_id"]
-            isOneToOne: false
-            referencedRelation: "collectivite_utilisateur"
-            referencedColumns: ["collectivite_id"]
-          },
-          {
-            foreignKeyName: "action_audit_state_collectivite_id_fkey"
-            columns: ["collectivite_id"]
-            isOneToOne: false
-            referencedRelation: "collectivites_crm"
-            referencedColumns: ["collectivite_id"]
-          },
-          {
-            foreignKeyName: "action_audit_state_collectivite_id_fkey"
-            columns: ["collectivite_id"]
-            isOneToOne: false
-            referencedRelation: "comparaison_scores_audit"
-            referencedColumns: ["collectivite_id"]
-          },
-          {
-            foreignKeyName: "action_audit_state_collectivite_id_fkey"
-            columns: ["collectivite_id"]
-            isOneToOne: false
-            referencedRelation: "crm_collectivites"
-            referencedColumns: ["collectivite_id"]
-          },
-          {
-            foreignKeyName: "action_audit_state_collectivite_id_fkey"
-            columns: ["collectivite_id"]
-            isOneToOne: false
-            referencedRelation: "crm_usages"
-            referencedColumns: ["collectivite_id"]
-          },
-          {
-            foreignKeyName: "action_audit_state_collectivite_id_fkey"
-            columns: ["collectivite_id"]
-            isOneToOne: false
-            referencedRelation: "crm_usages"
-            referencedColumns: ["collectivite_id"]
-          },
-          {
-            foreignKeyName: "action_audit_state_collectivite_id_fkey"
-            columns: ["collectivite_id"]
-            isOneToOne: false
-            referencedRelation: "engagement_collectivite"
-            referencedColumns: ["collectivite_id"]
-          },
-          {
-            foreignKeyName: "action_audit_state_collectivite_id_fkey"
-            columns: ["collectivite_id"]
-            isOneToOne: false
-            referencedRelation: "late_collectivite"
-            referencedColumns: ["collectivite_id"]
-          },
-          {
-            foreignKeyName: "action_audit_state_collectivite_id_fkey"
-            columns: ["collectivite_id"]
-            isOneToOne: false
-            referencedRelation: "locales_engagement_collectivite"
-            referencedColumns: ["collectivite_id"]
-          },
-          {
-            foreignKeyName: "action_audit_state_collectivite_id_fkey"
-            columns: ["collectivite_id"]
-            isOneToOne: false
-            referencedRelation: "locales_pourcentage_completude"
-            referencedColumns: ["collectivite_id"]
-          },
-          {
-            foreignKeyName: "action_audit_state_collectivite_id_fkey"
-            columns: ["collectivite_id"]
-            isOneToOne: false
-            referencedRelation: "named_collectivite"
-            referencedColumns: ["collectivite_id"]
-          },
-          {
-            foreignKeyName: "action_audit_state_collectivite_id_fkey"
-            columns: ["collectivite_id"]
-            isOneToOne: false
-            referencedRelation: "question_display"
-            referencedColumns: ["collectivite_id"]
-          },
-          {
-            foreignKeyName: "action_audit_state_collectivite_id_fkey"
-            columns: ["collectivite_id"]
-            isOneToOne: false
-            referencedRelation: "question_thematique_completude"
-            referencedColumns: ["collectivite_id"]
-          },
-          {
-            foreignKeyName: "action_audit_state_collectivite_id_fkey"
-            columns: ["collectivite_id"]
-            isOneToOne: false
-            referencedRelation: "rattachement"
-            referencedColumns: ["collectivite_id"]
-          },
-          {
-            foreignKeyName: "action_audit_state_collectivite_id_fkey"
-            columns: ["collectivite_id"]
-            isOneToOne: false
-            referencedRelation: "report_indicateur_resultat"
-            referencedColumns: ["collectivite_id"]
-          },
-          {
-            foreignKeyName: "action_audit_state_collectivite_id_fkey"
-            columns: ["collectivite_id"]
-            isOneToOne: false
-            referencedRelation: "report_reponse_binaire"
-            referencedColumns: ["collectivite_id"]
-          },
-          {
-            foreignKeyName: "action_audit_state_collectivite_id_fkey"
-            columns: ["collectivite_id"]
-            isOneToOne: false
-            referencedRelation: "report_reponse_choix"
-            referencedColumns: ["collectivite_id"]
-          },
-          {
-            foreignKeyName: "action_audit_state_collectivite_id_fkey"
-            columns: ["collectivite_id"]
-            isOneToOne: false
-            referencedRelation: "report_reponse_proportion"
-            referencedColumns: ["collectivite_id"]
-          },
-          {
-            foreignKeyName: "action_audit_state_collectivite_id_fkey"
-            columns: ["collectivite_id"]
-            isOneToOne: false
-            referencedRelation: "report_scores"
-            referencedColumns: ["collectivite_id"]
-          },
-          {
-            foreignKeyName: "action_audit_state_collectivite_id_fkey"
-            columns: ["collectivite_id"]
-            isOneToOne: false
-            referencedRelation: "retool_active_collectivite"
-            referencedColumns: ["collectivite_id"]
-          },
-          {
-            foreignKeyName: "action_audit_state_collectivite_id_fkey"
-            columns: ["collectivite_id"]
-            isOneToOne: false
-            referencedRelation: "retool_completude"
-            referencedColumns: ["collectivite_id"]
-          },
-          {
-            foreignKeyName: "action_audit_state_collectivite_id_fkey"
-            columns: ["collectivite_id"]
-            isOneToOne: false
-            referencedRelation: "retool_completude_compute"
-            referencedColumns: ["collectivite_id"]
-          },
-          {
-            foreignKeyName: "action_audit_state_collectivite_id_fkey"
-            columns: ["collectivite_id"]
-            isOneToOne: false
-            referencedRelation: "retool_plan_action_hebdo"
-            referencedColumns: ["collectivite_id"]
-          },
-          {
-            foreignKeyName: "action_audit_state_collectivite_id_fkey"
-            columns: ["collectivite_id"]
-            isOneToOne: false
-            referencedRelation: "retool_plan_action_premier_usage"
-            referencedColumns: ["collectivite_id"]
-          },
-          {
-            foreignKeyName: "action_audit_state_collectivite_id_fkey"
-            columns: ["collectivite_id"]
-            isOneToOne: false
-            referencedRelation: "retool_plan_action_premier_usage"
-            referencedColumns: ["collectivite_id"]
-          },
-          {
-            foreignKeyName: "action_audit_state_collectivite_id_fkey"
-            columns: ["collectivite_id"]
-            isOneToOne: false
-            referencedRelation: "retool_plan_action_usage"
-            referencedColumns: ["collectivite_id"]
-          },
-          {
-            foreignKeyName: "action_audit_state_collectivite_id_fkey"
-            columns: ["collectivite_id"]
-            isOneToOne: false
-            referencedRelation: "retool_score"
-            referencedColumns: ["collectivite_id"]
-          },
-          {
-            foreignKeyName: "action_audit_state_collectivite_id_fkey"
-            columns: ["collectivite_id"]
-            isOneToOne: false
-            referencedRelation: "site_labellisation"
-            referencedColumns: ["collectivite_id"]
-          },
-          {
-            foreignKeyName: "action_audit_state_collectivite_id_fkey"
-            columns: ["collectivite_id"]
-            isOneToOne: false
-            referencedRelation: "stats_active_real_collectivites"
-            referencedColumns: ["collectivite_id"]
-          },
-          {
-            foreignKeyName: "action_audit_state_collectivite_id_fkey"
-            columns: ["collectivite_id"]
-            isOneToOne: false
-            referencedRelation: "stats_carte_collectivite_active"
-            referencedColumns: ["collectivite_id"]
-          },
-          {
-            foreignKeyName: "action_audit_state_collectivite_id_fkey"
-            columns: ["collectivite_id"]
-            isOneToOne: false
-            referencedRelation: "stats_locales_engagement_collectivite"
-            referencedColumns: ["collectivite_id"]
-          },
-          {
-            foreignKeyName: "action_audit_state_collectivite_id_fkey"
-            columns: ["collectivite_id"]
-            isOneToOne: false
-            referencedRelation: "suivi_audit"
-            referencedColumns: ["collectivite_id"]
-          },
-          {
-            foreignKeyName: "action_audit_state_modified_by_fkey"
-            columns: ["modified_by"]
-            isOneToOne: false
-            referencedRelation: "users"
-            referencedColumns: ["id"]
           },
         ]
       }
@@ -491,367 +106,10 @@ export type Database = {
             referencedColumns: ["collectivite_id"]
           },
           {
-            foreignKeyName: "audit_collectivite_id_fkey"
-            columns: ["collectivite_id"]
-            isOneToOne: false
-            referencedRelation: "action_statuts"
-            referencedColumns: ["collectivite_id"]
-          },
-          {
-            foreignKeyName: "audit_collectivite_id_fkey"
-            columns: ["collectivite_id"]
-            isOneToOne: false
-            referencedRelation: "active_collectivite"
-            referencedColumns: ["collectivite_id"]
-          },
-          {
-            foreignKeyName: "audit_collectivite_id_fkey"
-            columns: ["collectivite_id"]
-            isOneToOne: false
-            referencedRelation: "auditeurs"
-            referencedColumns: ["collectivite_id"]
-          },
-          {
-            foreignKeyName: "audit_collectivite_id_fkey"
-            columns: ["collectivite_id"]
-            isOneToOne: false
-            referencedRelation: "audits"
-            referencedColumns: ["collectivite_id"]
-          },
-          {
-            foreignKeyName: "audit_collectivite_id_fkey"
-            columns: ["collectivite_id"]
-            isOneToOne: false
-            referencedRelation: "carte_collectivite_active"
-            referencedColumns: ["collectivite_id"]
-          },
-          {
-            foreignKeyName: "audit_collectivite_id_fkey"
-            columns: ["collectivite_id"]
-            isOneToOne: false
-            referencedRelation: "collectivite"
-            referencedColumns: ["id"]
-          },
-          {
-            foreignKeyName: "audit_collectivite_id_fkey"
-            columns: ["collectivite_id"]
-            isOneToOne: false
-            referencedRelation: "collectivite"
-            referencedColumns: ["collectivite_id"]
-          },
-          {
-            foreignKeyName: "audit_collectivite_id_fkey"
-            columns: ["collectivite_id"]
-            isOneToOne: false
-            referencedRelation: "collectivite_action_statut"
-            referencedColumns: ["collectivite_id"]
-          },
-          {
-            foreignKeyName: "audit_collectivite_id_fkey"
-            columns: ["collectivite_id"]
-            isOneToOne: false
-            referencedRelation: "collectivite_card"
-            referencedColumns: ["collectivite_id"]
-          },
-          {
-            foreignKeyName: "audit_collectivite_id_fkey"
-            columns: ["collectivite_id"]
-            isOneToOne: false
-            referencedRelation: "collectivite_carte_identite"
-            referencedColumns: ["collectivite_id"]
-          },
-          {
-            foreignKeyName: "audit_collectivite_id_fkey"
-            columns: ["collectivite_id"]
-            isOneToOne: false
-            referencedRelation: "collectivite_identite"
-            referencedColumns: ["id"]
-          },
-          {
-            foreignKeyName: "audit_collectivite_id_fkey"
-            columns: ["collectivite_id"]
-            isOneToOne: false
-            referencedRelation: "collectivite_labellisation"
-            referencedColumns: ["collectivite_id"]
-          },
-          {
-            foreignKeyName: "audit_collectivite_id_fkey"
-            columns: ["collectivite_id"]
-            isOneToOne: false
-            referencedRelation: "collectivite_membre_crm"
-            referencedColumns: ["collectivite_id"]
-          },
-          {
-            foreignKeyName: "audit_collectivite_id_fkey"
-            columns: ["collectivite_id"]
-            isOneToOne: false
-            referencedRelation: "collectivite_niveau_acces"
-            referencedColumns: ["collectivite_id"]
-          },
-          {
-            foreignKeyName: "audit_collectivite_id_fkey"
-            columns: ["collectivite_id"]
-            isOneToOne: false
-            referencedRelation: "collectivite_plan_action"
-            referencedColumns: ["collectivite_id"]
-          },
-          {
-            foreignKeyName: "audit_collectivite_id_fkey"
-            columns: ["collectivite_id"]
-            isOneToOne: false
-            referencedRelation: "collectivite_plan_action"
-            referencedColumns: ["collectivite_id"]
-          },
-          {
-            foreignKeyName: "audit_collectivite_id_fkey"
-            columns: ["collectivite_id"]
-            isOneToOne: false
-            referencedRelation: "collectivite_referentiel"
-            referencedColumns: ["collectivite_id"]
-          },
-          {
-            foreignKeyName: "audit_collectivite_id_fkey"
-            columns: ["collectivite_id"]
-            isOneToOne: false
-            referencedRelation: "collectivite_utilisateur"
-            referencedColumns: ["collectivite_id"]
-          },
-          {
-            foreignKeyName: "audit_collectivite_id_fkey"
-            columns: ["collectivite_id"]
-            isOneToOne: false
-            referencedRelation: "collectivites_crm"
-            referencedColumns: ["collectivite_id"]
-          },
-          {
-            foreignKeyName: "audit_collectivite_id_fkey"
-            columns: ["collectivite_id"]
-            isOneToOne: false
-            referencedRelation: "comparaison_scores_audit"
-            referencedColumns: ["collectivite_id"]
-          },
-          {
-            foreignKeyName: "audit_collectivite_id_fkey"
-            columns: ["collectivite_id"]
-            isOneToOne: false
-            referencedRelation: "crm_collectivites"
-            referencedColumns: ["collectivite_id"]
-          },
-          {
-            foreignKeyName: "audit_collectivite_id_fkey"
-            columns: ["collectivite_id"]
-            isOneToOne: false
-            referencedRelation: "crm_usages"
-            referencedColumns: ["collectivite_id"]
-          },
-          {
-            foreignKeyName: "audit_collectivite_id_fkey"
-            columns: ["collectivite_id"]
-            isOneToOne: false
-            referencedRelation: "crm_usages"
-            referencedColumns: ["collectivite_id"]
-          },
-          {
-            foreignKeyName: "audit_collectivite_id_fkey"
-            columns: ["collectivite_id"]
-            isOneToOne: false
-            referencedRelation: "engagement_collectivite"
-            referencedColumns: ["collectivite_id"]
-          },
-          {
-            foreignKeyName: "audit_collectivite_id_fkey"
-            columns: ["collectivite_id"]
-            isOneToOne: false
-            referencedRelation: "late_collectivite"
-            referencedColumns: ["collectivite_id"]
-          },
-          {
-            foreignKeyName: "audit_collectivite_id_fkey"
-            columns: ["collectivite_id"]
-            isOneToOne: false
-            referencedRelation: "locales_engagement_collectivite"
-            referencedColumns: ["collectivite_id"]
-          },
-          {
-            foreignKeyName: "audit_collectivite_id_fkey"
-            columns: ["collectivite_id"]
-            isOneToOne: false
-            referencedRelation: "locales_pourcentage_completude"
-            referencedColumns: ["collectivite_id"]
-          },
-          {
-            foreignKeyName: "audit_collectivite_id_fkey"
-            columns: ["collectivite_id"]
-            isOneToOne: false
-            referencedRelation: "named_collectivite"
-            referencedColumns: ["collectivite_id"]
-          },
-          {
-            foreignKeyName: "audit_collectivite_id_fkey"
-            columns: ["collectivite_id"]
-            isOneToOne: false
-            referencedRelation: "question_display"
-            referencedColumns: ["collectivite_id"]
-          },
-          {
-            foreignKeyName: "audit_collectivite_id_fkey"
-            columns: ["collectivite_id"]
-            isOneToOne: false
-            referencedRelation: "question_thematique_completude"
-            referencedColumns: ["collectivite_id"]
-          },
-          {
-            foreignKeyName: "audit_collectivite_id_fkey"
-            columns: ["collectivite_id"]
-            isOneToOne: false
-            referencedRelation: "rattachement"
-            referencedColumns: ["collectivite_id"]
-          },
-          {
-            foreignKeyName: "audit_collectivite_id_fkey"
-            columns: ["collectivite_id"]
-            isOneToOne: false
-            referencedRelation: "report_indicateur_resultat"
-            referencedColumns: ["collectivite_id"]
-          },
-          {
-            foreignKeyName: "audit_collectivite_id_fkey"
-            columns: ["collectivite_id"]
-            isOneToOne: false
-            referencedRelation: "report_reponse_binaire"
-            referencedColumns: ["collectivite_id"]
-          },
-          {
-            foreignKeyName: "audit_collectivite_id_fkey"
-            columns: ["collectivite_id"]
-            isOneToOne: false
-            referencedRelation: "report_reponse_choix"
-            referencedColumns: ["collectivite_id"]
-          },
-          {
-            foreignKeyName: "audit_collectivite_id_fkey"
-            columns: ["collectivite_id"]
-            isOneToOne: false
-            referencedRelation: "report_reponse_proportion"
-            referencedColumns: ["collectivite_id"]
-          },
-          {
-            foreignKeyName: "audit_collectivite_id_fkey"
-            columns: ["collectivite_id"]
-            isOneToOne: false
-            referencedRelation: "report_scores"
-            referencedColumns: ["collectivite_id"]
-          },
-          {
-            foreignKeyName: "audit_collectivite_id_fkey"
-            columns: ["collectivite_id"]
-            isOneToOne: false
-            referencedRelation: "retool_active_collectivite"
-            referencedColumns: ["collectivite_id"]
-          },
-          {
-            foreignKeyName: "audit_collectivite_id_fkey"
-            columns: ["collectivite_id"]
-            isOneToOne: false
-            referencedRelation: "retool_completude"
-            referencedColumns: ["collectivite_id"]
-          },
-          {
-            foreignKeyName: "audit_collectivite_id_fkey"
-            columns: ["collectivite_id"]
-            isOneToOne: false
-            referencedRelation: "retool_completude_compute"
-            referencedColumns: ["collectivite_id"]
-          },
-          {
-            foreignKeyName: "audit_collectivite_id_fkey"
-            columns: ["collectivite_id"]
-            isOneToOne: false
-            referencedRelation: "retool_plan_action_hebdo"
-            referencedColumns: ["collectivite_id"]
-          },
-          {
-            foreignKeyName: "audit_collectivite_id_fkey"
-            columns: ["collectivite_id"]
-            isOneToOne: false
-            referencedRelation: "retool_plan_action_premier_usage"
-            referencedColumns: ["collectivite_id"]
-          },
-          {
-            foreignKeyName: "audit_collectivite_id_fkey"
-            columns: ["collectivite_id"]
-            isOneToOne: false
-            referencedRelation: "retool_plan_action_premier_usage"
-            referencedColumns: ["collectivite_id"]
-          },
-          {
-            foreignKeyName: "audit_collectivite_id_fkey"
-            columns: ["collectivite_id"]
-            isOneToOne: false
-            referencedRelation: "retool_plan_action_usage"
-            referencedColumns: ["collectivite_id"]
-          },
-          {
-            foreignKeyName: "audit_collectivite_id_fkey"
-            columns: ["collectivite_id"]
-            isOneToOne: false
-            referencedRelation: "retool_score"
-            referencedColumns: ["collectivite_id"]
-          },
-          {
-            foreignKeyName: "audit_collectivite_id_fkey"
-            columns: ["collectivite_id"]
-            isOneToOne: false
-            referencedRelation: "site_labellisation"
-            referencedColumns: ["collectivite_id"]
-          },
-          {
-            foreignKeyName: "audit_collectivite_id_fkey"
-            columns: ["collectivite_id"]
-            isOneToOne: false
-            referencedRelation: "stats_active_real_collectivites"
-            referencedColumns: ["collectivite_id"]
-          },
-          {
-            foreignKeyName: "audit_collectivite_id_fkey"
-            columns: ["collectivite_id"]
-            isOneToOne: false
-            referencedRelation: "stats_carte_collectivite_active"
-            referencedColumns: ["collectivite_id"]
-          },
-          {
-            foreignKeyName: "audit_collectivite_id_fkey"
-            columns: ["collectivite_id"]
-            isOneToOne: false
-            referencedRelation: "stats_locales_engagement_collectivite"
-            referencedColumns: ["collectivite_id"]
-          },
-          {
-            foreignKeyName: "audit_collectivite_id_fkey"
-            columns: ["collectivite_id"]
-            isOneToOne: false
-            referencedRelation: "suivi_audit"
-            referencedColumns: ["collectivite_id"]
-          },
-          {
             foreignKeyName: "audit_demande_id_fkey"
             columns: ["demande_id"]
             isOneToOne: false
             referencedRelation: "demande"
-            referencedColumns: ["id"]
-          },
-          {
-            foreignKeyName: "audit_demande_id_fkey"
-            columns: ["demande_id"]
-            isOneToOne: false
-            referencedRelation: "retool_audit"
-            referencedColumns: ["demande_id"]
-          },
-          {
-            foreignKeyName: "audit_demande_id_fkey"
-            columns: ["demande_id"]
-            isOneToOne: false
-            referencedRelation: "retool_labellisation_demande"
             referencedColumns: ["id"]
           },
         ]
@@ -884,349 +142,6 @@ export type Database = {
             columns: ["collectivite_id"]
             isOneToOne: false
             referencedRelation: "action_snippet"
-            referencedColumns: ["collectivite_id"]
-          },
-          {
-            foreignKeyName: "bibliotheque_fichier_collectivite_id_fkey"
-            columns: ["collectivite_id"]
-            isOneToOne: false
-            referencedRelation: "action_statuts"
-            referencedColumns: ["collectivite_id"]
-          },
-          {
-            foreignKeyName: "bibliotheque_fichier_collectivite_id_fkey"
-            columns: ["collectivite_id"]
-            isOneToOne: false
-            referencedRelation: "active_collectivite"
-            referencedColumns: ["collectivite_id"]
-          },
-          {
-            foreignKeyName: "bibliotheque_fichier_collectivite_id_fkey"
-            columns: ["collectivite_id"]
-            isOneToOne: false
-            referencedRelation: "auditeurs"
-            referencedColumns: ["collectivite_id"]
-          },
-          {
-            foreignKeyName: "bibliotheque_fichier_collectivite_id_fkey"
-            columns: ["collectivite_id"]
-            isOneToOne: false
-            referencedRelation: "audits"
-            referencedColumns: ["collectivite_id"]
-          },
-          {
-            foreignKeyName: "bibliotheque_fichier_collectivite_id_fkey"
-            columns: ["collectivite_id"]
-            isOneToOne: false
-            referencedRelation: "carte_collectivite_active"
-            referencedColumns: ["collectivite_id"]
-          },
-          {
-            foreignKeyName: "bibliotheque_fichier_collectivite_id_fkey"
-            columns: ["collectivite_id"]
-            isOneToOne: false
-            referencedRelation: "collectivite"
-            referencedColumns: ["id"]
-          },
-          {
-            foreignKeyName: "bibliotheque_fichier_collectivite_id_fkey"
-            columns: ["collectivite_id"]
-            isOneToOne: false
-            referencedRelation: "collectivite"
-            referencedColumns: ["collectivite_id"]
-          },
-          {
-            foreignKeyName: "bibliotheque_fichier_collectivite_id_fkey"
-            columns: ["collectivite_id"]
-            isOneToOne: false
-            referencedRelation: "collectivite_action_statut"
-            referencedColumns: ["collectivite_id"]
-          },
-          {
-            foreignKeyName: "bibliotheque_fichier_collectivite_id_fkey"
-            columns: ["collectivite_id"]
-            isOneToOne: false
-            referencedRelation: "collectivite_card"
-            referencedColumns: ["collectivite_id"]
-          },
-          {
-            foreignKeyName: "bibliotheque_fichier_collectivite_id_fkey"
-            columns: ["collectivite_id"]
-            isOneToOne: false
-            referencedRelation: "collectivite_carte_identite"
-            referencedColumns: ["collectivite_id"]
-          },
-          {
-            foreignKeyName: "bibliotheque_fichier_collectivite_id_fkey"
-            columns: ["collectivite_id"]
-            isOneToOne: false
-            referencedRelation: "collectivite_identite"
-            referencedColumns: ["id"]
-          },
-          {
-            foreignKeyName: "bibliotheque_fichier_collectivite_id_fkey"
-            columns: ["collectivite_id"]
-            isOneToOne: false
-            referencedRelation: "collectivite_labellisation"
-            referencedColumns: ["collectivite_id"]
-          },
-          {
-            foreignKeyName: "bibliotheque_fichier_collectivite_id_fkey"
-            columns: ["collectivite_id"]
-            isOneToOne: false
-            referencedRelation: "collectivite_membre_crm"
-            referencedColumns: ["collectivite_id"]
-          },
-          {
-            foreignKeyName: "bibliotheque_fichier_collectivite_id_fkey"
-            columns: ["collectivite_id"]
-            isOneToOne: false
-            referencedRelation: "collectivite_niveau_acces"
-            referencedColumns: ["collectivite_id"]
-          },
-          {
-            foreignKeyName: "bibliotheque_fichier_collectivite_id_fkey"
-            columns: ["collectivite_id"]
-            isOneToOne: false
-            referencedRelation: "collectivite_plan_action"
-            referencedColumns: ["collectivite_id"]
-          },
-          {
-            foreignKeyName: "bibliotheque_fichier_collectivite_id_fkey"
-            columns: ["collectivite_id"]
-            isOneToOne: false
-            referencedRelation: "collectivite_plan_action"
-            referencedColumns: ["collectivite_id"]
-          },
-          {
-            foreignKeyName: "bibliotheque_fichier_collectivite_id_fkey"
-            columns: ["collectivite_id"]
-            isOneToOne: false
-            referencedRelation: "collectivite_referentiel"
-            referencedColumns: ["collectivite_id"]
-          },
-          {
-            foreignKeyName: "bibliotheque_fichier_collectivite_id_fkey"
-            columns: ["collectivite_id"]
-            isOneToOne: false
-            referencedRelation: "collectivite_utilisateur"
-            referencedColumns: ["collectivite_id"]
-          },
-          {
-            foreignKeyName: "bibliotheque_fichier_collectivite_id_fkey"
-            columns: ["collectivite_id"]
-            isOneToOne: false
-            referencedRelation: "collectivites_crm"
-            referencedColumns: ["collectivite_id"]
-          },
-          {
-            foreignKeyName: "bibliotheque_fichier_collectivite_id_fkey"
-            columns: ["collectivite_id"]
-            isOneToOne: false
-            referencedRelation: "comparaison_scores_audit"
-            referencedColumns: ["collectivite_id"]
-          },
-          {
-            foreignKeyName: "bibliotheque_fichier_collectivite_id_fkey"
-            columns: ["collectivite_id"]
-            isOneToOne: false
-            referencedRelation: "crm_collectivites"
-            referencedColumns: ["collectivite_id"]
-          },
-          {
-            foreignKeyName: "bibliotheque_fichier_collectivite_id_fkey"
-            columns: ["collectivite_id"]
-            isOneToOne: false
-            referencedRelation: "crm_usages"
-            referencedColumns: ["collectivite_id"]
-          },
-          {
-            foreignKeyName: "bibliotheque_fichier_collectivite_id_fkey"
-            columns: ["collectivite_id"]
-            isOneToOne: false
-            referencedRelation: "crm_usages"
-            referencedColumns: ["collectivite_id"]
-          },
-          {
-            foreignKeyName: "bibliotheque_fichier_collectivite_id_fkey"
-            columns: ["collectivite_id"]
-            isOneToOne: false
-            referencedRelation: "engagement_collectivite"
-            referencedColumns: ["collectivite_id"]
-          },
-          {
-            foreignKeyName: "bibliotheque_fichier_collectivite_id_fkey"
-            columns: ["collectivite_id"]
-            isOneToOne: false
-            referencedRelation: "late_collectivite"
-            referencedColumns: ["collectivite_id"]
-          },
-          {
-            foreignKeyName: "bibliotheque_fichier_collectivite_id_fkey"
-            columns: ["collectivite_id"]
-            isOneToOne: false
-            referencedRelation: "locales_engagement_collectivite"
-            referencedColumns: ["collectivite_id"]
-          },
-          {
-            foreignKeyName: "bibliotheque_fichier_collectivite_id_fkey"
-            columns: ["collectivite_id"]
-            isOneToOne: false
-            referencedRelation: "locales_pourcentage_completude"
-            referencedColumns: ["collectivite_id"]
-          },
-          {
-            foreignKeyName: "bibliotheque_fichier_collectivite_id_fkey"
-            columns: ["collectivite_id"]
-            isOneToOne: false
-            referencedRelation: "named_collectivite"
-            referencedColumns: ["collectivite_id"]
-          },
-          {
-            foreignKeyName: "bibliotheque_fichier_collectivite_id_fkey"
-            columns: ["collectivite_id"]
-            isOneToOne: false
-            referencedRelation: "question_display"
-            referencedColumns: ["collectivite_id"]
-          },
-          {
-            foreignKeyName: "bibliotheque_fichier_collectivite_id_fkey"
-            columns: ["collectivite_id"]
-            isOneToOne: false
-            referencedRelation: "question_thematique_completude"
-            referencedColumns: ["collectivite_id"]
-          },
-          {
-            foreignKeyName: "bibliotheque_fichier_collectivite_id_fkey"
-            columns: ["collectivite_id"]
-            isOneToOne: false
-            referencedRelation: "rattachement"
-            referencedColumns: ["collectivite_id"]
-          },
-          {
-            foreignKeyName: "bibliotheque_fichier_collectivite_id_fkey"
-            columns: ["collectivite_id"]
-            isOneToOne: false
-            referencedRelation: "report_indicateur_resultat"
-            referencedColumns: ["collectivite_id"]
-          },
-          {
-            foreignKeyName: "bibliotheque_fichier_collectivite_id_fkey"
-            columns: ["collectivite_id"]
-            isOneToOne: false
-            referencedRelation: "report_reponse_binaire"
-            referencedColumns: ["collectivite_id"]
-          },
-          {
-            foreignKeyName: "bibliotheque_fichier_collectivite_id_fkey"
-            columns: ["collectivite_id"]
-            isOneToOne: false
-            referencedRelation: "report_reponse_choix"
-            referencedColumns: ["collectivite_id"]
-          },
-          {
-            foreignKeyName: "bibliotheque_fichier_collectivite_id_fkey"
-            columns: ["collectivite_id"]
-            isOneToOne: false
-            referencedRelation: "report_reponse_proportion"
-            referencedColumns: ["collectivite_id"]
-          },
-          {
-            foreignKeyName: "bibliotheque_fichier_collectivite_id_fkey"
-            columns: ["collectivite_id"]
-            isOneToOne: false
-            referencedRelation: "report_scores"
-            referencedColumns: ["collectivite_id"]
-          },
-          {
-            foreignKeyName: "bibliotheque_fichier_collectivite_id_fkey"
-            columns: ["collectivite_id"]
-            isOneToOne: false
-            referencedRelation: "retool_active_collectivite"
-            referencedColumns: ["collectivite_id"]
-          },
-          {
-            foreignKeyName: "bibliotheque_fichier_collectivite_id_fkey"
-            columns: ["collectivite_id"]
-            isOneToOne: false
-            referencedRelation: "retool_completude"
-            referencedColumns: ["collectivite_id"]
-          },
-          {
-            foreignKeyName: "bibliotheque_fichier_collectivite_id_fkey"
-            columns: ["collectivite_id"]
-            isOneToOne: false
-            referencedRelation: "retool_completude_compute"
-            referencedColumns: ["collectivite_id"]
-          },
-          {
-            foreignKeyName: "bibliotheque_fichier_collectivite_id_fkey"
-            columns: ["collectivite_id"]
-            isOneToOne: false
-            referencedRelation: "retool_plan_action_hebdo"
-            referencedColumns: ["collectivite_id"]
-          },
-          {
-            foreignKeyName: "bibliotheque_fichier_collectivite_id_fkey"
-            columns: ["collectivite_id"]
-            isOneToOne: false
-            referencedRelation: "retool_plan_action_premier_usage"
-            referencedColumns: ["collectivite_id"]
-          },
-          {
-            foreignKeyName: "bibliotheque_fichier_collectivite_id_fkey"
-            columns: ["collectivite_id"]
-            isOneToOne: false
-            referencedRelation: "retool_plan_action_premier_usage"
-            referencedColumns: ["collectivite_id"]
-          },
-          {
-            foreignKeyName: "bibliotheque_fichier_collectivite_id_fkey"
-            columns: ["collectivite_id"]
-            isOneToOne: false
-            referencedRelation: "retool_plan_action_usage"
-            referencedColumns: ["collectivite_id"]
-          },
-          {
-            foreignKeyName: "bibliotheque_fichier_collectivite_id_fkey"
-            columns: ["collectivite_id"]
-            isOneToOne: false
-            referencedRelation: "retool_score"
-            referencedColumns: ["collectivite_id"]
-          },
-          {
-            foreignKeyName: "bibliotheque_fichier_collectivite_id_fkey"
-            columns: ["collectivite_id"]
-            isOneToOne: false
-            referencedRelation: "site_labellisation"
-            referencedColumns: ["collectivite_id"]
-          },
-          {
-            foreignKeyName: "bibliotheque_fichier_collectivite_id_fkey"
-            columns: ["collectivite_id"]
-            isOneToOne: false
-            referencedRelation: "stats_active_real_collectivites"
-            referencedColumns: ["collectivite_id"]
-          },
-          {
-            foreignKeyName: "bibliotheque_fichier_collectivite_id_fkey"
-            columns: ["collectivite_id"]
-            isOneToOne: false
-            referencedRelation: "stats_carte_collectivite_active"
-            referencedColumns: ["collectivite_id"]
-          },
-          {
-            foreignKeyName: "bibliotheque_fichier_collectivite_id_fkey"
-            columns: ["collectivite_id"]
-            isOneToOne: false
-            referencedRelation: "stats_locales_engagement_collectivite"
-            referencedColumns: ["collectivite_id"]
-          },
-          {
-            foreignKeyName: "bibliotheque_fichier_collectivite_id_fkey"
-            columns: ["collectivite_id"]
-            isOneToOne: false
-            referencedRelation: "suivi_audit"
             referencedColumns: ["collectivite_id"]
           },
         ]
@@ -1275,356 +190,6 @@ export type Database = {
             isOneToOne: false
             referencedRelation: "action_snippet"
             referencedColumns: ["collectivite_id"]
-          },
-          {
-            foreignKeyName: "demande_collectivite_id_fkey"
-            columns: ["collectivite_id"]
-            isOneToOne: false
-            referencedRelation: "action_statuts"
-            referencedColumns: ["collectivite_id"]
-          },
-          {
-            foreignKeyName: "demande_collectivite_id_fkey"
-            columns: ["collectivite_id"]
-            isOneToOne: false
-            referencedRelation: "active_collectivite"
-            referencedColumns: ["collectivite_id"]
-          },
-          {
-            foreignKeyName: "demande_collectivite_id_fkey"
-            columns: ["collectivite_id"]
-            isOneToOne: false
-            referencedRelation: "auditeurs"
-            referencedColumns: ["collectivite_id"]
-          },
-          {
-            foreignKeyName: "demande_collectivite_id_fkey"
-            columns: ["collectivite_id"]
-            isOneToOne: false
-            referencedRelation: "audits"
-            referencedColumns: ["collectivite_id"]
-          },
-          {
-            foreignKeyName: "demande_collectivite_id_fkey"
-            columns: ["collectivite_id"]
-            isOneToOne: false
-            referencedRelation: "carte_collectivite_active"
-            referencedColumns: ["collectivite_id"]
-          },
-          {
-            foreignKeyName: "demande_collectivite_id_fkey"
-            columns: ["collectivite_id"]
-            isOneToOne: false
-            referencedRelation: "collectivite"
-            referencedColumns: ["id"]
-          },
-          {
-            foreignKeyName: "demande_collectivite_id_fkey"
-            columns: ["collectivite_id"]
-            isOneToOne: false
-            referencedRelation: "collectivite"
-            referencedColumns: ["collectivite_id"]
-          },
-          {
-            foreignKeyName: "demande_collectivite_id_fkey"
-            columns: ["collectivite_id"]
-            isOneToOne: false
-            referencedRelation: "collectivite_action_statut"
-            referencedColumns: ["collectivite_id"]
-          },
-          {
-            foreignKeyName: "demande_collectivite_id_fkey"
-            columns: ["collectivite_id"]
-            isOneToOne: false
-            referencedRelation: "collectivite_card"
-            referencedColumns: ["collectivite_id"]
-          },
-          {
-            foreignKeyName: "demande_collectivite_id_fkey"
-            columns: ["collectivite_id"]
-            isOneToOne: false
-            referencedRelation: "collectivite_carte_identite"
-            referencedColumns: ["collectivite_id"]
-          },
-          {
-            foreignKeyName: "demande_collectivite_id_fkey"
-            columns: ["collectivite_id"]
-            isOneToOne: false
-            referencedRelation: "collectivite_identite"
-            referencedColumns: ["id"]
-          },
-          {
-            foreignKeyName: "demande_collectivite_id_fkey"
-            columns: ["collectivite_id"]
-            isOneToOne: false
-            referencedRelation: "collectivite_labellisation"
-            referencedColumns: ["collectivite_id"]
-          },
-          {
-            foreignKeyName: "demande_collectivite_id_fkey"
-            columns: ["collectivite_id"]
-            isOneToOne: false
-            referencedRelation: "collectivite_membre_crm"
-            referencedColumns: ["collectivite_id"]
-          },
-          {
-            foreignKeyName: "demande_collectivite_id_fkey"
-            columns: ["collectivite_id"]
-            isOneToOne: false
-            referencedRelation: "collectivite_niveau_acces"
-            referencedColumns: ["collectivite_id"]
-          },
-          {
-            foreignKeyName: "demande_collectivite_id_fkey"
-            columns: ["collectivite_id"]
-            isOneToOne: false
-            referencedRelation: "collectivite_plan_action"
-            referencedColumns: ["collectivite_id"]
-          },
-          {
-            foreignKeyName: "demande_collectivite_id_fkey"
-            columns: ["collectivite_id"]
-            isOneToOne: false
-            referencedRelation: "collectivite_plan_action"
-            referencedColumns: ["collectivite_id"]
-          },
-          {
-            foreignKeyName: "demande_collectivite_id_fkey"
-            columns: ["collectivite_id"]
-            isOneToOne: false
-            referencedRelation: "collectivite_referentiel"
-            referencedColumns: ["collectivite_id"]
-          },
-          {
-            foreignKeyName: "demande_collectivite_id_fkey"
-            columns: ["collectivite_id"]
-            isOneToOne: false
-            referencedRelation: "collectivite_utilisateur"
-            referencedColumns: ["collectivite_id"]
-          },
-          {
-            foreignKeyName: "demande_collectivite_id_fkey"
-            columns: ["collectivite_id"]
-            isOneToOne: false
-            referencedRelation: "collectivites_crm"
-            referencedColumns: ["collectivite_id"]
-          },
-          {
-            foreignKeyName: "demande_collectivite_id_fkey"
-            columns: ["collectivite_id"]
-            isOneToOne: false
-            referencedRelation: "comparaison_scores_audit"
-            referencedColumns: ["collectivite_id"]
-          },
-          {
-            foreignKeyName: "demande_collectivite_id_fkey"
-            columns: ["collectivite_id"]
-            isOneToOne: false
-            referencedRelation: "crm_collectivites"
-            referencedColumns: ["collectivite_id"]
-          },
-          {
-            foreignKeyName: "demande_collectivite_id_fkey"
-            columns: ["collectivite_id"]
-            isOneToOne: false
-            referencedRelation: "crm_usages"
-            referencedColumns: ["collectivite_id"]
-          },
-          {
-            foreignKeyName: "demande_collectivite_id_fkey"
-            columns: ["collectivite_id"]
-            isOneToOne: false
-            referencedRelation: "crm_usages"
-            referencedColumns: ["collectivite_id"]
-          },
-          {
-            foreignKeyName: "demande_collectivite_id_fkey"
-            columns: ["collectivite_id"]
-            isOneToOne: false
-            referencedRelation: "engagement_collectivite"
-            referencedColumns: ["collectivite_id"]
-          },
-          {
-            foreignKeyName: "demande_collectivite_id_fkey"
-            columns: ["collectivite_id"]
-            isOneToOne: false
-            referencedRelation: "late_collectivite"
-            referencedColumns: ["collectivite_id"]
-          },
-          {
-            foreignKeyName: "demande_collectivite_id_fkey"
-            columns: ["collectivite_id"]
-            isOneToOne: false
-            referencedRelation: "locales_engagement_collectivite"
-            referencedColumns: ["collectivite_id"]
-          },
-          {
-            foreignKeyName: "demande_collectivite_id_fkey"
-            columns: ["collectivite_id"]
-            isOneToOne: false
-            referencedRelation: "locales_pourcentage_completude"
-            referencedColumns: ["collectivite_id"]
-          },
-          {
-            foreignKeyName: "demande_collectivite_id_fkey"
-            columns: ["collectivite_id"]
-            isOneToOne: false
-            referencedRelation: "named_collectivite"
-            referencedColumns: ["collectivite_id"]
-          },
-          {
-            foreignKeyName: "demande_collectivite_id_fkey"
-            columns: ["collectivite_id"]
-            isOneToOne: false
-            referencedRelation: "question_display"
-            referencedColumns: ["collectivite_id"]
-          },
-          {
-            foreignKeyName: "demande_collectivite_id_fkey"
-            columns: ["collectivite_id"]
-            isOneToOne: false
-            referencedRelation: "question_thematique_completude"
-            referencedColumns: ["collectivite_id"]
-          },
-          {
-            foreignKeyName: "demande_collectivite_id_fkey"
-            columns: ["collectivite_id"]
-            isOneToOne: false
-            referencedRelation: "rattachement"
-            referencedColumns: ["collectivite_id"]
-          },
-          {
-            foreignKeyName: "demande_collectivite_id_fkey"
-            columns: ["collectivite_id"]
-            isOneToOne: false
-            referencedRelation: "report_indicateur_resultat"
-            referencedColumns: ["collectivite_id"]
-          },
-          {
-            foreignKeyName: "demande_collectivite_id_fkey"
-            columns: ["collectivite_id"]
-            isOneToOne: false
-            referencedRelation: "report_reponse_binaire"
-            referencedColumns: ["collectivite_id"]
-          },
-          {
-            foreignKeyName: "demande_collectivite_id_fkey"
-            columns: ["collectivite_id"]
-            isOneToOne: false
-            referencedRelation: "report_reponse_choix"
-            referencedColumns: ["collectivite_id"]
-          },
-          {
-            foreignKeyName: "demande_collectivite_id_fkey"
-            columns: ["collectivite_id"]
-            isOneToOne: false
-            referencedRelation: "report_reponse_proportion"
-            referencedColumns: ["collectivite_id"]
-          },
-          {
-            foreignKeyName: "demande_collectivite_id_fkey"
-            columns: ["collectivite_id"]
-            isOneToOne: false
-            referencedRelation: "report_scores"
-            referencedColumns: ["collectivite_id"]
-          },
-          {
-            foreignKeyName: "demande_collectivite_id_fkey"
-            columns: ["collectivite_id"]
-            isOneToOne: false
-            referencedRelation: "retool_active_collectivite"
-            referencedColumns: ["collectivite_id"]
-          },
-          {
-            foreignKeyName: "demande_collectivite_id_fkey"
-            columns: ["collectivite_id"]
-            isOneToOne: false
-            referencedRelation: "retool_completude"
-            referencedColumns: ["collectivite_id"]
-          },
-          {
-            foreignKeyName: "demande_collectivite_id_fkey"
-            columns: ["collectivite_id"]
-            isOneToOne: false
-            referencedRelation: "retool_completude_compute"
-            referencedColumns: ["collectivite_id"]
-          },
-          {
-            foreignKeyName: "demande_collectivite_id_fkey"
-            columns: ["collectivite_id"]
-            isOneToOne: false
-            referencedRelation: "retool_plan_action_hebdo"
-            referencedColumns: ["collectivite_id"]
-          },
-          {
-            foreignKeyName: "demande_collectivite_id_fkey"
-            columns: ["collectivite_id"]
-            isOneToOne: false
-            referencedRelation: "retool_plan_action_premier_usage"
-            referencedColumns: ["collectivite_id"]
-          },
-          {
-            foreignKeyName: "demande_collectivite_id_fkey"
-            columns: ["collectivite_id"]
-            isOneToOne: false
-            referencedRelation: "retool_plan_action_premier_usage"
-            referencedColumns: ["collectivite_id"]
-          },
-          {
-            foreignKeyName: "demande_collectivite_id_fkey"
-            columns: ["collectivite_id"]
-            isOneToOne: false
-            referencedRelation: "retool_plan_action_usage"
-            referencedColumns: ["collectivite_id"]
-          },
-          {
-            foreignKeyName: "demande_collectivite_id_fkey"
-            columns: ["collectivite_id"]
-            isOneToOne: false
-            referencedRelation: "retool_score"
-            referencedColumns: ["collectivite_id"]
-          },
-          {
-            foreignKeyName: "demande_collectivite_id_fkey"
-            columns: ["collectivite_id"]
-            isOneToOne: false
-            referencedRelation: "site_labellisation"
-            referencedColumns: ["collectivite_id"]
-          },
-          {
-            foreignKeyName: "demande_collectivite_id_fkey"
-            columns: ["collectivite_id"]
-            isOneToOne: false
-            referencedRelation: "stats_active_real_collectivites"
-            referencedColumns: ["collectivite_id"]
-          },
-          {
-            foreignKeyName: "demande_collectivite_id_fkey"
-            columns: ["collectivite_id"]
-            isOneToOne: false
-            referencedRelation: "stats_carte_collectivite_active"
-            referencedColumns: ["collectivite_id"]
-          },
-          {
-            foreignKeyName: "demande_collectivite_id_fkey"
-            columns: ["collectivite_id"]
-            isOneToOne: false
-            referencedRelation: "stats_locales_engagement_collectivite"
-            referencedColumns: ["collectivite_id"]
-          },
-          {
-            foreignKeyName: "demande_collectivite_id_fkey"
-            columns: ["collectivite_id"]
-            isOneToOne: false
-            referencedRelation: "suivi_audit"
-            referencedColumns: ["collectivite_id"]
-          },
-          {
-            foreignKeyName: "demande_demandeur_fkey"
-            columns: ["demandeur"]
-            isOneToOne: false
-            referencedRelation: "users"
-            referencedColumns: ["id"]
           },
         ]
       }
@@ -1695,356 +260,6 @@ export type Database = {
             referencedColumns: ["collectivite_id"]
           },
           {
-            foreignKeyName: "preuve_base_collectivite_id_fkey"
-            columns: ["collectivite_id"]
-            isOneToOne: false
-            referencedRelation: "action_statuts"
-            referencedColumns: ["collectivite_id"]
-          },
-          {
-            foreignKeyName: "preuve_base_collectivite_id_fkey"
-            columns: ["collectivite_id"]
-            isOneToOne: false
-            referencedRelation: "active_collectivite"
-            referencedColumns: ["collectivite_id"]
-          },
-          {
-            foreignKeyName: "preuve_base_collectivite_id_fkey"
-            columns: ["collectivite_id"]
-            isOneToOne: false
-            referencedRelation: "auditeurs"
-            referencedColumns: ["collectivite_id"]
-          },
-          {
-            foreignKeyName: "preuve_base_collectivite_id_fkey"
-            columns: ["collectivite_id"]
-            isOneToOne: false
-            referencedRelation: "audits"
-            referencedColumns: ["collectivite_id"]
-          },
-          {
-            foreignKeyName: "preuve_base_collectivite_id_fkey"
-            columns: ["collectivite_id"]
-            isOneToOne: false
-            referencedRelation: "carte_collectivite_active"
-            referencedColumns: ["collectivite_id"]
-          },
-          {
-            foreignKeyName: "preuve_base_collectivite_id_fkey"
-            columns: ["collectivite_id"]
-            isOneToOne: false
-            referencedRelation: "collectivite"
-            referencedColumns: ["id"]
-          },
-          {
-            foreignKeyName: "preuve_base_collectivite_id_fkey"
-            columns: ["collectivite_id"]
-            isOneToOne: false
-            referencedRelation: "collectivite"
-            referencedColumns: ["collectivite_id"]
-          },
-          {
-            foreignKeyName: "preuve_base_collectivite_id_fkey"
-            columns: ["collectivite_id"]
-            isOneToOne: false
-            referencedRelation: "collectivite_action_statut"
-            referencedColumns: ["collectivite_id"]
-          },
-          {
-            foreignKeyName: "preuve_base_collectivite_id_fkey"
-            columns: ["collectivite_id"]
-            isOneToOne: false
-            referencedRelation: "collectivite_card"
-            referencedColumns: ["collectivite_id"]
-          },
-          {
-            foreignKeyName: "preuve_base_collectivite_id_fkey"
-            columns: ["collectivite_id"]
-            isOneToOne: false
-            referencedRelation: "collectivite_carte_identite"
-            referencedColumns: ["collectivite_id"]
-          },
-          {
-            foreignKeyName: "preuve_base_collectivite_id_fkey"
-            columns: ["collectivite_id"]
-            isOneToOne: false
-            referencedRelation: "collectivite_identite"
-            referencedColumns: ["id"]
-          },
-          {
-            foreignKeyName: "preuve_base_collectivite_id_fkey"
-            columns: ["collectivite_id"]
-            isOneToOne: false
-            referencedRelation: "collectivite_labellisation"
-            referencedColumns: ["collectivite_id"]
-          },
-          {
-            foreignKeyName: "preuve_base_collectivite_id_fkey"
-            columns: ["collectivite_id"]
-            isOneToOne: false
-            referencedRelation: "collectivite_membre_crm"
-            referencedColumns: ["collectivite_id"]
-          },
-          {
-            foreignKeyName: "preuve_base_collectivite_id_fkey"
-            columns: ["collectivite_id"]
-            isOneToOne: false
-            referencedRelation: "collectivite_niveau_acces"
-            referencedColumns: ["collectivite_id"]
-          },
-          {
-            foreignKeyName: "preuve_base_collectivite_id_fkey"
-            columns: ["collectivite_id"]
-            isOneToOne: false
-            referencedRelation: "collectivite_plan_action"
-            referencedColumns: ["collectivite_id"]
-          },
-          {
-            foreignKeyName: "preuve_base_collectivite_id_fkey"
-            columns: ["collectivite_id"]
-            isOneToOne: false
-            referencedRelation: "collectivite_plan_action"
-            referencedColumns: ["collectivite_id"]
-          },
-          {
-            foreignKeyName: "preuve_base_collectivite_id_fkey"
-            columns: ["collectivite_id"]
-            isOneToOne: false
-            referencedRelation: "collectivite_referentiel"
-            referencedColumns: ["collectivite_id"]
-          },
-          {
-            foreignKeyName: "preuve_base_collectivite_id_fkey"
-            columns: ["collectivite_id"]
-            isOneToOne: false
-            referencedRelation: "collectivite_utilisateur"
-            referencedColumns: ["collectivite_id"]
-          },
-          {
-            foreignKeyName: "preuve_base_collectivite_id_fkey"
-            columns: ["collectivite_id"]
-            isOneToOne: false
-            referencedRelation: "collectivites_crm"
-            referencedColumns: ["collectivite_id"]
-          },
-          {
-            foreignKeyName: "preuve_base_collectivite_id_fkey"
-            columns: ["collectivite_id"]
-            isOneToOne: false
-            referencedRelation: "comparaison_scores_audit"
-            referencedColumns: ["collectivite_id"]
-          },
-          {
-            foreignKeyName: "preuve_base_collectivite_id_fkey"
-            columns: ["collectivite_id"]
-            isOneToOne: false
-            referencedRelation: "crm_collectivites"
-            referencedColumns: ["collectivite_id"]
-          },
-          {
-            foreignKeyName: "preuve_base_collectivite_id_fkey"
-            columns: ["collectivite_id"]
-            isOneToOne: false
-            referencedRelation: "crm_usages"
-            referencedColumns: ["collectivite_id"]
-          },
-          {
-            foreignKeyName: "preuve_base_collectivite_id_fkey"
-            columns: ["collectivite_id"]
-            isOneToOne: false
-            referencedRelation: "crm_usages"
-            referencedColumns: ["collectivite_id"]
-          },
-          {
-            foreignKeyName: "preuve_base_collectivite_id_fkey"
-            columns: ["collectivite_id"]
-            isOneToOne: false
-            referencedRelation: "engagement_collectivite"
-            referencedColumns: ["collectivite_id"]
-          },
-          {
-            foreignKeyName: "preuve_base_collectivite_id_fkey"
-            columns: ["collectivite_id"]
-            isOneToOne: false
-            referencedRelation: "late_collectivite"
-            referencedColumns: ["collectivite_id"]
-          },
-          {
-            foreignKeyName: "preuve_base_collectivite_id_fkey"
-            columns: ["collectivite_id"]
-            isOneToOne: false
-            referencedRelation: "locales_engagement_collectivite"
-            referencedColumns: ["collectivite_id"]
-          },
-          {
-            foreignKeyName: "preuve_base_collectivite_id_fkey"
-            columns: ["collectivite_id"]
-            isOneToOne: false
-            referencedRelation: "locales_pourcentage_completude"
-            referencedColumns: ["collectivite_id"]
-          },
-          {
-            foreignKeyName: "preuve_base_collectivite_id_fkey"
-            columns: ["collectivite_id"]
-            isOneToOne: false
-            referencedRelation: "named_collectivite"
-            referencedColumns: ["collectivite_id"]
-          },
-          {
-            foreignKeyName: "preuve_base_collectivite_id_fkey"
-            columns: ["collectivite_id"]
-            isOneToOne: false
-            referencedRelation: "question_display"
-            referencedColumns: ["collectivite_id"]
-          },
-          {
-            foreignKeyName: "preuve_base_collectivite_id_fkey"
-            columns: ["collectivite_id"]
-            isOneToOne: false
-            referencedRelation: "question_thematique_completude"
-            referencedColumns: ["collectivite_id"]
-          },
-          {
-            foreignKeyName: "preuve_base_collectivite_id_fkey"
-            columns: ["collectivite_id"]
-            isOneToOne: false
-            referencedRelation: "rattachement"
-            referencedColumns: ["collectivite_id"]
-          },
-          {
-            foreignKeyName: "preuve_base_collectivite_id_fkey"
-            columns: ["collectivite_id"]
-            isOneToOne: false
-            referencedRelation: "report_indicateur_resultat"
-            referencedColumns: ["collectivite_id"]
-          },
-          {
-            foreignKeyName: "preuve_base_collectivite_id_fkey"
-            columns: ["collectivite_id"]
-            isOneToOne: false
-            referencedRelation: "report_reponse_binaire"
-            referencedColumns: ["collectivite_id"]
-          },
-          {
-            foreignKeyName: "preuve_base_collectivite_id_fkey"
-            columns: ["collectivite_id"]
-            isOneToOne: false
-            referencedRelation: "report_reponse_choix"
-            referencedColumns: ["collectivite_id"]
-          },
-          {
-            foreignKeyName: "preuve_base_collectivite_id_fkey"
-            columns: ["collectivite_id"]
-            isOneToOne: false
-            referencedRelation: "report_reponse_proportion"
-            referencedColumns: ["collectivite_id"]
-          },
-          {
-            foreignKeyName: "preuve_base_collectivite_id_fkey"
-            columns: ["collectivite_id"]
-            isOneToOne: false
-            referencedRelation: "report_scores"
-            referencedColumns: ["collectivite_id"]
-          },
-          {
-            foreignKeyName: "preuve_base_collectivite_id_fkey"
-            columns: ["collectivite_id"]
-            isOneToOne: false
-            referencedRelation: "retool_active_collectivite"
-            referencedColumns: ["collectivite_id"]
-          },
-          {
-            foreignKeyName: "preuve_base_collectivite_id_fkey"
-            columns: ["collectivite_id"]
-            isOneToOne: false
-            referencedRelation: "retool_completude"
-            referencedColumns: ["collectivite_id"]
-          },
-          {
-            foreignKeyName: "preuve_base_collectivite_id_fkey"
-            columns: ["collectivite_id"]
-            isOneToOne: false
-            referencedRelation: "retool_completude_compute"
-            referencedColumns: ["collectivite_id"]
-          },
-          {
-            foreignKeyName: "preuve_base_collectivite_id_fkey"
-            columns: ["collectivite_id"]
-            isOneToOne: false
-            referencedRelation: "retool_plan_action_hebdo"
-            referencedColumns: ["collectivite_id"]
-          },
-          {
-            foreignKeyName: "preuve_base_collectivite_id_fkey"
-            columns: ["collectivite_id"]
-            isOneToOne: false
-            referencedRelation: "retool_plan_action_premier_usage"
-            referencedColumns: ["collectivite_id"]
-          },
-          {
-            foreignKeyName: "preuve_base_collectivite_id_fkey"
-            columns: ["collectivite_id"]
-            isOneToOne: false
-            referencedRelation: "retool_plan_action_premier_usage"
-            referencedColumns: ["collectivite_id"]
-          },
-          {
-            foreignKeyName: "preuve_base_collectivite_id_fkey"
-            columns: ["collectivite_id"]
-            isOneToOne: false
-            referencedRelation: "retool_plan_action_usage"
-            referencedColumns: ["collectivite_id"]
-          },
-          {
-            foreignKeyName: "preuve_base_collectivite_id_fkey"
-            columns: ["collectivite_id"]
-            isOneToOne: false
-            referencedRelation: "retool_score"
-            referencedColumns: ["collectivite_id"]
-          },
-          {
-            foreignKeyName: "preuve_base_collectivite_id_fkey"
-            columns: ["collectivite_id"]
-            isOneToOne: false
-            referencedRelation: "site_labellisation"
-            referencedColumns: ["collectivite_id"]
-          },
-          {
-            foreignKeyName: "preuve_base_collectivite_id_fkey"
-            columns: ["collectivite_id"]
-            isOneToOne: false
-            referencedRelation: "stats_active_real_collectivites"
-            referencedColumns: ["collectivite_id"]
-          },
-          {
-            foreignKeyName: "preuve_base_collectivite_id_fkey"
-            columns: ["collectivite_id"]
-            isOneToOne: false
-            referencedRelation: "stats_carte_collectivite_active"
-            referencedColumns: ["collectivite_id"]
-          },
-          {
-            foreignKeyName: "preuve_base_collectivite_id_fkey"
-            columns: ["collectivite_id"]
-            isOneToOne: false
-            referencedRelation: "stats_locales_engagement_collectivite"
-            referencedColumns: ["collectivite_id"]
-          },
-          {
-            foreignKeyName: "preuve_base_collectivite_id_fkey"
-            columns: ["collectivite_id"]
-            isOneToOne: false
-            referencedRelation: "suivi_audit"
-            referencedColumns: ["collectivite_id"]
-          },
-          {
-            foreignKeyName: "preuve_base_fichier_id_fkey"
-            columns: ["fichier_id"]
-            isOneToOne: false
-            referencedRelation: "bibliotheque_fichier"
-            referencedColumns: ["id"]
-          },
-          {
             foreignKeyName: "preuve_base_fichier_id_fkey"
             columns: ["fichier_id"]
             isOneToOne: false
@@ -2056,13 +271,6 @@ export type Database = {
             columns: ["fichier_id"]
             isOneToOne: false
             referencedRelation: "bibliotheque_fichier_snippet"
-            referencedColumns: ["id"]
-          },
-          {
-            foreignKeyName: "preuve_base_modified_by_fkey"
-            columns: ["modified_by"]
-            isOneToOne: false
-            referencedRelation: "users"
             referencedColumns: ["id"]
           },
         ]
@@ -2322,13 +530,6 @@ export type Database = {
             foreignKeyName: "action_commentaire_collectivite_id_fkey"
             columns: ["collectivite_id"]
             isOneToOne: false
-            referencedRelation: "action_snippet"
-            referencedColumns: ["collectivite_id"]
-          },
-          {
-            foreignKeyName: "action_commentaire_collectivite_id_fkey"
-            columns: ["collectivite_id"]
-            isOneToOne: false
             referencedRelation: "action_statuts"
             referencedColumns: ["collectivite_id"]
           },
@@ -2357,29 +558,8 @@ export type Database = {
             foreignKeyName: "action_commentaire_collectivite_id_fkey"
             columns: ["collectivite_id"]
             isOneToOne: false
-            referencedRelation: "carte_collectivite_active"
-            referencedColumns: ["collectivite_id"]
-          },
-          {
-            foreignKeyName: "action_commentaire_collectivite_id_fkey"
-            columns: ["collectivite_id"]
-            isOneToOne: false
             referencedRelation: "collectivite"
             referencedColumns: ["id"]
-          },
-          {
-            foreignKeyName: "action_commentaire_collectivite_id_fkey"
-            columns: ["collectivite_id"]
-            isOneToOne: false
-            referencedRelation: "collectivite"
-            referencedColumns: ["collectivite_id"]
-          },
-          {
-            foreignKeyName: "action_commentaire_collectivite_id_fkey"
-            columns: ["collectivite_id"]
-            isOneToOne: false
-            referencedRelation: "collectivite_action_statut"
-            referencedColumns: ["collectivite_id"]
           },
           {
             foreignKeyName: "action_commentaire_collectivite_id_fkey"
@@ -2406,56 +586,7 @@ export type Database = {
             foreignKeyName: "action_commentaire_collectivite_id_fkey"
             columns: ["collectivite_id"]
             isOneToOne: false
-            referencedRelation: "collectivite_labellisation"
-            referencedColumns: ["collectivite_id"]
-          },
-          {
-            foreignKeyName: "action_commentaire_collectivite_id_fkey"
-            columns: ["collectivite_id"]
-            isOneToOne: false
-            referencedRelation: "collectivite_membre_crm"
-            referencedColumns: ["collectivite_id"]
-          },
-          {
-            foreignKeyName: "action_commentaire_collectivite_id_fkey"
-            columns: ["collectivite_id"]
-            isOneToOne: false
             referencedRelation: "collectivite_niveau_acces"
-            referencedColumns: ["collectivite_id"]
-          },
-          {
-            foreignKeyName: "action_commentaire_collectivite_id_fkey"
-            columns: ["collectivite_id"]
-            isOneToOne: false
-            referencedRelation: "collectivite_plan_action"
-            referencedColumns: ["collectivite_id"]
-          },
-          {
-            foreignKeyName: "action_commentaire_collectivite_id_fkey"
-            columns: ["collectivite_id"]
-            isOneToOne: false
-            referencedRelation: "collectivite_plan_action"
-            referencedColumns: ["collectivite_id"]
-          },
-          {
-            foreignKeyName: "action_commentaire_collectivite_id_fkey"
-            columns: ["collectivite_id"]
-            isOneToOne: false
-            referencedRelation: "collectivite_referentiel"
-            referencedColumns: ["collectivite_id"]
-          },
-          {
-            foreignKeyName: "action_commentaire_collectivite_id_fkey"
-            columns: ["collectivite_id"]
-            isOneToOne: false
-            referencedRelation: "collectivite_utilisateur"
-            referencedColumns: ["collectivite_id"]
-          },
-          {
-            foreignKeyName: "action_commentaire_collectivite_id_fkey"
-            columns: ["collectivite_id"]
-            isOneToOne: false
-            referencedRelation: "collectivites_crm"
             referencedColumns: ["collectivite_id"]
           },
           {
@@ -2483,41 +614,6 @@ export type Database = {
             foreignKeyName: "action_commentaire_collectivite_id_fkey"
             columns: ["collectivite_id"]
             isOneToOne: false
-            referencedRelation: "crm_usages"
-            referencedColumns: ["collectivite_id"]
-          },
-          {
-            foreignKeyName: "action_commentaire_collectivite_id_fkey"
-            columns: ["collectivite_id"]
-            isOneToOne: false
-            referencedRelation: "engagement_collectivite"
-            referencedColumns: ["collectivite_id"]
-          },
-          {
-            foreignKeyName: "action_commentaire_collectivite_id_fkey"
-            columns: ["collectivite_id"]
-            isOneToOne: false
-            referencedRelation: "late_collectivite"
-            referencedColumns: ["collectivite_id"]
-          },
-          {
-            foreignKeyName: "action_commentaire_collectivite_id_fkey"
-            columns: ["collectivite_id"]
-            isOneToOne: false
-            referencedRelation: "locales_engagement_collectivite"
-            referencedColumns: ["collectivite_id"]
-          },
-          {
-            foreignKeyName: "action_commentaire_collectivite_id_fkey"
-            columns: ["collectivite_id"]
-            isOneToOne: false
-            referencedRelation: "locales_pourcentage_completude"
-            referencedColumns: ["collectivite_id"]
-          },
-          {
-            foreignKeyName: "action_commentaire_collectivite_id_fkey"
-            columns: ["collectivite_id"]
-            isOneToOne: false
             referencedRelation: "named_collectivite"
             referencedColumns: ["collectivite_id"]
           },
@@ -2533,48 +629,6 @@ export type Database = {
             columns: ["collectivite_id"]
             isOneToOne: false
             referencedRelation: "question_thematique_completude"
-            referencedColumns: ["collectivite_id"]
-          },
-          {
-            foreignKeyName: "action_commentaire_collectivite_id_fkey"
-            columns: ["collectivite_id"]
-            isOneToOne: false
-            referencedRelation: "rattachement"
-            referencedColumns: ["collectivite_id"]
-          },
-          {
-            foreignKeyName: "action_commentaire_collectivite_id_fkey"
-            columns: ["collectivite_id"]
-            isOneToOne: false
-            referencedRelation: "report_indicateur_resultat"
-            referencedColumns: ["collectivite_id"]
-          },
-          {
-            foreignKeyName: "action_commentaire_collectivite_id_fkey"
-            columns: ["collectivite_id"]
-            isOneToOne: false
-            referencedRelation: "report_reponse_binaire"
-            referencedColumns: ["collectivite_id"]
-          },
-          {
-            foreignKeyName: "action_commentaire_collectivite_id_fkey"
-            columns: ["collectivite_id"]
-            isOneToOne: false
-            referencedRelation: "report_reponse_choix"
-            referencedColumns: ["collectivite_id"]
-          },
-          {
-            foreignKeyName: "action_commentaire_collectivite_id_fkey"
-            columns: ["collectivite_id"]
-            isOneToOne: false
-            referencedRelation: "report_reponse_proportion"
-            referencedColumns: ["collectivite_id"]
-          },
-          {
-            foreignKeyName: "action_commentaire_collectivite_id_fkey"
-            columns: ["collectivite_id"]
-            isOneToOne: false
-            referencedRelation: "report_scores"
             referencedColumns: ["collectivite_id"]
           },
           {
@@ -2603,13 +657,6 @@ export type Database = {
             columns: ["collectivite_id"]
             isOneToOne: false
             referencedRelation: "retool_plan_action_hebdo"
-            referencedColumns: ["collectivite_id"]
-          },
-          {
-            foreignKeyName: "action_commentaire_collectivite_id_fkey"
-            columns: ["collectivite_id"]
-            isOneToOne: false
-            referencedRelation: "retool_plan_action_premier_usage"
             referencedColumns: ["collectivite_id"]
           },
           {
@@ -2667,13 +714,6 @@ export type Database = {
             isOneToOne: false
             referencedRelation: "suivi_audit"
             referencedColumns: ["collectivite_id"]
-          },
-          {
-            foreignKeyName: "action_commentaire_modified_by_fkey"
-            columns: ["modified_by"]
-            isOneToOne: false
-            referencedRelation: "users"
-            referencedColumns: ["id"]
           },
         ]
       }
@@ -2719,6 +759,8 @@ export type Database = {
           preuve: string | null
           reduction_potentiel: string
           referentiel: Database["public"]["Enums"]["referentiel"]
+          referentiel_id: string
+          referentiel_version: string
           ressources: string
         }
         Insert: {
@@ -2736,6 +778,8 @@ export type Database = {
           preuve?: string | null
           reduction_potentiel: string
           referentiel: Database["public"]["Enums"]["referentiel"]
+          referentiel_id: string
+          referentiel_version: string
           ressources: string
         }
         Update: {
@@ -2753,6 +797,8 @@ export type Database = {
           preuve?: string | null
           reduction_potentiel?: string
           referentiel?: Database["public"]["Enums"]["referentiel"]
+          referentiel_id?: string
+          referentiel_version?: string
           ressources?: string
         }
         Relationships: [
@@ -2762,6 +808,53 @@ export type Database = {
             isOneToOne: true
             referencedRelation: "action_relation"
             referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "referentiel_id_fkey"
+            columns: ["referentiel_id"]
+            isOneToOne: false
+            referencedRelation: "referentiel_definition"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      action_definition_tag: {
+        Row: {
+          action_id: string
+          referentiel_id: string
+          tag_ref: string
+        }
+        Insert: {
+          action_id: string
+          referentiel_id: string
+          tag_ref: string
+        }
+        Update: {
+          action_id?: string
+          referentiel_id?: string
+          tag_ref?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "action_definition_tag_action_id_fkey"
+            columns: ["action_id"]
+            isOneToOne: false
+            referencedRelation: "action_relation"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "action_definition_tag_referentiel_id_fkey"
+            columns: ["referentiel_id"]
+            isOneToOne: false
+            referencedRelation: "referentiel_definition"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "action_definition_tag_tag_ref_fkey"
+            columns: ["tag_ref"]
+            isOneToOne: false
+            referencedRelation: "referentiel_tag"
+            referencedColumns: ["ref"]
           },
         ]
       }
@@ -2805,13 +898,6 @@ export type Database = {
             foreignKeyName: "action_discussion_collectivite_id_fkey"
             columns: ["collectivite_id"]
             isOneToOne: false
-            referencedRelation: "action_snippet"
-            referencedColumns: ["collectivite_id"]
-          },
-          {
-            foreignKeyName: "action_discussion_collectivite_id_fkey"
-            columns: ["collectivite_id"]
-            isOneToOne: false
             referencedRelation: "action_statuts"
             referencedColumns: ["collectivite_id"]
           },
@@ -2840,29 +926,8 @@ export type Database = {
             foreignKeyName: "action_discussion_collectivite_id_fkey"
             columns: ["collectivite_id"]
             isOneToOne: false
-            referencedRelation: "carte_collectivite_active"
-            referencedColumns: ["collectivite_id"]
-          },
-          {
-            foreignKeyName: "action_discussion_collectivite_id_fkey"
-            columns: ["collectivite_id"]
-            isOneToOne: false
             referencedRelation: "collectivite"
             referencedColumns: ["id"]
-          },
-          {
-            foreignKeyName: "action_discussion_collectivite_id_fkey"
-            columns: ["collectivite_id"]
-            isOneToOne: false
-            referencedRelation: "collectivite"
-            referencedColumns: ["collectivite_id"]
-          },
-          {
-            foreignKeyName: "action_discussion_collectivite_id_fkey"
-            columns: ["collectivite_id"]
-            isOneToOne: false
-            referencedRelation: "collectivite_action_statut"
-            referencedColumns: ["collectivite_id"]
           },
           {
             foreignKeyName: "action_discussion_collectivite_id_fkey"
@@ -2889,56 +954,7 @@ export type Database = {
             foreignKeyName: "action_discussion_collectivite_id_fkey"
             columns: ["collectivite_id"]
             isOneToOne: false
-            referencedRelation: "collectivite_labellisation"
-            referencedColumns: ["collectivite_id"]
-          },
-          {
-            foreignKeyName: "action_discussion_collectivite_id_fkey"
-            columns: ["collectivite_id"]
-            isOneToOne: false
-            referencedRelation: "collectivite_membre_crm"
-            referencedColumns: ["collectivite_id"]
-          },
-          {
-            foreignKeyName: "action_discussion_collectivite_id_fkey"
-            columns: ["collectivite_id"]
-            isOneToOne: false
             referencedRelation: "collectivite_niveau_acces"
-            referencedColumns: ["collectivite_id"]
-          },
-          {
-            foreignKeyName: "action_discussion_collectivite_id_fkey"
-            columns: ["collectivite_id"]
-            isOneToOne: false
-            referencedRelation: "collectivite_plan_action"
-            referencedColumns: ["collectivite_id"]
-          },
-          {
-            foreignKeyName: "action_discussion_collectivite_id_fkey"
-            columns: ["collectivite_id"]
-            isOneToOne: false
-            referencedRelation: "collectivite_plan_action"
-            referencedColumns: ["collectivite_id"]
-          },
-          {
-            foreignKeyName: "action_discussion_collectivite_id_fkey"
-            columns: ["collectivite_id"]
-            isOneToOne: false
-            referencedRelation: "collectivite_referentiel"
-            referencedColumns: ["collectivite_id"]
-          },
-          {
-            foreignKeyName: "action_discussion_collectivite_id_fkey"
-            columns: ["collectivite_id"]
-            isOneToOne: false
-            referencedRelation: "collectivite_utilisateur"
-            referencedColumns: ["collectivite_id"]
-          },
-          {
-            foreignKeyName: "action_discussion_collectivite_id_fkey"
-            columns: ["collectivite_id"]
-            isOneToOne: false
-            referencedRelation: "collectivites_crm"
             referencedColumns: ["collectivite_id"]
           },
           {
@@ -2966,41 +982,6 @@ export type Database = {
             foreignKeyName: "action_discussion_collectivite_id_fkey"
             columns: ["collectivite_id"]
             isOneToOne: false
-            referencedRelation: "crm_usages"
-            referencedColumns: ["collectivite_id"]
-          },
-          {
-            foreignKeyName: "action_discussion_collectivite_id_fkey"
-            columns: ["collectivite_id"]
-            isOneToOne: false
-            referencedRelation: "engagement_collectivite"
-            referencedColumns: ["collectivite_id"]
-          },
-          {
-            foreignKeyName: "action_discussion_collectivite_id_fkey"
-            columns: ["collectivite_id"]
-            isOneToOne: false
-            referencedRelation: "late_collectivite"
-            referencedColumns: ["collectivite_id"]
-          },
-          {
-            foreignKeyName: "action_discussion_collectivite_id_fkey"
-            columns: ["collectivite_id"]
-            isOneToOne: false
-            referencedRelation: "locales_engagement_collectivite"
-            referencedColumns: ["collectivite_id"]
-          },
-          {
-            foreignKeyName: "action_discussion_collectivite_id_fkey"
-            columns: ["collectivite_id"]
-            isOneToOne: false
-            referencedRelation: "locales_pourcentage_completude"
-            referencedColumns: ["collectivite_id"]
-          },
-          {
-            foreignKeyName: "action_discussion_collectivite_id_fkey"
-            columns: ["collectivite_id"]
-            isOneToOne: false
             referencedRelation: "named_collectivite"
             referencedColumns: ["collectivite_id"]
           },
@@ -3016,48 +997,6 @@ export type Database = {
             columns: ["collectivite_id"]
             isOneToOne: false
             referencedRelation: "question_thematique_completude"
-            referencedColumns: ["collectivite_id"]
-          },
-          {
-            foreignKeyName: "action_discussion_collectivite_id_fkey"
-            columns: ["collectivite_id"]
-            isOneToOne: false
-            referencedRelation: "rattachement"
-            referencedColumns: ["collectivite_id"]
-          },
-          {
-            foreignKeyName: "action_discussion_collectivite_id_fkey"
-            columns: ["collectivite_id"]
-            isOneToOne: false
-            referencedRelation: "report_indicateur_resultat"
-            referencedColumns: ["collectivite_id"]
-          },
-          {
-            foreignKeyName: "action_discussion_collectivite_id_fkey"
-            columns: ["collectivite_id"]
-            isOneToOne: false
-            referencedRelation: "report_reponse_binaire"
-            referencedColumns: ["collectivite_id"]
-          },
-          {
-            foreignKeyName: "action_discussion_collectivite_id_fkey"
-            columns: ["collectivite_id"]
-            isOneToOne: false
-            referencedRelation: "report_reponse_choix"
-            referencedColumns: ["collectivite_id"]
-          },
-          {
-            foreignKeyName: "action_discussion_collectivite_id_fkey"
-            columns: ["collectivite_id"]
-            isOneToOne: false
-            referencedRelation: "report_reponse_proportion"
-            referencedColumns: ["collectivite_id"]
-          },
-          {
-            foreignKeyName: "action_discussion_collectivite_id_fkey"
-            columns: ["collectivite_id"]
-            isOneToOne: false
-            referencedRelation: "report_scores"
             referencedColumns: ["collectivite_id"]
           },
           {
@@ -3086,13 +1025,6 @@ export type Database = {
             columns: ["collectivite_id"]
             isOneToOne: false
             referencedRelation: "retool_plan_action_hebdo"
-            referencedColumns: ["collectivite_id"]
-          },
-          {
-            foreignKeyName: "action_discussion_collectivite_id_fkey"
-            columns: ["collectivite_id"]
-            isOneToOne: false
-            referencedRelation: "retool_plan_action_premier_usage"
             referencedColumns: ["collectivite_id"]
           },
           {
@@ -3151,13 +1083,6 @@ export type Database = {
             referencedRelation: "suivi_audit"
             referencedColumns: ["collectivite_id"]
           },
-          {
-            foreignKeyName: "action_discussion_created_by_fkey"
-            columns: ["created_by"]
-            isOneToOne: false
-            referencedRelation: "users"
-            referencedColumns: ["id"]
-          },
         ]
       }
       action_discussion_commentaire: {
@@ -3183,13 +1108,6 @@ export type Database = {
           message?: string
         }
         Relationships: [
-          {
-            foreignKeyName: "action_discussion_commentaire_created_by_fkey"
-            columns: ["created_by"]
-            isOneToOne: false
-            referencedRelation: "users"
-            referencedColumns: ["id"]
-          },
           {
             foreignKeyName: "action_discussion_commentaire_discussion_id_fkey"
             columns: ["discussion_id"]
@@ -3481,20 +1399,6 @@ export type Database = {
             foreignKeyName: "action_impact_fiche_action_fiche_id_fkey"
             columns: ["fiche_id"]
             isOneToOne: false
-            referencedRelation: "fiche_resume"
-            referencedColumns: ["id"]
-          },
-          {
-            foreignKeyName: "action_impact_fiche_action_fiche_id_fkey"
-            columns: ["fiche_id"]
-            isOneToOne: false
-            referencedRelation: "fiches_action"
-            referencedColumns: ["id"]
-          },
-          {
-            foreignKeyName: "action_impact_fiche_action_fiche_id_fkey"
-            columns: ["fiche_id"]
-            isOneToOne: false
             referencedRelation: "fiches_action"
             referencedColumns: ["id"]
           },
@@ -3534,13 +1438,6 @@ export type Database = {
             columns: ["action_impact_id"]
             isOneToOne: false
             referencedRelation: "action_impact"
-            referencedColumns: ["id"]
-          },
-          {
-            foreignKeyName: "action_impact_indicateur_indicateur_id_fkey"
-            columns: ["indicateur_id"]
-            isOneToOne: false
-            referencedRelation: "crm_indicateurs"
             referencedColumns: ["id"]
           },
           {
@@ -3801,6 +1698,59 @@ export type Database = {
         }
         Relationships: []
       }
+      action_origine: {
+        Row: {
+          action_id: string
+          origine_action_id: string
+          origine_referentiel_id: string
+          ponderation: number
+          referentiel_id: string
+        }
+        Insert: {
+          action_id: string
+          origine_action_id: string
+          origine_referentiel_id: string
+          ponderation?: number
+          referentiel_id: string
+        }
+        Update: {
+          action_id?: string
+          origine_action_id?: string
+          origine_referentiel_id?: string
+          ponderation?: number
+          referentiel_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "action_origine_action_id_fkey"
+            columns: ["action_id"]
+            isOneToOne: false
+            referencedRelation: "action_relation"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "action_origine_origine_action_id_fkey"
+            columns: ["origine_action_id"]
+            isOneToOne: false
+            referencedRelation: "action_relation"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "action_origine_origine_referentiel_id_fkey"
+            columns: ["origine_referentiel_id"]
+            isOneToOne: false
+            referencedRelation: "referentiel_definition"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "action_origine_referentiel_id_fkey"
+            columns: ["referentiel_id"]
+            isOneToOne: false
+            referencedRelation: "referentiel_definition"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       action_relation: {
         Row: {
           id: string
@@ -3867,13 +1817,6 @@ export type Database = {
             foreignKeyName: "action_statut_collectivite_id_fkey"
             columns: ["collectivite_id"]
             isOneToOne: false
-            referencedRelation: "action_snippet"
-            referencedColumns: ["collectivite_id"]
-          },
-          {
-            foreignKeyName: "action_statut_collectivite_id_fkey"
-            columns: ["collectivite_id"]
-            isOneToOne: false
             referencedRelation: "action_statuts"
             referencedColumns: ["collectivite_id"]
           },
@@ -3902,29 +1845,8 @@ export type Database = {
             foreignKeyName: "action_statut_collectivite_id_fkey"
             columns: ["collectivite_id"]
             isOneToOne: false
-            referencedRelation: "carte_collectivite_active"
-            referencedColumns: ["collectivite_id"]
-          },
-          {
-            foreignKeyName: "action_statut_collectivite_id_fkey"
-            columns: ["collectivite_id"]
-            isOneToOne: false
             referencedRelation: "collectivite"
             referencedColumns: ["id"]
-          },
-          {
-            foreignKeyName: "action_statut_collectivite_id_fkey"
-            columns: ["collectivite_id"]
-            isOneToOne: false
-            referencedRelation: "collectivite"
-            referencedColumns: ["collectivite_id"]
-          },
-          {
-            foreignKeyName: "action_statut_collectivite_id_fkey"
-            columns: ["collectivite_id"]
-            isOneToOne: false
-            referencedRelation: "collectivite_action_statut"
-            referencedColumns: ["collectivite_id"]
           },
           {
             foreignKeyName: "action_statut_collectivite_id_fkey"
@@ -3951,56 +1873,7 @@ export type Database = {
             foreignKeyName: "action_statut_collectivite_id_fkey"
             columns: ["collectivite_id"]
             isOneToOne: false
-            referencedRelation: "collectivite_labellisation"
-            referencedColumns: ["collectivite_id"]
-          },
-          {
-            foreignKeyName: "action_statut_collectivite_id_fkey"
-            columns: ["collectivite_id"]
-            isOneToOne: false
-            referencedRelation: "collectivite_membre_crm"
-            referencedColumns: ["collectivite_id"]
-          },
-          {
-            foreignKeyName: "action_statut_collectivite_id_fkey"
-            columns: ["collectivite_id"]
-            isOneToOne: false
             referencedRelation: "collectivite_niveau_acces"
-            referencedColumns: ["collectivite_id"]
-          },
-          {
-            foreignKeyName: "action_statut_collectivite_id_fkey"
-            columns: ["collectivite_id"]
-            isOneToOne: false
-            referencedRelation: "collectivite_plan_action"
-            referencedColumns: ["collectivite_id"]
-          },
-          {
-            foreignKeyName: "action_statut_collectivite_id_fkey"
-            columns: ["collectivite_id"]
-            isOneToOne: false
-            referencedRelation: "collectivite_plan_action"
-            referencedColumns: ["collectivite_id"]
-          },
-          {
-            foreignKeyName: "action_statut_collectivite_id_fkey"
-            columns: ["collectivite_id"]
-            isOneToOne: false
-            referencedRelation: "collectivite_referentiel"
-            referencedColumns: ["collectivite_id"]
-          },
-          {
-            foreignKeyName: "action_statut_collectivite_id_fkey"
-            columns: ["collectivite_id"]
-            isOneToOne: false
-            referencedRelation: "collectivite_utilisateur"
-            referencedColumns: ["collectivite_id"]
-          },
-          {
-            foreignKeyName: "action_statut_collectivite_id_fkey"
-            columns: ["collectivite_id"]
-            isOneToOne: false
-            referencedRelation: "collectivites_crm"
             referencedColumns: ["collectivite_id"]
           },
           {
@@ -4028,41 +1901,6 @@ export type Database = {
             foreignKeyName: "action_statut_collectivite_id_fkey"
             columns: ["collectivite_id"]
             isOneToOne: false
-            referencedRelation: "crm_usages"
-            referencedColumns: ["collectivite_id"]
-          },
-          {
-            foreignKeyName: "action_statut_collectivite_id_fkey"
-            columns: ["collectivite_id"]
-            isOneToOne: false
-            referencedRelation: "engagement_collectivite"
-            referencedColumns: ["collectivite_id"]
-          },
-          {
-            foreignKeyName: "action_statut_collectivite_id_fkey"
-            columns: ["collectivite_id"]
-            isOneToOne: false
-            referencedRelation: "late_collectivite"
-            referencedColumns: ["collectivite_id"]
-          },
-          {
-            foreignKeyName: "action_statut_collectivite_id_fkey"
-            columns: ["collectivite_id"]
-            isOneToOne: false
-            referencedRelation: "locales_engagement_collectivite"
-            referencedColumns: ["collectivite_id"]
-          },
-          {
-            foreignKeyName: "action_statut_collectivite_id_fkey"
-            columns: ["collectivite_id"]
-            isOneToOne: false
-            referencedRelation: "locales_pourcentage_completude"
-            referencedColumns: ["collectivite_id"]
-          },
-          {
-            foreignKeyName: "action_statut_collectivite_id_fkey"
-            columns: ["collectivite_id"]
-            isOneToOne: false
             referencedRelation: "named_collectivite"
             referencedColumns: ["collectivite_id"]
           },
@@ -4078,48 +1916,6 @@ export type Database = {
             columns: ["collectivite_id"]
             isOneToOne: false
             referencedRelation: "question_thematique_completude"
-            referencedColumns: ["collectivite_id"]
-          },
-          {
-            foreignKeyName: "action_statut_collectivite_id_fkey"
-            columns: ["collectivite_id"]
-            isOneToOne: false
-            referencedRelation: "rattachement"
-            referencedColumns: ["collectivite_id"]
-          },
-          {
-            foreignKeyName: "action_statut_collectivite_id_fkey"
-            columns: ["collectivite_id"]
-            isOneToOne: false
-            referencedRelation: "report_indicateur_resultat"
-            referencedColumns: ["collectivite_id"]
-          },
-          {
-            foreignKeyName: "action_statut_collectivite_id_fkey"
-            columns: ["collectivite_id"]
-            isOneToOne: false
-            referencedRelation: "report_reponse_binaire"
-            referencedColumns: ["collectivite_id"]
-          },
-          {
-            foreignKeyName: "action_statut_collectivite_id_fkey"
-            columns: ["collectivite_id"]
-            isOneToOne: false
-            referencedRelation: "report_reponse_choix"
-            referencedColumns: ["collectivite_id"]
-          },
-          {
-            foreignKeyName: "action_statut_collectivite_id_fkey"
-            columns: ["collectivite_id"]
-            isOneToOne: false
-            referencedRelation: "report_reponse_proportion"
-            referencedColumns: ["collectivite_id"]
-          },
-          {
-            foreignKeyName: "action_statut_collectivite_id_fkey"
-            columns: ["collectivite_id"]
-            isOneToOne: false
-            referencedRelation: "report_scores"
             referencedColumns: ["collectivite_id"]
           },
           {
@@ -4148,13 +1944,6 @@ export type Database = {
             columns: ["collectivite_id"]
             isOneToOne: false
             referencedRelation: "retool_plan_action_hebdo"
-            referencedColumns: ["collectivite_id"]
-          },
-          {
-            foreignKeyName: "action_statut_collectivite_id_fkey"
-            columns: ["collectivite_id"]
-            isOneToOne: false
-            referencedRelation: "retool_plan_action_premier_usage"
             referencedColumns: ["collectivite_id"]
           },
           {
@@ -4212,13 +2001,6 @@ export type Database = {
             isOneToOne: false
             referencedRelation: "suivi_audit"
             referencedColumns: ["collectivite_id"]
-          },
-          {
-            foreignKeyName: "action_statut_modified_by_fkey"
-            columns: ["modified_by"]
-            isOneToOne: false
-            referencedRelation: "users"
-            referencedColumns: ["id"]
           },
         ]
       }
@@ -4278,20 +2060,6 @@ export type Database = {
             foreignKeyName: "annexe_fiche_id_fkey"
             columns: ["fiche_id"]
             isOneToOne: false
-            referencedRelation: "fiche_resume"
-            referencedColumns: ["id"]
-          },
-          {
-            foreignKeyName: "annexe_fiche_id_fkey"
-            columns: ["fiche_id"]
-            isOneToOne: false
-            referencedRelation: "fiches_action"
-            referencedColumns: ["id"]
-          },
-          {
-            foreignKeyName: "annexe_fiche_id_fkey"
-            columns: ["fiche_id"]
-            isOneToOne: false
             referencedRelation: "fiches_action"
             referencedColumns: ["id"]
           },
@@ -4332,13 +2100,6 @@ export type Database = {
             foreignKeyName: "audit_auditeur_audit_id_fkey"
             columns: ["audit_id"]
             isOneToOne: false
-            referencedRelation: "audit"
-            referencedColumns: ["id"]
-          },
-          {
-            foreignKeyName: "audit_auditeur_audit_id_fkey"
-            columns: ["audit_id"]
-            isOneToOne: false
             referencedRelation: "audit_en_cours"
             referencedColumns: ["id"]
           },
@@ -4348,13 +2109,6 @@ export type Database = {
             isOneToOne: false
             referencedRelation: "retool_audit"
             referencedColumns: ["audit_id"]
-          },
-          {
-            foreignKeyName: "audit_auditeur_auditeur_fkey"
-            columns: ["auditeur"]
-            isOneToOne: false
-            referencedRelation: "users"
-            referencedColumns: ["id"]
           },
         ]
       }
@@ -4404,13 +2158,6 @@ export type Database = {
             foreignKeyName: "axe_collectivite_id_fkey"
             columns: ["collectivite_id"]
             isOneToOne: false
-            referencedRelation: "action_snippet"
-            referencedColumns: ["collectivite_id"]
-          },
-          {
-            foreignKeyName: "axe_collectivite_id_fkey"
-            columns: ["collectivite_id"]
-            isOneToOne: false
             referencedRelation: "action_statuts"
             referencedColumns: ["collectivite_id"]
           },
@@ -4439,29 +2186,8 @@ export type Database = {
             foreignKeyName: "axe_collectivite_id_fkey"
             columns: ["collectivite_id"]
             isOneToOne: false
-            referencedRelation: "carte_collectivite_active"
-            referencedColumns: ["collectivite_id"]
-          },
-          {
-            foreignKeyName: "axe_collectivite_id_fkey"
-            columns: ["collectivite_id"]
-            isOneToOne: false
             referencedRelation: "collectivite"
             referencedColumns: ["id"]
-          },
-          {
-            foreignKeyName: "axe_collectivite_id_fkey"
-            columns: ["collectivite_id"]
-            isOneToOne: false
-            referencedRelation: "collectivite"
-            referencedColumns: ["collectivite_id"]
-          },
-          {
-            foreignKeyName: "axe_collectivite_id_fkey"
-            columns: ["collectivite_id"]
-            isOneToOne: false
-            referencedRelation: "collectivite_action_statut"
-            referencedColumns: ["collectivite_id"]
           },
           {
             foreignKeyName: "axe_collectivite_id_fkey"
@@ -4488,56 +2214,7 @@ export type Database = {
             foreignKeyName: "axe_collectivite_id_fkey"
             columns: ["collectivite_id"]
             isOneToOne: false
-            referencedRelation: "collectivite_labellisation"
-            referencedColumns: ["collectivite_id"]
-          },
-          {
-            foreignKeyName: "axe_collectivite_id_fkey"
-            columns: ["collectivite_id"]
-            isOneToOne: false
-            referencedRelation: "collectivite_membre_crm"
-            referencedColumns: ["collectivite_id"]
-          },
-          {
-            foreignKeyName: "axe_collectivite_id_fkey"
-            columns: ["collectivite_id"]
-            isOneToOne: false
             referencedRelation: "collectivite_niveau_acces"
-            referencedColumns: ["collectivite_id"]
-          },
-          {
-            foreignKeyName: "axe_collectivite_id_fkey"
-            columns: ["collectivite_id"]
-            isOneToOne: false
-            referencedRelation: "collectivite_plan_action"
-            referencedColumns: ["collectivite_id"]
-          },
-          {
-            foreignKeyName: "axe_collectivite_id_fkey"
-            columns: ["collectivite_id"]
-            isOneToOne: false
-            referencedRelation: "collectivite_plan_action"
-            referencedColumns: ["collectivite_id"]
-          },
-          {
-            foreignKeyName: "axe_collectivite_id_fkey"
-            columns: ["collectivite_id"]
-            isOneToOne: false
-            referencedRelation: "collectivite_referentiel"
-            referencedColumns: ["collectivite_id"]
-          },
-          {
-            foreignKeyName: "axe_collectivite_id_fkey"
-            columns: ["collectivite_id"]
-            isOneToOne: false
-            referencedRelation: "collectivite_utilisateur"
-            referencedColumns: ["collectivite_id"]
-          },
-          {
-            foreignKeyName: "axe_collectivite_id_fkey"
-            columns: ["collectivite_id"]
-            isOneToOne: false
-            referencedRelation: "collectivites_crm"
             referencedColumns: ["collectivite_id"]
           },
           {
@@ -4565,41 +2242,6 @@ export type Database = {
             foreignKeyName: "axe_collectivite_id_fkey"
             columns: ["collectivite_id"]
             isOneToOne: false
-            referencedRelation: "crm_usages"
-            referencedColumns: ["collectivite_id"]
-          },
-          {
-            foreignKeyName: "axe_collectivite_id_fkey"
-            columns: ["collectivite_id"]
-            isOneToOne: false
-            referencedRelation: "engagement_collectivite"
-            referencedColumns: ["collectivite_id"]
-          },
-          {
-            foreignKeyName: "axe_collectivite_id_fkey"
-            columns: ["collectivite_id"]
-            isOneToOne: false
-            referencedRelation: "late_collectivite"
-            referencedColumns: ["collectivite_id"]
-          },
-          {
-            foreignKeyName: "axe_collectivite_id_fkey"
-            columns: ["collectivite_id"]
-            isOneToOne: false
-            referencedRelation: "locales_engagement_collectivite"
-            referencedColumns: ["collectivite_id"]
-          },
-          {
-            foreignKeyName: "axe_collectivite_id_fkey"
-            columns: ["collectivite_id"]
-            isOneToOne: false
-            referencedRelation: "locales_pourcentage_completude"
-            referencedColumns: ["collectivite_id"]
-          },
-          {
-            foreignKeyName: "axe_collectivite_id_fkey"
-            columns: ["collectivite_id"]
-            isOneToOne: false
             referencedRelation: "named_collectivite"
             referencedColumns: ["collectivite_id"]
           },
@@ -4615,48 +2257,6 @@ export type Database = {
             columns: ["collectivite_id"]
             isOneToOne: false
             referencedRelation: "question_thematique_completude"
-            referencedColumns: ["collectivite_id"]
-          },
-          {
-            foreignKeyName: "axe_collectivite_id_fkey"
-            columns: ["collectivite_id"]
-            isOneToOne: false
-            referencedRelation: "rattachement"
-            referencedColumns: ["collectivite_id"]
-          },
-          {
-            foreignKeyName: "axe_collectivite_id_fkey"
-            columns: ["collectivite_id"]
-            isOneToOne: false
-            referencedRelation: "report_indicateur_resultat"
-            referencedColumns: ["collectivite_id"]
-          },
-          {
-            foreignKeyName: "axe_collectivite_id_fkey"
-            columns: ["collectivite_id"]
-            isOneToOne: false
-            referencedRelation: "report_reponse_binaire"
-            referencedColumns: ["collectivite_id"]
-          },
-          {
-            foreignKeyName: "axe_collectivite_id_fkey"
-            columns: ["collectivite_id"]
-            isOneToOne: false
-            referencedRelation: "report_reponse_choix"
-            referencedColumns: ["collectivite_id"]
-          },
-          {
-            foreignKeyName: "axe_collectivite_id_fkey"
-            columns: ["collectivite_id"]
-            isOneToOne: false
-            referencedRelation: "report_reponse_proportion"
-            referencedColumns: ["collectivite_id"]
-          },
-          {
-            foreignKeyName: "axe_collectivite_id_fkey"
-            columns: ["collectivite_id"]
-            isOneToOne: false
-            referencedRelation: "report_scores"
             referencedColumns: ["collectivite_id"]
           },
           {
@@ -4685,13 +2285,6 @@ export type Database = {
             columns: ["collectivite_id"]
             isOneToOne: false
             referencedRelation: "retool_plan_action_hebdo"
-            referencedColumns: ["collectivite_id"]
-          },
-          {
-            foreignKeyName: "axe_collectivite_id_fkey"
-            columns: ["collectivite_id"]
-            isOneToOne: false
-            referencedRelation: "retool_plan_action_premier_usage"
             referencedColumns: ["collectivite_id"]
           },
           {
@@ -4749,13 +2342,6 @@ export type Database = {
             isOneToOne: false
             referencedRelation: "suivi_audit"
             referencedColumns: ["collectivite_id"]
-          },
-          {
-            foreignKeyName: "axe_modified_by_fkey"
-            columns: ["modified_by"]
-            isOneToOne: false
-            referencedRelation: "users"
-            referencedColumns: ["id"]
           },
           {
             foreignKeyName: "axe_panier_id_fkey"
@@ -4878,13 +2464,6 @@ export type Database = {
             foreignKeyName: "categorie_tag_collectivite_id_fkey"
             columns: ["collectivite_id"]
             isOneToOne: false
-            referencedRelation: "action_snippet"
-            referencedColumns: ["collectivite_id"]
-          },
-          {
-            foreignKeyName: "categorie_tag_collectivite_id_fkey"
-            columns: ["collectivite_id"]
-            isOneToOne: false
             referencedRelation: "action_statuts"
             referencedColumns: ["collectivite_id"]
           },
@@ -4913,29 +2492,8 @@ export type Database = {
             foreignKeyName: "categorie_tag_collectivite_id_fkey"
             columns: ["collectivite_id"]
             isOneToOne: false
-            referencedRelation: "carte_collectivite_active"
-            referencedColumns: ["collectivite_id"]
-          },
-          {
-            foreignKeyName: "categorie_tag_collectivite_id_fkey"
-            columns: ["collectivite_id"]
-            isOneToOne: false
             referencedRelation: "collectivite"
             referencedColumns: ["id"]
-          },
-          {
-            foreignKeyName: "categorie_tag_collectivite_id_fkey"
-            columns: ["collectivite_id"]
-            isOneToOne: false
-            referencedRelation: "collectivite"
-            referencedColumns: ["collectivite_id"]
-          },
-          {
-            foreignKeyName: "categorie_tag_collectivite_id_fkey"
-            columns: ["collectivite_id"]
-            isOneToOne: false
-            referencedRelation: "collectivite_action_statut"
-            referencedColumns: ["collectivite_id"]
           },
           {
             foreignKeyName: "categorie_tag_collectivite_id_fkey"
@@ -4962,56 +2520,7 @@ export type Database = {
             foreignKeyName: "categorie_tag_collectivite_id_fkey"
             columns: ["collectivite_id"]
             isOneToOne: false
-            referencedRelation: "collectivite_labellisation"
-            referencedColumns: ["collectivite_id"]
-          },
-          {
-            foreignKeyName: "categorie_tag_collectivite_id_fkey"
-            columns: ["collectivite_id"]
-            isOneToOne: false
-            referencedRelation: "collectivite_membre_crm"
-            referencedColumns: ["collectivite_id"]
-          },
-          {
-            foreignKeyName: "categorie_tag_collectivite_id_fkey"
-            columns: ["collectivite_id"]
-            isOneToOne: false
             referencedRelation: "collectivite_niveau_acces"
-            referencedColumns: ["collectivite_id"]
-          },
-          {
-            foreignKeyName: "categorie_tag_collectivite_id_fkey"
-            columns: ["collectivite_id"]
-            isOneToOne: false
-            referencedRelation: "collectivite_plan_action"
-            referencedColumns: ["collectivite_id"]
-          },
-          {
-            foreignKeyName: "categorie_tag_collectivite_id_fkey"
-            columns: ["collectivite_id"]
-            isOneToOne: false
-            referencedRelation: "collectivite_plan_action"
-            referencedColumns: ["collectivite_id"]
-          },
-          {
-            foreignKeyName: "categorie_tag_collectivite_id_fkey"
-            columns: ["collectivite_id"]
-            isOneToOne: false
-            referencedRelation: "collectivite_referentiel"
-            referencedColumns: ["collectivite_id"]
-          },
-          {
-            foreignKeyName: "categorie_tag_collectivite_id_fkey"
-            columns: ["collectivite_id"]
-            isOneToOne: false
-            referencedRelation: "collectivite_utilisateur"
-            referencedColumns: ["collectivite_id"]
-          },
-          {
-            foreignKeyName: "categorie_tag_collectivite_id_fkey"
-            columns: ["collectivite_id"]
-            isOneToOne: false
-            referencedRelation: "collectivites_crm"
             referencedColumns: ["collectivite_id"]
           },
           {
@@ -5039,41 +2548,6 @@ export type Database = {
             foreignKeyName: "categorie_tag_collectivite_id_fkey"
             columns: ["collectivite_id"]
             isOneToOne: false
-            referencedRelation: "crm_usages"
-            referencedColumns: ["collectivite_id"]
-          },
-          {
-            foreignKeyName: "categorie_tag_collectivite_id_fkey"
-            columns: ["collectivite_id"]
-            isOneToOne: false
-            referencedRelation: "engagement_collectivite"
-            referencedColumns: ["collectivite_id"]
-          },
-          {
-            foreignKeyName: "categorie_tag_collectivite_id_fkey"
-            columns: ["collectivite_id"]
-            isOneToOne: false
-            referencedRelation: "late_collectivite"
-            referencedColumns: ["collectivite_id"]
-          },
-          {
-            foreignKeyName: "categorie_tag_collectivite_id_fkey"
-            columns: ["collectivite_id"]
-            isOneToOne: false
-            referencedRelation: "locales_engagement_collectivite"
-            referencedColumns: ["collectivite_id"]
-          },
-          {
-            foreignKeyName: "categorie_tag_collectivite_id_fkey"
-            columns: ["collectivite_id"]
-            isOneToOne: false
-            referencedRelation: "locales_pourcentage_completude"
-            referencedColumns: ["collectivite_id"]
-          },
-          {
-            foreignKeyName: "categorie_tag_collectivite_id_fkey"
-            columns: ["collectivite_id"]
-            isOneToOne: false
             referencedRelation: "named_collectivite"
             referencedColumns: ["collectivite_id"]
           },
@@ -5089,48 +2563,6 @@ export type Database = {
             columns: ["collectivite_id"]
             isOneToOne: false
             referencedRelation: "question_thematique_completude"
-            referencedColumns: ["collectivite_id"]
-          },
-          {
-            foreignKeyName: "categorie_tag_collectivite_id_fkey"
-            columns: ["collectivite_id"]
-            isOneToOne: false
-            referencedRelation: "rattachement"
-            referencedColumns: ["collectivite_id"]
-          },
-          {
-            foreignKeyName: "categorie_tag_collectivite_id_fkey"
-            columns: ["collectivite_id"]
-            isOneToOne: false
-            referencedRelation: "report_indicateur_resultat"
-            referencedColumns: ["collectivite_id"]
-          },
-          {
-            foreignKeyName: "categorie_tag_collectivite_id_fkey"
-            columns: ["collectivite_id"]
-            isOneToOne: false
-            referencedRelation: "report_reponse_binaire"
-            referencedColumns: ["collectivite_id"]
-          },
-          {
-            foreignKeyName: "categorie_tag_collectivite_id_fkey"
-            columns: ["collectivite_id"]
-            isOneToOne: false
-            referencedRelation: "report_reponse_choix"
-            referencedColumns: ["collectivite_id"]
-          },
-          {
-            foreignKeyName: "categorie_tag_collectivite_id_fkey"
-            columns: ["collectivite_id"]
-            isOneToOne: false
-            referencedRelation: "report_reponse_proportion"
-            referencedColumns: ["collectivite_id"]
-          },
-          {
-            foreignKeyName: "categorie_tag_collectivite_id_fkey"
-            columns: ["collectivite_id"]
-            isOneToOne: false
-            referencedRelation: "report_scores"
             referencedColumns: ["collectivite_id"]
           },
           {
@@ -5159,13 +2591,6 @@ export type Database = {
             columns: ["collectivite_id"]
             isOneToOne: false
             referencedRelation: "retool_plan_action_hebdo"
-            referencedColumns: ["collectivite_id"]
-          },
-          {
-            foreignKeyName: "categorie_tag_collectivite_id_fkey"
-            columns: ["collectivite_id"]
-            isOneToOne: false
-            referencedRelation: "retool_plan_action_premier_usage"
             referencedColumns: ["collectivite_id"]
           },
           {
@@ -5225,13 +2650,6 @@ export type Database = {
             referencedColumns: ["collectivite_id"]
           },
           {
-            foreignKeyName: "categorie_tag_created_by_fkey"
-            columns: ["created_by"]
-            isOneToOne: false
-            referencedRelation: "users"
-            referencedColumns: ["id"]
-          },
-          {
             foreignKeyName: "categorie_tag_groupement_id_fkey"
             columns: ["groupement_id"]
             isOneToOne: false
@@ -5267,13 +2685,6 @@ export type Database = {
             foreignKeyName: "client_scores_collectivite_id_fkey"
             columns: ["collectivite_id"]
             isOneToOne: false
-            referencedRelation: "action_snippet"
-            referencedColumns: ["collectivite_id"]
-          },
-          {
-            foreignKeyName: "client_scores_collectivite_id_fkey"
-            columns: ["collectivite_id"]
-            isOneToOne: false
             referencedRelation: "action_statuts"
             referencedColumns: ["collectivite_id"]
           },
@@ -5302,29 +2713,8 @@ export type Database = {
             foreignKeyName: "client_scores_collectivite_id_fkey"
             columns: ["collectivite_id"]
             isOneToOne: false
-            referencedRelation: "carte_collectivite_active"
-            referencedColumns: ["collectivite_id"]
-          },
-          {
-            foreignKeyName: "client_scores_collectivite_id_fkey"
-            columns: ["collectivite_id"]
-            isOneToOne: false
             referencedRelation: "collectivite"
             referencedColumns: ["id"]
-          },
-          {
-            foreignKeyName: "client_scores_collectivite_id_fkey"
-            columns: ["collectivite_id"]
-            isOneToOne: false
-            referencedRelation: "collectivite"
-            referencedColumns: ["collectivite_id"]
-          },
-          {
-            foreignKeyName: "client_scores_collectivite_id_fkey"
-            columns: ["collectivite_id"]
-            isOneToOne: false
-            referencedRelation: "collectivite_action_statut"
-            referencedColumns: ["collectivite_id"]
           },
           {
             foreignKeyName: "client_scores_collectivite_id_fkey"
@@ -5351,56 +2741,7 @@ export type Database = {
             foreignKeyName: "client_scores_collectivite_id_fkey"
             columns: ["collectivite_id"]
             isOneToOne: false
-            referencedRelation: "collectivite_labellisation"
-            referencedColumns: ["collectivite_id"]
-          },
-          {
-            foreignKeyName: "client_scores_collectivite_id_fkey"
-            columns: ["collectivite_id"]
-            isOneToOne: false
-            referencedRelation: "collectivite_membre_crm"
-            referencedColumns: ["collectivite_id"]
-          },
-          {
-            foreignKeyName: "client_scores_collectivite_id_fkey"
-            columns: ["collectivite_id"]
-            isOneToOne: false
             referencedRelation: "collectivite_niveau_acces"
-            referencedColumns: ["collectivite_id"]
-          },
-          {
-            foreignKeyName: "client_scores_collectivite_id_fkey"
-            columns: ["collectivite_id"]
-            isOneToOne: false
-            referencedRelation: "collectivite_plan_action"
-            referencedColumns: ["collectivite_id"]
-          },
-          {
-            foreignKeyName: "client_scores_collectivite_id_fkey"
-            columns: ["collectivite_id"]
-            isOneToOne: false
-            referencedRelation: "collectivite_plan_action"
-            referencedColumns: ["collectivite_id"]
-          },
-          {
-            foreignKeyName: "client_scores_collectivite_id_fkey"
-            columns: ["collectivite_id"]
-            isOneToOne: false
-            referencedRelation: "collectivite_referentiel"
-            referencedColumns: ["collectivite_id"]
-          },
-          {
-            foreignKeyName: "client_scores_collectivite_id_fkey"
-            columns: ["collectivite_id"]
-            isOneToOne: false
-            referencedRelation: "collectivite_utilisateur"
-            referencedColumns: ["collectivite_id"]
-          },
-          {
-            foreignKeyName: "client_scores_collectivite_id_fkey"
-            columns: ["collectivite_id"]
-            isOneToOne: false
-            referencedRelation: "collectivites_crm"
             referencedColumns: ["collectivite_id"]
           },
           {
@@ -5428,41 +2769,6 @@ export type Database = {
             foreignKeyName: "client_scores_collectivite_id_fkey"
             columns: ["collectivite_id"]
             isOneToOne: false
-            referencedRelation: "crm_usages"
-            referencedColumns: ["collectivite_id"]
-          },
-          {
-            foreignKeyName: "client_scores_collectivite_id_fkey"
-            columns: ["collectivite_id"]
-            isOneToOne: false
-            referencedRelation: "engagement_collectivite"
-            referencedColumns: ["collectivite_id"]
-          },
-          {
-            foreignKeyName: "client_scores_collectivite_id_fkey"
-            columns: ["collectivite_id"]
-            isOneToOne: false
-            referencedRelation: "late_collectivite"
-            referencedColumns: ["collectivite_id"]
-          },
-          {
-            foreignKeyName: "client_scores_collectivite_id_fkey"
-            columns: ["collectivite_id"]
-            isOneToOne: false
-            referencedRelation: "locales_engagement_collectivite"
-            referencedColumns: ["collectivite_id"]
-          },
-          {
-            foreignKeyName: "client_scores_collectivite_id_fkey"
-            columns: ["collectivite_id"]
-            isOneToOne: false
-            referencedRelation: "locales_pourcentage_completude"
-            referencedColumns: ["collectivite_id"]
-          },
-          {
-            foreignKeyName: "client_scores_collectivite_id_fkey"
-            columns: ["collectivite_id"]
-            isOneToOne: false
             referencedRelation: "named_collectivite"
             referencedColumns: ["collectivite_id"]
           },
@@ -5478,48 +2784,6 @@ export type Database = {
             columns: ["collectivite_id"]
             isOneToOne: false
             referencedRelation: "question_thematique_completude"
-            referencedColumns: ["collectivite_id"]
-          },
-          {
-            foreignKeyName: "client_scores_collectivite_id_fkey"
-            columns: ["collectivite_id"]
-            isOneToOne: false
-            referencedRelation: "rattachement"
-            referencedColumns: ["collectivite_id"]
-          },
-          {
-            foreignKeyName: "client_scores_collectivite_id_fkey"
-            columns: ["collectivite_id"]
-            isOneToOne: false
-            referencedRelation: "report_indicateur_resultat"
-            referencedColumns: ["collectivite_id"]
-          },
-          {
-            foreignKeyName: "client_scores_collectivite_id_fkey"
-            columns: ["collectivite_id"]
-            isOneToOne: false
-            referencedRelation: "report_reponse_binaire"
-            referencedColumns: ["collectivite_id"]
-          },
-          {
-            foreignKeyName: "client_scores_collectivite_id_fkey"
-            columns: ["collectivite_id"]
-            isOneToOne: false
-            referencedRelation: "report_reponse_choix"
-            referencedColumns: ["collectivite_id"]
-          },
-          {
-            foreignKeyName: "client_scores_collectivite_id_fkey"
-            columns: ["collectivite_id"]
-            isOneToOne: false
-            referencedRelation: "report_reponse_proportion"
-            referencedColumns: ["collectivite_id"]
-          },
-          {
-            foreignKeyName: "client_scores_collectivite_id_fkey"
-            columns: ["collectivite_id"]
-            isOneToOne: false
-            referencedRelation: "report_scores"
             referencedColumns: ["collectivite_id"]
           },
           {
@@ -5548,13 +2812,6 @@ export type Database = {
             columns: ["collectivite_id"]
             isOneToOne: false
             referencedRelation: "retool_plan_action_hebdo"
-            referencedColumns: ["collectivite_id"]
-          },
-          {
-            foreignKeyName: "client_scores_collectivite_id_fkey"
-            columns: ["collectivite_id"]
-            isOneToOne: false
-            referencedRelation: "retool_plan_action_premier_usage"
             referencedColumns: ["collectivite_id"]
           },
           {
@@ -5636,13 +2893,6 @@ export type Database = {
             foreignKeyName: "client_scores_update_collectivite_id_fkey"
             columns: ["collectivite_id"]
             isOneToOne: false
-            referencedRelation: "action_snippet"
-            referencedColumns: ["collectivite_id"]
-          },
-          {
-            foreignKeyName: "client_scores_update_collectivite_id_fkey"
-            columns: ["collectivite_id"]
-            isOneToOne: false
             referencedRelation: "action_statuts"
             referencedColumns: ["collectivite_id"]
           },
@@ -5671,29 +2921,8 @@ export type Database = {
             foreignKeyName: "client_scores_update_collectivite_id_fkey"
             columns: ["collectivite_id"]
             isOneToOne: false
-            referencedRelation: "carte_collectivite_active"
-            referencedColumns: ["collectivite_id"]
-          },
-          {
-            foreignKeyName: "client_scores_update_collectivite_id_fkey"
-            columns: ["collectivite_id"]
-            isOneToOne: false
             referencedRelation: "collectivite"
             referencedColumns: ["id"]
-          },
-          {
-            foreignKeyName: "client_scores_update_collectivite_id_fkey"
-            columns: ["collectivite_id"]
-            isOneToOne: false
-            referencedRelation: "collectivite"
-            referencedColumns: ["collectivite_id"]
-          },
-          {
-            foreignKeyName: "client_scores_update_collectivite_id_fkey"
-            columns: ["collectivite_id"]
-            isOneToOne: false
-            referencedRelation: "collectivite_action_statut"
-            referencedColumns: ["collectivite_id"]
           },
           {
             foreignKeyName: "client_scores_update_collectivite_id_fkey"
@@ -5720,56 +2949,7 @@ export type Database = {
             foreignKeyName: "client_scores_update_collectivite_id_fkey"
             columns: ["collectivite_id"]
             isOneToOne: false
-            referencedRelation: "collectivite_labellisation"
-            referencedColumns: ["collectivite_id"]
-          },
-          {
-            foreignKeyName: "client_scores_update_collectivite_id_fkey"
-            columns: ["collectivite_id"]
-            isOneToOne: false
-            referencedRelation: "collectivite_membre_crm"
-            referencedColumns: ["collectivite_id"]
-          },
-          {
-            foreignKeyName: "client_scores_update_collectivite_id_fkey"
-            columns: ["collectivite_id"]
-            isOneToOne: false
             referencedRelation: "collectivite_niveau_acces"
-            referencedColumns: ["collectivite_id"]
-          },
-          {
-            foreignKeyName: "client_scores_update_collectivite_id_fkey"
-            columns: ["collectivite_id"]
-            isOneToOne: false
-            referencedRelation: "collectivite_plan_action"
-            referencedColumns: ["collectivite_id"]
-          },
-          {
-            foreignKeyName: "client_scores_update_collectivite_id_fkey"
-            columns: ["collectivite_id"]
-            isOneToOne: false
-            referencedRelation: "collectivite_plan_action"
-            referencedColumns: ["collectivite_id"]
-          },
-          {
-            foreignKeyName: "client_scores_update_collectivite_id_fkey"
-            columns: ["collectivite_id"]
-            isOneToOne: false
-            referencedRelation: "collectivite_referentiel"
-            referencedColumns: ["collectivite_id"]
-          },
-          {
-            foreignKeyName: "client_scores_update_collectivite_id_fkey"
-            columns: ["collectivite_id"]
-            isOneToOne: false
-            referencedRelation: "collectivite_utilisateur"
-            referencedColumns: ["collectivite_id"]
-          },
-          {
-            foreignKeyName: "client_scores_update_collectivite_id_fkey"
-            columns: ["collectivite_id"]
-            isOneToOne: false
-            referencedRelation: "collectivites_crm"
             referencedColumns: ["collectivite_id"]
           },
           {
@@ -5797,41 +2977,6 @@ export type Database = {
             foreignKeyName: "client_scores_update_collectivite_id_fkey"
             columns: ["collectivite_id"]
             isOneToOne: false
-            referencedRelation: "crm_usages"
-            referencedColumns: ["collectivite_id"]
-          },
-          {
-            foreignKeyName: "client_scores_update_collectivite_id_fkey"
-            columns: ["collectivite_id"]
-            isOneToOne: false
-            referencedRelation: "engagement_collectivite"
-            referencedColumns: ["collectivite_id"]
-          },
-          {
-            foreignKeyName: "client_scores_update_collectivite_id_fkey"
-            columns: ["collectivite_id"]
-            isOneToOne: false
-            referencedRelation: "late_collectivite"
-            referencedColumns: ["collectivite_id"]
-          },
-          {
-            foreignKeyName: "client_scores_update_collectivite_id_fkey"
-            columns: ["collectivite_id"]
-            isOneToOne: false
-            referencedRelation: "locales_engagement_collectivite"
-            referencedColumns: ["collectivite_id"]
-          },
-          {
-            foreignKeyName: "client_scores_update_collectivite_id_fkey"
-            columns: ["collectivite_id"]
-            isOneToOne: false
-            referencedRelation: "locales_pourcentage_completude"
-            referencedColumns: ["collectivite_id"]
-          },
-          {
-            foreignKeyName: "client_scores_update_collectivite_id_fkey"
-            columns: ["collectivite_id"]
-            isOneToOne: false
             referencedRelation: "named_collectivite"
             referencedColumns: ["collectivite_id"]
           },
@@ -5847,48 +2992,6 @@ export type Database = {
             columns: ["collectivite_id"]
             isOneToOne: false
             referencedRelation: "question_thematique_completude"
-            referencedColumns: ["collectivite_id"]
-          },
-          {
-            foreignKeyName: "client_scores_update_collectivite_id_fkey"
-            columns: ["collectivite_id"]
-            isOneToOne: false
-            referencedRelation: "rattachement"
-            referencedColumns: ["collectivite_id"]
-          },
-          {
-            foreignKeyName: "client_scores_update_collectivite_id_fkey"
-            columns: ["collectivite_id"]
-            isOneToOne: false
-            referencedRelation: "report_indicateur_resultat"
-            referencedColumns: ["collectivite_id"]
-          },
-          {
-            foreignKeyName: "client_scores_update_collectivite_id_fkey"
-            columns: ["collectivite_id"]
-            isOneToOne: false
-            referencedRelation: "report_reponse_binaire"
-            referencedColumns: ["collectivite_id"]
-          },
-          {
-            foreignKeyName: "client_scores_update_collectivite_id_fkey"
-            columns: ["collectivite_id"]
-            isOneToOne: false
-            referencedRelation: "report_reponse_choix"
-            referencedColumns: ["collectivite_id"]
-          },
-          {
-            foreignKeyName: "client_scores_update_collectivite_id_fkey"
-            columns: ["collectivite_id"]
-            isOneToOne: false
-            referencedRelation: "report_reponse_proportion"
-            referencedColumns: ["collectivite_id"]
-          },
-          {
-            foreignKeyName: "client_scores_update_collectivite_id_fkey"
-            columns: ["collectivite_id"]
-            isOneToOne: false
-            referencedRelation: "report_scores"
             referencedColumns: ["collectivite_id"]
           },
           {
@@ -5917,13 +3020,6 @@ export type Database = {
             columns: ["collectivite_id"]
             isOneToOne: false
             referencedRelation: "retool_plan_action_hebdo"
-            referencedColumns: ["collectivite_id"]
-          },
-          {
-            foreignKeyName: "client_scores_update_collectivite_id_fkey"
-            columns: ["collectivite_id"]
-            isOneToOne: false
-            referencedRelation: "retool_plan_action_premier_usage"
             referencedColumns: ["collectivite_id"]
           },
           {
@@ -6026,13 +3122,6 @@ export type Database = {
             foreignKeyName: "collectivite_banatic_competence_collectivite_id_fkey"
             columns: ["collectivite_id"]
             isOneToOne: false
-            referencedRelation: "action_snippet"
-            referencedColumns: ["collectivite_id"]
-          },
-          {
-            foreignKeyName: "collectivite_banatic_competence_collectivite_id_fkey"
-            columns: ["collectivite_id"]
-            isOneToOne: false
             referencedRelation: "action_statuts"
             referencedColumns: ["collectivite_id"]
           },
@@ -6061,29 +3150,8 @@ export type Database = {
             foreignKeyName: "collectivite_banatic_competence_collectivite_id_fkey"
             columns: ["collectivite_id"]
             isOneToOne: false
-            referencedRelation: "carte_collectivite_active"
-            referencedColumns: ["collectivite_id"]
-          },
-          {
-            foreignKeyName: "collectivite_banatic_competence_collectivite_id_fkey"
-            columns: ["collectivite_id"]
-            isOneToOne: false
             referencedRelation: "collectivite"
             referencedColumns: ["id"]
-          },
-          {
-            foreignKeyName: "collectivite_banatic_competence_collectivite_id_fkey"
-            columns: ["collectivite_id"]
-            isOneToOne: false
-            referencedRelation: "collectivite"
-            referencedColumns: ["collectivite_id"]
-          },
-          {
-            foreignKeyName: "collectivite_banatic_competence_collectivite_id_fkey"
-            columns: ["collectivite_id"]
-            isOneToOne: false
-            referencedRelation: "collectivite_action_statut"
-            referencedColumns: ["collectivite_id"]
           },
           {
             foreignKeyName: "collectivite_banatic_competence_collectivite_id_fkey"
@@ -6110,56 +3178,7 @@ export type Database = {
             foreignKeyName: "collectivite_banatic_competence_collectivite_id_fkey"
             columns: ["collectivite_id"]
             isOneToOne: false
-            referencedRelation: "collectivite_labellisation"
-            referencedColumns: ["collectivite_id"]
-          },
-          {
-            foreignKeyName: "collectivite_banatic_competence_collectivite_id_fkey"
-            columns: ["collectivite_id"]
-            isOneToOne: false
-            referencedRelation: "collectivite_membre_crm"
-            referencedColumns: ["collectivite_id"]
-          },
-          {
-            foreignKeyName: "collectivite_banatic_competence_collectivite_id_fkey"
-            columns: ["collectivite_id"]
-            isOneToOne: false
             referencedRelation: "collectivite_niveau_acces"
-            referencedColumns: ["collectivite_id"]
-          },
-          {
-            foreignKeyName: "collectivite_banatic_competence_collectivite_id_fkey"
-            columns: ["collectivite_id"]
-            isOneToOne: false
-            referencedRelation: "collectivite_plan_action"
-            referencedColumns: ["collectivite_id"]
-          },
-          {
-            foreignKeyName: "collectivite_banatic_competence_collectivite_id_fkey"
-            columns: ["collectivite_id"]
-            isOneToOne: false
-            referencedRelation: "collectivite_plan_action"
-            referencedColumns: ["collectivite_id"]
-          },
-          {
-            foreignKeyName: "collectivite_banatic_competence_collectivite_id_fkey"
-            columns: ["collectivite_id"]
-            isOneToOne: false
-            referencedRelation: "collectivite_referentiel"
-            referencedColumns: ["collectivite_id"]
-          },
-          {
-            foreignKeyName: "collectivite_banatic_competence_collectivite_id_fkey"
-            columns: ["collectivite_id"]
-            isOneToOne: false
-            referencedRelation: "collectivite_utilisateur"
-            referencedColumns: ["collectivite_id"]
-          },
-          {
-            foreignKeyName: "collectivite_banatic_competence_collectivite_id_fkey"
-            columns: ["collectivite_id"]
-            isOneToOne: false
-            referencedRelation: "collectivites_crm"
             referencedColumns: ["collectivite_id"]
           },
           {
@@ -6187,41 +3206,6 @@ export type Database = {
             foreignKeyName: "collectivite_banatic_competence_collectivite_id_fkey"
             columns: ["collectivite_id"]
             isOneToOne: false
-            referencedRelation: "crm_usages"
-            referencedColumns: ["collectivite_id"]
-          },
-          {
-            foreignKeyName: "collectivite_banatic_competence_collectivite_id_fkey"
-            columns: ["collectivite_id"]
-            isOneToOne: false
-            referencedRelation: "engagement_collectivite"
-            referencedColumns: ["collectivite_id"]
-          },
-          {
-            foreignKeyName: "collectivite_banatic_competence_collectivite_id_fkey"
-            columns: ["collectivite_id"]
-            isOneToOne: false
-            referencedRelation: "late_collectivite"
-            referencedColumns: ["collectivite_id"]
-          },
-          {
-            foreignKeyName: "collectivite_banatic_competence_collectivite_id_fkey"
-            columns: ["collectivite_id"]
-            isOneToOne: false
-            referencedRelation: "locales_engagement_collectivite"
-            referencedColumns: ["collectivite_id"]
-          },
-          {
-            foreignKeyName: "collectivite_banatic_competence_collectivite_id_fkey"
-            columns: ["collectivite_id"]
-            isOneToOne: false
-            referencedRelation: "locales_pourcentage_completude"
-            referencedColumns: ["collectivite_id"]
-          },
-          {
-            foreignKeyName: "collectivite_banatic_competence_collectivite_id_fkey"
-            columns: ["collectivite_id"]
-            isOneToOne: false
             referencedRelation: "named_collectivite"
             referencedColumns: ["collectivite_id"]
           },
@@ -6237,48 +3221,6 @@ export type Database = {
             columns: ["collectivite_id"]
             isOneToOne: false
             referencedRelation: "question_thematique_completude"
-            referencedColumns: ["collectivite_id"]
-          },
-          {
-            foreignKeyName: "collectivite_banatic_competence_collectivite_id_fkey"
-            columns: ["collectivite_id"]
-            isOneToOne: false
-            referencedRelation: "rattachement"
-            referencedColumns: ["collectivite_id"]
-          },
-          {
-            foreignKeyName: "collectivite_banatic_competence_collectivite_id_fkey"
-            columns: ["collectivite_id"]
-            isOneToOne: false
-            referencedRelation: "report_indicateur_resultat"
-            referencedColumns: ["collectivite_id"]
-          },
-          {
-            foreignKeyName: "collectivite_banatic_competence_collectivite_id_fkey"
-            columns: ["collectivite_id"]
-            isOneToOne: false
-            referencedRelation: "report_reponse_binaire"
-            referencedColumns: ["collectivite_id"]
-          },
-          {
-            foreignKeyName: "collectivite_banatic_competence_collectivite_id_fkey"
-            columns: ["collectivite_id"]
-            isOneToOne: false
-            referencedRelation: "report_reponse_choix"
-            referencedColumns: ["collectivite_id"]
-          },
-          {
-            foreignKeyName: "collectivite_banatic_competence_collectivite_id_fkey"
-            columns: ["collectivite_id"]
-            isOneToOne: false
-            referencedRelation: "report_reponse_proportion"
-            referencedColumns: ["collectivite_id"]
-          },
-          {
-            foreignKeyName: "collectivite_banatic_competence_collectivite_id_fkey"
-            columns: ["collectivite_id"]
-            isOneToOne: false
-            referencedRelation: "report_scores"
             referencedColumns: ["collectivite_id"]
           },
           {
@@ -6307,13 +3249,6 @@ export type Database = {
             columns: ["collectivite_id"]
             isOneToOne: false
             referencedRelation: "retool_plan_action_hebdo"
-            referencedColumns: ["collectivite_id"]
-          },
-          {
-            foreignKeyName: "collectivite_banatic_competence_collectivite_id_fkey"
-            columns: ["collectivite_id"]
-            isOneToOne: false
-            referencedRelation: "retool_plan_action_premier_usage"
             referencedColumns: ["collectivite_id"]
           },
           {
@@ -6396,20 +3331,6 @@ export type Database = {
         }
         Relationships: [
           {
-            foreignKeyName: "collectivite_bucket_bucket_id_fkey"
-            columns: ["bucket_id"]
-            isOneToOne: false
-            referencedRelation: "buckets"
-            referencedColumns: ["id"]
-          },
-          {
-            foreignKeyName: "collectivite_bucket_collectivite_id_fkey"
-            columns: ["collectivite_id"]
-            isOneToOne: false
-            referencedRelation: "action_snippet"
-            referencedColumns: ["collectivite_id"]
-          },
-          {
             foreignKeyName: "collectivite_bucket_collectivite_id_fkey"
             columns: ["collectivite_id"]
             isOneToOne: false
@@ -6441,29 +3362,8 @@ export type Database = {
             foreignKeyName: "collectivite_bucket_collectivite_id_fkey"
             columns: ["collectivite_id"]
             isOneToOne: false
-            referencedRelation: "carte_collectivite_active"
-            referencedColumns: ["collectivite_id"]
-          },
-          {
-            foreignKeyName: "collectivite_bucket_collectivite_id_fkey"
-            columns: ["collectivite_id"]
-            isOneToOne: false
             referencedRelation: "collectivite"
             referencedColumns: ["id"]
-          },
-          {
-            foreignKeyName: "collectivite_bucket_collectivite_id_fkey"
-            columns: ["collectivite_id"]
-            isOneToOne: false
-            referencedRelation: "collectivite"
-            referencedColumns: ["collectivite_id"]
-          },
-          {
-            foreignKeyName: "collectivite_bucket_collectivite_id_fkey"
-            columns: ["collectivite_id"]
-            isOneToOne: false
-            referencedRelation: "collectivite_action_statut"
-            referencedColumns: ["collectivite_id"]
           },
           {
             foreignKeyName: "collectivite_bucket_collectivite_id_fkey"
@@ -6490,56 +3390,7 @@ export type Database = {
             foreignKeyName: "collectivite_bucket_collectivite_id_fkey"
             columns: ["collectivite_id"]
             isOneToOne: false
-            referencedRelation: "collectivite_labellisation"
-            referencedColumns: ["collectivite_id"]
-          },
-          {
-            foreignKeyName: "collectivite_bucket_collectivite_id_fkey"
-            columns: ["collectivite_id"]
-            isOneToOne: false
-            referencedRelation: "collectivite_membre_crm"
-            referencedColumns: ["collectivite_id"]
-          },
-          {
-            foreignKeyName: "collectivite_bucket_collectivite_id_fkey"
-            columns: ["collectivite_id"]
-            isOneToOne: false
             referencedRelation: "collectivite_niveau_acces"
-            referencedColumns: ["collectivite_id"]
-          },
-          {
-            foreignKeyName: "collectivite_bucket_collectivite_id_fkey"
-            columns: ["collectivite_id"]
-            isOneToOne: false
-            referencedRelation: "collectivite_plan_action"
-            referencedColumns: ["collectivite_id"]
-          },
-          {
-            foreignKeyName: "collectivite_bucket_collectivite_id_fkey"
-            columns: ["collectivite_id"]
-            isOneToOne: false
-            referencedRelation: "collectivite_plan_action"
-            referencedColumns: ["collectivite_id"]
-          },
-          {
-            foreignKeyName: "collectivite_bucket_collectivite_id_fkey"
-            columns: ["collectivite_id"]
-            isOneToOne: false
-            referencedRelation: "collectivite_referentiel"
-            referencedColumns: ["collectivite_id"]
-          },
-          {
-            foreignKeyName: "collectivite_bucket_collectivite_id_fkey"
-            columns: ["collectivite_id"]
-            isOneToOne: false
-            referencedRelation: "collectivite_utilisateur"
-            referencedColumns: ["collectivite_id"]
-          },
-          {
-            foreignKeyName: "collectivite_bucket_collectivite_id_fkey"
-            columns: ["collectivite_id"]
-            isOneToOne: false
-            referencedRelation: "collectivites_crm"
             referencedColumns: ["collectivite_id"]
           },
           {
@@ -6567,41 +3418,6 @@ export type Database = {
             foreignKeyName: "collectivite_bucket_collectivite_id_fkey"
             columns: ["collectivite_id"]
             isOneToOne: false
-            referencedRelation: "crm_usages"
-            referencedColumns: ["collectivite_id"]
-          },
-          {
-            foreignKeyName: "collectivite_bucket_collectivite_id_fkey"
-            columns: ["collectivite_id"]
-            isOneToOne: false
-            referencedRelation: "engagement_collectivite"
-            referencedColumns: ["collectivite_id"]
-          },
-          {
-            foreignKeyName: "collectivite_bucket_collectivite_id_fkey"
-            columns: ["collectivite_id"]
-            isOneToOne: false
-            referencedRelation: "late_collectivite"
-            referencedColumns: ["collectivite_id"]
-          },
-          {
-            foreignKeyName: "collectivite_bucket_collectivite_id_fkey"
-            columns: ["collectivite_id"]
-            isOneToOne: false
-            referencedRelation: "locales_engagement_collectivite"
-            referencedColumns: ["collectivite_id"]
-          },
-          {
-            foreignKeyName: "collectivite_bucket_collectivite_id_fkey"
-            columns: ["collectivite_id"]
-            isOneToOne: false
-            referencedRelation: "locales_pourcentage_completude"
-            referencedColumns: ["collectivite_id"]
-          },
-          {
-            foreignKeyName: "collectivite_bucket_collectivite_id_fkey"
-            columns: ["collectivite_id"]
-            isOneToOne: false
             referencedRelation: "named_collectivite"
             referencedColumns: ["collectivite_id"]
           },
@@ -6617,48 +3433,6 @@ export type Database = {
             columns: ["collectivite_id"]
             isOneToOne: false
             referencedRelation: "question_thematique_completude"
-            referencedColumns: ["collectivite_id"]
-          },
-          {
-            foreignKeyName: "collectivite_bucket_collectivite_id_fkey"
-            columns: ["collectivite_id"]
-            isOneToOne: false
-            referencedRelation: "rattachement"
-            referencedColumns: ["collectivite_id"]
-          },
-          {
-            foreignKeyName: "collectivite_bucket_collectivite_id_fkey"
-            columns: ["collectivite_id"]
-            isOneToOne: false
-            referencedRelation: "report_indicateur_resultat"
-            referencedColumns: ["collectivite_id"]
-          },
-          {
-            foreignKeyName: "collectivite_bucket_collectivite_id_fkey"
-            columns: ["collectivite_id"]
-            isOneToOne: false
-            referencedRelation: "report_reponse_binaire"
-            referencedColumns: ["collectivite_id"]
-          },
-          {
-            foreignKeyName: "collectivite_bucket_collectivite_id_fkey"
-            columns: ["collectivite_id"]
-            isOneToOne: false
-            referencedRelation: "report_reponse_choix"
-            referencedColumns: ["collectivite_id"]
-          },
-          {
-            foreignKeyName: "collectivite_bucket_collectivite_id_fkey"
-            columns: ["collectivite_id"]
-            isOneToOne: false
-            referencedRelation: "report_reponse_proportion"
-            referencedColumns: ["collectivite_id"]
-          },
-          {
-            foreignKeyName: "collectivite_bucket_collectivite_id_fkey"
-            columns: ["collectivite_id"]
-            isOneToOne: false
-            referencedRelation: "report_scores"
             referencedColumns: ["collectivite_id"]
           },
           {
@@ -6687,13 +3461,6 @@ export type Database = {
             columns: ["collectivite_id"]
             isOneToOne: false
             referencedRelation: "retool_plan_action_hebdo"
-            referencedColumns: ["collectivite_id"]
-          },
-          {
-            foreignKeyName: "collectivite_bucket_collectivite_id_fkey"
-            columns: ["collectivite_id"]
-            isOneToOne: false
-            referencedRelation: "retool_plan_action_premier_usage"
             referencedColumns: ["collectivite_id"]
           },
           {
@@ -6775,13 +3542,6 @@ export type Database = {
             foreignKeyName: "collectivite_test_collectivite_id_fkey"
             columns: ["collectivite_id"]
             isOneToOne: false
-            referencedRelation: "action_snippet"
-            referencedColumns: ["collectivite_id"]
-          },
-          {
-            foreignKeyName: "collectivite_test_collectivite_id_fkey"
-            columns: ["collectivite_id"]
-            isOneToOne: false
             referencedRelation: "action_statuts"
             referencedColumns: ["collectivite_id"]
           },
@@ -6810,29 +3570,8 @@ export type Database = {
             foreignKeyName: "collectivite_test_collectivite_id_fkey"
             columns: ["collectivite_id"]
             isOneToOne: false
-            referencedRelation: "carte_collectivite_active"
-            referencedColumns: ["collectivite_id"]
-          },
-          {
-            foreignKeyName: "collectivite_test_collectivite_id_fkey"
-            columns: ["collectivite_id"]
-            isOneToOne: false
             referencedRelation: "collectivite"
             referencedColumns: ["id"]
-          },
-          {
-            foreignKeyName: "collectivite_test_collectivite_id_fkey"
-            columns: ["collectivite_id"]
-            isOneToOne: false
-            referencedRelation: "collectivite"
-            referencedColumns: ["collectivite_id"]
-          },
-          {
-            foreignKeyName: "collectivite_test_collectivite_id_fkey"
-            columns: ["collectivite_id"]
-            isOneToOne: false
-            referencedRelation: "collectivite_action_statut"
-            referencedColumns: ["collectivite_id"]
           },
           {
             foreignKeyName: "collectivite_test_collectivite_id_fkey"
@@ -6859,56 +3598,7 @@ export type Database = {
             foreignKeyName: "collectivite_test_collectivite_id_fkey"
             columns: ["collectivite_id"]
             isOneToOne: false
-            referencedRelation: "collectivite_labellisation"
-            referencedColumns: ["collectivite_id"]
-          },
-          {
-            foreignKeyName: "collectivite_test_collectivite_id_fkey"
-            columns: ["collectivite_id"]
-            isOneToOne: false
-            referencedRelation: "collectivite_membre_crm"
-            referencedColumns: ["collectivite_id"]
-          },
-          {
-            foreignKeyName: "collectivite_test_collectivite_id_fkey"
-            columns: ["collectivite_id"]
-            isOneToOne: false
             referencedRelation: "collectivite_niveau_acces"
-            referencedColumns: ["collectivite_id"]
-          },
-          {
-            foreignKeyName: "collectivite_test_collectivite_id_fkey"
-            columns: ["collectivite_id"]
-            isOneToOne: false
-            referencedRelation: "collectivite_plan_action"
-            referencedColumns: ["collectivite_id"]
-          },
-          {
-            foreignKeyName: "collectivite_test_collectivite_id_fkey"
-            columns: ["collectivite_id"]
-            isOneToOne: false
-            referencedRelation: "collectivite_plan_action"
-            referencedColumns: ["collectivite_id"]
-          },
-          {
-            foreignKeyName: "collectivite_test_collectivite_id_fkey"
-            columns: ["collectivite_id"]
-            isOneToOne: false
-            referencedRelation: "collectivite_referentiel"
-            referencedColumns: ["collectivite_id"]
-          },
-          {
-            foreignKeyName: "collectivite_test_collectivite_id_fkey"
-            columns: ["collectivite_id"]
-            isOneToOne: false
-            referencedRelation: "collectivite_utilisateur"
-            referencedColumns: ["collectivite_id"]
-          },
-          {
-            foreignKeyName: "collectivite_test_collectivite_id_fkey"
-            columns: ["collectivite_id"]
-            isOneToOne: false
-            referencedRelation: "collectivites_crm"
             referencedColumns: ["collectivite_id"]
           },
           {
@@ -6936,41 +3626,6 @@ export type Database = {
             foreignKeyName: "collectivite_test_collectivite_id_fkey"
             columns: ["collectivite_id"]
             isOneToOne: false
-            referencedRelation: "crm_usages"
-            referencedColumns: ["collectivite_id"]
-          },
-          {
-            foreignKeyName: "collectivite_test_collectivite_id_fkey"
-            columns: ["collectivite_id"]
-            isOneToOne: false
-            referencedRelation: "engagement_collectivite"
-            referencedColumns: ["collectivite_id"]
-          },
-          {
-            foreignKeyName: "collectivite_test_collectivite_id_fkey"
-            columns: ["collectivite_id"]
-            isOneToOne: false
-            referencedRelation: "late_collectivite"
-            referencedColumns: ["collectivite_id"]
-          },
-          {
-            foreignKeyName: "collectivite_test_collectivite_id_fkey"
-            columns: ["collectivite_id"]
-            isOneToOne: false
-            referencedRelation: "locales_engagement_collectivite"
-            referencedColumns: ["collectivite_id"]
-          },
-          {
-            foreignKeyName: "collectivite_test_collectivite_id_fkey"
-            columns: ["collectivite_id"]
-            isOneToOne: false
-            referencedRelation: "locales_pourcentage_completude"
-            referencedColumns: ["collectivite_id"]
-          },
-          {
-            foreignKeyName: "collectivite_test_collectivite_id_fkey"
-            columns: ["collectivite_id"]
-            isOneToOne: false
             referencedRelation: "named_collectivite"
             referencedColumns: ["collectivite_id"]
           },
@@ -6986,48 +3641,6 @@ export type Database = {
             columns: ["collectivite_id"]
             isOneToOne: false
             referencedRelation: "question_thematique_completude"
-            referencedColumns: ["collectivite_id"]
-          },
-          {
-            foreignKeyName: "collectivite_test_collectivite_id_fkey"
-            columns: ["collectivite_id"]
-            isOneToOne: false
-            referencedRelation: "rattachement"
-            referencedColumns: ["collectivite_id"]
-          },
-          {
-            foreignKeyName: "collectivite_test_collectivite_id_fkey"
-            columns: ["collectivite_id"]
-            isOneToOne: false
-            referencedRelation: "report_indicateur_resultat"
-            referencedColumns: ["collectivite_id"]
-          },
-          {
-            foreignKeyName: "collectivite_test_collectivite_id_fkey"
-            columns: ["collectivite_id"]
-            isOneToOne: false
-            referencedRelation: "report_reponse_binaire"
-            referencedColumns: ["collectivite_id"]
-          },
-          {
-            foreignKeyName: "collectivite_test_collectivite_id_fkey"
-            columns: ["collectivite_id"]
-            isOneToOne: false
-            referencedRelation: "report_reponse_choix"
-            referencedColumns: ["collectivite_id"]
-          },
-          {
-            foreignKeyName: "collectivite_test_collectivite_id_fkey"
-            columns: ["collectivite_id"]
-            isOneToOne: false
-            referencedRelation: "report_reponse_proportion"
-            referencedColumns: ["collectivite_id"]
-          },
-          {
-            foreignKeyName: "collectivite_test_collectivite_id_fkey"
-            columns: ["collectivite_id"]
-            isOneToOne: false
-            referencedRelation: "report_scores"
             referencedColumns: ["collectivite_id"]
           },
           {
@@ -7056,13 +3669,6 @@ export type Database = {
             columns: ["collectivite_id"]
             isOneToOne: false
             referencedRelation: "retool_plan_action_hebdo"
-            referencedColumns: ["collectivite_id"]
-          },
-          {
-            foreignKeyName: "collectivite_test_collectivite_id_fkey"
-            columns: ["collectivite_id"]
-            isOneToOne: false
-            referencedRelation: "retool_plan_action_premier_usage"
             referencedColumns: ["collectivite_id"]
           },
           {
@@ -7147,13 +3753,6 @@ export type Database = {
             foreignKeyName: "commune_collectivite_id_fkey"
             columns: ["collectivite_id"]
             isOneToOne: false
-            referencedRelation: "action_snippet"
-            referencedColumns: ["collectivite_id"]
-          },
-          {
-            foreignKeyName: "commune_collectivite_id_fkey"
-            columns: ["collectivite_id"]
-            isOneToOne: false
             referencedRelation: "action_statuts"
             referencedColumns: ["collectivite_id"]
           },
@@ -7182,29 +3781,8 @@ export type Database = {
             foreignKeyName: "commune_collectivite_id_fkey"
             columns: ["collectivite_id"]
             isOneToOne: false
-            referencedRelation: "carte_collectivite_active"
-            referencedColumns: ["collectivite_id"]
-          },
-          {
-            foreignKeyName: "commune_collectivite_id_fkey"
-            columns: ["collectivite_id"]
-            isOneToOne: false
             referencedRelation: "collectivite"
             referencedColumns: ["id"]
-          },
-          {
-            foreignKeyName: "commune_collectivite_id_fkey"
-            columns: ["collectivite_id"]
-            isOneToOne: false
-            referencedRelation: "collectivite"
-            referencedColumns: ["collectivite_id"]
-          },
-          {
-            foreignKeyName: "commune_collectivite_id_fkey"
-            columns: ["collectivite_id"]
-            isOneToOne: false
-            referencedRelation: "collectivite_action_statut"
-            referencedColumns: ["collectivite_id"]
           },
           {
             foreignKeyName: "commune_collectivite_id_fkey"
@@ -7231,56 +3809,7 @@ export type Database = {
             foreignKeyName: "commune_collectivite_id_fkey"
             columns: ["collectivite_id"]
             isOneToOne: false
-            referencedRelation: "collectivite_labellisation"
-            referencedColumns: ["collectivite_id"]
-          },
-          {
-            foreignKeyName: "commune_collectivite_id_fkey"
-            columns: ["collectivite_id"]
-            isOneToOne: false
-            referencedRelation: "collectivite_membre_crm"
-            referencedColumns: ["collectivite_id"]
-          },
-          {
-            foreignKeyName: "commune_collectivite_id_fkey"
-            columns: ["collectivite_id"]
-            isOneToOne: false
             referencedRelation: "collectivite_niveau_acces"
-            referencedColumns: ["collectivite_id"]
-          },
-          {
-            foreignKeyName: "commune_collectivite_id_fkey"
-            columns: ["collectivite_id"]
-            isOneToOne: false
-            referencedRelation: "collectivite_plan_action"
-            referencedColumns: ["collectivite_id"]
-          },
-          {
-            foreignKeyName: "commune_collectivite_id_fkey"
-            columns: ["collectivite_id"]
-            isOneToOne: false
-            referencedRelation: "collectivite_plan_action"
-            referencedColumns: ["collectivite_id"]
-          },
-          {
-            foreignKeyName: "commune_collectivite_id_fkey"
-            columns: ["collectivite_id"]
-            isOneToOne: false
-            referencedRelation: "collectivite_referentiel"
-            referencedColumns: ["collectivite_id"]
-          },
-          {
-            foreignKeyName: "commune_collectivite_id_fkey"
-            columns: ["collectivite_id"]
-            isOneToOne: false
-            referencedRelation: "collectivite_utilisateur"
-            referencedColumns: ["collectivite_id"]
-          },
-          {
-            foreignKeyName: "commune_collectivite_id_fkey"
-            columns: ["collectivite_id"]
-            isOneToOne: false
-            referencedRelation: "collectivites_crm"
             referencedColumns: ["collectivite_id"]
           },
           {
@@ -7308,41 +3837,6 @@ export type Database = {
             foreignKeyName: "commune_collectivite_id_fkey"
             columns: ["collectivite_id"]
             isOneToOne: false
-            referencedRelation: "crm_usages"
-            referencedColumns: ["collectivite_id"]
-          },
-          {
-            foreignKeyName: "commune_collectivite_id_fkey"
-            columns: ["collectivite_id"]
-            isOneToOne: false
-            referencedRelation: "engagement_collectivite"
-            referencedColumns: ["collectivite_id"]
-          },
-          {
-            foreignKeyName: "commune_collectivite_id_fkey"
-            columns: ["collectivite_id"]
-            isOneToOne: false
-            referencedRelation: "late_collectivite"
-            referencedColumns: ["collectivite_id"]
-          },
-          {
-            foreignKeyName: "commune_collectivite_id_fkey"
-            columns: ["collectivite_id"]
-            isOneToOne: false
-            referencedRelation: "locales_engagement_collectivite"
-            referencedColumns: ["collectivite_id"]
-          },
-          {
-            foreignKeyName: "commune_collectivite_id_fkey"
-            columns: ["collectivite_id"]
-            isOneToOne: false
-            referencedRelation: "locales_pourcentage_completude"
-            referencedColumns: ["collectivite_id"]
-          },
-          {
-            foreignKeyName: "commune_collectivite_id_fkey"
-            columns: ["collectivite_id"]
-            isOneToOne: false
             referencedRelation: "named_collectivite"
             referencedColumns: ["collectivite_id"]
           },
@@ -7358,48 +3852,6 @@ export type Database = {
             columns: ["collectivite_id"]
             isOneToOne: false
             referencedRelation: "question_thematique_completude"
-            referencedColumns: ["collectivite_id"]
-          },
-          {
-            foreignKeyName: "commune_collectivite_id_fkey"
-            columns: ["collectivite_id"]
-            isOneToOne: false
-            referencedRelation: "rattachement"
-            referencedColumns: ["collectivite_id"]
-          },
-          {
-            foreignKeyName: "commune_collectivite_id_fkey"
-            columns: ["collectivite_id"]
-            isOneToOne: false
-            referencedRelation: "report_indicateur_resultat"
-            referencedColumns: ["collectivite_id"]
-          },
-          {
-            foreignKeyName: "commune_collectivite_id_fkey"
-            columns: ["collectivite_id"]
-            isOneToOne: false
-            referencedRelation: "report_reponse_binaire"
-            referencedColumns: ["collectivite_id"]
-          },
-          {
-            foreignKeyName: "commune_collectivite_id_fkey"
-            columns: ["collectivite_id"]
-            isOneToOne: false
-            referencedRelation: "report_reponse_choix"
-            referencedColumns: ["collectivite_id"]
-          },
-          {
-            foreignKeyName: "commune_collectivite_id_fkey"
-            columns: ["collectivite_id"]
-            isOneToOne: false
-            referencedRelation: "report_reponse_proportion"
-            referencedColumns: ["collectivite_id"]
-          },
-          {
-            foreignKeyName: "commune_collectivite_id_fkey"
-            columns: ["collectivite_id"]
-            isOneToOne: false
-            referencedRelation: "report_scores"
             referencedColumns: ["collectivite_id"]
           },
           {
@@ -7428,13 +3880,6 @@ export type Database = {
             columns: ["collectivite_id"]
             isOneToOne: false
             referencedRelation: "retool_plan_action_hebdo"
-            referencedColumns: ["collectivite_id"]
-          },
-          {
-            foreignKeyName: "commune_collectivite_id_fkey"
-            columns: ["collectivite_id"]
-            isOneToOne: false
-            referencedRelation: "retool_plan_action_premier_usage"
             referencedColumns: ["collectivite_id"]
           },
           {
@@ -7546,13 +3991,6 @@ export type Database = {
             foreignKeyName: "cot_collectivite_id_fkey"
             columns: ["collectivite_id"]
             isOneToOne: true
-            referencedRelation: "action_snippet"
-            referencedColumns: ["collectivite_id"]
-          },
-          {
-            foreignKeyName: "cot_collectivite_id_fkey"
-            columns: ["collectivite_id"]
-            isOneToOne: true
             referencedRelation: "action_statuts"
             referencedColumns: ["collectivite_id"]
           },
@@ -7581,29 +4019,8 @@ export type Database = {
             foreignKeyName: "cot_collectivite_id_fkey"
             columns: ["collectivite_id"]
             isOneToOne: true
-            referencedRelation: "carte_collectivite_active"
-            referencedColumns: ["collectivite_id"]
-          },
-          {
-            foreignKeyName: "cot_collectivite_id_fkey"
-            columns: ["collectivite_id"]
-            isOneToOne: true
             referencedRelation: "collectivite"
             referencedColumns: ["id"]
-          },
-          {
-            foreignKeyName: "cot_collectivite_id_fkey"
-            columns: ["collectivite_id"]
-            isOneToOne: true
-            referencedRelation: "collectivite"
-            referencedColumns: ["collectivite_id"]
-          },
-          {
-            foreignKeyName: "cot_collectivite_id_fkey"
-            columns: ["collectivite_id"]
-            isOneToOne: true
-            referencedRelation: "collectivite_action_statut"
-            referencedColumns: ["collectivite_id"]
           },
           {
             foreignKeyName: "cot_collectivite_id_fkey"
@@ -7630,56 +4047,7 @@ export type Database = {
             foreignKeyName: "cot_collectivite_id_fkey"
             columns: ["collectivite_id"]
             isOneToOne: true
-            referencedRelation: "collectivite_labellisation"
-            referencedColumns: ["collectivite_id"]
-          },
-          {
-            foreignKeyName: "cot_collectivite_id_fkey"
-            columns: ["collectivite_id"]
-            isOneToOne: true
-            referencedRelation: "collectivite_membre_crm"
-            referencedColumns: ["collectivite_id"]
-          },
-          {
-            foreignKeyName: "cot_collectivite_id_fkey"
-            columns: ["collectivite_id"]
-            isOneToOne: true
             referencedRelation: "collectivite_niveau_acces"
-            referencedColumns: ["collectivite_id"]
-          },
-          {
-            foreignKeyName: "cot_collectivite_id_fkey"
-            columns: ["collectivite_id"]
-            isOneToOne: true
-            referencedRelation: "collectivite_plan_action"
-            referencedColumns: ["collectivite_id"]
-          },
-          {
-            foreignKeyName: "cot_collectivite_id_fkey"
-            columns: ["collectivite_id"]
-            isOneToOne: true
-            referencedRelation: "collectivite_plan_action"
-            referencedColumns: ["collectivite_id"]
-          },
-          {
-            foreignKeyName: "cot_collectivite_id_fkey"
-            columns: ["collectivite_id"]
-            isOneToOne: true
-            referencedRelation: "collectivite_referentiel"
-            referencedColumns: ["collectivite_id"]
-          },
-          {
-            foreignKeyName: "cot_collectivite_id_fkey"
-            columns: ["collectivite_id"]
-            isOneToOne: true
-            referencedRelation: "collectivite_utilisateur"
-            referencedColumns: ["collectivite_id"]
-          },
-          {
-            foreignKeyName: "cot_collectivite_id_fkey"
-            columns: ["collectivite_id"]
-            isOneToOne: true
-            referencedRelation: "collectivites_crm"
             referencedColumns: ["collectivite_id"]
           },
           {
@@ -7707,41 +4075,6 @@ export type Database = {
             foreignKeyName: "cot_collectivite_id_fkey"
             columns: ["collectivite_id"]
             isOneToOne: true
-            referencedRelation: "crm_usages"
-            referencedColumns: ["collectivite_id"]
-          },
-          {
-            foreignKeyName: "cot_collectivite_id_fkey"
-            columns: ["collectivite_id"]
-            isOneToOne: true
-            referencedRelation: "engagement_collectivite"
-            referencedColumns: ["collectivite_id"]
-          },
-          {
-            foreignKeyName: "cot_collectivite_id_fkey"
-            columns: ["collectivite_id"]
-            isOneToOne: true
-            referencedRelation: "late_collectivite"
-            referencedColumns: ["collectivite_id"]
-          },
-          {
-            foreignKeyName: "cot_collectivite_id_fkey"
-            columns: ["collectivite_id"]
-            isOneToOne: true
-            referencedRelation: "locales_engagement_collectivite"
-            referencedColumns: ["collectivite_id"]
-          },
-          {
-            foreignKeyName: "cot_collectivite_id_fkey"
-            columns: ["collectivite_id"]
-            isOneToOne: true
-            referencedRelation: "locales_pourcentage_completude"
-            referencedColumns: ["collectivite_id"]
-          },
-          {
-            foreignKeyName: "cot_collectivite_id_fkey"
-            columns: ["collectivite_id"]
-            isOneToOne: true
             referencedRelation: "named_collectivite"
             referencedColumns: ["collectivite_id"]
           },
@@ -7757,48 +4090,6 @@ export type Database = {
             columns: ["collectivite_id"]
             isOneToOne: true
             referencedRelation: "question_thematique_completude"
-            referencedColumns: ["collectivite_id"]
-          },
-          {
-            foreignKeyName: "cot_collectivite_id_fkey"
-            columns: ["collectivite_id"]
-            isOneToOne: true
-            referencedRelation: "rattachement"
-            referencedColumns: ["collectivite_id"]
-          },
-          {
-            foreignKeyName: "cot_collectivite_id_fkey"
-            columns: ["collectivite_id"]
-            isOneToOne: true
-            referencedRelation: "report_indicateur_resultat"
-            referencedColumns: ["collectivite_id"]
-          },
-          {
-            foreignKeyName: "cot_collectivite_id_fkey"
-            columns: ["collectivite_id"]
-            isOneToOne: true
-            referencedRelation: "report_reponse_binaire"
-            referencedColumns: ["collectivite_id"]
-          },
-          {
-            foreignKeyName: "cot_collectivite_id_fkey"
-            columns: ["collectivite_id"]
-            isOneToOne: true
-            referencedRelation: "report_reponse_choix"
-            referencedColumns: ["collectivite_id"]
-          },
-          {
-            foreignKeyName: "cot_collectivite_id_fkey"
-            columns: ["collectivite_id"]
-            isOneToOne: true
-            referencedRelation: "report_reponse_proportion"
-            referencedColumns: ["collectivite_id"]
-          },
-          {
-            foreignKeyName: "cot_collectivite_id_fkey"
-            columns: ["collectivite_id"]
-            isOneToOne: true
-            referencedRelation: "report_scores"
             referencedColumns: ["collectivite_id"]
           },
           {
@@ -7827,13 +4118,6 @@ export type Database = {
             columns: ["collectivite_id"]
             isOneToOne: true
             referencedRelation: "retool_plan_action_hebdo"
-            referencedColumns: ["collectivite_id"]
-          },
-          {
-            foreignKeyName: "cot_collectivite_id_fkey"
-            columns: ["collectivite_id"]
-            isOneToOne: true
-            referencedRelation: "retool_plan_action_premier_usage"
             referencedColumns: ["collectivite_id"]
           },
           {
@@ -7896,13 +4180,6 @@ export type Database = {
             foreignKeyName: "cot_signataire_fkey"
             columns: ["signataire"]
             isOneToOne: false
-            referencedRelation: "action_snippet"
-            referencedColumns: ["collectivite_id"]
-          },
-          {
-            foreignKeyName: "cot_signataire_fkey"
-            columns: ["signataire"]
-            isOneToOne: false
             referencedRelation: "action_statuts"
             referencedColumns: ["collectivite_id"]
           },
@@ -7931,29 +4208,8 @@ export type Database = {
             foreignKeyName: "cot_signataire_fkey"
             columns: ["signataire"]
             isOneToOne: false
-            referencedRelation: "carte_collectivite_active"
-            referencedColumns: ["collectivite_id"]
-          },
-          {
-            foreignKeyName: "cot_signataire_fkey"
-            columns: ["signataire"]
-            isOneToOne: false
             referencedRelation: "collectivite"
             referencedColumns: ["id"]
-          },
-          {
-            foreignKeyName: "cot_signataire_fkey"
-            columns: ["signataire"]
-            isOneToOne: false
-            referencedRelation: "collectivite"
-            referencedColumns: ["collectivite_id"]
-          },
-          {
-            foreignKeyName: "cot_signataire_fkey"
-            columns: ["signataire"]
-            isOneToOne: false
-            referencedRelation: "collectivite_action_statut"
-            referencedColumns: ["collectivite_id"]
           },
           {
             foreignKeyName: "cot_signataire_fkey"
@@ -7980,56 +4236,7 @@ export type Database = {
             foreignKeyName: "cot_signataire_fkey"
             columns: ["signataire"]
             isOneToOne: false
-            referencedRelation: "collectivite_labellisation"
-            referencedColumns: ["collectivite_id"]
-          },
-          {
-            foreignKeyName: "cot_signataire_fkey"
-            columns: ["signataire"]
-            isOneToOne: false
-            referencedRelation: "collectivite_membre_crm"
-            referencedColumns: ["collectivite_id"]
-          },
-          {
-            foreignKeyName: "cot_signataire_fkey"
-            columns: ["signataire"]
-            isOneToOne: false
             referencedRelation: "collectivite_niveau_acces"
-            referencedColumns: ["collectivite_id"]
-          },
-          {
-            foreignKeyName: "cot_signataire_fkey"
-            columns: ["signataire"]
-            isOneToOne: false
-            referencedRelation: "collectivite_plan_action"
-            referencedColumns: ["collectivite_id"]
-          },
-          {
-            foreignKeyName: "cot_signataire_fkey"
-            columns: ["signataire"]
-            isOneToOne: false
-            referencedRelation: "collectivite_plan_action"
-            referencedColumns: ["collectivite_id"]
-          },
-          {
-            foreignKeyName: "cot_signataire_fkey"
-            columns: ["signataire"]
-            isOneToOne: false
-            referencedRelation: "collectivite_referentiel"
-            referencedColumns: ["collectivite_id"]
-          },
-          {
-            foreignKeyName: "cot_signataire_fkey"
-            columns: ["signataire"]
-            isOneToOne: false
-            referencedRelation: "collectivite_utilisateur"
-            referencedColumns: ["collectivite_id"]
-          },
-          {
-            foreignKeyName: "cot_signataire_fkey"
-            columns: ["signataire"]
-            isOneToOne: false
-            referencedRelation: "collectivites_crm"
             referencedColumns: ["collectivite_id"]
           },
           {
@@ -8057,41 +4264,6 @@ export type Database = {
             foreignKeyName: "cot_signataire_fkey"
             columns: ["signataire"]
             isOneToOne: false
-            referencedRelation: "crm_usages"
-            referencedColumns: ["collectivite_id"]
-          },
-          {
-            foreignKeyName: "cot_signataire_fkey"
-            columns: ["signataire"]
-            isOneToOne: false
-            referencedRelation: "engagement_collectivite"
-            referencedColumns: ["collectivite_id"]
-          },
-          {
-            foreignKeyName: "cot_signataire_fkey"
-            columns: ["signataire"]
-            isOneToOne: false
-            referencedRelation: "late_collectivite"
-            referencedColumns: ["collectivite_id"]
-          },
-          {
-            foreignKeyName: "cot_signataire_fkey"
-            columns: ["signataire"]
-            isOneToOne: false
-            referencedRelation: "locales_engagement_collectivite"
-            referencedColumns: ["collectivite_id"]
-          },
-          {
-            foreignKeyName: "cot_signataire_fkey"
-            columns: ["signataire"]
-            isOneToOne: false
-            referencedRelation: "locales_pourcentage_completude"
-            referencedColumns: ["collectivite_id"]
-          },
-          {
-            foreignKeyName: "cot_signataire_fkey"
-            columns: ["signataire"]
-            isOneToOne: false
             referencedRelation: "named_collectivite"
             referencedColumns: ["collectivite_id"]
           },
@@ -8107,48 +4279,6 @@ export type Database = {
             columns: ["signataire"]
             isOneToOne: false
             referencedRelation: "question_thematique_completude"
-            referencedColumns: ["collectivite_id"]
-          },
-          {
-            foreignKeyName: "cot_signataire_fkey"
-            columns: ["signataire"]
-            isOneToOne: false
-            referencedRelation: "rattachement"
-            referencedColumns: ["collectivite_id"]
-          },
-          {
-            foreignKeyName: "cot_signataire_fkey"
-            columns: ["signataire"]
-            isOneToOne: false
-            referencedRelation: "report_indicateur_resultat"
-            referencedColumns: ["collectivite_id"]
-          },
-          {
-            foreignKeyName: "cot_signataire_fkey"
-            columns: ["signataire"]
-            isOneToOne: false
-            referencedRelation: "report_reponse_binaire"
-            referencedColumns: ["collectivite_id"]
-          },
-          {
-            foreignKeyName: "cot_signataire_fkey"
-            columns: ["signataire"]
-            isOneToOne: false
-            referencedRelation: "report_reponse_choix"
-            referencedColumns: ["collectivite_id"]
-          },
-          {
-            foreignKeyName: "cot_signataire_fkey"
-            columns: ["signataire"]
-            isOneToOne: false
-            referencedRelation: "report_reponse_proportion"
-            referencedColumns: ["collectivite_id"]
-          },
-          {
-            foreignKeyName: "cot_signataire_fkey"
-            columns: ["signataire"]
-            isOneToOne: false
-            referencedRelation: "report_scores"
             referencedColumns: ["collectivite_id"]
           },
           {
@@ -8177,13 +4307,6 @@ export type Database = {
             columns: ["signataire"]
             isOneToOne: false
             referencedRelation: "retool_plan_action_hebdo"
-            referencedColumns: ["collectivite_id"]
-          },
-          {
-            foreignKeyName: "cot_signataire_fkey"
-            columns: ["signataire"]
-            isOneToOne: false
-            referencedRelation: "retool_plan_action_premier_usage"
             referencedColumns: ["collectivite_id"]
           },
           {
@@ -8281,15 +4404,7 @@ export type Database = {
           telephone?: string | null
           user_id?: string
         }
-        Relationships: [
-          {
-            foreignKeyName: "dcp_user_id_fkey"
-            columns: ["user_id"]
-            isOneToOne: true
-            referencedRelation: "users"
-            referencedColumns: ["id"]
-          },
-        ]
+        Relationships: []
       }
       effet_attendu: {
         Row: {
@@ -8336,13 +4451,6 @@ export type Database = {
             foreignKeyName: "epci_collectivite_id_fkey"
             columns: ["collectivite_id"]
             isOneToOne: false
-            referencedRelation: "action_snippet"
-            referencedColumns: ["collectivite_id"]
-          },
-          {
-            foreignKeyName: "epci_collectivite_id_fkey"
-            columns: ["collectivite_id"]
-            isOneToOne: false
             referencedRelation: "action_statuts"
             referencedColumns: ["collectivite_id"]
           },
@@ -8371,29 +4479,8 @@ export type Database = {
             foreignKeyName: "epci_collectivite_id_fkey"
             columns: ["collectivite_id"]
             isOneToOne: false
-            referencedRelation: "carte_collectivite_active"
-            referencedColumns: ["collectivite_id"]
-          },
-          {
-            foreignKeyName: "epci_collectivite_id_fkey"
-            columns: ["collectivite_id"]
-            isOneToOne: false
             referencedRelation: "collectivite"
             referencedColumns: ["id"]
-          },
-          {
-            foreignKeyName: "epci_collectivite_id_fkey"
-            columns: ["collectivite_id"]
-            isOneToOne: false
-            referencedRelation: "collectivite"
-            referencedColumns: ["collectivite_id"]
-          },
-          {
-            foreignKeyName: "epci_collectivite_id_fkey"
-            columns: ["collectivite_id"]
-            isOneToOne: false
-            referencedRelation: "collectivite_action_statut"
-            referencedColumns: ["collectivite_id"]
           },
           {
             foreignKeyName: "epci_collectivite_id_fkey"
@@ -8420,56 +4507,7 @@ export type Database = {
             foreignKeyName: "epci_collectivite_id_fkey"
             columns: ["collectivite_id"]
             isOneToOne: false
-            referencedRelation: "collectivite_labellisation"
-            referencedColumns: ["collectivite_id"]
-          },
-          {
-            foreignKeyName: "epci_collectivite_id_fkey"
-            columns: ["collectivite_id"]
-            isOneToOne: false
-            referencedRelation: "collectivite_membre_crm"
-            referencedColumns: ["collectivite_id"]
-          },
-          {
-            foreignKeyName: "epci_collectivite_id_fkey"
-            columns: ["collectivite_id"]
-            isOneToOne: false
             referencedRelation: "collectivite_niveau_acces"
-            referencedColumns: ["collectivite_id"]
-          },
-          {
-            foreignKeyName: "epci_collectivite_id_fkey"
-            columns: ["collectivite_id"]
-            isOneToOne: false
-            referencedRelation: "collectivite_plan_action"
-            referencedColumns: ["collectivite_id"]
-          },
-          {
-            foreignKeyName: "epci_collectivite_id_fkey"
-            columns: ["collectivite_id"]
-            isOneToOne: false
-            referencedRelation: "collectivite_plan_action"
-            referencedColumns: ["collectivite_id"]
-          },
-          {
-            foreignKeyName: "epci_collectivite_id_fkey"
-            columns: ["collectivite_id"]
-            isOneToOne: false
-            referencedRelation: "collectivite_referentiel"
-            referencedColumns: ["collectivite_id"]
-          },
-          {
-            foreignKeyName: "epci_collectivite_id_fkey"
-            columns: ["collectivite_id"]
-            isOneToOne: false
-            referencedRelation: "collectivite_utilisateur"
-            referencedColumns: ["collectivite_id"]
-          },
-          {
-            foreignKeyName: "epci_collectivite_id_fkey"
-            columns: ["collectivite_id"]
-            isOneToOne: false
-            referencedRelation: "collectivites_crm"
             referencedColumns: ["collectivite_id"]
           },
           {
@@ -8497,41 +4535,6 @@ export type Database = {
             foreignKeyName: "epci_collectivite_id_fkey"
             columns: ["collectivite_id"]
             isOneToOne: false
-            referencedRelation: "crm_usages"
-            referencedColumns: ["collectivite_id"]
-          },
-          {
-            foreignKeyName: "epci_collectivite_id_fkey"
-            columns: ["collectivite_id"]
-            isOneToOne: false
-            referencedRelation: "engagement_collectivite"
-            referencedColumns: ["collectivite_id"]
-          },
-          {
-            foreignKeyName: "epci_collectivite_id_fkey"
-            columns: ["collectivite_id"]
-            isOneToOne: false
-            referencedRelation: "late_collectivite"
-            referencedColumns: ["collectivite_id"]
-          },
-          {
-            foreignKeyName: "epci_collectivite_id_fkey"
-            columns: ["collectivite_id"]
-            isOneToOne: false
-            referencedRelation: "locales_engagement_collectivite"
-            referencedColumns: ["collectivite_id"]
-          },
-          {
-            foreignKeyName: "epci_collectivite_id_fkey"
-            columns: ["collectivite_id"]
-            isOneToOne: false
-            referencedRelation: "locales_pourcentage_completude"
-            referencedColumns: ["collectivite_id"]
-          },
-          {
-            foreignKeyName: "epci_collectivite_id_fkey"
-            columns: ["collectivite_id"]
-            isOneToOne: false
             referencedRelation: "named_collectivite"
             referencedColumns: ["collectivite_id"]
           },
@@ -8547,48 +4550,6 @@ export type Database = {
             columns: ["collectivite_id"]
             isOneToOne: false
             referencedRelation: "question_thematique_completude"
-            referencedColumns: ["collectivite_id"]
-          },
-          {
-            foreignKeyName: "epci_collectivite_id_fkey"
-            columns: ["collectivite_id"]
-            isOneToOne: false
-            referencedRelation: "rattachement"
-            referencedColumns: ["collectivite_id"]
-          },
-          {
-            foreignKeyName: "epci_collectivite_id_fkey"
-            columns: ["collectivite_id"]
-            isOneToOne: false
-            referencedRelation: "report_indicateur_resultat"
-            referencedColumns: ["collectivite_id"]
-          },
-          {
-            foreignKeyName: "epci_collectivite_id_fkey"
-            columns: ["collectivite_id"]
-            isOneToOne: false
-            referencedRelation: "report_reponse_binaire"
-            referencedColumns: ["collectivite_id"]
-          },
-          {
-            foreignKeyName: "epci_collectivite_id_fkey"
-            columns: ["collectivite_id"]
-            isOneToOne: false
-            referencedRelation: "report_reponse_choix"
-            referencedColumns: ["collectivite_id"]
-          },
-          {
-            foreignKeyName: "epci_collectivite_id_fkey"
-            columns: ["collectivite_id"]
-            isOneToOne: false
-            referencedRelation: "report_reponse_proportion"
-            referencedColumns: ["collectivite_id"]
-          },
-          {
-            foreignKeyName: "epci_collectivite_id_fkey"
-            columns: ["collectivite_id"]
-            isOneToOne: false
-            referencedRelation: "report_scores"
             referencedColumns: ["collectivite_id"]
           },
           {
@@ -8617,13 +4578,6 @@ export type Database = {
             columns: ["collectivite_id"]
             isOneToOne: false
             referencedRelation: "retool_plan_action_hebdo"
-            referencedColumns: ["collectivite_id"]
-          },
-          {
-            foreignKeyName: "epci_collectivite_id_fkey"
-            columns: ["collectivite_id"]
-            isOneToOne: false
-            referencedRelation: "retool_plan_action_premier_usage"
             referencedColumns: ["collectivite_id"]
           },
           {
@@ -8689,7 +4643,7 @@ export type Database = {
           amelioration_continue: boolean | null
           budget_previsionnel: number | null
           calendrier: string | null
-          cibles: Database["public"]["Enums"]["fiche_action_cibles"][] | null
+          cibles: string[] | null
           collectivite_id: number
           created_at: string
           date_debut: string | null
@@ -8697,6 +4651,7 @@ export type Database = {
           description: string | null
           financements: string | null
           id: number
+          instance_gouvernance: string | null
           maj_termine: boolean | null
           modified_at: string
           modified_by: string | null
@@ -8705,6 +4660,8 @@ export type Database = {
             | null
           notes_complementaires: string | null
           objectifs: string | null
+          participation_citoyenne: string | null
+          participation_citoyenne_type: string | null
           piliers_eci:
             | Database["public"]["Enums"]["fiche_action_piliers_eci"][]
             | null
@@ -8714,6 +4671,7 @@ export type Database = {
             | Database["public"]["Enums"]["fiche_action_resultats_attendus"][]
             | null
           statut: Database["public"]["Enums"]["fiche_action_statuts"] | null
+          temps_de_mise_en_oeuvre_id: number | null
           titre: string | null
           fiche_action_plan: unknown | null
         }
@@ -8721,7 +4679,7 @@ export type Database = {
           amelioration_continue?: boolean | null
           budget_previsionnel?: number | null
           calendrier?: string | null
-          cibles?: Database["public"]["Enums"]["fiche_action_cibles"][] | null
+          cibles?: string[] | null
           collectivite_id: number
           created_at?: string
           date_debut?: string | null
@@ -8729,6 +4687,7 @@ export type Database = {
           description?: string | null
           financements?: string | null
           id?: number
+          instance_gouvernance?: string | null
           maj_termine?: boolean | null
           modified_at?: string
           modified_by?: string | null
@@ -8737,6 +4696,8 @@ export type Database = {
             | null
           notes_complementaires?: string | null
           objectifs?: string | null
+          participation_citoyenne?: string | null
+          participation_citoyenne_type?: string | null
           piliers_eci?:
             | Database["public"]["Enums"]["fiche_action_piliers_eci"][]
             | null
@@ -8746,13 +4707,14 @@ export type Database = {
             | Database["public"]["Enums"]["fiche_action_resultats_attendus"][]
             | null
           statut?: Database["public"]["Enums"]["fiche_action_statuts"] | null
+          temps_de_mise_en_oeuvre_id?: number | null
           titre?: string | null
         }
         Update: {
           amelioration_continue?: boolean | null
           budget_previsionnel?: number | null
           calendrier?: string | null
-          cibles?: Database["public"]["Enums"]["fiche_action_cibles"][] | null
+          cibles?: string[] | null
           collectivite_id?: number
           created_at?: string
           date_debut?: string | null
@@ -8760,6 +4722,7 @@ export type Database = {
           description?: string | null
           financements?: string | null
           id?: number
+          instance_gouvernance?: string | null
           maj_termine?: boolean | null
           modified_at?: string
           modified_by?: string | null
@@ -8768,6 +4731,8 @@ export type Database = {
             | null
           notes_complementaires?: string | null
           objectifs?: string | null
+          participation_citoyenne?: string | null
+          participation_citoyenne_type?: string | null
           piliers_eci?:
             | Database["public"]["Enums"]["fiche_action_piliers_eci"][]
             | null
@@ -8777,16 +4742,10 @@ export type Database = {
             | Database["public"]["Enums"]["fiche_action_resultats_attendus"][]
             | null
           statut?: Database["public"]["Enums"]["fiche_action_statuts"] | null
+          temps_de_mise_en_oeuvre_id?: number | null
           titre?: string | null
         }
         Relationships: [
-          {
-            foreignKeyName: "fiche_action_collectivite_id_fkey"
-            columns: ["collectivite_id"]
-            isOneToOne: false
-            referencedRelation: "action_snippet"
-            referencedColumns: ["collectivite_id"]
-          },
           {
             foreignKeyName: "fiche_action_collectivite_id_fkey"
             columns: ["collectivite_id"]
@@ -8819,29 +4778,8 @@ export type Database = {
             foreignKeyName: "fiche_action_collectivite_id_fkey"
             columns: ["collectivite_id"]
             isOneToOne: false
-            referencedRelation: "carte_collectivite_active"
-            referencedColumns: ["collectivite_id"]
-          },
-          {
-            foreignKeyName: "fiche_action_collectivite_id_fkey"
-            columns: ["collectivite_id"]
-            isOneToOne: false
             referencedRelation: "collectivite"
             referencedColumns: ["id"]
-          },
-          {
-            foreignKeyName: "fiche_action_collectivite_id_fkey"
-            columns: ["collectivite_id"]
-            isOneToOne: false
-            referencedRelation: "collectivite"
-            referencedColumns: ["collectivite_id"]
-          },
-          {
-            foreignKeyName: "fiche_action_collectivite_id_fkey"
-            columns: ["collectivite_id"]
-            isOneToOne: false
-            referencedRelation: "collectivite_action_statut"
-            referencedColumns: ["collectivite_id"]
           },
           {
             foreignKeyName: "fiche_action_collectivite_id_fkey"
@@ -8868,56 +4806,7 @@ export type Database = {
             foreignKeyName: "fiche_action_collectivite_id_fkey"
             columns: ["collectivite_id"]
             isOneToOne: false
-            referencedRelation: "collectivite_labellisation"
-            referencedColumns: ["collectivite_id"]
-          },
-          {
-            foreignKeyName: "fiche_action_collectivite_id_fkey"
-            columns: ["collectivite_id"]
-            isOneToOne: false
-            referencedRelation: "collectivite_membre_crm"
-            referencedColumns: ["collectivite_id"]
-          },
-          {
-            foreignKeyName: "fiche_action_collectivite_id_fkey"
-            columns: ["collectivite_id"]
-            isOneToOne: false
             referencedRelation: "collectivite_niveau_acces"
-            referencedColumns: ["collectivite_id"]
-          },
-          {
-            foreignKeyName: "fiche_action_collectivite_id_fkey"
-            columns: ["collectivite_id"]
-            isOneToOne: false
-            referencedRelation: "collectivite_plan_action"
-            referencedColumns: ["collectivite_id"]
-          },
-          {
-            foreignKeyName: "fiche_action_collectivite_id_fkey"
-            columns: ["collectivite_id"]
-            isOneToOne: false
-            referencedRelation: "collectivite_plan_action"
-            referencedColumns: ["collectivite_id"]
-          },
-          {
-            foreignKeyName: "fiche_action_collectivite_id_fkey"
-            columns: ["collectivite_id"]
-            isOneToOne: false
-            referencedRelation: "collectivite_referentiel"
-            referencedColumns: ["collectivite_id"]
-          },
-          {
-            foreignKeyName: "fiche_action_collectivite_id_fkey"
-            columns: ["collectivite_id"]
-            isOneToOne: false
-            referencedRelation: "collectivite_utilisateur"
-            referencedColumns: ["collectivite_id"]
-          },
-          {
-            foreignKeyName: "fiche_action_collectivite_id_fkey"
-            columns: ["collectivite_id"]
-            isOneToOne: false
-            referencedRelation: "collectivites_crm"
             referencedColumns: ["collectivite_id"]
           },
           {
@@ -8945,41 +4834,6 @@ export type Database = {
             foreignKeyName: "fiche_action_collectivite_id_fkey"
             columns: ["collectivite_id"]
             isOneToOne: false
-            referencedRelation: "crm_usages"
-            referencedColumns: ["collectivite_id"]
-          },
-          {
-            foreignKeyName: "fiche_action_collectivite_id_fkey"
-            columns: ["collectivite_id"]
-            isOneToOne: false
-            referencedRelation: "engagement_collectivite"
-            referencedColumns: ["collectivite_id"]
-          },
-          {
-            foreignKeyName: "fiche_action_collectivite_id_fkey"
-            columns: ["collectivite_id"]
-            isOneToOne: false
-            referencedRelation: "late_collectivite"
-            referencedColumns: ["collectivite_id"]
-          },
-          {
-            foreignKeyName: "fiche_action_collectivite_id_fkey"
-            columns: ["collectivite_id"]
-            isOneToOne: false
-            referencedRelation: "locales_engagement_collectivite"
-            referencedColumns: ["collectivite_id"]
-          },
-          {
-            foreignKeyName: "fiche_action_collectivite_id_fkey"
-            columns: ["collectivite_id"]
-            isOneToOne: false
-            referencedRelation: "locales_pourcentage_completude"
-            referencedColumns: ["collectivite_id"]
-          },
-          {
-            foreignKeyName: "fiche_action_collectivite_id_fkey"
-            columns: ["collectivite_id"]
-            isOneToOne: false
             referencedRelation: "named_collectivite"
             referencedColumns: ["collectivite_id"]
           },
@@ -8995,48 +4849,6 @@ export type Database = {
             columns: ["collectivite_id"]
             isOneToOne: false
             referencedRelation: "question_thematique_completude"
-            referencedColumns: ["collectivite_id"]
-          },
-          {
-            foreignKeyName: "fiche_action_collectivite_id_fkey"
-            columns: ["collectivite_id"]
-            isOneToOne: false
-            referencedRelation: "rattachement"
-            referencedColumns: ["collectivite_id"]
-          },
-          {
-            foreignKeyName: "fiche_action_collectivite_id_fkey"
-            columns: ["collectivite_id"]
-            isOneToOne: false
-            referencedRelation: "report_indicateur_resultat"
-            referencedColumns: ["collectivite_id"]
-          },
-          {
-            foreignKeyName: "fiche_action_collectivite_id_fkey"
-            columns: ["collectivite_id"]
-            isOneToOne: false
-            referencedRelation: "report_reponse_binaire"
-            referencedColumns: ["collectivite_id"]
-          },
-          {
-            foreignKeyName: "fiche_action_collectivite_id_fkey"
-            columns: ["collectivite_id"]
-            isOneToOne: false
-            referencedRelation: "report_reponse_choix"
-            referencedColumns: ["collectivite_id"]
-          },
-          {
-            foreignKeyName: "fiche_action_collectivite_id_fkey"
-            columns: ["collectivite_id"]
-            isOneToOne: false
-            referencedRelation: "report_reponse_proportion"
-            referencedColumns: ["collectivite_id"]
-          },
-          {
-            foreignKeyName: "fiche_action_collectivite_id_fkey"
-            columns: ["collectivite_id"]
-            isOneToOne: false
-            referencedRelation: "report_scores"
             referencedColumns: ["collectivite_id"]
           },
           {
@@ -9065,13 +4877,6 @@ export type Database = {
             columns: ["collectivite_id"]
             isOneToOne: false
             referencedRelation: "retool_plan_action_hebdo"
-            referencedColumns: ["collectivite_id"]
-          },
-          {
-            foreignKeyName: "fiche_action_collectivite_id_fkey"
-            columns: ["collectivite_id"]
-            isOneToOne: false
-            referencedRelation: "retool_plan_action_premier_usage"
             referencedColumns: ["collectivite_id"]
           },
           {
@@ -9131,11 +4936,11 @@ export type Database = {
             referencedColumns: ["collectivite_id"]
           },
           {
-            foreignKeyName: "fiche_action_modified_by_fkey"
-            columns: ["modified_by"]
+            foreignKeyName: "fiche_action_temps_de_mise_en_oeuvre_id_fkey"
+            columns: ["temps_de_mise_en_oeuvre_id"]
             isOneToOne: false
-            referencedRelation: "users"
-            referencedColumns: ["id"]
+            referencedRelation: "action_impact_temps_de_mise_en_oeuvre"
+            referencedColumns: ["niveau"]
           },
         ]
       }
@@ -9172,20 +4977,6 @@ export type Database = {
             columns: ["fiche_id"]
             isOneToOne: false
             referencedRelation: "fiche_resume"
-            referencedColumns: ["id"]
-          },
-          {
-            foreignKeyName: "fiche_action_action_fiche_id_fkey"
-            columns: ["fiche_id"]
-            isOneToOne: false
-            referencedRelation: "fiche_resume"
-            referencedColumns: ["id"]
-          },
-          {
-            foreignKeyName: "fiche_action_action_fiche_id_fkey"
-            columns: ["fiche_id"]
-            isOneToOne: false
-            referencedRelation: "fiches_action"
             referencedColumns: ["id"]
           },
           {
@@ -9250,20 +5041,6 @@ export type Database = {
             foreignKeyName: "fiche_action_axe_fiche_id_fkey"
             columns: ["fiche_id"]
             isOneToOne: false
-            referencedRelation: "fiche_resume"
-            referencedColumns: ["id"]
-          },
-          {
-            foreignKeyName: "fiche_action_axe_fiche_id_fkey"
-            columns: ["fiche_id"]
-            isOneToOne: false
-            referencedRelation: "fiches_action"
-            referencedColumns: ["id"]
-          },
-          {
-            foreignKeyName: "fiche_action_axe_fiche_id_fkey"
-            columns: ["fiche_id"]
-            isOneToOne: false
             referencedRelation: "fiches_action"
             referencedColumns: ["id"]
           },
@@ -9308,20 +5085,6 @@ export type Database = {
             foreignKeyName: "fiche_action_effet_attendu_fiche_id_fkey"
             columns: ["fiche_id"]
             isOneToOne: false
-            referencedRelation: "fiche_resume"
-            referencedColumns: ["id"]
-          },
-          {
-            foreignKeyName: "fiche_action_effet_attendu_fiche_id_fkey"
-            columns: ["fiche_id"]
-            isOneToOne: false
-            referencedRelation: "fiches_action"
-            referencedColumns: ["id"]
-          },
-          {
-            foreignKeyName: "fiche_action_effet_attendu_fiche_id_fkey"
-            columns: ["fiche_id"]
-            isOneToOne: false
             referencedRelation: "fiches_action"
             referencedColumns: ["id"]
           },
@@ -9359,20 +5122,6 @@ export type Database = {
             columns: ["fiche_id"]
             isOneToOne: false
             referencedRelation: "fiche_resume"
-            referencedColumns: ["id"]
-          },
-          {
-            foreignKeyName: "fiche_action_financeur_tag_fiche_id_fkey"
-            columns: ["fiche_id"]
-            isOneToOne: false
-            referencedRelation: "fiche_resume"
-            referencedColumns: ["id"]
-          },
-          {
-            foreignKeyName: "fiche_action_financeur_tag_fiche_id_fkey"
-            columns: ["fiche_id"]
-            isOneToOne: false
-            referencedRelation: "fiches_action"
             referencedColumns: ["id"]
           },
           {
@@ -9528,28 +5277,7 @@ export type Database = {
             foreignKeyName: "fiche_action_indicateur_fiche_id_fkey"
             columns: ["fiche_id"]
             isOneToOne: false
-            referencedRelation: "fiche_resume"
-            referencedColumns: ["id"]
-          },
-          {
-            foreignKeyName: "fiche_action_indicateur_fiche_id_fkey"
-            columns: ["fiche_id"]
-            isOneToOne: false
             referencedRelation: "fiches_action"
-            referencedColumns: ["id"]
-          },
-          {
-            foreignKeyName: "fiche_action_indicateur_fiche_id_fkey"
-            columns: ["fiche_id"]
-            isOneToOne: false
-            referencedRelation: "fiches_action"
-            referencedColumns: ["id"]
-          },
-          {
-            foreignKeyName: "fiche_action_indicateur_indicateur_id_fkey"
-            columns: ["indicateur_id"]
-            isOneToOne: false
-            referencedRelation: "crm_indicateurs"
             referencedColumns: ["id"]
           },
           {
@@ -9564,6 +5292,56 @@ export type Database = {
             columns: ["indicateur_id"]
             isOneToOne: false
             referencedRelation: "indicateur_definition"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      fiche_action_libre_tag: {
+        Row: {
+          created_at: string
+          created_by: string | null
+          fiche_id: number
+          libre_tag_id: number
+        }
+        Insert: {
+          created_at?: string
+          created_by?: string | null
+          fiche_id: number
+          libre_tag_id: number
+        }
+        Update: {
+          created_at?: string
+          created_by?: string | null
+          fiche_id?: number
+          libre_tag_id?: number
+        }
+        Relationships: [
+          {
+            foreignKeyName: "fiche_action_libre_tag_fiche_id_fkey"
+            columns: ["fiche_id"]
+            isOneToOne: false
+            referencedRelation: "fiche_action"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "fiche_action_libre_tag_fiche_id_fkey"
+            columns: ["fiche_id"]
+            isOneToOne: false
+            referencedRelation: "fiche_resume"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "fiche_action_libre_tag_fiche_id_fkey"
+            columns: ["fiche_id"]
+            isOneToOne: false
+            referencedRelation: "fiches_action"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "fiche_action_libre_tag_libre_tag_id_fkey"
+            columns: ["libre_tag_id"]
+            isOneToOne: false
+            referencedRelation: "libre_tag"
             referencedColumns: ["id"]
           },
         ]
@@ -9600,20 +5378,6 @@ export type Database = {
             foreignKeyName: "fiche_action_lien_fiche_deux_fkey"
             columns: ["fiche_deux"]
             isOneToOne: false
-            referencedRelation: "fiche_resume"
-            referencedColumns: ["id"]
-          },
-          {
-            foreignKeyName: "fiche_action_lien_fiche_deux_fkey"
-            columns: ["fiche_deux"]
-            isOneToOne: false
-            referencedRelation: "fiches_action"
-            referencedColumns: ["id"]
-          },
-          {
-            foreignKeyName: "fiche_action_lien_fiche_deux_fkey"
-            columns: ["fiche_deux"]
-            isOneToOne: false
             referencedRelation: "fiches_action"
             referencedColumns: ["id"]
           },
@@ -9629,20 +5393,6 @@ export type Database = {
             columns: ["fiche_une"]
             isOneToOne: false
             referencedRelation: "fiche_resume"
-            referencedColumns: ["id"]
-          },
-          {
-            foreignKeyName: "fiche_action_lien_fiche_une_fkey"
-            columns: ["fiche_une"]
-            isOneToOne: false
-            referencedRelation: "fiche_resume"
-            referencedColumns: ["id"]
-          },
-          {
-            foreignKeyName: "fiche_action_lien_fiche_une_fkey"
-            columns: ["fiche_une"]
-            isOneToOne: false
-            referencedRelation: "fiches_action"
             referencedColumns: ["id"]
           },
           {
@@ -9680,20 +5430,6 @@ export type Database = {
             columns: ["fiche_id"]
             isOneToOne: false
             referencedRelation: "fiche_resume"
-            referencedColumns: ["id"]
-          },
-          {
-            foreignKeyName: "fiche_action_partenaire_tag_fiche_id_fkey"
-            columns: ["fiche_id"]
-            isOneToOne: false
-            referencedRelation: "fiche_resume"
-            referencedColumns: ["id"]
-          },
-          {
-            foreignKeyName: "fiche_action_partenaire_tag_fiche_id_fkey"
-            columns: ["fiche_id"]
-            isOneToOne: false
-            referencedRelation: "fiches_action"
             referencedColumns: ["id"]
           },
           {
@@ -9747,20 +5483,6 @@ export type Database = {
             foreignKeyName: "fiche_action_pilote_fiche_id_fkey"
             columns: ["fiche_id"]
             isOneToOne: false
-            referencedRelation: "fiche_resume"
-            referencedColumns: ["id"]
-          },
-          {
-            foreignKeyName: "fiche_action_pilote_fiche_id_fkey"
-            columns: ["fiche_id"]
-            isOneToOne: false
-            referencedRelation: "fiches_action"
-            referencedColumns: ["id"]
-          },
-          {
-            foreignKeyName: "fiche_action_pilote_fiche_id_fkey"
-            columns: ["fiche_id"]
-            isOneToOne: false
             referencedRelation: "fiches_action"
             referencedColumns: ["id"]
           },
@@ -9775,13 +5497,6 @@ export type Database = {
             foreignKeyName: "fiche_action_pilote_user_id_fkey"
             columns: ["user_id"]
             isOneToOne: false
-            referencedRelation: "collectivite_membre_crm"
-            referencedColumns: ["user_id"]
-          },
-          {
-            foreignKeyName: "fiche_action_pilote_user_id_fkey"
-            columns: ["user_id"]
-            isOneToOne: false
             referencedRelation: "crm_personnes"
             referencedColumns: ["user_id"]
           },
@@ -9790,13 +5505,6 @@ export type Database = {
             columns: ["user_id"]
             isOneToOne: false
             referencedRelation: "dcp"
-            referencedColumns: ["user_id"]
-          },
-          {
-            foreignKeyName: "fiche_action_pilote_user_id_fkey"
-            columns: ["user_id"]
-            isOneToOne: false
-            referencedRelation: "dcp_display"
             referencedColumns: ["user_id"]
           },
         ]
@@ -9836,20 +5544,6 @@ export type Database = {
             foreignKeyName: "fiche_action_referent_fiche_id_fkey"
             columns: ["fiche_id"]
             isOneToOne: false
-            referencedRelation: "fiche_resume"
-            referencedColumns: ["id"]
-          },
-          {
-            foreignKeyName: "fiche_action_referent_fiche_id_fkey"
-            columns: ["fiche_id"]
-            isOneToOne: false
-            referencedRelation: "fiches_action"
-            referencedColumns: ["id"]
-          },
-          {
-            foreignKeyName: "fiche_action_referent_fiche_id_fkey"
-            columns: ["fiche_id"]
-            isOneToOne: false
             referencedRelation: "fiches_action"
             referencedColumns: ["id"]
           },
@@ -9864,8 +5558,15 @@ export type Database = {
             foreignKeyName: "fiche_action_referent_user_id_fkey"
             columns: ["user_id"]
             isOneToOne: false
-            referencedRelation: "users"
-            referencedColumns: ["id"]
+            referencedRelation: "crm_personnes"
+            referencedColumns: ["user_id"]
+          },
+          {
+            foreignKeyName: "fiche_action_referent_user_id_fkey"
+            columns: ["user_id"]
+            isOneToOne: false
+            referencedRelation: "dcp"
+            referencedColumns: ["user_id"]
           },
         ]
       }
@@ -9895,20 +5596,6 @@ export type Database = {
             columns: ["fiche_id"]
             isOneToOne: false
             referencedRelation: "fiche_resume"
-            referencedColumns: ["id"]
-          },
-          {
-            foreignKeyName: "fiche_action_service_tag_fiche_id_fkey"
-            columns: ["fiche_id"]
-            isOneToOne: false
-            referencedRelation: "fiche_resume"
-            referencedColumns: ["id"]
-          },
-          {
-            foreignKeyName: "fiche_action_service_tag_fiche_id_fkey"
-            columns: ["fiche_id"]
-            isOneToOne: false
-            referencedRelation: "fiches_action"
             referencedColumns: ["id"]
           },
           {
@@ -9959,20 +5646,6 @@ export type Database = {
             foreignKeyName: "fiche_action_sous_thematique_fiche_id_fkey"
             columns: ["fiche_id"]
             isOneToOne: false
-            referencedRelation: "fiche_resume"
-            referencedColumns: ["id"]
-          },
-          {
-            foreignKeyName: "fiche_action_sous_thematique_fiche_id_fkey"
-            columns: ["fiche_id"]
-            isOneToOne: false
-            referencedRelation: "fiches_action"
-            referencedColumns: ["id"]
-          },
-          {
-            foreignKeyName: "fiche_action_sous_thematique_fiche_id_fkey"
-            columns: ["fiche_id"]
-            isOneToOne: false
             referencedRelation: "fiches_action"
             referencedColumns: ["id"]
           },
@@ -10011,20 +5684,6 @@ export type Database = {
             columns: ["fiche_id"]
             isOneToOne: false
             referencedRelation: "fiche_resume"
-            referencedColumns: ["id"]
-          },
-          {
-            foreignKeyName: "fiche_action_structure_tag_fiche_id_fkey"
-            columns: ["fiche_id"]
-            isOneToOne: false
-            referencedRelation: "fiche_resume"
-            referencedColumns: ["id"]
-          },
-          {
-            foreignKeyName: "fiche_action_structure_tag_fiche_id_fkey"
-            columns: ["fiche_id"]
-            isOneToOne: false
-            referencedRelation: "fiches_action"
             referencedColumns: ["id"]
           },
           {
@@ -10075,21 +5734,14 @@ export type Database = {
             foreignKeyName: "fiche_action_thematique_fiche_id_fkey"
             columns: ["fiche_id"]
             isOneToOne: false
-            referencedRelation: "fiche_resume"
-            referencedColumns: ["id"]
-          },
-          {
-            foreignKeyName: "fiche_action_thematique_fiche_id_fkey"
-            columns: ["fiche_id"]
-            isOneToOne: false
             referencedRelation: "fiches_action"
             referencedColumns: ["id"]
           },
           {
-            foreignKeyName: "fiche_action_thematique_fiche_id_fkey"
-            columns: ["fiche_id"]
+            foreignKeyName: "fiche_action_thematique_thematique_id_fkey"
+            columns: ["thematique_id"]
             isOneToOne: false
-            referencedRelation: "fiches_action"
+            referencedRelation: "thematique"
             referencedColumns: ["id"]
           },
         ]
@@ -10136,13 +5788,6 @@ export type Database = {
             foreignKeyName: "financeur_tag_collectivite_id_fkey"
             columns: ["collectivite_id"]
             isOneToOne: false
-            referencedRelation: "action_snippet"
-            referencedColumns: ["collectivite_id"]
-          },
-          {
-            foreignKeyName: "financeur_tag_collectivite_id_fkey"
-            columns: ["collectivite_id"]
-            isOneToOne: false
             referencedRelation: "action_statuts"
             referencedColumns: ["collectivite_id"]
           },
@@ -10171,29 +5816,8 @@ export type Database = {
             foreignKeyName: "financeur_tag_collectivite_id_fkey"
             columns: ["collectivite_id"]
             isOneToOne: false
-            referencedRelation: "carte_collectivite_active"
-            referencedColumns: ["collectivite_id"]
-          },
-          {
-            foreignKeyName: "financeur_tag_collectivite_id_fkey"
-            columns: ["collectivite_id"]
-            isOneToOne: false
             referencedRelation: "collectivite"
             referencedColumns: ["id"]
-          },
-          {
-            foreignKeyName: "financeur_tag_collectivite_id_fkey"
-            columns: ["collectivite_id"]
-            isOneToOne: false
-            referencedRelation: "collectivite"
-            referencedColumns: ["collectivite_id"]
-          },
-          {
-            foreignKeyName: "financeur_tag_collectivite_id_fkey"
-            columns: ["collectivite_id"]
-            isOneToOne: false
-            referencedRelation: "collectivite_action_statut"
-            referencedColumns: ["collectivite_id"]
           },
           {
             foreignKeyName: "financeur_tag_collectivite_id_fkey"
@@ -10220,56 +5844,7 @@ export type Database = {
             foreignKeyName: "financeur_tag_collectivite_id_fkey"
             columns: ["collectivite_id"]
             isOneToOne: false
-            referencedRelation: "collectivite_labellisation"
-            referencedColumns: ["collectivite_id"]
-          },
-          {
-            foreignKeyName: "financeur_tag_collectivite_id_fkey"
-            columns: ["collectivite_id"]
-            isOneToOne: false
-            referencedRelation: "collectivite_membre_crm"
-            referencedColumns: ["collectivite_id"]
-          },
-          {
-            foreignKeyName: "financeur_tag_collectivite_id_fkey"
-            columns: ["collectivite_id"]
-            isOneToOne: false
             referencedRelation: "collectivite_niveau_acces"
-            referencedColumns: ["collectivite_id"]
-          },
-          {
-            foreignKeyName: "financeur_tag_collectivite_id_fkey"
-            columns: ["collectivite_id"]
-            isOneToOne: false
-            referencedRelation: "collectivite_plan_action"
-            referencedColumns: ["collectivite_id"]
-          },
-          {
-            foreignKeyName: "financeur_tag_collectivite_id_fkey"
-            columns: ["collectivite_id"]
-            isOneToOne: false
-            referencedRelation: "collectivite_plan_action"
-            referencedColumns: ["collectivite_id"]
-          },
-          {
-            foreignKeyName: "financeur_tag_collectivite_id_fkey"
-            columns: ["collectivite_id"]
-            isOneToOne: false
-            referencedRelation: "collectivite_referentiel"
-            referencedColumns: ["collectivite_id"]
-          },
-          {
-            foreignKeyName: "financeur_tag_collectivite_id_fkey"
-            columns: ["collectivite_id"]
-            isOneToOne: false
-            referencedRelation: "collectivite_utilisateur"
-            referencedColumns: ["collectivite_id"]
-          },
-          {
-            foreignKeyName: "financeur_tag_collectivite_id_fkey"
-            columns: ["collectivite_id"]
-            isOneToOne: false
-            referencedRelation: "collectivites_crm"
             referencedColumns: ["collectivite_id"]
           },
           {
@@ -10297,41 +5872,6 @@ export type Database = {
             foreignKeyName: "financeur_tag_collectivite_id_fkey"
             columns: ["collectivite_id"]
             isOneToOne: false
-            referencedRelation: "crm_usages"
-            referencedColumns: ["collectivite_id"]
-          },
-          {
-            foreignKeyName: "financeur_tag_collectivite_id_fkey"
-            columns: ["collectivite_id"]
-            isOneToOne: false
-            referencedRelation: "engagement_collectivite"
-            referencedColumns: ["collectivite_id"]
-          },
-          {
-            foreignKeyName: "financeur_tag_collectivite_id_fkey"
-            columns: ["collectivite_id"]
-            isOneToOne: false
-            referencedRelation: "late_collectivite"
-            referencedColumns: ["collectivite_id"]
-          },
-          {
-            foreignKeyName: "financeur_tag_collectivite_id_fkey"
-            columns: ["collectivite_id"]
-            isOneToOne: false
-            referencedRelation: "locales_engagement_collectivite"
-            referencedColumns: ["collectivite_id"]
-          },
-          {
-            foreignKeyName: "financeur_tag_collectivite_id_fkey"
-            columns: ["collectivite_id"]
-            isOneToOne: false
-            referencedRelation: "locales_pourcentage_completude"
-            referencedColumns: ["collectivite_id"]
-          },
-          {
-            foreignKeyName: "financeur_tag_collectivite_id_fkey"
-            columns: ["collectivite_id"]
-            isOneToOne: false
             referencedRelation: "named_collectivite"
             referencedColumns: ["collectivite_id"]
           },
@@ -10347,48 +5887,6 @@ export type Database = {
             columns: ["collectivite_id"]
             isOneToOne: false
             referencedRelation: "question_thematique_completude"
-            referencedColumns: ["collectivite_id"]
-          },
-          {
-            foreignKeyName: "financeur_tag_collectivite_id_fkey"
-            columns: ["collectivite_id"]
-            isOneToOne: false
-            referencedRelation: "rattachement"
-            referencedColumns: ["collectivite_id"]
-          },
-          {
-            foreignKeyName: "financeur_tag_collectivite_id_fkey"
-            columns: ["collectivite_id"]
-            isOneToOne: false
-            referencedRelation: "report_indicateur_resultat"
-            referencedColumns: ["collectivite_id"]
-          },
-          {
-            foreignKeyName: "financeur_tag_collectivite_id_fkey"
-            columns: ["collectivite_id"]
-            isOneToOne: false
-            referencedRelation: "report_reponse_binaire"
-            referencedColumns: ["collectivite_id"]
-          },
-          {
-            foreignKeyName: "financeur_tag_collectivite_id_fkey"
-            columns: ["collectivite_id"]
-            isOneToOne: false
-            referencedRelation: "report_reponse_choix"
-            referencedColumns: ["collectivite_id"]
-          },
-          {
-            foreignKeyName: "financeur_tag_collectivite_id_fkey"
-            columns: ["collectivite_id"]
-            isOneToOne: false
-            referencedRelation: "report_reponse_proportion"
-            referencedColumns: ["collectivite_id"]
-          },
-          {
-            foreignKeyName: "financeur_tag_collectivite_id_fkey"
-            columns: ["collectivite_id"]
-            isOneToOne: false
-            referencedRelation: "report_scores"
             referencedColumns: ["collectivite_id"]
           },
           {
@@ -10417,13 +5915,6 @@ export type Database = {
             columns: ["collectivite_id"]
             isOneToOne: false
             referencedRelation: "retool_plan_action_hebdo"
-            referencedColumns: ["collectivite_id"]
-          },
-          {
-            foreignKeyName: "financeur_tag_collectivite_id_fkey"
-            columns: ["collectivite_id"]
-            isOneToOne: false
-            referencedRelation: "retool_plan_action_premier_usage"
             referencedColumns: ["collectivite_id"]
           },
           {
@@ -10517,13 +6008,6 @@ export type Database = {
             foreignKeyName: "groupement_collectivite_collectivite_id_fkey"
             columns: ["collectivite_id"]
             isOneToOne: false
-            referencedRelation: "action_snippet"
-            referencedColumns: ["collectivite_id"]
-          },
-          {
-            foreignKeyName: "groupement_collectivite_collectivite_id_fkey"
-            columns: ["collectivite_id"]
-            isOneToOne: false
             referencedRelation: "action_statuts"
             referencedColumns: ["collectivite_id"]
           },
@@ -10552,29 +6036,8 @@ export type Database = {
             foreignKeyName: "groupement_collectivite_collectivite_id_fkey"
             columns: ["collectivite_id"]
             isOneToOne: false
-            referencedRelation: "carte_collectivite_active"
-            referencedColumns: ["collectivite_id"]
-          },
-          {
-            foreignKeyName: "groupement_collectivite_collectivite_id_fkey"
-            columns: ["collectivite_id"]
-            isOneToOne: false
             referencedRelation: "collectivite"
             referencedColumns: ["id"]
-          },
-          {
-            foreignKeyName: "groupement_collectivite_collectivite_id_fkey"
-            columns: ["collectivite_id"]
-            isOneToOne: false
-            referencedRelation: "collectivite"
-            referencedColumns: ["collectivite_id"]
-          },
-          {
-            foreignKeyName: "groupement_collectivite_collectivite_id_fkey"
-            columns: ["collectivite_id"]
-            isOneToOne: false
-            referencedRelation: "collectivite_action_statut"
-            referencedColumns: ["collectivite_id"]
           },
           {
             foreignKeyName: "groupement_collectivite_collectivite_id_fkey"
@@ -10601,56 +6064,7 @@ export type Database = {
             foreignKeyName: "groupement_collectivite_collectivite_id_fkey"
             columns: ["collectivite_id"]
             isOneToOne: false
-            referencedRelation: "collectivite_labellisation"
-            referencedColumns: ["collectivite_id"]
-          },
-          {
-            foreignKeyName: "groupement_collectivite_collectivite_id_fkey"
-            columns: ["collectivite_id"]
-            isOneToOne: false
-            referencedRelation: "collectivite_membre_crm"
-            referencedColumns: ["collectivite_id"]
-          },
-          {
-            foreignKeyName: "groupement_collectivite_collectivite_id_fkey"
-            columns: ["collectivite_id"]
-            isOneToOne: false
             referencedRelation: "collectivite_niveau_acces"
-            referencedColumns: ["collectivite_id"]
-          },
-          {
-            foreignKeyName: "groupement_collectivite_collectivite_id_fkey"
-            columns: ["collectivite_id"]
-            isOneToOne: false
-            referencedRelation: "collectivite_plan_action"
-            referencedColumns: ["collectivite_id"]
-          },
-          {
-            foreignKeyName: "groupement_collectivite_collectivite_id_fkey"
-            columns: ["collectivite_id"]
-            isOneToOne: false
-            referencedRelation: "collectivite_plan_action"
-            referencedColumns: ["collectivite_id"]
-          },
-          {
-            foreignKeyName: "groupement_collectivite_collectivite_id_fkey"
-            columns: ["collectivite_id"]
-            isOneToOne: false
-            referencedRelation: "collectivite_referentiel"
-            referencedColumns: ["collectivite_id"]
-          },
-          {
-            foreignKeyName: "groupement_collectivite_collectivite_id_fkey"
-            columns: ["collectivite_id"]
-            isOneToOne: false
-            referencedRelation: "collectivite_utilisateur"
-            referencedColumns: ["collectivite_id"]
-          },
-          {
-            foreignKeyName: "groupement_collectivite_collectivite_id_fkey"
-            columns: ["collectivite_id"]
-            isOneToOne: false
-            referencedRelation: "collectivites_crm"
             referencedColumns: ["collectivite_id"]
           },
           {
@@ -10678,41 +6092,6 @@ export type Database = {
             foreignKeyName: "groupement_collectivite_collectivite_id_fkey"
             columns: ["collectivite_id"]
             isOneToOne: false
-            referencedRelation: "crm_usages"
-            referencedColumns: ["collectivite_id"]
-          },
-          {
-            foreignKeyName: "groupement_collectivite_collectivite_id_fkey"
-            columns: ["collectivite_id"]
-            isOneToOne: false
-            referencedRelation: "engagement_collectivite"
-            referencedColumns: ["collectivite_id"]
-          },
-          {
-            foreignKeyName: "groupement_collectivite_collectivite_id_fkey"
-            columns: ["collectivite_id"]
-            isOneToOne: false
-            referencedRelation: "late_collectivite"
-            referencedColumns: ["collectivite_id"]
-          },
-          {
-            foreignKeyName: "groupement_collectivite_collectivite_id_fkey"
-            columns: ["collectivite_id"]
-            isOneToOne: false
-            referencedRelation: "locales_engagement_collectivite"
-            referencedColumns: ["collectivite_id"]
-          },
-          {
-            foreignKeyName: "groupement_collectivite_collectivite_id_fkey"
-            columns: ["collectivite_id"]
-            isOneToOne: false
-            referencedRelation: "locales_pourcentage_completude"
-            referencedColumns: ["collectivite_id"]
-          },
-          {
-            foreignKeyName: "groupement_collectivite_collectivite_id_fkey"
-            columns: ["collectivite_id"]
-            isOneToOne: false
             referencedRelation: "named_collectivite"
             referencedColumns: ["collectivite_id"]
           },
@@ -10728,48 +6107,6 @@ export type Database = {
             columns: ["collectivite_id"]
             isOneToOne: false
             referencedRelation: "question_thematique_completude"
-            referencedColumns: ["collectivite_id"]
-          },
-          {
-            foreignKeyName: "groupement_collectivite_collectivite_id_fkey"
-            columns: ["collectivite_id"]
-            isOneToOne: false
-            referencedRelation: "rattachement"
-            referencedColumns: ["collectivite_id"]
-          },
-          {
-            foreignKeyName: "groupement_collectivite_collectivite_id_fkey"
-            columns: ["collectivite_id"]
-            isOneToOne: false
-            referencedRelation: "report_indicateur_resultat"
-            referencedColumns: ["collectivite_id"]
-          },
-          {
-            foreignKeyName: "groupement_collectivite_collectivite_id_fkey"
-            columns: ["collectivite_id"]
-            isOneToOne: false
-            referencedRelation: "report_reponse_binaire"
-            referencedColumns: ["collectivite_id"]
-          },
-          {
-            foreignKeyName: "groupement_collectivite_collectivite_id_fkey"
-            columns: ["collectivite_id"]
-            isOneToOne: false
-            referencedRelation: "report_reponse_choix"
-            referencedColumns: ["collectivite_id"]
-          },
-          {
-            foreignKeyName: "groupement_collectivite_collectivite_id_fkey"
-            columns: ["collectivite_id"]
-            isOneToOne: false
-            referencedRelation: "report_reponse_proportion"
-            referencedColumns: ["collectivite_id"]
-          },
-          {
-            foreignKeyName: "groupement_collectivite_collectivite_id_fkey"
-            columns: ["collectivite_id"]
-            isOneToOne: false
-            referencedRelation: "report_scores"
             referencedColumns: ["collectivite_id"]
           },
           {
@@ -10798,13 +6135,6 @@ export type Database = {
             columns: ["collectivite_id"]
             isOneToOne: false
             referencedRelation: "retool_plan_action_hebdo"
-            referencedColumns: ["collectivite_id"]
-          },
-          {
-            foreignKeyName: "groupement_collectivite_collectivite_id_fkey"
-            columns: ["collectivite_id"]
-            isOneToOne: false
-            referencedRelation: "retool_plan_action_premier_usage"
             referencedColumns: ["collectivite_id"]
           },
           {
@@ -10904,13 +6234,6 @@ export type Database = {
             foreignKeyName: "indicateur_action_indicateur_id_fkey"
             columns: ["indicateur_id"]
             isOneToOne: false
-            referencedRelation: "crm_indicateurs"
-            referencedColumns: ["id"]
-          },
-          {
-            foreignKeyName: "indicateur_action_indicateur_id_fkey"
-            columns: ["indicateur_id"]
-            isOneToOne: false
             referencedRelation: "indicateur_definition"
             referencedColumns: ["id"]
           },
@@ -10952,13 +6275,6 @@ export type Database = {
             foreignKeyName: "indicateur_artificialisation_collectivite_id_fkey"
             columns: ["collectivite_id"]
             isOneToOne: true
-            referencedRelation: "action_snippet"
-            referencedColumns: ["collectivite_id"]
-          },
-          {
-            foreignKeyName: "indicateur_artificialisation_collectivite_id_fkey"
-            columns: ["collectivite_id"]
-            isOneToOne: true
             referencedRelation: "action_statuts"
             referencedColumns: ["collectivite_id"]
           },
@@ -10987,29 +6303,8 @@ export type Database = {
             foreignKeyName: "indicateur_artificialisation_collectivite_id_fkey"
             columns: ["collectivite_id"]
             isOneToOne: true
-            referencedRelation: "carte_collectivite_active"
-            referencedColumns: ["collectivite_id"]
-          },
-          {
-            foreignKeyName: "indicateur_artificialisation_collectivite_id_fkey"
-            columns: ["collectivite_id"]
-            isOneToOne: true
             referencedRelation: "collectivite"
             referencedColumns: ["id"]
-          },
-          {
-            foreignKeyName: "indicateur_artificialisation_collectivite_id_fkey"
-            columns: ["collectivite_id"]
-            isOneToOne: true
-            referencedRelation: "collectivite"
-            referencedColumns: ["collectivite_id"]
-          },
-          {
-            foreignKeyName: "indicateur_artificialisation_collectivite_id_fkey"
-            columns: ["collectivite_id"]
-            isOneToOne: true
-            referencedRelation: "collectivite_action_statut"
-            referencedColumns: ["collectivite_id"]
           },
           {
             foreignKeyName: "indicateur_artificialisation_collectivite_id_fkey"
@@ -11036,56 +6331,7 @@ export type Database = {
             foreignKeyName: "indicateur_artificialisation_collectivite_id_fkey"
             columns: ["collectivite_id"]
             isOneToOne: true
-            referencedRelation: "collectivite_labellisation"
-            referencedColumns: ["collectivite_id"]
-          },
-          {
-            foreignKeyName: "indicateur_artificialisation_collectivite_id_fkey"
-            columns: ["collectivite_id"]
-            isOneToOne: true
-            referencedRelation: "collectivite_membre_crm"
-            referencedColumns: ["collectivite_id"]
-          },
-          {
-            foreignKeyName: "indicateur_artificialisation_collectivite_id_fkey"
-            columns: ["collectivite_id"]
-            isOneToOne: true
             referencedRelation: "collectivite_niveau_acces"
-            referencedColumns: ["collectivite_id"]
-          },
-          {
-            foreignKeyName: "indicateur_artificialisation_collectivite_id_fkey"
-            columns: ["collectivite_id"]
-            isOneToOne: true
-            referencedRelation: "collectivite_plan_action"
-            referencedColumns: ["collectivite_id"]
-          },
-          {
-            foreignKeyName: "indicateur_artificialisation_collectivite_id_fkey"
-            columns: ["collectivite_id"]
-            isOneToOne: true
-            referencedRelation: "collectivite_plan_action"
-            referencedColumns: ["collectivite_id"]
-          },
-          {
-            foreignKeyName: "indicateur_artificialisation_collectivite_id_fkey"
-            columns: ["collectivite_id"]
-            isOneToOne: true
-            referencedRelation: "collectivite_referentiel"
-            referencedColumns: ["collectivite_id"]
-          },
-          {
-            foreignKeyName: "indicateur_artificialisation_collectivite_id_fkey"
-            columns: ["collectivite_id"]
-            isOneToOne: true
-            referencedRelation: "collectivite_utilisateur"
-            referencedColumns: ["collectivite_id"]
-          },
-          {
-            foreignKeyName: "indicateur_artificialisation_collectivite_id_fkey"
-            columns: ["collectivite_id"]
-            isOneToOne: true
-            referencedRelation: "collectivites_crm"
             referencedColumns: ["collectivite_id"]
           },
           {
@@ -11113,41 +6359,6 @@ export type Database = {
             foreignKeyName: "indicateur_artificialisation_collectivite_id_fkey"
             columns: ["collectivite_id"]
             isOneToOne: true
-            referencedRelation: "crm_usages"
-            referencedColumns: ["collectivite_id"]
-          },
-          {
-            foreignKeyName: "indicateur_artificialisation_collectivite_id_fkey"
-            columns: ["collectivite_id"]
-            isOneToOne: true
-            referencedRelation: "engagement_collectivite"
-            referencedColumns: ["collectivite_id"]
-          },
-          {
-            foreignKeyName: "indicateur_artificialisation_collectivite_id_fkey"
-            columns: ["collectivite_id"]
-            isOneToOne: true
-            referencedRelation: "late_collectivite"
-            referencedColumns: ["collectivite_id"]
-          },
-          {
-            foreignKeyName: "indicateur_artificialisation_collectivite_id_fkey"
-            columns: ["collectivite_id"]
-            isOneToOne: true
-            referencedRelation: "locales_engagement_collectivite"
-            referencedColumns: ["collectivite_id"]
-          },
-          {
-            foreignKeyName: "indicateur_artificialisation_collectivite_id_fkey"
-            columns: ["collectivite_id"]
-            isOneToOne: true
-            referencedRelation: "locales_pourcentage_completude"
-            referencedColumns: ["collectivite_id"]
-          },
-          {
-            foreignKeyName: "indicateur_artificialisation_collectivite_id_fkey"
-            columns: ["collectivite_id"]
-            isOneToOne: true
             referencedRelation: "named_collectivite"
             referencedColumns: ["collectivite_id"]
           },
@@ -11163,48 +6374,6 @@ export type Database = {
             columns: ["collectivite_id"]
             isOneToOne: true
             referencedRelation: "question_thematique_completude"
-            referencedColumns: ["collectivite_id"]
-          },
-          {
-            foreignKeyName: "indicateur_artificialisation_collectivite_id_fkey"
-            columns: ["collectivite_id"]
-            isOneToOne: true
-            referencedRelation: "rattachement"
-            referencedColumns: ["collectivite_id"]
-          },
-          {
-            foreignKeyName: "indicateur_artificialisation_collectivite_id_fkey"
-            columns: ["collectivite_id"]
-            isOneToOne: true
-            referencedRelation: "report_indicateur_resultat"
-            referencedColumns: ["collectivite_id"]
-          },
-          {
-            foreignKeyName: "indicateur_artificialisation_collectivite_id_fkey"
-            columns: ["collectivite_id"]
-            isOneToOne: true
-            referencedRelation: "report_reponse_binaire"
-            referencedColumns: ["collectivite_id"]
-          },
-          {
-            foreignKeyName: "indicateur_artificialisation_collectivite_id_fkey"
-            columns: ["collectivite_id"]
-            isOneToOne: true
-            referencedRelation: "report_reponse_choix"
-            referencedColumns: ["collectivite_id"]
-          },
-          {
-            foreignKeyName: "indicateur_artificialisation_collectivite_id_fkey"
-            columns: ["collectivite_id"]
-            isOneToOne: true
-            referencedRelation: "report_reponse_proportion"
-            referencedColumns: ["collectivite_id"]
-          },
-          {
-            foreignKeyName: "indicateur_artificialisation_collectivite_id_fkey"
-            columns: ["collectivite_id"]
-            isOneToOne: true
-            referencedRelation: "report_scores"
             referencedColumns: ["collectivite_id"]
           },
           {
@@ -11233,13 +6402,6 @@ export type Database = {
             columns: ["collectivite_id"]
             isOneToOne: true
             referencedRelation: "retool_plan_action_hebdo"
-            referencedColumns: ["collectivite_id"]
-          },
-          {
-            foreignKeyName: "indicateur_artificialisation_collectivite_id_fkey"
-            columns: ["collectivite_id"]
-            isOneToOne: true
-            referencedRelation: "retool_plan_action_premier_usage"
             referencedColumns: ["collectivite_id"]
           },
           {
@@ -11332,13 +6494,6 @@ export type Database = {
             foreignKeyName: "indicateur_categorie_tag_indicateur_id_fkey"
             columns: ["indicateur_id"]
             isOneToOne: false
-            referencedRelation: "crm_indicateurs"
-            referencedColumns: ["id"]
-          },
-          {
-            foreignKeyName: "indicateur_categorie_tag_indicateur_id_fkey"
-            columns: ["indicateur_id"]
-            isOneToOne: false
             referencedRelation: "indicateur_definition"
             referencedColumns: ["id"]
           },
@@ -11371,13 +6526,6 @@ export type Database = {
             foreignKeyName: "indicateur_collectivite_collectivite_id_fkey"
             columns: ["collectivite_id"]
             isOneToOne: false
-            referencedRelation: "action_snippet"
-            referencedColumns: ["collectivite_id"]
-          },
-          {
-            foreignKeyName: "indicateur_collectivite_collectivite_id_fkey"
-            columns: ["collectivite_id"]
-            isOneToOne: false
             referencedRelation: "action_statuts"
             referencedColumns: ["collectivite_id"]
           },
@@ -11406,29 +6554,8 @@ export type Database = {
             foreignKeyName: "indicateur_collectivite_collectivite_id_fkey"
             columns: ["collectivite_id"]
             isOneToOne: false
-            referencedRelation: "carte_collectivite_active"
-            referencedColumns: ["collectivite_id"]
-          },
-          {
-            foreignKeyName: "indicateur_collectivite_collectivite_id_fkey"
-            columns: ["collectivite_id"]
-            isOneToOne: false
             referencedRelation: "collectivite"
             referencedColumns: ["id"]
-          },
-          {
-            foreignKeyName: "indicateur_collectivite_collectivite_id_fkey"
-            columns: ["collectivite_id"]
-            isOneToOne: false
-            referencedRelation: "collectivite"
-            referencedColumns: ["collectivite_id"]
-          },
-          {
-            foreignKeyName: "indicateur_collectivite_collectivite_id_fkey"
-            columns: ["collectivite_id"]
-            isOneToOne: false
-            referencedRelation: "collectivite_action_statut"
-            referencedColumns: ["collectivite_id"]
           },
           {
             foreignKeyName: "indicateur_collectivite_collectivite_id_fkey"
@@ -11455,56 +6582,7 @@ export type Database = {
             foreignKeyName: "indicateur_collectivite_collectivite_id_fkey"
             columns: ["collectivite_id"]
             isOneToOne: false
-            referencedRelation: "collectivite_labellisation"
-            referencedColumns: ["collectivite_id"]
-          },
-          {
-            foreignKeyName: "indicateur_collectivite_collectivite_id_fkey"
-            columns: ["collectivite_id"]
-            isOneToOne: false
-            referencedRelation: "collectivite_membre_crm"
-            referencedColumns: ["collectivite_id"]
-          },
-          {
-            foreignKeyName: "indicateur_collectivite_collectivite_id_fkey"
-            columns: ["collectivite_id"]
-            isOneToOne: false
             referencedRelation: "collectivite_niveau_acces"
-            referencedColumns: ["collectivite_id"]
-          },
-          {
-            foreignKeyName: "indicateur_collectivite_collectivite_id_fkey"
-            columns: ["collectivite_id"]
-            isOneToOne: false
-            referencedRelation: "collectivite_plan_action"
-            referencedColumns: ["collectivite_id"]
-          },
-          {
-            foreignKeyName: "indicateur_collectivite_collectivite_id_fkey"
-            columns: ["collectivite_id"]
-            isOneToOne: false
-            referencedRelation: "collectivite_plan_action"
-            referencedColumns: ["collectivite_id"]
-          },
-          {
-            foreignKeyName: "indicateur_collectivite_collectivite_id_fkey"
-            columns: ["collectivite_id"]
-            isOneToOne: false
-            referencedRelation: "collectivite_referentiel"
-            referencedColumns: ["collectivite_id"]
-          },
-          {
-            foreignKeyName: "indicateur_collectivite_collectivite_id_fkey"
-            columns: ["collectivite_id"]
-            isOneToOne: false
-            referencedRelation: "collectivite_utilisateur"
-            referencedColumns: ["collectivite_id"]
-          },
-          {
-            foreignKeyName: "indicateur_collectivite_collectivite_id_fkey"
-            columns: ["collectivite_id"]
-            isOneToOne: false
-            referencedRelation: "collectivites_crm"
             referencedColumns: ["collectivite_id"]
           },
           {
@@ -11532,41 +6610,6 @@ export type Database = {
             foreignKeyName: "indicateur_collectivite_collectivite_id_fkey"
             columns: ["collectivite_id"]
             isOneToOne: false
-            referencedRelation: "crm_usages"
-            referencedColumns: ["collectivite_id"]
-          },
-          {
-            foreignKeyName: "indicateur_collectivite_collectivite_id_fkey"
-            columns: ["collectivite_id"]
-            isOneToOne: false
-            referencedRelation: "engagement_collectivite"
-            referencedColumns: ["collectivite_id"]
-          },
-          {
-            foreignKeyName: "indicateur_collectivite_collectivite_id_fkey"
-            columns: ["collectivite_id"]
-            isOneToOne: false
-            referencedRelation: "late_collectivite"
-            referencedColumns: ["collectivite_id"]
-          },
-          {
-            foreignKeyName: "indicateur_collectivite_collectivite_id_fkey"
-            columns: ["collectivite_id"]
-            isOneToOne: false
-            referencedRelation: "locales_engagement_collectivite"
-            referencedColumns: ["collectivite_id"]
-          },
-          {
-            foreignKeyName: "indicateur_collectivite_collectivite_id_fkey"
-            columns: ["collectivite_id"]
-            isOneToOne: false
-            referencedRelation: "locales_pourcentage_completude"
-            referencedColumns: ["collectivite_id"]
-          },
-          {
-            foreignKeyName: "indicateur_collectivite_collectivite_id_fkey"
-            columns: ["collectivite_id"]
-            isOneToOne: false
             referencedRelation: "named_collectivite"
             referencedColumns: ["collectivite_id"]
           },
@@ -11582,48 +6625,6 @@ export type Database = {
             columns: ["collectivite_id"]
             isOneToOne: false
             referencedRelation: "question_thematique_completude"
-            referencedColumns: ["collectivite_id"]
-          },
-          {
-            foreignKeyName: "indicateur_collectivite_collectivite_id_fkey"
-            columns: ["collectivite_id"]
-            isOneToOne: false
-            referencedRelation: "rattachement"
-            referencedColumns: ["collectivite_id"]
-          },
-          {
-            foreignKeyName: "indicateur_collectivite_collectivite_id_fkey"
-            columns: ["collectivite_id"]
-            isOneToOne: false
-            referencedRelation: "report_indicateur_resultat"
-            referencedColumns: ["collectivite_id"]
-          },
-          {
-            foreignKeyName: "indicateur_collectivite_collectivite_id_fkey"
-            columns: ["collectivite_id"]
-            isOneToOne: false
-            referencedRelation: "report_reponse_binaire"
-            referencedColumns: ["collectivite_id"]
-          },
-          {
-            foreignKeyName: "indicateur_collectivite_collectivite_id_fkey"
-            columns: ["collectivite_id"]
-            isOneToOne: false
-            referencedRelation: "report_reponse_choix"
-            referencedColumns: ["collectivite_id"]
-          },
-          {
-            foreignKeyName: "indicateur_collectivite_collectivite_id_fkey"
-            columns: ["collectivite_id"]
-            isOneToOne: false
-            referencedRelation: "report_reponse_proportion"
-            referencedColumns: ["collectivite_id"]
-          },
-          {
-            foreignKeyName: "indicateur_collectivite_collectivite_id_fkey"
-            columns: ["collectivite_id"]
-            isOneToOne: false
-            referencedRelation: "report_scores"
             referencedColumns: ["collectivite_id"]
           },
           {
@@ -11652,13 +6653,6 @@ export type Database = {
             columns: ["collectivite_id"]
             isOneToOne: false
             referencedRelation: "retool_plan_action_hebdo"
-            referencedColumns: ["collectivite_id"]
-          },
-          {
-            foreignKeyName: "indicateur_collectivite_collectivite_id_fkey"
-            columns: ["collectivite_id"]
-            isOneToOne: false
-            referencedRelation: "retool_plan_action_premier_usage"
             referencedColumns: ["collectivite_id"]
           },
           {
@@ -11716,13 +6710,6 @@ export type Database = {
             isOneToOne: false
             referencedRelation: "suivi_audit"
             referencedColumns: ["collectivite_id"]
-          },
-          {
-            foreignKeyName: "indicateur_collectivite_indicateur_id_fkey"
-            columns: ["indicateur_id"]
-            isOneToOne: false
-            referencedRelation: "crm_indicateurs"
-            referencedColumns: ["id"]
           },
           {
             foreignKeyName: "indicateur_collectivite_indicateur_id_fkey"
@@ -11805,13 +6792,6 @@ export type Database = {
             foreignKeyName: "indicateur_definition_collectivite_id_fkey"
             columns: ["collectivite_id"]
             isOneToOne: false
-            referencedRelation: "action_snippet"
-            referencedColumns: ["collectivite_id"]
-          },
-          {
-            foreignKeyName: "indicateur_definition_collectivite_id_fkey"
-            columns: ["collectivite_id"]
-            isOneToOne: false
             referencedRelation: "action_statuts"
             referencedColumns: ["collectivite_id"]
           },
@@ -11840,29 +6820,8 @@ export type Database = {
             foreignKeyName: "indicateur_definition_collectivite_id_fkey"
             columns: ["collectivite_id"]
             isOneToOne: false
-            referencedRelation: "carte_collectivite_active"
-            referencedColumns: ["collectivite_id"]
-          },
-          {
-            foreignKeyName: "indicateur_definition_collectivite_id_fkey"
-            columns: ["collectivite_id"]
-            isOneToOne: false
             referencedRelation: "collectivite"
             referencedColumns: ["id"]
-          },
-          {
-            foreignKeyName: "indicateur_definition_collectivite_id_fkey"
-            columns: ["collectivite_id"]
-            isOneToOne: false
-            referencedRelation: "collectivite"
-            referencedColumns: ["collectivite_id"]
-          },
-          {
-            foreignKeyName: "indicateur_definition_collectivite_id_fkey"
-            columns: ["collectivite_id"]
-            isOneToOne: false
-            referencedRelation: "collectivite_action_statut"
-            referencedColumns: ["collectivite_id"]
           },
           {
             foreignKeyName: "indicateur_definition_collectivite_id_fkey"
@@ -11889,56 +6848,7 @@ export type Database = {
             foreignKeyName: "indicateur_definition_collectivite_id_fkey"
             columns: ["collectivite_id"]
             isOneToOne: false
-            referencedRelation: "collectivite_labellisation"
-            referencedColumns: ["collectivite_id"]
-          },
-          {
-            foreignKeyName: "indicateur_definition_collectivite_id_fkey"
-            columns: ["collectivite_id"]
-            isOneToOne: false
-            referencedRelation: "collectivite_membre_crm"
-            referencedColumns: ["collectivite_id"]
-          },
-          {
-            foreignKeyName: "indicateur_definition_collectivite_id_fkey"
-            columns: ["collectivite_id"]
-            isOneToOne: false
             referencedRelation: "collectivite_niveau_acces"
-            referencedColumns: ["collectivite_id"]
-          },
-          {
-            foreignKeyName: "indicateur_definition_collectivite_id_fkey"
-            columns: ["collectivite_id"]
-            isOneToOne: false
-            referencedRelation: "collectivite_plan_action"
-            referencedColumns: ["collectivite_id"]
-          },
-          {
-            foreignKeyName: "indicateur_definition_collectivite_id_fkey"
-            columns: ["collectivite_id"]
-            isOneToOne: false
-            referencedRelation: "collectivite_plan_action"
-            referencedColumns: ["collectivite_id"]
-          },
-          {
-            foreignKeyName: "indicateur_definition_collectivite_id_fkey"
-            columns: ["collectivite_id"]
-            isOneToOne: false
-            referencedRelation: "collectivite_referentiel"
-            referencedColumns: ["collectivite_id"]
-          },
-          {
-            foreignKeyName: "indicateur_definition_collectivite_id_fkey"
-            columns: ["collectivite_id"]
-            isOneToOne: false
-            referencedRelation: "collectivite_utilisateur"
-            referencedColumns: ["collectivite_id"]
-          },
-          {
-            foreignKeyName: "indicateur_definition_collectivite_id_fkey"
-            columns: ["collectivite_id"]
-            isOneToOne: false
-            referencedRelation: "collectivites_crm"
             referencedColumns: ["collectivite_id"]
           },
           {
@@ -11966,41 +6876,6 @@ export type Database = {
             foreignKeyName: "indicateur_definition_collectivite_id_fkey"
             columns: ["collectivite_id"]
             isOneToOne: false
-            referencedRelation: "crm_usages"
-            referencedColumns: ["collectivite_id"]
-          },
-          {
-            foreignKeyName: "indicateur_definition_collectivite_id_fkey"
-            columns: ["collectivite_id"]
-            isOneToOne: false
-            referencedRelation: "engagement_collectivite"
-            referencedColumns: ["collectivite_id"]
-          },
-          {
-            foreignKeyName: "indicateur_definition_collectivite_id_fkey"
-            columns: ["collectivite_id"]
-            isOneToOne: false
-            referencedRelation: "late_collectivite"
-            referencedColumns: ["collectivite_id"]
-          },
-          {
-            foreignKeyName: "indicateur_definition_collectivite_id_fkey"
-            columns: ["collectivite_id"]
-            isOneToOne: false
-            referencedRelation: "locales_engagement_collectivite"
-            referencedColumns: ["collectivite_id"]
-          },
-          {
-            foreignKeyName: "indicateur_definition_collectivite_id_fkey"
-            columns: ["collectivite_id"]
-            isOneToOne: false
-            referencedRelation: "locales_pourcentage_completude"
-            referencedColumns: ["collectivite_id"]
-          },
-          {
-            foreignKeyName: "indicateur_definition_collectivite_id_fkey"
-            columns: ["collectivite_id"]
-            isOneToOne: false
             referencedRelation: "named_collectivite"
             referencedColumns: ["collectivite_id"]
           },
@@ -12016,48 +6891,6 @@ export type Database = {
             columns: ["collectivite_id"]
             isOneToOne: false
             referencedRelation: "question_thematique_completude"
-            referencedColumns: ["collectivite_id"]
-          },
-          {
-            foreignKeyName: "indicateur_definition_collectivite_id_fkey"
-            columns: ["collectivite_id"]
-            isOneToOne: false
-            referencedRelation: "rattachement"
-            referencedColumns: ["collectivite_id"]
-          },
-          {
-            foreignKeyName: "indicateur_definition_collectivite_id_fkey"
-            columns: ["collectivite_id"]
-            isOneToOne: false
-            referencedRelation: "report_indicateur_resultat"
-            referencedColumns: ["collectivite_id"]
-          },
-          {
-            foreignKeyName: "indicateur_definition_collectivite_id_fkey"
-            columns: ["collectivite_id"]
-            isOneToOne: false
-            referencedRelation: "report_reponse_binaire"
-            referencedColumns: ["collectivite_id"]
-          },
-          {
-            foreignKeyName: "indicateur_definition_collectivite_id_fkey"
-            columns: ["collectivite_id"]
-            isOneToOne: false
-            referencedRelation: "report_reponse_choix"
-            referencedColumns: ["collectivite_id"]
-          },
-          {
-            foreignKeyName: "indicateur_definition_collectivite_id_fkey"
-            columns: ["collectivite_id"]
-            isOneToOne: false
-            referencedRelation: "report_reponse_proportion"
-            referencedColumns: ["collectivite_id"]
-          },
-          {
-            foreignKeyName: "indicateur_definition_collectivite_id_fkey"
-            columns: ["collectivite_id"]
-            isOneToOne: false
-            referencedRelation: "report_scores"
             referencedColumns: ["collectivite_id"]
           },
           {
@@ -12086,13 +6919,6 @@ export type Database = {
             columns: ["collectivite_id"]
             isOneToOne: false
             referencedRelation: "retool_plan_action_hebdo"
-            referencedColumns: ["collectivite_id"]
-          },
-          {
-            foreignKeyName: "indicateur_definition_collectivite_id_fkey"
-            columns: ["collectivite_id"]
-            isOneToOne: false
-            referencedRelation: "retool_plan_action_premier_usage"
             referencedColumns: ["collectivite_id"]
           },
           {
@@ -12152,24 +6978,10 @@ export type Database = {
             referencedColumns: ["collectivite_id"]
           },
           {
-            foreignKeyName: "indicateur_definition_created_by_fkey"
-            columns: ["created_by"]
-            isOneToOne: false
-            referencedRelation: "users"
-            referencedColumns: ["id"]
-          },
-          {
             foreignKeyName: "indicateur_definition_groupement_id_fkey"
             columns: ["groupement_id"]
             isOneToOne: false
             referencedRelation: "groupement"
-            referencedColumns: ["id"]
-          },
-          {
-            foreignKeyName: "indicateur_definition_modified_by_fkey"
-            columns: ["modified_by"]
-            isOneToOne: false
-            referencedRelation: "users"
             referencedColumns: ["id"]
           },
         ]
@@ -12199,21 +7011,7 @@ export type Database = {
             foreignKeyName: "indicateur_groupe_enfant_fkey"
             columns: ["enfant"]
             isOneToOne: false
-            referencedRelation: "crm_indicateurs"
-            referencedColumns: ["id"]
-          },
-          {
-            foreignKeyName: "indicateur_groupe_enfant_fkey"
-            columns: ["enfant"]
-            isOneToOne: false
             referencedRelation: "indicateur_definition"
-            referencedColumns: ["id"]
-          },
-          {
-            foreignKeyName: "indicateur_groupe_parent_fkey"
-            columns: ["parent"]
-            isOneToOne: false
-            referencedRelation: "crm_indicateurs"
             referencedColumns: ["id"]
           },
           {
@@ -12260,13 +7058,6 @@ export type Database = {
             foreignKeyName: "indicateur_pilote_collectivite_id_fkey"
             columns: ["collectivite_id"]
             isOneToOne: false
-            referencedRelation: "action_snippet"
-            referencedColumns: ["collectivite_id"]
-          },
-          {
-            foreignKeyName: "indicateur_pilote_collectivite_id_fkey"
-            columns: ["collectivite_id"]
-            isOneToOne: false
             referencedRelation: "action_statuts"
             referencedColumns: ["collectivite_id"]
           },
@@ -12295,29 +7086,8 @@ export type Database = {
             foreignKeyName: "indicateur_pilote_collectivite_id_fkey"
             columns: ["collectivite_id"]
             isOneToOne: false
-            referencedRelation: "carte_collectivite_active"
-            referencedColumns: ["collectivite_id"]
-          },
-          {
-            foreignKeyName: "indicateur_pilote_collectivite_id_fkey"
-            columns: ["collectivite_id"]
-            isOneToOne: false
             referencedRelation: "collectivite"
             referencedColumns: ["id"]
-          },
-          {
-            foreignKeyName: "indicateur_pilote_collectivite_id_fkey"
-            columns: ["collectivite_id"]
-            isOneToOne: false
-            referencedRelation: "collectivite"
-            referencedColumns: ["collectivite_id"]
-          },
-          {
-            foreignKeyName: "indicateur_pilote_collectivite_id_fkey"
-            columns: ["collectivite_id"]
-            isOneToOne: false
-            referencedRelation: "collectivite_action_statut"
-            referencedColumns: ["collectivite_id"]
           },
           {
             foreignKeyName: "indicateur_pilote_collectivite_id_fkey"
@@ -12344,56 +7114,7 @@ export type Database = {
             foreignKeyName: "indicateur_pilote_collectivite_id_fkey"
             columns: ["collectivite_id"]
             isOneToOne: false
-            referencedRelation: "collectivite_labellisation"
-            referencedColumns: ["collectivite_id"]
-          },
-          {
-            foreignKeyName: "indicateur_pilote_collectivite_id_fkey"
-            columns: ["collectivite_id"]
-            isOneToOne: false
-            referencedRelation: "collectivite_membre_crm"
-            referencedColumns: ["collectivite_id"]
-          },
-          {
-            foreignKeyName: "indicateur_pilote_collectivite_id_fkey"
-            columns: ["collectivite_id"]
-            isOneToOne: false
             referencedRelation: "collectivite_niveau_acces"
-            referencedColumns: ["collectivite_id"]
-          },
-          {
-            foreignKeyName: "indicateur_pilote_collectivite_id_fkey"
-            columns: ["collectivite_id"]
-            isOneToOne: false
-            referencedRelation: "collectivite_plan_action"
-            referencedColumns: ["collectivite_id"]
-          },
-          {
-            foreignKeyName: "indicateur_pilote_collectivite_id_fkey"
-            columns: ["collectivite_id"]
-            isOneToOne: false
-            referencedRelation: "collectivite_plan_action"
-            referencedColumns: ["collectivite_id"]
-          },
-          {
-            foreignKeyName: "indicateur_pilote_collectivite_id_fkey"
-            columns: ["collectivite_id"]
-            isOneToOne: false
-            referencedRelation: "collectivite_referentiel"
-            referencedColumns: ["collectivite_id"]
-          },
-          {
-            foreignKeyName: "indicateur_pilote_collectivite_id_fkey"
-            columns: ["collectivite_id"]
-            isOneToOne: false
-            referencedRelation: "collectivite_utilisateur"
-            referencedColumns: ["collectivite_id"]
-          },
-          {
-            foreignKeyName: "indicateur_pilote_collectivite_id_fkey"
-            columns: ["collectivite_id"]
-            isOneToOne: false
-            referencedRelation: "collectivites_crm"
             referencedColumns: ["collectivite_id"]
           },
           {
@@ -12421,41 +7142,6 @@ export type Database = {
             foreignKeyName: "indicateur_pilote_collectivite_id_fkey"
             columns: ["collectivite_id"]
             isOneToOne: false
-            referencedRelation: "crm_usages"
-            referencedColumns: ["collectivite_id"]
-          },
-          {
-            foreignKeyName: "indicateur_pilote_collectivite_id_fkey"
-            columns: ["collectivite_id"]
-            isOneToOne: false
-            referencedRelation: "engagement_collectivite"
-            referencedColumns: ["collectivite_id"]
-          },
-          {
-            foreignKeyName: "indicateur_pilote_collectivite_id_fkey"
-            columns: ["collectivite_id"]
-            isOneToOne: false
-            referencedRelation: "late_collectivite"
-            referencedColumns: ["collectivite_id"]
-          },
-          {
-            foreignKeyName: "indicateur_pilote_collectivite_id_fkey"
-            columns: ["collectivite_id"]
-            isOneToOne: false
-            referencedRelation: "locales_engagement_collectivite"
-            referencedColumns: ["collectivite_id"]
-          },
-          {
-            foreignKeyName: "indicateur_pilote_collectivite_id_fkey"
-            columns: ["collectivite_id"]
-            isOneToOne: false
-            referencedRelation: "locales_pourcentage_completude"
-            referencedColumns: ["collectivite_id"]
-          },
-          {
-            foreignKeyName: "indicateur_pilote_collectivite_id_fkey"
-            columns: ["collectivite_id"]
-            isOneToOne: false
             referencedRelation: "named_collectivite"
             referencedColumns: ["collectivite_id"]
           },
@@ -12471,48 +7157,6 @@ export type Database = {
             columns: ["collectivite_id"]
             isOneToOne: false
             referencedRelation: "question_thematique_completude"
-            referencedColumns: ["collectivite_id"]
-          },
-          {
-            foreignKeyName: "indicateur_pilote_collectivite_id_fkey"
-            columns: ["collectivite_id"]
-            isOneToOne: false
-            referencedRelation: "rattachement"
-            referencedColumns: ["collectivite_id"]
-          },
-          {
-            foreignKeyName: "indicateur_pilote_collectivite_id_fkey"
-            columns: ["collectivite_id"]
-            isOneToOne: false
-            referencedRelation: "report_indicateur_resultat"
-            referencedColumns: ["collectivite_id"]
-          },
-          {
-            foreignKeyName: "indicateur_pilote_collectivite_id_fkey"
-            columns: ["collectivite_id"]
-            isOneToOne: false
-            referencedRelation: "report_reponse_binaire"
-            referencedColumns: ["collectivite_id"]
-          },
-          {
-            foreignKeyName: "indicateur_pilote_collectivite_id_fkey"
-            columns: ["collectivite_id"]
-            isOneToOne: false
-            referencedRelation: "report_reponse_choix"
-            referencedColumns: ["collectivite_id"]
-          },
-          {
-            foreignKeyName: "indicateur_pilote_collectivite_id_fkey"
-            columns: ["collectivite_id"]
-            isOneToOne: false
-            referencedRelation: "report_reponse_proportion"
-            referencedColumns: ["collectivite_id"]
-          },
-          {
-            foreignKeyName: "indicateur_pilote_collectivite_id_fkey"
-            columns: ["collectivite_id"]
-            isOneToOne: false
-            referencedRelation: "report_scores"
             referencedColumns: ["collectivite_id"]
           },
           {
@@ -12541,13 +7185,6 @@ export type Database = {
             columns: ["collectivite_id"]
             isOneToOne: false
             referencedRelation: "retool_plan_action_hebdo"
-            referencedColumns: ["collectivite_id"]
-          },
-          {
-            foreignKeyName: "indicateur_pilote_collectivite_id_fkey"
-            columns: ["collectivite_id"]
-            isOneToOne: false
-            referencedRelation: "retool_plan_action_premier_usage"
             referencedColumns: ["collectivite_id"]
           },
           {
@@ -12617,13 +7254,6 @@ export type Database = {
             foreignKeyName: "indicateur_pilote_indicateur_id_fkey"
             columns: ["indicateur_id"]
             isOneToOne: false
-            referencedRelation: "crm_indicateurs"
-            referencedColumns: ["id"]
-          },
-          {
-            foreignKeyName: "indicateur_pilote_indicateur_id_fkey"
-            columns: ["indicateur_id"]
-            isOneToOne: false
             referencedRelation: "indicateur_definition"
             referencedColumns: ["id"]
           },
@@ -12632,13 +7262,6 @@ export type Database = {
             columns: ["tag_id"]
             isOneToOne: false
             referencedRelation: "personne_tag"
-            referencedColumns: ["id"]
-          },
-          {
-            foreignKeyName: "indicateur_pilote_user_id_fkey"
-            columns: ["user_id"]
-            isOneToOne: false
-            referencedRelation: "users"
             referencedColumns: ["id"]
           },
         ]
@@ -12664,13 +7287,6 @@ export type Database = {
             foreignKeyName: "indicateur_service_tag_collectivite_id_fkey"
             columns: ["collectivite_id"]
             isOneToOne: false
-            referencedRelation: "action_snippet"
-            referencedColumns: ["collectivite_id"]
-          },
-          {
-            foreignKeyName: "indicateur_service_tag_collectivite_id_fkey"
-            columns: ["collectivite_id"]
-            isOneToOne: false
             referencedRelation: "action_statuts"
             referencedColumns: ["collectivite_id"]
           },
@@ -12699,29 +7315,8 @@ export type Database = {
             foreignKeyName: "indicateur_service_tag_collectivite_id_fkey"
             columns: ["collectivite_id"]
             isOneToOne: false
-            referencedRelation: "carte_collectivite_active"
-            referencedColumns: ["collectivite_id"]
-          },
-          {
-            foreignKeyName: "indicateur_service_tag_collectivite_id_fkey"
-            columns: ["collectivite_id"]
-            isOneToOne: false
             referencedRelation: "collectivite"
             referencedColumns: ["id"]
-          },
-          {
-            foreignKeyName: "indicateur_service_tag_collectivite_id_fkey"
-            columns: ["collectivite_id"]
-            isOneToOne: false
-            referencedRelation: "collectivite"
-            referencedColumns: ["collectivite_id"]
-          },
-          {
-            foreignKeyName: "indicateur_service_tag_collectivite_id_fkey"
-            columns: ["collectivite_id"]
-            isOneToOne: false
-            referencedRelation: "collectivite_action_statut"
-            referencedColumns: ["collectivite_id"]
           },
           {
             foreignKeyName: "indicateur_service_tag_collectivite_id_fkey"
@@ -12748,56 +7343,7 @@ export type Database = {
             foreignKeyName: "indicateur_service_tag_collectivite_id_fkey"
             columns: ["collectivite_id"]
             isOneToOne: false
-            referencedRelation: "collectivite_labellisation"
-            referencedColumns: ["collectivite_id"]
-          },
-          {
-            foreignKeyName: "indicateur_service_tag_collectivite_id_fkey"
-            columns: ["collectivite_id"]
-            isOneToOne: false
-            referencedRelation: "collectivite_membre_crm"
-            referencedColumns: ["collectivite_id"]
-          },
-          {
-            foreignKeyName: "indicateur_service_tag_collectivite_id_fkey"
-            columns: ["collectivite_id"]
-            isOneToOne: false
             referencedRelation: "collectivite_niveau_acces"
-            referencedColumns: ["collectivite_id"]
-          },
-          {
-            foreignKeyName: "indicateur_service_tag_collectivite_id_fkey"
-            columns: ["collectivite_id"]
-            isOneToOne: false
-            referencedRelation: "collectivite_plan_action"
-            referencedColumns: ["collectivite_id"]
-          },
-          {
-            foreignKeyName: "indicateur_service_tag_collectivite_id_fkey"
-            columns: ["collectivite_id"]
-            isOneToOne: false
-            referencedRelation: "collectivite_plan_action"
-            referencedColumns: ["collectivite_id"]
-          },
-          {
-            foreignKeyName: "indicateur_service_tag_collectivite_id_fkey"
-            columns: ["collectivite_id"]
-            isOneToOne: false
-            referencedRelation: "collectivite_referentiel"
-            referencedColumns: ["collectivite_id"]
-          },
-          {
-            foreignKeyName: "indicateur_service_tag_collectivite_id_fkey"
-            columns: ["collectivite_id"]
-            isOneToOne: false
-            referencedRelation: "collectivite_utilisateur"
-            referencedColumns: ["collectivite_id"]
-          },
-          {
-            foreignKeyName: "indicateur_service_tag_collectivite_id_fkey"
-            columns: ["collectivite_id"]
-            isOneToOne: false
-            referencedRelation: "collectivites_crm"
             referencedColumns: ["collectivite_id"]
           },
           {
@@ -12825,41 +7371,6 @@ export type Database = {
             foreignKeyName: "indicateur_service_tag_collectivite_id_fkey"
             columns: ["collectivite_id"]
             isOneToOne: false
-            referencedRelation: "crm_usages"
-            referencedColumns: ["collectivite_id"]
-          },
-          {
-            foreignKeyName: "indicateur_service_tag_collectivite_id_fkey"
-            columns: ["collectivite_id"]
-            isOneToOne: false
-            referencedRelation: "engagement_collectivite"
-            referencedColumns: ["collectivite_id"]
-          },
-          {
-            foreignKeyName: "indicateur_service_tag_collectivite_id_fkey"
-            columns: ["collectivite_id"]
-            isOneToOne: false
-            referencedRelation: "late_collectivite"
-            referencedColumns: ["collectivite_id"]
-          },
-          {
-            foreignKeyName: "indicateur_service_tag_collectivite_id_fkey"
-            columns: ["collectivite_id"]
-            isOneToOne: false
-            referencedRelation: "locales_engagement_collectivite"
-            referencedColumns: ["collectivite_id"]
-          },
-          {
-            foreignKeyName: "indicateur_service_tag_collectivite_id_fkey"
-            columns: ["collectivite_id"]
-            isOneToOne: false
-            referencedRelation: "locales_pourcentage_completude"
-            referencedColumns: ["collectivite_id"]
-          },
-          {
-            foreignKeyName: "indicateur_service_tag_collectivite_id_fkey"
-            columns: ["collectivite_id"]
-            isOneToOne: false
             referencedRelation: "named_collectivite"
             referencedColumns: ["collectivite_id"]
           },
@@ -12875,48 +7386,6 @@ export type Database = {
             columns: ["collectivite_id"]
             isOneToOne: false
             referencedRelation: "question_thematique_completude"
-            referencedColumns: ["collectivite_id"]
-          },
-          {
-            foreignKeyName: "indicateur_service_tag_collectivite_id_fkey"
-            columns: ["collectivite_id"]
-            isOneToOne: false
-            referencedRelation: "rattachement"
-            referencedColumns: ["collectivite_id"]
-          },
-          {
-            foreignKeyName: "indicateur_service_tag_collectivite_id_fkey"
-            columns: ["collectivite_id"]
-            isOneToOne: false
-            referencedRelation: "report_indicateur_resultat"
-            referencedColumns: ["collectivite_id"]
-          },
-          {
-            foreignKeyName: "indicateur_service_tag_collectivite_id_fkey"
-            columns: ["collectivite_id"]
-            isOneToOne: false
-            referencedRelation: "report_reponse_binaire"
-            referencedColumns: ["collectivite_id"]
-          },
-          {
-            foreignKeyName: "indicateur_service_tag_collectivite_id_fkey"
-            columns: ["collectivite_id"]
-            isOneToOne: false
-            referencedRelation: "report_reponse_choix"
-            referencedColumns: ["collectivite_id"]
-          },
-          {
-            foreignKeyName: "indicateur_service_tag_collectivite_id_fkey"
-            columns: ["collectivite_id"]
-            isOneToOne: false
-            referencedRelation: "report_reponse_proportion"
-            referencedColumns: ["collectivite_id"]
-          },
-          {
-            foreignKeyName: "indicateur_service_tag_collectivite_id_fkey"
-            columns: ["collectivite_id"]
-            isOneToOne: false
-            referencedRelation: "report_scores"
             referencedColumns: ["collectivite_id"]
           },
           {
@@ -12945,13 +7414,6 @@ export type Database = {
             columns: ["collectivite_id"]
             isOneToOne: false
             referencedRelation: "retool_plan_action_hebdo"
-            referencedColumns: ["collectivite_id"]
-          },
-          {
-            foreignKeyName: "indicateur_service_tag_collectivite_id_fkey"
-            columns: ["collectivite_id"]
-            isOneToOne: false
-            referencedRelation: "retool_plan_action_premier_usage"
             referencedColumns: ["collectivite_id"]
           },
           {
@@ -13009,13 +7471,6 @@ export type Database = {
             isOneToOne: false
             referencedRelation: "suivi_audit"
             referencedColumns: ["collectivite_id"]
-          },
-          {
-            foreignKeyName: "indicateur_service_tag_indicateur_id_fkey"
-            columns: ["indicateur_id"]
-            isOneToOne: false
-            referencedRelation: "crm_indicateurs"
-            referencedColumns: ["id"]
           },
           {
             foreignKeyName: "indicateur_service_tag_indicateur_id_fkey"
@@ -13124,13 +7579,6 @@ export type Database = {
             foreignKeyName: "indicateur_sous_thematique_indicateur_id_fkey"
             columns: ["indicateur_id"]
             isOneToOne: false
-            referencedRelation: "crm_indicateurs"
-            referencedColumns: ["id"]
-          },
-          {
-            foreignKeyName: "indicateur_sous_thematique_indicateur_id_fkey"
-            columns: ["indicateur_id"]
-            isOneToOne: false
             referencedRelation: "indicateur_definition"
             referencedColumns: ["id"]
           },
@@ -13157,13 +7605,6 @@ export type Database = {
           thematique_id?: number
         }
         Relationships: [
-          {
-            foreignKeyName: "indicateur_thematique_indicateur_id_fkey"
-            columns: ["indicateur_id"]
-            isOneToOne: false
-            referencedRelation: "crm_indicateurs"
-            referencedColumns: ["id"]
-          },
           {
             foreignKeyName: "indicateur_thematique_indicateur_id_fkey"
             columns: ["indicateur_id"]
@@ -13241,13 +7682,6 @@ export type Database = {
             foreignKeyName: "indicateur_valeur_collectivite_id_fkey"
             columns: ["collectivite_id"]
             isOneToOne: false
-            referencedRelation: "action_snippet"
-            referencedColumns: ["collectivite_id"]
-          },
-          {
-            foreignKeyName: "indicateur_valeur_collectivite_id_fkey"
-            columns: ["collectivite_id"]
-            isOneToOne: false
             referencedRelation: "action_statuts"
             referencedColumns: ["collectivite_id"]
           },
@@ -13276,29 +7710,8 @@ export type Database = {
             foreignKeyName: "indicateur_valeur_collectivite_id_fkey"
             columns: ["collectivite_id"]
             isOneToOne: false
-            referencedRelation: "carte_collectivite_active"
-            referencedColumns: ["collectivite_id"]
-          },
-          {
-            foreignKeyName: "indicateur_valeur_collectivite_id_fkey"
-            columns: ["collectivite_id"]
-            isOneToOne: false
             referencedRelation: "collectivite"
             referencedColumns: ["id"]
-          },
-          {
-            foreignKeyName: "indicateur_valeur_collectivite_id_fkey"
-            columns: ["collectivite_id"]
-            isOneToOne: false
-            referencedRelation: "collectivite"
-            referencedColumns: ["collectivite_id"]
-          },
-          {
-            foreignKeyName: "indicateur_valeur_collectivite_id_fkey"
-            columns: ["collectivite_id"]
-            isOneToOne: false
-            referencedRelation: "collectivite_action_statut"
-            referencedColumns: ["collectivite_id"]
           },
           {
             foreignKeyName: "indicateur_valeur_collectivite_id_fkey"
@@ -13325,56 +7738,7 @@ export type Database = {
             foreignKeyName: "indicateur_valeur_collectivite_id_fkey"
             columns: ["collectivite_id"]
             isOneToOne: false
-            referencedRelation: "collectivite_labellisation"
-            referencedColumns: ["collectivite_id"]
-          },
-          {
-            foreignKeyName: "indicateur_valeur_collectivite_id_fkey"
-            columns: ["collectivite_id"]
-            isOneToOne: false
-            referencedRelation: "collectivite_membre_crm"
-            referencedColumns: ["collectivite_id"]
-          },
-          {
-            foreignKeyName: "indicateur_valeur_collectivite_id_fkey"
-            columns: ["collectivite_id"]
-            isOneToOne: false
             referencedRelation: "collectivite_niveau_acces"
-            referencedColumns: ["collectivite_id"]
-          },
-          {
-            foreignKeyName: "indicateur_valeur_collectivite_id_fkey"
-            columns: ["collectivite_id"]
-            isOneToOne: false
-            referencedRelation: "collectivite_plan_action"
-            referencedColumns: ["collectivite_id"]
-          },
-          {
-            foreignKeyName: "indicateur_valeur_collectivite_id_fkey"
-            columns: ["collectivite_id"]
-            isOneToOne: false
-            referencedRelation: "collectivite_plan_action"
-            referencedColumns: ["collectivite_id"]
-          },
-          {
-            foreignKeyName: "indicateur_valeur_collectivite_id_fkey"
-            columns: ["collectivite_id"]
-            isOneToOne: false
-            referencedRelation: "collectivite_referentiel"
-            referencedColumns: ["collectivite_id"]
-          },
-          {
-            foreignKeyName: "indicateur_valeur_collectivite_id_fkey"
-            columns: ["collectivite_id"]
-            isOneToOne: false
-            referencedRelation: "collectivite_utilisateur"
-            referencedColumns: ["collectivite_id"]
-          },
-          {
-            foreignKeyName: "indicateur_valeur_collectivite_id_fkey"
-            columns: ["collectivite_id"]
-            isOneToOne: false
-            referencedRelation: "collectivites_crm"
             referencedColumns: ["collectivite_id"]
           },
           {
@@ -13402,41 +7766,6 @@ export type Database = {
             foreignKeyName: "indicateur_valeur_collectivite_id_fkey"
             columns: ["collectivite_id"]
             isOneToOne: false
-            referencedRelation: "crm_usages"
-            referencedColumns: ["collectivite_id"]
-          },
-          {
-            foreignKeyName: "indicateur_valeur_collectivite_id_fkey"
-            columns: ["collectivite_id"]
-            isOneToOne: false
-            referencedRelation: "engagement_collectivite"
-            referencedColumns: ["collectivite_id"]
-          },
-          {
-            foreignKeyName: "indicateur_valeur_collectivite_id_fkey"
-            columns: ["collectivite_id"]
-            isOneToOne: false
-            referencedRelation: "late_collectivite"
-            referencedColumns: ["collectivite_id"]
-          },
-          {
-            foreignKeyName: "indicateur_valeur_collectivite_id_fkey"
-            columns: ["collectivite_id"]
-            isOneToOne: false
-            referencedRelation: "locales_engagement_collectivite"
-            referencedColumns: ["collectivite_id"]
-          },
-          {
-            foreignKeyName: "indicateur_valeur_collectivite_id_fkey"
-            columns: ["collectivite_id"]
-            isOneToOne: false
-            referencedRelation: "locales_pourcentage_completude"
-            referencedColumns: ["collectivite_id"]
-          },
-          {
-            foreignKeyName: "indicateur_valeur_collectivite_id_fkey"
-            columns: ["collectivite_id"]
-            isOneToOne: false
             referencedRelation: "named_collectivite"
             referencedColumns: ["collectivite_id"]
           },
@@ -13452,48 +7781,6 @@ export type Database = {
             columns: ["collectivite_id"]
             isOneToOne: false
             referencedRelation: "question_thematique_completude"
-            referencedColumns: ["collectivite_id"]
-          },
-          {
-            foreignKeyName: "indicateur_valeur_collectivite_id_fkey"
-            columns: ["collectivite_id"]
-            isOneToOne: false
-            referencedRelation: "rattachement"
-            referencedColumns: ["collectivite_id"]
-          },
-          {
-            foreignKeyName: "indicateur_valeur_collectivite_id_fkey"
-            columns: ["collectivite_id"]
-            isOneToOne: false
-            referencedRelation: "report_indicateur_resultat"
-            referencedColumns: ["collectivite_id"]
-          },
-          {
-            foreignKeyName: "indicateur_valeur_collectivite_id_fkey"
-            columns: ["collectivite_id"]
-            isOneToOne: false
-            referencedRelation: "report_reponse_binaire"
-            referencedColumns: ["collectivite_id"]
-          },
-          {
-            foreignKeyName: "indicateur_valeur_collectivite_id_fkey"
-            columns: ["collectivite_id"]
-            isOneToOne: false
-            referencedRelation: "report_reponse_choix"
-            referencedColumns: ["collectivite_id"]
-          },
-          {
-            foreignKeyName: "indicateur_valeur_collectivite_id_fkey"
-            columns: ["collectivite_id"]
-            isOneToOne: false
-            referencedRelation: "report_reponse_proportion"
-            referencedColumns: ["collectivite_id"]
-          },
-          {
-            foreignKeyName: "indicateur_valeur_collectivite_id_fkey"
-            columns: ["collectivite_id"]
-            isOneToOne: false
-            referencedRelation: "report_scores"
             referencedColumns: ["collectivite_id"]
           },
           {
@@ -13522,13 +7809,6 @@ export type Database = {
             columns: ["collectivite_id"]
             isOneToOne: false
             referencedRelation: "retool_plan_action_hebdo"
-            referencedColumns: ["collectivite_id"]
-          },
-          {
-            foreignKeyName: "indicateur_valeur_collectivite_id_fkey"
-            columns: ["collectivite_id"]
-            isOneToOne: false
-            referencedRelation: "retool_plan_action_premier_usage"
             referencedColumns: ["collectivite_id"]
           },
           {
@@ -13588,20 +7868,6 @@ export type Database = {
             referencedColumns: ["collectivite_id"]
           },
           {
-            foreignKeyName: "indicateur_valeur_created_by_fkey"
-            columns: ["created_by"]
-            isOneToOne: false
-            referencedRelation: "users"
-            referencedColumns: ["id"]
-          },
-          {
-            foreignKeyName: "indicateur_valeur_indicateur_id_fkey"
-            columns: ["indicateur_id"]
-            isOneToOne: false
-            referencedRelation: "crm_indicateurs"
-            referencedColumns: ["id"]
-          },
-          {
             foreignKeyName: "indicateur_valeur_indicateur_id_fkey"
             columns: ["indicateur_id"]
             isOneToOne: false
@@ -13620,13 +7886,6 @@ export type Database = {
             columns: ["metadonnee_id"]
             isOneToOne: false
             referencedRelation: "indicateur_source_metadonnee"
-            referencedColumns: ["id"]
-          },
-          {
-            foreignKeyName: "indicateur_valeur_modified_by_fkey"
-            columns: ["modified_by"]
-            isOneToOne: false
-            referencedRelation: "users"
             referencedColumns: ["id"]
           },
         ]
@@ -13670,13 +7929,6 @@ export type Database = {
         }
         Relationships: [
           {
-            foreignKeyName: "justification_modified_by_fkey"
-            columns: ["modified_by"]
-            isOneToOne: false
-            referencedRelation: "users"
-            referencedColumns: ["id"]
-          },
-          {
             foreignKeyName: "justification_question_id_fkey"
             columns: ["question_id"]
             isOneToOne: false
@@ -13688,13 +7940,6 @@ export type Database = {
             columns: ["question_id"]
             isOneToOne: false
             referencedRelation: "question_display"
-            referencedColumns: ["id"]
-          },
-          {
-            foreignKeyName: "justification_question_id_fkey"
-            columns: ["question_id"]
-            isOneToOne: false
-            referencedRelation: "report_question"
             referencedColumns: ["id"]
           },
         ]
@@ -13733,13 +7978,6 @@ export type Database = {
             foreignKeyName: "justification_ajustement_collectivite_id_fkey"
             columns: ["collectivite_id"]
             isOneToOne: false
-            referencedRelation: "action_snippet"
-            referencedColumns: ["collectivite_id"]
-          },
-          {
-            foreignKeyName: "justification_ajustement_collectivite_id_fkey"
-            columns: ["collectivite_id"]
-            isOneToOne: false
             referencedRelation: "action_statuts"
             referencedColumns: ["collectivite_id"]
           },
@@ -13768,29 +8006,8 @@ export type Database = {
             foreignKeyName: "justification_ajustement_collectivite_id_fkey"
             columns: ["collectivite_id"]
             isOneToOne: false
-            referencedRelation: "carte_collectivite_active"
-            referencedColumns: ["collectivite_id"]
-          },
-          {
-            foreignKeyName: "justification_ajustement_collectivite_id_fkey"
-            columns: ["collectivite_id"]
-            isOneToOne: false
             referencedRelation: "collectivite"
             referencedColumns: ["id"]
-          },
-          {
-            foreignKeyName: "justification_ajustement_collectivite_id_fkey"
-            columns: ["collectivite_id"]
-            isOneToOne: false
-            referencedRelation: "collectivite"
-            referencedColumns: ["collectivite_id"]
-          },
-          {
-            foreignKeyName: "justification_ajustement_collectivite_id_fkey"
-            columns: ["collectivite_id"]
-            isOneToOne: false
-            referencedRelation: "collectivite_action_statut"
-            referencedColumns: ["collectivite_id"]
           },
           {
             foreignKeyName: "justification_ajustement_collectivite_id_fkey"
@@ -13817,56 +8034,7 @@ export type Database = {
             foreignKeyName: "justification_ajustement_collectivite_id_fkey"
             columns: ["collectivite_id"]
             isOneToOne: false
-            referencedRelation: "collectivite_labellisation"
-            referencedColumns: ["collectivite_id"]
-          },
-          {
-            foreignKeyName: "justification_ajustement_collectivite_id_fkey"
-            columns: ["collectivite_id"]
-            isOneToOne: false
-            referencedRelation: "collectivite_membre_crm"
-            referencedColumns: ["collectivite_id"]
-          },
-          {
-            foreignKeyName: "justification_ajustement_collectivite_id_fkey"
-            columns: ["collectivite_id"]
-            isOneToOne: false
             referencedRelation: "collectivite_niveau_acces"
-            referencedColumns: ["collectivite_id"]
-          },
-          {
-            foreignKeyName: "justification_ajustement_collectivite_id_fkey"
-            columns: ["collectivite_id"]
-            isOneToOne: false
-            referencedRelation: "collectivite_plan_action"
-            referencedColumns: ["collectivite_id"]
-          },
-          {
-            foreignKeyName: "justification_ajustement_collectivite_id_fkey"
-            columns: ["collectivite_id"]
-            isOneToOne: false
-            referencedRelation: "collectivite_plan_action"
-            referencedColumns: ["collectivite_id"]
-          },
-          {
-            foreignKeyName: "justification_ajustement_collectivite_id_fkey"
-            columns: ["collectivite_id"]
-            isOneToOne: false
-            referencedRelation: "collectivite_referentiel"
-            referencedColumns: ["collectivite_id"]
-          },
-          {
-            foreignKeyName: "justification_ajustement_collectivite_id_fkey"
-            columns: ["collectivite_id"]
-            isOneToOne: false
-            referencedRelation: "collectivite_utilisateur"
-            referencedColumns: ["collectivite_id"]
-          },
-          {
-            foreignKeyName: "justification_ajustement_collectivite_id_fkey"
-            columns: ["collectivite_id"]
-            isOneToOne: false
-            referencedRelation: "collectivites_crm"
             referencedColumns: ["collectivite_id"]
           },
           {
@@ -13894,41 +8062,6 @@ export type Database = {
             foreignKeyName: "justification_ajustement_collectivite_id_fkey"
             columns: ["collectivite_id"]
             isOneToOne: false
-            referencedRelation: "crm_usages"
-            referencedColumns: ["collectivite_id"]
-          },
-          {
-            foreignKeyName: "justification_ajustement_collectivite_id_fkey"
-            columns: ["collectivite_id"]
-            isOneToOne: false
-            referencedRelation: "engagement_collectivite"
-            referencedColumns: ["collectivite_id"]
-          },
-          {
-            foreignKeyName: "justification_ajustement_collectivite_id_fkey"
-            columns: ["collectivite_id"]
-            isOneToOne: false
-            referencedRelation: "late_collectivite"
-            referencedColumns: ["collectivite_id"]
-          },
-          {
-            foreignKeyName: "justification_ajustement_collectivite_id_fkey"
-            columns: ["collectivite_id"]
-            isOneToOne: false
-            referencedRelation: "locales_engagement_collectivite"
-            referencedColumns: ["collectivite_id"]
-          },
-          {
-            foreignKeyName: "justification_ajustement_collectivite_id_fkey"
-            columns: ["collectivite_id"]
-            isOneToOne: false
-            referencedRelation: "locales_pourcentage_completude"
-            referencedColumns: ["collectivite_id"]
-          },
-          {
-            foreignKeyName: "justification_ajustement_collectivite_id_fkey"
-            columns: ["collectivite_id"]
-            isOneToOne: false
             referencedRelation: "named_collectivite"
             referencedColumns: ["collectivite_id"]
           },
@@ -13944,48 +8077,6 @@ export type Database = {
             columns: ["collectivite_id"]
             isOneToOne: false
             referencedRelation: "question_thematique_completude"
-            referencedColumns: ["collectivite_id"]
-          },
-          {
-            foreignKeyName: "justification_ajustement_collectivite_id_fkey"
-            columns: ["collectivite_id"]
-            isOneToOne: false
-            referencedRelation: "rattachement"
-            referencedColumns: ["collectivite_id"]
-          },
-          {
-            foreignKeyName: "justification_ajustement_collectivite_id_fkey"
-            columns: ["collectivite_id"]
-            isOneToOne: false
-            referencedRelation: "report_indicateur_resultat"
-            referencedColumns: ["collectivite_id"]
-          },
-          {
-            foreignKeyName: "justification_ajustement_collectivite_id_fkey"
-            columns: ["collectivite_id"]
-            isOneToOne: false
-            referencedRelation: "report_reponse_binaire"
-            referencedColumns: ["collectivite_id"]
-          },
-          {
-            foreignKeyName: "justification_ajustement_collectivite_id_fkey"
-            columns: ["collectivite_id"]
-            isOneToOne: false
-            referencedRelation: "report_reponse_choix"
-            referencedColumns: ["collectivite_id"]
-          },
-          {
-            foreignKeyName: "justification_ajustement_collectivite_id_fkey"
-            columns: ["collectivite_id"]
-            isOneToOne: false
-            referencedRelation: "report_reponse_proportion"
-            referencedColumns: ["collectivite_id"]
-          },
-          {
-            foreignKeyName: "justification_ajustement_collectivite_id_fkey"
-            columns: ["collectivite_id"]
-            isOneToOne: false
-            referencedRelation: "report_scores"
             referencedColumns: ["collectivite_id"]
           },
           {
@@ -14014,13 +8105,6 @@ export type Database = {
             columns: ["collectivite_id"]
             isOneToOne: false
             referencedRelation: "retool_plan_action_hebdo"
-            referencedColumns: ["collectivite_id"]
-          },
-          {
-            foreignKeyName: "justification_ajustement_collectivite_id_fkey"
-            columns: ["collectivite_id"]
-            isOneToOne: false
-            referencedRelation: "retool_plan_action_premier_usage"
             referencedColumns: ["collectivite_id"]
           },
           {
@@ -14079,13 +8163,6 @@ export type Database = {
             referencedRelation: "suivi_audit"
             referencedColumns: ["collectivite_id"]
           },
-          {
-            foreignKeyName: "justification_ajustement_modified_by_fkey"
-            columns: ["modified_by"]
-            isOneToOne: false
-            referencedRelation: "users"
-            referencedColumns: ["id"]
-          },
         ]
       }
       labellisation: {
@@ -14124,13 +8201,6 @@ export type Database = {
             foreignKeyName: "labellisation_collectivite_id_fkey"
             columns: ["collectivite_id"]
             isOneToOne: false
-            referencedRelation: "action_snippet"
-            referencedColumns: ["collectivite_id"]
-          },
-          {
-            foreignKeyName: "labellisation_collectivite_id_fkey"
-            columns: ["collectivite_id"]
-            isOneToOne: false
             referencedRelation: "action_statuts"
             referencedColumns: ["collectivite_id"]
           },
@@ -14159,29 +8229,8 @@ export type Database = {
             foreignKeyName: "labellisation_collectivite_id_fkey"
             columns: ["collectivite_id"]
             isOneToOne: false
-            referencedRelation: "carte_collectivite_active"
-            referencedColumns: ["collectivite_id"]
-          },
-          {
-            foreignKeyName: "labellisation_collectivite_id_fkey"
-            columns: ["collectivite_id"]
-            isOneToOne: false
             referencedRelation: "collectivite"
             referencedColumns: ["id"]
-          },
-          {
-            foreignKeyName: "labellisation_collectivite_id_fkey"
-            columns: ["collectivite_id"]
-            isOneToOne: false
-            referencedRelation: "collectivite"
-            referencedColumns: ["collectivite_id"]
-          },
-          {
-            foreignKeyName: "labellisation_collectivite_id_fkey"
-            columns: ["collectivite_id"]
-            isOneToOne: false
-            referencedRelation: "collectivite_action_statut"
-            referencedColumns: ["collectivite_id"]
           },
           {
             foreignKeyName: "labellisation_collectivite_id_fkey"
@@ -14208,56 +8257,7 @@ export type Database = {
             foreignKeyName: "labellisation_collectivite_id_fkey"
             columns: ["collectivite_id"]
             isOneToOne: false
-            referencedRelation: "collectivite_labellisation"
-            referencedColumns: ["collectivite_id"]
-          },
-          {
-            foreignKeyName: "labellisation_collectivite_id_fkey"
-            columns: ["collectivite_id"]
-            isOneToOne: false
-            referencedRelation: "collectivite_membre_crm"
-            referencedColumns: ["collectivite_id"]
-          },
-          {
-            foreignKeyName: "labellisation_collectivite_id_fkey"
-            columns: ["collectivite_id"]
-            isOneToOne: false
             referencedRelation: "collectivite_niveau_acces"
-            referencedColumns: ["collectivite_id"]
-          },
-          {
-            foreignKeyName: "labellisation_collectivite_id_fkey"
-            columns: ["collectivite_id"]
-            isOneToOne: false
-            referencedRelation: "collectivite_plan_action"
-            referencedColumns: ["collectivite_id"]
-          },
-          {
-            foreignKeyName: "labellisation_collectivite_id_fkey"
-            columns: ["collectivite_id"]
-            isOneToOne: false
-            referencedRelation: "collectivite_plan_action"
-            referencedColumns: ["collectivite_id"]
-          },
-          {
-            foreignKeyName: "labellisation_collectivite_id_fkey"
-            columns: ["collectivite_id"]
-            isOneToOne: false
-            referencedRelation: "collectivite_referentiel"
-            referencedColumns: ["collectivite_id"]
-          },
-          {
-            foreignKeyName: "labellisation_collectivite_id_fkey"
-            columns: ["collectivite_id"]
-            isOneToOne: false
-            referencedRelation: "collectivite_utilisateur"
-            referencedColumns: ["collectivite_id"]
-          },
-          {
-            foreignKeyName: "labellisation_collectivite_id_fkey"
-            columns: ["collectivite_id"]
-            isOneToOne: false
-            referencedRelation: "collectivites_crm"
             referencedColumns: ["collectivite_id"]
           },
           {
@@ -14285,41 +8285,6 @@ export type Database = {
             foreignKeyName: "labellisation_collectivite_id_fkey"
             columns: ["collectivite_id"]
             isOneToOne: false
-            referencedRelation: "crm_usages"
-            referencedColumns: ["collectivite_id"]
-          },
-          {
-            foreignKeyName: "labellisation_collectivite_id_fkey"
-            columns: ["collectivite_id"]
-            isOneToOne: false
-            referencedRelation: "engagement_collectivite"
-            referencedColumns: ["collectivite_id"]
-          },
-          {
-            foreignKeyName: "labellisation_collectivite_id_fkey"
-            columns: ["collectivite_id"]
-            isOneToOne: false
-            referencedRelation: "late_collectivite"
-            referencedColumns: ["collectivite_id"]
-          },
-          {
-            foreignKeyName: "labellisation_collectivite_id_fkey"
-            columns: ["collectivite_id"]
-            isOneToOne: false
-            referencedRelation: "locales_engagement_collectivite"
-            referencedColumns: ["collectivite_id"]
-          },
-          {
-            foreignKeyName: "labellisation_collectivite_id_fkey"
-            columns: ["collectivite_id"]
-            isOneToOne: false
-            referencedRelation: "locales_pourcentage_completude"
-            referencedColumns: ["collectivite_id"]
-          },
-          {
-            foreignKeyName: "labellisation_collectivite_id_fkey"
-            columns: ["collectivite_id"]
-            isOneToOne: false
             referencedRelation: "named_collectivite"
             referencedColumns: ["collectivite_id"]
           },
@@ -14335,48 +8300,6 @@ export type Database = {
             columns: ["collectivite_id"]
             isOneToOne: false
             referencedRelation: "question_thematique_completude"
-            referencedColumns: ["collectivite_id"]
-          },
-          {
-            foreignKeyName: "labellisation_collectivite_id_fkey"
-            columns: ["collectivite_id"]
-            isOneToOne: false
-            referencedRelation: "rattachement"
-            referencedColumns: ["collectivite_id"]
-          },
-          {
-            foreignKeyName: "labellisation_collectivite_id_fkey"
-            columns: ["collectivite_id"]
-            isOneToOne: false
-            referencedRelation: "report_indicateur_resultat"
-            referencedColumns: ["collectivite_id"]
-          },
-          {
-            foreignKeyName: "labellisation_collectivite_id_fkey"
-            columns: ["collectivite_id"]
-            isOneToOne: false
-            referencedRelation: "report_reponse_binaire"
-            referencedColumns: ["collectivite_id"]
-          },
-          {
-            foreignKeyName: "labellisation_collectivite_id_fkey"
-            columns: ["collectivite_id"]
-            isOneToOne: false
-            referencedRelation: "report_reponse_choix"
-            referencedColumns: ["collectivite_id"]
-          },
-          {
-            foreignKeyName: "labellisation_collectivite_id_fkey"
-            columns: ["collectivite_id"]
-            isOneToOne: false
-            referencedRelation: "report_reponse_proportion"
-            referencedColumns: ["collectivite_id"]
-          },
-          {
-            foreignKeyName: "labellisation_collectivite_id_fkey"
-            columns: ["collectivite_id"]
-            isOneToOne: false
-            referencedRelation: "report_scores"
             referencedColumns: ["collectivite_id"]
           },
           {
@@ -14405,13 +8328,6 @@ export type Database = {
             columns: ["collectivite_id"]
             isOneToOne: false
             referencedRelation: "retool_plan_action_hebdo"
-            referencedColumns: ["collectivite_id"]
-          },
-          {
-            foreignKeyName: "labellisation_collectivite_id_fkey"
-            columns: ["collectivite_id"]
-            isOneToOne: false
-            referencedRelation: "retool_plan_action_premier_usage"
             referencedColumns: ["collectivite_id"]
           },
           {
@@ -14549,6 +8465,220 @@ export type Database = {
         }
         Relationships: []
       }
+      libre_tag: {
+        Row: {
+          collectivite_id: number | null
+          created_at: string
+          created_by: string | null
+          id: number
+          nom: string
+        }
+        Insert: {
+          collectivite_id?: number | null
+          created_at?: string
+          created_by?: string | null
+          id?: number
+          nom: string
+        }
+        Update: {
+          collectivite_id?: number | null
+          created_at?: string
+          created_by?: string | null
+          id?: number
+          nom?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "libre_tag_collectivite_id_fkey"
+            columns: ["collectivite_id"]
+            isOneToOne: false
+            referencedRelation: "action_statuts"
+            referencedColumns: ["collectivite_id"]
+          },
+          {
+            foreignKeyName: "libre_tag_collectivite_id_fkey"
+            columns: ["collectivite_id"]
+            isOneToOne: false
+            referencedRelation: "active_collectivite"
+            referencedColumns: ["collectivite_id"]
+          },
+          {
+            foreignKeyName: "libre_tag_collectivite_id_fkey"
+            columns: ["collectivite_id"]
+            isOneToOne: false
+            referencedRelation: "auditeurs"
+            referencedColumns: ["collectivite_id"]
+          },
+          {
+            foreignKeyName: "libre_tag_collectivite_id_fkey"
+            columns: ["collectivite_id"]
+            isOneToOne: false
+            referencedRelation: "audits"
+            referencedColumns: ["collectivite_id"]
+          },
+          {
+            foreignKeyName: "libre_tag_collectivite_id_fkey"
+            columns: ["collectivite_id"]
+            isOneToOne: false
+            referencedRelation: "collectivite"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "libre_tag_collectivite_id_fkey"
+            columns: ["collectivite_id"]
+            isOneToOne: false
+            referencedRelation: "collectivite_card"
+            referencedColumns: ["collectivite_id"]
+          },
+          {
+            foreignKeyName: "libre_tag_collectivite_id_fkey"
+            columns: ["collectivite_id"]
+            isOneToOne: false
+            referencedRelation: "collectivite_carte_identite"
+            referencedColumns: ["collectivite_id"]
+          },
+          {
+            foreignKeyName: "libre_tag_collectivite_id_fkey"
+            columns: ["collectivite_id"]
+            isOneToOne: false
+            referencedRelation: "collectivite_identite"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "libre_tag_collectivite_id_fkey"
+            columns: ["collectivite_id"]
+            isOneToOne: false
+            referencedRelation: "collectivite_niveau_acces"
+            referencedColumns: ["collectivite_id"]
+          },
+          {
+            foreignKeyName: "libre_tag_collectivite_id_fkey"
+            columns: ["collectivite_id"]
+            isOneToOne: false
+            referencedRelation: "comparaison_scores_audit"
+            referencedColumns: ["collectivite_id"]
+          },
+          {
+            foreignKeyName: "libre_tag_collectivite_id_fkey"
+            columns: ["collectivite_id"]
+            isOneToOne: false
+            referencedRelation: "crm_collectivites"
+            referencedColumns: ["collectivite_id"]
+          },
+          {
+            foreignKeyName: "libre_tag_collectivite_id_fkey"
+            columns: ["collectivite_id"]
+            isOneToOne: false
+            referencedRelation: "crm_usages"
+            referencedColumns: ["collectivite_id"]
+          },
+          {
+            foreignKeyName: "libre_tag_collectivite_id_fkey"
+            columns: ["collectivite_id"]
+            isOneToOne: false
+            referencedRelation: "named_collectivite"
+            referencedColumns: ["collectivite_id"]
+          },
+          {
+            foreignKeyName: "libre_tag_collectivite_id_fkey"
+            columns: ["collectivite_id"]
+            isOneToOne: false
+            referencedRelation: "question_display"
+            referencedColumns: ["collectivite_id"]
+          },
+          {
+            foreignKeyName: "libre_tag_collectivite_id_fkey"
+            columns: ["collectivite_id"]
+            isOneToOne: false
+            referencedRelation: "question_thematique_completude"
+            referencedColumns: ["collectivite_id"]
+          },
+          {
+            foreignKeyName: "libre_tag_collectivite_id_fkey"
+            columns: ["collectivite_id"]
+            isOneToOne: false
+            referencedRelation: "retool_active_collectivite"
+            referencedColumns: ["collectivite_id"]
+          },
+          {
+            foreignKeyName: "libre_tag_collectivite_id_fkey"
+            columns: ["collectivite_id"]
+            isOneToOne: false
+            referencedRelation: "retool_completude"
+            referencedColumns: ["collectivite_id"]
+          },
+          {
+            foreignKeyName: "libre_tag_collectivite_id_fkey"
+            columns: ["collectivite_id"]
+            isOneToOne: false
+            referencedRelation: "retool_completude_compute"
+            referencedColumns: ["collectivite_id"]
+          },
+          {
+            foreignKeyName: "libre_tag_collectivite_id_fkey"
+            columns: ["collectivite_id"]
+            isOneToOne: false
+            referencedRelation: "retool_plan_action_hebdo"
+            referencedColumns: ["collectivite_id"]
+          },
+          {
+            foreignKeyName: "libre_tag_collectivite_id_fkey"
+            columns: ["collectivite_id"]
+            isOneToOne: false
+            referencedRelation: "retool_plan_action_premier_usage"
+            referencedColumns: ["collectivite_id"]
+          },
+          {
+            foreignKeyName: "libre_tag_collectivite_id_fkey"
+            columns: ["collectivite_id"]
+            isOneToOne: false
+            referencedRelation: "retool_plan_action_usage"
+            referencedColumns: ["collectivite_id"]
+          },
+          {
+            foreignKeyName: "libre_tag_collectivite_id_fkey"
+            columns: ["collectivite_id"]
+            isOneToOne: false
+            referencedRelation: "retool_score"
+            referencedColumns: ["collectivite_id"]
+          },
+          {
+            foreignKeyName: "libre_tag_collectivite_id_fkey"
+            columns: ["collectivite_id"]
+            isOneToOne: false
+            referencedRelation: "site_labellisation"
+            referencedColumns: ["collectivite_id"]
+          },
+          {
+            foreignKeyName: "libre_tag_collectivite_id_fkey"
+            columns: ["collectivite_id"]
+            isOneToOne: false
+            referencedRelation: "stats_active_real_collectivites"
+            referencedColumns: ["collectivite_id"]
+          },
+          {
+            foreignKeyName: "libre_tag_collectivite_id_fkey"
+            columns: ["collectivite_id"]
+            isOneToOne: false
+            referencedRelation: "stats_carte_collectivite_active"
+            referencedColumns: ["collectivite_id"]
+          },
+          {
+            foreignKeyName: "libre_tag_collectivite_id_fkey"
+            columns: ["collectivite_id"]
+            isOneToOne: false
+            referencedRelation: "stats_locales_engagement_collectivite"
+            referencedColumns: ["collectivite_id"]
+          },
+          {
+            foreignKeyName: "libre_tag_collectivite_id_fkey"
+            columns: ["collectivite_id"]
+            isOneToOne: false
+            referencedRelation: "suivi_audit"
+            referencedColumns: ["collectivite_id"]
+          },
+        ]
+      }
       maintenance: {
         Row: {
           begins_at: string
@@ -14601,13 +8731,6 @@ export type Database = {
             foreignKeyName: "panier_collectivite_id_fkey"
             columns: ["collectivite_id"]
             isOneToOne: true
-            referencedRelation: "action_snippet"
-            referencedColumns: ["collectivite_id"]
-          },
-          {
-            foreignKeyName: "panier_collectivite_id_fkey"
-            columns: ["collectivite_id"]
-            isOneToOne: true
             referencedRelation: "action_statuts"
             referencedColumns: ["collectivite_id"]
           },
@@ -14636,29 +8759,8 @@ export type Database = {
             foreignKeyName: "panier_collectivite_id_fkey"
             columns: ["collectivite_id"]
             isOneToOne: true
-            referencedRelation: "carte_collectivite_active"
-            referencedColumns: ["collectivite_id"]
-          },
-          {
-            foreignKeyName: "panier_collectivite_id_fkey"
-            columns: ["collectivite_id"]
-            isOneToOne: true
             referencedRelation: "collectivite"
             referencedColumns: ["id"]
-          },
-          {
-            foreignKeyName: "panier_collectivite_id_fkey"
-            columns: ["collectivite_id"]
-            isOneToOne: true
-            referencedRelation: "collectivite"
-            referencedColumns: ["collectivite_id"]
-          },
-          {
-            foreignKeyName: "panier_collectivite_id_fkey"
-            columns: ["collectivite_id"]
-            isOneToOne: true
-            referencedRelation: "collectivite_action_statut"
-            referencedColumns: ["collectivite_id"]
           },
           {
             foreignKeyName: "panier_collectivite_id_fkey"
@@ -14685,56 +8787,7 @@ export type Database = {
             foreignKeyName: "panier_collectivite_id_fkey"
             columns: ["collectivite_id"]
             isOneToOne: true
-            referencedRelation: "collectivite_labellisation"
-            referencedColumns: ["collectivite_id"]
-          },
-          {
-            foreignKeyName: "panier_collectivite_id_fkey"
-            columns: ["collectivite_id"]
-            isOneToOne: true
-            referencedRelation: "collectivite_membre_crm"
-            referencedColumns: ["collectivite_id"]
-          },
-          {
-            foreignKeyName: "panier_collectivite_id_fkey"
-            columns: ["collectivite_id"]
-            isOneToOne: true
             referencedRelation: "collectivite_niveau_acces"
-            referencedColumns: ["collectivite_id"]
-          },
-          {
-            foreignKeyName: "panier_collectivite_id_fkey"
-            columns: ["collectivite_id"]
-            isOneToOne: true
-            referencedRelation: "collectivite_plan_action"
-            referencedColumns: ["collectivite_id"]
-          },
-          {
-            foreignKeyName: "panier_collectivite_id_fkey"
-            columns: ["collectivite_id"]
-            isOneToOne: true
-            referencedRelation: "collectivite_plan_action"
-            referencedColumns: ["collectivite_id"]
-          },
-          {
-            foreignKeyName: "panier_collectivite_id_fkey"
-            columns: ["collectivite_id"]
-            isOneToOne: true
-            referencedRelation: "collectivite_referentiel"
-            referencedColumns: ["collectivite_id"]
-          },
-          {
-            foreignKeyName: "panier_collectivite_id_fkey"
-            columns: ["collectivite_id"]
-            isOneToOne: true
-            referencedRelation: "collectivite_utilisateur"
-            referencedColumns: ["collectivite_id"]
-          },
-          {
-            foreignKeyName: "panier_collectivite_id_fkey"
-            columns: ["collectivite_id"]
-            isOneToOne: true
-            referencedRelation: "collectivites_crm"
             referencedColumns: ["collectivite_id"]
           },
           {
@@ -14762,41 +8815,6 @@ export type Database = {
             foreignKeyName: "panier_collectivite_id_fkey"
             columns: ["collectivite_id"]
             isOneToOne: true
-            referencedRelation: "crm_usages"
-            referencedColumns: ["collectivite_id"]
-          },
-          {
-            foreignKeyName: "panier_collectivite_id_fkey"
-            columns: ["collectivite_id"]
-            isOneToOne: true
-            referencedRelation: "engagement_collectivite"
-            referencedColumns: ["collectivite_id"]
-          },
-          {
-            foreignKeyName: "panier_collectivite_id_fkey"
-            columns: ["collectivite_id"]
-            isOneToOne: true
-            referencedRelation: "late_collectivite"
-            referencedColumns: ["collectivite_id"]
-          },
-          {
-            foreignKeyName: "panier_collectivite_id_fkey"
-            columns: ["collectivite_id"]
-            isOneToOne: true
-            referencedRelation: "locales_engagement_collectivite"
-            referencedColumns: ["collectivite_id"]
-          },
-          {
-            foreignKeyName: "panier_collectivite_id_fkey"
-            columns: ["collectivite_id"]
-            isOneToOne: true
-            referencedRelation: "locales_pourcentage_completude"
-            referencedColumns: ["collectivite_id"]
-          },
-          {
-            foreignKeyName: "panier_collectivite_id_fkey"
-            columns: ["collectivite_id"]
-            isOneToOne: true
             referencedRelation: "named_collectivite"
             referencedColumns: ["collectivite_id"]
           },
@@ -14812,48 +8830,6 @@ export type Database = {
             columns: ["collectivite_id"]
             isOneToOne: true
             referencedRelation: "question_thematique_completude"
-            referencedColumns: ["collectivite_id"]
-          },
-          {
-            foreignKeyName: "panier_collectivite_id_fkey"
-            columns: ["collectivite_id"]
-            isOneToOne: true
-            referencedRelation: "rattachement"
-            referencedColumns: ["collectivite_id"]
-          },
-          {
-            foreignKeyName: "panier_collectivite_id_fkey"
-            columns: ["collectivite_id"]
-            isOneToOne: true
-            referencedRelation: "report_indicateur_resultat"
-            referencedColumns: ["collectivite_id"]
-          },
-          {
-            foreignKeyName: "panier_collectivite_id_fkey"
-            columns: ["collectivite_id"]
-            isOneToOne: true
-            referencedRelation: "report_reponse_binaire"
-            referencedColumns: ["collectivite_id"]
-          },
-          {
-            foreignKeyName: "panier_collectivite_id_fkey"
-            columns: ["collectivite_id"]
-            isOneToOne: true
-            referencedRelation: "report_reponse_choix"
-            referencedColumns: ["collectivite_id"]
-          },
-          {
-            foreignKeyName: "panier_collectivite_id_fkey"
-            columns: ["collectivite_id"]
-            isOneToOne: true
-            referencedRelation: "report_reponse_proportion"
-            referencedColumns: ["collectivite_id"]
-          },
-          {
-            foreignKeyName: "panier_collectivite_id_fkey"
-            columns: ["collectivite_id"]
-            isOneToOne: true
-            referencedRelation: "report_scores"
             referencedColumns: ["collectivite_id"]
           },
           {
@@ -14882,13 +8858,6 @@ export type Database = {
             columns: ["collectivite_id"]
             isOneToOne: true
             referencedRelation: "retool_plan_action_hebdo"
-            referencedColumns: ["collectivite_id"]
-          },
-          {
-            foreignKeyName: "panier_collectivite_id_fkey"
-            columns: ["collectivite_id"]
-            isOneToOne: true
-            referencedRelation: "retool_plan_action_premier_usage"
             referencedColumns: ["collectivite_id"]
           },
           {
@@ -14951,13 +8920,6 @@ export type Database = {
             foreignKeyName: "panier_collectivite_preset_fkey"
             columns: ["collectivite_preset"]
             isOneToOne: false
-            referencedRelation: "action_snippet"
-            referencedColumns: ["collectivite_id"]
-          },
-          {
-            foreignKeyName: "panier_collectivite_preset_fkey"
-            columns: ["collectivite_preset"]
-            isOneToOne: false
             referencedRelation: "action_statuts"
             referencedColumns: ["collectivite_id"]
           },
@@ -14986,29 +8948,8 @@ export type Database = {
             foreignKeyName: "panier_collectivite_preset_fkey"
             columns: ["collectivite_preset"]
             isOneToOne: false
-            referencedRelation: "carte_collectivite_active"
-            referencedColumns: ["collectivite_id"]
-          },
-          {
-            foreignKeyName: "panier_collectivite_preset_fkey"
-            columns: ["collectivite_preset"]
-            isOneToOne: false
             referencedRelation: "collectivite"
             referencedColumns: ["id"]
-          },
-          {
-            foreignKeyName: "panier_collectivite_preset_fkey"
-            columns: ["collectivite_preset"]
-            isOneToOne: false
-            referencedRelation: "collectivite"
-            referencedColumns: ["collectivite_id"]
-          },
-          {
-            foreignKeyName: "panier_collectivite_preset_fkey"
-            columns: ["collectivite_preset"]
-            isOneToOne: false
-            referencedRelation: "collectivite_action_statut"
-            referencedColumns: ["collectivite_id"]
           },
           {
             foreignKeyName: "panier_collectivite_preset_fkey"
@@ -15035,56 +8976,7 @@ export type Database = {
             foreignKeyName: "panier_collectivite_preset_fkey"
             columns: ["collectivite_preset"]
             isOneToOne: false
-            referencedRelation: "collectivite_labellisation"
-            referencedColumns: ["collectivite_id"]
-          },
-          {
-            foreignKeyName: "panier_collectivite_preset_fkey"
-            columns: ["collectivite_preset"]
-            isOneToOne: false
-            referencedRelation: "collectivite_membre_crm"
-            referencedColumns: ["collectivite_id"]
-          },
-          {
-            foreignKeyName: "panier_collectivite_preset_fkey"
-            columns: ["collectivite_preset"]
-            isOneToOne: false
             referencedRelation: "collectivite_niveau_acces"
-            referencedColumns: ["collectivite_id"]
-          },
-          {
-            foreignKeyName: "panier_collectivite_preset_fkey"
-            columns: ["collectivite_preset"]
-            isOneToOne: false
-            referencedRelation: "collectivite_plan_action"
-            referencedColumns: ["collectivite_id"]
-          },
-          {
-            foreignKeyName: "panier_collectivite_preset_fkey"
-            columns: ["collectivite_preset"]
-            isOneToOne: false
-            referencedRelation: "collectivite_plan_action"
-            referencedColumns: ["collectivite_id"]
-          },
-          {
-            foreignKeyName: "panier_collectivite_preset_fkey"
-            columns: ["collectivite_preset"]
-            isOneToOne: false
-            referencedRelation: "collectivite_referentiel"
-            referencedColumns: ["collectivite_id"]
-          },
-          {
-            foreignKeyName: "panier_collectivite_preset_fkey"
-            columns: ["collectivite_preset"]
-            isOneToOne: false
-            referencedRelation: "collectivite_utilisateur"
-            referencedColumns: ["collectivite_id"]
-          },
-          {
-            foreignKeyName: "panier_collectivite_preset_fkey"
-            columns: ["collectivite_preset"]
-            isOneToOne: false
-            referencedRelation: "collectivites_crm"
             referencedColumns: ["collectivite_id"]
           },
           {
@@ -15112,41 +9004,6 @@ export type Database = {
             foreignKeyName: "panier_collectivite_preset_fkey"
             columns: ["collectivite_preset"]
             isOneToOne: false
-            referencedRelation: "crm_usages"
-            referencedColumns: ["collectivite_id"]
-          },
-          {
-            foreignKeyName: "panier_collectivite_preset_fkey"
-            columns: ["collectivite_preset"]
-            isOneToOne: false
-            referencedRelation: "engagement_collectivite"
-            referencedColumns: ["collectivite_id"]
-          },
-          {
-            foreignKeyName: "panier_collectivite_preset_fkey"
-            columns: ["collectivite_preset"]
-            isOneToOne: false
-            referencedRelation: "late_collectivite"
-            referencedColumns: ["collectivite_id"]
-          },
-          {
-            foreignKeyName: "panier_collectivite_preset_fkey"
-            columns: ["collectivite_preset"]
-            isOneToOne: false
-            referencedRelation: "locales_engagement_collectivite"
-            referencedColumns: ["collectivite_id"]
-          },
-          {
-            foreignKeyName: "panier_collectivite_preset_fkey"
-            columns: ["collectivite_preset"]
-            isOneToOne: false
-            referencedRelation: "locales_pourcentage_completude"
-            referencedColumns: ["collectivite_id"]
-          },
-          {
-            foreignKeyName: "panier_collectivite_preset_fkey"
-            columns: ["collectivite_preset"]
-            isOneToOne: false
             referencedRelation: "named_collectivite"
             referencedColumns: ["collectivite_id"]
           },
@@ -15162,48 +9019,6 @@ export type Database = {
             columns: ["collectivite_preset"]
             isOneToOne: false
             referencedRelation: "question_thematique_completude"
-            referencedColumns: ["collectivite_id"]
-          },
-          {
-            foreignKeyName: "panier_collectivite_preset_fkey"
-            columns: ["collectivite_preset"]
-            isOneToOne: false
-            referencedRelation: "rattachement"
-            referencedColumns: ["collectivite_id"]
-          },
-          {
-            foreignKeyName: "panier_collectivite_preset_fkey"
-            columns: ["collectivite_preset"]
-            isOneToOne: false
-            referencedRelation: "report_indicateur_resultat"
-            referencedColumns: ["collectivite_id"]
-          },
-          {
-            foreignKeyName: "panier_collectivite_preset_fkey"
-            columns: ["collectivite_preset"]
-            isOneToOne: false
-            referencedRelation: "report_reponse_binaire"
-            referencedColumns: ["collectivite_id"]
-          },
-          {
-            foreignKeyName: "panier_collectivite_preset_fkey"
-            columns: ["collectivite_preset"]
-            isOneToOne: false
-            referencedRelation: "report_reponse_choix"
-            referencedColumns: ["collectivite_id"]
-          },
-          {
-            foreignKeyName: "panier_collectivite_preset_fkey"
-            columns: ["collectivite_preset"]
-            isOneToOne: false
-            referencedRelation: "report_reponse_proportion"
-            referencedColumns: ["collectivite_id"]
-          },
-          {
-            foreignKeyName: "panier_collectivite_preset_fkey"
-            columns: ["collectivite_preset"]
-            isOneToOne: false
-            referencedRelation: "report_scores"
             referencedColumns: ["collectivite_id"]
           },
           {
@@ -15232,13 +9047,6 @@ export type Database = {
             columns: ["collectivite_preset"]
             isOneToOne: false
             referencedRelation: "retool_plan_action_hebdo"
-            referencedColumns: ["collectivite_id"]
-          },
-          {
-            foreignKeyName: "panier_collectivite_preset_fkey"
-            columns: ["collectivite_preset"]
-            isOneToOne: false
-            referencedRelation: "retool_plan_action_premier_usage"
             referencedColumns: ["collectivite_id"]
           },
           {
@@ -15296,13 +9104,6 @@ export type Database = {
             isOneToOne: false
             referencedRelation: "suivi_audit"
             referencedColumns: ["collectivite_id"]
-          },
-          {
-            foreignKeyName: "panier_created_by_fkey"
-            columns: ["created_by"]
-            isOneToOne: false
-            referencedRelation: "users"
-            referencedColumns: ["id"]
           },
         ]
       }
@@ -15342,13 +9143,6 @@ export type Database = {
             foreignKeyName: "partenaire_tag_collectivite_id_fkey"
             columns: ["collectivite_id"]
             isOneToOne: false
-            referencedRelation: "action_snippet"
-            referencedColumns: ["collectivite_id"]
-          },
-          {
-            foreignKeyName: "partenaire_tag_collectivite_id_fkey"
-            columns: ["collectivite_id"]
-            isOneToOne: false
             referencedRelation: "action_statuts"
             referencedColumns: ["collectivite_id"]
           },
@@ -15377,29 +9171,8 @@ export type Database = {
             foreignKeyName: "partenaire_tag_collectivite_id_fkey"
             columns: ["collectivite_id"]
             isOneToOne: false
-            referencedRelation: "carte_collectivite_active"
-            referencedColumns: ["collectivite_id"]
-          },
-          {
-            foreignKeyName: "partenaire_tag_collectivite_id_fkey"
-            columns: ["collectivite_id"]
-            isOneToOne: false
             referencedRelation: "collectivite"
             referencedColumns: ["id"]
-          },
-          {
-            foreignKeyName: "partenaire_tag_collectivite_id_fkey"
-            columns: ["collectivite_id"]
-            isOneToOne: false
-            referencedRelation: "collectivite"
-            referencedColumns: ["collectivite_id"]
-          },
-          {
-            foreignKeyName: "partenaire_tag_collectivite_id_fkey"
-            columns: ["collectivite_id"]
-            isOneToOne: false
-            referencedRelation: "collectivite_action_statut"
-            referencedColumns: ["collectivite_id"]
           },
           {
             foreignKeyName: "partenaire_tag_collectivite_id_fkey"
@@ -15426,56 +9199,7 @@ export type Database = {
             foreignKeyName: "partenaire_tag_collectivite_id_fkey"
             columns: ["collectivite_id"]
             isOneToOne: false
-            referencedRelation: "collectivite_labellisation"
-            referencedColumns: ["collectivite_id"]
-          },
-          {
-            foreignKeyName: "partenaire_tag_collectivite_id_fkey"
-            columns: ["collectivite_id"]
-            isOneToOne: false
-            referencedRelation: "collectivite_membre_crm"
-            referencedColumns: ["collectivite_id"]
-          },
-          {
-            foreignKeyName: "partenaire_tag_collectivite_id_fkey"
-            columns: ["collectivite_id"]
-            isOneToOne: false
             referencedRelation: "collectivite_niveau_acces"
-            referencedColumns: ["collectivite_id"]
-          },
-          {
-            foreignKeyName: "partenaire_tag_collectivite_id_fkey"
-            columns: ["collectivite_id"]
-            isOneToOne: false
-            referencedRelation: "collectivite_plan_action"
-            referencedColumns: ["collectivite_id"]
-          },
-          {
-            foreignKeyName: "partenaire_tag_collectivite_id_fkey"
-            columns: ["collectivite_id"]
-            isOneToOne: false
-            referencedRelation: "collectivite_plan_action"
-            referencedColumns: ["collectivite_id"]
-          },
-          {
-            foreignKeyName: "partenaire_tag_collectivite_id_fkey"
-            columns: ["collectivite_id"]
-            isOneToOne: false
-            referencedRelation: "collectivite_referentiel"
-            referencedColumns: ["collectivite_id"]
-          },
-          {
-            foreignKeyName: "partenaire_tag_collectivite_id_fkey"
-            columns: ["collectivite_id"]
-            isOneToOne: false
-            referencedRelation: "collectivite_utilisateur"
-            referencedColumns: ["collectivite_id"]
-          },
-          {
-            foreignKeyName: "partenaire_tag_collectivite_id_fkey"
-            columns: ["collectivite_id"]
-            isOneToOne: false
-            referencedRelation: "collectivites_crm"
             referencedColumns: ["collectivite_id"]
           },
           {
@@ -15503,41 +9227,6 @@ export type Database = {
             foreignKeyName: "partenaire_tag_collectivite_id_fkey"
             columns: ["collectivite_id"]
             isOneToOne: false
-            referencedRelation: "crm_usages"
-            referencedColumns: ["collectivite_id"]
-          },
-          {
-            foreignKeyName: "partenaire_tag_collectivite_id_fkey"
-            columns: ["collectivite_id"]
-            isOneToOne: false
-            referencedRelation: "engagement_collectivite"
-            referencedColumns: ["collectivite_id"]
-          },
-          {
-            foreignKeyName: "partenaire_tag_collectivite_id_fkey"
-            columns: ["collectivite_id"]
-            isOneToOne: false
-            referencedRelation: "late_collectivite"
-            referencedColumns: ["collectivite_id"]
-          },
-          {
-            foreignKeyName: "partenaire_tag_collectivite_id_fkey"
-            columns: ["collectivite_id"]
-            isOneToOne: false
-            referencedRelation: "locales_engagement_collectivite"
-            referencedColumns: ["collectivite_id"]
-          },
-          {
-            foreignKeyName: "partenaire_tag_collectivite_id_fkey"
-            columns: ["collectivite_id"]
-            isOneToOne: false
-            referencedRelation: "locales_pourcentage_completude"
-            referencedColumns: ["collectivite_id"]
-          },
-          {
-            foreignKeyName: "partenaire_tag_collectivite_id_fkey"
-            columns: ["collectivite_id"]
-            isOneToOne: false
             referencedRelation: "named_collectivite"
             referencedColumns: ["collectivite_id"]
           },
@@ -15553,48 +9242,6 @@ export type Database = {
             columns: ["collectivite_id"]
             isOneToOne: false
             referencedRelation: "question_thematique_completude"
-            referencedColumns: ["collectivite_id"]
-          },
-          {
-            foreignKeyName: "partenaire_tag_collectivite_id_fkey"
-            columns: ["collectivite_id"]
-            isOneToOne: false
-            referencedRelation: "rattachement"
-            referencedColumns: ["collectivite_id"]
-          },
-          {
-            foreignKeyName: "partenaire_tag_collectivite_id_fkey"
-            columns: ["collectivite_id"]
-            isOneToOne: false
-            referencedRelation: "report_indicateur_resultat"
-            referencedColumns: ["collectivite_id"]
-          },
-          {
-            foreignKeyName: "partenaire_tag_collectivite_id_fkey"
-            columns: ["collectivite_id"]
-            isOneToOne: false
-            referencedRelation: "report_reponse_binaire"
-            referencedColumns: ["collectivite_id"]
-          },
-          {
-            foreignKeyName: "partenaire_tag_collectivite_id_fkey"
-            columns: ["collectivite_id"]
-            isOneToOne: false
-            referencedRelation: "report_reponse_choix"
-            referencedColumns: ["collectivite_id"]
-          },
-          {
-            foreignKeyName: "partenaire_tag_collectivite_id_fkey"
-            columns: ["collectivite_id"]
-            isOneToOne: false
-            referencedRelation: "report_reponse_proportion"
-            referencedColumns: ["collectivite_id"]
-          },
-          {
-            foreignKeyName: "partenaire_tag_collectivite_id_fkey"
-            columns: ["collectivite_id"]
-            isOneToOne: false
-            referencedRelation: "report_scores"
             referencedColumns: ["collectivite_id"]
           },
           {
@@ -15623,13 +9270,6 @@ export type Database = {
             columns: ["collectivite_id"]
             isOneToOne: false
             referencedRelation: "retool_plan_action_hebdo"
-            referencedColumns: ["collectivite_id"]
-          },
-          {
-            foreignKeyName: "partenaire_tag_collectivite_id_fkey"
-            columns: ["collectivite_id"]
-            isOneToOne: false
-            referencedRelation: "retool_plan_action_premier_usage"
             referencedColumns: ["collectivite_id"]
           },
           {
@@ -15740,13 +9380,6 @@ export type Database = {
             foreignKeyName: "personnalisation_consequence_collectivite_id_fkey"
             columns: ["collectivite_id"]
             isOneToOne: true
-            referencedRelation: "action_snippet"
-            referencedColumns: ["collectivite_id"]
-          },
-          {
-            foreignKeyName: "personnalisation_consequence_collectivite_id_fkey"
-            columns: ["collectivite_id"]
-            isOneToOne: true
             referencedRelation: "action_statuts"
             referencedColumns: ["collectivite_id"]
           },
@@ -15775,29 +9408,8 @@ export type Database = {
             foreignKeyName: "personnalisation_consequence_collectivite_id_fkey"
             columns: ["collectivite_id"]
             isOneToOne: true
-            referencedRelation: "carte_collectivite_active"
-            referencedColumns: ["collectivite_id"]
-          },
-          {
-            foreignKeyName: "personnalisation_consequence_collectivite_id_fkey"
-            columns: ["collectivite_id"]
-            isOneToOne: true
             referencedRelation: "collectivite"
             referencedColumns: ["id"]
-          },
-          {
-            foreignKeyName: "personnalisation_consequence_collectivite_id_fkey"
-            columns: ["collectivite_id"]
-            isOneToOne: true
-            referencedRelation: "collectivite"
-            referencedColumns: ["collectivite_id"]
-          },
-          {
-            foreignKeyName: "personnalisation_consequence_collectivite_id_fkey"
-            columns: ["collectivite_id"]
-            isOneToOne: true
-            referencedRelation: "collectivite_action_statut"
-            referencedColumns: ["collectivite_id"]
           },
           {
             foreignKeyName: "personnalisation_consequence_collectivite_id_fkey"
@@ -15824,56 +9436,7 @@ export type Database = {
             foreignKeyName: "personnalisation_consequence_collectivite_id_fkey"
             columns: ["collectivite_id"]
             isOneToOne: true
-            referencedRelation: "collectivite_labellisation"
-            referencedColumns: ["collectivite_id"]
-          },
-          {
-            foreignKeyName: "personnalisation_consequence_collectivite_id_fkey"
-            columns: ["collectivite_id"]
-            isOneToOne: true
-            referencedRelation: "collectivite_membre_crm"
-            referencedColumns: ["collectivite_id"]
-          },
-          {
-            foreignKeyName: "personnalisation_consequence_collectivite_id_fkey"
-            columns: ["collectivite_id"]
-            isOneToOne: true
             referencedRelation: "collectivite_niveau_acces"
-            referencedColumns: ["collectivite_id"]
-          },
-          {
-            foreignKeyName: "personnalisation_consequence_collectivite_id_fkey"
-            columns: ["collectivite_id"]
-            isOneToOne: true
-            referencedRelation: "collectivite_plan_action"
-            referencedColumns: ["collectivite_id"]
-          },
-          {
-            foreignKeyName: "personnalisation_consequence_collectivite_id_fkey"
-            columns: ["collectivite_id"]
-            isOneToOne: true
-            referencedRelation: "collectivite_plan_action"
-            referencedColumns: ["collectivite_id"]
-          },
-          {
-            foreignKeyName: "personnalisation_consequence_collectivite_id_fkey"
-            columns: ["collectivite_id"]
-            isOneToOne: true
-            referencedRelation: "collectivite_referentiel"
-            referencedColumns: ["collectivite_id"]
-          },
-          {
-            foreignKeyName: "personnalisation_consequence_collectivite_id_fkey"
-            columns: ["collectivite_id"]
-            isOneToOne: true
-            referencedRelation: "collectivite_utilisateur"
-            referencedColumns: ["collectivite_id"]
-          },
-          {
-            foreignKeyName: "personnalisation_consequence_collectivite_id_fkey"
-            columns: ["collectivite_id"]
-            isOneToOne: true
-            referencedRelation: "collectivites_crm"
             referencedColumns: ["collectivite_id"]
           },
           {
@@ -15901,41 +9464,6 @@ export type Database = {
             foreignKeyName: "personnalisation_consequence_collectivite_id_fkey"
             columns: ["collectivite_id"]
             isOneToOne: true
-            referencedRelation: "crm_usages"
-            referencedColumns: ["collectivite_id"]
-          },
-          {
-            foreignKeyName: "personnalisation_consequence_collectivite_id_fkey"
-            columns: ["collectivite_id"]
-            isOneToOne: true
-            referencedRelation: "engagement_collectivite"
-            referencedColumns: ["collectivite_id"]
-          },
-          {
-            foreignKeyName: "personnalisation_consequence_collectivite_id_fkey"
-            columns: ["collectivite_id"]
-            isOneToOne: true
-            referencedRelation: "late_collectivite"
-            referencedColumns: ["collectivite_id"]
-          },
-          {
-            foreignKeyName: "personnalisation_consequence_collectivite_id_fkey"
-            columns: ["collectivite_id"]
-            isOneToOne: true
-            referencedRelation: "locales_engagement_collectivite"
-            referencedColumns: ["collectivite_id"]
-          },
-          {
-            foreignKeyName: "personnalisation_consequence_collectivite_id_fkey"
-            columns: ["collectivite_id"]
-            isOneToOne: true
-            referencedRelation: "locales_pourcentage_completude"
-            referencedColumns: ["collectivite_id"]
-          },
-          {
-            foreignKeyName: "personnalisation_consequence_collectivite_id_fkey"
-            columns: ["collectivite_id"]
-            isOneToOne: true
             referencedRelation: "named_collectivite"
             referencedColumns: ["collectivite_id"]
           },
@@ -15951,48 +9479,6 @@ export type Database = {
             columns: ["collectivite_id"]
             isOneToOne: true
             referencedRelation: "question_thematique_completude"
-            referencedColumns: ["collectivite_id"]
-          },
-          {
-            foreignKeyName: "personnalisation_consequence_collectivite_id_fkey"
-            columns: ["collectivite_id"]
-            isOneToOne: true
-            referencedRelation: "rattachement"
-            referencedColumns: ["collectivite_id"]
-          },
-          {
-            foreignKeyName: "personnalisation_consequence_collectivite_id_fkey"
-            columns: ["collectivite_id"]
-            isOneToOne: true
-            referencedRelation: "report_indicateur_resultat"
-            referencedColumns: ["collectivite_id"]
-          },
-          {
-            foreignKeyName: "personnalisation_consequence_collectivite_id_fkey"
-            columns: ["collectivite_id"]
-            isOneToOne: true
-            referencedRelation: "report_reponse_binaire"
-            referencedColumns: ["collectivite_id"]
-          },
-          {
-            foreignKeyName: "personnalisation_consequence_collectivite_id_fkey"
-            columns: ["collectivite_id"]
-            isOneToOne: true
-            referencedRelation: "report_reponse_choix"
-            referencedColumns: ["collectivite_id"]
-          },
-          {
-            foreignKeyName: "personnalisation_consequence_collectivite_id_fkey"
-            columns: ["collectivite_id"]
-            isOneToOne: true
-            referencedRelation: "report_reponse_proportion"
-            referencedColumns: ["collectivite_id"]
-          },
-          {
-            foreignKeyName: "personnalisation_consequence_collectivite_id_fkey"
-            columns: ["collectivite_id"]
-            isOneToOne: true
-            referencedRelation: "report_scores"
             referencedColumns: ["collectivite_id"]
           },
           {
@@ -16021,13 +9507,6 @@ export type Database = {
             columns: ["collectivite_id"]
             isOneToOne: true
             referencedRelation: "retool_plan_action_hebdo"
-            referencedColumns: ["collectivite_id"]
-          },
-          {
-            foreignKeyName: "personnalisation_consequence_collectivite_id_fkey"
-            columns: ["collectivite_id"]
-            isOneToOne: true
-            referencedRelation: "retool_plan_action_premier_usage"
             referencedColumns: ["collectivite_id"]
           },
           {
@@ -16159,13 +9638,6 @@ export type Database = {
             foreignKeyName: "personne_tag_collectivite_id_fkey"
             columns: ["collectivite_id"]
             isOneToOne: false
-            referencedRelation: "action_snippet"
-            referencedColumns: ["collectivite_id"]
-          },
-          {
-            foreignKeyName: "personne_tag_collectivite_id_fkey"
-            columns: ["collectivite_id"]
-            isOneToOne: false
             referencedRelation: "action_statuts"
             referencedColumns: ["collectivite_id"]
           },
@@ -16194,29 +9666,8 @@ export type Database = {
             foreignKeyName: "personne_tag_collectivite_id_fkey"
             columns: ["collectivite_id"]
             isOneToOne: false
-            referencedRelation: "carte_collectivite_active"
-            referencedColumns: ["collectivite_id"]
-          },
-          {
-            foreignKeyName: "personne_tag_collectivite_id_fkey"
-            columns: ["collectivite_id"]
-            isOneToOne: false
             referencedRelation: "collectivite"
             referencedColumns: ["id"]
-          },
-          {
-            foreignKeyName: "personne_tag_collectivite_id_fkey"
-            columns: ["collectivite_id"]
-            isOneToOne: false
-            referencedRelation: "collectivite"
-            referencedColumns: ["collectivite_id"]
-          },
-          {
-            foreignKeyName: "personne_tag_collectivite_id_fkey"
-            columns: ["collectivite_id"]
-            isOneToOne: false
-            referencedRelation: "collectivite_action_statut"
-            referencedColumns: ["collectivite_id"]
           },
           {
             foreignKeyName: "personne_tag_collectivite_id_fkey"
@@ -16243,56 +9694,7 @@ export type Database = {
             foreignKeyName: "personne_tag_collectivite_id_fkey"
             columns: ["collectivite_id"]
             isOneToOne: false
-            referencedRelation: "collectivite_labellisation"
-            referencedColumns: ["collectivite_id"]
-          },
-          {
-            foreignKeyName: "personne_tag_collectivite_id_fkey"
-            columns: ["collectivite_id"]
-            isOneToOne: false
-            referencedRelation: "collectivite_membre_crm"
-            referencedColumns: ["collectivite_id"]
-          },
-          {
-            foreignKeyName: "personne_tag_collectivite_id_fkey"
-            columns: ["collectivite_id"]
-            isOneToOne: false
             referencedRelation: "collectivite_niveau_acces"
-            referencedColumns: ["collectivite_id"]
-          },
-          {
-            foreignKeyName: "personne_tag_collectivite_id_fkey"
-            columns: ["collectivite_id"]
-            isOneToOne: false
-            referencedRelation: "collectivite_plan_action"
-            referencedColumns: ["collectivite_id"]
-          },
-          {
-            foreignKeyName: "personne_tag_collectivite_id_fkey"
-            columns: ["collectivite_id"]
-            isOneToOne: false
-            referencedRelation: "collectivite_plan_action"
-            referencedColumns: ["collectivite_id"]
-          },
-          {
-            foreignKeyName: "personne_tag_collectivite_id_fkey"
-            columns: ["collectivite_id"]
-            isOneToOne: false
-            referencedRelation: "collectivite_referentiel"
-            referencedColumns: ["collectivite_id"]
-          },
-          {
-            foreignKeyName: "personne_tag_collectivite_id_fkey"
-            columns: ["collectivite_id"]
-            isOneToOne: false
-            referencedRelation: "collectivite_utilisateur"
-            referencedColumns: ["collectivite_id"]
-          },
-          {
-            foreignKeyName: "personne_tag_collectivite_id_fkey"
-            columns: ["collectivite_id"]
-            isOneToOne: false
-            referencedRelation: "collectivites_crm"
             referencedColumns: ["collectivite_id"]
           },
           {
@@ -16320,41 +9722,6 @@ export type Database = {
             foreignKeyName: "personne_tag_collectivite_id_fkey"
             columns: ["collectivite_id"]
             isOneToOne: false
-            referencedRelation: "crm_usages"
-            referencedColumns: ["collectivite_id"]
-          },
-          {
-            foreignKeyName: "personne_tag_collectivite_id_fkey"
-            columns: ["collectivite_id"]
-            isOneToOne: false
-            referencedRelation: "engagement_collectivite"
-            referencedColumns: ["collectivite_id"]
-          },
-          {
-            foreignKeyName: "personne_tag_collectivite_id_fkey"
-            columns: ["collectivite_id"]
-            isOneToOne: false
-            referencedRelation: "late_collectivite"
-            referencedColumns: ["collectivite_id"]
-          },
-          {
-            foreignKeyName: "personne_tag_collectivite_id_fkey"
-            columns: ["collectivite_id"]
-            isOneToOne: false
-            referencedRelation: "locales_engagement_collectivite"
-            referencedColumns: ["collectivite_id"]
-          },
-          {
-            foreignKeyName: "personne_tag_collectivite_id_fkey"
-            columns: ["collectivite_id"]
-            isOneToOne: false
-            referencedRelation: "locales_pourcentage_completude"
-            referencedColumns: ["collectivite_id"]
-          },
-          {
-            foreignKeyName: "personne_tag_collectivite_id_fkey"
-            columns: ["collectivite_id"]
-            isOneToOne: false
             referencedRelation: "named_collectivite"
             referencedColumns: ["collectivite_id"]
           },
@@ -16370,48 +9737,6 @@ export type Database = {
             columns: ["collectivite_id"]
             isOneToOne: false
             referencedRelation: "question_thematique_completude"
-            referencedColumns: ["collectivite_id"]
-          },
-          {
-            foreignKeyName: "personne_tag_collectivite_id_fkey"
-            columns: ["collectivite_id"]
-            isOneToOne: false
-            referencedRelation: "rattachement"
-            referencedColumns: ["collectivite_id"]
-          },
-          {
-            foreignKeyName: "personne_tag_collectivite_id_fkey"
-            columns: ["collectivite_id"]
-            isOneToOne: false
-            referencedRelation: "report_indicateur_resultat"
-            referencedColumns: ["collectivite_id"]
-          },
-          {
-            foreignKeyName: "personne_tag_collectivite_id_fkey"
-            columns: ["collectivite_id"]
-            isOneToOne: false
-            referencedRelation: "report_reponse_binaire"
-            referencedColumns: ["collectivite_id"]
-          },
-          {
-            foreignKeyName: "personne_tag_collectivite_id_fkey"
-            columns: ["collectivite_id"]
-            isOneToOne: false
-            referencedRelation: "report_reponse_choix"
-            referencedColumns: ["collectivite_id"]
-          },
-          {
-            foreignKeyName: "personne_tag_collectivite_id_fkey"
-            columns: ["collectivite_id"]
-            isOneToOne: false
-            referencedRelation: "report_reponse_proportion"
-            referencedColumns: ["collectivite_id"]
-          },
-          {
-            foreignKeyName: "personne_tag_collectivite_id_fkey"
-            columns: ["collectivite_id"]
-            isOneToOne: false
-            referencedRelation: "report_scores"
             referencedColumns: ["collectivite_id"]
           },
           {
@@ -16440,13 +9765,6 @@ export type Database = {
             columns: ["collectivite_id"]
             isOneToOne: false
             referencedRelation: "retool_plan_action_hebdo"
-            referencedColumns: ["collectivite_id"]
-          },
-          {
-            foreignKeyName: "personne_tag_collectivite_id_fkey"
-            columns: ["collectivite_id"]
-            isOneToOne: false
-            referencedRelation: "retool_plan_action_premier_usage"
             referencedColumns: ["collectivite_id"]
           },
           {
@@ -16592,13 +9910,6 @@ export type Database = {
             foreignKeyName: "post_audit_scores_audit_id_fkey"
             columns: ["audit_id"]
             isOneToOne: false
-            referencedRelation: "audit"
-            referencedColumns: ["id"]
-          },
-          {
-            foreignKeyName: "post_audit_scores_audit_id_fkey"
-            columns: ["audit_id"]
-            isOneToOne: false
             referencedRelation: "audit_en_cours"
             referencedColumns: ["id"]
           },
@@ -16643,13 +9954,6 @@ export type Database = {
             isOneToOne: false
             referencedRelation: "action_audit_state"
             referencedColumns: ["audit_id"]
-          },
-          {
-            foreignKeyName: "pre_audit_scores_audit_id_fkey"
-            columns: ["audit_id"]
-            isOneToOne: false
-            referencedRelation: "audit"
-            referencedColumns: ["id"]
           },
           {
             foreignKeyName: "pre_audit_scores_audit_id_fkey"
@@ -16760,13 +10064,6 @@ export type Database = {
             foreignKeyName: "preuve_audit_audit_id_fkey"
             columns: ["audit_id"]
             isOneToOne: false
-            referencedRelation: "audit"
-            referencedColumns: ["id"]
-          },
-          {
-            foreignKeyName: "preuve_audit_audit_id_fkey"
-            columns: ["audit_id"]
-            isOneToOne: false
             referencedRelation: "audit_en_cours"
             referencedColumns: ["id"]
           },
@@ -16776,13 +10073,6 @@ export type Database = {
             isOneToOne: false
             referencedRelation: "retool_audit"
             referencedColumns: ["audit_id"]
-          },
-          {
-            foreignKeyName: "preuve_collectivite_id"
-            columns: ["collectivite_id"]
-            isOneToOne: false
-            referencedRelation: "action_snippet"
-            referencedColumns: ["collectivite_id"]
           },
           {
             foreignKeyName: "preuve_collectivite_id"
@@ -16816,29 +10106,8 @@ export type Database = {
             foreignKeyName: "preuve_collectivite_id"
             columns: ["collectivite_id"]
             isOneToOne: false
-            referencedRelation: "carte_collectivite_active"
-            referencedColumns: ["collectivite_id"]
-          },
-          {
-            foreignKeyName: "preuve_collectivite_id"
-            columns: ["collectivite_id"]
-            isOneToOne: false
             referencedRelation: "collectivite"
             referencedColumns: ["id"]
-          },
-          {
-            foreignKeyName: "preuve_collectivite_id"
-            columns: ["collectivite_id"]
-            isOneToOne: false
-            referencedRelation: "collectivite"
-            referencedColumns: ["collectivite_id"]
-          },
-          {
-            foreignKeyName: "preuve_collectivite_id"
-            columns: ["collectivite_id"]
-            isOneToOne: false
-            referencedRelation: "collectivite_action_statut"
-            referencedColumns: ["collectivite_id"]
           },
           {
             foreignKeyName: "preuve_collectivite_id"
@@ -16865,56 +10134,7 @@ export type Database = {
             foreignKeyName: "preuve_collectivite_id"
             columns: ["collectivite_id"]
             isOneToOne: false
-            referencedRelation: "collectivite_labellisation"
-            referencedColumns: ["collectivite_id"]
-          },
-          {
-            foreignKeyName: "preuve_collectivite_id"
-            columns: ["collectivite_id"]
-            isOneToOne: false
-            referencedRelation: "collectivite_membre_crm"
-            referencedColumns: ["collectivite_id"]
-          },
-          {
-            foreignKeyName: "preuve_collectivite_id"
-            columns: ["collectivite_id"]
-            isOneToOne: false
             referencedRelation: "collectivite_niveau_acces"
-            referencedColumns: ["collectivite_id"]
-          },
-          {
-            foreignKeyName: "preuve_collectivite_id"
-            columns: ["collectivite_id"]
-            isOneToOne: false
-            referencedRelation: "collectivite_plan_action"
-            referencedColumns: ["collectivite_id"]
-          },
-          {
-            foreignKeyName: "preuve_collectivite_id"
-            columns: ["collectivite_id"]
-            isOneToOne: false
-            referencedRelation: "collectivite_plan_action"
-            referencedColumns: ["collectivite_id"]
-          },
-          {
-            foreignKeyName: "preuve_collectivite_id"
-            columns: ["collectivite_id"]
-            isOneToOne: false
-            referencedRelation: "collectivite_referentiel"
-            referencedColumns: ["collectivite_id"]
-          },
-          {
-            foreignKeyName: "preuve_collectivite_id"
-            columns: ["collectivite_id"]
-            isOneToOne: false
-            referencedRelation: "collectivite_utilisateur"
-            referencedColumns: ["collectivite_id"]
-          },
-          {
-            foreignKeyName: "preuve_collectivite_id"
-            columns: ["collectivite_id"]
-            isOneToOne: false
-            referencedRelation: "collectivites_crm"
             referencedColumns: ["collectivite_id"]
           },
           {
@@ -16942,41 +10162,6 @@ export type Database = {
             foreignKeyName: "preuve_collectivite_id"
             columns: ["collectivite_id"]
             isOneToOne: false
-            referencedRelation: "crm_usages"
-            referencedColumns: ["collectivite_id"]
-          },
-          {
-            foreignKeyName: "preuve_collectivite_id"
-            columns: ["collectivite_id"]
-            isOneToOne: false
-            referencedRelation: "engagement_collectivite"
-            referencedColumns: ["collectivite_id"]
-          },
-          {
-            foreignKeyName: "preuve_collectivite_id"
-            columns: ["collectivite_id"]
-            isOneToOne: false
-            referencedRelation: "late_collectivite"
-            referencedColumns: ["collectivite_id"]
-          },
-          {
-            foreignKeyName: "preuve_collectivite_id"
-            columns: ["collectivite_id"]
-            isOneToOne: false
-            referencedRelation: "locales_engagement_collectivite"
-            referencedColumns: ["collectivite_id"]
-          },
-          {
-            foreignKeyName: "preuve_collectivite_id"
-            columns: ["collectivite_id"]
-            isOneToOne: false
-            referencedRelation: "locales_pourcentage_completude"
-            referencedColumns: ["collectivite_id"]
-          },
-          {
-            foreignKeyName: "preuve_collectivite_id"
-            columns: ["collectivite_id"]
-            isOneToOne: false
             referencedRelation: "named_collectivite"
             referencedColumns: ["collectivite_id"]
           },
@@ -16992,48 +10177,6 @@ export type Database = {
             columns: ["collectivite_id"]
             isOneToOne: false
             referencedRelation: "question_thematique_completude"
-            referencedColumns: ["collectivite_id"]
-          },
-          {
-            foreignKeyName: "preuve_collectivite_id"
-            columns: ["collectivite_id"]
-            isOneToOne: false
-            referencedRelation: "rattachement"
-            referencedColumns: ["collectivite_id"]
-          },
-          {
-            foreignKeyName: "preuve_collectivite_id"
-            columns: ["collectivite_id"]
-            isOneToOne: false
-            referencedRelation: "report_indicateur_resultat"
-            referencedColumns: ["collectivite_id"]
-          },
-          {
-            foreignKeyName: "preuve_collectivite_id"
-            columns: ["collectivite_id"]
-            isOneToOne: false
-            referencedRelation: "report_reponse_binaire"
-            referencedColumns: ["collectivite_id"]
-          },
-          {
-            foreignKeyName: "preuve_collectivite_id"
-            columns: ["collectivite_id"]
-            isOneToOne: false
-            referencedRelation: "report_reponse_choix"
-            referencedColumns: ["collectivite_id"]
-          },
-          {
-            foreignKeyName: "preuve_collectivite_id"
-            columns: ["collectivite_id"]
-            isOneToOne: false
-            referencedRelation: "report_reponse_proportion"
-            referencedColumns: ["collectivite_id"]
-          },
-          {
-            foreignKeyName: "preuve_collectivite_id"
-            columns: ["collectivite_id"]
-            isOneToOne: false
-            referencedRelation: "report_scores"
             referencedColumns: ["collectivite_id"]
           },
           {
@@ -17062,13 +10205,6 @@ export type Database = {
             columns: ["collectivite_id"]
             isOneToOne: false
             referencedRelation: "retool_plan_action_hebdo"
-            referencedColumns: ["collectivite_id"]
-          },
-          {
-            foreignKeyName: "preuve_collectivite_id"
-            columns: ["collectivite_id"]
-            isOneToOne: false
-            referencedRelation: "retool_plan_action_premier_usage"
             referencedColumns: ["collectivite_id"]
           },
           {
@@ -17171,13 +10307,6 @@ export type Database = {
             foreignKeyName: "preuve_collectivite_id"
             columns: ["collectivite_id"]
             isOneToOne: false
-            referencedRelation: "action_snippet"
-            referencedColumns: ["collectivite_id"]
-          },
-          {
-            foreignKeyName: "preuve_collectivite_id"
-            columns: ["collectivite_id"]
-            isOneToOne: false
             referencedRelation: "action_statuts"
             referencedColumns: ["collectivite_id"]
           },
@@ -17206,29 +10335,8 @@ export type Database = {
             foreignKeyName: "preuve_collectivite_id"
             columns: ["collectivite_id"]
             isOneToOne: false
-            referencedRelation: "carte_collectivite_active"
-            referencedColumns: ["collectivite_id"]
-          },
-          {
-            foreignKeyName: "preuve_collectivite_id"
-            columns: ["collectivite_id"]
-            isOneToOne: false
             referencedRelation: "collectivite"
             referencedColumns: ["id"]
-          },
-          {
-            foreignKeyName: "preuve_collectivite_id"
-            columns: ["collectivite_id"]
-            isOneToOne: false
-            referencedRelation: "collectivite"
-            referencedColumns: ["collectivite_id"]
-          },
-          {
-            foreignKeyName: "preuve_collectivite_id"
-            columns: ["collectivite_id"]
-            isOneToOne: false
-            referencedRelation: "collectivite_action_statut"
-            referencedColumns: ["collectivite_id"]
           },
           {
             foreignKeyName: "preuve_collectivite_id"
@@ -17255,56 +10363,7 @@ export type Database = {
             foreignKeyName: "preuve_collectivite_id"
             columns: ["collectivite_id"]
             isOneToOne: false
-            referencedRelation: "collectivite_labellisation"
-            referencedColumns: ["collectivite_id"]
-          },
-          {
-            foreignKeyName: "preuve_collectivite_id"
-            columns: ["collectivite_id"]
-            isOneToOne: false
-            referencedRelation: "collectivite_membre_crm"
-            referencedColumns: ["collectivite_id"]
-          },
-          {
-            foreignKeyName: "preuve_collectivite_id"
-            columns: ["collectivite_id"]
-            isOneToOne: false
             referencedRelation: "collectivite_niveau_acces"
-            referencedColumns: ["collectivite_id"]
-          },
-          {
-            foreignKeyName: "preuve_collectivite_id"
-            columns: ["collectivite_id"]
-            isOneToOne: false
-            referencedRelation: "collectivite_plan_action"
-            referencedColumns: ["collectivite_id"]
-          },
-          {
-            foreignKeyName: "preuve_collectivite_id"
-            columns: ["collectivite_id"]
-            isOneToOne: false
-            referencedRelation: "collectivite_plan_action"
-            referencedColumns: ["collectivite_id"]
-          },
-          {
-            foreignKeyName: "preuve_collectivite_id"
-            columns: ["collectivite_id"]
-            isOneToOne: false
-            referencedRelation: "collectivite_referentiel"
-            referencedColumns: ["collectivite_id"]
-          },
-          {
-            foreignKeyName: "preuve_collectivite_id"
-            columns: ["collectivite_id"]
-            isOneToOne: false
-            referencedRelation: "collectivite_utilisateur"
-            referencedColumns: ["collectivite_id"]
-          },
-          {
-            foreignKeyName: "preuve_collectivite_id"
-            columns: ["collectivite_id"]
-            isOneToOne: false
-            referencedRelation: "collectivites_crm"
             referencedColumns: ["collectivite_id"]
           },
           {
@@ -17332,41 +10391,6 @@ export type Database = {
             foreignKeyName: "preuve_collectivite_id"
             columns: ["collectivite_id"]
             isOneToOne: false
-            referencedRelation: "crm_usages"
-            referencedColumns: ["collectivite_id"]
-          },
-          {
-            foreignKeyName: "preuve_collectivite_id"
-            columns: ["collectivite_id"]
-            isOneToOne: false
-            referencedRelation: "engagement_collectivite"
-            referencedColumns: ["collectivite_id"]
-          },
-          {
-            foreignKeyName: "preuve_collectivite_id"
-            columns: ["collectivite_id"]
-            isOneToOne: false
-            referencedRelation: "late_collectivite"
-            referencedColumns: ["collectivite_id"]
-          },
-          {
-            foreignKeyName: "preuve_collectivite_id"
-            columns: ["collectivite_id"]
-            isOneToOne: false
-            referencedRelation: "locales_engagement_collectivite"
-            referencedColumns: ["collectivite_id"]
-          },
-          {
-            foreignKeyName: "preuve_collectivite_id"
-            columns: ["collectivite_id"]
-            isOneToOne: false
-            referencedRelation: "locales_pourcentage_completude"
-            referencedColumns: ["collectivite_id"]
-          },
-          {
-            foreignKeyName: "preuve_collectivite_id"
-            columns: ["collectivite_id"]
-            isOneToOne: false
             referencedRelation: "named_collectivite"
             referencedColumns: ["collectivite_id"]
           },
@@ -17382,48 +10406,6 @@ export type Database = {
             columns: ["collectivite_id"]
             isOneToOne: false
             referencedRelation: "question_thematique_completude"
-            referencedColumns: ["collectivite_id"]
-          },
-          {
-            foreignKeyName: "preuve_collectivite_id"
-            columns: ["collectivite_id"]
-            isOneToOne: false
-            referencedRelation: "rattachement"
-            referencedColumns: ["collectivite_id"]
-          },
-          {
-            foreignKeyName: "preuve_collectivite_id"
-            columns: ["collectivite_id"]
-            isOneToOne: false
-            referencedRelation: "report_indicateur_resultat"
-            referencedColumns: ["collectivite_id"]
-          },
-          {
-            foreignKeyName: "preuve_collectivite_id"
-            columns: ["collectivite_id"]
-            isOneToOne: false
-            referencedRelation: "report_reponse_binaire"
-            referencedColumns: ["collectivite_id"]
-          },
-          {
-            foreignKeyName: "preuve_collectivite_id"
-            columns: ["collectivite_id"]
-            isOneToOne: false
-            referencedRelation: "report_reponse_choix"
-            referencedColumns: ["collectivite_id"]
-          },
-          {
-            foreignKeyName: "preuve_collectivite_id"
-            columns: ["collectivite_id"]
-            isOneToOne: false
-            referencedRelation: "report_reponse_proportion"
-            referencedColumns: ["collectivite_id"]
-          },
-          {
-            foreignKeyName: "preuve_collectivite_id"
-            columns: ["collectivite_id"]
-            isOneToOne: false
-            referencedRelation: "report_scores"
             referencedColumns: ["collectivite_id"]
           },
           {
@@ -17452,13 +10434,6 @@ export type Database = {
             columns: ["collectivite_id"]
             isOneToOne: false
             referencedRelation: "retool_plan_action_hebdo"
-            referencedColumns: ["collectivite_id"]
-          },
-          {
-            foreignKeyName: "preuve_collectivite_id"
-            columns: ["collectivite_id"]
-            isOneToOne: false
-            referencedRelation: "retool_plan_action_premier_usage"
             referencedColumns: ["collectivite_id"]
           },
           {
@@ -17568,13 +10543,6 @@ export type Database = {
             foreignKeyName: "preuve_collectivite_id"
             columns: ["collectivite_id"]
             isOneToOne: false
-            referencedRelation: "action_snippet"
-            referencedColumns: ["collectivite_id"]
-          },
-          {
-            foreignKeyName: "preuve_collectivite_id"
-            columns: ["collectivite_id"]
-            isOneToOne: false
             referencedRelation: "action_statuts"
             referencedColumns: ["collectivite_id"]
           },
@@ -17603,29 +10571,8 @@ export type Database = {
             foreignKeyName: "preuve_collectivite_id"
             columns: ["collectivite_id"]
             isOneToOne: false
-            referencedRelation: "carte_collectivite_active"
-            referencedColumns: ["collectivite_id"]
-          },
-          {
-            foreignKeyName: "preuve_collectivite_id"
-            columns: ["collectivite_id"]
-            isOneToOne: false
             referencedRelation: "collectivite"
             referencedColumns: ["id"]
-          },
-          {
-            foreignKeyName: "preuve_collectivite_id"
-            columns: ["collectivite_id"]
-            isOneToOne: false
-            referencedRelation: "collectivite"
-            referencedColumns: ["collectivite_id"]
-          },
-          {
-            foreignKeyName: "preuve_collectivite_id"
-            columns: ["collectivite_id"]
-            isOneToOne: false
-            referencedRelation: "collectivite_action_statut"
-            referencedColumns: ["collectivite_id"]
           },
           {
             foreignKeyName: "preuve_collectivite_id"
@@ -17652,56 +10599,7 @@ export type Database = {
             foreignKeyName: "preuve_collectivite_id"
             columns: ["collectivite_id"]
             isOneToOne: false
-            referencedRelation: "collectivite_labellisation"
-            referencedColumns: ["collectivite_id"]
-          },
-          {
-            foreignKeyName: "preuve_collectivite_id"
-            columns: ["collectivite_id"]
-            isOneToOne: false
-            referencedRelation: "collectivite_membre_crm"
-            referencedColumns: ["collectivite_id"]
-          },
-          {
-            foreignKeyName: "preuve_collectivite_id"
-            columns: ["collectivite_id"]
-            isOneToOne: false
             referencedRelation: "collectivite_niveau_acces"
-            referencedColumns: ["collectivite_id"]
-          },
-          {
-            foreignKeyName: "preuve_collectivite_id"
-            columns: ["collectivite_id"]
-            isOneToOne: false
-            referencedRelation: "collectivite_plan_action"
-            referencedColumns: ["collectivite_id"]
-          },
-          {
-            foreignKeyName: "preuve_collectivite_id"
-            columns: ["collectivite_id"]
-            isOneToOne: false
-            referencedRelation: "collectivite_plan_action"
-            referencedColumns: ["collectivite_id"]
-          },
-          {
-            foreignKeyName: "preuve_collectivite_id"
-            columns: ["collectivite_id"]
-            isOneToOne: false
-            referencedRelation: "collectivite_referentiel"
-            referencedColumns: ["collectivite_id"]
-          },
-          {
-            foreignKeyName: "preuve_collectivite_id"
-            columns: ["collectivite_id"]
-            isOneToOne: false
-            referencedRelation: "collectivite_utilisateur"
-            referencedColumns: ["collectivite_id"]
-          },
-          {
-            foreignKeyName: "preuve_collectivite_id"
-            columns: ["collectivite_id"]
-            isOneToOne: false
-            referencedRelation: "collectivites_crm"
             referencedColumns: ["collectivite_id"]
           },
           {
@@ -17729,41 +10627,6 @@ export type Database = {
             foreignKeyName: "preuve_collectivite_id"
             columns: ["collectivite_id"]
             isOneToOne: false
-            referencedRelation: "crm_usages"
-            referencedColumns: ["collectivite_id"]
-          },
-          {
-            foreignKeyName: "preuve_collectivite_id"
-            columns: ["collectivite_id"]
-            isOneToOne: false
-            referencedRelation: "engagement_collectivite"
-            referencedColumns: ["collectivite_id"]
-          },
-          {
-            foreignKeyName: "preuve_collectivite_id"
-            columns: ["collectivite_id"]
-            isOneToOne: false
-            referencedRelation: "late_collectivite"
-            referencedColumns: ["collectivite_id"]
-          },
-          {
-            foreignKeyName: "preuve_collectivite_id"
-            columns: ["collectivite_id"]
-            isOneToOne: false
-            referencedRelation: "locales_engagement_collectivite"
-            referencedColumns: ["collectivite_id"]
-          },
-          {
-            foreignKeyName: "preuve_collectivite_id"
-            columns: ["collectivite_id"]
-            isOneToOne: false
-            referencedRelation: "locales_pourcentage_completude"
-            referencedColumns: ["collectivite_id"]
-          },
-          {
-            foreignKeyName: "preuve_collectivite_id"
-            columns: ["collectivite_id"]
-            isOneToOne: false
             referencedRelation: "named_collectivite"
             referencedColumns: ["collectivite_id"]
           },
@@ -17779,48 +10642,6 @@ export type Database = {
             columns: ["collectivite_id"]
             isOneToOne: false
             referencedRelation: "question_thematique_completude"
-            referencedColumns: ["collectivite_id"]
-          },
-          {
-            foreignKeyName: "preuve_collectivite_id"
-            columns: ["collectivite_id"]
-            isOneToOne: false
-            referencedRelation: "rattachement"
-            referencedColumns: ["collectivite_id"]
-          },
-          {
-            foreignKeyName: "preuve_collectivite_id"
-            columns: ["collectivite_id"]
-            isOneToOne: false
-            referencedRelation: "report_indicateur_resultat"
-            referencedColumns: ["collectivite_id"]
-          },
-          {
-            foreignKeyName: "preuve_collectivite_id"
-            columns: ["collectivite_id"]
-            isOneToOne: false
-            referencedRelation: "report_reponse_binaire"
-            referencedColumns: ["collectivite_id"]
-          },
-          {
-            foreignKeyName: "preuve_collectivite_id"
-            columns: ["collectivite_id"]
-            isOneToOne: false
-            referencedRelation: "report_reponse_choix"
-            referencedColumns: ["collectivite_id"]
-          },
-          {
-            foreignKeyName: "preuve_collectivite_id"
-            columns: ["collectivite_id"]
-            isOneToOne: false
-            referencedRelation: "report_reponse_proportion"
-            referencedColumns: ["collectivite_id"]
-          },
-          {
-            foreignKeyName: "preuve_collectivite_id"
-            columns: ["collectivite_id"]
-            isOneToOne: false
-            referencedRelation: "report_scores"
             referencedColumns: ["collectivite_id"]
           },
           {
@@ -17849,13 +10670,6 @@ export type Database = {
             columns: ["collectivite_id"]
             isOneToOne: false
             referencedRelation: "retool_plan_action_hebdo"
-            referencedColumns: ["collectivite_id"]
-          },
-          {
-            foreignKeyName: "preuve_collectivite_id"
-            columns: ["collectivite_id"]
-            isOneToOne: false
-            referencedRelation: "retool_plan_action_premier_usage"
             referencedColumns: ["collectivite_id"]
           },
           {
@@ -17918,13 +10732,6 @@ export type Database = {
             foreignKeyName: "preuve_labellisation_demande_id_fkey"
             columns: ["demande_id"]
             isOneToOne: false
-            referencedRelation: "demande"
-            referencedColumns: ["id"]
-          },
-          {
-            foreignKeyName: "preuve_labellisation_demande_id_fkey"
-            columns: ["demande_id"]
-            isOneToOne: false
             referencedRelation: "retool_audit"
             referencedColumns: ["demande_id"]
           },
@@ -17979,13 +10786,6 @@ export type Database = {
             foreignKeyName: "preuve_collectivite_id"
             columns: ["collectivite_id"]
             isOneToOne: false
-            referencedRelation: "action_snippet"
-            referencedColumns: ["collectivite_id"]
-          },
-          {
-            foreignKeyName: "preuve_collectivite_id"
-            columns: ["collectivite_id"]
-            isOneToOne: false
             referencedRelation: "action_statuts"
             referencedColumns: ["collectivite_id"]
           },
@@ -18014,29 +10814,8 @@ export type Database = {
             foreignKeyName: "preuve_collectivite_id"
             columns: ["collectivite_id"]
             isOneToOne: false
-            referencedRelation: "carte_collectivite_active"
-            referencedColumns: ["collectivite_id"]
-          },
-          {
-            foreignKeyName: "preuve_collectivite_id"
-            columns: ["collectivite_id"]
-            isOneToOne: false
             referencedRelation: "collectivite"
             referencedColumns: ["id"]
-          },
-          {
-            foreignKeyName: "preuve_collectivite_id"
-            columns: ["collectivite_id"]
-            isOneToOne: false
-            referencedRelation: "collectivite"
-            referencedColumns: ["collectivite_id"]
-          },
-          {
-            foreignKeyName: "preuve_collectivite_id"
-            columns: ["collectivite_id"]
-            isOneToOne: false
-            referencedRelation: "collectivite_action_statut"
-            referencedColumns: ["collectivite_id"]
           },
           {
             foreignKeyName: "preuve_collectivite_id"
@@ -18063,56 +10842,7 @@ export type Database = {
             foreignKeyName: "preuve_collectivite_id"
             columns: ["collectivite_id"]
             isOneToOne: false
-            referencedRelation: "collectivite_labellisation"
-            referencedColumns: ["collectivite_id"]
-          },
-          {
-            foreignKeyName: "preuve_collectivite_id"
-            columns: ["collectivite_id"]
-            isOneToOne: false
-            referencedRelation: "collectivite_membre_crm"
-            referencedColumns: ["collectivite_id"]
-          },
-          {
-            foreignKeyName: "preuve_collectivite_id"
-            columns: ["collectivite_id"]
-            isOneToOne: false
             referencedRelation: "collectivite_niveau_acces"
-            referencedColumns: ["collectivite_id"]
-          },
-          {
-            foreignKeyName: "preuve_collectivite_id"
-            columns: ["collectivite_id"]
-            isOneToOne: false
-            referencedRelation: "collectivite_plan_action"
-            referencedColumns: ["collectivite_id"]
-          },
-          {
-            foreignKeyName: "preuve_collectivite_id"
-            columns: ["collectivite_id"]
-            isOneToOne: false
-            referencedRelation: "collectivite_plan_action"
-            referencedColumns: ["collectivite_id"]
-          },
-          {
-            foreignKeyName: "preuve_collectivite_id"
-            columns: ["collectivite_id"]
-            isOneToOne: false
-            referencedRelation: "collectivite_referentiel"
-            referencedColumns: ["collectivite_id"]
-          },
-          {
-            foreignKeyName: "preuve_collectivite_id"
-            columns: ["collectivite_id"]
-            isOneToOne: false
-            referencedRelation: "collectivite_utilisateur"
-            referencedColumns: ["collectivite_id"]
-          },
-          {
-            foreignKeyName: "preuve_collectivite_id"
-            columns: ["collectivite_id"]
-            isOneToOne: false
-            referencedRelation: "collectivites_crm"
             referencedColumns: ["collectivite_id"]
           },
           {
@@ -18140,41 +10870,6 @@ export type Database = {
             foreignKeyName: "preuve_collectivite_id"
             columns: ["collectivite_id"]
             isOneToOne: false
-            referencedRelation: "crm_usages"
-            referencedColumns: ["collectivite_id"]
-          },
-          {
-            foreignKeyName: "preuve_collectivite_id"
-            columns: ["collectivite_id"]
-            isOneToOne: false
-            referencedRelation: "engagement_collectivite"
-            referencedColumns: ["collectivite_id"]
-          },
-          {
-            foreignKeyName: "preuve_collectivite_id"
-            columns: ["collectivite_id"]
-            isOneToOne: false
-            referencedRelation: "late_collectivite"
-            referencedColumns: ["collectivite_id"]
-          },
-          {
-            foreignKeyName: "preuve_collectivite_id"
-            columns: ["collectivite_id"]
-            isOneToOne: false
-            referencedRelation: "locales_engagement_collectivite"
-            referencedColumns: ["collectivite_id"]
-          },
-          {
-            foreignKeyName: "preuve_collectivite_id"
-            columns: ["collectivite_id"]
-            isOneToOne: false
-            referencedRelation: "locales_pourcentage_completude"
-            referencedColumns: ["collectivite_id"]
-          },
-          {
-            foreignKeyName: "preuve_collectivite_id"
-            columns: ["collectivite_id"]
-            isOneToOne: false
             referencedRelation: "named_collectivite"
             referencedColumns: ["collectivite_id"]
           },
@@ -18190,48 +10885,6 @@ export type Database = {
             columns: ["collectivite_id"]
             isOneToOne: false
             referencedRelation: "question_thematique_completude"
-            referencedColumns: ["collectivite_id"]
-          },
-          {
-            foreignKeyName: "preuve_collectivite_id"
-            columns: ["collectivite_id"]
-            isOneToOne: false
-            referencedRelation: "rattachement"
-            referencedColumns: ["collectivite_id"]
-          },
-          {
-            foreignKeyName: "preuve_collectivite_id"
-            columns: ["collectivite_id"]
-            isOneToOne: false
-            referencedRelation: "report_indicateur_resultat"
-            referencedColumns: ["collectivite_id"]
-          },
-          {
-            foreignKeyName: "preuve_collectivite_id"
-            columns: ["collectivite_id"]
-            isOneToOne: false
-            referencedRelation: "report_reponse_binaire"
-            referencedColumns: ["collectivite_id"]
-          },
-          {
-            foreignKeyName: "preuve_collectivite_id"
-            columns: ["collectivite_id"]
-            isOneToOne: false
-            referencedRelation: "report_reponse_choix"
-            referencedColumns: ["collectivite_id"]
-          },
-          {
-            foreignKeyName: "preuve_collectivite_id"
-            columns: ["collectivite_id"]
-            isOneToOne: false
-            referencedRelation: "report_reponse_proportion"
-            referencedColumns: ["collectivite_id"]
-          },
-          {
-            foreignKeyName: "preuve_collectivite_id"
-            columns: ["collectivite_id"]
-            isOneToOne: false
-            referencedRelation: "report_scores"
             referencedColumns: ["collectivite_id"]
           },
           {
@@ -18260,13 +10913,6 @@ export type Database = {
             columns: ["collectivite_id"]
             isOneToOne: false
             referencedRelation: "retool_plan_action_hebdo"
-            referencedColumns: ["collectivite_id"]
-          },
-          {
-            foreignKeyName: "preuve_collectivite_id"
-            columns: ["collectivite_id"]
-            isOneToOne: false
-            referencedRelation: "retool_plan_action_premier_usage"
             referencedColumns: ["collectivite_id"]
           },
           {
@@ -18369,13 +11015,6 @@ export type Database = {
             foreignKeyName: "preuve_collectivite_id"
             columns: ["collectivite_id"]
             isOneToOne: false
-            referencedRelation: "action_snippet"
-            referencedColumns: ["collectivite_id"]
-          },
-          {
-            foreignKeyName: "preuve_collectivite_id"
-            columns: ["collectivite_id"]
-            isOneToOne: false
             referencedRelation: "action_statuts"
             referencedColumns: ["collectivite_id"]
           },
@@ -18404,29 +11043,8 @@ export type Database = {
             foreignKeyName: "preuve_collectivite_id"
             columns: ["collectivite_id"]
             isOneToOne: false
-            referencedRelation: "carte_collectivite_active"
-            referencedColumns: ["collectivite_id"]
-          },
-          {
-            foreignKeyName: "preuve_collectivite_id"
-            columns: ["collectivite_id"]
-            isOneToOne: false
             referencedRelation: "collectivite"
             referencedColumns: ["id"]
-          },
-          {
-            foreignKeyName: "preuve_collectivite_id"
-            columns: ["collectivite_id"]
-            isOneToOne: false
-            referencedRelation: "collectivite"
-            referencedColumns: ["collectivite_id"]
-          },
-          {
-            foreignKeyName: "preuve_collectivite_id"
-            columns: ["collectivite_id"]
-            isOneToOne: false
-            referencedRelation: "collectivite_action_statut"
-            referencedColumns: ["collectivite_id"]
           },
           {
             foreignKeyName: "preuve_collectivite_id"
@@ -18453,56 +11071,7 @@ export type Database = {
             foreignKeyName: "preuve_collectivite_id"
             columns: ["collectivite_id"]
             isOneToOne: false
-            referencedRelation: "collectivite_labellisation"
-            referencedColumns: ["collectivite_id"]
-          },
-          {
-            foreignKeyName: "preuve_collectivite_id"
-            columns: ["collectivite_id"]
-            isOneToOne: false
-            referencedRelation: "collectivite_membre_crm"
-            referencedColumns: ["collectivite_id"]
-          },
-          {
-            foreignKeyName: "preuve_collectivite_id"
-            columns: ["collectivite_id"]
-            isOneToOne: false
             referencedRelation: "collectivite_niveau_acces"
-            referencedColumns: ["collectivite_id"]
-          },
-          {
-            foreignKeyName: "preuve_collectivite_id"
-            columns: ["collectivite_id"]
-            isOneToOne: false
-            referencedRelation: "collectivite_plan_action"
-            referencedColumns: ["collectivite_id"]
-          },
-          {
-            foreignKeyName: "preuve_collectivite_id"
-            columns: ["collectivite_id"]
-            isOneToOne: false
-            referencedRelation: "collectivite_plan_action"
-            referencedColumns: ["collectivite_id"]
-          },
-          {
-            foreignKeyName: "preuve_collectivite_id"
-            columns: ["collectivite_id"]
-            isOneToOne: false
-            referencedRelation: "collectivite_referentiel"
-            referencedColumns: ["collectivite_id"]
-          },
-          {
-            foreignKeyName: "preuve_collectivite_id"
-            columns: ["collectivite_id"]
-            isOneToOne: false
-            referencedRelation: "collectivite_utilisateur"
-            referencedColumns: ["collectivite_id"]
-          },
-          {
-            foreignKeyName: "preuve_collectivite_id"
-            columns: ["collectivite_id"]
-            isOneToOne: false
-            referencedRelation: "collectivites_crm"
             referencedColumns: ["collectivite_id"]
           },
           {
@@ -18530,41 +11099,6 @@ export type Database = {
             foreignKeyName: "preuve_collectivite_id"
             columns: ["collectivite_id"]
             isOneToOne: false
-            referencedRelation: "crm_usages"
-            referencedColumns: ["collectivite_id"]
-          },
-          {
-            foreignKeyName: "preuve_collectivite_id"
-            columns: ["collectivite_id"]
-            isOneToOne: false
-            referencedRelation: "engagement_collectivite"
-            referencedColumns: ["collectivite_id"]
-          },
-          {
-            foreignKeyName: "preuve_collectivite_id"
-            columns: ["collectivite_id"]
-            isOneToOne: false
-            referencedRelation: "late_collectivite"
-            referencedColumns: ["collectivite_id"]
-          },
-          {
-            foreignKeyName: "preuve_collectivite_id"
-            columns: ["collectivite_id"]
-            isOneToOne: false
-            referencedRelation: "locales_engagement_collectivite"
-            referencedColumns: ["collectivite_id"]
-          },
-          {
-            foreignKeyName: "preuve_collectivite_id"
-            columns: ["collectivite_id"]
-            isOneToOne: false
-            referencedRelation: "locales_pourcentage_completude"
-            referencedColumns: ["collectivite_id"]
-          },
-          {
-            foreignKeyName: "preuve_collectivite_id"
-            columns: ["collectivite_id"]
-            isOneToOne: false
             referencedRelation: "named_collectivite"
             referencedColumns: ["collectivite_id"]
           },
@@ -18580,48 +11114,6 @@ export type Database = {
             columns: ["collectivite_id"]
             isOneToOne: false
             referencedRelation: "question_thematique_completude"
-            referencedColumns: ["collectivite_id"]
-          },
-          {
-            foreignKeyName: "preuve_collectivite_id"
-            columns: ["collectivite_id"]
-            isOneToOne: false
-            referencedRelation: "rattachement"
-            referencedColumns: ["collectivite_id"]
-          },
-          {
-            foreignKeyName: "preuve_collectivite_id"
-            columns: ["collectivite_id"]
-            isOneToOne: false
-            referencedRelation: "report_indicateur_resultat"
-            referencedColumns: ["collectivite_id"]
-          },
-          {
-            foreignKeyName: "preuve_collectivite_id"
-            columns: ["collectivite_id"]
-            isOneToOne: false
-            referencedRelation: "report_reponse_binaire"
-            referencedColumns: ["collectivite_id"]
-          },
-          {
-            foreignKeyName: "preuve_collectivite_id"
-            columns: ["collectivite_id"]
-            isOneToOne: false
-            referencedRelation: "report_reponse_choix"
-            referencedColumns: ["collectivite_id"]
-          },
-          {
-            foreignKeyName: "preuve_collectivite_id"
-            columns: ["collectivite_id"]
-            isOneToOne: false
-            referencedRelation: "report_reponse_proportion"
-            referencedColumns: ["collectivite_id"]
-          },
-          {
-            foreignKeyName: "preuve_collectivite_id"
-            columns: ["collectivite_id"]
-            isOneToOne: false
-            referencedRelation: "report_scores"
             referencedColumns: ["collectivite_id"]
           },
           {
@@ -18650,13 +11142,6 @@ export type Database = {
             columns: ["collectivite_id"]
             isOneToOne: false
             referencedRelation: "retool_plan_action_hebdo"
-            referencedColumns: ["collectivite_id"]
-          },
-          {
-            foreignKeyName: "preuve_collectivite_id"
-            columns: ["collectivite_id"]
-            isOneToOne: false
-            referencedRelation: "retool_plan_action_premier_usage"
             referencedColumns: ["collectivite_id"]
           },
           {
@@ -18799,13 +11284,6 @@ export type Database = {
             foreignKeyName: "private_collectivite_membre_collectivite_id_fkey"
             columns: ["collectivite_id"]
             isOneToOne: false
-            referencedRelation: "action_snippet"
-            referencedColumns: ["collectivite_id"]
-          },
-          {
-            foreignKeyName: "private_collectivite_membre_collectivite_id_fkey"
-            columns: ["collectivite_id"]
-            isOneToOne: false
             referencedRelation: "action_statuts"
             referencedColumns: ["collectivite_id"]
           },
@@ -18834,29 +11312,8 @@ export type Database = {
             foreignKeyName: "private_collectivite_membre_collectivite_id_fkey"
             columns: ["collectivite_id"]
             isOneToOne: false
-            referencedRelation: "carte_collectivite_active"
-            referencedColumns: ["collectivite_id"]
-          },
-          {
-            foreignKeyName: "private_collectivite_membre_collectivite_id_fkey"
-            columns: ["collectivite_id"]
-            isOneToOne: false
             referencedRelation: "collectivite"
             referencedColumns: ["id"]
-          },
-          {
-            foreignKeyName: "private_collectivite_membre_collectivite_id_fkey"
-            columns: ["collectivite_id"]
-            isOneToOne: false
-            referencedRelation: "collectivite"
-            referencedColumns: ["collectivite_id"]
-          },
-          {
-            foreignKeyName: "private_collectivite_membre_collectivite_id_fkey"
-            columns: ["collectivite_id"]
-            isOneToOne: false
-            referencedRelation: "collectivite_action_statut"
-            referencedColumns: ["collectivite_id"]
           },
           {
             foreignKeyName: "private_collectivite_membre_collectivite_id_fkey"
@@ -18883,56 +11340,7 @@ export type Database = {
             foreignKeyName: "private_collectivite_membre_collectivite_id_fkey"
             columns: ["collectivite_id"]
             isOneToOne: false
-            referencedRelation: "collectivite_labellisation"
-            referencedColumns: ["collectivite_id"]
-          },
-          {
-            foreignKeyName: "private_collectivite_membre_collectivite_id_fkey"
-            columns: ["collectivite_id"]
-            isOneToOne: false
-            referencedRelation: "collectivite_membre_crm"
-            referencedColumns: ["collectivite_id"]
-          },
-          {
-            foreignKeyName: "private_collectivite_membre_collectivite_id_fkey"
-            columns: ["collectivite_id"]
-            isOneToOne: false
             referencedRelation: "collectivite_niveau_acces"
-            referencedColumns: ["collectivite_id"]
-          },
-          {
-            foreignKeyName: "private_collectivite_membre_collectivite_id_fkey"
-            columns: ["collectivite_id"]
-            isOneToOne: false
-            referencedRelation: "collectivite_plan_action"
-            referencedColumns: ["collectivite_id"]
-          },
-          {
-            foreignKeyName: "private_collectivite_membre_collectivite_id_fkey"
-            columns: ["collectivite_id"]
-            isOneToOne: false
-            referencedRelation: "collectivite_plan_action"
-            referencedColumns: ["collectivite_id"]
-          },
-          {
-            foreignKeyName: "private_collectivite_membre_collectivite_id_fkey"
-            columns: ["collectivite_id"]
-            isOneToOne: false
-            referencedRelation: "collectivite_referentiel"
-            referencedColumns: ["collectivite_id"]
-          },
-          {
-            foreignKeyName: "private_collectivite_membre_collectivite_id_fkey"
-            columns: ["collectivite_id"]
-            isOneToOne: false
-            referencedRelation: "collectivite_utilisateur"
-            referencedColumns: ["collectivite_id"]
-          },
-          {
-            foreignKeyName: "private_collectivite_membre_collectivite_id_fkey"
-            columns: ["collectivite_id"]
-            isOneToOne: false
-            referencedRelation: "collectivites_crm"
             referencedColumns: ["collectivite_id"]
           },
           {
@@ -18960,41 +11368,6 @@ export type Database = {
             foreignKeyName: "private_collectivite_membre_collectivite_id_fkey"
             columns: ["collectivite_id"]
             isOneToOne: false
-            referencedRelation: "crm_usages"
-            referencedColumns: ["collectivite_id"]
-          },
-          {
-            foreignKeyName: "private_collectivite_membre_collectivite_id_fkey"
-            columns: ["collectivite_id"]
-            isOneToOne: false
-            referencedRelation: "engagement_collectivite"
-            referencedColumns: ["collectivite_id"]
-          },
-          {
-            foreignKeyName: "private_collectivite_membre_collectivite_id_fkey"
-            columns: ["collectivite_id"]
-            isOneToOne: false
-            referencedRelation: "late_collectivite"
-            referencedColumns: ["collectivite_id"]
-          },
-          {
-            foreignKeyName: "private_collectivite_membre_collectivite_id_fkey"
-            columns: ["collectivite_id"]
-            isOneToOne: false
-            referencedRelation: "locales_engagement_collectivite"
-            referencedColumns: ["collectivite_id"]
-          },
-          {
-            foreignKeyName: "private_collectivite_membre_collectivite_id_fkey"
-            columns: ["collectivite_id"]
-            isOneToOne: false
-            referencedRelation: "locales_pourcentage_completude"
-            referencedColumns: ["collectivite_id"]
-          },
-          {
-            foreignKeyName: "private_collectivite_membre_collectivite_id_fkey"
-            columns: ["collectivite_id"]
-            isOneToOne: false
             referencedRelation: "named_collectivite"
             referencedColumns: ["collectivite_id"]
           },
@@ -19010,48 +11383,6 @@ export type Database = {
             columns: ["collectivite_id"]
             isOneToOne: false
             referencedRelation: "question_thematique_completude"
-            referencedColumns: ["collectivite_id"]
-          },
-          {
-            foreignKeyName: "private_collectivite_membre_collectivite_id_fkey"
-            columns: ["collectivite_id"]
-            isOneToOne: false
-            referencedRelation: "rattachement"
-            referencedColumns: ["collectivite_id"]
-          },
-          {
-            foreignKeyName: "private_collectivite_membre_collectivite_id_fkey"
-            columns: ["collectivite_id"]
-            isOneToOne: false
-            referencedRelation: "report_indicateur_resultat"
-            referencedColumns: ["collectivite_id"]
-          },
-          {
-            foreignKeyName: "private_collectivite_membre_collectivite_id_fkey"
-            columns: ["collectivite_id"]
-            isOneToOne: false
-            referencedRelation: "report_reponse_binaire"
-            referencedColumns: ["collectivite_id"]
-          },
-          {
-            foreignKeyName: "private_collectivite_membre_collectivite_id_fkey"
-            columns: ["collectivite_id"]
-            isOneToOne: false
-            referencedRelation: "report_reponse_choix"
-            referencedColumns: ["collectivite_id"]
-          },
-          {
-            foreignKeyName: "private_collectivite_membre_collectivite_id_fkey"
-            columns: ["collectivite_id"]
-            isOneToOne: false
-            referencedRelation: "report_reponse_proportion"
-            referencedColumns: ["collectivite_id"]
-          },
-          {
-            foreignKeyName: "private_collectivite_membre_collectivite_id_fkey"
-            columns: ["collectivite_id"]
-            isOneToOne: false
-            referencedRelation: "report_scores"
             referencedColumns: ["collectivite_id"]
           },
           {
@@ -19080,13 +11411,6 @@ export type Database = {
             columns: ["collectivite_id"]
             isOneToOne: false
             referencedRelation: "retool_plan_action_hebdo"
-            referencedColumns: ["collectivite_id"]
-          },
-          {
-            foreignKeyName: "private_collectivite_membre_collectivite_id_fkey"
-            columns: ["collectivite_id"]
-            isOneToOne: false
-            referencedRelation: "retool_plan_action_premier_usage"
             referencedColumns: ["collectivite_id"]
           },
           {
@@ -19144,13 +11468,6 @@ export type Database = {
             isOneToOne: false
             referencedRelation: "suivi_audit"
             referencedColumns: ["collectivite_id"]
-          },
-          {
-            foreignKeyName: "private_collectivite_membre_user_id_fkey"
-            columns: ["user_id"]
-            isOneToOne: false
-            referencedRelation: "users"
-            referencedColumns: ["id"]
           },
         ]
       }
@@ -19190,13 +11507,6 @@ export type Database = {
             foreignKeyName: "private_utilisateur_droit_collectivite_id_fkey"
             columns: ["collectivite_id"]
             isOneToOne: false
-            referencedRelation: "action_snippet"
-            referencedColumns: ["collectivite_id"]
-          },
-          {
-            foreignKeyName: "private_utilisateur_droit_collectivite_id_fkey"
-            columns: ["collectivite_id"]
-            isOneToOne: false
             referencedRelation: "action_statuts"
             referencedColumns: ["collectivite_id"]
           },
@@ -19225,29 +11535,8 @@ export type Database = {
             foreignKeyName: "private_utilisateur_droit_collectivite_id_fkey"
             columns: ["collectivite_id"]
             isOneToOne: false
-            referencedRelation: "carte_collectivite_active"
-            referencedColumns: ["collectivite_id"]
-          },
-          {
-            foreignKeyName: "private_utilisateur_droit_collectivite_id_fkey"
-            columns: ["collectivite_id"]
-            isOneToOne: false
             referencedRelation: "collectivite"
             referencedColumns: ["id"]
-          },
-          {
-            foreignKeyName: "private_utilisateur_droit_collectivite_id_fkey"
-            columns: ["collectivite_id"]
-            isOneToOne: false
-            referencedRelation: "collectivite"
-            referencedColumns: ["collectivite_id"]
-          },
-          {
-            foreignKeyName: "private_utilisateur_droit_collectivite_id_fkey"
-            columns: ["collectivite_id"]
-            isOneToOne: false
-            referencedRelation: "collectivite_action_statut"
-            referencedColumns: ["collectivite_id"]
           },
           {
             foreignKeyName: "private_utilisateur_droit_collectivite_id_fkey"
@@ -19274,56 +11563,7 @@ export type Database = {
             foreignKeyName: "private_utilisateur_droit_collectivite_id_fkey"
             columns: ["collectivite_id"]
             isOneToOne: false
-            referencedRelation: "collectivite_labellisation"
-            referencedColumns: ["collectivite_id"]
-          },
-          {
-            foreignKeyName: "private_utilisateur_droit_collectivite_id_fkey"
-            columns: ["collectivite_id"]
-            isOneToOne: false
-            referencedRelation: "collectivite_membre_crm"
-            referencedColumns: ["collectivite_id"]
-          },
-          {
-            foreignKeyName: "private_utilisateur_droit_collectivite_id_fkey"
-            columns: ["collectivite_id"]
-            isOneToOne: false
             referencedRelation: "collectivite_niveau_acces"
-            referencedColumns: ["collectivite_id"]
-          },
-          {
-            foreignKeyName: "private_utilisateur_droit_collectivite_id_fkey"
-            columns: ["collectivite_id"]
-            isOneToOne: false
-            referencedRelation: "collectivite_plan_action"
-            referencedColumns: ["collectivite_id"]
-          },
-          {
-            foreignKeyName: "private_utilisateur_droit_collectivite_id_fkey"
-            columns: ["collectivite_id"]
-            isOneToOne: false
-            referencedRelation: "collectivite_plan_action"
-            referencedColumns: ["collectivite_id"]
-          },
-          {
-            foreignKeyName: "private_utilisateur_droit_collectivite_id_fkey"
-            columns: ["collectivite_id"]
-            isOneToOne: false
-            referencedRelation: "collectivite_referentiel"
-            referencedColumns: ["collectivite_id"]
-          },
-          {
-            foreignKeyName: "private_utilisateur_droit_collectivite_id_fkey"
-            columns: ["collectivite_id"]
-            isOneToOne: false
-            referencedRelation: "collectivite_utilisateur"
-            referencedColumns: ["collectivite_id"]
-          },
-          {
-            foreignKeyName: "private_utilisateur_droit_collectivite_id_fkey"
-            columns: ["collectivite_id"]
-            isOneToOne: false
-            referencedRelation: "collectivites_crm"
             referencedColumns: ["collectivite_id"]
           },
           {
@@ -19351,41 +11591,6 @@ export type Database = {
             foreignKeyName: "private_utilisateur_droit_collectivite_id_fkey"
             columns: ["collectivite_id"]
             isOneToOne: false
-            referencedRelation: "crm_usages"
-            referencedColumns: ["collectivite_id"]
-          },
-          {
-            foreignKeyName: "private_utilisateur_droit_collectivite_id_fkey"
-            columns: ["collectivite_id"]
-            isOneToOne: false
-            referencedRelation: "engagement_collectivite"
-            referencedColumns: ["collectivite_id"]
-          },
-          {
-            foreignKeyName: "private_utilisateur_droit_collectivite_id_fkey"
-            columns: ["collectivite_id"]
-            isOneToOne: false
-            referencedRelation: "late_collectivite"
-            referencedColumns: ["collectivite_id"]
-          },
-          {
-            foreignKeyName: "private_utilisateur_droit_collectivite_id_fkey"
-            columns: ["collectivite_id"]
-            isOneToOne: false
-            referencedRelation: "locales_engagement_collectivite"
-            referencedColumns: ["collectivite_id"]
-          },
-          {
-            foreignKeyName: "private_utilisateur_droit_collectivite_id_fkey"
-            columns: ["collectivite_id"]
-            isOneToOne: false
-            referencedRelation: "locales_pourcentage_completude"
-            referencedColumns: ["collectivite_id"]
-          },
-          {
-            foreignKeyName: "private_utilisateur_droit_collectivite_id_fkey"
-            columns: ["collectivite_id"]
-            isOneToOne: false
             referencedRelation: "named_collectivite"
             referencedColumns: ["collectivite_id"]
           },
@@ -19401,48 +11606,6 @@ export type Database = {
             columns: ["collectivite_id"]
             isOneToOne: false
             referencedRelation: "question_thematique_completude"
-            referencedColumns: ["collectivite_id"]
-          },
-          {
-            foreignKeyName: "private_utilisateur_droit_collectivite_id_fkey"
-            columns: ["collectivite_id"]
-            isOneToOne: false
-            referencedRelation: "rattachement"
-            referencedColumns: ["collectivite_id"]
-          },
-          {
-            foreignKeyName: "private_utilisateur_droit_collectivite_id_fkey"
-            columns: ["collectivite_id"]
-            isOneToOne: false
-            referencedRelation: "report_indicateur_resultat"
-            referencedColumns: ["collectivite_id"]
-          },
-          {
-            foreignKeyName: "private_utilisateur_droit_collectivite_id_fkey"
-            columns: ["collectivite_id"]
-            isOneToOne: false
-            referencedRelation: "report_reponse_binaire"
-            referencedColumns: ["collectivite_id"]
-          },
-          {
-            foreignKeyName: "private_utilisateur_droit_collectivite_id_fkey"
-            columns: ["collectivite_id"]
-            isOneToOne: false
-            referencedRelation: "report_reponse_choix"
-            referencedColumns: ["collectivite_id"]
-          },
-          {
-            foreignKeyName: "private_utilisateur_droit_collectivite_id_fkey"
-            columns: ["collectivite_id"]
-            isOneToOne: false
-            referencedRelation: "report_reponse_proportion"
-            referencedColumns: ["collectivite_id"]
-          },
-          {
-            foreignKeyName: "private_utilisateur_droit_collectivite_id_fkey"
-            columns: ["collectivite_id"]
-            isOneToOne: false
-            referencedRelation: "report_scores"
             referencedColumns: ["collectivite_id"]
           },
           {
@@ -19471,13 +11634,6 @@ export type Database = {
             columns: ["collectivite_id"]
             isOneToOne: false
             referencedRelation: "retool_plan_action_hebdo"
-            referencedColumns: ["collectivite_id"]
-          },
-          {
-            foreignKeyName: "private_utilisateur_droit_collectivite_id_fkey"
-            columns: ["collectivite_id"]
-            isOneToOne: false
-            referencedRelation: "retool_plan_action_premier_usage"
             referencedColumns: ["collectivite_id"]
           },
           {
@@ -19535,20 +11691,6 @@ export type Database = {
             isOneToOne: false
             referencedRelation: "suivi_audit"
             referencedColumns: ["collectivite_id"]
-          },
-          {
-            foreignKeyName: "private_utilisateur_droit_invitation_id_fkey"
-            columns: ["invitation_id"]
-            isOneToOne: false
-            referencedRelation: "invitation"
-            referencedColumns: ["id"]
-          },
-          {
-            foreignKeyName: "private_utilisateur_droit_user_id_fkey"
-            columns: ["user_id"]
-            isOneToOne: false
-            referencedRelation: "users"
-            referencedColumns: ["id"]
           },
         ]
       }
@@ -19645,13 +11787,6 @@ export type Database = {
             referencedRelation: "question_display"
             referencedColumns: ["id"]
           },
-          {
-            foreignKeyName: "question_action_question_id_fkey"
-            columns: ["question_id"]
-            isOneToOne: false
-            referencedRelation: "report_question"
-            referencedColumns: ["id"]
-          },
         ]
       }
       question_choix: {
@@ -19688,13 +11823,6 @@ export type Database = {
             referencedRelation: "question_display"
             referencedColumns: ["id"]
           },
-          {
-            foreignKeyName: "question_choix_question_id_fkey"
-            columns: ["question_id"]
-            isOneToOne: false
-            referencedRelation: "report_question"
-            referencedColumns: ["id"]
-          },
         ]
       }
       question_thematique: {
@@ -19709,6 +11837,33 @@ export type Database = {
         Update: {
           id?: string
           nom?: string | null
+        }
+        Relationships: []
+      }
+      referentiel_definition: {
+        Row: {
+          created_at: string
+          hierarchie: Database["public"]["Enums"]["action_type"][]
+          id: string
+          modified_at: string
+          nom: string
+          version: string
+        }
+        Insert: {
+          created_at?: string
+          hierarchie: Database["public"]["Enums"]["action_type"][]
+          id: string
+          modified_at?: string
+          nom: string
+          version?: string
+        }
+        Update: {
+          created_at?: string
+          hierarchie?: Database["public"]["Enums"]["action_type"][]
+          id?: string
+          modified_at?: string
+          nom?: string
+          version?: string
         }
         Relationships: []
       }
@@ -19727,6 +11882,24 @@ export type Database = {
           children?: Json
           created_at?: string
           definitions?: Json
+        }
+        Relationships: []
+      }
+      referentiel_tag: {
+        Row: {
+          nom: string
+          ref: string
+          type: string
+        }
+        Insert: {
+          nom: string
+          ref: string
+          type: string
+        }
+        Update: {
+          nom?: string
+          ref?: string
+          type?: string
         }
         Relationships: []
       }
@@ -19750,13 +11923,6 @@ export type Database = {
           reponse?: boolean | null
         }
         Relationships: [
-          {
-            foreignKeyName: "reponse_binaire_collectivite_id_fkey"
-            columns: ["collectivite_id"]
-            isOneToOne: false
-            referencedRelation: "action_snippet"
-            referencedColumns: ["collectivite_id"]
-          },
           {
             foreignKeyName: "reponse_binaire_collectivite_id_fkey"
             columns: ["collectivite_id"]
@@ -19789,29 +11955,8 @@ export type Database = {
             foreignKeyName: "reponse_binaire_collectivite_id_fkey"
             columns: ["collectivite_id"]
             isOneToOne: false
-            referencedRelation: "carte_collectivite_active"
-            referencedColumns: ["collectivite_id"]
-          },
-          {
-            foreignKeyName: "reponse_binaire_collectivite_id_fkey"
-            columns: ["collectivite_id"]
-            isOneToOne: false
             referencedRelation: "collectivite"
             referencedColumns: ["id"]
-          },
-          {
-            foreignKeyName: "reponse_binaire_collectivite_id_fkey"
-            columns: ["collectivite_id"]
-            isOneToOne: false
-            referencedRelation: "collectivite"
-            referencedColumns: ["collectivite_id"]
-          },
-          {
-            foreignKeyName: "reponse_binaire_collectivite_id_fkey"
-            columns: ["collectivite_id"]
-            isOneToOne: false
-            referencedRelation: "collectivite_action_statut"
-            referencedColumns: ["collectivite_id"]
           },
           {
             foreignKeyName: "reponse_binaire_collectivite_id_fkey"
@@ -19838,56 +11983,7 @@ export type Database = {
             foreignKeyName: "reponse_binaire_collectivite_id_fkey"
             columns: ["collectivite_id"]
             isOneToOne: false
-            referencedRelation: "collectivite_labellisation"
-            referencedColumns: ["collectivite_id"]
-          },
-          {
-            foreignKeyName: "reponse_binaire_collectivite_id_fkey"
-            columns: ["collectivite_id"]
-            isOneToOne: false
-            referencedRelation: "collectivite_membre_crm"
-            referencedColumns: ["collectivite_id"]
-          },
-          {
-            foreignKeyName: "reponse_binaire_collectivite_id_fkey"
-            columns: ["collectivite_id"]
-            isOneToOne: false
             referencedRelation: "collectivite_niveau_acces"
-            referencedColumns: ["collectivite_id"]
-          },
-          {
-            foreignKeyName: "reponse_binaire_collectivite_id_fkey"
-            columns: ["collectivite_id"]
-            isOneToOne: false
-            referencedRelation: "collectivite_plan_action"
-            referencedColumns: ["collectivite_id"]
-          },
-          {
-            foreignKeyName: "reponse_binaire_collectivite_id_fkey"
-            columns: ["collectivite_id"]
-            isOneToOne: false
-            referencedRelation: "collectivite_plan_action"
-            referencedColumns: ["collectivite_id"]
-          },
-          {
-            foreignKeyName: "reponse_binaire_collectivite_id_fkey"
-            columns: ["collectivite_id"]
-            isOneToOne: false
-            referencedRelation: "collectivite_referentiel"
-            referencedColumns: ["collectivite_id"]
-          },
-          {
-            foreignKeyName: "reponse_binaire_collectivite_id_fkey"
-            columns: ["collectivite_id"]
-            isOneToOne: false
-            referencedRelation: "collectivite_utilisateur"
-            referencedColumns: ["collectivite_id"]
-          },
-          {
-            foreignKeyName: "reponse_binaire_collectivite_id_fkey"
-            columns: ["collectivite_id"]
-            isOneToOne: false
-            referencedRelation: "collectivites_crm"
             referencedColumns: ["collectivite_id"]
           },
           {
@@ -19915,41 +12011,6 @@ export type Database = {
             foreignKeyName: "reponse_binaire_collectivite_id_fkey"
             columns: ["collectivite_id"]
             isOneToOne: false
-            referencedRelation: "crm_usages"
-            referencedColumns: ["collectivite_id"]
-          },
-          {
-            foreignKeyName: "reponse_binaire_collectivite_id_fkey"
-            columns: ["collectivite_id"]
-            isOneToOne: false
-            referencedRelation: "engagement_collectivite"
-            referencedColumns: ["collectivite_id"]
-          },
-          {
-            foreignKeyName: "reponse_binaire_collectivite_id_fkey"
-            columns: ["collectivite_id"]
-            isOneToOne: false
-            referencedRelation: "late_collectivite"
-            referencedColumns: ["collectivite_id"]
-          },
-          {
-            foreignKeyName: "reponse_binaire_collectivite_id_fkey"
-            columns: ["collectivite_id"]
-            isOneToOne: false
-            referencedRelation: "locales_engagement_collectivite"
-            referencedColumns: ["collectivite_id"]
-          },
-          {
-            foreignKeyName: "reponse_binaire_collectivite_id_fkey"
-            columns: ["collectivite_id"]
-            isOneToOne: false
-            referencedRelation: "locales_pourcentage_completude"
-            referencedColumns: ["collectivite_id"]
-          },
-          {
-            foreignKeyName: "reponse_binaire_collectivite_id_fkey"
-            columns: ["collectivite_id"]
-            isOneToOne: false
             referencedRelation: "named_collectivite"
             referencedColumns: ["collectivite_id"]
           },
@@ -19965,48 +12026,6 @@ export type Database = {
             columns: ["collectivite_id"]
             isOneToOne: false
             referencedRelation: "question_thematique_completude"
-            referencedColumns: ["collectivite_id"]
-          },
-          {
-            foreignKeyName: "reponse_binaire_collectivite_id_fkey"
-            columns: ["collectivite_id"]
-            isOneToOne: false
-            referencedRelation: "rattachement"
-            referencedColumns: ["collectivite_id"]
-          },
-          {
-            foreignKeyName: "reponse_binaire_collectivite_id_fkey"
-            columns: ["collectivite_id"]
-            isOneToOne: false
-            referencedRelation: "report_indicateur_resultat"
-            referencedColumns: ["collectivite_id"]
-          },
-          {
-            foreignKeyName: "reponse_binaire_collectivite_id_fkey"
-            columns: ["collectivite_id"]
-            isOneToOne: false
-            referencedRelation: "report_reponse_binaire"
-            referencedColumns: ["collectivite_id"]
-          },
-          {
-            foreignKeyName: "reponse_binaire_collectivite_id_fkey"
-            columns: ["collectivite_id"]
-            isOneToOne: false
-            referencedRelation: "report_reponse_choix"
-            referencedColumns: ["collectivite_id"]
-          },
-          {
-            foreignKeyName: "reponse_binaire_collectivite_id_fkey"
-            columns: ["collectivite_id"]
-            isOneToOne: false
-            referencedRelation: "report_reponse_proportion"
-            referencedColumns: ["collectivite_id"]
-          },
-          {
-            foreignKeyName: "reponse_binaire_collectivite_id_fkey"
-            columns: ["collectivite_id"]
-            isOneToOne: false
-            referencedRelation: "report_scores"
             referencedColumns: ["collectivite_id"]
           },
           {
@@ -20035,13 +12054,6 @@ export type Database = {
             columns: ["collectivite_id"]
             isOneToOne: false
             referencedRelation: "retool_plan_action_hebdo"
-            referencedColumns: ["collectivite_id"]
-          },
-          {
-            foreignKeyName: "reponse_binaire_collectivite_id_fkey"
-            columns: ["collectivite_id"]
-            isOneToOne: false
-            referencedRelation: "retool_plan_action_premier_usage"
             referencedColumns: ["collectivite_id"]
           },
           {
@@ -20112,13 +12124,6 @@ export type Database = {
             columns: ["question_id"]
             isOneToOne: false
             referencedRelation: "question_display"
-            referencedColumns: ["id"]
-          },
-          {
-            foreignKeyName: "reponse_binaire_question_id_fkey"
-            columns: ["question_id"]
-            isOneToOne: false
-            referencedRelation: "report_question"
             referencedColumns: ["id"]
           },
         ]
@@ -20147,13 +12152,6 @@ export type Database = {
             foreignKeyName: "reponse_choix_collectivite_id_fkey"
             columns: ["collectivite_id"]
             isOneToOne: false
-            referencedRelation: "action_snippet"
-            referencedColumns: ["collectivite_id"]
-          },
-          {
-            foreignKeyName: "reponse_choix_collectivite_id_fkey"
-            columns: ["collectivite_id"]
-            isOneToOne: false
             referencedRelation: "action_statuts"
             referencedColumns: ["collectivite_id"]
           },
@@ -20182,29 +12180,8 @@ export type Database = {
             foreignKeyName: "reponse_choix_collectivite_id_fkey"
             columns: ["collectivite_id"]
             isOneToOne: false
-            referencedRelation: "carte_collectivite_active"
-            referencedColumns: ["collectivite_id"]
-          },
-          {
-            foreignKeyName: "reponse_choix_collectivite_id_fkey"
-            columns: ["collectivite_id"]
-            isOneToOne: false
             referencedRelation: "collectivite"
             referencedColumns: ["id"]
-          },
-          {
-            foreignKeyName: "reponse_choix_collectivite_id_fkey"
-            columns: ["collectivite_id"]
-            isOneToOne: false
-            referencedRelation: "collectivite"
-            referencedColumns: ["collectivite_id"]
-          },
-          {
-            foreignKeyName: "reponse_choix_collectivite_id_fkey"
-            columns: ["collectivite_id"]
-            isOneToOne: false
-            referencedRelation: "collectivite_action_statut"
-            referencedColumns: ["collectivite_id"]
           },
           {
             foreignKeyName: "reponse_choix_collectivite_id_fkey"
@@ -20231,56 +12208,7 @@ export type Database = {
             foreignKeyName: "reponse_choix_collectivite_id_fkey"
             columns: ["collectivite_id"]
             isOneToOne: false
-            referencedRelation: "collectivite_labellisation"
-            referencedColumns: ["collectivite_id"]
-          },
-          {
-            foreignKeyName: "reponse_choix_collectivite_id_fkey"
-            columns: ["collectivite_id"]
-            isOneToOne: false
-            referencedRelation: "collectivite_membre_crm"
-            referencedColumns: ["collectivite_id"]
-          },
-          {
-            foreignKeyName: "reponse_choix_collectivite_id_fkey"
-            columns: ["collectivite_id"]
-            isOneToOne: false
             referencedRelation: "collectivite_niveau_acces"
-            referencedColumns: ["collectivite_id"]
-          },
-          {
-            foreignKeyName: "reponse_choix_collectivite_id_fkey"
-            columns: ["collectivite_id"]
-            isOneToOne: false
-            referencedRelation: "collectivite_plan_action"
-            referencedColumns: ["collectivite_id"]
-          },
-          {
-            foreignKeyName: "reponse_choix_collectivite_id_fkey"
-            columns: ["collectivite_id"]
-            isOneToOne: false
-            referencedRelation: "collectivite_plan_action"
-            referencedColumns: ["collectivite_id"]
-          },
-          {
-            foreignKeyName: "reponse_choix_collectivite_id_fkey"
-            columns: ["collectivite_id"]
-            isOneToOne: false
-            referencedRelation: "collectivite_referentiel"
-            referencedColumns: ["collectivite_id"]
-          },
-          {
-            foreignKeyName: "reponse_choix_collectivite_id_fkey"
-            columns: ["collectivite_id"]
-            isOneToOne: false
-            referencedRelation: "collectivite_utilisateur"
-            referencedColumns: ["collectivite_id"]
-          },
-          {
-            foreignKeyName: "reponse_choix_collectivite_id_fkey"
-            columns: ["collectivite_id"]
-            isOneToOne: false
-            referencedRelation: "collectivites_crm"
             referencedColumns: ["collectivite_id"]
           },
           {
@@ -20308,41 +12236,6 @@ export type Database = {
             foreignKeyName: "reponse_choix_collectivite_id_fkey"
             columns: ["collectivite_id"]
             isOneToOne: false
-            referencedRelation: "crm_usages"
-            referencedColumns: ["collectivite_id"]
-          },
-          {
-            foreignKeyName: "reponse_choix_collectivite_id_fkey"
-            columns: ["collectivite_id"]
-            isOneToOne: false
-            referencedRelation: "engagement_collectivite"
-            referencedColumns: ["collectivite_id"]
-          },
-          {
-            foreignKeyName: "reponse_choix_collectivite_id_fkey"
-            columns: ["collectivite_id"]
-            isOneToOne: false
-            referencedRelation: "late_collectivite"
-            referencedColumns: ["collectivite_id"]
-          },
-          {
-            foreignKeyName: "reponse_choix_collectivite_id_fkey"
-            columns: ["collectivite_id"]
-            isOneToOne: false
-            referencedRelation: "locales_engagement_collectivite"
-            referencedColumns: ["collectivite_id"]
-          },
-          {
-            foreignKeyName: "reponse_choix_collectivite_id_fkey"
-            columns: ["collectivite_id"]
-            isOneToOne: false
-            referencedRelation: "locales_pourcentage_completude"
-            referencedColumns: ["collectivite_id"]
-          },
-          {
-            foreignKeyName: "reponse_choix_collectivite_id_fkey"
-            columns: ["collectivite_id"]
-            isOneToOne: false
             referencedRelation: "named_collectivite"
             referencedColumns: ["collectivite_id"]
           },
@@ -20358,48 +12251,6 @@ export type Database = {
             columns: ["collectivite_id"]
             isOneToOne: false
             referencedRelation: "question_thematique_completude"
-            referencedColumns: ["collectivite_id"]
-          },
-          {
-            foreignKeyName: "reponse_choix_collectivite_id_fkey"
-            columns: ["collectivite_id"]
-            isOneToOne: false
-            referencedRelation: "rattachement"
-            referencedColumns: ["collectivite_id"]
-          },
-          {
-            foreignKeyName: "reponse_choix_collectivite_id_fkey"
-            columns: ["collectivite_id"]
-            isOneToOne: false
-            referencedRelation: "report_indicateur_resultat"
-            referencedColumns: ["collectivite_id"]
-          },
-          {
-            foreignKeyName: "reponse_choix_collectivite_id_fkey"
-            columns: ["collectivite_id"]
-            isOneToOne: false
-            referencedRelation: "report_reponse_binaire"
-            referencedColumns: ["collectivite_id"]
-          },
-          {
-            foreignKeyName: "reponse_choix_collectivite_id_fkey"
-            columns: ["collectivite_id"]
-            isOneToOne: false
-            referencedRelation: "report_reponse_choix"
-            referencedColumns: ["collectivite_id"]
-          },
-          {
-            foreignKeyName: "reponse_choix_collectivite_id_fkey"
-            columns: ["collectivite_id"]
-            isOneToOne: false
-            referencedRelation: "report_reponse_proportion"
-            referencedColumns: ["collectivite_id"]
-          },
-          {
-            foreignKeyName: "reponse_choix_collectivite_id_fkey"
-            columns: ["collectivite_id"]
-            isOneToOne: false
-            referencedRelation: "report_scores"
             referencedColumns: ["collectivite_id"]
           },
           {
@@ -20428,13 +12279,6 @@ export type Database = {
             columns: ["collectivite_id"]
             isOneToOne: false
             referencedRelation: "retool_plan_action_hebdo"
-            referencedColumns: ["collectivite_id"]
-          },
-          {
-            foreignKeyName: "reponse_choix_collectivite_id_fkey"
-            columns: ["collectivite_id"]
-            isOneToOne: false
-            referencedRelation: "retool_plan_action_premier_usage"
             referencedColumns: ["collectivite_id"]
           },
           {
@@ -20508,24 +12352,10 @@ export type Database = {
             referencedColumns: ["id"]
           },
           {
-            foreignKeyName: "reponse_choix_question_id_fkey"
-            columns: ["question_id"]
-            isOneToOne: false
-            referencedRelation: "report_question"
-            referencedColumns: ["id"]
-          },
-          {
             foreignKeyName: "reponse_choix_reponse_fkey"
             columns: ["reponse"]
             isOneToOne: false
             referencedRelation: "question_choix"
-            referencedColumns: ["id"]
-          },
-          {
-            foreignKeyName: "reponse_choix_reponse_fkey"
-            columns: ["reponse"]
-            isOneToOne: false
-            referencedRelation: "report_choix"
             referencedColumns: ["id"]
           },
         ]
@@ -20554,13 +12384,6 @@ export type Database = {
             foreignKeyName: "reponse_proportion_collectivite_id_fkey"
             columns: ["collectivite_id"]
             isOneToOne: false
-            referencedRelation: "action_snippet"
-            referencedColumns: ["collectivite_id"]
-          },
-          {
-            foreignKeyName: "reponse_proportion_collectivite_id_fkey"
-            columns: ["collectivite_id"]
-            isOneToOne: false
             referencedRelation: "action_statuts"
             referencedColumns: ["collectivite_id"]
           },
@@ -20589,29 +12412,8 @@ export type Database = {
             foreignKeyName: "reponse_proportion_collectivite_id_fkey"
             columns: ["collectivite_id"]
             isOneToOne: false
-            referencedRelation: "carte_collectivite_active"
-            referencedColumns: ["collectivite_id"]
-          },
-          {
-            foreignKeyName: "reponse_proportion_collectivite_id_fkey"
-            columns: ["collectivite_id"]
-            isOneToOne: false
             referencedRelation: "collectivite"
             referencedColumns: ["id"]
-          },
-          {
-            foreignKeyName: "reponse_proportion_collectivite_id_fkey"
-            columns: ["collectivite_id"]
-            isOneToOne: false
-            referencedRelation: "collectivite"
-            referencedColumns: ["collectivite_id"]
-          },
-          {
-            foreignKeyName: "reponse_proportion_collectivite_id_fkey"
-            columns: ["collectivite_id"]
-            isOneToOne: false
-            referencedRelation: "collectivite_action_statut"
-            referencedColumns: ["collectivite_id"]
           },
           {
             foreignKeyName: "reponse_proportion_collectivite_id_fkey"
@@ -20638,56 +12440,7 @@ export type Database = {
             foreignKeyName: "reponse_proportion_collectivite_id_fkey"
             columns: ["collectivite_id"]
             isOneToOne: false
-            referencedRelation: "collectivite_labellisation"
-            referencedColumns: ["collectivite_id"]
-          },
-          {
-            foreignKeyName: "reponse_proportion_collectivite_id_fkey"
-            columns: ["collectivite_id"]
-            isOneToOne: false
-            referencedRelation: "collectivite_membre_crm"
-            referencedColumns: ["collectivite_id"]
-          },
-          {
-            foreignKeyName: "reponse_proportion_collectivite_id_fkey"
-            columns: ["collectivite_id"]
-            isOneToOne: false
             referencedRelation: "collectivite_niveau_acces"
-            referencedColumns: ["collectivite_id"]
-          },
-          {
-            foreignKeyName: "reponse_proportion_collectivite_id_fkey"
-            columns: ["collectivite_id"]
-            isOneToOne: false
-            referencedRelation: "collectivite_plan_action"
-            referencedColumns: ["collectivite_id"]
-          },
-          {
-            foreignKeyName: "reponse_proportion_collectivite_id_fkey"
-            columns: ["collectivite_id"]
-            isOneToOne: false
-            referencedRelation: "collectivite_plan_action"
-            referencedColumns: ["collectivite_id"]
-          },
-          {
-            foreignKeyName: "reponse_proportion_collectivite_id_fkey"
-            columns: ["collectivite_id"]
-            isOneToOne: false
-            referencedRelation: "collectivite_referentiel"
-            referencedColumns: ["collectivite_id"]
-          },
-          {
-            foreignKeyName: "reponse_proportion_collectivite_id_fkey"
-            columns: ["collectivite_id"]
-            isOneToOne: false
-            referencedRelation: "collectivite_utilisateur"
-            referencedColumns: ["collectivite_id"]
-          },
-          {
-            foreignKeyName: "reponse_proportion_collectivite_id_fkey"
-            columns: ["collectivite_id"]
-            isOneToOne: false
-            referencedRelation: "collectivites_crm"
             referencedColumns: ["collectivite_id"]
           },
           {
@@ -20715,41 +12468,6 @@ export type Database = {
             foreignKeyName: "reponse_proportion_collectivite_id_fkey"
             columns: ["collectivite_id"]
             isOneToOne: false
-            referencedRelation: "crm_usages"
-            referencedColumns: ["collectivite_id"]
-          },
-          {
-            foreignKeyName: "reponse_proportion_collectivite_id_fkey"
-            columns: ["collectivite_id"]
-            isOneToOne: false
-            referencedRelation: "engagement_collectivite"
-            referencedColumns: ["collectivite_id"]
-          },
-          {
-            foreignKeyName: "reponse_proportion_collectivite_id_fkey"
-            columns: ["collectivite_id"]
-            isOneToOne: false
-            referencedRelation: "late_collectivite"
-            referencedColumns: ["collectivite_id"]
-          },
-          {
-            foreignKeyName: "reponse_proportion_collectivite_id_fkey"
-            columns: ["collectivite_id"]
-            isOneToOne: false
-            referencedRelation: "locales_engagement_collectivite"
-            referencedColumns: ["collectivite_id"]
-          },
-          {
-            foreignKeyName: "reponse_proportion_collectivite_id_fkey"
-            columns: ["collectivite_id"]
-            isOneToOne: false
-            referencedRelation: "locales_pourcentage_completude"
-            referencedColumns: ["collectivite_id"]
-          },
-          {
-            foreignKeyName: "reponse_proportion_collectivite_id_fkey"
-            columns: ["collectivite_id"]
-            isOneToOne: false
             referencedRelation: "named_collectivite"
             referencedColumns: ["collectivite_id"]
           },
@@ -20765,48 +12483,6 @@ export type Database = {
             columns: ["collectivite_id"]
             isOneToOne: false
             referencedRelation: "question_thematique_completude"
-            referencedColumns: ["collectivite_id"]
-          },
-          {
-            foreignKeyName: "reponse_proportion_collectivite_id_fkey"
-            columns: ["collectivite_id"]
-            isOneToOne: false
-            referencedRelation: "rattachement"
-            referencedColumns: ["collectivite_id"]
-          },
-          {
-            foreignKeyName: "reponse_proportion_collectivite_id_fkey"
-            columns: ["collectivite_id"]
-            isOneToOne: false
-            referencedRelation: "report_indicateur_resultat"
-            referencedColumns: ["collectivite_id"]
-          },
-          {
-            foreignKeyName: "reponse_proportion_collectivite_id_fkey"
-            columns: ["collectivite_id"]
-            isOneToOne: false
-            referencedRelation: "report_reponse_binaire"
-            referencedColumns: ["collectivite_id"]
-          },
-          {
-            foreignKeyName: "reponse_proportion_collectivite_id_fkey"
-            columns: ["collectivite_id"]
-            isOneToOne: false
-            referencedRelation: "report_reponse_choix"
-            referencedColumns: ["collectivite_id"]
-          },
-          {
-            foreignKeyName: "reponse_proportion_collectivite_id_fkey"
-            columns: ["collectivite_id"]
-            isOneToOne: false
-            referencedRelation: "report_reponse_proportion"
-            referencedColumns: ["collectivite_id"]
-          },
-          {
-            foreignKeyName: "reponse_proportion_collectivite_id_fkey"
-            columns: ["collectivite_id"]
-            isOneToOne: false
-            referencedRelation: "report_scores"
             referencedColumns: ["collectivite_id"]
           },
           {
@@ -20835,13 +12511,6 @@ export type Database = {
             columns: ["collectivite_id"]
             isOneToOne: false
             referencedRelation: "retool_plan_action_hebdo"
-            referencedColumns: ["collectivite_id"]
-          },
-          {
-            foreignKeyName: "reponse_proportion_collectivite_id_fkey"
-            columns: ["collectivite_id"]
-            isOneToOne: false
-            referencedRelation: "retool_plan_action_premier_usage"
             referencedColumns: ["collectivite_id"]
           },
           {
@@ -20914,13 +12583,6 @@ export type Database = {
             referencedRelation: "question_display"
             referencedColumns: ["id"]
           },
-          {
-            foreignKeyName: "reponse_proportion_question_id_fkey"
-            columns: ["question_id"]
-            isOneToOne: false
-            referencedRelation: "report_question"
-            referencedColumns: ["id"]
-          },
         ]
       }
       service_tag: {
@@ -20940,13 +12602,6 @@ export type Database = {
           nom?: string
         }
         Relationships: [
-          {
-            foreignKeyName: "service_tag_collectivite_id_fkey"
-            columns: ["collectivite_id"]
-            isOneToOne: false
-            referencedRelation: "action_snippet"
-            referencedColumns: ["collectivite_id"]
-          },
           {
             foreignKeyName: "service_tag_collectivite_id_fkey"
             columns: ["collectivite_id"]
@@ -20979,29 +12634,8 @@ export type Database = {
             foreignKeyName: "service_tag_collectivite_id_fkey"
             columns: ["collectivite_id"]
             isOneToOne: false
-            referencedRelation: "carte_collectivite_active"
-            referencedColumns: ["collectivite_id"]
-          },
-          {
-            foreignKeyName: "service_tag_collectivite_id_fkey"
-            columns: ["collectivite_id"]
-            isOneToOne: false
             referencedRelation: "collectivite"
             referencedColumns: ["id"]
-          },
-          {
-            foreignKeyName: "service_tag_collectivite_id_fkey"
-            columns: ["collectivite_id"]
-            isOneToOne: false
-            referencedRelation: "collectivite"
-            referencedColumns: ["collectivite_id"]
-          },
-          {
-            foreignKeyName: "service_tag_collectivite_id_fkey"
-            columns: ["collectivite_id"]
-            isOneToOne: false
-            referencedRelation: "collectivite_action_statut"
-            referencedColumns: ["collectivite_id"]
           },
           {
             foreignKeyName: "service_tag_collectivite_id_fkey"
@@ -21028,56 +12662,7 @@ export type Database = {
             foreignKeyName: "service_tag_collectivite_id_fkey"
             columns: ["collectivite_id"]
             isOneToOne: false
-            referencedRelation: "collectivite_labellisation"
-            referencedColumns: ["collectivite_id"]
-          },
-          {
-            foreignKeyName: "service_tag_collectivite_id_fkey"
-            columns: ["collectivite_id"]
-            isOneToOne: false
-            referencedRelation: "collectivite_membre_crm"
-            referencedColumns: ["collectivite_id"]
-          },
-          {
-            foreignKeyName: "service_tag_collectivite_id_fkey"
-            columns: ["collectivite_id"]
-            isOneToOne: false
             referencedRelation: "collectivite_niveau_acces"
-            referencedColumns: ["collectivite_id"]
-          },
-          {
-            foreignKeyName: "service_tag_collectivite_id_fkey"
-            columns: ["collectivite_id"]
-            isOneToOne: false
-            referencedRelation: "collectivite_plan_action"
-            referencedColumns: ["collectivite_id"]
-          },
-          {
-            foreignKeyName: "service_tag_collectivite_id_fkey"
-            columns: ["collectivite_id"]
-            isOneToOne: false
-            referencedRelation: "collectivite_plan_action"
-            referencedColumns: ["collectivite_id"]
-          },
-          {
-            foreignKeyName: "service_tag_collectivite_id_fkey"
-            columns: ["collectivite_id"]
-            isOneToOne: false
-            referencedRelation: "collectivite_referentiel"
-            referencedColumns: ["collectivite_id"]
-          },
-          {
-            foreignKeyName: "service_tag_collectivite_id_fkey"
-            columns: ["collectivite_id"]
-            isOneToOne: false
-            referencedRelation: "collectivite_utilisateur"
-            referencedColumns: ["collectivite_id"]
-          },
-          {
-            foreignKeyName: "service_tag_collectivite_id_fkey"
-            columns: ["collectivite_id"]
-            isOneToOne: false
-            referencedRelation: "collectivites_crm"
             referencedColumns: ["collectivite_id"]
           },
           {
@@ -21105,41 +12690,6 @@ export type Database = {
             foreignKeyName: "service_tag_collectivite_id_fkey"
             columns: ["collectivite_id"]
             isOneToOne: false
-            referencedRelation: "crm_usages"
-            referencedColumns: ["collectivite_id"]
-          },
-          {
-            foreignKeyName: "service_tag_collectivite_id_fkey"
-            columns: ["collectivite_id"]
-            isOneToOne: false
-            referencedRelation: "engagement_collectivite"
-            referencedColumns: ["collectivite_id"]
-          },
-          {
-            foreignKeyName: "service_tag_collectivite_id_fkey"
-            columns: ["collectivite_id"]
-            isOneToOne: false
-            referencedRelation: "late_collectivite"
-            referencedColumns: ["collectivite_id"]
-          },
-          {
-            foreignKeyName: "service_tag_collectivite_id_fkey"
-            columns: ["collectivite_id"]
-            isOneToOne: false
-            referencedRelation: "locales_engagement_collectivite"
-            referencedColumns: ["collectivite_id"]
-          },
-          {
-            foreignKeyName: "service_tag_collectivite_id_fkey"
-            columns: ["collectivite_id"]
-            isOneToOne: false
-            referencedRelation: "locales_pourcentage_completude"
-            referencedColumns: ["collectivite_id"]
-          },
-          {
-            foreignKeyName: "service_tag_collectivite_id_fkey"
-            columns: ["collectivite_id"]
-            isOneToOne: false
             referencedRelation: "named_collectivite"
             referencedColumns: ["collectivite_id"]
           },
@@ -21155,48 +12705,6 @@ export type Database = {
             columns: ["collectivite_id"]
             isOneToOne: false
             referencedRelation: "question_thematique_completude"
-            referencedColumns: ["collectivite_id"]
-          },
-          {
-            foreignKeyName: "service_tag_collectivite_id_fkey"
-            columns: ["collectivite_id"]
-            isOneToOne: false
-            referencedRelation: "rattachement"
-            referencedColumns: ["collectivite_id"]
-          },
-          {
-            foreignKeyName: "service_tag_collectivite_id_fkey"
-            columns: ["collectivite_id"]
-            isOneToOne: false
-            referencedRelation: "report_indicateur_resultat"
-            referencedColumns: ["collectivite_id"]
-          },
-          {
-            foreignKeyName: "service_tag_collectivite_id_fkey"
-            columns: ["collectivite_id"]
-            isOneToOne: false
-            referencedRelation: "report_reponse_binaire"
-            referencedColumns: ["collectivite_id"]
-          },
-          {
-            foreignKeyName: "service_tag_collectivite_id_fkey"
-            columns: ["collectivite_id"]
-            isOneToOne: false
-            referencedRelation: "report_reponse_choix"
-            referencedColumns: ["collectivite_id"]
-          },
-          {
-            foreignKeyName: "service_tag_collectivite_id_fkey"
-            columns: ["collectivite_id"]
-            isOneToOne: false
-            referencedRelation: "report_reponse_proportion"
-            referencedColumns: ["collectivite_id"]
-          },
-          {
-            foreignKeyName: "service_tag_collectivite_id_fkey"
-            columns: ["collectivite_id"]
-            isOneToOne: false
-            referencedRelation: "report_scores"
             referencedColumns: ["collectivite_id"]
           },
           {
@@ -21225,13 +12733,6 @@ export type Database = {
             columns: ["collectivite_id"]
             isOneToOne: false
             referencedRelation: "retool_plan_action_hebdo"
-            referencedColumns: ["collectivite_id"]
-          },
-          {
-            foreignKeyName: "service_tag_collectivite_id_fkey"
-            columns: ["collectivite_id"]
-            isOneToOne: false
-            referencedRelation: "retool_plan_action_premier_usage"
             referencedColumns: ["collectivite_id"]
           },
           {
@@ -21357,13 +12858,6 @@ export type Database = {
             foreignKeyName: "structure_tag_collectivite_id_fkey"
             columns: ["collectivite_id"]
             isOneToOne: false
-            referencedRelation: "action_snippet"
-            referencedColumns: ["collectivite_id"]
-          },
-          {
-            foreignKeyName: "structure_tag_collectivite_id_fkey"
-            columns: ["collectivite_id"]
-            isOneToOne: false
             referencedRelation: "action_statuts"
             referencedColumns: ["collectivite_id"]
           },
@@ -21392,29 +12886,8 @@ export type Database = {
             foreignKeyName: "structure_tag_collectivite_id_fkey"
             columns: ["collectivite_id"]
             isOneToOne: false
-            referencedRelation: "carte_collectivite_active"
-            referencedColumns: ["collectivite_id"]
-          },
-          {
-            foreignKeyName: "structure_tag_collectivite_id_fkey"
-            columns: ["collectivite_id"]
-            isOneToOne: false
             referencedRelation: "collectivite"
             referencedColumns: ["id"]
-          },
-          {
-            foreignKeyName: "structure_tag_collectivite_id_fkey"
-            columns: ["collectivite_id"]
-            isOneToOne: false
-            referencedRelation: "collectivite"
-            referencedColumns: ["collectivite_id"]
-          },
-          {
-            foreignKeyName: "structure_tag_collectivite_id_fkey"
-            columns: ["collectivite_id"]
-            isOneToOne: false
-            referencedRelation: "collectivite_action_statut"
-            referencedColumns: ["collectivite_id"]
           },
           {
             foreignKeyName: "structure_tag_collectivite_id_fkey"
@@ -21441,56 +12914,7 @@ export type Database = {
             foreignKeyName: "structure_tag_collectivite_id_fkey"
             columns: ["collectivite_id"]
             isOneToOne: false
-            referencedRelation: "collectivite_labellisation"
-            referencedColumns: ["collectivite_id"]
-          },
-          {
-            foreignKeyName: "structure_tag_collectivite_id_fkey"
-            columns: ["collectivite_id"]
-            isOneToOne: false
-            referencedRelation: "collectivite_membre_crm"
-            referencedColumns: ["collectivite_id"]
-          },
-          {
-            foreignKeyName: "structure_tag_collectivite_id_fkey"
-            columns: ["collectivite_id"]
-            isOneToOne: false
             referencedRelation: "collectivite_niveau_acces"
-            referencedColumns: ["collectivite_id"]
-          },
-          {
-            foreignKeyName: "structure_tag_collectivite_id_fkey"
-            columns: ["collectivite_id"]
-            isOneToOne: false
-            referencedRelation: "collectivite_plan_action"
-            referencedColumns: ["collectivite_id"]
-          },
-          {
-            foreignKeyName: "structure_tag_collectivite_id_fkey"
-            columns: ["collectivite_id"]
-            isOneToOne: false
-            referencedRelation: "collectivite_plan_action"
-            referencedColumns: ["collectivite_id"]
-          },
-          {
-            foreignKeyName: "structure_tag_collectivite_id_fkey"
-            columns: ["collectivite_id"]
-            isOneToOne: false
-            referencedRelation: "collectivite_referentiel"
-            referencedColumns: ["collectivite_id"]
-          },
-          {
-            foreignKeyName: "structure_tag_collectivite_id_fkey"
-            columns: ["collectivite_id"]
-            isOneToOne: false
-            referencedRelation: "collectivite_utilisateur"
-            referencedColumns: ["collectivite_id"]
-          },
-          {
-            foreignKeyName: "structure_tag_collectivite_id_fkey"
-            columns: ["collectivite_id"]
-            isOneToOne: false
-            referencedRelation: "collectivites_crm"
             referencedColumns: ["collectivite_id"]
           },
           {
@@ -21518,41 +12942,6 @@ export type Database = {
             foreignKeyName: "structure_tag_collectivite_id_fkey"
             columns: ["collectivite_id"]
             isOneToOne: false
-            referencedRelation: "crm_usages"
-            referencedColumns: ["collectivite_id"]
-          },
-          {
-            foreignKeyName: "structure_tag_collectivite_id_fkey"
-            columns: ["collectivite_id"]
-            isOneToOne: false
-            referencedRelation: "engagement_collectivite"
-            referencedColumns: ["collectivite_id"]
-          },
-          {
-            foreignKeyName: "structure_tag_collectivite_id_fkey"
-            columns: ["collectivite_id"]
-            isOneToOne: false
-            referencedRelation: "late_collectivite"
-            referencedColumns: ["collectivite_id"]
-          },
-          {
-            foreignKeyName: "structure_tag_collectivite_id_fkey"
-            columns: ["collectivite_id"]
-            isOneToOne: false
-            referencedRelation: "locales_engagement_collectivite"
-            referencedColumns: ["collectivite_id"]
-          },
-          {
-            foreignKeyName: "structure_tag_collectivite_id_fkey"
-            columns: ["collectivite_id"]
-            isOneToOne: false
-            referencedRelation: "locales_pourcentage_completude"
-            referencedColumns: ["collectivite_id"]
-          },
-          {
-            foreignKeyName: "structure_tag_collectivite_id_fkey"
-            columns: ["collectivite_id"]
-            isOneToOne: false
             referencedRelation: "named_collectivite"
             referencedColumns: ["collectivite_id"]
           },
@@ -21568,48 +12957,6 @@ export type Database = {
             columns: ["collectivite_id"]
             isOneToOne: false
             referencedRelation: "question_thematique_completude"
-            referencedColumns: ["collectivite_id"]
-          },
-          {
-            foreignKeyName: "structure_tag_collectivite_id_fkey"
-            columns: ["collectivite_id"]
-            isOneToOne: false
-            referencedRelation: "rattachement"
-            referencedColumns: ["collectivite_id"]
-          },
-          {
-            foreignKeyName: "structure_tag_collectivite_id_fkey"
-            columns: ["collectivite_id"]
-            isOneToOne: false
-            referencedRelation: "report_indicateur_resultat"
-            referencedColumns: ["collectivite_id"]
-          },
-          {
-            foreignKeyName: "structure_tag_collectivite_id_fkey"
-            columns: ["collectivite_id"]
-            isOneToOne: false
-            referencedRelation: "report_reponse_binaire"
-            referencedColumns: ["collectivite_id"]
-          },
-          {
-            foreignKeyName: "structure_tag_collectivite_id_fkey"
-            columns: ["collectivite_id"]
-            isOneToOne: false
-            referencedRelation: "report_reponse_choix"
-            referencedColumns: ["collectivite_id"]
-          },
-          {
-            foreignKeyName: "structure_tag_collectivite_id_fkey"
-            columns: ["collectivite_id"]
-            isOneToOne: false
-            referencedRelation: "report_reponse_proportion"
-            referencedColumns: ["collectivite_id"]
-          },
-          {
-            foreignKeyName: "structure_tag_collectivite_id_fkey"
-            columns: ["collectivite_id"]
-            isOneToOne: false
-            referencedRelation: "report_scores"
             referencedColumns: ["collectivite_id"]
           },
           {
@@ -21638,13 +12985,6 @@ export type Database = {
             columns: ["collectivite_id"]
             isOneToOne: false
             referencedRelation: "retool_plan_action_hebdo"
-            referencedColumns: ["collectivite_id"]
-          },
-          {
-            foreignKeyName: "structure_tag_collectivite_id_fkey"
-            columns: ["collectivite_id"]
-            isOneToOne: false
-            referencedRelation: "retool_plan_action_premier_usage"
             referencedColumns: ["collectivite_id"]
           },
           {
@@ -21744,13 +13084,6 @@ export type Database = {
             foreignKeyName: "tableau_de_bord_module_collectivite_id_fkey"
             columns: ["collectivite_id"]
             isOneToOne: false
-            referencedRelation: "action_snippet"
-            referencedColumns: ["collectivite_id"]
-          },
-          {
-            foreignKeyName: "tableau_de_bord_module_collectivite_id_fkey"
-            columns: ["collectivite_id"]
-            isOneToOne: false
             referencedRelation: "action_statuts"
             referencedColumns: ["collectivite_id"]
           },
@@ -21779,29 +13112,8 @@ export type Database = {
             foreignKeyName: "tableau_de_bord_module_collectivite_id_fkey"
             columns: ["collectivite_id"]
             isOneToOne: false
-            referencedRelation: "carte_collectivite_active"
-            referencedColumns: ["collectivite_id"]
-          },
-          {
-            foreignKeyName: "tableau_de_bord_module_collectivite_id_fkey"
-            columns: ["collectivite_id"]
-            isOneToOne: false
             referencedRelation: "collectivite"
             referencedColumns: ["id"]
-          },
-          {
-            foreignKeyName: "tableau_de_bord_module_collectivite_id_fkey"
-            columns: ["collectivite_id"]
-            isOneToOne: false
-            referencedRelation: "collectivite"
-            referencedColumns: ["collectivite_id"]
-          },
-          {
-            foreignKeyName: "tableau_de_bord_module_collectivite_id_fkey"
-            columns: ["collectivite_id"]
-            isOneToOne: false
-            referencedRelation: "collectivite_action_statut"
-            referencedColumns: ["collectivite_id"]
           },
           {
             foreignKeyName: "tableau_de_bord_module_collectivite_id_fkey"
@@ -21828,56 +13140,7 @@ export type Database = {
             foreignKeyName: "tableau_de_bord_module_collectivite_id_fkey"
             columns: ["collectivite_id"]
             isOneToOne: false
-            referencedRelation: "collectivite_labellisation"
-            referencedColumns: ["collectivite_id"]
-          },
-          {
-            foreignKeyName: "tableau_de_bord_module_collectivite_id_fkey"
-            columns: ["collectivite_id"]
-            isOneToOne: false
-            referencedRelation: "collectivite_membre_crm"
-            referencedColumns: ["collectivite_id"]
-          },
-          {
-            foreignKeyName: "tableau_de_bord_module_collectivite_id_fkey"
-            columns: ["collectivite_id"]
-            isOneToOne: false
             referencedRelation: "collectivite_niveau_acces"
-            referencedColumns: ["collectivite_id"]
-          },
-          {
-            foreignKeyName: "tableau_de_bord_module_collectivite_id_fkey"
-            columns: ["collectivite_id"]
-            isOneToOne: false
-            referencedRelation: "collectivite_plan_action"
-            referencedColumns: ["collectivite_id"]
-          },
-          {
-            foreignKeyName: "tableau_de_bord_module_collectivite_id_fkey"
-            columns: ["collectivite_id"]
-            isOneToOne: false
-            referencedRelation: "collectivite_plan_action"
-            referencedColumns: ["collectivite_id"]
-          },
-          {
-            foreignKeyName: "tableau_de_bord_module_collectivite_id_fkey"
-            columns: ["collectivite_id"]
-            isOneToOne: false
-            referencedRelation: "collectivite_referentiel"
-            referencedColumns: ["collectivite_id"]
-          },
-          {
-            foreignKeyName: "tableau_de_bord_module_collectivite_id_fkey"
-            columns: ["collectivite_id"]
-            isOneToOne: false
-            referencedRelation: "collectivite_utilisateur"
-            referencedColumns: ["collectivite_id"]
-          },
-          {
-            foreignKeyName: "tableau_de_bord_module_collectivite_id_fkey"
-            columns: ["collectivite_id"]
-            isOneToOne: false
-            referencedRelation: "collectivites_crm"
             referencedColumns: ["collectivite_id"]
           },
           {
@@ -21905,41 +13168,6 @@ export type Database = {
             foreignKeyName: "tableau_de_bord_module_collectivite_id_fkey"
             columns: ["collectivite_id"]
             isOneToOne: false
-            referencedRelation: "crm_usages"
-            referencedColumns: ["collectivite_id"]
-          },
-          {
-            foreignKeyName: "tableau_de_bord_module_collectivite_id_fkey"
-            columns: ["collectivite_id"]
-            isOneToOne: false
-            referencedRelation: "engagement_collectivite"
-            referencedColumns: ["collectivite_id"]
-          },
-          {
-            foreignKeyName: "tableau_de_bord_module_collectivite_id_fkey"
-            columns: ["collectivite_id"]
-            isOneToOne: false
-            referencedRelation: "late_collectivite"
-            referencedColumns: ["collectivite_id"]
-          },
-          {
-            foreignKeyName: "tableau_de_bord_module_collectivite_id_fkey"
-            columns: ["collectivite_id"]
-            isOneToOne: false
-            referencedRelation: "locales_engagement_collectivite"
-            referencedColumns: ["collectivite_id"]
-          },
-          {
-            foreignKeyName: "tableau_de_bord_module_collectivite_id_fkey"
-            columns: ["collectivite_id"]
-            isOneToOne: false
-            referencedRelation: "locales_pourcentage_completude"
-            referencedColumns: ["collectivite_id"]
-          },
-          {
-            foreignKeyName: "tableau_de_bord_module_collectivite_id_fkey"
-            columns: ["collectivite_id"]
-            isOneToOne: false
             referencedRelation: "named_collectivite"
             referencedColumns: ["collectivite_id"]
           },
@@ -21955,48 +13183,6 @@ export type Database = {
             columns: ["collectivite_id"]
             isOneToOne: false
             referencedRelation: "question_thematique_completude"
-            referencedColumns: ["collectivite_id"]
-          },
-          {
-            foreignKeyName: "tableau_de_bord_module_collectivite_id_fkey"
-            columns: ["collectivite_id"]
-            isOneToOne: false
-            referencedRelation: "rattachement"
-            referencedColumns: ["collectivite_id"]
-          },
-          {
-            foreignKeyName: "tableau_de_bord_module_collectivite_id_fkey"
-            columns: ["collectivite_id"]
-            isOneToOne: false
-            referencedRelation: "report_indicateur_resultat"
-            referencedColumns: ["collectivite_id"]
-          },
-          {
-            foreignKeyName: "tableau_de_bord_module_collectivite_id_fkey"
-            columns: ["collectivite_id"]
-            isOneToOne: false
-            referencedRelation: "report_reponse_binaire"
-            referencedColumns: ["collectivite_id"]
-          },
-          {
-            foreignKeyName: "tableau_de_bord_module_collectivite_id_fkey"
-            columns: ["collectivite_id"]
-            isOneToOne: false
-            referencedRelation: "report_reponse_choix"
-            referencedColumns: ["collectivite_id"]
-          },
-          {
-            foreignKeyName: "tableau_de_bord_module_collectivite_id_fkey"
-            columns: ["collectivite_id"]
-            isOneToOne: false
-            referencedRelation: "report_reponse_proportion"
-            referencedColumns: ["collectivite_id"]
-          },
-          {
-            foreignKeyName: "tableau_de_bord_module_collectivite_id_fkey"
-            columns: ["collectivite_id"]
-            isOneToOne: false
-            referencedRelation: "report_scores"
             referencedColumns: ["collectivite_id"]
           },
           {
@@ -22025,13 +13211,6 @@ export type Database = {
             columns: ["collectivite_id"]
             isOneToOne: false
             referencedRelation: "retool_plan_action_hebdo"
-            referencedColumns: ["collectivite_id"]
-          },
-          {
-            foreignKeyName: "tableau_de_bord_module_collectivite_id_fkey"
-            columns: ["collectivite_id"]
-            isOneToOne: false
-            referencedRelation: "retool_plan_action_premier_usage"
             referencedColumns: ["collectivite_id"]
           },
           {
@@ -22094,13 +13273,6 @@ export type Database = {
             foreignKeyName: "tableau_de_bord_module_user_id_fkey"
             columns: ["user_id"]
             isOneToOne: false
-            referencedRelation: "collectivite_membre_crm"
-            referencedColumns: ["user_id"]
-          },
-          {
-            foreignKeyName: "tableau_de_bord_module_user_id_fkey"
-            columns: ["user_id"]
-            isOneToOne: false
             referencedRelation: "crm_personnes"
             referencedColumns: ["user_id"]
           },
@@ -22109,13 +13281,6 @@ export type Database = {
             columns: ["user_id"]
             isOneToOne: false
             referencedRelation: "dcp"
-            referencedColumns: ["user_id"]
-          },
-          {
-            foreignKeyName: "tableau_de_bord_module_user_id_fkey"
-            columns: ["user_id"]
-            isOneToOne: false
-            referencedRelation: "dcp_display"
             referencedColumns: ["user_id"]
           },
         ]
@@ -22237,13 +13402,6 @@ export type Database = {
             foreignKeyName: "utilisateur_support_user_id_fkey"
             columns: ["user_id"]
             isOneToOne: true
-            referencedRelation: "collectivite_membre_crm"
-            referencedColumns: ["user_id"]
-          },
-          {
-            foreignKeyName: "utilisateur_support_user_id_fkey"
-            columns: ["user_id"]
-            isOneToOne: true
             referencedRelation: "crm_personnes"
             referencedColumns: ["user_id"]
           },
@@ -22252,13 +13410,6 @@ export type Database = {
             columns: ["user_id"]
             isOneToOne: true
             referencedRelation: "dcp"
-            referencedColumns: ["user_id"]
-          },
-          {
-            foreignKeyName: "utilisateur_support_user_id_fkey"
-            columns: ["user_id"]
-            isOneToOne: true
-            referencedRelation: "dcp_display"
             referencedColumns: ["user_id"]
           },
         ]
@@ -22281,13 +13432,6 @@ export type Database = {
             foreignKeyName: "utilisateur_verifie_user_id_fkey"
             columns: ["user_id"]
             isOneToOne: true
-            referencedRelation: "collectivite_membre_crm"
-            referencedColumns: ["user_id"]
-          },
-          {
-            foreignKeyName: "utilisateur_verifie_user_id_fkey"
-            columns: ["user_id"]
-            isOneToOne: true
             referencedRelation: "crm_personnes"
             referencedColumns: ["user_id"]
           },
@@ -22296,13 +13440,6 @@ export type Database = {
             columns: ["user_id"]
             isOneToOne: true
             referencedRelation: "dcp"
-            referencedColumns: ["user_id"]
-          },
-          {
-            foreignKeyName: "utilisateur_verifie_user_id_fkey"
-            columns: ["user_id"]
-            isOneToOne: true
-            referencedRelation: "dcp_display"
             referencedColumns: ["user_id"]
           },
         ]
@@ -22352,55 +13489,6 @@ export type Database = {
             foreignKeyName: "audit_collectivite_id_fkey"
             columns: ["collectivite_id"]
             isOneToOne: false
-            referencedRelation: "collectivite"
-            referencedColumns: ["id"]
-          },
-          {
-            foreignKeyName: "audit_collectivite_id_fkey"
-            columns: ["collectivite_id"]
-            isOneToOne: false
-            referencedRelation: "collectivite_membre_crm"
-            referencedColumns: ["collectivite_id"]
-          },
-          {
-            foreignKeyName: "audit_collectivite_id_fkey"
-            columns: ["collectivite_id"]
-            isOneToOne: false
-            referencedRelation: "collectivite_plan_action"
-            referencedColumns: ["collectivite_id"]
-          },
-          {
-            foreignKeyName: "audit_collectivite_id_fkey"
-            columns: ["collectivite_id"]
-            isOneToOne: false
-            referencedRelation: "collectivites_crm"
-            referencedColumns: ["collectivite_id"]
-          },
-          {
-            foreignKeyName: "audit_collectivite_id_fkey"
-            columns: ["collectivite_id"]
-            isOneToOne: false
-            referencedRelation: "late_collectivite"
-            referencedColumns: ["collectivite_id"]
-          },
-          {
-            foreignKeyName: "audit_collectivite_id_fkey"
-            columns: ["collectivite_id"]
-            isOneToOne: false
-            referencedRelation: "action_snippet"
-            referencedColumns: ["collectivite_id"]
-          },
-          {
-            foreignKeyName: "audit_collectivite_id_fkey"
-            columns: ["collectivite_id"]
-            isOneToOne: false
-            referencedRelation: "retool_plan_action_premier_usage"
-            referencedColumns: ["collectivite_id"]
-          },
-          {
-            foreignKeyName: "audit_collectivite_id_fkey"
-            columns: ["collectivite_id"]
-            isOneToOne: false
             referencedRelation: "action_statuts"
             referencedColumns: ["collectivite_id"]
           },
@@ -22424,6 +13512,13 @@ export type Database = {
             isOneToOne: false
             referencedRelation: "audits"
             referencedColumns: ["collectivite_id"]
+          },
+          {
+            foreignKeyName: "audit_collectivite_id_fkey"
+            columns: ["collectivite_id"]
+            isOneToOne: false
+            referencedRelation: "collectivite"
+            referencedColumns: ["id"]
           },
           {
             foreignKeyName: "audit_collectivite_id_fkey"
@@ -22577,125 +13672,6 @@ export type Database = {
             columns: ["collectivite_id"]
             isOneToOne: false
             referencedRelation: "suivi_audit"
-            referencedColumns: ["collectivite_id"]
-          },
-          {
-            foreignKeyName: "audit_collectivite_id_fkey"
-            columns: ["collectivite_id"]
-            isOneToOne: false
-            referencedRelation: "carte_collectivite_active"
-            referencedColumns: ["collectivite_id"]
-          },
-          {
-            foreignKeyName: "audit_collectivite_id_fkey"
-            columns: ["collectivite_id"]
-            isOneToOne: false
-            referencedRelation: "collectivite"
-            referencedColumns: ["collectivite_id"]
-          },
-          {
-            foreignKeyName: "audit_collectivite_id_fkey"
-            columns: ["collectivite_id"]
-            isOneToOne: false
-            referencedRelation: "collectivite_action_statut"
-            referencedColumns: ["collectivite_id"]
-          },
-          {
-            foreignKeyName: "audit_collectivite_id_fkey"
-            columns: ["collectivite_id"]
-            isOneToOne: false
-            referencedRelation: "collectivite_labellisation"
-            referencedColumns: ["collectivite_id"]
-          },
-          {
-            foreignKeyName: "audit_collectivite_id_fkey"
-            columns: ["collectivite_id"]
-            isOneToOne: false
-            referencedRelation: "collectivite_plan_action"
-            referencedColumns: ["collectivite_id"]
-          },
-          {
-            foreignKeyName: "audit_collectivite_id_fkey"
-            columns: ["collectivite_id"]
-            isOneToOne: false
-            referencedRelation: "collectivite_referentiel"
-            referencedColumns: ["collectivite_id"]
-          },
-          {
-            foreignKeyName: "audit_collectivite_id_fkey"
-            columns: ["collectivite_id"]
-            isOneToOne: false
-            referencedRelation: "collectivite_utilisateur"
-            referencedColumns: ["collectivite_id"]
-          },
-          {
-            foreignKeyName: "audit_collectivite_id_fkey"
-            columns: ["collectivite_id"]
-            isOneToOne: false
-            referencedRelation: "crm_usages"
-            referencedColumns: ["collectivite_id"]
-          },
-          {
-            foreignKeyName: "audit_collectivite_id_fkey"
-            columns: ["collectivite_id"]
-            isOneToOne: false
-            referencedRelation: "engagement_collectivite"
-            referencedColumns: ["collectivite_id"]
-          },
-          {
-            foreignKeyName: "audit_collectivite_id_fkey"
-            columns: ["collectivite_id"]
-            isOneToOne: false
-            referencedRelation: "locales_engagement_collectivite"
-            referencedColumns: ["collectivite_id"]
-          },
-          {
-            foreignKeyName: "audit_collectivite_id_fkey"
-            columns: ["collectivite_id"]
-            isOneToOne: false
-            referencedRelation: "locales_pourcentage_completude"
-            referencedColumns: ["collectivite_id"]
-          },
-          {
-            foreignKeyName: "audit_collectivite_id_fkey"
-            columns: ["collectivite_id"]
-            isOneToOne: false
-            referencedRelation: "rattachement"
-            referencedColumns: ["collectivite_id"]
-          },
-          {
-            foreignKeyName: "audit_collectivite_id_fkey"
-            columns: ["collectivite_id"]
-            isOneToOne: false
-            referencedRelation: "report_indicateur_resultat"
-            referencedColumns: ["collectivite_id"]
-          },
-          {
-            foreignKeyName: "audit_collectivite_id_fkey"
-            columns: ["collectivite_id"]
-            isOneToOne: false
-            referencedRelation: "report_reponse_binaire"
-            referencedColumns: ["collectivite_id"]
-          },
-          {
-            foreignKeyName: "audit_collectivite_id_fkey"
-            columns: ["collectivite_id"]
-            isOneToOne: false
-            referencedRelation: "report_reponse_choix"
-            referencedColumns: ["collectivite_id"]
-          },
-          {
-            foreignKeyName: "audit_collectivite_id_fkey"
-            columns: ["collectivite_id"]
-            isOneToOne: false
-            referencedRelation: "report_reponse_proportion"
-            referencedColumns: ["collectivite_id"]
-          },
-          {
-            foreignKeyName: "audit_collectivite_id_fkey"
-            columns: ["collectivite_id"]
-            isOneToOne: false
-            referencedRelation: "report_scores"
             referencedColumns: ["collectivite_id"]
           },
         ]
@@ -22752,55 +13728,6 @@ export type Database = {
             foreignKeyName: "action_discussion_collectivite_id_fkey"
             columns: ["collectivite_id"]
             isOneToOne: false
-            referencedRelation: "collectivite"
-            referencedColumns: ["id"]
-          },
-          {
-            foreignKeyName: "action_discussion_collectivite_id_fkey"
-            columns: ["collectivite_id"]
-            isOneToOne: false
-            referencedRelation: "collectivite_membre_crm"
-            referencedColumns: ["collectivite_id"]
-          },
-          {
-            foreignKeyName: "action_discussion_collectivite_id_fkey"
-            columns: ["collectivite_id"]
-            isOneToOne: false
-            referencedRelation: "collectivite_plan_action"
-            referencedColumns: ["collectivite_id"]
-          },
-          {
-            foreignKeyName: "action_discussion_collectivite_id_fkey"
-            columns: ["collectivite_id"]
-            isOneToOne: false
-            referencedRelation: "collectivites_crm"
-            referencedColumns: ["collectivite_id"]
-          },
-          {
-            foreignKeyName: "action_discussion_collectivite_id_fkey"
-            columns: ["collectivite_id"]
-            isOneToOne: false
-            referencedRelation: "late_collectivite"
-            referencedColumns: ["collectivite_id"]
-          },
-          {
-            foreignKeyName: "action_discussion_collectivite_id_fkey"
-            columns: ["collectivite_id"]
-            isOneToOne: false
-            referencedRelation: "action_snippet"
-            referencedColumns: ["collectivite_id"]
-          },
-          {
-            foreignKeyName: "action_discussion_collectivite_id_fkey"
-            columns: ["collectivite_id"]
-            isOneToOne: false
-            referencedRelation: "retool_plan_action_premier_usage"
-            referencedColumns: ["collectivite_id"]
-          },
-          {
-            foreignKeyName: "action_discussion_collectivite_id_fkey"
-            columns: ["collectivite_id"]
-            isOneToOne: false
             referencedRelation: "action_statuts"
             referencedColumns: ["collectivite_id"]
           },
@@ -22824,6 +13751,13 @@ export type Database = {
             isOneToOne: false
             referencedRelation: "audits"
             referencedColumns: ["collectivite_id"]
+          },
+          {
+            foreignKeyName: "action_discussion_collectivite_id_fkey"
+            columns: ["collectivite_id"]
+            isOneToOne: false
+            referencedRelation: "collectivite"
+            referencedColumns: ["id"]
           },
           {
             foreignKeyName: "action_discussion_collectivite_id_fkey"
@@ -22978,132 +13912,6 @@ export type Database = {
             isOneToOne: false
             referencedRelation: "suivi_audit"
             referencedColumns: ["collectivite_id"]
-          },
-          {
-            foreignKeyName: "action_discussion_collectivite_id_fkey"
-            columns: ["collectivite_id"]
-            isOneToOne: false
-            referencedRelation: "carte_collectivite_active"
-            referencedColumns: ["collectivite_id"]
-          },
-          {
-            foreignKeyName: "action_discussion_collectivite_id_fkey"
-            columns: ["collectivite_id"]
-            isOneToOne: false
-            referencedRelation: "collectivite"
-            referencedColumns: ["collectivite_id"]
-          },
-          {
-            foreignKeyName: "action_discussion_collectivite_id_fkey"
-            columns: ["collectivite_id"]
-            isOneToOne: false
-            referencedRelation: "collectivite_action_statut"
-            referencedColumns: ["collectivite_id"]
-          },
-          {
-            foreignKeyName: "action_discussion_collectivite_id_fkey"
-            columns: ["collectivite_id"]
-            isOneToOne: false
-            referencedRelation: "collectivite_labellisation"
-            referencedColumns: ["collectivite_id"]
-          },
-          {
-            foreignKeyName: "action_discussion_collectivite_id_fkey"
-            columns: ["collectivite_id"]
-            isOneToOne: false
-            referencedRelation: "collectivite_plan_action"
-            referencedColumns: ["collectivite_id"]
-          },
-          {
-            foreignKeyName: "action_discussion_collectivite_id_fkey"
-            columns: ["collectivite_id"]
-            isOneToOne: false
-            referencedRelation: "collectivite_referentiel"
-            referencedColumns: ["collectivite_id"]
-          },
-          {
-            foreignKeyName: "action_discussion_collectivite_id_fkey"
-            columns: ["collectivite_id"]
-            isOneToOne: false
-            referencedRelation: "collectivite_utilisateur"
-            referencedColumns: ["collectivite_id"]
-          },
-          {
-            foreignKeyName: "action_discussion_collectivite_id_fkey"
-            columns: ["collectivite_id"]
-            isOneToOne: false
-            referencedRelation: "crm_usages"
-            referencedColumns: ["collectivite_id"]
-          },
-          {
-            foreignKeyName: "action_discussion_collectivite_id_fkey"
-            columns: ["collectivite_id"]
-            isOneToOne: false
-            referencedRelation: "engagement_collectivite"
-            referencedColumns: ["collectivite_id"]
-          },
-          {
-            foreignKeyName: "action_discussion_collectivite_id_fkey"
-            columns: ["collectivite_id"]
-            isOneToOne: false
-            referencedRelation: "locales_engagement_collectivite"
-            referencedColumns: ["collectivite_id"]
-          },
-          {
-            foreignKeyName: "action_discussion_collectivite_id_fkey"
-            columns: ["collectivite_id"]
-            isOneToOne: false
-            referencedRelation: "locales_pourcentage_completude"
-            referencedColumns: ["collectivite_id"]
-          },
-          {
-            foreignKeyName: "action_discussion_collectivite_id_fkey"
-            columns: ["collectivite_id"]
-            isOneToOne: false
-            referencedRelation: "rattachement"
-            referencedColumns: ["collectivite_id"]
-          },
-          {
-            foreignKeyName: "action_discussion_collectivite_id_fkey"
-            columns: ["collectivite_id"]
-            isOneToOne: false
-            referencedRelation: "report_indicateur_resultat"
-            referencedColumns: ["collectivite_id"]
-          },
-          {
-            foreignKeyName: "action_discussion_collectivite_id_fkey"
-            columns: ["collectivite_id"]
-            isOneToOne: false
-            referencedRelation: "report_reponse_binaire"
-            referencedColumns: ["collectivite_id"]
-          },
-          {
-            foreignKeyName: "action_discussion_collectivite_id_fkey"
-            columns: ["collectivite_id"]
-            isOneToOne: false
-            referencedRelation: "report_reponse_choix"
-            referencedColumns: ["collectivite_id"]
-          },
-          {
-            foreignKeyName: "action_discussion_collectivite_id_fkey"
-            columns: ["collectivite_id"]
-            isOneToOne: false
-            referencedRelation: "report_reponse_proportion"
-            referencedColumns: ["collectivite_id"]
-          },
-          {
-            foreignKeyName: "action_discussion_collectivite_id_fkey"
-            columns: ["collectivite_id"]
-            isOneToOne: false
-            referencedRelation: "report_scores"
-            referencedColumns: ["collectivite_id"]
-          },
-          {
-            foreignKeyName: "action_discussion_created_by_fkey"
-            columns: ["created_by"]
-            isOneToOne: false
-            referencedRelation: "users"
-            referencedColumns: ["id"]
           },
         ]
       }
@@ -23232,55 +14040,6 @@ export type Database = {
             foreignKeyName: "audit_collectivite_id_fkey"
             columns: ["collectivite_id"]
             isOneToOne: false
-            referencedRelation: "collectivite"
-            referencedColumns: ["id"]
-          },
-          {
-            foreignKeyName: "audit_collectivite_id_fkey"
-            columns: ["collectivite_id"]
-            isOneToOne: false
-            referencedRelation: "collectivite_membre_crm"
-            referencedColumns: ["collectivite_id"]
-          },
-          {
-            foreignKeyName: "audit_collectivite_id_fkey"
-            columns: ["collectivite_id"]
-            isOneToOne: false
-            referencedRelation: "collectivite_plan_action"
-            referencedColumns: ["collectivite_id"]
-          },
-          {
-            foreignKeyName: "audit_collectivite_id_fkey"
-            columns: ["collectivite_id"]
-            isOneToOne: false
-            referencedRelation: "collectivites_crm"
-            referencedColumns: ["collectivite_id"]
-          },
-          {
-            foreignKeyName: "audit_collectivite_id_fkey"
-            columns: ["collectivite_id"]
-            isOneToOne: false
-            referencedRelation: "late_collectivite"
-            referencedColumns: ["collectivite_id"]
-          },
-          {
-            foreignKeyName: "audit_collectivite_id_fkey"
-            columns: ["collectivite_id"]
-            isOneToOne: false
-            referencedRelation: "action_snippet"
-            referencedColumns: ["collectivite_id"]
-          },
-          {
-            foreignKeyName: "audit_collectivite_id_fkey"
-            columns: ["collectivite_id"]
-            isOneToOne: false
-            referencedRelation: "retool_plan_action_premier_usage"
-            referencedColumns: ["collectivite_id"]
-          },
-          {
-            foreignKeyName: "audit_collectivite_id_fkey"
-            columns: ["collectivite_id"]
-            isOneToOne: false
             referencedRelation: "action_statuts"
             referencedColumns: ["collectivite_id"]
           },
@@ -23304,6 +14063,13 @@ export type Database = {
             isOneToOne: false
             referencedRelation: "audits"
             referencedColumns: ["collectivite_id"]
+          },
+          {
+            foreignKeyName: "audit_collectivite_id_fkey"
+            columns: ["collectivite_id"]
+            isOneToOne: false
+            referencedRelation: "collectivite"
+            referencedColumns: ["id"]
           },
           {
             foreignKeyName: "audit_collectivite_id_fkey"
@@ -23458,132 +14224,6 @@ export type Database = {
             isOneToOne: false
             referencedRelation: "suivi_audit"
             referencedColumns: ["collectivite_id"]
-          },
-          {
-            foreignKeyName: "audit_collectivite_id_fkey"
-            columns: ["collectivite_id"]
-            isOneToOne: false
-            referencedRelation: "carte_collectivite_active"
-            referencedColumns: ["collectivite_id"]
-          },
-          {
-            foreignKeyName: "audit_collectivite_id_fkey"
-            columns: ["collectivite_id"]
-            isOneToOne: false
-            referencedRelation: "collectivite"
-            referencedColumns: ["collectivite_id"]
-          },
-          {
-            foreignKeyName: "audit_collectivite_id_fkey"
-            columns: ["collectivite_id"]
-            isOneToOne: false
-            referencedRelation: "collectivite_action_statut"
-            referencedColumns: ["collectivite_id"]
-          },
-          {
-            foreignKeyName: "audit_collectivite_id_fkey"
-            columns: ["collectivite_id"]
-            isOneToOne: false
-            referencedRelation: "collectivite_labellisation"
-            referencedColumns: ["collectivite_id"]
-          },
-          {
-            foreignKeyName: "audit_collectivite_id_fkey"
-            columns: ["collectivite_id"]
-            isOneToOne: false
-            referencedRelation: "collectivite_plan_action"
-            referencedColumns: ["collectivite_id"]
-          },
-          {
-            foreignKeyName: "audit_collectivite_id_fkey"
-            columns: ["collectivite_id"]
-            isOneToOne: false
-            referencedRelation: "collectivite_referentiel"
-            referencedColumns: ["collectivite_id"]
-          },
-          {
-            foreignKeyName: "audit_collectivite_id_fkey"
-            columns: ["collectivite_id"]
-            isOneToOne: false
-            referencedRelation: "collectivite_utilisateur"
-            referencedColumns: ["collectivite_id"]
-          },
-          {
-            foreignKeyName: "audit_collectivite_id_fkey"
-            columns: ["collectivite_id"]
-            isOneToOne: false
-            referencedRelation: "crm_usages"
-            referencedColumns: ["collectivite_id"]
-          },
-          {
-            foreignKeyName: "audit_collectivite_id_fkey"
-            columns: ["collectivite_id"]
-            isOneToOne: false
-            referencedRelation: "engagement_collectivite"
-            referencedColumns: ["collectivite_id"]
-          },
-          {
-            foreignKeyName: "audit_collectivite_id_fkey"
-            columns: ["collectivite_id"]
-            isOneToOne: false
-            referencedRelation: "locales_engagement_collectivite"
-            referencedColumns: ["collectivite_id"]
-          },
-          {
-            foreignKeyName: "audit_collectivite_id_fkey"
-            columns: ["collectivite_id"]
-            isOneToOne: false
-            referencedRelation: "locales_pourcentage_completude"
-            referencedColumns: ["collectivite_id"]
-          },
-          {
-            foreignKeyName: "audit_collectivite_id_fkey"
-            columns: ["collectivite_id"]
-            isOneToOne: false
-            referencedRelation: "rattachement"
-            referencedColumns: ["collectivite_id"]
-          },
-          {
-            foreignKeyName: "audit_collectivite_id_fkey"
-            columns: ["collectivite_id"]
-            isOneToOne: false
-            referencedRelation: "report_indicateur_resultat"
-            referencedColumns: ["collectivite_id"]
-          },
-          {
-            foreignKeyName: "audit_collectivite_id_fkey"
-            columns: ["collectivite_id"]
-            isOneToOne: false
-            referencedRelation: "report_reponse_binaire"
-            referencedColumns: ["collectivite_id"]
-          },
-          {
-            foreignKeyName: "audit_collectivite_id_fkey"
-            columns: ["collectivite_id"]
-            isOneToOne: false
-            referencedRelation: "report_reponse_choix"
-            referencedColumns: ["collectivite_id"]
-          },
-          {
-            foreignKeyName: "audit_collectivite_id_fkey"
-            columns: ["collectivite_id"]
-            isOneToOne: false
-            referencedRelation: "report_reponse_proportion"
-            referencedColumns: ["collectivite_id"]
-          },
-          {
-            foreignKeyName: "audit_collectivite_id_fkey"
-            columns: ["collectivite_id"]
-            isOneToOne: false
-            referencedRelation: "report_scores"
-            referencedColumns: ["collectivite_id"]
-          },
-          {
-            foreignKeyName: "audit_demande_id_fkey"
-            columns: ["demande_id"]
-            isOneToOne: false
-            referencedRelation: "demande"
-            referencedColumns: ["id"]
           },
           {
             foreignKeyName: "audit_demande_id_fkey"
@@ -23634,55 +14274,6 @@ export type Database = {
             foreignKeyName: "audit_collectivite_id_fkey"
             columns: ["collectivite_id"]
             isOneToOne: false
-            referencedRelation: "collectivite"
-            referencedColumns: ["id"]
-          },
-          {
-            foreignKeyName: "audit_collectivite_id_fkey"
-            columns: ["collectivite_id"]
-            isOneToOne: false
-            referencedRelation: "collectivite_membre_crm"
-            referencedColumns: ["collectivite_id"]
-          },
-          {
-            foreignKeyName: "audit_collectivite_id_fkey"
-            columns: ["collectivite_id"]
-            isOneToOne: false
-            referencedRelation: "collectivite_plan_action"
-            referencedColumns: ["collectivite_id"]
-          },
-          {
-            foreignKeyName: "audit_collectivite_id_fkey"
-            columns: ["collectivite_id"]
-            isOneToOne: false
-            referencedRelation: "collectivites_crm"
-            referencedColumns: ["collectivite_id"]
-          },
-          {
-            foreignKeyName: "audit_collectivite_id_fkey"
-            columns: ["collectivite_id"]
-            isOneToOne: false
-            referencedRelation: "late_collectivite"
-            referencedColumns: ["collectivite_id"]
-          },
-          {
-            foreignKeyName: "audit_collectivite_id_fkey"
-            columns: ["collectivite_id"]
-            isOneToOne: false
-            referencedRelation: "action_snippet"
-            referencedColumns: ["collectivite_id"]
-          },
-          {
-            foreignKeyName: "audit_collectivite_id_fkey"
-            columns: ["collectivite_id"]
-            isOneToOne: false
-            referencedRelation: "retool_plan_action_premier_usage"
-            referencedColumns: ["collectivite_id"]
-          },
-          {
-            foreignKeyName: "audit_collectivite_id_fkey"
-            columns: ["collectivite_id"]
-            isOneToOne: false
             referencedRelation: "action_statuts"
             referencedColumns: ["collectivite_id"]
           },
@@ -23706,6 +14297,13 @@ export type Database = {
             isOneToOne: false
             referencedRelation: "audits"
             referencedColumns: ["collectivite_id"]
+          },
+          {
+            foreignKeyName: "audit_collectivite_id_fkey"
+            columns: ["collectivite_id"]
+            isOneToOne: false
+            referencedRelation: "collectivite"
+            referencedColumns: ["id"]
           },
           {
             foreignKeyName: "audit_collectivite_id_fkey"
@@ -23860,132 +14458,6 @@ export type Database = {
             isOneToOne: false
             referencedRelation: "suivi_audit"
             referencedColumns: ["collectivite_id"]
-          },
-          {
-            foreignKeyName: "audit_collectivite_id_fkey"
-            columns: ["collectivite_id"]
-            isOneToOne: false
-            referencedRelation: "carte_collectivite_active"
-            referencedColumns: ["collectivite_id"]
-          },
-          {
-            foreignKeyName: "audit_collectivite_id_fkey"
-            columns: ["collectivite_id"]
-            isOneToOne: false
-            referencedRelation: "collectivite"
-            referencedColumns: ["collectivite_id"]
-          },
-          {
-            foreignKeyName: "audit_collectivite_id_fkey"
-            columns: ["collectivite_id"]
-            isOneToOne: false
-            referencedRelation: "collectivite_action_statut"
-            referencedColumns: ["collectivite_id"]
-          },
-          {
-            foreignKeyName: "audit_collectivite_id_fkey"
-            columns: ["collectivite_id"]
-            isOneToOne: false
-            referencedRelation: "collectivite_labellisation"
-            referencedColumns: ["collectivite_id"]
-          },
-          {
-            foreignKeyName: "audit_collectivite_id_fkey"
-            columns: ["collectivite_id"]
-            isOneToOne: false
-            referencedRelation: "collectivite_plan_action"
-            referencedColumns: ["collectivite_id"]
-          },
-          {
-            foreignKeyName: "audit_collectivite_id_fkey"
-            columns: ["collectivite_id"]
-            isOneToOne: false
-            referencedRelation: "collectivite_referentiel"
-            referencedColumns: ["collectivite_id"]
-          },
-          {
-            foreignKeyName: "audit_collectivite_id_fkey"
-            columns: ["collectivite_id"]
-            isOneToOne: false
-            referencedRelation: "collectivite_utilisateur"
-            referencedColumns: ["collectivite_id"]
-          },
-          {
-            foreignKeyName: "audit_collectivite_id_fkey"
-            columns: ["collectivite_id"]
-            isOneToOne: false
-            referencedRelation: "crm_usages"
-            referencedColumns: ["collectivite_id"]
-          },
-          {
-            foreignKeyName: "audit_collectivite_id_fkey"
-            columns: ["collectivite_id"]
-            isOneToOne: false
-            referencedRelation: "engagement_collectivite"
-            referencedColumns: ["collectivite_id"]
-          },
-          {
-            foreignKeyName: "audit_collectivite_id_fkey"
-            columns: ["collectivite_id"]
-            isOneToOne: false
-            referencedRelation: "locales_engagement_collectivite"
-            referencedColumns: ["collectivite_id"]
-          },
-          {
-            foreignKeyName: "audit_collectivite_id_fkey"
-            columns: ["collectivite_id"]
-            isOneToOne: false
-            referencedRelation: "locales_pourcentage_completude"
-            referencedColumns: ["collectivite_id"]
-          },
-          {
-            foreignKeyName: "audit_collectivite_id_fkey"
-            columns: ["collectivite_id"]
-            isOneToOne: false
-            referencedRelation: "rattachement"
-            referencedColumns: ["collectivite_id"]
-          },
-          {
-            foreignKeyName: "audit_collectivite_id_fkey"
-            columns: ["collectivite_id"]
-            isOneToOne: false
-            referencedRelation: "report_indicateur_resultat"
-            referencedColumns: ["collectivite_id"]
-          },
-          {
-            foreignKeyName: "audit_collectivite_id_fkey"
-            columns: ["collectivite_id"]
-            isOneToOne: false
-            referencedRelation: "report_reponse_binaire"
-            referencedColumns: ["collectivite_id"]
-          },
-          {
-            foreignKeyName: "audit_collectivite_id_fkey"
-            columns: ["collectivite_id"]
-            isOneToOne: false
-            referencedRelation: "report_reponse_choix"
-            referencedColumns: ["collectivite_id"]
-          },
-          {
-            foreignKeyName: "audit_collectivite_id_fkey"
-            columns: ["collectivite_id"]
-            isOneToOne: false
-            referencedRelation: "report_reponse_proportion"
-            referencedColumns: ["collectivite_id"]
-          },
-          {
-            foreignKeyName: "audit_collectivite_id_fkey"
-            columns: ["collectivite_id"]
-            isOneToOne: false
-            referencedRelation: "report_scores"
-            referencedColumns: ["collectivite_id"]
-          },
-          {
-            foreignKeyName: "audit_demande_id_fkey"
-            columns: ["demande_id"]
-            isOneToOne: false
-            referencedRelation: "demande"
-            referencedColumns: ["id"]
           },
           {
             foreignKeyName: "audit_demande_id_fkey"
@@ -24066,20 +14538,6 @@ export type Database = {
             referencedRelation: "fiches_action"
             referencedColumns: ["id"]
           },
-          {
-            foreignKeyName: "annexe_fiche_id_fkey"
-            columns: ["fiche_id"]
-            isOneToOne: false
-            referencedRelation: "fiche_resume"
-            referencedColumns: ["id"]
-          },
-          {
-            foreignKeyName: "annexe_fiche_id_fkey"
-            columns: ["fiche_id"]
-            isOneToOne: false
-            referencedRelation: "fiches_action"
-            referencedColumns: ["id"]
-          },
         ]
       }
       bibliotheque_fichier: {
@@ -24094,55 +14552,6 @@ export type Database = {
           id: number | null
         }
         Relationships: [
-          {
-            foreignKeyName: "bibliotheque_fichier_collectivite_id_fkey"
-            columns: ["collectivite_id"]
-            isOneToOne: false
-            referencedRelation: "collectivite"
-            referencedColumns: ["id"]
-          },
-          {
-            foreignKeyName: "bibliotheque_fichier_collectivite_id_fkey"
-            columns: ["collectivite_id"]
-            isOneToOne: false
-            referencedRelation: "collectivite_membre_crm"
-            referencedColumns: ["collectivite_id"]
-          },
-          {
-            foreignKeyName: "bibliotheque_fichier_collectivite_id_fkey"
-            columns: ["collectivite_id"]
-            isOneToOne: false
-            referencedRelation: "collectivite_plan_action"
-            referencedColumns: ["collectivite_id"]
-          },
-          {
-            foreignKeyName: "bibliotheque_fichier_collectivite_id_fkey"
-            columns: ["collectivite_id"]
-            isOneToOne: false
-            referencedRelation: "collectivites_crm"
-            referencedColumns: ["collectivite_id"]
-          },
-          {
-            foreignKeyName: "bibliotheque_fichier_collectivite_id_fkey"
-            columns: ["collectivite_id"]
-            isOneToOne: false
-            referencedRelation: "late_collectivite"
-            referencedColumns: ["collectivite_id"]
-          },
-          {
-            foreignKeyName: "bibliotheque_fichier_collectivite_id_fkey"
-            columns: ["collectivite_id"]
-            isOneToOne: false
-            referencedRelation: "action_snippet"
-            referencedColumns: ["collectivite_id"]
-          },
-          {
-            foreignKeyName: "bibliotheque_fichier_collectivite_id_fkey"
-            columns: ["collectivite_id"]
-            isOneToOne: false
-            referencedRelation: "retool_plan_action_premier_usage"
-            referencedColumns: ["collectivite_id"]
-          },
           {
             foreignKeyName: "bibliotheque_fichier_collectivite_id_fkey"
             columns: ["collectivite_id"]
@@ -24170,6 +14579,13 @@ export type Database = {
             isOneToOne: false
             referencedRelation: "audits"
             referencedColumns: ["collectivite_id"]
+          },
+          {
+            foreignKeyName: "bibliotheque_fichier_collectivite_id_fkey"
+            columns: ["collectivite_id"]
+            isOneToOne: false
+            referencedRelation: "collectivite"
+            referencedColumns: ["id"]
           },
           {
             foreignKeyName: "bibliotheque_fichier_collectivite_id_fkey"
@@ -24324,132 +14740,6 @@ export type Database = {
             isOneToOne: false
             referencedRelation: "suivi_audit"
             referencedColumns: ["collectivite_id"]
-          },
-          {
-            foreignKeyName: "bibliotheque_fichier_collectivite_id_fkey"
-            columns: ["collectivite_id"]
-            isOneToOne: false
-            referencedRelation: "carte_collectivite_active"
-            referencedColumns: ["collectivite_id"]
-          },
-          {
-            foreignKeyName: "bibliotheque_fichier_collectivite_id_fkey"
-            columns: ["collectivite_id"]
-            isOneToOne: false
-            referencedRelation: "collectivite"
-            referencedColumns: ["collectivite_id"]
-          },
-          {
-            foreignKeyName: "bibliotheque_fichier_collectivite_id_fkey"
-            columns: ["collectivite_id"]
-            isOneToOne: false
-            referencedRelation: "collectivite_action_statut"
-            referencedColumns: ["collectivite_id"]
-          },
-          {
-            foreignKeyName: "bibliotheque_fichier_collectivite_id_fkey"
-            columns: ["collectivite_id"]
-            isOneToOne: false
-            referencedRelation: "collectivite_labellisation"
-            referencedColumns: ["collectivite_id"]
-          },
-          {
-            foreignKeyName: "bibliotheque_fichier_collectivite_id_fkey"
-            columns: ["collectivite_id"]
-            isOneToOne: false
-            referencedRelation: "collectivite_plan_action"
-            referencedColumns: ["collectivite_id"]
-          },
-          {
-            foreignKeyName: "bibliotheque_fichier_collectivite_id_fkey"
-            columns: ["collectivite_id"]
-            isOneToOne: false
-            referencedRelation: "collectivite_referentiel"
-            referencedColumns: ["collectivite_id"]
-          },
-          {
-            foreignKeyName: "bibliotheque_fichier_collectivite_id_fkey"
-            columns: ["collectivite_id"]
-            isOneToOne: false
-            referencedRelation: "collectivite_utilisateur"
-            referencedColumns: ["collectivite_id"]
-          },
-          {
-            foreignKeyName: "bibliotheque_fichier_collectivite_id_fkey"
-            columns: ["collectivite_id"]
-            isOneToOne: false
-            referencedRelation: "crm_usages"
-            referencedColumns: ["collectivite_id"]
-          },
-          {
-            foreignKeyName: "bibliotheque_fichier_collectivite_id_fkey"
-            columns: ["collectivite_id"]
-            isOneToOne: false
-            referencedRelation: "engagement_collectivite"
-            referencedColumns: ["collectivite_id"]
-          },
-          {
-            foreignKeyName: "bibliotheque_fichier_collectivite_id_fkey"
-            columns: ["collectivite_id"]
-            isOneToOne: false
-            referencedRelation: "locales_engagement_collectivite"
-            referencedColumns: ["collectivite_id"]
-          },
-          {
-            foreignKeyName: "bibliotheque_fichier_collectivite_id_fkey"
-            columns: ["collectivite_id"]
-            isOneToOne: false
-            referencedRelation: "locales_pourcentage_completude"
-            referencedColumns: ["collectivite_id"]
-          },
-          {
-            foreignKeyName: "bibliotheque_fichier_collectivite_id_fkey"
-            columns: ["collectivite_id"]
-            isOneToOne: false
-            referencedRelation: "rattachement"
-            referencedColumns: ["collectivite_id"]
-          },
-          {
-            foreignKeyName: "bibliotheque_fichier_collectivite_id_fkey"
-            columns: ["collectivite_id"]
-            isOneToOne: false
-            referencedRelation: "report_indicateur_resultat"
-            referencedColumns: ["collectivite_id"]
-          },
-          {
-            foreignKeyName: "bibliotheque_fichier_collectivite_id_fkey"
-            columns: ["collectivite_id"]
-            isOneToOne: false
-            referencedRelation: "report_reponse_binaire"
-            referencedColumns: ["collectivite_id"]
-          },
-          {
-            foreignKeyName: "bibliotheque_fichier_collectivite_id_fkey"
-            columns: ["collectivite_id"]
-            isOneToOne: false
-            referencedRelation: "report_reponse_choix"
-            referencedColumns: ["collectivite_id"]
-          },
-          {
-            foreignKeyName: "bibliotheque_fichier_collectivite_id_fkey"
-            columns: ["collectivite_id"]
-            isOneToOne: false
-            referencedRelation: "report_reponse_proportion"
-            referencedColumns: ["collectivite_id"]
-          },
-          {
-            foreignKeyName: "bibliotheque_fichier_collectivite_id_fkey"
-            columns: ["collectivite_id"]
-            isOneToOne: false
-            referencedRelation: "report_scores"
-            referencedColumns: ["collectivite_id"]
-          },
-          {
-            foreignKeyName: "objects_bucketId_fkey"
-            columns: ["bucket_id"]
-            isOneToOne: false
-            referencedRelation: "buckets"
-            referencedColumns: ["id"]
           },
         ]
       }
@@ -24487,55 +14777,6 @@ export type Database = {
             foreignKeyName: "action_statut_collectivite_id_fkey"
             columns: ["collectivite_id"]
             isOneToOne: false
-            referencedRelation: "collectivite"
-            referencedColumns: ["id"]
-          },
-          {
-            foreignKeyName: "action_statut_collectivite_id_fkey"
-            columns: ["collectivite_id"]
-            isOneToOne: false
-            referencedRelation: "collectivite_membre_crm"
-            referencedColumns: ["collectivite_id"]
-          },
-          {
-            foreignKeyName: "action_statut_collectivite_id_fkey"
-            columns: ["collectivite_id"]
-            isOneToOne: false
-            referencedRelation: "collectivite_plan_action"
-            referencedColumns: ["collectivite_id"]
-          },
-          {
-            foreignKeyName: "action_statut_collectivite_id_fkey"
-            columns: ["collectivite_id"]
-            isOneToOne: false
-            referencedRelation: "collectivites_crm"
-            referencedColumns: ["collectivite_id"]
-          },
-          {
-            foreignKeyName: "action_statut_collectivite_id_fkey"
-            columns: ["collectivite_id"]
-            isOneToOne: false
-            referencedRelation: "late_collectivite"
-            referencedColumns: ["collectivite_id"]
-          },
-          {
-            foreignKeyName: "action_statut_collectivite_id_fkey"
-            columns: ["collectivite_id"]
-            isOneToOne: false
-            referencedRelation: "action_snippet"
-            referencedColumns: ["collectivite_id"]
-          },
-          {
-            foreignKeyName: "action_statut_collectivite_id_fkey"
-            columns: ["collectivite_id"]
-            isOneToOne: false
-            referencedRelation: "retool_plan_action_premier_usage"
-            referencedColumns: ["collectivite_id"]
-          },
-          {
-            foreignKeyName: "action_statut_collectivite_id_fkey"
-            columns: ["collectivite_id"]
-            isOneToOne: false
             referencedRelation: "action_statuts"
             referencedColumns: ["collectivite_id"]
           },
@@ -24559,6 +14800,13 @@ export type Database = {
             isOneToOne: false
             referencedRelation: "audits"
             referencedColumns: ["collectivite_id"]
+          },
+          {
+            foreignKeyName: "action_statut_collectivite_id_fkey"
+            columns: ["collectivite_id"]
+            isOneToOne: false
+            referencedRelation: "collectivite"
+            referencedColumns: ["id"]
           },
           {
             foreignKeyName: "action_statut_collectivite_id_fkey"
@@ -24713,132 +14961,6 @@ export type Database = {
             isOneToOne: false
             referencedRelation: "suivi_audit"
             referencedColumns: ["collectivite_id"]
-          },
-          {
-            foreignKeyName: "action_statut_collectivite_id_fkey"
-            columns: ["collectivite_id"]
-            isOneToOne: false
-            referencedRelation: "carte_collectivite_active"
-            referencedColumns: ["collectivite_id"]
-          },
-          {
-            foreignKeyName: "action_statut_collectivite_id_fkey"
-            columns: ["collectivite_id"]
-            isOneToOne: false
-            referencedRelation: "collectivite"
-            referencedColumns: ["collectivite_id"]
-          },
-          {
-            foreignKeyName: "action_statut_collectivite_id_fkey"
-            columns: ["collectivite_id"]
-            isOneToOne: false
-            referencedRelation: "collectivite_action_statut"
-            referencedColumns: ["collectivite_id"]
-          },
-          {
-            foreignKeyName: "action_statut_collectivite_id_fkey"
-            columns: ["collectivite_id"]
-            isOneToOne: false
-            referencedRelation: "collectivite_labellisation"
-            referencedColumns: ["collectivite_id"]
-          },
-          {
-            foreignKeyName: "action_statut_collectivite_id_fkey"
-            columns: ["collectivite_id"]
-            isOneToOne: false
-            referencedRelation: "collectivite_plan_action"
-            referencedColumns: ["collectivite_id"]
-          },
-          {
-            foreignKeyName: "action_statut_collectivite_id_fkey"
-            columns: ["collectivite_id"]
-            isOneToOne: false
-            referencedRelation: "collectivite_referentiel"
-            referencedColumns: ["collectivite_id"]
-          },
-          {
-            foreignKeyName: "action_statut_collectivite_id_fkey"
-            columns: ["collectivite_id"]
-            isOneToOne: false
-            referencedRelation: "collectivite_utilisateur"
-            referencedColumns: ["collectivite_id"]
-          },
-          {
-            foreignKeyName: "action_statut_collectivite_id_fkey"
-            columns: ["collectivite_id"]
-            isOneToOne: false
-            referencedRelation: "crm_usages"
-            referencedColumns: ["collectivite_id"]
-          },
-          {
-            foreignKeyName: "action_statut_collectivite_id_fkey"
-            columns: ["collectivite_id"]
-            isOneToOne: false
-            referencedRelation: "engagement_collectivite"
-            referencedColumns: ["collectivite_id"]
-          },
-          {
-            foreignKeyName: "action_statut_collectivite_id_fkey"
-            columns: ["collectivite_id"]
-            isOneToOne: false
-            referencedRelation: "locales_engagement_collectivite"
-            referencedColumns: ["collectivite_id"]
-          },
-          {
-            foreignKeyName: "action_statut_collectivite_id_fkey"
-            columns: ["collectivite_id"]
-            isOneToOne: false
-            referencedRelation: "locales_pourcentage_completude"
-            referencedColumns: ["collectivite_id"]
-          },
-          {
-            foreignKeyName: "action_statut_collectivite_id_fkey"
-            columns: ["collectivite_id"]
-            isOneToOne: false
-            referencedRelation: "rattachement"
-            referencedColumns: ["collectivite_id"]
-          },
-          {
-            foreignKeyName: "action_statut_collectivite_id_fkey"
-            columns: ["collectivite_id"]
-            isOneToOne: false
-            referencedRelation: "report_indicateur_resultat"
-            referencedColumns: ["collectivite_id"]
-          },
-          {
-            foreignKeyName: "action_statut_collectivite_id_fkey"
-            columns: ["collectivite_id"]
-            isOneToOne: false
-            referencedRelation: "report_reponse_binaire"
-            referencedColumns: ["collectivite_id"]
-          },
-          {
-            foreignKeyName: "action_statut_collectivite_id_fkey"
-            columns: ["collectivite_id"]
-            isOneToOne: false
-            referencedRelation: "report_reponse_choix"
-            referencedColumns: ["collectivite_id"]
-          },
-          {
-            foreignKeyName: "action_statut_collectivite_id_fkey"
-            columns: ["collectivite_id"]
-            isOneToOne: false
-            referencedRelation: "report_reponse_proportion"
-            referencedColumns: ["collectivite_id"]
-          },
-          {
-            foreignKeyName: "action_statut_collectivite_id_fkey"
-            columns: ["collectivite_id"]
-            isOneToOne: false
-            referencedRelation: "report_scores"
-            referencedColumns: ["collectivite_id"]
-          },
-          {
-            foreignKeyName: "action_statut_modified_by_fkey"
-            columns: ["modified_by"]
-            isOneToOne: false
-            referencedRelation: "users"
-            referencedColumns: ["id"]
           },
         ]
       }
@@ -25031,55 +15153,6 @@ export type Database = {
             foreignKeyName: "private_utilisateur_droit_collectivite_id_fkey"
             columns: ["collectivite_id"]
             isOneToOne: false
-            referencedRelation: "collectivite"
-            referencedColumns: ["id"]
-          },
-          {
-            foreignKeyName: "private_utilisateur_droit_collectivite_id_fkey"
-            columns: ["collectivite_id"]
-            isOneToOne: false
-            referencedRelation: "collectivite_membre_crm"
-            referencedColumns: ["collectivite_id"]
-          },
-          {
-            foreignKeyName: "private_utilisateur_droit_collectivite_id_fkey"
-            columns: ["collectivite_id"]
-            isOneToOne: false
-            referencedRelation: "collectivite_plan_action"
-            referencedColumns: ["collectivite_id"]
-          },
-          {
-            foreignKeyName: "private_utilisateur_droit_collectivite_id_fkey"
-            columns: ["collectivite_id"]
-            isOneToOne: false
-            referencedRelation: "collectivites_crm"
-            referencedColumns: ["collectivite_id"]
-          },
-          {
-            foreignKeyName: "private_utilisateur_droit_collectivite_id_fkey"
-            columns: ["collectivite_id"]
-            isOneToOne: false
-            referencedRelation: "late_collectivite"
-            referencedColumns: ["collectivite_id"]
-          },
-          {
-            foreignKeyName: "private_utilisateur_droit_collectivite_id_fkey"
-            columns: ["collectivite_id"]
-            isOneToOne: false
-            referencedRelation: "action_snippet"
-            referencedColumns: ["collectivite_id"]
-          },
-          {
-            foreignKeyName: "private_utilisateur_droit_collectivite_id_fkey"
-            columns: ["collectivite_id"]
-            isOneToOne: false
-            referencedRelation: "retool_plan_action_premier_usage"
-            referencedColumns: ["collectivite_id"]
-          },
-          {
-            foreignKeyName: "private_utilisateur_droit_collectivite_id_fkey"
-            columns: ["collectivite_id"]
-            isOneToOne: false
             referencedRelation: "action_statuts"
             referencedColumns: ["collectivite_id"]
           },
@@ -25103,6 +15176,13 @@ export type Database = {
             isOneToOne: false
             referencedRelation: "audits"
             referencedColumns: ["collectivite_id"]
+          },
+          {
+            foreignKeyName: "private_utilisateur_droit_collectivite_id_fkey"
+            columns: ["collectivite_id"]
+            isOneToOne: false
+            referencedRelation: "collectivite"
+            referencedColumns: ["id"]
           },
           {
             foreignKeyName: "private_utilisateur_droit_collectivite_id_fkey"
@@ -25258,132 +15338,6 @@ export type Database = {
             referencedRelation: "suivi_audit"
             referencedColumns: ["collectivite_id"]
           },
-          {
-            foreignKeyName: "private_utilisateur_droit_collectivite_id_fkey"
-            columns: ["collectivite_id"]
-            isOneToOne: false
-            referencedRelation: "carte_collectivite_active"
-            referencedColumns: ["collectivite_id"]
-          },
-          {
-            foreignKeyName: "private_utilisateur_droit_collectivite_id_fkey"
-            columns: ["collectivite_id"]
-            isOneToOne: false
-            referencedRelation: "collectivite"
-            referencedColumns: ["collectivite_id"]
-          },
-          {
-            foreignKeyName: "private_utilisateur_droit_collectivite_id_fkey"
-            columns: ["collectivite_id"]
-            isOneToOne: false
-            referencedRelation: "collectivite_action_statut"
-            referencedColumns: ["collectivite_id"]
-          },
-          {
-            foreignKeyName: "private_utilisateur_droit_collectivite_id_fkey"
-            columns: ["collectivite_id"]
-            isOneToOne: false
-            referencedRelation: "collectivite_labellisation"
-            referencedColumns: ["collectivite_id"]
-          },
-          {
-            foreignKeyName: "private_utilisateur_droit_collectivite_id_fkey"
-            columns: ["collectivite_id"]
-            isOneToOne: false
-            referencedRelation: "collectivite_plan_action"
-            referencedColumns: ["collectivite_id"]
-          },
-          {
-            foreignKeyName: "private_utilisateur_droit_collectivite_id_fkey"
-            columns: ["collectivite_id"]
-            isOneToOne: false
-            referencedRelation: "collectivite_referentiel"
-            referencedColumns: ["collectivite_id"]
-          },
-          {
-            foreignKeyName: "private_utilisateur_droit_collectivite_id_fkey"
-            columns: ["collectivite_id"]
-            isOneToOne: false
-            referencedRelation: "collectivite_utilisateur"
-            referencedColumns: ["collectivite_id"]
-          },
-          {
-            foreignKeyName: "private_utilisateur_droit_collectivite_id_fkey"
-            columns: ["collectivite_id"]
-            isOneToOne: false
-            referencedRelation: "crm_usages"
-            referencedColumns: ["collectivite_id"]
-          },
-          {
-            foreignKeyName: "private_utilisateur_droit_collectivite_id_fkey"
-            columns: ["collectivite_id"]
-            isOneToOne: false
-            referencedRelation: "engagement_collectivite"
-            referencedColumns: ["collectivite_id"]
-          },
-          {
-            foreignKeyName: "private_utilisateur_droit_collectivite_id_fkey"
-            columns: ["collectivite_id"]
-            isOneToOne: false
-            referencedRelation: "locales_engagement_collectivite"
-            referencedColumns: ["collectivite_id"]
-          },
-          {
-            foreignKeyName: "private_utilisateur_droit_collectivite_id_fkey"
-            columns: ["collectivite_id"]
-            isOneToOne: false
-            referencedRelation: "locales_pourcentage_completude"
-            referencedColumns: ["collectivite_id"]
-          },
-          {
-            foreignKeyName: "private_utilisateur_droit_collectivite_id_fkey"
-            columns: ["collectivite_id"]
-            isOneToOne: false
-            referencedRelation: "rattachement"
-            referencedColumns: ["collectivite_id"]
-          },
-          {
-            foreignKeyName: "private_utilisateur_droit_collectivite_id_fkey"
-            columns: ["collectivite_id"]
-            isOneToOne: false
-            referencedRelation: "report_indicateur_resultat"
-            referencedColumns: ["collectivite_id"]
-          },
-          {
-            foreignKeyName: "private_utilisateur_droit_collectivite_id_fkey"
-            columns: ["collectivite_id"]
-            isOneToOne: false
-            referencedRelation: "report_reponse_binaire"
-            referencedColumns: ["collectivite_id"]
-          },
-          {
-            foreignKeyName: "private_utilisateur_droit_collectivite_id_fkey"
-            columns: ["collectivite_id"]
-            isOneToOne: false
-            referencedRelation: "report_reponse_choix"
-            referencedColumns: ["collectivite_id"]
-          },
-          {
-            foreignKeyName: "private_utilisateur_droit_collectivite_id_fkey"
-            columns: ["collectivite_id"]
-            isOneToOne: false
-            referencedRelation: "report_reponse_proportion"
-            referencedColumns: ["collectivite_id"]
-          },
-          {
-            foreignKeyName: "private_utilisateur_droit_collectivite_id_fkey"
-            columns: ["collectivite_id"]
-            isOneToOne: false
-            referencedRelation: "report_scores"
-            referencedColumns: ["collectivite_id"]
-          },
-          {
-            foreignKeyName: "private_utilisateur_droit_user_id_fkey"
-            columns: ["user_id"]
-            isOneToOne: false
-            referencedRelation: "users"
-            referencedColumns: ["id"]
-          },
         ]
       }
       crm_indicateurs: {
@@ -25433,15 +15387,7 @@ export type Database = {
           telephone?: never
           user_id?: string | null
         }
-        Relationships: [
-          {
-            foreignKeyName: "dcp_user_id_fkey"
-            columns: ["user_id"]
-            isOneToOne: true
-            referencedRelation: "users"
-            referencedColumns: ["id"]
-          },
-        ]
+        Relationships: []
       }
       crm_plans: {
         Row: {
@@ -25517,13 +15463,6 @@ export type Database = {
             referencedRelation: "region"
             referencedColumns: ["code"]
           },
-          {
-            foreignKeyName: "departement_region_code_fkey"
-            columns: ["region_code"]
-            isOneToOne: false
-            referencedRelation: "region"
-            referencedColumns: ["code"]
-          },
         ]
       }
       export_score_audit: {
@@ -25582,55 +15521,6 @@ export type Database = {
             foreignKeyName: "fiche_action_collectivite_id_fkey"
             columns: ["collectivite_id"]
             isOneToOne: false
-            referencedRelation: "collectivite"
-            referencedColumns: ["id"]
-          },
-          {
-            foreignKeyName: "fiche_action_collectivite_id_fkey"
-            columns: ["collectivite_id"]
-            isOneToOne: false
-            referencedRelation: "collectivite_membre_crm"
-            referencedColumns: ["collectivite_id"]
-          },
-          {
-            foreignKeyName: "fiche_action_collectivite_id_fkey"
-            columns: ["collectivite_id"]
-            isOneToOne: false
-            referencedRelation: "collectivite_plan_action"
-            referencedColumns: ["collectivite_id"]
-          },
-          {
-            foreignKeyName: "fiche_action_collectivite_id_fkey"
-            columns: ["collectivite_id"]
-            isOneToOne: false
-            referencedRelation: "collectivites_crm"
-            referencedColumns: ["collectivite_id"]
-          },
-          {
-            foreignKeyName: "fiche_action_collectivite_id_fkey"
-            columns: ["collectivite_id"]
-            isOneToOne: false
-            referencedRelation: "late_collectivite"
-            referencedColumns: ["collectivite_id"]
-          },
-          {
-            foreignKeyName: "fiche_action_collectivite_id_fkey"
-            columns: ["collectivite_id"]
-            isOneToOne: false
-            referencedRelation: "action_snippet"
-            referencedColumns: ["collectivite_id"]
-          },
-          {
-            foreignKeyName: "fiche_action_collectivite_id_fkey"
-            columns: ["collectivite_id"]
-            isOneToOne: false
-            referencedRelation: "retool_plan_action_premier_usage"
-            referencedColumns: ["collectivite_id"]
-          },
-          {
-            foreignKeyName: "fiche_action_collectivite_id_fkey"
-            columns: ["collectivite_id"]
-            isOneToOne: false
             referencedRelation: "action_statuts"
             referencedColumns: ["collectivite_id"]
           },
@@ -25654,6 +15544,13 @@ export type Database = {
             isOneToOne: false
             referencedRelation: "audits"
             referencedColumns: ["collectivite_id"]
+          },
+          {
+            foreignKeyName: "fiche_action_collectivite_id_fkey"
+            columns: ["collectivite_id"]
+            isOneToOne: false
+            referencedRelation: "collectivite"
+            referencedColumns: ["id"]
           },
           {
             foreignKeyName: "fiche_action_collectivite_id_fkey"
@@ -25809,125 +15706,6 @@ export type Database = {
             referencedRelation: "suivi_audit"
             referencedColumns: ["collectivite_id"]
           },
-          {
-            foreignKeyName: "fiche_action_collectivite_id_fkey"
-            columns: ["collectivite_id"]
-            isOneToOne: false
-            referencedRelation: "carte_collectivite_active"
-            referencedColumns: ["collectivite_id"]
-          },
-          {
-            foreignKeyName: "fiche_action_collectivite_id_fkey"
-            columns: ["collectivite_id"]
-            isOneToOne: false
-            referencedRelation: "collectivite"
-            referencedColumns: ["collectivite_id"]
-          },
-          {
-            foreignKeyName: "fiche_action_collectivite_id_fkey"
-            columns: ["collectivite_id"]
-            isOneToOne: false
-            referencedRelation: "collectivite_action_statut"
-            referencedColumns: ["collectivite_id"]
-          },
-          {
-            foreignKeyName: "fiche_action_collectivite_id_fkey"
-            columns: ["collectivite_id"]
-            isOneToOne: false
-            referencedRelation: "collectivite_labellisation"
-            referencedColumns: ["collectivite_id"]
-          },
-          {
-            foreignKeyName: "fiche_action_collectivite_id_fkey"
-            columns: ["collectivite_id"]
-            isOneToOne: false
-            referencedRelation: "collectivite_plan_action"
-            referencedColumns: ["collectivite_id"]
-          },
-          {
-            foreignKeyName: "fiche_action_collectivite_id_fkey"
-            columns: ["collectivite_id"]
-            isOneToOne: false
-            referencedRelation: "collectivite_referentiel"
-            referencedColumns: ["collectivite_id"]
-          },
-          {
-            foreignKeyName: "fiche_action_collectivite_id_fkey"
-            columns: ["collectivite_id"]
-            isOneToOne: false
-            referencedRelation: "collectivite_utilisateur"
-            referencedColumns: ["collectivite_id"]
-          },
-          {
-            foreignKeyName: "fiche_action_collectivite_id_fkey"
-            columns: ["collectivite_id"]
-            isOneToOne: false
-            referencedRelation: "crm_usages"
-            referencedColumns: ["collectivite_id"]
-          },
-          {
-            foreignKeyName: "fiche_action_collectivite_id_fkey"
-            columns: ["collectivite_id"]
-            isOneToOne: false
-            referencedRelation: "engagement_collectivite"
-            referencedColumns: ["collectivite_id"]
-          },
-          {
-            foreignKeyName: "fiche_action_collectivite_id_fkey"
-            columns: ["collectivite_id"]
-            isOneToOne: false
-            referencedRelation: "locales_engagement_collectivite"
-            referencedColumns: ["collectivite_id"]
-          },
-          {
-            foreignKeyName: "fiche_action_collectivite_id_fkey"
-            columns: ["collectivite_id"]
-            isOneToOne: false
-            referencedRelation: "locales_pourcentage_completude"
-            referencedColumns: ["collectivite_id"]
-          },
-          {
-            foreignKeyName: "fiche_action_collectivite_id_fkey"
-            columns: ["collectivite_id"]
-            isOneToOne: false
-            referencedRelation: "rattachement"
-            referencedColumns: ["collectivite_id"]
-          },
-          {
-            foreignKeyName: "fiche_action_collectivite_id_fkey"
-            columns: ["collectivite_id"]
-            isOneToOne: false
-            referencedRelation: "report_indicateur_resultat"
-            referencedColumns: ["collectivite_id"]
-          },
-          {
-            foreignKeyName: "fiche_action_collectivite_id_fkey"
-            columns: ["collectivite_id"]
-            isOneToOne: false
-            referencedRelation: "report_reponse_binaire"
-            referencedColumns: ["collectivite_id"]
-          },
-          {
-            foreignKeyName: "fiche_action_collectivite_id_fkey"
-            columns: ["collectivite_id"]
-            isOneToOne: false
-            referencedRelation: "report_reponse_choix"
-            referencedColumns: ["collectivite_id"]
-          },
-          {
-            foreignKeyName: "fiche_action_collectivite_id_fkey"
-            columns: ["collectivite_id"]
-            isOneToOne: false
-            referencedRelation: "report_reponse_proportion"
-            referencedColumns: ["collectivite_id"]
-          },
-          {
-            foreignKeyName: "fiche_action_collectivite_id_fkey"
-            columns: ["collectivite_id"]
-            isOneToOne: false
-            referencedRelation: "report_scores"
-            referencedColumns: ["collectivite_id"]
-          },
         ]
       }
       fiches_action: {
@@ -25939,7 +15717,7 @@ export type Database = {
           axes: Database["public"]["Tables"]["axe"]["Row"][] | null
           budget_previsionnel: number | null
           calendrier: string | null
-          cibles: Database["public"]["Enums"]["fiche_action_cibles"][] | null
+          cibles: string[] | null
           collectivite_id: number | null
           created_at: string | null
           date_debut: string | null
@@ -25956,6 +15734,8 @@ export type Database = {
           indicateurs:
             | Database["public"]["Tables"]["indicateur_definition"]["Row"][]
             | null
+          instance_gouvernance: string | null
+          libres_tag: Database["public"]["Tables"]["libre_tag"]["Row"][] | null
           maj_termine: boolean | null
           modified_at: string | null
           modified_by: string | null
@@ -25967,6 +15747,8 @@ export type Database = {
           partenaires:
             | Database["public"]["Tables"]["partenaire_tag"]["Row"][]
             | null
+          participation_citoyenne: string | null
+          participation_citoyenne_type: string | null
           piliers_eci:
             | Database["public"]["Enums"]["fiche_action_piliers_eci"][]
             | null
@@ -25985,61 +15767,13 @@ export type Database = {
           structures:
             | Database["public"]["Tables"]["structure_tag"]["Row"][]
             | null
+          temps_de_mise_en_oeuvre: Json | null
           thematiques:
             | Database["public"]["Tables"]["thematique"]["Row"][]
             | null
           titre: string | null
         }
         Relationships: [
-          {
-            foreignKeyName: "fiche_action_collectivite_id_fkey"
-            columns: ["collectivite_id"]
-            isOneToOne: false
-            referencedRelation: "collectivite"
-            referencedColumns: ["id"]
-          },
-          {
-            foreignKeyName: "fiche_action_collectivite_id_fkey"
-            columns: ["collectivite_id"]
-            isOneToOne: false
-            referencedRelation: "collectivite_membre_crm"
-            referencedColumns: ["collectivite_id"]
-          },
-          {
-            foreignKeyName: "fiche_action_collectivite_id_fkey"
-            columns: ["collectivite_id"]
-            isOneToOne: false
-            referencedRelation: "collectivite_plan_action"
-            referencedColumns: ["collectivite_id"]
-          },
-          {
-            foreignKeyName: "fiche_action_collectivite_id_fkey"
-            columns: ["collectivite_id"]
-            isOneToOne: false
-            referencedRelation: "collectivites_crm"
-            referencedColumns: ["collectivite_id"]
-          },
-          {
-            foreignKeyName: "fiche_action_collectivite_id_fkey"
-            columns: ["collectivite_id"]
-            isOneToOne: false
-            referencedRelation: "late_collectivite"
-            referencedColumns: ["collectivite_id"]
-          },
-          {
-            foreignKeyName: "fiche_action_collectivite_id_fkey"
-            columns: ["collectivite_id"]
-            isOneToOne: false
-            referencedRelation: "action_snippet"
-            referencedColumns: ["collectivite_id"]
-          },
-          {
-            foreignKeyName: "fiche_action_collectivite_id_fkey"
-            columns: ["collectivite_id"]
-            isOneToOne: false
-            referencedRelation: "retool_plan_action_premier_usage"
-            referencedColumns: ["collectivite_id"]
-          },
           {
             foreignKeyName: "fiche_action_collectivite_id_fkey"
             columns: ["collectivite_id"]
@@ -26067,6 +15801,13 @@ export type Database = {
             isOneToOne: false
             referencedRelation: "audits"
             referencedColumns: ["collectivite_id"]
+          },
+          {
+            foreignKeyName: "fiche_action_collectivite_id_fkey"
+            columns: ["collectivite_id"]
+            isOneToOne: false
+            referencedRelation: "collectivite"
+            referencedColumns: ["id"]
           },
           {
             foreignKeyName: "fiche_action_collectivite_id_fkey"
@@ -26221,132 +15962,6 @@ export type Database = {
             isOneToOne: false
             referencedRelation: "suivi_audit"
             referencedColumns: ["collectivite_id"]
-          },
-          {
-            foreignKeyName: "fiche_action_collectivite_id_fkey"
-            columns: ["collectivite_id"]
-            isOneToOne: false
-            referencedRelation: "carte_collectivite_active"
-            referencedColumns: ["collectivite_id"]
-          },
-          {
-            foreignKeyName: "fiche_action_collectivite_id_fkey"
-            columns: ["collectivite_id"]
-            isOneToOne: false
-            referencedRelation: "collectivite"
-            referencedColumns: ["collectivite_id"]
-          },
-          {
-            foreignKeyName: "fiche_action_collectivite_id_fkey"
-            columns: ["collectivite_id"]
-            isOneToOne: false
-            referencedRelation: "collectivite_action_statut"
-            referencedColumns: ["collectivite_id"]
-          },
-          {
-            foreignKeyName: "fiche_action_collectivite_id_fkey"
-            columns: ["collectivite_id"]
-            isOneToOne: false
-            referencedRelation: "collectivite_labellisation"
-            referencedColumns: ["collectivite_id"]
-          },
-          {
-            foreignKeyName: "fiche_action_collectivite_id_fkey"
-            columns: ["collectivite_id"]
-            isOneToOne: false
-            referencedRelation: "collectivite_plan_action"
-            referencedColumns: ["collectivite_id"]
-          },
-          {
-            foreignKeyName: "fiche_action_collectivite_id_fkey"
-            columns: ["collectivite_id"]
-            isOneToOne: false
-            referencedRelation: "collectivite_referentiel"
-            referencedColumns: ["collectivite_id"]
-          },
-          {
-            foreignKeyName: "fiche_action_collectivite_id_fkey"
-            columns: ["collectivite_id"]
-            isOneToOne: false
-            referencedRelation: "collectivite_utilisateur"
-            referencedColumns: ["collectivite_id"]
-          },
-          {
-            foreignKeyName: "fiche_action_collectivite_id_fkey"
-            columns: ["collectivite_id"]
-            isOneToOne: false
-            referencedRelation: "crm_usages"
-            referencedColumns: ["collectivite_id"]
-          },
-          {
-            foreignKeyName: "fiche_action_collectivite_id_fkey"
-            columns: ["collectivite_id"]
-            isOneToOne: false
-            referencedRelation: "engagement_collectivite"
-            referencedColumns: ["collectivite_id"]
-          },
-          {
-            foreignKeyName: "fiche_action_collectivite_id_fkey"
-            columns: ["collectivite_id"]
-            isOneToOne: false
-            referencedRelation: "locales_engagement_collectivite"
-            referencedColumns: ["collectivite_id"]
-          },
-          {
-            foreignKeyName: "fiche_action_collectivite_id_fkey"
-            columns: ["collectivite_id"]
-            isOneToOne: false
-            referencedRelation: "locales_pourcentage_completude"
-            referencedColumns: ["collectivite_id"]
-          },
-          {
-            foreignKeyName: "fiche_action_collectivite_id_fkey"
-            columns: ["collectivite_id"]
-            isOneToOne: false
-            referencedRelation: "rattachement"
-            referencedColumns: ["collectivite_id"]
-          },
-          {
-            foreignKeyName: "fiche_action_collectivite_id_fkey"
-            columns: ["collectivite_id"]
-            isOneToOne: false
-            referencedRelation: "report_indicateur_resultat"
-            referencedColumns: ["collectivite_id"]
-          },
-          {
-            foreignKeyName: "fiche_action_collectivite_id_fkey"
-            columns: ["collectivite_id"]
-            isOneToOne: false
-            referencedRelation: "report_reponse_binaire"
-            referencedColumns: ["collectivite_id"]
-          },
-          {
-            foreignKeyName: "fiche_action_collectivite_id_fkey"
-            columns: ["collectivite_id"]
-            isOneToOne: false
-            referencedRelation: "report_reponse_choix"
-            referencedColumns: ["collectivite_id"]
-          },
-          {
-            foreignKeyName: "fiche_action_collectivite_id_fkey"
-            columns: ["collectivite_id"]
-            isOneToOne: false
-            referencedRelation: "report_reponse_proportion"
-            referencedColumns: ["collectivite_id"]
-          },
-          {
-            foreignKeyName: "fiche_action_collectivite_id_fkey"
-            columns: ["collectivite_id"]
-            isOneToOne: false
-            referencedRelation: "report_scores"
-            referencedColumns: ["collectivite_id"]
-          },
-          {
-            foreignKeyName: "fiche_action_modified_by_fkey"
-            columns: ["modified_by"]
-            isOneToOne: false
-            referencedRelation: "users"
-            referencedColumns: ["id"]
           },
         ]
       }
@@ -26476,55 +16091,6 @@ export type Database = {
             foreignKeyName: "axe_collectivite_id_fkey"
             columns: ["collectivite_id"]
             isOneToOne: false
-            referencedRelation: "collectivite"
-            referencedColumns: ["id"]
-          },
-          {
-            foreignKeyName: "axe_collectivite_id_fkey"
-            columns: ["collectivite_id"]
-            isOneToOne: false
-            referencedRelation: "collectivite_membre_crm"
-            referencedColumns: ["collectivite_id"]
-          },
-          {
-            foreignKeyName: "axe_collectivite_id_fkey"
-            columns: ["collectivite_id"]
-            isOneToOne: false
-            referencedRelation: "collectivite_plan_action"
-            referencedColumns: ["collectivite_id"]
-          },
-          {
-            foreignKeyName: "axe_collectivite_id_fkey"
-            columns: ["collectivite_id"]
-            isOneToOne: false
-            referencedRelation: "collectivites_crm"
-            referencedColumns: ["collectivite_id"]
-          },
-          {
-            foreignKeyName: "axe_collectivite_id_fkey"
-            columns: ["collectivite_id"]
-            isOneToOne: false
-            referencedRelation: "late_collectivite"
-            referencedColumns: ["collectivite_id"]
-          },
-          {
-            foreignKeyName: "axe_collectivite_id_fkey"
-            columns: ["collectivite_id"]
-            isOneToOne: false
-            referencedRelation: "action_snippet"
-            referencedColumns: ["collectivite_id"]
-          },
-          {
-            foreignKeyName: "axe_collectivite_id_fkey"
-            columns: ["collectivite_id"]
-            isOneToOne: false
-            referencedRelation: "retool_plan_action_premier_usage"
-            referencedColumns: ["collectivite_id"]
-          },
-          {
-            foreignKeyName: "axe_collectivite_id_fkey"
-            columns: ["collectivite_id"]
-            isOneToOne: false
             referencedRelation: "action_statuts"
             referencedColumns: ["collectivite_id"]
           },
@@ -26548,6 +16114,13 @@ export type Database = {
             isOneToOne: false
             referencedRelation: "audits"
             referencedColumns: ["collectivite_id"]
+          },
+          {
+            foreignKeyName: "axe_collectivite_id_fkey"
+            columns: ["collectivite_id"]
+            isOneToOne: false
+            referencedRelation: "collectivite"
+            referencedColumns: ["id"]
           },
           {
             foreignKeyName: "axe_collectivite_id_fkey"
@@ -26701,125 +16274,6 @@ export type Database = {
             columns: ["collectivite_id"]
             isOneToOne: false
             referencedRelation: "suivi_audit"
-            referencedColumns: ["collectivite_id"]
-          },
-          {
-            foreignKeyName: "axe_collectivite_id_fkey"
-            columns: ["collectivite_id"]
-            isOneToOne: false
-            referencedRelation: "carte_collectivite_active"
-            referencedColumns: ["collectivite_id"]
-          },
-          {
-            foreignKeyName: "axe_collectivite_id_fkey"
-            columns: ["collectivite_id"]
-            isOneToOne: false
-            referencedRelation: "collectivite"
-            referencedColumns: ["collectivite_id"]
-          },
-          {
-            foreignKeyName: "axe_collectivite_id_fkey"
-            columns: ["collectivite_id"]
-            isOneToOne: false
-            referencedRelation: "collectivite_action_statut"
-            referencedColumns: ["collectivite_id"]
-          },
-          {
-            foreignKeyName: "axe_collectivite_id_fkey"
-            columns: ["collectivite_id"]
-            isOneToOne: false
-            referencedRelation: "collectivite_labellisation"
-            referencedColumns: ["collectivite_id"]
-          },
-          {
-            foreignKeyName: "axe_collectivite_id_fkey"
-            columns: ["collectivite_id"]
-            isOneToOne: false
-            referencedRelation: "collectivite_plan_action"
-            referencedColumns: ["collectivite_id"]
-          },
-          {
-            foreignKeyName: "axe_collectivite_id_fkey"
-            columns: ["collectivite_id"]
-            isOneToOne: false
-            referencedRelation: "collectivite_referentiel"
-            referencedColumns: ["collectivite_id"]
-          },
-          {
-            foreignKeyName: "axe_collectivite_id_fkey"
-            columns: ["collectivite_id"]
-            isOneToOne: false
-            referencedRelation: "collectivite_utilisateur"
-            referencedColumns: ["collectivite_id"]
-          },
-          {
-            foreignKeyName: "axe_collectivite_id_fkey"
-            columns: ["collectivite_id"]
-            isOneToOne: false
-            referencedRelation: "crm_usages"
-            referencedColumns: ["collectivite_id"]
-          },
-          {
-            foreignKeyName: "axe_collectivite_id_fkey"
-            columns: ["collectivite_id"]
-            isOneToOne: false
-            referencedRelation: "engagement_collectivite"
-            referencedColumns: ["collectivite_id"]
-          },
-          {
-            foreignKeyName: "axe_collectivite_id_fkey"
-            columns: ["collectivite_id"]
-            isOneToOne: false
-            referencedRelation: "locales_engagement_collectivite"
-            referencedColumns: ["collectivite_id"]
-          },
-          {
-            foreignKeyName: "axe_collectivite_id_fkey"
-            columns: ["collectivite_id"]
-            isOneToOne: false
-            referencedRelation: "locales_pourcentage_completude"
-            referencedColumns: ["collectivite_id"]
-          },
-          {
-            foreignKeyName: "axe_collectivite_id_fkey"
-            columns: ["collectivite_id"]
-            isOneToOne: false
-            referencedRelation: "rattachement"
-            referencedColumns: ["collectivite_id"]
-          },
-          {
-            foreignKeyName: "axe_collectivite_id_fkey"
-            columns: ["collectivite_id"]
-            isOneToOne: false
-            referencedRelation: "report_indicateur_resultat"
-            referencedColumns: ["collectivite_id"]
-          },
-          {
-            foreignKeyName: "axe_collectivite_id_fkey"
-            columns: ["collectivite_id"]
-            isOneToOne: false
-            referencedRelation: "report_reponse_binaire"
-            referencedColumns: ["collectivite_id"]
-          },
-          {
-            foreignKeyName: "axe_collectivite_id_fkey"
-            columns: ["collectivite_id"]
-            isOneToOne: false
-            referencedRelation: "report_reponse_choix"
-            referencedColumns: ["collectivite_id"]
-          },
-          {
-            foreignKeyName: "axe_collectivite_id_fkey"
-            columns: ["collectivite_id"]
-            isOneToOne: false
-            referencedRelation: "report_reponse_proportion"
-            referencedColumns: ["collectivite_id"]
-          },
-          {
-            foreignKeyName: "axe_collectivite_id_fkey"
-            columns: ["collectivite_id"]
-            isOneToOne: false
-            referencedRelation: "report_scores"
             referencedColumns: ["collectivite_id"]
           },
         ]
@@ -26854,55 +16308,6 @@ export type Database = {
             foreignKeyName: "axe_collectivite_id_fkey"
             columns: ["collectivite_id"]
             isOneToOne: false
-            referencedRelation: "collectivite"
-            referencedColumns: ["id"]
-          },
-          {
-            foreignKeyName: "axe_collectivite_id_fkey"
-            columns: ["collectivite_id"]
-            isOneToOne: false
-            referencedRelation: "collectivite_membre_crm"
-            referencedColumns: ["collectivite_id"]
-          },
-          {
-            foreignKeyName: "axe_collectivite_id_fkey"
-            columns: ["collectivite_id"]
-            isOneToOne: false
-            referencedRelation: "collectivite_plan_action"
-            referencedColumns: ["collectivite_id"]
-          },
-          {
-            foreignKeyName: "axe_collectivite_id_fkey"
-            columns: ["collectivite_id"]
-            isOneToOne: false
-            referencedRelation: "collectivites_crm"
-            referencedColumns: ["collectivite_id"]
-          },
-          {
-            foreignKeyName: "axe_collectivite_id_fkey"
-            columns: ["collectivite_id"]
-            isOneToOne: false
-            referencedRelation: "late_collectivite"
-            referencedColumns: ["collectivite_id"]
-          },
-          {
-            foreignKeyName: "axe_collectivite_id_fkey"
-            columns: ["collectivite_id"]
-            isOneToOne: false
-            referencedRelation: "action_snippet"
-            referencedColumns: ["collectivite_id"]
-          },
-          {
-            foreignKeyName: "axe_collectivite_id_fkey"
-            columns: ["collectivite_id"]
-            isOneToOne: false
-            referencedRelation: "retool_plan_action_premier_usage"
-            referencedColumns: ["collectivite_id"]
-          },
-          {
-            foreignKeyName: "axe_collectivite_id_fkey"
-            columns: ["collectivite_id"]
-            isOneToOne: false
             referencedRelation: "action_statuts"
             referencedColumns: ["collectivite_id"]
           },
@@ -26926,6 +16331,13 @@ export type Database = {
             isOneToOne: false
             referencedRelation: "audits"
             referencedColumns: ["collectivite_id"]
+          },
+          {
+            foreignKeyName: "axe_collectivite_id_fkey"
+            columns: ["collectivite_id"]
+            isOneToOne: false
+            referencedRelation: "collectivite"
+            referencedColumns: ["id"]
           },
           {
             foreignKeyName: "axe_collectivite_id_fkey"
@@ -27079,125 +16491,6 @@ export type Database = {
             columns: ["collectivite_id"]
             isOneToOne: false
             referencedRelation: "suivi_audit"
-            referencedColumns: ["collectivite_id"]
-          },
-          {
-            foreignKeyName: "axe_collectivite_id_fkey"
-            columns: ["collectivite_id"]
-            isOneToOne: false
-            referencedRelation: "carte_collectivite_active"
-            referencedColumns: ["collectivite_id"]
-          },
-          {
-            foreignKeyName: "axe_collectivite_id_fkey"
-            columns: ["collectivite_id"]
-            isOneToOne: false
-            referencedRelation: "collectivite"
-            referencedColumns: ["collectivite_id"]
-          },
-          {
-            foreignKeyName: "axe_collectivite_id_fkey"
-            columns: ["collectivite_id"]
-            isOneToOne: false
-            referencedRelation: "collectivite_action_statut"
-            referencedColumns: ["collectivite_id"]
-          },
-          {
-            foreignKeyName: "axe_collectivite_id_fkey"
-            columns: ["collectivite_id"]
-            isOneToOne: false
-            referencedRelation: "collectivite_labellisation"
-            referencedColumns: ["collectivite_id"]
-          },
-          {
-            foreignKeyName: "axe_collectivite_id_fkey"
-            columns: ["collectivite_id"]
-            isOneToOne: false
-            referencedRelation: "collectivite_plan_action"
-            referencedColumns: ["collectivite_id"]
-          },
-          {
-            foreignKeyName: "axe_collectivite_id_fkey"
-            columns: ["collectivite_id"]
-            isOneToOne: false
-            referencedRelation: "collectivite_referentiel"
-            referencedColumns: ["collectivite_id"]
-          },
-          {
-            foreignKeyName: "axe_collectivite_id_fkey"
-            columns: ["collectivite_id"]
-            isOneToOne: false
-            referencedRelation: "collectivite_utilisateur"
-            referencedColumns: ["collectivite_id"]
-          },
-          {
-            foreignKeyName: "axe_collectivite_id_fkey"
-            columns: ["collectivite_id"]
-            isOneToOne: false
-            referencedRelation: "crm_usages"
-            referencedColumns: ["collectivite_id"]
-          },
-          {
-            foreignKeyName: "axe_collectivite_id_fkey"
-            columns: ["collectivite_id"]
-            isOneToOne: false
-            referencedRelation: "engagement_collectivite"
-            referencedColumns: ["collectivite_id"]
-          },
-          {
-            foreignKeyName: "axe_collectivite_id_fkey"
-            columns: ["collectivite_id"]
-            isOneToOne: false
-            referencedRelation: "locales_engagement_collectivite"
-            referencedColumns: ["collectivite_id"]
-          },
-          {
-            foreignKeyName: "axe_collectivite_id_fkey"
-            columns: ["collectivite_id"]
-            isOneToOne: false
-            referencedRelation: "locales_pourcentage_completude"
-            referencedColumns: ["collectivite_id"]
-          },
-          {
-            foreignKeyName: "axe_collectivite_id_fkey"
-            columns: ["collectivite_id"]
-            isOneToOne: false
-            referencedRelation: "rattachement"
-            referencedColumns: ["collectivite_id"]
-          },
-          {
-            foreignKeyName: "axe_collectivite_id_fkey"
-            columns: ["collectivite_id"]
-            isOneToOne: false
-            referencedRelation: "report_indicateur_resultat"
-            referencedColumns: ["collectivite_id"]
-          },
-          {
-            foreignKeyName: "axe_collectivite_id_fkey"
-            columns: ["collectivite_id"]
-            isOneToOne: false
-            referencedRelation: "report_reponse_binaire"
-            referencedColumns: ["collectivite_id"]
-          },
-          {
-            foreignKeyName: "axe_collectivite_id_fkey"
-            columns: ["collectivite_id"]
-            isOneToOne: false
-            referencedRelation: "report_reponse_choix"
-            referencedColumns: ["collectivite_id"]
-          },
-          {
-            foreignKeyName: "axe_collectivite_id_fkey"
-            columns: ["collectivite_id"]
-            isOneToOne: false
-            referencedRelation: "report_reponse_proportion"
-            referencedColumns: ["collectivite_id"]
-          },
-          {
-            foreignKeyName: "axe_collectivite_id_fkey"
-            columns: ["collectivite_id"]
-            isOneToOne: false
-            referencedRelation: "report_scores"
             referencedColumns: ["collectivite_id"]
           },
         ]
@@ -27336,55 +16629,6 @@ export type Database = {
             foreignKeyName: "audit_collectivite_id_fkey"
             columns: ["collectivite_id"]
             isOneToOne: false
-            referencedRelation: "collectivite"
-            referencedColumns: ["id"]
-          },
-          {
-            foreignKeyName: "audit_collectivite_id_fkey"
-            columns: ["collectivite_id"]
-            isOneToOne: false
-            referencedRelation: "collectivite_membre_crm"
-            referencedColumns: ["collectivite_id"]
-          },
-          {
-            foreignKeyName: "audit_collectivite_id_fkey"
-            columns: ["collectivite_id"]
-            isOneToOne: false
-            referencedRelation: "collectivite_plan_action"
-            referencedColumns: ["collectivite_id"]
-          },
-          {
-            foreignKeyName: "audit_collectivite_id_fkey"
-            columns: ["collectivite_id"]
-            isOneToOne: false
-            referencedRelation: "collectivites_crm"
-            referencedColumns: ["collectivite_id"]
-          },
-          {
-            foreignKeyName: "audit_collectivite_id_fkey"
-            columns: ["collectivite_id"]
-            isOneToOne: false
-            referencedRelation: "late_collectivite"
-            referencedColumns: ["collectivite_id"]
-          },
-          {
-            foreignKeyName: "audit_collectivite_id_fkey"
-            columns: ["collectivite_id"]
-            isOneToOne: false
-            referencedRelation: "action_snippet"
-            referencedColumns: ["collectivite_id"]
-          },
-          {
-            foreignKeyName: "audit_collectivite_id_fkey"
-            columns: ["collectivite_id"]
-            isOneToOne: false
-            referencedRelation: "retool_plan_action_premier_usage"
-            referencedColumns: ["collectivite_id"]
-          },
-          {
-            foreignKeyName: "audit_collectivite_id_fkey"
-            columns: ["collectivite_id"]
-            isOneToOne: false
             referencedRelation: "action_statuts"
             referencedColumns: ["collectivite_id"]
           },
@@ -27408,6 +16652,13 @@ export type Database = {
             isOneToOne: false
             referencedRelation: "audits"
             referencedColumns: ["collectivite_id"]
+          },
+          {
+            foreignKeyName: "audit_collectivite_id_fkey"
+            columns: ["collectivite_id"]
+            isOneToOne: false
+            referencedRelation: "collectivite"
+            referencedColumns: ["id"]
           },
           {
             foreignKeyName: "audit_collectivite_id_fkey"
@@ -27561,125 +16812,6 @@ export type Database = {
             columns: ["collectivite_id"]
             isOneToOne: false
             referencedRelation: "suivi_audit"
-            referencedColumns: ["collectivite_id"]
-          },
-          {
-            foreignKeyName: "audit_collectivite_id_fkey"
-            columns: ["collectivite_id"]
-            isOneToOne: false
-            referencedRelation: "carte_collectivite_active"
-            referencedColumns: ["collectivite_id"]
-          },
-          {
-            foreignKeyName: "audit_collectivite_id_fkey"
-            columns: ["collectivite_id"]
-            isOneToOne: false
-            referencedRelation: "collectivite"
-            referencedColumns: ["collectivite_id"]
-          },
-          {
-            foreignKeyName: "audit_collectivite_id_fkey"
-            columns: ["collectivite_id"]
-            isOneToOne: false
-            referencedRelation: "collectivite_action_statut"
-            referencedColumns: ["collectivite_id"]
-          },
-          {
-            foreignKeyName: "audit_collectivite_id_fkey"
-            columns: ["collectivite_id"]
-            isOneToOne: false
-            referencedRelation: "collectivite_labellisation"
-            referencedColumns: ["collectivite_id"]
-          },
-          {
-            foreignKeyName: "audit_collectivite_id_fkey"
-            columns: ["collectivite_id"]
-            isOneToOne: false
-            referencedRelation: "collectivite_plan_action"
-            referencedColumns: ["collectivite_id"]
-          },
-          {
-            foreignKeyName: "audit_collectivite_id_fkey"
-            columns: ["collectivite_id"]
-            isOneToOne: false
-            referencedRelation: "collectivite_referentiel"
-            referencedColumns: ["collectivite_id"]
-          },
-          {
-            foreignKeyName: "audit_collectivite_id_fkey"
-            columns: ["collectivite_id"]
-            isOneToOne: false
-            referencedRelation: "collectivite_utilisateur"
-            referencedColumns: ["collectivite_id"]
-          },
-          {
-            foreignKeyName: "audit_collectivite_id_fkey"
-            columns: ["collectivite_id"]
-            isOneToOne: false
-            referencedRelation: "crm_usages"
-            referencedColumns: ["collectivite_id"]
-          },
-          {
-            foreignKeyName: "audit_collectivite_id_fkey"
-            columns: ["collectivite_id"]
-            isOneToOne: false
-            referencedRelation: "engagement_collectivite"
-            referencedColumns: ["collectivite_id"]
-          },
-          {
-            foreignKeyName: "audit_collectivite_id_fkey"
-            columns: ["collectivite_id"]
-            isOneToOne: false
-            referencedRelation: "locales_engagement_collectivite"
-            referencedColumns: ["collectivite_id"]
-          },
-          {
-            foreignKeyName: "audit_collectivite_id_fkey"
-            columns: ["collectivite_id"]
-            isOneToOne: false
-            referencedRelation: "locales_pourcentage_completude"
-            referencedColumns: ["collectivite_id"]
-          },
-          {
-            foreignKeyName: "audit_collectivite_id_fkey"
-            columns: ["collectivite_id"]
-            isOneToOne: false
-            referencedRelation: "rattachement"
-            referencedColumns: ["collectivite_id"]
-          },
-          {
-            foreignKeyName: "audit_collectivite_id_fkey"
-            columns: ["collectivite_id"]
-            isOneToOne: false
-            referencedRelation: "report_indicateur_resultat"
-            referencedColumns: ["collectivite_id"]
-          },
-          {
-            foreignKeyName: "audit_collectivite_id_fkey"
-            columns: ["collectivite_id"]
-            isOneToOne: false
-            referencedRelation: "report_reponse_binaire"
-            referencedColumns: ["collectivite_id"]
-          },
-          {
-            foreignKeyName: "audit_collectivite_id_fkey"
-            columns: ["collectivite_id"]
-            isOneToOne: false
-            referencedRelation: "report_reponse_choix"
-            referencedColumns: ["collectivite_id"]
-          },
-          {
-            foreignKeyName: "audit_collectivite_id_fkey"
-            columns: ["collectivite_id"]
-            isOneToOne: false
-            referencedRelation: "report_reponse_proportion"
-            referencedColumns: ["collectivite_id"]
-          },
-          {
-            foreignKeyName: "audit_collectivite_id_fkey"
-            columns: ["collectivite_id"]
-            isOneToOne: false
-            referencedRelation: "report_scores"
             referencedColumns: ["collectivite_id"]
           },
         ]
@@ -27726,55 +16858,6 @@ export type Database = {
             foreignKeyName: "labellisation_collectivite_id_fkey"
             columns: ["collectivite_id"]
             isOneToOne: false
-            referencedRelation: "collectivite"
-            referencedColumns: ["id"]
-          },
-          {
-            foreignKeyName: "labellisation_collectivite_id_fkey"
-            columns: ["collectivite_id"]
-            isOneToOne: false
-            referencedRelation: "collectivite_membre_crm"
-            referencedColumns: ["collectivite_id"]
-          },
-          {
-            foreignKeyName: "labellisation_collectivite_id_fkey"
-            columns: ["collectivite_id"]
-            isOneToOne: false
-            referencedRelation: "collectivite_plan_action"
-            referencedColumns: ["collectivite_id"]
-          },
-          {
-            foreignKeyName: "labellisation_collectivite_id_fkey"
-            columns: ["collectivite_id"]
-            isOneToOne: false
-            referencedRelation: "collectivites_crm"
-            referencedColumns: ["collectivite_id"]
-          },
-          {
-            foreignKeyName: "labellisation_collectivite_id_fkey"
-            columns: ["collectivite_id"]
-            isOneToOne: false
-            referencedRelation: "late_collectivite"
-            referencedColumns: ["collectivite_id"]
-          },
-          {
-            foreignKeyName: "labellisation_collectivite_id_fkey"
-            columns: ["collectivite_id"]
-            isOneToOne: false
-            referencedRelation: "action_snippet"
-            referencedColumns: ["collectivite_id"]
-          },
-          {
-            foreignKeyName: "labellisation_collectivite_id_fkey"
-            columns: ["collectivite_id"]
-            isOneToOne: false
-            referencedRelation: "retool_plan_action_premier_usage"
-            referencedColumns: ["collectivite_id"]
-          },
-          {
-            foreignKeyName: "labellisation_collectivite_id_fkey"
-            columns: ["collectivite_id"]
-            isOneToOne: false
             referencedRelation: "action_statuts"
             referencedColumns: ["collectivite_id"]
           },
@@ -27798,6 +16881,13 @@ export type Database = {
             isOneToOne: false
             referencedRelation: "audits"
             referencedColumns: ["collectivite_id"]
+          },
+          {
+            foreignKeyName: "labellisation_collectivite_id_fkey"
+            columns: ["collectivite_id"]
+            isOneToOne: false
+            referencedRelation: "collectivite"
+            referencedColumns: ["id"]
           },
           {
             foreignKeyName: "labellisation_collectivite_id_fkey"
@@ -27951,125 +17041,6 @@ export type Database = {
             columns: ["collectivite_id"]
             isOneToOne: false
             referencedRelation: "suivi_audit"
-            referencedColumns: ["collectivite_id"]
-          },
-          {
-            foreignKeyName: "labellisation_collectivite_id_fkey"
-            columns: ["collectivite_id"]
-            isOneToOne: false
-            referencedRelation: "carte_collectivite_active"
-            referencedColumns: ["collectivite_id"]
-          },
-          {
-            foreignKeyName: "labellisation_collectivite_id_fkey"
-            columns: ["collectivite_id"]
-            isOneToOne: false
-            referencedRelation: "collectivite"
-            referencedColumns: ["collectivite_id"]
-          },
-          {
-            foreignKeyName: "labellisation_collectivite_id_fkey"
-            columns: ["collectivite_id"]
-            isOneToOne: false
-            referencedRelation: "collectivite_action_statut"
-            referencedColumns: ["collectivite_id"]
-          },
-          {
-            foreignKeyName: "labellisation_collectivite_id_fkey"
-            columns: ["collectivite_id"]
-            isOneToOne: false
-            referencedRelation: "collectivite_labellisation"
-            referencedColumns: ["collectivite_id"]
-          },
-          {
-            foreignKeyName: "labellisation_collectivite_id_fkey"
-            columns: ["collectivite_id"]
-            isOneToOne: false
-            referencedRelation: "collectivite_plan_action"
-            referencedColumns: ["collectivite_id"]
-          },
-          {
-            foreignKeyName: "labellisation_collectivite_id_fkey"
-            columns: ["collectivite_id"]
-            isOneToOne: false
-            referencedRelation: "collectivite_referentiel"
-            referencedColumns: ["collectivite_id"]
-          },
-          {
-            foreignKeyName: "labellisation_collectivite_id_fkey"
-            columns: ["collectivite_id"]
-            isOneToOne: false
-            referencedRelation: "collectivite_utilisateur"
-            referencedColumns: ["collectivite_id"]
-          },
-          {
-            foreignKeyName: "labellisation_collectivite_id_fkey"
-            columns: ["collectivite_id"]
-            isOneToOne: false
-            referencedRelation: "crm_usages"
-            referencedColumns: ["collectivite_id"]
-          },
-          {
-            foreignKeyName: "labellisation_collectivite_id_fkey"
-            columns: ["collectivite_id"]
-            isOneToOne: false
-            referencedRelation: "engagement_collectivite"
-            referencedColumns: ["collectivite_id"]
-          },
-          {
-            foreignKeyName: "labellisation_collectivite_id_fkey"
-            columns: ["collectivite_id"]
-            isOneToOne: false
-            referencedRelation: "locales_engagement_collectivite"
-            referencedColumns: ["collectivite_id"]
-          },
-          {
-            foreignKeyName: "labellisation_collectivite_id_fkey"
-            columns: ["collectivite_id"]
-            isOneToOne: false
-            referencedRelation: "locales_pourcentage_completude"
-            referencedColumns: ["collectivite_id"]
-          },
-          {
-            foreignKeyName: "labellisation_collectivite_id_fkey"
-            columns: ["collectivite_id"]
-            isOneToOne: false
-            referencedRelation: "rattachement"
-            referencedColumns: ["collectivite_id"]
-          },
-          {
-            foreignKeyName: "labellisation_collectivite_id_fkey"
-            columns: ["collectivite_id"]
-            isOneToOne: false
-            referencedRelation: "report_indicateur_resultat"
-            referencedColumns: ["collectivite_id"]
-          },
-          {
-            foreignKeyName: "labellisation_collectivite_id_fkey"
-            columns: ["collectivite_id"]
-            isOneToOne: false
-            referencedRelation: "report_reponse_binaire"
-            referencedColumns: ["collectivite_id"]
-          },
-          {
-            foreignKeyName: "labellisation_collectivite_id_fkey"
-            columns: ["collectivite_id"]
-            isOneToOne: false
-            referencedRelation: "report_reponse_choix"
-            referencedColumns: ["collectivite_id"]
-          },
-          {
-            foreignKeyName: "labellisation_collectivite_id_fkey"
-            columns: ["collectivite_id"]
-            isOneToOne: false
-            referencedRelation: "report_reponse_proportion"
-            referencedColumns: ["collectivite_id"]
-          },
-          {
-            foreignKeyName: "labellisation_collectivite_id_fkey"
-            columns: ["collectivite_id"]
-            isOneToOne: false
-            referencedRelation: "report_scores"
             referencedColumns: ["collectivite_id"]
           },
         ]
@@ -28098,55 +17069,6 @@ export type Database = {
             foreignKeyName: "demande_collectivite_id_fkey"
             columns: ["collectivite_id"]
             isOneToOne: false
-            referencedRelation: "collectivite"
-            referencedColumns: ["id"]
-          },
-          {
-            foreignKeyName: "demande_collectivite_id_fkey"
-            columns: ["collectivite_id"]
-            isOneToOne: false
-            referencedRelation: "collectivite_membre_crm"
-            referencedColumns: ["collectivite_id"]
-          },
-          {
-            foreignKeyName: "demande_collectivite_id_fkey"
-            columns: ["collectivite_id"]
-            isOneToOne: false
-            referencedRelation: "collectivite_plan_action"
-            referencedColumns: ["collectivite_id"]
-          },
-          {
-            foreignKeyName: "demande_collectivite_id_fkey"
-            columns: ["collectivite_id"]
-            isOneToOne: false
-            referencedRelation: "collectivites_crm"
-            referencedColumns: ["collectivite_id"]
-          },
-          {
-            foreignKeyName: "demande_collectivite_id_fkey"
-            columns: ["collectivite_id"]
-            isOneToOne: false
-            referencedRelation: "late_collectivite"
-            referencedColumns: ["collectivite_id"]
-          },
-          {
-            foreignKeyName: "demande_collectivite_id_fkey"
-            columns: ["collectivite_id"]
-            isOneToOne: false
-            referencedRelation: "action_snippet"
-            referencedColumns: ["collectivite_id"]
-          },
-          {
-            foreignKeyName: "demande_collectivite_id_fkey"
-            columns: ["collectivite_id"]
-            isOneToOne: false
-            referencedRelation: "retool_plan_action_premier_usage"
-            referencedColumns: ["collectivite_id"]
-          },
-          {
-            foreignKeyName: "demande_collectivite_id_fkey"
-            columns: ["collectivite_id"]
-            isOneToOne: false
             referencedRelation: "action_statuts"
             referencedColumns: ["collectivite_id"]
           },
@@ -28170,6 +17092,13 @@ export type Database = {
             isOneToOne: false
             referencedRelation: "audits"
             referencedColumns: ["collectivite_id"]
+          },
+          {
+            foreignKeyName: "demande_collectivite_id_fkey"
+            columns: ["collectivite_id"]
+            isOneToOne: false
+            referencedRelation: "collectivite"
+            referencedColumns: ["id"]
           },
           {
             foreignKeyName: "demande_collectivite_id_fkey"
@@ -28323,125 +17252,6 @@ export type Database = {
             columns: ["collectivite_id"]
             isOneToOne: false
             referencedRelation: "suivi_audit"
-            referencedColumns: ["collectivite_id"]
-          },
-          {
-            foreignKeyName: "demande_collectivite_id_fkey"
-            columns: ["collectivite_id"]
-            isOneToOne: false
-            referencedRelation: "carte_collectivite_active"
-            referencedColumns: ["collectivite_id"]
-          },
-          {
-            foreignKeyName: "demande_collectivite_id_fkey"
-            columns: ["collectivite_id"]
-            isOneToOne: false
-            referencedRelation: "collectivite"
-            referencedColumns: ["collectivite_id"]
-          },
-          {
-            foreignKeyName: "demande_collectivite_id_fkey"
-            columns: ["collectivite_id"]
-            isOneToOne: false
-            referencedRelation: "collectivite_action_statut"
-            referencedColumns: ["collectivite_id"]
-          },
-          {
-            foreignKeyName: "demande_collectivite_id_fkey"
-            columns: ["collectivite_id"]
-            isOneToOne: false
-            referencedRelation: "collectivite_labellisation"
-            referencedColumns: ["collectivite_id"]
-          },
-          {
-            foreignKeyName: "demande_collectivite_id_fkey"
-            columns: ["collectivite_id"]
-            isOneToOne: false
-            referencedRelation: "collectivite_plan_action"
-            referencedColumns: ["collectivite_id"]
-          },
-          {
-            foreignKeyName: "demande_collectivite_id_fkey"
-            columns: ["collectivite_id"]
-            isOneToOne: false
-            referencedRelation: "collectivite_referentiel"
-            referencedColumns: ["collectivite_id"]
-          },
-          {
-            foreignKeyName: "demande_collectivite_id_fkey"
-            columns: ["collectivite_id"]
-            isOneToOne: false
-            referencedRelation: "collectivite_utilisateur"
-            referencedColumns: ["collectivite_id"]
-          },
-          {
-            foreignKeyName: "demande_collectivite_id_fkey"
-            columns: ["collectivite_id"]
-            isOneToOne: false
-            referencedRelation: "crm_usages"
-            referencedColumns: ["collectivite_id"]
-          },
-          {
-            foreignKeyName: "demande_collectivite_id_fkey"
-            columns: ["collectivite_id"]
-            isOneToOne: false
-            referencedRelation: "engagement_collectivite"
-            referencedColumns: ["collectivite_id"]
-          },
-          {
-            foreignKeyName: "demande_collectivite_id_fkey"
-            columns: ["collectivite_id"]
-            isOneToOne: false
-            referencedRelation: "locales_engagement_collectivite"
-            referencedColumns: ["collectivite_id"]
-          },
-          {
-            foreignKeyName: "demande_collectivite_id_fkey"
-            columns: ["collectivite_id"]
-            isOneToOne: false
-            referencedRelation: "locales_pourcentage_completude"
-            referencedColumns: ["collectivite_id"]
-          },
-          {
-            foreignKeyName: "demande_collectivite_id_fkey"
-            columns: ["collectivite_id"]
-            isOneToOne: false
-            referencedRelation: "rattachement"
-            referencedColumns: ["collectivite_id"]
-          },
-          {
-            foreignKeyName: "demande_collectivite_id_fkey"
-            columns: ["collectivite_id"]
-            isOneToOne: false
-            referencedRelation: "report_indicateur_resultat"
-            referencedColumns: ["collectivite_id"]
-          },
-          {
-            foreignKeyName: "demande_collectivite_id_fkey"
-            columns: ["collectivite_id"]
-            isOneToOne: false
-            referencedRelation: "report_reponse_binaire"
-            referencedColumns: ["collectivite_id"]
-          },
-          {
-            foreignKeyName: "demande_collectivite_id_fkey"
-            columns: ["collectivite_id"]
-            isOneToOne: false
-            referencedRelation: "report_reponse_choix"
-            referencedColumns: ["collectivite_id"]
-          },
-          {
-            foreignKeyName: "demande_collectivite_id_fkey"
-            columns: ["collectivite_id"]
-            isOneToOne: false
-            referencedRelation: "report_reponse_proportion"
-            referencedColumns: ["collectivite_id"]
-          },
-          {
-            foreignKeyName: "demande_collectivite_id_fkey"
-            columns: ["collectivite_id"]
-            isOneToOne: false
-            referencedRelation: "report_scores"
             referencedColumns: ["collectivite_id"]
           },
         ]
@@ -28547,55 +17357,6 @@ export type Database = {
             foreignKeyName: "private_utilisateur_droit_collectivite_id_fkey"
             columns: ["collectivite_id"]
             isOneToOne: false
-            referencedRelation: "collectivite"
-            referencedColumns: ["id"]
-          },
-          {
-            foreignKeyName: "private_utilisateur_droit_collectivite_id_fkey"
-            columns: ["collectivite_id"]
-            isOneToOne: false
-            referencedRelation: "collectivite_membre_crm"
-            referencedColumns: ["collectivite_id"]
-          },
-          {
-            foreignKeyName: "private_utilisateur_droit_collectivite_id_fkey"
-            columns: ["collectivite_id"]
-            isOneToOne: false
-            referencedRelation: "collectivite_plan_action"
-            referencedColumns: ["collectivite_id"]
-          },
-          {
-            foreignKeyName: "private_utilisateur_droit_collectivite_id_fkey"
-            columns: ["collectivite_id"]
-            isOneToOne: false
-            referencedRelation: "collectivites_crm"
-            referencedColumns: ["collectivite_id"]
-          },
-          {
-            foreignKeyName: "private_utilisateur_droit_collectivite_id_fkey"
-            columns: ["collectivite_id"]
-            isOneToOne: false
-            referencedRelation: "late_collectivite"
-            referencedColumns: ["collectivite_id"]
-          },
-          {
-            foreignKeyName: "private_utilisateur_droit_collectivite_id_fkey"
-            columns: ["collectivite_id"]
-            isOneToOne: false
-            referencedRelation: "action_snippet"
-            referencedColumns: ["collectivite_id"]
-          },
-          {
-            foreignKeyName: "private_utilisateur_droit_collectivite_id_fkey"
-            columns: ["collectivite_id"]
-            isOneToOne: false
-            referencedRelation: "retool_plan_action_premier_usage"
-            referencedColumns: ["collectivite_id"]
-          },
-          {
-            foreignKeyName: "private_utilisateur_droit_collectivite_id_fkey"
-            columns: ["collectivite_id"]
-            isOneToOne: false
             referencedRelation: "action_statuts"
             referencedColumns: ["collectivite_id"]
           },
@@ -28619,6 +17380,13 @@ export type Database = {
             isOneToOne: false
             referencedRelation: "audits"
             referencedColumns: ["collectivite_id"]
+          },
+          {
+            foreignKeyName: "private_utilisateur_droit_collectivite_id_fkey"
+            columns: ["collectivite_id"]
+            isOneToOne: false
+            referencedRelation: "collectivite"
+            referencedColumns: ["id"]
           },
           {
             foreignKeyName: "private_utilisateur_droit_collectivite_id_fkey"
@@ -28773,132 +17541,6 @@ export type Database = {
             isOneToOne: false
             referencedRelation: "suivi_audit"
             referencedColumns: ["collectivite_id"]
-          },
-          {
-            foreignKeyName: "private_utilisateur_droit_collectivite_id_fkey"
-            columns: ["collectivite_id"]
-            isOneToOne: false
-            referencedRelation: "carte_collectivite_active"
-            referencedColumns: ["collectivite_id"]
-          },
-          {
-            foreignKeyName: "private_utilisateur_droit_collectivite_id_fkey"
-            columns: ["collectivite_id"]
-            isOneToOne: false
-            referencedRelation: "collectivite"
-            referencedColumns: ["collectivite_id"]
-          },
-          {
-            foreignKeyName: "private_utilisateur_droit_collectivite_id_fkey"
-            columns: ["collectivite_id"]
-            isOneToOne: false
-            referencedRelation: "collectivite_action_statut"
-            referencedColumns: ["collectivite_id"]
-          },
-          {
-            foreignKeyName: "private_utilisateur_droit_collectivite_id_fkey"
-            columns: ["collectivite_id"]
-            isOneToOne: false
-            referencedRelation: "collectivite_labellisation"
-            referencedColumns: ["collectivite_id"]
-          },
-          {
-            foreignKeyName: "private_utilisateur_droit_collectivite_id_fkey"
-            columns: ["collectivite_id"]
-            isOneToOne: false
-            referencedRelation: "collectivite_plan_action"
-            referencedColumns: ["collectivite_id"]
-          },
-          {
-            foreignKeyName: "private_utilisateur_droit_collectivite_id_fkey"
-            columns: ["collectivite_id"]
-            isOneToOne: false
-            referencedRelation: "collectivite_referentiel"
-            referencedColumns: ["collectivite_id"]
-          },
-          {
-            foreignKeyName: "private_utilisateur_droit_collectivite_id_fkey"
-            columns: ["collectivite_id"]
-            isOneToOne: false
-            referencedRelation: "collectivite_utilisateur"
-            referencedColumns: ["collectivite_id"]
-          },
-          {
-            foreignKeyName: "private_utilisateur_droit_collectivite_id_fkey"
-            columns: ["collectivite_id"]
-            isOneToOne: false
-            referencedRelation: "crm_usages"
-            referencedColumns: ["collectivite_id"]
-          },
-          {
-            foreignKeyName: "private_utilisateur_droit_collectivite_id_fkey"
-            columns: ["collectivite_id"]
-            isOneToOne: false
-            referencedRelation: "engagement_collectivite"
-            referencedColumns: ["collectivite_id"]
-          },
-          {
-            foreignKeyName: "private_utilisateur_droit_collectivite_id_fkey"
-            columns: ["collectivite_id"]
-            isOneToOne: false
-            referencedRelation: "locales_engagement_collectivite"
-            referencedColumns: ["collectivite_id"]
-          },
-          {
-            foreignKeyName: "private_utilisateur_droit_collectivite_id_fkey"
-            columns: ["collectivite_id"]
-            isOneToOne: false
-            referencedRelation: "locales_pourcentage_completude"
-            referencedColumns: ["collectivite_id"]
-          },
-          {
-            foreignKeyName: "private_utilisateur_droit_collectivite_id_fkey"
-            columns: ["collectivite_id"]
-            isOneToOne: false
-            referencedRelation: "rattachement"
-            referencedColumns: ["collectivite_id"]
-          },
-          {
-            foreignKeyName: "private_utilisateur_droit_collectivite_id_fkey"
-            columns: ["collectivite_id"]
-            isOneToOne: false
-            referencedRelation: "report_indicateur_resultat"
-            referencedColumns: ["collectivite_id"]
-          },
-          {
-            foreignKeyName: "private_utilisateur_droit_collectivite_id_fkey"
-            columns: ["collectivite_id"]
-            isOneToOne: false
-            referencedRelation: "report_reponse_binaire"
-            referencedColumns: ["collectivite_id"]
-          },
-          {
-            foreignKeyName: "private_utilisateur_droit_collectivite_id_fkey"
-            columns: ["collectivite_id"]
-            isOneToOne: false
-            referencedRelation: "report_reponse_choix"
-            referencedColumns: ["collectivite_id"]
-          },
-          {
-            foreignKeyName: "private_utilisateur_droit_collectivite_id_fkey"
-            columns: ["collectivite_id"]
-            isOneToOne: false
-            referencedRelation: "report_reponse_proportion"
-            referencedColumns: ["collectivite_id"]
-          },
-          {
-            foreignKeyName: "private_utilisateur_droit_collectivite_id_fkey"
-            columns: ["collectivite_id"]
-            isOneToOne: false
-            referencedRelation: "report_scores"
-            referencedColumns: ["collectivite_id"]
-          },
-          {
-            foreignKeyName: "private_utilisateur_droit_user_id_fkey"
-            columns: ["user_id"]
-            isOneToOne: false
-            referencedRelation: "users"
-            referencedColumns: ["id"]
           },
         ]
       }
@@ -29598,6 +18240,8 @@ export type Database = {
           preuve: string | null
           reduction_potentiel: string
           referentiel: Database["public"]["Enums"]["referentiel"]
+          referentiel_id: string
+          referentiel_version: string
           ressources: string
         }[]
       }
@@ -29924,6 +18568,7 @@ export type Database = {
           modified_at: string
           modified_by: string | null
           nom: string | null
+          panier_id: string | null
           parent: number | null
           plan: number | null
           type: number | null
@@ -32732,6 +21377,7 @@ export type Database = {
         | "action"
         | "sous-action"
         | "tache"
+        | "exemple"
       audit_statut: "non_audite" | "en_cours" | "audite"
       avancement:
         | "fait"
@@ -32853,7 +21499,7 @@ export type Database = {
         | "audit"
         | "rapport"
       question_type: "choix" | "binaire" | "proportion"
-      referentiel: "eci" | "cae"
+      referentiel: "eci" | "cae" | "te" | "te-test"
       regle_type: "score" | "desactivation" | "reduction"
       role_name: "agent" | "referent" | "conseiller" | "auditeur" | "aucun"
       thematique_completude: "complete" | "a_completer"
@@ -33108,5 +21754,20 @@ export type Enums<
   ? Database[PublicEnumNameOrOptions["schema"]]["Enums"][EnumName]
   : PublicEnumNameOrOptions extends keyof PublicSchema["Enums"]
     ? PublicSchema["Enums"][PublicEnumNameOrOptions]
+    : never
+
+export type CompositeTypes<
+  PublicCompositeTypeNameOrOptions extends
+    | keyof PublicSchema["CompositeTypes"]
+    | { schema: keyof Database },
+  CompositeTypeName extends PublicCompositeTypeNameOrOptions extends {
+    schema: keyof Database
+  }
+    ? keyof Database[PublicCompositeTypeNameOrOptions["schema"]]["CompositeTypes"]
+    : never = never,
+> = PublicCompositeTypeNameOrOptions extends { schema: keyof Database }
+  ? Database[PublicCompositeTypeNameOrOptions["schema"]]["CompositeTypes"][CompositeTypeName]
+  : PublicCompositeTypeNameOrOptions extends keyof PublicSchema["CompositeTypes"]
+    ? PublicSchema["CompositeTypes"][PublicCompositeTypeNameOrOptions]
     : never
 
