@@ -12,6 +12,7 @@ import PartenairePicto from './PictosActeurs/PartenairePicto';
 import PersonnePilotePicto from './PictosActeurs/PersonnePilotePicto';
 import ServicePilotePicto from './PictosActeurs/ServicePilotePicto';
 import StructurePilotePicto from './PictosActeurs/StructurePilotePicto';
+import CitoyenPicto from './PictosActeurs/CitoyenPicto';
 
 type FicheActionActeursProps = {
   isReadonly: boolean;
@@ -28,8 +29,16 @@ const FicheActionActeurs = ({
 }: FicheActionActeursProps) => {
   const [isModalOpen, setIsModalOpen] = useState(false);
 
-  const { pilotes, services, structures, referents, partenaires, cibles } =
-    fiche;
+  const {
+    pilotes,
+    services,
+    structures,
+    referents,
+    partenaires,
+    cibles,
+    participationCitoyenne,
+    participationCitoyenneType,
+  } = fiche;
 
   const isEmpty =
     !pilotes &&
@@ -37,7 +46,9 @@ const FicheActionActeurs = ({
     !structures &&
     !referents &&
     !partenaires &&
-    (!cibles || cibles.length === 0);
+    (!cibles || cibles.length === 0) &&
+    !participationCitoyenne &&
+    !participationCitoyenneType;
 
   return (
     <>
@@ -104,18 +115,23 @@ const FicheActionActeurs = ({
               liste={cibles?.map((cible) => cible)}
               picto={(className) => <CiblePicto className={className} />}
             />
-            {/* <ListeActeurs
+            <ListeActeurs
               titre="Participation citoyenne"
-              liste={[]}
-              picto={className => <CitoyenPicto className={className} />}
-            /> */}
+              liste={
+                participationCitoyenneType
+                  ? [participationCitoyenneType as string]
+                  : undefined
+              }
+              comment={participationCitoyenne ?? undefined}
+              picto={(className) => <CitoyenPicto className={className} />}
+            />
           </div>
         </div>
       ) : (
         <EmptyCard
           picto={(className) => <EmptyActeursPicto className={className} />}
           title="Aucun acteur du projet n'est renseigné !"
-          subTitle="Personne pilote | Structure pilote | Élu·e référent·e | Direction ou service pilote | Partenaires | Cibles"
+          subTitle="Personne pilote | Structure pilote | Élu·e référent·e | Direction ou service pilote | Partenaires | Cibles | Participation citoyenne"
           isReadonly={isReadonly}
           action={{
             dataTest: 'acteurs',

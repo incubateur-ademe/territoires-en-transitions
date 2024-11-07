@@ -68,10 +68,10 @@ export const Textarea = forwardRef(
           ref={ref}
           disabled={disabled}
           className={classNames(
-            'grow text-grey-8 px-4 outline-none ',
+            'grow text-grey-8 px-4 outline-none placeholder:text-xs',
             {
-              'text-sm py-2': displaySize === 'sm',
-              'text-md py-3': displaySize === 'md',
+              'text-xs py-2': displaySize === 'sm',
+              'text-sm py-3': displaySize === 'md',
               resize: resize === 'both',
               'resize-x': resize === 'horizontal',
               'resize-y': resize === 'vertical',

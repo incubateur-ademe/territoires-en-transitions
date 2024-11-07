@@ -19,6 +19,7 @@ import { Thematique } from '@tet/api/shared/domain';
 
 const DESCRIPTION_MAX_LENGTH = 20000;
 const MOYENS_MAX_LENGTH = 10000;
+const INSTANCES_MAX_LENGTH = 10000;
 
 /**
  * Bouton + modale pour l'édition des informations principales d'une fiche action
@@ -143,6 +144,34 @@ const ModaleDescription = ({ fiche, updateFiche }: ModaleDescriptionProps) => {
                 setEditedFiche((prevState) => ({
                   ...prevState,
                   ressources: (evt.target as HTMLTextAreaElement).value,
+                }))
+              }
+            />
+          </Field>
+
+          {/* Instances de gouvernance */}
+          <Field
+            title="Instances de gouvernance"
+            className="col-span-2"
+            state={
+              editedFiche.instanceGouvernance?.length === INSTANCES_MAX_LENGTH
+                ? 'info'
+                : 'default'
+            }
+            message={getMaxLengthMessage(
+              editedFiche.instanceGouvernance ?? '',
+              INSTANCES_MAX_LENGTH
+            )}
+          >
+            <Textarea
+              className="min-h-[100px]"
+              value={editedFiche.instanceGouvernance ?? ''}
+              maxLength={INSTANCES_MAX_LENGTH}
+              onChange={(evt) =>
+                setEditedFiche((prevState) => ({
+                  ...prevState,
+                  instanceGouvernance: (evt.target as HTMLTextAreaElement)
+                    .value,
                 }))
               }
             />

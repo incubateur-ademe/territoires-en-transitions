@@ -4,6 +4,7 @@ import {
   FormSectionGrid,
   Modal,
   ModalFooterOKCancel,
+  Textarea,
   useEventTracker,
 } from '@tet/ui';
 import { useCurrentCollectivite } from 'core-logic/hooks/useCurrentCollectivite';
@@ -15,6 +16,7 @@ import { getPersonneStringId } from 'ui/dropdownLists/PersonnesDropdown/utils';
 import ServicesPilotesDropdown from 'ui/dropdownLists/ServicesPilotesDropdown/ServicesPilotesDropdown';
 import StructuresDropdown from 'ui/dropdownLists/StructuresDropdown/StructuresDropdown';
 import CiblesDropdown from 'ui/dropdownLists/ficheAction/CiblesDropdown/CiblesDropdown';
+import ParticipationCitoyenneDropdown from 'ui/dropdownLists/ficheAction/ParticipationCitoyenneDropdown/ParticipationCitoyenneDropdown';
 
 type ModaleActeursProps = {
   isOpen: boolean;
@@ -127,6 +129,30 @@ const ModaleActeurs = ({
                   cibles,
                 }))
               }
+            />
+          </Field>
+
+          {/* Participation citoyenne */}
+          <Field title="Participation citoyenne" className="md:col-span-2">
+            <ParticipationCitoyenneDropdown
+              values={editedFiche.participationCitoyenneType}
+              onChange={(participation) =>
+                setEditedFiche((prevState) => ({
+                  ...prevState,
+                  participationCitoyenneType: participation,
+                }))
+              }
+            />
+            <Textarea
+              value={editedFiche.participationCitoyenne ?? ''}
+              onChange={(evt) =>
+                setEditedFiche((prevState) => ({
+                  ...prevState,
+                  participationCitoyenne: (evt.target as HTMLTextAreaElement)
+                    .value,
+                }))
+              }
+              placeholder="Détaillez la participation citoyenne"
             />
           </Field>
         </FormSectionGrid>

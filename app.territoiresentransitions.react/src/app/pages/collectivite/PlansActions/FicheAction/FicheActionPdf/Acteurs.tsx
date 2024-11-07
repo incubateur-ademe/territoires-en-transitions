@@ -2,12 +2,14 @@ import {
   Card,
   List,
   ListElement,
+  Paragraph,
   Stack,
   Title,
 } from 'ui/export-pdf/components';
 import { FicheActionPdfProps } from './FicheActionPdf';
 import {
   CiblePicto,
+  CitoyenPicto,
   EluPicto,
   PartenairePicto,
   PersonnePilotePicto,
@@ -18,10 +20,11 @@ import {
 type ListeActeursProps = {
   titre: string;
   liste: string[] | undefined;
+  comment?: string;
   picto: (className: string) => React.ReactNode;
 };
 
-const ListeActeurs = ({ titre, liste, picto }: ListeActeursProps) => {
+const ListeActeurs = ({ titre, liste, comment, picto }: ListeActeursProps) => {
   return (
     <Stack wrap={false} gap={0}>
       <Stack gap={3} direction="row" className="items-center">
@@ -31,22 +34,35 @@ const ListeActeurs = ({ titre, liste, picto }: ListeActeursProps) => {
         </Title>
       </Stack>
 
-      <List className="pl-12 pr-5">
-        {liste && liste.length ? (
-          liste.map((elt, index) => (
-            <ListElement key={`${elt}-${index}`}>{elt}</ListElement>
-          ))
-        ) : (
-          <ListElement className="text-grey-7">Non renseigné</ListElement>
+      <Stack gap="px" className="pl-12 pr-5">
+        {((liste && liste.length) || !comment) && (
+          <List>
+            {liste && liste.length ? (
+              liste.map((elt, index) => (
+                <ListElement key={`${elt}-${index}`}>{elt}</ListElement>
+              ))
+            ) : (
+              <ListElement className="text-grey-7">Non renseigné</ListElement>
+            )}
+          </List>
         )}
-      </List>
+        {comment && <Paragraph>{comment}</Paragraph>}
+      </Stack>
     </Stack>
   );
 };
 
 const Acteurs = ({ fiche }: FicheActionPdfProps) => {
-  const { pilotes, services, structures, referents, partenaires, cibles } =
-    fiche;
+  const {
+    pilotes,
+    services,
+    structures,
+    referents,
+    partenaires,
+    cibles,
+    participationCitoyenneType,
+    participationCitoyenne,
+  } = fiche;
 
   return (
     <Card className="w-2/5">
@@ -84,6 +100,17 @@ const Acteurs = ({ fiche }: FicheActionPdfProps) => {
         titre="Cibles"
         liste={cibles?.map((cible) => cible)}
         picto={(className) => <CiblePicto className={className} />}
+      />
+
+      <ListeActeurs
+        titre="Participation citoyenne"
+        liste={
+          participationCitoyenneType
+            ? [participationCitoyenneType as string]
+            : undefined
+        }
+        comment={participationCitoyenne ?? undefined}
+        picto={(className) => <CitoyenPicto className={className} />}
       />
     </Card>
   );
