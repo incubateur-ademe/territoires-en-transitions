@@ -46,6 +46,14 @@ export const cibleSchema = z.enum([
 
 export type Cible = z.infer<typeof cibleSchema>;
 
+export const participationCitoyenneTypeSchema = z.enum([
+  'Pas de participation citoyenne',
+  'Information',
+  'Consultation',
+  'Concertation',
+  'Co-construction',
+]);
+
 export const effetsAttendus = z.object({
   id: z.number(),
   nom: z.string(),
@@ -90,6 +98,11 @@ export const ficheActionSchema = z.object({
     .or(z.string().datetime({ offset: true }))
     .nullish(),
   financements: z.string().nullish(),
+  instanceGouvernance: z.string().nullish(),
+  participationCitoyenne: z.string().nullish(),
+  participationCitoyenneType: participationCitoyenneTypeSchema.nullish(),
+  tempsDeMiseEnOeuvre: z.number().nullish(),
+
   actionImpactId: z.number().nullish(),
 
   // Champ calculé
