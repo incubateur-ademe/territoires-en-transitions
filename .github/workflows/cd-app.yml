@@ -94,6 +94,7 @@ jobs:
           earthly
           --use-inline-cache --save-inline-cache
           +app-deploy-test
+          --ENV_NAME=${{ github.event.inputs.target }}
           --KOYEB_API_KEY=${{ secrets.KOYEB_API_KEY }}
           --AUTH_URL=${{ vars.AUTH_URL }}
           --BACKEND_URL=${{ vars.BACKEND_URL }}
