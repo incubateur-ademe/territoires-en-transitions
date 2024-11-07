@@ -1,3 +1,4 @@
+import { personneSchema } from '@tet/api/collectivites';
 import { indicateurListItemSchema } from '@tet/api/indicateurs/domain';
 import { actionSchema } from '@tet/api/referentiel';
 import {
@@ -7,7 +8,6 @@ import {
 } from '@tet/api/shared/domain';
 import { z } from 'zod';
 import { axeSchema } from './axe.schema';
-import { personneSchema } from '@tet/api/collectivites';
 
 // Enums
 
@@ -47,11 +47,11 @@ export const cibleSchema = z.enum([
 export type Cible = z.infer<typeof cibleSchema>;
 
 export const participationCitoyenneTypeSchema = z.enum([
-  'Pas de participation citoyenne',
-  'Information',
-  'Consultation',
-  'Concertation',
-  'Co-construction',
+  'pas-de-participation',
+  'information',
+  'consultation',
+  'concertation',
+  'co-construction',
 ]);
 
 export const effetsAttendus = z.object({
@@ -68,6 +68,11 @@ export const financeurSchema = z.object({
 });
 
 export type Financeur = z.infer<typeof financeurSchema>;
+
+export const tempsDeMiseEnOeuvreSchema = z.object({
+  id: z.number(),
+  nom: z.string(),
+});
 
 export const ficheActionSchema = z.object({
   id: z.number(),
@@ -101,7 +106,7 @@ export const ficheActionSchema = z.object({
   instanceGouvernance: z.string().nullish(),
   participationCitoyenne: z.string().nullish(),
   participationCitoyenneType: participationCitoyenneTypeSchema.nullish(),
-  tempsDeMiseEnOeuvre: z.number().nullish(),
+  tempsDeMiseEnOeuvre: tempsDeMiseEnOeuvreSchema.nullish(),
 
   actionImpactId: z.number().nullish(),
 

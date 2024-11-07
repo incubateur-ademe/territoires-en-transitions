@@ -153,7 +153,7 @@ export const ficheActionTable = pgTable('fiche_action', {
     length: 30,
     enum: ficheActionParticipationCitoyenneTypeEnumValues,
   }),
-  tempsDeMiseEnOeuvre: integer('temps_de_mise_en_oeuvre').references(
+  tempsDeMiseEnOeuvre: integer('temps_de_mise_en_oeuvre_id').references(
     () => tempsDeMiseEnOeuvreTable.niveau
   ),
   majTermine: boolean('maj_termine'),
