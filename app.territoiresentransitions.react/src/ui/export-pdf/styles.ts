@@ -3,23 +3,29 @@ import { preset } from '@tet/ui';
 
 const { colors } = preset.theme.extend;
 
-const fontsRepo = `${window.location.origin}/fonts`;
-const regularFont = `${fontsRepo}/Marianne-Regular.woff2`;
-const regularItalicFont = `${fontsRepo}/Marianne-Regular_Italic.woff2`;
-const mediumFont = `${fontsRepo}/Marianne-Medium.woff2`;
-const mediumItalicFont = `${fontsRepo}/Marianne-Medium_Italic.woff2`;
-const boldFont = `${fontsRepo}/Marianne-Bold.woff2`;
-const boldItalicFont = `${fontsRepo}/Marianne-Bold_Italic.woff2`;
-
 Font.register({
   family: 'Marianne',
   fonts: [
-    { src: regularFont },
-    { src: regularItalicFont, fontStyle: 'italic' },
-    { src: mediumFont, fontWeight: 500 },
-    { src: mediumItalicFont, fontWeight: 500, fontStyle: 'italic' },
-    { src: boldFont, fontWeight: 700 },
-    { src: boldItalicFont, fontWeight: 700, fontStyle: 'italic' },
+    { src: '/fonts/Marianne-Regular.woff2' },
+    {
+      src: '/fonts/Marianne-Regular_Italic.woff2',
+      fontStyle: 'italic',
+    },
+    {
+      src: '/fonts/Marianne-Medium.woff2',
+      fontWeight: 500,
+    },
+    {
+      src: '/fonts/Marianne-Medium_Italic.woff2',
+      fontWeight: 500,
+      fontStyle: 'italic',
+    },
+    { src: '/fonts/Marianne-Bold.woff2', fontWeight: 700 },
+    {
+      src: '/fonts/Marianne-Bold_Italic.woff2',
+      fontWeight: 700,
+      fontStyle: 'italic',
+    },
   ],
 });
 
