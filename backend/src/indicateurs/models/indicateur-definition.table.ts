@@ -5,13 +5,17 @@ import {
   pgTable,
   serial,
   text,
-  timestamp,
-  uuid,
 } from 'drizzle-orm/pg-core';
 import { collectiviteTable } from '../../collectivites/models/collectivite.table';
-import { InferInsertModel, InferSelectModel, sql } from 'drizzle-orm';
+import { InferInsertModel, InferSelectModel } from 'drizzle-orm';
 import { createInsertSchema, createSelectSchema } from 'drizzle-zod';
 import { z } from 'zod';
+import {
+  createdAt,
+  createdBy,
+  modifiedAt,
+  modifiedBy,
+} from '../../common/models/column.helpers';
 
 export const indicateurDefinitionTable = pgTable('indicateur_definition', {
   id: serial('id').primaryKey(),
@@ -34,14 +38,10 @@ export const indicateurDefinitionTable = pgTable('indicateur_definition', {
     .default(false)
     .notNull(),
   valeurCalcule: text('valeur_calcule'),
-  modifiedAt: timestamp('modified_at', { withTimezone: true })
-    .default(sql.raw(`CURRENT_TIMESTAMP`))
-    .notNull(), // with time zone default CURRENT_TIMESTAMP
-  createdAt: timestamp('created_at', { withTimezone: true })
-    .default(sql.raw(`CURRENT_TIMESTAMP`))
-    .notNull(), // with time zone default CURRENT_TIMESTAMP
-  modifiedBy: uuid('modified_by'), // TODO: default auth.uid() references auth.users
-  createdBy: uuid('created_by'), // TODO: default auth.uid() references auth.users
+  createdAt,
+  modifiedAt,
+  createdBy,
+  modifiedBy,
 });
 export type IndicateurDefinitionType = InferSelectModel<
   typeof indicateurDefinitionTable

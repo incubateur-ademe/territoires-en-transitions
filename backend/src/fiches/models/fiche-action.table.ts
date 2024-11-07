@@ -1,5 +1,5 @@
 import { collectiviteTable } from '../../collectivites/models/collectivite.table';
-import { InferInsertModel, sql } from 'drizzle-orm';
+import { InferInsertModel } from 'drizzle-orm';
 import {
   boolean,
   integer,
@@ -9,12 +9,12 @@ import {
   serial,
   text,
   timestamp,
-  uuid,
   varchar,
 } from 'drizzle-orm/pg-core';
 import { tempsDeMiseEnOeuvreTable } from '../../taxonomie/models/temps-de-mise-en-oeuvre.table';
 import { createInsertSchema, createSelectSchema } from 'drizzle-zod';
 import { z } from 'zod';
+import { createdAt, modifiedAt, modifiedBy } from '../../common/models/column.helpers';
 
 export enum piliersEciEnumType {
   APPROVISIONNEMENT_DURABLE = 'Approvisionnement durable',
@@ -149,9 +149,6 @@ export const ficheActionParticipationCitoyenneTypeEnumValues = [
 ] as const;
 
 export const ficheActionTable = pgTable('fiche_action', {
-  modifiedAt: timestamp('modified_at', { withTimezone: true, mode: 'string' })
-    .default(sql`CURRENT_TIMESTAMP`)
-    .notNull(),
   id: serial('id').primaryKey().notNull(),
   titre: varchar('titre', { length: 300 }).default('Nouvelle fiche'),
   description: varchar('description', { length: 20000 }),
@@ -191,12 +188,12 @@ export const ficheActionTable = pgTable('fiche_action', {
   collectiviteId: integer('collectivite_id')
     .notNull()
     .references(() => collectiviteTable.id),
-  createdAt: timestamp('created_at', { withTimezone: true, mode: 'string' })
-    .default(sql`CURRENT_TIMESTAMP`)
-    .notNull(),
-  modifiedBy: uuid('modified_by').default(sql`auth.uid()`),
+  createdAt,
+  modifiedAt,
+  modifiedBy,
   restreint: boolean('restreint').default(false),
 });
+
 export type FicheActionTableType = typeof ficheActionTable;
 
 export type CreateFicheActionType = InferInsertModel<typeof ficheActionTable>;
