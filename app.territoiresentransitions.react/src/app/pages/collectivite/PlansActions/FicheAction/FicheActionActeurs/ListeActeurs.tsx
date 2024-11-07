@@ -2,10 +2,17 @@ type ListeActeursProps = {
   dataTest?: string;
   titre: string;
   liste: string[] | undefined;
+  comment?: string;
   picto: (className: string) => React.ReactNode;
 };
 
-const ListeActeurs = ({titre, liste, picto, dataTest}: ListeActeursProps) => {
+const ListeActeurs = ({
+  titre,
+  liste,
+  comment,
+  picto,
+  dataTest,
+}: ListeActeursProps) => {
   return (
     <div className="flex flex-col gap-1">
       <div className="flex items-center gap-3">
@@ -17,17 +24,25 @@ const ListeActeurs = ({titre, liste, picto, dataTest}: ListeActeursProps) => {
 
       <div className="flex items-center gap-3">
         <div className="w-11 shrink-0" />
-        <ul className="list-disc list-inside text-sm mb-0" data-test={dataTest}>
-          {liste && liste.length ? (
-            liste.map((elt, index) => (
-              <li key={`${elt}-${index}`} className="text-primary-10">
-                {elt}
-              </li>
-            ))
-          ) : (
-            <li className="text-grey-7">Non renseigné</li>
+        <div className="flex flex-col gap-1">
+          {((liste && liste.length) || !comment) && (
+            <ul
+              className="list-disc list-inside text-sm mb-0"
+              data-test={dataTest}
+            >
+              {liste && liste.length ? (
+                liste.map((elt, index) => (
+                  <li key={`${elt}-${index}`} className="text-primary-10">
+                    {elt}
+                  </li>
+                ))
+              ) : (
+                <li className="text-grey-7">Non renseigné</li>
+              )}
+            </ul>
           )}
-        </ul>
+          {comment && <p className="text-sm text-primary-10 mb-0">{comment}</p>}
+        </div>
       </div>
     </div>
   );

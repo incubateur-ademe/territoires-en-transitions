@@ -21,8 +21,15 @@ const FicheActionDescription = ({
 }: FicheActionDescriptionProps) => {
   const [isFullDescription, setIsFullDescription] = useState(false);
   const [isFullRessources, setIsFullRessources] = useState(false);
+  const [isFullInstances, setIsFullInstances] = useState(false);
 
-  const { thematiques, sousThematiques, description, ressources } = fiche;
+  const {
+    thematiques,
+    sousThematiques,
+    description,
+    ressources,
+    instanceGouvernance,
+  } = fiche;
 
   const {
     truncatedText: truncatedDescription,
@@ -33,6 +40,11 @@ const FicheActionDescription = ({
     truncatedText: truncatedRessources,
     isTextTruncated: isRessourcesTruncated,
   } = getTruncatedText(ressources ?? '', 1000);
+
+  const {
+    truncatedText: truncatedInstances,
+    isTextTruncated: isInstancesTruncated,
+  } = getTruncatedText(instanceGouvernance ?? '', 1000);
 
   return (
     <div
@@ -125,6 +137,28 @@ const FicheActionDescription = ({
             onClick={() => setIsFullRessources((prevState) => !prevState)}
           >
             {isFullRessources ? 'Voir moins' : 'Voir plus'}
+          </Button>
+        )}
+      </div>
+
+      {/* Instances de gouvernance */}
+      <div>
+        <h6 className="text-lg leading-6 text-grey-1 mb-2">
+          Instances de gouvernance :
+        </h6>
+        <p className="text-base text-grey-1 whitespace-pre-wrap mb-0">
+          {(isFullInstances || !isInstancesTruncated
+            ? instanceGouvernance
+            : truncatedInstances) || 'Non renseigné'}
+        </p>
+        {isInstancesTruncated && (
+          <Button
+            variant="underlined"
+            size="xs"
+            className="ml-auto !text-grey-2 !border-grey-2"
+            onClick={() => setIsFullInstances((prevState) => !prevState)}
+          >
+            {isFullInstances ? 'Voir moins' : 'Voir plus'}
           </Button>
         )}
       </div>

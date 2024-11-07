@@ -2,7 +2,13 @@ import { Badge, Card, Paragraph, Stack, Title } from 'ui/export-pdf/components';
 import { FicheActionPdfProps } from './FicheActionPdf';
 
 const Description = ({ fiche }: FicheActionPdfProps) => {
-  const { thematiques, sousThematiques, description, ressources } = fiche;
+  const {
+    thematiques,
+    sousThematiques,
+    description,
+    ressources,
+    instanceGouvernance,
+  } = fiche;
 
   return (
     <Card className="bg-primary-6 border-primary-6">
@@ -40,6 +46,16 @@ const Description = ({ fiche }: FicheActionPdfProps) => {
           </Title>
           <Paragraph className="text-grey-1">
             {ressources || 'Non renseigné'}
+          </Paragraph>
+        </Stack>
+
+        {/* Instances de gouvernance */}
+        <Stack gap={1}>
+          <Title variant="h5" className="text-grey-1">
+            Instances de gouvernance :
+          </Title>
+          <Paragraph className="text-grey-1">
+            {instanceGouvernance || 'Non renseigné'}
           </Paragraph>
         </Stack>
       </Stack>

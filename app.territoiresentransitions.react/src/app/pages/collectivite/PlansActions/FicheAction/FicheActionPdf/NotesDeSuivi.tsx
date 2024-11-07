@@ -46,7 +46,7 @@ type NotesDeSuiviProps = {
 };
 
 const NotesDeSuivi = ({ notesSuivi }: NotesDeSuiviProps) => {
-  if (!notesSuivi) return null;
+  if (!notesSuivi || notesSuivi.length === 0) return null;
 
   return (
     <Card wrap={false}>

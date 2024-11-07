@@ -345,11 +345,8 @@ const SelectButton = forwardRef(
               !isSearcheable && (
                 <span
                   className={classNames(
-                    'my-auto text-left text-sm text-grey-6 line-clamp-1',
-                    {
-                      '!text-grey-5': disabled,
-                      'text-xs': small,
-                    }
+                    'my-auto text-left text-grey-6 line-clamp-1 text-xs',
+                    { '!text-grey-5': disabled }
                   )}
                 >
                   {placeholder ??
@@ -373,10 +370,7 @@ const SelectButton = forwardRef(
                   type="text"
                   className={classNames(
                     'w-full text-sm outline-0 placeholder:text-grey-6 placeholder:text-xs',
-                    {
-                      'py-1': values,
-                      'text-xs': small,
-                    }
+                    { 'py-1': values }
                   )}
                   value={inputValue}
                   onChange={(e) => {
