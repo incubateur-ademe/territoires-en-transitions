@@ -14,6 +14,7 @@ import { FicheAction } from '@tet/api/plan-actions';
 import { getIsoFormattedDate } from 'utils/formatUtils';
 import StatutsSelectDropdown from 'ui/dropdownLists/ficheAction/statuts/StatutsSelectDropdown';
 import PrioritesSelectDropdown from 'ui/dropdownLists/ficheAction/priorites/PrioritesSelectDropdown';
+import MiseEnOeuvreDropdown from 'ui/dropdownLists/ficheAction/MiseEnOeuvreDropdown/MiseEnOeuvreDropdown';
 import { useCurrentCollectivite } from 'core-logic/hooks/useCurrentCollectivite';
 
 type ModalePlanningProps = {
@@ -60,7 +61,7 @@ const ModalePlanning = ({
           {/* Date de début */}
           <Field
             title="Date de début"
-            className="col-span-2"
+            className="max-md:col-span-2"
             state={isDateDebutError ? 'error' : 'default'}
             message={
               isDateDebutError
@@ -100,29 +101,10 @@ const ModalePlanning = ({
             />
           </Field>
 
-          <div className="col-span-2 mb-2">
-            <Checkbox
-              label="L'action se répète tous les ans"
-              message="Sans date de fin prévisionnelle"
-              checked={editedFiche.ameliorationContinue ?? false}
-              onChange={(evt) => {
-                const isChecked = evt.target.checked;
-                const dateFin = isChecked
-                  ? null
-                  : editedFiche.dateFinProvisoire;
-                setEditedFiche((prevState) => ({
-                  ...prevState,
-                  ameliorationContinue: isChecked,
-                  dateFinProvisoire: dateFin,
-                }));
-              }}
-            />
-          </div>
-
           {/* Date de fin prévisionnelle */}
           <Field
             title="Date de fin prévisionnelle"
-            className="col-span-2"
+            className="max-md:col-span-2"
             state={isDateFinError ? 'error' : 'default'}
             message={
               isDateFinError
@@ -164,6 +146,39 @@ const ModalePlanning = ({
                     evt.target.value.length !== 0 ? evt.target.value : null,
                 }));
               }}
+            />
+          </Field>
+
+          {/* Amélioration continue */}
+          <div className="col-span-2 mb-2">
+            <Checkbox
+              label="L'action se répète tous les ans"
+              message="Sans date de fin prévisionnelle"
+              checked={editedFiche.ameliorationContinue ?? false}
+              onChange={(evt) => {
+                const isChecked = evt.target.checked;
+                const dateFin = isChecked
+                  ? null
+                  : editedFiche.dateFinProvisoire;
+                setEditedFiche((prevState) => ({
+                  ...prevState,
+                  ameliorationContinue: isChecked,
+                  dateFinProvisoire: dateFin,
+                }));
+              }}
+            />
+          </div>
+
+          {/* Temps de mise en oeuvre */}
+          <Field title="Temps de mise en œuvre" className="col-span-2">
+            <MiseEnOeuvreDropdown
+              values={editedFiche.tempsDeMiseEnOeuvre}
+              onChange={(tempsDeMiseEnOeuvre) =>
+                setEditedFiche((prevState) => ({
+                  ...prevState,
+                  tempsDeMiseEnOeuvre,
+                }))
+              }
             />
           </Field>
 

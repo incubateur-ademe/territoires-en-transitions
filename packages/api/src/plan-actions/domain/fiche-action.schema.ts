@@ -78,6 +78,8 @@ export const tempsDeMiseEnOeuvreSchema = z.object({
   nom: z.string(),
 });
 
+export type TempsDeMiseEnOeuvre = z.infer<typeof tempsDeMiseEnOeuvreSchema>;
+
 const auteur = z.object({
   userId: z.string(),
   prenom: z.string(),

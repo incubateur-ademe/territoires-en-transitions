@@ -34,9 +34,14 @@ const FicheActionPlanning = ({
     dateFinProvisoire: dateFinPrevisionnelle,
     niveauPriorite,
     statut,
+    tempsDeMiseEnOeuvre,
   } = fiche;
 
-  const isEmpty = !ameliorationContinue && !dateDebut && !dateFinPrevisionnelle;
+  const isEmpty =
+    !ameliorationContinue &&
+    !dateDebut &&
+    !dateFinPrevisionnelle &&
+    !tempsDeMiseEnOeuvre;
 
   const isLate =
     dateFinPrevisionnelle &&
@@ -107,6 +112,25 @@ const FicheActionPlanning = ({
             </div>
           )}
 
+          {/* Temps de mise en oeuvre */}
+          <div>
+            <h6 className="text-sm leading-4 text-primary-9 uppercase mb-2">
+              Temps de mise en œuvre
+            </h6>
+            <p
+              className={classNames('text-sm leading-4 mb-0', {
+                'text-grey-7':
+                  !tempsDeMiseEnOeuvre || tempsDeMiseEnOeuvre.nom === null,
+                'text-primary-10':
+                  !!tempsDeMiseEnOeuvre && tempsDeMiseEnOeuvre.nom !== null,
+              })}
+            >
+              {!!tempsDeMiseEnOeuvre && tempsDeMiseEnOeuvre.nom !== null
+                ? tempsDeMiseEnOeuvre.nom
+                : 'Non renseigné'}
+            </p>
+          </div>
+
           {(!!statut || !!niveauPriorite || !!ameliorationContinue) && (
             <Divider className="-mb-5" />
           )}
@@ -174,7 +198,7 @@ const FicheActionPlanning = ({
             </>
           )}
           title="Aucun planning n'est renseigné !"
-          subTitle={`Date de début | Date de fin prévisionnelle${
+          subTitle={`Date de début | Date de fin prévisionnelle | Temps de mise en œuvre${
             !statut ? ' | Statut' : ''
           }${!niveauPriorite ? ' | Niveau de priorité' : ''}`}
           isReadonly={isReadonly}
