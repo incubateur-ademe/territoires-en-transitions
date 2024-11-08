@@ -100,14 +100,14 @@ export default class FichesActionSyntheseService {
   getFicheActionServiceTagsQuery() {
     return this.databaseService.db
       .select({
-        fiche_id: ficheActionServiceTagTable.fiche_id,
+        fiche_id: ficheActionServiceTagTable.ficheId,
         service_tag_ids:
-          sql`array_agg(${ficheActionServiceTagTable.service_tag_id})`.as(
+          sql`array_agg(${ficheActionServiceTagTable.serviceTagId})`.as(
             'service_tag_ids'
           ),
       })
       .from(ficheActionServiceTagTable)
-      .groupBy(ficheActionServiceTagTable.fiche_id)
+      .groupBy(ficheActionServiceTagTable.ficheId)
       .as('ficheActionServiceTag');
   }
 
