@@ -12,7 +12,6 @@ import { AppModule } from './app.module';
 import { initApplicationCredentials } from './common/services/gcloud.helper';
 import './common/services/sentry.service';
 import { SENTRY_DSN } from './common/services/sentry.service';
-import { TrpcRouter } from './trpc.router';
 
 const logger = new Logger('main');
 const port = process.env.PORT || 8080;
@@ -50,8 +49,8 @@ async function bootstrap() {
   SwaggerModule.setup('api-docs/v1', app, document);
 
   // Configure tRPC
-  const trpc = app.get(TrpcRouter);
-  trpc.applyMiddleware(app);
+  // const trpc = app.get(TrpcRouter);
+  // trpc.applyMiddleware(app);
 
   await app.listen(port);
 }
