@@ -22,6 +22,7 @@ const Planning = ({ fiche }: FicheActionPdfProps) => {
     dateFinProvisoire: dateFinPrevisionnelle,
     niveauPriorite,
     statut,
+    tempsDeMiseEnOeuvre,
   } = fiche;
 
   const isLate =
@@ -62,6 +63,23 @@ const Planning = ({ fiche }: FicheActionPdfProps) => {
           </Paragraph>
         </Stack>
       )}
+
+      {/* Temps de mise en oeuvre */}
+      <Stack gap={1} className="text-center">
+        <Title variant="h6" className="uppercase">
+          Temps de mise en œuvre
+        </Title>
+        <Paragraph
+          className={classNames({
+            'text-grey-7':
+              !tempsDeMiseEnOeuvre || tempsDeMiseEnOeuvre.nom === null,
+          })}
+        >
+          {!!tempsDeMiseEnOeuvre && tempsDeMiseEnOeuvre.nom !== null
+            ? tempsDeMiseEnOeuvre.nom
+            : 'Non renseigné'}
+        </Paragraph>
+      </Stack>
 
       {(!!statut || !!niveauPriorite || !!ameliorationContinue) && (
         <>
