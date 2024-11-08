@@ -1,4 +1,4 @@
-import { Injectable, Logger } from '@nestjs/common';
+import { Injectable, Logger, NotFoundException } from '@nestjs/common';
 import {
   Column,
   ColumnBaseConfig,
@@ -9,15 +9,14 @@ import {
 } from 'drizzle-orm';
 import { SupabaseJwtPayload } from '../../auth/models/supabase-jwt.models';
 import DatabaseService from '../../common/services/database.service';
-import {
-  ficheActionTable,
-  updateFicheActionSchema,
-  UpdateFicheActionType,
-} from '../models/fiche-action.table';
+import { ficheActionTable } from '../models/fiche-action.table';
 import { ficheActionAxeTable } from '../models/fiche-action-axe.table';
 import { PgTable, PgTransaction } from 'drizzle-orm/pg-core';
 import { PostgresJsQueryResultHKT } from 'drizzle-orm/postgres-js';
-import { UpdateFicheActionRequestType } from '../models/update-fiche-action.request';
+import {
+  updateFicheActionRequestSchema,
+  UpdateFicheActionRequestType,
+} from '../models/update-fiche-action.request';
 import { ficheActionThematiqueTable } from '../models/fiche-action-thematique.table';
 import { ficheActionSousThematiqueTable } from '../models/fiche-action-sous-thematique.table';
 import { ficheActionPartenaireTagTable } from '../models/fiche-action-partenaire-tag.table';
@@ -30,7 +29,7 @@ import { ficheActionServiceTagTable } from '../models/fiche-action-service-tag.t
 import { ficheActionFinanceurTagTable } from '../models/fiche-action-financeur-tag.table';
 import { ficheActionLienTable } from '../models/fiche-action-lien.table';
 import { ficheActionEffetAttenduTable } from '../models/fiche-action-effet-attendu.table';
-import { snakeToCamelCase } from 'backend/src/common/services/key-converter.helper';
+import { toCamel } from 'postgres';
 
 type TxType = PgTransaction<
   PostgresJsQueryResultHKT,
@@ -65,8 +64,7 @@ export default class FichesActionUpdateService {
 
   async updateFicheAction(
     ficheActionId: number,
-    body: UpdateFicheActionRequestType,
-    tokenInfo: SupabaseJwtPayload
+    body: UpdateFicheActionRequestType
   ) {
     this.logger.log(
       `Mise à jour de la fiche action dont l'id est ${ficheActionId}`
@@ -86,28 +84,56 @@ export default class FichesActionUpdateService {
       financeurs,
       fichesLiees,
       resultatAttendu,
-      ...ficheAction
+      ...unsafeFicheAction
     } = body;
 
     return await this.databaseService.db.transaction(async (tx) => {
+      const existingFicheAction = await this.databaseService.db
+        .select()
+        .from(ficheActionTable)
+        .where(eq(ficheActionTable.id, ficheActionId));
+
+      if (existingFicheAction.length === 0) {
+        throw new NotFoundException('Fiche action not found');
+      }
+
+      // Removes all props that are not in the schema
+      const ficheAction =
+        updateFicheActionRequestSchema.parse(unsafeFicheAction);
+
+      let updatedFicheAction;
+      let updatedAxes;
+      let updatedThematiques;
+      let updatedSousThematiques;
+      let updatedPartenaires;
+      let updatedStructures;
+      let updatedPilotes;
+      let updatedReferents;
+      let updatedActions;
+      let updatedIndicateurs;
+      let updatedServices;
+      let updatedFinanceurs;
+      let updatedFichesLiees;
+      let updatedResultatAttendu;
+
       /**
        * Updates fiche action properties
        */
 
-      // Removes all props that are not in the schema
-      // const validFicheAction = updateFicheActionSchema.parse(ficheAction);
-
-      const updatedFicheAction = await tx
-        .update(ficheActionTable)
-        .set(ficheAction)
-        .where(eq(ficheActionTable.id, ficheActionId));
+      if (Object.keys(ficheAction).length > 0) {
+        updatedFicheAction = await tx
+          .update(ficheActionTable)
+          .set(ficheAction)
+          .where(eq(ficheActionTable.id, ficheActionId))
+          .returning();
+      }
 
       /**
        * Updates junction tables
        */
 
       if (axes && axes.length > 0) {
-        await this.updateRelations(
+        updatedAxes = await this.updateRelations(
           ficheActionId,
           axes,
           tx,
@@ -119,7 +145,7 @@ export default class FichesActionUpdateService {
       }
 
       if (thematiques && thematiques.length > 0) {
-        await this.updateRelations(
+        updatedThematiques = await this.updateRelations(
           ficheActionId,
           thematiques,
           tx,
@@ -131,7 +157,7 @@ export default class FichesActionUpdateService {
       }
 
       if (sousThematiques && sousThematiques.length > 0) {
-        await this.updateRelations(
+        updatedSousThematiques = await this.updateRelations(
           ficheActionId,
           sousThematiques,
           tx,
@@ -143,7 +169,7 @@ export default class FichesActionUpdateService {
       }
 
       if (partenaires && partenaires.length > 0) {
-        await this.updateRelations(
+        updatedPartenaires = await this.updateRelations(
           ficheActionId,
           partenaires,
           tx,
@@ -155,7 +181,7 @@ export default class FichesActionUpdateService {
       }
 
       if (structures && structures.length > 0) {
-        await this.updateRelations(
+        updatedStructures = await this.updateRelations(
           ficheActionId,
           structures,
           tx,
@@ -167,31 +193,31 @@ export default class FichesActionUpdateService {
       }
 
       if (pilotes && pilotes.length > 0) {
-        await this.updateRelations(
+        updatedPilotes = await this.updateRelations(
           ficheActionId,
           pilotes,
           tx,
           ficheActionPiloteTable,
-          ['tag_id', 'user_id'],
+          ['tagId', 'userId'],
           ficheActionPiloteTable.ficheId,
           [ficheActionPiloteTable.tagId, ficheActionPiloteTable.userId]
         );
       }
 
       if (referents && referents.length > 0) {
-        await this.updateRelations(
+        updatedReferents = await this.updateRelations(
           ficheActionId,
           referents,
           tx,
           ficheActionReferentTable,
-          ['tag_id', 'user_id'],
+          ['tagId', 'userId'],
           ficheActionReferentTable.ficheId,
           [ficheActionReferentTable.tagId, ficheActionReferentTable.userId]
         );
       }
 
       if (actions && actions.length > 0) {
-        await this.updateRelations(
+        updatedActions = await this.updateRelations(
           ficheActionId,
           actions,
           tx,
@@ -203,7 +229,7 @@ export default class FichesActionUpdateService {
       }
 
       if (indicateurs && indicateurs.length > 0) {
-        await this.updateRelations(
+        updatedIndicateurs = await this.updateRelations(
           ficheActionId,
           indicateurs,
           tx,
@@ -215,7 +241,7 @@ export default class FichesActionUpdateService {
       }
 
       if (services && services.length > 0) {
-        await this.updateRelations(
+        updatedServices = await this.updateRelations(
           ficheActionId,
           services,
           tx,
@@ -228,7 +254,7 @@ export default class FichesActionUpdateService {
 
       if (financeurs && financeurs.length > 0) {
         const flatFinanceurs = this.extractIdsAndMontants(financeurs);
-        await this.updateRelations(
+        updatedFinanceurs = await this.updateRelations(
           ficheActionId,
           flatFinanceurs,
           tx,
@@ -243,7 +269,7 @@ export default class FichesActionUpdateService {
       }
 
       if (fichesLiees && fichesLiees.length > 0) {
-        await this.updateRelations(
+        updatedFichesLiees = await this.updateRelations(
           ficheActionId,
           fichesLiees,
           tx,
@@ -255,7 +281,7 @@ export default class FichesActionUpdateService {
       }
 
       if (resultatAttendu && resultatAttendu.length > 0) {
-        await this.updateRelations(
+        updatedResultatAttendu = await this.updateRelations(
           ficheActionId,
           resultatAttendu,
           tx,
@@ -266,7 +292,22 @@ export default class FichesActionUpdateService {
         );
       }
 
-      return updatedFicheAction;
+      return {
+        ...(updatedFicheAction?.[0] || {}),
+        axes: updatedAxes,
+        thematiques: updatedThematiques,
+        sousThematiques: updatedSousThematiques,
+        partenaires: updatedPartenaires,
+        structures: updatedStructures,
+        pilotes: updatedPilotes,
+        referents: updatedReferents,
+        actions: updatedActions,
+        indicateurs: updatedIndicateurs,
+        services: updatedServices,
+        financeurs: updatedFinanceurs,
+        fichesLiees: updatedFichesLiees,
+        resultatAttendu: updatedResultatAttendu,
+      };
     });
   }
 
@@ -301,7 +342,7 @@ export default class FichesActionUpdateService {
     await tx.delete(table).where(eq(ficheIdColumn, ficheActionId));
 
     // Adds new relations to fiche action
-    await tx.insert(table).values(relationsToUpdate);
+    return await tx.insert(table).values(relationsToUpdate).returning();
   }
 
   private buildRelationsToUpdate(
@@ -314,17 +355,17 @@ export default class FichesActionUpdateService {
     const values = this.extractValuesForGivenIdKeys(relations, relationIdKeys);
     const allRelationsToUpdate = values.map((value) => {
       const relationObject: Partial<RelationObjectType> = {
-        [snakeToCamelCase(ficheIdColumn.name) as keyof RelationObjectType]:
+        [toCamel(ficheIdColumn.name) as keyof RelationObjectType]:
           ficheActionId,
       };
 
       if (this.isMultipleRelationsToUpdate(value)) {
         relationIdColumns.forEach((column, index) => {
-          const key = snakeToCamelCase(column.name) as keyof RelationObjectType;
+          const key = toCamel(column.name) as keyof RelationObjectType;
           (relationObject[key] as any) = value[index];
         });
       } else {
-        const key = snakeToCamelCase(
+        const key = toCamel(
           relationIdColumns[0].name
         ) as keyof RelationObjectType;
         (relationObject[key] as any) = value;
