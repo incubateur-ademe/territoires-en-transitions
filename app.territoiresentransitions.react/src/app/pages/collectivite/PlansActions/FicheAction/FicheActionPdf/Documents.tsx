@@ -27,47 +27,50 @@ const DocumentCard = ({ annexe }: DocumentCardProps) => {
   const isLink = !filename && titre;
 
   return (
-    <Card wrap={false} gap={1.5} className="w-[49%] p-3">
-      <Stack direction="row">
-        <Stack className="bg-primary-3 rounded-md h-[18px] min-h-[18px] w-[18px] min-w-[18px] justify-center items-center shrink-0">
-          {isLink ? (
-            <LinkIcon className="h-[10px] w-[10px]" />
-          ) : (
-            <FileIcon className="h-[10px] w-[10px]" />
-          )}
-        </Stack>
+    <Card
+      wrap={false}
+      gap={3}
+      direction="row"
+      className="w-[49%] p-3 items-start"
+    >
+      <Stack className="bg-primary-3 rounded-md h-[18px] min-h-[18px] w-[18px] min-w-[18px] justify-center items-center shrink-0 mt-0.5">
+        {isLink ? (
+          <LinkIcon className="h-[10px] w-[10px]" />
+        ) : (
+          <FileIcon className="h-[10px] w-[10px]" />
+        )}
+      </Stack>
 
-        <Stack gap={1} className="w-full">
-          {/* Titre */}
-          {isLink ? (
-            <StyledLink
-              src={url ?? undefined}
-              className="text-primary-9 font-bold"
-            >
-              {generateTitle(titre)}
-            </StyledLink>
-          ) : (
-            <Title variant="h6">{generateTitle(filename)}</Title>
-          )}
+      <Stack gap={1} className="w-full">
+        {/* Titre */}
+        {isLink ? (
+          <StyledLink
+            src={url ?? undefined}
+            className="text-primary-9 font-bold"
+          >
+            {generateTitle(titre)}
+          </StyledLink>
+        ) : (
+          <Title variant="h6">{generateTitle(filename)}</Title>
+        )}
 
-          {/* Date de création et auteur */}
-          <Paragraph className="text-[0.65rem] text-grey-8 font-medium">
-            {getAuthorAndDate(created_at, created_by_nom)}
-          </Paragraph>
+        {/* Date de création et auteur */}
+        <Paragraph className="text-[0.65rem] text-grey-8 font-medium">
+          {getAuthorAndDate(created_at, created_by_nom)}
+        </Paragraph>
 
-          {/* Commentaire */}
-          {commentaire && commentaire.length && (
-            <>
-              <Divider className="w-full" />
-              <Stack gap={1} direction="row" className="items-center">
-                <DiscussIcon fill={colors.grey[7]} />
-                <Paragraph className="text-grey-8 text-[0.6rem] font-medium italic">
-                  {commentaire}
-                </Paragraph>
-              </Stack>
-            </>
-          )}
-        </Stack>
+        {/* Commentaire */}
+        {commentaire && commentaire.length && (
+          <>
+            <Divider className="w-full" />
+            <Stack gap={1} direction="row" className="items-center">
+              <DiscussIcon fill={colors.grey[7]} />
+              <Paragraph className="text-grey-8 text-[0.6rem] font-medium italic">
+                {commentaire}
+              </Paragraph>
+            </Stack>
+          </>
+        )}
       </Stack>
     </Card>
   );

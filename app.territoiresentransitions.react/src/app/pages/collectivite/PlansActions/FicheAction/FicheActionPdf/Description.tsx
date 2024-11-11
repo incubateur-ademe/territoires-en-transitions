@@ -8,7 +8,7 @@ const Description = ({ fiche }: FicheActionPdfProps) => {
     <Card className="bg-primary-6 border-primary-6">
       {/* Liste des thématiques et sous-thématiques sous forme de badges */}
       {(thematiques?.length || sousThematiques?.length) && (
-        <Stack direction="row" gap={2.5} className="flex-wrap">
+        <Stack direction="row" gap={2.5} className="flex-wrap gap-y-2">
           {thematiques?.map((thematique) => (
             <Badge key={thematique.id} title={thematique.nom} state="info" />
           ))}
@@ -22,7 +22,7 @@ const Description = ({ fiche }: FicheActionPdfProps) => {
         </Stack>
       )}
 
-      <Stack gap={3}>
+      <Stack>
         {/* Description */}
         <Stack gap={1}>
           <Title variant="h5" className="text-grey-1">

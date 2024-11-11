@@ -63,31 +63,36 @@ const Planning = ({ fiche }: FicheActionPdfProps) => {
         </Stack>
       )}
 
-      {(!!statut || !!niveauPriorite || !!ameliorationContinue) && <Divider />}
+      {(!!statut || !!niveauPriorite || !!ameliorationContinue) && (
+        <>
+          <Divider />
+          <Stack gap={2} className="text-center">
+            {/* Statut et niveau de priorité */}
+            {
+              <Stack direction="row" className="mx-auto">
+                {!!niveauPriorite && (
+                  <BadgePriorite priorite={niveauPriorite} />
+                )}
+                {!!statut && <BadgeStatut statut={statut} />}
+              </Stack>
+            }
 
-      <Stack gap={2} className="text-center">
-        {/* Statut et niveau de priorité */}
-        {
-          <Stack direction="row" className="mx-auto">
-            {!!niveauPriorite && <BadgePriorite priorite={niveauPriorite} />}
-            {<BadgeStatut statut={statut ?? 'Sans statut'} />}
+            {/* Action récurrente */}
+            {!!ameliorationContinue && (
+              <Stack
+                direction="row"
+                gap={1}
+                className="items-center justify-center"
+              >
+                <LoopLeftIcon />
+                <Paragraph className="font-medium">
+                  l'action se répète tous les ans
+                </Paragraph>
+              </Stack>
+            )}
           </Stack>
-        }
-
-        {/* Action récurrente */}
-        {!!ameliorationContinue && (
-          <Stack
-            direction="row"
-            gap={1}
-            className="items-center justify-center"
-          >
-            <LoopLeftIcon />
-            <Paragraph className="font-medium">
-              l'action se répète tous les ans
-            </Paragraph>
-          </Stack>
-        )}
-      </Stack>
+        </>
+      )}
 
       {!!justificationCalendrier && <Divider />}
 

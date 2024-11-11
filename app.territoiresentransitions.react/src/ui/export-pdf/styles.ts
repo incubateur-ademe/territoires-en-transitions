@@ -78,7 +78,6 @@ export const styles = StyleSheet.create({
 
   // Footer
   footer: {
-    height: '20pt',
-    marginTop: 'auto',
+    paddingTop: '25pt',
   },
 });

@@ -48,7 +48,7 @@ const FicheActionDescription = ({
       >
         {/* Liste des thématiques et sous-thématiques sous forme de badges */}
         {(thematiques?.length || sousThematiques?.length) && (
-          <div className="flex flex-wrap gap-4">
+          <div className="flex flex-wrap gap-3">
             {thematiques?.map((thematique) => (
               <Badge
                 key={thematique.id}
