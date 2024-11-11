@@ -18,15 +18,20 @@ import {
 type ListeActeursProps = {
   titre: string;
   liste: string[] | undefined;
+  picto: (className: string) => React.ReactNode;
 };
 
-const ListeActeurs = ({ titre, liste }: ListeActeursProps) => {
+const ListeActeurs = ({ titre, liste, picto }: ListeActeursProps) => {
   return (
-    <Stack gap={2}>
-      <Title variant="h6" className="uppercase">
-        {titre}
-      </Title>
-      <List>
+    <Stack wrap={false} gap={0}>
+      <Stack gap={3} direction="row" className="items-center">
+        {picto('h-9 w-9 shrink-0')}
+        <Title variant="h6" className="uppercase">
+          {titre}
+        </Title>
+      </Stack>
+
+      <List className="pl-12 pr-5">
         {liste && liste.length ? (
           liste.map((elt, index) => (
             <ListElement key={`${elt}-${index}`}>{elt}</ListElement>
@@ -45,50 +50,41 @@ const Acteurs = ({ fiche }: FicheActionPdfProps) => {
 
   return (
     <Card className="w-2/5">
-      <Stack gap={3} direction="row" className="items-start">
-        <PersonnePilotePicto className="h-9 w-9 -mt-2" />
-        <ListeActeurs
-          titre="Personne pilote"
-          liste={pilotes?.map((pilote) => pilote.nom!)}
-        />
-      </Stack>
+      <ListeActeurs
+        titre="Personne pilote"
+        liste={pilotes?.map((pilote) => pilote.nom!)}
+        picto={(className) => <PersonnePilotePicto className={className} />}
+      />
 
-      <Stack gap={3} direction="row" className="items-start">
-        <ServicePilotePicto className="h-9 w-9 -mt-2" />
-        <ListeActeurs
-          titre="Direction ou service pilote"
-          liste={services?.map((service) => service.nom!)}
-        />
-      </Stack>
+      <ListeActeurs
+        titre="Direction ou service pilote"
+        liste={services?.map((service) => service.nom!)}
+        picto={(className) => <ServicePilotePicto className={className} />}
+      />
 
-      <Stack gap={3} direction="row" className="items-start">
-        <StructurePilotePicto className="h-9 w-9 -mt-2" />
-        <ListeActeurs
-          titre="Structure pilote"
-          liste={structures?.map((structure) => structure.nom!)}
-        />
-      </Stack>
+      <ListeActeurs
+        titre="Structure pilote"
+        liste={structures?.map((structure) => structure.nom!)}
+        picto={(className) => <StructurePilotePicto className={className} />}
+      />
 
-      <Stack gap={3} direction="row" className="items-start">
-        <EluPicto className="h-9 w-9 -mt-2" />
-        <ListeActeurs
-          titre="Élu·e référent·e"
-          liste={referents?.map((referent) => referent.nom!)}
-        />
-      </Stack>
+      <ListeActeurs
+        titre="Élu·e référent·e"
+        liste={referents?.map((referent) => referent.nom!)}
+        picto={(className) => <EluPicto className={className} />}
+      />
 
-      <Stack gap={3} direction="row" className="items-start">
-        <PartenairePicto className="h-9 w-9 -mt-2" />
-        <ListeActeurs
-          titre="Partenaires"
-          liste={partenaires?.map((partenaire) => partenaire.nom!)}
-        />
-      </Stack>
+      <ListeActeurs
+        titre="Partenaires"
+        liste={partenaires?.map((partenaire) => partenaire.nom!)}
+        picto={(className) => <PartenairePicto className={className} />}
+      />
 
-      <Stack gap={3} direction="row" className="items-start">
-        <CiblePicto className="h-9 w-9 -mt-2" />
-        <ListeActeurs titre="Cibles" liste={cibles?.map((cible) => cible)} />
-      </Stack>
+      <ListeActeurs
+        titre="Cibles"
+        liste={cibles?.map((cible) => cible)}
+        picto={(className) => <CiblePicto className={className} />}
+      />
     </Card>
   );
 };
