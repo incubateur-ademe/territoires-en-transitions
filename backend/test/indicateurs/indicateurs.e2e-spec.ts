@@ -3,7 +3,7 @@ import { Test } from '@nestjs/testing';
 import { createClient, SupabaseClient } from '@supabase/supabase-js';
 import { default as request } from 'supertest';
 import { AppModule } from '../../src/app.module';
-import { UpsertIndicateursValeursRequest } from '../../src/indicateurs/models/upsertIndicateurs.models';
+import { UpsertIndicateursValeursRequest } from '../../src/indicateurs/models/upsert-indicateurs-valeurs.request';
 import { YOLO_DODO_CREDENTIALS } from '../auth/test-users.samples';
 
 describe('Route de lecture / ecriture des indicateurs', () => {

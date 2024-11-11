@@ -65,10 +65,10 @@ export const DonneesCollectivite = ({modalProps}: DonneesCollectiviteProps) => {
                   valeursSecteurs={valeursSecteurs}
                   secteurs={secteurs as unknown as Secteur[]}
                   sources={sources}
-                  onChange={({indicateur_id, valeur}) => {
+                  onChange={({ indicateurId, valeur }) => {
                     upsertValeur({
-                      indicateur_id,
-                      date_valeur: DATE_DEBUT,
+                      indicateurId,
+                      dateValeur: DATE_DEBUT,
                       resultat: normalizeValue(valeur, tab.id),
                     });
                   }}

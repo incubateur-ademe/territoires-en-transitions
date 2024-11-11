@@ -25,10 +25,15 @@ const DEFAULT_STYLE: CSSProperties = {
   height: 600,
 };
 
+const DEFAULT_SETTINGS: SetOptionOpts = {
+  // pour éviter que des données persistent quand on passe d'un graphe à un autre
+  notMerge: true,
+};
+
 export function ReactECharts({
   option,
   style = DEFAULT_STYLE,
-  settings,
+  settings = DEFAULT_SETTINGS,
   loading,
   theme,
 }: ReactEChartsProps): JSX.Element {
@@ -77,5 +82,5 @@ export function ReactECharts({
     }
   }, [loading, theme]);
 
-  return <div ref={chartRef} style={{width: '100%', ...style}} />;
+  return <div ref={chartRef} style={{ width: '100%', ...style }} />;
 }

@@ -1,21 +1,23 @@
-import {forwardRef, Ref} from 'react';
-import {Link, useHistory, useLocation} from 'react-router-dom';
-import {useQueryClient} from 'react-query';
+import { Button } from '@tet/ui';
+import { monComptePath } from 'app/paths';
 import classNames from 'classnames';
-import {monComptePath} from 'app/paths';
-import {TAuthContext, UserData} from 'core-logic/api/auth/AuthProvider';
+import { TAuthContext, UserData } from 'core-logic/api/auth/AuthProvider';
+import { usePathname, useRouter } from 'next/navigation';
+import { forwardRef, Ref } from 'react';
+import { useQueryClient } from 'react-query';
 import DropdownFloater from 'ui/shared/floating-ui/DropdownFloater';
-import {HeaderPropsWithModalState} from './types';
 import './MenuUtilisateur.css';
-import {Button} from '@tet/ui';
+import { HeaderPropsWithModalState } from './types';
+import Link from 'next/link';
 
 /**
  * Affiche le menu associé à l'utilisateur courant
  */
 const MenuUtilisateur = (props: HeaderPropsWithModalState) => {
-  const {auth, setModalOpened} = props;
-  const {user} = auth;
-  const {pathname} = useLocation();
+  const { auth, setModalOpened } = props;
+  const { user } = auth;
+  const pathname = usePathname();
+
   if (!user) {
     return null;
   }
@@ -26,7 +28,7 @@ const MenuUtilisateur = (props: HeaderPropsWithModalState) => {
       placement="bottom"
       offsetValue={0}
       zIndex={2000}
-      render={({close}) => (
+      render={({ close }) => (
         <div
           className="m-0 p-0 user-menu"
           onClick={() => {
@@ -35,8 +37,9 @@ const MenuUtilisateur = (props: HeaderPropsWithModalState) => {
           }}
         >
           <Link
-            to={monComptePath}
+            href={monComptePath}
             className="fr-nav__link"
+            data-test="user-profile"
             aria-current={isUserPath ? 'page' : undefined}
           >
             <span className="px-6">Profil</span>
@@ -70,7 +73,7 @@ const MenuUtilisateurBtn = forwardRef(
     <Button
       ref={ref}
       {...props}
-      data-test="connectedMenu"
+      data-test="nav-user"
       variant="white"
       size="sm"
       className={classNames('user-menu text-primary-9 pr-2', {
@@ -92,18 +95,20 @@ const MenuUtilisateurBtn = forwardRef(
   )
 );
 
+MenuUtilisateurBtn.displayName = 'MenuUtilisateurBtn';
+
 /**
  * Bouton "Déconnexion"
  */
-const Deconnexion = ({auth}: {auth: TAuthContext}) => {
-  const history = useHistory();
+const Deconnexion = ({ auth }: { auth: TAuthContext }) => {
+  const router = useRouter();
   const queryClient = useQueryClient();
   return (
     <Link
       className="fr-nav__link"
-      style={{backgroundImage: 'none'}}
-      data-test="logoutBtn"
-      to="/"
+      style={{ backgroundImage: 'none' }}
+      data-test="user-logout"
+      href="/"
       onClick={() => {
         auth.disconnect().then(() => {
           // Supprime le cache de la session
@@ -111,7 +116,7 @@ const Deconnexion = ({auth}: {auth: TAuthContext}) => {
             queryKey: ['session'],
           });
 
-          history.push('/');
+          router.push('/');
         });
       }}
     >

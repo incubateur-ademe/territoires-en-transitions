@@ -254,6 +254,21 @@ export const TypeFile: Story = {
   },
 };
 
+export const TypeFileWithOnDrop: Story = {
+  args: {
+    type: 'file',
+    onDropFiles: action('onDropFiles'),
+  },
+};
+
+export const TypeFileWithOnDropMd: Story = {
+  args: {
+    type: 'file',
+    displaySize: 'md',
+    onDropFiles: action('onDropFiles'),
+  },
+};
+
 /** Recherche en cours. */
 export const TypeSearchLoading: Story = {
   args: {

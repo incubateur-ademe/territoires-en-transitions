@@ -12,6 +12,7 @@ import {
   uuid,
   varchar,
 } from 'drizzle-orm/pg-core';
+import { tempsDeMiseEnOeuvreTable } from 'backend/src/taxonomie/models/temps-de-mise-en-oeuvre.table';
 import { createInsertSchema, createSelectSchema } from 'drizzle-zod';
 import { z } from 'zod';
 
@@ -89,6 +90,8 @@ export const ficheActionStatutsEnum = pgEnum('fiche_action_statuts', [
 ]);
 
 export enum FicheActionCiblesEnumType {
+  GRAND_PUBLIC = 'Grand public',
+  ASSOCIATIONS = 'Associations',
   GRAND_PUBLIC_ET_ASSOCIATIONS = 'Grand public et associations',
   PUBLIC_SCOLAIRE = 'Public Scolaire',
   AUTRES_COLLECTIVITES_DU_TERRITOIRE = 'Autres collectivités du territoire',
@@ -102,7 +105,9 @@ export enum FicheActionCiblesEnumType {
   AGENTS = 'Agents',
 }
 
-export const ficheActionCiblesEnum = pgEnum('fiche_action_cibles', [
+export const ficheActionCiblesEnumValues = [
+  FicheActionCiblesEnumType.GRAND_PUBLIC,
+  FicheActionCiblesEnumType.ASSOCIATIONS,
   FicheActionCiblesEnumType.GRAND_PUBLIC_ET_ASSOCIATIONS,
   FicheActionCiblesEnumType.PUBLIC_SCOLAIRE,
   FicheActionCiblesEnumType.AUTRES_COLLECTIVITES_DU_TERRITOIRE,
@@ -114,12 +119,27 @@ export const ficheActionCiblesEnum = pgEnum('fiche_action_cibles', [
   FicheActionCiblesEnumType.COLLECTIVITE_ELLE_MEME,
   FicheActionCiblesEnumType.ELUS_LOCAUX,
   FicheActionCiblesEnumType.AGENTS,
-]);
+] as const;
+
+export const ficheActionCiblesEnumSchema = z.enum(ficheActionCiblesEnumValues);
+
+export const ficheActionCiblesEnum = pgEnum(
+  'fiche_action_cibles',
+  ficheActionCiblesEnumValues
+);
 
 export const ficheActionNiveauxPrioriteEnum = pgEnum(
   'fiche_action_niveaux_priorite',
   ['Élevé', 'Moyen', 'Bas']
 );
+
+export const ficheActionParticipationCitoyenneTypeEnumValues = [
+  'Pas de participation citoyenne',
+  'Information',
+  'Consultation',
+  'Concertation',
+  'Co-construction',
+] as const;
 
 export const ficheActionTable = pgTable('fiche_action', {
   modifiedAt: timestamp('modified_at', { withTimezone: true, mode: 'string' })
@@ -132,7 +152,9 @@ export const ficheActionTable = pgTable('fiche_action', {
   objectifs: varchar('objectifs', { length: 10000 }),
   resultatsAttendus:
     ficheActionResultatsAttendusEnum('resultats_attendus').array(),
-  cibles: ficheActionCiblesEnum('cibles').array(),
+  cibles: text('cibles', {
+    enum: ficheActionCiblesEnumValues,
+  }).array(),
   ressources: varchar('ressources', { length: 10000 }),
   financements: text('financements'),
   budgetPrevisionnel: numeric('budget_previsionnel', {
@@ -151,6 +173,15 @@ export const ficheActionTable = pgTable('fiche_action', {
   ameliorationContinue: boolean('amelioration_continue'),
   calendrier: varchar('calendrier', { length: 10000 }),
   notesComplementaires: varchar('notes_complementaires', { length: 20000 }),
+  instanceGouvernance: text('instance_gouvernance'),
+  participationCitoyenne: text('participation_citoyenne'),
+  participationCitoyenneType: varchar('participation_citoyenne', {
+    length: 30,
+    enum: ficheActionParticipationCitoyenneTypeEnumValues,
+  }),
+  tempsDeMiseEnOeuvre: integer('temps_de_mise_en_oeuvre_id').references(
+    () => tempsDeMiseEnOeuvreTable.niveau
+  ),
   majTermine: boolean('maj_termine'),
   collectiviteId: integer('collectivite_id')
     .notNull()

@@ -6,10 +6,10 @@ import {getStatusKey} from './useStatutTrajectoire';
 import {useEventTracker} from '@tet/ui';
 
 export type ResultatTrajectoire = {
-  indentifiants_referentiel_manquants_donnees_entree: string[];
+  indentifiantsReferentielManquantsDonneesEntree: string[];
   trajectoire: {
-    emissions_ges: IndicateurAvecValeurs[];
-    consommations_finales: IndicateurAvecValeurs[];
+    emissionsGes: IndicateurAvecValeurs[];
+    consommationsFinales: IndicateurAvecValeurs[];
   };
 };
 
@@ -17,13 +17,13 @@ export type IndicateurAvecValeurs = {
   definition: Omit<
     Indicateurs.domain.IndicateurDefinitionPredefini,
     'identifiant'
-  > & {identifiant_referentiel: string};
+  > & { identifiantReferentiel: string };
   valeurs: IndicateurValeurGroupee[];
 };
 
 type IndicateurValeurGroupee = {
   id: number;
-  date_valeur: string;
+  dateValeur: string;
   objectif: number;
 };
 
@@ -33,7 +33,7 @@ export const getKey = (collectiviteId: number | null) => [
 ];
 
 /** Déclenche le calcul de la trajectoire */
-export const useCalculTrajectoire = (args?: {nouveauCalcul: boolean}) => {
+export const useCalculTrajectoire = (args?: { nouveauCalcul: boolean }) => {
   const collectiviteId = useCollectiviteId();
   const api = useApiClient();
   const queryClient = useQueryClient();
@@ -50,11 +50,11 @@ export const useCalculTrajectoire = (args?: {nouveauCalcul: boolean}) => {
       return api.get<ResultatTrajectoire>({
         route: '/trajectoires/snbc',
         params: {
-          collectivite_id: collectiviteId,
+          collectiviteId,
           ...(args?.nouveauCalcul
             ? {
                 mode: 'maj_spreadsheet_existant',
-                force_utilisation_donnees_collectivite: true,
+                forceUtilisationDonneesCollectivite: true,
               }
             : {}),
         },
@@ -62,10 +62,9 @@ export const useCalculTrajectoire = (args?: {nouveauCalcul: boolean}) => {
     },
     {
       retry: false,
-      onSuccess: data => {
+      onSuccess: (data) => {
         // met à jour le cache
         queryClient.setQueryData(getKey(collectiviteId), data);
-        queryClient.invalidateQueries(getStatusKey(collectiviteId));
       },
     }
   );

@@ -52,7 +52,7 @@ function loginAs(userAlias) {
   cy.get(userAlias).then(function (user) {
     login.call(this, user);
 
-    cy.get('[data-test=connectedMenu]').should('contain.text', user.prenom);
+    cy.get('[data-test=nav-user]').should('contain.text', user.prenom);
   });
 }
 function login({email, password}) {

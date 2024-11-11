@@ -7,6 +7,7 @@ import {
   Views,
   NonNullableFields,
 } from '@tet/api';
+import { Cible } from '@tet/api/plan-actions';
 
 export type TFlatAxe = NonNullableFields<CompositeTypes<'flat_axe_node'>>;
 
@@ -62,7 +63,8 @@ export type TPersonne = CompositeTypes<'personne'>;
 
 export type TFinanceurMontant = CompositeTypes<'financeur_montant'>;
 
-export type TFicheActionCibles = Enums<'fiche_action_cibles'>;
+export type TFicheActionCibles = Cible;
+
 export type TFicheActionNiveauxPriorite =
   Enums<'fiche_action_niveaux_priorite'>;
 export type TFicheActionPiliersECI = Enums<'fiche_action_piliers_eci'>;

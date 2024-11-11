@@ -1,7 +1,7 @@
 import { extendApi } from '@anatine/zod-openapi';
 import { z } from 'zod';
 import { modifiedSinceSchema } from '../../common/models/modified-since.enum';
-import { FicheActionCiblesEnumType } from './fiche-action.table';
+import { ficheActionCiblesEnumSchema } from './fiche-action.table';
 
 export const getFichesActionFilterRequestSchema = extendApi(
   z
@@ -9,7 +9,7 @@ export const getFichesActionFilterRequestSchema = extendApi(
       cibles: z
         .string()
         .transform((value) => value.split(','))
-        .pipe(z.nativeEnum(FicheActionCiblesEnumType).array())
+        .pipe(ficheActionCiblesEnumSchema.array())
         .optional()
         .openapi({
           description: 'Liste des cibles séparées par des virgules',

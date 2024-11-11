@@ -1,4 +1,4 @@
-name: Déploiement à la demande de l'app
+name: Déploiement de l'app
 run-name: Déploiement de l'app sur ${{ github.event.inputs.target }}
 
 on:
@@ -19,7 +19,6 @@ jobs:
     name: Build l'app
     environment: ${{ github.event.inputs.target }}
     runs-on: ubuntu-latest
-    timeout-minutes: 20
 
     steps:
       - uses: actions/checkout@v4
@@ -35,14 +34,17 @@ jobs:
           earthly
           --use-inline-cache --save-inline-cache --push
           --platform=linux/amd64
-          +app-build
+          +app-docker
           --ENV_NAME=${{ github.event.inputs.target }}
-          --ANON_KEY=${{ secrets.ANON_KEY }} --API_URL=${{ secrets.API_URL }}
-          --SENTRY_DSN=${{ vars.SENTRY_DSN }}
-          --CRISP_WEBSITE_ID=${{ vars.CRISP_WEBSITE_ID }}
+          --ANON_KEY=${{ secrets.ANON_KEY }}
+          --API_URL=${{ secrets.API_URL }}
+          --AUTH_URL=${{ vars.AUTH_URL }}
           --BACKEND_URL=${{ vars.BACKEND_URL }}
           --PANIER_URL=${{ vars.PANIER_URL }}
-          --POSTHOG_HOST=${{ secrets.POSTHOG_HOST }} --POSTHOG_KEY=${{ secrets.POSTHOG_KEY }}
+          --SENTRY_DSN=${{ vars.SENTRY_DSN }}
+          --CRISP_WEBSITE_ID=${{ vars.CRISP_WEBSITE_ID }}
+          --POSTHOG_HOST=${{ secrets.POSTHOG_HOST }}
+          --POSTHOG_KEY=${{ secrets.POSTHOG_KEY }}
 
   deploy-app:
     name: Déploie l'app
@@ -50,7 +52,6 @@ jobs:
     needs: build-app
     environment: ${{ github.event.inputs.target }}
     runs-on: ubuntu-latest
-    timeout-minutes: 20
 
     steps:
       - uses: actions/checkout@v4
@@ -68,14 +69,16 @@ jobs:
           +app-deploy
           --ENV_NAME=${{ github.event.inputs.target }}
           --KOYEB_API_KEY=${{ secrets.KOYEB_API_KEY }}
+          --AUTH_URL=${{ vars.AUTH_URL }}
+          --BACKEND_URL=${{ vars.BACKEND_URL }}
+          --PANIER_URL=${{ vars.PANIER_URL }}
 
   deploy-test-app:
     name: Déploie l'app de test
     if: ${{ github.event.inputs.is-test-app == 'true' }}
     needs: build-app
-    environment: ${{ github.event.inputs.target }}
+    environment: preprod-koyeb
     runs-on: ubuntu-latest
-    timeout-minutes: 20
 
     steps:
       - uses: actions/checkout@v4
@@ -93,3 +96,6 @@ jobs:
           +app-deploy-test
           --ENV_NAME=${{ github.event.inputs.target }}
           --KOYEB_API_KEY=${{ secrets.KOYEB_API_KEY }}
+          --AUTH_URL=${{ vars.AUTH_URL }}
+          --BACKEND_URL=${{ vars.BACKEND_URL }}
+          --PANIER_URL=${{ vars.PANIER_URL }}

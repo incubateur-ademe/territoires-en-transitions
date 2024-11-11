@@ -64,7 +64,7 @@ const CarteDocument = ({
   return (
     <>
       <div
-        className={classNames('relative group h-full max-w-screen-md', {
+        className={classNames('relative group max-w-screen-md', {
           'mt-3': fichier?.confidentiel,
         })}
         data-test="carte-doc"
@@ -104,7 +104,7 @@ const CarteDocument = ({
                 <SpinnerLoader className="mx-auto my-auto" />
               ) : (
                 <Icon
-                  icon={!!fichier ? 'file-2-line' : 'links-line'}
+                  icon={fichier ? 'file-2-line' : 'links-line'}
                   className="text-primary-10"
                 />
               )}
@@ -116,7 +116,7 @@ const CarteDocument = ({
               <span
                 className="text-primary-10 hover:text-primary-8 transition text-base font-bold cursor-pointer"
                 data-test="name"
-                title={!!fichier ? 'Télécharger le fichier' : 'Ouvrir le lien'}
+                title={fichier ? 'Télécharger le fichier' : 'Ouvrir le lien'}
                 onClick={() => openPreuve(document)}
               >
                 {getFormattedTitle(document)}

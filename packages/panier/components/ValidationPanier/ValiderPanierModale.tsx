@@ -1,16 +1,3 @@
-/* eslint-disable react/no-unescaped-entities */
-import Fireworks from 'react-canvas-confetti/dist/presets/fireworks';
-import {
-  Button,
-  Divider,
-  Field,
-  OptionValue,
-  Select,
-  useEventTracker,
-} from '@tet/ui';
-import { useState } from 'react';
-import { useRouter } from 'next/navigation';
-import useSWR from 'swr';
 import {
   MesCollectivite,
   getAuthPaths,
@@ -24,6 +11,18 @@ import {
   useUserContext,
 } from '@tet/panier/providers';
 import { panierAPI } from '@tet/panier/src/clientAPI';
+import {
+  Button,
+  Divider,
+  Field,
+  OptionValue,
+  Select,
+  useEventTracker,
+} from '@tet/ui';
+import { useRouter } from 'next/navigation';
+import { useState } from 'react';
+import Fireworks from 'react-canvas-confetti/dist/presets/fireworks';
+import useSWR from 'swr';
 
 const ValiderPanierModale = () => {
   const { panier } = usePanierContext();
@@ -83,10 +82,7 @@ const ModeDeconnecte = () => {
   redirectTo.searchParams.set('modale', 'creation');
 
   // récupère les urls du module auth.
-  const authPaths = getAuthPaths(
-    document.location.hostname,
-    redirectTo.toString()
-  );
+  const authPaths = getAuthPaths(redirectTo.toString());
 
   return (
     <div className="flex gap-4 justify-center">
@@ -140,12 +136,7 @@ const ModeConnectePasRattache = () => {
   redirectTo.searchParams.set('modale', 'creation');
 
   return (
-    <Button
-      href={getRejoindreCollectivitePath(
-        document.location.hostname,
-        redirectTo.toString()
-      )}
-    >
+    <Button href={getRejoindreCollectivitePath(redirectTo.toString())}>
       Rejoindre une collectivité
     </Button>
   );
@@ -193,11 +184,7 @@ const ModeConnecteRattache = ({
       panier?.id ?? ''
     );
 
-    const href = getCollectivitePlanPath(
-      document.location.hostname,
-      collectivite.collectivite_id,
-      plan_id
-    );
+    const href = getCollectivitePlanPath(collectivite.collectivite_id, plan_id);
     router.push(href);
   };
 

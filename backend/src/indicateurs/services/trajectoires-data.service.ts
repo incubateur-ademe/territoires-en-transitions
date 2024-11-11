@@ -10,14 +10,6 @@ import { NiveauAcces } from '../../auth/models/private-utilisateur-droit.table';
 import { AuthService } from '../../auth/services/auth.service';
 import { EpciType } from '../../collectivites/models/epci.table';
 import CollectivitesService from '../../collectivites/services/collectivites.service';
-import {
-  DonneesARemplirResultType,
-  DonneesARemplirValeurType,
-  DonneesCalculTrajectoireARemplirType,
-  VerificationDonneesSNBCResult,
-  VerificationDonneesSNBCStatus,
-  VerificationTrajectoireRequestType,
-} from '../models/calcultrajectoire.models';
 import IndicateursService from './indicateurs.service';
 import IndicateurSourcesService from './indicateurSources.service';
 import { CreateIndicateurSourceType } from '../models/indicateur-source.table';
@@ -30,19 +22,28 @@ import {
   IndicateurValeurType,
 } from '../models/indicateur-valeur.table';
 import { SupabaseJwtPayload } from '../../auth/models/supabase-jwt.models';
+import {
+  VerificationTrajectoireResultType,
+  VerificationTrajectoireStatus,
+} from '../models/verification-trajectoire.response';
+import { VerificationTrajectoireRequestType } from '../models/verification-trajectoire.request';
+import { DonneesCalculTrajectoireARemplirType } from '../models/donnees-calcul-trajectoire-a-remplir.dto';
+import { DonneesARemplirValeurType } from '../models/donnees-a-remplir-valeur.dto';
+import { DonneesARemplirResultType } from '../models/donnees-a-remplir-result.dto';
 
 @Injectable()
 export default class TrajectoiresDataService {
   private readonly logger = new Logger(TrajectoiresDataService.name);
 
-  private readonly OBJECTIF_COMMENTAIRE_SOURCE = 'Source:';
+  private readonly OBJECTIF_COMMENTAIRE_SOURCE = "Source des données d'entrée:";
   private readonly OBJECTIF_COMMENTAIRE_INDICATEURS_MANQUANTS =
     'Indicateurs manquants:';
 
   private readonly OBJECTIF_COMMENTAIRE_REGEXP = new RegExp(
-    String.raw`${this.OBJECTIF_COMMENTAIRE_SOURCE}\s*(.*?)(?:\s*-\s*${this.OBJECTIF_COMMENTAIRE_INDICATEURS_MANQUANTS}\s*(.*))?$`
+    String.raw`Source[^-]*:\s*(.*?)(?:\s*-\s*${this.OBJECTIF_COMMENTAIRE_INDICATEURS_MANQUANTS}\s*(.*))?$`
   );
   public readonly RARE_SOURCE_ID = 'rare';
+  public readonly ALDO_SOURCE_ID = 'aldo';
 
   public readonly TEST_COLLECTIVITE_VALID_SIREN = '242900314';
 
@@ -249,15 +250,19 @@ export default class TrajectoiresDataService {
     donneesCalculTrajectoire: DonneesCalculTrajectoireARemplirType
   ): string {
     const identifiantsManquants = [
-      ...donneesCalculTrajectoire.emissions_ges
-        .identifiants_referentiel_manquants,
-      ...donneesCalculTrajectoire.consommations_finales
-        .identifiants_referentiel_manquants,
+      ...donneesCalculTrajectoire.emissionsGes.identifiantsReferentielManquants,
+      ...donneesCalculTrajectoire.consommationsFinales
+        .identifiantsReferentielManquants,
       ...donneesCalculTrajectoire.sequestrations
-        .identifiants_referentiel_manquants,
+        .identifiantsReferentielManquants,
     ];
-
-    let commentaitre = `${this.OBJECTIF_COMMENTAIRE_SOURCE} ${donneesCalculTrajectoire.source}`;
+    const source = donneesCalculTrajectoire.sources
+      .join(',')
+      .replace(
+        IndicateursService.NULL_SOURCE_ID,
+        IndicateursService.NULL_SOURCE_LABEL
+      );
+    let commentaitre = `${this.OBJECTIF_COMMENTAIRE_SOURCE} ${source}`;
     if (identifiantsManquants.length) {
       commentaitre += ` - ${
         this.OBJECTIF_COMMENTAIRE_INDICATEURS_MANQUANTS
@@ -268,13 +273,20 @@ export default class TrajectoiresDataService {
   }
 
   extractSourceIdentifiantManquantsFromCommentaire(commentaire: string): {
-    source: string;
+    sources: string[];
     identifiants_referentiel_manquants: string[];
   } | null {
     const match = commentaire.match(this.OBJECTIF_COMMENTAIRE_REGEXP);
     if (match) {
+      const extractedSources = match[1].split(',').map((i) => i.trim());
+      const replacedExtractedSource = extractedSources.map((source) => {
+        if (source.localeCompare(IndicateursService.NULL_SOURCE_LABEL) === 0) {
+          return IndicateursService.NULL_SOURCE_ID;
+        }
+        return source;
+      });
       return {
-        source: match[1],
+        sources: replacedExtractedSource,
         identifiants_referentiel_manquants: match[2]
           ? match[2]
               .split(',')
@@ -296,20 +308,29 @@ export default class TrajectoiresDataService {
     forceDonneesCollectivite?: boolean
   ): Promise<DonneesCalculTrajectoireARemplirType> {
     // Récupère les valeurs des indicateurs d'émission pour l'année 2015 (valeur directe ou interpolation)
-    const source = forceDonneesCollectivite
-      ? this.indicateursService.NULL_SOURCE_ID
-      : this.RARE_SOURCE_ID;
+    const sources = forceDonneesCollectivite
+      ? [IndicateursService.NULL_SOURCE_ID]
+      : [this.RARE_SOURCE_ID, this.ALDO_SOURCE_ID];
     this.logger.log(
-      `Récupération des données d'émission GES et de consommation pour la collectivité ${collectiviteId} depuis la source ${source}`
+      `Récupération des données d'émission GES et de consommation pour la collectivité ${collectiviteId} depuis les sources ${sources.join(
+        ','
+      )}`
     );
+
     const indicateurValeursEmissionsGes =
       await this.indicateursService.getIndicateursValeurs({
         collectiviteId: collectiviteId,
         identifiantsReferentiel: _.flatten(
           this.SNBC_EMISSIONS_GES_IDENTIFIANTS_REFERENTIEL
         ),
-        sources: [source],
+        sources: sources,
       });
+    const emissionsGesSources = indicateurValeursEmissionsGes
+      .map(
+        (indicateurValeur) =>
+          indicateurValeur.indicateur_source_metadonnee?.sourceId
+      )
+      .filter((source) => source !== undefined);
 
     // Construit le tableau de valeurs à insérer dans le fichier Spreadsheet
     const donneesEmissionsGes = this.getValeursARemplirPourIdentifiants(
@@ -324,8 +345,14 @@ export default class TrajectoiresDataService {
         identifiantsReferentiel: _.flatten(
           this.SNBC_CONSOMMATIONS_IDENTIFIANTS_REFERENTIEL
         ),
-        sources: [source],
+        sources: sources,
       });
+    const consommationsFinalesSources = indicateurValeursConsommationsFinales
+      .map(
+        (indicateurValeur) =>
+          indicateurValeur.indicateur_source_metadonnee?.sourceId
+      )
+      .filter((source) => source !== undefined);
 
     // Construit le tableau de valeurs à insérer dans le fichier Spreadsheet
     const donneesConsommationsFinales = this.getValeursARemplirPourIdentifiants(
@@ -340,18 +367,32 @@ export default class TrajectoiresDataService {
         identifiantsReferentiel: _.flatten(
           this.SNBC_SEQUESTRATION_IDENTIFIANTS_REFERENTIEL
         ),
-        sources: [source],
+        sources: sources,
       });
+    const sequestrationSources = indicateurValeursSequestration
+      .map(
+        (indicateurValeur) =>
+          indicateurValeur.indicateur_source_metadonnee?.sourceId
+      )
+      .filter((source) => source !== undefined);
 
     // Construit le tableau de valeurs à insérer dans le fichier Spreadsheet
+    // Allow closest for sequestration
     const donneesSequestration = this.getValeursARemplirPourIdentifiants(
       this.SNBC_SEQUESTRATION_IDENTIFIANTS_REFERENTIEL,
-      indicateurValeursSequestration
+      indicateurValeursSequestration,
+      true
     );
+
+    const uniqueSources = _.uniq([
+      ...emissionsGesSources,
+      ...consommationsFinalesSources,
+      ...sequestrationSources,
+    ]);
     return {
-      source: source,
-      emissions_ges: donneesEmissionsGes,
-      consommations_finales: donneesConsommationsFinales,
+      sources: uniqueSources,
+      emissionsGes: donneesEmissionsGes,
+      consommationsFinales: donneesConsommationsFinales,
       sequestrations: donneesSequestration,
     };
   }
@@ -362,16 +403,17 @@ export default class TrajectoiresDataService {
    */
   getValeursARemplirPourIdentifiants(
     identifiantsReferentiel: string[][],
-    indicateurValeurs: IndicateurValeurAvecMetadonnesDefinition[]
+    indicateurValeurs: IndicateurValeurAvecMetadonnesDefinition[],
+    useClosestIfNoInterpolation?: boolean // if not interpolation is available, allow to use the closest value
   ): DonneesARemplirResultType {
     const valeursARemplir: DonneesARemplirValeurType[] = [];
     const identifiantsReferentielManquants: string[] = [];
     identifiantsReferentiel.forEach((identifiants, index) => {
       const valeurARemplir: DonneesARemplirValeurType = {
-        identifiants_referentiel: identifiants,
+        identifiantsReferentiel: identifiants,
         valeur: 0,
-        date_min: null,
-        date_max: null,
+        dateMin: null,
+        dateMax: null,
       };
       valeursARemplir[index] = valeurARemplir;
       identifiants.forEach((identifiant) => {
@@ -400,47 +442,60 @@ export default class TrajectoiresDataService {
             valeurARemplir.valeur +=
               identifiantIndicateurValeur2015.indicateur_valeur.resultat;
             if (
-              !valeurARemplir.date_max ||
+              !valeurARemplir.dateMax ||
               identifiantIndicateurValeur2015.indicateur_valeur.dateValeur >
-                valeurARemplir.date_max
+                valeurARemplir.dateMax
             ) {
-              valeurARemplir.date_max =
+              valeurARemplir.dateMax =
                 identifiantIndicateurValeur2015.indicateur_valeur.dateValeur;
             }
             if (
-              !valeurARemplir.date_min ||
+              !valeurARemplir.dateMin ||
               identifiantIndicateurValeur2015.indicateur_valeur.dateValeur <
-                valeurARemplir.date_min
+                valeurARemplir.dateMin
             ) {
-              valeurARemplir.date_min =
+              valeurARemplir.dateMin =
                 identifiantIndicateurValeur2015.indicateur_valeur.dateValeur;
             }
           }
         } else {
-          const interpolationResultat = this.getInterpolationValeur(
-            identifiantIndicateurValeurs.map((v) => v.indicateur_valeur)
+          const indicateurValeurs = identifiantIndicateurValeurs.map(
+            (v) => v.indicateur_valeur
           );
+          let interpolationOrClosestResultat =
+            this.getInterpolationValeur(indicateurValeurs);
+          if (
+            !interpolationOrClosestResultat.valeur &&
+            useClosestIfNoInterpolation
+          ) {
+            interpolationOrClosestResultat =
+              this.getClosestValeur(indicateurValeurs);
+          }
 
-          if (!interpolationResultat.valeur) {
+          if (!interpolationOrClosestResultat.valeur) {
             identifiantsReferentielManquants.push(identifiant);
             valeurARemplir.valeur = null;
           } else {
             // Si il n'y a pas déjà eu une valeur manquante qui a placé la valeur à null (pour un autre indicateur contribuant à la même valeur)
             if (valeurARemplir.valeur !== null) {
-              valeurARemplir.valeur += interpolationResultat.valeur;
+              valeurARemplir.valeur += interpolationOrClosestResultat.valeur;
               if (
-                !valeurARemplir.date_max ||
-                (interpolationResultat.date_max &&
-                  interpolationResultat.date_max > valeurARemplir.date_max)
+                !valeurARemplir.dateMax ||
+                (interpolationOrClosestResultat.date_max &&
+                  interpolationOrClosestResultat.date_max >
+                    valeurARemplir.dateMax)
               ) {
-                valeurARemplir.date_max = interpolationResultat.date_max;
+                valeurARemplir.dateMax =
+                  interpolationOrClosestResultat.date_max;
               }
               if (
-                !valeurARemplir.date_min ||
-                (interpolationResultat.date_min &&
-                  interpolationResultat.date_min < valeurARemplir.date_min)
+                !valeurARemplir.dateMin ||
+                (interpolationOrClosestResultat.date_min &&
+                  interpolationOrClosestResultat.date_min <
+                    valeurARemplir.dateMin)
               ) {
-                valeurARemplir.date_min = interpolationResultat.date_min;
+                valeurARemplir.dateMin =
+                  interpolationOrClosestResultat.date_min;
               }
             }
           }
@@ -449,7 +504,37 @@ export default class TrajectoiresDataService {
     });
     return {
       valeurs: valeursARemplir,
-      identifiants_referentiel_manquants: identifiantsReferentielManquants,
+      identifiantsReferentielManquants: identifiantsReferentielManquants,
+    };
+  }
+
+  getClosestValeur(indicateurValeurs: IndicateurValeurType[]): {
+    valeur: number | null;
+    date_min: string | null;
+    date_max: string | null;
+  } {
+    const time2015 = new Date(this.SNBC_DATE_REFERENCE).getTime();
+    let closestValeur: number | null = null;
+    let closestDate: string | null = null;
+    let currentDiff: number | null = null;
+
+    indicateurValeurs.forEach((indicateurValeur) => {
+      const timeIndicateurValeur = new Date(
+        indicateurValeur.dateValeur
+      ).getTime();
+      const diff = Math.abs(time2015 - timeIndicateurValeur);
+      if (!currentDiff || diff < currentDiff) {
+        currentDiff = diff;
+        closestValeur = indicateurValeur.resultat;
+        closestDate = indicateurValeur.dateValeur;
+      }
+    });
+
+    // Return this response with both date_min & date_max to match getInterpolationValeur signature and simplify rest of the code
+    return {
+      valeur: closestValeur,
+      date_min: closestDate,
+      date_max: closestDate,
     };
   }
 
@@ -514,12 +599,12 @@ export default class TrajectoiresDataService {
   verificationDonneesARemplirSuffisantes(
     donnees: DonneesCalculTrajectoireARemplirType
   ): boolean {
-    const { emissions_ges, consommations_finales } = donnees;
-    const valeurEmissionGesValides = emissions_ges.valeurs.filter(
+    const { emissionsGes, consommationsFinales } = donnees;
+    const valeurEmissionGesValides = emissionsGes.valeurs.filter(
       (v) => v.valeur !== null
     ).length;
     const valeurConsommationFinalesValides =
-      consommations_finales.valeurs.filter((v) => v.valeur !== null).length;
+      consommationsFinales.valeurs.filter((v) => v.valeur !== null).length;
     return (
       valeurEmissionGesValides >= 4 && valeurConsommationFinalesValides >= 3
     );
@@ -536,29 +621,29 @@ export default class TrajectoiresDataService {
     tokenInfo: SupabaseJwtPayload,
     epci?: EpciType,
     forceRecuperationDonnees = false
-  ): Promise<VerificationDonneesSNBCResult> {
+  ): Promise<VerificationTrajectoireResultType> {
     // Vérification des droits
     await this.authService.verifieAccesAuxCollectivites(
       tokenInfo,
-      [request.collectivite_id],
+      [request.collectiviteId],
       NiveauAcces.EDITION
     );
 
-    const response: VerificationDonneesSNBCResult = {
-      status: VerificationDonneesSNBCStatus.COMMUNE_NON_SUPPORTEE,
+    const response: VerificationTrajectoireResultType = {
+      status: VerificationTrajectoireStatus.COMMUNE_NON_SUPPORTEE,
     };
 
-    if (request.force_recuperation_donnees) {
+    if (request.forceRecuperationDonnees) {
       forceRecuperationDonnees = true;
     }
 
     if (!epci) {
       // Vérifie si la collectivité est une commune :
       const collectivite = await this.collectivitesService.getCollectivite(
-        request.collectivite_id
+        request.collectiviteId
       );
       if (collectivite.commune || !collectivite.epci) {
-        response.status = VerificationDonneesSNBCStatus.COMMUNE_NON_SUPPORTEE;
+        response.status = VerificationTrajectoireStatus.COMMUNE_NON_SUPPORTEE;
         return response;
       }
       response.epci = collectivite.epci;
@@ -578,7 +663,7 @@ export default class TrajectoiresDataService {
 
     // sinon, vérifie s'il existe déjà des données trajectoire SNBC calculées :
     const valeurs = await this.indicateursService.getIndicateursValeurs({
-      collectiviteId: request.collectivite_id,
+      collectiviteId: request.collectiviteId,
       sources: [this.SNBC_SOURCE.id],
     });
     if (valeurs.length > 0) {
@@ -590,13 +675,15 @@ export default class TrajectoiresDataService {
         this.extractSourceIdentifiantManquantsFromCommentaire(
           premierCommentaire || ''
         );
-      response.source_donnees_entree = sourceIdentifiantManquants?.source || '';
+      response.sourcesDonneesEntree = sourceIdentifiantManquants?.sources || [];
       this.logger.log(
-        `Source des données SNBC déjà calculées : ${response.source_donnees_entree}`
+        `Sources des données SNBC déjà calculées : ${response.sourcesDonneesEntree?.join(
+          ','
+        )}`
       );
-      response.indentifiants_referentiel_manquants_donnees_entree =
+      response.indentifiantsReferentielManquantsDonneesEntree =
         sourceIdentifiantManquants?.identifiants_referentiel_manquants || [];
-      response.status = VerificationDonneesSNBCStatus.DEJA_CALCULE;
+      response.status = VerificationTrajectoireStatus.DEJA_CALCULE;
       if (!forceRecuperationDonnees) {
         return response;
       }
@@ -605,11 +692,12 @@ export default class TrajectoiresDataService {
     // Si jamais les données ont déjà été calculées et que l'on a pas défini le flag forceUtilisationDonneesCollectivite, on utilise la meme source
     const donneesCalculTrajectoireARemplir =
       await this.getValeursPourCalculTrajectoire(
-        request.collectivite_id,
-        !isNil(request.force_utilisation_donnees_collectivite)
-          ? request.force_utilisation_donnees_collectivite
-          : response.source_donnees_entree ===
-            this.indicateursService.NULL_SOURCE_ID
+        request.collectiviteId,
+        !isNil(request.forceUtilisationDonneesCollectivite)
+          ? request.forceUtilisationDonneesCollectivite
+          : response.sourcesDonneesEntree?.includes(
+              IndicateursService.NULL_SOURCE_ID
+            )
           ? true
           : false
       );
@@ -617,16 +705,16 @@ export default class TrajectoiresDataService {
     const donneesSuffisantes = this.verificationDonneesARemplirSuffisantes(
       donneesCalculTrajectoireARemplir
     );
-    response.donnees_entree = donneesCalculTrajectoireARemplir;
+    response.donneesEntree = donneesCalculTrajectoireARemplir;
     // si oui, retourne 'pret a calculer'
     if (donneesSuffisantes) {
-      if (response.status !== VerificationDonneesSNBCStatus.DEJA_CALCULE) {
-        response.status = VerificationDonneesSNBCStatus.PRET_A_CALCULER;
+      if (response.status !== VerificationTrajectoireStatus.DEJA_CALCULE) {
+        response.status = VerificationTrajectoireStatus.PRET_A_CALCULER;
       }
       return response;
     }
     // sinon, retourne 'données manquantes'
-    response.status = VerificationDonneesSNBCStatus.DONNEES_MANQUANTES;
+    response.status = VerificationTrajectoireStatus.DONNEES_MANQUANTES;
     return response;
   }
 

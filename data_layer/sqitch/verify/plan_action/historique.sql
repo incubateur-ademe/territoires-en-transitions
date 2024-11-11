@@ -59,7 +59,7 @@ from historique.fiche_action_pilote
 where false;
 
 select has_function_privilege('historique.save_fiche_action()', 'execute');
-select has_function_privilege('historique.save_fiche_action_pilote()', 'execute');
+select has_function_privilege('historique.set_fiche_action_modified_at()', 'execute');
 
 
 

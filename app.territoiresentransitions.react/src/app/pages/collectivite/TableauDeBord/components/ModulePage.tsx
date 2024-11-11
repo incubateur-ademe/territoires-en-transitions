@@ -1,9 +1,8 @@
-import { useHistory, useParams } from 'react-router-dom';
-
 import { Breadcrumbs } from '@tet/ui';
-
 import { TDBViewParam, makeTableauBordUrl } from 'app/paths';
 import { useCollectiviteId } from 'core-logic/hooks/params';
+import { useRouter } from 'next/navigation';
+import { useParams } from 'react-router-dom';
 
 type Props = {
   title: string;
@@ -17,9 +16,9 @@ type Props = {
 /** Composant générique de la page d'un module du tableau de bord plans d'action */
 const ModulePage = ({ view, title, children }: Props) => {
   const collectiviteId = useCollectiviteId();
-  const history = useHistory();
+  const router = useRouter();
 
-  const { tdbModule: slug }: { tdbModule: string } = useParams();
+  const { tdbModule: slug } = useParams<{ tdbModule: string }>();
 
   return (
     <div
@@ -36,7 +35,7 @@ const ModulePage = ({ view, title, children }: Props) => {
                 view === 'collectivite' ? 'Collectivité' : ''
               }`,
               onClick: () =>
-                history.push(
+                router.push(
                   makeTableauBordUrl({
                     collectiviteId: collectiviteId!,
                     view,

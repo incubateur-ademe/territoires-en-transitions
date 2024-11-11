@@ -50,6 +50,7 @@ export const InputNumber = forwardRef(
         getInputRef={ref}
         thousandSeparator={THOUSAND_SEP}
         decimalSeparator={DECIMAL_SEP}
+        decimalScale={numType === 'int' ? 0 : 3}
         onPaste={(e: ClipboardEvent) => {
           // rend la chaîne copiée compatible avec le `decimalSeparator` spécifié
           const data = e.clipboardData?.getData('text/plain');
@@ -60,7 +61,6 @@ export const InputNumber = forwardRef(
         }}
         type="text"
         value={currentValue}
-        {...(numType === 'int' ? { decimalScale: 0 } : {})}
         {...remainingProps}
       />
     );

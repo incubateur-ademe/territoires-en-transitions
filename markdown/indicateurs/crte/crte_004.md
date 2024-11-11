@@ -31,6 +31,7 @@ thematiques:
 id: crte_4.2
 identifiant: 4.2
 unite: ha
+parent: crte_4.1
 
 titre_long: Surface agricole utile en agriculture biologique (AB) ou en conversion
 programmes:
@@ -40,7 +41,7 @@ climat_pratic_ids:
   - agri_alim
 thematiques:
   - urbanisme_et_amenagement
-  - agriculture_alimentation
+  - agri_alim
 ```
 ## Description
 

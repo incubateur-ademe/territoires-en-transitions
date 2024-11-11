@@ -1,5 +1,4 @@
-import { Link } from 'react-router-dom';
-
+import Link from 'next/link';
 import { Referentiel } from 'types/litterals';
 import { toPercentString } from 'utils/score';
 import { referentielToName } from 'app/labels';
@@ -38,7 +37,7 @@ export const CollectiviteCarte = ({
       onClick={() =>
         tracker({ fonction: 'collectivite_carte', action: 'clic' })
       }
-      to={
+      href={
         canUserClickCard
           ? makeCollectiviteAccueilUrl({
               collectiviteId: collectivite.collectivite_id,

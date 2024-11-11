@@ -4,12 +4,13 @@ import {useApiClient} from 'core-logic/api/useApiClient';
 import {Indicateurs, Tables} from '@tet/api';
 
 type GetIndicateurValeursRequest = {
-  identifiants_referentiel?: string[];
-  indicateur_id?: number;
-  date_debut?: string;
-  date_fin?: string;
+  disabled?: boolean;
+  identifiantsReferentiel?: string[];
+  indicateurId?: number;
+  dateDebut?: string;
+  dateFin?: string;
   sources?: string[];
-  ignore_dedoublonnage?: boolean;
+  ignoreDedoublonnage?: boolean;
 };
 
 type GetIndicateursValeursResponse = {
@@ -20,7 +21,7 @@ type IndicateurAvecValeursParSource = {
   definition: Omit<
     Indicateurs.domain.IndicateurDefinitionPredefini,
     'identifiant'
-  > & {identifiant_referentiel: string};
+  > & { identifiantReferentiel: string };
   sources: Record<string, IndicateurValeursGroupeeParSource>;
 };
 
@@ -32,24 +33,27 @@ type IndicateurValeursGroupeeParSource = {
 
 export type IndicateurValeurGroupee = {
   id: number;
-  date_valeur: string;
+  dateValeur: string;
   resultat?: number | null;
-  resultat_commentaire?: string | null;
+  resultatCommentaire?: string | null;
   objectif?: number | null;
-  objectif_commentaire?: string | null;
-  metadonnee_id?: number | null;
+  objectifCommentaire?: string | null;
+  metadonneeId?: number | null;
 };
 
 /** Charge toutes les valeurs associées à un indicateur id (ou à un ou plusieurs identifiants d'indicateurs prédéfinis) */
-export const useIndicateurValeurs = (params: GetIndicateurValeursRequest) => {
-  const collectivite_id = useCollectiviteId();
+export const useIndicateurValeurs = ({
+  disabled,
+  ...params
+}: GetIndicateurValeursRequest) => {
+  const collectiviteId = useCollectiviteId();
   const api = useApiClient();
 
-  return useQuery(['indicateur_valeurs', collectivite_id, params], async () => {
-    if (!collectivite_id) return;
+  return useQuery(['indicateur_valeurs', collectiviteId, params], async () => {
+    if (!collectiviteId || disabled) return;
     return api.get<GetIndicateursValeursResponse>({
       route: '/indicateurs',
-      params: {collectivite_id, ...params},
+      params: { collectiviteId, ...params },
     });
   });
 };

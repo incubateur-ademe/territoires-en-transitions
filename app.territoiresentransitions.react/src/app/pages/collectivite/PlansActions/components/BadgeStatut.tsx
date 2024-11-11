@@ -2,7 +2,10 @@ import { Statut as PlanActionStatut } from '@tet/api/plan-actions/domain';
 import { Badge, BadgeState } from '@tet/ui';
 import classNames from 'classnames';
 
-const statusToState: Record<PlanActionStatut | 'Sans statut', BadgeState> = {
+export const statusToState: Record<
+  PlanActionStatut | 'Sans statut',
+  BadgeState
+> = {
   'À venir': 'standard',
   'En cours': 'info',
   Réalisé: 'success',

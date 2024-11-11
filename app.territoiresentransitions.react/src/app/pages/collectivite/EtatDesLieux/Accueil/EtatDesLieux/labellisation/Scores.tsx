@@ -19,6 +19,7 @@ import { Button } from '@tet/ui';
 import { ProgressionRow } from '@tet/app/pages/collectivite/EtatDesLieux/Accueil/data/useProgressionReferentiel';
 import { getAggregatedScore } from '@tet/app/pages/collectivite/EtatDesLieux/Accueil/EtatDesLieux/utils';
 import AccueilCard from '@tet/app/pages/collectivite/EtatDesLieux/Accueil/EtatDesLieux/AccueilCard';
+import Image from 'next/image';
 
 type ScoreRempliProps = {
   collectiviteId: number;
@@ -69,7 +70,7 @@ export const ScoreRempli = ({
       <div className="flex flex-col items-center xl:items-start gap-2 shrink-0">
         {/** Référentiel */}
         <div className="flex items-center justify-center gap-3 xl:flex-col xl:items-start xl:gap-0 xl:-mt-3">
-          <img
+          <Image
             src={logoTerritoireEngage}
             alt="Logo Territoire Engage"
             className="w-12 xl:w-24"
@@ -121,7 +122,7 @@ export const ScoreVide = ({
     <AccueilCard className="flex flex-col gap-7">
       {/* En-tête */}
       <div className="flex flex-col items-start xl:-mt-3">
-        <img
+        <Image
           src={logoTerritoireEngage}
           alt="Logo Territoire Engage"
           className="w-24"
@@ -161,7 +162,7 @@ export const ScoreVide = ({
             referentielVue: 'progression',
           })}
         >
-          Commencer l'état des lieux
+          {"Commencer l'état des lieux"}
         </Button>
         <Button
           size="sm"

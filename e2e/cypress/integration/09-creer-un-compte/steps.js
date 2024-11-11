@@ -8,5 +8,5 @@ beforeEach(() => {
 });
 
 When(/le bouton compte contient le texte "([^"]+)"/, message => {
-  cy.get('[data-test="connectedMenu"] button').should('contain', message);
+  cy.get('[data-test="nav-user"] button').should('contain', message);
 });

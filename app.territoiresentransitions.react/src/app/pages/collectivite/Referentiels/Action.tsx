@@ -1,33 +1,34 @@
-import { Link, useHistory } from 'react-router-dom';
-import { addTargetToContentAnchors } from 'utils/content';
-import { Tabs, Tab } from 'ui/shared/Tabs';
-import { ActionDefinitionSummary } from 'core-logic/api/endpoints/ActionDefinitionSummaryReadEndpoint';
+import { Alert } from '@tet/ui';
+import HistoriqueListe from 'app/pages/collectivite/Historique/HistoriqueListe';
 import { OrientationQuickNav } from 'app/pages/collectivite/Referentiels/QuickNav';
 import {
   ActionVueParamOption,
   makeCollectiviteActionUrl,
   ReferentielParamOption,
 } from 'app/paths';
+import { ActionDefinitionSummary } from 'core-logic/api/endpoints/ActionDefinitionSummaryReadEndpoint';
 import { useActionVue, useReferentielId } from 'core-logic/hooks/params';
-import HistoriqueListe from 'app/pages/collectivite/Historique/HistoriqueListe';
-import { ActionBottomNav } from './ActionNav';
+import { useCurrentCollectivite } from 'core-logic/hooks/useCurrentCollectivite';
+import Link from 'next/link';
+import { useRouter } from 'next/navigation';
 import ScrollTopButton from 'ui/buttons/ScrollTopButton';
 import ActionPreuvePanel from 'ui/shared/actions/ActionPreuvePanel/ActionPreuvePanel';
-import { DownloadDocs } from './DownloadDocs';
-import ActionAuditStatut from '../Audit/ActionAuditStatut';
-import { ActionAuditDetail } from '../Audit/ActionAuditDetail';
-import { useShowDescIntoInfoPanel } from '../Audit/useAudit';
-import { useCurrentCollectivite } from 'core-logic/hooks/useCurrentCollectivite';
-import { usePrevAndNextActionLinks } from './usePrevAndNextActionLinks';
-import { ActionHeader } from './ActionHeader';
 import { useActionPreuvesCount } from 'ui/shared/preuves/Bibliotheque/usePreuves';
-import ActionFollowUp from '../EtatDesLieux/Referentiel/SuiviAction/ActionFollowUp';
-import { FichesActionLiees } from './FichesActionLiees';
+import { Tab, Tabs } from 'ui/shared/Tabs';
+import { addTargetToContentAnchors } from 'utils/content';
+import { ActionAuditDetail } from '../Audit/ActionAuditDetail';
+import ActionAuditStatut from '../Audit/ActionAuditStatut';
+import { useShowDescIntoInfoPanel } from '../Audit/useAudit';
 import { useScoreRealise } from '../EtatDesLieux/Referentiel/data/useScoreRealise';
-import { useCycleLabellisation } from '../ParcoursLabellisation/useCycleLabellisation';
+import ActionFollowUp from '../EtatDesLieux/Referentiel/SuiviAction/ActionFollowUp';
 import { useFilteredIndicateurDefinitions } from '../Indicateurs/lists/useFilteredIndicateurDefinitions';
+import { useCycleLabellisation } from '../ParcoursLabellisation/useCycleLabellisation';
+import { ActionHeader } from './ActionHeader';
+import { ActionBottomNav } from './ActionNav';
+import { DownloadDocs } from './DownloadDocs';
+import { FichesActionLiees } from './FichesActionLiees';
 import IndicateurChartsGrid from './IndicateurChartsGrid';
-import { Alert } from '@tet/ui';
+import { usePrevAndNextActionLinks } from './usePrevAndNextActionLinks';
 
 // index des onglets de la page Action
 const TABS_INDEX: Record<ActionVueParamOption, number> = {
@@ -40,7 +41,7 @@ const TABS_INDEX: Record<ActionVueParamOption, number> = {
 
 const Action = ({ action }: { action: ActionDefinitionSummary }) => {
   const actionVue = useActionVue();
-  const history = useHistory();
+  const router = useRouter();
   const collectivite = useCurrentCollectivite();
   const collectiviteId = collectivite?.collectivite_id;
   const referentielId = useReferentielId() as ReferentielParamOption;
@@ -62,7 +63,7 @@ const Action = ({ action }: { action: ActionDefinitionSummary }) => {
   const { status: auditStatus } = useCycleLabellisation(action.referentiel);
 
   if (!action || !collectivite) {
-    return <Link to="./referentiels" />;
+    return <Link href="./referentiels" />;
   }
 
   const activeTab = actionVue ? TABS_INDEX[actionVue] : TABS_INDEX['suivi'];
@@ -82,7 +83,7 @@ const Action = ({ action }: { action: ActionDefinitionSummary }) => {
 
     // met à jour l'url
     if (collectiviteId && name && name !== actionVue) {
-      history.replace(
+      router.replace(
         makeCollectiviteActionUrl({
           collectiviteId,
           referentielId,
@@ -94,7 +95,7 @@ const Action = ({ action }: { action: ActionDefinitionSummary }) => {
   };
 
   if (!action || !collectiviteId) {
-    return <Link to="./referentiels" />;
+    return <Link href="./referentiels" />;
   }
 
   return (
@@ -158,7 +159,7 @@ const Action = ({ action }: { action: ActionDefinitionSummary }) => {
             {activeTab === TABS_INDEX['indicateurs'] && !noIndicateursTab ? (
               <section>
                 {indicateursLies?.length === 0 ? (
-                  <p>Cette action ne comporte pas d'indicateur</p>
+                  <p>{"Cette action ne comporte pas d'indicateur"}</p>
                 ) : (
                   <IndicateurChartsGrid
                     definitions={indicateursLies!}

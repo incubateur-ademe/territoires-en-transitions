@@ -6,6 +6,7 @@ import {Maintenance} from '../useMaintenance';
 export type TNavItem = {
   label: string;
   to: string;
+  dataTest?: string;
   urlPrefix?: string[];
   // indique que l'item n'est pas affiché quand la collectivité est confidentielle
   confidentiel?: boolean;
@@ -15,6 +16,7 @@ export type TNavItem = {
 
 export type TNavDropdown = {
   title: string;
+  dataTest?: string;
   items: TNavItem[];
   // optionnel : pour gérer l'état "actif' quand le sous-menu contient une vue avec des onglets
   urlPrefix?: string[];

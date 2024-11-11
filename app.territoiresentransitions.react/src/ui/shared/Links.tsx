@@ -1,13 +1,14 @@
-import {signUpPath, signInPath} from 'app/paths';
+import { signUpPath, signInPath } from 'app/paths';
+import Link from 'next/link';
 
 export const RegisterLink = () => (
-  <a href={signUpPath}>
+  <Link href={signUpPath}>
     <button className="fr-btn fr-btn--secondary">Créer un compte</button>
-  </a>
+  </Link>
 );
 
 export const SignInLink = () => (
-  <a className="fr-btn text-center" href={signInPath}>
+  <Link className="fr-btn text-center" href={signInPath}>
     Se connecter
-  </a>
+  </Link>
 );

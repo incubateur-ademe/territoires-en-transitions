@@ -56,7 +56,8 @@ export const TrajectoireCalculee = () => {
     valeursSousSecteurs,
     isLoadingObjectifsResultats,
     donneesSectoriellesIncompletes,
-  } = useResultatTrajectoire({indicateur, secteurIdx, coef: indicateur.coef});
+    emissionsNettes,
+  } = useResultatTrajectoire({ indicateur, secteurIdx, coef: indicateur.coef });
 
   const trackTab = useOngletTracker('app/trajectoires/snbc');
   const trackEvent = useEventTracker('app/trajectoires/snbc', indicateur.id);
@@ -73,7 +74,7 @@ export const TrajectoireCalculee = () => {
         </div>
         <Modal
           size="xl"
-          render={props => <DonneesCollectivite modalProps={props} />}
+          render={(props) => <DonneesCollectivite modalProps={props} />}
         >
           <Button size="sm">Calculer une nouvelle trajectoire</Button>
         </Modal>
@@ -87,11 +88,11 @@ export const TrajectoireCalculee = () => {
         <ButtonGroup
           size="sm"
           activeButtonId={indicateur.id}
-          buttons={INDICATEURS_TRAJECTOIRE.map(({id, nom}, idx) => ({
+          buttons={INDICATEURS_TRAJECTOIRE.map(({ id, nom }, idx) => ({
             id,
             children: nom,
             onClick: () => {
-              trackTab(id, {collectivite_id: collectiviteId});
+              trackTab(id, { collectivite_id: collectiviteId });
               return setParams({
                 indicateurIdx: [String(idx)],
                 secteurIdx: ['0'],
@@ -104,16 +105,16 @@ export const TrajectoireCalculee = () => {
           !!indicateur?.secteurs && (
             <Tabs
               defaultActiveTab={secteurIdx}
-              onChange={idx => {
+              onChange={(idx) => {
                 trackEvent('selection_secteur', {
                   collectivite_id: collectiviteId,
                   secteur: indicateur?.secteurs[idx]?.identifiant,
                 });
-                return setParams({...params, secteurIdx: [String(idx)]});
+                return setParams({ ...params, secteurIdx: [String(idx)] });
               }}
               size="sm"
             >
-              {secteurs.map(({nom}) => (
+              {secteurs.map(({ nom }) => (
                 <Tab key={nom} label={nom} />
               ))}
             </Tabs>
@@ -139,6 +140,7 @@ export const TrajectoireCalculee = () => {
                   secteurs={valeursTousSecteurs as Dataset[]}
                   objectifs={objectifs}
                   resultats={resultats}
+                  emissionsNettes={emissionsNettes}
                 />
               </Card>
             )

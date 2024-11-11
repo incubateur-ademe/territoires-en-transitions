@@ -76,6 +76,25 @@ const useRemovePreuve = () =>
     }
   );
 
+// renvoie une fonction de modification d'une preuve de type lien
+export const useUpdatePreuveLien = () =>
+  useMutation(
+    async (preuve: TPreuve) => {
+      const {id, lien} = preuve;
+      if (!lien) return;
+      const {url, titre} = lien
+      return supabaseClient
+        .from(tableOfType(preuve))
+        .update({url, titre})
+        .match({id});
+    },
+    {
+      mutationKey: 'update_preuve_lien',
+      onSuccess: useRefetchPreuves(),
+    }
+  );
+
+
 // renvoie une fonction de modification du commentaire d'une preuve
 const useUpdatePreuveCommentaire = () =>
   useMutation(

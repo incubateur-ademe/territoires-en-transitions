@@ -11,12 +11,12 @@ import {
   useInvitationState,
 } from 'core-logic/hooks/useInvitationState';
 import { usePlanActionsPilotableFetch } from 'core-logic/hooks/useOwnedCollectivites';
+import { usePathname, useRouter } from 'next/navigation';
 import { useEffect } from 'react';
-import { useHistory, useLocation } from 'react-router-dom';
 
 export const Redirector = () => {
-  const history = useHistory();
-  const { pathname } = useLocation();
+  const router = useRouter();
+  const pathname = usePathname();
   const { isConnected, user } = useAuth();
   const { invitationId, invitationEmail, consume } = useInvitationState();
 
@@ -45,12 +45,12 @@ export const Redirector = () => {
     }
 
     if (!collectiviteId) {
-      history.push(finaliserMonInscriptionUrl);
+      router.push(finaliserMonInscriptionUrl);
       return;
     }
 
     if (plansData?.plans?.length) {
-      history.push(
+      router.push(
         makeTableauBordUrl({
           collectiviteId,
           view:
@@ -65,7 +65,7 @@ export const Redirector = () => {
 
     if (!plansData?.plans) return;
 
-    history.push(makeCollectiviteAccueilUrl({ collectiviteId }));
+    router.push(makeCollectiviteAccueilUrl({ collectiviteId }));
   }, [isLandingConnected, collectiviteId, user, plansData]);
 
   // réagit aux changements de l'état "invitation"
@@ -76,15 +76,12 @@ export const Redirector = () => {
       if (isConnected && consume) {
         // si connecté on consomme l'invitation
         consumeInvitation(invitationId).then(() => {
-          history.push('/');
+          router.push('/');
         });
       } else if (!isConnected && !consume) {
         // si déconnecté on redirige sur la page "créer un compte"
         const signUpPathFromInvitation = new URL(
-          getAuthPaths(
-            document.location.hostname,
-            `${document.location.href}?consume=1`
-          ).signUp
+          getAuthPaths(`${document.location.href}?consume=1`).signUp
         );
         // ajoute l'email associé à l'invitation afin que le formulaire soit pré-rempli
         if (invitationEmail) {
@@ -97,7 +94,7 @@ export const Redirector = () => {
         document.location.replace(signUpPathFromInvitation);
       }
     }
-  }, [isConnected, invitationId]);
+  }, [isConnected, invitationId, router, invitationEmail, consume]);
 
   return null;
 };

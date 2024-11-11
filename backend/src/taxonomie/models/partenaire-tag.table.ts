@@ -1,10 +1,10 @@
 import { pgTable, uniqueIndex } from 'drizzle-orm/pg-core';
-import { TagBase } from './tag.basetable';
+import { tagTableBase } from './tag.table-base';
 import { createSelectSchema } from 'drizzle-zod';
 
 export const partenaireTagTable = pgTable(
   'partenaire_tag',
-  TagBase,
+  tagTableBase,
   (table) => {
     return {
       partenaireTagNomCollectiviteIdKey: uniqueIndex(

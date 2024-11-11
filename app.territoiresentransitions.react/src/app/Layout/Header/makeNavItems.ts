@@ -54,10 +54,12 @@ const makeNavItemsBase = (
     {
       label: 'Accueil',
       to: makeCollectiviteAccueilUrl({ collectiviteId }),
+      dataTest: 'nav-home',
     },
     {
       confidentiel,
       title: 'État des lieux',
+      dataTest: 'nav-edl',
       // Chemin de base pour garder le menu actif quand un change d'onglet
       urlPrefix: [
         makeCollectiviteReferentielUrl({
@@ -93,15 +95,18 @@ const makeNavItemsBase = (
         {
           label: "Synthèse de l'état des lieux",
           to: makeCollectiviteSyntheseReferentielUrl({ collectiviteId }),
+          dataTest: 'edl-synthese',
         },
         {
           label: 'Personnalisation des référentiels',
           to: makeCollectivitePersoRefUrl({
             collectiviteId,
           }),
+          dataTest: 'edl-personnalisation',
         },
         {
           label: 'Référentiel Climat-Air-Énergie',
+          dataTest: 'edl-cae',
           to: makeCollectiviteReferentielUrl({
             collectiviteId,
             referentielId: 'cae',
@@ -121,6 +126,7 @@ const makeNavItemsBase = (
         },
         {
           label: 'Labellisation Climat-Air-Énergie',
+          dataTest: 'labellisation-cae',
           to: makeCollectiviteLabellisationUrl({
             collectiviteId,
             referentielId: 'cae',
@@ -129,6 +135,7 @@ const makeNavItemsBase = (
         },
         {
           label: 'Référentiel Économie Circulaire',
+          dataTest: 'edl-eci',
           to: makeCollectiviteReferentielUrl({
             collectiviteId,
             referentielId: 'eci',
@@ -148,6 +155,7 @@ const makeNavItemsBase = (
         },
         {
           label: 'Labellisation Économie Circulaire',
+          dataTest: 'labellisation-eci',
           to: makeCollectiviteLabellisationUrl({
             collectiviteId,
             referentielId: 'eci',
@@ -160,9 +168,11 @@ const makeNavItemsBase = (
       confidentiel,
       title: "Plans d'action",
       urlPrefix: [`${collectivite.collectivite_id}/plans/`],
+      dataTest: 'nav-pa',
       items: [
         {
           label: 'Tableau de bord Collectivité',
+          dataTest: 'pa-tdb-collectivite',
           to: makeTableauBordUrl({
             collectiviteId,
             view: 'collectivite',
@@ -171,6 +181,7 @@ const makeNavItemsBase = (
         },
         {
           label: 'Mon suivi personnel',
+          dataTest: 'pa-tdb-perso',
           to: makeTableauBordUrl({
             collectiviteId,
             view: 'personnel',
@@ -180,18 +191,21 @@ const makeNavItemsBase = (
         },
         {
           label: "Tous les plans d'action",
+          dataTest: 'pa-tous',
           to: makeCollectivitePlansActionsLandingUrl({
             collectiviteId,
           }),
         },
         {
           label: 'Toutes les fiches action',
+          dataTest: 'pa-fa-toutes',
           to: makeCollectiviteToutesLesFichesUrl({
             collectiviteId,
           }),
         },
         {
           label: 'Répartition des fiches action',
+          dataTest: 'pa-fa-repartition',
           to: makeCollectivitePlansActionsSyntheseUrl({
             collectiviteId,
           }),
@@ -201,21 +215,25 @@ const makeNavItemsBase = (
     {
       confidentiel,
       title: 'Indicateurs',
+      dataTest: 'nav-ind',
       urlPrefix: [`${collectivite.collectivite_id}/indicateurs/`],
       items: [
         {
           label: 'Tous les indicateurs',
+          dataTest: 'ind-tous',
           to: makeCollectiviteTousLesIndicateursUrl({
             collectiviteId,
           }),
         },
         {
           label: 'Indicateurs de la collectivité',
+          dataTest: 'ind-collectivite',
           to: makeCollectiviteIndicateursCollectiviteUrl({
             collectiviteId,
           }),
         },
         {
+          dataTest: 'ind-traj-snbc',
           label: 'Trajectoire SNBC territorialisée',
           to: makeCollectiviteTrajectoirelUrl({ collectiviteId }),
         },
@@ -262,21 +280,25 @@ const makeSecondaryNavItemsBase = (
   return [
     {
       title: 'Paramètres',
+      dataTest: 'nav-params',
       items: [
         {
           label: 'Gestion des membres',
+          dataTest: 'params-membres',
           to: makeCollectiviteUsersUrl({
             collectiviteId,
           }),
         },
         {
           label: 'Bibliothèque de documents',
+          dataTest: 'params-docs',
           to: makeCollectiviteBibliothequeUrl({
             collectiviteId,
           }),
         },
         {
           label: "Journal d'activité",
+          dataTest: 'params-logs',
           to: makeCollectiviteJournalUrl({
             collectiviteId,
           }),

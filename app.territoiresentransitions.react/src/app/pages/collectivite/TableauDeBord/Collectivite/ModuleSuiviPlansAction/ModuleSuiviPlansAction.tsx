@@ -1,5 +1,4 @@
 import { useState } from 'react';
-import { useHistory } from 'react-router-dom';
 
 import { ModulePlanActionListSelect } from '@tet/api/plan-actions/dashboards/collectivite-dashboard/domain/module.schema';
 import { usePlansActionsListe } from '@tet/app/pages/collectivite/PlansActions/PlanAction/data/usePlansActionsListe';
@@ -13,8 +12,8 @@ import {
   makeTableauBordModuleUrl,
   TDBViewParam,
 } from 'app/paths';
+import { useRouter } from 'next/navigation';
 import PictoDocument from 'ui/pictogrammes/PictoDocument';
-import ModalSuiviPlansAction from '@tet/app/pages/collectivite/TableauDeBord/Collectivite/ModuleSuiviPlansAction/ModalSuiviPlansAction';
 
 type Props = {
   view: TDBViewParam;
@@ -23,7 +22,7 @@ type Props = {
 
 /** Module pour afficher l'avancement des fiches action */
 const ModuleSuiviPlansAction = ({ view, module }: Props) => {
-  const history = useHistory();
+  const router = useRouter();
 
   const trackEvent = useEventTracker('app/tdb/collectivite');
 
@@ -65,7 +64,7 @@ const ModuleSuiviPlansAction = ({ view, module }: Props) => {
             variant="grey"
             size="sm"
             onClick={() =>
-              history.push(
+              router.push(
                 makeTableauBordModuleUrl({
                   collectiviteId: module.collectiviteId,
                   view,

@@ -1,6 +1,4 @@
-import { useState } from 'react';
-import { Link, useLocation, useParams } from 'react-router-dom';
-import HeaderTitle from 'ui/HeaderTitle';
+import { FicheResume } from '@tet/api/plan-actions';
 import {
   makeCollectiviteFicheNonClasseeUrl,
   makeCollectivitePlanActionFicheUrl,
@@ -8,22 +6,26 @@ import {
   makeCollectivitePlansActionsSyntheseVueUrl,
 } from 'app/paths';
 import { useCollectiviteId } from 'core-logic/hooks/params';
+import Link from 'next/link';
+import { useSearchParams } from 'next/navigation';
+import { useState } from 'react';
+import HeaderTitle from 'ui/HeaderTitle';
+import { ITEM_ALL } from 'ui/shared/filters/commons';
 import { DesactiverLesFiltres } from 'ui/shared/filters/DesactiverLesFiltres';
-import FiltersPlanAction, { PlanActionFilter } from '../FiltersPlanAction';
+import FicheActionCard from '../../FicheAction/Carte/FicheActionCard';
 import { FiltersKeys } from '../../FicheAction/data/filters';
 import { useFichesActionFiltresListe } from '../../FicheAction/data/useFichesActionFiltresListe';
-import FicheActionCard from '../../FicheAction/Carte/FicheActionCard';
+import FiltersPlanAction, { PlanActionFilter } from '../FiltersPlanAction';
+import { generateSyntheseVue } from '../utils';
 import FiltresPrimaires from './FiltresPrimaires/FiltresPrimaires';
 import FiltresSecondaires from './FiltresSecondaires';
-import { generateSyntheseVue } from '../utils';
-import { ITEM_ALL } from 'ui/shared/filters/commons';
 import SyntheseVueGraph from './SyntheseVueGraph';
-import { FicheResume } from '@tet/api/plan-actions';
+import { useParams } from 'react-router-dom';
 
 const SyntheseVue = () => {
   const collectivite_id = useCollectiviteId();
   const { syntheseVue } = useParams<{ syntheseVue: FiltersKeys }>();
-  const { search } = useLocation();
+  const search = useSearchParams();
 
   const pageUrl = makeCollectivitePlansActionsSyntheseVueUrl({
     collectiviteId: collectivite_id!,
@@ -76,7 +78,7 @@ const SyntheseVue = () => {
         <div className="py-6">
           <Link
             className="p-1 shrink-0 text-xs text-gray-500 underline !bg-none !shadow-none hover:text-gray-600"
-            to={makeCollectivitePlansActionsSyntheseUrl({
+            href={makeCollectivitePlansActionsSyntheseUrl({
               collectiviteId: collectivite_id!,
             })}
           >
@@ -117,7 +119,7 @@ const SyntheseVue = () => {
         <div className="my-8 border-b border-gray-200" />
         {/** Fiches */}
         <div className="mb-16">
-          {search.length && search.length > 1 ? (
+          {search.toString().length && search.toString().length > 1 ? (
             <>
               <div className="flex items-baseline mb-8">
                 <p

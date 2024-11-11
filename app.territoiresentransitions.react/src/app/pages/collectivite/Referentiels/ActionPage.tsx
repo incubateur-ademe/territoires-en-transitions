@@ -1,17 +1,17 @@
-import {Suspense} from 'react';
-import {lazy} from 'utils/lazy';
-import {useParams} from 'react-router-dom';
-import {renderLoader} from 'utils/renderLoader';
-import {Referentiel} from 'types/litterals';
-import {useActionDownToTache} from 'core-logic/hooks/referentiel';
+import { useActionDownToTache } from 'core-logic/hooks/referentiel';
+import { Suspense } from 'react';
+import { Referentiel } from 'types/litterals';
+import { lazy } from 'utils/lazy';
+import { renderLoader } from 'utils/renderLoader';
 import CollectivitePageLayout from '../CollectivitePageLayout/CollectivitePageLayout';
+import { useParams } from 'react-router-dom';
 
 const ActionReferentielAvancement = lazy(
   () => import('app/pages/collectivite/Referentiels/Action')
 );
 
 export const ActionPage = () => {
-  const {actionId} = useParams<{
+  const { actionId } = useParams<{
     collectiviteId: string;
     actionId: string;
   }>();
@@ -19,7 +19,7 @@ export const ActionPage = () => {
   const [referentiel, identifiant] = actionId.split('_');
 
   const actions = useActionDownToTache(referentiel as Referentiel, identifiant);
-  const action = actions.find(a => a.id === actionId);
+  const action = actions.find((a) => a.id === actionId);
 
   return (
     <Suspense fallback={renderLoader()}>

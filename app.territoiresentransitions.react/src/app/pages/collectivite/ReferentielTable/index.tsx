@@ -46,15 +46,22 @@ const ReferentielTable: Table = props => {
       data-test={dataTest}
     >
       <div className="header">
-        {headerGroups.map(headerGroup => (
-          <div className="row" {...headerGroup.getHeaderGroupProps()}>
-            {headerGroup.headers.map(column => (
-              <div className="cell" {...column.getHeaderProps()}>
-                {column.render('Header', customHeaderProps)}
-              </div>
-            ))}
-          </div>
-        ))}
+        {headerGroups.map((headerGroup) => {
+          const { key, ...headerGroupProps } =
+            headerGroup.getHeaderGroupProps();
+          return (
+            <div className="row" key={key} {...headerGroupProps}>
+              {headerGroup.headers.map((column) => {
+                const { key, ...headerProps } = column.getHeaderProps();
+                return (
+                  <div className="cell" key={key} {...headerProps}>
+                    {column.render('Header', customHeaderProps)}
+                  </div>
+                );
+              })}
+            </div>
+          );
+        })}
       </div>
       <div className="body" {...getTableBodyProps()}>
         {isLoading ? (

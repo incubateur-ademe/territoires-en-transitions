@@ -1,11 +1,10 @@
 import { Filtre as FiltrePersonnel } from '@tet/api/plan-actions/dashboards/personal-dashboard/domain/module.schema';
 import { Filter as FiltreCollectivite } from '@tet/api/plan-actions/dashboards/collectivite-dashboard/domain/module.schema';
-import { Button, ButtonGroup, useEventTracker } from '@tet/ui';
+import { Button, ButtonGroup } from '@tet/ui';
 import { OpenState } from '@tet/ui/utils/types';
 import ModuleFiltreBadges from 'app/pages/collectivite/TableauDeBord/components/ModuleFiltreBadges';
 import { getDisplayButtons } from 'app/pages/collectivite/TableauDeBord/components/utils';
 import classNames from 'classnames';
-import { useCollectiviteId } from 'core-logic/hooks/params';
 import React, { useState } from 'react';
 import SpinnerLoader from 'ui/shared/SpinnerLoader';
 

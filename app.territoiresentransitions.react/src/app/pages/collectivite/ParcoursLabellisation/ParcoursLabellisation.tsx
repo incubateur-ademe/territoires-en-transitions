@@ -1,20 +1,20 @@
-import {Link} from 'react-router-dom';
-import {useCollectiviteId, useReferentielId} from 'core-logic/hooks/params';
-import {referentielToName} from 'app/labels';
-import {useCycleLabellisation} from './useCycleLabellisation';
+import { useCollectiviteId, useReferentielId } from 'core-logic/hooks/params';
+import { referentielToName } from 'app/labels';
+import { useCycleLabellisation } from './useCycleLabellisation';
 import HeaderLabellisation from './HeaderLabellisation';
-import {ReferentielOfIndicateur} from 'types/litterals';
+import { ReferentielOfIndicateur } from 'types/litterals';
 import {
   makeCollectiviteReferentielUrl,
   ReferentielParamOption,
 } from 'app/paths';
-import {LabellisationTabs} from './LabellisationTabs';
-import {useIsUnchangedReferentiel} from './useIsUnchangedReferentiel';
+import { LabellisationTabs } from './LabellisationTabs';
+import { useIsUnchangedReferentiel } from './useIsUnchangedReferentiel';
+import Link from 'next/link';
 
 const ParcoursLabellisation = () => {
   const collectiviteId = useCollectiviteId();
   const referentiel = useReferentielId();
-  const {parcours} = useCycleLabellisation(referentiel);
+  const { parcours } = useCycleLabellisation(referentiel);
   const isUnchangedReferentiel = useIsUnchangedReferentiel(
     collectiviteId,
     referentiel
@@ -39,7 +39,7 @@ const ParcoursLabellisation = () => {
             <div className="flex justify-center">
               <Link
                 className="fr-btn fr-btn--secondary "
-                to={makeCollectiviteReferentielUrl({
+                href={makeCollectiviteReferentielUrl({
                   collectiviteId,
                   referentielId: referentiel as ReferentielParamOption,
                 })}
@@ -69,7 +69,7 @@ const ParcoursLabellisation = () => {
   );
 };
 
-const Title = ({referentiel}: {referentiel: string | null}) => (
+const Title = ({ referentiel }: { referentiel: string | null }) => (
   <>
     <h1 className="text-center fr-mt-4w fr-mb-1w">Audit et labellisation</h1>
     {referentiel ? (

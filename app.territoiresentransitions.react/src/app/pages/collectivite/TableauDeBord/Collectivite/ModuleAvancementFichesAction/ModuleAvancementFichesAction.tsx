@@ -1,5 +1,7 @@
+import { Statut } from '@tet/api/plan-actions';
 import { ModuleFicheActionCountByStatusSelect } from '@tet/api/plan-actions/dashboards/collectivite-dashboard/domain/module.schema';
 import { statutToColor } from '@tet/app/pages/collectivite/PlansActions/FicheAction/utils';
+import ModalAvancementFichesAction from '@tet/app/pages/collectivite/TableauDeBord/Collectivite/ModuleAvancementFichesAction/ModalAvancementFichesAction';
 import { useFichesActionStatuts } from '@tet/app/pages/collectivite/TableauDeBord/Collectivite/ModuleAvancementFichesAction/useFichesActionStatuts';
 import { makeFichesActionUrlWithParams } from '@tet/app/pages/collectivite/TableauDeBord/Collectivite/ModuleAvancementFichesAction/utils';
 import { getQueryKey } from '@tet/app/pages/collectivite/TableauDeBord/Collectivite/useCollectiviteModulesFetch';
@@ -8,14 +10,13 @@ import BadgeStatut from 'app/pages/collectivite/PlansActions/components/BadgeSta
 import Module, {
   ModuleDisplay,
 } from 'app/pages/collectivite/TableauDeBord/components/Module';
-import ModalAvancementFichesAction from '@tet/app/pages/collectivite/TableauDeBord/Collectivite/ModuleAvancementFichesAction/ModalAvancementFichesAction';
 import { TDBViewParam } from 'app/paths';
+import { useCurrentCollectivite } from 'core-logic/hooks/useCurrentCollectivite';
+import Link from 'next/link';
+import { useRouter } from 'next/navigation';
 import { useState } from 'react';
-import { Link, useHistory } from 'react-router-dom';
 import Chart from 'ui/charts/Chart';
 import PictoDocument from 'ui/pictogrammes/PictoDocument';
-import { Statut } from '@tet/api/plan-actions';
-import { useCurrentCollectivite } from 'core-logic/hooks/useCurrentCollectivite';
 
 type Props = {
   view: TDBViewParam;
@@ -26,7 +27,7 @@ type Props = {
 const ModuleAvancementFichesAction = ({ module }: Props) => {
   const collectivite = useCurrentCollectivite();
 
-  const history = useHistory();
+  const router = useRouter();
 
   const collectiviteId = collectivite?.collectivite_id;
 
@@ -109,7 +110,7 @@ const ModuleAvancementFichesAction = ({ module }: Props) => {
                 : [],
               onClick: (statut) =>
                 statut !== 'Sans statut' &&
-                history.push(
+                router.push(
                   makeFichesActionUrlWithParams(
                     collectiviteId,
                     filtres,
@@ -140,7 +141,7 @@ const ModuleAvancementFichesAction = ({ module }: Props) => {
               ) : (
                 <Link
                   key={index}
-                  to={makeFichesActionUrlWithParams(
+                  href={makeFichesActionUrlWithParams(
                     collectiviteId,
                     filtres,
                     valeur

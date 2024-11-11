@@ -32,8 +32,8 @@
       "description": "<p>Prend en compte la capture et stockage du carbone</p>\n",
       "id": "cae_1.aa",
       "identifiant": "1.aa",
-      "nom": "Emissions GES totales nettes",
-      "parent": null,
+      "nom": "Emissions de gaz \u00e0 effet de serre totales nettes",
+      "parent": "cae_1.a",
       "participation_score": false,
       "programmes": [
         "cae"
@@ -42,7 +42,7 @@
       "selection": false,
       "source": null,
       "thematiques": [],
-      "titre_long": "Emissions GES totales nettes",
+      "titre_long": "Emissions  de gaz \u00e0 effet de serre totales nettes",
       "type": null,
       "unite": "teq CO2",
       "valeur_indicateur": null
@@ -99,7 +99,7 @@
       "id": "cae_1.ca",
       "identifiant": "1.ca",
       "nom": "Emissions de gaz \u00e0 effet de serre - r\u00e9sidentiel - Chauffage / Maisons individuelles",
-      "parent": null,
+      "parent": "cae_1.c",
       "participation_score": false,
       "programmes": [
         "cae"
@@ -119,7 +119,7 @@
       "id": "cae_1.cb",
       "identifiant": "1.cb",
       "nom": "Emissions de gaz \u00e0 effet de serre - r\u00e9sidentiel - Chauffage / Logement collectif",
-      "parent": null,
+      "parent": "cae_1.c",
       "participation_score": false,
       "programmes": [
         "cae"
@@ -139,7 +139,7 @@
       "id": "cae_1.cc",
       "identifiant": "1.cc",
       "nom": "Emissions de gaz \u00e0 effet de serre - r\u00e9sidentiel - Autres usages",
-      "parent": null,
+      "parent": "cae_1.c",
       "participation_score": false,
       "programmes": [
         "cae"
@@ -202,7 +202,7 @@
       "id": "cae_1.da",
       "identifiant": "1.da",
       "nom": "Emissions de gaz \u00e0 effet de serre - tertiaire - Chauffage",
-      "parent": null,
+      "parent": "cae_1.d",
       "participation_score": false,
       "programmes": [
         "cae"
@@ -222,7 +222,7 @@
       "id": "cae_1.db",
       "identifiant": "1.db",
       "nom": "Emissions de gaz \u00e0 effet de serre - tertiaire - Autres usages",
-      "parent": null,
+      "parent": "cae_1.d",
       "participation_score": false,
       "programmes": [
         "cae"
@@ -265,7 +265,7 @@
       "id": "cae_1.ea",
       "identifiant": "1.ea",
       "nom": "Emissions de gaz \u00e0 effet de serre - Transport routier - mobilit\u00e9 locale",
-      "parent": null,
+      "parent": "cae_1.e",
       "participation_score": false,
       "programmes": [
         "cae"
@@ -285,7 +285,7 @@
       "id": "cae_1.eb",
       "identifiant": "1.eb",
       "nom": "Emissions de gaz \u00e0 effet de serre - Transport routier - autre",
-      "parent": null,
+      "parent": "cae_1.e",
       "participation_score": false,
       "programmes": [
         "cae"
@@ -351,7 +351,7 @@
       "id": "cae_1.ga",
       "identifiant": "1.ga",
       "nom": "Emissions de gaz \u00e0 effet de serre - agriculture - Energie",
-      "parent": null,
+      "parent": "cae_1.g",
       "participation_score": false,
       "programmes": [
         "cae"
@@ -371,7 +371,7 @@
       "id": "cae_1.gb",
       "identifiant": "1.gb",
       "nom": "Emissions de gaz \u00e0 effet de serre - agriculture - Elevage",
-      "parent": null,
+      "parent": "cae_1.g",
       "participation_score": false,
       "programmes": [
         "cae"
@@ -391,7 +391,7 @@
       "id": "cae_1.gc",
       "identifiant": "1.gc",
       "nom": "Emissions de gaz \u00e0 effet de serre - agriculture - Pratiques culturales",
-      "parent": null,
+      "parent": "cae_1.g",
       "participation_score": false,
       "programmes": [
         "cae"
@@ -457,7 +457,7 @@
       "id": "cae_1.ia",
       "identifiant": "1.ia",
       "nom": "Emissions de gaz \u00e0 effet de serre - industrie - M\u00e9taux primaires",
-      "parent": null,
+      "parent": "cae_1.i",
       "participation_score": false,
       "programmes": [
         "cae"
@@ -477,7 +477,7 @@
       "id": "cae_1.ib",
       "identifiant": "1.ib",
       "nom": "Emissions de gaz \u00e0 effet de serre - industrie - Chimie",
-      "parent": null,
+      "parent": "cae_1.i",
       "participation_score": false,
       "programmes": [
         "cae"
@@ -497,7 +497,7 @@
       "id": "cae_1.ic",
       "identifiant": "1.ic",
       "nom": "Emissions de gaz \u00e0 effet de serre - industrie - Non-m\u00e9talliques",
-      "parent": null,
+      "parent": "cae_1.i",
       "participation_score": false,
       "programmes": [
         "cae"
@@ -517,7 +517,7 @@
       "id": "cae_1.id",
       "identifiant": "1.id",
       "nom": "Emissions de gaz \u00e0 effet de serre - industrie - Agro-industries",
-      "parent": null,
+      "parent": "cae_1.i",
       "participation_score": false,
       "programmes": [
         "cae"
@@ -537,7 +537,7 @@
       "id": "cae_1.ie",
       "identifiant": "1.ie",
       "nom": "Emissions de gaz \u00e0 effet de serre - industrie - Equipements",
-      "parent": null,
+      "parent": "cae_1.i",
       "participation_score": false,
       "programmes": [
         "cae"
@@ -557,7 +557,7 @@
       "id": "cae_1.if",
       "identifiant": "1.if",
       "nom": "Emissions de gaz \u00e0 effet de serre - industrie - Papier-carton",
-      "parent": null,
+      "parent": "cae_1.i",
       "participation_score": false,
       "programmes": [
         "cae"
@@ -577,7 +577,7 @@
       "id": "cae_1.ig",
       "identifiant": "1.ig",
       "nom": "Emissions de gaz \u00e0 effet de serre - industrie - Autres industries",
-      "parent": null,
+      "parent": "cae_1.i",
       "participation_score": false,
       "programmes": [
         "cae"
@@ -1382,7 +1382,7 @@
       "id": "cae_2.ea",
       "identifiant": "2.ea",
       "nom": "Consommation \u00e9nerg\u00e9tique - r\u00e9sidentiel - Chauffage / Maisons individuelles",
-      "parent": null,
+      "parent": "cae_2.e",
       "participation_score": false,
       "programmes": [
         "cae"
@@ -1402,7 +1402,7 @@
       "id": "cae_2.eb",
       "identifiant": "2.eb",
       "nom": "Consommation \u00e9nerg\u00e9tique - r\u00e9sidentiel - Chauffage / Logement collectif",
-      "parent": null,
+      "parent": "cae_2.e",
       "participation_score": false,
       "programmes": [
         "cae"
@@ -1422,7 +1422,7 @@
       "id": "cae_2.ec",
       "identifiant": "2.ec",
       "nom": "Consommation \u00e9nerg\u00e9tique - r\u00e9sidentiel - Autres usages",
-      "parent": null,
+      "parent": "cae_2.e",
       "participation_score": false,
       "programmes": [
         "cae"
@@ -1465,7 +1465,7 @@
       "id": "cae_2.fa",
       "identifiant": "2.fa",
       "nom": "Consommation \u00e9nerg\u00e9tique - tertiaire - Chauffage",
-      "parent": null,
+      "parent": "cae_2.f",
       "participation_score": false,
       "programmes": [
         "cae"
@@ -1485,7 +1485,7 @@
       "id": "cae_2.fb",
       "identifiant": "2.fb",
       "nom": "Consommation \u00e9nerg\u00e9tique - tertiaire - Autres usages",
-      "parent": null,
+      "parent": "cae_2.f",
       "participation_score": false,
       "programmes": [
         "cae"
@@ -1610,6 +1610,146 @@
       "source": null,
       "thematiques": [],
       "titre_long": "Consommation \u00e9nerg\u00e9tique de l'industrie hors branche \u00e9nergie",
+      "type": null,
+      "unite": "GWh",
+      "valeur_indicateur": null
+    },
+    {
+      "action_ids": [],
+      "description": "",
+      "id": "cae_2.ka",
+      "identifiant": "2.ka",
+      "nom": "Consommation \u00e9nerg\u00e9tique - industrie - M\u00e9taux primaires",
+      "parent": "cae_2.k",
+      "participation_score": false,
+      "programmes": [
+        "cae"
+      ],
+      "sans_valeur": false,
+      "selection": false,
+      "source": null,
+      "thematiques": [],
+      "titre_long": "Consommation \u00e9nerg\u00e9tique du secteur Industrie - M\u00e9taux primaires",
+      "type": null,
+      "unite": "GWh",
+      "valeur_indicateur": null
+    },
+    {
+      "action_ids": [],
+      "description": "",
+      "id": "cae_2.kb",
+      "identifiant": "2.kb",
+      "nom": "Consommation \u00e9nerg\u00e9tique - industrie - Chimie",
+      "parent": "cae_2.k",
+      "participation_score": false,
+      "programmes": [
+        "cae"
+      ],
+      "sans_valeur": false,
+      "selection": false,
+      "source": null,
+      "thematiques": [],
+      "titre_long": "Consommation \u00e9nerg\u00e9tique du secteur industrie - Chimie",
+      "type": null,
+      "unite": "GWh",
+      "valeur_indicateur": null
+    },
+    {
+      "action_ids": [],
+      "description": "",
+      "id": "cae_2.kc",
+      "identifiant": "2.kc",
+      "nom": "Consommation \u00e9nerg\u00e9tique - industrie - Non-m\u00e9talliques",
+      "parent": "cae_2.k",
+      "participation_score": false,
+      "programmes": [
+        "cae"
+      ],
+      "sans_valeur": false,
+      "selection": false,
+      "source": null,
+      "thematiques": [],
+      "titre_long": "Consommation \u00e9nerg\u00e9tique du secteur industrie - Non-m\u00e9talliques",
+      "type": null,
+      "unite": "GWh",
+      "valeur_indicateur": null
+    },
+    {
+      "action_ids": [],
+      "description": "",
+      "id": "cae_2.kd",
+      "identifiant": "2.kd",
+      "nom": "Consommation \u00e9nerg\u00e9tique - industrie - Agro-industries",
+      "parent": "cae_2.k",
+      "participation_score": false,
+      "programmes": [
+        "cae"
+      ],
+      "sans_valeur": false,
+      "selection": false,
+      "source": null,
+      "thematiques": [],
+      "titre_long": "Consommation \u00e9nerg\u00e9tique du secteur industrie - Agro-industries",
+      "type": null,
+      "unite": "GWh",
+      "valeur_indicateur": null
+    },
+    {
+      "action_ids": [],
+      "description": "",
+      "id": "cae_2.ke",
+      "identifiant": "2.ke",
+      "nom": "Consommation \u00e9nerg\u00e9tique - industrie - Equipements",
+      "parent": "cae_2.k",
+      "participation_score": false,
+      "programmes": [
+        "cae"
+      ],
+      "sans_valeur": false,
+      "selection": false,
+      "source": null,
+      "thematiques": [],
+      "titre_long": "Consommation \u00e9nerg\u00e9tique du secteur industrie - Equipements",
+      "type": null,
+      "unite": "GWh",
+      "valeur_indicateur": null
+    },
+    {
+      "action_ids": [],
+      "description": "",
+      "id": "cae_2.kf",
+      "identifiant": "2.kf",
+      "nom": "Consommation \u00e9nerg\u00e9tique - industrie - Papier-carton",
+      "parent": "cae_2.k",
+      "participation_score": false,
+      "programmes": [
+        "cae"
+      ],
+      "sans_valeur": false,
+      "selection": false,
+      "source": null,
+      "thematiques": [],
+      "titre_long": "Consommation \u00e9nerg\u00e9tique du secteur industrie - Papier-carton",
+      "type": null,
+      "unite": "GWh",
+      "valeur_indicateur": null
+    },
+    {
+      "action_ids": [],
+      "description": "",
+      "id": "cae_2.kg",
+      "identifiant": "2.kg",
+      "nom": "Consommation \u00e9nerg\u00e9tique - industrie - Autres industries",
+      "parent": "cae_2.k",
+      "participation_score": false,
+      "programmes": [
+        "cae"
+      ],
+      "sans_valeur": false,
+      "selection": false,
+      "source": null,
+      "thematiques": [],
+      "titre_long": "Consommation \u00e9nerg\u00e9tique du secteur industrie - Autres industries",
       "type": null,
       "unite": "GWh",
       "valeur_indicateur": null
@@ -3275,8 +3415,8 @@
       "description": "<p>L'indicateur mesure le pourcentage de SAU en agriculture biologique (certifi\u00e9 ou en conversion) par rapport \u00e0 la SAU totale. L'agriculture \u00e0 haute valeur environnementale de niveau 3 (HVE) ou raisonn\u00e9e (ou niveau 2 de certification environnementale selon les d\u00e9crets et arr\u00eat\u00e9s du 20 et 21 juin 2011) ne sont pas prises en compte.</p>\n<p>Pour la France m\u00e9tropole, la valeur limite est bas\u00e9e sur la valeur moyenne fran\u00e7aise des surfaces labellis\u00e9es AB en 2016 (5,7% - Agence bio) et la valeur cible est bas\u00e9e sur l\u2019objectif 2020 fix\u00e9 dans la loi Grenelle I (20%).</p>\n<p><strong>Objectif op\u00e9rationnel national fix\u00e9 par les documents de r\u00e9f\u00e9rence:</strong></p>\n<p>Strat\u00e9gie \u201cDe la Ferme \u00e0 la Fourchette\u201d (F2F) UE ; Plan ambition bio - Loi Egalim :</p>\n<ul>\n<li>15 % de SAU affect\u00e9e \u00e0 l\u2019agriculture biologique au 31/12/2022 ; 30 % en 2030</li>\n</ul>\n",
       "id": "cae_59",
       "identifiant": 59,
-      "nom": "Surface agricole utile en agriculture biologique",
-      "parent": null,
+      "nom": "Part de la surface agricole utile en agriculture biologique",
+      "parent": "crte_4.1",
       "participation_score": true,
       "programmes": [
         "cae",
@@ -3286,10 +3426,10 @@
       "selection": true,
       "source": null,
       "thematiques": [
-        "agriculture_alimentation",
+        "agri_alim",
         "urbanisme_et_amenagement"
       ],
-      "titre_long": "Part de surface agricole certifi\u00e9e agriculture biologique",
+      "titre_long": "Part de la surface agricole certifi\u00e9e agriculture biologique ou en conversion",
       "type": null,
       "unite": "%",
       "valeur_indicateur": null
@@ -3537,7 +3677,7 @@
       "description": "<p>L'indicateur suit une estimation de la s\u00e9questration nette de dioxyde de carbone, identifiant au moins les sols agricoles et la for\u00eat, en tenant compte des changements d\u2019affectation des terres (d\u00e9cret n\u00b02016-849 du 28 juin 2016 et arr\u00eat\u00e9 du 4 ao\u00fbt 2016 relatifs au plan climat-air-\u00e9nergie territorial).</p>\n",
       "id": "cae_63.a",
       "identifiant": "63.a",
-      "nom": "S\u00e9questration de CO2 dans les sols et la for\u00eat",
+      "nom": "S\u00e9questration nette de CO2 dans les sols et la for\u00eat",
       "parent": null,
       "participation_score": false,
       "programmes": [
@@ -3563,7 +3703,7 @@
       "description": "",
       "id": "cae_63.b",
       "identifiant": "63.b",
-      "nom": "S\u00e9questration de la for\u00eat",
+      "nom": "S\u00e9questration de CO2 dans la for\u00eat",
       "parent": "cae_63.a",
       "participation_score": false,
       "programmes": [
@@ -3574,7 +3714,7 @@
       "selection": false,
       "source": null,
       "thematiques": [],
-      "titre_long": "S\u00e9questration de la for\u00eat",
+      "titre_long": "S\u00e9questration nette de CO2 dans la for\u00eat",
       "type": null,
       "unite": "teq CO2",
       "valeur_indicateur": null
@@ -3586,7 +3726,7 @@
       "description": "",
       "id": "cae_63.c",
       "identifiant": "63.c",
-      "nom": "S\u00e9questration dans les terres agricoles et les prairies",
+      "nom": "S\u00e9questration de CO2 dans les terres agricoles et les prairies",
       "parent": "cae_63.a",
       "participation_score": false,
       "programmes": [
@@ -3597,7 +3737,7 @@
       "selection": false,
       "source": null,
       "thematiques": [],
-      "titre_long": "S\u00e9questration dans les terres agricoles et les prairies",
+      "titre_long": "S\u00e9questration nette de CO2 dans les terres agricoles et les prairies",
       "type": null,
       "unite": "teq CO2",
       "valeur_indicateur": null
@@ -3617,7 +3757,7 @@
       "selection": false,
       "source": null,
       "thematiques": [],
-      "titre_long": "S\u00e9questration de CO2 dans les cultures",
+      "titre_long": "S\u00e9questration nette de CO2 dans les cultures",
       "type": null,
       "unite": "teq CO2",
       "valeur_indicateur": null
@@ -3637,7 +3777,7 @@
       "selection": false,
       "source": null,
       "thematiques": [],
-      "titre_long": "S\u00e9questration de CO2 dans les prairies",
+      "titre_long": "S\u00e9questration nette de CO2 dans les prairies",
       "type": null,
       "unite": "teq CO2",
       "valeur_indicateur": null
@@ -3657,7 +3797,7 @@
       "selection": false,
       "source": null,
       "thematiques": [],
-      "titre_long": "S\u00e9questration de CO2 dans les vignes",
+      "titre_long": "S\u00e9questration nette de CO2 dans les vignes",
       "type": null,
       "unite": "teq CO2",
       "valeur_indicateur": null
@@ -3677,7 +3817,7 @@
       "selection": false,
       "source": null,
       "thematiques": [],
-      "titre_long": "S\u00e9questration de CO2 dans les vergers",
+      "titre_long": "S\u00e9questration nette de CO2 dans les vergers",
       "type": null,
       "unite": "teq CO2",
       "valeur_indicateur": null
@@ -3689,7 +3829,7 @@
       "description": "",
       "id": "cae_63.d",
       "identifiant": "63.d",
-      "nom": "S\u00e9questration dans les autres sols",
+      "nom": "S\u00e9questration de CO2 dans les autres sols",
       "parent": "cae_63.a",
       "participation_score": false,
       "programmes": [
@@ -3700,7 +3840,7 @@
       "selection": false,
       "source": null,
       "thematiques": [],
-      "titre_long": "S\u00e9questration dans les autres sols",
+      "titre_long": "S\u00e9questration nette de CO2 dans les autres sols",
       "type": null,
       "unite": "teq CO2",
       "valeur_indicateur": null
@@ -3720,7 +3860,7 @@
       "selection": false,
       "source": null,
       "thematiques": [],
-      "titre_long": "S\u00e9questration de CO2 dans les zones humides",
+      "titre_long": "S\u00e9questration nette de CO2 dans les zones humides",
       "type": null,
       "unite": "teq CO2",
       "valeur_indicateur": null
@@ -3740,7 +3880,7 @@
       "selection": false,
       "source": null,
       "thematiques": [],
-      "titre_long": "S\u00e9questration de CO2 dans les sols artificiels",
+      "titre_long": "S\u00e9questration nette de CO2 dans les sols artificiels",
       "type": null,
       "unite": "teq CO2",
       "valeur_indicateur": null
@@ -3751,7 +3891,7 @@
       "id": "cae_63.e",
       "identifiant": "63.e",
       "nom": "S\u00e9questration de CO2 dans les produits bois",
-      "parent": null,
+      "parent": "cae_63.a",
       "participation_score": false,
       "programmes": [
         "cae"
@@ -3760,7 +3900,7 @@
       "selection": false,
       "source": null,
       "thematiques": [],
-      "titre_long": "S\u00e9questration de CO2 dans les produits bois",
+      "titre_long": "S\u00e9questration nette de CO2 dans les produits bois",
       "type": null,
       "unite": "teq CO2",
       "valeur_indicateur": null
@@ -4191,7 +4331,7 @@
       "id": "crte_4.2",
       "identifiant": 4.2,
       "nom": "Surface agricole utile en agriculture biologique (AB) ou en conversion",
-      "parent": null,
+      "parent": "crte_4.1",
       "participation_score": false,
       "programmes": [
         "crte"
@@ -4200,7 +4340,7 @@
       "selection": false,
       "source": null,
       "thematiques": [
-        "agriculture_alimentation",
+        "agri_alim",
         "urbanisme_et_amenagement"
       ],
       "titre_long": "Surface agricole utile en agriculture biologique (AB) ou en conversion",
@@ -4552,7 +4692,7 @@
       "source": null,
       "thematiques": [
         "activites_economiques",
-        "agriculture_alimentation"
+        "agri_alim"
       ],
       "titre_long": "Part de l\u2019alimentation sous signe de qualit\u00e9 en restauration collective sous la comp\u00e9tence de la collectivit\u00e9 (%)",
       "type": null,
@@ -4608,7 +4748,7 @@
       "description": "<p>Nombre d'hectares artificialis\u00e9s total / Nombre d'hectares des terres agricoles, naturelles et foresti\u00e8res.</p>\n<p>Dans la logique du Z\u00e9ro Artificialisation Net.</p>\n",
       "id": "eci_23",
       "identifiant": 23,
-      "nom": "Surface artificialis\u00e9e",
+      "nom": "Part de la surface artificialis\u00e9e",
       "parent": null,
       "participation_score": false,
       "programmes": [
@@ -4620,7 +4760,7 @@
       "thematiques": [
         "urbanisme_et_amenagement"
       ],
-      "titre_long": "Artificialisation des espaces naturels, agricoles, forestiers (ha)",
+      "titre_long": "Artificialisation des espaces naturels, agricoles, forestiers",
       "type": null,
       "unite": "%",
       "valeur_indicateur": null

@@ -20,9 +20,9 @@ export const useTelechargementTrajectoire = () => {
         collectivite_id: collectivite.collectivite_id,
         file: 'donnees',
       });
-      const {blob, filename} = await api.getAsBlob({
+      const { blob, filename } = await api.getAsBlob({
         route: '/trajectoires/snbc/telechargement',
-        params: {collectivite_id: collectivite.collectivite_id},
+        params: { collectiviteId: collectivite.collectivite_id },
       });
       if (blob) {
         await saveBlob(

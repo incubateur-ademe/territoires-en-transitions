@@ -287,7 +287,7 @@ export const IndicateurCardBase = ({
                 />
                 {isNotLoadingNotFilled && !readonly && !!href && (
                   <Button size="xs" className="mx-auto">
-                    Compléter l'indicateur
+                    Compléter l&apos;indicateur
                   </Button>
                 )}
                 {/** Légende */}
@@ -296,7 +296,7 @@ export const IndicateurCardBase = ({
                     {generateLineLegendItems(prepareData(data.valeurs)).map(
                       ({ name, color, symbole }) => (
                         <div key={name} className="flex items-center gap-2">
-                          {!!symbole ? (
+                          {symbole ? (
                             symbole(color)
                           ) : (
                             <div

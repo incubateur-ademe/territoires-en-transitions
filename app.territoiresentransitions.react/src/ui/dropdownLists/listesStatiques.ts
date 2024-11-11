@@ -14,8 +14,12 @@ type Options<T extends string> = {
 
 export const ficheActionCiblesOptions: Options<TFicheActionCibles> = [
   {
-    value: 'Grand public et associations',
-    label: 'Grand public et associations',
+    value: 'Grand public',
+    label: 'Grand public',
+  },
+  {
+    value: 'Associations',
+    label: 'Associations',
   },
   {
     value: 'Public Scolaire',

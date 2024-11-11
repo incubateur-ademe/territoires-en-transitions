@@ -15,7 +15,7 @@ import {
   categorieFNVSchema,
   CategorieFNVType,
 } from '../../taxonomie/models/categorie-fnv.table';
-import { actionImpactTempsDeMiseEnOeuvreTable } from './action-impact-temps-de-mise-en-oeuvre.table';
+import { tempsDeMiseEnOeuvreTable } from '../../taxonomie/models/temps-de-mise-en-oeuvre.table';
 import { actionImpactFourchetteBudgetaireTable } from './action-impact-fourchette-budgetaire.table';
 import { actionImpactTierTable } from './action-impact-tier.table';
 import { createSelectSchema } from 'drizzle-zod';
@@ -40,7 +40,7 @@ export const actionImpactTable = pgTable('action_impact', {
   tempsDeMiseEnOeuvre: integer('temps_de_mise_en_oeuvre')
     .notNull()
     .default(1)
-    .references(() => actionImpactTempsDeMiseEnOeuvreTable.niveau),
+    .references(() => tempsDeMiseEnOeuvreTable.niveau),
   fourchetteBudgetaire: integer('fourchette_budgetaire')
     .notNull()
     .default(1)

@@ -1,6 +1,6 @@
 import classNames from 'classnames';
-import SideNav, { SideNavLinks } from 'ui/shared/SideNav';
 import { useFonctionTracker } from 'core-logic/hooks/useFonctionTracker';
+import SideNav, { SideNavLinks } from './SideNav';
 
 export type SideNavContainerProps = {
   links: SideNavLinks;

@@ -37,6 +37,16 @@ INSERT INTO public.indicateur_source (id, libelle) VALUES ('rare', 'RARE-OREC');
 INSERT INTO public.indicateur_source_metadonnee (id, source_id, date_version, nom_donnees, diffuseur, producteur, methodologie, limites)
 VALUES (2, 'rare', '2024-07-18T00:00:00.000Z', '', 'OREC', '', 'Scope 1&2 (approche cadastrale)', '');
 
+-- Insertion de la source snbc
+INSERT INTO public.indicateur_source (id, libelle) VALUES ('snbc', 'SNBC');
+INSERT INTO public.indicateur_source_metadonnee (id, source_id, date_version, nom_donnees, diffuseur, producteur, methodologie, limites)
+VALUES (3, 'snbc', '2024-07-11T00:00:00.000Z', 'SNBC', 'ADEME', 'ADEME', '', '');
+
+-- Insertion de la source aldo
+INSERT INTO public.indicateur_source (id, libelle) VALUES ('aldo', 'ALDO');
+INSERT INTO public.indicateur_source_metadonnee (id, source_id, date_version, nom_donnees, diffuseur, producteur, methodologie, limites)
+VALUES (4, 'aldo', '2024-09-01T00:00:00.000Z', '', 'CGDD', '', '', '');
+
 -- Insertion pour le calcul de la trajectoire snbc. Cas du pays du Laon
 insert into public.indicateur_valeur (indicateur_id, collectivite_id, date_valeur, metadonnee_id, resultat,
                                       resultat_commentaire, objectif, objectif_commentaire)
@@ -127,7 +137,19 @@ values
         '2015-01-01', (select id from public.indicateur_source_metadonnee where source_id = 'rare' and date_version = '2024-07-18T00:00:00.000Z' limit 1), 138.76, null, null, null),
     ((select id from indicateur_definition where identifiant_referentiel = 'cae_2.j' limit 1),
      (select collectivite_id from epci where siren = '246700488' limit 1),
-        '2015-01-01', (select id from public.indicateur_source_metadonnee where source_id = 'rare' and date_version = '2024-07-18T00:00:00.000Z' limit 1), 0, null, null, null);
+        '2015-01-01', (select id from public.indicateur_source_metadonnee where source_id = 'rare' and date_version = '2024-07-18T00:00:00.000Z' limit 1), 0, null, null, null),
+    ((select id from indicateur_definition where identifiant_referentiel = 'cae_63.ca' limit 1),
+     (select collectivite_id from epci where siren = '246700488' limit 1),
+        '2018-01-01', (select id from public.indicateur_source_metadonnee where source_id = 'aldo' and date_version = '2024-09-01T00:00:00.000Z' limit 1), -138.44, null, null, null),
+    ((select id from indicateur_definition where identifiant_referentiel = 'cae_63.db' limit 1),
+     (select collectivite_id from epci where siren = '246700488' limit 1),
+        '2018-01-01', (select id from public.indicateur_source_metadonnee where source_id = 'aldo' and date_version = '2024-09-01T00:00:00.000Z' limit 1), -227.9, null, null, null),
+    ((select id from indicateur_definition where identifiant_referentiel = 'cae_63.b' limit 1),
+     (select collectivite_id from epci where siren = '246700488' limit 1),
+        '2018-01-01', (select id from public.indicateur_source_metadonnee where source_id = 'aldo' and date_version = '2024-09-01T00:00:00.000Z' limit 1), 7812.64, null, null, null),
+    ((select id from indicateur_definition where identifiant_referentiel = 'cae_63.e' limit 1),
+     (select collectivite_id from epci where siren = '246700488' limit 1),
+        '2018-01-01', (select id from public.indicateur_source_metadonnee where source_id = 'aldo' and date_version = '2024-09-01T00:00:00.000Z' limit 1), 627.13, null, null, null);
 
 -- Rhone agglo avec des données qui nécessitent une interpolation
 insert into public.indicateur_valeur (indicateur_id, collectivite_id, date_valeur, metadonnee_id, resultat,

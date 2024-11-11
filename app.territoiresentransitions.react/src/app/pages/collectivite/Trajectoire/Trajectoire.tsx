@@ -1,14 +1,20 @@
-import {Alert, Button, Card, Modal, TrackPageView} from '@tet/ui';
+import { useEffect } from 'react';
+import { useQueryClient } from 'react-query';
+import { Alert, Button, Card, Modal, TrackPageView } from '@tet/ui';
 import SpinnerLoader from 'ui/shared/SpinnerLoader';
-import {StatutTrajectoire, useStatutTrajectoire} from './useStatutTrajectoire';
-import {useCalculTrajectoire} from './useCalculTrajectoire';
-import {TrajectoireCalculee} from './TrajectoireCalculee';
-import {CommuneNonSupportee} from './CommuneNonSupportee';
-import {HELPDESK_URL} from './constants';
-import {ReactComponent as DbErrorPicto} from './db-error.svg';
-import {ReactComponent as TrajectoirePicto} from './trajectoire.svg';
-import {DonneesCollectivite} from './DonneesCollectivite/DonneesCollectivite';
-import {useCollectiviteId} from 'core-logic/hooks/params';
+import {
+  getStatusKey,
+  StatutTrajectoire,
+  useStatutTrajectoire,
+} from './useStatutTrajectoire';
+import { useCalculTrajectoire } from './useCalculTrajectoire';
+import { TrajectoireCalculee } from './TrajectoireCalculee';
+import { CommuneNonSupportee } from './CommuneNonSupportee';
+import { HELPDESK_URL } from './constants';
+import { ReactComponent as DbErrorPicto } from './db-error.svg';
+import { ReactComponent as TrajectoirePicto } from './trajectoire.svg';
+import { DonneesCollectivite } from './DonneesCollectivite/DonneesCollectivite';
+import { useCollectiviteId } from 'core-logic/hooks/params';
 
 /**
  * Affiche l'écran approprié en fonction du statut du calcul de la trajectoire SNBC
@@ -16,7 +22,7 @@ import {useCollectiviteId} from 'core-logic/hooks/params';
 const TrajectoireContent = (props: {
   statut: ReturnType<typeof useStatutTrajectoire>;
 }) => {
-  const {data, error, isLoading} = props.statut;
+  const { data, error, isLoading } = props.statut;
   if (isLoading) {
     return (
       <div className="h-56 flex justify-center items-center">
@@ -71,7 +77,7 @@ const DonneesNonDispo = () => {
       </p>
       <Modal
         size="xl"
-        render={props => <DonneesCollectivite modalProps={props} />}
+        render={(props) => <DonneesCollectivite modalProps={props} />}
       >
         <Button>Compléter mes données</Button>
       </Modal>
@@ -111,52 +117,86 @@ const ErreurDeChargement = () => {
  * Affiche le message de présentation
  */
 const Presentation = () => {
-  const {mutate: calcul, isLoading} = useCalculTrajectoire();
+  const {
+    mutate: calcul,
+    isLoading,
+    data: trajectoire,
+  } = useCalculTrajectoire();
+
+  // démarre le calcul au chargement de la page
+  useEffect(() => {
+    if (!isLoading) {
+      calcul();
+    }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, []);
+
+  const queryClient = useQueryClient();
+  const collectiviteId = useCollectiviteId();
 
   return (
-    <div className="flex flex-row gap-14 py-12">
-      <div className="w-3/5">
-        <h1>
-          Calculez votre trajectoire de transition bas-carbone avec la méthode
-          développée par l’ADEME.
-        </h1>
-        <p className="font-bold text-lg">
-          C’est un excellent outil stratégique pour :
-        </p>
-        <ul className="w-11/12 text-lg list-disc ml-4 mb-0">
-          <li>
-            Définir ou évaluer vos objectifs, par exemple lors d'un suivi annuel
-            ou d'un bilan à mi-parcours de PCAET
-          </li>
-          <li>Quantifier les efforts nécessaires secteur par secteur</li>
-          <li>Identifier votre contribution à la SNBC</li>
-        </ul>
-        <p className="text-lg mt-2">
-          Cette trajectoire n'est pas prescriptive, mais peut constituer un
-          repère pour guider votre stratégie, vos actions.
-        </p>
-        <Button
-          size="md"
-          variant="underlined"
-          external
-          href={HELPDESK_URL}
-          className="mb-6"
-        >
-          Pour plus d’informations
-        </Button>
-
-        <Button onClick={() => calcul()} disabled={isLoading}>
-          {isLoading ? (
-            <>
-              Calcul en cours
-              <SpinnerLoader />
-            </>
-          ) : (
-            'Je lance le calcul'
-          )}
-        </Button>
+    <div className="flex flex-col py-12">
+      <div className="flex flex-row gap-14">
+        <div className="w-3/5">
+          <h1>
+            Calculez votre trajectoire de transition bas-carbone avec la méthode
+            développée par l’ADEME.
+          </h1>
+          <p className="font-bold text-lg">
+            C’est un excellent outil stratégique pour :
+          </p>
+          <ul className="w-11/12 text-lg list-disc ml-4 mb-0">
+            <li>
+              Définir ou évaluer vos objectifs, par exemple lors d'un suivi
+              annuel ou d'un bilan à mi-parcours de PCAET
+            </li>
+            <li>Quantifier les efforts nécessaires secteur par secteur</li>
+            <li>Identifier votre contribution à la SNBC</li>
+          </ul>
+          <p className="text-lg mt-2">
+            Cette trajectoire n'est pas prescriptive, mais peut constituer un
+            repère pour guider votre stratégie, vos actions.
+          </p>
+          <Button
+            size="md"
+            variant="underlined"
+            external
+            href={HELPDESK_URL}
+            className="mb-6"
+          >
+            Pour plus d’informations
+          </Button>
+        </div>
+        <TrajectoirePicto />
       </div>
-      <TrajectoirePicto />
+      {trajectoire ? (
+        <Button
+          onClick={() => {
+            queryClient.invalidateQueries(getStatusKey(collectiviteId));
+          }}
+        >
+          J’accède à la trajectoire
+        </Button>
+      ) : (
+        <div className="flex flex-row gap-2 items-center">
+          <Button onClick={() => calcul()} disabled={isLoading}>
+            {isLoading ? (
+              <>
+                Calcul en cours
+                <SpinnerLoader />
+              </>
+            ) : (
+              'Je lance le calcul'
+            )}
+          </Button>
+          {isLoading && (
+            <span>
+              Le calcul de la trajectoire peut prendre jusqu’à 25 secondes. Il
+              s’est lancé automatiquement à l’arrivée sur la page.
+            </span>
+          )}
+        </div>
+      )}
     </div>
   );
 };
@@ -165,25 +205,33 @@ const Presentation = () => {
  * Point d'entrée
  */
 const Trajectoire = () => {
-  const statut = useStatutTrajectoire();
-  const {data, isLoading} = statut;
-  const collectivite_id = useCollectiviteId()!;
+  const statutTrajectoire = useStatutTrajectoire();
+  const { data, error, isLoading } = statutTrajectoire;
+  const collectiviteId = useCollectiviteId();
+  const statut = isLoading ? undefined : data?.status ? data.status : 'error';
+  const errorProps =
+    statut === 'error'
+      ? { error: error?.error, statusCode: error?.statusCode }
+      : {};
 
   return (
-    <div className="bg-grey-2 -mb-8">
-      {!isLoading && (
-        <TrackPageView
-          pageName="app/trajectoires/snbc"
-          properties={{
-            collectivite_id,
-            statut: data && data.status ? data.status : 'error',
-          }}
-        />
-      )}
-      <div className="fr-container flex flex-col gap-16">
-        <TrajectoireContent statut={statut} />
+    collectiviteId && (
+      <div className="bg-grey-2 -mb-8">
+        {!isLoading && (
+          <TrackPageView
+            pageName="app/trajectoires/snbc"
+            properties={{
+              collectivite_id: collectiviteId,
+              statut,
+              ...errorProps,
+            }}
+          />
+        )}
+        <div className="fr-container flex flex-col gap-16">
+          <TrajectoireContent statut={statutTrajectoire} />
+        </div>
       </div>
-    </div>
+    )
   );
 };
 

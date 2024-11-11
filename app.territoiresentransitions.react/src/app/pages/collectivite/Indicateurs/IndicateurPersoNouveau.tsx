@@ -8,8 +8,8 @@ import {
 import { makeCollectiviteIndicateursUrl } from 'app/paths';
 import { useCollectiviteId } from 'core-logic/hooks/params';
 import { Form, Formik } from 'formik';
+import { useRouter } from 'next/navigation';
 import { useState } from 'react';
-import { useHistory } from 'react-router-dom';
 import ThematiquesDropdown from 'ui/dropdownLists/ThematiquesDropdown/ThematiquesDropdown';
 import FormikInput from 'ui/shared/form/formik/FormikInput';
 import * as Yup from 'yup';
@@ -34,8 +34,7 @@ const IndicateurPersoNouveau = ({
   onClose?: () => void;
 }) => {
   const collectiviteId = useCollectiviteId()!;
-
-  const history = useHistory();
+  const router = useRouter();
   const ficheId = fiche?.id;
 
   const { mutate: save, isLoading } = useInsertIndicateurPersoDefinition({
@@ -50,7 +49,7 @@ const IndicateurPersoNouveau = ({
       if (ficheId !== undefined) {
         window.open(url, '_blank');
       } else {
-        history.push(url);
+        router.push(url);
       }
     },
   });
