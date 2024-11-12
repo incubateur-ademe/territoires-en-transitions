@@ -2,7 +2,6 @@ import {
   CreateFicheActionType,
   FicheActionCiblesEnumType,
   ficheActionPiliersEciEnumType,
-  ficheActionResultatsAttendusEnumType,
   FicheActionStatutsEnumType,
 } from '../../../src/fiches/models/fiche-action.table';
 
@@ -12,9 +11,6 @@ export const ficheActionFixture: CreateFicheActionType = {
   description: 'patati',
   piliersEci: [ficheActionPiliersEciEnumType.APPROVISIONNEMENT_DURABLE],
   objectifs: 'Diminution des émissions de carbone',
-  resultatsAttendus: [
-    ficheActionResultatsAttendusEnumType.ALLONGEMENT_DUREE_USAGE,
-  ],
   cibles: [
     FicheActionCiblesEnumType.GRAND_PUBLIC_ET_ASSOCIATIONS,
     FicheActionCiblesEnumType.AGENTS,
@@ -34,4 +30,7 @@ export const ficheActionFixture: CreateFicheActionType = {
   createdAt: '2024-11-08 09:09:16.731248+00',
   modifiedBy: null,
   restreint: false,
+  tempsDeMiseEnOeuvre: 1,
+  participationCitoyenne: 'Participation',
+  participationCitoyenneType: 'Concertation',
 };

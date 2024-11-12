@@ -64,7 +64,8 @@ export default class FichesActionUpdateService {
 
   async updateFicheAction(
     ficheActionId: number,
-    body: UpdateFicheActionRequestType
+    body: UpdateFicheActionRequestType,
+    tokenInfo: SupabaseJwtPayload
   ) {
     this.logger.log(
       `Mise à jour de la fiche action dont l'id est ${ficheActionId}`
@@ -83,7 +84,7 @@ export default class FichesActionUpdateService {
       services,
       financeurs,
       fichesLiees,
-      resultatAttendu,
+      resultatsAttendus,
       ...unsafeFicheAction
     } = body;
 
@@ -114,7 +115,7 @@ export default class FichesActionUpdateService {
       let updatedServices;
       let updatedFinanceurs;
       let updatedFichesLiees;
-      let updatedResultatAttendu;
+      let updatedResultatsAttendus;
 
       /**
        * Updates fiche action properties
@@ -280,10 +281,10 @@ export default class FichesActionUpdateService {
         );
       }
 
-      if (resultatAttendu && resultatAttendu.length > 0) {
-        updatedResultatAttendu = await this.updateRelations(
+      if (resultatsAttendus && resultatsAttendus.length > 0) {
+        updatedResultatsAttendus = await this.updateRelations(
           ficheActionId,
-          resultatAttendu,
+          resultatsAttendus,
           tx,
           ficheActionEffetAttenduTable,
           ['id'],
@@ -306,7 +307,7 @@ export default class FichesActionUpdateService {
         services: updatedServices,
         financeurs: updatedFinanceurs,
         fichesLiees: updatedFichesLiees,
-        resultatAttendu: updatedResultatAttendu,
+        resultatAttendu: updatedResultatsAttendus,
       };
     });
   }
