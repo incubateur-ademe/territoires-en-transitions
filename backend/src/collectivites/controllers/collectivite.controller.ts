@@ -1,4 +1,4 @@
-import { Controller, Get, Param } from '@nestjs/common';
+import { Controller, Get, Param, Query } from '@nestjs/common';
 import { ApiOkResponse } from '@nestjs/swagger';
 import { AllowPublicAccess } from '../../auth/decorators/allow-public-access.decorator';
 import CollectivitesService from '../services/collectivites.service';
@@ -18,7 +18,14 @@ export class CollectiviteController {
     //type: VersionResponseClass,
     description: "Récupération des informations d'une collectivite",
   })
-  async getCollectivite(@Param('collectivite_id') collectiviteId: number) {
-    return this.collectiviteService.getCollectivite(collectiviteId);
+  async getCollectivite(
+    @Param('collectivite_id') collectiviteId: number,
+    @Query('avecType') avecType: string
+  ) {
+    if (avecType) {
+      return this.collectiviteService.getCollectiviteAvecType(collectiviteId);
+    } else {
+      return this.collectiviteService.getCollectivite(collectiviteId);
+    }
   }
 }
