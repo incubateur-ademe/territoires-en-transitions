@@ -7,7 +7,7 @@ ALTER TYPE referentiel ADD VALUE IF NOT EXISTS 'te-test';
 BEGIN;
 
 -- Create the referentiels table. use referentiels instead of referentiel to avoid conflict with enum
-create table referentiel_definition
+create table IF NOT EXISTS referentiel_definition
 (
     id              varchar(30) primary key,
     nom             varchar(300) not null,
@@ -20,21 +20,23 @@ comment on table referentiel_definition is
     'Les référentiels de la plateforme';
 
 alter table referentiel_definition enable row level security;
+drop policy if exists allow_read on referentiel_definition;
 create policy allow_read on referentiel_definition for select using(is_authenticated());
 
 insert into referentiel_definition (id, nom, version, hierarchie) values 
 ('cae', 'Climat Air Energie', '1.0.0', '{"referentiel", "axe", "sous-axe", "action", "sous-action", "tache"}'),
 ('eci', 'Économie Circulaire', '1.0.0', '{"referentiel", "axe", "action", "sous-action", "tache"}'),
 ('te', 'Transition Écologique', '0.1.0', '{"referentiel", "axe", "sous-axe", "action", "sous-action", "exemple"}'),
-('te-test', 'Transition Écologique', '0.1.0', '{"referentiel", "axe", "sous-axe", "action", "sous-action", "exemple"}');
+('te-test', 'Transition Écologique', '0.1.0', '{"referentiel", "axe", "sous-axe", "action", "sous-action", "exemple"}')
+on conflict do nothing;
 
-create trigger set_modified_at
+create or replace trigger set_modified_at
     before update
     on referentiel_definition
     for each row
 execute procedure update_modified_at();
 
-alter table action_definition add column referentiel_id varchar(30);
+alter table action_definition add column if not exists referentiel_id varchar(30);
 
 UPDATE action_definition
 SET referentiel_id = referentiel::text;
@@ -43,7 +45,7 @@ ALTER TABLE action_definition
     ALTER COLUMN referentiel_id SET NOT NULL;
 
 -- Referentiel version allows keeping track of action definitions which are not in the current version of the referentiel
-alter table action_definition add column referentiel_version varchar(16);
+alter table action_definition add column if not exists referentiel_version varchar(16);
 
 UPDATE action_definition
 SET referentiel_version = '1.0.0';
@@ -51,13 +53,14 @@ SET referentiel_version = '1.0.0';
 ALTER TABLE action_definition
     ALTER COLUMN referentiel_version SET NOT NULL;
 
+ALTER TABLE "public"."action_definition"  DROP CONSTRAINT IF EXISTS "referentiel_id_fkey";
 alter table "public"."action_definition" 
 add constraint "referentiel_id_fkey"
 foreign key ("referentiel_id") 
 references "public"."referentiel_definition" ("id") 
 on delete restrict;
 
-create table referentiel_tag
+create table IF NOT EXISTS referentiel_tag
 (
     ref             varchar(300) primary key,
     nom             varchar(300) not null,
@@ -66,7 +69,7 @@ create table referentiel_tag
 comment on table referentiel_tag is
     'liste des tags associés aux actions des référentiels';
 
-create table action_definition_tag
+create table IF NOT EXISTS action_definition_tag
 (   
     referentiel_id  varchar(30) references referentiel_definition not null,
     action_id       varchar(30) references action_relation not null,
@@ -160,7 +163,7 @@ $$ language plpgsql security definer;
 comment on function private.upsert_actions is
     'Met à jour les définitions des définitions des actions qui constituent un référentiel.';
 
-create table action_origine
+create table if not exists action_origine
 (
     referentiel_id          varchar(30) references referentiel_definition not null, 
     action_id               varchar(30) references action_relation not null,
@@ -173,6 +176,7 @@ comment on table action_origine is
     'Lien entre une action du nouveau référentiel et les actions des anciens référentiels';
 
 alter table action_origine enable row level security;
+drop policy if exists allow_read on action_origine;
 create policy allow_read on action_origine for select using(is_authenticated());
 
 
