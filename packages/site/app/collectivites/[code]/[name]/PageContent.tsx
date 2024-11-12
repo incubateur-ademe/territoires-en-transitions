@@ -17,8 +17,8 @@ const PageContent = ({ indicateurs, programme }: PageContentType) => {
         className="col-span-full md:col-span-7 lg:col-span-8"
         tabsListClassName="!bg-primary-1"
       >
-        <Tab label="Indicateurs locaux">{indicateurs}</Tab>
         <Tab label="Programme T.E.T.E.">{programme}</Tab>
+        <Tab label="Indicateurs locaux">{indicateurs}</Tab>
       </Tabs>
     );
   } else if (indicateurs) return indicateurs;
