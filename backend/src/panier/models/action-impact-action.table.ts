@@ -1,5 +1,5 @@
 import { integer, pgTable, primaryKey } from 'drizzle-orm/pg-core';
-import { actionRelationTable } from '../../referentiel/models/action-relation.table';
+import { actionRelationTable } from '../../referentiels/models/action-relation.table';
 import { actionImpactTable } from './action-impact.table';
 import { text } from 'drizzle-orm/pg-core';
 import { InferSelectModel } from 'drizzle-orm';

@@ -2,7 +2,6 @@ import { extendApi } from '@anatine/zod-openapi';
 import { z } from 'zod';
 import { indicateurAvecValeursParSourceSchema } from './indicateur-valeur.table';
 
-
 export const getIndicateursValeursResponseSchema = extendApi(
   z
     .object({

@@ -1,11 +1,11 @@
 from business.utils.models.action_score import ActionScore
-from business.utils.models.action_statut import (
-    ActionStatut,
-    DetailedAvancement,
-)
+from business.utils.models.action_statut import (ActionStatut,
+                                                 DetailedAvancement)
 from business.utils.models.actions import ActionId
-from business.utils.models.personnalisation import ActionPersonnalisationConsequence
+from business.utils.models.personnalisation import \
+  ActionPersonnalisationConsequence
 from business.utils.models.reponse import Reponse
+
 from .fixtures import *
 
 commune_id = 1
@@ -88,6 +88,7 @@ def test_cae_321_when_recuperation_cogeneration_is_NON(
         == scores_cae["cae_3.2.1"].point_potentiel_perso
         == 2.0
     )
+    assert scores_cae["cae_3.2.1.1.1"].point_potentiel == 0.25
     assert scores_cae["cae_3.2.1.1"].point_potentiel == 2.0
     assert scores_cae["cae_3.2.1.2"].point_potentiel == 0
     assert scores_cae["cae_3.2.1.3"].point_potentiel == 0
@@ -144,6 +145,7 @@ def test_cae_631_when_cae_6314_if_dev_eco_4_is_NON(
         scores_cae["cae_6.3.1.2"].point_potentiel
         == scores_cae["cae_6.3.1.2"].point_referentiel
     )
+
 
     # cae_6.3.1.3 and cae_6.3.1.5 have been augmented of 1 point each
     assert (
@@ -209,11 +211,19 @@ def test_cae_641_when_localosation_dom_and_SAU_OUI(
         scores_cae["cae_6.4.1.6"].point_potentiel
         == scores_cae["cae_6.4.1"].point_potentiel * 20 / 100
     )
+    assert (
+        scores_cae["cae_6.4.1.6"].point_potentiel
+        == 1.2
+    )
 
     # 6.4.1.8 passe de 15% à 10%
     assert (
         scores_cae["cae_6.4.1.8"].point_potentiel
         == scores_cae["cae_6.4.1"].point_potentiel * 10 / 100
+    )
+    assert (
+        scores_cae["cae_6.4.1.8"].point_potentiel
+        == 0.6
     )
 
 
@@ -254,8 +264,8 @@ def test_cae_621_when_type_commune(test_post_personnalize, test_post_evaluate):
 
     # Cas 3 :  Si une commune est à 10 % de l'EPCI et qu'elle ne participe pas au conseil d'administration d'un bailleur social, elle est notée sur 2 points
     # ------
-    # si identite(type, commune) et reponse(habitat_3, OUI) et reponse(habitat_2, 10%)
-    #    - cae 6.2.1 est réduite à 2 points et on lui ajoute 1 point, donc a un potentiel de 3 points
+    # si identite(type, commune) et reponse(habitat_3, NON) et reponse(habitat_2, 10%)
+    #    - cae 6.2.1 est réduite à 2 points et on ne lui rajoute pas de points, donc a un potentiel de 2 points
     reponses = [Reponse("habitat_3", "NON"), Reponse("habitat_2", 0.1)]
     consequences = test_post_personnalize(
         reponses,

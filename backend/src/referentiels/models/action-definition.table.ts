@@ -8,25 +8,37 @@ import {
   varchar,
 } from 'drizzle-orm/pg-core';
 import { createInsertSchema, createSelectSchema } from 'drizzle-zod';
+import { z } from 'zod';
+import { actionRelationTable } from './action-relation.table';
+import { ActionType } from './action-type.enum';
+import { referentielDefinitionTable } from './referentiel-definition.table';
+import { referentielEnum } from './referentiel.enum';
 
-// Todo: change it reference another table instead
-export const referentielEnum = pgEnum('referentiel', ['eci', 'cae']);
+export enum ActionCategoryType {
+  BASES = 'bases',
+  MISE_EN_OEUVRE = 'mise en œuvre',
+  EFFETS = 'effets',
+}
 export const actionCategorieEnum = pgEnum('action_categorie', [
-  'bases',
-  'mise en œuvre',
-  'effets',
+  ActionCategoryType.BASES,
+  ActionCategoryType.MISE_EN_OEUVRE,
+  ActionCategoryType.EFFETS,
 ]);
 export const actionIdVarchar = varchar('action_id', { length: 30 });
 export const actionIdReference = actionIdVarchar.references(
-  () => actionDefinitionTable.actionId
+  () => actionRelationTable.id
 );
 
 export const actionDefinitionTable = pgTable('action_definition', {
-  modifiedAt: timestamp('modified_at', { withTimezone: true, mode: 'string' })
+  modified_at: timestamp('modified_at', { withTimezone: true, mode: 'string' })
     .default(sql`CURRENT_TIMESTAMP`)
     .notNull(),
   actionId: actionIdVarchar.primaryKey().notNull(),
   referentiel: referentielEnum('referentiel').notNull(),
+  referentielId: varchar('referentiel_id', { length: 30 })
+    .notNull()
+    .references(() => referentielDefinitionTable.id),
+  referentielVersion: varchar('referentiel_version', { length: 16 }).notNull(),
   identifiant: text('identifiant').notNull(),
   nom: text('nom').notNull(),
   description: text('description').notNull(),
@@ -51,9 +63,47 @@ export type CreateActionDefinitionType = InferInsertModel<
 export const actionDefinitionSchema = createSelectSchema(actionDefinitionTable);
 export const actionDefinitionSeulementIdObligatoireSchema =
   actionDefinitionSchema.partial();
+export const actionDefinitionMinimalWithTypeLevel =
+  actionDefinitionSchema.extend({
+    level: z.number(),
+    actionType: z.nativeEnum(ActionType),
+  });
+
 export const createActionDefinitionSchema = createInsertSchema(
   actionDefinitionTable
 );
+
+export enum ImportActionDefinitionCoremeasureType {
+  COREMEASURE = 'coremeasure',
+}
+
+export const importActionDefinitionSchema = createActionDefinitionSchema
+  .partial({
+    actionId: true,
+    description: true,
+    nom: true,
+    contexte: true,
+    exemples: true,
+    ressources: true,
+    referentiel: true,
+    referentielId: true,
+    referentielVersion: true,
+    reductionPotentiel: true,
+    perimetreEvaluation: true,
+  })
+  .extend({
+    categorie: z
+      .string()
+      .toLowerCase()
+      .pipe(z.nativeEnum(ActionCategoryType))
+      .optional(),
+    origine: z.string().optional(),
+    coremeasure: z.string().optional(),
+    desactivation: z.string().optional(),
+  });
+export type ImportActionDefinitionType = z.infer<
+  typeof importActionDefinitionSchema
+>;
 
 export type ActionDefinitionAvecParentType = Pick<
   ActionDefinitionType,
