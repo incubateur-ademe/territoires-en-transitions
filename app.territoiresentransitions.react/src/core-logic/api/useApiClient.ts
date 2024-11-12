@@ -102,9 +102,26 @@ export const useApiClient = () => {
     return body as ResponseType;
   };
 
+  const put = async <ResponseType>({ route, params }: API_ARGS) => {
+    const response = await fetch(makeUrl({ route }), {
+      method: 'PUT',
+      body: JSON.stringify(params),
+      headers: {
+        'content-type': 'application/json',
+        ...authHeaders,
+      },
+    });
+    const body = await response.json();
+    if (!response.ok) {
+      throw new ApiError(body);
+    }
+    return body as ResponseType;
+  };
+
   return {
     get,
     getAsBlob,
     post,
+    put,
   };
 };
