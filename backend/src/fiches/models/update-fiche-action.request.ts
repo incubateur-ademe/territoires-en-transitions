@@ -2,7 +2,6 @@ import z from 'zod';
 import {
   FicheActionCiblesEnumType,
   ficheActionPiliersEciEnumType,
-  ficheActionResultatsAttendusEnumType,
   ficheActionSchema,
   updateFicheActionSchema,
 } from './fiche-action.table';
@@ -45,41 +44,6 @@ export const updateFicheActionRequestSchema = updateFicheActionSchema.extend({
     .array()
     .optional(),
   cibles: z.nativeEnum(FicheActionCiblesEnumType).array().optional(),
-
-  // Object is the type we're receiving from the front-end, array of enums is the type we're expecting in fiche action table schema
-  // So we're converting it here
-  // resultatsAttendus: z
-  //   .array(
-  //     z.object({
-  //       id: z.number(),
-  //       nom: z.preprocess(
-  //         (val) => (typeof val === 'string' ? val.replace(/'/g, '’') : val),
-  //         z.nativeEnum(ficheActionResultatsAttendusEnumType)
-  //       ),
-  //       notice: z.string().nullable().optional(),
-  //     })
-  //   )
-  //   .transform((items) => items.map((item) => item.nom))
-  //   .optional(),
-
-  // resultatsAttendus: z
-  //   .union([
-  //     z
-  //       .array(
-  //         z.object({
-  //           id: z.number(),
-  //           nom: z.preprocess(
-  //             (val) => (typeof val === 'string' ? val.replace(/'/g, '’') : val),
-  //             z.nativeEnum(ficheActionResultatsAttendusEnumType)
-  //           ),
-  //           notice: z.string().nullable().optional(),
-  //         })
-  //       )
-  //       .transform((items) => items.map((item) => item.nom)),
-  //     z.array(z.nativeEnum(ficheActionResultatsAttendusEnumType)),
-  //   ])
-  //   .optional(),
-
   // Overriding because numeric and timestamp types are not properly converted otherwise (a bug with zod/drizzle ?)
   budgetPrevisionnel: z
     .union([z.string(), z.number()])
