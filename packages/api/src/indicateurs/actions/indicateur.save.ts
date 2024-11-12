@@ -496,7 +496,11 @@ export async function upsertValeursUtilisateurAvecSource(
     if (args.appliquerResultat) {
       for (const ligne of valeurs.resultats.lignes) {
         // Si nouvelle ligne, ou nouveau résultat qu'on écrase
-        if (!ligne.idAEcraser || (ligne.conflit && args.ecraserResultat)) {
+        if (
+          !ligne.idAEcraser ||
+          !ligne.conflit ||
+          (ligne.conflit && args.ecraserResultat)
+        ) {
           const valeurToUpsert: Valeur = {
             id: ligne.idAEcraser ? ligne.idAEcraser : undefined,
             indicateurId: args.indicateurId,
@@ -505,7 +509,7 @@ export async function upsertValeursUtilisateurAvecSource(
             source: null,
             resultat: ligne.valeurAAppliquer,
           };
-          if (!ligne.idAEcraser)
+          if (!ligne.idAEcraser || !ligne.conflit)
             valeurToUpsert.resultatCommentaire = commentaire;
           valeursToUpsert.set(ligne.annee, valeurToUpsert);
         }
@@ -513,7 +517,11 @@ export async function upsertValeursUtilisateurAvecSource(
     }
     if (args.appliquerObjectif) {
       for (const ligne of valeurs.objectifs.lignes) {
-        if (!ligne.idAEcraser || (ligne.conflit && args.ecraserObjectif)) {
+        if (
+          !ligne.idAEcraser ||
+          !ligne.conflit ||
+          (ligne.conflit && args.ecraserObjectif)
+        ) {
           const valeurFromResultat = valeursToUpsert.get(ligne.annee);
           const valeurToUpsert: Valeur = valeurFromResultat
             ? valeurFromResultat
@@ -525,7 +533,7 @@ export async function upsertValeursUtilisateurAvecSource(
                 source: null,
                 objectif: ligne.valeurAAppliquer,
               };
-          if (!ligne.idAEcraser)
+          if (!ligne.idAEcraser || !ligne.conflit)
             valeurToUpsert.objectifCommentaire = commentaire;
           valeursToUpsert.set(ligne.annee, valeurToUpsert);
         }
