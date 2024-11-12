@@ -151,6 +151,7 @@ const MenuFiltresTousLesIndicateurs = ({ filters, setFilters }: Props) => {
         </Field>
         <Field title="Thématique">
           <ThematiquesDropdown
+            placement="top"
             values={filters.thematiqueIds}
             onChange={({ thematiques }) => {
               const { thematiqueIds, ...rest } = filters;
