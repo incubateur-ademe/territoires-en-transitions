@@ -153,9 +153,7 @@ export const DropdownFloater = ({
               >
                 <div
                   className={classNames(
-                    'overflow-y-auto bg-white border border-grey-4',
-                    { 'border-t-0 rounded-b-lg': placement !== 'top' },
-                    { 'border-b-0 rounded-t-lg': placement === 'top' },
+                    'overflow-y-auto bg-white rounded-b-lg border border-grey-4 border-t-0',
                     containerClassName
                   )}
                   style={{ maxHeight: maxHeight - 16 }}
