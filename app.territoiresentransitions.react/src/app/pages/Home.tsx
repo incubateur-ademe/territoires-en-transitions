@@ -12,15 +12,20 @@ const Home = () => {
     >
       <div className="flex flex-col items-center max-w-6xl mx-auto px-6 text-center">
         <h1 className="text-primary-9">À vous de jouer !</h1>
-        <p className="mb-0">
-          Territoires en Transitions est un outil public gratuit et open-source
-          pour les collectivités, financé par l&apos;ADEME.
+        <p className="my-4 text-lg text-primary-10">
+          Territoires en Transitions est un service numérique gratuit et open
+          source destiné à toutes les collectivités. Que vous soyez engagé ou
+          non dans le programme Territoire Engagé Transition Écologique de
+          l’ADEME, vous bénéficiez d&apos;un espace de travail collaboratif pour
+          piloter l&apos;ensemble de vos plans d&apos;actions et de vos
+          indicateurs.
           <br />
-          Actuellement à ses débuts, la plateforme a besoin de vous pour évoluer
-          dans le sens de vos besoins.
           <br />
-          Rejoignez-nous dans sa co-construction en créant votre compte en moins
-          d&apos;une minute.
+          Créez votre compte en moins d&apos;une minute, rejoignez le profil de
+          votre collectivité et faites vos premiers pas sur la plateforme.
+          <br />
+          <br />
+          Des questions ? Utilisez le chat en bas à droite de votre écran.
         </p>
         <Button
           href="https://www.territoiresentransitions.fr/outil-numerique"
