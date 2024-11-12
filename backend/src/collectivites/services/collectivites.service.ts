@@ -67,7 +67,6 @@ export default class CollectivitesService {
     collectiviteId: number
   ): Promise<CollectiviteAvecType> {
     const collectivite = await this.getCollectivite(collectiviteId);
-    console.log(JSON.stringify(collectivite, null, 2));
     return {
       ...collectivite.banatic,
       // @ts-ignore: TODO: fix this, pourquoi manque dans drizzle à cause de la jointure?
@@ -89,7 +88,7 @@ export default class CollectivitesService {
       population:
         collectivite.commune?.population ||
         // @ts-ignore: TODO: fix this, pourquoi manque dans drizzle à cause de la jointure?
-        collectivite.import_commune.population ||
+        collectivite.import_commune?.population ||
         collectivite.banatic?.population,
       type: collectivite.epci
         ? CollectiviteTypeEnum.EPCI
