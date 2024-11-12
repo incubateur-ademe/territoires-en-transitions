@@ -1743,7 +1743,7 @@ describe('ReferentielsScoringService', () => {
       const collectiviteInfo: IdentiteCollectivite = {
         type: CollectiviteTypeEnum.COMMUNE,
         soustype: null,
-        population_tags: [],
+        populationTags: [],
         drom: false,
       };
       const personnalisationConsequences =
@@ -1783,7 +1783,7 @@ describe('ReferentielsScoringService', () => {
       const collectiviteInfo: IdentiteCollectivite = {
         type: CollectiviteTypeEnum.COMMUNE,
         soustype: null,
-        population_tags: [],
+        populationTags: [],
         drom: false,
       };
       const personnalisationConsequences =
@@ -1829,7 +1829,7 @@ describe('ReferentielsScoringService', () => {
       const collectiviteInfo: IdentiteCollectivite = {
         type: CollectiviteTypeEnum.COMMUNE,
         soustype: null,
-        population_tags: [],
+        populationTags: [],
         drom: false,
       };
       const personnalisationConsequences =
@@ -1900,7 +1900,7 @@ describe('ReferentielsScoringService', () => {
       const collectiviteInfo: IdentiteCollectivite = {
         type: CollectiviteTypeEnum.COMMUNE,
         soustype: null,
-        population_tags: [],
+        populationTags: [],
         drom: true,
       };
       const personnalisationConsequences =
@@ -1966,7 +1966,7 @@ describe('ReferentielsScoringService', () => {
       const collectiviteInfo: IdentiteCollectivite = {
         type: CollectiviteTypeEnum.COMMUNE,
         soustype: null,
-        population_tags: [],
+        populationTags: [],
         drom: false,
       };
       const actionStatuts: GetActionStatutsResponseType = {};
@@ -2063,13 +2063,13 @@ describe('ReferentielsScoringService', () => {
       const communeInfo: IdentiteCollectivite = {
         type: CollectiviteTypeEnum.COMMUNE,
         soustype: null,
-        population_tags: [],
+        populationTags: [],
         drom: false,
       };
       const epciInfo: IdentiteCollectivite = {
         type: CollectiviteTypeEnum.EPCI,
         soustype: null,
-        population_tags: [],
+        populationTags: [],
         drom: false,
       };
 

@@ -2,11 +2,16 @@ import { Injectable, Logger, NotFoundException } from '@nestjs/common';
 import { aliasedTable, eq, or } from 'drizzle-orm';
 import DatabaseService from '../../common/services/database.service';
 import { collectiviteTable } from '../models/collectivite.table';
-import { epciTable, EpciType } from '../models/epci.table';
 import { communeTable, CommuneType } from '../models/commune.table';
-import { CollectiviteAvecType, CollectivitePopulationTypeEnum, CollectiviteSousTypeEnum, CollectiviteTypeEnum } from '../models/identite-collectivite.dto';
-import { importCommuneTable } from '../models/imports-commune.table';
+import { epciTable, EpciType } from '../models/epci.table';
+import {
+  CollectiviteAvecType,
+  CollectivitePopulationTypeEnum,
+  CollectiviteSousTypeEnum,
+  CollectiviteTypeEnum,
+} from '../models/identite-collectivite.dto';
 import { banaticTable } from '../models/imports-banatic.table';
+import { importCommuneTable } from '../models/imports-commune.table';
 import { regionTable } from '../models/imports-region.table';
 
 @Injectable()
@@ -27,14 +32,14 @@ export default class CollectivitesService {
     this.POPULATION_BORNES_SUP.forEach((borneSup) => {
       if (population < borneSup) {
         populationTags.push(
-          `moins_de_${borneSup}` as CollectivitePopulationTypeEnum,
+          `moins_de_${borneSup}` as CollectivitePopulationTypeEnum
         );
       }
     });
     this.POPULATION_BORNES_INF.forEach((borneInf) => {
       if (population > borneInf) {
         populationTags.push(
-          `plus_de_${borneInf}` as CollectivitePopulationTypeEnum,
+          `plus_de_${borneInf}` as CollectivitePopulationTypeEnum
         );
       }
     });
@@ -59,9 +64,10 @@ export default class CollectivitesService {
   }
 
   async getCollectiviteAvecType(
-    collectiviteId: number,
+    collectiviteId: number
   ): Promise<CollectiviteAvecType> {
     const collectivite = await this.getCollectivite(collectiviteId);
+    console.log(JSON.stringify(collectivite, null, 2));
     return {
       ...collectivite.banatic,
       // @ts-ignore: TODO: fix this, pourquoi manque dans drizzle à cause de la jointure?
@@ -69,15 +75,31 @@ export default class CollectivitesService {
       ...collectivite.commune,
       ...collectivite.epci,
       ...collectivite.collectivite,
+      nom: collectivite.commune?.nom || collectivite.epci?.nom,
+      regionCode:
+        collectivite.commune?.regionCode ||
+        collectivite.banatic?.regionCode ||
+        // @ts-ignore: TODO: fix this, pourquoi manque dans drizzle à cause de la jointure?
+        collectivite.import_commune?.regionCode,
+      departementCode:
+        collectivite.commune?.departementCode ||
+        collectivite.banatic?.departementCode ||
+        // @ts-ignore: TODO: fix this, pourquoi manque dans drizzle à cause de la jointure?
+        collectivite.import_commune?.departementCode,
+      population:
+        collectivite.commune?.population ||
+        // @ts-ignore: TODO: fix this, pourquoi manque dans drizzle à cause de la jointure?
+        collectivite.import_commune.population ||
+        collectivite.banatic?.population,
       type: collectivite.epci
         ? CollectiviteTypeEnum.EPCI
         : CollectiviteTypeEnum.COMMUNE,
       soustype: this.getCollectiviteSousType(collectivite),
-      population_tags: this.getPopulationTags(
+      populationTags: this.getPopulationTags(
         collectivite.commune?.population ||
           // @ts-ignore: TODO: fix this, pourquoi manque dans drizzle à cause de la jointure?
           collectivite.import_commune?.population ||
-          collectivite.banatic?.population,
+          collectivite.banatic?.population
       ),
       drom: collectivite.region?.drom || false,
     };
@@ -90,7 +112,7 @@ export default class CollectivitesService {
 
     const importCommuneAliasedTable = aliasedTable(
       importCommuneTable,
-      'import_commune',
+      'import_commune'
     );
     const collectiviteByIdResult = await this.databaseService.db
       .select()
@@ -103,14 +125,14 @@ export default class CollectivitesService {
       .leftJoin(banaticTable, eq(banaticTable.siren, epciTable.siren))
       .leftJoin(
         importCommuneAliasedTable,
-        eq(importCommuneAliasedTable.code, communeTable.code),
+        eq(importCommuneAliasedTable.code, communeTable.code)
       )
       .leftJoin(
         regionTable,
         or(
           eq(regionTable.code, banaticTable.regionCode),
-          eq(regionTable.code, importCommuneAliasedTable.regionCode),
-        ),
+          eq(regionTable.code, importCommuneAliasedTable.regionCode)
+        )
       )
       .where(eq(collectiviteTable.id, collectiviteId));
 

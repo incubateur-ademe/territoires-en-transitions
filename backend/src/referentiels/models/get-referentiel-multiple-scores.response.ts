@@ -4,6 +4,7 @@ import { getReferentielScoresResponseSchema } from './get-referentiel-scores.res
 
 export const getReferentielMultipleScoresResponseSchema = extendApi(
   z.object({
+    referentielVersion: z.string(),
     collectiviteScores: getReferentielScoresResponseSchema.array(),
   })
 ).openapi({

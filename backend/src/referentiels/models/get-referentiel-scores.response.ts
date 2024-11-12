@@ -9,7 +9,7 @@ export const getReferentielScoresResponseSchema = extendApi(
   z.object({
     collectiviteId: z.number(),
     referentielVersion: z.string(),
-    collectiviteInfo: collectiviteAvecTypeSchema.optional(),
+    collectiviteInfo: collectiviteAvecTypeSchema,
     date: z.string().datetime().optional(),
     scores: referentielActionAvecScoreDtoSchema,
     jalon: z.nativeEnum(ScoreJalon),

@@ -1,12 +1,13 @@
 import { createZodDto } from '@anatine/zod-nestjs';
 import { Controller, Get, Logger, Param } from '@nestjs/common';
 import { ApiResponse, ApiTags } from '@nestjs/swagger';
+import { AllowAnonymousAccess } from '../../auth/decorators/allow-anonymous-access.decorator';
 import { AllowPublicAccess } from '../../auth/decorators/allow-public-access.decorator';
 import { TokenInfo } from '../../auth/decorators/token-info.decorators';
+import { SupabaseJwtPayload } from '../../auth/models/supabase-jwt.models';
 import { getReferentielResponseSchema } from '../models/get-referentiel.response';
 import { ReferentielType } from '../models/referentiel.enum';
 import ReferentielsService from '../services/referentiels.service';
-import { SupabaseJwtPayload } from '../../auth/models/supabase-jwt.models';
 
 class GetReferentielResponseClass extends createZodDto(
   getReferentielResponseSchema
@@ -29,7 +30,7 @@ export class ReferentielsController {
     return this.referentielsService.getReferentiel(referentielId, true);
   }
 
-  @AllowPublicAccess()
+  @AllowAnonymousAccess()
   @Get(':referentiel_id/import')
   @ApiResponse({ type: GetReferentielResponseClass })
   async importReferentiel(

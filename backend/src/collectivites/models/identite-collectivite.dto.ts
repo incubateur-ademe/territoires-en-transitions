@@ -1,12 +1,8 @@
-
-import {
-  pgEnum,
-} from 'drizzle-orm/pg-core';
-import { collectiviteSchema, CollectiviteType } from './collectivite.table';
-import { communeSchema, CommuneType } from './commune.table';
-import { epciSchema, EpciType } from './epci.table';
+import { pgEnum } from 'drizzle-orm/pg-core';
 import { z } from 'zod';
-
+import { collectiviteSchema } from './collectivite.table';
+import { communeSchema } from './commune.table';
+import { epciSchema } from './epci.table';
 
 export enum CollectiviteTypeEnum {
   EPCI = 'EPCI',
@@ -48,28 +44,18 @@ export const typeLocalisationEnum = pgEnum('type_localisation', [
 export const identiteCollectiviteSchema = z.object({
   type: z.nativeEnum(CollectiviteTypeEnum),
   soustype: z.nativeEnum(CollectiviteSousTypeEnum).nullable(),
-  population_tags: z.array(z.nativeEnum(CollectivitePopulationTypeEnum)),
+  populationTags: z.array(z.nativeEnum(CollectivitePopulationTypeEnum)),
   drom: z.boolean(),
 });
 
 export type IdentiteCollectivite = z.infer<typeof identiteCollectiviteSchema>;
 
-
 export const collectiviteAvecTypeSchema = collectiviteSchema
-.merge(communeSchema.partial())
-.merge(epciSchema.partial())
-.merge(identiteCollectiviteSchema)
-.omit({
-  collectiviteId: true,
-});
+  .merge(communeSchema.partial())
+  .merge(epciSchema.partial())
+  .merge(identiteCollectiviteSchema)
+  .omit({
+    collectiviteId: true,
+  });
 
 export type CollectiviteAvecType = z.infer<typeof collectiviteAvecTypeSchema>;
-
-
-
-
-
-
-
-
-

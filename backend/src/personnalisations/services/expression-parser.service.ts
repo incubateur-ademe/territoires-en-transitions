@@ -468,7 +468,7 @@ class CollectiviteExpressionVisitor extends BaseCSTVisitor {
         this.identiteCollectivite.soustype === primary
       );
     } else if (identifier === 'population') {
-      return this.identiteCollectivite.population_tags.includes(primary);
+      return this.identiteCollectivite.populationTags.includes(primary);
     } else if (identifier === 'localisation') {
       const drom = primary === 'DOM';
       return this.identiteCollectivite.drom === drom;

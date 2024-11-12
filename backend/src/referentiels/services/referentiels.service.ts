@@ -283,9 +283,7 @@ export default class ReferentielsService {
     onlyForScoring?: boolean,
     getActionsOrigine?: boolean
   ): Promise<GetReferentielResponseType> {
-    this.logger.log(
-      `Recherche des actions pour le referentiel ${referentielId}`
-    );
+    this.logger.log(`Get referentiel ${referentielId}`);
 
     const referentielDefinition = await this.getReferentielDefinition(
       referentielId

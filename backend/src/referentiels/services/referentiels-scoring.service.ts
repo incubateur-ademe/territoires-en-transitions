@@ -37,6 +37,7 @@ import { GetReferentielMultipleScoresRequestType } from '../models/get-referenti
 import { GetReferentielMultipleScoresResponseType } from '../models/get-referentiel-multiple-scores.response';
 import { GetReferentielScoresRequestType } from '../models/get-referentiel-scores.request';
 import { GetReferentielScoresResponseType } from '../models/get-referentiel-scores.response';
+import { GetReferentielResponseType } from '../models/get-referentiel.response';
 import { historiqueActionStatutTable } from '../models/historique-action-statut.table';
 import { LabellisationAuditType } from '../models/labellisation-audit.table';
 import { LabellisationEtoileMetaType } from '../models/labellisation-etoile.table';
@@ -758,8 +759,15 @@ export default class ReferentielsScoringService {
       } (Depuis referentiels origine: ${parameters.avecReferentielsOrigine})`
     );
 
+    const referentiel = await this.referentielsService.getReferentiel(
+      referentielId,
+      true,
+      parameters.avecReferentielsOrigine
+    );
+
     const getReferentielMultipleScoresResponseType: GetReferentielMultipleScoresResponseType =
       {
+        referentielVersion: referentiel.version,
         collectiviteScores: [],
       };
 
@@ -775,6 +783,7 @@ export default class ReferentielsScoringService {
             collectiviteId,
             parameters,
             tokenInfo,
+            referentiel,
             true
           )
         )
@@ -792,6 +801,7 @@ export default class ReferentielsScoringService {
     collectiviteId: number,
     parameters: GetReferentielScoresRequestType,
     tokenInfo?: SupabaseJwtPayload,
+    referentiel?: GetReferentielResponseType,
     noCheck?: boolean
   ): Promise<GetReferentielScoresResponseType> {
     this.logger.log(
@@ -857,13 +867,18 @@ export default class ReferentielsScoringService {
         parameters.date,
         tokenInfo
       );
+    } else {
+      collectiviteInfo =
+        await this.collectivitesService.getCollectiviteAvecType(collectiviteId);
     }
 
-    const referentiel = await this.referentielsService.getReferentiel(
-      referentielId,
-      true,
-      parameters.avecReferentielsOrigine
-    );
+    if (!referentiel) {
+      referentiel = await this.referentielsService.getReferentiel(
+        referentielId,
+        true,
+        parameters.avecReferentielsOrigine
+      );
+    }
 
     const etoilesDefinitions =
       await this.labellisationService.getEtoileDefinitions();

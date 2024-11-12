@@ -225,7 +225,7 @@ describe('ExpressionParserService', () => {
           {
             type: CollectiviteTypeEnum.EPCI,
             soustype: null,
-            population_tags: [CollectivitePopulationTypeEnum.MOINS_DE_50000],
+            populationTags: [CollectivitePopulationTypeEnum.MOINS_DE_50000],
             drom: false,
           }
         )
@@ -238,7 +238,7 @@ describe('ExpressionParserService', () => {
           {
             type: CollectiviteTypeEnum.EPCI,
             soustype: null,
-            population_tags: [CollectivitePopulationTypeEnum.MOINS_DE_50000],
+            populationTags: [CollectivitePopulationTypeEnum.MOINS_DE_50000],
             drom: false,
           }
         )
@@ -435,7 +435,7 @@ sinon si identite(type, commune) et reponse(assainissement_1, NON) et reponse(as
           {
             type: CollectiviteTypeEnum.COMMUNE,
             soustype: null,
-            population_tags: [CollectivitePopulationTypeEnum.MOINS_DE_20000],
+            populationTags: [CollectivitePopulationTypeEnum.MOINS_DE_20000],
             drom: false,
           }
         )
@@ -453,7 +453,7 @@ sinon si identite(type, commune) et reponse(assainissement_1, NON) et reponse(as
           {
             type: CollectiviteTypeEnum.COMMUNE,
             soustype: null,
-            population_tags: [CollectivitePopulationTypeEnum.MOINS_DE_20000],
+            populationTags: [CollectivitePopulationTypeEnum.MOINS_DE_20000],
             drom: false,
           }
         )
@@ -471,7 +471,7 @@ sinon si identite(type, commune) et reponse(assainissement_1, NON) et reponse(as
           {
             type: CollectiviteTypeEnum.EPCI,
             soustype: null,
-            population_tags: [CollectivitePopulationTypeEnum.MOINS_DE_50000],
+            populationTags: [CollectivitePopulationTypeEnum.MOINS_DE_50000],
             drom: false,
           }
         )
@@ -489,7 +489,7 @@ sinon si identite(type, commune) et reponse(assainissement_1, NON) et reponse(as
           {
             type: CollectiviteTypeEnum.EPCI,
             soustype: null,
-            population_tags: [CollectivitePopulationTypeEnum.MOINS_DE_50000],
+            populationTags: [CollectivitePopulationTypeEnum.MOINS_DE_50000],
             drom: false,
           }
         )
@@ -517,7 +517,7 @@ sinon si identite(type, EPCI) et reponse(dechets_2, NON) alors min(score(cae_1.2
           {
             type: CollectiviteTypeEnum.COMMUNE,
             soustype: null,
-            population_tags: [CollectivitePopulationTypeEnum.MOINS_DE_20000],
+            populationTags: [CollectivitePopulationTypeEnum.MOINS_DE_20000],
             drom: false,
           }
         )
@@ -533,7 +533,7 @@ sinon si identite(type, EPCI) et reponse(dechets_2, NON) alors min(score(cae_1.2
           {
             type: CollectiviteTypeEnum.COMMUNE,
             soustype: null,
-            population_tags: [CollectivitePopulationTypeEnum.MOINS_DE_20000],
+            populationTags: [CollectivitePopulationTypeEnum.MOINS_DE_20000],
             drom: false,
           }
         )
@@ -549,7 +549,7 @@ sinon si identite(type, EPCI) et reponse(dechets_2, NON) alors min(score(cae_1.2
           {
             type: CollectiviteTypeEnum.EPCI,
             soustype: null,
-            population_tags: [CollectivitePopulationTypeEnum.MOINS_DE_50000],
+            populationTags: [CollectivitePopulationTypeEnum.MOINS_DE_50000],
             drom: false,
           }
         )
@@ -566,7 +566,7 @@ sinon si identite(type, EPCI) et reponse(dechets_2, NON) alors min(score(cae_1.2
           {
             type: CollectiviteTypeEnum.EPCI,
             soustype: null,
-            population_tags: [CollectivitePopulationTypeEnum.MOINS_DE_50000],
+            populationTags: [CollectivitePopulationTypeEnum.MOINS_DE_50000],
             drom: false,
           }
         )
@@ -587,7 +587,7 @@ sinon si identite(type, EPCI) et reponse(dechets_2, NON) alors min(score(cae_1.2
           {
             type: CollectiviteTypeEnum.COMMUNE,
             soustype: null,
-            population_tags: [CollectivitePopulationTypeEnum.MOINS_DE_20000],
+            populationTags: [CollectivitePopulationTypeEnum.MOINS_DE_20000],
             drom: false,
           }
         )
@@ -601,7 +601,7 @@ sinon si identite(type, EPCI) et reponse(dechets_2, NON) alors min(score(cae_1.2
           {
             type: CollectiviteTypeEnum.COMMUNE,
             soustype: null,
-            population_tags: [CollectivitePopulationTypeEnum.MOINS_DE_20000],
+            populationTags: [CollectivitePopulationTypeEnum.MOINS_DE_20000],
             drom: true,
           }
         )
@@ -624,7 +624,7 @@ sinon si identite(type, EPCI) et reponse(dechets_2, NON) alors min(score(cae_1.2
           {
             type: CollectiviteTypeEnum.COMMUNE,
             soustype: null,
-            population_tags: [CollectivitePopulationTypeEnum.MOINS_DE_20000],
+            populationTags: [CollectivitePopulationTypeEnum.MOINS_DE_20000],
             drom: false,
           }
         )
@@ -640,7 +640,7 @@ sinon si identite(type, EPCI) et reponse(dechets_2, NON) alors min(score(cae_1.2
           {
             type: CollectiviteTypeEnum.COMMUNE,
             soustype: null,
-            population_tags: [CollectivitePopulationTypeEnum.MOINS_DE_20000],
+            populationTags: [CollectivitePopulationTypeEnum.MOINS_DE_20000],
             drom: false,
           }
         )
