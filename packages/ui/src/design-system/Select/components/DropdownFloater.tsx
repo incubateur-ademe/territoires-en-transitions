@@ -73,8 +73,13 @@ export const DropdownFloater = ({
   };
 
   const [maxHeight, setMaxHeight] = useState(0);
+  const [minHeight, setMinHeight] = useState(0);
 
   const nodeId = useFloatingNodeId();
+
+  /** si l'id n'est pas null alors le DropdownFloater est contenu dans un élément
+   * où le floating node est déjà présent (par exemple dans une modale) */
+  const parentNodeId = useFloatingParentNodeId();
 
   const { x, y, strategy, refs, context } = useFloating({
     nodeId,
@@ -88,7 +93,11 @@ export const DropdownFloater = ({
       size({
         apply({ rects, elements, availableHeight }) {
           // https://floating-ui.com/docs/size
-          flushSync(() => setMaxHeight(availableHeight));
+          flushSync(() => {
+            setMaxHeight(availableHeight);
+            if (availableHeight < 80 && rects.floating.height > availableHeight)
+              setMinHeight(rects.floating.height);
+          });
           Object.assign(elements.floating.style, {
             minWidth: `${rects.reference.width}px`,
             width: containerWidthMatchButton
@@ -110,10 +119,6 @@ export const DropdownFloater = ({
     click,
     dismiss,
   ]);
-
-  /** si l'id n'est pas null alors le DropdownFloater est contenu dans un élément
-   * où le floating node est déjà présent (par exemple dans une modale) */
-  const parentNodeId = useFloatingParentNodeId();
 
   return (
     <>
@@ -156,7 +161,7 @@ export const DropdownFloater = ({
                     'overflow-y-auto bg-white rounded-b-lg border border-grey-4 border-t-0',
                     containerClassName
                   )}
-                  style={{ maxHeight: maxHeight - 16 }}
+                  style={{ maxHeight: maxHeight - 16, minHeight }}
                 >
                   {render({
                     close: () => handleOpenChange(),
