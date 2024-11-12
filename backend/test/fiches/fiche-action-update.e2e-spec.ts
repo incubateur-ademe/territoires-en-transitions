@@ -85,14 +85,6 @@ describe('FichesActionUpdateService', () => {
     insertFixtures(databaseService, ficheActionId);
   });
 
-  afterAll(async () => {
-    await databaseService.db
-      .delete(ficheActionTable)
-      .where(eq(ficheActionTable.id, ficheActionId));
-
-    await app.close();
-  });
-
   describe('Update fiche action fields', () => {
     it('should strip irrelevant fiche action fields data', async () => {
       const data = {
@@ -106,6 +98,7 @@ describe('FichesActionUpdateService', () => {
       const response = await request(app.getHttpServer())
         .put(`/collectivites/${collectiviteId}/fiches-action/${ficheActionId}`)
         .send(data)
+        .set('Authorization', `Bearer ${yoloDodoToken}`)
         .set('Content-Type', 'application/json')
         .expect(200);
 
@@ -144,6 +137,7 @@ describe('FichesActionUpdateService', () => {
       const response = await request(app.getHttpServer())
         .put(`/collectivites/${collectiviteId}/fiches-action/${ficheActionId}`)
         .send(data)
+        .set('Authorization', `Bearer ${yoloDodoToken}`)
         .set('Content-Type', 'application/json')
         .expect(200);
 
@@ -187,6 +181,7 @@ describe('FichesActionUpdateService', () => {
       await request(app.getHttpServer())
         .put(`/collectivites/${collectiviteId}/fiches-action/${ficheActionId}`)
         .send(data)
+        .set('Authorization', `Bearer ${yoloDodoToken}`)
         .set('Content-Type', 'application/json')
         .expect(400);
     });
@@ -197,6 +192,7 @@ describe('FichesActionUpdateService', () => {
       await request(app.getHttpServer())
         .put(`/collectivites/${collectiviteId}/fiches-action/${ficheActionId}`)
         .send(data)
+        .set('Authorization', `Bearer ${yoloDodoToken}`)
         .set('Content-Type', 'application/json')
         .expect(400);
     });
@@ -207,6 +203,7 @@ describe('FichesActionUpdateService', () => {
       await request(app.getHttpServer())
         .put(`/collectivites/${collectiviteId}/fiches-action/${ficheActionId}`)
         .send(data)
+        .set('Authorization', `Bearer ${yoloDodoToken}`)
         .set('Content-Type', 'application/json')
         .expect(400);
     });
@@ -217,6 +214,7 @@ describe('FichesActionUpdateService', () => {
       await request(app.getHttpServer())
         .put(`/collectivites/${collectiviteId}/fiches-action/${ficheActionId}`)
         .send(data)
+        .set('Authorization', `Bearer ${yoloDodoToken}`)
         .set('Content-Type', 'application/json')
         .expect(400);
     });
@@ -232,6 +230,7 @@ describe('FichesActionUpdateService', () => {
           `/collectivites/${collectiviteId}/fiches-action/${nonExistentFicheActionId}`
         )
         .send(data)
+        .set('Authorization', `Bearer ${yoloDodoToken}`)
         .set('Content-Type', 'application/json')
         .expect(404);
     });
@@ -492,6 +491,38 @@ describe('FichesActionUpdateService', () => {
     });
   });
 
+  describe('Access Rights', () => {
+    it('should return 401 if an unauthorized user tries to update a fiche action', async () => {
+      const data = {
+        titre: 'Tentative de mise à jour sans droits',
+      };
+
+      await request(app.getHttpServer())
+        .put(`/collectivites/${collectiviteId}/fiches-action/${ficheActionId}`)
+        .send(data)
+        .set('Authorization', 'Bearer invalid_or_missing_token')
+        .set('Content-Type', 'application/json')
+        .expect(401);
+    });
+
+    it('should allow authorized user to update fiche action', async () => {
+      const data = {
+        titre: 'Titre mis à jour par une utilisatrice autorisée',
+      };
+
+      const response = await request(app.getHttpServer())
+        .put(`/collectivites/${collectiviteId}/fiches-action/${ficheActionId}`)
+        .send(data)
+        .set('Authorization', `Bearer ${yoloDodoToken}`)
+        .set('Content-Type', 'application/json')
+        .expect(200);
+
+      expect(response.body.titre).toBe(
+        'Titre mis à jour par une utilisatrice autorisée'
+      );
+    });
+  });
+
   async function insertFixtures(
     databaseService: DatabaseService,
     ficheId: number
@@ -569,6 +600,15 @@ describe('FichesActionUpdateService', () => {
     return await request(app.getHttpServer())
       .put(`/collectivites/${collectiviteId}/fiches-action/${ficheActionId}`)
       .send(data)
+      .set('Authorization', `Bearer ${yoloDodoToken}`)
       .set('Content-Type', 'application/json');
   };
+
+  afterAll(async () => {
+    await databaseService.db
+      .delete(ficheActionTable)
+      .where(eq(ficheActionTable.id, ficheActionId));
+
+    await app.close();
+  });
 });

@@ -68,7 +68,6 @@ export class FichesActionController {
     );
   }
 
-  @PublicEndpoint()
   @Put(':id')
   @ApiOkResponse({
     type: UpdateFicheActionRequestClass,
@@ -82,8 +81,8 @@ export class FichesActionController {
   ) {
     return await this.fichesActionUpdateService.updateFicheAction(
       id,
-      body
-      // tokenInfo
+      body,
+      tokenInfo
     );
   }
 }
