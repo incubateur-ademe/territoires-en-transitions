@@ -1,5 +1,6 @@
 import { pgTable, uniqueIndex } from 'drizzle-orm/pg-core';
 import { tagTableBase } from './tag.table-base';
+import { createSelectSchema } from 'drizzle-zod';
 
 export const structureTagTable = pgTable(
   'structure_tag',
@@ -12,3 +13,5 @@ export const structureTagTable = pgTable(
     };
   }
 );
+
+export const structureTagSchema = createSelectSchema(structureTagTable);

@@ -12,7 +12,7 @@ import {
   uuid,
   varchar,
 } from 'drizzle-orm/pg-core';
-import { tempsDeMiseEnOeuvreTable } from 'backend/src/taxonomie/models/temps-de-mise-en-oeuvre.table';
+import { tempsDeMiseEnOeuvreTable } from '../../taxonomie/models/temps-de-mise-en-oeuvre.table';
 import { createInsertSchema, createSelectSchema } from 'drizzle-zod';
 import { z } from 'zod';
 
@@ -150,8 +150,6 @@ export const ficheActionTable = pgTable('fiche_action', {
   description: varchar('description', { length: 20000 }),
   piliersEci: ficheActionPiliersEciEnum('piliers_eci').array(),
   objectifs: varchar('objectifs', { length: 10000 }),
-  resultatsAttendus:
-    ficheActionResultatsAttendusEnum('resultats_attendus').array(),
   cibles: text('cibles', {
     enum: ficheActionCiblesEnumValues,
   }).array(),
@@ -175,7 +173,7 @@ export const ficheActionTable = pgTable('fiche_action', {
   notesComplementaires: varchar('notes_complementaires', { length: 20000 }),
   instanceGouvernance: text('instance_gouvernance'),
   participationCitoyenne: text('participation_citoyenne'),
-  participationCitoyenneType: varchar('participation_citoyenne', {
+  participationCitoyenneType: varchar('participation_citoyenne_type', {
     length: 30,
     enum: ficheActionParticipationCitoyenneTypeEnumValues,
   }),

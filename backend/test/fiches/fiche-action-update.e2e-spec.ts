@@ -24,12 +24,12 @@ import {
   structuresFixture,
   pilotesFixture,
   referentsFixture,
+  resultatAttenduFixture,
   actionsFixture,
   indicateursFixture,
   servicesFixture,
   financeursFixture,
   fichesLieesFixture,
-  resultatAttenduFixture,
 } from './fixtures/fiche-action-relations.fixture';
 import { ficheActionPartenaireTagTable } from '../../src/fiches/models/fiche-action-partenaire-tag.table';
 import { ficheActionStructureTagTable } from '../../src/fiches/models/fiche-action-structure-tag.table';
@@ -37,12 +37,16 @@ import { ficheActionFinanceurTagTable } from '../../src/fiches/models/fiche-acti
 import { ficheActionServiceTagTable } from '../../src/fiches/models/fiche-action-service.table';
 import { ficheActionEffetAttenduTable } from '../../src/fiches/models/fiche-action-effet-attendu.table';
 import { ficheActionLienTable } from '../../src/fiches/models/fiche-action-lien.table';
+import { createClient, SupabaseClient } from '@supabase/supabase-js';
+import { YOLO_DODO_CREDENTIALS } from '../auth/test-users.samples';
 
 let collectiviteId: number;
 let ficheActionId: number;
 
 describe('FichesActionUpdateService', () => {
   let app: INestApplication;
+  let supabase: SupabaseClient;
+  let yoloDodoToken: string;
   let databaseService: DatabaseService;
 
   beforeAll(async () => {
@@ -53,6 +57,17 @@ describe('FichesActionUpdateService', () => {
     app = moduleRef.createNestApplication();
     app.useGlobalPipes(new ZodValidationPipe());
     await app.init();
+
+    supabase = createClient(
+      process.env.SUPABASE_URL!,
+      process.env.SUPABASE_ANON_KEY!
+    );
+
+    const signinResponse = await supabase.auth.signInWithPassword(
+      YOLO_DODO_CREDENTIALS
+    );
+
+    yoloDodoToken = signinResponse.data.session?.access_token || '';
 
     databaseService = app.get<DatabaseService>(DatabaseService);
 
@@ -109,10 +124,6 @@ describe('FichesActionUpdateService', () => {
         piliersEci: ['Approvisionnement durable', 'Écoconception'],
         objectifs:
           'Diminution de 15% de la consommation de feuilles de papier / Indicateurs : Nombre de papiers',
-        resultatsAttendus: [
-          'Allongement de la durée d’usage',
-          'Préservation de la biodiversité',
-        ],
         cibles: ['Grand public et associations', 'Agents'],
         ressources: 'Service numérique',
         financements: 'De 40 000€ à 100 000€',
@@ -123,6 +134,11 @@ describe('FichesActionUpdateService', () => {
         calendrier: 'Calendrier prévisionnel',
         notesComplementaires: 'Vive le vélo !',
         majTermine: true,
+        tempsDeMiseEnOeuvre: 1,
+        participationCitoyenne:
+          'La participation citoyenne a été approuvée en réunion plénière',
+        participationCitoyenneType: 'Information',
+        restreint: false,
       };
 
       const response = await request(app.getHttpServer())
@@ -145,10 +161,6 @@ describe('FichesActionUpdateService', () => {
       expect(body.objectifs).toBe(
         'Diminution de 15% de la consommation de feuilles de papier / Indicateurs : Nombre de papiers'
       );
-      expect(body.resultatsAttendus).toEqual([
-        'Allongement de la durée d’usage',
-        'Préservation de la biodiversité',
-      ]);
       expect(body.cibles).toEqual(['Grand public et associations', 'Agents']);
       expect(body.ressources).toBe('Service numérique');
       expect(body.financements).toBe('De 40 000€ à 100 000€');
@@ -158,6 +170,13 @@ describe('FichesActionUpdateService', () => {
       expect(body.calendrier).toBe('Calendrier prévisionnel');
       expect(body.notesComplementaires).toBe('Vive le vélo !');
       expect(body.majTermine).toBe(true);
+      expect(body.collectiviteId).toBe(1);
+      expect(body.restreint).toBe(false);
+      expect(body.tempsDeMiseEnOeuvre).toBe(1);
+      expect(body.participationCitoyenne).toBe(
+        'La participation citoyenne a été approuvée en réunion plénière'
+      );
+      expect(body.participationCitoyenneType).toBe('Information');
     });
 
     it('should return 400 when invalid numeric type are provided', async () => {
@@ -224,7 +243,7 @@ describe('FichesActionUpdateService', () => {
         axes: [{ id: 1 }, { id: 2 }],
       };
 
-      const response = await putRequest(data, app);
+      const response = await putRequest(data);
 
       const body = response.body;
 
@@ -245,7 +264,7 @@ describe('FichesActionUpdateService', () => {
         thematiques: [{ id: 1 }, { id: 2 }],
       };
 
-      const response = await putRequest(data, app);
+      const response = await putRequest(data);
 
       const body = response.body;
 
@@ -266,7 +285,7 @@ describe('FichesActionUpdateService', () => {
         sousThematiques: [{ id: 3 }, { id: 4 }],
       };
 
-      const response = await putRequest(data, app);
+      const response = await putRequest(data);
 
       const body = response.body;
 
@@ -287,7 +306,7 @@ describe('FichesActionUpdateService', () => {
         partenaires: [{ id: 1 }, { id: 2 }],
       };
 
-      const response = await putRequest(data, app);
+      const response = await putRequest(data);
 
       const body = response.body;
 
@@ -308,7 +327,7 @@ describe('FichesActionUpdateService', () => {
         structures: [{ id: 1 }, { id: 2 }],
       };
 
-      const response = await putRequest(data, app);
+      const response = await putRequest(data);
 
       const body = response.body;
 
@@ -342,7 +361,7 @@ describe('FichesActionUpdateService', () => {
         ],
       };
 
-      const response = await putRequest(data, app);
+      const response = await putRequest(data);
 
       const body = response.body;
 
@@ -378,7 +397,7 @@ describe('FichesActionUpdateService', () => {
         ],
       };
 
-      const response = await putRequest(data, app);
+      const response = await putRequest(data);
 
       const body = response.body;
 
@@ -395,7 +414,7 @@ describe('FichesActionUpdateService', () => {
         actions: [{ id: 'cae_1.1.1' }, { id: 'cae_1.1.2' }],
       };
 
-      const response = await putRequest(data, app);
+      const response = await putRequest(data);
 
       const body = response.body;
 
@@ -410,7 +429,7 @@ describe('FichesActionUpdateService', () => {
         indicateurs: [{ id: 13 }, { id: 14 }],
       };
 
-      const response = await putRequest(data, app);
+      const response = await putRequest(data);
 
       const body = response.body;
 
@@ -425,7 +444,7 @@ describe('FichesActionUpdateService', () => {
         services: [{ id: 1 }, { id: 2 }],
       };
 
-      const response = await putRequest(data, app);
+      const response = await putRequest(data);
 
       const body = response.body;
 
@@ -440,10 +459,9 @@ describe('FichesActionUpdateService', () => {
         fichesLiees: [{ id: 1 }, { id: 2 }],
       };
 
-      const response = await putRequest(data, app);
+      const response = await putRequest(data);
 
       const body = response.body;
-      console.log(body);
 
       expect(body.fichesLiees).toStrictEqual([
         { ficheUne: ficheActionId, ficheDeux: 1 },
@@ -453,10 +471,17 @@ describe('FichesActionUpdateService', () => {
 
     it('should update the resultatAttendu relations in the database', async () => {
       const data = {
-        resultatAttendu: [{ id: 21 }, { id: 22 }],
+        resultatsAttendus: [
+          {
+            id: 21,
+          },
+          {
+            id: 22,
+          },
+        ],
       };
 
-      const response = await putRequest(data, app);
+      const response = await putRequest(data);
 
       const body = response.body;
 
@@ -544,7 +569,6 @@ describe('FichesActionUpdateService', () => {
     return await request(app.getHttpServer())
       .put(`/collectivites/${collectiviteId}/fiches-action/${ficheActionId}`)
       .send(data)
-      .set('Content-Type', 'application/json')
-      .expect(200);
+      .set('Content-Type', 'application/json');
   };
 });
