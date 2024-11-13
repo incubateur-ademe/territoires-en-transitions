@@ -11,7 +11,6 @@ import CitoyenPicto from './PictosActeurs/CitoyenPicto';
 import EluPicto from './PictosActeurs/EluPicto';
 import EmptyActeursPicto from './PictosActeurs/EmptyActeursPicto';
 import PartenairePicto from './PictosActeurs/PartenairePicto';
-import PersonnePilotePicto from './PictosActeurs/PersonnePilotePicto';
 import ServicePilotePicto from './PictosActeurs/ServicePilotePicto';
 import StructurePilotePicto from './PictosActeurs/StructurePilotePicto';
 
@@ -56,7 +55,7 @@ const FicheActionActeurs = ({
       {!isEmpty ? (
         <div
           className={classNames(
-            'bg-white border border-grey-3 rounded-lg py-7 lg:py-8 xl:py-10 px-5 lg:px-6 xl:px-8 relative flex flex-col items-start gap-y-3 gap-x-6',
+            'bg-white border border-grey-3 rounded-lg py-7 lg:py-8 xl:py-10 px-5 lg:px-6 xl:px-8 relative flex flex-col md:max-lg:grid md:max-lg:grid-cols-2 items-start gap-y-3 gap-x-6',
             className
           )}
         >
@@ -71,14 +70,6 @@ const FicheActionActeurs = ({
             />
           )}
           <div className="flex flex-col gap-3">
-            <ListeActeurs
-              dataTest="personnes-pilotes"
-              titre="Personne pilote"
-              liste={pilotes?.map((pilote) => pilote.nom!)}
-              picto={(className) => (
-                <PersonnePilotePicto className={className} />
-              )}
-            />
             {/* <ListeActeurs
               titre="Collaborateurs"
               liste={[]}
@@ -98,14 +89,14 @@ const FicheActionActeurs = ({
                 <StructurePilotePicto className={className} />
               )}
             />
-          </div>
-
-          <div className="flex flex-col gap-3">
             <ListeActeurs
               titre="Élu·e référent·e"
               liste={referents?.map((referent) => referent.nom!)}
               picto={(className) => <EluPicto className={className} />}
             />
+          </div>
+
+          <div className="flex flex-col gap-3">
             <ListeActeurs
               titre="Partenaires"
               liste={partenaires?.map((partenaire) => partenaire.nom!)}
@@ -137,7 +128,7 @@ const FicheActionActeurs = ({
         <EmptyCard
           picto={(className) => <EmptyActeursPicto className={className} />}
           title="Aucun acteur du projet n'est renseigné !"
-          subTitle="Personne pilote | Structure pilote | Élu·e référent·e | Direction ou service pilote | Partenaires | Cibles | Participation citoyenne"
+          subTitle="Structure pilote | Élu·e référent·e | Direction ou service pilote | Partenaires | Cibles | Participation citoyenne"
           isReadonly={isReadonly}
           action={{
             dataTest: 'acteurs',

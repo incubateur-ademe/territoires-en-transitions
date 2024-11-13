@@ -20,6 +20,7 @@ import Notes from './Notes';
 import Planning from './Planning';
 import Documents from './Documents';
 import NotesDeSuivi from './NotesDeSuivi';
+import Pilotes from './Pilotes';
 
 export type FicheActionPdfProps = {
   fiche: FicheAction;
@@ -64,17 +65,20 @@ const FicheActionPdf = ({
 
       {/* Informations principales */}
       <Stack wrap={false} direction="row">
-        <Stack className="w-3/5">
+        <Stack className="w-[49%]">
           {/* Dates et auteurs */}
           <CreationFiche fiche={fiche} />
 
-          {/* Planning */}
-          <Planning fiche={fiche} />
+          {/* Pilotes */}
+          <Pilotes fiche={fiche} />
         </Stack>
 
-        {/* Acteurs */}
-        <Acteurs fiche={fiche} />
+        {/* Planning */}
+        <Planning fiche={fiche} />
       </Stack>
+
+      {/* Acteurs */}
+      <Acteurs fiche={fiche} />
 
       {/* Indicateurs */}
       <Indicateurs fiche={fiche} indicateursListe={indicateursListe} />
