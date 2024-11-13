@@ -2,11 +2,13 @@ import { Injectable } from '@nestjs/common';
 import DatabaseService from '../../common/services/database.service';
 import { AuthService } from '../../auth/services/auth.service';
 import {
+  getFilteredIndicateurRequestQueryOptionSchema,
   GetFilteredIndicateurRequestQueryOptionType,
+  getFilteredIndicateursRequestOptionsSchema,
   GetFilteredIndicateursRequestOptionType,
 } from '../models/get-filtered-indicateurs.request';
 import { getTableName, sql } from 'drizzle-orm';
-import { isNil } from 'es-toolkit';
+import { intersection, isNil } from 'es-toolkit';
 import { GetFilteredIndicateurResponseType } from '../models/get-filtered-indicateurs.response';
 import type { SupabaseJwtPayload } from '../../auth/models/supabase-jwt.models';
 import { indicateurValeurTable } from '../models/indicateur-valeur.table';
@@ -120,6 +122,9 @@ export default class IndicateurFiltreService {
     queryOptions: GetFilteredIndicateurRequestQueryOptionType,
     tokenInfo: SupabaseJwtPayload
   ): Promise<GetFilteredIndicateurResponseType[]> {
+    // Vérifie les types TODO fait planter les tests unitaires alors que cette fonction n'est pas appelée
+    //getFilteredIndicateursRequestOptionsSchema.parse(filters);
+    //getFilteredIndicateurRequestQueryOptionSchema.parse(queryOptions);
     // Vérifie les droits
     await this.authService.verifieAccesRestreintCollectivite(
       tokenInfo,
@@ -702,49 +707,49 @@ export default class IndicateurFiltreService {
       const hasOpenData = options.hasOpenData ? indicateur.hasOpenData : true;
       const categoriesNoms =
         options.categorieNoms && options.categorieNoms.length > 0
-          ? this.hasCommunElement(
+          ? intersection(
               options.categorieNoms,
               indicateur.categorieNoms
-            )
+            ).length>0
           : true;
       const planActionIds =
         options.planActionIds && options.planActionIds.length > 0
-          ? this.hasCommunElement(options.planActionIds, indicateur.planIds)
+          ? intersection(options.planActionIds, indicateur.planIds).length>0
           : true;
       const ficheActionIds =
         options.ficheActionIds && options.ficheActionIds.length > 0
-          ? this.hasCommunElement(options.ficheActionIds, indicateur.ficheIds)
+          ? intersection(options.ficheActionIds, indicateur.ficheIds).length>0
           : true;
       const fichesNonClassees = options.fichesNonClassees
         ? indicateur.hasFichesNonClassees
         : true;
       const servicePiloteIds =
         options.servicePiloteIds && options.servicePiloteIds.length > 0
-          ? this.hasCommunElement(
+          ? intersection(
               options.servicePiloteIds,
               indicateur.serviceIds
-            )
+            ).length>0
           : true;
       const thematiqueIds =
         options.thematiqueIds && options.thematiqueIds.length > 0
-          ? this.hasCommunElement(
+          ? intersection(
               options.thematiqueIds,
               indicateur.thematiqueIds
-            )
+            ).length>0
           : true;
       const personnePiloteIds =
         options.personnePiloteIds && options.personnePiloteIds.length > 0
-          ? this.hasCommunElement(
+          ? intersection(
               options.personnePiloteIds,
               indicateur.piloteTagIds
-            )
+            ).length>0
           : true;
       const utilisateurPiloteIds =
         options.utilisateurPiloteIds && options.utilisateurPiloteIds.length > 0
-          ? this.hasCommunElement(
+          ? intersection(
               options.utilisateurPiloteIds,
               indicateur.piloteUserIds
-            )
+            ).length>0
           : true;
       const estComplet =
         options.estComplet === true
@@ -772,7 +777,7 @@ export default class IndicateurFiltreService {
         }
       }
       const actionId = options.actionId
-        ? this.hasCommunElement([options.actionId], indicateur.actionIds)
+        ? intersection([options.actionId], indicateur.actionIds).length>0
         : true;
 
       // Applique les conditions
@@ -824,16 +829,6 @@ export default class IndicateurFiltreService {
       });
     }
     return toReturn;
-  }
-
-  /**
-   * Retourne vrai si au moins un élément est commun dans les deux tableaux
-   * @param array1
-   * @param array2
-   */
-  private hasCommunElement(array1: any[], array2: any[]): boolean {
-    const set1 = new Set(array1);
-    return array2.some((element) => set1.has(element));
   }
 
   /**
