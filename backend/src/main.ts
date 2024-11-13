@@ -21,7 +21,9 @@ logger.log(`Launching NestJS app on port ${port}`);
 async function bootstrap() {
   initApplicationCredentials();
 
-  const app = await NestFactory.create(AppModule);
+  const app = await NestFactory.create(AppModule, {
+    logger: ['fatal', 'error', 'warn', 'log'], // No debug by default
+  });
   const { httpAdapter } = app.get(HttpAdapterHost);
 
   app.enableCors();
