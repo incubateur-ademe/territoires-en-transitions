@@ -1,7 +1,7 @@
 import { INestApplication, Injectable, Logger } from '@nestjs/common';
 import * as trpcExpress from '@trpc/server/adapters/express';
-import { TrajectoiresRouter } from './indicateurs/routers/trajectoires.router';
-import { TrpcService } from './trpc/services/trpc.service';
+import { TrpcService } from './trpc.service';
+import { TrajectoiresRouter } from '../indicateurs/routers/trajectoires.router';
 
 @Injectable()
 export class TrpcRouter {

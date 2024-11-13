@@ -4,7 +4,7 @@ import {
   SupabaseJwtPayload,
   SupabaseRole,
 } from '../../auth/models/supabase-jwt.models';
-import { TrpcService } from '../../trpc/services/trpc.service';
+import { TrpcService } from '../../trpc/trpc.service';
 import TrajectoiresSpreadsheetService from '../services/trajectoires-spreadsheet.service';
 
 @Injectable()

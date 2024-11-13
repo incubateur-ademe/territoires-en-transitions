@@ -11,7 +11,7 @@ import { ReferentielsModule } from './referentiels/referentiels.module';
 import { SheetModule } from './spreadsheets/sheet.module';
 import { TrpcModule } from './trpc/trpc.module';
 import { ConfigurationModule } from './config/configuration.module';
-import { TrpcRouter } from './trpc.router';
+import { TrpcRouter } from './trpc/trpc.router';
 
 @Module({
   imports: [

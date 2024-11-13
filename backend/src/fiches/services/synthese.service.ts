@@ -12,6 +12,7 @@ import {
   SQLWrapper,
 } from 'drizzle-orm';
 import { PgColumn } from 'drizzle-orm/pg-core';
+import { SupabaseJwtPayload } from '../../auth/models/supabase-jwt.models';
 import { AuthService } from '../../auth/services/auth.service';
 import { CountSyntheseType } from '../../common/models/count-synthese.dto';
 import { getModifiedSinceDate } from '../../common/models/modified-since.enum';
@@ -28,11 +29,10 @@ import {
 } from '../models/fiche-action.table';
 import { GetFichesActionSyntheseResponseType } from '../models/get-fiches-action-synthese.response';
 import { GetFichesActionFilterRequestType } from '../models/get-fiches-actions-filter.request';
-import { SupabaseJwtPayload } from '../../auth/models/supabase-jwt.models';
 
 @Injectable()
-export default class FichesActionSyntheseService {
-  private readonly logger = new Logger(FichesActionSyntheseService.name);
+export default class SyntheseService {
+  private readonly logger = new Logger(SyntheseService.name);
 
   private readonly FICHE_ACTION_PARTENAIRE_TAGS_QUERY_ALIAS =
     'ficheActionPartenaireTags';
@@ -70,7 +70,7 @@ export default class FichesActionSyntheseService {
     return synthese;
   }
 
-  getFicheActionPartenaireTagsQuery() {
+  private getFicheActionPartenaireTagsQuery() {
     return this.databaseService.db
       .select({
         fiche_id: ficheActionPartenaireTagTable.ficheId,
@@ -84,7 +84,7 @@ export default class FichesActionSyntheseService {
       .as(this.FICHE_ACTION_PARTENAIRE_TAGS_QUERY_ALIAS);
   }
 
-  getFicheActionAxesQuery() {
+  private getFicheActionAxesQuery() {
     return this.databaseService.db
       .select({
         fiche_id: ficheActionAxeTable.ficheId,
@@ -97,7 +97,7 @@ export default class FichesActionSyntheseService {
       .as('ficheActionAxes');
   }
 
-  getFicheActionServiceTagsQuery() {
+  private getFicheActionServiceTagsQuery() {
     return this.databaseService.db
       .select({
         fiche_id: ficheActionServiceTagTable.ficheId,
@@ -111,7 +111,7 @@ export default class FichesActionSyntheseService {
       .as('ficheActionServiceTag');
   }
 
-  getFicheActionPilotesQuery() {
+  private getFicheActionPilotesQuery() {
     return this.databaseService.db
       .select({
         fiche_id: ficheActionPiloteTable.ficheId,
@@ -179,7 +179,7 @@ export default class FichesActionSyntheseService {
     return await fichesActionQuery;
   }
 
-  getConditions(
+  private getConditions(
     collectiviteId: number,
     filter: GetFichesActionFilterRequestType
   ): (SQLWrapper | SQL)[] {
@@ -242,7 +242,7 @@ export default class FichesActionSyntheseService {
     return conditions;
   }
 
-  async getSynthesePourPropriete(
+  private async getSynthesePourPropriete(
     propriete: PgColumn,
     conditions: (SQLWrapper | SQL)[],
     listeValeurs?: string[],

@@ -3,13 +3,13 @@ import { AuthModule } from '../auth/auth.module';
 import { CollectivitesModule } from '../collectivites/collectivites.module';
 import { CommonModule } from '../common/common.module';
 import { FichesActionController } from './controllers/fiches-action.controller';
-import FichesActionSyntheseService from './services/fiches-action-synthese.service';
+import SyntheseService from './services/synthese.service';
 import FichesActionUpdateService from './services/fiches-action-update.service';
 
 @Module({
   imports: [CommonModule, AuthModule, CollectivitesModule],
-  providers: [FichesActionSyntheseService, FichesActionUpdateService],
-  exports: [FichesActionSyntheseService],
+  providers: [SyntheseService, FichesActionUpdateService],
+  exports: [SyntheseService],
   controllers: [FichesActionController],
 })
 export class FichesActionModule {}
