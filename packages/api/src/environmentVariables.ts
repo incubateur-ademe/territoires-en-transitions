@@ -10,4 +10,5 @@ export const ENV = {
     env: process.env.NODE_ENV,
   },
   crisp_website_id: process.env.NEXT_PUBLIC_CRISP_WEBSITE_ID,
+  app_url: process.env.NEXT_PUBLIC_APP_URL,
 };
