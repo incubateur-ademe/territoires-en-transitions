@@ -606,16 +606,23 @@ export default class ReferentielsScoringService {
     }
 
     //
+    this.fillEtoilesInScore(
+      referentielActionAvecScore.score,
+      etoilesDefinition
+    );
+  }
+
+  fillEtoilesInScore(
+    score: ActionScoreType,
+    etoilesDefinition: LabellisationEtoileMetaType[]
+  ) {
     // WARNING the etoiles definition is supposed to have been sorted by minRealisePercentage desc
     for (const etoileDefinition of etoilesDefinition) {
-      const scorePercentage = referentielActionAvecScore.score.pointPotentiel
-        ? ((referentielActionAvecScore.score.pointFait || 0) * 100) /
-          referentielActionAvecScore.score.pointPotentiel
+      const scorePercentage = score.pointPotentiel
+        ? ((score.pointFait || 0) * 100) / score.pointPotentiel
         : 0;
       if (scorePercentage >= etoileDefinition.minRealisePercentage) {
-        referentielActionAvecScore.score.etoiles = parseInt(
-          etoileDefinition.etoile
-        );
+        score.etoiles = parseInt(etoileDefinition.etoile);
         break;
       }
     }
@@ -948,7 +955,8 @@ export default class ReferentielsScoringService {
           referentiel.itemsTree!,
           collectiviteId,
           parameters.jalon,
-          auditId
+          auditId,
+          etoilesDefinitions
         );
         referentielWithScore = scoresResult.referentielWithScore;
         parameters.date = scoresResult.date;
@@ -1310,7 +1318,8 @@ export default class ReferentielsScoringService {
           referentielsOriginePromiseScores.push(
             this.getClientScoresForCollectivite(
               referentielOrigine as ReferentielType,
-              collectiviteId
+              collectiviteId,
+              etoilesDefinitions
             )
           );
         });
@@ -1320,7 +1329,9 @@ export default class ReferentielsScoringService {
           referentielsOriginePromiseScores.push(
             this.getPreAuditScoresForCollectivite(
               referentielOrigine as ReferentielType,
-              collectiviteId
+              collectiviteId,
+              undefined,
+              etoilesDefinitions
             )
           );
         });
@@ -1331,7 +1342,8 @@ export default class ReferentielsScoringService {
             this.getPostAuditScoresForCollectivite(
               referentielOrigine as ReferentielType,
               collectiviteId,
-              1 // TODO
+              undefined,
+              etoilesDefinitions
             )
           );
         });
@@ -1473,7 +1485,8 @@ export default class ReferentielsScoringService {
     referentiel: ReferentielActionType,
     collectiviteId: number,
     jalon: ScoreJalon,
-    auditId?: number
+    auditId?: number,
+    etoiles?: LabellisationEtoileMetaType[]
   ): Promise<{
     date: string;
     referentielWithScore: ReferentielActionWithScoreType;
@@ -1487,19 +1500,22 @@ export default class ReferentielsScoringService {
     if (jalon === ScoreJalon.SCORE_COURANT) {
       scoresResult = await this.getClientScoresForCollectivite(
         referentiel.actionId as ReferentielType,
-        collectiviteId
+        collectiviteId,
+        etoiles
       );
     } else if (jalon === ScoreJalon.DEBUT_AUDIT) {
       scoresResult = await this.getPreAuditScoresForCollectivite(
         referentiel.actionId as ReferentielType,
         collectiviteId,
-        auditId!
+        auditId!,
+        etoiles
       );
     } else if (jalon === ScoreJalon.FIN_AUDIT) {
       scoresResult = await this.getPostAuditScoresForCollectivite(
         referentiel.actionId as ReferentielType,
         collectiviteId,
-        auditId!
+        auditId!,
+        etoiles
       );
     }
 
@@ -1523,7 +1539,8 @@ export default class ReferentielsScoringService {
 
   async getClientScoresForCollectivite(
     referentielId: ReferentielType,
-    collectiviteId: number
+    collectiviteId: number,
+    etoilesDefinition?: LabellisationEtoileMetaType[]
   ): Promise<{
     date: string;
     scoresMap: GetActionScoresResponseType;
@@ -1542,11 +1559,12 @@ export default class ReferentielsScoringService {
         )
       )
       .orderBy(desc(clientScoresTable.payloadTimestamp));
-    return this.getFirstDatabaseScoreFromJsonb(scores);
+    return this.getFirstDatabaseScoreFromJsonb(scores, etoilesDefinition);
   }
 
   async getFirstDatabaseScoreFromJsonb(
-    scoreRecords: ClientScoresType[]
+    scoreRecords: ClientScoresType[],
+    etoilesDefinition?: LabellisationEtoileMetaType[]
   ): Promise<{
     date: string;
     scoresMap: GetActionScoresResponseType;
@@ -1574,6 +1592,11 @@ export default class ReferentielsScoringService {
       getActionScoresResponse[score.actionId] = score;
     });
 
+    const rootScore = getActionScoresResponse[scoreRecords[0].referentiel];
+    if (etoilesDefinition && rootScore) {
+      this.fillEtoilesInScore(rootScore, etoilesDefinition);
+    }
+
     return {
       date: lastScoreDate.toISOString(),
       scoresMap: getActionScoresResponse,
@@ -1583,7 +1606,8 @@ export default class ReferentielsScoringService {
   async getPreAuditScoresForCollectivite(
     referentielId: ReferentielType,
     collectiviteId: number,
-    auditId?: number
+    auditId?: number,
+    etoilesDefinition?: LabellisationEtoileMetaType[]
   ): Promise<{
     date: string;
     scoresMap: GetActionScoresResponseType;
@@ -1605,13 +1629,14 @@ export default class ReferentielsScoringService {
       .from(preAuditScoresTable)
       .where(and(...conditions))
       .orderBy(desc(preAuditScoresTable.payloadTimestamp));
-    return this.getFirstDatabaseScoreFromJsonb(scores);
+    return this.getFirstDatabaseScoreFromJsonb(scores, etoilesDefinition);
   }
 
   async getPostAuditScoresForCollectivite(
     referentielId: ReferentielType,
     collectiviteId: number,
-    auditId?: number
+    auditId?: number,
+    etoilesDefinition?: LabellisationEtoileMetaType[]
   ): Promise<{
     date: string;
     scoresMap: GetActionScoresResponseType;
@@ -1633,7 +1658,7 @@ export default class ReferentielsScoringService {
       .from(postAuditScoresTable)
       .where(and(...conditions))
       .orderBy(desc(postAuditScoresTable.payloadTimestamp));
-    return this.getFirstDatabaseScoreFromJsonb(scores);
+    return this.getFirstDatabaseScoreFromJsonb(scores, etoilesDefinition);
   }
 
   async checkScoreForCollectivite(
