@@ -71,6 +71,26 @@ export const PlansActionsRoutes = ({ collectivite_id, readonly }: Props) => {
                 href={makeCollectivitePlansActionsNouveauUrl({
                   collectiviteId: collectivite_id,
                 })}
+                onClick={() => {
+                  $crisp.push(['do', 'chat:open']);
+                  $crisp.push([
+                    'do',
+                    'message:show',
+                    [
+                      'text',
+                      'On est là pour vous aider à mettre en ligne vos plans d’action. Si vous hésitez entre les options de mise en ligne ou que vous avez des questions, contactez-nous !',
+                    ],
+                  ]);
+                  $crisp.push([
+                    'do',
+                    'message:show',
+                    [
+                      'text',
+                      "Vous trouverez aussi des infos utiles dans notre [Centre d'aide](https://aide.territoiresentransitions.fr/fr/article/comment-mettre-en-ligne-votre-plan-daction-1skcwdw/)",
+                    ],
+                  ]);
+                  $crisp.push(['do', 'message:show', ['text', 'À bientôt 😄']]);
+                }}
               >
                 Ajouter un plan d&apos;action
               </Link>
@@ -83,7 +103,7 @@ export const PlansActionsRoutes = ({ collectivite_id, readonly }: Props) => {
         {readonly && axes.length === 0 ? (
           <div className="flex">
             <div className="mt-64 mx-auto leading-relaxed text-grey-6 text-center">
-              Aucun plan d'action n'a été ajouté
+              Aucun plan d&apos;action n&apos;a été ajouté
               <br />
               par cette collectivité pour le moment.
             </div>
