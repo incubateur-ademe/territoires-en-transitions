@@ -6,21 +6,24 @@ import { YOLO_DODO_CREDENTIALS } from '../auth/test-users.samples';
 import { default as request } from 'supertest';
 import {
   GetFilteredIndicateurRequestQueryOptionType,
-  GetFilteredIndicateursRequestOptionType
+  GetFilteredIndicateursRequestOptionType,
 } from '../../src/indicateurs/models/get-filtered-indicateurs.request';
+import { getFilteredIndicateursResponseSchema } from '../../src/indicateurs/models/get-filtered-indicateurs.response';
 
 describe('Route de lecture des indicateurs filtrés', () => {
   let app: INestApplication;
   let supabase: SupabaseClient;
   let yoloDodoToken: string;
-  const queryOptions : GetFilteredIndicateurRequestQueryOptionType = {
-    page : 1,
-    limit : 10,
-    sort: [{
-      field : "estComplet",
-      direction : "asc"
-    }]
-  }
+  const queryOptions: GetFilteredIndicateurRequestQueryOptionType = {
+    page: 1,
+    limit: 10,
+    sort: [
+      {
+        field: 'estComplet',
+        direction: 'asc',
+      },
+    ],
+  };
 
   beforeAll(async () => {
     const moduleRef = await Test.createTestingModule({
@@ -52,31 +55,33 @@ describe('Route de lecture des indicateurs filtrés', () => {
     params.append('options', JSON.stringify(options));
     params.append('queryOptions', JSON.stringify(queryOptions));
 
-    await request(app.getHttpServer())
+    const result = await request(app.getHttpServer())
       .get(`/indicateurs/filtre?${params.toString()}`)
       .set('Authorization', `Bearer ${yoloDodoToken}`)
       .expect(200);
+    const toCheck = getFilteredIndicateursResponseSchema.safeParse(result.body);
+    expect(toCheck.success).toBeTruthy;
   });
 
   it(`Test que la requête s'exécute avec tous les filtres`, async () => {
     const options: GetFilteredIndicateursRequestOptionType = {
-      actionId : 'eci_2',
-      participationScore : false,
-      estComplet : false,
-      estConfidentiel : true,
-      estFavorisCollectivite : true,
-      fichesNonClassees : true,
-      text : 'de',
-      estPerso : false,
-      categorieNoms : ['cae'],
-      hasOpenData : true,
-      thematiqueIds : [1],
-      planActionIds : [1],
-      utilisateurPiloteIds : ['t'],
-      personnePiloteIds : [1],
-      servicePiloteIds : [1],
-      ficheActionIds : [1],
-      avecEnfants : false
+      actionId: 'eci_2',
+      participationScore: false,
+      estComplet: false,
+      estConfidentiel: true,
+      estFavorisCollectivite: true,
+      fichesNonClassees: true,
+      text: 'de',
+      estPerso: false,
+      categorieNoms: ['cae'],
+      hasOpenData: true,
+      thematiqueIds: [1],
+      planActionIds: [1],
+      utilisateurPiloteIds: ['t'],
+      personnePiloteIds: [1],
+      servicePiloteIds: [1],
+      ficheActionIds: [1],
+      avecEnfants: false,
     };
 
     const params = new URLSearchParams();
@@ -89,5 +94,4 @@ describe('Route de lecture des indicateurs filtrés', () => {
       .set('Authorization', `Bearer ${yoloDodoToken}`)
       .expect(200);
   });
-
 });
