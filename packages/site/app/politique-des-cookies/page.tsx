@@ -1,8 +1,7 @@
 'use server';
 
-import Section from '@tet/site/components/sections/Section';
 import { Metadata } from 'next';
-import Cookies from './cookies.mdx';
+import CookiesContent from './CookiesContent';
 
 export async function generateMetadata(): Promise<Metadata> {
   return {
@@ -11,10 +10,5 @@ export async function generateMetadata(): Promise<Metadata> {
 }
 
 export default async function Page() {
-  return (
-    <Section>
-      <h1 className="fr-header__body">Politique des cookies</h1>
-      <Cookies />
-    </Section>
-  );
+  return <CookiesContent />;
 }
