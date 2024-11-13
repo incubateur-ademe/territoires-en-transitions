@@ -18,7 +18,7 @@ type Props = {
 
 const MenuFiltresTousLesIndicateurs = ({ filters, setFilters }: Props) => {
   return (
-    <div className="w-96 flex flex-col gap-8 p-4">
+    <div className="w-96 md:w-[48rem] grid md:grid-cols-2 gap-8 lg:gap-12 p-4 lg:p-8">
       <FormSection title="Typologie :" className="!grid-cols-1">
         <Checkbox
           label="Données Open Data"
