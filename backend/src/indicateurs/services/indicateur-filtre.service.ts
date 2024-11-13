@@ -1,11 +1,11 @@
-import { Injectable, Logger } from '@nestjs/common';
+import { Injectable } from '@nestjs/common';
 import DatabaseService from '../../common/services/database.service';
 import { AuthService } from '../../auth/services/auth.service';
 import {
   GetFilteredIndicateurRequestQueryOptionType,
   GetFilteredIndicateursRequestOptionType,
 } from '../models/get-filtered-indicateurs.request';
-import { sql, getTableName } from 'drizzle-orm';
+import { getTableName, sql } from 'drizzle-orm';
 import { isNil } from 'es-toolkit';
 import { GetFilteredIndicateurResponseType } from '../models/get-filtered-indicateurs.response';
 import type { SupabaseJwtPayload } from '../../auth/models/supabase-jwt.models';
@@ -33,7 +33,11 @@ export type RequestResultIndicateursRaw = {
   description: string | null;
   collectiviteId: number | null;
   groupementId: number | null;
+  parent?: number | null;
+  enfant?: number | null;
   participationScore: boolean | null;
+  confidentiel?: boolean | null;
+  favoris?: boolean | null;
   valeurId: number | null;
   metadonneeId: number | null;
   categorieNom?: string | null;
@@ -44,22 +48,23 @@ export type RequestResultIndicateursRaw = {
   thematiqueId?: number | null;
   piloteUserId?: string | null;
   piloteTagId?: number | null;
-  confidentiel?: boolean | null;
-  favoris?: boolean | null;
-  parent?: number | null;
-  enfant?: number | null;
   actionId?: string | null;
 };
-export type IndicateurGroupedWithSetType = {
+type IndicateurGroupedWithSetType = {
   id: number;
   identifiantReferentiel: string | null;
   titre: string | null;
   description: string | null;
   collectiviteId: number | null;
   groupementId: number | null;
+  parents: Set<number>;
+  enfants: Set<number>;
   participationScore: boolean | null;
   confidentiel?: boolean | null;
   favoris?: boolean | null;
+  hasFichesNonClassees: boolean;
+  isCompleted: boolean;
+  hasOpenData: boolean;
   categorieNoms: Set<string>;
   planIds: Set<number>;
   ficheIds: Set<number>;
@@ -67,15 +72,13 @@ export type IndicateurGroupedWithSetType = {
   thematiqueIds: Set<number>;
   piloteUserIds: Set<string>;
   piloteTagIds: Set<number>;
-  parents: Set<number>;
-  enfants: Set<number>;
   actionIds: Set<string>;
   participationScoreEnfant: boolean | null;
   confidentielEnfant?: boolean | null;
   favorisEnfant?: boolean | null;
-  hasFichesNonClassees: boolean;
-  isCompleted: boolean;
-  hasOpenData: boolean;
+  hasFichesNonClasseesEnfant: boolean;
+  isCompletedEnfant: boolean;
+  hasOpenDataEnfant: boolean;
   categorieNomsEnfant: Set<string>;
   planIdsEnfant: Set<number>;
   ficheIdsEnfant: Set<number>;
@@ -83,23 +86,21 @@ export type IndicateurGroupedWithSetType = {
   thematiqueIdsEnfant: Set<number>;
   piloteUserIdsEnfant: Set<string>;
   piloteTagIdsEnfant: Set<number>;
-  hasFichesNonClasseesEnfant: boolean;
-  isCompletedEnfant: boolean;
-  hasOpenDataEnfant: boolean;
+  actionIdsEnfant: Set<string>;
 };
 
+// IndicateurGroupedWithSetType sans les attributs terminant par Enfant
+// et avec les sets transformés en tableaux
 export type IndicateurGroupedWithArrayType = {
-  [K in keyof IndicateurGroupedWithSetType]: IndicateurGroupedWithSetType[K] extends Set<
-    infer U
-  >
+  [K in keyof IndicateurGroupedWithSetType as K extends `${infer Base}Enfant`
+    ? never
+    : K]: IndicateurGroupedWithSetType[K] extends Set<infer U>
     ? U[]
     : IndicateurGroupedWithSetType[K];
 };
 
 @Injectable()
 export default class IndicateurFiltreService {
-  private readonly logger = new Logger(IndicateurFiltreService.name);
-
   constructor(
     private readonly databaseService: DatabaseService,
     private readonly authService: AuthService
@@ -161,7 +162,7 @@ export default class IndicateurFiltreService {
       titre: indicateur.titre,
       estPerso: !isNil(indicateur.collectiviteId),
       identifiant: indicateur.identifiantReferentiel,
-      hasOpenData: indicateur.hasOpenDataEnfant,
+      hasOpenData: indicateur.hasOpenData,
     }));
   }
 
@@ -445,7 +446,11 @@ export default class IndicateurFiltreService {
         description: row.description as string | null,
         collectiviteId: row.collectiviteId as number | null,
         groupementId: row.groupementId as number | null,
+        parent: row.parent as number | null,
+        enfant: row.enfant as number | null,
         participationScore: row.participationScore as boolean | null,
+        confidentiel: row.confidentiel as boolean | null,
+        favoris: row.favoris as boolean | null,
         valeurId: row.valeurId as number | null,
         metadonneeId: row.metadonneeId as number | null,
         categorieNom: row.categorieNom as string | null,
@@ -456,10 +461,6 @@ export default class IndicateurFiltreService {
         thematiqueId: row.thematiqueId as number | null,
         piloteUserId: row.piloteUserId as string | null,
         piloteTagId: row.piloteTagId as number | null,
-        confidentiel: row.confidentiel as boolean | null,
-        favoris: row.favoris as boolean | null,
-        parent: row.parent as number | null,
-        enfant: row.enfant as number | null,
         actionId: row.actionId as string | null,
       })) as RequestResultIndicateursRaw[];
     } catch (error) {
@@ -478,46 +479,7 @@ export default class IndicateurFiltreService {
     indicateurs: RequestResultIndicateursRaw[],
     avecEnfant: boolean
   ): IndicateurGroupedWithArrayType[] {
-    const groupedResults = new Map<
-      number,
-      {
-        id: number;
-        identifiantReferentiel: string | null;
-        titre: string | null;
-        description: string | null;
-        collectiviteId: number | null;
-        groupementId: number | null;
-        participationScore: boolean | null;
-        confidentiel?: boolean | null;
-        favoris?: boolean | null;
-        categorieNoms: Set<string>;
-        planIds: Set<number>;
-        ficheIds: Set<number>;
-        serviceIds: Set<number>;
-        thematiqueIds: Set<number>;
-        piloteUserIds: Set<string>;
-        piloteTagIds: Set<number>;
-        parents: Set<number>;
-        enfants: Set<number>;
-        actionIds: Set<string>;
-        participationScoreEnfant: boolean | null;
-        confidentielEnfant?: boolean | null;
-        favorisEnfant?: boolean | null;
-        hasFichesNonClassees: boolean;
-        isCompleted: boolean;
-        hasOpenData: boolean;
-        categorieNomsEnfant: Set<string>;
-        planIdsEnfant: Set<number>;
-        ficheIdsEnfant: Set<number>;
-        serviceIdsEnfant: Set<number>;
-        thematiqueIdsEnfant: Set<number>;
-        piloteUserIdsEnfant: Set<string>;
-        piloteTagIdsEnfant: Set<number>;
-        hasFichesNonClasseesEnfant: boolean;
-        isCompletedEnfant: boolean;
-        hasOpenDataEnfant: boolean;
-      }
-    >();
+    const groupedResults = new Map<number, IndicateurGroupedWithSetType>();
     // Parcours le résultat de la requête pour regrouper les tables liés à un même indicateur sous des sets
     indicateurs.forEach((row) => {
       // Récupère l'objet correspondant à l'indicateur en cours ou le créé s'il n'existe pas encore
@@ -533,6 +495,9 @@ export default class IndicateurFiltreService {
           participationScore: row.participationScore,
           confidentiel: row.confidentiel,
           favoris: row.favoris,
+          hasFichesNonClassees: false,
+          isCompleted: false,
+          hasOpenData: false,
           categorieNoms: new Set(),
           planIds: new Set(),
           ficheIds: new Set(),
@@ -543,12 +508,12 @@ export default class IndicateurFiltreService {
           parents: new Set(),
           enfants: new Set(),
           actionIds: new Set(),
-          hasFichesNonClassees: false,
-          isCompleted: false,
-          hasOpenData: false,
           participationScoreEnfant: row.participationScore,
           confidentielEnfant: row.confidentiel,
           favorisEnfant: row.favoris,
+          hasFichesNonClasseesEnfant: false,
+          isCompletedEnfant: false,
+          hasOpenDataEnfant: false,
           categorieNomsEnfant: new Set(),
           planIdsEnfant: new Set(),
           ficheIdsEnfant: new Set(),
@@ -556,9 +521,7 @@ export default class IndicateurFiltreService {
           thematiqueIdsEnfant: new Set(),
           piloteUserIdsEnfant: new Set(),
           piloteTagIdsEnfant: new Set(),
-          hasFichesNonClasseesEnfant: false,
-          isCompletedEnfant: false,
-          hasOpenDataEnfant: false,
+          actionIdsEnfant: new Set(),
         };
         groupedResults.set(row.id, indicateur);
       }
@@ -600,6 +563,7 @@ export default class IndicateurFiltreService {
       }
       if (row.actionId) {
         indicateur.actionIds.add(row.actionId);
+        indicateur.actionIdsEnfant.add(row.actionId);
       }
       // Vérifie s'il y a une fiche non classée
       if (row.ficheId && !row.axeId) {
@@ -670,6 +634,10 @@ export default class IndicateurFiltreService {
                 indicateur.piloteTagIdsEnfant.add,
                 indicateur.piloteTagIdsEnfant
               );
+              enfant.actionIds.forEach(
+                indicateur.actionIdsEnfant.add,
+                indicateur.actionIdsEnfant
+              );
             }
           }
         }
@@ -677,26 +645,31 @@ export default class IndicateurFiltreService {
     }
 
     // Transforme la map et les sets en tableau pour faciliter leur lecture
+    // Applique les attributs %Enfant dans les attributs sans pour éviter la confusion
+    // Enlève les attributs non utilisés ensuite
     return Array.from(groupedResults.values()).map((item) => ({
-      ...item,
-      categorieNoms: Array.from(item.categorieNoms),
-      planIds: Array.from(item.planIds),
-      ficheIds: Array.from(item.ficheIds),
-      serviceIds: Array.from(item.serviceIds),
-      thematiqueIds: Array.from(item.thematiqueIds),
-      piloteUserIds: Array.from(item.piloteUserIds),
-      piloteTagIds: Array.from(item.piloteTagIds),
+      id: item.id,
+      identifiantReferentiel: item.identifiantReferentiel,
+      titre: item.titre,
+      description: item.description,
+      collectiviteId: item.collectiviteId,
+      groupementId: item.groupementId,
       parents: Array.from(item.parents),
       enfants: Array.from(item.enfants),
-      actionIds: Array.from(item.actionIds),
-      categorieNomsEnfant: Array.from(item.categorieNomsEnfant),
-      planIdsEnfant: Array.from(item.planIdsEnfant),
-      ficheIdsEnfant: Array.from(item.ficheIdsEnfant),
-      serviceIdsEnfant: Array.from(item.serviceIdsEnfant),
-      thematiqueIdsEnfant: Array.from(item.thematiqueIdsEnfant),
-      piloteUserIdsEnfant: Array.from(item.piloteUserIdsEnfant),
-      piloteTagIdsEnfant: Array.from(item.piloteTagIdsEnfant),
-      // TODO enlever champs non utilisés
+      participationScore: item.participationScoreEnfant,
+      confidentiel: item.confidentielEnfant,
+      favoris: item.favorisEnfant,
+      hasFichesNonClassees: item.hasFichesNonClasseesEnfant,
+      isCompleted: item.isCompletedEnfant,
+      hasOpenData: item.hasOpenDataEnfant,
+      categorieNoms: Array.from(item.categorieNomsEnfant),
+      planIds: Array.from(item.planIdsEnfant),
+      ficheIds: Array.from(item.ficheIdsEnfant),
+      serviceIds: Array.from(item.serviceIdsEnfant),
+      thematiqueIds: Array.from(item.thematiqueIdsEnfant),
+      piloteUserIds: Array.from(item.piloteUserIdsEnfant),
+      piloteTagIds: Array.from(item.piloteTagIdsEnfant),
+      actionIds: Array.from(item.actionIdsEnfant),
     }));
   }
 
@@ -718,37 +691,29 @@ export default class IndicateurFiltreService {
         ? true
         : !indicateur.parents || indicateur.parents.length === 0;
       const participationScore = options.participationScore
-        ? indicateur.participationScoreEnfant === true
+        ? indicateur.participationScore === true
         : true;
       const estConfidentiel = options.estConfidentiel
-        ? indicateur.confidentielEnfant === true
+        ? indicateur.confidentiel === true
         : true;
       const estFavorisCollectivite = options.estFavorisCollectivite
-        ? indicateur.favorisEnfant === true
+        ? indicateur.favoris === true
         : true;
-      const hasOpenData = options.hasOpenData
-        ? indicateur.hasOpenDataEnfant
-        : true;
+      const hasOpenData = options.hasOpenData ? indicateur.hasOpenData : true;
       const categoriesNoms =
         options.categorieNoms && options.categorieNoms.length > 0
           ? this.hasCommunElement(
               options.categorieNoms,
-              indicateur.categorieNomsEnfant
+              indicateur.categorieNoms
             )
           : true;
       const planActionIds =
         options.planActionIds && options.planActionIds.length > 0
-          ? this.hasCommunElement(
-              options.planActionIds,
-              indicateur.planIdsEnfant
-            )
+          ? this.hasCommunElement(options.planActionIds, indicateur.planIds)
           : true;
       const ficheActionIds =
         options.ficheActionIds && options.ficheActionIds.length > 0
-          ? this.hasCommunElement(
-              options.ficheActionIds,
-              indicateur.ficheIdsEnfant
-            )
+          ? this.hasCommunElement(options.ficheActionIds, indicateur.ficheIds)
           : true;
       const fichesNonClassees = options.fichesNonClassees
         ? indicateur.hasFichesNonClassees
@@ -757,35 +722,35 @@ export default class IndicateurFiltreService {
         options.servicePiloteIds && options.servicePiloteIds.length > 0
           ? this.hasCommunElement(
               options.servicePiloteIds,
-              indicateur.serviceIdsEnfant
+              indicateur.serviceIds
             )
           : true;
       const thematiqueIds =
         options.thematiqueIds && options.thematiqueIds.length > 0
           ? this.hasCommunElement(
               options.thematiqueIds,
-              indicateur.thematiqueIdsEnfant
+              indicateur.thematiqueIds
             )
           : true;
       const personnePiloteIds =
         options.personnePiloteIds && options.personnePiloteIds.length > 0
           ? this.hasCommunElement(
               options.personnePiloteIds,
-              indicateur.piloteTagIdsEnfant
+              indicateur.piloteTagIds
             )
           : true;
       const utilisateurPiloteIds =
         options.utilisateurPiloteIds && options.utilisateurPiloteIds.length > 0
           ? this.hasCommunElement(
               options.utilisateurPiloteIds,
-              indicateur.piloteUserIdsEnfant
+              indicateur.piloteUserIds
             )
           : true;
       const estComplet =
         options.estComplet === true
-          ? indicateur.isCompletedEnfant
+          ? indicateur.isCompleted
           : options.estComplet === false
-          ? !indicateur.isCompletedEnfant
+          ? !indicateur.isCompleted
           : true;
 
       let text = true;
@@ -806,7 +771,6 @@ export default class IndicateurFiltreService {
               : false);
         }
       }
-      // TODO aller chercher dans les enfants ?
       const actionId = options.actionId
         ? this.hasCommunElement([options.actionId], indicateur.actionIds)
         : true;
@@ -856,7 +820,7 @@ export default class IndicateurFiltreService {
     // Tri une seconde fois si demandé par complétude
     if (queryOptions?.sort?.at(0)?.field === 'estComplet') {
       toReturn = toReturn.sort((a, b) => {
-        return Number(a.isCompletedEnfant) - Number(b.isCompletedEnfant);
+        return Number(a.isCompleted) - Number(b.isCompleted);
       });
     }
     return toReturn;
