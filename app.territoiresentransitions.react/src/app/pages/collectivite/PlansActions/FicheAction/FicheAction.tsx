@@ -9,6 +9,7 @@ import FicheActionHeader from './FicheActionHeader/FicheActionHeader';
 import FicheActionImpact from './FicheActionImpact';
 import FicheActionOnglets from './FicheActionOnglets';
 import FicheActionPlanning from './FicheActionPlanning/FicheActionPlanning';
+import FicheActionPilotes from './FicheActionPilotes/FicheActionPilotes';
 import FicheActionRestreint from './FicheActionRestreint/FicheActionRestreint';
 import { useParams } from 'react-router-dom';
 
@@ -95,20 +96,27 @@ const FicheAction = ({ isReadonly }: FicheActionProps) => {
                   </div>
                 )}
 
-                {/* Planning prévisionnel */}
-                <FicheActionPlanning
+                {/* Pilotes */}
+                <FicheActionPilotes
                   isReadonly={isReadonly}
                   fiche={fiche}
                   updateFiche={updateFiche}
-                  className="grow"
                 />
               </div>
+
+              {/* Planning prévisionnel */}
+              <FicheActionPlanning
+                isReadonly={isReadonly}
+                fiche={fiche}
+                updateFiche={updateFiche}
+              />
 
               {/* Acteurs du projet */}
               <FicheActionActeurs
                 isReadonly={isReadonly}
                 fiche={fiche}
                 updateFiche={updateFiche}
+                className="md:max-lg:col-span-2"
               />
             </div>
 

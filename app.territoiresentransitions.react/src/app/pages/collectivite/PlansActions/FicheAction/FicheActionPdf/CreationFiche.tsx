@@ -13,11 +13,12 @@ const CreationFiche = ({ fiche }: FicheActionPdfProps) => {
         {modifiedAt && (
           <>
             Dernière modification le{' '}
-            {format(new Date(modifiedAt), 'dd/MM/yyyy')},{' '}
+            {format(new Date(modifiedAt), 'dd/MM/yyyy')}
           </>
         )}
-        {modifiedAt ? 't' : 'T'}éléchargée le {format(new Date(), 'dd/MM/yyyy')}
       </Paragraph>
+
+      <Paragraph>Téléchargée le {format(new Date(), 'dd/MM/yyyy')}</Paragraph>
 
       {createdAt && (
         <Paragraph>

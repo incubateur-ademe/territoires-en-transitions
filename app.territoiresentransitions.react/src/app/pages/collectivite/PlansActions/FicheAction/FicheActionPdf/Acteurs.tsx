@@ -4,7 +4,6 @@ import {
   CitoyenPicto,
   EluPicto,
   PartenairePicto,
-  PersonnePilotePicto,
   ServicePilotePicto,
   StructurePilotePicto,
 } from 'ui/export-pdf/assets/picto';
@@ -56,7 +55,6 @@ const ListeActeurs = ({ titre, liste, comment, picto }: ListeActeursProps) => {
 
 const Acteurs = ({ fiche }: FicheActionPdfProps) => {
   const {
-    pilotes,
     services,
     structures,
     referents,
@@ -67,58 +65,52 @@ const Acteurs = ({ fiche }: FicheActionPdfProps) => {
   } = fiche;
 
   return (
-    <Card className="w-2/5">
-      <ListeActeurs
-        titre="Personne pilote"
-        liste={pilotes?.map((pilote) => pilote.nom!)}
-        picto={(className) => <PersonnePilotePicto className={className} />}
-      />
+    <Card wrap={false} direction="row">
+      <Stack className="w-[49%]">
+        <ListeActeurs
+          titre="Direction ou service pilote"
+          liste={services?.map((service) => service.nom!)}
+          picto={(className) => <ServicePilotePicto className={className} />}
+        />
+        <ListeActeurs
+          titre="Structure pilote"
+          liste={structures?.map((structure) => structure.nom!)}
+          picto={(className) => <StructurePilotePicto className={className} />}
+        />
+        <ListeActeurs
+          titre="Élu·e référent·e"
+          liste={referents?.map((referent) => referent.nom!)}
+          picto={(className) => <EluPicto className={className} />}
+        />
+      </Stack>
 
-      <ListeActeurs
-        titre="Direction ou service pilote"
-        liste={services?.map((service) => service.nom!)}
-        picto={(className) => <ServicePilotePicto className={className} />}
-      />
-
-      <ListeActeurs
-        titre="Structure pilote"
-        liste={structures?.map((structure) => structure.nom!)}
-        picto={(className) => <StructurePilotePicto className={className} />}
-      />
-
-      <ListeActeurs
-        titre="Élu·e référent·e"
-        liste={referents?.map((referent) => referent.nom!)}
-        picto={(className) => <EluPicto className={className} />}
-      />
-
-      <ListeActeurs
-        titre="Partenaires"
-        liste={partenaires?.map((partenaire) => partenaire.nom!)}
-        picto={(className) => <PartenairePicto className={className} />}
-      />
-
-      <ListeActeurs
-        titre="Cibles"
-        liste={cibles?.map((cible) => cible)}
-        picto={(className) => <CiblePicto className={className} />}
-      />
-
-      <ListeActeurs
-        titre="Participation citoyenne"
-        liste={
-          participationCitoyenneType
-            ? [
-                getOptionLabel(
-                  participationCitoyenneType,
-                  ficheActionParticipationOptions
-                ) as string,
-              ]
-            : undefined
-        }
-        comment={participationCitoyenne ?? undefined}
-        picto={(className) => <CitoyenPicto className={className} />}
-      />
+      <Stack className="w-[49%]">
+        <ListeActeurs
+          titre="Partenaires"
+          liste={partenaires?.map((partenaire) => partenaire.nom!)}
+          picto={(className) => <PartenairePicto className={className} />}
+        />
+        <ListeActeurs
+          titre="Cibles"
+          liste={cibles?.map((cible) => cible)}
+          picto={(className) => <CiblePicto className={className} />}
+        />
+        <ListeActeurs
+          titre="Participation citoyenne"
+          liste={
+            participationCitoyenneType
+              ? [
+                  getOptionLabel(
+                    participationCitoyenneType,
+                    ficheActionParticipationOptions
+                  ) as string,
+                ]
+              : undefined
+          }
+          comment={participationCitoyenne ?? undefined}
+          picto={(className) => <CitoyenPicto className={className} />}
+        />
+      </Stack>
     </Card>
   );
 };

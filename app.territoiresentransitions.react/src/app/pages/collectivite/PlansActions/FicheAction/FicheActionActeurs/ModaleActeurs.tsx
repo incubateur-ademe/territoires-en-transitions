@@ -1,4 +1,6 @@
 import { FicheAction } from '@tet/api/plan-actions';
+import { useState } from 'react';
+import _ from 'lodash';
 import {
   Field,
   FormSectionGrid,
@@ -8,8 +10,6 @@ import {
   useEventTracker,
 } from '@tet/ui';
 import { useCurrentCollectivite } from 'core-logic/hooks/useCurrentCollectivite';
-import _ from 'lodash';
-import { useState } from 'react';
 import PartenairesDropdown from 'ui/dropdownLists/PartenairesDropdown/PartenairesDropdown';
 import PersonnesDropdown from 'ui/dropdownLists/PersonnesDropdown/PersonnesDropdown';
 import { getPersonneStringId } from 'ui/dropdownLists/PersonnesDropdown/utils';
@@ -50,21 +50,6 @@ const ModaleActeurs = ({
       size="lg"
       render={({ descriptionId }) => (
         <FormSectionGrid formSectionId={descriptionId}>
-          {/* Personnes pilote */}
-          <Field title="Personne pilote">
-            <PersonnesDropdown
-              dataTest="personnes-pilotes"
-              values={editedFiche.pilotes?.map((p) => getPersonneStringId(p))}
-              placeholder="Sélectionnez ou créez un pilote"
-              onChange={({ personnes }) =>
-                setEditedFiche((prevState) => ({
-                  ...prevState,
-                  pilotes: personnes,
-                }))
-              }
-            />
-          </Field>
-
           {/* Directions ou services pilote */}
           <Field title="Direction ou service pilote">
             <ServicesPilotesDropdown
