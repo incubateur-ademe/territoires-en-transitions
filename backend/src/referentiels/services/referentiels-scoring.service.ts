@@ -727,34 +727,44 @@ export default class ReferentielsScoringService {
     return getActionStatuts;
   }
 
-  getActionPointScore(actionScore: ActionScoreType): ActionPointScoreType {
-    const actionPointScore: ActionPointScoreType = {
-      pointPotentiel: actionScore.pointPotentiel || 0,
-      pointFait: actionScore.pointFait || 0,
-      pointProgramme: actionScore.pointProgramme || 0,
-      pointPasFait: actionScore.pointPasFait || 0,
-      pointNonRenseigne: actionScore.pointNonRenseigne || 0,
-      pointReferentiel: actionScore.pointReferentiel || 0,
-    };
-    if (!isNil(actionScore.etoiles)) {
-      actionPointScore.etoiles = actionScore.etoiles;
+  getActionPointScore(
+    actionScore: ActionScoreType
+  ): ActionPointScoreType | null {
+    if (actionScore) {
+      const actionPointScore: ActionPointScoreType = {
+        pointPotentiel: actionScore.pointPotentiel || 0,
+        pointFait: actionScore.pointFait || 0,
+        pointProgramme: actionScore.pointProgramme || 0,
+        pointPasFait: actionScore.pointPasFait || 0,
+        pointNonRenseigne: actionScore.pointNonRenseigne || 0,
+        pointReferentiel: actionScore.pointReferentiel || 0,
+      };
+      if (!isNil(actionScore.etoiles)) {
+        actionPointScore.etoiles = actionScore.etoiles;
+      }
+      return actionPointScore;
     }
-    return actionPointScore;
+    return null;
   }
 
   getActionPointScoreWithAvancement(
     actionScore: ActionScoreType
-  ): ActionPointScoreWithAvancementType {
+  ): ActionPointScoreWithAvancementType | null {
     const actionPointScore = this.getActionPointScore(actionScore);
-    const actionPointScoreWithAvancement: ActionPointScoreWithAvancementType = {
-      ...actionPointScore,
-      totalTachesCount: actionScore.totalTachesCount || 0,
-      faitTachesAvancement: actionScore.faitTachesAvancement || 0,
-      programmeTachesAvancement: actionScore.programmeTachesAvancement || 0,
-      pasFaitTachesAvancement: actionScore.pasFaitTachesAvancement || 0,
-      pasConcerneTachesAvancement: actionScore.pasConcerneTachesAvancement || 0,
-    };
-    return actionPointScoreWithAvancement;
+    if (actionPointScore) {
+      const actionPointScoreWithAvancement: ActionPointScoreWithAvancementType =
+        {
+          ...actionPointScore,
+          totalTachesCount: actionScore.totalTachesCount || 0,
+          faitTachesAvancement: actionScore.faitTachesAvancement || 0,
+          programmeTachesAvancement: actionScore.programmeTachesAvancement || 0,
+          pasFaitTachesAvancement: actionScore.pasFaitTachesAvancement || 0,
+          pasConcerneTachesAvancement:
+            actionScore.pasConcerneTachesAvancement || 0,
+        };
+      return actionPointScoreWithAvancement;
+    }
+    return null;
   }
 
   async computeScoreForMultipleCollectivite(
@@ -1294,15 +1304,34 @@ export default class ReferentielsScoringService {
           `Une date ne doit pas être fournie lorsqu'on veut récupérer les scores depuis une sauvegarde`,
           400
         );
-      } else if (parameters.jalon) {
-        // TODO:
-      } else {
+      } else if (parameters.jalon === ScoreJalon.SCORE_COURANT) {
         // Get scores from sauvegarde
         referentielsOrigine.forEach((referentielOrigine) => {
           referentielsOriginePromiseScores.push(
             this.getClientScoresForCollectivite(
               referentielOrigine as ReferentielType,
               collectiviteId
+            )
+          );
+        });
+      } else if (parameters.jalon === ScoreJalon.DEBUT_AUDIT) {
+        // Get scores from sauvegarde
+        referentielsOrigine.forEach((referentielOrigine) => {
+          referentielsOriginePromiseScores.push(
+            this.getPreAuditScoresForCollectivite(
+              referentielOrigine as ReferentielType,
+              collectiviteId
+            )
+          );
+        });
+      } else if (parameters.jalon === ScoreJalon.FIN_AUDIT) {
+        // Get scores from sauvegarde
+        referentielsOrigine.forEach((referentielOrigine) => {
+          referentielsOriginePromiseScores.push(
+            this.getPostAuditScoresForCollectivite(
+              referentielOrigine as ReferentielType,
+              collectiviteId,
+              1 // TODO
             )
           );
         });
@@ -1511,7 +1540,8 @@ export default class ReferentielsScoringService {
           eq(clientScoresTable.referentiel, referentielId),
           eq(clientScoresTable.collectiviteId, collectiviteId)
         )
-      );
+      )
+      .orderBy(desc(clientScoresTable.payloadTimestamp));
     return this.getFirstDatabaseScoreFromJsonb(scores);
   }
 
@@ -1553,7 +1583,7 @@ export default class ReferentielsScoringService {
   async getPreAuditScoresForCollectivite(
     referentielId: ReferentielType,
     collectiviteId: number,
-    auditId: number
+    auditId?: number
   ): Promise<{
     date: string;
     scoresMap: GetActionScoresResponseType;
@@ -1562,23 +1592,26 @@ export default class ReferentielsScoringService {
       `Récupération des pre-audit scores de la collectivité ${collectiviteId} pour le referentiel ${referentielId}`
     );
 
+    const conditions: (SQLWrapper | SQL)[] = [
+      eq(preAuditScoresTable.referentiel, referentielId),
+      eq(preAuditScoresTable.collectiviteId, collectiviteId),
+    ];
+    if (auditId) {
+      conditions.push(eq(preAuditScoresTable.auditId, auditId));
+    }
+
     const scores = await this.databaseService.db
       .select()
       .from(preAuditScoresTable)
-      .where(
-        and(
-          eq(preAuditScoresTable.referentiel, referentielId),
-          eq(preAuditScoresTable.collectiviteId, collectiviteId),
-          eq(preAuditScoresTable.auditId, auditId)
-        )
-      );
+      .where(and(...conditions))
+      .orderBy(desc(preAuditScoresTable.payloadTimestamp));
     return this.getFirstDatabaseScoreFromJsonb(scores);
   }
 
   async getPostAuditScoresForCollectivite(
     referentielId: ReferentielType,
     collectiviteId: number,
-    auditId: number
+    auditId?: number
   ): Promise<{
     date: string;
     scoresMap: GetActionScoresResponseType;
@@ -1587,16 +1620,19 @@ export default class ReferentielsScoringService {
       `Récupération des post-audit scores de la collectivité ${collectiviteId} pour le referentiel ${referentielId}`
     );
 
+    const conditions: (SQLWrapper | SQL)[] = [
+      eq(postAuditScoresTable.referentiel, referentielId),
+      eq(postAuditScoresTable.collectiviteId, collectiviteId),
+    ];
+    if (auditId) {
+      conditions.push(eq(postAuditScoresTable.auditId, auditId));
+    }
+
     const scores = await this.databaseService.db
       .select()
       .from(postAuditScoresTable)
-      .where(
-        and(
-          eq(postAuditScoresTable.referentiel, referentielId),
-          eq(postAuditScoresTable.collectiviteId, collectiviteId),
-          eq(postAuditScoresTable.auditId, auditId)
-        )
-      );
+      .where(and(...conditions))
+      .orderBy(desc(postAuditScoresTable.payloadTimestamp));
     return this.getFirstDatabaseScoreFromJsonb(scores);
   }
 

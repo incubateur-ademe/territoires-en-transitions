@@ -203,7 +203,7 @@ export default class PersonnalisationsService {
         };
       }
       if (regle.formule) {
-        this.logger.log(
+        this.logger.debug(
           `Evaluation de la formule de type ${regle.type} pour l'action ${regle.actionId}: ${regle.formule}`
         );
         const evaluatedExpression =
