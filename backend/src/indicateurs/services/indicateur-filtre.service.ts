@@ -132,7 +132,7 @@ export default class IndicateurFiltreService {
     );
     // Vérifie s'il faut inclure les enfants dans le retour filtré ou dans le filtre des parents
     const avecEnfant =
-      filters.avecEnfants === true ||
+      filters.withChildren === true ||
       (filters.text && filters.text.startsWith('#')) === true;
 
     // Crée la requête pour avoir tous les indicateurs de la collectivité ainsi que leurs tables liées utiles aux filters voulus
@@ -164,7 +164,7 @@ export default class IndicateurFiltreService {
 
     return indicateursSorted.map((indicateur) => ({
       id: indicateur.id,
-      titre: indicateur.titre,
+      titre: indicateur.titre?indicateur.titre:'',
       estPerso: !isNil(indicateur.collectiviteId),
       identifiant: indicateur.identifiantReferentiel,
       hasOpenData: indicateur.hasOpenData,
