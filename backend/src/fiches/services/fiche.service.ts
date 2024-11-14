@@ -1,4 +1,5 @@
 import { Injectable, Logger } from '@nestjs/common';
+import { eq } from 'drizzle-orm';
 import DatabaseService from '../../common/services/database.service';
 import {
   CreateFicheActionType,
@@ -12,15 +13,64 @@ import { ficheActionEffetAttenduTable } from '../models/fiche-action-effet-atten
 import { ficheActionIndicateurTable } from '../models/fiche-action-indicateur.table';
 import { ficheActionSousThematiqueTable } from '../models/fiche-action-sous-thematique.table';
 import { ficheActionThematiqueTable } from '../models/fiche-action-thematique.table';
+import { ficheActionNoteTable } from '../models/fiche-action-note.table';
+import { AuthService } from '../../auth/services/auth.service';
+import { SupabaseJwtPayload } from '../../auth/models/supabase-jwt.models';
+import { NiveauAcces } from '../../auth/models/private-utilisateur-droit.table';
 
 @Injectable()
 export default class FicheService {
   private readonly logger = new Logger(FicheService.name);
 
   constructor(
+    private readonly authService: AuthService,
     private readonly databaseService: DatabaseService,
     private readonly tagService: TagService
   ) {}
+
+  /** Renvoi une fiche à partir de son id */
+  async getFicheFromId(ficheId: number) {
+    const rows = await this.databaseService.db
+      .select()
+      .from(ficheActionTable)
+      .where(eq(ficheActionTable.id, ficheId));
+    return rows?.[0] ?? null;
+  }
+
+  /** Détermine si un utilisateur peut lire une fiche */
+  async canReadFiche(
+    ficheId: number,
+    tokenInfo: SupabaseJwtPayload
+  ): Promise<boolean> {
+    const fiche = await this.getFicheFromId(ficheId);
+    if (fiche === null) return false;
+    if (fiche.restreint) {
+      const canRead = await this.authService.verifieAccesAuxCollectivites(
+        tokenInfo,
+        [fiche.collectiviteId],
+        NiveauAcces.LECTURE
+      );
+      return canRead || this.authService.estSupport(tokenInfo);
+    }
+    return this.authService.verifieAccesRestreintCollectivite(
+      tokenInfo,
+      fiche.collectiviteId
+    );
+  }
+
+  /** Détermine si un utilisateur peut modifier une fiche */
+  async canWriteFiche(
+    ficheId: number,
+    tokenInfo: SupabaseJwtPayload
+  ): Promise<boolean> {
+    const fiche = await this.getFicheFromId(ficheId);
+    if (fiche === null) return false;
+    return this.authService.verifieAccesAuxCollectivites(
+      tokenInfo,
+      [fiche.collectiviteId],
+      NiveauAcces.EDITION
+    );
+  }
 
   /**
    * Crée une fiche action
@@ -145,5 +195,13 @@ export default class FicheService {
       ficheId: ficheId,
       actionImpactId: actionId,
     });
+  }
+
+  /** Lit les notes de suivi attachées à la fiche */
+  getNotes(ficheId: number) {
+    return this.databaseService.db
+      .select()
+      .from(ficheActionNoteTable)
+      .where(eq(ficheActionActionTable.ficheId, ficheId));
   }
 }
