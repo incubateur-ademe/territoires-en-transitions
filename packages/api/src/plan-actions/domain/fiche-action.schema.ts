@@ -130,6 +130,17 @@ export const ficheActionSchema = z.object({
 
 export type FicheAction = z.infer<typeof ficheActionSchema>;
 
+export const noteSuiviSchema = z.object({
+  createdAt: z.string().datetime(),
+  createdBy: z.string(),
+  modifiedAt: z.string().datetime(),
+  modifiedBy: z.string(),
+  dateNote: z.string().datetime(),
+  note: z.string(),
+});
+
+export type FicheActionNote = z.infer<typeof noteSuiviSchema>;
+
 export const ficheActionInsertSchema = ficheActionSchema.extend({
   id: z.number().optional(),
   modifiedAt: z.string().datetime().optional(),
