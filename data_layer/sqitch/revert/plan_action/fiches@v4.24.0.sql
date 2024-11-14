@@ -11,10 +11,6 @@ DROP TRIGGER IF EXISTS upsert ON public.fiches_action;
 DROP VIEW public.fiches_action;
 DROP VIEW private.fiches_action;
 
-
-alter table fiche_action
-  add column created_by uuid default auth.uid() references auth.users;
-
 --
 -- AFTER. Recreate the views and functions
 create view private.fiches_action
@@ -41,7 +37,6 @@ SELECT fa.modified_at,
        fa.participation_citoyenne,
        fa.participation_citoyenne_type,
        jsonb_build_object('id', tmo.niveau, 'nom', tmo.nom) as temps_de_mise_en_oeuvre,
-       jsonb_build_object('user_id', created_user.user_id, 'nom', created_user.nom, 'prenom', created_user.prenom, 'email', created_user.email) as created_by,
        fa.maj_termine,
        fa.collectivite_id,
        fa.created_at,
@@ -104,7 +99,6 @@ SELECT fa.modified_at,
             ) indi
        ) AS indicateurs,
        ser.services,
-       lib.libres_tag,
        (
        SELECT array_agg(ROW (fin.financeur_tag, fin.montant_ttc, fin.id)::financeur_montant) AS financeurs
        FROM (
@@ -169,13 +163,6 @@ LEFT JOIN (
           GROUP BY fast.fiche_id
           ) ser ON ser.fiche_id = fa.id
 LEFT JOIN (
-          SELECT falt.fiche_id,
-                 array_agg(lt_1.*) AS libres_tag
-          FROM libre_tag lt_1
-          JOIN fiche_action_libre_tag falt ON falt.libre_tag_id = lt_1.id
-          GROUP BY falt.fiche_id
-          ) lib ON lib.fiche_id = fa.id
-LEFT JOIN (
           SELECT falpf.fiche_id,
                  array_agg(fr.*) AS fiches_liees
           FROM private.fiche_resume fr
@@ -191,8 +178,6 @@ LEFT JOIN (
           ) eff ON eff.fiche_id = fa.id
 LEFT JOIN action_impact_temps_de_mise_en_oeuvre tmo
           ON tmo.niveau = fa.temps_de_mise_en_oeuvre_id
-LEFT JOIN dcp created_user
-          ON created_user.user_id = fa.created_by
 ;
 
 

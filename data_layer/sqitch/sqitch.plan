@@ -754,3 +754,5 @@ referentiel/referentiel 2024-10-07T16:09:16Z System Administrator <root@AirdeThi
 @v4.23.0 2024-11-12T13:39:14Z System Administrator <root@AirdeThibaut2.lan> # Ajout de la table de referentiel avec la version, de la traçabilité entre referentiels et des tags
 
 plan_action/fiches [plan_action/fiches@v4.23.0] 2024-11-13T10:43:48Z System Administrator <root@MacBook-Air-de-Eli.local> # Ajoute libre_tag à la vue
+@v4.24.0 2024-11-14T14:07:15Z System Administrator <root@MacBook-Air-de-Eli.local> # Tag v4.24.0
+plan_action/fiches [plan_action/fiches@v4.24.0] 2024-11-14T14:08:59Z System Administrator <root@MacBook-Air-de-Eli.local> # Ajoute created_by à la table FA et à la vue FA
