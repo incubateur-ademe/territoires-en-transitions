@@ -1,17 +1,11 @@
+import { FicheActionNote } from '@tet/api/plan-actions';
 import { Modal, ModalFooterOKCancel } from '@tet/ui';
 import DeleteButton from '../DeleteButton';
+import { DeletedNote } from '../data/useUpsertNoteSuivi';
 
 type ModaleSuppressionNoteProps = {
-  editedNote: {
-    id: string;
-    note: string;
-    year: number;
-    createdAt: string;
-    createdBy: string;
-    modifiedAt?: string;
-    modifiedBy?: string;
-  };
-  onDelete: () => void;
+  editedNote: FicheActionNote;
+  onDelete: (deletedNote: DeletedNote) => void;
 };
 
 /**
@@ -21,10 +15,11 @@ const ModaleSuppressionNote = ({
   editedNote,
   onDelete,
 }: ModaleSuppressionNoteProps) => {
+  const year = new Date(editedNote.dateNote).getFullYear();
   return (
     <Modal
       title="Supprimer la note de suivi"
-      subTitle={`Note de suivi ${editedNote.year}${
+      subTitle={`Note de suivi ${year}${
         editedNote.createdAt ? ` créée par ${editedNote.createdBy}` : ''
       }`}
       render={({ descriptionId }) => (
@@ -41,7 +36,7 @@ const ModaleSuppressionNote = ({
           btnCancelProps={{ onClick: close }}
           btnOKProps={{
             onClick: () => {
-              onDelete();
+              onDelete({ year });
               close();
             },
           }}

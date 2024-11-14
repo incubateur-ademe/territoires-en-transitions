@@ -1,30 +1,16 @@
 import { format } from 'date-fns';
+import { useState } from 'react';
 import { Button, Card, Icon } from '@tet/ui';
+import { FicheActionNote } from '@tet/api/plan-actions';
 import ModaleSuppressionNote from './ModaleSuppressionNote';
 import ModaleEditionNote from './ModaleEditionNote';
-import { useState } from 'react';
+import { DeletedNote, EditedNote } from '../data/useUpsertNoteSuivi';
 
 type NoteSuiviCardProps = {
   isReadonly?: boolean;
-  note: {
-    id: string;
-    note: string;
-    year: number;
-    createdAt: string;
-    createdBy: string;
-    modifiedAt?: string;
-    modifiedBy?: string;
-  };
-  onEdit: (editedNote: {
-    id: string;
-    note: string;
-    year: number;
-    createdAt: string;
-    createdBy: string;
-    modifiedAt?: string;
-    modifiedBy?: string;
-  }) => void;
-  onDelete: () => void;
+  note: FicheActionNote;
+  onEdit: (editedNote: EditedNote) => void;
+  onDelete: (deletedNote: DeletedNote) => void;
 };
 
 const NoteSuiviCard = ({
@@ -34,6 +20,7 @@ const NoteSuiviCard = ({
   onDelete,
 }: NoteSuiviCardProps) => {
   const [isModalOpen, setIsModalOpen] = useState(false);
+  const year = new Date(note.dateNote).getFullYear();
 
   return (
     <div className="relative group">
@@ -50,7 +37,7 @@ const NoteSuiviCard = ({
             {!isReadonly && isModalOpen && (
               <ModaleEditionNote
                 editedNote={note}
-                updateNotes={onEdit}
+                onEdit={onEdit}
                 isOpen={isModalOpen}
                 setIsOpen={setIsModalOpen}
               />
@@ -62,7 +49,7 @@ const NoteSuiviCard = ({
 
       <Card className="h-full px-4 py-[1.125rem] !gap-3 text-grey-8 hover:border-primary-3 hover:!bg-primary-1 !shadow-none transition">
         {/* Année */}
-        <span>{note.year}</span>
+        <span>{year}</span>
 
         {/* Contenu de la note */}
         <p className="paragraphe-14 mb-0 whitespace-pre-wrap">{note.note}</p>
@@ -76,7 +63,7 @@ const NoteSuiviCard = ({
             {format(new Date(note.createdAt), 'dd/MM/yyyy')}
           </span>
           {/* Edition */}
-          {(note.modifiedAt || note.modifiedBy) && (
+          {note.modifiedAt && note.modifiedAt !== note.createdAt && (
             <>
               <div className="w-[1px] h-4 bg-grey-5" />
               <span className="text-grey-8 text-sm font-normal">

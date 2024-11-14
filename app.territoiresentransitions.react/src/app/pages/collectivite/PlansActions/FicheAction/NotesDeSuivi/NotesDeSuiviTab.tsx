@@ -5,30 +5,22 @@ import EmptyCard from '../EmptyCard';
 import NotificationPicto from './NotificationPicto';
 import ModaleCreationNote from './ModaleCreationNote';
 import NoteSuiviCard from './NoteSuiviCard';
+import {
+  useDeleteNoteSuivi,
+  useUpsertNoteSuivi,
+} from '../data/useUpsertNoteSuivi';
 
 type NotesDeSuiviTabProps = {
   isReadonly: boolean;
   fiche: FicheAction;
-  updateFiche: (fiche: FicheAction) => void;
 };
 
-const NotesDeSuiviTab = ({ isReadonly }: NotesDeSuiviTabProps) => {
+const NotesDeSuiviTab = ({ fiche, isReadonly }: NotesDeSuiviTabProps) => {
   const [isModalOpen, setIsModalOpen] = useState(false);
+  const { mutate: updateNotes } = useUpsertNoteSuivi(fiche.id);
+  const { mutate: deleteNote } = useDeleteNoteSuivi(fiche.id);
 
-  // TODO: récupérer les notes existantes dans la fiche
-  const [notes, setNotes] = useState<
-    {
-      id: string;
-      note: string;
-      year: number;
-      createdAt: string;
-      createdBy: string;
-      modifiedAt?: string;
-      modifiedBy?: string;
-    }[]
-  >([]);
-
-  // TODO: isEmtpy si notes undefined ou tableau vide
+  const notes = fiche.notesSuivi || [];
   const isEmpty = notes.length === 0;
 
   return (
@@ -63,26 +55,14 @@ const NotesDeSuiviTab = ({ isReadonly }: NotesDeSuiviTabProps) => {
           </div>
 
           <div className="flex flex-col gap-3">
-            {notes
-              .sort((a, b) => b.year - a.year)
-              .map((note) => (
-                <NoteSuiviCard
-                  key={note.id}
-                  note={note}
-                  // TODO: mettre à jour onEdit et onDelete pour mettre à jour l'objet fiche
-                  onEdit={(editedNote) => {
-                    setNotes((prevState) => [
-                      ...prevState.filter((p) => p.id !== editedNote.id),
-                      editedNote,
-                    ]);
-                  }}
-                  onDelete={() =>
-                    setNotes((prevState) =>
-                      prevState.filter((s) => s.id !== note.id)
-                    )
-                  }
-                />
-              ))}
+            {notes.map((note) => (
+              <NoteSuiviCard
+                key={note.dateNote}
+                note={note}
+                onEdit={updateNotes}
+                onDelete={deleteNote}
+              />
+            ))}
           </div>
         </div>
       )}
@@ -91,14 +71,7 @@ const NotesDeSuiviTab = ({ isReadonly }: NotesDeSuiviTabProps) => {
         <ModaleCreationNote
           isOpen={isModalOpen && !isReadonly}
           setIsOpen={setIsModalOpen}
-          // fiche={fiche}
-          // updateFiche={updateFiche}
-          updateNotes={(newNote) =>
-            setNotes((prevState) => [
-              ...prevState,
-              { ...newNote, id: `${newNote.id}-${prevState.length}` },
-            ])
-          }
+          onEdit={updateNotes}
         />
       )}
     </>
