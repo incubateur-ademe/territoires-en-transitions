@@ -9,6 +9,7 @@ import {
   Select,
   Textarea,
 } from '@tet/ui';
+import { EditedNote } from '../data/useUpsertNoteSuivi';
 
 export const getYearsOptions = () => {
   const currentYear = new Date().getFullYear();
@@ -26,21 +27,13 @@ export const getYearsOptions = () => {
 type ModaleCreationNoteProps = {
   isOpen: boolean;
   setIsOpen: (opened: boolean) => void;
-  updateNotes: (note: {
-    id: string;
-    note: string;
-    year: number;
-    createdAt: string;
-    createdBy: string;
-    modifiedAt?: string;
-    modifiedBy?: string;
-  }) => void;
+  onEdit: (editedNote: EditedNote) => void;
 };
 
 const ModaleCreationNote = ({
   isOpen,
   setIsOpen,
-  updateNotes,
+  onEdit,
 }: ModaleCreationNoteProps) => {
   const { yearsOptions } = getYearsOptions();
 
@@ -49,13 +42,7 @@ const ModaleCreationNote = ({
 
   const handleSave = () => {
     if (note !== undefined && note.trim().length > 0 && year !== undefined) {
-      updateNotes({
-        id: `${year}-${note.slice(0, 4)}`, // id pour tester le front en attendant le dev back
-        note,
-        year,
-        createdAt: new Date().toString(),
-        createdBy: 'Yolo Dodo',
-      });
+      onEdit({ note, year });
     }
   };
 

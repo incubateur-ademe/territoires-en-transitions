@@ -1,6 +1,6 @@
 import { useState } from 'react';
+import { FicheActionNote } from '@tet/api/plan-actions';
 import {
-  Alert,
   Field,
   FormSectionGrid,
   Modal,
@@ -9,53 +9,35 @@ import {
   Textarea,
 } from '@tet/ui';
 import { getYearsOptions } from './ModaleCreationNote';
+import { EditedNote } from '../data/useUpsertNoteSuivi';
 
 type ModaleEditionNoteProps = {
   isOpen: boolean;
   setIsOpen: (opened: boolean) => void;
-  editedNote: {
-    id: string;
-    note: string;
-    year: number;
-    createdAt: string;
-    createdBy: string;
-    modifiedAt?: string;
-    modifiedBy?: string;
-  };
-  updateNotes: (note: {
-    id: string;
-    note: string;
-    year: number;
-    createdAt: string;
-    createdBy: string;
-    modifiedAt?: string;
-    modifiedBy?: string;
-  }) => void;
+  editedNote: FicheActionNote;
+  onEdit: (editedNote: EditedNote) => void;
 };
 
 const ModaleEditionNote = ({
   isOpen,
   setIsOpen,
   editedNote,
-  updateNotes,
+  onEdit,
 }: ModaleEditionNoteProps) => {
   const { yearsOptions } = getYearsOptions();
 
-  const [year, setYear] = useState<number>(editedNote.year);
+  const initialYear = new Date(editedNote.dateNote).getFullYear();
+  const [year, setYear] = useState<number>(
+    new Date(editedNote.dateNote).getFullYear()
+  );
   const [note, setNote] = useState<string>(editedNote.note);
 
   const handleSave = () => {
     if (
       note.trim().length > 0 &&
-      (note !== editedNote.note || year !== editedNote.year)
+      (note !== editedNote.note || year !== initialYear)
     ) {
-      updateNotes({
-        ...editedNote,
-        note,
-        year,
-        modifiedAt: new Date().toString(),
-        modifiedBy: 'Yala Dada',
-      });
+      onEdit({ note, year });
     }
   };
 
@@ -63,7 +45,7 @@ const ModaleEditionNote = ({
     <Modal
       openState={{ isOpen, setIsOpen }}
       title="Modifier la note"
-      subTitle={`Note de suivi ${editedNote.year}${
+      subTitle={`Note de suivi ${year}${
         editedNote.createdAt ? ` créée par ${editedNote.createdBy}` : ''
       }`}
       size="lg"

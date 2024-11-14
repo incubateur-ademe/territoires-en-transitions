@@ -43,11 +43,7 @@ const FicheActionOnglets = ({
 
       {/* Notes de suivi */}
       <Tab label="Notes de suivi">
-        <NotesDeSuiviTab
-          isReadonly={isReadonly}
-          fiche={fiche}
-          updateFiche={updateFiche}
-        />
+        <NotesDeSuiviTab isReadonly={isReadonly} fiche={fiche} />
       </Tab>
 
       {/* Budget */}
