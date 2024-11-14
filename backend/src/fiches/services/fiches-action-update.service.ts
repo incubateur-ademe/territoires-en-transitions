@@ -15,7 +15,10 @@ import { SupabaseJwtPayload } from '../../auth/models/supabase-jwt.models';
 import DatabaseService from '../../common/services/database.service';
 import { buildConflictUpdateColumns } from '../../common/services/conflict.helper';
 import FicheService from './fiche.service';
-import { ficheActionTable } from '../models/fiche-action.table';
+import {
+  ficheActionTable,
+  updateFicheActionSchema,
+} from '../models/fiche-action.table';
 import { ficheActionActionTable } from '../models/fiche-action-action.table';
 import { ficheActionAxeTable } from '../models/fiche-action-axe.table';
 import { ficheActionEffetAttenduTable } from '../models/fiche-action-effet-attendu.table';
@@ -432,7 +435,11 @@ export default class FichesActionUpdateService {
       )
       .onConflictDoUpdate({
         target: [ficheActionNoteTable.ficheId, ficheActionNoteTable.dateNote],
-        set: buildConflictUpdateColumns(ficheActionNoteTable, ['note']),
+        set: buildConflictUpdateColumns(ficheActionNoteTable, [
+          'note',
+          'modifiedAt',
+          'modifiedBy',
+        ]),
       });
   }
 
