@@ -1,5 +1,5 @@
 import { Injectable, Logger } from '@nestjs/common';
-import { eq } from 'drizzle-orm';
+import { aliasedTable, desc, eq } from 'drizzle-orm';
 import DatabaseService from '../../common/services/database.service';
 import {
   CreateFicheActionType,
@@ -17,6 +17,7 @@ import { ficheActionNoteTable } from '../models/fiche-action-note.table';
 import { AuthService } from '../../auth/services/auth.service';
 import { SupabaseJwtPayload } from '../../auth/models/supabase-jwt.models';
 import { NiveauAcces } from '../../auth/models/private-utilisateur-droit.table';
+import { dcpTable } from '../../auth/models/dcp.table';
 
 @Injectable()
 export default class FicheService {
@@ -198,10 +199,37 @@ export default class FicheService {
   }
 
   /** Lit les notes de suivi attachées à la fiche */
-  getNotes(ficheId: number) {
-    return this.databaseService.db
-      .select()
+  async getNotes(ficheId: number, tokenInfo: SupabaseJwtPayload) {
+    const canRead = await this.canReadFiche(ficheId, tokenInfo);
+    if (!canRead) return false;
+
+    const createdByDCP = aliasedTable(dcpTable, 'createdByDCP');
+    const modifiedByDCP = aliasedTable(dcpTable, 'modifiedByDCP');
+    const rows = await this.databaseService.db
+      .select({
+        note: ficheActionNoteTable.note,
+        dateNote: ficheActionNoteTable.dateNote,
+        createdAt: ficheActionNoteTable.createdAt,
+        modifiedAt: ficheActionNoteTable.modifiedAt,
+        createdByDCP,
+        modifiedByDCP,
+      })
       .from(ficheActionNoteTable)
-      .where(eq(ficheActionActionTable.ficheId, ficheId));
+      .leftJoin(
+        createdByDCP,
+        eq(createdByDCP.userId, ficheActionNoteTable.createdBy)
+      )
+      .leftJoin(
+        modifiedByDCP,
+        eq(modifiedByDCP.userId, ficheActionNoteTable.modifiedBy)
+      )
+      .where(eq(ficheActionNoteTable.ficheId, ficheId))
+      .orderBy(desc(ficheActionNoteTable.dateNote));
+
+    return rows.map(({ createdByDCP, modifiedByDCP, ...otherCols }) => ({
+      ...otherCols,
+      createdBy: `${createdByDCP?.prenom} ${createdByDCP?.nom}`,
+      modifiedBy: `${modifiedByDCP?.prenom} ${modifiedByDCP?.nom}`,
+    }));
   }
 }
