@@ -9,6 +9,7 @@ import {
   useDeleteNoteSuivi,
   useUpsertNoteSuivi,
 } from '../data/useUpsertNoteSuivi';
+import { useFicheActionNotesSuivi } from '../data/useFicheActionNotesSuivi';
 
 type NotesDeSuiviTabProps = {
   isReadonly: boolean;
@@ -17,10 +18,11 @@ type NotesDeSuiviTabProps = {
 
 const NotesDeSuiviTab = ({ fiche, isReadonly }: NotesDeSuiviTabProps) => {
   const [isModalOpen, setIsModalOpen] = useState(false);
-  const { mutate: updateNotes } = useUpsertNoteSuivi(fiche.id);
-  const { mutate: deleteNote } = useDeleteNoteSuivi(fiche.id);
+  const { mutate: updateNotes } = useUpsertNoteSuivi(fiche);
+  const { mutate: deleteNote } = useDeleteNoteSuivi(fiche);
+  const { data: notesSuivi } = useFicheActionNotesSuivi(fiche);
 
-  const notes = fiche.notesSuivi || [];
+  const notes = notesSuivi || [];
   const isEmpty = notes.length === 0;
 
   return (
