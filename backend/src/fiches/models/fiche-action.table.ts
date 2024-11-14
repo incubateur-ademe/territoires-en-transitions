@@ -135,9 +135,19 @@ export const ficheActionCiblesEnum = pgEnum(
   ficheActionCiblesEnumValues
 );
 
+export enum ficheActionNiveauxPrioriteEnumType {
+  BAS = 'Bas',
+  MOYEN = 'Moyen',
+  ELEVE = 'Élevé',
+}
+
 export const ficheActionNiveauxPrioriteEnum = pgEnum(
   'fiche_action_niveaux_priorite',
-  ['Élevé', 'Moyen', 'Bas']
+  [
+    ficheActionNiveauxPrioriteEnumType.BAS,
+    ficheActionNiveauxPrioriteEnumType.MOYEN,
+    ficheActionNiveauxPrioriteEnumType.ELEVE,
+  ]
 );
 
 export const ficheActionParticipationCitoyenneTypeEnumValues = [
