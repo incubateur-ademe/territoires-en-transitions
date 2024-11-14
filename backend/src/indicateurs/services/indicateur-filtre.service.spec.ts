@@ -532,9 +532,9 @@ describe('IndicateurFiltreService', () => {
         );
         expect(toCheck.length).toEqual(2);
       });
-      it('avecEnfants', async () => {
+      it('withChildren', async () => {
         let filtres: GetFilteredIndicateursRequestOptionType = {
-          avecEnfants: true,
+          withChildren: true,
         };
         let toCheck = indicateurFiltreService.applyFilters(
           datas,
@@ -543,7 +543,7 @@ describe('IndicateurFiltreService', () => {
         );
         expect(toCheck.length).toEqual(4);
         filtres = {
-          avecEnfants: false,
+          withChildren: false,
         };
         toCheck = indicateurFiltreService.applyFilters(datas, filtres, false);
         expect(toCheck.length).toEqual(3);

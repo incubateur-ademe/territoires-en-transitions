@@ -81,7 +81,7 @@ describe('Route de lecture des indicateurs filtrés', () => {
       personnePiloteIds: [1],
       servicePiloteIds: [1],
       ficheActionIds: [1],
-      avecEnfants: false,
+      withChildren: false,
     };
 
     const params = new URLSearchParams();

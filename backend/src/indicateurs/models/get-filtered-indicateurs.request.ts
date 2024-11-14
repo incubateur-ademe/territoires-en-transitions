@@ -109,7 +109,7 @@ export const getFilteredIndicateursRequestOptionsSchema = extendApi(
         description:
           "Liste des identifiants des fiches action permettant de récupérer les indicateurs liés à l'une d'elle (ou dont un enfant en est lié si avecEnfants!=true).",
       }),
-      avecEnfants: z
+      withChildren: z
         .boolean()
         .optional()
         .openapi({
