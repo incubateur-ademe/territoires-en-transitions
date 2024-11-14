@@ -1,5 +1,13 @@
 import { createZodDto } from '@anatine/zod-nestjs';
-import { Body, Controller, Get, Param, Put, Query } from '@nestjs/common';
+import {
+  Body,
+  Controller,
+  Delete,
+  Get,
+  Param,
+  Put,
+  Query,
+} from '@nestjs/common';
 import { ApiOkResponse, ApiTags } from '@nestjs/swagger';
 import { TokenInfo } from '../../auth/decorators/token-info.decorators';
 import type { SupabaseJwtPayload } from '../../auth/models/supabase-jwt.models';
@@ -8,6 +16,10 @@ import { getFichesActionFilterRequestSchema } from '../models/get-fiches-actions
 import { updateFicheActionRequestSchema } from '../models/update-fiche-action.request';
 import FichesActionSyntheseService from '../services/fiches-action-synthese.service';
 import FichesActionUpdateService from '../services/fiches-action-update.service';
+import {
+  deleteFicheActionNotesRequestSchema,
+  upsertFicheActionNotesRequestSchema,
+} from '../models/upsert-fiche-action-note.request';
 
 /**
  * Création des classes de réponse à partir du schema pour générer automatiquement la documentation OpenAPI
@@ -21,6 +33,13 @@ export class GetFichesActionFilterRequestClass extends createZodDto(
 ) {}
 export class UpdateFicheActionRequestClass extends createZodDto(
   updateFicheActionRequestSchema
+) {}
+
+export class UpsertFicheActionNotesRequestClass extends createZodDto(
+  upsertFicheActionNotesRequestSchema
+) {}
+export class DeleteFicheActionNotesRequestClass extends createZodDto(
+  deleteFicheActionNotesRequestSchema
 ) {}
 
 @ApiTags('Fiches action')
@@ -80,6 +99,40 @@ export class FichesActionController {
     return await this.fichesActionUpdateService.updateFicheAction(
       id,
       body,
+      tokenInfo
+    );
+  }
+
+  @Put(':id/notes')
+  @ApiOkResponse({
+    type: UpsertFicheActionNotesRequestClass,
+    description: 'Insère ou met à jour les notes de suivi',
+  })
+  async upsertFicheActionNotes(
+    @Param('id') ficheId: number,
+    @Body() body: UpsertFicheActionNotesRequestClass,
+    @TokenInfo() tokenInfo: SupabaseJwtPayload
+  ) {
+    return this.fichesActionUpdateService.upsertNotes(
+      ficheId,
+      body.notes,
+      tokenInfo
+    );
+  }
+
+  @Delete(':id/note')
+  @ApiOkResponse({
+    type: DeleteFicheActionNotesRequestClass,
+    description: 'Supprime une note de suivi',
+  })
+  async deleteFicheActionNotes(
+    @Param('id') ficheId: number,
+    @Body() body: DeleteFicheActionNotesRequestClass,
+    @TokenInfo() tokenInfo: SupabaseJwtPayload
+  ) {
+    return this.fichesActionUpdateService.deleteNote(
+      ficheId,
+      body.dateNote,
       tokenInfo
     );
   }
