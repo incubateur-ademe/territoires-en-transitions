@@ -20,6 +20,9 @@ import {
   deleteFicheActionNotesRequestSchema,
   upsertFicheActionNotesRequestSchema,
 } from '../models/upsert-fiche-action-note.request';
+import FicheService from '../services/fiche.service';
+import { ficheActionNoteSchema } from '../models/fiche-action-note.table';
+import { z } from 'zod';
 
 /**
  * Création des classes de réponse à partir du schema pour générer automatiquement la documentation OpenAPI
@@ -35,6 +38,9 @@ export class UpdateFicheActionRequestClass extends createZodDto(
   updateFicheActionRequestSchema
 ) {}
 
+export class GetFicheActionNotesResponseClass extends createZodDto(
+  z.array(ficheActionNoteSchema)
+) {}
 export class UpsertFicheActionNotesRequestClass extends createZodDto(
   upsertFicheActionNotesRequestSchema
 ) {}
@@ -46,6 +52,7 @@ export class DeleteFicheActionNotesRequestClass extends createZodDto(
 @Controller('collectivites/:collectivite_id/fiches-action')
 export class FichesActionController {
   constructor(
+    private readonly ficheService: FicheService,
     private readonly fichesActionSyntheseService: FichesActionSyntheseService,
     private readonly fichesActionUpdateService: FichesActionUpdateService
   ) {}
@@ -101,6 +108,18 @@ export class FichesActionController {
       body,
       tokenInfo
     );
+  }
+
+  @Get(':id/notes')
+  @ApiOkResponse({
+    type: GetFicheActionNotesResponseClass,
+    description: 'Charge les notes de suivi',
+  })
+  async selectFicheActionNotes(
+    @Param('id') ficheId: number,
+    @TokenInfo() tokenInfo: SupabaseJwtPayload
+  ) {
+    return this.ficheService.getNotes(ficheId, tokenInfo);
   }
 
   @Put(':id/notes')
