@@ -1,19 +1,18 @@
 import {
   DndContext,
   DragEndEvent,
-  KeyboardSensor,
   PointerSensor,
   pointerWithin,
   useSensor,
   useSensors,
 } from '@dnd-kit/core';
 
-import {PlanNode} from '../data/types';
+import { PlanNode } from '../data/types';
 import NestedDroppableContainers from './NestedDroppableContainers';
-import {useFicheChangeAxe} from '../../FicheAction/data/useFicheChangeAxe';
+import { useFicheChangeAxe } from '../../FicheAction/data/useFicheChangeAxe';
 import PictoLeaf from 'ui/pictogrammes/PictoLeaf';
-import {AxeActions} from '../AxeActions';
-import {useDragAxe} from '../data/useDragAxe';
+import { AxeActions } from '../AxeActions';
+import { useDragAxe } from '../data/useDragAxe';
 
 import './dropAnimation.css';
 
@@ -27,36 +26,29 @@ interface Props {
 
 /**
  * C'est ici qu'est initilisé le drag & drop.
- * La fonction `handleDragHand` permet de réaliser des actions au drop d'un élément.
+ * La fonction `handleDragEnd` permet de réaliser des actions au drop d'un élément.
  */
-function Arborescence({plan, axe, axes, isAxePage, isReadonly}: Props) {
-  const {mutate: changeAxeFiche} = useFicheChangeAxe({planId: plan.id});
-  const {mutate: moveAxe} = useDragAxe(plan.id);
-
-  const keyboardCodes = {
-    start: ['Enter'],
-    cancel: ['Escape'],
-    end: ['Enter'],
-  };
+function Arborescence({ plan, axe, axes, isAxePage, isReadonly }: Props) {
+  const { mutate: changeAxeFiche } = useFicheChangeAxe({ planId: plan.id });
+  const { mutate: moveAxe } = useDragAxe(plan.id);
 
   const sensors = useSensors(
     useSensor(PointerSensor, {
       activationConstraint: {
         distance: 20,
       },
-    }),
-    useSensor(KeyboardSensor, {keyboardCodes})
+    })
   );
 
   const hasContent =
-    axes.filter(a => a.parent === axe.id).length > 0 ||
+    axes.filter((a) => a.parent === axe.id).length > 0 ||
     (axe.fiches && axe.fiches.length > 0);
 
   return (
     <DndContext
       sensors={sensors}
       collisionDetection={pointerWithin}
-      onDragEnd={event => {
+      onDragEnd={(event) => {
         handleDragEnd(event);
       }}
     >
@@ -71,7 +63,7 @@ function Arborescence({plan, axe, axes, isAxePage, isReadonly}: Props) {
         <div className="flex flex-col items-center my-8">
           <PictoLeaf className="w-24 fill-gray-400" />
           <div className="my-6 text-gray-500">
-            Aucune arborescence pour l'instant
+            Aucune arborescence pour l&apos;instant
           </div>
           {!isReadonly && <AxeActions plan={plan} axe={axe} />}
         </div>
@@ -80,7 +72,7 @@ function Arborescence({plan, axe, axes, isAxePage, isReadonly}: Props) {
   );
 
   function handleDragEnd(event: DragEndEvent) {
-    const {active, over} = event;
+    const { active, over } = event;
 
     const activeData = active.data.current;
     const overData = over?.data.current;
@@ -133,6 +125,6 @@ export default Arborescence;
 /** Animation utilisée au drop d'un élément (axe ou fiche) */
 export const dropAnimation = (elementId: string) => {
   const element = document.getElementById(elementId);
-  element?.scrollIntoView({behavior: 'smooth', block: 'center'});
+  element?.scrollIntoView({ behavior: 'smooth', block: 'center' });
   element?.classList.add('drop-animation');
 };
