@@ -17,11 +17,9 @@ import { financeurTagSchema } from '../../taxonomie/models/financeur-tag.table';
 import { structureTagSchema } from '../../taxonomie/models/structure-tag.table';
 
 // There is no proper Pilote or Referent tables, so we use a custom schema here
-const piloteOrReferentSchema = z.object({
-  nom: z.string(),
-  collectiviteId: z.number(),
-  tagId: z.number(),
-  userId: z.string().uuid(),
+const personneSchema = z.object({
+  tagId: z.number().nullish(),
+  userId: z.string().uuid().nullish(),
 });
 
 const financeurSchema = financeurTagSchema.pick({ id: true }).extend({
@@ -77,8 +75,8 @@ export const updateFicheActionRequestSchema = updateFicheActionSchema
     sousThematiques: sousThematiqueSchema.pick({ id: true }).array().nullish(),
     partenaires: partenaireTagSchema.pick({ id: true }).array().nullish(),
     structures: structureTagSchema.pick({ id: true }).array().nullish(),
-    pilotes: piloteOrReferentSchema.array().nullish(),
-    referents: piloteOrReferentSchema.array().nullish(),
+    pilotes: personneSchema.array().nullish(),
+    referents: personneSchema.array().nullish(),
     actions: actionRelationSchema.pick({ id: true }).array().nullish(),
     indicateurs: indicateurDefinitionSchema
       .pick({ id: true })
