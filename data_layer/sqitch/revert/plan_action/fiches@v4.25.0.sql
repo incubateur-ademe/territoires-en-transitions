@@ -11,6 +11,9 @@ DROP TRIGGER IF EXISTS upsert ON public.fiches_action;
 DROP VIEW public.fiches_action;
 DROP VIEW private.fiches_action;
 
+alter table fiche_action
+  drop column created_by;
+
 --
 -- AFTER. Recreate the views and functions
 create view private.fiches_action
@@ -37,7 +40,6 @@ SELECT fa.modified_at,
        fa.participation_citoyenne,
        fa.participation_citoyenne_type,
        jsonb_build_object('id', tmo.niveau, 'nom', tmo.nom) as temps_de_mise_en_oeuvre,
-       jsonb_build_object('user_id', created_user.user_id, 'nom', created_user.nom, 'prenom', created_user.prenom, 'email', created_user.email) as created_by,
        fa.maj_termine,
        fa.collectivite_id,
        fa.created_at,
@@ -187,8 +189,6 @@ LEFT JOIN (
           ) eff ON eff.fiche_id = fa.id
 LEFT JOIN action_impact_temps_de_mise_en_oeuvre tmo
           ON tmo.niveau = fa.temps_de_mise_en_oeuvre_id
-LEFT JOIN dcp created_user
-          ON created_user.user_id = fa.created_by
 ;
 
 

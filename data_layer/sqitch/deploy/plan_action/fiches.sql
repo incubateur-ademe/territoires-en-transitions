@@ -12,11 +12,8 @@ DROP VIEW public.fiches_action;
 DROP VIEW private.fiches_action;
 
 
-alter table fiche_action
-  add column created_by uuid default auth.uid() references auth.users;
-
 --
--- AFTER. Recreate the views and functions
+-- Recreate the view with the new fields
 create view private.fiches_action
 as
 SELECT fa.modified_at,
@@ -40,8 +37,16 @@ SELECT fa.modified_at,
        fa.instance_gouvernance,
        fa.participation_citoyenne,
        fa.participation_citoyenne_type,
-       jsonb_build_object('id', tmo.niveau, 'nom', tmo.nom) as temps_de_mise_en_oeuvre,
-       jsonb_build_object('user_id', created_user.user_id, 'nom', created_user.nom, 'prenom', created_user.prenom, 'email', created_user.email) as created_by,
+       -- ↓ CHANGES HERE ↓
+       CASE
+          WHEN tmo.niveau IS NULL THEN NULL
+          ELSE jsonb_build_object('id', tmo.niveau, 'nom', tmo.nom)
+       END as temps_de_mise_en_oeuvre,
+       CASE
+          WHEN fa.created_by IS NULL THEN NULL
+          ELSE jsonb_build_object('user_id', created_user.user_id, 'nom', created_user.nom, 'prenom', created_user.prenom, 'email', created_user.email)
+       END as created_by,
+       -- ↑ CHANGES HERE ↑
        fa.maj_termine,
        fa.collectivite_id,
        fa.created_at,
@@ -196,6 +201,8 @@ LEFT JOIN dcp created_user
 ;
 
 
+--
+-- AFTER. Recreate the related views and functions
 create or replace view public.fiches_action as
 SELECT *
 FROM private.fiches_action
