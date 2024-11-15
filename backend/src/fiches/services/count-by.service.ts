@@ -64,6 +64,8 @@ export default class CountByService {
       SANS_STATUT_FICHE_ACTION_SYNTHESE_KEY
     );
 
+    type truc = typeof result;
+
     return result;
   }
 

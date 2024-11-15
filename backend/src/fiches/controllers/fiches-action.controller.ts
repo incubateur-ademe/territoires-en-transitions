@@ -3,11 +3,11 @@ import { Body, Controller, Get, Param, Put, Query } from '@nestjs/common';
 import { ApiOkResponse, ApiTags } from '@nestjs/swagger';
 import { TokenInfo } from '../../auth/decorators/token-info.decorators';
 import type { SupabaseJwtPayload } from '../../auth/models/supabase-jwt.models';
-import { getFichesActionSyntheseSchema } from '../models/get-fiches-action-synthese.response';
 import { getFichesActionFilterRequestSchema } from '../models/get-fiches-actions-filter.request';
 import { updateFicheActionRequestSchema } from '../models/update-fiche-action.request';
-import SyntheseService from '../services/synthese.service';
+import CountByService from '../services/count-by.service';
 import FichesActionUpdateService from '../services/fiches-action-update.service';
+import { getFichesActionSyntheseSchema } from '../models/get-fiches-action-synthese.response';
 
 /**
  * Création des classes de réponse à partir du schema pour générer automatiquement la documentation OpenAPI
@@ -27,7 +27,7 @@ export class UpdateFicheActionRequestClass extends createZodDto(
 @Controller('collectivites/:collectivite_id/fiches-action')
 export class FichesActionController {
   constructor(
-    private readonly syntheseService: SyntheseService,
+    private readonly syntheseService: CountByService,
     private readonly fichesActionUpdateService: FichesActionUpdateService
   ) {}
 
@@ -42,7 +42,7 @@ export class FichesActionController {
     @Query() request: GetFichesActionFilterRequestClass,
     @TokenInfo() tokenInfo: SupabaseJwtPayload
   ) {
-    return this.syntheseService.getFichesActionSynthese(
+    return this.syntheseService.countByStatut(
       collectiviteId,
       request,
       tokenInfo

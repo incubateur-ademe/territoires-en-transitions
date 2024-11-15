@@ -5,7 +5,7 @@ import {
   SupabaseRole,
 } from '../../auth/models/supabase-jwt.models';
 import { TrpcService } from '../../trpc/trpc.service';
-import SyntheseService from '../services/synthese.service';
+import CountByService from '../services/count-by.service';
 import { getFichesActionFilterRequestSchema } from '../models/get-fiches-actions-filter.request';
 
 const inputSchema = z.object({
@@ -14,14 +14,14 @@ const inputSchema = z.object({
 });
 
 @Injectable()
-export class SyntheseRouter {
+export class CountByStatutRouter {
   constructor(
     private readonly trpc: TrpcService,
-    private readonly service: SyntheseService
+    private readonly service: CountByService
   ) {}
 
   router = this.trpc.router({
-    synthese: this.trpc.procedure.input(inputSchema).query(({ input }) => {
+    countByStatut: this.trpc.procedure.input(inputSchema).query(({ input }) => {
       const { collectiviteId, body } = input;
       // TODO: token
       const tokenInfo: SupabaseJwtPayload = {
@@ -29,11 +29,7 @@ export class SyntheseRouter {
         role: SupabaseRole.AUTHENTICATED,
         is_anonymous: false,
       };
-      return this.service.getFichesActionSynthese(
-        collectiviteId,
-        body,
-        tokenInfo
-      );
+      return this.service.countByStatut(collectiviteId, body, tokenInfo);
     }),
   });
 }

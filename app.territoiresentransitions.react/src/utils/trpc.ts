@@ -4,7 +4,7 @@ import { getAuthHeaders } from 'core-logic/api/auth/AuthProvider';
 // By using `import type` you ensure that the reference will be stripped at compile-time, meaning you don't inadvertently import server-side code into your client.
 // For more information, see the Typescript docs: https://www.typescriptlang.org/docs/handbook/release-notes/typescript-3-8.html#type-only-imports-and-export
 // eslint-disable-next-line @nx/enforce-module-boundaries
-import type { AppRouter } from './../../../backend/src/trpc.router';
+import type { AppRouter } from '@tet/backend/trpc/trpc.router';
 
 const BASE_URL = `${process.env.NEXT_PUBLIC_BACKEND_URL}/trpc`;
 

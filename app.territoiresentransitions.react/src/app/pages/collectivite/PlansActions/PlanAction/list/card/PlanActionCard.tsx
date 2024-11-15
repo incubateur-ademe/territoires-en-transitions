@@ -24,11 +24,9 @@ const PlanActionCard = ({
   openInNewTab,
   display = 'row',
 }: Props) => {
-  const { data } = useFichesActionStatuts({
+  const { data: countByStatut } = useFichesActionStatuts({
     plan_ids: plan.id.toString(),
   });
-
-  const statuts = data?.par_statut;
 
   const axesCount = plan.axes?.reduce(
     (acc: { axe: number; sousAxe: number }, axe: Axe) => {
@@ -42,8 +40,8 @@ const PlanActionCard = ({
     { axe: 0, sousAxe: 0 }
   );
 
-  const fichesCount = statuts
-    ? Object.values(statuts).reduce((acc, curr) => acc + curr.count, 0)
+  const fichesCount = countByStatut
+    ? Object.values(countByStatut).reduce((acc, curr) => acc + curr.count, 0)
     : 0;
 
   return (
@@ -65,9 +63,9 @@ const PlanActionCard = ({
         )}
       </div>
       {/** Statuts de fiches */}
-      {statuts && (
+      {countByStatut && (
         <Statuts
-          statuts={statuts}
+          statuts={countByStatut}
           fichesCount={fichesCount}
           display={display}
         />

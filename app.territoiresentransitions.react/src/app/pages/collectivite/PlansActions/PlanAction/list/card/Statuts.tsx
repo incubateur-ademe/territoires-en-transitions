@@ -9,7 +9,7 @@ type Props = {
   statuts: {
     [key: string]: {
       count: number;
-      valeur: Statut;
+      valeur: Statut | 'Sans statut';
     };
   };
   fichesCount: number;
