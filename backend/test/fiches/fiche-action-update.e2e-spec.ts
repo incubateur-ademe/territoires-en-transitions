@@ -1,73 +1,53 @@
 import { INestApplication } from '@nestjs/common';
-import { Test } from '@nestjs/testing';
-import { AppModule } from '../../src/app.module';
-import { describe, expect, it } from 'vitest';
-import { default as request } from 'supertest';
-import { ZodValidationPipe } from '@anatine/zod-nestjs/src/lib/zod-validation-pipe';
 import { eq } from 'drizzle-orm';
+import { default as request } from 'supertest';
+import { describe, expect, it } from 'vitest';
 import DatabaseService from '../../src/common/services/database.service';
-import { ficheActionTable } from '../../src/fiches/models/fiche-action.table';
-import { ficheActionFixture } from './fixtures/fiche-action.fixture';
-import { ficheActionAxeTable } from '../../src/fiches/models/fiche-action-axe.table';
-import { ficheActionThematiqueTable } from '../../src/fiches/models/fiche-action-thematique.table';
 import { ficheActionActionTable } from '../../src/fiches/models/fiche-action-action.table';
+import { ficheActionAxeTable } from '../../src/fiches/models/fiche-action-axe.table';
 import { ficheActionIndicateurTable } from '../../src/fiches/models/fiche-action-indicateur.table';
 import { ficheActionPiloteTable } from '../../src/fiches/models/fiche-action-pilote.table';
 import { ficheActionReferentTable } from '../../src/fiches/models/fiche-action-referent.table';
 import { ficheActionSousThematiqueTable } from '../../src/fiches/models/fiche-action-sous-thematique.table';
+import { ficheActionThematiqueTable } from '../../src/fiches/models/fiche-action-thematique.table';
+import { ficheActionTable } from '../../src/fiches/models/fiche-action.table';
+import { ficheActionFixture } from './fixtures/fiche-action.fixture';
 
+import { ficheActionEffetAttenduTable } from '../../src/fiches/models/fiche-action-effet-attendu.table';
+import { ficheActionFinanceurTagTable } from '../../src/fiches/models/fiche-action-financeur-tag.table';
+import { ficheActionLienTable } from '../../src/fiches/models/fiche-action-lien.table';
+import { ficheActionPartenaireTagTable } from '../../src/fiches/models/fiche-action-partenaire-tag.table';
+import { ficheActionServiceTagTable } from '../../src/fiches/models/fiche-action-service.table';
+import { ficheActionStructureTagTable } from '../../src/fiches/models/fiche-action-structure-tag.table';
+import { getYoloDodoToken } from '../auth/auth-utils';
+import { getTestApp } from '../common/app-utils';
 import {
+  actionsFixture,
   axesFixture,
-  sousThematiquesFixture,
-  thematiquesFixture,
+  fichesLieesFixture,
+  financeursFixture,
+  indicateursFixture,
   partenairesFixture,
-  structuresFixture,
   pilotesFixture,
   referentsFixture,
   resultatAttenduFixture,
-  actionsFixture,
-  indicateursFixture,
   servicesFixture,
-  financeursFixture,
-  fichesLieesFixture,
+  sousThematiquesFixture,
+  structuresFixture,
+  thematiquesFixture,
 } from './fixtures/fiche-action-relations.fixture';
-import { ficheActionPartenaireTagTable } from '../../src/fiches/models/fiche-action-partenaire-tag.table';
-import { ficheActionStructureTagTable } from '../../src/fiches/models/fiche-action-structure-tag.table';
-import { ficheActionFinanceurTagTable } from '../../src/fiches/models/fiche-action-financeur-tag.table';
-import { ficheActionServiceTagTable } from '../../src/fiches/models/fiche-action-service.table';
-import { ficheActionEffetAttenduTable } from '../../src/fiches/models/fiche-action-effet-attendu.table';
-import { ficheActionLienTable } from '../../src/fiches/models/fiche-action-lien.table';
-import { createClient, SupabaseClient } from '@supabase/supabase-js';
-import { YOLO_DODO_CREDENTIALS } from '../auth/test-users.samples';
 
 let collectiviteId: number;
 let ficheActionId: number;
 
 describe('FichesActionUpdateService', () => {
   let app: INestApplication;
-  let supabase: SupabaseClient;
   let yoloDodoToken: string;
   let databaseService: DatabaseService;
 
   beforeAll(async () => {
-    const moduleRef = await Test.createTestingModule({
-      imports: [AppModule],
-    }).compile();
-
-    app = moduleRef.createNestApplication();
-    app.useGlobalPipes(new ZodValidationPipe());
-    await app.init();
-
-    supabase = createClient(
-      process.env.SUPABASE_URL!,
-      process.env.SUPABASE_ANON_KEY!
-    );
-
-    const signinResponse = await supabase.auth.signInWithPassword(
-      YOLO_DODO_CREDENTIALS
-    );
-
-    yoloDodoToken = signinResponse.data.session?.access_token || '';
+    app = await getTestApp();
+    yoloDodoToken = await getYoloDodoToken();
 
     databaseService = app.get<DatabaseService>(DatabaseService);
 
@@ -596,7 +576,7 @@ describe('FichesActionUpdateService', () => {
     });
   }
 
-  const putRequest = async (data: {}) => {
+  const putRequest = async (data: object) => {
     return await request(app.getHttpServer())
       .put(`/collectivites/${collectiviteId}/fiches-action/${ficheActionId}`)
       .send(data)
