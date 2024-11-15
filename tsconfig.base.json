@@ -2,6 +2,8 @@
   "compileOnSave": false,
   "compilerOptions": {
     "rootDir": ".",
+    "baseUrl": ".",
+    "outDir": "./dist",
     "sourceMap": true,
     "strict": true,
     "declaration": false,
@@ -15,7 +17,8 @@
     "lib": ["es2021", "dom", "dom.iterable"],
     "skipLibCheck": true,
     "skipDefaultLibCheck": true,
-    "baseUrl": ".",
+    "esModuleInterop": true,
+    "incremental": true,
     "paths": {
       "@tet/api": ["./packages/api/src/index.ts"],
       "@tet/api/*": ["./packages/api/src/*"],
