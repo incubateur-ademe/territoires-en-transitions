@@ -5,14 +5,14 @@ import { ficheActionTable } from './fiche-action.table';
 export const ficheActionServiceTagTable = pgTable(
   'fiche_action_service_tag',
   {
-    fiche_id: integer('fiche_id').references(() => ficheActionTable.id),
-    service_tag_id: integer('service_tag_id').references(
+    ficheId: integer('fiche_id').references(() => ficheActionTable.id),
+    serviceTagId: integer('service_tag_id').references(
       () => serviceTagTable.id
     ),
   },
   (table) => {
     return {
-      pk: primaryKey({ columns: [table.fiche_id, table.service_tag_id] }),
+      pk: primaryKey({ columns: [table.ficheId, table.serviceTagId] }),
     };
   }
 );

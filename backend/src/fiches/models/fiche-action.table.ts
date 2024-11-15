@@ -1,3 +1,4 @@
+import { collectiviteTable } from '../../collectivites/models/collectivite.table';
 import { InferInsertModel, sql } from 'drizzle-orm';
 import {
   boolean,
@@ -11,34 +12,66 @@ import {
   uuid,
   varchar,
 } from 'drizzle-orm/pg-core';
-import { collectiviteTable } from '../../collectivites/models/collectivite.table';
-import { z } from 'zod';
 import { tempsDeMiseEnOeuvreTable } from '../../taxonomie/models/temps-de-mise-en-oeuvre.table';
+import { createInsertSchema, createSelectSchema } from 'drizzle-zod';
+import { z } from 'zod';
 
-export const ficheActionPiliersEciEnum = pgEnum('fiche_action_piliers_eci', [
-  'Approvisionnement durable',
-  'Écoconception',
-  'Écologie industrielle (et territoriale)',
-  'Économie de la fonctionnalité',
-  'Consommation responsable',
-  'Allongement de la durée d’usage',
-  'Recyclage',
-]);
+export enum piliersEciEnumType {
+  APPROVISIONNEMENT_DURABLE = 'Approvisionnement durable',
+  ECOCONCEPTION = 'Écoconception',
+  ECOLOGIE_INDUSTRIELLE = 'Écologie industrielle (et territoriale)',
+  ECONOMIE_DE_LA_FONCTIONNALITE = 'Économie de la fonctionnalité',
+  CONSOMMATION_RESPONSABLE = 'Consommation responsable',
+  ALLONGEMENT_DUREE_USAGE = 'Allongement de la durée d’usage',
+  RECYCLAGE = 'Recyclage',
+}
+
+export const piliersEciEnumValues = [
+  piliersEciEnumType.APPROVISIONNEMENT_DURABLE,
+  piliersEciEnumType.ECOCONCEPTION,
+  piliersEciEnumType.ECOLOGIE_INDUSTRIELLE,
+  piliersEciEnumType.ECONOMIE_DE_LA_FONCTIONNALITE,
+  piliersEciEnumType.CONSOMMATION_RESPONSABLE,
+  piliersEciEnumType.ALLONGEMENT_DUREE_USAGE,
+  piliersEciEnumType.RECYCLAGE,
+] as const;
+
+export const piliersEciEnumSchema = z.enum(piliersEciEnumValues);
+
+export const piliersEciPgEnum = pgEnum(
+  'fiche_action_piliers_eci',
+  piliersEciEnumValues
+);
+
+export enum ficheActionResultatsAttendusEnumType {
+  ADAPTATION_CHANGEMENT_CLIMATIQUE = 'Adaptation au changement climatique',
+  ALLONGEMENT_DUREE_USAGE = 'Allongement de la durée d’usage',
+  AMELIORATION_QUALITE_VIE = 'Amélioration de la qualité de vie',
+  DEVELOPPEMENT_ENERGIES_RENOUVELABLES = 'Développement des énergies renouvelables',
+  EFFICACITE_ENERGETIQUE = 'Efficacité énergétique',
+  PRESERVATION_BIODIVERSITE = 'Préservation de la biodiversité',
+  REDUCTION_CONSOMMATIONS_ENERGETIQUES = 'Réduction des consommations énergétiques',
+  REDUCTION_DECHETS = 'Réduction des déchets',
+  REDUCTION_EMISSIONS_GES = 'Réduction des émissions de gaz à effet de serre',
+  REDUCTION_POLLUANTS_ATMOSPHERIQUES = 'Réduction des polluants atmosphériques',
+  SOBRIETE_ENERGETIQUE = 'Sobriété énergétique',
+}
 
 export const ficheActionResultatsAttendusEnum = pgEnum(
   'fiche_action_resultats_attendus',
   [
-    'Adaptation au changement climatique',
-    'Allongement de la durée d’usage',
-    'Amélioration de la qualité de vie',
-    'Développement des énergies renouvelables',
-    'Efficacité énergétique',
-    'Préservation de la biodiversité',
-    'Réduction des consommations énergétiques',
-    'Réduction des déchets',
-    'Réduction des émissions de gaz à effet de serre',
-    'Réduction des polluants atmosphériques',
-    'Sobriété énergétique',
+    ficheActionResultatsAttendusEnumType.ADAPTATION_CHANGEMENT_CLIMATIQUE,
+    ficheActionResultatsAttendusEnumType.ALLONGEMENT_DUREE_USAGE,
+    ficheActionResultatsAttendusEnumType.AMELIORATION_QUALITE_VIE,
+    ficheActionResultatsAttendusEnumType.DEVELOPPEMENT_ENERGIES_RENOUVELABLES,
+    ficheActionResultatsAttendusEnumType.EFFICACITE_ENERGETIQUE,
+    ficheActionResultatsAttendusEnumType.PRESERVATION_BIODIVERSITE,
+    ficheActionResultatsAttendusEnumType.REDUCTION_CONSOMMATIONS_ENERGETIQUES,
+    ficheActionResultatsAttendusEnumType.REDUCTION_DECHETS,
+    ficheActionResultatsAttendusEnumType.REDUCTION_DECHETS,
+    ficheActionResultatsAttendusEnumType.REDUCTION_EMISSIONS_GES,
+    ficheActionResultatsAttendusEnumType.REDUCTION_POLLUANTS_ATMOSPHERIQUES,
+    ficheActionResultatsAttendusEnumType.SOBRIETE_ENERGETIQUE,
   ]
 );
 
@@ -122,10 +155,8 @@ export const ficheActionTable = pgTable('fiche_action', {
   id: serial('id').primaryKey().notNull(),
   titre: varchar('titre', { length: 300 }).default('Nouvelle fiche'),
   description: varchar('description', { length: 20000 }),
-  piliersEci: ficheActionPiliersEciEnum('piliers_eci').array(),
+  piliersEci: piliersEciPgEnum('piliers_eci').array(),
   objectifs: varchar('objectifs', { length: 10000 }),
-  resultatsAttendus:
-    ficheActionResultatsAttendusEnum('resultats_attendus').array(),
   cibles: text('cibles', {
     enum: ficheActionCiblesEnumValues,
   }).array(),
@@ -149,7 +180,7 @@ export const ficheActionTable = pgTable('fiche_action', {
   notesComplementaires: varchar('notes_complementaires', { length: 20000 }),
   instanceGouvernance: text('instance_gouvernance'),
   participationCitoyenne: text('participation_citoyenne'),
-  participationCitoyenneType: varchar('participation_citoyenne', {
+  participationCitoyenneType: varchar('participation_citoyenne_type', {
     length: 30,
     enum: ficheActionParticipationCitoyenneTypeEnumValues,
   }),
@@ -167,4 +198,25 @@ export const ficheActionTable = pgTable('fiche_action', {
   restreint: boolean('restreint').default(false),
 });
 export type FicheActionTableType = typeof ficheActionTable;
+
 export type CreateFicheActionType = InferInsertModel<typeof ficheActionTable>;
+
+export const ficheActionSchema = createSelectSchema(ficheActionTable, {
+  // Overriding array types as a workaround for drizzle-zod parsing issue
+  // See https://github.com/drizzle-team/drizzle-orm/issues/1609
+  piliersEci: z.array(piliersEciEnumSchema),
+  cibles: z.array(ficheActionCiblesEnumSchema),
+});
+
+export const createFicheActionSchema = createInsertSchema(ficheActionTable, {
+  // Overriding array types as a workaround for drizzle-zod parsing issue
+  // See https://github.com/drizzle-team/drizzle-orm/issues/1609
+  piliersEci: z.array(piliersEciEnumSchema),
+  cibles: z.array(ficheActionCiblesEnumSchema),
+});
+
+export const updateFicheActionSchema = createFicheActionSchema
+  .omit({ id: true, createdAt: true, modifiedAt: true, modifiedBy: true })
+  .partial();
+
+export type UpdateFicheActionType = z.infer<typeof updateFicheActionSchema>;

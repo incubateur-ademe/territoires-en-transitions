@@ -1,4 +1,5 @@
 import { pgTable, uniqueIndex } from 'drizzle-orm/pg-core';
+import { createSelectSchema } from 'drizzle-zod';
 import { tagTableBase } from './tag.table-base';
 
 export const serviceTagTable = pgTable('service_tag', tagTableBase, (table) => {
@@ -8,3 +9,5 @@ export const serviceTagTable = pgTable('service_tag', tagTableBase, (table) => {
     ).on(table.nom, table.collectiviteId),
   };
 });
+
+export const serviceTagSchema = createSelectSchema(serviceTagTable);

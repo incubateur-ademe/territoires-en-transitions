@@ -11,6 +11,10 @@ DROP TRIGGER IF EXISTS upsert ON public.fiches_action;
 DROP VIEW public.fiches_action;
 DROP VIEW private.fiches_action;
 
+
+alter table fiche_action
+  add column created_by uuid default auth.uid() references auth.users;
+
 --
 -- AFTER. Recreate the views and functions
 create view private.fiches_action

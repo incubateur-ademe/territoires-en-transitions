@@ -28,7 +28,6 @@ import {
 } from '../models/fiche-action.table';
 import { GetFichesActionSyntheseResponseType } from '../models/get-fiches-action-synthese.response';
 import { GetFichesActionFilterRequestType } from '../models/get-fiches-actions-filter.request';
-import { NiveauAcces } from '../../auth/models/private-utilisateur-droit.table';
 import { SupabaseJwtPayload } from '../../auth/models/supabase-jwt.models';
 
 @Injectable()
@@ -101,14 +100,14 @@ export default class FichesActionSyntheseService {
   getFicheActionServiceTagsQuery() {
     return this.databaseService.db
       .select({
-        fiche_id: ficheActionServiceTagTable.fiche_id,
+        fiche_id: ficheActionServiceTagTable.ficheId,
         service_tag_ids:
-          sql`array_agg(${ficheActionServiceTagTable.service_tag_id})`.as(
+          sql`array_agg(${ficheActionServiceTagTable.serviceTagId})`.as(
             'service_tag_ids'
           ),
       })
       .from(ficheActionServiceTagTable)
-      .groupBy(ficheActionServiceTagTable.fiche_id)
+      .groupBy(ficheActionServiceTagTable.ficheId)
       .as('ficheActionServiceTag');
   }
 
