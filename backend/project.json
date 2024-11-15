@@ -6,20 +6,16 @@
   "tags": [],
   "targets": {
     "dev": {
-      "executor": "@nx/js:node",
-      "defaultConfiguration": "development",
-      "dependsOn": ["build"],
+      "command": "nest start --watch",
+      "// debug": "nest start --debug --watch",
       "options": {
-        "buildTarget": "@tet/backend:build",
-        "runBuildTargetDependencies": false
-      },
-      "configurations": {
-        "development": {
-          "buildTarget": "@tet/backend:build:development"
-        },
-        "production": {
-          "buildTarget": "@tet/backend:build:production"
-        }
+        "cwd": "backend"
+      }
+    },
+    "build": {
+      "command": "nest build",
+      "options": {
+        "cwd": "backend"
       }
     }
   }
