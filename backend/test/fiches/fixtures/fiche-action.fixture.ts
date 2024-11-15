@@ -1,7 +1,7 @@
 import {
   CreateFicheActionType,
   FicheActionCiblesEnumType,
-  ficheActionPiliersEciEnumType,
+  piliersEciEnumType,
   FicheActionStatutsEnumType,
 } from '../../../src/fiches/models/fiche-action.table';
 
@@ -9,7 +9,7 @@ export const ficheActionFixture: CreateFicheActionType = {
   id: 9999,
   titre: 'Test Fiche Action',
   description: 'patati',
-  piliersEci: [ficheActionPiliersEciEnumType.APPROVISIONNEMENT_DURABLE],
+  piliersEci: [piliersEciEnumType.APPROVISIONNEMENT_DURABLE],
   objectifs: 'Diminution des émissions de carbone',
   cibles: [
     FicheActionCiblesEnumType.GRAND_PUBLIC_ET_ASSOCIATIONS,

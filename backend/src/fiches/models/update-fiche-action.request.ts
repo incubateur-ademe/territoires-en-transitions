@@ -1,7 +1,7 @@
 import z from 'zod';
 import {
   FicheActionCiblesEnumType,
-  ficheActionPiliersEciEnumType,
+  piliersEciEnumType,
   ficheActionSchema,
   updateFicheActionSchema,
 } from './fiche-action.table';
@@ -40,11 +40,11 @@ export const updateFicheActionRequestSchema = updateFicheActionSchema
     piliersEci: z
       .preprocess(
         (val) => (typeof val === 'string' ? val.replace(/'/g, '’') : val),
-        z.nativeEnum(ficheActionPiliersEciEnumType)
+        z.nativeEnum(piliersEciEnumType)
       )
       .array()
-      .optional(),
-    cibles: z.nativeEnum(FicheActionCiblesEnumType).array().optional(),
+      .nullish(),
+    cibles: z.nativeEnum(FicheActionCiblesEnumType).array().nullish(),
     // Overriding because numeric and timestamp types are not properly converted otherwise (a bug with zod/drizzle ?)
     budgetPrevisionnel: z
       .union([z.string(), z.number()])
@@ -52,14 +52,14 @@ export const updateFicheActionRequestSchema = updateFicheActionSchema
       .refine((val) => !isNaN(Number(val)), {
         message: "Expected 'budgetPrevisionnel' to be a numeric string",
       })
-      .optional(),
+      .nullish(),
     dateDebut: z
       .string()
       .nullable()
       .refine((val) => val === null || !isNaN(Date.parse(val)), {
         message: "Invalid date format for 'dateDebut'",
       })
-      .optional(),
+      .nullish(),
 
     tempsDeMiseEnOeuvre: z
       .union([
@@ -70,24 +70,24 @@ export const updateFicheActionRequestSchema = updateFicheActionSchema
         }),
       ])
       .transform((val) => (typeof val === 'number' ? val : val.id))
-      .optional(),
+      .nullish(),
 
-    axes: axeSchema.pick({ id: true }).array().optional(),
-    thematiques: thematiqueSchema.pick({ id: true }).array().optional(),
-    sousThematiques: sousThematiqueSchema.pick({ id: true }).array().optional(),
-    partenaires: partenaireTagSchema.pick({ id: true }).array().optional(),
-    structures: structureTagSchema.pick({ id: true }).array().optional(),
-    pilotes: piloteOrReferentSchema.array().optional(),
-    referents: piloteOrReferentSchema.array().optional(),
-    actions: actionRelationSchema.pick({ id: true }).array().optional(),
+    axes: axeSchema.pick({ id: true }).array().nullish(),
+    thematiques: thematiqueSchema.pick({ id: true }).array().nullish(),
+    sousThematiques: sousThematiqueSchema.pick({ id: true }).array().nullish(),
+    partenaires: partenaireTagSchema.pick({ id: true }).array().nullish(),
+    structures: structureTagSchema.pick({ id: true }).array().nullish(),
+    pilotes: piloteOrReferentSchema.array().nullish(),
+    referents: piloteOrReferentSchema.array().nullish(),
+    actions: actionRelationSchema.pick({ id: true }).array().nullish(),
     indicateurs: indicateurDefinitionSchema
       .pick({ id: true })
       .array()
-      .optional(),
-    services: serviceTagSchema.pick({ id: true }).array().optional(),
-    financeurs: z.array(financeurWithMontantSchema).optional(),
-    fichesLiees: ficheActionSchema.pick({ id: true }).array().optional(),
-    resultatsAttendus: effetAttenduSchema.pick({ id: true }).array().optional(),
+      .nullish(),
+    services: serviceTagSchema.pick({ id: true }).array().nullish(),
+    financeurs: z.array(financeurWithMontantSchema).nullish(),
+    fichesLiees: ficheActionSchema.pick({ id: true }).array().nullish(),
+    resultatsAttendus: effetAttenduSchema.pick({ id: true }).array().nullish(),
   })
   .refine((schema) => Object.keys(schema).length > 0, 'Body cannot be empty');
 

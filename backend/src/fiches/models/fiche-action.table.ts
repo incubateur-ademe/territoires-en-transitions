@@ -16,7 +16,7 @@ import { tempsDeMiseEnOeuvreTable } from '../../taxonomie/models/temps-de-mise-e
 import { createInsertSchema, createSelectSchema } from 'drizzle-zod';
 import { z } from 'zod';
 
-export enum ficheActionPiliersEciEnumType {
+export enum piliersEciEnumType {
   APPROVISIONNEMENT_DURABLE = 'Approvisionnement durable',
   ECOCONCEPTION = 'Écoconception',
   ECOLOGIE_INDUSTRIELLE = 'Écologie industrielle (et territoriale)',
@@ -26,15 +26,22 @@ export enum ficheActionPiliersEciEnumType {
   RECYCLAGE = 'Recyclage',
 }
 
-export const ficheActionPiliersEciEnum = pgEnum('fiche_action_piliers_eci', [
-  ficheActionPiliersEciEnumType.APPROVISIONNEMENT_DURABLE,
-  ficheActionPiliersEciEnumType.ECOCONCEPTION,
-  ficheActionPiliersEciEnumType.ECOLOGIE_INDUSTRIELLE,
-  ficheActionPiliersEciEnumType.ECONOMIE_DE_LA_FONCTIONNALITE,
-  ficheActionPiliersEciEnumType.CONSOMMATION_RESPONSABLE,
-  ficheActionPiliersEciEnumType.ALLONGEMENT_DUREE_USAGE,
-  ficheActionPiliersEciEnumType.RECYCLAGE,
-]);
+export const piliersEciEnumValues = [
+  piliersEciEnumType.APPROVISIONNEMENT_DURABLE,
+  piliersEciEnumType.ECOCONCEPTION,
+  piliersEciEnumType.ECOLOGIE_INDUSTRIELLE,
+  piliersEciEnumType.ECONOMIE_DE_LA_FONCTIONNALITE,
+  piliersEciEnumType.CONSOMMATION_RESPONSABLE,
+  piliersEciEnumType.ALLONGEMENT_DUREE_USAGE,
+  piliersEciEnumType.RECYCLAGE,
+] as const;
+
+export const piliersEciEnumSchema = z.enum(piliersEciEnumValues);
+
+export const piliersEciPgEnum = pgEnum(
+  'fiche_action_piliers_eci',
+  piliersEciEnumValues
+);
 
 export enum ficheActionResultatsAttendusEnumType {
   ADAPTATION_CHANGEMENT_CLIMATIQUE = 'Adaptation au changement climatique',
@@ -148,7 +155,7 @@ export const ficheActionTable = pgTable('fiche_action', {
   id: serial('id').primaryKey().notNull(),
   titre: varchar('titre', { length: 300 }).default('Nouvelle fiche'),
   description: varchar('description', { length: 20000 }),
-  piliersEci: ficheActionPiliersEciEnum('piliers_eci').array(),
+  piliersEci: piliersEciPgEnum('piliers_eci').array(),
   objectifs: varchar('objectifs', { length: 10000 }),
   cibles: text('cibles', {
     enum: ficheActionCiblesEnumValues,
@@ -197,15 +204,15 @@ export type CreateFicheActionType = InferInsertModel<typeof ficheActionTable>;
 export const ficheActionSchema = createSelectSchema(ficheActionTable, {
   // Overriding array types as a workaround for drizzle-zod parsing issue
   // See https://github.com/drizzle-team/drizzle-orm/issues/1609
-  piliersEci: (schema) => schema.piliersEci.array(),
-  cibles: (schema) => schema.cibles.array(),
+  piliersEci: z.array(piliersEciEnumSchema),
+  cibles: z.array(ficheActionCiblesEnumSchema),
 });
 
 export const createFicheActionSchema = createInsertSchema(ficheActionTable, {
   // Overriding array types as a workaround for drizzle-zod parsing issue
   // See https://github.com/drizzle-team/drizzle-orm/issues/1609
-  piliersEci: (schema) => schema.piliersEci.array(),
-  cibles: (schema) => schema.cibles.array(),
+  piliersEci: z.array(piliersEciEnumSchema),
+  cibles: z.array(ficheActionCiblesEnumSchema),
 });
 
 export const updateFicheActionSchema = createFicheActionSchema
