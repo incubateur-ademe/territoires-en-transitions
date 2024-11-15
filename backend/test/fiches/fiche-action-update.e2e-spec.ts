@@ -5,20 +5,18 @@ import { describe, expect, it } from 'vitest';
 import DatabaseService from '../../src/common/services/database.service';
 import { ficheActionActionTable } from '../../src/fiches/models/fiche-action-action.table';
 import { ficheActionAxeTable } from '../../src/fiches/models/fiche-action-axe.table';
-import { ficheActionIndicateurTable } from '../../src/fiches/models/fiche-action-indicateur.table';
-import { ficheActionPiloteTable } from '../../src/fiches/models/fiche-action-pilote.table';
-import { ficheActionReferentTable } from '../../src/fiches/models/fiche-action-referent.table';
-import { ficheActionSousThematiqueTable } from '../../src/fiches/models/fiche-action-sous-thematique.table';
-import { ficheActionThematiqueTable } from '../../src/fiches/models/fiche-action-thematique.table';
-import { ficheActionTable } from '../../src/fiches/models/fiche-action.table';
-import { ficheActionFixture } from './fixtures/fiche-action.fixture';
-
 import { ficheActionEffetAttenduTable } from '../../src/fiches/models/fiche-action-effet-attendu.table';
 import { ficheActionFinanceurTagTable } from '../../src/fiches/models/fiche-action-financeur-tag.table';
+import { ficheActionIndicateurTable } from '../../src/fiches/models/fiche-action-indicateur.table';
 import { ficheActionLienTable } from '../../src/fiches/models/fiche-action-lien.table';
 import { ficheActionPartenaireTagTable } from '../../src/fiches/models/fiche-action-partenaire-tag.table';
+import { ficheActionPiloteTable } from '../../src/fiches/models/fiche-action-pilote.table';
+import { ficheActionReferentTable } from '../../src/fiches/models/fiche-action-referent.table';
 import { ficheActionServiceTagTable } from '../../src/fiches/models/fiche-action-service.table';
+import { ficheActionSousThematiqueTable } from '../../src/fiches/models/fiche-action-sous-thematique.table';
 import { ficheActionStructureTagTable } from '../../src/fiches/models/fiche-action-structure-tag.table';
+import { ficheActionThematiqueTable } from '../../src/fiches/models/fiche-action-thematique.table';
+import { ficheActionTable } from '../../src/fiches/models/fiche-action.table';
 import { getYoloDodoToken } from '../auth/auth-utils';
 import { getTestApp } from '../common/app-utils';
 import {
@@ -36,9 +34,10 @@ import {
   structuresFixture,
   thematiquesFixture,
 } from './fixtures/fiche-action-relations.fixture';
+import { ficheActionFixture } from './fixtures/fiche-action.fixture';
 
-let collectiviteId: number;
-let ficheActionId: number;
+const collectiviteId = 1;
+const ficheActionId = 9999;
 
 describe('FichesActionUpdateService', () => {
   let app: INestApplication;
@@ -51,9 +50,6 @@ describe('FichesActionUpdateService', () => {
 
     databaseService = app.get<DatabaseService>(DatabaseService);
 
-    collectiviteId = 1;
-    ficheActionId = 9999;
-
     await databaseService.db
       .delete(ficheActionTable)
       .where(eq(ficheActionTable.id, ficheActionId));
@@ -62,7 +58,15 @@ describe('FichesActionUpdateService', () => {
       .insert(ficheActionTable)
       .values(ficheActionFixture);
 
-    insertFixtures(databaseService, ficheActionId);
+    await insertFixtures(databaseService, ficheActionId);
+  });
+
+  afterAll(async () => {
+    await databaseService.db
+      .delete(ficheActionTable)
+      .where(eq(ficheActionTable.id, ficheActionId));
+
+    await app.close();
   });
 
   describe('Update fiche action fields', () => {
@@ -213,6 +217,14 @@ describe('FichesActionUpdateService', () => {
         .set('Authorization', `Bearer ${yoloDodoToken}`)
         .set('Content-Type', 'application/json')
         .expect(404);
+    });
+
+    it('should return 400 if the body is empty', async () => {
+      const data = {};
+      const response = await putRequest(data);
+
+      expect(response.status).toBe(400);
+      expect(response.body.message[0]).toMatch(/cannot be empty/);
     });
   });
 
@@ -583,12 +595,4 @@ describe('FichesActionUpdateService', () => {
       .set('Authorization', `Bearer ${yoloDodoToken}`)
       .set('Content-Type', 'application/json');
   };
-
-  afterAll(async () => {
-    await databaseService.db
-      .delete(ficheActionTable)
-      .where(eq(ficheActionTable.id, ficheActionId));
-
-    await app.close();
-  });
 });

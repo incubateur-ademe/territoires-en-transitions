@@ -33,58 +33,63 @@ const financeurWithMontantSchema = z.object({
   montantTtc: z.number().optional(),
 });
 
-export const updateFicheActionRequestSchema = updateFicheActionSchema.extend({
-  // We're overriding piliersEci and cibles because,
-  // for some unknown reason (a bug with zod/drizzle ?), extend() looses enum's array
-  piliersEci: z
-    .preprocess(
-      (val) => (typeof val === 'string' ? val.replace(/'/g, '’') : val),
-      z.nativeEnum(ficheActionPiliersEciEnumType)
-    )
-    .array()
-    .optional(),
-  cibles: z.nativeEnum(FicheActionCiblesEnumType).array().optional(),
-  // Overriding because numeric and timestamp types are not properly converted otherwise (a bug with zod/drizzle ?)
-  budgetPrevisionnel: z
-    .union([z.string(), z.number()])
-    .transform((val) => val.toString())
-    .refine((val) => !isNaN(Number(val)), {
-      message: "Expected 'budgetPrevisionnel' to be a numeric string",
-    })
-    .optional(),
-  dateDebut: z
-    .string()
-    .nullable()
-    .refine((val) => val === null || !isNaN(Date.parse(val)), {
-      message: "Invalid date format for 'dateDebut'",
-    })
-    .optional(),
+export const updateFicheActionRequestSchema = updateFicheActionSchema
+  .extend({
+    // We're overriding piliersEci and cibles because,
+    // for some unknown reason (a bug with zod/drizzle ?), extend() looses enum's array
+    piliersEci: z
+      .preprocess(
+        (val) => (typeof val === 'string' ? val.replace(/'/g, '’') : val),
+        z.nativeEnum(ficheActionPiliersEciEnumType)
+      )
+      .array()
+      .optional(),
+    cibles: z.nativeEnum(FicheActionCiblesEnumType).array().optional(),
+    // Overriding because numeric and timestamp types are not properly converted otherwise (a bug with zod/drizzle ?)
+    budgetPrevisionnel: z
+      .union([z.string(), z.number()])
+      .transform((val) => val.toString())
+      .refine((val) => !isNaN(Number(val)), {
+        message: "Expected 'budgetPrevisionnel' to be a numeric string",
+      })
+      .optional(),
+    dateDebut: z
+      .string()
+      .nullable()
+      .refine((val) => val === null || !isNaN(Date.parse(val)), {
+        message: "Invalid date format for 'dateDebut'",
+      })
+      .optional(),
 
-  tempsDeMiseEnOeuvre: z
-    .union([
-      z.number(),
-      z.object({
-        id: z.number(),
-        nom: z.string(),
-      }),
-    ])
-    .transform((val) => (typeof val === 'number' ? val : val.id))
-    .optional(),
+    tempsDeMiseEnOeuvre: z
+      .union([
+        z.number(),
+        z.object({
+          id: z.number(),
+          nom: z.string(),
+        }),
+      ])
+      .transform((val) => (typeof val === 'number' ? val : val.id))
+      .optional(),
 
-  axes: axeSchema.pick({ id: true }).array().optional(),
-  thematiques: thematiqueSchema.pick({ id: true }).array().optional(),
-  sousThematiques: sousThematiqueSchema.pick({ id: true }).array().optional(),
-  partenaires: partenaireTagSchema.pick({ id: true }).array().optional(),
-  structures: structureTagSchema.pick({ id: true }).array().optional(),
-  pilotes: piloteOrReferentSchema.array().optional(),
-  referents: piloteOrReferentSchema.array().optional(),
-  actions: actionRelationSchema.pick({ id: true }).array().optional(),
-  indicateurs: indicateurDefinitionSchema.pick({ id: true }).array().optional(),
-  services: serviceTagSchema.pick({ id: true }).array().optional(),
-  financeurs: z.array(financeurWithMontantSchema).optional(),
-  fichesLiees: ficheActionSchema.pick({ id: true }).array().optional(),
-  resultatsAttendus: effetAttenduSchema.pick({ id: true }).array().optional(),
-});
+    axes: axeSchema.pick({ id: true }).array().optional(),
+    thematiques: thematiqueSchema.pick({ id: true }).array().optional(),
+    sousThematiques: sousThematiqueSchema.pick({ id: true }).array().optional(),
+    partenaires: partenaireTagSchema.pick({ id: true }).array().optional(),
+    structures: structureTagSchema.pick({ id: true }).array().optional(),
+    pilotes: piloteOrReferentSchema.array().optional(),
+    referents: piloteOrReferentSchema.array().optional(),
+    actions: actionRelationSchema.pick({ id: true }).array().optional(),
+    indicateurs: indicateurDefinitionSchema
+      .pick({ id: true })
+      .array()
+      .optional(),
+    services: serviceTagSchema.pick({ id: true }).array().optional(),
+    financeurs: z.array(financeurWithMontantSchema).optional(),
+    fichesLiees: ficheActionSchema.pick({ id: true }).array().optional(),
+    resultatsAttendus: effetAttenduSchema.pick({ id: true }).array().optional(),
+  })
+  .refine((schema) => Object.keys(schema).length > 0, 'Body cannot be empty');
 
 export type UpdateFicheActionRequestType = z.infer<
   typeof updateFicheActionRequestSchema

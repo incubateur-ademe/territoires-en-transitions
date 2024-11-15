@@ -7,29 +7,29 @@ import {
   ExtractTablesWithRelations,
   TableConfig,
 } from 'drizzle-orm';
-import { SupabaseJwtPayload } from '../../auth/models/supabase-jwt.models';
-import DatabaseService from '../../common/services/database.service';
-import { ficheActionTable } from '../models/fiche-action.table';
-import { ficheActionAxeTable } from '../models/fiche-action-axe.table';
 import { PgTable, PgTransaction } from 'drizzle-orm/pg-core';
 import { PostgresJsQueryResultHKT } from 'drizzle-orm/postgres-js';
-import {
-  updateFicheActionRequestSchema,
-  UpdateFicheActionRequestType,
-} from '../models/update-fiche-action.request';
-import { ficheActionThematiqueTable } from '../models/fiche-action-thematique.table';
-import { ficheActionSousThematiqueTable } from '../models/fiche-action-sous-thematique.table';
+import { toCamel } from 'postgres';
+import { SupabaseJwtPayload } from '../../auth/models/supabase-jwt.models';
+import DatabaseService from '../../common/services/database.service';
+import { ficheActionActionTable } from '../models/fiche-action-action.table';
+import { ficheActionAxeTable } from '../models/fiche-action-axe.table';
+import { ficheActionEffetAttenduTable } from '../models/fiche-action-effet-attendu.table';
+import { ficheActionFinanceurTagTable } from '../models/fiche-action-financeur-tag.table';
+import { ficheActionIndicateurTable } from '../models/fiche-action-indicateur.table';
+import { ficheActionLienTable } from '../models/fiche-action-lien.table';
 import { ficheActionPartenaireTagTable } from '../models/fiche-action-partenaire-tag.table';
-import { ficheActionStructureTagTable } from '../models/fiche-action-structure-tag.table';
 import { ficheActionPiloteTable } from '../models/fiche-action-pilote.table';
 import { ficheActionReferentTable } from '../models/fiche-action-referent.table';
-import { ficheActionActionTable } from '../models/fiche-action-action.table';
-import { ficheActionIndicateurTable } from '../models/fiche-action-indicateur.table';
 import { ficheActionServiceTagTable } from '../models/fiche-action-service-tag.table';
-import { ficheActionFinanceurTagTable } from '../models/fiche-action-financeur-tag.table';
-import { ficheActionLienTable } from '../models/fiche-action-lien.table';
-import { ficheActionEffetAttenduTable } from '../models/fiche-action-effet-attendu.table';
-import { toCamel } from 'postgres';
+import { ficheActionSousThematiqueTable } from '../models/fiche-action-sous-thematique.table';
+import { ficheActionStructureTagTable } from '../models/fiche-action-structure-tag.table';
+import { ficheActionThematiqueTable } from '../models/fiche-action-thematique.table';
+import {
+  ficheActionTable,
+  updateFicheActionSchema,
+} from '../models/fiche-action.table';
+import { UpdateFicheActionRequestType } from '../models/update-fiche-action.request';
 
 type TxType = PgTransaction<
   PostgresJsQueryResultHKT,
@@ -99,8 +99,7 @@ export default class FichesActionUpdateService {
       }
 
       // Removes all props that are not in the schema
-      const ficheAction =
-        updateFicheActionRequestSchema.parse(unsafeFicheAction);
+      const ficheAction = updateFicheActionSchema.parse(unsafeFicheAction);
 
       let updatedFicheAction;
       let updatedAxes;

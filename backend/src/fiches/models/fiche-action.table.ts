@@ -194,8 +194,19 @@ export type FicheActionTableType = typeof ficheActionTable;
 
 export type CreateFicheActionType = InferInsertModel<typeof ficheActionTable>;
 
-export const ficheActionSchema = createSelectSchema(ficheActionTable);
-export const createFicheActionSchema = createInsertSchema(ficheActionTable);
+export const ficheActionSchema = createSelectSchema(ficheActionTable, {
+  // Overriding array types as a workaround for drizzle-zod parsing issue
+  // See https://github.com/drizzle-team/drizzle-orm/issues/1609
+  piliersEci: (schema) => schema.piliersEci.array(),
+  cibles: (schema) => schema.cibles.array(),
+});
+
+export const createFicheActionSchema = createInsertSchema(ficheActionTable, {
+  // Overriding array types as a workaround for drizzle-zod parsing issue
+  // See https://github.com/drizzle-team/drizzle-orm/issues/1609
+  piliersEci: (schema) => schema.piliersEci.array(),
+  cibles: (schema) => schema.cibles.array(),
+});
 
 export const updateFicheActionSchema = createFicheActionSchema
   .omit({ id: true, createdAt: true, modifiedAt: true, modifiedBy: true })

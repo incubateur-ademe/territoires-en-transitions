@@ -3,7 +3,6 @@ import { Body, Controller, Get, Param, Put, Query } from '@nestjs/common';
 import { ApiOkResponse, ApiTags } from '@nestjs/swagger';
 import { TokenInfo } from '../../auth/decorators/token-info.decorators';
 import type { SupabaseJwtPayload } from '../../auth/models/supabase-jwt.models';
-import { BodyNotEmptyPipe } from '../../common/pipes/body-not-empty.pipe';
 import { getFichesActionSyntheseSchema } from '../models/get-fiches-action-synthese.response';
 import { getFichesActionFilterRequestSchema } from '../models/get-fiches-actions-filter.request';
 import { updateFicheActionRequestSchema } from '../models/update-fiche-action.request';
@@ -36,7 +35,7 @@ export class FichesActionController {
   @ApiOkResponse({
     type: GetFichesActionSyntheseResponseClass,
     description:
-      "Récupération de la sythèse des fiches action d'une collectivité (ex: nombre par statut)",
+      "Récupération de la synthèse des fiches action d'une collectivité (ex: nombre par statut)",
   })
   async getFichesActionSynthese(
     @Param('collectivite_id') collectiviteId: number,
@@ -74,7 +73,7 @@ export class FichesActionController {
   })
   async updateFicheAction(
     @Param('id') id: number,
-    @Body(new BodyNotEmptyPipe())
+    @Body()
     body: UpdateFicheActionRequestClass,
     @TokenInfo() tokenInfo: SupabaseJwtPayload
   ) {
