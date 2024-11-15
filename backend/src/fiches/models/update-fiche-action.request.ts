@@ -10,7 +10,7 @@ import { thematiqueSchema } from '../../taxonomie/models/thematique.table';
 import { partenaireTagSchema } from '../../taxonomie/models/partenaire-tag.table';
 import { serviceTagSchema } from '../../taxonomie/models/service-tag.table';
 import { effetAttenduSchema } from '../../taxonomie/models/effet-attendu.table';
-import { actionRelationSchema } from '../../referentiel/models/action-relation.table';
+import { actionRelationSchema } from '../../referentiels/models/action-relation.table';
 import { indicateurDefinitionSchema } from '../../indicateurs/models/indicateur-definition.table';
 import { sousThematiqueSchema } from '../../taxonomie/models/sous-thematique.table';
 import { financeurTagSchema } from '../../taxonomie/models/financeur-tag.table';
