@@ -19,7 +19,7 @@ export type ReferentielActionWithScoreType = z.infer<
   level: number;
   actionType: ActionType;
   actionsOrigine?: ReferentielActionOrigineWithScoreType[];
-  scoresOrigine?: Record<string, ActionPointScoreType>;
+  scoresOrigine?: Record<string, ActionPointScoreType | null>;
   tags?: string[]; // action catalogues include cae, eci but also biodiversite, eau
   scoresTag: Record<string, ActionPointScoreType>;
   actionsEnfant: ReferentielActionWithScoreType[];
@@ -34,7 +34,9 @@ export const referentielActionAvecScoreDtoSchema: z.ZodType<ReferentielActionWit
         level: z.number(),
         actionType: z.nativeEnum(ActionType),
         referentielsOrigine: z.string().array().optional(),
-        scoresOrigine: z.record(z.string(), actionPointScoreSchema).optional(),
+        scoresOrigine: z
+          .record(z.string(), actionPointScoreSchema.nullable())
+          .optional(),
         tags: z.string().array().optional(),
         scoresTag: z.record(z.string(), actionPointScoreSchema),
         actionsOrigine: referentielActionOrigineWithScoreSchema

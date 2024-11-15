@@ -33,11 +33,13 @@ const ActionDiscussionsFeed = ({ vue, discussions }: Props) => {
 export default ActionDiscussionsFeed;
 
 const ActionDiscussionsFeedVide = ({ message }: { message: string }) => (
-  <div className="mt-32 text-sm text-center text-gray-400 p-10">
+  <div className="flex flex-col mt-32 text-sm text-center text-gray-400 p-10">
     <Image
       src={noCommentIllustration}
       alt="illustration commentaire vide"
       className="mx-auto mb-4"
+      width={80}
+      height={80}
     />
     {message}
   </div>

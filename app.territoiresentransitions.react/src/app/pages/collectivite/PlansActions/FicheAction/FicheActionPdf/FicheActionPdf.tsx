@@ -2,7 +2,7 @@ import { FicheAction, FicheResume } from '@tet/api/plan-actions';
 import { TActionStatutsRow, TAxeRow } from 'types/alias';
 import { IndicateurDefinition } from '@tet/api/indicateurs/domain';
 import { AnnexeInfo } from '../data/useAnnexesFicheActionInfos';
-import { Stack, Title } from 'ui/export-pdf/components';
+import { Divider, Stack, Title } from 'ui/export-pdf/components';
 
 import Acteurs from './Acteurs';
 import ActionsLiees from './ActionsLiees';
@@ -40,19 +40,23 @@ const FicheActionPdf = ({
 
   return (
     <Stack>
-      <Stack gap={2} className="mb-4" fixed>
+      <Stack fixed>
         {/* Titre */}
-        <Title variant="h1">{titre || 'Sans titre'}</Title>
+        <Title variant="h1" className="leading-5">
+          {titre || 'Sans titre'}
+        </Title>
 
         {/* Emplacements de la fiche */}
         <Chemins chemins={chemins} />
+
+        <Divider />
       </Stack>
 
       {/* Description de la fiche */}
       <Description fiche={fiche} />
 
       {/* Informations principales */}
-      <Stack direction="row">
+      <Stack wrap={false} direction="row">
         <Stack className="w-3/5">
           {/* Dates et auteurs */}
           <CreationFiche fiche={fiche} />

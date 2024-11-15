@@ -28,7 +28,7 @@ export const Badge = ({
   if (uppercase) fontStyle += ' uppercase';
 
   return (
-    <Stack direction="row" gap={0}>
+    <Stack wrap={false} direction="row" gap={0}>
       <Text
         style={tw(
           `${background} ${border} ${text} ${fontStyle} border rounded px-1.5 py-0.5 font-bold${style}`

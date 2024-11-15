@@ -2,6 +2,4 @@
 
 BEGIN;
 
-SELECT created_by from fiche_action where false;
-
 ROLLBACK;

@@ -21,10 +21,10 @@ export const labellisationAuditTable = labellisationSchema.table(
     // TODO: change later to use the referentiel definition table
     referentiel: referentielEnum('referentiel').notNull(),
     demandeId: integer('demande_id'),
-    dateDebut: timestamp('date_debut', { withTimezone: true, mode: 'string' }),
-    dateFin: timestamp('date_fin', { withTimezone: true, mode: 'string' }),
+    dateDebut: timestamp('date_debut', { withTimezone: true }),
+    dateFin: timestamp('date_fin', { withTimezone: true }),
     valide: boolean('valide').default(false).notNull(),
-    dateCnl: timestamp('date_cnl', { withTimezone: true, mode: 'string' }),
+    dateCnl: timestamp('date_cnl', { withTimezone: true }),
     valideLabellisation: boolean('valide_labellisation'),
     clos: boolean('clos').default(false).notNull(),
   },

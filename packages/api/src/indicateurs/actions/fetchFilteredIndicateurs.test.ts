@@ -13,72 +13,72 @@ const yaladadaUUid = '4ecc7d3a-7484-4a1c-8ac8-930cdacd2561';
 const FIXTURE = {
   indicateur_action: [
     {
-      indicateur_id: 17, // eci_29
+      indicateur_identifiant_referentiel: 'eci_29',
       action_id: 'eci_1.2',
     },
   ],
   indicateur_pilote: [
     {
       collectivite_id: 1,
-      indicateur_id: 17, //'eci_29',
+      indicateur_identifiant_referentiel: 'eci_29',
       user_id: '4ecc7d3a-7484-4a1c-8ac8-930cdacd2561',
     },
     {
-      indicateur_id: 17, //'eci_29',
+      indicateur_identifiant_referentiel: 'eci_29',
       collectivite_id: 1,
       tag_id: 1,
     },
     {
-      indicateur_id: 3, //'eci_24',
+      indicateur_identifiant_referentiel: 'eci_24',
       collectivite_id: 1,
       tag_id: 1,
     },
   ],
   indicateur_service_tag: [
     {
-      indicateur_id: 17, //'eci_29',
+      indicateur_identifiant_referentiel: 'eci_29',
       collectivite_id: 1,
       service_tag_id: 1,
     },
   ],
   fiche_action_indicateur: [
     {
-      indicateur_id: 17, //'eci_29',
+      indicateur_identifiant_referentiel: 'cae_1.a',
       fiche_id: 1,
     },
   ],
   indicateur_thematique: [
     {
-      indicateur_id: 123,
+      indicateur_identifiant_referentiel: 'cae_1.a',
       thematique_id: 8,
     },
     {
-      indicateur_id: 17, // eci_29
+      indicateur_identifiant_referentiel: 'eci_29',
       thematique_id: 5,
     },
     {
-      indicateur_id: 10, // eci_36
+      indicateur_identifiant_referentiel: 'eci_36',
       thematique_id: 4,
     },
   ],
   indicateur_collectivite: [
     {
-      indicateur_id: 98, //'cae_1.a',
+      indicateur_identifiant_referentiel: 'cae_1.a',
       collectivite_id: 1,
       confidentiel: true,
     },
     {
-      indicateur_id: 48, // 'cae_2.a'
+      indicateur_identifiant_referentiel: 'cae_2.a',
       collectivite_id: 1,
       confidentiel: true,
     },
     {
-      indicateur_id: 113,
+      indicateur_identifiant_referentiel: 'cae_4.c',
       collectivite_id: 1,
       confidentiel: false,
     },
     {
-      indicateur_id: 123,
+      indicateur_identifiant_referentiel: 'cae_44',
       collectivite_id: 1,
       confidentiel: true,
     },
@@ -94,13 +94,49 @@ const fetchIndicateurs = (filters: FetchFiltre) =>
 beforeAll(async () => {
   await testReset();
 
+  // Résoud les identifiants de référentiel
+  const identifiantReferentielPromises = Object.entries(FIXTURE).map(
+    ([tableName, entries]) => {
+      if (Array.isArray(entries)) {
+        return entries?.map((entry) => {
+          if (entry.indicateur_identifiant_referentiel) {
+            return dbAdmin
+              .from('indicateur_definition')
+              .select('id')
+              .eq(
+                'identifiant_referentiel',
+                entry.indicateur_identifiant_referentiel
+              )
+              .single()
+              .then((result) => {
+                if (!result.data?.id) {
+                  throw new Error(
+                    `Indicateur ${entry.indicateur_identifiant_referentiel} not found`
+                  );
+                }
+                entry.indicateur_id = result.data.id;
+                delete entry.indicateur_identifiant_referentiel;
+              });
+          } else {
+            return Promise.resolve();
+          }
+        });
+      } else {
+        return Promise.resolve();
+      }
+    }
+  );
+  await Promise.all(identifiantReferentielPromises.flat());
+
   // insère les données de test
-  await Promise.all(
+  const upsertPromises = await Promise.all(
     Object.entries(FIXTURE).map(async ([tableName, entries]) => {
-      const upsert = await dbAdmin.from(tableName as TableName).upsert(entries);
-      expect(upsert.status).toEqual(201);
+      return dbAdmin.from(tableName as TableName).upsert(entries);
     })
   );
+  upsertPromises.forEach((upsert) => {
+    expect(upsert.status).toEqual(201);
+  });
 
   await signIn('yolododo');
 
@@ -112,13 +148,13 @@ beforeAll(async () => {
 test('Confidentialité - Devrait pouvoir voir des résultats insérés en confidentiel', async () => {
   await supabase.from('indicateur_valeur').upsert([
     {
-      indicateur_id: 60, //'eci_8',
+      indicateur_id: 60, //'cae_8',
       collectivite_id: 1,
       date_valeur: new Date(2023, 0, 1).toLocaleDateString('sv-SE'),
       resultat: 999,
     },
     {
-      indicateur_id: 60, //'eci_8',
+      indicateur_id: 60, //'cae_8',
       collectivite_id: 1,
       date_valeur: new Date(2024, 0, 1).toLocaleDateString('sv-SE'),
       resultat: 666,
@@ -227,6 +263,7 @@ test('Filtrer les indicateurs - par une thématique', async () => {
   });
   expect(status).toEqual(200);
   expect(data).toHaveLength(1); // 'ind. ECi dans la thématique'
+  expect(data[0].identifiant).toEqual('eci_29');
 });
 
 test('Filtrer les indicateurs - par plusieurs thématiques', async () => {
@@ -266,6 +303,7 @@ test('Filtrer les indicateurs - par action du référentiel', async () => {
   });
 
   expect(data).toHaveLength(1);
+  expect(data[0].identifiant).toEqual('eci_29');
 });
 
 test("Filtrer les indicateurs - par id de plan d'actions", async () => {
@@ -418,6 +456,7 @@ test('Filtrer les indicateurs - par fiche action', async () => {
   });
 
   expect(data).toHaveLength(1);
+  expect(data[0].identifiant).toEqual('cae_1.a');
 
   const { data: empty } = await fetchIndicateurs({
     ficheActionIds: [2],
@@ -445,8 +484,22 @@ test('Filtrer les indicateurs - par existence de données open-data', async () =
     expect.fail();
   }
 
+  // cae_15.a_dom has a parent, cae_1.a not
+  const resultIndicateurDefinitions = await dbAdmin
+    .from('indicateur_definition')
+    .select('*')
+    .in('identifiant_referentiel', ['cae_1.a', 'cae_15.a_dom']);
+  const cae1aIndicateur = resultIndicateurDefinitions.data?.find(
+    (i) => i.identifiant_referentiel === 'cae_1.a'
+  );
+  expect(cae1aIndicateur).toBeDefined();
+  const cae15aDomIndicateur = resultIndicateurDefinitions.data?.find(
+    (i) => i.identifiant_referentiel === 'cae_15.a_dom'
+  );
+  expect(cae15aDomIndicateur).toBeDefined();
+
   await dbAdmin.from('indicateur_valeur').insert({
-    indicateur_id: 17,
+    indicateur_id: cae1aIndicateur!.id,
     date_valeur: '2025-01-01',
     collectivite_id: 1,
     resultat: 1.8,
@@ -454,7 +507,7 @@ test('Filtrer les indicateurs - par existence de données open-data', async () =
   });
 
   await dbAdmin.from('indicateur_valeur').insert({
-    indicateur_id: 17,
+    indicateur_id: cae1aIndicateur!.id,
     date_valeur: '2024-01-01',
     collectivite_id: 1,
     resultat: 1.5,
@@ -462,7 +515,7 @@ test('Filtrer les indicateurs - par existence de données open-data', async () =
   });
 
   await dbAdmin.from('indicateur_valeur').insert({
-    indicateur_id: 48,
+    indicateur_id: cae15aDomIndicateur!.id,
     date_valeur: '2024-01-01',
     collectivite_id: 1,
     objectif: 16,
@@ -482,7 +535,7 @@ test('Filtrer les indicateurs - par existence de données open-data', async () =
   expect(data).toHaveLength(1);
 
   for (const indicateur of data) {
-    expect(indicateur.id).toEqual(17);
+    expect(indicateur.id).toEqual(cae1aIndicateur!.id);
     expect(indicateur.hasOpenData).toBe(true);
   }
 });

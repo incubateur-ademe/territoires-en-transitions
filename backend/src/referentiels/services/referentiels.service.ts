@@ -17,6 +17,10 @@ import {
   CreatePersonnalisationRegleType,
   personnalisationRegleTable,
 } from '../../personnalisations/models/personnalisation-regle.table';
+import {
+  personnalisationTable,
+  PersonnalisationType,
+} from '../../personnalisations/models/personnalisation.table';
 import ExpressionParserService from '../../personnalisations/services/expression-parser.service';
 import SheetService from '../../spreadsheets/services/sheet.service';
 import {
@@ -825,6 +829,14 @@ export default class ReferentielsService {
 
       // Delete desactivation rules not needed anymore
       await tx
+        .delete(personnalisationTable)
+        .where(
+          inArray(
+            personnalisationTable.actionId,
+            deletePersonnalisationReglesActionIds
+          )
+        );
+      await tx
         .delete(personnalisationRegleTable)
         .where(
           inArray(
@@ -832,7 +844,28 @@ export default class ReferentielsService {
             deletePersonnalisationReglesActionIds
           )
         );
+
       // Create desactivation rules
+      const personnalisations = createPersonnalisationRegles.map((regle) => {
+        const personnalisation: PersonnalisationType = {
+          actionId: regle.actionId,
+          titre: `Désactivation de ${regle.actionId}`,
+          description: regle.description,
+        };
+        return personnalisation;
+      });
+      await tx
+        .insert(personnalisationTable)
+        .values(personnalisations)
+        .onConflictDoUpdate({
+          target: [personnalisationTable.actionId],
+          set: {
+            titre: sql.raw(`excluded.${personnalisationTable.titre.name}`),
+            description: sql.raw(
+              `excluded.${personnalisationTable.description.name}`
+            ),
+          },
+        });
       await tx
         .insert(personnalisationRegleTable)
         .values(createPersonnalisationRegles)

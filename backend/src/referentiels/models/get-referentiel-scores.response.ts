@@ -1,9 +1,9 @@
 import { extendApi } from '@anatine/zod-openapi';
 import { z } from 'zod';
+import { collectiviteAvecTypeSchema } from '../../collectivites/models/identite-collectivite.dto';
+import { ComputeScoreMode } from './compute-scores-mode.enum';
 import { referentielActionAvecScoreDtoSchema } from './referentiel-action-avec-score.dto';
 import { ScoreJalon } from './score-jalon.enum';
-import { collectiviteAvecTypeSchema } from '../../collectivites/models/identite-collectivite.dto';
-import { referentielSchema } from '../../../../packages/api/src/referentiel/domain/enum.schema';
 
 export const getReferentielScoresResponseSchema = extendApi(
   z.object({
@@ -15,6 +15,7 @@ export const getReferentielScoresResponseSchema = extendApi(
     jalon: z.nativeEnum(ScoreJalon),
     auditId: z.number().optional(),
     anneeAudit: z.number().optional(),
+    mode: z.nativeEnum(ComputeScoreMode),
   })
 ).openapi({
   title: 'Score de la collectivité pour un référentiel et la date donnée',

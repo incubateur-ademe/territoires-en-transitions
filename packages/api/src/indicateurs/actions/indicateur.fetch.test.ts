@@ -1,3 +1,4 @@
+import { PostgrestSingleResponse } from '@supabase/supabase-js';
 import { beforeAll, expect, test } from 'vitest';
 import { signIn, signOut } from '../../tests/auth';
 import { dbAdmin, supabase } from '../../tests/supabase';
@@ -108,96 +109,128 @@ beforeAll(async () => {
     expect.fail();
   }
 
-  await dbAdmin
+  let response: PostgrestSingleResponse<null> = await dbAdmin
     .from('indicateur_categorie_tag')
     .insert({ categorie_tag_id: cat4.id, indicateur_id: 1 });
+  expect(response.status).toEqual(201);
 
   // Pilotes
-  await dbAdmin
+  response = await dbAdmin
     .from('indicateur_pilote')
     .insert({ collectivite_id: 1, user_id: null, tag_id: 1, indicateur_id: 1 });
+  expect(response.status).toEqual(201);
 
   // Services
-  await dbAdmin
+  response = await dbAdmin
     .from('indicateur_service_tag')
     .insert({ collectivite_id: 1, service_tag_id: 1, indicateur_id: 1 });
+  expect(response.status).toEqual(201);
 
   // Thématiques
-  await dbAdmin
+  response = await dbAdmin
     .from('indicateur_thematique')
     .insert({ thematique_id: 1, indicateur_id: 123 });
+  expect(response.status).toEqual(201);
 
   // Fiches
-  await dbAdmin
+  response = await dbAdmin
     .from('fiche_action_indicateur')
     .insert({ fiche_id: 1, indicateur_id: 123 });
+  expect(response.status).toEqual(201);
 
   // Actions
-  await dbAdmin
+  response = await dbAdmin
     .from('indicateur_action')
     .insert({ action_id: 'eci_4', indicateur_id: 123 });
+  expect(response.status).toEqual(201);
 
   // Commentaire
-  await dbAdmin
+  response = await dbAdmin
     .from('indicateur_collectivite')
     .insert({ indicateur_id: 1, collectivite_id: 1, commentaire: 'test1' });
+  expect(response.status).toEqual(201);
 
-  await dbAdmin
+  response = await dbAdmin
     .from('indicateur_collectivite')
     .insert({ indicateur_id: 1, collectivite_id: 2, commentaire: 'test2' });
+  expect(response.status).toEqual(201);
 
   // Metadonnées
+  // Pas de critère d'unicité, donc on doit définir un id
   const meta = await dbAdmin
     .from('indicateur_source_metadonnee')
     .insert({
+      id: 5,
       source_id: 'citepa',
       date_version: new Date().toLocaleDateString('sv-SE'),
     })
     .select('id');
+  if (meta.error) {
+    expect.fail(
+      `(${meta.error.code}) ${meta.error.message} - ${meta.error.details} - ${meta.error.hint}`
+    );
+  }
+  expect(meta.error).toBeNull();
+  expect(meta.status).toEqual(201);
+  expect(meta.data[0].id).toEqual(5);
 
+  // Pas de critère d'unicité, donc on doit définir un id
   const meta2 = await dbAdmin
     .from('indicateur_source_metadonnee')
     .insert({
+      id: 6,
       source_id: 'citepa',
       producteur: 'test',
       date_version: new Date().toLocaleDateString('sv-SE'),
     })
     .select('id');
+  expect(meta2.error).toBeNull();
+  expect(meta2.status).toEqual(201);
+  expect(meta2.data?.[0].id).toEqual(6);
 
   // Valeurs
-  await dbAdmin.from('indicateur_valeur').insert({
+  response = await dbAdmin.from('indicateur_valeur').insert({
     indicateur_id: 1,
     date_valeur: '2020-01-01',
     collectivite_id: 1,
     resultat: 1.2,
   });
-  await dbAdmin.from('indicateur_valeur').insert({
+  expect(response.status).toEqual(201);
+
+  response = await dbAdmin.from('indicateur_valeur').insert({
     indicateur_id: 8,
     date_valeur: '2020-01-01',
     collectivite_id: 1,
     resultat: 1.2,
   });
-  await dbAdmin.from('indicateur_valeur').insert({
+  expect(response.status).toEqual(201);
+
+  response = await dbAdmin.from('indicateur_valeur').insert({
     indicateur_id: 1,
     date_valeur: '2020-01-01',
     collectivite_id: 1,
     resultat: 1.5,
     metadonnee_id: meta.data?.[0].id,
   });
-  await dbAdmin.from('indicateur_valeur').insert({
+  expect(response.status).toEqual(201);
+
+  response = await dbAdmin.from('indicateur_valeur').insert({
     indicateur_id: 1,
     date_valeur: '2020-01-01',
     collectivite_id: 1,
     resultat: 1.9,
     metadonnee_id: meta2.data?.[0].id,
   });
-  await dbAdmin.from('indicateur_valeur').insert({
+  expect(response.status).toEqual(201);
+
+  response = await dbAdmin.from('indicateur_valeur').insert({
     indicateur_id: 1,
     date_valeur: '2020-01-01',
     collectivite_id: 2,
     resultat: 1.5,
     metadonnee_id: meta.data?.[0].id,
   });
+  expect(response.status).toEqual(201);
 
   await signIn('yolododo');
 
