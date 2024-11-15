@@ -760,3 +760,4 @@ plan_action/fiches [plan_action/fiches@v4.24.0] 2024-11-14T14:08:59Z System Admi
 @v4.25.0 2024-11-15T17:21:24Z Frederic Arnoux <frederic.arnoux@beta.gouv.fr> # Tag v4.25.0
 
 plan_action/fiches [plan_action/fiches@v4.25.0] 2024-11-15T17:21:45Z Frederic Arnoux <frederic.arnoux@beta.gouv.fr> # Fix nullable field in read view
+@v4.26.0 2024-11-15T20:23:13Z Frederic Arnoux <frederic.arnoux@beta.gouv.fr> # Tag en v4.26.0
