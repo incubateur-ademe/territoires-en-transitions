@@ -24,7 +24,7 @@ docker:
 
   COPY +build/dist ./dist
 
-  CMD ["node", "dist/backend/main.js"]
+  CMD ["node", "dist/backend/src/main.js"]
   SAVE IMAGE --push $DOCKER_IMAGE
 
 deploy: ## Déploie le backend dans une app Koyeb existante
