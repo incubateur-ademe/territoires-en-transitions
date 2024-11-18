@@ -766,3 +766,4 @@ evaluation/score_service [evaluation/score_service@v4.26.0] 2024-11-18T14:10:55Z
 @v4.26.1 2024-11-18T14:21:59Z System Administrator <root@MacBook-Air-de-Thibaut-2.local> # Fix evaluation regle avec l'ajout du nouveau referentiel
 
 plan_action/fiche_note 2024-11-07T11:21:55Z Marc Rutkowski <marc@attractive-media.fr> # Ajoute la table pour associer aux FA des notes de suivi annuel
+plan_action/historique [plan_action/historique@v4.23.0] 2024-11-15T13:06:26Z Marc Rutkowski <marc@attractive-media.fr> # Met à jour la date de modification de la fiche action quand les notes de suivi sont modifiées
