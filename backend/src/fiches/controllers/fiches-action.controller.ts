@@ -13,6 +13,7 @@ import { TokenInfo } from '../../auth/decorators/token-info.decorators';
 import type { SupabaseJwtPayload } from '../../auth/models/supabase-jwt.models';
 import { getFichesActionSyntheseSchema } from '../models/get-fiches-action-synthese.response';
 import { getFichesActionFilterRequestSchema } from '../models/get-fiches-actions-filter.request';
+import { updateFicheActionRequestSchema } from '../models/update-fiche-action.request';
 import FichesActionSyntheseService from '../services/fiches-action-synthese.service';
 import FichesActionUpdateService from '../services/fiches-action-update.service';
 import {
@@ -22,7 +23,6 @@ import {
 import FicheService from '../services/fiche.service';
 import { ficheActionNoteSchema } from '../models/fiche-action-note.table';
 import { z } from 'zod';
-import { updateFicheActionRequestSchema } from '../models/update-fiche-action.request';
 
 /**
  * Création des classes de réponse à partir du schema pour générer automatiquement la documentation OpenAPI
