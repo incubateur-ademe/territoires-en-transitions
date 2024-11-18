@@ -254,6 +254,67 @@ jobs:
           --ANON_KEY=${{ secrets.ANON_KEY }}
           --API_URL=${{ secrets.API_URL }}
 
+  test-backend:
+    needs:
+      - build-business-dev
+      - build-tools
+      - build-db
+      - prepare-front-deps
+    environment: dev
+    runs-on: ubuntu-latest
+    timeout-minutes: 30
+
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          ref: ${{ github.event.pull_request.head.sha }}
+          fetch-depth: 0
+      - uses: earthly/actions-setup@v1
+        with:
+          version: 0.8.1
+      - uses: supabase/setup-cli@v1
+        with:
+          version: latest
+
+      - name: Login into registry
+        run: earthly --use-inline-cache +docker-dev-login --GH_USER=${{ secrets.GH_USER }} --GH_TOKEN=${{ secrets.GH_TOKEN }}
+
+      - name: Start services
+        run: >
+          earthly --use-inline-cache +dev
+          --stop=no --datalayer=yes --business=yes --app=no --eco=yes --faster=yes --version=HEAD
+          --DB_URL=${{ secrets.DB_URL }}
+          --SERVICE_ROLE_KEY=${{ secrets.SERVICE_ROLE_KEY }}
+          --ANON_KEY=${{ secrets.ANON_KEY }}
+          --API_URL=${{ secrets.API_URL }}
+
+      - name: Reset de postgrest
+        run: docker restart supabase_rest_tet
+
+      - name: Test curl
+        run: >
+          earthly --use-inline-cache +curl-test
+          --DB_URL=${{ secrets.DB_URL }}
+          --SERVICE_ROLE_KEY=${{ secrets.SERVICE_ROLE_KEY }}
+          --ANON_KEY=${{ secrets.ANON_KEY }}
+          --API_URL=${{ secrets.API_URL }}
+
+      - name: Test backend API
+        run: >
+          earthly --use-inline-cache +backend-test
+          --SUPABASE_SERVICE_ROLE_KEY=${{ secrets.SERVICE_ROLE_KEY }}
+          --SUPABASE_ANON_KEY=${{ secrets.ANON_KEY }}
+          --SUPABASE_URL=${{ secrets.API_URL }}
+          --SUPABASE_DATABASE_URL=${{ secrets.DATABASE_URL }}
+          --SUPABASE_JWT_SECRET=${{ secrets.SUPABASE_JWT_SECRET }}
+          --TRAJECTOIRE_SNBC_SHEET_ID=${{ vars.TRAJECTOIRE_SNBC_SHEET_ID }}
+          --TRAJECTOIRE_SNBC_XLSX_ID=${{ vars.TRAJECTOIRE_SNBC_XLSX_ID }}
+          --TRAJECTOIRE_SNBC_RESULT_FOLDER_ID=${{ vars.TRAJECTOIRE_SNBC_RESULT_FOLDER_ID }}
+          --REFERENTIEL_TE_SHEET_ID=${{ vars.REFERENTIEL_TE_SHEET_ID }}
+          --BREVO_API_KEY=${{ secrets.BREVO_API_KEY }}
+          --DIRECTUS_API_KEY=${{ secrets.DIRECTUS_API_KEY }}
+          --GCLOUD_SERVICE_ACCOUNT_KEY=${{ secrets.GCLOUD_SERVICE_ACCOUNT_KEY }}
+
   test-package-ui:
     environment: dev
     runs-on: ubuntu-latest
