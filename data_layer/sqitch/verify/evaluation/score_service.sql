@@ -2,7 +2,6 @@
 
 BEGIN;
 
-select has_function_privilege('evaluation.evaluation_payload(integer, referentiel)', 'execute');
-
+select has_function_privilege('evaluation.evaluate_regles( integer, varchar, varchar )', 'execute');
 
 ROLLBACK;

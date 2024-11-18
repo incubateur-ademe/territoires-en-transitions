@@ -3,33 +3,68 @@
 BEGIN;
 
 create or replace function
-    evaluation.evaluation_payload(
+    evaluation.evaluate_regles(
     in collectivite_id integer,
-    in referentiel referentiel,
-    out referentiel jsonb,
-    out statuts jsonb,
-    out consequences jsonb
+    in consequences_table varchar,
+    in scores_table varchar,
+    out request_id bigint
 )
 as
 $$
-with statuts as (select s.data
-                 from evaluation.service_statuts s
-                 where s.referentiel = evaluation_payload.referentiel
-                   and s.collectivite_id = evaluation_payload.collectivite_id),
-     consequences as ( -- on ne garde que les conséquences du référentiel concerné
-         select jsonb_object_agg(tuple.key, tuple.value) as filtered
-         from personnalisation_consequence pc
-                  join jsonb_each(pc.consequences) tuple on true
-                  join action_relation ar on tuple.key = ar.id
-         where pc.collectivite_id = evaluation_payload.collectivite_id
-           and ar.referentiel = evaluation_payload.referentiel)
-select r.data                                    as referentiel,
-       coalesce(s.data, to_jsonb('{}'::jsonb[])) as statuts,
-       coalesce(c.filtered, '{}'::jsonb)         as consequences
-from evaluation.service_referentiel as r
-         left join statuts s on true
-         left join consequences c on true
-where r.referentiel = evaluation_payload.referentiel
-$$ language sql stable;
+with ref as (select unnest(ARRAY['eci'::referentiel, 'cae'::referentiel]) as referentiel),
+-- les payloads pour le calculs des scores des référentiels
+     evaluation_payload as (select transaction_timestamp()      as timestamp,
+                                   evaluate_regles.collectivite_id,
+                                   ref.referentiel              as referentiel,
+                                   evaluate_regles.scores_table as scores_table,
+                                   ep                           as payload
+                            from ref
+                                     left join evaluation.evaluation_payload(
+                                    evaluate_regles.collectivite_id,
+                                    ref.referentiel) ep on true),
+     -- la payload de personnalisation qui contient les payloads d'évaluation.
+     personnalisation_payload as (select transaction_timestamp()                           as timestamp,
+                                         ci.id                                             as collectivite_id,
+                                         evaluate_regles.consequences_table                as consequences_table,
+                                         jsonb_build_object(
+                                                 'identite', jsonb_build_object('population', ci.population,
+                                                                                'type', ci.type,
+                                                                                'localisation', ci.localisation),
+                                                 'regles',
+                                                 (select array_agg(sr) from evaluation.service_regles sr),
+                                                 'reponses',
+                                                 coalesce((select reponses
+                                                           from evaluation.service_reponses sr
+                                                           where sr.collectivite_id = ci.id),
+                                                          to_jsonb('{}'::jsonb[]))
+                                             )                                             as payload,
+                                         (select array_agg(ep) from evaluation_payload ep) as evaluation_payloads
+                                  from collectivite_identite ci
+                                  where ci.id = evaluate_regles.collectivite_id),
+     configuration as (select *
+                       from evaluation.service_configuration
+                       order by created_at desc
+                       limit 1)
+
+select post.*
+from configuration -- si il n'y a aucune configuration on ne fait pas d'appel
+         join personnalisation_payload pp on true
+         left join lateral (
+    -- appel le business avec la payload.
+    select *
+    from net.http_post(
+            configuration.personnalisation_endpoint,
+            to_jsonb(pp.*)
+        )
+    ) as post on true
+$$
+    language sql
+    security definer
+-- permet d'utiliser l'extension http depuis un trigger
+    set search_path = public, net;
+comment on function evaluation.evaluate_regles
+    is 'Appel le service d''évaluation pour une collectivité. '
+        'Le service écrira une fois les conséquences de personnalisation calculée dans la table `consequences_table`. '
+        'Puis le service écrira pour chaque référentiel les scores dans la table `scores_table`.';
 
 COMMIT;
