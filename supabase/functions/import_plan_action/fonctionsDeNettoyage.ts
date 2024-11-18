@@ -29,7 +29,8 @@ const ficheActionResultatsAttendus = [
 ];
 
 const ficheActionCibles = [
-    "Grand public et associations" ,
+    "Grand public",
+    "Associations",
     "Public Scolaire" ,
     "Autres collectivités du territoire" ,
     "Acteurs économiques" ,
@@ -42,7 +43,7 @@ const ficheActionCibles = [
     "Agents"
 ];
 
-const ficheActionStatuts = ["À venir", "En cours", "Réalisé", "En pause", "Abandonné"];
+const ficheActionStatuts = ["À venir", "A discuter", "En retard", "En pause", "Bloqué", "Abandonné", "Réalisé", "En cours"];
 const ficheActionNiveauxPrioritesSynonyme : Record<string, string> = {
     'Faible' : 'Bas',
     'Haut' : 'Élevé'
