@@ -2,69 +2,13 @@
 
 BEGIN;
 
-create or replace function
-    evaluation.evaluate_regles(
-    in collectivite_id integer,
-    in consequences_table varchar,
-    in scores_table varchar,
-    out request_id bigint
-)
+create or replace view evaluation.service_regles
 as
-$$
-with ref as (select unnest(enum_range(null::referentiel)) as referentiel),
--- les payloads pour le calculs des scores des référentiels
-     evaluation_payload as (select transaction_timestamp()      as timestamp,
-                                   evaluate_regles.collectivite_id,
-                                   ref.referentiel              as referentiel,
-                                   evaluate_regles.scores_table as scores_table,
-                                   ep                           as payload
-                            from ref
-                                     left join evaluation.evaluation_payload(
-                                    evaluate_regles.collectivite_id,
-                                    ref.referentiel) ep on true),
-     -- la payload de personnalisation qui contient les payloads d'évaluation.
-     personnalisation_payload as (select transaction_timestamp()                           as timestamp,
-                                         ci.id                                             as collectivite_id,
-                                         evaluate_regles.consequences_table                as consequences_table,
-                                         jsonb_build_object(
-                                                 'identite', jsonb_build_object('population', ci.population,
-                                                                                'type', ci.type,
-                                                                                'localisation', ci.localisation),
-                                                 'regles',
-                                                 (select array_agg(sr) from evaluation.service_regles sr),
-                                                 'reponses',
-                                                 coalesce((select reponses
-                                                           from evaluation.service_reponses sr
-                                                           where sr.collectivite_id = ci.id),
-                                                          to_jsonb('{}'::jsonb[]))
-                                             )                                             as payload,
-                                         (select array_agg(ep) from evaluation_payload ep) as evaluation_payloads
-                                  from collectivite_identite ci
-                                  where ci.id = evaluate_regles.collectivite_id),
-     configuration as (select *
-                       from evaluation.service_configuration
-                       order by created_at desc
-                       limit 1)
-
-select post.*
-from configuration -- si il n'y a aucune configuration on ne fait pas d'appel
-         join personnalisation_payload pp on true
-         left join lateral (
-    -- appel le business avec la payload.
-    select *
-    from net.http_post(
-            configuration.personnalisation_endpoint,
-            to_jsonb(pp.*)
-        )
-    ) as post on true
-$$
-    language sql
-    security definer
--- permet d'utiliser l'extension http depuis un trigger
-    set search_path = public, net;
-comment on function evaluation.evaluate_regles
-    is 'Appel le service d''évaluation pour une collectivité. '
-        'Le service écrira une fois les conséquences de personnalisation calculée dans la table `consequences_table`. '
-        'Puis le service écrira pour chaque référentiel les scores dans la table `scores_table`.';
+select action_id,
+       jsonb_agg(jsonb_build_object('type', pr.type, 'formule', formule)) as regles
+from personnalisation_regle pr
+group by action_id;
+comment on view evaluation.service_regles
+    is 'Les règles qui s''appliquent aux actions au format JSON, inclues dans les payload envoyées au service.';
 
 COMMIT;
