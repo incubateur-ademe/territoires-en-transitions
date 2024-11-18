@@ -71,27 +71,6 @@ describe('FichesActionUpdateService', () => {
   });
 
   describe('Update fiche action fields', () => {
-    it('should not allow another collectivite user to update fiche action', async () => {
-      const data: UpdateFicheActionRequestClass = {
-        titre: 'Construire des pistes cyclables',
-      };
-
-      const response = await request(app.getHttpServer())
-        .put(`/collectivites/${collectiviteId}/fiches-action/${ficheActionId}`)
-        .send(data)
-        .set('Authorization', `Bearer ${yoloDodoToken}`)
-        .set('Content-Type', 'application/json')
-        .expect(401);
-
-      const body = response.body;
-
-      expect(body).toStrictEqual({
-        message: 'Droits insuffisants',
-        error: 'Unauthorized',
-        statusCode: 401,
-      });
-    });
-
     it('should strip irrelevant fiche action fields data', async () => {
       const data: UpdateFicheActionRequestClass = {
         titre: 'Construire des pistes cyclables',
@@ -252,6 +231,60 @@ describe('FichesActionUpdateService', () => {
 
       expect(response.status).toBe(400);
       expect(response.body.message[0]).toMatch(/cannot be empty/);
+    });
+
+    it('should update fiche action fields', async () => {
+      const data: UpdateFicheActionRequestClass = {
+        collectiviteId: 1,
+        titre: 'Construire des pistes cyclables',
+        description:
+          'Un objectif à long terme sera de construire de nombreuses pistes cyclables dans le centre-ville.',
+        dateDebut: '2024-11-14 00:00:00+00',
+        dateFinProvisoire: '2025-09-10 00:00:00+00',
+        instanceGouvernance: null,
+        niveauPriorite: ficheActionNiveauxPrioriteEnumType.BAS,
+        piliersEci: [
+          piliersEciEnumType.APPROVISIONNEMENT_DURABLE,
+          piliersEciEnumType.ECOCONCEPTION,
+        ],
+        objectifs:
+          'Diminution de 15% de la consommation de feuilles de papier / Indicateurs : Nombre de papiers',
+        cibles: [
+          FicheActionCiblesEnumType.GRAND_PUBLIC,
+          FicheActionCiblesEnumType.ASSOCIATIONS,
+        ],
+        ressources: 'Service numérique',
+        financements: 'De 40 000€ à 100 000€',
+        budgetPrevisionnel: '35000',
+        statut: FicheActionStatutsEnumType.EN_PAUSE,
+        ameliorationContinue: false,
+        calendrier: 'Calendrier prévisionnel',
+        notesComplementaires: 'Vive le vélo !',
+        majTermine: true,
+        tempsDeMiseEnOeuvre: 1,
+        participationCitoyenne:
+          'La participation citoyenne a été approuvée en réunion plénière',
+        participationCitoyenneType: 'Information',
+        restreint: false,
+      };
+
+      const response = await request(app.getHttpServer())
+        .put(`/collectivites/${collectiviteId}/fiches-action/${ficheActionId}`)
+        .send(data)
+        .set('Authorization', `Bearer ${yoloDodoToken}`)
+        .set('Content-Type', 'application/json')
+        .expect(200);
+
+      const unFilteredBody = response.body;
+
+      const body = Object.fromEntries(
+        Object.entries(unFilteredBody).filter(
+          ([key]) =>
+            !['id', 'createdAt', 'modifiedAt', 'modifiedBy'].includes(key)
+        )
+      );
+
+      expect(body).toStrictEqual(data);
     });
   });
 
@@ -511,7 +544,7 @@ describe('FichesActionUpdateService', () => {
   });
 
   describe('Access Rights', () => {
-    it('should return 401 if an unauthorized user tries to update a fiche action', async () => {
+    it('should return 401 if an invalid token is provided', async () => {
       const data: UpdateFicheActionRequestClass = {
         titre: 'Tentative de mise à jour sans droits',
       };
@@ -524,7 +557,40 @@ describe('FichesActionUpdateService', () => {
         .expect(401);
     });
 
-    it('should allow authorized user to update fiche action', async () => {
+    it('should not allow update if fiche action is not in user‘s collectivite', async () => {
+      await databaseService.db
+        .insert(ficheActionTable)
+        .values({ ...ficheActionFixture, id: 10000, collectiviteId: 3 });
+
+      const data: UpdateFicheActionRequestClass = {
+        titre: 'Construire des pistes cyclables',
+      };
+
+      const response = await request(app.getHttpServer())
+        .put(`/collectivites/${collectiviteId}/fiches-action/10000`)
+        .send(data)
+        .set('Authorization', `Bearer ${yoloDodoToken}`)
+        .set('Content-Type', 'application/json')
+        .expect(401);
+
+      const body = response.body;
+
+      expect(body).toStrictEqual({
+        message: 'Droits insuffisants',
+        error: 'Unauthorized',
+        statusCode: 401,
+      });
+
+      await databaseService.db
+        .delete(ficheActionTable)
+        .where(eq(ficheActionTable.id, 10000));
+    });
+
+    it('should allow update if fiche action is in user‘s collectivite', async () => {
+      await databaseService.db
+        .insert(ficheActionTable)
+        .values({ ...ficheActionFixture, id: 10000, collectiviteId: 1 });
+
       const data: UpdateFicheActionRequestClass = {
         titre: 'Titre mis à jour par une utilisatrice autorisée',
       };
@@ -539,6 +605,10 @@ describe('FichesActionUpdateService', () => {
       expect(response.body.titre).toBe(
         'Titre mis à jour par une utilisatrice autorisée'
       );
+
+      await databaseService.db
+        .delete(ficheActionTable)
+        .where(eq(ficheActionTable.id, 10000));
     });
   });
 
