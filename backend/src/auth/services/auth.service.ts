@@ -106,8 +106,12 @@ export class AuthService {
   ): Promise<boolean> {
     let droits: UtilisateurDroitType[] = [];
     const userId = tokenInfo?.sub;
+    console.log('tokenInfo');
+    console.log(tokenInfo);
     if (tokenInfo?.role === SupabaseRole.AUTHENTICATED && userId) {
       droits = await this.getDroitsUtilisateur(userId, collectiviteIds);
+      console.log('droits');
+      console.log(droits);
     }
     const authorise = this.aDroitsSuffisants(
       tokenInfo?.role,
@@ -115,6 +119,8 @@ export class AuthService {
       collectiviteIds,
       niveauAccessMinimum
     );
+    console.log('authorise');
+    console.log(authorise);
     if (!authorise && !doNotThrow) {
       throw new UnauthorizedException(`Droits insuffisants`);
     }

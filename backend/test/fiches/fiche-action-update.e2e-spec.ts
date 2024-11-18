@@ -35,6 +35,7 @@ import {
   thematiquesFixture,
 } from './fixtures/fiche-action-relations.fixture';
 import { ficheActionFixture } from './fixtures/fiche-action.fixture';
+import { UpdateFicheActionRequestClass } from '../../src/fiches/controllers/fiches-action.controller';
 
 const collectiviteId = 1;
 const ficheActionId = 9999;
@@ -70,6 +71,27 @@ describe('FichesActionUpdateService', () => {
   });
 
   describe('Update fiche action fields', () => {
+    it('should not allow another collectivite user to update fiche action', async () => {
+      const data: UpdateFicheActionRequestClass = {
+        titre: 'Construire des pistes cyclables',
+      };
+
+      const response = await request(app.getHttpServer())
+        .put(`/collectivites/${collectiviteId}/fiches-action/${ficheActionId}`)
+        .send(data)
+        .set('Authorization', `Bearer ${yoloDodoToken}`)
+        .set('Content-Type', 'application/json')
+        .expect(401);
+
+      const body = response.body;
+
+      expect(body).toStrictEqual({
+        message: 'Droits insuffisants',
+        error: 'Unauthorized',
+        statusCode: 401,
+      });
+    });
+
     it('should strip irrelevant fiche action fields data', async () => {
       const data = {
         titre: 'Construire des pistes cyclables',

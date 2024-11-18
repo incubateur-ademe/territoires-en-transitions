@@ -8,19 +8,19 @@ import {
   ExtractTablesWithRelations,
   TableConfig,
 } from 'drizzle-orm';
+import { SupabaseJwtPayload } from '../../auth/models/supabase-jwt.models';
+import DatabaseService from '../../common/services/database.service';
+import {
+  updateFicheActionSchema,
+  ficheActionTable,
+} from '../models/fiche-action.table';
+import { ficheActionAxeTable } from '../models/fiche-action-axe.table';
 import { PgTable, PgTransaction } from 'drizzle-orm/pg-core';
 import { PostgresJsQueryResultHKT } from 'drizzle-orm/postgres-js';
 import { toCamel } from 'postgres';
-import { SupabaseJwtPayload } from '../../auth/models/supabase-jwt.models';
-import DatabaseService from '../../common/services/database.service';
 import { buildConflictUpdateColumns } from '../../common/services/conflict.helper';
 import FicheService from './fiche.service';
-import {
-  ficheActionTable,
-  updateFicheActionSchema,
-} from '../models/fiche-action.table';
 import { ficheActionActionTable } from '../models/fiche-action-action.table';
-import { ficheActionAxeTable } from '../models/fiche-action-axe.table';
 import { ficheActionEffetAttenduTable } from '../models/fiche-action-effet-attendu.table';
 import { ficheActionFinanceurTagTable } from '../models/fiche-action-financeur-tag.table';
 import { ficheActionIndicateurTable } from '../models/fiche-action-indicateur.table';
@@ -77,6 +77,8 @@ export default class FichesActionUpdateService {
     body: UpdateFicheActionRequestType,
     tokenInfo: SupabaseJwtPayload
   ) {
+    await this.ficheService.canWriteFiche(ficheActionId, tokenInfo);
+
     this.logger.log(
       `Mise à jour de la fiche action dont l'id est ${ficheActionId}`
     );

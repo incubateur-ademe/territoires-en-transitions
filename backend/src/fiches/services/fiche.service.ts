@@ -66,6 +66,8 @@ export default class FicheService {
   ): Promise<boolean> {
     const fiche = await this.getFicheFromId(ficheId);
     if (fiche === null) return false;
+    console.log('fiche');
+    console.log(fiche);
     return this.authService.verifieAccesAuxCollectivites(
       tokenInfo,
       [fiche.collectiviteId],
