@@ -2,6 +2,6 @@
 
 BEGIN;
 
-select has_function_privilege('evaluation.evaluate_regles( integer, varchar, varchar )', 'execute');
+SELECT 1/COUNT(*) FROM evaluation.service_regles;
 
 ROLLBACK;
