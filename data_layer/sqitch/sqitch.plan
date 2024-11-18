@@ -770,3 +770,5 @@ plan_action/historique [plan_action/historique@v4.23.0] 2024-11-15T13:06:26Z Mar
 @v4.27.0 2024-11-18T14:32:46Z Marc Rutkowski <marc@attractive-media.fr> # Tag le plan en v4.27.0
 
 evaluation/score_service [evaluation/score_service@v4.27.0] 2024-11-18T15:13:30Z System Administrator <root@MacBook-Air-de-Thibaut-2.local> # ignore les règles de personnalisation du nouveau referentiel dans le python
+@v4.27.1 2024-11-18T15:22:13Z System Administrator <root@MacBook-Air-de-Thibaut-2.local> # ignore les règles de personnalisation du nouveau referentiel dans le python
+
