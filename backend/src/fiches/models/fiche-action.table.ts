@@ -14,7 +14,11 @@ import {
 import { tempsDeMiseEnOeuvreTable } from '../../taxonomie/models/temps-de-mise-en-oeuvre.table';
 import { createInsertSchema, createSelectSchema } from 'drizzle-zod';
 import { z } from 'zod';
-import { createdAt, modifiedAt, modifiedBy } from '../../common/models/column.helpers';
+import {
+  createdAt,
+  modifiedAt,
+  modifiedBy,
+} from '../../common/models/column.helpers';
 
 export enum piliersEciEnumType {
   APPROVISIONNEMENT_DURABLE = 'Approvisionnement durable',
@@ -135,19 +139,9 @@ export const ficheActionCiblesEnum = pgEnum(
   ficheActionCiblesEnumValues
 );
 
-export enum ficheActionNiveauxPrioriteEnumType {
-  BAS = 'Bas',
-  MOYEN = 'Moyen',
-  ELEVE = 'Élevé',
-}
-
 export const ficheActionNiveauxPrioriteEnum = pgEnum(
   'fiche_action_niveaux_priorite',
-  [
-    ficheActionNiveauxPrioriteEnumType.BAS,
-    ficheActionNiveauxPrioriteEnumType.MOYEN,
-    ficheActionNiveauxPrioriteEnumType.ELEVE,
-  ]
+  ['Élevé', 'Moyen', 'Bas']
 );
 
 export const ficheActionParticipationCitoyenneTypeEnumValues = [
