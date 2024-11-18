@@ -1,3 +1,4 @@
+import { DateTime } from 'luxon';
 import {
   CreateFicheActionType,
   FicheActionCiblesEnumType,
@@ -27,7 +28,7 @@ export const ficheActionFixture: CreateFicheActionType = {
   notesComplementaires: '',
   majTermine: true,
   collectiviteId: 1,
-  createdAt: '2024-11-08 09:09:16.731248+00',
+  createdAt: DateTime.fromISO('2024-11-08T09:09:16Z').toJSDate(),
   modifiedBy: null,
   restreint: false,
   tempsDeMiseEnOeuvre: 1,
