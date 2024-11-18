@@ -103,8 +103,6 @@ export class FichesActionController {
     body: UpdateFicheActionRequestClass,
     @TokenInfo() tokenInfo: SupabaseJwtPayload
   ) {
-    console.log('tokenInfo');
-    console.log(tokenInfo);
     return await this.fichesActionUpdateService.updateFicheAction(
       id,
       body,
