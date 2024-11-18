@@ -5,7 +5,7 @@ from typing import Literal, NewType, Optional
 # Literals
 # ---------
 ActionCategorie = Literal["bases", "mise en œuvre", "effets"]
-ActionReferentiel = Literal["cae", "eci"]
+ActionReferentiel = Literal["cae", "eci", "te", "te-test"]
 
 
 ActionId = NewType("ActionId", str)
