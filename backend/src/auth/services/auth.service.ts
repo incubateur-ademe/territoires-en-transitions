@@ -1,5 +1,5 @@
 import { Injectable, Logger, UnauthorizedException } from '@nestjs/common';
-import { and, eq, inArray, SQL, SQLWrapper } from 'drizzle-orm';
+import { and, eq, inArray, sql, SQL, SQLWrapper } from 'drizzle-orm';
 import DatabaseService from '../../common/services/database.service';
 import {
   NiveauAcces,
@@ -186,8 +186,10 @@ export class AuthService {
             tokenInfo,
             [collectiviteId],
             NiveauAcces.LECTURE,
-            doNotThrow
-          )) || (await this.estSupport(tokenInfo)); // TODO || private.est_auditeur(collectivite_id)
+            true
+          )) ||
+          (await this.estSupport(tokenInfo)) ||
+          (await this.estAuditeur(tokenInfo, collectiviteId));
       } else {
         // Si la collectivité n'est pas en accès restreint, l'utilisateur doit :
         // être vérifié, ou s'il ne l'est pas, avoir un droit en lecture sur la collectivité.
@@ -197,13 +199,40 @@ export class AuthService {
             tokenInfo,
             [collectiviteId],
             NiveauAcces.LECTURE,
-            doNotThrow
+            true
           ));
       }
       if (!authorise && !doNotThrow) {
         throw new UnauthorizedException(`Droits insuffisants`);
       }
       return authorise;
+    }
+    return false;
+  }
+
+  /**
+   * Vérifie que l'utilisateur est un auditeur de la collectivité
+   * TODO à modifier avec les tables liées aux labellisations
+   * @param tokenInfo token de l'utilisateur
+   * @param collectiviteId identifiant de la collectivité
+   */
+  async estAuditeur(
+    tokenInfo: SupabaseJwtPayload,
+    collectiviteId: number
+  ): Promise<boolean> {
+    const userId = tokenInfo.sub;
+    if (tokenInfo.role === SupabaseRole.AUTHENTICATED && userId) {
+      const result = await this.databaseService.db.execute(
+        sql
+          `SELECT *
+           FROM audit_auditeur aa
+           JOIN labellisation.audit a ON aa.audit_id = a.id
+           WHERE a.date_debut IS NOT NULL
+             AND a.clos IS FALSE
+             AND a.collectivite_id = ${collectiviteId}
+             AND aa.auditeur = ${userId}`
+      );
+      return result?.length > 0 || false;
     }
     return false;
   }
