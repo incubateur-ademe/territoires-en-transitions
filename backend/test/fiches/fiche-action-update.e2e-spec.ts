@@ -3,20 +3,21 @@ import { eq } from 'drizzle-orm';
 import { default as request } from 'supertest';
 import { describe, expect, it } from 'vitest';
 import DatabaseService from '../../src/common/services/database.service';
-import { ficheActionActionTable } from '../../src/fiches/models/fiche-action-action.table';
+import {
+  FicheActionCiblesEnumType,
+  ficheActionNiveauxPrioriteEnumType,
+  piliersEciEnumType,
+  FicheActionStatutsEnumType,
+  ficheActionTable,
+} from '../../src/fiches/models/fiche-action.table';
+import { ficheActionFixture } from './fixtures/fiche-action.fixture';
 import { ficheActionAxeTable } from '../../src/fiches/models/fiche-action-axe.table';
-import { ficheActionEffetAttenduTable } from '../../src/fiches/models/fiche-action-effet-attendu.table';
-import { ficheActionFinanceurTagTable } from '../../src/fiches/models/fiche-action-financeur-tag.table';
+import { ficheActionThematiqueTable } from '../../src/fiches/models/fiche-action-thematique.table';
+import { ficheActionActionTable } from '../../src/fiches/models/fiche-action-action.table';
 import { ficheActionIndicateurTable } from '../../src/fiches/models/fiche-action-indicateur.table';
-import { ficheActionLienTable } from '../../src/fiches/models/fiche-action-lien.table';
-import { ficheActionPartenaireTagTable } from '../../src/fiches/models/fiche-action-partenaire-tag.table';
 import { ficheActionPiloteTable } from '../../src/fiches/models/fiche-action-pilote.table';
 import { ficheActionReferentTable } from '../../src/fiches/models/fiche-action-referent.table';
-import { ficheActionServiceTagTable } from '../../src/fiches/models/fiche-action-service.table';
 import { ficheActionSousThematiqueTable } from '../../src/fiches/models/fiche-action-sous-thematique.table';
-import { ficheActionStructureTagTable } from '../../src/fiches/models/fiche-action-structure-tag.table';
-import { ficheActionThematiqueTable } from '../../src/fiches/models/fiche-action-thematique.table';
-import { ficheActionTable } from '../../src/fiches/models/fiche-action.table';
 import { getYoloDodoToken } from '../auth/auth-utils';
 import { getTestApp } from '../common/app-utils';
 import {
@@ -34,7 +35,12 @@ import {
   structuresFixture,
   thematiquesFixture,
 } from './fixtures/fiche-action-relations.fixture';
-import { ficheActionFixture } from './fixtures/fiche-action.fixture';
+import { ficheActionPartenaireTagTable } from '../../src/fiches/models/fiche-action-partenaire-tag.table';
+import { ficheActionStructureTagTable } from '../../src/fiches/models/fiche-action-structure-tag.table';
+import { ficheActionFinanceurTagTable } from '../../src/fiches/models/fiche-action-financeur-tag.table';
+import { ficheActionServiceTagTable } from '../../src/fiches/models/fiche-action-service.table';
+import { ficheActionEffetAttenduTable } from '../../src/fiches/models/fiche-action-effet-attendu.table';
+import { ficheActionLienTable } from '../../src/fiches/models/fiche-action-lien.table';
 import { UpdateFicheActionRequestClass } from '../../src/fiches/controllers/fiches-action.controller';
 
 const collectiviteId = 1;
@@ -76,7 +82,7 @@ describe('FichesActionUpdateService', () => {
         titre: 'Construire des pistes cyclables',
         description:
           'Un objectif à long terme sera de construire de nombreuses pistes cyclables dans le centre-ville.',
-        niveauPriorite: ficheActionNiveauxPrioriteEnumType.BAS,
+        niveauPriorite: 'Bas',
         plat: 'macaroni', // irrelevant data to be stripped
       };
 
@@ -90,60 +96,6 @@ describe('FichesActionUpdateService', () => {
       const body = response.body;
 
       expect(body.plat).toBeUndefined();
-    });
-
-    it('should update fiche action fields', async () => {
-      const data: UpdateFicheActionRequestClass = {
-        collectiviteId: 1,
-        titre: 'Construire des pistes cyclables',
-        description:
-          'Un objectif à long terme sera de construire de nombreuses pistes cyclables dans le centre-ville.',
-        dateDebut: '2024-11-14 00:00:00+00',
-        dateFinProvisoire: '2025-09-10 00:00:00+00',
-        instanceGouvernance: null,
-        niveauPriorite: ficheActionNiveauxPrioriteEnumType.BAS,
-        piliersEci: [
-          ficheActionPiliersEciEnumType.APPROVISIONNEMENT_DURABLE,
-          ficheActionPiliersEciEnumType.ECOCONCEPTION,
-        ],
-        objectifs:
-          'Diminution de 15% de la consommation de feuilles de papier / Indicateurs : Nombre de papiers',
-        cibles: [
-          FicheActionCiblesEnumType.GRAND_PUBLIC,
-          FicheActionCiblesEnumType.ASSOCIATIONS,
-        ],
-        ressources: 'Service numérique',
-        financements: 'De 40 000€ à 100 000€',
-        budgetPrevisionnel: '35000',
-        statut: FicheActionStatutsEnumType.EN_PAUSE,
-        ameliorationContinue: false,
-        calendrier: 'Calendrier prévisionnel',
-        notesComplementaires: 'Vive le vélo !',
-        majTermine: true,
-        tempsDeMiseEnOeuvre: 1,
-        participationCitoyenne:
-          'La participation citoyenne a été approuvée en réunion plénière',
-        participationCitoyenneType: 'Information',
-        restreint: false,
-      };
-
-      const response = await request(app.getHttpServer())
-        .put(`/collectivites/${collectiviteId}/fiches-action/${ficheActionId}`)
-        .send(data)
-        .set('Authorization', `Bearer ${yoloDodoToken}`)
-        .set('Content-Type', 'application/json')
-        .expect(200);
-
-      const unFilteredBody = response.body;
-
-      const body = Object.fromEntries(
-        Object.entries(unFilteredBody).filter(
-          ([key]) =>
-            !['id', 'createdAt', 'modifiedAt', 'modifiedBy'].includes(key)
-        )
-      );
-
-      expect(body).toStrictEqual(data);
     });
 
     it('should return 400 when invalid numeric type are provided', async () => {
@@ -242,7 +194,7 @@ describe('FichesActionUpdateService', () => {
         dateDebut: '2024-11-14 00:00:00+00',
         dateFinProvisoire: '2025-09-10 00:00:00+00',
         instanceGouvernance: null,
-        niveauPriorite: ficheActionNiveauxPrioriteEnumType.BAS,
+        niveauPriorite: 'Bas',
         piliersEci: [
           piliersEciEnumType.APPROVISIONNEMENT_DURABLE,
           piliersEciEnumType.ECOCONCEPTION,
@@ -398,14 +350,10 @@ describe('FichesActionUpdateService', () => {
       const data: UpdateFicheActionRequestClass = {
         pilotes: [
           {
-            nom: 'Donald Duck',
-            collectiviteId: 5460,
             tagId: 1,
             userId: '3f407fc6-3634-45ff-a988-301e9088096a',
           },
           {
-            nom: 'Mickey Mouse',
-            collectiviteId: 5460,
             tagId: 9,
             userId: '4ecc7d3a-7484-4a1c-8ac8-930cdacd2561',
           },
