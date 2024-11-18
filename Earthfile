@@ -375,6 +375,21 @@ backend-deploy:
   ARG --required TRAJECTOIRE_SNBC_RESULT_FOLDER_ID
   BUILD --pass-args ./backend+deploy
 
+backend-test:
+  ARG --required TRAJECTOIRE_SNBC_SHEET_ID
+  ARG --required TRAJECTOIRE_SNBC_XLSX_ID
+  ARG --required TRAJECTOIRE_SNBC_RESULT_FOLDER_ID
+  ARG --required REFERENTIEL_TE_SHEET_ID
+  ARG --required GCLOUD_SERVICE_ACCOUNT_KEY
+  ARG --required SUPABASE_DATABASE_URL
+  ARG --required SUPABASE_URL
+  ARG --required SUPABASE_ANON_KEY
+  ARG --required SUPABASE_SERVICE_ROLE_KEY
+  ARG --required SUPABASE_JWT_SECRET
+  ARG --required BREVO_API_KEY
+  ARG --required DIRECTUS_API_KEY
+  BUILD --pass-args ./backend+test
+
 
 # PANIER ENTRYPOINTS
 # ------------------

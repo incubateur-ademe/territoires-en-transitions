@@ -12,9 +12,15 @@ export const initApplicationCredentials = () => {
     logger.log(
       `Writing Google Cloud credentials to file: ${serviceAccountFile}`
     );
+    let credentialsJson = process.env.GCLOUD_SERVICE_ACCOUNT_KEY;
+    if (!credentialsJson.includes('{')) {
+      // Assume it's a base64 encoded string
+      credentialsJson = Buffer.from(credentialsJson, 'base64').toString('utf-8');
+    }
+    
     fs.writeFileSync(
       serviceAccountFile,
-      process.env.GCLOUD_SERVICE_ACCOUNT_KEY
+      credentialsJson
     );
     process.env.GOOGLE_APPLICATION_CREDENTIALS = serviceAccountFile;
   }
