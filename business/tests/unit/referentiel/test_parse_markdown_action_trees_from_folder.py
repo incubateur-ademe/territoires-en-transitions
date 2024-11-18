@@ -155,4 +155,4 @@ def test_build_markdown_action_node_when_referentiel_is_unknown():
     )
 
     assert len(errors) == 1
-    assert ("Input should be 'cae' or 'eci'" in errors[0])
+    assert ("Input should be 'cae', 'eci', 'te' or 'te-test'" in errors[0])
