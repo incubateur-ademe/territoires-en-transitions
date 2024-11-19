@@ -6,12 +6,26 @@ from public.action_statut;
 comment on table test.action_statut is
     'Copie de la table action_statut.';
 
+create table test.historique_action_statut
+as
+select *
+from historique.action_statut;
+comment on table test.historique_action_statut is
+    'Copie de la table historique.action_statut.';
+
 create table test.action_commentaire
 as
 select *
 from public.action_commentaire;
 comment on table test.action_commentaire is
     'Copie de la table action_commentaire.';
+
+create table test.historique_action_commentaire
+as
+select *
+from historique.action_precision;
+comment on table test.historique_action_commentaire is
+    'Copie de la table historique.action_precision.';
 
 create or replace function
     test_reset_action_statut_and_desc()
@@ -34,7 +48,9 @@ $$
 
     -- Vide les tables
     truncate action_statut;
+    truncate historique.action_statut;
     truncate action_commentaire;
+    truncate historique.action_precision;
     truncate justification_ajustement;
 
     -- Restaure les copies
@@ -42,9 +58,17 @@ $$
     select *
     from test.action_statut;
 
+    insert into historique.action_statut
+    select *
+    from test.historique_action_statut;
+
     insert into public.action_commentaire
     select *
     from test.action_commentaire;
+
+    insert into historique.action_precision
+    select *
+    from test.historique_action_commentaire;
 
 -- ré active les triggers
     alter table action_statut
