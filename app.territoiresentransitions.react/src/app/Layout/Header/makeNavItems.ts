@@ -264,8 +264,12 @@ export const makeSecondaryNavItems = (
 ): TNavItemsList => {
   const collectiviteId = collectivite.collectivite_id;
 
+  const confidentiel =
+    collectivite.acces_restreint && collectivite.niveau_acces === null;
+
   return filtreItems([
     {
+      confidentiel,
       title: 'Paramètres',
       dataTest: 'nav-params',
       items: [
