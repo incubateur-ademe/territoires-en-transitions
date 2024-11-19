@@ -38,5 +38,5 @@ test('Test selectGroupementParCollectivite', async () => {
 
 test('Test selectGroupements', async () => {
   const def: Groupement[] = await selectGroupements(supabase);
-  expect(def).toHaveLength(1);
+  expect(def).toHaveLength(2);
 });
