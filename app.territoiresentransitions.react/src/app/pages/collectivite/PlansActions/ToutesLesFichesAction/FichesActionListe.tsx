@@ -7,7 +7,7 @@ import {
   SortFichesAction,
   SortFichesActionValue,
 } from '@tet/api/plan-actions/fiche-resumes.list/domain/fetch-options.schema';
-import { Alert, Button, Checkbox, Input, Pagination, Select } from '@tet/ui';
+import { Button, Checkbox, Input, Pagination, Select } from '@tet/ui';
 import { OpenState } from '@tet/ui/utils/types';
 import FicheActionCard from 'app/pages/collectivite/PlansActions/FicheAction/Carte/FicheActionCard';
 import PictoExpert from 'ui/pictogrammes/PictoExpert';
@@ -23,7 +23,7 @@ import FilterBadges, {
   CustomFilterBadges,
   useFiltersToBadges,
 } from 'ui/shared/filters/filter-badges';
-import ExportFicheActionGroupeesButton from '../ExportPdf/ExportFicheActionGroupeesButton';
+import ActionsGroupeesMenu from '../ActionsGroupees/ActionsGroupeesMenu';
 
 type sortByOptionsType = SortFichesAction & {
   label: string;
@@ -322,23 +322,7 @@ const FichesActionListe = ({
         </div>
       )}
 
-      <Alert
-        className={classNames(
-          'absolute left-0 bottom-0 border-t border-t-info-1 pt-2 pb-4 transition-all duration-500',
-          {
-            'opacity-100 z-50': isGroupedActionsOn && selectedIds.length > 1,
-            'opacity-0 -z-10': selectedIds.length <= 1,
-          }
-        )}
-        title="Appliquer une action groupée"
-        description={
-          <div className="flex gap-2">
-            <ExportFicheActionGroupeesButton fichesIds={selectedIds} />
-          </div>
-        }
-        fullPageWidth
-        noIcon
-      />
+      <ActionsGroupeesMenu {...{ isGroupedActionsOn, selectedIds }} />
     </>
   );
 };

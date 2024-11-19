@@ -25,6 +25,7 @@ type Props = Omit<SelectMultipleProps, 'values' | 'onChange' | 'options'> & {
     selectedPersonne: Personne;
   }) => void;
   disabledOptionsIds?: string[];
+  disableEdition?: boolean;
 };
 
 /** Sélecteur de personnes de la collectivité */
@@ -87,6 +88,7 @@ const PersonnesDropdown = (props: Props) => {
     <SelectFilter
       {...props}
       dataTest={props.dataTest ?? 'personnes'}
+      isSearcheable
       options={options}
       onChange={({ values, selectedValue }) =>
         props.onChange({
@@ -94,35 +96,39 @@ const PersonnesDropdown = (props: Props) => {
           selectedPersonne: getSelectedPersonnes([selectedValue])[0],
         })
       }
-      createProps={{
-        userCreatedOptions:
-          personneListe
-            ?.filter((p) => p.tagId)
-            .map((p) => p.tagId!.toString()) ?? [],
-        onUpdate: (tagId, tagName) => {
-          updateTag({
-            collectiviteId: collectiviteId!,
-            id: parseInt(tagId as string),
-            nom: tagName,
-          });
-        },
-        onDelete: (tagId) => {
-          props.onChange({
-            personnes: getSelectedPersonnes(
-              props.values?.filter((v) => v !== tagId)
-            ),
-            selectedPersonne: getSelectedPersonnes(
-              props.values?.filter((v) => v === tagId)
-            )[0],
-          });
-          deleteTag(parseInt(tagId as string));
-        },
-        onCreate: (inputValue) =>
-          createTag({
-            collectiviteId: collectiviteId!,
-            nom: inputValue,
-          }),
-      }}
+      createProps={
+        !props.disableEdition
+          ? {
+              userCreatedOptions:
+                personneListe
+                  ?.filter((p) => p.tagId)
+                  .map((p) => p.tagId!.toString()) ?? [],
+              onUpdate: (tagId, tagName) => {
+                updateTag({
+                  collectiviteId: collectiviteId!,
+                  id: parseInt(tagId as string),
+                  nom: tagName,
+                });
+              },
+              onDelete: (tagId) => {
+                props.onChange({
+                  personnes: getSelectedPersonnes(
+                    props.values?.filter((v) => v !== tagId)
+                  ),
+                  selectedPersonne: getSelectedPersonnes(
+                    props.values?.filter((v) => v === tagId)
+                  )[0],
+                });
+                deleteTag(parseInt(tagId as string));
+              },
+              onCreate: (inputValue) =>
+                createTag({
+                  collectiviteId: collectiviteId!,
+                  nom: inputValue,
+                }),
+            }
+          : undefined
+      }
     />
   );
 };
