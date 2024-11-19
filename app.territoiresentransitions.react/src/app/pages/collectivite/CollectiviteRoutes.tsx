@@ -65,21 +65,21 @@ export const CollectiviteRoutes = () => {
         <PlansActionsPage />
       </RouteEnAccesRestreint>
 
-      <Route path={collectiviteUsersPath}>
+      <RouteEnAccesRestreint path={collectiviteUsersPath}>
         <MembresPage />
-      </Route>
+      </RouteEnAccesRestreint>
       <Route path={collectivitePersoRefPath} exact>
         <PersoReferentielPage />
       </Route>
       <Route path={collectivitePersoRefThematiquePath}>
         <PersoReferentielThematiquePage />
       </Route>
-      <Route path={collectiviteJournalPath}>
+      <RouteEnAccesRestreint path={collectiviteJournalPath}>
         <JournalActivitePage />
-      </Route>
-      <Route path={collectiviteBibliothequePath}>
+      </RouteEnAccesRestreint>
+      <RouteEnAccesRestreint path={collectiviteBibliothequePath}>
         <BibliothequeDocsPage />
-      </Route>
+      </RouteEnAccesRestreint>
       <Route path={collectiviteLabellisationPath}>
         <ParcoursLabellisationPage />
       </Route>
