@@ -1,7 +1,8 @@
-import {useCollectiviteId} from 'core-logic/hooks/params';
-import {THistoriqueProps} from './types';
-import {HistoriqueListe} from './HistoriqueListe';
-import {useHistoriqueItemListe} from './useHistoriqueItemListe';
+import { useCollectiviteId } from 'core-logic/hooks/params';
+import { THistoriqueProps } from './types';
+import { HistoriqueListe } from './HistoriqueListe';
+import { useHistoriqueItemListe } from './useHistoriqueItemListe';
+import { TrackPageView } from '@tet/ui';
 
 /**
  * Affiche le journal d'activité d'une collectivité
@@ -19,7 +20,15 @@ export const JournalActivite = (props: THistoriqueProps) => {
 const JournalActiviteConnected = () => {
   const collectivite_id = useCollectiviteId()!;
   const historique = useHistoriqueItemListe(collectivite_id);
-  return <JournalActivite {...historique} />;
+  return (
+    <>
+      <TrackPageView
+        pageName="app/parametres/historique"
+        properties={{ collectivite_id }}
+      />
+      <JournalActivite {...historique} />;
+    </>
+  );
 };
 
 export default JournalActiviteConnected;
