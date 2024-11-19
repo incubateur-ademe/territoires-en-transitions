@@ -21,15 +21,17 @@ export class CountByStatutRouter {
   ) {}
 
   router = this.trpc.router({
-    countByStatut: this.trpc.procedure.input(inputSchema).query(({ input }) => {
-      const { collectiviteId, body } = input;
-      // TODO: token
-      const tokenInfo: SupabaseJwtPayload = {
-        session_id: '',
-        role: SupabaseRole.AUTHENTICATED,
-        is_anonymous: false,
-      };
-      return this.service.countByStatut(collectiviteId, body, tokenInfo);
-    }),
+    countByStatut: this.trpc.publicProcedure
+      .input(inputSchema)
+      .query(({ input }) => {
+        const { collectiviteId, body } = input;
+        // TODO: token
+        const tokenInfo: SupabaseJwtPayload = {
+          session_id: '',
+          role: SupabaseRole.AUTHENTICATED,
+          is_anonymous: false,
+        };
+        return this.service.countByStatut(collectiviteId, body, tokenInfo);
+      }),
   });
 }

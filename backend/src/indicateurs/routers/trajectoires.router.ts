@@ -15,7 +15,7 @@ export class TrajectoiresRouter {
   ) {}
 
   router = this.trpc.router({
-    snbc: this.trpc.procedure
+    snbc: this.trpc.publicProcedure
       .input(
         z.object({
           collectiviteId: z.number(),
