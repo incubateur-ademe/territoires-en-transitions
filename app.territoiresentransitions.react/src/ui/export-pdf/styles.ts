@@ -32,6 +32,7 @@ Font.register({
 export const styles = StyleSheet.create({
   page: {
     fontFamily: 'Marianne',
+    paddingBottom: '25pt',
   },
 
   // Header
@@ -74,10 +75,5 @@ export const styles = StyleSheet.create({
   body: {
     padding: '0pt 25pt',
     fontFamily: 'Marianne',
-  },
-
-  // Footer
-  footer: {
-    paddingTop: '25pt',
   },
 });

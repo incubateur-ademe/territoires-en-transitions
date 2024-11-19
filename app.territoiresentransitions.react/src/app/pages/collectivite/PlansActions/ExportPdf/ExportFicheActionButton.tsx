@@ -1,20 +1,20 @@
 import { createElement, useEffect, useState } from 'react';
 import { FicheAction } from '@tet/api/plan-actions';
-import { useFicheActionChemins } from '../../PlanAction/data/usePlanActionChemin';
-import { useIndicateurDefinitions } from '../../../Indicateurs/Indicateur/useIndicateurDefinition';
-import { useFichesActionLiees } from '../data/useFichesActionLiees';
-import { useActionListe } from '../data/options/useActionListe';
-import { useAnnexesFicheActionInfos } from '../data/useAnnexesFicheActionInfos';
-import { useFicheActionNotesSuivi } from '../data/useFicheActionNotesSuivi';
+import { useFicheActionChemins } from '../PlanAction/data/usePlanActionChemin';
+import { useIndicateurDefinitions } from '../../Indicateurs/Indicateur/useIndicateurDefinition';
+import { useFichesActionLiees } from '../FicheAction/data/useFichesActionLiees';
+import { useActionListe } from '../FicheAction/data/options/useActionListe';
+import { useAnnexesFicheActionInfos } from '../FicheAction/data/useAnnexesFicheActionInfos';
+import { useFicheActionNotesSuivi } from '../FicheAction/data/useFicheActionNotesSuivi';
 import ExportPDFButton from 'ui/export-pdf/ExportPDFButton';
-import FicheActionPdf from '../FicheActionPdf/FicheActionPdf';
+import FicheActionPdf from './FicheActionPdf/FicheActionPdf';
 
 type FicheActionPdfContentProps = {
   fiche: FicheAction;
   generateContent: (content: JSX.Element) => void;
 };
 
-const FicheActionPdfContent = ({
+export const FicheActionPdfContent = ({
   fiche,
   generateContent,
 }: FicheActionPdfContentProps) => {

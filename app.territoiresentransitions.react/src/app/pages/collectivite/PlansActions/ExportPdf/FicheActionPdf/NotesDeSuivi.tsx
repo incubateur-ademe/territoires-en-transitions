@@ -1,6 +1,10 @@
-import { FicheActionNote } from '@tet/api/plan-actions';
-import { Card, Paragraph, Stack, Title } from 'ui/export-pdf/components';
 import { format } from 'date-fns';
+import { FicheActionNote } from '@tet/api/plan-actions';
+import { preset } from '@tet/ui';
+import { Card, Paragraph, Stack, Title } from 'ui/export-pdf/components';
+import { EditIcon, UserIcon } from 'ui/export-pdf/assets/icons';
+
+const { colors } = preset.theme.extend;
 
 type NotesDeSuiviCardProps = {
   noteSuivi: FicheActionNote;
@@ -22,20 +26,25 @@ const NotesDeSuiviCard = ({ noteSuivi }: NotesDeSuiviCardProps) => {
         <Title variant="h6">{new Date(dateNote).getFullYear()}</Title>
 
         {/* Contenu */}
-        <Paragraph className="text-[0.65rem] text-grey-8 font-medium">
-          {note}
-        </Paragraph>
+        <Paragraph className="text-[0.65rem]">{note}</Paragraph>
 
         {/* Créée par... / modifiée par... */}
-        <Paragraph className="text-[0.65rem]">
-          Créée le {format(new Date(createdAt), 'dd/MM/yyyy')} par {createdBy}
+        <Stack gap={1} direction="row" className="items-center">
+          <UserIcon fill={colors.grey[8]} />
+          <Paragraph className="text-[0.65rem] text-grey-8">
+            Créée le {format(new Date(createdAt), 'dd/MM/yyyy')} par {createdBy}
+          </Paragraph>
           {modifiedAt !== createdAt && (
             <>
-              | Modifiée le {format(new Date(modifiedAt), 'dd/MM/yyyy')} par{' '}
-              {modifiedBy}
+              <Paragraph className="text-[0.65rem] text-grey-8">| </Paragraph>
+              <EditIcon fill={colors.grey[8]} />
+              <Paragraph className="text-[0.65rem] text-grey-8">
+                Modifiée le {format(new Date(modifiedAt), 'dd/MM/yyyy')} par{' '}
+                {modifiedBy}
+              </Paragraph>
             </>
           )}
-        </Paragraph>
+        </Stack>
       </Stack>
     </Card>
   );

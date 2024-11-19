@@ -221,6 +221,15 @@ export interface TrackingPlan extends Record<never, Page> {
     };
   };
 
+  /** Actions groupées sur les fiches actions */
+  'app/actions-groupees-fiches-action': {
+    properties: { collectivite_id: number };
+    onglets: never;
+    events: {
+      export_PDF_telechargement_groupe: {};
+    };
+  };
+
   /** Page "créer un plan" */
   'app/creer-plan': {
     properties: { collectivite_id: number };
