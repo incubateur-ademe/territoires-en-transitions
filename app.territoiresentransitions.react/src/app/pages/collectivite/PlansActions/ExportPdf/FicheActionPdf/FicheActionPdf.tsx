@@ -5,7 +5,7 @@ import {
 } from '@tet/api/plan-actions';
 import { TActionStatutsRow, TAxeRow } from 'types/alias';
 import { IndicateurDefinition } from '@tet/api/indicateurs/domain';
-import { AnnexeInfo } from '../data/useAnnexesFicheActionInfos';
+import { AnnexeInfo } from '../../FicheAction/data/useAnnexesFicheActionInfos';
 import { Divider, Stack, Title } from 'ui/export-pdf/components';
 
 import Acteurs from './Acteurs';

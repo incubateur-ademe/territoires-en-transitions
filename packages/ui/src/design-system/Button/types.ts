@@ -36,8 +36,6 @@ export type ButtonContentProps = {
 type BaseButtonProps = {
   /** Position de l'icône dans le bouton */
   iconPosition?: IconPosition;
-  /** Affiche un loader à la place de l'icône */
-  loading?: boolean;
   /** Lien externe */
   external?: boolean;
   /** Donné par le dropdownfloater si utilisé pour afficher un élément floating-ui */

@@ -1,6 +1,7 @@
 export * from './ArrowRightIcon';
 export * from './CalendarIcon';
 export * from './DiscussIcon';
+export * from './EditIcon';
 export * from './FileIcon';
 export * from './Icon';
 export * from './LinkIcon';

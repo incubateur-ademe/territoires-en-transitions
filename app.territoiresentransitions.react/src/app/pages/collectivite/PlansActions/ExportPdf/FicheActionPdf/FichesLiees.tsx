@@ -18,7 +18,7 @@ import {
   LoopLeftIcon,
   UserIcon,
 } from 'ui/export-pdf/assets/icons';
-import { generateTitle } from '../data/utils';
+import { generateTitle } from '../../FicheAction/data/utils';
 
 const { colors } = preset.theme.extend;
 
@@ -80,7 +80,7 @@ const FicheLieeCard = ({ ficheLiee }: FicheLieeCardProps) => {
       <Stack className="mt-auto" gap={1}>
         {/* Pilotes et date de fin prévisionnelle */}
         {(hasPilotes || hasDateDeFin || ameliorationContinue) && (
-          <Stack direction="row" gap={2}>
+          <Stack direction="row" gap={2} className="flex-wrap">
             {/* Personnes pilote */}
             {hasPilotes && (
               <Stack gap={1} direction="row" className="items-center">

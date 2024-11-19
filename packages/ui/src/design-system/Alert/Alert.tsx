@@ -14,6 +14,8 @@ type AlertProps = {
   state?: AlertState;
   /** Remplace l'icône par défaut */
   customIcon?: IconValue;
+  /** Supprime l'icône */
+  noIcon?: boolean;
   /** Initialisation de l'état open */
   isOpen?: boolean;
   /** Gestion de l'affichage pour les alertes sur toute la largeur de page */
@@ -36,6 +38,7 @@ export const Alert = ({
   footer,
   state = 'info',
   customIcon,
+  noIcon = false,
   isOpen = true,
   fullPageWidth = false,
   rounded = false,
@@ -68,10 +71,12 @@ export const Alert = ({
         )}
       >
         {/* Icône à gauche du bloc */}
-        <Icon
-          icon={customIcon ? customIcon : stateToIcon[state]}
-          className={classNames('mt-0.5', styles.text)}
-        />
+        {!noIcon && (
+          <Icon
+            icon={customIcon ? customIcon : stateToIcon[state]}
+            className={classNames('mt-0.5', styles.text)}
+          />
+        )}
 
         {/* Titre et texte additionnel */}
         <div className="flex flex-col gap-3 justify-center">
@@ -80,11 +85,14 @@ export const Alert = ({
               {title}
             </div>
           )}
-          {!!description && (
-            <div className="text-sm [&_*]:text-sm font-medium text-grey-9 [&_*]:text-grey-9 [&>*]:last:mb-0 flex flex-col gap-3">
-              {description}
-            </div>
-          )}
+          {!!description &&
+            (typeof description === 'string' ? (
+              <div className="text-sm [&_*]:text-sm font-medium text-grey-9 [&_*]:text-grey-9 [&>*]:last:mb-0 flex flex-col gap-3">
+                {description}
+              </div>
+            ) : (
+              description
+            ))}
           {!!footer && footer}
         </div>
 

@@ -1,5 +1,5 @@
 import { FicheResume } from '@tet/api/plan-actions/domain';
-import { Button, Card, Notification, Tooltip } from '@tet/ui';
+import { Button, Card, Checkbox, Notification, Tooltip } from '@tet/ui';
 import classNames from 'classnames';
 import { useCurrentCollectivite } from 'core-logic/hooks/useCurrentCollectivite';
 import { useState } from 'react';
@@ -24,8 +24,12 @@ type FicheActionCardProps = {
   /** Pour invalider la liste des fiches d'un axe à la suppression de la fiche */
   axeIdToInvalidate?: number;
   editKeysToInvalidate?: QueryKey[];
+  /** Etat sélectionné ou non de la fiche */
+  isSelected?: boolean;
   /** Dissociation de la fiche action */
   onUnlink?: () => void;
+  /** Sélection de la fiche action */
+  onSelect?: (isSelected: boolean) => void;
 };
 
 const FicheActionCard = ({
@@ -35,7 +39,9 @@ const FicheActionCard = ({
   isEditable = false,
   axeIdToInvalidate,
   editKeysToInvalidate,
+  isSelected = false,
   onUnlink,
+  onSelect,
 }: FicheActionCardProps) => {
   const collectivite = useCurrentCollectivite();
 
@@ -60,7 +66,7 @@ const FicheActionCard = ({
               onClick={onUnlink}
             />
           )}
-          {isEditable && (
+          {isEditable && !onSelect && (
             <>
               <>
                 {isEditOpen && (
@@ -117,8 +123,10 @@ const FicheActionCard = ({
             'hover:border-primary-3 hover:!bg-primary-1': !isNotClickable,
           }
         )}
-        href={link}
+        href={onSelect ? undefined : link}
+        onClick={onSelect ? () => onSelect(!isSelected) : undefined}
         disabled={isNotClickable}
+        isSelected={isSelected}
         external={openInNewTab}
         header={
           // Badges priorité et statut de la fiche
@@ -171,9 +179,12 @@ const FicheActionCard = ({
         }
       >
         {/* Titre de la fiche action */}
-        <span className="text-base font-bold text-primary-9">
-          {generateTitle(ficheAction.titre)}
-        </span>
+        <div className="flex min-w-min">
+          {onSelect && <Checkbox checked={isSelected} />}
+          <span className="text-base font-bold text-primary-9">
+            {generateTitle(ficheAction.titre)}
+          </span>
+        </div>
 
         {/* Plans d'action dans lesquels sont la fiche */}
         <span title="Emplacements" className="text-sm font-medium">

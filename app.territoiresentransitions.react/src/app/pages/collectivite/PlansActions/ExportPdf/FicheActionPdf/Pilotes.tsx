@@ -7,7 +7,7 @@ const Pilotes = ({ fiche }: FicheActionPdfProps) => {
 
   return (
     <Card className="justify-center">
-      <PersonnePilotePicto className="h-15 w-15 mx-auto" />
+      <PersonnePilotePicto className="h-14 w-14 mx-auto" />
       <Stack gap={1} className="text-center items-center">
         <Title variant="h6" className="uppercase text-center">
           Personnes pilotes

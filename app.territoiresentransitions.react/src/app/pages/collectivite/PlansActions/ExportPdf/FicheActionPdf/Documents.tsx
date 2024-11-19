@@ -9,8 +9,8 @@ import {
 } from 'ui/export-pdf/components';
 import { DiscussIcon, FileIcon, LinkIcon } from 'ui/export-pdf/assets/icons';
 import { getAuthorAndDate } from 'ui/shared/preuves/Bibliotheque/utils';
-import { AnnexeInfo } from '../data/useAnnexesFicheActionInfos';
-import { generateTitle } from '../data/utils';
+import { AnnexeInfo } from '../../FicheAction/data/useAnnexesFicheActionInfos';
+import { generateTitle } from '../../FicheAction/data/utils';
 
 const { colors } = preset.theme.extend;
 
