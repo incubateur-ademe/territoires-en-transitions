@@ -250,7 +250,7 @@ const filtreItems = (items: TNavItemsList): TNavItemsList =>
     ?.filter((item) => !item.confidentiel)
     .filter((item) => !item.hideToVisitor)
     .map((item) => {
-      return item.hasOwnProperty('items')
+      return Object.prototype.hasOwnProperty.call(item, 'items')
         ? {
             ...item,
             items: filtreItems((item as TNavDropdown).items) as TNavItem[],
@@ -260,24 +260,11 @@ const filtreItems = (items: TNavItemsList): TNavItemsList =>
 
 /** Génère les liens de navigation secondaires pour une collectivité donnée */
 export const makeSecondaryNavItems = (
-  collectivite: CurrentCollectivite,
-  user: UserData | null
-): TNavItemsList => {
-  return filtreItems(makeSecondaryNavItemsBase(collectivite, user));
-};
-
-const makeSecondaryNavItemsBase = (
-  collectivite: CurrentCollectivite,
-  user: UserData | null
+  collectivite: CurrentCollectivite
 ): TNavItemsList => {
   const collectiviteId = collectivite.collectivite_id;
 
-  // On n'affiche pas le menu des paramètres si droit "visiteur"
-  if (isVisiteur({ user, collectivite })) {
-    return [];
-  }
-
-  return [
+  return filtreItems([
     {
       title: 'Paramètres',
       dataTest: 'nav-params',
@@ -305,5 +292,5 @@ const makeSecondaryNavItemsBase = (
         },
       ],
     },
-  ];
+  ]);
 };
