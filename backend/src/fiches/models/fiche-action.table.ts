@@ -1,4 +1,3 @@
-import { collectiviteTable } from '../../collectivites/models/collectivite.table';
 import { InferInsertModel } from 'drizzle-orm';
 import {
   boolean,
@@ -11,14 +10,15 @@ import {
   timestamp,
   varchar,
 } from 'drizzle-orm/pg-core';
-import { tempsDeMiseEnOeuvreTable } from '../../taxonomie/models/temps-de-mise-en-oeuvre.table';
 import { createInsertSchema, createSelectSchema } from 'drizzle-zod';
 import { z } from 'zod';
+import { collectiviteTable } from '../../collectivites/models/collectivite.table';
 import {
   createdAt,
   modifiedAt,
   modifiedBy,
 } from '../../common/models/column.helpers';
+import { tempsDeMiseEnOeuvreTable } from '../../taxonomie/models/temps-de-mise-en-oeuvre.table';
 
 export enum piliersEciEnumType {
   APPROVISIONNEMENT_DURABLE = 'Approvisionnement durable',
@@ -30,15 +30,10 @@ export enum piliersEciEnumType {
   RECYCLAGE = 'Recyclage',
 }
 
-export const piliersEciEnumValues = [
-  piliersEciEnumType.APPROVISIONNEMENT_DURABLE,
-  piliersEciEnumType.ECOCONCEPTION,
-  piliersEciEnumType.ECOLOGIE_INDUSTRIELLE,
-  piliersEciEnumType.ECONOMIE_DE_LA_FONCTIONNALITE,
-  piliersEciEnumType.CONSOMMATION_RESPONSABLE,
-  piliersEciEnumType.ALLONGEMENT_DUREE_USAGE,
-  piliersEciEnumType.RECYCLAGE,
-] as const;
+export const piliersEciEnumValues = Object.values(piliersEciEnumType) as [
+  piliersEciEnumType,
+  ...piliersEciEnumType[]
+];
 
 export const piliersEciEnumSchema = z.enum(piliersEciEnumValues);
 
@@ -63,19 +58,9 @@ export enum ficheActionResultatsAttendusEnumType {
 
 export const ficheActionResultatsAttendusEnum = pgEnum(
   'fiche_action_resultats_attendus',
-  [
-    ficheActionResultatsAttendusEnumType.ADAPTATION_CHANGEMENT_CLIMATIQUE,
-    ficheActionResultatsAttendusEnumType.ALLONGEMENT_DUREE_USAGE,
-    ficheActionResultatsAttendusEnumType.AMELIORATION_QUALITE_VIE,
-    ficheActionResultatsAttendusEnumType.DEVELOPPEMENT_ENERGIES_RENOUVELABLES,
-    ficheActionResultatsAttendusEnumType.EFFICACITE_ENERGETIQUE,
-    ficheActionResultatsAttendusEnumType.PRESERVATION_BIODIVERSITE,
-    ficheActionResultatsAttendusEnumType.REDUCTION_CONSOMMATIONS_ENERGETIQUES,
-    ficheActionResultatsAttendusEnumType.REDUCTION_DECHETS,
-    ficheActionResultatsAttendusEnumType.REDUCTION_DECHETS,
-    ficheActionResultatsAttendusEnumType.REDUCTION_EMISSIONS_GES,
-    ficheActionResultatsAttendusEnumType.REDUCTION_POLLUANTS_ATMOSPHERIQUES,
-    ficheActionResultatsAttendusEnumType.SOBRIETE_ENERGETIQUE,
+  Object.values(ficheActionResultatsAttendusEnumType) as [
+    ficheActionResultatsAttendusEnumType,
+    ...ficheActionResultatsAttendusEnumType[]
   ]
 );
 
@@ -92,13 +77,13 @@ export enum FicheActionStatutsEnumType {
 
 export const SANS_STATUT_FICHE_ACTION_SYNTHESE_KEY = 'Sans statut';
 
-export const ficheActionStatutsEnum = pgEnum('fiche_action_statuts', [
-  FicheActionStatutsEnumType.A_VENIR,
-  FicheActionStatutsEnumType.EN_COURS,
-  FicheActionStatutsEnumType.REALISE,
-  FicheActionStatutsEnumType.EN_PAUSE,
-  FicheActionStatutsEnumType.ABANDONNE,
-]);
+export const ficheActionStatutsEnum = pgEnum(
+  'fiche_action_statuts',
+  Object.values(FicheActionStatutsEnumType) as [
+    FicheActionStatutsEnumType,
+    ...FicheActionStatutsEnumType[]
+  ]
+);
 
 export enum FicheActionCiblesEnumType {
   GRAND_PUBLIC = 'Grand public',
@@ -116,21 +101,9 @@ export enum FicheActionCiblesEnumType {
   AGENTS = 'Agents',
 }
 
-export const ficheActionCiblesEnumValues = [
-  FicheActionCiblesEnumType.GRAND_PUBLIC,
-  FicheActionCiblesEnumType.ASSOCIATIONS,
-  FicheActionCiblesEnumType.GRAND_PUBLIC_ET_ASSOCIATIONS,
-  FicheActionCiblesEnumType.PUBLIC_SCOLAIRE,
-  FicheActionCiblesEnumType.AUTRES_COLLECTIVITES_DU_TERRITOIRE,
-  FicheActionCiblesEnumType.ACTEURS_ECONOMIQUES,
-  FicheActionCiblesEnumType.ACTEURS_ECONOMIQUES_DU_SECTEUR_PRIMAIRE,
-  FicheActionCiblesEnumType.ACTEURS_ECONOMIQUES_DU_SECTEUR_SECONDAIRE,
-  FicheActionCiblesEnumType.ACTEURS_ECONOMIQUES_DU_SECTEUR_TERTIAIRE,
-  FicheActionCiblesEnumType.PARTENAIRES,
-  FicheActionCiblesEnumType.COLLECTIVITE_ELLE_MEME,
-  FicheActionCiblesEnumType.ELUS_LOCAUX,
-  FicheActionCiblesEnumType.AGENTS,
-] as const;
+export const ficheActionCiblesEnumValues = Object.values(
+  FicheActionCiblesEnumType
+) as [FicheActionCiblesEnumType, ...FicheActionCiblesEnumType[]];
 
 export const ficheActionCiblesEnumSchema = z.enum(ficheActionCiblesEnumValues);
 

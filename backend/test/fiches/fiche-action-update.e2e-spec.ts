@@ -3,21 +3,26 @@ import { eq } from 'drizzle-orm';
 import { default as request } from 'supertest';
 import { describe, expect, it } from 'vitest';
 import DatabaseService from '../../src/common/services/database.service';
-import {
-  FicheActionCiblesEnumType,
-  ficheActionNiveauxPrioriteEnumType,
-  piliersEciEnumType,
-  FicheActionStatutsEnumType,
-  ficheActionTable,
-} from '../../src/fiches/models/fiche-action.table';
-import { ficheActionFixture } from './fixtures/fiche-action.fixture';
-import { ficheActionAxeTable } from '../../src/fiches/models/fiche-action-axe.table';
-import { ficheActionThematiqueTable } from '../../src/fiches/models/fiche-action-thematique.table';
+import { UpdateFicheActionRequestClass } from '../../src/fiches/controllers/fiches-action.controller';
 import { ficheActionActionTable } from '../../src/fiches/models/fiche-action-action.table';
+import { ficheActionAxeTable } from '../../src/fiches/models/fiche-action-axe.table';
+import { ficheActionEffetAttenduTable } from '../../src/fiches/models/fiche-action-effet-attendu.table';
+import { ficheActionFinanceurTagTable } from '../../src/fiches/models/fiche-action-financeur-tag.table';
 import { ficheActionIndicateurTable } from '../../src/fiches/models/fiche-action-indicateur.table';
+import { ficheActionLienTable } from '../../src/fiches/models/fiche-action-lien.table';
+import { ficheActionPartenaireTagTable } from '../../src/fiches/models/fiche-action-partenaire-tag.table';
 import { ficheActionPiloteTable } from '../../src/fiches/models/fiche-action-pilote.table';
 import { ficheActionReferentTable } from '../../src/fiches/models/fiche-action-referent.table';
+import { ficheActionServiceTagTable } from '../../src/fiches/models/fiche-action-service.table';
 import { ficheActionSousThematiqueTable } from '../../src/fiches/models/fiche-action-sous-thematique.table';
+import { ficheActionStructureTagTable } from '../../src/fiches/models/fiche-action-structure-tag.table';
+import { ficheActionThematiqueTable } from '../../src/fiches/models/fiche-action-thematique.table';
+import {
+  FicheActionCiblesEnumType,
+  FicheActionStatutsEnumType,
+  ficheActionTable,
+  piliersEciEnumType
+} from '../../src/fiches/models/fiche-action.table';
 import { getYoloDodoToken } from '../auth/auth-utils';
 import { getTestApp } from '../common/app-utils';
 import {
@@ -35,13 +40,7 @@ import {
   structuresFixture,
   thematiquesFixture,
 } from './fixtures/fiche-action-relations.fixture';
-import { ficheActionPartenaireTagTable } from '../../src/fiches/models/fiche-action-partenaire-tag.table';
-import { ficheActionStructureTagTable } from '../../src/fiches/models/fiche-action-structure-tag.table';
-import { ficheActionFinanceurTagTable } from '../../src/fiches/models/fiche-action-financeur-tag.table';
-import { ficheActionServiceTagTable } from '../../src/fiches/models/fiche-action-service.table';
-import { ficheActionEffetAttenduTable } from '../../src/fiches/models/fiche-action-effet-attendu.table';
-import { ficheActionLienTable } from '../../src/fiches/models/fiche-action-lien.table';
-import { UpdateFicheActionRequestClass } from '../../src/fiches/controllers/fiches-action.controller';
+import { ficheActionFixture } from './fixtures/fiche-action.fixture';
 
 const collectiviteId = 1;
 const ficheActionId = 9999;
@@ -83,7 +82,8 @@ describe('FichesActionUpdateService', () => {
         description:
           'Un objectif à long terme sera de construire de nombreuses pistes cyclables dans le centre-ville.',
         niveauPriorite: 'Bas',
-        plat: 'macaroni', // irrelevant data to be stripped
+        // @ts-expect-error irrelevant data to be stripped
+        plat: 'macaroni',
       };
 
       const response = await request(app.getHttpServer())
@@ -137,7 +137,7 @@ describe('FichesActionUpdateService', () => {
     });
 
     it('should return 400 for invalid boolean type in ameliorationContinue', async () => {
-      const data: UpdateFicheActionRequestClass = {
+      const data = {
         ameliorationContinue: 'not-a-boolean',
       };
 
