@@ -250,6 +250,27 @@ export interface TrackingPlan extends Record<never, Page> {
     };
   };
 
+  /** Page "Gestion des membres de la collectivité" */
+  'app/parametres/membres': {
+    properties: { collectivite_id: number };
+    onglets: never;
+    events: never;
+  };
+
+  /** Page "journal de bord de la collectivité" */
+  'app/parametres/historique': {
+    properties: { collectivite_id: number };
+    onglets: never;
+    events: never;
+  };
+
+  /** Page "Bibliothèque de documents de la collectivité" */
+  'app/parametres/bibliotheque': {
+    properties: { collectivite_id: number };
+    onglets: never;
+    events: never;
+  };
+
   /* La page à la racine de https://auth.territoiresentransitions.fr */
   'auth/': NoProps;
 

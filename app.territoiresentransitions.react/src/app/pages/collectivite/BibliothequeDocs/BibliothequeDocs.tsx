@@ -3,10 +3,12 @@ import {
   TPreuveAuditEtLabellisation,
   TPreuveRapport,
 } from 'ui/shared/preuves/Bibliotheque/types';
-import {usePreuvesParType} from 'ui/shared/preuves/Bibliotheque/usePreuves';
-import {AddRapportVisite} from './AddRapportVisite';
-import {PreuvesLabellisation} from './PreuveLabellisation';
-import {PreuvesTabs} from './PreuvesTabs';
+import { usePreuvesParType } from 'ui/shared/preuves/Bibliotheque/usePreuves';
+import { AddRapportVisite } from './AddRapportVisite';
+import { PreuvesLabellisation } from './PreuveLabellisation';
+import { PreuvesTabs } from './PreuvesTabs';
+import { TrackPageView } from '@tet/ui';
+import { useCollectiviteId } from 'core-logic/hooks/params';
 
 type TBibliothequeDocsProps = {
   labellisationEtAudit?: TPreuveAuditEtLabellisation[];
@@ -32,7 +34,7 @@ export const BibliothequeDocs = ({
       <section className="fr-mt-4w" data-test="rapports">
         <h2>Rapports de visite annuelle</h2>
         <AddRapportVisite />
-        {rapports?.map(preuve => (
+        {rapports?.map((preuve) => (
           <div className="py-4" key={preuve.id}>
             <PreuveDoc preuve={preuve} />
           </div>
@@ -48,18 +50,25 @@ export const BibliothequeDocs = ({
 };
 
 const BibliothequeDocsConnected = () => {
+  const collectivite_id = useCollectiviteId()!;
   const preuves = usePreuvesParType({
     preuve_types: ['audit', 'labellisation', 'rapport'],
   });
 
-  const {labellisation, rapport, audit} = preuves;
+  const { labellisation, rapport, audit } = preuves;
   const labellisationEtAudit = [...(labellisation || []), ...(audit || [])];
 
   return (
-    <BibliothequeDocs
-      labellisationEtAudit={labellisationEtAudit}
-      rapports={rapport}
-    />
+    <>
+      <TrackPageView
+        pageName="app/parametres/bibliotheque"
+        properties={{ collectivite_id }}
+      />
+      <BibliothequeDocs
+        labellisationEtAudit={labellisationEtAudit}
+        rapports={rapport}
+      />
+    </>
   );
 };
 
