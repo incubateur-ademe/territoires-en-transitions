@@ -48,7 +48,7 @@ export const MenuPrincipal = (props: HeaderPropsWithModalState) => {
   if (currentCollectivite) {
     // récupère la liste des items à afficher dans le menu
     items = makeNavItems(currentCollectivite, auth.user);
-    secondaryItems = makeSecondaryNavItems(currentCollectivite, auth.user);
+    secondaryItems = makeSecondaryNavItems(currentCollectivite);
   }
 
   return (
