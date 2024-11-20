@@ -21,7 +21,7 @@ import {
   IndicateurValeurAvecMetadonnesDefinition,
   IndicateurValeurType,
 } from '../models/indicateur-valeur.table';
-import { SupabaseJwtPayload } from '../../auth/models/supabase-jwt.models';
+import { AuthenticatedUser } from '../../auth/models/authenticated-user.models';
 import {
   VerificationTrajectoireResultType,
   VerificationTrajectoireStatus,
@@ -618,13 +618,13 @@ export default class TrajectoiresDataService {
    */
   async verificationDonneesSnbc(
     request: VerificationTrajectoireRequestType,
-    tokenInfo: SupabaseJwtPayload,
+    user: AuthenticatedUser,
     epci?: EpciType,
     forceRecuperationDonnees = false
   ): Promise<VerificationTrajectoireResultType> {
     // Vérification des droits
     await this.authService.verifieAccesAuxCollectivites(
-      tokenInfo,
+      user,
       [request.collectiviteId],
       NiveauAcces.EDITION
     );
@@ -721,7 +721,7 @@ export default class TrajectoiresDataService {
   async deleteTrajectoireSnbc(
     collectiviteId: number,
     snbcMetadonneesId?: number,
-    tokenInfo?: SupabaseJwtPayload
+    tokenInfo?: AuthenticatedUser
   ): Promise<void> {
     if (!snbcMetadonneesId) {
       const indicateurSourceMetadonnee =

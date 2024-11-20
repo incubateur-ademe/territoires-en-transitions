@@ -2,9 +2,8 @@ import { createZodDto } from '@anatine/zod-nestjs';
 import { Controller, Get, Logger, Param, Query } from '@nestjs/common';
 import { ApiExcludeEndpoint, ApiResponse, ApiTags } from '@nestjs/swagger';
 import { AllowAnonymousAccess } from '../../auth/decorators/allow-anonymous-access.decorator';
-import { AllowPublicAccess } from '../../auth/decorators/allow-public-access.decorator';
-import { TokenInfo } from '../../auth/decorators/token-info.decorators';
-import { SupabaseJwtPayload } from '../../auth/models/supabase-jwt.models';
+import { User } from '../../auth/decorators/user.decorator';
+import { AuthenticatedUser } from '../../auth/models/authenticated-user.models';
 import { getActionStatutsRequestSchema } from '../models/get-action-statuts.request';
 import { getActionStatutsResponseSchema } from '../models/get-action-statuts.response';
 import { GetCheckScoresResponseType } from '../models/get-check-scores.response';
@@ -56,13 +55,13 @@ export class ReferentielsScoringController {
     @Param('collectivite_id') collectiviteId: number,
     @Param('referentiel_id') referentielId: ReferentielType,
     @Query() parameters: GetActionStatutsRequestClass,
-    @TokenInfo() tokenInfo: SupabaseJwtPayload
+    @User() user: AuthenticatedUser
   ): Promise<GetActionStatutsResponseClass> {
     return this.referentielsScoringService.getReferentielActionStatuts(
       referentielId,
       collectiviteId,
       parameters.date,
-      tokenInfo
+      user
     );
   }
 
@@ -72,12 +71,12 @@ export class ReferentielsScoringController {
   async getReferentielMultipleScorings(
     @Param('referentiel_id') referentielId: ReferentielType,
     @Query() parameters: GetReferentielMultipleScoresRequestClass,
-    @TokenInfo() tokenInfo: SupabaseJwtPayload
+    @User() user: AuthenticatedUser
   ): Promise<GetReferentielMultipleScoresResponseClass> {
     return await this.referentielsScoringService.computeScoreForMultipleCollectivite(
       referentielId,
       parameters,
-      tokenInfo
+      user
     );
   }
 
@@ -88,13 +87,13 @@ export class ReferentielsScoringController {
     @Param('collectivite_id') collectiviteId: number,
     @Param('referentiel_id') referentielId: ReferentielType,
     @Query() parameters: GetReferentielScoresRequestClass,
-    @TokenInfo() tokenInfo: SupabaseJwtPayload
+    @User() user: AuthenticatedUser
   ): Promise<GetReferentielScoresResponseClass> {
     return await this.referentielsScoringService.computeScoreForCollectivite(
       referentielId,
       collectiviteId,
       parameters,
-      tokenInfo
+      user
     );
   }
 

@@ -1,13 +1,13 @@
 import { createZodDto } from '@anatine/zod-nestjs';
 import { Body, Controller, Get, Param, Put, Query } from '@nestjs/common';
 import { ApiOkResponse, ApiTags } from '@nestjs/swagger';
-import { TokenInfo } from '../../auth/decorators/token-info.decorators';
-import type { SupabaseJwtPayload } from '../../auth/models/supabase-jwt.models';
+import { User } from '../../auth/decorators/user.decorator';
+import type { AuthenticatedUser } from '../../auth/models/authenticated-user.models';
+import { getFichesActionSyntheseSchema } from '../models/get-fiches-action-synthese.response';
 import { getFichesActionFilterRequestSchema } from '../models/get-fiches-actions-filter.request';
 import { updateFicheActionRequestSchema } from '../models/update-fiche-action.request';
 import CountByService from '../services/count-by.service';
 import FichesActionUpdateService from '../services/fiches-action-update.service';
-import { getFichesActionSyntheseSchema } from '../models/get-fiches-action-synthese.response';
 
 /**
  * Création des classes de réponse à partir du schema pour générer automatiquement la documentation OpenAPI
@@ -39,14 +39,9 @@ export class FichesActionController {
   })
   async getFichesActionSynthese(
     @Param('collectivite_id') collectiviteId: number,
-    @Query() request: GetFichesActionFilterRequestClass,
-    @TokenInfo() tokenInfo: SupabaseJwtPayload
+    @Query() request: GetFichesActionFilterRequestClass
   ) {
-    return this.syntheseService.countByStatut(
-      collectiviteId,
-      request,
-      tokenInfo
-    );
+    return this.syntheseService.countByStatut(collectiviteId, request);
   }
 
   @Get('')
@@ -56,14 +51,9 @@ export class FichesActionController {
   })
   async getFichesAction(
     @Param('collectivite_id') collectiviteId: number,
-    @Query() request: GetFichesActionFilterRequestClass,
-    @TokenInfo() tokenInfo: SupabaseJwtPayload
+    @Query() request: GetFichesActionFilterRequestClass
   ) {
-    return this.syntheseService.getFichesAction(
-      collectiviteId,
-      request,
-      tokenInfo
-    );
+    return this.syntheseService.getFichesAction(collectiviteId, request);
   }
 
   @Put(':id')
@@ -75,12 +65,12 @@ export class FichesActionController {
     @Param('id') id: number,
     @Body()
     body: UpdateFicheActionRequestClass,
-    @TokenInfo() tokenInfo: SupabaseJwtPayload
+    @User() user: AuthenticatedUser
   ) {
     return await this.fichesActionUpdateService.updateFicheAction(
       id,
       body,
-      tokenInfo
+      user
     );
   }
 }

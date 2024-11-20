@@ -3,7 +3,7 @@ import {
   ExecutionContext,
   Injectable,
   Logger,
-  UnauthorizedException
+  UnauthorizedException,
 } from '@nestjs/common';
 import { Reflector } from '@nestjs/core';
 import { JwtService } from '@nestjs/jwt';
@@ -12,7 +12,7 @@ import BackendConfigurationService from '../../config/configuration.service';
 import { getErrorMessage } from '../../common/services/errors.helper';
 import { AllowAnonymousAccess } from '../decorators/allow-anonymous-access.decorator';
 import { AllowPublicAccess } from '../decorators/allow-public-access.decorator';
-import { SupabaseJwtPayload } from '../models/supabase-jwt.models';
+import { AuthenticatedUser } from '../models/authenticated-user.models';
 
 @Injectable()
 export class AuthGuard implements CanActivate {
@@ -42,17 +42,16 @@ export class AuthGuard implements CanActivate {
       throw new UnauthorizedException();
     }
     try {
-      const payload: SupabaseJwtPayload = await this.jwtService.verifyAsync(
-        token,
-        {
-          secret: this.backendConfigurationService.get("SUPABASE_JWT_SECRET"),
-        }
-      );
-      // 💡 We're assigning the payload to the request object here
+      const user: AuthenticatedUser = await this.jwtService.verifyAsync(token, {
+        secret: this.backendConfigurationService.get('SUPABASE_JWT_SECRET'),
+      });
+      // 💡 We're assigning the user to the request object here
       // so that we can access it in our route handlers
-      request['tokenInfo'] = payload;
-      this.logger.log(`Token validated for user ${payload.sub}`);
-      if (payload.is_anonymous) {
+      request['user'] = user;
+
+      this.logger.log(`Token validated for user ${user.id}`);
+
+      if (user.is_anonymous) {
         const allowAnonymousAccess = this.reflector.get(
           AllowAnonymousAccess,
           context.getHandler()

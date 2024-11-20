@@ -3,7 +3,7 @@ import { Controller, Get, Logger, Param, Query } from '@nestjs/common';
 import { ApiResponse, ApiTags } from '@nestjs/swagger';
 import { AllowAnonymousAccess } from '../../auth/decorators/allow-anonymous-access.decorator';
 import { AllowPublicAccess } from '../../auth/decorators/allow-public-access.decorator';
-import { TokenInfo } from '../../auth/decorators/token-info.decorators';
+import { User } from '../../auth/decorators/user.decorator';
 import { getPersonnalisationConsequencesRequestSchema } from '../models/get-personnalisation-consequences.request';
 import { getPersonnalitionConsequencesResponseSchema } from '../models/get-personnalisation-consequences.response';
 import { getPersonnalisationReglesRequestSchema } from '../models/get-personnalisation-regles.request';
@@ -11,7 +11,7 @@ import { getPersonnalisationReglesResponseSchema } from '../models/get-personnal
 import { getPersonnalisationReponsesRequestSchema } from '../models/get-personnalisation-reponses.request';
 import { getPersonnalitionReponsesResponseSchema } from '../models/get-personnalisation-reponses.response';
 import PersonnalisationService from '../services/personnalisations-service';
-import { SupabaseJwtPayload } from '../../auth/models/supabase-jwt.models';
+import { AuthenticatedUser } from '../../auth/models/authenticated-user.models';
 
 /**
  * Création des classes de requête/réponse à partir du schema pour générer automatiquement la documentation OpenAPI et la validation des entrées
@@ -51,8 +51,7 @@ export class PersonnalisationsController {
   @Get('personnalisations/regles')
   @ApiResponse({ type: GetPersonnalisationReglesResponseClass })
   async getPersonnalisationRegles(
-    @Query() request: GetPersonnalisationReglesRequestClass,
-    @TokenInfo() tokenInfo: SupabaseJwtPayload
+    @Query() request: GetPersonnalisationReglesRequestClass
   ): Promise<GetPersonnalisationReglesResponseClass> {
     return this.personnalisationsService.getPersonnalisationRegles(
       request.referentiel
@@ -65,12 +64,12 @@ export class PersonnalisationsController {
   async getPersonnalisationReponses(
     @Param('collectivite_id') collectiviteId: number,
     @Query() request: GetPersonnalitionReponsesQueryClass,
-    @TokenInfo() tokenInfo: SupabaseJwtPayload
+    @User() user: AuthenticatedUser
   ): Promise<GetPersonnalitionReponsesResponseClass> {
     return this.personnalisationsService.getPersonnalisationReponses(
       collectiviteId,
       request.date,
-      tokenInfo
+      user
     );
   }
 
@@ -80,12 +79,12 @@ export class PersonnalisationsController {
   async getPersonnalisationConsequences(
     @Param('collectivite_id') collectiviteId: number,
     @Query() request: GetPersonnalitionConsequencesQueryClass,
-    @TokenInfo() tokenInfo: SupabaseJwtPayload
+    @User() user: AuthenticatedUser
   ): Promise<GetPersonnalitionConsequencesResponseClass> {
     return this.personnalisationsService.getPersonnalisationConsequencesForCollectivite(
       collectiviteId,
       request,
-      tokenInfo
+      user
     );
   }
 }

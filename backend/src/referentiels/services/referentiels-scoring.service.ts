@@ -9,7 +9,7 @@ import { chunk, isNil } from 'es-toolkit';
 import * as _ from 'lodash';
 import { DateTime } from 'luxon';
 import { NiveauAcces } from '../../auth/models/private-utilisateur-droit.table';
-import { SupabaseJwtPayload } from '../../auth/models/supabase-jwt.models';
+import { AuthenticatedUser } from '../../auth/models/authenticated-user.models';
 import { AuthService } from '../../auth/services/auth.service';
 import { CollectiviteAvecType } from '../../collectivites/models/identite-collectivite.dto';
 import CollectivitesService from '../../collectivites/services/collectivites.service';
@@ -75,13 +75,13 @@ export default class ReferentielsScoringService {
     collectiviteId: number,
     referentielId: ReferentielType,
     date?: string,
-    tokenInfo?: SupabaseJwtPayload,
+    user?: AuthenticatedUser,
     niveauAccesMinimum = NiveauAcces.LECTURE
   ): Promise<CollectiviteAvecType> {
     // Check read access if a date is given (historical data)
-    if (tokenInfo && date) {
+    if (user && date) {
       await this.authService.verifieAccesAuxCollectivites(
-        tokenInfo,
+        user,
         [collectiviteId],
         niveauAccesMinimum
       );
@@ -411,7 +411,7 @@ export default class ReferentielsScoringService {
       referentielActionAvecScore.score.pasConcerneTachesAvancement =
         referentielActionAvecScore.score.totalTachesCount;
       referentielActionAvecScore.score.renseigne = true;
-      /* todo: 
+      /* todo:
             point_potentiel_perso=tache_points_personnalise
             if is_personnalise and not is_desactive
             else None,
@@ -686,7 +686,7 @@ export default class ReferentielsScoringService {
     referentielId: ReferentielType,
     collectiviteId: number,
     date?: string,
-    tokenInfo?: SupabaseJwtPayload,
+    user?: AuthenticatedUser,
     noCheck?: boolean
   ): Promise<GetActionStatutsResponseType> {
     const getActionStatuts: GetActionStatutsResponseType = {};
@@ -700,7 +700,7 @@ export default class ReferentielsScoringService {
         collectiviteId,
         referentielId,
         date,
-        tokenInfo
+        user
       );
     }
 
@@ -777,7 +777,7 @@ export default class ReferentielsScoringService {
   async computeScoreForMultipleCollectivite(
     referentielId: ReferentielType,
     parameters: GetReferentielMultipleScoresRequestType,
-    tokenInfo?: SupabaseJwtPayload
+    user?: AuthenticatedUser
   ): Promise<GetReferentielMultipleScoresResponseType> {
     this.logger.log(
       `Calcul des scores pour les collectivités ${parameters.collectiviteIds.join(
@@ -810,7 +810,7 @@ export default class ReferentielsScoringService {
             referentielId,
             collectiviteId,
             parameters,
-            tokenInfo,
+            user,
             referentiel,
             true
           )
@@ -828,7 +828,7 @@ export default class ReferentielsScoringService {
     referentielId: ReferentielType,
     collectiviteId: number,
     parameters: GetReferentielScoresRequestType,
-    tokenInfo?: SupabaseJwtPayload,
+    tokenInfo?: AuthenticatedUser,
     referentiel?: GetReferentielResponseType,
     noCheck?: boolean
   ): Promise<GetReferentielScoresResponseType> {

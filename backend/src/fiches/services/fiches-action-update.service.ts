@@ -10,7 +10,7 @@ import {
 import { PgTable, PgTransaction } from 'drizzle-orm/pg-core';
 import { PostgresJsQueryResultHKT } from 'drizzle-orm/postgres-js';
 import { toCamel } from 'postgres';
-import { SupabaseJwtPayload } from '../../auth/models/supabase-jwt.models';
+import { AuthenticatedUser } from '../../auth/models/authenticated-user.models';
 import DatabaseService from '../../common/services/database.service';
 import { ficheActionActionTable } from '../models/fiche-action-action.table';
 import { ficheActionAxeTable } from '../models/fiche-action-axe.table';
@@ -65,7 +65,7 @@ export default class FichesActionUpdateService {
   async updateFicheAction(
     ficheActionId: number,
     body: UpdateFicheActionRequestType,
-    tokenInfo: SupabaseJwtPayload
+    user: AuthenticatedUser
   ) {
     this.logger.log(
       `Mise à jour de la fiche action dont l'id est ${ficheActionId}`

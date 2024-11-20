@@ -1,12 +1,8 @@
 import { Injectable } from '@nestjs/common';
 import { z } from 'zod';
-import {
-  SupabaseJwtPayload,
-  SupabaseRole,
-} from '../../auth/models/supabase-jwt.models';
-import { TrpcService } from '../../trpc/trpc.service';
-import CountByService from '../services/count-by.service';
 import { getFichesActionFilterRequestSchema } from '../models/get-fiches-actions-filter.request';
+import CountByService from '../services/count-by.service';
+import { TrpcService } from '@tet/backend/trpc/trpc.service';
 
 const inputSchema = z.object({
   collectiviteId: z.number(),
@@ -21,17 +17,12 @@ export class CountByStatutRouter {
   ) {}
 
   router = this.trpc.router({
-    countByStatut: this.trpc.publicProcedure
+    countByStatut: this.trpc.authedProcedure
       .input(inputSchema)
       .query(({ input }) => {
         const { collectiviteId, body } = input;
-        // TODO: token
-        const tokenInfo: SupabaseJwtPayload = {
-          session_id: '',
-          role: SupabaseRole.AUTHENTICATED,
-          is_anonymous: false,
-        };
-        return this.service.countByStatut(collectiviteId, body, tokenInfo);
+
+        return this.service.countByStatut(collectiviteId, body);
       }),
   });
 }

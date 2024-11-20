@@ -1,5 +1,6 @@
 import { Injectable, Logger, UnauthorizedException } from '@nestjs/common';
 import { and, eq, inArray, SQL, SQLWrapper } from 'drizzle-orm';
+import CollectivitesService from '../../collectivites/services/collectivites.service';
 import DatabaseService from '../../common/services/database.service';
 import {
   NiveauAcces,
@@ -8,10 +9,9 @@ import {
   UtilisateurDroitType,
 } from '../models/private-utilisateur-droit.table';
 import {
-  SupabaseJwtPayload,
-  SupabaseRole,
-} from '../models/supabase-jwt.models';
-import CollectivitesService from '../../collectivites/services/collectivites.service';
+  AuthenticatedUser,
+  UserRole,
+} from '../models/authenticated-user.models';
 import { utilisateurSupportTable } from '../models/utilisateur-support.table';
 import { utilisateurVerifieTable } from '../models/utilisateur-verifie.table';
 
@@ -25,17 +25,17 @@ export class AuthService {
   ) {}
 
   aDroitsSuffisants(
-    tokenRole: SupabaseRole,
+    role: UserRole,
     droits: UtilisateurDroitType[],
     collectiviteIds: number[],
     niveauAccessMinimum: NiveauAcces
   ): boolean {
-    if (tokenRole === SupabaseRole.SERVICE_ROLE) {
+    if (role === UserRole.SERVICE_ROLE) {
       this.logger.log(
         `Rôle de service détecté, accès autorisé à toutes les collectivités`
       );
       return true;
-    } else if (tokenRole === SupabaseRole.AUTHENTICATED) {
+    } else if (role === UserRole.AUTHENTICATED) {
       const niveauAccessMinimumIndex =
         niveauAccessOrdonne.indexOf(niveauAccessMinimum);
 
@@ -99,18 +99,18 @@ export class AuthService {
   }
 
   async verifieAccesAuxCollectivites(
-    tokenInfo: SupabaseJwtPayload,
+    user: AuthenticatedUser,
     collectiviteIds: number[],
     niveauAccessMinimum: NiveauAcces,
     doNotThrow?: boolean
   ): Promise<boolean> {
     let droits: UtilisateurDroitType[] = [];
-    const userId = tokenInfo?.sub;
-    if (tokenInfo?.role === SupabaseRole.AUTHENTICATED && userId) {
+    const userId = user.id;
+    if (user.role === UserRole.AUTHENTICATED && userId) {
       droits = await this.getDroitsUtilisateur(userId, collectiviteIds);
     }
     const authorise = this.aDroitsSuffisants(
-      tokenInfo?.role,
+      user?.role,
       droits,
       collectiviteIds,
       niveauAccessMinimum
@@ -123,12 +123,12 @@ export class AuthService {
 
   /**
    * Vérifie si l'utilisateur a un rôle support
-   * @param tokenInfo token de l'utilisateur
+   * @param user token de l'utilisateur
    * @return vrai si l'utilisateur a un rôle support
    */
-  async estSupport(tokenInfo: SupabaseJwtPayload): Promise<boolean> {
-    const userId = tokenInfo.sub;
-    if (tokenInfo.role === SupabaseRole.AUTHENTICATED && userId) {
+  async estSupport(user: AuthenticatedUser): Promise<boolean> {
+    const userId = user.id;
+    if (user.role === UserRole.AUTHENTICATED && userId) {
       const result = await this.databaseService.db
         .select()
         .from(utilisateurSupportTable)
@@ -140,12 +140,12 @@ export class AuthService {
 
   /**
    * Vérifie si l'utilisateur est vérifié
-   * @param tokenInfo token de l'utilisateur
+   * @param user token de l'utilisateur
    * @return vrai si l'utilisateur est vérifié
    */
-  async estVerifie(tokenInfo: SupabaseJwtPayload): Promise<boolean> {
-    const userId = tokenInfo.sub;
-    if (tokenInfo.role === SupabaseRole.AUTHENTICATED && userId) {
+  async estVerifie(user: AuthenticatedUser): Promise<boolean> {
+    const userId = user.id;
+    if (user.role === UserRole.AUTHENTICATED && userId) {
       const result = await this.databaseService.db
         .select()
         .from(utilisateurVerifieTable)
@@ -158,21 +158,21 @@ export class AuthService {
   /**
    * Vérifie si un utilisateur a accès en lecture à une collectivité
    * en prenant en compte la restriction possible de la collectivité
-   * @param tokenInfo token de l'utilisateur
+   * @param user token de l'utilisateur
    * @param collectiviteId identifiant de la collectivité
    * @param doNotThrow vrai pour ne pas générer une exception
    */
   async verifieAccesRestreintCollectivite(
-    tokenInfo: SupabaseJwtPayload,
+    user: AuthenticatedUser,
     collectiviteId: number,
     doNotThrow?: boolean
   ): Promise<boolean> {
-    if (tokenInfo.role === SupabaseRole.SERVICE_ROLE) {
+    if (user.role === UserRole.SERVICE_ROLE) {
       this.logger.log(
         `Rôle de service détecté, accès autorisé à toutes les collectivités`
       );
       return true;
-    } else if (tokenInfo.role === SupabaseRole.AUTHENTICATED) {
+    } else if (user.role === UserRole.AUTHENTICATED) {
       let authorise = false;
       const collectivite = await this.collectiviteService.getCollectivite(
         collectiviteId
@@ -183,18 +183,18 @@ export class AuthService {
         // ou être un auditeur d'un audit courant de la collectivité.
         authorise =
           (await this.verifieAccesAuxCollectivites(
-            tokenInfo,
+            user,
             [collectiviteId],
             NiveauAcces.LECTURE,
             doNotThrow
-          )) || (await this.estSupport(tokenInfo)); // TODO || private.est_auditeur(collectivite_id)
+          )) || (await this.estSupport(user)); // TODO || private.est_auditeur(collectivite_id)
       } else {
         // Si la collectivité n'est pas en accès restreint, l'utilisateur doit :
         // être vérifié, ou s'il ne l'est pas, avoir un droit en lecture sur la collectivité.
         authorise =
-          (await this.estVerifie(tokenInfo)) ||
+          (await this.estVerifie(user)) ||
           (await this.verifieAccesAuxCollectivites(
-            tokenInfo,
+            user,
             [collectiviteId],
             NiveauAcces.LECTURE,
             doNotThrow

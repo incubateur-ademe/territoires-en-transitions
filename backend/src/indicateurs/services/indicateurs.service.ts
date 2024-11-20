@@ -15,21 +15,15 @@ import {
 import { groupBy, partition } from 'es-toolkit';
 import * as _ from 'lodash';
 import { NiveauAcces } from '../../auth/models/private-utilisateur-droit.table';
+import {
+  AuthenticatedUser,
+  UserRole,
+} from '../../auth/models/authenticated-user.models';
 import { AuthService } from '../../auth/services/auth.service';
 import DatabaseService from '../../common/services/database.service';
+import { DeleteIndicateursValeursRequestType } from '../models/delete-indicateurs.request';
+import { GetIndicateursValeursRequestType } from '../models/get-indicateurs.request';
 import { GetIndicateursValeursResponseType } from '../models/get-indicateurs.response';
-import { groupementTable } from '../../collectivites/models/groupement.table';
-import { groupementCollectiviteTable } from '../../collectivites/models/groupement-collectivite.table';
-import {
-  CreateIndicateurValeurType,
-  IndicateurAvecValeursParSource,
-  IndicateurAvecValeursType,
-  IndicateurValeurAvecMetadonnesDefinition,
-  IndicateurValeurGroupee,
-  IndicateurValeursGroupeeParSource,
-  indicateurValeurTable,
-  IndicateurValeurType,
-} from '../models/indicateur-valeur.table';
 import {
   indicateurDefinitionTable,
   IndicateurDefinitionType,
@@ -40,11 +34,15 @@ import {
   IndicateurSourceMetadonneeType,
 } from '../models/indicateur-source-metadonnee.table';
 import {
-  SupabaseJwtPayload,
-  SupabaseRole,
-} from '../../auth/models/supabase-jwt.models';
-import { DeleteIndicateursValeursRequestType } from '../models/delete-indicateurs.request';
-import { GetIndicateursValeursRequestType } from '../models/get-indicateurs.request';
+  CreateIndicateurValeurType,
+  IndicateurAvecValeursParSource,
+  IndicateurAvecValeursType,
+  IndicateurValeurAvecMetadonnesDefinition,
+  IndicateurValeurGroupee,
+  IndicateurValeursGroupeeParSource,
+  indicateurValeurTable,
+  IndicateurValeurType,
+} from '../models/indicateur-valeur.table';
 
 @Injectable()
 export default class IndicateursService {
@@ -195,7 +193,7 @@ export default class IndicateursService {
 
   async getIndicateurValeursGroupees(
     options: GetIndicateursValeursRequestType,
-    tokenInfo: SupabaseJwtPayload
+    tokenInfo: AuthenticatedUser
   ): Promise<GetIndicateursValeursResponseType> {
     await this.authService.verifieAccesAuxCollectivites(
       tokenInfo,
@@ -295,28 +293,28 @@ export default class IndicateursService {
 
   async upsertIndicateurValeurs(
     indicateurValeurs: CreateIndicateurValeurType[],
-    tokenInfo?: SupabaseJwtPayload
+    user: AuthenticatedUser
   ): Promise<IndicateurValeurType[]> {
-    if (tokenInfo) {
+    if (user) {
       const collectiviteIds = [
         ...new Set(indicateurValeurs.map((v) => v.collectiviteId)),
       ];
       await this.authService.verifieAccesAuxCollectivites(
-        tokenInfo,
+        user,
         collectiviteIds,
         NiveauAcces.EDITION
       );
 
-      if (tokenInfo.role === SupabaseRole.AUTHENTICATED && tokenInfo.sub) {
+      if (user.role === UserRole.AUTHENTICATED && user.id) {
         indicateurValeurs.forEach((v) => {
-          v.createdBy = tokenInfo.sub;
-          v.modifiedBy = tokenInfo.sub;
+          v.createdBy = user.id;
+          v.modifiedBy = user.id;
         });
       }
     }
 
     this.logger.log(
-      `Upsert des ${indicateurValeurs.length} valeurs des indicateurs pour l'utilisateur ${tokenInfo?.sub} (role ${tokenInfo?.role})`
+      `Upsert des ${indicateurValeurs.length} valeurs des indicateurs pour l'utilisateur ${user.id} (role ${user.role})`
     );
     // On doit distinguer les valeurs avec et sans métadonnées car la clause d'unicité est différente (onConflictDoUpdate)
     const [indicateurValeursAvecMetadonnees, indicateurValeursSansMetadonnees] =

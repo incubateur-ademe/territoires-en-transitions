@@ -11,17 +11,17 @@ import {
 import { ApiOkResponse, ApiResponse, ApiTags } from '@nestjs/swagger';
 import { NextFunction, Response } from 'express';
 import { AllowPublicAccess } from '../../auth/decorators/allow-public-access.decorator';
-import { TokenInfo } from '../../auth/decorators/token-info.decorators';
+import { User } from '../../auth/decorators/user.decorator';
+import type { AuthenticatedUser } from '../../auth/models/authenticated-user.models';
 import { CollectiviteRequestClass } from '../../collectivites/models/collectivite.request';
 import { calculTrajectoireRequestSchema } from '../models/calcul-trajectoire.request';
+import { calculTrajectoireResponseSchema } from '../models/calcul-trajectoire.response';
+import { modeleTrajectoireTelechargementRequestSchema } from '../models/modele-trajectoire-telechargement.request';
+import { verificationTrajectoireRequestSchema } from '../models/verification-trajectoire.request';
+import { verificationTrajectoireResponseSchema } from '../models/verification-trajectoire.response';
 import TrajectoiresDataService from '../services/trajectoires-data.service';
 import TrajectoiresSpreadsheetService from '../services/trajectoires-spreadsheet.service';
 import TrajectoiresXlsxService from '../services/trajectoires-xlsx.service';
-import type { SupabaseJwtPayload } from '../../auth/models/supabase-jwt.models';
-import { verificationTrajectoireResponseSchema } from '../models/verification-trajectoire.response';
-import { modeleTrajectoireTelechargementRequestSchema } from '../models/modele-trajectoire-telechargement.request';
-import { verificationTrajectoireRequestSchema } from '../models/verification-trajectoire.request';
-import { calculTrajectoireResponseSchema } from '../models/calcul-trajectoire.response';
 
 /**
  * Création des classes de requête/réponse à partir du schema pour générer automatiquement la documentation OpenAPI et la validation des entrées
@@ -61,7 +61,7 @@ export class TrajectoiresController {
   @ApiResponse({ type: CalculTrajectoireResponseClass })
   async calculeTrajectoireSnbc(
     @Query() request: CalculTrajectoireRequestClass,
-    @TokenInfo() tokenInfo: SupabaseJwtPayload
+    @User() user: AuthenticatedUser
   ): Promise<CalculTrajectoireResponseClass> {
     this.logger.log(
       `Calcul de la trajectoire SNBC pour la collectivité ${request.collectiviteId}`
@@ -70,7 +70,7 @@ export class TrajectoiresController {
     const { spreadsheetId, ...response } =
       await this.trajectoiresSpreadsheetService.calculeTrajectoireSnbc(
         request,
-        tokenInfo
+        user
       );
     return response;
   }
@@ -78,7 +78,7 @@ export class TrajectoiresController {
   @Delete('')
   async deleteTrajectoireSnbc(
     @Query() request: CollectiviteRequestClass,
-    @TokenInfo() tokenInfo: SupabaseJwtPayload
+    @User() user: AuthenticatedUser
   ): Promise<void> {
     this.logger.log(
       `Suppression de la trajectoire SNBC pour la collectivité ${request.collectiviteId}`
@@ -86,7 +86,7 @@ export class TrajectoiresController {
     await this.trajectoiresDataService.deleteTrajectoireSnbc(
       request.collectiviteId,
       undefined,
-      tokenInfo
+      user
     );
   }
 
@@ -116,7 +116,7 @@ export class TrajectoiresController {
   })
   downloadDataSnbc(
     @Query() request: CollectiviteRequestClass,
-    @TokenInfo() tokenInfo: SupabaseJwtPayload,
+    @User() user: AuthenticatedUser,
     @Res() res: Response,
     @Next() next: NextFunction
   ) {
@@ -125,7 +125,7 @@ export class TrajectoiresController {
     );
     this.trajectoiresXlsxService.downloadTrajectoireSnbc(
       request,
-      tokenInfo,
+      user,
       res,
       next
     );
@@ -139,17 +139,14 @@ export class TrajectoiresController {
   })
   async verificationDonneesSnbc(
     @Query() request: VerificationTrajectoireRequestClass,
-    @TokenInfo() tokenInfo: SupabaseJwtPayload
+    @User() user: AuthenticatedUser
   ): Promise<VerificationTrajectoireResponseClass> {
     this.logger.log(
       `Vérifie la possibilité de lancer le calcul de la trajectoire SNBC pour la collectivité ${request.collectiviteId}`
     );
     // eslint-disable-next-line @typescript-eslint/no-unused-vars
     const { valeurs, ...response } =
-      await this.trajectoiresDataService.verificationDonneesSnbc(
-        request,
-        tokenInfo
-      );
+      await this.trajectoiresDataService.verificationDonneesSnbc(request, user);
     if (!request.epciInfo) {
       delete response.epci;
     }

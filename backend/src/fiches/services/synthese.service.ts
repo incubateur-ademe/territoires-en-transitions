@@ -12,7 +12,7 @@ import {
   SQLWrapper,
 } from 'drizzle-orm';
 import { PgColumn } from 'drizzle-orm/pg-core';
-import { SupabaseJwtPayload } from '../../auth/models/supabase-jwt.models';
+import { AuthenticatedUser } from '../../auth/models/authenticated-user.models';
 import { AuthService } from '../../auth/services/auth.service';
 import { CountByRecordType } from '../../common/models/count-synthese.dto';
 import { getModifiedSinceDate } from '../../common/models/modified-since.enum';
@@ -45,8 +45,7 @@ export default class CountByService {
 
   async countByStatut(
     collectiviteId: number,
-    filter: GetFichesActionFilterRequestType,
-    tokenInfo: SupabaseJwtPayload
+    filter: GetFichesActionFilterRequestType
   ) {
     this.logger.log(
       `Récupération de la synthese des fiches action pour la collectivité ${collectiviteId}: filtre ${JSON.stringify(
@@ -129,7 +128,7 @@ export default class CountByService {
   async getFichesAction(
     collectiviteId: number,
     filter: GetFichesActionFilterRequestType,
-    tokenInfo: SupabaseJwtPayload
+    tokenInfo: AuthenticatedUser
   ): Promise<any> {
     this.logger.log(
       `Récupération des fiches action pour la collectivité ${collectiviteId}: filtre ${JSON.stringify(

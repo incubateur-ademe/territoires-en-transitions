@@ -7,10 +7,9 @@ import {
 import { isNil, partition } from 'es-toolkit';
 import * as _ from 'lodash';
 import slugify from 'slugify';
-import { SupabaseJwtPayload } from '../../auth/models/supabase-jwt.models';
+import { AuthenticatedUser } from '../../auth/models/authenticated-user.models';
 import { EpciType } from '../../collectivites/models/epci.table';
 import GroupementsService from '../../collectivites/services/groupements.service';
-import { BackendConfigurationType } from '../../config/configuration.model';
 import ConfigurationService from '../../config/configuration.service';
 import SheetService from '../../spreadsheets/services/sheet.service';
 import {
@@ -18,14 +17,14 @@ import {
   CalculTrajectoireReset,
   CalculTrajectoireResultatMode,
 } from '../models/calcul-trajectoire.request';
-import { CreateIndicateurValeurType } from '../models/indicateur-valeur.table';
+import { CalculTrajectoireResultType } from '../models/calcul-trajectoire.response';
+import { DonneesCalculTrajectoireARemplirType } from '../models/donnees-calcul-trajectoire-a-remplir.dto';
 import { IndicateurDefinitionType } from '../models/indicateur-definition.table';
+import { CreateIndicateurValeurType } from '../models/indicateur-valeur.table';
+import { VerificationTrajectoireStatus } from '../models/verification-trajectoire.response';
 import IndicateursService from './indicateurs.service';
 import IndicateurSourcesService from './indicateurSources.service';
 import TrajectoiresDataService from './trajectoires-data.service';
-import { VerificationTrajectoireStatus } from '../models/verification-trajectoire.response';
-import { DonneesCalculTrajectoireARemplirType } from '../models/donnees-calcul-trajectoire-a-remplir.dto';
-import { CalculTrajectoireResultType } from '../models/calcul-trajectoire.response';
 
 @Injectable()
 export default class TrajectoiresSpreadsheetService {
@@ -58,7 +57,7 @@ export default class TrajectoiresSpreadsheetService {
 
   async calculeTrajectoireSnbc(
     request: CalculTrajectoireRequestType,
-    tokenInfo: SupabaseJwtPayload,
+    user: AuthenticatedUser,
     epci?: EpciType
   ): Promise<CalculTrajectoireResultType> {
     let mode: CalculTrajectoireResultatMode =
@@ -90,7 +89,7 @@ export default class TrajectoiresSpreadsheetService {
     const resultatVerification =
       await this.trajectoiresDataService.verificationDonneesSnbc(
         request,
-        tokenInfo,
+        user,
         epci,
         Boolean(request.mode)
       );
@@ -324,7 +323,8 @@ export default class TrajectoiresSpreadsheetService {
     );
     const upsertedTrajectoireIndicateurValeurs =
       await this.indicateursService.upsertIndicateurValeurs(
-        indicateurValeursTrajectoireResultat
+        indicateurValeursTrajectoireResultat,
+        user
       );
 
     // Maintenant que les indicateurs ont été créés, on peut ajouter la collectivité au groupement
