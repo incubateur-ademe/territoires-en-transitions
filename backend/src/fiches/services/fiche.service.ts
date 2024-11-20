@@ -1,23 +1,23 @@
 import { Injectable, Logger } from '@nestjs/common';
+import { AuthenticatedUser } from '@tet/backend/auth/models/authenticated-user.models';
 import { aliasedTable, desc, eq } from 'drizzle-orm';
+import { dcpTable } from '../../auth/models/dcp.table';
+import { NiveauAcces } from '../../auth/models/private-utilisateur-droit.table';
+import { AuthService } from '../../auth/services/auth.service';
 import DatabaseService from '../../common/services/database.service';
+import TagService from '../../taxonomie/services/tag.service';
+import { actionImpactFicheActionTable } from '../models/action-impact-fiche-action.table';
+import { ficheActionActionTable } from '../models/fiche-action-action.table';
+import { ficheActionEffetAttenduTable } from '../models/fiche-action-effet-attendu.table';
+import { ficheActionIndicateurTable } from '../models/fiche-action-indicateur.table';
+import { ficheActionNoteTable } from '../models/fiche-action-note.table';
+import { ficheActionPartenaireTagTable } from '../models/fiche-action-partenaire-tag.table';
+import { ficheActionSousThematiqueTable } from '../models/fiche-action-sous-thematique.table';
+import { ficheActionThematiqueTable } from '../models/fiche-action-thematique.table';
 import {
   CreateFicheActionType,
   ficheActionTable,
 } from '../models/fiche-action.table';
-import TagService from '../../taxonomie/services/tag.service';
-import { actionImpactFicheActionTable } from '../models/action-impact-fiche-action.table';
-import { ficheActionActionTable } from '../models/fiche-action-action.table';
-import { ficheActionPartenaireTagTable } from '../models/fiche-action-partenaire-tag.table';
-import { ficheActionEffetAttenduTable } from '../models/fiche-action-effet-attendu.table';
-import { ficheActionIndicateurTable } from '../models/fiche-action-indicateur.table';
-import { ficheActionSousThematiqueTable } from '../models/fiche-action-sous-thematique.table';
-import { ficheActionThematiqueTable } from '../models/fiche-action-thematique.table';
-import { ficheActionNoteTable } from '../models/fiche-action-note.table';
-import { AuthService } from '../../auth/services/auth.service';
-import { SupabaseJwtPayload } from '../../auth/models/supabase-jwt.models';
-import { NiveauAcces } from '../../auth/models/private-utilisateur-droit.table';
-import { dcpTable } from '../../auth/models/dcp.table';
 
 @Injectable()
 export default class FicheService {
@@ -41,20 +41,20 @@ export default class FicheService {
   /** Détermine si un utilisateur peut lire une fiche */
   async canReadFiche(
     ficheId: number,
-    tokenInfo: SupabaseJwtPayload
+    user: AuthenticatedUser
   ): Promise<boolean> {
     const fiche = await this.getFicheFromId(ficheId);
     if (fiche === null) return false;
     if (fiche.restreint) {
       const canRead = await this.authService.verifieAccesAuxCollectivites(
-        tokenInfo,
+        user,
         [fiche.collectiviteId],
         NiveauAcces.LECTURE
       );
-      return canRead || this.authService.estSupport(tokenInfo);
+      return canRead || this.authService.estSupport(user);
     }
     return this.authService.verifieAccesRestreintCollectivite(
-      tokenInfo,
+      user,
       fiche.collectiviteId
     );
   }
@@ -62,12 +62,12 @@ export default class FicheService {
   /** Détermine si un utilisateur peut modifier une fiche */
   async canWriteFiche(
     ficheId: number,
-    tokenInfo: SupabaseJwtPayload
+    user: AuthenticatedUser
   ): Promise<boolean> {
     const fiche = await this.getFicheFromId(ficheId);
     if (fiche === null) return false;
     return this.authService.verifieAccesAuxCollectivites(
-      tokenInfo,
+      user,
       [fiche.collectiviteId],
       NiveauAcces.EDITION
     );
@@ -199,8 +199,8 @@ export default class FicheService {
   }
 
   /** Lit les notes de suivi attachées à la fiche */
-  async getNotes(ficheId: number, tokenInfo: SupabaseJwtPayload) {
-    const canRead = await this.canReadFiche(ficheId, tokenInfo);
+  async getNotes(ficheId: number, user: AuthenticatedUser) {
+    const canRead = await this.canReadFiche(ficheId, user);
     if (!canRead) return false;
 
     const createdByDCP = aliasedTable(dcpTable, 'createdByDCP');

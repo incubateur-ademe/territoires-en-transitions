@@ -12,31 +12,31 @@ import { PgTable, PgTransaction } from 'drizzle-orm/pg-core';
 import { PostgresJsQueryResultHKT } from 'drizzle-orm/postgres-js';
 import { toCamel } from 'postgres';
 import { AuthenticatedUser } from '../../auth/models/authenticated-user.models';
-import DatabaseService from '../../common/services/database.service';
 import { buildConflictUpdateColumns } from '../../common/services/conflict.helper';
-import FicheService from './fiche.service';
-import {
-  ficheActionTable,
-  updateFicheActionSchema,
-} from '../models/fiche-action.table';
+import DatabaseService from '../../common/services/database.service';
 import { ficheActionActionTable } from '../models/fiche-action-action.table';
 import { ficheActionAxeTable } from '../models/fiche-action-axe.table';
 import { ficheActionEffetAttenduTable } from '../models/fiche-action-effet-attendu.table';
 import { ficheActionFinanceurTagTable } from '../models/fiche-action-financeur-tag.table';
 import { ficheActionIndicateurTable } from '../models/fiche-action-indicateur.table';
 import { ficheActionLienTable } from '../models/fiche-action-lien.table';
+import {
+  ficheActionNoteTable,
+  UpsertFicheActionNoteType,
+} from '../models/fiche-action-note.table';
 import { ficheActionPartenaireTagTable } from '../models/fiche-action-partenaire-tag.table';
 import { ficheActionPiloteTable } from '../models/fiche-action-pilote.table';
 import { ficheActionReferentTable } from '../models/fiche-action-referent.table';
 import { ficheActionServiceTagTable } from '../models/fiche-action-service-tag.table';
 import { ficheActionSousThematiqueTable } from '../models/fiche-action-sous-thematique.table';
-import { ficheActionThematiqueTable } from '../models/fiche-action-thematique.table';
 import { ficheActionStructureTagTable } from '../models/fiche-action-structure-tag.table';
-import { UpdateFicheActionRequestType } from '../models/update-fiche-action.request';
+import { ficheActionThematiqueTable } from '../models/fiche-action-thematique.table';
 import {
-  ficheActionNoteTable,
-  UpsertFicheActionNoteType,
-} from '../models/fiche-action-note.table';
+  ficheActionTable,
+  updateFicheActionSchema,
+} from '../models/fiche-action.table';
+import { UpdateFicheActionRequestType } from '../models/update-fiche-action.request';
+import FicheService from './fiche.service';
 
 type TxType = PgTransaction<
   PostgresJsQueryResultHKT,
@@ -77,7 +77,7 @@ export default class FichesActionUpdateService {
     body: UpdateFicheActionRequestType,
     user: AuthenticatedUser
   ) {
-    await this.ficheService.canWriteFiche(ficheActionId, tokenInfo);
+    await this.ficheService.canWriteFiche(ficheActionId, user);
 
     this.logger.log(
       `Mise à jour de la fiche action dont l'id est ${ficheActionId}`
@@ -415,13 +415,13 @@ export default class FichesActionUpdateService {
   async upsertNotes(
     ficheId: number,
     notes: UpsertFicheActionNoteType[],
-    tokenInfo: SupabaseJwtPayload
+    user: AuthenticatedUser
   ) {
     this.logger.log(
       `Vérifie les droits avant de mettre à jour les notes de la fiche ${ficheId}`
     );
 
-    const canWrite = await this.ficheService.canWriteFiche(ficheId, tokenInfo);
+    const canWrite = await this.ficheService.canWriteFiche(ficheId, user);
     if (!canWrite) return false;
 
     this.logger.log(`Met à jour les notes de la fiche ${ficheId}`);
@@ -431,8 +431,8 @@ export default class FichesActionUpdateService {
         notes.map((note) => ({
           ...note,
           ficheId,
-          createdBy: tokenInfo.sub,
-          modifiedBy: tokenInfo.sub,
+          createdBy: user.id,
+          modifiedBy: user.id,
         }))
       )
       .onConflictDoUpdate({
@@ -446,16 +446,12 @@ export default class FichesActionUpdateService {
   }
 
   /** Supprime une note */
-  async deleteNote(
-    ficheId: number,
-    dateNote: string,
-    tokenInfo: SupabaseJwtPayload
-  ) {
+  async deleteNote(ficheId: number, dateNote: string, user: AuthenticatedUser) {
     this.logger.log(
       `Vérifie les droits avant de supprimer la note datée ${dateNote} de la fiche ${ficheId}`
     );
 
-    const canWrite = await this.ficheService.canWriteFiche(ficheId, tokenInfo);
+    const canWrite = await this.ficheService.canWriteFiche(ficheId, user);
     if (!canWrite) return false;
 
     this.logger.log(
