@@ -7,7 +7,7 @@ export const getIndicateursValeursRequestSchema = extendApi(
       collectiviteId: z.coerce.number().int().openapi({
         description: 'Identifiant de la collectivité',
       }),
-      indicateurId: z.coerce.number().int().optional().openapi({
+      indicateurIds: z.coerce.number().int().array().optional().openapi({
         description: "Identifiant de l'indicateur",
       }),
 
@@ -40,6 +40,13 @@ export const getIndicateursValeursRequestSchema = extendApi(
         .optional()
         .openapi({
           description: 'Ignore le dédoublonnage',
+        }),
+      withoutDefinition: z
+        .enum(['true', 'false'])
+        .transform((value) => value === 'true')
+        .optional()
+        .openapi({
+          description: "Exclue les définitions d'indicateur de la réponse",
         }),
     })
     .openapi({
