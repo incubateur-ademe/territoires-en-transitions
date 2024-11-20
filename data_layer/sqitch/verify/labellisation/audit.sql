@@ -2,6 +2,6 @@
 
 BEGIN;
 
-select has_function_privilege('labellisation.update_labellisation_after_scores()', 'execute');
+select has_function_privilege('labellisation_peut_commencer_audit(integer, referentiel)', 'execute');
 
 ROLLBACK;
