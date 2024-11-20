@@ -1,36 +1,40 @@
-import {useTableData} from './useTableData';
-import {Table} from './Table';
-import {noFilters} from './filters';
-import {getMaxDepth} from './queries';
-import {useReferentielId} from 'core-logic/hooks/params';
-import {getFilterInfoMessage} from '../AidePriorisation/filters';
-import {ColumnSelector} from './ColumnSelector';
-import {DisableAllFilters} from 'ui/buttons/DisableAllFilters';
+import { useTableData } from './useTableData';
+import { Table } from './Table';
+import { noFilters } from './filters';
+import { getMaxDepth } from './queries';
+import { useReferentielId } from 'core-logic/hooks/params';
+import { getFilterInfoMessage } from '../AidePriorisation/filters';
+import { ColumnSelector } from './ColumnSelector';
+import { DesactiverLesFiltres } from 'ui/shared/filters/DesactiverLesFiltres';
 
 const Progression = () => {
   const tableData = useTableData();
   const referentiel = useReferentielId();
-  const {setFilters, filtersCount, options, setOptions} = tableData;
+  const { setFilters, filtersCount, options, setOptions } = tableData;
   const labelFilters = filtersCount > 1 ? 'filtres actifs' : 'filtre actif';
   const filterInfoMessage = getFilterInfoMessage(
     filtersCount,
     getMaxDepth(referentiel)
   );
-  const {visibleColumns} = options;
+  const { visibleColumns } = options;
 
   return (
     <>
       <div className="flex items-center mb-6">
         <ColumnSelector
           selectedColumns={visibleColumns}
-          setSelectedColumns={visibleColumns => setOptions({visibleColumns})}
+          setSelectedColumns={(visibleColumns) =>
+            setOptions({ visibleColumns })
+          }
         />
         <div className="pl-12">
           {filtersCount} {labelFilters}
-          <DisableAllFilters
-            filtersCount={filtersCount}
-            onClick={() => setFilters(noFilters)}
-          />
+          {filtersCount > 0 && (
+            <DesactiverLesFiltres
+              className="ml-5"
+              onClick={() => setFilters(noFilters)}
+            />
+          )}
         </div>
       </div>
       {filterInfoMessage ? <p>{filterInfoMessage}</p> : null}

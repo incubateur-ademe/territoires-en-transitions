@@ -1,14 +1,25 @@
-export const DesactiverLesFiltres = (props: {onClick: () => void}) => {
-  // fixme. hard navigate to reset filters
+import { Icon } from '@tet/ui';
+import classNames from 'classnames';
+
+/** Bouton générique pour désactiver des filtres aux allures de DSFR */
+export const DesactiverLesFiltres = (props: {
+  onClick: () => void;
+  className?: string;
+}) => {
   return (
-    <div className="w-max mt-4 border-b border-bf500 md:mt-auto">
+    <div
+      className={classNames(
+        'inline-block w-max border-b border-bf500',
+        props.className
+      )}
+    >
       <button
         data-test="desactiver-les-filtres"
         onClick={props.onClick}
-        className="flex items-center text-bf500 hover:!bg-none"
+        className="flex items-center text-bf500 hover:!bg-transparent"
       >
-        <span className="fr-icon-close-circle-fill mr-1 scale-90"></span>
-        <span className="text-sm">Désactiver tous les filtres</span>
+        <Icon icon="close-circle-fill" className="mr-1" size="sm" />
+        <span>Désactiver tous les filtres</span>
       </button>
     </div>
   );

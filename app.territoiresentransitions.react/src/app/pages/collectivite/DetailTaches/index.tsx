@@ -1,7 +1,7 @@
-import {useTableData} from './useTableData';
-import {DetailTacheTable} from './DetailTacheTable';
-import {noFilters} from './filters';
-import {DisableAllFilters} from 'ui/buttons/DisableAllFilters';
+import { useTableData } from './useTableData';
+import { DetailTacheTable } from './DetailTacheTable';
+import { noFilters } from './filters';
+import { DesactiverLesFiltres } from 'ui/shared/filters/DesactiverLesFiltres';
 
 const DetailTaches = () => {
   const tableData = useTableData();
@@ -22,10 +22,12 @@ const DetailTaches = () => {
       <p>
         {filtersCount} {labelFilters} ; {sousActionsCount} {labelSousActions}{' '}
         sur {sousActionsTotal} ; {count} {labelTaches} sur {total}
-        <DisableAllFilters
-          filtersCount={filtersCount}
-          onClick={() => setFilters(noFilters)}
-        />
+        {filtersCount > 0 && (
+          <DesactiverLesFiltres
+            className="ml-5"
+            onClick={() => setFilters(noFilters)}
+          />
+        )}
       </p>
       <DetailTacheTable tableData={tableData} />
     </>

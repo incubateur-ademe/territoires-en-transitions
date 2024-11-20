@@ -13,6 +13,6 @@ export const LocalSelectors = {
     selector: '[data-test=StartAuditBtn]',
   },
   'Désactiver tous les filtres': {
-    selector: '[data-test=DisableAllFilters]',
+    selector: '[data-test=desactiver-les-filtres]',
   },
 };
