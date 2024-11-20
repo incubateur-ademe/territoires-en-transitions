@@ -1,16 +1,16 @@
 import PlansView from 'app/pages/CollectivitesEngagees/Views/PlansView';
 import { Route } from 'react-router-dom';
-import AssocierCollectiviteBandeau from 'ui/collectivites/AssocierCollectiviteBandeau';
 import Filters from './Filters/FiltersColonne';
 import CollectivitesView from './Views/CollectivitesView';
 
 import { useAuth } from 'core-logic/api/auth/AuthProvider';
 import { useSearchParams } from 'core-logic/hooks/query';
 
-import { CollectiviteEngagee } from '@tet/api';
+import { CollectiviteEngagee, getRejoindreCollectivitePath } from '@tet/api';
 import { recherchesCollectivitesUrl, recherchesPlansUrl } from 'app/paths';
 import { initialFilters, nameToShortNames } from './data/filters';
 import { useSansCollectivite } from 'core-logic/hooks/useOwnedCollectivites';
+import { Alert, Button } from '@tet/ui';
 
 const DecouvrirLesCollectivites = () => {
   const auth = useAuth();
@@ -27,7 +27,23 @@ const DecouvrirLesCollectivites = () => {
 
   return (
     <div className="bg-primary-1 -mb-8">
-      {!!sansCollectivite && <AssocierCollectiviteBandeau />}
+      {!!sansCollectivite && (
+        <Alert
+          fullPageWidth
+          state="info"
+          title="Pour accéder à plus de détails sur chacune des collectivités engagées dans le programme, vous devez être membre d’au moins une collectivité."
+          className="border-b border-b-info-3"
+          footer={
+            <Button
+              data-test="btn-AssocierCollectivite"
+              size="sm"
+              href={getRejoindreCollectivitePath(document.location.origin)}
+            >
+              Rejoindre une collectivité
+            </Button>
+          }
+        />
+      )}
       <div
         data-test="ToutesLesCollectivites"
         className="app fr-container py-16"
