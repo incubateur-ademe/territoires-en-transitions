@@ -1,6 +1,7 @@
 import { Injectable, Logger, NotFoundException } from '@nestjs/common';
 import { aliasedTable, eq, or } from 'drizzle-orm';
 import DatabaseService from '../../common/services/database.service';
+import { collectiviteTestTable } from '../models/collectivite-test.table';
 import { collectiviteTable } from '../models/collectivite.table';
 import { communeTable, CommuneType } from '../models/commune.table';
 import { epciTable, EpciType } from '../models/epci.table';
@@ -74,7 +75,10 @@ export default class CollectivitesService {
       ...collectivite.commune,
       ...collectivite.epci,
       ...collectivite.collectivite,
-      nom: collectivite.commune?.nom || collectivite.epci?.nom,
+      nom:
+        collectivite.commune?.nom ||
+        collectivite.epci?.nom ||
+        collectivite.collectivite_test?.nom,
       regionCode:
         collectivite.commune?.regionCode ||
         collectivite.banatic?.regionCode ||
@@ -90,9 +94,9 @@ export default class CollectivitesService {
         // @ts-ignore: TODO: fix this, pourquoi manque dans drizzle à cause de la jointure?
         collectivite.import_commune?.population ||
         collectivite.banatic?.population,
-      type: collectivite.epci
-        ? CollectiviteTypeEnum.EPCI
-        : CollectiviteTypeEnum.COMMUNE,
+      type: collectivite.commune
+        ? CollectiviteTypeEnum.COMMUNE
+        : CollectiviteTypeEnum.EPCI, // By default, it's an EPCI
       soustype: this.getCollectiviteSousType(collectivite),
       populationTags: this.getPopulationTags(
         collectivite.commune?.population ||
@@ -100,7 +104,11 @@ export default class CollectivitesService {
           collectivite.import_commune?.population ||
           collectivite.banatic?.population
       ),
-      drom: collectivite.region?.drom || false,
+      // A bit weird, but it's the same as sql for now: if collectivite test, metropole if epci, null if commune
+      drom:
+        collectivite.region?.drom ||
+        (collectivite.collectivite_test && !collectivite.epci ? null : false),
+      test: Boolean(collectivite.collectivite_test),
     };
   }
 
@@ -121,6 +129,10 @@ export default class CollectivitesService {
         eq(communeTable.collectiviteId, collectiviteTable.id)
       )
       .leftJoin(epciTable, eq(epciTable.collectiviteId, collectiviteTable.id))
+      .leftJoin(
+        collectiviteTestTable,
+        eq(collectiviteTestTable.collectiviteId, collectiviteTable.id)
+      )
       .leftJoin(banaticTable, eq(banaticTable.siren, epciTable.siren))
       .leftJoin(
         importCommuneAliasedTable,

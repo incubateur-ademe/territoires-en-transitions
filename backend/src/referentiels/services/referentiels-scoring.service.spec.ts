@@ -6,12 +6,15 @@ import {
 } from '../../collectivites/models/identite-collectivite.dto';
 import CollectivitesService from '../../collectivites/services/collectivites.service';
 import DatabaseService from '../../common/services/database.service';
+import MattermostNotificationService from '../../common/services/mattermost-notification.service';
 import { roundTo } from '../../common/services/number.helper';
+import ConfigurationService from '../../config/configuration.service';
 import { GetPersonnalitionConsequencesResponseType } from '../../personnalisations/models/get-personnalisation-consequences.response';
 import { GetPersonnalisationReponsesResponseType } from '../../personnalisations/models/get-personnalisation-reponses.response';
 import { caePersonnalisationRegles } from '../../personnalisations/models/samples/cae-personnalisation-regles.sample';
 import ExpressionParserService from '../../personnalisations/services/expression-parser.service';
 import PersonnalisationsService from '../../personnalisations/services/personnalisations-service';
+import SheetService from '../../spreadsheets/services/sheet.service';
 import { ActionType } from '../models/action-type.enum';
 import { GetActionStatutsResponseType } from '../models/get-action-statuts.response';
 import { ReferentielActionWithScoreType } from '../models/referentiel-action-avec-score.dto';
@@ -33,15 +36,18 @@ describe('ReferentielsScoringService', () => {
         ReferentielsScoringService,
         PersonnalisationsService,
         ExpressionParserService,
+        ReferentielsService,
       ],
     })
       .useMocker((token) => {
         if (
           token === DatabaseService ||
           token === AuthService ||
-          token === ReferentielsService ||
           token === CollectivitesService ||
-          token === LabellisationService
+          token === LabellisationService ||
+          token === MattermostNotificationService ||
+          token === ConfigurationService ||
+          token === SheetService
         ) {
           return {};
         }
@@ -784,6 +790,7 @@ describe('ReferentielsScoringService', () => {
       expect(scoreLength).toEqual(8);
 
       expect(scoresMap['eci_1.1']).toEqual({
+        aStatut: true,
         actionId: 'eci_1.1',
         pointFait: 0,
         pointProgramme: 0,
@@ -912,6 +919,7 @@ describe('ReferentielsScoringService', () => {
       expect(scoreLength).toEqual(8);
 
       expect(scoresMap['eci_1.1']).toEqual({
+        aStatut: true,
         actionId: 'eci_1.1',
         pointFait: 0,
         pointProgramme: 0,
@@ -932,6 +940,7 @@ describe('ReferentielsScoringService', () => {
       });
 
       expect(scoresMap['eci_1.2']).toEqual({
+        aStatut: true,
         actionId: 'eci_1.2',
         pointFait: 0,
         pointProgramme: 0,
@@ -1060,6 +1069,7 @@ describe('ReferentielsScoringService', () => {
 
       // Désactivé donc point potentiel à 0
       expect(scoresMap['eci_2.1']).toEqual({
+        aStatut: true,
         actionId: 'eci_2.1',
         pointFait: 0,
         pointProgramme: 0,
@@ -1139,6 +1149,159 @@ describe('ReferentielsScoringService', () => {
         desactive: false,
         pointPotentielPerso: null,
         renseigne: false,
+      });
+    });
+
+    it('Taches doivent être ignorées lorsque les sous-actions sont détaillées', async () => {
+      const personnalisationConsequences: GetPersonnalitionConsequencesResponseType =
+        {};
+      const actionStatuts: GetActionStatutsResponseType = {
+        'eci_2.1': {
+          concerne: true,
+          avancement: 'fait',
+          avancementDetaille: [1, 0, 0],
+        },
+        'eci_2.1.1': {
+          concerne: true,
+          avancement: 'detaille',
+          avancementDetaille: [0.8, 0.2, 0],
+        },
+      };
+
+      const scoresMap = referentielsScoringService.computeScoreMap(
+        deeperReferentiel,
+        personnalisationConsequences,
+        actionStatuts,
+        1
+      );
+
+      // Avancement partiel de eci_2.1.1 ne doit pas être pris en compte
+      expect(scoresMap['eci_2.1']).toEqual({
+        aStatut: true,
+        actionId: 'eci_2.1',
+        pointFait: 65,
+        pointProgramme: 0,
+        pointPasFait: 0,
+        pointNonRenseigne: 0,
+        pointPotentiel: 65,
+        pointReferentiel: 65,
+        completedTachesCount: 3,
+        totalTachesCount: 3,
+        faitTachesAvancement: 3,
+        programmeTachesAvancement: 0,
+        pasFaitTachesAvancement: 0,
+        pasConcerneTachesAvancement: 0,
+        concerne: true,
+        pointPotentielPerso: null,
+        desactive: false,
+        renseigne: true,
+      });
+    });
+
+    it('Taches doivent être prises en compte lorsque les statuts des sous-actions existent mais sont non_renseigne', async () => {
+      const personnalisationConsequences: GetPersonnalitionConsequencesResponseType =
+        {};
+      const actionStatuts: GetActionStatutsResponseType = {
+        'eci_2.1': {
+          concerne: true,
+          avancement: 'non_renseigne',
+          avancementDetaille: [0, 0, 0],
+        },
+        'eci_2.1.1': {
+          concerne: true,
+          avancement: 'detaille',
+          avancementDetaille: [0.8, 0.2, 0],
+        },
+      };
+
+      const scoresMap = referentielsScoringService.computeScoreMap(
+        deeperReferentiel,
+        personnalisationConsequences,
+        actionStatuts,
+        1
+      );
+
+      // Avancement partiel de eci_2.1.1 ne doit pas être pris en compte
+      expect(scoresMap['eci_2.1']).toEqual({
+        aStatut: true,
+        actionId: 'eci_2.1',
+        pointFait: 32,
+        pointProgramme: 8,
+        pointPasFait: 0,
+        pointNonRenseigne: 25,
+        pointPotentiel: 65,
+        pointReferentiel: 65,
+        completedTachesCount: 1,
+        totalTachesCount: 3,
+        faitTachesAvancement: 0.8,
+        programmeTachesAvancement: 0.2,
+        pasFaitTachesAvancement: 0,
+        pasConcerneTachesAvancement: 0,
+        concerne: true,
+        pointPotentielPerso: null,
+        desactive: false,
+        renseigne: false,
+      });
+    });
+
+    it('Statut non concerné ne doit pas être pris des enfants si défini explicitement au niveau du parent', async () => {
+      const personnalisationConsequences: GetPersonnalitionConsequencesResponseType =
+        {};
+      const actionStatuts: GetActionStatutsResponseType = {
+        'cae_4.2.1.2': {
+          avancement: 'pas_fait',
+          avancementDetaille: [0, 0, 1],
+          concerne: true,
+        },
+        'cae_4.2.1.2.1': {
+          avancement: 'non_renseigne',
+          avancementDetaille: [0, 0, 0],
+          concerne: false,
+        },
+        'cae_4.2.1.2.3': {
+          avancement: 'non_renseigne',
+          avancementDetaille: [0, 0, 0],
+          concerne: false,
+        },
+        'cae_4.2.1.2.4': {
+          avancement: 'non_renseigne',
+          avancementDetaille: [0, 0, 0],
+          concerne: false,
+        },
+        'cae_4.2.1.2.2': {
+          avancement: 'non_renseigne',
+          avancementDetaille: [0, 0, 0],
+          concerne: false,
+        },
+      };
+
+      const scoresMap = referentielsScoringService.computeScoreMap(
+        caeReferentiel,
+        personnalisationConsequences,
+        actionStatuts,
+        3
+      );
+
+      // Avancement partiel de eci_2.1.1 ne doit pas être pris en compte
+      expect(scoresMap['cae_4.2.1.2']).toEqual({
+        aStatut: true,
+        actionId: 'cae_4.2.1.2',
+        completedTachesCount: 4,
+        concerne: true,
+        faitTachesAvancement: 0,
+        pasConcerneTachesAvancement: 0,
+        pointFait: 0,
+        pointPasFait: 1.6,
+        pointNonRenseigne: 0,
+        pointPotentiel: 1.6,
+        pointProgramme: 0,
+        pointReferentiel: 1.6,
+        programmeTachesAvancement: 0,
+        pasFaitTachesAvancement: 4,
+        renseigne: true,
+        desactive: false,
+        totalTachesCount: 4,
+        pointPotentielPerso: null,
       });
     });
 
@@ -2325,6 +2488,181 @@ describe('ReferentielsScoringService', () => {
         }
       );
       // Even if the difference is 0.001, it should not be considered as a difference because due to python issue
+      expect(scoreDiff).toEqual(null);
+    });
+
+    it('python rounding issue 2', async () => {
+      const scoreDiff = referentielsScoringService.getScoreDiff(
+        {
+          actionId: 'eci',
+          pointReferentiel: 500,
+          pointPotentiel: 500,
+          pointPotentielPerso: null,
+          pointFait: 281.139,
+          pointPasFait: 114.42,
+          pointNonRenseigne: 0,
+          pointProgramme: 104.44,
+          concerne: true,
+          completedTachesCount: 274,
+          totalTachesCount: 274,
+          faitTachesAvancement: 155.4,
+          programmeTachesAvancement: 61.3,
+          pasFaitTachesAvancement: 51.3,
+          pasConcerneTachesAvancement: 6,
+          desactive: false,
+          renseigne: true,
+          etoiles: 3,
+        },
+        {
+          concerne: true,
+          actionId: 'eci',
+          desactive: false,
+          renseigne: true,
+          pointFait: 281.139,
+          pointPasFait: 114.42,
+          pointPotentiel: 500,
+          pointProgramme: 104.44,
+          pointReferentiel: 500,
+          totalTachesCount: 274,
+          pointNonRenseigne: 0,
+          pointPotentielPerso: null,
+          completedTachesCount: 274,
+          faitTachesAvancement: 155.4,
+          pasFaitTachesAvancement: 51.3,
+          programmeTachesAvancement: 61.300000000000004,
+          pasConcerneTachesAvancement: 6,
+        }
+      );
+      // Small difference for programmeTachesAvancement
+      expect(scoreDiff).toEqual(null);
+    });
+
+    it('Nominal difference', async () => {
+      const scoreDiff = referentielsScoringService.getScoreDiff(
+        {
+          actionId: 'eci',
+          pointReferentiel: 500,
+          pointPotentiel: 500,
+          pointPotentielPerso: null,
+          pointFait: 242.925,
+          pointPasFait: 102.42,
+          pointNonRenseigne: 0,
+          pointProgramme: 94.155,
+          concerne: true,
+          completedTachesCount: 274,
+          totalTachesCount: 274,
+          faitTachesAvancement: 138.9,
+          programmeTachesAvancement: 54.8,
+          pasFaitTachesAvancement: 42.3,
+          pasConcerneTachesAvancement: 6,
+          desactive: false,
+          renseigne: true,
+          etoiles: 2,
+        },
+        {
+          concerne: true,
+          actionId: 'eci',
+          desactive: false,
+          renseigne: true,
+          pointFait: 281.139,
+          pointPasFait: 114.42,
+          pointPotentiel: 500,
+          pointProgramme: 104.44,
+          pointReferentiel: 500,
+          totalTachesCount: 274,
+          pointNonRenseigne: 0,
+          pointPotentielPerso: null,
+          completedTachesCount: 274,
+          faitTachesAvancement: 155.4,
+          pasFaitTachesAvancement: 51.3,
+          programmeTachesAvancement: 61.300000000000004,
+          pasConcerneTachesAvancement: 6,
+        }
+      );
+      const expectedScoreDiff = {
+        sauvegarde: {
+          pointFait: 281.139,
+          pointPasFait: 114.42,
+          pointProgramme: 104.44,
+          faitTachesAvancement: 155.4,
+          programmeTachesAvancement: 61.300000000000004,
+          pasFaitTachesAvancement: 51.3,
+        },
+        calcule: {
+          pointFait: 242.925,
+          pointPasFait: 102.42,
+          pointProgramme: 94.155,
+          faitTachesAvancement: 138.9,
+          programmeTachesAvancement: 54.8,
+          pasFaitTachesAvancement: 42.3,
+        },
+      };
+      expect(scoreDiff).toEqual(expectedScoreDiff);
+    });
+
+    it('Concerne difference due to python code', async () => {
+      const scoreDiff = referentielsScoringService.getScoreDiff(
+        {
+          actionId: 'cae_6.2.3.4.3',
+          pointReferentiel: 0.667,
+          pointPotentiel: 0,
+          pointPotentielPerso: null,
+          pointFait: 0,
+          pointPasFait: 0,
+          pointNonRenseigne: 0,
+          pointProgramme: 0,
+          concerne: false,
+          completedTachesCount: 1,
+          totalTachesCount: 1,
+          faitTachesAvancement: 0,
+          programmeTachesAvancement: 0,
+          pasFaitTachesAvancement: 0,
+          pasConcerneTachesAvancement: 1,
+          desactive: false,
+          renseigne: true,
+        },
+        {
+          concerne: true,
+          actionId: 'cae_6.2.3.4.3',
+          desactive: false,
+          renseigne: true,
+          pointFait: 0,
+          pointPasFait: 0,
+          pointPotentiel: 0,
+          pointProgramme: 0,
+          pointReferentiel: 0.667,
+          totalTachesCount: 1,
+          pointNonRenseigne: 0,
+          pointPotentielPerso: null,
+          completedTachesCount: 0,
+          faitTachesAvancement: 0,
+          pasFaitTachesAvancement: 0,
+          programmeTachesAvancement: 0,
+          pasConcerneTachesAvancement: 0,
+        },
+        {
+          'cae_6.2.3.4': {
+            actionId: 'cae_6.2.3.4',
+            pointReferentiel: 2,
+            pointPotentiel: 0,
+            pointPotentielPerso: null,
+            pointFait: 0,
+            pointPasFait: 0,
+            pointNonRenseigne: 0,
+            pointProgramme: 0,
+            concerne: false,
+            completedTachesCount: 3,
+            totalTachesCount: 3,
+            faitTachesAvancement: 0,
+            programmeTachesAvancement: 0,
+            pasFaitTachesAvancement: 0,
+            pasConcerneTachesAvancement: 3,
+            desactive: false,
+            renseigne: true,
+          },
+        }
+      );
+
       expect(scoreDiff).toEqual(null);
     });
   });

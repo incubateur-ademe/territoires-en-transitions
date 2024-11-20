@@ -4,7 +4,18 @@ import {
   Logger,
   NotFoundException,
 } from '@nestjs/common';
-import { and, asc, desc, eq, like, lte, SQL, SQLWrapper } from 'drizzle-orm';
+import {
+  and,
+  asc,
+  desc,
+  eq,
+  gte,
+  like,
+  lte,
+  sql,
+  SQL,
+  SQLWrapper,
+} from 'drizzle-orm';
 import { chunk, isNil } from 'es-toolkit';
 import * as _ from 'lodash';
 import { DateTime } from 'luxon';
@@ -14,7 +25,10 @@ import { AuthService } from '../../auth/services/auth.service';
 import { CollectiviteAvecType } from '../../collectivites/models/identite-collectivite.dto';
 import CollectivitesService from '../../collectivites/services/collectivites.service';
 import DatabaseService from '../../common/services/database.service';
+import MattermostNotificationService from '../../common/services/mattermost-notification.service';
 import { roundTo } from '../../common/services/number.helper';
+import { sleep } from '../../common/services/sleep.helper';
+import ConfigurationService from '../../config/configuration.service';
 import { GetPersonnalitionConsequencesResponseType } from '../../personnalisations/models/get-personnalisation-consequences.response';
 import ExpressionParserService from '../../personnalisations/services/expression-parser.service';
 import PersonnalisationsService from '../../personnalisations/services/personnalisations-service';
@@ -28,6 +42,9 @@ import {
   ActionStatutType,
 } from '../models/action-statut.table';
 import { ActionType } from '../models/action-type.enum';
+import { CheckMultipleReferentielScoresRequestType } from '../models/check-multiple-referentiel-scores.request';
+import { CheckReferentielScoresRequestType } from '../models/check-referentiel-scores.request';
+import { CheckScoreStatus } from '../models/check-score-status.enum';
 import {
   clientScoresTable,
   ClientScoresType,
@@ -36,6 +53,7 @@ import { ComputeScoreMode } from '../models/compute-scores-mode.enum';
 import { GetActionScoresResponseType } from '../models/get-action-scores.response';
 import { GetActionStatutsResponseType } from '../models/get-action-statuts.response';
 import { GetCheckScoresResponseType } from '../models/get-check-scores.response';
+import { GetMultipleCheckScoresResponseType } from '../models/get-multiple-check-scores.response';
 import { GetReferentielMultipleScoresRequestType } from '../models/get-referentiel-multiple-scores.request';
 import { GetReferentielMultipleScoresResponseType } from '../models/get-referentiel-multiple-scores.response';
 import { GetReferentielScoresRequestType } from '../models/get-referentiel-scores.request';
@@ -63,6 +81,8 @@ export default class ReferentielsScoringService {
 
   constructor(
     private readonly authService: AuthService,
+    private readonly configService: ConfigurationService,
+    private readonly mattermostNotificationService: MattermostNotificationService,
     private readonly collectivitesService: CollectivitesService,
     private readonly databaseService: DatabaseService,
     private readonly referentielsService: ReferentielsService,
@@ -265,6 +285,11 @@ export default class ReferentielsScoringService {
     parentConcerne = true
   ) {
     const actionStatut = actionStatuts[referentielActionAvecScore.actionId!];
+    if (actionStatut) {
+      referentielActionAvecScore.score.aStatut = true;
+    }
+    
+
     // Si le parent n'est pas déjà désactivé et il y a une desactivation on l'applique et on le propagera aux enfants
     if (parentConcerne && actionStatut && !actionStatut.concerne) {
       parentConcerne = actionStatut.concerne;
@@ -287,6 +312,7 @@ export default class ReferentielsScoringService {
     // Maintant qu'on l'a appliqué aux enfants, on remonte aux parents
     // Si tous ces enfants sont non concernés, alors il est non concerné
     if (
+      !actionStatut?.concerne &&
       referentielActionAvecScore.actionsEnfant.length &&
       referentielActionAvecScore.actionsEnfant.every(
         (enfant) => !enfant.score.concerne
@@ -363,13 +389,29 @@ export default class ReferentielsScoringService {
 
       // On met à jour le potentiel du parent
       if (referentielActionAvecScore.actionsEnfant.length) {
-        const potentielParent = referentielActionAvecScore.actionsEnfant.reduce(
-          (acc, enfant) =>
-            acc +
-            (enfant.score.concerne ? enfant.score.pointPotentiel || 0 : 0),
-          0
-        );
-        referentielActionAvecScore.score.pointPotentiel = potentielParent;
+        // Exception si sous-action qui a été marquée explicitementcomme concernée et dont tous les enfants on été mis comme nonconcernés
+        const enfantsConcernes =
+          referentielActionAvecScore.actionsEnfant.filter(
+            (enfant) => enfant.score.concerne
+          ).length;
+        if (
+          referentielActionAvecScore.score.aStatut &&
+          referentielActionAvecScore.score.concerne &&
+          !enfantsConcernes
+        ) {
+          this.logger.warn(
+            `Action ${referentielActionAvecScore.actionId} a un statut concerné mais tous ses enfants sont non concernés`
+          );
+        } else {
+          const potentielParent =
+            referentielActionAvecScore.actionsEnfant.reduce(
+              (acc, enfant) =>
+                acc +
+                (enfant.score.concerne ? enfant.score.pointPotentiel || 0 : 0),
+              0
+            );
+          referentielActionAvecScore.score.pointPotentiel = potentielParent;
+        }
       }
     }
   }
@@ -398,18 +440,29 @@ export default class ReferentielsScoringService {
 
     // voir fonction update_action_scores_from_status
     if (!referentielActionAvecScore.score.concerne) {
+      // Attention dans le python pasConcerneTachesAvancement, completedTachesCount et totalTachesCount sont mal géré dans ce cas là
+      // la fonction leaf_count est utilisée qui donne le nombre d'enfant directs qui sont des feuilles ou 1 si il y en a pas
+      // En conséquence, completedTachesCount et totalTachesCount sont à 1 dès qu'on est au niveau d'une action ou au dessus (sous-axe, axe)
+
+      // Fait comme le python pour l'instant, le temps de valider le moteur
+      // TODO: à supprimer une fois le moteur validé > à remplacer par referentielActionAvecScore.score.totalTachesCount
+      const tachesCount =
+        referentielActionAvecScore.actionsEnfant.filter(
+          (actionEnfant) => !actionEnfant.actionsEnfant?.length
+        ).length || 1;
+
       referentielActionAvecScore.score.pointFait = 0;
       referentielActionAvecScore.score.pointPasFait = 0;
       referentielActionAvecScore.score.pointProgramme = 0;
       referentielActionAvecScore.score.pointPotentiel = 0;
       referentielActionAvecScore.score.pointNonRenseigne = 0;
-      referentielActionAvecScore.score.completedTachesCount =
-        referentielActionAvecScore.score.totalTachesCount;
+      referentielActionAvecScore.score.completedTachesCount = tachesCount;
+      referentielActionAvecScore.score.totalTachesCount = tachesCount;
       referentielActionAvecScore.score.faitTachesAvancement = 0;
       referentielActionAvecScore.score.programmeTachesAvancement = 0;
       referentielActionAvecScore.score.pasFaitTachesAvancement = 0;
       referentielActionAvecScore.score.pasConcerneTachesAvancement =
-        referentielActionAvecScore.score.totalTachesCount;
+        tachesCount;
       referentielActionAvecScore.score.renseigne = true;
       /* todo: 
             point_potentiel_perso=tache_points_personnalise
@@ -418,12 +471,17 @@ export default class ReferentielsScoringService {
             */
     } else {
       const actionStatut = actionStatuts[referentielActionAvecScore.actionId!];
-      if (actionStatut && actionStatut.avancementDetaille?.length === 3) {
+      if (actionStatut) {
         referentielActionAvecScore.score.aStatut = true;
+      }
+
+      if (
+        actionStatut &&
+        actionStatut.avancement !== 'non_renseigne' &&
+        actionStatut.avancementDetaille?.length === 3
+      ) {
         const pointsPotentiel =
-          referentielActionAvecScore.score.pointPotentiel ||
-          referentielActionAvecScore.score.pointReferentiel ||
-          0;
+          referentielActionAvecScore.score.pointPotentiel || 0;
         const pourcentageFait = actionStatut.avancementDetaille[0];
         const pourcentageProgramme = actionStatut.avancementDetaille[1];
         const pourcentagePasFait = actionStatut.avancementDetaille[2];
@@ -508,6 +566,14 @@ export default class ReferentielsScoringService {
     scoreEnfants: ActionScoreType[]
   ) {
     this.mergePointScoresEnfants(scoreParent, scoreEnfants);
+
+    // TODO: supprimer ce recalcul du totalTachesCount une fois le moteur validé
+    // lié à un bug python
+    scoreParent.totalTachesCount = scoreEnfants.reduce(
+      (acc, enfant) => acc + (enfant.totalTachesCount || 1),
+      0
+    );
+
     scoreParent.completedTachesCount = scoreEnfants.reduce(
       (acc, enfant) => acc + (enfant.completedTachesCount || 0),
       0
@@ -666,6 +732,22 @@ export default class ReferentielsScoringService {
         ndigits
       );
     }
+    referentielActionAvecScore.score.faitTachesAvancement = roundTo(
+      referentielActionAvecScore.score.faitTachesAvancement,
+      ndigits
+    );
+    referentielActionAvecScore.score.pasFaitTachesAvancement = roundTo(
+      referentielActionAvecScore.score.pasFaitTachesAvancement,
+      ndigits
+    );
+    referentielActionAvecScore.score.programmeTachesAvancement = roundTo(
+      referentielActionAvecScore.score.programmeTachesAvancement,
+      ndigits
+    );
+    referentielActionAvecScore.score.pasConcerneTachesAvancement = roundTo(
+      referentielActionAvecScore.score.pasConcerneTachesAvancement,
+      ndigits
+    );
   }
 
   fillAvancementDetailleFromAvancement(
@@ -718,9 +800,16 @@ export default class ReferentielsScoringService {
       .select()
       .from(table)
       .where(and(...actionStatutsConditions))
-      .orderBy(asc(table.actionId), desc(table.modifiedAt));
+      .orderBy(desc(table.modifiedAt), asc(table.actionId));
     this.logger.log(
-      `${referentielActionStatuts.length} statuts trouvees pour le referentiel ${referentielId} et la collectivite ${collectiviteId}`
+      `${referentielActionStatuts.length} statuts trouves pour le referentiel ${referentielId} et la collectivite ${collectiviteId}`
+    );
+    this.logger.log(
+      `Dernière modification de statut: ${
+        referentielActionStatuts.length
+          ? referentielActionStatuts[0]?.modifiedAt
+          : 'N/A'
+      }`
     );
     referentielActionStatuts.forEach((actionStatut) => {
       if (!getActionStatuts[actionStatut.actionId]) {
@@ -1424,11 +1513,14 @@ export default class ReferentielsScoringService {
 
     const referentielAvecScore = this.buildReferentielAvecScore(referentiel);
 
+    let scoreMap = this.fillScoreMap(referentielAvecScore, {});
+
     // On applique recursivement le facteur de potentiel perso
     this.appliquePersonnalisationPotentielPerso(
       referentielAvecScore,
       personnalisationConsequences
     );
+    scoreMap = this.fillScoreMap(referentielAvecScore, {});
 
     // On applique recursivement la desactivation liée à la personnalisation
     // la desactivation mais également le flag concerné à false
@@ -1436,6 +1528,7 @@ export default class ReferentielsScoringService {
       referentielAvecScore,
       personnalisationConsequences
     );
+    scoreMap = this.fillScoreMap(referentielAvecScore, {});
 
     // On désactive les actions non concernées
     // on remonte aux parents pour les rendre non concernés si tous les enfants sont non concernés
@@ -1443,6 +1536,7 @@ export default class ReferentielsScoringService {
       referentielAvecScore,
       actionStatuts
     );
+    scoreMap = this.fillScoreMap(referentielAvecScore, {});
 
     // On redistribue les points liés aux actions désactivées et non concernées aux action frères/soeurs
     this.redistribuePotentielActionsDesactiveesNonConcernees(
@@ -1580,7 +1674,7 @@ export default class ReferentielsScoringService {
     const getActionScoresResponse: GetActionScoresResponseType = {};
 
     const lastScoreDate = scoreRecords[0].payloadTimestamp;
-    this.logger.log(`Last score date: ${lastScoreDate.toISOString()}`);
+    this.logger.log(`Dernier score enregistré: ${lastScoreDate.toISOString()}`);
 
     // Due to esm import
     // See https://stackoverflow.com/questions/74830166/unable-to-import-esm-module-in-nestjs
@@ -1661,12 +1755,91 @@ export default class ReferentielsScoringService {
     return this.getFirstDatabaseScoreFromJsonb(scores, etoilesDefinition);
   }
 
+  async checkScoreForLastModifiedCollectivite(
+    parameters: CheckMultipleReferentielScoresRequestType,
+    hostUrl?: string
+  ): Promise<GetMultipleCheckScoresResponseType> {
+    const statusList = Object.values(CheckScoreStatus);
+    const response: GetMultipleCheckScoresResponseType = {
+      count: 0,
+      countByStatus: {},
+      referentielCountByStatus: {},
+      resultats: [],
+    };
+    statusList.forEach((status) => {
+      response.countByStatus[status] = 0;
+    });
+
+    const lastChangesDate = DateTime.now().minus({
+      days: parameters.nbJours,
+    });
+    this.logger.log(
+      `Recuperation des collectivites dont le score a été modifié depuis ${lastChangesDate.toISO()} (${
+        parameters.nbJours
+      } jours)`
+    );
+
+    const lastChanges = await this.databaseService.db
+      .select()
+      .from(clientScoresTable)
+      .where(gte(clientScoresTable.modifiedAt, lastChangesDate.toJSDate()));
+
+    this.logger.log(`Nombre de scores modifiés: ${lastChanges.length}`);
+    response.count = lastChanges.length;
+
+    const lastChangesChunks = chunk(
+      lastChanges,
+      ReferentielsScoringService.MULTIPLE_COLLECTIVITE_CHUNK_SIZE
+    );
+    const checkScorePromises: Promise<GetCheckScoresResponseType>[] = [];
+    let iChunk = 0;
+    for (const lastChangesChunk of lastChangesChunks) {
+      this.logger.log(
+        `Chunk ${iChunk}/${lastChangesChunks.length} de ${lastChangesChunks.length} verifications`
+      );
+      lastChangesChunk.forEach((lastChange) => {
+        checkScorePromises.push(
+          this.checkScoreForCollectivite(
+            lastChange.referentiel,
+            lastChange.collectiviteId,
+            parameters,
+            hostUrl
+          )
+        );
+      });
+      const checkScores = await Promise.all(checkScorePromises);
+      response.resultats.push(...checkScores);
+      checkScorePromises.length = 0;
+      iChunk++;
+    }
+
+    response.resultats.forEach((resultat) => {
+      response.countByStatus[resultat.verification_status]++;
+      if (!response.referentielCountByStatus[resultat.referentielId]) {
+        response.referentielCountByStatus[resultat.referentielId] = {};
+        statusList.forEach((status) => {
+          response.referentielCountByStatus[resultat.referentielId][status] = 0;
+        });
+      }
+      response.referentielCountByStatus[resultat.referentielId][
+        resultat.verification_status
+      ]++;
+    });
+
+    return response;
+  }
+
   async checkScoreForCollectivite(
     referentielId: ReferentielType,
-    collectiviteId: number
+    collectiviteId: number,
+    parameters: CheckReferentielScoresRequestType,
+    hostUrl?: string,
+    noClientScoreUpdateForMajorDifferences?: boolean
   ): Promise<GetCheckScoresResponseType> {
     this.logger.log(
-      `Vérification du score de la collectivité ${collectiviteId} pour le referentiel ${referentielId}`
+      `Vérification du score de la collectivité ${collectiviteId} pour le referentiel ${referentielId} (parameters: ${JSON.stringify(
+        parameters
+      )})`
     );
 
     const savedScoreResult = await this.getClientScoresForCollectivite(
@@ -1674,32 +1847,154 @@ export default class ReferentielsScoringService {
       collectiviteId
     );
 
-    const { scores } = await this.computeScoreForCollectivite(
+    const { scores, collectiviteInfo } = await this.computeScoreForCollectivite(
       referentielId,
       collectiviteId,
-      { date: savedScoreResult.date, mode: ComputeScoreMode.RECALCUL }
+      {
+        date: parameters.utiliseDatePourScoreCourant
+          ? savedScoreResult.date
+          : undefined,
+        mode: ComputeScoreMode.RECALCUL,
+      }
     );
     const scoreMap = this.fillScoreMap(scores, {});
+
     const getReferentielScores: GetCheckScoresResponseType = {
+      collectiviteId: collectiviteId,
+      referentielId: referentielId,
       date: savedScoreResult.date,
+      verification_status: CheckScoreStatus.MAJOR_DIFFERENCES,
       differences: {},
     };
     const actionIds = Object.keys(scoreMap);
     actionIds.forEach((actionId) => {
       const savedScore = savedScoreResult.scoresMap[actionId];
       if (!_.isEqual(savedScore, scoreMap[actionId])) {
-        const scoreDiff = this.getScoreDiff(scoreMap[actionId], savedScore);
+        const scoreDiff = this.getScoreDiff(
+          scoreMap[actionId],
+          savedScore,
+          scoreMap
+        );
         if (scoreDiff) {
           getReferentielScores.differences[actionId] = scoreDiff;
         }
       }
     });
+    const differencesCount = Object.keys(
+      getReferentielScores.differences
+    ).length;
+    const rootDifferences = getReferentielScores.differences[referentielId];
+    if (!differencesCount) {
+      getReferentielScores.verification_status =
+        CheckScoreStatus.NO_DIFFERENCES;
+    } else {
+      if (
+        rootDifferences &&
+        (rootDifferences.calcule?.pointFait !==
+          rootDifferences.sauvegarde?.pointFait ||
+          rootDifferences.calcule?.pointProgramme !==
+            rootDifferences.sauvegarde?.pointProgramme ||
+          rootDifferences.calcule?.pointPasFait !==
+            rootDifferences.sauvegarde?.pointPasFait)
+      ) {
+        getReferentielScores.verification_status =
+          CheckScoreStatus.MAJOR_DIFFERENCES;
+      } else {
+        getReferentielScores.verification_status =
+          CheckScoreStatus.MINOR_DIFFERENCES;
+      }
+    }
+
+    // If there are major differences, try to trigger manually an update of the score using the legacy algorithm to check if the differences are still present
+    if (
+      getReferentielScores.verification_status ===
+        CheckScoreStatus.MAJOR_DIFFERENCES &&
+      !noClientScoreUpdateForMajorDifferences
+    ) {
+      this.logger.log(
+        `Major differences have been detected, trying to update the score using the legacy algorithm`
+      );
+
+      await this.databaseService.db.execute(
+        sql`select evaluation.evaluate_regles(${collectiviteId},'personnalisation_consequence','client_scores');`
+      );
+
+      this.logger.log(`Wait for client score to be updated`);
+      for (let i = 0; i < 10; i++) {
+        await sleep(1000);
+        const newSavedScoreResult = await this.getClientScoresForCollectivite(
+          referentielId,
+          collectiviteId
+        );
+        if (newSavedScoreResult.date > savedScoreResult.date) {
+          this.logger.log(
+            `Client score updated (${newSavedScoreResult.date}, i=${i})`
+          );
+          break;
+        }
+      }
+
+      const resultAfterUpdate = await this.checkScoreForCollectivite(
+        referentielId,
+        collectiviteId,
+        { ...parameters, notification: false },
+        hostUrl,
+        true
+      );
+      this.logger.log(
+        `Check status after update: ${resultAfterUpdate.verification_status}`
+      );
+      if (
+        resultAfterUpdate.verification_status ===
+        CheckScoreStatus.NO_DIFFERENCES
+      ) {
+        getReferentielScores.verification_status =
+          CheckScoreStatus.MAJOR_DIFFERENCES_FIXED_AFTER_CLIENT_SCORE_UPDATE;
+      }
+    }
+
+    if (differencesCount && parameters.notification) {
+      let message = '';
+      if (
+        getReferentielScores.verification_status ===
+        CheckScoreStatus.MAJOR_DIFFERENCES_FIXED_AFTER_CLIENT_SCORE_UPDATE
+      ) {
+        message = `:grimacing: Différences majeures de score corrigées après un déclenchement manuel de mise à jour pour la collectivité ${collectiviteId} et le referentiel ${referentielId} sur l'environnement ${process.env.ENV_NAME}.`;
+      } else {
+        const majorDifferences =
+          getReferentielScores.verification_status ===
+          CheckScoreStatus.MAJOR_DIFFERENCES;
+
+        message = `${
+          majorDifferences ? ':no_entry:' : ':warning:'
+        } Différence ${majorDifferences ? 'majeure' : 'mineure'} de score${
+          majorDifferences
+            ? ` (points fait calculés: ${scoreMap[referentielId]?.pointFait}, points fait sauvegardés: ${savedScoreResult.scoresMap[referentielId]?.pointFait}, points pas fait calculés: ${scoreMap[referentielId]?.pointPasFait}, points pas fait sauvegardés: ${savedScoreResult.scoresMap[referentielId]?.pointPasFait}, points programmés calculés: ${scoreMap[referentielId]?.pointProgramme}, points pas fait sauvegardés: ${savedScoreResult.scoresMap[referentielId]?.pointProgramme})`
+            : ''
+        } pour la collectivité ${
+          collectiviteInfo.nom
+        } (${collectiviteId}) et le referentiel ${referentielId} sur l'environnement ${
+          process.env.ENV_NAME
+        }${
+          hostUrl
+            ? ` ([details](${hostUrl}/api/v1/collectivites/${collectiviteId}/referentiels/${referentielId}/check-scores?token=${this.configService.get(
+                'SUPABASE_ANON_KEY'
+              )})).`
+            : '.'
+        }`;
+      }
+      if (message) {
+        await this.mattermostNotificationService.postMessage(message);
+      }
+    }
+
     return getReferentielScores;
   }
 
   getScoreDiff(
     computedScore: ActionScoreType,
-    savedScore: ActionScoreType | undefined | null
+    savedScore: ActionScoreType | undefined | null,
+    fullScoreMap?: GetActionScoresResponseType
   ): {
     sauvegarde: Partial<ActionScoreType>;
     calcule: Partial<ActionScoreType>;
@@ -1731,7 +2026,11 @@ export default class ReferentielsScoringService {
               key !== 'pointReferentiel' &&
               key !== 'pointNonRenseigne' &&
               key !== 'pointProgramme' &&
-              key !== 'pointPasFait'
+              key !== 'pointPasFait' &&
+              key !== 'faitTachesAvancement' &&
+              key !== 'pasFaitTachesAvancement' &&
+              key !== 'pasConcerneTachesAvancement' &&
+              key !== 'programmeTachesAvancement'
             ) {
               hasDiff = true;
             } else {
@@ -1746,7 +2045,12 @@ export default class ReferentielsScoringService {
                       10,
                       ReferentielsScoringService.DEFAULT_ROUNDING_DIGITS
                     ) +
-                  Number.EPSILON;
+                  1 /
+                    Math.pow(
+                      10,
+                      ReferentielsScoringService.DEFAULT_ROUNDING_DIGITS + 1
+                    );
+
                 if (diff <= diffThreshold) {
                   hasDiff = false;
                 } else {
@@ -1768,6 +2072,36 @@ export default class ReferentielsScoringService {
       }
     } else {
       scoreMapDiff = computedScore;
+    }
+
+    if (hasDiff) {
+      // Specific cases due to python code
+      const diffKeys = Object.keys(savedScoreDiff).sort((a, b) =>
+        a.localeCompare(b)
+      );
+      // Python is not affecting not concerne recursively
+      if (
+        ['concerne', 'pasConcerneTachesAvancement'].every((v) =>
+          diffKeys.includes(v)
+        )
+      ) {
+        if (!computedScore.concerne) {
+          // Check if parent is not concerne
+          let parentActionId = this.referentielsService.getActionParent(
+            computedScore.actionId
+          );
+          while (parentActionId) {
+            const parentAction = fullScoreMap![parentActionId];
+            if (!parentAction.concerne) {
+              // Diff coming from python code which can be ignored
+              hasDiff = false;
+              break;
+            }
+            parentActionId =
+              this.referentielsService.getActionParent(parentActionId);
+          }
+        }
+      }
     }
 
     if (hasDiff) {

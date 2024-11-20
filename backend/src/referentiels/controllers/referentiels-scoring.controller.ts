@@ -1,13 +1,16 @@
 import { createZodDto } from '@anatine/zod-nestjs';
-import { Controller, Get, Logger, Param, Query } from '@nestjs/common';
+import { Controller, Get, Logger, Param, Query, Req } from '@nestjs/common';
 import { ApiExcludeEndpoint, ApiResponse, ApiTags } from '@nestjs/swagger';
+import { Request } from 'express';
 import { AllowAnonymousAccess } from '../../auth/decorators/allow-anonymous-access.decorator';
-import { AllowPublicAccess } from '../../auth/decorators/allow-public-access.decorator';
 import { TokenInfo } from '../../auth/decorators/token-info.decorators';
 import { SupabaseJwtPayload } from '../../auth/models/supabase-jwt.models';
+import { checkMultipleReferentielScoresRequestSchema } from '../models/check-multiple-referentiel-scores.request';
+import { CheckReferentielScoresRequestType } from '../models/check-referentiel-scores.request';
 import { getActionStatutsRequestSchema } from '../models/get-action-statuts.request';
 import { getActionStatutsResponseSchema } from '../models/get-action-statuts.response';
 import { GetCheckScoresResponseType } from '../models/get-check-scores.response';
+import { GetMultipleCheckScoresResponseType } from '../models/get-multiple-check-scores.response';
 import { getReferentielMultipleScoresRequestSchema } from '../models/get-referentiel-multiple-scores.request';
 import { getReferentielMultipleScoresResponseSchema } from '../models/get-referentiel-multiple-scores.response';
 import { getReferentielScoresRequestSchema } from '../models/get-referentiel-scores.request';
@@ -36,6 +39,10 @@ class GetActionStatutsRequestClass extends createZodDto(
 
 class GetActionStatutsResponseClass extends createZodDto(
   getActionStatutsResponseSchema
+) {}
+
+class CheckMultipleReferentielScoresRequestClass extends createZodDto(
+  checkMultipleReferentielScoresRequestSchema
 ) {}
 
 @ApiTags('Referentiels')
@@ -103,13 +110,32 @@ export class ReferentielsScoringController {
   @Get(
     'collectivites/:collectivite_id/referentiels/:referentiel_id/check-scores'
   )
-  async checkReferentialScore(
+  async checkReferentielScore(
     @Param('collectivite_id') collectiviteId: number,
-    @Param('referentiel_id') referentielId: ReferentielType
+    @Param('referentiel_id') referentielId: ReferentielType,
+    @Query() parameters: CheckReferentielScoresRequestType,
+    @Req() req: Request
   ): Promise<GetCheckScoresResponseType> {
+    const checkReferentielHostUrl = `${req.protocol}://${req.get('Host')}`;
     return await this.referentielsScoringService.checkScoreForCollectivite(
       referentielId,
-      collectiviteId
+      collectiviteId,
+      parameters,
+      checkReferentielHostUrl
+    );
+  }
+
+  @AllowAnonymousAccess()
+  @ApiExcludeEndpoint() // Not in documentation
+  @Get('referentiels/all/check-last-scores')
+  async checkLastReferentielsScore(
+    @Query() parameters: CheckMultipleReferentielScoresRequestClass,
+    @Req() req: Request
+  ): Promise<GetMultipleCheckScoresResponseType> {
+    const checkHostUrl = `${req.protocol}://${req.get('Host')}`;
+    return await this.referentielsScoringService.checkScoreForLastModifiedCollectivite(
+      parameters,
+      checkHostUrl
     );
   }
 }

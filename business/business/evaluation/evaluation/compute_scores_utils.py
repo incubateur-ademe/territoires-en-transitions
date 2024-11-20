@@ -90,6 +90,7 @@ def update_action_scores_from_status(
     is_concerne = action_id not in actions_non_concerne_ids
     is_personnalise = action_id in action_personnalise_ids
     is_desactive = action_id in action_desactive_ids
+    # WARNING: when it's not a tache or sous-action, it's a wrong number: always return 1
     tache_count = point_tree_referentiel.leaf_count[action_id]
 
     if not is_concerne:
