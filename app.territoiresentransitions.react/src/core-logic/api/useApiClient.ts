@@ -66,13 +66,22 @@ export const useApiClient = () => {
     return body as ResponseType;
   };
 
-  // fait un appel GET pour télécharger un fichier
-  const getAsBlob = async (args: API_ARGS) => {
-    const response = await fetch(makeUrl(args), {
-      headers: {
-        ...authHeaders,
-      },
-    });
+  // fait un appel GET (ou POST) pour télécharger un fichier
+  const getAsBlob = async (
+    { route, params }: API_ARGS,
+    method: 'POST' | 'GET' = 'GET'
+  ) => {
+    const response = await fetch(
+      method === 'GET' ? makeUrl({ route, params }) : makeUrl({ route }),
+      {
+        method,
+        headers: {
+          ...authHeaders,
+          'content-type': 'application/json',
+        },
+        body: method === 'GET' ? undefined : JSON.stringify(params),
+      }
+    );
     if (!response.ok) {
       const body = await response.json();
       throw new ApiError(body);
