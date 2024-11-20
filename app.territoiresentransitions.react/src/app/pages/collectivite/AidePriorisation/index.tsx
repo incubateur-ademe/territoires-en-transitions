@@ -1,14 +1,14 @@
-import {useTableData} from './useTableData';
-import {Table} from './Table';
-import {getFilterInfoMessage, noFilters} from './filters';
-import {getMaxDepth} from './queries';
-import {useReferentielId} from 'core-logic/hooks/params';
-import {DisableAllFilters} from 'ui/buttons/DisableAllFilters';
+import { useTableData } from './useTableData';
+import { Table } from './Table';
+import { getFilterInfoMessage, noFilters } from './filters';
+import { getMaxDepth } from './queries';
+import { useReferentielId } from 'core-logic/hooks/params';
+import { DesactiverLesFiltres } from 'ui/shared/filters/DesactiverLesFiltres';
 
 const AidePriorisation = () => {
   const tableData = useTableData();
   const referentiel = useReferentielId();
-  const {setFilters, filtersCount} = tableData;
+  const { setFilters, filtersCount } = tableData;
   const labelFilters = filtersCount > 1 ? 'filtres actifs' : 'filtre actif';
   const filterInfoMessage = getFilterInfoMessage(
     filtersCount,
@@ -19,10 +19,12 @@ const AidePriorisation = () => {
     <>
       <p>
         {filtersCount} {labelFilters}
-        <DisableAllFilters
-          filtersCount={filtersCount}
-          onClick={() => setFilters(noFilters)}
-        />
+        {filtersCount > 0 && (
+          <DesactiverLesFiltres
+            className="ml-5"
+            onClick={() => setFilters(noFilters)}
+          />
+        )}
         {filterInfoMessage ? (
           <>
             <br />
