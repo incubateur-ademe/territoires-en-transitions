@@ -32,6 +32,7 @@ import ConfigurationService from '../../config/configuration.service';
 import { GetPersonnalitionConsequencesResponseType } from '../../personnalisations/models/get-personnalisation-consequences.response';
 import ExpressionParserService from '../../personnalisations/services/expression-parser.service';
 import PersonnalisationsService from '../../personnalisations/services/personnalisations-service';
+import { actionCommentaireTable } from '../models/action-commentaire.table';
 import {
   ActionPointScoreType,
   ActionPointScoreWithAvancementType,
@@ -51,6 +52,7 @@ import {
 } from '../models/client-scores.table';
 import { ComputeScoreMode } from '../models/compute-scores-mode.enum';
 import { GetActionScoresResponseType } from '../models/get-action-scores.response';
+import { GetActionStatutExplicationsResponseType } from '../models/get-action-statut-explications.response';
 import { GetActionStatutsResponseType } from '../models/get-action-statuts.response';
 import { GetCheckScoresResponseType } from '../models/get-check-scores.response';
 import { GetMultipleCheckScoresResponseType } from '../models/get-multiple-check-scores.response';
@@ -59,6 +61,7 @@ import { GetReferentielMultipleScoresResponseType } from '../models/get-referent
 import { GetReferentielScoresRequestType } from '../models/get-referentiel-scores.request';
 import { GetReferentielScoresResponseType } from '../models/get-referentiel-scores.response';
 import { GetReferentielResponseType } from '../models/get-referentiel.response';
+import { historiqueActionCommentaireTable } from '../models/historique-action-commentaire.table';
 import { historiqueActionStatutTable } from '../models/historique-action-statut.table';
 import { LabellisationAuditType } from '../models/labellisation-audit.table';
 import { LabellisationEtoileMetaType } from '../models/labellisation-etoile.table';
@@ -113,6 +116,7 @@ export default class ReferentielsScoringService {
 
   buildReferentielAvecScore(
     referentiel: ReferentielActionType,
+    actionStatutExplications?: GetActionStatutExplicationsResponseType,
     fillOrigineActionMap?: {
       [origineActionId: string]: ReferentielActionOrigineWithScoreType;
     },
@@ -149,6 +153,10 @@ export default class ReferentielsScoringService {
       actionsEnfant: [],
       scoresTag: {},
     };
+    if (actionStatutExplications && actionStatutExplications[actionId]) {
+      referentielAvecScore.score.explication =
+        actionStatutExplications[actionId].explication;
+    }
     if (!referentiel.actionsOrigine) {
       delete referentielAvecScore.actionsOrigine;
     }
@@ -157,6 +165,7 @@ export default class ReferentielsScoringService {
       if (actionEnfant.actionType !== ActionType.EXEMPLE) {
         const actionEnfantAvecScore = this.buildReferentielAvecScore(
           actionEnfant,
+          actionStatutExplications,
           fillOrigineActionMap,
           existingScores
         );
@@ -288,7 +297,6 @@ export default class ReferentielsScoringService {
     if (actionStatut) {
       referentielActionAvecScore.score.aStatut = true;
     }
-    
 
     // Si le parent n'est pas déjà désactivé et il y a une desactivation on l'applique et on le propagera aux enfants
     if (parentConcerne && actionStatut && !actionStatut.concerne) {
@@ -823,6 +831,76 @@ export default class ReferentielsScoringService {
     return getActionStatuts;
   }
 
+  // Called explications to differentiate from discussion commentaire
+  async getReferentielActionStatutExplications(
+    referentielId: ReferentielType,
+    collectiviteId: number,
+    date?: string,
+    tokenInfo?: SupabaseJwtPayload,
+    noCheck?: boolean
+  ): Promise<GetActionStatutExplicationsResponseType> {
+    const getActionStatutsExplications: GetActionStatutExplicationsResponseType =
+      {};
+
+    this.logger.log(
+      `Getting collectivite ${collectiviteId} action statut explications for referentiel ${referentielId} and date ${date}`
+    );
+
+    if (!noCheck) {
+      await this.checkCollectiviteAndReferentielWithAccess(
+        collectiviteId,
+        referentielId,
+        date,
+        tokenInfo
+      );
+    }
+
+    const table = date
+      ? historiqueActionCommentaireTable
+      : actionCommentaireTable;
+
+    const actionStatutsConditions: (SQLWrapper | SQL)[] = [
+      eq(table.collectiviteId, collectiviteId),
+      like(table.actionId, `${referentielId}%`),
+    ];
+    if (date) {
+      actionStatutsConditions.push(lte(table.modifiedAt, date));
+    }
+    // TODO: colonne referentiel dans les actionStatutTable ?
+    const referentielActionStatutExplications = await this.databaseService.db
+      .select({
+        actionId: table.actionId,
+        explication: date
+          ? historiqueActionCommentaireTable.precision
+          : actionCommentaireTable.commentaire,
+        modifiedAt: table.modifiedAt,
+      })
+      .from(table)
+      .where(and(...actionStatutsConditions))
+      .orderBy(desc(table.modifiedAt), asc(table.actionId));
+    this.logger.log(
+      `${referentielActionStatutExplications.length} action statut explications trouves pour le referentiel ${referentielId} et la collectivite ${collectiviteId}`
+    );
+    this.logger.log(
+      `Dernière modification de statut: ${
+        referentielActionStatutExplications.length
+          ? referentielActionStatutExplications[0]?.modifiedAt
+          : 'N/A'
+      }`
+    );
+    referentielActionStatutExplications.forEach((actionStatutExplication) => {
+      if (!getActionStatutsExplications[actionStatutExplication.actionId]) {
+        getActionStatutsExplications[actionStatutExplication.actionId] = {
+          explication: actionStatutExplication.explication,
+        };
+      } else {
+        // On ne garde que la dernière explication, déjà pris en compte par l'orderBy
+      }
+    });
+
+    return getActionStatutsExplications;
+  }
+
   getActionPointScore(
     actionScore: ActionScoreType
   ): ActionPointScoreType | null {
@@ -1026,6 +1104,13 @@ export default class ReferentielsScoringService {
         parameters.date
       );
 
+      const actionStatutExplications =
+        await this.getReferentielActionStatutExplications(
+          referentielId,
+          collectiviteId,
+          parameters.date
+        );
+
       const actionLevel = referentiel.orderedItemTypes.indexOf(
         ActionType.ACTION
       );
@@ -1045,6 +1130,7 @@ export default class ReferentielsScoringService {
           collectiviteId,
           parameters.jalon,
           auditId,
+          actionStatutExplications,
           etoilesDefinitions
         );
         referentielWithScore = scoresResult.referentielWithScore;
@@ -1056,6 +1142,7 @@ export default class ReferentielsScoringService {
           personnalisationConsequences,
           actionStatuts,
           actionLevel,
+          actionStatutExplications,
           etoilesDefinitions
         );
       }
@@ -1369,6 +1456,7 @@ export default class ReferentielsScoringService {
 
     const referentielAvecScore = this.buildReferentielAvecScore(
       referentiel,
+      undefined,
       actionsOrigineMap
     );
 
@@ -1502,6 +1590,7 @@ export default class ReferentielsScoringService {
     personnalisationConsequences: GetPersonnalitionConsequencesResponseType,
     actionStatuts: GetActionStatutsResponseType,
     actionLevel: number,
+    actionStatutExplications?: GetActionStatutExplicationsResponseType,
     etoilesDefinitions?: LabellisationEtoileMetaType[]
   ): ReferentielActionWithScoreType {
     const actionStatutsKeys = Object.keys(actionStatuts);
@@ -1511,7 +1600,10 @@ export default class ReferentielsScoringService {
       this.fillAvancementDetailleFromAvancement(actionStatut);
     }
 
-    const referentielAvecScore = this.buildReferentielAvecScore(referentiel);
+    const referentielAvecScore = this.buildReferentielAvecScore(
+      referentiel,
+      actionStatutExplications
+    );
 
     let scoreMap = this.fillScoreMap(referentielAvecScore, {});
 
@@ -1580,6 +1672,7 @@ export default class ReferentielsScoringService {
     collectiviteId: number,
     jalon: ScoreJalon,
     auditId?: number,
+    statutExplications?: GetActionStatutExplicationsResponseType,
     etoiles?: LabellisationEtoileMetaType[]
   ): Promise<{
     date: string;
@@ -1622,6 +1715,7 @@ export default class ReferentielsScoringService {
 
     const referentielWithScore = this.buildReferentielAvecScore(
       referentiel,
+      statutExplications,
       undefined,
       scoresResult.scoresMap
     );
@@ -1883,20 +1977,18 @@ export default class ReferentielsScoringService {
     const differencesCount = Object.keys(
       getReferentielScores.differences
     ).length;
-    const rootDifferences = getReferentielScores.differences[referentielId];
     if (!differencesCount) {
       getReferentielScores.verification_status =
         CheckScoreStatus.NO_DIFFERENCES;
     } else {
-      if (
-        rootDifferences &&
-        (rootDifferences.calcule?.pointFait !==
-          rootDifferences.sauvegarde?.pointFait ||
-          rootDifferences.calcule?.pointProgramme !==
-            rootDifferences.sauvegarde?.pointProgramme ||
-          rootDifferences.calcule?.pointPasFait !==
-            rootDifferences.sauvegarde?.pointPasFait)
-      ) {
+      const differenceList = Object.values(getReferentielScores.differences);
+      const majorDifferences = differenceList.filter(
+        (diff) =>
+          diff.calcule?.pointFait !== diff.sauvegarde?.pointFait ||
+          diff.calcule?.pointProgramme !== diff.sauvegarde?.pointProgramme ||
+          diff.calcule?.pointPasFait !== diff.sauvegarde?.pointPasFait
+      );
+      if (majorDifferences.length) {
         getReferentielScores.verification_status =
           CheckScoreStatus.MAJOR_DIFFERENCES;
       } else {

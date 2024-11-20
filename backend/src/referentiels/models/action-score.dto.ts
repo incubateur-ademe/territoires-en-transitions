@@ -6,6 +6,10 @@ export const actionScoreSchema = extendApi(
   z
     .object({
       actionId: z.string().describe("L'id de l'action, ex: eci_1.1"),
+      explication: z
+        .string()
+        .optional()
+        .describe("Explication/justification du statut de l'action"),
       etoiles: z
         .number()
         .optional()
