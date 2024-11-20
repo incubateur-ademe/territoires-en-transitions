@@ -1,19 +1,18 @@
-import {useEffect, useState} from 'react';
-import classNames from 'classnames';
-import {TIndicateurDefinition, SourceType} from '../../types';
-import {SOURCE_COLLECTIVITE} from '../../constants';
-import {TIndicateurValeur} from '../../useIndicateurValeurs';
+import { useEffect, useState } from 'react';
+import { TIndicateurDefinition, SourceType } from '../../types';
+import { SOURCE_COLLECTIVITE } from '../../constants';
+import { TIndicateurValeur } from '../../useIndicateurValeurs';
 import {
   TEditIndicateurValeurHandlers,
   useEditIndicateurValeur,
 } from './useEditIndicateurValeur';
-import {useToggle} from 'ui/shared/useToggle';
-import AnchorAsButton from 'ui/buttons/AnchorAsButton';
+import { useToggle } from 'ui/shared/useToggle';
 import {
   ValueTableRowReadOnly,
   IndicateurValueTableRow,
 } from './IndicateurValueTableRow';
-import {Indicateurs} from '@tet/api';
+import { Indicateurs } from '@tet/api';
+import { Button } from '@tet/ui';
 
 type IndicateurValuesTableProps = {
   definition: TIndicateurDefinition;
@@ -27,7 +26,7 @@ type IndicateurValuesTableProps = {
 
 /** Charge les données et affiche le tableau des valeurs */
 export const IndicateurValuesTable = (props: IndicateurValuesTableProps) => {
-  const {definition, type, valeurs, valeursBrutes} = props;
+  const { definition, type, valeurs, valeursBrutes } = props;
   const editHandlers = useEditIndicateurValeur({
     definition,
     type,
@@ -58,7 +57,7 @@ const ValuesTableBase = (
     editHandlers,
     importSource,
   } = props;
-  const {unite} = definition;
+  const { unite } = definition;
   const [showAll, toggleShowAll] = useToggle(false);
   const haveManyValues = values.length > SHOW_MORE_THRESHOLD;
   const valuesToShow =
@@ -72,7 +71,7 @@ const ValuesTableBase = (
     if (
       lastAddedYear !== null &&
       !showAll &&
-      valuesToShow.findIndex(v => v.annee === lastAddedYear) === -1
+      valuesToShow.findIndex((v) => v.annee === lastAddedYear) === -1
     ) {
       toggleShowAll();
     }
@@ -126,20 +125,18 @@ const ValuesTableBase = (
         {haveManyValues && (
           <tr>
             <td colSpan={4}>
-              <AnchorAsButton
+              <Button
                 aria-expanded={showAll}
-                className={classNames(
-                  'fr-link--icon-right text-bf500',
-                  showAll
-                    ? 'fr-icon-arrow-up-s-line'
-                    : 'fr-icon-arrow-down-s-line'
-                )}
+                variant="underlined"
+                icon={showAll ? 'arrow-up-s-line' : 'arrow-down-s-line'}
+                iconPosition="right"
+                size="sm"
                 onClick={toggleShowAll}
               >
                 {showAll
                   ? `Afficher uniquement les ${sourceTypeLabel}s récents`
                   : `Afficher tous les ${sourceTypeLabel}s`}
-              </AnchorAsButton>
+              </Button>
             </td>
           </tr>
         )}
