@@ -9,6 +9,7 @@ import { TrajectoiresController } from './controllers/trajectoires.controller';
 import { TrajectoiresRouter } from './routers/trajectoires.router';
 import IndicateursService from './services/indicateurs.service';
 import IndicateurSourcesService from './services/indicateurSources.service';
+import ExportIndicateursService from './services/export-indicateurs.service';
 import TrajectoiresDataService from './services/trajectoires-data.service';
 import TrajectoiresSpreadsheetService from './services/trajectoires-spreadsheet.service';
 import TrajectoiresXlsxService from './services/trajectoires-xlsx.service';
@@ -24,6 +25,7 @@ import { ConfigurationModule } from '../config/configuration.module';
     SheetModule,
   ],
   providers: [
+    ExportIndicateursService,
     IndicateurSourcesService,
     IndicateursService,
     TrajectoiresDataService,

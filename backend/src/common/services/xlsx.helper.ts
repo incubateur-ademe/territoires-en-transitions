@@ -16,3 +16,7 @@ export const adjustColumnWidth = (worksheet: Worksheet) => {
     }
   });
 };
+
+// normalise le nom des feuilles qui ne doivent pas contenir certains caractères
+const RE_WS_FORBIDDEN_CHARS = /[*?:\\/[\]]/g;
+export const normalizeWorksheetName = (name: string) => name.replaceAll(RE_WS_FORBIDDEN_CHARS, '-');
