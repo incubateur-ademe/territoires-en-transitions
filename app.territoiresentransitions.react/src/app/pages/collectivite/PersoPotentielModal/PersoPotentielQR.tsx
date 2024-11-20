@@ -4,18 +4,17 @@
 
 import DOMPurify from 'dompurify';
 import classNames from 'classnames';
-import {ActionDefinitionSummary} from 'core-logic/api/endpoints/ActionDefinitionSummaryReadEndpoint';
-import {ActionScore} from 'types/ClientScore';
+import { ActionDefinitionSummary } from 'core-logic/api/endpoints/ActionDefinitionSummaryReadEndpoint';
+import { ActionScore } from 'types/ClientScore';
 import {
   TQuestionReponse,
   TReponse,
   TChangeReponse,
 } from 'types/personnalisation';
-import {PointsPotentiels} from './PointsPotentiels';
-import {reponseParType} from './Reponse';
-import {Accordion} from 'ui/Accordion';
-import {YellowHighlight} from 'ui/Highlight';
-import {Justification} from './Justification';
+import { PointsPotentiels } from './PointsPotentiels';
+import { reponseParType } from './Reponse';
+import { Accordion } from 'ui/Accordion';
+import { Justification } from './Justification';
 
 export type TPersoPotentielQRProps = {
   /** Définition de l'action */
@@ -33,11 +32,23 @@ export type TPersoPotentielQRProps = {
  * Affiche le potentiel réduit ou augmenté ainsi que la liste des questions/réponses
  */
 export const PersoPotentielQR = (props: TPersoPotentielQRProps) => {
+  const color = 'var(--yellow-moutarde-850-200)';
   return (
     <div data-test="PersoPotentielQR">
-      <YellowHighlight>
+      <div
+        className="fr-highlight"
+        style={{
+          boxShadow: `inset 0.25rem 0 0 0 ${color}`,
+          marginLeft: 0,
+          maxWidth: 'fit-content',
+          paddingRight: '2rem',
+          paddingTop: '1rem',
+          paddingBottom: '1rem',
+          border: `1px solid ${color}`,
+        }}
+      >
         <PointsPotentiels {...props} />
-      </YellowHighlight>
+      </div>
       <QuestionReponseList {...props} variant="modal" />
     </div>
   );
@@ -55,8 +66,8 @@ export type TQuestionReponseProps = {
 
 /** Affiche une question/réponse et son éventuel libellé d'aide */
 const QuestionReponse = (props: TQuestionReponseProps) => {
-  const {qr, hasProportionDescription, variant} = props;
-  const {id, type, formulation, description} = qr;
+  const { qr, hasProportionDescription, variant } = props;
+  const { id, type, formulation, description } = qr;
   const Reponse = reponseParType[type];
 
   return (
@@ -73,7 +84,7 @@ const QuestionReponse = (props: TQuestionReponseProps) => {
             '!font-bold fr-text--lg': variant === 'modal',
           }
         )}
-        dangerouslySetInnerHTML={{__html: DOMPurify.sanitize(formulation)}}
+        dangerouslySetInnerHTML={{ __html: DOMPurify.sanitize(formulation) }}
       />
       <div className="fr-pl-2w">
         {description ? (
@@ -119,11 +130,11 @@ export type TQuestionReponseListProps = {
 
 /** Affiche la liste de questions/réponses */
 export const QuestionReponseList = (props: TQuestionReponseListProps) => {
-  const {className, questionReponses, variant, onChange} = props;
+  const { className, questionReponses, variant, onChange } = props;
   return (
     <div className={classNames('fr-form-group', className)}>
       {questionReponses.map((qr, index) => {
-        const {id} = qr;
+        const { id } = qr;
         return (
           <fieldset key={id} className="fr-fieldset !flex-col !items-stretch">
             <QuestionReponse
@@ -147,7 +158,7 @@ const hasProportionDescription = (
   index: number
 ): boolean => {
   const firstProportionIndex = questionReponses.findIndex(
-    ({type}) => type === 'proportion'
+    ({ type }) => type === 'proportion'
   );
   return index === firstProportionIndex;
 };
