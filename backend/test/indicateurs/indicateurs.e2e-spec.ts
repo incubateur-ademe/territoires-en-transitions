@@ -59,4 +59,29 @@ describe('Route de lecture / ecriture des indicateurs', () => {
         statusCode: 401,
       });
   });
+
+  it('Exporte un indicateur au format XLSX', async () => {
+    const response = await request(app.getHttpServer())
+      .post('/indicateurs/xlsx')
+      .set('Authorization', `Bearer ${yoloDodoToken}`)
+      .send({ collectiviteId: 3895, indicateurIds: [177] })
+      .expect(201)
+      .responseType('blob');
+
+    const fileName = decodeURI(
+      response.headers['content-disposition']
+        .split('filename=')[1]
+        .split(';')[0]
+    );
+
+    const body = response.body as Buffer;
+    // décommenter pour écrire le fichier
+    //    fs.writeFileSync(fileName, body);
+
+    expect(fileName).toMatch(
+      /^"CA Annonay Rhône Agglo - cae_8 - Rénovation énergétique des logements - \d{4}-\d{2}-\d{2}.*\.xlsx"$/
+    );
+    expect(body.byteLength).toBeGreaterThanOrEqual(6665);
+    expect(body.byteLength).toBeLessThanOrEqual(6670);
+  });
 });
