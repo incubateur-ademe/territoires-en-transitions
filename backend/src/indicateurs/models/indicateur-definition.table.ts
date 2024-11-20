@@ -69,3 +69,7 @@ export const minimaleIndicateurDefinitionSchema =
 export type MinimalIndicateurDefinitionType = z.infer<
   typeof minimaleIndicateurDefinitionSchema
 >;
+
+export type IndicateurDefinitionAvecEnfantsType = IndicateurDefinitionType & {
+  enfants: IndicateurDefinitionType[] | null;
+};
