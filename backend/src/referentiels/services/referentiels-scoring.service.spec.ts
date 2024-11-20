@@ -2450,6 +2450,7 @@ describe('ReferentielsScoringService', () => {
       const scoreDiff = referentielsScoringService.getScoreDiff(
         {
           actionId: 'cae_6.5.1.2.8',
+          explication: 'test explication',
           pointReferentiel: 0.338,
           pointPotentiel: 0.338,
           pointPotentielPerso: null,

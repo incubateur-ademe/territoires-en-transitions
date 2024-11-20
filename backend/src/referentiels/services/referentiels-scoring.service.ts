@@ -2105,6 +2105,7 @@ export default class ReferentielsScoringService {
         if (
           key !== 'aStatut' && // Not existing in python code
           key !== 'etoiles' && // Not existing in python code
+          key !== 'explication' && // Not existing in python code
           key !== 'renseigne' &&
           key !== 'pointPotentielPerso'
         ) {
