@@ -1,13 +1,19 @@
 import { Injectable, Logger } from '@nestjs/common';
-import { and, eq } from 'drizzle-orm';
+import { and, eq, or, isNull, inArray } from 'drizzle-orm';
 import DatabaseService from '../../common/services/database.service';
 import { partenaireTagTable } from '../models/partenaire-tag.table';
+import { categorieTagTable } from '../models/categorie-tag.table';
+import { groupementCollectiviteTable } from '../../collectivites/models/groupement-collectivite.table';
+import { TagType } from '../models/tag.table-base';
+import { AuthenticatedUser } from '../../auth/models/auth.models';
+import { AuthService } from '../../auth/services/auth.service';
 
 @Injectable()
 export default class TagService {
   private readonly logger = new Logger(TagService.name);
 
-  constructor(private readonly databaseService: DatabaseService) {}
+  constructor(private readonly databaseService: DatabaseService,
+              private readonly authService : AuthService) {}
 
   /**
    * TODO à factoriser avec les autres tags
@@ -41,5 +47,58 @@ export default class TagService {
       return toReturn[0]?.id;
     }
     return tag.id;
+  }
+
+  /**
+   * Récupère les catégories possibles pour une collectivité
+   * @param collectiviteId
+   * @param withPredefinedTags vrai pour inclure les tags prédéfinis par TeT
+   * @param tokenInfo
+   */
+  async getCategoriesByCollectivite(
+    collectiviteId: number,
+    withPredefinedTags: boolean,
+    tokenInfo: AuthenticatedUser
+  ) : Promise<TagType[]>{
+
+    // Vérifie les droits
+    await this.authService.verifieAccesRestreintCollectivite(tokenInfo, collectiviteId);
+
+    // Sous-requête pour récupérer les groupements auquel appartient la collectivité
+    const groupements = this.databaseService.db
+      .selectDistinct({
+        groupementId: groupementCollectiviteTable.groupementId,
+      })
+      .from(groupementCollectiviteTable)
+      .where(eq(groupementCollectiviteTable.collectiviteId, collectiviteId));
+
+    // Requête
+    return this.databaseService.db
+      .select({
+        id: categorieTagTable.id,
+        nom: categorieTagTable.nom,
+        collectiviteId: categorieTagTable.collectiviteId,
+      })
+      .from(categorieTagTable)
+      .where(
+        withPredefinedTags
+          // Récupère les catégories
+          // - propres à la collectivité
+          // - propres aux groupements de la collectivité
+          // - prédéfinies visibles par TeT
+          ? and(
+              or(
+                and(
+                  isNull(categorieTagTable.collectiviteId),
+                  isNull(categorieTagTable.groupementId)
+                ),
+                eq(categorieTagTable.collectiviteId, collectiviteId),
+                inArray(categorieTagTable.groupementId, groupements)
+              ),
+              eq(categorieTagTable.visible, true)
+            )
+          // Récupère seulement les catégories propres à la collectivité
+          : eq(categorieTagTable.collectiviteId, collectiviteId)
+      );
   }
 }
