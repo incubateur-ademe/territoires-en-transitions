@@ -1,34 +1,30 @@
-import {useMutation} from 'react-query';
-import {format as formatDate} from 'date-fns';
-import {supabaseClient} from 'core-logic/api/supabase';
-import {useFonctionTracker} from 'core-logic/hooks/useFonctionTracker';
-import {useCollectiviteId} from 'core-logic/hooks/params';
-import {saveBlob} from 'ui/shared/preuves/Bibliotheque/saveBlob';
-import {TIndicateurListItem} from '../types';
-import {IndicateurViewParamOption} from 'app/paths';
+import { useMutation } from 'react-query';
+import { useFonctionTracker } from 'core-logic/hooks/useFonctionTracker';
+import { useCollectiviteId } from 'core-logic/hooks/params';
+import { useApiClient } from 'core-logic/api/useApiClient';
+import { saveBlob } from 'ui/shared/preuves/Bibliotheque/saveBlob';
+import { TIndicateurListItem } from '../types';
 
-export const useExportIndicateurs = (
-  definitions?: TIndicateurListItem[],
-  view?: IndicateurViewParamOption
-) => {
+export const useExportIndicateurs = (definitions?: TIndicateurListItem[]) => {
   const tracker = useFonctionTracker();
-  const collectivite_id = useCollectiviteId();
-  const filename = useFilename(definitions, view);
+  const collectiviteId = useCollectiviteId();
+  const apiClient = useApiClient();
 
   return useMutation(
-    ['export_indicateurs', collectivite_id],
+    ['export_indicateurs', collectiviteId],
     async () => {
-      if (!collectivite_id || !definitions?.length) return;
-      const indicateur_ids = definitions.map(d => d.id);
-      const {data} = await supabaseClient.functions.invoke(
-        'export_indicateur',
+      if (!collectiviteId || !definitions?.length) return;
+      const indicateurIds = definitions.map((d) => d.id);
+      const { blob, filename } = await apiClient.getAsBlob(
         {
-          body: {collectivite_id, indicateur_ids},
-        }
+          route: '/indicateurs/xlsx',
+          params: { collectiviteId, indicateurIds },
+        },
+        'POST'
       );
 
-      if (filename && data) {
-        saveBlob(data, filename);
+      if (filename && blob) {
+        saveBlob(blob, filename);
 
         tracker({
           page: 'indicateur',
@@ -44,26 +40,4 @@ export const useExportIndicateurs = (
       },
     }
   );
-};
-
-// détermine le nom du fichier généré
-const useFilename = (
-  definitions?: TIndicateurListItem[],
-  view?: IndicateurViewParamOption
-) => {
-  const exportedAt = formatDate(new Date(), 'yyyy-MM-dd');
-
-  if (!definitions?.length) return;
-
-  if (definitions.length > 1) {
-    return `Export indicateurs ${view ? `${view} ` : ''}- ${exportedAt}.zip`;
-  }
-
-  if (definitions.length === 1) {
-    const def = definitions[0];
-    if (typeof def.id === 'number') {
-      return `${def.titre} - ${exportedAt}.xlsx`;
-    }
-    return `${def.id} - ${def.titre} - ${exportedAt}.xlsx`;
-  }
 };
