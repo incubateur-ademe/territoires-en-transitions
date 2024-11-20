@@ -5,7 +5,6 @@ import { QueryClientProvider } from '@tanstack/react-query';
 import { httpBatchLink } from '@trpc/client';
 import { createTRPCReact } from '@trpc/react-query';
 import type { inferRouterInputs, inferRouterOutputs } from '@trpc/server';
-import { getAuthHeaders } from 'core-logic/api/auth/AuthProvider';
 import { useState } from 'react';
 import { makeQueryClient } from './query-client';
 
@@ -31,7 +30,9 @@ function getQueryClient() {
 }
 
 function getUrl() {
-  return `${process.env.NEXT_PUBLIC_BACKEND_URL ?? 'http://localhost:8080'}/trpc`;
+  return `${
+    process.env.NEXT_PUBLIC_BACKEND_URL ?? 'http://localhost:8080'
+  }/trpc`;
 }
 
 export function TRPCProvider(
@@ -69,3 +70,13 @@ export function TRPCProvider(
     </trpc.Provider>
   );
 }
+
+// export async function getAuthHeaders() {
+//   const session = await getSession();
+//   return session?.access_token
+//     ? {
+//         authorization: `Bearer ${session.access_token}`,
+//         apikey: `${ENV.supabase_anon_key}`,
+//       }
+//     : null;
+// }

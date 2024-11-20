@@ -5,8 +5,8 @@ import { createTrackingClient, TrackingProvider } from '@tet/ui';
 import { ENV } from 'environmentVariables';
 import { QueryClient, QueryClientProvider } from 'react-query';
 import { ReactQueryDevtools } from 'react-query/devtools';
-import { TRPCProvider } from 'utils/trpc/client';
 import { AuthProvider } from '../core-logic/api/auth/AuthProvider';
+import { TRPCProvider } from '@tet/api/utils/trpc/client';
 
 const theme = createTheme({
   palette: {
