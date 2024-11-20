@@ -1,18 +1,15 @@
-import { InferInsertModel, InferSelectModel, sql } from 'drizzle-orm';
-import { boolean, pgTable, serial, timestamp } from 'drizzle-orm/pg-core';
+import { InferInsertModel, InferSelectModel } from 'drizzle-orm';
+import { boolean, pgTable, serial } from 'drizzle-orm/pg-core';
 import { createInsertSchema, createSelectSchema } from 'drizzle-zod';
+import { createdAt, modifiedAt } from '../../common/models/column.helpers';
 
 // TODO: create domain siren as varchar(9) check ( value ~ '^\d{9}$' );
 // TODO: create domain codegeo as varchar(5);
 
 export const collectiviteTable = pgTable('collectivite', {
   id: serial('id').primaryKey(),
-  modifiedAt: timestamp('modified_at', { withTimezone: true })
-    .default(sql.raw(`CURRENT_TIMESTAMP`))
-    .notNull(),
-  createdAt: timestamp('created_at', { withTimezone: true })
-    .default(sql.raw(`CURRENT_TIMESTAMP`))
-    .notNull(),
+  modifiedAt,
+  createdAt,
   accessRestreint: boolean('access_restreint'),
 });
 export const collectiviteSchema = createSelectSchema(collectiviteTable);

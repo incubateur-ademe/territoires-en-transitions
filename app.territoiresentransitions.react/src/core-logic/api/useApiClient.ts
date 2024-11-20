@@ -85,43 +85,30 @@ export const useApiClient = () => {
     return { blob, filename };
   };
 
-  // fait un appel POST
-  const post = async <ResponseType>({ route, params }: API_ARGS) => {
-    const response = await fetch(makeUrl({ route }), {
-      method: 'POST',
-      body: JSON.stringify(params),
-      headers: {
-        'content-type': 'application/json',
-        ...authHeaders,
-      },
-    });
-    const body = await response.json();
-    if (!response.ok) {
-      throw new ApiError(body);
-    }
-    return body as ResponseType;
-  };
-
-  const put = async <ResponseType>({ route, params }: API_ARGS) => {
-    const response = await fetch(makeUrl({ route }), {
-      method: 'PUT',
-      body: JSON.stringify(params),
-      headers: {
-        'content-type': 'application/json',
-        ...authHeaders,
-      },
-    });
-    const body = await response.json();
-    if (!response.ok) {
-      throw new ApiError(body);
-    }
-    return body as ResponseType;
-  };
+  // renvoie une fonction permettant de faire une requête d'écriture (POST ou PUT ou DELETE)
+  const createWriteRequest =
+    (method: 'POST' | 'PUT' | 'DELETE') =>
+    async <ResponseType>({ route, params }: API_ARGS) => {
+      const response = await fetch(makeUrl({ route }), {
+        method,
+        body: JSON.stringify(params),
+        headers: {
+          'content-type': 'application/json',
+          ...authHeaders,
+        },
+      });
+      const body = await response.json();
+      if (!response.ok) {
+        throw new ApiError(body);
+      }
+      return body as ResponseType;
+    };
 
   return {
     get,
     getAsBlob,
-    post,
-    put,
+    post: createWriteRequest('POST'),
+    put: createWriteRequest('PUT'),
+    delete: createWriteRequest('DELETE'),
   };
 };

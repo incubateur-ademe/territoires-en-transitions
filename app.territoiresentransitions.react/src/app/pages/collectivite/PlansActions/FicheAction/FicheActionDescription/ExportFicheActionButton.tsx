@@ -5,6 +5,7 @@ import { useIndicateurDefinitions } from '../../../Indicateurs/Indicateur/useInd
 import { useFichesActionLiees } from '../data/useFichesActionLiees';
 import { useActionListe } from '../data/options/useActionListe';
 import { useAnnexesFicheActionInfos } from '../data/useAnnexesFicheActionInfos';
+import { useFicheActionNotesSuivi } from '../data/useFicheActionNotesSuivi';
 import ExportPDFButton from 'ui/export-pdf/ExportPDFButton';
 import FicheActionPdf from '../FicheActionPdf/FicheActionPdf';
 
@@ -36,14 +37,19 @@ const FicheActionPdfContent = ({
   const { data: annexes, isLoading: isLoadingAnnexes } =
     useAnnexesFicheActionInfos(fiche.id);
 
+  const { data: notesSuivi, isLoading: isLoadingNotesSuivi } =
+    useFicheActionNotesSuivi(fiche);
+
+  const isLoading =
+    isLoadingIndicateurs ||
+    isLoadingFichesLiees ||
+    isLoadignActionsListe ||
+    isLoadingAxes ||
+    isLoadingAnnexes ||
+    isLoadingNotesSuivi;
+
   useEffect(() => {
-    if (
-      !isLoadingIndicateurs &&
-      !isLoadingFichesLiees &&
-      !isLoadignActionsListe &&
-      !isLoadingAxes &&
-      !isLoadingAnnexes
-    ) {
+    if (!isLoading) {
       const { actions } = fiche;
       const actionsIds = (actions ?? []).map((action) => action.id);
       const actionsLiees = (actionListe ?? []).filter((action) =>
@@ -60,15 +66,11 @@ const FicheActionPdfContent = ({
           fichesLiees,
           actionsLiees,
           annexes,
+          notesSuivi,
         })
       );
     }
-  }, [
-    isLoadingIndicateurs,
-    isLoadingFichesLiees,
-    isLoadignActionsListe,
-    isLoadingAxes,
-  ]);
+  }, [isLoading]);
 
   return <></>;
 };

@@ -187,12 +187,12 @@ export default class CountByService {
     }
     if (filter.modified_since) {
       const modifiedSinceDate = getModifiedSinceDate(filter.modified_since);
-      conditions.push(
-        gte(ficheActionTable.modifiedAt, modifiedSinceDate.toISOString())
-      );
+      conditions.push(gte(ficheActionTable.modifiedAt, modifiedSinceDate));
     }
     if (filter.modified_after) {
-      conditions.push(gte(ficheActionTable.modifiedAt, filter.modified_after));
+      conditions.push(
+        gte(ficheActionTable.modifiedAt, new Date(filter.modified_after))
+      );
     }
     if (filter.partenaire_tag_ids?.length) {
       // Vraiment étrange, probable bug de drizzle, on le peut pas lui donner le tableau directement

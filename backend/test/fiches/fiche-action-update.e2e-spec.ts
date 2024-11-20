@@ -3,6 +3,7 @@ import { eq } from 'drizzle-orm';
 import { default as request } from 'supertest';
 import { describe, expect, it } from 'vitest';
 import DatabaseService from '../../src/common/services/database.service';
+import { UpdateFicheActionRequestClass } from '../../src/fiches/controllers/fiches-action.controller';
 import { ficheActionActionTable } from '../../src/fiches/models/fiche-action-action.table';
 import { ficheActionAxeTable } from '../../src/fiches/models/fiche-action-axe.table';
 import { ficheActionEffetAttenduTable } from '../../src/fiches/models/fiche-action-effet-attendu.table';
@@ -16,7 +17,12 @@ import { ficheActionServiceTagTable } from '../../src/fiches/models/fiche-action
 import { ficheActionSousThematiqueTable } from '../../src/fiches/models/fiche-action-sous-thematique.table';
 import { ficheActionStructureTagTable } from '../../src/fiches/models/fiche-action-structure-tag.table';
 import { ficheActionThematiqueTable } from '../../src/fiches/models/fiche-action-thematique.table';
-import { ficheActionTable } from '../../src/fiches/models/fiche-action.table';
+import {
+  FicheActionCiblesEnumType,
+  FicheActionStatutsEnumType,
+  ficheActionTable,
+  piliersEciEnumType
+} from '../../src/fiches/models/fiche-action.table';
 import { getYoloDodoToken } from '../auth/auth-utils';
 import { getTestApp } from '../common/app-utils';
 import {
@@ -71,12 +77,13 @@ describe('FichesActionUpdateService', () => {
 
   describe('Update fiche action fields', () => {
     it('should strip irrelevant fiche action fields data', async () => {
-      const data = {
+      const data: UpdateFicheActionRequestClass = {
         titre: 'Construire des pistes cyclables',
         description:
           'Un objectif à long terme sera de construire de nombreuses pistes cyclables dans le centre-ville.',
-        niveau_priorite: 'Bas',
-        plat: 'macaroni', // irrelevant data to be stripped
+        niveauPriorite: 'Bas',
+        // @ts-expect-error irrelevant data to be stripped
+        plat: 'macaroni',
       };
 
       const response = await request(app.getHttpServer())
@@ -91,22 +98,117 @@ describe('FichesActionUpdateService', () => {
       expect(body.plat).toBeUndefined();
     });
 
-    it('should update fiche action fields', async () => {
+    it('should return 400 when invalid numeric type are provided', async () => {
+      const data: UpdateFicheActionRequestClass = {
+        budgetPrevisionnel: 'invalid_number',
+      };
+
+      const response = await request(app.getHttpServer())
+        .put(`/collectivites/${collectiviteId}/fiches-action/${ficheActionId}`)
+        .send(data)
+        .set('Authorization', `Bearer ${yoloDodoToken}`)
+        .set('Content-Type', 'application/json')
+        .expect(400);
+
+      expect(response.body).toStrictEqual({
+        message: [
+          "budgetPrevisionnel: Expected 'budgetPrevisionnel' to be a numeric string",
+        ],
+        error: 'Bad Request',
+        statusCode: 400,
+      });
+    });
+
+    it('should return 400 for invalid date format in dateDebut', async () => {
+      const data: UpdateFicheActionRequestClass = { dateDebut: 'not-a-date' };
+
+      const response = await request(app.getHttpServer())
+        .put(`/collectivites/${collectiviteId}/fiches-action/${ficheActionId}`)
+        .send(data)
+        .set('Authorization', `Bearer ${yoloDodoToken}`)
+        .set('Content-Type', 'application/json')
+        .expect(400);
+
+      expect(response.body).toStrictEqual({
+        message: ["dateDebut: Invalid date format for 'dateDebut'"],
+        error: 'Bad Request',
+        statusCode: 400,
+      });
+    });
+
+    it('should return 400 for invalid boolean type in ameliorationContinue', async () => {
       const data = {
+        ameliorationContinue: 'not-a-boolean',
+      };
+
+      const response = await request(app.getHttpServer())
+        .put(`/collectivites/${collectiviteId}/fiches-action/${ficheActionId}`)
+        .send(data)
+        .set('Authorization', `Bearer ${yoloDodoToken}`)
+        .set('Content-Type', 'application/json')
+        .expect(400);
+
+      expect(response.body).toStrictEqual({
+        message: ['ameliorationContinue: Expected boolean, received string'],
+        error: 'Bad Request',
+        statusCode: 400,
+      });
+    });
+
+    it('should return 404 when updating a non-existent ficheAction', async () => {
+      const nonExistentFicheActionId = 121212;
+      const data: UpdateFicheActionRequestClass = {
+        titre: 'New Titre',
+      };
+
+      const response = await request(app.getHttpServer())
+        .put(
+          `/collectivites/${collectiviteId}/fiches-action/${nonExistentFicheActionId}`
+        )
+        .send(data)
+        .set('Authorization', `Bearer ${yoloDodoToken}`)
+        .set('Content-Type', 'application/json')
+        .expect(404);
+
+      expect(response.body).toStrictEqual({
+        message: 'Fiche action not found',
+        error: 'Not Found',
+        statusCode: 404,
+      });
+    });
+
+    it('should return 400 if the body is empty', async () => {
+      const data = {};
+      const response = await putRequest(data);
+
+      expect(response.status).toBe(400);
+      expect(response.body.message[0]).toMatch(/cannot be empty/);
+    });
+
+    it('should update fiche action fields', async () => {
+      const data: UpdateFicheActionRequestClass = {
         collectiviteId: 1,
         titre: 'Construire des pistes cyclables',
         description:
           'Un objectif à long terme sera de construire de nombreuses pistes cyclables dans le centre-ville.',
-        niveau_priorite: 'Bas',
-        piliersEci: ['Approvisionnement durable', 'Écoconception'],
+        dateDebut: '2024-11-14 00:00:00+00',
+        dateFinProvisoire: '2025-09-10 00:00:00+00',
+        instanceGouvernance: null,
+        niveauPriorite: 'Bas',
+        piliersEci: [
+          piliersEciEnumType.APPROVISIONNEMENT_DURABLE,
+          piliersEciEnumType.ECOCONCEPTION,
+        ],
         objectifs:
           'Diminution de 15% de la consommation de feuilles de papier / Indicateurs : Nombre de papiers',
-        cibles: ['Grand public et associations', 'Agents'],
+        cibles: [
+          FicheActionCiblesEnumType.GRAND_PUBLIC,
+          FicheActionCiblesEnumType.ASSOCIATIONS,
+        ],
         ressources: 'Service numérique',
         financements: 'De 40 000€ à 100 000€',
         budgetPrevisionnel: '35000',
-        statut: 'En pause',
-        niveauPriorite: 'Bas',
+        statut: FicheActionStatutsEnumType.EN_PAUSE,
         ameliorationContinue: false,
         calendrier: 'Calendrier prévisionnel',
         notesComplementaires: 'Vive le vélo !',
@@ -125,112 +227,22 @@ describe('FichesActionUpdateService', () => {
         .set('Content-Type', 'application/json')
         .expect(200);
 
-      const body = response.body;
+      const unFilteredBody = response.body;
 
-      expect(body.titre).toBe('Construire des pistes cyclables');
-      expect(body.description).toBe(
-        'Un objectif à long terme sera de construire de nombreuses pistes cyclables dans le centre-ville.'
-      );
-      expect(body.niveauPriorite).toBe('Bas');
-      expect(body.piliersEci).toEqual([
-        'Approvisionnement durable',
-        'Écoconception',
-      ]);
-      expect(body.objectifs).toBe(
-        'Diminution de 15% de la consommation de feuilles de papier / Indicateurs : Nombre de papiers'
-      );
-      expect(body.cibles).toEqual(['Grand public et associations', 'Agents']);
-      expect(body.ressources).toBe('Service numérique');
-      expect(body.financements).toBe('De 40 000€ à 100 000€');
-      expect(body.budgetPrevisionnel).toBe('35000');
-      expect(body.statut).toBe('En pause');
-      expect(body.ameliorationContinue).toBe(false);
-      expect(body.calendrier).toBe('Calendrier prévisionnel');
-      expect(body.notesComplementaires).toBe('Vive le vélo !');
-      expect(body.majTermine).toBe(true);
-      expect(body.collectiviteId).toBe(1);
-      expect(body.restreint).toBe(false);
-      expect(body.tempsDeMiseEnOeuvre).toBe(1);
-      expect(body.participationCitoyenne).toBe(
-        'La participation citoyenne a été approuvée en réunion plénière'
-      );
-      expect(body.participationCitoyenneType).toBe('Information');
-    });
-
-    it('should return 400 when invalid numeric type are provided', async () => {
-      const data = {
-        budgetPrevisionnel: 'invalid_number',
-      };
-
-      await request(app.getHttpServer())
-        .put(`/collectivites/${collectiviteId}/fiches-action/${ficheActionId}`)
-        .send(data)
-        .set('Authorization', `Bearer ${yoloDodoToken}`)
-        .set('Content-Type', 'application/json')
-        .expect(400);
-    });
-
-    it('should return 400 for invalid date format in dateDebut', async () => {
-      const data = { dateDebut: 'not-a-date' };
-
-      await request(app.getHttpServer())
-        .put(`/collectivites/${collectiviteId}/fiches-action/${ficheActionId}`)
-        .send(data)
-        .set('Authorization', `Bearer ${yoloDodoToken}`)
-        .set('Content-Type', 'application/json')
-        .expect(400);
-    });
-
-    it('should return 400 for non-array type in resultatsAttendus', async () => {
-      const data = { resultatsAttendus: 'this-should-be-an-array' };
-
-      await request(app.getHttpServer())
-        .put(`/collectivites/${collectiviteId}/fiches-action/${ficheActionId}`)
-        .send(data)
-        .set('Authorization', `Bearer ${yoloDodoToken}`)
-        .set('Content-Type', 'application/json')
-        .expect(400);
-    });
-
-    it('should return 400 for invalid boolean type in ameliorationContinue', async () => {
-      const data = { ameliorationContinue: 'not-a-boolean' };
-
-      await request(app.getHttpServer())
-        .put(`/collectivites/${collectiviteId}/fiches-action/${ficheActionId}`)
-        .send(data)
-        .set('Authorization', `Bearer ${yoloDodoToken}`)
-        .set('Content-Type', 'application/json')
-        .expect(400);
-    });
-
-    it('should return 404 when updating a non-existent ficheAction', async () => {
-      const nonExistentFicheActionId = 121212;
-      const data = {
-        titre: 'New Titre',
-      };
-
-      await request(app.getHttpServer())
-        .put(
-          `/collectivites/${collectiviteId}/fiches-action/${nonExistentFicheActionId}`
+      const body = Object.fromEntries(
+        Object.entries(unFilteredBody).filter(
+          ([key]) =>
+            !['id', 'createdAt', 'modifiedAt', 'modifiedBy'].includes(key)
         )
-        .send(data)
-        .set('Authorization', `Bearer ${yoloDodoToken}`)
-        .set('Content-Type', 'application/json')
-        .expect(404);
-    });
+      );
 
-    it('should return 400 if the body is empty', async () => {
-      const data = {};
-      const response = await putRequest(data);
-
-      expect(response.status).toBe(400);
-      expect(response.body.message[0]).toMatch(/cannot be empty/);
+      expect(body).toStrictEqual(data);
     });
   });
 
   describe('Update relations', () => {
     it('should update the axes relations in the database', async () => {
-      const data = {
+      const data: UpdateFicheActionRequestClass = {
         axes: [{ id: 1 }, { id: 2 }],
       };
 
@@ -251,7 +263,7 @@ describe('FichesActionUpdateService', () => {
     });
 
     it('should update the thematiques relations in the database', async () => {
-      const data = {
+      const data: UpdateFicheActionRequestClass = {
         thematiques: [{ id: 1 }, { id: 2 }],
       };
 
@@ -272,7 +284,7 @@ describe('FichesActionUpdateService', () => {
     });
 
     it('should update the sousThematiques relations in the database', async () => {
-      const data = {
+      const data: UpdateFicheActionRequestClass = {
         sousThematiques: [{ id: 3 }, { id: 4 }],
       };
 
@@ -293,7 +305,7 @@ describe('FichesActionUpdateService', () => {
     });
 
     it('should update the partenaires relations in the database', async () => {
-      const data = {
+      const data: UpdateFicheActionRequestClass = {
         partenaires: [{ id: 1 }, { id: 2 }],
       };
 
@@ -314,7 +326,7 @@ describe('FichesActionUpdateService', () => {
     });
 
     it('should update the structures relations in the database', async () => {
-      const data = {
+      const data: UpdateFicheActionRequestClass = {
         structures: [{ id: 1 }, { id: 2 }],
       };
 
@@ -335,17 +347,13 @@ describe('FichesActionUpdateService', () => {
     });
 
     it('should update the pilotes relations in the database', async () => {
-      const data = {
+      const data: UpdateFicheActionRequestClass = {
         pilotes: [
           {
-            nom: 'Donald Duck',
-            collectiviteId: 5460,
             tagId: 1,
             userId: '3f407fc6-3634-45ff-a988-301e9088096a',
           },
           {
-            nom: 'Mickey Mouse',
-            collectiviteId: 5460,
             tagId: 9,
             userId: '4ecc7d3a-7484-4a1c-8ac8-930cdacd2561',
           },
@@ -371,7 +379,7 @@ describe('FichesActionUpdateService', () => {
     });
 
     it('should update the financeurs relations in the database', async () => {
-      const data = {
+      const data: UpdateFicheActionRequestClass = {
         financeurs: [
           {
             financeurTag: {
@@ -401,7 +409,7 @@ describe('FichesActionUpdateService', () => {
     });
 
     it('should update the actions relations in the database', async () => {
-      const data = {
+      const data: UpdateFicheActionRequestClass = {
         actions: [{ id: 'cae_1.1.1' }, { id: 'cae_1.1.2' }],
       };
 
@@ -416,7 +424,7 @@ describe('FichesActionUpdateService', () => {
     });
 
     it('should update the indicateurs relations in the database', async () => {
-      const data = {
+      const data: UpdateFicheActionRequestClass = {
         indicateurs: [{ id: 13 }, { id: 14 }],
       };
 
@@ -431,7 +439,7 @@ describe('FichesActionUpdateService', () => {
     });
 
     it('should update the services relations in the database', async () => {
-      const data = {
+      const data: UpdateFicheActionRequestClass = {
         services: [{ id: 1 }, { id: 2 }],
       };
 
@@ -446,7 +454,7 @@ describe('FichesActionUpdateService', () => {
     });
 
     it('should update the fichesLiees relations in the database', async () => {
-      const data = {
+      const data: UpdateFicheActionRequestClass = {
         fichesLiees: [{ id: 1 }, { id: 2 }],
       };
 
@@ -461,7 +469,7 @@ describe('FichesActionUpdateService', () => {
     });
 
     it('should update the resultatAttendu relations in the database', async () => {
-      const data = {
+      const data: UpdateFicheActionRequestClass = {
         resultatsAttendus: [
           {
             id: 21,
@@ -484,8 +492,8 @@ describe('FichesActionUpdateService', () => {
   });
 
   describe('Access Rights', () => {
-    it('should return 401 if an unauthorized user tries to update a fiche action', async () => {
-      const data = {
+    it('should return 401 if an invalid token is provided', async () => {
+      const data: UpdateFicheActionRequestClass = {
         titre: 'Tentative de mise à jour sans droits',
       };
 
@@ -497,8 +505,41 @@ describe('FichesActionUpdateService', () => {
         .expect(401);
     });
 
-    it('should allow authorized user to update fiche action', async () => {
-      const data = {
+    it('should not allow update if fiche action is not in user‘s collectivite', async () => {
+      await databaseService.db
+        .insert(ficheActionTable)
+        .values({ ...ficheActionFixture, id: 10000, collectiviteId: 3 });
+
+      const data: UpdateFicheActionRequestClass = {
+        titre: 'Construire des pistes cyclables',
+      };
+
+      const response = await request(app.getHttpServer())
+        .put(`/collectivites/${collectiviteId}/fiches-action/10000`)
+        .send(data)
+        .set('Authorization', `Bearer ${yoloDodoToken}`)
+        .set('Content-Type', 'application/json')
+        .expect(401);
+
+      const body = response.body;
+
+      expect(body).toStrictEqual({
+        message: 'Droits insuffisants',
+        error: 'Unauthorized',
+        statusCode: 401,
+      });
+
+      await databaseService.db
+        .delete(ficheActionTable)
+        .where(eq(ficheActionTable.id, 10000));
+    });
+
+    it('should allow update if fiche action is in user‘s collectivite', async () => {
+      await databaseService.db
+        .insert(ficheActionTable)
+        .values({ ...ficheActionFixture, id: 10000, collectiviteId: 1 });
+
+      const data: UpdateFicheActionRequestClass = {
         titre: 'Titre mis à jour par une utilisatrice autorisée',
       };
 
@@ -512,6 +553,10 @@ describe('FichesActionUpdateService', () => {
       expect(response.body.titre).toBe(
         'Titre mis à jour par une utilisatrice autorisée'
       );
+
+      await databaseService.db
+        .delete(ficheActionTable)
+        .where(eq(ficheActionTable.id, 10000));
     });
   });
 

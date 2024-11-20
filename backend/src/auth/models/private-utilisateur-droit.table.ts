@@ -1,15 +1,14 @@
-import { InferInsertModel, InferSelectModel, sql } from 'drizzle-orm';
+import { InferInsertModel, InferSelectModel } from 'drizzle-orm';
 import {
   boolean,
   integer,
   pgEnum,
   pgTable,
   serial,
-  timestamp,
   uuid,
 } from 'drizzle-orm/pg-core';
 import { collectiviteTable } from '../../collectivites/models/collectivite.table';
-import { default as jwt } from 'jsonwebtoken';
+import { createdAt, modifiedAt } from '../../common/models/column.helpers';
 
 export enum NiveauAcces {
   LECTURE = 'lecture',
@@ -30,12 +29,8 @@ export const utilisateurDroitTable = pgTable('private_utilisateur_droit', {
   collectiviteId: integer('collectivite_id')
     .notNull()
     .references(() => collectiviteTable.id),
-  createdAt: timestamp('created_at', { withTimezone: true })
-    .default(sql.raw(`CURRENT_TIMESTAMP`))
-    .notNull(),
-  modifiedAt: timestamp('modified_at', { withTimezone: true }).default(
-    sql.raw(`CURRENT_TIMESTAMP`)
-  ),
+  createdAt,
+  modifiedAt,
   active: boolean('active').notNull(),
   niveauAcces: niveauAccessEnum('niveau_acces')
     .notNull()

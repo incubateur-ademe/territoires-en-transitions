@@ -1,4 +1,8 @@
-import { FicheAction, FicheResume } from '@tet/api/plan-actions';
+import {
+  FicheAction,
+  FicheActionNote,
+  FicheResume,
+} from '@tet/api/plan-actions';
 import { TActionStatutsRow, TAxeRow } from 'types/alias';
 import { IndicateurDefinition } from '@tet/api/indicateurs/domain';
 import { AnnexeInfo } from '../data/useAnnexesFicheActionInfos';
@@ -15,6 +19,7 @@ import Indicateurs from './Indicateurs';
 import Notes from './Notes';
 import Planning from './Planning';
 import Documents from './Documents';
+import NotesDeSuivi from './NotesDeSuivi';
 
 export type FicheActionPdfProps = {
   fiche: FicheAction;
@@ -26,6 +31,7 @@ export type FicheActionPdfExtendedProps = FicheActionPdfProps & {
   fichesLiees: FicheResume[];
   actionsLiees: TActionStatutsRow[];
   annexes: AnnexeInfo[] | undefined;
+  notesSuivi: FicheActionNote[] | undefined;
 };
 
 const FicheActionPdf = ({
@@ -35,6 +41,7 @@ const FicheActionPdf = ({
   fichesLiees,
   actionsLiees,
   annexes,
+  notesSuivi,
 }: FicheActionPdfExtendedProps) => {
   const { titre } = fiche;
 
@@ -71,6 +78,9 @@ const FicheActionPdf = ({
 
       {/* Indicateurs */}
       <Indicateurs fiche={fiche} indicateursListe={indicateursListe} />
+
+      {/* Notes de suivi */}
+      <NotesDeSuivi notesSuivi={notesSuivi} />
 
       {/* Budget */}
       <Budget fiche={fiche} />

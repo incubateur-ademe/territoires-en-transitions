@@ -5,6 +5,7 @@ import FichesLieesTab from './FichesLiees/FichesLieesTab';
 import ActionsLieesTab from './ActionsLiees/ActionsLieesTab';
 import NotesEtDocumentsTab from './NotesEtDocuments/NotesEtDocumentsTab';
 import { FicheAction } from '@tet/api/plan-actions';
+import NotesDeSuiviTab from './NotesDeSuivi/NotesDeSuiviTab';
 
 type FicheActionOngletsProps = {
   fiche: FicheAction;
@@ -26,10 +27,8 @@ const FicheActionOnglets = ({
   return (
     <Tabs
       className={className}
-      tabsListClassName="lg:!justify-start lg:pl-0 lg:flex-nowrap lg:overflow-x-auto"
+      tabsListClassName="!justify-start pl-0 flex-nowrap overflow-x-scroll"
     >
-      {/* TODO: Tâches */}
-
       {/* Indicateurs de suivi */}
       <Tab label="Indicateurs de suivi">
         <IndicateursTab
@@ -40,7 +39,12 @@ const FicheActionOnglets = ({
         />
       </Tab>
 
-      {/* TODO: Notes de suivi */}
+      {/* TODO: Tâches */}
+
+      {/* Notes de suivi */}
+      <Tab label="Notes de suivi">
+        <NotesDeSuiviTab isReadonly={isReadonly} fiche={fiche} />
+      </Tab>
 
       {/* Budget */}
       <Tab label="Budget">

@@ -1,4 +1,5 @@
 import { Injectable, Logger } from '@nestjs/common';
+import { aliasedTable, desc, eq } from 'drizzle-orm';
 import DatabaseService from '../../common/services/database.service';
 import {
   CreateFicheActionType,
@@ -12,15 +13,65 @@ import { ficheActionEffetAttenduTable } from '../models/fiche-action-effet-atten
 import { ficheActionIndicateurTable } from '../models/fiche-action-indicateur.table';
 import { ficheActionSousThematiqueTable } from '../models/fiche-action-sous-thematique.table';
 import { ficheActionThematiqueTable } from '../models/fiche-action-thematique.table';
+import { ficheActionNoteTable } from '../models/fiche-action-note.table';
+import { AuthService } from '../../auth/services/auth.service';
+import { SupabaseJwtPayload } from '../../auth/models/supabase-jwt.models';
+import { NiveauAcces } from '../../auth/models/private-utilisateur-droit.table';
+import { dcpTable } from '../../auth/models/dcp.table';
 
 @Injectable()
 export default class FicheService {
   private readonly logger = new Logger(FicheService.name);
 
   constructor(
+    private readonly authService: AuthService,
     private readonly databaseService: DatabaseService,
     private readonly tagService: TagService
   ) {}
+
+  /** Renvoi une fiche à partir de son id */
+  async getFicheFromId(ficheId: number) {
+    const rows = await this.databaseService.db
+      .select()
+      .from(ficheActionTable)
+      .where(eq(ficheActionTable.id, ficheId));
+    return rows?.[0] ?? null;
+  }
+
+  /** Détermine si un utilisateur peut lire une fiche */
+  async canReadFiche(
+    ficheId: number,
+    tokenInfo: SupabaseJwtPayload
+  ): Promise<boolean> {
+    const fiche = await this.getFicheFromId(ficheId);
+    if (fiche === null) return false;
+    if (fiche.restreint) {
+      const canRead = await this.authService.verifieAccesAuxCollectivites(
+        tokenInfo,
+        [fiche.collectiviteId],
+        NiveauAcces.LECTURE
+      );
+      return canRead || this.authService.estSupport(tokenInfo);
+    }
+    return this.authService.verifieAccesRestreintCollectivite(
+      tokenInfo,
+      fiche.collectiviteId
+    );
+  }
+
+  /** Détermine si un utilisateur peut modifier une fiche */
+  async canWriteFiche(
+    ficheId: number,
+    tokenInfo: SupabaseJwtPayload
+  ): Promise<boolean> {
+    const fiche = await this.getFicheFromId(ficheId);
+    if (fiche === null) return false;
+    return this.authService.verifieAccesAuxCollectivites(
+      tokenInfo,
+      [fiche.collectiviteId],
+      NiveauAcces.EDITION
+    );
+  }
 
   /**
    * Crée une fiche action
@@ -145,5 +196,40 @@ export default class FicheService {
       ficheId: ficheId,
       actionImpactId: actionId,
     });
+  }
+
+  /** Lit les notes de suivi attachées à la fiche */
+  async getNotes(ficheId: number, tokenInfo: SupabaseJwtPayload) {
+    const canRead = await this.canReadFiche(ficheId, tokenInfo);
+    if (!canRead) return false;
+
+    const createdByDCP = aliasedTable(dcpTable, 'createdByDCP');
+    const modifiedByDCP = aliasedTable(dcpTable, 'modifiedByDCP');
+    const rows = await this.databaseService.db
+      .select({
+        note: ficheActionNoteTable.note,
+        dateNote: ficheActionNoteTable.dateNote,
+        createdAt: ficheActionNoteTable.createdAt,
+        modifiedAt: ficheActionNoteTable.modifiedAt,
+        createdByDCP,
+        modifiedByDCP,
+      })
+      .from(ficheActionNoteTable)
+      .leftJoin(
+        createdByDCP,
+        eq(createdByDCP.userId, ficheActionNoteTable.createdBy)
+      )
+      .leftJoin(
+        modifiedByDCP,
+        eq(modifiedByDCP.userId, ficheActionNoteTable.modifiedBy)
+      )
+      .where(eq(ficheActionNoteTable.ficheId, ficheId))
+      .orderBy(desc(ficheActionNoteTable.dateNote));
+
+    return rows.map(({ createdByDCP, modifiedByDCP, ...otherCols }) => ({
+      ...otherCols,
+      createdBy: `${createdByDCP?.prenom} ${createdByDCP?.nom}`,
+      modifiedBy: `${modifiedByDCP?.prenom} ${modifiedByDCP?.nom}`,
+    }));
   }
 }

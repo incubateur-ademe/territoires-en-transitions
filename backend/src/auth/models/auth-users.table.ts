@@ -1,16 +1,13 @@
 import { pgSchema } from 'drizzle-orm/pg-core';
-import { timestamp, uuid, varchar } from 'drizzle-orm/pg-core';
+import { uuid, varchar } from 'drizzle-orm/pg-core';
+import { createdAt } from '../../common/models/column.helpers';
 
 export const authSchemaDB = pgSchema('auth');
 
 export const authUsersTable = authSchemaDB.table('users', {
   id: uuid('user_id').primaryKey().notNull(),
   email: varchar('email', { length: 255 }),
-  createdAt: timestamp('created_at', { withTimezone: true, mode: 'string' }),
-  lastSignInAt: timestamp('last_sign_in_at', {
-    withTimezone: true,
-    mode: 'string'
-  })
+  createdAt,
 
   /*
   TODO

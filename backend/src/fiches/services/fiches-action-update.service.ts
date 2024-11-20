@@ -1,5 +1,6 @@
 import { Injectable, Logger, NotFoundException } from '@nestjs/common';
 import {
+  and,
   Column,
   ColumnBaseConfig,
   ColumnDataType,
@@ -12,6 +13,12 @@ import { PostgresJsQueryResultHKT } from 'drizzle-orm/postgres-js';
 import { toCamel } from 'postgres';
 import { AuthenticatedUser } from '../../auth/models/authenticated-user.models';
 import DatabaseService from '../../common/services/database.service';
+import { buildConflictUpdateColumns } from '../../common/services/conflict.helper';
+import FicheService from './fiche.service';
+import {
+  ficheActionTable,
+  updateFicheActionSchema,
+} from '../models/fiche-action.table';
 import { ficheActionActionTable } from '../models/fiche-action-action.table';
 import { ficheActionAxeTable } from '../models/fiche-action-axe.table';
 import { ficheActionEffetAttenduTable } from '../models/fiche-action-effet-attendu.table';
@@ -23,13 +30,13 @@ import { ficheActionPiloteTable } from '../models/fiche-action-pilote.table';
 import { ficheActionReferentTable } from '../models/fiche-action-referent.table';
 import { ficheActionServiceTagTable } from '../models/fiche-action-service-tag.table';
 import { ficheActionSousThematiqueTable } from '../models/fiche-action-sous-thematique.table';
-import { ficheActionStructureTagTable } from '../models/fiche-action-structure-tag.table';
 import { ficheActionThematiqueTable } from '../models/fiche-action-thematique.table';
-import {
-  ficheActionTable,
-  updateFicheActionSchema,
-} from '../models/fiche-action.table';
+import { ficheActionStructureTagTable } from '../models/fiche-action-structure-tag.table';
 import { UpdateFicheActionRequestType } from '../models/update-fiche-action.request';
+import {
+  ficheActionNoteTable,
+  UpsertFicheActionNoteType,
+} from '../models/fiche-action-note.table';
 
 type TxType = PgTransaction<
   PostgresJsQueryResultHKT,
@@ -60,13 +67,18 @@ type RelationObjectType =
 export default class FichesActionUpdateService {
   private readonly logger = new Logger(FichesActionUpdateService.name);
 
-  constructor(private readonly databaseService: DatabaseService) {}
+  constructor(
+    private readonly databaseService: DatabaseService,
+    private readonly ficheService: FicheService
+  ) {}
 
   async updateFicheAction(
     ficheActionId: number,
     body: UpdateFicheActionRequestType,
     user: AuthenticatedUser
   ) {
+    await this.ficheService.canWriteFiche(ficheActionId, tokenInfo);
+
     this.logger.log(
       `Mise à jour de la fiche action dont l'id est ${ficheActionId}`
     );
@@ -397,5 +409,65 @@ export default class FichesActionUpdateService {
       financeurTagId: financeur.financeurTag.id,
       montantTtc: financeur.montantTtc,
     }));
+  }
+
+  /** Insère ou met à jour des notes de suivi */
+  async upsertNotes(
+    ficheId: number,
+    notes: UpsertFicheActionNoteType[],
+    tokenInfo: SupabaseJwtPayload
+  ) {
+    this.logger.log(
+      `Vérifie les droits avant de mettre à jour les notes de la fiche ${ficheId}`
+    );
+
+    const canWrite = await this.ficheService.canWriteFiche(ficheId, tokenInfo);
+    if (!canWrite) return false;
+
+    this.logger.log(`Met à jour les notes de la fiche ${ficheId}`);
+    return this.databaseService.db
+      .insert(ficheActionNoteTable)
+      .values(
+        notes.map((note) => ({
+          ...note,
+          ficheId,
+          createdBy: tokenInfo.sub,
+          modifiedBy: tokenInfo.sub,
+        }))
+      )
+      .onConflictDoUpdate({
+        target: [ficheActionNoteTable.ficheId, ficheActionNoteTable.dateNote],
+        set: buildConflictUpdateColumns(ficheActionNoteTable, [
+          'note',
+          'modifiedAt',
+          'modifiedBy',
+        ]),
+      });
+  }
+
+  /** Supprime une note */
+  async deleteNote(
+    ficheId: number,
+    dateNote: string,
+    tokenInfo: SupabaseJwtPayload
+  ) {
+    this.logger.log(
+      `Vérifie les droits avant de supprimer la note datée ${dateNote} de la fiche ${ficheId}`
+    );
+
+    const canWrite = await this.ficheService.canWriteFiche(ficheId, tokenInfo);
+    if (!canWrite) return false;
+
+    this.logger.log(
+      `Supprime la note datée ${dateNote} de la fiche ${ficheId}`
+    );
+    return this.databaseService.db
+      .delete(ficheActionNoteTable)
+      .where(
+        and(
+          eq(ficheActionNoteTable.ficheId, ficheId),
+          eq(ficheActionNoteTable.dateNote, dateNote)
+        )
+      );
   }
 }

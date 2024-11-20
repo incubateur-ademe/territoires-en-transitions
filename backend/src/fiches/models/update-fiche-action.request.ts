@@ -27,8 +27,8 @@ const financeurSchema = financeurTagSchema.pick({ id: true }).extend({
 });
 
 const financeurWithMontantSchema = z.object({
-  financeurTag: financeurSchema.optional(),
-  montantTtc: z.number().optional(),
+  financeurTag: financeurSchema.nullish(),
+  montantTtc: z.number().nullish(),
 });
 
 export const updateFicheActionRequestSchema = updateFicheActionSchema

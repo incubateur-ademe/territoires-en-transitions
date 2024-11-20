@@ -2,7 +2,6 @@
 
 BEGIN;
 
-select has_function_privilege('evaluation.evaluation_payload(integer, referentiel)', 'execute');
-
+SELECT 1/COUNT(*) FROM evaluation.service_regles;
 
 ROLLBACK;

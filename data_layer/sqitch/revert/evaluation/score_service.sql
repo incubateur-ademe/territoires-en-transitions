@@ -2,34 +2,13 @@
 
 BEGIN;
 
-create or replace function
-    evaluation.evaluation_payload(
-    in collectivite_id integer,
-    in referentiel referentiel,
-    out referentiel jsonb,
-    out statuts jsonb,
-    out consequences jsonb
-)
+create or replace view evaluation.service_regles
 as
-$$
-with statuts as (select s.data
-                 from evaluation.service_statuts s
-                 where s.referentiel = evaluation_payload.referentiel
-                   and s.collectivite_id = evaluation_payload.collectivite_id),
-     consequences as ( -- on ne garde que les conséquences du référentiel concerné
-         select jsonb_object_agg(tuple.key, tuple.value) as filtered
-         from personnalisation_consequence pc
-                  join jsonb_each(pc.consequences) tuple on true
-                  join action_relation ar on tuple.key = ar.id
-         where pc.collectivite_id = evaluation_payload.collectivite_id
-           and ar.referentiel = evaluation_payload.referentiel)
-select r.data                                        as referentiel,
-       coalesce(s.data, to_jsonb('{}'::jsonb[]))     as statuts,
-       coalesce(c.filtered, to_jsonb('{}'::jsonb[])) as consequences
-from evaluation.service_referentiel as r
-         left join statuts s on true
-         left join consequences c on true
-where r.referentiel = evaluation_payload.referentiel
-$$ language sql stable;
+select action_id,
+       jsonb_agg(jsonb_build_object('type', pr.type, 'formule', formule)) as regles
+from personnalisation_regle pr
+group by action_id;
+comment on view evaluation.service_regles
+    is 'Les règles qui s''appliquent aux actions au format JSON, inclues dans les payload envoyées au service.';
 
 COMMIT;

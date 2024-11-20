@@ -1,17 +1,17 @@
 import { Injectable, Logger, UnauthorizedException } from '@nestjs/common';
-import { and, eq, inArray, SQL, SQLWrapper } from 'drizzle-orm';
-import CollectivitesService from '../../collectivites/services/collectivites.service';
+import CollectivitesService from '@tet/backend/collectivites/services/collectivites.service';
+import { and, eq, inArray, sql, SQL, SQLWrapper } from 'drizzle-orm';
 import DatabaseService from '../../common/services/database.service';
+import {
+  AuthenticatedUser,
+  UserRole,
+} from '../models/authenticated-user.models';
 import {
   NiveauAcces,
   niveauAccessOrdonne,
   utilisateurDroitTable,
   UtilisateurDroitType,
 } from '../models/private-utilisateur-droit.table';
-import {
-  AuthenticatedUser,
-  UserRole,
-} from '../models/authenticated-user.models';
 import { utilisateurSupportTable } from '../models/utilisateur-support.table';
 import { utilisateurVerifieTable } from '../models/utilisateur-verifie.table';
 
@@ -186,8 +186,10 @@ export class AuthService {
             user,
             [collectiviteId],
             NiveauAcces.LECTURE,
-            doNotThrow
-          )) || (await this.estSupport(user)); // TODO || private.est_auditeur(collectivite_id)
+            true
+          )) ||
+          (await this.estSupport(user)) ||
+          (await this.estAuditeur(user, collectiviteId));
       } else {
         // Si la collectivité n'est pas en accès restreint, l'utilisateur doit :
         // être vérifié, ou s'il ne l'est pas, avoir un droit en lecture sur la collectivité.
@@ -197,13 +199,39 @@ export class AuthService {
             user,
             [collectiviteId],
             NiveauAcces.LECTURE,
-            doNotThrow
+            true
           ));
       }
       if (!authorise && !doNotThrow) {
         throw new UnauthorizedException(`Droits insuffisants`);
       }
       return authorise;
+    }
+    return false;
+  }
+
+  /**
+   * Vérifie que l'utilisateur est un auditeur de la collectivité
+   * TODO à modifier avec les tables liées aux labellisations
+   * @param tokenInfo token de l'utilisateur
+   * @param collectiviteId identifiant de la collectivité
+   */
+  async estAuditeur(
+    user: AuthenticatedUser,
+    collectiviteId: number
+  ): Promise<boolean> {
+    const userId = user.id;
+    if (user.role === UserRole.AUTHENTICATED && userId) {
+      const result = await this.databaseService.db.execute(
+        sql`SELECT *
+           FROM audit_auditeur aa
+           JOIN labellisation.audit a ON aa.audit_id = a.id
+           WHERE a.date_debut IS NOT NULL
+             AND a.clos IS FALSE
+             AND a.collectivite_id = ${collectiviteId}
+             AND aa.auditeur = ${userId}`
+      );
+      return result?.length > 0 || false;
     }
     return false;
   }
