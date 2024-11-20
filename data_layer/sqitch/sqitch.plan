@@ -779,3 +779,4 @@ plan_action/fiches [plan_action/fiches@v4.28.0] 2024-11-25T17:04:51Z System Admi
 @v4.28.1 2024-11-25T18:42:06Z System Administrator <root@MacBook-Air-de-Eli.local> # Tag en v4.28.1
 
 plan_action/fiche_action_etape 2024-11-21T13:40:26Z Amandine <ours@ours> # Ajoute des etapes aux fiches actions
+labellisation/audit [labellisation/audit@v4.27.1] 2024-11-20T13:56:04Z Amandine <ours@ours> # Corrige la fonction labellisation_peut_commencer_audit qui prenait à tord une demander 1ère étoile pour l'audit en cours
