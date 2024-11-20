@@ -1,7 +1,9 @@
 import { Injectable, Logger } from '@nestjs/common';
 import {
+  aliasedTable,
   and,
   eq,
+  getTableColumns,
   gte,
   inArray,
   isNotNull,
@@ -12,6 +14,7 @@ import {
   SQL,
   SQLWrapper,
 } from 'drizzle-orm';
+import { objectToCamel } from 'ts-case-convert';
 import { groupBy, partition } from 'es-toolkit';
 import * as _ from 'lodash';
 import { AuthenticatedUser, AuthRole } from '../../auth/models/auth.models';
@@ -22,6 +25,7 @@ import { DeleteIndicateursValeursRequestType } from '../models/delete-indicateur
 import { GetIndicateursValeursRequestType } from '../models/get-indicateurs.request';
 import { GetIndicateursValeursResponseType } from '../models/get-indicateurs.response';
 import {
+  IndicateurDefinitionAvecEnfantsType,
   indicateurDefinitionTable,
   IndicateurDefinitionType,
   MinimalIndicateurDefinitionType,
@@ -40,6 +44,7 @@ import {
   indicateurValeurTable,
   IndicateurValeurType,
 } from '../models/indicateur-valeur.table';
+import { indicateurGroupeTable } from '../models/indicateur-groupe.table';
 
 @Injectable()
 export default class IndicateursService {
@@ -288,6 +293,54 @@ export default class IndicateursService {
       );
     this.logger.log(`${definitions.length} définitions trouvées`);
     return definitions;
+  }
+
+  /**
+   * Charge la définition des indicateurs à partir de leur id
+   * ainsi que les définitions des indicateurs "enfant" associés.
+   */
+  async getIndicateurDefinitions(
+    indicateurIds: number[]
+  ): Promise<IndicateurDefinitionAvecEnfantsType[]> {
+    this.logger.log(
+      `Charge la définition des indicateurs ${indicateurIds.join(',')}`
+    );
+
+    const definitionEnfantsTable = aliasedTable(
+      indicateurDefinitionTable,
+      'enfants'
+    );
+
+    const definitions = await this.databaseService.db
+      .select({
+        ...getTableColumns(indicateurDefinitionTable),
+        enfants: sql`json_agg(${definitionEnfantsTable})`,
+      })
+      .from(indicateurDefinitionTable)
+      .leftJoin(
+        indicateurGroupeTable,
+        eq(indicateurGroupeTable.parent, indicateurDefinitionTable.id)
+      )
+      .leftJoin(
+        definitionEnfantsTable,
+        eq(definitionEnfantsTable.id, indicateurGroupeTable.enfant)
+      )
+      .where(inArray(indicateurDefinitionTable.id, indicateurIds))
+      .groupBy(indicateurDefinitionTable.id);
+
+    this.logger.log(`${definitions.length} définitions trouvées`);
+
+    return definitions.map(
+      (def: IndicateurDefinitionType & { enfants: unknown[] }) => {
+        const enfants = def.enfants?.filter(Boolean);
+        return {
+          ...def,
+          enfants: enfants?.length
+            ? (objectToCamel(enfants) as IndicateurDefinitionType[])
+            : null,
+        };
+      }
+    );
   }
 
   async upsertIndicateurValeurs(
