@@ -1,12 +1,28 @@
-import {TScoreAuditRowData} from 'app/pages/collectivite/AuditComparaison/types';
-import {ProgressionRow} from 'app/pages/collectivite/Progression/queries';
-import {ReferentielParamOption} from 'app/paths';
-import {useEffect, useState} from 'react';
-import {TableOptions} from 'react-table';
+import { TScoreAuditRowData } from 'app/pages/collectivite/AuditComparaison/types';
+import { ReferentielParamOption } from 'app/paths';
+import { useEffect, useState } from 'react';
+import { TableOptions } from 'react-table';
 import TagFilters from 'ui/shared/filters/TagFilters';
 import ChartCard from './ChartCard';
-import {getIndexTitles} from '../utils';
-import {Breadcrumbs} from '@tet/ui';
+import { getIndexTitles } from '../utils';
+import { Breadcrumbs } from '@tet/ui';
+import { TActionStatutsRow } from 'types/alias';
+import { ActionReferentiel } from 'app/pages/collectivite/ReferentielTable/useReferentiel';
+
+export type ProgressionRow = ActionReferentiel &
+  Pick<
+    TActionStatutsRow,
+    | 'action_id'
+    | 'score_realise'
+    | 'score_programme'
+    | 'score_realise_plus_programme'
+    | 'score_pas_fait'
+    | 'score_non_renseigne'
+    | 'points_realises'
+    | 'points_programmes'
+    | 'points_max_personnalises'
+    | 'points_max_referentiel'
+  >;
 
 export type TBarChartScoreTable =
   | Pick<
@@ -27,12 +43,12 @@ type BarChartCardWithSubrowsProps = {
     layout?: 'horizontal' | 'vertical';
     groupMode?: 'grouped' | 'stacked';
     inverted?: boolean;
-    customColors?: {[key: string]: string};
+    customColors?: { [key: string]: string };
   };
   chartInfo?: {
     title?: string;
     subtitle?: string;
-    legend?: {name: string; color: string}[];
+    legend?: { name: string; color: string }[];
     legendOnOverview?: boolean;
     expandable?: boolean;
     downloadable?: boolean;
@@ -58,7 +74,7 @@ const BarChartCardWithSubrows = ({
 }: BarChartCardWithSubrowsProps): JSX.Element => {
   // Associe la data des scores à un nom d'affichage pour le breadcrumb
   const [scoreBreadcrumb, setScoreBreadcrumb] = useState([
-    {scoreData: score.data, name: 'Tous les axes', fileName: 'referentiel'},
+    { scoreData: score.data, name: 'Tous les axes', fileName: 'referentiel' },
   ]);
 
   // Donnée actuellement observée dans le tableau scoreBreadcrumb
@@ -70,18 +86,18 @@ const BarChartCardWithSubrows = ({
   // Mise à jour lors du changement de valeur des scores en props
   useEffect(() => {
     setScoreBreadcrumb([
-      {scoreData: score.data, name: 'Tous les axes', fileName: 'referentiel'},
+      { scoreData: score.data, name: 'Tous les axes', fileName: 'referentiel' },
     ]);
     setIndexBy(score.data[0]?.type ?? '');
   }, [score.data]);
 
   // Affichage de l'axe enfant
   const handleOpenChildIndex = (index: string | number) => {
-    const {scoreData} = scoreBreadcrumb[scoreBreadcrumb.length - 1];
+    const { scoreData } = scoreBreadcrumb[scoreBreadcrumb.length - 1];
 
     if (score.getSubRows !== undefined) {
       const relativeIndex = scoreData.findIndex(
-        d => d.identifiant === index.toString()
+        (d) => d.identifiant === index.toString()
       );
       const currentRow = scoreData[relativeIndex];
 
@@ -89,7 +105,7 @@ const BarChartCardWithSubrows = ({
         // @ts-ignore
         const subRows = score.getSubRows(currentRow, relativeIndex);
         if (!!subRows && subRows.length > 0) {
-          setScoreBreadcrumb(prevScoreBreadcrumb => [
+          setScoreBreadcrumb((prevScoreBreadcrumb) => [
             ...prevScoreBreadcrumb,
             {
               scoreData: subRows,
@@ -178,7 +194,7 @@ const BarChartCardWithSubrows = ({
           >
             <Breadcrumbs
               size="xs"
-              items={scoreBreadcrumb.map(currentScore => ({
+              items={scoreBreadcrumb.map((currentScore) => ({
                 label: currentScore.name,
               }))}
               onClick={handleOpenParentIndex}
@@ -187,8 +203,8 @@ const BarChartCardWithSubrows = ({
           {percentage === undefined && (
             <TagFilters
               options={[
-                {value: 'absolue', label: 'Valeur absolue (points)'},
-                {value: 'relative', label: 'Valeur relative (%)'},
+                { value: 'absolue', label: 'Valeur absolue (points)' },
+                { value: 'relative', label: 'Valeur relative (%)' },
               ]}
               defaultOption={relativeMode ? 'relative' : 'absolue'}
               small
