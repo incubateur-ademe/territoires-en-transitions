@@ -1,7 +1,6 @@
 /// <reference types='vitest' />
 
 import { nxViteTsPaths } from '@nx/vite/plugins/nx-tsconfig-paths.plugin';
-import swc from 'unplugin-swc';
 import { loadEnv } from 'vite';
 import { defineConfig } from 'vitest/config';
 
@@ -9,7 +8,7 @@ export default defineConfig(({ mode }) => ({
   root: __dirname,
   cacheDir: '../node_modules/.vite/apps/backend',
 
-  plugins: [nxViteTsPaths(), swc.vite()],
+  plugins: [nxViteTsPaths()],
 
   test: {
     fileParallelism: false,

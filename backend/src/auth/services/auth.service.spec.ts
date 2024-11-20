@@ -1,12 +1,12 @@
 import { Test } from '@nestjs/testing';
+import CollectivitesService from '../../collectivites/services/collectivites.service';
 import DatabaseService from '../../common/services/database.service';
+import { UserRole } from '../models/authenticated-user.models';
 import {
   NiveauAcces,
   UtilisateurDroitType,
 } from '../models/private-utilisateur-droit.table';
 import { AuthService } from './auth.service';
-import { SupabaseRole } from '../models/supabase-jwt.models';
-import CollectivitesService from '../../collectivites/services/collectivites.service';
 
 describe('AuthService', () => {
   let authService: AuthService;
@@ -29,7 +29,7 @@ describe('AuthService', () => {
     it("Utilisateur qui n'a aucun droit", async () => {
       expect(
         authService.aDroitsSuffisants(
-          SupabaseRole.AUTHENTICATED,
+          UserRole.AUTHENTICATED,
           [],
           [1],
           NiveauAcces.LECTURE
@@ -40,7 +40,7 @@ describe('AuthService', () => {
     it('Utilisateur anonyme', async () => {
       expect(
         authService.aDroitsSuffisants(
-          SupabaseRole.ANON,
+          UserRole.ANON,
           [],
           [],
           NiveauAcces.LECTURE
@@ -51,7 +51,7 @@ describe('AuthService', () => {
     it('Service role', async () => {
       expect(
         authService.aDroitsSuffisants(
-          SupabaseRole.SERVICE_ROLE,
+          UserRole.SERVICE_ROLE,
           [],
           [1, 2, 3],
           NiveauAcces.ADMIN
@@ -68,7 +68,7 @@ describe('AuthService', () => {
           niveauAcces: NiveauAcces.EDITION,
           active: true,
           createdAt: new Date(),
-          modifiedAt: null,
+          modifiedAt: new Date(),
           invitationId: null,
         },
         {
@@ -78,14 +78,14 @@ describe('AuthService', () => {
           niveauAcces: NiveauAcces.ADMIN,
           active: true,
           createdAt: new Date(),
-          modifiedAt: null,
+          modifiedAt: new Date(),
           invitationId: null,
         },
       ];
 
       expect(
         authService.aDroitsSuffisants(
-          SupabaseRole.AUTHENTICATED,
+          UserRole.AUTHENTICATED,
           droits,
           [1, 2],
           NiveauAcces.EDITION
@@ -102,7 +102,7 @@ describe('AuthService', () => {
           niveauAcces: NiveauAcces.EDITION,
           active: true,
           createdAt: new Date(),
-          modifiedAt: null,
+          modifiedAt: new Date(),
           invitationId: null,
         },
         {
@@ -112,14 +112,14 @@ describe('AuthService', () => {
           niveauAcces: NiveauAcces.ADMIN,
           active: false,
           createdAt: new Date(),
-          modifiedAt: null,
+          modifiedAt: new Date(),
           invitationId: null,
         },
       ];
 
       expect(
         authService.aDroitsSuffisants(
-          SupabaseRole.AUTHENTICATED,
+          UserRole.AUTHENTICATED,
           droits,
           [1, 2],
           NiveauAcces.EDITION
@@ -136,7 +136,7 @@ describe('AuthService', () => {
           niveauAcces: NiveauAcces.LECTURE,
           active: true,
           createdAt: new Date(),
-          modifiedAt: null,
+          modifiedAt: new Date(),
           invitationId: null,
         },
         {
@@ -146,14 +146,14 @@ describe('AuthService', () => {
           niveauAcces: NiveauAcces.ADMIN,
           active: true,
           createdAt: new Date(),
-          modifiedAt: null,
+          modifiedAt: new Date(),
           invitationId: null,
         },
       ];
 
       expect(
         authService.aDroitsSuffisants(
-          SupabaseRole.AUTHENTICATED,
+          UserRole.AUTHENTICATED,
           droits,
           [1, 2],
           NiveauAcces.EDITION
@@ -170,14 +170,14 @@ describe('AuthService', () => {
           niveauAcces: NiveauAcces.EDITION,
           active: true,
           createdAt: new Date(),
-          modifiedAt: null,
+          modifiedAt: new Date(),
           invitationId: null,
         },
       ];
 
       expect(
         authService.aDroitsSuffisants(
-          SupabaseRole.AUTHENTICATED,
+          UserRole.AUTHENTICATED,
           droits,
           [1, 2],
           NiveauAcces.EDITION
