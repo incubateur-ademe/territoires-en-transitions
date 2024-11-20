@@ -772,3 +772,4 @@ plan_action/historique [plan_action/historique@v4.23.0] 2024-11-15T13:06:26Z Mar
 evaluation/score_service [evaluation/score_service@v4.27.0] 2024-11-18T15:13:30Z System Administrator <root@MacBook-Air-de-Thibaut-2.local> # ignore les règles de personnalisation du nouveau referentiel dans le python
 @v4.27.1 2024-11-18T15:22:13Z System Administrator <root@MacBook-Air-de-Thibaut-2.local> # ignore les règles de personnalisation du nouveau referentiel dans le python
 
+referentiel/verification_score 2024-11-20T16:04:26Z System Administrator <root@MacBook-Air-de-Thibaut-2.local> # Ajout d'un cron de verification des scores pour le nouveau moteur de calcul

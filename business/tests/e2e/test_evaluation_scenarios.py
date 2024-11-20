@@ -275,6 +275,67 @@ def test_cae_621_when_type_commune(test_post_personnalize, test_post_evaluate):
 
     assert scores_cae_3["cae_6.2.1"].point_potentiel == 2.0
 
+def test_cae_full_example(test_post_personnalize, test_post_evaluate):
+
+    reponses = [
+        Reponse("EP_1", "EP_1_c"),
+        Reponse("voirie_1", "voirie_1_c"),
+        Reponse("ECS", "ECS_c"),
+        Reponse("fournisseur_energie", "NON"),
+        Reponse("dev_eco_3", "NON"),
+        Reponse("recuperation_cogeneration", "NON"),
+        Reponse("habitat_1", "NON"),
+        Reponse("urba_3", "OUI"),
+        Reponse("urba_2", "NON"),
+        Reponse("SCoT", "NON"),
+        Reponse("amenagement_2", "OUI"),
+        Reponse("amenagement_1", "OUI"),
+        Reponse("versement_mobilite", "NON"),
+        Reponse("trafic", "OUI"),
+        Reponse("cyclable", "NON"),
+        Reponse("assainissement_4bis", "NON"),
+        Reponse("assainissement_4", "NON"),
+        Reponse("dev_eco_4", "NON"),
+        Reponse("REOM", "NON"),
+        Reponse("centre_polarite", "OUI"),
+        Reponse("centre_urbain", "OUI"),
+        Reponse("foret", "OUI"),
+        Reponse("SAU", "OUI"),
+        Reponse("habitat_3", "OUI"),
+        Reponse("eau_1", "NON"),
+        Reponse("AOD_elec", "NON"),
+        Reponse("AOD_gaz", "NON"),
+        Reponse("AOD_chaleur", "NON"),
+        Reponse("urba_1", "NON"),
+        Reponse("tourisme_2", "NON"),
+        Reponse("vehiculeCT_1", "OUI"),
+        Reponse("pouvoir_police", "OUI"),
+        Reponse("TC_1", "OUI"),
+        Reponse("AOM_1", "NON"),
+        Reponse("assainissement_2", "NON"),
+        Reponse("assainissement_1", "NON"),
+        Reponse("dev_eco_1", "NON"),
+        Reponse("dechets_3", "NON"),
+        Reponse("dechets_2", "NON"),
+        Reponse("dechets_1", "NON"),
+        Reponse("scolaire_1", "OUI"),
+        Reponse("formation", "OUI"),
+        Reponse("scolaire_2", "OUI"),
+        Reponse("SPASER", "OUI"),
+        Reponse("EP_2", 0.04),
+        Reponse("tourisme_1", 0.04),
+        Reponse("AOM_2", 0.04),
+        Reponse("dev_eco_2", 0.04),
+        Reponse("habitat_2", 0.04),
+        Reponse("voirie_2", 0.04)
+        ]
+    consequences = test_post_personnalize(
+        reponses,
+        IdentiteCollectivite(type={"commune"}),
+    ) # population={"moins_de_50000", "moins_de_100000", "plus_de_20000"}, localisation={"Metropole"}
+    scores_cae_1 = test_post_evaluate("cae", [], consequences)
+    assert scores_cae_1["cae_2.3.3"].completed_taches_count == 1
+
 
 def test_cae_335_with_score_taken_into_account(
     test_post_personnalize, test_post_evaluate

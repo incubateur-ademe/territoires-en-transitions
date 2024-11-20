@@ -3,16 +3,18 @@ import {
   ExecutionContext,
   Injectable,
   Logger,
-  UnauthorizedException
+  UnauthorizedException,
 } from '@nestjs/common';
 import { Reflector } from '@nestjs/core';
 import { JwtService } from '@nestjs/jwt';
 import { Request } from 'express';
-import BackendConfigurationService from '../../config/configuration.service';
 import { getErrorMessage } from '../../common/services/errors.helper';
+import BackendConfigurationService from '../../config/configuration.service';
 import { AllowAnonymousAccess } from '../decorators/allow-anonymous-access.decorator';
 import { AllowPublicAccess } from '../decorators/allow-public-access.decorator';
 import { SupabaseJwtPayload } from '../models/supabase-jwt.models';
+
+export const TOKEN_QUERY_PARAM = 'token';
 
 @Injectable()
 export class AuthGuard implements CanActivate {
@@ -25,7 +27,7 @@ export class AuthGuard implements CanActivate {
   ) {}
 
   async canActivate(context: ExecutionContext): Promise<boolean> {
-    const request = context.switchToHttp().getRequest();
+    const request: Request = context.switchToHttp().getRequest();
 
     const allowPublicAccess = this.reflector.get(
       AllowPublicAccess,
@@ -37,7 +39,7 @@ export class AuthGuard implements CanActivate {
       return true;
     }
 
-    const token = this.extractTokenFromHeader(request);
+    const token = this.extractTokenFromRequest(request);
     if (!token) {
       throw new UnauthorizedException();
     }
@@ -45,11 +47,12 @@ export class AuthGuard implements CanActivate {
       const payload: SupabaseJwtPayload = await this.jwtService.verifyAsync(
         token,
         {
-          secret: this.backendConfigurationService.get("SUPABASE_JWT_SECRET"),
+          secret: this.backendConfigurationService.get('SUPABASE_JWT_SECRET'),
         }
       );
       // 💡 We're assigning the payload to the request object here
       // so that we can access it in our route handlers
+      // @ts-expect-error tokenInfo doesn't exist on Request, but we want to attach it
       request['tokenInfo'] = payload;
       this.logger.log(`Token validated for user ${payload.sub}`);
       if (payload.is_anonymous) {
@@ -72,7 +75,11 @@ export class AuthGuard implements CanActivate {
     return true;
   }
 
-  private extractTokenFromHeader(request: Request): string | undefined {
+  private extractTokenFromRequest(request: Request): string | undefined {
+    if (request.query[TOKEN_QUERY_PARAM]) {
+      return request.query[TOKEN_QUERY_PARAM] as string;
+    }
+
     const [type, token] = request.headers.authorization?.split(' ') ?? [];
     return type === 'Bearer' ? token : undefined;
   }

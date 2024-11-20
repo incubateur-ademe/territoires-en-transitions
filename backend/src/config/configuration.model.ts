@@ -20,6 +20,10 @@ export const backendConfigurationSchema = z.object({
     description:
       "Clé pour la connexion à l'API Supabase. Utilisé pour initialiser le client supabase indépendamment de la base de données",
   }),
+  SUPABASE_ANON_KEY: z.string().min(1).openapi({
+    description:
+      "Clé pour la connexion à l'API Supabase en tant qu'utilisateur anonyme, permet de générér des urls d'accès anonyme",
+  }),
   GCLOUD_SERVICE_ACCOUNT_KEY: z.string().min(1).openapi({
     description:
       "Clé du compte de service Google Cloud pour l'accès aux api drive et sheets",
@@ -45,6 +49,9 @@ export const backendConfigurationSchema = z.object({
   REFERENTIEL_TE_SHEET_ID: z.string().min(1).openapi({
     description:
       "Identifiant de la feuille de calcul Google Sheets pour l'import du nouveau référentiel",
+  }),
+  MATTERMOST_NOTIFICATIONS_WEBHOOK_URL: z.string().optional().openapi({
+    description: 'Url du webhook pour les notifications Mattermost',
   }),
 });
 export type BackendConfigurationType = z.infer<
