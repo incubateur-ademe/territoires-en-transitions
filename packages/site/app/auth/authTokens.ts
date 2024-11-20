@@ -1,13 +1,11 @@
-/* 
+/*
  * Fonctions pour enlever ou ajouter les cookies qui permettent de partager
- * l'authentification entre les sous-domaines. 
+ * l'authentification entre les sous-domaines.
 
  * Ref: https://github.com/orgs/supabase/discussions/5742#discussioncomment-4050444
 */
-import {Session, SupabaseClient} from '@supabase/supabase-js';
-
-const ACCESS_TOKEN = 'tet-access-token';
-const REFRESH_TOKEN = 'tet-refresh-token';
+import { Session, SupabaseClient } from '@supabase/supabase-js';
+import { ACCESS_TOKEN, REFRESH_TOKEN } from '@tet/api';
 
 /** Enlève les tokens */
 export const clearAuthTokens = (domain: string) => {
@@ -27,9 +25,9 @@ export const setAuthTokens = (session: Session, domain: string) => {
 export const restoreAuthTokens = async (supabase: SupabaseClient) => {
   const cookies = document.cookie
     .split(/\s*;\s*/)
-    .map(cookie => cookie.split('='));
-  const accessTokenCookie = cookies.find(x => x[0] === ACCESS_TOKEN);
-  const refreshTokenCookie = cookies.find(x => x[0] === REFRESH_TOKEN);
+    .map((cookie) => cookie.split('='));
+  const accessTokenCookie = cookies.find((x) => x[0] === ACCESS_TOKEN);
+  const refreshTokenCookie = cookies.find((x) => x[0] === REFRESH_TOKEN);
 
   if (accessTokenCookie && refreshTokenCookie) {
     await supabase.auth.setSession({

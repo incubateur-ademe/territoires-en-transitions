@@ -12,6 +12,7 @@ import { makeQueryClient } from './query-client';
 // For more information, see the Typescript docs: https://www.typescriptlang.org/docs/handbook/release-notes/typescript-3-8.html#type-only-imports-and-export
 // eslint-disable-next-line @nx/enforce-module-boundaries
 import type { AppRouter } from '@tet/backend/trpc/trpc.router';
+import { getAuthHeaders } from '../authTokens';
 
 export type RouterInput = inferRouterInputs<AppRouter>;
 export type RouterOutput = inferRouterOutputs<AppRouter>;
