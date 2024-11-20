@@ -81,8 +81,10 @@ export default class IndicateursService {
     if (options.dateFin) {
       conditions.push(lte(indicateurValeurTable.dateValeur, options.dateFin));
     }
-    if (options.indicateurId) {
-      conditions.push(eq(indicateurValeurTable.id, options.indicateurId));
+    if (options.indicateurIds) {
+      conditions.push(
+        inArray(indicateurValeurTable.indicateurId, options.indicateurIds)
+      );
     }
     if (options.sources?.length) {
       const nullSourceId = options.sources.includes(
