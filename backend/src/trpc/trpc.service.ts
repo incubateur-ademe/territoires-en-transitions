@@ -1,7 +1,10 @@
 import { Injectable } from '@nestjs/common';
 import { initTRPC, TRPCError } from '@trpc/server';
+import {
+  isAnonymousUser,
+  isAuthenticatedUser,
+} from '../auth/models/authenticated-user.models';
 import { Context } from './trpc.router';
-import { AuthenticatedUser } from '../auth/models/authenticated-user.models';
 
 @Injectable()
 export class TrpcService {
@@ -14,9 +17,26 @@ export class TrpcService {
 
   publicProcedure = this.trpc.procedure;
 
+  anonProcedure = this.trpc.procedure.use(
+    this.trpc.middleware(({ next, ctx }) => {
+      const anonUser = ctx.user;
+
+      if (!isAnonymousUser(anonUser)) {
+        throw new TRPCError({
+          code: 'UNAUTHORIZED',
+          message: 'Not anonymous',
+        });
+      }
+
+      return next({ ctx: { user: anonUser } });
+    })
+  );
+
   authedProcedure = this.trpc.procedure.use(
     this.trpc.middleware(({ next, ctx }) => {
-      if (ctx.user === null) {
+      const authUser = ctx.user;
+
+      if (!isAuthenticatedUser(authUser)) {
         throw new TRPCError({
           code: 'UNAUTHORIZED',
           message: 'Not authenticated',
@@ -25,7 +45,7 @@ export class TrpcService {
 
       return next({
         ctx: {
-          user: ctx.user as AuthenticatedUser,
+          user: authUser,
         },
       });
     })

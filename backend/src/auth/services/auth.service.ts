@@ -4,6 +4,8 @@ import { and, eq, inArray, sql, SQL, SQLWrapper } from 'drizzle-orm';
 import DatabaseService from '../../common/services/database.service';
 import {
   AuthenticatedUser,
+  isAuthenticatedUser,
+  User,
   UserRole,
 } from '../models/authenticated-user.models';
 import {
@@ -163,7 +165,7 @@ export class AuthService {
    * @param doNotThrow vrai pour ne pas générer une exception
    */
   async verifieAccesRestreintCollectivite(
-    user: AuthenticatedUser,
+    user: User,
     collectiviteId: number,
     doNotThrow?: boolean
   ): Promise<boolean> {
@@ -172,7 +174,7 @@ export class AuthService {
         `Rôle de service détecté, accès autorisé à toutes les collectivités`
       );
       return true;
-    } else if (user.role === UserRole.AUTHENTICATED) {
+    } else if (isAuthenticatedUser(user)) {
       let authorise = false;
       const collectivite = await this.collectiviteService.getCollectivite(
         collectiviteId
