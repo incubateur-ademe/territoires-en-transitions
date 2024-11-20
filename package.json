@@ -62,6 +62,7 @@
     "drizzle-zod": "^0.5.1",
     "echarts": "^5.5.1",
     "es-toolkit": "^1.20.0",
+    "exceljs": "^4.4.0",
     "express": "^4.21.0",
     "formik": "^2.2.9",
     "fuse.js": "^7.0.0",
