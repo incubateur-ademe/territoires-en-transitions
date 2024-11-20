@@ -22,7 +22,7 @@ export const getFileNameFromString = (contentDisposition: string) => {
   }
 
   // essaye de trouver un nom encodé en utf-8
-  const index = parts.findIndex(s => s.match(RE_UTF8_FILENAME));
+  const index = parts.findIndex((s) => s.match(RE_UTF8_FILENAME));
   if (index !== -1) {
     const filename = parts[index].match(RE_UTF8_FILENAME)?.[1];
     if (filename) {
@@ -32,8 +32,11 @@ export const getFileNameFromString = (contentDisposition: string) => {
   }
 
   // sinon essaye de trouver un nom sans encodage
-  const index2 = parts.findIndex(s => s.match(RE_FILENAME));
+  const index2 = parts.findIndex((s) => s.match(RE_FILENAME));
   if (index2 !== -1) {
-    return parts[index2].match(RE_FILENAME)?.[1];
+    const filename = parts[index2].match(RE_FILENAME)?.[1];
+    if (filename) {
+      return decodeURIComponent(filename);
+    }
   }
 };
