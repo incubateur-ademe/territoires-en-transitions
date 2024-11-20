@@ -1,16 +1,16 @@
-import {useState} from 'react';
-import {ActionDefinitionSummary} from 'core-logic/api/endpoints/ActionDefinitionSummaryReadEndpoint';
-import {useSortedActionSummaryChildren} from 'core-logic/hooks/referentiel';
-import {ActionCommentaire} from 'ui/shared/actions/ActionCommentaire';
-import ExpandAllButton from 'ui/buttons/ExpandAllButton';
+import { useState } from 'react';
+import { ActionDefinitionSummary } from 'core-logic/api/endpoints/ActionDefinitionSummaryReadEndpoint';
+import { useSortedActionSummaryChildren } from 'core-logic/hooks/referentiel';
+import { ActionCommentaire } from 'ui/shared/actions/ActionCommentaire';
 import SubActionCard from './SubActionCard';
-import {phaseToLabel} from 'ui/referentiels/utils';
-import {SuiviScoreRow} from '../data/useScoreRealise';
-import {TCycleLabellisationStatus} from 'app/pages/collectivite/ParcoursLabellisation/useCycleLabellisation';
+import { phaseToLabel } from 'ui/referentiels/utils';
+import { SuiviScoreRow } from '../data/useScoreRealise';
+import { TCycleLabellisationStatus } from 'app/pages/collectivite/ParcoursLabellisation/useCycleLabellisation';
+import { Button } from '@tet/ui';
 
 type ActionFollowUpProps = {
   action: ActionDefinitionSummary;
-  actionScores: {[actionId: string]: SuiviScoreRow};
+  actionScores: { [actionId: string]: SuiviScoreRow };
   auditStatus: TCycleLabellisationStatus;
 };
 
@@ -37,7 +37,7 @@ const ActionFollowUp = ({
   // Click sur le bouton "Tout déplier" / "Tout replier"
   const toggleOpenAll = () => {
     setOpenedSubActionsCount(openAll ? 0 : subActions.count);
-    setOpenAll(prevState => !prevState);
+    setOpenAll((prevState) => !prevState);
   };
 
   // Mise à jour après l'ouverture / fermeture manuelle d'une sous-action
@@ -47,8 +47,8 @@ const ActionFollowUp = ({
     } else if (openedSubActionsCount === subActions.count - 1 && isOpen) {
       setOpenAll(true);
     }
-    if (isOpen) setOpenedSubActionsCount(prevState => prevState + 1);
-    else setOpenedSubActionsCount(prevState => prevState - 1);
+    if (isOpen) setOpenedSubActionsCount((prevState) => prevState + 1);
+    else setOpenedSubActionsCount((prevState) => prevState - 1);
   };
 
   return (
@@ -57,22 +57,26 @@ const ActionFollowUp = ({
       <ActionCommentaire action={action} className="mb-10" />
 
       {/* Bouton pour déplier / replier la liste */}
-      <ExpandAllButton
-        open={openAll}
-        onToggleOpen={toggleOpenAll}
+      <Button
         className="mb-10"
-      />
+        variant="underlined"
+        icon={openAll ? 'arrow-up-line' : 'arrow-down-line'}
+        iconPosition="right"
+        onClick={toggleOpenAll}
+      >
+        {openAll ? 'Tout replier' : 'Tout déplier'}
+      </Button>
 
       {/* Sous-actions triées par phase */}
       <div className="flex flex-col gap-10">
         {['bases', 'mise en œuvre', 'effets'].map(
-          phase =>
+          (phase) =>
             subActions.sortedActions[phase] && (
               <div key={phase} className="flex flex-col gap-8">
                 <p className="mb-0 font-bold">
                   {phaseToLabel[phase].toUpperCase()}
                 </p>
-                {subActions.sortedActions[phase].map(subAction => (
+                {subActions.sortedActions[phase].map((subAction) => (
                   <SubActionCard
                     key={subAction.id}
                     subAction={subAction}
