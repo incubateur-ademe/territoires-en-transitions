@@ -1,8 +1,8 @@
-import {TScoreAuditRowData} from 'app/pages/collectivite/AuditComparaison/types';
-import {ProgressionRow} from 'app/pages/collectivite/Progression/queries';
-import {DonutData} from 'ui/charts/Donut/DonutChart';
-import {LineData} from 'ui/charts/Line/LineChart';
-import {defaultColors, nivoColorsSet} from 'ui/charts/chartsTheme';
+import { TScoreAuditRowData } from 'app/pages/collectivite/AuditComparaison/types';
+import { ProgressionRow } from 'ui/charts/old/BarChartCardWithSubrows';
+import { DonutData } from 'ui/charts/Donut/DonutChart';
+import { LineData } from 'ui/charts/Line/LineChart';
+import { defaultColors, nivoColorsSet } from 'ui/charts/chartsTheme';
 
 /**
  * Définition des titres des axes pour les graphes
@@ -13,8 +13,8 @@ export const getIndexTitles = (
   scoreData: readonly (ProgressionRow | TScoreAuditRowData)[],
   addTotal: boolean
 ) => {
-  let indexTitles = scoreData.map(
-    d => `${d.action_id.split('_')[1]}. ${d.nom}`
+  const indexTitles = scoreData.map(
+    (d) => `${d.action_id.split('_')[1]}. ${d.nom}`
   );
   if (addTotal) indexTitles.push('Total');
 
