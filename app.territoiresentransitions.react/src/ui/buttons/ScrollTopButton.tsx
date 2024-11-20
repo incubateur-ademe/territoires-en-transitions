@@ -1,20 +1,20 @@
-import AnchorAsButton from './AnchorAsButton';
+import { Button } from '@tet/ui';
 
-const ScrollTopButton = ({className = ''}: {className?: string}) => {
+const ScrollTopButton = ({ className = '' }: { className?: string }) => {
   return (
-    <div className={className}>
-      <AnchorAsButton
-        className="underline_href fr-link fr-link--icon-left fr-icon-arrow-up-fill"
-        onClick={() =>
-          document
-            .getElementsByClassName('fr-header')
-            .item(0)
-            ?.scrollIntoView({behavior: 'smooth'})
-        }
-      >
-        Haut de page
-      </AnchorAsButton>
-    </div>
+    <Button
+      className={className}
+      variant="underlined"
+      icon="arrow-up-fill"
+      onClick={() =>
+        document
+          .getElementsByClassName('fr-header')
+          .item(0)
+          ?.scrollIntoView({ behavior: 'smooth' })
+      }
+    >
+      Haut de page
+    </Button>
   );
 };
 

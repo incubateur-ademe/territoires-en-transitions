@@ -1,21 +1,20 @@
-import {useEffect, useState} from 'react';
-import {useCurrentCollectivite} from 'core-logic/hooks/useCurrentCollectivite';
+import { useEffect, useState } from 'react';
+import { useCurrentCollectivite } from 'core-logic/hooks/useCurrentCollectivite';
 import {
   useActionStatut,
   useEditActionStatutIsDisabled,
   useSaveActionStatut,
 } from 'core-logic/hooks/useActionStatut';
-import {TActionAvancement, TActionAvancementExt} from 'types/alias';
+import { TActionAvancement, TActionAvancementExt } from 'types/alias';
 import {
   ITEMS_AVEC_NON_CONCERNE,
   SelectActionStatut,
 } from 'ui/shared/actions/SelectActionStatut';
 import ActionProgressBar from './ActionProgressBar';
-import AnchorAsButton from 'ui/buttons/AnchorAsButton';
-import {ActionDefinitionSummary} from 'core-logic/api/endpoints/ActionDefinitionSummaryReadEndpoint';
+import { ActionDefinitionSummary } from 'core-logic/api/endpoints/ActionDefinitionSummaryReadEndpoint';
 import ProgressBarWithTooltip from 'ui/score/ProgressBarWithTooltip';
-import {avancementToLabel} from 'app/labels';
-import {actionAvancementColors} from 'app/theme';
+import { avancementToLabel } from 'app/labels';
+import { actionAvancementColors } from 'app/theme';
 import ScoreAutoModal from './ScoreAutoModal';
 import ScoreDetailleModal from './ScoreDetailleModal';
 import {
@@ -23,9 +22,9 @@ import {
   getStatusFromIndex,
   statutParAvancement,
 } from './utils';
-import {SuiviScoreRow} from 'app/pages/collectivite/EtatDesLieux/Referentiel/data/useScoreRealise';
+import { SuiviScoreRow } from 'app/pages/collectivite/EtatDesLieux/Referentiel/data/useScoreRealise';
 import classNames from 'classnames';
-import {Tooltip} from '@tet/ui';
+import { Button, Tooltip } from '@tet/ui';
 
 export type StatusToSavePayload = {
   actionId: string;
@@ -49,7 +48,7 @@ export const ActionStatusDropdown = ({
   onSaveStatus,
 }: {
   action: ActionDefinitionSummary;
-  actionScores: {[actionId: string]: SuiviScoreRow};
+  actionScores: { [actionId: string]: SuiviScoreRow };
   statusWarningMessage?: boolean;
   onSaveStatus?: (payload: StatusToSavePayload) => void;
 }) => {
@@ -63,18 +62,18 @@ export const ActionStatusDropdown = ({
     action_id: action.id,
     collectivite_id: collectivite?.collectivite_id || 0,
   };
-  const {statut, filled} = useActionStatut(action.id);
-  const {avancement, avancement_detaille, concerne} = statut || {};
+  const { statut, filled } = useActionStatut(action.id);
+  const { avancement, avancement_detaille, concerne } = statut || {};
 
   const score = actionScores[action.id] ?? {};
-  const {desactive} = score;
+  const { desactive } = score;
   const avancementExt = getAvancementExt({
     avancement,
     desactive,
     concerne,
   });
 
-  const {saveActionStatut} = useSaveActionStatut();
+  const { saveActionStatut } = useSaveActionStatut();
 
   const [localAvancement, setLocalAvancement] = useState(avancementExt);
   const [localAvancementDetaille, setLocalAvancementDetaille] =
@@ -102,7 +101,7 @@ export const ActionStatusDropdown = ({
   // Mise à jour du statut lorsque une nouvelle valeur
   // est sélectionnée sur le dropdown
   const handleChange = (value: TActionAvancementExt) => {
-    const {avancement, concerne, avancement_detaille} =
+    const { avancement, concerne, avancement_detaille } =
       statutParAvancement(value);
 
     if (avancement === 'detaille') {
@@ -153,8 +152,10 @@ export const ActionStatusDropdown = ({
       setLocalAvancementDetaille(undefined);
 
       // Sauvegarde des statuts des tâches
-      newStatus.forEach(element => {
-        const {avancement, concerne} = statutParAvancement(element.avancement);
+      newStatus.forEach((element) => {
+        const { avancement, concerne } = statutParAvancement(
+          element.avancement
+        );
 
         saveActionStatut({
           action_id: element.actionId,
@@ -240,9 +241,9 @@ export const ActionStatusDropdown = ({
   return (
     <div
       className="flex flex-col justify-between items-end gap-2 h-full w-fit ml-auto"
-      onClick={evt => evt.stopPropagation()}
+      onClick={(evt) => evt.stopPropagation()}
     >
-      {/* Dropdown avec suppression de l'option "non renseigné" sur les sous-actions 
+      {/* Dropdown avec suppression de l'option "non renseigné" sur les sous-actions
       quand au moins une des tâches a un statut */}
       <Tooltip
         label={
@@ -253,7 +254,7 @@ export const ActionStatusDropdown = ({
           </p>
         }
         openingDelay={0}
-        className={classNames({hidden: !statusWarningMessage})}
+        className={classNames({ hidden: !statusWarningMessage })}
       >
         <div>
           <SelectActionStatut
@@ -262,7 +263,7 @@ export const ActionStatusDropdown = ({
               localAvancement !== 'non_renseigne' &&
               filled
                 ? ITEMS_AVEC_NON_CONCERNE.filter(
-                    item => item !== 'non_renseigne'
+                    (item) => item !== 'non_renseigne'
                   )
                 : ITEMS_AVEC_NON_CONCERNE
             }
@@ -302,8 +303,9 @@ export const ActionStatusDropdown = ({
 
           {/* Bouton d'ouverture de la modale pour détailler le score */}
           {!disabled && (
-            <AnchorAsButton
-              className="underline_href fr-link fr-link--sm"
+            <Button
+              variant="underlined"
+              size="sm"
               onClick={() => {
                 action.type === 'sous-action' && action.children.length > 0
                   ? avancement === 'detaille'
@@ -312,8 +314,8 @@ export const ActionStatusDropdown = ({
                   : setOpenScoreDetaille(true);
               }}
             >
-              Détailler l'avancement
-            </AnchorAsButton>
+              Détailler l&apos;avancement
+            </Button>
           )}
         </div>
       )}
@@ -338,7 +340,7 @@ export const ActionStatusDropdown = ({
           externalOpen={openScoreDetaille || openScorePerso}
           saveAtValidation={onSaveStatus === undefined}
           isScorePerso={openScorePerso}
-          setExternalOpen={value => {
+          setExternalOpen={(value) => {
             if (openScoreDetaille) setOpenScoreDetaille(value);
             else setOpenScorePerso(value);
           }}

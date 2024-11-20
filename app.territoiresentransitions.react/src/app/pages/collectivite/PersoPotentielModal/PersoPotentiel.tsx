@@ -1,13 +1,13 @@
-import {ActionDefinitionSummary} from 'core-logic/api/endpoints/ActionDefinitionSummaryReadEndpoint';
-import {useCollectiviteId} from 'core-logic/hooks/params';
-import {PersoPotentielTabs} from './PersoPotentielTabs';
-import {PointsPotentiels} from './PointsPotentiels';
-import {useRegles} from './useRegles';
-import {useChangeReponseHandler} from './useChangeReponseHandler';
-import {useActionScore} from 'core-logic/hooks/scoreHooks';
-import {useQuestionsReponses} from '../PersoReferentielThematique/useQuestionsReponses';
+import { ActionDefinitionSummary } from 'core-logic/api/endpoints/ActionDefinitionSummaryReadEndpoint';
+import { useCollectiviteId } from 'core-logic/hooks/params';
+import { PersoPotentielTabs } from './PersoPotentielTabs';
+import { PointsPotentiels } from './PointsPotentiels';
+import { useRegles } from './useRegles';
+import { useChangeReponseHandler } from './useChangeReponseHandler';
+import { useActionScore } from 'core-logic/hooks/scoreHooks';
+import { useQuestionsReponses } from '../PersoReferentielThematique/useQuestionsReponses';
 import Modal from 'ui/shared/floating-ui/Modal';
-import AnchorAsButton from 'ui/buttons/AnchorAsButton';
+import { Button } from '@tet/ui';
 
 export type TPersoPotentielButtonProps = {
   /** Définition de l'action */
@@ -20,9 +20,9 @@ export type TPersoPotentielButtonProps = {
  * d'une action, et le dialogue lui-même
  */
 export const PersoPotentiel = (props: TPersoPotentielButtonProps) => {
-  const {id: actionId, type, identifiant, nom} = props.actionDef;
+  const { id: actionId, type, identifiant, nom } = props.actionDef;
   const collectivite_id = useCollectiviteId();
-  const qr = useQuestionsReponses({action_ids: [actionId]});
+  const qr = useQuestionsReponses({ action_ids: [actionId] });
   const regles = useRegles(actionId);
   const handleChange = useChangeReponseHandler(collectivite_id);
 
@@ -35,7 +35,7 @@ export const PersoPotentiel = (props: TPersoPotentielButtonProps) => {
     <div
       data-test="PersoPotentiel"
       className="flex items-center"
-      onClick={event => event.stopPropagation()}
+      onClick={(event) => event.stopPropagation()}
     >
       <PointsPotentiels actionScore={actionScore} />
       <Modal
@@ -60,9 +60,14 @@ export const PersoPotentiel = (props: TPersoPotentielButtonProps) => {
           </div>
         )}
       >
-        <AnchorAsButton className="fr-link fr-link--icon-left fr-icon-settings-5-line fr-ml-2w fr-text--sm">
+        <Button
+          className="ml-2"
+          variant="underlined"
+          size="sm"
+          icon="settings-5-line"
+        >
           Personnaliser
-        </AnchorAsButton>
+        </Button>
       </Modal>
     </div>
   );
