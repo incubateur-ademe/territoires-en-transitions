@@ -570,6 +570,21 @@ describe('FichesActionUpdateService', () => {
           .where(eq(libreTagTable.nom, nom));
       });
     });
+
+    it('should update the libres tag relations in the database', async () => {
+      const data: UpdateFicheActionRequestClass = {
+        libresTag: [{ id: 1 }, { id: 2 }],
+      };
+
+      const response = await putRequest(data);
+
+      const body = response.body;
+
+      expect(body.libres).toStrictEqual([
+        { ficheId: ficheActionId, libreTagId: 1 },
+        { ficheId: ficheActionId, libreTagId: 2 },
+      ]);
+    });
   });
 
   describe('Access Rights', () => {
