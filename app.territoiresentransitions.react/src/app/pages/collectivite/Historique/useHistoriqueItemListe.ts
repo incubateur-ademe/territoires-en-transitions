@@ -1,13 +1,17 @@
-import {useEffect} from 'react';
-import {useQuery, useQueryClient} from 'react-query';
+import { useEffect } from 'react';
+import { useQuery, useQueryClient } from 'react-query';
 
-import {supabaseClient} from 'core-logic/api/supabase';
-import {useSearchParams} from 'core-logic/hooks/query';
-import {TFilters, NB_ITEMS_PER_PAGE, nameToShortNames} from './filters';
-import {THistoriqueItem, THistoriqueProps} from './types';
-import {isValidFilter} from 'ui/shared/filters/commons';
+import { supabaseClient } from 'core-logic/api/supabase';
+import { useSearchParams } from 'core-logic/hooks/query';
+import { TFilters, NB_ITEMS_PER_PAGE, nameToShortNames } from './filters';
+import { THistoriqueItem, THistoriqueProps } from './types';
+import { ITEM_ALL } from '@tet/ui';
 
-type TFetchedData = {items: THistoriqueItem[]; total: number};
+/** vérifie si ITEM_ALL n'est pas présent dans un filtre */
+export const isValidFilter = (values: string[] | undefined | null) =>
+  values?.length && !values.includes(ITEM_ALL);
+
+type TFetchedData = { items: THistoriqueItem[]; total: number };
 
 /**
  * Toutes les entrées d'un référentiel pour une collectivité et des filtres donnés
@@ -26,11 +30,11 @@ export const fetchHistorique = async (
   } = filters;
 
   // la requête
-  let query = supabaseClient
+  const query = supabaseClient
     .from('historique')
-    .select('*', {count: 'exact'})
-    .match({collectivite_id})
-    .order('modified_at', {ascending: false})
+    .select('*', { count: 'exact' })
+    .match({ collectivite_id })
+    .order('modified_at', { ascending: false })
     .limit(NB_ITEMS_PER_PAGE);
 
   // filtre optionnel par action
@@ -63,12 +67,12 @@ export const fetchHistorique = async (
   }
 
   // attends les données
-  const {error, data, count} = await query;
+  const { error, data, count } = await query;
   if (error) {
     throw new Error(error.message);
   }
 
-  return {items: (data as THistoriqueItem[]) || [], total: count || 0};
+  return { items: (data as THistoriqueItem[]) || [], total: count || 0 };
 };
 
 // les mutations "écoutées" pour déclencher le rechargement de l'historique
@@ -94,7 +98,7 @@ export const useHistoriqueItemListe = (
     queryClient.invalidateQueries(['historique_utilisateur', collectivite_id]);
   };
   useEffect(() => {
-    return queryClient.getMutationCache().subscribe(mutation => {
+    return queryClient.getMutationCache().subscribe((mutation) => {
       if (
         mutation?.state.status === 'success' &&
         OBSERVED_MUTATION_KEYS.includes(mutation.options.mutationKey as string)
@@ -107,18 +111,18 @@ export const useHistoriqueItemListe = (
   // filtre initial
   const [filters, setFilters, filtersCount] = useSearchParams<TFilters>(
     'historique',
-    {collectivite_id, action_id},
+    { collectivite_id, action_id },
     nameToShortNames
   );
 
   // charge les données
-  const {data} = useQuery(['historique', collectivite_id, filters], () =>
+  const { data } = useQuery(['historique', collectivite_id, filters], () =>
     fetchHistorique(filters)
   );
 
   return {
-    ...(data || {items: [], total: 0}),
-    initialFilters: {collectivite_id, action_id},
+    ...(data || { items: [], total: 0 }),
+    initialFilters: { collectivite_id, action_id },
     filters,
     setFilters,
     filtersCount,
