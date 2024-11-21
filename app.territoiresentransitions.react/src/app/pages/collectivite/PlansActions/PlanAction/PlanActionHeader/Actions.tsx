@@ -14,6 +14,7 @@ import { useExportPlanAction } from '../data/useExportPlanAction';
 import ModifierPlanModale from './ModifierPlanModale';
 import { TPlanType } from 'types/alias';
 import { Tooltip } from '@tet/ui';
+import { useState } from 'react';
 
 const EXPORT_OPTIONS = [
   { value: 'xlsx', label: 'Format Excel (.xlsx)' },
@@ -42,16 +43,28 @@ const Actions = ({
 }: Props) => {
   const { mutate: exportPlanAction, isLoading } = useExportPlanAction(axe.id);
 
+  const [isModifierPlanModalOpen, setIsModifierPlanModalOpen] = useState(false);
+
   return (
     <div className="flex items-center gap-3 ml-auto">
-      <ModifierPlanModale type={type} axe={axe} isAxePage={isAxePage}>
-        <button
-          data-test="ModifierPlanBouton"
-          className="py-1.5 px-4 text-sm text-primary font-bold bg-white rounded-lg"
-        >
-          Modifier
-        </button>
-      </ModifierPlanModale>
+      <button
+        data-test="ModifierPlanBouton"
+        className="py-1.5 px-4 text-sm text-primary font-bold bg-white rounded-lg"
+        onClick={() => setIsModifierPlanModalOpen(true)}
+      >
+        Modifier
+      </button>
+      {isModifierPlanModalOpen && (
+        <ModifierPlanModale
+          type={type}
+          axe={axe}
+          isAxePage={isAxePage}
+          openState={{
+            isOpen: isModifierPlanModalOpen,
+            setIsOpen: setIsModifierPlanModalOpen,
+          }}
+        />
+      )}
       {!isAxePage && axeHasFiches ? (
         <SmallIconContextMenu
           dataTest="export-pa"
