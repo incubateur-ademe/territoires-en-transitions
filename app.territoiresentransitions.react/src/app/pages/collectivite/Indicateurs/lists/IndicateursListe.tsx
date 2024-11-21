@@ -20,6 +20,7 @@ import ModuleFiltreBadges from 'app/pages/collectivite/TableauDeBord/components/
 import { makeCollectiviteIndicateursUrl } from 'app/paths';
 import { OpenState } from '@tet/ui/utils/types';
 import { useCurrentCollectivite } from 'core-logic/hooks/useCurrentCollectivite';
+import { useExportIndicateurs } from '../Indicateur/useExportIndicateurs';
 
 type sortByOptionsType = {
   label: string;
@@ -142,6 +143,10 @@ const IndicateursListe = ({
     (_, i) => Math.floor(i / maxNbOfCards) + 1 === currentPage
   );
 
+  // fonction d'export
+  const { mutate: exportIndicateurs, isLoading: isDownloadingExport } =
+    useExportIndicateurs(data);
+
   /** Affiche ou cache les graphiques des cartes */
   const [displayGraphs, setDisplayGraphs] = useState(true);
 
@@ -183,6 +188,17 @@ const IndicateursListe = ({
           {`indicateur`}
           {countTotal > 1 ? 's' : ''}
         </span>
+        {/** Export */}
+        {!!currentDefs?.length && !isLoading && (
+          <Button
+            icon="download-line"
+            title="Exporter"
+            variant="outlined"
+            size="sm"
+            onClick={() => exportIndicateurs()}
+            disabled={isDownloadingExport}
+          />
+        )}
         {/** Champ de recherche */}
         <Input
           type="search"

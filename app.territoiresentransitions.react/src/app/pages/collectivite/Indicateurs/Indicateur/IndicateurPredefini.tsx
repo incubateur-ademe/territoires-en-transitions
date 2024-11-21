@@ -19,6 +19,8 @@ import ActionsLieesListe from 'app/pages/collectivite/PlansActions/FicheAction/A
 import { useCurrentCollectivite } from 'core-logic/hooks/useCurrentCollectivite';
 import { useUpdateIndicateurDefinition } from './useUpdateIndicateurDefinition';
 import BadgeOpenData from '@tet/app/pages/collectivite/Indicateurs/components/BadgeOpenData';
+import { useExportIndicateurs } from './useExportIndicateurs';
+import { ToolbarIconButton } from 'ui/buttons/ToolbarIconButton';
 
 /** Charge et affiche le détail d'un indicateur prédéfini et de ses éventuels "enfants" */
 export const IndicateurPredefiniBase = ({
@@ -30,6 +32,9 @@ export const IndicateurPredefiniBase = ({
   const { mutate: updateDefinition } = useUpdateIndicateurDefinition();
   const collectivite = useCurrentCollectivite();
   const isReadonly = !collectivite || collectivite?.readonly;
+  const { mutate: exportIndicateurs, isLoading } = useExportIndicateurs([
+    definition,
+  ]);
 
   const collectivite_id = useCollectiviteId()!;
 
@@ -54,6 +59,14 @@ export const IndicateurPredefiniBase = ({
       <HeaderIndicateur title={definition.titre} />
       <div className="px-10 py-4">
         <div className="flex flex-row justify-end fr-mb-2w">
+          <ToolbarIconButton
+            className="fr-mr-1w"
+            disabled={isLoading}
+            icon="download"
+            title="Exporter"
+            onClick={() => exportIndicateurs()}
+          />
+
           <IndicateurSidePanelToolbar definition={definition} />
         </div>
         {/** affiche les indicateurs "enfants" */}
@@ -143,8 +156,6 @@ export const IndicateurPredefini = ({
 }) => {
   const definition = useIndicateurDefinition(indicateurId);
   if (!definition) return null;
-
-  console.log(definition);
 
   return <IndicateurPredefiniBase definition={definition} />;
 };
