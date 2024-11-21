@@ -270,7 +270,7 @@ export default class ExportIndicateursService {
   }
 
   private getSourceName(source: IndicateurSourceMetadonneeType) {
-    return source.nomDonnees ?? source.producteur ?? source.diffuseur;
+    return source.nomDonnees || source.diffuseur || source.producteur;
   }
 
   private sortByDefinitionId(
