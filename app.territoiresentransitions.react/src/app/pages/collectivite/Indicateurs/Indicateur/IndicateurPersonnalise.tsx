@@ -14,6 +14,7 @@ import { IndicateurInfoLiees } from './detail/IndicateurInfoLiees';
 import { useIndicateurDefinition } from './useIndicateurDefinition';
 import IndicateurDetailChart from 'app/pages/collectivite/Indicateurs/Indicateur/detail/IndicateurDetailChart';
 import { useDeleteIndicateurPerso } from './useRemoveIndicateurPerso';
+import { useExportIndicateurs } from './useExportIndicateurs';
 import { Indicateurs } from '@tet/api';
 import BadgeIndicateurPerso from 'app/pages/collectivite/Indicateurs/components/BadgeIndicateurPerso';
 
@@ -27,6 +28,9 @@ const IndicateurPersonnaliseBase = ({
   const { mutate: updateDefinition } = useUpdateIndicateurDefinition();
   const collectivite = useCurrentCollectivite();
   const isReadonly = !collectivite || collectivite?.readonly;
+  const { mutate: exportIndicateurs, isLoading } = useExportIndicateurs([
+    definition,
+  ]);
 
   // génère les fonctions d'enregistrement des modifications
   const handleUpdate = (
@@ -80,16 +84,25 @@ const IndicateurPersonnaliseBase = ({
             <BadgeACompleter a_completer={!rempli} />
             <BadgeIndicateurPerso />
           </div>
-
-          {!isReadonly && (
+          <div>
             <ToolbarIconButton
-              className="fr-mr-1w text-error-1"
-              icon="delete"
-              title="Supprimer"
-              aria-label="Supprimer"
-              onClick={() => setShowConfirm(true)}
+              className="fr-mr-1w"
+              disabled={isLoading}
+              icon="download"
+              title="Exporter"
+              onClick={() => exportIndicateurs()}
             />
-          )}
+            {!isReadonly && (
+              <ToolbarIconButton
+                className="fr-mr-1w text-error-1"
+                disabled={isLoading}
+                icon="delete"
+                title="Supprimer"
+                aria-label="Supprimer"
+                onClick={() => setShowConfirm(true)}
+              />
+            )}
+          </div>
         </div>
 
         <IndicateurDetailChart
