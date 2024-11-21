@@ -1,8 +1,8 @@
-import {useState} from 'react';
+import { useState } from 'react';
 import SliderBase from '@mui/material/Slider';
-import {styled} from '@mui/material/styles';
-import {actionAvancementColors} from 'app/theme';
-import TagFilters from '../filters/TagFilters';
+import { styled } from '@mui/material/styles';
+import { actionAvancementColors } from 'app/theme';
+import TagFilters from '../../../shared/filters/TagFilters';
 
 export type AvancementValues = [number, number, number];
 type SliderValues = [number, number];
@@ -85,9 +85,9 @@ const getDefaultStep = (value: SliderValues) => {
 
 const getMarksValues = (step: number) => {
   const slots = 100 / step;
-  let values = [];
+  const values = [];
   for (let i = 1; i < slots; i++) {
-    values.push({value: i * step});
+    values.push({ value: i * step });
   }
   return values;
 };
@@ -96,7 +96,7 @@ const getMarksValues = (step: number) => {
  * Affiche le slider de définition de l'état d'avancement détaillé d'une tâche
  */
 export const DetailedScoreSlider = (props: TSliderProps) => {
-  const {value, onChange} = props;
+  const { value, onChange } = props;
 
   // valeur d'avancements en fonction des valeurs stockées dans la base
   const [currentValue, setCurrentValue] = useState<SliderValues>(
@@ -113,7 +113,7 @@ export const DetailedScoreSlider = (props: TSliderProps) => {
   const handleChange = (e: Event | null, newValue: number | number[]) => {
     onChange(
       sliderValuesToAvancement(newValue as SliderValues).map(
-        v => v / 100
+        (v) => v / 100
       ) as AvancementValues
     );
     setCurrentValue(newValue as SliderValues);
@@ -141,7 +141,7 @@ export const DetailedScoreSlider = (props: TSliderProps) => {
           },
         ]}
         defaultOption={`${step}`}
-        onChange={value => handleChangeStep(parseInt(value))}
+        onChange={(value) => handleChangeStep(parseInt(value))}
       />
 
       <div className="relative w-9/12 h-fit mx-auto my-4">

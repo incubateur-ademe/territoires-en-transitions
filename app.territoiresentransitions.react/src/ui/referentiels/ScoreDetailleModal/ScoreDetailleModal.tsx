@@ -1,19 +1,19 @@
-import {avancementToLabel} from 'app/labels';
+import { avancementToLabel } from 'app/labels';
 import {
   useActionJustification,
   useSaveActionJustification,
 } from 'app/pages/collectivite/EtatDesLieux/Referentiel/data/useActionJustification';
-import {useTasksScoreRepartition} from 'app/pages/collectivite/EtatDesLieux/Referentiel/data/useTasksScores';
-import {actionAvancementColors} from 'app/theme';
+import { useTasksScoreRepartition } from 'app/pages/collectivite/EtatDesLieux/Referentiel/data/useTasksScores';
+import { actionAvancementColors } from 'app/theme';
 import classNames from 'classnames';
-import {ActionDefinitionSummary} from 'core-logic/api/endpoints/ActionDefinitionSummaryReadEndpoint';
-import {Dispatch, SetStateAction, useEffect, useState} from 'react';
+import { ActionDefinitionSummary } from 'core-logic/api/endpoints/ActionDefinitionSummaryReadEndpoint';
+import { Dispatch, SetStateAction, useEffect, useState } from 'react';
 import ProgressBarWithTooltip from 'ui/score/ProgressBarWithTooltip';
-import {DetailedScore} from 'ui/shared/DetailedScore/DetailedScore';
-import {AvancementValues} from 'ui/shared/DetailedScore/DetailedScoreSlider';
+import { DetailedScore } from 'ui/referentiels/ScoreDetailleModal/DetailedScore/DetailedScore';
+import { AvancementValues } from 'ui/referentiels/ScoreDetailleModal/DetailedScore/DetailedScoreSlider';
 import Modal from 'ui/shared/floating-ui/Modal';
-import ActionJustification from '../../app/pages/collectivite/EtatDesLieux/Referentiel/SuiviAction/ActionJustification';
-import {AVANCEMENT_DETAILLE_PAR_STATUT, getStatusFromIndex} from './utils';
+import ActionJustification from '../../../app/pages/collectivite/EtatDesLieux/Referentiel/SuiviAction/ActionJustification';
+import { AVANCEMENT_DETAILLE_PAR_STATUT, getStatusFromIndex } from '../utils';
 
 type ScoreDetailleModalProps = {
   action: ActionDefinitionSummary;
@@ -38,7 +38,7 @@ const ScoreDetailleModal = ({
 }: ScoreDetailleModalProps): JSX.Element => {
   const [currentAvancement, setCurrentAvancement] = useState<AvancementValues>(
     (avancementDetaille?.length === 3 &&
-    !avancementDetaille.find(av => av === 1)
+    !avancementDetaille.find((av) => av === 1)
       ? avancementDetaille
       : AVANCEMENT_DETAILLE_PAR_STATUT.detaille) as AvancementValues
   );
@@ -55,8 +55,8 @@ const ScoreDetailleModal = ({
   const [justification, setJustification] = useState<string>('');
 
   const scores = useTasksScoreRepartition(action.id);
-  const {actionJustification} = useActionJustification(action.id);
-  const {saveActionJustification} = useSaveActionJustification();
+  const { actionJustification } = useActionJustification(action.id);
+  const { saveActionJustification } = useSaveActionJustification();
 
   useEffect(() => {
     if (actionJustification) {
@@ -77,7 +77,7 @@ const ScoreDetailleModal = ({
             <h4>
               {isScorePerso
                 ? 'Personnaliser le score'
-                : `Détailler l'avancement de cette 
+                : `Détailler l'avancement de cette
               ${action.type === 'tache' ? 'tâche' : action.type}`}{' '}
               : {action.id.split('_')[1]}
             </h4>
@@ -85,7 +85,7 @@ const ScoreDetailleModal = ({
             {/* Score automatique */}
             {isScorePerso &&
             scores &&
-            scores.tasksScores.filter(task => task.concerne).length &&
+            scores.tasksScores.filter((task) => task.concerne).length &&
             scores.avancementDetaille &&
             scores.scoreMax ? (
               <div className="flex items-start mt-2 mb-6">
@@ -126,7 +126,7 @@ const ScoreDetailleModal = ({
                     className="fr-icon-pencil-line text-bf500"
                     aria-hidden="true"
                   />{' '}
-                  situé sous l'intitulé de la tâche.
+                  situé sous l&apos;intitulé de la tâche.
                 </p>
               )}
 
