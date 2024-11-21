@@ -8,3 +8,9 @@ export const tagTableBase = {
     .notNull()
     .references(() => collectiviteTable.id),
 };
+
+export type TagType = {
+  id : number,
+  nom : string,
+  collectiviteId : number
+}
