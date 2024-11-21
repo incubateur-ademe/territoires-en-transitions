@@ -3,6 +3,7 @@ import { default as request } from 'supertest';
 import { UpsertIndicateursValeursRequest } from '../../src/indicateurs/models/upsert-indicateurs-valeurs.request';
 import { getYoloDodoToken } from '../auth/auth-utils';
 import { getTestApp } from '../common/app-utils';
+import { Workbook } from 'exceljs';
 
 describe('Route de lecture / ecriture des indicateurs', () => {
   let app: INestApplication;
@@ -61,10 +62,17 @@ describe('Route de lecture / ecriture des indicateurs', () => {
   });
 
   it('Exporte un indicateur au format XLSX', async () => {
+    const { data } = await supabase
+      .from('indicateur_definition')
+      .select('id')
+      .eq('identifiant_referentiel', 'cae_8');
+    const indicateurId = data?.[0].id;
+    expect(typeof indicateurId === 'number').toBe(true);
+
     const response = await request(app.getHttpServer())
       .post('/indicateurs/xlsx')
       .set('Authorization', `Bearer ${yoloDodoToken}`)
-      .send({ collectiviteId: 3895, indicateurIds: [177] })
+      .send({ collectiviteId: 1, indicateurIds: [indicateurId] })
       .expect(201)
       .responseType('blob');
 
@@ -72,16 +80,34 @@ describe('Route de lecture / ecriture des indicateurs', () => {
       response.headers['content-disposition']
         .split('filename=')[1]
         .split(';')[0]
+        .split('"')[1]
     );
 
     const body = response.body as Buffer;
-    // décommenter pour écrire le fichier
-    //    fs.writeFileSync(fileName, body);
+    // décommenter pour écrire le fichier (et vérifier son contenu manuellement)
+    // writeFileSync(fileName, body);
 
     expect(fileName).toMatch(
-      /^"CA Annonay Rhône Agglo - cae_8 - Rénovation énergétique des logements - \d{4}-\d{2}-\d{2}.*\.xlsx"$/
+      /^Ambérieu-en-Bugey - cae_8 - Rénovation énergétique des logements - \d{4}-\d{2}-\d{2}.*\.xlsx$/
     );
-    expect(body.byteLength).toBeGreaterThanOrEqual(6665);
-    expect(body.byteLength).toBeLessThanOrEqual(6670);
+    // poids approximitatif du fichier attendu car la date de génération peut le faire un peu varier
+    expect(body.byteLength).toBeGreaterThanOrEqual(6700);
+    expect(body.byteLength).toBeLessThanOrEqual(6800);
+
+    // crée le classeur et vérifie le contenu de la 2ème ligne de la 1ère feuille
+    const wb = new Workbook();
+    await wb.xlsx.load(body);
+    const ws = wb.getWorksheet(1);
+    expect(ws).toBeDefined();
+    const row = ws?.getRow(2);
+    expect(row?.values).toEqual([
+      undefined, // index des colonnes à partir de 1
+      'cae_8',
+      'Rénovation énergétique des logements',
+      'Mes objectifs',
+      'nombre logements rénovés/100 logements existants',
+      21,
+      13,
+    ]);
   });
 });
