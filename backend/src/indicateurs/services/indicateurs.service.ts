@@ -45,6 +45,8 @@ import {
   IndicateurValeurType,
 } from '../models/indicateur-valeur.table';
 import { indicateurGroupeTable } from '../models/indicateur-groupe.table';
+import { groupementTable } from '../../collectivites/models/groupement.table';
+import { groupementCollectiviteTable } from '../../collectivites/models/groupement-collectivite.table';
 
 @Injectable()
 export default class IndicateursService {
@@ -300,6 +302,7 @@ export default class IndicateursService {
    * ainsi que les définitions des indicateurs "enfant" associés.
    */
   async getIndicateurDefinitions(
+    collectiviteId: number,
     indicateurIds: number[]
   ): Promise<IndicateurDefinitionAvecEnfantsType[]> {
     this.logger.log(
@@ -325,7 +328,23 @@ export default class IndicateursService {
         definitionEnfantsTable,
         eq(definitionEnfantsTable.id, indicateurGroupeTable.enfant)
       )
-      .where(inArray(indicateurDefinitionTable.id, indicateurIds))
+      .leftJoin(
+        groupementTable,
+        eq(groupementTable.id, definitionEnfantsTable.groupementId)
+      )
+      .leftJoin(
+        groupementCollectiviteTable,
+        eq(groupementCollectiviteTable.groupementId, groupementTable.id)
+      )
+      .where(
+        and(
+          inArray(indicateurDefinitionTable.id, indicateurIds),
+          or(
+            isNull(definitionEnfantsTable.groupementId),
+            eq(groupementCollectiviteTable.collectiviteId, collectiviteId)
+          )
+        )
+      )
       .groupBy(indicateurDefinitionTable.id);
 
     this.logger.log(`${definitions.length} définitions trouvées`);
