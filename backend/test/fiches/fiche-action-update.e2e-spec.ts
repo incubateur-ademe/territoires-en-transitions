@@ -4,8 +4,16 @@ import { default as request } from 'supertest';
 import { describe, expect, it } from 'vitest';
 import DatabaseService from '../../src/common/services/database.service';
 import { UpdateFicheActionRequestClass } from '../../src/fiches/controllers/fiches-action.controller';
-import { ficheActionActionTable } from '../../src/fiches/models/fiche-action-action.table';
+import {
+  FicheActionCiblesEnumType,
+  piliersEciEnumType,
+  FicheActionStatutsEnumType,
+  ficheActionTable,
+} from '../../src/fiches/models/fiche-action.table';
+import { ficheActionFixture } from './fixtures/fiche-action.fixture';
 import { ficheActionAxeTable } from '../../src/fiches/models/fiche-action-axe.table';
+import { ficheActionThematiqueTable } from '../../src/fiches/models/fiche-action-thematique.table';
+import { ficheActionActionTable } from '../../src/fiches/models/fiche-action-action.table';
 import { ficheActionEffetAttenduTable } from '../../src/fiches/models/fiche-action-effet-attendu.table';
 import { ficheActionFinanceurTagTable } from '../../src/fiches/models/fiche-action-financeur-tag.table';
 import { ficheActionIndicateurTable } from '../../src/fiches/models/fiche-action-indicateur.table';
@@ -16,14 +24,8 @@ import { ficheActionReferentTable } from '../../src/fiches/models/fiche-action-r
 import { ficheActionServiceTagTable } from '../../src/fiches/models/fiche-action-service.table';
 import { ficheActionSousThematiqueTable } from '../../src/fiches/models/fiche-action-sous-thematique.table';
 import { ficheActionStructureTagTable } from '../../src/fiches/models/fiche-action-structure-tag.table';
-import { ficheActionThematiqueTable } from '../../src/fiches/models/fiche-action-thematique.table';
-import {
-  FicheActionCiblesEnumType,
-  FicheActionStatutsEnumType,
-  ficheActionTable,
-  piliersEciEnumType,
-} from '../../src/fiches/models/fiche-action.table';
 import { getAuthToken } from '../auth/auth-utils';
+import { ficheActionLibreTagTable } from '../../src/fiches/models/fiche-action-libre-tag.table';
 import { getTestApp } from '../common/app-utils';
 import { UpdateFicheActionRequestType } from './../../src/fiches/models/update-fiche-action.request';
 import {
@@ -35,13 +37,13 @@ import {
   partenairesFixture,
   pilotesFixture,
   referentsFixture,
-  resultatAttenduFixture,
+  resultatsAttendusFixture,
   servicesFixture,
   sousThematiquesFixture,
   structuresFixture,
   thematiquesFixture,
+  libresFixture,
 } from './fixtures/fiche-action-relations.fixture';
-import { ficheActionFixture } from './fixtures/fiche-action.fixture';
 
 const collectiviteId = 1;
 const ficheActionId = 9999;
@@ -57,6 +59,11 @@ describe('FichesActionUpdateService', () => {
 
     databaseService = app.get<DatabaseService>(DatabaseService);
 
+    // There's no delete cascade on ficheActionLibreTagTable, so we have to delete manually
+    await databaseService.db
+      .delete(ficheActionLibreTagTable)
+      .where(eq(ficheActionLibreTagTable.ficheId, ficheActionId));
+
     await databaseService.db
       .delete(ficheActionTable)
       .where(eq(ficheActionTable.id, ficheActionId));
@@ -69,6 +76,11 @@ describe('FichesActionUpdateService', () => {
   });
 
   afterAll(async () => {
+    // There's no delete cascade on ficheActionLibreTagTable, so we have to delete manually
+    await databaseService.db
+      .delete(ficheActionLibreTagTable)
+      .where(eq(ficheActionLibreTagTable.ficheId, ficheActionId));
+
     await databaseService.db
       .delete(ficheActionTable)
       .where(eq(ficheActionTable.id, ficheActionId));
@@ -465,7 +477,7 @@ describe('FichesActionUpdateService', () => {
       ]);
     });
 
-    it('should update the fichesLiees relations in the database', async () => {
+    it('should update the fiches liees relations in the database', async () => {
       const data: UpdateFicheActionRequestClass = {
         fichesLiees: [{ id: 1 }, { id: 2 }],
       };
@@ -480,7 +492,7 @@ describe('FichesActionUpdateService', () => {
       ]);
     });
 
-    it('should update the resultatAttendu relations in the database', async () => {
+    it('should update the resultats attendus relations in the database', async () => {
       const data: UpdateFicheActionRequestClass = {
         resultatsAttendus: [
           {
@@ -496,9 +508,24 @@ describe('FichesActionUpdateService', () => {
 
       const body = response.body;
 
-      expect(body.resultatAttendu).toStrictEqual([
+      expect(body.resultatsAttendus).toStrictEqual([
         { ficheId: ficheActionId, effetAttenduId: 21 },
         { ficheId: ficheActionId, effetAttenduId: 22 },
+      ]);
+    });
+
+    it('should update the libres tag relations in the database', async () => {
+      const data: UpdateFicheActionRequestClass = {
+        libres: [{ id: 1 }, { id: 2 }],
+      };
+
+      const response = await putRequest(data);
+
+      const body = response.body;
+
+      expect(body.libres).toStrictEqual([
+        { ficheId: ficheActionId, libreTagId: 1 },
+        { ficheId: ficheActionId, libreTagId: 2 },
       ]);
     });
   });
@@ -645,7 +672,12 @@ describe('FichesActionUpdateService', () => {
 
     await databaseService.db.insert(ficheActionEffetAttenduTable).values({
       ficheId,
-      effetAttenduId: resultatAttenduFixture.id,
+      effetAttenduId: resultatsAttendusFixture.id,
+    });
+
+    await databaseService.db.insert(ficheActionLibreTagTable).values({
+      ficheId,
+      libreTagId: libresFixture.id,
     });
   }
 
