@@ -1,6 +1,8 @@
 import { useEffect, useState } from 'react';
+import classNames from 'classnames';
 
 import {
+  Badge,
   Button,
   Checkbox,
   Input,
@@ -188,17 +190,6 @@ const IndicateursListe = ({
           {`indicateur`}
           {countTotal > 1 ? 's' : ''}
         </span>
-        {/** Export */}
-        {!!currentDefs?.length && !isLoading && (
-          <Button
-            icon="download-line"
-            title="Exporter"
-            variant="outlined"
-            size="sm"
-            onClick={() => exportIndicateurs()}
-            disabled={isDownloadingExport}
-          />
-        )}
         {/** Champ de recherche */}
         <Input
           type="search"
@@ -214,7 +205,29 @@ const IndicateursListe = ({
       </div>
       {/** Liste des filtres appliqués */}
       {filtres && (
-        <ModuleFiltreBadges filtre={filtres} resetFilters={resetFilters} />
+        <div className="flex flex-row justify-between">
+          <ModuleFiltreBadges filtre={filtres} resetFilters={resetFilters} />
+          {
+            /** Bouton Exporter */
+            !!currentDefs?.length && !isLoading && (
+              <button
+                className={classNames({ 'opacity-50': isDownloadingExport })}
+                disabled={isDownloadingExport}
+                onClick={() => exportIndicateurs()}
+              >
+                <Badge
+                  className="py-4"
+                  icon="download-line"
+                  iconPosition="left"
+                  title="Exporter le résultat de mon filtre en Excel"
+                  state="default"
+                  uppercase={false}
+                  size="sm"
+                />
+              </button>
+            )
+          }
+        </div>
       )}
 
       {/** Chargement */}
