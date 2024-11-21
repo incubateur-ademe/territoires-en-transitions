@@ -2,9 +2,12 @@ import { INestApplication, Injectable, Logger } from '@nestjs/common';
 import { createExpressMiddleware } from '@trpc/server/adapters/express';
 import { PersonnesRouter } from '../collectivites/personnes.router';
 import SupabaseService from '../common/services/supabase.service';
-import { CountByStatutRouter } from '../fiches/count-by-statut/count-by-statut.router';
 import { TrajectoiresRouter } from '../indicateurs/routers/trajectoires.router';
 import { createContext, TrpcService } from './trpc.service';
+import { CountByStatutRouter } from '../fiches/count-by-statut/count-by-statut.router';
+import {
+  GetCategoriesByCollectiviteRouter
+} from '../taxonomie/routers/get-categories-by-collectivite.router';
 
 @Injectable()
 export class TrpcRouter {
@@ -15,6 +18,7 @@ export class TrpcRouter {
     private readonly supabase: SupabaseService,
     private readonly trajectoiresRouter: TrajectoiresRouter,
     private readonly countByStatutRouter: CountByStatutRouter,
+    private readonly getCategoriesByCollectiviteRouter: GetCategoriesByCollectiviteRouter,
     private readonly personnes: PersonnesRouter
   ) {}
 
@@ -29,6 +33,9 @@ export class TrpcRouter {
     },
     collectivites: {
       personnes: this.personnes.router,
+    },
+    tags: {
+      categories : this.getCategoriesByCollectiviteRouter.router
     },
   });
 
