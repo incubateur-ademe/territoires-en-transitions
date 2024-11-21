@@ -322,18 +322,13 @@ export default class FichesActionUpdateService {
         );
       }
 
-      if (libresTag && libresTag.length > 0) {
+      if (libresTag !== undefined) {
         const { collectiviteId } = await this.getCollectiviteIdForFiche(
           tx,
           ficheActionId
         );
 
-        // Example of tagMap:
-        // tagMap = new Map([
-        //   ['Mobility', 1],
-        //   ['Transport', 2],
-        //   ['Bicycle', 3]
-        // ]);
+        // tagMap = new Map([['Mobility', 1], ['Transport', 2], ['Bicycle', 3]]);
         const tagMap = await this.getOrCreateLibreTag(
           tx,
           libresTag,
@@ -502,10 +497,14 @@ export default class FichesActionUpdateService {
    */
   private async getOrCreateLibreTag(
     tx: TxType,
-    libresTag: { id?: number; nom?: string }[],
+    libresTag: { id?: number; nom?: string }[] | null,
     collectiviteId: number
   ): Promise<Map<string, number>> {
     const tagMap = new Map<string, number>();
+
+    if (!libresTag) {
+      return tagMap;
+    }
 
     for (const tag of libresTag) {
       if (this.isNewTag(tag)) {
@@ -532,9 +531,12 @@ export default class FichesActionUpdateService {
   }
 
   private resolveLibreTagIds(
-    libresTag: { id?: number; nom?: string }[],
+    libresTag: { id?: number; nom?: string }[] | null,
     tagMap: Map<string, number>
   ): { id: number }[] {
+    if (!libresTag) {
+      return [];
+    }
     return libresTag
       .map((tag) => ({
         id: tag.id ?? tagMap.get(tag.nom ?? ''),
