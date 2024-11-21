@@ -1,8 +1,6 @@
 import classNames from 'classnames';
 
 import SmallIconContextMenu from 'app/pages/collectivite/PlansActions/PlanAction/PlanActionHeader/SmallIconContextMenu';
-import IconUnlockFill from 'ui/shared/designSystem/icons/IconUnlockFill';
-import IconLockFill from 'ui/shared/designSystem/icons/IconLockFill';
 
 import SupprimerAxeModal from '../SupprimerAxeModal';
 import RestreindreFichesModal from '../RestreindreFichesModal';
@@ -97,40 +95,42 @@ const Actions = ({
           >
             <button
               data-test="BoutonToutesFichesPubliques"
-              className="p-2 bg-white hover:bg-primary-1 rounded-lg"
+              className="flex bg-white hover:bg-primary-1 rounded-lg"
               disabled={!axeHasFiches}
             >
               <Tooltip
                 placement="bottom"
                 label="Rendre publiques l'ensemble des fiches du plan"
               >
-                <div>
-                  <IconUnlockFill
-                    className={classNames('h-4 w-4 fill-success-1', {
-                      'fill-grey-5': !axeHasFiches,
-                    })}
-                  />
-                </div>
+                <span
+                  className={classNames(
+                    'ri-lock-unlock-fill p-2 leading-none text-success-1',
+                    {
+                      '!text-grey-5': !axeHasFiches,
+                    }
+                  )}
+                />
               </Tooltip>
             </button>
           </RestreindreFichesModal>
           <RestreindreFichesModal planId={plan.id} axes={axes} restreindre>
             <button
               data-test="BoutonToutesFichesPrivees"
-              className="p-2 bg-white hover:bg-primary-1 rounded-lg"
+              className="flex bg-white hover:bg-primary-1 rounded-lg"
               disabled={!axeHasFiches}
             >
               <Tooltip
                 placement="bottom"
                 label="Rendre privées l'ensemble des fiches du plan"
               >
-                <div>
-                  <IconLockFill
-                    className={classNames('h-4 w-4 fill-primary', {
-                      'fill-grey-5': !axeHasFiches,
-                    })}
-                  />
-                </div>
+                <span
+                  className={classNames(
+                    'ri-lock-fill p-2 leading-none text-primary',
+                    {
+                      '!text-grey-5': !axeHasFiches,
+                    }
+                  )}
+                />
               </Tooltip>
             </button>
           </RestreindreFichesModal>
