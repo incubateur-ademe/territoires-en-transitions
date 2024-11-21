@@ -59,3 +59,5 @@ storybook-static
 # fichiers `package.json` des packages enfant (créés automatiquement par le lancement des storybooks)
 **/package.json
 
+# gcloud credentials
+backend/src/common/services/keyfile.json
