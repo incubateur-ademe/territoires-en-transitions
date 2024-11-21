@@ -38,6 +38,7 @@ import {
 } from '../models/fiche-action.table';
 import { UpdateFicheActionRequestType } from '../models/update-fiche-action.request';
 import FicheService from './fiche.service';
+import { ficheActionLibreTagTable } from '../models/fiche-action-libre-tag.table';
 
 type TxType = PgTransaction<
   PostgresJsQueryResultHKT,
@@ -98,6 +99,7 @@ export default class FichesActionUpdateService {
       financeurs,
       fichesLiees,
       resultatsAttendus,
+      libres,
       ...unsafeFicheAction
     } = body;
 
@@ -128,6 +130,7 @@ export default class FichesActionUpdateService {
       let updatedFinanceurs;
       let updatedFichesLiees;
       let updatedResultatsAttendus;
+      let updatedLibres;
 
       /**
        * Updates fiche action properties
@@ -318,6 +321,18 @@ export default class FichesActionUpdateService {
         );
       }
 
+      if (libres && libres.length > 0) {
+        updatedLibres = await this.updateRelations(
+          ficheActionId,
+          libres,
+          tx,
+          ficheActionLibreTagTable,
+          ['id'],
+          ficheActionLibreTagTable.ficheId,
+          [ficheActionLibreTagTable.libreTagId]
+        );
+      }
+
       return {
         ...(updatedFicheAction?.[0] || {}),
         axes: updatedAxes,
@@ -332,7 +347,8 @@ export default class FichesActionUpdateService {
         services: updatedServices,
         financeurs: updatedFinanceurs,
         fichesLiees: updatedFichesLiees,
-        resultatAttendu: updatedResultatsAttendus,
+        resultatsAttendus: updatedResultatsAttendus,
+        libres: updatedLibres,
       };
     });
   }

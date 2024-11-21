@@ -1,6 +1,7 @@
 import { sql } from 'drizzle-orm';
 import { pgTable, timestamp, uniqueIndex, uuid } from 'drizzle-orm/pg-core';
 import { tagTableBase } from './tag.table-base';
+import { createSelectSchema } from 'drizzle-zod';
 
 export const libreTagTable = pgTable(
   'libre_tag',
@@ -20,3 +21,5 @@ export const libreTagTable = pgTable(
     };
   }
 );
+
+export const libreTagSchema = createSelectSchema(libreTagTable);
