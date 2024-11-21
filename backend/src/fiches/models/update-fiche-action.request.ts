@@ -89,16 +89,10 @@ export const updateFicheActionRequestSchema = updateFicheActionSchema
     resultatsAttendus: effetAttenduSchema.pick({ id: true }).array().nullish(),
     libresTag: z
       .array(
-        z
-          .object({
-            id: z.number().optional(),
-            nom: z.string().min(1).optional(),
-            createdBy: z.string().uuid().optional(),
-          })
-          .refine(
-            (data) => data.id !== undefined || data.nom !== undefined,
-            'Either id or nom must be provided'
-          )
+        z.union([
+          libreTagSchema.pick({ id: true }),
+          libreTagSchema.pick({ nom: true }),
+        ])
       )
       .nullish(),
   })
