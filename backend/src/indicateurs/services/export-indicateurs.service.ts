@@ -50,6 +50,7 @@ export default class ExportIndicateursService {
 
     // charge les définitions
     const definitions = await this.indicateursService.getIndicateurDefinitions(
+      options.collectiviteId,
       options.indicateurIds
     );
     // tri par identifiant
