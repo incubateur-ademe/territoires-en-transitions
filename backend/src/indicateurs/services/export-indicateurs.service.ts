@@ -284,15 +284,4 @@ export default class ExportIndicateursService {
       { numeric: true, sensitivity: 'base' }
     );
   }
-
-  private sortByDefinitionId(
-    a: MinimalIndicateurDefinitionType,
-    b: MinimalIndicateurDefinitionType
-  ) {
-    return `${a.identifiantReferentiel ?? a.id}`.localeCompare(
-      `${b.identifiantReferentiel ?? b.id}`,
-      undefined,
-      { numeric: true, sensitivity: 'base' }
-    );
-  }
 }
