@@ -772,6 +772,10 @@ plan_action/historique [plan_action/historique@v4.23.0] 2024-11-15T13:06:26Z Mar
 evaluation/score_service [evaluation/score_service@v4.27.0] 2024-11-18T15:13:30Z System Administrator <root@MacBook-Air-de-Thibaut-2.local> # ignore les règles de personnalisation du nouveau referentiel dans le python
 @v4.27.1 2024-11-18T15:22:13Z System Administrator <root@MacBook-Air-de-Thibaut-2.local> # ignore les règles de personnalisation du nouveau referentiel dans le python
 
+plan_action/fiches [plan_action/fiches@v4.27.1] 2024-11-21T17:00:58Z System Administrator <root@MacBook-Air-de-Eli.local> # Ajoute ON DELETE CASCADE à fiche_action_libre_tag
+@4.27.2 2024-11-21T17:43:54Z System Administrator <root@MacBook-Air-de-Eli.local> # Tag en v4.27.2
+
 referentiel/verification_score 2024-11-20T16:04:26Z System Administrator <root@MacBook-Air-de-Thibaut-2.local> # Ajout d'un cron de verification des scores pour le nouveau moteur de calcul
 @v4.28.0 2024-11-20T17:10:15Z System Administrator <root@MacBook-Air-de-Thibaut-2.local> # Ajout d'un cron de verification des scores pour le nouveau moteur de calcul
+
 
