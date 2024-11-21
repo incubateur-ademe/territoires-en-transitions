@@ -190,6 +190,17 @@ const IndicateursListe = ({
           {`indicateur`}
           {countTotal > 1 ? 's' : ''}
         </span>
+        {/** Export */}
+        {!!currentDefs?.length && !isLoading && (
+          <Button
+            icon="download-line"
+            title="Exporter"
+            variant="outlined"
+            size="sm"
+            onClick={() => exportIndicateurs()}
+            disabled={isDownloadingExport}
+          />
+        )}
         {/** Champ de recherche */}
         <Input
           type="search"
