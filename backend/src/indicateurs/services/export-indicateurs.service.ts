@@ -7,7 +7,10 @@ import { AuthService } from '../../auth/services/auth.service';
 import { NiveauAcces } from '../../auth/models/private-utilisateur-droit.table';
 import IndicateursService from './indicateurs.service';
 import { ExportIndicateursRequestType } from '../models/export-indicateurs.request';
-import { IndicateurDefinitionAvecEnfantsType } from '../models/indicateur-definition.table';
+import {
+  IndicateurDefinitionAvecEnfantsType,
+  MinimalIndicateurDefinitionType,
+} from '../models/indicateur-definition.table';
 import { IndicateurValeurAvecMetadonnesDefinition } from '../models/indicateur-valeur.table';
 import { IndicateurSourceMetadonneeType } from '../models/indicateur-source-metadonnee.table';
 import {
@@ -49,6 +52,8 @@ export default class ExportIndicateursService {
     const definitions = await this.indicateursService.getIndicateurDefinitions(
       options.indicateurIds
     );
+    // tri par identifiant
+    definitions.sort(this.sortByDefinitionId);
 
     // charge la collectivité
     const collectivite = await this.collectiviteService.getCollectivite(
@@ -133,7 +138,10 @@ export default class ExportIndicateursService {
     );
 
     // extrait les ids des définitions
-    const definitions = [definition, ...(definition.enfants || [])];
+    const definitions = [
+      definition,
+      ...(definition.enfants?.sort(this.sortByDefinitionId) || []),
+    ];
     const indicateurIds = definitions.map((d) => d.id);
 
     // filtre les données
@@ -148,7 +156,7 @@ export default class ExportIndicateursService {
       subset.map((ind) =>
         new Date(ind.indicateur_valeur.dateValeur).getFullYear()
       )
-    );
+    ).sort();
 
     // utilisé ensuite pour remplir les colonnes par années
     const valeurParAnnee = new Map();
@@ -263,5 +271,16 @@ export default class ExportIndicateursService {
 
   private getSourceName(source: IndicateurSourceMetadonneeType) {
     return source.nomDonnees ?? source.producteur ?? source.diffuseur;
+  }
+
+  private sortByDefinitionId(
+    a: MinimalIndicateurDefinitionType,
+    b: MinimalIndicateurDefinitionType
+  ) {
+    return `${a.identifiantReferentiel ?? a.id}`.localeCompare(
+      `${b.identifiantReferentiel ?? b.id}`,
+      undefined,
+      { numeric: true, sensitivity: 'base' }
+    );
   }
 }
