@@ -16,7 +16,7 @@ import ProgressBarWithTooltip from 'ui/score/ProgressBarWithTooltip';
 import { avancementToLabel } from 'app/labels';
 import { actionAvancementColors } from 'app/theme';
 import ScoreAutoModal from './ScoreAutoModal';
-import ScoreDetailleModal from './ScoreDetailleModal';
+import ScoreDetailleModal from './ScoreDetailleModal/ScoreDetailleModal';
 import {
   getAvancementExt,
   getStatusFromIndex,
