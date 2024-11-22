@@ -34,4 +34,19 @@ describe('CountByStatutRouter', () => {
       });
     }
   });
+
+  test('not authenticated', async () => {
+    const caller = router.createCaller({ user: null });
+
+    const input: Input = {
+      collectiviteId: 1,
+      filter: {},
+    };
+
+    // `rejects` is necessary to handle exception in async function
+    // See https://vitest.dev/api/expect.html#tothrowerror
+    await expect(() =>
+      caller.plans.fiches.countByStatut(input)
+    ).rejects.toThrowError(/not authenticated/i);
+  });
 });
