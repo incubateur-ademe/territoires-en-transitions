@@ -2,6 +2,7 @@ import { Tag } from '@tet/api/shared/domain';
 import { SelectMultipleProps } from '@tet/ui';
 import SelectTags from '../tags/SelectTags';
 import { useTagsSuiviPersoListe } from './useTagsSuiviPersoListe';
+import { LibreTag } from '@tet/api/typeUtils';
 
 type TagsSuiviPersoDropdownProps = Omit<
   SelectMultipleProps,
@@ -12,8 +13,8 @@ type TagsSuiviPersoDropdownProps = Omit<
     libresTag,
     selectedLibreTag,
   }: {
-    libresTag: Tag[];
-    selectedLibreTag: Tag;
+    libresTag: LibreTag[];
+    selectedLibreTag: LibreTag;
   }) => void;
 };
 
