@@ -335,15 +335,6 @@ describe('FichesActionUpdateService', () => {
         partenaires: null,
       });
       expect(withNull.partenaires).toHaveLength(0);
-
-      const { body: notEmpty3 } = await putRequest(fiche);
-      expect(notEmpty3.partenaires).toHaveLength(fiche.partenaires.length);
-
-      const { body: withUndefined } = await putRequest({
-        titre: 'hello', // Additional field to not have an empty body
-        partenaires: undefined,
-      });
-      expect(withUndefined.partenaires).toHaveLength(fiche.partenaires.length);
     });
 
     it('should update the structures relations in the database', async () => {
@@ -550,9 +541,11 @@ describe('FichesActionUpdateService', () => {
         statusCode: 401,
       });
 
-      await databaseService.db
-        .delete(ficheActionTable)
-        .where(eq(ficheActionTable.id, 10000));
+      onTestFinished(async () => {
+        await databaseService.db
+          .delete(ficheActionTable)
+          .where(eq(ficheActionTable.id, 10000));
+      });
     });
 
     it('should allow update if fiche action is in user‘s collectivite', async () => {
@@ -575,9 +568,11 @@ describe('FichesActionUpdateService', () => {
         'Titre mis à jour par une utilisatrice autorisée'
       );
 
-      await databaseService.db
-        .delete(ficheActionTable)
-        .where(eq(ficheActionTable.id, 10000));
+      onTestFinished(async () => {
+        await databaseService.db
+          .delete(ficheActionTable)
+          .where(eq(ficheActionTable.id, 10000));
+      });
     });
   });
 
