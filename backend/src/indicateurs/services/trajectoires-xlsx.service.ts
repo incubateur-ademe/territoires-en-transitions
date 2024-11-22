@@ -5,17 +5,16 @@ import {
   UnprocessableEntityException,
 } from '@nestjs/common';
 import { NextFunction, Response } from 'express';
-import { JSZipGeneratorOptions } from 'jszip';
 import { default as XlsxTemplate } from 'xlsx-template';
-import { SupabaseJwtPayload } from '../../auth/models/supabase-jwt.models';
-import { EpciType } from '../../collectivites/models/epci.table';
+import { AuthenticatedUser } from '../../auth/models/auth.models';
 import { CollectiviteRequestType } from '../../collectivites/models/collectivite.request';
+import { EpciType } from '../../collectivites/models/epci.table';
 import BackendConfigurationService from '../../config/configuration.service';
 import SheetService from '../../spreadsheets/services/sheet.service';
-import TrajectoiresDataService from './trajectoires-data.service';
-import { VerificationTrajectoireStatus } from '../models/verification-trajectoire.response';
-import { ModeleTrajectoireTelechargementRequestType } from '../models/modele-trajectoire-telechargement.request';
 import { DonneesCalculTrajectoireARemplirType } from '../models/donnees-calcul-trajectoire-a-remplir.dto';
+import { ModeleTrajectoireTelechargementRequestType } from '../models/modele-trajectoire-telechargement.request';
+import { VerificationTrajectoireStatus } from '../models/verification-trajectoire.response';
+import TrajectoiresDataService from './trajectoires-data.service';
 
 @Injectable()
 export default class TrajectoiresXlsxService {
@@ -202,7 +201,7 @@ export default class TrajectoiresXlsxService {
 
   async downloadTrajectoireSnbc(
     request: CollectiviteRequestType,
-    tokenInfo: SupabaseJwtPayload,
+    tokenInfo: AuthenticatedUser,
     res: Response,
     next: NextFunction
   ) {
@@ -223,7 +222,7 @@ export default class TrajectoiresXlsxService {
 
       if (
         resultatVerification.status ===
-        VerificationTrajectoireStatus.COMMUNE_NON_SUPPORTEE ||
+          VerificationTrajectoireStatus.COMMUNE_NON_SUPPORTEE ||
         !resultatVerification.epci
       ) {
         throw new UnprocessableEntityException(

@@ -13,7 +13,7 @@ import {
 } from 'drizzle-orm';
 import { PgColumn } from 'drizzle-orm/pg-core';
 import { AuthService } from '../../auth/services/auth.service';
-import { CountSyntheseType } from '../../common/models/count-synthese.dto';
+import { CountByRecordType } from '../../common/models/count-synthese.dto';
 import { getModifiedSinceDate } from '../../common/models/modified-since.enum';
 import DatabaseService from '../../common/services/database.service';
 import { axeTable } from '../models/axe.table';
@@ -26,13 +26,11 @@ import {
   ficheActionTable,
   SANS_STATUT_FICHE_ACTION_SYNTHESE_KEY,
 } from '../models/fiche-action.table';
-import { GetFichesActionSyntheseResponseType } from '../models/get-fiches-action-synthese.response';
 import { GetFichesActionFilterRequestType } from '../models/get-fiches-actions-filter.request';
-import { SupabaseJwtPayload } from '../../auth/models/supabase-jwt.models';
 
 @Injectable()
-export default class FichesActionSyntheseService {
-  private readonly logger = new Logger(FichesActionSyntheseService.name);
+export class CountByStatutService {
+  private readonly logger = new Logger(CountByStatutService.name);
 
   private readonly FICHE_ACTION_PARTENAIRE_TAGS_QUERY_ALIAS =
     'ficheActionPartenaireTags';
@@ -44,33 +42,30 @@ export default class FichesActionSyntheseService {
     private readonly authService: AuthService
   ) {}
 
-  async getFichesActionSynthese(
+  async countByStatut(
     collectiviteId: number,
-    filter: GetFichesActionFilterRequestType,
-    tokenInfo: SupabaseJwtPayload
-  ): Promise<GetFichesActionSyntheseResponseType> {
+    filter: GetFichesActionFilterRequestType
+  ) {
     this.logger.log(
       `Récupération de la synthese des fiches action pour la collectivité ${collectiviteId}: filtre ${JSON.stringify(
         filter
       )}`
     );
 
-    const listeValeurs = Object.values(FicheActionStatutsEnumType) as string[];
+    const listeValeurs = Object.values(FicheActionStatutsEnumType);
     const conditions = this.getConditions(collectiviteId, filter);
-    const statutSynthese = await this.getSynthesePourPropriete(
+
+    const result = await this.countBy(
       ficheActionTable.statut,
       conditions,
       listeValeurs,
       SANS_STATUT_FICHE_ACTION_SYNTHESE_KEY
     );
 
-    const synthese: GetFichesActionSyntheseResponseType = {
-      par_statut: statutSynthese,
-    };
-    return synthese;
+    return result;
   }
 
-  getFicheActionPartenaireTagsQuery() {
+  private getFicheActionPartenaireTagsQuery() {
     return this.databaseService.db
       .select({
         fiche_id: ficheActionPartenaireTagTable.ficheId,
@@ -84,7 +79,7 @@ export default class FichesActionSyntheseService {
       .as(this.FICHE_ACTION_PARTENAIRE_TAGS_QUERY_ALIAS);
   }
 
-  getFicheActionAxesQuery() {
+  private getFicheActionAxesQuery() {
     return this.databaseService.db
       .select({
         fiche_id: ficheActionAxeTable.ficheId,
@@ -97,7 +92,7 @@ export default class FichesActionSyntheseService {
       .as('ficheActionAxes');
   }
 
-  getFicheActionServiceTagsQuery() {
+  private getFicheActionServiceTagsQuery() {
     return this.databaseService.db
       .select({
         fiche_id: ficheActionServiceTagTable.ficheId,
@@ -111,7 +106,7 @@ export default class FichesActionSyntheseService {
       .as('ficheActionServiceTag');
   }
 
-  getFicheActionPilotesQuery() {
+  private getFicheActionPilotesQuery() {
     return this.databaseService.db
       .select({
         fiche_id: ficheActionPiloteTable.ficheId,
@@ -131,9 +126,8 @@ export default class FichesActionSyntheseService {
 
   async getFichesAction(
     collectiviteId: number,
-    filter: GetFichesActionFilterRequestType,
-    tokenInfo: SupabaseJwtPayload
-  ): Promise<any> {
+    filter: GetFichesActionFilterRequestType
+  ) {
     this.logger.log(
       `Récupération des fiches action pour la collectivité ${collectiviteId}: filtre ${JSON.stringify(
         filter
@@ -179,7 +173,7 @@ export default class FichesActionSyntheseService {
     return await fichesActionQuery;
   }
 
-  getConditions(
+  private getConditions(
     collectiviteId: number,
     filter: GetFichesActionFilterRequestType
   ): (SQLWrapper | SQL)[] {
@@ -242,20 +236,20 @@ export default class FichesActionSyntheseService {
     return conditions;
   }
 
-  async getSynthesePourPropriete(
+  private async countBy<Value extends string, NullValue extends string>(
     propriete: PgColumn,
     conditions: (SQLWrapper | SQL)[],
-    listeValeurs?: string[],
-    nullValue?: string
-  ): Promise<CountSyntheseType> {
+    values: Value[],
+    nullValue?: NullValue
+  ) {
     const ficheActionPartenaireTags = this.getFicheActionPartenaireTagsQuery();
     const ficheActionPilotes = this.getFicheActionPilotesQuery();
     const ficheActionServiceTags = this.getFicheActionServiceTagsQuery();
     const ficheActionAxes = this.getFicheActionAxesQuery();
 
-    if (listeValeurs && nullValue && !listeValeurs.includes(nullValue)) {
-      listeValeurs.push(nullValue);
-    }
+    const listeValeurs: Array<Value | NullValue> = [
+      ...new Set([...values, ...(nullValue ? [nullValue] : [])]),
+    ];
 
     const fichesActionSyntheseQuery = this.databaseService.db
       .select({
@@ -283,7 +277,7 @@ export default class FichesActionSyntheseService {
       .groupBy(propriete);
     const fichesActionSynthese = await fichesActionSyntheseQuery;
 
-    const synthese: CountSyntheseType = {};
+    const synthese = {} as CountByRecordType<Value | NullValue>;
     if (listeValeurs) {
       listeValeurs.forEach((valeur) => {
         synthese[valeur] = {

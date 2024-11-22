@@ -4,7 +4,7 @@ import { ApiExcludeEndpoint, ApiResponse, ApiTags } from '@nestjs/swagger';
 import { Request } from 'express';
 import { AllowAnonymousAccess } from '../../auth/decorators/allow-anonymous-access.decorator';
 import { TokenInfo } from '../../auth/decorators/token-info.decorators';
-import { SupabaseJwtPayload } from '../../auth/models/supabase-jwt.models';
+import { AuthenticatedUser } from '../../auth/models/auth.models';
 import { checkMultipleReferentielScoresRequestSchema } from '../models/check-multiple-referentiel-scores.request';
 import { CheckReferentielScoresRequestType } from '../models/check-referentiel-scores.request';
 import { getActionStatutsRequestSchema } from '../models/get-action-statuts.request';
@@ -63,7 +63,7 @@ export class ReferentielsScoringController {
     @Param('collectivite_id') collectiviteId: number,
     @Param('referentiel_id') referentielId: ReferentielType,
     @Query() parameters: GetActionStatutsRequestClass,
-    @TokenInfo() tokenInfo: SupabaseJwtPayload
+    @TokenInfo() tokenInfo: AuthenticatedUser
   ): Promise<GetActionStatutsResponseClass> {
     return this.referentielsScoringService.getReferentielActionStatuts(
       referentielId,
@@ -79,7 +79,7 @@ export class ReferentielsScoringController {
   async getReferentielMultipleScorings(
     @Param('referentiel_id') referentielId: ReferentielType,
     @Query() parameters: GetReferentielMultipleScoresRequestClass,
-    @TokenInfo() tokenInfo: SupabaseJwtPayload
+    @TokenInfo() tokenInfo: AuthenticatedUser
   ): Promise<GetReferentielMultipleScoresResponseClass> {
     return await this.referentielsScoringService.computeScoreForMultipleCollectivite(
       referentielId,
@@ -95,7 +95,7 @@ export class ReferentielsScoringController {
     @Param('collectivite_id') collectiviteId: number,
     @Param('referentiel_id') referentielId: ReferentielType,
     @Query() parameters: GetReferentielScoresRequestClass,
-    @TokenInfo() tokenInfo: SupabaseJwtPayload
+    @TokenInfo() tokenInfo: AuthenticatedUser
   ): Promise<GetReferentielScoresResponseClass> {
     return await this.referentielsScoringService.computeScoreForCollectivite(
       referentielId,
