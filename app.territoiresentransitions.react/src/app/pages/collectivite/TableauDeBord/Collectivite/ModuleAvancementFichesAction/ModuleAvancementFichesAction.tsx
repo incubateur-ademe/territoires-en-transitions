@@ -37,7 +37,7 @@ const ModuleAvancementFichesAction = ({ module }: Props) => {
 
   const filtres = module.options.filtre;
 
-  const { data, isLoading } = useFichesActionStatuts(
+  const { data: countByStatut, isLoading } = useFichesActionStatuts(
     Object.fromEntries(
       // Map les champs entre le type API et celui Backend
       Object.entries({
@@ -52,10 +52,8 @@ const ModuleAvancementFichesAction = ({ module }: Props) => {
     )
   );
 
-  const statutFiches = data?.par_statut;
-
-  const fichesCount = statutFiches
-    ? Object.values(statutFiches).reduce((acc, curr) => acc + curr.count, 0)
+  const fichesCount = countByStatut
+    ? Object.values(countByStatut).reduce((acc, curr) => acc + curr.count, 0)
     : 0;
 
   if (!collectiviteId) {
@@ -99,8 +97,8 @@ const ModuleAvancementFichesAction = ({ module }: Props) => {
         <Chart
           donut={{
             chart: {
-              data: statutFiches
-                ? Object.entries(statutFiches)
+              data: countByStatut
+                ? Object.entries(countByStatut)
                     .map(([statut, { count, valeur }]) => ({
                       id: statut,
                       value: count,
@@ -134,21 +132,25 @@ const ModuleAvancementFichesAction = ({ module }: Props) => {
       )}
       {display === 'row' && (
         <div className="flex flex-wrap gap-2">
-          {statutFiches &&
-            Object.entries(statutFiches).map(([statut, { valeur }], index) =>
+          {countByStatut &&
+            Object.entries(countByStatut).map(([statut, { valeur }], index) =>
               statut === 'Sans statut' ? (
-                <Card statut={valeur} count={statutFiches[statut].count} />
+                <Card
+                  key={index}
+                  statut={valeur}
+                  count={countByStatut[statut].count}
+                />
               ) : (
                 <Link
                   key={index}
                   href={makeFichesActionUrlWithParams(
                     collectiviteId,
                     filtres,
-                    valeur
+                    valeur as Statut
                   )}
                   className="bg-none rounded-xl hover:shadow"
                 >
-                  <Card statut={valeur} count={statutFiches[statut].count} />
+                  <Card statut={valeur} count={countByStatut[statut].count} />
                 </Link>
               )
             )}
@@ -161,7 +163,7 @@ const ModuleAvancementFichesAction = ({ module }: Props) => {
 export default ModuleAvancementFichesAction;
 
 type CardProps = {
-  statut: Statut;
+  statut: Statut | 'Sans statut';
   count: number;
 };
 

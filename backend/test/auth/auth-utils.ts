@@ -1,6 +1,5 @@
 import { createClient, SupabaseClient } from '@supabase/supabase-js';
 import { YOLO_DODO_CREDENTIALS } from './test-users.samples';
-import { AuthenticatedUser } from '../../src/auth/models/auth.models';
 
 let supabase: SupabaseClient;
 

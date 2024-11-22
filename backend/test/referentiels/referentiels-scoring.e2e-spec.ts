@@ -2,9 +2,7 @@ import { INestApplication } from '@nestjs/common';
 import { default as request } from 'supertest';
 import { getYoloDodoToken } from '../auth/auth-utils';
 import { getTestApp } from '../common/app-utils';
-import {
-  GetActionStatutsResponseType,
-} from '../../src/referentiels/models/get-action-statuts.response';
+import { GetActionStatutsResponseType } from '../../src/referentiels/models/get-action-statuts.response';
 import { ReferentielActionWithScoreType } from '../../src/referentiels/models/referentiel-action-avec-score.dto';
 import { GetReferentielScoresResponseType } from '../../src/referentiels/models/get-referentiel-scores.response';
 import { ActionType } from '../../src/referentiels/models/action-type.enum';
@@ -21,7 +19,7 @@ describe('Referentiels scoring routes', () => {
   });
 
   it(`Récupération des statuts des actions sans token non autorisée`, async () => {
-    const response = await request(app.getHttpServer())
+    await request(app.getHttpServer())
       .get('/collectivites/1/referentiels/cae/action-statuts')
       .expect(401);
   });
@@ -46,7 +44,7 @@ describe('Referentiels scoring routes', () => {
   });
 
   it(`Récupération anonyme des statuts des actions pour une collectivite inconnue`, async () => {
-    const response = await request(app.getHttpServer())
+    await request(app.getHttpServer())
       .get('/collectivites/10000000/referentiels/cae/action-statuts')
       .set('Authorization', `Bearer ${process.env.SUPABASE_ANON_KEY}`)
       .expect(404)
@@ -59,7 +57,7 @@ describe('Referentiels scoring routes', () => {
   });
 
   it(`Récupération anonyme des statuts des actions d'un référentiel inconnu`, async () => {
-    const response = await request(app.getHttpServer())
+    await request(app.getHttpServer())
       .get('/collectivites/1/referentiels/inconnu/action-statuts')
       .set('Authorization', `Bearer ${process.env.SUPABASE_ANON_KEY}`)
       .expect(404)
@@ -71,7 +69,7 @@ describe('Referentiels scoring routes', () => {
   });
 
   it(`Récupération anonyme des historiques de statuts des actions non autorisé`, async () => {
-    const response = await request(app.getHttpServer())
+    await request(app.getHttpServer())
       .get(
         '/collectivites/1/referentiels/cae/action-statuts?date=2020-01-02T00:00:01Z'
       )
@@ -105,9 +103,9 @@ describe('Referentiels scoring routes', () => {
     };
     expect(actionStatuts['cae_1.1.1.1.1']).toEqual(expectedActionStatut);
   });
-  
+
   it(`Récupération du score d'un référentiel sans token non autorisée`, async () => {
-    const response = await request(app.getHttpServer())
+    await request(app.getHttpServer())
       .get('/collectivites/1/referentiels/cae/scores')
       .expect(401);
   });
@@ -154,13 +152,13 @@ describe('Referentiels scoring routes', () => {
       },
       actionsEnfant: [],
       scoresTag: {},
-      tags: []
+      tags: [],
     };
     expect(referentielScoreWithoutActionsEnfant).toEqual(expectedCaeRoot);
   });
 
   it(`Récupération anonyme du score d'un référentiel pour une collectivite inconnue`, async () => {
-    const response = await request(app.getHttpServer())
+    await request(app.getHttpServer())
       .get('/collectivites/10000000/referentiels/cae/scores')
       .set('Authorization', `Bearer ${process.env.SUPABASE_ANON_KEY}`)
       .expect(404)
@@ -173,7 +171,7 @@ describe('Referentiels scoring routes', () => {
   });
 
   it(`Récupération anonyme du score d'un référentiel inconnu`, async () => {
-    const response = await request(app.getHttpServer())
+    await request(app.getHttpServer())
       .get('/collectivites/1/referentiels/inconnu/scores')
       .set('Authorization', `Bearer ${process.env.SUPABASE_ANON_KEY}`)
       .expect(404)
@@ -228,7 +226,7 @@ describe('Referentiels scoring routes', () => {
       },
       actionsEnfant: [],
       scoresTag: {},
-      tags: []
+      tags: [],
     };
 
     expect(referentielScoreWithoutActionsEnfant).toEqual(expectedCaeRoot);
