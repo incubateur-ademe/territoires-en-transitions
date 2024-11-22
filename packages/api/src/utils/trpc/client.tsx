@@ -71,13 +71,3 @@ export function TRPCProvider(
     </trpc.Provider>
   );
 }
-
-// export async function getAuthHeaders() {
-//   const session = await getSession();
-//   return session?.access_token
-//     ? {
-//         authorization: `Bearer ${session.access_token}`,
-//         apikey: `${ENV.supabase_anon_key}`,
-//       }
-//     : null;
-// }
