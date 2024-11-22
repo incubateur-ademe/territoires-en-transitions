@@ -1,5 +1,4 @@
-import { useEffect, useState } from 'react';
-import _ from 'lodash';
+import { FicheAction } from '@tet/api/plan-actions';
 import {
   Field,
   FormSectionGrid,
@@ -7,14 +6,15 @@ import {
   ModalFooterOKCancel,
   useEventTracker,
 } from '@tet/ui';
-import { FicheAction } from '@tet/api/plan-actions';
+import { useCurrentCollectivite } from 'core-logic/hooks/useCurrentCollectivite';
+import _ from 'lodash';
+import { useState } from 'react';
+import PartenairesDropdown from 'ui/dropdownLists/PartenairesDropdown/PartenairesDropdown';
 import PersonnesDropdown from 'ui/dropdownLists/PersonnesDropdown/PersonnesDropdown';
 import { getPersonneStringId } from 'ui/dropdownLists/PersonnesDropdown/utils';
 import ServicesPilotesDropdown from 'ui/dropdownLists/ServicesPilotesDropdown/ServicesPilotesDropdown';
 import StructuresDropdown from 'ui/dropdownLists/StructuresDropdown/StructuresDropdown';
-import PartenairesDropdown from 'ui/dropdownLists/PartenairesDropdown/PartenairesDropdown';
 import CiblesDropdown from 'ui/dropdownLists/ficheAction/CiblesDropdown/CiblesDropdown';
-import { useCurrentCollectivite } from 'core-logic/hooks/useCurrentCollectivite';
 
 type ModaleActeursProps = {
   isOpen: boolean;
@@ -69,7 +69,10 @@ const ModaleActeurs = ({
               placeholder="Sélectionnez ou créez un pilote"
               values={editedFiche.services?.map((s) => s.id)}
               onChange={({ services }) =>
-                setEditedFiche((prevState) => ({ ...prevState, services }))
+                setEditedFiche((prevState) => ({
+                  ...prevState,
+                  services,
+                }))
               }
             />
           </Field>
@@ -79,7 +82,10 @@ const ModaleActeurs = ({
             <StructuresDropdown
               values={editedFiche.structures?.map((s) => s.id)}
               onChange={({ structures }) =>
-                setEditedFiche((prevState) => ({ ...prevState, structures }))
+                setEditedFiche((prevState) => ({
+                  ...prevState,
+                  structures,
+                }))
               }
             />
           </Field>
@@ -103,7 +109,10 @@ const ModaleActeurs = ({
             <PartenairesDropdown
               values={editedFiche.partenaires?.map((p) => p.id)}
               onChange={({ partenaires }) =>
-                setEditedFiche((prevState) => ({ ...prevState, partenaires }))
+                setEditedFiche((prevState) => ({
+                  ...prevState,
+                  partenaires,
+                }))
               }
             />
           </Field>
@@ -113,7 +122,10 @@ const ModaleActeurs = ({
             <CiblesDropdown
               values={editedFiche.cibles ?? []}
               onChange={({ cibles }) =>
-                setEditedFiche((prevState) => ({ ...prevState, cibles }))
+                setEditedFiche((prevState) => ({
+                  ...prevState,
+                  cibles,
+                }))
               }
             />
           </Field>

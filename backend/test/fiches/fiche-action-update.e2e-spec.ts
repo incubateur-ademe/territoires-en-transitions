@@ -21,10 +21,11 @@ import {
   FicheActionCiblesEnumType,
   FicheActionStatutsEnumType,
   ficheActionTable,
-  piliersEciEnumType
+  piliersEciEnumType,
 } from '../../src/fiches/models/fiche-action.table';
 import { getYoloDodoToken } from '../auth/auth-utils';
 import { getTestApp } from '../common/app-utils';
+import { UpdateFicheActionRequestType } from './../../src/fiches/models/update-fiche-action.request';
 import {
   actionsFixture,
   axesFixture,
@@ -305,15 +306,13 @@ describe('FichesActionUpdateService', () => {
     });
 
     it('should update the partenaires relations in the database', async () => {
-      const data: UpdateFicheActionRequestClass = {
+      const fiche = {
         partenaires: [{ id: 1 }, { id: 2 }],
-      };
+      } satisfies UpdateFicheActionRequestClass;
 
-      const response = await putRequest(data);
+      const { body: notEmpty } = await putRequest(fiche);
 
-      const body = response.body;
-
-      expect(body.partenaires).toStrictEqual([
+      expect(notEmpty.partenaires).toStrictEqual([
         {
           ficheId: ficheActionId,
           partenaireTagId: 1,
@@ -323,6 +322,28 @@ describe('FichesActionUpdateService', () => {
           partenaireTagId: 2,
         },
       ]);
+
+      const { body: withEmpty } = await putRequest({
+        partenaires: [],
+      });
+      expect(withEmpty.partenaires).toHaveLength(0);
+
+      const { body: notEmpty2 } = await putRequest(fiche);
+      expect(notEmpty2.partenaires).toHaveLength(fiche.partenaires.length);
+
+      const { body: withNull } = await putRequest({
+        partenaires: null,
+      });
+      expect(withNull.partenaires).toHaveLength(0);
+
+      const { body: notEmpty3 } = await putRequest(fiche);
+      expect(notEmpty3.partenaires).toHaveLength(fiche.partenaires.length);
+
+      const { body: withUndefined } = await putRequest({
+        titre: 'hello', // Additional field to not have an empty body
+        partenaires: undefined,
+      });
+      expect(withUndefined.partenaires).toHaveLength(fiche.partenaires.length);
     });
 
     it('should update the structures relations in the database', async () => {
@@ -633,7 +654,7 @@ describe('FichesActionUpdateService', () => {
     });
   }
 
-  const putRequest = async (data: object) => {
+  const putRequest = async (data: UpdateFicheActionRequestType) => {
     return await request(app.getHttpServer())
       .put(`/collectivites/${collectiviteId}/fiches-action/${ficheActionId}`)
       .send(data)

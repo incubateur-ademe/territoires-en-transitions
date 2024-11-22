@@ -144,7 +144,7 @@ export default class FichesActionUpdateService {
        * Updates junction tables
        */
 
-      if (axes && axes.length > 0) {
+      if (axes !== undefined) {
         updatedAxes = await this.updateRelations(
           ficheActionId,
           axes,
@@ -156,7 +156,7 @@ export default class FichesActionUpdateService {
         );
       }
 
-      if (thematiques && thematiques.length > 0) {
+      if (thematiques !== undefined) {
         updatedThematiques = await this.updateRelations(
           ficheActionId,
           thematiques,
@@ -168,7 +168,7 @@ export default class FichesActionUpdateService {
         );
       }
 
-      if (sousThematiques && sousThematiques.length > 0) {
+      if (sousThematiques !== undefined) {
         updatedSousThematiques = await this.updateRelations(
           ficheActionId,
           sousThematiques,
@@ -180,7 +180,7 @@ export default class FichesActionUpdateService {
         );
       }
 
-      if (partenaires && partenaires.length > 0) {
+      if (partenaires !== undefined) {
         updatedPartenaires = await this.updateRelations(
           ficheActionId,
           partenaires,
@@ -192,7 +192,7 @@ export default class FichesActionUpdateService {
         );
       }
 
-      if (structures && structures.length > 0) {
+      if (structures !== undefined) {
         updatedStructures = await this.updateRelations(
           ficheActionId,
           structures,
@@ -204,7 +204,7 @@ export default class FichesActionUpdateService {
         );
       }
 
-      if (pilotes && pilotes.length > 0) {
+      if (pilotes !== undefined) {
         updatedPilotes = await this.updateRelations(
           ficheActionId,
           pilotes,
@@ -216,7 +216,7 @@ export default class FichesActionUpdateService {
         );
       }
 
-      if (referents && referents.length > 0) {
+      if (referents !== undefined) {
         updatedReferents = await this.updateRelations(
           ficheActionId,
           referents,
@@ -228,7 +228,7 @@ export default class FichesActionUpdateService {
         );
       }
 
-      if (actions && actions.length > 0) {
+      if (actions !== undefined) {
         updatedActions = await this.updateRelations(
           ficheActionId,
           actions,
@@ -240,7 +240,7 @@ export default class FichesActionUpdateService {
         );
       }
 
-      if (indicateurs && indicateurs.length > 0) {
+      if (indicateurs !== undefined) {
         updatedIndicateurs = await this.updateRelations(
           ficheActionId,
           indicateurs,
@@ -252,7 +252,7 @@ export default class FichesActionUpdateService {
         );
       }
 
-      if (services && services.length > 0) {
+      if (services !== undefined) {
         updatedServices = await this.updateRelations(
           ficheActionId,
           services,
@@ -264,7 +264,7 @@ export default class FichesActionUpdateService {
         );
       }
 
-      if (financeurs && financeurs.length > 0) {
+      if (financeurs !== undefined) {
         const flatFinanceurs = this.extractIdsAndMontants(financeurs);
         updatedFinanceurs = await this.updateRelations(
           ficheActionId,
@@ -335,7 +335,7 @@ export default class FichesActionUpdateService {
    */
   private async updateRelations(
     ficheActionId: number,
-    relations: any[],
+    relations: any[] | null,
     tx: TxType,
     table: PgTable<TableConfig>,
     relationIdKeys: string[],
@@ -346,7 +346,7 @@ export default class FichesActionUpdateService {
       ficheActionId,
       ficheIdColumn,
       relationIdColumns,
-      relations,
+      relations ?? [],
       relationIdKeys
     );
 
@@ -354,7 +354,11 @@ export default class FichesActionUpdateService {
     await tx.delete(table).where(eq(ficheIdColumn, ficheActionId));
 
     // Adds new relations to fiche action
-    return await tx.insert(table).values(relationsToUpdate).returning();
+    if (relationsToUpdate.length > 0) {
+      return await tx.insert(table).values(relationsToUpdate).returning();
+    }
+
+    return [];
   }
 
   private buildRelationsToUpdate(
@@ -403,9 +407,9 @@ export default class FichesActionUpdateService {
   }
 
   private extractIdsAndMontants(
-    financeurs: any[]
+    financeurs: any[] | null
   ): { financeurTagId: number; montantTtc: number }[] {
-    return financeurs.map((financeur) => ({
+    return (financeurs ?? []).map((financeur) => ({
       financeurTagId: financeur.financeurTag.id,
       montantTtc: financeur.montantTtc,
     }));
