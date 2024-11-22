@@ -3,11 +3,9 @@
   "compilerOptions": {
     "jsx": "preserve",
     "allowJs": false,
-    "esModuleInterop": true,
     "allowSyntheticDefaultImports": true,
     "noEmit": true,
     "resolveJsonModule": true,
-    "incremental": true,
     "isolatedModules": true,
     "plugins": [
       {
