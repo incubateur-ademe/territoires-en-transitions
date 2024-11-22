@@ -6,8 +6,8 @@ import {
 import {
   clearAuthTokens,
   getRootDomain,
+  getSession,
   MaCollectivite,
-  restoreSessionFromAuthTokens,
   setAuthTokens,
 } from '@tet/api';
 import { Tables } from '@tet/api/database.types';
@@ -227,24 +227,6 @@ const clearCrispUserData = () => {
   }
 };
 
-export async function getSession() {
-  const { data, error } = await supabaseClient.auth.getSession();
-  if (data?.session) {
-    return data.session;
-  }
-  if (error) throw error;
-
-  // restaure une éventuelle session précédente
-  const ret = await restoreSessionFromAuthTokens(supabaseClient);
-  if (ret) {
-    const { data, error } = ret;
-    if (data?.session) {
-      return data.session;
-    }
-    if (error) throw error;
-  }
-}
-
 const useCurrentSession = () => {
   const { data, error } = useQuery(['session'], async () => {
     return getSession();
@@ -256,13 +238,3 @@ const useCurrentSession = () => {
 
   return data;
 };
-
-export async function getAuthHeaders() {
-  const session = await getSession();
-  return session?.access_token
-    ? {
-        authorization: `Bearer ${session.access_token}`,
-        apikey: `${ENV.supabase_anon_key}`,
-      }
-    : null;
-}

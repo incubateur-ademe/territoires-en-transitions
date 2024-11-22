@@ -1,5 +1,4 @@
 import { User as SupabaseUser } from '@supabase/supabase-js';
-import { UUID } from 'crypto';
 import { JwtPayload } from 'jsonwebtoken';
 
 export enum AuthRole {
