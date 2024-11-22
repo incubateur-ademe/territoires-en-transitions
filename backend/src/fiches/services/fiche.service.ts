@@ -15,7 +15,7 @@ import { ficheActionSousThematiqueTable } from '../models/fiche-action-sous-them
 import { ficheActionThematiqueTable } from '../models/fiche-action-thematique.table';
 import { ficheActionNoteTable } from '../models/fiche-action-note.table';
 import { AuthService } from '../../auth/services/auth.service';
-import { SupabaseJwtPayload } from '../../auth/models/supabase-jwt.models';
+import { AuthenticatedUser } from '../../auth/models/auth.models';
 import { NiveauAcces } from '../../auth/models/private-utilisateur-droit.table';
 import { dcpTable } from '../../auth/models/dcp.table';
 
@@ -41,7 +41,7 @@ export default class FicheService {
   /** Détermine si un utilisateur peut lire une fiche */
   async canReadFiche(
     ficheId: number,
-    tokenInfo: SupabaseJwtPayload
+    tokenInfo: AuthenticatedUser
   ): Promise<boolean> {
     const fiche = await this.getFicheFromId(ficheId);
     if (fiche === null) return false;
@@ -62,7 +62,7 @@ export default class FicheService {
   /** Détermine si un utilisateur peut modifier une fiche */
   async canWriteFiche(
     ficheId: number,
-    tokenInfo: SupabaseJwtPayload
+    tokenInfo: AuthenticatedUser
   ): Promise<boolean> {
     const fiche = await this.getFicheFromId(ficheId);
     if (fiche === null) return false;
@@ -199,7 +199,7 @@ export default class FicheService {
   }
 
   /** Lit les notes de suivi attachées à la fiche */
-  async getNotes(ficheId: number, tokenInfo: SupabaseJwtPayload) {
+  async getNotes(ficheId: number, tokenInfo: AuthenticatedUser) {
     const canRead = await this.canReadFiche(ficheId, tokenInfo);
     if (!canRead) return false;
 

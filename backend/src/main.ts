@@ -12,7 +12,7 @@ import { AppModule } from './app.module';
 import { initApplicationCredentials } from './common/services/gcloud.helper';
 import './common/services/sentry.service';
 import { SENTRY_DSN } from './common/services/sentry.service';
-import { TrpcRouter } from './trpc.router';
+import { TrpcRouter } from './trpc/trpc.router';
 
 const logger = new Logger('main');
 const port = process.env.PORT || 8080;

@@ -1,6 +1,7 @@
-import { Module } from '@nestjs/common';
-import { TrpcService } from './services/trpc.service';
+import { Global, Module } from '@nestjs/common';
+import { TrpcService } from './trpc.service';
 
+@Global()
 @Module({
   imports: [],
   controllers: [],

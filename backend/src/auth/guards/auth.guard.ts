@@ -12,9 +12,16 @@ import { getErrorMessage } from '../../common/services/errors.helper';
 import BackendConfigurationService from '../../config/configuration.service';
 import { AllowAnonymousAccess } from '../decorators/allow-anonymous-access.decorator';
 import { AllowPublicAccess } from '../decorators/allow-public-access.decorator';
-import { SupabaseJwtPayload } from '../models/supabase-jwt.models';
+import {
+  AuthenticatedUser,
+  AuthJwtPayload,
+  isAnonymousJwt,
+  jwtToAuthenticatedUser,
+} from '../models/auth.models';
+import SupabaseService from '../../common/services/supabase.service';
 
 export const TOKEN_QUERY_PARAM = 'token';
+export const REQUEST_JWT_PAYLOAD_PARAM = 'jwt-payload';
 
 @Injectable()
 export class AuthGuard implements CanActivate {
@@ -22,6 +29,7 @@ export class AuthGuard implements CanActivate {
 
   constructor(
     private jwtService: JwtService,
+    private supabase: SupabaseService,
     private reflector: Reflector,
     private backendConfigurationService: BackendConfigurationService
   ) {}
@@ -39,39 +47,52 @@ export class AuthGuard implements CanActivate {
       return true;
     }
 
-    const token = this.extractTokenFromRequest(request);
-    if (!token) {
+    const jwtToken = this.extractTokenFromRequest(request);
+    if (!jwtToken) {
       throw new UnauthorizedException();
     }
+
+    let jwtPayload;
     try {
-      const payload: SupabaseJwtPayload = await this.jwtService.verifyAsync(
-        token,
-        {
-          secret: this.backendConfigurationService.get('SUPABASE_JWT_SECRET'),
-        }
-      );
-      // 💡 We're assigning the payload to the request object here
-      // so that we can access it in our route handlers
-      // @ts-expect-error tokenInfo doesn't exist on Request, but we want to attach it
-      request['tokenInfo'] = payload;
-      this.logger.log(`Token validated for user ${payload.sub}`);
-      if (payload.is_anonymous) {
-        const allowAnonymousAccess = this.reflector.get(
-          AllowAnonymousAccess,
-          context.getHandler()
-        );
-        if (allowAnonymousAccess) {
-          this.logger.log(`Anonymous user is allowed`);
-          return true;
-        } else {
-          this.logger.error(`Anonymous user is not allowed`);
-          throw new UnauthorizedException();
-        }
-      }
+      jwtPayload = await this.jwtService.verifyAsync<AuthJwtPayload>(jwtToken, {
+        secret: this.backendConfigurationService.get('SUPABASE_JWT_SECRET'),
+      });
     } catch (err) {
       this.logger.error(`Failed to validate token: ${getErrorMessage(err)}`);
       throw new UnauthorizedException();
     }
+
+    if (isAnonymousJwt(jwtPayload)) {
+      const allowAnonymousAccess = this.reflector.get(
+        AllowAnonymousAccess,
+        context.getHandler()
+      );
+
+      if (allowAnonymousAccess) {
+        this.logger.log(`Anonymous user is allowed`);
+        return true;
+      }
+
+      this.logger.error(`Anonymous user is not allowed`);
+      throw new UnauthorizedException();
+    }
+
+    // Else user is authenticated
+    // const { data } = await this.supabase.client.auth.getUser(jwtToken);
+
+    let authenticatedUser: AuthenticatedUser;
+    try {
+      authenticatedUser = jwtToAuthenticatedUser(jwtPayload);
+      this.logger.log(`Token validated for user ${authenticatedUser.id}`);
+    } catch (err) {
+      this.logger.error(`Failed to convert token: ${getErrorMessage(err)}`);
+      throw new UnauthorizedException();
+    }
+
+    // 💡 We're assigning the payload to the request object here so that we can access it in our route handlers
+    // @ts-expect-error force attach a new property to the request object
+    request[REQUEST_JWT_PAYLOAD_PARAM] = authenticatedUser;
+
     return true;
   }
 

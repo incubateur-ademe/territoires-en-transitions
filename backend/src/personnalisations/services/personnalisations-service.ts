@@ -1,7 +1,7 @@
 import { Injectable, Logger } from '@nestjs/common';
 import { and, asc, desc, eq, like, lte, SQL, SQLWrapper } from 'drizzle-orm';
 import { NiveauAcces } from '../../auth/models/private-utilisateur-droit.table';
-import { SupabaseJwtPayload } from '../../auth/models/supabase-jwt.models';
+import { AuthenticatedUser } from '../../auth/models/auth.models';
 import { AuthService } from '../../auth/services/auth.service';
 import {
   CollectiviteAvecType,
@@ -88,7 +88,7 @@ export default class PersonnalisationsService {
   async getPersonnalisationReponses(
     collectiviteId: number,
     reponsesDate?: string,
-    tokenInfo?: SupabaseJwtPayload
+    tokenInfo?: AuthenticatedUser
   ): Promise<GetPersonnalisationReponsesResponseType> {
     const reponses: GetPersonnalisationReponsesResponseType = {};
 
@@ -158,7 +158,7 @@ export default class PersonnalisationsService {
   async getPersonnalisationConsequencesForCollectivite(
     collectiviteId: number,
     request: GetPersonnalisationConsequencesRequestType,
-    tokenInfo?: SupabaseJwtPayload,
+    tokenInfo?: AuthenticatedUser,
     collectiviteInfo?: CollectiviteAvecType
   ): Promise<GetPersonnalitionConsequencesResponseType> {
     // Seulement les personnes ayant l'accès en lecture à la collectivité peuvent voir les réponses historiques

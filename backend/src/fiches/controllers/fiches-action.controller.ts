@@ -10,11 +10,11 @@ import {
 } from '@nestjs/common';
 import { ApiOkResponse, ApiTags } from '@nestjs/swagger';
 import { TokenInfo } from '../../auth/decorators/token-info.decorators';
-import type { SupabaseJwtPayload } from '../../auth/models/supabase-jwt.models';
+import type { AuthenticatedUser } from '../../auth/models/auth.models';
 import { getFichesActionSyntheseSchema } from '../models/get-fiches-action-synthese.response';
 import { getFichesActionFilterRequestSchema } from '../models/get-fiches-actions-filter.request';
 import { updateFicheActionRequestSchema } from '../models/update-fiche-action.request';
-import FichesActionSyntheseService from '../services/fiches-action-synthese.service';
+import { CountByStatutService } from '../count-by-statut/count-by-statut.service';
 import FichesActionUpdateService from '../services/fiches-action-update.service';
 import {
   deleteFicheActionNotesRequestSchema,
@@ -53,7 +53,7 @@ export class DeleteFicheActionNotesRequestClass extends createZodDto(
 export class FichesActionController {
   constructor(
     private readonly ficheService: FicheService,
-    private readonly fichesActionSyntheseService: FichesActionSyntheseService,
+    private readonly fichesActionSyntheseService: CountByStatutService,
     private readonly fichesActionUpdateService: FichesActionUpdateService
   ) {}
 
@@ -66,12 +66,11 @@ export class FichesActionController {
   async getFichesActionSynthese(
     @Param('collectivite_id') collectiviteId: number,
     @Query() request: GetFichesActionFilterRequestClass,
-    @TokenInfo() tokenInfo: SupabaseJwtPayload
+    @TokenInfo() tokenInfo: AuthenticatedUser
   ) {
-    return this.fichesActionSyntheseService.getFichesActionSynthese(
+    return this.fichesActionSyntheseService.countByStatut(
       collectiviteId,
-      request,
-      tokenInfo
+      request
     );
   }
 
@@ -83,12 +82,11 @@ export class FichesActionController {
   async getFichesAction(
     @Param('collectivite_id') collectiviteId: number,
     @Query() request: GetFichesActionFilterRequestClass,
-    @TokenInfo() tokenInfo: SupabaseJwtPayload
+    @TokenInfo() tokenInfo: AuthenticatedUser
   ) {
     return this.fichesActionSyntheseService.getFichesAction(
       collectiviteId,
-      request,
-      tokenInfo
+      request
     );
   }
 
@@ -101,7 +99,7 @@ export class FichesActionController {
     @Param('id') id: number,
     @Body()
     body: UpdateFicheActionRequestClass,
-    @TokenInfo() tokenInfo: SupabaseJwtPayload
+    @TokenInfo() tokenInfo: AuthenticatedUser
   ) {
     return await this.fichesActionUpdateService.updateFicheAction(
       id,
@@ -117,7 +115,7 @@ export class FichesActionController {
   })
   async selectFicheActionNotes(
     @Param('id') ficheId: number,
-    @TokenInfo() tokenInfo: SupabaseJwtPayload
+    @TokenInfo() tokenInfo: AuthenticatedUser
   ) {
     return this.ficheService.getNotes(ficheId, tokenInfo);
   }
@@ -130,7 +128,7 @@ export class FichesActionController {
   async upsertFicheActionNotes(
     @Param('id') ficheId: number,
     @Body() body: UpsertFicheActionNotesRequestClass,
-    @TokenInfo() tokenInfo: SupabaseJwtPayload
+    @TokenInfo() tokenInfo: AuthenticatedUser
   ) {
     return this.fichesActionUpdateService.upsertNotes(
       ficheId,
@@ -147,7 +145,7 @@ export class FichesActionController {
   async deleteFicheActionNotes(
     @Param('id') ficheId: number,
     @Body() body: DeleteFicheActionNotesRequestClass,
-    @TokenInfo() tokenInfo: SupabaseJwtPayload
+    @TokenInfo() tokenInfo: AuthenticatedUser
   ) {
     return this.fichesActionUpdateService.deleteNote(
       ficheId,

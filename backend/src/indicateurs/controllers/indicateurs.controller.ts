@@ -2,15 +2,13 @@ import { createZodDto } from '@anatine/zod-nestjs';
 import { Body, Controller, Get, Logger, Post, Query } from '@nestjs/common';
 import { ApiCreatedResponse, ApiResponse, ApiTags } from '@nestjs/swagger';
 import { TokenInfo } from '../../auth/decorators/token-info.decorators';
-import {
-  getIndicateursValeursResponseSchema,
-} from '../models/get-indicateurs.response';
+import { getIndicateursValeursResponseSchema } from '../models/get-indicateurs.response';
 import {
   UpsertIndicateursValeursRequest,
   UpsertIndicateursValeursResponse,
 } from '../models/upsert-indicateurs-valeurs.request';
 import IndicateursService from '../services/indicateurs.service';
-import type { SupabaseJwtPayload } from '../../auth/models/supabase-jwt.models';
+import type { AuthenticatedUser } from '../../auth/models/auth.models';
 import { getIndicateursValeursRequestSchema } from '../models/get-indicateurs.request';
 
 /**
@@ -35,8 +33,9 @@ export class IndicateursController {
   @ApiResponse({ type: GetIndicateursValeursResponseClass })
   async getIndicateurValeurs(
     @Query() request: GetIndicateursValeursRequestClass,
-    @TokenInfo() tokenInfo: SupabaseJwtPayload
+    @TokenInfo() tokenInfo: AuthenticatedUser
   ): Promise<GetIndicateursValeursResponseClass> {
+    console.log('tokenInfo', tokenInfo);
     return this.indicateurService.getIndicateurValeursGroupees(
       request,
       tokenInfo
@@ -49,7 +48,7 @@ export class IndicateursController {
   })
   async upsertIndicateurValeurs(
     @Body() request: UpsertIndicateursValeursRequest,
-    @TokenInfo() tokenInfo: SupabaseJwtPayload
+    @TokenInfo() tokenInfo: AuthenticatedUser
   ): Promise<UpsertIndicateursValeursResponse> {
     const upsertedValeurs =
       await this.indicateurService.upsertIndicateurValeurs(

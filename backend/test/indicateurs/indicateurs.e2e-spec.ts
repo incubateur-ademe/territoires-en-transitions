@@ -1,32 +1,16 @@
 import { INestApplication } from '@nestjs/common';
-import { Test } from '@nestjs/testing';
-import { createClient, SupabaseClient } from '@supabase/supabase-js';
 import { default as request } from 'supertest';
-import { AppModule } from '../../src/app.module';
 import { UpsertIndicateursValeursRequest } from '../../src/indicateurs/models/upsert-indicateurs-valeurs.request';
-import { YOLO_DODO_CREDENTIALS } from '../auth/test-users.samples';
+import { getYoloDodoToken } from '../auth/auth-utils';
+import { getTestApp } from '../common/app-utils';
 
 describe('Route de lecture / ecriture des indicateurs', () => {
   let app: INestApplication;
-  let supabase: SupabaseClient;
   let yoloDodoToken: string;
 
   beforeAll(async () => {
-    const moduleRef = await Test.createTestingModule({
-      imports: [AppModule],
-    }).compile();
-
-    app = moduleRef.createNestApplication();
-    await app.init();
-
-    supabase = createClient(
-      process.env.SUPABASE_URL!,
-      process.env.SUPABASE_ANON_KEY!
-    );
-    const signinResponse = await supabase.auth.signInWithPassword(
-      YOLO_DODO_CREDENTIALS
-    );
-    yoloDodoToken = signinResponse.data.session?.access_token || '';
+    app = await getTestApp();
+    yoloDodoToken = await getYoloDodoToken();
   });
 
   afterAll(async () => {

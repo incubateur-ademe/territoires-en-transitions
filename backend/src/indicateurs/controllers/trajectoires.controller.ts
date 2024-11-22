@@ -17,7 +17,7 @@ import { calculTrajectoireRequestSchema } from '../models/calcul-trajectoire.req
 import TrajectoiresDataService from '../services/trajectoires-data.service';
 import TrajectoiresSpreadsheetService from '../services/trajectoires-spreadsheet.service';
 import TrajectoiresXlsxService from '../services/trajectoires-xlsx.service';
-import type { SupabaseJwtPayload } from '../../auth/models/supabase-jwt.models';
+import type { AuthenticatedUser } from '../../auth/models/auth.models';
 import { verificationTrajectoireResponseSchema } from '../models/verification-trajectoire.response';
 import { modeleTrajectoireTelechargementRequestSchema } from '../models/modele-trajectoire-telechargement.request';
 import { verificationTrajectoireRequestSchema } from '../models/verification-trajectoire.request';
@@ -61,7 +61,7 @@ export class TrajectoiresController {
   @ApiResponse({ type: CalculTrajectoireResponseClass })
   async calculeTrajectoireSnbc(
     @Query() request: CalculTrajectoireRequestClass,
-    @TokenInfo() tokenInfo: SupabaseJwtPayload
+    @TokenInfo() tokenInfo: AuthenticatedUser
   ): Promise<CalculTrajectoireResponseClass> {
     this.logger.log(
       `Calcul de la trajectoire SNBC pour la collectivité ${request.collectiviteId}`
@@ -78,7 +78,7 @@ export class TrajectoiresController {
   @Delete('')
   async deleteTrajectoireSnbc(
     @Query() request: CollectiviteRequestClass,
-    @TokenInfo() tokenInfo: SupabaseJwtPayload
+    @TokenInfo() tokenInfo: AuthenticatedUser
   ): Promise<void> {
     this.logger.log(
       `Suppression de la trajectoire SNBC pour la collectivité ${request.collectiviteId}`
@@ -116,7 +116,7 @@ export class TrajectoiresController {
   })
   downloadDataSnbc(
     @Query() request: CollectiviteRequestClass,
-    @TokenInfo() tokenInfo: SupabaseJwtPayload,
+    @TokenInfo() tokenInfo: AuthenticatedUser,
     @Res() res: Response,
     @Next() next: NextFunction
   ) {
@@ -139,7 +139,7 @@ export class TrajectoiresController {
   })
   async verificationDonneesSnbc(
     @Query() request: VerificationTrajectoireRequestClass,
-    @TokenInfo() tokenInfo: SupabaseJwtPayload
+    @TokenInfo() tokenInfo: AuthenticatedUser
   ): Promise<VerificationTrajectoireResponseClass> {
     this.logger.log(
       `Vérifie la possibilité de lancer le calcul de la trajectoire SNBC pour la collectivité ${request.collectiviteId}`

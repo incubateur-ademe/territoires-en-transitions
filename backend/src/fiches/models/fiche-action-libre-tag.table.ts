@@ -1,5 +1,5 @@
-import { libreTagTable } from 'backend/src/taxonomie/models/libre-tag.table';
 import { integer, pgTable, primaryKey } from 'drizzle-orm/pg-core';
+import { libreTagTable } from '../../taxonomie/models/libre-tag.table';
 import { ficheActionTable } from './fiche-action.table';
 
 export const ficheActionLibreTagTable = pgTable(

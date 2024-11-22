@@ -10,7 +10,7 @@ import { PersonnalisationsModule } from './personnalisations/personnalisations.m
 import { SheetModule } from './spreadsheets/sheet.module';
 import { TrpcModule } from './trpc/trpc.module';
 import { ConfigurationModule } from './config/configuration.module';
-import { TrpcRouter } from './trpc.router';
+import { TrpcRouter } from './trpc/trpc.router';
 import { ReferentielsModule } from './referentiels/referentiels.module';
 
 @Module({

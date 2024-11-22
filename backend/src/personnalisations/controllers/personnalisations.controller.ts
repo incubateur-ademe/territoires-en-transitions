@@ -11,7 +11,7 @@ import { getPersonnalisationReglesResponseSchema } from '../models/get-personnal
 import { getPersonnalisationReponsesRequestSchema } from '../models/get-personnalisation-reponses.request';
 import { getPersonnalitionReponsesResponseSchema } from '../models/get-personnalisation-reponses.response';
 import PersonnalisationService from '../services/personnalisations-service';
-import { SupabaseJwtPayload } from '../../auth/models/supabase-jwt.models';
+import { AuthenticatedUser } from '../../auth/models/auth.models';
 
 /**
  * Création des classes de requête/réponse à partir du schema pour générer automatiquement la documentation OpenAPI et la validation des entrées
@@ -52,7 +52,7 @@ export class PersonnalisationsController {
   @ApiResponse({ type: GetPersonnalisationReglesResponseClass })
   async getPersonnalisationRegles(
     @Query() request: GetPersonnalisationReglesRequestClass,
-    @TokenInfo() tokenInfo: SupabaseJwtPayload
+    @TokenInfo() tokenInfo: AuthenticatedUser
   ): Promise<GetPersonnalisationReglesResponseClass> {
     return this.personnalisationsService.getPersonnalisationRegles(
       request.referentiel
@@ -65,7 +65,7 @@ export class PersonnalisationsController {
   async getPersonnalisationReponses(
     @Param('collectivite_id') collectiviteId: number,
     @Query() request: GetPersonnalitionReponsesQueryClass,
-    @TokenInfo() tokenInfo: SupabaseJwtPayload
+    @TokenInfo() tokenInfo: AuthenticatedUser
   ): Promise<GetPersonnalitionReponsesResponseClass> {
     return this.personnalisationsService.getPersonnalisationReponses(
       collectiviteId,
@@ -80,7 +80,7 @@ export class PersonnalisationsController {
   async getPersonnalisationConsequences(
     @Param('collectivite_id') collectiviteId: number,
     @Query() request: GetPersonnalitionConsequencesQueryClass,
-    @TokenInfo() tokenInfo: SupabaseJwtPayload
+    @TokenInfo() tokenInfo: AuthenticatedUser
   ): Promise<GetPersonnalitionConsequencesResponseClass> {
     return this.personnalisationsService.getPersonnalisationConsequencesForCollectivite(
       collectiviteId,

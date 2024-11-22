@@ -11,7 +11,7 @@ import {
 import { PgTable, PgTransaction } from 'drizzle-orm/pg-core';
 import { PostgresJsQueryResultHKT } from 'drizzle-orm/postgres-js';
 import { toCamel } from 'postgres';
-import { SupabaseJwtPayload } from '../../auth/models/supabase-jwt.models';
+import { AuthenticatedUser } from '../../auth/models/auth.models';
 import DatabaseService from '../../common/services/database.service';
 import { buildConflictUpdateColumns } from '../../common/services/conflict.helper';
 import FicheService from './fiche.service';
@@ -75,7 +75,7 @@ export default class FichesActionUpdateService {
   async updateFicheAction(
     ficheActionId: number,
     body: UpdateFicheActionRequestType,
-    tokenInfo: SupabaseJwtPayload
+    tokenInfo: AuthenticatedUser
   ) {
     await this.ficheService.canWriteFiche(ficheActionId, tokenInfo);
 
@@ -415,7 +415,7 @@ export default class FichesActionUpdateService {
   async upsertNotes(
     ficheId: number,
     notes: UpsertFicheActionNoteType[],
-    tokenInfo: SupabaseJwtPayload
+    tokenInfo: AuthenticatedUser
   ) {
     this.logger.log(
       `Vérifie les droits avant de mettre à jour les notes de la fiche ${ficheId}`
@@ -431,8 +431,8 @@ export default class FichesActionUpdateService {
         notes.map((note) => ({
           ...note,
           ficheId,
-          createdBy: tokenInfo.sub,
-          modifiedBy: tokenInfo.sub,
+          createdBy: tokenInfo.id,
+          modifiedBy: tokenInfo.id,
         }))
       )
       .onConflictDoUpdate({
@@ -449,7 +449,7 @@ export default class FichesActionUpdateService {
   async deleteNote(
     ficheId: number,
     dateNote: string,
-    tokenInfo: SupabaseJwtPayload
+    tokenInfo: AuthenticatedUser
   ) {
     this.logger.log(
       `Vérifie les droits avant de supprimer la note datée ${dateNote} de la fiche ${ficheId}`
