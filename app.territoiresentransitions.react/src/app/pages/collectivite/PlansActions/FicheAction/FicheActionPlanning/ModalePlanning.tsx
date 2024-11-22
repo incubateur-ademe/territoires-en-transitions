@@ -174,7 +174,7 @@ const ModalePlanning = ({
               onChange={(statut) =>
                 setEditedFiche((prevState) => ({
                   ...prevState,
-                  statut,
+                  statut: statut ?? null,
                 }))
               }
             />
@@ -187,7 +187,7 @@ const ModalePlanning = ({
               onChange={(priorite) =>
                 setEditedFiche((prevState) => ({
                   ...prevState,
-                  niveauPriorite: priorite,
+                  niveauPriorite: priorite ?? null,
                 }))
               }
             />
