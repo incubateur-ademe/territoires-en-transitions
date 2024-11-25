@@ -1,5 +1,5 @@
-import {TBoundary} from 'ui/shared/boundariesToQueryFilter';
-import {ITEM_ALL} from 'ui/shared/filters/commons';
+import { TBoundary } from '@tet/app/pages/collectivite/AidePriorisation/boundariesToQueryFilter';
+import { ITEM_ALL } from '@tet/ui';
 
 export type TFilters = {
   score_realise: string[];
@@ -45,7 +45,7 @@ export const filterToBoundaries = (
     return [];
   }
 
-  return filter.map(option => valueToBoundary[option]);
+  return filter.map((option) => valueToBoundary[option]);
 };
 
 export const getFilterInfoMessage = (filtersCount: number, maxDepth: number) =>
