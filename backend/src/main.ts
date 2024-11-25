@@ -1,17 +1,13 @@
 // WARNING: Do this import first
+import './common/services/sentry.service';
+// Other imports
 import { patchNestjsSwagger, ZodValidationPipe } from '@anatine/zod-nestjs';
 import { Logger } from '@nestjs/common';
-import {
-  BaseExceptionFilter,
-  HttpAdapterHost,
-  NestFactory,
-} from '@nestjs/core';
+import { HttpAdapterHost, NestFactory } from '@nestjs/core';
 import { DocumentBuilder, SwaggerModule } from '@nestjs/swagger';
-import * as Sentry from '@sentry/nestjs';
 import { AppModule } from './app.module';
+import { AllExceptionsFilter } from './common/filters/all-exceptions.filter';
 import { initApplicationCredentials } from './common/services/gcloud.helper';
-import './common/services/sentry.service';
-import { SENTRY_DSN } from './common/services/sentry.service';
 import { TrpcRouter } from './trpc/trpc.router';
 
 const logger = new Logger('main');
@@ -36,10 +32,7 @@ async function bootstrap() {
     exclude: ['version'],
   });
 
-  if (SENTRY_DSN) {
-    logger.log('Sentry enabled with DSN: ', SENTRY_DSN);
-    Sentry.setupNestErrorHandler(app, new BaseExceptionFilter(httpAdapter));
-  }
+  app.useGlobalFilters(new AllExceptionsFilter(httpAdapter));
 
   const config = new DocumentBuilder()
     .setTitle('Api Territoires en Transitions')

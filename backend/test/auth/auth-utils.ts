@@ -11,14 +11,18 @@ import { YOLO_DODO } from './test-users.samples';
 
 let supabase: SupabaseClient;
 
-export async function signInWith(credentials: SignInWithPasswordCredentials) {
+export const getSupabaseClient = (): SupabaseClient => {
   if (!supabase) {
     supabase = createClient(
-      process.env.SUPABASE_URL as string,
-      process.env.SUPABASE_ANON_KEY as string
+      process.env.SUPABASE_URL!,
+      process.env.SUPABASE_ANON_KEY!
     );
   }
+  return supabase;
+};
 
+export async function signInWith(credentials: SignInWithPasswordCredentials) {
+  getSupabaseClient();
   return await supabase.auth.signInWithPassword(credentials);
 }
 

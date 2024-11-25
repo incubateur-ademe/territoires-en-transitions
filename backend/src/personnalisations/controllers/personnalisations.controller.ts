@@ -82,10 +82,12 @@ export class PersonnalisationsController {
     @Query() request: GetPersonnalitionConsequencesQueryClass,
     @TokenInfo() tokenInfo: AuthenticatedUser
   ): Promise<GetPersonnalitionConsequencesResponseClass> {
-    return this.personnalisationsService.getPersonnalisationConsequencesForCollectivite(
-      collectiviteId,
-      request,
-      tokenInfo
-    );
+    const personnalisationConsequencesResult =
+      await this.personnalisationsService.getPersonnalisationConsequencesForCollectivite(
+        collectiviteId,
+        request,
+        tokenInfo
+      );
+    return personnalisationConsequencesResult.consequences;
   }
 }

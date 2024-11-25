@@ -160,7 +160,10 @@ export default class PersonnalisationsService {
     request: GetPersonnalisationConsequencesRequestType,
     tokenInfo?: AuthenticatedUser,
     collectiviteInfo?: CollectiviteAvecType
-  ): Promise<GetPersonnalitionConsequencesResponseType> {
+  ): Promise<{
+    reponses: GetPersonnalisationReponsesResponseType;
+    consequences: GetPersonnalitionConsequencesResponseType;
+  }> {
     // Seulement les personnes ayant l'accès en lecture à la collectivité peuvent voir les réponses historiques
     if (request.date && tokenInfo) {
       await this.authService.verifieAccesAuxCollectivites(
@@ -180,11 +183,15 @@ export default class PersonnalisationsService {
     );
     const regles = await this.getPersonnalisationRegles(request.referentiel);
 
-    return this.getPersonnalisationConsequences(
+    const consequences = await this.getPersonnalisationConsequences(
       regles,
       reponses,
       collectiviteInfo
     );
+    return {
+      reponses,
+      consequences,
+    };
   }
 
   async getPersonnalisationConsequences(

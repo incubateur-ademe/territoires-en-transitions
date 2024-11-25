@@ -8,6 +8,7 @@ import { SheetModule } from '../spreadsheets/sheet.module';
 import { ReferentielsScoringController } from './controllers/referentiels-scoring.controller';
 import { ReferentielsController } from './controllers/referentiels.controller';
 import LabellisationService from './services/labellisation.service';
+import ReferentielsScoringSnapshotsService from './services/referentiels-scoring-snapshots.service';
 import ReferentielsScoringService from './services/referentiels-scoring.service';
 import ReferentielsService from './services/referentiels.service';
 
@@ -23,11 +24,13 @@ import ReferentielsService from './services/referentiels.service';
   providers: [
     ReferentielsService,
     LabellisationService,
+    ReferentielsScoringSnapshotsService,
     ReferentielsScoringService,
   ],
   exports: [
     ReferentielsService,
     LabellisationService,
+    ReferentielsScoringSnapshotsService,
     ReferentielsScoringService,
   ],
   controllers: [ReferentielsController, ReferentielsScoringController],

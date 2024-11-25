@@ -1,0 +1,10 @@
+{
+    "editor.codeActionsOnSave": {
+        "source.organizeImports": "explicit"
+    },
+    "[typescript]": {
+        "editor.formatOnSave": true
+    },
+    "typescript.preferences.importModuleSpecifier": "relative",
+    "vscode-vitest.preTest": ["export $(grep -v '^#' ./backend/.env | xargs -0)"],
+}
