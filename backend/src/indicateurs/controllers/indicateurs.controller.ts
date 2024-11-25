@@ -35,7 +35,6 @@ export class IndicateursController {
     @Query() request: GetIndicateursValeursRequestClass,
     @TokenInfo() tokenInfo: AuthenticatedUser
   ): Promise<GetIndicateursValeursResponseClass> {
-    console.log('tokenInfo', tokenInfo);
     return this.indicateurService.getIndicateurValeursGroupees(
       request,
       tokenInfo

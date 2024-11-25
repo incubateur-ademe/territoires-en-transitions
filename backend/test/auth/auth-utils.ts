@@ -1,5 +1,9 @@
 import { createClient, SupabaseClient } from '@supabase/supabase-js';
 import { YOLO_DODO_CREDENTIALS } from './test-users.samples';
+import {
+  AuthUser,
+  isAuthenticatedUser,
+} from '../../src/auth/models/auth.models';
 
 let supabase: SupabaseClient;
 
@@ -30,5 +34,15 @@ export async function getYoloDodoUser() {
     expect.fail('Could not authenticated user yolododo');
   }
 
-  return user;
+  const authUser = {
+    id: user.id,
+    role: user.role,
+    isAnonymous: user.is_anonymous,
+  } as AuthUser;
+
+  if (!isAuthenticatedUser(authUser)) {
+    expect.fail('Could not authenticated user yolododo');
+  }
+
+  return authUser;
 }
