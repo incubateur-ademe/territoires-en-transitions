@@ -87,7 +87,20 @@ export const updateFicheActionRequestSchema = updateFicheActionSchema
     financeurs: z.array(financeurWithMontantSchema).nullish(),
     fichesLiees: ficheActionSchema.pick({ id: true }).array().nullish(),
     resultatsAttendus: effetAttenduSchema.pick({ id: true }).array().nullish(),
-    libres: libreTagSchema.pick({ id: true }).array().nullish(),
+    libresTag: z
+      .array(
+        z
+          .object({
+            id: z.number().optional(),
+            nom: z.string().min(1).optional(),
+            createdBy: z.string().uuid().optional(),
+          })
+          .refine(
+            (data) => data.id !== undefined || data.nom !== undefined,
+            'Either id or nom must be provided'
+          )
+      )
+      .nullish(),
   })
   .refine((schema) => Object.keys(schema).length > 0, 'Body cannot be empty');
 

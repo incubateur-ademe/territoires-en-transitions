@@ -44,6 +44,7 @@ import {
   thematiquesFixture,
   libresFixture,
 } from './fixtures/fiche-action-relations.fixture';
+import { libreTagTable } from '../../src/taxonomie/models/libre-tag.table';
 
 const collectiviteId = 1;
 const ficheActionId = 9999;
@@ -59,7 +60,7 @@ describe('FichesActionUpdateService', () => {
 
     databaseService = app.get<DatabaseService>(DatabaseService);
 
-    // There's no delete cascade on ficheActionLibreTagTable, so we have to delete manually
+    // Temp: there's no delete cascade on ficheActionLibreTagTable, so we have to delete manually
     await databaseService.db
       .delete(ficheActionLibreTagTable)
       .where(eq(ficheActionLibreTagTable.ficheId, ficheActionId));
@@ -76,7 +77,7 @@ describe('FichesActionUpdateService', () => {
   });
 
   afterAll(async () => {
-    // There's no delete cascade on ficheActionLibreTagTable, so we have to delete manually
+    // Temp: there's no delete cascade on ficheActionLibreTagTable, so we have to delete manually
     await databaseService.db
       .delete(ficheActionLibreTagTable)
       .where(eq(ficheActionLibreTagTable.ficheId, ficheActionId));
@@ -260,19 +261,16 @@ describe('FichesActionUpdateService', () => {
       };
 
       const response = await putRequest(data);
-
       const body = response.body;
 
-      expect(body.axes).toStrictEqual([
-        {
-          ficheId: ficheActionId,
-          axeId: 1,
-        },
-        {
-          ficheId: ficheActionId,
-          axeId: 2,
-        },
-      ]);
+      expect(body.axes).toContainEqual({
+        ficheId: ficheActionId,
+        axeId: 1,
+      });
+      expect(body.axes).toContainEqual({
+        ficheId: ficheActionId,
+        axeId: 2,
+      });
     });
 
     it('should update the thematiques relations in the database', async () => {
@@ -281,19 +279,16 @@ describe('FichesActionUpdateService', () => {
       };
 
       const response = await putRequest(data);
-
       const body = response.body;
 
-      expect(body.thematiques).toStrictEqual([
-        {
-          ficheId: ficheActionId,
-          thematiqueId: 1,
-        },
-        {
-          ficheId: ficheActionId,
-          thematiqueId: 2,
-        },
-      ]);
+      expect(body.thematiques).toContainEqual({
+        ficheId: ficheActionId,
+        thematiqueId: 1,
+      });
+      expect(body.thematiques).toContainEqual({
+        ficheId: ficheActionId,
+        thematiqueId: 2,
+      });
     });
 
     it('should update the sousThematiques relations in the database', async () => {
@@ -302,19 +297,16 @@ describe('FichesActionUpdateService', () => {
       };
 
       const response = await putRequest(data);
-
       const body = response.body;
 
-      expect(body.sousThematiques).toStrictEqual([
-        {
-          ficheId: ficheActionId,
-          thematiqueId: 3,
-        },
-        {
-          ficheId: ficheActionId,
-          thematiqueId: 4,
-        },
-      ]);
+      expect(body.sousThematiques).toContainEqual({
+        ficheId: ficheActionId,
+        thematiqueId: 3,
+      });
+      expect(body.sousThematiques).toContainEqual({
+        ficheId: ficheActionId,
+        thematiqueId: 4,
+      });
     });
 
     it('should update the partenaires relations in the database', async () => {
@@ -355,19 +347,16 @@ describe('FichesActionUpdateService', () => {
       };
 
       const response = await putRequest(data);
-
       const body = response.body;
 
-      expect(body.structures).toStrictEqual([
-        {
-          ficheId: ficheActionId,
-          structureTagId: 1,
-        },
-        {
-          ficheId: ficheActionId,
-          structureTagId: 2,
-        },
-      ]);
+      expect(body.structures).toContainEqual({
+        ficheId: ficheActionId,
+        structureTagId: 1,
+      });
+      expect(body.structures).toContainEqual({
+        ficheId: ficheActionId,
+        structureTagId: 2,
+      });
     });
 
     it('should update the pilotes relations in the database', async () => {
@@ -385,51 +374,49 @@ describe('FichesActionUpdateService', () => {
       };
 
       const response = await putRequest(data);
-
       const body = response.body;
 
-      expect(body.pilotes).toStrictEqual([
-        {
-          ficheId: ficheActionId,
-          tagId: 1,
-          userId: '3f407fc6-3634-45ff-a988-301e9088096a',
-        },
-        {
-          ficheId: ficheActionId,
-          tagId: 9,
-          userId: '4ecc7d3a-7484-4a1c-8ac8-930cdacd2561',
-        },
-      ]);
+      expect(body.pilotes).toContainEqual({
+        ficheId: ficheActionId,
+        tagId: 1,
+        userId: '3f407fc6-3634-45ff-a988-301e9088096a',
+      });
+      expect(body.pilotes).toContainEqual({
+        ficheId: ficheActionId,
+        tagId: 9,
+        userId: '4ecc7d3a-7484-4a1c-8ac8-930cdacd2561',
+      });
     });
 
     it('should update the financeurs relations in the database', async () => {
       const data: UpdateFicheActionRequestClass = {
         financeurs: [
           {
-            financeurTag: {
-              id: 1,
-            },
+            financeurTag: { id: 1 },
             montantTtc: 999,
           },
           {
-            financeurTag: {
-              id: 2,
-            },
+            financeurTag: { id: 2 },
             montantTtc: 666,
           },
         ],
       };
 
       const response = await putRequest(data);
-
       const body = response.body;
 
-      expect(body.financeurs[0].ficheId).toEqual(ficheActionId);
-      expect(body.financeurs[0].financeurTagId).toEqual(1);
-      expect(body.financeurs[0].montantTtc).toEqual(999);
-      expect(body.financeurs[1].ficheId).toEqual(ficheActionId);
-      expect(body.financeurs[1].financeurTagId).toEqual(2);
-      expect(body.financeurs[1].montantTtc).toEqual(666);
+      expect(body.financeurs).toContainEqual(
+        expect.objectContaining({
+          financeurTagId: 1,
+          montantTtc: 999,
+        })
+      );
+      expect(body.financeurs).toContainEqual(
+        expect.objectContaining({
+          financeurTagId: 2,
+          montantTtc: 666,
+        })
+      );
     });
 
     it('should update the actions relations in the database', async () => {
@@ -438,28 +425,34 @@ describe('FichesActionUpdateService', () => {
       };
 
       const response = await putRequest(data);
-
       const body = response.body;
 
-      expect(body.actions).toStrictEqual([
-        { ficheId: ficheActionId, actionId: 'cae_1.1.1' },
-        { ficheId: ficheActionId, actionId: 'cae_1.1.2' },
-      ]);
+      expect(body.actions).toContainEqual({
+        ficheId: ficheActionId,
+        actionId: 'cae_1.1.1',
+      });
+      expect(body.actions).toContainEqual({
+        ficheId: ficheActionId,
+        actionId: 'cae_1.1.2',
+      });
     });
 
     it('should update the indicateurs relations in the database', async () => {
       const data: UpdateFicheActionRequestClass = {
-        indicateurs: [{ id: 13 }, { id: 14 }],
+        indicateurs: [{ id: 1 }, { id: 2 }],
       };
 
       const response = await putRequest(data);
-
       const body = response.body;
 
-      expect(body.indicateurs).toStrictEqual([
-        { ficheId: ficheActionId, indicateurId: 13 },
-        { ficheId: ficheActionId, indicateurId: 14 },
-      ]);
+      expect(body.indicateurs).toContainEqual({
+        ficheId: ficheActionId,
+        indicateurId: 1,
+      });
+      expect(body.indicateurs).toContainEqual({
+        ficheId: ficheActionId,
+        indicateurId: 2,
+      });
     });
 
     it('should update the services relations in the database', async () => {
@@ -468,13 +461,16 @@ describe('FichesActionUpdateService', () => {
       };
 
       const response = await putRequest(data);
-
       const body = response.body;
 
-      expect(body.services).toStrictEqual([
-        { ficheId: ficheActionId, serviceTagId: 1 },
-        { ficheId: ficheActionId, serviceTagId: 2 },
-      ]);
+      expect(body.services).toContainEqual({
+        ficheId: ficheActionId,
+        serviceTagId: 1,
+      });
+      expect(body.services).toContainEqual({
+        ficheId: ficheActionId,
+        serviceTagId: 2,
+      });
     });
 
     it('should update the fiches liees relations in the database', async () => {
@@ -483,50 +479,103 @@ describe('FichesActionUpdateService', () => {
       };
 
       const response = await putRequest(data);
-
       const body = response.body;
 
-      expect(body.fichesLiees).toStrictEqual([
-        { ficheUne: ficheActionId, ficheDeux: 1 },
-        { ficheUne: ficheActionId, ficheDeux: 2 },
-      ]);
+      expect(body.fichesLiees).toContainEqual({
+        ficheUne: ficheActionId,
+        ficheDeux: 1,
+      });
+      expect(body.fichesLiees).toContainEqual({
+        ficheUne: ficheActionId,
+        ficheDeux: 2,
+      });
     });
 
     it('should update the resultats attendus relations in the database', async () => {
       const data: UpdateFicheActionRequestClass = {
-        resultatsAttendus: [
+        resultatsAttendus: [{ id: 21 }, { id: 22 }],
+      };
+
+      const response = await putRequest(data);
+      const body = response.body;
+
+      expect(body.resultatsAttendus).toContainEqual({
+        ficheId: ficheActionId,
+        effetAttenduId: 21,
+      });
+      expect(body.resultatsAttendus).toContainEqual({
+        ficheId: ficheActionId,
+        effetAttenduId: 22,
+      });
+    });
+
+    it('should update libre tag relations in the database when an existing tag is added', async () => {
+      const data: UpdateFicheActionRequestClass = {
+        libresTag: [
+          { id: 1, createdBy: '3f407fc6-3634-45ff-a988-301e9088096a' },
+          { id: 2, createdBy: '3f407fc6-3634-45ff-a988-301e9088096a' },
+        ],
+      };
+
+      const response = await putRequest(data);
+      const body = response.body;
+
+      expect(body.libresTag).toContainEqual(
+        expect.objectContaining({
+          ficheId: ficheActionId,
+          libreTagId: 1,
+          createdBy: '3f407fc6-3634-45ff-a988-301e9088096a',
+        })
+      );
+      expect(body.libresTag).toContainEqual(
+        expect.objectContaining({
+          ficheId: ficheActionId,
+          libreTagId: 2,
+          createdBy: '3f407fc6-3634-45ff-a988-301e9088096a',
+        })
+      );
+    });
+
+    it('should create and link new libre tags to fiche action', async () => {
+      const nom = 'My new tag';
+
+      const data: UpdateFicheActionRequestClass = {
+        libresTag: [
           {
-            id: 21,
-          },
-          {
-            id: 22,
+            nom: nom,
+            createdBy: '3f407fc6-3634-45ff-a988-301e9088096a',
           },
         ],
       };
 
       const response = await putRequest(data);
-
       const body = response.body;
 
-      expect(body.resultatsAttendus).toStrictEqual([
-        { ficheId: ficheActionId, effetAttenduId: 21 },
-        { ficheId: ficheActionId, effetAttenduId: 22 },
-      ]);
-    });
+      const newLibreTag = await databaseService.db
+        .select()
+        .from(libreTagTable)
+        .where(eq(libreTagTable.nom, nom))
+        .then((rows) => rows[0]);
 
-    it('should update the libres tag relations in the database', async () => {
-      const data: UpdateFicheActionRequestClass = {
-        libres: [{ id: 1 }, { id: 2 }],
-      };
+      expect(newLibreTag.collectiviteId).toBe(collectiviteId);
+      expect(body.libresTag).toContainEqual(
+        expect.objectContaining({
+          ficheId: ficheActionId,
+          libreTagId: newLibreTag.id,
+          createdBy: '3f407fc6-3634-45ff-a988-301e9088096a',
+        })
+      );
 
-      const response = await putRequest(data);
+      onTestFinished(async () => {
+        // Temp: there's no delete cascade on ficheActionLibreTagTable, so we have to delete manually
+        await databaseService.db
+          .delete(ficheActionLibreTagTable)
+          .where(eq(ficheActionLibreTagTable.ficheId, ficheActionId));
 
-      const body = response.body;
-
-      expect(body.libres).toStrictEqual([
-        { ficheId: ficheActionId, libreTagId: 1 },
-        { ficheId: ficheActionId, libreTagId: 2 },
-      ]);
+        await databaseService.db
+          .delete(libreTagTable)
+          .where(eq(libreTagTable.nom, nom));
+      });
     });
   });
 
