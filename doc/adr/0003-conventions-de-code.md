@@ -27,45 +27,92 @@ Les conventions de nommage et d'architecture choisies suivent les standards par 
 
 - **`kebab-case` pour les noms de fichiers et dossiers**
 
-  Exemple : `src/app/plan-actions/plan-actions.tsx`
+  Exemple : `src/app/plans/plan-actions.tsx`
 
-- **Organisation des dossiers d'abord par domaine → puis scope → puis layer technique**
+- **Organisation des dossiers d'abord par domaine → puis scope [→ puis feature] [→ puis layer technique]**
 
-  Exemple : `src/indicateurs/models/indicateur.schema.ts`
+  Exemple côté backend :
 
-  Exemple : `src/plan-actions/shared/models/fiche-action.schema.ts`
+  ```
+  src
+  └ plans
+    └ fiches
+    · └ count-by-statut
+    · · └ count-by-statut.request.ts
+    · · └ count-by-statut.response.ts
+    · · └ count-by-statut.router.ts
+    · · └ count-by-statut.router.e2e-test.ts
+    · · └ count-by-statut.service.ts
+    · └ update
+    · · └ update.controller.ts
+    · · └ update.request.ts
+    · · └ update.service.ts
+    · └ shared
+    ·   └ fiche-action.table.ts
+    ·   └ fiche-action-referent.table.ts
+    └ shared
+      └ models
+        └ thematique.table.ts
+        └ structure-tag.table.ts
+  ```
 
-  Exemple : `src/app/plan-actions/fiche-actions/views/fiche-action.card.tsx`
+  Exemple côté frontend :
+
+  ```
+  src
+  └ plans
+    └ toutes-les-fiches
+    · └ views
+    ·   └ fiche-action.list.tsx
+    ·   └ fiche-action.list-item.tsx
+    ·   └ fiche-action.card.tsx
+    ·   └ fiche-action.card.stories.tsx
+    └ shared
+      └ hooks
+        └ use-create-fiche-action.ts
+        └ use-export-fiche-action.ts
+  ```
 
 - **Suffix des fichiers avec son "type"**
 
-  Exemple type UI : `fiche-action.card.tsx`, `fiche-action.list.tsx`, `fiche-action.list-item.tsx`
+  Exemple type UI :
+
+  - `fiche-action.card.tsx`
+  - `fiche-action.list.tsx`
+  - `fiche-action.list-item.tsx`
 
 - **`index.ts` au niveau des sous-scopes**, si besoin, pour rassembler tous les exports associés et simplifier les imports.
 
-  Exemple : `src/plan-actions/fiche-actions/index.ts`
+  Exemple : `src/plans/fiches/index.ts`
 
-  → résultat à l'import : `import { FicheAction } from '@tet/api/fiche-actions'`
+  → résultat à l'import : `import { FicheAction } from '@tet/api/plans/fiches'`
 
 ### Les domaines métiers Territoires en Transitions
 
 Les domaines correspondent aux principaux contextes métiers de la plateforme Territoires en Transitions.
 
-Voici les domaines définis actuellement :
+Voici les domaines et sous-scopes définis actuellement :
 
 1. `utilisateurs`
 2. `collectivites`
+   - `membres`
 3. `referentiels`
-   - `audits`
-   - `labelisations`
-   - `personnalisations`
+   - `scores`
+     - `personnalisations`
+     - `snapshots`
+   - `evaluations`
+     - `audits`
+     - `labelisations`
 4. `indicateurs`
+   - `trajectoires`
 5. `plans`
+   - `plans`
    - `fiches`
    - `paniers`
+   - `fiche-modeles`
 6. `shared`
 
-Les domaines définis doivent rester restreints et (quasi) figés.
+Les domaines et scopes définis doivent rester restreints et (quasi) figés.
 
 L'ajout exceptionnel d'un nouveau domaine ne peut se faire qu'après validation auprès de l'ensemble de l'équipe.
 
