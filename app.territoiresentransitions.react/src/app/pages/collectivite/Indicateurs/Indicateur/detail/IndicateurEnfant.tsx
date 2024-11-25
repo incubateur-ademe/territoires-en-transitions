@@ -1,14 +1,14 @@
 import classNames from 'classnames';
-import {TIndicateurDefinition} from '../../types';
-import {useToggle} from 'ui/shared/useToggle';
-import {IndicateurEnfantHeader} from './IndicateurEnfantHeader';
-import {IndicateurEnfantContent} from './IndicateurEnfantContent';
+import { TIndicateurDefinition } from '../../types';
+import { IndicateurEnfantHeader } from './IndicateurEnfantHeader';
+import { IndicateurEnfantContent } from './IndicateurEnfantContent';
+import { useState } from 'react';
 
 /** Affiche le détail d'un indicateur enfant */
 export const IndicateurEnfant = ({
   definition,
   actionsLieesCommunes,
-  isOpen,
+  isOpen = false,
   className,
 }: {
   definition: TIndicateurDefinition;
@@ -16,7 +16,7 @@ export const IndicateurEnfant = ({
   isOpen?: boolean;
   className?: string;
 }) => {
-  const [open, toggle] = useToggle(isOpen || false);
+  const [open, setOpen] = useState(isOpen);
 
   return (
     <div
@@ -28,7 +28,7 @@ export const IndicateurEnfant = ({
       <IndicateurEnfantHeader
         definition={definition}
         open={open}
-        toggle={toggle}
+        toggle={() => setOpen(!open)}
       />
       {open && (
         <IndicateurEnfantContent

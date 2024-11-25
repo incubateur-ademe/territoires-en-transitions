@@ -2,18 +2,18 @@
  * Affiche la liste des questions et les éventuelles réponses pour une collectivité
  */
 
-import {useState} from 'react';
-import {QuestionReponseList} from '../PersoPotentielModal/PersoPotentielQR';
-import {SwitchLabelLeft} from 'ui/shared/SwitchLabelLeft';
-import {TQuestionThematiqueRead} from './useThematique';
-import {TChangeReponse, TQuestionReponse} from 'types/personnalisation';
+import { useState } from 'react';
+import { QuestionReponseList } from '../PersoPotentielModal/PersoPotentielQR';
+import { TQuestionThematiqueRead } from './useThematique';
+import { TChangeReponse, TQuestionReponse } from 'types/personnalisation';
 import {
   makeCollectivitePersoRefUrl,
   makeCollectivitePersoRefThematiqueUrl,
 } from 'app/paths';
-import {CarteIdentite} from './CarteIdentite';
-import {TCarteIdentite} from './useCarteIdentite';
-import {usePersoFilters} from '../PersoReferentiel/usePersoFilters';
+import { CarteIdentite } from './CarteIdentite';
+import { TCarteIdentite } from './useCarteIdentite';
+import { usePersoFilters } from '../PersoReferentiel/usePersoFilters';
+import { Checkbox } from '@tet/ui';
 
 export type TThematiqueQRProps = {
   thematique: TQuestionThematiqueRead;
@@ -32,29 +32,32 @@ export type TThematiqueQRProps = {
 };
 
 export const ThematiqueQR = (props: TThematiqueQRProps) => {
-  const {collectivite, identite, nextThematiqueId, questionReponses, onChange} =
-    props;
+  const {
+    collectivite,
+    identite,
+    nextThematiqueId,
+    questionReponses,
+    onChange,
+  } = props;
   const [onlyNoResponse, setOnlyNoResponse] = useState(false);
-  const [{referentiels}] = usePersoFilters();
+  const [{ referentiels }] = usePersoFilters();
 
   const qrList = onlyNoResponse
     ? questionReponses.filter(
-        ({reponse}) => reponse === null || reponse === undefined
+        ({ reponse }) => reponse === null || reponse === undefined
       )
     : questionReponses;
 
   return (
     <div className="flex flex-col">
-      <div className="flex justify-center w-full">
-        <SwitchLabelLeft
-          id="onlyNoResponse"
-          checked={onlyNoResponse}
-          className="w-[28rem] mt-6"
-          onChange={setOnlyNoResponse}
-        >
-          Afficher uniquement les questions sans réponse
-        </SwitchLabelLeft>
-      </div>
+      <Checkbox
+        variant="switch"
+        id="onlyNoResponse"
+        checked={onlyNoResponse}
+        onChange={() => setOnlyNoResponse(!onlyNoResponse)}
+        label="Afficher uniquement les questions sans réponse"
+        containerClassname="mt-6 mx-auto pb-4 border-b border-grey-4"
+      />
       <div className="max-w-3xl self-center mt-10">
         {identite ? (
           <>
