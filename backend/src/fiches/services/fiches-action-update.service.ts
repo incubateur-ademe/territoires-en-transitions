@@ -39,6 +39,7 @@ import {
 import { UpdateFicheActionRequestType } from '../models/update-fiche-action.request';
 import FicheService from './fiche.service';
 import { ficheActionLibreTagTable } from '../models/fiche-action-libre-tag.table';
+import { libreTagTable } from '../../taxonomie/models/libre-tag.table';
 
 type TxType = PgTransaction<
   PostgresJsQueryResultHKT,
@@ -99,7 +100,7 @@ export default class FichesActionUpdateService {
       financeurs,
       fichesLiees,
       resultatsAttendus,
-      libres,
+      libresTag,
       ...unsafeFicheAction
     } = body;
 
@@ -130,7 +131,7 @@ export default class FichesActionUpdateService {
       let updatedFinanceurs;
       let updatedFichesLiees;
       let updatedResultatsAttendus;
-      let updatedLibres;
+      let updatedLibresTag;
 
       /**
        * Updates fiche action properties
@@ -321,15 +322,41 @@ export default class FichesActionUpdateService {
         );
       }
 
-      if (libres && libres.length > 0) {
-        updatedLibres = await this.updateRelations(
+      if (libresTag && libresTag.length > 0) {
+        const { collectiviteId } = await this.getCollectiviteIdForFiche(
+          tx,
+          ficheActionId
+        );
+
+        // Create a map of name -> id for new tags
+
+        const tagMap = await this.createOrGetLibreTag(
+          tx,
+          libresTag,
+          collectiviteId
+        );
+
+        const libresTagWithResolvedIds = libresTag
+          .map((tag) => ({
+            id: tag.id ?? tagMap.get(tag.nom ?? ''),
+            createdBy: tag.createdBy,
+          }))
+          .filter(
+            (tag): tag is { id: number; createdBy: string } =>
+              tag.id !== undefined
+          );
+
+        updatedLibresTag = await this.updateRelations(
           ficheActionId,
-          libres,
+          libresTagWithResolvedIds,
           tx,
           ficheActionLibreTagTable,
-          ['id'],
+          ['id', 'createdBy'],
           ficheActionLibreTagTable.ficheId,
-          [ficheActionLibreTagTable.libreTagId]
+          [
+            ficheActionLibreTagTable.libreTagId,
+            ficheActionLibreTagTable.createdBy,
+          ]
         );
       }
 
@@ -348,7 +375,7 @@ export default class FichesActionUpdateService {
         financeurs: updatedFinanceurs,
         fichesLiees: updatedFichesLiees,
         resultatsAttendus: updatedResultatsAttendus,
-        libres: updatedLibres,
+        libresTag: updatedLibresTag,
       };
     });
   }
@@ -443,6 +470,49 @@ export default class FichesActionUpdateService {
       financeurTagId: financeur.financeurTag.id,
       montantTtc: financeur.montantTtc,
     }));
+  }
+
+  private async getCollectiviteIdForFiche(tx: TxType, ficheActionId: number) {
+    return await tx
+      .select({ collectiviteId: ficheActionTable.collectiviteId })
+      .from(ficheActionTable)
+      .where(eq(ficheActionTable.id, ficheActionId))
+      .then((rows: { collectiviteId: number }[]) => rows[0]);
+  }
+
+  private async createOrGetLibreTag(
+    tx: TxType,
+    libresTag: { id?: number; nom?: string }[],
+    collectiviteId: number
+  ): Promise<Map<string, number>> {
+    const tagMap = new Map<string, number>();
+
+    for (const tag of libresTag) {
+      if (!tag.id && tag.nom) {
+        const existingTag = await this.findExistingLibreTagByName(tx, tag.nom);
+        if (existingTag) {
+          tagMap.set(tag.nom, existingTag.id);
+        } else {
+          const [newTag] = await tx
+            .insert(libreTagTable)
+            .values({
+              nom: tag.nom,
+              collectiviteId: collectiviteId,
+            })
+            .returning();
+          tagMap.set(tag.nom, newTag.id);
+        }
+      }
+    }
+    return tagMap;
+  }
+
+  private async findExistingLibreTagByName(tx: TxType, nom: string) {
+    return tx
+      .select()
+      .from(libreTagTable)
+      .where(eq(libreTagTable.nom, nom))
+      .then((rows: { id: number; nom: string }[]) => rows[0]);
   }
 
   /** Insère ou met à jour des notes de suivi */
