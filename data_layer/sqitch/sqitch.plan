@@ -775,3 +775,5 @@ evaluation/score_service [evaluation/score_service@v4.27.0] 2024-11-18T15:13:30Z
 referentiel/verification_score 2024-11-20T16:04:26Z System Administrator <root@MacBook-Air-de-Thibaut-2.local> # Ajout d'un cron de verification des scores pour le nouveau moteur de calcul
 @v4.28.0 2024-11-20T17:10:15Z System Administrator <root@MacBook-Air-de-Thibaut-2.local> # Ajout d'un cron de verification des scores pour le nouveau moteur de calcul
 
+plan_action/fiches [plan_action/fiches@v4.28.0] 2024-11-25T17:04:51Z System Administrator <root@MacBook-Air-de-Eli.local> # Ajoute ON DELETE CASCADE à fiche_action_libre_tag
+@v4.28.1 2024-11-25T18:42:06Z System Administrator <root@MacBook-Air-de-Eli.local> # Tag en v4.28.1
