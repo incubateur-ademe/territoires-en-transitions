@@ -62,12 +62,7 @@ describe('Route de lecture / ecriture des indicateurs', () => {
   });
 
   it('Exporte un indicateur au format XLSX', async () => {
-    const { data } = await supabase
-      .from('indicateur_definition')
-      .select('id')
-      .eq('identifiant_referentiel', 'cae_8');
-    const indicateurId = data?.[0].id;
-    expect(typeof indicateurId === 'number').toBe(true);
+    const indicateurId = 177; // cae_8
 
     const response = await request(app.getHttpServer())
       .post('/indicateurs/xlsx')
