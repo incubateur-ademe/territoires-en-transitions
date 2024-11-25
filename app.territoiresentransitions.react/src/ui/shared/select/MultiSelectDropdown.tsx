@@ -1,11 +1,10 @@
 import classNames from 'classnames';
-import {forwardRef, Ref} from 'react';
+import { forwardRef, Ref } from 'react';
 
 import DropdownFloater from 'ui/shared/floating-ui/DropdownFloater';
 import {
   buttonDisplayedClassname,
   buttonDisplayedPlaceholderClassname,
-  DSFRbuttonClassname,
   ExpandCollapseIcon,
   getOptions,
   TOption,
@@ -30,8 +29,6 @@ export type TMultiSelectDropdownProps<T extends string> =
     renderOption?: (option: TOption) => React.ReactElement;
     /** appelée quand les options sélectionnées changent (reçoit les nouvelles valeurs) */
     onSelect: (values: T[]) => void;
-    /** Applique les styles DSFR au bouton de sélection */
-    dsfrButton?: boolean;
   };
 
 /**
@@ -41,7 +38,6 @@ const MultiSelectDropdown = <T extends string>({
   values,
   options,
   buttonClassName,
-  dsfrButton,
   containerWidthMatchButton,
   placeholderText = 'Sélectionnez une ou plusieurs options',
   onSelect,
@@ -65,15 +61,12 @@ const MultiSelectDropdown = <T extends string>({
     )}
   >
     <MultiSelectButton
-      buttonClassName={classNames(
-        dsfrButton && DSFRbuttonClassname,
-        buttonClassName
-      )}
+      buttonClassName={classNames(buttonClassName)}
       options={options}
       values={values}
       placeholderText={placeholderText}
       renderSelection={
-        renderSelection ? values => renderSelection(values as T[]) : undefined
+        renderSelection ? (values) => renderSelection(values as T[]) : undefined
       }
       data-test={dataTest}
       disabled={disabled}
@@ -119,8 +112,8 @@ const MultiSelectButton = forwardRef(
           <span className="mr-auto flex line-clamp-1">
             {values.sort().map((value, index) => (
               <span key={value}>
-                {getOptions(options).find(({value: v}) => v === value)?.label ||
-                  ''}
+                {getOptions(options).find(({ value: v }) => v === value)
+                  ?.label || ''}
                 {values.length !== index + 1 && ', '}
               </span>
             ))}
@@ -135,3 +128,5 @@ const MultiSelectButton = forwardRef(
     </button>
   )
 );
+
+MultiSelectButton.displayName = 'MultiSelectButton';

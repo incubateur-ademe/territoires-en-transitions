@@ -1,13 +1,7 @@
-import {
-  Checkmark,
-  isOptionSection,
-  optionButtonClassname,
-  TOption,
-  TSelectOption,
-} from './commons';
+import { Checkmark, isOptionSection, TOption, TSelectOption } from './commons';
 import IconThreeDotHorizontal from 'ui/icons/IconThreeDotHorizontal';
 import DropdownFloater from '../floating-ui/DropdownFloater';
-import {forwardRef, Ref} from 'react';
+import { forwardRef, Ref } from 'react';
 
 type RenderOptionMenuProps = {
   option: TOption;
@@ -45,7 +39,7 @@ const Options = <T extends string>({
                 <div className="w-full p-1 pl-10 text-left text-sm italic text-gray-500 bg-gray-100 border-y border-gray-200">
                   {option.title}
                 </div>
-                {option.options.map((option, i) => (
+                {option.options.map((option) => (
                   <Option
                     key={`${option.value}`}
                     option={option}
@@ -101,13 +95,13 @@ const Option = <T extends string>({
   return (
     <button
       data-test={option.value}
-      className={optionButtonClassname}
+      className="flex items-center w-full p-2 text-left text-sm"
       onClick={() => {
         if (values?.includes(option.value as T)) {
           // retrait d'une valeur
           onSelect(
             values.filter(
-              selectedValue => selectedValue !== (option.value as T)
+              (selectedValue) => selectedValue !== (option.value as T)
             )
           );
         } else {
@@ -132,9 +126,9 @@ const Option = <T extends string>({
         }) && (
           <DropdownFloater
             placement="top"
-            offsetValue={{mainAxis: 8}}
-            render={({close}) => (
-              <div onClick={e => e.stopPropagation()}>
+            offsetValue={{ mainAxis: 8 }}
+            render={({ close }) => (
+              <div onClick={(e) => e.stopPropagation()}>
                 {renderOptionMenu({
                   option,
                   close,
@@ -155,13 +149,13 @@ type OptionOpenFloaterButtonProps = {
 
 const OptionOpenFloaterButton = forwardRef(
   (
-    {isOpen, ...props}: OptionOpenFloaterButtonProps,
+    { isOpen, ...props }: OptionOpenFloaterButtonProps,
     ref?: Ref<HTMLDivElement>
   ) => (
     <div
       ref={ref}
       className="ml-6 mr-4 p-1 cursor-pointer hover:bg-indigo-100"
-      onClick={evt => {
+      onClick={(evt) => {
         evt.stopPropagation();
       }}
     >
@@ -172,3 +166,5 @@ const OptionOpenFloaterButton = forwardRef(
     </div>
   )
 );
+
+OptionOpenFloaterButton.displayName = 'OptionOpenFloaterButton';
