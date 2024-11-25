@@ -1,12 +1,11 @@
-import '../CrossExpandPanel.css';
-import {ActionDefinitionSummary} from 'core-logic/api/endpoints/ActionDefinitionSummaryReadEndpoint';
-import {useCurrentCollectivite} from 'core-logic/hooks/useCurrentCollectivite';
+import { ActionDefinitionSummary } from 'core-logic/api/endpoints/ActionDefinitionSummaryReadEndpoint';
+import { useCurrentCollectivite } from 'core-logic/hooks/useCurrentCollectivite';
 import Textarea from 'ui/shared/form/Textarea';
 import {
   useActionCommentaire,
   useSaveActionCommentaire,
 } from 'core-logic/hooks/useActionCommentaire';
-import React, {useEffect, useState} from 'react';
+import React, { useEffect, useState } from 'react';
 import classNames from 'classnames';
 
 type ActionCommentaireProps = {
@@ -24,8 +23,8 @@ export const ActionCommentaire = ({
   autoFocus,
   onSave,
 }: ActionCommentaireProps) => {
-  const {actionCommentaire, isLoading} = useActionCommentaire(action.id);
-  const {saveActionCommentaire} = useSaveActionCommentaire();
+  const { actionCommentaire, isLoading } = useActionCommentaire(action.id);
+  const { saveActionCommentaire } = useSaveActionCommentaire();
 
   // On utilise le `isLoading` pour masquer l'input, car il gère son state.
   return (
@@ -42,7 +41,7 @@ export const ActionCommentaire = ({
               : undefined
           }
           autoFocus={autoFocus}
-          onSave={payload => {
+          onSave={(payload) => {
             saveActionCommentaire(payload);
             onSave && onSave();
           }}
