@@ -13,12 +13,13 @@ import BackendConfigurationService from '../../config/configuration.service';
 import { AllowAnonymousAccess } from '../decorators/allow-anonymous-access.decorator';
 import { AllowPublicAccess } from '../decorators/allow-public-access.decorator';
 import {
-  AuthenticatedUser,
   AuthJwtPayload,
-  isAnonymousJwt,
-  jwtToAuthenticatedUser,
+  AuthUser,
+  isAnonymousUser,
+  isAuthenticatedUser,
+  isServiceRoleUser,
+  jwtToUser,
 } from '../models/auth.models';
-import SupabaseService from '../../common/services/supabase.service';
 
 export const TOKEN_QUERY_PARAM = 'token';
 export const REQUEST_JWT_PAYLOAD_PARAM = 'jwt-payload';
@@ -29,7 +30,6 @@ export class AuthGuard implements CanActivate {
 
   constructor(
     private jwtService: JwtService,
-    private supabase: SupabaseService,
     private reflector: Reflector,
     private backendConfigurationService: BackendConfigurationService
   ) {}
@@ -52,7 +52,8 @@ export class AuthGuard implements CanActivate {
       throw new UnauthorizedException();
     }
 
-    let jwtPayload;
+    // Validate JWT token and extract payload
+    let jwtPayload: AuthJwtPayload;
     try {
       jwtPayload = await this.jwtService.verifyAsync<AuthJwtPayload>(jwtToken, {
         secret: this.backendConfigurationService.get('SUPABASE_JWT_SECRET'),
@@ -62,7 +63,30 @@ export class AuthGuard implements CanActivate {
       throw new UnauthorizedException();
     }
 
-    if (isAnonymousJwt(jwtPayload)) {
+    // Convert JWT payload to user
+    let user: AuthUser;
+    try {
+      user = jwtToUser(jwtPayload);
+    } catch (err) {
+      this.logger.error(`Failed to convert token: ${getErrorMessage(err)}`);
+      throw new UnauthorizedException();
+    }
+
+    // 💡 We're assigning the user to the request object here so that we can access it in our route handlers
+    // @ts-expect-error force attach a new property to the request object
+    request[REQUEST_JWT_PAYLOAD_PARAM] = user;
+
+    if (isAuthenticatedUser(user)) {
+      this.logger.log(`Authenticated user is allowed`);
+      return true;
+    }
+
+    if (isServiceRoleUser(user)) {
+      this.logger.log(`Service role user is allowed`);
+      return true;
+    }
+
+    if (isAnonymousUser(user)) {
       const allowAnonymousAccess = this.reflector.get(
         AllowAnonymousAccess,
         context.getHandler()
@@ -77,23 +101,8 @@ export class AuthGuard implements CanActivate {
       throw new UnauthorizedException();
     }
 
-    // Else user is authenticated
-    // const { data } = await this.supabase.client.auth.getUser(jwtToken);
-
-    let authenticatedUser: AuthenticatedUser;
-    try {
-      authenticatedUser = jwtToAuthenticatedUser(jwtPayload);
-      this.logger.log(`Token validated for user ${authenticatedUser.id}`);
-    } catch (err) {
-      this.logger.error(`Failed to convert token: ${getErrorMessage(err)}`);
-      throw new UnauthorizedException();
-    }
-
-    // 💡 We're assigning the payload to the request object here so that we can access it in our route handlers
-    // @ts-expect-error force attach a new property to the request object
-    request[REQUEST_JWT_PAYLOAD_PARAM] = authenticatedUser;
-
-    return true;
+    this.logger.error(`Unknown user is not allowed`);
+    throw new UnauthorizedException();
   }
 
   private extractTokenFromRequest(request: Request): string | undefined {

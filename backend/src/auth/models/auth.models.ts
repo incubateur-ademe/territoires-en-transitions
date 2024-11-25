@@ -1,4 +1,3 @@
-import { User as SupabaseUser } from '@supabase/supabase-js';
 import { JwtPayload } from 'jsonwebtoken';
 
 export enum AuthRole {
@@ -7,54 +6,67 @@ export enum AuthRole {
   ANON = 'anon', // Anonymous
 }
 
-export type User = Pick<SupabaseUser, 'id' | 'role' | 'is_anonymous'>;
+// export type User = Pick<SupabaseUser, 'id' | 'role' | 'is_anonymous'>;
 
-export interface AnonymousUser extends User {
-  role: AuthRole.ANON;
-  is_anonymous: true;
+export interface AuthUser<Role extends AuthRole = AuthRole> {
+  id: Role extends AuthRole.AUTHENTICATED ? string : null;
+  role: Role;
+  isAnonymous: Role extends AuthRole.AUTHENTICATED ? false : true;
 }
 
-export interface AuthenticatedUser extends User {
-  role: AuthRole.AUTHENTICATED;
-  is_anonymous: false;
+export type AnonymousUser = AuthUser<AuthRole.ANON>;
+export type AuthenticatedUser = AuthUser<AuthRole.AUTHENTICATED>;
+export type ServiceRoleUser = AuthUser<AuthRole.SERVICE_ROLE>;
+
+export function isAnonymousUser(user: AuthUser | null): user is AnonymousUser {
+  return user?.role === AuthRole.ANON && user.isAnonymous === true;
 }
 
-export function isAnonymousUser(user: User | null): user is AnonymousUser {
-  return user?.role === AuthRole.ANON && user.is_anonymous === true;
+export function isServiceRoleUser(
+  user: AuthUser | null
+): user is AnonymousUser {
+  return user?.role === AuthRole.SERVICE_ROLE && user.isAnonymous === true;
 }
 
 export function isAuthenticatedUser(
-  user: User | null
+  user: AuthUser | null
 ): user is AuthenticatedUser {
-  return user?.role === AuthRole.AUTHENTICATED && user.is_anonymous === false;
+  return user?.role === AuthRole.AUTHENTICATED && user.isAnonymous === false;
 }
 
-export interface AuthJwtPayload extends JwtPayload {
-  role: AuthRole;
+export interface AuthJwtPayload<Role extends AuthRole = AuthRole>
+  extends JwtPayload {
+  role: Role;
 }
 
-export interface AnonymousJwtPayload extends AuthJwtPayload {
-  role: AuthRole.ANON;
-}
+export function jwtToUser(jwt: AuthJwtPayload): AuthUser {
+  if (jwt.role === AuthRole.AUTHENTICATED) {
+    if (jwt.sub === undefined) {
+      throw new Error(`JWT sub claim is missing: ${JSON.stringify(jwt)}`);
+    }
 
-export function isAnonymousJwt(
-  jwt: AuthJwtPayload
-): jwt is AnonymousJwtPayload {
-  return jwt.role === AuthRole.ANON;
-}
-
-export function jwtToAuthenticatedUser(jwt: AuthJwtPayload): AuthenticatedUser {
-  if (jwt.role !== AuthRole.AUTHENTICATED) {
-    throw new Error(`JWT role is invalid: ${jwt.role}`);
+    return {
+      id: jwt.sub,
+      role: AuthRole.AUTHENTICATED,
+      isAnonymous: false,
+    };
   }
 
-  if (jwt.sub === undefined) {
-    throw new Error('JWT sub claim is missing');
+  if (jwt.role === AuthRole.ANON) {
+    return {
+      id: null,
+      role: AuthRole.ANON,
+      isAnonymous: true,
+    };
   }
 
-  return {
-    id: jwt.sub,
-    role: AuthRole.AUTHENTICATED,
-    is_anonymous: false,
-  };
+  if (jwt.role === AuthRole.SERVICE_ROLE) {
+    return {
+      id: null,
+      role: AuthRole.SERVICE_ROLE,
+      isAnonymous: true,
+    };
+  }
+
+  throw new Error(`JWT role is invalid: ${JSON.stringify(jwt)}`);
 }

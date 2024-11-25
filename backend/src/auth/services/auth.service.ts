@@ -5,8 +5,9 @@ import DatabaseService from '../../common/services/database.service';
 import {
   AuthenticatedUser,
   AuthRole,
+  AuthUser,
   isAuthenticatedUser,
-  User,
+  isServiceRoleUser,
 } from '../models/auth.models';
 import {
   NiveauAcces,
@@ -102,60 +103,60 @@ export class AuthService {
   }
 
   async verifieAccesAuxCollectivites(
-    tokenInfo: AuthenticatedUser,
+    user: AuthUser,
     collectiviteIds: number[],
     niveauAccessMinimum: NiveauAcces,
     doNotThrow?: boolean
   ): Promise<boolean> {
     let droits: UtilisateurDroitType[] = [];
-    const userId = tokenInfo.id;
-    if (isAuthenticatedUser(tokenInfo)) {
-      droits = await this.getDroitsUtilisateur(userId, collectiviteIds);
+
+    if (isAuthenticatedUser(user)) {
+      droits = await this.getDroitsUtilisateur(user.id, collectiviteIds);
     }
+
     const authorise = this.aDroitsSuffisants(
-      tokenInfo.role,
+      user.role,
       droits,
       collectiviteIds,
       niveauAccessMinimum
     );
+
     if (!authorise && !doNotThrow) {
       throw new UnauthorizedException(`Droits insuffisants`);
     }
+
     return authorise;
   }
 
   /**
    * Vérifie si l'utilisateur a un rôle support
-   * @param tokenInfo token de l'utilisateur
+   * @param user token de l'utilisateur
    * @return vrai si l'utilisateur a un rôle support
    */
-  async estSupport(tokenInfo: AuthenticatedUser): Promise<boolean> {
-    const userId = tokenInfo.id;
-    if (tokenInfo.role === AuthRole.AUTHENTICATED && userId) {
+  async estSupport(user: AuthUser): Promise<boolean> {
+    if (isAuthenticatedUser(user)) {
       const result = await this.databaseService.db
         .select()
         .from(utilisateurSupportTable)
-        .where(eq(utilisateurSupportTable.userId, userId));
+        .where(eq(utilisateurSupportTable.userId, user.id));
       return result[0].support || false;
     }
+
     return false;
   }
 
   /**
    * Vérifie si l'utilisateur est vérifié
-   * @param tokenInfo token de l'utilisateur
+   * @param tokenInfo utilisateur authentifié
    * @return vrai si l'utilisateur est vérifié
    */
-  async estVerifie(tokenInfo: AuthenticatedUser): Promise<boolean> {
-    const userId = tokenInfo.id;
-    if (tokenInfo.role === AuthRole.AUTHENTICATED && userId) {
-      const result = await this.databaseService.db
-        .select()
-        .from(utilisateurVerifieTable)
-        .where(eq(utilisateurVerifieTable.userId, userId));
-      return result[0].verifie || false;
-    }
-    return false;
+  async estVerifie(user: AuthenticatedUser): Promise<boolean> {
+    const result = await this.databaseService.db
+      .select()
+      .from(utilisateurVerifieTable)
+      .where(eq(utilisateurVerifieTable.userId, user.id));
+
+    return result[0].verifie || false;
   }
 
   /**
@@ -166,11 +167,11 @@ export class AuthService {
    * @param doNotThrow vrai pour ne pas générer une exception
    */
   async verifieAccesRestreintCollectivite(
-    user: User,
+    user: AuthUser,
     collectiviteId: number,
     doNotThrow?: boolean
   ): Promise<boolean> {
-    if (user.role === AuthRole.SERVICE_ROLE) {
+    if (isServiceRoleUser(user)) {
       this.logger.log(
         `Rôle de service détecté, accès autorisé à toutes les collectivités`
       );
@@ -216,26 +217,23 @@ export class AuthService {
   /**
    * Vérifie que l'utilisateur est un auditeur de la collectivité
    * TODO à modifier avec les tables liées aux labellisations
-   * @param tokenInfo token de l'utilisateur
+   * @param user utilisateur authentifié
    * @param collectiviteId identifiant de la collectivité
    */
   async estAuditeur(
-    tokenInfo: AuthenticatedUser,
+    user: AuthenticatedUser,
     collectiviteId: number
   ): Promise<boolean> {
-    const userId = tokenInfo.id;
-    if (tokenInfo.role === AuthRole.AUTHENTICATED && userId) {
-      const result = await this.databaseService.db.execute(
-        sql`SELECT *
-           FROM audit_auditeur aa
-           JOIN labellisation.audit a ON aa.audit_id = a.id
-           WHERE a.date_debut IS NOT NULL
-             AND a.clos IS FALSE
-             AND a.collectivite_id = ${collectiviteId}
-             AND aa.auditeur = ${userId}`
-      );
-      return result?.length > 0 || false;
-    }
-    return false;
+    const result = await this.databaseService.db.execute(
+      sql`SELECT *
+        FROM audit_auditeur aa
+        JOIN labellisation.audit a ON aa.audit_id = a.id
+        WHERE a.date_debut IS NOT NULL
+          AND a.clos IS FALSE
+          AND a.collectivite_id = ${collectiviteId}
+          AND aa.auditeur = ${user.id}`
+    );
+
+    return result?.length > 0 || false;
   }
 }
