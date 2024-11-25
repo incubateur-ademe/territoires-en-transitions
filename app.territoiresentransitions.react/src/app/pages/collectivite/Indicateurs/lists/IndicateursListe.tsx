@@ -18,7 +18,10 @@ import SpinnerLoader from 'ui/shared/SpinnerLoader';
 import { Indicateurs } from '@tet/api';
 import { getIndicateurGroup } from 'app/pages/collectivite/Indicateurs/lists/IndicateurCard/utils';
 import { useFilteredIndicateurDefinitions } from 'app/pages/collectivite/Indicateurs/lists/useFilteredIndicateurDefinitions';
-import ModuleFiltreBadges from 'app/pages/collectivite/TableauDeBord/components/ModuleFiltreBadges';
+import {
+  ModuleFiltreBadgesBase,
+  useSelectedFilters,
+} from 'app/pages/collectivite/TableauDeBord/components/ModuleFiltreBadges';
 import { makeCollectiviteIndicateursUrl } from 'app/paths';
 import { OpenState } from '@tet/ui/utils/types';
 import { useCurrentCollectivite } from 'core-logic/hooks/useCurrentCollectivite';
@@ -152,6 +155,9 @@ const IndicateursListe = ({
   /** Affiche ou cache les graphiques des cartes */
   const [displayGraphs, setDisplayGraphs] = useState(true);
 
+  /** Filtres sélectionnés */
+  const selectedFilters = useSelectedFilters({ filtre: filtres || {} });
+
   return (
     <>
       <div className="flex items-center gap-8 py-6 border-y border-primary-3">
@@ -206,7 +212,12 @@ const IndicateursListe = ({
       {/** Liste des filtres appliqués */}
       {filtres && (
         <div className="flex flex-row justify-between">
-          <ModuleFiltreBadges filtre={filtres} resetFilters={resetFilters} />
+          {!!selectedFilters?.length && (
+            <ModuleFiltreBadgesBase
+              selectedFilters={selectedFilters}
+              resetFilters={resetFilters}
+            />
+          )}
           {
             /** Bouton Exporter */
             !!currentDefs?.length && !isLoading && (
@@ -219,7 +230,11 @@ const IndicateursListe = ({
                   className="py-4"
                   icon="download-line"
                   iconPosition="left"
-                  title="Exporter le résultat de mon filtre en Excel"
+                  title={
+                    selectedFilters?.length
+                      ? 'Exporter le résultat de mon filtre en Excel'
+                      : 'Exporter tous les indicateurs en Excel'
+                  }
                   state="default"
                   uppercase={false}
                   size="sm"
