@@ -1,10 +1,10 @@
-import {supabaseClient} from 'core-logic/api/supabase';
-import {TActionStatutsRow} from 'types/alias';
-import {ActionReferentiel} from 'app/pages/collectivite/ReferentielTable/useReferentiel';
-import {boundariesToQueryFilter} from 'ui/shared/boundariesToQueryFilter';
-import {filterToBoundaries, TFilters} from './filters';
-import {percentBoundaries} from './FiltrePourcentage';
-import {ITEM_ALL} from 'ui/shared/filters/commons';
+import { supabaseClient } from 'core-logic/api/supabase';
+import { TActionStatutsRow } from 'types/alias';
+import { ActionReferentiel } from 'app/pages/collectivite/ReferentielTable/useReferentiel';
+import { boundariesToQueryFilter } from '@tet/app/pages/collectivite/AidePriorisation/boundariesToQueryFilter';
+import { filterToBoundaries, TFilters } from './filters';
+import { percentBoundaries } from './FiltrePourcentage';
+import { ITEM_ALL } from '@tet/ui';
 
 // un sous-ensemble des champs pour alimenter notre table
 export type PriorisationRow = ActionReferentiel &
@@ -32,13 +32,13 @@ export const fetchRows = async (
   const query = supabaseClient
     .from('action_statuts')
     .select('action_id,phase,score_realise,score_programme,points_restants')
-    .match({collectivite_id, referentiel, concerne: true, desactive: false})
+    .match({ collectivite_id, referentiel, concerne: true, desactive: false })
     .gt('depth', 0);
 
   // applique les filtres
   const realise = getPercentFilter(filters, 'score_realise');
   const programme = getPercentFilter(filters, 'score_programme');
-  const {phase} = filters;
+  const { phase } = filters;
   let phase_filter;
   if (phase?.length && !phase.includes(ITEM_ALL)) {
     phase_filter = `phase.in.(${phase})`;
@@ -53,7 +53,7 @@ export const fetchRows = async (
   }
 
   // attends les données
-  const {error, data} = await query;
+  const { error, data } = await query;
 
   if (error) {
     throw new Error(error.message);
@@ -63,10 +63,10 @@ export const fetchRows = async (
 
   // décompte les sous-actions uniquement
   const count = rows.reduce(
-    (sum, {depth}) => (depth === maxDepth ? sum : sum + 1),
+    (sum, { depth }) => (depth === maxDepth ? sum : sum + 1),
     0
   );
-  return {rows, count};
+  return { rows, count };
 };
 
 const getPercentFilter = (filters: TFilters, column: keyof TFilters) => {
@@ -75,6 +75,6 @@ const getPercentFilter = (filters: TFilters, column: keyof TFilters) => {
     column
   );
 
-  const or = qf.map(f => 'and(' + f?.map(g => `${g}`).join(',') + ')');
+  const or = qf.map((f) => 'and(' + f?.map((g) => `${g}`).join(',') + ')');
   return or.length ? 'or(' + or.join(',') + ')' : null;
 };
