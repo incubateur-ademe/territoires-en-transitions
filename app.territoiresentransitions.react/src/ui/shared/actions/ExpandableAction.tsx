@@ -1,5 +1,4 @@
 import { useEffect, useRef, useState } from 'react';
-import { LazyDetails } from 'ui/shared/LazyDetails';
 import { ActionReferentielDisplayTitle } from 'ui/referentiels/ActionReferentielDisplayTitle';
 import { ActionReferentielLinkCard } from 'ui/referentiels/ActionReferentielLinkCard';
 import ActionProgressBar from 'ui/referentiels/ActionProgressBar';
@@ -48,42 +47,44 @@ export const ExpandableAction = ({
   }, [ref, axeIdParam]);
 
   return (
-    <div className="mt-5" data-test={`ExpandableAction-${action.identifiant}`}>
-      <LazyDetails
-        summary={
-          <div className="flex flex-row items-center justify-between mt-3">
-            <div ref={ref} className="flex flex-row w-4/5 items-center">
-              <ActionReferentielDisplayTitle action={action} />
-              <div className="pt-1 pl-2">
-                <div
-                  className={classNames('duration-300 text-2xl', {
-                    'rotate-90': opened,
-                    'rotate-0': !opened,
-                  })}
-                  aria-hidden={true}
-                >
-                  <span
-                    className="fr-fi-arrow-right-s-line"
-                    aria-hidden={true}
-                  />
-                </div>
+    <section
+      className="flex flex-col mt-5"
+      data-test={`ExpandableAction-${action.identifiant}`}
+    >
+      <header
+        className="w-full cursor-pointer"
+        onClick={(e) => {
+          e.preventDefault();
+          setOpened(!opened);
+        }}
+      >
+        <div className="flex flex-row items-center justify-between mt-3">
+          <div ref={ref} className="flex flex-row w-4/5 items-center">
+            <ActionReferentielDisplayTitle action={action} />
+            <div className="pt-1 pl-2">
+              <div
+                className={classNames('duration-300 text-2xl', {
+                  'rotate-90': opened,
+                  'rotate-0': !opened,
+                })}
+                aria-hidden={true}
+              >
+                <span className="fr-fi-arrow-right-s-line" aria-hidden={true} />
               </div>
             </div>
-            <div className="w-1/6">
-              <ActionProgressBar action={action} />
-            </div>
           </div>
-        }
-        startOpen={opened}
-        onChange={setOpened}
-      >
-        {children.map((action) => {
+          <div className="w-1/6">
+            <ActionProgressBar action={action} />
+          </div>
+        </div>
+      </header>
+      {opened &&
+        children.map((action) => {
           if (action.type === 'axe' || action.type === 'sous-axe') {
             return <ExpandableAction key={action.id} action={action} />;
           }
           return <ActionReferentielLinkCard key={action.id} action={action} />;
         })}
-      </LazyDetails>
-    </div>
+    </section>
   );
 };
