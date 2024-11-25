@@ -139,7 +139,7 @@ const ModaleActeurs = ({
               onChange={(participation) =>
                 setEditedFiche((prevState) => ({
                   ...prevState,
-                  participationCitoyenneType: participation,
+                  participationCitoyenneType: participation ?? null,
                 }))
               }
             />
