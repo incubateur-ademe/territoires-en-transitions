@@ -11,7 +11,7 @@ type Props = {
   resetFilters?: () => void;
 };
 
-const ModuleFiltreBadges = ({ filtre, className, resetFilters }: Props) => {
+export const useSelectedFilters = ({ filtre }: Pick<Props, 'filtre'>) => {
   const { data: filtreValues } = useFiltreValues({
     filtre,
   });
@@ -25,6 +25,16 @@ const ModuleFiltreBadges = ({ filtre, className, resetFilters }: Props) => {
   if (selectedFilters.length === 0) {
     return null;
   }
+
+  return selectedFilters;
+};
+
+export const ModuleFiltreBadgesBase = (
+  props: Pick<Props, 'className' | 'resetFilters'> & {
+    selectedFilters: string[];
+  }
+) => {
+  const { className, selectedFilters, resetFilters } = props;
 
   return (
     <div className={classNames('flex flex-wrap gap-x-4 gap-y-2', className)}>
@@ -50,6 +60,14 @@ const ModuleFiltreBadges = ({ filtre, className, resetFilters }: Props) => {
       )}
     </div>
   );
+};
+
+const ModuleFiltreBadges = (props: Props) => {
+  const selectedFilters = useSelectedFilters(props);
+
+  return selectedFilters?.length ? (
+    <ModuleFiltreBadgesBase {...props} selectedFilters={selectedFilters} />
+  ) : null;
 };
 
 export default ModuleFiltreBadges;
