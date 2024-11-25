@@ -3,7 +3,7 @@ import { Card, Paragraph } from 'ui/export-pdf/components';
 import { FicheActionPdfProps } from './FicheActionPdf';
 
 const CreationFiche = ({ fiche }: FicheActionPdfProps) => {
-  const { modifiedAt, createdAt } = fiche;
+  const { modifiedAt, createdAt, createdBy } = fiche;
 
   if (!modifiedAt && !createdAt) return null;
 
@@ -22,6 +22,9 @@ const CreationFiche = ({ fiche }: FicheActionPdfProps) => {
       {createdAt && (
         <Paragraph>
           Fiche action créée le {format(new Date(createdAt), 'dd/MM/yyyy')}
+          {createdBy !== null
+            ? ` par ${createdBy.prenom} ${createdBy.nom}`
+            : ''}
         </Paragraph>
       )}
     </Card>
