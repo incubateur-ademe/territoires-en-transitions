@@ -329,7 +329,6 @@ export default class FichesActionUpdateService {
         );
 
         // Create a map of name -> id for new tags
-
         const tagMap = await this.createOrGetLibreTag(
           tx,
           libresTag,
@@ -339,25 +338,29 @@ export default class FichesActionUpdateService {
         const libresTagWithResolvedIds = libresTag
           .map((tag) => ({
             id: tag.id ?? tagMap.get(tag.nom ?? ''),
-            createdBy: tag.createdBy,
           }))
-          .filter(
-            (tag): tag is { id: number; createdBy: string } =>
-              tag.id !== undefined
-          );
+          .filter((tag): tag is { id: number } => tag.id !== undefined);
 
-        updatedLibresTag = await this.updateRelations(
-          ficheActionId,
-          libresTagWithResolvedIds,
-          tx,
-          ficheActionLibreTagTable,
-          ['id', 'createdBy'],
-          ficheActionLibreTagTable.ficheId,
-          [
-            ficheActionLibreTagTable.libreTagId,
-            ficheActionLibreTagTable.createdBy,
-          ]
-        );
+        // Delete existing relations
+        await tx
+          .delete(ficheActionLibreTagTable)
+          .where(eq(ficheActionLibreTagTable.ficheId, ficheActionId));
+
+        // Insert new relations if any exist
+        if (libresTagWithResolvedIds.length > 0) {
+          updatedLibresTag = await tx
+            .insert(ficheActionLibreTagTable)
+            .values(
+              libresTagWithResolvedIds.map((relation) => ({
+                ficheId: ficheActionId,
+                libreTagId: relation.id,
+                createdBy: tokenInfo.id,
+              }))
+            )
+            .returning();
+        } else {
+          updatedLibresTag = [];
+        }
       }
 
       return {
@@ -480,6 +483,13 @@ export default class FichesActionUpdateService {
       .then((rows: { collectiviteId: number }[]) => rows[0]);
   }
 
+  /**
+   * Create or get libre tags
+   * @param tx - current database transaction
+   * @param libresTag - array of libre tags to create or get
+   * @param collectiviteId - id of the collectivite
+   * @returns a map of name -> id for the newly created or existing libre tags
+   */
   private async createOrGetLibreTag(
     tx: TxType,
     libresTag: { id?: number; nom?: string }[],
