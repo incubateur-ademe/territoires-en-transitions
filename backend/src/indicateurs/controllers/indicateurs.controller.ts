@@ -81,7 +81,7 @@ export class IndicateursController {
   })
   async exportIndicateurs(
     @Body() request: GetExportIndicateursRequestClass,
-    @TokenInfo() tokenInfo: SupabaseJwtPayload,
+    @TokenInfo() tokenInfo: AuthenticatedUser,
     @Res() res: Response
   ) {
     const result = await this.exportService.exportXLSX(request, tokenInfo);

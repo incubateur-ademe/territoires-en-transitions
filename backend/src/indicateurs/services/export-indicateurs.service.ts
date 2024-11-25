@@ -2,7 +2,7 @@ import { Injectable, Logger } from '@nestjs/common';
 import { Workbook } from 'exceljs';
 import { format } from 'date-fns';
 import { uniq } from 'es-toolkit';
-import { SupabaseJwtPayload } from '../../auth/models/supabase-jwt.models';
+import { AuthenticatedUser } from '../../auth/models/auth.models';
 import { AuthService } from '../../auth/services/auth.service';
 import { NiveauAcces } from '../../auth/models/private-utilisateur-droit.table';
 import IndicateursService from './indicateurs.service';
@@ -32,7 +32,7 @@ export default class ExportIndicateursService {
 
   async exportXLSX(
     options: ExportIndicateursRequestType,
-    tokenInfo: SupabaseJwtPayload
+    tokenInfo: AuthenticatedUser
   ) {
     if (!options.indicateurIds) return null;
 
