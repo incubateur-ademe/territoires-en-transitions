@@ -1,5 +1,4 @@
-import { useEffect, useRef, useState } from 'react';
-import _ from 'lodash';
+import { FicheAction } from '@tet/api/plan-actions';
 import {
   Checkbox,
   Field,
@@ -10,12 +9,13 @@ import {
   Textarea,
   useEventTracker,
 } from '@tet/ui';
-import { FicheAction } from '@tet/api/plan-actions';
-import { getIsoFormattedDate } from 'utils/formatUtils';
-import StatutsSelectDropdown from 'ui/dropdownLists/ficheAction/statuts/StatutsSelectDropdown';
-import PrioritesSelectDropdown from 'ui/dropdownLists/ficheAction/priorites/PrioritesSelectDropdown';
-import MiseEnOeuvreDropdown from 'ui/dropdownLists/ficheAction/MiseEnOeuvreDropdown/MiseEnOeuvreDropdown';
 import { useCurrentCollectivite } from 'core-logic/hooks/useCurrentCollectivite';
+import _ from 'lodash';
+import { useEffect, useRef, useState } from 'react';
+import MiseEnOeuvreDropdown from 'ui/dropdownLists/ficheAction/MiseEnOeuvreDropdown/MiseEnOeuvreDropdown';
+import PrioritesSelectDropdown from 'ui/dropdownLists/ficheAction/priorites/PrioritesSelectDropdown';
+import StatutsSelectDropdown from 'ui/dropdownLists/ficheAction/statuts/StatutsSelectDropdown';
+import { getIsoFormattedDate } from 'utils/formatUtils';
 
 type ModalePlanningProps = {
   isOpen: boolean;
@@ -176,7 +176,7 @@ const ModalePlanning = ({
               onChange={(tempsDeMiseEnOeuvre) =>
                 setEditedFiche((prevState) => ({
                   ...prevState,
-                  tempsDeMiseEnOeuvre,
+                  tempsDeMiseEnOeuvre: tempsDeMiseEnOeuvre ?? null,
                 }))
               }
             />
