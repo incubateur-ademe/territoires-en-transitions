@@ -511,10 +511,7 @@ describe('FichesActionUpdateService', () => {
 
     it('should update libre tag relations in the database when an existing tag is added', async () => {
       const data: UpdateFicheActionRequestClass = {
-        libresTag: [
-          { id: 1, createdBy: '3f407fc6-3634-45ff-a988-301e9088096a' },
-          { id: 2, createdBy: '3f407fc6-3634-45ff-a988-301e9088096a' },
-        ],
+        libresTag: [{ id: 1 }, { id: 2 }],
       };
 
       const response = await putRequest(data);
@@ -524,14 +521,12 @@ describe('FichesActionUpdateService', () => {
         expect.objectContaining({
           ficheId: ficheActionId,
           libreTagId: 1,
-          createdBy: '3f407fc6-3634-45ff-a988-301e9088096a',
         })
       );
       expect(body.libresTag).toContainEqual(
         expect.objectContaining({
           ficheId: ficheActionId,
           libreTagId: 2,
-          createdBy: '3f407fc6-3634-45ff-a988-301e9088096a',
         })
       );
     });
@@ -543,7 +538,6 @@ describe('FichesActionUpdateService', () => {
         libresTag: [
           {
             nom: nom,
-            createdBy: '3f407fc6-3634-45ff-a988-301e9088096a',
           },
         ],
       };
@@ -562,7 +556,6 @@ describe('FichesActionUpdateService', () => {
         expect.objectContaining({
           ficheId: ficheActionId,
           libreTagId: newLibreTag.id,
-          createdBy: '3f407fc6-3634-45ff-a988-301e9088096a',
         })
       );
 
