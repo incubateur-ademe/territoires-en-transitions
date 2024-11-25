@@ -1,31 +1,23 @@
-import {getIsAllSelected} from 'ui/shared/filters/commons';
-import FilterField from 'ui/shared/filters/FilterField';
-import {MultiSelectFilter} from 'ui/shared/select/MultiSelectFilter';
-import {filtresTypeOptions, TFiltreProps} from '../filters';
+import { filtresTypeOptions, TFilterType, TFiltreProps } from '../filters';
+import { Field, SelectFilter } from '@tet/ui';
 
-const FiltreType = ({filters, setFilters}: TFiltreProps) => {
+const FiltreType = ({ filters, setFilters }: TFiltreProps) => {
   return (
-    <FilterField title="Type d'élément modifié">
-      <MultiSelectFilter
-        data-test="filtre-type"
-        values={
-          filters.types && getIsAllSelected(filters.types)
-            ? undefined
-            : filters.types
-        }
+    <Field title="Type d'élément modifié">
+      <SelectFilter
+        dataTest="filtre-type"
+        values={filters.types}
         options={filtresTypeOptions}
-        onSelect={newValues => {
-          if (getIsAllSelected(newValues)) {
-            const filtres = filters;
-            delete filtres.types;
-            setFilters({...filtres});
+        onChange={({ values }) => {
+          if (values === undefined) {
+            delete filters.types;
+            return setFilters({ ...filters });
           } else {
-            setFilters({...filters, types: newValues});
+            return setFilters({ ...filters, types: values as TFilterType[] });
           }
         }}
-        placeholderText="Sélectionner des options"
       />
-    </FilterField>
+    </Field>
   );
 };
 

@@ -1,15 +1,13 @@
-import {ITEM_ALL} from 'ui/shared/filters/commons';
-import {HistoriqueType} from './types';
+import { HistoriqueType } from './types';
 
 export const NB_ITEMS_PER_PAGE = 10;
 
 export type TFilterType = HistoriqueType | 'tous';
 
-export const filtresTypeOptions: {value: TFilterType; label: string}[] = [
-  {value: ITEM_ALL, label: 'Tous'},
-  {value: 'action_statut', label: 'Action : statut'},
-  {value: 'action_precision', label: 'Action : texte'},
-  {value: 'reponse', label: 'Caractéristique de la collectivité : réponse'},
+export const filtresTypeOptions: { value: TFilterType; label: string }[] = [
+  { value: 'action_statut', label: 'Action : statut' },
+  { value: 'action_precision', label: 'Action : texte' },
+  { value: 'reponse', label: 'Caractéristique de la collectivité : réponse' },
   {
     value: 'justification',
     label: 'Caractéristique de la collectivité : justification',
@@ -39,7 +37,7 @@ export type TFilters = {
 
 export type TSetFilters = (newFilter: TFilters) => void;
 
-export type TInitialFilters = {collectivite_id: number; action_id?: string};
+export type TInitialFilters = { collectivite_id: number; action_id?: string };
 
 export type TFiltreProps = {
   filters: TFilters;

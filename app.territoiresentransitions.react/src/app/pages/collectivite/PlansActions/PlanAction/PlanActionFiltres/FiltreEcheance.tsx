@@ -1,41 +1,29 @@
-import FilterField from 'ui/shared/filters/FilterField';
-import {TOption} from 'ui/shared/select/commons';
-import {TFiltreProps} from '../../FicheAction/data/filters';
-import {getIsAllSelected, ITEM_ALL} from 'ui/shared/filters/commons';
-import {ficheActionEcheanceOptions} from '../../../../../../ui/dropdownLists/listesStatiques';
-import SelectDropdown from 'ui/shared/select/SelectDropdown';
-import {TFicheActionEcheances} from 'types/alias';
+import { TFiltreProps } from '../../FicheAction/data/filters';
+import { ficheActionEcheanceOptions } from '../../../../../../ui/dropdownLists/listesStatiques';
+import { TFicheActionEcheances } from 'types/alias';
+import { Field, Select } from '@tet/ui';
 
-const FiltreEcheance = ({filters, setFilters}: TFiltreProps) => {
-  const {echeance} = filters;
-
-  // Initialisation du tableau d'options pour le multi-select
-  const options: TOption[] = [
-    {value: ITEM_ALL, label: 'Tous'},
-    ...ficheActionEcheanceOptions,
-  ];
+const FiltreEcheance = ({ filters, setFilters }: TFiltreProps) => {
+  const { echeance } = filters;
 
   return (
-    <FilterField title="Échéance">
-      <SelectDropdown
-        data-test="filtre-echeance"
-        value={Array.isArray(echeance) ? echeance[0] : echeance}
-        options={options}
-        onSelect={(value: TFicheActionEcheances) => {
-          // onClick "tous" ou toggle option
-          if (getIsAllSelected([value]) || !value) {
-            const newFilters = filters;
-            delete newFilters.echeance;
-            setFilters({...newFilters});
-            // d'une option à l'autre
-          } else {
-            setFilters({...filters, echeance: value});
+    <Field title="Échéance">
+      <Select
+        dataTest="filtre-echeance"
+        values={Array.isArray(echeance) ? echeance[0] : echeance}
+        options={ficheActionEcheanceOptions}
+        onChange={(value) => {
+          if (value) {
+            return setFilters({
+              ...filters,
+              echeance: value as TFicheActionEcheances,
+            });
           }
+          delete filters.echeance;
+          setFilters({ ...filters });
         }}
-        placeholderText="Sélectionner des options"
-        disabled={options.length === 0}
       />
-    </FilterField>
+    </Field>
   );
 };
 
