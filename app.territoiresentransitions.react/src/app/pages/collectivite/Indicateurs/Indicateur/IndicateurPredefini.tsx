@@ -56,7 +56,9 @@ export const IndicateurPredefiniBase = ({
         pageName="app/indicateurs/predefini"
         properties={{ collectivite_id, indicateur_id: definition.identifiant! }}
       />
-      <HeaderIndicateur title={definition.titre} />
+      <h5 className="sticky top-0 mb-0 py-8 px-12 text-[#3a3a3a] text-lg bg-bf925 z-40">
+        {definition.titre}
+      </h5>
       <div className="px-10 py-4">
         <div className="flex flex-row justify-end fr-mb-2w">
           <ToolbarIconButton
