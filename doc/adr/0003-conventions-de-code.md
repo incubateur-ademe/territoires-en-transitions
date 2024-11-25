@@ -1,16 +1,16 @@
-# 3. Convention d'architecture des projets Typescript
+# 3. Conventions de code et d'architecture
 
 Date: 2024-10-01
 
-## Status
+## Statut
 
-Proposed
+Accepted
 
-## Context
+## Contexte
 
 Afin d'améliorer la lisibilité, la cohérence et la maintenabilité de notre codebase, il parait nécessaire d'adopter une convention de nommage pour nos projets, fichiers et dossiers au sein du monorepo. Cette convention vise à standardiser les pratiques et à faciliter la navigation et la compréhension du code par tous les membres de l'équipe.
 
-## Decision
+## Décision
 
 Les conventions de nommage et d'architecture choisies suivent les standards par défaut Typescript, ESLint, Node, Next.js, et Nest.js.
 
@@ -56,9 +56,14 @@ Voici les domaines définis actuellement :
 1. `utilisateurs`
 2. `collectivites`
 3. `referentiels`
+   - `audits`
+   - `labelisations`
+   - `personnalisations`
 4. `indicateurs`
-5. `plan-actions`
-6. `impact-actions`
+5. `plans`
+   - `fiches`
+   - `paniers`
+6. `shared`
 
 Les domaines définis doivent rester restreints et (quasi) figés.
 
@@ -67,7 +72,7 @@ L'ajout exceptionnel d'un nouveau domaine ne peut se faire qu'après validation 
 #### Exemples d'entités au sein de ces domaines
 
 ```
-plan-actions
+plans
   → plan-action
   → fiche-action
 
@@ -75,6 +80,10 @@ indicateurs
   → definition
   → valeur
   → categorie
+
+shared
+  → thematiques
+  → pilotes
 ```
 
 ### Les "layers" et "types" techniques
@@ -106,7 +115,7 @@ Exemples plus granulaires, si pertinent :
 - `views` : couche des composants UI
 - `hooks` : couche de logique UI
 
-## Consequences
+## Conséquences
 
 1.  Standards par défaut
 
@@ -124,7 +133,7 @@ Exemples plus granulaires, si pertinent :
 
     → [Lien plugin VSCode](https://marketplace.visualstudio.com/items?itemName=EditorConfig.EditorConfig)
 
-## Useful links
+## Références
 
 - Inspirations autour du concept d'architecture hexagonale / clean code
 
