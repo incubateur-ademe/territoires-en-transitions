@@ -3,14 +3,13 @@ import classNames from 'classnames';
 import MultiSelectDropdown, {
   TMultiSelectDropdownProps,
 } from 'ui/shared/select/MultiSelectDropdown';
-import {getIsAllSelected, ITEM_ALL} from '../filters/commons';
-import {getOptions} from './commons';
+import { getIsAllSelected, ITEM_ALL } from '../filters/commons';
+import { getOptions } from './commons';
 
 /** Uncontroled multi select filter */
 export const MultiSelectFilter = <T extends string>({
   values,
   options,
-  dsfrButton,
   buttonClassName,
   placeholderText,
   onSelect,
@@ -21,8 +20,8 @@ export const MultiSelectFilter = <T extends string>({
 }: TMultiSelectDropdownProps<T>) => {
   const isAllSelected = values && getIsAllSelected(values);
 
-  let labels = new Map<string, string>();
-  getOptions(options).forEach(({label, value}) => labels.set(value, label));
+  const labels = new Map<string, string>();
+  getOptions(options).forEach(({ label, value }) => labels.set(value, label));
 
   // gère la sélection/déselection d'item dans la liste
   const handleChange = (newValues: T[]) => {
@@ -40,19 +39,18 @@ export const MultiSelectFilter = <T extends string>({
       onSelect([ITEM_ALL as T]);
     } else {
       // sinon évite que "tous" reste dans la nouvelle sélection
-      onSelect(newValues.filter(f => f !== ITEM_ALL));
+      onSelect(newValues.filter((f) => f !== ITEM_ALL));
     }
   };
 
   return (
     <MultiSelectDropdown
       data-test={dataTest}
-      dsfrButton={dsfrButton}
       buttonClassName={buttonClassName}
       values={values}
       options={options}
       onSelect={handleChange}
-      renderOption={option =>
+      renderOption={(option) =>
         renderOption ? (
           renderOption(option)
         ) : (
@@ -81,13 +79,13 @@ export type TMultiSelectFilterTitleProps = {
  * Affiche le titre d'un filtre multi-sélection
  */
 export const MultiSelectFilterTitle = (props: TMultiSelectFilterTitleProps) => {
-  const {values, label} = props;
+  const { values, label } = props;
   return (
     <span
       className={classNames(
         'fr-fi--sm w-full text-center text-bf500 font-bold mt-1',
-        {'fr-fi-filter-fill': !values.includes(ITEM_ALL)},
-        {'fr-fi-filter-line': values.includes(ITEM_ALL)}
+        { 'fr-fi-filter-fill': !values.includes(ITEM_ALL) },
+        { 'fr-fi-filter-line': values.includes(ITEM_ALL) }
       )}
     >
       &nbsp;{label}
