@@ -1,73 +1,60 @@
-import FilterField from 'ui/shared/filters/FilterField';
-import {TOption} from 'ui/shared/select/commons';
-import {MultiSelectFilter} from 'ui/shared/select/MultiSelectFilter';
-import {SANS_STATUT, TFiltreProps} from '../../FicheAction/data/filters';
-import {getIsAllSelected, ITEM_ALL} from 'ui/shared/filters/commons';
-import {ficheActionStatutOptions} from '../../../../../../ui/dropdownLists/listesStatiques';
+import { TOption } from 'ui/shared/select/commons';
+import { SANS_STATUT, TFiltreProps } from '../../FicheAction/data/filters';
+import { ficheActionStatutOptions } from '../../../../../../ui/dropdownLists/listesStatiques';
 import BadgeStatut from '../../components/BadgeStatut';
-import {TFicheActionStatuts} from 'types/alias';
+import { TFicheActionStatuts } from 'types/alias';
+import { Field, OptionValue, SelectFilter } from '@tet/ui';
+import { Statut } from '@tet/api/plan-actions';
 
-const FiltreStatuts = ({filters, setFilters}: TFiltreProps) => {
+const FiltreStatuts = ({ filters, setFilters }: TFiltreProps) => {
   // Initialisation du tableau d'options pour le multi-select
   const options: TOption[] = [
-    {value: ITEM_ALL, label: 'Tous les statuts'},
-    {value: SANS_STATUT, label: 'Sans statut'},
+    { value: SANS_STATUT, label: 'Sans statut' },
     ...ficheActionStatutOptions,
   ];
 
-  const selectStatut = (newStatuts: string[]) => {
+  const selectStatut = (newStatuts?: OptionValue[]) => {
     const newFilters = filters;
-    const statuts = newStatuts.filter(s => s !== SANS_STATUT);
+    const statuts = newStatuts?.filter((s) => s !== SANS_STATUT);
 
-    if (getIsAllSelected(newStatuts)) {
+    if (newStatuts === undefined) {
       delete newFilters.sans_statut;
       delete newFilters.statuts;
-      return {...newFilters};
+      return { ...newFilters };
     } else if (newStatuts.includes(SANS_STATUT)) {
       if (filters.sans_statut === 1) {
         delete newFilters.sans_statut;
-        return {...newFilters, statuts: statuts as TFicheActionStatuts[]};
+        return { ...newFilters, statuts: statuts as TFicheActionStatuts[] };
       } else {
         delete newFilters.statuts;
-        return {...newFilters, sans_statut: 1};
+        return { ...newFilters, sans_statut: 1 };
       }
     } else {
-      return {...newFilters, statuts: statuts as TFicheActionStatuts[]};
+      return { ...newFilters, statuts: statuts as TFicheActionStatuts[] };
     }
   };
 
   return (
-    <FilterField title="Statut">
-      <MultiSelectFilter
-        data-test="filtre-statut"
+    <Field title="Statut">
+      <SelectFilter
+        dataTest="filtre-statut"
         values={
           filters.sans_statut && filters.sans_statut === 1
             ? [SANS_STATUT]
             : filters.statuts
         }
         options={options}
-        onSelect={newValues => setFilters(selectStatut(newValues))}
-        renderSelection={values => (
-          <div className="flex items-center flex-wrap gap-2">
-            {values.map(v =>
-              v === SANS_STATUT ? (
-                <span key={v}>Sans statut</span>
-              ) : (
-                <BadgeStatut key={v} statut={v} />
-              )
-            )}
-          </div>
-        )}
-        renderOption={option => {
-          if (option.value === ITEM_ALL || option.value === SANS_STATUT) {
-            return <span>{option.label}</span>;
-          }
-          return <BadgeStatut statut={option.value as TFicheActionStatuts} />;
-        }}
-        placeholderText="Sélectionner des options"
+        onChange={({ values }) => setFilters(selectStatut(values))}
+        customItem={(item) =>
+          item.value === SANS_STATUT ? (
+            <span>Sans statut</span>
+          ) : (
+            <BadgeStatut statut={item.value as Statut} />
+          )
+        }
         disabled={options.length === 0}
       />
-    </FilterField>
+    </Field>
   );
 };
 

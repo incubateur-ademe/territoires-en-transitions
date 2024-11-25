@@ -1,52 +1,41 @@
-import {MultiSelectFilter} from 'ui/shared/select/MultiSelectFilter';
-import {TFiltreProps} from '../filters';
-import {useHistoriqueUtilisateurListe} from '../useHistoriqueUtilisateurListe';
-import {useCollectiviteId} from 'core-logic/hooks/params';
-import FilterField from 'ui/shared/filters/FilterField';
-import {getIsAllSelected, ITEM_ALL} from 'ui/shared/filters/commons';
+import { TFiltreProps } from '../filters';
+import { useHistoriqueUtilisateurListe } from '../useHistoriqueUtilisateurListe';
+import { useCollectiviteId } from 'core-logic/hooks/params';
+import { Field, SelectFilter } from '@tet/ui';
 
-const FiltreMembre = ({filters, setFilters}: TFiltreProps) => {
+const FiltreMembre = ({ filters, setFilters }: TFiltreProps) => {
   const collectivite_id = useCollectiviteId();
   const utilisateurs = useHistoriqueUtilisateurListe(collectivite_id!);
 
-  // Initialisation du tableau d'options pour le multi-select
-  const memberList: {value: string; label: string}[] = [];
-  // Ajoute l'option "Tous" s'il y a plus d'une option
-  if (utilisateurs && utilisateurs.length > 1) {
-    memberList.push({value: ITEM_ALL, label: 'Tous'});
-  }
+  // Initialisation du tableau d'options
+  const memberList: { value: string; label: string }[] = [];
+
   // Transformation et ajout des données membres au tableau d'options
   utilisateurs &&
-    utilisateurs.forEach(u =>
-      memberList.push({value: u.modified_by_id!, label: u.modified_by_nom!})
+    utilisateurs.forEach((u) =>
+      memberList.push({ value: u.modified_by_id!, label: u.modified_by_nom! })
     );
 
   return (
-    <FilterField title="Membre">
-      <MultiSelectFilter
-        data-test="filtre-membre"
-        values={
-          filters.modified_by && getIsAllSelected(filters.modified_by)
-            ? undefined
-            : filters.modified_by
-        }
+    <Field title="Membre">
+      <SelectFilter
+        dataTest="filtre-membre"
+        values={filters.modified_by}
         options={memberList}
-        onSelect={newValues => {
-          if (getIsAllSelected(newValues)) {
-            const filtres = filters;
-            delete filtres.modified_by;
-            setFilters({...filtres});
+        onChange={({ values }) => {
+          if (values === undefined) {
+            delete filters.modified_by;
+            return setFilters({ ...filters });
           } else {
-            setFilters({
+            return setFilters({
               ...filters,
-              modified_by: newValues,
+              modified_by: values as string[],
             });
           }
         }}
-        placeholderText="Sélectionner des options"
         disabled={memberList.length === 0}
       />
-    </FilterField>
+    </Field>
   );
 };
 

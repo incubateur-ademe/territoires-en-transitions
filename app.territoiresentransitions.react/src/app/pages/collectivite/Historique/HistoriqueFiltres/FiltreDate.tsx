@@ -1,48 +1,33 @@
-import {TFiltreProps} from '../filters';
-import FilterField from 'ui/shared/filters/FilterField';
+import { Field, Input } from '@tet/ui';
+import { TFiltreProps } from '../filters';
+import { useRef } from 'react';
 
-export const FiltreDateDebut = ({filters, setFilters}: TFiltreProps) => {
+export const FiltreDateDebut = ({ filters, setFilters }: TFiltreProps) => {
+  const ref = useRef<HTMLInputElement>(null);
   return (
-    <FilterField title="Date de début">
-      <InputDate
+    <Field title="Date de début">
+      <Input
+        ref={ref}
+        type="date"
+        data-test="filtre-start-date"
         value={filters.startDate || ''}
-        onChange={(newDate: string) =>
-          setFilters({...filters, startDate: newDate})
-        }
+        onChange={(e) => setFilters({ ...filters, startDate: e.target.value })}
       />
-    </FilterField>
+    </Field>
   );
 };
 
-export const FiltreDateFin = ({filters, setFilters}: TFiltreProps) => {
+export const FiltreDateFin = ({ filters, setFilters }: TFiltreProps) => {
+  const ref = useRef<HTMLInputElement>(null);
   return (
-    <FilterField title="Date de fin">
-      <InputDate
-        dataTest="filtre-end-date"
+    <Field title="Date de fin">
+      <Input
+        ref={ref}
+        type="date"
+        data-test="filtre-end-date"
         value={filters.endDate || ''}
-        onChange={(newDate: string) => {
-          setFilters({...filters, endDate: newDate});
-        }}
-      />
-    </FilterField>
+        onChange={(e) => setFilters({ ...filters, endDate: e.target.value })}
+      />{' '}
+    </Field>
   );
 };
-
-type InputDateProps = {
-  dataTest?: string;
-  value?: string;
-  onChange: (date: string) => void;
-};
-
-const InputDate = ({dataTest, value, onChange}: InputDateProps) => (
-  <input
-    data-test={dataTest}
-    type="date"
-    className="w-full p-2"
-    pattern="\d{4}-\d{2}-\d{2}"
-    value={value}
-    onChange={evt => {
-      onChange(evt.target.value);
-    }}
-  />
-);
