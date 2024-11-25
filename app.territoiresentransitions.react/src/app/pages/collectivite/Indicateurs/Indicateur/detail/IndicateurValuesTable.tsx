@@ -6,7 +6,6 @@ import {
   TEditIndicateurValeurHandlers,
   useEditIndicateurValeur,
 } from './useEditIndicateurValeur';
-import { useToggle } from 'ui/shared/useToggle';
 import {
   ValueTableRowReadOnly,
   IndicateurValueTableRow,
@@ -58,7 +57,7 @@ const ValuesTableBase = (
     importSource,
   } = props;
   const { unite } = definition;
-  const [showAll, toggleShowAll] = useToggle(false);
+  const [showAll, setShowAll] = useState(false);
   const haveManyValues = values.length > SHOW_MORE_THRESHOLD;
   const valuesToShow =
     haveManyValues && !showAll ? values.slice(0, SHOW_MORE_THRESHOLD) : values;
@@ -73,7 +72,7 @@ const ValuesTableBase = (
       !showAll &&
       valuesToShow.findIndex((v) => v.annee === lastAddedYear) === -1
     ) {
-      toggleShowAll();
+      setShowAll(!showAll);
     }
   }, [lastAddedYear]);
 
@@ -92,7 +91,7 @@ const ValuesTableBase = (
       </thead>
       <tbody>
         {isReadonly ? (
-          valuesToShow.map((row, index) => (
+          valuesToShow.map((row) => (
             <ValueTableRowReadOnly key={`${row.type}-${row.annee}`} row={row} />
           ))
         ) : (
@@ -131,7 +130,7 @@ const ValuesTableBase = (
                 icon={showAll ? 'arrow-up-s-line' : 'arrow-down-s-line'}
                 iconPosition="right"
                 size="sm"
-                onClick={toggleShowAll}
+                onClick={() => setShowAll(!showAll)}
               >
                 {showAll
                   ? `Afficher uniquement les ${sourceTypeLabel}s récents`

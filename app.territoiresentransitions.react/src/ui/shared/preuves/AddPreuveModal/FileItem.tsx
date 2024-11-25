@@ -1,14 +1,13 @@
-import {useEffect} from 'react';
+import { useEffect } from 'react';
 import {
   UploadStatus,
   UploadStatusCode,
   UploadStatusRunning,
   UploadStatusFailed,
 } from 'ui/shared/preuves/AddPreuveModal/types';
-import {useUploader} from 'ui/shared/preuves/AddPreuveModal/useUploader';
-import {ProgressBar} from 'ui/shared/ProgressBar';
-import {formatFileSize} from 'utils/file';
-import {Button} from '@tet/ui';
+import { useUploader } from 'ui/shared/preuves/AddPreuveModal/useUploader';
+import { formatFileSize } from 'utils/file';
+import { Button } from '@tet/ui';
 
 export type TFileItem = {
   /** Fichier concerné */
@@ -27,16 +26,16 @@ export type TFileItemProps = TFileItem;
  * Affiche un item représentant un fichier
  */
 export const FileItem = (props: TFileItemProps) => {
-  const {status} = props;
+  const { status } = props;
   const code: UploadStatusCode = status?.code || '';
   const Renderer = statusToRenderer[code];
   return Renderer ? <Renderer {...props} /> : null;
 };
 
 const FileItemRunning = (props: TFileItemProps) => {
-  const {file, onRunningStopped} = props;
-  const {status} = useUploader(file);
-  const {progress, abort} = status as UploadStatusRunning;
+  const { file, onRunningStopped } = props;
+  const { status } = useUploader(file);
+  const { progress, abort } = status as UploadStatusRunning;
 
   // répercute le changement d'état de running à completed | failed
   useEffect(() => {
@@ -59,7 +58,13 @@ const FileItemRunning = (props: TFileItemProps) => {
         </div>
       </div>
       <div className="w-3/12 flex items-center gap-1">
-        <ProgressBar className="w-80 h-3.5 inline-block" value={progress} />
+        {/** Progress bar */}
+        <div className="w-80 h-3.5 inline-block bg-grey925">
+          <div
+            className="h-full bg-primary max-w-full"
+            style={{ width: `${progress}%` }}
+          />
+        </div>
         <Button icon="close-line" variant="white" size="xs" onClick={abort} />
       </div>
     </div>
@@ -67,7 +72,7 @@ const FileItemRunning = (props: TFileItemProps) => {
 };
 
 const FileItemCompleted = (props: TFileItemProps) => {
-  const {file} = props;
+  const { file } = props;
   return (
     <div data-test="file-completed" className="flex w-full">
       <div
@@ -94,8 +99,8 @@ const errorToLabel = {
 };
 
 const FileItemFailed = (props: TFileItemProps) => {
-  const {file, status, onRemoveFailed} = props;
-  const {error} = status as UploadStatusFailed;
+  const { file, status, onRemoveFailed } = props;
+  const { error } = status as UploadStatusFailed;
   const label = errorToLabel[error];
   return (
     <div
