@@ -3,9 +3,9 @@ import { SupabaseClient } from '@supabase/supabase-js';
 import { initTRPC, TRPCError } from '@trpc/server';
 import { CreateExpressContextOptions } from '@trpc/server/adapters/express';
 import {
+  AuthUser,
   isAnonymousUser,
   isAuthenticatedUser,
-  User,
 } from '../auth/models/auth.models';
 
 @Injectable()
@@ -101,8 +101,16 @@ export async function createContext(
       data: { user },
     } = await supabase.auth.getUser(supabaseToken);
 
+    if (!user) {
+      return { user: null };
+    }
+
     return {
-      user: user as User,
+      user: {
+        id: user.id ?? null,
+        role: user.role,
+        isAnonymous: user.is_anonymous,
+      } as AuthUser,
     };
   } catch (error) {
     return { user: null };

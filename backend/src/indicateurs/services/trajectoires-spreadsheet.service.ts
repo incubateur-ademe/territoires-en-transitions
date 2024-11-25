@@ -7,6 +7,7 @@ import {
 import { isNil, partition } from 'es-toolkit';
 import * as _ from 'lodash';
 import slugify from 'slugify';
+import { AuthenticatedUser } from '../../auth/models/auth.models';
 import { EpciType } from '../../collectivites/models/epci.table';
 import GroupementsService from '../../collectivites/services/groupements.service';
 import ConfigurationService from '../../config/configuration.service';
@@ -24,7 +25,6 @@ import { VerificationTrajectoireStatus } from '../models/verification-trajectoir
 import IndicateursService from './indicateurs.service';
 import IndicateurSourcesService from './indicateurSources.service';
 import TrajectoiresDataService from './trajectoires-data.service';
-import { AuthenticatedUser } from '../../auth/models/auth.models';
 
 @Injectable()
 export default class TrajectoiresSpreadsheetService {

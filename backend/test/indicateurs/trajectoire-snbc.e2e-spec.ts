@@ -1,17 +1,15 @@
 import { INestApplication } from '@nestjs/common';
 import { Test } from '@nestjs/testing';
 import { createClient, SupabaseClient } from '@supabase/supabase-js';
-import { default as _ } from 'lodash';
 import { default as request } from 'supertest';
 import { AppModule } from '../../src/app.module';
 import { CalculTrajectoireResultatMode } from '../../src/indicateurs/models/calcul-trajectoire.request';
-import { YOLO_DODO_CREDENTIALS } from '../auth/test-users.samples';
-import { trajectoireSnbcCalculRetour } from './test-data/trajectoire-snbc-calcul-retour';
+import { CalculTrajectoireResponseType } from '../../src/indicateurs/models/calcul-trajectoire.response';
 import {
   VerificationTrajectoireResponseType,
   VerificationTrajectoireStatus,
 } from '../../src/indicateurs/models/verification-trajectoire.response';
-import { CalculTrajectoireResponseType } from '../../src/indicateurs/models/calcul-trajectoire.response';
+import { YOLO_DODO_CREDENTIALS } from '../auth/test-users.samples';
 
 describe('Calcul de trajectoire SNBC', () => {
   let app: INestApplication;
