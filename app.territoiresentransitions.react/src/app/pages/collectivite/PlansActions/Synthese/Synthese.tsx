@@ -1,11 +1,10 @@
-import {useState} from 'react';
-import HeaderTitle from 'ui/HeaderTitle';
+import { useState } from 'react';
 import FiltersPlanAction, {
   PlanActionFilter,
   filtreToutesLesFiches,
 } from './FiltersPlanAction';
 import SyntheseGraphsList from './SyntheseGraphsList';
-import {useCurrentCollectivite} from 'core-logic/hooks/useCurrentCollectivite';
+import { useCurrentCollectivite } from 'core-logic/hooks/useCurrentCollectivite';
 
 /**
  * Contenu de la page Synthèse
@@ -17,7 +16,7 @@ type SyntheseProps = {
   collectiviteId: number;
 };
 
-const Synthese = ({collectiviteId}: SyntheseProps): JSX.Element => {
+const Synthese = ({ collectiviteId }: SyntheseProps): JSX.Element => {
   const collectivite = useCurrentCollectivite();
 
   const [selectedPlan, setSelectedPlan] = useState<PlanActionFilter>(
@@ -26,11 +25,9 @@ const Synthese = ({collectiviteId}: SyntheseProps): JSX.Element => {
 
   return (
     <div className="w-full">
-      <HeaderTitle
-        customClass={{text: 'text-[2rem]'}}
-        titre="Répartition des fiches action"
-        isReadonly={true}
-      />
+      <h2 className="mb-0 py-8 px-12 text-white bg-primary">
+        Répartition des fiches action
+      </h2>
       <div className="mx-auto p-10">
         {/* Filtres par plan d'actions */}
         <div className="mb-8">

@@ -9,7 +9,6 @@ import { useCollectiviteId } from 'core-logic/hooks/params';
 import Link from 'next/link';
 import { useSearchParams } from 'next/navigation';
 import { useState } from 'react';
-import HeaderTitle from 'ui/HeaderTitle';
 import { ITEM_ALL } from 'ui/shared/filters/commons';
 import { DesactiverLesFiltres } from 'ui/shared/filters/DesactiverLesFiltres';
 import FicheActionCard from '../../FicheAction/Carte/FicheActionCard';
@@ -68,11 +67,7 @@ const SyntheseVue = () => {
 
   return (
     <div data-test="PageGraphSynthese" className="w-full">
-      <HeaderTitle
-        customClass={{ text: 'text-[1.375rem]' }}
-        titre={vue.titre}
-        isReadonly
-      />
+      <h5 className="mb-0 py-8 px-12 text-white bg-primary">{vue.titre}</h5>
       <div className="px-6">
         {/** Header */}
         <div className="py-6">
