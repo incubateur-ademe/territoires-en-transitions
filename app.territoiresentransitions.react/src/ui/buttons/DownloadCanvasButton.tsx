@@ -2,8 +2,6 @@ import { Button, ButtonProps } from '@tet/ui';
 import html2canvas from 'html2canvas';
 import { MouseEvent, RefObject } from 'react';
 
-import { downloadFromCanvas } from '../../utils/downloadFromCanvas';
-
 type DownloadCanvasButtonProps = {
   containerRef: RefObject<HTMLElement>;
   fileName: string;
@@ -26,7 +24,12 @@ const DownloadCanvasButton = ({
   ) => {
     if (containerRef && containerRef.current) {
       html2canvas(containerRef.current, { scale: 2 }).then((canvas) => {
-        downloadFromCanvas(canvas, fileName, fileType);
+        const link = document.createElement('a');
+        document.body.appendChild(link);
+        link.setAttribute('href', canvas.toDataURL(`image/${fileType}`));
+        link.setAttribute('download', `${fileName}.${fileType}`);
+        link.click();
+        link.remove();
       });
 
       if (props.onClick) props.onClick(event);

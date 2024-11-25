@@ -2,7 +2,6 @@ import { useState } from 'react';
 import { Field, Modal, ModalFooterOKCancel } from '@tet/ui';
 import { BadgeACompleter } from 'ui/shared/Badge/BadgeACompleter';
 import TextareaControlled from 'ui/shared/form/TextareaControlled';
-import InputControlled from 'ui/shared/form/InputControlled';
 import ScrollTopButton from 'ui/buttons/ScrollTopButton';
 import { ToolbarIconButton } from 'ui/buttons/ToolbarIconButton';
 import { useUpdateIndicateurDefinition } from './useUpdateIndicateurDefinition';
@@ -16,6 +15,7 @@ import IndicateurDetailChart from 'app/pages/collectivite/Indicateurs/Indicateur
 import { useDeleteIndicateurPerso } from './useRemoveIndicateurPerso';
 import { useExportIndicateurs } from './useExportIndicateurs';
 import { Indicateurs } from '@tet/api';
+import { Input } from '@tet/ui';
 import BadgeIndicateurPerso from 'app/pages/collectivite/Indicateurs/components/BadgeIndicateurPerso';
 
 /** Affiche le détail d'un indicateur personnalisé */
@@ -70,6 +70,8 @@ const IndicateurPersonnaliseBase = ({
     collectivite?.collectivite_id as number,
     definition.id
   );
+
+  const [uniteInput, setUniteInput] = useState(unite);
 
   return (
     <>
@@ -128,11 +130,12 @@ const IndicateurPersonnaliseBase = ({
           <IndicateurInfoLiees definition={definition} />
           <FichesActionLiees definition={definition} />
           <Field title="Unité">
-            <InputControlled
-              className="fr-input fr-mt-1w !outline-none"
-              initialValue={unite}
-              readOnly={isReadonly}
+            <Input
+              type="text"
+              value={uniteInput}
+              onChange={(e) => setUniteInput(e.target.value)}
               onBlur={(e) => handleUpdate('unite', e.target.value)}
+              disabled={isReadonly}
             />
           </Field>
         </div>
