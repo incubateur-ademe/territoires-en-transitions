@@ -87,6 +87,9 @@ const FicheAction = ({ isReadonly }: FicheActionProps) => {
                       <span className="text-sm text-primary-10 text-left">
                         Fiche action créée le{' '}
                         {format(new Date(fiche.createdAt), 'dd/MM/yyyy')}
+                        {fiche.createdBy !== null
+                          ? ` par ${fiche.createdBy.prenom} ${fiche.createdBy.nom}`
+                          : ''}
                       </span>
                     )}
                   </div>

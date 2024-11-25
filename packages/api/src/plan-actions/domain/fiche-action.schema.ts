@@ -78,11 +78,19 @@ export const tempsDeMiseEnOeuvreSchema = z.object({
   nom: z.string(),
 });
 
+const auteur = z.object({
+  userId: z.string(),
+  prenom: z.string(),
+  nom: z.string(),
+  email: z.string(),
+});
+
 export const ficheActionSchema = z.object({
   id: z.number(),
   collectiviteId: z.number(),
   modifiedAt: z.string().datetime().nullish(),
   createdAt: z.string().datetime().nullish(),
+  createdBy: auteur.nullable(),
   titre: z.string().nullable(),
   description: z.string().nullish(),
   statut: statutSchema.nullish(),
