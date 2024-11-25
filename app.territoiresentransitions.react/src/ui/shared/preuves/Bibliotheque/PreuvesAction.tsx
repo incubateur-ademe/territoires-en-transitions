@@ -1,8 +1,7 @@
-import {TPreuveComplementaire, TPreuveReglementaire} from './types';
-import {PreuveReglementaire} from './PreuveReglementaire';
-import {AddPreuveComplementaire} from 'ui/shared/actions/AddPreuve/AddPreuveComplementaire';
-import {TActionDef} from './usePreuves';
-import {YellowDivider} from 'ui/dividers/YellowDivider';
+import { TPreuveComplementaire, TPreuveReglementaire } from './types';
+import { PreuveReglementaire } from './PreuveReglementaire';
+import { AddPreuveComplementaire } from 'ui/shared/actions/AddPreuve/AddPreuveComplementaire';
+import { TActionDef } from './usePreuves';
 import PreuveDoc from './PreuveDoc';
 
 export type TPreuvesActionProps = {
@@ -67,7 +66,7 @@ export const PreuvesAction = (props: TPreuvesActionProps) => {
               })
             }
           </div>
-          <YellowDivider />
+          <div className="border-solid border-t border-[#FCC63A] my-4" />
         </>
       ) : (
         <p className="fr-text--sm !mb-0 py-4">
@@ -98,7 +97,7 @@ export const PreuvesAction = (props: TPreuvesActionProps) => {
       {/* Message d'avertissement */}
       {showWarning && (
         <>
-          <YellowDivider />
+          <div className="border-solid border-t border-[#FCC63A] my-4" />
           <p className="text-xs grey-6 py-4 mb-0">
             Tous les documents sont visibles par les membres de la communauté
             Territoires en Transitions, sauf les documents confidentiels
@@ -116,8 +115,8 @@ const groupByActionId = (preuves: TPreuveReglementaire[]) => {
   // on utilise une Map pour conserver l'ordre d'insertion
   const byId = new Map<string, TPreuveReglementaire[]>();
 
-  preuves.forEach(preuve => {
-    const {action_id} = preuve.action;
+  preuves.forEach((preuve) => {
+    const { action_id } = preuve.action;
     byId.set(action_id, [...(byId.get(action_id) || []), preuve]);
   });
 
@@ -131,8 +130,8 @@ const groupByPreuveDefinitionId = (preuves: TPreuveReglementaire[]) => {
   // on utilise une Map pour conserver l'ordre d'insertion
   const byId = new Map<string, TPreuveReglementaire[]>();
 
-  preuves.forEach(preuve => {
-    const {id} = preuve.preuve_reglementaire;
+  preuves.forEach((preuve) => {
+    const { id } = preuve.preuve_reglementaire;
     byId.set(id, [...(byId.get(id) || []), preuve]);
   });
 
