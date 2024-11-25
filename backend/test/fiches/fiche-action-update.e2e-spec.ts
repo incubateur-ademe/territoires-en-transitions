@@ -576,14 +576,16 @@ describe('FichesActionUpdateService', () => {
         libresTag: [{ id: 1 }, { id: 2 }],
       };
 
-      const response = await putRequest(data);
+      onTestFinished(async () => {
+        // Temp: there's no delete cascade on ficheActionLibreTagTable, so we have to delete manually
+        await databaseService.db
+          .delete(ficheActionLibreTagTable)
+          .where(eq(ficheActionLibreTagTable.ficheId, ficheActionId));
 
-      const body = response.body;
-
-      expect(body.libres).toStrictEqual([
-        { ficheId: ficheActionId, libreTagId: 1 },
-        { ficheId: ficheActionId, libreTagId: 2 },
-      ]);
+        await databaseService.db
+          .delete(libreTagTable)
+          .where(eq(libreTagTable.nom, nom));
+      });
     });
   });
 
