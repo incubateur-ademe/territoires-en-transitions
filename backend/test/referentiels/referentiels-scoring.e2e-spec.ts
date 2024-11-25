@@ -1,21 +1,29 @@
 import { INestApplication } from '@nestjs/common';
 import { default as request } from 'supertest';
+import { HttpErrorResponse } from '../../src/common/models/http-error.response';
+import { ActionScoreType } from '../../src/referentiels/models/action-score.dto';
 import { ActionStatutType } from '../../src/referentiels/models/action-statut.table';
 import { ActionType } from '../../src/referentiels/models/action-type.enum';
 import { GetActionStatutsResponseType } from '../../src/referentiels/models/get-action-statuts.response';
 import { GetReferentielScoresResponseType } from '../../src/referentiels/models/get-referentiel-scores.response';
+import { GetScoreSnapshotsResponseType } from '../../src/referentiels/models/get-score-snapshots.response';
 import { HistoriqueActionStatutType } from '../../src/referentiels/models/historique-action-statut.table';
 import { ReferentielActionWithScoreType } from '../../src/referentiels/models/referentiel-action-avec-score.dto';
+import { ReferentielType } from '../../src/referentiels/models/referentiel.enum';
+import { ScoreJalon } from '../../src/referentiels/models/score-jalon.enum';
 import { getAuthToken } from '../auth/auth-utils';
+import { getCollectiviteIdBySiren } from '../collectivites/collectivites-utils';
 import { getTestApp } from '../common/app-utils';
 
 describe('Referentiels scoring routes', () => {
   let app: INestApplication;
   let yoloDodoToken: string;
+  let rhoneAggloCollectiviteId: number;
 
   beforeAll(async () => {
     app = await getTestApp();
     yoloDodoToken = await getAuthToken();
+    rhoneAggloCollectiviteId = await getCollectiviteIdBySiren('200072015');
   });
 
   it(`Récupération des statuts des actions sans token non autorisée`, async () => {
@@ -180,6 +188,199 @@ describe('Referentiels scoring routes', () => {
         error: 'Not Found',
         statusCode: 404,
       });
+  });
+
+  it(`Récupération anonyme du score d'un référentiel avec sauvegarde d'un snapshot non autorisée`, async () => {
+    const response = await request(app.getHttpServer())
+      .get('/collectivites/1/referentiels/cae/scores?snapshotNom=test')
+      .set('Authorization', `Bearer ${process.env.SUPABASE_ANON_KEY}`)
+      .expect(401);
+    expect((response.body as HttpErrorResponse).message).toEqual(
+      'Droits insuffisants'
+    );
+
+    const response2 = await request(app.getHttpServer())
+      .get('/collectivites/1/referentiels/cae/scores?snapshot=true')
+      .set('Authorization', `Bearer ${process.env.SUPABASE_ANON_KEY}`)
+      .expect(401);
+    expect((response2.body as HttpErrorResponse).message).toEqual(
+      'Droits insuffisants'
+    );
+  });
+
+  it(`Récupération du score d'un référentiel avec sauvegarde d'un snapshot non autorisée pour un utilisateur en lecture seule`, async () => {
+    await request(app.getHttpServer())
+      .get(
+        `/collectivites/${rhoneAggloCollectiviteId}/referentiels/cae/scores?snapshotNom=test`
+      )
+      .set('Authorization', `Bearer ${yoloDodoToken}`)
+      .expect(401);
+
+    await request(app.getHttpServer())
+      .get(
+        `/collectivites/${rhoneAggloCollectiviteId}/referentiels/cae/scores?snapshot=true`
+      )
+      .set('Authorization', `Bearer ${yoloDodoToken}`)
+      .expect(401);
+  });
+
+  it(`Récupération du score d'un référentiel avec sauvegarde d'un snapshot autorisée pour un utilisateur en écriture`, async () => {
+    const responseSnapshotScoreCourantCreation = await request(
+      app.getHttpServer()
+    )
+      .get(`/collectivites/1/referentiels/cae/scores?snapshot=true`)
+      .set('Authorization', `Bearer ${yoloDodoToken}`)
+      .expect(200);
+    const getReferentielScoresCourantResponseType: GetReferentielScoresResponseType =
+      responseSnapshotScoreCourantCreation.body as GetReferentielScoresResponseType;
+    expect(getReferentielScoresCourantResponseType.snapshot?.ref).toBe(
+      'score-courant'
+    );
+
+    const responseSnapshotCreation = await request(app.getHttpServer())
+      .get(
+        `/collectivites/1/referentiels/cae/scores?snapshotNom=test%20à%20accent&snapshotForceUpdate=true`
+      )
+      .set('Authorization', `Bearer ${yoloDodoToken}`)
+      .expect(200);
+    const getReferentielScoresResponseType: GetReferentielScoresResponseType =
+      responseSnapshotCreation.body as GetReferentielScoresResponseType;
+    expect(getReferentielScoresResponseType.snapshot?.ref).toBe(
+      'user-test-a-accent'
+    );
+
+    const responseSnapshotList = await request(app.getHttpServer())
+      .get(`/collectivites/1/referentiels/cae/score-snapshots`)
+      .set('Authorization', `Bearer ${yoloDodoToken}`)
+      .expect(200);
+    const expectedSnapshotList: GetScoreSnapshotsResponseType = {
+      collectiviteId: 1,
+      referentielId: ReferentielType.CAE,
+      typesJalon: [
+        ScoreJalon.PRE_AUDIT,
+        ScoreJalon.POST_AUDIT,
+        ScoreJalon.DATE_PERSONNALISEE,
+        ScoreJalon.SCORE_COURANT,
+        ScoreJalon.VISITE_ANNUELLE,
+      ],
+      snapshots: [
+        {
+          auditId: null,
+          createdAt: getReferentielScoresCourantResponseType.snapshot!
+            .createdAt as unknown as Date,
+          createdBy: '17440546-f389-4d4f-bfdb-b0c94a1bd0f9',
+          modifiedBy: '17440546-f389-4d4f-bfdb-b0c94a1bd0f9',
+          date: getReferentielScoresCourantResponseType.date as unknown as Date,
+          modifiedAt: getReferentielScoresCourantResponseType.snapshot!
+            .modifiedAt as unknown as Date,
+          nom: 'Score courant',
+          pointFait: 0.36,
+          pointPasFait: 0.03,
+          pointPotentiel: 490.9,
+          pointProgramme: 0.21,
+          ref: 'score-courant',
+          referentielVersion: '1.0.0',
+          typeJalon: ScoreJalon.SCORE_COURANT,
+        },
+        {
+          date: getReferentielScoresResponseType.date as unknown as Date,
+          nom: 'test à accent',
+          ref: 'user-test-a-accent',
+          typeJalon: ScoreJalon.DATE_PERSONNALISEE,
+          modifiedAt: getReferentielScoresResponseType.snapshot!
+            .modifiedAt as unknown as Date,
+          createdAt: getReferentielScoresResponseType.snapshot!
+            .createdAt as unknown as Date,
+          referentielVersion: '1.0.0',
+          auditId: null,
+          createdBy: '17440546-f389-4d4f-bfdb-b0c94a1bd0f9',
+          modifiedBy: '17440546-f389-4d4f-bfdb-b0c94a1bd0f9',
+          pointFait: 0.36,
+          pointPasFait: 0.03,
+          pointPotentiel: 490.9,
+          pointProgramme: 0.21,
+        },
+      ],
+    };
+    expect(responseSnapshotList.body).toEqual(expectedSnapshotList);
+
+    onTestFinished(async () => {
+      await request(app.getHttpServer())
+        .delete(
+          `/collectivites/1/referentiels/cae/score-snapshots/test-a-accent`
+        )
+        .set('Authorization', `Bearer ${yoloDodoToken}`);
+    });
+  });
+
+  it(`Suppression d'un snapshot non-autorisée pour un utilisateur en écriture mais sur un snapshot qui ne soit pas de type date personnalisée`, async () => {
+    // Recalcul du score courant
+    const responseSnapshotCreation = await request(app.getHttpServer())
+      .get(`/collectivites/1/referentiels/cae/scores?snapshot=true`)
+      .set('Authorization', `Bearer ${yoloDodoToken}`)
+      .expect(200);
+    const getReferentielScoresResponseType: GetReferentielScoresResponseType =
+      responseSnapshotCreation.body as GetReferentielScoresResponseType;
+    expect(getReferentielScoresResponseType.snapshot?.ref).toBe(
+      'score-courant'
+    );
+
+    // Suppression du score courant interdite
+    const deletionResponse = await request(app.getHttpServer())
+      .delete(`/collectivites/1/referentiels/cae/score-snapshots/score-courant`)
+      .set('Authorization', `Bearer ${yoloDodoToken}`)
+      .expect(401);
+    expect((deletionResponse.body as HttpErrorResponse).message).toEqual(
+      `Uniquement les snaphots de type date_personnalisee,visite_annuelle peuvent être supprimés par un utilisateur.`
+    );
+  });
+
+  it(`Récupération du snapshot pour un utilisateur anonyme`, async () => {
+    // Recalcul du score courant
+    const responseSnapshotCreation = await request(app.getHttpServer())
+      .get(`/collectivites/1/referentiels/cae/scores?snapshot=true`)
+      .set('Authorization', `Bearer ${yoloDodoToken}`)
+      .expect(200);
+    const getReferentielScoresResponseType: GetReferentielScoresResponseType =
+      responseSnapshotCreation.body as GetReferentielScoresResponseType;
+    expect(getReferentielScoresResponseType.snapshot?.ref).toBe(
+      'score-courant'
+    );
+
+    // Récupération du snapshot pour un utilisateur anonyme
+    const responseSnapshot = await request(app.getHttpServer())
+      .get(`/collectivites/1/referentiels/cae/score-snapshots/score-courant`)
+      .set('Authorization', `Bearer ${process.env.SUPABASE_ANON_KEY}`)
+      .expect(200);
+    const reponseSnapshotGetReferentielScores: GetReferentielScoresResponseType =
+      responseSnapshot.body as GetReferentielScoresResponseType;
+
+    expect(reponseSnapshotGetReferentielScores).toEqual(
+      getReferentielScoresResponseType
+    );
+    const expectedRootScore: ActionScoreType = {
+      etoiles: 1,
+      actionId: 'cae',
+      concerne: true,
+      desactive: false,
+      pointFait: 0.36,
+      renseigne: false,
+      pointPasFait: 0.03,
+      pointPotentiel: 490.9,
+      pointProgramme: 0.21,
+      pointReferentiel: 500,
+      totalTachesCount: 1111,
+      pointNonRenseigne: 490.3,
+      pointPotentielPerso: null,
+      completedTachesCount: 2,
+      faitTachesAvancement: 1.2,
+      pasFaitTachesAvancement: 0.1,
+      programmeTachesAvancement: 0.7,
+      pasConcerneTachesAvancement: 0,
+    };
+    expect(reponseSnapshotGetReferentielScores.scores.score).toEqual(
+      expectedRootScore
+    );
   });
 
   it(`Récupération de l'historique du score d'un référentiel pour un utilisateur autorisé`, async () => {

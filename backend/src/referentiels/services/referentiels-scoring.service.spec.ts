@@ -23,6 +23,7 @@ import { deeperReferentiel } from '../models/samples/deeper-referentiel';
 import { eciReferentiel } from '../models/samples/eci-referentiel';
 import { simpleReferentiel } from '../models/samples/simple-referentiel';
 import LabellisationService from './labellisation.service';
+import ReferentielsScoringSnapshotsService from './referentiels-scoring-snapshots.service';
 import ReferentielsScoringService from './referentiels-scoring.service';
 import ReferentielsService from './referentiels.service';
 
@@ -34,6 +35,7 @@ describe('ReferentielsScoringService', () => {
     const moduleRef = await Test.createTestingModule({
       providers: [
         ReferentielsScoringService,
+        ReferentielsScoringSnapshotsService,
         PersonnalisationsService,
         ExpressionParserService,
         ReferentielsService,

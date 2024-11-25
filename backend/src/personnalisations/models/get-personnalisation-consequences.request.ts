@@ -1,7 +1,9 @@
-import { extendApi } from '@anatine/zod-openapi';
+import { extendApi, extendZodWithOpenApi } from '@anatine/zod-openapi';
 import { z } from 'zod';
 import { ReferentielType } from '../../referentiels/models/referentiel.enum';
 import { getPersonnalisationReponsesRequestSchema } from './get-personnalisation-reponses.request';
+
+extendZodWithOpenApi(z);
 
 export const getPersonnalisationConsequencesRequestSchema = extendApi(
   getPersonnalisationReponsesRequestSchema.extend({

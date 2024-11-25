@@ -32,6 +32,10 @@ export const getReferentielScoresRequestSchema = extendApi(
       .describe(
         `Définit la date par rapport à un jalon spécifique. Prioritaire par rapport à la date. Peut être complété par anneeAudit pour spécifier un audit spécifique`
       ),
+    auditId: z.coerce
+      .number()
+      .optional()
+      .describe(`Identifiant de l'audit pour le jalon`),
     anneeAudit: z
       .string()
       .pipe(z.coerce.number().int())
@@ -41,6 +45,24 @@ export const getReferentielScoresRequestSchema = extendApi(
       )
       .optional()
       .describe(`Année de l'audit pour le jalon`),
+    snapshot: z
+      .enum(['true', 'false'])
+      .transform((value) => value === 'true')
+      .optional()
+      .describe(
+        `Indique si le score doit être sauvegardé. Si c'est le cas, l'utilisateur doit avoir le droit d'écriture sur la collectivité`
+      ),
+    snapshotNom: z
+      .string()
+      .optional()
+      .describe(
+        `Nom du snapshot de score à sauvegarder. Ne peut être défini que pour une date personnalisée, sinon un nom par défaut est utilisé`
+      ),
+    snapshotForceUpdate: z
+      .enum(['true', 'false'])
+      .transform((value) => value === 'true')
+      .optional()
+      .describe(`Force l'update du snapshot même si il existe déjà`),
   })
 ).openapi({
   title:

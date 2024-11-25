@@ -3,6 +3,8 @@ import { pgTable, timestamp, varchar } from 'drizzle-orm/pg-core';
 import { createInsertSchema, createSelectSchema } from 'drizzle-zod';
 import { actionTypeEnum } from './action-type.enum';
 
+export const referentielIdVarchar = varchar('referentiel_id', { length: 30 });
+
 export const referentielDefinitionTable = pgTable('referentiel_definition', {
   id: varchar('id', { length: 30 }).primaryKey().notNull(),
   nom: varchar('nom', { length: 300 }).notNull(),

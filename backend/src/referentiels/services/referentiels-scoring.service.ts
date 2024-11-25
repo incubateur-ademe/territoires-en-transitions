@@ -19,12 +19,13 @@ import {
 import { chunk, isNil } from 'es-toolkit';
 import * as _ from 'lodash';
 import { DateTime } from 'luxon';
-import { NiveauAcces } from '../../auth/models/private-utilisateur-droit.table';
 import { AuthenticatedUser } from '../../auth/models/auth.models';
+import { NiveauAcces } from '../../auth/models/private-utilisateur-droit.table';
 import { AuthService } from '../../auth/services/auth.service';
 import { CollectiviteAvecType } from '../../collectivites/models/identite-collectivite.dto';
 import CollectivitesService from '../../collectivites/services/collectivites.service';
 import DatabaseService from '../../common/services/database.service';
+import { getErrorMessage } from '../../common/services/errors.helper';
 import MattermostNotificationService from '../../common/services/mattermost-notification.service';
 import { roundTo } from '../../common/services/number.helper';
 import { sleep } from '../../common/services/sleep.helper';
@@ -61,6 +62,7 @@ import { GetReferentielMultipleScoresResponseType } from '../models/get-referent
 import { GetReferentielScoresRequestType } from '../models/get-referentiel-scores.request';
 import { GetReferentielScoresResponseType } from '../models/get-referentiel-scores.response';
 import { GetReferentielResponseType } from '../models/get-referentiel.response';
+import { ScoreSnapshotInfoType } from '../models/get-score-snapshots.response';
 import { historiqueActionCommentaireTable } from '../models/historique-action-commentaire.table';
 import { historiqueActionStatutTable } from '../models/historique-action-statut.table';
 import { LabellisationAuditType } from '../models/labellisation-audit.table';
@@ -73,6 +75,7 @@ import { ReferentielActionType } from '../models/referentiel-action.dto';
 import { ReferentielType } from '../models/referentiel.enum';
 import { ScoreJalon } from '../models/score-jalon.enum';
 import LabellisationService from './labellisation.service';
+import ReferentielsScoringSnapshotsService from './referentiels-scoring-snapshots.service';
 import ReferentielsService from './referentiels.service';
 
 @Injectable()
@@ -89,6 +92,7 @@ export default class ReferentielsScoringService {
     private readonly collectivitesService: CollectivitesService,
     private readonly databaseService: DatabaseService,
     private readonly referentielsService: ReferentielsService,
+    private readonly referentielsScoringSnapshotsService: ReferentielsScoringSnapshotsService,
     private readonly personnalisationService: PersonnalisationsService,
     private readonly expressionParserService: ExpressionParserService,
     private readonly labellisationService: LabellisationService
@@ -97,12 +101,11 @@ export default class ReferentielsScoringService {
   async checkCollectiviteAndReferentielWithAccess(
     collectiviteId: number,
     referentielId: ReferentielType,
-    date?: string,
     tokenInfo?: AuthenticatedUser,
     niveauAccesMinimum = NiveauAcces.LECTURE
   ): Promise<CollectiviteAvecType> {
     // Check read access if a date is given (historical data)
-    if (tokenInfo && date) {
+    if (tokenInfo) {
       await this.authService.verifieAccesAuxCollectivites(
         tokenInfo,
         [collectiviteId],
@@ -785,12 +788,12 @@ export default class ReferentielsScoringService {
       `Getting collectivite ${collectiviteId} action statuts for referentiel ${referentielId} and date ${date}`
     );
 
+    // No check if no date is defined: allowed for anonymous access
     if (!noCheck) {
       await this.checkCollectiviteAndReferentielWithAccess(
         collectiviteId,
         referentielId,
-        date,
-        tokenInfo
+        date ? tokenInfo : undefined
       );
     }
 
@@ -846,11 +849,11 @@ export default class ReferentielsScoringService {
       `Getting collectivite ${collectiviteId} action statut explications for referentiel ${referentielId} and date ${date}`
     );
 
-    if (!noCheck) {
+    // // No check if no date is defined, allowed for anonymous access
+    if (!noCheck && date) {
       await this.checkCollectiviteAndReferentielWithAccess(
         collectiviteId,
         referentielId,
-        date,
         tokenInfo
       );
     }
@@ -1010,14 +1013,14 @@ export default class ReferentielsScoringService {
     if (parameters.jalon) {
       if (parameters.date) {
         throw new HttpException(
-          `Date should not be provided when a jalon is defined`,
+          `Une date ne doit pas être définie lorsqu'un jalon est spécifié`,
           400
         );
       }
       // Later we can have snapshots for other jalon
       if (
-        (parameters.jalon === ScoreJalon.DEBUT_AUDIT ||
-          parameters.jalon === ScoreJalon.FIN_AUDIT) &&
+        (parameters.jalon === ScoreJalon.PRE_AUDIT ||
+          parameters.jalon === ScoreJalon.POST_AUDIT) &&
         !parameters.avecReferentielsOrigine
       ) {
         const audits = await this.labellisationService.getAuditsForCollectivite(
@@ -1027,7 +1030,7 @@ export default class ReferentielsScoringService {
         );
         if (!audits.length) {
           throw new HttpException(
-            `Aucun audit trouvé pour la collectivité ${collectiviteId}`,
+            `Aucun audit trouvé pour la collectivité ${collectiviteId} (auditId: ${parameters.auditId})`,
             400
           );
         }
@@ -1046,10 +1049,21 @@ export default class ReferentielsScoringService {
               400
             );
           }
+        } else if (parameters.auditId) {
+          audit = audits.find((a) => a.id === parameters.auditId);
+          if (!audit) {
+            throw new HttpException(
+              `Aucun audit trouvé pour la collectivité ${collectiviteId} et l'id d'audit ${parameters.auditId}`,
+              400
+            );
+          }
+          parameters.anneeAudit = DateTime.fromJSDate(
+            (audit.dateFin || audit.dateDebut)!
+          ).year;
         }
         auditId = audit.id;
         parameters.date =
-          (parameters.jalon === ScoreJalon.DEBUT_AUDIT
+          (parameters.jalon === ScoreJalon.PRE_AUDIT
             ? audit.dateDebut?.toISOString()
             : audit.dateFin?.toISOString()) || undefined;
         this.logger.log(
@@ -1062,13 +1076,32 @@ export default class ReferentielsScoringService {
         : ScoreJalon.SCORE_COURANT;
     }
 
+    if (parameters.snapshotNom) {
+      parameters.snapshot = true;
+      if (
+        parameters.jalon !== ScoreJalon.SCORE_COURANT &&
+        parameters.jalon !== ScoreJalon.DATE_PERSONNALISEE
+      ) {
+        throw new HttpException(
+          `Un nom de snapshot ne peut être défini que pour le score courant ou une date personnalisée`,
+          400
+        );
+      }
+    }
+
+    let niveauAccess: NiveauAcces = NiveauAcces.LECTURE;
+    if (parameters.snapshot) {
+      niveauAccess = NiveauAcces.EDITION;
+    }
+
     let collectiviteInfo: undefined | CollectiviteAvecType;
-    if (!noCheck) {
+    if (!noCheck && niveauAccess !== NiveauAcces.LECTURE) {
+      // Lecture allowed for anonymous access
       collectiviteInfo = await this.checkCollectiviteAndReferentielWithAccess(
         collectiviteId,
         referentielId,
-        parameters.date,
-        tokenInfo
+        tokenInfo,
+        niveauAccess
       );
     } else {
       collectiviteInfo =
@@ -1086,7 +1119,7 @@ export default class ReferentielsScoringService {
     const etoilesDefinitions =
       await this.labellisationService.getEtoileDefinitions();
 
-    const personnalisationConsequences =
+    const personnalisationConsequencesResult =
       await this.personnalisationService.getPersonnalisationConsequencesForCollectivite(
         collectiviteId,
         {
@@ -1139,29 +1172,43 @@ export default class ReferentielsScoringService {
         this.logger.log(`Recalcul des scores `);
         referentielWithScore = this.computeScore(
           referentiel.itemsTree!,
-          personnalisationConsequences,
+          personnalisationConsequencesResult.consequences,
           actionStatuts,
           actionLevel,
           actionStatutExplications,
           etoilesDefinitions
         );
       }
-      return {
+      const getScoreResult: GetReferentielScoresResponseType = {
         mode: parameters.mode!,
         jalon: parameters.jalon,
         auditId,
+        anneeAudit: parameters.anneeAudit,
+        referentielId: referentielId,
         referentielVersion: referentiel.version,
         collectiviteId,
         collectiviteInfo,
         date: parameters.date || new Date().toISOString(),
         scores: referentielWithScore,
       };
+
+      if (parameters.snapshot) {
+        // The snapshot slug is automatically set in saveSnapshotForScoreResponse
+        await this.referentielsScoringSnapshotsService.saveSnapshotForScoreResponse(
+          getScoreResult,
+          personnalisationConsequencesResult.reponses,
+          parameters.snapshotNom,
+          parameters.snapshotForceUpdate,
+          tokenInfo?.id
+        );
+      }
+      return getScoreResult;
     } else {
       const scores = await this.computeScoreFromReferentielsOrigine(
         collectiviteId,
         parameters,
         referentiel.itemsTree!,
-        personnalisationConsequences,
+        personnalisationConsequencesResult.consequences,
         etoilesDefinitions
       );
 
@@ -1169,6 +1216,7 @@ export default class ReferentielsScoringService {
         mode: parameters.mode!,
         jalon: parameters.jalon,
         collectiviteId,
+        referentielId: referentielId,
         referentielVersion: referentiel.version,
         collectiviteInfo,
         date: parameters.date || new Date().toISOString(),
@@ -1500,7 +1548,7 @@ export default class ReferentielsScoringService {
             )
           );
         });
-      } else if (parameters.jalon === ScoreJalon.DEBUT_AUDIT) {
+      } else if (parameters.jalon === ScoreJalon.PRE_AUDIT) {
         // Get scores from sauvegarde
         referentielsOrigine.forEach((referentielOrigine) => {
           referentielsOriginePromiseScores.push(
@@ -1512,7 +1560,7 @@ export default class ReferentielsScoringService {
             )
           );
         });
-      } else if (parameters.jalon === ScoreJalon.FIN_AUDIT) {
+      } else if (parameters.jalon === ScoreJalon.POST_AUDIT) {
         // Get scores from sauvegarde
         referentielsOrigine.forEach((referentielOrigine) => {
           referentielsOriginePromiseScores.push(
@@ -1690,14 +1738,14 @@ export default class ReferentielsScoringService {
         collectiviteId,
         etoiles
       );
-    } else if (jalon === ScoreJalon.DEBUT_AUDIT) {
+    } else if (jalon === ScoreJalon.PRE_AUDIT) {
       scoresResult = await this.getPreAuditScoresForCollectivite(
         referentiel.actionId as ReferentielType,
         collectiviteId,
         auditId!,
         etoiles
       );
-    } else if (jalon === ScoreJalon.FIN_AUDIT) {
+    } else if (jalon === ScoreJalon.POST_AUDIT) {
       scoresResult = await this.getPostAuditScoresForCollectivite(
         referentiel.actionId as ReferentielType,
         collectiviteId,
@@ -2081,6 +2129,113 @@ export default class ReferentielsScoringService {
     }
 
     return getReferentielScores;
+  }
+
+  async saveLastReferentielsScoreToNewTable() {
+    // Save post audit scores to new table
+    const postAuditScores = (
+      await this.databaseService.db
+        .select({
+          collectiviteId: postAuditScoresTable.collectiviteId,
+          referentiel: postAuditScoresTable.referentiel,
+          auditId: postAuditScoresTable.auditId,
+        })
+        .from(postAuditScoresTable)
+        .orderBy(desc(postAuditScoresTable.payloadTimestamp))
+    ).map((score) => ({
+      collectiviteId: score.collectiviteId,
+      referentiel: score.referentiel,
+      auditId: score.auditId,
+      jalon: ScoreJalon.POST_AUDIT,
+    }));
+    this.logger.log(`Found ${postAuditScores.length} post audit scores`);
+
+    const preAuditScores = (
+      await this.databaseService.db
+        .select({
+          collectiviteId: preAuditScoresTable.collectiviteId,
+          referentiel: preAuditScoresTable.referentiel,
+          auditId: preAuditScoresTable.auditId,
+        })
+        .from(preAuditScoresTable)
+        .orderBy(desc(preAuditScoresTable.payloadTimestamp))
+    ).map((score) => ({
+      collectiviteId: score.collectiviteId,
+      referentiel: score.referentiel,
+      auditId: score.auditId,
+      jalon: ScoreJalon.PRE_AUDIT,
+    }));
+    this.logger.log(`Found ${preAuditScores.length} post audit scores`);
+
+    const clientScores = (
+      await this.databaseService.db
+        .select({
+          collectiviteId: clientScoresTable.collectiviteId,
+          referentiel: clientScoresTable.referentiel,
+        })
+        .from(clientScoresTable)
+        .orderBy(desc(clientScoresTable.payloadTimestamp))
+    ).map((score) => ({
+      collectiviteId: score.collectiviteId,
+      referentiel: score.referentiel,
+      auditId: undefined,
+      jalon: ScoreJalon.SCORE_COURANT,
+    }));
+    this.logger.log(`Found ${preAuditScores.length} client current scores`);
+
+    const allScores = [...postAuditScores, ...preAuditScores, ...clientScores];
+
+    const allScoresChunks = chunk(
+      allScores,
+      ReferentielsScoringService.MULTIPLE_COLLECTIVITE_CHUNK_SIZE
+    );
+    const insertPromises: Promise<GetReferentielScoresResponseType | null>[] =
+      [];
+    let iChunk = 0;
+    const parameters: GetReferentielScoresRequestType = {
+      mode: ComputeScoreMode.DEPUIS_SAUVEGARDE,
+      snapshot: true,
+      snapshotForceUpdate: true,
+    };
+    const allSnapshotsInfo: ScoreSnapshotInfoType[] = [];
+    for (const allScoresChunk of allScoresChunks) {
+      this.logger.log(
+        `Chunk ${iChunk}/${allScoresChunk.length} de ${allScoresChunks.length} enregistrements`
+      );
+      insertPromises.push(
+        ...allScoresChunk.map((score) =>
+          this.computeScoreForCollectivite(
+            score.referentiel,
+            score.collectiviteId,
+            { ...parameters, jalon: score.jalon, auditId: score.auditId },
+            undefined,
+            undefined,
+            true
+          ).catch((error) => {
+            this.logger.error(error);
+            this.logger.error(
+              `Error computing score for collectivite ${
+                score.collectiviteId
+              } and referentiel ${score.referentiel}: ${getErrorMessage(error)}`
+            );
+            return null;
+          })
+        )
+      );
+      const snapshots = (await Promise.all(insertPromises))
+        .filter((response) => Boolean(response))
+        .map((response) =>
+          this.referentielsScoringSnapshotsService.getSnapshotInfoFromScoreResponse(
+            response!
+          )
+        );
+      allSnapshotsInfo.push(...snapshots);
+      insertPromises.length = 0;
+      iChunk++;
+    }
+    return {
+      snapshots: allSnapshotsInfo,
+    };
   }
 
   getScoreDiff(

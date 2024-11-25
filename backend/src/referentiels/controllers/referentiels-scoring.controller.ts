@@ -1,10 +1,18 @@
 import { createZodDto } from '@anatine/zod-nestjs';
-import { Controller, Get, Logger, Param, Query, Req } from '@nestjs/common';
+import {
+  Controller,
+  Delete,
+  Get,
+  Logger,
+  Param,
+  Query,
+  Req,
+} from '@nestjs/common';
 import { ApiExcludeEndpoint, ApiResponse, ApiTags } from '@nestjs/swagger';
 import { Request } from 'express';
 import { AllowAnonymousAccess } from '../../auth/decorators/allow-anonymous-access.decorator';
 import { TokenInfo } from '../../auth/decorators/token-info.decorators';
-import { AuthenticatedUser } from '../../auth/models/auth.models';
+import { AuthenticatedUser, AuthUser } from '../../auth/models/auth.models';
 import { checkMultipleReferentielScoresRequestSchema } from '../models/check-multiple-referentiel-scores.request';
 import { CheckReferentielScoresRequestType } from '../models/check-referentiel-scores.request';
 import { getActionStatutsRequestSchema } from '../models/get-action-statuts.request';
@@ -15,7 +23,10 @@ import { getReferentielMultipleScoresRequestSchema } from '../models/get-referen
 import { getReferentielMultipleScoresResponseSchema } from '../models/get-referentiel-multiple-scores.response';
 import { getReferentielScoresRequestSchema } from '../models/get-referentiel-scores.request';
 import { getReferentielScoresResponseSchema } from '../models/get-referentiel-scores.response';
+import { getScoreSnapshotsRequestSchema } from '../models/get-score-snapshots.request';
+import { getScoreSnapshotsResponseSchema } from '../models/get-score-snapshots.response';
 import { ReferentielType } from '../models/referentiel.enum';
+import ReferentielsScoringSnapshotsService from '../services/referentiels-scoring-snapshots.service';
 import ReferentielsScoringService from '../services/referentiels-scoring.service';
 
 class GetReferentielScoresRequestClass extends createZodDto(
@@ -45,13 +56,22 @@ class CheckMultipleReferentielScoresRequestClass extends createZodDto(
   checkMultipleReferentielScoresRequestSchema
 ) {}
 
+class GetScoreSnapshotsRequestClass extends createZodDto(
+  getScoreSnapshotsRequestSchema
+) {}
+
+class GetScoreSnapshotsResponseClass extends createZodDto(
+  getScoreSnapshotsResponseSchema
+) {}
+
 @ApiTags('Referentiels')
 @Controller('')
 export class ReferentielsScoringController {
   private readonly logger = new Logger(ReferentielsScoringController.name);
 
   constructor(
-    private readonly referentielsScoringService: ReferentielsScoringService
+    private readonly referentielsScoringService: ReferentielsScoringService,
+    private readonly referentielsScoringSnapshotsService: ReferentielsScoringSnapshotsService
   ) {}
 
   @AllowAnonymousAccess()
@@ -126,6 +146,57 @@ export class ReferentielsScoringController {
   }
 
   @AllowAnonymousAccess()
+  @Get(
+    'collectivites/:collectivite_id/referentiels/:referentiel_id/score-snapshots'
+  )
+  async getReferentielScoreSnapshots(
+    @Param('collectivite_id') collectiviteId: number,
+    @Param('referentiel_id') referentielId: ReferentielType,
+    @Query() parameters: GetScoreSnapshotsRequestClass,
+    @TokenInfo() tokenInfo: AuthUser
+  ): Promise<GetScoreSnapshotsResponseClass> {
+    return this.referentielsScoringSnapshotsService.getScoreSnapshots(
+      collectiviteId,
+      referentielId,
+      parameters
+    );
+  }
+
+  @AllowAnonymousAccess()
+  @Get(
+    'collectivites/:collectivite_id/referentiels/:referentiel_id/score-snapshots/:snapshot_ref'
+  )
+  async getReferentielScoreSnapshot(
+    @Param('collectivite_id') collectiviteId: number,
+    @Param('referentiel_id') referentielId: ReferentielType,
+    @Param('snapshot_ref') snapshotRef: string,
+    @TokenInfo() tokenInfo: AuthenticatedUser
+  ): Promise<GetReferentielScoresResponseClass> {
+    return this.referentielsScoringSnapshotsService.getFullScoreSnapshot(
+      collectiviteId,
+      referentielId,
+      snapshotRef
+    );
+  }
+
+  @Delete(
+    'collectivites/:collectivite_id/referentiels/:referentiel_id/score-snapshots/:snapshot_ref'
+  )
+  async deleteReferentielScoreSnapshot(
+    @Param('collectivite_id') collectiviteId: number,
+    @Param('referentiel_id') referentielId: ReferentielType,
+    @Param('snapshot_ref') snapshotRef: string,
+    @TokenInfo() tokenInfo: AuthUser
+  ): Promise<void> {
+    return this.referentielsScoringSnapshotsService.deleteScoreSnapshot(
+      collectiviteId,
+      referentielId,
+      snapshotRef,
+      tokenInfo
+    );
+  }
+
+  @AllowAnonymousAccess()
   @ApiExcludeEndpoint() // Not in documentation
   @Get('referentiels/all/check-last-scores')
   async checkLastReferentielsScore(
@@ -137,5 +208,13 @@ export class ReferentielsScoringController {
       parameters,
       checkHostUrl
     );
+  }
+
+  @AllowAnonymousAccess()
+  @ApiExcludeEndpoint() // Not in documentation
+  @Get('referentiels/all/save-last-scores')
+  async saveLastReferentielsScoreNewTable() {
+    // TODO: endpoint to be removed, only used during migration
+    return await this.referentielsScoringService.saveLastReferentielsScoreToNewTable();
   }
 }
