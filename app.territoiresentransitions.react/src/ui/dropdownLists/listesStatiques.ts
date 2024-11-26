@@ -1,4 +1,4 @@
-import { Statut, ParticipationCitoyenne } from '@tet/api/plan-actions';
+import { ParticipationCitoyenne, Statut } from '@tet/api/plan-actions';
 import { ModifiedSince } from '@tet/api/plan-actions/fiche-resumes.list/domain/fetch-options.schema';
 import {
   TFicheActionCibles,
@@ -109,11 +109,11 @@ export const ficheActionEcheanceOptions: Options<TFicheActionEcheances> = [
 export const ficheActionParticipationOptions: Options<ParticipationCitoyenne> =
   [
     {
-      value: 'Pas de participation citoyenne',
+      value: 'pas-de-participation',
       label: 'Pas de participation citoyenne',
     },
-    { value: 'Information', label: 'Information' },
-    { value: 'Consultation', label: 'Consultation' },
-    { value: 'Concertation', label: 'Concertation' },
-    { value: 'Co-construction', label: 'Co-construction' },
+    { value: 'information', label: 'Information' },
+    { value: 'consultation', label: 'Consultation' },
+    { value: 'concertation', label: 'Concertation' },
+    { value: 'co-construction', label: 'Co-construction' },
   ];
