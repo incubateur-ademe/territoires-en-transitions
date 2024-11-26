@@ -1,7 +1,6 @@
 import { extendApi } from '@anatine/zod-openapi';
 import { z } from 'zod';
 import { categorieSchema } from '@tet/api/indicateurs/domain';
-import { createZodDto } from '@anatine/zod-nestjs';
 import { getQueryOptionsSchema } from '@tet/api/shared/domain';
 
 export const getFilteredIndicateursRequestOptionsSchema = extendApi(
@@ -145,7 +144,3 @@ export const getFilteredIndicateursRequestSchema = extendApi(
     queryOptions: extendApi(getFilteredIndicateurRequestQueryOptionSchema),
   })
 );
-
-export class GetFilteredIndicateursRequestClass extends createZodDto(
-  getFilteredIndicateursRequestSchema
-) {}

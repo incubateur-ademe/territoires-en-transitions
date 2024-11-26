@@ -1,15 +1,13 @@
 import {
   GetFilteredIndicateurRequestQueryOptionType,
-  GetFilteredIndicateursRequestOptionType
+  GetFilteredIndicateursRequestOptionType,
 } from './get-filtered-indicateurs.request';
 import { getTestRouter } from '../../../test/common/app-utils';
 import { AuthenticatedUser } from './../../auth/models/auth.models';
 import { getYoloDodoUser } from '../../../test/auth/auth-utils';
 import { inferProcedureInput } from '@trpc/server';
 import { AppRouter, TrpcRouter } from '../../trpc/trpc.router';
-import {
-  getFilteredIndicateurResponseSchema
-} from './get-filtered-indicateurs.response';
+import { getFilteredIndicateurResponseSchema } from './get-filtered-indicateurs.response';
 
 type Input = inferProcedureInput<AppRouter['indicateurs']['filtre']>;
 
@@ -22,9 +20,9 @@ describe('Route de lecture des indicateurs filtrés', () => {
     sort: [
       {
         field: 'estComplet',
-        direction: 'asc'
-      }
-    ]
+        direction: 'asc',
+      },
+    ],
   };
 
   beforeAll(async () => {
@@ -32,22 +30,22 @@ describe('Route de lecture des indicateurs filtrés', () => {
     yoloDodoUser = await getYoloDodoUser();
   });
 
-  it(`Test que la requête s'exécute sans filtres`, async () => {
+  test(`Test que la requête s'exécute sans filtres`, async () => {
     const caller = router.createCaller({ user: yoloDodoUser });
     const filtre: GetFilteredIndicateursRequestOptionType = {};
 
     const input: Input = {
       collectiviteId: 1,
       filtre: filtre,
-      queryOptions: queryOptions
+      queryOptions: queryOptions,
     };
     const result = await caller.indicateurs.filtre.getFilteredIndicateur(input);
-    console.log(JSON.stringify(result, null, 4));
+    expect(result.length).not.toBe(0);
     const toCheck = getFilteredIndicateurResponseSchema.safeParse(result.body);
     expect(toCheck.success).toBeTruthy;
   });
 
-  it(`Test que la requête s'exécute avec tous les filtres`, async () => {
+  test(`Test que la requête s'exécute avec tous les filtres`, async () => {
     const caller = router.createCaller({ user: yoloDodoUser });
     const filtre: GetFilteredIndicateursRequestOptionType = {
       actionId: 'eci_2',
@@ -66,15 +64,16 @@ describe('Route de lecture des indicateurs filtrés', () => {
       personnePiloteIds: [1],
       servicePiloteIds: [1],
       ficheActionIds: [1],
-      withChildren: false
+      withChildren: false,
     };
 
     const input: Input = {
       collectiviteId: 1,
       filtre: filtre,
-      queryOptions: queryOptions
+      queryOptions: queryOptions,
     };
 
     const result = await caller.indicateurs.filtre.getFilteredIndicateur(input);
+    expect(result.length).toBe(0);
   });
 });

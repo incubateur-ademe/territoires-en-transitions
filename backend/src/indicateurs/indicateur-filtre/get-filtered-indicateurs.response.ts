@@ -1,6 +1,5 @@
 import { extendApi, extendZodWithOpenApi } from '@anatine/zod-openapi';
 import { z } from 'zod';
-import { createZodDto } from '@anatine/zod-nestjs';
 
 extendZodWithOpenApi(z);
 
@@ -17,14 +16,3 @@ export const getFilteredIndicateurResponseSchema = extendApi(
 export type GetFilteredIndicateurResponseType = z.infer<
   typeof getFilteredIndicateurResponseSchema
 >;
-
-export const getFilteredIndicateursResponseSchema = extendApi(
-  z.object({
-    indicateurs: extendApi(z.array(getFilteredIndicateurResponseSchema)),
-  })
-);
-
-
-export class GetFilteredIndicateursResponseClass extends createZodDto(
-  getFilteredIndicateursResponseSchema
-) {}
