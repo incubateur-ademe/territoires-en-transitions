@@ -1,12 +1,4 @@
-import {
-  Card,
-  List,
-  ListElement,
-  Paragraph,
-  Stack,
-  Title,
-} from 'ui/export-pdf/components';
-import { FicheActionPdfProps } from './FicheActionPdf';
+import { getOptionLabel } from '@tet/ui';
 import {
   CiblePicto,
   CitoyenPicto,
@@ -16,6 +8,16 @@ import {
   ServicePilotePicto,
   StructurePilotePicto,
 } from 'ui/export-pdf/assets/picto';
+import {
+  Card,
+  List,
+  ListElement,
+  Paragraph,
+  Stack,
+  Title,
+} from 'ui/export-pdf/components';
+import { ficheActionParticipationOptions } from '../../../../../../ui/dropdownLists/listesStatiques';
+import { FicheActionPdfProps } from './FicheActionPdf';
 
 type ListeActeursProps = {
   titre: string;
@@ -106,7 +108,12 @@ const Acteurs = ({ fiche }: FicheActionPdfProps) => {
         titre="Participation citoyenne"
         liste={
           participationCitoyenneType
-            ? [participationCitoyenneType as string]
+            ? [
+                getOptionLabel(
+                  participationCitoyenneType,
+                  ficheActionParticipationOptions
+                ) as string,
+              ]
             : undefined
         }
         comment={participationCitoyenne ?? undefined}

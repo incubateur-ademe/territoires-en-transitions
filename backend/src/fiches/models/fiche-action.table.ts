@@ -118,11 +118,11 @@ export const ficheActionNiveauxPrioriteEnum = pgEnum(
 );
 
 export const ficheActionParticipationCitoyenneTypeEnumValues = [
-  'Pas de participation citoyenne',
-  'Information',
-  'Consultation',
-  'Concertation',
-  'Co-construction',
+  'pas-de-participation',
+  'information',
+  'consultation',
+  'concertation',
+  'co-construction',
 ] as const;
 
 export const ficheActionTable = pgTable('fiche_action', {

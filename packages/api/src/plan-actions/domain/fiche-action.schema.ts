@@ -47,11 +47,11 @@ export const cibleSchema = z.enum([
 export type Cible = z.infer<typeof cibleSchema>;
 
 export const participationCitoyenneTypeSchema = z.enum([
-  'Pas de participation citoyenne',
-  'Information',
-  'Consultation',
-  'Concertation',
-  'Co-construction',
+  'pas-de-participation',
+  'information',
+  'consultation',
+  'concertation',
+  'co-construction',
 ]);
 
 export type ParticipationCitoyenne = z.infer<

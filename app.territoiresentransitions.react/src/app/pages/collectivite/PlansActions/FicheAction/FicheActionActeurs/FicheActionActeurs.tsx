@@ -1,18 +1,19 @@
 import { FicheAction } from '@tet/api/plan-actions';
-import { Button } from '@tet/ui';
+import { Button, getOptionLabel } from '@tet/ui';
 import classNames from 'classnames';
 import { useState } from 'react';
+import { ficheActionParticipationOptions } from '../../../../../../ui/dropdownLists/listesStatiques';
 import EmptyCard from '../EmptyCard';
 import ListeActeurs from './ListeActeurs';
 import ModaleActeurs from './ModaleActeurs';
 import CiblePicto from './PictosActeurs/CiblePicto';
+import CitoyenPicto from './PictosActeurs/CitoyenPicto';
 import EluPicto from './PictosActeurs/EluPicto';
 import EmptyActeursPicto from './PictosActeurs/EmptyActeursPicto';
 import PartenairePicto from './PictosActeurs/PartenairePicto';
 import PersonnePilotePicto from './PictosActeurs/PersonnePilotePicto';
 import ServicePilotePicto from './PictosActeurs/ServicePilotePicto';
 import StructurePilotePicto from './PictosActeurs/StructurePilotePicto';
-import CitoyenPicto from './PictosActeurs/CitoyenPicto';
 
 type FicheActionActeursProps = {
   isReadonly: boolean;
@@ -119,7 +120,12 @@ const FicheActionActeurs = ({
               titre="Participation citoyenne"
               liste={
                 participationCitoyenneType
-                  ? [participationCitoyenneType as string]
+                  ? [
+                      getOptionLabel(
+                        participationCitoyenneType,
+                        ficheActionParticipationOptions
+                      ) as string,
+                    ]
                   : undefined
               }
               comment={participationCitoyenne ?? undefined}
