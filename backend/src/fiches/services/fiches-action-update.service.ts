@@ -328,25 +328,35 @@ export default class FichesActionUpdateService {
           ficheActionId
         );
 
-        // Create a map of name -> id for new tags
-        const tagMap = await this.createOrGetLibreTag(
+        // Example of tagMap:
+        // tagMap = new Map([
+        //   ['Mobility', 1],
+        //   ['Transport', 2],
+        //   ['Bicycle', 3]
+        // ]);
+        const tagMap = await this.getOrCreateLibreTag(
           tx,
           libresTag,
           collectiviteId
         );
 
-        const libresTagWithResolvedIds = libresTag
-          .map((tag) => ({
-            id: tag.id ?? tagMap.get(tag.nom ?? ''),
-          }))
-          .filter((tag): tag is { id: number } => tag.id !== undefined);
+        // Example of libresTagWithResolvedIds:
+        // libresTagWithResolvedIds = [
+        //   { id: 1 },
+        //   { id: 2 },
+        //   { id: 3 }
+        // ]
+        const libresTagWithResolvedIds = this.resolveLibreTagIds(
+          libresTag,
+          tagMap
+        );
 
         // Delete existing relations
         await tx
           .delete(ficheActionLibreTagTable)
           .where(eq(ficheActionLibreTagTable.ficheId, ficheActionId));
 
-        // Insert new relations if any exist
+        // Insert new relations
         if (libresTagWithResolvedIds.length > 0) {
           updatedLibresTag = await tx
             .insert(ficheActionLibreTagTable)
@@ -490,7 +500,7 @@ export default class FichesActionUpdateService {
    * @param collectiviteId - id of the collectivite
    * @returns a map of name -> id for the newly created or existing libre tags
    */
-  private async createOrGetLibreTag(
+  private async getOrCreateLibreTag(
     tx: TxType,
     libresTag: { id?: number; nom?: string }[],
     collectiviteId: number
@@ -498,23 +508,38 @@ export default class FichesActionUpdateService {
     const tagMap = new Map<string, number>();
 
     for (const tag of libresTag) {
-      if (!tag.id && tag.nom) {
-        const existingTag = await this.findExistingLibreTagByName(tx, tag.nom);
+      if (this.isNewTag(tag)) {
+        const existingTag = await this.findExistingLibreTagByName(tx, tag.nom!);
         if (existingTag) {
-          tagMap.set(tag.nom, existingTag.id);
+          tagMap.set(tag.nom!, existingTag.id);
         } else {
           const [newTag] = await tx
             .insert(libreTagTable)
             .values({
-              nom: tag.nom,
+              nom: tag.nom!,
               collectiviteId: collectiviteId,
             })
             .returning();
-          tagMap.set(tag.nom, newTag.id);
+          tagMap.set(tag.nom!, newTag.id);
         }
       }
     }
     return tagMap;
+  }
+
+  private isNewTag(tag: { id?: number; nom?: string }) {
+    return !tag.id && tag.nom;
+  }
+
+  private resolveLibreTagIds(
+    libresTag: { id?: number; nom?: string }[],
+    tagMap: Map<string, number>
+  ): { id: number }[] {
+    return libresTag
+      .map((tag) => ({
+        id: tag.id ?? tagMap.get(tag.nom ?? ''),
+      }))
+      .filter((tag): tag is { id: number } => tag.id !== undefined);
   }
 
   private async findExistingLibreTagByName(tx: TxType, nom: string) {
