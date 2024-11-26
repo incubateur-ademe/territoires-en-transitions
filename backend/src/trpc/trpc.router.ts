@@ -5,6 +5,7 @@ import SupabaseService from '../common/services/supabase.service';
 import { CountByStatutRouter } from '../fiches/count-by-statut/count-by-statut.router';
 import { TrajectoiresRouter } from '../indicateurs/routers/trajectoires.router';
 import { createContext, TrpcService } from './trpc.service';
+import { IndicateurFiltreRouter } from '../indicateurs/indicateur-filtre/indicateur-filtre.router';
 import {
   GetCategoriesByCollectiviteRouter
 } from '../taxonomie/routers/get-categories-by-collectivite.router';
@@ -22,11 +23,13 @@ export class TrpcRouter {
     private readonly getCategoriesByCollectiviteRouter: GetCategoriesByCollectiviteRouter,
     private readonly personnes: PersonnesRouter,
     private readonly ficheActionEtapeRouter : FicheActionEtapeRouter,
+    private readonly indicateurFiltreRouter : IndicateurFiltreRouter,
   ) {}
 
   appRouter = this.trpc.router({
     indicateurs: {
       trajectoires: this.trajectoiresRouter.router,
+      filtre : this.indicateurFiltreRouter.router
     },
     plans: {
       fiches: {

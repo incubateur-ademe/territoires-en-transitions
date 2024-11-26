@@ -2,15 +2,13 @@ import { Injectable } from '@nestjs/common';
 import DatabaseService from '../../common/services/database.service';
 import { AuthService } from '../../auth/services/auth.service';
 import {
-  getFilteredIndicateurRequestQueryOptionSchema,
   GetFilteredIndicateurRequestQueryOptionType,
-  getFilteredIndicateursRequestOptionsSchema,
   GetFilteredIndicateursRequestOptionType,
 } from './get-filtered-indicateurs.request';
 import { getTableName, sql } from 'drizzle-orm';
 import { intersection, isNil } from 'es-toolkit';
 import { GetFilteredIndicateurResponseType } from './get-filtered-indicateurs.response';
-import type { SupabaseJwtPayload } from '../../auth/models/supabase-jwt.models';
+import { AuthenticatedUser } from '../../auth/models/auth.models';
 import { indicateurValeurTable } from '../models/indicateur-valeur.table';
 import { groupementCollectiviteTable } from '../../collectivites/models/groupement-collectivite.table';
 import { indicateurDefinitionTable } from '../models/indicateur-definition.table';
@@ -120,11 +118,8 @@ export default class IndicateurFiltreService {
     collectiviteId: number,
     filters: GetFilteredIndicateursRequestOptionType,
     queryOptions: GetFilteredIndicateurRequestQueryOptionType,
-    tokenInfo: SupabaseJwtPayload
+    tokenInfo: AuthenticatedUser
   ): Promise<GetFilteredIndicateurResponseType[]> {
-    // Vérifie les types TODO fait planter les tests unitaires alors que cette fonction n'est pas appelée
-    //getFilteredIndicateursRequestOptionsSchema.parse(filters);
-    //getFilteredIndicateurRequestQueryOptionSchema.parse(queryOptions);
     // Vérifie les droits
     await this.authService.verifieAccesRestreintCollectivite(
       tokenInfo,
