@@ -1,14 +1,14 @@
 import { INestApplication } from '@nestjs/common';
 import { createClient, SupabaseClient } from '@supabase/supabase-js';
 import { Test } from '@nestjs/testing';
-import { AppModule } from '../../src/app.module';
-import { YOLO_DODO_CREDENTIALS } from '../auth/test-users.samples';
+import { AppModule } from '../../app.module';
+import { YOLO_DODO_CREDENTIALS } from '../../../test/auth/test-users.samples';
 import { default as request } from 'supertest';
 import {
   GetFilteredIndicateurRequestQueryOptionType,
   GetFilteredIndicateursRequestOptionType,
-} from '../../src/indicateurs/models/get-filtered-indicateurs.request';
-import { getFilteredIndicateursResponseSchema } from '../../src/indicateurs/models/get-filtered-indicateurs.response';
+} from '@tet/backend/indicateurs/indicateur-filtre/get-filtered-indicateurs.request';
+import { getFilteredIndicateursResponseSchema } from '@tet/backend/indicateurs/indicateur-filtre/get-filtered-indicateurs.response';
 
 describe('Route de lecture des indicateurs filtrés', () => {
   let app: INestApplication;

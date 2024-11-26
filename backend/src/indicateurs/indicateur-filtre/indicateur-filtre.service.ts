@@ -6,10 +6,10 @@ import {
   GetFilteredIndicateurRequestQueryOptionType,
   getFilteredIndicateursRequestOptionsSchema,
   GetFilteredIndicateursRequestOptionType,
-} from '../models/get-filtered-indicateurs.request';
+} from './get-filtered-indicateurs.request';
 import { getTableName, sql } from 'drizzle-orm';
 import { intersection, isNil } from 'es-toolkit';
-import { GetFilteredIndicateurResponseType } from '../models/get-filtered-indicateurs.response';
+import { GetFilteredIndicateurResponseType } from './get-filtered-indicateurs.response';
 import type { SupabaseJwtPayload } from '../../auth/models/supabase-jwt.models';
 import { indicateurValeurTable } from '../models/indicateur-valeur.table';
 import { groupementCollectiviteTable } from '../../collectivites/models/groupement-collectivite.table';

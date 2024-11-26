@@ -14,7 +14,7 @@ import TrajectoiresDataService from './services/trajectoires-data.service';
 import TrajectoiresSpreadsheetService from './services/trajectoires-spreadsheet.service';
 import TrajectoiresXlsxService from './services/trajectoires-xlsx.service';
 import { ConfigurationModule } from '../config/configuration.module';
-import IndicateurFiltreService from './services/indicateur-filtre.service';
+import IndicateurFiltreService from './indicateur-filtre/indicateur-filtre.service';
 
 @Module({
   imports: [
