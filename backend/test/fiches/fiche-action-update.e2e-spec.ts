@@ -1,5 +1,5 @@
 import { INestApplication } from '@nestjs/common';
-import { eq } from 'drizzle-orm';
+import { eq, or } from 'drizzle-orm';
 import { default as request } from 'supertest';
 import { describe, expect, it } from 'vitest';
 import DatabaseService from '../../src/common/services/database.service';
@@ -81,6 +81,10 @@ describe('FichesActionUpdateService', () => {
     await databaseService.db
       .delete(ficheActionLibreTagTable)
       .where(eq(ficheActionLibreTagTable.ficheId, ficheActionId));
+
+    await databaseService.db
+      .delete(libreTagTable)
+      .where(or(eq(libreTagTable.id, 1), eq(libreTagTable.id, 2)));
 
     await databaseService.db
       .delete(ficheActionTable)
@@ -513,10 +517,8 @@ describe('FichesActionUpdateService', () => {
       const data: UpdateFicheActionRequestClass = {
         libresTag: [{ id: 1 }, { id: 2 }],
       };
-
       const response = await putRequest(data);
       const body = response.body;
-
       expect(body.libresTag).toContainEqual(
         expect.objectContaining({
           ficheId: ficheActionId,
@@ -733,6 +735,19 @@ describe('FichesActionUpdateService', () => {
       ficheId,
       effetAttenduId: resultatsAttendusFixture.id,
     });
+
+    await databaseService.db.insert(libreTagTable).values([
+      {
+        id: 1,
+        nom: 'Tag 1',
+        collectiviteId: collectiviteId,
+      },
+      {
+        id: 2,
+        nom: 'Tag 2',
+        collectiviteId: collectiviteId,
+      },
+    ]);
 
     await databaseService.db.insert(ficheActionLibreTagTable).values({
       ficheId,
