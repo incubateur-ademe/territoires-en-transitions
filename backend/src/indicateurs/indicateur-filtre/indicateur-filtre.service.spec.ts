@@ -6,7 +6,7 @@ import IndicateurFiltreService from './indicateur-filtre.service';
 import {
   GetFilteredIndicateurRequestQueryOptionType,
   GetFilteredIndicateursRequestOptionType,
-} from '../models/get-filtered-indicateurs.request';
+} from './get-filtered-indicateurs.request';
 
 describe('IndicateurFiltreService', () => {
   let indicateurFiltreService: IndicateurFiltreService;
