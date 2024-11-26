@@ -1,11 +1,7 @@
 import { Injectable } from '@nestjs/common';
 import { TrpcService } from '../../trpc/trpc.service';
 import IndicateurFiltreService from './indicateur-filtre.service';
-import {
-  getFilteredIndicateursRequestSchema
-} from './get-filtered-indicateurs.request';
-
-
+import { getFilteredIndicateursRequestSchema } from './get-filtered-indicateurs.request';
 
 @Injectable()
 export class IndicateurFiltreRouter {
@@ -19,14 +15,12 @@ export class IndicateurFiltreRouter {
       .input(getFilteredIndicateursRequestSchema)
       .query(({ ctx, input }) => {
         const { collectiviteId, filtre, queryOptions } = input;
-        return {
-          indicateurs: this.service.getFilteredIndicateurs(
-            collectiviteId,
-            filtre,
-            queryOptions,
-            ctx.user
-          ),
-        };
+        return this.service.getFilteredIndicateurs(
+          collectiviteId,
+          filtre,
+          queryOptions,
+          ctx.user
+        );
       }),
   });
 }
