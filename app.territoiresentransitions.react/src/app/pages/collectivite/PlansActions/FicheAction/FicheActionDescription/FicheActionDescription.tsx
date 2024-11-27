@@ -1,10 +1,10 @@
-import { useState } from 'react';
-import classNames from 'classnames';
-import { Badge, Button } from '@tet/ui';
 import { FicheAction } from '@tet/api/plan-actions';
-import MenuDescription from './MenuDescription';
-import { getTruncatedText } from 'utils/formatUtils';
+import { Badge, Button } from '@tet/ui';
+import classNames from 'classnames';
+import { useState } from 'react';
 import Markdown from 'ui/Markdown';
+import { getTruncatedText } from 'utils/formatUtils';
+import MenuDescription from './MenuDescription';
 
 type FicheActionDescriptionProps = {
   isReadonly: boolean;
@@ -82,7 +82,7 @@ const FicheActionDescription = ({
         <h6 className="text-lg leading-6 text-grey-1 mb-2">
           Description de l'action :
         </h6>
-        <p className="text-base text-grey-1 whitespace-pre-wrap mb-0">
+        <div className="text-base text-grey-1 whitespace-pre-wrap mb-0">
           {description ? (
             <Markdown
               className="[&_ul]:list-disc [&_ul]:pl-8 [&_p]:mb-0"
@@ -94,7 +94,7 @@ const FicheActionDescription = ({
           ) : (
             'Non renseigné'
           )}
-        </p>
+        </div>
         {isDescriptionTruncated && (
           <Button
             variant="underlined"
