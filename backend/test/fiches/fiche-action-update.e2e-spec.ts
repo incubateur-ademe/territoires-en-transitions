@@ -577,17 +577,6 @@ describe('FichesActionUpdateService', () => {
       const data: UpdateFicheActionRequestClass = {
         libresTag: [{ id: 1 }, { id: 2 }],
       };
-
-      onTestFinished(async () => {
-        // Temp: there's no delete cascade on ficheActionLibreTagTable, so we have to delete manually
-        await databaseService.db
-          .delete(ficheActionLibreTagTable)
-          .where(eq(ficheActionLibreTagTable.ficheId, ficheActionId));
-
-        await databaseService.db
-          .delete(libreTagTable)
-          .where(eq(libreTagTable.nom, nom));
-      });
     });
   });
 
