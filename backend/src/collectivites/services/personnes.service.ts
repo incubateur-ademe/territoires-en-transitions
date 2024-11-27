@@ -33,6 +33,7 @@ export class PersonnesService {
         nom: personneTagTable.nom,
         tagId: personneTagTable.id,
         userId: sql`null::uuid`.mapWith(utilisateurDroitTable.userId),
+        ...(request.filter.activeOnly ? {} : { active: sql<boolean>`null` }),
       })
       .from(personneTagTable)
       .where(eq(personneTagTable.collectiviteId, request.collectiviteId));
@@ -45,14 +46,19 @@ export class PersonnesService {
         ),
         tagId: sql`null::integer`.mapWith(personneTagTable.id),
         userId: utilisateurDroitTable.userId,
+        ...(request.filter.activeOnly
+          ? {}
+          : { active: utilisateurDroitTable.active }),
       })
       .from(utilisateurDroitTable)
       .leftJoin(dcpTable, eq(dcpTable.userId, utilisateurDroitTable.userId))
       .where(
-        and(
-          eq(utilisateurDroitTable.collectiviteId, request.collectiviteId),
-          eq(utilisateurDroitTable.active, request.filter.activeOnly)
-        )
+        request.filter.activeOnly
+          ? and(
+              eq(utilisateurDroitTable.collectiviteId, request.collectiviteId),
+              eq(utilisateurDroitTable.active, true)
+            )
+          : eq(utilisateurDroitTable.collectiviteId, request.collectiviteId)
       );
 
     const result = await union(selectPersonneTags, selectUsers);
