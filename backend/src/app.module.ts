@@ -12,6 +12,7 @@ import { TrpcModule } from './trpc/trpc.module';
 import { ConfigurationModule } from './config/configuration.module';
 import { TrpcRouter } from './trpc/trpc.router';
 import { ReferentielsModule } from './referentiels/referentiels.module';
+import { TaxonomieModule } from './taxonomie/taxonomie.module';
 
 @Module({
   imports: [
@@ -30,6 +31,7 @@ import { ReferentielsModule } from './referentiels/referentiels.module';
     FichesActionModule,
     PersonnalisationsModule,
     ReferentielsModule,
+    TaxonomieModule,
   ],
   providers: [TrpcRouter],
 })
