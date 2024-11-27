@@ -16,7 +16,7 @@ import { ficheActionThematiqueTable } from '../models/fiche-action-thematique.ta
 import { ficheActionNoteTable } from '../models/fiche-action-note.table';
 import { AuthService } from '../../auth/services/auth.service';
 import { AuthenticatedUser } from '../../auth/models/auth.models';
-import { NiveauAcces } from '../../auth/models/private-utilisateur-droit.table';
+import { NiveauAcces } from '../../auth/models/niveau-acces.enum';
 import { dcpTable } from '../../auth/models/dcp.table';
 
 @Injectable()

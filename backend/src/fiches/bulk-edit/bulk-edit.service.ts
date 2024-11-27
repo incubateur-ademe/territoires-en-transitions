@@ -1,6 +1,6 @@
 import { Injectable } from '@nestjs/common';
 import { AuthUser } from '@tet/backend/auth/models/auth.models';
-import { NiveauAcces } from '@tet/backend/auth/models/private-utilisateur-droit.table';
+import { NiveauAcces } from '@tet/backend/auth/models/niveau-acces.enum';
 import { and, inArray, or } from 'drizzle-orm';
 import z from 'zod';
 import { AuthService } from '../../auth/services/auth.service';

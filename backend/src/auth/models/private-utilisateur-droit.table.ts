@@ -1,27 +1,8 @@
 import { InferInsertModel, InferSelectModel } from 'drizzle-orm';
-import {
-  boolean,
-  integer,
-  pgEnum,
-  pgTable,
-  serial,
-  uuid,
-} from 'drizzle-orm/pg-core';
+import { boolean, integer, pgTable, serial, uuid } from 'drizzle-orm/pg-core';
 import { collectiviteTable } from '../../collectivites/models/collectivite.table';
 import { createdAt, modifiedAt } from '../../common/models/column.helpers';
-
-export enum NiveauAcces {
-  LECTURE = 'lecture',
-  EDITION = 'edition',
-  ADMIN = 'admin',
-}
-
-export const niveauAccessOrdonne = [
-  NiveauAcces.LECTURE,
-  NiveauAcces.EDITION,
-  NiveauAcces.ADMIN,
-] as const;
-export const niveauAccessEnum = pgEnum('niveau_acces', niveauAccessOrdonne);
+import { niveauAccessEnum, NiveauAcces } from './niveau-acces.enum';
 
 export const utilisateurDroitTable = pgTable('private_utilisateur_droit', {
   id: serial('id').primaryKey(),

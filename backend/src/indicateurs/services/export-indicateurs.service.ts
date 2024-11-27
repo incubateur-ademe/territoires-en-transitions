@@ -4,7 +4,7 @@ import { format } from 'date-fns';
 import { uniq } from 'es-toolkit';
 import { AuthenticatedUser } from '../../auth/models/auth.models';
 import { AuthService } from '../../auth/services/auth.service';
-import { NiveauAcces } from '../../auth/models/private-utilisateur-droit.table';
+import { NiveauAcces } from '../../auth/models/niveau-acces.enum';
 import IndicateursService from './indicateurs.service';
 import { ExportIndicateursRequestType } from '../models/export-indicateurs.request';
 import {

@@ -18,7 +18,7 @@ import { objectToCamel } from 'ts-case-convert';
 import { groupBy, partition } from 'es-toolkit';
 import * as _ from 'lodash';
 import { AuthenticatedUser, AuthRole } from '../../auth/models/auth.models';
-import { NiveauAcces } from '../../auth/models/private-utilisateur-droit.table';
+import { NiveauAcces } from '../../auth/models/niveau-acces.enum';
 import { AuthService } from '../../auth/services/auth.service';
 import DatabaseService from '../../common/services/database.service';
 import { DeleteIndicateursValeursRequestType } from '../models/delete-indicateurs.request';

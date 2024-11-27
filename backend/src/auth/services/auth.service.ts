@@ -10,11 +10,10 @@ import {
   isServiceRoleUser,
 } from '../models/auth.models';
 import {
-  NiveauAcces,
-  niveauAccessOrdonne,
   utilisateurDroitTable,
   UtilisateurDroitType,
 } from '../models/private-utilisateur-droit.table';
+import { NiveauAcces, niveauAccessOrdonne } from '../models/niveau-acces.enum';
 import { utilisateurSupportTable } from '../models/utilisateur-support.table';
 import { utilisateurVerifieTable } from '../models/utilisateur-verifie.table';
 

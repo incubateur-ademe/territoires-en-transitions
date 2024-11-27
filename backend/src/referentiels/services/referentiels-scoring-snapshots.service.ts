@@ -10,7 +10,7 @@ import { and, asc, eq, inArray, sql } from 'drizzle-orm';
 import { DateTime } from 'luxon';
 import slugify from 'slugify';
 import { AuthRole, AuthUser } from '../../auth/models/auth.models';
-import { NiveauAcces } from '../../auth/models/private-utilisateur-droit.table';
+import { NiveauAcces } from '../../auth/models/niveau-acces.enum';
 import { AuthService } from '../../auth/services/auth.service';
 import { PgIntegrityConstraintViolation } from '../../common/models/postgresql-error-codes.enum';
 import DatabaseService from '../../common/services/database.service';
