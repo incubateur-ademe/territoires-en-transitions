@@ -57,6 +57,19 @@ describe('PersonnesRouter', () => {
     }
   });
 
+  test('list: authenticated, without explicit access to collectivité', async () => {
+    const yuluDudu = await getAuthUser(YULU_DUDU);
+    const caller = router.createCaller({ user: yuluDudu });
+
+    const input: ListRequest = {
+      collectiviteId: COLLECTIVITE_ID,
+    };
+
+    const result = await caller.collectivites.personnes.list(input);
+    expect(result).toBeInstanceOf(Array);
+    expect(result.length).toBeGreaterThan(0);
+  });
+
   test('list: authenticated, with activeOnly = false', async () => {
     const caller = router.createCaller({ user: yoloDodoUser });
 
@@ -127,17 +140,5 @@ describe('PersonnesRouter', () => {
     await expect(async () => {
       await caller.collectivites.personnes.list(input);
     }).rejects.toThrowError(/not authenticated/i);
-  });
-
-  test('list: authenticated but not authorized', async () => {
-    const yuluDudu = await getAuthUser(YULU_DUDU);
-    const caller = router.createCaller({ user: yuluDudu });
-
-    const input: ListRequest = {
-      collectiviteId: COLLECTIVITE_ID,
-    };
-
-    const result = await caller.collectivites.personnes.list(input);
-    expect(result).toEqual([]);
   });
 });
