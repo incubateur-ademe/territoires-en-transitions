@@ -1,14 +1,14 @@
-import { z } from 'zod';
 import { DBClient } from '@tet/api/typeUtils';
+import { trpcUtils } from '@tet/api/utils/trpc/client';
+import { objectToCamel } from 'ts-case-convert';
+import { z } from 'zod';
+import { FicheResume } from '../../domain';
 import {
-  SortFichesAction,
   FetchOptions,
   Filtre as FiltreFicheActions,
+  SortFichesAction,
   fetchOptionsSchema,
 } from '../domain/fetch-options.schema';
-import { FicheResume } from '../../domain';
-import { objectToCamel } from 'ts-case-convert';
-import { fetchPersonnes } from '@tet/api/collectivites';
 
 const ficheActionColumns = [
   'id',
@@ -277,7 +277,12 @@ export async function ficheResumesFetch({
 
   // 4. Transforme les données pour les adapter au format attendu
 
-  const personnes = await fetchPersonnes(dbClient, collectiviteId);
+  const personnes = await trpcUtils.collectivites.personnes.list.ensureData({
+    collectiviteId,
+    filter: {
+      activeOnly: false,
+    },
+  });
 
   const fiches = data.map((fiche) => ({
     ...fiche,
