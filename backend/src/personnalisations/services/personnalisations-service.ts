@@ -1,6 +1,6 @@
 import { Injectable, Logger } from '@nestjs/common';
 import { and, asc, desc, eq, like, lte, SQL, SQLWrapper } from 'drizzle-orm';
-import { NiveauAcces } from '../../auth/models/private-utilisateur-droit.table';
+import { NiveauAcces } from '../../auth/models/niveau-acces.enum';
 import { AuthenticatedUser } from '../../auth/models/auth.models';
 import { AuthService } from '../../auth/services/auth.service';
 import {

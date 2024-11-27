@@ -1,12 +1,10 @@
 import { Test } from '@nestjs/testing';
 import DatabaseService from '../../common/services/database.service';
-import {
-  NiveauAcces,
-  UtilisateurDroitType,
-} from '../models/private-utilisateur-droit.table';
+import { UtilisateurDroitType } from '../models/private-utilisateur-droit.table';
 import { AuthService } from './auth.service';
 import CollectivitesService from '../../collectivites/services/collectivites.service';
 import { AuthRole } from '../models/auth.models';
+import { NiveauAcces } from '../models/niveau-acces.enum';
 
 describe('AuthService', () => {
   let authService: AuthService;
