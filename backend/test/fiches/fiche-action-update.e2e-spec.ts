@@ -178,7 +178,7 @@ describe('FichesActionUpdateService', () => {
       });
     });
 
-    it('should return 400 if the body is empty', async () => {
+    test('should return 400 if the body is empty', async () => {
       const data = {};
       const response = await putRequest(data);
 
@@ -186,7 +186,7 @@ describe('FichesActionUpdateService', () => {
       expect(response.body.message[0]).toMatch(/cannot be empty/);
     });
 
-    it('should update fiche action fields', async () => {
+    test('should update fiche action fields', async () => {
       const data: UpdateFicheActionRequestClass = {
         collectiviteId: 1,
         titre: 'Construire des pistes cyclables',
@@ -217,7 +217,7 @@ describe('FichesActionUpdateService', () => {
         tempsDeMiseEnOeuvre: 1,
         participationCitoyenne:
           'La participation citoyenne a été approuvée en réunion plénière',
-        participationCitoyenneType: 'Information',
+        participationCitoyenneType: 'information',
         restreint: false,
       };
 
