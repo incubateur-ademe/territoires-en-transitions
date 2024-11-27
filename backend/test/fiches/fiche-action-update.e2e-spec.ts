@@ -60,11 +60,6 @@ describe('FichesActionUpdateService', () => {
 
     databaseService = app.get<DatabaseService>(DatabaseService);
 
-    // Temp: there's no delete cascade on ficheActionLibreTagTable, so we have to delete manually
-    await databaseService.db
-      .delete(ficheActionLibreTagTable)
-      .where(eq(ficheActionLibreTagTable.ficheId, ficheActionId));
-
     await databaseService.db
       .delete(ficheActionTable)
       .where(eq(ficheActionTable.id, ficheActionId));
@@ -77,15 +72,6 @@ describe('FichesActionUpdateService', () => {
   });
 
   afterAll(async () => {
-    // Temp: there's no delete cascade on ficheActionLibreTagTable, so we have to delete manually
-    await databaseService.db
-      .delete(ficheActionLibreTagTable)
-      .where(eq(ficheActionLibreTagTable.ficheId, ficheActionId));
-
-    await databaseService.db
-      .delete(libreTagTable)
-      .where(or(eq(libreTagTable.id, 1), eq(libreTagTable.id, 2)));
-
     await databaseService.db
       .delete(ficheActionTable)
       .where(eq(ficheActionTable.id, ficheActionId));
@@ -259,6 +245,7 @@ describe('FichesActionUpdateService', () => {
   });
 
   describe('Update relations', () => {
+
     it('should update the axes relations in the database', async () => {
       const data: UpdateFicheActionRequestClass = {
         axes: [{ id: 1 }, { id: 2 }],
@@ -514,11 +501,17 @@ describe('FichesActionUpdateService', () => {
     });
 
     it('should update libre tag relations in the database when an existing tag is added', async () => {
+      // Setup test data
+      await databaseService.db.insert(libreTagTable).values([
+        { id: 2, nom: 'Tag 2', collectiviteId: collectiviteId },
+      ]);
+
       const data: UpdateFicheActionRequestClass = {
         libresTag: [{ id: 1 }, { id: 2 }],
       };
       const response = await putRequest(data);
       const body = response.body;
+
       expect(body.libresTag).toContainEqual(
         expect.objectContaining({
           ficheId: ficheActionId,
@@ -531,17 +524,16 @@ describe('FichesActionUpdateService', () => {
           libreTagId: 2,
         })
       );
+
+      onTestFinished(async () => {
+        await cleanupLibreTags();
+      });
     });
 
     it('should create and link new libre tags to fiche action', async () => {
       const nom = 'My new tag';
-
       const data: UpdateFicheActionRequestClass = {
-        libresTag: [
-          {
-            nom: nom,
-          },
-        ],
+        libresTag: [{ nom }],
       };
 
       const response = await putRequest(data);
@@ -560,23 +552,6 @@ describe('FichesActionUpdateService', () => {
           libreTagId: newLibreTag.id,
         })
       );
-
-      onTestFinished(async () => {
-        // Temp: there's no delete cascade on ficheActionLibreTagTable, so we have to delete manually
-        await databaseService.db
-          .delete(ficheActionLibreTagTable)
-          .where(eq(ficheActionLibreTagTable.ficheId, ficheActionId));
-
-        await databaseService.db
-          .delete(libreTagTable)
-          .where(eq(libreTagTable.nom, nom));
-      });
-    });
-
-    it('should update the libres tag relations in the database', async () => {
-      const data: UpdateFicheActionRequestClass = {
-        libresTag: [{ id: 1 }, { id: 2 }],
-      };
     });
   });
 
@@ -730,12 +705,7 @@ describe('FichesActionUpdateService', () => {
         id: 1,
         nom: 'Tag 1',
         collectiviteId: collectiviteId,
-      },
-      {
-        id: 2,
-        nom: 'Tag 2',
-        collectiviteId: collectiviteId,
-      },
+      }
     ]);
 
     await databaseService.db.insert(ficheActionLibreTagTable).values({
@@ -750,5 +720,17 @@ describe('FichesActionUpdateService', () => {
       .send(data)
       .set('Authorization', `Bearer ${yoloDodoToken}`)
       .set('Content-Type', 'application/json');
+  };
+
+  const cleanupLibreTags = async () => {
+    // Always cleanup ficheActionLibreTag first due to foreign key constraints
+    await databaseService.db
+      .delete(ficheActionLibreTagTable)
+      .where(eq(ficheActionLibreTagTable.ficheId, ficheActionId));
+
+    // Then cleanup all libreTags
+    await databaseService.db
+      .delete(libreTagTable)
+      .where(eq(libreTagTable.collectiviteId, collectiviteId));
   };
 });
