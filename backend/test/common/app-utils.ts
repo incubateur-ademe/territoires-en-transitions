@@ -2,6 +2,7 @@ import { ZodValidationPipe } from '@anatine/zod-nestjs/src/lib/zod-validation-pi
 import { INestApplication } from '@nestjs/common';
 import { Test } from '@nestjs/testing';
 import { AppModule } from '../../src/app.module';
+import DatabaseService from '../../src/common/services/database.service';
 import { TrpcRouter } from '../../src/trpc/trpc.router';
 
 export const getTestApp = async (): Promise<INestApplication> => {
@@ -17,6 +18,10 @@ export const getTestApp = async (): Promise<INestApplication> => {
   return app;
 };
 
-export async function getTestRouter() {
-  return (await getTestApp()).get(TrpcRouter);
+export async function getTestRouter(app?: INestApplication) {
+  return (app ?? (await getTestApp())).get(TrpcRouter);
+}
+
+export async function getTestDatabase(app?: INestApplication) {
+  return (app ?? (await getTestApp())).get(DatabaseService);
 }
