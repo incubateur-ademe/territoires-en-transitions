@@ -57,11 +57,9 @@ $$
 with configuration as (select 
                         CONCAT(service_url,'/api/v1/collectivites/',collectivite_id::text,'/referentiels/', referentiel, '/scores?mode=depuis_sauvegarde&snapshot=true&snapshotForceUpdate=true&jalon=', jalon, '&auditId=', audit_id) as full_url,
                         jsonb_build_object(
-                            'Authorization', CONCAT('Bearer ', decrypted_secret)
+                            'Authorization', CONCAT('Bearer ', token)
                         ) as headers
                        from config.service_configurations as config
-                       left join vault.decrypted_secrets
-                       on vault.decrypted_secrets.name = 'backend_service_role_token'
                        where service_key = 'backend'
                        order by config.created_at desc
                        limit 1)
