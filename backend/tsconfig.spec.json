@@ -1,14 +1,15 @@
 {
   "extends": "./tsconfig.json",
   "compilerOptions": {
-    "outDir": "../dist/out-tsc",
     "types": [
       "vitest/globals",
       "vitest/importMeta",
       "vite/client",
       "node",
       "vitest"
-    ]
+    ],
+    "module": "NodeNext",
+    "moduleResolution": "NodeNext"
   },
   "include": [
     "vitest.config.mts",
