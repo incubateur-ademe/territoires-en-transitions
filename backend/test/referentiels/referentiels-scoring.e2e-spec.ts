@@ -1,13 +1,13 @@
 import { INestApplication } from '@nestjs/common';
 import { default as request } from 'supertest';
-import { getYoloDodoToken } from '../auth/auth-utils';
-import { getTestApp } from '../common/app-utils';
-import { GetActionStatutsResponseType } from '../../src/referentiels/models/get-action-statuts.response';
-import { ReferentielActionWithScoreType } from '../../src/referentiels/models/referentiel-action-avec-score.dto';
-import { GetReferentielScoresResponseType } from '../../src/referentiels/models/get-referentiel-scores.response';
-import { ActionType } from '../../src/referentiels/models/action-type.enum';
 import { ActionStatutType } from '../../src/referentiels/models/action-statut.table';
+import { ActionType } from '../../src/referentiels/models/action-type.enum';
+import { GetActionStatutsResponseType } from '../../src/referentiels/models/get-action-statuts.response';
+import { GetReferentielScoresResponseType } from '../../src/referentiels/models/get-referentiel-scores.response';
 import { HistoriqueActionStatutType } from '../../src/referentiels/models/historique-action-statut.table';
+import { ReferentielActionWithScoreType } from '../../src/referentiels/models/referentiel-action-avec-score.dto';
+import { getAuthToken } from '../auth/auth-utils';
+import { getTestApp } from '../common/app-utils';
 
 describe('Referentiels scoring routes', () => {
   let app: INestApplication;
@@ -15,7 +15,7 @@ describe('Referentiels scoring routes', () => {
 
   beforeAll(async () => {
     app = await getTestApp();
-    yoloDodoToken = await getYoloDodoToken();
+    yoloDodoToken = await getAuthToken();
   });
 
   it(`Récupération des statuts des actions sans token non autorisée`, async () => {

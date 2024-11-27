@@ -1,9 +1,9 @@
-import { AuthenticatedUser } from './../../auth/models/auth.models';
 import { inferProcedureInput } from '@trpc/server';
-import { getYoloDodoUser } from '../../../test/auth/auth-utils';
+import { getAuthUser } from '../../../test/auth/auth-utils';
 import { getTestRouter } from '../../../test/common/app-utils';
 import { AppRouter, TrpcRouter } from '../../trpc/trpc.router';
 import { FicheActionStatutsEnumType } from '../models/fiche-action.table';
+import { AuthenticatedUser } from './../../auth/models/auth.models';
 
 type Input = inferProcedureInput<AppRouter['plans']['fiches']['countByStatut']>;
 
@@ -13,7 +13,7 @@ describe('CountByStatutRouter', () => {
 
   beforeAll(async () => {
     router = await getTestRouter();
-    yoloDodoUser = await getYoloDodoUser();
+    yoloDodoUser = await getAuthUser();
   });
 
   test('authenticated, with empty filter', async () => {

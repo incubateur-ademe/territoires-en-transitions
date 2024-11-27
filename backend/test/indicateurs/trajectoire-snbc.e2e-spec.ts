@@ -1,39 +1,24 @@
 import { INestApplication } from '@nestjs/common';
-import { Test } from '@nestjs/testing';
-import { createClient, SupabaseClient } from '@supabase/supabase-js';
 import { default as request } from 'supertest';
-import { AppModule } from '../../src/app.module';
 import { CalculTrajectoireResultatMode } from '../../src/indicateurs/models/calcul-trajectoire.request';
 import { CalculTrajectoireResponseType } from '../../src/indicateurs/models/calcul-trajectoire.response';
 import {
   VerificationTrajectoireResponseType,
   VerificationTrajectoireStatus,
 } from '../../src/indicateurs/models/verification-trajectoire.response';
-import { YOLO_DODO_CREDENTIALS } from '../auth/test-users.samples';
+import { signInWith } from '../auth/auth-utils';
+import { YOLO_DODO } from '../auth/test-users.samples';
+import { getTestApp } from '../common/app-utils';
 
 describe('Calcul de trajectoire SNBC', () => {
   let app: INestApplication;
-  let supabase: SupabaseClient;
   let yoloDodoToken: string;
 
   beforeAll(async () => {
-    const moduleRef = await Test.createTestingModule({
-      imports: [AppModule],
-    }).compile();
+    app = await getTestApp();
 
-    app = moduleRef.createNestApplication();
-    await app.init();
-
-    supabase = createClient(
-      process.env.SUPABASE_URL!,
-      process.env.SUPABASE_ANON_KEY!
-    );
-
-    const signinResponse = await supabase.auth.signInWithPassword(
-      YOLO_DODO_CREDENTIALS
-    );
-
-    yoloDodoToken = signinResponse.data.session?.access_token || '';
+    const yoloDodo = await signInWith(YOLO_DODO);
+    yoloDodoToken = yoloDodo.data.session?.access_token || '';
   });
 
   it(`Verification sans acces`, () => {

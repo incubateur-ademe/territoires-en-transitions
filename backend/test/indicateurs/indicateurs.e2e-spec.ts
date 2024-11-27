@@ -1,7 +1,7 @@
 import { INestApplication } from '@nestjs/common';
 import { default as request } from 'supertest';
 import { UpsertIndicateursValeursRequest } from '../../src/indicateurs/models/upsert-indicateurs-valeurs.request';
-import { getYoloDodoToken } from '../auth/auth-utils';
+import { getAuthToken } from '../auth/auth-utils';
 import { getTestApp } from '../common/app-utils';
 
 describe('Route de lecture / ecriture des indicateurs', () => {
@@ -10,7 +10,7 @@ describe('Route de lecture / ecriture des indicateurs', () => {
 
   beforeAll(async () => {
     app = await getTestApp();
-    yoloDodoToken = await getYoloDodoToken();
+    yoloDodoToken = await getAuthToken();
   });
 
   afterAll(async () => {
