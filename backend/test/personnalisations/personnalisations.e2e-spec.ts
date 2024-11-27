@@ -3,7 +3,7 @@ import { default as request } from 'supertest';
 import { GetPersonnalitionConsequencesResponseType } from '../../src/personnalisations/models/get-personnalisation-consequences.response';
 import { GetPersonnalisationReglesResponseType } from '../../src/personnalisations/models/get-personnalisation-regles.response';
 import { PersonnalisationConsequenceType } from '../../src/personnalisations/models/personnalisation-consequence.dto';
-import { getYoloDodoToken } from '../auth/auth-utils';
+import { getAuthToken } from '../auth/auth-utils';
 import { getTestApp } from '../common/app-utils';
 
 describe('Personnalisations routes', () => {
@@ -12,7 +12,7 @@ describe('Personnalisations routes', () => {
 
   beforeAll(async () => {
     app = await getTestApp();
-    yoloDodoToken = await getYoloDodoToken();
+    yoloDodoToken = await getAuthToken();
   });
 
   it(`Récupération publique des règles`, async () => {

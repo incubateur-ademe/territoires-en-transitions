@@ -23,7 +23,7 @@ import {
   ficheActionTable,
   piliersEciEnumType,
 } from '../../src/fiches/models/fiche-action.table';
-import { getYoloDodoToken } from '../auth/auth-utils';
+import { getAuthToken } from '../auth/auth-utils';
 import { getTestApp } from '../common/app-utils';
 import { UpdateFicheActionRequestType } from './../../src/fiches/models/update-fiche-action.request';
 import {
@@ -53,7 +53,7 @@ describe('FichesActionUpdateService', () => {
 
   beforeAll(async () => {
     app = await getTestApp();
-    yoloDodoToken = await getYoloDodoToken();
+    yoloDodoToken = await getAuthToken();
 
     databaseService = app.get<DatabaseService>(DatabaseService);
 

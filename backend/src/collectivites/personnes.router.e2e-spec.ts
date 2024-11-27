@@ -1,6 +1,7 @@
 import { inferProcedureInput } from '@trpc/server';
 import { eq } from 'drizzle-orm';
-import { getYoloDodoUser } from '../../test/auth/auth-utils';
+import { getAuthUser } from '../../test/auth/auth-utils';
+import { YOLO_DODO, YULU_DUDU } from '../../test/auth/test-users.samples';
 import {
   getTestApp,
   getTestDatabase,
@@ -15,7 +16,7 @@ type ListRequest = inferProcedureInput<
   AppRouter['collectivites']['personnes']['list']
 >;
 
-const COLLECTIVITE_ID = 1;
+const COLLECTIVITE_ID = YOLO_DODO.collectiviteId.admin;
 
 describe('PersonnesRouter', () => {
   let router: TrpcRouter;
@@ -27,7 +28,7 @@ describe('PersonnesRouter', () => {
     router = await getTestRouter(app);
     db = await getTestDatabase(app);
 
-    yoloDodoUser = await getYoloDodoUser();
+    yoloDodoUser = await getAuthUser(YOLO_DODO);
   });
 
   test('list: authenticated, with empty filter', async () => {
@@ -56,7 +57,7 @@ describe('PersonnesRouter', () => {
     }
   });
 
-  test('list: authenticated, with activeOnly: false', async () => {
+  test('list: authenticated, with activeOnly = false', async () => {
     const caller = router.createCaller({ user: yoloDodoUser });
 
     const input: ListRequest = {
@@ -114,5 +115,29 @@ describe('PersonnesRouter', () => {
         .set({ active: true })
         .where(eq(utilisateurDroitTable.userId, user.userId));
     });
+  });
+
+  test('list: not authenticated', async () => {
+    const caller = router.createCaller({ user: null });
+
+    const input: ListRequest = {
+      collectiviteId: COLLECTIVITE_ID,
+    };
+
+    await expect(async () => {
+      await caller.collectivites.personnes.list(input);
+    }).rejects.toThrowError(/not authenticated/i);
+  });
+
+  test('list: authenticated but not authorized', async () => {
+    const yuluDudu = await getAuthUser(YULU_DUDU);
+    const caller = router.createCaller({ user: yuluDudu });
+
+    const input: ListRequest = {
+      collectiviteId: COLLECTIVITE_ID,
+    };
+
+    const result = await caller.collectivites.personnes.list(input);
+    expect(result).toEqual([]);
   });
 });
