@@ -1,9 +1,10 @@
 import { INestApplication, Injectable, Logger } from '@nestjs/common';
 import { createExpressMiddleware } from '@trpc/server/adapters/express';
+import { PersonnesRouter } from '../collectivites/personnes.router';
 import SupabaseService from '../common/services/supabase.service';
+import { CountByStatutRouter } from '../fiches/count-by-statut/count-by-statut.router';
 import { TrajectoiresRouter } from '../indicateurs/routers/trajectoires.router';
 import { createContext, TrpcService } from './trpc.service';
-import { CountByStatutRouter } from '../fiches/count-by-statut/count-by-statut.router';
 
 @Injectable()
 export class TrpcRouter {
@@ -13,7 +14,8 @@ export class TrpcRouter {
     private readonly trpc: TrpcService,
     private readonly supabase: SupabaseService,
     private readonly trajectoiresRouter: TrajectoiresRouter,
-    private readonly countByStatutRouter: CountByStatutRouter
+    private readonly countByStatutRouter: CountByStatutRouter,
+    private readonly personnes: PersonnesRouter
   ) {}
 
   appRouter = this.trpc.router({
@@ -24,6 +26,9 @@ export class TrpcRouter {
       fiches: {
         ...this.countByStatutRouter.router,
       },
+    },
+    collectivites: {
+      personnes: this.personnes.router,
     },
   });
 

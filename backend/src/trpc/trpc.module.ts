@@ -3,8 +3,6 @@ import { TrpcService } from './trpc.service';
 
 @Global()
 @Module({
-  imports: [],
-  controllers: [],
   providers: [TrpcService],
   exports: [TrpcService],
 })
