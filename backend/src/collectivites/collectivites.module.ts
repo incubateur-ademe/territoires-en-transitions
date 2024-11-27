@@ -5,6 +5,8 @@ import { PersonnesRouter } from './personnes.router';
 import CollectivitesService from './services/collectivites.service';
 import GroupementsService from './services/groupements.service';
 import { PersonnesService } from './services/personnes.service';
+import { CollectiviteMembresService } from './membres/membres.service';
+import { CollectiviteMembresRouter } from './membres/membres.router';
 
 @Module({
   imports: [CommonModule],
@@ -14,7 +16,12 @@ import { PersonnesService } from './services/personnes.service';
     PersonnesService,
     PersonnesRouter,
   ],
-  exports: [CollectivitesService, GroupementsService, PersonnesRouter],
+  exports: [
+    CollectivitesService,
+    CollectiviteMembresService,
+    GroupementsService,
+    CollectiviteMembresRouter,
+  ],
   controllers: [CollectiviteController],
 })
 export class CollectivitesModule {}

@@ -1,5 +1,6 @@
 import { INestApplication, Injectable, Logger } from '@nestjs/common';
 import { createExpressMiddleware } from '@trpc/server/adapters/express';
+import { CollectiviteMembresRouter } from '../collectivites/membres/membres.router';
 import { PersonnesRouter } from '../collectivites/personnes.router';
 import SupabaseService from '../common/services/supabase.service';
 import { BulkEditRouter } from '../fiches/bulk-edit/bulk-edit.router';
@@ -23,7 +24,8 @@ export class TrpcRouter {
     private readonly personnes: PersonnesRouter,
     private readonly ficheActionEtapeRouter: FicheActionEtapeRouter,
     private readonly indicateurFiltreRouter: IndicateurFiltreRouter,
-    private readonly bulkEditRouter: BulkEditRouter
+    private readonly bulkEditRouter: BulkEditRouter,
+    private readonly membresRouter: CollectiviteMembresRouter
   ) {}
 
   appRouter = this.trpc.router({
@@ -40,6 +42,7 @@ export class TrpcRouter {
     },
     collectivites: {
       personnes: this.personnes.router,
+      membres: this.membresRouter.router,
     },
     tags: {
       categories: this.getCategoriesByCollectiviteRouter.router,
