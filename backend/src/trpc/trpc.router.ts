@@ -2,12 +2,13 @@ import { INestApplication, Injectable, Logger } from '@nestjs/common';
 import { createExpressMiddleware } from '@trpc/server/adapters/express';
 import { PersonnesRouter } from '../collectivites/personnes.router';
 import SupabaseService from '../common/services/supabase.service';
+import { CountByStatutRouter } from '../fiches/count-by-statut/count-by-statut.router';
 import { TrajectoiresRouter } from '../indicateurs/routers/trajectoires.router';
 import { createContext, TrpcService } from './trpc.service';
-import { CountByStatutRouter } from '../fiches/count-by-statut/count-by-statut.router';
 import {
   GetCategoriesByCollectiviteRouter
 } from '../taxonomie/routers/get-categories-by-collectivite.router';
+import { FicheActionEtapeRouter } from '../fiches/fiche-action-etape/fiche-action-etape.router';
 
 @Injectable()
 export class TrpcRouter {
@@ -19,7 +20,8 @@ export class TrpcRouter {
     private readonly trajectoiresRouter: TrajectoiresRouter,
     private readonly countByStatutRouter: CountByStatutRouter,
     private readonly getCategoriesByCollectiviteRouter: GetCategoriesByCollectiviteRouter,
-    private readonly personnes: PersonnesRouter
+    private readonly personnes: PersonnesRouter,
+    private readonly ficheActionEtapeRouter : FicheActionEtapeRouter,
   ) {}
 
   appRouter = this.trpc.router({
@@ -28,7 +30,8 @@ export class TrpcRouter {
     },
     plans: {
       fiches: {
-        ...this.countByStatutRouter.router,
+        countByStatut : this.countByStatutRouter.router.countByStatut,
+        etapes : this.ficheActionEtapeRouter.router,
       },
     },
     collectivites: {
