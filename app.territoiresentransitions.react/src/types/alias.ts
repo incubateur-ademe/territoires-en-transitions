@@ -83,4 +83,9 @@ export type TNomCollectivite = NonNullableFields<Views<'named_collectivite'>>;
 
 export type TNiveauAcces = Enums<'niveau_acces'>;
 
-export type TMembreFonction = Enums<'membre_fonction'>;
+export type TMembreFonction =
+  | 'conseiller'
+  | 'technique'
+  | 'politique'
+  | 'partenaire';
+
