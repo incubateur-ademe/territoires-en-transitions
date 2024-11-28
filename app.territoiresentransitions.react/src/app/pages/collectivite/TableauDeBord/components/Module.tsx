@@ -1,12 +1,14 @@
-import { Filtre as FiltrePersonnel } from '@tet/api/plan-actions/dashboards/personal-dashboard/domain/module.schema';
-import { Filter as FiltreCollectivite } from '@tet/api/plan-actions/dashboards/collectivite-dashboard/domain/module.schema';
 import { Button, ButtonGroup } from '@tet/ui';
 import { OpenState } from '@tet/ui/utils/types';
-import ModuleFiltreBadges from 'app/pages/collectivite/TableauDeBord/components/ModuleFiltreBadges';
 import { getDisplayButtons } from 'app/pages/collectivite/TableauDeBord/components/utils';
 import classNames from 'classnames';
 import React, { useState } from 'react';
 import SpinnerLoader from 'ui/shared/SpinnerLoader';
+import { usePlanActionsCount } from '@tet/app/pages/collectivite/PlansActions/PlanAction/data/usePlanActionsCount';
+import FilterBadges, {
+  BadgeFilters,
+  useFiltersToBadges,
+} from 'ui/shared/filters/filter-badges';
 
 export type ModuleDisplay = 'circular' | 'row';
 
@@ -30,7 +32,7 @@ type Props = {
   /** État vide générique */
   isEmpty: boolean;
   /** Filtre du module */
-  filtre?: FiltrePersonnel | FiltreCollectivite;
+  filtre?: BadgeFilters;
   /** Le contenu (cartes, boutons, ... ) à afficher dans le module.
    * Les contenus sont trop différents pour tous les traiter ici.
    * (voir ModuleFichesActions pour un exemple) */
@@ -49,7 +51,7 @@ type Props = {
 /** Composant générique d'un module du tableau de bord plans d'action */
 const Module = ({
   title,
-  filtre,
+  filtre = {},
   symbole,
   editModal,
   isLoading,
@@ -61,6 +63,15 @@ const Module = ({
   onSettingsClick,
 }: Props) => {
   const [isModalOpen, setIsModalOpen] = useState(false);
+
+  const { count } = usePlanActionsCount();
+
+  const { data: filterBadges } = useFiltersToBadges({
+    filters: filtre,
+    overrideValues: {
+      planActions: filtre.planActionIds?.length === count && 'Tous les plans',
+    },
+  });
 
   if (isLoading) {
     return (
@@ -86,10 +97,7 @@ const Module = ({
           <p className="mb-0 font-bold text-primary-9">
             Aucun résultat pour ce filtre !
           </p>
-          <ModuleFiltreBadges
-            className="justify-center"
-            filtre={filtre ?? {}}
-          />
+          <FilterBadges className="justify-center" badges={filterBadges} />
           {editModal && (
             <Button
               size="sm"
@@ -132,7 +140,7 @@ const Module = ({
         </>
       </div>
       {/** Filtres du module */}
-      <ModuleFiltreBadges filtre={filtre ?? {}} />
+      <FilterBadges badges={filterBadges} />
       {/** Contenu du module */}
       <div className="flex-grow">{children}</div>
       {/** Footer buttons */}

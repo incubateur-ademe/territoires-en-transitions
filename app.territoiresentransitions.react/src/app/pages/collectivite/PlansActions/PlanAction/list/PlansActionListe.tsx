@@ -3,10 +3,8 @@ import { useEffect, useState } from 'react';
 import { Button, ButtonGroup, Pagination, Select } from '@tet/ui';
 import { OpenState } from '@tet/ui/utils/types';
 import SpinnerLoader from 'ui/shared/SpinnerLoader';
-import ModuleFiltreBadges from 'app/pages/collectivite/TableauDeBord/components/ModuleFiltreBadges';
 import {
   FetchFilter,
-  FetchSort,
   SortPlansActionValue,
 } from '@tet/api/plan-actions/plan-actions.list/domain/fetch-options.schema';
 import { usePlansActionsListe } from '@tet/app/pages/collectivite/PlansActions/PlanAction/data/usePlansActionsListe';
@@ -14,6 +12,9 @@ import PictoDocument from 'ui/pictogrammes/PictoDocument';
 import PlanActionCard from '@tet/app/pages/collectivite/PlansActions/PlanAction/list/card/PlanActionCard';
 import { ModuleDisplay } from '@tet/app/pages/collectivite/TableauDeBord/components/Module';
 import { makeCollectivitePlanActionUrl } from '@tet/app/paths';
+import FilterBadges, {
+  useFiltersToBadges,
+} from 'ui/shared/filters/filter-badges';
 
 type sortByOptionsType = {
   label: string;
@@ -98,6 +99,8 @@ const PlansActionListe = ({
     setCurrentPage(1);
   }, [isLoading]);
 
+  const { data: filterBadges } = useFiltersToBadges({ filters: filtres });
+
   return (
     <>
       <div className="flex items-center gap-8 py-6 border-y border-primary-3">
@@ -141,7 +144,9 @@ const PlansActionListe = ({
         {settings?.({ isOpen: isSettingsOpen, setIsOpen: setIsSettingsOpen })}
       </div>
       {/** Liste des filtres appliqués */}
-      <ModuleFiltreBadges filtre={filtres} resetFilters={resetFilters} />
+      {!!filterBadges?.length && (
+        <FilterBadges badges={filterBadges} resetFilters={resetFilters} />
+      )}
 
       {/** Chargement */}
       {isLoading ? (
@@ -153,7 +158,7 @@ const PlansActionListe = ({
         <div className="flex flex-col items-center gap-2 m-auto">
           <PictoDocument className="w-32 h-32" />
           <p className="text-primary-8">
-            Aucun plan d'action ne correspond à votre recherche
+            Aucun plan d&apos;action ne correspond à votre recherche
           </p>
 
           <Button
