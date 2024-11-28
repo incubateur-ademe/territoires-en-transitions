@@ -3,15 +3,17 @@
  * par référentiel et niveau
  */
 
-import {Tabs, Tab} from 'ui/shared/Tabs';
-import {referentielToName} from 'app/labels';
-import {Referentiel} from 'types/litterals';
-import {useTableData} from './useTableData';
-import {PreuvesTable} from './PreuvesTable';
+import { Tabs, Tab } from 'ui/shared/Tabs';
+import { referentielToName } from 'app/labels';
+import { Referentiel } from 'types/litterals';
+import { useTableData } from './useTableData';
+import { PreuvesTable } from './PreuvesTable';
 
-const REFERENTIELS: Referentiel[] = ['cae', 'eci'];
+const REFERENTIELS: Exclude<Referentiel, 'te' | 'te-test'>[] = ['cae', 'eci'];
 
-const PreuvesTab = (props: {referentielId: Referentiel}) => {
+const PreuvesTab = (props: {
+  referentielId: Exclude<Referentiel, 'te' | 'te-test'>;
+}) => {
   const tableData = useTableData(props.referentielId);
   return (
     <PreuvesTable tableData={tableData} referentielId={props.referentielId} />
@@ -21,7 +23,7 @@ const PreuvesTab = (props: {referentielId: Referentiel}) => {
 export const PreuvesTabs = () => {
   return (
     <Tabs>
-      {REFERENTIELS.map(referentielId => {
+      {REFERENTIELS.map((referentielId) => {
         return (
           <Tab
             key={referentielId}

@@ -17,7 +17,7 @@ import ActionPreuvePanel from 'ui/shared/actions/ActionPreuvePanel/ActionPreuveP
 
 export type TPreuvesTableProps = {
   tableData: TableData;
-  referentielId: Referentiel;
+  referentielId: Exclude<Referentiel, 'te' | 'te-test'>;
 };
 
 export type TCellProps = CellProps<ActionReferentiel>;
@@ -121,7 +121,7 @@ export const PreuvesTable = (props: TPreuvesTableProps) => {
                       title={(nom as string) || ''}
                       {...rowProps}
                     >
-                      {row.cells.map(cell => {
+                      {row.cells.map((cell) => {
                         const { key, ...cellProps } = cell.getCellProps();
                         return (
                           <div className="cell" key={key} {...cellProps}>

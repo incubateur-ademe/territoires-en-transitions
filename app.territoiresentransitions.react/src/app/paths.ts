@@ -38,10 +38,12 @@ const actionVueParam = 'actionVue';
 const labellisationVueParam = 'labellisationVue';
 export const thematiqueParam = 'thematiqueId';
 
-export type ReferentielParamOption = 'cae' | 'eci';
+export type ReferentielParamOption = 'cae' | 'eci' | 'te' | 'te-test';
 export type IndicateurViewParamOption =
   | 'cae'
   | 'eci'
+  | 'te'
+  | 'te-test'
   | 'crte'
   | 'perso'
   | 'cles'
