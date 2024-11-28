@@ -6,11 +6,11 @@ import {
 } from '@tet/api/plan-actions/dashboards/personal-dashboard/domain/module.schema';
 import ModulePage from '@tet/app/pages/collectivite/TableauDeBord/components/ModulePage';
 import ModalIndicateursSuiviPlan from '@tet/app/pages/collectivite/TableauDeBord/Personnel/ModuleIndicateurs/ModalIndicateursSuiviPlan';
+import IndicateursListe from '@tet/app/pages/collectivite/Indicateurs/lists/indicateurs-list';
 import {
   getQueryKey,
   usePersonalModuleFetch,
 } from '@tet/app/pages/collectivite/TableauDeBord/Personnel/usePersonalModuleFetch';
-import IndicateursListe from 'app/pages/collectivite/Indicateurs/lists/IndicateursListe';
 import { TDBViewParam } from 'app/paths';
 import { useCollectiviteId } from 'core-logic/hooks/params';
 

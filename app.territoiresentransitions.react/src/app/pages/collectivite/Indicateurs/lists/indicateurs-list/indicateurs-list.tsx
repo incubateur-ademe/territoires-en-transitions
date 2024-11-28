@@ -1,8 +1,6 @@
-import classNames from 'classnames';
 import { useEffect, useState } from 'react';
 
 import {
-  Badge,
   Button,
   Checkbox,
   Input,
@@ -21,9 +19,8 @@ import { getIndicateurGroup } from 'app/pages/collectivite/Indicateurs/lists/Ind
 import { useFilteredIndicateurDefinitions } from 'app/pages/collectivite/Indicateurs/lists/useFilteredIndicateurDefinitions';
 import { makeCollectiviteIndicateursUrl } from 'app/paths';
 import { useCurrentCollectivite } from 'core-logic/hooks/useCurrentCollectivite';
-import { useExportIndicateurs } from '../Indicateur/useExportIndicateurs';
-import { useFiltersToBadges } from 'ui/shared/filters/filter-badges';
-import FilterBadges from 'ui/shared/filters/filter-badges';
+import BadgeList from '@tet/app/pages/collectivite/Indicateurs/lists/indicateurs-list/badge-list';
+import { ExportIndicateursPageName } from '@tet/app/pages/collectivite/Indicateurs/Indicateur/useExportIndicateurs';
 
 type sortByOptionsType = {
   label: string;
@@ -60,10 +57,7 @@ type Props = {
   /** Rend les cartes indicateurs éditables */
   isEditable?: boolean;
   // pour le tracking
-  pageName:
-    | 'app/indicateurs/tous'
-    | 'app/indicateurs/collectivite'
-    | 'app/tdb/personnel/indicateurs-de-suivi-de-mes-plans';
+  pageName: ExportIndicateursPageName;
 };
 
 /** Liste de fiches action avec tri et options de fitlre */
@@ -117,7 +111,7 @@ const IndicateursListe = ({
   /** Texte de recherche avec debounced pour l'appel */
   const [debouncedSearch, setDebouncedSearch] = useState<string>();
 
-  const { data, isLoading } = useFilteredIndicateurDefinitions(
+  const { data: definitions, isLoading } = useFilteredIndicateurDefinitions(
     {
       filtre: {
         ...filtres,
@@ -145,21 +139,15 @@ const IndicateursListe = ({
   }, [debouncedSearch]);
 
   /** Nombre total d'indicateurs filtrés */
-  const countTotal = data?.length || 0;
+  const countTotal = definitions?.length || 0;
 
   /** Liste filtrée des indicateurs à afficher */
-  const currentDefs = data?.filter(
+  const currentDefs = definitions?.filter(
     (_, i) => Math.floor(i / maxNbOfCards) + 1 === currentPage
   );
 
-  // fonction d'export
-  const { mutate: exportIndicateurs, isLoading: isDownloadingExport } =
-    useExportIndicateurs(pageName, data);
-
   /** Affiche ou cache les graphiques des cartes */
   const [displayGraphs, setDisplayGraphs] = useState(true);
-
-  const { data: filterBadges } = useFiltersToBadges({ filters: filtres });
 
   return (
     <>
@@ -213,32 +201,14 @@ const IndicateursListe = ({
         {settings({ isOpen: isSettingsOpen, setIsOpen: setIsSettingsOpen })}
       </div>
       {/** Liste des filtres appliqués et bouton d'export */}
-      <div className="flex flex-row justify-between">
-        {!!filterBadges?.length && (
-          <FilterBadges badges={filterBadges} resetFilters={resetFilters} />
-        )}
-        {!!currentDefs?.length && !isLoading && (
-          <button
-            className={classNames({ 'opacity-50': isDownloadingExport })}
-            disabled={isDownloadingExport}
-            onClick={() => exportIndicateurs()}
-          >
-            <Badge
-              className="py-4"
-              icon="download-line"
-              iconPosition="left"
-              title={
-                filterBadges?.length
-                  ? 'Exporter le résultat de mon filtre en Excel'
-                  : 'Exporter tous les indicateurs en Excel'
-              }
-              state="default"
-              uppercase={false}
-              size="sm"
-            />
-          </button>
-        )}
-      </div>
+      <BadgeList
+        pageName={pageName}
+        definitions={definitions}
+        filters={filtres}
+        resetFilters={resetFilters}
+        isLoading={isLoading}
+        isEmpty={currentDefs?.length === 0}
+      />
 
       {/** Chargement */}
       {isLoading ? (

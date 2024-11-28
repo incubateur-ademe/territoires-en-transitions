@@ -1,0 +1,69 @@
+import React from 'react';
+import classNames from 'classnames';
+
+import { Indicateurs } from '@tet/api';
+import { Badge } from '@tet/ui';
+import {
+  ExportIndicateursPageName,
+  useExportIndicateurs,
+} from '@tet/app/pages/collectivite/Indicateurs/Indicateur/useExportIndicateurs';
+import FilterBadges, {
+  useFiltersToBadges,
+} from 'ui/shared/filters/filter-badges';
+
+type Props = {
+  pageName: ExportIndicateursPageName; // tracking
+  definitions?: Indicateurs.domain.IndicateurListItem[];
+  filters: Indicateurs.FetchFiltre;
+  resetFilters?: () => void;
+  isLoading: boolean;
+  isEmpty: boolean;
+};
+
+const BadgeList = ({
+  pageName,
+  definitions,
+  filters,
+  resetFilters,
+  isEmpty,
+  isLoading,
+}: Props) => {
+  // fonction d'export
+  const { mutate: exportIndicateurs, isLoading: isDownloadingExport } =
+    useExportIndicateurs(pageName, definitions);
+
+  const { data: filterBadges } = useFiltersToBadges({ filters });
+
+  return (
+    <div className="flex flex-row justify-between items-start">
+      {!!filterBadges?.length && (
+        <FilterBadges badges={filterBadges} resetFilters={resetFilters} />
+      )}
+      {!isEmpty && !isLoading && (
+        <button
+          className={classNames('shrink-0 ml-auto', {
+            'opacity-50': isDownloadingExport,
+          })}
+          disabled={isDownloadingExport}
+          onClick={() => exportIndicateurs()}
+        >
+          <Badge
+            className="py-4"
+            icon="download-line"
+            iconPosition="left"
+            title={
+              filterBadges?.length
+                ? 'Exporter le résultat de mon filtre en Excel'
+                : 'Exporter tous les indicateurs en Excel'
+            }
+            state="default"
+            uppercase={false}
+            size="sm"
+          />
+        </button>
+      )}
+    </div>
+  );
+};
+
+export default BadgeList;
