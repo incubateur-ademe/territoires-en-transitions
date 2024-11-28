@@ -1,7 +1,8 @@
 import {useMutation, useQueryClient} from 'react-query';
+import { trpc } from '@tet/api/utils/trpc/client';
 import {supabaseClient} from 'core-logic/api/supabase';
 import {TUpdateMembre, TUpdateMembreArgs} from './types';
-import {useCollectiviteId} from 'core-logic/hooks/params';
+import { useCollectiviteId } from 'core-logic/hooks/params';
 
 /**
  * Met à jour une propriété d'un des membres de la collectivité courante
@@ -10,18 +11,21 @@ export const useUpdateCollectiviteMembre = () => {
   const queryClient = useQueryClient();
 
   // associe la fonction d'update avec l'id de la collectivité
-  const collectivite_id = useCollectiviteId();
+  const collectiviteId = useCollectiviteId();
   const updateCollectiviteMembre = (
     args: TUpdateMembreArgs
   ): Promise<boolean> =>
-    collectivite_id
-      ? updateMembre({collectivite_id, ...args})
+    collectiviteId
+      ? updateMembre({ collectiviteId, ...args })
       : Promise.resolve(false);
 
-  const {isLoading, mutate} = useMutation(updateCollectiviteMembre, {
+  const utils = trpc.useUtils();
+  const { isLoading, mutate } = useMutation(updateCollectiviteMembre, {
     onSuccess: () => {
       // recharge les données après un changement
       queryClient.invalidateQueries(['collectivite_membres']);
+      if (collectiviteId)
+        utils.collectivites.membres.list.invalidate({ collectiviteId });
     },
   });
 
@@ -35,14 +39,14 @@ const fieldNameToRPCName = (name: TUpdateMembreArgs['name']) =>
   `update_collectivite_membre_${name}`;
 
 const updateMembre = async ({
-  collectivite_id,
+  collectiviteId,
   membre_id,
   name,
   value,
-}: TUpdateMembreArgs & {collectivite_id: number}) => {
-  const {error} = await supabaseClient
+}: TUpdateMembreArgs & { collectiviteId: number }) => {
+  const { error } = await supabaseClient
     .rpc(fieldNameToRPCName(name) as any, {
-      collectivite_id,
+      collectivite_id: collectiviteId,
       membre_id,
       [name]: value,
     })
