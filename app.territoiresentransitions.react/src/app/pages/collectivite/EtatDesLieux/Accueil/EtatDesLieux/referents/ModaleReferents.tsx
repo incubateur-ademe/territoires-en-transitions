@@ -1,15 +1,17 @@
 import { Field, Modal, ModalFooterOKCancel, OptionValue } from '@tet/ui';
+import { membreFonctionToLabel } from 'app/labels';
+import { makeCollectiviteUsersUrl } from 'app/paths';
+import { pick } from 'es-toolkit';
+import Link from 'next/link';
 import { useEffect, useState } from 'react';
+import { TMembreFonction } from 'types/alias';
 import ReferentsDropdown from './ReferentsDropdown';
 import {
   CollectiviteMembre,
   groupeParFonction,
   useMembres,
 } from './useMembres';
-import { pick } from 'es-toolkit';
 import { useUpdateMembres } from './useUpdateMembres';
-import Link from 'next/link';
-import { makeCollectiviteUsersUrl } from 'app/paths';
 
 export type ModaleReferentsProps = {
   collectiviteId: number;
@@ -81,7 +83,7 @@ export const ModaleReferents = (props: ModaleReferentsProps) => {
           >
             <DropdownOrMessage
               collectiviteId={collectiviteId}
-              nomFonction="chef de projet"
+              fonction="technique"
               membres={parFonction?.technique}
               handleChange={handleChange}
             />
@@ -89,7 +91,7 @@ export const ModaleReferents = (props: ModaleReferentsProps) => {
           <Field title="Élu">
             <DropdownOrMessage
               collectiviteId={collectiviteId}
-              nomFonction="élu"
+              fonction="politique"
               membres={parFonction?.politique}
               handleChange={handleChange}
             />
@@ -97,7 +99,7 @@ export const ModaleReferents = (props: ModaleReferentsProps) => {
           <Field title="Conseiller">
             <DropdownOrMessage
               collectiviteId={collectiviteId}
-              nomFonction="conseiller"
+              fonction="conseiller"
               membres={parFonction?.conseiller}
               handleChange={handleChange}
             />
@@ -138,12 +140,12 @@ export const ModaleReferents = (props: ModaleReferentsProps) => {
 /** Affiche la liste déroulante ou un message+lien si il n'y a pas de membres */
 const DropdownOrMessage = ({
   collectiviteId,
-  nomFonction,
+  fonction,
   membres,
   handleChange,
 }: {
   collectiviteId: number;
-  nomFonction: string;
+  fonction: TMembreFonction;
   membres: CollectiviteMembre[] | undefined;
   handleChange: ({ selectedValue }: { selectedValue: OptionValue }) => void;
 }) =>
@@ -151,7 +153,7 @@ const DropdownOrMessage = ({
     <ReferentsDropdown membres={membres} onChange={handleChange} />
   ) : (
     <p>
-      Personne n’est identifié comme {nomFonction} dans la{' '}
+      Personne n’est identifié comme “{membreFonctionToLabel[fonction]}“ dans la{' '}
       <Link href={makeCollectiviteUsersUrl({ collectiviteId })}>
         gestion des membres
       </Link>
