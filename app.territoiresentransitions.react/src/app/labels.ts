@@ -1,5 +1,5 @@
-import {TActionAvancementExt} from 'types/alias';
-import type {ReferentielOfIndicateur} from 'types/litterals';
+import { TActionAvancementExt, TMembreFonction } from 'types/alias';
+import type { ReferentielOfIndicateur } from 'types/litterals';
 
 // Define all labels from app
 export const referentielToName: Record<
@@ -27,3 +27,15 @@ export const actionIdToLabel: Record<string, string> = {
   eci_3: "Autres piliers de l'ECI",
   eci_4: 'Outils financiers',
 };
+
+export const membreFonctions: { value: TMembreFonction; label: string }[] = [
+  { value: 'technique', label: 'Directions et services techniques' },
+  { value: 'politique', label: 'Équipe politique' },
+  { value: 'conseiller', label: "Bureau d'études" },
+  { value: 'partenaire', label: 'Partenaire' },
+];
+
+export const membreFonctionToLabel = membreFonctions.reduce(
+  (acc, { value, label }) => ({ ...acc, [value]: label }),
+  {} as Record<TMembreFonction, string>
+);
