@@ -16,6 +16,7 @@ import FichesActionListe, {
 import ModulePage from '@tet/app/pages/collectivite/TableauDeBord/components/ModulePage';
 import ModalActionsDontJeSuisLePilote from '@tet/app/pages/collectivite/TableauDeBord/Personnel/ModuleFichesActions/ModalActionsDontJeSuisLePilote';
 import ModalActionsRecemmentModifiees from '@tet/app/pages/collectivite/TableauDeBord/Personnel/ModuleFichesActions/ModalActionsRecemmentModifiees';
+import { usePlanActionsCount } from '@tet/app/pages/collectivite/PlansActions/PlanAction/data/usePlanActionsCount';
 
 type Props = {
   view: TDBViewParam;
@@ -30,6 +31,7 @@ const ModuleFichesActionsPage = ({ view, slug, sortSettings }: Props) => {
   const { data: dataModule, isLoading: isModuleLoading } =
     usePersonalModuleFetch(slug);
   const module = dataModule as ModuleFicheActionsSelect;
+  const { count } = usePlanActionsCount();
 
   const trackEvent = useEventTracker(`app/tdb/personnel/${slug}`);
 
@@ -45,6 +47,11 @@ const ModuleFichesActionsPage = ({ view, slug, sortSettings }: Props) => {
       />
       <FichesActionListe
         filtres={module.options.filtre}
+        customFilterBadges={{
+          planActions:
+            module.options.filtre?.planActionIds?.length === count &&
+            'Tous les plans',
+        }}
         sortSettings={sortSettings}
         settings={(openState) => (
           <>

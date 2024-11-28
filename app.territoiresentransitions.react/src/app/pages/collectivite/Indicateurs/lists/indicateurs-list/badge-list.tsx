@@ -8,6 +8,7 @@ import {
   useExportIndicateurs,
 } from '@tet/app/pages/collectivite/Indicateurs/Indicateur/useExportIndicateurs';
 import FilterBadges, {
+  CustomFilterBadges,
   useFiltersToBadges,
 } from 'ui/shared/filters/filter-badges';
 
@@ -15,6 +16,7 @@ type Props = {
   pageName: ExportIndicateursPageName; // tracking
   definitions?: Indicateurs.domain.IndicateurListItem[];
   filters: Indicateurs.FetchFiltre;
+  customFilterBadges?: CustomFilterBadges;
   resetFilters?: () => void;
   isLoading: boolean;
   isEmpty: boolean;
@@ -24,6 +26,7 @@ const BadgeList = ({
   pageName,
   definitions,
   filters,
+  customFilterBadges,
   resetFilters,
   isEmpty,
   isLoading,
@@ -32,7 +35,10 @@ const BadgeList = ({
   const { mutate: exportIndicateurs, isLoading: isDownloadingExport } =
     useExportIndicateurs(pageName, definitions);
 
-  const { data: filterBadges } = useFiltersToBadges({ filters });
+  const { data: filterBadges } = useFiltersToBadges({
+    filters,
+    customValues: customFilterBadges,
+  });
 
   return (
     <div className="flex flex-row justify-between items-start">

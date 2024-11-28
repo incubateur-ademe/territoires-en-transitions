@@ -21,6 +21,7 @@ import { makeCollectiviteIndicateursUrl } from 'app/paths';
 import { useCurrentCollectivite } from 'core-logic/hooks/useCurrentCollectivite';
 import BadgeList from '@tet/app/pages/collectivite/Indicateurs/lists/indicateurs-list/badge-list';
 import { ExportIndicateursPageName } from '@tet/app/pages/collectivite/Indicateurs/Indicateur/useExportIndicateurs';
+import { CustomFilterBadges } from 'ui/shared/filters/filter-badges';
 
 type sortByOptionsType = {
   label: string;
@@ -51,6 +52,7 @@ const sortByOptions: sortByOptionsType[] = [
 type Props = {
   settings: (openState: OpenState) => React.ReactNode;
   filtres?: Indicateurs.FetchFiltre;
+  customFilterBadges?: CustomFilterBadges;
   resetFilters?: () => void;
   maxNbOfCards?: number;
   sortSettings?: SortIndicateurSettings;
@@ -67,6 +69,7 @@ const IndicateursListe = ({
     defaultSort: 'text',
   },
   filtres = {},
+  customFilterBadges,
   resetFilters,
   settings,
   isEditable,
@@ -205,6 +208,7 @@ const IndicateursListe = ({
         pageName={pageName}
         definitions={definitions}
         filters={filtres}
+        customFilterBadges={customFilterBadges}
         resetFilters={resetFilters}
         isLoading={isLoading}
         isEmpty={currentDefs?.length === 0}

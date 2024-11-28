@@ -19,6 +19,7 @@ import {
   makeCollectivitePlanActionFicheUrl,
 } from 'app/paths';
 import FilterBadges, {
+  CustomFilterBadges,
   useFiltersToBadges,
 } from 'ui/shared/filters/filter-badges';
 
@@ -52,8 +53,9 @@ const sortByOptions: sortByOptionsType[] = [
 ];
 
 type Props = {
-  filtres: Filtre;
   settings: (openState: OpenState) => React.ReactNode;
+  filtres: Filtre;
+  customFilterBadges?: CustomFilterBadges;
   resetFilters?: () => void;
   maxNbOfCards?: number;
   sortSettings?: SortFicheActionSettings;
@@ -65,6 +67,7 @@ const FichesActionListe = ({
     defaultSort: 'modified_at',
   },
   filtres,
+  customFilterBadges,
   resetFilters,
   settings,
   maxNbOfCards = 15,
@@ -133,7 +136,10 @@ const FichesActionListe = ({
 
   const countTotal = data?.count || 0;
 
-  const { data: filterBadges } = useFiltersToBadges({ filters: filtres });
+  const { data: filterBadges } = useFiltersToBadges({
+    filters: filtres,
+    customValues: customFilterBadges,
+  });
 
   return (
     <>
