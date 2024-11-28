@@ -13,6 +13,7 @@ import {
 } from '@tet/app/pages/collectivite/TableauDeBord/Personnel/usePersonalModuleFetch';
 import { TDBViewParam } from 'app/paths';
 import { useCollectiviteId } from 'core-logic/hooks/params';
+import { usePlanActionsCount } from '@tet/app/pages/collectivite/PlansActions/PlanAction/data/usePlanActionsCount';
 
 type Props = {
   view: TDBViewParam;
@@ -26,6 +27,8 @@ const ModuleIndicateursPage = ({ view, slug }: Props) => {
     usePersonalModuleFetch(slug);
 
   const filtre = module?.options.filtre;
+
+  const { count } = usePlanActionsCount();
 
   const pageName = 'app/tdb/personnel/indicateurs-de-suivi-de-mes-plans';
   const trackEvent = useEventTracker(pageName);
@@ -43,6 +46,10 @@ const ModuleIndicateursPage = ({ view, slug }: Props) => {
       <IndicateursListe
         pageName={pageName}
         filtres={filtre}
+        customFilterBadges={{
+          planActions:
+            filtre?.planActionIds?.length === count && 'Tous les plans',
+        }}
         settings={(openState) => (
           <>
             <Button
