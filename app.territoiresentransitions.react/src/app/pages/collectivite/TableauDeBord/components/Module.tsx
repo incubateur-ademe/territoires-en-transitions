@@ -68,7 +68,7 @@ const Module = ({
 
   const { data: filterBadges } = useFiltersToBadges({
     filters: filtre,
-    overrideValues: {
+    customValues: {
       planActions: filtre.planActionIds?.length === count && 'Tous les plans',
     },
   });

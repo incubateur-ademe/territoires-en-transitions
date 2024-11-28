@@ -22,7 +22,7 @@ import { getCategorieLabel } from 'ui/dropdownLists/indicateur/utils';
 export type BadgeFilters = FiltreIndicateurs & FiltreFicheActions;
 
 /** Override les valeurs des badges retournées */
-export type OverrideFilterBadges = Partial<
+export type CustomFilterBadges = Partial<
   Record<keyof FinalFilters, string | undefined | false>
 >;
 
@@ -34,23 +34,23 @@ type FinalFilters = Omit<BadgeFilters, keyof FiltreRessourceLiees> &
 type Args = {
   filters: BadgeFilters;
   /** Permet d'override les valeurs des badges retournées */
-  overrideValues?: OverrideFilterBadges;
+  customValues?: CustomFilterBadges;
 };
 
 /** Transforme les filtres en string associées à afficher dans les badges. */
-export const useFiltersToBadges = ({ filters, overrideValues }: Args) => {
+export const useFiltersToBadges = ({ filters, customValues }: Args) => {
   const collectiviteId = useCollectiviteId();
 
-  // On nettoie les valeurs vides de l'objet overrideValues.
+  // On nettoie les valeurs vides de l'objet customValues.
   // Permet de ne pas avoir à le faire dans les composants utilisant le hook.
-  overrideValues &&
-    Object.entries(overrideValues).forEach(([key, value]) => {
+  customValues &&
+    Object.entries(customValues).forEach(([key, value]) => {
       if (!value) {
-        delete overrideValues[key as keyof OverrideFilterBadges];
+        delete customValues[key as keyof CustomFilterBadges];
       }
     });
 
-  return useQuery(['filter_badges', filters, overrideValues], async () => {
+  return useQuery(['filter_badges', filters, customValues], async () => {
     if (!collectiviteId) {
       throw new Error('Aucune collectivité associée');
     }
@@ -67,7 +67,7 @@ export const useFiltersToBadges = ({ filters, overrideValues }: Args) => {
     const mergedFilters: FinalFilters = { ...data, ...filters };
 
     // clés à retirer des valeurs données par défaut
-    const overrideKeys = overrideValues && Object.keys(overrideValues);
+    const overrideKeys = customValues && Object.keys(customValues);
     // On retire les clés des filtres à override afin de boucler et donner le texte par défaut correspondant à chaque type
     const mergedFiltersKeys = Object.keys(mergedFilters).filter(
       (key) => !overrideKeys?.includes(key)
@@ -186,8 +186,8 @@ export const useFiltersToBadges = ({ filters, overrideValues }: Args) => {
     }
 
     // On ajoute les valeurs à override si elles existent
-    if (overrideValues) {
-      Object.values(overrideValues).forEach((value) => {
+    if (customValues) {
+      Object.values(customValues).forEach((value) => {
         value && badgeValues.unshift(value);
       });
     }
