@@ -1,14 +1,11 @@
 import { z } from 'zod';
 
 import { filtreRessourceLieesSchema } from '@tet/api/collectivites';
-import { cibleSchema } from '@tet/api/plan-actions/domain';
+import { filtreSchema as schemaFicheAction } from '@tet/api/plan-actions/fiche-resumes.list';
 
-export const filtreSpecifiqueSchema = z.object({
-  cibles: cibleSchema.array().optional(),
-  partenaireIds: z.number().array().optional(),
+export const filtreFromFicheActionSchema = schemaFicheAction.pick({
+  cibles: true,
 });
-
-export type FiltreSpecifique = z.infer<typeof filtreSpecifiqueSchema>;
 
 export const filtreSchema = filtreRessourceLieesSchema
   .pick({
@@ -16,7 +13,8 @@ export const filtreSchema = filtreRessourceLieesSchema
     personnePiloteIds: true,
     servicePiloteIds: true,
     planActionIds: true,
+    partenaireIds: true,
   })
-  .merge(filtreSpecifiqueSchema);
+  .merge(filtreFromFicheActionSchema);
 
 export type Filtre = z.infer<typeof filtreSchema>;
