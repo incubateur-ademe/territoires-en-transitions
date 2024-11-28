@@ -7,13 +7,16 @@ import { Tooltip } from '@tet/ui';
 
 export type TCellProps = CellProps<ActionReferentiel> & {
   collectiviteId: number | null;
-  referentielId: ReferentielParamOption | null;
+  referentielId: Exclude<ReferentielParamOption, 'te' | 'te-test'> | null;
   maxDepth?: number | null;
   alwaysShowExpand?: boolean;
 };
 
 // décalage à gauche des lignes en fonction du niveau
-const paddingByLevel: Record<ReferentielParamOption, Record<number, number>> = {
+const paddingByLevel: Record<
+  Exclude<ReferentielParamOption, 'te' | 'te-test'>,
+  Record<number, number>
+> = {
   cae: {
     1: 0,
     2: 16,

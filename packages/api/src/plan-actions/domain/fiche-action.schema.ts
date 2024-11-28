@@ -91,7 +91,7 @@ const libreTagSchema = z.object({
   id: z.number().nullish(),
   nom: z.string(),
   collectivitedId: z.number().nullish(),
-  createdAt: z.date().nullish(),
+  createdAt: z.string().date().nullish(),
   createdBy: z.string().nullish(),
 });
 

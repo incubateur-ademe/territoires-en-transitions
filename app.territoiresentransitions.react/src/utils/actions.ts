@@ -1,6 +1,6 @@
-import {Referentiel} from 'types/litterals';
-import {ActionDefinitionSummary} from 'core-logic/api/endpoints/ActionDefinitionSummaryReadEndpoint';
-import {ActionTitleRead} from 'core-logic/api/endpoints/ActionTitleReadEndpoint';
+import { Referentiel } from 'types/litterals';
+import { ActionDefinitionSummary } from 'core-logic/api/endpoints/ActionDefinitionSummaryReadEndpoint';
+import { ActionTitleRead } from 'core-logic/api/endpoints/ActionTitleReadEndpoint';
 
 /**
  * Search for the siblings of an action in the action list.
@@ -13,7 +13,7 @@ export function findActionSiblingsOfId<
   T extends ActionDefinitionSummary | ActionTitleRead
 >(action: T, actions: T[]): T[] {
   if (action.type === 'referentiel') {
-    return actions.filter(a => a.type === 'referentiel');
+    return actions.filter((a) => a.type === 'referentiel');
   }
 
   const parent = findParent(action, actions)!;
@@ -29,7 +29,7 @@ export function findActionSiblingsOfId<
 export function findChildren<
   T extends ActionDefinitionSummary | ActionTitleRead
 >(action: T, actions: T[]): T[] {
-  return actions.filter(a => action.children.includes(a.id));
+  return actions.filter((a) => action.children.includes(a.id));
 }
 
 /**
@@ -41,7 +41,7 @@ export function findParent<T extends ActionDefinitionSummary | ActionTitleRead>(
   action: T,
   actions: T[]
 ): T | null {
-  return actions.find(a => a.children.includes(action.id)) ?? null;
+  return actions.find((a) => a.children.includes(action.id)) ?? null;
 }
 
 /**
@@ -81,7 +81,9 @@ export const displayName = (
     ? referentielDisplayName(action)
     : `${action.identifiant} - ${action.nom}`;
 
-export const referentielId = (actionId: string): Referentiel =>
+export const referentielId = (
+  actionId: string
+): Exclude<Referentiel, 'te' | 'te-test'> =>
   actionId.startsWith('eci') ? 'eci' : 'cae';
 
 export const actionPath = (

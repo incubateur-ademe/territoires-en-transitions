@@ -18,7 +18,7 @@ export const getScoreQueryKey = (
 
 const fetchScoresForCollectiviteAndReferentiel = async (
   collectiviteId: number,
-  referentiel: Referentiel
+  referentiel: Exclude<Referentiel, 'te' | 'te-test'>
 ): Promise<ActionScore[]> => {
   const clientScores = await clientScoresReadEndpoint.getBy({
     collectiviteId,
@@ -28,7 +28,9 @@ const fetchScoresForCollectiviteAndReferentiel = async (
 };
 
 // donne accès aux scores d'un référentiel
-const useReferentielScores = (referentiel: Referentiel) => {
+const useReferentielScores = (
+  referentiel: Exclude<Referentiel, 'te' | 'te-test'>
+) => {
   const collectiviteId = useCollectiviteId();
 
   // écoute les changements

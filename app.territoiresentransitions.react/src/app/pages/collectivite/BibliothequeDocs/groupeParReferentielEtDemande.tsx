@@ -1,5 +1,5 @@
-import {Referentiel} from 'types/litterals';
-import {TPreuveAuditEtLabellisation} from 'ui/shared/preuves/Bibliotheque/types';
+import { Referentiel } from 'types/litterals';
+import { TPreuveAuditEtLabellisation } from 'ui/shared/preuves/Bibliotheque/types';
 
 // groupe les preuves par référentiel
 type TPreuvesParReferentiel = Record<
@@ -12,7 +12,7 @@ const groupeParReferentiel = (
   preuves.reduce((dict, preuve) => {
     const referentiel =
       preuve.demande?.referentiel || preuve.audit?.referentiel;
-    if (!referentiel) {
+    if (!referentiel || referentiel === 'te' || referentiel === 'te-test') {
       return dict;
     }
     return {
