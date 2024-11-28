@@ -28,9 +28,9 @@ type Props = {
 const ModuleFichesActionsPage = ({ view, slug, sortSettings }: Props) => {
   const collectiviteId = useCollectiviteId();
 
-  const { data: dataModule, isLoading: isModuleLoading } =
+  const { data: module, isLoading: isModuleLoading } =
     usePersonalModuleFetch(slug);
-  const module = dataModule as ModuleFicheActionsSelect;
+
   const { count } = usePlanActionsCount();
 
   const trackEvent = useEventTracker(`app/tdb/personnel/${slug}`);
@@ -46,7 +46,7 @@ const ModuleFichesActionsPage = ({ view, slug, sortSettings }: Props) => {
         properties={{ collectivite_id: collectiviteId! }}
       />
       <FichesActionListe
-        filtres={module.options.filtre}
+        filtres={module.options.filtre ?? {}}
         customFilterBadges={{
           planActions:
             module.options.filtre?.planActionIds?.length === count &&
@@ -59,7 +59,6 @@ const ModuleFichesActionsPage = ({ view, slug, sortSettings }: Props) => {
               variant="outlined"
               icon="equalizer-line"
               size="sm"
-              children="Filtrer"
               onClick={() => {
                 openState.setIsOpen(true);
                 trackEvent(
@@ -69,7 +68,9 @@ const ModuleFichesActionsPage = ({ view, slug, sortSettings }: Props) => {
                   { collectivite_id: collectiviteId } as never
                 );
               }}
-            />
+            >
+              Filtrer
+            </Button>
             {module.slug === 'actions-dont-je-suis-pilote' &&
               openState.isOpen && (
                 <ModalActionsDontJeSuisLePilote
