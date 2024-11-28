@@ -11,7 +11,6 @@ import { OpenState } from '@tet/ui/utils/types';
 import SpinnerLoader from 'ui/shared/SpinnerLoader';
 import PictoExpert from 'ui/pictogrammes/PictoExpert';
 import FicheActionCard from 'app/pages/collectivite/PlansActions/FicheAction/Carte/FicheActionCard';
-import ModuleFiltreBadges from 'app/pages/collectivite/TableauDeBord/components/ModuleFiltreBadges';
 
 import { useFicheResumesFetch } from 'app/pages/collectivite/PlansActions/FicheAction/data/useFicheResumesFetch';
 import { useCollectiviteId } from 'core-logic/hooks/params';
@@ -19,6 +18,9 @@ import {
   makeCollectiviteFicheNonClasseeUrl,
   makeCollectivitePlanActionFicheUrl,
 } from 'app/paths';
+import FilterBadges, {
+  useFiltersToBadges,
+} from 'ui/shared/filters/filter-badges';
 
 type sortByOptionsType = SortFichesAction & {
   label: string;
@@ -131,6 +133,8 @@ const FichesActionListe = ({
 
   const countTotal = data?.count || 0;
 
+  const { data: filterBadges } = useFiltersToBadges({ filters: filtres });
+
   return (
     <>
       <div className="flex items-center gap-8 py-6 border-y border-primary-3">
@@ -168,7 +172,9 @@ const FichesActionListe = ({
         {settings({ isOpen: isSettingsOpen, setIsOpen: setIsSettingsOpen })}
       </div>
       {/** Liste des filtres appliqués */}
-      <ModuleFiltreBadges filtre={filtres} resetFilters={resetFilters} />
+      {!!filterBadges?.length && (
+        <FilterBadges badges={filterBadges} resetFilters={resetFilters} />
+      )}
 
       {/** Chargement */}
       {isLoading ? (

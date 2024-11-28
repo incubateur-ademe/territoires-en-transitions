@@ -19,13 +19,11 @@ import { Indicateurs } from '@tet/api';
 import { OpenState } from '@tet/ui/utils/types';
 import { getIndicateurGroup } from 'app/pages/collectivite/Indicateurs/lists/IndicateurCard/utils';
 import { useFilteredIndicateurDefinitions } from 'app/pages/collectivite/Indicateurs/lists/useFilteredIndicateurDefinitions';
-import {
-  ModuleFiltreBadgesBase,
-  useSelectedFilters,
-} from 'app/pages/collectivite/TableauDeBord/components/ModuleFiltreBadges';
 import { makeCollectiviteIndicateursUrl } from 'app/paths';
 import { useCurrentCollectivite } from 'core-logic/hooks/useCurrentCollectivite';
 import { useExportIndicateurs } from '../Indicateur/useExportIndicateurs';
+import { useFiltersToBadges } from 'ui/shared/filters/filter-badges';
+import FilterBadges from 'ui/shared/filters/filter-badges';
 
 type sortByOptionsType = {
   label: string;
@@ -74,7 +72,7 @@ const IndicateursListe = ({
   sortSettings = {
     defaultSort: 'text',
   },
-  filtres,
+  filtres = {},
   resetFilters,
   settings,
   isEditable,
@@ -161,8 +159,7 @@ const IndicateursListe = ({
   /** Affiche ou cache les graphiques des cartes */
   const [displayGraphs, setDisplayGraphs] = useState(true);
 
-  /** Filtres sélectionnés */
-  const selectedFilters = useSelectedFilters({ filtre: filtres || {} });
+  const { data: filterBadges } = useFiltersToBadges({ filters: filtres });
 
   return (
     <>
@@ -215,41 +212,33 @@ const IndicateursListe = ({
         {/** Bouton d'édition des filtres (une modale avec bouton ou un ButtonMenu) */}
         {settings({ isOpen: isSettingsOpen, setIsOpen: setIsSettingsOpen })}
       </div>
-      {/** Liste des filtres appliqués */}
-      {filtres && (
-        <div className="flex flex-row justify-between">
-          {!!selectedFilters?.length && (
-            <ModuleFiltreBadgesBase
-              selectedFilters={selectedFilters}
-              resetFilters={resetFilters}
+      {/** Liste des filtres appliqués et bouton d'export */}
+      <div className="flex flex-row justify-between">
+        {!!filterBadges?.length && (
+          <FilterBadges badges={filterBadges} resetFilters={resetFilters} />
+        )}
+        {!!currentDefs?.length && !isLoading && (
+          <button
+            className={classNames({ 'opacity-50': isDownloadingExport })}
+            disabled={isDownloadingExport}
+            onClick={() => exportIndicateurs()}
+          >
+            <Badge
+              className="py-4"
+              icon="download-line"
+              iconPosition="left"
+              title={
+                filterBadges?.length
+                  ? 'Exporter le résultat de mon filtre en Excel'
+                  : 'Exporter tous les indicateurs en Excel'
+              }
+              state="default"
+              uppercase={false}
+              size="sm"
             />
-          )}
-          {
-            /** Bouton Exporter */
-            !!currentDefs?.length && !isLoading && (
-              <button
-                className={classNames({ 'opacity-50': isDownloadingExport })}
-                disabled={isDownloadingExport}
-                onClick={() => exportIndicateurs()}
-              >
-                <Badge
-                  className="py-4"
-                  icon="download-line"
-                  iconPosition="left"
-                  title={
-                    selectedFilters?.length
-                      ? 'Exporter le résultat de mon filtre en Excel'
-                      : 'Exporter tous les indicateurs en Excel'
-                  }
-                  state="default"
-                  uppercase={false}
-                  size="sm"
-                />
-              </button>
-            )
-          }
-        </div>
-      )}
+          </button>
+        )}
+      </div>
 
       {/** Chargement */}
       {isLoading ? (
@@ -273,7 +262,7 @@ const IndicateursListe = ({
           </Button>
         </div>
       ) : (
-        /** Liste des fiches actions */
+        /** Liste des indicateurs */
         // besoin de cette div car `grid` semble rentrer en conflit avec le container `flex` sur Safari
         <div>
           <div className="grid grid-cols-2 2xl:grid-cols-3 gap-4">
