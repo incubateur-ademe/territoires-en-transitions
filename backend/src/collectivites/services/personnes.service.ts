@@ -1,4 +1,4 @@
-import { Injectable, Logger } from '@nestjs/common';
+import { Injectable } from '@nestjs/common';
 import { dcpTable } from '@tet/backend/auth/models/dcp.table';
 import { utilisateurDroitTable } from '@tet/backend/auth/models/private-utilisateur-droit.table';
 import DatabaseService from '@tet/backend/common/services/database.service';
@@ -21,9 +21,7 @@ export type ListRequest = z.infer<typeof listRequestSchema>;
 
 @Injectable()
 export class PersonnesService {
-  private readonly logger = new Logger(PersonnesService.name);
   private db = this.database.db;
-
   constructor(private readonly database: DatabaseService) {}
 
   async list(request: ListRequest) {

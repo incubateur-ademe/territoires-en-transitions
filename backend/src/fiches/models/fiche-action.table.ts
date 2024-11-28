@@ -1,3 +1,4 @@
+import { getEnumValues } from '@tet/backend/utils/enum.utils';
 import { InferInsertModel } from 'drizzle-orm';
 import {
   boolean,
@@ -77,13 +78,9 @@ export enum FicheActionStatutsEnumType {
 
 export const SANS_STATUT_FICHE_ACTION_SYNTHESE_KEY = 'Sans statut';
 
-export const ficheActionStatutsEnum = pgEnum(
-  'fiche_action_statuts',
-  Object.values(FicheActionStatutsEnumType) as [
-    FicheActionStatutsEnumType,
-    ...FicheActionStatutsEnumType[]
-  ]
-);
+export const statutsEnumValues = getEnumValues(FicheActionStatutsEnumType);
+export const statutsEnumSchema = z.enum(statutsEnumValues);
+export const statutsPgEnum = pgEnum('fiche_action_statuts', statutsEnumValues);
 
 export enum FicheActionCiblesEnumType {
   GRAND_PUBLIC = 'Grand public',
@@ -140,9 +137,7 @@ export const ficheActionTable = pgTable('fiche_action', {
     precision: 12,
     scale: 0,
   }),
-  statut: ficheActionStatutsEnum('statut').default(
-    FicheActionStatutsEnumType.A_VENIR
-  ),
+  statut: statutsPgEnum('statut').default(FicheActionStatutsEnumType.A_VENIR),
   niveauPriorite: ficheActionNiveauxPrioriteEnum('niveau_priorite'),
   dateDebut: timestamp('date_debut', { withTimezone: true, mode: 'string' }),
   dateFinProvisoire: timestamp('date_fin_provisoire', {
@@ -171,8 +166,6 @@ export const ficheActionTable = pgTable('fiche_action', {
   restreint: boolean('restreint').default(false),
 });
 
-export type FicheActionTableType = typeof ficheActionTable;
-
 export type CreateFicheActionType = InferInsertModel<typeof ficheActionTable>;
 
 export const ficheActionSchema = createSelectSchema(ficheActionTable, {
@@ -181,6 +174,8 @@ export const ficheActionSchema = createSelectSchema(ficheActionTable, {
   piliersEci: z.array(piliersEciEnumSchema),
   cibles: z.array(ficheActionCiblesEnumSchema),
 });
+
+export type FicheActionSelectType = z.infer<typeof ficheActionSchema>;
 
 export const createFicheActionSchema = createInsertSchema(ficheActionTable, {
   // Overriding array types as a workaround for drizzle-zod parsing issue
