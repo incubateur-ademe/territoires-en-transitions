@@ -15,7 +15,7 @@ export const getYearsOptions = () => {
   const currentYear = new Date().getFullYear();
   const startingYear = 1990;
   const yearsOptions = Array.from(
-    { length: currentYear - startingYear + 1 },
+    { length: currentYear - startingYear + 2 },
     (_, i) => i + startingYear
   )
     .reverse()
