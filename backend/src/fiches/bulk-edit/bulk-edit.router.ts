@@ -13,7 +13,7 @@ export class BulkEditRouter {
     bulkEdit: this.trpc.authedProcedure
       .input(this.service.bulkEditRequestSchema)
       .mutation(({ input, ctx }) => {
-        return this.service.bulkEdit(input);
+        return this.service.bulkEdit(input, ctx.user);
       }),
   });
 }
