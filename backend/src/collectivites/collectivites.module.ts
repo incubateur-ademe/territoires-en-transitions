@@ -12,6 +12,8 @@ import { CollectiviteMembresRouter } from './membres/membres.router';
   imports: [CommonModule],
   providers: [
     CollectivitesService,
+    CollectiviteMembresService,
+    CollectiviteMembresRouter,
     GroupementsService,
     PersonnesService,
     PersonnesRouter,
@@ -19,8 +21,9 @@ import { CollectiviteMembresRouter } from './membres/membres.router';
   exports: [
     CollectivitesService,
     CollectiviteMembresService,
-    GroupementsService,
     CollectiviteMembresRouter,
+    GroupementsService,
+    PersonnesRouter,
   ],
   controllers: [CollectiviteController],
 })
