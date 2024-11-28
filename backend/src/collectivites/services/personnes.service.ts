@@ -51,7 +51,8 @@ export class PersonnesService {
           : { active: utilisateurDroitTable.active }),
       })
       .from(utilisateurDroitTable)
-      .leftJoin(dcpTable, eq(dcpTable.userId, utilisateurDroitTable.userId))
+      // Inner join pour ne pas inclure les utilisateurs sans DCP
+      .innerJoin(dcpTable, eq(dcpTable.userId, utilisateurDroitTable.userId))
       .where(
         request.filter.activeOnly
           ? and(
