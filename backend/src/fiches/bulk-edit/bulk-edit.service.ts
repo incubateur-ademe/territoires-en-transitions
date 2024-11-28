@@ -1,4 +1,6 @@
 import { Injectable } from '@nestjs/common';
+import { AuthUser } from '@tet/backend/auth/models/auth.models';
+import { NiveauAcces } from '@tet/backend/auth/models/private-utilisateur-droit.table';
 import { inArray } from 'drizzle-orm';
 import z from 'zod';
 import { AuthService } from '../../auth/services/auth.service';
@@ -7,14 +9,6 @@ import {
   ficheActionSchema,
   ficheActionTable,
 } from '../models/fiche-action.table';
-
-const requestSchema = z.object({
-  ficheIds: z.array(z.number()),
-  statut: bodySchema(ficheActionSchema.shape.statut),
-  personnePilotes: bodySchema(z.object({})),
-});
-
-type Request = z.infer<typeof requestSchema>;
 
 @Injectable()
 export class BulkEditService {
@@ -25,10 +19,30 @@ export class BulkEditService {
     private readonly auth: AuthService
   ) {}
 
-  bulkEditRequestSchema = requestSchema;
+  bulkEditRequestSchema = z.object({
+    ficheIds: z.array(z.number()),
+    statut: bodySchema(ficheActionSchema.shape.statut),
+    personnePilotes: bodySchema(z.object({})),
+  });
 
-  async bulkEdit(request: Request) {
+  async bulkEdit(
+    request: z.infer<typeof this.bulkEditRequestSchema>,
+    user: AuthUser
+  ) {
     const { ficheIds, statut } = request;
+
+    // Get all the distinct collectiviteIds of the fiches
+    const collectiviteIds = await this.db
+      .selectDistinct({ collectiviteId: ficheActionTable.collectiviteId })
+      .from(ficheActionTable)
+      .where(inArray(ficheActionTable.id, ficheIds));
+
+    // Check if the user has edition access to all the collectivites
+    await this.auth.verifieAccesAuxCollectivites(
+      user,
+      collectiviteIds.map((c) => c.collectiviteId),
+      NiveauAcces.EDITION
+    );
 
     await this.db
       .update(ficheActionTable)
@@ -39,6 +53,7 @@ export class BulkEditService {
   }
 }
 
+// Helper function to create a sub-schema for each type of field in the input body
 function bodySchema<T extends z.ZodTypeAny>(
   schema: T
 ): T extends z.ZodArray<infer U>

@@ -1,5 +1,4 @@
 import DatabaseService from '@tet/backend/common/services/database.service';
-import { inferProcedureInput } from '@trpc/server';
 import { eq, inArray } from 'drizzle-orm';
 import { getAuthUser } from '../../../test/auth/auth-utils';
 import { YOLO_DODO, YULU_DUDU } from '../../../test/auth/test-users.samples';
@@ -9,13 +8,11 @@ import {
   getTestRouter,
 } from '../../../test/common/app-utils';
 import { AuthenticatedUser } from '../../auth/models/auth.models';
-import { AppRouter, TrpcRouter } from '../../trpc/trpc.router';
+import { TrpcRouter } from '../../trpc/trpc.router';
 import {
   FicheActionStatutsEnumType,
   ficheActionTable,
 } from '../models/fiche-action.table';
-
-type Input = inferProcedureInput<AppRouter['plans']['fiches']['bulkEdit']>;
 
 const COLLECTIVITE_ID = YOLO_DODO.collectiviteId.admin;
 
@@ -38,6 +35,16 @@ describe('BulkEditRouter', () => {
       .select()
       .from(ficheActionTable)
       .where(inArray(ficheActionTable.id, ficheIds));
+  }
+
+  function createFiche({ collectiviteId }: { collectiviteId: number }) {
+    return db.db
+      .insert(ficheActionTable)
+      .values({
+        collectiviteId,
+      })
+      .returning()
+      .then((rows) => rows[0]);
   }
 
   beforeAll(async () => {
@@ -89,14 +96,16 @@ describe('BulkEditRouter', () => {
     const yuluDudu = await getAuthUser(YULU_DUDU);
     const caller = router.createCaller({ user: yuluDudu });
 
+    const newFiche = await createFiche({ collectiviteId: 4 });
+
     const input = {
-      ficheIds,
+      ficheIds: [...ficheIds, newFiche.id],
       statut: FicheActionStatutsEnumType.EN_RETARD,
     };
 
     await expect(() =>
       caller.plans.fiches.bulkEdit(input)
-    ).rejects.toThrowError(/not authorized/i);
+    ).rejects.toThrowError(/droits insuffisants/i);
   });
 
   test('not authenticated', async () => {
