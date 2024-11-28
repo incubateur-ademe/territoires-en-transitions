@@ -1,6 +1,6 @@
 import { FetchFiltre } from '@tet/api/indicateurs';
 import { Button, ButtonMenu, TrackPageView, useEventTracker } from '@tet/ui';
-import IndicateursListe from 'app/pages/collectivite/Indicateurs/lists/IndicateursListe';
+import IndicateursListe from '@tet/app/pages/collectivite/Indicateurs/lists/indicateurs-list';
 import { indicateursNameToParams } from 'app/pages/collectivite/Indicateurs/lists/utils';
 import MenuFiltresTousLesIndicateurs from 'app/pages/collectivite/Indicateurs/TousLesIndicateurs/MenuFiltresTousLesIndicateurs';
 import ModaleCreerIndicateur from 'app/pages/collectivite/PlansActions/FicheAction/Indicateurs/ModaleCreerIndicateur';

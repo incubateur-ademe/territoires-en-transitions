@@ -5,7 +5,7 @@ import { useMutation } from 'react-query';
 import { saveBlob } from 'ui/shared/preuves/Bibliotheque/saveBlob';
 import { TIndicateurListItem } from '../types';
 
-type PageName =
+export type ExportIndicateursPageName =
   | 'app/indicateurs/tous'
   | 'app/indicateurs/collectivite'
   | 'app/indicateurs/perso'
@@ -13,7 +13,7 @@ type PageName =
   | 'app/tdb/personnel/indicateurs-de-suivi-de-mes-plans';
 
 export const useExportIndicateurs = (
-  pageName: PageName,
+  pageName: ExportIndicateursPageName,
   definitions?: TIndicateurListItem[]
 ) => {
   const trackEvent = useEventTracker(pageName);
