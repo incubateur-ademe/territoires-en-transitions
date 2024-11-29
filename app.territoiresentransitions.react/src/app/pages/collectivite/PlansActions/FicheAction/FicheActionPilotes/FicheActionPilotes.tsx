@@ -1,12 +1,12 @@
-import { useState } from 'react';
 import { FicheAction } from '@tet/api/plan-actions';
+import { useState } from 'react';
 import EmptyCard from '../EmptyCard';
 import EmptyActeursPicto from '../FicheActionActeurs/PictosActeurs/EmptyActeursPicto';
 import PersonnePilotePicto from './PersonnePilotePicto';
 
 import { Button } from '@tet/ui';
-import ModalePilotes from '../FicheActionPilotes/ModalePilotes';
 import classNames from 'classnames';
+import ModalePilotes from '../FicheActionPilotes/ModalePilotes';
 
 type FicheActionPilotesProps = {
   isReadonly: boolean;
@@ -52,9 +52,9 @@ const FicheActionPilotes = ({
               <h6 className="text-sm leading-4 text-primary-9 uppercase text-center mb-1">
                 Personnes pilotes
               </h6>
-              {pilotes.map((pilote) => (
+              {pilotes.map((pilote, index) => (
                 <p
-                  key={pilote.tagId}
+                  key={index}
                   className="text-sm leading-4 mb-0 text-primary-10 text-center"
                 >
                   {pilote.nom}
