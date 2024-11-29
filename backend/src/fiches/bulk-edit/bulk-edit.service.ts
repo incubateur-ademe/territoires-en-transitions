@@ -1,7 +1,7 @@
 import { Injectable } from '@nestjs/common';
 import { AuthUser } from '@tet/backend/auth/models/auth.models';
 import { NiveauAcces } from '@tet/backend/auth/models/private-utilisateur-droit.table';
-import { inArray } from 'drizzle-orm';
+import { and, inArray, or } from 'drizzle-orm';
 import z from 'zod';
 import { AuthService } from '../../auth/services/auth.service';
 import DatabaseService from '../../common/services/database.service';
@@ -60,19 +60,42 @@ export class BulkEditService {
       }
 
       // Update external relations
-      if (pilotes !== undefined && pilotes.add?.length) {
-        const values = ficheIds.flatMap((ficheId) => {
-          return (pilotes.add ?? []).map((pilote) => ({
-            ficheId,
-            tagId: pilote.tagId ?? null,
-            userId: pilote.userId ?? null,
-          }));
-        });
+      if (pilotes !== undefined) {
+        if (pilotes.add?.length) {
+          const values = ficheIds.flatMap((ficheId) => {
+            return (pilotes.add ?? []).map((pilote) => ({
+              ficheId,
+              tagId: pilote.tagId ?? null,
+              userId: pilote.userId ?? null,
+            }));
+          });
 
-        await tx
-          .insert(ficheActionPiloteTable)
-          .values(values)
-          .onConflictDoNothing();
+          await tx
+            .insert(ficheActionPiloteTable)
+            .values(values)
+            .onConflictDoNothing();
+        }
+
+        if (pilotes.remove?.length) {
+          const tagIds = pilotes.remove
+            .filter((p) => p.tagId)
+            .map((p) => p.tagId) as number[];
+          const userIds = pilotes.remove
+            .filter((p) => p.userId)
+            .map((p) => p.userId) as string[];
+
+          await tx
+            .delete(ficheActionPiloteTable)
+            .where(
+              and(
+                inArray(ficheActionPiloteTable.ficheId, ficheIds),
+                or(
+                  inArray(ficheActionPiloteTable.tagId, tagIds),
+                  inArray(ficheActionPiloteTable.userId, userIds)
+                )
+              )
+            );
+        }
       }
     });
   }
