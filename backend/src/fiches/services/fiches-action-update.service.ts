@@ -6,6 +6,7 @@ import {
   ColumnDataType,
   eq,
   ExtractTablesWithRelations,
+  or,
   TableConfig,
 } from 'drizzle-orm';
 import { PgTable, PgTransaction } from 'drizzle-orm/pg-core';
@@ -281,15 +282,28 @@ export default class FichesActionUpdateService {
       }
 
       if (fichesLiees !== undefined) {
-        updatedFichesLiees = await this.updateRelations(
-          ficheActionId,
-          fichesLiees,
-          tx,
-          ficheActionLienTable,
-          ['id'],
-          ficheActionLienTable.ficheUne,
-          [ficheActionLienTable.ficheDeux]
-        );
+        // Deletes all existing relations linked to fiche action
+        await tx
+          .delete(ficheActionLienTable)
+          .where(
+            or(
+              eq(ficheActionLienTable.ficheUne, ficheActionId),
+              eq(ficheActionLienTable.ficheDeux, ficheActionId)
+            )
+          );
+
+        // Adds new relations to fiche action
+        if (fichesLiees !== null && fichesLiees.length > 0) {
+          updatedFichesLiees = await tx
+            .insert(ficheActionLienTable)
+            .values(
+              fichesLiees.map((fiche) => ({
+                ficheUne: ficheActionId,
+                ficheDeux: fiche.id,
+              }))
+            )
+            .returning();
+        }
       }
 
       if (resultatsAttendus !== undefined) {
