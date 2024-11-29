@@ -21,7 +21,7 @@ const ModaleActionsLiees = ({
 
   useEffect(() => {
     if (isOpen) setEditedFiche(fiche);
-  }, [isOpen]);
+  }, [isOpen, fiche]);
 
   const handleSave = () => {
     if (!_.isEqual(fiche, editedFiche)) {
