@@ -133,6 +133,31 @@ describe('BulkEditRouter', () => {
     await caller.plans.fiches.bulkEdit(input);
     expect(result).toBeUndefined();
 
+    // Remove one pilote and add another one
+    const input2 = {
+      ficheIds,
+      pilotes: {
+        add: [{ tagId: 3 }],
+        remove: [
+          { tagId: input.pilotes.add[0].tagId },
+          { userId: yoloDodo.id },
+        ],
+      },
+    } satisfies Input;
+
+    await caller.plans.fiches.bulkEdit(input2);
+    expect(result).toBeUndefined();
+
+    // Verify that all fiches have been updated with tags and users
+    const updatedFiches = await getFichesWithPilotes(ficheIds);
+
+    for (const fiche of updatedFiches) {
+      expect(fiche.tagIds).toContain(input2.pilotes.add[0].tagId);
+
+      expect(fiche.userIds).not.toContain(input.pilotes.add[1].userId);
+      expect(fiche.tagIds).not.toContain(input2.pilotes.remove[0].tagId);
+    }
+
     // Delete inserted or existing pilotes after test
     onTestFinished(async () => {
       await db.db
