@@ -1,5 +1,6 @@
 import DatabaseService from '@tet/backend/common/services/database.service';
-import { eq, inArray } from 'drizzle-orm';
+import { inferProcedureInput } from '@trpc/server';
+import { eq, inArray, sql } from 'drizzle-orm';
 import { getAuthUser } from '../../../test/auth/auth-utils';
 import { YOLO_DODO, YULU_DUDU } from '../../../test/auth/test-users.samples';
 import {
@@ -8,11 +9,14 @@ import {
   getTestRouter,
 } from '../../../test/common/app-utils';
 import { AuthenticatedUser } from '../../auth/models/auth.models';
-import { TrpcRouter } from '../../trpc/trpc.router';
+import { AppRouter, TrpcRouter } from '../../trpc/trpc.router';
+import { ficheActionPiloteTable } from '../models/fiche-action-pilote.table';
 import {
   FicheActionStatutsEnumType,
   ficheActionTable,
 } from '../models/fiche-action.table';
+
+type Input = inferProcedureInput<AppRouter['plans']['fiches']['bulkEdit']>;
 
 const COLLECTIVITE_ID = YOLO_DODO.collectiviteId.admin;
 
@@ -47,6 +51,18 @@ describe('BulkEditRouter', () => {
       .then((rows) => rows[0]);
   }
 
+  function getFichesWithPilotes(ficheIds: number[]) {
+    return db.db
+      .select({
+        ficheId: ficheActionPiloteTable.ficheId,
+        tagIds: sql`array_remove(array_agg(${ficheActionPiloteTable.tagId}), NULL)`,
+        userIds: sql`array_remove(array_agg(${ficheActionPiloteTable.userId}), NULL)`,
+      })
+      .from(ficheActionPiloteTable)
+      .where(inArray(ficheActionPiloteTable.ficheId, ficheIds))
+      .groupBy(ficheActionPiloteTable.ficheId);
+  }
+
   beforeAll(async () => {
     const app = await getTestApp();
     router = await getTestRouter(app);
@@ -62,7 +78,7 @@ describe('BulkEditRouter', () => {
   test('authenticated, bulk edit statut', async () => {
     const caller = router.createCaller({ user: yoloDodo });
 
-    const input1 = {
+    const input1: Input = {
       ficheIds,
       statut: FicheActionStatutsEnumType.EN_RETARD,
     };
@@ -78,7 +94,7 @@ describe('BulkEditRouter', () => {
     }
 
     // Change again the statut value
-    const input2 = {
+    const input2: Input = {
       ficheIds,
       statut: null,
     };
@@ -90,6 +106,39 @@ describe('BulkEditRouter', () => {
     for (const fiche of fiches2) {
       expect(fiche.statut).toBe(input2.statut);
     }
+  });
+
+  test('authenticated, bulk edit personnePilotes', async () => {
+    const caller = router.createCaller({ user: yoloDodo });
+
+    const input = {
+      ficheIds,
+      pilotes: {
+        add: [{ tagId: 1 }, { userId: yoloDodo.id }],
+      },
+    } satisfies Input;
+
+    const result = await caller.plans.fiches.bulkEdit(input);
+    expect(result).toBeUndefined();
+
+    // Verify that all fiches have been updated with tags and users
+    const fiches = await getFichesWithPilotes(ficheIds);
+
+    for (const fiche of fiches) {
+      expect(fiche.tagIds).toContain(input.pilotes.add[0].tagId);
+      expect(fiche.userIds).toContain(input.pilotes.add[1].userId);
+    }
+
+    // Add again the same pilotes to check there is no conflict error
+    await caller.plans.fiches.bulkEdit(input);
+    expect(result).toBeUndefined();
+
+    // Delete inserted or existing pilotes after test
+    onTestFinished(async () => {
+      await db.db
+        .delete(ficheActionPiloteTable)
+        .where(inArray(ficheActionPiloteTable.ficheId, ficheIds));
+    });
   });
 
   test('authenticated, without access to some fiches', async () => {
