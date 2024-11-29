@@ -781,3 +781,4 @@ plan_action/fiches [plan_action/fiches@v4.28.0] 2024-11-25T17:04:51Z System Admi
 plan_action/fiche_action_etape 2024-11-21T13:40:26Z Amandine <ours@ours> # Ajoute des etapes aux fiches actions
 labellisation/audit [labellisation/audit@v4.27.1] 2024-11-20T13:56:04Z Amandine <ours@ours> # Corrige la fonction labellisation_peut_commencer_audit qui prenait à tord une demander 1ère étoile pour l'audit en cours
 referentiel/score_snapshot 2024-11-25T11:25:21Z System Administrator <root@MacBook-Air-de-Thibaut-2.local> # Ajout de la table permettant de sauvegarder/figer des scores de referentiel
+plan_action/fiches [plan_action/fiches@v4.28.1] 2024-11-29T13:01:29Z Frederic Arnoux <frederic.arnoux@beta.gouv.fr> # Fix unicity constraint for fiche action pilotes

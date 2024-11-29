@@ -1,4 +1,11 @@
-import { integer, pgTable, uniqueIndex, uuid } from 'drizzle-orm/pg-core';
+import { sql } from 'drizzle-orm';
+import {
+  check,
+  integer,
+  pgTable,
+  uniqueIndex,
+  uuid,
+} from 'drizzle-orm/pg-core';
 import { personneTagTable } from '../../taxonomie/models/personne-tag.table';
 import { ficheActionTable } from './fiche-action.table';
 
@@ -18,6 +25,10 @@ export const ficheActionPiloteTable = pgTable(
       oneTagPerFiche: uniqueIndex('one_tag_per_fiche ').on(
         table.ficheId,
         table.tagId
+      ),
+      eitherUserOrTagNotNull: check(
+        'either_user_or_tag_not_null',
+        sql`${table.userId} IS NOT NULL OR ${table.tagId} IS NOT NULL`
       ),
     };
   }

@@ -23,7 +23,6 @@ import FichesActionUpdateService from './services/fiches-action-update.service';
     BulkEditRouter,
     FichesActionUpdateService,
     TagService,
-    CountByStatutRouter,
     FicheActionEtapeService,
     FicheActionEtapeRouter,
   ],
