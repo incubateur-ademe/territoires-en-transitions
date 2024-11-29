@@ -491,8 +491,8 @@ package-api-test: ## lance les tests d'intégration de l'api
     RUN docker run --rm \
         --name package-api-test_tet \
         --network $network \
-        --env SUPABASE_URL=$API_URL \
-        --env SUPABASE_KEY=$ANON_KEY \
+        --env NEXT_PUBLIC_SUPABASE_URL=$API_URL \
+        --env NEXT_PUBLIC_SUPABASE_KEY=$ANON_KEY \
         --env SUPABASE_SERVICE_ROLE_KEY=$SERVICE_ROLE_KEY \
         package-api-test:latest
 
