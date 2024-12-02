@@ -8,10 +8,32 @@ const params = {
   collectiviteId: 1,
 };
 
+const yoloDodoUuid = '17440546-f389-4d4f-bfdb-b0c94a1bd0f9';
+
+vi.mock('@tet/api/utils/trpc/client', () => {
+  return {
+    trpcUtils: {
+      collectivites: {
+        personnes: {
+          list: {
+            ensureData: vi.fn(async () => {
+              return [
+                { tagId: 1, nom: 'Lou Piote' },
+                { tagId: null, userId: yoloDodoUuid, nom: 'Yolo Dodo' },
+              ];
+            }),
+          },
+        },
+      },
+    },
+  };
+});
+
 beforeAll(async () => {
   await signIn('yolododo');
 
   return async () => {
+    vi.restoreAllMocks();
     await signOut();
   };
 });
@@ -47,8 +69,6 @@ test('Fetch avec filtre sur une personne', async () => {
 });
 
 test('Fetch avec filtre sur un utilisateur', async () => {
-  const yoloDodoUuid = '17440546-f389-4d4f-bfdb-b0c94a1bd0f9';
-
   const { data } = await ficheResumesFetch({
     ...params,
     options: {
@@ -74,8 +94,6 @@ test('Fetch avec filtre sur un utilisateur', async () => {
 });
 
 test('Fetch avec filtre sur un utilisateur et sur personne. Le filtre doit être un OU.', async () => {
-  const yoloDodoUuid = '17440546-f389-4d4f-bfdb-b0c94a1bd0f9';
-
   const { data } = await ficheResumesFetch({
     ...params,
     options: {
