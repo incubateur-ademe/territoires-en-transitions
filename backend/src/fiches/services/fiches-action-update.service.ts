@@ -454,7 +454,7 @@ export default class FichesActionUpdateService {
         }))
       )
       .onConflictDoUpdate({
-        target: [ficheActionNoteTable.ficheId, ficheActionNoteTable.dateNote],
+        target: [ficheActionNoteTable.id],
         set: buildConflictUpdateColumns(ficheActionNoteTable, [
           'note',
           'modifiedAt',
@@ -466,25 +466,23 @@ export default class FichesActionUpdateService {
   /** Supprime une note */
   async deleteNote(
     ficheId: number,
-    dateNote: string,
+    noteId: number,
     tokenInfo: AuthenticatedUser
   ) {
     this.logger.log(
-      `Vérifie les droits avant de supprimer la note datée ${dateNote} de la fiche ${ficheId}`
+      `Vérifie les droits avant de supprimer la note ${noteId} de la fiche ${ficheId}`
     );
 
     const canWrite = await this.ficheService.canWriteFiche(ficheId, tokenInfo);
     if (!canWrite) return false;
 
-    this.logger.log(
-      `Supprime la note datée ${dateNote} de la fiche ${ficheId}`
-    );
+    this.logger.log(`Supprime la note ${noteId} de la fiche ${ficheId}`);
     return this.databaseService.db
       .delete(ficheActionNoteTable)
       .where(
         and(
           eq(ficheActionNoteTable.ficheId, ficheId),
-          eq(ficheActionNoteTable.dateNote, dateNote)
+          eq(ficheActionNoteTable.id, noteId)
         )
       );
   }

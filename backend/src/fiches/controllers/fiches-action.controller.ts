@@ -152,7 +152,7 @@ export class FichesActionController {
   ) {
     return this.fichesActionUpdateService.deleteNote(
       ficheId,
-      body.dateNote,
+      body.id,
       tokenInfo
     );
   }
