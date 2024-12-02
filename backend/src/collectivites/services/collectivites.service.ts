@@ -1,5 +1,6 @@
 import { Injectable, Logger, NotFoundException } from '@nestjs/common';
 import { aliasedTable, eq, or } from 'drizzle-orm';
+import { isNil } from 'es-toolkit';
 import DatabaseService from '../../common/services/database.service';
 import { collectiviteTestTable } from '../models/collectivite-test.table';
 import { collectiviteTable } from '../models/collectivite.table';
@@ -27,7 +28,7 @@ export default class CollectivitesService {
 
   getPopulationTags(population?: number): CollectivitePopulationTypeEnum[] {
     const populationTags: CollectivitePopulationTypeEnum[] = [];
-    if (!population) {
+    if (isNil(population)) {
       return populationTags;
     }
     this.POPULATION_BORNES_SUP.forEach((borneSup) => {
@@ -102,7 +103,8 @@ export default class CollectivitesService {
         collectivite.commune?.population ||
           // @ts-ignore: TODO: fix this, pourquoi manque dans drizzle à cause de la jointure?
           collectivite.import_commune?.population ||
-          collectivite.banatic?.population
+          collectivite.banatic?.population ||
+          0
       ),
       // A bit weird, but it's the same as sql for now: if collectivite test, metropole if epci, null if commune
       drom:
