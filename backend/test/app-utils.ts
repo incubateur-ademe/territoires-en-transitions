@@ -1,4 +1,5 @@
-import { ZodValidationPipe } from '@anatine/zod-nestjs/src/lib/zod-validation-pipe';
+import { ContextStoreService } from '@/backend/utils/context/context.service';
+import { CustomZodValidationPipe } from '@/backend/utils/nest/custom-zod-validation.pipe';
 import { INestApplication } from '@nestjs/common';
 import { Test } from '@nestjs/testing';
 import { AppModule } from '../src/app.module';
@@ -11,7 +12,8 @@ export const getTestApp = async (): Promise<INestApplication> => {
   }).compile();
 
   const app = moduleRef.createNestApplication();
-  app.useGlobalPipes(new ZodValidationPipe());
+  const contextStoreService = app.get(ContextStoreService);
+  app.useGlobalPipes(new CustomZodValidationPipe(contextStoreService));
 
   await app.init();
 
