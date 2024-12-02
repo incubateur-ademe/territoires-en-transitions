@@ -25,6 +25,7 @@
       "@tet/app/*": ["./app.territoiresentransitions.react/src/app/*"],
       "@tet/auth/*": ["./packages/auth/*"],
       "@tet/backend/*": ["./backend/src/*"],
+      "@/domain/*": ["packages/domain/src/*"],
       "@tet/panier/*": ["./packages/panier/*"],
       "@tet/site/*": ["./packages/site/*"],
       "@tet/ui": ["./packages/ui/src/index.ts"],
