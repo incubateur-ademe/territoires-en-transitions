@@ -9,7 +9,7 @@ import { DateTime } from 'luxon';
 import { AuthenticatedUser } from '../../auth/models/auth.models';
 import { NiveauAcces } from '../../auth/models/private-utilisateur-droit.table';
 import { AuthService } from '../../auth/services/auth.service';
-import { EpciType } from '../../collectivites/models/epci.table';
+import { EpciType } from '../../collectivites/shared/models/epci.table';
 import CollectivitesService from '../../collectivites/shared/services/collectivites.service';
 import { DonneesARemplirResultType } from '../models/donnees-a-remplir-result.dto';
 import { DonneesARemplirValeurType } from '../models/donnees-a-remplir-valeur.dto';

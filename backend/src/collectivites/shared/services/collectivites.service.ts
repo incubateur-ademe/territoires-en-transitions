@@ -2,19 +2,19 @@ import { Injectable, Logger, NotFoundException } from '@nestjs/common';
 import { aliasedTable, eq, or } from 'drizzle-orm';
 import { isNil } from 'es-toolkit';
 import DatabaseService from '../../common/services/database.service';
-import { collectiviteTestTable } from '../../models/collectivite-test.table';
-import { collectiviteTable } from '../../models/collectivite.table';
-import { communeTable, CommuneType } from '../../models/commune.table';
-import { epciTable, EpciType } from '../../models/epci.table';
+import { collectiviteTestTable } from '../models/collectivite-test.table';
+import { collectiviteTable } from '../models/collectivite.table';
+import { communeTable, CommuneType } from '../models/commune.table';
+import { epciTable, EpciType } from '../models/epci.table';
 import {
   CollectiviteAvecType,
   CollectivitePopulationTypeEnum,
   CollectiviteSousTypeEnum,
   CollectiviteTypeEnum,
-} from '../../models/identite-collectivite.dto';
-import { banaticTable } from '../../models/imports-banatic.table';
-import { importCommuneTable } from '../../models/imports-commune.table';
-import { regionTable } from '../../models/imports-region.table';
+} from '../models/identite-collectivite.dto';
+import { banaticTable } from '../models/imports-banatic.table';
+import { importCommuneTable } from '../models/imports-commune.table';
+import { regionTable } from '../models/imports-region.table';
 
 @Injectable()
 export default class CollectivitesService {

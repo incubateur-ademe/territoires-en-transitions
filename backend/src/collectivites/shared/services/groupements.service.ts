@@ -10,8 +10,8 @@ import DatabaseService from '../../common/services/database.service';
 import {
   CreateGroupementCollectiviteType,
   groupementCollectiviteTable,
-} from '../../models/groupement-collectivite.table';
-import { groupementTable } from '../../models/groupement.table';
+} from '../models/groupement-collectivite.table';
+import { groupementTable } from '../models/groupement.table';
 
 @Injectable()
 export default class GroupementsService {

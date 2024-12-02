@@ -1,6 +1,6 @@
 import { extendApi } from '@anatine/zod-openapi';
 import { z } from 'zod';
-import { collectiviteRequestSchema } from '../../collectivites/models/collectivite.request';
+import { collectiviteRequestSchema } from '../../collectivites/shared/models/collectivite.request';
 
 export const verificationTrajectoireRequestSchema = extendApi(
   collectiviteRequestSchema.extend({

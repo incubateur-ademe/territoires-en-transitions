@@ -12,16 +12,16 @@ import { ApiOkResponse, ApiResponse, ApiTags } from '@nestjs/swagger';
 import { NextFunction, Response } from 'express';
 import { AllowPublicAccess } from '../../auth/decorators/allow-public-access.decorator';
 import { TokenInfo } from '../../auth/decorators/token-info.decorators';
-import { CollectiviteRequestClass } from '../../collectivites/models/collectivite.request';
+import type { AuthenticatedUser } from '../../auth/models/auth.models';
+import { CollectiviteRequestClass } from '../../collectivites/shared/models/collectivite.request';
 import { calculTrajectoireRequestSchema } from '../models/calcul-trajectoire.request';
+import { calculTrajectoireResponseSchema } from '../models/calcul-trajectoire.response';
+import { modeleTrajectoireTelechargementRequestSchema } from '../models/modele-trajectoire-telechargement.request';
+import { verificationTrajectoireRequestSchema } from '../models/verification-trajectoire.request';
+import { verificationTrajectoireResponseSchema } from '../models/verification-trajectoire.response';
 import TrajectoiresDataService from '../services/trajectoires-data.service';
 import TrajectoiresSpreadsheetService from '../services/trajectoires-spreadsheet.service';
 import TrajectoiresXlsxService from '../services/trajectoires-xlsx.service';
-import type { AuthenticatedUser } from '../../auth/models/auth.models';
-import { verificationTrajectoireResponseSchema } from '../models/verification-trajectoire.response';
-import { modeleTrajectoireTelechargementRequestSchema } from '../models/modele-trajectoire-telechargement.request';
-import { verificationTrajectoireRequestSchema } from '../models/verification-trajectoire.request';
-import { calculTrajectoireResponseSchema } from '../models/calcul-trajectoire.response';
 
 /**
  * Création des classes de requête/réponse à partir du schema pour générer automatiquement la documentation OpenAPI et la validation des entrées

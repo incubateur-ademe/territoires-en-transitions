@@ -14,12 +14,14 @@ import {
   SQL,
   SQLWrapper,
 } from 'drizzle-orm';
-import { objectToCamel } from 'ts-case-convert';
 import { groupBy, partition } from 'es-toolkit';
 import * as _ from 'lodash';
+import { objectToCamel } from 'ts-case-convert';
 import { AuthenticatedUser, AuthRole } from '../../auth/models/auth.models';
 import { NiveauAcces } from '../../auth/models/private-utilisateur-droit.table';
 import { AuthService } from '../../auth/services/auth.service';
+import { groupementCollectiviteTable } from '../../collectivites/shared/models/groupement-collectivite.table';
+import { groupementTable } from '../../collectivites/shared/models/groupement.table';
 import DatabaseService from '../../common/services/database.service';
 import { DeleteIndicateursValeursRequestType } from '../models/delete-indicateurs.request';
 import { GetIndicateursValeursRequestType } from '../models/get-indicateurs.request';
@@ -30,6 +32,7 @@ import {
   IndicateurDefinitionType,
   MinimalIndicateurDefinitionType,
 } from '../models/indicateur-definition.table';
+import { indicateurGroupeTable } from '../models/indicateur-groupe.table';
 import {
   indicateurSourceMetadonneeTable,
   IndicateurSourceMetadonneeType,
@@ -44,9 +47,6 @@ import {
   indicateurValeurTable,
   IndicateurValeurType,
 } from '../models/indicateur-valeur.table';
-import { indicateurGroupeTable } from '../models/indicateur-groupe.table';
-import { groupementTable } from '../../collectivites/models/groupement.table';
-import { groupementCollectiviteTable } from '../../collectivites/models/groupement-collectivite.table';
 
 @Injectable()
 export default class IndicateursService {

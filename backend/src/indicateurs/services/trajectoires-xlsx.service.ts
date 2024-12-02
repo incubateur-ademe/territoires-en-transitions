@@ -7,8 +7,8 @@ import {
 import { NextFunction, Response } from 'express';
 import { default as XlsxTemplate } from 'xlsx-template';
 import { AuthenticatedUser } from '../../auth/models/auth.models';
-import { CollectiviteRequestType } from '../../collectivites/models/collectivite.request';
-import { EpciType } from '../../collectivites/models/epci.table';
+import { CollectiviteRequestType } from '../../collectivites/shared/models/collectivite.request';
+import { EpciType } from '../../collectivites/shared/models/epci.table';
 import SheetService from '../../spreadsheets/services/sheet.service';
 import BackendConfigurationService from '../../utils/config/configuration.service';
 import { DonneesCalculTrajectoireARemplirType } from '../models/donnees-calcul-trajectoire-a-remplir.dto';

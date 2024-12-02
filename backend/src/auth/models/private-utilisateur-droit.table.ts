@@ -7,7 +7,7 @@ import {
   serial,
   uuid,
 } from 'drizzle-orm/pg-core';
-import { collectiviteTable } from '../../collectivites/models/collectivite.table';
+import { collectiviteTable } from '../../collectivites/shared/models/collectivite.table';
 import { createdAt, modifiedAt } from '../../common/models/column.helpers';
 
 export enum NiveauAcces {
