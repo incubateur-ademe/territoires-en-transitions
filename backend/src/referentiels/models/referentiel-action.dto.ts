@@ -1,4 +1,4 @@
-import { extendApi, extendZodWithOpenApi } from '@anatine/zod-openapi';
+import { extendApi } from '@anatine/zod-openapi';
 import { z } from 'zod';
 import { actionDefinitionSeulementIdObligatoireSchema } from './action-definition.table';
 import { ActionType } from './action-type.enum';
@@ -6,7 +6,6 @@ import {
   referentielActionOrigineSchema,
   ReferentielActionOrigineType,
 } from './referentiel-action-origine.dto';
-extendZodWithOpenApi(z);
 
 export type ReferentielActionType = z.infer<
   typeof actionDefinitionSeulementIdObligatoireSchema
@@ -31,8 +30,5 @@ export const referentielActionDtoSchema: z.ZodType<ReferentielActionType> =
         pointsCatalogue: z.record(z.string(), z.number()).optional(),
         actionsEnfant: z.lazy(() => referentielActionDtoSchema.array()),
       })
-      .openapi({
-        title: "Référentiel d'actions",
-        description: 'Référentiel avec ses actions enfants',
-      })
+      .describe('Référentiel avec ses actions enfants')
   );

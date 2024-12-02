@@ -1,9 +1,7 @@
-import { extendApi, extendZodWithOpenApi } from '@anatine/zod-openapi';
+import { extendApi } from '@anatine/zod-openapi';
 import { z } from 'zod';
-import { CalculTrajectoireResultatMode } from './calcul-trajectoire.request';
 import { calculTrajectoireResponseDonneesSchema } from './calcul-trajectoire-response-donnees.dto';
-
-extendZodWithOpenApi(z);
+import { CalculTrajectoireResultatMode } from './calcul-trajectoire.request';
 
 export const calculTrajectoireResponseSchema = extendApi(
   z
@@ -13,9 +11,7 @@ export const calculTrajectoireResponseSchema = extendApi(
       indentifiantsReferentielManquantsDonneesEntree: z.array(z.string()),
       trajectoire: calculTrajectoireResponseDonneesSchema,
     })
-    .openapi({
-      title: 'Réponse du calcul de la trajectoire SNBC',
-    })
+    .describe('Réponse du calcul de la trajectoire SNBC')
 );
 export type CalculTrajectoireResponseType = z.infer<
   typeof calculTrajectoireResponseSchema

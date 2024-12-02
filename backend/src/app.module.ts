@@ -11,10 +11,9 @@ import { IndicateursModule } from './indicateurs/indicateurs.module';
 import { PersonnalisationsModule } from './personnalisations/personnalisations.module';
 import { ReferentielsModule } from './referentiels/referentiels.module';
 import { SheetModule } from './spreadsheets/sheet.module';
+import { TaxonomieModule } from './taxonomie/taxonomie.module';
 import { TrpcModule } from './trpc/trpc.module';
 import { TrpcRouter } from './trpc/trpc.router';
-import { ReferentielsModule } from './referentiels/referentiels.module';
-import { TaxonomieModule } from './taxonomie/taxonomie.module';
 
 @Module({
   imports: [

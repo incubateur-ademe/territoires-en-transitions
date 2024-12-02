@@ -18,9 +18,7 @@ export const getCheckScoresResponseSchema = extendApi(
       })
     ),
   })
-).openapi({
-  title: 'Résultat de la vérification de calcul de score',
-});
+).describe('Résultat de la vérification de calcul de score');
 export type GetCheckScoresResponseType = z.infer<
   typeof getCheckScoresResponseSchema
 >;

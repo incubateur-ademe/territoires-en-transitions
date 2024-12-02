@@ -12,9 +12,7 @@ export const getMultipleCheckScoresResponseSchema = extendApi(
     ),
     resultats: getCheckScoresResponseSchema.array(),
   })
-).openapi({
-  title: 'Résultat de la vérification multiple de calcul de score',
-});
+).describe('Résultat de la vérification multiple de calcul de score');
 export type GetMultipleCheckScoresResponseType = z.infer<
   typeof getMultipleCheckScoresResponseSchema
 >;

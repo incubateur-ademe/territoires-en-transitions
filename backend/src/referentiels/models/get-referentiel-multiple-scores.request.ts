@@ -8,15 +8,13 @@ export const getReferentielMultipleScoresRequestSchema = extendApi(
       .string()
       .transform((value) => value.split(','))
       .pipe(z.coerce.number().array())
-      .openapi({
-        description:
-          'Liste des identifiants de collectivités séparés par des virgules',
-      }),
+      .describe(
+        'Liste des identifiants de collectivités séparés par des virgules'
+      ),
   })
-).openapi({
-  title:
-    "Paramètres de la requête pour obtenir les scores de plusieurs collectivités d'un coup.",
-});
+).describe(
+  "Paramètres de la requête pour obtenir les scores de plusieurs collectivités d'un coup."
+);
 export type GetReferentielMultipleScoresRequestType = z.infer<
   typeof getReferentielMultipleScoresRequestSchema
 >;

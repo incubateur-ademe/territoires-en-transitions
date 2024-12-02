@@ -171,6 +171,95 @@ export default class ReferentielsScoringSnapshotsService {
     };
   }
 
+  /**
+   * Upsert score snapshot: update always allowed
+   * @param createScoreSnapshot
+   * @returns
+   */
+  async upsertScoreSnapshot(
+    createScoreSnapshot: CreateScoreSnapshotType
+  ): Promise<ScoreSnapshotType[]> {
+    return (await this.databaseService.db
+      .insert(scoreSnapshotTable)
+      .values(createScoreSnapshot)
+      .onConflictDoUpdate({
+        target: [
+          scoreSnapshotTable.collectiviteId,
+          scoreSnapshotTable.referentielId,
+          scoreSnapshotTable.ref,
+        ],
+        set: {
+          date: sql.raw(`excluded.${scoreSnapshotTable.date.name}`),
+          pointFait: sql.raw(`excluded.${scoreSnapshotTable.pointFait.name}`),
+          pointPotentiel: sql.raw(
+            `excluded.${scoreSnapshotTable.pointPotentiel.name}`
+          ),
+          pointProgramme: sql.raw(
+            `excluded.${scoreSnapshotTable.pointProgramme.name}`
+          ),
+          pointPasFait: sql.raw(
+            `excluded.${scoreSnapshotTable.pointPasFait.name}`
+          ),
+          referentielScores: sql.raw(
+            `excluded.${scoreSnapshotTable.referentielScores.name}`
+          ),
+          personnalisationReponses: sql.raw(
+            `excluded.${scoreSnapshotTable.personnalisationReponses.name}`
+          ),
+          referentielVersion: sql.raw(
+            `excluded.${scoreSnapshotTable.referentielVersion.name}`
+          ),
+          modifiedBy: sql.raw(`excluded.${scoreSnapshotTable.modifiedBy.name}`),
+        },
+      })
+      .returning()) as ScoreSnapshotType[];
+  }
+
+  /**
+   * Insert with upsert only allowed if jalon is current score
+   * @param createScoreSnapshot
+   * @returns
+   */
+  async insertScoreSnapshotWithAllowedCurrentScoreUpdate(
+    createScoreSnapshot: CreateScoreSnapshotType
+  ): Promise<ScoreSnapshotType[]> {
+    return (await this.databaseService.db
+      .insert(scoreSnapshotTable)
+      .values(createScoreSnapshot)
+      .onConflictDoUpdate({
+        // Only allow to update current score
+        target: [
+          scoreSnapshotTable.collectiviteId,
+          scoreSnapshotTable.referentielId,
+        ],
+        targetWhere: eq(scoreSnapshotTable.typeJalon, ScoreJalon.SCORE_COURANT),
+        set: {
+          date: sql.raw(`excluded.${scoreSnapshotTable.date.name}`),
+          pointFait: sql.raw(`excluded.${scoreSnapshotTable.pointFait.name}`),
+          pointPotentiel: sql.raw(
+            `excluded.${scoreSnapshotTable.pointPotentiel.name}`
+          ),
+          pointProgramme: sql.raw(
+            `excluded.${scoreSnapshotTable.pointProgramme.name}`
+          ),
+          pointPasFait: sql.raw(
+            `excluded.${scoreSnapshotTable.pointPasFait.name}`
+          ),
+          referentielScores: sql.raw(
+            `excluded.${scoreSnapshotTable.referentielScores.name}`
+          ),
+          personnalisationReponses: sql.raw(
+            `excluded.${scoreSnapshotTable.personnalisationReponses.name}`
+          ),
+          referentielVersion: sql.raw(
+            `excluded.${scoreSnapshotTable.referentielVersion.name}`
+          ),
+          modifiedBy: sql.raw(`excluded.${scoreSnapshotTable.modifiedBy.name}`),
+        },
+      })
+      .returning()) as ScoreSnapshotType[];
+  }
+
   async saveSnapshotForScoreResponse(
     scoreResponse: GetReferentielScoresResponseType,
     personnalisationResponses: GetPersonnalisationReponsesResponseType,
@@ -229,88 +318,12 @@ export default class ReferentielsScoringSnapshotsService {
           );
         }
 
-        scoreSnapshots = (await this.databaseService.db
-          .insert(scoreSnapshotTable)
-          .values(createScoreSnapshot)
-          .onConflictDoUpdate({
-            // Only allow to update current score
-            target: [
-              scoreSnapshotTable.collectiviteId,
-              scoreSnapshotTable.referentielId,
-              scoreSnapshotTable.ref,
-            ],
-            set: {
-              date: sql.raw(`excluded.${scoreSnapshotTable.date.name}`),
-              pointFait: sql.raw(
-                `excluded.${scoreSnapshotTable.pointFait.name}`
-              ),
-              pointPotentiel: sql.raw(
-                `excluded.${scoreSnapshotTable.pointPotentiel.name}`
-              ),
-              pointProgramme: sql.raw(
-                `excluded.${scoreSnapshotTable.pointProgramme.name}`
-              ),
-              pointPasFait: sql.raw(
-                `excluded.${scoreSnapshotTable.pointPasFait.name}`
-              ),
-              referentielScores: sql.raw(
-                `excluded.${scoreSnapshotTable.referentielScores.name}`
-              ),
-              personnalisationReponses: sql.raw(
-                `excluded.${scoreSnapshotTable.personnalisationReponses.name}`
-              ),
-              referentielVersion: sql.raw(
-                `excluded.${scoreSnapshotTable.referentielVersion.name}`
-              ),
-              modifiedBy: sql.raw(
-                `excluded.${scoreSnapshotTable.modifiedBy.name}`
-              ),
-            },
-          })
-          .returning()) as ScoreSnapshotType[];
+        scoreSnapshots = await this.upsertScoreSnapshot(createScoreSnapshot);
       } else {
-        scoreSnapshots = (await this.databaseService.db
-          .insert(scoreSnapshotTable)
-          .values(createScoreSnapshot)
-          .onConflictDoUpdate({
-            // Only allow to update current score
-            target: [
-              scoreSnapshotTable.collectiviteId,
-              scoreSnapshotTable.referentielId,
-            ],
-            targetWhere: eq(
-              scoreSnapshotTable.typeJalon,
-              ScoreJalon.SCORE_COURANT
-            ),
-            set: {
-              date: sql.raw(`excluded.${scoreSnapshotTable.date.name}`),
-              pointFait: sql.raw(
-                `excluded.${scoreSnapshotTable.pointFait.name}`
-              ),
-              pointPotentiel: sql.raw(
-                `excluded.${scoreSnapshotTable.pointPotentiel.name}`
-              ),
-              pointProgramme: sql.raw(
-                `excluded.${scoreSnapshotTable.pointProgramme.name}`
-              ),
-              pointPasFait: sql.raw(
-                `excluded.${scoreSnapshotTable.pointPasFait.name}`
-              ),
-              referentielScores: sql.raw(
-                `excluded.${scoreSnapshotTable.referentielScores.name}`
-              ),
-              personnalisationReponses: sql.raw(
-                `excluded.${scoreSnapshotTable.personnalisationReponses.name}`
-              ),
-              referentielVersion: sql.raw(
-                `excluded.${scoreSnapshotTable.referentielVersion.name}`
-              ),
-              modifiedBy: sql.raw(
-                `excluded.${scoreSnapshotTable.modifiedBy.name}`
-              ),
-            },
-          })
-          .returning()) as ScoreSnapshotType[];
+        scoreSnapshots =
+          await this.insertScoreSnapshotWithAllowedCurrentScoreUpdate(
+            createScoreSnapshot
+          );
       }
     } catch (error) {
       const errorWithCode = getErrorWithCode(error);

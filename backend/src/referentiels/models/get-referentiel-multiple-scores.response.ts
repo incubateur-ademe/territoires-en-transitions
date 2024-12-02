@@ -7,9 +7,7 @@ export const getReferentielMultipleScoresResponseSchema = extendApi(
     referentielVersion: z.string(),
     collectiviteScores: getReferentielScoresResponseSchema.array(),
   })
-).openapi({
-  title: 'Score des différentes collectivités pour un référentiel',
-});
+).describe('Score des différentes collectivités pour un référentiel');
 export type GetReferentielMultipleScoresResponseType = z.infer<
   typeof getReferentielMultipleScoresResponseSchema
 >;

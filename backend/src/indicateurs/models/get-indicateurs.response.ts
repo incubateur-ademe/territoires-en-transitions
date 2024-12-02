@@ -7,9 +7,7 @@ export const getIndicateursValeursResponseSchema = extendApi(
     .object({
       indicateurs: z.array(indicateurAvecValeursParSourceSchema),
     })
-    .openapi({
-      title: 'Valeurs par indicateur et par source',
-    })
+    .describe('Valeurs par indicateur et par source')
 );
 
 export type GetIndicateursValeursResponseType = z.infer<

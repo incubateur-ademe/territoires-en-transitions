@@ -18,10 +18,9 @@ export const getScoreSnapshotsRequestSchema = extendApi(
         `${ScoreJalon.PRE_AUDIT},${ScoreJalon.POST_AUDIT},${ScoreJalon.DATE_PERSONNALISEE},${ScoreJalon.SCORE_COURANT},${ScoreJalon.VISITE_ANNUELLE}`
       ), // All except JOUR_AUTO
   })
-).openapi({
-  description:
-    'Paramètres de la requête pour obtenir la liste des snapshots de score',
-});
+).describe(
+  'Paramètres de la requête pour obtenir la liste des snapshots de score'
+);
 export type GetScoreSnapshotsRequestType = z.infer<
   typeof getScoreSnapshotsRequestSchema
 >;

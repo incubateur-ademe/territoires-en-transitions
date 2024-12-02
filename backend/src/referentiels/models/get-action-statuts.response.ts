@@ -13,9 +13,7 @@ export type SimpleActionStatutType = z.infer<typeof simpleActionStatutSchema>;
 
 export const getActionStatutsResponseSchema = extendApi(
   z.record(z.string(), simpleActionStatutSchema)
-).openapi({
-  title: 'Statuts des actions',
-});
+).describe('Statuts des actions');
 export type GetActionStatutsResponseType = z.infer<
   typeof getActionStatutsResponseSchema
 >;

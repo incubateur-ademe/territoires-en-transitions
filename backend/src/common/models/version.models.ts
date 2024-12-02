@@ -1,7 +1,5 @@
-import { extendApi, extendZodWithOpenApi } from '@anatine/zod-openapi';
+import { extendApi } from '@anatine/zod-openapi';
 import { z } from 'zod';
-
-extendZodWithOpenApi(z);
 
 export enum AppEnvironment {
   DEV = 'dev',
@@ -11,21 +9,13 @@ export enum AppEnvironment {
 
 export const versionResponseSchema = extendApi(
   z.object({
-    version: z.string().openapi({
-      description: 'Application version',
-    }),
-    environment: z.nativeEnum(AppEnvironment).openapi({
-      description: 'Environnement de déploiement',
-    }),
-    commit: z.string().openapi({
-      description: 'Hash court du commit',
-    }),
-    commit_time: z.string().openapi({
-      description: 'Date de commit au format ISO 8601',
-    }),
-    deploy_time: z.string().openapi({
-      description: 'Date de déploiement au format ISO 8601',
-    }),
+    version: z.string().describe('Application version'),
+    environment: z
+      .nativeEnum(AppEnvironment)
+      .describe('Environnement de déploiement'),
+    commit: z.string().describe('Hash court du commit'),
+    commit_time: z.string().describe('Date de commit au format ISO 8601'),
+    deploy_time: z.string().describe('Date de déploiement au format ISO 8601'),
   })
 );
 export type VersionResponseType = z.infer<typeof versionResponseSchema>;

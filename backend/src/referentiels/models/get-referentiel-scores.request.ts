@@ -64,10 +64,9 @@ export const getReferentielScoresRequestSchema = extendApi(
       .optional()
       .describe(`Force l'update du snapshot même si il existe déjà`),
   })
-).openapi({
-  title:
-    'Paramètres de la requête pour obtenir les scores des actions dun référentiel',
-});
+).describe(
+  'Paramètres de la requête pour obtenir les scores des actions dun référentiel'
+);
 export type GetReferentielScoresRequestType = z.infer<
   typeof getReferentielScoresRequestSchema
 >;

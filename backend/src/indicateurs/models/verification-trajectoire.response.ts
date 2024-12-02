@@ -1,10 +1,8 @@
-import { IndicateurValeurType } from './indicateur-valeur.table';
+import { extendApi } from '@anatine/zod-openapi';
 import { z } from 'zod';
-import { extendApi, extendZodWithOpenApi } from '@anatine/zod-openapi';
 import { epciSchema } from '../../collectivites/models/epci.table';
 import { donneesCalculTrajectoireARemplirSchema } from './donnees-calcul-trajectoire-a-remplir.dto';
-
-extendZodWithOpenApi(z);
+import { IndicateurValeurType } from './indicateur-valeur.table';
 
 export enum VerificationTrajectoireStatus {
   COMMUNE_NON_SUPPORTEE = 'commune_non_supportee',
@@ -15,28 +13,30 @@ export enum VerificationTrajectoireStatus {
 
 export const verificationTrajectoireResponseSchema = extendApi(
   z.object({
-    status: z.nativeEnum(VerificationTrajectoireStatus).openapi({
-      description:
-        'Status de la vérification des données pour le calcul de la trajectoire SNBC',
-    }),
-    donneesEntree: donneesCalculTrajectoireARemplirSchema.optional().openapi({
-      description:
-        'Données qui seront utilisées pour le calcul de la trajectoire SNBC.',
-    }),
-    epci: epciSchema.optional().openapi({
-      description: "Informations de l'EPCI",
-    }),
-    sourcesDonneesEntree: z.string().array().optional().openapi({
-      description:
-        'Source des données utilisées lorsque le calcul a déjà été fait',
-    }),
+    status: z
+      .nativeEnum(VerificationTrajectoireStatus)
+      .describe(
+        'Status de la vérification des données pour le calcul de la trajectoire SNBC'
+      ),
+    donneesEntree: donneesCalculTrajectoireARemplirSchema
+      .optional()
+      .describe(
+        'Données qui seront utilisées pour le calcul de la trajectoire SNBC.'
+      ),
+    epci: epciSchema.optional().describe("Informations de l'EPCI"),
+    sourcesDonneesEntree: z
+      .string()
+      .array()
+      .optional()
+      .describe(
+        'Source des données utilisées lorsque le calcul a déjà été fait'
+      ),
     indentifiantsReferentielManquantsDonneesEntree: z
       .array(z.string())
       .optional()
-      .openapi({
-        description:
-          "Identifiants du référentiel manquants dans les données d'entrée lorsque le calcul a déjà été fait",
-      }),
+      .describe(
+        "Identifiants du référentiel manquants dans les données d'entrée lorsque le calcul a déjà été fait"
+      ),
   })
 );
 export type VerificationTrajectoireResponseType = z.infer<
