@@ -1,5 +1,5 @@
 import { Module } from '@nestjs/common';
-import { ConfigurationModule } from '../config/configuration.module';
+import { ConfigurationModule } from '../utils/config/configuration.module';
 import { VersionController } from './controllers/version.controller';
 import DatabaseService from './services/database.service';
 import MattermostNotificationService from './services/mattermost-notification.service';

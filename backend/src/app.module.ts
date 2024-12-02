@@ -4,8 +4,6 @@ import { SentryModule } from '@sentry/nestjs/setup';
 import { AuthModule } from './auth/auth.module';
 import { CollectivitesModule } from './collectivites/collectivites.module';
 import { CommonModule } from './common/common.module';
-import configuration from './config/configuration';
-import { ConfigurationModule } from './config/configuration.module';
 import { FichesActionModule } from './fiches/fiches-action.module';
 import { IndicateursModule } from './indicateurs/indicateurs.module';
 import { PersonnalisationsModule } from './personnalisations/personnalisations.module';
@@ -14,6 +12,8 @@ import { SheetModule } from './spreadsheets/sheet.module';
 import { TaxonomieModule } from './taxonomie/taxonomie.module';
 import { TrpcModule } from './trpc/trpc.module';
 import { TrpcRouter } from './trpc/trpc.router';
+import configuration from './utils/config/configuration';
+import { ConfigurationModule } from './utils/config/configuration.module';
 
 @Module({
   imports: [

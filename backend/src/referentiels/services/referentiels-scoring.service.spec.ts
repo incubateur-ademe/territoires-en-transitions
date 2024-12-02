@@ -8,13 +8,13 @@ import CollectivitesService from '../../collectivites/services/collectivites.ser
 import DatabaseService from '../../common/services/database.service';
 import MattermostNotificationService from '../../common/services/mattermost-notification.service';
 import { roundTo } from '../../common/services/number.helper';
-import ConfigurationService from '../../config/configuration.service';
 import { GetPersonnalitionConsequencesResponseType } from '../../personnalisations/models/get-personnalisation-consequences.response';
 import { GetPersonnalisationReponsesResponseType } from '../../personnalisations/models/get-personnalisation-reponses.response';
 import { caePersonnalisationRegles } from '../../personnalisations/models/samples/cae-personnalisation-regles.sample';
 import ExpressionParserService from '../../personnalisations/services/expression-parser.service';
 import PersonnalisationsService from '../../personnalisations/services/personnalisations-service';
 import SheetService from '../../spreadsheets/services/sheet.service';
+import ConfigurationService from '../../utils/config/configuration.service';
 import { ActionType } from '../models/action-type.enum';
 import { GetActionStatutsResponseType } from '../models/get-action-statuts.response';
 import { ReferentielActionWithScoreType } from '../models/referentiel-action-avec-score.dto';

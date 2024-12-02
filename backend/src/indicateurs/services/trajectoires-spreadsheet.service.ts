@@ -10,8 +10,8 @@ import slugify from 'slugify';
 import { AuthenticatedUser } from '../../auth/models/auth.models';
 import { EpciType } from '../../collectivites/models/epci.table';
 import GroupementsService from '../../collectivites/services/groupements.service';
-import ConfigurationService from '../../config/configuration.service';
 import SheetService from '../../spreadsheets/services/sheet.service';
+import ConfigurationService from '../../utils/config/configuration.service';
 import {
   CalculTrajectoireRequestType,
   CalculTrajectoireReset,
@@ -22,8 +22,8 @@ import { DonneesCalculTrajectoireARemplirType } from '../models/donnees-calcul-t
 import { IndicateurDefinitionType } from '../models/indicateur-definition.table';
 import { CreateIndicateurValeurType } from '../models/indicateur-valeur.table';
 import { VerificationTrajectoireStatus } from '../models/verification-trajectoire.response';
-import IndicateursService from './indicateurs.service';
 import IndicateurSourcesService from './indicateur-sources.service';
+import IndicateursService from './indicateurs.service';
 import TrajectoiresDataService from './trajectoires-data.service';
 
 @Injectable()

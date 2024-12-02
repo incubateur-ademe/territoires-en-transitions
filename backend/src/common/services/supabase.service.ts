@@ -1,7 +1,7 @@
 import { Injectable, Logger } from '@nestjs/common';
 import { createClient } from '@supabase/supabase-js';
-import ConfigurationService from '../../config/configuration.service';
 import { Database, DBClient } from '@tet/api';
+import ConfigurationService from '../../utils/config/configuration.service';
 
 @Injectable()
 export default class SupabaseService {
