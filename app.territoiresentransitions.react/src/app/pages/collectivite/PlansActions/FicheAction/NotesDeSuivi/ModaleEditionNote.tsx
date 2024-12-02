@@ -37,7 +37,7 @@ const ModaleEditionNote = ({
       note.trim().length > 0 &&
       (note !== editedNote.note || year !== initialYear)
     ) {
-      onEdit({ note, year });
+      onEdit({ id: editedNote.id, note, year });
     }
   };
 
