@@ -17,26 +17,26 @@ import {
 import { groupBy, partition } from 'es-toolkit';
 import * as _ from 'lodash';
 import { objectToCamel } from 'ts-case-convert';
-import { AuthenticatedUser, AuthRole } from '../../auth/models/auth.models';
-import { NiveauAcces } from '../../auth/models/private-utilisateur-droit.table';
-import { AuthService } from '../../auth/services/auth.service';
-import { groupementCollectiviteTable } from '../../collectivites/shared/models/groupement-collectivite.table';
-import { groupementTable } from '../../collectivites/shared/models/groupement.table';
+import { AuthenticatedUser, AuthRole } from '../../../auth/models/auth.models';
+import { NiveauAcces } from '../../../auth/models/private-utilisateur-droit.table';
+import { AuthService } from '../../../auth/services/auth.service';
+import { groupementCollectiviteTable } from '../../../collectivites/shared/models/groupement-collectivite.table';
+import { groupementTable } from '../../../collectivites/shared/models/groupement.table';
 import DatabaseService from '../../common/services/database.service';
-import { DeleteIndicateursValeursRequestType } from '../models/delete-indicateurs.request';
-import { GetIndicateursValeursRequestType } from '../models/get-indicateurs.request';
-import { GetIndicateursValeursResponseType } from '../models/get-indicateurs.response';
+import { DeleteIndicateursValeursRequestType } from '../../models/delete-indicateurs.request';
+import { GetIndicateursValeursRequestType } from '../../models/get-indicateurs.request';
+import { GetIndicateursValeursResponseType } from '../../models/get-indicateurs.response';
 import {
   IndicateurDefinitionAvecEnfantsType,
   indicateurDefinitionTable,
   IndicateurDefinitionType,
   MinimalIndicateurDefinitionType,
-} from '../models/indicateur-definition.table';
-import { indicateurGroupeTable } from '../models/indicateur-groupe.table';
+} from '../../models/indicateur-definition.table';
+import { indicateurGroupeTable } from '../../models/indicateur-groupe.table';
 import {
   indicateurSourceMetadonneeTable,
   IndicateurSourceMetadonneeType,
-} from '../models/indicateur-source-metadonnee.table';
+} from '../../models/indicateur-source-metadonnee.table';
 import {
   CreateIndicateurValeurType,
   IndicateurAvecValeursParSource,
@@ -46,7 +46,7 @@ import {
   IndicateurValeursGroupeeParSource,
   indicateurValeurTable,
   IndicateurValeurType,
-} from '../models/indicateur-valeur.table';
+} from '../../models/indicateur-valeur.table';
 
 @Injectable()
 export default class IndicateursService {

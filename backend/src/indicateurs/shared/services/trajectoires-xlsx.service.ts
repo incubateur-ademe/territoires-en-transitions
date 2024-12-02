@@ -6,14 +6,14 @@ import {
 } from '@nestjs/common';
 import { NextFunction, Response } from 'express';
 import { default as XlsxTemplate } from 'xlsx-template';
-import { AuthenticatedUser } from '../../auth/models/auth.models';
-import { CollectiviteRequestType } from '../../collectivites/shared/models/collectivite.request';
-import { EpciType } from '../../collectivites/shared/models/epci.table';
+import { AuthenticatedUser } from '../../../auth/models/auth.models';
+import { CollectiviteRequestType } from '../../../collectivites/shared/models/collectivite.request';
+import { EpciType } from '../../../collectivites/shared/models/epci.table';
+import BackendConfigurationService from '../../../utils/config/configuration.service';
+import { DonneesCalculTrajectoireARemplirType } from '../../models/donnees-calcul-trajectoire-a-remplir.dto';
+import { ModeleTrajectoireTelechargementRequestType } from '../../models/modele-trajectoire-telechargement.request';
+import { VerificationTrajectoireStatus } from '../../models/verification-trajectoire.response';
 import SheetService from '../../spreadsheets/services/sheet.service';
-import BackendConfigurationService from '../../utils/config/configuration.service';
-import { DonneesCalculTrajectoireARemplirType } from '../models/donnees-calcul-trajectoire-a-remplir.dto';
-import { ModeleTrajectoireTelechargementRequestType } from '../models/modele-trajectoire-telechargement.request';
-import { VerificationTrajectoireStatus } from '../models/verification-trajectoire.response';
 import TrajectoiresDataService from './trajectoires-data.service';
 
 @Injectable()

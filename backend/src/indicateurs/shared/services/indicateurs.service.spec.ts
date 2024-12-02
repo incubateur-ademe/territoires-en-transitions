@@ -1,17 +1,17 @@
 import { Test } from '@nestjs/testing';
 import * as _ from 'lodash';
 import { DateTime } from 'luxon';
-import { AuthService } from '../../auth/services/auth.service';
+import { AuthService } from '../../../auth/services/auth.service';
 import DatabaseService from '../../common/services/database.service';
-import IndicateursService from './indicateurs.service';
-import { IndicateurDefinitionType } from '../models/indicateur-definition.table';
+import { IndicateurDefinitionType } from '../../models/indicateur-definition.table';
+import { IndicateurSourceMetadonneeType } from '../../models/indicateur-source-metadonnee.table';
 import {
   IndicateurAvecValeursParSource,
   IndicateurAvecValeursType,
   IndicateurValeurAvecMetadonnesDefinition,
   IndicateurValeurType,
-} from '../models/indicateur-valeur.table';
-import { IndicateurSourceMetadonneeType } from '../models/indicateur-source-metadonnee.table';
+} from '../../models/indicateur-valeur.table';
+import IndicateursService from './indicateurs.service';
 
 describe('IndicateursService', () => {
   let indicateurService: IndicateursService;

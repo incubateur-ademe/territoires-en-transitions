@@ -7,21 +7,21 @@ import {
 import { isNil, partition } from 'es-toolkit';
 import * as _ from 'lodash';
 import slugify from 'slugify';
-import { AuthenticatedUser } from '../../auth/models/auth.models';
-import { EpciType } from '../../collectivites/shared/models/epci.table';
-import GroupementsService from '../../collectivites/shared/services/groupements.service';
-import SheetService from '../../spreadsheets/services/sheet.service';
-import ConfigurationService from '../../utils/config/configuration.service';
+import { AuthenticatedUser } from '../../../auth/models/auth.models';
+import { EpciType } from '../../../collectivites/shared/models/epci.table';
+import GroupementsService from '../../../collectivites/shared/services/groupements.service';
+import ConfigurationService from '../../../utils/config/configuration.service';
 import {
   CalculTrajectoireRequestType,
   CalculTrajectoireReset,
   CalculTrajectoireResultatMode,
-} from '../models/calcul-trajectoire.request';
-import { CalculTrajectoireResultType } from '../models/calcul-trajectoire.response';
-import { DonneesCalculTrajectoireARemplirType } from '../models/donnees-calcul-trajectoire-a-remplir.dto';
-import { IndicateurDefinitionType } from '../models/indicateur-definition.table';
-import { CreateIndicateurValeurType } from '../models/indicateur-valeur.table';
-import { VerificationTrajectoireStatus } from '../models/verification-trajectoire.response';
+} from '../../models/calcul-trajectoire.request';
+import { CalculTrajectoireResultType } from '../../models/calcul-trajectoire.response';
+import { DonneesCalculTrajectoireARemplirType } from '../../models/donnees-calcul-trajectoire-a-remplir.dto';
+import { IndicateurDefinitionType } from '../../models/indicateur-definition.table';
+import { CreateIndicateurValeurType } from '../../models/indicateur-valeur.table';
+import { VerificationTrajectoireStatus } from '../../models/verification-trajectoire.response';
+import SheetService from '../../spreadsheets/services/sheet.service';
 import IndicateurSourcesService from './indicateur-sources.service';
 import IndicateursService from './indicateurs.service';
 import TrajectoiresDataService from './trajectoires-data.service';
