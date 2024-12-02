@@ -13,6 +13,7 @@ import {
   jwtToUser,
 } from '../../auth/models/auth.models';
 import ConfigurationService from '../../utils/config/configuration.service';
+import { ContextStoreService } from '../context/context.service';
 
 @Injectable()
 export class TrpcService {
@@ -20,7 +21,8 @@ export class TrpcService {
 
   constructor(
     private readonly jwtService: JwtService,
-    private readonly config: ConfigurationService
+    private readonly config: ConfigurationService,
+    private readonly contextStoreService: ContextStoreService
   ) {}
 
   trpc = initTRPC
@@ -32,18 +34,27 @@ export class TrpcService {
       },
     });
 
+  contextStoreMiddleware = this.trpc.middleware(
+    async ({ next, ctx, getRawInput }) => {
+      const rawInput = await getRawInput();
+      this.contextStoreService.autoSetContextFromPayload(rawInput);
+
+      return next({ ctx: ctx });
+    }
+  );
+
   /**
    * Create an unprotected public procedure
    * @see https://trpc.io/docs/v11/procedures
    **/
-  publicProcedure = this.trpc.procedure;
+  publicProcedure = this.trpc.procedure.use(this.contextStoreMiddleware);
 
   /**
    * Create an anonymous procedure
    * @see https://trpc.io/docs/v11/procedures
    **/
   anonProcedure = this.trpc.procedure.use(
-    this.trpc.middleware(({ next, ctx }) => {
+    this.contextStoreMiddleware.unstable_pipe(async ({ next, ctx }) => {
       const user = ctx.user;
 
       if (isAnonymousUser(user) || isAuthenticatedUser(user)) {
@@ -62,7 +73,7 @@ export class TrpcService {
    * @see https://trpc.io/docs/v11/procedures
    **/
   authedProcedure = this.trpc.procedure.use(
-    this.trpc.middleware(({ next, ctx }) => {
+    this.contextStoreMiddleware.unstable_pipe(async ({ next, ctx }) => {
       const user = ctx.user;
 
       if (isAuthenticatedUser(user) || isServiceRoleUser(user)) {

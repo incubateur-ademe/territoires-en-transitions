@@ -1,7 +1,15 @@
 // tslint:disable-next-line:no-unused-variable
-import { ArgumentsHost, Catch, HttpException, Logger } from '@nestjs/common';
+import { ContextStoreService } from '@/backend/utils/context/context.service';
+import { getSentryContextFromApplicationContext } from '@/backend/utils/sentry-init';
+import {
+  ArgumentsHost,
+  Catch,
+  HttpException,
+  HttpServer,
+  Logger,
+} from '@nestjs/common';
 import { BaseExceptionFilter } from '@nestjs/core';
-import { SentryExceptionCaptured } from '@sentry/nestjs';
+import * as Sentry from '@sentry/nestjs';
 import { Request, Response } from 'express';
 import { getErrorWithCode } from './errors.utils';
 import { HttpErrorResponse } from './http-error.response';
@@ -25,14 +33,26 @@ export const getHttpErrorResponse = (exception: unknown): HttpErrorResponse => {
 export class AllExceptionsFilter extends BaseExceptionFilter {
   private readonly logger = new Logger(AllExceptionsFilter.name);
 
-  @SentryExceptionCaptured()
+  constructor(
+    private readonly contextStoreService: ContextStoreService,
+    applicationRef?: HttpServer
+  ) {
+    super(applicationRef);
+  }
+
   catch(exception: unknown, host: ArgumentsHost) {
     const ctx = host.switchToHttp();
     const response = ctx.getResponse<Response>();
     const request = ctx.getRequest<Request>();
+    this.logger.error(exception);
 
-    // Log the error using json string to have full details
-    this.logger.error(JSON.stringify(exception));
+    // report it to sentry with context
+    Sentry.captureException(
+      exception,
+      getSentryContextFromApplicationContext(
+        this.contextStoreService.getContext()
+      )
+    );
 
     const httpErrorResponse = getHttpErrorResponse(exception);
     httpErrorResponse.path = request.url;

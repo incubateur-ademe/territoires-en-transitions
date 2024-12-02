@@ -1,38 +1,61 @@
-// WARNING: Do this import first
+// WARNING: Do these imports first
 import './utils/sentry-init';
 // Other imports
-import { patchNestjsSwagger, ZodValidationPipe } from '@anatine/zod-nestjs';
-import { Logger } from '@nestjs/common';
+import { patchNestjsSwagger } from '@anatine/zod-nestjs';
 import { HttpAdapterHost, NestFactory } from '@nestjs/core';
 import { DocumentBuilder, SwaggerModule } from '@nestjs/swagger';
+import { NextFunction, Request, Response } from 'express';
 import { AppModule } from './app.module';
+import { ContextRouteParametersInterceptor } from './utils/context/context-route-parameters.interceptor';
+import { ContextStoreService } from './utils/context/context.service';
 import { initGoogleCloudCredentials } from './utils/google-sheets/gcloud.helper';
+import {
+  CustomLogger,
+  getDefaultLoggerOptions,
+} from './utils/log/custom-logger.service';
 import { AllExceptionsFilter } from './utils/nest/all-exceptions.filter';
+import { CustomZodValidationPipe } from './utils/nest/custom-zod-validation.pipe';
 import { TrpcRouter } from './utils/trpc/trpc.router';
 
-const logger = new Logger('main');
 const port = process.env.PORT || 8080;
-logger.log(`Launching NestJS app on port ${port}`);
 
 async function bootstrap() {
   initGoogleCloudCredentials();
 
-  const app = await NestFactory.create(AppModule, {
-    logger: ['fatal', 'error', 'warn', 'log'], // No debug by default
-  });
+  const app = await NestFactory.create(AppModule);
+  const contextStoreService = app.get(ContextStoreService);
+  const logger = new CustomLogger(
+    contextStoreService,
+    getDefaultLoggerOptions()
+  );
+  logger.log(`Launching NestJS app on port ${port}`);
+  app.useLogger(logger);
+  const withContextMiddleWare = (
+    req: Request,
+    res: Response,
+    next: NextFunction
+  ) => {
+    contextStoreService.withContext(req, res, next);
+  };
+  app.use(withContextMiddleWare);
+  app.useGlobalInterceptors(
+    new ContextRouteParametersInterceptor(contextStoreService)
+  );
+
   const { httpAdapter } = app.get(HttpAdapterHost);
 
   app.enableCors();
 
-  // TODO: configure validation
-  app.useGlobalPipes(new ZodValidationPipe());
+  app.useGlobalPipes(new CustomZodValidationPipe(contextStoreService));
 
   // Seulement une v1 pour l'instant
   app.setGlobalPrefix('api/v1', {
-    exclude: ['version'],
+    exclude: ['version', 'throw'],
   });
 
-  app.useGlobalFilters(new AllExceptionsFilter(httpAdapter));
+  app.useGlobalFilters(
+    new AllExceptionsFilter(contextStoreService, httpAdapter)
+  );
 
   const config = new DocumentBuilder()
     .setTitle('Api Territoires en Transitions')
