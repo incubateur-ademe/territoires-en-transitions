@@ -7,11 +7,11 @@ import {
 } from '@nestjs/common';
 import { eq } from 'drizzle-orm';
 import DatabaseService from '../../common/services/database.service';
-import { groupementTable } from '../models/groupement.table';
 import {
   CreateGroupementCollectiviteType,
   groupementCollectiviteTable,
-} from '../models/groupement-collectivite.table';
+} from '../../models/groupement-collectivite.table';
+import { groupementTable } from '../../models/groupement.table';
 
 @Injectable()
 export default class GroupementsService {

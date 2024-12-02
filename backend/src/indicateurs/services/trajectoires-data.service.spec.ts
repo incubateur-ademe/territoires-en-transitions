@@ -1,11 +1,11 @@
 import { Test } from '@nestjs/testing';
 import { DateTime } from 'luxon';
 import { AuthService } from '../../auth/services/auth.service';
-import CollectivitesService from '../../collectivites/services/collectivites.service';
+import CollectivitesService from '../../collectivites/shared/services/collectivites.service';
 import SheetService from '../../spreadsheets/services/sheet.service';
 import { IndicateurValeurType } from '../models/indicateur-valeur.table';
-import IndicateursService from './indicateurs.service';
 import IndicateurSourcesService from './indicateur-sources.service';
+import IndicateursService from './indicateurs.service';
 import TrajectoiresDataService from './trajectoires-data.service';
 
 describe('TrajectoiresDataService test', () => {

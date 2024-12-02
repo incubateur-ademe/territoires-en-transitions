@@ -4,7 +4,7 @@ import {
   CollectiviteTypeEnum,
   IdentiteCollectivite,
 } from '../../collectivites/models/identite-collectivite.dto';
-import CollectivitesService from '../../collectivites/services/collectivites.service';
+import CollectivitesService from '../../collectivites/shared/services/collectivites.service';
 import DatabaseService from '../../common/services/database.service';
 import MattermostNotificationService from '../../common/services/mattermost-notification.service';
 import { roundTo } from '../../common/services/number.helper';

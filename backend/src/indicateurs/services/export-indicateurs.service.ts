@@ -1,24 +1,24 @@
 import { Injectable, Logger } from '@nestjs/common';
-import { Workbook } from 'exceljs';
 import { format } from 'date-fns';
 import { uniq } from 'es-toolkit';
+import { Workbook } from 'exceljs';
 import { AuthenticatedUser } from '../../auth/models/auth.models';
-import { AuthService } from '../../auth/services/auth.service';
 import { NiveauAcces } from '../../auth/models/private-utilisateur-droit.table';
-import IndicateursService from './indicateurs.service';
-import { ExportIndicateursRequestType } from '../models/export-indicateurs.request';
-import {
-  IndicateurDefinitionAvecEnfantsType,
-  MinimalIndicateurDefinitionType,
-} from '../models/indicateur-definition.table';
-import { IndicateurValeurAvecMetadonnesDefinition } from '../models/indicateur-valeur.table';
-import { IndicateurSourceMetadonneeType } from '../models/indicateur-source-metadonnee.table';
+import { AuthService } from '../../auth/services/auth.service';
+import CollectivitesService from '../../collectivites/shared/services/collectivites.service';
 import {
   adjustColumnWidth,
   BOLD,
   normalizeWorksheetName,
 } from '../../common/services/xlsx.helper';
-import CollectivitesService from '../../collectivites/services/collectivites.service';
+import { ExportIndicateursRequestType } from '../models/export-indicateurs.request';
+import {
+  IndicateurDefinitionAvecEnfantsType,
+  MinimalIndicateurDefinitionType,
+} from '../models/indicateur-definition.table';
+import { IndicateurSourceMetadonneeType } from '../models/indicateur-source-metadonnee.table';
+import { IndicateurValeurAvecMetadonnesDefinition } from '../models/indicateur-valeur.table';
+import IndicateursService from './indicateurs.service';
 
 @Injectable()
 export default class ExportIndicateursService {

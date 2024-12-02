@@ -9,7 +9,7 @@ import * as _ from 'lodash';
 import slugify from 'slugify';
 import { AuthenticatedUser } from '../../auth/models/auth.models';
 import { EpciType } from '../../collectivites/models/epci.table';
-import GroupementsService from '../../collectivites/services/groupements.service';
+import GroupementsService from '../../collectivites/shared/services/groupements.service';
 import SheetService from '../../spreadsheets/services/sheet.service';
 import ConfigurationService from '../../utils/config/configuration.service';
 import {

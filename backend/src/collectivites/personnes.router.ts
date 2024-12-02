@@ -5,7 +5,7 @@ import { TrpcService } from '../trpc/trpc.service';
 import {
   listRequestSchema,
   PersonnesService,
-} from './services/personnes.service';
+} from './shared/services/personnes.service';
 
 const inputSchema = listRequestSchema;
 

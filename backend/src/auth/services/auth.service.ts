@@ -1,6 +1,6 @@
 import { Injectable, Logger, UnauthorizedException } from '@nestjs/common';
 import { and, eq, inArray, sql, SQL, SQLWrapper } from 'drizzle-orm';
-import CollectivitesService from '../../collectivites/services/collectivites.service';
+import CollectivitesService from '../../collectivites/shared/services/collectivites.service';
 import DatabaseService from '../../common/services/database.service';
 import {
   AuthenticatedUser,
