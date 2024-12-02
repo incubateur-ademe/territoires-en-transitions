@@ -3,7 +3,6 @@
 BEGIN;
 
 select
-    id,
     fiche_id,
     date_note,
     note,
