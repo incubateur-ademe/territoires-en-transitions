@@ -1,9 +1,12 @@
-import { useMutation, useQueryClient } from 'react-query';
 import { FicheAction, FicheActionNote } from '@tet/api/plan-actions';
 import { useApiClient } from 'core-logic/api/useApiClient';
+import { useMutation, useQueryClient } from 'react-query';
 
-export type EditedNote = Pick<FicheActionNote, 'note'> & { year: number };
-export type DeletedNote = { year: number };
+export type EditedNote = Pick<FicheActionNote, 'note'> & {
+  id?: number;
+  year: number;
+};
+export type DeletedNote = { id: number };
 
 // renvoie une fonction de modification des notes de suivi
 export const useUpsertNoteSuivi = ({
@@ -14,11 +17,13 @@ export const useUpsertNoteSuivi = ({
   const queryClient = useQueryClient();
 
   return useMutation(
-    async ({ note, year }: EditedNote) => {
+    async ({ id, note, year }: EditedNote) => {
       return api.put({
         route: `/collectivites/${collectiviteId}/fiches-action/${ficheId}/notes`,
         params: {
-          notes: [{ note, dateNote: new Date(`${year}-01-01`).toISOString() }],
+          notes: [
+            { id, note, dateNote: new Date(`${year}-01-01`).toISOString() },
+          ],
         },
       });
     },
@@ -45,10 +50,10 @@ export const useDeleteNoteSuivi = ({
   const queryClient = useQueryClient();
 
   return useMutation(
-    async ({ year }: DeletedNote) => {
+    async ({ id }: DeletedNote) => {
       return api.delete({
         route: `/collectivites/${collectiviteId}/fiches-action/${ficheId}/note`,
-        params: { dateNote: new Date(`${year}-01-01`).toISOString() },
+        params: { id },
       });
     },
     {

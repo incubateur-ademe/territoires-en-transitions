@@ -36,7 +36,7 @@ const ModaleSuppressionNote = ({
           btnCancelProps={{ onClick: close }}
           btnOKProps={{
             onClick: () => {
-              onDelete({ year });
+              onDelete({ id: editedNote.id });
               close();
             },
           }}
