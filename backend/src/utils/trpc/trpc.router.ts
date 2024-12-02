@@ -4,8 +4,15 @@ import { CountByRouter } from '@/backend/plans/fiches/count-by/count-by.router';
 import { FicheActionEtapeRouter } from '@/backend/plans/fiches/fiche-action-etape/fiche-action-etape.router';
 import { ImportPlanRouter } from '@/backend/plans/fiches/import/import-plan.router';
 import { ReferentielsRouter } from '@/backend/referentiels/referentiels.router';
-import { INestApplication, Injectable, Logger } from '@nestjs/common';
+import {
+  HttpException,
+  INestApplication,
+  Injectable,
+  Logger,
+} from '@nestjs/common';
+import * as Sentry from '@sentry/nestjs';
 import { createExpressMiddleware } from '@trpc/server/adapters/express';
+import z from 'zod';
 import { UsersRouter } from '../../auth/users/users.router';
 import { IndicateurFiltreRouter } from '../../indicateurs/definitions/indicateur-filtre.router';
 import { IndicateurDefinitionsRouter } from '../../indicateurs/definitions/list-definitions.router';
@@ -37,6 +44,13 @@ export class TrpcRouter {
   ) {}
 
   appRouter = this.trpc.router({
+    error: this.trpc.router({
+      throw: this.trpc.anonProcedure
+        .input(z.object({}))
+        .query(async ({ input, ctx }) => {
+          throw new HttpException('A test trpc error occured', 500);
+        }),
+    }),
     utilisateurs: this.usersRouter.router,
     collectivites: this.collectivitesRouter.router,
     indicateurs: {
@@ -70,7 +84,9 @@ export class TrpcRouter {
         onError: (opts) => {
           const { error, type, path, input, ctx, req } = opts;
           this.logger.error(error);
-          // TODO: report it to sentry
+
+          // report it to sentry
+          Sentry.captureException(error);
         },
       })
     );
