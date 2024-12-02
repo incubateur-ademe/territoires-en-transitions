@@ -207,6 +207,7 @@ export default class FicheService {
     const modifiedByDCP = aliasedTable(dcpTable, 'modifiedByDCP');
     const rows = await this.databaseService.db
       .select({
+        id: ficheActionNoteTable.id,
         note: ficheActionNoteTable.note,
         dateNote: ficheActionNoteTable.dateNote,
         createdAt: ficheActionNoteTable.createdAt,

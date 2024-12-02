@@ -145,6 +145,7 @@ export const ficheActionSchema = z.object({
 export type FicheAction = z.infer<typeof ficheActionSchema>;
 
 export const noteSuiviSchema = z.object({
+  id: z.number(),
   createdAt: z.string().datetime(),
   createdBy: z.string(),
   modifiedAt: z.string().datetime(),
