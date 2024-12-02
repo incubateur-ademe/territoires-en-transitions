@@ -11,7 +11,7 @@ export class IndicateurFiltreRouter {
   ) {}
 
   router = this.trpc.router({
-    getFilteredIndicateur: this.trpc.authedProcedure
+    list: this.trpc.authedProcedure
       .input(getFilteredIndicateursRequestSchema)
       .query(({ ctx, input }) => {
         const { collectiviteId, filtre, queryOptions } = input;

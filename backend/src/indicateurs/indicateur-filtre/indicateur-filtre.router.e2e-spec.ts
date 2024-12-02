@@ -4,12 +4,12 @@ import {
 } from './get-filtered-indicateurs.request';
 import { getTestRouter } from '../../../test/common/app-utils';
 import { AuthenticatedUser } from './../../auth/models/auth.models';
-import { getYoloDodoUser } from '../../../test/auth/auth-utils';
+import { getAuthUser } from '../../../test/auth/auth-utils';
 import { inferProcedureInput } from '@trpc/server';
 import { AppRouter, TrpcRouter } from '../../trpc/trpc.router';
 import { getFilteredIndicateurResponseSchema } from './get-filtered-indicateurs.response';
 
-type Input = inferProcedureInput<AppRouter['indicateurs']['filtre']>;
+type Input = inferProcedureInput<AppRouter['indicateurs']['filtre']['list']>;
 
 describe('Route de lecture des indicateurs filtrés', () => {
   let router: TrpcRouter;
@@ -27,7 +27,7 @@ describe('Route de lecture des indicateurs filtrés', () => {
 
   beforeAll(async () => {
     router = await getTestRouter();
-    yoloDodoUser = await getYoloDodoUser();
+    yoloDodoUser = await getAuthUser();
   });
 
   test(`Test que la requête s'exécute sans filtres`, async () => {
@@ -39,9 +39,9 @@ describe('Route de lecture des indicateurs filtrés', () => {
       filtre: filtre,
       queryOptions: queryOptions,
     };
-    const result = await caller.indicateurs.filtre.getFilteredIndicateur(input);
+    const result = await caller.indicateurs.filtre.list(input);
     expect(result.length).not.toBe(0);
-    const toCheck = getFilteredIndicateurResponseSchema.safeParse(result.body);
+    const toCheck = getFilteredIndicateurResponseSchema.safeParse(result);
     expect(toCheck.success).toBeTruthy;
   });
 
@@ -73,7 +73,7 @@ describe('Route de lecture des indicateurs filtrés', () => {
       queryOptions: queryOptions,
     };
 
-    const result = await caller.indicateurs.filtre.getFilteredIndicateur(input);
+    const result = await caller.indicateurs.filtre.list(input);
     expect(result.length).toBe(0);
   });
 });
