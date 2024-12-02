@@ -4,54 +4,53 @@ import { z } from 'zod';
 export const getIndicateursValeursRequestSchema = extendApi(
   z
     .object({
-      collectiviteId: z.coerce.number().int().openapi({
-        description: 'Identifiant de la collectivité',
-      }),
-      indicateurIds: z.coerce.number().int().array().optional().openapi({
-        description: "Identifiant de l'indicateur",
-      }),
+      collectiviteId: z.coerce
+        .number()
+        .int()
+        .describe('Identifiant de la collectivité'),
+      indicateurIds: z.coerce
+        .number()
+        .int()
+        .array()
+        .optional()
+        .describe("Identifiant de l'indicateur"),
 
       identifiantsReferentiel: z
         .string()
         .transform((value) => value.split(','))
         .pipe(z.string().array())
         .optional()
-        .openapi({
-          description: 'Identifiants du référentiel',
-        }),
+        .describe('Identifiants du référentiel'),
       sources: z
         .string()
         .transform((value) => value.split(','))
         .pipe(z.string().array())
         .optional()
-        .openapi({
-          description:
-            'Liste des sources (séparées par des virgules). collectivite pour les valeurs renseignées par la collectivité',
-        }),
-      dateDebut: z.string().length(10).optional().openapi({
-        description: 'Date de début (format YYYY-MM-DD)',
-      }),
-      dateFin: z.string().length(10).optional().openapi({
-        description: 'Date de fin (format YYYY-MM-DD)',
-      }), // z.string().date() only supported in 3.23
+        .describe(
+          'Liste des sources (séparées par des virgules). collectivite pour les valeurs renseignées par la collectivité'
+        ),
+      dateDebut: z
+        .string()
+        .length(10)
+        .optional()
+        .describe('Date de début (format YYYY-MM-DD)'),
+      dateFin: z
+        .string()
+        .length(10)
+        .optional()
+        .describe('Date de fin (format YYYY-MM-DD)'), // z.string().date() only supported in 3.23
       ignoreDedoublonnage: z
         .enum(['true', 'false'])
         .transform((value) => value === 'true')
         .optional()
-        .openapi({
-          description: 'Ignore le dédoublonnage',
-        }),
+        .describe('Ignore le dédoublonnage'),
       withoutDefinition: z
         .enum(['true', 'false'])
         .transform((value) => value === 'true')
         .optional()
-        .openapi({
-          description: "Exclue les définitions d'indicateur de la réponse",
-        }),
+        .describe("Exclue les définitions d'indicateur de la réponse"),
     })
-    .openapi({
-      title: 'Filtre de récupération des valeurs des indicateurs',
-    })
+    .describe('Filtre de récupération des valeurs des indicateurs')
 );
 export type GetIndicateursValeursRequestType = z.infer<
   typeof getIndicateursValeursRequestSchema

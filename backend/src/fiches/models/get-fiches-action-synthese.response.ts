@@ -1,8 +1,6 @@
-import { extendApi, extendZodWithOpenApi } from '@anatine/zod-openapi';
+import { extendApi } from '@anatine/zod-openapi';
 import { z } from 'zod';
 import { countSyntheseValeurSchema } from '../../common/models/count-synthese.dto';
-
-extendZodWithOpenApi(z);
 
 export const getFichesActionSyntheseSchema = extendApi(
   z.object({

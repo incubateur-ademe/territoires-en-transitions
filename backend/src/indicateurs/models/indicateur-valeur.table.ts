@@ -1,3 +1,6 @@
+import { createZodDto } from '@anatine/zod-nestjs';
+import { extendApi } from '@anatine/zod-openapi';
+import { InferInsertModel, InferSelectModel } from 'drizzle-orm';
 import {
   date,
   doublePrecision,
@@ -6,12 +9,15 @@ import {
   serial,
   text,
 } from 'drizzle-orm/pg-core';
-import { collectiviteTable } from '../../collectivites/models/collectivite.table';
-import { InferInsertModel, InferSelectModel } from 'drizzle-orm';
 import { createInsertSchema, createSelectSchema } from 'drizzle-zod';
-import { extendApi, extendZodWithOpenApi } from '@anatine/zod-openapi';
 import { z } from 'zod';
-import { createZodDto } from '@anatine/zod-nestjs';
+import { collectiviteTable } from '../../collectivites/models/collectivite.table';
+import {
+  createdAt,
+  createdBy,
+  modifiedAt,
+  modifiedBy,
+} from '../../common/models/column.helpers';
 import {
   indicateurDefinitionSchema,
   indicateurDefinitionTable,
@@ -23,14 +29,6 @@ import {
   indicateurSourceMetadonneeTable,
   IndicateurSourceMetadonneeType,
 } from './indicateur-source-metadonnee.table';
-import {
-  createdAt,
-  createdBy,
-  modifiedAt,
-  modifiedBy,
-} from '../../common/models/column.helpers';
-
-extendZodWithOpenApi(z);
 
 export const indicateurValeurTable = pgTable('indicateur_valeur', {
   id: serial('id').primaryKey(),
@@ -107,9 +105,7 @@ export const indicateurAvecValeursSchema = extendApi(
       definition: minimaleIndicateurDefinitionSchema,
       valeurs: z.array(indicateurValeurGroupeeSchema),
     })
-    .openapi({
-      title: 'Indicateur définition et valeurs ordonnées par date',
-    })
+    .describe('Indicateur définition et valeurs ordonnées par date')
 );
 
 export type IndicateurAvecValeursType = z.infer<
@@ -127,9 +123,7 @@ export const indicateurValeursGroupeeParSourceSchema = extendApi(
       metadonnees: z.array(indicateurSourceMetadonneeSchema),
       valeurs: z.array(indicateurValeurGroupeeSchema),
     })
-    .openapi({
-      title: 'Indicateur valeurs pour une source donnée',
-    })
+    .describe('Indicateur valeurs pour une source donnée')
 );
 
 export class IndicateurValeursGroupeeParSource extends createZodDto(
@@ -142,9 +136,7 @@ export const indicateurAvecValeursParSourceSchema = extendApi(
       definition: indicateurDefinitionSchema,
       sources: z.record(z.string(), indicateurValeursGroupeeParSourceSchema),
     })
-    .openapi({
-      title: 'Filtre de récupération des valeurs des indicateurs',
-    })
+    .describe('Filtre de récupération des valeurs des indicateurs')
 );
 
 export class IndicateurAvecValeursParSource extends createZodDto(

@@ -9,10 +9,8 @@ export type lienType = {
 export const lienSchema = extendApi(
   z
     .object({
-      label: z.string().openapi({ description: `Nom descriptif du lien` }),
-      url: z.string().openapi({ description: `URL du lien` }),
+      label: z.string().describe(`Nom descriptif du lien`),
+      url: z.string().describe(`URL du lien`),
     })
-    .openapi({
-      title: 'Un lien URL.',
-    })
+    .describe('Un lien URL.')
 );

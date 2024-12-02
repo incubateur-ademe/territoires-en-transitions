@@ -29,9 +29,7 @@ export const getReferentielScoresResponseSchema = extendApi(
     snapshot: getReferentielScoresResponseSnapshotInfoSchema.optional(),
     mode: z.nativeEnum(ComputeScoreMode),
   })
-).openapi({
-  title: 'Score de la collectivité pour un référentiel et la date donnée',
-});
+).describe('Score de la collectivité pour un référentiel et la date donnée');
 export type GetReferentielScoresResponseType = z.infer<
   typeof getReferentielScoresResponseSchema
 >;

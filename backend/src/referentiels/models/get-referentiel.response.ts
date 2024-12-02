@@ -14,9 +14,7 @@ export const getReferentielResponseSchema = extendApi(
       .record(z.string(), actionDefinitionMinimalWithTypeLevel)
       .optional(),
   })
-).openapi({
-  title: 'Referentiel sous forme de liste, map ou hierarchie',
-});
+).describe('Referentiel sous forme de liste, map ou hierarchie');
 export type GetReferentielResponseType = z.infer<
   typeof getReferentielResponseSchema
 >;

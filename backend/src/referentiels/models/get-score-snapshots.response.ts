@@ -53,9 +53,9 @@ export const getScoreSnapshotsResponseSchema = extendApi(
     typesJalon: z.nativeEnum(ScoreJalon).array(),
     snapshots: scoreSnapshotInfo.array(),
   })
-).openapi({
-  title: 'Liste des snapshots de score pour une collectivité et un référentiel',
-});
+).describe(
+  'Liste des snapshots de score pour une collectivité et un référentiel'
+);
 export type GetScoreSnapshotsResponseType = z.infer<
   typeof getScoreSnapshotsResponseSchema
 >;

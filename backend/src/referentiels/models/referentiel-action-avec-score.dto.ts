@@ -1,4 +1,4 @@
-import { extendApi, extendZodWithOpenApi } from '@anatine/zod-openapi';
+import { extendApi } from '@anatine/zod-openapi';
 import { z } from 'zod';
 import { actionDefinitionSeulementIdObligatoireSchema } from './action-definition.table';
 import {
@@ -11,7 +11,6 @@ import {
   referentielActionOrigineWithScoreSchema,
   ReferentielActionOrigineWithScoreType,
 } from './referentiel-action-origine-with-score.dto';
-extendZodWithOpenApi(z);
 
 export type ReferentielActionWithScoreType = z.infer<
   typeof actionDefinitionSeulementIdObligatoireSchema
@@ -47,7 +46,5 @@ export const referentielActionAvecScoreDtoSchema: z.ZodType<ReferentielActionWit
         ),
         score: actionScoreSchema,
       })
-      .openapi({
-        title: "Référentiel d'actions avec le score associé",
-      })
+      .describe("Référentiel d'actions avec le score associé")
   );

@@ -6,9 +6,7 @@ export const deleteIndicateursValeursResponseSchema = extendApi(
     .object({
       indicateurValeurIdsSupprimes: z.array(z.number().int()),
     })
-    .openapi({
-      title: 'Identifiant des valeurs supprimées',
-    })
+    .describe('Identifiant des valeurs supprimées')
 );
 
 export type DeleteIndicateursValeursResponseType = z.infer<

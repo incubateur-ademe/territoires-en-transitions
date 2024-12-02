@@ -56,10 +56,10 @@ export const scoreSnapshotTable = pgTable(
     pointPotentiel: doublePrecision('point_potentiel').notNull(),
     referentielScores: jsonb('referentiel_scores').notNull(),
     personnalisationReponses: jsonb('personnalisation_reponses').notNull(),
-    createdBy: createdBy,
-    createdAt: createdAt,
-    modifiedAt: modifiedAt,
-    modifiedBy: modifiedBy,
+    createdBy,
+    createdAt,
+    modifiedAt,
+    modifiedBy,
   },
   (table) => {
     return {

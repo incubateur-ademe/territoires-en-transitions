@@ -22,7 +22,7 @@ export const getSupabaseClient = (): SupabaseClient => {
 };
 
 export async function signInWith(credentials: SignInWithPasswordCredentials) {
-  getSupabaseClient();
+  const supabase = getSupabaseClient();
   return await supabase.auth.signInWithPassword(credentials);
 }
 

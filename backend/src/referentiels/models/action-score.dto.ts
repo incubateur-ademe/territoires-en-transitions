@@ -1,6 +1,5 @@
-import { extendApi, extendZodWithOpenApi } from '@anatine/zod-openapi';
+import { extendApi } from '@anatine/zod-openapi';
 import { z } from 'zod';
-extendZodWithOpenApi(z);
 
 export const actionScoreSchema = extendApi(
   z
@@ -111,11 +110,9 @@ export const actionScoreSchema = extendApi(
           "Vrai si l'action est renseignée, càd non manquante à la complétion du référentiel. Tag défini en fonction du statut de l'action et de celui de ses parents"
         ),
     })
-    .openapi({
-      title: 'ActionScore',
-      description:
-        "Le score d'une action. Une action est un nœud de l'arbre constituant le référentiel. Son score représente les points obtenus ainsi que la valeur de l'action.",
-    })
+    .describe(
+      "Le score d'une action. Une action est un nœud de l'arbre constituant le référentiel. Son score représente les points obtenus ainsi que la valeur de l'action."
+    )
 );
 
 export type ActionScoreType = z.infer<typeof actionScoreSchema>;

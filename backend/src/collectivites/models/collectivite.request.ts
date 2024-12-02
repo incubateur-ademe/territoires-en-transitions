@@ -1,14 +1,13 @@
 import { createZodDto } from '@anatine/zod-nestjs';
-import { extendApi, extendZodWithOpenApi } from '@anatine/zod-openapi';
+import { extendApi } from '@anatine/zod-openapi';
 import { z } from 'zod';
-
-extendZodWithOpenApi(z);
 
 export const collectiviteRequestSchema = extendApi(
   z.object({
-    collectiviteId: z.coerce.number().int().openapi({
-      description: 'Identifiant de la collectivité',
-    }),
+    collectiviteId: z.coerce
+      .number()
+      .int()
+      .describe('Identifiant de la collectivité'),
   })
 );
 export type CollectiviteRequestType = z.infer<typeof collectiviteRequestSchema>;
