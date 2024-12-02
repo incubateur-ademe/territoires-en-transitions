@@ -175,8 +175,6 @@ export const ficheActionSchema = createSelectSchema(ficheActionTable, {
   cibles: z.array(ficheActionCiblesEnumSchema),
 });
 
-export type FicheActionSelectType = z.infer<typeof ficheActionSchema>;
-
 export const createFicheActionSchema = createInsertSchema(ficheActionTable, {
   // Overriding array types as a workaround for drizzle-zod parsing issue
   // See https://github.com/drizzle-team/drizzle-orm/issues/1609
