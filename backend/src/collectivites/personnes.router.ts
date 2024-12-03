@@ -1,7 +1,7 @@
 import { Injectable } from '@nestjs/common';
 import { TRPCError } from '@trpc/server';
 import { AuthService } from '../auth/services/auth.service';
-import { TrpcService } from '../trpc/trpc.service';
+import { TrpcService } from '../utils/trpc/trpc.service';
 import {
   listRequestSchema,
   PersonnesService,

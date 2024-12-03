@@ -1,11 +1,14 @@
-import { AuthenticatedUser, AuthService } from '@/backend/auth';
+import { AuthService } from '@/backend/auth';
 import { DatabaseService } from '@/backend/utils';
+import { AuthenticatedUser } from '@/domain/auth';
+import {
+  categorieTagTable,
+  groupementCollectiviteTable,
+  partenaireTagTable,
+  TagType,
+} from '@/domain/collectivites';
 import { Injectable, Logger } from '@nestjs/common';
 import { and, eq, inArray, isNull, or } from 'drizzle-orm';
-import { categorieTagTable } from '../models/categorie-tag.table';
-import { groupementCollectiviteTable } from '../models/groupement-collectivite.table';
-import { partenaireTagTable } from '../models/partenaire-tag.table';
-import { TagType } from '../models/tag.table-base';
 
 @Injectable()
 export class TagService {

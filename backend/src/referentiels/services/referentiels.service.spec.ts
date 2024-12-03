@@ -1,14 +1,14 @@
+import { ConfigService, DatabaseService, SheetService } from '@/backend/utils';
+import {
+  ActionDefinitionAvecParentType,
+  ActionType,
+  CreateActionOrigineType,
+  ReferentielActionType,
+  ReferentielDefinitionType,
+  ReferentielType,
+} from '@/domain/referentiels';
 import { Test } from '@nestjs/testing';
-import DatabaseService from '../../common/services/database.service';
-import ExpressionParserService from '../../personnalisations/services/expression-parser.service';
-import SheetService from '../../spreadsheets/services/sheet.service';
-import ConfigurationService from '../../utils/config/config.service';
-import { ActionDefinitionAvecParentType } from '../models/action-definition.table';
-import { CreateActionOrigineType } from '../models/action-origine.table';
-import { ActionType } from '../models/action-type.enum';
-import { ReferentielActionType } from '../models/referentiel-action.dto';
-import { ReferentielDefinitionType } from '../models/referentiel-definition.table';
-import { ReferentielType } from '../models/referentiel.enum';
+import ExpressionParserService from '../scores/personnalisations/services/expression-parser.service';
 import ReferentielsService from './referentiels.service';
 
 describe('ReferentielsService', () => {
@@ -22,7 +22,7 @@ describe('ReferentielsService', () => {
       .useMocker((token) => {
         if (
           token === DatabaseService ||
-          token === ConfigurationService ||
+          token === ConfigService ||
           token === SheetService ||
           token === ExpressionParserService
         ) {

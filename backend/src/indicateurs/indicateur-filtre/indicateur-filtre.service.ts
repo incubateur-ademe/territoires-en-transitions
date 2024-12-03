@@ -1,25 +1,18 @@
+import { DatabaseService } from '@/backend/utils';
+import { AuthenticatedUser } from '@/domain/auth';
+import {
+  categorieTagTable,
+  groupementCollectiviteTable,
+} from '@/domain/collectivites';
+import {
+  indicateurDefinitionTable,
+  indicateurGroupeTable,
+  indicateurValeurTable,
+} from '@/domain/indicateurs';
 import { Injectable } from '@nestjs/common';
 import { getTableName, sql } from 'drizzle-orm';
 import { intersection, isNil } from 'es-toolkit';
-import { AuthenticatedUser } from '../../auth/models/auth.models';
 import { AuthService } from '../../auth/services/auth.service';
-import { groupementCollectiviteTable } from '../../collectivites/shared/models/groupement-collectivite.table';
-import DatabaseService from '../../common/services/database.service';
-import { axeTable } from '../../fiches/models/axe.table';
-import { ficheActionAxeTable } from '../../fiches/models/fiche-action-axe.table';
-import { ficheActionIndicateurTable } from '../../fiches/models/fiche-action-indicateur.table';
-import { ficheActionTable } from '../../fiches/models/fiche-action.table';
-import { categorieTagTable } from '../../taxonomie/models/categorie-tag.table';
-import { serviceTagTable } from '../../taxonomie/models/service-tag.table';
-import { indicateurActionTable } from '../models/indicateur-action.table';
-import { indicateurCategorieTagTable } from '../models/indicateur-categorie-tag.table';
-import { indicateurCollectiviteTable } from '../models/indicateur-collectivite.table';
-import { indicateurDefinitionTable } from '../models/indicateur-definition.table';
-import { indicateurGroupeTable } from '../models/indicateur-groupe.table';
-import { indicateurPiloteTable } from '../models/indicateur-pilote.table';
-import { indicateurServiceTagTable } from '../models/indicateur-service-tag.table';
-import { indicateurThematiqueTable } from '../models/indicateur-thematique.table';
-import { indicateurValeurTable } from '../models/indicateur-valeur.table';
 import {
   GetFilteredIndicateurRequestQueryOptionType,
   GetFilteredIndicateursRequestOptionType,

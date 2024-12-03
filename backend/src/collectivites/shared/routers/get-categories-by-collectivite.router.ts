@@ -1,7 +1,7 @@
+import { TrpcService } from '@/backend/utils/trpc/trpc.service';
 import { Injectable } from '@nestjs/common';
 import { z } from 'zod';
-import { TrpcService } from '../../trpc/trpc.service';
-import TagService from '../services/tag.service';
+import { TagService } from '../services/tag.service';
 
 const inputSchema = z.object({
   collectiviteId: z.number(),

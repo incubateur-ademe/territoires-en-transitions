@@ -1,3 +1,9 @@
+import { DatabaseService } from '@/backend/utils';
+import {
+  CreateGroupementCollectiviteType,
+  groupementCollectiviteTable,
+  groupementTable,
+} from '@/domain/collectivites';
 import {
   HttpException,
   HttpStatus,
@@ -6,12 +12,6 @@ import {
   NotFoundException,
 } from '@nestjs/common';
 import { eq } from 'drizzle-orm';
-import DatabaseService from '../../common/services/database.service';
-import {
-  CreateGroupementCollectiviteType,
-  groupementCollectiviteTable,
-} from '../models/groupement-collectivite.table';
-import { groupementTable } from '../models/groupement.table';
 
 @Injectable()
 export default class GroupementsService {

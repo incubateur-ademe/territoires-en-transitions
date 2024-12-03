@@ -1,16 +1,18 @@
+import { HttpErrorResponse } from '@/backend/utils/common/models/http-error.response';
+import {
+  ActionScoreType,
+  ActionStatutType,
+  ActionType,
+  GetActionStatutsResponseType,
+  GetReferentielScoresResponseType,
+  GetScoreSnapshotsResponseType,
+  HistoriqueActionStatutType,
+  ReferentielActionWithScoreType,
+  ReferentielType,
+  ScoreJalon,
+} from '@/domain/referentiels';
 import { INestApplication } from '@nestjs/common';
 import { default as request } from 'supertest';
-import { HttpErrorResponse } from '../../src/common/models/http-error.response';
-import { ActionScoreType } from '../../src/referentiels/models/action-score.dto';
-import { ActionStatutType } from '../../src/referentiels/models/action-statut.table';
-import { ActionType } from '../../src/referentiels/models/action-type.enum';
-import { GetActionStatutsResponseType } from '../../src/referentiels/models/get-action-statuts.response';
-import { GetReferentielScoresResponseType } from '../../src/referentiels/models/get-referentiel-scores.response';
-import { GetScoreSnapshotsResponseType } from '../../src/referentiels/models/get-score-snapshots.response';
-import { HistoriqueActionStatutType } from '../../src/referentiels/models/historique-action-statut.table';
-import { ReferentielActionWithScoreType } from '../../src/referentiels/models/referentiel-action-avec-score.dto';
-import { ReferentielType } from '../../src/referentiels/models/referentiel.enum';
-import { ScoreJalon } from '../../src/referentiels/models/score-jalon.enum';
 import { getAuthToken } from '../auth/auth-utils';
 import { getCollectiviteIdBySiren } from '../collectivites/collectivites-utils';
 import { getTestApp } from '../common/app-utils';

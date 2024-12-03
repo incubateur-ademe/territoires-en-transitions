@@ -1,3 +1,4 @@
+import { collectiviteTable } from '@/domain/collectivites';
 import { sql } from 'drizzle-orm';
 import {
   doublePrecision,
@@ -5,7 +6,6 @@ import {
   timestamp,
   varchar,
 } from 'drizzle-orm/pg-core';
-import { collectiviteTable } from '../../collectivites/models/collectivite.table';
 import { historiqueSchema } from './historique-reponse-choix.table';
 
 export const historiqueReponseProportionTable = historiqueSchema.table(

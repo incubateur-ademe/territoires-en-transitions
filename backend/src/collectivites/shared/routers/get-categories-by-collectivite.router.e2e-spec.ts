@@ -1,8 +1,7 @@
-import { getTestRouter } from '../../../test/common/app-utils';
-import { AuthenticatedUser } from './../../auth/models/auth.models';
-import { getAuthUser } from '../../../test/auth/auth-utils';
+import { getAuthUser, getTestRouter } from '@/backend/test';
+import { AppRouter, TrpcRouter } from '@/backend/utils';
+import { AuthenticatedUser } from '@/domain/auth';
 import { inferProcedureInput } from '@trpc/server';
-import { AppRouter, TrpcRouter } from '../../trpc/trpc.router';
 
 type Input = inferProcedureInput<AppRouter['tags']['categories']['list']>;
 
@@ -20,7 +19,7 @@ describe('Route de lecture des tags catégories', () => {
 
     const input: Input = {
       collectiviteId: 1,
-      withPredefinedTags : false
+      withPredefinedTags: false,
     };
     const result = await caller.tags.categories.list(input);
     // Il n'y a pas de catégories propres à une collectivité dans le jeu de test
@@ -32,7 +31,7 @@ describe('Route de lecture des tags catégories', () => {
 
     const input: Input = {
       collectiviteId: 1,
-      withPredefinedTags : true
+      withPredefinedTags: true,
     };
     const result = await caller.tags.categories.list(input);
     expect(result.length).not.toBe(0);

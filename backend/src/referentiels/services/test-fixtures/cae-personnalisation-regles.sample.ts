@@ -1,4 +1,4 @@
-import { GetPersonnalisationReglesResponseType } from '../get-personnalisation-regles.response';
+import { GetPersonnalisationReglesResponseType } from '@/domain/referentiels';
 
 export const caePersonnalisationRegles: GetPersonnalisationReglesResponseType =
   {

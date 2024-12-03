@@ -3,14 +3,14 @@ import {
   partenaireTagSchema,
   serviceTagSchema,
   structureTagSchema,
-} from '@/backend/collectivites';
-import { indicateurDefinitionSchema } from '@/backend/indicateurs';
-import { actionRelationSchema } from '@/backend/referentiels';
+} from '@/domain/collectivites';
+import { indicateurDefinitionSchema } from '@/domain/indicateurs';
+import { actionRelationSchema } from '@/domain/referentiels';
 import {
   effetAttenduSchema,
   sousThematiqueSchema,
   thematiqueSchema,
-} from '@/backend/shared';
+} from '@/domain/shared';
 import z from 'zod';
 import { axeSchema } from '../models/axe.table';
 import {

@@ -1,12 +1,8 @@
+import { AuthUser, isAnonymousUser, isAuthenticatedUser } from '@/domain/auth';
 import { Injectable } from '@nestjs/common';
 import { SupabaseClient } from '@supabase/supabase-js';
 import { initTRPC, TRPCError } from '@trpc/server';
 import { CreateExpressContextOptions } from '@trpc/server/adapters/express';
-import {
-  AuthUser,
-  isAnonymousUser,
-  isAuthenticatedUser,
-} from '../auth/models/auth.models';
 
 @Injectable()
 export class TrpcService {

@@ -1,8 +1,8 @@
-import { Test } from '@nestjs/testing';
 import {
   CollectivitePopulationTypeEnum,
   CollectiviteTypeEnum,
-} from '../../collectivites/models/identite-collectivite.dto';
+} from '@/domain/collectivites';
+import { Test } from '@nestjs/testing';
 import ExpressionParserService from './expression-parser.service';
 
 describe('ExpressionParserService', () => {
@@ -256,8 +256,8 @@ describe('ExpressionParserService', () => {
     le score de la 1.2.3 est réduit à 2 points.
     */
 
-      const expression = `si reponse(dechets_1, OUI) et reponse(dechets_2, OUI) et reponse(dechets_3, OUI) alors 1.0 
-sinon si reponse(dechets_1, NON) et reponse(dechets_2, NON) et reponse(dechets_3, NON) alors 2/12 
+      const expression = `si reponse(dechets_1, OUI) et reponse(dechets_2, OUI) et reponse(dechets_3, OUI) alors 1.0
+sinon si reponse(dechets_1, NON) et reponse(dechets_2, NON) et reponse(dechets_3, NON) alors 2/12
 sinon 0.75`;
       expect(() =>
         expressionParserService.parseAndEvaluateExpression(expression)
@@ -331,12 +331,12 @@ sinon 0.75`;
     Ces réductions sont cumulables dans la limite de 2 points restants
     pour prendre en compte la part d’influence dans les instances compétentes et les actions partenariales.
     */
-      const expression = `si reponse(AOD_elec, OUI) et reponse(AOD_gaz, OUI) et reponse(AOD_chaleur, OUI) alors 1.0 
-sinon si reponse(AOD_elec, NON) et reponse(AOD_gaz, NON) et reponse(AOD_chaleur, NON) alors 2/10 
-sinon si reponse(AOD_elec, NON) et reponse(AOD_gaz, NON) alors 4/10 
-sinon si reponse(AOD_elec, NON) et reponse(AOD_chaleur, NON) alors 3/10 
-sinon si reponse(AOD_gaz, NON) et reponse(AOD_chaleur, NON) alors 3/10 
-sinon si reponse(AOD_elec, NON) ou reponse(AOD_gaz, NON) alors 7/10 
+      const expression = `si reponse(AOD_elec, OUI) et reponse(AOD_gaz, OUI) et reponse(AOD_chaleur, OUI) alors 1.0
+sinon si reponse(AOD_elec, NON) et reponse(AOD_gaz, NON) et reponse(AOD_chaleur, NON) alors 2/10
+sinon si reponse(AOD_elec, NON) et reponse(AOD_gaz, NON) alors 4/10
+sinon si reponse(AOD_elec, NON) et reponse(AOD_chaleur, NON) alors 3/10
+sinon si reponse(AOD_gaz, NON) et reponse(AOD_chaleur, NON) alors 3/10
+sinon si reponse(AOD_elec, NON) ou reponse(AOD_gaz, NON) alors 7/10
 sinon si reponse(AOD_chaleur, NON) alors 6/10`;
 
       expect(

@@ -1,31 +1,35 @@
-import { Test } from '@nestjs/testing';
-import { AuthService } from '../../auth/services/auth.service';
+import { CollectivitesService } from '@/backend/collectivites';
+import {
+  ConfigService,
+  DatabaseService,
+  MattermostNotificationService,
+  roundTo,
+  SheetService,
+} from '@/backend/utils';
 import {
   CollectiviteTypeEnum,
   IdentiteCollectivite,
-} from '../../collectivites/shared/models/identite-collectivite.dto';
-import CollectivitesService from '../../collectivites/shared/services/collectivites.service';
-import DatabaseService from '../../common/services/database.service';
-import MattermostNotificationService from '../../common/services/mattermost-notification.service';
-import { roundTo } from '../../common/services/number.helper';
-import { GetPersonnalitionConsequencesResponseType } from '../../personnalisations/models/get-personnalisation-consequences.response';
-import { GetPersonnalisationReponsesResponseType } from '../../personnalisations/models/get-personnalisation-reponses.response';
-import { caePersonnalisationRegles } from '../../personnalisations/models/samples/cae-personnalisation-regles.sample';
-import ExpressionParserService from '../../personnalisations/services/expression-parser.service';
-import PersonnalisationsService from '../../personnalisations/services/personnalisations-service';
-import SheetService from '../../spreadsheets/services/sheet.service';
-import ConfigurationService from '../../utils/config/config.service';
-import { ActionType } from '../models/action-type.enum';
-import { GetActionStatutsResponseType } from '../models/get-action-statuts.response';
-import { ReferentielActionWithScoreType } from '../models/referentiel-action-avec-score.dto';
-import { caeReferentiel } from '../models/samples/cae-referentiel';
-import { deeperReferentiel } from '../models/samples/deeper-referentiel';
-import { eciReferentiel } from '../models/samples/eci-referentiel';
-import { simpleReferentiel } from '../models/samples/simple-referentiel';
+} from '@/domain/collectivites';
+import {
+  ActionType,
+  GetActionStatutsResponseType,
+  GetPersonnalisationReponsesResponseType,
+  GetPersonnalitionConsequencesResponseType,
+  ReferentielActionWithScoreType,
+} from '@/domain/referentiels';
+import { Test } from '@nestjs/testing';
+import { AuthService } from '../../auth/services/auth.service';
+import ExpressionParserService from '../scores/personnalisations/services/expression-parser.service';
+import PersonnalisationsService from '../scores/personnalisations/services/personnalisations-service';
 import LabellisationService from './labellisation.service';
 import ReferentielsScoringSnapshotsService from './referentiels-scoring-snapshots.service';
 import ReferentielsScoringService from './referentiels-scoring.service';
 import ReferentielsService from './referentiels.service';
+import { caePersonnalisationRegles } from './test-fixtures/cae-personnalisation-regles.sample';
+import { caeReferentiel } from './test-fixtures/cae-referentiel';
+import { deeperReferentiel } from './test-fixtures/deeper-referentiel';
+import { eciReferentiel } from './test-fixtures/eci-referentiel';
+import { simpleReferentiel } from './test-fixtures/simple-referentiel';
 
 describe('ReferentielsScoringService', () => {
   let referentielsScoringService: ReferentielsScoringService;
@@ -48,7 +52,7 @@ describe('ReferentielsScoringService', () => {
           token === CollectivitesService ||
           token === LabellisationService ||
           token === MattermostNotificationService ||
-          token === ConfigurationService ||
+          token === ConfigService ||
           token === SheetService
         ) {
           return {};

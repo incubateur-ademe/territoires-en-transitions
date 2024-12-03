@@ -1,6 +1,6 @@
+import { createdAt, modifiedAt } from '@/domain/utils';
 import { boolean, pgTable, uuid, varchar } from 'drizzle-orm/pg-core';
 import { text, timestamp } from 'drizzle-orm/pg-core';
-import { createdAt, modifiedAt } from '../../common/models/column.helpers';
 
 export const dcpTable = pgTable('dcp', {
   userId: uuid('user_id').primaryKey().notNull(), // TODO .references(() => users.id),

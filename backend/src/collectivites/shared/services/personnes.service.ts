@@ -1,10 +1,10 @@
-import { dcpTable, utilisateurDroitTable } from '@/backend/auth';
 import { DatabaseService } from '@/backend/utils';
+import { dcpTable, utilisateurDroitTable } from '@/domain/auth';
+import { personneTagTable } from '@/domain/collectivites';
 import { Injectable } from '@nestjs/common';
 import { and, eq, sql } from 'drizzle-orm';
 import { union } from 'drizzle-orm/pg-core';
 import z from 'zod';
-import { personneTagTable } from '../models/personne-tag.table';
 
 export const listRequestSchema = z.object({
   collectiviteId: z.number(),

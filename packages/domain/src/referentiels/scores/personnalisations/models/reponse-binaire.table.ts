@@ -1,3 +1,4 @@
+import { collectiviteTable } from '@/domain/collectivites';
 import { sql } from 'drizzle-orm';
 import {
   boolean,
@@ -6,7 +7,6 @@ import {
   timestamp,
   varchar,
 } from 'drizzle-orm/pg-core';
-import { collectiviteTable } from '../../collectivites/models/collectivite.table';
 
 export const reponseBinaireTable = pgTable('reponse_binaire', {
   modifiedAt: timestamp('modified_at', { withTimezone: true, mode: 'string' })

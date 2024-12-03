@@ -1,3 +1,4 @@
+import { actionIdReference } from '@/domain/referentiels';
 import { InferInsertModel, InferSelectModel } from 'drizzle-orm';
 import {
   pgEnum,
@@ -8,7 +9,6 @@ import {
 } from 'drizzle-orm/pg-core';
 import { sql } from 'drizzle-orm/sql';
 import { createInsertSchema, createSelectSchema } from 'drizzle-zod';
-import { actionIdReference } from '../../referentiels/models/action-definition.table';
 
 export const regleTypeEnum = pgEnum('regle_type', [
   'score',

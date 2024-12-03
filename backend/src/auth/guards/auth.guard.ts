@@ -1,3 +1,13 @@
+import { ConfigService } from '@/backend/utils';
+import { getErrorMessage } from '@/backend/utils/common/services/errors.helper';
+import {
+  AuthJwtPayload,
+  AuthUser,
+  isAnonymousUser,
+  isAuthenticatedUser,
+  isServiceRoleUser,
+  jwtToUser,
+} from '@/domain/auth';
 import {
   CanActivate,
   ExecutionContext,
@@ -8,18 +18,8 @@ import {
 import { Reflector } from '@nestjs/core';
 import { JwtService } from '@nestjs/jwt';
 import { Request } from 'express';
-import { getErrorMessage } from '../../common/services/errors.helper';
-import BackendConfigurationService from '../../utils/config/config.service';
 import { AllowAnonymousAccess } from '../decorators/allow-anonymous-access.decorator';
 import { AllowPublicAccess } from '../decorators/allow-public-access.decorator';
-import {
-  AuthJwtPayload,
-  AuthUser,
-  isAnonymousUser,
-  isAuthenticatedUser,
-  isServiceRoleUser,
-  jwtToUser,
-} from '../models/auth.models';
 
 export const TOKEN_QUERY_PARAM = 'token';
 export const REQUEST_JWT_PAYLOAD_PARAM = 'jwt-payload';
@@ -31,7 +31,7 @@ export class AuthGuard implements CanActivate {
   constructor(
     private jwtService: JwtService,
     private reflector: Reflector,
-    private backendConfigurationService: BackendConfigurationService
+    private configService: ConfigService
   ) {}
 
   async canActivate(context: ExecutionContext): Promise<boolean> {
@@ -56,7 +56,7 @@ export class AuthGuard implements CanActivate {
     let jwtPayload: AuthJwtPayload;
     try {
       jwtPayload = await this.jwtService.verifyAsync<AuthJwtPayload>(jwtToken, {
-        secret: this.backendConfigurationService.get('SUPABASE_JWT_SECRET'),
+        secret: this.configService.get('SUPABASE_JWT_SECRET'),
       });
     } catch (err) {
       this.logger.error(`Failed to validate token: ${getErrorMessage(err)}`);

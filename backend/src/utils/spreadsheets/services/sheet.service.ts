@@ -6,7 +6,7 @@ import * as auth from 'google-auth-library';
 import { drive_v3, google, sheets_v4 } from 'googleapis';
 import { default as _ } from 'lodash';
 import { z } from 'zod';
-import { initApplicationCredentials } from '../../common/services/gcloud.helper';
+import { initGoogleCloudCredentials } from '../../common/services/gcloud.helper';
 import { getPropertyPaths } from '../../common/services/zod.helper';
 import {
   SheetValueInputOption,
@@ -17,7 +17,7 @@ const sheets = google.sheets({ version: 'v4' });
 const drive = google.drive({ version: 'v3' });
 
 @Injectable()
-export default class SheetService {
+export class SheetService {
   private readonly logger = new Logger(SheetService.name);
 
   readonly RETRY_STRATEGY: Options = {
@@ -43,7 +43,7 @@ export default class SheetService {
     | auth.Impersonated
   > {
     if (!this.authClient) {
-      initApplicationCredentials();
+      initGoogleCloudCredentials();
       this.authClient = await google.auth.getClient({
         scopes: [
           'https://www.googleapis.com/auth/spreadsheets',

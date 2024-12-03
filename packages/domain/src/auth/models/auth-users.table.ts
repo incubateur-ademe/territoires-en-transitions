@@ -1,6 +1,5 @@
-import { pgSchema } from 'drizzle-orm/pg-core';
-import { uuid, varchar } from 'drizzle-orm/pg-core';
-import { createdAt } from '../../common/models/column.helpers';
+import { createdAt } from '@/domain/utils';
+import { pgSchema, uuid, varchar } from 'drizzle-orm/pg-core';
 
 export const authSchemaDB = pgSchema('auth');
 

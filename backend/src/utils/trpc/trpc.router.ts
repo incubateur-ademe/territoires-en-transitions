@@ -1,13 +1,13 @@
+import { PersonnesRouter } from '@/backend/collectivites/personnes.router';
+import { GetCategoriesByCollectiviteRouter } from '@/backend/collectivites/shared/routers/get-categories-by-collectivite.router';
+import { IndicateurFiltreRouter } from '@/backend/indicateurs/indicateur-filtre/indicateur-filtre.router';
+import { TrajectoiresRouter } from '@/backend/indicateurs/shared/routers/trajectoires.router';
+import { BulkEditRouter } from '@/backend/plans/fiches/bulk-edit/bulk-edit.router';
+import { CountByStatutRouter } from '@/backend/plans/fiches/count-by-statut/count-by-statut.router';
+import { FicheActionEtapeRouter } from '@/backend/plans/fiches/fiche-action-etape/fiche-action-etape.router';
 import { INestApplication, Injectable, Logger } from '@nestjs/common';
 import { createExpressMiddleware } from '@trpc/server/adapters/express';
-import { PersonnesRouter } from '../collectivites/personnes.router';
-import SupabaseService from '../common/services/supabase.service';
-import { BulkEditRouter } from '../fiches/bulk-edit/bulk-edit.router';
-import { CountByStatutRouter } from '../fiches/count-by-statut/count-by-statut.router';
-import { FicheActionEtapeRouter } from '../fiches/fiche-action-etape/fiche-action-etape.router';
-import { IndicateurFiltreRouter } from '../indicateurs/indicateur-filtre/indicateur-filtre.router';
-import { TrajectoiresRouter } from '../indicateurs/routers/trajectoires.router';
-import { GetCategoriesByCollectiviteRouter } from '../taxonomie/routers/get-categories-by-collectivite.router';
+import { SupabaseService } from '../common/services/supabase.service';
 import { createContext, TrpcService } from './trpc.service';
 
 @Injectable()

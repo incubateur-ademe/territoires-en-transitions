@@ -1,22 +1,20 @@
-import { Injectable, Logger, UnauthorizedException } from '@nestjs/common';
-import { and, eq, inArray, sql, SQL, SQLWrapper } from 'drizzle-orm';
-import CollectivitesService from '../../collectivites/shared/services/collectivites.service';
-import DatabaseService from '../../common/services/database.service';
+import { CollectivitesService } from '@/backend/collectivites';
+import { DatabaseService } from '@/backend/utils';
 import {
   AuthenticatedUser,
   AuthRole,
   AuthUser,
   isAuthenticatedUser,
   isServiceRoleUser,
-} from '../models/auth.models';
-import {
   NiveauAcces,
   niveauAccessOrdonne,
   utilisateurDroitTable,
   UtilisateurDroitType,
-} from '../models/private-utilisateur-droit.table';
-import { utilisateurSupportTable } from '../models/utilisateur-support.table';
-import { utilisateurVerifieTable } from '../models/utilisateur-verifie.table';
+  utilisateurSupportTable,
+  utilisateurVerifieTable,
+} from '@/domain/auth';
+import { Injectable, Logger, UnauthorizedException } from '@nestjs/common';
+import { and, eq, inArray, sql, SQL, SQLWrapper } from 'drizzle-orm';
 
 @Injectable()
 export class AuthService {

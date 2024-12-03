@@ -1,3 +1,5 @@
+import { collectiviteTable } from '@/domain/collectivites';
+import { createdAt, modifiedAt } from '@/domain/utils';
 import { InferInsertModel, InferSelectModel } from 'drizzle-orm';
 import {
   boolean,
@@ -7,8 +9,6 @@ import {
   serial,
   uuid,
 } from 'drizzle-orm/pg-core';
-import { collectiviteTable } from '../../collectivites/shared/models/collectivite.table';
-import { createdAt, modifiedAt } from '../../common/models/column.helpers';
 
 export enum NiveauAcces {
   LECTURE = 'lecture',

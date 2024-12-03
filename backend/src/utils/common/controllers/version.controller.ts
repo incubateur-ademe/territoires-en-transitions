@@ -1,8 +1,8 @@
 import { createZodDto } from '@anatine/zod-nestjs';
 import { Controller, Get } from '@nestjs/common';
 import { ApiOkResponse, ApiTags } from '@nestjs/swagger';
-import { AllowPublicAccess } from '../../auth/decorators/allow-public-access.decorator';
 import { versionResponseSchema } from '../models/version.models';
+import { AllowPublicAccess } from '@/backend/auth';
 
 /**
  * Création des classes de réponse à partir du schema pour générer automatiquement la documentation OpenAPI

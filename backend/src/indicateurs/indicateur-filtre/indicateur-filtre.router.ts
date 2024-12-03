@@ -1,7 +1,7 @@
+import { TrpcService } from '@/backend/utils';
 import { Injectable } from '@nestjs/common';
-import { TrpcService } from '../../trpc/trpc.service';
-import IndicateurFiltreService from './indicateur-filtre.service';
 import { getFilteredIndicateursRequestSchema } from './get-filtered-indicateurs.request';
+import IndicateurFiltreService from './indicateur-filtre.service';
 
 @Injectable()
 export class IndicateurFiltreRouter {

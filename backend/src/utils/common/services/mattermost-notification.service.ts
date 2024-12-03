@@ -1,12 +1,12 @@
 import { Injectable, Logger } from '@nestjs/common';
-import ConfigurationService from '../../utils/config/configuration.service';
+import { ConfigService } from '../../config/config.service';
 import { getErrorMessage } from './errors.helper';
 
 @Injectable()
-export default class MattermostNotificationService {
+export class MattermostNotificationService {
   private readonly logger = new Logger(MattermostNotificationService.name);
 
-  constructor(private readonly configService: ConfigurationService) {}
+  constructor(private readonly configService: ConfigService) {}
 
   async postMessage(message: string) {
     const mattermostNotificationUrl = this.configService.get(
