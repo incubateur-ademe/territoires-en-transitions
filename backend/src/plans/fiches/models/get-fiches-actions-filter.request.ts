@@ -16,7 +16,7 @@ export const getFichesActionFilterRequestSchema = z
       .pipe(z.coerce.number().array())
       .optional()
       .describe(
-        'Liste des identifiants de tags de partenaires séparés par des virgules ouaich'
+        'Liste des identifiants de tags de partenaires séparés par des virgules'
       ),
     pilote_tag_ids: z
       .string()
