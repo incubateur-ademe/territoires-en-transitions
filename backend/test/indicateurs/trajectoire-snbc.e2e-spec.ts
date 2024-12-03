@@ -3,7 +3,6 @@ import { default as request } from 'supertest';
 import { signInWith } from '../auth/auth-utils';
 import { YOLO_DODO } from '../auth/test-users.samples';
 import { getTestApp } from '../common/app-utils';
-import { VerificationTrajectoireResponseType } from '../../src/indicateurs/shared/models/verification-trajectoire.response';
 
 describe('Calcul de trajectoire SNBC', () => {
   let app: INestApplication;

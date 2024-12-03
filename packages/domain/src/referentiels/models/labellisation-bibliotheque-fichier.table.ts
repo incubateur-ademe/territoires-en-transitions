@@ -1,3 +1,4 @@
+import { collectiviteTable } from '@/domain/collectivites';
 import {
   boolean,
   foreignKey,
@@ -7,7 +8,6 @@ import {
   unique,
   varchar,
 } from 'drizzle-orm/pg-core';
-import { collectiviteTable } from '../../collectivites/shared/models/collectivite.table';
 import { labellisationSchema } from './labellisation.schema';
 
 export const labellisationBibliothequeFichierTable = labellisationSchema.table(

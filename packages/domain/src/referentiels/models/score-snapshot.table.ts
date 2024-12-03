@@ -1,3 +1,5 @@
+import { collectiviteTable } from '@/domain/collectivites';
+import { createdAt, createdBy, modifiedAt, modifiedBy } from '@/domain/utils';
 import {
   doublePrecision,
   foreignKey,
@@ -12,14 +14,7 @@ import {
 } from 'drizzle-orm/pg-core';
 import { createInsertSchema, createSelectSchema } from 'drizzle-zod';
 import z from 'zod';
-import { collectiviteTable } from '../../collectivites/shared/models/collectivite.table';
-import {
-  createdAt,
-  createdBy,
-  modifiedAt,
-  modifiedBy,
-} from '../../common/models/column.helpers';
-import { getPersonnalitionReponsesResponseSchema } from '../../personnalisations/models/get-personnalisation-reponses.response';
+import { getPersonnalitionReponsesResponseSchema } from '../scores/personnalisations/models/get-personnalisation-reponses.response';
 import { getReferentielScoresResponseSchema } from './get-referentiel-scores.response';
 import { labellisationAuditTable } from './labellisation-audit.table';
 import {

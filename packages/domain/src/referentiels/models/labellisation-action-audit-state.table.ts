@@ -1,3 +1,4 @@
+import { collectiviteTable } from '@/domain/collectivites';
 import { sql } from 'drizzle-orm';
 import {
   boolean,

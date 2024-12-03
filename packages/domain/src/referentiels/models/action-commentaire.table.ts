@@ -1,3 +1,4 @@
+import { authUsersTable } from '@/domain/auth';
 import { collectiviteTable } from '@/domain/collectivites';
 import { InferInsertModel, InferSelectModel, sql } from 'drizzle-orm';
 import {

@@ -1,3 +1,4 @@
+import { collectiviteTable } from '@/domain/collectivites';
 import {
   boolean,
   foreignKey,
@@ -7,7 +8,6 @@ import {
   uuid,
 } from 'drizzle-orm/pg-core';
 import { authUsersTable } from '../../auth/models/auth-users.table';
-import { collectiviteTable } from '../../collectivites/shared/models/collectivite.table';
 import { labellisationEtoileEnum } from './labellisation-etoile.table';
 import { labellisationSchema } from './labellisation.schema';
 import { referentielEnum } from './referentiel.enum';

@@ -1,15 +1,8 @@
-import DatabaseService from '@tet/backend/common/services/database.service';
+import { AppRouter, TrpcRouter } from '@/backend/utils';
+import { AuthenticatedUser } from '@/domain/auth';
 import { inferProcedureInput } from '@trpc/server';
 import { eq, inArray, sql } from 'drizzle-orm';
-import { getAuthUser } from '../../../test/auth/auth-utils';
-import { YOLO_DODO, YULU_DUDU } from '../../../test/auth/test-users.samples';
-import {
-  getTestApp,
-  getTestDatabase,
-  getTestRouter,
-} from '../../../test/common/app-utils';
-import { AuthenticatedUser } from '../../auth/models/auth.models';
-import { AppRouter, TrpcRouter } from '../../trpc/trpc.router';
+import { YOLO_DODO } from '../../../../test/auth/test-users.samples';
 import { ficheActionPiloteTable } from '../models/fiche-action-pilote.table';
 import {
   StatutsEnumType,

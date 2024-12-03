@@ -1,3 +1,4 @@
+import { collectiviteTable } from '@/domain/collectivites';
 import { sql } from 'drizzle-orm';
 import {
   foreignKey,
@@ -8,7 +9,6 @@ import {
   uuid,
 } from 'drizzle-orm/pg-core';
 import { authUsersTable } from '../../auth/models/auth-users.table';
-import { collectiviteTable } from '../../collectivites/shared/models/collectivite.table';
 import { labellisationBibliothequeFichierTable } from './labellisation-bibliotheque-fichier.table';
 import { labellisationSchema } from './labellisation.schema';
 
