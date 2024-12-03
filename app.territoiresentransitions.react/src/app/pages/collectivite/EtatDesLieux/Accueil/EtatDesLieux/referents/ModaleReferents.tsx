@@ -69,7 +69,7 @@ export const ModaleReferents = (props: ModaleReferentsProps) => {
           </p>
 
           <Field
-            title="Chef de projet"
+            title="Chef·fe de projet"
             message={
               <span>
                 Etes-vous inscrit-e sur l&apos;espace collaboratif{' '}
@@ -88,7 +88,7 @@ export const ModaleReferents = (props: ModaleReferentsProps) => {
               handleChange={handleChange}
             />
           </Field>
-          <Field title="Élu">
+          <Field title="Élu·e">
             <DropdownOrMessage
               collectiviteId={collectiviteId}
               fonction="politique"
@@ -96,7 +96,7 @@ export const ModaleReferents = (props: ModaleReferentsProps) => {
               handleChange={handleChange}
             />
           </Field>
-          <Field title="Conseiller">
+          <Field title="Conseiller·ère">
             <DropdownOrMessage
               collectiviteId={collectiviteId}
               fonction="conseiller"
