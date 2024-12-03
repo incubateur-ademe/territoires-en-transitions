@@ -86,15 +86,15 @@ const AccueilNonConfidentielle = ({
           </div>
           <div className="mb-8">
             <ReferentsList
-              nomFonction="Chef de projet"
+              nomFonction="Chef·fe de projet"
               referents={referentsParFonction?.technique}
             />
             <ReferentsList
-              nomFonction="Élu"
+              nomFonction="Élu·e"
               referents={referentsParFonction?.politique}
             />
             <ReferentsList
-              nomFonction="Conseiller"
+              nomFonction="Conseiller·ère"
               referents={referentsParFonction?.conseiller}
             />
           </div>
