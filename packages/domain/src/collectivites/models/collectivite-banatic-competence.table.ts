@@ -1,5 +1,5 @@
+import { banaticCompetenceTable } from '@/domain/shared';
 import { integer, pgTable, primaryKey } from 'drizzle-orm/pg-core';
-import { banaticCompetenceTable } from '../../../shared/models/banatic-competence.table';
 import { collectiviteTable } from './collectivite.table';
 
 export const collectiviteBanaticCompetenceTable = pgTable(

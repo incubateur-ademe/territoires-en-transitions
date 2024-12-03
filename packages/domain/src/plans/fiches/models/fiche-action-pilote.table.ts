@@ -1,3 +1,4 @@
+import { personneTagTable } from '@/domain/collectivites';
 import { sql } from 'drizzle-orm';
 import {
   check,
@@ -6,7 +7,6 @@ import {
   uniqueIndex,
   uuid,
 } from 'drizzle-orm/pg-core';
-import { personneTagTable } from '../../taxonomie/models/personne-tag.table';
 import { ficheActionTable } from './fiche-action.table';
 
 export const ficheActionPiloteTable = pgTable(

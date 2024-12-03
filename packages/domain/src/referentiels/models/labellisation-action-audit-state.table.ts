@@ -11,7 +11,6 @@ import {
   uuid,
 } from 'drizzle-orm/pg-core';
 import { authUsersTable } from '../../auth/models/auth-users.table';
-import { collectiviteTable } from '../../collectivites/shared/models/collectivite.table';
 import { actionIdReference } from './action-definition.table';
 import { labellisationAuditTable } from './labellisation-audit.table';
 import { labellisationSchema } from './labellisation.schema';

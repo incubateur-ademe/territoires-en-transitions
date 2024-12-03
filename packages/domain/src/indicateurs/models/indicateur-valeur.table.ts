@@ -1,3 +1,4 @@
+import { createdAt, createdBy, modifiedAt, modifiedBy } from '@/domain/utils';
 import { createZodDto } from '@anatine/zod-nestjs';
 import { extendApi } from '@anatine/zod-openapi';
 import { InferInsertModel, InferSelectModel } from 'drizzle-orm';
@@ -11,13 +12,6 @@ import {
 } from 'drizzle-orm/pg-core';
 import { createInsertSchema, createSelectSchema } from 'drizzle-zod';
 import { z } from 'zod';
-import { collectiviteTable } from '../../collectivites/shared/models/collectivite.table';
-import {
-  createdAt,
-  createdBy,
-  modifiedAt,
-  modifiedBy,
-} from '../../common/models/column.helpers';
 import {
   indicateurDefinitionSchema,
   indicateurDefinitionTable,
@@ -29,6 +23,7 @@ import {
   indicateurSourceMetadonneeTable,
   IndicateurSourceMetadonneeType,
 } from './indicateur-source-metadonnee.table';
+import { collectiviteTable } from '@/domain/collectivites';
 
 export const indicateurValeurTable = pgTable('indicateur_valeur', {
   id: serial('id').primaryKey(),

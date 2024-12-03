@@ -1,3 +1,4 @@
+import { collectiviteTable } from '@/domain/collectivites';
 import {
   boolean,
   integer,
@@ -5,7 +6,6 @@ import {
   primaryKey,
   text,
 } from 'drizzle-orm/pg-core';
-import { collectiviteTable } from '../../collectivites/shared/models/collectivite.table';
 import { indicateurDefinitionTable } from './indicateur-definition.table';
 
 export const indicateurCollectiviteTable = pgTable(

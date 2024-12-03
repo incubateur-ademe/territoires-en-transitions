@@ -1,7 +1,7 @@
 import { integer, pgTable } from 'drizzle-orm/pg-core';
 import { primaryKey } from 'drizzle-orm/pg-core';
 import { actionImpactTable } from './action-impact.table';
-import { banaticCompetenceTable } from '../../taxonomie/models/banatic-competence.table';
+import { banaticCompetenceTable } from '@/domain/shared';
 
 export const actionImpactBanaticCompetenceTable = pgTable(
   'action_impact_banatic_competence',

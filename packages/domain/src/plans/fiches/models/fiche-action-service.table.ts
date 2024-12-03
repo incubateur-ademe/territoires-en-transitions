@@ -1,5 +1,5 @@
+import { serviceTagTable } from '@/domain/collectivites';
 import { integer, pgTable, primaryKey } from 'drizzle-orm/pg-core';
-import { serviceTagTable } from '../../taxonomie/models/service-tag.table';
 import { ficheActionTable } from './fiche-action.table';
 
 export const ficheActionServiceTagTable = pgTable(

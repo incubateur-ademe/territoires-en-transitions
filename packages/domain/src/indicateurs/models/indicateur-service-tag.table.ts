@@ -1,6 +1,5 @@
+import { collectiviteTable, serviceTagTable } from '@/domain/collectivites';
 import { integer, pgTable, primaryKey } from 'drizzle-orm/pg-core';
-import { collectiviteTable } from '../../collectivites/shared/models/collectivite.table';
-import { serviceTagTable } from '../../taxonomie/models/service-tag.table';
 import { indicateurDefinitionTable } from './indicateur-definition.table';
 
 export const indicateurServiceTagTable = pgTable(

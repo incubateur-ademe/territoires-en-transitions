@@ -1,6 +1,6 @@
+import { collectiviteAvecTypeSchema } from '@/domain/collectivites';
 import { extendApi } from '@anatine/zod-openapi';
 import { z } from 'zod';
-import { collectiviteAvecTypeSchema } from '../../collectivites/shared/models/identite-collectivite.dto';
 import { ComputeScoreMode } from './compute-scores-mode.enum';
 import { referentielActionAvecScoreDtoSchema } from './referentiel-action-avec-score.dto';
 import { ReferentielType } from './referentiel.enum';

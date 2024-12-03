@@ -1,11 +1,11 @@
-import { collectiviteTable } from '@/backend/collectivites';
-import { tempsDeMiseEnOeuvreTable } from '@/backend/shared';
+import { collectiviteTable } from '@/domain/collectivites';
+import { tempsDeMiseEnOeuvreTable } from '@/domain/shared';
 import {
   createdAt,
   getEnumValues,
   modifiedAt,
   modifiedBy,
-} from '@/backend/utils';
+} from '@/domain/utils';
 import { InferInsertModel } from 'drizzle-orm';
 import {
   boolean,

@@ -1,3 +1,4 @@
+import { collectiviteTable } from '@/domain/collectivites';
 import { InferInsertModel, InferSelectModel, sql } from 'drizzle-orm';
 import {
   boolean,
@@ -9,7 +10,6 @@ import {
   uuid,
 } from 'drizzle-orm/pg-core';
 import { createInsertSchema, createSelectSchema } from 'drizzle-zod';
-import { collectiviteTable } from '../../collectivites/shared/models/collectivite.table';
 import { actionIdReference } from './action-definition.table';
 
 export const avancementEnum = pgEnum('avancement', [

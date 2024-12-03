@@ -9,5 +9,5 @@
     "src/**/*.e2e-spec.ts",
     "src/**/*.test.ts"
   ],
-  "include": ["src/**/*.ts"]
+  "include": ["src/**/*.ts", "../packages/domain/src/utils/enum.utils.ts"]
 }

@@ -1,6 +1,6 @@
+import { serviceTagTable } from '@/domain/collectivites';
 import { integer, pgTable, primaryKey } from 'drizzle-orm/pg-core';
 import { ficheActionTable } from './fiche-action.table';
-import { serviceTagTable } from '../../taxonomie/models/service-tag.table';
 
 export const ficheActionServiceTagTable = pgTable(
   'fiche_action_service_tag',

@@ -1,14 +1,9 @@
-import { date, integer, pgTable, primaryKey, text } from 'drizzle-orm/pg-core';
+import { createdAt, createdBy, modifiedAt, modifiedBy } from '@/domain/utils';
 import { InferSelectModel } from 'drizzle-orm';
-import { z } from 'zod';
+import { date, integer, pgTable, primaryKey, text } from 'drizzle-orm/pg-core';
 import { createInsertSchema, createSelectSchema } from 'drizzle-zod';
+import { z } from 'zod';
 import { ficheActionTable } from './fiche-action.table';
-import {
-  createdAt,
-  createdBy,
-  modifiedAt,
-  modifiedBy,
-} from '../../common/models/column.helpers';
 
 export const ficheActionNoteTable = pgTable(
   'fiche_action_note',
