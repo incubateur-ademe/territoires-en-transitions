@@ -1,5 +1,5 @@
-import { useEffect, useState } from 'react';
 import classNames from 'classnames';
+import { useEffect, useState } from 'react';
 
 import {
   Badge,
@@ -16,6 +16,7 @@ import PictoExpert from 'ui/pictogrammes/PictoExpert';
 import SpinnerLoader from 'ui/shared/SpinnerLoader';
 
 import { Indicateurs } from '@tet/api';
+import { OpenState } from '@tet/ui/utils/types';
 import { getIndicateurGroup } from 'app/pages/collectivite/Indicateurs/lists/IndicateurCard/utils';
 import { useFilteredIndicateurDefinitions } from 'app/pages/collectivite/Indicateurs/lists/useFilteredIndicateurDefinitions';
 import {
@@ -23,7 +24,6 @@ import {
   useSelectedFilters,
 } from 'app/pages/collectivite/TableauDeBord/components/ModuleFiltreBadges';
 import { makeCollectiviteIndicateursUrl } from 'app/paths';
-import { OpenState } from '@tet/ui/utils/types';
 import { useCurrentCollectivite } from 'core-logic/hooks/useCurrentCollectivite';
 import { useExportIndicateurs } from '../Indicateur/useExportIndicateurs';
 
@@ -61,10 +61,16 @@ type Props = {
   sortSettings?: SortIndicateurSettings;
   /** Rend les cartes indicateurs éditables */
   isEditable?: boolean;
+  // pour le tracking
+  pageName:
+    | 'app/indicateurs/tous'
+    | 'app/indicateurs/collectivite'
+    | 'app/tdb/personnel/indicateurs-de-suivi-de-mes-plans';
 };
 
 /** Liste de fiches action avec tri et options de fitlre */
 const IndicateursListe = ({
+  pageName,
   sortSettings = {
     defaultSort: 'text',
   },
@@ -150,7 +156,7 @@ const IndicateursListe = ({
 
   // fonction d'export
   const { mutate: exportIndicateurs, isLoading: isDownloadingExport } =
-    useExportIndicateurs(data);
+    useExportIndicateurs(pageName, data);
 
   /** Affiche ou cache les graphiques des cartes */
   const [displayGraphs, setDisplayGraphs] = useState(true);
