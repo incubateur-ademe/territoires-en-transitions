@@ -1,14 +1,9 @@
 import { INestApplication } from '@nestjs/common';
 import { default as request } from 'supertest';
-import { CalculTrajectoireResultatMode } from '../../src/indicateurs/models/calcul-trajectoire.request';
-import { CalculTrajectoireResponseType } from '../../src/indicateurs/models/calcul-trajectoire.response';
-import {
-  VerificationTrajectoireResponseType,
-  VerificationTrajectoireStatus,
-} from '../../src/indicateurs/models/verification-trajectoire.response';
 import { signInWith } from '../auth/auth-utils';
 import { YOLO_DODO } from '../auth/test-users.samples';
 import { getTestApp } from '../common/app-utils';
+import { VerificationTrajectoireResponseType } from '../../src/indicateurs/shared/models/verification-trajectoire.response';
 
 describe('Calcul de trajectoire SNBC', () => {
   let app: INestApplication;

@@ -1,8 +1,8 @@
 import { extendApi } from '@anatine/zod-openapi';
 import { z } from 'zod';
-import { epciSchema } from '../../collectivites/shared/models/epci.table';
 import { donneesCalculTrajectoireARemplirSchema } from './donnees-calcul-trajectoire-a-remplir.dto';
 import { IndicateurValeurType } from './indicateur-valeur.table';
+import { epciSchema } from '@/backend/collectivites';
 
 export enum VerificationTrajectoireStatus {
   COMMUNE_NON_SUPPORTEE = 'commune_non_supportee',
