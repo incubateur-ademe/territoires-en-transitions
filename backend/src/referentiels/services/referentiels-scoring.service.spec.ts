@@ -14,7 +14,7 @@ import { caePersonnalisationRegles } from '../../personnalisations/models/sample
 import ExpressionParserService from '../../personnalisations/services/expression-parser.service';
 import PersonnalisationsService from '../../personnalisations/services/personnalisations-service';
 import SheetService from '../../spreadsheets/services/sheet.service';
-import ConfigurationService from '../../utils/config/configuration.service';
+import ConfigurationService from '../../utils/config/config.service';
 import { ActionType } from '../models/action-type.enum';
 import { GetActionStatutsResponseType } from '../models/get-action-statuts.response';
 import { ReferentielActionWithScoreType } from '../models/referentiel-action-avec-score.dto';

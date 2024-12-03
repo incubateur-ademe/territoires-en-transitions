@@ -9,11 +9,9 @@ import { IndicateursModule } from './indicateurs/indicateurs.module';
 import { PersonnalisationsModule } from './personnalisations/personnalisations.module';
 import { ReferentielsModule } from './referentiels/referentiels.module';
 import { SheetModule } from './spreadsheets/sheet.module';
-import { TaxonomieModule } from './taxonomie/taxonomie.module';
 import { TrpcModule } from './trpc/trpc.module';
 import { TrpcRouter } from './trpc/trpc.router';
 import configuration from './utils/config/configuration';
-import { ConfigurationModule } from './utils/config/configuration.module';
 
 @Module({
   imports: [
@@ -23,7 +21,7 @@ import { ConfigurationModule } from './utils/config/configuration.module';
       // validate: validateBackendConfiguration,
       load: [configuration],
     }),
-    ConfigurationModule,
+    ConfigModule,
     CommonModule,
     TrpcModule,
     SheetModule,
@@ -33,7 +31,6 @@ import { ConfigurationModule } from './utils/config/configuration.module';
     FichesActionModule,
     PersonnalisationsModule,
     ReferentielsModule,
-    TaxonomieModule,
   ],
   providers: [TrpcRouter],
 })

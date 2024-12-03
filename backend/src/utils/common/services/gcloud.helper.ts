@@ -3,7 +3,7 @@ import * as fs from 'fs';
 
 const logger = new Logger('gcloud.helper');
 
-export const initApplicationCredentials = () => {
+export const initGoogleCloudCredentials = () => {
   if (
     process.env.GCLOUD_SERVICE_ACCOUNT_KEY &&
     !process.env.GOOGLE_APPLICATION_CREDENTIALS
@@ -15,13 +15,12 @@ export const initApplicationCredentials = () => {
     let credentialsJson = process.env.GCLOUD_SERVICE_ACCOUNT_KEY;
     if (!credentialsJson.includes('{')) {
       // Assume it's a base64 encoded string
-      credentialsJson = Buffer.from(credentialsJson, 'base64').toString('utf-8');
+      credentialsJson = Buffer.from(credentialsJson, 'base64').toString(
+        'utf-8'
+      );
     }
-    
-    fs.writeFileSync(
-      serviceAccountFile,
-      credentialsJson
-    );
+
+    fs.writeFileSync(serviceAccountFile, credentialsJson);
     process.env.GOOGLE_APPLICATION_CREDENTIALS = serviceAccountFile;
   }
 };

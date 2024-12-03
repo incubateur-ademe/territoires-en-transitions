@@ -10,7 +10,7 @@ import slugify from 'slugify';
 import { AuthenticatedUser } from '../../../auth/models/auth.models';
 import { EpciType } from '../../../collectivites/shared/models/epci.table';
 import GroupementsService from '../../../collectivites/shared/services/groupements.service';
-import ConfigurationService from '../../../utils/config/configuration.service';
+import ConfigurationService from '../../../utils/config/config.service';
 import {
   CalculTrajectoireRequestType,
   CalculTrajectoireReset,

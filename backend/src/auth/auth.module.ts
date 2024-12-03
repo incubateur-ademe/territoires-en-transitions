@@ -2,8 +2,8 @@ import { Global, Module } from '@nestjs/common';
 import { APP_GUARD } from '@nestjs/core';
 import { JwtModule } from '@nestjs/jwt';
 import { CollectivitesModule } from '../collectivites/collectivites.module';
-import { CommonModule } from '../common/common.module';
-import { ConfigurationModule } from '../utils/config/configuration.module';
+import { CommonModule } from '../utils/common/common.module';
+import { ConfigModule } from '../utils/config/config.module';
 import { AuthGuard } from './guards/auth.guard';
 import { AuthService } from './services/auth.service';
 
@@ -14,7 +14,7 @@ import { AuthService } from './services/auth.service';
       global: true,
       secret: process.env.SUPABASE_JWT_SECRET,
     }),
-    ConfigurationModule,
+    ConfigModule,
     CommonModule,
     CollectivitesModule,
   ],

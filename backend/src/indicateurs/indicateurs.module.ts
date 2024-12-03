@@ -4,7 +4,7 @@ import { CollectivitesModule } from '../collectivites/collectivites.module';
 import { CommonModule } from '../common/common.module';
 import { SheetModule } from '../spreadsheets/sheet.module';
 import { TrpcModule } from '../trpc/trpc.module';
-import { ConfigurationModule } from '../utils/config/configuration.module';
+import { ConfigModule } from '../utils/config/config.module';
 import { IndicateursController } from './controllers/indicateurs.controller';
 import { TrajectoiresController } from './controllers/trajectoires.controller';
 import { IndicateurFiltreRouter } from './indicateur-filtre/indicateur-filtre.router';
@@ -19,7 +19,7 @@ import TrajectoiresXlsxService from './shared/services/trajectoires-xlsx.service
 
 @Module({
   imports: [
-    ConfigurationModule,
+    ConfigModule,
     CommonModule,
     TrpcModule,
     AuthModule,

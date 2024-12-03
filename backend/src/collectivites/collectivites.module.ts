@@ -1,10 +1,12 @@
 import { Module } from '@nestjs/common';
-import { CommonModule } from '../common/common.module';
-import { CollectiviteController } from './controllers/collectivite.controller';
+import { CommonModule } from '../utils/common/common.module';
 import { PersonnesRouter } from './personnes.router';
-import CollectivitesService from './shared/services/collectivites.service';
+import { CollectiviteController } from './shared/controllers/collectivite.controller';
+import { GetCategoriesByCollectiviteRouter } from './shared/routers/get-categories-by-collectivite.router';
+import { CollectivitesService } from './shared/services/collectivites.service';
 import GroupementsService from './shared/services/groupements.service';
 import { PersonnesService } from './shared/services/personnes.service';
+import { TagService } from './shared/services/tag.service';
 
 @Module({
   imports: [CommonModule],
@@ -13,8 +15,15 @@ import { PersonnesService } from './shared/services/personnes.service';
     GroupementsService,
     PersonnesService,
     PersonnesRouter,
+    TagService,
+    GetCategoriesByCollectiviteRouter,
   ],
-  exports: [CollectivitesService, GroupementsService, PersonnesRouter],
+  exports: [
+    CollectivitesService,
+    GroupementsService,
+    PersonnesRouter,
+    GetCategoriesByCollectiviteRouter,
+  ],
   controllers: [CollectiviteController],
 })
 export class CollectivitesModule {}

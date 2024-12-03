@@ -2,7 +2,7 @@ import { INestApplication } from '@nestjs/common';
 import { eq } from 'drizzle-orm';
 import { default as request } from 'supertest';
 import { describe, expect, it } from 'vitest';
-import DatabaseService from '../../src/common/services/database.service';
+
 import { UpdateFicheActionRequestClass } from '../../src/fiches/controllers/fiches-action.controller';
 import { ficheActionActionTable } from '../../src/fiches/models/fiche-action-action.table';
 import { ficheActionAxeTable } from '../../src/fiches/models/fiche-action-axe.table';
@@ -42,6 +42,7 @@ import {
   thematiquesFixture,
 } from './fixtures/fiche-action-relations.fixture';
 import { ficheActionFixture } from './fixtures/fiche-action.fixture';
+import DatabaseService from '@/backend/utils/common/services/database.service';
 
 const collectiviteId = 1;
 const ficheActionId = 9999;

@@ -4,7 +4,7 @@ import { CollectivitesModule } from '../collectivites/collectivites.module';
 import { CommonModule } from '../common/common.module';
 import { PersonnalisationsModule } from '../personnalisations/personnalisations.module';
 import { SheetModule } from '../spreadsheets/sheet.module';
-import { ConfigurationModule } from '../utils/config/configuration.module';
+import { ConfigModule } from '../utils/config/config.module';
 import { ReferentielsScoringController } from './controllers/referentiels-scoring.controller';
 import { ReferentielsController } from './controllers/referentiels.controller';
 import LabellisationService from './services/labellisation.service';
@@ -17,7 +17,7 @@ import ReferentielsService from './services/referentiels.service';
     AuthModule,
     CollectivitesModule,
     CommonModule,
-    ConfigurationModule,
+    ConfigModule,
     SheetModule,
     PersonnalisationsModule,
   ],

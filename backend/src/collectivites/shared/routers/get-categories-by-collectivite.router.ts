@@ -1,11 +1,11 @@
 import { Injectable } from '@nestjs/common';
 import { z } from 'zod';
-import TagService from '../services/tag.service';
 import { TrpcService } from '../../trpc/trpc.service';
+import TagService from '../services/tag.service';
 
 const inputSchema = z.object({
   collectiviteId: z.number(),
-  withPredefinedTags : z.boolean().default(true)
+  withPredefinedTags: z.boolean().default(true),
 });
 
 @Injectable()
@@ -20,7 +20,11 @@ export class GetCategoriesByCollectiviteRouter {
       .input(inputSchema)
       .query(({ ctx, input }) => {
         const { collectiviteId, withPredefinedTags } = input;
-        return this.service.getCategoriesByCollectivite(collectiviteId, withPredefinedTags, ctx.user);
+        return this.service.getCategoriesByCollectivite(
+          collectiviteId,
+          withPredefinedTags,
+          ctx.user
+        );
       }),
   });
 }

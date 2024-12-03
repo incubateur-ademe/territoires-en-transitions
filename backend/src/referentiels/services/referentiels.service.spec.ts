@@ -2,7 +2,7 @@ import { Test } from '@nestjs/testing';
 import DatabaseService from '../../common/services/database.service';
 import ExpressionParserService from '../../personnalisations/services/expression-parser.service';
 import SheetService from '../../spreadsheets/services/sheet.service';
-import ConfigurationService from '../../utils/config/configuration.service';
+import ConfigurationService from '../../utils/config/config.service';
 import { ActionDefinitionAvecParentType } from '../models/action-definition.table';
 import { CreateActionOrigineType } from '../models/action-origine.table';
 import { ActionType } from '../models/action-type.enum';

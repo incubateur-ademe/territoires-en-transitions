@@ -1,7 +1,6 @@
 import { Injectable, Logger, NotFoundException } from '@nestjs/common';
 import { aliasedTable, eq, or } from 'drizzle-orm';
 import { isNil } from 'es-toolkit';
-import DatabaseService from '../../common/services/database.service';
 import { collectiviteTestTable } from '../models/collectivite-test.table';
 import { collectiviteTable } from '../models/collectivite.table';
 import { communeTable, CommuneType } from '../models/commune.table';
@@ -15,9 +14,10 @@ import {
 import { banaticTable } from '../models/imports-banatic.table';
 import { importCommuneTable } from '../models/imports-commune.table';
 import { regionTable } from '../models/imports-region.table';
+import { DatabaseService } from '@/backend/utils';
 
 @Injectable()
-export default class CollectivitesService {
+export class CollectivitesService {
   private readonly logger = new Logger(CollectivitesService.name);
 
   private readonly POPULATION_BORNES_SUP = [10000, 20000, 50000, 100000];

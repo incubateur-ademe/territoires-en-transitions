@@ -32,7 +32,7 @@ import { sleep } from '../../common/services/sleep.helper';
 import { GetPersonnalitionConsequencesResponseType } from '../../personnalisations/models/get-personnalisation-consequences.response';
 import ExpressionParserService from '../../personnalisations/services/expression-parser.service';
 import PersonnalisationsService from '../../personnalisations/services/personnalisations-service';
-import ConfigurationService from '../../utils/config/configuration.service';
+import ConfigurationService from '../../utils/config/config.service';
 import { actionCommentaireTable } from '../models/action-commentaire.table';
 import {
   ActionPointScoreType,
