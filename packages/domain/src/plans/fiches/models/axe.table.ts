@@ -1,12 +1,8 @@
+import { collectiviteTable } from '@/domain/collectivites';
+import { createdAt, modifiedAt, modifiedBy } from '@/domain/utils';
 import { InferInsertModel } from 'drizzle-orm';
 import { integer, pgTable, serial, text } from 'drizzle-orm/pg-core';
 import { createSelectSchema } from 'drizzle-zod';
-import { collectiviteTable } from '../../collectivites/models/collectivite.table';
-import {
-  createdAt,
-  modifiedAt,
-  modifiedBy,
-} from '../../common/models/column.helpers';
 import { panierTable } from '../../paniers/models/panier.table';
 import { planActionTypeTable } from './plan-action-type.table';
 

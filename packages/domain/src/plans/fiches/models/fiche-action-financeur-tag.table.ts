@@ -1,6 +1,6 @@
+import { financeurTagTable } from '@/domain/collectivites';
 import { integer, pgTable, serial } from 'drizzle-orm/pg-core';
 import { ficheActionTable } from './fiche-action.table';
-import { financeurTagTable } from '../../taxonomie/models/financeur-tag.table';
 
 export const ficheActionFinanceurTagTable = pgTable(
   'fiche_action_financeur_tag',
