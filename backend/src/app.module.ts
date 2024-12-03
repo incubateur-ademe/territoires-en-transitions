@@ -1,26 +1,20 @@
 import { Module } from '@nestjs/common';
-import { ConfigModule } from '@nestjs/config';
 import { SentryModule } from '@sentry/nestjs/setup';
 import { AuthModule } from './auth/auth.module';
 import { CollectivitesModule } from './collectivites/collectivites.module';
-import { CommonModule } from './common/common.module';
-import { FichesActionModule } from './fiches/fiches-action.module';
 import { IndicateursModule } from './indicateurs/indicateurs.module';
-import { PersonnalisationsModule } from './personnalisations/personnalisations.module';
+import { FichesActionModule } from './plans/fiches/fiches-action.module';
 import { ReferentielsModule } from './referentiels/referentiels.module';
-import { SheetModule } from './spreadsheets/sheet.module';
-import { TrpcModule } from './trpc/trpc.module';
-import { TrpcRouter } from './trpc/trpc.router';
-import configuration from './utils/config/configuration';
+import { PersonnalisationsModule } from './referentiels/scores/personnalisations/personnalisations.module';
+import { CommonModule } from './utils/common/common.module';
+import { ConfigModule } from './utils/config/config.module';
+import { SheetModule } from './utils/spreadsheets/sheet.module';
+import { TrpcModule } from './utils/trpc/trpc.module';
+import { TrpcRouter } from './utils/trpc/trpc.router';
 
 @Module({
   imports: [
     SentryModule.forRoot(),
-    ConfigModule.forRoot({
-      ignoreEnvFile: process.env.NODE_ENV === 'production', // In production, environment variables are set by the deployment
-      // validate: validateBackendConfiguration,
-      load: [configuration],
-    }),
     ConfigModule,
     CommonModule,
     TrpcModule,

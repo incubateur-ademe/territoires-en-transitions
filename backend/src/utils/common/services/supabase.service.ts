@@ -1,15 +1,15 @@
 import { Injectable, Logger } from '@nestjs/common';
 import { createClient } from '@supabase/supabase-js';
+import { ConfigService } from '../../config/config.service';
 import { Database, DBClient } from '@tet/api';
-import ConfigurationService from '../../utils/config/configuration.service';
 
 @Injectable()
-export default class SupabaseService {
+export class SupabaseService {
   private readonly logger = new Logger(SupabaseService.name);
 
   public readonly client: DBClient;
 
-  constructor(configService: ConfigurationService) {
+  constructor(configService: ConfigService) {
     const supabaseUrl = configService.get('SUPABASE_URL');
     this.logger.log(`Initializing supabase service with url: ${supabaseUrl}`);
     this.client = createClient<Database>(

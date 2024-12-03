@@ -1,10 +1,9 @@
+import { AuthenticatedUser, AuthService } from '@/backend/auth';
+import { DatabaseService } from '@/backend/utils';
 import { Injectable, Logger } from '@nestjs/common';
 import { and, eq, inArray, isNull, or } from 'drizzle-orm';
-import { AuthenticatedUser } from '../../auth/models/auth.models';
-import { AuthService } from '../../auth/services/auth.service';
-import { groupementCollectiviteTable } from '../../collectivites/models/groupement-collectivite.table';
-import DatabaseService from '../../common/services/database.service';
 import { categorieTagTable } from '../models/categorie-tag.table';
+import { groupementCollectiviteTable } from '../models/groupement-collectivite.table';
 import { partenaireTagTable } from '../models/partenaire-tag.table';
 import { TagType } from '../models/tag.table-base';
 

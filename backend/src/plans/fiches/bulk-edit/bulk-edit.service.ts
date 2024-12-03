@@ -5,12 +5,12 @@ import { and, inArray, or } from 'drizzle-orm';
 import z from 'zod';
 import { AuthService } from '../../auth/services/auth.service';
 import DatabaseService from '../../common/services/database.service';
+import { updateFicheActionRequestSchema } from '../edit/update-fiche-action.request';
 import { ficheActionPiloteTable } from '../models/fiche-action-pilote.table';
 import {
   ficheActionSchema,
   ficheActionTable,
 } from '../models/fiche-action.table';
-import { updateFicheActionRequestSchema } from '../models/update-fiche-action.request';
 
 @Injectable()
 export class BulkEditService {

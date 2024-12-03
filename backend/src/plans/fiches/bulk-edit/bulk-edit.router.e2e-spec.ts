@@ -12,7 +12,7 @@ import { AuthenticatedUser } from '../../auth/models/auth.models';
 import { AppRouter, TrpcRouter } from '../../trpc/trpc.router';
 import { ficheActionPiloteTable } from '../models/fiche-action-pilote.table';
 import {
-  FicheActionStatutsEnumType,
+  StatutsEnumType,
   ficheActionTable,
 } from '../models/fiche-action.table';
 
@@ -80,7 +80,7 @@ describe('BulkEditRouter', () => {
 
     const input1: Input = {
       ficheIds,
-      statut: FicheActionStatutsEnumType.EN_RETARD,
+      statut: StatutsEnumType.EN_RETARD,
     };
 
     const result = await caller.plans.fiches.bulkEdit(input1);
@@ -174,7 +174,7 @@ describe('BulkEditRouter', () => {
 
     const input = {
       ficheIds: [...ficheIds, newFiche.id],
-      statut: FicheActionStatutsEnumType.EN_RETARD,
+      statut: StatutsEnumType.EN_RETARD,
     };
 
     await expect(() =>
@@ -187,7 +187,7 @@ describe('BulkEditRouter', () => {
 
     const input = {
       ficheIds,
-      statut: FicheActionStatutsEnumType.EN_RETARD,
+      statut: StatutsEnumType.EN_RETARD,
     };
 
     await expect(() =>

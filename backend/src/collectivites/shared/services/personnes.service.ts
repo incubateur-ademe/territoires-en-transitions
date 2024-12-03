@@ -1,4 +1,4 @@
-import { dcpTable } from '@/backend/auth';
+import { dcpTable, utilisateurDroitTable } from '@/backend/auth';
 import { DatabaseService } from '@/backend/utils';
 import { Injectable } from '@nestjs/common';
 import { and, eq, sql } from 'drizzle-orm';

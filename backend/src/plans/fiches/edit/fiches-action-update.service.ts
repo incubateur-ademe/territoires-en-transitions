@@ -1,3 +1,5 @@
+import { AuthenticatedUser } from '@/backend/auth';
+import { DatabaseService } from '@/backend/utils';
 import { Injectable, Logger, NotFoundException } from '@nestjs/common';
 import {
   and,
@@ -12,9 +14,7 @@ import {
 import { PgTable, PgTransaction } from 'drizzle-orm/pg-core';
 import { PostgresJsQueryResultHKT } from 'drizzle-orm/postgres-js';
 import { toCamel } from 'postgres';
-import { AuthenticatedUser } from '../../auth/models/auth.models';
-import { buildConflictUpdateColumns } from '../../common/services/conflict.helper';
-import DatabaseService from '../../common/services/database.service';
+import { FicheService } from '../fiche.service';
 import { ficheActionActionTable } from '../models/fiche-action-action.table';
 import { ficheActionAxeTable } from '../models/fiche-action-axe.table';
 import { ficheActionEffetAttenduTable } from '../models/fiche-action-effet-attendu.table';
@@ -36,8 +36,7 @@ import {
   ficheActionTable,
   updateFicheActionSchema,
 } from '../models/fiche-action.table';
-import { UpdateFicheActionRequestType } from '../models/update-fiche-action.request';
-import FicheService from './fiche.service';
+import { UpdateFicheActionRequestType } from './update-fiche-action.request';
 
 type TxType = PgTransaction<
   PostgresJsQueryResultHKT,

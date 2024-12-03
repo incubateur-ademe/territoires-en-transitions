@@ -1,20 +1,24 @@
-import z from 'zod';
-import { indicateurDefinitionSchema } from '../../indicateurs/models/indicateur-definition.table';
-import { actionRelationSchema } from '../../referentiels/models/action-relation.table';
-import { effetAttenduSchema } from '../../taxonomie/models/effet-attendu.table';
-import { financeurTagSchema } from '../../taxonomie/models/financeur-tag.table';
-import { partenaireTagSchema } from '../../taxonomie/models/partenaire-tag.table';
-import { serviceTagSchema } from '../../taxonomie/models/service-tag.table';
-import { sousThematiqueSchema } from '../../taxonomie/models/sous-thematique.table';
-import { structureTagSchema } from '../../taxonomie/models/structure-tag.table';
-import { thematiqueSchema } from '../../taxonomie/models/thematique.table';
-import { axeSchema } from './axe.table';
 import {
-  FicheActionCiblesEnumType,
+  financeurTagSchema,
+  partenaireTagSchema,
+  serviceTagSchema,
+  structureTagSchema,
+} from '@/backend/collectivites';
+import { indicateurDefinitionSchema } from '@/backend/indicateurs';
+import { actionRelationSchema } from '@/backend/referentiels';
+import {
+  effetAttenduSchema,
+  sousThematiqueSchema,
+  thematiqueSchema,
+} from '@/backend/shared';
+import z from 'zod';
+import { axeSchema } from '../models/axe.table';
+import {
+  CiblesEnumType,
   ficheActionSchema,
   piliersEciEnumType,
   updateFicheActionSchema,
-} from './fiche-action.table';
+} from '../models/fiche-action.table';
 
 // There is no proper Pilote or Referent tables, so we use a custom schema here
 export const personneSchema = z.object({
@@ -41,7 +45,7 @@ export const updateFicheActionRequestSchema = updateFicheActionSchema.extend({
     )
     .array()
     .nullish(),
-  cibles: z.nativeEnum(FicheActionCiblesEnumType).array().nullish(),
+  cibles: z.nativeEnum(CiblesEnumType).array().nullish(),
   // Overriding because numeric and timestamp types are not properly converted otherwise (a bug with zod/drizzle ?)
   budgetPrevisionnel: z
     .union([z.string(), z.number()])
@@ -87,5 +91,3 @@ export const updateFicheActionRequestSchema = updateFicheActionSchema.extend({
 export type UpdateFicheActionRequestType = z.infer<
   typeof updateFicheActionRequestSchema
 >;
-
-export type UpdateFicheActionType = z.infer<typeof updateFicheActionSchema>;

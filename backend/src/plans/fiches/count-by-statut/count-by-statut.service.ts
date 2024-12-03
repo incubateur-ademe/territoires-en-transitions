@@ -22,9 +22,9 @@ import { ficheActionPartenaireTagTable } from '../models/fiche-action-partenaire
 import { ficheActionPiloteTable } from '../models/fiche-action-pilote.table';
 import { ficheActionServiceTagTable } from '../models/fiche-action-service.table';
 import {
-  FicheActionStatutsEnumType,
   ficheActionTable,
   SANS_STATUT_FICHE_ACTION_SYNTHESE_KEY,
+  StatutsEnumType,
 } from '../models/fiche-action.table';
 import { GetFichesActionFilterRequestType } from '../models/get-fiches-actions-filter.request';
 
@@ -52,7 +52,7 @@ export class CountByStatutService {
       )}`
     );
 
-    const listeValeurs = Object.values(FicheActionStatutsEnumType);
+    const listeValeurs = Object.values(StatutsEnumType);
     const conditions = this.getConditions(collectiviteId, filter);
 
     const result = await this.countBy(

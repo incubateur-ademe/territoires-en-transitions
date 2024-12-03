@@ -1,4 +1,11 @@
-import { getEnumValues } from '@tet/backend/utils/enum.utils';
+import { collectiviteTable } from '@/backend/collectivites';
+import { tempsDeMiseEnOeuvreTable } from '@/backend/shared';
+import {
+  createdAt,
+  getEnumValues,
+  modifiedAt,
+  modifiedBy,
+} from '@/backend/utils';
 import { InferInsertModel } from 'drizzle-orm';
 import {
   boolean,
@@ -13,13 +20,6 @@ import {
 } from 'drizzle-orm/pg-core';
 import { createInsertSchema, createSelectSchema } from 'drizzle-zod';
 import { z } from 'zod';
-import { collectiviteTable } from '../../collectivites/models/collectivite.table';
-import {
-  createdAt,
-  modifiedAt,
-  modifiedBy,
-} from '../../common/models/column.helpers';
-import { tempsDeMiseEnOeuvreTable } from '../../taxonomie/models/temps-de-mise-en-oeuvre.table';
 
 export enum piliersEciEnumType {
   APPROVISIONNEMENT_DURABLE = 'Approvisionnement durable',
@@ -43,7 +43,7 @@ export const piliersEciPgEnum = pgEnum(
   piliersEciEnumValues
 );
 
-export enum ficheActionResultatsAttendusEnumType {
+export enum ResultatsAttendusEnumType {
   ADAPTATION_CHANGEMENT_CLIMATIQUE = 'Adaptation au changement climatique',
   ALLONGEMENT_DUREE_USAGE = 'Allongement de la durée d’usage',
   AMELIORATION_QUALITE_VIE = 'Amélioration de la qualité de vie',
@@ -59,13 +59,13 @@ export enum ficheActionResultatsAttendusEnumType {
 
 export const ficheActionResultatsAttendusEnum = pgEnum(
   'fiche_action_resultats_attendus',
-  Object.values(ficheActionResultatsAttendusEnumType) as [
-    ficheActionResultatsAttendusEnumType,
-    ...ficheActionResultatsAttendusEnumType[]
+  Object.values(ResultatsAttendusEnumType) as [
+    ResultatsAttendusEnumType,
+    ...ResultatsAttendusEnumType[]
   ]
 );
 
-export enum FicheActionStatutsEnumType {
+export enum StatutsEnumType {
   A_VENIR = 'À venir',
   EN_COURS = 'En cours',
   REALISE = 'Réalisé',
@@ -78,11 +78,11 @@ export enum FicheActionStatutsEnumType {
 
 export const SANS_STATUT_FICHE_ACTION_SYNTHESE_KEY = 'Sans statut';
 
-export const statutsEnumValues = getEnumValues(FicheActionStatutsEnumType);
+export const statutsEnumValues = getEnumValues(StatutsEnumType);
 export const statutsEnumSchema = z.enum(statutsEnumValues);
 export const statutsPgEnum = pgEnum('fiche_action_statuts', statutsEnumValues);
 
-export enum FicheActionCiblesEnumType {
+export enum CiblesEnumType {
   GRAND_PUBLIC = 'Grand public',
   ASSOCIATIONS = 'Associations',
   GRAND_PUBLIC_ET_ASSOCIATIONS = 'Grand public et associations',
@@ -98,9 +98,10 @@ export enum FicheActionCiblesEnumType {
   AGENTS = 'Agents',
 }
 
-export const ficheActionCiblesEnumValues = Object.values(
-  FicheActionCiblesEnumType
-) as [FicheActionCiblesEnumType, ...FicheActionCiblesEnumType[]];
+export const ficheActionCiblesEnumValues = Object.values(CiblesEnumType) as [
+  CiblesEnumType,
+  ...CiblesEnumType[]
+];
 
 export const ficheActionCiblesEnumSchema = z.enum(ficheActionCiblesEnumValues);
 
@@ -137,7 +138,7 @@ export const ficheActionTable = pgTable('fiche_action', {
     precision: 12,
     scale: 0,
   }),
-  statut: statutsPgEnum('statut').default(FicheActionStatutsEnumType.A_VENIR),
+  statut: statutsPgEnum('statut').default(StatutsEnumType.A_VENIR),
   niveauPriorite: ficheActionNiveauxPrioriteEnum('niveau_priorite'),
   dateDebut: timestamp('date_debut', { withTimezone: true, mode: 'string' }),
   dateFinProvisoire: timestamp('date_fin_provisoire', {
@@ -185,5 +186,3 @@ export const createFicheActionSchema = createInsertSchema(ficheActionTable, {
 export const updateFicheActionSchema = createFicheActionSchema
   .omit({ id: true, createdAt: true, modifiedAt: true, modifiedBy: true })
   .partial();
-
-export type UpdateFicheActionType = z.infer<typeof updateFicheActionSchema>;

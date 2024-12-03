@@ -1,31 +1,30 @@
+import {
+  CiblesEnumType,
+  ficheActionActionTable,
+  ficheActionEffetAttenduTable,
+  ficheActionFinanceurTagTable,
+  ficheActionIndicateurTable,
+  ficheActionLienTable,
+  ficheActionPartenaireTagTable,
+  ficheActionPiloteTable,
+  ficheActionReferentTable,
+  ficheActionServiceTagTable,
+  ficheActionSousThematiqueTable,
+  ficheActionStructureTagTable,
+  ficheActionTable,
+  ficheActionThematiqueTable,
+  piliersEciEnumType,
+  StatutsEnumType,
+  UpdateFicheActionRequestClass,
+  UpdateFicheActionRequestType,
+} from '@/backend/plans/fiches';
+import { DatabaseService } from '@/backend/utils';
 import { INestApplication } from '@nestjs/common';
 import { eq } from 'drizzle-orm';
 import { default as request } from 'supertest';
 import { describe, expect, it } from 'vitest';
-
-import { UpdateFicheActionRequestClass } from '../../src/fiches/controllers/fiches-action.controller';
-import { ficheActionActionTable } from '../../src/fiches/models/fiche-action-action.table';
-import { ficheActionAxeTable } from '../../src/fiches/models/fiche-action-axe.table';
-import { ficheActionEffetAttenduTable } from '../../src/fiches/models/fiche-action-effet-attendu.table';
-import { ficheActionFinanceurTagTable } from '../../src/fiches/models/fiche-action-financeur-tag.table';
-import { ficheActionIndicateurTable } from '../../src/fiches/models/fiche-action-indicateur.table';
-import { ficheActionLienTable } from '../../src/fiches/models/fiche-action-lien.table';
-import { ficheActionPartenaireTagTable } from '../../src/fiches/models/fiche-action-partenaire-tag.table';
-import { ficheActionPiloteTable } from '../../src/fiches/models/fiche-action-pilote.table';
-import { ficheActionReferentTable } from '../../src/fiches/models/fiche-action-referent.table';
-import { ficheActionServiceTagTable } from '../../src/fiches/models/fiche-action-service.table';
-import { ficheActionSousThematiqueTable } from '../../src/fiches/models/fiche-action-sous-thematique.table';
-import { ficheActionStructureTagTable } from '../../src/fiches/models/fiche-action-structure-tag.table';
-import { ficheActionThematiqueTable } from '../../src/fiches/models/fiche-action-thematique.table';
-import {
-  FicheActionCiblesEnumType,
-  FicheActionStatutsEnumType,
-  ficheActionTable,
-  piliersEciEnumType,
-} from '../../src/fiches/models/fiche-action.table';
-import { getAuthToken } from '../auth/auth-utils';
-import { getTestApp } from '../common/app-utils';
-import { UpdateFicheActionRequestType } from './../../src/fiches/models/update-fiche-action.request';
+import { getAuthToken } from '../../../../test/auth/auth-utils';
+import { getTestApp } from '../../../../test/common/app-utils';
 import {
   actionsFixture,
   axesFixture,
@@ -40,9 +39,9 @@ import {
   sousThematiquesFixture,
   structuresFixture,
   thematiquesFixture,
-} from './fixtures/fiche-action-relations.fixture';
-import { ficheActionFixture } from './fixtures/fiche-action.fixture';
-import DatabaseService from '@/backend/utils/common/services/database.service';
+} from '../../../../test/fiches/fixtures/fiche-action-relations.fixture';
+import { ficheActionFixture } from '../../../../test/fiches/fixtures/fiche-action.fixture';
+import { ficheActionAxeTable } from '../models/fiche-action-axe.table';
 
 const collectiviteId = 1;
 const ficheActionId = 9999;
@@ -203,14 +202,11 @@ describe('FichesActionUpdateService', () => {
         ],
         objectifs:
           'Diminution de 15% de la consommation de feuilles de papier / Indicateurs : Nombre de papiers',
-        cibles: [
-          FicheActionCiblesEnumType.GRAND_PUBLIC,
-          FicheActionCiblesEnumType.ASSOCIATIONS,
-        ],
+        cibles: [CiblesEnumType.GRAND_PUBLIC, CiblesEnumType.ASSOCIATIONS],
         ressources: 'Service numérique',
         financements: 'De 40 000€ à 100 000€',
         budgetPrevisionnel: '35000',
-        statut: FicheActionStatutsEnumType.EN_PAUSE,
+        statut: StatutsEnumType.EN_PAUSE,
         ameliorationContinue: false,
         calendrier: 'Calendrier prévisionnel',
         notesComplementaires: 'Vive le vélo !',

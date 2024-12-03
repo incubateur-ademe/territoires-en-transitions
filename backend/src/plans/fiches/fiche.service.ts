@@ -1,26 +1,26 @@
+import { TagService } from '@/backend/collectivites';
+import { DatabaseService } from '@/backend/utils';
 import { Injectable, Logger } from '@nestjs/common';
 import { aliasedTable, desc, eq } from 'drizzle-orm';
-import DatabaseService from '../../common/services/database.service';
+import { AuthenticatedUser } from '../../auth/models/auth.models';
+import { dcpTable } from '../../auth/models/dcp.table';
+import { NiveauAcces } from '../../auth/models/private-utilisateur-droit.table';
+import { AuthService } from '../../auth/services/auth.service';
+import { actionImpactFicheActionTable } from './models/action-impact-fiche-action.table';
+import { ficheActionActionTable } from './models/fiche-action-action.table';
+import { ficheActionEffetAttenduTable } from './models/fiche-action-effet-attendu.table';
+import { ficheActionIndicateurTable } from './models/fiche-action-indicateur.table';
+import { ficheActionNoteTable } from './models/fiche-action-note.table';
+import { ficheActionPartenaireTagTable } from './models/fiche-action-partenaire-tag.table';
+import { ficheActionSousThematiqueTable } from './models/fiche-action-sous-thematique.table';
+import { ficheActionThematiqueTable } from './models/fiche-action-thematique.table';
 import {
   CreateFicheActionType,
   ficheActionTable,
-} from '../models/fiche-action.table';
-import TagService from '../../taxonomie/services/tag.service';
-import { actionImpactFicheActionTable } from '../models/action-impact-fiche-action.table';
-import { ficheActionActionTable } from '../models/fiche-action-action.table';
-import { ficheActionPartenaireTagTable } from '../models/fiche-action-partenaire-tag.table';
-import { ficheActionEffetAttenduTable } from '../models/fiche-action-effet-attendu.table';
-import { ficheActionIndicateurTable } from '../models/fiche-action-indicateur.table';
-import { ficheActionSousThematiqueTable } from '../models/fiche-action-sous-thematique.table';
-import { ficheActionThematiqueTable } from '../models/fiche-action-thematique.table';
-import { ficheActionNoteTable } from '../models/fiche-action-note.table';
-import { AuthService } from '../../auth/services/auth.service';
-import { AuthenticatedUser } from '../../auth/models/auth.models';
-import { NiveauAcces } from '../../auth/models/private-utilisateur-droit.table';
-import { dcpTable } from '../../auth/models/dcp.table';
+} from './models/fiche-action.table';
 
 @Injectable()
-export default class FicheService {
+export class FicheService {
   private readonly logger = new Logger(FicheService.name);
 
   constructor(

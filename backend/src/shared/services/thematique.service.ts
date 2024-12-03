@@ -1,9 +1,9 @@
+import { DatabaseService } from '@/backend/utils';
 import { Injectable, Logger } from '@nestjs/common';
 import {
   sousThematiqueTable,
   SousThematiqueType,
 } from '../models/sous-thematique.table';
-import DatabaseService from '../../common/services/database.service';
 
 @Injectable()
 export default class ThematiqueService {

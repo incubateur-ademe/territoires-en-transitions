@@ -1,8 +1,8 @@
 import { Injectable, Logger } from '@nestjs/common';
-import DatabaseService from '../../common/services/database.service';
 import { and, eq, isNull, or } from 'drizzle-orm';
-import { axeTable, CreateAxeType } from '../models/axe.table';
-import { ficheActionAxeTable } from '../models/fiche-action-axe.table';
+import DatabaseService from '../../common/services/database.service';
+import { axeTable, CreateAxeType } from './models/axe.table';
+import { ficheActionAxeTable } from './models/fiche-action-axe.table';
 
 @Injectable()
 export default class AxeService {

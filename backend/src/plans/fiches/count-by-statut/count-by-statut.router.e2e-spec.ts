@@ -2,7 +2,7 @@ import { inferProcedureInput } from '@trpc/server';
 import { getAuthUser } from '../../../test/auth/auth-utils';
 import { getTestRouter } from '../../../test/common/app-utils';
 import { AppRouter, TrpcRouter } from '../../trpc/trpc.router';
-import { FicheActionStatutsEnumType } from '../models/fiche-action.table';
+import { StatutsEnumType } from '../models/fiche-action.table';
 import { AuthenticatedUser } from './../../auth/models/auth.models';
 
 type Input = inferProcedureInput<AppRouter['plans']['fiches']['countByStatut']>;
@@ -27,7 +27,7 @@ describe('CountByStatutRouter', () => {
     const result = await caller.plans.fiches.countByStatut(input);
     expect(result).toMatchObject({});
 
-    for (const statut of Object.values(FicheActionStatutsEnumType)) {
+    for (const statut of Object.values(StatutsEnumType)) {
       expect(result[statut]).toMatchObject({
         valeur: expect.any(String),
         count: expect.any(Number),
