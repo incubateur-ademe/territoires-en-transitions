@@ -1,26 +1,25 @@
-import ScrollTopButton from 'ui/buttons/ScrollTopButton';
-import { HeaderIndicateur } from './detail/HeaderIndicateur';
-import { IndicateurCompose } from './detail/IndicateurCompose';
-import { IndicateurSidePanelToolbar } from './IndicateurSidePanelToolbar';
-import { TIndicateurDefinition } from '../types';
-import { useIndicateurDefinition } from './useIndicateurDefinition';
+import BadgeOpenData from '@tet/app/pages/collectivite/Indicateurs/components/BadgeOpenData';
 import { Badge, Field, TrackPageView } from '@tet/ui';
-import { useCollectiviteId } from 'core-logic/hooks/params';
-import { useIndicateurImportSources } from 'app/pages/collectivite/Indicateurs/Indicateur/detail/useImportSources';
+import { referentielToName } from 'app/labels';
 import { ImportSourcesSelector } from 'app/pages/collectivite/Indicateurs/Indicateur/detail/ImportSourcesSelector';
 import IndicateurDetailChart from 'app/pages/collectivite/Indicateurs/Indicateur/detail/IndicateurDetailChart';
-import { BadgeACompleter } from 'ui/shared/Badge/BadgeACompleter';
-import TextareaControlled from 'ui/shared/form/TextareaControlled';
-import { referentielToName } from 'app/labels';
-import { IndicateurValuesTabs } from 'app/pages/collectivite/Indicateurs/Indicateur/detail/IndicateurValuesTabs';
 import { IndicateurInfoLiees } from 'app/pages/collectivite/Indicateurs/Indicateur/detail/IndicateurInfoLiees';
+import { IndicateurValuesTabs } from 'app/pages/collectivite/Indicateurs/Indicateur/detail/IndicateurValuesTabs';
+import { useIndicateurImportSources } from 'app/pages/collectivite/Indicateurs/Indicateur/detail/useImportSources';
 import { FichesActionLiees } from 'app/pages/collectivite/Indicateurs/Indicateur/FichesActionLiees';
 import ActionsLieesListe from 'app/pages/collectivite/PlansActions/FicheAction/ActionsLiees/ActionsLieesListe';
+import { useCollectiviteId } from 'core-logic/hooks/params';
 import { useCurrentCollectivite } from 'core-logic/hooks/useCurrentCollectivite';
-import { useUpdateIndicateurDefinition } from './useUpdateIndicateurDefinition';
-import BadgeOpenData from '@tet/app/pages/collectivite/Indicateurs/components/BadgeOpenData';
-import { useExportIndicateurs } from './useExportIndicateurs';
+import ScrollTopButton from 'ui/buttons/ScrollTopButton';
 import { ToolbarIconButton } from 'ui/buttons/ToolbarIconButton';
+import { BadgeACompleter } from 'ui/shared/Badge/BadgeACompleter';
+import TextareaControlled from 'ui/shared/form/TextareaControlled';
+import { TIndicateurDefinition } from '../types';
+import { IndicateurCompose } from './detail/IndicateurCompose';
+import { IndicateurSidePanelToolbar } from './IndicateurSidePanelToolbar';
+import { useExportIndicateurs } from './useExportIndicateurs';
+import { useIndicateurDefinition } from './useIndicateurDefinition';
+import { useUpdateIndicateurDefinition } from './useUpdateIndicateurDefinition';
 
 /** Charge et affiche le détail d'un indicateur prédéfini et de ses éventuels "enfants" */
 export const IndicateurPredefiniBase = ({
@@ -32,9 +31,10 @@ export const IndicateurPredefiniBase = ({
   const { mutate: updateDefinition } = useUpdateIndicateurDefinition();
   const collectivite = useCurrentCollectivite();
   const isReadonly = !collectivite || collectivite?.readonly;
-  const { mutate: exportIndicateurs, isLoading } = useExportIndicateurs([
-    definition,
-  ]);
+  const { mutate: exportIndicateurs, isLoading } = useExportIndicateurs(
+    'app/indicateurs/predefini',
+    [definition]
+  );
 
   const collectivite_id = useCollectiviteId()!;
 

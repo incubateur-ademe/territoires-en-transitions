@@ -1,22 +1,21 @@
+import { Indicateurs } from '@tet/api';
+import { Field, Input, Modal, ModalFooterOKCancel } from '@tet/ui';
+import BadgeIndicateurPerso from 'app/pages/collectivite/Indicateurs/components/BadgeIndicateurPerso';
+import IndicateurDetailChart from 'app/pages/collectivite/Indicateurs/Indicateur/detail/IndicateurDetailChart';
+import { useCurrentCollectivite } from 'core-logic/hooks/useCurrentCollectivite';
 import { useState } from 'react';
-import { Field, Modal, ModalFooterOKCancel } from '@tet/ui';
-import { BadgeACompleter } from 'ui/shared/Badge/BadgeACompleter';
-import TextareaControlled from 'ui/shared/form/TextareaControlled';
 import ScrollTopButton from 'ui/buttons/ScrollTopButton';
 import { ToolbarIconButton } from 'ui/buttons/ToolbarIconButton';
-import { useUpdateIndicateurDefinition } from './useUpdateIndicateurDefinition';
+import { BadgeACompleter } from 'ui/shared/Badge/BadgeACompleter';
+import TextareaControlled from 'ui/shared/form/TextareaControlled';
 import { HeaderIndicateur } from './detail/HeaderIndicateur';
+import { IndicateurInfoLiees } from './detail/IndicateurInfoLiees';
 import { IndicateurValuesTabs } from './detail/IndicateurValuesTabs';
 import { FichesActionLiees } from './FichesActionLiees';
-import { useCurrentCollectivite } from 'core-logic/hooks/useCurrentCollectivite';
-import { IndicateurInfoLiees } from './detail/IndicateurInfoLiees';
-import { useIndicateurDefinition } from './useIndicateurDefinition';
-import IndicateurDetailChart from 'app/pages/collectivite/Indicateurs/Indicateur/detail/IndicateurDetailChart';
-import { useDeleteIndicateurPerso } from './useRemoveIndicateurPerso';
 import { useExportIndicateurs } from './useExportIndicateurs';
-import { Indicateurs } from '@tet/api';
-import { Input } from '@tet/ui';
-import BadgeIndicateurPerso from 'app/pages/collectivite/Indicateurs/components/BadgeIndicateurPerso';
+import { useIndicateurDefinition } from './useIndicateurDefinition';
+import { useDeleteIndicateurPerso } from './useRemoveIndicateurPerso';
+import { useUpdateIndicateurDefinition } from './useUpdateIndicateurDefinition';
 
 /** Affiche le détail d'un indicateur personnalisé */
 const IndicateurPersonnaliseBase = ({
@@ -28,9 +27,10 @@ const IndicateurPersonnaliseBase = ({
   const { mutate: updateDefinition } = useUpdateIndicateurDefinition();
   const collectivite = useCurrentCollectivite();
   const isReadonly = !collectivite || collectivite?.readonly;
-  const { mutate: exportIndicateurs, isLoading } = useExportIndicateurs([
-    definition,
-  ]);
+  const { mutate: exportIndicateurs, isLoading } = useExportIndicateurs(
+    'app/indicateurs/perso',
+    [definition]
+  );
 
   // génère les fonctions d'enregistrement des modifications
   const handleUpdate = (

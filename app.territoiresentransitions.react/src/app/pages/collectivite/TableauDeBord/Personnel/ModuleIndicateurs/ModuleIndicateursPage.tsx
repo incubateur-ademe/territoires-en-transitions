@@ -4,15 +4,15 @@ import {
   ModuleIndicateursSelect,
   Slug,
 } from '@tet/api/plan-actions/dashboards/personal-dashboard/domain/module.schema';
-import IndicateursListe from 'app/pages/collectivite/Indicateurs/lists/IndicateursListe';
+import ModulePage from '@tet/app/pages/collectivite/TableauDeBord/components/ModulePage';
+import ModalIndicateursSuiviPlan from '@tet/app/pages/collectivite/TableauDeBord/Personnel/ModuleIndicateurs/ModalIndicateursSuiviPlan';
 import {
   getQueryKey,
   usePersonalModuleFetch,
 } from '@tet/app/pages/collectivite/TableauDeBord/Personnel/usePersonalModuleFetch';
+import IndicateursListe from 'app/pages/collectivite/Indicateurs/lists/IndicateursListe';
 import { TDBViewParam } from 'app/paths';
 import { useCollectiviteId } from 'core-logic/hooks/params';
-import ModulePage from '@tet/app/pages/collectivite/TableauDeBord/components/ModulePage';
-import ModalIndicateursSuiviPlan from '@tet/app/pages/collectivite/TableauDeBord/Personnel/ModuleIndicateurs/ModalIndicateursSuiviPlan';
 
 type Props = {
   view: TDBViewParam;
@@ -27,9 +27,8 @@ const ModuleIndicateursPage = ({ view, slug }: Props) => {
 
   const filtre = module?.options.filtre;
 
-  const trackEvent = useEventTracker(
-    `app/tdb/personnel/indicateurs-de-suivi-de-mes-plans`
-  );
+  const pageName = 'app/tdb/personnel/indicateurs-de-suivi-de-mes-plans';
+  const trackEvent = useEventTracker(pageName);
 
   if (isModuleLoading || !module) {
     return null;
@@ -42,6 +41,7 @@ const ModuleIndicateursPage = ({ view, slug }: Props) => {
         properties={{ collectivite_id: collectiviteId! }}
       />
       <IndicateursListe
+        pageName={pageName}
         filtres={filtre}
         settings={(openState) => (
           <>

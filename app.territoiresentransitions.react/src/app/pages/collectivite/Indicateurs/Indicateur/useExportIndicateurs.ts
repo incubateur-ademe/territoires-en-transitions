@@ -1,12 +1,22 @@
-import { useMutation } from 'react-query';
-import { useFonctionTracker } from 'core-logic/hooks/useFonctionTracker';
-import { useCollectiviteId } from 'core-logic/hooks/params';
+import { useEventTracker } from '@tet/ui';
 import { useApiClient } from 'core-logic/api/useApiClient';
+import { useCollectiviteId } from 'core-logic/hooks/params';
+import { useMutation } from 'react-query';
 import { saveBlob } from 'ui/shared/preuves/Bibliotheque/saveBlob';
 import { TIndicateurListItem } from '../types';
 
-export const useExportIndicateurs = (definitions?: TIndicateurListItem[]) => {
-  const tracker = useFonctionTracker();
+type PageName =
+  | 'app/indicateurs/tous'
+  | 'app/indicateurs/collectivite'
+  | 'app/indicateurs/perso'
+  | 'app/indicateurs/predefini'
+  | 'app/tdb/personnel/indicateurs-de-suivi-de-mes-plans';
+
+export const useExportIndicateurs = (
+  pageName: PageName,
+  definitions?: TIndicateurListItem[]
+) => {
+  const trackEvent = useEventTracker(pageName);
   const collectiviteId = useCollectiviteId();
   const apiClient = useApiClient();
 
@@ -26,10 +36,8 @@ export const useExportIndicateurs = (definitions?: TIndicateurListItem[]) => {
       if (filename && blob) {
         saveBlob(blob, filename);
 
-        tracker({
-          page: 'indicateur',
-          action: 'telechargement',
-          fonction: 'export_xlsx',
+        trackEvent('export_xlsx_telechargement', {
+          collectivite_id: collectiviteId,
         });
       }
     },

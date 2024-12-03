@@ -1,4 +1,3 @@
-import { useState } from 'react';
 import { FetchFiltre } from '@tet/api/indicateurs';
 import { Button, ButtonMenu, TrackPageView, useEventTracker } from '@tet/ui';
 import IndicateursListe from 'app/pages/collectivite/Indicateurs/lists/IndicateursListe';
@@ -8,6 +7,7 @@ import ModaleCreerIndicateur from 'app/pages/collectivite/PlansActions/FicheActi
 import { makeCollectiviteTousLesIndicateursUrl } from 'app/paths';
 import { useSearchParams } from 'core-logic/hooks/query';
 import { useCurrentCollectivite } from 'core-logic/hooks/useCurrentCollectivite';
+import { useState } from 'react';
 
 /** Page de listing de toutes les fiches actions de la collectivité */
 const TousLesIndicateurs = () => {
@@ -66,6 +66,7 @@ const TousLesIndicateurs = () => {
           )}
         </div>
         <IndicateursListe
+          pageName="app/indicateurs/tous"
           isEditable
           filtres={filters}
           resetFilters={() => setFilters({})}
