@@ -33,6 +33,7 @@ npm-debug.log
 yarn-error.log
 testem.log
 /typings
+vitest.config.mts.timestamp*
 
 # System Files
 .DS_Store
