@@ -228,6 +228,8 @@ export interface TrackingPlan extends Record<never, Page> {
     events: {
       editer_personne_pilote_groupe: {};
       associer_statut_groupe: {};
+      associer_priorite_groupe: {};
+      associer_planning_groupe: {};
       export_PDF_telechargement_groupe: {};
     };
   };
