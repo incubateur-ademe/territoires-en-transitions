@@ -15,6 +15,7 @@ import { caePersonnalisationRegles } from '../../personnalisations/models/sample
 import ExpressionParserService from '../../personnalisations/services/expression-parser.service';
 import PersonnalisationsService from '../../personnalisations/services/personnalisations-service';
 import SheetService from '../../spreadsheets/services/sheet.service';
+import { ActionPointScoreType } from '../models/action-point-score.dto';
 import { ActionType } from '../models/action-type.enum';
 import { GetActionStatutsResponseType } from '../models/get-action-statuts.response';
 import { ReferentielActionWithScoreType } from '../models/referentiel-action-avec-score.dto';
@@ -110,7 +111,7 @@ describe('ReferentielsScoringService', () => {
             },
           },
         ],
-        referentielsOrigine: [],
+        referentielsOrigine: ['cae'],
         score: {
           actionId: 'te_1.3.1.3',
           pointReferentiel: 5,
@@ -154,6 +155,31 @@ describe('ReferentielsScoringService', () => {
         renseigne: true,
         totalTachesCount: 1,
       });
+
+      const expectedCaePoints: ActionPointScoreType = {
+        pointFait: 3.5,
+        pointNonRenseigne: 1.5,
+        pointPasFait: 0,
+        pointProgramme: 0,
+        pointReferentiel: 5,
+        pointPotentiel: 5,
+      };
+      expect(referectielActionWithScore.scoresTag!['cae']).toEqual(
+        expectedCaePoints
+      );
+
+      // Not normalized
+      const expectedCaePointsOrigine: ActionPointScoreType = {
+        pointFait: 5,
+        pointNonRenseigne: 2,
+        pointPasFait: 0,
+        pointProgramme: 0,
+        pointReferentiel: 7,
+        pointPotentiel: 7,
+      };
+      expect(referectielActionWithScore.scoresOrigine!['cae']).toEqual(
+        expectedCaePointsOrigine
+      );
     });
 
     it('Standard test with change in total points in new referentiel', async () => {
@@ -188,8 +214,8 @@ describe('ReferentielsScoringService', () => {
             },
           },
           {
-            referentielId: 'cae',
-            actionId: 'cae_6.3.1.3.2',
+            referentielId: 'eci',
+            actionId: 'eci_6.3.1.3.2',
             ponderation: 0.5,
             nom: "Décliner des orientations stratégiques fortes en matière de localisation et de qualité environnementale des zones d'activités dans les documents d’urbanisme",
             score: {
@@ -207,7 +233,7 @@ describe('ReferentielsScoringService', () => {
             },
           },
         ],
-        referentielsOrigine: [],
+        referentielsOrigine: ['cae', 'eci'],
         score: {
           actionId: 'te_1.3.1.3',
           pointReferentiel: 4,
@@ -251,6 +277,54 @@ describe('ReferentielsScoringService', () => {
         renseigne: true,
         totalTachesCount: 1,
       });
+
+      const expectedCaePoints: ActionPointScoreType = {
+        pointFait: 1.6,
+        pointNonRenseigne: 0.8,
+        pointPasFait: 0,
+        pointProgramme: 0,
+        pointReferentiel: 2.4,
+        pointPotentiel: 2.4,
+      };
+      expect(referectielActionWithScore.scoresTag!['cae']).toEqual(
+        expectedCaePoints
+      );
+      const expectedEciPoints: ActionPointScoreType = {
+        pointFait: 1.2,
+        pointNonRenseigne: 0.4,
+        pointPasFait: 0,
+        pointProgramme: 0,
+        pointReferentiel: 1.6,
+        pointPotentiel: 1.6,
+      };
+      expect(referectielActionWithScore.scoresTag!['eci']).toEqual(
+        expectedEciPoints
+      );
+
+      // Not normalized
+      const expectedCaePointsOrigine: ActionPointScoreType = {
+        pointFait: 2,
+        pointNonRenseigne: 1,
+        pointPasFait: 0,
+        pointProgramme: 0,
+        pointReferentiel: 3,
+        pointPotentiel: 3,
+      };
+      expect(referectielActionWithScore.scoresOrigine!['cae']).toEqual(
+        expectedCaePointsOrigine
+      );
+
+      const expectedEciPointsOrigine: ActionPointScoreType = {
+        pointFait: 3,
+        pointNonRenseigne: 1,
+        pointPasFait: 0,
+        pointProgramme: 0,
+        pointReferentiel: 4,
+        pointPotentiel: 4,
+      };
+      expect(referectielActionWithScore.scoresOrigine!['eci']).toEqual(
+        expectedEciPointsOrigine
+      );
     });
   });
 

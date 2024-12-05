@@ -1,5 +1,7 @@
-export function roundTo(num: number | null, precision: number): number | null {
-  if (!num) {
+import { isNil } from 'es-toolkit';
+
+export function roundTo(num: number | null, precision?: number): number | null {
+  if (!num || isNil(precision)) {
     return num;
   }
   const factor = Math.pow(10, precision);
@@ -10,7 +12,7 @@ export function pythonRoundTo(
   value: number | null,
   precision: number
 ): number | null {
-  if (!value) {
+  if (!value || isNil(precision)) {
     return value;
   }
 
