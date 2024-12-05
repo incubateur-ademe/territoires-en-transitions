@@ -396,6 +396,18 @@ export default class ReferentielsService {
     );
   }
 
+  getReferentielIdFromActionId(actionId: string): ReferentielType {
+    const referentielId = actionId.split('_')[0];
+    if (
+      !Object.values(ReferentielType).includes(referentielId as ReferentielType)
+    ) {
+      throw new UnprocessableEntityException(
+        `Invalid referentiel id ${referentielId} for action ${actionId}`
+      );
+    }
+    return referentielId as ReferentielType;
+  }
+
   getLevelFromActionId(actionId: string): number {
     const level = actionId.split('.').length;
     if (level === 1) {

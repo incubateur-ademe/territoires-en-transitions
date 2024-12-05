@@ -98,6 +98,30 @@ export default class ReferentielsScoringService {
     private readonly labellisationService: LabellisationService
   ) {}
 
+  async getOrCreateCurrentScore(
+    collectiviteId: number,
+    referentielId: ReferentielType
+  ) {
+    let currentScore = await this.referentielsScoringSnapshotsService.get(
+      collectiviteId,
+      referentielId,
+      ReferentielsScoringSnapshotsService.SCORE_COURANT_SNAPSHOT_REF,
+      true
+    );
+    if (!currentScore) {
+      currentScore = await this.computeScoreForCollectivite(
+        referentielId,
+        collectiviteId,
+        {
+          mode: ComputeScoreMode.RECALCUL,
+          snapshot: true,
+          snapshotForceUpdate: true,
+        }
+      );
+    }
+    return currentScore;
+  }
+
   async checkCollectiviteAndReferentielWithAccess(
     collectiviteId: number,
     referentielId: ReferentielType,

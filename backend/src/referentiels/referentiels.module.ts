@@ -5,12 +5,16 @@ import { CommonModule } from '../common/common.module';
 import { ConfigurationModule } from '../config/configuration.module';
 import { PersonnalisationsModule } from '../personnalisations/personnalisations.module';
 import { SheetModule } from '../spreadsheets/sheet.module';
+import { ComputeScoreRouter } from './compute-score/compute-score.router';
 import { ReferentielsScoringController } from './controllers/referentiels-scoring.controller';
 import { ReferentielsController } from './controllers/referentiels.controller';
 import LabellisationService from './services/labellisation.service';
 import ReferentielsScoringSnapshotsService from './services/referentiels-scoring-snapshots.service';
 import ReferentielsScoringService from './services/referentiels-scoring.service';
 import ReferentielsService from './services/referentiels.service';
+import { ScoreSnapshotsRouter } from './snapshots/score-snaphots.router';
+import { UpdateActionStatutRouter } from './update-action-statut/update-action-statut.router';
+import { UpdateActionStatutService } from './update-action-statut/update-action-statut.service';
 
 @Module({
   imports: [
@@ -26,12 +30,20 @@ import ReferentielsService from './services/referentiels.service';
     LabellisationService,
     ReferentielsScoringSnapshotsService,
     ReferentielsScoringService,
+    UpdateActionStatutService,
+    UpdateActionStatutRouter,
+    ComputeScoreRouter,
+    ScoreSnapshotsRouter,
   ],
   exports: [
     ReferentielsService,
     LabellisationService,
     ReferentielsScoringSnapshotsService,
     ReferentielsScoringService,
+    UpdateActionStatutService,
+    UpdateActionStatutRouter,
+    ComputeScoreRouter,
+    ScoreSnapshotsRouter,
   ],
   controllers: [ReferentielsController, ReferentielsScoringController],
 })

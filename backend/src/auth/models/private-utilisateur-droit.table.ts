@@ -3,7 +3,7 @@ import { boolean, integer, pgTable, serial, uuid } from 'drizzle-orm/pg-core';
 import { collectiviteTable } from '../../collectivites/models/collectivite.table';
 import { createdAt, modifiedAt } from '../../common/models/column.helpers';
 import { invitationTable } from './invitation.table';
-import { niveauAccessEnum, NiveauAcces } from './niveau-acces.enum';
+import { NiveauAcces, niveauAccessEnum } from './niveau-acces.enum';
 
 export const utilisateurDroitTable = pgTable('private_utilisateur_droit', {
   id: serial('id').primaryKey(),

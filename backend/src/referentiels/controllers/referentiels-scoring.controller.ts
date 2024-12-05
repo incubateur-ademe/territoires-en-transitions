@@ -149,13 +149,13 @@ export class ReferentielsScoringController {
   @Get(
     'collectivites/:collectivite_id/referentiels/:referentiel_id/score-snapshots'
   )
-  async getReferentielScoreSnapshots(
+  async listSummary(
     @Param('collectivite_id') collectiviteId: number,
     @Param('referentiel_id') referentielId: ReferentielType,
     @Query() parameters: GetScoreSnapshotsRequestClass,
     @TokenInfo() tokenInfo: AuthUser
   ): Promise<GetScoreSnapshotsResponseClass> {
-    return this.referentielsScoringSnapshotsService.getScoreSnapshots(
+    return this.referentielsScoringSnapshotsService.listSummary(
       collectiviteId,
       referentielId,
       parameters
@@ -171,12 +171,22 @@ export class ReferentielsScoringController {
     @Param('referentiel_id') referentielId: ReferentielType,
     @Param('snapshot_ref') snapshotRef: string,
     @TokenInfo() tokenInfo: AuthenticatedUser
-  ): Promise<GetReferentielScoresResponseClass> {
-    return this.referentielsScoringSnapshotsService.getFullScoreSnapshot(
-      collectiviteId,
-      referentielId,
-      snapshotRef
-    );
+  ) {
+    if (
+      snapshotRef ===
+      ReferentielsScoringSnapshotsService.SCORE_COURANT_SNAPSHOT_REF
+    ) {
+      return this.referentielsScoringService.getOrCreateCurrentScore(
+        collectiviteId,
+        referentielId
+      );
+    } else {
+      return this.referentielsScoringSnapshotsService.get(
+        collectiviteId,
+        referentielId,
+        snapshotRef
+      );
+    }
   }
 
   @Delete(
@@ -188,7 +198,7 @@ export class ReferentielsScoringController {
     @Param('snapshot_ref') snapshotRef: string,
     @TokenInfo() tokenInfo: AuthUser
   ): Promise<void> {
-    return this.referentielsScoringSnapshotsService.deleteScoreSnapshot(
+    return this.referentielsScoringSnapshotsService.delete(
       collectiviteId,
       referentielId,
       snapshotRef,
