@@ -69,6 +69,19 @@ export default class CollectivitesService {
     collectiviteId: number
   ): Promise<CollectiviteAvecType> {
     const collectivite = await this.getCollectivite(collectiviteId);
+
+    let collectivitePopulation: number | undefined = undefined;
+    // We are using the if else to set population to differentiate between 0 values and undefined values
+    if (!isNil(collectivite.commune?.population)) {
+      collectivitePopulation = collectivite.commune.population;
+      // @ts-ignore: TODO: fix this, pourquoi manque dans drizzle à cause de la jointure?
+    } else if (!isNil(collectivite.import_commune?.population)) {
+      // @ts-ignore: TODO: fix this, pourquoi manque dans drizzle à cause de la jointure?
+      collectivitePopulation = collectivite.import_commune.population;
+    } else if (!isNil(collectivite.banatic?.population)) {
+      collectivitePopulation = collectivite.banatic.population;
+    }
+
     return {
       ...collectivite.banatic,
       // @ts-ignore: TODO: fix this, pourquoi manque dans drizzle à cause de la jointure?
@@ -99,13 +112,7 @@ export default class CollectivitesService {
         ? CollectiviteTypeEnum.COMMUNE
         : CollectiviteTypeEnum.EPCI, // By default, it's an EPCI
       soustype: this.getCollectiviteSousType(collectivite),
-      populationTags: this.getPopulationTags(
-        collectivite.commune?.population ||
-          // @ts-ignore: TODO: fix this, pourquoi manque dans drizzle à cause de la jointure?
-          collectivite.import_commune?.population ||
-          collectivite.banatic?.population ||
-          0
-      ),
+      populationTags: this.getPopulationTags(collectivitePopulation),
       // A bit weird, but it's the same as sql for now: if collectivite test, metropole if epci, null if commune
       drom:
         collectivite.region?.drom ||
