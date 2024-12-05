@@ -2,6 +2,8 @@ import { Alert } from '@/ui';
 import classNames from 'classnames';
 import ExportFicheActionGroupeesButton from '../ExportPdf/ExportFicheActionGroupeesButton';
 import EditionPilote from './EditionPilote';
+import EditionPlanning from './EditionPlanning';
+import EditionPriorite from './EditionPriorite';
 import EditionStatut from './EditionStatut';
 
 type ActionsGroupeesMenuProps = {
@@ -27,6 +29,8 @@ const ActionsGroupeesMenu = ({
         <div className="flex gap-3 flex-wrap">
           <EditionPilote selectedIds={selectedIds} />
           <EditionStatut selectedIds={selectedIds} />
+          <EditionPriorite selectedIds={selectedIds} />
+          <EditionPlanning selectedIds={selectedIds} />
           <ExportFicheActionGroupeesButton fichesIds={selectedIds} />
         </div>
       }
