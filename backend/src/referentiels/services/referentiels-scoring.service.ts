@@ -541,33 +541,46 @@ export default class ReferentielsScoringService {
   mergePointScoresEnfants(
     scoreParent: ActionPointScoreType,
     scoreEnfants: ActionPointScoreType[],
-    includePointPotentielAndReferentiel = false
+    includePointPotentielAndReferentiel = false,
+    roundingDigits: number | undefined = undefined
   ) {
     // only focus on point properties
-    scoreParent.pointPasFait = scoreEnfants.reduce(
-      (acc, enfant) => acc + (enfant.pointPasFait || 0),
-      0
+    scoreParent.pointPasFait = roundTo(
+      scoreEnfants.reduce((acc, enfant) => acc + (enfant.pointPasFait || 0), 0),
+      roundingDigits
     );
-    scoreParent.pointFait = scoreEnfants.reduce(
-      (acc, enfant) => acc + (enfant.pointFait || 0),
-      0
+    scoreParent.pointFait = roundTo(
+      scoreEnfants.reduce((acc, enfant) => acc + (enfant.pointFait || 0), 0),
+      roundingDigits
     );
-    scoreParent.pointProgramme = scoreEnfants.reduce(
-      (acc, enfant) => acc + (enfant.pointProgramme || 0),
-      0
+    scoreParent.pointProgramme = roundTo(
+      scoreEnfants.reduce(
+        (acc, enfant) => acc + (enfant.pointProgramme || 0),
+        0
+      ),
+      roundingDigits
     );
-    scoreParent.pointNonRenseigne = scoreEnfants.reduce(
-      (acc, enfant) => acc + (enfant.pointNonRenseigne || 0),
-      0
+    scoreParent.pointNonRenseigne = roundTo(
+      scoreEnfants.reduce(
+        (acc, enfant) => acc + (enfant.pointNonRenseigne || 0),
+        0
+      ),
+      roundingDigits
     );
     if (includePointPotentielAndReferentiel) {
-      scoreParent.pointPotentiel = scoreEnfants.reduce(
-        (acc, enfant) => acc + (enfant.pointPotentiel || 0),
-        0
+      scoreParent.pointPotentiel = roundTo(
+        scoreEnfants.reduce(
+          (acc, enfant) => acc + (enfant.pointPotentiel || 0),
+          0
+        ),
+        roundingDigits
       );
-      scoreParent.pointReferentiel = scoreEnfants.reduce(
-        (acc, enfant) => acc + (enfant.pointReferentiel || 0),
-        0
+      scoreParent.pointReferentiel = roundTo(
+        scoreEnfants.reduce(
+          (acc, enfant) => acc + (enfant.pointReferentiel || 0),
+          0
+        ),
+        roundingDigits
       );
     }
   }
@@ -1225,27 +1238,13 @@ export default class ReferentielsScoringService {
     }
   }
 
-  updateFromOrigineActions(
-    referentielActionWithScore: ReferentielActionWithScoreType,
-    roundingDigits = ReferentielsScoringService.DEFAULT_ROUNDING_DIGITS
+  updateScoreWithOrigineActionsAndRatio(
+    initialScore: ActionPointScoreType,
+    ratio: number,
+    origineActions: ReferentielActionOrigineWithScoreType[] | undefined,
+    roundingDigits: number,
+    setPointReferentiel = false
   ) {
-    const initialScore = referentielActionWithScore.score;
-    const origineActions = referentielActionWithScore.actionsOrigine;
-
-    const originePointsPotentiels = origineActions?.reduce(
-      (acc, origineAction) =>
-        acc +
-        (origineAction.score?.pointPotentiel || 0) *
-          (origineAction.ponderation || 1),
-      0
-    );
-    const referentielPointsPotentiels = !isNil(initialScore.pointPotentiel)
-      ? initialScore.pointPotentiel
-      : initialScore.pointReferentiel;
-    const ratio = originePointsPotentiels
-      ? (referentielPointsPotentiels || 0) / originePointsPotentiels
-      : 0;
-
     initialScore.pointFait = roundTo(
       ratio *
         (origineActions?.reduce(
@@ -1287,12 +1286,63 @@ export default class ReferentielsScoringService {
       roundingDigits
     );
 
+    let referentielPointsPotentiels = !isNil(initialScore.pointPotentiel)
+      ? initialScore.pointPotentiel
+      : initialScore.pointReferentiel;
+    if (setPointReferentiel) {
+      referentielPointsPotentiels =
+        roundTo(
+          ratio *
+            (origineActions?.reduce(
+              (acc, origineAction) =>
+                acc +
+                (origineAction.score?.pointReferentiel || 0) *
+                  (origineAction.ponderation || 1),
+              0
+            ) || 0),
+          roundingDigits
+        ) || 0;
+
+      initialScore.pointReferentiel = referentielPointsPotentiels;
+      initialScore.pointPotentiel = referentielPointsPotentiels;
+    }
+
     // If new action (no origine actions), set non renseigne to all points
     initialScore.pointNonRenseigne = roundTo(
       (referentielPointsPotentiels || 0) -
         (initialScore.pointFait || 0) -
         (initialScore.pointProgramme || 0) -
         (initialScore.pointPasFait || 0),
+      roundingDigits
+    );
+  }
+
+  updateFromOrigineActions(
+    referentielActionWithScore: ReferentielActionWithScoreType,
+    roundingDigits = ReferentielsScoringService.DEFAULT_ROUNDING_DIGITS
+  ) {
+    const initialScore = referentielActionWithScore.score;
+    const origineActions = referentielActionWithScore.actionsOrigine;
+
+    // Compute points potentiels by using origine actions with ponderation
+    const originePointsPotentiels = origineActions?.reduce(
+      (acc, origineAction) =>
+        acc +
+        (origineAction.score?.pointPotentiel || 0) *
+          (origineAction.ponderation || 1),
+      0
+    );
+    const referentielPointsPotentiels = !isNil(initialScore.pointPotentiel)
+      ? initialScore.pointPotentiel
+      : initialScore.pointReferentiel;
+    const ratio = originePointsPotentiels
+      ? (referentielPointsPotentiels || 0) / originePointsPotentiels
+      : 0;
+
+    this.updateScoreWithOrigineActionsAndRatio(
+      initialScore,
+      ratio,
+      origineActions,
       roundingDigits
     );
 
@@ -1303,51 +1353,65 @@ export default class ReferentielsScoringService {
         referentielActionWithScore.actionsOrigine?.filter(
           (action) => action.referentielId === referentielid
         );
+      const initialReferentielScore: ActionPointScoreType = {
+        pointFait: 0,
+        pointProgramme: 0,
+        pointPasFait: 0,
+        pointNonRenseigne: 0,
+        pointReferentiel: 0,
+        pointPotentiel: 0,
+      };
+      // Scores tag is the part of the new score corresponding to each referentiel (renormalized)
+      // whereas score origin is the sum of the children origin scores without renormalization
+      referentielActionWithScore.scoresTag![referentielid] =
+        initialReferentielScore;
+      this.updateScoreWithOrigineActionsAndRatio(
+        initialReferentielScore,
+        ratio,
+        origineReferentielActions,
+        roundingDigits,
+        true
+      );
+
       referentielActionWithScore.scoresOrigine![referentielid] = {
         pointFait: roundTo(
           origineReferentielActions?.reduce(
-            (acc, action) =>
-              acc + (action.score?.pointFait || 0) * action.ponderation,
+            (acc, action) => acc + (action.score?.pointFait || 0),
             0
           ) || 0,
           roundingDigits
         ),
         pointProgramme: roundTo(
           origineReferentielActions?.reduce(
-            (acc, action) =>
-              acc + (action.score?.pointProgramme || 0) * action.ponderation,
+            (acc, action) => acc + (action.score?.pointProgramme || 0),
             0
           ) || 0,
           roundingDigits
         ),
         pointPasFait: roundTo(
           origineReferentielActions?.reduce(
-            (acc, action) =>
-              acc + (action.score?.pointPasFait || 0) * action.ponderation,
+            (acc, action) => acc + (action.score?.pointPasFait || 0),
             0
           ) || 0,
           roundingDigits
         ),
         pointNonRenseigne: roundTo(
           origineReferentielActions?.reduce(
-            (acc, action) =>
-              acc + (action.score?.pointNonRenseigne || 0) * action.ponderation,
+            (acc, action) => acc + (action.score?.pointNonRenseigne || 0),
             0
           ) || 0,
           roundingDigits
         ),
         pointPotentiel: roundTo(
           origineReferentielActions?.reduce(
-            (acc, action) =>
-              acc + (action.score?.pointPotentiel || 0) * action.ponderation,
+            (acc, action) => acc + (action.score?.pointPotentiel || 0),
             0
           ) || 0,
           roundingDigits
         ),
         pointReferentiel: roundTo(
           origineReferentielActions?.reduce(
-            (acc, action) =>
-              acc + (action.score?.pointReferentiel || 0) * action.ponderation,
+            (acc, action) => acc + (action.score?.pointReferentiel || 0),
             0
           ) || 0,
           roundingDigits
@@ -1409,8 +1473,11 @@ export default class ReferentielsScoringService {
     // now that the score has been consolidated, we can compute the score by tag
     if (referentielActionWithScore.tags) {
       referentielActionWithScore.tags.forEach((tag) => {
-        referentielActionWithScore.scoresTag[tag] =
-          referentielActionWithScore.score;
+        // if has not already been set by updateFromOrigineActions
+        if (!referentielActionWithScore.scoresTag[tag]) {
+          referentielActionWithScore.scoresTag[tag] =
+            referentielActionWithScore.score;
+        }
       });
     }
     // Get all tags from children
@@ -1443,7 +1510,12 @@ export default class ReferentielsScoringService {
           pointPotentiel: 0,
           pointReferentiel: 0,
         };
-        this.mergePointScoresEnfants(consolidatedScore, scoreEnfant, true);
+        this.mergePointScoresEnfants(
+          consolidatedScore,
+          scoreEnfant,
+          true,
+          ReferentielsScoringService.DEFAULT_ROUNDING_DIGITS
+        );
         referentielActionWithScore.scoresTag[tag] = consolidatedScore;
       }
     });
