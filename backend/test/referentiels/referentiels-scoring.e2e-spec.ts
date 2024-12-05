@@ -228,13 +228,48 @@ describe('Referentiels scoring routes', () => {
     const responseSnapshotScoreCourantCreation = await request(
       app.getHttpServer()
     )
-      .get(`/collectivites/1/referentiels/cae/scores?snapshot=true`)
+      .get(`/collectivites/1/referentiels/cae/score-snapshots/score-courant`)
       .set('Authorization', `Bearer ${yoloDodoToken}`)
       .expect(200);
     const getReferentielScoresCourantResponseType: GetReferentielScoresResponseType =
       responseSnapshotScoreCourantCreation.body as GetReferentielScoresResponseType;
     expect(getReferentielScoresCourantResponseType.snapshot?.ref).toBe(
       'score-courant'
+    );
+
+    const responseCurrentSnapshotList = await request(app.getHttpServer())
+      .get(
+        `/collectivites/1/referentiels/cae/score-snapshots?typesJalon=score_courant`
+      )
+      .set('Authorization', `Bearer ${yoloDodoToken}`)
+      .expect(200);
+    const expectedCurrentSnapshotList: GetScoreSnapshotsResponseType = {
+      collectiviteId: 1,
+      referentielId: ReferentielType.CAE,
+      typesJalon: [ScoreJalon.SCORE_COURANT],
+      snapshots: [
+        {
+          auditId: null,
+          createdAt: getReferentielScoresCourantResponseType.snapshot!
+            .createdAt as unknown as Date,
+          createdBy: null,
+          modifiedBy: null,
+          date: getReferentielScoresCourantResponseType.date as unknown as Date,
+          modifiedAt: getReferentielScoresCourantResponseType.snapshot!
+            .modifiedAt as unknown as Date,
+          nom: 'Score courant',
+          pointFait: 0.36,
+          pointPasFait: 0.03,
+          pointPotentiel: 490.9,
+          pointProgramme: 0.21,
+          ref: 'score-courant',
+          referentielVersion: '1.0.0',
+          typeJalon: ScoreJalon.SCORE_COURANT,
+        },
+      ],
+    };
+    expect(responseCurrentSnapshotList.body).toEqual(
+      expectedCurrentSnapshotList
     );
 
     const responseSnapshotCreation = await request(app.getHttpServer())
@@ -250,38 +285,16 @@ describe('Referentiels scoring routes', () => {
     );
 
     const responseSnapshotList = await request(app.getHttpServer())
-      .get(`/collectivites/1/referentiels/cae/score-snapshots`)
+      .get(
+        `/collectivites/1/referentiels/cae/score-snapshots?typesJalon=date_personnalisee`
+      )
       .set('Authorization', `Bearer ${yoloDodoToken}`)
       .expect(200);
     const expectedSnapshotList: GetScoreSnapshotsResponseType = {
       collectiviteId: 1,
       referentielId: ReferentielType.CAE,
-      typesJalon: [
-        ScoreJalon.PRE_AUDIT,
-        ScoreJalon.POST_AUDIT,
-        ScoreJalon.DATE_PERSONNALISEE,
-        ScoreJalon.SCORE_COURANT,
-        ScoreJalon.VISITE_ANNUELLE,
-      ],
+      typesJalon: [ScoreJalon.DATE_PERSONNALISEE],
       snapshots: [
-        {
-          auditId: null,
-          createdAt: getReferentielScoresCourantResponseType.snapshot!
-            .createdAt as unknown as Date,
-          createdBy: '17440546-f389-4d4f-bfdb-b0c94a1bd0f9',
-          modifiedBy: '17440546-f389-4d4f-bfdb-b0c94a1bd0f9',
-          date: getReferentielScoresCourantResponseType.date as unknown as Date,
-          modifiedAt: getReferentielScoresCourantResponseType.snapshot!
-            .modifiedAt as unknown as Date,
-          nom: 'Score courant',
-          pointFait: 0.36,
-          pointPasFait: 0.03,
-          pointPotentiel: 490.9,
-          pointProgramme: 0.21,
-          ref: 'score-courant',
-          referentielVersion: '1.0.0',
-          typeJalon: ScoreJalon.SCORE_COURANT,
-        },
         {
           date: getReferentielScoresResponseType.date as unknown as Date,
           nom: 'test à accent',
