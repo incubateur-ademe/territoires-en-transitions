@@ -14,7 +14,7 @@ type Props = {
 
 export const statusToState: Record<TActionAvancementExt, BadgeState> = {
   non_renseigne: 'grey',
-  pas_fait: 'error',
+  pas_fait: 'warning',
   programme: 'info',
   detaille: 'standard',
   fait: 'success',
