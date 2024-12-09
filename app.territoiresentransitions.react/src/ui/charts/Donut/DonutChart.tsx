@@ -1,15 +1,15 @@
 import { DatumId, ResponsivePie } from '@nivo/pie';
 
+import classNames from 'classnames';
+import { getDataColor } from 'ui/charts/utils';
+import ChartLegend, { ChartLegendProps } from '../ChartLegend';
 import { theme } from '../chartsTheme';
+import { getDonutTooltip } from './DonutTooltip';
 import {
   generateDonutLegendItems,
   getPercentage,
   skipArcLinkLabel,
 } from './utils';
-import { getDonutTooltip } from './DonutTooltip';
-import classNames from 'classnames';
-import ChartLegend, { ChartLegendProps } from '../ChartLegend';
-import { getDataColor } from 'ui/charts/utils';
 
 /** Format de données du composant Pie de nivo*/
 export type DonutData = {
