@@ -236,7 +236,17 @@ export async function ficheResumesFetch({
   }
 
   if (filtre.statuts?.length) {
-    query.in('statut', filtre.statuts);
+    const withStatus = filtre.statuts.filter((s) => s !== 'Sans statut');
+
+    if (withStatus.length) {
+      const statutCondition = `statut.in.(${withStatus.join(',')})`;
+      const nullCondition = filtre.statuts.includes('Sans statut')
+        ? ',statut.is.null'
+        : '';
+      query.or(statutCondition + nullCondition);
+    } else {
+      query.is('statut', null);
+    }
   }
 
   if (filtre.priorites?.length) {
