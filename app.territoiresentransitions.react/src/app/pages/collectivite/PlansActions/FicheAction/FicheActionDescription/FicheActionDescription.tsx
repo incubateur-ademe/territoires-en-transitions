@@ -56,11 +56,14 @@ const FicheActionDescription = ({
     >
       <div
         className={classNames('flex justify-between items-start', {
-          'max-sm:-mb-4 -mb-8': !thematiques || !thematiques?.length,
+          'max-sm:-mb-4 -mb-8':
+            (!thematiques || !thematiques?.length) && !libresTag?.length,
         })}
       >
         {/* Liste des thématiques et sous-thématiques sous forme de badges */}
-        {(thematiques?.length || sousThematiques?.length) && (
+        {(thematiques?.length ||
+          sousThematiques?.length ||
+          libresTag?.length) && (
           <div className="flex flex-wrap gap-3">
             {thematiques?.map((thematique) => (
               <Badge

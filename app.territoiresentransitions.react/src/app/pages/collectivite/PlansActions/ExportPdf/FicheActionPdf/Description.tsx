@@ -29,7 +29,7 @@ const Description = ({ fiche }: FicheActionPdfProps) => {
             />
           ))}
           {libresTag?.map((tagPerso) => (
-            <Badge key={tagPerso.id} title={tagPerso.nom} state="grey" />
+            <Badge key={tagPerso.id} title={tagPerso.nom} state="default" />
           ))}
         </Stack>
       )}
