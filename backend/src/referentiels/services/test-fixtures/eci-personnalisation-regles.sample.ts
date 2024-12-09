@@ -1,4 +1,4 @@
-import { GetPersonnalisationReglesResponseType } from '@/backend/referentiels';
+import { GetPersonnalisationReglesResponseType } from '../../scores/personnalisations/get-personnalisation-regles.response';
 
 export const eciPersonnalisationRegles: GetPersonnalisationReglesResponseType =
   {

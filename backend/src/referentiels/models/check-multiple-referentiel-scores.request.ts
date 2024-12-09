@@ -1,5 +1,6 @@
 import { extendApi } from '@anatine/zod-openapi';
 import { z } from 'zod';
+import { checkReferentielScoresRequestSchema } from '../shared/models/check-referentiel-scores.request';
 
 export const checkMultipleReferentielScoresRequestSchema = extendApi(
   checkReferentielScoresRequestSchema.extend({

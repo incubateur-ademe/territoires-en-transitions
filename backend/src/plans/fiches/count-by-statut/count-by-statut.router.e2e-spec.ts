@@ -1,5 +1,5 @@
 import { AuthenticatedUser } from '@/backend/auth';
-import { statutsEnumValues } from '@/backend/plans';
+import { statutsEnumValues } from '@/backend/plans/fiches';
 import { getAuthUser, getTestRouter } from '@/backend/test';
 import { AppRouter, TrpcRouter } from '@/backend/utils';
 import { inferProcedureInput } from '@trpc/server';

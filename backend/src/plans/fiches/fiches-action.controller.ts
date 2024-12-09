@@ -1,5 +1,5 @@
 import { AuthenticatedUser } from '@/backend/auth';
-import { ficheActionNoteSchema } from '@/backend/plans';
+import { ficheActionNoteSchema } from '@/backend/plans/fiches';
 import { createZodDto } from '@anatine/zod-nestjs';
 import {
   Body,

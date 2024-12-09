@@ -1,11 +1,9 @@
 import { ScoreJalon } from '@/backend/referentiels';
 import { extendApi } from '@anatine/zod-openapi';
 import { z } from 'zod';
+import { getEnumValues } from '../../utils/enum.utils';
 
-export const typesJalonEnumValues = Object.values(ScoreJalon) as [
-  ScoreJalon,
-  ...ScoreJalon[]
-];
+export const typesJalonEnumValues = getEnumValues(ScoreJalon);
 export const typesJalonEnumSchema = z.enum(typesJalonEnumValues);
 
 export const getScoreSnapshotsRequestSchema = extendApi(

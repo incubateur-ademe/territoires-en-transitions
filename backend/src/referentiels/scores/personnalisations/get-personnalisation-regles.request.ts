@@ -1,6 +1,6 @@
 import { extendApi } from '@anatine/zod-openapi';
 import { z } from 'zod';
-import { ReferentielType } from '../../referentiels/models/referentiel.enum';
+import { ReferentielType } from '../../shared/models/referentiel.enum';
 
 export const getPersonnalisationReglesRequestSchema = extendApi(
   z.object({

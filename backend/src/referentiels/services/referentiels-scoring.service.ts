@@ -1,4 +1,12 @@
 import {
+  ConfigService,
+  DatabaseService,
+  MattermostNotificationService,
+  roundTo,
+} from '@/backend/utils';
+import { getErrorMessage } from '@/backend/utils/common/services/errors.helper';
+import { sleep } from '@/backend/utils/common/services/sleep.helper';
+import {
   HttpException,
   Injectable,
   Logger,
@@ -23,35 +31,8 @@ import { AuthenticatedUser } from '../../auth/models/auth.models';
 import { NiveauAcces } from '../../auth/models/private-utilisateur-droit.table';
 import { AuthService } from '../../auth/services/auth.service';
 import { CollectiviteAvecType } from '../../collectivites/shared/models/identite-collectivite.dto';
-import CollectivitesService from '../../collectivites/shared/services/collectivites.service';
-import DatabaseService from '../../common/services/database.service';
-import { getErrorMessage } from '../../common/services/errors.helper';
-import MattermostNotificationService from '../../common/services/mattermost-notification.service';
-import { roundTo } from '../../common/services/number.helper';
-import { sleep } from '../../common/services/sleep.helper';
-import { GetPersonnalitionConsequencesResponseType } from '../../personnalisations/models/get-personnalisation-consequences.response';
-import ExpressionParserService from '../../personnalisations/services/expression-parser.service';
-import PersonnalisationsService from '../../personnalisations/services/personnalisations-service';
-import ConfigurationService from '../../utils/config/config.service';
-import { actionCommentaireTable } from '../models/action-commentaire.table';
-import {
-  ActionPointScoreType,
-  ActionPointScoreWithAvancementType,
-} from '../models/action-point-score.dto';
-import { ActionScoreType } from '../models/action-score.dto';
-import {
-  actionStatutTable,
-  ActionStatutType,
-} from '../models/action-statut.table';
-import { ActionType } from '../models/action-type.enum';
+import { CollectivitesService } from '../../collectivites/shared/services/collectivites.service';
 import { CheckMultipleReferentielScoresRequestType } from '../models/check-multiple-referentiel-scores.request';
-import { CheckReferentielScoresRequestType } from '../models/check-referentiel-scores.request';
-import { CheckScoreStatus } from '../models/check-score-status.enum';
-import {
-  clientScoresTable,
-  ClientScoresType,
-} from '../models/client-scores.table';
-import { ComputeScoreMode } from '../models/compute-scores-mode.enum';
 import { GetActionScoresResponseType } from '../models/get-action-scores.response';
 import { GetActionStatutExplicationsResponseType } from '../models/get-action-statut-explications.response';
 import { GetActionStatutsResponseType } from '../models/get-action-statuts.response';
@@ -63,17 +44,38 @@ import { GetReferentielScoresRequestType } from '../models/get-referentiel-score
 import { GetReferentielScoresResponseType } from '../models/get-referentiel-scores.response';
 import { GetReferentielResponseType } from '../models/get-referentiel.response';
 import { ScoreSnapshotInfoType } from '../models/get-score-snapshots.response';
-import { historiqueActionCommentaireTable } from '../models/historique-action-commentaire.table';
-import { historiqueActionStatutTable } from '../models/historique-action-statut.table';
-import { LabellisationAuditType } from '../models/labellisation-audit.table';
-import { LabellisationEtoileMetaType } from '../models/labellisation-etoile.table';
-import { postAuditScoresTable } from '../models/post-audit-scores.table';
-import { preAuditScoresTable } from '../models/pre-audit-scores.table';
-import { ReferentielActionWithScoreType } from '../models/referentiel-action-avec-score.dto';
-import { ReferentielActionOrigineWithScoreType } from '../models/referentiel-action-origine-with-score.dto';
-import { ReferentielActionType } from '../models/referentiel-action.dto';
-import { ReferentielType } from '../models/referentiel.enum';
-import { ScoreJalon } from '../models/score-jalon.enum';
+import { GetPersonnalitionConsequencesResponseType } from '../scores/personnalisations/get-personnalisation-consequences.response';
+import ExpressionParserService from '../scores/personnalisations/services/expression-parser.service';
+import PersonnalisationsService from '../scores/personnalisations/services/personnalisations-service';
+import { actionCommentaireTable } from '../shared/models/action-commentaire.table';
+import {
+  ActionPointScoreType,
+  ActionPointScoreWithAvancementType,
+} from '../shared/models/action-point-score.dto';
+import { ActionScoreType } from '../shared/models/action-score.dto';
+import {
+  actionStatutTable,
+  ActionStatutType,
+} from '../shared/models/action-statut.table';
+import { ActionType } from '../shared/models/action-type.enum';
+import { CheckReferentielScoresRequestType } from '../shared/models/check-referentiel-scores.request';
+import { CheckScoreStatus } from '../shared/models/check-score-status.enum';
+import {
+  clientScoresTable,
+  ClientScoresType,
+} from '../shared/models/client-scores.table';
+import { ComputeScoreMode } from '../shared/models/compute-scores-mode.enum';
+import { historiqueActionCommentaireTable } from '../shared/models/historique-action-commentaire.table';
+import { historiqueActionStatutTable } from '../shared/models/historique-action-statut.table';
+import { LabellisationAuditType } from '../shared/models/labellisation-audit.table';
+import { LabellisationEtoileMetaType } from '../shared/models/labellisation-etoile.table';
+import { postAuditScoresTable } from '../shared/models/post-audit-scores.table';
+import { preAuditScoresTable } from '../shared/models/pre-audit-scores.table';
+import { ReferentielActionWithScoreType } from '../shared/models/referentiel-action-avec-score.dto';
+import { ReferentielActionOrigineWithScoreType } from '../shared/models/referentiel-action-origine-with-score.dto';
+import { ReferentielActionType } from '../shared/models/referentiel-action.dto';
+import { ReferentielType } from '../shared/models/referentiel.enum';
+import { ScoreJalon } from '../shared/models/score-jalon.enum';
 import LabellisationService from './labellisation.service';
 import ReferentielsScoringSnapshotsService from './referentiels-scoring-snapshots.service';
 import ReferentielsService from './referentiels.service';
@@ -87,7 +89,7 @@ export default class ReferentielsScoringService {
 
   constructor(
     private readonly authService: AuthService,
-    private readonly configService: ConfigurationService,
+    private readonly configService: ConfigService,
     private readonly mattermostNotificationService: MattermostNotificationService,
     private readonly collectivitesService: CollectivitesService,
     private readonly databaseService: DatabaseService,

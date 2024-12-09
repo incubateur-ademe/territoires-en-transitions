@@ -1,10 +1,10 @@
 import { collectiviteAvecTypeSchema } from '@/backend/collectivites';
 import { extendApi } from '@anatine/zod-openapi';
 import { z } from 'zod';
-import { ComputeScoreMode } from '../../../../packages/domain/src/referentiels/models/compute-scores-mode.enum';
-import { referentielActionAvecScoreDtoSchema } from '../../../../packages/domain/src/referentiels/models/referentiel-action-avec-score.dto';
-import { ReferentielType } from '../../../../packages/domain/src/referentiels/models/referentiel.enum';
-import { ScoreJalon } from '../../../../packages/domain/src/referentiels/models/score-jalon.enum';
+import { ComputeScoreMode } from '../shared/models/compute-scores-mode.enum';
+import { referentielActionAvecScoreDtoSchema } from '../shared/models/referentiel-action-avec-score.dto';
+import { ReferentielType } from '../shared/models/referentiel.enum';
+import { ScoreJalon } from '../shared/models/score-jalon.enum';
 
 export const getReferentielScoresResponseSnapshotInfoSchema = z.object({
   ref: z.string(),

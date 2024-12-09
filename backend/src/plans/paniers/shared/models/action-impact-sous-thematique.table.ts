@@ -1,7 +1,7 @@
-import { integer, pgTable, primaryKey } from 'drizzle-orm/pg-core';
-import { sousThematiqueTable } from '../../taxonomie/models/sous-thematique.table';
-import { actionImpactTable } from './action-impact.table';
+import { sousThematiqueTable } from '@/backend/shared';
 import { InferSelectModel } from 'drizzle-orm';
+import { integer, pgTable, primaryKey } from 'drizzle-orm/pg-core';
+import { actionImpactTable } from './action-impact.table';
 
 export const actionImpactSousThematiqueTable = pgTable(
   'action_impact_sous_thematique',

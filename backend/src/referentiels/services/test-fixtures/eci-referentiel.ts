@@ -1,5 +1,5 @@
-import { ActionType } from '../action-type.enum';
-import { ReferentielActionType } from '../referentiel-action.dto';
+import { ActionType } from '../../shared/models/action-type.enum';
+import { ReferentielActionType } from '../../shared/models/referentiel-action.dto';
 
 export const eciReferentiel: ReferentielActionType = {
   actionId: 'eci',

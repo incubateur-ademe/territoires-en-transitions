@@ -1,8 +1,8 @@
 import { extendApi } from '@anatine/zod-openapi';
 import z from 'zod';
-import { ReferentielType } from '../../../../../packages/domain/src/referentiels/models/referentiel.enum';
-import { ScoreJalon } from '../../../../../packages/domain/src/referentiels/models/score-jalon.enum';
-import { scoreSnapshotSchema } from '../../../../../packages/domain/src/referentiels/models/score-snapshot.table';
+import { ReferentielType } from '../shared/models/referentiel.enum';
+import { ScoreJalon } from '../shared/models/score-jalon.enum';
+import { scoreSnapshotSchema } from '../shared/models/score-snapshot.table';
 
 export const scoreSnapshotInfo = scoreSnapshotSchema.pick({
   ref: true,

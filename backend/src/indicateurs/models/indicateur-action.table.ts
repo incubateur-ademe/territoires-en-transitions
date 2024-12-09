@@ -1,6 +1,6 @@
+import { actionRelationTable } from '@/backend/referentiels';
 import { integer, pgTable, primaryKey, varchar } from 'drizzle-orm/pg-core';
 import { indicateurDefinitionTable } from './indicateur-definition.table';
-import { actionRelationTable } from '../../referentiels/models/action-relation.table';
 
 export const indicateurActionTable = pgTable(
   'indicateur_action',

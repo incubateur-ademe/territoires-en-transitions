@@ -1,6 +1,6 @@
 import { extendApi } from '@anatine/zod-openapi';
 import { z } from 'zod';
-import { actionStatutSchema } from '../../../../packages/domain/src/referentiels/models/action-statut.table';
+import { actionStatutSchema } from '../shared/models/action-statut.table';
 
 export const simpleActionStatutSchema = extendApi(
   actionStatutSchema.pick({

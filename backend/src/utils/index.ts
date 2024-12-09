@@ -1,5 +1,7 @@
 export * from './column.utils';
 export * from './common/common.module';
+export * from './common/models/count-synthese.dto';
+export * from './common/models/modified-since.enum';
 export * from './common/services/database.service';
 export * from './common/services/mattermost-notification.service';
 export * from './common/services/number.helper';

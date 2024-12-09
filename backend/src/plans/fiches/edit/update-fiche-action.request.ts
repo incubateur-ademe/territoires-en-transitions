@@ -11,7 +11,7 @@ import {
   ficheActionSchema,
   piliersEciEnumType,
   updateFicheActionSchema,
-} from '@/backend/plans';
+} from '@/backend/plans/fiches';
 import { actionRelationSchema } from '@/backend/referentiels';
 import {
   effetAttenduSchema,

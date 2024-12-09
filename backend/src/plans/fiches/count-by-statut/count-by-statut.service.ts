@@ -12,21 +12,20 @@ import {
   SQLWrapper,
 } from 'drizzle-orm';
 import { PgColumn } from 'drizzle-orm/pg-core';
-import { AuthService } from '../../auth/services/auth.service';
-import { CountByRecordType } from '../../common/models/count-synthese.dto';
-import { getModifiedSinceDate } from '../../common/models/modified-since.enum';
-import DatabaseService from '../../common/services/database.service';
-import { axeTable } from '../models/axe.table';
-import { ficheActionAxeTable } from '../models/fiche-action-axe.table';
-import { ficheActionPartenaireTagTable } from '../models/fiche-action-partenaire-tag.table';
-import { ficheActionPiloteTable } from '../models/fiche-action-pilote.table';
-import { ficheActionServiceTagTable } from '../models/fiche-action-service.table';
+import { GetFichesActionFilterRequestType } from '../models/get-fiches-actions-filter.request';
+import { AuthService } from '@/backend/auth';
+import { CountByRecordType, DatabaseService } from '@/backend/utils';
 import {
   ficheActionTable,
   SANS_STATUT_FICHE_ACTION_SYNTHESE_KEY,
   StatutsEnumType,
-} from '../models/fiche-action.table';
-import { GetFichesActionFilterRequestType } from '../models/get-fiches-actions-filter.request';
+} from '../shared/models/fiche-action.table';
+import { ficheActionPartenaireTagTable } from '../shared/models/fiche-action-partenaire-tag.table';
+import { ficheActionAxeTable } from '../shared/models/fiche-action-axe.table';
+import { axeTable } from '../shared/models/axe.table';
+import { ficheActionServiceTagTable } from '../shared/models/fiche-action-service-tag.table';
+import { ficheActionPiloteTable } from '../shared/models/fiche-action-pilote.table';
+import { getModifiedSinceDate } from '@/backend/utils';
 
 @Injectable()
 export class CountByStatutService {

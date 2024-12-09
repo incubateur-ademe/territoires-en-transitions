@@ -1,9 +1,9 @@
 import { collectiviteTable } from '@/backend/collectivites';
+import { panierTable } from '@/backend/plans/paniers';
 import { createdAt, modifiedAt, modifiedBy } from '@/backend/utils';
 import { InferInsertModel } from 'drizzle-orm';
 import { integer, pgTable, serial, text } from 'drizzle-orm/pg-core';
 import { createSelectSchema } from 'drizzle-zod';
-import { panierTable } from '../../paniers/models/panier.table';
 import { planActionTypeTable } from './plan-action-type.table';
 
 export const axeTable: ReturnType<typeof pgTable> = pgTable('axe', {

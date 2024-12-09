@@ -1,3 +1,4 @@
+import { IdentiteCollectivite } from '@/backend/collectivites';
 import { HttpException, Injectable, Logger } from '@nestjs/common';
 import {
   createToken,
@@ -7,7 +8,6 @@ import {
   tokenMatcher,
 } from 'chevrotain';
 import * as _ from 'lodash';
-import { IdentiteCollectivite } from '../../collectivites/models/identite-collectivite.dto';
 
 // Define all the tokens used in the grammar
 const VRAI = createToken({ name: 'VRAI', pattern: /VRAI/ });

@@ -7,7 +7,7 @@ import {
   uuid,
 } from 'drizzle-orm/pg-core';
 import { actionIdVarchar } from './action-definition.table';
-import { historiqueSchema } from '../scores/personnalisations/models/historique-reponse-choix.table';
+import { historiqueSchema } from '../../scores/personnalisations/models/historique-reponse-choix.table';
 
 // Weirdly, the table name is 'action_precision' and not 'action_commentaire'
 export const historiqueActionCommentaireTable = historiqueSchema.table(

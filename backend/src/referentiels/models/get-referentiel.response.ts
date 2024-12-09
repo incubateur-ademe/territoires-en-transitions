@@ -1,8 +1,8 @@
 import { extendApi } from '@anatine/zod-openapi';
 import { z } from 'zod';
-import { actionDefinitionMinimalWithTypeLevel } from '../../../../packages/domain/src/referentiels/models/action-definition.table';
-import { ActionType } from '../../../../packages/domain/src/referentiels/models/action-type.enum';
-import { referentielActionDtoSchema } from '../../../../packages/domain/src/referentiels/models/referentiel-action.dto';
+import { actionDefinitionMinimalWithTypeLevel } from '../shared/models/action-definition.table';
+import { ActionType } from '../shared/models/action-type.enum';
+import { referentielActionDtoSchema } from '../shared/models/referentiel-action.dto';
 
 export const getReferentielResponseSchema = extendApi(
   z.object({

@@ -1,5 +1,5 @@
 import { z } from 'zod';
-import { actionOrigineSchema } from '../../../../packages/domain/src/referentiels/models/action-origine.table';
+import { actionOrigineSchema } from '../shared/models/action-origine.table';
 
 export const getActionOrigineDtoSchema = actionOrigineSchema.extend({
   origineActionNom: z.string().optional().nullable(),

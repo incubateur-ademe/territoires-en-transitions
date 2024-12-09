@@ -1,7 +1,7 @@
 import { integer, pgTable, primaryKey } from 'drizzle-orm/pg-core';
-import { effetAttenduTable } from '../../taxonomie/models/effet-attendu.table';
 import { actionImpactTable } from './action-impact.table';
 import { InferSelectModel } from 'drizzle-orm';
+import { effetAttenduTable } from '@/backend/shared';
 
 export const actionImpactEffetAttenduTable = pgTable(
   'action_impact_effet_attendu',

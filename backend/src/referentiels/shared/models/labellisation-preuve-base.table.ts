@@ -1,3 +1,4 @@
+import { authUsersTable } from '@/backend/auth';
 import { collectiviteTable } from '@/backend/collectivites';
 import { sql } from 'drizzle-orm';
 import {
@@ -8,7 +9,6 @@ import {
   timestamp,
   uuid,
 } from 'drizzle-orm/pg-core';
-import { authUsersTable } from '../../auth/models/auth-users.table';
 import { labellisationBibliothequeFichierTable } from './labellisation-bibliotheque-fichier.table';
 import { labellisationSchema } from './labellisation.schema';
 

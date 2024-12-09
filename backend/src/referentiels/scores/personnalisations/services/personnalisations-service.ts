@@ -1,18 +1,16 @@
-import { Injectable, Logger } from '@nestjs/common';
-import { and, asc, desc, eq, like, lte, SQL, SQLWrapper } from 'drizzle-orm';
-import { NiveauAcces } from '../../auth/models/private-utilisateur-droit.table';
-import { AuthenticatedUser } from '../../auth/models/auth.models';
-import { AuthService } from '../../auth/services/auth.service';
+import { AuthenticatedUser, AuthService, NiveauAcces } from '@/backend/auth';
 import {
   CollectiviteAvecType,
+  CollectivitesService,
   IdentiteCollectivite,
-} from '../../collectivites/models/identite-collectivite.dto';
-import CollectivitesService from '../../collectivites/services/collectivites.service';
-import DatabaseService from '../../common/services/database.service';
-import { GetPersonnalisationConsequencesRequestType } from '../models/get-personnalisation-consequences.request';
-import { GetPersonnalitionConsequencesResponseType } from '../models/get-personnalisation-consequences.response';
-import { GetPersonnalisationReglesResponseType } from '../models/get-personnalisation-regles.response';
-import { GetPersonnalisationReponsesResponseType } from '../models/get-personnalisation-reponses.response';
+} from '@/backend/collectivites';
+import { DatabaseService } from '@/backend/utils';
+import { Injectable, Logger } from '@nestjs/common';
+import { and, asc, desc, eq, like, lte, SQL, SQLWrapper } from 'drizzle-orm';
+import { GetPersonnalisationConsequencesRequestType } from '../get-personnalisation-consequences.request';
+import { GetPersonnalitionConsequencesResponseType } from '../get-personnalisation-consequences.response';
+import { GetPersonnalisationReglesResponseType } from '../get-personnalisation-regles.response';
+import { GetPersonnalisationReponsesResponseType } from '../get-personnalisation-reponses.response';
 import { historiqueReponseBinaireTable } from '../models/historique-reponse-binaire.table';
 import { historiqueReponseChoixTable } from '../models/historique-reponse-choix.table';
 import { historiqueReponseProportionTable } from '../models/historique-reponse-proportion.table';

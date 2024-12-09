@@ -1,3 +1,4 @@
+import { collectiviteTable } from '@/backend/collectivites';
 import { sql } from 'drizzle-orm';
 import {
   doublePrecision,
@@ -6,7 +7,6 @@ import {
   timestamp,
   varchar,
 } from 'drizzle-orm/pg-core';
-import { collectiviteTable } from '../../collectivites/models/collectivite.table';
 
 export const reponseProportionTable = pgTable('reponse_proportion', {
   modifiedAt: timestamp('modified_at', { withTimezone: true, mode: 'string' })

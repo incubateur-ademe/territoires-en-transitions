@@ -1,17 +1,19 @@
 import { createZodDto } from '@anatine/zod-nestjs';
 import { Controller, Get, Logger, Param, Query } from '@nestjs/common';
 import { ApiResponse, ApiTags } from '@nestjs/swagger';
-import { AllowAnonymousAccess } from '../../auth/decorators/allow-anonymous-access.decorator';
-import { AllowPublicAccess } from '../../auth/decorators/allow-public-access.decorator';
-import { TokenInfo } from '../../auth/decorators/token-info.decorators';
-import { getPersonnalisationConsequencesRequestSchema } from '../models/get-personnalisation-consequences.request';
-import { getPersonnalitionConsequencesResponseSchema } from '../models/get-personnalisation-consequences.response';
-import { getPersonnalisationReglesRequestSchema } from '../models/get-personnalisation-regles.request';
-import { getPersonnalisationReglesResponseSchema } from '../models/get-personnalisation-regles.response';
-import { getPersonnalisationReponsesRequestSchema } from '../models/get-personnalisation-reponses.request';
-import { getPersonnalitionReponsesResponseSchema } from '../models/get-personnalisation-reponses.response';
-import PersonnalisationService from '../services/personnalisations-service';
-import { AuthenticatedUser } from '../../auth/models/auth.models';
+import { getPersonnalitionReponsesResponseSchema } from '../get-personnalisation-reponses.response';
+import { getPersonnalisationReponsesRequestSchema } from '../get-personnalisation-reponses.request';
+import { getPersonnalisationConsequencesRequestSchema } from '../get-personnalisation-consequences.request';
+import { getPersonnalitionConsequencesResponseSchema } from '../get-personnalisation-consequences.response';
+import { getPersonnalisationReglesRequestSchema } from '../get-personnalisation-regles.request';
+import { getPersonnalisationReglesResponseSchema } from '../get-personnalisation-regles.response';
+import PersonnalisationsService from '../services/personnalisations-service';
+import {
+  AllowPublicAccess,
+  AuthenticatedUser,
+  TokenInfo,
+} from '@/backend/auth';
+import { AllowAnonymousAccess } from '@/backend/auth/decorators/allow-anonymous-access.decorator';
 
 /**
  * Création des classes de requête/réponse à partir du schema pour générer automatiquement la documentation OpenAPI et la validation des entrées
@@ -44,7 +46,7 @@ export class PersonnalisationsController {
   private readonly logger = new Logger(PersonnalisationsController.name);
 
   constructor(
-    private readonly personnalisationsService: PersonnalisationService
+    private readonly personnalisationsService: PersonnalisationsService
   ) {}
 
   @AllowPublicAccess()

@@ -1,6 +1,6 @@
 import { extendApi } from '@anatine/zod-openapi';
 import { z } from 'zod';
-import { personnalisationConsequenceSchema } from '../../../../../packages/domain/src/referentiels/scores/personnalisations/models/personnalisation-consequence.dto';
+import { personnalisationConsequenceSchema } from './models/personnalisation-consequence.dto';
 
 export const getPersonnalitionConsequencesResponseSchema = extendApi(
   z.record(z.string(), personnalisationConsequenceSchema)

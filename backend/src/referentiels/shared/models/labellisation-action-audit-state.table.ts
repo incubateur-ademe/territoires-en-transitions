@@ -1,3 +1,4 @@
+import { authUsersTable } from '@/backend/auth';
 import { collectiviteTable } from '@/backend/collectivites';
 import { sql } from 'drizzle-orm';
 import {
@@ -11,7 +12,6 @@ import {
   unique,
   uuid,
 } from 'drizzle-orm/pg-core';
-import { authUsersTable } from '../../auth/models/auth-users.table';
 import { actionIdReference } from './action-definition.table';
 import { labellisationAuditTable } from './labellisation-audit.table';
 import { labellisationSchema } from './labellisation.schema';

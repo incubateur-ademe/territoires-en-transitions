@@ -1,8 +1,8 @@
 import { extendApi } from '@anatine/zod-openapi';
 import { z } from 'zod';
-import { actionScoreSchema } from '../../../../packages/domain/src/referentiels/models/action-score.dto';
-import { CheckScoreStatus } from '../../../../packages/domain/src/referentiels/models/check-score-status.enum';
-import { ReferentielType } from '../../../../packages/domain/src/referentiels/models/referentiel.enum';
+import { actionScoreSchema } from '../shared/models/action-score.dto';
+import { CheckScoreStatus } from '../shared/models/check-score-status.enum';
+import { ReferentielType } from '../shared/models/referentiel.enum';
 
 export const getCheckScoresResponseSchema = extendApi(
   z.object({

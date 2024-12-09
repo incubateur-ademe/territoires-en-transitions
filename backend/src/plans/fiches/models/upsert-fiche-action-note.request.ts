@@ -1,7 +1,7 @@
 import {
   deleteFicheActionNoteSchema,
   upsertFicheActionNoteSchema,
-} from '@/backend/plans';
+} from '@/backend/plans/fiches';
 import { extendApi } from '@anatine/zod-openapi';
 import { z } from 'zod';
 

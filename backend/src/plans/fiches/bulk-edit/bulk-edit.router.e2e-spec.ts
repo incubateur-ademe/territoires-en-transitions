@@ -3,7 +3,7 @@ import {
   ficheActionPiloteTable,
   ficheActionTable,
   StatutsEnumType,
-} from '@/backend/plans';
+} from '@/backend/plans/fiches';
 import {
   getAuthUser,
   getTestApp,

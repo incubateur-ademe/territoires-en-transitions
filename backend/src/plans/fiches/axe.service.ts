@@ -1,4 +1,8 @@
-import { axeTable, CreateAxeType, ficheActionAxeTable } from '@/backend/plans';
+import {
+  axeTable,
+  CreateAxeType,
+  ficheActionAxeTable,
+} from '@/backend/plans/fiches';
 import { DatabaseService } from '@/backend/utils';
 import { Injectable, Logger } from '@nestjs/common';
 import { and, eq, isNull, or } from 'drizzle-orm';

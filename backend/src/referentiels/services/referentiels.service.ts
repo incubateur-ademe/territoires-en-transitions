@@ -1,3 +1,5 @@
+import { ConfigService, DatabaseService, SheetService } from '@/backend/utils';
+import { getErrorMessage } from '@/backend/utils/common/services/errors.helper';
 import {
   HttpException,
   HttpStatus,
@@ -10,23 +12,21 @@ import { and, asc, eq, getTableColumns, inArray, sql } from 'drizzle-orm';
 import { isNil } from 'es-toolkit';
 import * as _ from 'lodash';
 import * as semver from 'semver';
-import DatabaseService from '../../common/services/database.service';
-import { getErrorMessage } from '../../common/services/errors.helper';
+import { GetActionOrigineDtoSchema } from '../models/get-action-origine.dto';
+import { GetReferentielResponseType } from '../models/get-referentiel.response';
 import {
   CreatePersonnalisationRegleType,
   personnalisationRegleTable,
-} from '../../personnalisations/models/personnalisation-regle.table';
+} from '../scores/personnalisations/models/personnalisation-regle.table';
 import {
   personnalisationTable,
   PersonnalisationType,
-} from '../../personnalisations/models/personnalisation.table';
-import ExpressionParserService from '../../personnalisations/services/expression-parser.service';
-import SheetService from '../../spreadsheets/services/sheet.service';
-import ConfigurationService from '../../utils/config/config.service';
+} from '../scores/personnalisations/models/personnalisation.table';
+import ExpressionParserService from '../scores/personnalisations/services/expression-parser.service';
 import {
   actionDefinitionTagTable,
   CreateActionDefinitionTagType,
-} from '../models/action-definition-tag.table';
+} from '../shared/models/action-definition-tag.table';
 import {
   ActionDefinitionAvecParentType,
   actionDefinitionTable,
@@ -34,32 +34,30 @@ import {
   ImportActionDefinitionCoremeasureType,
   importActionDefinitionSchema,
   ImportActionDefinitionType,
-} from '../models/action-definition.table';
+} from '../shared/models/action-definition.table';
 import {
   actionOrigineTable,
   CreateActionOrigineType,
-} from '../models/action-origine.table';
+} from '../shared/models/action-origine.table';
 import {
   actionRelationTable,
   CreateActionRelationType,
-} from '../models/action-relation.table';
-import { ActionType } from '../models/action-type.enum';
-import { GetActionOrigineDtoSchema } from '../models/get-action-origine.dto';
-import { GetReferentielResponseType } from '../models/get-referentiel.response';
-import { ReferentielActionType } from '../models/referentiel-action.dto';
+} from '../shared/models/action-relation.table';
+import { ActionType } from '../shared/models/action-type.enum';
+import { ReferentielActionType } from '../shared/models/referentiel-action.dto';
 import {
   referentielChangelogSchema,
   ReferentielChangelogType,
-} from '../models/referentiel-changelog.dto';
+} from '../shared/models/referentiel-changelog.dto';
 import {
   referentielDefinitionTable,
   ReferentielDefinitionType,
-} from '../models/referentiel-definition.table';
+} from '../shared/models/referentiel-definition.table';
 import {
   CreateReferentielTagType,
   referentielTagTable,
-} from '../models/referentiel-tag.table';
-import { ReferentielType } from '../models/referentiel.enum';
+} from '../shared/models/referentiel-tag.table';
+import { ReferentielType } from '../shared/models/referentiel.enum';
 
 @Injectable()
 export default class ReferentielsService {
@@ -72,7 +70,7 @@ export default class ReferentielsService {
   private readonly ORIGIN_NEW_ACTION_PREFIX = 'nouvelle';
 
   constructor(
-    private readonly backendConfigurationService: ConfigurationService,
+    private readonly backendConfigurationService: ConfigService,
     private readonly databaseService: DatabaseService,
     private readonly sheetService: SheetService,
     private readonly expressionParserService: ExpressionParserService

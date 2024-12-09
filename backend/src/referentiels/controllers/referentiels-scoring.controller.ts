@@ -14,7 +14,6 @@ import { AllowAnonymousAccess } from '../../auth/decorators/allow-anonymous-acce
 import { TokenInfo } from '../../auth/decorators/token-info.decorators';
 import { AuthenticatedUser, AuthUser } from '../../auth/models/auth.models';
 import { checkMultipleReferentielScoresRequestSchema } from '../models/check-multiple-referentiel-scores.request';
-import { CheckReferentielScoresRequestType } from '../models/check-referentiel-scores.request';
 import { getActionStatutsRequestSchema } from '../models/get-action-statuts.request';
 import { getActionStatutsResponseSchema } from '../models/get-action-statuts.response';
 import { GetCheckScoresResponseType } from '../models/get-check-scores.response';
@@ -25,9 +24,10 @@ import { getReferentielScoresRequestSchema } from '../models/get-referentiel-sco
 import { getReferentielScoresResponseSchema } from '../models/get-referentiel-scores.response';
 import { getScoreSnapshotsRequestSchema } from '../models/get-score-snapshots.request';
 import { getScoreSnapshotsResponseSchema } from '../models/get-score-snapshots.response';
-import { ReferentielType } from '../models/referentiel.enum';
 import ReferentielsScoringSnapshotsService from '../services/referentiels-scoring-snapshots.service';
 import ReferentielsScoringService from '../services/referentiels-scoring.service';
+import { CheckReferentielScoresRequestType } from '../shared/models/check-referentiel-scores.request';
+import { ReferentielType } from '../shared/models/referentiel.enum';
 
 class GetReferentielScoresRequestClass extends createZodDto(
   getReferentielScoresRequestSchema

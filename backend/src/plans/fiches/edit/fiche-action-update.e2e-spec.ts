@@ -16,7 +16,7 @@ import {
   ficheActionThematiqueTable,
   piliersEciEnumType,
   StatutsEnumType,
-} from '@/backend/plans';
+} from '@/backend/plans/fiches';
 import { DatabaseService } from '@/backend/utils';
 import { INestApplication } from '@nestjs/common';
 import { eq } from 'drizzle-orm';

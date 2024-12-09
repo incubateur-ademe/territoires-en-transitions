@@ -8,9 +8,9 @@ import {
   uuid,
 } from 'drizzle-orm/pg-core';
 import { createInsertSchema, createSelectSchema } from 'drizzle-zod';
-import { historiqueSchema } from '../scores/personnalisations/models/historique-reponse-choix.table';
 import { actionIdReference } from './action-definition.table';
 import { avancementEnum } from './action-statut.table';
+import { historiqueSchema } from '../../scores/personnalisations/models/historique-reponse-choix.table';
 
 export const historiqueActionStatutTable = historiqueSchema.table(
   'action_statut',

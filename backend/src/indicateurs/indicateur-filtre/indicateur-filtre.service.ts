@@ -20,7 +20,7 @@ import {
   ficheActionAxeTable,
   ficheActionIndicateurTable,
   ficheActionTable,
-} from '@/backend/plans';
+} from '@/backend/plans/fiches';
 import { DatabaseService } from '@/backend/utils';
 import { Injectable } from '@nestjs/common';
 import { getTableName, sql } from 'drizzle-orm';

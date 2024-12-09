@@ -1,31 +1,21 @@
 import { Module } from '@nestjs/common';
-import { AuthModule } from '../auth/auth.module';
 import { CollectivitesModule } from '../collectivites/collectivites.module';
-import { CommonModule } from '../common/common.module';
-import { SheetModule } from '../spreadsheets/sheet.module';
-import { TrpcModule } from '../trpc/trpc.module';
+import { CommonModule, SheetModule } from '../utils';
 import { ConfigModule } from '../utils/config/config.module';
-import { IndicateursController } from './controllers/indicateurs.controller';
-import { TrajectoiresController } from './controllers/trajectoires.controller';
 import { IndicateurFiltreRouter } from './indicateur-filtre/indicateur-filtre.router';
 import IndicateurFiltreService from './indicateur-filtre/indicateur-filtre.service';
-import ExportIndicateursService from './shared/services/export-indicateurs.service';
+import { IndicateursController } from './shared/controllers/indicateurs.controller';
+import { ExportIndicateursService } from './shared/services/export-indicateurs.service';
 import IndicateurSourcesService from './shared/services/indicateur-sources.service';
-import IndicateursService from './shared/services/indicateurs.service';
+import { IndicateursService } from './shared/services/indicateurs.service';
 import TrajectoiresDataService from './trajectoires/trajectoires-data.service';
 import TrajectoiresSpreadsheetService from './trajectoires/trajectoires-spreadsheet.service';
 import TrajectoiresXlsxService from './trajectoires/trajectoires-xlsx.service';
+import { TrajectoiresController } from './trajectoires/trajectoires.controller';
 import { TrajectoiresRouter } from './trajectoires/trajectoires.router';
 
 @Module({
-  imports: [
-    ConfigModule,
-    CommonModule,
-    TrpcModule,
-    AuthModule,
-    CollectivitesModule,
-    SheetModule,
-  ],
+  imports: [ConfigModule, CommonModule, CollectivitesModule, SheetModule],
   providers: [
     ExportIndicateursService,
     IndicateurSourcesService,

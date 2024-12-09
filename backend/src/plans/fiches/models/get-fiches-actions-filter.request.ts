@@ -1,4 +1,4 @@
-import { ficheActionCiblesEnumSchema } from '@/backend/plans';
+import { ficheActionCiblesEnumSchema } from '@/backend/plans/fiches';
 import { modifiedSinceSchema } from '@/backend/utils/common/models/modified-since.enum';
 import { z } from 'zod';
 

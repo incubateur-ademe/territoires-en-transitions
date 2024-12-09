@@ -1,5 +1,5 @@
 import { AuthenticatedUser, NiveauAcces } from '@/backend/auth';
-import { CollectivitesService } from '@/backend/collectivites';
+import { CollectivitesService, EpciType } from '@/backend/collectivites';
 import {
   CreateIndicateurSourceMetadonneeType,
   CreateIndicateurSourceType,
@@ -21,6 +21,7 @@ import { IndicateursService } from '../shared/services/indicateurs.service';
 import { DonneesARemplirResultType } from './models/donnees-a-remplir-result.dto';
 import { DonneesARemplirValeurType } from './models/donnees-a-remplir-valeur.dto';
 import { DonneesCalculTrajectoireARemplirType } from './models/donnees-calcul-trajectoire-a-remplir.dto';
+import { VerificationTrajectoireRequestType } from './models/verification-trajectoire.request';
 import {
   VerificationTrajectoireResultType,
   VerificationTrajectoireStatus,

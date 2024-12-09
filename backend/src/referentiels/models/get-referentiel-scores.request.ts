@@ -1,7 +1,7 @@
 import { extendApi } from '@anatine/zod-openapi';
 import { z } from 'zod';
-import { ComputeScoreMode } from '../../../../packages/domain/src/referentiels/models/compute-scores-mode.enum';
-import { ScoreJalon } from '../../../../packages/domain/src/referentiels/models/score-jalon.enum';
+import { ComputeScoreMode } from '../shared/models/compute-scores-mode.enum';
+import { ScoreJalon } from '../shared/models/score-jalon.enum';
 
 export const getReferentielScoresRequestSchema = extendApi(
   z.object({

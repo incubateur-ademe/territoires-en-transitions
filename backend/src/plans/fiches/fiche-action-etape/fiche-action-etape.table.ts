@@ -1,17 +1,9 @@
-import {
-  pgTable,
-  serial,
-  integer,
-  text,
-  timestamp,
-  boolean,
-  uuid,
-} from 'drizzle-orm/pg-core';
-import { createInsertSchema } from 'drizzle-zod';
+import { createdAt, createdBy, modifiedAt, modifiedBy } from '@/backend/utils';
 import { InferSelectModel } from 'drizzle-orm';
+import { boolean, integer, pgTable, serial, text } from 'drizzle-orm/pg-core';
+import { createInsertSchema } from 'drizzle-zod';
 import { z } from 'zod';
-import { ficheActionTable } from '../models/fiche-action.table';
-import { createdAt, createdBy, modifiedAt, modifiedBy } from '@tet/backend/common/models/column.helpers';
+import { ficheActionTable } from '../shared/models/fiche-action.table';
 
 export const ficheActionEtapeTable = pgTable('fiche_action_etape', {
   id: serial('id').primaryKey(),

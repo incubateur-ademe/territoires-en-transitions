@@ -1,5 +1,5 @@
 import { integer, serial, text } from 'drizzle-orm/pg-core';
-import { collectiviteTable } from '../../collectivites/models/collectivite.table';
+import { collectiviteTable } from './collectivite.table';
 
 export const tagTableBase = {
   id: serial('id').primaryKey(),
@@ -10,7 +10,7 @@ export const tagTableBase = {
 };
 
 export type TagType = {
-  id : number,
-  nom : string,
-  collectiviteId : number
-}
+  id: number;
+  nom: string;
+  collectiviteId: number;
+};

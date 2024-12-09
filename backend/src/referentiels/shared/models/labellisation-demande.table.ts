@@ -1,3 +1,4 @@
+import { authUsersTable } from '@/backend/auth';
 import { collectiviteTable } from '@/backend/collectivites';
 import {
   boolean,
@@ -7,7 +8,6 @@ import {
   timestamp,
   uuid,
 } from 'drizzle-orm/pg-core';
-import { authUsersTable } from '../../auth/models/auth-users.table';
 import { labellisationEtoileEnum } from './labellisation-etoile.table';
 import { labellisationSchema } from './labellisation.schema';
 import { referentielEnum } from './referentiel.enum';

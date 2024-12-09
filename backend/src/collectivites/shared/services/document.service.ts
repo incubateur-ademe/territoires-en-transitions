@@ -1,7 +1,7 @@
+import { DatabaseService } from '@/backend/utils';
 import { Injectable, Logger } from '@nestjs/common';
-import DatabaseService from '../../common/services/database.service';
-import { annexeTable } from '../models/annexe.table';
-import { lienType } from '../models/document-lien.dto';
+import { annexeTable } from '../models/documents/annexe.table';
+import { LienType } from '../models/documents/document-lien.dto';
 
 @Injectable()
 export default class DocumentService {
@@ -18,7 +18,7 @@ export default class DocumentService {
    */
   async createLienAnnexe(
     ficheId: number,
-    lien: lienType,
+    lien: LienType,
     collectiviteId: number
   ): Promise<number> {
     this.logger.log(

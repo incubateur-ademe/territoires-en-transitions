@@ -1,8 +1,8 @@
+import { TrpcService } from '@/backend/utils';
 import { Injectable } from '@nestjs/common';
-import { upsertFicheActionEtapeSchema } from '@tet/backend/fiches/fiche-action-etape/fiche-action-etape.table';
 import { z } from 'zod';
-import { TrpcService } from '../../trpc/trpc.service';
 import { FicheActionEtapeService } from './fiche-action-etape.service';
+import { upsertFicheActionEtapeSchema } from './fiche-action-etape.table';
 
 @Injectable()
 export class FicheActionEtapeRouter {

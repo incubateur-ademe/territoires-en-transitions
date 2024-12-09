@@ -1,4 +1,4 @@
-import { ficheActionTable } from '@/backend/plans';
+import { ficheActionTable } from '@/backend/plans/fiches';
 import { integer, pgTable } from 'drizzle-orm/pg-core';
 import { DocumentBase } from './document.basetable';
 

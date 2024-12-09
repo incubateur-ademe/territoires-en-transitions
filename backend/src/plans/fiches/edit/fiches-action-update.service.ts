@@ -17,7 +17,7 @@ import {
   ficheActionThematiqueTable,
   updateFicheActionSchema,
   UpsertFicheActionNoteType,
-} from '@/backend/plans';
+} from '@/backend/plans/fiches';
 import { DatabaseService } from '@/backend/utils';
 import { buildConflictUpdateColumns } from '@/backend/utils/common/services/conflict.helper';
 import { Injectable, Logger, NotFoundException } from '@nestjs/common';

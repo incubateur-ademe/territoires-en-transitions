@@ -1,5 +1,5 @@
+import { panierPartenaireTable } from '@/backend/shared/models/panier-partenaire.table';
 import { integer, pgTable, primaryKey } from 'drizzle-orm/pg-core';
-import { panierPartenaireTable } from '../../taxonomie/models/panier-partenaire.table';
 import { actionImpactTable } from './action-impact.table';
 
 export const actionImpactPartenaireTable = pgTable(

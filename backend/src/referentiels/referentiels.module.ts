@@ -1,12 +1,11 @@
 import { Module } from '@nestjs/common';
 import { AuthModule } from '../auth/auth.module';
 import { CollectivitesModule } from '../collectivites/collectivites.module';
-import { CommonModule } from '../common/common.module';
-import { PersonnalisationsModule } from '../personnalisations/personnalisations.module';
-import { SheetModule } from '../spreadsheets/sheet.module';
+import { CommonModule, SheetModule } from '../utils';
 import { ConfigModule } from '../utils/config/config.module';
 import { ReferentielsScoringController } from './controllers/referentiels-scoring.controller';
 import { ReferentielsController } from './controllers/referentiels.controller';
+import { PersonnalisationsModule } from './scores/personnalisations/personnalisations.module';
 import LabellisationService from './services/labellisation.service';
 import ReferentielsScoringSnapshotsService from './services/referentiels-scoring-snapshots.service';
 import ReferentielsScoringService from './services/referentiels-scoring.service';

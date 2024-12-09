@@ -1,7 +1,7 @@
+import { TrpcService } from '@/backend/utils';
 import { Injectable } from '@nestjs/common';
 import { z } from 'zod';
 import { getFichesActionFilterRequestSchema } from '../models/get-fiches-actions-filter.request';
-import { TrpcService } from '../../trpc/trpc.service';
 import { CountByStatutService } from './count-by-statut.service';
 
 const inputSchema = z.object({

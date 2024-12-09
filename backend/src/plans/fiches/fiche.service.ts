@@ -16,7 +16,7 @@ import {
   ficheActionSousThematiqueTable,
   ficheActionTable,
   ficheActionThematiqueTable,
-} from '@/backend/plans';
+} from '@/backend/plans/fiches';
 import { DatabaseService } from '@/backend/utils';
 import { Injectable, Logger } from '@nestjs/common';
 import { aliasedTable, desc, eq } from 'drizzle-orm';
