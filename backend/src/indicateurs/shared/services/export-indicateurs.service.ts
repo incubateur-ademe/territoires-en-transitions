@@ -1,27 +1,26 @@
-import { Injectable, Logger } from '@nestjs/common';
-import { format } from 'date-fns';
-import { uniq } from 'es-toolkit';
-import { Workbook } from 'exceljs';
-import { AuthenticatedUser } from '../../../auth/models/auth.models';
-import { NiveauAcces } from '../../../auth/models/private-utilisateur-droit.table';
-import { AuthService } from '../../../auth/services/auth.service';
-import CollectivitesService from '../../../collectivites/shared/services/collectivites.service';
+import { AuthenticatedUser, NiveauAcces } from '@/backend/auth';
+import { CollectivitesService } from '@/backend/collectivites';
+import {
+  IndicateurDefinitionAvecEnfantsType,
+  IndicateurSourceMetadonneeType,
+  IndicateurValeurAvecMetadonnesDefinition,
+  MinimalIndicateurDefinitionType,
+} from '@/backend/indicateurs';
 import {
   adjustColumnWidth,
   BOLD,
   normalizeWorksheetName,
-} from '../../common/services/xlsx.helper';
-import { ExportIndicateursRequestType } from '../../models/export-indicateurs.request';
-import {
-  IndicateurDefinitionAvecEnfantsType,
-  MinimalIndicateurDefinitionType,
-} from '../../models/indicateur-definition.table';
-import { IndicateurSourceMetadonneeType } from '../../models/indicateur-source-metadonnee.table';
-import { IndicateurValeurAvecMetadonnesDefinition } from '../../models/indicateur-valeur.table';
-import IndicateursService from './indicateurs.service';
+} from '@/backend/utils/common/services/xlsx.helper';
+import { Injectable, Logger } from '@nestjs/common';
+import { format } from 'date-fns';
+import { uniq } from 'es-toolkit';
+import { Workbook } from 'exceljs';
+import { AuthService } from '../../../auth/services/auth.service';
+import { ExportIndicateursRequestType } from '../models/export-indicateurs.request';
+import { IndicateursService } from './indicateurs.service';
 
 @Injectable()
-export default class ExportIndicateursService {
+export class ExportIndicateursService {
   private readonly logger = new Logger(ExportIndicateursService.name);
 
   constructor(

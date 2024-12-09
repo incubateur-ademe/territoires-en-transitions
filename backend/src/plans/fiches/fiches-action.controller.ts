@@ -1,3 +1,5 @@
+import { AuthenticatedUser } from '@/backend/auth';
+import { ficheActionNoteSchema } from '@/backend/plans';
 import { createZodDto } from '@anatine/zod-nestjs';
 import {
   Body,
@@ -11,13 +13,11 @@ import {
 import { ApiOkResponse, ApiTags } from '@nestjs/swagger';
 import { z } from 'zod';
 import { TokenInfo } from '../../auth/decorators/token-info.decorators';
-import type { AuthenticatedUser } from '../../auth/models/auth.models';
+import { getFichesActionSyntheseSchema } from './count-by-statut/count-by-status.response';
 import { CountByStatutService } from './count-by-statut/count-by-statut.service';
 import FichesActionUpdateService from './edit/fiches-action-update.service';
-import { getFichesActionSyntheseSchema } from './edit/get-fiches-action-synthese.response';
 import { updateFicheActionRequestSchema } from './edit/update-fiche-action.request';
-import FicheService from './fiche.service';
-import { ficheActionNoteSchema } from './models/fiche-action-note.table';
+import { FicheService } from './fiche.service';
 import { getFichesActionFilterRequestSchema } from './models/get-fiches-actions-filter.request';
 import {
   deleteFicheActionNotesRequestSchema,

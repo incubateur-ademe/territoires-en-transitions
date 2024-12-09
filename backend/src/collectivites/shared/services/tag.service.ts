@@ -1,12 +1,11 @@
-import { AuthService } from '@/backend/auth';
-import { DatabaseService } from '@/backend/utils';
-import { AuthenticatedUser } from '@/domain/auth';
+import { AuthenticatedUser, AuthService } from '@/backend/auth';
 import {
   categorieTagTable,
   groupementCollectiviteTable,
   partenaireTagTable,
   TagType,
-} from '@/domain/collectivites';
+} from '@/backend/collectivites';
+import { DatabaseService } from '@/backend/utils';
 import { Injectable, Logger } from '@nestjs/common';
 import { and, eq, inArray, isNull, or } from 'drizzle-orm';
 

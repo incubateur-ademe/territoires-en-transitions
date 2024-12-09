@@ -1,15 +1,13 @@
-import { Injectable, Logger } from '@nestjs/common';
-import { and, eq } from 'drizzle-orm';
-import DatabaseService from '../../common/services/database.service';
 import {
   CreateIndicateurSourceMetadonneeType,
+  CreateIndicateurSourceType,
   indicateurSourceMetadonneeTable,
   IndicateurSourceMetadonneeType,
-} from '../../models/indicateur-source-metadonnee.table';
-import {
-  CreateIndicateurSourceType,
   indicateurSourceTable,
-} from '../../models/indicateur-source.table';
+} from '@/backend/indicateurs';
+import { DatabaseService } from '@/backend/utils';
+import { Injectable, Logger } from '@nestjs/common';
+import { and, eq } from 'drizzle-orm';
 
 @Injectable()
 export default class IndicateurSourcesService {

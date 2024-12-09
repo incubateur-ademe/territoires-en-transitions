@@ -1,4 +1,4 @@
-import { AuthUser, isAnonymousUser, isAuthenticatedUser } from '@/domain/auth';
+import { AuthUser, isAnonymousUser, isAuthenticatedUser } from '@/backend/auth';
 import { Injectable } from '@nestjs/common';
 import { SupabaseClient } from '@supabase/supabase-js';
 import { initTRPC, TRPCError } from '@trpc/server';

@@ -3,22 +3,22 @@ import {
   partenaireTagSchema,
   serviceTagSchema,
   structureTagSchema,
-} from '@/domain/collectivites';
-import { indicateurDefinitionSchema } from '@/domain/indicateurs';
-import { actionRelationSchema } from '@/domain/referentiels';
+} from '@/backend/collectivites';
+import { indicateurDefinitionSchema } from '@/backend/indicateurs';
 import {
-  effetAttenduSchema,
-  sousThematiqueSchema,
-  thematiqueSchema,
-} from '@/domain/shared';
-import z from 'zod';
-import { axeSchema } from '../models/axe.table';
-import {
+  axeSchema,
   CiblesEnumType,
   ficheActionSchema,
   piliersEciEnumType,
   updateFicheActionSchema,
-} from '../models/fiche-action.table';
+} from '@/backend/plans';
+import { actionRelationSchema } from '@/backend/referentiels';
+import {
+  effetAttenduSchema,
+  sousThematiqueSchema,
+  thematiqueSchema,
+} from '@/backend/shared';
+import z from 'zod';
 
 // There is no proper Pilote or Referent tables, so we use a custom schema here
 export const personneSchema = z.object({

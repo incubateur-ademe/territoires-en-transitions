@@ -1,9 +1,9 @@
-import { extendApi } from '@anatine/zod-openapi';
-import { z } from 'zod';
 import {
   deleteFicheActionNoteSchema,
   upsertFicheActionNoteSchema,
-} from './fiche-action-note.table';
+} from '@/backend/plans';
+import { extendApi } from '@anatine/zod-openapi';
+import { z } from 'zod';
 
 export const upsertFicheActionNotesRequestSchema = extendApi(
   z

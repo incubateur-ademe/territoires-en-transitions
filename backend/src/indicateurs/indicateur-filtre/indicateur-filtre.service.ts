@@ -1,14 +1,27 @@
-import { DatabaseService } from '@/backend/utils';
-import { AuthenticatedUser } from '@/domain/auth';
+import { AuthenticatedUser } from '@/backend/auth';
 import {
   categorieTagTable,
   groupementCollectiviteTable,
-} from '@/domain/collectivites';
+  serviceTagTable,
+} from '@/backend/collectivites';
 import {
+  indicateurActionTable,
+  indicateurCategorieTagTable,
+  indicateurCollectiviteTable,
   indicateurDefinitionTable,
   indicateurGroupeTable,
+  indicateurPiloteTable,
+  indicateurServiceTagTable,
+  indicateurThematiqueTable,
   indicateurValeurTable,
-} from '@/domain/indicateurs';
+} from '@/backend/indicateurs';
+import {
+  axeTable,
+  ficheActionAxeTable,
+  ficheActionIndicateurTable,
+  ficheActionTable,
+} from '@/backend/plans';
+import { DatabaseService } from '@/backend/utils';
 import { Injectable } from '@nestjs/common';
 import { getTableName, sql } from 'drizzle-orm';
 import { intersection, isNil } from 'es-toolkit';

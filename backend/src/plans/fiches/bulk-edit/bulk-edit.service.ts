@@ -1,16 +1,14 @@
-import { Injectable } from '@nestjs/common';
-import { AuthUser } from '@tet/backend/auth/models/auth.models';
-import { NiveauAcces } from '@tet/backend/auth/models/private-utilisateur-droit.table';
-import { and, inArray, or } from 'drizzle-orm';
-import z from 'zod';
-import { AuthService } from '../../auth/services/auth.service';
-import DatabaseService from '../../common/services/database.service';
-import { updateFicheActionRequestSchema } from '../edit/update-fiche-action.request';
-import { ficheActionPiloteTable } from '../models/fiche-action-pilote.table';
+import { AuthService, AuthUser, NiveauAcces } from '@/backend/auth';
 import {
+  ficheActionPiloteTable,
   ficheActionSchema,
   ficheActionTable,
-} from '../models/fiche-action.table';
+} from '@/backend/plans';
+import { DatabaseService } from '@/backend/utils';
+import { Injectable } from '@nestjs/common';
+import { and, inArray, or } from 'drizzle-orm';
+import z from 'zod';
+import { updateFicheActionRequestSchema } from '../edit/update-fiche-action.request';
 
 @Injectable()
 export class BulkEditService {

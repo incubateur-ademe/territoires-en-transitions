@@ -1,3 +1,4 @@
+import { AuthenticatedUser } from '@/backend/auth';
 import {
   getAuthUser,
   getTestApp,
@@ -5,7 +6,6 @@ import {
   getTestRouter,
 } from '@/backend/test';
 import { AppRouter, DatabaseService, TrpcRouter } from '@/backend/utils';
-import { AuthenticatedUser } from '@/domain/auth';
 import { inferProcedureInput } from '@trpc/server';
 import { eq } from 'drizzle-orm';
 import { ficheActionEtapeTable } from './fiche-action-etape.table';

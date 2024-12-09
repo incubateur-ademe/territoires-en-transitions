@@ -1,4 +1,15 @@
-import { CollectivitesService } from '@/backend/collectivites';
+import {
+  CollectivitesService,
+  CollectiviteTypeEnum,
+  IdentiteCollectivite,
+} from '@/backend/collectivites';
+import {
+  ActionType,
+  GetActionStatutsResponseType,
+  GetPersonnalisationReponsesResponseType,
+  GetPersonnalitionConsequencesResponseType,
+  ReferentielActionWithScoreType,
+} from '@/backend/referentiels';
 import {
   ConfigService,
   DatabaseService,
@@ -6,17 +17,6 @@ import {
   roundTo,
   SheetService,
 } from '@/backend/utils';
-import {
-  CollectiviteTypeEnum,
-  IdentiteCollectivite,
-} from '@/domain/collectivites';
-import {
-  ActionType,
-  GetActionStatutsResponseType,
-  GetPersonnalisationReponsesResponseType,
-  GetPersonnalitionConsequencesResponseType,
-  ReferentielActionWithScoreType,
-} from '@/domain/referentiels';
 import { Test } from '@nestjs/testing';
 import { AuthService } from '../../auth/services/auth.service';
 import ExpressionParserService from '../scores/personnalisations/services/expression-parser.service';

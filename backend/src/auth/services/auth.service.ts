@@ -1,5 +1,3 @@
-import { CollectivitesService } from '@/backend/collectivites';
-import { DatabaseService } from '@/backend/utils';
 import {
   AuthenticatedUser,
   AuthRole,
@@ -12,7 +10,9 @@ import {
   UtilisateurDroitType,
   utilisateurSupportTable,
   utilisateurVerifieTable,
-} from '@/domain/auth';
+} from '@/backend/auth';
+import { CollectivitesService } from '@/backend/collectivites';
+import { DatabaseService } from '@/backend/utils';
 import { Injectable, Logger, UnauthorizedException } from '@nestjs/common';
 import { and, eq, inArray, sql, SQL, SQLWrapper } from 'drizzle-orm';
 

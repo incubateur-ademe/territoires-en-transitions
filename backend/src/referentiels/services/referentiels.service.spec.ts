@@ -1,4 +1,3 @@
-import { ConfigService, DatabaseService, SheetService } from '@/backend/utils';
 import {
   ActionDefinitionAvecParentType,
   ActionType,
@@ -6,7 +5,8 @@ import {
   ReferentielActionType,
   ReferentielDefinitionType,
   ReferentielType,
-} from '@/domain/referentiels';
+} from '@/backend/referentiels';
+import { ConfigService, DatabaseService, SheetService } from '@/backend/utils';
 import { Test } from '@nestjs/testing';
 import ExpressionParserService from '../scores/personnalisations/services/expression-parser.service';
 import ReferentielsService from './referentiels.service';

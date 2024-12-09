@@ -1,15 +1,13 @@
-import { Injectable, Logger } from '@nestjs/common';
-import { and, desc, eq, isNotNull, SQL, SQLWrapper } from 'drizzle-orm';
-import DatabaseService from '../../common/services/database.service';
 import {
   labellisationAuditTable,
   LabellisationAuditType,
-} from '../models/labellisation-audit.table';
-import {
   labellisationEtoileMetaTable,
   LabellisationEtoileMetaType,
-} from '../models/labellisation-etoile.table';
-import { ReferentielType } from '../models/referentiel.enum';
+  ReferentielType,
+} from '@/backend/referentiels';
+import { DatabaseService } from '@/backend/utils';
+import { Injectable, Logger } from '@nestjs/common';
+import { and, desc, eq, isNotNull, SQL, SQLWrapper } from 'drizzle-orm';
 import ReferentielsService from './referentiels.service';
 
 @Injectable()

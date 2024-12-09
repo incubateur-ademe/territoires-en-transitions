@@ -1,7 +1,7 @@
 import {
   CollectivitePopulationTypeEnum,
   CollectiviteTypeEnum,
-} from '@/domain/collectivites';
+} from '@/backend/collectivites';
 import { Test } from '@nestjs/testing';
 import ExpressionParserService from './expression-parser.service';
 

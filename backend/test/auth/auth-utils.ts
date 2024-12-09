@@ -1,4 +1,4 @@
-import { AuthUser, isAuthenticatedUser } from '@/domain/auth';
+import { AuthUser, isAuthenticatedUser } from '@/backend/auth';
 import {
   createClient,
   SignInWithPasswordCredentials,

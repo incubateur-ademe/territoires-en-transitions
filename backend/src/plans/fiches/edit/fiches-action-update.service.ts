@@ -1,5 +1,25 @@
 import { AuthenticatedUser } from '@/backend/auth';
+import {
+  ficheActionActionTable,
+  ficheActionAxeTable,
+  ficheActionEffetAttenduTable,
+  ficheActionFinanceurTagTable,
+  ficheActionIndicateurTable,
+  ficheActionLienTable,
+  ficheActionNoteTable,
+  ficheActionPartenaireTagTable,
+  ficheActionPiloteTable,
+  ficheActionReferentTable,
+  ficheActionServiceTagTable,
+  ficheActionSousThematiqueTable,
+  ficheActionStructureTagTable,
+  ficheActionTable,
+  ficheActionThematiqueTable,
+  updateFicheActionSchema,
+  UpsertFicheActionNoteType,
+} from '@/backend/plans';
 import { DatabaseService } from '@/backend/utils';
+import { buildConflictUpdateColumns } from '@/backend/utils/common/services/conflict.helper';
 import { Injectable, Logger, NotFoundException } from '@nestjs/common';
 import {
   and,
@@ -15,27 +35,6 @@ import { PgTable, PgTransaction } from 'drizzle-orm/pg-core';
 import { PostgresJsQueryResultHKT } from 'drizzle-orm/postgres-js';
 import { toCamel } from 'postgres';
 import { FicheService } from '../fiche.service';
-import { ficheActionActionTable } from '../models/fiche-action-action.table';
-import { ficheActionAxeTable } from '../models/fiche-action-axe.table';
-import { ficheActionEffetAttenduTable } from '../models/fiche-action-effet-attendu.table';
-import { ficheActionFinanceurTagTable } from '../models/fiche-action-financeur-tag.table';
-import { ficheActionIndicateurTable } from '../models/fiche-action-indicateur.table';
-import { ficheActionLienTable } from '../models/fiche-action-lien.table';
-import {
-  ficheActionNoteTable,
-  UpsertFicheActionNoteType,
-} from '../models/fiche-action-note.table';
-import { ficheActionPartenaireTagTable } from '../models/fiche-action-partenaire-tag.table';
-import { ficheActionPiloteTable } from '../models/fiche-action-pilote.table';
-import { ficheActionReferentTable } from '../models/fiche-action-referent.table';
-import { ficheActionServiceTagTable } from '../models/fiche-action-service-tag.table';
-import { ficheActionSousThematiqueTable } from '../models/fiche-action-sous-thematique.table';
-import { ficheActionStructureTagTable } from '../models/fiche-action-structure-tag.table';
-import { ficheActionThematiqueTable } from '../models/fiche-action-thematique.table';
-import {
-  ficheActionTable,
-  updateFicheActionSchema,
-} from '../models/fiche-action.table';
 import { UpdateFicheActionRequestType } from './update-fiche-action.request';
 
 type TxType = PgTransaction<

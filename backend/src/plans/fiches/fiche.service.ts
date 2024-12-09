@@ -1,23 +1,25 @@
+import {
+  AuthenticatedUser,
+  AuthService,
+  dcpTable,
+  NiveauAcces,
+} from '@/backend/auth';
 import { TagService } from '@/backend/collectivites';
+import {
+  actionImpactFicheActionTable,
+  CreateFicheActionType,
+  ficheActionActionTable,
+  ficheActionEffetAttenduTable,
+  ficheActionIndicateurTable,
+  ficheActionNoteTable,
+  ficheActionPartenaireTagTable,
+  ficheActionSousThematiqueTable,
+  ficheActionTable,
+  ficheActionThematiqueTable,
+} from '@/backend/plans';
 import { DatabaseService } from '@/backend/utils';
 import { Injectable, Logger } from '@nestjs/common';
 import { aliasedTable, desc, eq } from 'drizzle-orm';
-import { AuthenticatedUser } from '../../auth/models/auth.models';
-import { dcpTable } from '../../auth/models/dcp.table';
-import { NiveauAcces } from '../../auth/models/private-utilisateur-droit.table';
-import { AuthService } from '../../auth/services/auth.service';
-import { actionImpactFicheActionTable } from './models/action-impact-fiche-action.table';
-import { ficheActionActionTable } from './models/fiche-action-action.table';
-import { ficheActionEffetAttenduTable } from './models/fiche-action-effet-attendu.table';
-import { ficheActionIndicateurTable } from './models/fiche-action-indicateur.table';
-import { ficheActionNoteTable } from './models/fiche-action-note.table';
-import { ficheActionPartenaireTagTable } from './models/fiche-action-partenaire-tag.table';
-import { ficheActionSousThematiqueTable } from './models/fiche-action-sous-thematique.table';
-import { ficheActionThematiqueTable } from './models/fiche-action-thematique.table';
-import {
-  CreateFicheActionType,
-  ficheActionTable,
-} from './models/fiche-action.table';
 
 @Injectable()
 export class FicheService {

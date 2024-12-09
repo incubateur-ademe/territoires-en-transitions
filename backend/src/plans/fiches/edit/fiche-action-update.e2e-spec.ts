@@ -1,6 +1,7 @@
 import {
   CiblesEnumType,
   ficheActionActionTable,
+  ficheActionAxeTable,
   ficheActionEffetAttenduTable,
   ficheActionFinanceurTagTable,
   ficheActionIndicateurTable,
@@ -15,9 +16,7 @@ import {
   ficheActionThematiqueTable,
   piliersEciEnumType,
   StatutsEnumType,
-  UpdateFicheActionRequestClass,
-  UpdateFicheActionRequestType,
-} from '@/backend/plans/fiches';
+} from '@/backend/plans';
 import { DatabaseService } from '@/backend/utils';
 import { INestApplication } from '@nestjs/common';
 import { eq } from 'drizzle-orm';
@@ -41,7 +40,8 @@ import {
   thematiquesFixture,
 } from '../../../../test/fiches/fixtures/fiche-action-relations.fixture';
 import { ficheActionFixture } from '../../../../test/fiches/fixtures/fiche-action.fixture';
-import { ficheActionAxeTable } from '../models/fiche-action-axe.table';
+import { UpdateFicheActionRequestClass } from '../fiches-action.controller';
+import { UpdateFicheActionRequestType } from './update-fiche-action.request';
 
 const collectiviteId = 1;
 const ficheActionId = 9999;

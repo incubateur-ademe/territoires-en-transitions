@@ -1,6 +1,6 @@
+import { AuthenticatedUser } from '@/backend/auth';
 import { getAuthUser, getTestRouter } from '@/backend/test';
 import { AppRouter, TrpcRouter } from '@/backend/utils';
-import { AuthenticatedUser } from '@/domain/auth';
 import { inferProcedureInput } from '@trpc/server';
 
 type Input = inferProcedureInput<AppRouter['tags']['categories']['list']>;

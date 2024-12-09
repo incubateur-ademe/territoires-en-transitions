@@ -1,6 +1,6 @@
+import { ficheActionCiblesEnumSchema } from '@/backend/plans';
+import { modifiedSinceSchema } from '@/backend/utils/common/models/modified-since.enum';
 import { z } from 'zod';
-import { modifiedSinceSchema } from '../../common/models/modified-since.enum';
-import { ficheActionCiblesEnumSchema } from './fiche-action.table';
 
 export const getFichesActionFilterRequestSchema = z
   .object({

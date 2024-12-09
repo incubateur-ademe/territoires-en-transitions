@@ -1,3 +1,4 @@
+import { AuthenticatedUser, TokenInfo } from '@/backend/auth';
 import { createZodDto } from '@anatine/zod-nestjs';
 import {
   Body,
@@ -8,19 +9,17 @@ import {
   Query,
   Res,
 } from '@nestjs/common';
-import { Response } from 'express';
 import { ApiCreatedResponse, ApiResponse, ApiTags } from '@nestjs/swagger';
-import { TokenInfo } from '../../auth/decorators/token-info.decorators';
+import { Response } from 'express';
+import { exportIndicateursRequestSchema } from '../models/export-indicateurs.request';
+import { getIndicateursValeursRequestSchema } from '../models/get-indicateurs.request';
 import { getIndicateursValeursResponseSchema } from '../models/get-indicateurs.response';
 import {
   UpsertIndicateursValeursRequest,
   UpsertIndicateursValeursResponse,
 } from '../models/upsert-indicateurs-valeurs.request';
-import IndicateursService from '../services/indicateurs.service';
-import type { AuthenticatedUser } from '../../auth/models/auth.models';
-import { getIndicateursValeursRequestSchema } from '../models/get-indicateurs.request';
-import ExportIndicateursService from '../services/export-indicateurs.service';
-import { exportIndicateursRequestSchema } from '../models/export-indicateurs.request';
+import { ExportIndicateursService } from '../services/export-indicateurs.service';
+import { IndicateursService } from '../services/indicateurs.service';
 
 /**
  * Création des classes de requête/réponse à partir du schema pour générer automatiquement la documentation OpenAPI et la validation des entrées

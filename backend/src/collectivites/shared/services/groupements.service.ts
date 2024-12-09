@@ -1,9 +1,9 @@
-import { DatabaseService } from '@/backend/utils';
 import {
   CreateGroupementCollectiviteType,
   groupementCollectiviteTable,
   groupementTable,
-} from '@/domain/collectivites';
+} from '@/backend/collectivites';
+import { DatabaseService } from '@/backend/utils';
 import {
   HttpException,
   HttpStatus,

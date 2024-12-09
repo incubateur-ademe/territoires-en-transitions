@@ -1,5 +1,3 @@
-import { ConfigService } from '@/backend/utils';
-import { getErrorMessage } from '@/backend/utils/common/services/errors.helper';
 import {
   AuthJwtPayload,
   AuthUser,
@@ -7,7 +5,9 @@ import {
   isAuthenticatedUser,
   isServiceRoleUser,
   jwtToUser,
-} from '@/domain/auth';
+} from '@/backend/auth';
+import { ConfigService } from '@/backend/utils';
+import { getErrorMessage } from '@/backend/utils/common/services/errors.helper';
 import {
   CanActivate,
   ExecutionContext,

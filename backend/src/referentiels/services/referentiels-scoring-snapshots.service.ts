@@ -1,3 +1,20 @@
+import { AuthRole, AuthService, AuthUser, NiveauAcces } from '@/backend/auth';
+import {
+  CreateScoreSnapshotType,
+  GetPersonnalisationReponsesResponseType,
+  GetReferentielScoresResponseType,
+  GetScoreSnapshotsRequestType,
+  GetScoreSnapshotsResponseType,
+  ReferentielType,
+  ScoreJalon,
+  ScoreSnapshotCollectiviteInfoType,
+  ScoreSnapshotInfoType,
+  scoreSnapshotTable,
+  ScoreSnapshotType,
+} from '@/backend/referentiels';
+import { DatabaseService } from '@/backend/utils';
+import { PgIntegrityConstraintViolation } from '@/backend/utils/common/models/postgresql-error-codes.enum';
+import { getErrorWithCode } from '@/backend/utils/common/services/errors.helper';
 import {
   BadRequestException,
   Injectable,
@@ -9,27 +26,6 @@ import {
 import { and, asc, eq, inArray, sql } from 'drizzle-orm';
 import { DateTime } from 'luxon';
 import slugify from 'slugify';
-import { AuthRole, AuthUser } from '../../auth/models/auth.models';
-import { NiveauAcces } from '../../auth/models/private-utilisateur-droit.table';
-import { AuthService } from '../../auth/services/auth.service';
-import { PgIntegrityConstraintViolation } from '../../common/models/postgresql-error-codes.enum';
-import DatabaseService from '../../common/services/database.service';
-import { getErrorWithCode } from '../../common/services/errors.helper';
-import { GetPersonnalisationReponsesResponseType } from '../../personnalisations/models/get-personnalisation-reponses.response';
-import { GetReferentielScoresResponseType } from '../models/get-referentiel-scores.response';
-import { GetScoreSnapshotsRequestType } from '../models/get-score-snapshots.request';
-import {
-  GetScoreSnapshotsResponseType,
-  ScoreSnapshotCollectiviteInfoType,
-  ScoreSnapshotInfoType,
-} from '../models/get-score-snapshots.response';
-import { ReferentielType } from '../models/referentiel.enum';
-import { ScoreJalon } from '../models/score-jalon.enum';
-import {
-  CreateScoreSnapshotType,
-  scoreSnapshotTable,
-  ScoreSnapshotType,
-} from '../models/score-snapshot.table';
 
 @Injectable()
 export default class ReferentielsScoringSnapshotsService {

@@ -1,4 +1,3 @@
-import { DatabaseService } from '@/backend/utils';
 import {
   banaticTable,
   CollectiviteAvecType,
@@ -13,7 +12,8 @@ import {
   EpciType,
   importCommuneTable,
   regionTable,
-} from '@/domain/collectivites';
+} from '@/backend/collectivites';
+import { DatabaseService } from '@/backend/utils';
 import { Injectable, Logger, NotFoundException } from '@nestjs/common';
 import { aliasedTable, eq, or } from 'drizzle-orm';
 import { isNil } from 'es-toolkit';

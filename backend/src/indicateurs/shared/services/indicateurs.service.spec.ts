@@ -1,4 +1,3 @@
-import { DatabaseService } from '@/backend/utils';
 import {
   IndicateurAvecValeursParSource,
   IndicateurAvecValeursType,
@@ -6,7 +5,8 @@ import {
   IndicateurSourceMetadonneeType,
   IndicateurValeurAvecMetadonnesDefinition,
   IndicateurValeurType,
-} from '@/domain/indicateurs';
+} from '@/backend/indicateurs';
+import { DatabaseService } from '@/backend/utils';
 import { Test } from '@nestjs/testing';
 import * as _ from 'lodash';
 import { DateTime } from 'luxon';

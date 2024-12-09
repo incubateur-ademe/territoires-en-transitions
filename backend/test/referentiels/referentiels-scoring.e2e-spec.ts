@@ -1,4 +1,3 @@
-import { HttpErrorResponse } from '@/backend/utils/common/models/http-error.response';
 import {
   ActionScoreType,
   ActionStatutType,
@@ -10,7 +9,8 @@ import {
   ReferentielActionWithScoreType,
   ReferentielType,
   ScoreJalon,
-} from '@/domain/referentiels';
+} from '@/backend/referentiels';
+import { HttpErrorResponse } from '@/backend/utils/common/models/http-error.response';
 import { INestApplication } from '@nestjs/common';
 import { default as request } from 'supertest';
 import { getAuthToken } from '../auth/auth-utils';
