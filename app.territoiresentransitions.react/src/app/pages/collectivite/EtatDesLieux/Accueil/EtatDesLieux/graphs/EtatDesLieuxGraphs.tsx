@@ -25,7 +25,6 @@ type EtatDesLieuxGraphsProps = {
 
 const EtatDesLieuxGraphs = ({
   referentiel,
-  displayEtatDesLieux,
   progressionScore,
   repartitionPhases,
 }: EtatDesLieuxGraphsProps): JSX.Element => {
