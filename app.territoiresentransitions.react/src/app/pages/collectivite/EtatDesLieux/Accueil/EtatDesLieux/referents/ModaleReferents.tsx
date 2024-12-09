@@ -61,7 +61,7 @@ export const ModaleReferents = (props: ModaleReferentsProps) => {
         <>
           <p>
             “Référent” est un statut lié au programme Territoire Engagé
-            Transition Écologique de l’ADEME. Les personnes désignés ci-après
+            Transition Écologique de l’ADEME. Les personnes désignées ci-après
             sont les contacts privilégiés de la collectivité pour l’ADEME et
             toutes les personnes intervenants dans ce cadre (Bureau d’Appui,
             auditeur, membre de la CNL) ainsi que pour leurs homologues dans
