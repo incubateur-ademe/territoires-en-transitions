@@ -1,8 +1,6 @@
 import { useEffect, useState } from 'react';
-import classNames from 'classnames';
 
 import {
-  Badge,
   Button,
   Checkbox,
   Input,
@@ -16,16 +14,14 @@ import PictoExpert from 'ui/pictogrammes/PictoExpert';
 import SpinnerLoader from 'ui/shared/SpinnerLoader';
 
 import { Indicateurs } from '@tet/api';
+import { OpenState } from '@tet/ui/utils/types';
 import { getIndicateurGroup } from 'app/pages/collectivite/Indicateurs/lists/IndicateurCard/utils';
 import { useFilteredIndicateurDefinitions } from 'app/pages/collectivite/Indicateurs/lists/useFilteredIndicateurDefinitions';
-import {
-  ModuleFiltreBadgesBase,
-  useSelectedFilters,
-} from 'app/pages/collectivite/TableauDeBord/components/ModuleFiltreBadges';
 import { makeCollectiviteIndicateursUrl } from 'app/paths';
-import { OpenState } from '@tet/ui/utils/types';
 import { useCurrentCollectivite } from 'core-logic/hooks/useCurrentCollectivite';
-import { useExportIndicateurs } from '../Indicateur/useExportIndicateurs';
+import BadgeList from '@tet/app/pages/collectivite/Indicateurs/lists/indicateurs-list/badge-list';
+import { ExportIndicateursPageName } from '@tet/app/pages/collectivite/Indicateurs/Indicateur/useExportIndicateurs';
+import { CustomFilterBadges } from 'ui/shared/filters/filter-badges';
 
 type sortByOptionsType = {
   label: string;
@@ -56,19 +52,24 @@ const sortByOptions: sortByOptionsType[] = [
 type Props = {
   settings: (openState: OpenState) => React.ReactNode;
   filtres?: Indicateurs.FetchFiltre;
+  customFilterBadges?: CustomFilterBadges;
   resetFilters?: () => void;
   maxNbOfCards?: number;
   sortSettings?: SortIndicateurSettings;
   /** Rend les cartes indicateurs éditables */
   isEditable?: boolean;
+  // pour le tracking
+  pageName: ExportIndicateursPageName;
 };
 
 /** Liste de fiches action avec tri et options de fitlre */
 const IndicateursListe = ({
+  pageName,
   sortSettings = {
     defaultSort: 'text',
   },
-  filtres,
+  filtres = {},
+  customFilterBadges,
   resetFilters,
   settings,
   isEditable,
@@ -113,7 +114,7 @@ const IndicateursListe = ({
   /** Texte de recherche avec debounced pour l'appel */
   const [debouncedSearch, setDebouncedSearch] = useState<string>();
 
-  const { data, isLoading } = useFilteredIndicateurDefinitions(
+  const { data: definitions, isLoading } = useFilteredIndicateurDefinitions(
     {
       filtre: {
         ...filtres,
@@ -141,22 +142,15 @@ const IndicateursListe = ({
   }, [debouncedSearch]);
 
   /** Nombre total d'indicateurs filtrés */
-  const countTotal = data?.length || 0;
+  const countTotal = definitions?.length || 0;
 
   /** Liste filtrée des indicateurs à afficher */
-  const currentDefs = data?.filter(
+  const currentDefs = definitions?.filter(
     (_, i) => Math.floor(i / maxNbOfCards) + 1 === currentPage
   );
 
-  // fonction d'export
-  const { mutate: exportIndicateurs, isLoading: isDownloadingExport } =
-    useExportIndicateurs(data);
-
   /** Affiche ou cache les graphiques des cartes */
   const [displayGraphs, setDisplayGraphs] = useState(true);
-
-  /** Filtres sélectionnés */
-  const selectedFilters = useSelectedFilters({ filtre: filtres || {} });
 
   return (
     <>
@@ -209,41 +203,16 @@ const IndicateursListe = ({
         {/** Bouton d'édition des filtres (une modale avec bouton ou un ButtonMenu) */}
         {settings({ isOpen: isSettingsOpen, setIsOpen: setIsSettingsOpen })}
       </div>
-      {/** Liste des filtres appliqués */}
-      {filtres && (
-        <div className="flex flex-row justify-between">
-          {!!selectedFilters?.length && (
-            <ModuleFiltreBadgesBase
-              selectedFilters={selectedFilters}
-              resetFilters={resetFilters}
-            />
-          )}
-          {
-            /** Bouton Exporter */
-            !!currentDefs?.length && !isLoading && (
-              <button
-                className={classNames({ 'opacity-50': isDownloadingExport })}
-                disabled={isDownloadingExport}
-                onClick={() => exportIndicateurs()}
-              >
-                <Badge
-                  className="py-4"
-                  icon="download-line"
-                  iconPosition="left"
-                  title={
-                    selectedFilters?.length
-                      ? 'Exporter le résultat de mon filtre en Excel'
-                      : 'Exporter tous les indicateurs en Excel'
-                  }
-                  state="default"
-                  uppercase={false}
-                  size="sm"
-                />
-              </button>
-            )
-          }
-        </div>
-      )}
+      {/** Liste des filtres appliqués et bouton d'export */}
+      <BadgeList
+        pageName={pageName}
+        definitions={definitions}
+        filters={filtres}
+        customFilterBadges={customFilterBadges}
+        resetFilters={resetFilters}
+        isLoading={isLoading}
+        isEmpty={currentDefs?.length === 0}
+      />
 
       {/** Chargement */}
       {isLoading ? (
@@ -267,7 +236,7 @@ const IndicateursListe = ({
           </Button>
         </div>
       ) : (
-        /** Liste des fiches actions */
+        /** Liste des indicateurs */
         // besoin de cette div car `grid` semble rentrer en conflit avec le container `flex` sur Safari
         <div>
           <div className="grid grid-cols-2 2xl:grid-cols-3 gap-4">

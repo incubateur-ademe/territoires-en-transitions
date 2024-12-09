@@ -1,5 +1,7 @@
 import { Module } from '@nestjs/common';
 import { CommonModule } from '../utils/common/common.module';
+import { CollectiviteMembresRouter } from './membres/membres.router';
+import { CollectiviteMembresService } from './membres/membres.service';
 import { PersonnesRouter } from './personnes.router';
 import { CollectiviteController } from './shared/controllers/collectivite.controller';
 import { GetCategoriesByCollectiviteRouter } from './shared/routers/get-categories-by-collectivite.router';
@@ -12,6 +14,8 @@ import { TagService } from './shared/services/tag.service';
   imports: [CommonModule],
   providers: [
     CollectivitesService,
+    CollectiviteMembresService,
+    CollectiviteMembresRouter,
     GroupementsService,
     PersonnesService,
     PersonnesRouter,
@@ -20,6 +24,8 @@ import { TagService } from './shared/services/tag.service';
   ],
   exports: [
     CollectivitesService,
+    CollectiviteMembresService,
+    CollectiviteMembresRouter,
     GroupementsService,
     PersonnesRouter,
     GetCategoriesByCollectiviteRouter,

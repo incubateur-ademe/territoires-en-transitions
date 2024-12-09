@@ -6,7 +6,7 @@ export const fakeAdmin: Membre = {
   prenom: 'Dodo',
   email: 'yolo@dodo.com',
   telephone: '06 46 82 45 85',
-  fonction: 'referent',
+  fonction: 'conseiller',
   champ_intervention: ['cae'],
   details_fonction: 'Cheffe de projet PCAET',
   niveau_acces: 'admin',

@@ -3,7 +3,7 @@ import { FicheAction } from '@tet/api/plan-actions';
 import ModaleDescription from './ModaleDescription';
 import ModaleEmplacement from './EmplacementFiche/ModaleEmplacement';
 import ModaleSuppression from './ModaleSuppression';
-import ExportFicheActionButton from './ExportFicheActionButton';
+import ExportFicheActionButton from '../../ExportPdf/ExportFicheActionButton';
 
 type MenuDescriptionProps = {
   isReadonly: boolean;

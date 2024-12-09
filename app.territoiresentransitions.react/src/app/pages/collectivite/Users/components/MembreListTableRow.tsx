@@ -14,6 +14,7 @@ import {referentielToName} from 'app/labels';
 import {TNiveauAcces, TMembreFonction} from 'types/alias';
 import {SendInvitationArgs} from '../useSendInvitation';
 import {ConfirmerChangementNiveau} from 'app/pages/collectivite/Users/components/ConfirmerChangementNiveau';
+import { membreFonctions } from 'app/labels';
 
 export type TMembreListTableRowProps = {
   currentUserId: string;
@@ -23,14 +24,6 @@ export type TMembreListTableRowProps = {
   removeFromCollectivite: TRemoveFromCollectivite;
   sendInvitation: (args: SendInvitationArgs) => void;
 };
-
-const membreFonctions: {value: TMembreFonction; label: string}[] = [
-  {value: 'referent', label: 'Référent·e'},
-  {value: 'technique', label: 'Équipe technique'},
-  {value: 'politique', label: 'Équipe politique'},
-  {value: 'conseiller', label: "Bureau d'études"},
-  {value: 'partenaire', label: 'Partenaire'},
-];
 
 const niveauAcces: {value: TNiveauAcces; label: string}[] = [
   {value: 'admin', label: 'Admin'},

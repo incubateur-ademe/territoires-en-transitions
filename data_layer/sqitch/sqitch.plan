@@ -783,3 +783,6 @@ labellisation/audit [labellisation/audit@v4.27.1] 2024-11-20T13:56:04Z Amandine 
 referentiel/score_snapshot 2024-11-25T11:25:21Z System Administrator <root@MacBook-Air-de-Thibaut-2.local> # Ajout de la table permettant de sauvegarder/figer des scores de referentiel
 plan_action/fiches [plan_action/fiches@v4.28.1] 2024-11-29T13:01:29Z Frederic Arnoux <frederic.arnoux@beta.gouv.fr> # Fix unicity constraint for fiche action pilotes
 @v4.29.0 2024-12-02T11:47:31Z Frederic Arnoux <frederic.arnoux@beta.gouv.fr> # Tag 4.29.0
+
+plan_action/fiche_note [plan_action/fiche_note@v4.28.1] 2024-12-02T09:23:16Z Marc Rutkowski <marc@attractive-media.fr> # Change la clé primaire de `fiche_action_note` pour utiliser un id unique (permet d'avoir plusieurs notes de suivi de la FA pour la même année)
+@v4.30.0 2024-12-03T10:22:30Z Marc Rutkowski <marc@attractive-media.fr> # Tag 4.30.0

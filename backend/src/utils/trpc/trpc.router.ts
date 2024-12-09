@@ -1,3 +1,4 @@
+import { CollectiviteMembresRouter } from '@/backend/collectivites/membres/membres.router';
 import { PersonnesRouter } from '@/backend/collectivites/personnes.router';
 import { GetCategoriesByCollectiviteRouter } from '@/backend/collectivites/shared/routers/get-categories-by-collectivite.router';
 import { IndicateurFiltreRouter } from '@/backend/indicateurs/indicateur-filtre/indicateur-filtre.router';
@@ -23,7 +24,8 @@ export class TrpcRouter {
     private readonly personnes: PersonnesRouter,
     private readonly ficheActionEtapeRouter: FicheActionEtapeRouter,
     private readonly indicateurFiltreRouter: IndicateurFiltreRouter,
-    private readonly bulkEditRouter: BulkEditRouter
+    private readonly bulkEditRouter: BulkEditRouter,
+    private readonly membresRouter: CollectiviteMembresRouter
   ) {}
 
   appRouter = this.trpc.router({
@@ -40,6 +42,7 @@ export class TrpcRouter {
     },
     collectivites: {
       personnes: this.personnes.router,
+      membres: this.membresRouter.router,
     },
     tags: {
       categories: this.getCategoriesByCollectiviteRouter.router,

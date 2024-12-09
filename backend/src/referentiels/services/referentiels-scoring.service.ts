@@ -28,7 +28,7 @@ import { chunk, isNil } from 'es-toolkit';
 import * as _ from 'lodash';
 import { DateTime } from 'luxon';
 import { AuthenticatedUser } from '../../auth/models/auth.models';
-import { NiveauAcces } from '../../auth/models/private-utilisateur-droit.table';
+import { NiveauAcces } from '../../auth/models/niveau-acces.enum';
 import { AuthService } from '../../auth/services/auth.service';
 import { CollectiviteAvecType } from '../../collectivites/shared/models/identite-collectivite.dto';
 import { CollectivitesService } from '../../collectivites/shared/services/collectivites.service';

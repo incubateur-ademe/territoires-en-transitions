@@ -162,7 +162,7 @@ const Action = ({ action }: { action: ActionDefinitionSummary }) => {
                   <p>{"Cette action ne comporte pas d'indicateur"}</p>
                 ) : (
                   <IndicateurChartsGrid
-                    definitions={indicateursLies!}
+                    definitions={indicateursLies}
                     view={referentielId}
                   />
                 )}

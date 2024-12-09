@@ -1,15 +1,15 @@
-import { useState } from 'react';
 import { FetchFiltre } from '@tet/api/indicateurs';
 import { Button, ButtonMenu, TrackPageView, useEventTracker } from '@tet/ui';
 import EmptyIndicateurFavori from 'app/pages/collectivite/Indicateurs/IndicateursCollectivite/EmptyIndicateurFavori';
 import { useIndicateursFavorisCollectiviteIds } from 'app/pages/collectivite/Indicateurs/IndicateursCollectivite/useIndicateursFavorisCollectiviteIds';
-import IndicateursListe from 'app/pages/collectivite/Indicateurs/lists/IndicateursListe';
+import IndicateursListe from '@tet/app/pages/collectivite/Indicateurs/lists/indicateurs-list';
 import { indicateursNameToParams } from 'app/pages/collectivite/Indicateurs/lists/utils';
 import MenuFiltresTousLesIndicateurs from 'app/pages/collectivite/Indicateurs/TousLesIndicateurs/MenuFiltresTousLesIndicateurs';
+import ModaleCreerIndicateur from 'app/pages/collectivite/PlansActions/FicheAction/Indicateurs/ModaleCreerIndicateur';
 import { makeCollectiviteIndicateursCollectiviteUrl } from 'app/paths';
 import { useSearchParams } from 'core-logic/hooks/query';
 import { useCurrentCollectivite } from 'core-logic/hooks/useCurrentCollectivite';
-import ModaleCreerIndicateur from 'app/pages/collectivite/PlansActions/FicheAction/Indicateurs/ModaleCreerIndicateur';
+import { useState } from 'react';
 
 /** Page de listing de tous les indicateurs de la collectivité */
 const IndicateursCollectivite = () => {
@@ -63,6 +63,7 @@ const IndicateursCollectivite = () => {
           />
         ) : (
           <IndicateursListe
+            pageName="app/indicateurs/collectivite"
             isEditable
             filtres={{ ...filters, estFavorisCollectivite: true }}
             resetFilters={() => setFilters({})}

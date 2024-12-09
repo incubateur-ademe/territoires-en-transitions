@@ -9,6 +9,7 @@ import {
   serial,
   uuid,
 } from 'drizzle-orm/pg-core';
+import { invitationTable } from './invitation.table';
 
 export enum NiveauAcces {
   LECTURE = 'lecture',
@@ -35,8 +36,9 @@ export const utilisateurDroitTable = pgTable('private_utilisateur_droit', {
   niveauAcces: niveauAccessEnum('niveau_acces')
     .notNull()
     .default(NiveauAcces.LECTURE),
-  invitationId: uuid('invitation_id'), // TODO: reference invitation table
+  invitationId: uuid('invitation_id').references(() => invitationTable.id),
 });
+
 export type UtilisateurDroitType = InferSelectModel<
   typeof utilisateurDroitTable
 >;

@@ -86,6 +86,7 @@ export interface TrackingPlan extends Record<never, Page> {
     onglets: never;
     events: {
       toggle_graphique: { actif: boolean };
+      export_xlsx_telechargement: {};
       filtres: {
         filtreValues: IndicateursFiltres;
       };
@@ -98,6 +99,7 @@ export interface TrackingPlan extends Record<never, Page> {
     onglets: never;
     events: {
       explorerIndicateursClick: {};
+      export_xlsx_telechargement: {};
       filtres: {
         filtreValues: IndicateursFiltres;
       };
@@ -110,6 +112,7 @@ export interface TrackingPlan extends Record<never, Page> {
     onglets: never;
     events: {
       indicateur_suppression: { indicateur_id: number };
+      export_xlsx_telechargement: {};
     };
   };
 
@@ -122,6 +125,7 @@ export interface TrackingPlan extends Record<never, Page> {
       view_open_data: OpenDataSource;
       /** Applique une source open data aux résultats ou objectifs */
       apply_open_data: OpenDataSource & { overwrite: boolean };
+      export_xlsx_telechargement: {};
     };
   };
 
@@ -162,6 +166,7 @@ export interface TrackingPlan extends Record<never, Page> {
     events: {
       tdb_modifier_filtres_indicateurs: {};
       tdb_valider_filtres_indicateurs: {};
+      export_xlsx_telechargement: {};
     };
   };
 
@@ -213,6 +218,15 @@ export interface TrackingPlan extends Record<never, Page> {
       validation_modale_planning_fa: {};
       cta_indicateur_perso_fa: {};
       cta_fa_fai: {};
+    };
+  };
+
+  /** Actions groupées sur les fiches actions */
+  'app/actions-groupees-fiches-action': {
+    properties: { collectivite_id: number };
+    onglets: never;
+    events: {
+      export_PDF_telechargement_groupe: {};
     };
   };
 

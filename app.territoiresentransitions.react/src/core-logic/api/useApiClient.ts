@@ -8,6 +8,7 @@ type JSONValue =
   | number
   | boolean
   | null
+  | undefined
   | { [x: string]: JSONValue }
   | Array<JSONValue>;
 

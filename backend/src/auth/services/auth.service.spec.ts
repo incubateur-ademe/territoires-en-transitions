@@ -1,6 +1,6 @@
+import { DatabaseService } from '@/backend/utils';
 import { Test } from '@nestjs/testing';
-import CollectivitesService from '../../collectivites/shared/services/collectivites.service';
-import DatabaseService from '../../common/services/database.service';
+import { CollectivitesService } from '../../collectivites/shared/services/collectivites.service';
 import { AuthRole } from '../models/auth.models';
 import {
   NiveauAcces,
