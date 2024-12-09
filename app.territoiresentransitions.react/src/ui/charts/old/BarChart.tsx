@@ -4,7 +4,7 @@ import {
   ComputedDatum,
   ResponsiveBar,
 } from '@nivo/bar';
-import {defaultColors} from '../chartsTheme';
+import { defaultColors } from '../chartsTheme';
 
 const getCustomColor = ({
   id,
@@ -18,7 +18,7 @@ const upperCaseFirstLetter = (value: string): string => {
   return `${value.slice(0, 1).toUpperCase()}${value.slice(1).toLowerCase()}`;
 };
 
-const getLabel = (d: ComputedDatum<{}>) => {
+const getLabel = (d: ComputedDatum<object>) => {
   if (d.value) {
     const roundedValue = Math.round(d.value);
     if (roundedValue !== 0) return roundedValue.toString();
@@ -27,7 +27,7 @@ const getLabel = (d: ComputedDatum<{}>) => {
 };
 
 const getTooltip = (
-  {id, value, index, indexValue, color}: BarTooltipProps<{}>,
+  { id, value, index, indexValue, color }: BarTooltipProps<object>,
   localIndexTitles: string[],
   unit: string,
   clickable: boolean
@@ -151,10 +151,10 @@ const BarChart = ({
       groupMode={groupMode}
       colors={
         customColors
-          ? ({id, data}) => getCustomColor({id, data})
+          ? ({ id, data }) => getCustomColor({ id, data })
           : defaultColors
       }
-      borderColor={{from: 'color', modifiers: [['darker', 1.6]]}}
+      borderColor={{ from: 'color', modifiers: [['darker', 1.6]] }}
       axisTop={null}
       axisRight={null}
       axisBottom={{
@@ -184,36 +184,36 @@ const BarChart = ({
       enableGridY={layout !== 'horizontal'}
       labelSkipWidth={layout === 'horizontal' ? 10 : 0}
       labelSkipHeight={layout !== 'horizontal' ? 10 : 0}
-      tooltip={d =>
+      tooltip={(d) =>
         getTooltip(
           d,
           localIndexTitles,
           unit,
           onSelectIndex !== undefined &&
-            ((d.data.hasOwnProperty('clickable') &&
+            ((Object.prototype.hasOwnProperty.call(d.data, 'clickable') &&
               d.data.clickable === 'true') ||
-              !d.data.hasOwnProperty('clickable'))
+              !Object.prototype.hasOwnProperty.call(d.data, 'clickable'))
         )
       }
-      onClick={({indexValue}) => {
+      onClick={({ indexValue }) => {
         if (onSelectIndex) onSelectIndex(indexValue);
       }}
-      onMouseEnter={value => {
+      onMouseEnter={(value) => {
         if (
           onSelectIndex &&
-          ((value.data.hasOwnProperty('clickable') &&
+          ((Object.prototype.hasOwnProperty.call(value.data, 'clickable') &&
             value.data.clickable === 'true') ||
-            !value.data.hasOwnProperty('clickable'))
+            !Object.prototype.hasOwnProperty.call(value.data, 'clickable'))
         ) {
           (document.body as HTMLInputElement).style.cursor = 'pointer';
         }
       }}
-      onMouseLeave={value => {
+      onMouseLeave={(value) => {
         if (
           onSelectIndex &&
-          ((value.data.hasOwnProperty('clickable') &&
+          ((Object.prototype.hasOwnProperty.call(value.data, 'clickable') &&
             value.data.clickable === 'true') ||
-            !value.data.hasOwnProperty('clickable'))
+            !Object.prototype.hasOwnProperty.call(value.data, 'clickable'))
         )
           (document.body as HTMLInputElement).style.cursor = 'default';
       }}
