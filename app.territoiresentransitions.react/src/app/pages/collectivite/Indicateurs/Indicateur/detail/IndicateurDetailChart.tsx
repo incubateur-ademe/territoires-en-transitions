@@ -1,11 +1,11 @@
 import classNames from 'classnames';
 import { useState } from 'react';
 
-import IndicateurChart from '@/app/app/pages/collectivite/Indicateurs/chart/IndicateurChart';
 import { TIndicateurDefinition } from '@/app/app/pages/collectivite/Indicateurs/types';
 import { useIndicateurValeurs } from '@/app/app/pages/collectivite/Indicateurs/useIndicateurValeurs';
-import { getLeftLineChartMargin } from '@/app/ui/charts/Line/utils';
-import { Button, Icon } from '@/ui';
+import PictoIndicateurVide from '@/app/ui/pictogrammes/PictoIndicateurVide';
+import { EmptyCard, Icon } from '@/ui';
+import IndicateurChartNew from '../../chart/IndicateurChartNew';
 import { DataSourceTooltip } from './DataSourceTooltip';
 import { transformeValeurs } from './transformeValeurs';
 
@@ -51,73 +51,33 @@ const IndicateurDetailChart = ({
   // Rempli ne peut pas être utilisé pour l'affichage car les objectifs ne sont pas pris en compte mais doivent quand même apparaître
   const hasValeurOrObjectif = valeurs.length > 0;
 
-  return (
+  return hasValeurOrObjectif ? (
     <div
       data-test={`chart-${definition.id}`}
-      className={classNames(
-        'flex flex-col p-6 border border-grey-4 rounded-lg',
-        className
-      )}
+      className={classNames('flex flex-col px-2 py-4', className)}
     >
-      <div className="flex justify-between gap-16 mb-6">
-        <div
-          className={classNames('font-bold text-primary-9', {
-            'grow text-center': !hasValeurOrObjectif,
-          })}
-        >
-          {titre}
-        </div>
-        {!!rempli && (
-          <Button
-            size="xs"
-            variant="outlined"
-            className="h-fit shrink-0"
-            onClick={() => setIsChartOpen(true)}
-          >
-            Télécharger le graphique
-          </Button>
-        )}
-      </div>
-
-      <IndicateurChart
-        className="min-h-[16rem]"
-        isLoading={isLoadingValeurs}
+      {/* todo: modale téléchargement ? */}
+      <IndicateurChartNew
         data={data}
-        chartConfig={{
-          theme: {
-            axis: {
-              ticks: {
-                text: {
-                  fontSize: 14,
-                },
-              },
-            },
-          },
-          margin: {
-            top: 16,
-            right: 16,
-            bottom: 48,
-            left: getLeftLineChartMargin(data.valeurs) + 8,
-          },
-          legend: { isOpen: true },
-        }}
-        chartInfos={{
-          modal: { isOpen: isChartOpen, setIsOpen: setIsChartOpen },
-          fileName,
-          title: titre,
-        }}
+        isLoading={isLoadingValeurs}
+        height={500}
+        title={titre}
+        disableToolbox={!rempli}
       />
+
       {!!metadonnee && (
         <DataSourceTooltip metadonnee={metadonnee}>
           <Icon icon="information-line" className="text-primary" />
         </DataSourceTooltip>
       )}
-      {!hasValeurOrObjectif && (
-        <div className="mx-auto text-sm text-grey-7">
-          Aucune valeur renseignée pour l’instant
-        </div>
-      )}
     </div>
+  ) : (
+    <EmptyCard
+      size="xs"
+      className="h-64"
+      picto={(props) => <PictoIndicateurVide {...props} />}
+      title="Aucune valeur n'est associée aux résultats ou aux objectifs de la collectivité !"
+    />
   );
 };
 

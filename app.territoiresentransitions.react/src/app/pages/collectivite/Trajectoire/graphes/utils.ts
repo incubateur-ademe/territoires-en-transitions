@@ -2,6 +2,7 @@ import { preset } from '@/ui';
 import type {
   DatasetComponentOption,
   EChartsOption,
+  GridComponentOption,
   LegendComponentOption,
   LineSeriesOption,
 } from 'echarts';
@@ -83,16 +84,24 @@ export const makeLegendData = (
         }
   );
 
+type OptionsProps = {
+  option?: EChartsOption;
+  titre?: string;
+  unite?: string;
+  disableToolbox?: boolean;
+  customLegend?: LegendComponentOption;
+  customGrid?: GridComponentOption;
+};
+
 // génère le paramétrage du graphe
 export const makeOption = ({
   option,
   titre,
   unite,
-}: {
-  option?: EChartsOption;
-  titre: string;
-  unite: string;
-}): EChartsOption => ({
+  disableToolbox = false,
+  customLegend,
+  customGrid,
+}: OptionsProps): EChartsOption => ({
   textStyle: {
     fontFamily: '"Marianne", arial, sans-serif',
   },
@@ -102,9 +111,11 @@ export const makeOption = ({
     top: '17%',
     bottom: '12%',
     containLabel: true,
+    ...customGrid,
   },
   legend: {
     icon: 'roundRect',
+    itemGap: 14,
     itemHeight: 12,
     itemWidth: 18,
     bottom: 0,
@@ -118,13 +129,14 @@ export const makeOption = ({
       option?.series && Array.isArray(option?.series)
         ? makeLegendData(option.series as LineSeriesOption[])
         : undefined,
+    ...customLegend,
   },
   xAxis: {
     type: 'time',
     splitLine: { show: true, lineStyle: { opacity: 0.5 } },
-    minorSplitLine: { show: true },
     // graduation de 5 en 5 années
     maxInterval: 6 * 365 * 24 * 50 * 60 * 1000,
+    minInterval: 365 * 24 * 50 * 60 * 1000,
     axisLabel: {
       formatter: '{yyyy}',
       color: colors.primary['9'],
@@ -165,35 +177,37 @@ export const makeOption = ({
     },
     valueFormatter: (value) => NumFormat.format(value as number),
   },
-  toolbox: {
-    top: 1,
-    right: 10,
-    borderType: 'solid',
-    borderWidth: 0.5,
-    borderColor: colors.primary.DEFAULT,
-    borderRadius: 8,
-    padding: 10,
-    iconStyle: {
-      color: colors.primary.DEFAULT,
-      borderWidth: 0,
-    },
-    emphasis: {
-      iconStyle: {
-        // @ts-expect-error les props `text*` fonctionnent mais ne sont pas dans le typage
-        textBackgroundColor: '#222',
-        textFill: '#fff',
-        textBorderRadius: 3,
-        textPadding: [5, 8],
-        color: colors.primary.DEFAULT,
-      },
-    },
-    feature: {
-      saveAsImage: {
-        title: 'Télécharger',
-        name: titre,
-        icon: DOWNLOAD_ICON,
-      },
-    },
-  },
+  toolbox: !disableToolbox
+    ? {
+        top: 1,
+        right: 10,
+        borderType: 'solid',
+        borderWidth: 0.5,
+        borderColor: colors.primary.DEFAULT,
+        borderRadius: 8,
+        padding: 10,
+        iconStyle: {
+          color: colors.primary.DEFAULT,
+          borderWidth: 0,
+        },
+        emphasis: {
+          iconStyle: {
+            // @ts-expect-error les props `text*` fonctionnent mais ne sont pas dans le typage
+            textBackgroundColor: '#222',
+            textFill: '#fff',
+            textBorderRadius: 3,
+            textPadding: [5, 8],
+            color: colors.primary.DEFAULT,
+          },
+        },
+        feature: {
+          saveAsImage: {
+            title: 'Télécharger',
+            name: titre,
+            icon: DOWNLOAD_ICON,
+          },
+        },
+      }
+    : undefined,
   ...option,
 });

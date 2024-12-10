@@ -9,7 +9,7 @@ type EmptyCardProps = {
     width?: string;
     height?: string;
   }) => React.ReactNode;
-  title: string;
+  title?: string;
   subTitle?: string;
   description?: string;
   additionalContent?: React.ReactNode;
@@ -80,14 +80,16 @@ export const EmptyCard = ({
         width: sizeClasses[size].picto.width,
         height: sizeClasses[size].picto.height,
       })}
-      <h6
-        className={classNames(
-          'leading-5 text-center text-primary-8 mb-0 px-2',
-          sizeClasses[size].title
-        )}
-      >
-        {title}
-      </h6>
+      {!!title && (
+        <h6
+          className={classNames(
+            'leading-5 text-center text-primary-8 mb-0 px-2',
+            sizeClasses[size].title
+          )}
+        >
+          {title}
+        </h6>
+      )}
       {!!subTitle && (
         <p
           className={classNames(
