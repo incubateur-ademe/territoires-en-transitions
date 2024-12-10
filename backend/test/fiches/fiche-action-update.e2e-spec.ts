@@ -85,7 +85,7 @@ describe('FichesActionUpdateService', () => {
         titre: 'Construire des pistes cyclables',
         description:
           'Un objectif à long terme sera de construire de nombreuses pistes cyclables dans le centre-ville.',
-        niveauPriorite: 'Bas',
+        priorite: 'Bas',
         // @ts-expect-error irrelevant data to be stripped
         plat: 'macaroni',
       };
@@ -196,9 +196,9 @@ describe('FichesActionUpdateService', () => {
         description:
           'Un objectif à long terme sera de construire de nombreuses pistes cyclables dans le centre-ville.',
         dateDebut: '2024-11-14 00:00:00+00',
-        dateFinProvisoire: '2025-09-10 00:00:00+00',
+        dateFin: '2025-09-10 00:00:00+00',
         instanceGouvernance: null,
-        niveauPriorite: 'Bas',
+        priorite: 'Bas',
         piliersEci: [
           piliersEciEnumType.APPROVISIONNEMENT_DURABLE,
           piliersEciEnumType.ECOCONCEPTION,

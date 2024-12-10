@@ -22,9 +22,9 @@ export class BulkEditService {
   ) {}
 
   bulkEditRequestSchema = z.object({
-    ficheIds: z.array(z.number()),
+    ficheIds: ficheActionSchema.shape.id.array(),
     statut: ficheActionSchema.shape.statut.optional(),
-    niveauPriorite: ficheActionSchema.shape.niveauPriorite.optional(),
+    priorite: ficheActionSchema.shape.priorite.optional(),
     pilotes: listSchema(
       updateFicheActionRequestSchema.shape.pilotes.unwrap().unwrap()
     ),

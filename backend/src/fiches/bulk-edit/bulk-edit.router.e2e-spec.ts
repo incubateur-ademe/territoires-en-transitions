@@ -172,7 +172,7 @@ describe('BulkEditRouter', () => {
 
     const input1: Input = {
       ficheIds,
-      niveauPriorite: prioriteEnumSchema.enum.Élevé,
+      priorite: prioriteEnumSchema.enum.Élevé,
     };
 
     const result = await caller.plans.fiches.bulkEdit(input1);
@@ -181,13 +181,13 @@ describe('BulkEditRouter', () => {
     // Verify that all fiches have been updated
     const fiches1 = await fetchFiches();
     for (const fiche of fiches1) {
-      expect(fiche.niveauPriorite).toBe(input1.niveauPriorite);
+      expect(fiche.priorite).toBe(input1.priorite);
     }
 
     // Change again the statut value
     const input2: Input = {
       ficheIds,
-      niveauPriorite: null,
+      priorite: null,
     };
 
     await caller.plans.fiches.bulkEdit(input2);
@@ -195,7 +195,7 @@ describe('BulkEditRouter', () => {
     // Verify that all fiches have been updated
     const fiches2 = await fetchFiches();
     for (const fiche of fiches2) {
-      expect(fiche.niveauPriorite).toBe(input2.niveauPriorite);
+      expect(fiche.priorite).toBe(input2.priorite);
     }
   });
 

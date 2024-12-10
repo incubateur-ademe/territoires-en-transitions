@@ -20,9 +20,9 @@ export const ficheActionFixture: CreateFicheActionType = {
   financements: '100 000€',
   budgetPrevisionnel: '35000',
   statut: FicheActionStatutsEnumType.EN_PAUSE,
-  niveauPriorite: 'Moyen',
+  priorite: 'Moyen',
   dateDebut: null,
-  dateFinProvisoire: null,
+  dateFin: null,
   ameliorationContinue: false,
   calendrier: 'Calendrier à préciser',
   notesComplementaires: '',
@@ -33,5 +33,5 @@ export const ficheActionFixture: CreateFicheActionType = {
   restreint: false,
   tempsDeMiseEnOeuvre: 1,
   participationCitoyenne: 'Participation',
-  participationCitoyenneType: 'Concertation',
+  participationCitoyenneType: 'concertation',
 };
