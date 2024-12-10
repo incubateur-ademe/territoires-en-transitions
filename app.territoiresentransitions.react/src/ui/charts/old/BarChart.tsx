@@ -87,6 +87,7 @@ export type BarChartProps = {
   inverted?: boolean;
   customColors?: boolean;
   unit?: string;
+  isIntoModal?: boolean;
   onSelectIndex?: (index: string | number) => void;
 };
 
@@ -115,6 +116,7 @@ const BarChart = ({
   inverted = false,
   customColors = false,
   unit = '',
+  isIntoModal,
   onSelectIndex,
 }: BarChartProps) => {
   let localData = [];
@@ -135,15 +137,25 @@ const BarChart = ({
       data={localData}
       keys={keys}
       indexBy={indexBy}
-      theme={{
-        labels: {text: {fontSize: 14}},
-        axis: {ticks: {text: {fontSize: 13}}},
-      }}
+      theme={
+        isIntoModal
+          ? {
+              labels: { text: { fontSize: 30, fontWeight: 'bold' } },
+              axis: {
+                ticks: { text: { fontSize: 22 } },
+                legend: { text: { fontSize: 20 } },
+              },
+            }
+          : {
+              labels: { text: { fontSize: 14 } },
+              axis: { ticks: { text: { fontSize: 13 } } },
+            }
+      }
       margin={{
         top: layout === 'horizontal' ? 20 : 85,
         right: 60,
         bottom: layout === 'horizontal' ? 80 : 70,
-        left: 70,
+        left: isIntoModal ? 90 : 70,
       }}
       padding={layout === 'horizontal' ? 0.1 : 0.5}
       innerPadding={groupMode === 'grouped' ? 2 : 0}
@@ -166,7 +178,7 @@ const BarChart = ({
             ? upperCaseFirstLetter(unit)
             : upperCaseFirstLetter(indexBy),
         legendPosition: 'middle',
-        legendOffset: 45,
+        legendOffset: isIntoModal ? 60 : 45,
       }}
       axisLeft={{
         tickSize: 5,
@@ -177,7 +189,7 @@ const BarChart = ({
             ? upperCaseFirstLetter(indexBy)
             : upperCaseFirstLetter(unit),
         legendPosition: 'middle',
-        legendOffset: -50,
+        legendOffset: isIntoModal ? -70 : -50,
       }}
       label={getLabel}
       enableGridX={layout === 'horizontal'}
