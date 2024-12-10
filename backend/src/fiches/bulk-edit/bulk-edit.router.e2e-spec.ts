@@ -1,4 +1,4 @@
-import DatabaseService from '@tet/backend/common/services/database.service';
+import { DatabaseService } from '@/backend/common';
 import { inferProcedureInput } from '@trpc/server';
 import { eq, inArray, sql } from 'drizzle-orm';
 import { getAuthUser } from '../../../test/auth/auth-utils';

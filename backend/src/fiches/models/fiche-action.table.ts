@@ -1,4 +1,4 @@
-import { getEnumValues } from '@tet/backend/utils/enum.utils';
+import { getEnumValues } from '@/backend/utils/enum.utils';
 import { InferInsertModel } from 'drizzle-orm';
 import {
   boolean,
