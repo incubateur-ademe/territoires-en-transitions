@@ -32,12 +32,13 @@ const DEFAULT_SETTINGS: SetOptionOpts = {
 
 export function ReactECharts({
   option,
-  style = DEFAULT_STYLE,
+  style = {},
   settings = DEFAULT_SETTINGS,
   loading,
   theme,
 }: ReactEChartsProps): JSX.Element {
   const chartRef = useRef<HTMLDivElement>(null);
+  const echartStyle = { ...DEFAULT_STYLE, ...style };
 
   useEffect(() => {
     // Initialize chart
@@ -82,5 +83,5 @@ export function ReactECharts({
     }
   }, [loading, theme]);
 
-  return <div ref={chartRef} style={{ width: '100%', ...style }} />;
+  return <div ref={chartRef} style={{ width: '100%', ...echartStyle }} />;
 }
