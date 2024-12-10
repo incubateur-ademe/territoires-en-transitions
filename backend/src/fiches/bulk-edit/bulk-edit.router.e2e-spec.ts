@@ -199,6 +199,72 @@ describe('BulkEditRouter', () => {
     }
   });
 
+  test('authenticated, bulk edit `dateFin`', async () => {
+    const caller = router.createCaller({ user: yoloDodo });
+
+    const input1 = {
+      ficheIds,
+      dateFin: '2024-12-25',
+    } satisfies Input;
+
+    const result = await caller.plans.fiches.bulkEdit(input1);
+    expect(result).toBeUndefined();
+
+    // Verify that all fiches have been updated
+    const fiches1 = await fetchFiches();
+    for (const fiche of fiches1) {
+      expect(new Date(fiche.dateFin as string)).toEqual(
+        new Date(input1.dateFin)
+      );
+    }
+
+    // Change again the statut value
+    const input2: Input = {
+      ficheIds,
+      dateFin: null,
+    };
+
+    await caller.plans.fiches.bulkEdit(input2);
+
+    // Verify that all fiches have been updated
+    const fiches2 = await fetchFiches();
+    for (const fiche of fiches2) {
+      expect(fiche.dateFin).toBe(input2.dateFin);
+    }
+  });
+
+  test('authenticated, bulk edit `ameliorationContinue`', async () => {
+    const caller = router.createCaller({ user: yoloDodo });
+
+    const input1: Input = {
+      ficheIds,
+      ameliorationContinue: true,
+    };
+
+    const result = await caller.plans.fiches.bulkEdit(input1);
+    expect(result).toBeUndefined();
+
+    // Verify that all fiches have been updated
+    const fiches1 = await fetchFiches();
+    for (const fiche of fiches1) {
+      expect(fiche.ameliorationContinue).toBe(input1.ameliorationContinue);
+    }
+
+    // Change again the statut value
+    const input2: Input = {
+      ficheIds,
+      ameliorationContinue: null,
+    };
+
+    await caller.plans.fiches.bulkEdit(input2);
+
+    // Verify that all fiches have been updated
+    const fiches2 = await fetchFiches();
+    for (const fiche of fiches2) {
+      expect(fiche.ameliorationContinue).toBe(input2.ameliorationContinue);
+    }
+  });
+
   test('authenticated, without access to some fiches', async () => {
     const yuluDudu = await getAuthUser(YULU_DUDU);
     const caller = router.createCaller({ user: yuluDudu });

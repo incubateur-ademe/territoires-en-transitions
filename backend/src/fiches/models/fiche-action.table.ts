@@ -142,7 +142,7 @@ export const ficheActionTable = pgTable('fiche_action', {
   statut: statutsPgEnum('statut').default(FicheActionStatutsEnumType.A_VENIR),
   priorite: prioritePgEnum('niveau_priorite'),
   dateDebut: timestamp('date_debut', { withTimezone: true, mode: 'string' }),
-  dateFinProvisoire: timestamp('date_fin_provisoire', {
+  dateFin: timestamp('date_fin_provisoire', {
     withTimezone: true,
     mode: 'string',
   }),

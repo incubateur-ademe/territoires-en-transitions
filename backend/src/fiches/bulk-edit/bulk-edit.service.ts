@@ -25,6 +25,9 @@ export class BulkEditService {
     ficheIds: ficheActionSchema.shape.id.array(),
     statut: ficheActionSchema.shape.statut.optional(),
     priorite: ficheActionSchema.shape.priorite.optional(),
+    dateFin: ficheActionSchema.shape.dateFin.optional(),
+    ameliorationContinue:
+      ficheActionSchema.shape.ameliorationContinue.optional(),
     pilotes: listSchema(
       updateFicheActionRequestSchema.shape.pilotes.unwrap().unwrap()
     ),
