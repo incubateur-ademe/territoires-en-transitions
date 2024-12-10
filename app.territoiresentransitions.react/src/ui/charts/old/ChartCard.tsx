@@ -1,6 +1,5 @@
 import { Button } from '@/ui';
 import classNames from 'classnames';
-import { useFonctionTracker } from 'core-logic/hooks/useFonctionTracker';
 import { useRef, useState } from 'react';
 import DownloadCanvasButton from 'ui/buttons/DownloadCanvasButton';
 import Modal from 'ui/shared/floating-ui/Modal';
@@ -41,15 +40,17 @@ type ChartCardModalContentProps = {
     chartClassname?: string;
   };
   topElement?: (id?: string) => JSX.Element;
+  // appelée lors du clic sur le bouton "Télécharger"
+  onDownload?: () => void;
 };
 
 const useDownloadChartButton = (
   fileName: string | undefined,
-  className: string | undefined
+  className: string | undefined,
+  onDownload: (() => void) | undefined
 ) => {
   // Référence utilisée pour le téléchargement du graphe
   const chartWrapperRef = useRef<HTMLDivElement>(null);
-  const tracker = useFonctionTracker();
   const downloadable = !!fileName;
 
   return {
@@ -62,9 +63,7 @@ const useDownloadChartButton = (
             containerRef={chartWrapperRef}
             fileName={fileName}
             fileType="png"
-            onClick={() =>
-              tracker({ fonction: 'graphique', action: 'telechargement' })
-            }
+            onClick={() => onDownload?.()}
           >
             Télécharger le graphique
           </DownloadCanvasButton>
@@ -77,11 +76,13 @@ const ChartCardModalContent = ({
   chart,
   chartInfo,
   topElement,
+  onDownload,
 }: ChartCardModalContentProps) => {
   // Référence utilisée pour le téléchargement du graphe
   const { chartWrapperRef, DownloadChartButton } = useDownloadChartButton(
     chartInfo?.downloadedFileName,
-    'absolute -mr-2 right-0 top-3 z-10'
+    'absolute -mr-2 right-0 top-3 z-10',
+    onDownload
   );
 
   return (
@@ -149,6 +150,10 @@ type ChartCardProps = {
   topElement?: (id?: string) => JSX.Element;
   customStyle?: React.CSSProperties;
   className?: string;
+  // appelée lors de l'ouverture de la modale "zoom"
+  onOpenModal?: () => void;
+  // appelée lors du clic sur le bouton "Télécharger"
+  onDownload?: () => void;
 };
 
 /**
@@ -168,9 +173,9 @@ const ChartCard = ({
   topElement,
   customStyle,
   className,
+  onOpenModal,
+  onDownload,
 }: ChartCardProps) => {
-  const tracker = useFonctionTracker();
-
   // Etat d'ouverture de la modale "zoom", disponible si chartInfo.expandable === true
   const [isModalOpen, setIsModalOpen] = useState(false);
 
@@ -224,6 +229,7 @@ const ChartCard = ({
                 chart={chart}
                 chartInfo={chartInfo}
                 topElement={topElement}
+                onDownload={onDownload}
               />
             )}
           >
@@ -233,7 +239,7 @@ const ChartCard = ({
               variant="outlined"
               onClick={() => {
                 setIsModalOpen(true);
-                tracker({ fonction: 'graphique', action: 'agrandissement' });
+                onOpenModal?.();
               }}
               className="ml-auto h-fit"
             >

@@ -2,6 +2,7 @@ import AccueilCard from '@/app/pages/collectivite/EtatDesLieux/Accueil/EtatDesLi
 import { Button } from '@/ui';
 import { referentielToName } from 'app/labels';
 import { ReferentielParamOption } from 'app/paths';
+import { useCollectiviteId } from 'core-logic/hooks/params';
 import { useState } from 'react';
 import { TableOptions } from 'react-table';
 import Chart from 'ui/charts/Chart';
@@ -47,6 +48,9 @@ const EtatDesLieuxGraphs = ({
     scoreTotal > 1 ? Math.round(scoreTotal) : toLocaleFixed(scoreTotal, 2)
   } point${Math.round(scoreTotal) <= 1 ? '' : 's'})`;
 
+  const trackEvent = useEventTracker('app/edl/synthese');
+  const collectiviteId = useCollectiviteId();
+
   return (
     <>
       <ProgressionReferentiel
@@ -64,6 +68,14 @@ const EtatDesLieuxGraphs = ({
       <GraphCard
         title={progressionParPhaseTitre}
         subTitle={referentielToName[referentiel]}
+        onOpenModal={() =>
+          collectiviteId &&
+          trackEvent('zoom_graph', {
+            collectivite_id: collectiviteId,
+            referentiel,
+            type: 'phase',
+          })
+        }
         renderGraph={(openState) => (
           <Chart
             donut={{
@@ -82,6 +94,14 @@ const EtatDesLieuxGraphs = ({
               subtitle: referentielToName[referentiel],
               fileName: `${referentiel}-realise-par-phase`,
             }}
+            onDownload={() =>
+              collectiviteId &&
+              trackEvent('export_graph', {
+                collectivite_id: collectiviteId,
+                referentiel,
+                type: 'phase',
+              })
+            }
           />
         )}
       />
@@ -98,9 +118,10 @@ type Props = {
     isOpen: boolean;
     setIsOpen: () => void;
   }) => React.ReactNode;
+  onOpenModal?: () => void;
 };
 
-const GraphCard = ({ title, subTitle, renderGraph }: Props) => {
+const GraphCard = ({ title, subTitle, renderGraph, onOpenModal }: Props) => {
   const [isOpen, setIsOpen] = useState(false);
   const toggleOpen = () => setIsOpen(!isOpen);
   return (
@@ -114,7 +135,10 @@ const GraphCard = ({ title, subTitle, renderGraph }: Props) => {
           icon="zoom-in-line"
           size="xs"
           variant="outlined"
-          onClick={() => toggleOpen()}
+          onClick={() => {
+            toggleOpen();
+            onOpenModal?.();
+          }}
           className="ml-auto h-fit"
         >
           Détails
