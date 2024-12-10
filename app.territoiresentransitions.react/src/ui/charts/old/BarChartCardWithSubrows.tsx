@@ -1,4 +1,4 @@
-import { Breadcrumbs } from '@/ui';
+import { Breadcrumbs, useEventTracker } from '@/ui';
 import { TScoreAuditRowData } from 'app/pages/collectivite/AuditComparaison/types';
 import { ActionReferentiel } from 'app/pages/collectivite/ReferentielTable/useReferentiel';
 import { ReferentielParamOption } from 'app/paths';
@@ -6,6 +6,7 @@ import { useEffect, useState } from 'react';
 import { TableOptions } from 'react-table';
 import { TActionStatutsRow } from 'types/alias';
 import TagFilters from 'ui/shared/filters/TagFilters';
+import { useCollectiviteId } from '../../../core-logic/hooks/params';
 import { getIndexTitles } from '../utils';
 import ChartCard from './ChartCard';
 
@@ -180,6 +181,9 @@ const BarChartCardWithSubrows = ({
       : undefined,
   };
 
+  const trackEvent = useEventTracker('app/edl/synthese');
+  const collectiviteId = useCollectiviteId();
+
   return (
     <ChartCard
       chartType="bar"
@@ -216,6 +220,22 @@ const BarChartCardWithSubrows = ({
         </div>
       )}
       customStyle={customStyle}
+      onOpenModal={() =>
+        collectiviteId &&
+        trackEvent('zoom_graph', {
+          collectivite_id: collectiviteId,
+          referentiel,
+          type: percentage ? 'percentage' : 'points',
+        })
+      }
+      onDownload={() =>
+        collectiviteId &&
+        trackEvent('export_graph', {
+          collectivite_id: collectiviteId,
+          referentiel,
+          type: percentage ? 'percentage' : 'points',
+        })
+      }
     />
   );
 };

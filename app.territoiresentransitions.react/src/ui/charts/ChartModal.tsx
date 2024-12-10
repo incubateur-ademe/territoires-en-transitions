@@ -1,6 +1,5 @@
 import { Modal } from '@/ui';
 
-import { useFonctionTracker } from 'core-logic/hooks/useFonctionTracker';
 import DownloadCanvasButton from 'ui/buttons/DownloadCanvasButton';
 import { ChartProps } from './Chart';
 import DonutChart from './Donut/DonutChart';
@@ -8,12 +7,10 @@ import LineChart from './Line/LineChart';
 
 /** Modale qui présente le graphique complet et permet de le télécharger */
 const ChartModal = (props: ChartProps) => {
-  const { infos, line, donut } = props;
-
-  const tracker = useFonctionTracker();
+  const { infos, line, donut, onDownload } = props;
 
   // Si la modale est ouverte alors elle est forcément définie
-  const modal = infos?.modal!;
+  const modal = infos?.modal;
 
   // On affiche toujours la légende par défaut dans la modale
   const legendBase = {
@@ -21,7 +18,7 @@ const ChartModal = (props: ChartProps) => {
     className: 'mt-6',
   };
 
-  if (!infos) return null;
+  if (!infos || !modal) return null;
 
   return (
     <Modal
@@ -46,9 +43,7 @@ const ChartModal = (props: ChartProps) => {
               fileName={infos.fileName}
               fileType="png"
               className="m-auto"
-              onClick={() =>
-                tracker({ fonction: 'graphique', action: 'telechargement' })
-              }
+              onClick={() => onDownload?.()}
             >
               Télécharger
             </DownloadCanvasButton>

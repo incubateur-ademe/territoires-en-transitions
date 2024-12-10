@@ -43,6 +43,8 @@ export type ChartProps = {
   };
   /** Les informations détaillées à afficher dans la modale de téléchargement */
   infos?: ChartInfosProps;
+  // appelée lors du clic sur le bouton "Télécharger"
+  onDownload?: () => void;
 };
 
 /**
