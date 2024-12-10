@@ -15,10 +15,10 @@ const ModaleEditionPlanning = ({
   openState,
   selectedIds,
 }: ModaleEditionPlanningProps) => {
-  const [dateFinProvisoire, setDateFinProvisoire] = useState<
-    string | null | undefined
-  >();
-  const [ameliorationContinue, setAmeliorationContinue] = useState(false);
+  const [dateFin, setDateFin] = useState<string | null | undefined>();
+  const [ameliorationContinue, setAmeliorationContinue] = useState<
+    boolean | null
+  >(null);
 
   const collectiviteId = useCollectiviteId()!;
   const tracker = useEventTracker('app/actions-groupees-fiches-action');
@@ -39,6 +39,8 @@ const ModaleEditionPlanning = ({
         });
         mutation.mutate({
           ficheIds: selectedIds,
+          dateFin,
+          ameliorationContinue,
         });
       }}
     >
@@ -53,25 +55,21 @@ const ModaleEditionPlanning = ({
               : undefined
           }
           disabled={ameliorationContinue ?? false}
-          value={
-            dateFinProvisoire ? getIsoFormattedDate(dateFinProvisoire) : ''
-          }
+          value={dateFin ? getIsoFormattedDate(dateFin) : ''}
           onChange={(evt) => {
-            setDateFinProvisoire(
-              evt.target.value.length !== 0 ? evt.target.value : null
-            );
+            setAmeliorationContinue(null);
+            setDateFin(evt.target.value.length !== 0 ? evt.target.value : null);
           }}
         />
 
         <div className="col-span-2 mt-2">
           <Checkbox
             label="Action en amélioration continue, sans date de fin"
-            checked={ameliorationContinue}
+            checked={ameliorationContinue ?? false}
             onChange={(evt) => {
               const isChecked = evt.currentTarget.checked;
-              const dateFin = isChecked ? null : dateFinProvisoire;
               setAmeliorationContinue(isChecked);
-              setDateFinProvisoire(dateFin);
+              setDateFin(isChecked ? null : dateFin);
             }}
           />
         </div>
