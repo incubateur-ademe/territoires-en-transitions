@@ -28,13 +28,13 @@ const ModaleEditionPriorite = ({
       openState={openState}
       title="Associer un niveau de priorité"
       actionsCount={selectedIds.length}
-      // TODO: sauvegarde de la nouvelle valeur
       onSave={() => {
         tracker('associer_priorite_groupe', {
           collectivite_id: collectiviteId,
         });
         mutation.mutate({
           ficheIds: selectedIds,
+          priorite,
         });
       }}
     >
