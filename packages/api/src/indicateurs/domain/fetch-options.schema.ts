@@ -1,7 +1,6 @@
 import { z } from 'zod';
 import { filtreRessourceLieesSchema } from '../../collectivites/shared/domain/filtre-ressource-liees.schema';
 import { getQueryOptionsSchema } from '../../shared/domain/query_options.schema';
-import { categorieSchema } from './categorie.schema';
 
 export const filtreSpecifiqueSchema = z.object({
   actionId: z.string().optional(),
@@ -12,7 +11,7 @@ export const filtreSpecifiqueSchema = z.object({
   fichesNonClassees: z.coerce.boolean().default(false).optional(),
   text: z.string().optional(),
   estPerso: z.coerce.boolean().default(false).optional(),
-  categorieNoms: z.array(categorieSchema.shape.nom).optional(),
+  categorieNoms: z.string().array().optional(),
   hasOpenData: z.coerce.boolean().optional(),
   /** Permet de forcer l'inclusion des indicateurs enfants */
   withChildren: z.coerce.boolean().optional(),
