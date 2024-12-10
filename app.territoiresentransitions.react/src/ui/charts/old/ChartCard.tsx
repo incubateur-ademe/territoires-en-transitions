@@ -178,7 +178,12 @@ const ChartCard = ({
   let chart: JSX.Element = <></>;
   switch (chartType) {
     case 'bar':
-      chart = <BarChart {...(chartProps as BarChartProps)} />;
+      chart = (
+        <BarChart
+          {...(chartProps as BarChartProps)}
+          isIntoModal={isModalOpen}
+        />
+      );
       break;
     default:
       break;
