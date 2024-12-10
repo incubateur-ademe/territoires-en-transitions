@@ -1,4 +1,3 @@
-import { categorieSchema } from '@/api/indicateurs/domain';
 import { getQueryOptionsSchema } from '@/api/shared/domain';
 import { z } from 'zod';
 
@@ -65,7 +64,8 @@ export const getFilteredIndicateursRequestOptionsSchema = z.object({
         'Faux ou non renseigné pour ne pas appliquer de filtre.'
     ),
   categorieNoms: z
-    .array(categorieSchema.shape.nom)
+    .string()
+    .array()
     .optional()
     .describe(
       'Liste de nom de catégories permettant de récupérer les indicateurs ayant une de ces catégories (ou dont un enfant en possède une si avecEnfants!=true).'
