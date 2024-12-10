@@ -24,6 +24,7 @@ export class BulkEditService {
   bulkEditRequestSchema = z.object({
     ficheIds: z.array(z.number()),
     statut: ficheActionSchema.shape.statut.optional(),
+    niveauPriorite: ficheActionSchema.shape.niveauPriorite.optional(),
     pilotes: listSchema(
       updateFicheActionRequestSchema.shape.pilotes.unwrap().unwrap()
     ),
@@ -48,14 +49,14 @@ export class BulkEditService {
       NiveauAcces.EDITION
     );
 
-    const { statut, pilotes } = params;
+    const { pilotes, ...plainValues } = params;
 
     await this.db.transaction(async (tx) => {
-      // Update base params
-      if (statut !== undefined) {
+      // Update plain values
+      if (Object.keys(plainValues).length) {
         await tx
           .update(ficheActionTable)
-          .set({ statut })
+          .set(plainValues)
           .where(inArray(ficheActionTable.id, ficheIds));
       }
 

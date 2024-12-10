@@ -109,9 +109,11 @@ export const ficheActionCiblesEnum = pgEnum(
   ficheActionCiblesEnumValues
 );
 
-export const ficheActionNiveauxPrioriteEnum = pgEnum(
+export const prioriteEnumValues = ['Élevé', 'Moyen', 'Bas'] as const;
+export const prioriteEnumSchema = z.enum(prioriteEnumValues);
+export const prioritePgEnum = pgEnum(
   'fiche_action_niveaux_priorite',
-  ['Élevé', 'Moyen', 'Bas']
+  prioriteEnumValues
 );
 
 export const ficheActionParticipationCitoyenneTypeEnumValues = [
@@ -138,7 +140,7 @@ export const ficheActionTable = pgTable('fiche_action', {
     scale: 0,
   }),
   statut: statutsPgEnum('statut').default(FicheActionStatutsEnumType.A_VENIR),
-  niveauPriorite: ficheActionNiveauxPrioriteEnum('niveau_priorite'),
+  niveauPriorite: prioritePgEnum('niveau_priorite'),
   dateDebut: timestamp('date_debut', { withTimezone: true, mode: 'string' }),
   dateFinProvisoire: timestamp('date_fin_provisoire', {
     withTimezone: true,

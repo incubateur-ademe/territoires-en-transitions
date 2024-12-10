@@ -14,6 +14,7 @@ import { ficheActionPiloteTable } from '../models/fiche-action-pilote.table';
 import {
   FicheActionStatutsEnumType,
   ficheActionTable,
+  prioriteEnumSchema,
 } from '../models/fiche-action.table';
 
 type Input = inferProcedureInput<AppRouter['plans']['fiches']['bulkEdit']>;
@@ -75,7 +76,7 @@ describe('BulkEditRouter', () => {
     ficheIds = fiches.map((f) => f.id);
   });
 
-  test('authenticated, bulk edit statut', async () => {
+  test('authenticated, bulk edit `statut`', async () => {
     const caller = router.createCaller({ user: yoloDodo });
 
     const input1: Input = {
@@ -108,7 +109,7 @@ describe('BulkEditRouter', () => {
     }
   });
 
-  test('authenticated, bulk edit personnePilotes', async () => {
+  test('authenticated, bulk edit `personnePilotes`', async () => {
     const caller = router.createCaller({ user: yoloDodo });
 
     const input = {
@@ -164,6 +165,38 @@ describe('BulkEditRouter', () => {
         .delete(ficheActionPiloteTable)
         .where(inArray(ficheActionPiloteTable.ficheId, ficheIds));
     });
+  });
+
+  test('authenticated, bulk edit `priorite`', async () => {
+    const caller = router.createCaller({ user: yoloDodo });
+
+    const input1: Input = {
+      ficheIds,
+      niveauPriorite: prioriteEnumSchema.enum.Élevé,
+    };
+
+    const result = await caller.plans.fiches.bulkEdit(input1);
+    expect(result).toBeUndefined();
+
+    // Verify that all fiches have been updated
+    const fiches1 = await fetchFiches();
+    for (const fiche of fiches1) {
+      expect(fiche.niveauPriorite).toBe(input1.niveauPriorite);
+    }
+
+    // Change again the statut value
+    const input2: Input = {
+      ficheIds,
+      niveauPriorite: null,
+    };
+
+    await caller.plans.fiches.bulkEdit(input2);
+
+    // Verify that all fiches have been updated
+    const fiches2 = await fetchFiches();
+    for (const fiche of fiches2) {
+      expect(fiche.niveauPriorite).toBe(input2.niveauPriorite);
+    }
   });
 
   test('authenticated, without access to some fiches', async () => {
