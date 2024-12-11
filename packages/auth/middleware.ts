@@ -1,5 +1,6 @@
 import { isAllowedOrigin } from '@/api';
-import { NextRequest, NextResponse } from 'next/server';
+import { NextRequest } from 'next/server';
+import { updateSessionOrRedirect } from './src/supabase/middleware';
 
 /**
  * Middleware pour ajouter à chaque requête les en-têtes CSP et CORS
@@ -7,8 +8,8 @@ import { NextRequest, NextResponse } from 'next/server';
  * Ref: https://nextjs.org/docs/app/building-your-application/configuring/content-security-policy
  *
  */
-export function middleware(request: NextRequest) {
-  // génère un id à chaque requête
+export async function middleware(request: NextRequest) {
+  // Génère un id unique à chaque requête
   const nonce = Buffer.from(crypto.randomUUID()).toString('base64');
 
   // on autorise 'unsafe-eval' et 'unsafe-inline' en mode dev. pour que les pages
@@ -51,16 +52,17 @@ export function middleware(request: NextRequest) {
     .replace(/\s{2,}/g, ' ')
     .trim();
 
-  // crée et complète l'objet `Headers`
   const requestHeaders = new Headers(request.headers);
   requestHeaders.set('x-nonce', nonce);
+
   requestHeaders.set(
     'Content-Security-Policy',
     contentSecurityPolicyHeaderValue
   );
 
+  const response = await updateSessionOrRedirect(request);
+
   // ajoute les en-têtes CSP à la réponse
-  const response = NextResponse.next({ request: { headers: requestHeaders } });
   response.headers.set(
     'Content-Security-Policy',
     contentSecurityPolicyHeaderValue

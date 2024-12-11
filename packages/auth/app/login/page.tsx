@@ -2,7 +2,6 @@
 'use client';
 
 import { LoginModal } from '@/auth/components/Login';
-import { useRedirectTo } from '@/auth/components/Login/useRedirectTo';
 import { useLoginState } from './useLoginState';
 
 /**
@@ -22,9 +21,6 @@ const LoginPage = ({
     redirect_to: string;
   };
 }) => {
-  // redirige immédiatement si l'utilisateur est déjà connecté
-  useRedirectTo(redirect_to);
-
   const defaultValues = {
     email,
     otp,
