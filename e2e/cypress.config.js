@@ -1,4 +1,4 @@
-const {defineConfig} = require('cypress');
+const { defineConfig } = require('cypress');
 const setupNodeEvents = require('./cypress/plugins');
 
 /** Configuration Cypress */
@@ -11,6 +11,7 @@ module.exports = defineConfig({
     // taille de la fenêtre dans laquelle l'app est chargée
     viewportWidth: 1280,
     viewportHeight: 1024,
+    requestTimeout: 10000,
     // lorsqu'un test échoue...
     retries: {
       // ...on refait 2 tentatives en mode "headless"
