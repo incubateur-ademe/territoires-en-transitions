@@ -2,12 +2,15 @@ import { transformeValeurs } from '@/app/app/pages/collectivite/Indicateurs/Indi
 import { useIndicateurValeurs } from '@/app/app/pages/collectivite/Indicateurs/useIndicateurValeurs';
 import { useCurrentCollectivite } from '@/app/core-logic/hooks/useCurrentCollectivite';
 import { Tab, Tabs, useActiveTab } from '@/app/ui/shared/Tabs';
-import { Checkbox, Tooltip } from '@/ui';
+import { Alert, Checkbox, Tooltip } from '@/ui';
 import { useEffect } from 'react';
 import { SOURCE_COLLECTIVITE } from '../../constants';
 import { TIndicateurDefinition } from '../../types';
 import { IndicateurValuesTable } from './IndicateurValuesTable';
 import { useToggleIndicateurConfidentiel } from './useToggleIndicateurConfidentiel';
+
+// un message spécifique doit être affiché pour les indicateurs de la séquestration carbone
+const ID_SEQUESTRATION = 'cae_63.';
 
 /** Affiche les onglets résultats/objectifs */
 export const IndicateurValuesTabs = ({
@@ -80,6 +83,13 @@ export const IndicateurValuesTabs = ({
               </div>
             </Tooltip>
           </div>
+          {definition.identifiant?.startsWith(ID_SEQUESTRATION) && (
+            <Alert
+              className="mb-8"
+              state="warning"
+              title="Les données sont attendues au format ALDO : positives en cas de séquestration et négatives en cas d’émission."
+            />
+          )}
         </>
       )}
       <Tabs defaultActiveTab={activeTab} onChange={onChangeTab}>
