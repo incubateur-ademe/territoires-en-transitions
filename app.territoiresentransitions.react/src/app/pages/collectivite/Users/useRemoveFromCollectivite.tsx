@@ -1,9 +1,9 @@
-import {useMutation, useQueryClient} from 'react-query';
-import { trpc } from '@tet/api/utils/trpc/client';
+import { trpc } from '@/api/utils/trpc/client';
+import { supabaseClient } from 'core-logic/api/supabase';
 import { useCollectiviteId } from 'core-logic/hooks/params';
+import { useMutation, useQueryClient } from 'react-query';
 import { TRemoveFromCollectivite } from './types';
 import { getQueryKey } from './useCollectiviteMembres';
-import { supabaseClient } from 'core-logic/api/supabase';
 
 type RemoveMembreResponse = {
   message?: string;

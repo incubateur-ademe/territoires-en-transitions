@@ -1,12 +1,12 @@
-import {ActionImpactFourchetteBudgetaire} from '@tet/api';
-import {Icon} from '@tet/ui';
+import { ActionImpactFourchetteBudgetaire } from '@/api';
+import { Icon } from '@tet/ui';
 import classNames from 'classnames';
 
 type NiveauBudgetProps = {
   budget: ActionImpactFourchetteBudgetaire;
 };
 
-const NiveauBudget = ({budget}: NiveauBudgetProps) => {
+const NiveauBudget = ({ budget }: NiveauBudgetProps) => {
   // Mise en forme du label à partir du nom stocké en base
   // ex : "De 40 000€ à 100 000€" => "40k à 100k"
   // attention en cas de mise à jour des budgets

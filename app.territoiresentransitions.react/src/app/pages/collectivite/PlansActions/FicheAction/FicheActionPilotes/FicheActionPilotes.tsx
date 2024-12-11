@@ -1,4 +1,4 @@
-import { FicheAction } from '@tet/api/plan-actions';
+import { FicheAction } from '@/api/plan-actions';
 import { useState } from 'react';
 import EmptyCard from '../EmptyCard';
 import EmptyActeursPicto from '../FicheActionActeurs/PictosActeurs/EmptyActeursPicto';

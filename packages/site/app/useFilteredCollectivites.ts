@@ -1,4 +1,4 @@
-import { makeSearchString } from '@tet/api';
+import { makeSearchString } from '@/api';
 import { supabase } from '@tet/site/app/initSupabase';
 import useSWR from 'swr';
 

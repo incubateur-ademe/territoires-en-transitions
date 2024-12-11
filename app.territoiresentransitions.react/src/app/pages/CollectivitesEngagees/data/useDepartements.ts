@@ -1,12 +1,12 @@
-import {useQuery} from 'react-query';
-import {DISABLE_AUTO_REFETCH, supabaseClient} from 'core-logic/api/supabase';
-import {NonNullableFields, Views} from '@tet/api';
+import { NonNullableFields, Views } from '@/api';
+import { DISABLE_AUTO_REFETCH, supabaseClient } from 'core-logic/api/supabase';
+import { useQuery } from 'react-query';
 
 /**
  * Charge la liste des départements.
  */
 export const useDepartements = () => {
-  const {data, isLoading} = useQuery(
+  const { data, isLoading } = useQuery(
     ['departement'],
     () => fetch(),
     DISABLE_AUTO_REFETCH
@@ -18,7 +18,7 @@ export const useDepartements = () => {
 };
 
 const fetch = async () => {
-  const {data} = await supabaseClient.from('departement').select();
+  const { data } = await supabaseClient.from('departement').select();
   return data;
 };
 

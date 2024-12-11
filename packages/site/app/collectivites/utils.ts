@@ -1,4 +1,4 @@
-import { Tables } from '@tet/api';
+import { Tables } from '@/api';
 import { supabase } from '@tet/site/app/initSupabase';
 import { EtoilesLabel } from '@tet/site/app/types';
 import { fetchCollection, fetchSingle } from '@tet/site/src/strapi/strapi';

@@ -1,6 +1,6 @@
+import { dbAdmin } from '@/api/tests/supabase';
 import { expect } from 'vitest';
 import { ModuleInsert } from '../domain/module.schema';
-import { dbAdmin } from '@tet/api/tests/supabase';
 
 export const moduleNew: ModuleInsert = {
   id: crypto.randomUUID(),

@@ -1,7 +1,7 @@
-import {useQuery} from 'react-query';
-import {DISABLE_AUTO_REFETCH, supabaseClient} from 'core-logic/api/supabase';
-import {useCollectiviteId} from 'core-logic/hooks/params';
-import {Indicateurs} from '@tet/api';
+import { Indicateurs } from '@/api';
+import { DISABLE_AUTO_REFETCH, supabaseClient } from 'core-logic/api/supabase';
+import { useCollectiviteId } from 'core-logic/hooks/params';
+import { useQuery } from 'react-query';
 
 /**
  * Charge les données nécessaires à l'affichage d'un graphique indicateur.
@@ -25,6 +25,6 @@ export const useIndicateurChartInfo = (
             collectiviteId
           )
         : null,
-    autoRefresh ? {} : {...DISABLE_AUTO_REFETCH}
+    autoRefresh ? {} : { ...DISABLE_AUTO_REFETCH }
   );
 };

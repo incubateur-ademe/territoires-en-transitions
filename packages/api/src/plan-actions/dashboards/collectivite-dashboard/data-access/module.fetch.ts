@@ -1,3 +1,5 @@
+import { planActionsFetch } from '@/api/plan-actions';
+import { DBClient } from '@/api/typeUtils';
 import { objectToCamel } from 'ts-case-convert';
 import {
   ModuleFicheActionCountByStatusSelect,
@@ -5,8 +7,6 @@ import {
   Slug,
   getDefaultModule,
 } from '../domain/module.schema';
-import { DBClient } from '@tet/api/typeUtils';
-import { planActionsFetch } from '@tet/api/plan-actions';
 
 export type ReturnType<S extends Slug> = S extends 'suivi-plan-actions'
   ? ModulePlanActionListSelect

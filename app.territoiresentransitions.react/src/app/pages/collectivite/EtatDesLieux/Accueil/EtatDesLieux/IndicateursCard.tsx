@@ -1,11 +1,11 @@
+import { Referentiel } from '@/api/referentiel/domain/enum.schema';
+import AccueilCard from '@tet/app/pages/collectivite/EtatDesLieux/Accueil/EtatDesLieux/AccueilCard';
+import { Button } from '@tet/ui';
 import { referentielToName } from 'app/labels';
 import { makeCollectiviteTousLesIndicateursUrl } from 'app/paths';
-import { Button } from '@tet/ui';
-import { useIndicateurSummary } from '../data/useIndicateurSummary';
 import { useFonctionTracker } from 'core-logic/hooks/useFonctionTracker';
+import { useIndicateurSummary } from '../data/useIndicateurSummary';
 import { useOpenDataIndicateursCount } from '../data/useOpenDataIndicateurs';
-import AccueilCard from '@tet/app/pages/collectivite/EtatDesLieux/Accueil/EtatDesLieux/AccueilCard';
-import { Referentiel } from '@tet/api/referentiel/domain/enum.schema';
 
 type IndicateursCardProps = {
   collectiviteId: number;

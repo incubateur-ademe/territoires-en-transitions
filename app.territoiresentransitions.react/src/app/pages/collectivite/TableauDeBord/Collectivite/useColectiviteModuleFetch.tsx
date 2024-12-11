@@ -1,5 +1,5 @@
-import { moduleFetch } from '@tet/api/plan-actions/dashboards/collectivite-dashboard/data-access/module.fetch';
-import { Slug } from '@tet/api/plan-actions/dashboards/collectivite-dashboard/domain/module.schema';
+import { moduleFetch } from '@/api/plan-actions/dashboards/collectivite-dashboard/data-access/module.fetch';
+import { Slug } from '@/api/plan-actions/dashboards/collectivite-dashboard/domain/module.schema';
 import { supabaseClient } from 'core-logic/api/supabase';
 import { useCollectiviteId } from 'core-logic/hooks/params';
 import { QueryKey, useQuery } from 'react-query';

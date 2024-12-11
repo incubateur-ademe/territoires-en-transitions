@@ -1,4 +1,4 @@
-import { modulesFetch } from '@tet/api/plan-actions/dashboards/collectivite-dashboard';
+import { modulesFetch } from '@/api/plan-actions/dashboards/collectivite-dashboard';
 import { supabaseClient } from 'core-logic/api/supabase';
 import { useCollectiviteId } from 'core-logic/hooks/params';
 import { useQuery } from 'react-query';

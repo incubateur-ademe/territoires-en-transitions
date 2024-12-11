@@ -1,7 +1,7 @@
+import { fetchFilteredIndicateurs } from '@/api/indicateurs';
 import { objectToCamel } from 'ts-case-convert';
 import { DBClient } from '../../../typeUtils';
 import { FicheAction } from '../../domain';
-import { fetchFilteredIndicateurs } from '@tet/api/indicateurs';
 
 const ficheActionColumns = [
   // 'id',

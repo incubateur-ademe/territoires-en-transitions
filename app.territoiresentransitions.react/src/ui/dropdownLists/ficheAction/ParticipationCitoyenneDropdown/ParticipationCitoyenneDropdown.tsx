@@ -1,4 +1,4 @@
-import { ParticipationCitoyenne } from '@tet/api/plan-actions';
+import { ParticipationCitoyenne } from '@/api/plan-actions';
 import { Select, SelectMultipleProps } from '@tet/ui';
 import { ficheActionParticipationOptions } from '../../listesStatiques';
 

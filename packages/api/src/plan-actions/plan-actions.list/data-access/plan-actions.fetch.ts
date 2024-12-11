@@ -1,4 +1,4 @@
-import { DBClient } from '@tet/api/typeUtils';
+import { DBClient } from '@/api/typeUtils';
 import { objectToCamel } from 'ts-case-convert';
 import { Axe } from '../../domain';
 import {

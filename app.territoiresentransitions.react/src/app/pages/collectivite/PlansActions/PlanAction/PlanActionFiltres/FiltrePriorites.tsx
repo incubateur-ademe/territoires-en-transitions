@@ -1,9 +1,9 @@
+import { NiveauPriorite } from '@/api/plan-actions';
+import { Field, OptionValue, SelectFilter } from '@tet/ui';
 import { TOption } from 'ui/shared/select/commons';
-import { SANS_PRIORITE, TFiltreProps } from '../../FicheAction/data/filters';
 import { ficheActionNiveauPrioriteOptions } from '../../../../../../ui/dropdownLists/listesStatiques';
 import BadgePriorite from '../../components/BadgePriorite';
-import { Field, OptionValue, SelectFilter } from '@tet/ui';
-import { NiveauPriorite } from '@tet/api/plan-actions';
+import { SANS_PRIORITE, TFiltreProps } from '../../FicheAction/data/filters';
 
 const FiltrePriorites = ({ filters, setFilters }: TFiltreProps) => {
   // Initialisation du tableau d'options pour le multi-select

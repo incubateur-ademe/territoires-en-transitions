@@ -1,16 +1,16 @@
-import {supabaseClient} from 'core-logic/api/supabase';
-import {useCollectiviteId} from 'core-logic/hooks/params';
-import {useMutation, useQuery, useQueryClient} from 'react-query';
-import {TablesInsert} from '@tet/api';
+import { TablesInsert } from '@/api';
+import { supabaseClient } from 'core-logic/api/supabase';
+import { useCollectiviteId } from 'core-logic/hooks/params';
+import { useMutation, useQuery, useQueryClient } from 'react-query';
 
 const fetchJustification = async (
   collectivite_id: number | null,
   action_id: string | null
 ) => {
-  const {error, data} = await supabaseClient
+  const { error, data } = await supabaseClient
     .from('justification_ajustement')
     .select()
-    .match({collectivite_id, action_id});
+    .match({ collectivite_id, action_id });
 
   if (error) throw new Error(error.message);
 
@@ -20,7 +20,7 @@ const fetchJustification = async (
 export const useActionJustification = (action_id: string) => {
   const collectivite_id = useCollectiviteId();
 
-  const {data, isLoading} = useQuery(
+  const { data, isLoading } = useQuery(
     ['action_justification', collectivite_id, action_id],
     () => fetchJustification(collectivite_id, action_id)
   );

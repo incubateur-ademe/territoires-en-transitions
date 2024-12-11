@@ -1,4 +1,4 @@
-import { FicheAction } from '@tet/api/plan-actions';
+import { FicheAction } from '@/api/plan-actions';
 import { Button, getOptionLabel } from '@tet/ui';
 import classNames from 'classnames';
 import { useState } from 'react';

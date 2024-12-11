@@ -1,12 +1,12 @@
+import { FicheAction } from '@/api/plan-actions';
 import { createElement, useEffect, useState } from 'react';
-import { FicheAction } from '@tet/api/plan-actions';
-import { useFicheActionChemins } from '../PlanAction/data/usePlanActionChemin';
+import ExportPDFButton from 'ui/export-pdf/ExportPDFButton';
 import { useIndicateurDefinitions } from '../../Indicateurs/Indicateur/useIndicateurDefinition';
-import { useFichesActionLiees } from '../FicheAction/data/useFichesActionLiees';
 import { useActionListe } from '../FicheAction/data/options/useActionListe';
 import { useAnnexesFicheActionInfos } from '../FicheAction/data/useAnnexesFicheActionInfos';
 import { useFicheActionNotesSuivi } from '../FicheAction/data/useFicheActionNotesSuivi';
-import ExportPDFButton from 'ui/export-pdf/ExportPDFButton';
+import { useFichesActionLiees } from '../FicheAction/data/useFichesActionLiees';
+import { useFicheActionChemins } from '../PlanAction/data/usePlanActionChemin';
 import FicheActionPdf from './FicheActionPdf/FicheActionPdf';
 
 type FicheActionPdfContentProps = {

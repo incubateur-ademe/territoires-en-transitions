@@ -1,4 +1,4 @@
-import { Tag } from '@tet/api/shared/domain';
+import { Tag } from '@/api/shared/domain';
 import { supabaseClient } from 'core-logic/api/supabase';
 import { useCollectiviteId } from 'core-logic/hooks/params';
 import { useQuery } from 'react-query';

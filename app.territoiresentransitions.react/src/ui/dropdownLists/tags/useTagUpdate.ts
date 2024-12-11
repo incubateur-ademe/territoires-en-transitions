@@ -1,5 +1,5 @@
-import { TableTag } from '@tet/api';
-import { TagUpdate } from '@tet/api/shared/domain';
+import { TableTag } from '@/api';
+import { TagUpdate } from '@/api/shared/domain';
 import { supabaseClient } from 'core-logic/api/supabase';
 import { QueryKey, useMutation, useQueryClient } from 'react-query';
 import { objectToSnake } from 'ts-case-convert';

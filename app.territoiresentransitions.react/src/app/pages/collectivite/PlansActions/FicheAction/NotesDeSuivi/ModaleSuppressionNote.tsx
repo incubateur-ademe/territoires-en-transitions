@@ -1,4 +1,4 @@
-import { FicheActionNote } from '@tet/api/plan-actions';
+import { FicheActionNote } from '@/api/plan-actions';
 import { Modal, ModalFooterOKCancel } from '@tet/ui';
 import DeleteButton from '../DeleteButton';
 import { DeletedNote } from '../data/useUpsertNoteSuivi';

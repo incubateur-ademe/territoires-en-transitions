@@ -1,7 +1,7 @@
+import { Statut } from '@/api/plan-actions';
 import { Select, SelectProps } from '@tet/ui';
-import { Statut } from '@tet/api/plan-actions';
-import { ficheActionStatutOptions } from 'ui/dropdownLists/listesStatiques';
 import BadgeStatut from 'app/pages/collectivite/PlansActions/components/BadgeStatut';
+import { ficheActionStatutOptions } from 'ui/dropdownLists/listesStatiques';
 
 type Props = Omit<SelectProps, 'values' | 'onChange' | 'options'> & {
   values?: Statut | null;

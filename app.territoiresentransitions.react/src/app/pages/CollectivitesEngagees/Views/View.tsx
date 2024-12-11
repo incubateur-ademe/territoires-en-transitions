@@ -2,7 +2,7 @@ import classNames from 'classnames';
 
 import { Button, Pagination, Select } from '@tet/ui';
 
-import { CollectiviteEngagee } from '@tet/api';
+import { CollectiviteEngagee } from '@/api';
 import { Grid } from 'app/pages/CollectivitesEngagees/Views/Grid';
 import { trierParOptions } from 'app/pages/CollectivitesEngagees/data/filtreOptions';
 import { NB_CARDS_PER_PAGE } from 'app/pages/CollectivitesEngagees/data/utils';

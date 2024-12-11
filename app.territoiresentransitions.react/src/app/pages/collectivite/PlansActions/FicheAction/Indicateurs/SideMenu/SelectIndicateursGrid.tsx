@@ -1,4 +1,4 @@
-import { IndicateurListItem } from '@tet/api/indicateurs/domain';
+import { IndicateurListItem } from '@/api/indicateurs/domain';
 import IndicateurCard, {
   IndicateurCardProps,
 } from 'app/pages/collectivite/Indicateurs/lists/IndicateurCard/IndicateurCard';

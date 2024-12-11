@@ -1,7 +1,7 @@
-import {useMutation, useQueryClient} from 'react-query';
-import {supabaseClient} from 'core-logic/api/supabase';
-import {useCollectiviteId} from 'core-logic/hooks/params';
-import {Indicateurs} from '@tet/api';
+import { Indicateurs } from '@/api';
+import { supabaseClient } from 'core-logic/api/supabase';
+import { useCollectiviteId } from 'core-logic/hooks/params';
+import { useMutation, useQueryClient } from 'react-query';
 
 export const useUpdateIndicateurDefinition = () => {
   const queryClient = useQueryClient();
@@ -15,14 +15,14 @@ export const useUpdateIndicateurDefinition = () => {
         definition,
         collectiviteId
       );
-      return {definition};
+      return { definition };
     },
     meta: {
       success: "L'indicateur est enregistré",
       error: "L'indicateur n'a pas été enregistré",
     },
-    onSuccess: ({definition}) => {
-      const {collectiviteId, id} = definition;
+    onSuccess: ({ definition }) => {
+      const { collectiviteId, id } = definition;
       queryClient.invalidateQueries([
         'indicateur_definition',
         collectiviteId,

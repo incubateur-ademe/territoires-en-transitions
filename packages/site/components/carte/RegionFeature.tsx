@@ -1,9 +1,9 @@
 'use client';
 
-import { FeatureGroup, GeoJSON } from 'react-leaflet';
-import { Views, Json } from '@tet/api';
-import { PathOptions } from 'leaflet';
+import { Json, Views } from '@/api';
 import { GeoJsonObject } from 'geojson';
+import { PathOptions } from 'leaflet';
+import { FeatureGroup, GeoJSON } from 'react-leaflet';
 
 type region_w_geojson = Views<'site_region'> & {
   geojson?: Json;

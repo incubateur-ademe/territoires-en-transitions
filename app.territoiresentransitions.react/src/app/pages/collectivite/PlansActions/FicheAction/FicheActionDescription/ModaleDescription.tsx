@@ -1,5 +1,5 @@
-import { useState } from 'react';
-import _ from 'lodash';
+import { FicheAction } from '@/api/plan-actions';
+import { Thematique } from '@/api/shared/domain';
 import {
   Button,
   Field,
@@ -10,12 +10,12 @@ import {
   Textarea,
   useEventTracker,
 } from '@tet/ui';
-import { FicheAction } from '@tet/api/plan-actions';
-import ThematiquesDropdown from 'ui/dropdownLists/ThematiquesDropdown/ThematiquesDropdown';
-import SousThematiquesDropdown from 'ui/dropdownLists/SousThematiquesDropdown/SousThematiquesDropdown';
 import { useCurrentCollectivite } from 'core-logic/hooks/useCurrentCollectivite';
+import _ from 'lodash';
+import { useState } from 'react';
+import SousThematiquesDropdown from 'ui/dropdownLists/SousThematiquesDropdown/SousThematiquesDropdown';
+import ThematiquesDropdown from 'ui/dropdownLists/ThematiquesDropdown/ThematiquesDropdown';
 import { getMaxLengthMessage } from 'utils/formatUtils';
-import { Thematique } from '@tet/api/shared/domain';
 
 const DESCRIPTION_MAX_LENGTH = 20000;
 const MOYENS_MAX_LENGTH = 10000;

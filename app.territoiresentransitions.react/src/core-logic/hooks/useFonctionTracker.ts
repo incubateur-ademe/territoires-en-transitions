@@ -1,10 +1,10 @@
-import {TablesInsert} from '@tet/api';
-import {useCollectiviteId} from 'core-logic/hooks/params';
-import {useAuth} from 'core-logic/api/auth/AuthProvider';
-import {supabaseClient} from 'core-logic/api/supabase';
-import {useLocalisation} from 'core-logic/hooks/useLocalisation';
-import {ENV} from 'environmentVariables';
-import {useMemo, useRef} from 'react';
+import { TablesInsert } from '@/api';
+import { useAuth } from 'core-logic/api/auth/AuthProvider';
+import { supabaseClient } from 'core-logic/api/supabase';
+import { useCollectiviteId } from 'core-logic/hooks/params';
+import { useLocalisation } from 'core-logic/hooks/useLocalisation';
+import { ENV } from 'environmentVariables';
+import { useMemo, useRef } from 'react';
 
 /**
  * Représente l'utilisation d'une fonctionnalité
@@ -18,7 +18,7 @@ type Usage = TablesInsert<'usage'>;
  * @returns success
  */
 const track = async (usage: Usage): Promise<boolean> => {
-  const {status} = await supabaseClient.from('usage').insert(usage);
+  const { status } = await supabaseClient.from('usage').insert(usage);
   return status === 201;
 };
 
@@ -33,7 +33,7 @@ export const useFonctionTracker = (): ((usage: Usage) => Promise<boolean>) => {
   const collectivite_id = useCollectiviteId();
   const localisation = useLocalisation();
   const ref = useRef();
-  const {user} = useAuth();
+  const { user } = useAuth();
 
   const factory = () => {
     // Garde la dernière valeur d'usage pour éviter d'envoyer

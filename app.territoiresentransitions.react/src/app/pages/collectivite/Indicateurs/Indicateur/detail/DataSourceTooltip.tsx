@@ -1,5 +1,5 @@
-import {Tooltip} from '@tet/ui';
-import {Indicateurs} from '@tet/api';
+import { Indicateurs } from '@/api';
+import { Tooltip } from '@tet/ui';
 
 /**
  * Affiche une infobulle donnant les informations disponibles pour une source de

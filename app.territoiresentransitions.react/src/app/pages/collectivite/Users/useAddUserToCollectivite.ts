@@ -1,10 +1,10 @@
-import {useMutation, useQueryClient} from 'react-query';
-import { trpc } from '@tet/api/utils/trpc/client';
-import { supabaseClient } from 'core-logic/api/supabase';
-import { TNiveauAcces } from 'types/alias';
-import { CurrentCollectivite } from 'core-logic/hooks/useCurrentCollectivite';
-import { UserData } from 'core-logic/api/auth/AuthProvider';
+import { trpc } from '@/api/utils/trpc/client';
 import { useSendInvitation } from 'app/pages/collectivite/Users/useSendInvitation';
+import { UserData } from 'core-logic/api/auth/AuthProvider';
+import { supabaseClient } from 'core-logic/api/supabase';
+import { CurrentCollectivite } from 'core-logic/hooks/useCurrentCollectivite';
+import { useMutation, useQueryClient } from 'react-query';
+import { TNiveauAcces } from 'types/alias';
 
 type AddUserToCollectiviteArgs = {
   email: string;
@@ -81,4 +81,3 @@ export const useAddUserToCollectivite = (
     }
   );
 };
-

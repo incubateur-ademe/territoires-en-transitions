@@ -1,5 +1,5 @@
-import { FetchOptions } from '@tet/api/indicateurs/domain';
-import { trpc } from '@tet/api/utils/trpc/client';
+import { FetchOptions } from '@/api/indicateurs/domain';
+import { trpc } from '@/api/utils/trpc/client';
 import { DISABLE_AUTO_REFETCH } from 'core-logic/api/supabase';
 import { useCollectiviteId } from 'core-logic/hooks/params';
 import Fuse from 'fuse.js';

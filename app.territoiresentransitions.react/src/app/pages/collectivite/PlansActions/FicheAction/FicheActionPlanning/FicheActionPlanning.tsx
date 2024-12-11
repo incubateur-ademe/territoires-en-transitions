@@ -1,15 +1,15 @@
-import { useState } from 'react';
+import { FicheAction } from '@/api/plan-actions';
+import { Button, Divider, Icon } from '@tet/ui';
 import classNames from 'classnames';
 import { isBefore, startOfToday } from 'date-fns';
-import { Button, Divider, Icon } from '@tet/ui';
-import { FicheAction } from '@tet/api/plan-actions';
-import BadgeStatut from '../../components/BadgeStatut';
-import BadgePriorite from '../../components/BadgePriorite';
-import FilledCalendarPicto from './PictosPlanning/FilledCalendarPicto';
-import EmptyCalendarPicto from './PictosPlanning/EmptyCalendarPicto';
-import ModalePlanning from './ModalePlanning';
+import { useState } from 'react';
 import { getTextFormattedDate, getTruncatedText } from 'utils/formatUtils';
+import BadgePriorite from '../../components/BadgePriorite';
+import BadgeStatut from '../../components/BadgeStatut';
 import EmptyCard from '../EmptyCard';
+import ModalePlanning from './ModalePlanning';
+import EmptyCalendarPicto from './PictosPlanning/EmptyCalendarPicto';
+import FilledCalendarPicto from './PictosPlanning/FilledCalendarPicto';
 
 type FicheActionPlanningProps = {
   isReadonly: boolean;

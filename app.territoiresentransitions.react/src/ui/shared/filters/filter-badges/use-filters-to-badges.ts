@@ -1,15 +1,15 @@
 import { useQuery } from 'react-query';
 
-import { supabaseClient } from '@tet/api/utils/supabase-client';
-import { Filtre as FiltreFicheActions } from '@tet/api/plan-actions/fiche-resumes.list';
-import { FetchFiltre as FiltreIndicateurs } from '@tet/api/indicateurs';
-import { filtreValuesFetch } from '@tet/api/collectivites/shared/data-access/filtre-values.fetch';
+import { filtreValuesFetch } from '@/api/collectivites/shared/data-access/filtre-values.fetch';
+import { FetchFiltre as FiltreIndicateurs } from '@/api/indicateurs';
+import { Filtre as FiltreFicheActions } from '@/api/plan-actions/fiche-resumes.list';
+import { supabaseClient } from '@/api/utils/supabase-client';
 import { useCollectiviteId } from 'core-logic/hooks/params';
 
 import {
   FiltreRessourceLiees,
   FiltreValues,
-} from '@tet/api/collectivites/shared/domain/filtre-ressource-liees.schema';
+} from '@/api/collectivites/shared/domain/filtre-ressource-liees.schema';
 import { generateTitle } from '@tet/app/pages/collectivite/PlansActions/FicheAction/data/utils';
 import { getCategorieLabel } from 'ui/dropdownLists/indicateur/utils';
 

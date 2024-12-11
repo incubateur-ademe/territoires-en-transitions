@@ -3,7 +3,7 @@ import {
   getAuthPaths,
   getCollectivitePlanPath,
   getRejoindreCollectivitePath,
-} from '@tet/api';
+} from '@/api';
 import StepperValidation from '@tet/panier/components/Stepper/StepperValidation';
 import {
   useCollectiviteContext,

@@ -1,12 +1,12 @@
 import {
+  FetchFilter as FetchFilterPlanActions,
+  fetchOptionsSchema as planActionsFetchOptionsSchema,
+} from '@/api/plan-actions';
+import { z } from 'zod';
+import {
   Filtre as FiltreFichesSynthese,
   filtreSchema,
 } from './fiches-synthese.schema';
-import {
-  FetchFilter as FetchFilterPlanActions,
-  fetchOptionsSchema as planActionsFetchOptionsSchema,
-} from '@tet/api/plan-actions';
-import { z } from 'zod';
 
 const moduleTypeSchema = z.enum([
   // "Avancée des plans d'actions de la collectivité"

@@ -20,8 +20,8 @@
     "esModuleInterop": true,
     "incremental": true,
     "paths": {
-      "@tet/api": ["./packages/api/src/index.ts"],
-      "@tet/api/*": ["./packages/api/src/*"],
+      "@/api": ["./packages/api/src/index.ts"],
+      "@/api/*": ["./packages/api/src/*"],
       "@tet/app/*": ["./app.territoiresentransitions.react/src/app/*"],
       "@tet/auth/*": ["./packages/auth/*"],
       "@/backend/*": ["./backend/src/*"],

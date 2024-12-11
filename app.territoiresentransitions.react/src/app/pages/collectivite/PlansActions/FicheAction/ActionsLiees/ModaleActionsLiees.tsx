@@ -1,7 +1,7 @@
-import { useEffect, useState } from 'react';
-import _ from 'lodash';
+import { FicheAction } from '@/api/plan-actions';
 import { Field, Modal, ModalFooterOKCancel } from '@tet/ui';
-import { FicheAction } from '@tet/api/plan-actions';
+import _ from 'lodash';
+import { useEffect, useState } from 'react';
 import ActionsReferentielsDropdown from 'ui/dropdownLists/ActionsReferentielsDropdown/ActionsReferentielsDropdown';
 
 type ModaleActionsLieesProps = {

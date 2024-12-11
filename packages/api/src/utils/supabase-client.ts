@@ -1,5 +1,5 @@
+import { Database } from '@/api';
 import { createClient } from '@supabase/supabase-js';
-import { Database } from '@tet/api';
 import { ENV } from '../environmentVariables';
 
 export const supabaseClient = createClient<Database>(

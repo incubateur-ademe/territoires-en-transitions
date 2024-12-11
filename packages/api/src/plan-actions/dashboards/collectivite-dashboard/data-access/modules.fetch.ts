@@ -1,11 +1,11 @@
+import { planActionsFetch } from '@/api/plan-actions';
+import { DBClient } from '@/api/typeUtils';
 import { objectToCamel } from 'ts-case-convert';
-import { planActionsFetch } from '@tet/api/plan-actions';
 import {
   ModuleSelect,
   defaultSlugsSchema,
   getDefaultModule,
 } from '../domain/module.schema';
-import { DBClient } from '@tet/api/typeUtils';
 
 export type FetchReturnValue = Array<ModuleSelect>;
 

@@ -1,5 +1,5 @@
+import { DBClient } from '@/api/typeUtils';
 import { Groupement } from '../domain/groupement.schema';
-import { DBClient } from '@tet/api/typeUtils';
 
 /**
  * Récupère les groupements auquel appartient une collectivité

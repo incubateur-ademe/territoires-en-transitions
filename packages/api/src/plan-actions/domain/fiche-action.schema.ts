@@ -1,11 +1,11 @@
-import { personneSchema } from '@tet/api/collectivites';
-import { indicateurListItemSchema } from '@tet/api/indicateurs/domain';
-import { actionSchema } from '@tet/api/referentiel';
+import { personneSchema } from '@/api/collectivites';
+import { indicateurListItemSchema } from '@/api/indicateurs/domain';
+import { actionSchema } from '@/api/referentiel';
 import {
   sousThematiqueSchemaId,
   tagSchema,
   thematiqueSchema,
-} from '@tet/api/shared/domain';
+} from '@/api/shared/domain';
 import { z } from 'zod';
 import { axeSchema } from './axe.schema';
 

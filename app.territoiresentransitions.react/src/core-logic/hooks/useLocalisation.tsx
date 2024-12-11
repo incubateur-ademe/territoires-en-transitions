@@ -1,4 +1,4 @@
-import { Enums } from '@tet/api';
+import { Enums } from '@/api';
 import { usePathname } from 'next/navigation';
 import { useMemo } from 'react';
 

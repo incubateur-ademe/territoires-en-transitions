@@ -3,7 +3,7 @@ import {
   ActionImpactStatut,
   ActionImpactTempsMiseEnOeuvre,
   ActionImpactThematique,
-} from '@tet/api';
+} from '@/api';
 import { Badge } from '@tet/ui/design-system/Badge';
 import { Button } from '@tet/ui/design-system/Button';
 import { Divider } from '@tet/ui/design-system/Divider';
@@ -54,7 +54,7 @@ export const InfoActionImpact = ({
   descriptionMarkdown,
   className,
 }: InfoActionImpactProps) => {
-  const {thematiques, budget, miseEnOeuvre, ressources, rex, subventions} =
+  const { thematiques, budget, miseEnOeuvre, ressources, rex, subventions } =
     action;
 
   return (
@@ -62,7 +62,7 @@ export const InfoActionImpact = ({
       {/* Badges thématiques */}
       {!!thematiques?.length && (
         <div className="flex gap-4 flex-wrap mb-6">
-          {thematiques.map(theme => (
+          {thematiques.map((theme) => (
             <Badge
               key={theme.id}
               title={theme.nom}

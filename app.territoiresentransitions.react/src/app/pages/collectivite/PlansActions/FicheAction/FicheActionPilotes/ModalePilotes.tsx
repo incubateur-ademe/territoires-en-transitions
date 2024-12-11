@@ -1,7 +1,7 @@
-import { useState } from 'react';
-import _ from 'lodash';
+import { FicheAction } from '@/api/plan-actions';
 import { Field, FormSectionGrid, Modal, ModalFooterOKCancel } from '@tet/ui';
-import { FicheAction } from '@tet/api/plan-actions';
+import _ from 'lodash';
+import { useState } from 'react';
 import PersonnesDropdown from 'ui/dropdownLists/PersonnesDropdown/PersonnesDropdown';
 import { getPersonneStringId } from 'ui/dropdownLists/PersonnesDropdown/utils';
 

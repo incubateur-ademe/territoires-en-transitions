@@ -1,11 +1,11 @@
 import {
   defaultSlugsSchema as colectiviteSlug,
   Slug as CollectiviteSlug,
-} from '@tet/api/plan-actions/dashboards/collectivite-dashboard/domain/module.schema';
+} from '@/api/plan-actions/dashboards/collectivite-dashboard/domain/module.schema';
 import {
   defaultSlugsSchema as personalSlug,
   Slug as PersonalSlug,
-} from '@tet/api/plan-actions/dashboards/personal-dashboard/domain/module.schema';
+} from '@/api/plan-actions/dashboards/personal-dashboard/domain/module.schema';
 import ModuleSuiviPlansActionPage from '@tet/app/pages/collectivite/TableauDeBord/Collectivite/ModuleSuiviPlansAction/ModuleSuiviPlansActionPage';
 import ModuleFichesActionsPage from '@tet/app/pages/collectivite/TableauDeBord/Personnel/ModuleFichesActions/ModuleFichesActionsPage';
 import ModuleIndicateursPage from '@tet/app/pages/collectivite/TableauDeBord/Personnel/ModuleIndicateurs/ModuleIndicateursPage';

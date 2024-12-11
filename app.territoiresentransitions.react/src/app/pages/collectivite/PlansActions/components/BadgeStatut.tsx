@@ -1,4 +1,4 @@
-import { Statut as PlanActionStatut } from '@tet/api/plan-actions/domain';
+import { Statut as PlanActionStatut } from '@/api/plan-actions/domain';
 import { Badge, BadgeState } from '@tet/ui';
 import classNames from 'classnames';
 

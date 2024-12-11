@@ -1,5 +1,5 @@
-import { Statut } from '@tet/api/plan-actions';
-import { ModuleFicheActionCountByStatusSelect } from '@tet/api/plan-actions/dashboards/collectivite-dashboard/domain/module.schema';
+import { Statut } from '@/api/plan-actions';
+import { ModuleFicheActionCountByStatusSelect } from '@/api/plan-actions/dashboards/collectivite-dashboard/domain/module.schema';
 import { statutToColor } from '@tet/app/pages/collectivite/PlansActions/FicheAction/utils';
 import ModalAvancementFichesAction from '@tet/app/pages/collectivite/TableauDeBord/Collectivite/ModuleAvancementFichesAction/ModalAvancementFichesAction';
 import { useFichesActionStatuts } from '@tet/app/pages/collectivite/TableauDeBord/Collectivite/ModuleAvancementFichesAction/useFichesActionStatuts';

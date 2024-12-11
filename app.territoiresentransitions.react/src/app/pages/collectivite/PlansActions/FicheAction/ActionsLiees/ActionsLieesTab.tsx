@@ -1,7 +1,7 @@
-import { useState } from 'react';
+import { FicheAction } from '@/api/plan-actions';
 import { Button } from '@tet/ui';
+import { useState } from 'react';
 import SpinnerLoader from 'ui/shared/SpinnerLoader';
-import { FicheAction } from '@tet/api/plan-actions';
 import EmptyCard from '../EmptyCard';
 import ActionPicto from './ActionPicto';
 import ActionsLieesListe from './ActionsLieesListe';

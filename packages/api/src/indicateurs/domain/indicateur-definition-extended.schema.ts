@@ -1,5 +1,5 @@
-import { ficheResumeSchema } from '@tet/api/plan-actions';
-import { personneSchema, tagSchema } from '@tet/api/shared/domain';
+import { ficheResumeSchema } from '@/api/plan-actions';
+import { personneSchema, tagSchema } from '@/api/shared/domain';
 import { z } from 'zod';
 import { definitionSchema } from './definition.schema';
 import { valeurSchema } from './valeur.schema';

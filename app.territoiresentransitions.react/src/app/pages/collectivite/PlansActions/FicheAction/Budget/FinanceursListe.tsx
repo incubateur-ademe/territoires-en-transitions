@@ -1,5 +1,5 @@
+import { Financeur } from '@/api/plan-actions';
 import { Badge } from '@tet/ui';
-import { Financeur } from '@tet/api/plan-actions';
 import { getFormattedNumber } from 'utils/formatUtils';
 
 type FinanceursListeProps = {

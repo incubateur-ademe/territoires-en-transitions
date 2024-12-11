@@ -1,4 +1,4 @@
-import { TempsDeMiseEnOeuvre } from '@tet/api/plan-actions';
+import { TempsDeMiseEnOeuvre } from '@/api/plan-actions';
 import { Select, SelectProps } from '@tet/ui';
 import { useMiseEnOeuvre } from './useMiseEnOeuvre';
 

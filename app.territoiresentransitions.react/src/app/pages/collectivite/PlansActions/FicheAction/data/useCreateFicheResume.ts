@@ -1,4 +1,4 @@
-import { FicheResume } from '@tet/api/plan-actions';
+import { FicheResume } from '@/api/plan-actions';
 import { makeCollectiviteFicheNonClasseeUrl } from 'app/paths';
 import { supabaseClient } from 'core-logic/api/supabase';
 import { useCollectiviteId } from 'core-logic/hooks/params';

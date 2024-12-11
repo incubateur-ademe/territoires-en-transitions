@@ -1,9 +1,9 @@
-import { useMutation, useQueryClient } from 'react-query';
+import { FicheResume } from '@/api/plan-actions';
 import { supabaseClient } from 'core-logic/api/supabase';
+import { useMutation, useQueryClient } from 'react-query';
 import { dropAnimation } from '../../PlanAction/DragAndDropNestedContainers/Arborescence';
 import { PlanNode } from '../../PlanAction/data/types';
 import { sortFichesResume } from './utils';
-import { FicheResume } from '@tet/api/plan-actions';
 
 type Args = {
   fiche: FicheResume;

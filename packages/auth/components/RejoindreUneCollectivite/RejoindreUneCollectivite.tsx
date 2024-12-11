@@ -1,35 +1,35 @@
-import {useState} from 'react';
+import { Enums } from '@/api';
 import {
-  Checkbox,
-  ModalFooterOKCancel,
-  Field,
-  FieldMessage,
-  Input,
-  FormSectionGrid,
-  Select,
-  SelectMultiple,
   Accordion,
   ACCORDION_CONTENT_STYLE,
+  Checkbox,
+  Field,
+  FieldMessage,
+  FormSectionGrid,
+  Input,
+  ModalFooterOKCancel,
+  Select,
+  SelectMultiple,
   TrackPageView,
   useEventTracker,
 } from '@tet/ui';
-import {Enums} from '@tet/api';
+import { useState } from 'react';
+import { CollectiviteSelectionnee } from './CollectiviteSelectionnee';
 import {
   RejoindreUneCollectiviteData,
   RejoindreUneCollectiviteProps,
 } from './type';
-import {CollectiviteSelectionnee} from './CollectiviteSelectionnee';
 
-const ROLES: Array<{value: Enums<'membre_fonction'>; label: string}> = [
-  {value: 'politique', label: 'Équipe politique'},
-  {value: 'technique', label: 'Directions et services techniques'},
-  {value: 'partenaire', label: 'Partenaire'},
-  {value: 'conseiller', label: "Bureau d'études"},
+const ROLES: Array<{ value: Enums<'membre_fonction'>; label: string }> = [
+  { value: 'politique', label: 'Équipe politique' },
+  { value: 'technique', label: 'Directions et services techniques' },
+  { value: 'partenaire', label: 'Partenaire' },
+  { value: 'conseiller', label: "Bureau d'études" },
 ];
 
 const REFERENTIELS = [
-  {value: 'cae', label: 'Climat Air Énergie'},
-  {value: 'eci', label: 'Économie Circulaire'},
+  { value: 'cae', label: 'Climat Air Énergie' },
+  { value: 'eci', label: 'Économie Circulaire' },
 ];
 
 /**
@@ -52,8 +52,8 @@ export const RejoindreUneCollectivite = (
   const [formState, setFormState] = useState<
     Omit<RejoindreUneCollectiviteData, 'collectiviteId'>
   >({});
-  const {est_referent, poste, role, champ_intervention} = formState;
-  const {id: collectiviteId, contacts} = collectiviteSelectionnee || {};
+  const { est_referent, poste, role, champ_intervention } = formState;
+  const { id: collectiviteId, contacts } = collectiviteSelectionnee || {};
 
   const hasContacts = !!contacts?.length;
   const isValid =
@@ -68,10 +68,10 @@ export const RejoindreUneCollectivite = (
       <TrackPageView pageName="auth/rejoindre-une-collectivite" />
       <form
         className="flex flex-col gap-4"
-        onSubmit={e => {
+        onSubmit={(e) => {
           e.preventDefault();
           if (isValid) {
-            onSubmit({...formState, collectiviteId});
+            onSubmit({ ...formState, collectiviteId });
             // @ts-expect-error en attendant de gérer le 2ème argument optionnel
             eventTracker('cta_submit', {});
           }
@@ -83,7 +83,7 @@ export const RejoindreUneCollectivite = (
               dataTest="select-collectivite"
               debounce={500}
               options={
-                collectivites?.map(c => ({
+                collectivites?.map((c) => ({
                   value: c.collectivite_id,
                   label: c.nom,
                 })) || []
@@ -92,7 +92,7 @@ export const RejoindreUneCollectivite = (
               isSearcheable
               onSearch={onFilterCollectivites}
               isLoading={isLoading}
-              onChange={value => {
+              onChange={(value) => {
                 const id = collectiviteId === value ? null : (value as number);
                 onSelectCollectivite(id);
               }}
@@ -131,8 +131,8 @@ export const RejoindreUneCollectivite = (
                   dataTest="role"
                   options={ROLES}
                   values={role ? [role] : undefined}
-                  onChange={value => {
-                    setFormState(previous => ({
+                  onChange={(value) => {
+                    setFormState((previous) => ({
                       ...previous,
                       role:
                         role === value
@@ -147,8 +147,8 @@ export const RejoindreUneCollectivite = (
                   id="poste"
                   type="text"
                   value={poste}
-                  onChange={e =>
-                    setFormState(previous => ({
+                  onChange={(e) =>
+                    setFormState((previous) => ({
                       ...previous,
                       poste: e.target.value,
                     }))
@@ -173,8 +173,8 @@ export const RejoindreUneCollectivite = (
                     dataTest="role"
                     options={REFERENTIELS}
                     values={champ_intervention}
-                    onChange={({values}) => {
-                      setFormState(previous => ({
+                    onChange={({ values }) => {
+                      setFormState((previous) => ({
                         ...previous,
                         champ_intervention:
                           values as RejoindreUneCollectiviteData['champ_intervention'],
@@ -190,7 +190,7 @@ export const RejoindreUneCollectivite = (
           <FieldMessage messageClassName="mt-4" state="error" message={error} />
         )}
         <ModalFooterOKCancel
-          btnCancelProps={{onClick: onCancel}}
+          btnCancelProps={{ onClick: onCancel }}
           btnOKProps={{
             type: 'submit',
             disabled: !isValid || isLoading,

@@ -1,8 +1,8 @@
-import {useMutation, useQueryClient} from 'react-query';
-import {Indicateurs} from '@tet/api';
-import {supabaseClient} from 'core-logic/api/supabase';
-import {useCollectiviteId} from 'core-logic/hooks/params';
-import {TIndicateurDefinition} from '../../types';
+import { Indicateurs } from '@/api';
+import { supabaseClient } from 'core-logic/api/supabase';
+import { useCollectiviteId } from 'core-logic/hooks/params';
+import { useMutation, useQueryClient } from 'react-query';
+import { TIndicateurDefinition } from '../../types';
 
 /** Met à jour l'état "confidentiel" d'un indicateur */
 export const useToggleIndicateurConfidentiel = (

@@ -1,4 +1,4 @@
-import { Statut } from '@tet/api/plan-actions';
+import { Statut } from '@/api/plan-actions';
 import { preset } from '@tet/ui';
 
 /** Correspondance entre les statuts et couleurs associées */

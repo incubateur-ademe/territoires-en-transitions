@@ -1,5 +1,5 @@
-import { MaCollectivite } from '@tet/api';
-import { planActionsPilotableFetch } from '@tet/api/plan-actions';
+import { MaCollectivite } from '@/api';
+import { planActionsPilotableFetch } from '@/api/plan-actions';
 import { useAuth } from 'core-logic/api/auth/AuthProvider';
 import { supabaseClient } from 'core-logic/api/supabase';
 import { useQuery } from 'react-query';

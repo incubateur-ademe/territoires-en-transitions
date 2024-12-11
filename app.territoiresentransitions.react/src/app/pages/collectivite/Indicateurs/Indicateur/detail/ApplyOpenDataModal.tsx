@@ -1,8 +1,8 @@
-import {Alert, Checkbox} from '@tet/ui';
-import {Indicateurs} from '@tet/api';
-import {TIndicateurDefinition} from '../../types';
-import {SOURCE_TYPE_LABEL} from '../../constants';
+import { Indicateurs } from '@/api';
+import { Alert, Checkbox } from '@tet/ui';
 import classNames from 'classnames';
+import { SOURCE_TYPE_LABEL } from '../../constants';
+import { TIndicateurDefinition } from '../../types';
 
 export type Props = {
   /** Indicateur concerné */
@@ -18,7 +18,7 @@ export type Props = {
 };
 
 // pour formater les chiffres
-const NumFormat = Intl.NumberFormat('fr', {maximumFractionDigits: 3});
+const NumFormat = Intl.NumberFormat('fr', { maximumFractionDigits: 3 });
 
 /**
  * Affiche le contenu de la modale de confirmation avant écrasement des données
@@ -33,8 +33,8 @@ export const ApplyOpenDataModal = ({
 }: Props) => {
   if (!comparaison || !source || !definition) return;
 
-  const {lignes, conflits} = comparaison;
-  const {type, libelle} = source;
+  const { lignes, conflits } = comparaison;
+  const { type, libelle } = source;
   if (!type) return;
 
   const sourceType = SOURCE_TYPE_LABEL[type];

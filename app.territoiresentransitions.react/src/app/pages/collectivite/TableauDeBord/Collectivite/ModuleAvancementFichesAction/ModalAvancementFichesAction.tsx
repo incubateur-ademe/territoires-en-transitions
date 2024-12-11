@@ -2,7 +2,6 @@ import { useState } from 'react';
 import { QueryKey, useQueryClient } from 'react-query';
 
 import {
-  ButtonGroup,
   Field,
   FormSection,
   Modal,
@@ -10,21 +9,21 @@ import {
   ModalProps,
 } from '@tet/ui';
 
+import { modulesSave } from '@/api/plan-actions/dashboards/collectivite-dashboard';
+import { Filtre } from '@/api/plan-actions/dashboards/collectivite-dashboard/domain/fiches-synthese.schema';
+import { ModuleFicheActionCountByStatusSelect } from '@/api/plan-actions/dashboards/collectivite-dashboard/domain/module.schema';
+import { ModuleDisplaySettings } from 'app/pages/collectivite/TableauDeBord/components/Module';
+import { supabaseClient } from 'core-logic/api/supabase';
+import { TFicheActionCibles } from 'types/alias';
+import CiblesDropdown from 'ui/dropdownLists/ficheAction/CiblesDropdown/CiblesDropdown';
+import PartenairesDropdown from 'ui/dropdownLists/PartenairesDropdown/PartenairesDropdown';
 import PersonnesDropdown from 'ui/dropdownLists/PersonnesDropdown/PersonnesDropdown';
 import {
   getPilotesValues,
   splitPilotePersonnesAndUsers,
 } from 'ui/dropdownLists/PersonnesDropdown/utils';
-import ServicesPilotesDropdown from 'ui/dropdownLists/ServicesPilotesDropdown/ServicesPilotesDropdown';
-import { ModuleDisplaySettings } from 'app/pages/collectivite/TableauDeBord/components/Module';
-import PartenairesDropdown from 'ui/dropdownLists/PartenairesDropdown/PartenairesDropdown';
-import CiblesDropdown from 'ui/dropdownLists/ficheAction/CiblesDropdown/CiblesDropdown';
 import PlansActionDropdown from 'ui/dropdownLists/PlansActionDropdown';
-import { ModuleFicheActionCountByStatusSelect } from '@tet/api/plan-actions/dashboards/collectivite-dashboard/domain/module.schema';
-import { Filtre } from '@tet/api/plan-actions/dashboards/collectivite-dashboard/domain/fiches-synthese.schema';
-import { TFicheActionCibles } from 'types/alias';
-import { modulesSave } from '@tet/api/plan-actions/dashboards/collectivite-dashboard';
-import { supabaseClient } from 'core-logic/api/supabase';
+import ServicesPilotesDropdown from 'ui/dropdownLists/ServicesPilotesDropdown/ServicesPilotesDropdown';
 
 type Props = ModalProps & {
   module: ModuleFicheActionCountByStatusSelect;

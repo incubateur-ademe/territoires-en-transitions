@@ -3,10 +3,10 @@ import { useQuery } from 'react-query';
 import {
   planActionsFetch,
   WithSelect,
-} from '@tet/api/plan-actions/plan-actions.list/data-access/plan-actions.fetch';
+} from '@/api/plan-actions/plan-actions.list/data-access/plan-actions.fetch';
+import { FetchOptions } from '@/api/plan-actions/plan-actions.list/domain/fetch-options.schema';
 import { supabaseClient as dbClient } from 'core-logic/api/supabase';
 import { useCollectiviteId } from 'core-logic/hooks/params';
-import { FetchOptions } from '@tet/api/plan-actions/plan-actions.list/domain/fetch-options.schema';
 
 type Props = {
   options?: FetchOptions;

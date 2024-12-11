@@ -1,4 +1,4 @@
-import { Axe } from '@tet/api/plan-actions';
+import { Axe } from '@/api/plan-actions';
 import { Breadcrumbs, Button } from '@tet/ui';
 import { makeCollectiviteFichesNonClasseesUrl } from 'app/paths';
 import { useRouter } from 'next/navigation';

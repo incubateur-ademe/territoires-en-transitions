@@ -1,4 +1,4 @@
-import { Tag } from '@tet/api/shared/domain';
+import { Tag } from '@/api/shared/domain';
 import { SelectMultipleProps } from '@tet/ui';
 import SelectTags from '../tags/SelectTags';
 import { useServicesPilotesListe } from './useServicesPilotesListe';

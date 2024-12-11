@@ -1,7 +1,7 @@
-import { useQuery } from 'react-query';
+import { Indicateurs } from '@/api';
 import { DISABLE_AUTO_REFETCH, supabaseClient } from 'core-logic/api/supabase';
 import { useCollectiviteId } from 'core-logic/hooks/params';
-import { Indicateurs } from '@tet/api';
+import { useQuery } from 'react-query';
 
 /** Charge la définition détaillée d'un indicateur */
 export const useIndicateurDefinition = (indicateurId: number | string) => {

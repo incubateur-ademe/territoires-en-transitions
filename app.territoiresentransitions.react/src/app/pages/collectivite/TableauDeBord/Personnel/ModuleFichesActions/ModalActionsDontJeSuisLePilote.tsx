@@ -1,7 +1,8 @@
 import { useState } from 'react';
 
-import { modulesSave } from '@tet/api/plan-actions/dashboards/personal-dashboard/actions/modules.save';
-import { ModuleFicheActionsSelect } from '@tet/api/plan-actions/dashboards/personal-dashboard/domain/module.schema';
+import { modulesSave } from '@/api/plan-actions/dashboards/personal-dashboard/actions/modules.save';
+import { ModuleFicheActionsSelect } from '@/api/plan-actions/dashboards/personal-dashboard/domain/module.schema';
+import { Filtre as FiltreFichesAction } from '@/api/plan-actions/fiche-resumes.list/domain/fetch-options.schema';
 import {
   Field,
   FormSection,
@@ -11,15 +12,14 @@ import {
   ModalProps,
   useEventTracker,
 } from '@tet/ui';
+import { useAuth } from 'core-logic/api/auth/AuthProvider';
 import { supabaseClient } from 'core-logic/api/supabase';
 import { useCollectiviteId } from 'core-logic/hooks/params';
 import { QueryKey, useQueryClient } from 'react-query';
-import PersonnesDropdown from 'ui/dropdownLists/PersonnesDropdown/PersonnesDropdown';
-import { Filtre as FiltreFichesAction } from '@tet/api/plan-actions/fiche-resumes.list/domain/fetch-options.schema';
-import { useAuth } from 'core-logic/api/auth/AuthProvider';
-import { getPilotesValues } from 'ui/dropdownLists/PersonnesDropdown/utils';
-import StatutsFilterDropdown from 'ui/dropdownLists/ficheAction/statuts/StatutsFilterDropdown';
 import PrioritesFilterDropdown from 'ui/dropdownLists/ficheAction/priorites/PrioritesFilterDropdown';
+import StatutsFilterDropdown from 'ui/dropdownLists/ficheAction/statuts/StatutsFilterDropdown';
+import PersonnesDropdown from 'ui/dropdownLists/PersonnesDropdown/PersonnesDropdown';
+import { getPilotesValues } from 'ui/dropdownLists/PersonnesDropdown/utils';
 import PlansActionDropdown from 'ui/dropdownLists/PlansActionDropdown';
 
 type Props = ModalProps & {

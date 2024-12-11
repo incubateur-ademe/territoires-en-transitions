@@ -1,4 +1,4 @@
-import { getRootDomain, setAuthTokens } from '@tet/api';
+import { getRootDomain, setAuthTokens } from '@/api';
 import {
   Credentials,
   isValidLoginView,

@@ -1,4 +1,4 @@
-import { getRejoindreCollectivitePath } from '@tet/api';
+import { getRejoindreCollectivitePath } from '@/api';
 import { Button, Card } from '@tet/ui';
 import {
   finaliserMonInscriptionUrl,

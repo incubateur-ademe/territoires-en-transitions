@@ -1,9 +1,9 @@
-import {useEffect, useState} from 'react';
-import {useQuery} from 'react-query';
-import {Indicateurs} from '@tet/api';
-import {supabaseClient} from 'core-logic/api/supabase';
-import {useCollectiviteId} from 'core-logic/hooks/params';
-import {SOURCE_COLLECTIVITE} from '../../constants';
+import { Indicateurs } from '@/api';
+import { supabaseClient } from 'core-logic/api/supabase';
+import { useCollectiviteId } from 'core-logic/hooks/params';
+import { useEffect, useState } from 'react';
+import { useQuery } from 'react-query';
+import { SOURCE_COLLECTIVITE } from '../../constants';
 
 /**
  * Fourni la liste des sources de données d'un indicateur ainsi que la source
@@ -12,13 +12,13 @@ import {SOURCE_COLLECTIVITE} from '../../constants';
 export const useIndicateurImportSources = (indicateur_id: number) => {
   const collectivite_id = useCollectiviteId();
   // charge la liste des sources disponibles
-  const {data: sources, isLoading: isLoading1} = useImportSources(
+  const { data: sources, isLoading: isLoading1 } = useImportSources(
     collectivite_id,
     indicateur_id
   );
 
   // détermine si il y a des valeurs saisies manuellement
-  const {data: hasCustomValues, isLoading: isLoading2} = useHasCustomValues(
+  const { data: hasCustomValues, isLoading: isLoading2 } = useHasCustomValues(
     collectivite_id,
     indicateur_id
   );
@@ -82,10 +82,10 @@ const useHasCustomValues = (
         typeof indicateur_id !== 'string'
       )
         return;
-      const {count} = await supabaseClient
+      const { count } = await supabaseClient
         .from('indicateur_valeur')
-        .select('', {count: 'exact', head: true})
-        .match({collectivite_id, indicateur_id, type: 'resultat'})
+        .select('', { count: 'exact', head: true })
+        .match({ collectivite_id, indicateur_id, type: 'resultat' })
         .not('valeur', 'is', null);
 
       return count !== null && count > 0;

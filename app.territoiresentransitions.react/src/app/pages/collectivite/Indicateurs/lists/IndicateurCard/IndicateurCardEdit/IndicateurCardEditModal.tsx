@@ -1,5 +1,5 @@
-import { SharedDomain } from '@tet/api';
-import { Personne } from '@tet/api/collectivites';
+import { SharedDomain } from '@/api';
+import { Personne } from '@/api/collectivites';
 import { Field, Modal, ModalFooterOKCancel } from '@tet/ui';
 import { OpenState } from '@tet/ui/utils/types';
 import { useUpdateIndicateurCard } from 'app/pages/collectivite/Indicateurs/lists/IndicateurCard/IndicateurCardEdit/useUpdateIndicateurCard';

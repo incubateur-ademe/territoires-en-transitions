@@ -1,4 +1,4 @@
-import { Financeur } from '@tet/api/plan-actions';
+import { Financeur } from '@/api/plan-actions';
 import { Button, Field, Input } from '@tet/ui';
 import FinanceursDropdown from 'ui/dropdownLists/FinanceursDropdown/FinanceursDropdown';
 

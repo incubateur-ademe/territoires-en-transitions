@@ -1,4 +1,4 @@
-import {CollectiviteEngagee} from '@tet/api';
+import { CollectiviteEngagee } from '@/api';
 
 const notEmpty = (l: string[]): boolean => l.length > 0;
 export const getNumberOfActiveFilters = (

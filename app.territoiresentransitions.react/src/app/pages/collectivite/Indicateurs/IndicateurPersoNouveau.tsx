@@ -1,5 +1,5 @@
-import { FicheAction } from '@tet/api/plan-actions';
-import { Thematique } from '@tet/api/shared/domain';
+import { FicheAction } from '@/api/plan-actions';
+import { Thematique } from '@/api/shared/domain';
 import { Alert, Button, Checkbox, Field, FormSectionGrid } from '@tet/ui';
 import {
   TIndicateurPersoDefinitionWrite,

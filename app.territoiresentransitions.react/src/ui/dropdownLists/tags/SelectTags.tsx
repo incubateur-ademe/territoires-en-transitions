@@ -1,5 +1,5 @@
-import { TableTag } from '@tet/api';
-import { Tag } from '@tet/api/shared/domain';
+import { TableTag } from '@/api';
+import { Tag } from '@/api/shared/domain';
 import {
   Option,
   OptionValue,

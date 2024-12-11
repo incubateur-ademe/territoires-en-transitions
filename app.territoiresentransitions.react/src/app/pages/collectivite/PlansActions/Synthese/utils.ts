@@ -1,8 +1,8 @@
+import { Statut } from '@/api/plan-actions';
+import { statutToColor } from '@tet/app/pages/collectivite/PlansActions/FicheAction/utils';
+import { DonutData } from 'ui/charts/Donut/DonutChart';
 import { FiltersKeys } from '../FicheAction/data/filters';
 import { TPlanActionTableauDeBord } from './data/usePlanActionTableauDeBord';
-import { DonutData } from 'ui/charts/Donut/DonutChart';
-import { statutToColor } from '@tet/app/pages/collectivite/PlansActions/FicheAction/utils';
-import { Statut } from '@tet/api/plan-actions';
 
 const statutsGraphTitre = "Répartition par statut d'avancement";
 const pilotesGraphTitre = 'Répartition par personne pilote';

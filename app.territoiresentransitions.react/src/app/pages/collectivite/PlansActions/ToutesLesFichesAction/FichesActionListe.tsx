@@ -6,7 +6,7 @@ import {
   Filtre,
   SortFichesAction,
   SortFichesActionValue,
-} from '@tet/api/plan-actions/fiche-resumes.list/domain/fetch-options.schema';
+} from '@/api/plan-actions/fiche-resumes.list/domain/fetch-options.schema';
 import { Alert, Button, Checkbox, Input, Pagination, Select } from '@tet/ui';
 import { OpenState } from '@tet/ui/utils/types';
 import FicheActionCard from 'app/pages/collectivite/PlansActions/FicheAction/Carte/FicheActionCard';

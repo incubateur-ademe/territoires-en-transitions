@@ -1,5 +1,5 @@
-import { ParticipationCitoyenne, Statut } from '@tet/api/plan-actions';
-import { ModifiedSince } from '@tet/api/plan-actions/fiche-resumes.list/domain/fetch-options.schema';
+import { ParticipationCitoyenne, Statut } from '@/api/plan-actions';
+import { ModifiedSince } from '@/api/plan-actions/fiche-resumes.list/domain/fetch-options.schema';
 import {
   TFicheActionCibles,
   TFicheActionEcheances,

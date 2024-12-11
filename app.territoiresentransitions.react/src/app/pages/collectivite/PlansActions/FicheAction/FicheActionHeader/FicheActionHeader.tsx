@@ -1,4 +1,4 @@
-import { Axe } from '@tet/api/plan-actions';
+import { Axe } from '@/api/plan-actions';
 import { Divider } from '@tet/ui';
 import CheminsFiche from './CheminsFiche';
 import TitreFiche from './TitreFiche';

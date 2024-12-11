@@ -1,7 +1,7 @@
 'use client';
 
+import { restoreSessionFromAuthTokens } from '@/api';
 import { User } from '@supabase/supabase-js';
-import { restoreSessionFromAuthTokens } from '@tet/api';
 import { supabase } from '@tet/panier/src/clientAPI';
 import {
   Dispatch,

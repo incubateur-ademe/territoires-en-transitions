@@ -1,14 +1,14 @@
-import {useMutation, useQueryClient} from 'react-query';
-import {supabaseClient} from 'core-logic/api/supabase';
-import {Database} from '@tet/api';
-import {TLabellisationParcours} from './types';
+import { Database } from '@/api';
+import { supabaseClient } from 'core-logic/api/supabase';
+import { useMutation, useQueryClient } from 'react-query';
+import { TLabellisationParcours } from './types';
 
 export const useEnvoiDemande = () => {
   const queryClient = useQueryClient();
-  const {isLoading, mutate: envoiDemande} = useMutation(submitDemande, {
+  const { isLoading, mutate: envoiDemande } = useMutation(submitDemande, {
     mutationKey: 'submit_demande',
     // avant que la mutation soit exécutée...
-    onMutate: async ({collectivite_id, referentiel}) => {
+    onMutate: async ({ collectivite_id, referentiel }) => {
       // annule un éventuel fetch en cours pour que la MàJ optimiste ne soit pas écrasée
       const queryKey = ['labellisation_parcours', collectivite_id];
       await queryClient.cancelQueries(queryKey);
@@ -20,7 +20,7 @@ export const useEnvoiDemande = () => {
 
       // crée la nouvelle valeur à partir des entrées
       const newValue = [...previousCacheValue];
-      const index = newValue.findIndex(p => p.referentiel === referentiel);
+      const index = newValue.findIndex((p) => p.referentiel === referentiel);
       if (index !== -1) {
         newValue[index].demande!.en_cours = false;
       }
@@ -30,13 +30,13 @@ export const useEnvoiDemande = () => {
 
       // renvoi un objet `context` avec la valeur précédente du cache et la
       // clé correspondante
-      return {queryKey, previousCacheValue};
+      return { queryKey, previousCacheValue };
     },
     // utilise le contexte fourni par `onMutate` pour revenir à l'état
     // précédent si la mutation a échouée
     onError: (err, variables, context) => {
       if (context) {
-        const {queryKey, previousCacheValue} = context;
+        const { queryKey, previousCacheValue } = context;
         queryClient.setQueryData(queryKey, previousCacheValue);
       }
     },
@@ -70,14 +70,14 @@ type TLabellisationSubmitDemande = Omit<
 export const submitDemande = async (
   args: TLabellisationSubmitDemande
 ): Promise<boolean> => {
-  const {collectivite_id, referentiel, etoiles, sujet} = args;
+  const { collectivite_id, referentiel, etoiles, sujet } = args;
   if (!collectivite_id || !referentiel || !sujet) {
     return false;
   }
 
   const etoileDemandee = sujet === 'cot' || !etoiles ? null : etoiles;
 
-  const {error} = await supabaseClient.rpc('labellisation_submit_demande', {
+  const { error } = await supabaseClient.rpc('labellisation_submit_demande', {
     collectivite_id,
     referentiel,
     sujet,

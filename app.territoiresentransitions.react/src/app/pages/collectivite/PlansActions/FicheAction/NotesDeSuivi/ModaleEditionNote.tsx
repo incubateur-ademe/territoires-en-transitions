@@ -1,5 +1,4 @@
-import { useState } from 'react';
-import { FicheActionNote } from '@tet/api/plan-actions';
+import { FicheActionNote } from '@/api/plan-actions';
 import {
   Field,
   FormSectionGrid,
@@ -8,8 +7,9 @@ import {
   Select,
   Textarea,
 } from '@tet/ui';
-import { getYearsOptions } from './ModaleCreationNote';
+import { useState } from 'react';
 import { EditedNote } from '../data/useUpsertNoteSuivi';
+import { getYearsOptions } from './ModaleCreationNote';
 
 type ModaleEditionNoteProps = {
   isOpen: boolean;

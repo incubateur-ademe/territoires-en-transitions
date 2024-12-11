@@ -1,18 +1,18 @@
-import {useQuery} from 'react-query';
-import {supabaseClient} from 'core-logic/api/supabase';
-import {Tables} from '@tet/api';
+import { Tables } from '@/api';
+import { supabaseClient } from 'core-logic/api/supabase';
+import { useQuery } from 'react-query';
 
 export type TPersonnalisationRegleRead = Tables<'personnalisation_regle'>;
 
 type TUseRegles = (action_id: string) => TPersonnalisationRegleRead[];
 
 // charge les règles de personnalisation pour une action donnée
-export const useRegles: TUseRegles = action_id => {
+export const useRegles: TUseRegles = (action_id) => {
   const query = useQuery(['personnalisation_regle', action_id], async () => {
-    const {data} = await supabaseClient
+    const { data } = await supabaseClient
       .from('personnalisation_regle')
       .select()
-      .match({action_id});
+      .match({ action_id });
     return data;
   });
 

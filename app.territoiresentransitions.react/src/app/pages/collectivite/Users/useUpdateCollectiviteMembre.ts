@@ -1,8 +1,8 @@
-import {useMutation, useQueryClient} from 'react-query';
-import { trpc } from '@tet/api/utils/trpc/client';
-import {supabaseClient} from 'core-logic/api/supabase';
-import {TUpdateMembre, TUpdateMembreArgs} from './types';
+import { trpc } from '@/api/utils/trpc/client';
+import { supabaseClient } from 'core-logic/api/supabase';
 import { useCollectiviteId } from 'core-logic/hooks/params';
+import { useMutation, useQueryClient } from 'react-query';
+import { TUpdateMembre, TUpdateMembreArgs } from './types';
 
 /**
  * Met à jour une propriété d'un des membres de la collectivité courante

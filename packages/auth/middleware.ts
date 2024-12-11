@@ -1,5 +1,5 @@
-import {NextRequest, NextResponse} from 'next/server';
-import {isAllowedOrigin} from '@tet/api';
+import { isAllowedOrigin } from '@/api';
+import { NextRequest, NextResponse } from 'next/server';
 
 /**
  * Middleware pour ajouter à chaque requête les en-têtes CSP et CORS
@@ -35,7 +35,7 @@ export function middleware(request: NextRequest) {
     object-src 'none';
     connect-src 'self'
       ${process.env.NEXT_PUBLIC_SUPABASE_URL!}
-      ${process.env.NEXT_PUBLIC_SUPABASE_URL!.replace('http', 'ws')} 
+      ${process.env.NEXT_PUBLIC_SUPABASE_URL!.replace('http', 'ws')}
       ws://${request.nextUrl.host}
       *.posthog.com;
     base-uri 'self';
@@ -56,14 +56,14 @@ export function middleware(request: NextRequest) {
   requestHeaders.set('x-nonce', nonce);
   requestHeaders.set(
     'Content-Security-Policy',
-    contentSecurityPolicyHeaderValue,
+    contentSecurityPolicyHeaderValue
   );
 
   // ajoute les en-têtes CSP à la réponse
-  const response = NextResponse.next({request: {headers: requestHeaders}});
+  const response = NextResponse.next({ request: { headers: requestHeaders } });
   response.headers.set(
     'Content-Security-Policy',
-    contentSecurityPolicyHeaderValue,
+    contentSecurityPolicyHeaderValue
   );
 
   // ajoute l'en-tête 'Access-Control-Allow-Origin' si l'origine de la requête est valide
@@ -73,7 +73,7 @@ export function middleware(request: NextRequest) {
     isAllowedOrigin(
       origin,
       process.env.NODE_ENV,
-      process.env.ALLOWED_ORIGIN_PATTERN,
+      process.env.ALLOWED_ORIGIN_PATTERN
     )
   ) {
     response.headers.append('Access-Control-Allow-Origin', origin);
@@ -83,11 +83,11 @@ export function middleware(request: NextRequest) {
   response.headers.append('Access-Control-Allow-Credentials', 'true');
   response.headers.append(
     'Access-Control-Allow-Methods',
-    'GET,DELETE,PATCH,POST,PUT,OPTIONS',
+    'GET,DELETE,PATCH,POST,PUT,OPTIONS'
   );
   response.headers.append(
     'Access-Control-Allow-Headers',
-    'X-CSRF-Token, X-Requested-With, Accept, Accept-Version, Content-Length, Content-MD5, Content-Type, Date, X-Api-Version, apikey, authorization',
+    'X-CSRF-Token, X-Requested-With, Accept, Accept-Version, Content-Length, Content-MD5, Content-Type, Date, X-Api-Version, apikey, authorization'
   );
 
   return response;
@@ -108,8 +108,8 @@ export const config = {
     {
       source: '/((?!api|_next/static|_next/image|favicon.ico).*)',
       missing: [
-        {type: 'header', key: 'next-router-prefetch'},
-        {type: 'header', key: 'purpose', value: 'prefetch'},
+        { type: 'header', key: 'next-router-prefetch' },
+        { type: 'header', key: 'purpose', value: 'prefetch' },
       ],
     },
   ],

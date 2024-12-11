@@ -2,7 +2,7 @@ import {
   getCollectivitePath,
   makeSearchString,
   restoreSessionFromAuthTokens,
-} from '@tet/api';
+} from '@/api';
 import {
   CollectiviteInfo,
   CollectiviteNom,

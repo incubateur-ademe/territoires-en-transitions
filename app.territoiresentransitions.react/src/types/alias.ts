@@ -1,13 +1,13 @@
 import {
-  Enums,
   CompositeTypes,
+  Enums,
+  NonNullableFields,
   Tables,
   TablesInsert,
   TablesUpdate,
   Views,
-  NonNullableFields,
-} from '@tet/api';
-import { Cible } from '@tet/api/plan-actions';
+} from '@/api';
+import { Cible } from '@/api/plan-actions';
 
 export type TFlatAxe = NonNullableFields<CompositeTypes<'flat_axe_node'>>;
 
@@ -88,4 +88,3 @@ export type TMembreFonction =
   | 'technique'
   | 'politique'
   | 'partenaire';
-

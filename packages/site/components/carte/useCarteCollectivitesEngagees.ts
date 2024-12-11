@@ -1,4 +1,4 @@
-import { Views, Json } from '@tet/api';
+import { Json, Views } from '@/api';
 import { supabase } from '@tet/site/app/initSupabase';
 import useSWR from 'swr';
 

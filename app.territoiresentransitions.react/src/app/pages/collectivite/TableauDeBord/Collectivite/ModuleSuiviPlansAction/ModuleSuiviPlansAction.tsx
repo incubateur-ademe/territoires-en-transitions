@@ -1,6 +1,6 @@
 import { useState } from 'react';
 
-import { ModulePlanActionListSelect } from '@tet/api/plan-actions/dashboards/collectivite-dashboard/domain/module.schema';
+import { ModulePlanActionListSelect } from '@/api/plan-actions/dashboards/collectivite-dashboard/domain/module.schema';
 import { usePlansActionsListe } from '@tet/app/pages/collectivite/PlansActions/PlanAction/data/usePlansActionsListe';
 import PlanActionCard from '@tet/app/pages/collectivite/PlansActions/PlanAction/list/card/PlanActionCard';
 import { Button, useEventTracker } from '@tet/ui';

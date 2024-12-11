@@ -1,7 +1,7 @@
-import {useQuery} from 'react-query';
-import {useCollectiviteId} from 'core-logic/hooks/params';
-import {useApiClient} from 'core-logic/api/useApiClient';
-import {Indicateurs, Tables} from '@tet/api';
+import { Indicateurs, Tables } from '@/api';
+import { useApiClient } from 'core-logic/api/useApiClient';
+import { useCollectiviteId } from 'core-logic/hooks/params';
+import { useQuery } from 'react-query';
 
 type GetIndicateurValeursRequest = {
   disabled?: boolean;
@@ -64,7 +64,7 @@ export const separeObjectifsEtResultats = (
 ) =>
   valeurs?.reduce(
     (objectifsEtResultats, valeur) => {
-      const {objectif, resultat} = valeur;
+      const { objectif, resultat } = valeur;
       if (objectif !== undefined) {
         objectifsEtResultats.objectifs.push(valeur);
       }

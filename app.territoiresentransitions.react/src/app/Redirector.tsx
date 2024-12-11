@@ -1,4 +1,4 @@
-import { getAuthPaths } from '@tet/api';
+import { getAuthPaths } from '@/api';
 import {
   finaliserMonInscriptionUrl,
   makeCollectiviteAccueilUrl,

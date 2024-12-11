@@ -1,4 +1,4 @@
-import { Indicateurs } from '@tet/api';
+import { Indicateurs } from '@/api';
 import { Field, Input, Modal, ModalFooterOKCancel } from '@tet/ui';
 import BadgeIndicateurPerso from 'app/pages/collectivite/Indicateurs/components/BadgeIndicateurPerso';
 import IndicateurDetailChart from 'app/pages/collectivite/Indicateurs/Indicateur/detail/IndicateurDetailChart';

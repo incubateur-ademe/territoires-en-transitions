@@ -1,6 +1,6 @@
-import {useQuery} from 'react-query';
-import {supabaseClient} from 'core-logic/api/supabase';
-import { ActionImpactDetails } from '@tet/api';
+import { ActionImpactDetails } from '@/api';
+import { supabaseClient } from 'core-logic/api/supabase';
+import { useQuery } from 'react-query';
 
 /**
  * Charge le détail d'une action à impact

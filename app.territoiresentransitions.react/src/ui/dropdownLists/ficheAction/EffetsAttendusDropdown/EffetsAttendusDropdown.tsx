@@ -1,4 +1,4 @@
-import { EffetsAttendus } from '@tet/api/plan-actions';
+import { EffetsAttendus } from '@/api/plan-actions';
 import { SelectFilter, SelectMultipleProps } from '@tet/ui';
 import { useEffetsAttendus } from './useEffetsAttendus';
 

@@ -1,8 +1,8 @@
-import { useMutation, useQuery, useQueryClient } from 'react-query';
+import { Indicateurs } from '@/api';
+import { Personne } from '@/api/collectivites';
 import { supabaseClient } from 'core-logic/api/supabase';
 import { useCollectiviteId } from 'core-logic/hooks/params';
-import { Indicateurs } from '@tet/api';
-import { Personne } from '@tet/api/collectivites';
+import { useMutation, useQuery, useQueryClient } from 'react-query';
 
 /** Met à jour les personnes pilotes d'un indicateur */
 export const useUpsertIndicateurPilote = (indicateurId: number) => {

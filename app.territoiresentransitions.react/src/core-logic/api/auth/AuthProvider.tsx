@@ -1,17 +1,17 @@
 import {
-  Session,
-  SignInWithPasswordCredentials,
-  User,
-} from '@supabase/supabase-js';
-import {
   clearAuthTokens,
   getRootDomain,
   getSession,
   MaCollectivite,
   setAuthTokens,
-} from '@tet/api';
-import { Tables } from '@tet/api/database.types';
-import { dcpFetch } from '@tet/api/utilisateurs/shared/data_access/dcp.fetch';
+} from '@/api';
+import { Tables } from '@/api/database.types';
+import { dcpFetch } from '@/api/utilisateurs/shared/data_access/dcp.fetch';
+import {
+  Session,
+  SignInWithPasswordCredentials,
+  User,
+} from '@supabase/supabase-js';
 import { fetchOwnedCollectivites } from 'core-logic/hooks/useOwnedCollectivites';
 import { ENV } from 'environmentVariables';
 import {

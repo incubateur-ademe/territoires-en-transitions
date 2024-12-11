@@ -1,5 +1,5 @@
+import { Database } from '@/api';
 import { createClient } from '@supabase/supabase-js';
-import {Database} from '@tet/api';
 
 export const supabase = createClient<Database>(
   process.env.NEXT_PUBLIC_SUPABASE_URL!,

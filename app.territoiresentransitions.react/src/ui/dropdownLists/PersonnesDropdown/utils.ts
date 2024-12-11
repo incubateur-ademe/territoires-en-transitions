@@ -1,5 +1,5 @@
-import { Personne } from '@tet/api/collectivites';
-import { Filtre } from '@tet/api/plan-actions/fiche-resumes.list/domain/fetch-options.schema';
+import { Personne } from '@/api/collectivites';
+import { Filtre } from '@/api/plan-actions/fiche-resumes.list/domain/fetch-options.schema';
 
 /**
  * Renvoie l'id en string d'un type Personne qui est soit un tag_id number ou un user_id string

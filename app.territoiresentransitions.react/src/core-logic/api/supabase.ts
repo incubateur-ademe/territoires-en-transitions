@@ -1,4 +1,4 @@
-import { supabaseClient } from '@tet/api/utils/supabase-client';
+import { supabaseClient } from '@/api/utils/supabase-client';
 
 export { supabaseClient };
 

@@ -1,4 +1,4 @@
-import { Filtre } from '@tet/api/plan-actions/fiche-resumes.list/domain/fetch-options.schema';
+import { Filtre } from '@/api/plan-actions/fiche-resumes.list/domain/fetch-options.schema';
 import { useCreateFicheAction } from '@tet/app/pages/collectivite/PlansActions/FicheAction/data/useCreateFicheAction';
 import { Button, ButtonMenu } from '@tet/ui';
 import { OpenState } from '@tet/ui/utils/types';

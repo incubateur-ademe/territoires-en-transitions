@@ -1,9 +1,9 @@
+import { FicheAction } from '@/api/plan-actions';
 import classNames from 'classnames';
-import { FicheAction } from '@tet/api/plan-actions';
-import ModaleDescription from './ModaleDescription';
-import ModaleEmplacement from './EmplacementFiche/ModaleEmplacement';
-import ModaleSuppression from './ModaleSuppression';
 import ExportFicheActionButton from '../../ExportPdf/ExportFicheActionButton';
+import ModaleEmplacement from './EmplacementFiche/ModaleEmplacement';
+import ModaleDescription from './ModaleDescription';
+import ModaleSuppression from './ModaleSuppression';
 
 type MenuDescriptionProps = {
   isReadonly: boolean;

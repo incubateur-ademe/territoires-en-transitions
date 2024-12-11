@@ -1,8 +1,7 @@
-import {useQuery} from 'react-query';
-import {supabaseClient} from 'core-logic/api/supabase';
-import {NonNullableFields, Views, CollectiviteEngagee} from '@tet/api';
-import {NB_CARDS_PER_PAGE} from 'app/pages/CollectivitesEngagees/data/utils';
-
+import { CollectiviteEngagee, NonNullableFields, Views } from '@/api';
+import { NB_CARDS_PER_PAGE } from 'app/pages/CollectivitesEngagees/data/utils';
+import { supabaseClient } from 'core-logic/api/supabase';
+import { useQuery } from 'react-query';
 
 /**
  * Element de la liste `collectivite_card`, utilisée par la vue toutes les
@@ -17,7 +16,7 @@ type FilterOperator = 'in' | 'ov';
  * Renvoi une liste de collectivités en fonction d'un ensemble de filtres
  */
 export const useFilteredCollectivites = (args: CollectiviteEngagee.Filters) => {
-  const {data, isLoading} = useQuery(['collectivite_card', args], () =>
+  const { data, isLoading } = useQuery(['collectivite_card', args], () =>
     fetchCollectiviteCards(args)
   );
 
@@ -36,7 +35,7 @@ const fetchCollectiviteCards = async (filters: CollectiviteEngagee.Filters) => {
   const query = buildQueryFromFilters(filters);
 
   // attends les données
-  const {error, data, count} = await query;
+  const { error, data, count } = await query;
 
   if (error) {
     throw new Error(error.message);
@@ -53,7 +52,7 @@ const fetchCollectiviteCards = async (filters: CollectiviteEngagee.Filters) => {
 const buildQueryFromFilters = (filters: CollectiviteEngagee.Filters) => {
   let query = supabaseClient
     .from('collectivite_card')
-    .select('*', {count: 'exact'});
+    .select('*', { count: 'exact' });
 
   const filter = (
     column: keyof TCollectiviteCarte,
@@ -167,7 +166,7 @@ const buildQueryFromFilters = (filters: CollectiviteEngagee.Filters) => {
       break;
   }
 
-  query = query.order(orderBy, {ascending: ascending});
+  query = query.order(orderBy, { ascending: ascending });
 
   // Pagination
   if (filters.page) {

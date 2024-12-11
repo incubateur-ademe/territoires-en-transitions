@@ -1,5 +1,5 @@
-import {TActionAvancement, TActionAvancementExt} from 'types/alias';
-import {Enums} from '@tet/api';
+import { Enums } from '@/api';
+import { TActionAvancement, TActionAvancementExt } from 'types/alias';
 
 export const phaseToLabel: Record<Enums<'action_categorie'> | string, string> =
   {
@@ -74,13 +74,13 @@ export const getActionStatut = (action: {
 }) => {
   const avancementExt = getAvancementExt(action);
 
-  return  (!avancementExt || avancementExt === 'non_renseigne') &&
-  action.avancement_descendants?.find(av => !!av && av !== 'non_renseigne')
-    // Une sous-action "non renseigné" mais avec au moins une tâche renseignée a
-    // le statut "détaillé"
-    ? 'detaille'
+  return (!avancementExt || avancementExt === 'non_renseigne') &&
+    action.avancement_descendants?.find((av) => !!av && av !== 'non_renseigne')
+    ? // Une sous-action "non renseigné" mais avec au moins une tâche renseignée a
+      // le statut "détaillé"
+      'detaille'
     : avancementExt || 'non_renseigne';
-}
+};
 
 /**
  * Renvoie le statut en fonction de l'index dans le tableau avancement détaillé
@@ -95,4 +95,3 @@ export const getStatusFromIndex = (index: number): TActionAvancement => {
       return 'pas_fait';
   }
 };
-

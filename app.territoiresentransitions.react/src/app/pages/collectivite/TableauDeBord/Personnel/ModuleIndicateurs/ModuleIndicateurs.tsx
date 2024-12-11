@@ -1,6 +1,6 @@
 import { Button, useEventTracker } from '@tet/ui';
 
-import { ModuleIndicateursSelect } from '@tet/api/plan-actions/dashboards/personal-dashboard/domain/module.schema';
+import { ModuleIndicateursSelect } from '@/api/plan-actions/dashboards/personal-dashboard/domain/module.schema';
 import Module from '@tet/app/pages/collectivite/TableauDeBord/components/Module';
 import ModalIndicateursSuiviPlan from '@tet/app/pages/collectivite/TableauDeBord/Personnel/ModuleIndicateurs/ModalIndicateursSuiviPlan';
 import IndicateurCard from 'app/pages/collectivite/Indicateurs/lists/IndicateurCard/IndicateurCard';

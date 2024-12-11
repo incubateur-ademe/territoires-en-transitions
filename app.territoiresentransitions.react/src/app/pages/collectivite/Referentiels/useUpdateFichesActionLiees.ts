@@ -1,8 +1,8 @@
-import { useMutation, useQueryClient } from 'react-query';
-import { diff } from 'utils/diff';
+import { FicheResume } from '@/api/plan-actions';
 import { supabaseClient } from 'core-logic/api/supabase';
 import { useCollectiviteId } from 'core-logic/hooks/params';
-import { FicheResume } from '@tet/api/plan-actions';
+import { useMutation, useQueryClient } from 'react-query';
+import { diff } from 'utils/diff';
 
 type TUpdateFichesActionLieesArgs = {
   /** liste courante des fiches associées à l'action */

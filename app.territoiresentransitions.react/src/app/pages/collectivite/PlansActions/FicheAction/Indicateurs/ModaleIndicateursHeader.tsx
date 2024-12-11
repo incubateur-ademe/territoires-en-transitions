@@ -1,5 +1,4 @@
-import { useState } from 'react';
-import _ from 'lodash';
+import { FicheAction } from '@/api/plan-actions';
 import {
   Field,
   FormSectionGrid,
@@ -7,10 +6,11 @@ import {
   ModalFooterOKCancel,
   Textarea,
 } from '@tet/ui';
+import { OpenState } from '@tet/ui/utils/types';
+import _ from 'lodash';
+import { useState } from 'react';
 import EffetsAttendusDropdown from 'ui/dropdownLists/ficheAction/EffetsAttendusDropdown/EffetsAttendusDropdown';
 import { getMaxLengthMessage } from 'utils/formatUtils';
-import { OpenState } from '@tet/ui/utils/types';
-import { FicheAction } from '@tet/api/plan-actions';
 
 const OBJECTIFS_MAX_LENGTH = 10000;
 

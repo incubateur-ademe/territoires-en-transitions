@@ -1,15 +1,15 @@
-import { useState } from 'react';
+import { FicheAction } from '@/api/plan-actions';
 import { Button } from '@tet/ui';
-import { FicheAction } from '@tet/api/plan-actions';
-import EmptyCard from '../EmptyCard';
-import NotificationPicto from './NotificationPicto';
-import ModaleCreationNote from './ModaleCreationNote';
-import NoteSuiviCard from './NoteSuiviCard';
+import { useState } from 'react';
+import { useFicheActionNotesSuivi } from '../data/useFicheActionNotesSuivi';
 import {
   useDeleteNoteSuivi,
   useUpsertNoteSuivi,
 } from '../data/useUpsertNoteSuivi';
-import { useFicheActionNotesSuivi } from '../data/useFicheActionNotesSuivi';
+import EmptyCard from '../EmptyCard';
+import ModaleCreationNote from './ModaleCreationNote';
+import NoteSuiviCard from './NoteSuiviCard';
+import NotificationPicto from './NotificationPicto';
 
 type NotesDeSuiviTabProps = {
   isReadonly: boolean;

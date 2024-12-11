@@ -1,7 +1,7 @@
-import {useMutation, useQueryClient} from 'react-query';
-import {supabaseClient} from 'core-logic/api/supabase';
-import {TablesInsert} from '@tet/api';
-import {TReponseRead} from 'types/personnalisation';
+import { TablesInsert } from '@/api';
+import { supabaseClient } from 'core-logic/api/supabase';
+import { useMutation, useQueryClient } from 'react-query';
+import { TReponseRead } from 'types/personnalisation';
 
 type TJustification = TablesInsert<'justification'>;
 
@@ -19,7 +19,7 @@ export const useUpdateJustification = () => {
       mutationKey: 'update_justification',
 
       // mise à jour optimiste du cache
-      onMutate: async ({collectivite_id, question_id, texte}) => {
+      onMutate: async ({ collectivite_id, question_id, texte }) => {
         const queryKey = ['reponse', collectivite_id, question_id];
 
         // annule un éventuel fetch en cours pour que la MàJ optimiste ne soit pas écrasée
@@ -37,7 +37,7 @@ export const useUpdateJustification = () => {
       },
       // rechargement après la requête
       onSettled: (data, err, variables: TJustification) => {
-        const {collectivite_id} = variables;
+        const { collectivite_id } = variables;
         queryClient.invalidateQueries([
           'reponse',
           collectivite_id,

@@ -1,8 +1,8 @@
-import { useQuery } from 'react-query';
+import { FicheResume } from '@/api/plan-actions';
 import { supabaseClient } from 'core-logic/api/supabase';
-import { sortFichesResume } from './utils';
-import { FicheResume } from '@tet/api/plan-actions';
+import { useQuery } from 'react-query';
 import { objectToCamel } from 'ts-case-convert';
+import { sortFichesResume } from './utils';
 
 export const useFichesNonClasseesListe = (collectivite_id: number) => {
   return useQuery(['axe_fiches', null], async () => {

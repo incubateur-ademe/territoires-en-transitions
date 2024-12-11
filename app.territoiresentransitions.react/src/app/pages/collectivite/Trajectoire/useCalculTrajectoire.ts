@@ -1,9 +1,8 @@
-import {useMutation, useQueryClient} from 'react-query';
-import {Indicateurs} from '@tet/api';
-import {useApiClient} from 'core-logic/api/useApiClient';
-import {useCollectiviteId} from 'core-logic/hooks/params';
-import {getStatusKey} from './useStatutTrajectoire';
-import {useEventTracker} from '@tet/ui';
+import { Indicateurs } from '@/api';
+import { useEventTracker } from '@tet/ui';
+import { useApiClient } from 'core-logic/api/useApiClient';
+import { useCollectiviteId } from 'core-logic/hooks/params';
+import { useMutation, useQueryClient } from 'react-query';
 
 export type ResultatTrajectoire = {
   indentifiantsReferentielManquantsDonneesEntree: string[];

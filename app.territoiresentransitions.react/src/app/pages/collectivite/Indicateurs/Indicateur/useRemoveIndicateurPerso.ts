@@ -1,7 +1,7 @@
 import { supabaseClient } from 'core-logic/api/supabase';
 import { useMutation, useQueryClient } from 'react-query';
 // import {useFonctionTracker} from 'core-logic/hooks/useFonctionTracker';
-import { Indicateurs } from '@tet/api';
+import { Indicateurs } from '@/api';
 import { useEventTracker } from '@tet/ui';
 import { makeCollectiviteTousLesIndicateursUrl } from 'app/paths';
 import { useRouter } from 'next/navigation';

@@ -1,8 +1,8 @@
-import {Field, SelectFilter, Input} from '@tet/ui';
+import { Field, Input, SelectFilter } from '@tet/ui';
 
-import {useFonctionTracker} from 'core-logic/hooks/useFonctionTracker';
-import {useDepartements} from '../data/useDepartements';
-import {useRegions} from '../data/useRegions';
+import { CollectiviteEngagee } from '@/api';
+import { usePlanTypeListe } from 'app/pages/collectivite/PlansActions/PlanAction/data/usePlanTypeListe';
+import { SetFilters } from 'app/pages/CollectivitesEngagees/data/filters';
 import {
   niveauLabellisationCollectiviteOptions,
   populationCollectiviteOptions,
@@ -10,13 +10,13 @@ import {
   tauxRemplissageCollectiviteOptions,
   typeCollectiviteOptions,
 } from 'app/pages/CollectivitesEngagees/data/filtreOptions';
-import {usePlanTypeListe} from 'app/pages/collectivite/PlansActions/PlanAction/data/usePlanTypeListe';
-import {MultiSelectCheckboxes} from 'app/pages/CollectivitesEngagees/Filters/MultiSelectCheckboxes';
+import { MultiSelectCheckboxes } from 'app/pages/CollectivitesEngagees/Filters/MultiSelectCheckboxes';
+import { RecherchesViewParam } from 'app/paths';
+import { useFonctionTracker } from 'core-logic/hooks/useFonctionTracker';
+import { useEffect, useState } from 'react';
 import SpinnerLoader from 'ui/shared/SpinnerLoader';
-import {useEffect, useState} from 'react';
-import {CollectiviteEngagee} from '@tet/api';
-import {SetFilters} from 'app/pages/CollectivitesEngagees/data/filters';
-import {RecherchesViewParam} from 'app/paths';
+import { useDepartements } from '../data/useDepartements';
+import { useRegions } from '../data/useRegions';
 
 type Props = {
   vue: RecherchesViewParam;
@@ -24,11 +24,11 @@ type Props = {
   setFilters: SetFilters;
 };
 
-export const Filters = ({vue, filters, setFilters}: Props) => {
+export const Filters = ({ vue, filters, setFilters }: Props) => {
   const tracker = useFonctionTracker();
-  const {regions, isLoading: isRegionsLoading} = useRegions();
-  const {departements, isLoading: isDepartementsLoading} = useDepartements();
-  const {options: planTypeOptions} = usePlanTypeListe();
+  const { regions, isLoading: isRegionsLoading } = useRegions();
+  const { departements, isLoading: isDepartementsLoading } = useDepartements();
+  const { options: planTypeOptions } = usePlanTypeListe();
 
   const isLoading = isRegionsLoading || isDepartementsLoading;
 
@@ -50,10 +50,10 @@ export const Filters = ({vue, filters, setFilters}: Props) => {
           <Input
             data-test="CollectiviteSearchInput"
             type="search"
-            onChange={e => setSearch(e.target.value)}
-            onSearch={v => {
-              setFilters({...filters, nom: v});
-              tracker({fonction: 'recherche', action: 'saisie'});
+            onChange={(e) => setSearch(e.target.value)}
+            onSearch={(v) => {
+              setFilters({ ...filters, nom: v });
+              tracker({ fonction: 'recherche', action: 'saisie' });
             }}
             value={search}
             placeholder="Rechercher par nom de collectivité"
@@ -64,7 +64,7 @@ export const Filters = ({vue, filters, setFilters}: Props) => {
             <Field title="Type de plan" small>
               <SelectFilter
                 options={planTypeOptions ?? []}
-                onChange={({values}) => {
+                onChange={({ values }) => {
                   setFilters({
                     ...filters,
                     typesPlan: (values as string[]) ?? [],
@@ -85,23 +85,23 @@ export const Filters = ({vue, filters, setFilters}: Props) => {
           {/** Région */}
           <Field title="Région" small>
             <SelectFilter
-              options={regions.map(({code, libelle}) => ({
+              options={regions.map(({ code, libelle }) => ({
                 value: code,
                 label: libelle,
               }))}
-              onChange={({values, selectedValue}) => {
+              onChange={({ values, selectedValue }) => {
                 // Désélection
                 if (!values?.includes(selectedValue)) {
                   // départements sélectionnés associés à la région désélectionnée
                   const deps = departements.filter(
-                    d => d.region_code === selectedValue
+                    (d) => d.region_code === selectedValue
                   );
                   // on désélectionne aussi les départements associés à cette région
                   setFilters({
                     ...filters,
                     regions: (values as string[]) ?? [],
                     departments: filters.departments.filter(
-                      d => !deps.map(dep => dep.code).includes(d)
+                      (d) => !deps.map((dep) => dep.code).includes(d)
                     ),
                   });
                   // Sélection
@@ -116,8 +116,8 @@ export const Filters = ({vue, filters, setFilters}: Props) => {
                       ...filters,
                       regions: (values as string[]) ?? [],
                       departments: filters.departments.filter(
-                        d =>
-                          departements.find(dep => dep.code === d)
+                        (d) =>
+                          departements.find((dep) => dep.code === d)
                             ?.region_code === selectedValue
                       ),
                     });
@@ -128,7 +128,7 @@ export const Filters = ({vue, filters, setFilters}: Props) => {
                     });
                   }
                 }
-                tracker({fonction: 'filtre_region', action: 'selection'});
+                tracker({ fonction: 'filtre_region', action: 'selection' });
               }}
               values={filters.regions}
               small
@@ -140,20 +140,23 @@ export const Filters = ({vue, filters, setFilters}: Props) => {
             <SelectFilter
               options={departements
                 .filter(
-                  dep =>
+                  (dep) =>
                     filters.regions.length === 0 ||
                     filters.regions.includes(dep.region_code)
                 )
-                .map(({code, libelle}) => ({
+                .map(({ code, libelle }) => ({
                   value: code,
                   label: libelle,
                 }))}
-              onChange={({values}) => {
+              onChange={({ values }) => {
                 setFilters({
                   ...filters,
                   departments: (values as string[]) ?? [],
                 });
-                tracker({fonction: 'filtre_departement', action: 'selection'});
+                tracker({
+                  fonction: 'filtre_departement',
+                  action: 'selection',
+                });
               }}
               values={filters.departments}
               small
@@ -164,12 +167,12 @@ export const Filters = ({vue, filters, setFilters}: Props) => {
           <Field title="Type de collectivité" small>
             <SelectFilter
               options={typeCollectiviteOptions}
-              onChange={({values}) => {
+              onChange={({ values }) => {
                 setFilters({
                   ...filters,
                   typesCollectivite: (values as string[]) ?? [],
                 });
-                tracker({fonction: 'filtre_type', action: 'selection'});
+                tracker({ fonction: 'filtre_type', action: 'selection' });
               }}
               values={filters.typesCollectivite}
               small
@@ -179,12 +182,12 @@ export const Filters = ({vue, filters, setFilters}: Props) => {
           <Field title="Population" small>
             <SelectFilter
               options={populationCollectiviteOptions}
-              onChange={({values}) => {
+              onChange={({ values }) => {
                 setFilters({
                   ...filters,
                   population: (values as string[]) ?? [],
                 });
-                tracker({fonction: 'filtre_population', action: 'selection'});
+                tracker({ fonction: 'filtre_population', action: 'selection' });
               }}
               values={filters.population}
               small
@@ -196,8 +199,8 @@ export const Filters = ({vue, filters, setFilters}: Props) => {
                 htmlId="ref"
                 title="Référentiel"
                 options={referentielCollectiviteOptions}
-                onChange={selected => {
-                  setFilters({...filters, referentiel: selected});
+                onChange={(selected) => {
+                  setFilters({ ...filters, referentiel: selected });
                   tracker({
                     fonction: 'filtre_referentiel',
                     action: 'selection',
@@ -209,9 +212,9 @@ export const Filters = ({vue, filters, setFilters}: Props) => {
                 htmlId="nx"
                 title="Niveau de labellisation"
                 options={niveauLabellisationCollectiviteOptions}
-                onChange={selected => {
-                  setFilters({...filters, niveauDeLabellisation: selected});
-                  tracker({fonction: 'filtre_niveau', action: 'selection'});
+                onChange={(selected) => {
+                  setFilters({ ...filters, niveauDeLabellisation: selected });
+                  tracker({ fonction: 'filtre_niveau', action: 'selection' });
                 }}
                 selected={filters.niveauDeLabellisation}
               />
@@ -219,7 +222,7 @@ export const Filters = ({vue, filters, setFilters}: Props) => {
               <Field title="Taux de remplissage" small>
                 <SelectFilter
                   options={tauxRemplissageCollectiviteOptions}
-                  onChange={({values}) => {
+                  onChange={({ values }) => {
                     setFilters({
                       ...filters,
                       tauxDeRemplissage: (values as string[]) ?? [],

@@ -1,7 +1,7 @@
 import { Button, useEventTracker } from '@tet/ui';
 
-import { ModuleFicheActionsSelect } from '@tet/api/plan-actions/dashboards/personal-dashboard/domain/module.schema';
-import { SortFichesAction } from '@tet/api/plan-actions/fiche-resumes.list';
+import { ModuleFicheActionsSelect } from '@/api/plan-actions/dashboards/personal-dashboard/domain/module.schema';
+import { SortFichesAction } from '@/api/plan-actions/fiche-resumes.list';
 import Module from '@tet/app/pages/collectivite/TableauDeBord/components/Module';
 import ModalActionsDontJeSuisLePilote from '@tet/app/pages/collectivite/TableauDeBord/Personnel/ModuleFichesActions/ModalActionsDontJeSuisLePilote';
 import ModalActionsRecemmentModifiees from '@tet/app/pages/collectivite/TableauDeBord/Personnel/ModuleFichesActions/ModalActionsRecemmentModifiees';

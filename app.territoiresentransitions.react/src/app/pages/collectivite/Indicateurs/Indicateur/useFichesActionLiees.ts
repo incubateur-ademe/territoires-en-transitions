@@ -1,8 +1,8 @@
-import {useMutation, useQuery, useQueryClient} from 'react-query';
-import {Indicateurs} from '@tet/api';
-import {supabaseClient} from 'core-logic/api/supabase';
-import {useCollectiviteId} from 'core-logic/hooks/params';
-import {TIndicateurDefinition} from '../types';
+import { Indicateurs } from '@/api';
+import { supabaseClient } from 'core-logic/api/supabase';
+import { useCollectiviteId } from 'core-logic/hooks/params';
+import { useMutation, useQuery, useQueryClient } from 'react-query';
+import { TIndicateurDefinition } from '../types';
 
 /**
  * Charge la liste des fiches action liées à un indicateur
@@ -10,9 +10,9 @@ import {TIndicateurDefinition} from '../types';
 export const useFichesActionLiees = (definition: TIndicateurDefinition) => {
   const collectiviteId = useCollectiviteId()!;
 
-  const {id} = definition;
+  const { id } = definition;
 
-  const {data, ...other} = useQuery(
+  const { data, ...other } = useQuery(
     ['fiche_action_indicateur_lies', collectiviteId, id],
     async () =>
       Indicateurs.fetch.selectIndicateurFiches(
@@ -21,7 +21,7 @@ export const useFichesActionLiees = (definition: TIndicateurDefinition) => {
         collectiviteId
       )
   );
-  return {data: data || [], ...other};
+  return { data: data || [], ...other };
 };
 
 /**
@@ -32,7 +32,7 @@ export const useUpdateFichesActionLiees = (
 ) => {
   const queryClient = useQueryClient();
   const collectiviteId = useCollectiviteId();
-  const {id} = definition;
+  const { id } = definition;
 
   return useMutation(
     async (fiches_liees: number[]) =>

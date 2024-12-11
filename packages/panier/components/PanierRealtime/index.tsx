@@ -1,10 +1,6 @@
 'use client';
 
-import { useEffect, useState } from 'react';
-import { useRouter } from 'next/navigation';
-import { Panier } from '@tet/api';
-import { PanierOngletName, useEventTracker, useOngletTracker } from '@tet/ui';
-import { panierAPI, supabase } from '@tet/panier/src/clientAPI';
+import { Panier } from '@/api';
 import ListeActions from '@tet/panier/components/ListeActions';
 import PanierActions from '@tet/panier/components/PanierActions';
 import {
@@ -12,9 +8,13 @@ import {
   usePanierContext,
   useUserContext,
 } from '@tet/panier/providers';
-import {PartagerLeLien} from './PartagerLeLien';
+import { panierAPI, supabase } from '@tet/panier/src/clientAPI';
+import { PanierOngletName, useEventTracker, useOngletTracker } from '@tet/ui';
+import { useRouter } from 'next/navigation';
+import { useEffect, useState } from 'react';
 import { ContenuListesFiltre } from '../FiltresActions/types';
 import { useAjouterActionsRealiseesOuEnCoursState } from '../PanierActions/useAjouterActionsRealiseesOuEnCoursState';
+import { PartagerLeLien } from './PartagerLeLien';
 
 type PanierRealtimeProps = {
   panier: Panier;

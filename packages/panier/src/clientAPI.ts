@@ -1,4 +1,4 @@
-import {PanierAPI} from '@tet/api';
+import { PanierAPI } from '@/api';
 import { createClient } from './supabase/client';
 
 export const supabase = createClient();

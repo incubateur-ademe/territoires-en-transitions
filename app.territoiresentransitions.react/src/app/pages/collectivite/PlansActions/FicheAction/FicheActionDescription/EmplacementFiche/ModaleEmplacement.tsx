@@ -1,8 +1,8 @@
+import { FicheAction } from '@/api/plan-actions';
 import { Button, Modal, Tab, Tabs } from '@tet/ui';
+import { useState } from 'react';
 import EmplacementActuelFiche from './EmplacementActuel/EmplacementActuelFiche';
 import NouvelEmplacementFiche from './NouvelEmplacement/NouvelEmplacementFiche';
-import { useState } from 'react';
-import { FicheAction } from '@tet/api/plan-actions';
 
 /**
  * Bouton + modale pour le déplacement de la fiche action

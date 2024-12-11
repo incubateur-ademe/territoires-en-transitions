@@ -1,6 +1,6 @@
-import classNames from 'classnames';
-import { Statut as PlanActionStatut } from '@tet/api/plan-actions/domain';
+import { Statut as PlanActionStatut } from '@/api/plan-actions/domain';
 import { statusToState } from '@tet/app/pages/collectivite/PlansActions/components/BadgeStatut';
+import classNames from 'classnames';
 import { Badge } from './Badge';
 
 type BadgeStatutProps = {

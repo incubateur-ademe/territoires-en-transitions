@@ -11,7 +11,7 @@ import { useTagCreate } from 'ui/dropdownLists/tags/useTagCreate';
 import { useDeleteTag } from 'ui/dropdownLists/tags/useTagDelete';
 import { useTagUpdate } from 'ui/dropdownLists/tags/useTagUpdate';
 
-import { Personne } from '@tet/api/collectivites';
+import { Personne } from '@/api/collectivites';
 import { usePersonneListe } from './usePersonneListe';
 import { getPersonneStringId } from './utils';
 

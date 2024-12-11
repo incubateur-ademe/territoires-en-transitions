@@ -1,5 +1,5 @@
+import { FicheAction } from '@/api/plan-actions';
 import { Modal } from '@tet/ui';
-import { FicheAction } from '@tet/api/plan-actions';
 import IndicateurPersoNouveau from 'app/pages/collectivite/Indicateurs/IndicateurPersoNouveau';
 
 type ModaleCreerIndicateurProps = {

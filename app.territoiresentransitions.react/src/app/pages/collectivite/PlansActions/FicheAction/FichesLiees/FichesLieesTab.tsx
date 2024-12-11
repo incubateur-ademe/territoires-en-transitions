@@ -1,4 +1,4 @@
-import { FicheAction } from '@tet/api/plan-actions';
+import { FicheAction } from '@/api/plan-actions';
 import { Button } from '@tet/ui';
 import { useState } from 'react';
 import SpinnerLoader from 'ui/shared/SpinnerLoader';

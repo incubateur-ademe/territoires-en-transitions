@@ -1,9 +1,9 @@
-import { Statut } from '@tet/api/plan-actions';
-import { Tooltip } from '@tet/ui';
+import { Statut } from '@/api/plan-actions';
 import BadgeStatut from '@tet/app/pages/collectivite/PlansActions/components/BadgeStatut';
-import { ModuleDisplay } from '@tet/app/pages/collectivite/TableauDeBord/components/Module';
-import Chart from 'ui/charts/Chart';
 import { statutToColor } from '@tet/app/pages/collectivite/PlansActions/FicheAction/utils';
+import { ModuleDisplay } from '@tet/app/pages/collectivite/TableauDeBord/components/Module';
+import { Tooltip } from '@tet/ui';
+import Chart from 'ui/charts/Chart';
 
 type Props = {
   statuts: {

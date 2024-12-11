@@ -1,6 +1,6 @@
 /* eslint-disable react/no-unescaped-entities */
-import {useSearchParams} from 'next/navigation';
-import { Panier } from '@tet/api';
+import { Panier } from '@/api';
+import FiltresActions from '@tet/panier/components/FiltresActions';
 import {
   Alert,
   Button,
@@ -9,10 +9,10 @@ import {
   Tab,
   Tabs,
 } from '@tet/ui';
+import { useSearchParams } from 'next/navigation';
+import { ContenuListesFiltre } from '../FiltresActions/types';
 import ListeActionsFiltrees from './ListeActionsFiltrees';
 import ListeVide from './ListeVide';
-import FiltresActions from '@tet/panier/components/FiltresActions';
-import { ContenuListesFiltre } from '../FiltresActions/types';
 
 const getTabLabel = (
   tab: { label: string; labelOne?: string; status: string | null },

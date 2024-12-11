@@ -10,18 +10,18 @@ import {
   ModalFooterOKCancel,
 } from '@tet/ui';
 
-import { useUpdateFicheResume } from 'app/pages/collectivite/PlansActions/FicheAction/data/useUpdateFicheResume';
-import { format } from 'date-fns';
+import { FicheResume } from '@/api/plan-actions/domain';
 import {
   useFicheActionAddPilote,
   useFicheActionRemoveTagPilote,
   useFicheActionRemoveUserPilote,
 } from 'app/pages/collectivite/PlansActions/FicheAction/data/useFicheActionPilote';
+import { useUpdateFicheResume } from 'app/pages/collectivite/PlansActions/FicheAction/data/useUpdateFicheResume';
+import { format } from 'date-fns';
 import PersonnesDropdown from 'ui/dropdownLists/PersonnesDropdown/PersonnesDropdown';
 import { getPersonneStringId } from 'ui/dropdownLists/PersonnesDropdown/utils';
-import StatutsSelectDropdown from 'ui/dropdownLists/ficheAction/statuts/StatutsSelectDropdown';
 import PrioritesSelectDropdown from 'ui/dropdownLists/ficheAction/priorites/PrioritesSelectDropdown';
-import { FicheResume } from '@tet/api/plan-actions/domain';
+import StatutsSelectDropdown from 'ui/dropdownLists/ficheAction/statuts/StatutsSelectDropdown';
 
 type Props = {
   initialFiche: FicheResume;

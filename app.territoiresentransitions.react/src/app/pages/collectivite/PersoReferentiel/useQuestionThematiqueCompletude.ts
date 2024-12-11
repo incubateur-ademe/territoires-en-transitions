@@ -1,7 +1,7 @@
-import {useQuery} from 'react-query';
-import {supabaseClient} from 'core-logic/api/supabase';
-import {Referentiel} from 'types/litterals';
-import {NonNullableFields, Views} from '@tet/api';
+import { NonNullableFields, Views } from '@/api';
+import { supabaseClient } from 'core-logic/api/supabase';
+import { useQuery } from 'react-query';
+import { Referentiel } from 'types/litterals';
 
 export type TQuestionThematiqueCompletudeRead = NonNullableFields<
   Views<'question_thematique_completude'>
@@ -15,10 +15,10 @@ type TUseQuestionThematiqueCompletude = (
 // charge l'état de complétude de la personnalisation groupé par thématique
 export const useQuestionThematiqueCompletude: TUseQuestionThematiqueCompletude =
   (collectivite_id, filters) => {
-    const {data} = useQuery(
+    const { data } = useQuery(
       ['question_thematique_completude', collectivite_id],
       () => (collectivite_id ? fetch(collectivite_id) : []),
-      {enabled: !!collectivite_id}
+      { enabled: !!collectivite_id }
     );
 
     return applyFilter(
@@ -30,7 +30,7 @@ export const useQuestionThematiqueCompletude: TUseQuestionThematiqueCompletude =
 // charge les données
 const fetch = async (collectivite_id: number) => {
   if (collectivite_id) {
-    const {data: thematiques} = await supabaseClient
+    const { data: thematiques } = await supabaseClient
       .from('question_thematique_completude')
       .select()
       .eq('collectivite_id', collectivite_id);
@@ -47,15 +47,15 @@ const applyFilter = (
   if (!filters) {
     return thematiques;
   }
-  const filtersWithoutEmptyEntries = filters.filter(f => Boolean(f));
+  const filtersWithoutEmptyEntries = filters.filter((f) => Boolean(f));
   // aucun référentiel sélectionné => affiche uniquement la thématique identité :
   if (filtersWithoutEmptyEntries.length === 0) {
-    const identite = thematiques?.find(({id}) => id === 'identite');
+    const identite = thematiques?.find(({ id }) => id === 'identite');
     return identite ? [identite] : [];
   }
   return thematiques?.length
-    ? thematiques.filter(({referentiels}) =>
-        filtersWithoutEmptyEntries.find(r => referentiels.includes(r))
+    ? thematiques.filter(({ referentiels }) =>
+        filtersWithoutEmptyEntries.find((r) => referentiels.includes(r))
       )
     : [];
 };

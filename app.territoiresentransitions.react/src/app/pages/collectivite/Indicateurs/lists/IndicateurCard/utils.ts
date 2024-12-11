@@ -1,4 +1,4 @@
-import { IndicateurChartInfo } from '@tet/api/indicateurs/domain';
+import { IndicateurChartInfo } from '@/api/indicateurs/domain';
 import { IndicateurViewParamOption } from 'app/paths';
 
 /** Permet de calculer le nombre d'indicateurs restants à compléter (parent et/ou enfants) */

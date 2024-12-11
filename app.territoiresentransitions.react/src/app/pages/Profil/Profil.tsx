@@ -1,4 +1,4 @@
-import { getRejoindreCollectivitePath } from '@tet/api';
+import { getRejoindreCollectivitePath } from '@/api';
 import CollectivitePageLayout from '@tet/app/pages/collectivite/CollectivitePageLayout/CollectivitePageLayout';
 import { monComptePath } from 'app/paths';
 import { ProfilRoutes } from './ProfileRoutes';

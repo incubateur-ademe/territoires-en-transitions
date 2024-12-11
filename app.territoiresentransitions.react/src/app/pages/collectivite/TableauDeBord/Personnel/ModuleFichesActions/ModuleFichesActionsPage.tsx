@@ -1,22 +1,22 @@
 import {
   ModuleFicheActionsSelect,
   Slug,
-} from '@tet/api/plan-actions/dashboards/personal-dashboard/domain/module.schema';
+} from '@/api/plan-actions/dashboards/personal-dashboard/domain/module.schema';
 import { Button, TrackPageView, useEventTracker } from '@tet/ui';
 
-import { TDBViewParam } from 'app/paths';
+import { usePlanActionsCount } from '@tet/app/pages/collectivite/PlansActions/PlanAction/data/usePlanActionsCount';
+import ModulePage from '@tet/app/pages/collectivite/TableauDeBord/components/ModulePage';
+import ModalActionsDontJeSuisLePilote from '@tet/app/pages/collectivite/TableauDeBord/Personnel/ModuleFichesActions/ModalActionsDontJeSuisLePilote';
+import ModalActionsRecemmentModifiees from '@tet/app/pages/collectivite/TableauDeBord/Personnel/ModuleFichesActions/ModalActionsRecemmentModifiees';
 import {
   getQueryKey,
   usePersonalModuleFetch,
 } from '@tet/app/pages/collectivite/TableauDeBord/Personnel/usePersonalModuleFetch';
-import { useCollectiviteId } from 'core-logic/hooks/params';
 import FichesActionListe, {
   SortFicheActionSettings,
 } from 'app/pages/collectivite/PlansActions/ToutesLesFichesAction/FichesActionListe';
-import ModulePage from '@tet/app/pages/collectivite/TableauDeBord/components/ModulePage';
-import ModalActionsDontJeSuisLePilote from '@tet/app/pages/collectivite/TableauDeBord/Personnel/ModuleFichesActions/ModalActionsDontJeSuisLePilote';
-import ModalActionsRecemmentModifiees from '@tet/app/pages/collectivite/TableauDeBord/Personnel/ModuleFichesActions/ModalActionsRecemmentModifiees';
-import { usePlanActionsCount } from '@tet/app/pages/collectivite/PlansActions/PlanAction/data/usePlanActionsCount';
+import { TDBViewParam } from 'app/paths';
+import { useCollectiviteId } from 'core-logic/hooks/params';
 
 type Props = {
   view: TDBViewParam;

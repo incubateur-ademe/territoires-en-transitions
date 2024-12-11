@@ -1,12 +1,12 @@
-import { useEffect } from 'react';
-import { useSousThematiqueListe } from './useSousThematiqueListe';
+import { SousThematiqueId } from '@/api/shared/domain';
 import {
   Option,
   OptionValue,
   SelectFilter,
   SelectMultipleProps,
 } from '@tet/ui';
-import { SousThematique, SousThematiqueId } from '@tet/api/shared/domain';
+import { useEffect } from 'react';
+import { useSousThematiqueListe } from './useSousThematiqueListe';
 
 type Props = Omit<SelectMultipleProps, 'values' | 'onChange' | 'options'> & {
   thematiques: number[];

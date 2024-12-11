@@ -1,6 +1,6 @@
-import { useQuery } from 'react-query';
+import { FicheAction, FicheActionNote } from '@/api/plan-actions';
 import { useApiClient } from 'core-logic/api/useApiClient';
-import { FicheAction, FicheActionNote } from '@tet/api/plan-actions';
+import { useQuery } from 'react-query';
 
 /**
  * Charge les notes de suivi d'une fiche action

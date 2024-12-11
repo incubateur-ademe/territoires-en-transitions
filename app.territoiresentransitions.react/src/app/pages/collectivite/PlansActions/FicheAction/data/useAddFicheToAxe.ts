@@ -1,8 +1,8 @@
-import { useMutation, useQueryClient } from 'react-query';
+import { FicheAction } from '@/api/plan-actions';
 import { supabaseClient } from 'core-logic/api/supabase';
 import { useCollectiviteId } from 'core-logic/hooks/params';
+import { useMutation, useQueryClient } from 'react-query';
 import { TAxeInsert } from 'types/alias';
-import { FicheAction } from '@tet/api/plan-actions';
 
 type Args = {
   fiche_id: number;

@@ -1,14 +1,14 @@
-import {Panier} from '@tet/api';
-import {useState, useEffect} from 'react';
+import { Panier } from '@/api';
+import { useEffect, useState } from 'react';
+import { usePanierContext } from '../../providers';
 import { panierAPI } from '../../src/clientAPI';
-import {usePanierContext} from '../../providers';
 
 /**
  * Fourni les décomptes d'actions réalisées/en cours totaux et ajouter dans le panier
  * ainsi que des fonctions pour ajouter/enlever une de ces sous-sélections du panier.
  */
 export const useAjouterActionsRealiseesOuEnCoursState = () => {
-  const {panier} = usePanierContext();
+  const { panier } = usePanierContext();
 
   const {
     count: nbEnCours,
@@ -41,7 +41,7 @@ export type AjouterActionsRealiseesOuEnCoursState = ReturnType<
 // enlève/ajoute un sous-ensemble d'actions dans le panier
 const useToggleAjoutActions = (
   panier: Panier | null,
-  subset: 'en_cours' | 'realise',
+  subset: 'en_cours' | 'realise'
 ) => {
   const [ajout, setAjout] = useState(false);
 
@@ -79,5 +79,5 @@ const useToggleAjoutActions = (
     }
   }, [countInPanier, ajout]);
 
-  return {ajout, toggleAjout, count, countInPanier};
+  return { ajout, toggleAjout, count, countInPanier };
 };

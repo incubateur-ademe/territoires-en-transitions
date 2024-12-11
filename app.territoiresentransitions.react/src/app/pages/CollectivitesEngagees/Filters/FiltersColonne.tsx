@@ -1,12 +1,12 @@
-import {useState} from 'react';
 import classNames from 'classnames';
+import { useState } from 'react';
 
-import {Filters} from './Filters';
+import { Filters } from './Filters';
 
-import {Button} from '@tet/ui';
-import {CollectiviteEngagee} from '@tet/api';
-import {SetFilters, getNumberOfActiveFilters} from '../data/filters';
-import {RecherchesViewParam} from 'app/paths';
+import { CollectiviteEngagee } from '@/api';
+import { Button } from '@tet/ui';
+import { RecherchesViewParam } from 'app/paths';
+import { SetFilters, getNumberOfActiveFilters } from '../data/filters';
 
 type Props = {
   vue: RecherchesViewParam;
@@ -14,7 +14,7 @@ type Props = {
   setFilters: SetFilters;
 };
 
-const FiltersColonne = ({vue, filters, setFilters}: Props) => {
+const FiltersColonne = ({ vue, filters, setFilters }: Props) => {
   const [isMobileFilterOpen, setIsMobileFilterOpen] = useState(false);
 
   const numberOfActiveFilters = getNumberOfActiveFilters(filters);

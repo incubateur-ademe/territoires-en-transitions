@@ -1,4 +1,4 @@
-import { AxeInsert, FicheResume } from '@tet/api/plan-actions';
+import { AxeInsert, FicheResume } from '@/api/plan-actions';
 import { useFicheResumesFetch } from '@tet/app/pages/collectivite/PlansActions/FicheAction/data/useFicheResumesFetch';
 import {
   Option,

@@ -3,17 +3,17 @@ import { Button, TrackPageView, useEventTracker } from '@tet/ui';
 import {
   ModuleIndicateursSelect,
   Slug,
-} from '@tet/api/plan-actions/dashboards/personal-dashboard/domain/module.schema';
+} from '@/api/plan-actions/dashboards/personal-dashboard/domain/module.schema';
+import IndicateursListe from '@tet/app/pages/collectivite/Indicateurs/lists/indicateurs-list';
+import { usePlanActionsCount } from '@tet/app/pages/collectivite/PlansActions/PlanAction/data/usePlanActionsCount';
 import ModulePage from '@tet/app/pages/collectivite/TableauDeBord/components/ModulePage';
 import ModalIndicateursSuiviPlan from '@tet/app/pages/collectivite/TableauDeBord/Personnel/ModuleIndicateurs/ModalIndicateursSuiviPlan';
-import IndicateursListe from '@tet/app/pages/collectivite/Indicateurs/lists/indicateurs-list';
 import {
   getQueryKey,
   usePersonalModuleFetch,
 } from '@tet/app/pages/collectivite/TableauDeBord/Personnel/usePersonalModuleFetch';
 import { TDBViewParam } from 'app/paths';
 import { useCollectiviteId } from 'core-logic/hooks/params';
-import { usePlanActionsCount } from '@tet/app/pages/collectivite/PlansActions/PlanAction/data/usePlanActionsCount';
 
 type Props = {
   view: TDBViewParam;

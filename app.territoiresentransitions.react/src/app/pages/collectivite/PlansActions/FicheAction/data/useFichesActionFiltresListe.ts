@@ -1,12 +1,12 @@
 import { useQuery } from 'react-query';
 
+import { FicheResume } from '@/api/plan-actions';
 import { supabaseClient } from 'core-logic/api/supabase';
-import { useSearchParams } from 'core-logic/hooks/query';
-import { nameToShortNames, NB_FICHES_PER_PAGE, TFilters } from './filters';
 import { useCollectiviteId } from 'core-logic/hooks/params';
-import { TPersonne } from 'types/alias';
-import { FicheResume } from '@tet/api/plan-actions';
+import { useSearchParams } from 'core-logic/hooks/query';
 import { objectToCamel } from 'ts-case-convert';
+import { TPersonne } from 'types/alias';
+import { nameToShortNames, NB_FICHES_PER_PAGE, TFilters } from './filters';
 
 /**
  * Renvoie un tableau de Personne.

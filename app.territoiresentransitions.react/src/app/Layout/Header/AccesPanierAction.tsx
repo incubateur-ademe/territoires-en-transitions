@@ -1,11 +1,10 @@
-import { useQuery } from 'react-query';
-import { PanierAPI } from '@tet/api';
+import { PanierAPI } from '@/api';
+import { makeCollectivitePanierUrl } from '@tet/app/paths';
 import { Button } from '@tet/ui';
+import classNames from 'classnames';
 import { supabaseClient } from 'core-logic/api/supabase';
 import { useCollectiviteId } from 'core-logic/hooks/params';
-import { ENV } from 'environmentVariables';
-import classNames from 'classnames';
-import { makeCollectivitePanierUrl } from '@tet/app/paths';
+import { useQuery } from 'react-query';
 
 const panierAPI = new PanierAPI(supabaseClient);
 
