@@ -96,5 +96,3 @@ La production annuelle d’énergie hydroélectrique sur le territoire est compt
 - Production de biogaz à hauteur de 24 à 32 TWh en 2028 (4 à 6 fois la production de 2017)
 - Production de chaleur renouvelable : 196 TWh en 2023 ; 218 à 247 TWh en 2028
 - Capacités de production d’électricité renouvelables installées: 73,5 GW en 2023, soit + 50 % par rapport à 2017 ; 101 à 113 GW en 2028, soit x2 par rapport à 2017
-
-Cet indicateur est proposé par le SYDEV pour le suivi des PCAET.
