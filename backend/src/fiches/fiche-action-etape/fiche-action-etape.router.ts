@@ -15,12 +15,12 @@ export class FicheActionEtapeRouter {
     etapes: {
       upsert: this.trpc.authedProcedure
         .input(upsertFicheActionEtapeSchema)
-        .query(({ ctx, input }) => {
+        .mutation(({ ctx, input }) => {
           return this.service.upsertEtape(input, ctx.user);
         }),
       delete: this.trpc.authedProcedure
         .input(z.object({ etapeId: z.number() }))
-        .query(({ ctx, input }) => {
+        .mutation(({ ctx, input }) => {
           return this.service.deleteEtape(input.etapeId, ctx.user);
         }),
       list: this.trpc.authedProcedure
