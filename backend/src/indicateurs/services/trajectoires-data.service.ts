@@ -6,30 +6,30 @@ import {
 import { isNil } from 'es-toolkit';
 import * as _ from 'lodash';
 import { DateTime } from 'luxon';
+import { AuthenticatedUser } from '../../auth/models/auth.models';
 import { NiveauAcces } from '../../auth/models/niveau-acces.enum';
 import { AuthService } from '../../auth/services/auth.service';
 import { EpciType } from '../../collectivites/models/epci.table';
 import CollectivitesService from '../../collectivites/services/collectivites.service';
-import IndicateursService from './indicateurs.service';
-import IndicateurSourcesService from './indicateur-sources.service';
-import { CreateIndicateurSourceType } from '../models/indicateur-source.table';
+import { DonneesARemplirResultType } from '../models/donnees-a-remplir-result.dto';
+import { DonneesARemplirValeurType } from '../models/donnees-a-remplir-valeur.dto';
+import { DonneesCalculTrajectoireARemplirType } from '../models/donnees-calcul-trajectoire-a-remplir.dto';
 import {
   CreateIndicateurSourceMetadonneeType,
   IndicateurSourceMetadonneeType,
 } from '../models/indicateur-source-metadonnee.table';
+import { CreateIndicateurSourceType } from '../models/indicateur-source.table';
 import {
   IndicateurValeurAvecMetadonnesDefinition,
   IndicateurValeurType,
 } from '../models/indicateur-valeur.table';
-import { AuthenticatedUser } from '../../auth/models/auth.models';
+import { VerificationTrajectoireRequestType } from '../models/verification-trajectoire.request';
 import {
   VerificationTrajectoireResultType,
   VerificationTrajectoireStatus,
 } from '../models/verification-trajectoire.response';
-import { VerificationTrajectoireRequestType } from '../models/verification-trajectoire.request';
-import { DonneesCalculTrajectoireARemplirType } from '../models/donnees-calcul-trajectoire-a-remplir.dto';
-import { DonneesARemplirValeurType } from '../models/donnees-a-remplir-valeur.dto';
-import { DonneesARemplirResultType } from '../models/donnees-a-remplir-result.dto';
+import IndicateurSourcesService from './indicateur-sources.service';
+import IndicateursService from './indicateurs.service';
 
 @Injectable()
 export default class TrajectoiresDataService {
@@ -56,7 +56,7 @@ export default class TrajectoiresDataService {
       sourceId: this.SNBC_SOURCE.id,
       dateVersion: DateTime.fromISO('2024-07-11T00:00:00', {
         zone: 'utc',
-      }).toJSDate(),
+      }).toISO() as string,
       nomDonnees: 'SNBC',
       diffuseur: 'ADEME',
       producteur: 'ADEME',
@@ -222,9 +222,7 @@ export default class TrajectoiresDataService {
         );
       if (!this.indicateurSourceMetadonnee) {
         this.logger.log(
-          `Création de la metadonnée pour la source ${
-            this.SNBC_SOURCE.id
-          } et la date ${this.SNBC_SOURCE_METADONNEES.dateVersion.toISOString()}`
+          `Création de la metadonnée pour la source ${this.SNBC_SOURCE.id} et la date ${this.SNBC_SOURCE_METADONNEES.dateVersion}`
         );
         await this.indicateurSourcesService.upsertIndicateurSource(
           this.SNBC_SOURCE
@@ -237,11 +235,7 @@ export default class TrajectoiresDataService {
       }
     }
     this.logger.log(
-      `La metadonnée pour la source ${
-        this.SNBC_SOURCE.id
-      } et la date ${this.SNBC_SOURCE_METADONNEES.dateVersion.toISOString()} existe avec l'identifiant ${
-        this.indicateurSourceMetadonnee.id
-      }`
+      `La metadonnée pour la source ${this.SNBC_SOURCE.id} et la date ${this.SNBC_SOURCE_METADONNEES.dateVersion} existe avec l'identifiant ${this.indicateurSourceMetadonnee.id}`
     );
     return this.indicateurSourceMetadonnee;
   }

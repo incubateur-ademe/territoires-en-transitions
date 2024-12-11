@@ -1078,7 +1078,7 @@ export default class ReferentielsScoringService {
           audit = audits.find(
             (a) =>
               a.dateFin &&
-              DateTime.fromJSDate(a.dateFin).year === parameters.anneeAudit
+              DateTime.fromISO(a.dateFin).year === parameters.anneeAudit
           );
           if (!audit) {
             throw new HttpException(
@@ -1094,15 +1094,16 @@ export default class ReferentielsScoringService {
               400
             );
           }
-          parameters.anneeAudit = DateTime.fromJSDate(
+          parameters.anneeAudit = DateTime.fromISO(
             (audit.dateFin || audit.dateDebut)!
           ).year;
         }
         auditId = audit.id;
         parameters.date =
           (parameters.jalon === ScoreJalon.PRE_AUDIT
-            ? audit.dateDebut?.toISOString()
-            : audit.dateFin?.toISOString()) || undefined;
+            ? audit.dateDebut
+            : audit.dateFin) || undefined;
+
         this.logger.log(
           `Audit ${auditId} trouvé pour la collectivité ${collectiviteId} et le referentiel ${referentielId} avec le jaon ${parameters.jalon}: ${parameters.date}`
         );
@@ -1217,7 +1218,7 @@ export default class ReferentielsScoringService {
         );
       }
       const getScoreResult: GetReferentielScoresResponseType = {
-        mode: parameters.mode!,
+        mode: parameters.mode,
         jalon: parameters.jalon,
         auditId,
         anneeAudit: parameters.anneeAudit,
@@ -1225,7 +1226,7 @@ export default class ReferentielsScoringService {
         referentielVersion: referentiel.version,
         collectiviteId,
         collectiviteInfo,
-        date: parameters.date || new Date().toISOString(),
+        date: parameters.date || DateTime.now().toISO(),
         scores: referentielWithScore,
       };
 
@@ -2360,7 +2361,6 @@ export default class ReferentielsScoringService {
           key !== 'renseigne' &&
           key !== 'pointPotentielPerso'
         ) {
-          // @ts-ignore
           if (!_.isEqual(savedScore[key], computedScore[key])) {
             hasDiff = true;
 
@@ -2406,9 +2406,7 @@ export default class ReferentielsScoringService {
             }
 
             if (hasDiff) {
-              // @ts-ignore
               savedScoreDiff[key] = savedScore[key];
-              // @ts-ignore
               scoreMapDiff[key] = computedScore[key];
             }
           }

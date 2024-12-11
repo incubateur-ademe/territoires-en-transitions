@@ -1,12 +1,11 @@
-import { InferInsertModel, InferSelectModel, sql } from 'drizzle-orm';
+import { modifiedAt, modifiedBy } from '@/backend/common/models/column.helpers';
+import { InferInsertModel, InferSelectModel } from 'drizzle-orm';
 import {
   boolean,
   doublePrecision,
   integer,
   pgEnum,
   pgTable,
-  timestamp,
-  uuid,
 } from 'drizzle-orm/pg-core';
 import { createInsertSchema, createSelectSchema } from 'drizzle-zod';
 import { collectiviteTable } from '../../collectivites/models/collectivite.table';
@@ -28,12 +27,8 @@ export const actionStatutTable = pgTable('action_statut', {
   avancement: avancementEnum('avancement').notNull(),
   avancementDetaille: doublePrecision('avancement_detaille').array(),
   concerne: boolean('concerne').notNull(),
-  modifiedBy: uuid('modified_by')
-    .default(sql`auth.uid()`)
-    .notNull(),
-  modifiedAt: timestamp('modified_at', { withTimezone: true, mode: 'string' })
-    .default(sql`CURRENT_TIMESTAMP`)
-    .notNull(),
+  modifiedBy,
+  modifiedAt,
 });
 
 export type ActionStatutType = InferSelectModel<typeof actionStatutTable>;

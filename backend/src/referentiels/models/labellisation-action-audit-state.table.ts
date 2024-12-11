@@ -15,6 +15,7 @@ import { collectiviteTable } from '../../collectivites/models/collectivite.table
 import { actionIdReference } from './action-definition.table';
 import { labellisationAuditTable } from './labellisation-audit.table';
 import { labellisationSchema } from './labellisation.schema';
+import { modifiedAt } from '@/backend/common/models/column.helpers';
 
 export enum AuditStatutEnumType {
   NON_AUDITE = 'non_audite',
@@ -37,9 +38,7 @@ export const labellisationActionAuditStateTable = labellisationSchema.table(
     modifiedBy: uuid('modified_by')
       .default(sql`auth.uid()`)
       .notNull(),
-    modifiedAt: timestamp('modified_at', { withTimezone: true, mode: 'string' })
-      .default(sql`CURRENT_TIMESTAMP`)
-      .notNull(),
+    modifiedAt,
     ordreDuJour: boolean('ordre_du_jour').default(false).notNull(),
     avis: text('avis').default('').notNull(),
     statut: auditStatutEnum('statut').notNull(),

@@ -1,17 +1,14 @@
-import { sql } from 'drizzle-orm';
-import { pgTable, timestamp, uniqueIndex, uuid } from 'drizzle-orm/pg-core';
-import { tagTableBase } from './tag.table-base';
+import { pgTable, uniqueIndex } from 'drizzle-orm/pg-core';
 import { createSelectSchema } from 'drizzle-zod';
+import { createdAt, createdBy } from '../../common/models/column.helpers';
+import { tagTableBase } from './tag.table-base';
 
 export const libreTagTable = pgTable(
   'libre_tag',
   {
     ...tagTableBase,
-
-    createdAt: timestamp('created_at', { withTimezone: true })
-      .notNull()
-      .defaultNow(),
-    createdBy: uuid('created_by').default(sql`auth.uid()`),
+    createdAt,
+    createdBy,
   },
   (table) => {
     return {

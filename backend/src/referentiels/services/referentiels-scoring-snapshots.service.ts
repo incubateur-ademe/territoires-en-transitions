@@ -154,7 +154,7 @@ export default class ReferentielsScoringSnapshotsService {
       referentielId: scoreResponse.referentielId,
       ref: scoreResponse.snapshot!.ref!,
       nom: scoreResponse.snapshot!.nom,
-      date: DateTime.fromISO(scoreResponse.date).toJSDate(),
+      date: scoreResponse.date,
       typeJalon: scoreResponse.jalon,
       pointFait: scoreResponse.scores.score.pointFait || 0,
       pointProgramme: scoreResponse.scores.score.pointProgramme || 0,
@@ -162,11 +162,9 @@ export default class ReferentielsScoringSnapshotsService {
       pointPotentiel: scoreResponse.scores.score.pointPotentiel || 0,
       referentielVersion: scoreResponse.referentielVersion,
       auditId: scoreResponse.auditId || null,
-      createdAt: DateTime.fromISO(scoreResponse.snapshot!.createdAt).toJSDate(),
+      createdAt: scoreResponse.snapshot!.createdAt,
       createdBy: scoreResponse.snapshot!.createdBy,
-      modifiedAt: DateTime.fromISO(
-        scoreResponse.snapshot!.modifiedAt
-      ).toJSDate(),
+      modifiedAt: scoreResponse.snapshot!.modifiedAt,
       modifiedBy: scoreResponse.snapshot!.modifiedBy,
     };
   }
@@ -267,7 +265,7 @@ export default class ReferentielsScoringSnapshotsService {
     snapshotForceUpdate?: boolean,
     userId?: string
   ): Promise<ScoreSnapshotType> {
-    const scoreDate = DateTime.fromISO(scoreResponse.date).toJSDate();
+    const scoreDate = scoreResponse.date;
 
     if (!scoreResponse.snapshot?.ref || !scoreResponse.snapshot?.nom) {
       this.fillDefaultSnapshotNomRef(scoreResponse, snapshotNom);
@@ -345,9 +343,9 @@ export default class ReferentielsScoringSnapshotsService {
     }
     const scoreSnapshot = scoreSnapshots[0] as ScoreSnapshotType;
     scoreResponse.snapshot!.createdBy = scoreSnapshot.createdBy;
-    scoreResponse.snapshot!.createdAt = scoreSnapshot.createdAt.toISOString();
+    scoreResponse.snapshot!.createdAt = scoreSnapshot.createdAt;
     scoreResponse.snapshot!.modifiedBy = scoreSnapshot.modifiedBy;
-    scoreResponse.snapshot!.modifiedAt = scoreSnapshot.modifiedAt.toISOString();
+    scoreResponse.snapshot!.modifiedAt = scoreSnapshot.modifiedAt;
 
     return scoreSnapshot;
   }
@@ -355,7 +353,7 @@ export default class ReferentielsScoringSnapshotsService {
   async listSummary(
     collectiviteId: number,
     referentielId: ReferentielType,
-    parameters: GetScoreSnapshotsRequestType
+    { typesJalon }: GetScoreSnapshotsRequestType
   ): Promise<GetScoreSnapshotsResponseType> {
     const result = await this.databaseService.db
       .select({
@@ -379,7 +377,7 @@ export default class ReferentielsScoringSnapshotsService {
         and(
           eq(scoreSnapshotTable.collectiviteId, collectiviteId),
           eq(scoreSnapshotTable.referentielId, referentielId),
-          inArray(scoreSnapshotTable.typeJalon, parameters.typesJalon)
+          inArray(scoreSnapshotTable.typeJalon, typesJalon)
         )
       )
       .orderBy(asc(scoreSnapshotTable.date));
@@ -387,7 +385,7 @@ export default class ReferentielsScoringSnapshotsService {
     const getScoreSnapshotsResponseType: GetScoreSnapshotsResponseType = {
       collectiviteId: parseInt(collectiviteId as unknown as string),
       referentielId,
-      typesJalon: parameters.typesJalon,
+      typesJalon,
       snapshots: result,
     };
     return getScoreSnapshotsResponseType;
@@ -464,9 +462,9 @@ export default class ReferentielsScoringSnapshotsService {
     fullScores.snapshot = {
       ref: result[0].ref!,
       nom: result[0].nom,
-      createdAt: result[0].createdAt.toISOString(),
+      createdAt: result[0].createdAt,
       createdBy: result[0].createdBy,
-      modifiedAt: result[0].modifiedAt.toISOString(),
+      modifiedAt: result[0].modifiedAt,
       modifiedBy: result[0].modifiedBy,
     };
     return fullScores;

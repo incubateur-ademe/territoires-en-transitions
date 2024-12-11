@@ -1,11 +1,9 @@
-import { sql } from 'drizzle-orm';
-import { integer, pgTable, timestamp, varchar } from 'drizzle-orm/pg-core';
+import { modifiedAt } from '@/backend/common/models/column.helpers';
+import { integer, pgTable, varchar } from 'drizzle-orm/pg-core';
 import { collectiviteTable } from '../../collectivites/models/collectivite.table';
 
 export const reponseChoixTable = pgTable('reponse_choix', {
-  modifiedAt: timestamp('modified_at', { withTimezone: true, mode: 'string' })
-    .default(sql`CURRENT_TIMESTAMP`)
-    .notNull(),
+  modifiedAt,
   collectiviteId: integer('collectivite_id')
     .references(() => collectiviteTable.id)
     .notNull(),

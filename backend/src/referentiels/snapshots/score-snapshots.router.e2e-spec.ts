@@ -88,20 +88,22 @@ describe('ScoreSnapshotsRouter', () => {
           typesJalon: [ScoreJalon.DATE_PERSONNALISEE],
         },
       });
+
     const foundSnapshot = responseSnapshotList.snapshots.find(
       (snapshot) => snapshot.ref === 'user-test-trpc'
     );
+
+    if (!foundSnapshot) {
+      expect.fail();
+    }
+
     const expectedSnapshot: ScoreSnapshotInfoType = {
-      date: DateTime.fromISO(referentielScore.date).toJSDate(),
+      date: DateTime.fromISO(referentielScore.date).toISO() as string,
       nom: 'Test trpc',
       ref: 'user-test-trpc',
       typeJalon: ScoreJalon.DATE_PERSONNALISEE,
-      modifiedAt: DateTime.fromISO(
-        referentielScore.snapshot!.modifiedAt
-      ).toJSDate(),
-      createdAt: DateTime.fromISO(
-        referentielScore.snapshot!.createdAt
-      ).toJSDate(),
+      modifiedAt: referentielScore.snapshot!.modifiedAt,
+      createdAt: referentielScore.snapshot!.createdAt,
       referentielVersion: '1.0.0',
       auditId: null,
       createdBy: '17440546-f389-4d4f-bfdb-b0c94a1bd0f9',
@@ -111,7 +113,11 @@ describe('ScoreSnapshotsRouter', () => {
       pointPotentiel: 490.9,
       pointProgramme: 0.21,
     };
-    expect(foundSnapshot).toEqual(expectedSnapshot);
+
+    expect({
+      ...foundSnapshot,
+      date: DateTime.fromSQL(foundSnapshot.date).toISO() as string,
+    }).toEqual(expectedSnapshot);
 
     // delete the snapshot
     await caller.referentiels.snapshots.delete({

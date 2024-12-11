@@ -1,5 +1,6 @@
-import { InferSelectModel, sql } from 'drizzle-orm';
-import { pgTable, timestamp, varchar } from 'drizzle-orm/pg-core';
+import { createdAt, modifiedAt } from '@/backend/common/models/column.helpers';
+import { InferSelectModel } from 'drizzle-orm';
+import { pgTable, varchar } from 'drizzle-orm/pg-core';
 import { createInsertSchema, createSelectSchema } from 'drizzle-zod';
 import { actionTypeEnum } from './action-type.enum';
 
@@ -10,12 +11,8 @@ export const referentielDefinitionTable = pgTable('referentiel_definition', {
   nom: varchar('nom', { length: 300 }).notNull(),
   version: varchar('version', { length: 16 }).notNull().default('1.0.0'),
   hierarchie: actionTypeEnum('hierarchie').array().notNull(),
-  createdAt: timestamp('created_at', { withTimezone: true, mode: 'string' })
-    .default(sql`CURRENT_TIMESTAMP`)
-    .notNull(),
-  modifiedAt: timestamp('modified_at', { withTimezone: true, mode: 'string' })
-    .default(sql`CURRENT_TIMESTAMP`)
-    .notNull(),
+  createdAt,
+  modifiedAt,
 });
 
 export type ReferentielDefinitionType = InferSelectModel<

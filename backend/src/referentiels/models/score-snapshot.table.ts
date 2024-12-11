@@ -18,6 +18,7 @@ import {
   createdBy,
   modifiedAt,
   modifiedBy,
+  TIMESTAMP_OPTIONS,
 } from '../../common/models/column.helpers';
 import { getPersonnalitionReponsesResponseSchema } from '../../personnalisations/models/get-personnalisation-reponses.response';
 import { getReferentielScoresResponseSchema } from './get-referentiel-scores.response';
@@ -44,9 +45,7 @@ export const scoreSnapshotTable = pgTable(
     referentielId: referentielIdVarchar.notNull(),
     referentielVersion: varchar('referentiel_version', { length: 16 }),
     auditId: integer('audit_id'),
-    date: timestamp('date', {
-      withTimezone: true,
-    }).notNull(),
+    date: timestamp('date', TIMESTAMP_OPTIONS).notNull(),
     ref: varchar('ref', { length: 30 }),
     nom: varchar('nom', { length: 300 }).notNull(),
     typeJalon: scoreJalonEnumValues('type_jalon').notNull(), // not an enum in the database but in order to type it

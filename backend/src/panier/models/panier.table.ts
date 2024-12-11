@@ -1,3 +1,4 @@
+import { createZodDto } from '@anatine/zod-nestjs';
 import { InferSelectModel, SQL, sql } from 'drizzle-orm';
 import {
   boolean,
@@ -6,9 +7,8 @@ import {
   timestamp,
   uuid,
 } from 'drizzle-orm/pg-core';
-import { collectiviteTable } from '../../collectivites/models/collectivite.table';
 import { createSelectSchema } from 'drizzle-zod';
-import { createZodDto } from '@anatine/zod-nestjs';
+import { collectiviteTable } from '../../collectivites/models/collectivite.table';
 
 export const panierTable = pgTable('panier', {
   id: uuid('id').primaryKey().defaultRandom(),
@@ -24,7 +24,10 @@ export const panierTable = pgTable('panier', {
   collectivitePreset: integer('collectivite_preset')
     .unique()
     .references(() => collectiviteTable.id),
-  latestUpdate: timestamp('latest_update', { withTimezone: true })
+  latestUpdate: timestamp('latest_update', {
+    withTimezone: true,
+    mode: 'string',
+  })
     .notNull()
     .defaultNow(),
   private: boolean('private').generatedAlwaysAs(

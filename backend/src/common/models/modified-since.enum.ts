@@ -17,16 +17,16 @@ export const modifiedSinceSchema = z.enum([
 
 export const getModifiedSinceDate = (
   modifiedSince: ModifiedSinceEnum
-): Date => {
+): string => {
   const now = DateTime.now();
   switch (modifiedSince) {
     case ModifiedSinceEnum.LAST_90_DAYS:
-      return now.minus({ days: 90 }).toJSDate();
+      return now.minus({ days: 90 }).toISO() as string;
     case ModifiedSinceEnum.LAST_60_DAYS:
-      return now.minus({ days: 60 }).toJSDate();
+      return now.minus({ days: 60 }).toISO() as string;
     case ModifiedSinceEnum.LAST_30_DAYS:
-      return now.minus({ days: 30 }).toJSDate();
+      return now.minus({ days: 30 }).toISO() as string;
     case ModifiedSinceEnum.LAST_15_DAYS:
-      return now.minus({ days: 15 }).toJSDate();
+      return now.minus({ days: 15 }).toISO() as string;
   }
 };

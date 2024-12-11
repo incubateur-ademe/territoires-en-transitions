@@ -1,4 +1,5 @@
 import { INestApplication } from '@nestjs/common';
+import { DateTime } from 'luxon';
 import { default as request } from 'supertest';
 import { HttpErrorResponse } from '../../src/common/models/http-error.response';
 import { ActionScoreType } from '../../src/referentiels/models/action-score.dto';
@@ -250,13 +251,20 @@ describe('Referentiels scoring routes', () => {
       snapshots: [
         {
           auditId: null,
-          createdAt: getReferentielScoresCourantResponseType.snapshot!
-            .createdAt as unknown as Date,
+          createdAt:
+            getReferentielScoresCourantResponseType.snapshot!.createdAt,
           createdBy: null,
           modifiedBy: null,
-          date: getReferentielScoresCourantResponseType.date as unknown as Date,
-          modifiedAt: getReferentielScoresCourantResponseType.snapshot!
-            .modifiedAt as unknown as Date,
+          date: expect.stringContaining(
+            DateTime.fromISO(getReferentielScoresCourantResponseType.date, {
+              zone: 'utc',
+            }).toSQL({
+              includeOffset: false,
+              includeOffsetSpace: false,
+            }) as string
+          ),
+          modifiedAt:
+            getReferentielScoresCourantResponseType.snapshot!.modifiedAt,
           nom: 'Score courant',
           pointFait: 0.36,
           pointPasFait: 0.03,
@@ -296,14 +304,19 @@ describe('Referentiels scoring routes', () => {
       typesJalon: [ScoreJalon.DATE_PERSONNALISEE],
       snapshots: [
         {
-          date: getReferentielScoresResponseType.date as unknown as Date,
+          date: expect.stringContaining(
+            DateTime.fromISO(getReferentielScoresResponseType.date, {
+              zone: 'utc',
+            }).toSQL({
+              includeOffset: false,
+              includeOffsetSpace: false,
+            }) as string
+          ),
           nom: 'test à accent',
           ref: 'user-test-a-accent',
           typeJalon: ScoreJalon.DATE_PERSONNALISEE,
-          modifiedAt: getReferentielScoresResponseType.snapshot!
-            .modifiedAt as unknown as Date,
-          createdAt: getReferentielScoresResponseType.snapshot!
-            .createdAt as unknown as Date,
+          modifiedAt: getReferentielScoresResponseType.snapshot!.modifiedAt,
+          createdAt: getReferentielScoresResponseType.snapshot!.createdAt,
           referentielVersion: '1.0.0',
           auditId: null,
           createdBy: '17440546-f389-4d4f-bfdb-b0c94a1bd0f9',
