@@ -3,13 +3,12 @@ import {
   DATE_DEBUT,
   getIndicateurTrajectoire,
   getNomSource,
-  SEQUESTRATION_CARBONE,
-  INDICATEURS_TRAJECTOIRE,
   IndicateurTrajectoireId,
+  SEQUESTRATION_CARBONE,
   SourceIndicateur,
 } from '../constants';
-import {useIndicateurValeurs} from '../useIndicateurValeurs';
-import {TabId, TABS} from './constants';
+import { useIndicateurValeurs } from '../useIndicateurValeurs';
+import { TabId, TABS } from './constants';
 
 export type DonneesSectorisees = ReturnType<
   typeof useDonneesSectoriseesIndicateur
@@ -38,7 +37,7 @@ export const useDonneesSectorisees = () => {
   // (permet de lancer un nouveau calcul ou non)
   const tabData = Object.values(donneesSectorisees);
   const donneesCompletes =
-    tabData.filter(d => !d.isLoading && d.data.donneesCompletes).length ===
+    tabData.filter((d) => !d.isLoading && d.data.donneesCompletes).length ===
     tabData.length;
 
   return {
@@ -46,7 +45,6 @@ export const useDonneesSectorisees = () => {
     donneesCompletes,
   };
 };
-
 
 /** Charge les données sectorisées pour un onglet du dialogue "Lancer un calcul" */
 const useDonneesSectoriseesIndicateur = (
@@ -140,10 +138,7 @@ const useDonneesSectoriseesIndicateur = (
           valeurs: ind
             ? Object.entries(ind.sources).map(([source, { valeurs }]) => ({
                 source,
-                valeur: normalizeValue(
-                  valeurs?.[0].resultat ?? valeurs?.[0].objectif ?? null,
-                  id
-                ),
+                valeur: valeurs?.[0].resultat ?? valeurs?.[0].objectif ?? null,
                 id: valeurs?.[0].id,
               }))
             : [],
@@ -164,15 +159,3 @@ const useDonneesSectoriseesIndicateur = (
   };
 };
 
-// normalise une valeur objectif/résultat
-const normalizeValue = (
-  value: number | null,
-  id: IndicateurTrajectoireId | typeof SEQUESTRATION_CARBONE.id
-) => {
-  if (value === null) return null;
-  const coef =
-    [...INDICATEURS_TRAJECTOIRE, SEQUESTRATION_CARBONE]?.find(
-      ind => ind.id === id
-    )?.coef ?? 1;
-  return value * coef;
-};

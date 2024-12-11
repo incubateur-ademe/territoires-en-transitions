@@ -47,14 +47,11 @@ const useTrajectoire = () => {
 export const useResultatTrajectoire = ({
   indicateur,
   secteurIdx,
-  coef,
 }: {
   /** indicateur trajectoire */
   indicateur: IndicateurTrajectoire;
   /** index du secteur sélectionné */
   secteurIdx: number;
-  /** coefficient pour normaliser les données */
-  coef?: number;
 }) => {
   // données de la trajectoire
   const { data, isLoading: isLoadingTrajectoire } = useTrajectoire();
@@ -65,7 +62,7 @@ export const useResultatTrajectoire = ({
   const valeursTousSecteurs =
     trajectoire &&
     indicateur.secteurs &&
-    prepareDonneesParSecteur(indicateur.secteurs, trajectoire, coef);
+    prepareDonneesParSecteur(indicateur.secteurs, trajectoire);
 
   // secteur sélectionné
   const secteur = secteurIdx === 0 ? null : indicateur.secteurs[secteurIdx - 1];
@@ -85,7 +82,7 @@ export const useResultatTrajectoire = ({
     trajectoire &&
     secteur &&
     'sousSecteurs' in secteur &&
-    prepareDonneesParSecteur(secteur.sousSecteurs, trajectoire, coef);
+    prepareDonneesParSecteur(secteur.sousSecteurs, trajectoire);
 
   // charge les données objectifs/résultats de la collectivité et open data
   const { data: indicateursEtValeurs, isLoading: isLoadingObjectifsResultats } =
@@ -129,7 +126,7 @@ export const useResultatTrajectoire = ({
     source:
       objectifsCollectiviteOuPCAET?.map((v) => ({
         x: v.dateValeur,
-        y: (v.objectif as number) * (coef || 1),
+        y: v.objectif as number,
       })) || [],
   };
   const resultats = {
@@ -139,7 +136,7 @@ export const useResultatTrajectoire = ({
     source:
       resultatsCollectiviteOuRARE?.map((v) => ({
         x: v.dateValeur,
-        y: (v.resultat as number) * (coef || 1),
+        y: v.resultat as number,
       })) || [],
   };
 
@@ -162,7 +159,7 @@ export const useResultatTrajectoire = ({
         color: LAYERS.trajectoire.color,
         source: dataEmissionsNettes.valeurs.map((v) => ({
           x: v.dateValeur,
-          y: v.objectif * (EMISSIONS_NETTES.coef || 1),
+          y: v.objectif,
         })),
       }
     : null;
@@ -186,9 +183,7 @@ const prepareDonneesParSecteur = (
   /** (sous-)secteurs à inclure */
   secteurs: Readonly<Array<{ nom: string; identifiant: string }>>,
   /** données de la trajectoire */
-  indicateurs: IndicateurAvecValeurs[],
-  /** coefficient pour normaliser les données */
-  coef?: number
+  indicateurs: IndicateurAvecValeurs[]
 ) => {
   if (!indicateurs?.length || !secteurs?.length) return undefined;
 
@@ -203,7 +198,7 @@ const prepareDonneesParSecteur = (
             name: s.nom,
             source: valeurs.map((v) => ({
               x: v.dateValeur,
-              y: v.objectif * (coef || 1),
+              y: v.objectif,
             })),
             dimensions: ['x', 'y'],
             color: COULEURS_SECTEUR[i % COULEURS_SECTEUR.length],

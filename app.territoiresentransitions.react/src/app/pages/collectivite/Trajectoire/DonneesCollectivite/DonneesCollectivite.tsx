@@ -1,7 +1,5 @@
 import {
   DATE_DEBUT,
-  INDICATEURS_TRAJECTOIRE,
-  SEQUESTRATION_CARBONE,
 } from '@/app/app/pages/collectivite/Trajectoire/constants';
 import { useCalculTrajectoire } from '@/app/app/pages/collectivite/Trajectoire/useCalculTrajectoire';
 import SpinnerLoader from '@/app/ui/shared/SpinnerLoader';
@@ -46,7 +44,7 @@ export const DonneesCollectivite = ({
         complétant les données ci-après. Les données à entrer sont les résultats
         observés pour l’année 2015 : c’est l’année de référence de la SNBC v2.
       </p>
-      <Tabs defaultActiveTab={0} onChange={() => {}}>
+      <Tabs defaultActiveTab={0}>
         {TABS.map((tab) => {
           const { data } = donneesSectorisees[tab.id];
           const { secteurs, sources, valeursSecteurs, donneesCompletes } =
@@ -71,7 +69,7 @@ export const DonneesCollectivite = ({
                     upsertValeur({
                       indicateurId,
                       dateValeur: DATE_DEBUT,
-                      resultat: normalizeValue(valeur, tab.id),
+                      resultat: valeur,
                     });
                   }}
                 />
@@ -120,14 +118,4 @@ const getTabProps = (donneesCompletes: boolean) => {
         title:
           'Formulaire incomplet : veuillez le compléter pour valider et lancer le calcul',
       } as const);
-};
-
-// normalise une valeur objectif/résultat
-const normalizeValue = (value: number | null, id: string) => {
-  if (value === null || value === undefined) return value;
-  const coef =
-    [...INDICATEURS_TRAJECTOIRE, SEQUESTRATION_CARBONE]?.find(
-      (ind) => ind.id === id
-    )?.coef ?? 1;
-  return value / coef;
 };

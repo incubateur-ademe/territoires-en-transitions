@@ -60,7 +60,7 @@ export const TrajectoireCalculee = () => {
     isLoadingObjectifsResultats,
     donneesSectoriellesIncompletes,
     emissionsNettes,
-  } = useResultatTrajectoire({ indicateur, secteurIdx, coef: indicateur.coef });
+  } = useResultatTrajectoire({ indicateur, secteurIdx });
 
   const trackTab = useOngletTracker('app/trajectoires/snbc');
   const trackEvent = useEventTracker('app/trajectoires/snbc', indicateur.id);
