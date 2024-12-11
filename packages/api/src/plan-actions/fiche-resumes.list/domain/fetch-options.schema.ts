@@ -1,6 +1,6 @@
 import { z } from 'zod';
-import { getQueryOptionsSchema } from '../../../shared/domain/query_options.schema';
 import { filtreRessourceLieesSchema } from '../../../collectivites/shared/domain/filtre-ressource-liees.schema';
+import { getQueryOptionsSchema } from '../../../shared/domain/query_options.schema';
 import { cibleSchema, niveauPrioriteSchema, statutSchema } from '../../domain';
 
 export const modifiedSinceSchema = z.enum([
@@ -21,6 +21,9 @@ export const filtreSpecifiqueSchema = z.object({
   budgetPrevisionnel: z.coerce.boolean().default(false).optional(),
   restreint: z.coerce.boolean().default(false).optional(),
   hasIndicateurLies: z.coerce.boolean().default(false).optional(),
+  sansPilote: z.coerce.boolean().default(false).optional(),
+  sansServicePilote: z.coerce.boolean().default(false).optional(),
+  sansStatut: z.coerce.boolean().default(false).optional(),
   dateDebut: z.string().optional(),
   dateFin: z.string().optional(),
   ameliorationContinue: z.coerce.boolean().default(false).optional(),
