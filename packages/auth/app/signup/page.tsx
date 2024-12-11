@@ -1,6 +1,5 @@
 'use client';
 
-import { useRedirectTo } from '@/auth/components/Login/useRedirectTo';
 import { SignupModal } from '@/auth/components/Signup';
 import { useState } from 'react';
 import { useCollectivites } from './useCollectivites';
@@ -36,9 +35,6 @@ const SignupPage = ({
     defaultView: view,
     defaultValues,
   });
-
-  // redirige immédiatement si l'utilisateur est déjà connecté
-  useRedirectTo(redirect_to);
 
   return (
     <SignupModal

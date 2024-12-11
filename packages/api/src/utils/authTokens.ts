@@ -5,8 +5,8 @@
  * Ref: https://github.com/orgs/supabase/discussions/5742#discussioncomment-4050444
 */
 import { Session, SupabaseClient } from '@supabase/supabase-js';
-import { supabaseClient } from './supabase-client';
 import { ENV } from '../environmentVariables';
+import { supabaseClient } from './supabase-client';
 
 export const ACCESS_TOKEN = 'tet-access-token';
 export const REFRESH_TOKEN = 'tet-refresh-token';
