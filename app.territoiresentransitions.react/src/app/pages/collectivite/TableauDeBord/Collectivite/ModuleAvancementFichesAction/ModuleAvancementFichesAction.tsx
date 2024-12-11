@@ -36,6 +36,7 @@ const ModuleAvancementFichesAction = ({ module }: Props) => {
   const [display, setDisplay] = useState<ModuleDisplay>('row');
 
   const filtres = module.options.filtre;
+  console.log('Filtres:', filtres);
 
   const { data: countByStatut, isLoading } = useFichesActionStatuts(
     Object.fromEntries(
@@ -133,27 +134,19 @@ const ModuleAvancementFichesAction = ({ module }: Props) => {
       {display === 'row' && (
         <div className="flex flex-wrap gap-2">
           {countByStatut &&
-            Object.entries(countByStatut).map(([statut, { valeur }], index) =>
-              statut === 'Sans statut' ? (
-                <Card
-                  key={index}
-                  statut={valeur}
-                  count={countByStatut[statut].count}
-                />
-              ) : (
-                <Link
-                  key={index}
-                  href={makeFichesActionUrlWithParams(
-                    collectiviteId,
-                    filtres,
-                    valeur as Statut
-                  )}
-                  className="bg-none rounded-xl hover:shadow"
-                >
-                  <Card statut={valeur} count={countByStatut[statut].count} />
-                </Link>
-              )
-            )}
+            Object.entries(countByStatut).map(([statut, { valeur }], index) => (
+              <Link
+                key={index}
+                href={makeFichesActionUrlWithParams(
+                  collectiviteId,
+                  filtres,
+                  statut === 'Sans statut' ? 'Sans statut' : (valeur as Statut)
+                )}
+                className="bg-none rounded-xl hover:shadow"
+              >
+                <Card statut={valeur} count={countByStatut[statut].count} />
+              </Link>
+            ))}
         </div>
       )}
     </Module>
