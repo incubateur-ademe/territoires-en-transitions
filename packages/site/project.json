@@ -1,10 +1,10 @@
 {
-  "name": "@tet/site",
+  "name": "site",
   "$schema": "../../node_modules/nx/schemas/project-schema.json",
   "sourceRoot": "packages/site",
   "projectType": "application",
   "tags": [],
-  "implicitDependencies": ["@tet/ui"],
+  "implicitDependencies": ["ui"],
   "targets": {
     "dev": {
       "options": {
