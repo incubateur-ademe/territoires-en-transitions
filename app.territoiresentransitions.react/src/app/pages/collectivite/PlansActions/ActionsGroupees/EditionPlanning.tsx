@@ -1,5 +1,5 @@
-import { Button, Checkbox, Field, Input, useEventTracker } from '@tet/ui';
-import { OpenState } from '@tet/ui/utils/types';
+import { Button, Checkbox, Field, Input, useEventTracker } from '@/ui';
+import { OpenState } from '@/ui/utils/types';
 import { useCollectiviteId } from 'core-logic/hooks/params';
 import { useRef, useState } from 'react';
 import { getIsoFormattedDate } from 'utils/formatUtils';

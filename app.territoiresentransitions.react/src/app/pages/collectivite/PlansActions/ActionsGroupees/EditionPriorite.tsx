@@ -1,6 +1,6 @@
-import { NiveauPriorite } from '@tet/api/plan-actions';
-import { Button, Field, useEventTracker } from '@tet/ui';
-import { OpenState } from '@tet/ui/utils/types';
+import { NiveauPriorite } from '@/api/plan-actions';
+import { Button, Field, useEventTracker } from '@/ui';
+import { OpenState } from '@/ui/utils/types';
 import { useCollectiviteId } from 'core-logic/hooks/params';
 import { useState } from 'react';
 import PrioritesSelectDropdown from 'ui/dropdownLists/ficheAction/priorites/PrioritesSelectDropdown';
