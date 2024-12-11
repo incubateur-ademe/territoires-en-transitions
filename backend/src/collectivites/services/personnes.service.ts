@@ -1,8 +1,7 @@
-import { Injectable } from '@nestjs/common';
-import { dcpTable } from '@/backend/auth/models/dcp.table';
-import { utilisateurDroitTable } from '@/backend/auth/models/private-utilisateur-droit.table';
-import DatabaseService from '@/backend/common/services/database.service';
+import { dcpTable, utilisateurDroitTable } from '@/backend/auth';
+import { DatabaseService } from '@/backend/common';
 import { personneTagTable } from '@/backend/taxonomie/models/personne-tag.table';
+import { Injectable } from '@nestjs/common';
 import { and, eq, sql } from 'drizzle-orm';
 import { union } from 'drizzle-orm/pg-core';
 import z from 'zod';
