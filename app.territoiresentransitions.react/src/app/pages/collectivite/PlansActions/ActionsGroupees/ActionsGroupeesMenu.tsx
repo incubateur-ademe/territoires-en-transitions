@@ -1,5 +1,6 @@
 import { Alert } from '@/ui';
 import classNames from 'classnames';
+import { FicheResume } from 'packages/api/src/plan-actions';
 import ExportFicheActionGroupeesButton from '../ExportPdf/ExportFicheActionGroupeesButton';
 import EditionPilote from './EditionPilote';
 import EditionPlanning from './EditionPlanning';
@@ -9,20 +10,33 @@ import EditionTagsLibres from './EditionTagsLibres';
 
 type ActionsGroupeesMenuProps = {
   isGroupedActionsOn: boolean;
-  selectedIds: number[];
+  selectedFiches: FicheResume[];
 };
 
 const ActionsGroupeesMenu = ({
   isGroupedActionsOn,
-  selectedIds,
+  selectedFiches,
 }: ActionsGroupeesMenuProps) => {
+  const selectedIds = selectedFiches.map((fiche) => fiche.id);
+  const dateDebutArray = selectedFiches
+    .map((fiche) => fiche.dateDebut)
+    .filter((elt) => elt !== null && elt !== undefined) as string[];
+
+  const minDateFin = dateDebutArray.length
+    ? dateDebutArray.reduce((dateFin, currDate) => {
+        if (new Date(currDate).getTime() > new Date(dateFin).getTime())
+          return currDate;
+        else return dateFin;
+      })
+    : null;
+
   return (
     <Alert
       className={classNames(
         'absolute left-0 bottom-0 border-t border-t-info-1 pt-2 pb-4 transition-all duration-500',
         {
-          'opacity-100 z-50': isGroupedActionsOn && selectedIds.length > 1,
-          'opacity-0 -z-10': selectedIds.length <= 1,
+          'opacity-100 z-50': isGroupedActionsOn && selectedFiches.length > 1,
+          'opacity-0 -z-10': selectedFiches.length <= 1,
         }
       )}
       title="Appliquer une action groupée"
@@ -31,7 +45,7 @@ const ActionsGroupeesMenu = ({
           <EditionPilote selectedIds={selectedIds} />
           <EditionStatut selectedIds={selectedIds} />
           <EditionPriorite selectedIds={selectedIds} />
-          <EditionPlanning selectedIds={selectedIds} />
+          <EditionPlanning selectedIds={selectedIds} minDateFin={minDateFin} />
           <EditionTagsLibres selectedIds={selectedIds} />
           <ExportFicheActionGroupeesButton fichesIds={selectedIds} />
         </div>

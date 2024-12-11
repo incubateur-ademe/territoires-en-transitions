@@ -185,6 +185,7 @@ export const ficheResumeSchema = ficheActionSchema
     titre: true,
     statut: true,
     ameliorationContinue: true,
+    dateDebut: true,
     dateFinProvisoire: true,
     niveauPriorite: true,
     restreint: true,

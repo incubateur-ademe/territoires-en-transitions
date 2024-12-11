@@ -9,11 +9,13 @@ import { useFichesActionsBulkEdit } from './useFichesActionsBulkEdit';
 type ModaleEditionPlanningProps = {
   openState: OpenState;
   selectedIds: number[];
+  minDateFin: string | null;
 };
 
 const ModaleEditionPlanning = ({
   openState,
   selectedIds,
+  minDateFin,
 }: ModaleEditionPlanningProps) => {
   const [dateFin, setDateFin] = useState<string | null | undefined>();
   const [ameliorationContinue, setAmeliorationContinue] = useState<
@@ -32,7 +34,6 @@ const ModaleEditionPlanning = ({
       openState={openState}
       title="Associer un planning"
       actionsCount={selectedIds.length}
-      // TODO: sauvegarde de la nouvelle valeur
       onSave={() => {
         tracker('associer_priorite_groupe', {
           collectivite_id: collectiviteId,
@@ -56,6 +57,9 @@ const ModaleEditionPlanning = ({
           }
           disabled={ameliorationContinue ?? false}
           value={dateFin ? getIsoFormattedDate(dateFin) : ''}
+          min={
+            minDateFin !== null ? getIsoFormattedDate(minDateFin) : undefined
+          }
           onChange={(evt) => {
             setAmeliorationContinue(null);
             setDateFin(evt.target.value.length !== 0 ? evt.target.value : null);
@@ -80,9 +84,10 @@ const ModaleEditionPlanning = ({
 
 type EditionPlanningProps = {
   selectedIds: number[];
+  minDateFin: string | null;
 };
 
-const EditionPlanning = ({ selectedIds }: EditionPlanningProps) => {
+const EditionPlanning = ({ selectedIds, minDateFin }: EditionPlanningProps) => {
   const [isModalOpen, setIsModalOpen] = useState(false);
 
   return (
@@ -99,6 +104,7 @@ const EditionPlanning = ({ selectedIds }: EditionPlanningProps) => {
         <ModaleEditionPlanning
           openState={{ isOpen: isModalOpen, setIsOpen: setIsModalOpen }}
           selectedIds={selectedIds}
+          minDateFin={minDateFin}
         />
       )}
     </>
