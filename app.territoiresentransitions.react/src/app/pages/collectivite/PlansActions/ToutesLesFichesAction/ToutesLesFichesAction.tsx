@@ -36,7 +36,10 @@ export type FicheActionParam =
   | 'ac'
   | 'p'
   | 'lfa'
-  | 'sort';
+  | 'sort'
+  | 'ssp'
+  | 'sssp'
+  | 'sss';
 
 // TODO: implémenter les filtres "sans" (ex. "sans_pilote")
 export const nameToparams: Record<
@@ -69,6 +72,9 @@ export const nameToparams: Record<
   ameliorationContinue: 'ac',
   page: 'p',
   sort: 'sort',
+  sansPilote: 'ssp',
+  sansServicePilote: 'sssp',
+  sansStatut: 'sss',
 };
 
 /** Page de listing de toutes les fiches actions de la collectivité */
