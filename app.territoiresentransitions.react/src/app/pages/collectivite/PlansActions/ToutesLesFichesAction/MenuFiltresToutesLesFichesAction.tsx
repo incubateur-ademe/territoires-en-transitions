@@ -169,6 +169,39 @@ const MenuFiltresToutesLesFichesAction = ({ filters, setFilters }: Props) => {
                 });
               }}
             />
+            <Checkbox
+              label="Sans pilote"
+              checked={filters.sansPilote}
+              onChange={() => {
+                const { sansPilote, ...rest } = filters;
+                setFilters({
+                  ...rest,
+                  ...(!sansPilote ? { sansPilote: true } : {}),
+                });
+              }}
+            />
+            <Checkbox
+              label="Sans direction ou service pilote"
+              checked={filters.sansServicePilote}
+              onChange={() => {
+                const { sansServicePilote, ...rest } = filters;
+                setFilters({
+                  ...rest,
+                  ...(!sansServicePilote ? { sansServicePilote: true } : {}),
+                });
+              }}
+            />
+            <Checkbox
+              label="Sans statut"
+              checked={filters.sansStatut}
+              onChange={() => {
+                const { sansStatut, ...rest } = filters;
+                setFilters({
+                  ...rest,
+                  ...(!sansStatut ? { sansStatut: true } : {}),
+                });
+              }}
+            />
           </div>
         </div>
 

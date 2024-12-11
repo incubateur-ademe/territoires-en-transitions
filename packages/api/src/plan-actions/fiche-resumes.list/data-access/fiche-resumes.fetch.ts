@@ -235,18 +235,20 @@ export async function ficheResumesFetch({
     query.is('restreint', true);
   }
 
-  if (filtre.statuts?.length) {
-    const withStatus = filtre.statuts.filter((s) => s !== 'Sans statut');
+  if (filtre.sansPilote) {
+    query.is('pilotes', null);
+  }
 
-    if (withStatus.length) {
-      const statutCondition = `statut.in.(${withStatus.join(',')})`;
-      const nullCondition = filtre.statuts.includes('Sans statut')
-        ? ',statut.is.null'
-        : '';
-      query.or(statutCondition + nullCondition);
-    } else {
-      query.is('statut', null);
-    }
+  if (filtre.sansServicePilote) {
+    query.is('services', null);
+  }
+
+  if (filtre.sansStatut) {
+    query.is('statut', null);
+  }
+
+  if (filtre.statuts?.length) {
+    query.in('statut', filtre.statuts);
   }
 
   if (filtre.priorites?.length) {
