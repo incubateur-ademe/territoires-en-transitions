@@ -1,5 +1,5 @@
 import AccueilCard from '@/app/pages/collectivite/EtatDesLieux/Accueil/EtatDesLieux/AccueilCard';
-import { Button } from '@/ui';
+import { Button, useEventTracker } from '@/ui';
 import { referentielToName } from 'app/labels';
 import { ReferentielParamOption } from 'app/paths';
 import { useCollectiviteId } from 'core-logic/hooks/params';

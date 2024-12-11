@@ -2,10 +2,11 @@ import { avancementToLabel, referentielToName } from 'app/labels';
 import { ReferentielParamOption } from 'app/paths';
 import { actionAvancementColors } from 'app/theme';
 import { TableOptions } from 'react-table';
-import BarChartCardWithSubrows from 'ui/charts/old/BarChartCardWithSubrows';
+import BarChartCardWithSubrows, {
+  TBarChartScoreTable,
+} from 'ui/charts/old/BarChartCardWithSubrows';
 import { ProgressionRow } from '../../data/useProgressionReferentiel';
 import { getFormattedScore } from '../utils';
-import { TBarChartScoreTable } from 'ui/charts/old/BarChartCardWithSubrows';
 
 // Définition des couleurs des graphes
 const customColors = {
@@ -62,6 +63,7 @@ const ProgressionReferentiel = ({
 }: ProgressionReferentielProps): JSX.Element => {
   return (
     <BarChartCardWithSubrows
+      pageName="app/edl/synthese"
       referentiel={referentiel}
       percentage={percentage}
       score={score as TBarChartScoreTable}

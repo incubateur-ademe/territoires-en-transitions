@@ -62,9 +62,12 @@ type BarChartCardWithSubrowsProps = {
     percentage: boolean,
     customColors: {}
   ) => {}[];
+  /** pour le tracking */
+  pageName: 'app/edl/synthese' | 'app/audit/comparaison';
 };
 
 const BarChartCardWithSubrows = ({
+  pageName,
   referentiel,
   percentage,
   score,
@@ -181,7 +184,7 @@ const BarChartCardWithSubrows = ({
       : undefined,
   };
 
-  const trackEvent = useEventTracker('app/edl/synthese');
+  const trackEvent = useEventTracker(pageName);
   const collectiviteId = useCollectiviteId();
 
   return (
@@ -225,7 +228,7 @@ const BarChartCardWithSubrows = ({
         trackEvent('zoom_graph', {
           collectivite_id: collectiviteId,
           referentiel,
-          type: percentage ? 'percentage' : 'points',
+          type: relativeMode ? 'percentage' : 'points',
         })
       }
       onDownload={() =>
@@ -233,7 +236,7 @@ const BarChartCardWithSubrows = ({
         trackEvent('export_graph', {
           collectivite_id: collectiviteId,
           referentiel,
-          type: percentage ? 'percentage' : 'points',
+          type: relativeMode ? 'percentage' : 'points',
         })
       }
     />
