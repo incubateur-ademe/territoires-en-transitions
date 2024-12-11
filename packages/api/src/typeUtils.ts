@@ -26,15 +26,19 @@ export type CompositeTypes<
 export type CollectiviteTag =
   Database['public']['Tables']['partenaire_tag']['Insert'];
 
+export type LibreTag = Database['public']['Tables']['libre_tag']['Insert'];
+
 // la liste des tables correspondant au schéma CollectiviteTag
 // utilise le "key remapping" et les types conditionnels
 // Ref: https://www.typescriptlang.org/docs/handbook/2/mapped-types.html#key-remapping-via-as
 //      https://www.typescriptlang.org/docs/handbook/2/conditional-types.html
-export type TableTag = keyof {
-  [K in TableName as TablesInsert<K> extends CollectiviteTag
-    ? K
-    : never]: unknown;
-};
+export type TableTag =
+  | keyof {
+      [K in TableName as TablesInsert<K> extends CollectiviteTag
+        ? K
+        : never]: unknown;
+    }
+  | 'libre_tag';
 
 /**
   Génère, à partir d'un type, un nouveau type dont tous les champs sont non

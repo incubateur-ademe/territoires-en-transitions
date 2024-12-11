@@ -8,12 +8,15 @@ const Description = ({ fiche }: FicheActionPdfProps) => {
     description,
     ressources,
     instanceGouvernance,
+    libresTag,
   } = fiche;
 
   return (
     <Card className="bg-primary-6 border-primary-6">
       {/* Liste des thématiques et sous-thématiques sous forme de badges */}
-      {(thematiques?.length || sousThematiques?.length) && (
+      {(thematiques?.length ||
+        sousThematiques?.length ||
+        libresTag?.length) && (
         <Stack direction="row" gap={2.5} className="flex-wrap gap-y-2">
           {thematiques?.map((thematique) => (
             <Badge key={thematique.id} title={thematique.nom} state="info" />
@@ -24,6 +27,9 @@ const Description = ({ fiche }: FicheActionPdfProps) => {
               title={ssThematique.sousThematique}
               state="info"
             />
+          ))}
+          {libresTag?.map((tagPerso) => (
+            <Badge key={tagPerso.id} title={tagPerso.nom} state="default" />
           ))}
         </Stack>
       )}

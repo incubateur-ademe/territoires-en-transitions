@@ -59,7 +59,7 @@ export default class ReferentielsScoringSnapshotsService {
 
   slugifyName(name: string): string {
     if (name) {
-      return slugify(name, {
+      return slugify(name.toLowerCase(), {
         replacement: '-',
         remove: /[*+~.()'"!:@]/g,
       });
@@ -303,7 +303,7 @@ export default class ReferentielsScoringSnapshotsService {
     let scoreSnapshots: ScoreSnapshotType[] = [];
     try {
       if (snapshotForceUpdate) {
-        const existingSnapshot = await this.getScoreSnapshotInfo(
+        const existingSnapshot = await this.getSummary(
           createScoreSnapshot.collectiviteId,
           createScoreSnapshot.referentielId as ReferentielType,
           createScoreSnapshot.ref!,
@@ -352,7 +352,7 @@ export default class ReferentielsScoringSnapshotsService {
     return scoreSnapshot;
   }
 
-  async getScoreSnapshots(
+  async listSummary(
     collectiviteId: number,
     referentielId: ReferentielType,
     parameters: GetScoreSnapshotsRequestType
@@ -393,7 +393,7 @@ export default class ReferentielsScoringSnapshotsService {
     return getScoreSnapshotsResponseType;
   }
 
-  async getScoreSnapshotInfo(
+  async getSummary(
     collectiviteId: number,
     referentielId: ReferentielType,
     snapshotRef: string,
@@ -433,11 +433,12 @@ export default class ReferentielsScoringSnapshotsService {
     return result.length ? result[0] : null;
   }
 
-  async getFullScoreSnapshot(
+  async get(
     collectiviteId: number,
     referentielId: ReferentielType,
-    snapshotRef: string
-  ): Promise<GetReferentielScoresResponseType> {
+    snapshotRef: string,
+    doNotThrowIfNotFound?: boolean
+  ): Promise<GetReferentielScoresResponseType | null> {
     const result = (await this.databaseService.db
       .select()
       .from(scoreSnapshotTable)
@@ -450,9 +451,13 @@ export default class ReferentielsScoringSnapshotsService {
       )) as ScoreSnapshotType[];
 
     if (!result.length) {
-      throw new NotFoundException(
-        `Aucun snapshot de score avec la référence ${snapshotRef} n'a été trouvé pour la collectivité ${collectiviteId} et le referentiel ${referentielId}`
-      );
+      if (!doNotThrowIfNotFound) {
+        throw new NotFoundException(
+          `Aucun snapshot de score avec la référence ${snapshotRef} n'a été trouvé pour la collectivité ${collectiviteId} et le referentiel ${referentielId}`
+        );
+      } else {
+        return null;
+      }
     }
 
     const fullScores = result[0].referentielScores;
@@ -467,7 +472,7 @@ export default class ReferentielsScoringSnapshotsService {
     return fullScores;
   }
 
-  async deleteScoreSnapshot(
+  async delete(
     collectiviteId: number,
     referentielId: ReferentielType,
     snapshotRef: string,
@@ -479,7 +484,7 @@ export default class ReferentielsScoringSnapshotsService {
       NiveauAcces.EDITION
     );
 
-    const snapshotInfo = await this.getScoreSnapshotInfo(
+    const snapshotInfo = await this.getSummary(
       collectiviteId,
       referentielId,
       snapshotRef

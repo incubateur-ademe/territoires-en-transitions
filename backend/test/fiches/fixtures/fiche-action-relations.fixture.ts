@@ -53,6 +53,10 @@ export const fichesLieesFixture = {
   id: 1,
 };
 
-export const resultatAttenduFixture = {
+export const resultatsAttendusFixture = {
   id: 4,
+};
+
+export const libresFixture = {
+  id: 1,
 };

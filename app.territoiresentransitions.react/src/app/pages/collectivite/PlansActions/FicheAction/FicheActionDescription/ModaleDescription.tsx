@@ -14,6 +14,7 @@ import { useCurrentCollectivite } from 'core-logic/hooks/useCurrentCollectivite'
 import _ from 'lodash';
 import { useState } from 'react';
 import SousThematiquesDropdown from 'ui/dropdownLists/SousThematiquesDropdown/SousThematiquesDropdown';
+import TagsSuiviPersoDropdown from 'ui/dropdownLists/TagsSuiviPersoDropdown/TagsSuiviPersoDropdown';
 import ThematiquesDropdown from 'ui/dropdownLists/ThematiquesDropdown/ThematiquesDropdown';
 import { getMaxLengthMessage } from 'utils/formatUtils';
 
@@ -67,7 +68,7 @@ const ModaleDescription = ({ fiche, updateFiche }: ModaleDescriptionProps) => {
           </Field>
 
           {/* Dropdown thématiques */}
-          <Field title="Thématique" className="col-span-2">
+          <Field title="Thématique">
             <ThematiquesDropdown
               values={editedFiche.thematiques?.map((t) => t.id)}
               onChange={({ thematiques }) =>
@@ -80,7 +81,7 @@ const ModaleDescription = ({ fiche, updateFiche }: ModaleDescriptionProps) => {
           </Field>
 
           {/* Dropdown sous-thématiques */}
-          <Field title="Sous-thématique" className="col-span-2">
+          <Field title="Sous-thématique">
             <SousThematiquesDropdown
               thematiques={(editedFiche.thematiques ?? []).map(
                 (t: Thematique) => t.id
@@ -92,6 +93,16 @@ const ModaleDescription = ({ fiche, updateFiche }: ModaleDescriptionProps) => {
                   sousThematiques,
                 }));
               }}
+            />
+          </Field>
+
+          {/* Dropdown tags personnalisés */}
+          <Field title="Mes tags de suivi" className="col-span-2">
+            <TagsSuiviPersoDropdown
+              values={editedFiche.libresTag?.map((t) => t.id!)}
+              onChange={({ libresTag }) =>
+                setEditedFiche((prevState) => ({ ...prevState, libresTag }))
+              }
             />
           </Field>
 

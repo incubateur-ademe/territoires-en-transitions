@@ -8,6 +8,9 @@ import { CountByStatutRouter } from '../fiches/count-by-statut/count-by-statut.r
 import { FicheActionEtapeRouter } from '../fiches/fiche-action-etape/fiche-action-etape.router';
 import { IndicateurFiltreRouter } from '../indicateurs/indicateur-filtre/indicateur-filtre.router';
 import { TrajectoiresRouter } from '../indicateurs/routers/trajectoires.router';
+import { ComputeScoreRouter } from '../referentiels/compute-score/compute-score.router';
+import { ScoreSnapshotsRouter } from '../referentiels/snapshots/score-snaphots.router';
+import { UpdateActionStatutRouter } from '../referentiels/update-action-statut/update-action-statut.router';
 import { GetCategoriesByCollectiviteRouter } from '../taxonomie/routers/get-categories-by-collectivite.router';
 import { createContext, TrpcService } from './trpc.service';
 
@@ -25,7 +28,10 @@ export class TrpcRouter {
     private readonly ficheActionEtapeRouter: FicheActionEtapeRouter,
     private readonly indicateurFiltreRouter: IndicateurFiltreRouter,
     private readonly bulkEditRouter: BulkEditRouter,
-    private readonly membresRouter: CollectiviteMembresRouter
+    private readonly membresRouter: CollectiviteMembresRouter,
+    private readonly updateActionStatutRouter: UpdateActionStatutRouter,
+    private readonly scoreSnapshotsRouter: ScoreSnapshotsRouter,
+    private readonly computeScoreRouter: ComputeScoreRouter
   ) {}
 
   appRouter = this.trpc.router({
@@ -46,6 +52,11 @@ export class TrpcRouter {
     },
     tags: {
       categories: this.getCategoriesByCollectiviteRouter.router,
+    },
+    referentiels: {
+      actions: this.updateActionStatutRouter.router,
+      snapshots: this.scoreSnapshotsRouter.router,
+      scores: this.computeScoreRouter.router,
     },
   });
 

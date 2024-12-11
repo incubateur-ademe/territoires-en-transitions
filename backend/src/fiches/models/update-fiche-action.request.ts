@@ -3,6 +3,7 @@ import { indicateurDefinitionSchema } from '../../indicateurs/models/indicateur-
 import { actionRelationSchema } from '../../referentiels/models/action-relation.table';
 import { effetAttenduSchema } from '../../taxonomie/models/effet-attendu.table';
 import { financeurTagSchema } from '../../taxonomie/models/financeur-tag.table';
+import { libreTagSchema } from '../../taxonomie/models/libre-tag.table';
 import { partenaireTagSchema } from '../../taxonomie/models/partenaire-tag.table';
 import { serviceTagSchema } from '../../taxonomie/models/service-tag.table';
 import { sousThematiqueSchema } from '../../taxonomie/models/sous-thematique.table';
@@ -82,6 +83,14 @@ export const updateFicheActionRequestSchema = updateFicheActionSchema.extend({
   financeurs: z.array(financeurWithMontantSchema).nullish(),
   fichesLiees: ficheActionSchema.pick({ id: true }).array().nullish(),
   resultatsAttendus: effetAttenduSchema.pick({ id: true }).array().nullish(),
+  libresTag: z
+    .array(
+      z.union([
+        libreTagSchema.pick({ id: true }),
+        libreTagSchema.pick({ nom: true }),
+      ])
+    )
+    .nullish(),
 });
 
 export type UpdateFicheActionRequestType = z.infer<

@@ -6,7 +6,8 @@ export type TypeTag =
   | 'partenaire'
   | 'categorie'
   | 'financeur'
-  | 'structure';
+  | 'structure'
+  | 'libre';
 
 export const tagSchema = z.object({
   id: z.number(),

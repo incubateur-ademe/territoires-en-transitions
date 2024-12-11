@@ -226,6 +226,8 @@ export interface TrackingPlan extends Record<never, Page> {
     properties: { collectivite_id: number };
     onglets: never;
     events: {
+      editer_personne_pilote_groupe: {};
+      associer_statut_groupe: {};
       export_PDF_telechargement_groupe: {};
     };
   };

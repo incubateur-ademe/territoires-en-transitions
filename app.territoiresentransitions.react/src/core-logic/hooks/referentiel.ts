@@ -1,11 +1,11 @@
-import {useEffect, useState} from 'react';
+import { useEffect, useState } from 'react';
 import {
   actionDownToTache,
   actionPreuve,
   referentielDownToAction,
 } from 'core-logic/api/procedures/referentielProcedures';
-import {Referentiel} from 'types/litterals';
-import {parentId} from 'utils/actions';
+import { Referentiel } from 'types/litterals';
+import { parentId } from 'utils/actions';
 import {
   ActionTitleRead,
   actionTitleReadEndpoint,
@@ -25,7 +25,7 @@ export const useActionDownToTache = (
   const [summaries, setSummaries] = useState<ActionDefinitionSummary[]>([]);
 
   useEffect(() => {
-    actionDownToTache(referentiel, identifiant).then(definitions =>
+    actionDownToTache(referentiel, identifiant).then((definitions) =>
       setSummaries(definitions)
     );
   }, [referentiel, identifiant]);
@@ -43,7 +43,7 @@ export const useReferentielDownToAction = (
   const [summaries, setSummaries] = useState<ActionDefinitionSummary[]>([]);
 
   useEffect(() => {
-    referentielDownToAction(referentiel).then(definitions =>
+    referentielDownToAction(referentiel).then((definitions) =>
       setSummaries(definitions)
     );
   }, [referentiel]);
@@ -57,7 +57,7 @@ export const useActionPreuve = (actionId: string) => {
   const [preuve, setPreuve] = useState<string>('...');
 
   useEffect(() => {
-    actionPreuve(actionId).then(preuve => setPreuve(preuve.preuve));
+    actionPreuve(actionId).then((preuve) => setPreuve(preuve.preuve));
   }, [actionId]);
 
   return preuve;
@@ -119,7 +119,7 @@ export const useSortedActionSummaryChildren = (
     [id: string]: ActionDefinitionSummary[];
   } = {};
 
-  actions.forEach(act => {
+  actions.forEach((act) => {
     if (sortedActions[act.phase]) {
       sortedActions[act.phase].push(act);
     } else {
@@ -130,14 +130,14 @@ export const useSortedActionSummaryChildren = (
     }
   });
 
-  return {sortedActions, count: actions.length};
+  return { sortedActions, count: actions.length };
 };
 
 /**
  * Returns action titles relative to the scope
  */
 export const useActionTitleList = (
-  scope: 'all' | 'cae' | 'eci'
+  scope: 'all' | 'cae' | 'eci' | 'te' | 'te-test'
 ): ActionTitleRead[] => {
   const [actionTitles, setActionTitles] = useState<ActionTitleRead[]>([]);
 
@@ -145,7 +145,9 @@ export const useActionTitleList = (
     if (scope === 'all')
       actionTitleReadEndpoint.getBy({}).then(setActionTitles);
     else
-      actionTitleReadEndpoint.getBy({referentiel: scope}).then(setActionTitles);
+      actionTitleReadEndpoint
+        .getBy({ referentiel: scope })
+        .then(setActionTitles);
   }, [scope]);
 
   return actionTitles;
@@ -163,8 +165,8 @@ export const useActionSummary = (
 
   useEffect(() => {
     actionDefinitionSummaryReadEndpoint
-      .getBy({referentiel, identifiant})
-      .then(list => setActionSummary(list.length === 0 ? null : list[0]));
+      .getBy({ referentiel, identifiant })
+      .then((list) => setActionSummary(list.length === 0 ? null : list[0]));
   }, [referentiel, identifiant]);
 
   return actionSummary ?? null;

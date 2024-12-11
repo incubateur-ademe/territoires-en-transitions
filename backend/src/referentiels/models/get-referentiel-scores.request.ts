@@ -14,8 +14,10 @@ export const getReferentielScoresRequestSchema = extendApi(
       ),
 
     avecReferentielsOrigine: z
-      .enum(['true', 'false'])
-      .transform((value) => value === 'true')
+      .union([
+        z.enum(['true', 'false']).transform((value) => value === 'true'),
+        z.boolean(),
+      ])
       .optional()
       .describe(
         `Indique si les scores des actions doivent être calculés à partir des avancement dans les référentiels d'origine. Utilisé pour le bac à sable lors de la création de nouveaux référentiels à partir de référentiels existants`
@@ -46,8 +48,10 @@ export const getReferentielScoresRequestSchema = extendApi(
       .optional()
       .describe(`Année de l'audit pour le jalon`),
     snapshot: z
-      .enum(['true', 'false'])
-      .transform((value) => value === 'true')
+      .union([
+        z.enum(['true', 'false']).transform((value) => value === 'true'),
+        z.boolean(),
+      ])
       .optional()
       .describe(
         `Indique si le score doit être sauvegardé. Si c'est le cas, l'utilisateur doit avoir le droit d'écriture sur la collectivité`
@@ -59,8 +63,10 @@ export const getReferentielScoresRequestSchema = extendApi(
         `Nom du snapshot de score à sauvegarder. Ne peut être défini que pour une date personnalisée, sinon un nom par défaut est utilisé`
       ),
     snapshotForceUpdate: z
-      .enum(['true', 'false'])
-      .transform((value) => value === 'true')
+      .union([
+        z.enum(['true', 'false']).transform((value) => value === 'true'),
+        z.boolean(),
+      ])
       .optional()
       .describe(`Force l'update du snapshot même si il existe déjà`),
   })
