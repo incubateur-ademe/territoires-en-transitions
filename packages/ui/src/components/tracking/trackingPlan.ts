@@ -76,6 +76,17 @@ type IndicateursFiltres = {
   hasOpenData?: boolean;
 };
 
+type EventsGraphReferentiel = {
+  zoom_graph: {
+    referentiel: string;
+    type: 'points' | 'percentage' | 'phase';
+  };
+  export_graph: {
+    referentiel: string;
+    type: 'points' | 'percentage' | 'phase';
+  };
+};
+
 /**
  * Permet de respecter le plan de tracking.
  */
@@ -83,16 +94,13 @@ export interface TrackingPlan extends Record<never, Page> {
   'app/edl/synthese': {
     properties: { collectivite_id: number };
     onglets: never;
-    events: {
-      zoom_graph: {
-        referentiel: string;
-        type: 'points' | 'percentage' | 'phase';
-      };
-      export_graph: {
-        referentiel: string;
-        type: 'points' | 'percentage' | 'phase';
-      };
-    };
+    events: EventsGraphReferentiel;
+  };
+
+  'app/audit/comparaison': {
+    properties: { collectivite_id: number };
+    onglets: never;
+    events: EventsGraphReferentiel;
   };
 
   /** Page "Tous les indicateurs" */
