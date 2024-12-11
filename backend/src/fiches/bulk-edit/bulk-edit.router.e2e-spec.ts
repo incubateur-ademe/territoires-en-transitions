@@ -9,7 +9,9 @@ import {
   getTestRouter,
 } from '../../../test/common/app-utils';
 import { AuthenticatedUser } from '../../auth/models/auth.models';
+import { libreTagTable } from '../../taxonomie/models/libre-tag.table';
 import { AppRouter, TrpcRouter } from '../../trpc/trpc.router';
+import { ficheActionLibreTagTable } from '../models/fiche-action-libre-tag.table';
 import { ficheActionPiloteTable } from '../models/fiche-action-pilote.table';
 import {
   FicheActionStatutsEnumType,
@@ -62,6 +64,17 @@ describe('BulkEditRouter', () => {
       .from(ficheActionPiloteTable)
       .where(inArray(ficheActionPiloteTable.ficheId, ficheIds))
       .groupBy(ficheActionPiloteTable.ficheId);
+  }
+
+  function getFichesWithLibreTags(ficheIds: number[]) {
+    return db.db
+      .select({
+        ficheId: ficheActionLibreTagTable.ficheId,
+        libreTagIds: sql`array_remove(array_agg(${ficheActionLibreTagTable.libreTagId}), NULL)`,
+      })
+      .from(ficheActionLibreTagTable)
+      .where(inArray(ficheActionLibreTagTable.ficheId, ficheIds))
+      .groupBy(ficheActionLibreTagTable.ficheId);
   }
 
   beforeAll(async () => {
@@ -164,6 +177,80 @@ describe('BulkEditRouter', () => {
       await db.db
         .delete(ficheActionPiloteTable)
         .where(inArray(ficheActionPiloteTable.ficheId, ficheIds));
+    });
+  });
+
+  test('authenticated, bulk edit `libreTags`', async () => {
+    function createLibreTagIds() {
+      return db.db
+        .insert(libreTagTable)
+        .values([
+          {
+            collectiviteId: COLLECTIVITE_ID,
+            nom: 'tag-1',
+          },
+          {
+            collectiviteId: COLLECTIVITE_ID,
+            nom: 'tag-2',
+          },
+        ])
+        .returning()
+        .then((tags) => tags.map((tag) => tag.id));
+    }
+
+    const caller = router.createCaller({ user: yoloDodo });
+    const tagIds = await createLibreTagIds();
+
+    const input = {
+      ficheIds,
+      libreTags: {
+        add: [{ id: tagIds[0] }],
+      },
+    } satisfies Input;
+
+    const result = await caller.plans.fiches.bulkEdit(input);
+    expect(result).toBeUndefined();
+
+    // Verify that all fiches have been updated with libreTags
+    const fiches = await getFichesWithLibreTags(ficheIds);
+
+    for (const fiche of fiches) {
+      expect(fiche.libreTagIds).toContain(input.libreTags.add[0].id);
+    }
+
+    // Add again the same libreTags to check there is no conflict error
+    await caller.plans.fiches.bulkEdit(input);
+    expect(result).toBeUndefined();
+
+    // Remove one pilote and add another one
+    const input2 = {
+      ficheIds,
+      libreTags: {
+        add: [{ id: tagIds[1] }],
+        remove: [{ id: input.libreTags.add[0].id }],
+      },
+    } satisfies Input;
+
+    await caller.plans.fiches.bulkEdit(input2);
+    expect(result).toBeUndefined();
+
+    // Verify that all fiches have been updated with libreTags
+    const updatedFiches = await getFichesWithLibreTags(ficheIds);
+
+    for (const fiche of updatedFiches) {
+      expect(fiche.libreTagIds).toContain(input2.libreTags.add[0].id);
+      expect(fiche.libreTagIds).not.toContain(input.libreTags.add[0].id);
+    }
+
+    // Delete inserted or existing pilotes after test
+    onTestFinished(async () => {
+      await db.db
+        .delete(ficheActionLibreTagTable)
+        .where(inArray(ficheActionLibreTagTable.ficheId, ficheIds));
+
+      await db.db
+        .delete(libreTagTable)
+        .where(inArray(libreTagTable.id, tagIds));
     });
   });
 

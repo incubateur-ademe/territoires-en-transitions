@@ -5,6 +5,7 @@ import { Injectable } from '@nestjs/common';
 import { and, inArray, or } from 'drizzle-orm';
 import z from 'zod';
 import { AuthService } from '../../auth/services/auth.service';
+import { ficheActionLibreTagTable } from '../models/fiche-action-libre-tag.table';
 import { ficheActionPiloteTable } from '../models/fiche-action-pilote.table';
 import {
   ficheActionSchema,
@@ -28,8 +29,12 @@ export class BulkEditService {
     dateFin: ficheActionSchema.shape.dateFin.optional(),
     ameliorationContinue:
       ficheActionSchema.shape.ameliorationContinue.optional(),
+
     pilotes: listSchema(
       updateFicheActionRequestSchema.shape.pilotes.unwrap().unwrap()
+    ),
+    libreTags: listSchema(
+      updateFicheActionRequestSchema.shape.libresTag.unwrap().unwrap()
     ),
   });
 
@@ -52,7 +57,7 @@ export class BulkEditService {
       NiveauAcces.EDITION
     );
 
-    const { pilotes, ...plainValues } = params;
+    const { pilotes, libreTags, ...plainValues } = params;
 
     await this.db.transaction(async (tx) => {
       // Update plain values
@@ -63,7 +68,7 @@ export class BulkEditService {
           .where(inArray(ficheActionTable.id, ficheIds));
       }
 
-      // Update external relations
+      // Update external relation `pilotes`
       if (pilotes !== undefined) {
         if (pilotes.add?.length) {
           const values = ficheIds.flatMap((ficheId) => {
@@ -97,6 +102,36 @@ export class BulkEditService {
                   inArray(ficheActionPiloteTable.tagId, tagIds),
                   inArray(ficheActionPiloteTable.userId, userIds)
                 )
+              )
+            );
+        }
+      }
+
+      // Update external relation `libreTags`
+      if (libreTags !== undefined) {
+        if (libreTags.add?.length) {
+          const values = ficheIds.flatMap((ficheId) => {
+            return (libreTags.add ?? []).map((tag) => ({
+              ficheId,
+              libreTagId: tag.id,
+            }));
+          });
+
+          await tx
+            .insert(ficheActionLibreTagTable)
+            .values(values)
+            .onConflictDoNothing();
+        }
+
+        if (libreTags.remove?.length) {
+          const ids = libreTags.remove.map((tag) => tag.id) as number[];
+
+          await tx
+            .delete(ficheActionLibreTagTable)
+            .where(
+              and(
+                inArray(ficheActionLibreTagTable.ficheId, ficheIds),
+                inArray(ficheActionLibreTagTable.libreTagId, ids)
               )
             );
         }
