@@ -7,11 +7,16 @@ import { makeCollectiviteToutesLesFichesUrl } from '@/app/paths';
 export const makeFichesActionUrlWithParams = (
   collectiviteId: number,
   filtres: Filtre,
-  statut: Statut
+  statut: Statut | 'Sans statut'
 ): string => {
-  const baseUrl = `${makeCollectiviteToutesLesFichesUrl({
-    collectiviteId,
-  })}?s=${statut}`;
+  const baseUrl =
+    statut === 'Sans statut'
+      ? `${makeCollectiviteToutesLesFichesUrl({
+          collectiviteId,
+        })}?sss=true`
+      : `${makeCollectiviteToutesLesFichesUrl({
+          collectiviteId,
+        })}?s=${statut}`;
 
   const searchParams = new URLSearchParams();
 
