@@ -1,8 +1,8 @@
-import {useCurrentCollectivite} from 'core-logic/hooks/useCurrentCollectivite';
-import {useState} from 'react';
-import {Modal} from '@tet/ui';
-import {AddPreuveModal} from 'ui/shared/preuves/AddPreuveModal';
-import {useAddPreuveToDemande} from './useAddPreuveToDemande';
+import { Modal } from '@/ui';
+import { useCurrentCollectivite } from 'core-logic/hooks/useCurrentCollectivite';
+import { useState } from 'react';
+import { AddPreuveModal } from 'ui/shared/preuves/AddPreuveModal';
+import { useAddPreuveToDemande } from './useAddPreuveToDemande';
 
 /**
  * Affiche un bouton permettant d'ouvrir le sélecteur de fichiers pour ajouter
@@ -19,9 +19,9 @@ export const AddDocsButton = () => {
   return (
     <Modal
       size="lg"
-      openState={{isOpen: opened, setIsOpen: setOpened}}
+      openState={{ isOpen: opened, setIsOpen: setOpened }}
       title="Ajouter un document"
-      render={({close}) => {
+      render={({ close }) => {
         return <AddPreuveModal onClose={close} handlers={handlers} />;
       }}
     >

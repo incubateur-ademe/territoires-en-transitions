@@ -1,5 +1,5 @@
-import { Views, Json } from '@tet/api';
-import { supabase } from '@tet/site/app/initSupabase';
+import { Json, Views } from '@/api';
+import { supabase } from '@/site/app/initSupabase';
 import useSWR from 'swr';
 
 export type labellisation_w_geojson = Views<'site_labellisation'> & {

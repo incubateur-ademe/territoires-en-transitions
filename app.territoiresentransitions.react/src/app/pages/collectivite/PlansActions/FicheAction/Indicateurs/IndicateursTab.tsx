@@ -1,6 +1,6 @@
-import IndicateursHeader from './IndicateursHeader';
+import { FicheAction } from '@/api/plan-actions';
 import IndicateursAssocies from './IndicateursAssocies';
-import { FicheAction } from '@tet/api/plan-actions';
+import IndicateursHeader from './IndicateursHeader';
 
 type IndicateursTabProps = {
   isReadonly: boolean;

@@ -1,5 +1,5 @@
+import { DBClient } from '@/api/typeUtils';
 import { objectToCamel } from 'ts-case-convert';
-import { DBClient } from '@tet/api/typeUtils';
 
 import {
   FiltreRessourceLiees,

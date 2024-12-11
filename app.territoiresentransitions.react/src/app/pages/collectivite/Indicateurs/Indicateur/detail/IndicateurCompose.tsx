@@ -1,4 +1,4 @@
-import { IndicateurDefinition } from '@tet/api/indicateurs/domain';
+import { IndicateurDefinition } from '@/api/indicateurs/domain';
 import { useIndicateurDefinitions } from 'app/pages/collectivite/Indicateurs/Indicateur/useIndicateurDefinition';
 import { IndicateurEnfant } from './IndicateurEnfant';
 

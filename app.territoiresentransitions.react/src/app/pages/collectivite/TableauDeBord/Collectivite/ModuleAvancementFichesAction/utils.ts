@@ -1,7 +1,7 @@
-import { Statut } from '@tet/api/plan-actions';
-import { Filtre } from '@tet/api/plan-actions/dashboards/collectivite-dashboard/domain/fiches-synthese.schema';
-import { FicheActionParam } from '@tet/app/pages/collectivite/PlansActions/ToutesLesFichesAction/ToutesLesFichesAction';
-import { makeCollectiviteToutesLesFichesUrl } from '@tet/app/paths';
+import { Statut } from '@/api/plan-actions';
+import { Filtre } from '@/api/plan-actions/dashboards/collectivite-dashboard/domain/fiches-synthese.schema';
+import { FicheActionParam } from '@/app/pages/collectivite/PlansActions/ToutesLesFichesAction/ToutesLesFichesAction';
+import { makeCollectiviteToutesLesFichesUrl } from '@/app/paths';
 
 /** Permet de transformer les filtres de modules fiches action en paramètres d'URL */
 export const makeFichesActionUrlWithParams = (

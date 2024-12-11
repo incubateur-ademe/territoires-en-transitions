@@ -1,11 +1,11 @@
 'use client';
 
-import { FeatureGroup, GeoJSON, Tooltip } from 'react-leaflet';
+import { Json, Views } from '@/api';
+import { convertNameToSlug } from '@/site/src/utils/convertNameToSlug';
 import { GeoJsonObject } from 'geojson';
-import { Views, Json } from '@tet/api';
 import { PathOptions } from 'leaflet';
 import { useRouter } from 'next/navigation';
-import { convertNameToSlug } from '@tet/site/src/utils/convertNameToSlug';
+import { FeatureGroup, GeoJSON, Tooltip } from 'react-leaflet';
 
 type labellisation_w_geojson = Views<'site_labellisation'> & { geojson?: Json };
 

@@ -1,14 +1,14 @@
-import { usePlanActionTableauDeBord } from './data/usePlanActionTableauDeBord';
-import PictoLeaf from 'ui/pictogrammes/PictoLeaf';
-import Link from 'next/link';
+import { Card } from '@/ui';
 import {
   makeCollectivitePlansActionsNouveauUrl,
   makeCollectivitePlansActionsSyntheseVueUrl,
 } from 'app/paths';
+import Link from 'next/link';
+import Chart from 'ui/charts/Chart';
+import PictoLeaf from 'ui/pictogrammes/PictoLeaf';
+import { usePlanActionTableauDeBord } from './data/usePlanActionTableauDeBord';
 import { PlanActionFilter } from './FiltersPlanAction';
 import { generateSyntheseGraphData } from './utils';
-import Chart from 'ui/charts/Chart';
-import { Card } from '@tet/ui';
 
 type SyntheseGraphsListProps = {
   collectiviteId: number;

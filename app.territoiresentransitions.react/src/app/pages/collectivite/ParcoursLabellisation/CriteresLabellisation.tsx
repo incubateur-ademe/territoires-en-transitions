@@ -1,16 +1,16 @@
-import {TLabellisationParcours} from 'app/pages/collectivite/ParcoursLabellisation/types';
-import {CritereScore} from './CritereScore';
-import {CriteresAction} from './CriteresAction';
-import {CriterePreuves} from './CriterePreuves';
-import {numLabels} from './numLabels';
-import {CritereCompletude} from './CritereCompletude';
-import {TPreuveLabellisation} from 'ui/shared/preuves/Bibliotheque/types';
-import {useCollectiviteId, useReferentielId} from 'core-logic/hooks/params';
+import { Alert } from '@/ui';
+import { TLabellisationParcours } from 'app/pages/collectivite/ParcoursLabellisation/types';
+import { useCollectiviteId, useReferentielId } from 'core-logic/hooks/params';
+import { TPreuveLabellisation } from 'ui/shared/preuves/Bibliotheque/types';
+import { CritereCompletude } from './CritereCompletude';
+import { CriterePreuves } from './CriterePreuves';
+import { CritereScore } from './CritereScore';
+import { CriteresAction } from './CriteresAction';
+import { numLabels } from './numLabels';
 import {
   useCycleLabellisation,
   usePreuvesLabellisation,
 } from './useCycleLabellisation';
-import {Alert} from '@tet/ui';
 
 export type TCriteresLabellisationProps = {
   collectiviteId: number;
@@ -23,9 +23,9 @@ export type TCriteresLabellisationProps = {
  * Affiche la liste des critères à remplir pour un niveau de labellisation
  */
 export const CriteresLabellisation = (props: TCriteresLabellisationProps) => {
-  const {parcours} = props;
-  const {etoiles, critere_score} = parcours;
-  const {atteint, score_a_realiser} = critere_score;
+  const { parcours } = props;
+  const { etoiles, critere_score } = parcours;
+  const { atteint, score_a_realiser } = critere_score;
 
   return (
     <>
@@ -59,7 +59,7 @@ export const CriteresLabellisation = (props: TCriteresLabellisationProps) => {
 const CriteresLabellisationConnected = () => {
   const collectiviteId = useCollectiviteId();
   const referentiel = useReferentielId();
-  const {parcours, isCOT} = useCycleLabellisation(referentiel);
+  const { parcours, isCOT } = useCycleLabellisation(referentiel);
   const preuves = usePreuvesLabellisation(parcours?.demande?.id);
 
   return collectiviteId && parcours ? (

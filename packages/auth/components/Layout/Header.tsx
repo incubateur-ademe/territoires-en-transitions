@@ -1,6 +1,6 @@
 'use client';
 
-import {HeaderTeT} from '@tet/ui';
+import { HeaderTeT } from '@/ui';
 
 // wrapper du Header avec le use client
 const Header = () => {

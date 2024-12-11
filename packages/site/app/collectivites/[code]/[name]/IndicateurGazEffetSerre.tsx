@@ -1,8 +1,8 @@
-import { Indicateurs } from '@tet/site/app/collectivites/utils';
-import { IndicateurDefaultData } from './IndicateursCollectivite';
-import { secteurIdToLabel } from '@tet/site/src/utils/labels';
+import { Indicateurs } from '@/site/app/collectivites/utils';
+import { getFormattedNumber } from '@/site/src/utils/getFormattedNumber';
+import { secteurIdToLabel } from '@/site/src/utils/labels';
 import IndicateurCard from './IndicateurCard';
-import { getFormattedNumber } from '@tet/site/src/utils/getFormattedNumber';
+import { IndicateurDefaultData } from './IndicateursCollectivite';
 
 const getYear = (dateIso: string) => new Date(dateIso).getFullYear();
 

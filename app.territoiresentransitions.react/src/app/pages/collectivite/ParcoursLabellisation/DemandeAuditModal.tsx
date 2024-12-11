@@ -1,25 +1,25 @@
-import {useState} from 'react';
+import { Alert } from '@/ui';
 import classNames from 'classnames';
+import { useState } from 'react';
 import Modal from 'ui/shared/floating-ui/Modal';
-import {TSujetDemande} from './types';
-import {useEnvoiDemande} from './useEnvoiDemande';
 import {
   TDemandeLabellisationModalProps,
-  submittedEtoile1,
   submittedAutresEtoiles,
+  submittedEtoile1,
 } from './DemandeLabellisationModal';
-import {MessageCompletudeECi} from './MessageCompletudeECi';
-import {usePreuvesLabellisation} from './useCycleLabellisation';
-import {Alert} from '@tet/ui';
+import { MessageCompletudeECi } from './MessageCompletudeECi';
+import { TSujetDemande } from './types';
+import { usePreuvesLabellisation } from './useCycleLabellisation';
+import { useEnvoiDemande } from './useEnvoiDemande';
 
 /**
  * Affiche la modale de sélection du type d'audit souhaité et d'envoie de la
  * demande d'audit
  */
 export const DemandeAuditModal = (props: TDemandeLabellisationModalProps) => {
-  const {parcoursLabellisation, opened, setOpened} = props;
-  const {parcours} = parcoursLabellisation;
-  const {collectivite_id, referentiel} = parcours || {};
+  const { parcoursLabellisation, opened, setOpened } = props;
+  const { parcours } = parcoursLabellisation;
+  const { collectivite_id, referentiel } = parcours || {};
 
   if (!collectivite_id || !referentiel) {
     return null;
@@ -30,7 +30,7 @@ export const DemandeAuditModal = (props: TDemandeLabellisationModalProps) => {
       externalOpen={opened}
       setExternalOpen={setOpened}
       size="lg"
-      render={({close}) => (
+      render={({ close }) => (
         <DemandeAuditModalContent {...props} onClose={close} />
       )}
     />
@@ -38,12 +38,12 @@ export const DemandeAuditModal = (props: TDemandeLabellisationModalProps) => {
 };
 
 export const DemandeAuditModalContent = (
-  props: TDemandeLabellisationModalProps & {onClose: () => void}
+  props: TDemandeLabellisationModalProps & { onClose: () => void }
 ) => {
-  const {isLoading, envoiDemande} = useEnvoiDemande();
-  const {parcoursLabellisation, onClose, isCOT} = props;
-  const {parcours, status, labellisable} = parcoursLabellisation;
-  const {collectivite_id, referentiel, etoiles} = parcours || {};
+  const { isLoading, envoiDemande } = useEnvoiDemande();
+  const { parcoursLabellisation, onClose, isCOT } = props;
+  const { parcours, status, labellisable } = parcoursLabellisation;
+  const { collectivite_id, referentiel, etoiles } = parcours || {};
   const [sujet, setSujet] = useState<TSujetDemande | null>(
     labellisable ? null : 'cot'
   );
@@ -103,7 +103,7 @@ export const DemandeAuditModalContent = (
               </RadioButton>
             </fieldset>
             {aide}
-            <div className={classNames({'fr-mt-2w': !aide})}>
+            <div className={classNames({ 'fr-mt-2w': !aide })}>
               <button
                 className="fr-btn"
                 data-test="EnvoyerDemandeBtn"

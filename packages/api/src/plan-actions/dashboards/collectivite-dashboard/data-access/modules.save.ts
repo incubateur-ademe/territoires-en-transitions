@@ -1,12 +1,12 @@
+import { TablesInsert } from '@/api/database.types';
+import { DBClient } from '@/api/typeUtils';
 import { objectToSnake } from 'ts-case-convert';
-import { DBClient } from '@tet/api/typeUtils';
 import {
   ModuleInsert,
   moduleCommonSchemaInsert,
   moduleFicheActionCountByStatusSchema,
   modulePlanActionListSchema,
 } from '../domain/module.schema';
-import { TablesInsert } from '@tet/api/database.types';
 
 type Props = {
   dbClient: DBClient;

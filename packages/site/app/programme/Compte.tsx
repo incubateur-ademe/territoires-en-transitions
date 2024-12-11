@@ -1,12 +1,12 @@
 'use client';
 
-import Markdown from '@tet/site/components/markdown/Markdown';
-import Section from '@tet/site/components/sections/Section';
-import { StrapiImage } from '@tet/site/components/strapiImage/StrapiImage';
-import { Button, useEventTracker } from '@tet/ui';
-import Arrow from '@tet/site/app/outil-numerique/Arrow';
-import { useEvolutionTotalActivation } from '@tet/site/app/stats/EvolutionTotalActivationParType';
-import { StrapiItem } from '@tet/site/src/strapi/StrapiItem';
+import Arrow from '@/site/app/outil-numerique/Arrow';
+import { useEvolutionTotalActivation } from '@/site/app/stats/EvolutionTotalActivationParType';
+import Markdown from '@/site/components/markdown/Markdown';
+import Section from '@/site/components/sections/Section';
+import { StrapiImage } from '@/site/components/strapiImage/StrapiImage';
+import { StrapiItem } from '@/site/src/strapi/StrapiItem';
+import { Button, useEventTracker } from '@/ui';
 
 type CompteProps = {
   titre: string;

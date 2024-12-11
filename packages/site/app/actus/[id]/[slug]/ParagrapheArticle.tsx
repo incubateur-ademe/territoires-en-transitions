@@ -1,6 +1,6 @@
-import Markdown from '@tet/site/components/markdown/Markdown';
-import { StrapiImage } from '@tet/site/components/strapiImage/StrapiImage';
-import { ParagrapheCustomArticleData } from '@tet/site/app/types';
+import { ParagrapheCustomArticleData } from '@/site/app/types';
+import Markdown from '@/site/components/markdown/Markdown';
+import { StrapiImage } from '@/site/components/strapiImage/StrapiImage';
 import classNames from 'classnames';
 
 type ParagrapheArticleProps = {

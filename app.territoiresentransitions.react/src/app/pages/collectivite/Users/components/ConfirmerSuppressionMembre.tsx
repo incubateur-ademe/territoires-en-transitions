@@ -1,6 +1,6 @@
-import {Dispatch, SetStateAction} from 'react';
-import {Modal, ModalFooterOKCancel} from '@tet/ui';
-import {Membre, TRemoveFromCollectivite} from '../types';
+import { Modal, ModalFooterOKCancel } from '@/ui';
+import { Dispatch, SetStateAction } from 'react';
+import { Membre, TRemoveFromCollectivite } from '../types';
 
 export type Props = {
   isOpen: boolean;
@@ -14,7 +14,7 @@ export type Props = {
  * Confirmation avant de supprimer un membre de la collectivité.
  */
 export const ConfirmerSuppressionMembre = (props: Props) => {
-  const {isOpen, setIsOpen, membre, isCurrentUser, removeFromCollectivite} =
+  const { isOpen, setIsOpen, membre, isCurrentUser, removeFromCollectivite } =
     props;
 
   return (
@@ -26,8 +26,8 @@ export const ConfirmerSuppressionMembre = (props: Props) => {
           : `Détacher ${membre.email}`
       }
       description={getDescription(props)}
-      openState={{isOpen, setIsOpen}}
-      renderFooter={({close}) => (
+      openState={{ isOpen, setIsOpen }}
+      renderFooter={({ close }) => (
         <ModalFooterOKCancel
           btnOKProps={{
             onClick: () => {
@@ -35,14 +35,14 @@ export const ConfirmerSuppressionMembre = (props: Props) => {
               close();
             },
           }}
-          btnCancelProps={{onClick: () => close()}}
+          btnCancelProps={{ onClick: () => close() }}
         />
       )}
     />
   );
 };
 
-const getDescription = ({membre, isCurrentUser}: Props) => {
+const getDescription = ({ membre, isCurrentUser }: Props) => {
   if (isCurrentUser) {
     return 'Souhaitez-vous vraiment ne plus avoir un accès privilégié au profil de cette collectivité ?';
   }

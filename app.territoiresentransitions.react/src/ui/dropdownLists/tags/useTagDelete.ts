@@ -1,6 +1,6 @@
-import {QueryKey, useMutation, useQueryClient} from 'react-query';
-import {supabaseClient} from 'core-logic/api/supabase';
-import {CollectiviteTag, TableTag} from '@tet/api';
+import { CollectiviteTag, TableTag } from '@/api';
+import { supabaseClient } from 'core-logic/api/supabase';
+import { QueryKey, useMutation, useQueryClient } from 'react-query';
 
 type Tag = CollectiviteTag;
 
@@ -25,24 +25,24 @@ export const useDeleteTag = ({
     },
     {
       mutationKey: 'delete_tag',
-      onMutate: async tag_id => {
-        await queryClient.cancelQueries({queryKey: key});
+      onMutate: async (tag_id) => {
+        await queryClient.cancelQueries({ queryKey: key });
 
-        const previousdata: {tags: Tag[]} | undefined =
+        const previousdata: { tags: Tag[] } | undefined =
           queryClient.getQueryData(key);
 
         queryClient.setQueryData(key, (old?: Tag[]) => {
           return old ? old.filter((v: Tag) => v.id !== tag_id) : [];
         });
 
-        return {previousdata};
+        return { previousdata };
       },
       onSettled: (data, err, args, context) => {
         if (err) {
           queryClient.setQueryData(key, context?.previousdata);
         }
         queryClient.invalidateQueries(key);
-        keysToInvalidate?.forEach(key => queryClient.invalidateQueries(key));
+        keysToInvalidate?.forEach((key) => queryClient.invalidateQueries(key));
       },
       onSuccess: () => onSuccess?.(),
     }

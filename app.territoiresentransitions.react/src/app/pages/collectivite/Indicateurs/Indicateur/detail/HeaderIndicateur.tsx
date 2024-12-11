@@ -1,4 +1,4 @@
-import { Icon } from '@tet/ui';
+import { Icon } from '@/ui';
 import classNames from 'classnames';
 import { useEffect, useRef } from 'react';
 import TextareaControlled from 'ui/shared/form/TextareaControlled';

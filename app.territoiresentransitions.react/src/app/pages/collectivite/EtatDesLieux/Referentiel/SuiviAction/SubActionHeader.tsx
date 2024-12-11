@@ -1,23 +1,23 @@
+import { InfoTooltip } from '@/ui';
+import ActionJustification from 'app/pages/collectivite/EtatDesLieux/Referentiel/SuiviAction/ActionJustification';
 import classNames from 'classnames';
-import {ActionDefinitionSummary} from 'core-logic/api/endpoints/ActionDefinitionSummaryReadEndpoint';
-import {useEffect, useState} from 'react';
+import { ActionDefinitionSummary } from 'core-logic/api/endpoints/ActionDefinitionSummaryReadEndpoint';
+import DOMPurify from 'dompurify';
+import { useEffect, useState } from 'react';
+import { TActionAvancement } from 'types/alias';
+import { ExpandToggle } from 'ui/icons/ExpandToggle';
+import ActionProgressBar from 'ui/referentiels/ActionProgressBar';
 import {
   ActionStatusDropdown,
   StatusToSavePayload,
 } from 'ui/referentiels/ActionStatusDropdown';
 import ScoreDisplay from 'ui/referentiels/ScoreDisplay';
-import ActionProgressBar from 'ui/referentiels/ActionProgressBar';
-import {SuiviScoreRow} from '../data/useScoreRealise';
-import {ActionCommentaire} from 'ui/shared/actions/ActionCommentaire';
-import {ExpandToggle} from 'ui/icons/ExpandToggle';
-import ActionJustification from 'app/pages/collectivite/EtatDesLieux/Referentiel/SuiviAction/ActionJustification';
-import {TActionAvancement} from 'types/alias';
-import {InfoTooltip} from '@tet/ui';
-import DOMPurify from 'dompurify';
+import { ActionCommentaire } from 'ui/shared/actions/ActionCommentaire';
+import { SuiviScoreRow } from '../data/useScoreRealise';
 
 type SubActionHeaderProps = {
   action: ActionDefinitionSummary;
-  actionScores: {[actionId: string]: SuiviScoreRow};
+  actionScores: { [actionId: string]: SuiviScoreRow };
   actionAvancement?: TActionAvancement;
   hideStatus?: boolean;
   statusWarningMessage?: boolean;
@@ -51,7 +51,7 @@ const SubActionHeader = ({
   useEffect(() => setOpen(openSubAction), [openSubAction]);
 
   const handleOnClick = () => {
-    setOpen(prevState => !prevState);
+    setOpen((prevState) => !prevState);
     if (onToggleOpen) onToggleOpen();
   };
 
@@ -79,7 +79,7 @@ const SubActionHeader = ({
 
       {/* Nom de l'action et score réalisé */}
       <div className="flex flex-col justify-between gap-3">
-        <div className={classNames({'font-bold': isSubAction})}>
+        <div className={classNames({ 'font-bold': isSubAction })}>
           {action.nom}
           {action.description &&
             ((isSubAction && action.referentiel === 'cae') || isTask) && (
@@ -128,7 +128,7 @@ const SubActionHeader = ({
         />
       )}
       {displayActionCommentaire && (
-        <div className="col-span-full" onClick={evt => evt.stopPropagation()}>
+        <div className="col-span-full" onClick={(evt) => evt.stopPropagation()}>
           <ActionCommentaire
             action={action}
             backgroundClassName="!bg-[#f6f6f6] group-hover:!bg-[#eee]"

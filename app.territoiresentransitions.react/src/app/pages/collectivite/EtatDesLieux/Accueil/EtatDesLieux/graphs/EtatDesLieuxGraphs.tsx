@@ -1,13 +1,13 @@
+import AccueilCard from '@/app/pages/collectivite/EtatDesLieux/Accueil/EtatDesLieux/AccueilCard';
+import { Button } from '@/ui';
+import { referentielToName } from 'app/labels';
 import { ReferentielParamOption } from 'app/paths';
+import { useState } from 'react';
 import { TableOptions } from 'react-table';
+import Chart from 'ui/charts/Chart';
+import { toLocaleFixed } from 'utils/toFixed';
 import { ProgressionRow } from '../../data/useProgressionReferentiel';
 import ProgressionReferentiel from './ProgressionReferentiel';
-import { referentielToName } from 'app/labels';
-import { toLocaleFixed } from 'utils/toFixed';
-import { useState } from 'react';
-import Chart from 'ui/charts/Chart';
-import { Button } from '@tet/ui';
-import AccueilCard from '@tet/app/pages/collectivite/EtatDesLieux/Accueil/EtatDesLieux/AccueilCard';
 
 type EtatDesLieuxGraphsProps = {
   referentiel: ReferentielParamOption;

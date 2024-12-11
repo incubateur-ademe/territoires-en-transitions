@@ -1,10 +1,10 @@
-import { useRef } from 'react';
 import { Meta, StoryObj } from '@storybook/react';
+import { useRef } from 'react';
 
-import DoubleCheckIcon from '@tet/ui/assets/DoubleCheckIcon';
+import DoubleCheckIcon from '@/ui/assets/DoubleCheckIcon';
 
+import { SITE_BASE_URL } from '@/ui/utils/constants';
 import { Button } from './Button';
-import { SITE_BASE_URL } from '@tet/ui/utils/constants';
 
 const meta: Meta<typeof Button> = {
   component: Button,

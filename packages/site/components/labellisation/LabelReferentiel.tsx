@@ -1,5 +1,5 @@
-import { EtoilesLabel } from '@tet/site/app/types';
-import { referentielToLabel } from '@tet/site/src/utils/labels';
+import { EtoilesLabel } from '@/site/app/types';
+import { referentielToLabel } from '@/site/src/utils/labels';
 import { GreyStar, RedStar } from './Star';
 
 type LabelReferentielProps = {

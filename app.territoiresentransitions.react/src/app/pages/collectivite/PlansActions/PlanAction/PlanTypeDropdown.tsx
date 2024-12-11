@@ -1,6 +1,6 @@
-import { usePlanTypeListe } from './data/usePlanTypeListe';
+import { Field, Select } from '@/ui';
 import { TPlanType } from 'types/alias';
-import { Field, Select } from '@tet/ui';
+import { usePlanTypeListe } from './data/usePlanTypeListe';
 
 type Props = {
   type?: number;

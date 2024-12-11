@@ -1,8 +1,8 @@
-import {DataLayerReadCachedEndpoint} from 'core-logic/api/dataLayerEndpoint';
-import {PostgrestResponse} from '@supabase/supabase-js';
-import {Referentiel} from 'types/litterals';
-import {ActionType} from 'types/action_referentiel';
-import {Enums} from '@tet/api';
+import { Enums } from '@/api';
+import { PostgrestResponse } from '@supabase/supabase-js';
+import { DataLayerReadCachedEndpoint } from 'core-logic/api/dataLayerEndpoint';
+import { ActionType } from 'types/action_referentiel';
+import { Referentiel } from 'types/litterals';
 
 export interface ActionDefinitionSummaryParams {
   referentiel: Referentiel;
@@ -42,8 +42,8 @@ class ActionDefinitionSummaryReadEndpoint extends DataLayerReadCachedEndpoint<
   ): Promise<PostgrestResponse<ActionDefinitionSummary>> {
     // @ts-ignore
     return this._table
-  .eq('referentiel', getParams.referentiel)
-  .eq('identifiant', getParams.identifiant);
+      .eq('referentiel', getParams.referentiel)
+      .eq('identifiant', getParams.identifiant);
   }
 }
 

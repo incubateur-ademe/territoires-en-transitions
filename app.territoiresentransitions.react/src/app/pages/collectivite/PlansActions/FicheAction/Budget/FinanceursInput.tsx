@@ -1,5 +1,5 @@
-import { Financeur } from '@tet/api/plan-actions';
-import { Button, Field, Input } from '@tet/ui';
+import { Financeur } from '@/api/plan-actions';
+import { Button, Field, Input } from '@/ui';
 import FinanceursDropdown from 'ui/dropdownLists/FinanceursDropdown/FinanceursDropdown';
 
 type FinanceursInputProps = {

@@ -1,5 +1,5 @@
-import { Indicateurs } from '@tet/api';
-import { Field, Input, Modal, ModalFooterOKCancel } from '@tet/ui';
+import { Indicateurs } from '@/api';
+import { Field, Input, Modal, ModalFooterOKCancel } from '@/ui';
 import BadgeIndicateurPerso from 'app/pages/collectivite/Indicateurs/components/BadgeIndicateurPerso';
 import IndicateurDetailChart from 'app/pages/collectivite/Indicateurs/Indicateur/detail/IndicateurDetailChart';
 import { useCurrentCollectivite } from 'core-logic/hooks/useCurrentCollectivite';

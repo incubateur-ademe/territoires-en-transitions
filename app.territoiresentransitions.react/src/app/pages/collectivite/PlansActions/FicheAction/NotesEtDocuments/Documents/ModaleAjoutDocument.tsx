@@ -1,4 +1,4 @@
-import {Modal} from '@tet/ui';
+import { Modal } from '@/ui';
 import {
   AddPreuveModal,
   TAddPreuveModalHandlers,

@@ -1,4 +1,4 @@
-import { Redirect, Route } from 'react-router-dom';
+import { useCreateFicheAction } from '@/app/pages/collectivite/PlansActions/FicheAction/data/useCreateFicheAction';
 import FichesNonClassees from 'app/pages/collectivite/PlansActions/FichesNonClassees';
 import {
   collectiviteFichesNonClasseesPath,
@@ -11,6 +11,8 @@ import {
   makeCollectivitePlanActionUrl,
   makeCollectivitePlansActionsNouveauUrl,
 } from 'app/paths';
+import Link from 'next/link';
+import { Redirect, Route } from 'react-router-dom';
 import CollectivitePageLayout from '../CollectivitePageLayout/CollectivitePageLayout';
 import { useFichesNonClasseesListe } from './FicheAction/data/useFichesNonClasseesListe';
 import { CreerPlanPage } from './ParcoursCreationPlan/CreerPlanPage';
@@ -21,8 +23,6 @@ import {
   generatePlanActionNavigationLinks,
   usePlansNavigation,
 } from './PlanAction/data/usePlansNavigation';
-import { useCreateFicheAction } from '@tet/app/pages/collectivite/PlansActions/FicheAction/data/useCreateFicheAction';
-import Link from 'next/link';
 
 type Props = {
   collectivite_id: number;

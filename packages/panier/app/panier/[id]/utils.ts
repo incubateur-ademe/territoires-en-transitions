@@ -6,9 +6,9 @@ import {
   Niveau,
   Panier,
   PanierAPI,
-} from '@tet/api';
+} from '@/api';
+import { createClient } from '@/panier/src/supabase/server';
 import { cookies } from 'next/headers';
-import { createClient } from '@tet/panier/src/supabase/server';
 
 const apiKey = process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY;
 const apiUrl = process.env.NEXT_PUBLIC_SUPABASE_URL;
@@ -57,7 +57,7 @@ export const fetchThematiques = async (): Promise<ActionImpactThematique[]> => {
 export const fetchTypologies = async (): Promise<ActionImpactTypologie[]> => {
   const response = await fetch(
     `${apiUrl}/rest/v1/action_impact_typologie?select=id,nom`,
-    getInit,
+    getInit
   );
   return await response.json();
 };
@@ -72,4 +72,3 @@ export const fetchNiveaux = async (
   const response = await fetch(`${apiUrl}/rest/v1/${table}`, getInit);
   return await response.json();
 };
-

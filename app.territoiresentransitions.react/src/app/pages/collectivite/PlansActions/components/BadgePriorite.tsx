@@ -1,4 +1,4 @@
-import { Badge, BadgeState } from '@tet/ui';
+import { Badge, BadgeState } from '@/ui';
 import classNames from 'classnames';
 
 import { TFicheActionNiveauxPriorite } from 'types/alias';

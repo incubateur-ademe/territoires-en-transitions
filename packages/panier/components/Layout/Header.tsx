@@ -1,11 +1,11 @@
 'use client';
 
-import useLandingPathname from '@tet/panier/hooks/useLandingPathname';
-import { Button, HeaderTeT, SITE_BASE_URL } from '@tet/ui';
-import { useCollectiviteInfo } from '@tet/panier/components/Landing/useCollectiviteInfo';
-import { usePanierContext } from '@tet/panier/providers';
+import { ENV } from '@/api/environmentVariables';
+import { useCollectiviteInfo } from '@/panier/components/Landing/useCollectiviteInfo';
+import useLandingPathname from '@/panier/hooks/useLandingPathname';
+import { usePanierContext } from '@/panier/providers';
+import { Button, HeaderTeT, SITE_BASE_URL } from '@/ui';
 import classNames from 'classnames';
-import { ENV } from '@tet/api/environmentVariables';
 
 const Header = () => {
   const landingPathname = useLandingPathname();

@@ -1,4 +1,4 @@
-import { FicheAction } from '@tet/api/plan-actions';
+import { FicheAction } from '@/api/plan-actions';
 import Documents from './Documents/Documents';
 import NotesComplementaires from './Notes/NotesComplementaires';
 

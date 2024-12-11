@@ -1,6 +1,6 @@
-import { supabase } from '@tet/site/app/initSupabase';
-import BarChart from '@tet/site/components/charts/BarChart';
-import ChartWithLegend from '@tet/site/components/charts/ChartWithLegend';
+import { supabase } from '@/site/app/initSupabase';
+import BarChart from '@/site/components/charts/BarChart';
+import ChartWithLegend from '@/site/components/charts/ChartWithLegend';
 import useSWR from 'swr';
 import { fromMonth } from './shared';
 

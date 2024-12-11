@@ -1,6 +1,6 @@
-import { useMutation, useQueryClient } from 'react-query';
+import { FicheAction } from '@/api/plan-actions';
 import { supabaseClient } from 'core-logic/api/supabase';
-import { FicheAction } from '@tet/api/plan-actions';
+import { useMutation, useQueryClient } from 'react-query';
 
 type Args = {
   axe_id: number;

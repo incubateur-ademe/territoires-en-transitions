@@ -1,15 +1,15 @@
-import { Checkbox, Field, FormSection } from '@tet/ui';
+import { FetchFiltre } from '@/api/indicateurs';
+import { Checkbox, Field, FormSection } from '@/ui';
 import PersonnesDropdown from 'ui/dropdownLists/PersonnesDropdown/PersonnesDropdown';
 import {
   getPilotesValues,
   splitPilotePersonnesAndUsers,
 } from 'ui/dropdownLists/PersonnesDropdown/utils';
+import PlansActionDropdown from 'ui/dropdownLists/PlansActionDropdown';
 import ServicesPilotesDropdown from 'ui/dropdownLists/ServicesPilotesDropdown/ServicesPilotesDropdown';
 import ThematiquesDropdown from 'ui/dropdownLists/ThematiquesDropdown/ThematiquesDropdown';
-import PlansActionDropdown from 'ui/dropdownLists/PlansActionDropdown';
-import IndicateurCompletsDropdown from 'ui/dropdownLists/indicateur/IndicateurCompletsDropdown';
 import IndicateurCategoriesDropdown from 'ui/dropdownLists/indicateur/IndicateurCategoriesDropdown';
-import { FetchFiltre } from '@tet/api/indicateurs';
+import IndicateurCompletsDropdown from 'ui/dropdownLists/indicateur/IndicateurCompletsDropdown';
 
 type Props = {
   filters: FetchFiltre;

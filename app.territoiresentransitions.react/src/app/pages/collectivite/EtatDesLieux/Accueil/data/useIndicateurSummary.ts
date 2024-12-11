@@ -1,7 +1,7 @@
-import { useQuery } from 'react-query';
+import { Referentiel } from '@/api/referentiel/domain/enum.schema';
 import { supabaseClient } from 'core-logic/api/supabase';
 import { useCollectiviteId } from 'core-logic/hooks/params';
-import { Referentiel } from '@tet/api/referentiel/domain/enum.schema';
+import { useQuery } from 'react-query';
 
 const fetchIndicateurSummary = async (
   collectivite_id: number,

@@ -1,4 +1,4 @@
-import { Breadcrumbs } from '@tet/ui';
+import { Breadcrumbs } from '@/ui';
 import { useRouter } from 'next/navigation';
 import { TAxeRow } from 'types/alias';
 import {

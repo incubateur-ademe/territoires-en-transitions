@@ -1,10 +1,10 @@
 /**
  * Affiche le sélecteur de ressources (fichiers ou liens)
  */
-import {Tab, Tabs} from '@tet/ui';
-import {AddLink, TAddLink} from './AddLink';
-import {AddFile, TAddFileFromLib} from './AddFile';
+import { Tab, Tabs } from '@/ui';
+import { AddFile, TAddFileFromLib } from './AddFile';
 import AddFromLib from './AddFromLib';
+import { AddLink, TAddLink } from './AddLink';
 import { DocType } from './types';
 
 export type TAddPreuveModalHandlers = {
@@ -25,8 +25,8 @@ export type TAddPreuveModalProps = {
 };
 
 export const AddPreuveModal = (props: TAddPreuveModalProps) => {
-  const {defaultActiveTab, handlers} = props;
-  const {addFileFromLib, addLink} = handlers;
+  const { defaultActiveTab, handlers } = props;
+  const { addFileFromLib, addLink } = handlers;
 
   return (
     <Tabs data-test="AddPreuveModal" defaultActiveTab={defaultActiveTab}>

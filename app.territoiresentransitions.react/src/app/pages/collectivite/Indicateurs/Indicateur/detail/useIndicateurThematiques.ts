@@ -1,9 +1,9 @@
-import {useMutation, useQuery, useQueryClient} from 'react-query';
-import {Indicateurs} from '@tet/api';
-import {supabaseClient} from 'core-logic/api/supabase';
-import {useCollectiviteId} from 'core-logic/hooks/params';
-import {TThematiqueRow} from 'types/alias';
-import {TIndicateurDefinition} from 'app/pages/collectivite/Indicateurs/types';
+import { Indicateurs } from '@/api';
+import { TIndicateurDefinition } from 'app/pages/collectivite/Indicateurs/types';
+import { supabaseClient } from 'core-logic/api/supabase';
+import { useCollectiviteId } from 'core-logic/hooks/params';
+import { useMutation, useQuery, useQueryClient } from 'react-query';
+import { TThematiqueRow } from 'types/alias';
 
 /** Met à jour les thématiques d'un indicateur personnalisé */
 export const useUpsertIndicateurThematiques = ({

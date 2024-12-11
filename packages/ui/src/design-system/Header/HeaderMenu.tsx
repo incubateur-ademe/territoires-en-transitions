@@ -1,5 +1,5 @@
-import { Button } from '@tet/ui/design-system/Button';
-import { ButtonProps } from '@tet/ui/design-system/Button/types';
+import { Button } from '@/ui/design-system/Button';
+import { ButtonProps } from '@/ui/design-system/Button/types';
 import classNames from 'classnames';
 import { Dispatch, ReactElement, SetStateAction } from 'react';
 

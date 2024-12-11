@@ -1,11 +1,11 @@
-import { Tab, Tabs } from '@tet/ui';
-import BudgetTab from './Budget/BudgetTab';
-import IndicateursTab from './Indicateurs/IndicateursTab';
-import FichesLieesTab from './FichesLiees/FichesLieesTab';
+import { FicheAction } from '@/api/plan-actions';
+import { Tab, Tabs } from '@/ui';
 import ActionsLieesTab from './ActionsLiees/ActionsLieesTab';
-import NotesEtDocumentsTab from './NotesEtDocuments/NotesEtDocumentsTab';
-import { FicheAction } from '@tet/api/plan-actions';
+import BudgetTab from './Budget/BudgetTab';
+import FichesLieesTab from './FichesLiees/FichesLieesTab';
+import IndicateursTab from './Indicateurs/IndicateursTab';
 import NotesDeSuiviTab from './NotesDeSuivi/NotesDeSuiviTab';
+import NotesEtDocumentsTab from './NotesEtDocuments/NotesEtDocumentsTab';
 
 type FicheActionOngletsProps = {
   fiche: FicheAction;

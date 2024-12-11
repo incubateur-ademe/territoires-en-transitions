@@ -1,4 +1,5 @@
-import { preset } from '@tet/ui';
+import { preset } from '@/ui';
+import { DiscussIcon, FileIcon, LinkIcon } from 'ui/export-pdf/assets/icons';
 import {
   Card,
   Divider,
@@ -7,7 +8,6 @@ import {
   StyledLink,
   Title,
 } from 'ui/export-pdf/components';
-import { DiscussIcon, FileIcon, LinkIcon } from 'ui/export-pdf/assets/icons';
 import { getAuthorAndDate } from 'ui/shared/preuves/Bibliotheque/utils';
 import { AnnexeInfo } from '../../FicheAction/data/useAnnexesFicheActionInfos';
 import { generateTitle } from '../../FicheAction/data/utils';

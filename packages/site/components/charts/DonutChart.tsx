@@ -2,9 +2,9 @@
 
 'use client';
 
+import { getFormattedNumber } from '@/site/src/utils/getFormattedNumber';
 import { PieTooltipProps, ResponsivePie } from '@nivo/pie';
 import { animated } from '@react-spring/web';
-import { getFormattedNumber } from '@tet/site/src/utils/getFormattedNumber';
 import { defaultColors, theme as localTheme } from './chartsTheme';
 
 /**

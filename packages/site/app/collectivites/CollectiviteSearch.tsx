@@ -1,9 +1,9 @@
 'use client';
 
+import { convertNameToSlug } from '@/site/src/utils/convertNameToSlug';
+import { Select } from '@/ui';
 import { useRouter } from 'next/navigation';
 import { Dispatch, SetStateAction, useState } from 'react';
-import { Select } from '@tet/ui';
-import { convertNameToSlug } from '@tet/site/src/utils/convertNameToSlug';
 import { useFilteredCollectivites } from '../useFilteredCollectivites';
 
 type CollectiviteSearchProps = {

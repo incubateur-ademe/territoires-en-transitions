@@ -1,4 +1,4 @@
-import { Button, ButtonProps, Icon, Tooltip } from '@tet/ui';
+import { Button, ButtonProps, Icon, Tooltip } from '@/ui';
 
 type Props = {
   picto: React.ReactNode;

@@ -1,4 +1,4 @@
-import { DBClient } from '@tet/api/typeUtils';
+import { DBClient } from '@/api/typeUtils';
 
 export const dcpFetch = async ({
   dbClient,

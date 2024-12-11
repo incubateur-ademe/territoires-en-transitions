@@ -1,6 +1,6 @@
 'use client';
 
-import {Alert} from '@tet/ui';
+import { Alert } from '@/ui';
 
 const ErrorPage = () => {
   return (

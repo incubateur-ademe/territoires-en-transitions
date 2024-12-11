@@ -1,12 +1,12 @@
-import Link from 'next/link';
 import classNames from 'classnames';
+import Link from 'next/link';
 
-import { Badge } from '@tet/ui';
+import { Badge } from '@/ui';
 
-import { useFonctionTracker } from 'core-logic/hooks/useFonctionTracker';
-import { makeCollectivitePlanActionUrl } from 'app/paths';
+import { CollectiviteEngagee } from '@/api';
 import { generateTitle } from 'app/pages/collectivite/PlansActions/FicheAction/data/utils';
-import { CollectiviteEngagee } from '@tet/api';
+import { makeCollectivitePlanActionUrl } from 'app/paths';
+import { useFonctionTracker } from 'core-logic/hooks/useFonctionTracker';
 
 type Props = {
   plan: CollectiviteEngagee.TPlanCarte;

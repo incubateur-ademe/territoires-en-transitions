@@ -1,14 +1,14 @@
-import { Button } from '@tet/ui';
+import { Button } from '@/ui';
 import { monComptePath } from 'app/paths';
 import classNames from 'classnames';
 import { TAuthContext, UserData } from 'core-logic/api/auth/AuthProvider';
+import Link from 'next/link';
 import { usePathname, useRouter } from 'next/navigation';
 import { forwardRef, Ref } from 'react';
 import { useQueryClient } from 'react-query';
 import DropdownFloater from 'ui/shared/floating-ui/DropdownFloater';
 import './MenuUtilisateur.css';
 import { HeaderPropsWithModalState } from './types';
-import Link from 'next/link';
 
 /**
  * Affiche le menu associé à l'utilisateur courant

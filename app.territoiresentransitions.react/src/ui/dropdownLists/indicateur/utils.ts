@@ -1,6 +1,6 @@
-// import {Indicateurs} from '@tet/api';
-import { CategorieProgramme } from '@tet/api/indicateurs';
-import { categorieProgrammeEnumSchema } from '@tet/api/indicateurs/domain';
+// import {Indicateurs} from '@/api';
+import { CategorieProgramme } from '@/api/indicateurs';
+import { categorieProgrammeEnumSchema } from '@/api/indicateurs/domain';
 
 const categorieEnum = categorieProgrammeEnumSchema.enum;
 

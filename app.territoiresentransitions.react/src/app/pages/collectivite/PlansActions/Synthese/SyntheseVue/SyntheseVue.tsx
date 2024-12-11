@@ -1,4 +1,4 @@
-import { FicheResume } from '@tet/api/plan-actions';
+import { FicheResume } from '@/api/plan-actions';
 import {
   makeCollectiviteFicheNonClasseeUrl,
   makeCollectivitePlanActionFicheUrl,
@@ -9,6 +9,7 @@ import { useCollectiviteId } from 'core-logic/hooks/params';
 import Link from 'next/link';
 import { useSearchParams } from 'next/navigation';
 import { useState } from 'react';
+import { useParams } from 'react-router-dom';
 import { ITEM_ALL } from 'ui/shared/filters/commons';
 import { DesactiverLesFiltres } from 'ui/shared/filters/DesactiverLesFiltres';
 import FicheActionCard from '../../FicheAction/Carte/FicheActionCard';
@@ -19,7 +20,6 @@ import { generateSyntheseVue } from '../utils';
 import FiltresPrimaires from './FiltresPrimaires/FiltresPrimaires';
 import FiltresSecondaires from './FiltresSecondaires';
 import SyntheseVueGraph from './SyntheseVueGraph';
-import { useParams } from 'react-router-dom';
 
 const SyntheseVue = () => {
   const collectivite_id = useCollectiviteId();

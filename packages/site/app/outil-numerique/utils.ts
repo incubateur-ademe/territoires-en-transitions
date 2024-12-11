@@ -1,5 +1,5 @@
-import { fetchSingle } from '@tet/site/src/strapi/strapi';
-import { StrapiItem } from '@tet/site/src/strapi/StrapiItem';
+import { fetchSingle } from '@/site/src/strapi/strapi';
+import { StrapiItem } from '@/site/src/strapi/StrapiItem';
 
 export const getStrapiData = async () => {
   const data = await fetchSingle('page-outils-numerique', [

@@ -1,6 +1,6 @@
-import {ReactNode, createContext, useEffect, useState} from 'react';
-import {Session, SupabaseClient} from '@supabase/supabase-js';
-import {clearAuthTokens, setAuthTokens} from '@tet/api';
+import { clearAuthTokens, setAuthTokens } from '@/api';
+import { Session, SupabaseClient } from '@supabase/supabase-js';
+import { ReactNode, createContext, useEffect, useState } from 'react';
 
 const SessionContext = createContext<Session | null>(null);
 
@@ -25,7 +25,7 @@ export const SessionProvider = ({
   // enregistre l'écouteur d'événements
   useEffect(() => {
     const {
-      data: {subscription},
+      data: { subscription },
     } = supabase.auth.onAuthStateChange((event, session) => {
       // efface la session et les cookies à la déconnexion
       if (event === 'SIGNED_OUT') {

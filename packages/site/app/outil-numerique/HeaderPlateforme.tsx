@@ -1,11 +1,11 @@
 'use client';
 
-import Section from '@tet/site/components/sections/Section';
-import { StrapiImage } from '@tet/site/components/strapiImage/StrapiImage';
-import { useEvolutionTotalActivation } from '@tet/site/app/stats/EvolutionTotalActivationParType';
-import { StrapiItem } from '@tet/site/src/strapi/StrapiItem';
+import { useEvolutionTotalActivation } from '@/site/app/stats/EvolutionTotalActivationParType';
+import Section from '@/site/components/sections/Section';
+import { StrapiImage } from '@/site/components/strapiImage/StrapiImage';
+import { StrapiItem } from '@/site/src/strapi/StrapiItem';
+import { Button, useEventTracker } from '@/ui';
 import Arrow from './Arrow';
-import { Button, useEventTracker } from '@tet/ui';
 
 type HeaderPlateformeProps = {
   titre: string;

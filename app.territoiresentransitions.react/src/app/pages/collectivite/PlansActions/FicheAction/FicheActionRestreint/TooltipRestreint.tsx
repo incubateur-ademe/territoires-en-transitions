@@ -1,11 +1,11 @@
-import {Tooltip} from '@tet/ui';
+import { Tooltip } from '@/ui';
 
 type TooltipRestreintProps = {
   children: JSX.Element;
   isRestreint: boolean;
 };
 
-const TooltipRestreint = ({children, isRestreint}: TooltipRestreintProps) => {
+const TooltipRestreint = ({ children, isRestreint }: TooltipRestreintProps) => {
   return isRestreint ? (
     <Tooltip
       label={

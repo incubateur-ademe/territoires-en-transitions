@@ -1,4 +1,4 @@
-import {Select, SelectProps} from '@tet/ui';
+import { Select, SelectProps } from '@/ui';
 
 type Value = 'rempli' | 'incomplet';
 
@@ -21,7 +21,7 @@ const IndicateurCompletsDropdown = (props: Props) => {
           value: 'incomplet',
         },
       ]}
-      onChange={value => {
+      onChange={(value) => {
         props.onChange(value as Value);
       }}
     />

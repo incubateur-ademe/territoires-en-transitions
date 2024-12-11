@@ -1,6 +1,6 @@
-import { StrapiImage } from '@tet/site/components/strapiImage/StrapiImage';
+import { StrapiImage } from '@/site/components/strapiImage/StrapiImage';
+import { StrapiItem } from '@/site/src/strapi/StrapiItem';
 import classNames from 'classnames';
-import { StrapiItem } from '@tet/site/src/strapi/StrapiItem';
 
 type ThreePicsMosaicProps = {
   images: StrapiItem[];

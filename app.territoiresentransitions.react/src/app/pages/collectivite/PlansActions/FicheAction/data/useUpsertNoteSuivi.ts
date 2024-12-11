@@ -1,4 +1,4 @@
-import { FicheAction, FicheActionNote } from '@tet/api/plan-actions';
+import { FicheAction, FicheActionNote } from '@/api/plan-actions';
 import { useApiClient } from 'core-logic/api/useApiClient';
 import { useMutation, useQueryClient } from 'react-query';
 

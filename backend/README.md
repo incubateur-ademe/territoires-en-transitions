@@ -41,7 +41,7 @@ $ pnpm build:backend
 $ pnpm test:backend
 
 # Ou directement avec Nx
-$ nx test @tet/backend
+$ nx test backend
 ```
 
 ### Tests
@@ -49,17 +49,17 @@ $ nx test @tet/backend
 Pour lancer tous les tests :
 
 ```
-nx test @tet/backend
+nx test backend
 ```
 
 Pour lancer uniquement les tests unitaires (dossier `src`) :
 
 ```
-nx test @tet/backend src
+nx test backend src
 ```
 
 Pour lancer uniquement les tests end-to-end (dossier `test`) :
 
 ```
-nx test @tet/backend test
+nx test backend test
 ```

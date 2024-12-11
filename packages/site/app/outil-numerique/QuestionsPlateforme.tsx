@@ -1,8 +1,8 @@
 'use client';
 
-import Markdown from '@tet/site/components/markdown/Markdown';
-import Section from '@tet/site/components/sections/Section';
-import { Button, useEventTracker } from '@tet/ui';
+import Markdown from '@/site/components/markdown/Markdown';
+import Section from '@/site/components/sections/Section';
+import { Button, useEventTracker } from '@/ui';
 
 type QuestionsPlateformeProps = {
   titre: string;

@@ -1,7 +1,7 @@
+import { Badge } from '@/ui/design-system/Badge';
+import { Button } from '@/ui/design-system/Button';
 import { Meta, StoryObj } from '@storybook/react';
 import { Card } from './Card';
-import { Button } from '@tet/ui/design-system/Button';
-import { Badge } from '@tet/ui/design-system/Badge';
 
 const meta: Meta<typeof Card> = {
   component: Card,

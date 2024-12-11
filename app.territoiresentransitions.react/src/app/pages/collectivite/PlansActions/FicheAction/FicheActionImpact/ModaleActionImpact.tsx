@@ -1,8 +1,8 @@
-import {useState} from 'react';
-import {Modal, InfoActionImpact, useEventTracker} from '@tet/ui';
-import {useCollectiviteId} from 'core-logic/hooks/params';
-import {useActionImpact} from './useActionImpact';
+import { InfoActionImpact, Modal, useEventTracker } from '@/ui';
+import { useCollectiviteId } from 'core-logic/hooks/params';
+import { useState } from 'react';
 import Markdown from 'ui/Markdown';
+import { useActionImpact } from './useActionImpact';
 
 type ModaleActionImpactProps = {
   actionImpactId: number;
@@ -13,8 +13,8 @@ type ModaleActionImpactProps = {
  * Affiche le descriptif d'une action à impact (du panier d'actions)
  */
 export const ModaleActionImpact = (props: ModaleActionImpactProps) => {
-  const {actionImpactId, children} = props;
-  const {data: action} = useActionImpact(actionImpactId);
+  const { actionImpactId, children } = props;
+  const { data: action } = useActionImpact(actionImpactId);
   const [isOpen, setIsOpen] = useState(false);
   const trackEvent = useEventTracker('app/fiche-action');
   const collectivite_id = useCollectiviteId()!;
@@ -23,7 +23,7 @@ export const ModaleActionImpact = (props: ModaleActionImpactProps) => {
     return null;
   }
 
-  const {titre, description, typologie} = action;
+  const { titre, description, typologie } = action;
   return (
     <Modal
       size="lg"
@@ -32,9 +32,9 @@ export const ModaleActionImpact = (props: ModaleActionImpactProps) => {
       textAlign="left"
       openState={{
         isOpen,
-        setIsOpen: opened => {
+        setIsOpen: (opened) => {
           if (opened) {
-            trackEvent('cta_fa_fai', {collectivite_id});
+            trackEvent('cta_fa_fai', { collectivite_id });
           }
           setIsOpen(opened);
         },

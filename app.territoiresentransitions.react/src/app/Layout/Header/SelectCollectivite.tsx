@@ -1,9 +1,9 @@
-import classNames from 'classnames';
+import { Tooltip } from '@/ui';
 import { makeCollectiviteAccueilUrl } from 'app/paths';
+import classNames from 'classnames';
+import Link from 'next/link';
 import { BadgeNiveauAcces } from './BadgeNiveauAcces';
 import { HeaderPropsWithModalState } from './types';
-import { Tooltip } from '@tet/ui';
-import Link from 'next/link';
 
 const ID = 'SelectCollectivite';
 

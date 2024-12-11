@@ -1,5 +1,5 @@
-import { useState } from 'react';
-import _ from 'lodash';
+import { FicheAction } from '@/api/plan-actions';
+import { Thematique } from '@/api/shared/domain';
 import {
   Button,
   Field,
@@ -9,14 +9,14 @@ import {
   ModalFooterOKCancel,
   Textarea,
   useEventTracker,
-} from '@tet/ui';
-import { FicheAction } from '@tet/api/plan-actions';
-import ThematiquesDropdown from 'ui/dropdownLists/ThematiquesDropdown/ThematiquesDropdown';
+} from '@/ui';
+import { useCurrentCollectivite } from 'core-logic/hooks/useCurrentCollectivite';
+import _ from 'lodash';
+import { useState } from 'react';
 import SousThematiquesDropdown from 'ui/dropdownLists/SousThematiquesDropdown/SousThematiquesDropdown';
 import TagsSuiviPersoDropdown from 'ui/dropdownLists/TagsSuiviPersoDropdown/TagsSuiviPersoDropdown';
-import { useCurrentCollectivite } from 'core-logic/hooks/useCurrentCollectivite';
+import ThematiquesDropdown from 'ui/dropdownLists/ThematiquesDropdown/ThematiquesDropdown';
 import { getMaxLengthMessage } from 'utils/formatUtils';
-import { Thematique } from '@tet/api/shared/domain';
 
 const DESCRIPTION_MAX_LENGTH = 20000;
 const MOYENS_MAX_LENGTH = 10000;

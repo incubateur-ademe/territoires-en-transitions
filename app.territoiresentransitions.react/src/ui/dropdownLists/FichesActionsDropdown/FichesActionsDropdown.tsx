@@ -1,12 +1,12 @@
-import { AxeInsert, FicheResume } from '@tet/api/plan-actions';
-import { useFicheResumesFetch } from '@tet/app/pages/collectivite/PlansActions/FicheAction/data/useFicheResumesFetch';
+import { AxeInsert, FicheResume } from '@/api/plan-actions';
+import { useFicheResumesFetch } from '@/app/pages/collectivite/PlansActions/FicheAction/data/useFicheResumesFetch';
 import {
   Option,
   OptionValue,
   SelectFilter,
   SelectMultipleProps,
   SelectOption,
-} from '@tet/ui';
+} from '@/ui';
 import { generateTitle } from 'app/pages/collectivite/PlansActions/FicheAction/data/utils';
 import { naturalSort } from 'utils/naturalSort';
 

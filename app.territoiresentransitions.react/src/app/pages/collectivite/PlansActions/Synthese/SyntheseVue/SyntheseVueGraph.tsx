@@ -1,21 +1,21 @@
-import {useState} from 'react';
+import { useState } from 'react';
 
-import {TSyntheseVue, getGraphData} from '../utils';
-import {useCollectiviteId} from 'core-logic/hooks/params';
-import {usePlanActionTableauDeBord} from '../data/usePlanActionTableauDeBord';
-import {PlanActionFilter} from '../FiltersPlanAction';
-import Chart, {ChartProps} from 'ui/charts/Chart';
-import {Button} from '@tet/ui';
+import { Button } from '@/ui';
+import { useCollectiviteId } from 'core-logic/hooks/params';
+import Chart, { ChartProps } from 'ui/charts/Chart';
+import { usePlanActionTableauDeBord } from '../data/usePlanActionTableauDeBord';
+import { PlanActionFilter } from '../FiltersPlanAction';
+import { TSyntheseVue, getGraphData } from '../utils';
 
 type Props = {
   vue: TSyntheseVue;
   plan: PlanActionFilter;
 };
 
-const SyntheseVueGraph = ({vue, plan}: Props) => {
+const SyntheseVueGraph = ({ vue, plan }: Props) => {
   const collectivite_id = useCollectiviteId();
 
-  const {data} = usePlanActionTableauDeBord(
+  const { data } = usePlanActionTableauDeBord(
     collectivite_id!,
     plan.id === 'tous' || plan.id === 'nc' ? null : plan.id,
     plan.id === 'nc' || null

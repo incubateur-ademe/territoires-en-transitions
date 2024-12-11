@@ -1,5 +1,5 @@
-import { makeSearchString } from '@tet/api';
-import { supabase } from '@tet/site/app/initSupabase';
+import { makeSearchString } from '@/api';
+import { supabase } from '@/site/app/initSupabase';
 import useSWR from 'swr';
 
 export const useFilteredCollectivites = (search: string) => {

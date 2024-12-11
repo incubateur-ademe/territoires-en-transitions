@@ -2,10 +2,10 @@
  * Affiche le formulaire d'ajout de liens
  */
 
-import {Form, Formik} from 'formik';
-import * as Yup from 'yup';
+import { Button } from '@/ui';
+import { Form, Formik } from 'formik';
 import FormikInput from 'ui/shared/form/formik/FormikInput';
-import {Button} from '@tet/ui';
+import * as Yup from 'yup';
 
 export type TAddLink = (titre: string, url: string) => void;
 
@@ -32,9 +32,9 @@ const validation = Yup.object({
 });
 
 export const AddLink = (props: TAddLinkProps) => {
-  const {onClose, onAddLink} = props;
+  const { onClose, onAddLink } = props;
 
-  const onSubmit = ({titre, url}: TPreuveLienParams) => {
+  const onSubmit = ({ titre, url }: TPreuveLienParams) => {
     onAddLink(titre, url);
     onClose();
   };
@@ -45,7 +45,7 @@ export const AddLink = (props: TAddLinkProps) => {
       validationSchema={validation}
       onSubmit={onSubmit}
     >
-      {({values, isValid}) => {
+      {({ values, isValid }) => {
         return (
           <Form data-test="AddLink" className="flex flex-col gap-8">
             <div className="flex gap-6">

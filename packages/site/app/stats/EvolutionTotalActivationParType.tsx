@@ -1,14 +1,14 @@
 'use client';
 
+import { statsColors, theme } from '@/site/components/charts/chartsTheme';
+import ChartWithLegend from '@/site/components/charts/ChartWithLegend';
+import LineChart from '@/site/components/charts/LineChart';
+import { SliceTooltipProps } from '@nivo/line';
 import useSWR from 'swr';
 import { supabase } from '../initSupabase';
+import { ChartHead } from './headings';
 import { fromMonth } from './shared';
 import { addLocalFilters } from './utils';
-import { ChartHead } from './headings';
-import LineChart from '@tet/site/components/charts/LineChart';
-import { statsColors, theme } from '@tet/site/components/charts/chartsTheme';
-import ChartWithLegend from '@tet/site/components/charts/ChartWithLegend';
-import { SliceTooltipProps } from '@nivo/line';
 
 /**
  * L'évolution des activations par type de collectivité

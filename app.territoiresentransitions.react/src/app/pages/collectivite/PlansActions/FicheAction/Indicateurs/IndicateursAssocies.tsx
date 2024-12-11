@@ -1,17 +1,17 @@
-import { useState } from 'react';
-import { Button, Divider, useEventTracker } from '@tet/ui';
-import { FicheAction } from '@tet/api/plan-actions';
-import Content from './SideMenu/Content';
-import EmptyCard from '../EmptyCard';
-import DatavizPicto from './DatavizPicto';
-import ModaleCreerIndicateur from './ModaleCreerIndicateur';
-import SideMenu from '../SideMenu';
-import LoadingCard from '../LoadingCard';
-import { TIndicateurListItem } from 'app/pages/collectivite/Indicateurs/types';
-import { getIndicateurGroup } from 'app/pages/collectivite/Indicateurs/lists/IndicateurCard/utils';
+import { FicheAction } from '@/api/plan-actions';
+import { Button, Divider, useEventTracker } from '@/ui';
 import IndicateurCard from 'app/pages/collectivite/Indicateurs/lists/IndicateurCard/IndicateurCard';
+import { getIndicateurGroup } from 'app/pages/collectivite/Indicateurs/lists/IndicateurCard/utils';
+import { TIndicateurListItem } from 'app/pages/collectivite/Indicateurs/types';
 import { makeCollectiviteIndicateursUrl } from 'app/paths';
 import { useCollectiviteId } from 'core-logic/hooks/params';
+import { useState } from 'react';
+import EmptyCard from '../EmptyCard';
+import LoadingCard from '../LoadingCard';
+import SideMenu from '../SideMenu';
+import DatavizPicto from './DatavizPicto';
+import ModaleCreerIndicateur from './ModaleCreerIndicateur';
+import Content from './SideMenu/Content';
 
 type IndicateursAssociesProps = {
   isReadonly: boolean;

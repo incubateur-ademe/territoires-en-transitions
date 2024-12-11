@@ -1,8 +1,12 @@
-import { format, isBefore, startOfToday } from 'date-fns';
+import { FicheResume } from '@/api/plan-actions';
+import { preset } from '@/ui';
 import classNames from 'classnames';
-import { FicheResume } from '@tet/api/plan-actions';
-import { preset } from '@tet/ui';
-import { getTextFormattedDate } from 'utils/formatUtils';
+import { format, isBefore, startOfToday } from 'date-fns';
+import {
+  CalendarIcon,
+  LoopLeftIcon,
+  UserIcon,
+} from 'ui/export-pdf/assets/icons';
 import {
   BadgePriorite,
   BadgeStatut,
@@ -13,11 +17,7 @@ import {
   Stack,
   Title,
 } from 'ui/export-pdf/components';
-import {
-  CalendarIcon,
-  LoopLeftIcon,
-  UserIcon,
-} from 'ui/export-pdf/assets/icons';
+import { getTextFormattedDate } from 'utils/formatUtils';
 import { generateTitle } from '../../FicheAction/data/utils';
 
 const { colors } = preset.theme.extend;

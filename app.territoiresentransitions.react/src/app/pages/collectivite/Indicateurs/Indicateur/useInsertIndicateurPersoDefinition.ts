@@ -1,7 +1,7 @@
-import {useMutation, useQueryClient} from 'react-query';
-import {supabaseClient} from 'core-logic/api/supabase';
-import {Indicateurs} from '@tet/api';
-import {useCollectiviteId} from 'core-logic/hooks/params';
+import { Indicateurs } from '@/api';
+import { supabaseClient } from 'core-logic/api/supabase';
+import { useCollectiviteId } from 'core-logic/hooks/params';
+import { useMutation, useQueryClient } from 'react-query';
 
 export type TIndicateurPersoDefinitionWrite =
   Indicateurs.domain.IndicateurDefinitionInsert;
@@ -47,13 +47,13 @@ export const useInsertIndicateurPersoDefinition = (options?: {
           );
         }
       }
-      return {indicateurId};
+      return { indicateurId };
     },
     meta: {
       success: "L'indicateur est enregistré",
       error: "L'indicateur n'a pas été enregistré",
     },
-    onSuccess: ({indicateurId}, {definition: {collectiviteId}}) => {
+    onSuccess: ({ indicateurId }, { definition: { collectiviteId } }) => {
       queryClient.invalidateQueries([
         'indicateur_definition',
         collectiviteId,

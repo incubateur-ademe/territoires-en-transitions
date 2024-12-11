@@ -1,5 +1,5 @@
+import { Icon } from '@/ui';
 import { Placement } from '@floating-ui/react';
-import { Icon } from '@tet/ui';
 import classNames from 'classnames';
 
 /**

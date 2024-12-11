@@ -1,4 +1,4 @@
-import {Database, Enums, NonNullableFields} from '@tet/api';
+import { Database, Enums, NonNullableFields } from '@/api';
 
 export type RejoindreUneCollectiviteData = {
   collectiviteId?: number | null;

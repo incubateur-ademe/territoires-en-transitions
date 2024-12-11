@@ -1,7 +1,7 @@
 'use client';
 
-import { getAuthPaths } from '@tet/api';
-import { ENV } from '@tet/api/environmentVariables';
+import { getAuthPaths } from '@/api';
+import { ENV } from '@/api/environmentVariables';
 import classNames from 'classnames';
 import Image from 'next/image';
 import { usePathname } from 'next/navigation';

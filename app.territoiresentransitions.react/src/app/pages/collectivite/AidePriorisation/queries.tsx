@@ -1,10 +1,10 @@
+import { boundariesToQueryFilter } from '@/app/pages/collectivite/AidePriorisation/boundariesToQueryFilter';
+import { ITEM_ALL } from '@/ui';
+import { ActionReferentiel } from 'app/pages/collectivite/ReferentielTable/useReferentiel';
 import { supabaseClient } from 'core-logic/api/supabase';
 import { TActionStatutsRow } from 'types/alias';
-import { ActionReferentiel } from 'app/pages/collectivite/ReferentielTable/useReferentiel';
-import { boundariesToQueryFilter } from '@tet/app/pages/collectivite/AidePriorisation/boundariesToQueryFilter';
 import { filterToBoundaries, TFilters } from './filters';
 import { percentBoundaries } from './FiltrePourcentage';
-import { ITEM_ALL } from '@tet/ui';
 
 // un sous-ensemble des champs pour alimenter notre table
 export type PriorisationRow = ActionReferentiel &

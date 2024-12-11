@@ -1,17 +1,17 @@
+import { Indicateurs } from '@/api';
+import { Button } from '@/ui';
 import { useEffect, useState } from 'react';
-import { TIndicateurDefinition, SourceType } from '../../types';
 import { SOURCE_COLLECTIVITE } from '../../constants';
+import { SourceType, TIndicateurDefinition } from '../../types';
 import { TIndicateurValeur } from '../../useIndicateurValeurs';
+import {
+  IndicateurValueTableRow,
+  ValueTableRowReadOnly,
+} from './IndicateurValueTableRow';
 import {
   TEditIndicateurValeurHandlers,
   useEditIndicateurValeur,
 } from './useEditIndicateurValeur';
-import {
-  ValueTableRowReadOnly,
-  IndicateurValueTableRow,
-} from './IndicateurValueTableRow';
-import { Indicateurs } from '@tet/api';
-import { Button } from '@tet/ui';
 
 type IndicateurValuesTableProps = {
   definition: TIndicateurDefinition;

@@ -1,5 +1,5 @@
+import { Icon } from '@/ui';
 import classNames from 'classnames';
-import {Icon} from '@tet/ui';
 
 type BoutonTableauEmplacementProps = {
   /** Id associé au bouton, permettant le scroll */

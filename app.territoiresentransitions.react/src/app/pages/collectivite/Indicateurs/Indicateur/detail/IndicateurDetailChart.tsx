@@ -1,13 +1,13 @@
-import {useState} from 'react';
 import classNames from 'classnames';
+import { useState } from 'react';
 
-import {Button, Icon} from '@tet/ui';
+import { Button, Icon } from '@/ui';
 import IndicateurChart from 'app/pages/collectivite/Indicateurs/chart/IndicateurChart';
-import {TIndicateurDefinition} from 'app/pages/collectivite/Indicateurs/types';
-import {useIndicateurValeurs} from 'app/pages/collectivite/Indicateurs/useIndicateurValeurs';
-import {getLeftLineChartMargin} from 'ui/charts/Line/utils';
-import {transformeValeurs} from './transformeValeurs';
-import {DataSourceTooltip} from './DataSourceTooltip';
+import { TIndicateurDefinition } from 'app/pages/collectivite/Indicateurs/types';
+import { useIndicateurValeurs } from 'app/pages/collectivite/Indicateurs/useIndicateurValeurs';
+import { getLeftLineChartMargin } from 'ui/charts/Line/utils';
+import { DataSourceTooltip } from './DataSourceTooltip';
+import { transformeValeurs } from './transformeValeurs';
 
 type Props = {
   definition: TIndicateurDefinition;
@@ -34,7 +34,7 @@ const IndicateurDetailChart = ({
   const [isChartOpen, setIsChartOpen] = useState(false);
 
   // charge les valeurs à afficher dans le graphe
-  const {data: valeursBrutes, isLoading: isLoadingValeurs} =
+  const { data: valeursBrutes, isLoading: isLoadingValeurs } =
     useIndicateurValeurs({
       id: definition.id,
       importSource: source,
@@ -42,7 +42,7 @@ const IndicateurDetailChart = ({
     });
 
   // sépare les données objectifs/résultats
-  const {valeurs, metadonnee} = transformeValeurs(valeursBrutes, source);
+  const { valeurs, metadonnee } = transformeValeurs(valeursBrutes, source);
   const data = {
     unite: definition.unite,
     valeurs,
@@ -99,10 +99,10 @@ const IndicateurDetailChart = ({
             bottom: 48,
             left: getLeftLineChartMargin(data.valeurs) + 8,
           },
-          legend: {isOpen: true},
+          legend: { isOpen: true },
         }}
         chartInfos={{
-          modal: {isOpen: isChartOpen, setIsOpen: setIsChartOpen},
+          modal: { isOpen: isChartOpen, setIsOpen: setIsChartOpen },
           fileName,
           title: titre,
         }}

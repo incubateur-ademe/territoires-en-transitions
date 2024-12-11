@@ -1,11 +1,11 @@
-import {Badge} from '@tet/ui';
+import { Badge } from '@/ui';
 import { getFormattedNumber } from 'utils/formatUtils';
 
 type BudgetBadgeProps = {
   budgetPrevisionnel: number;
 };
 
-const BudgetBadge = ({budgetPrevisionnel}: BudgetBadgeProps) => {
+const BudgetBadge = ({ budgetPrevisionnel }: BudgetBadgeProps) => {
   return (
     <Badge
       title={

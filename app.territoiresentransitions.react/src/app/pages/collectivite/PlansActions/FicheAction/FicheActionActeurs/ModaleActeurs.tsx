@@ -1,6 +1,4 @@
-import { FicheAction } from '@tet/api/plan-actions';
-import { useState } from 'react';
-import _ from 'lodash';
+import { FicheAction } from '@/api/plan-actions';
 import {
   Field,
   FormSectionGrid,
@@ -8,8 +6,10 @@ import {
   ModalFooterOKCancel,
   Textarea,
   useEventTracker,
-} from '@tet/ui';
+} from '@/ui';
 import { useCurrentCollectivite } from 'core-logic/hooks/useCurrentCollectivite';
+import _ from 'lodash';
+import { useState } from 'react';
 import PartenairesDropdown from 'ui/dropdownLists/PartenairesDropdown/PartenairesDropdown';
 import PersonnesDropdown from 'ui/dropdownLists/PersonnesDropdown/PersonnesDropdown';
 import { getPersonneStringId } from 'ui/dropdownLists/PersonnesDropdown/utils';

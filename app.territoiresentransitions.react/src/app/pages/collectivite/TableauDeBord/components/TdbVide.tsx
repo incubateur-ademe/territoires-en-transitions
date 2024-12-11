@@ -1,4 +1,4 @@
-import { Button } from '@tet/ui';
+import { Button } from '@/ui';
 import { makeCollectivitePlansActionsNouveauUrl } from 'app/paths';
 import { useCurrentCollectivite } from 'core-logic/hooks/useCurrentCollectivite';
 import { useRouter } from 'next/navigation';

@@ -1,9 +1,9 @@
 'use client';
 
+import { StrapiImage } from '@/site/components/strapiImage/StrapiImage';
+import { StrapiItem } from '@/site/src/strapi/StrapiItem';
+import { Icon, Tooltip, useCopyToClipboard } from '@/ui';
 import { useState } from 'react';
-import { Icon, Tooltip, useCopyToClipboard } from '@tet/ui';
-import { StrapiItem } from '@tet/site/src/strapi/StrapiItem';
-import { StrapiImage } from '@tet/site/components/strapiImage/StrapiImage';
 
 type CarteConseillerProps = {
   prenom: string;

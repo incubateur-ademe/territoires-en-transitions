@@ -1,5 +1,5 @@
-import { Statut } from '@tet/api/plan-actions';
-import { preset } from '@tet/ui';
+import { Statut } from '@/api/plan-actions';
+import { preset } from '@/ui';
 
 /** Correspondance entre les statuts et couleurs associées */
 export const statutToColor: Record<Statut | 'NC' | 'Sans statut', string> = {

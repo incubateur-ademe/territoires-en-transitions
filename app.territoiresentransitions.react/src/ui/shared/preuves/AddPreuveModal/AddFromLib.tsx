@@ -1,9 +1,9 @@
-import {useState} from 'react';
-import { Button, Field, Icon, Option, SelectFilter } from '@tet/ui';
-import { TBibliothequeFichier } from '../Bibliotheque/types';
-import { useFichiers, TFilters } from '../Bibliotheque/useFichiers';
-import { TAddFileFromLib } from './AddFile';
+import { Button, Field, Icon, Option, SelectFilter } from '@/ui';
 import classNames from 'classnames';
+import { useState } from 'react';
+import { TBibliothequeFichier } from '../Bibliotheque/types';
+import { TFilters, useFichiers } from '../Bibliotheque/useFichiers';
+import { TAddFileFromLib } from './AddFile';
 
 export type TAddFromLibProps = {
   items: TBibliothequeFichier[];
@@ -92,7 +92,7 @@ export const AddFromLib = (props: TAddFromLibProps) => {
 const AddFromLibConnected = (
   props: Omit<TAddFromLibProps, 'items' | 'setFilters'>
 ) => {
-  const [filters, setFilters] = useState({search: '', page: 1});
+  const [filters, setFilters] = useState({ search: '', page: 1 });
   const data = useFichiers(filters);
   return data ? (
     <AddFromLib {...props} {...data} setFilters={setFilters} />

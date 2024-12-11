@@ -1,7 +1,7 @@
-import { SelectFilter, SelectMultipleProps } from '@tet/ui';
-import { NiveauPriorite } from '@tet/api/plan-actions';
-import { ficheActionNiveauPrioriteOptions } from 'ui/dropdownLists/listesStatiques';
+import { NiveauPriorite } from '@/api/plan-actions';
+import { SelectFilter, SelectMultipleProps } from '@/ui';
 import BadgePriorite from 'app/pages/collectivite/PlansActions/components/BadgePriorite';
+import { ficheActionNiveauPrioriteOptions } from 'ui/dropdownLists/listesStatiques';
 
 type Props = Omit<SelectMultipleProps, 'values' | 'onChange' | 'options'> & {
   values?: NiveauPriorite[];

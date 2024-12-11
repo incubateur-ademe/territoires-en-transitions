@@ -1,6 +1,6 @@
+import { getFormattedNumber } from '@/site/src/utils/getFormattedNumber';
 import classNames from 'classnames';
 import { TTableauBudget } from './utils';
-import { getFormattedNumber } from '@tet/site/src/utils/getFormattedNumber';
 
 type TableauBudgetProps = {
   data: TTableauBudget;

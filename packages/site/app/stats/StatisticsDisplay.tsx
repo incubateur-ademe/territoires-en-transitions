@@ -1,19 +1,19 @@
 /* eslint-disable react/no-unescaped-entities */
 'use client';
 
-import Section from '@tet/site/components/sections/Section';
+import Section from '@/site/components/sections/Section';
+import dynamic from 'next/dynamic';
 import ActiveUsers from './ActiveUsers';
 import CollectiviteActivesEtTotalParType from './CollectiviteActivesEtTotalParType';
 import CollectivitesLabellisees from './CollectivitesLabellisees';
 import { EtatDesLieux } from './EtatDesLieux';
+import EvolutionCollectivitesLabellisees from './EvolutionCollectivitesLabellisees';
 import { EvolutionIndicateurs } from './EvolutionIndicateurs';
 import { EvolutionPlansAction } from './EvolutionPlansAction';
 import EvolutionTotalActivationParType from './EvolutionTotalActivationParType';
 import { ChartTitle, SectionHead } from './headings';
 import NombreCollectivitesEngagees from './NombreCollectivitesEngagees';
 import NombreUtilisateurParCollectivite from './NombreUtilisateurParCollectivite';
-import dynamic from 'next/dynamic';
-import EvolutionCollectivitesLabellisees from './EvolutionCollectivitesLabellisees';
 
 /**
  * Affiche le contenu de la page statisques

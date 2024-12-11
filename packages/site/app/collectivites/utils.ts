@@ -1,8 +1,8 @@
-import { Tables } from '@tet/api';
-import { supabase } from '@tet/site/app/initSupabase';
-import { EtoilesLabel } from '@tet/site/app/types';
-import { fetchCollection, fetchSingle } from '@tet/site/src/strapi/strapi';
-import { StrapiItem } from '@tet/site/src/strapi/StrapiItem';
+import { Tables } from '@/api';
+import { supabase } from '@/site/app/initSupabase';
+import { EtoilesLabel } from '@/site/app/types';
+import { fetchCollection, fetchSingle } from '@/site/src/strapi/strapi';
+import { StrapiItem } from '@/site/src/strapi/StrapiItem';
 
 export type Labellisations = Tables<'labellisation'>;
 export type Indicateurs = {

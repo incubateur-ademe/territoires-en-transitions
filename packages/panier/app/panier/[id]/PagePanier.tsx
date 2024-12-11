@@ -1,10 +1,10 @@
 'use client';
 
-import PanierRealtime from '@tet/panier/components/PanierRealtime';
-import Section from '@tet/panier/components/Section';
-import { ContenuListesFiltre } from '@tet/panier/components/FiltresActions/types';
-import { Panier } from '@tet/api';
-import { ControlledAlert } from '@tet/ui';
+import { Panier } from '@/api';
+import { ContenuListesFiltre } from '@/panier/components/FiltresActions/types';
+import PanierRealtime from '@/panier/components/PanierRealtime';
+import Section from '@/panier/components/Section';
+import { ControlledAlert } from '@/ui';
 
 type PagePanierProps = {
   panier: Panier;

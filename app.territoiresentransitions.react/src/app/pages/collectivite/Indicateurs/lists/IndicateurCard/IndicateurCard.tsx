@@ -1,19 +1,12 @@
 import classNames from 'classnames';
 import { useState } from 'react';
 
-import {
-  Button,
-  Card,
-  CardProps,
-  Checkbox,
-  Notification,
-  Tooltip,
-} from '@tet/ui';
+import { Button, Card, CardProps, Checkbox, Notification, Tooltip } from '@/ui';
 
 import {
   IndicateurChartInfo,
   IndicateurListItem,
-} from '@tet/api/indicateurs/domain';
+} from '@/api/indicateurs/domain';
 import IndicateurChart, {
   IndicateurChartData,
   IndicateurChartProps,
@@ -21,16 +14,16 @@ import IndicateurChart, {
 import { useIndicateurChartInfo } from 'app/pages/collectivite/Indicateurs/chart/useIndicateurChartInfo';
 import { prepareData } from 'app/pages/collectivite/Indicateurs/chart/utils';
 import BadgeIndicateurPerso from 'app/pages/collectivite/Indicateurs/components/BadgeIndicateurPerso';
+import BadgeOpenData from 'app/pages/collectivite/Indicateurs/components/BadgeOpenData';
 import { transformeValeurs } from 'app/pages/collectivite/Indicateurs/Indicateur/detail/transformeValeurs';
+import IndicateurCardOptions from 'app/pages/collectivite/Indicateurs/lists/IndicateurCard/IndicateurCardOptions';
 import {
   generateLineLegendItems,
   getLeftLineChartMargin,
 } from 'ui/charts/Line/utils';
 import PictoIndicateurComplet from 'ui/pictogrammes/PictoIndicateurComplet';
-import { getIndicateurRestant } from './utils';
 import { BadgeACompleter } from 'ui/shared/Badge/BadgeACompleter';
-import IndicateurCardOptions from 'app/pages/collectivite/Indicateurs/lists/IndicateurCard/IndicateurCardOptions';
-import BadgeOpenData from 'app/pages/collectivite/Indicateurs/components/BadgeOpenData';
+import { getIndicateurRestant } from './utils';
 
 /** Props de la carte Indicateur */
 export type IndicateurCardProps = {

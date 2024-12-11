@@ -1,19 +1,19 @@
+import { Button } from '@/ui';
 import classNames from 'classnames';
-import {useFonctionTracker} from 'core-logic/hooks/useFonctionTracker';
-import {useRef, useState} from 'react';
+import { useFonctionTracker } from 'core-logic/hooks/useFonctionTracker';
+import { useRef, useState } from 'react';
 import DownloadCanvasButton from 'ui/buttons/DownloadCanvasButton';
 import Modal from 'ui/shared/floating-ui/Modal';
-import BarChart, {BarChartProps} from './BarChart';
-import {Button} from '@tet/ui';
+import BarChart, { BarChartProps } from './BarChart';
 
 export const Legend = ({
   legend,
 }: {
-  legend: {name: string; color: string}[];
+  legend: { name: string; color: string }[];
 }): JSX.Element => {
   return (
     <div className="flex flex-row flex-wrap items-center justify-center gap-x-8 gap-y-3 my-6">
-      {legend.map(l => (
+      {legend.map((l) => (
         <div key={l.name} className="flex flex-row items-center gap-3">
           <div
             style={{
@@ -34,7 +34,7 @@ type ChartCardModalContentProps = {
   chartInfo?: {
     title?: string;
     subtitle?: string;
-    legend?: {name: string; color: string}[];
+    legend?: { name: string; color: string }[];
     expandable?: boolean;
     downloadedFileName?: string;
     additionalInfo?: string | string[];
@@ -63,7 +63,7 @@ const useDownloadChartButton = (
             fileName={fileName}
             fileType="png"
             onClick={() =>
-              tracker({fonction: 'graphique', action: 'telechargement'})
+              tracker({ fonction: 'graphique', action: 'telechargement' })
             }
           >
             Télécharger le graphique
@@ -79,7 +79,7 @@ const ChartCardModalContent = ({
   topElement,
 }: ChartCardModalContentProps) => {
   // Référence utilisée pour le téléchargement du graphe
-  const {chartWrapperRef, DownloadChartButton} = useDownloadChartButton(
+  const { chartWrapperRef, DownloadChartButton } = useDownloadChartButton(
     chartInfo?.downloadedFileName,
     'absolute -mr-2 right-0 top-3 z-10'
   );
@@ -140,7 +140,7 @@ type ChartCardProps = {
   chartInfo?: {
     title?: string;
     subtitle?: string;
-    legend?: {name: string; color: string}[];
+    legend?: { name: string; color: string }[];
     legendOnOverview?: boolean;
     expandable?: boolean;
     downloadedFileName?: string;
@@ -188,7 +188,7 @@ const ChartCard = ({
     <div
       className={classNames(
         'border border-gray-200 bg-white flex flex-col w-full h-96 relative',
-        {'pt-6': chartInfo?.title || chartInfo?.expandable},
+        { 'pt-6': chartInfo?.title || chartInfo?.expandable },
         className
       )}
       style={customStyle}
@@ -228,7 +228,7 @@ const ChartCard = ({
               variant="outlined"
               onClick={() => {
                 setIsModalOpen(true);
-                tracker({fonction: 'graphique', action: 'agrandissement'});
+                tracker({ fonction: 'graphique', action: 'agrandissement' });
               }}
               className="ml-auto h-fit"
             >

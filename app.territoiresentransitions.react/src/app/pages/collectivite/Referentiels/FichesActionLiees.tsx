@@ -1,10 +1,10 @@
+import { Field } from '@/ui';
 import { useCurrentCollectivite } from 'core-logic/hooks/useCurrentCollectivite';
-import { useFichesActionLiees } from './useFichesActionLiees';
-import { useUpdateFichesActionLiees } from './useUpdateFichesActionLiees';
+import FichesActionsDropdown from 'ui/dropdownLists/FichesActionsDropdown/FichesActionsDropdown';
 import { useCreateFicheResume } from '../PlansActions/FicheAction/data/useCreateFicheResume';
 import FichesLieesListe from '../PlansActions/FicheAction/FichesLiees/FichesLieesListe';
-import { Field } from '@tet/ui';
-import FichesActionsDropdown from 'ui/dropdownLists/FichesActionsDropdown/FichesActionsDropdown';
+import { useFichesActionLiees } from './useFichesActionLiees';
+import { useUpdateFichesActionLiees } from './useUpdateFichesActionLiees';
 
 export type TFichesActionProps = {
   actionId: string;

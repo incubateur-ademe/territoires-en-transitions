@@ -1,9 +1,9 @@
-import {ActionImpact} from '@tet/panier/components/ActionImpact';
 import {
   ActionImpactFourchetteBudgetaire,
   ActionImpactFull,
   ActionImpactTempsMiseEnOeuvre,
-} from '@tet/api';
+} from '@/api';
+import { ActionImpact } from '@/panier/components/ActionImpact';
 
 type ListeActionsFiltreesProps = {
   actionsListe: ActionImpactFull[];

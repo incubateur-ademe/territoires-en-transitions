@@ -1,12 +1,12 @@
 'use client';
 
-import Section from '@tet/site/components/sections/Section';
-import { Button, useEventTracker } from '@tet/ui';
 import {
   useCollectivitesEngagees,
   useTerritoiresCOT,
   useTerritoiresLabellises,
-} from '@tet/site/app/stats/NombreCollectivitesEngagees';
+} from '@/site/app/stats/NombreCollectivitesEngagees';
+import Section from '@/site/components/sections/Section';
+import { Button, useEventTracker } from '@/ui';
 
 type CollectivitesEngageesProps = {
   titre: string;

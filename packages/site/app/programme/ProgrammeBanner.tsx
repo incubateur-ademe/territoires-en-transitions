@@ -1,6 +1,6 @@
 /* eslint-disable react/no-unescaped-entities */
-import Section from '@tet/site/components/sections/Section';
-import EmbededVideo from '@tet/site/components/video/EmbededVideo';
+import Section from '@/site/components/sections/Section';
+import EmbededVideo from '@/site/components/video/EmbededVideo';
 
 type ProgrammeBannerProps = {
   titre: string;

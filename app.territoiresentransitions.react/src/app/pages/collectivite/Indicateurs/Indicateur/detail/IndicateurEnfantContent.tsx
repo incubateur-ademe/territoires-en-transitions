@@ -1,12 +1,12 @@
+import { Field } from '@/ui';
+import IndicateurDetailChart from 'app/pages/collectivite/Indicateurs/Indicateur/detail/IndicateurDetailChart';
+import ActionsLieesListe from 'app/pages/collectivite/PlansActions/FicheAction/ActionsLiees/ActionsLieesListe';
 import { TIndicateurDefinition } from '../../types';
 import { FichesActionLiees } from '../FichesActionLiees';
-import { IndicateurValuesTabs } from './IndicateurValuesTabs';
-import { IndicateurInfoLiees } from './IndicateurInfoLiees';
-import { useIndicateurImportSources } from './useImportSources';
 import { ImportSourcesSelector } from './ImportSourcesSelector';
-import IndicateurDetailChart from 'app/pages/collectivite/Indicateurs/Indicateur/detail/IndicateurDetailChart';
-import { Field } from '@tet/ui';
-import ActionsLieesListe from 'app/pages/collectivite/PlansActions/FicheAction/ActionsLiees/ActionsLieesListe';
+import { IndicateurInfoLiees } from './IndicateurInfoLiees';
+import { IndicateurValuesTabs } from './IndicateurValuesTabs';
+import { useIndicateurImportSources } from './useImportSources';
 
 /** Affiche le contenu du détail d'un indicateur enfant */
 export const IndicateurEnfantContent = ({

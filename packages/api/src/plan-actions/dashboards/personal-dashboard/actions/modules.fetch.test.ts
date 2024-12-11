@@ -1,10 +1,10 @@
+import { signIn, signOut } from '@/api/tests/auth';
+import { supabase } from '@/api/tests/supabase';
 import { beforeEach, expect, test } from 'vitest';
 import { defaultSlugsSchema } from '../domain/module.schema';
 import { modulesFetch } from './modules.fetch';
 import { modulesSave } from './modules.save';
 import { moduleNew, resetModules } from './modules.test-fixture';
-import { signIn, signOut } from '@tet/api/tests/auth';
-import { supabase } from '@tet/api/tests/supabase';
 
 const params = {
   dbClient: supabase,

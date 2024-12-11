@@ -1,7 +1,7 @@
 'use server';
 
+import { convertNameToSlug } from '@/site/src/utils/convertNameToSlug';
 import { notFound, redirect } from 'next/navigation';
-import { convertNameToSlug } from '@tet/site/src/utils/convertNameToSlug';
 import { getData } from './[slug]/utils';
 
 /**

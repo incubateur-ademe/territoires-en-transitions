@@ -1,13 +1,13 @@
-import { useState } from 'react';
-import { Meta, StoryObj } from '@storybook/react';
 import { action } from '@storybook/addon-actions';
+import { Meta, StoryObj } from '@storybook/react';
+import { useState } from 'react';
 
-import { Field } from '@tet/ui/design-system/Field';
+import { Field } from '@/ui/design-system/Field';
 
+import { SelectFilter } from '@/ui/design-system/Select/SelectFilter';
+import { SelectBase } from '@/ui/design-system/Select/components/SelectBase';
 import { Select, SelectMultiple } from '.';
 import { OptionValue, SelectOption, getFlatOptions } from './utils';
-import { SelectFilter } from '@tet/ui/design-system/Select/SelectFilter';
-import { SelectBase } from '@tet/ui/design-system/Select/components/SelectBase';
 
 const singleOptions: SelectOption[] = [
   { value: 'option1', label: 'Option 1' },

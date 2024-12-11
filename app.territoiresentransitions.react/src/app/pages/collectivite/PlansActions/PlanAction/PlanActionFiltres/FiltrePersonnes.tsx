@@ -1,3 +1,6 @@
+import { Field, OptionValue, SelectFilter } from '@/ui';
+import { usePersonneListe } from 'ui/dropdownLists/PersonnesDropdown/usePersonneListe';
+import { getPersonneStringId } from 'ui/dropdownLists/PersonnesDropdown/utils';
 import { TOption } from 'ui/shared/select/commons';
 import {
   SANS_PILOTE,
@@ -5,9 +8,6 @@ import {
   TFilters,
   TFiltreProps,
 } from '../../FicheAction/data/filters';
-import { getPersonneStringId } from 'ui/dropdownLists/PersonnesDropdown/utils';
-import { usePersonneListe } from 'ui/dropdownLists/PersonnesDropdown/usePersonneListe';
-import { Field, OptionValue, SelectFilter } from '@tet/ui';
 
 type Props = TFiltreProps & {
   label: string;

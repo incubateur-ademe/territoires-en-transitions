@@ -1,14 +1,14 @@
-import {useState} from 'react';
-import {Button, Field, Modal, ModalFooterOKCancel, Textarea} from '@tet/ui';
-import {NOTES_MAX_LENGTH} from './ModaleCreationNote';
+import { Button, Field, Modal, ModalFooterOKCancel, Textarea } from '@/ui';
+import { useState } from 'react';
 import { getMaxLengthMessage } from 'utils/formatUtils';
+import { NOTES_MAX_LENGTH } from './ModaleCreationNote';
 
 type ModaleEditionNoteProps = {
   notes: string;
   updateNotes: (notes: string | null) => void;
 };
 
-const ModaleEditionNote = ({notes, updateNotes}: ModaleEditionNoteProps) => {
+const ModaleEditionNote = ({ notes, updateNotes }: ModaleEditionNoteProps) => {
   const [editedNotes, setEditedNotes] = useState(notes);
 
   const handleSave = () => {
@@ -21,7 +21,7 @@ const ModaleEditionNote = ({notes, updateNotes}: ModaleEditionNoteProps) => {
     <Modal
       title="Modifier la note"
       size="lg"
-      render={({descriptionId}) => (
+      render={({ descriptionId }) => (
         <div id={descriptionId} className="flex flex-col gap-8">
           {/* Décommenter au passage à notes privées */}
           {/* <Alert description="La note est privée, elle n’est pas consultable par les personnes n’étant pas membres de votre collectivité." /> */}
@@ -37,7 +37,7 @@ const ModaleEditionNote = ({notes, updateNotes}: ModaleEditionNoteProps) => {
               className="min-h-[100px]"
               value={editedNotes}
               maxLength={NOTES_MAX_LENGTH}
-              onChange={evt =>
+              onChange={(evt) =>
                 setEditedNotes((evt.target as HTMLTextAreaElement).value)
               }
             />
@@ -45,9 +45,9 @@ const ModaleEditionNote = ({notes, updateNotes}: ModaleEditionNoteProps) => {
         </div>
       )}
       // Boutons pour valider / annuler les modifications
-      renderFooter={({close}) => (
+      renderFooter={({ close }) => (
         <ModalFooterOKCancel
-          btnCancelProps={{onClick: close}}
+          btnCancelProps={{ onClick: close }}
           btnOKProps={{
             onClick: () => {
               handleSave();

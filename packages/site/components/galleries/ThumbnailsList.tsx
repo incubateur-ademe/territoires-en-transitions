@@ -1,5 +1,5 @@
-import { StrapiImage } from '@tet/site/components/strapiImage/StrapiImage';
-import { StrapiItem } from '@tet/site/src/strapi/StrapiItem';
+import { StrapiImage } from '@/site/components/strapiImage/StrapiImage';
+import { StrapiItem } from '@/site/src/strapi/StrapiItem';
 
 type ThumbnailsListProps = {
   thumbnails: {

@@ -1,4 +1,4 @@
-import { Button } from '@tet/ui';
+import { Button } from '@/ui';
 
 const ScrollTopButton = ({ className = '' }: { className?: string }) => {
   return (

@@ -3,7 +3,7 @@ import {
   SelectFilter,
   SelectMultiple,
   SelectMultipleProps,
-} from '@tet/ui';
+} from '@/ui';
 import { generateTitle } from 'app/pages/collectivite/PlansActions/FicheAction/data/utils';
 import { usePlansActionsListe } from 'app/pages/collectivite/PlansActions/PlanAction/data/usePlansActionsListe';
 

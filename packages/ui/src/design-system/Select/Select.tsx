@@ -1,4 +1,4 @@
-import { OptionValue } from '@tet/ui/design-system/Select/utils';
+import { OptionValue } from '@/ui/design-system/Select/utils';
 import { SelectBase, SelectProps } from './components/SelectBase';
 
 type Props = Omit<SelectProps, 'onChange'> & {

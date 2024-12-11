@@ -1,15 +1,15 @@
 import { supabaseClient } from 'core-logic/api/supabase';
 import { QueryKey, useMutation, useQueryClient } from 'react-query';
 
-import { FicheResume } from '@tet/api/plan-actions';
+import { FicheResume } from '@/api/plan-actions';
 import {
   makeCollectivitePlanActionUrl,
   makeCollectiviteToutesLesFichesUrl,
 } from 'app/paths';
 import { useCollectiviteId } from 'core-logic/hooks/params';
 import { useRouter } from 'next/navigation';
-import { PlanNode } from '../../PlanAction/data/types';
 import { useParams } from 'react-router-dom';
+import { PlanNode } from '../../PlanAction/data/types';
 
 type Args = {
   ficheId: number;

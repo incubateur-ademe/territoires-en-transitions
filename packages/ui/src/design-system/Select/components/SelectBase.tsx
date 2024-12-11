@@ -1,22 +1,22 @@
 import { Placement } from '@floating-ui/react';
-import { Ref, forwardRef, useEffect, useState } from 'react';
 import classNames from 'classnames';
+import { Ref, forwardRef, useEffect, useState } from 'react';
 import { useDebouncedCallback } from 'use-debounce';
 
-import { DropdownFloater } from '@tet/ui/design-system/Select/components/DropdownFloater';
-import { Icon } from '@tet/ui/design-system/Icon';
-import { Badge } from '@tet/ui/design-system/Badge';
+import { Badge } from '@/ui/design-system/Badge';
+import { Icon } from '@/ui/design-system/Icon';
+import { DropdownFloater } from '@/ui/design-system/Select/components/DropdownFloater';
 
-import Options from './Options';
 import {
-  filterOptions,
-  getOptionLabel,
-  getFlatOptions,
-  sortOptionByAlphabet,
   Option,
   OptionValue,
   SelectOption,
+  filterOptions,
+  getFlatOptions,
+  getOptionLabel,
+  sortOptionByAlphabet,
 } from '../utils';
+import Options from './Options';
 
 export type CreateOption = {
   userCreatedOptions: OptionValue[];

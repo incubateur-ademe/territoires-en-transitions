@@ -1,6 +1,6 @@
+import { categorieSchema } from '@/api/indicateurs/domain';
+import { getQueryOptionsSchema } from '@/api/shared/domain';
 import { z } from 'zod';
-import { categorieSchema } from '@tet/api/indicateurs/domain';
-import { getQueryOptionsSchema } from '@tet/api/shared/domain';
 
 export const getFilteredIndicateursRequestOptionsSchema = z.object({
   actionId: z

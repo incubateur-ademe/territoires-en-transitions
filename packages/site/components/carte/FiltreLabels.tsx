@@ -1,6 +1,6 @@
 'use client';
 
-import { RadioButton } from '@tet/ui';
+import { RadioButton } from '@/ui';
 import { FiltresLabels } from './CarteCollectivites';
 
 type FiltreLabelsProps = {

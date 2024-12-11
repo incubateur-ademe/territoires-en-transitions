@@ -1,16 +1,16 @@
-import {useEffect} from 'react';
-import {Alert, Button, ModalFooter, RenderProps, Tab, Tabs} from '@tet/ui';
-import {Secteur, TableauDonnees} from './TableauDonnees';
-import {useDonneesSectorisees} from './useDonneesSectorisees';
-import {useUpsertValeurIndicateur} from './useUpsertValeurIndicateur';
-import {TABS} from './constants';
+import { Alert, Button, ModalFooter, RenderProps, Tab, Tabs } from '@/ui';
 import {
   DATE_DEBUT,
   INDICATEURS_TRAJECTOIRE,
   SEQUESTRATION_CARBONE,
 } from 'app/pages/collectivite/Trajectoire/constants';
-import {useCalculTrajectoire} from 'app/pages/collectivite/Trajectoire/useCalculTrajectoire';
+import { useCalculTrajectoire } from 'app/pages/collectivite/Trajectoire/useCalculTrajectoire';
+import { useEffect } from 'react';
 import SpinnerLoader from 'ui/shared/SpinnerLoader';
+import { TABS } from './constants';
+import { Secteur, TableauDonnees } from './TableauDonnees';
+import { useDonneesSectorisees } from './useDonneesSectorisees';
+import { useUpsertValeurIndicateur } from './useUpsertValeurIndicateur';
 
 export type DonneesCollectiviteProps = {
   modalProps: RenderProps;
@@ -20,14 +20,16 @@ export type DonneesCollectiviteProps = {
  * Affiche le contenu de la modale permettant de saisir les données de la
  * collectivité et de lancer un nouveau calcul
  */
-export const DonneesCollectivite = ({modalProps}: DonneesCollectiviteProps) => {
-  const {donneesCompletes, donneesSectorisees} = useDonneesSectorisees();
-  const {mutate: upsertValeur} = useUpsertValeurIndicateur();
+export const DonneesCollectivite = ({
+  modalProps,
+}: DonneesCollectiviteProps) => {
+  const { donneesCompletes, donneesSectorisees } = useDonneesSectorisees();
+  const { mutate: upsertValeur } = useUpsertValeurIndicateur();
   const {
     mutate: calcul,
     isLoading,
     isSuccess,
-  } = useCalculTrajectoire({nouveauCalcul: true});
+  } = useCalculTrajectoire({ nouveauCalcul: true });
 
   // ferme le dialogue quand le nouveau calcul est terminé
   useEffect(() => {
@@ -45,9 +47,9 @@ export const DonneesCollectivite = ({modalProps}: DonneesCollectiviteProps) => {
         observés pour l’année 2015 : c’est l’année de référence de la SNBC v2.
       </p>
       <Tabs defaultActiveTab={0} onChange={() => {}}>
-        {TABS.map(tab => {
-          const {data} = donneesSectorisees[tab.id];
-          const {secteurs, sources, valeursSecteurs, donneesCompletes} =
+        {TABS.map((tab) => {
+          const { data } = donneesSectorisees[tab.id];
+          const { secteurs, sources, valeursSecteurs, donneesCompletes } =
             data || {};
           return (
             <Tab
@@ -125,7 +127,7 @@ const normalizeValue = (value: number | null, id: string) => {
   if (value === null || value === undefined) return value;
   const coef =
     [...INDICATEURS_TRAJECTOIRE, SEQUESTRATION_CARBONE]?.find(
-      ind => ind.id === id
+      (ind) => ind.id === id
     )?.coef ?? 1;
   return value / coef;
 };

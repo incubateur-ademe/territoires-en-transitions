@@ -1,8 +1,8 @@
 import { useMutation } from 'react-query';
 
-import { Indicateurs } from '@tet/api';
-import { Personne } from '@tet/api/collectivites';
-import { Tag, Thematique } from '@tet/api/shared/domain';
+import { Indicateurs } from '@/api';
+import { Personne } from '@/api/collectivites';
+import { Tag, Thematique } from '@/api/shared/domain';
 import { supabaseClient } from 'core-logic/api/supabase';
 import { useCollectiviteId } from 'core-logic/hooks/params';
 

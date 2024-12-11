@@ -1,9 +1,9 @@
+import { Modal } from '@/ui';
 import classNames from 'classnames';
-import {useCurrentCollectivite} from 'core-logic/hooks/useCurrentCollectivite';
-import {useState} from 'react';
-import {Modal} from '@tet/ui';
-import {AddPreuveModal} from 'ui/shared/preuves/AddPreuveModal';
-import {useAddPreuveReglementaireToAction} from './useAddPreuveToAction';
+import { useCurrentCollectivite } from 'core-logic/hooks/useCurrentCollectivite';
+import { useState } from 'react';
+import { AddPreuveModal } from 'ui/shared/preuves/AddPreuveModal';
+import { useAddPreuveReglementaireToAction } from './useAddPreuveToAction';
 
 export type TAddPreuveButtonProps = {
   preuve_id: string;
@@ -19,7 +19,7 @@ export type TAddPreuveButtonProps = {
 
 export const AddPreuveReglementaire = (props: TAddPreuveButtonProps) => {
   const [opened, setOpened] = useState(false);
-  const {preuve_id, isDisabled} = props;
+  const { preuve_id, isDisabled } = props;
   const handlers = useAddPreuveReglementaireToAction(preuve_id);
   const currentCollectivite = useCurrentCollectivite();
   if (!currentCollectivite || currentCollectivite.readonly) {
@@ -29,9 +29,9 @@ export const AddPreuveReglementaire = (props: TAddPreuveButtonProps) => {
   return (
     <Modal
       size="lg"
-      openState={{isOpen: opened, setIsOpen: setOpened}}
+      openState={{ isOpen: opened, setIsOpen: setOpened }}
       title="Ajouter un document attendu"
-      render={({close}) => {
+      render={({ close }) => {
         return (
           <AddPreuveModal
             docType="reglementaire"

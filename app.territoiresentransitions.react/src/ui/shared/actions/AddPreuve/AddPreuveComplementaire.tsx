@@ -1,11 +1,11 @@
-import {useCurrentCollectivite} from 'core-logic/hooks/useCurrentCollectivite';
-import {useState} from 'react';
-import {Modal} from '@tet/ui';
-import {AddPreuveModal} from 'ui/shared/preuves/AddPreuveModal';
-import {TActionDef} from 'ui/shared/preuves/Bibliotheque/usePreuves';
+import { Modal } from '@/ui';
+import { useCurrentCollectivite } from 'core-logic/hooks/useCurrentCollectivite';
+import { useState } from 'react';
+import { AddPreuveModal } from 'ui/shared/preuves/AddPreuveModal';
+import { TActionDef } from 'ui/shared/preuves/Bibliotheque/usePreuves';
 import SelectDropdown from 'ui/shared/select/SelectDropdown';
-import {useAddPreuveComplementaireToAction} from './useAddPreuveToAction';
-import {useSubActionOptionsListe} from './useSubActions';
+import { useAddPreuveComplementaireToAction } from './useAddPreuveToAction';
+import { useSubActionOptionsListe } from './useSubActions';
 
 export type TAddPreuveButtonProps = {
   /** Identifiant de l'action concernée */
@@ -25,7 +25,7 @@ export const AddPreuveComplementaire = (props: TAddPreuveButtonProps) => {
   // l'action dans ce cas il est nécessaire d'extraire l'identifiant de l'action
   // et de demander à laquelle de ses sous-actions doit être associée la preuve
   // complémentaire
-  const {action, addToSubAction} = props;
+  const { action, addToSubAction } = props;
   const [subaction_id, setSubaction] = useState('');
   const selectSubActionIsRequired = addToSubAction && !subaction_id;
 
@@ -53,7 +53,7 @@ export const AddPreuveComplementaire = (props: TAddPreuveButtonProps) => {
   return (
     <Modal
       size="lg"
-      openState={{isOpen: opened, setIsOpen: setOpened}}
+      openState={{ isOpen: opened, setIsOpen: setOpened }}
       disableDismiss={selectSubActionIsRequired}
       title="Ajouter un document complémentaire"
       render={() => {
@@ -105,7 +105,7 @@ const SelectSubAction = ({
         placeholderText="Sélectionnez une option"
         value={subaction_id}
         options={options}
-        onSelect={value => {
+        onSelect={(value) => {
           setSubaction(value);
         }}
       />

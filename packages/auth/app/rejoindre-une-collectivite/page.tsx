@@ -1,9 +1,9 @@
 'use client';
 
-import { getAuthPaths, restoreSessionFromAuthTokens } from '@tet/api';
-import { useRejoindreUneCollectivite } from '@tet/auth/app/rejoindre-une-collectivite/useRejoindreUneCollectivite';
-import { RejoindreUneCollectiviteModal } from '@tet/auth/components/RejoindreUneCollectivite';
-import { supabase } from '@tet/auth/src/clientAPI';
+import { getAuthPaths, restoreSessionFromAuthTokens } from '@/api';
+import { useRejoindreUneCollectivite } from '@/auth/app/rejoindre-une-collectivite/useRejoindreUneCollectivite';
+import { RejoindreUneCollectiviteModal } from '@/auth/components/RejoindreUneCollectivite';
+import { supabase } from '@/auth/src/clientAPI';
 import { useEffect } from 'react';
 
 /**

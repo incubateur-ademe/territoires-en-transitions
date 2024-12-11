@@ -1,5 +1,5 @@
-import {useEffect, useState} from 'react';
-import {Checkbox, FormSectionGrid, Modal, ModalFooterOKCancel} from '@tet/ui';
+import { Checkbox, FormSectionGrid, Modal, ModalFooterOKCancel } from '@/ui';
+import { useEffect, useState } from 'react';
 
 type ModaleAccesProps = {
   isOpen: boolean;
@@ -28,10 +28,10 @@ const ModaleAcces = ({
 
   return (
     <Modal
-      openState={{isOpen, setIsOpen}}
+      openState={{ isOpen, setIsOpen }}
       title="Restriction des accès à la fiche"
       size="md"
-      render={({descriptionId}) => (
+      render={({ descriptionId }) => (
         <FormSectionGrid formSectionId={descriptionId}>
           <Checkbox
             data-test="FicheToggleConfidentialite"
@@ -43,14 +43,14 @@ const ModaleAcces = ({
             de la plateforme."
             containerClassname="col-span-2"
             checked={editedRestreint}
-            onChange={() => setEditedFiche(prevState => !prevState)}
+            onChange={() => setEditedFiche((prevState) => !prevState)}
           />
         </FormSectionGrid>
       )}
       // Boutons pour valider / annuler les modifications
-      renderFooter={({close}) => (
+      renderFooter={({ close }) => (
         <ModalFooterOKCancel
-          btnCancelProps={{onClick: close}}
+          btnCancelProps={{ onClick: close }}
           btnOKProps={{
             onClick: () => {
               handleSave();

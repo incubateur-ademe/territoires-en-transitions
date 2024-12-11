@@ -1,6 +1,6 @@
 import { useQuery } from 'react-query';
 
-import { ficheActionCount } from '@tet/api/plan-actions/fiche-resumes.list';
+import { ficheActionCount } from '@/api/plan-actions/fiche-resumes.list';
 import { supabaseClient } from 'core-logic/api/supabase';
 import { useCollectiviteId } from 'core-logic/hooks/params';
 

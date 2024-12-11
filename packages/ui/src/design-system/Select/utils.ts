@@ -1,7 +1,7 @@
 import {
   ITEM_ALL,
   itemAllOption,
-} from '@tet/ui/design-system/Select/SelectFilter';
+} from '@/ui/design-system/Select/SelectFilter';
 import { naturalSort } from '../../utils/naturalSort';
 
 /**

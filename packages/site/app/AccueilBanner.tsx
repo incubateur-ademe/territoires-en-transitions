@@ -1,8 +1,8 @@
 'use client';
 
+import { StrapiImage } from '@/site/components/strapiImage/StrapiImage';
+import { StrapiItem } from '@/site/src/strapi/StrapiItem';
 import { useEffect, useState } from 'react';
-import { StrapiItem } from '@tet/site/src/strapi/StrapiItem';
-import { StrapiImage } from '@tet/site/components/strapiImage/StrapiImage';
 
 type AccueilBannerProps = {
   couverture: StrapiItem;

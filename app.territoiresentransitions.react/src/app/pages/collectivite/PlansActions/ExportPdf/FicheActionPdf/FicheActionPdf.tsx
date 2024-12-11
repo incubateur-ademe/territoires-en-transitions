@@ -1,12 +1,8 @@
-import {
-  FicheAction,
-  FicheActionNote,
-  FicheResume,
-} from '@tet/api/plan-actions';
+import { IndicateurDefinition } from '@/api/indicateurs/domain';
+import { FicheAction, FicheActionNote, FicheResume } from '@/api/plan-actions';
 import { TActionStatutsRow, TAxeRow } from 'types/alias';
-import { IndicateurDefinition } from '@tet/api/indicateurs/domain';
-import { AnnexeInfo } from '../../FicheAction/data/useAnnexesFicheActionInfos';
 import { Divider, Stack, Title } from 'ui/export-pdf/components';
+import { AnnexeInfo } from '../../FicheAction/data/useAnnexesFicheActionInfos';
 
 import Acteurs from './Acteurs';
 import ActionsLiees from './ActionsLiees';
@@ -14,13 +10,13 @@ import Budget from './Budget';
 import Chemins from './Chemins';
 import CreationFiche from './CreationFiche';
 import Description from './Description';
+import Documents from './Documents';
 import FichesLiees from './FichesLiees';
 import Indicateurs from './Indicateurs';
 import Notes from './Notes';
-import Planning from './Planning';
-import Documents from './Documents';
 import NotesDeSuivi from './NotesDeSuivi';
 import Pilotes from './Pilotes';
+import Planning from './Planning';
 
 export type FicheActionPdfProps = {
   fiche: FicheAction;

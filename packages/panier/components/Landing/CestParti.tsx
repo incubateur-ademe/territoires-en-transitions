@@ -1,13 +1,13 @@
 'use client';
 
-import { useState } from 'react';
-import { panierAPI } from '@tet/panier/src/clientAPI';
+import { getAuthPaths } from '@/api';
+import { panierAPI } from '@/panier/src/clientAPI';
+import { Button, Icon, useEventTracker } from '@/ui';
 import { useParams, usePathname, useRouter } from 'next/navigation';
-import { useEventTracker, Button, Icon } from '@tet/ui';
+import { useState } from 'react';
+import { useUserContext } from '../../providers';
 import SelectCollectivite from './SelectCollectivite';
 import { useCollectiviteInfo } from './useCollectiviteInfo';
-import { getAuthPaths } from '@tet/api';
-import { useUserContext } from '../../providers';
 
 const CestParti = () => {
   const params = useParams();

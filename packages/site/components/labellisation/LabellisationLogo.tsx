@@ -1,4 +1,4 @@
-import { EtoilesLabel } from '@tet/site/app/types';
+import { EtoilesLabel } from '@/site/app/types';
 import LabelReferentiel from './LabelReferentiel';
 import LogoTeTe from './LogoTeTe';
 

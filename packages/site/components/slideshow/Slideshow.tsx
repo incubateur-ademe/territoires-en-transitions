@@ -1,9 +1,9 @@
 'use client';
 
-import {Button, ButtonVariant} from '@tet/ui';
+import { Button, ButtonVariant } from '@/ui';
 import classNames from 'classnames';
-import {useCallback, useEffect, useState} from 'react';
-import {useSwipeable} from 'react-swipeable';
+import { useCallback, useEffect, useState } from 'react';
+import { useSwipeable } from 'react-swipeable';
 
 type SlideshowProps = {
   slides: React.ReactNode[];
@@ -38,7 +38,7 @@ const Slideshow = ({
       else if (index >= slides.length) setSlideIndex(0);
       else setSlideIndex(index);
     },
-    [slideIndex, slides.length],
+    [slideIndex, slides.length]
   );
 
   // Changement automatique du slide affiché
@@ -110,7 +110,7 @@ const Slideshow = ({
                     'bg-orange-1':
                       index === slideIndex && dotsColor === 'orange',
                     'bg-[#D9D9D9] hover:bg-grey-5': index !== slideIndex,
-                  },
+                  }
                 )}
                 onClick={() => setSlideIndex(index)}
               />

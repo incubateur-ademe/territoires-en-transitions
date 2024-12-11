@@ -7,7 +7,7 @@ import {
   ModalFooter,
   Select,
   Textarea,
-} from '@tet/ui';
+} from '@/ui';
 import { useState } from 'react';
 import { EditedNote } from '../data/useUpsertNoteSuivi';
 

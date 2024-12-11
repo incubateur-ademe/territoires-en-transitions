@@ -1,7 +1,7 @@
-import DonutChartWithLegend from '@tet/site/components/charts/DonutChartWithLegend';
-import { StrapiImage } from '@tet/site/components/strapiImage/StrapiImage';
+import DonutChartWithLegend from '@/site/components/charts/DonutChartWithLegend';
+import Markdown from '@/site/components/markdown/Markdown';
+import { StrapiImage } from '@/site/components/strapiImage/StrapiImage';
 import { IndicateurDefaultData } from './IndicateursCollectivite';
-import Markdown from '@tet/site/components/markdown/Markdown';
 
 type IndicateurCardProps = {
   defaultData: IndicateurDefaultData;

@@ -1,7 +1,7 @@
+import Markdown from '@/site/components/markdown/Markdown';
+import ReactIcon from '@/site/components/react-icons/ReactIcon';
+import { StrapiImage } from '@/site/components/strapiImage/StrapiImage';
 import { Liste } from './types';
-import Markdown from '@tet/site/components/markdown/Markdown';
-import ReactIcon from '@tet/site/components/react-icons/ReactIcon';
-import { StrapiImage } from '@tet/site/components/strapiImage/StrapiImage';
 
 const ListeVerticaleService = ({ liste }: { liste: Liste }) => {
   return (

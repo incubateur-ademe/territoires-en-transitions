@@ -1,13 +1,13 @@
+import { Button } from '@/ui';
 import { ActionDefinitionSummary } from 'core-logic/api/endpoints/ActionDefinitionSummaryReadEndpoint';
 import { useCollectiviteId } from 'core-logic/hooks/params';
+import { useActionScore } from 'core-logic/hooks/scoreHooks';
+import Modal from 'ui/shared/floating-ui/Modal';
+import { useQuestionsReponses } from '../PersoReferentielThematique/useQuestionsReponses';
 import { PersoPotentielTabs } from './PersoPotentielTabs';
 import { PointsPotentiels } from './PointsPotentiels';
-import { useRegles } from './useRegles';
 import { useChangeReponseHandler } from './useChangeReponseHandler';
-import { useActionScore } from 'core-logic/hooks/scoreHooks';
-import { useQuestionsReponses } from '../PersoReferentielThematique/useQuestionsReponses';
-import Modal from 'ui/shared/floating-ui/Modal';
-import { Button } from '@tet/ui';
+import { useRegles } from './useRegles';
 
 export type TPersoPotentielButtonProps = {
   /** Définition de l'action */

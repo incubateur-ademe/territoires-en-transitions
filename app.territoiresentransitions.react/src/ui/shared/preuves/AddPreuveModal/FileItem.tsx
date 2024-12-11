@@ -1,13 +1,13 @@
+import { Button } from '@/ui';
 import { useEffect } from 'react';
 import {
   UploadStatus,
   UploadStatusCode,
-  UploadStatusRunning,
   UploadStatusFailed,
+  UploadStatusRunning,
 } from 'ui/shared/preuves/AddPreuveModal/types';
 import { useUploader } from 'ui/shared/preuves/AddPreuveModal/useUploader';
 import { formatFileSize } from 'utils/file';
-import { Button } from '@tet/ui';
 
 export type TFileItem = {
   /** Fichier concerné */

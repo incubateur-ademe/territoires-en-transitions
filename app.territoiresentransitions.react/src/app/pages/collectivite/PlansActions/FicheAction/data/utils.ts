@@ -1,8 +1,4 @@
-import {
-  FicheAction,
-  FicheActionInsert,
-  FicheResume,
-} from '@tet/api/plan-actions';
+import { FicheAction, FicheResume } from '@/api/plan-actions';
 import { naturalSort } from 'utils/naturalSort';
 
 /**

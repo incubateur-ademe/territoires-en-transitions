@@ -1,4 +1,4 @@
-import { ReferentielParamOption } from '@tet/app/paths';
+import { ReferentielParamOption } from '@/app/paths';
 import { supabaseClient } from 'core-logic/api/supabase';
 import { useCollectiviteId } from 'core-logic/hooks/params';
 import { useQuery } from 'react-query';

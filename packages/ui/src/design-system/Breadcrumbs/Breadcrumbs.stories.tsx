@@ -1,7 +1,7 @@
+import { Button } from '@/ui/design-system/Button';
 import { Meta, StoryObj } from '@storybook/react';
-import { Breadcrumbs } from './Breadcrumbs';
 import { useState } from 'react';
-import { Button } from '@tet/ui/design-system/Button';
+import { Breadcrumbs } from './Breadcrumbs';
 
 const meta: Meta<typeof Breadcrumbs> = {
   component: Breadcrumbs,

@@ -1,8 +1,8 @@
+import { TrackPageView } from '@/ui';
 import { useCollectiviteId } from 'core-logic/hooks/params';
-import { THistoriqueProps } from './types';
 import { HistoriqueListe } from './HistoriqueListe';
+import { THistoriqueProps } from './types';
 import { useHistoriqueItemListe } from './useHistoriqueItemListe';
-import { TrackPageView } from '@tet/ui';
 
 /**
  * Affiche le journal d'activité d'une collectivité

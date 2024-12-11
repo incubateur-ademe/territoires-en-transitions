@@ -1,8 +1,8 @@
 import { useState } from 'react';
 
-import { Indicateurs } from '@tet/api';
-import { modulesSave } from '@tet/api/plan-actions/dashboards/personal-dashboard/actions/modules.save';
-import { ModuleIndicateursSelect } from '@tet/api/plan-actions/dashboards/personal-dashboard/domain/module.schema';
+import { Indicateurs } from '@/api';
+import { modulesSave } from '@/api/plan-actions/dashboards/personal-dashboard/actions/modules.save';
+import { ModuleIndicateursSelect } from '@/api/plan-actions/dashboards/personal-dashboard/domain/module.schema';
 import {
   Field,
   FormSection,
@@ -10,16 +10,16 @@ import {
   ModalFooterOKCancel,
   ModalProps,
   useEventTracker,
-} from '@tet/ui';
+} from '@/ui';
 import { supabaseClient } from 'core-logic/api/supabase';
 import { useCollectiviteId } from 'core-logic/hooks/params';
 import { QueryKey, useQueryClient } from 'react-query';
+import IndicateurCompletsDropdown from 'ui/dropdownLists/indicateur/IndicateurCompletsDropdown';
 import PersonnesDropdown from 'ui/dropdownLists/PersonnesDropdown/PersonnesDropdown';
 import { splitPilotePersonnesAndUsers } from 'ui/dropdownLists/PersonnesDropdown/utils';
 import PlansActionDropdown from 'ui/dropdownLists/PlansActionDropdown';
-import ThematiquesDropdown from 'ui/dropdownLists/ThematiquesDropdown/ThematiquesDropdown';
-import IndicateurCompletsDropdown from 'ui/dropdownLists/indicateur/IndicateurCompletsDropdown';
 import ServicesPilotesDropdown from 'ui/dropdownLists/ServicesPilotesDropdown/ServicesPilotesDropdown';
+import ThematiquesDropdown from 'ui/dropdownLists/ThematiquesDropdown/ThematiquesDropdown';
 
 type Props = ModalProps & {
   module: ModuleIndicateursSelect;

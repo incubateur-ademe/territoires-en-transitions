@@ -1,4 +1,4 @@
-import { ficheActionFetch } from '@tet/api/plan-actions';
+import { ficheActionFetch } from '@/api/plan-actions';
 import { supabaseClient } from 'core-logic/api/supabase';
 import { useQuery } from 'react-query';
 

@@ -1,6 +1,5 @@
-import Landing from '@tet/panier/components/Landing';
-import { TrackPageView } from '@tet/ui';
-import React from 'react';
+import Landing from '@/panier/components/Landing';
+import { TrackPageView } from '@/ui';
 
 const Page = () => {
   return (

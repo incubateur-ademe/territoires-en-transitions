@@ -1,6 +1,6 @@
-import { useState } from 'react';
+import { Icon, IconValue } from '@/ui/design-system/Icon';
 import classNames from 'classnames';
-import { Icon, IconValue } from '@tet/ui/design-system/Icon';
+import { useState } from 'react';
 
 type AccordionType = {
   id?: string;

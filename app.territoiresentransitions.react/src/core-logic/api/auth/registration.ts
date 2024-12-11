@@ -1,5 +1,5 @@
-import {supabaseClient} from 'core-logic/api/supabase';
-import {TablesInsert} from '@tet/api';
+import { TablesInsert } from '@/api';
+import { supabaseClient } from 'core-logic/api/supabase';
 
 export interface InscriptionUtilisateur {
   email: string;
@@ -22,7 +22,7 @@ export const registerUser = async (inscription: InscriptionUtilisateur) => {
     );
 
   const email = inscription.email.toLowerCase();
-  const {data, error} = await supabaseClient.auth.signUp({
+  const { data, error } = await supabaseClient.auth.signUp({
     email,
     password: inscription.password,
   });

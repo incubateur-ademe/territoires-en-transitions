@@ -1,4 +1,4 @@
-import { Icon, IconValue } from '@tet/ui/design-system/Icon';
+import { Icon, IconValue } from '@/ui/design-system/Icon';
 import { FormSectionGrid, FormSectionGridProps } from './FormSectionGrid';
 
 type FormSectionProps = {

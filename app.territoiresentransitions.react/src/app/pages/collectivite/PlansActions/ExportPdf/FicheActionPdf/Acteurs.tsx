@@ -1,4 +1,4 @@
-import { getOptionLabel } from '@tet/ui';
+import { getOptionLabel } from '@/ui';
 import {
   CiblePicto,
   CitoyenPicto,

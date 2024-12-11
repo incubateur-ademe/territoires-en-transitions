@@ -1,6 +1,6 @@
-import { PlanNode } from './data/types';
+import { Modal, ModalFooterOKCancel } from '@/ui';
 import { useRestreindreFiches } from '../FicheAction/data/useRestreindreFiches';
-import { Modal, ModalFooterOKCancel } from '@tet/ui';
+import { PlanNode } from './data/types';
 
 type Props = {
   children: JSX.Element;

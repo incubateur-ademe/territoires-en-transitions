@@ -1,8 +1,5 @@
-import {useState} from 'react';
-import {useRouter} from 'next/navigation';
-import {supabase} from '@tet/auth/src/clientAPI';
-import {getRootDomain, setAuthTokens} from '@tet/api';
-import {useGetPasswordStrength} from '@tet/auth/components/PasswordStrengthMeter/useGetPasswordStrength';
+import { getRootDomain, setAuthTokens } from '@/api';
+import { useGetPasswordStrength } from '@/auth/components/PasswordStrengthMeter/useGetPasswordStrength';
 import {
   SignupData,
   SignupDataStep1,
@@ -10,8 +7,11 @@ import {
   SignupDataStep3,
   SignupView,
   isValidSignupView,
-} from '@tet/auth/components/Signup';
-import {ResendFunction} from '@tet/auth/components/VerifyOTP';
+} from '@/auth/components/Signup';
+import { ResendFunction } from '@/auth/components/VerifyOTP';
+import { supabase } from '@/auth/src/clientAPI';
+import { useRouter } from 'next/navigation';
+import { useState } from 'react';
 
 /**
  * Gère l'appel à la fonction de signup et la redirection
@@ -46,20 +46,20 @@ export const useSignupState = ({
 
     // ETAPE 1
     if (view === 'etape1') {
-      const {email, password} = formData as SignupDataStep1;
+      const { email, password } = formData as SignupDataStep1;
       if (!email || isLoading) return;
 
       // fait l'appel approprié suivant qu'un mdp est spécifié ou non
       setIsLoading(true);
-      const {error} = await (password
+      const { error } = await (password
         ? supabase.auth.signUp({
             email,
             password,
-            options: {emailRedirectTo: redirectTo},
+            options: { emailRedirectTo: redirectTo },
           })
         : supabase.auth.signInWithOtp({
             email,
-            options: {shouldCreateUser: true, emailRedirectTo: redirectTo},
+            options: { shouldCreateUser: true, emailRedirectTo: redirectTo },
           }));
       setIsLoading(false);
 
@@ -88,7 +88,7 @@ export const useSignupState = ({
 
       // vérifie le compte
       setIsLoading(true);
-      const {data, error} = await supabase.auth.verifyOtp({
+      const { data, error } = await supabase.auth.verifyOtp({
         email,
         type: 'signup',
         token: otp,
@@ -114,14 +114,14 @@ export const useSignupState = ({
     // ETAPE 3
     if (view === 'etape3') {
       // enregistre les DCP
-      const {data} = await supabase.auth.getSession();
+      const { data } = await supabase.auth.getSession();
       const user_id = data.session?.user.id;
       const email = data.session?.user.email;
 
       if (user_id && email) {
-        const {telephone, prenom, nom} = formData as SignupDataStep3;
+        const { telephone, prenom, nom } = formData as SignupDataStep3;
 
-        const {error} = await supabase.from('dcp').insert([
+        const { error } = await supabase.from('dcp').insert([
           {
             email,
             telephone,
@@ -132,7 +132,7 @@ export const useSignupState = ({
         ]);
 
         // et l'acceptation des CGU
-        const {error: error2} = await supabase.rpc('accepter_cgu');
+        const { error: error2 } = await supabase.rpc('accepter_cgu');
 
         if (error || error2) {
           setError('Une erreur est survenue. Veuillez contacter le support.');
@@ -149,7 +149,7 @@ export const useSignupState = ({
   };
 
   // rappelle la fonction nécessaire si l'utilisateur demande le renvoi d'un email
-  const onResend: ResendFunction = async ({type, email}) => {
+  const onResend: ResendFunction = async ({ type, email }) => {
     if (type && email) {
       // réinitialise les erreurs
       setError(null);
@@ -167,7 +167,7 @@ export const useSignupState = ({
       } else if (type === 'login') {
         ret = await supabase.auth.signInWithOtp({
           email,
-          options: {shouldCreateUser: true, emailRedirectTo: redirectTo},
+          options: { shouldCreateUser: true, emailRedirectTo: redirectTo },
         });
       }
       setIsLoading(false);

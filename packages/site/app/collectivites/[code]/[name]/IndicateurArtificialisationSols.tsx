@@ -1,8 +1,8 @@
-import { IndicateurArtificialisation } from '@tet/site/app/collectivites/utils';
+import { IndicateurArtificialisation } from '@/site/app/collectivites/utils';
+import { getFormattedNumber } from '@/site/src/utils/getFormattedNumber';
+import { fluxToLabel } from '@/site/src/utils/labels';
 import IndicateurCard from './IndicateurCard';
 import { IndicateurDefaultData } from './IndicateursCollectivite';
-import { getFormattedNumber } from '@tet/site/src/utils/getFormattedNumber';
-import { fluxToLabel } from '@tet/site/src/utils/labels';
 
 type IndicateurArtificialisationSolsProps = {
   defaultData?: IndicateurDefaultData;

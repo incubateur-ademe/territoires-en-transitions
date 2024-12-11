@@ -1,5 +1,5 @@
+import { RouterInput, RouterOutput, trpc } from '@/api/utils/trpc/client';
 import { groupBy } from 'es-toolkit';
-import { trpc, RouterOutput, RouterInput } from '@tet/api/utils/trpc/client';
 
 type ListMembresInput = RouterInput['collectivites']['membres']['list'];
 export type CollectiviteMembre =

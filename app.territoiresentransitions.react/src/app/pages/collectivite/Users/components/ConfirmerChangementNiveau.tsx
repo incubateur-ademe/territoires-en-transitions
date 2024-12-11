@@ -1,8 +1,8 @@
-import {Dispatch, SetStateAction} from 'react';
+import { Dispatch, SetStateAction } from 'react';
 
-import {Modal, ModalFooterOKCancel} from '@tet/ui';
-import {TAccesDropdownOption} from 'app/pages/collectivite/Users/components/MembreListTableRow';
-import {Membre, TUpdateMembre} from '../types';
+import { Modal, ModalFooterOKCancel } from '@/ui';
+import { TAccesDropdownOption } from 'app/pages/collectivite/Users/components/MembreListTableRow';
+import { Membre, TUpdateMembre } from '../types';
 
 type Props = {
   isOpen: boolean;
@@ -16,7 +16,7 @@ type Props = {
  * Confirmation avant de changer le niveau d'accès de l'admin lui-même.
  */
 export const ConfirmerChangementNiveau = (props: Props) => {
-  const {selectedOption, membre, updateMembre, isOpen, setIsOpen} = props;
+  const { selectedOption, membre, updateMembre, isOpen, setIsOpen } = props;
   const membre_id = membre.user_id;
   if (!membre_id) {
     return;
@@ -29,8 +29,8 @@ export const ConfirmerChangementNiveau = (props: Props) => {
       description="Souhaitez-vous vraiment modifier vos droits d’accès à cette
     collectivité ? Si possible, nommez une nouvelle personne avec
     l’accès admin."
-      openState={{isOpen, setIsOpen}}
-      renderFooter={({close}) => (
+      openState={{ isOpen, setIsOpen }}
+      renderFooter={({ close }) => (
         <ModalFooterOKCancel
           btnOKProps={{
             onClick: () => {
@@ -42,7 +42,7 @@ export const ConfirmerChangementNiveau = (props: Props) => {
               close();
             },
           }}
-          btnCancelProps={{onClick: () => close()}}
+          btnCancelProps={{ onClick: () => close() }}
         />
       )}
     />

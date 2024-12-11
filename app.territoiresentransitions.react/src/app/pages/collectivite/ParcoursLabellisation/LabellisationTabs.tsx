@@ -1,4 +1,4 @@
-import { Alert } from '@tet/ui';
+import { Alert } from '@/ui';
 import {
   LabellisationVueParamOption,
   makeCollectiviteLabellisationUrl,

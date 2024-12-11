@@ -1,4 +1,4 @@
-import {useState} from 'react';
+import { Indicateurs } from '@/api';
 import {
   Alert,
   Button,
@@ -8,14 +8,13 @@ import {
   Tabs,
   TrackPageView,
   useEventTracker,
-} from '@tet/ui';
-import {Indicateurs} from '@tet/api';
-import {useCurrentCollectivite} from 'core-logic/hooks/useCurrentCollectivite';
-import {TIndicateurDefinition} from '../../types';
-import {SOURCE_COLLECTIVITE} from '../../constants';
-import {useApplyOpenData, useOpenDataComparaison} from './useApplyOpenData';
-import {ApplyOpenDataModal} from './ApplyOpenDataModal';
-import {getSourceTypeLabel} from '../../constants';
+} from '@/ui';
+import { useCurrentCollectivite } from 'core-logic/hooks/useCurrentCollectivite';
+import { useState } from 'react';
+import { getSourceTypeLabel, SOURCE_COLLECTIVITE } from '../../constants';
+import { TIndicateurDefinition } from '../../types';
+import { ApplyOpenDataModal } from './ApplyOpenDataModal';
+import { useApplyOpenData, useOpenDataComparaison } from './useApplyOpenData';
 
 /**
  * Affiche le sélecteur des sources de données d'un indicateur, lorsqu'il
@@ -33,11 +32,11 @@ export const ImportSourcesSelector = ({
   setCurrentSource: (value: string) => void;
 }) => {
   // utilitaire pour faire correspondre les index d'onglet aux id de source
-  const {indexedSources, idToIndex, indexToId, getSourceType} =
+  const { indexedSources, idToIndex, indexToId, getSourceType } =
     useIndexedSources(sources);
 
   // source sélectionnée
-  const source = sources.find(s => s.id === currentSource);
+  const source = sources.find((s) => s.id === currentSource);
   const sourceType = getSourceType(source);
   const sourceTypeLabel = getSourceTypeLabel(sourceType);
 
@@ -65,7 +64,7 @@ export const ImportSourcesSelector = ({
     !!(comparaison?.conflits || comparaison?.ajouts);
 
   // mutation pour appliquer les données
-  const {mutate: applyOpenData} = useApplyOpenData({
+  const { mutate: applyOpenData } = useApplyOpenData({
     collectiviteId,
     definition,
     source,
@@ -84,7 +83,7 @@ export const ImportSourcesSelector = ({
         data-test="sources"
         tabsListClassName="!justify-start"
         defaultActiveTab={idToIndex(currentSource)}
-        onChange={activeTab => {
+        onChange={(activeTab) => {
           const sourceId = indexToId(activeTab);
           setCurrentSource(sourceId);
           if (sourceId !== SOURCE_COLLECTIVITE && sourceType)
@@ -96,7 +95,7 @@ export const ImportSourcesSelector = ({
             });
         }}
       >
-        {indexedSources?.map(({id, libelle}) => (
+        {indexedSources?.map(({ id, libelle }) => (
           <Tab key={id} label={libelle} />
         ))}
       </Tabs>
@@ -118,7 +117,7 @@ export const ImportSourcesSelector = ({
                     setIsOpen(true);
                   } else {
                     // applique les changements si nécessaire
-                    applyOpenData({overwrite: false});
+                    applyOpenData({ overwrite: false });
                   }
                 }}
               >
@@ -131,7 +130,7 @@ export const ImportSourcesSelector = ({
             <Modal
               dataTest="conflits"
               size="xl"
-              openState={{isOpen, setIsOpen}}
+              openState={{ isOpen, setIsOpen }}
               title={`Appliquer les ${sourceTypeLabel} ${source.libelle}`}
               render={() => (
                 <>
@@ -151,13 +150,13 @@ export const ImportSourcesSelector = ({
                   />
                 </>
               )}
-              renderFooter={({close}) => (
+              renderFooter={({ close }) => (
                 <ModalFooterOKCancel
-                  btnCancelProps={{onClick: close}}
+                  btnCancelProps={{ onClick: close }}
                   btnOKProps={{
                     onClick: () => {
                       // applique les changements si nécessaire
-                      applyOpenData({overwrite});
+                      applyOpenData({ overwrite });
                       close();
                     },
                   }}
@@ -180,7 +179,7 @@ const useIndexedSources = (
 ) => {
   // ajoute la source "mes données"
   const indexedSources = sources?.length
-    ? [{id: SOURCE_COLLECTIVITE, libelle: 'Mes données'}, ...sources]
+    ? [{ id: SOURCE_COLLECTIVITE, libelle: 'Mes données' }, ...sources]
     : null;
 
   // converti un id de source en index
@@ -188,7 +187,7 @@ const useIndexedSources = (
     if (id === SOURCE_COLLECTIVITE) {
       return 0;
     }
-    const index = indexedSources?.findIndex(s => s.id === id);
+    const index = indexedSources?.findIndex((s) => s.id === id);
     return index === -1 || index === undefined ? 0 : index;
   };
 
@@ -205,5 +204,5 @@ const useIndexedSources = (
     return source && source.id !== SOURCE_COLLECTIVITE ? source.type : null;
   };
 
-  return {indexedSources, idToIndex, indexToId, getSourceType};
+  return { indexedSources, idToIndex, indexToId, getSourceType };
 };

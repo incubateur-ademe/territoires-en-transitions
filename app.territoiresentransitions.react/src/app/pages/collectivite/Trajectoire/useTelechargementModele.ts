@@ -1,9 +1,9 @@
-import {useMutation} from 'react-query';
-import {useEventTracker} from '@tet/ui';
-import {useApiClient} from 'core-logic/api/useApiClient';
-import {useCollectiviteId} from 'core-logic/hooks/params';
-import {saveBlob} from 'ui/shared/preuves/Bibliotheque/saveBlob';
-import {DOWNLOAD_FILE_MUTATION_OPTIONS} from 'utils/useDownloadFile';
+import { useEventTracker } from '@/ui';
+import { useApiClient } from 'core-logic/api/useApiClient';
+import { useCollectiviteId } from 'core-logic/hooks/params';
+import { useMutation } from 'react-query';
+import { saveBlob } from 'ui/shared/preuves/Bibliotheque/saveBlob';
+import { DOWNLOAD_FILE_MUTATION_OPTIONS } from 'utils/useDownloadFile';
 
 /** Télécharge le fichier xlsx modèle */
 export const useTelechargementModele = () => {
@@ -14,8 +14,8 @@ export const useTelechargementModele = () => {
   return useMutation(
     'snbc/modele',
     async () => {
-      trackEvent('cta_download', {collectivite_id, file: 'modele'});
-      const {blob, filename} = await api.getAsBlob({
+      trackEvent('cta_download', { collectivite_id, file: 'modele' });
+      const { blob, filename } = await api.getAsBlob({
         route: '/trajectoires/snbc/modele',
       });
       if (blob) {

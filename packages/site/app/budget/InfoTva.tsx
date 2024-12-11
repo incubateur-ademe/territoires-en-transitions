@@ -1,7 +1,7 @@
 'use client';
 
+import { Alert } from '@/ui';
 import Markdown from '../../components/markdown/Markdown';
-import { Alert } from '@tet/ui';
 
 export type InfoTvaProps = {
   titre: string;

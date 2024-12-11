@@ -1,6 +1,6 @@
 'use client';
 
-import { Tab, Tabs } from '@tet/ui';
+import { Tab, Tabs } from '@/ui';
 
 type PageContentType = {
   indicateurs: JSX.Element | null;

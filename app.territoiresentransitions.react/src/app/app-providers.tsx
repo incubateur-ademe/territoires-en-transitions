@@ -1,8 +1,8 @@
 'use client';
 
+import { TRPCProvider } from '@/api/utils/trpc/client';
+import { createTrackingClient, TrackingProvider } from '@/ui';
 import { createTheme, ThemeProvider } from '@mui/material/styles';
-import { TRPCProvider } from '@tet/api/utils/trpc/client';
-import { createTrackingClient, TrackingProvider } from '@tet/ui';
 import { ENV } from 'environmentVariables';
 import { QueryClient, QueryClientProvider } from 'react-query';
 import { ReactQueryDevtools } from 'react-query/devtools';

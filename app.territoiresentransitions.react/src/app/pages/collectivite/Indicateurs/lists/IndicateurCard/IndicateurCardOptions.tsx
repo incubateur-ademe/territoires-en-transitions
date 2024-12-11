@@ -1,12 +1,12 @@
-import {Fragment, useState} from 'react';
 import classNames from 'classnames';
+import { Fragment, useState } from 'react';
 
-import {Button} from '@tet/ui';
-import {TIndicateurListItem} from 'app/pages/collectivite/Indicateurs/types';
+import { Button } from '@/ui';
+import IndicateurCardEdit from 'app/pages/collectivite/Indicateurs/lists/IndicateurCard/IndicateurCardEdit/IndicateurCardEdit';
 import IndicateurCardMenu, {
   ChartDownloadSettings,
 } from 'app/pages/collectivite/Indicateurs/lists/IndicateurCard/IndicateurCardMenu/IndicateurCardMenu';
-import IndicateurCardEdit from 'app/pages/collectivite/Indicateurs/lists/IndicateurCard/IndicateurCardEdit/IndicateurCardEdit';
+import { TIndicateurListItem } from 'app/pages/collectivite/Indicateurs/types';
 
 type Props = {
   definition: TIndicateurListItem;

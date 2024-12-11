@@ -1,9 +1,7 @@
-import { GoogleTagManager } from '@next/third-parties/google';
-import AppHeader from '@tet/site/components/layout/AppHeader';
-import Footer from '@tet/site/components/layout/Footer';
-import { Trackers } from '@tet/site/providers/posthog';
+import AppHeader from '@/site/components/layout/AppHeader';
+import Footer from '@/site/components/layout/Footer';
+import { Trackers } from '@/site/providers/posthog';
 import { Metadata, Viewport } from 'next';
-import Script from 'next/script';
 import './global.css';
 import { getMetaData } from './utils';
 

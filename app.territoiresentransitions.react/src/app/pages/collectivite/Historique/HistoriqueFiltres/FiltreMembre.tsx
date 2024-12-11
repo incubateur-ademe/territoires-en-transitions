@@ -1,7 +1,7 @@
+import { Field, SelectFilter } from '@/ui';
+import { useCollectiviteId } from 'core-logic/hooks/params';
 import { TFiltreProps } from '../filters';
 import { useHistoriqueUtilisateurListe } from '../useHistoriqueUtilisateurListe';
-import { useCollectiviteId } from 'core-logic/hooks/params';
-import { Field, SelectFilter } from '@tet/ui';
 
 const FiltreMembre = ({ filters, setFilters }: TFiltreProps) => {
   const collectivite_id = useCollectiviteId();

@@ -1,7 +1,7 @@
-import {Indicateurs} from '@tet/api';
-import {supabaseClient} from 'core-logic/api/supabase';
-import {useCollectiviteId} from 'core-logic/hooks/params';
-import {useQuery} from 'react-query';
+import { Indicateurs } from '@/api';
+import { supabaseClient } from 'core-logic/api/supabase';
+import { useCollectiviteId } from 'core-logic/hooks/params';
+import { useQuery } from 'react-query';
 
 /** Réucpère tous les id des indicateurs favoris de la collectivité */
 export const useIndicateursFavorisCollectiviteIds = () => {

@@ -1,9 +1,9 @@
 import { useEffect, useState } from 'react';
 
-import { Indicateurs } from '@tet/api';
-import { Checkbox, Field, Input } from '@tet/ui';
+import { Indicateurs } from '@/api';
+import { Checkbox, Field, Input } from '@/ui';
 
-import { IndicateurListItem } from '@tet/api/indicateurs/domain';
+import { IndicateurListItem } from '@/api/indicateurs/domain';
 import { useFilteredIndicateurDefinitions } from 'app/pages/collectivite/Indicateurs/lists/useFilteredIndicateurDefinitions';
 import ThematiquesDropdown from 'ui/dropdownLists/ThematiquesDropdown/ThematiquesDropdown';
 import SelectIndicateursGrid from './SelectIndicateursGrid';

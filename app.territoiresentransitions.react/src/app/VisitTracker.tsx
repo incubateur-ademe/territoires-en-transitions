@@ -1,4 +1,4 @@
-import { TablesInsert } from '@tet/api';
+import { TablesInsert } from '@/api';
 import { supabaseClient } from 'core-logic/api/supabase';
 import { useCollectiviteId } from 'core-logic/hooks/params';
 import { useLocalisation } from 'core-logic/hooks/useLocalisation';

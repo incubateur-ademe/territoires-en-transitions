@@ -1,7 +1,7 @@
-import {supabaseClient} from 'core-logic/api/supabase';
-import {useCollectiviteId} from 'core-logic/hooks/params';
-import {useMutation, useQuery, useQueryClient} from 'react-query';
-import {TablesInsert} from '@tet/api';
+import { TablesInsert } from '@/api';
+import { supabaseClient } from 'core-logic/api/supabase';
+import { useCollectiviteId } from 'core-logic/hooks/params';
+import { useMutation, useQuery, useQueryClient } from 'react-query';
 
 /**
  * Permet de charger un commentaire (précision) pour une action.
@@ -14,13 +14,13 @@ import {TablesInsert} from '@tet/api';
 export const useActionCommentaire = (action_id: string) => {
   const collectivite_id = useCollectiviteId();
   const referentiel = getReferentielFromActionId(action_id);
-  const {data, isLoading} = useReferentielCommentaires(
+  const { data, isLoading } = useReferentielCommentaires(
     collectivite_id,
     referentiel
   );
   return {
     actionCommentaire:
-      data?.find(action => action.action_id === action_id) || null,
+      data?.find((action) => action.action_id === action_id) || null,
     isLoading,
   };
 };
@@ -42,15 +42,17 @@ export const useReferentielCommentaires = (
   referentiel: string | null
 ) => {
   return useQuery(['action_commentaire', collectivite_id, referentiel], () =>
-    collectivite_id && referentiel ? read({collectivite_id, referentiel}) : null
+    collectivite_id && referentiel
+      ? read({ collectivite_id, referentiel })
+      : null
   );
 };
 
 const read = async ({
   collectivite_id,
   referentiel,
-}: Pick<CommentaireParams, 'collectivite_id'> & {referentiel: string}) => {
-  const {data} = await supabaseClient
+}: Pick<CommentaireParams, 'collectivite_id'> & { referentiel: string }) => {
+  const { data } = await supabaseClient
     .from('action_commentaire')
     .select()
     .eq('collectivite_id', collectivite_id)

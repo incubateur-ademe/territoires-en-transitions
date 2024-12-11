@@ -1,13 +1,13 @@
 'use server';
 
-import { getServiceStrapiData } from './utils';
-import { InfoData, ListeData, ParagrapheData } from './types';
-import ParagrapheService from './ParagrapheService';
-import ListeService from './ListeService';
-import InfoService from './InfoService';
+import { getUpdatedMetadata } from '@/site/src/utils/getUpdatedMetadata';
 import { Metadata, ResolvingMetadata } from 'next';
-import { getUpdatedMetadata } from '@tet/site/src/utils/getUpdatedMetadata';
 import { notFound } from 'next/navigation';
+import InfoService from './InfoService';
+import ListeService from './ListeService';
+import ParagrapheService from './ParagrapheService';
+import { InfoData, ListeData, ParagrapheData } from './types';
+import { getServiceStrapiData } from './utils';
 
 export async function generateMetadata(
   { params }: { params: { uid: string } },

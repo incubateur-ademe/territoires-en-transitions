@@ -1,8 +1,7 @@
+import { dcpTable, utilisateurDroitTable } from '@/backend/auth';
+import { DatabaseService } from '@/backend/common';
+import { personneTagTable } from '@/backend/taxonomie/models/personne-tag.table';
 import { Injectable } from '@nestjs/common';
-import { dcpTable } from '@tet/backend/auth/models/dcp.table';
-import { utilisateurDroitTable } from '@tet/backend/auth/models/private-utilisateur-droit.table';
-import DatabaseService from '@tet/backend/common/services/database.service';
-import { personneTagTable } from '@tet/backend/taxonomie/models/personne-tag.table';
 import { and, eq, sql } from 'drizzle-orm';
 import { union } from 'drizzle-orm/pg-core';
 import z from 'zod';

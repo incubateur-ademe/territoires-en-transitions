@@ -1,9 +1,9 @@
-import InfoTva, { InfoTvaProps } from './InfoTva';
-import TableauBudget from './TableauBudget';
-import RepartitionCouts from './RepartitionCouts';
+import Markdown from '@/site/components/markdown/Markdown';
 import DescriptionCouts, { DescriptionCoutsProps } from './DescriptionCouts';
+import InfoTva, { InfoTvaProps } from './InfoTva';
+import RepartitionCouts from './RepartitionCouts';
+import TableauBudget from './TableauBudget';
 import { TTableauBudget } from './utils';
-import Markdown from '@tet/site/components/markdown/Markdown';
 
 type BudgetConsommeProps = {
   titre: string;

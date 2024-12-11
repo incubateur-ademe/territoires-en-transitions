@@ -1,5 +1,5 @@
+import { Button } from '@/ui/design-system/Button';
 import classNames from 'classnames';
-import { Button } from '@tet/ui/design-system/Button';
 import { useEffect, useState } from 'react';
 import PaginationPageButton from './PaginationPageButton';
 import { calculatePaginationArray } from './utils';

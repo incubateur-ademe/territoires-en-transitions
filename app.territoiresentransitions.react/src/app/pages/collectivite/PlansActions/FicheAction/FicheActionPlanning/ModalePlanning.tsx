@@ -1,4 +1,4 @@
-import { FicheAction } from '@tet/api/plan-actions';
+import { FicheAction } from '@/api/plan-actions';
 import {
   Checkbox,
   Field,
@@ -8,7 +8,7 @@ import {
   ModalFooterOKCancel,
   Textarea,
   useEventTracker,
-} from '@tet/ui';
+} from '@/ui';
 import { useCurrentCollectivite } from 'core-logic/hooks/useCurrentCollectivite';
 import _ from 'lodash';
 import { useEffect, useRef, useState } from 'react';

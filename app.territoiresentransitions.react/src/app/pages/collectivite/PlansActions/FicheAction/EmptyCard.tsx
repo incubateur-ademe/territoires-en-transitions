@@ -1,4 +1,4 @@
-import {Button, IconValue} from '@tet/ui';
+import { Button, IconValue } from '@/ui';
 import classNames from 'classnames';
 
 type EmptyCardProps = {

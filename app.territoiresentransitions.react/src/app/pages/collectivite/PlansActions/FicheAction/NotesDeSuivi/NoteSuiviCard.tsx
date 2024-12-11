@@ -1,10 +1,10 @@
+import { FicheActionNote } from '@/api/plan-actions';
+import { Button, Card, Icon } from '@/ui';
 import { format } from 'date-fns';
 import { useState } from 'react';
-import { Button, Card, Icon } from '@tet/ui';
-import { FicheActionNote } from '@tet/api/plan-actions';
-import ModaleSuppressionNote from './ModaleSuppressionNote';
-import ModaleEditionNote from './ModaleEditionNote';
 import { DeletedNote, EditedNote } from '../data/useUpsertNoteSuivi';
+import ModaleEditionNote from './ModaleEditionNote';
+import ModaleSuppressionNote from './ModaleSuppressionNote';
 
 type NoteSuiviCardProps = {
   isReadonly?: boolean;

@@ -1,5 +1,5 @@
-import { Statut as PlanActionStatut } from '@tet/api/plan-actions/domain';
-import { Badge, BadgeState } from '@tet/ui';
+import { Statut as PlanActionStatut } from '@/api/plan-actions/domain';
+import { Badge, BadgeState } from '@/ui';
 import classNames from 'classnames';
 
 export const statusToState: Record<

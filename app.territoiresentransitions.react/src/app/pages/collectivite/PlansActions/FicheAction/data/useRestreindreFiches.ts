@@ -1,7 +1,7 @@
+import { FicheResume } from '@/api/plan-actions';
 import { supabaseClient } from 'core-logic/api/supabase';
 import { useMutation, useQueryClient } from 'react-query';
 import { PlanNode } from '../../PlanAction/data/types';
-import { FicheResume } from '@tet/api/plan-actions';
 
 export const useRestreindreFiches = (axes: PlanNode[]) => {
   const queryClient = useQueryClient();

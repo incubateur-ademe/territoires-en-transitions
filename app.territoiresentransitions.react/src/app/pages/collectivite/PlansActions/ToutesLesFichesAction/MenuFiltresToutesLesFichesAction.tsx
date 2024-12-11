@@ -1,21 +1,21 @@
-import { Checkbox, Field, FormSection } from '@tet/ui';
+import { Filtre } from '@/api/plan-actions/fiche-resumes.list/domain/fetch-options.schema';
+import { Checkbox, Field, FormSection } from '@/ui';
+import FinanceursDropdown from 'ui/dropdownLists/FinanceursDropdown/FinanceursDropdown';
+import PartenairesDropdown from 'ui/dropdownLists/PartenairesDropdown/PartenairesDropdown';
 import PersonnesDropdown from 'ui/dropdownLists/PersonnesDropdown/PersonnesDropdown';
-import { Filtre } from '@tet/api/plan-actions/fiche-resumes.list/domain/fetch-options.schema';
 import {
   getPilotesValues,
   getReferentsValues,
   splitPilotePersonnesAndUsers,
   splitReferentPersonnesAndUsers,
 } from 'ui/dropdownLists/PersonnesDropdown/utils';
-import ServicesPilotesDropdown from 'ui/dropdownLists/ServicesPilotesDropdown/ServicesPilotesDropdown';
-import ThematiquesDropdown from 'ui/dropdownLists/ThematiquesDropdown/ThematiquesDropdown';
-import FinanceursDropdown from 'ui/dropdownLists/FinanceursDropdown/FinanceursDropdown';
-import StatutsFilterDropdown from 'ui/dropdownLists/ficheAction/statuts/StatutsFilterDropdown';
-import PrioritesFilterDropdown from 'ui/dropdownLists/ficheAction/priorites/PrioritesFilterDropdown';
 import PlansActionDropdown from 'ui/dropdownLists/PlansActionDropdown';
+import ServicesPilotesDropdown from 'ui/dropdownLists/ServicesPilotesDropdown/ServicesPilotesDropdown';
 import StructuresDropdown from 'ui/dropdownLists/StructuresDropdown/StructuresDropdown';
-import PartenairesDropdown from 'ui/dropdownLists/PartenairesDropdown/PartenairesDropdown';
+import ThematiquesDropdown from 'ui/dropdownLists/ThematiquesDropdown/ThematiquesDropdown';
 import CiblesDropdown from 'ui/dropdownLists/ficheAction/CiblesDropdown/CiblesDropdown';
+import PrioritesFilterDropdown from 'ui/dropdownLists/ficheAction/priorites/PrioritesFilterDropdown';
+import StatutsFilterDropdown from 'ui/dropdownLists/ficheAction/statuts/StatutsFilterDropdown';
 
 type Props = {
   filters: Filtre;

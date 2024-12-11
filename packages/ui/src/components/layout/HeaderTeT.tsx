@@ -1,8 +1,8 @@
-import AdemeLogo from '@tet/ui/assets/AdemeLogo';
-import RepubliqueFrancaiseLogo from '@tet/ui/assets/RepubliqueFrancaiseLogo';
-import { Button } from '@tet/ui/design-system/Button';
-import { ButtonProps } from '@tet/ui/design-system/Button/types';
-import { Header } from '@tet/ui/design-system/Header/Header';
+import AdemeLogo from '@/ui/assets/AdemeLogo';
+import RepubliqueFrancaiseLogo from '@/ui/assets/RepubliqueFrancaiseLogo';
+import { Button } from '@/ui/design-system/Button';
+import { ButtonProps } from '@/ui/design-system/Button/types';
+import { Header } from '@/ui/design-system/Header/Header';
 
 import { ReactElement } from 'react';
 

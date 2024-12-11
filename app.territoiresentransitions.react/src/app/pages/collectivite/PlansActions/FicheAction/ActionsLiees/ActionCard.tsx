@@ -1,4 +1,4 @@
-import { Button, Card } from '@tet/ui';
+import { Button, Card } from '@/ui';
 import { referentielToName } from 'app/labels';
 import { makeCollectiviteTacheUrl } from 'app/paths';
 import { useCollectiviteId } from 'core-logic/hooks/params';

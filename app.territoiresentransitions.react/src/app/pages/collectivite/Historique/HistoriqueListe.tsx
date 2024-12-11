@@ -1,15 +1,19 @@
-import {FC} from 'react';
-import {useCollectiviteId} from 'core-logic/hooks/params';
-import {useHistoriqueItemListe} from 'app/pages/collectivite/Historique/useHistoriqueItemListe';
-import HistoriqueItemActionStatut from 'app/pages/collectivite/Historique/actionStatut/HistoriqueItemActionStatut';
+import { Pagination } from '@/ui';
 import HistoriqueItemActionPrecision from 'app/pages/collectivite/Historique/actionPrecision/HistoriqueItemActionPrecision';
-import {THistoriqueItem, THistoriqueItemProps, THistoriqueProps} from './types';
-import HistoriqueItemReponse from './reponse/HistoriqueItemReponse';
-import {NB_ITEMS_PER_PAGE} from './filters';
+import HistoriqueItemActionStatut from 'app/pages/collectivite/Historique/actionStatut/HistoriqueItemActionStatut';
+import { useHistoriqueItemListe } from 'app/pages/collectivite/Historique/useHistoriqueItemListe';
+import { useCollectiviteId } from 'core-logic/hooks/params';
+import { useFonctionTracker } from 'core-logic/hooks/useFonctionTracker';
+import { FC } from 'react';
+import { NB_ITEMS_PER_PAGE } from './filters';
 import HistoriqueFiltres from './HistoriqueFiltres/HistoriqueFiltres';
 import HistoriqueItemJustification from './reponse/HistoriqueItemJustification';
-import {Pagination} from '@tet/ui';
-import {useFonctionTracker} from 'core-logic/hooks/useFonctionTracker';
+import HistoriqueItemReponse from './reponse/HistoriqueItemReponse';
+import {
+  THistoriqueItem,
+  THistoriqueItemProps,
+  THistoriqueProps,
+} from './types';
 
 /**
  * Affiche l'historique des modifications
@@ -37,8 +41,8 @@ export const HistoriqueListe = ({
             Aucun historique de modification
           </span>
         ) : null}
-        {items.map(item => {
-          const {type} = item;
+        {items.map((item) => {
+          const { type } = item;
           const Item = historiqueParType[type];
           return Item ? <Item key={makeKey(item)} item={item} /> : null;
         })}
@@ -49,9 +53,9 @@ export const HistoriqueListe = ({
         nbOfElements={total}
         maxElementsPerPage={NB_ITEMS_PER_PAGE}
         selectedPage={filters.page ?? 1}
-        onChange={selected => {
-          setFilters({...filters, page: selected});
-          tracker({fonction: 'pagination', action: 'clic'});
+        onChange={(selected) => {
+          setFilters({ ...filters, page: selected });
+          tracker({ fonction: 'pagination', action: 'clic' });
         }}
         idToScrollTo="filtres-historique"
       />
@@ -62,7 +66,7 @@ export const HistoriqueListe = ({
 /**
  * Charge et affiche les données de l'historique
  */
-const HistoriqueListeConnected = ({actionId}: {actionId?: string}) => {
+const HistoriqueListeConnected = ({ actionId }: { actionId?: string }) => {
   const collectivite_id = useCollectiviteId()!;
   const historique = useHistoriqueItemListe(collectivite_id, actionId);
   return <HistoriqueListe {...historique} />;
@@ -70,7 +74,7 @@ const HistoriqueListeConnected = ({actionId}: {actionId?: string}) => {
 
 // correspondances entre le type d'un item de l'historique et le composant
 // utilisé pour l'afficher
-const historiqueParType: {[k: string]: FC<THistoriqueItemProps>} = {
+const historiqueParType: { [k: string]: FC<THistoriqueItemProps> } = {
   action_statut: HistoriqueItemActionStatut,
   action_precision: HistoriqueItemActionPrecision,
   reponse: HistoriqueItemReponse,
@@ -79,7 +83,7 @@ const historiqueParType: {[k: string]: FC<THistoriqueItemProps>} = {
 
 // construit une clé d'identification d'un item de l'historique
 const makeKey = (item: THistoriqueItem): string => {
-  const {type, action_id, question_id, modified_at} = item;
+  const { type, action_id, question_id, modified_at } = item;
   const timestamp = new Date(modified_at).getTime();
 
   if (

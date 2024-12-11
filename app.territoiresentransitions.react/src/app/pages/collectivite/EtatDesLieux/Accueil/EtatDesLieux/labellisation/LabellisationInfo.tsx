@@ -1,11 +1,11 @@
-import { Tooltip } from '@tet/ui';
-import ScoreDisplay from '../../../../../../../ui/referentiels/ScoreDisplay';
-import { TLabellisationParcours } from '../../../../ParcoursLabellisation/types';
-import { toLocaleFixed } from 'utils/toFixed';
 import {
   GreyStar,
   RedStar,
-} from '@tet/app/pages/collectivite/EtatDesLieux/Accueil/EtatDesLieux/labellisation/Star';
+} from '@/app/pages/collectivite/EtatDesLieux/Accueil/EtatDesLieux/labellisation/Star';
+import { Tooltip } from '@/ui';
+import { toLocaleFixed } from 'utils/toFixed';
+import ScoreDisplay from '../../../../../../../ui/referentiels/ScoreDisplay';
+import { TLabellisationParcours } from '../../../../ParcoursLabellisation/types';
 
 export const NIVEAUX = [1, 2, 3, 4, 5];
 

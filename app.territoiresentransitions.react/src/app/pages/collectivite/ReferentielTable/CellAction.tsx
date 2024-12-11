@@ -1,9 +1,9 @@
-import { CellProps } from 'react-table';
-import Link from 'next/link';
+import { Tooltip } from '@/ui';
 import { makeCollectiviteTacheUrl, ReferentielParamOption } from 'app/paths';
-import { ActionReferentiel } from './useReferentiel';
+import Link from 'next/link';
+import { CellProps } from 'react-table';
 import { Kbd } from 'ui/shared/Kbd';
-import { Tooltip } from '@tet/ui';
+import { ActionReferentiel } from './useReferentiel';
 
 export type TCellProps = CellProps<ActionReferentiel> & {
   collectiviteId: number | null;

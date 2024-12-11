@@ -1,5 +1,5 @@
-import {TIndicateurValeur} from 'app/pages/collectivite/Indicateurs/useIndicateurValeurs';
-import {Indicateurs} from '@tet/api';
+import { Indicateurs } from '@/api';
+import { TIndicateurValeur } from 'app/pages/collectivite/Indicateurs/useIndicateurValeurs';
 
 /** Sépare les données objectifs/résultats */
 export function transformeValeurs(

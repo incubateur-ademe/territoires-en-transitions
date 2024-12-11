@@ -1,12 +1,12 @@
-import { z } from 'zod';
+import {
+  FetchFiltre as FiltreIndicateurs,
+  fetchOptionsSchema as indicateursFetchOptionsSchema,
+} from '@/api/indicateurs';
 import {
   fetchOptionsSchema as fichesFetchOptionsSchema,
   Filtre as FiltreFicheActions,
-} from '@tet/api/plan-actions/fiche-resumes.list';
-import {
-  fetchOptionsSchema as indicateursFetchOptionsSchema,
-  FetchFiltre as FiltreIndicateurs,
-} from '@tet/api/indicateurs';
+} from '@/api/plan-actions/fiche-resumes.list';
+import { z } from 'zod';
 
 const moduleTypeSchema = z.enum(['indicateur.list', 'fiche_action.list']);
 

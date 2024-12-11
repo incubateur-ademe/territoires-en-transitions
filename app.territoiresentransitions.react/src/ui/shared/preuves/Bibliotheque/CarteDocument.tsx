@@ -1,16 +1,16 @@
-import { useEffect, useState } from 'react';
+import { Button, Card, Divider, Icon, Notification, Tooltip } from '@/ui';
 import classNames from 'classnames';
-import { Button, Card, Divider, Icon, Notification, Tooltip } from '@tet/ui';
-import { TPreuve } from './types';
-import { openPreuve } from './openPreuve';
+import { useEffect, useState } from 'react';
 import SpinnerLoader from 'ui/shared/SpinnerLoader';
-import MenuCarteDocument from './MenuCarteDocument';
-import { getAuthorAndDate, getFormattedTitle } from './utils';
-import { useEditPreuve } from './useEditPreuve';
+import { getTextFormattedDate, getTruncatedText } from 'utils/formatUtils';
 import AlerteSuppression from './AlerteSuppression';
 import DocumentInput from './DocumentInput';
-import { getTextFormattedDate, getTruncatedText } from 'utils/formatUtils';
 import { IdentifiantAction } from './IdentifiantAction';
+import MenuCarteDocument from './MenuCarteDocument';
+import { openPreuve } from './openPreuve';
+import { TPreuve } from './types';
+import { useEditPreuve } from './useEditPreuve';
+import { getAuthorAndDate, getFormattedTitle } from './utils';
 
 type CarteDocumentProps = {
   isReadonly: boolean;

@@ -1,16 +1,16 @@
-import {MailSendMessage} from '@tet/auth/components/Login/MailSendMessage';
-import {useFormState} from '@tet/auth/components/Login/useFormState';
-import {SignupProps} from './type';
-import {SignupStep1} from './SignupStep1';
-import {SignupStep2} from './SignupStep2';
-import {SignupStep3} from './SignupStep3';
-import {ResendMessage} from '../ResendMessage';
+import { MailSendMessage } from '@/auth/components/Login/MailSendMessage';
+import { useFormState } from '@/auth/components/Login/useFormState';
+import { ResendMessage } from '../ResendMessage';
+import { SignupStep1 } from './SignupStep1';
+import { SignupStep2 } from './SignupStep2';
+import { SignupStep3 } from './SignupStep3';
+import { SignupProps } from './type';
 
 /**
  * Affiche le panneau création de compte
  */
 export const Signup = (props: SignupProps) => {
-  const {view, onResend, isLoading} = props;
+  const { view, onResend, isLoading } = props;
   const formState = useFormState(props);
 
   if (view === 'etape1') {

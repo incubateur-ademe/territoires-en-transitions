@@ -1,4 +1,4 @@
-import { Alert } from '@tet/ui';
+import { Alert } from '@/ui';
 import { makeCollectivitePlansActionsNouveauUrl } from 'app/paths';
 import { useCollectiviteId } from 'core-logic/hooks/params';
 import { useFonctionTracker } from 'core-logic/hooks/useFonctionTracker';

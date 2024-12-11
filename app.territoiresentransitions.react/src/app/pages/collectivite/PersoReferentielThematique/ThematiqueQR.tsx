@@ -2,18 +2,18 @@
  * Affiche la liste des questions et les éventuelles réponses pour une collectivité
  */
 
-import { useState } from 'react';
-import { QuestionReponseList } from '../PersoPotentielModal/PersoPotentielQR';
-import { TQuestionThematiqueRead } from './useThematique';
-import { TChangeReponse, TQuestionReponse } from 'types/personnalisation';
+import { Checkbox } from '@/ui';
 import {
-  makeCollectivitePersoRefUrl,
   makeCollectivitePersoRefThematiqueUrl,
+  makeCollectivitePersoRefUrl,
 } from 'app/paths';
+import { useState } from 'react';
+import { TChangeReponse, TQuestionReponse } from 'types/personnalisation';
+import { QuestionReponseList } from '../PersoPotentielModal/PersoPotentielQR';
+import { usePersoFilters } from '../PersoReferentiel/usePersoFilters';
 import { CarteIdentite } from './CarteIdentite';
 import { TCarteIdentite } from './useCarteIdentite';
-import { usePersoFilters } from '../PersoReferentiel/usePersoFilters';
-import { Checkbox } from '@tet/ui';
+import { TQuestionThematiqueRead } from './useThematique';
 
 export type TThematiqueQRProps = {
   thematique: TQuestionThematiqueRead;

@@ -1,6 +1,6 @@
 import { useQuery } from 'react-query';
 
-import { SousThematiqueId } from '@tet/api/shared/domain';
+import { SousThematiqueId } from '@/api/shared/domain';
 import { supabaseClient } from 'core-logic/api/supabase';
 import { objectToCamel } from 'ts-case-convert';
 

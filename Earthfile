@@ -536,12 +536,12 @@ package-ui-storybook-test:
 
     FROM +front-deps
     RUN pnpm exec playwright install --with-deps chromium
-    RUN pnpm nx build-storybook @tet/ui --quiet
+    RUN pnpm nx build-storybook ui --quiet
     EXPOSE $PORT
 
     RUN pnpx concurrently -k -s first -n "SB,TEST" \
       "pnpx http-server $UI_DIR/storybook-static --port $PORT --silent" \
-      "pnpx wait-on tcp:127.0.0.1:$PORT && pnpm nx test-storybook @tet/ui --url http://127.0.0.1:$PORT" || true
+      "pnpx wait-on tcp:127.0.0.1:$PORT && pnpm nx test-storybook ui --url http://127.0.0.1:$PORT" || true
 
 
 curl-test-build:

@@ -1,5 +1,5 @@
-import { signIn, signOut } from '@tet/api/tests/auth';
-import { dbAdmin, supabase } from '@tet/api/tests/supabase';
+import { signIn, signOut } from '@/api/tests/auth';
+import { dbAdmin, supabase } from '@/api/tests/supabase';
 import { beforeEach, expect, test } from 'vitest';
 import { modulesFetch } from './modules.fetch';
 import { modulesSave } from './modules.save';

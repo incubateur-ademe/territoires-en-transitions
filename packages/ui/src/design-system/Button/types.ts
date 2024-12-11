@@ -1,5 +1,5 @@
-import { IconValue } from '@tet/ui/design-system/Icon';
-import { ButtonHTMLProps, LinkFullProps } from '@tet/ui/utils/types';
+import { IconValue } from '@/ui/design-system/Icon';
+import { ButtonHTMLProps, LinkFullProps } from '@/ui/utils/types';
 import { NotificationProps } from '../Notification';
 
 export type ButtonState = 'default' | 'disabled';

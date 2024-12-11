@@ -1,5 +1,5 @@
-import {Alert, Button, Modal} from '@tet/ui';
-import {DonneesCollectivite} from './DonneesCollectivite/DonneesCollectivite';
+import { Alert, Button, Modal } from '@/ui';
+import { DonneesCollectivite } from './DonneesCollectivite/DonneesCollectivite';
 
 const DEFAULT_TITLE =
   'Voici un premier calcul de votre trajectoire SNBC territorialisée, avec les données disponibles !';
@@ -22,7 +22,7 @@ export const DonneesPartiellementDisponibles = ({
       footer={
         <Modal
           size="xl"
-          render={props => <DonneesCollectivite modalProps={props} />}
+          render={(props) => <DonneesCollectivite modalProps={props} />}
         >
           <Button size="sm">Compléter les données</Button>
         </Modal>

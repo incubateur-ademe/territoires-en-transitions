@@ -1,7 +1,7 @@
+import { Button } from '@/ui/design-system/Button';
+import { APP_BASE_URL } from '@/ui/utils/constants';
 import { Meta, StoryObj } from '@storybook/react';
 import { Header } from './Header';
-import { Button } from '@tet/ui/design-system/Button';
-import { APP_BASE_URL } from '@tet/ui/utils/constants';
 
 const meta: Meta<typeof Header> = {
   component: Header,

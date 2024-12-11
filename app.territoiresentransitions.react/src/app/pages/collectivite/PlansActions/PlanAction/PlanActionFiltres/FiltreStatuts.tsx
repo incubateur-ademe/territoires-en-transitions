@@ -1,10 +1,10 @@
+import { Statut } from '@/api/plan-actions';
+import { Field, OptionValue, SelectFilter } from '@/ui';
+import { TFicheActionStatuts } from 'types/alias';
 import { TOption } from 'ui/shared/select/commons';
-import { SANS_STATUT, TFiltreProps } from '../../FicheAction/data/filters';
 import { ficheActionStatutOptions } from '../../../../../../ui/dropdownLists/listesStatiques';
 import BadgeStatut from '../../components/BadgeStatut';
-import { TFicheActionStatuts } from 'types/alias';
-import { Field, OptionValue, SelectFilter } from '@tet/ui';
-import { Statut } from '@tet/api/plan-actions';
+import { SANS_STATUT, TFiltreProps } from '../../FicheAction/data/filters';
 
 const FiltreStatuts = ({ filters, setFilters }: TFiltreProps) => {
   // Initialisation du tableau d'options pour le multi-select

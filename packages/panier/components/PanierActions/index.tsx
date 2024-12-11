@@ -1,14 +1,14 @@
 /* eslint-disable react/no-unescaped-entities */
-import {ActionImpact} from '@tet/panier/components/ActionImpact';
-import BasketPicto from '@tet/panier/components/Picto/BasketPicto';
-import EmptyBasketPicto from '@tet/panier/components/Picto/EmptyBasketPicto';
-import ValiderPanierButton from '@tet/panier/components/ValidationPanier/ValiderPanierButton';
 import {
   ActionImpactFourchetteBudgetaire,
   ActionImpactFull,
   Panier,
-} from '@tet/api';
-import { Alert } from '@tet/ui';
+} from '@/api';
+import { ActionImpact } from '@/panier/components/ActionImpact';
+import BasketPicto from '@/panier/components/Picto/BasketPicto';
+import EmptyBasketPicto from '@/panier/components/Picto/EmptyBasketPicto';
+import ValiderPanierButton from '@/panier/components/ValidationPanier/ValiderPanierButton';
+import { Alert } from '@/ui';
 import { AjouterActionsRealiseesOuEnCours } from './AjouterActionsRealiseesOuEnCours';
 import { AjouterActionsRealiseesOuEnCoursState } from './useAjouterActionsRealiseesOuEnCoursState';
 

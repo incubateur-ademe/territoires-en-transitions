@@ -1,10 +1,10 @@
-import {useQuery} from 'react-query';
-import {Indicateurs} from '@tet/api';
-import {DISABLE_AUTO_REFETCH, supabaseClient} from 'core-logic/api/supabase';
-import {useCollectiviteId} from 'core-logic/hooks/params';
-import {SOURCE_COLLECTIVITE} from './constants';
-import {useIndicateurImportSources} from './Indicateur/detail/useImportSources';
-import {useIndicateurDefinition} from './Indicateur/useIndicateurDefinition';
+import { Indicateurs } from '@/api';
+import { DISABLE_AUTO_REFETCH, supabaseClient } from 'core-logic/api/supabase';
+import { useCollectiviteId } from 'core-logic/hooks/params';
+import { useQuery } from 'react-query';
+import { SOURCE_COLLECTIVITE } from './constants';
+import { useIndicateurImportSources } from './Indicateur/detail/useImportSources';
+import { useIndicateurDefinition } from './Indicateur/useIndicateurDefinition';
 
 // export type TIndicateurValeur = Indicateurs.domain.Valeur;
 export type TIndicateurValeur = {
@@ -33,7 +33,7 @@ export const useIndicateurValeurs = ({
   autoRefresh?: boolean;
 }) => {
   const collectivite_id = useCollectiviteId();
-  const {defaultSource} = useIndicateurImportSources(id);
+  const { defaultSource } = useIndicateurImportSources(id);
   const source = importSource || defaultSource;
 
   return useQuery(

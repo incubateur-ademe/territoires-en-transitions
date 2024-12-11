@@ -1,14 +1,14 @@
-import { FicheResume } from '@tet/api/plan-actions/domain';
-import { Button, Card, Checkbox, Notification, Tooltip } from '@tet/ui';
+import { FicheResume } from '@/api/plan-actions/domain';
+import { Button, Card, Checkbox, Notification, Tooltip } from '@/ui';
 import classNames from 'classnames';
 import { useCurrentCollectivite } from 'core-logic/hooks/useCurrentCollectivite';
 import { useState } from 'react';
 import { QueryKey } from 'react-query';
+import { getModifiedSince } from 'utils/formatUtils';
 import BadgePriorite from '../../components/BadgePriorite';
 import BadgeStatut from '../../components/BadgeStatut';
 import { generateTitle } from '../data/utils';
 import ModaleSuppression from '../FicheActionDescription/ModaleSuppression';
-import { getModifiedSince } from 'utils/formatUtils';
 import FicheActionFooterInfo from './FicheActionFooterInfo';
 import ModifierFicheModale from './ModifierFicheModale';
 

@@ -1,4 +1,4 @@
-import { Alert } from '@tet/ui';
+import { Alert } from '@/ui';
 import classNames from 'classnames';
 import ExportFicheActionGroupeesButton from '../ExportPdf/ExportFicheActionGroupeesButton';
 import EditionPilote from './EditionPilote';

@@ -1,6 +1,6 @@
-import {Badge} from '@tet/ui';
+import { Badge } from '@/ui';
 import classNames from 'classnames';
-import {TNiveauAcces} from 'types/alias';
+import { TNiveauAcces } from 'types/alias';
 
 type Props = {
   acces: TNiveauAcces | null;
@@ -10,7 +10,7 @@ type Props = {
 
 /** Représente le niveau d'accès à une collectivité par un badge */
 export const BadgeNiveauAcces = (props: Props) => {
-  const {acces, className} = props;
+  const { acces, className } = props;
   const displayedAcces = getLabel(props);
 
   return (
@@ -23,7 +23,7 @@ export const BadgeNiveauAcces = (props: Props) => {
   );
 };
 
-const getLabel = ({acces, isAuditeur}: Props) => {
+const getLabel = ({ acces, isAuditeur }: Props) => {
   if (isAuditeur) {
     return 'audit';
   }

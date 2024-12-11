@@ -1,11 +1,11 @@
+import { FicheAction } from '@/api/plan-actions';
+import { Alert, Button } from '@/ui';
 import { useState } from 'react';
-import { Alert, Button } from '@tet/ui';
-import { usePlanActionProfondeur } from '../../../../PlanAction/data/usePlanActionProfondeur';
-import { useAddFicheToAxe } from '../../../data/useAddFicheToAxe';
-import { checkAxeExistInPlanProfondeur } from '../../../../PlanAction/data/utils';
 import { TProfondeurAxe } from '../../../../PlanAction/data/types';
+import { usePlanActionProfondeur } from '../../../../PlanAction/data/usePlanActionProfondeur';
+import { checkAxeExistInPlanProfondeur } from '../../../../PlanAction/data/utils';
+import { useAddFicheToAxe } from '../../../data/useAddFicheToAxe';
 import ColonneTableauEmplacement from './ColonneTableauEmplacement';
-import { FicheAction } from '@tet/api/plan-actions';
 
 type NouvelEmplacementFicheProps = {
   fiche: FicheAction;

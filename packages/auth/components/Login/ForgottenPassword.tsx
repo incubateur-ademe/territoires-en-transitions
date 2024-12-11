@@ -1,22 +1,22 @@
-import {useForm} from 'react-hook-form';
-import {zodResolver} from '@hookform/resolvers/zod';
-import {z} from 'zod';
 import {
   Button,
-  Input,
   Field,
   FieldMessage,
+  Input,
   ModalFooter,
   ModalFooterSection,
   useEventTracker,
-} from '@tet/ui';
+} from '@/ui';
+import { zodResolver } from '@hookform/resolvers/zod';
+import { useForm } from 'react-hook-form';
+import { z } from 'zod';
 import TrackPageView from '../TrackPageView';
-import {LoginPropsWithState} from './type';
+import { LoginPropsWithState } from './type';
 
 /** Gestionnaire d'état pour le formulaire */
 const useForgottenPassword = (email: string) => {
   const validationSchema = z.object({
-    email: z.string().email({message: 'Un email valide est requis'}),
+    email: z.string().email({ message: 'Un email valide est requis' }),
   });
 
   return useForm({
@@ -39,17 +39,17 @@ export const ForgottenPassword = (props: LoginPropsWithState) => {
     onCancel,
     onOpenChatbox,
   } = props;
-  const {email, setEmail} = formState;
+  const { email, setEmail } = formState;
   const form = useForgottenPassword(email);
   const {
     handleSubmit,
     register,
-    formState: {isValid, errors},
+    formState: { isValid, errors },
   } = form;
 
   const eventTracker = useEventTracker('auth/login/mdp_oublie');
 
-  const onSubmitForm = (data: {email: string}) => {
+  const onSubmitForm = (data: { email: string }) => {
     // enregistre les données car on a besoin de l'email pour vérifier l'otp à
     // l'étape suivante, dans le cas où l'utilisateur saisi directement le code
     // OTP plutôt que de cliquer sur le lien

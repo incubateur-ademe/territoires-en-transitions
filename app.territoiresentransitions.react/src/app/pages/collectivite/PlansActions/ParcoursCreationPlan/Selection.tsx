@@ -1,5 +1,5 @@
-import { useNbActionsDansPanier } from '@tet/app/Layout/Header/AccesPanierAction';
-import { TrackingPlan, useEventTracker } from '@tet/ui';
+import { useNbActionsDansPanier } from '@/app/Layout/Header/AccesPanierAction';
+import { TrackingPlan, useEventTracker } from '@/ui';
 import {
   makeCollectivitePanierUrl,
   makeCollectivitePlansActionsCreerUrl,

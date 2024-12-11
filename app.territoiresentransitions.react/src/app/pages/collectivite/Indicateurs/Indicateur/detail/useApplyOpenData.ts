@@ -2,13 +2,13 @@
  * Utilitaires pour appliquer des données open-data aux objectifs et résultats d'une collectivité
  */
 
-import {useMutation, useQuery, useQueryClient} from 'react-query';
-import {Indicateurs} from '@tet/api';
-import {useEventTracker} from '@tet/ui';
-import {supabaseClient} from 'core-logic/api/supabase';
-import {TIndicateurDefinition} from '../../types';
-import {SOURCE_COLLECTIVITE, SOURCE_TYPE_LABEL} from '../../constants';
-import {useOnSuccess} from './useEditIndicateurValeur';
+import { Indicateurs } from '@/api';
+import { useEventTracker } from '@/ui';
+import { supabaseClient } from 'core-logic/api/supabase';
+import { useMutation, useQuery, useQueryClient } from 'react-query';
+import { SOURCE_COLLECTIVITE, SOURCE_TYPE_LABEL } from '../../constants';
+import { TIndicateurDefinition } from '../../types';
+import { useOnSuccess } from './useEditIndicateurValeur';
 
 type UseApplyOpenDataArgs = {
   collectiviteId: number | null;
@@ -36,7 +36,7 @@ export const useApplyOpenData = ({
   const queryClient = useQueryClient();
 
   return useMutation(
-    async ({overwrite}: {overwrite: boolean}) => {
+    async ({ overwrite }: { overwrite: boolean }) => {
       if (!source || !source.type || !collectiviteId) return null;
 
       const appliquerResultat = type === 'resultat';
@@ -61,7 +61,7 @@ export const useApplyOpenData = ({
             source.libelle
           } ont bien été appliqués`,
       },
-      onSuccess: (data, {overwrite}) => {
+      onSuccess: (data, { overwrite }) => {
         onSuccess();
         queryClient.invalidateQueries([
           'indicateur-comparaison',
@@ -93,7 +93,7 @@ export const useOpenDataComparaison = ({
   definition: TIndicateurDefinition;
   importSource: string;
 }) => {
-  const {data} = useQuery(
+  const { data } = useQuery(
     ['indicateur-comparaison', collectiviteId, definition.id, importSource],
     async () => {
       if (

@@ -1,4 +1,4 @@
-import { modulesFetch } from '@tet/api/plan-actions/dashboards/personal-dashboard';
+import { modulesFetch } from '@/api/plan-actions/dashboards/personal-dashboard';
 import { useAuth } from 'core-logic/api/auth/AuthProvider';
 import { supabaseClient } from 'core-logic/api/supabase';
 import { useCollectiviteId } from 'core-logic/hooks/params';

@@ -1,8 +1,8 @@
-import { signIn, signOut } from '@tet/api/tests/auth';
-import { dbAdmin, supabase } from '@tet/api/tests/supabase';
-import { planActionsFetch } from './plan-actions.fetch';
-import { FetchOptions } from '../domain/fetch-options.schema';
+import { signIn, signOut } from '@/api/tests/auth';
+import { dbAdmin, supabase } from '@/api/tests/supabase';
 import _ from 'lodash';
+import { FetchOptions } from '../domain/fetch-options.schema';
+import { planActionsFetch } from './plan-actions.fetch';
 
 const params = {
   dbClient: supabase,

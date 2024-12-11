@@ -1,12 +1,12 @@
+import { Field, Input, Modal, ModalFooterOKCancel } from '@/ui';
+import { useEditFilenameState } from 'core-logic/hooks/useEditState';
 import { useState } from 'react';
-import { Field, Input, Modal, ModalFooterOKCancel } from '@tet/ui';
-import { TPreuve } from './types';
 import { CheckboxConfidentiel } from '../AddPreuveModal/CheckboxConfidentiel';
+import { TPreuve } from './types';
 import {
   useUpdateBibliothequeFichierConfidentiel,
   useUpdateBibliothequeFichierFilename,
 } from './useEditPreuve';
-import { useEditFilenameState } from 'core-logic/hooks/useEditState';
 
 export type EditerDocumentProps = {
   preuve: TPreuve;

@@ -1,4 +1,4 @@
-import { useEventTracker } from '@tet/ui';
+import { useEventTracker } from '@/ui';
 import { useApiClient } from 'core-logic/api/useApiClient';
 import { useCollectiviteId } from 'core-logic/hooks/params';
 import { useMutation } from 'react-query';

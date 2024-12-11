@@ -1,7 +1,7 @@
 import Image from 'next/image';
 
-import { signInPath, signUpPath } from '@tet/app/paths';
-import { Button } from '@tet/ui';
+import { signInPath, signUpPath } from '@/app/paths';
+import { Button } from '@/ui';
 import homeImage from 'app/static/img/home.jpg';
 
 const Home = () => {

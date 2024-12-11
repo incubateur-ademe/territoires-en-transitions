@@ -1,12 +1,12 @@
 'use client';
 
+import ChartWithLegend from '@/site/components/charts/ChartWithLegend';
+import LineChart from '@/site/components/charts/LineChart';
 import useSWR from 'swr';
 import { supabase } from '../initSupabase';
+import { ChartHead } from './headings';
 import { colors, fromMonth } from './shared';
 import { addLocalFilters } from './utils';
-import { ChartHead } from './headings';
-import LineChart from '@tet/site/components/charts/LineChart';
-import ChartWithLegend from '@tet/site/components/charts/ChartWithLegend';
 
 export function useActiveUsers(codeRegion: string, codeDepartement: string) {
   return useSWR(

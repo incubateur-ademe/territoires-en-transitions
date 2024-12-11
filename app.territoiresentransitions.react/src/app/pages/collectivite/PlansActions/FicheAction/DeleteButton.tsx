@@ -1,6 +1,6 @@
-import { ComponentProps, ForwardedRef, Ref, forwardRef } from 'react';
+import { Button, ButtonProps } from '@/ui';
 import classNames from 'classnames';
-import { Button, ButtonProps } from '@tet/ui';
+import { forwardRef } from 'react';
 
 // ComponentProps<typeof Button>['ref']
 const DeleteButton = forwardRef<

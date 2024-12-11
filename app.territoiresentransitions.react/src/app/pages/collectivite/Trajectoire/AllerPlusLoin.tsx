@@ -1,14 +1,14 @@
-import {Button, Card} from '@tet/ui';
+import { Button, Card } from '@/ui';
 import SpinnerLoader from 'ui/shared/SpinnerLoader';
-import {useDownloadFile} from 'utils/useDownloadFile';
-import {useTelechargementTrajectoire} from './useTelechargementTrajectoire';
-import {DOC_METHODO} from './constants';
+import { useDownloadFile } from 'utils/useDownloadFile';
+import { DOC_METHODO } from './constants';
+import { useTelechargementTrajectoire } from './useTelechargementTrajectoire';
 
 export const AllerPlusLoin = () => {
   // pour télécharger les fichiers
-  const {mutate: download, isLoading: isDownloading} =
+  const { mutate: download, isLoading: isDownloading } =
     useTelechargementTrajectoire();
-  const {mutate: downloadFile, isLoading: isDownloadingFile} =
+  const { mutate: downloadFile, isLoading: isDownloadingFile } =
     useDownloadFile();
 
   return (

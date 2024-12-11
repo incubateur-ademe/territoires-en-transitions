@@ -1,6 +1,6 @@
 'use client';
 
-import Section from '@tet/site/components/sections/Section';
+import Section from '@/site/components/sections/Section';
 import Cookies from './cookies.mdx';
 
 const CookiesContent = () => {

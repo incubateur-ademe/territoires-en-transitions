@@ -1,22 +1,22 @@
 'use server';
 
-import { Metadata, ResolvingMetadata } from 'next';
+import LabellisationLogo from '@/site/components/labellisation/LabellisationLogo';
+import Section from '@/site/components/sections/Section';
+import { getUpdatedMetadata } from '@/site/src/utils/getUpdatedMetadata';
+import { natureCollectiviteToLabel } from '@/site/src/utils/labels';
 import classNames from 'classnames';
+import { Metadata, ResolvingMetadata } from 'next';
+import { notFound } from 'next/navigation';
 import {
   fetchCollectivite,
   getStrapiData,
   getStrapiDefaultData,
 } from '../../utils';
-import Section from '@tet/site/components/sections/Section';
-import CollectiviteHeader from './CollectiviteHeader';
-import LabellisationLogo from '@tet/site/components/labellisation/LabellisationLogo';
-import ContenuCollectivite from './ContenuCollectivite';
-import IndicateursCollectivite from './IndicateursCollectivite';
-import { natureCollectiviteToLabel } from '@tet/site/src/utils/labels';
 import AccesCompte from './AccesCompte';
-import { getUpdatedMetadata } from '@tet/site/src/utils/getUpdatedMetadata';
+import CollectiviteHeader from './CollectiviteHeader';
+import ContenuCollectivite from './ContenuCollectivite';
 import HistoriqueLabellisation from './HistoriqueLabellisation';
-import { notFound } from 'next/navigation';
+import IndicateursCollectivite from './IndicateursCollectivite';
 import PageContent from './PageContent';
 
 export async function generateMetadata(

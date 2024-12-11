@@ -1,19 +1,19 @@
-import { Button, TrackPageView, useEventTracker } from '@tet/ui';
+import { Button, TrackPageView, useEventTracker } from '@/ui';
 
 import {
   ModuleIndicateursSelect,
   Slug,
-} from '@tet/api/plan-actions/dashboards/personal-dashboard/domain/module.schema';
-import ModulePage from '@tet/app/pages/collectivite/TableauDeBord/components/ModulePage';
-import ModalIndicateursSuiviPlan from '@tet/app/pages/collectivite/TableauDeBord/Personnel/ModuleIndicateurs/ModalIndicateursSuiviPlan';
-import IndicateursListe from '@tet/app/pages/collectivite/Indicateurs/lists/indicateurs-list';
+} from '@/api/plan-actions/dashboards/personal-dashboard/domain/module.schema';
+import IndicateursListe from '@/app/pages/collectivite/Indicateurs/lists/indicateurs-list';
+import { usePlanActionsCount } from '@/app/pages/collectivite/PlansActions/PlanAction/data/usePlanActionsCount';
+import ModulePage from '@/app/pages/collectivite/TableauDeBord/components/ModulePage';
+import ModalIndicateursSuiviPlan from '@/app/pages/collectivite/TableauDeBord/Personnel/ModuleIndicateurs/ModalIndicateursSuiviPlan';
 import {
   getQueryKey,
   usePersonalModuleFetch,
-} from '@tet/app/pages/collectivite/TableauDeBord/Personnel/usePersonalModuleFetch';
+} from '@/app/pages/collectivite/TableauDeBord/Personnel/usePersonalModuleFetch';
 import { TDBViewParam } from 'app/paths';
 import { useCollectiviteId } from 'core-logic/hooks/params';
-import { usePlanActionsCount } from '@tet/app/pages/collectivite/PlansActions/PlanAction/data/usePlanActionsCount';
 
 type Props = {
   view: TDBViewParam;

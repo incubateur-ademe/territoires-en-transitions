@@ -1,7 +1,7 @@
 'use client';
 
-import Section from '@tet/site/components/sections/Section';
-import { Button, useEventTracker } from '@tet/ui';
+import Section from '@/site/components/sections/Section';
+import { Button, useEventTracker } from '@/ui';
 
 type ContactProps = {
   description: string;

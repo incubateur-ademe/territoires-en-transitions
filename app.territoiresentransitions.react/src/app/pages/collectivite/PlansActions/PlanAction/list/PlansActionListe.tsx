@@ -1,20 +1,20 @@
 import { useEffect, useState } from 'react';
 
-import { Button, ButtonGroup, Pagination, Select } from '@tet/ui';
-import { OpenState } from '@tet/ui/utils/types';
-import SpinnerLoader from 'ui/shared/SpinnerLoader';
 import {
   FetchFilter,
   SortPlansActionValue,
-} from '@tet/api/plan-actions/plan-actions.list/domain/fetch-options.schema';
-import { usePlansActionsListe } from '@tet/app/pages/collectivite/PlansActions/PlanAction/data/usePlansActionsListe';
+} from '@/api/plan-actions/plan-actions.list/domain/fetch-options.schema';
+import { usePlansActionsListe } from '@/app/pages/collectivite/PlansActions/PlanAction/data/usePlansActionsListe';
+import PlanActionCard from '@/app/pages/collectivite/PlansActions/PlanAction/list/card/PlanActionCard';
+import { ModuleDisplay } from '@/app/pages/collectivite/TableauDeBord/components/Module';
+import { makeCollectivitePlanActionUrl } from '@/app/paths';
+import { Button, ButtonGroup, Pagination, Select } from '@/ui';
+import { OpenState } from '@/ui/utils/types';
 import PictoDocument from 'ui/pictogrammes/PictoDocument';
-import PlanActionCard from '@tet/app/pages/collectivite/PlansActions/PlanAction/list/card/PlanActionCard';
-import { ModuleDisplay } from '@tet/app/pages/collectivite/TableauDeBord/components/Module';
-import { makeCollectivitePlanActionUrl } from '@tet/app/paths';
 import FilterBadges, {
   useFiltersToBadges,
 } from 'ui/shared/filters/filter-badges';
+import SpinnerLoader from 'ui/shared/SpinnerLoader';
 
 type sortByOptionsType = {
   label: string;

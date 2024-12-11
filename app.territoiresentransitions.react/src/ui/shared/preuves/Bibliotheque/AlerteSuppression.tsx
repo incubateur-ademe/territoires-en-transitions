@@ -1,5 +1,4 @@
-import { Modal, ModalFooterOKCancel } from '@tet/ui';
-import classNames from 'classnames';
+import { Modal, ModalFooterOKCancel } from '@/ui';
 
 type AlerteSuppressionProps = {
   className?: string;

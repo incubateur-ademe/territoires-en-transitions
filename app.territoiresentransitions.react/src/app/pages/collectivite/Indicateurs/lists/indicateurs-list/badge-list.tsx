@@ -1,12 +1,11 @@
-import React from 'react';
 import classNames from 'classnames';
 
-import { Indicateurs } from '@tet/api';
-import { Badge } from '@tet/ui';
+import { Indicateurs } from '@/api';
 import {
   ExportIndicateursPageName,
   useExportIndicateurs,
-} from '@tet/app/pages/collectivite/Indicateurs/Indicateur/useExportIndicateurs';
+} from '@/app/pages/collectivite/Indicateurs/Indicateur/useExportIndicateurs';
+import { Badge } from '@/ui';
 import FilterBadges, {
   CustomFilterBadges,
   useFiltersToBadges,

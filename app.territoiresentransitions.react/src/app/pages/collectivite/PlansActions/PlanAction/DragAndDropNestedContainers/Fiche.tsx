@@ -1,10 +1,10 @@
-import { createPortal } from 'react-dom';
+import { FicheResume } from '@/api/plan-actions';
 import { DragOverlay, useDraggable } from '@dnd-kit/core';
-import FicheActionCard from '../../FicheAction/Carte/FicheActionCard';
-import { useCurrentCollectivite } from 'core-logic/hooks/useCurrentCollectivite';
 import classNames from 'classnames';
+import { useCurrentCollectivite } from 'core-logic/hooks/useCurrentCollectivite';
+import { createPortal } from 'react-dom';
 import { QueryKey } from 'react-query';
-import { FicheResume } from '@tet/api/plan-actions';
+import FicheActionCard from '../../FicheAction/Carte/FicheActionCard';
 
 export type FicheDndData = {
   type: 'fiche';

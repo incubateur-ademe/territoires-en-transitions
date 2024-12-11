@@ -1,11 +1,11 @@
 'use client';
 
+import LineChart from '@/site/components/charts/LineChart';
 import useSWR from 'swr';
 import { supabase } from '../initSupabase';
-import { colors, formatInteger, fromMonth } from './shared';
 import { ChartTitle } from './headings';
+import { colors, formatInteger, fromMonth } from './shared';
 import { addLocalFilters } from './utils';
-import LineChart from '@tet/site/components/charts/LineChart';
 
 function useIndicateursRenseignes(codeRegion: string, codeDepartement: string) {
   return useSWR(

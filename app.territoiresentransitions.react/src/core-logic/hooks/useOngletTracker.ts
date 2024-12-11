@@ -1,10 +1,10 @@
-import {Enums, TablesInsert} from '@tet/api';
-import {useCollectiviteId} from 'core-logic/hooks/params';
-import {useAuth} from 'core-logic/api/auth/AuthProvider';
-import {supabaseClient} from 'core-logic/api/supabase';
-import {useLocalisation} from 'core-logic/hooks/useLocalisation';
-import {ENV} from 'environmentVariables';
-import {useMemo, useRef} from 'react';
+import { Enums, TablesInsert } from '@/api';
+import { useAuth } from 'core-logic/api/auth/AuthProvider';
+import { supabaseClient } from 'core-logic/api/supabase';
+import { useCollectiviteId } from 'core-logic/hooks/params';
+import { useLocalisation } from 'core-logic/hooks/useLocalisation';
+import { ENV } from 'environmentVariables';
+import { useMemo, useRef } from 'react';
 
 /**
  * Représente la visite d'une page.
@@ -23,7 +23,7 @@ type Onglet = Enums<'visite_onglet'>;
  * @returns success
  */
 const track = async (visite: Visite): Promise<boolean> => {
-  const {status} = await supabaseClient.from('visite').insert(visite);
+  const { status } = await supabaseClient.from('visite').insert(visite);
   return status === 201;
 };
 
@@ -38,7 +38,7 @@ export const useOngletTracker = (): ((onglet: Onglet) => Promise<boolean>) => {
   const collectivite_id = useCollectiviteId();
   const localisation = useLocalisation();
   const ref = useRef();
-  const {user} = useAuth();
+  const { user } = useAuth();
 
   const factory = () => {
     // Garde la dernière visite pour éviter d'envoyer

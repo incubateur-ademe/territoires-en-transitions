@@ -1,5 +1,5 @@
+import { trpc } from '@/api/utils/trpc/client';
 import { uniq } from 'es-toolkit';
-import { trpc } from '@tet/api/utils/trpc/client';
 
 /** Met à jour un ou plusieurs membres */
 export const useUpdateMembres = () => {

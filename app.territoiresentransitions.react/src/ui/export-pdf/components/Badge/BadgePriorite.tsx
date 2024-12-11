@@ -1,5 +1,5 @@
+import { prioritesToState } from '@/app/pages/collectivite/PlansActions/components/BadgePriorite';
 import classNames from 'classnames';
-import { prioritesToState } from '@tet/app/pages/collectivite/PlansActions/components/BadgePriorite';
 import { TFicheActionNiveauxPriorite } from 'types/alias';
 import { Badge } from './Badge';
 

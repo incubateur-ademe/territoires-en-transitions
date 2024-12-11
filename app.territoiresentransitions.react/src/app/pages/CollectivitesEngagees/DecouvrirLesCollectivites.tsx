@@ -6,11 +6,11 @@ import CollectivitesView from './Views/CollectivitesView';
 import { useAuth } from 'core-logic/api/auth/AuthProvider';
 import { useSearchParams } from 'core-logic/hooks/query';
 
-import { CollectiviteEngagee, getRejoindreCollectivitePath } from '@tet/api';
+import { CollectiviteEngagee, getRejoindreCollectivitePath } from '@/api';
+import { Alert, Button } from '@/ui';
 import { recherchesCollectivitesUrl, recherchesPlansUrl } from 'app/paths';
-import { initialFilters, nameToShortNames } from './data/filters';
 import { useSansCollectivite } from 'core-logic/hooks/useOwnedCollectivites';
-import { Alert, Button } from '@tet/ui';
+import { initialFilters, nameToShortNames } from './data/filters';
 
 const DecouvrirLesCollectivites = () => {
   const auth = useAuth();

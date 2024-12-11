@@ -1,3 +1,4 @@
+import { Field } from '@/ui';
 import { ActionDefinitionSummary } from 'core-logic/api/endpoints/ActionDefinitionSummaryReadEndpoint';
 import React, { ChangeEvent, useState } from 'react';
 import Textarea from 'ui/shared/form/Textarea';
@@ -5,7 +6,6 @@ import { TActionAuditStatut } from './types';
 import { useActionAuditStatut } from './useActionAuditStatut';
 import { useAudit, useIsAuditeur } from './useAudit';
 import { useUpdateActionAuditStatut } from './useUpdateActionAuditStatut';
-import { Field } from '@tet/ui';
 
 export type TActionAuditDetailProps = {
   action: ActionDefinitionSummary;

@@ -1,4 +1,4 @@
-import { trpc } from '@tet/api/utils/trpc/client';
+import { trpc } from '@/api/utils/trpc/client';
 import { useCollectiviteId } from 'core-logic/hooks/params';
 import { useQueryClient } from 'react-query';
 

@@ -1,8 +1,8 @@
-import {useMutation, useQueryClient} from 'react-query';
-import {supabaseClient} from 'core-logic/api/supabase';
-import {useCollectiviteId} from 'core-logic/hooks/params';
-import {SourceType, TIndicateurDefinition} from '../../types';
-import {Indicateurs} from '@tet/api';
+import { Indicateurs } from '@/api';
+import { supabaseClient } from 'core-logic/api/supabase';
+import { useCollectiviteId } from 'core-logic/hooks/params';
+import { useMutation, useQueryClient } from 'react-query';
+import { SourceType, TIndicateurDefinition } from '../../types';
 
 type TEditIndicateurValeurArgs = {
   collectiviteId: number | null;
@@ -19,10 +19,10 @@ export const useEditIndicateurValeur = (
   args: Omit<TEditIndicateurValeurArgs, 'collectiviteId'>
 ) => {
   const collectiviteId = useCollectiviteId();
-  const editArgs = {collectiviteId, ...args};
+  const editArgs = { collectiviteId, ...args };
 
-  const {mutate: editValeur} = useUpsertIndicateurValeur(editArgs);
-  const {mutate: deleteValue} = useDeleteIndicateurValeur(editArgs);
+  const { mutate: editValeur } = useUpsertIndicateurValeur(editArgs);
+  const { mutate: deleteValue } = useDeleteIndicateurValeur(editArgs);
 
   return {
     editValeur,
@@ -35,7 +35,7 @@ export type TEditIndicateurValeurHandlers = ReturnType<
 
 /** Met à jour la valeur d'un indicateur */
 const useUpsertIndicateurValeur = (args: TEditIndicateurValeurArgs) => {
-  const {collectiviteId, definition, type, valeursBrutes} = args;
+  const { collectiviteId, definition, type, valeursBrutes } = args;
   const indicateurId = definition.id;
 
   return useMutation({
@@ -52,7 +52,8 @@ const useUpsertIndicateurValeur = (args: TEditIndicateurValeurArgs) => {
       valeurId: number | null;
     }) => {
       const valeurBrute =
-        valeursBrutes?.find(v => v.id === valeurId || v.annee === annee) || {};
+        valeursBrutes?.find((v) => v.id === valeurId || v.annee === annee) ||
+        {};
 
       return (
         collectiviteId &&
@@ -72,20 +73,19 @@ const useUpsertIndicateurValeur = (args: TEditIndicateurValeurArgs) => {
 };
 
 const useDeleteIndicateurValeur = (args: TEditIndicateurValeurArgs) => {
-  const {collectiviteId, type, valeursBrutes} = args;
+  const { collectiviteId, type, valeursBrutes } = args;
 
   return useMutation({
     mutationKey: 'delete_indicateur_valeur',
-    mutationFn: async ({valeurId}: {valeurId: number}) => {
-      const valeurBrute =
-          valeursBrutes?.find(v => v.id === valeurId);
+    mutationFn: async ({ valeurId }: { valeurId: number }) => {
+      const valeurBrute = valeursBrutes?.find((v) => v.id === valeurId);
       if (!collectiviteId || isNaN(valeurId) || !valeurBrute) {
         return;
       }
       return Indicateurs.save.upsertIndicateurValeur(supabaseClient, {
         ...valeurBrute,
         [type]: null,
-        [`${type}Commentaire`]: null
+        [`${type}Commentaire`]: null,
       });
     },
     onSuccess: useOnSuccess(args),
@@ -96,8 +96,8 @@ const useDeleteIndicateurValeur = (args: TEditIndicateurValeurArgs) => {
 export const useOnSuccess = (
   args: Omit<TEditIndicateurValeurArgs, 'valeursBrutes'>
 ) => {
-  const {collectiviteId, definition, type} = args;
-  const {id: indicateurId, estPerso, identifiant} = definition;
+  const { collectiviteId, definition, type } = args;
+  const { id: indicateurId, estPerso, identifiant } = definition;
   const parents = estPerso ? null : definition.parents;
 
   const queryClient = useQueryClient();

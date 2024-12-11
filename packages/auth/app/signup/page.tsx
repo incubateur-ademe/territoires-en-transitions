@@ -1,7 +1,7 @@
 'use client';
 
-import { useRedirectTo } from '@tet/auth/components/Login/useRedirectTo';
-import { SignupModal } from '@tet/auth/components/Signup';
+import { useRedirectTo } from '@/auth/components/Login/useRedirectTo';
+import { SignupModal } from '@/auth/components/Signup';
 import { useState } from 'react';
 import { useCollectivites } from './useCollectivites';
 import { useSignupState } from './useSignupState';

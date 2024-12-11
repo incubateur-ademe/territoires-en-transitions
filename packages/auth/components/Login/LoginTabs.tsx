@@ -1,28 +1,28 @@
-import {useState} from 'react';
-import {useForm} from 'react-hook-form';
-import {zodResolver} from '@hookform/resolvers/zod';
-import {z} from 'zod';
 import {
   Button,
-  Input,
   Field,
   FieldMessage,
+  Input,
   ModalFooterOKCancel,
   Tab,
   Tabs,
-  useOngletTracker,
-  useEventTracker,
   TrackPageView,
-} from '@tet/ui';
-import {Credentials, LoginPropsWithState} from './type';
+  useEventTracker,
+  useOngletTracker,
+} from '@/ui';
+import { zodResolver } from '@hookform/resolvers/zod';
+import { useState } from 'react';
+import { useForm } from 'react-hook-form';
+import { z } from 'zod';
+import { Credentials, LoginPropsWithState } from './type';
 
 /** Gestionnaire d'état pour le formulaire de l'étape 1 */
 const useLoginForm = (isPasswordless: boolean, email: string) => {
   const validationSchema = z.object({
-    email: z.string().email({message: 'Un email valide est requis'}),
+    email: z.string().email({ message: 'Un email valide est requis' }),
     password: z
       .string()
-      .refine(value => (isPasswordless ? true : value.length >= 8), {
+      .refine((value) => (isPasswordless ? true : value.length >= 8), {
         message: 'Le mot de passe doit comporter au moins 8 caractères',
       }),
   });
@@ -42,8 +42,8 @@ const useLoginForm = (isPasswordless: boolean, email: string) => {
  * (saisir un email et éventuellement un mot de passe)
  */
 export const LoginTabs = (props: LoginPropsWithState) => {
-  const {formState: signupState, withPassword} = props;
-  const {email} = signupState;
+  const { formState: signupState, withPassword } = props;
+  const { email } = signupState;
   const [isPasswordless, setIsPasswordless] = useState(!withPassword);
   const form = useLoginForm(isPasswordless, email);
   const ongletTracker = useOngletTracker('auth/login');
@@ -54,7 +54,7 @@ export const LoginTabs = (props: LoginPropsWithState) => {
       <Tabs
         className="justify-center"
         defaultActiveTab={isPasswordless ? 0 : 1}
-        onChange={activeTab => {
+        onChange={(activeTab) => {
           if (activeTab === 0) {
             // reset le champ mdp qui peut être rempli quand on passe d'un onglet à l'autre
             form.setValue('password', '');
@@ -94,12 +94,12 @@ const SignupStep1Form = (
     onSubmit,
     onCancel,
     form,
-    formState: {setEmail},
+    formState: { setEmail },
   } = props;
   const {
     handleSubmit,
     register,
-    formState: {isValid, errors},
+    formState: { isValid, errors },
   } = form;
   const eventTracker = useEventTracker('auth/login');
 
@@ -158,7 +158,7 @@ const SignupStep1Form = (
         />
       )}
       <ModalFooterOKCancel
-        btnCancelProps={{onClick: onCancel}}
+        btnCancelProps={{ onClick: onCancel }}
         btnOKProps={{
           type: 'submit',
           disabled: !isValid || isLoading,

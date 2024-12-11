@@ -14,8 +14,8 @@ import {
 import classNames from 'classnames';
 import { cloneElement, RefObject, useState } from 'react';
 
-import { preset } from '@tet/ui/tailwind-preset';
-import { OpenState } from '@tet/ui/utils/types';
+import { preset } from '@/ui/tailwind-preset';
+import { OpenState } from '@/ui/utils/types';
 import { Button } from '../Button';
 
 export type ModalSize = 'sm' | 'md' | 'lg' | 'xl';

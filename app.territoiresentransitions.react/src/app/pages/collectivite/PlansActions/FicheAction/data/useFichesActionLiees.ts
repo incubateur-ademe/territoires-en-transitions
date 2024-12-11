@@ -1,4 +1,4 @@
-import { ficheResumesFetch, updateLinkedFiches } from '@tet/api/plan-actions';
+import { ficheResumesFetch, updateLinkedFiches } from '@/api/plan-actions';
 import { supabaseClient } from 'core-logic/api/supabase';
 import { useCollectiviteId } from 'core-logic/hooks/params';
 import { useMutation, useQuery, useQueryClient } from 'react-query';

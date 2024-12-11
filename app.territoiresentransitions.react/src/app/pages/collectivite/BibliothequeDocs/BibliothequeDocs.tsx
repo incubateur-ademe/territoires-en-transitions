@@ -1,3 +1,5 @@
+import { TrackPageView } from '@/ui';
+import { useCollectiviteId } from 'core-logic/hooks/params';
 import PreuveDoc from 'ui/shared/preuves/Bibliotheque/PreuveDoc';
 import {
   TPreuveAuditEtLabellisation,
@@ -7,8 +9,6 @@ import { usePreuvesParType } from 'ui/shared/preuves/Bibliotheque/usePreuves';
 import { AddRapportVisite } from './AddRapportVisite';
 import { PreuvesLabellisation } from './PreuveLabellisation';
 import { PreuvesTabs } from './PreuvesTabs';
-import { TrackPageView } from '@tet/ui';
-import { useCollectiviteId } from 'core-logic/hooks/params';
 
 type TBibliothequeDocsProps = {
   labellisationEtAudit?: TPreuveAuditEtLabellisation[];

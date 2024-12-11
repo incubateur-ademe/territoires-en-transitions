@@ -1,5 +1,5 @@
-import {Database, Tables} from '@tet/api';
-import {TAudit} from 'app/pages/collectivite/Audit/types';
+import { Database, Tables } from '@/api';
+import { TAudit } from 'app/pages/collectivite/Audit/types';
 
 export type TEtoiles = Database['labellisation']['Enums']['etoile'];
 export type TSujetDemande = Database['labellisation']['Enums']['sujet_demande'];

@@ -1,6 +1,6 @@
-import {Indicateurs} from '@tet/api';
-import {SelectFilter, SelectProps} from '@tet/ui';
-import {getCategorieLabel} from './utils';
+import { Indicateurs } from '@/api';
+import { SelectFilter, SelectProps } from '@/ui';
+import { getCategorieLabel } from './utils';
 
 type Props = Omit<SelectProps, 'values' | 'onChange' | 'options'> & {
   values?: Indicateurs.CategorieProgramme[];
@@ -18,12 +18,12 @@ const IndicateurCategoriesDropdown = (props: Props) => {
     <SelectFilter
       {...props}
       options={Indicateurs.domain.categorieProgrammeEnumSchema.options.map(
-        categorie => ({
+        (categorie) => ({
           label: getCategorieLabel(categorie),
           value: categorie,
         })
       )}
-      onChange={({values, selectedValue}) => {
+      onChange={({ values, selectedValue }) => {
         props.onChange({
           categories: values as Indicateurs.CategorieProgramme[],
           selectedCategorie: selectedValue as Indicateurs.CategorieProgramme,

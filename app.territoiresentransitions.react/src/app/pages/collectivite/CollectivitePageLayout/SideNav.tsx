@@ -1,4 +1,4 @@
-import { Icon } from '@tet/ui';
+import { Icon } from '@/ui';
 import classNames from 'classnames';
 import Link from 'next/link';
 import { usePathname } from 'next/navigation';

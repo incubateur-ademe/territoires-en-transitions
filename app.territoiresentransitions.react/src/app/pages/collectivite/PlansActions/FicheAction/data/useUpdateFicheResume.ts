@@ -1,4 +1,4 @@
-import { FicheResume } from '@tet/api/plan-actions';
+import { FicheResume } from '@/api/plan-actions';
 import { supabaseClient } from 'core-logic/api/supabase';
 import { QueryKey, useMutation, useQueryClient } from 'react-query';
 

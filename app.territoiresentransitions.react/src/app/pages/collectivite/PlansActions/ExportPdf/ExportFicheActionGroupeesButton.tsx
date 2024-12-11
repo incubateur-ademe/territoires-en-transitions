@@ -1,9 +1,9 @@
+import { useEventTracker } from '@/ui';
+import { useCurrentCollectivite } from 'core-logic/hooks/useCurrentCollectivite';
 import { useEffect, useState } from 'react';
 import ExportPDFButton from 'ui/export-pdf/ExportPDFButton';
-import { useCurrentCollectivite } from 'core-logic/hooks/useCurrentCollectivite';
 import { useFicheAction } from '../FicheAction/data/useFicheAction';
 import { FicheActionPdfContent } from './ExportFicheActionButton';
-import { useEventTracker } from '@tet/ui';
 
 type FicheActionPdfWrapperProps = {
   ficheId: number;

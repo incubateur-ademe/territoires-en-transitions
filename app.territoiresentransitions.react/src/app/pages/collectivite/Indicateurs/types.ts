@@ -1,4 +1,4 @@
-import { Indicateurs } from '@tet/api';
+import { Indicateurs } from '@/api';
 
 /** type de données importées */
 export type SourceType = 'resultat' | 'objectif';

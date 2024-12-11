@@ -1,5 +1,5 @@
-import { DBClient } from '@tet/api/typeUtils';
-import { trpcUtils } from '@tet/api/utils/trpc/client';
+import { DBClient } from '@/api/typeUtils';
+import { trpcUtils } from '@/api/utils/trpc/client';
 import { objectToCamel } from 'ts-case-convert';
 import { z } from 'zod';
 import { FicheResume } from '../../domain';

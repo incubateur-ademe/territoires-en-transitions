@@ -1,6 +1,6 @@
-import {SelectFilter, SelectMultipleProps} from '@tet/ui';
-import {TFicheActionCibles} from 'types/alias';
-import {ficheActionCiblesOptions} from '../../listesStatiques';
+import { SelectFilter, SelectMultipleProps } from '@/ui';
+import { TFicheActionCibles } from 'types/alias';
+import { ficheActionCiblesOptions } from '../../listesStatiques';
 
 type CiblesDropdownProps = Omit<
   SelectMultipleProps,
@@ -23,7 +23,7 @@ const CiblesDropdown = (props: CiblesDropdownProps) => {
       isSearcheable
       options={ficheActionCiblesOptions}
       placeholder={props.placeholder ?? 'Sélectionnez une ou plusieurs cibles'}
-      onChange={({values, selectedValue}) =>
+      onChange={({ values, selectedValue }) =>
         props.onChange({
           cibles: values as TFicheActionCibles[],
           selectedCible: selectedValue as TFicheActionCibles,

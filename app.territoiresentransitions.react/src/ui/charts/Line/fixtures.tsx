@@ -1,5 +1,5 @@
-import {Icon} from '@tet/ui';
-import {LineData} from './LineChart';
+import { Icon } from '@/ui';
+import { LineData } from './LineChart';
 
 export const fakeNoLineData: LineData[] = [];
 
@@ -147,7 +147,7 @@ export const fakeManyXLineData: LineData[] = [
   {
     id: 'dodo',
     color: '#CCEEAA',
-    symbole: color => <Icon icon="leaf-fill" style={{color}} />,
+    symbole: (color) => <Icon icon="leaf-fill" style={{ color }} />,
     data: [
       {
         x: 2000,
@@ -222,10 +222,10 @@ export const fakeManyXLineData: LineData[] = [
   {
     id: 'yala',
     color: '#DDA023',
-    symbole: color => (
+    symbole: (color) => (
       <div className="flex gap-1 w-5">
-        <div className="h-1 grow" style={{backgroundColor: color}} />
-        <div className="h-1 grow" style={{backgroundColor: color}} />
+        <div className="h-1 grow" style={{ backgroundColor: color }} />
+        <div className="h-1 grow" style={{ backgroundColor: color }} />
       </div>
     ),
     data: [

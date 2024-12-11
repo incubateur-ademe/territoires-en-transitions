@@ -1,5 +1,5 @@
-import {Button, Input} from '@tet/ui';
-import {useEffect, useState} from 'react';
+import { Button, Input } from '@/ui';
+import { useEffect, useState } from 'react';
 
 type TitreFicheProps = {
   titre: string | null;
@@ -10,7 +10,7 @@ type TitreFicheProps = {
 /**
  * Titre éditable d'une fiche action
  */
-const TitreFiche = ({titre, isReadonly, updateTitle}: TitreFicheProps) => {
+const TitreFiche = ({ titre, isReadonly, updateTitle }: TitreFicheProps) => {
   const [isEditing, setIsEditing] = useState(false);
   const [editedTitle, setEditedTitle] = useState(titre);
 
@@ -19,7 +19,7 @@ const TitreFiche = ({titre, isReadonly, updateTitle}: TitreFicheProps) => {
   // Switch entre les modes lecture et édition
   // Lors du switch d'édition à lecture -> sauvegarde des modifications
   const handleChangeMode = () => {
-    setIsEditing(prevState => !prevState);
+    setIsEditing((prevState) => !prevState);
     if (isEditing) {
       const titleToSave = editedTitle?.trim() ?? null;
       if (titleToSave !== titre) {
@@ -41,9 +41,9 @@ const TitreFiche = ({titre, isReadonly, updateTitle}: TitreFicheProps) => {
         <Input
           value={editedTitle ?? ''}
           autoFocus
-          onChange={evt => setEditedTitle(evt.target.value)}
+          onChange={(evt) => setEditedTitle(evt.target.value)}
           onBlur={handleChangeMode}
-          onKeyDown={evt => evt.key === 'Enter' && handleChangeMode()}
+          onKeyDown={(evt) => evt.key === 'Enter' && handleChangeMode()}
           type="text"
           containerClassname="w-full"
           className="text-3xl"

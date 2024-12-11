@@ -1,10 +1,10 @@
-import { Button, Card, useEventTracker } from '@tet/ui';
-import { useDownloadFile } from 'utils/useDownloadFile';
+import { Button, Card, useEventTracker } from '@/ui';
+import { useCollectiviteId } from 'core-logic/hooks/params';
 import SpinnerLoader from 'ui/shared/SpinnerLoader';
-import { useTelechargementModele } from './useTelechargementModele';
+import { useDownloadFile } from 'utils/useDownloadFile';
 import { DOC_METHODO } from './constants';
 import { ReactComponent as DbErrorPicto } from './db-error.svg';
-import { useCollectiviteId } from 'core-logic/hooks/params';
+import { useTelechargementModele } from './useTelechargementModele';
 
 /**
  * Affiche un message pour les communes.

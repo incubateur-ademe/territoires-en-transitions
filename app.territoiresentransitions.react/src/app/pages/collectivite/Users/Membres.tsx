@@ -1,27 +1,27 @@
-import { useCollectiviteId } from 'core-logic/hooks/params';
-import { useAuth, UserData } from 'core-logic/api/auth/AuthProvider';
-import {
-  CurrentCollectivite,
-  useCurrentCollectivite,
-} from 'core-logic/hooks/useCurrentCollectivite';
-import { useUpdateCollectiviteMembre } from 'app/pages/collectivite/Users/useUpdateCollectiviteMembre';
-import {
-  PAGE_SIZE,
-  useCollectiviteMembres,
-} from 'app/pages/collectivite/Users/useCollectiviteMembres';
-import { useRemoveFromCollectivite } from 'app/pages/collectivite/Users/useRemoveFromCollectivite';
+import { Button, Modal, Pagination, TrackPageView } from '@/ui';
+import { Invite } from 'app/pages/collectivite/Users/components/Invite';
+import MembreListTable from 'app/pages/collectivite/Users/components/MembreListTable';
 import {
   Membre,
   TRemoveFromCollectivite,
   TUpdateMembre,
 } from 'app/pages/collectivite/Users/types';
-import MembreListTable from 'app/pages/collectivite/Users/components/MembreListTable';
 import { useAddUserToCollectivite } from 'app/pages/collectivite/Users/useAddUserToCollectivite';
-import { Button, Modal, Pagination, TrackPageView } from '@tet/ui';
-import { Invite } from 'app/pages/collectivite/Users/components/Invite';
-import { useBaseToast } from 'core-logic/hooks/useBaseToast';
-import { useEffect, useState } from 'react';
+import {
+  PAGE_SIZE,
+  useCollectiviteMembres,
+} from 'app/pages/collectivite/Users/useCollectiviteMembres';
+import { useRemoveFromCollectivite } from 'app/pages/collectivite/Users/useRemoveFromCollectivite';
 import { useSendInvitation } from 'app/pages/collectivite/Users/useSendInvitation';
+import { useUpdateCollectiviteMembre } from 'app/pages/collectivite/Users/useUpdateCollectiviteMembre';
+import { useAuth, UserData } from 'core-logic/api/auth/AuthProvider';
+import { useCollectiviteId } from 'core-logic/hooks/params';
+import { useBaseToast } from 'core-logic/hooks/useBaseToast';
+import {
+  CurrentCollectivite,
+  useCurrentCollectivite,
+} from 'core-logic/hooks/useCurrentCollectivite';
+import { useEffect, useState } from 'react';
 
 export type MembresProps = {
   membres: Membre[];

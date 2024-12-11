@@ -1,8 +1,13 @@
-import { extractIdsFromParam } from '@tet/panier/src/utils/extractIdsFromParam';
+import { extractIdsFromParam } from '@/panier/src/utils/extractIdsFromParam';
+import { TrackPageView } from '@/ui';
 import { notFound } from 'next/navigation';
 import PagePanier from './PagePanier';
-import { fetchNiveaux, fetchPanier, fetchThematiques, fetchTypologies } from './utils';
-import { TrackPageView } from '@tet/ui';
+import {
+  fetchNiveaux,
+  fetchPanier,
+  fetchThematiques,
+  fetchTypologies,
+} from './utils';
 
 /**
  * La page d'un panier d'action

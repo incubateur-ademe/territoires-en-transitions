@@ -1,5 +1,5 @@
-import { FicheAction } from '@tet/api/plan-actions';
-import { Button, getOptionLabel } from '@tet/ui';
+import { FicheAction } from '@/api/plan-actions';
+import { Button, getOptionLabel } from '@/ui';
 import classNames from 'classnames';
 import { useState } from 'react';
 import { ficheActionParticipationOptions } from '../../../../../../ui/dropdownLists/listesStatiques';

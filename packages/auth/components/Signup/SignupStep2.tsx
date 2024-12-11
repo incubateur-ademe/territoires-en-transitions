@@ -1,5 +1,5 @@
-import {SignupPropsWithState} from './type';
-import {VerifyOTP} from '@tet/auth/components/VerifyOTP/VerifyOTP';
+import { VerifyOTP } from '@/auth/components/VerifyOTP/VerifyOTP';
+import { SignupPropsWithState } from './type';
 
 /**
  * Affiche l'étape 2 du panneau de création de compte
@@ -12,7 +12,7 @@ export const SignupStep2 = (props: SignupPropsWithState) => {
     onCancel,
     onSubmit,
     onResend,
-    formState: {email},
+    formState: { email },
   } = props;
 
   return (

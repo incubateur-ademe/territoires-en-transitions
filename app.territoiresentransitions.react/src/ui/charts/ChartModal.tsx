@@ -1,14 +1,14 @@
-import {Modal} from '@tet/ui';
+import { Modal } from '@/ui';
 
+import { useFonctionTracker } from 'core-logic/hooks/useFonctionTracker';
+import DownloadCanvasButton from 'ui/buttons/DownloadCanvasButton';
+import { ChartProps } from './Chart';
 import DonutChart from './Donut/DonutChart';
 import LineChart from './Line/LineChart';
-import {ChartProps} from './Chart';
-import DownloadCanvasButton from 'ui/buttons/DownloadCanvasButton';
-import {useFonctionTracker} from 'core-logic/hooks/useFonctionTracker';
 
 /** Modale qui présente le graphique complet et permet de le télécharger */
 const ChartModal = (props: ChartProps) => {
-  const {infos, line, donut} = props;
+  const { infos, line, donut } = props;
 
   const tracker = useFonctionTracker();
 
@@ -26,8 +26,8 @@ const ChartModal = (props: ChartProps) => {
   return (
     <Modal
       size={modal.size || 'lg'}
-      openState={{isOpen: modal.isOpen, setIsOpen: modal.setIsOpen}}
-      render={({ref}) => (
+      openState={{ isOpen: modal.isOpen, setIsOpen: modal.setIsOpen }}
+      render={({ ref }) => (
         <div className="flex flex-col gap-6">
           <div className="text-center">
             {!!infos.title && (
@@ -47,7 +47,7 @@ const ChartModal = (props: ChartProps) => {
               fileType="png"
               className="m-auto"
               onClick={() =>
-                tracker({fonction: 'graphique', action: 'telechargement'})
+                tracker({ fonction: 'graphique', action: 'telechargement' })
               }
             >
               Télécharger

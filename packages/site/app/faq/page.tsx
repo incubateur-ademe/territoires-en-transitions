@@ -1,12 +1,12 @@
 'use server';
 
-import Section from '@tet/site/components/sections/Section';
+import NoResult from '@/site/components/info/NoResult';
+import Section from '@/site/components/sections/Section';
+import { fetchCollection } from '@/site/src/strapi/strapi';
+import { sortByRank } from '@/site/src/utils/sortByRank';
 import { Metadata } from 'next';
-import { fetchCollection } from '@tet/site/src/strapi/strapi';
-import { sortByRank } from '@tet/site/src/utils/sortByRank';
 import ContactEquipe from './ContactEquipe';
 import ListeQuestions from './ListeQuestions';
-import NoResult from '@tet/site/components/info/NoResult';
 
 export async function generateMetadata(): Promise<Metadata> {
   return {

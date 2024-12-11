@@ -1,10 +1,10 @@
+import { AuthUser } from '@/backend/auth/models/auth.models';
+import { NiveauAcces } from '@/backend/auth/models/niveau-acces.enum';
+import { DatabaseService } from '@/backend/common';
 import { Injectable } from '@nestjs/common';
-import { AuthUser } from '@tet/backend/auth/models/auth.models';
-import { NiveauAcces } from '@tet/backend/auth/models/niveau-acces.enum';
 import { and, inArray, or } from 'drizzle-orm';
 import z from 'zod';
 import { AuthService } from '../../auth/services/auth.service';
-import DatabaseService from '../../common/services/database.service';
 import { ficheActionPiloteTable } from '../models/fiche-action-pilote.table';
 import {
   ficheActionSchema,

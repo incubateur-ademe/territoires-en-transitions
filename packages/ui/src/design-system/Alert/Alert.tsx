@@ -1,7 +1,7 @@
-import { Icon, IconValue } from '@tet/ui/design-system/Icon';
+import { Icon, IconValue } from '@/ui/design-system/Icon';
 import classNames from 'classnames';
-import { AlertState, alertClassnames, stateToIcon } from './utils';
 import { useState } from 'react';
+import { AlertState, alertClassnames, stateToIcon } from './utils';
 
 type AlertProps = {
   /** Titre du bloc alerte */

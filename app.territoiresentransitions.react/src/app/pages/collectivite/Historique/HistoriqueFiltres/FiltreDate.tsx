@@ -1,6 +1,6 @@
-import { Field, Input } from '@tet/ui';
-import { TFiltreProps } from '../filters';
+import { Field, Input } from '@/ui';
 import { useRef } from 'react';
+import { TFiltreProps } from '../filters';
 
 export const FiltreDateDebut = ({ filters, setFilters }: TFiltreProps) => {
   const ref = useRef<HTMLInputElement>(null);

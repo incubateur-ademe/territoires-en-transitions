@@ -1,8 +1,8 @@
-import MasonryGallery from '@tet/site/components/galleries/MasonryGallery';
+import MasonryGallery from '@/site/components/galleries/MasonryGallery';
+import Markdown from '@/site/components/markdown/Markdown';
+import ReactIcon from '@/site/components/react-icons/ReactIcon';
+import { StrapiImage } from '@/site/components/strapiImage/StrapiImage';
 import { Liste } from './types';
-import Markdown from '@tet/site/components/markdown/Markdown';
-import { StrapiImage } from '@tet/site/components/strapiImage/StrapiImage';
-import ReactIcon from '@tet/site/components/react-icons/ReactIcon';
 
 const ListeGallerieService = ({ liste }: { liste: Liste }) => {
   return (

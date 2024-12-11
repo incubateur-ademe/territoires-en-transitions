@@ -1,7 +1,7 @@
-import { SharedDomain } from '@tet/api';
-import { Personne } from '@tet/api/collectivites';
-import { Field, Modal, ModalFooterOKCancel } from '@tet/ui';
-import { OpenState } from '@tet/ui/utils/types';
+import { SharedDomain } from '@/api';
+import { Personne } from '@/api/collectivites';
+import { Field, Modal, ModalFooterOKCancel } from '@/ui';
+import { OpenState } from '@/ui/utils/types';
 import { useUpdateIndicateurCard } from 'app/pages/collectivite/Indicateurs/lists/IndicateurCard/IndicateurCardEdit/useUpdateIndicateurCard';
 import { useEffect, useState } from 'react';
 import { objectToCamel } from 'ts-case-convert';

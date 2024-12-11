@@ -1,15 +1,15 @@
+import { preset } from '@/ui';
 import type {
   DatasetComponentOption,
-  LineSeriesOption,
   EChartsOption,
   LegendComponentOption,
+  LineSeriesOption,
 } from 'echarts';
-import {preset} from '@tet/ui';
 
-const {colors} = preset.theme.extend;
+const { colors } = preset.theme.extend;
 
 // pour formater les chiffres
-const NumFormat = Intl.NumberFormat('fr', {maximumFractionDigits: 3});
+const NumFormat = Intl.NumberFormat('fr', { maximumFractionDigits: 3 });
 
 // icône bouton "télécharger"
 const DOWNLOAD_ICON =
@@ -21,7 +21,7 @@ export type Dataset = DatasetComponentOption & {
 
 // génère le paramétrage de séries de données sous forme de surfaces empilées
 export const makeStackedSeries = (dataset: Dataset[]): LineSeriesOption[] =>
-  dataset.map(ds => ({
+  dataset.map((ds) => ({
     datasetId: ds.id,
     name: ds.name,
     color: ds.color,
@@ -38,7 +38,7 @@ export const makeStackedSeries = (dataset: Dataset[]): LineSeriesOption[] =>
     stack: 'total',
     symbol: 'none',
     areaStyle: {},
-    lineStyle: {width: 0},
+    lineStyle: { width: 0 },
   }));
 
 const estLignePointillee = ({ id }: { id?: string | number }) =>
@@ -46,16 +46,18 @@ const estLignePointillee = ({ id }: { id?: string | number }) =>
 
 // génère le paramétrage de séries de données sous forme de lignes
 export const makeLineSeries = (dataset: Dataset[]): LineSeriesOption[] =>
-  dataset.map(ds => ({
+  dataset.map((ds) => ({
     id: ds.id,
     datasetId: ds.id,
     name: ds.name,
     color: ds.color,
     type: 'line',
     smooth: true,
-    emphasis: {focus: 'series'},
+    emphasis: { focus: 'series' },
     symbol: ds.id === 'trajectoire' ? 'none' : 'circle',
-    lineStyle: estLignePointillee(ds) ? {type: 'dashed', width: 2} : {width: 2},
+    lineStyle: estLignePointillee(ds)
+      ? { type: 'dashed', width: 2 }
+      : { width: 2 },
   }));
 
 // génère le paramétrage des données de la légende à partir des paramètres des lignes
@@ -63,7 +65,7 @@ export const makeLegendData = (
   series: LineSeriesOption[]
 ): LegendComponentOption['data'] =>
   // @ts-expect-error
-  series.map(serie =>
+  series.map((serie) =>
     serie.stack
       ? serie.name
       : {
@@ -75,8 +77,8 @@ export const makeLegendData = (
               borderWidth: 2,
             },
             estLignePointillee(serie)
-              ? {borderDashOffset: 1, borderType: 'dashed'}
-              : {borderType: 'solid'}
+              ? { borderDashOffset: 1, borderType: 'dashed' }
+              : { borderType: 'solid' }
           ),
         }
   );
@@ -119,8 +121,8 @@ export const makeOption = ({
   },
   xAxis: {
     type: 'time',
-    splitLine: {show: true, lineStyle: {opacity: 0.5}},
-    minorSplitLine: {show: true},
+    splitLine: { show: true, lineStyle: { opacity: 0.5 } },
+    minorSplitLine: { show: true },
     // graduation de 5 en 5 années
     maxInterval: 6 * 365 * 24 * 50 * 60 * 1000,
     axisLabel: {
@@ -135,7 +137,7 @@ export const makeOption = ({
     type: 'value',
     axisLabel: {
       color: colors.primary['9'],
-      formatter: value => NumFormat.format(value),
+      formatter: (value) => NumFormat.format(value),
     },
   },
   title: {
@@ -155,13 +157,13 @@ export const makeOption = ({
       type: 'cross',
       label: {
         backgroundColor: '#6a7985',
-        formatter: params =>
+        formatter: (params) =>
           params.axisDimension === 'x'
             ? new Date(params.value).getFullYear().toString()
             : NumFormat.format(params.value as number),
       },
     },
-    valueFormatter: value => NumFormat.format(value as number),
+    valueFormatter: (value) => NumFormat.format(value as number),
   },
   toolbox: {
     top: 1,

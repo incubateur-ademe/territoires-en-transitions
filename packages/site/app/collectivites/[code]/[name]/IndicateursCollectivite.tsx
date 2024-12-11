@@ -1,11 +1,11 @@
-import MasonryGallery from '@tet/site/components/galleries/MasonryGallery';
 import {
   IndicateurArtificialisation,
   Indicateurs,
-} from '@tet/site/app/collectivites/utils';
-import { StrapiItem } from '@tet/site/src/strapi/StrapiItem';
-import IndicateurGazEffetSerre from './IndicateurGazEffetSerre';
+} from '@/site/app/collectivites/utils';
+import MasonryGallery from '@/site/components/galleries/MasonryGallery';
+import { StrapiItem } from '@/site/src/strapi/StrapiItem';
 import IndicateurArtificialisationSols from './IndicateurArtificialisationSols';
+import IndicateurGazEffetSerre from './IndicateurGazEffetSerre';
 
 export type IndicateurDefaultData = {
   titre: string;

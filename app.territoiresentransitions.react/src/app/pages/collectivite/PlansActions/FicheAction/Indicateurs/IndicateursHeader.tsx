@@ -1,9 +1,9 @@
-import { useState } from 'react';
+import { FicheAction } from '@/api/plan-actions';
+import { Badge, Button } from '@/ui';
 import classNames from 'classnames';
-import { Badge, Button } from '@tet/ui';
-import ModaleIndicateursHeader from './ModaleIndicateursHeader';
+import { useState } from 'react';
 import { getTruncatedText } from 'utils/formatUtils';
-import { FicheAction } from '@tet/api/plan-actions';
+import ModaleIndicateursHeader from './ModaleIndicateursHeader';
 
 type IndicateursHeaderProps = {
   isReadonly: boolean;

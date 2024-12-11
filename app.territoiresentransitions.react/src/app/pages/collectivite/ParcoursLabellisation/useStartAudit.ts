@@ -1,6 +1,6 @@
-import {useMutation, useQueryClient} from 'react-query';
-import {supabaseClient} from 'core-logic/api/supabase';
-import {Enums} from '@tet/api';
+import { Enums } from '@/api';
+import { supabaseClient } from 'core-logic/api/supabase';
+import { useMutation, useQueryClient } from 'react-query';
 
 export type TStartAudit = ReturnType<typeof useStartAudit>['mutate'];
 
@@ -11,7 +11,7 @@ export const useStartAudit = () => {
   return useMutation(startAudit, {
     mutationKey: 'startAudit',
     onSuccess: (data, variables) => {
-      const {collectivite_id, referentiel} = variables;
+      const { collectivite_id, referentiel } = variables;
       queryClient.invalidateQueries(['audit', collectivite_id, referentiel]);
       queryClient.invalidateQueries([
         'peut_commencer_audit',
@@ -33,7 +33,7 @@ const startAudit = async ({
   referentiel: Enums<'referentiel'>;
   audit_id: number;
 }) =>
-  supabaseClient.rpc('labellisation_commencer_audit', {audit_id} as {
+  supabaseClient.rpc('labellisation_commencer_audit', { audit_id } as {
     audit_id: number;
     date_debut: string;
   });

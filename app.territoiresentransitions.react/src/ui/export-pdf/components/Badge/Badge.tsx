@@ -1,6 +1,6 @@
+import { BadgeState, badgeClassnames } from '@/ui';
 import { Text, TextProps } from '@react-pdf/renderer';
 import { tw } from '../../utils';
-import { BadgeState, badgeClassnames } from '@tet/ui';
 import { Stack } from '../Stack';
 
 type BadgeProps = TextProps & {

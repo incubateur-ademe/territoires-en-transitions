@@ -1,26 +1,26 @@
-import {useMutation, useQuery, useQueryClient} from 'react-query';
-import {supabaseClient} from 'core-logic/api/supabase';
-import {useCurrentCollectivite} from './useCurrentCollectivite';
-import {useAudit, useIsAuditeur} from 'app/pages/collectivite/Audit/useAudit';
-import {useActionScore} from './scoreHooks';
-import {TablesInsert} from '@tet/api';
-import {useCollectiviteId} from './params';
-import {TActionAvancement} from 'types/alias';
+import { TablesInsert } from '@/api';
+import { useAudit, useIsAuditeur } from 'app/pages/collectivite/Audit/useAudit';
+import { supabaseClient } from 'core-logic/api/supabase';
+import { useMutation, useQuery, useQueryClient } from 'react-query';
+import { TActionAvancement } from 'types/alias';
+import { useCollectiviteId } from './params';
+import { useActionScore } from './scoreHooks';
+import { useCurrentCollectivite } from './useCurrentCollectivite';
 
 /**
  * Charge le statut d'une action
  */
 export const useActionStatut = (actionId: string) => {
   const collectivite_id = useCollectiviteId();
-  const {data, isLoading} = useQuery(['action_statut', collectivite_id], () =>
+  const { data, isLoading } = useQuery(['action_statut', collectivite_id], () =>
     fetchCollectiviteActionStatuts(collectivite_id ?? undefined)
   );
 
-  const statut = data?.find(action => action.action_id === actionId) || null;
+  const statut = data?.find((action) => action.action_id === actionId) || null;
 
   const filled =
     data?.find(
-      action =>
+      (action) =>
         action.action_id.includes(actionId) &&
         action.action_id.split(actionId)[1] !== '' &&
         action.avancement !== 'non_renseigne'
@@ -35,24 +35,24 @@ export const useActionStatut = (actionId: string) => {
 
 export const useTasksStatus = (tasksIds: string[]) => {
   const collectivite_id = useCollectiviteId();
-  const {data, isLoading} = useQuery(['action_statut', collectivite_id], () =>
+  const { data, isLoading } = useQuery(['action_statut', collectivite_id], () =>
     fetchCollectiviteActionStatuts(collectivite_id ?? undefined)
   );
 
   let tasksStatus: {
-    [key: string]: {avancement: TActionAvancement; concerne: boolean};
+    [key: string]: { avancement: TActionAvancement; concerne: boolean };
   } = {};
 
-  tasksIds.forEach(taskId => {
-    const task = data?.find(action => action.action_id === taskId);
+  tasksIds.forEach((taskId) => {
+    const task = data?.find((action) => action.action_id === taskId);
     if (task !== undefined)
       tasksStatus = {
         ...tasksStatus,
-        [taskId]: {avancement: task.avancement, concerne: task.concerne},
+        [taskId]: { avancement: task.avancement, concerne: task.concerne },
       };
   });
 
-  return {tasksStatus, isLoading};
+  return { tasksStatus, isLoading };
 };
 
 const fetchCollectiviteActionStatuts = async (collectivite_id?: number) => {
@@ -63,7 +63,7 @@ const fetchCollectiviteActionStatuts = async (collectivite_id?: number) => {
     .from('action_statut')
     .select()
     .eq('collectivite_id', collectivite_id);
-  const {error, data} = await query;
+  const { error, data } = await query;
 
   if (error) {
     throw new Error(error.message);
@@ -77,7 +77,7 @@ const fetchCollectiviteActionStatuts = async (collectivite_id?: number) => {
 export const useSaveActionStatut = () => {
   const collectivite_id = useCollectiviteId();
   const queryClient = useQueryClient();
-  const {isLoading, mutate: saveActionStatut} = useMutation(write, {
+  const { isLoading, mutate: saveActionStatut } = useMutation(write, {
     mutationKey: 'action_statut',
     onSuccess: () => {
       queryClient.invalidateQueries(['action_statut', collectivite_id]);
@@ -104,7 +104,7 @@ const write = async (statut: TActionStatutWrite) => {
  */
 export const useEditActionStatutIsDisabled = (actionId: string) => {
   const collectivite = useCurrentCollectivite();
-  const {data: audit} = useAudit();
+  const { data: audit } = useAudit();
   const isAuditeur = useIsAuditeur();
   const score = useActionScore(actionId);
 

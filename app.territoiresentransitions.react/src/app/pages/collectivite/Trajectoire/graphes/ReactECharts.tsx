@@ -4,13 +4,13 @@
  * Ref: https://dev.to/manufac/using-apache-echarts-with-react-and-typescript-353k
  */
 
-import {useRef, useEffect} from 'react';
-import {init, getInstanceByDom} from 'echarts';
-import type {CSSProperties} from 'react';
-import type {EChartsOption, ECharts, SetOptionOpts} from 'echarts';
-import {preset} from '@tet/ui';
+import { preset } from '@/ui';
+import type { ECharts, EChartsOption, SetOptionOpts } from 'echarts';
+import { getInstanceByDom, init } from 'echarts';
+import type { CSSProperties } from 'react';
+import { useEffect, useRef } from 'react';
 
-const {colors} = preset.theme.extend;
+const { colors } = preset.theme.extend;
 
 export interface ReactEChartsProps {
   option: EChartsOption;

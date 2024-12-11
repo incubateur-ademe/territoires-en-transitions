@@ -3,7 +3,7 @@ import { useQuery } from 'react-query';
 import {
   FetchOptions,
   ficheResumesFetch,
-} from '@tet/api/plan-actions/fiche-resumes.list';
+} from '@/api/plan-actions/fiche-resumes.list';
 import { supabaseClient } from 'core-logic/api/supabase';
 import { useCollectiviteId } from 'core-logic/hooks/params';
 

@@ -1,7 +1,7 @@
-import {useMutation, useQuery, useQueryClient} from 'react-query';
-import {supabaseClient} from 'core-logic/api/supabase';
-import {useCollectiviteId} from 'core-logic/hooks/params';
-import {Indicateurs, SharedDomain} from '@tet/api';
+import { Indicateurs, SharedDomain } from '@/api';
+import { supabaseClient } from 'core-logic/api/supabase';
+import { useCollectiviteId } from 'core-logic/hooks/params';
+import { useMutation, useQuery, useQueryClient } from 'react-query';
 
 /** Met à jour les services pilotes d'un indicateur */
 export const useUpsertIndicateurServices = (indicateurId: number) => {

@@ -1,5 +1,5 @@
-import {Prefix} from '@tet/api';
-import {TOC_ITEMS} from './toc-items';
+import { Prefix } from '@/api';
+import { TOC_ITEMS } from './toc-items';
 
 // type d'info associées à une action
 export type TActionInfo = (typeof TOC_ITEMS)[number]['id'];

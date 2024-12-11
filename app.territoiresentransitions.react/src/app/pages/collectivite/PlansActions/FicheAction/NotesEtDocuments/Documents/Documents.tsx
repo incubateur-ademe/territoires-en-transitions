@@ -1,13 +1,13 @@
-import {useEffect, useState} from 'react';
-import {Button} from '@tet/ui';
+import { Button } from '@/ui';
+import { useEffect, useState } from 'react';
+import CarteDocument from 'ui/shared/preuves/Bibliotheque/CarteDocument';
 import SpinnerLoader from 'ui/shared/SpinnerLoader';
-import {useAnnexesFicheAction} from '../../data/useAnnexesFicheAction';
+import { useAddAnnexe } from '../../data/useAddAnnexe';
+import { useAnnexesFicheAction } from '../../data/useAnnexesFicheAction';
 import EmptyCard from '../../EmptyCard';
+import LoadingCard from '../../LoadingCard';
 import DocumentPicto from './DocumentPicto';
 import ModaleAjoutDocument from './ModaleAjoutDocument';
-import CarteDocument from 'ui/shared/preuves/Bibliotheque/CarteDocument';
-import LoadingCard from '../../LoadingCard';
-import { useAddAnnexe } from '../../data/useAddAnnexe';
 
 type DocumentsProps = {
   isReadonly: boolean;

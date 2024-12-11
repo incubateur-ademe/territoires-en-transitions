@@ -1,9 +1,9 @@
-import { Button, Card, Icon } from '@tet/ui';
-import ModaleEditionNote from './ModaleEditionNote';
+import { Button, Card, Icon } from '@/ui';
 import { useState } from 'react';
 import AlerteSuppression from 'ui/shared/preuves/Bibliotheque/AlerteSuppression';
-import DeleteButton from '../../DeleteButton';
 import { getTruncatedText } from 'utils/formatUtils';
+import DeleteButton from '../../DeleteButton';
+import ModaleEditionNote from './ModaleEditionNote';
 
 type CarteNoteProps = {
   isReadonly: boolean;

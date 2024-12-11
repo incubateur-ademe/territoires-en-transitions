@@ -1,8 +1,8 @@
+import TeTeLogo from '@/ui/assets/TeTeLogo';
+import { Button } from '@/ui/design-system/Button';
+import { APP_BASE_URL, SITE_BASE_URL } from '@/ui/utils/constants';
 import { Meta, StoryObj } from '@storybook/react';
 import { HeaderTeT } from './HeaderTeT';
-import { Button } from '@tet/ui/design-system/Button';
-import { APP_BASE_URL, SITE_BASE_URL } from '@tet/ui/utils/constants';
-import TeTeLogo from '@tet/ui/assets/TeTeLogo';
 
 const meta: Meta<typeof HeaderTeT> = {
   title: 'Components/Layout/Header TeT',

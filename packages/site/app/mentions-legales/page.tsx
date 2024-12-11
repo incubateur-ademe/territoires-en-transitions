@@ -1,6 +1,6 @@
 'use server';
 
-import Section from '@tet/site/components/sections/Section';
+import Section from '@/site/components/sections/Section';
 import { Metadata } from 'next';
 
 export async function generateMetadata(): Promise<Metadata> {

@@ -1,14 +1,14 @@
-import classNames from 'classnames';
-import {ModaleActionImpactProps} from './types';
+import Markdown from '@/panier/components/Markdown';
 import {
   Button,
+  Card,
+  InfoActionImpact,
   Modal,
   ModalFooter,
   ModalFooterSection,
-  InfoActionImpact,
-  Card,
-} from '@tet/ui';
-import Markdown from '@tet/panier/components/Markdown';
+} from '@/ui';
+import classNames from 'classnames';
+import { ModaleActionImpactProps } from './types';
 
 const referentielToName: Record<string, string> = {
   cae: 'Climat Air Énergie',
@@ -41,7 +41,7 @@ export const ModaleActionImpact = (props: ModaleActionImpactProps) => {
         return (
           <>
             <InfoActionImpact
-              action={{...props}}
+              action={{ ...props }}
               descriptionMarkdown={
                 <Markdown
                   content={description}
@@ -55,7 +55,7 @@ export const ModaleActionImpact = (props: ModaleActionImpactProps) => {
                   Actions des référentiels liés :
                 </h6>
                 <div className={'grid lg:grid-cols-2 xl:grid-cols-3 gap-3'}>
-                  {actionsLiees.map(({identifiant, nom, referentiel}) => (
+                  {actionsLiees.map(({ identifiant, nom, referentiel }) => (
                     <Card
                       key={identifiant}
                       className="h-full px-4 py-[1.125rem] !gap-3 text-grey-8 !shadow-none"
@@ -75,7 +75,7 @@ export const ModaleActionImpact = (props: ModaleActionImpactProps) => {
           </>
         );
       }}
-      renderFooter={({close}) => (
+      renderFooter={({ close }) => (
         <ModalFooter variant="space">
           <ModalFooterSection>
             <Button

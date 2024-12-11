@@ -1,16 +1,16 @@
-import {useForm} from 'react-hook-form';
-import {zodResolver} from '@hookform/resolvers/zod';
-import {z} from 'zod';
+import { MailSendMessage } from '@/auth/components/Login/MailSendMessage';
+import { ResendMessage } from '@/auth/components/ResendMessage';
 import {
-  Input,
-  validateOTP,
   FieldMessage,
+  Input,
   ModalFooterOKCancel,
   TrackPageView,
   useEventTracker,
-} from '@tet/ui';
-import {MailSendMessage} from '@tet/auth/components/Login/MailSendMessage';
-import {ResendMessage} from '@tet/auth/components/ResendMessage';
+  validateOTP,
+} from '@/ui';
+import { zodResolver } from '@hookform/resolvers/zod';
+import { useForm } from 'react-hook-form';
+import { z } from 'zod';
 
 export type VerifyOTPData = {
   email: string;
@@ -19,13 +19,16 @@ export type VerifyOTPData = {
 
 export type VerifyType = 'signup' | 'login' | 'reset_password';
 
-export type ResendFunction = (args: {type: VerifyType; email: string}) => void;
+export type ResendFunction = (args: {
+  type: VerifyType;
+  email: string;
+}) => void;
 
 type VerifyOTPProps = {
   /** Type d'usage (fait varier le message affiché) */
   type: VerifyType;
   /** Valeurs par défaut pour initialiser les formulaires */
-  defaultValues: {email: string | null; otp?: string | null};
+  defaultValues: { email: string | null; otp?: string | null };
   /** Erreur à afficher */
   error: string | null;
   /** Indique qu'un appel réseau est en cours */
@@ -63,12 +66,19 @@ const useVerifyOTP = (email: string, otp: string) => {
  * Affiche le panneau de vérification du jeton OTP
  */
 export const VerifyOTP = (props: VerifyOTPProps) => {
-  const {type, defaultValues, isLoading, error, onCancel, onSubmit, onResend} =
-    props;
+  const {
+    type,
+    defaultValues,
+    isLoading,
+    error,
+    onCancel,
+    onSubmit,
+    onResend,
+  } = props;
   const {
     handleSubmit,
     register,
-    formState: {isValid},
+    formState: { isValid },
   } = useVerifyOTP(defaultValues?.email || '', defaultValues?.otp || '');
 
   const pageName = `auth/verify_otp/${type}` as const;
@@ -77,7 +87,7 @@ export const VerifyOTP = (props: VerifyOTPProps) => {
   const onSubmitForm = handleSubmit((data: VerifyOTPData) => {
     const otp = validateOTP(data.otp);
     if (otp && defaultValues.email) {
-      onSubmit?.({email: defaultValues.email, otp});
+      onSubmit?.({ email: defaultValues.email, otp });
       // @ts-expect-error on veut pas gérer l'erreur
       eventTracker('cta_submit', {});
     }
@@ -102,7 +112,7 @@ export const VerifyOTP = (props: VerifyOTPProps) => {
           <FieldMessage messageClassName="mt-4" state="error" message={error} />
         )}
         <ModalFooterOKCancel
-          btnCancelProps={{onClick: onCancel}}
+          btnCancelProps={{ onClick: onCancel }}
           btnOKProps={{
             type: 'submit',
             disabled: !isValid || isLoading,

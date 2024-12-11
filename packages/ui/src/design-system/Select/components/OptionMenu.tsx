@@ -1,20 +1,20 @@
-import { Ref, cloneElement, forwardRef, useState } from 'react';
 import {
+  FloatingFocusManager,
+  flip,
+  offset,
+  shift,
   useClick,
   useDismiss,
   useFloating,
   useFocus,
-  flip,
-  offset,
-  shift,
   useInteractions,
   useRole,
-  FloatingFocusManager,
 } from '@floating-ui/react';
+import { Ref, cloneElement, forwardRef, useState } from 'react';
 
-import { Modal } from '@tet/ui/design-system/Modal';
-import { Icon } from '@tet/ui/design-system/Icon';
-import { Button } from '@tet/ui/design-system/Button';
+import { Button } from '@/ui/design-system/Button';
+import { Icon } from '@/ui/design-system/Icon';
+import { Modal } from '@/ui/design-system/Modal';
 
 import { Option, OptionValue } from '../utils';
 

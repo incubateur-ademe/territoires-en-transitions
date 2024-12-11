@@ -7,20 +7,20 @@ import {
   Pagination,
   Select,
   useEventTracker,
-} from '@tet/ui';
+} from '@/ui';
 
 import IndicateurCard from 'app/pages/collectivite/Indicateurs/lists/IndicateurCard/IndicateurCard';
 import PictoExpert from 'ui/pictogrammes/PictoExpert';
 import SpinnerLoader from 'ui/shared/SpinnerLoader';
 
-import { Indicateurs } from '@tet/api';
-import { OpenState } from '@tet/ui/utils/types';
+import { Indicateurs } from '@/api';
+import { ExportIndicateursPageName } from '@/app/pages/collectivite/Indicateurs/Indicateur/useExportIndicateurs';
+import BadgeList from '@/app/pages/collectivite/Indicateurs/lists/indicateurs-list/badge-list';
+import { OpenState } from '@/ui/utils/types';
 import { getIndicateurGroup } from 'app/pages/collectivite/Indicateurs/lists/IndicateurCard/utils';
 import { useFilteredIndicateurDefinitions } from 'app/pages/collectivite/Indicateurs/lists/useFilteredIndicateurDefinitions';
 import { makeCollectiviteIndicateursUrl } from 'app/paths';
 import { useCurrentCollectivite } from 'core-logic/hooks/useCurrentCollectivite';
-import BadgeList from '@tet/app/pages/collectivite/Indicateurs/lists/indicateurs-list/badge-list';
-import { ExportIndicateursPageName } from '@tet/app/pages/collectivite/Indicateurs/Indicateur/useExportIndicateurs';
 import { CustomFilterBadges } from 'ui/shared/filters/filter-badges';
 
 type sortByOptionsType = {

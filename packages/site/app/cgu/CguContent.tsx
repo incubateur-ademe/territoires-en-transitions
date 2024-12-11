@@ -1,6 +1,6 @@
 'use client';
 
-import Section from '@tet/site/components/sections/Section';
+import Section from '@/site/components/sections/Section';
 import CGU from './cgu.mdx';
 
 const CguContent = () => {

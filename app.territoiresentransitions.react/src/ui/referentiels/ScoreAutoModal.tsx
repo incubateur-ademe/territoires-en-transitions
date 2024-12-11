@@ -1,13 +1,13 @@
-import {SuiviScoreRow} from 'app/pages/collectivite/EtatDesLieux/Referentiel/data/useScoreRealise';
+import { Alert } from '@/ui';
+import { SuiviScoreRow } from 'app/pages/collectivite/EtatDesLieux/Referentiel/data/useScoreRealise';
 import SubActionTasksList from 'app/pages/collectivite/EtatDesLieux/Referentiel/SuiviAction/SubActionTasksList';
-import {ActionDefinitionSummary} from 'core-logic/api/endpoints/ActionDefinitionSummaryReadEndpoint';
-import {useActionSummaryChildren} from 'core-logic/hooks/referentiel';
-import {useTasksStatus} from 'core-logic/hooks/useActionStatut';
-import {Dispatch, SetStateAction, useState} from 'react';
-import {TActionAvancement} from 'types/alias';
+import { ActionDefinitionSummary } from 'core-logic/api/endpoints/ActionDefinitionSummaryReadEndpoint';
+import { useActionSummaryChildren } from 'core-logic/hooks/referentiel';
+import { useTasksStatus } from 'core-logic/hooks/useActionStatut';
+import { Dispatch, SetStateAction, useState } from 'react';
+import { TActionAvancement } from 'types/alias';
 import Modal from 'ui/shared/floating-ui/Modal';
-import {StatusToSavePayload} from './ActionStatusDropdown';
-import {Alert} from '@tet/ui';
+import { StatusToSavePayload } from './ActionStatusDropdown';
 
 /**
  * Vérifie pour chaque tâche de la sous-action le statut
@@ -17,7 +17,7 @@ import {Alert} from '@tet/ui';
 const isCustomScoreGranted = (
   tasks: ActionDefinitionSummary[],
   tasksStatus: {
-    [key: string]: {avancement: TActionAvancement; concerne: boolean};
+    [key: string]: { avancement: TActionAvancement; concerne: boolean };
   },
   localStatus: {
     [key: string]: StatusToSavePayload;
@@ -55,7 +55,7 @@ const isCustomScoreGranted = (
 
 type ScoreAutoModalProps = {
   action: ActionDefinitionSummary;
-  actionScores: {[actionId: string]: SuiviScoreRow};
+  actionScores: { [actionId: string]: SuiviScoreRow };
   externalOpen: boolean;
   setExternalOpen: Dispatch<SetStateAction<boolean>>;
   onSaveScore: (payload: StatusToSavePayload[]) => void;
@@ -72,13 +72,13 @@ const ScoreAutoModal = ({
 }: ScoreAutoModalProps): JSX.Element => {
   const tasks = useActionSummaryChildren(action);
 
-  const {tasksStatus} = useTasksStatus(tasks.map(task => task.id));
+  const { tasksStatus } = useTasksStatus(tasks.map((task) => task.id));
 
   const [localStatus, setLocalStatus] = useState<{
     [key: string]: StatusToSavePayload;
   }>({});
   const handleChangeStatus = (payload: StatusToSavePayload) => {
-    setLocalStatus(prevState => ({
+    setLocalStatus((prevState) => ({
       ...prevState,
       [payload.actionId]: {
         actionId: payload.actionId,

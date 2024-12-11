@@ -4,11 +4,11 @@ import {
   TrackingProvider,
   createTrackingClient,
   getNextTrackingEnv,
-} from '@tet/ui';
+} from '@/ui';
 
 const client = createTrackingClient(getNextTrackingEnv());
 
-const PHProvider = ({children}: {children: React.ReactNode}) => {
+const PHProvider = ({ children }: { children: React.ReactNode }) => {
   return <TrackingProvider client={client}>{children}</TrackingProvider>;
 };
 

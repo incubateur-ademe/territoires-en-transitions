@@ -1,6 +1,6 @@
+import { IndicateurDefinition } from '@/api/indicateurs/domain';
+import { FicheAction } from '@/api/plan-actions';
 import classNames from 'classnames';
-import { FicheAction } from '@tet/api/plan-actions';
-import { IndicateurDefinition } from '@tet/api/indicateurs/domain';
 import {
   Badge,
   Card,

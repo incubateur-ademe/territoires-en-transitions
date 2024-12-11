@@ -1,9 +1,9 @@
+import { Button } from '@/ui';
 import classNames from 'classnames';
-import { Button } from '@tet/ui';
-import { TPreuve } from 'ui/shared/preuves/Bibliotheque/types';
-import { EditerDocumentModal } from 'ui/shared/preuves/Bibliotheque/EditerDocumentModal';
-import DeleteButton from '../../../../app/pages/collectivite/PlansActions/FicheAction/DeleteButton';
 import { useState } from 'react';
+import { EditerDocumentModal } from 'ui/shared/preuves/Bibliotheque/EditerDocumentModal';
+import { TPreuve } from 'ui/shared/preuves/Bibliotheque/types';
+import DeleteButton from '../../../../app/pages/collectivite/PlansActions/FicheAction/DeleteButton';
 import { EditerLienModal } from './EditerLienModal';
 
 type MenuCarteDocumentProps = {

@@ -1,9 +1,9 @@
-import { Icon, Tooltip } from '@tet/ui';
-import {Fragment} from 'react';
-import { getTextFormattedDate } from 'utils/formatUtils';
+import { Personne } from '@/api/collectivites';
+import { Icon, Tooltip } from '@/ui';
 import classNames from 'classnames';
 import { isBefore, startOfToday } from 'date-fns';
-import { Personne } from '@tet/api/collectivites';
+import { Fragment } from 'react';
+import { getTextFormattedDate } from 'utils/formatUtils';
 
 type FicheActionFooterInfoProps = {
   pilotes: Personne[] | null | undefined;

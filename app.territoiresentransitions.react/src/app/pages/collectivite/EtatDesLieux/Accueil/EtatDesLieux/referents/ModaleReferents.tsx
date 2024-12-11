@@ -1,4 +1,4 @@
-import { Field, Modal, ModalFooterOKCancel, OptionValue } from '@tet/ui';
+import { Field, Modal, ModalFooterOKCancel, OptionValue } from '@/ui';
 import { membreFonctionToLabel } from 'app/labels';
 import { makeCollectiviteUsersUrl } from 'app/paths';
 import { pick } from 'es-toolkit';

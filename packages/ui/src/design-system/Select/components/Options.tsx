@@ -1,18 +1,18 @@
-import { Fragment } from 'react';
 import classNames from 'classnames';
+import { Fragment } from 'react';
 
-import { Badge } from '@tet/ui/design-system/Badge';
-import { Icon } from '@tet/ui/design-system/Icon';
+import { Badge } from '@/ui/design-system/Badge';
+import { Icon } from '@/ui/design-system/Icon';
 
+import { ITEM_ALL } from '@/ui/design-system/Select/SelectFilter';
 import {
   OptionValue,
-  Option as TOption,
   SelectOption,
+  Option as TOption,
   isOptionSection,
 } from '../utils';
 import { OptionMenu } from './OptionMenu';
 import { CreateOption } from './SelectBase';
-import { ITEM_ALL } from '@tet/ui/design-system/Select/SelectFilter';
 
 type BaseProps = {
   /** Liste des valeurs sélectionnées dans le sélecteur parent */
