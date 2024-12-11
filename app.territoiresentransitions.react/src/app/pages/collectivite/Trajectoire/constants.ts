@@ -40,7 +40,7 @@ export const INDICATEURS_TRAJECTOIRE = [
     id: 'emissions_ges',
     nom: 'Émissions GES',
     titre: 'Comparaison des trajectoires d’émissions de GES',
-    titreSecteur: "Détail de la trajectoire d'émisssions de GES",
+    titreSecteur: "Détail de la trajectoire d'émissions de GES",
     unite: 'kteq CO2',
     identifiant: 'cae_1.a',
     sources: [
@@ -338,7 +338,7 @@ export const METHODO_PAR_SECTEUR = {
   CSC: {
     snbc2: [
       'La SNBC 2 prévoit la création de systèmes industriels de "Capture et Stockage de Carbone"',
-      'Il s\'agit de flux de séquestrations, donc d\'émissions "négatives". Ces systèmes, encore expérimentaux, entrent en action en 2030. Ils sont associés à des industries particulièrement émetrices.',
+      'Il s\'agit de flux de séquestrations, donc d\'émissions "négatives". Ces systèmes, encore expérimentaux, entrent en action en 2030. Ils sont associés à des industries particulièrement émettrices.',
     ],
   },
 };
