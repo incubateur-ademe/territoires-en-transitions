@@ -1,6 +1,6 @@
-import { LibreTag } from '@tet/api/typeUtils';
-import { Button, Field, useEventTracker } from '@tet/ui';
-import { OpenState } from '@tet/ui/utils/types';
+import { LibreTag } from '@/api/typeUtils';
+import { Button, Field, useEventTracker } from '@/ui';
+import { OpenState } from '@/ui/utils/types';
 import { useCollectiviteId } from 'core-logic/hooks/params';
 import { useState } from 'react';
 import TagsSuiviPersoDropdown from 'ui/dropdownLists/TagsSuiviPersoDropdown/TagsSuiviPersoDropdown';
