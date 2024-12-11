@@ -11,10 +11,12 @@ import { useAutoResize } from './useAutoResize';
 
 export const AutoResizedTextarea = forwardRef(
   (props: TextareaProps, ref?: Ref<HTMLTextAreaElement>) => {
-    // Valeur locale, nécessaire pour le refresh des valeurs textareaRef et shadowRef
-    const [value, setValue] = useState<string | undefined>(props.value);
+    const { onChange, value: initialValue, ...restProps } = props;
 
-    useEffect(() => setValue(value), [props.value]);
+    // Valeur locale, nécessaire pour le refresh des valeurs textareaRef et shadowRef
+    const [value, setValue] = useState<string | undefined>(initialValue);
+
+    useEffect(() => setValue(initialValue), [initialValue]);
 
     const { textareaRef, shadowRef } = useAutoResize(
       value?.toString(),
@@ -22,14 +24,20 @@ export const AutoResizedTextarea = forwardRef(
     );
 
     const handleChange = (evt: ChangeEvent<HTMLTextAreaElement>) => {
-      props.onChange?.(evt);
+      onChange?.(evt);
       setValue(evt.target.value);
     };
 
     return (
       <div className="flex items-start w-full">
         <div ref={shadowRef} className="w-px -mr-px" />
-        <Textarea ref={textareaRef} onChange={handleChange} resize="none" />
+        <Textarea
+          {...restProps}
+          ref={textareaRef}
+          value={value}
+          onChange={handleChange}
+          resize="none"
+        />
       </div>
     );
   }

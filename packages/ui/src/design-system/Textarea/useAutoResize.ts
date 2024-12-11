@@ -1,4 +1,4 @@
-import {RefObject, useLayoutEffect, useRef} from 'react';
+import { RefObject, useLayoutEffect, useRef } from 'react';
 
 /**
  * Rend un champ de texte avec redimensionnement automatique en fonction de son contenu
@@ -25,19 +25,18 @@ export const useAutoResize = (
 
   // Permet de set la taille du textarea au changement de valeur
   useLayoutEffect(() => {
-    if (textareaRef && textareaRef.current && shadowRef && shadowRef.current) {
+    if (textareaRef?.current && shadowRef && shadowRef.current) {
       // Initialise la hauteur du textarea à 0px
       textareaRef.current.style.height = '0px';
 
       // Met à jour la hauteur en fonction du contenu
-      textareaRef.current.style.height =
-        textareaRef.current.scrollHeight + 'px';
+      textareaRef.current.style.height = `${textareaRef.current.scrollHeight}px`;
 
       // Une div invisible qui permet de conserver la hauteur pour éviter
       // les sauts dans la page à la mise à jour du texte
-      shadowRef.current.style.height = textareaRef.current.scrollHeight + 'px';
+      shadowRef.current.style.height = `${textareaRef.current.scrollHeight}px`;
     }
   }, [value]);
 
-  return {textareaRef, shadowRef};
+  return { textareaRef, shadowRef };
 };
