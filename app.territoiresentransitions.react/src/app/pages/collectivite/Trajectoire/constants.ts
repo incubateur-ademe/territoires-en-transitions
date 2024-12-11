@@ -32,7 +32,6 @@ export const getNomSource = (id: string) =>
 export const EMISSIONS_NETTES = {
   id: 'cae_1.aa',
   nom: 'Émissions nettes',
-  coef: 0.001, // pour normaliser les données résultats/objectifs (tCO2 => ktCO2)
 };
 
 // liste des indicateurs Trajectoire
@@ -44,7 +43,6 @@ export const INDICATEURS_TRAJECTOIRE = [
     titreSecteur: "Détail de la trajectoire d'émisssions de GES",
     unite: 'kteq CO2',
     identifiant: 'cae_1.a',
-    coef: 0.001, // pour normaliser les données résultats/objectifs (tCO2 => ktCO2)
     sources: [
       SourceIndicateur.CITEPA,
       SourceIndicateur.RARE,
@@ -204,7 +202,6 @@ export const INDICATEURS_TRAJECTOIRE = [
     titreSecteur: "Détail de la trajectoire de consommation d'énergie",
     unite: 'GWh',
     identifiant: 'cae_2.a',
-    coef: 1, // pas de normalisation
     sources: [
       SourceIndicateur.CITEPA,
       SourceIndicateur.RARE,
@@ -215,36 +212,36 @@ export const INDICATEURS_TRAJECTOIRE = [
         nom: 'Résidentiel',
         identifiant: 'cae_2.e',
         sousSecteurs: [
-          {nom: 'Chauffage / Maisons individuelles', identifiant: 'cae_2.ea'},
-          {nom: 'Chauffage / Logement collectif', identifiant: 'cae_2.eb'},
-          {nom: 'Autres usages', identifiant: 'cae_2.ec'},
+          { nom: 'Chauffage / Maisons individuelles', identifiant: 'cae_2.ea' },
+          { nom: 'Chauffage / Logement collectif', identifiant: 'cae_2.eb' },
+          { nom: 'Autres usages', identifiant: 'cae_2.ec' },
         ],
       },
       {
         nom: 'Tertiaire',
         identifiant: 'cae_2.f',
         sousSecteurs: [
-          {nom: 'Chauffage', identifiant: 'cae_2.fa'},
-          {nom: 'Autres usages', identifiant: 'cae_2.fb'},
+          { nom: 'Chauffage', identifiant: 'cae_2.fa' },
+          { nom: 'Autres usages', identifiant: 'cae_2.fb' },
         ],
       },
       {
         nom: 'Industrie',
         identifiant: 'cae_2.k',
         sousSecteurs: [
-          {nom: 'Métaux primaires', identifiant: 'cae_2.ka'},
-          {nom: 'Chimie', identifiant: 'cae_2.kb'},
-          {nom: 'Non-métalliques', identifiant: 'cae_2.kc'},
-          {nom: 'Agro-industries', identifiant: 'cae_2.kd'},
-          {nom: 'Equipements', identifiant: 'cae_2.ke'},
-          {nom: 'Papier-carton', identifiant: 'cae_2.kf'},
-          {nom: 'Autres industries', identifiant: 'cae_2.kg'},
+          { nom: 'Métaux primaires', identifiant: 'cae_2.ka' },
+          { nom: 'Chimie', identifiant: 'cae_2.kb' },
+          { nom: 'Non-métalliques', identifiant: 'cae_2.kc' },
+          { nom: 'Agro-industries', identifiant: 'cae_2.kd' },
+          { nom: 'Equipements', identifiant: 'cae_2.ke' },
+          { nom: 'Papier-carton', identifiant: 'cae_2.kf' },
+          { nom: 'Autres industries', identifiant: 'cae_2.kg' },
         ],
       },
-      {nom: 'Agriculture', identifiant: 'cae_2.i'},
-      {nom: 'Transports', identifiant: 'cae_2.m'},
-      {nom: 'Déchets', identifiant: 'cae_2.j'},
-      {nom: 'Branche énergie', identifiant: 'cae_2.l_pcaet'},
+      { nom: 'Agriculture', identifiant: 'cae_2.i' },
+      { nom: 'Transports', identifiant: 'cae_2.m' },
+      { nom: 'Déchets', identifiant: 'cae_2.j' },
+      { nom: 'Branche énergie', identifiant: 'cae_2.l_pcaet' },
     ],
   },
 ] as const;
@@ -349,7 +346,6 @@ export const METHODO_PAR_SECTEUR = {
 export const SEQUESTRATION_CARBONE = {
   id: 'sequestration_carbone',
   sources: [SourceIndicateur.ALDO, SourceIndicateur.COLLECTIVITE],
-  coef: 0.001, // pour normaliser les données résultats/objectifs (tCO2 => ktCO2)
   secteurs: [
     {
       nom: 'Cultures',
