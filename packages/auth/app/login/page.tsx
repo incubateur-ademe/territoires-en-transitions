@@ -1,8 +1,8 @@
 // modale floating-ui ne pouvant s'afficher que côté client...
 'use client';
 
-import { LoginModal } from '@tet/auth/components/Login';
-import { useRedirectTo } from '@tet/auth/components/Login/useRedirectTo';
+import { LoginModal } from '@/auth/components/Login';
+import { useRedirectTo } from '@/auth/components/Login/useRedirectTo';
 import { useLoginState } from './useLoginState';
 
 /**

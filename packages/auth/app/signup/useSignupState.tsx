@@ -1,5 +1,5 @@
 import { getRootDomain, setAuthTokens } from '@/api';
-import { useGetPasswordStrength } from '@tet/auth/components/PasswordStrengthMeter/useGetPasswordStrength';
+import { useGetPasswordStrength } from '@/auth/components/PasswordStrengthMeter/useGetPasswordStrength';
 import {
   SignupData,
   SignupDataStep1,
@@ -7,9 +7,9 @@ import {
   SignupDataStep3,
   SignupView,
   isValidSignupView,
-} from '@tet/auth/components/Signup';
-import { ResendFunction } from '@tet/auth/components/VerifyOTP';
-import { supabase } from '@tet/auth/src/clientAPI';
+} from '@/auth/components/Signup';
+import { ResendFunction } from '@/auth/components/VerifyOTP';
+import { supabase } from '@/auth/src/clientAPI';
 import { useRouter } from 'next/navigation';
 import { useState } from 'react';
 

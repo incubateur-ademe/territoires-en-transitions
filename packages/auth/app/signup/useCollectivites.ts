@@ -1,4 +1,4 @@
-import {supabase} from '@tet/auth/src/clientAPI';
+import { supabase } from '@/auth/src/clientAPI';
 import useSWR from 'swr';
 
 /** Charge la liste des collectivités */
@@ -13,9 +13,9 @@ const getCollectivites = async (nom?: string) => {
     query.limit(15);
   }
 
-  const {data} = await query;
+  const { data } = await query;
 
-  return (data || []) as Array<{value: number; label: string}>;
+  return (data || []) as Array<{ value: number; label: string }>;
 };
 
 export const useCollectivites = (nom?: string) =>

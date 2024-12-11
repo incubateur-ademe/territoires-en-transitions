@@ -4,10 +4,10 @@ import {
   isValidLoginView,
   LoginData,
   LoginView,
-} from '@tet/auth/components/Login';
-import { useGetPasswordStrength } from '@tet/auth/components/PasswordStrengthMeter/useGetPasswordStrength';
-import { ResendFunction, VerifyOTPData } from '@tet/auth/components/VerifyOTP';
-import { supabase } from '@tet/auth/src/clientAPI';
+} from '@/auth/components/Login';
+import { useGetPasswordStrength } from '@/auth/components/PasswordStrengthMeter/useGetPasswordStrength';
+import { ResendFunction, VerifyOTPData } from '@/auth/components/VerifyOTP';
+import { supabase } from '@/auth/src/clientAPI';
 import { useRouter } from 'next/navigation';
 import { useState } from 'react';
 

@@ -1,3 +1,5 @@
+import { MailSendMessage } from '@/auth/components/Login/MailSendMessage';
+import { ResendMessage } from '@/auth/components/ResendMessage';
 import {
   FieldMessage,
   Input,
@@ -7,8 +9,6 @@ import {
   validateOTP,
 } from '@/ui';
 import { zodResolver } from '@hookform/resolvers/zod';
-import { MailSendMessage } from '@tet/auth/components/Login/MailSendMessage';
-import { ResendMessage } from '@tet/auth/components/ResendMessage';
 import { useForm } from 'react-hook-form';
 import { z } from 'zod';
 

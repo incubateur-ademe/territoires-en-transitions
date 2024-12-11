@@ -1,3 +1,4 @@
+import { PasswordStrengthMeter } from '@/auth/components/PasswordStrengthMeter';
 import {
   Field,
   FieldMessage,
@@ -7,7 +8,6 @@ import {
   useEventTracker,
 } from '@/ui';
 import { zodResolver } from '@hookform/resolvers/zod';
-import { PasswordStrengthMeter } from '@tet/auth/components/PasswordStrengthMeter';
 import { useForm } from 'react-hook-form';
 import { z } from 'zod';
 import { LoginData, LoginPropsWithState } from './type';

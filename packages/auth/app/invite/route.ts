@@ -1,10 +1,10 @@
-import {NextRequest} from 'next/server';
-import {z} from 'zod';
-import {sendEmail} from '@tet/auth/src/utils/sendEmail';
 import {
   authError,
   getDbUserFromRequest,
-} from '@tet/auth/src/supabase/getDbUserFromRequest';
+} from '@/auth/src/supabase/getDbUserFromRequest';
+import { sendEmail } from '@/auth/src/utils/sendEmail';
+import { NextRequest } from 'next/server';
+import { z } from 'zod';
 
 // schéma des données attendues
 const invitationSchema = z.object({
@@ -42,12 +42,12 @@ export async function POST(request: NextRequest) {
   const verifyArgs = invitationSchema.safeParse(invitation);
   if (!verifyArgs.success) {
     console.error('POST invite error', verifyArgs.error);
-    return Response.json({error: 'Arguments non valides'}, {status: 500});
+    return Response.json({ error: 'Arguments non valides' }, { status: 500 });
   }
 
   // génère et envoi le mail
-  const {to, from, collectivite} = invitation;
-  const {nom, prenom} = from;
+  const { to, from, collectivite } = invitation;
+  const { nom, prenom } = from;
   const res = await sendEmail({
     to,
     subject: `Invitation de ${prenom} ${nom} à rejoindre ${collectivite} sur Territoires en Transitions`,
@@ -63,15 +63,15 @@ export async function OPTIONS(request: NextRequest) {
 }
 
 // formatage du mail
-const mailTemplate = ({from, collectivite, url, urlType}: Invitation) => {
-  const {email, nom, prenom} = from;
+const mailTemplate = ({ from, collectivite, url, urlType }: Invitation) => {
+  const { email, nom, prenom } = from;
 
   return `<html>
 <body>
     <h2>Territoires en Transitions</h2>
     <p>Bonjour,</p>
 
-  <p>${prenom} ${nom} (${email}) vous invite à contribuer pour ${collectivite} sur Territoires en Transitions.</p> 
+  <p>${prenom} ${nom} (${email}) vous invite à contribuer pour ${collectivite} sur Territoires en Transitions.</p>
   <a href="${url}"
     style="font-size: 1rem; font-weight: 700; border: 1px solid #6A6AF4; border-radius: 8px; text-align: center; padding: 1rem 2rem; margin: 1rem; display: block; max-width: fit-content; background-color: #6A6AF4; color: white; text-decoration: none;"
     >${

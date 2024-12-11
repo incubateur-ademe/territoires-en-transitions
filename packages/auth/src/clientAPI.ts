@@ -1,3 +1,3 @@
-import {createClient} from '@tet/auth/src/supabase/client';
+import { createClient } from '@/auth/src/supabase/client';
 
 export const supabase = createClient();

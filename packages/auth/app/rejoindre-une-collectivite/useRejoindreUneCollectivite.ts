@@ -7,8 +7,8 @@ import {
   CollectiviteInfo,
   CollectiviteNom,
   RejoindreUneCollectiviteData,
-} from '@tet/auth/components/RejoindreUneCollectivite';
-import { supabase } from '@tet/auth/src/clientAPI';
+} from '@/auth/components/RejoindreUneCollectivite';
+import { supabase } from '@/auth/src/clientAPI';
 import { useRouter } from 'next/navigation';
 import { useState } from 'react';
 

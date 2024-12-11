@@ -1,6 +1,6 @@
-import {ZxcvbnResult} from '@zxcvbn-ts/core';
-import {ResendFunction, VerifyOTPData} from '@tet/auth/components/VerifyOTP';
-import {FormState} from './useFormState';
+import { ResendFunction, VerifyOTPData } from '@/auth/components/VerifyOTP';
+import { ZxcvbnResult } from '@zxcvbn-ts/core';
+import { FormState } from './useFormState';
 
 const ValidLoginView = [
   'etape1',
@@ -15,7 +15,7 @@ export const isValidLoginView = (view: string | null) =>
   ValidLoginView.includes(view as LoginView);
 export type LoginView = (typeof ValidLoginView)[number];
 
-export type Credentials = {email: string; password?: string};
+export type Credentials = { email: string; password?: string };
 
 export type LoginData = Credentials | VerifyOTPData;
 
@@ -25,7 +25,7 @@ export type LoginProps = {
   /** Permet de passer d'une vue à une autre */
   setView: (view: LoginView) => void;
   /** Valeurs par défaut pour initialiser les formulaires */
-  defaultValues: {email: string | null; otp: string | null};
+  defaultValues: { email: string | null; otp: string | null };
   /** Erreur à afficher */
   error: string | null;
   /** Indique qu'un appel réseau est en cours */
@@ -47,4 +47,4 @@ export type LoginProps = {
   ) => ZxcvbnResult | null;
 };
 
-export type LoginPropsWithState = LoginProps & {formState: FormState};
+export type LoginPropsWithState = LoginProps & { formState: FormState };

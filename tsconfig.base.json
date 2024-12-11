@@ -23,7 +23,7 @@
       "@/api": ["./packages/api/src/index.ts"],
       "@/api/*": ["./packages/api/src/*"],
       "@tet/app/*": ["./app.territoiresentransitions.react/src/app/*"],
-      "@tet/auth/*": ["./packages/auth/*"],
+      "@/auth/*": ["./packages/auth/*"],
       "@/backend/*": ["./backend/src/*"],
       "@tet/panier/*": ["./packages/panier/*"],
       "@tet/site/*": ["./packages/site/*"],

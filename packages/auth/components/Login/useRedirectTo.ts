@@ -1,6 +1,6 @@
 import { restoreSessionFromAuthTokens } from '@/api';
 import { dcpFetch } from '@/api/utilisateurs/shared/data_access/dcp.fetch';
-import { supabase } from '@tet/auth/src/clientAPI';
+import { supabase } from '@/auth/src/clientAPI';
 import { useRouter } from 'next/navigation';
 import { useEffect } from 'react';
 

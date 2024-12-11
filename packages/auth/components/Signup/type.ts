@@ -1,6 +1,6 @@
-import {FormState} from '@tet/auth/components/Login/useFormState';
-import {ResendFunction, VerifyOTPData} from '@tet/auth/components/VerifyOTP';
-import {ZxcvbnResult} from '@zxcvbn-ts/core';
+import { FormState } from '@/auth/components/Login/useFormState';
+import { ResendFunction, VerifyOTPData } from '@/auth/components/VerifyOTP';
+import { ZxcvbnResult } from '@zxcvbn-ts/core';
 
 const ValidSignupView = [
   'etape1',
@@ -35,7 +35,7 @@ export type SignupProps = {
   /** Permet de passer d'une vue à une autre */
   setView: (view: SignupView) => void;
   /** Valeurs par défaut du formulaire (étape 1) */
-  defaultValues?: {email: string | null; otp?: string | null};
+  defaultValues?: { email: string | null; otp?: string | null };
   /** Erreur à afficher */
   error: string | null;
   /** Indique qu'un appel réseau est en cours */
@@ -43,7 +43,7 @@ export type SignupProps = {
   /** Indique que l'option "avec mot de passe" est activée */
   withPassword?: boolean;
   /** Liste de collectivités auxquelles le compte peut être rattaché */
-  collectivites: Array<{value: number; label: string}>;
+  collectivites: Array<{ value: number; label: string }>;
   /** Appelé pour filtrer la liste des collectivités */
   onFilterCollectivites: (value: string) => void;
   /** Appelé à l'envoi du formulaire */
@@ -59,4 +59,4 @@ export type SignupProps = {
   ) => ZxcvbnResult | null;
 };
 
-export type SignupPropsWithState = SignupProps & {formState: FormState};
+export type SignupPropsWithState = SignupProps & { formState: FormState };

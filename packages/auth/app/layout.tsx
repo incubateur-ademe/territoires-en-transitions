@@ -1,6 +1,6 @@
+import Header from '@/auth/components/Layout/Header';
+import PHProvider from '@/auth/providers/posthog';
 import './global.css';
-import PHProvider from '@tet/auth/providers/posthog';
-import Header from '@tet/auth/components/Layout/Header';
 
 export const metadata = {
   title: 'Territoires en Transitions',
@@ -26,7 +26,11 @@ export const metadata = {
   },
 };
 
-export default function RootLayout({children}: {children: React.ReactNode}) {
+export default function RootLayout({
+  children,
+}: {
+  children: React.ReactNode;
+}) {
   return (
     <html lang="fr">
       <PHProvider>
