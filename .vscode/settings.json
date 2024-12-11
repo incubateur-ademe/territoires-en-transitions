@@ -1,9 +1,8 @@
 {
-    "editor.codeActionsOnSave": {
-        "source.organizeImports": "explicit"
-    },
-    "[typescript]": {
-        "editor.formatOnSave": true
-    },
-    "typescript.preferences.importModuleSpecifier": "relative",
+  "editor.codeActionsOnSave": {
+    "source.organizeImports": "explicit"
+  },
+  "[typescript]": {
+    "editor.formatOnSave": true
+  }
 }
