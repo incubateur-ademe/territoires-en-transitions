@@ -5,6 +5,7 @@ import EditionPilote from './EditionPilote';
 import EditionPlanning from './EditionPlanning';
 import EditionPriorite from './EditionPriorite';
 import EditionStatut from './EditionStatut';
+import EditionTagsLibres from './EditionTagsLibres';
 
 type ActionsGroupeesMenuProps = {
   isGroupedActionsOn: boolean;
@@ -31,6 +32,7 @@ const ActionsGroupeesMenu = ({
           <EditionStatut selectedIds={selectedIds} />
           <EditionPriorite selectedIds={selectedIds} />
           <EditionPlanning selectedIds={selectedIds} />
+          <EditionTagsLibres selectedIds={selectedIds} />
           <ExportFicheActionGroupeesButton fichesIds={selectedIds} />
         </div>
       }
