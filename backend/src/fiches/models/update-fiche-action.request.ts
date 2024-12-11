@@ -80,17 +80,10 @@ export const updateFicheActionRequestSchema = updateFicheActionSchema.extend({
   actions: actionRelationSchema.pick({ id: true }).array().nullish(),
   indicateurs: indicateurDefinitionSchema.pick({ id: true }).array().nullish(),
   services: serviceTagSchema.pick({ id: true }).array().nullish(),
-  financeurs: z.array(financeurWithMontantSchema).nullish(),
+  financeurs: financeurWithMontantSchema.array().nullish(),
   fichesLiees: ficheActionSchema.pick({ id: true }).array().nullish(),
   resultatsAttendus: effetAttenduSchema.pick({ id: true }).array().nullish(),
-  libresTag: z
-    .array(
-      z.union([
-        libreTagSchema.pick({ id: true }),
-        libreTagSchema.pick({ nom: true }),
-      ])
-    )
-    .nullish(),
+  libresTag: libreTagSchema.pick({ id: true }).array().nullish(),
 });
 
 export type UpdateFicheActionRequestType = z.infer<

@@ -1,22 +1,15 @@
 import { INestApplication } from '@nestjs/common';
-import { eq, or } from 'drizzle-orm';
+import { eq } from 'drizzle-orm';
 import { default as request } from 'supertest';
 import { describe, expect, it } from 'vitest';
 import DatabaseService from '../../src/common/services/database.service';
 import { UpdateFicheActionRequestClass } from '../../src/fiches/controllers/fiches-action.controller';
-import {
-  FicheActionCiblesEnumType,
-  piliersEciEnumType,
-  FicheActionStatutsEnumType,
-  ficheActionTable,
-} from '../../src/fiches/models/fiche-action.table';
-import { ficheActionFixture } from './fixtures/fiche-action.fixture';
-import { ficheActionAxeTable } from '../../src/fiches/models/fiche-action-axe.table';
-import { ficheActionThematiqueTable } from '../../src/fiches/models/fiche-action-thematique.table';
 import { ficheActionActionTable } from '../../src/fiches/models/fiche-action-action.table';
+import { ficheActionAxeTable } from '../../src/fiches/models/fiche-action-axe.table';
 import { ficheActionEffetAttenduTable } from '../../src/fiches/models/fiche-action-effet-attendu.table';
 import { ficheActionFinanceurTagTable } from '../../src/fiches/models/fiche-action-financeur-tag.table';
 import { ficheActionIndicateurTable } from '../../src/fiches/models/fiche-action-indicateur.table';
+import { ficheActionLibreTagTable } from '../../src/fiches/models/fiche-action-libre-tag.table';
 import { ficheActionLienTable } from '../../src/fiches/models/fiche-action-lien.table';
 import { ficheActionPartenaireTagTable } from '../../src/fiches/models/fiche-action-partenaire-tag.table';
 import { ficheActionPiloteTable } from '../../src/fiches/models/fiche-action-pilote.table';
@@ -24,8 +17,15 @@ import { ficheActionReferentTable } from '../../src/fiches/models/fiche-action-r
 import { ficheActionServiceTagTable } from '../../src/fiches/models/fiche-action-service.table';
 import { ficheActionSousThematiqueTable } from '../../src/fiches/models/fiche-action-sous-thematique.table';
 import { ficheActionStructureTagTable } from '../../src/fiches/models/fiche-action-structure-tag.table';
+import { ficheActionThematiqueTable } from '../../src/fiches/models/fiche-action-thematique.table';
+import {
+  FicheActionCiblesEnumType,
+  FicheActionStatutsEnumType,
+  ficheActionTable,
+  piliersEciEnumType,
+} from '../../src/fiches/models/fiche-action.table';
+import { libreTagTable } from '../../src/taxonomie/models/libre-tag.table';
 import { getAuthToken } from '../auth/auth-utils';
-import { ficheActionLibreTagTable } from '../../src/fiches/models/fiche-action-libre-tag.table';
 import { getTestApp } from '../common/app-utils';
 import { UpdateFicheActionRequestType } from './../../src/fiches/models/update-fiche-action.request';
 import {
@@ -34,6 +34,7 @@ import {
   fichesLieesFixture,
   financeursFixture,
   indicateursFixture,
+  libresFixture,
   partenairesFixture,
   pilotesFixture,
   referentsFixture,
@@ -42,9 +43,8 @@ import {
   sousThematiquesFixture,
   structuresFixture,
   thematiquesFixture,
-  libresFixture,
 } from './fixtures/fiche-action-relations.fixture';
-import { libreTagTable } from '../../src/taxonomie/models/libre-tag.table';
+import { ficheActionFixture } from './fixtures/fiche-action.fixture';
 
 const collectiviteId = 1;
 const ficheActionId = 9999;
@@ -245,7 +245,6 @@ describe('FichesActionUpdateService', () => {
   });
 
   describe('Update relations', () => {
-
     it('should update the axes relations in the database', async () => {
       const data: UpdateFicheActionRequestClass = {
         axes: [{ id: 1 }, { id: 2 }],
@@ -502,9 +501,9 @@ describe('FichesActionUpdateService', () => {
 
     it('should update libre tag relations in the database when an existing tag is added', async () => {
       // Setup test data
-      await databaseService.db.insert(libreTagTable).values([
-        { id: 2, nom: 'Tag 2', collectiviteId: collectiviteId },
-      ]);
+      await databaseService.db
+        .insert(libreTagTable)
+        .values([{ id: 2, nom: 'Tag 2', collectiviteId: collectiviteId }]);
 
       const data: UpdateFicheActionRequestClass = {
         libresTag: [{ id: 1 }, { id: 2 }],
@@ -528,30 +527,6 @@ describe('FichesActionUpdateService', () => {
       onTestFinished(async () => {
         await cleanupLibreTags();
       });
-    });
-
-    it('should create and link new libre tags to fiche action', async () => {
-      const nom = 'My new tag';
-      const data: UpdateFicheActionRequestClass = {
-        libresTag: [{ nom }],
-      };
-
-      const response = await putRequest(data);
-      const body = response.body;
-
-      const newLibreTag = await databaseService.db
-        .select()
-        .from(libreTagTable)
-        .where(eq(libreTagTable.nom, nom))
-        .then((rows) => rows[0]);
-
-      expect(newLibreTag.collectiviteId).toBe(collectiviteId);
-      expect(body.libresTag).toContainEqual(
-        expect.objectContaining({
-          ficheId: ficheActionId,
-          libreTagId: newLibreTag.id,
-        })
-      );
     });
   });
 
@@ -705,7 +680,7 @@ describe('FichesActionUpdateService', () => {
         id: 1,
         nom: 'Tag 1',
         collectiviteId: collectiviteId,
-      }
+      },
     ]);
 
     await databaseService.db.insert(ficheActionLibreTagTable).values({
