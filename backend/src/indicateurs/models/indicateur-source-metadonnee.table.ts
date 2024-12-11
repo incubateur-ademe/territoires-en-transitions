@@ -1,5 +1,5 @@
-import { pgTable, serial, text, timestamp } from 'drizzle-orm/pg-core';
 import { InferInsertModel, InferSelectModel } from 'drizzle-orm';
+import { pgTable, serial, text, timestamp } from 'drizzle-orm/pg-core';
 import { createInsertSchema, createSelectSchema } from 'drizzle-zod';
 import { indicateurSourceTable } from './indicateur-source.table';
 
@@ -10,7 +10,7 @@ export const indicateurSourceMetadonneeTable = pgTable(
     sourceId: text('source_id')
       .references(() => indicateurSourceTable.id)
       .notNull(),
-    dateVersion: timestamp('date_version').notNull(),
+    dateVersion: timestamp('date_version', { mode: 'string' }).notNull(),
     nomDonnees: text('nom_donnees'),
     diffuseur: text('diffuseur'),
     producteur: text('producteur'),

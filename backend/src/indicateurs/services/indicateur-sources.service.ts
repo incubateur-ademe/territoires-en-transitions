@@ -21,9 +21,7 @@ export default class IndicateurSourcesService {
     indicateurSourceMetadonneeType: CreateIndicateurSourceMetadonneeType
   ) {
     this.logger.log(
-      `Création de la metadonnees pour la source d'indicateur ${
-        indicateurSourceMetadonneeType.sourceId
-      } et la date ${indicateurSourceMetadonneeType.dateVersion.toISOString()}`
+      `Création de la metadonnees pour la source d'indicateur ${indicateurSourceMetadonneeType.sourceId} et la date ${indicateurSourceMetadonneeType.dateVersion}`
     );
     const request = this.databaseService.db
       .insert(indicateurSourceMetadonneeTable)
@@ -36,10 +34,10 @@ export default class IndicateurSourcesService {
 
   async getIndicateurSourceMetadonnee(
     sourceId: string,
-    dateVersion: Date
+    dateVersion: string
   ): Promise<IndicateurSourceMetadonneeType | null> {
     this.logger.log(
-      `Récupération de la metadonnees pour la source d'indicateur ${sourceId} et la date ${dateVersion.toISOString()}`
+      `Récupération de la metadonnees pour la source d'indicateur ${sourceId} et la date ${dateVersion}`
     );
     const indicateurSourceMetadonnees = await this.databaseService.db
       .select()

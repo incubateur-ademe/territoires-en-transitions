@@ -4,7 +4,11 @@
 import { sql } from 'drizzle-orm';
 import { timestamp, uuid } from 'drizzle-orm/pg-core';
 
-const TIMESTAMP_OPTIONS = { withTimezone: true } as const;
+export const TIMESTAMP_OPTIONS = {
+  withTimezone: true,
+  mode: 'string',
+} as const;
+
 const SQL_CURRENT_TIMESTAMP = sql`CURRENT_TIMESTAMP`;
 
 export const createdAt = timestamp('created_at', TIMESTAMP_OPTIONS)
@@ -17,6 +21,7 @@ export const modifiedAt = timestamp('modified_at', TIMESTAMP_OPTIONS)
 
 const SQL_AUTH_UID = sql`auth.uid()`;
 
+// TODO references auth.uid
 export const createdBy = uuid('created_by').default(SQL_AUTH_UID);
 
 export const modifiedBy = uuid('modified_by').default(SQL_AUTH_UID);

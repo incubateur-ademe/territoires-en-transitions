@@ -188,9 +188,7 @@ export class CountByStatutService {
       conditions.push(gte(ficheActionTable.modifiedAt, modifiedSinceDate));
     }
     if (filter.modified_after) {
-      conditions.push(
-        gte(ficheActionTable.modifiedAt, new Date(filter.modified_after))
-      );
+      conditions.push(gte(ficheActionTable.modifiedAt, filter.modified_after));
     }
     if (filter.partenaire_tag_ids?.length) {
       // Vraiment étrange, probable bug de drizzle, on le peut pas lui donner le tableau directement

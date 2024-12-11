@@ -1,10 +1,10 @@
-import { InferInsertModel, InferSelectModel, sql } from 'drizzle-orm';
+import { modifiedAt } from '@/backend/common/models/column.helpers';
+import { InferInsertModel, InferSelectModel } from 'drizzle-orm';
 import {
   doublePrecision,
   pgEnum,
   pgTable,
   text,
-  timestamp,
   varchar,
 } from 'drizzle-orm/pg-core';
 import { createInsertSchema, createSelectSchema } from 'drizzle-zod';
@@ -30,9 +30,7 @@ export const actionIdReference = actionIdVarchar.references(
 );
 
 export const actionDefinitionTable = pgTable('action_definition', {
-  modified_at: timestamp('modified_at', { withTimezone: true, mode: 'string' })
-    .default(sql`CURRENT_TIMESTAMP`)
-    .notNull(),
+  modifiedAt,
   actionId: actionIdVarchar.primaryKey().notNull(),
   referentiel: referentielEnum('referentiel').notNull(),
   referentielId: varchar('referentiel_id', { length: 30 })

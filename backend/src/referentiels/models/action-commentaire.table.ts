@@ -1,12 +1,11 @@
-import { InferInsertModel, InferSelectModel, sql } from 'drizzle-orm';
+import { modifiedAt, modifiedBy } from '@/backend/common/models/column.helpers';
+import { InferInsertModel, InferSelectModel } from 'drizzle-orm';
 import {
   foreignKey,
   integer,
   pgTable,
   primaryKey,
   text,
-  timestamp,
-  uuid,
 } from 'drizzle-orm/pg-core';
 import { createInsertSchema, createSelectSchema } from 'drizzle-zod';
 import { authUsersTable } from '../../auth/models/auth-users.table';
@@ -20,12 +19,8 @@ export const actionCommentaireTable = pgTable(
     collectiviteId: integer('collectivite_id').notNull(),
     actionId: actionIdVarchar.notNull(),
     commentaire: text('commentaire').notNull(),
-    modifiedBy: uuid('modified_by')
-      .default(sql`auth.uid()`)
-      .notNull(),
-    modifiedAt: timestamp('modified_at', { withTimezone: true, mode: 'string' })
-      .default(sql`CURRENT_TIMESTAMP`)
-      .notNull(),
+    modifiedBy,
+    modifiedAt,
   },
   (table) => {
     return {

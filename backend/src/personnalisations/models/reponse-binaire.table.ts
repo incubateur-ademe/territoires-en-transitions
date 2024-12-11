@@ -1,17 +1,9 @@
-import { sql } from 'drizzle-orm';
-import {
-  boolean,
-  integer,
-  pgTable,
-  timestamp,
-  varchar,
-} from 'drizzle-orm/pg-core';
+import { modifiedAt } from '@/backend/common/models/column.helpers';
+import { boolean, integer, pgTable, varchar } from 'drizzle-orm/pg-core';
 import { collectiviteTable } from '../../collectivites/models/collectivite.table';
 
 export const reponseBinaireTable = pgTable('reponse_binaire', {
-  modifiedAt: timestamp('modified_at', { withTimezone: true, mode: 'string' })
-    .default(sql`CURRENT_TIMESTAMP`)
-    .notNull(),
+  modifiedAt,
   collectiviteId: integer('collectivite_id')
     .references(() => collectiviteTable.id)
     .notNull(),

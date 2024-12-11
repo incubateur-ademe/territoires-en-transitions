@@ -18,6 +18,7 @@ import {
   createdAt,
   modifiedAt,
   modifiedBy,
+  TIMESTAMP_OPTIONS,
 } from '../../common/models/column.helpers';
 import { tempsDeMiseEnOeuvreTable } from '../../taxonomie/models/temps-de-mise-en-oeuvre.table';
 
@@ -141,11 +142,8 @@ export const ficheActionTable = pgTable('fiche_action', {
   }),
   statut: statutsPgEnum('statut').default(FicheActionStatutsEnumType.A_VENIR),
   priorite: prioritePgEnum('niveau_priorite'),
-  dateDebut: timestamp('date_debut', { withTimezone: true, mode: 'string' }),
-  dateFin: timestamp('date_fin_provisoire', {
-    withTimezone: true,
-    mode: 'string',
-  }),
+  dateDebut: timestamp('date_debut', TIMESTAMP_OPTIONS),
+  dateFin: timestamp('date_fin_provisoire', TIMESTAMP_OPTIONS),
   ameliorationContinue: boolean('amelioration_continue'),
   calendrier: varchar('calendrier', { length: 10000 }),
   notesComplementaires: varchar('notes_complementaires', { length: 20000 }),

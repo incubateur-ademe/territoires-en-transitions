@@ -1,13 +1,13 @@
 import { Injectable } from '@nestjs/common';
-import { ficheActionEtapeTable } from './fiche-action-etape.table';
-import { eq, and, gte, sql, lt, gt, lte } from 'drizzle-orm';
+import { and, eq, gt, gte, lt, lte, sql } from 'drizzle-orm';
+import { AuthenticatedUser } from '../../auth/models/auth.models';
+import DatabaseService from '../../common/services/database.service';
+import FicheService from '../services/fiche.service';
 import {
+  ficheActionEtapeTable,
   FicheActionEtapeType,
   UpsertFicheActionEtapeType,
 } from './fiche-action-etape.table';
-import { AuthenticatedUser } from '../../auth/models/auth.models';
-import FicheService from '../services/fiche.service';
-import DatabaseService from '../../common/services/database.service';
 
 @Injectable()
 export class FicheActionEtapeService {
@@ -25,7 +25,7 @@ export class FicheActionEtapeService {
   async upsertEtape(
     etape: UpsertFicheActionEtapeType,
     tokenInfo: AuthenticatedUser
-  ) : Promise<FicheActionEtapeType> {
+  ): Promise<FicheActionEtapeType> {
     const { id, ficheId, nom, ordre, realise = false } = etape;
     await this.ficheService.canWriteFiche(ficheId, tokenInfo);
     const userId = tokenInfo?.id;
@@ -103,8 +103,8 @@ export class FicheActionEtapeService {
           realise,
           createdBy: userId,
           modifiedBy: userId,
-          createdAt: new Date(),
-          modifiedAt: new Date(),
+          createdAt: new Date().toISOString(),
+          modifiedAt: new Date().toISOString(),
         })
         .onConflictDoUpdate({
           target: [ficheActionEtapeTable.id],
@@ -113,7 +113,7 @@ export class FicheActionEtapeService {
             ordre,
             realise,
             modifiedBy: userId,
-            modifiedAt: new Date(),
+            modifiedAt: new Date().toISOString(),
           },
         })
         .returning();

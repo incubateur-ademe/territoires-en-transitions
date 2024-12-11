@@ -1,10 +1,11 @@
+import { TIMESTAMP_OPTIONS } from '@/backend/common/models/column.helpers';
 import {
+  integer,
+  jsonb,
   serial,
   text,
-  integer,
   timestamp,
   uuid,
-  jsonb,
 } from 'drizzle-orm/pg-core';
 import { collectiviteTable } from '../../collectivites/models/collectivite.table';
 
@@ -17,7 +18,7 @@ export const DocumentBase = {
   url: text('url'),
   titre: text('titre'),
   commentaire: text('commentaire'),
-  modifiedAt: timestamp('modified_at', { withTimezone: true })
+  modifiedAt: timestamp('modified_at', TIMESTAMP_OPTIONS)
     .notNull()
     .defaultNow(),
   modifiedBy: uuid('modified_by'), // TODO references auth.uid,

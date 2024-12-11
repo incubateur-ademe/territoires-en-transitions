@@ -1,12 +1,6 @@
+import { modifiedAt } from '@/backend/common/models/column.helpers';
 import { InferInsertModel, InferSelectModel } from 'drizzle-orm';
-import {
-  pgEnum,
-  pgTable,
-  primaryKey,
-  text,
-  timestamp,
-} from 'drizzle-orm/pg-core';
-import { sql } from 'drizzle-orm/sql';
+import { pgEnum, pgTable, primaryKey, text } from 'drizzle-orm/pg-core';
 import { createInsertSchema, createSelectSchema } from 'drizzle-zod';
 import { actionIdReference } from '../../referentiels/models/action-definition.table';
 
@@ -23,9 +17,7 @@ export const personnalisationRegleTable = pgTable(
     type: regleTypeEnum('type').notNull(),
     formule: text('formule').notNull(),
     description: text('description').notNull(),
-    modifiedAt: timestamp('modified_at', { withTimezone: true, mode: 'string' })
-      .default(sql`CURRENT_TIMESTAMP`)
-      .notNull(),
+    modifiedAt,
   },
   (table) => {
     return {

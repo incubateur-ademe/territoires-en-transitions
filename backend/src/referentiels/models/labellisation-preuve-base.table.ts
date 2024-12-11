@@ -1,12 +1,6 @@
+import { modifiedAt, modifiedBy } from '@/backend/common/models/column.helpers';
 import { sql } from 'drizzle-orm';
-import {
-  foreignKey,
-  integer,
-  jsonb,
-  text,
-  timestamp,
-  uuid,
-} from 'drizzle-orm/pg-core';
+import { foreignKey, integer, jsonb, text } from 'drizzle-orm/pg-core';
 import { authUsersTable } from '../../auth/models/auth-users.table';
 import { collectiviteTable } from '../../collectivites/models/collectivite.table';
 import { labellisationBibliothequeFichierTable } from './labellisation-bibliotheque-fichier.table';
@@ -20,12 +14,8 @@ export const preuveBaseInLabellisation = labellisationSchema.table(
     url: text('url'),
     titre: text('titre').default('').notNull(),
     commentaire: text('commentaire').default('').notNull(),
-    modifiedBy: uuid('modified_by')
-      .default(sql`auth.uid()`)
-      .notNull(),
-    modifiedAt: timestamp('modified_at', { withTimezone: true, mode: 'string' })
-      .default(sql`CURRENT_TIMESTAMP`)
-      .notNull(),
+    modifiedBy,
+    modifiedAt,
     lien: jsonb('lien').generatedAlwaysAs(sql`
 CASE
     WHEN (url IS NOT NULL) THEN jsonb_object(ARRAY['url'::text, url, 'titre'::text, titre])

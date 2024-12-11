@@ -1,3 +1,4 @@
+import { TIMESTAMP_OPTIONS } from '@/backend/common/models/column.helpers';
 import { InferInsertModel, InferSelectModel, sql } from 'drizzle-orm';
 import {
   boolean,
@@ -21,10 +22,10 @@ export const labellisationAuditTable = labellisationSchema.table(
     // TODO: change later to use the referentiel definition table
     referentiel: referentielEnum('referentiel').notNull(),
     demandeId: integer('demande_id'),
-    dateDebut: timestamp('date_debut', { withTimezone: true }),
-    dateFin: timestamp('date_fin', { withTimezone: true }),
+    dateDebut: timestamp('date_debut', TIMESTAMP_OPTIONS),
+    dateFin: timestamp('date_fin', TIMESTAMP_OPTIONS),
     valide: boolean('valide').default(false).notNull(),
-    dateCnl: timestamp('date_cnl', { withTimezone: true }),
+    dateCnl: timestamp('date_cnl', TIMESTAMP_OPTIONS),
     valideLabellisation: boolean('valide_labellisation'),
     clos: boolean('clos').default(false).notNull(),
   },

@@ -1,3 +1,4 @@
+import { TIMESTAMP_OPTIONS } from '@/backend/common/models/column.helpers';
 import {
   boolean,
   foreignKey,
@@ -36,15 +37,13 @@ export const labellisationDemandeTable = labellisationSchema.table(
     // TODO: change later to use the referentiel definition table
     referentiel: referentielEnum('referentiel').notNull(),
     etoiles: labellisationEtoileEnum('etoiles'),
-    date: timestamp('date', { withTimezone: true, mode: 'string' })
-      .defaultNow()
-      .notNull(),
+    date: timestamp('date', TIMESTAMP_OPTIONS).defaultNow().notNull(),
     sujet: labellisationSujetDemandeEnum('sujet'),
     modifiedAt: timestamp('modified_at', {
       withTimezone: true,
       mode: 'string',
     }),
-    envoyeeLe: timestamp('envoyee_le', { withTimezone: true, mode: 'string' }),
+    envoyeeLe: timestamp('envoyee_le', TIMESTAMP_OPTIONS),
     demandeur: uuid('demandeur'),
   },
   (table) => {
