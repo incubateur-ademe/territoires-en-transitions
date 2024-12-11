@@ -1,5 +1,5 @@
+import Landing from '@/panier/components/Landing';
 import { TrackPageView } from '@/ui';
-import Landing from '@tet/panier/components/Landing';
 
 export default function Page({ params }: { params: { id: string } }) {
   return (

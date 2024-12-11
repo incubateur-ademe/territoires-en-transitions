@@ -1,8 +1,8 @@
-import './global.css';
-import Footer from '@tet/panier/components/Layout/Footer';
-import Header from '@tet/panier/components/Layout/Header';
-import { StoreProvider } from '../providers';
+import Footer from '@/panier/components/Layout/Footer';
+import Header from '@/panier/components/Layout/Header';
 import Script from 'next/script';
+import { StoreProvider } from '../providers';
+import './global.css';
 
 export const metadata = {
   title: 'Territoires en Transitions',

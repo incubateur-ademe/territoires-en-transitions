@@ -1,7 +1,7 @@
 'use client';
 
+import { usePanierContext } from '@/panier/providers';
 import { Button, Modal, useEventTracker } from '@/ui';
-import { usePanierContext } from '@tet/panier/providers';
 import { useSearchParams } from 'next/navigation';
 import { useState } from 'react';
 import ValiderPanierModale from './ValiderPanierModale';

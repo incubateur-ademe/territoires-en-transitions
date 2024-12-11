@@ -1,17 +1,17 @@
+import SearchPicto from '@/panier/components/Picto/SearchPicto';
+import SuccessPicto from '@/panier/components/Picto/SuccessPicto';
 import Fireworks from 'react-canvas-confetti/dist/presets/fireworks';
-import SearchPicto from '@tet/panier/components/Picto/SearchPicto';
-import SuccessPicto from '@tet/panier/components/Picto/SuccessPicto';
 
 type ListeVideProps = {
   success?: boolean;
 };
 
-const ListeVide = ({success}: ListeVideProps) => {
+const ListeVide = ({ success }: ListeVideProps) => {
   return (
     <div className="bg-white rounded-lg border-[0.5px] border-primary-3 px-8 pt-2 pb-8 flex flex-col justify-center items-center w-full grow relative">
       {success && (
         <Fireworks
-          autorun={{speed: 3, duration: 600}}
+          autorun={{ speed: 3, duration: 600 }}
           className="absolute top-0 left-0 w-full h-full"
         />
       )}

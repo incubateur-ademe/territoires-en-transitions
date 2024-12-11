@@ -3,7 +3,7 @@ import {
   ActionImpactFull,
   ActionImpactTempsMiseEnOeuvre,
 } from '@/api';
-import { ActionImpact } from '@tet/panier/components/ActionImpact';
+import { ActionImpact } from '@/panier/components/ActionImpact';
 
 type ListeActionsFiltreesProps = {
   actionsListe: ActionImpactFull[];

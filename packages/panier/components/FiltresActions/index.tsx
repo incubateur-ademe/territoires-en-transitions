@@ -1,7 +1,7 @@
 'use client';
 
+import { usePanierContext } from '@/panier/providers';
 import { OptionValue, SelectMultipleOnChangeArgs, useEventTracker } from '@/ui';
-import { usePanierContext } from '@tet/panier/providers';
 import { usePathname, useRouter, useSearchParams } from 'next/navigation';
 import { useEffect, useState } from 'react';
 import { BadgesFilters } from './BadgesFilters';

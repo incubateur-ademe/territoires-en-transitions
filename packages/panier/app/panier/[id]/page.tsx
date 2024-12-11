@@ -1,5 +1,5 @@
+import { extractIdsFromParam } from '@/panier/src/utils/extractIdsFromParam';
 import { TrackPageView } from '@/ui';
-import { extractIdsFromParam } from '@tet/panier/src/utils/extractIdsFromParam';
 import { notFound } from 'next/navigation';
 import PagePanier from './PagePanier';
 import {

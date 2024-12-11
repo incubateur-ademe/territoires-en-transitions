@@ -1,15 +1,15 @@
 'use client';
 
 import { Panier } from '@/api';
-import { PanierOngletName, useEventTracker, useOngletTracker } from '@/ui';
-import ListeActions from '@tet/panier/components/ListeActions';
-import PanierActions from '@tet/panier/components/PanierActions';
+import ListeActions from '@/panier/components/ListeActions';
+import PanierActions from '@/panier/components/PanierActions';
 import {
   useCollectiviteContext,
   usePanierContext,
   useUserContext,
-} from '@tet/panier/providers';
-import { panierAPI, supabase } from '@tet/panier/src/clientAPI';
+} from '@/panier/providers';
+import { panierAPI, supabase } from '@/panier/src/clientAPI';
+import { PanierOngletName, useEventTracker, useOngletTracker } from '@/ui';
 import { useRouter } from 'next/navigation';
 import { useEffect, useState } from 'react';
 import { ContenuListesFiltre } from '../FiltresActions/types';

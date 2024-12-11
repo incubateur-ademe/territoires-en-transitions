@@ -7,7 +7,7 @@ import {
   Panier,
   PanierAPI,
 } from '@/api';
-import { createClient } from '@tet/panier/src/supabase/server';
+import { createClient } from '@/panier/src/supabase/server';
 import { cookies } from 'next/headers';
 
 const apiKey = process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY;

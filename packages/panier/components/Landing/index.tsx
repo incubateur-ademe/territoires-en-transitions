@@ -1,10 +1,10 @@
-import BigBasketPicto from '@tet/panier/components/Picto/BigBasketPicto';
-import DashboardPicto from '@tet/panier/components/Picto/DashboardPicto';
-import CollectiviteEngageePicto from '@tet/panier/components/Picto/CollectiviteEngageePicto';
-import Section from '@tet/panier/components/Section';
+import BigBasketPicto from '@/panier/components/Picto/BigBasketPicto';
+import CollectiviteEngageePicto from '@/panier/components/Picto/CollectiviteEngageePicto';
+import DashboardPicto from '@/panier/components/Picto/DashboardPicto';
+import Section from '@/panier/components/Section';
 import CestParti from './CestParti';
+import { CommentCaMarche } from './CommentCaMarche';
 import ReprendrePanier from './ReprendrePanier';
-import {CommentCaMarche} from './CommentCaMarche';
 
 const Landing = () => {
   return (

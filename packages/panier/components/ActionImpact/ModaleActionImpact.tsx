@@ -1,3 +1,4 @@
+import Markdown from '@/panier/components/Markdown';
 import {
   Button,
   Card,
@@ -6,7 +7,6 @@ import {
   ModalFooter,
   ModalFooterSection,
 } from '@/ui';
-import Markdown from '@tet/panier/components/Markdown';
 import classNames from 'classnames';
 import { ModaleActionImpactProps } from './types';
 
