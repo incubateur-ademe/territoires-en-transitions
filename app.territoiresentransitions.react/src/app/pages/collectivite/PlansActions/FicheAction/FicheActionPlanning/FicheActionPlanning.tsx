@@ -1,5 +1,5 @@
 import { FicheAction } from '@/api/plan-actions';
-import { Button, Divider, Icon } from '@tet/ui';
+import { Button, Divider, Icon } from '@/ui';
 import classNames from 'classnames';
 import { isBefore, startOfToday } from 'date-fns';
 import { useState } from 'react';

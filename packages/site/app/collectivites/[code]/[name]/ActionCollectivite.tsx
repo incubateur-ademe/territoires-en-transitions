@@ -1,11 +1,11 @@
 'use client';
 
-import { useState } from 'react';
-import classNames from 'classnames';
-import { StrapiItem } from '@tet/site/src/strapi/StrapiItem';
-import { Button } from '@tet/ui';
-import { StrapiImage } from '@tet/site/components/strapiImage/StrapiImage';
+import { Button } from '@/ui';
 import Markdown from '@tet/site/components/markdown/Markdown';
+import { StrapiImage } from '@tet/site/components/strapiImage/StrapiImage';
+import { StrapiItem } from '@tet/site/src/strapi/StrapiItem';
+import classNames from 'classnames';
+import { useState } from 'react';
 
 const splitContent = (content: string, limit: number) => {
   let newContent = content.slice(0, limit);

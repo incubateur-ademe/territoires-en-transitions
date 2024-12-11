@@ -1,11 +1,6 @@
 import { TableTag } from '@/api';
 import { Tag } from '@/api/shared/domain';
-import {
-  Option,
-  OptionValue,
-  SelectFilter,
-  SelectMultipleProps,
-} from '@tet/ui';
+import { Option, OptionValue, SelectFilter, SelectMultipleProps } from '@/ui';
 import { useCollectiviteId } from 'core-logic/hooks/params';
 import { useEffect } from 'react';
 import { QueryKey } from 'react-query';

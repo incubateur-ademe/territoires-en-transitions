@@ -1,6 +1,6 @@
-import { useEffect, useState } from 'react';
+import { Button, ButtonProps } from '@/ui';
 import { usePDF } from '@react-pdf/renderer';
-import { Button, ButtonProps } from '@tet/ui';
+import { useEffect, useState } from 'react';
 import { saveBlob } from '../shared/preuves/Bibliotheque/saveBlob';
 import DocumentToExport from './DocumentToExport';
 

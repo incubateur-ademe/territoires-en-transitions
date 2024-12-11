@@ -8,7 +8,7 @@ import {
   Modal,
   ModalFooterOKCancel,
   ModalProps,
-} from '@tet/ui';
+} from '@/ui';
 
 import { modulesSave } from '@/api/plan-actions/dashboards/collectivite-dashboard';
 import { ModulePlanActionListSelect } from '@/api/plan-actions/dashboards/collectivite-dashboard/domain/module.schema';

@@ -1,14 +1,14 @@
-import { Button, ButtonGroup } from '@tet/ui';
-import { OpenState } from '@tet/ui/utils/types';
+import { Button, ButtonGroup } from '@/ui';
+import { OpenState } from '@/ui/utils/types';
+import { usePlanActionsCount } from '@tet/app/pages/collectivite/PlansActions/PlanAction/data/usePlanActionsCount';
 import { getDisplayButtons } from 'app/pages/collectivite/TableauDeBord/components/utils';
 import classNames from 'classnames';
 import React, { useState } from 'react';
-import SpinnerLoader from 'ui/shared/SpinnerLoader';
-import { usePlanActionsCount } from '@tet/app/pages/collectivite/PlansActions/PlanAction/data/usePlanActionsCount';
 import FilterBadges, {
   BadgeFilters,
   useFiltersToBadges,
 } from 'ui/shared/filters/filter-badges';
+import SpinnerLoader from 'ui/shared/SpinnerLoader';
 
 export type ModuleDisplay = 'circular' | 'row';
 

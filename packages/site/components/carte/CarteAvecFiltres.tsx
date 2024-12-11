@@ -1,13 +1,13 @@
 /* eslint-disable react/no-unescaped-entities */
 'use client';
 
+import { Divider } from '@/ui';
+import classNames from 'classnames';
 import dynamic from 'next/dynamic';
 import { useEffect, useState } from 'react';
 import { FiltresLabels } from '../../components/carte/CarteCollectivites';
 import FiltreEtoiles from './FiltreEtoiles';
 import FiltreLabels from './FiltreLabels';
-import { Divider } from '@tet/ui';
-import classNames from 'classnames';
 
 const CarteAvecFiltres = () => {
   const [filtre, setFiltre] = useState<FiltresLabels | null>(null);

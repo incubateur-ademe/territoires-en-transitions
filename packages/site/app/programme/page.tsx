@@ -1,17 +1,17 @@
 'use server';
 
-import Services from './Services';
+import { TrackPageView } from '@/ui';
+import NoResult from '@tet/site/components/info/NoResult';
+import { getUpdatedMetadata } from '@tet/site/src/utils/getUpdatedMetadata';
+import { Metadata, ResolvingMetadata } from 'next';
 import Benefices from './Benefices';
+import CollectivitesEngagees from './CollectivitesEngagees';
+import Compte from './Compte';
+import Contact from './Contact';
 import Etapes from './Etapes';
 import ProgrammeBanner from './ProgrammeBanner';
-import NoResult from '@tet/site/components/info/NoResult';
+import Services from './Services';
 import { getStrapiData } from './utils';
-import { Metadata, ResolvingMetadata } from 'next';
-import { getUpdatedMetadata } from '@tet/site/src/utils/getUpdatedMetadata';
-import Contact from './Contact';
-import Compte from './Compte';
-import CollectivitesEngagees from './CollectivitesEngagees';
-import { TrackPageView } from '@tet/ui';
 
 export async function generateMetadata(
   params: { params: unknown },

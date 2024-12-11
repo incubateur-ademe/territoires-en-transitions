@@ -1,13 +1,13 @@
-import {useState} from 'react';
-import {Modal} from '@tet/ui';
-import {RejoindreUneCollectiviteProps} from './type';
-import {RejoindreUneCollectivite} from './RejoindreUneCollectivite';
+import { Modal } from '@/ui';
+import { useState } from 'react';
+import { RejoindreUneCollectivite } from './RejoindreUneCollectivite';
+import { RejoindreUneCollectiviteProps } from './type';
 
 /**
  * Encapsule le formulaire dans une modale
  */
 export const RejoindreUneCollectiviteModal = (
-  props: RejoindreUneCollectiviteProps,
+  props: RejoindreUneCollectiviteProps
 ) => {
   const [isOpen, setIsOpen] = useState(true);
 
@@ -23,7 +23,7 @@ export const RejoindreUneCollectiviteModal = (
       backdropBlur
       size="lg"
       title="Rejoindre une collectivité"
-      openState={{isOpen, setIsOpen}}
+      openState={{ isOpen, setIsOpen }}
       onClose={onClose}
       render={() => (
         <RejoindreUneCollectivite {...props} onCancel={() => onClose()} />

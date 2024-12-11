@@ -11,7 +11,7 @@ import {
   ModalFooterOKCancel,
   ModalProps,
   useEventTracker,
-} from '@tet/ui';
+} from '@/ui';
 import { useAuth } from 'core-logic/api/auth/AuthProvider';
 import { supabaseClient } from 'core-logic/api/supabase';
 import { useCollectiviteId } from 'core-logic/hooks/params';

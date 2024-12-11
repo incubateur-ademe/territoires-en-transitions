@@ -1,24 +1,24 @@
 import { TableOptions } from 'react-table';
 
 // import logoTerritoireEngage from 'ui/logo/logoTerritoireEngage.png';
-import logoTerritoireEngage from 'ui/logo/logoTerritoireEngage_big.png';
 import LabellisationInfo from '@tet/app/pages/collectivite/EtatDesLieux/Accueil/EtatDesLieux/labellisation/LabellisationInfo';
 import Chart from 'ui/charts/Chart';
+import logoTerritoireEngage from 'ui/logo/logoTerritoireEngage_big.png';
 
+import { useCycleLabellisation } from 'app/pages/collectivite/ParcoursLabellisation/useCycleLabellisation';
 import {
   ReferentielParamOption,
   makeCollectiviteLabellisationUrl,
   makeCollectivitePersoRefUrl,
   makeCollectiviteReferentielUrl,
 } from 'app/paths';
-import { toLocaleFixed } from 'utils/toFixed';
 import { useFonctionTracker } from 'core-logic/hooks/useFonctionTracker';
-import { useCycleLabellisation } from 'app/pages/collectivite/ParcoursLabellisation/useCycleLabellisation';
+import { toLocaleFixed } from 'utils/toFixed';
 
-import { Button } from '@tet/ui';
+import { Button } from '@/ui';
 import { ProgressionRow } from '@tet/app/pages/collectivite/EtatDesLieux/Accueil/data/useProgressionReferentiel';
-import { getAggregatedScore } from '@tet/app/pages/collectivite/EtatDesLieux/Accueil/EtatDesLieux/utils';
 import AccueilCard from '@tet/app/pages/collectivite/EtatDesLieux/Accueil/EtatDesLieux/AccueilCard';
+import { getAggregatedScore } from '@tet/app/pages/collectivite/EtatDesLieux/Accueil/EtatDesLieux/utils';
 import Image from 'next/image';
 
 type ScoreRempliProps = {

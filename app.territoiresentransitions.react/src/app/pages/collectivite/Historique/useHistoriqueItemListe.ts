@@ -1,11 +1,11 @@
 import { useEffect } from 'react';
 import { useQuery, useQueryClient } from 'react-query';
 
+import { ITEM_ALL } from '@/ui';
 import { supabaseClient } from 'core-logic/api/supabase';
 import { useSearchParams } from 'core-logic/hooks/query';
-import { TFilters, NB_ITEMS_PER_PAGE, nameToShortNames } from './filters';
+import { NB_ITEMS_PER_PAGE, TFilters, nameToShortNames } from './filters';
 import { THistoriqueItem, THistoriqueProps } from './types';
-import { ITEM_ALL } from '@tet/ui';
 
 /** vérifie si ITEM_ALL n'est pas présent dans un filtre */
 export const isValidFilter = (values: string[] | undefined | null) =>

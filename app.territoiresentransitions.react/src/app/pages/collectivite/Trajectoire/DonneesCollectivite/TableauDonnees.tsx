@@ -1,5 +1,5 @@
+import { Input, Table, TBody, TCell, THead, THeadCell, TRow } from '@/ui';
 import classNames from 'classnames';
-import { Table, THead, TBody, TRow, THeadCell, TCell, Input } from '@tet/ui';
 import { getNomSource, SourceIndicateur } from '../constants';
 
 type Source = {

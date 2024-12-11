@@ -10,7 +10,7 @@ import {
   ModalFooterOKCancel,
   ModalProps,
   useEventTracker,
-} from '@tet/ui';
+} from '@/ui';
 import { supabaseClient } from 'core-logic/api/supabase';
 import { useCollectiviteId } from 'core-logic/hooks/params';
 import { QueryKey, useQueryClient } from 'react-query';

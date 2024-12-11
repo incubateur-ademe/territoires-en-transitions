@@ -1,5 +1,5 @@
 import { FicheAction } from '@/api/plan-actions';
-import { Tab, Tabs } from '@tet/ui';
+import { Tab, Tabs } from '@/ui';
 import ActionsLieesTab from './ActionsLiees/ActionsLieesTab';
 import BudgetTab from './Budget/BudgetTab';
 import FichesLieesTab from './FichesLiees/FichesLieesTab';

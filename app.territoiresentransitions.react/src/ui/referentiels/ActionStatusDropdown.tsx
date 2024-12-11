@@ -1,20 +1,23 @@
-import { useEffect, useState } from 'react';
-import { useCurrentCollectivite } from 'core-logic/hooks/useCurrentCollectivite';
+import { Button, Tooltip } from '@/ui';
+import { avancementToLabel } from 'app/labels';
+import { SuiviScoreRow } from 'app/pages/collectivite/EtatDesLieux/Referentiel/data/useScoreRealise';
+import { actionAvancementColors } from 'app/theme';
+import classNames from 'classnames';
+import { ActionDefinitionSummary } from 'core-logic/api/endpoints/ActionDefinitionSummaryReadEndpoint';
 import {
   useActionStatut,
   useEditActionStatutIsDisabled,
   useSaveActionStatut,
 } from 'core-logic/hooks/useActionStatut';
+import { useCurrentCollectivite } from 'core-logic/hooks/useCurrentCollectivite';
+import { useEffect, useState } from 'react';
 import { TActionAvancement, TActionAvancementExt } from 'types/alias';
+import ProgressBarWithTooltip from 'ui/score/ProgressBarWithTooltip';
 import {
   ITEMS_AVEC_NON_CONCERNE,
   SelectActionStatut,
 } from 'ui/shared/actions/SelectActionStatut';
 import ActionProgressBar from './ActionProgressBar';
-import { ActionDefinitionSummary } from 'core-logic/api/endpoints/ActionDefinitionSummaryReadEndpoint';
-import ProgressBarWithTooltip from 'ui/score/ProgressBarWithTooltip';
-import { avancementToLabel } from 'app/labels';
-import { actionAvancementColors } from 'app/theme';
 import ScoreAutoModal from './ScoreAutoModal';
 import ScoreDetailleModal from './ScoreDetailleModal/ScoreDetailleModal';
 import {
@@ -22,9 +25,6 @@ import {
   getStatusFromIndex,
   statutParAvancement,
 } from './utils';
-import { SuiviScoreRow } from 'app/pages/collectivite/EtatDesLieux/Referentiel/data/useScoreRealise';
-import classNames from 'classnames';
-import { Button, Tooltip } from '@tet/ui';
 
 export type StatusToSavePayload = {
   actionId: string;

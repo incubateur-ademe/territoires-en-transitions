@@ -1,8 +1,8 @@
-import {Modal, RenderProps} from '@tet/ui';
+import { Modal, RenderProps } from '@/ui';
+import { TAudit } from 'app/pages/collectivite/Audit/types';
 import PreuveDoc from 'ui/shared/preuves/Bibliotheque/PreuveDoc';
-import {AddRapportButton} from './AddRapportButton';
-import {useRapportsAudit} from './useAudit';
-import {TAudit} from 'app/pages/collectivite/Audit/types';
+import { AddRapportButton } from './AddRapportButton';
+import { useRapportsAudit } from './useAudit';
 
 export type TValiderAuditProps = {
   audit: TAudit;
@@ -16,7 +16,7 @@ export const ValiderAudit = (props: TValiderAuditProps) => (
   <Modal
     size="lg"
     disableDismiss
-    render={modalProps => <ValiderAuditModal {...modalProps} {...props} />}
+    render={(modalProps) => <ValiderAuditModal {...modalProps} {...props} />}
   >
     <button className="fr-btn" data-test="ValiderAuditBtn">
       Valider l'audit
@@ -33,8 +33,8 @@ const auditLabellisation =
  * Affiche la modale de validation d'un audit
  */
 export const ValiderAuditModal = (props: RenderProps & TValiderAuditProps) => {
-  const {audit, close, onValidate} = props;
-  const {id: audit_id, demande_id} = audit;
+  const { audit, close, onValidate } = props;
+  const { id: audit_id, demande_id } = audit;
 
   // on peut valider seulement si au moins un rapport a été attaché à l'audit
   const rapports = useRapportsAudit(audit_id!);
@@ -51,7 +51,7 @@ export const ValiderAuditModal = (props: RenderProps & TValiderAuditProps) => {
       <AddRapportButton audit_id={audit_id!} />
       {rapports?.length ? (
         <div data-test="rapports-audit">
-          {rapports.map(rapport => (
+          {rapports.map((rapport) => (
             <PreuveDoc key={rapport.id} preuve={rapport} />
           ))}
         </div>

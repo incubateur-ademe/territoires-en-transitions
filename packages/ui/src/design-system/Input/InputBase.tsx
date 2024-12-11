@@ -1,8 +1,8 @@
-import { Button } from '@tet/ui/design-system/Button';
-import { DefaultButtonProps } from '@tet/ui/design-system/Button/types';
-import { FieldState, stateToTextColor } from '@tet/ui/design-system/Field';
-import { Icon, IconValue } from '@tet/ui/design-system/Icon';
-import { preset } from '@tet/ui/tailwind-preset';
+import { Button } from '@/ui/design-system/Button';
+import { DefaultButtonProps } from '@/ui/design-system/Button/types';
+import { FieldState, stateToTextColor } from '@/ui/design-system/Field';
+import { Icon, IconValue } from '@/ui/design-system/Icon';
+import { preset } from '@/ui/tailwind-preset';
 import classNames from 'classnames';
 import { forwardRef } from 'react';
 

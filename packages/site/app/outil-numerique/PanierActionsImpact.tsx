@@ -1,10 +1,10 @@
 'use client';
 
-import { Button, useEventTracker } from '@tet/ui';
-import Section from '@tet/site/components/sections/Section';
-import { StrapiItem } from '@tet/site/src/strapi/StrapiItem';
-import { StrapiImage } from '@tet/site/components/strapiImage/StrapiImage';
+import { Button, useEventTracker } from '@/ui';
 import Markdown from '@tet/site/components/markdown/Markdown';
+import Section from '@tet/site/components/sections/Section';
+import { StrapiImage } from '@tet/site/components/strapiImage/StrapiImage';
+import { StrapiItem } from '@tet/site/src/strapi/StrapiItem';
 
 type PanierActionsImpactProps = {
   titre: string;

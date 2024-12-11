@@ -1,8 +1,8 @@
-import {Badge, BadgeProps} from '@tet/ui';
+import { Badge, BadgeProps } from '@/ui';
 
 type Props = Pick<BadgeProps, 'size'>;
 
-const BadgeIndicateurPerso = ({size}: Props) => {
+const BadgeIndicateurPerso = ({ size }: Props) => {
   return (
     <Badge
       title="Indicateur personnalisé"

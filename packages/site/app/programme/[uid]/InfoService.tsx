@@ -1,9 +1,9 @@
 'use client';
 
-import { Button } from '@tet/ui';
+import { Button } from '@/ui';
 import Section from '@tet/site/components/sections/Section';
-import { InfoData } from './types';
 import classNames from 'classnames';
+import { InfoData } from './types';
 
 const InfoService = ({ titre, boutons }: InfoData) => {
   const areButtons = boutons.filter((b) => !!b.url).length !== 0;

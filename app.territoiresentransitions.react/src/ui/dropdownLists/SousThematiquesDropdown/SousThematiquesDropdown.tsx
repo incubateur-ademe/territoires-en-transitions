@@ -1,10 +1,5 @@
 import { SousThematiqueId } from '@/api/shared/domain';
-import {
-  Option,
-  OptionValue,
-  SelectFilter,
-  SelectMultipleProps,
-} from '@tet/ui';
+import { Option, OptionValue, SelectFilter, SelectMultipleProps } from '@/ui';
 import { useEffect } from 'react';
 import { useSousThematiqueListe } from './useSousThematiqueListe';
 

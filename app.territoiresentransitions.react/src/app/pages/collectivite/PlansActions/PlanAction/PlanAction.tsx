@@ -5,15 +5,15 @@ import PlanActionFiltresAccordeon from './PlanActionFiltres/PlanActionFiltresAcc
 import PlanActionFooter from './PlanActionFooter';
 import PlanActionHeader from './PlanActionHeader/PlanActionHeader';
 
-import { Breadcrumbs } from '@tet/ui';
+import { Breadcrumbs } from '@/ui';
 import { makeCollectivitePlanActionUrl } from 'app/paths';
 import { useCurrentCollectivite } from 'core-logic/hooks/useCurrentCollectivite';
 import { useRouter } from 'next/navigation';
+import { useParams } from 'react-router-dom';
 import { generateTitle } from '../FicheAction/data/utils';
 import { PlanNode } from './data/types';
 import { usePlanAction } from './data/usePlanAction';
 import { checkAxeHasFiche } from './data/utils';
-import { useParams } from 'react-router-dom';
 
 type PlanActionProps = {
   /** Axe racine du plan d'action (depth = 0) */

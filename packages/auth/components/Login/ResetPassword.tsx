@@ -1,21 +1,21 @@
-import {useForm} from 'react-hook-form';
-import {zodResolver} from '@hookform/resolvers/zod';
-import {z} from 'zod';
 import {
-  Input,
   Field,
   FieldMessage,
+  Input,
   ModalFooterOKCancel,
-  useEventTracker,
   TrackPageView,
-} from '@tet/ui';
-import {LoginData, LoginPropsWithState} from './type';
-import {PasswordStrengthMeter} from '@tet/auth/components/PasswordStrengthMeter';
+  useEventTracker,
+} from '@/ui';
+import { zodResolver } from '@hookform/resolvers/zod';
+import { PasswordStrengthMeter } from '@tet/auth/components/PasswordStrengthMeter';
+import { useForm } from 'react-hook-form';
+import { z } from 'zod';
+import { LoginData, LoginPropsWithState } from './type';
 
 /** Gestionnaire d'état pour le formulaire */
 const useResetPassword = (email: string) => {
   const validationSchema = z.object({
-    password: z.string().refine(value => value.length >= 8, {
+    password: z.string().refine((value) => value.length >= 8, {
       message: 'Le mot de passe doit comporter au moins 8 caractères',
     }),
   });
@@ -44,7 +44,7 @@ export const ResetPassword = (props: LoginPropsWithState) => {
     handleSubmit,
     register,
     watch,
-    formState: {isValid},
+    formState: { isValid },
   } = useResetPassword(defaultValues?.email || '');
 
   const password = watch('password');
@@ -77,7 +77,7 @@ export const ResetPassword = (props: LoginPropsWithState) => {
             type: 'submit',
             disabled: !isValid || isLoading || (!!res && res.score < 4),
           }}
-          btnCancelProps={{onClick: onCancel}}
+          btnCancelProps={{ onClick: onCancel }}
         />
       </form>
     </>

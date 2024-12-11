@@ -1,3 +1,5 @@
+import { preset } from '@/ui/tailwind-preset';
+import { OpenState } from '@/ui/utils/types';
 import {
   FloatingFocusManager,
   FloatingNode,
@@ -15,8 +17,6 @@ import {
   useFloatingParentNodeId,
   useInteractions,
 } from '@floating-ui/react';
-import { preset } from '@tet/ui/tailwind-preset';
-import { OpenState } from '@tet/ui/utils/types';
 import classNames from 'classnames';
 import { cloneElement, useState } from 'react';
 import { flushSync } from 'react-dom';

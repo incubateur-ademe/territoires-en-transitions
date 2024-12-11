@@ -1,5 +1,5 @@
 import { FicheAction } from '@/api/plan-actions';
-import { Badge, Button } from '@tet/ui';
+import { Badge, Button } from '@/ui';
 import classNames from 'classnames';
 import { useState } from 'react';
 import Markdown from 'ui/Markdown';

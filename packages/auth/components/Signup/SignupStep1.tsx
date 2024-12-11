@@ -1,28 +1,28 @@
-import {useState} from 'react';
-import {useForm} from 'react-hook-form';
-import {zodResolver} from '@hookform/resolvers/zod';
-import {z} from 'zod';
 import {
-  Input,
   Field,
   FieldMessage,
+  Input,
   ModalFooterOKCancel,
   Tab,
   Tabs,
   TrackPageView,
-  useOngletTracker,
   useEventTracker,
-} from '@tet/ui';
-import {SignupDataStep1, SignupPropsWithState} from './type';
-import {PasswordStrengthMeter} from '@tet/auth/components/PasswordStrengthMeter';
+  useOngletTracker,
+} from '@/ui';
+import { zodResolver } from '@hookform/resolvers/zod';
+import { PasswordStrengthMeter } from '@tet/auth/components/PasswordStrengthMeter';
+import { useState } from 'react';
+import { useForm } from 'react-hook-form';
+import { z } from 'zod';
+import { SignupDataStep1, SignupPropsWithState } from './type';
 
 /** Gestionnaire d'état pour le formulaire de l'étape 1 */
 const useSignupStep1 = (isPasswordless: boolean, email: string) => {
   const validationSchema = z.object({
-    email: z.string().email({message: 'Un email valide est requis'}),
+    email: z.string().email({ message: 'Un email valide est requis' }),
     password: z
       .string()
-      .refine(value => (isPasswordless ? true : value.length >= 8), {
+      .refine((value) => (isPasswordless ? true : value.length >= 8), {
         message: 'Le mot de passe doit comporter au moins 8 caractères',
       }),
   });
@@ -41,8 +41,8 @@ const useSignupStep1 = (isPasswordless: boolean, email: string) => {
  * (saisir un email et éventuellement un mot de passe)
  */
 export const SignupStep1 = (props: SignupPropsWithState) => {
-  const {formState, withPassword} = props;
-  const {email} = formState;
+  const { formState, withPassword } = props;
+  const { email } = formState;
   const [isPasswordless, setIsPasswordless] = useState(!withPassword);
   const form = useSignupStep1(isPasswordless, email);
   const ongletTracker = useOngletTracker('auth/signup');
@@ -53,7 +53,7 @@ export const SignupStep1 = (props: SignupPropsWithState) => {
       <Tabs
         className="justify-center"
         defaultActiveTab={isPasswordless ? 0 : 1}
-        onChange={activeTab => {
+        onChange={(activeTab) => {
           if (activeTab === 0) {
             // reset le champ mdp qui peut être rempli quand on passe d'un onglet à l'autre
             form.setValue('password', '');
@@ -93,13 +93,13 @@ const SignupStep1Form = (
     onCancel,
     getPasswordStrength,
     form,
-    formState: {setEmail},
+    formState: { setEmail },
   } = props;
   const {
     handleSubmit,
     register,
     watch,
-    formState: {isValid, errors},
+    formState: { isValid, errors },
   } = form;
   const eventTracker = useEventTracker('auth/signup');
 
@@ -148,7 +148,7 @@ const SignupStep1Form = (
         />
       )}
       <ModalFooterOKCancel
-        btnCancelProps={{onClick: onCancel}}
+        btnCancelProps={{ onClick: onCancel }}
         btnOKProps={{
           type: 'submit',
           disabled: !isValid || isLoading || (!!res && res.score < 4),

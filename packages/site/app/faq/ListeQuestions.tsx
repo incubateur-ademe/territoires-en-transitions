@@ -1,7 +1,7 @@
 'use client';
 
+import { Accordion, Tab, Tabs } from '@/ui';
 import Markdown from '@tet/site/components/markdown/Markdown';
-import { Accordion, Tab, Tabs } from '@tet/ui';
 import { usePathname, useRouter, useSearchParams } from 'next/navigation';
 import { useEffect } from 'react';
 import { FaqData } from './page';

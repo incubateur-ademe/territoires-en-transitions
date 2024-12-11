@@ -1,10 +1,5 @@
 'use client';
 
-import { ToastFloater } from '@tet/site/components/floating-ui/ToastFloater';
-import classNames from 'classnames';
-import { useEffect, useState } from 'react';
-import { supabase } from '../initSupabase';
-import { options } from './data';
 import {
   Button,
   Field,
@@ -14,8 +9,13 @@ import {
   Select,
   Textarea,
   useEventTracker,
-} from '@tet/ui';
+} from '@/ui';
+import { ToastFloater } from '@tet/site/components/floating-ui/ToastFloater';
+import classNames from 'classnames';
 import { useRouter, useSearchParams } from 'next/navigation';
+import { useEffect, useState } from 'react';
+import { supabase } from '../initSupabase';
+import { options } from './data';
 
 type FormData = {
   categorie: string;

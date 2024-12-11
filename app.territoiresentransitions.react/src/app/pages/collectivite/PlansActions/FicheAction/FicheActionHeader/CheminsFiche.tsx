@@ -1,5 +1,5 @@
 import { Axe } from '@/api/plan-actions';
-import { Breadcrumbs, Button } from '@tet/ui';
+import { Breadcrumbs, Button } from '@/ui';
 import { makeCollectiviteFichesNonClasseesUrl } from 'app/paths';
 import { useRouter } from 'next/navigation';
 import { useState } from 'react';

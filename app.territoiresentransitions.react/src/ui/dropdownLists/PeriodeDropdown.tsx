@@ -1,5 +1,5 @@
 import { ModifiedSince } from '@/api/plan-actions/fiche-resumes.list/domain/fetch-options.schema';
-import { Select, SelectMultipleProps } from '@tet/ui';
+import { Select, SelectMultipleProps } from '@/ui';
 import { ficheActionModifiedSinceOptions } from 'ui/dropdownLists/listesStatiques';
 
 type PeriodeDropdownProps = Omit<

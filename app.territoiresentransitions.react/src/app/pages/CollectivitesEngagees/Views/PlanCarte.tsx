@@ -1,7 +1,7 @@
 import classNames from 'classnames';
 import Link from 'next/link';
 
-import { Badge } from '@tet/ui';
+import { Badge } from '@/ui';
 
 import { CollectiviteEngagee } from '@/api';
 import { generateTitle } from 'app/pages/collectivite/PlansActions/FicheAction/data/utils';

@@ -4,7 +4,7 @@ import { useState } from 'react';
 import { Filters } from './Filters';
 
 import { CollectiviteEngagee } from '@/api';
-import { Button } from '@tet/ui';
+import { Button } from '@/ui';
 import { RecherchesViewParam } from 'app/paths';
 import { SetFilters, getNumberOfActiveFilters } from '../data/filters';
 

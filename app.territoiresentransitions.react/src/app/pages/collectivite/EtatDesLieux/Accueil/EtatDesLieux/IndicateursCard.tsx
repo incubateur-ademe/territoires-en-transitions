@@ -1,6 +1,6 @@
 import { Referentiel } from '@/api/referentiel/domain/enum.schema';
+import { Button } from '@/ui';
 import AccueilCard from '@tet/app/pages/collectivite/EtatDesLieux/Accueil/EtatDesLieux/AccueilCard';
-import { Button } from '@tet/ui';
 import { referentielToName } from 'app/labels';
 import { makeCollectiviteTousLesIndicateursUrl } from 'app/paths';
 import { useFonctionTracker } from 'core-logic/hooks/useFonctionTracker';

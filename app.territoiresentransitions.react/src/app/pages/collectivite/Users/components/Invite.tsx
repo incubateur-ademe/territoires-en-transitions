@@ -1,13 +1,7 @@
-import { Controller, SubmitHandler, useForm } from 'react-hook-form';
+import { Field, Input, ModalFooterOKCancel, Select, TrackPageView } from '@/ui';
 import { zodResolver } from '@hookform/resolvers/zod';
+import { Controller, SubmitHandler, useForm } from 'react-hook-form';
 import { z } from 'zod';
-import {
-  Field,
-  Input,
-  ModalFooterOKCancel,
-  Select,
-  TrackPageView,
-} from '@tet/ui';
 
 // validation du formulaire
 const validationSchema = z.object({

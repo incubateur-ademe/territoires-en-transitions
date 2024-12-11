@@ -1,12 +1,12 @@
-import { useState } from 'react';
+import { Button } from '@/ui';
+import { TCycleLabellisationStatus } from 'app/pages/collectivite/ParcoursLabellisation/useCycleLabellisation';
 import { ActionDefinitionSummary } from 'core-logic/api/endpoints/ActionDefinitionSummaryReadEndpoint';
 import { useSortedActionSummaryChildren } from 'core-logic/hooks/referentiel';
-import { ActionCommentaire } from 'ui/shared/actions/ActionCommentaire';
-import SubActionCard from './SubActionCard';
+import { useState } from 'react';
 import { phaseToLabel } from 'ui/referentiels/utils';
+import { ActionCommentaire } from 'ui/shared/actions/ActionCommentaire';
 import { SuiviScoreRow } from '../data/useScoreRealise';
-import { TCycleLabellisationStatus } from 'app/pages/collectivite/ParcoursLabellisation/useCycleLabellisation';
-import { Button } from '@tet/ui';
+import SubActionCard from './SubActionCard';
 
 type ActionFollowUpProps = {
   action: ActionDefinitionSummary;

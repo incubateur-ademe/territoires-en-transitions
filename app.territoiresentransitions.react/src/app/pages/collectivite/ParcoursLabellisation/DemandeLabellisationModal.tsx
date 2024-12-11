@@ -1,9 +1,9 @@
+import { Alert } from '@/ui';
 import Modal from 'ui/shared/floating-ui/Modal';
-import {numLabels} from './numLabels';
-import {useEnvoiDemande} from './useEnvoiDemande';
-import {TCycleLabellisation} from './useCycleLabellisation';
-import {MessageCompletudeECi} from './MessageCompletudeECi';
-import {Alert} from '@tet/ui';
+import { MessageCompletudeECi } from './MessageCompletudeECi';
+import { numLabels } from './numLabels';
+import { TCycleLabellisation } from './useCycleLabellisation';
+import { useEnvoiDemande } from './useEnvoiDemande';
 
 export type TDemandeLabellisationModalProps = {
   isCOT: boolean;
@@ -47,7 +47,7 @@ export const submittedAutresEtoiles =
   'Votre demande d’audit a bien été envoyée. Vous recevrez prochainement un mail du Bureau d’Appui.';
 
 const getMessage = (parcours: TCycleLabellisation['parcours']) => {
-  const {etoiles, referentiel} = parcours || {};
+  const { etoiles, referentiel } = parcours || {};
   if (!etoiles) {
     return null;
   }
@@ -69,8 +69,8 @@ const getMessage = (parcours: TCycleLabellisation['parcours']) => {
 export const DemandeLabellisationModal = (
   props: TDemandeLabellisationModalProps
 ) => {
-  const {parcoursLabellisation, opened, setOpened} = props;
-  const {parcours, status} = parcoursLabellisation;
+  const { parcoursLabellisation, opened, setOpened } = props;
+  const { parcours, status } = parcoursLabellisation;
 
   // n'affiche rien si les donnnées ne sont pas valides
   if (
@@ -86,7 +86,7 @@ export const DemandeLabellisationModal = (
       externalOpen={opened}
       setExternalOpen={setOpened}
       size="lg"
-      render={({close}) => (
+      render={({ close }) => (
         <DemandeLabellisationModalContent {...props} onClose={close} />
       )}
     />
@@ -94,12 +94,12 @@ export const DemandeLabellisationModal = (
 };
 
 export const DemandeLabellisationModalContent = (
-  props: TDemandeLabellisationModalProps & {onClose: () => void}
+  props: TDemandeLabellisationModalProps & { onClose: () => void }
 ) => {
-  const {isLoading, envoiDemande} = useEnvoiDemande();
-  const {parcoursLabellisation, onClose} = props;
-  const {parcours, status} = parcoursLabellisation;
-  const {collectivite_id, referentiel, etoiles} = parcours || {};
+  const { isLoading, envoiDemande } = useEnvoiDemande();
+  const { parcoursLabellisation, onClose } = props;
+  const { parcours, status } = parcoursLabellisation;
+  const { collectivite_id, referentiel, etoiles } = parcours || {};
 
   const canSubmit = referentiel && etoiles;
 

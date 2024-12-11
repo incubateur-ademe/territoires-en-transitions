@@ -1,5 +1,5 @@
 import { FicheAction } from '@/api/plan-actions';
-import { Button } from '@tet/ui';
+import { Button } from '@/ui';
 import { useState } from 'react';
 import { useFicheActionNotesSuivi } from '../data/useFicheActionNotesSuivi';
 import {

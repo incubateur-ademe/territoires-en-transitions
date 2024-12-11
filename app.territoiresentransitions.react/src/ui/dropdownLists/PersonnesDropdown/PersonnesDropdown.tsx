@@ -1,11 +1,6 @@
 import { useEffect } from 'react';
 
-import {
-  Option,
-  OptionValue,
-  SelectFilter,
-  SelectMultipleProps,
-} from '@tet/ui';
+import { Option, OptionValue, SelectFilter, SelectMultipleProps } from '@/ui';
 import { useCollectiviteId } from 'core-logic/hooks/params';
 import { useTagCreate } from 'ui/dropdownLists/tags/useTagCreate';
 import { useDeleteTag } from 'ui/dropdownLists/tags/useTagDelete';

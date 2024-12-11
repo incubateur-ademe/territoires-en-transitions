@@ -1,13 +1,13 @@
 'use client';
 
-import {Button} from '@tet/ui';
-import {useEffect} from 'react';
+import { Button } from '@/ui';
+import { useEffect } from 'react';
 
 const Error = ({
   error,
   reset,
 }: {
-  error: Error & {digest?: string};
+  error: Error & { digest?: string };
   reset: () => void;
 }) => {
   useEffect(() => {

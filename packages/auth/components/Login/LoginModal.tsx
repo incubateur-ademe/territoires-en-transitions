@@ -1,14 +1,14 @@
-import {useState} from 'react';
-import {Modal} from '@tet/ui';
-import {LoginProps, LoginView} from './type';
-import {Login} from './Login';
+import { Modal } from '@/ui';
+import { useState } from 'react';
+import { Login } from './Login';
+import { LoginProps, LoginView } from './type';
 
 /**
  * Encapsule le panneau d'authentification dans une modale
  */
 export const LoginModal = (props: LoginProps) => {
   const [isOpen, setIsOpen] = useState(true);
-  const {view, onCancel} = props;
+  const { view, onCancel } = props;
 
   const onClose = () => {
     setIsOpen(false);
@@ -22,7 +22,7 @@ export const LoginModal = (props: LoginProps) => {
       backdropBlur
       size={mdDialog.includes(view) ? 'md' : 'lg'}
       title={getTitle(view)}
-      openState={{isOpen, setIsOpen}}
+      openState={{ isOpen, setIsOpen }}
       onClose={onClose}
       render={() => <Login {...props} onCancel={() => onClose()} />}
     />

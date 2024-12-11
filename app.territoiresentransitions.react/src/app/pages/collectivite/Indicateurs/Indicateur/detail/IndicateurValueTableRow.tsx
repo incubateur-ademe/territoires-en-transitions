@@ -1,5 +1,5 @@
+import { InfoTooltip, Notification, Tooltip } from '@/ui';
 import classNames from 'classnames';
-import ThreeDotMenu from 'ui/shared/select/ThreeDotMenu';
 import Modal from 'ui/shared/floating-ui/Modal';
 import Textarea from 'ui/shared/form/Textarea';
 import {
@@ -7,13 +7,13 @@ import {
   onlyNumericWithFloatRegExp,
   useInputFilterRef,
 } from 'ui/shared/form/utils';
-import {TIndicateurValeur} from '../../useIndicateurValeurs';
+import ThreeDotMenu from 'ui/shared/select/ThreeDotMenu';
+import { TIndicateurValeur } from '../../useIndicateurValeurs';
 import {
   OPTION_DELETE,
   TUseTableRowStateArgs,
   useTableRowState,
 } from './useTableRowState';
-import {InfoTooltip, Notification, Tooltip} from '@tet/ui';
 
 const PLACEHOLDER = 'Écrire ici...';
 const OPTIONS = [
@@ -90,14 +90,14 @@ export const IndicateurValueTableRow = ({
         </td>
         <td>
           <input
-            className={classNames({'font-bold': !!annee})}
+            className={classNames({ 'font-bold': !!annee })}
             type="text"
             ref={refAnnee}
             placeholder={PLACEHOLDER}
             value={annee}
             readOnly={isReadonly.annee}
             size={8}
-            onChange={e => onChange('annee', e)}
+            onChange={(e) => onChange('annee', e)}
           />
         </td>
         <td>
@@ -111,13 +111,13 @@ export const IndicateurValueTableRow = ({
               value={valeur}
               readOnly={isReadonly.valeur}
               size={12}
-              onChange={e => onChange('valeur', e)}
+              onChange={(e) => onChange('valeur', e)}
               onBlur={onBlur}
             />
           )}
         </td>
         <td
-          className={classNames({'!flex !justify-between': showDeleteButton})}
+          className={classNames({ '!flex !justify-between': showDeleteButton })}
         >
           {isImport ? (
             row?.source && (
@@ -129,7 +129,7 @@ export const IndicateurValueTableRow = ({
               placeholder={isReadonly.commentaire ? undefined : PLACEHOLDER}
               value={commentaire || undefined}
               readOnly={isReadonly.commentaire}
-              onChange={e => onChange('commentaire', e)}
+              onChange={(e) => onChange('commentaire', e)}
               onBlur={onBlur}
               autoFocus={autoFocus}
             />
@@ -149,8 +149,8 @@ export const IndicateurValueTableRow = ({
 };
 
 /** Affiche une valeur importée */
-const NumFormat = Intl.NumberFormat('fr', {maximumFractionDigits: 3});
-const ValueImported = ({valeur}: {valeur: string}) => {
+const NumFormat = Intl.NumberFormat('fr', { maximumFractionDigits: 3 });
+const ValueImported = ({ valeur }: { valeur: string }) => {
   // la valeur importée est une chaîne qui peut contenir beaucoup de chiffres
   // après la virgule alors on essaye de la parser
   const n = parseFloat(valeur?.replace(/\s/g, '').replace(',', '.'));
@@ -175,9 +175,9 @@ const ValueImported = ({valeur}: {valeur: string}) => {
 };
 
 /** Affiche une ligne du tableau en lecture seule */
-export const ValueTableRowReadOnly = ({row}: {row?: TIndicateurValeur}) => {
+export const ValueTableRowReadOnly = ({ row }: { row?: TIndicateurValeur }) => {
   if (!row) return null;
-  const {annee, valeur, commentaire, source, type} = row;
+  const { annee, valeur, commentaire, source, type } = row;
 
   const isImport = type === 'import';
   return (
@@ -209,7 +209,7 @@ const ConfirmModif = ({
 }: {
   state: ReturnType<typeof useTableRowState>;
 }) => {
-  const {annee, confirmAvantEcrasement, onDismissConfirm, valeur} = state;
+  const { annee, confirmAvantEcrasement, onDismissConfirm, valeur } = state;
   if (!confirmAvantEcrasement) return null;
 
   return (

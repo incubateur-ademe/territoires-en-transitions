@@ -1,15 +1,15 @@
 'use server';
 
+import { TrackPageView } from '@/ui';
 import NoResult from '@tet/site/components/info/NoResult';
-import Temoignages from './Temoignages';
 import Accompagnement from './Accompagnement';
 import AccueilBanner from './AccueilBanner';
-import Newsletter from './Newsletter';
-import DemandeContact from './DemandeContact';
 import Communaute from './Communaute';
+import DemandeContact from './DemandeContact';
+import Newsletter from './Newsletter';
 import Objectifs from './Objectifs';
+import Temoignages from './Temoignages';
 import { getData } from './utils';
-import { TrackPageView } from '@tet/ui';
 
 const Accueil = async () => {
   const data = await getData();

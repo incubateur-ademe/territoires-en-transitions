@@ -1,12 +1,12 @@
-import React, {useState} from 'react';
-import {Meta, StoryObj} from '@storybook/react';
+import { Meta, StoryObj } from '@storybook/react';
+import { useState } from 'react';
 
-import {Button} from '@tet/ui';
+import { Button } from '@/ui';
 
 import Chart from './Chart';
-import {fakeComplexeDonutData, fakeSimpleDonutData} from './Donut/fixtures';
-import {additionalInfos, fakeChartInfos} from './fixtures';
-import {fakeManyXLineData} from './Line/fixtures';
+import { fakeComplexeDonutData, fakeSimpleDonutData } from './Donut/fixtures';
+import { additionalInfos, fakeChartInfos } from './fixtures';
+import { fakeManyXLineData } from './Line/fixtures';
 
 const meta: Meta<typeof Chart> = {
   component: Chart,
@@ -45,13 +45,13 @@ export const Charts: Story = {
       <div className="flex flex-col gap-6">
         <Chart
           donut={{
-            chart: {data: fakeSimpleDonutData},
+            chart: { data: fakeSimpleDonutData },
           }}
         />
         <div className="h-px bg-grey-4" />
         <Chart
           line={{
-            chart: {data: fakeManyXLineData},
+            chart: { data: fakeManyXLineData },
           }}
         />
       </div>
@@ -73,7 +73,7 @@ export const Download = () => {
         />
         <Chart
           donut={{
-            chart: {data: fakeComplexeDonutData},
+            chart: { data: fakeComplexeDonutData },
           }}
           infos={{
             ...fakeChartInfos,
@@ -99,7 +99,7 @@ export const Download = () => {
           line={{
             chart: {
               data: fakeManyXLineData,
-              colors: {datum: 'color'},
+              colors: { datum: 'color' },
               axisLeftLegend: 'Nombre de yolo en kw/h',
             },
             modalChart: {

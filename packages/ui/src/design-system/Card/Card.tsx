@@ -1,5 +1,5 @@
+import { DivHTMLProps, isLink, LinkFullProps } from '@/ui/utils/types';
 import classNames from 'classnames';
-import { DivHTMLProps, isLink, LinkFullProps } from '@tet/ui/utils/types';
 import Link from 'next/link';
 
 /** Types custom de Card */

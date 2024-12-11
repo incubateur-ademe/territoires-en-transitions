@@ -1,4 +1,4 @@
-import { Breadcrumbs } from '@tet/ui';
+import { Breadcrumbs } from '@/ui';
 import { TDBViewParam, makeTableauBordUrl } from 'app/paths';
 import { useCollectiviteId } from 'core-logic/hooks/params';
 import { useRouter } from 'next/navigation';

@@ -8,7 +8,7 @@ import {
   Input,
   Modal,
   ModalFooterOKCancel,
-} from '@tet/ui';
+} from '@/ui';
 
 import { FicheResume } from '@/api/plan-actions/domain';
 import {

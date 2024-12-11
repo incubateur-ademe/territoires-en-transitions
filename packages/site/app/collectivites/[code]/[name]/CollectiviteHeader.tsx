@@ -1,9 +1,9 @@
 'use client';
 
+import { Badge, Icon } from '@/ui';
 import { StrapiImage } from '@tet/site/components/strapiImage/StrapiImage';
 import { StrapiItem } from '@tet/site/src/strapi/StrapiItem';
 import { getFormattedNumber } from '@tet/site/src/utils/getFormattedNumber';
-import { Badge, Icon } from '@tet/ui';
 import classNames from 'classnames';
 import Image from 'next/image';
 

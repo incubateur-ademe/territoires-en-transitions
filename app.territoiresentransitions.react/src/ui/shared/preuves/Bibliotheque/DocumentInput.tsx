@@ -1,6 +1,6 @@
-import {Input, Textarea} from '@tet/ui';
+import { Input, Textarea } from '@/ui';
 import classNames from 'classnames';
-import {TEditState} from 'core-logic/hooks/useEditState';
+import { TEditState } from 'core-logic/hooks/useEditState';
 
 type DocumentInputProps = {
   editElement: TEditState;
@@ -18,9 +18,9 @@ const DocumentInput = ({
       type="text"
       autoFocus
       value={editElement.value}
-      onChange={evt => editElement.setValue(evt.target.value)}
+      onChange={(evt) => editElement.setValue(evt.target.value)}
       onBlur={editElement.exit}
-      onKeyUp={evt => {
+      onKeyUp={(evt) => {
         if (evt.key === 'Enter') editElement.exit();
       }}
       className={classNames('font-normal', className)}
@@ -29,11 +29,11 @@ const DocumentInput = ({
     <Textarea
       autoFocus
       value={editElement.value}
-      onChange={evt =>
+      onChange={(evt) =>
         editElement.setValue((evt.target as HTMLTextAreaElement).value)
       }
       onBlur={editElement.exit}
-      onKeyDown={evt => {
+      onKeyDown={(evt) => {
         if (evt.key === 'Enter' && !evt.shiftKey) editElement.exit();
       }}
       className={classNames('font-normal', className)}

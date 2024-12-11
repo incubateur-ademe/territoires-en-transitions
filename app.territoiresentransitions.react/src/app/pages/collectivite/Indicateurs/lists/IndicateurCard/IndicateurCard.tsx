@@ -1,14 +1,7 @@
 import classNames from 'classnames';
 import { useState } from 'react';
 
-import {
-  Button,
-  Card,
-  CardProps,
-  Checkbox,
-  Notification,
-  Tooltip,
-} from '@tet/ui';
+import { Button, Card, CardProps, Checkbox, Notification, Tooltip } from '@/ui';
 
 import {
   IndicateurChartInfo,

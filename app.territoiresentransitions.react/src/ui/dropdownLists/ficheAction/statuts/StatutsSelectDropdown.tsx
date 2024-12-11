@@ -1,5 +1,5 @@
 import { Statut } from '@/api/plan-actions';
-import { Select, SelectProps } from '@tet/ui';
+import { Select, SelectProps } from '@/ui';
 import BadgeStatut from 'app/pages/collectivite/PlansActions/components/BadgeStatut';
 import { ficheActionStatutOptions } from 'ui/dropdownLists/listesStatiques';
 

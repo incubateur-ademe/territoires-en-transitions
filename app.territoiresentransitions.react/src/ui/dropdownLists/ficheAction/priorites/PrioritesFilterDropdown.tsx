@@ -1,5 +1,5 @@
 import { NiveauPriorite } from '@/api/plan-actions';
-import { SelectFilter, SelectMultipleProps } from '@tet/ui';
+import { SelectFilter, SelectMultipleProps } from '@/ui';
 import BadgePriorite from 'app/pages/collectivite/PlansActions/components/BadgePriorite';
 import { ficheActionNiveauPrioriteOptions } from 'ui/dropdownLists/listesStatiques';
 

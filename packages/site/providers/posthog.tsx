@@ -8,7 +8,7 @@ import {
   getNextTrackingEnv,
   ScriptLikeProps,
   TrackingProvider,
-} from '@tet/ui';
+} from '@/ui';
 import Script from 'next/script';
 
 const client = createTrackingClient(getNextTrackingEnv());

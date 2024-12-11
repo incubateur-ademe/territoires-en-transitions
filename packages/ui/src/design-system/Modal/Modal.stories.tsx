@@ -1,9 +1,9 @@
 import { Meta, StoryObj } from '@storybook/react';
 import { forwardRef, useState } from 'react';
 
+import { Button } from '@/ui/design-system/Button';
+import { ModalFooter } from '@/ui/design-system/Modal/ModalFooter';
 import { Modal } from '.';
-import { Button } from '@tet/ui/design-system/Button';
-import { ModalFooter } from '@tet/ui/design-system/Modal/ModalFooter';
 
 const meta: Meta<typeof Modal> = {
   component: Modal,

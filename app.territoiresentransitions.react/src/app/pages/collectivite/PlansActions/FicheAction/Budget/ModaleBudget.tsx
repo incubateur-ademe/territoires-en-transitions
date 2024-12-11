@@ -6,7 +6,7 @@ import {
   Modal,
   ModalFooterOKCancel,
   Textarea,
-} from '@tet/ui';
+} from '@/ui';
 import _ from 'lodash';
 import { useEffect, useState } from 'react';
 import FinanceursInput from './FinanceursInput';

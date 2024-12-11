@@ -1,6 +1,6 @@
+import { Field, Input, Textarea } from '@/ui';
 import classNames from 'classnames';
-import {Field, Input, Textarea} from '@tet/ui';
-import {Field as FormikField, FieldAttributes, FieldProps} from 'formik';
+import { FieldAttributes, FieldProps, Field as FormikField } from 'formik';
 
 /**
  * Prevents enter key submitting the form.
@@ -35,7 +35,11 @@ const FormikInput = (props: FormFieldProps) => (
 
 export default FormikInput;
 
-const InputField = ({field, form, ...props}: FormikInputProps & FieldProps) => {
+const InputField = ({
+  field,
+  form,
+  ...props
+}: FormikInputProps & FieldProps) => {
   const errorMessage = (form.errors as Record<string, string | undefined>)[
     field.name
   ];

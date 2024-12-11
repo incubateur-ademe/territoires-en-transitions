@@ -1,12 +1,12 @@
-import {Datum} from '@nivo/line';
-import {dedup} from 'utils/dedup';
-import {TIndicateurValeur} from '../useIndicateurValeurs';
-import {LineData} from 'ui/charts/Line/LineChart';
-import {preset} from '@tet/ui';
+import { preset } from '@/ui';
+import { Datum } from '@nivo/line';
+import { LineData } from 'ui/charts/Line/LineChart';
+import { dedup } from 'utils/dedup';
+import { TIndicateurValeur } from '../useIndicateurValeurs';
 
 const {
   theme: {
-    extend: {colors},
+    extend: { colors },
   },
 } = preset;
 
@@ -20,8 +20,11 @@ export const indicateurBaseData: Record<string, LineData> = {
     style: {
       strokeWidth: 2,
     },
-    symbole: color => (
-      <div className="h-1 w-4 rounded-full" style={{backgroundColor: color}} />
+    symbole: (color) => (
+      <div
+        className="h-1 w-4 rounded-full"
+        style={{ backgroundColor: color }}
+      />
     ),
   },
   resultat: {
@@ -32,8 +35,11 @@ export const indicateurBaseData: Record<string, LineData> = {
     style: {
       strokeWidth: 2,
     },
-    symbole: color => (
-      <div className="h-1 w-4 rounded-full" style={{backgroundColor: color}} />
+    symbole: (color) => (
+      <div
+        className="h-1 w-4 rounded-full"
+        style={{ backgroundColor: color }}
+      />
     ),
   },
 };
@@ -44,7 +50,7 @@ export const prepareData = (valeurs: TIndicateurValeur[]): LineData[] => {
   // sépare les valeurs "objectif" des valeurs "résultat" (ou "import")
   const objectifs: TIndicateurValeur[] = [];
   const resultats: TIndicateurValeur[] = [];
-  valeurs?.forEach(v =>
+  valeurs?.forEach((v) =>
     (v.type === 'objectif' ? objectifs : resultats).push(v)
   );
 
@@ -61,7 +67,7 @@ export const prepareData = (valeurs: TIndicateurValeur[]): LineData[] => {
 };
 
 /** Converti une valeur d'indicateur en point d'une série */
-const toDatum = ({annee: x, valeur: y}: TIndicateurValeur): Datum => ({
+const toDatum = ({ annee: x, valeur: y }: TIndicateurValeur): Datum => ({
   x,
   y,
 });
@@ -75,7 +81,7 @@ export const getXTickValues = (
   const maxTicks = maxTickValues || 10;
   // sélectionne les valeurs distinctes
   const distinctYears = valeurs?.length
-    ? dedup(valeurs.map(({annee}) => annee))
+    ? dedup(valeurs.map(({ annee }) => annee))
     : [];
 
   // puis l'écart entre le max et le min qui donne le nombre de graduations maximum

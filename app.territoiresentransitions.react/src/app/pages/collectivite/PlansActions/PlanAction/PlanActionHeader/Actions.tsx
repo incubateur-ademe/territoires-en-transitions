@@ -2,19 +2,19 @@ import classNames from 'classnames';
 
 import SmallIconContextMenu from 'app/pages/collectivite/PlansActions/PlanAction/PlanActionHeader/SmallIconContextMenu';
 
-import SupprimerAxeModal from '../SupprimerAxeModal';
 import RestreindreFichesModal from '../RestreindreFichesModal';
+import SupprimerAxeModal from '../SupprimerAxeModal';
 
+import { Tooltip } from '@/ui';
 import {
   makeCollectivitePlanActionUrl,
   makeCollectivitePlansActionsLandingUrl,
 } from 'app/paths';
+import { useState } from 'react';
+import { TPlanType } from 'types/alias';
 import { PlanNode } from '../data/types';
 import { useExportPlanAction } from '../data/useExportPlanAction';
 import ModifierPlanModale from './ModifierPlanModale';
-import { TPlanType } from 'types/alias';
-import { Tooltip } from '@tet/ui';
-import { useState } from 'react';
 
 const EXPORT_OPTIONS = [
   { value: 'xlsx', label: 'Format Excel (.xlsx)' },

@@ -1,6 +1,6 @@
 'use client';
 
-import { FooterTeT } from '@tet/ui';
+import { FooterTeT } from '@/ui';
 
 const Footer = () => {
   return <FooterTeT />;

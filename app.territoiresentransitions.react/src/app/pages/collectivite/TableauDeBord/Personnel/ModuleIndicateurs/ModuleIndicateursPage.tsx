@@ -1,4 +1,4 @@
-import { Button, TrackPageView, useEventTracker } from '@tet/ui';
+import { Button, TrackPageView, useEventTracker } from '@/ui';
 
 import {
   ModuleIndicateursSelect,

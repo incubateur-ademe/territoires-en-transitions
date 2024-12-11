@@ -1,11 +1,11 @@
 'use client';
 
-import useSWR from 'swr';
-import { supabase } from '../initSupabase';
-import { useEffect, useState } from 'react';
+import { Button } from '@/ui';
 import { usePathname, useRouter } from 'next/navigation';
+import { useEffect, useState } from 'react';
+import useSWR from 'swr';
 import Select from '../../components/inputs/Select';
-import { Button } from '@tet/ui';
+import { supabase } from '../initSupabase';
 
 /**
  * Toutes les régions.

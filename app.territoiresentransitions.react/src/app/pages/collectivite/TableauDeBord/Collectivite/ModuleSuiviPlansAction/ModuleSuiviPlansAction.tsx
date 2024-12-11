@@ -1,9 +1,9 @@
 import { useState } from 'react';
 
 import { ModulePlanActionListSelect } from '@/api/plan-actions/dashboards/collectivite-dashboard/domain/module.schema';
+import { Button, useEventTracker } from '@/ui';
 import { usePlansActionsListe } from '@tet/app/pages/collectivite/PlansActions/PlanAction/data/usePlansActionsListe';
 import PlanActionCard from '@tet/app/pages/collectivite/PlansActions/PlanAction/list/card/PlanActionCard';
-import { Button, useEventTracker } from '@tet/ui';
 import Module, {
   ModuleDisplay,
 } from 'app/pages/collectivite/TableauDeBord/components/Module';

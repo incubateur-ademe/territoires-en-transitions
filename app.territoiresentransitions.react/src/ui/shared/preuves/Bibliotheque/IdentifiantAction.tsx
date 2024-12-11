@@ -1,5 +1,5 @@
-import {Badge} from '@tet/ui';
-import {TPreuveAction} from './types';
+import { Badge } from '@/ui';
+import { TPreuveAction } from './types';
 
 export type TIdentifiantActionProps = {
   action: TPreuveAction;
@@ -9,8 +9,8 @@ export type TIdentifiantActionProps = {
  * Affiche l'identifiant d'une action à laquelle une preuve est associée
  */
 export const IdentifiantAction = (props: TIdentifiantActionProps) => {
-  const {action} = props;
-  const {identifiant} = action;
+  const { action } = props;
+  const { identifiant } = action;
 
   return (
     <span className="text-grey-6 leading-6 flex gap-2">
@@ -23,6 +23,6 @@ export const IdentifiantAction = (props: TIdentifiantActionProps) => {
 };
 
 export const isDisabledAction = (action: TPreuveAction) => {
-  const {concerne, desactive} = action;
+  const { concerne, desactive } = action;
   return !concerne || desactive;
 };

@@ -1,5 +1,5 @@
 import { Personne } from '@/api/collectivites';
-import { Icon, Tooltip } from '@tet/ui';
+import { Icon, Tooltip } from '@/ui';
 import classNames from 'classnames';
 import { isBefore, startOfToday } from 'date-fns';
 import { Fragment } from 'react';

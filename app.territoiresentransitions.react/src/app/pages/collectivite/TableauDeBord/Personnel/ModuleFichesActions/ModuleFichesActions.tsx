@@ -1,4 +1,4 @@
-import { Button, useEventTracker } from '@tet/ui';
+import { Button, useEventTracker } from '@/ui';
 
 import { ModuleFicheActionsSelect } from '@/api/plan-actions/dashboards/personal-dashboard/domain/module.schema';
 import { SortFichesAction } from '@/api/plan-actions/fiche-resumes.list';

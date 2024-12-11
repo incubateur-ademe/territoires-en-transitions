@@ -1,5 +1,5 @@
 import { FicheAction } from '@/api/plan-actions';
-import { Button, Divider, useEventTracker } from '@tet/ui';
+import { Button, Divider, useEventTracker } from '@/ui';
 import IndicateurCard from 'app/pages/collectivite/Indicateurs/lists/IndicateurCard/IndicateurCard';
 import { getIndicateurGroup } from 'app/pages/collectivite/Indicateurs/lists/IndicateurCard/utils';
 import { TIndicateurListItem } from 'app/pages/collectivite/Indicateurs/types';

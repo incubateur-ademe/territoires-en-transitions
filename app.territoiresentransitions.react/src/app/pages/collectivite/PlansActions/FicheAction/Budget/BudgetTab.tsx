@@ -1,5 +1,5 @@
 import { FicheAction } from '@/api/plan-actions';
-import { Button } from '@tet/ui';
+import { Button } from '@/ui';
 import classNames from 'classnames';
 import { useState } from 'react';
 import EmptyCard from '../EmptyCard';

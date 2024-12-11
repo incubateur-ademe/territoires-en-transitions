@@ -2,7 +2,7 @@ import {
   ModuleFicheActionsSelect,
   Slug,
 } from '@/api/plan-actions/dashboards/personal-dashboard/domain/module.schema';
-import { Button, TrackPageView, useEventTracker } from '@tet/ui';
+import { Button, TrackPageView, useEventTracker } from '@/ui';
 
 import { usePlanActionsCount } from '@tet/app/pages/collectivite/PlansActions/PlanAction/data/usePlanActionsCount';
 import ModulePage from '@tet/app/pages/collectivite/TableauDeBord/components/ModulePage';

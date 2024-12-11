@@ -1,19 +1,19 @@
-import {useForm} from 'react-hook-form';
-import {zodResolver} from '@hookform/resolvers/zod';
-import {z} from 'zod';
 import {
   Button,
   Checkbox,
-  Input,
-  validateTel,
   Field,
   FieldMessage,
   FormSectionGrid,
+  Input,
   ModalFooterOKCancel,
   TrackPageView,
   useEventTracker,
-} from '@tet/ui';
-import {SignupDataStep3, SignupPropsWithState} from './type';
+  validateTel,
+} from '@/ui';
+import { zodResolver } from '@hookform/resolvers/zod';
+import { useForm } from 'react-hook-form';
+import { z } from 'zod';
+import { SignupDataStep3, SignupPropsWithState } from './type';
 
 const URL_CGU = 'https://territoiresentransitions.fr/cgu';
 const URL_DCP = 'https://www.ademe.fr/donnees-personnelles/';

@@ -1,15 +1,15 @@
-import {CollectiviteInfo} from '@tet/auth/components/RejoindreUneCollectivite/type';
-import {Alert, Button, Icon, useCopyToClipboard} from '@tet/ui';
+import { Alert, Button, Icon, useCopyToClipboard } from '@/ui';
+import { CollectiviteInfo } from '@tet/auth/components/RejoindreUneCollectivite/type';
 
 type Props = {
   collectivite: CollectiviteInfo | null;
 };
 
-export const CollectiviteSelectionnee = ({collectivite}: Props) => {
-  const {copy} = useCopyToClipboard();
+export const CollectiviteSelectionnee = ({ collectivite }: Props) => {
+  const { copy } = useCopyToClipboard();
   if (!collectivite) return;
 
-  const {url, contacts} = collectivite;
+  const { url, contacts } = collectivite;
 
   return (
     <div className="mt-6">
@@ -32,7 +32,7 @@ export const CollectiviteSelectionnee = ({collectivite}: Props) => {
             </tr>
           </thead>
           <tbody>
-            {contacts?.map(contact => (
+            {contacts?.map((contact) => (
               <tr
                 key={contact.email}
                 className="even:bg-primary-1 text-md leading-[3rem] border-b border-primary-3"

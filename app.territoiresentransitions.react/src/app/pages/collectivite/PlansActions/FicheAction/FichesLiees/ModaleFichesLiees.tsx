@@ -1,4 +1,4 @@
-import { Field, Modal, ModalFooterOKCancel } from '@tet/ui';
+import { Field, Modal, ModalFooterOKCancel } from '@/ui';
 import { useEffect, useState } from 'react';
 import FichesActionsDropdown from 'ui/dropdownLists/FichesActionsDropdown/FichesActionsDropdown';
 

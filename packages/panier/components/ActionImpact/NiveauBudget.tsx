@@ -1,5 +1,5 @@
 import { ActionImpactFourchetteBudgetaire } from '@/api';
-import { Icon } from '@tet/ui';
+import { Icon } from '@/ui';
 import classNames from 'classnames';
 
 type NiveauBudgetProps = {

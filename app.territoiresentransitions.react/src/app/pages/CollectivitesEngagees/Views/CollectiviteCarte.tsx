@@ -1,17 +1,17 @@
-import Link from 'next/link';
-import { Referentiel } from 'types/litterals';
-import { toPercentString } from 'utils/score';
-import { referentielToName } from 'app/labels';
+import { Icon } from '@/ui';
+import { NIVEAUX } from '@tet/app/pages/collectivite/EtatDesLieux/Accueil/EtatDesLieux/labellisation/LabellisationInfo';
 import {
   GreyStar,
   RedStar,
 } from '@tet/app/pages/collectivite/EtatDesLieux/Accueil/EtatDesLieux/labellisation/Star';
+import { referentielToName } from 'app/labels';
 import { TCollectiviteCarte } from 'app/pages/CollectivitesEngagees/data/useFilteredCollectivites';
-import { useFonctionTracker } from 'core-logic/hooks/useFonctionTracker';
 import { makeCollectiviteAccueilUrl } from 'app/paths';
 import classNames from 'classnames';
-import { Icon } from '@tet/ui';
-import { NIVEAUX } from '@tet/app/pages/collectivite/EtatDesLieux/Accueil/EtatDesLieux/labellisation/LabellisationInfo';
+import { useFonctionTracker } from 'core-logic/hooks/useFonctionTracker';
+import Link from 'next/link';
+import { Referentiel } from 'types/litterals';
+import { toPercentString } from 'utils/score';
 
 type Props = {
   collectivite: TCollectiviteCarte;

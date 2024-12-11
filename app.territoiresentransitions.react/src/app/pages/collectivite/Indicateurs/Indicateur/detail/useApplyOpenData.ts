@@ -3,7 +3,7 @@
  */
 
 import { Indicateurs } from '@/api';
-import { useEventTracker } from '@tet/ui';
+import { useEventTracker } from '@/ui';
 import { supabaseClient } from 'core-logic/api/supabase';
 import { useMutation, useQuery, useQueryClient } from 'react-query';
 import { SOURCE_COLLECTIVITE, SOURCE_TYPE_LABEL } from '../../constants';

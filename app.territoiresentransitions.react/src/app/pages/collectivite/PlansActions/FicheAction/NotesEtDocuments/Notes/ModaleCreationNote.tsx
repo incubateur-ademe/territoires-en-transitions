@@ -1,5 +1,5 @@
-import {useEffect, useState} from 'react';
-import {Field, Modal, ModalFooterOKCancel, Textarea} from '@tet/ui';
+import { Field, Modal, ModalFooterOKCancel, Textarea } from '@/ui';
+import { useEffect, useState } from 'react';
 import { getMaxLengthMessage } from 'utils/formatUtils';
 
 export const NOTES_MAX_LENGTH = 20000;
@@ -27,10 +27,10 @@ const ModaleCreationNote = ({
 
   return (
     <Modal
-      openState={{isOpen, setIsOpen}}
+      openState={{ isOpen, setIsOpen }}
       title="Ajouter une note"
       size="lg"
-      render={({descriptionId}) => (
+      render={({ descriptionId }) => (
         <div id={descriptionId} className="flex flex-col gap-8">
           {/* Décommenter au passage à notes privées */}
           {/* <Alert description="La note est privée, elle n’est pas consultable par les personnes n’étant pas membres de votre collectivité." /> */}
@@ -46,7 +46,7 @@ const ModaleCreationNote = ({
               className="min-h-[100px]"
               value={editedNotes ?? ''}
               maxLength={NOTES_MAX_LENGTH}
-              onChange={evt =>
+              onChange={(evt) =>
                 setEditedNotes((evt.target as HTMLTextAreaElement).value)
               }
             />
@@ -54,9 +54,9 @@ const ModaleCreationNote = ({
         </div>
       )}
       // Boutons pour valider / annuler les modifications
-      renderFooter={({close}) => (
+      renderFooter={({ close }) => (
         <ModalFooterOKCancel
-          btnCancelProps={{onClick: close}}
+          btnCancelProps={{ onClick: close }}
           btnOKProps={{
             onClick: () => {
               handleSave();

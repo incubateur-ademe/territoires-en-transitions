@@ -1,5 +1,5 @@
 import { FetchFiltre } from '@/api/indicateurs';
-import { Checkbox, Field, FormSection } from '@tet/ui';
+import { Checkbox, Field, FormSection } from '@/ui';
 import PersonnesDropdown from 'ui/dropdownLists/PersonnesDropdown/PersonnesDropdown';
 import {
   getPilotesValues,

@@ -1,6 +1,6 @@
 import { useState } from 'react';
 
-import { TrackPageView, useEventTracker } from '@tet/ui';
+import { TrackPageView, useEventTracker } from '@/ui';
 
 import {
   ModulePlanActionListSelect,

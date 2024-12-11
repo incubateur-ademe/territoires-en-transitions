@@ -1,4 +1,4 @@
-import { Field, Input, SelectFilter } from '@tet/ui';
+import { Field, Input, SelectFilter } from '@/ui';
 
 import { CollectiviteEngagee } from '@/api';
 import { usePlanTypeListe } from 'app/pages/collectivite/PlansActions/PlanAction/data/usePlanTypeListe';

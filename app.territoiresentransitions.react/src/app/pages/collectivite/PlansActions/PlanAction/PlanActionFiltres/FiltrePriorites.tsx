@@ -1,5 +1,5 @@
 import { NiveauPriorite } from '@/api/plan-actions';
-import { Field, OptionValue, SelectFilter } from '@tet/ui';
+import { Field, OptionValue, SelectFilter } from '@/ui';
 import { TOption } from 'ui/shared/select/commons';
 import { ficheActionNiveauPrioriteOptions } from '../../../../../../ui/dropdownLists/listesStatiques';
 import BadgePriorite from '../../components/BadgePriorite';

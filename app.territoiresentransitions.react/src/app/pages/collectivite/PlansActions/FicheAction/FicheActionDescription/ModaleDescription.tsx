@@ -9,7 +9,7 @@ import {
   ModalFooterOKCancel,
   Textarea,
   useEventTracker,
-} from '@tet/ui';
+} from '@/ui';
 import { useCurrentCollectivite } from 'core-logic/hooks/useCurrentCollectivite';
 import _ from 'lodash';
 import { useState } from 'react';

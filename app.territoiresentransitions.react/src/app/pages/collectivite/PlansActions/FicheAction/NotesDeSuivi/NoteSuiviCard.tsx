@@ -1,5 +1,5 @@
 import { FicheActionNote } from '@/api/plan-actions';
-import { Button, Card, Icon } from '@tet/ui';
+import { Button, Card, Icon } from '@/ui';
 import { format } from 'date-fns';
 import { useState } from 'react';
 import { DeletedNote, EditedNote } from '../data/useUpsertNoteSuivi';

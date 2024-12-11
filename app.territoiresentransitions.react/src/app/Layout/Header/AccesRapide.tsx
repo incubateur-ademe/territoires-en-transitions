@@ -1,14 +1,14 @@
-import {signInPath, signUpPath} from 'app/paths';
-import {useFonctionTracker} from 'core-logic/hooks/useFonctionTracker';
+import { Button } from '@/ui';
+import { signInPath, signUpPath } from 'app/paths';
+import { useFonctionTracker } from 'core-logic/hooks/useFonctionTracker';
+import { AccesPanierAction } from './AccesPanierAction';
 import MenuUtilisateur from './MenuUtilisateur';
-import {HeaderPropsWithModalState} from './types';
-import {AccesPanierAction} from './AccesPanierAction';
-import {Button} from '@tet/ui';
+import { HeaderPropsWithModalState } from './types';
 
 /** liens en "accès rapide" */
 export const AccesRapide = (props: HeaderPropsWithModalState) => {
-  const {auth, setModalOpened} = props;
-  const {isConnected, user} = auth;
+  const { auth, setModalOpened } = props;
+  const { isConnected, user } = auth;
 
   return (
     <ul className="fr-btns-group">
@@ -69,7 +69,7 @@ const Aide = () => {
     // utiliser <a target="_blank"> qui empêche de mettre une icône...
     window.open('https://aide.territoiresentransitions.fr/fr/', '_blank');
 
-    await tracker({fonction: 'aide', action: 'clic'});
+    await tracker({ fonction: 'aide', action: 'clic' });
   };
 
   return (

@@ -1,9 +1,9 @@
-import {TPreuve, TPreuveReglementaire} from './types';
-import PreuveDoc from './PreuveDoc';
-import {AddPreuveReglementaire} from 'ui/shared/actions/AddPreuve/AddPreuveReglementaire';
-import {IdentifiantAction, isDisabledAction} from './IdentifiantAction';
-import {InfoTooltip} from '@tet/ui';
+import { InfoTooltip } from '@/ui';
 import DOMPurify from 'dompurify';
+import { AddPreuveReglementaire } from 'ui/shared/actions/AddPreuve/AddPreuveReglementaire';
+import { IdentifiantAction, isDisabledAction } from './IdentifiantAction';
+import PreuveDoc from './PreuveDoc';
+import { TPreuve, TPreuveReglementaire } from './types';
 
 export type TPreuveReglementaireProps = {
   preuves: TPreuveReglementaire[];
@@ -14,7 +14,7 @@ export type TPreuveReglementaireProps = {
  * Affiche une preuve règlementaire et les éventuels documents associés
  */
 export const PreuveReglementaire = (props: TPreuveReglementaireProps) => {
-  const {preuves, hideIdentifier} = props;
+  const { preuves, hideIdentifier } = props;
 
   // n'affiche rien quand la liste est vide
   if (!preuves.length) {
@@ -23,8 +23,8 @@ export const PreuveReglementaire = (props: TPreuveReglementaireProps) => {
 
   // lit les informations du 1er item (identiques aux suivants)
   const first = preuves[0];
-  const {action, preuve_reglementaire, fichier, lien} = first;
-  const {id: preuve_id, nom, description} = preuve_reglementaire;
+  const { action, preuve_reglementaire, fichier, lien } = first;
+  const { id: preuve_id, nom, description } = preuve_reglementaire;
   const isDisabled = isDisabledAction(action);
   const haveDoc = !!fichier || !!lien;
 
@@ -59,7 +59,7 @@ export const PreuveReglementaire = (props: TPreuveReglementaireProps) => {
         {/* Liens vers les documents */}
         {haveDoc && (
           <div className="flex flex-col gap-3">
-            {preuves.map(preuve => (
+            {preuves.map((preuve) => (
               <PreuveDoc key={preuve.id} preuve={preuve as TPreuve} />
             ))}
           </div>

@@ -1,6 +1,6 @@
-import {useState} from 'react';
+import { Button, Notification } from '@/ui';
 import classNames from 'classnames';
-import {Button, Notification} from '@tet/ui';
+import { useState } from 'react';
 import ModaleAcces from './ModaleAcces';
 import TooltipRestreint from './TooltipRestreint';
 
@@ -23,7 +23,7 @@ const FicheActionRestreint = ({
         onClick={!isReadonly ? () => setIsModalOpen(true) : undefined}
         className={classNames(
           'relative bg-white border border-grey-3 rounded-lg py-2 px-2.5 h-14 text-sm text-primary-10 font-medium italic flex gap-2 items-center max-md:justify-center',
-          {'cursor-pointer hover:bg-primary-2 transition-colors': !isReadonly}
+          { 'cursor-pointer hover:bg-primary-2 transition-colors': !isReadonly }
         )}
       >
         <Notification

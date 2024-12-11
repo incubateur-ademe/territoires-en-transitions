@@ -1,8 +1,8 @@
 'use client';
 
-import {Button} from '@tet/ui';
+import { Button } from '@/ui';
 import classNames from 'classnames';
-import {useCallback, useEffect, useState} from 'react';
+import { useCallback, useEffect, useState } from 'react';
 
 type SlideshowProps = {
   slides: React.ReactNode[];
@@ -30,7 +30,7 @@ const Slideshow = ({
       else if (index >= slides.length) setSlideIndex(0);
       else setSlideIndex(index);
     },
-    [slideIndex, slides.length],
+    [slideIndex, slides.length]
   );
 
   useEffect(() => {
@@ -49,7 +49,7 @@ const Slideshow = ({
     <div
       className={classNames(
         'flex justify-between items-center min-h-[250px]',
-        className,
+        className
       )}
     >
       {slides.length > 1 && (

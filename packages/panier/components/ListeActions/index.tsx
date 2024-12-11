@@ -1,6 +1,5 @@
 /* eslint-disable react/no-unescaped-entities */
 import { Panier } from '@/api';
-import FiltresActions from '@tet/panier/components/FiltresActions';
 import {
   Alert,
   Button,
@@ -8,7 +7,8 @@ import {
   SITE_BASE_URL,
   Tab,
   Tabs,
-} from '@tet/ui';
+} from '@/ui';
+import FiltresActions from '@tet/panier/components/FiltresActions';
 import { useSearchParams } from 'next/navigation';
 import { ContenuListesFiltre } from '../FiltresActions/types';
 import ListeActionsFiltrees from './ListeActionsFiltrees';

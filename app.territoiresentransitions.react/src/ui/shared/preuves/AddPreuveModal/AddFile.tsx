@@ -1,21 +1,21 @@
 /**
  * Affiche le composant d'upload de fichiers
  */
+import { Button, Field, Input } from '@/ui';
+import { useCollectiviteId } from 'core-logic/hooks/params';
 import { FormEvent, useEffect, useState } from 'react';
-import { Button, Field, Input } from '@tet/ui';
-import { HINT, EXPECTED_FORMATS_LIST } from './constants';
-import { filesToUploadList } from './filesToUploadList';
+import { useUpdateBibliothequeFichierConfidentiel } from '../Bibliotheque/useEditPreuve';
+import { CheckboxConfidentiel } from './CheckboxConfidentiel';
+import { EXPECTED_FORMATS_LIST, HINT } from './constants';
 import { TFileItem } from './FileItem';
 import { FileItemsList } from './FileItemsList';
+import { filesToUploadList } from './filesToUploadList';
 import {
   DocType,
   UploadStatus,
   UploadStatusCode,
   UploadStatusCompleted,
 } from './types';
-import { useCollectiviteId } from 'core-logic/hooks/params';
-import { CheckboxConfidentiel } from './CheckboxConfidentiel';
-import { useUpdateBibliothequeFichierConfidentiel } from '../Bibliotheque/useEditPreuve';
 
 export type TAddFileFromLib = (fichier_id: number) => void;
 

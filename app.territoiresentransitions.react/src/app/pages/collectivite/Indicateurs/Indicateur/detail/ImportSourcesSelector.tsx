@@ -8,7 +8,7 @@ import {
   Tabs,
   TrackPageView,
   useEventTracker,
-} from '@tet/ui';
+} from '@/ui';
 import { useCurrentCollectivite } from 'core-logic/hooks/useCurrentCollectivite';
 import { useState } from 'react';
 import { getSourceTypeLabel, SOURCE_COLLECTIVITE } from '../../constants';

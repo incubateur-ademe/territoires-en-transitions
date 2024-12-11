@@ -1,13 +1,13 @@
+import { Checkbox, Tooltip } from '@/ui';
+import { transformeValeurs } from 'app/pages/collectivite/Indicateurs/Indicateur/detail/transformeValeurs';
+import { useIndicateurValeurs } from 'app/pages/collectivite/Indicateurs/useIndicateurValeurs';
+import { useCurrentCollectivite } from 'core-logic/hooks/useCurrentCollectivite';
 import { useEffect } from 'react';
 import { Tab, Tabs, useActiveTab } from 'ui/shared/Tabs';
-import { TIndicateurDefinition } from '../../types';
 import { SOURCE_COLLECTIVITE } from '../../constants';
-import { useCurrentCollectivite } from 'core-logic/hooks/useCurrentCollectivite';
+import { TIndicateurDefinition } from '../../types';
 import { IndicateurValuesTable } from './IndicateurValuesTable';
 import { useToggleIndicateurConfidentiel } from './useToggleIndicateurConfidentiel';
-import { Checkbox, Tooltip } from '@tet/ui';
-import { useIndicateurValeurs } from 'app/pages/collectivite/Indicateurs/useIndicateurValeurs';
-import { transformeValeurs } from 'app/pages/collectivite/Indicateurs/Indicateur/detail/transformeValeurs';
 
 /** Affiche les onglets résultats/objectifs */
 export const IndicateurValuesTabs = ({

@@ -1,5 +1,5 @@
-import {Theme} from '@nivo/core';
-import {preset} from '@tet/ui';
+import { preset } from '@/ui';
+import { Theme } from '@nivo/core';
 
 const colorTheme = preset.theme.extend.colors;
 

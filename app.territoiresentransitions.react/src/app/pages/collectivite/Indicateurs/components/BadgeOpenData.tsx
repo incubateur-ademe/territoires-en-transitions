@@ -1,11 +1,11 @@
-import {Badge, BadgeProps, Tooltip} from '@tet/ui';
+import { Badge, BadgeProps, Tooltip } from '@/ui';
 
 type Props = {
   size?: BadgeProps['size'];
 };
 
 /** Badge permettant de savoir si l'indicateur détient des données en open data */
-const BadgeOpenData = ({size}: Props) => {
+const BadgeOpenData = ({ size }: Props) => {
   return (
     <Tooltip
       className="max-w-xs"

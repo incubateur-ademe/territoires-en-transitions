@@ -1,7 +1,7 @@
 'use client';
 
+import { Checkbox } from '@/ui';
 import { RedStar } from '@tet/site/components/labellisation/Star';
-import { Checkbox } from '@tet/ui';
 import { useEffect, useState } from 'react';
 
 type FiltreEtoilesProps = {

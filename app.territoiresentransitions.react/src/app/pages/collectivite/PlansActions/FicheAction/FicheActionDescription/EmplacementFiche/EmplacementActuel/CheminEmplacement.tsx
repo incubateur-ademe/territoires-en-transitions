@@ -1,6 +1,6 @@
-import {Icon} from '@tet/ui';
-import {usePlanActionChemin} from '../../../../PlanAction/data/usePlanActionChemin';
-import {useRemoveFicheFromAxe} from '../../../data/useRemoveFicheFromAxe';
+import { Icon } from '@/ui';
+import { usePlanActionChemin } from '../../../../PlanAction/data/usePlanActionChemin';
+import { useRemoveFicheFromAxe } from '../../../data/useRemoveFicheFromAxe';
 import DeleteButton from '../../../DeleteButton';
 
 type CheminEmplacementProps = {
@@ -8,11 +8,11 @@ type CheminEmplacementProps = {
   axeId: number;
 };
 
-const CheminEmplacement = ({ficheId, axeId}: CheminEmplacementProps) => {
-  const {data} = usePlanActionChemin(axeId);
-  const {chemin} = data ?? {};
+const CheminEmplacement = ({ ficheId, axeId }: CheminEmplacementProps) => {
+  const { data } = usePlanActionChemin(axeId);
+  const { chemin } = data ?? {};
 
-  const {mutate: removeFicheFromAxe} = useRemoveFicheFromAxe();
+  const { mutate: removeFicheFromAxe } = useRemoveFicheFromAxe();
 
   if (!chemin || chemin?.length === 0) return null;
 

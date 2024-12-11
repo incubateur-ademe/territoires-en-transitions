@@ -5,8 +5,8 @@ import {
   Modal,
   ModalFooterOKCancel,
   Textarea,
-} from '@tet/ui';
-import { OpenState } from '@tet/ui/utils/types';
+} from '@/ui';
+import { OpenState } from '@/ui/utils/types';
 import _ from 'lodash';
 import { useState } from 'react';
 import EffetsAttendusDropdown from 'ui/dropdownLists/ficheAction/EffetsAttendusDropdown/EffetsAttendusDropdown';

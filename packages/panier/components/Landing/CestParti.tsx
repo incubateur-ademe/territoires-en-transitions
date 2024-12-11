@@ -1,8 +1,8 @@
 'use client';
 
 import { getAuthPaths } from '@/api';
+import { Button, Icon, useEventTracker } from '@/ui';
 import { panierAPI } from '@tet/panier/src/clientAPI';
-import { Button, Icon, useEventTracker } from '@tet/ui';
 import { useParams, usePathname, useRouter } from 'next/navigation';
 import { useState } from 'react';
 import { useUserContext } from '../../providers';

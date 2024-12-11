@@ -8,15 +8,15 @@ import {
   getNextTrackingEnv,
   ScriptLikeProps,
   TrackingProvider,
-} from '@tet/ui';
+} from '@/ui';
 import Script from 'next/script';
 
 const client = createTrackingClient(getNextTrackingEnv());
 const onConsentSave = () => {
-  client.set_config({persistence: getConsent() ? 'cookie' : 'memory'});
+  client.set_config({ persistence: getConsent() ? 'cookie' : 'memory' });
 };
 
-export const PHProvider = ({children}: {children: React.ReactNode}) => {
+export const PHProvider = ({ children }: { children: React.ReactNode }) => {
   return (
     <>
       <TrackingProvider client={client}>{children}</TrackingProvider>

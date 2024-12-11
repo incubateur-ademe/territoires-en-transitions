@@ -1,4 +1,4 @@
-import { Icon } from '@tet/ui/design-system/Icon';
+import { Icon } from '@/ui/design-system/Icon';
 import classNames from 'classnames';
 
 type TagProps = {

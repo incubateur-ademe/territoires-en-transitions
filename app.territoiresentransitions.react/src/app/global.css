@@ -1,5 +1,5 @@
 /* feuille de styles globale fourni par le module partagé */
-@import '@tet/ui/global.css';
+@import '@/ui/global.css';
 
 /* jeux d'icônes supplémentaires */
 @import '@gouvfr/dsfr/dist/utility/icons/icons-document/icons-document.min.css';

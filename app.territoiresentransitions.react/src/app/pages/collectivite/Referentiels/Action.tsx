@@ -1,4 +1,4 @@
-import { Alert } from '@tet/ui';
+import { Alert } from '@/ui';
 import HistoriqueListe from 'app/pages/collectivite/Historique/HistoriqueListe';
 import { OrientationQuickNav } from 'app/pages/collectivite/Referentiels/QuickNav';
 import {

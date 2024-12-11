@@ -1,6 +1,6 @@
 import classNames from 'classnames';
 
-import { Button, Pagination, Select } from '@tet/ui';
+import { Button, Pagination, Select } from '@/ui';
 
 import { CollectiviteEngagee } from '@/api';
 import { Grid } from 'app/pages/CollectivitesEngagees/Views/Grid';

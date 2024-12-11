@@ -1,13 +1,13 @@
 'use server';
 
+import { Alert, TrackPageView } from '@/ui';
 import NoResult from '@tet/site/components/info/NoResult';
 import Section from '@tet/site/components/sections/Section';
 import { StrapiImage } from '@tet/site/components/strapiImage/StrapiImage';
-import ContactForm from './ContactForm';
-import { Metadata, ResolvingMetadata } from 'next';
-import { getStrapiData } from './utils';
 import { getUpdatedMetadata } from '@tet/site/src/utils/getUpdatedMetadata';
-import { Alert, TrackPageView } from '@tet/ui';
+import { Metadata, ResolvingMetadata } from 'next';
+import ContactForm from './ContactForm';
+import { getStrapiData } from './utils';
 
 export async function generateMetadata(
   params: { params: unknown },

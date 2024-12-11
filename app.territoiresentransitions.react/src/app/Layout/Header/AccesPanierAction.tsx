@@ -1,6 +1,6 @@
 import { PanierAPI } from '@/api';
+import { Button } from '@/ui';
 import { makeCollectivitePanierUrl } from '@tet/app/paths';
-import { Button } from '@tet/ui';
 import classNames from 'classnames';
 import { supabaseClient } from 'core-logic/api/supabase';
 import { useCollectiviteId } from 'core-logic/hooks/params';

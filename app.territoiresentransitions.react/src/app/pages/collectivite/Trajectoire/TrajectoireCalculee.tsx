@@ -2,27 +2,27 @@ import {
   Button,
   ButtonGroup,
   Card,
-  Tabs,
-  Tab,
   Modal,
-  useOngletTracker,
+  Tab,
+  Tabs,
   useEventTracker,
-} from '@tet/ui';
-import {useCollectiviteId} from 'core-logic/hooks/params';
-import {useSearchParams} from 'core-logic/hooks/query';
-import {HELPDESK_URL, INDICATEURS_TRAJECTOIRE} from './constants';
-import {useResultatTrajectoire} from './useResultatTrajectoire';
-import {GrapheTousSecteurs} from './graphes/GrapheTousSecteurs';
-import {GrapheSecteur} from './graphes/GrapheSecteur';
-import {GrapheSousSecteurs} from './graphes/GrapheSousSecteurs';
-import {AllerPlusLoin} from './AllerPlusLoin';
-import {ComparezLaTrajectoire} from './ComparezLaTrajectoire';
-import {Methodologie} from './Methodologie';
-import {DonneesPartiellementDisponibles} from './DonneesPartiellementDisponibles';
-import {DonneesCollectivite} from './DonneesCollectivite/DonneesCollectivite';
-import {Dataset} from './graphes/utils';
+  useOngletTracker,
+} from '@/ui';
+import { useCollectiviteId } from 'core-logic/hooks/params';
+import { useSearchParams } from 'core-logic/hooks/query';
+import { AllerPlusLoin } from './AllerPlusLoin';
+import { ComparezLaTrajectoire } from './ComparezLaTrajectoire';
+import { HELPDESK_URL, INDICATEURS_TRAJECTOIRE } from './constants';
+import { DonneesCollectivite } from './DonneesCollectivite/DonneesCollectivite';
+import { DonneesPartiellementDisponibles } from './DonneesPartiellementDisponibles';
+import { GrapheSecteur } from './graphes/GrapheSecteur';
+import { GrapheSousSecteurs } from './graphes/GrapheSousSecteurs';
+import { GrapheTousSecteurs } from './graphes/GrapheTousSecteurs';
+import { Dataset } from './graphes/utils';
+import { Methodologie } from './Methodologie';
+import { useResultatTrajectoire } from './useResultatTrajectoire';
 
-const defaultParams = {indicateurIdx: ['0'], secteurIdx: ['0']};
+const defaultParams = { indicateurIdx: ['0'], secteurIdx: ['0'] };
 const nameToparams: Record<keyof typeof defaultParams, string> = {
   indicateurIdx: 'i',
   secteurIdx: 's',
@@ -43,7 +43,10 @@ export const TrajectoireCalculee = () => {
   const indicateur = INDICATEURS_TRAJECTOIRE[indicateurIdx];
 
   // secteur sélectionné
-  const secteurs = [{nom: 'Tous les secteurs'}, ...(indicateur.secteurs || [])];
+  const secteurs = [
+    { nom: 'Tous les secteurs' },
+    ...(indicateur.secteurs || []),
+  ];
   const secteur = secteurIdx === 0 ? null : indicateur.secteurs[secteurIdx - 1];
 
   // données de la trajectoire

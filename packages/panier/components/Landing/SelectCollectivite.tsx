@@ -1,9 +1,9 @@
 'use client';
 
-import {useState} from 'react';
-import {Select} from '@tet/ui';
-import { useFilteredCollectivites } from './useFilteredCollectivites';
+import { Select } from '@/ui';
+import { useState } from 'react';
 import { useCollectiviteInfo } from './useCollectiviteInfo';
+import { useFilteredCollectivites } from './useFilteredCollectivites';
 
 /**
  *  Permet de rechercher et sélectionner une collectivité

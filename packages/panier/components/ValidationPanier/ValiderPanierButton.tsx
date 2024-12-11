@@ -1,10 +1,10 @@
 'use client';
 
-import {useState} from 'react';
-import {useSearchParams} from 'next/navigation';
-import {Button, Modal, useEventTracker} from '@tet/ui';
+import { Button, Modal, useEventTracker } from '@/ui';
+import { usePanierContext } from '@tet/panier/providers';
+import { useSearchParams } from 'next/navigation';
+import { useState } from 'react';
 import ValiderPanierModale from './ValiderPanierModale';
-import {usePanierContext} from '@tet/panier/providers';
 
 /**
  * Le bouton “Valider la création” du panier d'action
@@ -12,12 +12,12 @@ import {usePanierContext} from '@tet/panier/providers';
  * Contrôle la modale de "Création de plan d’action”
  * Si le paramètre `modale` est égal à `creation` la modale est initialement ouverte
  */
-const ValiderPanierButton = ({disabled}: {disabled?: boolean}) => {
+const ValiderPanierButton = ({ disabled }: { disabled?: boolean }) => {
   const searchParams = useSearchParams();
   const initiallyOpen = searchParams.get('modale') === 'creation';
   const [createModalOpen, setCreateModalOpen] = useState(initiallyOpen);
   const tracker = useEventTracker('panier/panier');
-  const {panier} = usePanierContext();
+  const { panier } = usePanierContext();
 
   return (
     <>

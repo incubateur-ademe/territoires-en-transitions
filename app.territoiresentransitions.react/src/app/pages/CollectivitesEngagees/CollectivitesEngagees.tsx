@@ -1,5 +1,5 @@
 import { getRejoindreCollectivitePath } from '@/api';
-import { Button, Card } from '@tet/ui';
+import { Button, Card } from '@/ui';
 import {
   finaliserMonInscriptionUrl,
   recherchesCollectivitesUrl,

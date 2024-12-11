@@ -1,9 +1,9 @@
-import { Ref, forwardRef, ComponentType } from 'react';
-import { InputBase, InputBaseProps } from './InputBase';
 import {
   InputPattern,
   InputPatternProps,
-} from '@tet/ui/design-system/Input/InputPattern';
+} from '@/ui/design-system/Input/InputPattern';
+import { ComponentType, Ref, forwardRef } from 'react';
+import { InputBase, InputBaseProps } from './InputBase';
 import { validateInputNumLength } from './validateInputNumLength';
 
 export type InputOTPProps = Omit<

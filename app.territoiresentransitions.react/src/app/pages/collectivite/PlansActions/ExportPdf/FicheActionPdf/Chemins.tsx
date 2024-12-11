@@ -1,7 +1,7 @@
-import { preset } from '@tet/ui';
+import { preset } from '@/ui';
 import { TAxeRow } from 'types/alias';
-import { Paragraph, Stack } from 'ui/export-pdf/components';
 import { ArrowRightIcon } from 'ui/export-pdf/assets/icons';
+import { Paragraph, Stack } from 'ui/export-pdf/components';
 import { generateTitle } from '../../FicheAction/data/utils';
 
 const { colors } = preset.theme.extend;

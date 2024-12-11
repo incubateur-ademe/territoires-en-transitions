@@ -7,8 +7,8 @@ import {
   SortFichesAction,
   SortFichesActionValue,
 } from '@/api/plan-actions/fiche-resumes.list/domain/fetch-options.schema';
-import { Alert, Button, Checkbox, Input, Pagination, Select } from '@tet/ui';
-import { OpenState } from '@tet/ui/utils/types';
+import { Alert, Button, Checkbox, Input, Pagination, Select } from '@/ui';
+import { OpenState } from '@/ui/utils/types';
 import FicheActionCard from 'app/pages/collectivite/PlansActions/FicheAction/Carte/FicheActionCard';
 import PictoExpert from 'ui/pictogrammes/PictoExpert';
 import SpinnerLoader from 'ui/shared/SpinnerLoader';

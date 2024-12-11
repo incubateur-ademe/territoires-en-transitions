@@ -1,5 +1,5 @@
 import { FicheResume } from '@/api/plan-actions';
-import { preset } from '@tet/ui';
+import { preset } from '@/ui';
 import classNames from 'classnames';
 import { format, isBefore, startOfToday } from 'date-fns';
 import {

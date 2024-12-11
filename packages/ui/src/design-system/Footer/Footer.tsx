@@ -1,4 +1,4 @@
-import { Button } from '@tet/ui/design-system/Button';
+import { Button } from '@/ui/design-system/Button';
 import classNames from 'classnames';
 
 export type LinkObject = { label: string; href: string; external?: boolean };

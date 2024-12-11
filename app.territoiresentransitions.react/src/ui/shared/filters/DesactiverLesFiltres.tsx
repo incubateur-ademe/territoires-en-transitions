@@ -1,4 +1,4 @@
-import { Icon } from '@tet/ui';
+import { Icon } from '@/ui';
 import classNames from 'classnames';
 
 /** Bouton générique pour désactiver des filtres aux allures de DSFR */

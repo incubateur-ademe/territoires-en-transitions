@@ -1,8 +1,8 @@
-import {Dispatch, SetStateAction, useState} from 'react';
-import {Modal} from '@tet/ui';
+import { Modal } from '@/ui';
+import { Dispatch, SetStateAction, useState } from 'react';
 
-import {AddPreuveModal} from 'ui/shared/preuves/AddPreuveModal';
-import {useAddRapportVisite} from './useAddRapportVisite';
+import { AddPreuveModal } from 'ui/shared/preuves/AddPreuveModal';
+import { useAddRapportVisite } from './useAddRapportVisite';
 
 /**
  * Affiche un bouton permettant d'ouvrir le sélecteur de fichiers pour ajouter
@@ -13,7 +13,7 @@ export const AddRapportVisite = () => {
   const [date, setDate] = useState('');
   const handlers = useAddRapportVisite(date);
 
-  const onSetOpened: Dispatch<SetStateAction<boolean>> = value => {
+  const onSetOpened: Dispatch<SetStateAction<boolean>> = (value) => {
     setOpened(value);
     // quand on ferme le dialogue il faut aussi réinitialiser la date
     // sélectionnée pour que le sélecteur ré-apparaisse bien lors de la
@@ -26,9 +26,9 @@ export const AddRapportVisite = () => {
   return (
     <Modal
       size="lg"
-      openState={{isOpen: opened, setIsOpen: onSetOpened}}
+      openState={{ isOpen: opened, setIsOpen: onSetOpened }}
       title="Ajouter un rapport de visite annuelle"
-      render={({close}) => {
+      render={({ close }) => {
         return !date ? (
           <SelectDate setDate={setDate} />
         ) : (
@@ -48,7 +48,7 @@ export const AddRapportVisite = () => {
 };
 
 /** Affiche le sélecteur de date */
-const SelectDate = ({setDate}: {setDate: (value: string) => void}) => {
+const SelectDate = ({ setDate }: { setDate: (value: string) => void }) => {
   const [isValid, setIsValid] = useState(false);
   const [value, setValue] = useState('');
 
@@ -63,7 +63,7 @@ const SelectDate = ({setDate}: {setDate: (value: string) => void}) => {
           type="date"
           required
           pattern="\d{4}-\d{2}-\d{2}"
-          onChange={e => {
+          onChange={(e) => {
             setIsValid(e.target.validity.valid || false);
             setValue(e.target.value || '');
           }}

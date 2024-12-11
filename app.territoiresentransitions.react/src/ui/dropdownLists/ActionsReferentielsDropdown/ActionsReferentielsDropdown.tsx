@@ -1,6 +1,6 @@
-import {OptionValue, SelectFilter, SelectMultipleProps} from '@tet/ui';
-import {TActionRelationInsert, TActionStatutsRow} from 'types/alias';
-import {useActionsReferentielsListe} from './useActionsReferentielsListe';
+import { OptionValue, SelectFilter, SelectMultipleProps } from '@/ui';
+import { TActionRelationInsert, TActionStatutsRow } from 'types/alias';
+import { useActionsReferentielsListe } from './useActionsReferentielsListe';
 
 type ActionsReferentielsDropdownProps = Omit<
   SelectMultipleProps,
@@ -20,15 +20,15 @@ const ActionsReferentielsDropdown = ({
   ...props
 }: ActionsReferentielsDropdownProps) => {
   // Liste de toutes les actions
-  const {data: actionListe} = useActionsReferentielsListe();
+  const { data: actionListe } = useActionsReferentielsListe();
 
   // Formattage des valeurs sélectionnées pour les renvoyer au composant parent
   const getSelectedActions = (values?: OptionValue[]) => {
     const selectedActions = (actionListe ?? []).filter(
-      (action: TActionStatutsRow) => values?.some(v => v === action.action_id)
+      (action: TActionStatutsRow) => values?.some((v) => v === action.action_id)
     );
     const formatedActions: TActionRelationInsert[] = selectedActions.map(
-      action => ({
+      (action) => ({
         id: action.action_id,
         referentiel: action.referentiel,
       })
@@ -37,7 +37,7 @@ const ActionsReferentielsDropdown = ({
   };
 
   // Calcul de la liste des options pour le select
-  const options = (actionListe ?? []).map(action => ({
+  const options = (actionListe ?? []).map((action) => ({
     value: action.action_id,
     label: `${action.referentiel} ${action.identifiant} - ${action.nom}`,
   }));
@@ -48,7 +48,7 @@ const ActionsReferentielsDropdown = ({
       isSearcheable
       options={options}
       placeholder={props.placeholder ?? 'Recherchez par mots-clés'}
-      onChange={({values, selectedValue}) =>
+      onChange={({ values, selectedValue }) =>
         props.onChange({
           actions: getSelectedActions(values) as TActionRelationInsert[],
           selectedAction: getSelectedActions([

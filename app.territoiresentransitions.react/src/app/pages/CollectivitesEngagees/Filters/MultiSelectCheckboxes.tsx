@@ -1,4 +1,4 @@
-import {Checkbox, Option} from '@tet/ui';
+import { Checkbox, Option } from '@/ui';
 
 export type TMultiSelectCheckboxesProps = {
   htmlId: string;
@@ -12,8 +12,8 @@ export type TMultiSelectCheckboxesProps = {
  * Permet de sélectionner plusieurs options d'une liste via des checkboxes
  */
 export const MultiSelectCheckboxes = (props: TMultiSelectCheckboxesProps) => {
-  const {selected, title, options, onChange} = props;
-  const optionsIncludingAll = [{value: 'all', label: 'Tous'}, ...options];
+  const { selected, title, options, onChange } = props;
+  const optionsIncludingAll = [{ value: 'all', label: 'Tous' }, ...options];
 
   return (
     <div>
@@ -21,7 +21,7 @@ export const MultiSelectCheckboxes = (props: TMultiSelectCheckboxesProps) => {
         {title}
       </div>
       <div className="flex flex-col gap-4">
-        {optionsIncludingAll.map(option => (
+        {optionsIncludingAll.map((option) => (
           <Checkbox
             key={option.value}
             label={option.label}
@@ -31,13 +31,13 @@ export const MultiSelectCheckboxes = (props: TMultiSelectCheckboxesProps) => {
                 ? option.value === 'all'
                 : selected.includes(option.value as string)
             }
-            onChange={e => {
+            onChange={(e) => {
               if (e.currentTarget.checked) {
                 if (option.value === 'all') {
                   onChange([]);
                 } else onChange([...selected, option.value as string]);
               } else {
-                onChange(selected.filter(s => s !== option.value));
+                onChange(selected.filter((s) => s !== option.value));
               }
             }}
           />

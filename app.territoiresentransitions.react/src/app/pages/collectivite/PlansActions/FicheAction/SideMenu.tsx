@@ -1,6 +1,6 @@
-import {useEffect, useState} from 'react';
+import { Button } from '@/ui';
 import classNames from 'classnames';
-import {Button} from '@tet/ui';
+import { useEffect, useState } from 'react';
 
 type SideMenuProps = {
   children: JSX.Element;
@@ -9,7 +9,7 @@ type SideMenuProps = {
   setIsOpen: (value: boolean) => void;
 };
 
-const SideMenu = ({children, title, isOpen, setIsOpen}: SideMenuProps) => {
+const SideMenu = ({ children, title, isOpen, setIsOpen }: SideMenuProps) => {
   const [displayContent, setDisplayContent] = useState(false);
 
   useEffect(() => {
@@ -35,7 +35,7 @@ const SideMenu = ({children, title, isOpen, setIsOpen}: SideMenuProps) => {
           'right-0': isOpen,
         }
       )}
-      style={isOpen ? {boxShadow: '-1px 0px 12px 1px #ddd'} : {}}
+      style={isOpen ? { boxShadow: '-1px 0px 12px 1px #ddd' } : {}}
     >
       {/* Titre + bouton de fermeture */}
       <div className="p-4 flex justify-between items-center bg-white border-b border-b-grey-3 shadow-sm z-[801] top-0">

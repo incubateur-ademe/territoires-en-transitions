@@ -1,5 +1,5 @@
 import { Tag } from '@/api/shared/domain';
-import { SelectMultipleProps } from '@tet/ui';
+import { SelectMultipleProps } from '@/ui';
 import SelectTags from '../tags/SelectTags';
 import { usePartenairesListe } from './usePartenairesListe';
 

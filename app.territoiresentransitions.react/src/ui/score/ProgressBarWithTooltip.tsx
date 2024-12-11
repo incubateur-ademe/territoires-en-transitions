@@ -1,11 +1,11 @@
-import {toFixed} from 'utils/toFixed';
-import ProgressBar, {ProgressBarType} from './ProgressBar';
-import {Tooltip} from '@tet/ui';
+import { Tooltip } from '@/ui';
+import { toFixed } from 'utils/toFixed';
+import ProgressBar, { ProgressBarType } from './ProgressBar';
 
 type ProgressBarTooltipContentProps = {
-  score: {label: string; value: number; color: string}[];
+  score: { label: string; value: number; color: string }[];
   total: number;
-  defaultScore: {label: string; color: string};
+  defaultScore: { label: string; color: string };
   percent?: boolean;
 };
 
@@ -61,7 +61,7 @@ const ProgressBarTooltipContent = ({
   return (
     <div className="flex flex-col gap-1">
       {/* Liste des éléments dans score */}
-      {score.map(s =>
+      {score.map((s) =>
         s.value > 1e-3 ? (
           <ProgressBarTooltipElement
             key={s.label}
@@ -102,7 +102,13 @@ const ProgressBarTooltipElement = ({
   );
 };
 
-const Square = ({size, color}: {size: number; color: string}): JSX.Element => (
+const Square = ({
+  size,
+  color,
+}: {
+  size: number;
+  color: string;
+}): JSX.Element => (
   <svg width={size} height={size}>
     <rect fill={color} stroke="white" width={size} height={size} />
   </svg>

@@ -1,4 +1,4 @@
-import { Button, useEventTracker } from '@tet/ui';
+import { Button, useEventTracker } from '@/ui';
 
 import { ModuleIndicateursSelect } from '@/api/plan-actions/dashboards/personal-dashboard/domain/module.schema';
 import Module from '@tet/app/pages/collectivite/TableauDeBord/components/Module';

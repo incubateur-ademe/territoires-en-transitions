@@ -1,8 +1,8 @@
+import { ButtonVariant } from '@/ui';
 import { StrapiImage } from '@tet/site/components/strapiImage/StrapiImage';
-import classNames from 'classnames';
 import { StrapiItem } from '@tet/site/src/strapi/StrapiItem';
+import classNames from 'classnames';
 import Slideshow from './Slideshow';
-import { ButtonVariant } from '@tet/ui';
 
 type TestimonialSlideshowProps = {
   contenu: {

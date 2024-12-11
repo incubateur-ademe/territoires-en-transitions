@@ -1,13 +1,13 @@
-import { Field } from '@tet/ui';
-import { objectToSnake } from 'ts-case-convert';
+import { Field } from '@/ui';
+import FichesLieesListe from 'app/pages/collectivite/PlansActions/FicheAction/FichesLiees/FichesLieesListe';
 import { useCurrentCollectivite } from 'core-logic/hooks/useCurrentCollectivite';
+import { objectToSnake } from 'ts-case-convert';
+import FichesActionsDropdown from 'ui/dropdownLists/FichesActionsDropdown/FichesActionsDropdown';
+import { TIndicateurDefinition } from '../types';
 import {
   useFichesActionLiees,
   useUpdateFichesActionLiees,
 } from './useFichesActionLiees';
-import { TIndicateurDefinition } from '../types';
-import FichesActionsDropdown from 'ui/dropdownLists/FichesActionsDropdown/FichesActionsDropdown';
-import FichesLieesListe from 'app/pages/collectivite/PlansActions/FicheAction/FichesLiees/FichesLieesListe';
 
 export type TFichesActionProps = {
   definition: TIndicateurDefinition;

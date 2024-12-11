@@ -12,7 +12,7 @@ import {
   SelectMultiple,
   TrackPageView,
   useEventTracker,
-} from '@tet/ui';
+} from '@/ui';
 import { useState } from 'react';
 import { CollectiviteSelectionnee } from './CollectiviteSelectionnee';
 import {

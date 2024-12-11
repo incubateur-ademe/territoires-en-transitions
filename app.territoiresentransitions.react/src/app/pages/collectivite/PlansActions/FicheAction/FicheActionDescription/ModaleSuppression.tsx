@@ -1,5 +1,5 @@
+import { Modal, ModalFooterOKCancel } from '@/ui';
 import { QueryKey } from 'react-query';
-import { ButtonVariant, Modal, ModalFooterOKCancel } from '@tet/ui';
 import { useDeleteFicheAction } from '../data/useDeleteFicheAction';
 import DeleteButton from '../DeleteButton';
 

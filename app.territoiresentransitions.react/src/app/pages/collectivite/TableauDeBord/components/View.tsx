@@ -1,4 +1,4 @@
-import { TrackPageView } from '@tet/ui';
+import { TrackPageView } from '@/ui';
 import { TDBViewParam } from 'app/paths';
 import { useCollectiviteId } from 'core-logic/hooks/params';
 

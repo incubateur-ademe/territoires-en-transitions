@@ -4,13 +4,6 @@ import {
   getCollectivitePlanPath,
   getRejoindreCollectivitePath,
 } from '@/api';
-import StepperValidation from '@tet/panier/components/Stepper/StepperValidation';
-import {
-  useCollectiviteContext,
-  usePanierContext,
-  useUserContext,
-} from '@tet/panier/providers';
-import { panierAPI } from '@tet/panier/src/clientAPI';
 import {
   Button,
   Divider,
@@ -18,7 +11,14 @@ import {
   OptionValue,
   Select,
   useEventTracker,
-} from '@tet/ui';
+} from '@/ui';
+import StepperValidation from '@tet/panier/components/Stepper/StepperValidation';
+import {
+  useCollectiviteContext,
+  usePanierContext,
+  useUserContext,
+} from '@tet/panier/providers';
+import { panierAPI } from '@tet/panier/src/clientAPI';
 import { useRouter } from 'next/navigation';
 import { useState } from 'react';
 import Fireworks from 'react-canvas-confetti/dist/presets/fireworks';

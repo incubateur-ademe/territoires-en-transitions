@@ -1,5 +1,5 @@
-import { Button, ButtonSize } from '@tet/ui/design-system/Button';
-import { Icon, IconSize } from '@tet/ui/design-system/Icon';
+import { Button, ButtonSize } from '@/ui/design-system/Button';
+import { Icon, IconSize } from '@/ui/design-system/Icon';
 import classNames from 'classnames';
 
 const buttonSizeToIconSize: Record<ButtonSize, IconSize> = {

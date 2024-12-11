@@ -1,17 +1,17 @@
 'use server';
 
+import { TrackPageView } from '@/ui';
+import Trajectoire from '@tet/site/app/outil-numerique/Trajectoire';
 import NoResult from '@tet/site/components/info/NoResult';
+import { getUpdatedMetadata } from '@tet/site/src/utils/getUpdatedMetadata';
+import { Metadata, ResolvingMetadata } from 'next';
 import AvantagesPlateforme from './AvantagesPlateforme';
 import EquipePlateforme from './EquipePlateforme';
 import HeaderPlateforme from './HeaderPlateforme';
+import PanierActionsImpact from './PanierActionsImpact';
 import QuestionsPlateforme from './QuestionsPlateforme';
 import TemoignagesPlateforme from './TemoignagesPlateforme';
 import { getStrapiData } from './utils';
-import { Metadata, ResolvingMetadata } from 'next';
-import { getUpdatedMetadata } from '@tet/site/src/utils/getUpdatedMetadata';
-import PanierActionsImpact from './PanierActionsImpact';
-import Trajectoire from '@tet/site/app/outil-numerique/Trajectoire';
-import { TrackPageView } from '@tet/ui';
 
 export async function generateMetadata(
   { params }: { params: unknown },

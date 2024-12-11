@@ -1,19 +1,19 @@
-import { useState } from 'react';
-import { Button } from '@tet/ui';
+import { Button } from '@/ui';
 import { referentielToName } from 'app/labels';
-import { useProgressionReferentiel } from './data/useProgressionReferentiel';
-import EtatDesLieux from './EtatDesLieux/EtatDesLieux';
+import { useAuth } from 'core-logic/api/auth/AuthProvider';
 import {
   CurrentCollectivite,
   useCurrentCollectivite,
 } from 'core-logic/hooks/useCurrentCollectivite';
-import { useAuth } from 'core-logic/api/auth/AuthProvider';
-import {
-  useMembres,
-  groupeParFonction,
-} from './EtatDesLieux/referents/useMembres';
+import { useState } from 'react';
+import { useProgressionReferentiel } from './data/useProgressionReferentiel';
+import EtatDesLieux from './EtatDesLieux/EtatDesLieux';
 import { ModaleReferents } from './EtatDesLieux/referents/ModaleReferents';
 import { ReferentsList } from './EtatDesLieux/referents/ReferentsList';
+import {
+  groupeParFonction,
+  useMembres,
+} from './EtatDesLieux/referents/useMembres';
 
 /**
  * Affiche la page d'accueil d'une collectivité

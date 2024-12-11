@@ -1,9 +1,9 @@
-import {useCurrentCollectivite} from 'core-logic/hooks/useCurrentCollectivite';
-import {useState} from 'react';
-import {Modal} from '@tet/ui';
+import { Modal } from '@/ui';
+import { useCurrentCollectivite } from 'core-logic/hooks/useCurrentCollectivite';
+import { useState } from 'react';
 
-import {AddPreuveModal} from 'ui/shared/preuves/AddPreuveModal';
-import {useAddPreuveToAudit} from './useAddPreuveToAudit';
+import { AddPreuveModal } from 'ui/shared/preuves/AddPreuveModal';
+import { useAddPreuveToAudit } from './useAddPreuveToAudit';
 
 export type TAddDocsButtonProps = {
   audit_id: number;
@@ -24,9 +24,9 @@ export const AddRapportButton = (props: TAddDocsButtonProps) => {
   return (
     <Modal
       size="lg"
-      openState={{isOpen: opened, setIsOpen: setOpened}}
+      openState={{ isOpen: opened, setIsOpen: setOpened }}
       title="Ajouter le rapport d'audit"
-      render={({close}) => {
+      render={({ close }) => {
         return <AddPreuveModal onClose={close} handlers={handlers} />;
       }}
     >

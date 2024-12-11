@@ -4,11 +4,11 @@ import {
   ActionImpactFull,
   Panier,
 } from '@/api';
+import { Alert } from '@/ui';
 import { ActionImpact } from '@tet/panier/components/ActionImpact';
 import BasketPicto from '@tet/panier/components/Picto/BasketPicto';
 import EmptyBasketPicto from '@tet/panier/components/Picto/EmptyBasketPicto';
 import ValiderPanierButton from '@tet/panier/components/ValidationPanier/ValiderPanierButton';
-import { Alert } from '@tet/ui';
 import { AjouterActionsRealiseesOuEnCours } from './AjouterActionsRealiseesOuEnCours';
 import { AjouterActionsRealiseesOuEnCoursState } from './useAjouterActionsRealiseesOuEnCoursState';
 

@@ -1,11 +1,11 @@
 import classNames from 'classnames';
 import { Ref, forwardRef } from 'react';
 
-import { ButtonHTMLProps, isLink } from '@tet/ui/utils/types';
+import { ButtonHTMLProps, isLink } from '@/ui/utils/types';
+import Link from 'next/link';
 import ButtonContent from './ButtonContent';
 import { buttonSizeClassnames, buttonThemeClassnames } from './theme';
 import { ButtonContentProps, ButtonProps } from './types';
-import Link from 'next/link';
 
 /**
  * Composant bouton par défaut, ayant pour props toutes les props habituelles d'un button tag.

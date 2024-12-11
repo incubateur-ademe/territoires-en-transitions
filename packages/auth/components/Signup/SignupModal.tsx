@@ -1,14 +1,14 @@
-import {useState} from 'react';
-import {Modal} from '@tet/ui';
-import {SignupProps, SignupView} from './type';
-import {Signup} from './Signup';
+import { Modal } from '@/ui';
+import { useState } from 'react';
+import { Signup } from './Signup';
+import { SignupProps, SignupView } from './type';
 
 /**
  * Encapsule le panneau de création de compte dans une modale
  */
 export const SignupModal = (props: SignupProps) => {
   const [isOpen, setIsOpen] = useState(true);
-  const {view, onCancel} = props;
+  const { view, onCancel } = props;
 
   const onClose = () => {
     setIsOpen(false);
@@ -22,7 +22,7 @@ export const SignupModal = (props: SignupProps) => {
       backdropBlur
       size={mdDialog.includes(view) ? 'md' : 'lg'}
       title={getTitle(view)}
-      openState={{isOpen, setIsOpen}}
+      openState={{ isOpen, setIsOpen }}
       onClose={onClose}
       noCloseButton={view === 'etape3'}
       render={() => <Signup {...props} onCancel={() => onClose()} />}

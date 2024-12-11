@@ -1,10 +1,10 @@
 'use client';
 
-import Image from 'next/image';
-import { Badge } from '@tet/ui';
-import classNames from 'classnames';
-import { getLocalDateString } from '@tet/site/src/utils/getLocalDateString';
+import { Badge } from '@/ui';
 import Markdown from '@tet/site/components/markdown/Markdown';
+import { getLocalDateString } from '@tet/site/src/utils/getLocalDateString';
+import classNames from 'classnames';
+import Image from 'next/image';
 
 type BlogCardProps = {
   title: string;

@@ -1,5 +1,5 @@
-import { Icon, IconSize } from '@tet/ui/design-system/Icon';
-import { Tooltip, TooltipProps } from '@tet/ui/design-system/Tooltip';
+import { Icon, IconSize } from '@/ui/design-system/Icon';
+import { Tooltip, TooltipProps } from '@/ui/design-system/Tooltip';
 import classNames from 'classnames';
 
 type InfoTooltipProps = Omit<TooltipProps, 'children'> & {

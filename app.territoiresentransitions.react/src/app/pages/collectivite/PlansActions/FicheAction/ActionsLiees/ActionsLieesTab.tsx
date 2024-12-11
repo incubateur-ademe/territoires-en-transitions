@@ -1,5 +1,5 @@
 import { FicheAction } from '@/api/plan-actions';
-import { Button } from '@tet/ui';
+import { Button } from '@/ui';
 import { useState } from 'react';
 import SpinnerLoader from 'ui/shared/SpinnerLoader';
 import EmptyCard from '../EmptyCard';

@@ -1,7 +1,7 @@
+import { Button } from '@/ui/design-system/Button';
 import { Meta, StoryObj } from '@storybook/react';
-import { ControlledAlert, Alert } from './Alert';
 import { useState } from 'react';
-import { Button } from '@tet/ui/design-system/Button';
+import { Alert, ControlledAlert } from './Alert';
 
 const meta: Meta<typeof Alert> = {
   component: Alert,

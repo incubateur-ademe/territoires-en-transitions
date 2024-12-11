@@ -1,7 +1,7 @@
 import { useEffect, useState } from 'react';
 
 import { Indicateurs } from '@/api';
-import { Checkbox, Field, Input } from '@tet/ui';
+import { Checkbox, Field, Input } from '@/ui';
 
 import { IndicateurListItem } from '@/api/indicateurs/domain';
 import { useFilteredIndicateurDefinitions } from 'app/pages/collectivite/Indicateurs/lists/useFilteredIndicateurDefinitions';

@@ -1,12 +1,12 @@
-import {TLabellisationParcours} from './types';
-import {Alert} from '@tet/ui';
+import { Alert } from '@/ui';
+import { TLabellisationParcours } from './types';
 
 export const MessageCompletudeECi = ({
   parcours,
 }: {
   parcours: TLabellisationParcours | null;
 }) => {
-  const {referentiel, etoiles} = parcours || {};
+  const { referentiel, etoiles } = parcours || {};
 
   return referentiel === 'eci' && etoiles !== '1' ? (
     <Alert

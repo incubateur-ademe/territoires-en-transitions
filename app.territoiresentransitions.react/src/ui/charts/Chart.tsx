@@ -1,8 +1,8 @@
-import {ModalSize} from '@tet/ui';
+import { ModalSize } from '@/ui';
 
-import DonutChart, {DonutChartProps} from './Donut/DonutChart';
-import LineChart, {LineChartProps} from './Line/LineChart';
 import ChartModal from './ChartModal';
+import DonutChart, { DonutChartProps } from './Donut/DonutChart';
+import LineChart, { LineChartProps } from './Line/LineChart';
 
 /** Informations détaillées du graphique visible sur la modale de téléchargement */
 export type ChartInfosProps = {
@@ -50,7 +50,7 @@ export type ChartProps = {
  * Il permet d'afficher le graphique et de le télécharger.
  */
 const Chart = (props: ChartProps) => {
-  const {infos, line, donut} = props;
+  const { infos, line, donut } = props;
 
   if (line && donut) {
     throw new Error(

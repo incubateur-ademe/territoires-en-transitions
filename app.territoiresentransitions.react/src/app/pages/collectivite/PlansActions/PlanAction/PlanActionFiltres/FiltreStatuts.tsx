@@ -1,5 +1,5 @@
 import { Statut } from '@/api/plan-actions';
-import { Field, OptionValue, SelectFilter } from '@tet/ui';
+import { Field, OptionValue, SelectFilter } from '@/ui';
 import { TFicheActionStatuts } from 'types/alias';
 import { TOption } from 'ui/shared/select/commons';
 import { ficheActionStatutOptions } from '../../../../../../ui/dropdownLists/listesStatiques';

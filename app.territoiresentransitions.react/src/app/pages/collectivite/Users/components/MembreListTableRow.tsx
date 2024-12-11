@@ -1,20 +1,19 @@
-import {useState} from 'react';
-import {Button, Icon, Tooltip} from '@tet/ui';
+import { Button, Icon, Tooltip } from '@/ui';
+import { useState } from 'react';
 
-import SelectDropdown from 'ui/shared/select/SelectDropdown';
-import MultiSelectDropdown from 'ui/shared/select/MultiSelectDropdown';
-import {ConfirmerSuppressionMembre} from './ConfirmerSuppressionMembre';
+import { membreFonctions, referentielToName } from 'app/labels';
+import { ConfirmerChangementNiveau } from 'app/pages/collectivite/Users/components/ConfirmerChangementNiveau';
 import {
   Membre,
   TRemoveFromCollectivite,
   TUpdateMembre,
 } from 'app/pages/collectivite/Users/types';
-import {Referentiel} from 'types/litterals';
-import {referentielToName} from 'app/labels';
-import {TNiveauAcces, TMembreFonction} from 'types/alias';
-import {SendInvitationArgs} from '../useSendInvitation';
-import {ConfirmerChangementNiveau} from 'app/pages/collectivite/Users/components/ConfirmerChangementNiveau';
-import { membreFonctions } from 'app/labels';
+import { TMembreFonction, TNiveauAcces } from 'types/alias';
+import { Referentiel } from 'types/litterals';
+import MultiSelectDropdown from 'ui/shared/select/MultiSelectDropdown';
+import SelectDropdown from 'ui/shared/select/SelectDropdown';
+import { SendInvitationArgs } from '../useSendInvitation';
+import { ConfirmerSuppressionMembre } from './ConfirmerSuppressionMembre';
 
 export type TMembreListTableRowProps = {
   currentUserId: string;
@@ -25,10 +24,10 @@ export type TMembreListTableRowProps = {
   sendInvitation: (args: SendInvitationArgs) => void;
 };
 
-const niveauAcces: {value: TNiveauAcces; label: string}[] = [
-  {value: 'admin', label: 'Admin'},
-  {value: 'edition', label: 'Édition'},
-  {value: 'lecture', label: 'Lecture'},
+const niveauAcces: { value: TNiveauAcces; label: string }[] = [
+  { value: 'admin', label: 'Admin' },
+  { value: 'edition', label: 'Édition' },
+  { value: 'lecture', label: 'Lecture' },
 ];
 
 const niveauAccessDetail: Record<TNiveauAcces, string> = {
@@ -41,7 +40,7 @@ const rowClassNames = 'h-20 border-b border-gray-300 bg-white';
 const cellClassNames = 'px-4';
 
 const MembreListTableRow = (props: TMembreListTableRowProps) => {
-  const {membre} = props;
+  const { membre } = props;
 
   // l'affichage est différent si le membre est en attente ou non d'acceptation d'une invitation
   return membre.user_id ? (
@@ -61,7 +60,7 @@ const MembreListTableRowInvite = ({
   removeFromCollectivite,
   sendInvitation,
 }: TMembreListTableRowProps) => {
-  const {user_id, email, niveau_acces, invitation_id} = membre;
+  const { user_id, email, niveau_acces, invitation_id } = membre;
 
   const isCurrentUser = currentUserId === user_id;
   const isAdmin = currentUserAccess === 'admin';
@@ -78,7 +77,7 @@ const MembreListTableRowInvite = ({
         </span>
       </td>
       <td className={cellClassNames}>
-        <span>{niveauAcces.find(v => v.value === niveau_acces)?.label}</span>
+        <span>{niveauAcces.find((v) => v.value === niveau_acces)?.label}</span>
       </td>
       <td className={cellClassNames}>
         <Tooltip label="En attente de validation">
@@ -113,7 +112,7 @@ const MembreListTableRowInvite = ({
                   variant="outlined"
                   icon="mail-send-line"
                   onClick={() =>
-                    sendInvitation({invitationId: invitation_id, email})
+                    sendInvitation({ invitationId: invitation_id, email })
                   }
                 />
               </Tooltip>
@@ -176,13 +175,14 @@ const MembreListTableRowAttache = (props: TMembreListTableRowProps) => {
         {canUpdate ? (
           <FonctionDropdown
             value={fonction}
-            onChange={value =>
-              updateMembre({membre_id, name: 'fonction', value})
+            onChange={(value) =>
+              updateMembre({ membre_id, name: 'fonction', value })
             }
           />
         ) : (
           <span>
-            {fonction && membreFonctions.find(v => v.value === fonction)?.label}
+            {fonction &&
+              membreFonctions.find((v) => v.value === fonction)?.label}
           </span>
         )}
       </td>
@@ -190,12 +190,12 @@ const MembreListTableRowAttache = (props: TMembreListTableRowProps) => {
         {canUpdate ? (
           <ChampsInterventionDropdown
             values={champ_intervention ?? []}
-            onChange={value =>
-              updateMembre({membre_id, name: 'champ_intervention', value})
+            onChange={(value) =>
+              updateMembre({ membre_id, name: 'champ_intervention', value })
             }
           />
         ) : (
-          (champ_intervention ?? []).map(champ => (
+          (champ_intervention ?? []).map((champ) => (
             <span key={champ} className="block">
               {referentielToName[champ]}
             </span>
@@ -207,7 +207,7 @@ const MembreListTableRowAttache = (props: TMembreListTableRowProps) => {
           <div className="py-1 px-2 border border-gray-300">
             <DetailsFonctionTextarea
               details_fonction={details_fonction ?? ''}
-              save={value =>
+              save={(value) =>
                 updateMembre({
                   membre_id,
                   name: 'details_fonction',
@@ -228,18 +228,20 @@ const MembreListTableRowAttache = (props: TMembreListTableRowProps) => {
             isCurrentUser={isCurrentUser}
             currentUserAccess={currentUserAccess}
             value={niveau_acces}
-            onSelect={value => {
+            onSelect={(value) => {
               // demande confirmation avant de changer le niveau d'accès de l'admin lui-même
               if (isCurrentUser && niveau_acces === 'admin') {
                 setSelectedOption(value);
                 setIsOpenChangeNiveau(true);
               } else {
-                updateMembre({membre_id, name: 'niveau_acces', value});
+                updateMembre({ membre_id, name: 'niveau_acces', value });
               }
             }}
           />
         ) : (
-          <span>{niveauAcces.find(v => v.value === niveau_acces)?.label}</span>
+          <span>
+            {niveauAcces.find((v) => v.value === niveau_acces)?.label}
+          </span>
         )}
       </td>
       <td className={cellClassNames}>
@@ -310,7 +312,7 @@ const DetailsFonctionTextarea = ({
       data-test="details_fonction-textarea"
       value={value}
       className="w-full cursor-text resize-none"
-      onChange={e => setValue(e.target.value)}
+      onChange={(e) => setValue(e.target.value)}
       onBlur={() => details_fonction !== value && save(value)}
     />
   );
@@ -334,8 +336,8 @@ const FonctionDropdown = ({
 );
 
 const referentiels = [
-  {label: referentielToName['eci'], value: 'eci'},
-  {label: referentielToName['cae'], value: 'cae'},
+  { label: referentielToName['eci'], value: 'eci' },
+  { label: referentielToName['cae'], value: 'cae' },
 ];
 
 const ChampsInterventionDropdown = ({
@@ -351,11 +353,11 @@ const ChampsInterventionDropdown = ({
       onSelect={onChange}
       values={values}
       placeholderText="À renseigner"
-      renderSelection={values => (
+      renderSelection={(values) => (
         <span className="mr-auto flex flex-col gap-2">
           {values.sort().map((value, index) => (
             <div key={value}>
-              {referentiels.find(({value: v}) => v === value)?.label || ''}
+              {referentiels.find(({ value: v }) => v === value)?.label || ''}
             </div>
           ))}
         </span>
@@ -376,7 +378,7 @@ const AccessDropdownLabel = ({
   if (currentUserAccess === 'admin')
     return (
       <div>
-        <div>{niveauAcces.find(v => v.value === option)?.label}</div>
+        <div>{niveauAcces.find((v) => v.value === option)?.label}</div>
         <div
           aria-label={niveauAccessDetail[option]}
           className="mt-1 text-xs text-gray-500"
@@ -402,7 +404,7 @@ const AccesDropdown = ({
   onSelect,
 }: TAccesDropdownProps) => {
   if (currentUserAccess !== 'admin')
-    return niveauAcces.find(v => v.value === currentUserAccess)?.label;
+    return niveauAcces.find((v) => v.value === currentUserAccess)?.label;
 
   return (
     <div data-test="acces-dropdown">
@@ -411,12 +413,12 @@ const AccesDropdown = ({
         value={value}
         onSelect={onSelect}
         options={niveauAcces}
-        renderSelection={value => (
+        renderSelection={(value) => (
           <span className="mr-auto">
-            {niveauAcces.find(v => v.value === value)?.label}
+            {niveauAcces.find((v) => v.value === value)?.label}
           </span>
         )}
-        renderOption={option => (
+        renderOption={(option) => (
           <AccessDropdownLabel
             option={option.value as TNiveauAcces}
             currentUserAccess={currentUserAccess}

@@ -1,13 +1,9 @@
 'use client';
 
-import { useEffect, useState } from 'react';
-import { usePathname, useRouter, useSearchParams } from 'next/navigation';
-import {
-  OptionValue,
-  SelectMultipleOnChangeArgs,
-  useEventTracker,
-} from '@tet/ui';
+import { OptionValue, SelectMultipleOnChangeArgs, useEventTracker } from '@/ui';
 import { usePanierContext } from '@tet/panier/providers';
+import { usePathname, useRouter, useSearchParams } from 'next/navigation';
+import { useEffect, useState } from 'react';
 import { BadgesFilters } from './BadgesFilters';
 import { ContenuListesFiltre } from './types';
 

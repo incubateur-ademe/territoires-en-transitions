@@ -1,5 +1,5 @@
 import { Indicateurs } from '@/api';
-import { SelectFilter, SelectProps } from '@tet/ui';
+import { SelectFilter, SelectProps } from '@/ui';
 import { getCategorieLabel } from './utils';
 
 type Props = Omit<SelectProps, 'values' | 'onChange' | 'options'> & {

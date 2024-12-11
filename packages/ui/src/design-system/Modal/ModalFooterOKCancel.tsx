@@ -1,4 +1,4 @@
-import { Button } from '@tet/ui/design-system/Button';
+import { Button } from '@/ui/design-system/Button';
 import { ButtonProps } from '../Button/types';
 import { ModalFooter, ModalFooterProps } from './ModalFooter';
 

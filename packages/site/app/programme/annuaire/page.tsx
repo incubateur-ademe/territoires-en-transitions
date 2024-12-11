@@ -1,10 +1,10 @@
 'use client';
 
+import { Input, Pagination } from '@/ui';
 import Section from '@tet/site/components/sections/Section';
-import CarteConseiller from './CarteConseiller';
-import { Input, Pagination } from '@tet/ui';
-import { ConseillerType, getData } from './utils';
 import { useEffect, useState } from 'react';
+import CarteConseiller from './CarteConseiller';
+import { ConseillerType, getData } from './utils';
 
 const PAGINATION_LIMIT = 12;
 

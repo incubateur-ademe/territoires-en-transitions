@@ -1,7 +1,7 @@
-import { TFiltreProps } from '../../FicheAction/data/filters';
-import { ficheActionEcheanceOptions } from '../../../../../../ui/dropdownLists/listesStatiques';
+import { Field, Select } from '@/ui';
 import { TFicheActionEcheances } from 'types/alias';
-import { Field, Select } from '@tet/ui';
+import { ficheActionEcheanceOptions } from '../../../../../../ui/dropdownLists/listesStatiques';
+import { TFiltreProps } from '../../FicheAction/data/filters';
 
 const FiltreEcheance = ({ filters, setFilters }: TFiltreProps) => {
   const { echeance } = filters;

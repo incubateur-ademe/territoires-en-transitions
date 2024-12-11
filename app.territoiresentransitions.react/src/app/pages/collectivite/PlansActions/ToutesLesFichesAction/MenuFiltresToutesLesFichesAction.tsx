@@ -1,5 +1,5 @@
 import { Filtre } from '@/api/plan-actions/fiche-resumes.list/domain/fetch-options.schema';
-import { Checkbox, Field, FormSection } from '@tet/ui';
+import { Checkbox, Field, FormSection } from '@/ui';
 import FinanceursDropdown from 'ui/dropdownLists/FinanceursDropdown/FinanceursDropdown';
 import PartenairesDropdown from 'ui/dropdownLists/PartenairesDropdown/PartenairesDropdown';
 import PersonnesDropdown from 'ui/dropdownLists/PersonnesDropdown/PersonnesDropdown';

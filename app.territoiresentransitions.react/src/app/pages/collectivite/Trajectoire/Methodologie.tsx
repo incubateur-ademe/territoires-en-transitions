@@ -1,6 +1,6 @@
+import { Card } from '@/ui';
 import { Fragment } from 'react';
-import { Card } from '@tet/ui';
-import { SecteurTrajectoire, METHODO_PAR_SECTEUR } from './constants';
+import { METHODO_PAR_SECTEUR, SecteurTrajectoire } from './constants';
 
 /** Affiche l'encadré "Méthodologie" (lorsqu'un secteur est sélectionné) */
 export const Methodologie = ({ secteur }: { secteur: SecteurTrajectoire }) => {

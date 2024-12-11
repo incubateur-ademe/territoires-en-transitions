@@ -1,13 +1,13 @@
-import {useQuery} from 'react-query';
+import { useQuery } from 'react-query';
 
-import {OptionSection} from '@tet/ui';
+import { OptionSection } from '@/ui';
 
-import {supabaseClient} from 'core-logic/api/supabase';
+import { supabaseClient } from 'core-logic/api/supabase';
 
 const fetchPlanTypeListe = async () => {
   const query = supabaseClient.from('plan_action_type').select();
 
-  const {error, data} = await query;
+  const { error, data } = await query;
   if (error) {
     throw new Error(error.message);
   }
@@ -17,12 +17,12 @@ const fetchPlanTypeListe = async () => {
 
 /** Renvoie la liste complète des types possibles de plan d'action */
 export const usePlanTypeListe = () => {
-  const {data} = useQuery(['plan_action_type'], () => fetchPlanTypeListe());
+  const { data } = useQuery(['plan_action_type'], () => fetchPlanTypeListe());
 
   /** Formate la liste pour créer des options avec section */
   const options = data?.reduce((acc: OptionSection[], curr) => {
     /** Ajout des sections */
-    if (!acc.some(v => v.title === curr.categorie)) {
+    if (!acc.some((v) => v.title === curr.categorie)) {
       acc.push({
         title: curr.categorie,
         options: [
@@ -34,7 +34,7 @@ export const usePlanTypeListe = () => {
       });
     } else {
       /** Ajout des options dans les sections */
-      acc[acc.findIndex(v => v.title === curr.categorie)].options.push({
+      acc[acc.findIndex((v) => v.title === curr.categorie)].options.push({
         value: curr.id,
         label: `${curr.type}${curr.detail ? ` (${curr.detail})` : ''}`,
       });
@@ -42,5 +42,5 @@ export const usePlanTypeListe = () => {
     return acc;
   }, []);
 
-  return {data, options};
+  return { data, options };
 };

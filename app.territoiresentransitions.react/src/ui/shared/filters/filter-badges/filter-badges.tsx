@@ -1,6 +1,6 @@
 import classNames from 'classnames';
 
-import { Badge } from '@tet/ui';
+import { Badge } from '@/ui';
 
 type Props = {
   /** valeurs des badges à afficher */

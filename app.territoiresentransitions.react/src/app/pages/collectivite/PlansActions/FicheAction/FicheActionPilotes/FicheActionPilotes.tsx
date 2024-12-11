@@ -4,7 +4,7 @@ import EmptyCard from '../EmptyCard';
 import EmptyActeursPicto from '../FicheActionActeurs/PictosActeurs/EmptyActeursPicto';
 import PersonnePilotePicto from './PersonnePilotePicto';
 
-import { Button } from '@tet/ui';
+import { Button } from '@/ui';
 import classNames from 'classnames';
 import ModalePilotes from '../FicheActionPilotes/ModalePilotes';
 

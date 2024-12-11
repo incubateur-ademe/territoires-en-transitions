@@ -1,5 +1,5 @@
 import { FicheAction } from '@/api/plan-actions';
-import { Icon, Notification } from '@tet/ui';
+import { Icon, Notification } from '@/ui';
 import classNames from 'classnames';
 import { useFicheActionImpactId } from './data/useFicheActionImpactId';
 import { ModaleActionImpact } from './FicheActionImpact/ModaleActionImpact';

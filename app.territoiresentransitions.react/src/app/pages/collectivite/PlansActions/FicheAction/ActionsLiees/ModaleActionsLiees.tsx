@@ -1,5 +1,5 @@
 import { FicheAction } from '@/api/plan-actions';
-import { Field, Modal, ModalFooterOKCancel } from '@tet/ui';
+import { Field, Modal, ModalFooterOKCancel } from '@/ui';
 import _ from 'lodash';
 import { useEffect, useState } from 'react';
 import ActionsReferentielsDropdown from 'ui/dropdownLists/ActionsReferentielsDropdown/ActionsReferentielsDropdown';

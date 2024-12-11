@@ -1,9 +1,9 @@
-import classNames from 'classnames';
-import { TIndicateurPredefini } from '../../types';
-import { BadgeACompleter } from 'ui/shared/Badge/BadgeACompleter';
-import { ExpandToggle } from 'ui/icons/ExpandToggle';
-import { Badge } from '@tet/ui';
+import { Badge } from '@/ui';
 import BadgeOpenData from 'app/pages/collectivite/Indicateurs/components/BadgeOpenData';
+import classNames from 'classnames';
+import { ExpandToggle } from 'ui/icons/ExpandToggle';
+import { BadgeACompleter } from 'ui/shared/Badge/BadgeACompleter';
+import { TIndicateurPredefini } from '../../types';
 
 /** Affiche l'en-tête du détail d'un indicateur enfant */
 export const IndicateurEnfantHeader = ({

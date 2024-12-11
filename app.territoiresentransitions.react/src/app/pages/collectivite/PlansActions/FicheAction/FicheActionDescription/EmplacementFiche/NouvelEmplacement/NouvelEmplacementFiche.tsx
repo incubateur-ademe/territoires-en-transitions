@@ -1,5 +1,5 @@
 import { FicheAction } from '@/api/plan-actions';
-import { Alert, Button } from '@tet/ui';
+import { Alert, Button } from '@/ui';
 import { useState } from 'react';
 import { TProfondeurAxe } from '../../../../PlanAction/data/types';
 import { usePlanActionProfondeur } from '../../../../PlanAction/data/usePlanActionProfondeur';

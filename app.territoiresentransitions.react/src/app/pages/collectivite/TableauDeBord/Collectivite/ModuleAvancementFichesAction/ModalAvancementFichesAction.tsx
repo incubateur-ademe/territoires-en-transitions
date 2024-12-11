@@ -7,7 +7,7 @@ import {
   Modal,
   ModalFooterOKCancel,
   ModalProps,
-} from '@tet/ui';
+} from '@/ui';
 
 import { modulesSave } from '@/api/plan-actions/dashboards/collectivite-dashboard';
 import { Filtre } from '@/api/plan-actions/dashboards/collectivite-dashboard/domain/fiches-synthese.schema';

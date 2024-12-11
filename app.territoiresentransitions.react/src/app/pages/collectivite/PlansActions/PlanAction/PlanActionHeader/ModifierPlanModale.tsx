@@ -1,11 +1,11 @@
 import { useState } from 'react';
 
+import { Field, Input, Modal, ModalFooterOKCancel } from '@/ui';
+import { OpenState } from '@/ui/utils/types';
+import { TPlanType } from 'types/alias';
 import PlanTypeDropdown from '../PlanTypeDropdown';
 import { PlanNode } from '../data/types';
 import { useEditAxe } from '../data/useEditAxe';
-import { TPlanType } from 'types/alias';
-import { Field, Input, Modal, ModalFooterOKCancel } from '@tet/ui';
-import { OpenState } from '@tet/ui/utils/types';
 
 type Props = {
   type?: TPlanType;

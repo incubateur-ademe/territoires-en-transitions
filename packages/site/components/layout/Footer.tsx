@@ -1,7 +1,7 @@
 'use client';
 
-import {usePathname} from 'next/navigation';
-import {FooterTeT} from '@tet/ui';
+import { FooterTeT } from '@/ui';
+import { usePathname } from 'next/navigation';
 
 const Footer = () => {
   const pathname = usePathname();

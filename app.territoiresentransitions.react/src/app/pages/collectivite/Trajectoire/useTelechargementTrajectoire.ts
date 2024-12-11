@@ -1,9 +1,9 @@
-import {useMutation} from 'react-query';
-import {useEventTracker} from '@tet/ui';
-import {useApiClient} from 'core-logic/api/useApiClient';
-import {saveBlob} from 'ui/shared/preuves/Bibliotheque/saveBlob';
-import {useCurrentCollectivite} from 'core-logic/hooks/useCurrentCollectivite';
-import {DOWNLOAD_FILE_MUTATION_OPTIONS} from 'utils/useDownloadFile';
+import { useEventTracker } from '@/ui';
+import { useApiClient } from 'core-logic/api/useApiClient';
+import { useCurrentCollectivite } from 'core-logic/hooks/useCurrentCollectivite';
+import { useMutation } from 'react-query';
+import { saveBlob } from 'ui/shared/preuves/Bibliotheque/saveBlob';
+import { DOWNLOAD_FILE_MUTATION_OPTIONS } from 'utils/useDownloadFile';
 
 /** Télécharge le fichier xlsx de la trajectoire */
 export const useTelechargementTrajectoire = () => {

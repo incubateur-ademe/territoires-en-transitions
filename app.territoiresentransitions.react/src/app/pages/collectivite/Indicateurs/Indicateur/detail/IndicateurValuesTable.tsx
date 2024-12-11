@@ -1,5 +1,5 @@
 import { Indicateurs } from '@/api';
-import { Button } from '@tet/ui';
+import { Button } from '@/ui';
 import { useEffect, useState } from 'react';
 import { SOURCE_COLLECTIVITE } from '../../constants';
 import { SourceType, TIndicateurDefinition } from '../../types';

@@ -1,7 +1,16 @@
-import { useCurrentCollectivite } from 'core-logic/hooks/useCurrentCollectivite';
-import { useAuth } from 'core-logic/api/auth/AuthProvider';
-import CollectivitePageLayout from '@tet/app/pages/collectivite/CollectivitePageLayout/CollectivitePageLayout';
+import { Button } from '@/ui';
+import { useNbActionsDansPanier } from '@tet/app/Layout/Header/AccesPanierAction';
+import PictoCollectivite from '@tet/app/pages/collectivite/Accueil/pictogrammes/PictoCollectivite';
+import PictoEtatDesLieux from '@tet/app/pages/collectivite/Accueil/pictogrammes/PictoEtatDesLieux';
+import PictoIndicateurs from '@tet/app/pages/collectivite/Accueil/pictogrammes/PictoIndicateurs';
+import PictoPanierActions from '@tet/app/pages/collectivite/Accueil/pictogrammes/PictoPanierActions';
+import PictoPlansAction from '@tet/app/pages/collectivite/Accueil/pictogrammes/PictoPlansAction';
+import PictoTrajectoire from '@tet/app/pages/collectivite/Accueil/pictogrammes/PictoTrajectoire';
 import SectionCard from '@tet/app/pages/collectivite/Accueil/SectionCard';
+import CollectivitePageLayout from '@tet/app/pages/collectivite/CollectivitePageLayout/CollectivitePageLayout';
+import { useCreateFicheAction } from '@tet/app/pages/collectivite/PlansActions/FicheAction/data/useCreateFicheAction';
+import { useFicheActionCount } from '@tet/app/pages/collectivite/PlansActions/FicheAction/data/useFicheActionCount';
+import { usePlanActionsCount } from '@tet/app/pages/collectivite/PlansActions/PlanAction/data/usePlanActionsCount';
 import {
   makeCollectivitePanierUrl,
   makeCollectivitePlansActionsNouveauUrl,
@@ -12,17 +21,8 @@ import {
   makeTableauBordUrl,
   recherchesCollectivitesUrl,
 } from '@tet/app/paths';
-import PictoEtatDesLieux from '@tet/app/pages/collectivite/Accueil/pictogrammes/PictoEtatDesLieux';
-import PictoPlansAction from '@tet/app/pages/collectivite/Accueil/pictogrammes/PictoPlansAction';
-import PictoIndicateurs from '@tet/app/pages/collectivite/Accueil/pictogrammes/PictoIndicateurs';
-import PictoTrajectoire from '@tet/app/pages/collectivite/Accueil/pictogrammes/PictoTrajectoire';
-import PictoCollectivite from '@tet/app/pages/collectivite/Accueil/pictogrammes/PictoCollectivite';
-import PictoPanierActions from '@tet/app/pages/collectivite/Accueil/pictogrammes/PictoPanierActions';
-import { Button } from '@tet/ui';
-import { useNbActionsDansPanier } from '@tet/app/Layout/Header/AccesPanierAction';
-import { useCreateFicheAction } from '@tet/app/pages/collectivite/PlansActions/FicheAction/data/useCreateFicheAction';
-import { useFicheActionCount } from '@tet/app/pages/collectivite/PlansActions/FicheAction/data/useFicheActionCount';
-import { usePlanActionsCount } from '@tet/app/pages/collectivite/PlansActions/PlanAction/data/usePlanActionsCount';
+import { useAuth } from 'core-logic/api/auth/AuthProvider';
+import { useCurrentCollectivite } from 'core-logic/hooks/useCurrentCollectivite';
 
 /**
  * Affiche la page d'accueil d'une collectivité

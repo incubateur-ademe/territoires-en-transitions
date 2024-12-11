@@ -1,13 +1,13 @@
+import { Breadcrumbs } from '@/ui';
 import { TScoreAuditRowData } from 'app/pages/collectivite/AuditComparaison/types';
+import { ActionReferentiel } from 'app/pages/collectivite/ReferentielTable/useReferentiel';
 import { ReferentielParamOption } from 'app/paths';
 import { useEffect, useState } from 'react';
 import { TableOptions } from 'react-table';
-import TagFilters from 'ui/shared/filters/TagFilters';
-import ChartCard from './ChartCard';
-import { getIndexTitles } from '../utils';
-import { Breadcrumbs } from '@tet/ui';
 import { TActionStatutsRow } from 'types/alias';
-import { ActionReferentiel } from 'app/pages/collectivite/ReferentielTable/useReferentiel';
+import TagFilters from 'ui/shared/filters/TagFilters';
+import { getIndexTitles } from '../utils';
+import ChartCard from './ChartCard';
 
 export type ProgressionRow = ActionReferentiel &
   Pick<

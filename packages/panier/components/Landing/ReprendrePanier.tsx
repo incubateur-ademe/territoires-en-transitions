@@ -1,12 +1,11 @@
 'use client';
 
-import {useParams, usePathname, useRouter} from 'next/navigation';
-import {useEventTracker, Button} from '@tet/ui';
+import { Button, useEventTracker } from '@/ui';
 import { useCollectiviteContext } from '@tet/panier/providers';
-
+import { useParams, usePathname, useRouter } from 'next/navigation';
 
 const ReprendrePanier = () => {
-  const {collectiviteId} = useCollectiviteContext();
+  const { collectiviteId } = useCollectiviteContext();
   const params = useParams();
   const pathname = usePathname();
   const router = useRouter();

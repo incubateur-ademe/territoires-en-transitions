@@ -1,5 +1,5 @@
 import { Indicateurs } from '@/api';
-import { Alert, Checkbox } from '@tet/ui';
+import { Alert, Checkbox } from '@/ui';
 import classNames from 'classnames';
 import { SOURCE_TYPE_LABEL } from '../../constants';
 import { TIndicateurDefinition } from '../../types';

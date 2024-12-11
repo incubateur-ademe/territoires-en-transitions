@@ -1,7 +1,7 @@
 import { Meta, StoryObj } from '@storybook/react';
 
+import { Input } from '@/ui/design-system/Input';
 import { Field } from './Field';
-import { Input } from '@tet/ui/design-system/Input';
 
 const meta: Meta<typeof Field> = {
   component: Field,
