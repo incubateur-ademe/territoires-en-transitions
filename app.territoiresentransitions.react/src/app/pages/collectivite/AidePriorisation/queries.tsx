@@ -1,5 +1,5 @@
+import { boundariesToQueryFilter } from '@/app/pages/collectivite/AidePriorisation/boundariesToQueryFilter';
 import { ITEM_ALL } from '@/ui';
-import { boundariesToQueryFilter } from '@tet/app/pages/collectivite/AidePriorisation/boundariesToQueryFilter';
 import { ActionReferentiel } from 'app/pages/collectivite/ReferentielTable/useReferentiel';
 import { supabaseClient } from 'core-logic/api/supabase';
 import { TActionStatutsRow } from 'types/alias';

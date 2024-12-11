@@ -14,9 +14,9 @@ import PictoExpert from 'ui/pictogrammes/PictoExpert';
 import SpinnerLoader from 'ui/shared/SpinnerLoader';
 
 import { Indicateurs } from '@/api';
+import { ExportIndicateursPageName } from '@/app/pages/collectivite/Indicateurs/Indicateur/useExportIndicateurs';
+import BadgeList from '@/app/pages/collectivite/Indicateurs/lists/indicateurs-list/badge-list';
 import { OpenState } from '@/ui/utils/types';
-import { ExportIndicateursPageName } from '@tet/app/pages/collectivite/Indicateurs/Indicateur/useExportIndicateurs';
-import BadgeList from '@tet/app/pages/collectivite/Indicateurs/lists/indicateurs-list/badge-list';
 import { getIndicateurGroup } from 'app/pages/collectivite/Indicateurs/lists/IndicateurCard/utils';
 import { useFilteredIndicateurDefinitions } from 'app/pages/collectivite/Indicateurs/lists/useFilteredIndicateurDefinitions';
 import { makeCollectiviteIndicateursUrl } from 'app/paths';

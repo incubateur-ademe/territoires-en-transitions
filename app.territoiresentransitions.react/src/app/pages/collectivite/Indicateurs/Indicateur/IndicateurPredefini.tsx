@@ -1,5 +1,5 @@
+import BadgeOpenData from '@/app/pages/collectivite/Indicateurs/components/BadgeOpenData';
 import { Badge, Field, TrackPageView } from '@/ui';
-import BadgeOpenData from '@tet/app/pages/collectivite/Indicateurs/components/BadgeOpenData';
 import { referentielToName } from 'app/labels';
 import { ImportSourcesSelector } from 'app/pages/collectivite/Indicateurs/Indicateur/detail/ImportSourcesSelector';
 import IndicateurDetailChart from 'app/pages/collectivite/Indicateurs/Indicateur/detail/IndicateurDetailChart';

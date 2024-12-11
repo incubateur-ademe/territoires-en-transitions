@@ -1,16 +1,15 @@
-import { Button } from '@/ui';
-import { useNbActionsDansPanier } from '@tet/app/Layout/Header/AccesPanierAction';
-import PictoCollectivite from '@tet/app/pages/collectivite/Accueil/pictogrammes/PictoCollectivite';
-import PictoEtatDesLieux from '@tet/app/pages/collectivite/Accueil/pictogrammes/PictoEtatDesLieux';
-import PictoIndicateurs from '@tet/app/pages/collectivite/Accueil/pictogrammes/PictoIndicateurs';
-import PictoPanierActions from '@tet/app/pages/collectivite/Accueil/pictogrammes/PictoPanierActions';
-import PictoPlansAction from '@tet/app/pages/collectivite/Accueil/pictogrammes/PictoPlansAction';
-import PictoTrajectoire from '@tet/app/pages/collectivite/Accueil/pictogrammes/PictoTrajectoire';
-import SectionCard from '@tet/app/pages/collectivite/Accueil/SectionCard';
-import CollectivitePageLayout from '@tet/app/pages/collectivite/CollectivitePageLayout/CollectivitePageLayout';
-import { useCreateFicheAction } from '@tet/app/pages/collectivite/PlansActions/FicheAction/data/useCreateFicheAction';
-import { useFicheActionCount } from '@tet/app/pages/collectivite/PlansActions/FicheAction/data/useFicheActionCount';
-import { usePlanActionsCount } from '@tet/app/pages/collectivite/PlansActions/PlanAction/data/usePlanActionsCount';
+import { useNbActionsDansPanier } from '@/app/Layout/Header/AccesPanierAction';
+import PictoCollectivite from '@/app/pages/collectivite/Accueil/pictogrammes/PictoCollectivite';
+import PictoEtatDesLieux from '@/app/pages/collectivite/Accueil/pictogrammes/PictoEtatDesLieux';
+import PictoIndicateurs from '@/app/pages/collectivite/Accueil/pictogrammes/PictoIndicateurs';
+import PictoPanierActions from '@/app/pages/collectivite/Accueil/pictogrammes/PictoPanierActions';
+import PictoPlansAction from '@/app/pages/collectivite/Accueil/pictogrammes/PictoPlansAction';
+import PictoTrajectoire from '@/app/pages/collectivite/Accueil/pictogrammes/PictoTrajectoire';
+import SectionCard from '@/app/pages/collectivite/Accueil/SectionCard';
+import CollectivitePageLayout from '@/app/pages/collectivite/CollectivitePageLayout/CollectivitePageLayout';
+import { useCreateFicheAction } from '@/app/pages/collectivite/PlansActions/FicheAction/data/useCreateFicheAction';
+import { useFicheActionCount } from '@/app/pages/collectivite/PlansActions/FicheAction/data/useFicheActionCount';
+import { usePlanActionsCount } from '@/app/pages/collectivite/PlansActions/PlanAction/data/usePlanActionsCount';
 import {
   makeCollectivitePanierUrl,
   makeCollectivitePlansActionsNouveauUrl,
@@ -20,7 +19,8 @@ import {
   makeCollectiviteTrajectoirelUrl,
   makeTableauBordUrl,
   recherchesCollectivitesUrl,
-} from '@tet/app/paths';
+} from '@/app/paths';
+import { Button } from '@/ui';
 import { useAuth } from 'core-logic/api/auth/AuthProvider';
 import { useCurrentCollectivite } from 'core-logic/hooks/useCurrentCollectivite';
 

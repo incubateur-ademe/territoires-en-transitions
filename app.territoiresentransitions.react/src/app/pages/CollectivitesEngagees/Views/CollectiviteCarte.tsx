@@ -1,9 +1,9 @@
-import { Icon } from '@/ui';
-import { NIVEAUX } from '@tet/app/pages/collectivite/EtatDesLieux/Accueil/EtatDesLieux/labellisation/LabellisationInfo';
+import { NIVEAUX } from '@/app/pages/collectivite/EtatDesLieux/Accueil/EtatDesLieux/labellisation/LabellisationInfo';
 import {
   GreyStar,
   RedStar,
-} from '@tet/app/pages/collectivite/EtatDesLieux/Accueil/EtatDesLieux/labellisation/Star';
+} from '@/app/pages/collectivite/EtatDesLieux/Accueil/EtatDesLieux/labellisation/Star';
+import { Icon } from '@/ui';
 import { referentielToName } from 'app/labels';
 import { TCollectiviteCarte } from 'app/pages/CollectivitesEngagees/data/useFilteredCollectivites';
 import { makeCollectiviteAccueilUrl } from 'app/paths';

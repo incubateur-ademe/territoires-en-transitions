@@ -1,4 +1,5 @@
 import { AxeInsert, FicheResume } from '@/api/plan-actions';
+import { useFicheResumesFetch } from '@/app/pages/collectivite/PlansActions/FicheAction/data/useFicheResumesFetch';
 import {
   Option,
   OptionValue,
@@ -6,7 +7,6 @@ import {
   SelectMultipleProps,
   SelectOption,
 } from '@/ui';
-import { useFicheResumesFetch } from '@tet/app/pages/collectivite/PlansActions/FicheAction/data/useFicheResumesFetch';
 import { generateTitle } from 'app/pages/collectivite/PlansActions/FicheAction/data/utils';
 import { naturalSort } from 'utils/naturalSort';
 

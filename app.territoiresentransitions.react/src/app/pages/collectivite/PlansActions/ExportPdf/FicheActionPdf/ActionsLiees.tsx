@@ -1,6 +1,5 @@
-import { referentielToName } from '@tet/app/labels';
+import { referentielToName } from '@/app/labels';
 import { TActionStatutsRow } from 'types/alias';
-import { getActionStatut } from 'ui/referentiels/utils';
 import {
   BadgeStatutAction,
   Card,
@@ -8,6 +7,7 @@ import {
   Stack,
   Title,
 } from 'ui/export-pdf/components';
+import { getActionStatut } from 'ui/referentiels/utils';
 
 type ActionLieeCardProps = {
   action: TActionStatutsRow;

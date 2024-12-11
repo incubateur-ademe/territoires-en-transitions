@@ -1,5 +1,5 @@
+import { TBoundary } from '@/app/pages/collectivite/AidePriorisation/boundariesToQueryFilter';
 import { ITEM_ALL } from '@/ui';
-import { TBoundary } from '@tet/app/pages/collectivite/AidePriorisation/boundariesToQueryFilter';
 
 export type TFilters = {
   score_realise: string[];

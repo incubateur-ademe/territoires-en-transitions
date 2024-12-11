@@ -1,7 +1,7 @@
 import { Filtre } from '@/api/plan-actions/fiche-resumes.list/domain/fetch-options.schema';
+import { useCreateFicheAction } from '@/app/pages/collectivite/PlansActions/FicheAction/data/useCreateFicheAction';
 import { Button, ButtonMenu } from '@/ui';
 import { OpenState } from '@/ui/utils/types';
-import { useCreateFicheAction } from '@tet/app/pages/collectivite/PlansActions/FicheAction/data/useCreateFicheAction';
 import FichesActionListe from 'app/pages/collectivite/PlansActions/ToutesLesFichesAction/FichesActionListe';
 import MenuFiltresToutesLesFichesAction from 'app/pages/collectivite/PlansActions/ToutesLesFichesAction/MenuFiltresToutesLesFichesAction';
 import { makeCollectiviteToutesLesFichesUrl } from 'app/paths';

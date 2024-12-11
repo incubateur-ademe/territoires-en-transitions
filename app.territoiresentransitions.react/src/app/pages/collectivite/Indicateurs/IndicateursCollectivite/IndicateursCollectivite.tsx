@@ -1,6 +1,6 @@
 import { FetchFiltre } from '@/api/indicateurs';
+import IndicateursListe from '@/app/pages/collectivite/Indicateurs/lists/indicateurs-list';
 import { Button, ButtonMenu, TrackPageView, useEventTracker } from '@/ui';
-import IndicateursListe from '@tet/app/pages/collectivite/Indicateurs/lists/indicateurs-list';
 import EmptyIndicateurFavori from 'app/pages/collectivite/Indicateurs/IndicateursCollectivite/EmptyIndicateurFavori';
 import { useIndicateursFavorisCollectiviteIds } from 'app/pages/collectivite/Indicateurs/IndicateursCollectivite/useIndicateursFavorisCollectiviteIds';
 import { indicateursNameToParams } from 'app/pages/collectivite/Indicateurs/lists/utils';

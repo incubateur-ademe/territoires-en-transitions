@@ -1,8 +1,12 @@
 import { ReactNode } from 'react';
 import { Redirect, Route, RouteProps } from 'react-router-dom';
 
+import { AccueilPage } from '@/app/pages/collectivite/Accueil/AccueilPage';
+import { AccueilPage as SyntheseEtatDesLieuxPage } from '@/app/pages/collectivite/EtatDesLieux/Accueil/AccueilPage';
+import { IndicateursPage } from 'app/pages/collectivite/Indicateurs/IndicateursPage';
 import { ActionPage } from 'app/pages/collectivite/Referentiels/ActionPage';
 import { ReferentielsPage } from 'app/pages/collectivite/Referentiels/ReferentielsPage';
+import { TrajectoirePage } from 'app/pages/collectivite/Trajectoire/TrajectoirePage';
 import { MembresPage } from 'app/pages/collectivite/Users/MembresPage';
 import {
   collectiviteAccueilPath,
@@ -27,10 +31,6 @@ import { ParcoursLabellisationPage } from './ParcoursLabellisation/ParcoursLabel
 import { PersoReferentielPage } from './PersoReferentiel/PersoReferentielPage';
 import { PersoReferentielThematiquePage } from './PersoReferentielThematique/PersoReferentielThematiquePage';
 import { PlansActionsPage } from './PlansActions/PlansActionsPage';
-import { IndicateursPage } from 'app/pages/collectivite/Indicateurs/IndicateursPage';
-import { TrajectoirePage } from 'app/pages/collectivite/Trajectoire/TrajectoirePage';
-import { AccueilPage as SyntheseEtatDesLieuxPage } from '@tet/app/pages/collectivite/EtatDesLieux/Accueil/AccueilPage';
-import { AccueilPage } from '@tet/app/pages/collectivite/Accueil/AccueilPage';
 
 /**
  * Routes starting with collectivite/:collectiviteId/ see App.ts Router.

@@ -1,5 +1,5 @@
+import { ModuleDisplay } from '@/app/pages/collectivite/TableauDeBord/components/Module';
 import { DefaultButtonProps } from '@/ui';
-import { ModuleDisplay } from '@tet/app/pages/collectivite/TableauDeBord/components/Module';
 
 type DisplayOption = Omit<DefaultButtonProps, 'id'> & {
   id: ModuleDisplay;

@@ -1,6 +1,6 @@
 import { Route } from 'react-router-dom';
 
-import ModulePageRoutes from '@tet/app/pages/collectivite/TableauDeBord/ModulePageRoutes';
+import ModulePageRoutes from '@/app/pages/collectivite/TableauDeBord/ModulePageRoutes';
 import { usePlansActionsListe } from 'app/pages/collectivite/PlansActions/PlanAction/data/usePlansActionsListe';
 import Collectivite from 'app/pages/collectivite/TableauDeBord/Collectivite/Collectivite';
 import {

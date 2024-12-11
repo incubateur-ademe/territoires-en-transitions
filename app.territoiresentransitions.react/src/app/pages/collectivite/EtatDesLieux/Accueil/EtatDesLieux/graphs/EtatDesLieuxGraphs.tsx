@@ -1,5 +1,5 @@
+import AccueilCard from '@/app/pages/collectivite/EtatDesLieux/Accueil/EtatDesLieux/AccueilCard';
 import { Button } from '@/ui';
-import AccueilCard from '@tet/app/pages/collectivite/EtatDesLieux/Accueil/EtatDesLieux/AccueilCard';
 import { referentielToName } from 'app/labels';
 import { ReferentielParamOption } from 'app/paths';
 import { useState } from 'react';

@@ -1,6 +1,6 @@
 import { useMutation, useQueryClient } from 'react-query';
 
-import { makeCollectiviteFicheNonClasseeUrl } from '@tet/app/paths';
+import { makeCollectiviteFicheNonClasseeUrl } from '@/app/paths';
 import { supabaseClient } from 'core-logic/api/supabase';
 import { useCollectiviteId } from 'core-logic/hooks/params';
 import { useRouter } from 'next/navigation';

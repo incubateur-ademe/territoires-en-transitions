@@ -1,8 +1,8 @@
 import { Statut } from '@/api/plan-actions';
+import BadgeStatut from '@/app/pages/collectivite/PlansActions/components/BadgeStatut';
+import { statutToColor } from '@/app/pages/collectivite/PlansActions/FicheAction/utils';
+import { ModuleDisplay } from '@/app/pages/collectivite/TableauDeBord/components/Module';
 import { Tooltip } from '@/ui';
-import BadgeStatut from '@tet/app/pages/collectivite/PlansActions/components/BadgeStatut';
-import { statutToColor } from '@tet/app/pages/collectivite/PlansActions/FicheAction/utils';
-import { ModuleDisplay } from '@tet/app/pages/collectivite/TableauDeBord/components/Module';
 import Chart from 'ui/charts/Chart';
 
 type Props = {
