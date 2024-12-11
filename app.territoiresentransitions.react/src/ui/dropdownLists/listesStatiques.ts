@@ -72,7 +72,6 @@ export const ficheActionStatutOptions: Options<Statut> = [
   { value: 'En pause', label: 'En pause' },
   { value: 'Abandonné', label: 'Abandonné' },
   { value: 'Bloqué', label: 'Bloqué' },
-  { value: 'Sans statut', label: 'Sans statut' },
 ];
 
 export const ficheActionNiveauPrioriteOptions: Options<TFicheActionNiveauxPriorite> =

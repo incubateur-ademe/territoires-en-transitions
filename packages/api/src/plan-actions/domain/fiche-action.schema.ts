@@ -20,7 +20,6 @@ export const statutSchema = z.enum([
   'Bloqué',
   'En retard',
   'A discuter',
-  'Sans statut',
 ]);
 
 export type Statut = z.infer<typeof statutSchema>;
