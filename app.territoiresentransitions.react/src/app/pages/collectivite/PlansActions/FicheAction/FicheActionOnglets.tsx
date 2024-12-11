@@ -6,6 +6,7 @@ import FichesLieesTab from './FichesLiees/FichesLieesTab';
 import IndicateursTab from './Indicateurs/IndicateursTab';
 import NotesDeSuiviTab from './NotesDeSuivi/NotesDeSuiviTab';
 import NotesEtDocumentsTab from './NotesEtDocuments/NotesEtDocumentsTab';
+import Etapes from './etapes';
 
 type FicheActionOngletsProps = {
   fiche: FicheAction;
@@ -39,7 +40,10 @@ const FicheActionOnglets = ({
         />
       </Tab>
 
-      {/* TODO: Tâches */}
+      {/* Étapes */}
+      <Tab label="Étapes">
+        <Etapes isReadonly={isReadonly} fiche={fiche} />
+      </Tab>
 
       {/* Notes de suivi */}
       <Tab label="Notes de suivi">
