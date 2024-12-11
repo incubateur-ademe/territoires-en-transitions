@@ -19,6 +19,7 @@ import {
   makeCollectivitePlanActionFicheUrl,
 } from 'app/paths';
 import { useCollectiviteId } from 'core-logic/hooks/params';
+import { FicheResume } from 'packages/api/src/plan-actions';
 import FilterBadges, {
   CustomFilterBadges,
   useFiltersToBadges,
@@ -80,7 +81,7 @@ const FichesActionListe = ({
 
   const [isSettingsOpen, setIsSettingsOpen] = useState(false);
   const [isGroupedActionsOn, setIsGroupedActionsOn] = useState(false);
-  const [selectedIds, setSelectedIds] = useState<number[]>([]);
+  const [selectedFiches, setSelectedFiches] = useState<FicheResume[]>([]);
 
   /** Tri sélectionné */
   const [sort, setSort] = useState(
@@ -132,12 +133,12 @@ const FichesActionListe = ({
     options: ficheResumesOptions,
   });
 
-  /** Gère les ids sélectionnés pour les actions groupées */
-  const handleSelectId = (id: number) => {
-    if (selectedIds.includes(id)) {
-      setSelectedIds(selectedIds.filter((s) => s !== id));
+  /** Gère les fiches sélectionnées pour les actions groupées */
+  const handleSelectFiche = (fiche: FicheResume) => {
+    if (selectedFiches.find((f) => f.id === fiche.id)) {
+      setSelectedFiches(selectedFiches.filter((f) => f.id !== fiche.id));
     } else {
-      setSelectedIds([...selectedIds, id]);
+      setSelectedFiches([...selectedFiches, fiche]);
     }
   };
 
@@ -195,7 +196,7 @@ const FichesActionListe = ({
                   labelClassname="font-normal !text-grey-7"
                   checked={isGroupedActionsOn}
                   onChange={(evt) => {
-                    if (isGroupedActionsOn) setSelectedIds([]);
+                    if (isGroupedActionsOn) setSelectedFiches([]);
                     setIsGroupedActionsOn(evt.currentTarget.checked);
                   }}
                   disabled={isLoading}
@@ -233,11 +234,11 @@ const FichesActionListe = ({
           >
             <div className="text-grey-7 font-medium ml-auto">
               <span className="text-primary-9">{`${
-                (selectedIds ?? []).length
+                (selectedFiches ?? []).length
               } action${
-                (selectedIds ?? []).length > 1 ? 's' : ''
+                (selectedFiches ?? []).length > 1 ? 's' : ''
               } sélectionnée${
-                (selectedIds ?? []).length > 1 ? 's' : ''
+                (selectedFiches ?? []).length > 1 ? 's' : ''
               }`}</span>
               {` / ${countTotal} action${countTotal > 1 ? 's' : ''}`}
             </div>
@@ -284,10 +285,10 @@ const FichesActionListe = ({
                 isEditable
                 onSelect={
                   isGroupedActionsOn
-                    ? () => handleSelectId(fiche.id)
+                    ? () => handleSelectFiche(fiche)
                     : undefined
                 }
-                isSelected={selectedIds?.includes(fiche.id)}
+                isSelected={!!selectedFiches?.find((f) => f.id === fiche.id)}
                 editKeysToInvalidate={[
                   [
                     'fiches_resume_collectivite',
@@ -322,7 +323,7 @@ const FichesActionListe = ({
         </div>
       )}
 
-      <ActionsGroupeesMenu {...{ isGroupedActionsOn, selectedIds }} />
+      <ActionsGroupeesMenu {...{ isGroupedActionsOn, selectedFiches }} />
     </>
   );
 };
