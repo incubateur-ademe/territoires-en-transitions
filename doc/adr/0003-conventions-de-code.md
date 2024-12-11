@@ -85,7 +85,7 @@ Les conventions de nommage et d'architecture choisies suivent les standards par 
 
   Exemple : `src/plans/fiches/index.ts`
 
-  → résultat à l'import : `import { FicheAction } from '@tet/api/plans/fiches'`
+  → résultat à l'import : `import { FicheAction } from '@/api/plans/fiches'`
 
 ### Les domaines métiers Territoires en Transitions
 

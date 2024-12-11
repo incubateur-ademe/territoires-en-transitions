@@ -1,6 +1,6 @@
-import { Personne } from '@tet/api/collectivites';
-import { Button, Field, useEventTracker } from '@tet/ui';
-import { OpenState } from '@tet/ui/utils/types';
+import { Personne } from '@/api/collectivites';
+import { Button, Field, useEventTracker } from '@/ui';
+import { OpenState } from '@/ui/utils/types';
 import { useCollectiviteId } from 'core-logic/hooks/params';
 import { useState } from 'react';
 import PersonnesDropdown from 'ui/dropdownLists/PersonnesDropdown/PersonnesDropdown';

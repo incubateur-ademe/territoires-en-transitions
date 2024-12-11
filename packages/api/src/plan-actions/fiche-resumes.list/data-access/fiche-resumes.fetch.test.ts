@@ -10,7 +10,7 @@ const params = {
 
 const yoloDodoUuid = '17440546-f389-4d4f-bfdb-b0c94a1bd0f9';
 
-vi.mock('@tet/api/utils/trpc/client', () => {
+vi.mock('@/api/utils/trpc/client', () => {
   return {
     trpcUtils: {
       collectivites: {

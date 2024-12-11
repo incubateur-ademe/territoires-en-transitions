@@ -1,6 +1,6 @@
-import { RouterInput } from '@tet/api/utils/trpc/client';
-import { Button, Field, useEventTracker } from '@tet/ui';
-import { OpenState } from '@tet/ui/utils/types';
+import { RouterInput } from '@/api/utils/trpc/client';
+import { Button, Field, useEventTracker } from '@/ui';
+import { OpenState } from '@/ui/utils/types';
 import { useCollectiviteId } from 'core-logic/hooks/params';
 import { useState } from 'react';
 import StatutsSelectDropdown from 'ui/dropdownLists/ficheAction/statuts/StatutsSelectDropdown';
