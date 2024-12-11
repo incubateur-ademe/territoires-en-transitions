@@ -1,7 +1,7 @@
 'use client';
 
 import { Json, Views } from '@/api';
-import { convertNameToSlug } from '@tet/site/src/utils/convertNameToSlug';
+import { convertNameToSlug } from '@/site/src/utils/convertNameToSlug';
 import { GeoJsonObject } from 'geojson';
 import { PathOptions } from 'leaflet';
 import { useRouter } from 'next/navigation';

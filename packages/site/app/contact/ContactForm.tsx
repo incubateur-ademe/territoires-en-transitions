@@ -1,5 +1,6 @@
 'use client';
 
+import { ToastFloater } from '@/site/components/floating-ui/ToastFloater';
 import {
   Button,
   Field,
@@ -10,7 +11,6 @@ import {
   Textarea,
   useEventTracker,
 } from '@/ui';
-import { ToastFloater } from '@tet/site/components/floating-ui/ToastFloater';
 import classNames from 'classnames';
 import { useRouter, useSearchParams } from 'next/navigation';
 import { useEffect, useState } from 'react';

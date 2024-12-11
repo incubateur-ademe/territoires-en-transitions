@@ -1,9 +1,9 @@
 import {
   ParagrapheCustomArticleData,
   ParagrapheCustomFetchedData,
-} from '@tet/site/app/types';
-import { fetchCollection, fetchItem } from '@tet/site/src/strapi/strapi';
-import { StrapiItem } from '@tet/site/src/strapi/StrapiItem';
+} from '@/site/app/types';
+import { fetchCollection, fetchItem } from '@/site/src/strapi/strapi';
+import { StrapiItem } from '@/site/src/strapi/StrapiItem';
 import {
   ArticleData,
   ContenuArticleFetchedData,

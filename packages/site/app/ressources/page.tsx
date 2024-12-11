@@ -1,8 +1,8 @@
-import Section from '@tet/site/components/sections/Section';
-import { Metadata } from 'next';
+import Section from '@/site/components/sections/Section';
 import fs from 'fs';
-import path from 'path';
+import { Metadata } from 'next';
 import Link from 'next/link';
+import path from 'path';
 import Markdown from 'react-markdown';
 
 export async function generateMetadata(): Promise<Metadata> {

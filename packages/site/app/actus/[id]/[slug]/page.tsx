@@ -1,16 +1,16 @@
-import { StrapiImage } from '@tet/site/components/strapiImage/StrapiImage';
-import Section from '@tet/site/components/sections/Section';
-import { getLocalDateString } from '@tet/site/src/utils/getLocalDateString';
-import ParagrapheArticle from './ParagrapheArticle';
-import InfoArticle from './InfoArticle';
-import { GallerieArticleData, ImageArticleData } from '../../../types';
-import { getData, getMetaData } from './utils';
-import GallerieArticle from './GallerieArticle';
-import EmbededVideo from '@tet/site/components/video/EmbededVideo';
-import { ParagrapheCustomArticleData } from '@tet/site/app/types';
+import { ParagrapheCustomArticleData } from '@/site/app/types';
+import Section from '@/site/components/sections/Section';
+import { StrapiImage } from '@/site/components/strapiImage/StrapiImage';
+import EmbededVideo from '@/site/components/video/EmbededVideo';
+import { getLocalDateString } from '@/site/src/utils/getLocalDateString';
+import { getUpdatedMetadata } from '@/site/src/utils/getUpdatedMetadata';
 import { Metadata, ResolvingMetadata } from 'next';
-import { getUpdatedMetadata } from '@tet/site/src/utils/getUpdatedMetadata';
 import { notFound } from 'next/navigation';
+import { GallerieArticleData, ImageArticleData } from '../../../types';
+import GallerieArticle from './GallerieArticle';
+import InfoArticle from './InfoArticle';
+import ParagrapheArticle from './ParagrapheArticle';
+import { getData, getMetaData } from './utils';
 
 export async function generateMetadata(
   { params }: { params: { id: string } },

@@ -1,6 +1,6 @@
-import { StrapiImage } from '@tet/site/components/strapiImage/StrapiImage';
+import { GallerieArticleData } from '@/site/app/types';
+import { StrapiImage } from '@/site/components/strapiImage/StrapiImage';
 import classNames from 'classnames';
-import { GallerieArticleData } from '@tet/site/app/types';
 
 type GallerieArticleProps = {
   data: GallerieArticleData;

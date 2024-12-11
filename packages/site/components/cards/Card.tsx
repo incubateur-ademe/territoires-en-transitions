@@ -1,7 +1,7 @@
 'use client';
 
+import Markdown from '@/site/components/markdown/Markdown';
 import { Button, ButtonVariant } from '@/ui';
-import Markdown from '@tet/site/components/markdown/Markdown';
 import classNames from 'classnames';
 
 type CardProps = {

@@ -1,9 +1,9 @@
 'use server';
 
+import Trajectoire from '@/site/app/outil-numerique/Trajectoire';
+import NoResult from '@/site/components/info/NoResult';
+import { getUpdatedMetadata } from '@/site/src/utils/getUpdatedMetadata';
 import { TrackPageView } from '@/ui';
-import Trajectoire from '@tet/site/app/outil-numerique/Trajectoire';
-import NoResult from '@tet/site/components/info/NoResult';
-import { getUpdatedMetadata } from '@tet/site/src/utils/getUpdatedMetadata';
 import { Metadata, ResolvingMetadata } from 'next';
 import AvantagesPlateforme from './AvantagesPlateforme';
 import EquipePlateforme from './EquipePlateforme';

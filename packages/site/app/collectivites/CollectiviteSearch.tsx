@@ -1,7 +1,7 @@
 'use client';
 
+import { convertNameToSlug } from '@/site/src/utils/convertNameToSlug';
 import { Select } from '@/ui';
-import { convertNameToSlug } from '@tet/site/src/utils/convertNameToSlug';
 import { useRouter } from 'next/navigation';
 import { Dispatch, SetStateAction, useState } from 'react';
 import { useFilteredCollectivites } from '../useFilteredCollectivites';

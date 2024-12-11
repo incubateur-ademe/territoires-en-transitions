@@ -1,7 +1,7 @@
 'use server';
 
+import NoResult from '@/site/components/info/NoResult';
 import { TrackPageView } from '@/ui';
-import NoResult from '@tet/site/components/info/NoResult';
 import Accompagnement from './Accompagnement';
 import AccueilBanner from './AccueilBanner';
 import Communaute from './Communaute';

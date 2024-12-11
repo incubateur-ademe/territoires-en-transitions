@@ -1,6 +1,6 @@
 'use client';
 
-import LineChart from '@tet/site/components/charts/LineChart';
+import LineChart from '@/site/components/charts/LineChart';
 import useSWR from 'swr';
 import { supabase } from '../initSupabase';
 import { colors } from './shared';

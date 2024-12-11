@@ -1,8 +1,8 @@
 'use server';
 
+import Section from '@/site/components/sections/Section';
 import { Metadata } from 'next';
 import Carte from './Carte';
-import Section from '@tet/site/components/sections/Section';
 import CollectiviteSearchConnected from './CollectiviteSearch';
 
 export async function generateMetadata(): Promise<Metadata> {

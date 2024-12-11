@@ -1,7 +1,7 @@
 'use client';
 
+import Section from '@/site/components/sections/Section';
 import { Button, useEventTracker } from '@/ui';
-import Section from '@tet/site/components/sections/Section';
 
 type DemandeContactProps = {
   description: string;

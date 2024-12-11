@@ -1,10 +1,10 @@
 'use client';
 
-import useSWR from 'swr';
+import ChartWithLegend from '@/site/components/charts/ChartWithLegend';
+import { theme } from '@/site/components/charts/chartsTheme';
 import { ResponsiveWaffle } from '@nivo/waffle';
+import useSWR from 'swr';
 import { supabase } from '../initSupabase';
-import ChartWithLegend from '@tet/site/components/charts/ChartWithLegend';
-import { theme } from '@tet/site/components/charts/chartsTheme';
 
 function useCollectiviteActivesEtTotalParType() {
   return useSWR(

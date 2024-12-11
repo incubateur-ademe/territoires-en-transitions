@@ -1,5 +1,5 @@
 /* eslint-disable react/no-unescaped-entities */
-import Section from '@tet/site/components/sections/Section';
+import Section from '@/site/components/sections/Section';
 
 const NotFound = () => {
   return (

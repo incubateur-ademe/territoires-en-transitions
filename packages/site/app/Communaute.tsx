@@ -1,11 +1,11 @@
 'use client';
 
-import { Button } from '@/ui';
 import {
   useCollectivitesEngagees,
   useTerritoiresLabellises,
-} from '@tet/site/app/stats/NombreCollectivitesEngagees';
-import Section from '@tet/site/components/sections/Section';
+} from '@/site/app/stats/NombreCollectivitesEngagees';
+import Section from '@/site/components/sections/Section';
+import { Button } from '@/ui';
 import { useActiveUsers } from './stats/ActiveUsers';
 
 type CommunauteProps = {

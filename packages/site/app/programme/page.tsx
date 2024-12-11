@@ -1,8 +1,8 @@
 'use server';
 
+import NoResult from '@/site/components/info/NoResult';
+import { getUpdatedMetadata } from '@/site/src/utils/getUpdatedMetadata';
 import { TrackPageView } from '@/ui';
-import NoResult from '@tet/site/components/info/NoResult';
-import { getUpdatedMetadata } from '@tet/site/src/utils/getUpdatedMetadata';
 import { Metadata, ResolvingMetadata } from 'next';
 import Benefices from './Benefices';
 import CollectivitesEngagees from './CollectivitesEngagees';

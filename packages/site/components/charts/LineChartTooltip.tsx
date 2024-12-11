@@ -1,6 +1,6 @@
+import { getFormattedNumber } from '@/site/src/utils/getFormattedNumber';
 import { SliceTooltipProps } from '@nivo/line';
 import { theme } from './chartsTheme';
-import { getFormattedNumber } from '@tet/site/src/utils/getFormattedNumber';
 import TooltipColor from './TooltipColor';
 
 const LineChartTooltip = ({ slice }: SliceTooltipProps) => (

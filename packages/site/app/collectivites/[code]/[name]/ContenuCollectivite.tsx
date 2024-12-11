@@ -1,7 +1,7 @@
-import TestimonialSlideshow from '@tet/site/components/slideshow/TestimonialSlideshow';
-import EmbededVideo from '@tet/site/components/video/EmbededVideo';
+import TestimonialSlideshow from '@/site/components/slideshow/TestimonialSlideshow';
+import EmbededVideo from '@/site/components/video/EmbededVideo';
+import { StrapiItem } from '@/site/src/strapi/StrapiItem';
 import classNames from 'classnames';
-import { StrapiItem } from '@tet/site/src/strapi/StrapiItem';
 import ActionCollectivite from './ActionCollectivite';
 
 type ContenuCollectiviteProps = {

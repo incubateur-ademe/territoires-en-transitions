@@ -1,11 +1,11 @@
-import Section from '@tet/site/components/sections/Section';
-import { ListeData } from './types';
+import ThumbnailsList from '@/site/components/galleries/ThumbnailsList';
+import Markdown from '@/site/components/markdown/Markdown';
+import Section from '@/site/components/sections/Section';
 import classNames from 'classnames';
-import Markdown from '@tet/site/components/markdown/Markdown';
-import ThumbnailsList from '@tet/site/components/galleries/ThumbnailsList';
-import ListeVerticaleService from './ListeVerticaleService';
-import ListeGrilleService from './ListeGrilleService';
 import ListeGallerieService from './ListeGallerieService';
+import ListeGrilleService from './ListeGrilleService';
+import ListeVerticaleService from './ListeVerticaleService';
+import { ListeData } from './types';
 
 const ListeService = ({
   tailleListe,

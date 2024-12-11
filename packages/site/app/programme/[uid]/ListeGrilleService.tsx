@@ -1,7 +1,7 @@
-import Markdown from '@tet/site/components/markdown/Markdown';
+import Markdown from '@/site/components/markdown/Markdown';
+import ReactIcon from '@/site/components/react-icons/ReactIcon';
+import { StrapiImage } from '@/site/components/strapiImage/StrapiImage';
 import { Liste } from './types';
-import { StrapiImage } from '@tet/site/components/strapiImage/StrapiImage';
-import ReactIcon from '@tet/site/components/react-icons/ReactIcon';
 
 const ListeGrilleService = ({ liste }: { liste: Liste }) => {
   return (

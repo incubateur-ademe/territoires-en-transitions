@@ -1,12 +1,12 @@
 'use client';
 
+import ChartWithLegend from '@/site/components/charts/ChartWithLegend';
+import LineChart from '@/site/components/charts/LineChart';
 import useSWR from 'swr';
 import { supabase } from '../initSupabase';
-import { fromMonth } from './shared';
 import { ChartHead } from './headings';
+import { fromMonth } from './shared';
 import { addLocalFilters } from './utils';
-import ChartWithLegend from '@tet/site/components/charts/ChartWithLegend';
-import LineChart from '@tet/site/components/charts/LineChart';
 
 function useNombreUtilisateurParCollectivite(
   codeRegion: string,

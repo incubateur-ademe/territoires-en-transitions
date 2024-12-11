@@ -1,9 +1,9 @@
 'use client';
 
+import Markdown from '@/site/components/markdown/Markdown';
+import { StrapiImage } from '@/site/components/strapiImage/StrapiImage';
+import { StrapiItem } from '@/site/src/strapi/StrapiItem';
 import { Button } from '@/ui';
-import Markdown from '@tet/site/components/markdown/Markdown';
-import { StrapiImage } from '@tet/site/components/strapiImage/StrapiImage';
-import { StrapiItem } from '@tet/site/src/strapi/StrapiItem';
 import classNames from 'classnames';
 import { useState } from 'react';
 

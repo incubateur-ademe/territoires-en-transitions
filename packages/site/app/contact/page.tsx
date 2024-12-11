@@ -1,10 +1,10 @@
 'use server';
 
+import NoResult from '@/site/components/info/NoResult';
+import Section from '@/site/components/sections/Section';
+import { StrapiImage } from '@/site/components/strapiImage/StrapiImage';
+import { getUpdatedMetadata } from '@/site/src/utils/getUpdatedMetadata';
 import { Alert, TrackPageView } from '@/ui';
-import NoResult from '@tet/site/components/info/NoResult';
-import Section from '@tet/site/components/sections/Section';
-import { StrapiImage } from '@tet/site/components/strapiImage/StrapiImage';
-import { getUpdatedMetadata } from '@tet/site/src/utils/getUpdatedMetadata';
 import { Metadata, ResolvingMetadata } from 'next';
 import ContactForm from './ContactForm';
 import { getStrapiData } from './utils';

@@ -1,4 +1,4 @@
-import Markdown from '@tet/site/components/markdown/Markdown';
+import Markdown from '@/site/components/markdown/Markdown';
 
 type InfoArticleProps = {
   texte: string;

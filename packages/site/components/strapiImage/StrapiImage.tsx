@@ -1,6 +1,6 @@
 'use client';
 
-import { StrapiItem } from '@tet/site/src/strapi/StrapiItem';
+import { StrapiItem } from '@/site/src/strapi/StrapiItem';
 
 import classNames from 'classnames';
 import { CSSProperties, useEffect, useState } from 'react';

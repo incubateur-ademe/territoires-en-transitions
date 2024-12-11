@@ -1,9 +1,9 @@
 'use client';
 
+import Card from '@/site/components/cards/Card';
+import CardsWrapper from '@/site/components/cards/CardsWrapper';
+import CardsSection from '@/site/components/sections/CardsSection';
 import { Button, useEventTracker } from '@/ui';
-import Card from '@tet/site/components/cards/Card';
-import CardsWrapper from '@tet/site/components/cards/CardsWrapper';
-import CardsSection from '@tet/site/components/sections/CardsSection';
 import { Content } from './types';
 
 type EtapesProps = {

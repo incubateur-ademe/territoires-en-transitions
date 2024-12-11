@@ -1,13 +1,13 @@
 'use server';
 
-import { fetchCollection } from '@tet/site/src/strapi/strapi';
-import { StrapiImage } from '@tet/site/components/strapiImage/StrapiImage';
-import { StrapiItem } from '@tet/site/src/strapi/StrapiItem';
-import Section from '@tet/site/components/sections/Section';
-import BlogCard from '@tet/site/components/cards/BlogCard';
-import MasonryGallery from '@tet/site/components/galleries/MasonryGallery';
+import BlogCard from '@/site/components/cards/BlogCard';
+import MasonryGallery from '@/site/components/galleries/MasonryGallery';
+import Section from '@/site/components/sections/Section';
+import { StrapiImage } from '@/site/components/strapiImage/StrapiImage';
+import { fetchCollection } from '@/site/src/strapi/strapi';
+import { StrapiItem } from '@/site/src/strapi/StrapiItem';
+import { convertNameToSlug } from '@/site/src/utils/convertNameToSlug';
 import { Metadata } from 'next';
-import { convertNameToSlug } from '@tet/site/src/utils/convertNameToSlug';
 import { notFound } from 'next/navigation';
 
 const LIMIT = 50;

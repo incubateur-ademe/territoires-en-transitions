@@ -1,15 +1,15 @@
 'use server';
 
-import Section from '@tet/site/components/sections/Section';
-import Fonctionnement from './Fonctionnement';
-import Principes from './Principes';
-import ChiffresClefs from './ChiffresClefs';
-import BudgetConsomme from './BudgetConsomme';
-import PerformanceBudget from './PerformanceBudget';
-import { getStrapiData } from './utils';
-import NoResult from '@tet/site/components/info/NoResult';
+import NoResult from '@/site/components/info/NoResult';
+import Section from '@/site/components/sections/Section';
+import { getUpdatedMetadata } from '@/site/src/utils/getUpdatedMetadata';
 import { Metadata, ResolvingMetadata } from 'next';
-import { getUpdatedMetadata } from '@tet/site/src/utils/getUpdatedMetadata';
+import BudgetConsomme from './BudgetConsomme';
+import ChiffresClefs from './ChiffresClefs';
+import Fonctionnement from './Fonctionnement';
+import PerformanceBudget from './PerformanceBudget';
+import Principes from './Principes';
+import { getStrapiData } from './utils';
 
 export async function generateMetadata(
   { params }: { params: unknown },

@@ -1,9 +1,9 @@
 'use server';
 
-import { notFound, redirect } from 'next/navigation';
+import { convertNameToSlug } from '@/site/src/utils/convertNameToSlug';
 import { Metadata } from 'next';
+import { notFound, redirect } from 'next/navigation';
 import { fetchCollectivite } from '../utils';
-import { convertNameToSlug } from '@tet/site/src/utils/convertNameToSlug';
 
 export async function generateMetadata(): Promise<Metadata> {
   return {

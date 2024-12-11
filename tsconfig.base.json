@@ -26,7 +26,7 @@
       "@/auth/*": ["./packages/auth/*"],
       "@/backend/*": ["./backend/src/*"],
       "@/panier/*": ["./packages/panier/*"],
-      "@tet/site/*": ["./packages/site/*"],
+      "@/site/*": ["./packages/site/*"],
       "@/ui": ["./packages/ui/src/index.ts"],
       "@/ui/*": ["./packages/ui/src/*"],
       "app/*": ["./app.territoiresentransitions.react/src/app/*"],

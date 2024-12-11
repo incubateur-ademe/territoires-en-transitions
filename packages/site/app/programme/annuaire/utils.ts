@@ -1,5 +1,5 @@
-import { StrapiItem } from '@tet/site/src/strapi/StrapiItem';
-import { fetchCollection } from '@tet/site/src/strapi/strapi';
+import { StrapiItem } from '@/site/src/strapi/StrapiItem';
+import { fetchCollection } from '@/site/src/strapi/strapi';
 
 export type ConseillerType = {
   id: number;

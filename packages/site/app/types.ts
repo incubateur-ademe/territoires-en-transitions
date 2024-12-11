@@ -1,4 +1,4 @@
-import { StrapiItem } from '@tet/site/src/strapi/StrapiItem';
+import { StrapiItem } from '@/site/src/strapi/StrapiItem';
 
 // Types associés aux pages actualités et collectivités
 

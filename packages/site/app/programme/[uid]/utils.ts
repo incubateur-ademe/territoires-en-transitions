@@ -1,4 +1,5 @@
-import { fetchCollection } from '@tet/site/src/strapi/strapi';
+import { fetchCollection } from '@/site/src/strapi/strapi';
+import { StrapiItem } from '@/site/src/strapi/StrapiItem';
 import {
   InfoData,
   InfoFetchedData,
@@ -8,7 +9,6 @@ import {
   ParagrapheFetchedData,
   ServicesFetchedData,
 } from './types';
-import { StrapiItem } from '@tet/site/src/strapi/StrapiItem';
 
 export const getServiceStrapiData = async (uid: string) => {
   const { data } = await fetchCollection('services', [

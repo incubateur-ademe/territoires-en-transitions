@@ -1,16 +1,16 @@
 'use server';
 
-import NoResult from '@tet/site/components/info/NoResult';
-import { getStrapiData } from './utils';
-import HeaderTrajectoire from './HeaderTrajectoire';
-import PresentationTrajectoire from './PresentationTrajectoire';
-import Methode from './Methode';
-import Webinaire from './Webinaire';
+import NoResult from '@/site/components/info/NoResult';
+import { getUpdatedMetadata } from '@/site/src/utils/getUpdatedMetadata';
+import { Metadata, ResolvingMetadata } from 'next';
 import Calcul from './Calcul';
 import Documentation from './Documentation';
+import HeaderTrajectoire from './HeaderTrajectoire';
+import Methode from './Methode';
+import PresentationTrajectoire from './PresentationTrajectoire';
 import TemoignagesTrajectoire from './TemoignagesTrajectoire';
-import { Metadata, ResolvingMetadata } from 'next';
-import { getUpdatedMetadata } from '@tet/site/src/utils/getUpdatedMetadata';
+import { getStrapiData } from './utils';
+import Webinaire from './Webinaire';
 
 export async function generateMetadata(
   { params }: { params: {} },

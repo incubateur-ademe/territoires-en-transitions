@@ -1,6 +1,6 @@
-import { RedStar } from '@tet/site/components/labellisation/Star';
-import { Labellisations } from '@tet/site/app/collectivites/utils';
-import { referentielToLabel } from '@tet/site/src/utils/labels';
+import { Labellisations } from '@/site/app/collectivites/utils';
+import { RedStar } from '@/site/components/labellisation/Star';
+import { referentielToLabel } from '@/site/src/utils/labels';
 
 type HistoriqueLabellisationProps = {
   referentiel: 'cae' | 'eci';

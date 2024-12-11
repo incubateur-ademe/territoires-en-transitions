@@ -1,6 +1,6 @@
-import ThumbnailsList from '@tet/site/components/galleries/ThumbnailsList';
-import Section from '@tet/site/components/sections/Section';
-import { StrapiItem } from '@tet/site/src/strapi/StrapiItem';
+import ThumbnailsList from '@/site/components/galleries/ThumbnailsList';
+import Section from '@/site/components/sections/Section';
+import { StrapiItem } from '@/site/src/strapi/StrapiItem';
 
 type AvantagesPlateformeProps = {
   avantages: {

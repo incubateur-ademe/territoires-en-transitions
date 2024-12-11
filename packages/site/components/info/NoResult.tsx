@@ -1,6 +1,6 @@
 /* eslint-disable react/no-unescaped-entities */
-import Section from '@tet/site/components/sections/Section';
-import AstronautCat from '@tet/site/public/pictogrammes/AstronautCat';
+import Section from '@/site/components/sections/Section';
+import AstronautCat from '@/site/public/pictogrammes/AstronautCat';
 
 const NoResult = () => {
   return (

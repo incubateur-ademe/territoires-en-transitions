@@ -1,6 +1,6 @@
-import Section from '@tet/site/components/sections/Section';
-import TestimonialSlideshow from '@tet/site/components/slideshow/TestimonialSlideshow';
-import { StrapiItem } from '@tet/site/src/strapi/StrapiItem';
+import Section from '@/site/components/sections/Section';
+import TestimonialSlideshow from '@/site/components/slideshow/TestimonialSlideshow';
+import { StrapiItem } from '@/site/src/strapi/StrapiItem';
 
 type TemoignagesTrajectoireProps = {
   temoignages: {

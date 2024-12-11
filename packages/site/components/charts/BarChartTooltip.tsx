@@ -1,8 +1,8 @@
+import { getFormattedNumber } from '@/site/src/utils/getFormattedNumber';
 import { BarTooltipProps } from '@nivo/bar';
 import { theme } from './chartsTheme';
-import { getFormattedNumber } from '@tet/site/src/utils/getFormattedNumber';
-import { dateAsMonthAndYear } from './utils';
 import TooltipColor from './TooltipColor';
+import { dateAsMonthAndYear } from './utils';
 
 const BarChartTooltip = ({
   id,
