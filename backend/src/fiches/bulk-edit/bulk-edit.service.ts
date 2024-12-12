@@ -1,10 +1,8 @@
 import { AuthUser } from '@/backend/auth/models/auth.models';
-import { NiveauAcces } from '@/backend/auth/models/niveau-acces.enum';
 import { DatabaseService } from '@/backend/common';
 import { Injectable } from '@nestjs/common';
 import { and, inArray, or } from 'drizzle-orm';
 import z from 'zod';
-import { AuthService } from '../../auth/services/auth.service';
 import { ficheActionLibreTagTable } from '../models/fiche-action-libre-tag.table';
 import { ficheActionPiloteTable } from '../models/fiche-action-pilote.table';
 import {
@@ -12,6 +10,9 @@ import {
   ficheActionTable,
 } from '../models/fiche-action.table';
 import { updateFicheActionRequestSchema } from '../models/update-fiche-action.request';
+import { PermissionService } from '../../auth/gestion-des-droits/permission.service';
+import { Authorization } from '../../auth/gestion-des-droits/authorization.enum';
+import { ResourceType } from '../../auth/gestion-des-droits/resource-type.enum';
 
 @Injectable()
 export class BulkEditService {
@@ -19,7 +20,7 @@ export class BulkEditService {
 
   constructor(
     private readonly database: DatabaseService,
-    private readonly auth: AuthService
+    private readonly permission: PermissionService
   ) {}
 
   bulkEditRequestSchema = z.object({
@@ -51,11 +52,14 @@ export class BulkEditService {
       .where(inArray(ficheActionTable.id, ficheIds));
 
     // Check if the user has edition access to all the collectivites
-    await this.auth.verifieAccesAuxCollectivites(
-      user,
-      collectiviteIds.map((c) => c.collectiviteId),
-      NiveauAcces.EDITION
-    );
+    for (const c of collectiviteIds) {
+      await this.permission.hasTheRightTo(
+        user,
+        Authorization.FICHES_EDITION,
+        ResourceType.COLLECTIVITE,
+        c.collectiviteId
+      );
+    }
 
     const { pilotes, libreTags, ...plainValues } = params;
 

@@ -6,14 +6,20 @@ import { categorieTagTable } from '../models/categorie-tag.table';
 import { groupementCollectiviteTable } from '../../collectivites/models/groupement-collectivite.table';
 import { TagType } from '../models/tag.table-base';
 import { AuthenticatedUser } from '../../auth/models/auth.models';
-import { AuthService } from '../../auth/services/auth.service';
+import { Authorization } from '../../auth/gestion-des-droits/authorization.enum';
+import { ResourceType } from '../../auth/gestion-des-droits/resource-type.enum';
+import CollectivitesService from '../../collectivites/services/collectivites.service';
+import { PermissionService } from '../../auth/gestion-des-droits/permission.service';
 
 @Injectable()
 export default class TagService {
   private readonly logger = new Logger(TagService.name);
 
-  constructor(private readonly databaseService: DatabaseService,
-              private readonly authService : AuthService) {}
+  constructor(
+    private readonly databaseService: DatabaseService,
+    private readonly permissionService: PermissionService,
+    private readonly collectiviteService: CollectivitesService
+  ) {}
 
   /**
    * TODO à factoriser avec les autres tags
@@ -59,10 +65,19 @@ export default class TagService {
     collectiviteId: number,
     withPredefinedTags: boolean,
     tokenInfo: AuthenticatedUser
-  ) : Promise<TagType[]>{
-
+  ): Promise<TagType[]> {
     // Vérifie les droits
-    await this.authService.verifieAccesRestreintCollectivite(tokenInfo, collectiviteId);
+    const collectivitePrivate = await this.collectiviteService.isPrivate(
+      collectiviteId
+    );
+    await this.permissionService.hasTheRightTo(
+      tokenInfo,
+      collectivitePrivate
+        ? Authorization.COLLECTIVITES_CONTENT_LECTURE
+        : Authorization.COLLECTIVITES_CONTENT_VISITE,
+      ResourceType.COLLECTIVITE,
+      collectiviteId
+    );
 
     // Sous-requête pour récupérer les groupements auquel appartient la collectivité
     const groupements = this.databaseService.db

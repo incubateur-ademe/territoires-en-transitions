@@ -1,9 +1,6 @@
-import { dcpTable } from '@/backend/auth';
 import { Injectable, Logger } from '@nestjs/common';
 import { aliasedTable, desc, eq } from 'drizzle-orm';
 import { AuthenticatedUser } from '../../auth/models/auth.models';
-import { NiveauAcces } from '../../auth/models/niveau-acces.enum';
-import { AuthService } from '../../auth/services/auth.service';
 import DatabaseService from '../../common/services/database.service';
 import TagService from '../../taxonomie/services/tag.service';
 import { actionImpactFicheActionTable } from '../models/action-impact-fiche-action.table';
@@ -18,13 +15,17 @@ import {
   CreateFicheActionType,
   ficheActionTable,
 } from '../models/fiche-action.table';
+import { dcpTable } from '@/backend/auth';
+import { PermissionService } from '../../auth/gestion-des-droits/permission.service';
+import { Authorization } from '../../auth/gestion-des-droits/authorization.enum';
+import { ResourceType } from '../../auth/gestion-des-droits/resource-type.enum';
 
 @Injectable()
 export default class FicheService {
   private readonly logger = new Logger(FicheService.name);
 
   constructor(
-    private readonly authService: AuthService,
+    private readonly permissionService: PermissionService,
     private readonly databaseService: DatabaseService,
     private readonly tagService: TagService
   ) {}
@@ -45,16 +46,12 @@ export default class FicheService {
   ): Promise<boolean> {
     const fiche = await this.getFicheFromId(ficheId);
     if (fiche === null) return false;
-    if (fiche.restreint) {
-      const canRead = await this.authService.verifieAccesAuxCollectivites(
-        tokenInfo,
-        [fiche.collectiviteId],
-        NiveauAcces.LECTURE
-      );
-      return canRead || this.authService.estSupport(tokenInfo);
-    }
-    return this.authService.verifieAccesRestreintCollectivite(
+    return await this.permissionService.hasTheRightTo(
       tokenInfo,
+      fiche.restreint
+        ? Authorization.FICHES_LECTURE
+        : Authorization.FICHES_VISITE,
+      ResourceType.COLLECTIVITE,
       fiche.collectiviteId
     );
   }
@@ -66,10 +63,11 @@ export default class FicheService {
   ): Promise<boolean> {
     const fiche = await this.getFicheFromId(ficheId);
     if (fiche === null) return false;
-    return this.authService.verifieAccesAuxCollectivites(
+    return await this.permissionService.hasTheRightTo(
       tokenInfo,
-      [fiche.collectiviteId],
-      NiveauAcces.EDITION
+      Authorization.FICHES_EDITION,
+      ResourceType.COLLECTIVITE,
+      fiche.collectiviteId
     );
   }
 
