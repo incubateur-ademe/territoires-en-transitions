@@ -240,6 +240,7 @@ export interface TrackingPlan extends Record<never, Page> {
       cta_creer: {};
       cta_importer: {};
       cta_commencer_pai: {};
+      cta_telecharger_modele: { format: string };
     };
   };
 
