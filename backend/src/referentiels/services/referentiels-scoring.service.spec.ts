@@ -1,5 +1,4 @@
 import { Test } from '@nestjs/testing';
-import { AuthService } from '../../auth/services/auth.service';
 import {
   CollectiviteTypeEnum,
   IdentiteCollectivite,
@@ -27,6 +26,7 @@ import LabellisationService from './labellisation.service';
 import ReferentielsScoringSnapshotsService from './referentiels-scoring-snapshots.service';
 import ReferentielsScoringService from './referentiels-scoring.service';
 import ReferentielsService from './referentiels.service';
+import { PermissionService } from '../../auth/gestion-des-droits/permission.service';
 
 describe('ReferentielsScoringService', () => {
   let referentielsScoringService: ReferentielsScoringService;
@@ -45,7 +45,7 @@ describe('ReferentielsScoringService', () => {
       .useMocker((token) => {
         if (
           token === DatabaseService ||
-          token === AuthService ||
+          token === PermissionService ||
           token === CollectivitesService ||
           token === LabellisationService ||
           token === MattermostNotificationService ||

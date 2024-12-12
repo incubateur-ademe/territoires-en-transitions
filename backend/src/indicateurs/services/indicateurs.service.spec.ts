@@ -1,6 +1,6 @@
 import { Test } from '@nestjs/testing';
 import * as _ from 'lodash';
-import { AuthService } from '../../auth/services/auth.service';
+import { DateTime } from 'luxon';
 import DatabaseService from '../../common/services/database.service';
 import { IndicateurDefinitionType } from '../models/indicateur-definition.table';
 import { IndicateurSourceMetadonneeType } from '../models/indicateur-source-metadonnee.table';
@@ -10,6 +10,7 @@ import {
   IndicateurValeurAvecMetadonnesDefinition,
   IndicateurValeurType,
 } from '../models/indicateur-valeur.table';
+import { PermissionService } from '../../auth/gestion-des-droits/permission.service';
 import IndicateursService from './indicateurs.service';
 
 describe('IndicateursService', () => {
@@ -20,7 +21,7 @@ describe('IndicateursService', () => {
       controllers: [IndicateursService],
     })
       .useMocker((token) => {
-        if (token === DatabaseService || token === AuthService) {
+        if (token === DatabaseService || token === PermissionService) {
           return {};
         }
       })
