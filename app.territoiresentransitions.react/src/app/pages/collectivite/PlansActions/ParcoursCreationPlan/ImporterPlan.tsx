@@ -89,10 +89,7 @@ const ImporterPlan = () => {
                   fonction: 'modele_import',
                   action: 'telechargement',
                 });
-                window.open(
-                  `/20231107-Fichier-Import-PA-NEW.${format}`,
-                  '_blank'
-                );
+                window.open(`/modele-import-pa.${format}`, '_blank');
               }}
             >
               <MenuTriggerButton className="fr-btn fr-btn--icon-left fr-icon-download-line">
