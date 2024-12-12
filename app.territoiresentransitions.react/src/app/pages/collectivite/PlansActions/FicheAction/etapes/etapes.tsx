@@ -59,7 +59,11 @@ const Etapes = ({ fiche, isReadonly }: Props) => {
       <div className="h-[1px] w-full my-4 bg-grey-3" />
       <div className="flex flex-col gap-1">
         {etapes.map((etape) => (
-          <Etape key={etape.id} etape={etape} isReadonly={isReadonly} />
+          <Etape
+            key={etape.id}
+            etape={etape as unknown as any}
+            isReadonly={isReadonly}
+          />
         ))}
       </div>
       {/** Champ d'ajout d'une nouvelle étape */}
