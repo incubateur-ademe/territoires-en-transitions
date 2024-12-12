@@ -498,7 +498,7 @@ jobs:
 
   test-e2e:
     # Disable job temporarily until we have a stable environment for Next.js et new Earthly config
-    if: false
+    # if: false
     needs:
       - build-business-dev
       - build-tools
