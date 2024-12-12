@@ -1,6 +1,6 @@
-import { trpc } from '@tet/api/utils/trpc/client';
+import { trpc } from '@/api/utils/trpc/client';
 
-import { FicheAction } from '@tet/api/plan-actions';
+import { FicheAction } from '@/api/plan-actions';
 
 /**
  * Charge les étapes d'une fiche action

@@ -1,7 +1,7 @@
 import React from 'react';
 
-import { Modal, ModalFooterOKCancel } from '@tet/ui';
-import { OpenState } from '@tet/ui/utils/types';
+import { Modal, ModalFooterOKCancel } from '@/ui';
+import { OpenState } from '@/ui/utils/types';
 
 import { useDeleteEtape } from './use-delete-etape';
 
