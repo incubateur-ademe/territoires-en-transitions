@@ -198,4 +198,11 @@ export default class CollectivitesService {
     this.logger.log(`Epci trouvé avec l'id ${epciBySirenResult[0].id}`);
     return epciBySirenResult[0];
   }
+
+  async isPrivate(collectiviteId : number) : Promise<boolean>{
+    const collectivite = await this.getCollectivite(
+      collectiviteId
+    );
+    return collectivite.collectivite.accessRestreint || false;
+  }
 }
