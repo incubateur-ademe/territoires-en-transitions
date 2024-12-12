@@ -1,11 +1,12 @@
 import { Test } from '@nestjs/testing';
-import { AuthService } from '../../auth/services/auth.service';
+import { DateTime } from 'luxon';
 import CollectivitesService from '../../collectivites/services/collectivites.service';
 import SheetService from '../../spreadsheets/services/sheet.service';
 import { IndicateurValeurType } from '../models/indicateur-valeur.table';
 import IndicateurSourcesService from './indicateur-sources.service';
 import IndicateursService from './indicateurs.service';
 import TrajectoiresDataService from './trajectoires-data.service';
+import { PermissionService } from '../../auth/gestion-des-droits/permission.service';
 
 describe('TrajectoiresDataService test', () => {
   let trajectoiresDataService: TrajectoiresDataService;
@@ -20,7 +21,7 @@ describe('TrajectoiresDataService test', () => {
           token === CollectivitesService ||
           token === IndicateurSourcesService ||
           token === IndicateursService ||
-          token === AuthService
+          token === PermissionService
         ) {
           return {};
         } else if (token === SheetService) {

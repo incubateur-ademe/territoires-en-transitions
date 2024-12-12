@@ -1,12 +1,12 @@
 import { Test } from '@nestjs/testing';
-
-import { AuthService } from '../../auth/services/auth.service';
 import DatabaseService from '../../common/services/database.service';
 import IndicateurFiltreService from './indicateur-filtre.service';
 import {
   GetFilteredIndicateurRequestQueryOptionType,
   GetFilteredIndicateursRequestOptionType,
 } from './get-filtered-indicateurs.request';
+import { PermissionService } from '../../auth/gestion-des-droits/permission.service';
+import CollectivitesService from '../../collectivites/services/collectivites.service';
 
 describe('IndicateurFiltreService', () => {
   let indicateurFiltreService: IndicateurFiltreService;
@@ -16,7 +16,11 @@ describe('IndicateurFiltreService', () => {
       controllers: [IndicateurFiltreService],
     })
       .useMocker((token) => {
-        if (token === DatabaseService || token === AuthService) {
+        if (
+          token === DatabaseService ||
+          token === PermissionService ||
+          token === CollectivitesService
+        ) {
           return {};
         }
       })
@@ -291,13 +295,16 @@ describe('IndicateurFiltreService', () => {
         piloteUserId: null,
         piloteTagId: null,
         actionId: null,
-      }
-    ]
+      },
+    ];
     it('Test le groupement sans le groupement des enfants dans les parents', async () => {
-      const result = indicateurFiltreService.groupDetailsIndicateurs(datas, true);
+      const result = indicateurFiltreService.groupDetailsIndicateurs(
+        datas,
+        true
+      );
       const toCheck = indicateurFiltreService.applyFilters(result, {}, true);
       expect(toCheck.length).toEqual(4);
-      expect(toCheck.filter(item => item.id === 1)[0]).toEqual({
+      expect(toCheck.filter((item) => item.id === 1)[0]).toEqual({
         id: 1,
         identifiantReferentiel: null,
         titre: null,
@@ -320,13 +327,16 @@ describe('IndicateurFiltreService', () => {
         piloteUserIds: ['userid'],
         piloteTagIds: [],
         actionIds: ['eci_1'],
-      })
+      });
     });
     it('Test le groupement avec le groupement des enfants dans les parents', async () => {
-      const result = indicateurFiltreService.groupDetailsIndicateurs(datas, false);
+      const result = indicateurFiltreService.groupDetailsIndicateurs(
+        datas,
+        false
+      );
       const toCheck = indicateurFiltreService.applyFilters(result, {}, false);
       expect(toCheck.length).toEqual(2);
-      expect(toCheck.filter(item => item.id === 1)[0]).toEqual({
+      expect(toCheck.filter((item) => item.id === 1)[0]).toEqual({
         id: 1,
         identifiantReferentiel: null,
         titre: null,
@@ -349,7 +359,7 @@ describe('IndicateurFiltreService', () => {
         piloteUserIds: ['userid'],
         piloteTagIds: [1, 2],
         actionIds: ['eci_1'],
-      })
+      });
     });
   });
   describe('applyFilters', () => {
