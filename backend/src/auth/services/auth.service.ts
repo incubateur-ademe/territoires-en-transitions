@@ -12,10 +12,10 @@ import {
 import {
   utilisateurDroitTable,
   UtilisateurDroitType,
-} from '../models/private-utilisateur-droit.table';
-import { NiveauAcces, niveauAccessOrdonne } from '../models/niveau-acces.enum';
-import { utilisateurSupportTable } from '../models/utilisateur-support.table';
-import { utilisateurVerifieTable } from '../models/utilisateur-verifie.table';
+} from '../gestion-des-droits/roles/private-utilisateur-droit.table';
+import { NiveauAcces, niveauAccessOrdonne } from '../gestion-des-droits/roles/niveau-acces.enum';
+import { utilisateurSupportTable } from '../gestion-des-droits/roles/utilisateur-support.table';
+import { utilisateurVerifieTable } from '../gestion-des-droits/roles/utilisateur-verifie.table';
 
 @Injectable()
 export class AuthService {
