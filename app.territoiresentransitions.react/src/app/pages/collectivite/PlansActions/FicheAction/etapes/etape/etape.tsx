@@ -1,8 +1,8 @@
 import classNames from 'classnames';
 import { useState } from 'react';
 
-import { FicheActionEtapeType } from '@tet/backend/fiches/fiche-action-etape/fiche-action-etape.table';
-import { Button, Checkbox } from '@tet/ui';
+import { FicheActionEtapeType } from '@/backend/fiches/fiche-action-etape/fiche-action-etape.table';
+import { Button, Checkbox } from '@/ui';
 
 import ModalDeleteEtape from './modal-delete-etape';
 import { useUpsertEtape } from './use-upsert-etape';

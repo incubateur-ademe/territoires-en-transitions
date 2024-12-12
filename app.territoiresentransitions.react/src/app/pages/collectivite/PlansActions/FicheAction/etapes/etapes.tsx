@@ -1,8 +1,8 @@
 import { useRef } from 'react';
 
-import { FicheAction } from '@tet/api/plan-actions';
+import { FicheAction } from '@/api/plan-actions';
 
-import { Checkbox } from '@tet/ui';
+import { Checkbox } from '@/ui';
 import SpinnerLoader from 'ui/shared/SpinnerLoader';
 
 import { Etape, Textarea, useUpsertEtape } from './etape';
