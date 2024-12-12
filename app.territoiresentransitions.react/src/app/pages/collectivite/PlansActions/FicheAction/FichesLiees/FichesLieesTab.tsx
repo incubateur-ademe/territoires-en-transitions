@@ -1,8 +1,7 @@
 import { FicheAction } from '@/api/plan-actions';
-import { Button } from '@/ui';
+import { Button, EmptyCard } from '@/ui';
 import { useState } from 'react';
 import SpinnerLoader from 'ui/shared/SpinnerLoader';
-import EmptyCard from '../EmptyCard';
 import LoadingCard from '../LoadingCard';
 import {
   useFichesActionLiees,
@@ -41,15 +40,18 @@ const FichesLieesTab = ({
     <>
       {isEmpty ? (
         <EmptyCard
-          picto={(className) => <FichePicto className={className} />}
+          picto={(props) => <FichePicto {...props} />}
           title="Aucune fiche action de vos plans d'actions n'est liée !"
           subTitle="Ici vous pouvez faire référence à d’autres fiches actions de vos plans"
           isReadonly={isReadonly}
-          action={{
-            label: 'Lier une fiche action',
-            icon: 'link',
-            onClick: () => setIsModalOpen(true),
-          }}
+          actions={[
+            {
+              children: 'Lier une fiche action',
+              icon: 'link',
+              onClick: () => setIsModalOpen(true),
+            },
+          ]}
+          size="xs"
         />
       ) : (
         <div className="bg-white border border-grey-3 rounded-lg py-7 lg:py-8 xl:py-10 px-5 lg:px-6 xl:px-8 flex flex-col gap-5">

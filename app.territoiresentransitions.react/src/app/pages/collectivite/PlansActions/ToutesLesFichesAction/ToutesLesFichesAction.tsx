@@ -7,6 +7,7 @@ import MenuFiltresToutesLesFichesAction from 'app/pages/collectivite/PlansAction
 import { makeCollectiviteToutesLesFichesUrl } from 'app/paths';
 import { useSearchParams } from 'core-logic/hooks/query';
 import { useCurrentCollectivite } from 'core-logic/hooks/useCurrentCollectivite';
+import { useFicheResumesFetch } from '../FicheAction/data/useFicheResumesFetch';
 
 /** Paramètres d'URL possibles pour les filtres de fiches action */
 export type FicheActionParam =
@@ -76,6 +77,10 @@ const ToutesLesFichesAction = () => {
 
   const isReadonly = collectivite?.readonly ?? false;
 
+  const { data: ficheExistenceData } = useFicheResumesFetch();
+
+  const hasFiches = !!ficheExistenceData?.data?.length;
+
   const [filterParams, setFilterParams] = useSearchParams<Filtre>(
     makeCollectiviteToutesLesFichesUrl({
       collectiviteId: collectivite?.collectivite_id!,
@@ -92,7 +97,7 @@ const ToutesLesFichesAction = () => {
     <div className="min-h-[44rem] flex flex-col gap-8">
       <div className="flex justify-between max-sm:flex-col gap-y-4">
         <h2 className="mb-0">Toutes les actions</h2>
-        {!isReadonly && (
+        {!isReadonly && hasFiches && (
           <Button size="sm" onClick={() => createFicheAction()}>
             Créer une fiche d’action
           </Button>
@@ -119,6 +124,8 @@ const ToutesLesFichesAction = () => {
           </ButtonMenu>
         )}
         enableGroupedActions={!isReadonly}
+        hasFiches={hasFiches}
+        isReadOnly={isReadonly}
       />
     </div>
   );

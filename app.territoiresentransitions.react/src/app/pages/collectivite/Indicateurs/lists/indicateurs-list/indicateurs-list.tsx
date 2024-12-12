@@ -1,8 +1,8 @@
 import { useEffect, useState } from 'react';
 
 import {
-  Button,
   Checkbox,
+  EmptyCard,
   Input,
   Pagination,
   Select,
@@ -221,20 +221,18 @@ const IndicateursListe = ({
         </div>
       ) : /** État vide  */
       currentDefs?.length === 0 ? (
-        <div className="flex flex-col items-center gap-2 m-auto">
-          <PictoExpert className="w-32 h-32" />
-          <p className="text-primary-8">
-            Aucun indicateur ne correspond à votre recherche
-          </p>
-          <Button
-            size="sm"
-            onClick={() => {
-              setIsSettingsOpen(true);
-            }}
-          >
-            Modifier le filtre
-          </Button>
-        </div>
+        <EmptyCard
+          picto={(props) => <PictoExpert {...props} />}
+          title="Aucun indicateur ne correspond à votre recherche"
+          actions={[
+            {
+              children: 'Modifier le filtre',
+              onClick: () => setIsSettingsOpen(true),
+            },
+          ]}
+          background="bg-transparent"
+          border="border-transparent"
+        />
       ) : (
         /** Liste des indicateurs */
         // besoin de cette div car `grid` semble rentrer en conflit avec le container `flex` sur Safari

@@ -1,12 +1,11 @@
 import { FicheAction } from '@/api/plan-actions';
-import { Button, Divider, useEventTracker } from '@/ui';
+import { Button, Divider, EmptyCard, useEventTracker } from '@/ui';
 import IndicateurCard from 'app/pages/collectivite/Indicateurs/lists/IndicateurCard/IndicateurCard';
 import { getIndicateurGroup } from 'app/pages/collectivite/Indicateurs/lists/IndicateurCard/utils';
 import { TIndicateurListItem } from 'app/pages/collectivite/Indicateurs/types';
 import { makeCollectiviteIndicateursUrl } from 'app/paths';
 import { useCollectiviteId } from 'core-logic/hooks/params';
 import { useState } from 'react';
-import EmptyCard from '../EmptyCard';
 import LoadingCard from '../LoadingCard';
 import SideMenu from '../SideMenu';
 import DatavizPicto from './DatavizPicto';
@@ -56,27 +55,32 @@ const IndicateursAssocies = ({
     <>
       {isEmpty ? (
         <EmptyCard
-          picto={(className) => <DatavizPicto className={className} />}
+          picto={(props) => <DatavizPicto {...props} />}
           title="Aucun indicateur associé !"
           subTitle="Observez votre progression grâce aux indicateurs"
           isReadonly={isReadonly}
-          action={{
-            label: 'Associer des indicateurs',
-            icon: 'link',
-            onClick: () => setIsPanelOpen((prevState) => !prevState),
-          }}
-          secondaryAction={{
-            label: 'Créer un indicateur',
-            icon: 'add-line',
-            onClick: () => {
-              collectiviteId &&
-                tracker('cta_indicateur_perso_fa', {
-                  collectivite_id: collectiviteId,
-                });
-              setIsModalOpen(true);
-              setIsPanelOpen(false);
+          actions={[
+            {
+              children: 'Créer un indicateur',
+              icon: 'add-line',
+              onClick: () => {
+                collectiviteId &&
+                  tracker('cta_indicateur_perso_fa', {
+                    collectivite_id: collectiviteId,
+                  });
+                setIsModalOpen(true);
+                setIsPanelOpen(false);
+              },
+              variant: 'outlined',
             },
-          }}
+            {
+              children: 'Associer des indicateurs',
+              icon: 'link',
+              onClick: () => setIsPanelOpen((prevState) => !prevState),
+              variant: 'primary',
+            },
+          ]}
+          size="xs"
         />
       ) : (
         <div>

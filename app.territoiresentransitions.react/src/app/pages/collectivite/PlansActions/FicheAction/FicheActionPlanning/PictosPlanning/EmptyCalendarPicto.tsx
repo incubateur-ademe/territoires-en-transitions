@@ -1,9 +1,17 @@
-const EmptyCalendarPicto = ({className}: {className?: string}) => {
+const EmptyCalendarPicto = ({
+  className,
+  width = '101',
+  height = '100',
+}: {
+  className?: string;
+  width?: string;
+  height?: string;
+}) => {
   return (
     <svg
       className={className}
-      width="101"
-      height="100"
+      width={width}
+      height={height}
       viewBox="0 0 101 100"
       fill="none"
       xmlns="http://www.w3.org/2000/svg"

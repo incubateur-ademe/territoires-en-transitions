@@ -1,6 +1,16 @@
-const PictoDocument = ({className}: {className?: string}) => (
+const PictoDocument = ({
+  className,
+  width = '48',
+  height = '48',
+}: {
+  className?: string;
+  width?: string;
+  height?: string;
+}) => (
   <svg
     className={className}
+    width={width}
+    height={height}
     viewBox="0 0 48 48"
     fill="none"
     xmlns="http://www.w3.org/2000/svg"

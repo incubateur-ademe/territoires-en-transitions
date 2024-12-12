@@ -1,8 +1,16 @@
-const PictoDashboard = ({className}: {className?: string}) => (
+const PictoDashboard = ({
+  className,
+  width = '212',
+  height = '212',
+}: {
+  className?: string;
+  width?: string;
+  height?: string;
+}) => (
   <svg
     className={className}
-    width="212"
-    height="212"
+    width={width}
+    height={height}
     viewBox="0 0 212 212"
     fill="none"
     xmlns="http://www.w3.org/2000/svg"

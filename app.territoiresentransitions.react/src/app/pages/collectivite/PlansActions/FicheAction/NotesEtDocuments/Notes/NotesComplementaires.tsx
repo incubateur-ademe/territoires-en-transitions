@@ -1,8 +1,8 @@
-import {useState} from 'react';
-import EmptyCard from '../../EmptyCard';
-import NotesPicto from './NotesPicto';
+import { EmptyCard } from '@/ui';
+import { useState } from 'react';
 import CarteNote from './CarteNote';
 import ModaleCreationNote from './ModaleCreationNote';
+import NotesPicto from './NotesPicto';
 
 type NotesComplementairesProps = {
   isReadonly: boolean;
@@ -23,13 +23,16 @@ const NotesComplementaires = ({
     <>
       {isEmpty ? (
         <EmptyCard
-          picto={className => <NotesPicto className={className} />}
+          picto={(props) => <NotesPicto {...props} />}
           title="Aucune note complémentaire ajoutée"
           isReadonly={isReadonly}
-          action={{
-            label: 'Ajouter une note',
-            onClick: () => setIsModalOpen(true),
-          }}
+          actions={[
+            {
+              children: 'Ajouter une note',
+              onClick: () => setIsModalOpen(true),
+            },
+          ]}
+          size="xs"
         />
       ) : (
         <div className="bg-white border border-grey-3 rounded-lg py-7 lg:py-8 xl:py-10 px-5 lg:px-6 xl:px-8 flex flex-col gap-5">

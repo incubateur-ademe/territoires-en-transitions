@@ -12,6 +12,7 @@ export * from './hooks/useCopyToClipboard';
 export * from './components/layout';
 export * from './components/tracking';
 export * from './components/InfoActionImpact';
+export * from './components/EmptyCard/EmptyCard';
 
 // dossier design-system
 export * from './design-system/Accordion';
