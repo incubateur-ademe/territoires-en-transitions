@@ -1,10 +1,9 @@
 import { FicheAction } from '@/api/plan-actions';
 import { useState } from 'react';
-import EmptyCard from '../EmptyCard';
 import EmptyActeursPicto from '../FicheActionActeurs/PictosActeurs/EmptyActeursPicto';
 import PersonnePilotePicto from './PersonnePilotePicto';
 
-import { Button } from '@/ui';
+import { Button, EmptyCard } from '@/ui';
 import classNames from 'classnames';
 import ModalePilotes from '../FicheActionPilotes/ModalePilotes';
 
@@ -65,15 +64,18 @@ const FicheActionPilotes = ({
         </div>
       ) : (
         <EmptyCard
-          picto={(className) => <EmptyActeursPicto className={className} />}
+          picto={(props) => <EmptyActeursPicto {...props} />}
           title="Aucun pilote du projet n'est renseigné !"
           isReadonly={isReadonly}
-          action={{
-            dataTest: 'pilotes',
-            label: 'Ajouter les pilotes',
-            onClick: () => setIsModalOpen(true),
-          }}
+          actions={[
+            {
+              dataTest: 'pilotes',
+              children: 'Ajouter les pilotes',
+              onClick: () => setIsModalOpen(true),
+            },
+          ]}
           className={className}
+          size="xs"
         />
       )}
 

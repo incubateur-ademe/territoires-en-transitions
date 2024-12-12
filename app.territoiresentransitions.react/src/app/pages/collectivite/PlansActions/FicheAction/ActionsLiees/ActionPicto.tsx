@@ -1,9 +1,17 @@
-const ActionPicto = ({className}: {className?: string}) => {
+const ActionPicto = ({
+  className,
+  width = '135',
+  height = '134',
+}: {
+  className?: string;
+  width?: string;
+  height?: string;
+}) => {
   return (
     <svg
       className={className}
-      width="135"
-      height="134"
+      width={width}
+      height={height}
       viewBox="0 0 135 134"
       fill="none"
       xmlns="http://www.w3.org/2000/svg"

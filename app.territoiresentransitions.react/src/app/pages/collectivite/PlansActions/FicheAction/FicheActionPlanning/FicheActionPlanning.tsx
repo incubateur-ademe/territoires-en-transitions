@@ -1,12 +1,11 @@
 import { FicheAction } from '@/api/plan-actions';
-import { Button, Divider, Icon } from '@/ui';
+import { Button, Divider, EmptyCard, Icon } from '@/ui';
 import classNames from 'classnames';
 import { isBefore, startOfToday } from 'date-fns';
 import { useState } from 'react';
 import { getTextFormattedDate, getTruncatedText } from 'utils/formatUtils';
 import BadgePriorite from '../../components/BadgePriorite';
 import BadgeStatut from '../../components/BadgeStatut';
-import EmptyCard from '../EmptyCard';
 import ModalePlanning from './ModalePlanning';
 import EmptyCalendarPicto from './PictosPlanning/EmptyCalendarPicto';
 import FilledCalendarPicto from './PictosPlanning/FilledCalendarPicto';
@@ -184,9 +183,9 @@ const FicheActionPlanning = ({
       ) : (
         <EmptyCard
           dataTest="empty-planning"
-          picto={(className) => (
+          picto={(props) => (
             <>
-              <EmptyCalendarPicto className={className} />
+              <EmptyCalendarPicto {...props} />
               {(!!statut || !!niveauPriorite) && (
                 <div className="flex flex-wrap justify-center gap-4 mb-2">
                   {!!statut && <BadgeStatut statut={statut} />}
@@ -202,12 +201,15 @@ const FicheActionPlanning = ({
             !statut ? ' | Statut' : ''
           }${!niveauPriorite ? ' | Niveau de priorité' : ''}`}
           isReadonly={isReadonly}
-          action={{
-            dataTest: 'modalites',
-            label: 'Ajouter le planning prévisionnel',
-            onClick: () => setIsModalOpen(true),
-          }}
+          actions={[
+            {
+              dataTest: 'modalites',
+              children: 'Ajouter le planning prévisionnel',
+              onClick: () => setIsModalOpen(true),
+            },
+          ]}
           className={className}
+          size="xs"
         />
       )}
 

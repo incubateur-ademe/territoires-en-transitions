@@ -1,5 +1,5 @@
 import { getRejoindreCollectivitePath } from '@/api';
-import { Button, Card } from '@/ui';
+import { EmptyCard } from '@/ui';
 import {
   finaliserMonInscriptionUrl,
   recherchesCollectivitesUrl,
@@ -24,25 +24,26 @@ const CollectivitesEngagees = () => {
 
 const FinaliserMonInscription = () => (
   <div className="mx-auto my-8" data-test="FinaliserInscription">
-    <Card className="items-center">
-      <PictoCarte />
-      <h2 className="text-primary-8">Merci pour votre inscription !</h2>
-      <p className="font-normal text-center leading-7">
-        Dernière étape pour accéder à l’ensemble des fonctionnalités de &nbsp;
-        <b>Territoires en Transitions</b> : rejoindre une collectivité.
-        <br />
-        Vous pouvez également découvrir les collectivités déjà inscrites sur la
-        plateforme.
-      </p>
-      <div className="flex flex-row gap-4">
-        <Button variant="outlined" href={recherchesCollectivitesUrl}>
-          Découvrir les collectivités
-        </Button>
-        <Button href={getRejoindreCollectivitePath(document.location.origin)}>
-          Rejoindre une collectivité
-        </Button>
-      </div>
-    </Card>
+    <EmptyCard
+      picto={(props) => <PictoCarte {...props} />}
+      title="Merci pour votre inscription !"
+      description="Dernière étape pour accéder à l'ensemble des fonctionnalités de Territoires en Transitions : rejoindre une collectivité. Vous pouvez également découvrir les collectivités déjà inscrites sur la plateforme."
+      actions={[
+        {
+          children: 'Découvrir les collectivités',
+          onClick: () => (window.location.href = recherchesCollectivitesUrl),
+          variant: 'outlined',
+        },
+        {
+          children: 'Rejoindre une collectivité',
+          onClick: () =>
+            (window.location.href = getRejoindreCollectivitePath(
+              document.location.origin
+            )),
+        },
+      ]}
+      size="xl"
+    />
   </div>
 );
 

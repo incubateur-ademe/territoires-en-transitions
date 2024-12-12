@@ -1,10 +1,9 @@
-import { Button } from '@/ui';
+import { Button, EmptyCard } from '@/ui';
 import { useEffect, useState } from 'react';
 import CarteDocument from 'ui/shared/preuves/Bibliotheque/CarteDocument';
 import SpinnerLoader from 'ui/shared/SpinnerLoader';
 import { useAddAnnexe } from '../../data/useAddAnnexe';
 import { useAnnexesFicheAction } from '../../data/useAnnexesFicheAction';
-import EmptyCard from '../../EmptyCard';
 import LoadingCard from '../../LoadingCard';
 import DocumentPicto from './DocumentPicto';
 import ModaleAjoutDocument from './ModaleAjoutDocument';
@@ -47,13 +46,16 @@ const Documents = ({ isReadonly, ficheId, collectiviteId }: DocumentsProps) => {
     <>
       {isEmpty ? (
         <EmptyCard
-          picto={(className) => <DocumentPicto className={className} />}
+          picto={(props) => <DocumentPicto {...props} />}
           title="Aucun document ajouté"
           isReadonly={isReadonly}
-          action={{
-            label: 'Ajouter un document',
-            onClick: () => setIsModalOpen(true),
-          }}
+          actions={[
+            {
+              children: 'Ajouter un document',
+              onClick: () => setIsModalOpen(true),
+            },
+          ]}
+          size="xs"
         />
       ) : (
         <div className="bg-white border border-grey-3 rounded-lg py-7 lg:py-8 xl:py-10 px-5 lg:px-6 xl:px-8 flex flex-col gap-5">

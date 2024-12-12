@@ -1,8 +1,7 @@
 import { FicheAction } from '@/api/plan-actions';
-import { Button } from '@/ui';
+import { Button, EmptyCard } from '@/ui';
 import classNames from 'classnames';
 import { useState } from 'react';
-import EmptyCard from '../EmptyCard';
 import BudgetBadge from './BudgetBadge';
 import FinanceursListe from './FinanceursListe';
 import ModaleBudget from './ModaleBudget';
@@ -28,14 +27,17 @@ const BudgetTab = ({ isReadonly, fiche, updateFiche }: BudgetTabProps) => {
     <>
       {isEmpty ? (
         <EmptyCard
-          picto={(className) => <MoneyPicto className={className} />}
+          picto={(props) => <MoneyPicto {...props} />}
           title="Budget non renseigné !"
           subTitle="Renseignez le budget prévisionnel de l'action, ainsi que les détails de financements"
           isReadonly={isReadonly}
-          action={{
-            label: 'Renseigner un budget',
-            onClick: () => setIsModalOpen(true),
-          }}
+          actions={[
+            {
+              children: 'Renseigner un budget',
+              onClick: () => setIsModalOpen(true),
+            },
+          ]}
+          size="xs"
         />
       ) : (
         <div className="bg-white border border-grey-3 rounded-lg py-7 lg:py-8 xl:py-10 px-5 lg:px-6 xl:px-8 flex flex-col gap-5">

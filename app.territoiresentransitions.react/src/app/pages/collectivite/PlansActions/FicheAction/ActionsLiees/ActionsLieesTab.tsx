@@ -1,8 +1,7 @@
 import { FicheAction } from '@/api/plan-actions';
-import { Button } from '@/ui';
+import { Button, EmptyCard } from '@/ui';
 import { useState } from 'react';
 import SpinnerLoader from 'ui/shared/SpinnerLoader';
-import EmptyCard from '../EmptyCard';
 import ActionPicto from './ActionPicto';
 import ActionsLieesListe from './ActionsLieesListe';
 import ModaleActionsLiees from './ModaleActionsLiees';
@@ -31,15 +30,18 @@ const ActionsLieesTab = ({
     <>
       {isEmpty ? (
         <EmptyCard
-          picto={(className) => <ActionPicto className={className} />}
+          picto={(props) => <ActionPicto {...props} />}
           title="Aucune action des référentiels n'est liée !"
           subTitle="Ici vous pouvez lier votre action avec une action des référentiels Climat Air Energie et Economie Circulaire de l’ADEME"
           isReadonly={isReadonly}
-          action={{
-            label: 'Lier une action des référentiels',
-            icon: 'link',
-            onClick: () => setIsModalOpen(true),
-          }}
+          actions={[
+            {
+              children: 'Lier une action des référentiels',
+              icon: 'link',
+              onClick: () => setIsModalOpen(true),
+            },
+          ]}
+          size="xs"
         />
       ) : (
         <div className="bg-white border border-grey-3 rounded-lg py-7 lg:py-8 xl:py-10 px-5 lg:px-6 xl:px-8 flex flex-col gap-5">

@@ -1,12 +1,11 @@
 import { FicheAction } from '@/api/plan-actions';
-import { Button } from '@/ui';
+import { Button, EmptyCard } from '@/ui';
 import { useState } from 'react';
 import { useFicheActionNotesSuivi } from '../data/useFicheActionNotesSuivi';
 import {
   useDeleteNoteSuivi,
   useUpsertNoteSuivi,
 } from '../data/useUpsertNoteSuivi';
-import EmptyCard from '../EmptyCard';
 import ModaleCreationNote from './ModaleCreationNote';
 import NoteSuiviCard from './NoteSuiviCard';
 import NotificationPicto from './NotificationPicto';
@@ -29,13 +28,16 @@ const NotesDeSuiviTab = ({ fiche, isReadonly }: NotesDeSuiviTabProps) => {
     <>
       {isEmpty ? (
         <EmptyCard
-          picto={(className) => <NotificationPicto className={className} />}
+          picto={(props) => <NotificationPicto {...props} />}
           title="Aucune note de suivi ou point de vigilance n'est renseigné"
           isReadonly={isReadonly}
-          action={{
-            label: 'Compléter le suivi',
-            onClick: () => setIsModalOpen(true),
-          }}
+          actions={[
+            {
+              children: 'Compléter le suivi',
+              onClick: () => setIsModalOpen(true),
+            },
+          ]}
+          size="xs"
         />
       ) : (
         <div className="bg-white border border-grey-3 rounded-lg py-7 lg:py-8 xl:py-10 px-5 lg:px-6 xl:px-8 flex flex-col gap-5">

@@ -1,9 +1,8 @@
 import { FicheAction } from '@/api/plan-actions';
-import { Button, getOptionLabel } from '@/ui';
+import { Button, EmptyCard, getOptionLabel } from '@/ui';
 import classNames from 'classnames';
 import { useState } from 'react';
 import { ficheActionParticipationOptions } from '../../../../../../ui/dropdownLists/listesStatiques';
-import EmptyCard from '../EmptyCard';
 import ListeActeurs from './ListeActeurs';
 import ModaleActeurs from './ModaleActeurs';
 import CiblePicto from './PictosActeurs/CiblePicto';
@@ -126,16 +125,19 @@ const FicheActionActeurs = ({
         </div>
       ) : (
         <EmptyCard
-          picto={(className) => <EmptyActeursPicto className={className} />}
+          picto={(props) => <EmptyActeursPicto {...props} />}
           title="Aucun acteur du projet n'est renseigné !"
           subTitle="Structure pilote | Élu·e référent·e | Direction ou service pilote | Partenaires | Cibles | Participation citoyenne"
           isReadonly={isReadonly}
-          action={{
-            dataTest: 'acteurs',
-            label: 'Ajouter les acteurs',
-            onClick: () => setIsModalOpen(true),
-          }}
+          actions={[
+            {
+              dataTest: 'acteurs',
+              children: 'Ajouter les acteurs',
+              onClick: () => setIsModalOpen(true),
+            },
+          ]}
           className={className}
+          size="xs"
         />
       )}
 
