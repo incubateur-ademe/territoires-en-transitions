@@ -1,4 +1,4 @@
-import { Alert } from '@/ui';
+import { Alert, useEventTracker } from '@/ui';
 import { makeCollectivitePlansActionsNouveauUrl } from 'app/paths';
 import { useCollectiviteId } from 'core-logic/hooks/params';
 import { useFonctionTracker } from 'core-logic/hooks/useFonctionTracker';
@@ -10,6 +10,9 @@ const DOWNLOAD_TEMPLATE_OPTIONS = [
   { value: 'xlsx', label: 'Format Excel (.xlsx)' },
   { value: 'ods', label: 'Format OpenDocument (.ods)' },
 ];
+
+const URL_VIDEO_IMPORT_PA =
+  'https://www.loom.com/share/9daea45015014616a4ab4e79556bcce9?sid=971d9818-0acf-4be5-af65-74a0f1161f1b';
 
 const ImporterPlan = () => {
   const collectivite_id = useCollectiviteId();
@@ -41,7 +44,8 @@ const ImporterPlan = () => {
           <ul>
             <li>
               La version flash (onglet 2), pour importer en priorité la
-              structure de votre plan et les informations clés pour le pilotage.
+                structure de votre plan et les informations clés pour le
+                pilotage.
             </li>
             <li>
               La version complète (onglet 3) pour détailler et importer
@@ -50,8 +54,15 @@ const ImporterPlan = () => {
             </li>
           </ul>
           <p>
-            Attention à bien respecter le format proposé pour que l’importation
-            fonctionne !
+              Attention à bien respecter le format proposé pour que
+              l’importation fonctionne !
+          </p>
+          <p>
+              Nous vous invitons à regarder cette vidéo de présentation du
+              fichier d’import en cliquant sur ce{' '}
+              <a href={URL_VIDEO_IMPORT_PA} target="_blank">
+              lien
+              </a>
           </p>
           <Alert
             title={`Pour toute question, contactez-nous sur le support en ligne
