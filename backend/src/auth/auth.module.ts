@@ -5,7 +5,8 @@ import { CollectivitesModule } from '../collectivites/collectivites.module';
 import { CommonModule } from '../common/common.module';
 import { ConfigurationModule } from '../config/configuration.module';
 import { AuthGuard } from './guards/auth.guard';
-import { AuthService } from './services/auth.service';
+import { PermissionService } from '../auth/gestion-des-droits/permission.service';
+import { RoleService } from '../auth/gestion-des-droits/roles/role.service';
 
 @Global()
 @Module({
@@ -23,8 +24,9 @@ import { AuthService } from './services/auth.service';
       provide: APP_GUARD,
       useClass: AuthGuard,
     },
-    AuthService,
+    PermissionService,
+    RoleService
   ],
-  exports: [AuthService],
+  exports: [PermissionService],
 })
 export class AuthModule {}
