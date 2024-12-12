@@ -1,2 +1,2 @@
 export * from './models/dcp.table';
-export * from './models/private-utilisateur-droit.table';
+export * from './gestion-des-droits/roles/private-utilisateur-droit.table';

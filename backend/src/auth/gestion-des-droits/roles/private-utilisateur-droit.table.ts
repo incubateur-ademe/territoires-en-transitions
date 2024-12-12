@@ -1,9 +1,9 @@
-import { InferInsertModel, InferSelectModel } from 'drizzle-orm';
+import { InferSelectModel } from 'drizzle-orm';
 import { boolean, integer, pgTable, serial, uuid } from 'drizzle-orm/pg-core';
-import { collectiviteTable } from '../../collectivites/models/collectivite.table';
-import { createdAt, modifiedAt } from '../../utils/column.utils';
-import { invitationTable } from './invitation.table';
+import { collectiviteTable } from '../../../collectivites/models/collectivite.table';
 import { NiveauAcces, niveauAccessEnum } from './niveau-acces.enum';
+import { createdAt, modifiedAt } from '@/backend/utils';
+import { invitationTable } from '@/backend/auth/models/invitation.table';
 
 export const utilisateurDroitTable = pgTable('private_utilisateur_droit', {
   id: serial('id').primaryKey(),
@@ -21,8 +21,5 @@ export const utilisateurDroitTable = pgTable('private_utilisateur_droit', {
 });
 
 export type UtilisateurDroitType = InferSelectModel<
-  typeof utilisateurDroitTable
->;
-export type CreateUtilisateurDroitType = InferInsertModel<
   typeof utilisateurDroitTable
 >;

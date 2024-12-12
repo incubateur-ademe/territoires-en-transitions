@@ -4,7 +4,7 @@ import { and, eq, sql } from 'drizzle-orm';
 import { unionAll } from 'drizzle-orm/pg-core';
 import z from 'zod';
 import { invitationTable } from '../../auth/models/invitation.table';
-import { utilisateurDroitTable } from '../../auth/models/private-utilisateur-droit.table';
+import { utilisateurDroitTable } from '../../auth/gestion-des-droits/roles/private-utilisateur-droit.table';
 import DatabaseService from '../../common/services/database.service';
 import { MembreFonction } from '../models/membre-fonction.enum';
 import { insertMembreSchema, membreTable } from '../models/membre.table';
