@@ -20,8 +20,7 @@ import { chunk, isNil } from 'es-toolkit';
 import * as _ from 'lodash';
 import { DateTime } from 'luxon';
 import { AuthenticatedUser } from '../../auth/models/auth.models';
-import { NiveauAcces } from '../../auth/models/niveau-acces.enum';
-import { AuthService } from '../../auth/services/auth.service';
+import { NiveauAcces } from '../../auth/gestion-des-droits/roles/niveau-acces.enum';
 import { CollectiviteAvecType } from '../../collectivites/models/identite-collectivite.dto';
 import CollectivitesService from '../../collectivites/services/collectivites.service';
 import DatabaseService from '../../common/services/database.service';
@@ -77,6 +76,9 @@ import { ScoreJalon } from '../models/score-jalon.enum';
 import LabellisationService from './labellisation.service';
 import ReferentielsScoringSnapshotsService from './referentiels-scoring-snapshots.service';
 import ReferentielsService from './referentiels.service';
+import { ResourceType } from '../../auth/gestion-des-droits/resource-type.enum';
+import { PermissionService } from '../../auth/gestion-des-droits/permission.service';
+import { Authorization } from '../../auth/gestion-des-droits/authorization.enum';
 
 @Injectable()
 export default class ReferentielsScoringService {
@@ -86,7 +88,7 @@ export default class ReferentielsScoringService {
   private static MULTIPLE_COLLECTIVITE_CHUNK_SIZE = 10;
 
   constructor(
-    private readonly authService: AuthService,
+    private readonly permissionService: PermissionService,
     private readonly configService: ConfigurationService,
     private readonly mattermostNotificationService: MattermostNotificationService,
     private readonly collectivitesService: CollectivitesService,
@@ -130,10 +132,13 @@ export default class ReferentielsScoringService {
   ): Promise<CollectiviteAvecType> {
     // Check read access if a date is given (historical data)
     if (tokenInfo) {
-      await this.authService.verifieAccesAuxCollectivites(
+      await this.permissionService.hasTheRightTo(
         tokenInfo,
-        [collectiviteId],
-        niveauAccesMinimum
+        niveauAccesMinimum === NiveauAcces.LECTURE
+          ? Authorization.REFERENTIELS_LECTURE
+          : Authorization.REFERENTIELS_EDITION,
+        ResourceType.COLLECTIVITE,
+        collectiviteId
       );
     }
     await this.referentielsService.getReferentielDefinition(referentielId);

@@ -3,8 +3,6 @@ import { sql } from 'drizzle-orm';
 import { PostgresError } from 'postgres';
 import z from 'zod';
 import { AuthenticatedUser } from '../../auth/models/auth.models';
-import { NiveauAcces } from '../../auth/models/niveau-acces.enum';
-import { AuthService } from '../../auth/services/auth.service';
 import { PgIntegrityConstraintViolation } from '../../common/models/postgresql-error-codes.enum';
 import DatabaseService from '../../common/services/database.service';
 import { getErrorWithCode } from '../../common/services/errors.helper';
@@ -16,6 +14,9 @@ import { ComputeScoreMode } from '../models/compute-scores-mode.enum';
 import { GetReferentielScoresRequestType } from '../models/get-referentiel-scores.request';
 import ReferentielsScoringService from '../services/referentiels-scoring.service';
 import ReferentielsService from '../services/referentiels.service';
+import { PermissionService } from '../../auth/gestion-des-droits/permission.service';
+import { Authorization } from '../../auth/gestion-des-droits/authorization.enum';
+import { ResourceType } from '../../auth/gestion-des-droits/resource-type.enum';
 
 export const upsertActionStatutRequestSchema = z.object({
   actionStatut: createActionStatutSchema,
@@ -30,7 +31,7 @@ export class UpdateActionStatutService {
 
   constructor(
     private readonly databaseService: DatabaseService,
-    private readonly authService: AuthService,
+    private readonly permissionService: PermissionService,
     private readonly referentielService: ReferentielsService,
     private readonly referentielScoringService: ReferentielsScoringService
   ) {}
@@ -40,10 +41,11 @@ export class UpdateActionStatutService {
     user: AuthenticatedUser
   ) {
     // Check user access
-    await this.authService.verifieAccesAuxCollectivites(
+    await this.permissionService.hasTheRightTo(
       user,
-      [request.actionStatut.collectiviteId],
-      NiveauAcces.EDITION
+      Authorization.REFERENTIELS_EDITION,
+      ResourceType.COLLECTIVITE,
+      request.actionStatut.collectiviteId
     );
 
     const referentielId = this.referentielService.getReferentielIdFromActionId(

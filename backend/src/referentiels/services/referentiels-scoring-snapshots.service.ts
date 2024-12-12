@@ -10,8 +10,6 @@ import { and, asc, eq, inArray, sql } from 'drizzle-orm';
 import { DateTime } from 'luxon';
 import slugify from 'slugify';
 import { AuthRole, AuthUser } from '../../auth/models/auth.models';
-import { NiveauAcces } from '../../auth/models/niveau-acces.enum';
-import { AuthService } from '../../auth/services/auth.service';
 import { PgIntegrityConstraintViolation } from '../../common/models/postgresql-error-codes.enum';
 import DatabaseService from '../../common/services/database.service';
 import { getErrorWithCode } from '../../common/services/errors.helper';
@@ -30,6 +28,9 @@ import {
   scoreSnapshotTable,
   ScoreSnapshotType,
 } from '../models/score-snapshot.table';
+import { PermissionService } from '../../auth/gestion-des-droits/permission.service';
+import { Authorization } from '../../auth/gestion-des-droits/authorization.enum';
+import { ResourceType } from '../../auth/gestion-des-droits/resource-type.enum';
 
 @Injectable()
 export default class ReferentielsScoringSnapshotsService {
@@ -54,7 +55,7 @@ export default class ReferentielsScoringSnapshotsService {
 
   constructor(
     private readonly databaseService: DatabaseService,
-    private readonly authService: AuthService
+    private readonly permissionService: PermissionService
   ) {}
 
   slugifyName(name: string): string {
@@ -476,10 +477,11 @@ export default class ReferentielsScoringSnapshotsService {
     snapshotRef: string,
     tokenInfo: AuthUser
   ): Promise<void> {
-    await this.authService.verifieAccesAuxCollectivites(
+    await this.permissionService.hasTheRightTo(
       tokenInfo,
-      [collectiviteId],
-      NiveauAcces.EDITION
+      Authorization.REFERENTIELS_EDITION,
+      ResourceType.COLLECTIVITE,
+      collectiviteId
     );
 
     const snapshotInfo = await this.getSummary(

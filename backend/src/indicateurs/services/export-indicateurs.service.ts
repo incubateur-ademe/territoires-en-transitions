@@ -3,8 +3,6 @@ import { Workbook } from 'exceljs';
 import { format } from 'date-fns';
 import { uniq } from 'es-toolkit';
 import { AuthenticatedUser } from '../../auth/models/auth.models';
-import { AuthService } from '../../auth/services/auth.service';
-import { NiveauAcces } from '../../auth/models/niveau-acces.enum';
 import IndicateursService from './indicateurs.service';
 import { ExportIndicateursRequestType } from '../models/export-indicateurs.request';
 import {
@@ -19,13 +17,16 @@ import {
   normalizeWorksheetName,
 } from '../../common/services/xlsx.helper';
 import CollectivitesService from '../../collectivites/services/collectivites.service';
+import { PermissionService } from '../../auth/gestion-des-droits/permission.service';
+import { ResourceType } from '../../auth/gestion-des-droits/resource-type.enum';
+import { Authorization } from '../../auth/gestion-des-droits/authorization.enum';
 
 @Injectable()
 export default class ExportIndicateursService {
   private readonly logger = new Logger(ExportIndicateursService.name);
 
   constructor(
-    private readonly authService: AuthService,
+    private readonly permissionService: PermissionService,
     private readonly indicateursService: IndicateursService,
     private readonly collectiviteService: CollectivitesService
   ) {}
@@ -38,10 +39,11 @@ export default class ExportIndicateursService {
 
     this.logger.log("Vérification des droits avant l'export xlsx");
 
-    await this.authService.verifieAccesAuxCollectivites(
+    await this.permissionService.hasTheRightTo(
       tokenInfo,
-      [options.collectiviteId],
-      NiveauAcces.LECTURE
+      Authorization.FICHES_LECTURE,
+      ResourceType.COLLECTIVITE,
+      options.collectiviteId
     );
 
     this.logger.log(

@@ -1,8 +1,6 @@
 import { Injectable, Logger } from '@nestjs/common';
 import { and, asc, desc, eq, like, lte, SQL, SQLWrapper } from 'drizzle-orm';
-import { NiveauAcces } from '../../auth/models/niveau-acces.enum';
 import { AuthenticatedUser } from '../../auth/models/auth.models';
-import { AuthService } from '../../auth/services/auth.service';
 import {
   CollectiviteAvecType,
   IdentiteCollectivite,
@@ -24,6 +22,9 @@ import { reponseBinaireTable } from '../models/reponse-binaire.table';
 import { reponseChoixTable } from '../models/reponse-choix.table';
 import { reponseProportionTable } from '../models/reponse-proportion.table';
 import ExpressionParserService from './expression-parser.service';
+import { PermissionService } from '../../auth/gestion-des-droits/permission.service';
+import { Authorization } from '../../auth/gestion-des-droits/authorization.enum';
+import { ResourceType } from '../../auth/gestion-des-droits/resource-type.enum';
 
 export type ReponseTables =
   | typeof reponseBinaireTable
@@ -41,7 +42,7 @@ export default class PersonnalisationsService {
     private readonly databaseService: DatabaseService,
     private readonly collectivitesService: CollectivitesService,
     private readonly expressionParserService: ExpressionParserService,
-    private readonly authService: AuthService
+    private readonly permissionService: PermissionService
   ) {}
 
   async getPersonnalisationReponsesForTable(
@@ -98,10 +99,11 @@ export default class PersonnalisationsService {
 
     // Seulement les personnes ayant l'accès en lecture à la collectivité peuvent voir les réponses historiques
     if (reponsesDate && tokenInfo) {
-      await this.authService.verifieAccesAuxCollectivites(
+      await this.permissionService.hasTheRightTo(
         tokenInfo,
-        [collectiviteId],
-        NiveauAcces.LECTURE
+        Authorization.REFERENTIELS_LECTURE,
+        ResourceType.COLLECTIVITE,
+        collectiviteId
       );
     }
 
@@ -166,10 +168,11 @@ export default class PersonnalisationsService {
   }> {
     // Seulement les personnes ayant l'accès en lecture à la collectivité peuvent voir les réponses historiques
     if (request.date && tokenInfo) {
-      await this.authService.verifieAccesAuxCollectivites(
+      await this.permissionService.hasTheRightTo(
         tokenInfo,
-        [collectiviteId],
-        NiveauAcces.LECTURE
+        Authorization.REFERENTIELS_LECTURE,
+        ResourceType.COLLECTIVITE,
+        collectiviteId
       );
     }
 

@@ -7,13 +7,8 @@ import { isNil } from 'es-toolkit';
 import * as _ from 'lodash';
 import { DateTime } from 'luxon';
 import { AuthenticatedUser } from '../../auth/models/auth.models';
-import { NiveauAcces } from '../../auth/models/niveau-acces.enum';
-import { AuthService } from '../../auth/services/auth.service';
 import { EpciType } from '../../collectivites/models/epci.table';
 import CollectivitesService from '../../collectivites/services/collectivites.service';
-import { DonneesARemplirResultType } from '../models/donnees-a-remplir-result.dto';
-import { DonneesARemplirValeurType } from '../models/donnees-a-remplir-valeur.dto';
-import { DonneesCalculTrajectoireARemplirType } from '../models/donnees-calcul-trajectoire-a-remplir.dto';
 import {
   CreateIndicateurSourceMetadonneeType,
   IndicateurSourceMetadonneeType,
@@ -23,11 +18,17 @@ import {
   IndicateurValeurAvecMetadonnesDefinition,
   IndicateurValeurType,
 } from '../models/indicateur-valeur.table';
-import { VerificationTrajectoireRequestType } from '../models/verification-trajectoire.request';
 import {
   VerificationTrajectoireResultType,
   VerificationTrajectoireStatus,
 } from '../models/verification-trajectoire.response';
+import { VerificationTrajectoireRequestType } from '../models/verification-trajectoire.request';
+import { DonneesCalculTrajectoireARemplirType } from '../models/donnees-calcul-trajectoire-a-remplir.dto';
+import { DonneesARemplirValeurType } from '../models/donnees-a-remplir-valeur.dto';
+import { DonneesARemplirResultType } from '../models/donnees-a-remplir-result.dto';
+import { PermissionService } from '../../auth/gestion-des-droits/permission.service';
+import { ResourceType } from '../../auth/gestion-des-droits/resource-type.enum';
+import { Autorisation } from '../../auth/gestion-des-droits/autorisation.enum';
 import IndicateurSourcesService from './indicateur-sources.service';
 import IndicateursService from './indicateurs.service';
 
@@ -209,7 +210,7 @@ export default class TrajectoiresDataService {
     private readonly collectivitesService: CollectivitesService,
     private readonly indicateursService: IndicateursService,
     private readonly indicateurSourcesService: IndicateurSourcesService,
-    private readonly authService: AuthService
+    private readonly permissionService: PermissionService
   ) {}
 
   async getTrajectoireIndicateursMetadonnees(): Promise<IndicateurSourceMetadonneeType> {
@@ -617,10 +618,11 @@ export default class TrajectoiresDataService {
     forceRecuperationDonnees = false
   ): Promise<VerificationTrajectoireResultType> {
     // Vérification des droits
-    await this.authService.verifieAccesAuxCollectivites(
+    await this.permissionService.hasTheRightTo(
       tokenInfo,
-      [request.collectiviteId],
-      NiveauAcces.EDITION
+      Autorisation.INDICATEURS_TRAJECTOIRE_EDITION,
+      ResourceType.COLLECTIVITE,
+      request.collectiviteId
     );
 
     const response: VerificationTrajectoireResultType = {
@@ -736,10 +738,11 @@ export default class TrajectoiresDataService {
 
     // Vérifie les droits de l'utilisateur
     if (tokenInfo) {
-      await this.authService.verifieAccesAuxCollectivites(
+      await this.permissionService.hasTheRightTo(
         tokenInfo,
-        [collectiviteId],
-        NiveauAcces.EDITION
+        Autorisation.INDICATEURS_TRAJECTOIRE_EDITION,
+        ResourceType.COLLECTIVITE,
+        collectiviteId
       );
     }
 

@@ -1,6 +1,5 @@
 import { Injectable } from '@nestjs/common';
 import DatabaseService from '../../common/services/database.service';
-import { AuthService } from '../../auth/services/auth.service';
 import {
   GetFilteredIndicateurRequestQueryOptionType,
   GetFilteredIndicateursRequestOptionType,
@@ -25,6 +24,10 @@ import { indicateurCollectiviteTable } from '../models/indicateur-collectivite.t
 import { indicateurActionTable } from '../models/indicateur-action.table';
 import { ficheActionIndicateurTable } from '../../fiches/models/fiche-action-indicateur.table';
 import { indicateurServiceTagTable } from '../models/indicateur-service-tag.table';
+import { PermissionService } from '../../auth/gestion-des-droits/permission.service';
+import CollectivitesService from '../../collectivites/services/collectivites.service';
+import { Authorization } from '../../auth/gestion-des-droits/authorization.enum';
+import { ResourceType } from '../../auth/gestion-des-droits/resource-type.enum';
 
 export type RequestResultIndicateursRaw = {
   id: number;
@@ -103,7 +106,8 @@ export type IndicateurGroupedWithArrayType = {
 export default class IndicateurFiltreService {
   constructor(
     private readonly databaseService: DatabaseService,
-    private readonly authService: AuthService
+    private readonly permissionService: PermissionService,
+    private readonly collectiviteService: CollectivitesService
   ) {}
 
   /**
@@ -121,10 +125,18 @@ export default class IndicateurFiltreService {
     tokenInfo: AuthenticatedUser
   ): Promise<GetFilteredIndicateurResponseType[]> {
     // Vérifie les droits
-    await this.authService.verifieAccesRestreintCollectivite(
-      tokenInfo,
+    const collectivitePrivate = await this.collectiviteService.isPrivate(
       collectiviteId
     );
+    await this.permissionService.hasTheRightTo(
+      tokenInfo,
+      collectivitePrivate
+        ? Authorization.COLLECTIVITES_CONTENT_LECTURE
+        : Authorization.COLLECTIVITES_CONTENT_VISITE,
+      ResourceType.COLLECTIVITE,
+      collectiviteId
+    );
+
     // Vérifie s'il faut inclure les enfants dans le retour filtré ou dans le filtre des parents
     const avecEnfant =
       filters.withChildren === true ||

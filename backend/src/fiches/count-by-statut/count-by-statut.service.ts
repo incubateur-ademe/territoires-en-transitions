@@ -12,7 +12,6 @@ import {
   SQLWrapper,
 } from 'drizzle-orm';
 import { PgColumn } from 'drizzle-orm/pg-core';
-import { AuthService } from '../../auth/services/auth.service';
 import { CountByRecordType } from '../../common/models/count-synthese.dto';
 import { getModifiedSinceDate } from '../../common/models/modified-since.enum';
 import DatabaseService from '../../common/services/database.service';
@@ -38,8 +37,7 @@ export class CountByStatutService {
     'partenaire_tag_ids';
 
   constructor(
-    private readonly databaseService: DatabaseService,
-    private readonly authService: AuthService
+    private readonly databaseService: DatabaseService
   ) {}
 
   async countByStatut(

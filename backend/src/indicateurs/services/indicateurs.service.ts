@@ -18,8 +18,6 @@ import { objectToCamel } from 'ts-case-convert';
 import { groupBy, partition } from 'es-toolkit';
 import * as _ from 'lodash';
 import { AuthenticatedUser, AuthRole } from '../../auth/models/auth.models';
-import { NiveauAcces } from '../../auth/models/niveau-acces.enum';
-import { AuthService } from '../../auth/services/auth.service';
 import DatabaseService from '../../common/services/database.service';
 import { DeleteIndicateursValeursRequestType } from '../models/delete-indicateurs.request';
 import { GetIndicateursValeursRequestType } from '../models/get-indicateurs.request';
@@ -47,6 +45,9 @@ import {
 import { indicateurGroupeTable } from '../models/indicateur-groupe.table';
 import { groupementTable } from '../../collectivites/models/groupement.table';
 import { groupementCollectiviteTable } from '../../collectivites/models/groupement-collectivite.table';
+import { PermissionService } from '../../auth/gestion-des-droits/permission.service';
+import { Authorization } from '../../auth/gestion-des-droits/authorization.enum';
+import { ResourceType } from '../../auth/gestion-des-droits/resource-type.enum';
 
 @Injectable()
 export default class IndicateursService {
@@ -62,7 +63,7 @@ export default class IndicateursService {
 
   constructor(
     private readonly databaseService: DatabaseService,
-    private readonly authService: AuthService
+    private readonly permissionService: PermissionService
   ) {}
 
   private getIndicateurValeursSqlConditions(
@@ -201,10 +202,11 @@ export default class IndicateursService {
     options: GetIndicateursValeursRequestType,
     tokenInfo: AuthenticatedUser
   ): Promise<GetIndicateursValeursResponseType> {
-    await this.authService.verifieAccesAuxCollectivites(
+    await this.permissionService.hasTheRightTo(
       tokenInfo,
-      [options.collectiviteId],
-      NiveauAcces.LECTURE
+      Authorization.INDICATEURS_LECTURE,
+      ResourceType.COLLECTIVITE,
+      options.collectiviteId
     );
 
     const indicateurValeurs = await this.getIndicateursValeurs(options);
@@ -370,11 +372,14 @@ export default class IndicateursService {
       const collectiviteIds = [
         ...new Set(indicateurValeurs.map((v) => v.collectiviteId)),
       ];
-      await this.authService.verifieAccesAuxCollectivites(
-        tokenInfo,
-        collectiviteIds,
-        NiveauAcces.EDITION
-      );
+      for (const collectiviteId of collectiviteIds) {
+        await this.permissionService.hasTheRightTo(
+          tokenInfo,
+          Authorization.INDICATEURS_EDITION,
+          ResourceType.COLLECTIVITE,
+          collectiviteId
+        );
+      }
 
       if (tokenInfo.role === AuthRole.AUTHENTICATED && tokenInfo.id) {
         indicateurValeurs.forEach((v) => {
