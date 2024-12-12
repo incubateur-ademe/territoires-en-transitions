@@ -1,35 +1,37 @@
 import { Indicateurs } from '@/api';
 import { SelectFilter, SelectProps } from '@/ui';
+import { useCategorieTags } from './use-categorie-tags';
 import { getCategorieLabel } from './utils';
 
 type Props = Omit<SelectProps, 'values' | 'onChange' | 'options'> & {
-  values?: Indicateurs.CategorieProgramme[];
+  values?: string[];
   onChange: ({
     categories,
     selectedCategorie,
   }: {
-    categories: Indicateurs.CategorieProgramme[];
-    selectedCategorie: Indicateurs.CategorieProgramme;
+    categories: string[];
+    selectedCategorie: string;
   }) => void;
 };
 
 const IndicateurCategoriesDropdown = (props: Props) => {
+  const { data: categories } = useCategorieTags();
   return (
-    <SelectFilter
-      {...props}
-      options={Indicateurs.domain.categorieProgrammeEnumSchema.options.map(
-        (categorie) => ({
-          label: getCategorieLabel(categorie),
-          value: categorie,
-        })
-      )}
-      onChange={({ values, selectedValue }) => {
-        props.onChange({
-          categories: values as Indicateurs.CategorieProgramme[],
-          selectedCategorie: selectedValue as Indicateurs.CategorieProgramme,
-        });
-      }}
-    />
+    categories && (
+      <SelectFilter
+        {...props}
+        options={categories.map((categorie) => ({
+          label: getCategorieLabel(categorie.nom),
+          value: categorie.nom,
+        }))}
+        onChange={({ values, selectedValue }) => {
+          props.onChange({
+            categories: values as Indicateurs.CategorieProgramme[],
+            selectedCategorie: selectedValue as Indicateurs.CategorieProgramme,
+          });
+        }}
+      />
+    )
   );
 };
 
