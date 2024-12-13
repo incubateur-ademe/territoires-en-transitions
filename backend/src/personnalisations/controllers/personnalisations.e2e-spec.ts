@@ -3,8 +3,8 @@ import { default as request } from 'supertest';
 import { GetPersonnalitionConsequencesResponseType } from '../../src/personnalisations/models/get-personnalisation-consequences.response';
 import { GetPersonnalisationReglesResponseType } from '../../src/personnalisations/models/get-personnalisation-regles.response';
 import { PersonnalisationConsequenceType } from '../../src/personnalisations/models/personnalisation-consequence.dto';
-import { getAuthToken } from '../auth/auth-utils';
-import { getTestApp } from '../common/app-utils';
+import { getTestApp } from '../app-utils';
+import { getAuthToken } from '../auth-utils';
 
 describe('Personnalisations routes', () => {
   let app: INestApplication;

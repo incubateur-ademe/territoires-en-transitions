@@ -1,6 +1,6 @@
 import { inferProcedureInput } from '@trpc/server';
-import { getAuthUser } from '../../../test/auth/auth-utils';
-import { getTestRouter } from '../../../test/common/app-utils';
+import { getTestRouter } from '../../../test/app-utils';
+import { getAuthUser } from '../../../test/auth-utils';
 import { AppRouter, TrpcRouter } from '../../trpc/trpc.router';
 import { FicheActionStatutsEnumType } from '../models/fiche-action.table';
 import { AuthenticatedUser } from './../../auth/models/auth.models';

@@ -1,10 +1,10 @@
-import { CalculTrajectoireResultatMode } from '../../../src/indicateurs/models/calcul-trajectoire.request';
-import { CalculTrajectoireResponseType } from '../../../src/indicateurs/models/calcul-trajectoire.response';
+import { CalculTrajectoireResultatMode } from '../../models/calcul-trajectoire.request';
+import { CalculTrajectoireResponseType } from '../../models/calcul-trajectoire.response';
 
 export const trajectoireSnbcCalculRetour: CalculTrajectoireResponseType = {
   mode: CalculTrajectoireResultatMode.MAJ_SPREADSHEET_EXISTANT,
-  source_donnees_entree: 'rare',
-  indentifiants_referentiel_manquants_donnees_entree: [
+  sourcesDonneesEntree: ['rare'],
+  indentifiantsReferentielManquantsDonneesEntree: [
     'cae_2.k',
     'cae_2.l_pcaet',
     'cae_63.ca',
@@ -17,7 +17,7 @@ export const trajectoireSnbcCalculRetour: CalculTrajectoireResponseType = {
     'cae_63.e',
   ],
   trajectoire: {
-    emissions_ges: [
+    emissionsGes: [
       {
         definition: {
           id: 4,
@@ -4905,7 +4905,7 @@ export const trajectoireSnbcCalculRetour: CalculTrajectoireResponseType = {
         ],
       },
     ],
-    consommations_finales: [
+    consommationsFinales: [
       {
         definition: {
           id: 62,

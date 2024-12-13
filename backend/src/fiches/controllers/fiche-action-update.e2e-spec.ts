@@ -2,32 +2,28 @@ import { INestApplication } from '@nestjs/common';
 import { eq } from 'drizzle-orm';
 import { default as request } from 'supertest';
 import { describe, expect, it } from 'vitest';
-import DatabaseService from '../../src/common/services/database.service';
-import { UpdateFicheActionRequestClass } from '../../src/fiches/controllers/fiches-action.controller';
-import { ficheActionActionTable } from '../../src/fiches/models/fiche-action-action.table';
-import { ficheActionAxeTable } from '../../src/fiches/models/fiche-action-axe.table';
-import { ficheActionEffetAttenduTable } from '../../src/fiches/models/fiche-action-effet-attendu.table';
-import { ficheActionFinanceurTagTable } from '../../src/fiches/models/fiche-action-financeur-tag.table';
-import { ficheActionIndicateurTable } from '../../src/fiches/models/fiche-action-indicateur.table';
-import { ficheActionLibreTagTable } from '../../src/fiches/models/fiche-action-libre-tag.table';
-import { ficheActionLienTable } from '../../src/fiches/models/fiche-action-lien.table';
-import { ficheActionPartenaireTagTable } from '../../src/fiches/models/fiche-action-partenaire-tag.table';
-import { ficheActionPiloteTable } from '../../src/fiches/models/fiche-action-pilote.table';
-import { ficheActionReferentTable } from '../../src/fiches/models/fiche-action-referent.table';
-import { ficheActionServiceTagTable } from '../../src/fiches/models/fiche-action-service.table';
-import { ficheActionSousThematiqueTable } from '../../src/fiches/models/fiche-action-sous-thematique.table';
-import { ficheActionStructureTagTable } from '../../src/fiches/models/fiche-action-structure-tag.table';
-import { ficheActionThematiqueTable } from '../../src/fiches/models/fiche-action-thematique.table';
+import DatabaseService from '../../common/services/database.service';
+import { UpdateFicheActionRequestClass } from './fiches-action.controller';
+import { ficheActionActionTable } from '../models/fiche-action-action.table';
+import { ficheActionAxeTable } from '../models/fiche-action-axe.table';
+import { ficheActionEffetAttenduTable } from '../models/fiche-action-effet-attendu.table';
+import { ficheActionFinanceurTagTable } from '../models/fiche-action-financeur-tag.table';
+import { ficheActionIndicateurTable } from '../models/fiche-action-indicateur.table';
+import { ficheActionLibreTagTable } from '../models/fiche-action-libre-tag.table';
+import { ficheActionLienTable } from '../models/fiche-action-lien.table';
+import { ficheActionPartenaireTagTable } from '../models/fiche-action-partenaire-tag.table';
+import { ficheActionPiloteTable } from '../models/fiche-action-pilote.table';
+import { ficheActionReferentTable } from '../models/fiche-action-referent.table';
+import { ficheActionServiceTagTable } from '../models/fiche-action-service.table';
+import { ficheActionSousThematiqueTable } from '../models/fiche-action-sous-thematique.table';
+import { ficheActionStructureTagTable } from '../models/fiche-action-structure-tag.table';
+import { ficheActionThematiqueTable } from '../models/fiche-action-thematique.table';
 import {
   FicheActionCiblesEnumType,
   FicheActionStatutsEnumType,
   ficheActionTable,
   piliersEciEnumType,
-} from '../../src/fiches/models/fiche-action.table';
-import { libreTagTable } from '../../src/taxonomie/models/libre-tag.table';
-import { getAuthToken } from '../auth/auth-utils';
-import { getTestApp } from '../common/app-utils';
-import { UpdateFicheActionRequestType } from './../../src/fiches/models/update-fiche-action.request';
+} from '../models/fiche-action.table';
 import {
   actionsFixture,
   axesFixture,
@@ -43,8 +39,12 @@ import {
   sousThematiquesFixture,
   structuresFixture,
   thematiquesFixture,
-} from './fixtures/fiche-action-relations.fixture';
-import { ficheActionFixture } from './fixtures/fiche-action.fixture';
+} from '../shared/fixtures/fiche-action-relations.fixture';
+import { ficheActionFixture } from '../shared/fixtures/fiche-action.fixture';
+import { libreTagTable } from '../../taxonomie/models/libre-tag.table';
+import { getTestApp } from '../../../test/app-utils';
+import { getAuthToken } from '../../../test/auth-utils';
+import { UpdateFicheActionRequestType } from '../models/update-fiche-action.request';
 
 const collectiviteId = 1;
 const ficheActionId = 9999;

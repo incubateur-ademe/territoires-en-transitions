@@ -1,4 +1,4 @@
-import { getSupabaseClient } from '../auth/auth-utils';
+import { getSupabaseClient } from './auth-utils';
 
 export const getCollectiviteIdBySiren = async (
   siren: string

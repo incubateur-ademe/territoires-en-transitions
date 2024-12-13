@@ -1,9 +1,8 @@
+import { getTestApp } from '@/backend/test';
 import { INestApplication } from '@nestjs/common';
 import { default as request } from 'supertest';
-import { ReferentielActionType } from '../../src/referentiels/models/referentiel-action.dto';
-import { getTestApp } from '../common/app-utils';
-import { GetReferentielResponseType } from '../../src/referentiels/models/get-referentiel.response';
-import { ActionType } from '../../src/referentiels/models/action-type.enum';
+import { ActionType } from '../models/action-type.enum';
+import { GetReferentielResponseType } from '../models/get-referentiel.response';
 
 describe('Referentiels routes', () => {
   let app: INestApplication;

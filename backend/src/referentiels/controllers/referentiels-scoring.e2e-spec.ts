@@ -1,20 +1,20 @@
 import { INestApplication } from '@nestjs/common';
 import { DateTime } from 'luxon';
 import { default as request } from 'supertest';
-import { HttpErrorResponse } from '../../src/common/models/http-error.response';
-import { ActionScoreType } from '../../src/referentiels/models/action-score.dto';
-import { ActionStatutType } from '../../src/referentiels/models/action-statut.table';
-import { ActionType } from '../../src/referentiels/models/action-type.enum';
-import { GetActionStatutsResponseType } from '../../src/referentiels/models/get-action-statuts.response';
-import { GetReferentielScoresResponseType } from '../../src/referentiels/models/get-referentiel-scores.response';
-import { GetScoreSnapshotsResponseType } from '../../src/referentiels/models/get-score-snapshots.response';
-import { HistoriqueActionStatutType } from '../../src/referentiels/models/historique-action-statut.table';
-import { ReferentielActionWithScoreType } from '../../src/referentiels/models/referentiel-action-avec-score.dto';
-import { ReferentielType } from '../../src/referentiels/models/referentiel.enum';
-import { ScoreJalon } from '../../src/referentiels/models/score-jalon.enum';
-import { getAuthToken } from '../auth/auth-utils';
-import { getCollectiviteIdBySiren } from '../collectivites/collectivites-utils';
-import { getTestApp } from '../common/app-utils';
+import { HttpErrorResponse } from '../../common/models/http-error.response';
+import { ActionScoreType } from '../models/action-score.dto';
+import { ActionStatutType } from '../models/action-statut.table';
+import { ActionType } from '../models/action-type.enum';
+import { GetActionStatutsResponseType } from '../models/get-action-statuts.response';
+import { GetReferentielScoresResponseType } from '../models/get-referentiel-scores.response';
+import { GetScoreSnapshotsResponseType } from '../models/get-score-snapshots.response';
+import { HistoriqueActionStatutType } from '../models/historique-action-statut.table';
+import { ReferentielActionWithScoreType } from '../models/referentiel-action-avec-score.dto';
+import { ReferentielType } from '../models/referentiel.enum';
+import { ScoreJalon } from '../models/score-jalon.enum';
+import { getTestApp } from '../../../test/app-utils';
+import { getAuthToken } from '../../../test/auth-utils';
+import { getCollectiviteIdBySiren } from '../../../test/collectivites-utils';
 
 describe('Referentiels scoring routes', () => {
   let app: INestApplication;

@@ -1,12 +1,12 @@
+import { inferProcedureInput } from '@trpc/server';
+import { getTestRouter } from '../../../test/app-utils';
+import { getAuthUser } from '../../../test/auth-utils';
+import { AppRouter, TrpcRouter } from '../../trpc/trpc.router';
+import { AuthenticatedUser } from './../../auth/models/auth.models';
 import {
   GetFilteredIndicateurRequestQueryOptionType,
   GetFilteredIndicateursRequestOptionType,
 } from './get-filtered-indicateurs.request';
-import { getTestRouter } from '../../../test/common/app-utils';
-import { AuthenticatedUser } from './../../auth/models/auth.models';
-import { getAuthUser } from '../../../test/auth/auth-utils';
-import { inferProcedureInput } from '@trpc/server';
-import { AppRouter, TrpcRouter } from '../../trpc/trpc.router';
 import { getFilteredIndicateurResponseSchema } from './get-filtered-indicateurs.response';
 
 type Input = inferProcedureInput<AppRouter['indicateurs']['filtre']['list']>;
