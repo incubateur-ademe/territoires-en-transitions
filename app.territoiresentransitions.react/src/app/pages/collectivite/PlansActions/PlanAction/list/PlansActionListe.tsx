@@ -4,10 +4,10 @@ import {
   FetchFilter,
   SortPlansActionValue,
 } from '@/api/plan-actions/plan-actions.list/domain/fetch-options.schema';
-import { usePlansActionsListe } from '@/app/pages/collectivite/PlansActions/PlanAction/data/usePlansActionsListe';
-import PlanActionCard from '@/app/pages/collectivite/PlansActions/PlanAction/list/card/PlanActionCard';
-import { ModuleDisplay } from '@/app/pages/collectivite/TableauDeBord/components/Module';
-import { makeCollectivitePlanActionUrl } from '@/app/paths';
+import { usePlansActionsListe } from '@/app/app/pages/collectivite/PlansActions/PlanAction/data/usePlansActionsListe';
+import PlanActionCard from '@/app/app/pages/collectivite/PlansActions/PlanAction/list/card/PlanActionCard';
+import { ModuleDisplay } from '@/app/app/pages/collectivite/TableauDeBord/components/Module';
+import { makeCollectivitePlanActionUrl } from '@/app/app/paths';
 import { Button, ButtonGroup, Pagination, Select } from '@/ui';
 import { OpenState } from '@/ui/utils/types';
 import PictoDocument from 'ui/pictogrammes/PictoDocument';

@@ -1,5 +1,5 @@
 import { getRejoindreCollectivitePath } from '@/api';
-import CollectivitePageLayout from '@/app/pages/collectivite/CollectivitePageLayout/CollectivitePageLayout';
+import CollectivitePageLayout from '@/app/app/pages/collectivite/CollectivitePageLayout/CollectivitePageLayout';
 import { monComptePath } from 'app/paths';
 import { ProfilRoutes } from './ProfileRoutes';
 

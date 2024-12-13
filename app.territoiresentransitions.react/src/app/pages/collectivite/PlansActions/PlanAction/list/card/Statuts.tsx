@@ -1,7 +1,7 @@
 import { Statut } from '@/api/plan-actions';
-import BadgeStatut from '@/app/pages/collectivite/PlansActions/components/BadgeStatut';
-import { statutToColor } from '@/app/pages/collectivite/PlansActions/FicheAction/utils';
-import { ModuleDisplay } from '@/app/pages/collectivite/TableauDeBord/components/Module';
+import BadgeStatut from '@/app/app/pages/collectivite/PlansActions/components/BadgeStatut';
+import { statutToColor } from '@/app/app/pages/collectivite/PlansActions/FicheAction/utils';
+import { ModuleDisplay } from '@/app/app/pages/collectivite/TableauDeBord/components/Module';
 import { Tooltip } from '@/ui';
 import Chart from 'ui/charts/Chart';
 

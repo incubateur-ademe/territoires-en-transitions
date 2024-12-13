@@ -1,5 +1,5 @@
 import { AxeInsert, FicheResume } from '@/api/plan-actions';
-import { useFicheResumesFetch } from '@/app/pages/collectivite/PlansActions/FicheAction/data/useFicheResumesFetch';
+import { useFicheResumesFetch } from '@/app/app/pages/collectivite/PlansActions/FicheAction/data/useFicheResumesFetch';
 import {
   Option,
   OptionValue,

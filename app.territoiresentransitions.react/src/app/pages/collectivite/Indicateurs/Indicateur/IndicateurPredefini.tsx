@@ -1,4 +1,4 @@
-import BadgeOpenData from '@/app/pages/collectivite/Indicateurs/components/BadgeOpenData';
+import BadgeOpenData from '@/app/app/pages/collectivite/Indicateurs/components/BadgeOpenData';
 import { Badge, Field, TrackPageView } from '@/ui';
 import { referentielToName } from 'app/labels';
 import { ImportSourcesSelector } from 'app/pages/collectivite/Indicateurs/Indicateur/detail/ImportSourcesSelector';

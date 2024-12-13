@@ -4,14 +4,14 @@ import {
 } from '@/api/plan-actions/dashboards/personal-dashboard/domain/module.schema';
 import { Button, TrackPageView, useEventTracker } from '@/ui';
 
-import { usePlanActionsCount } from '@/app/pages/collectivite/PlansActions/PlanAction/data/usePlanActionsCount';
-import ModulePage from '@/app/pages/collectivite/TableauDeBord/components/ModulePage';
-import ModalActionsDontJeSuisLePilote from '@/app/pages/collectivite/TableauDeBord/Personnel/ModuleFichesActions/ModalActionsDontJeSuisLePilote';
-import ModalActionsRecemmentModifiees from '@/app/pages/collectivite/TableauDeBord/Personnel/ModuleFichesActions/ModalActionsRecemmentModifiees';
+import { usePlanActionsCount } from '@/app/app/pages/collectivite/PlansActions/PlanAction/data/usePlanActionsCount';
+import ModulePage from '@/app/app/pages/collectivite/TableauDeBord/components/ModulePage';
+import ModalActionsDontJeSuisLePilote from '@/app/app/pages/collectivite/TableauDeBord/Personnel/ModuleFichesActions/ModalActionsDontJeSuisLePilote';
+import ModalActionsRecemmentModifiees from '@/app/app/pages/collectivite/TableauDeBord/Personnel/ModuleFichesActions/ModalActionsRecemmentModifiees';
 import {
   getQueryKey,
   usePersonalModuleFetch,
-} from '@/app/pages/collectivite/TableauDeBord/Personnel/usePersonalModuleFetch';
+} from '@/app/app/pages/collectivite/TableauDeBord/Personnel/usePersonalModuleFetch';
 import FichesActionListe, {
   SortFicheActionSettings,
 } from 'app/pages/collectivite/PlansActions/ToutesLesFichesAction/FichesActionListe';

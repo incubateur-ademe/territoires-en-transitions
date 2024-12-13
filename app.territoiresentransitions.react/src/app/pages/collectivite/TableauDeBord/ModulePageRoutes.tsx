@@ -6,9 +6,9 @@ import {
   defaultSlugsSchema as personalSlug,
   Slug as PersonalSlug,
 } from '@/api/plan-actions/dashboards/personal-dashboard/domain/module.schema';
-import ModuleSuiviPlansActionPage from '@/app/pages/collectivite/TableauDeBord/Collectivite/ModuleSuiviPlansAction/ModuleSuiviPlansActionPage';
-import ModuleFichesActionsPage from '@/app/pages/collectivite/TableauDeBord/Personnel/ModuleFichesActions/ModuleFichesActionsPage';
-import ModuleIndicateursPage from '@/app/pages/collectivite/TableauDeBord/Personnel/ModuleIndicateurs/ModuleIndicateursPage';
+import ModuleSuiviPlansActionPage from '@/app/app/pages/collectivite/TableauDeBord/Collectivite/ModuleSuiviPlansAction/ModuleSuiviPlansActionPage';
+import ModuleFichesActionsPage from '@/app/app/pages/collectivite/TableauDeBord/Personnel/ModuleFichesActions/ModuleFichesActionsPage';
+import ModuleIndicateursPage from '@/app/app/pages/collectivite/TableauDeBord/Personnel/ModuleIndicateurs/ModuleIndicateursPage';
 import { SortFicheActionSettings } from 'app/pages/collectivite/PlansActions/ToutesLesFichesAction/FichesActionListe';
 import { TDBViewParam } from 'app/paths';
 import { useParams } from 'react-router-dom';

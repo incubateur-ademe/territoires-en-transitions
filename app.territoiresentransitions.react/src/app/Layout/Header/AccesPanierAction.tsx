@@ -1,5 +1,5 @@
 import { PanierAPI } from '@/api';
-import { makeCollectivitePanierUrl } from '@/app/paths';
+import { makeCollectivitePanierUrl } from '@/app/app/paths';
 import { Button } from '@/ui';
 import classNames from 'classnames';
 import { supabaseClient } from 'core-logic/api/supabase';

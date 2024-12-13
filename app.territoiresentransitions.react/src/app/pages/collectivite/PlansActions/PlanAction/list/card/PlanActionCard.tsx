@@ -1,8 +1,8 @@
 import { Axe } from '@/api/plan-actions/domain';
-import { generateTitle } from '@/app/pages/collectivite/PlansActions/FicheAction/data/utils';
-import Statuts from '@/app/pages/collectivite/PlansActions/PlanAction/list/card/Statuts';
-import { useFichesActionStatuts } from '@/app/pages/collectivite/TableauDeBord/Collectivite/ModuleAvancementFichesAction/useFichesActionStatuts';
-import { ModuleDisplay } from '@/app/pages/collectivite/TableauDeBord/components/Module';
+import { generateTitle } from '@/app/app/pages/collectivite/PlansActions/FicheAction/data/utils';
+import Statuts from '@/app/app/pages/collectivite/PlansActions/PlanAction/list/card/Statuts';
+import { useFichesActionStatuts } from '@/app/app/pages/collectivite/TableauDeBord/Collectivite/ModuleAvancementFichesAction/useFichesActionStatuts';
+import { ModuleDisplay } from '@/app/app/pages/collectivite/TableauDeBord/components/Module';
 import { Card } from '@/ui';
 import classNames from 'classnames';
 

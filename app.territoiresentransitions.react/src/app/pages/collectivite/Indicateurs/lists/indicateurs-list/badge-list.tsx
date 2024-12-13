@@ -4,7 +4,7 @@ import { Indicateurs } from '@/api';
 import {
   ExportIndicateursPageName,
   useExportIndicateurs,
-} from '@/app/pages/collectivite/Indicateurs/Indicateur/useExportIndicateurs';
+} from '@/app/app/pages/collectivite/Indicateurs/Indicateur/useExportIndicateurs';
 import { Badge } from '@/ui';
 import FilterBadges, {
   CustomFilterBadges,

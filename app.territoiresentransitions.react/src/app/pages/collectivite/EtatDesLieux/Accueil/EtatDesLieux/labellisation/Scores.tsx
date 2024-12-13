@@ -1,7 +1,7 @@
 import { TableOptions } from 'react-table';
 
 // import logoTerritoireEngage from 'ui/logo/logoTerritoireEngage.png';
-import LabellisationInfo from '@/app/pages/collectivite/EtatDesLieux/Accueil/EtatDesLieux/labellisation/LabellisationInfo';
+import LabellisationInfo from '@/app/app/pages/collectivite/EtatDesLieux/Accueil/EtatDesLieux/labellisation/LabellisationInfo';
 import Chart from 'ui/charts/Chart';
 import logoTerritoireEngage from 'ui/logo/logoTerritoireEngage_big.png';
 
@@ -15,9 +15,9 @@ import {
 import { useFonctionTracker } from 'core-logic/hooks/useFonctionTracker';
 import { toLocaleFixed } from 'utils/toFixed';
 
-import { ProgressionRow } from '@/app/pages/collectivite/EtatDesLieux/Accueil/data/useProgressionReferentiel';
-import AccueilCard from '@/app/pages/collectivite/EtatDesLieux/Accueil/EtatDesLieux/AccueilCard';
-import { getAggregatedScore } from '@/app/pages/collectivite/EtatDesLieux/Accueil/EtatDesLieux/utils';
+import { ProgressionRow } from '@/app/app/pages/collectivite/EtatDesLieux/Accueil/data/useProgressionReferentiel';
+import AccueilCard from '@/app/app/pages/collectivite/EtatDesLieux/Accueil/EtatDesLieux/AccueilCard';
+import { getAggregatedScore } from '@/app/app/pages/collectivite/EtatDesLieux/Accueil/EtatDesLieux/utils';
 import { Button } from '@/ui';
 import Image from 'next/image';
 

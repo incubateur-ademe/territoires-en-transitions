@@ -1,4 +1,4 @@
-import { useCreateFicheAction } from '@/app/pages/collectivite/PlansActions/FicheAction/data/useCreateFicheAction';
+import { useCreateFicheAction } from '@/app/app/pages/collectivite/PlansActions/FicheAction/data/useCreateFicheAction';
 import FichesNonClassees from 'app/pages/collectivite/PlansActions/FichesNonClassees';
 import {
   collectiviteFichesNonClasseesPath,
