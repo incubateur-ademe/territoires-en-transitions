@@ -4,7 +4,7 @@ import { getTestRouter } from '../../../test/app-utils';
 import { getAuthUser } from '../../../test/auth-utils';
 import { getCollectiviteIdBySiren } from '../../../test/collectivites-utils';
 import { AuthenticatedUser } from '../../auth/models/auth.models';
-import { AppRouter, TrpcRouter } from '../../trpc/trpc.router';
+import { AppRouter, TrpcRouter } from '../../utils/trpc/trpc.router';
 import { ScoreSnapshotInfoType } from '../models/get-score-snapshots.response';
 import { ReferentielType } from '../models/referentiel.enum';
 import { ScoreJalon } from '../models/score-jalon.enum';

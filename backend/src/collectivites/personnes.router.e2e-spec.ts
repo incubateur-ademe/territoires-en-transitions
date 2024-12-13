@@ -10,7 +10,7 @@ import { YOLO_DODO, YULU_DUDU } from '../../test/test-users.samples';
 import { AuthenticatedUser } from '../auth/models/auth.models';
 import { utilisateurDroitTable } from '@/backend/auth/authorizations/roles/private-utilisateur-droit.table';
 import DatabaseService from '../common/services/database.service';
-import { AppRouter, TrpcRouter } from '../trpc/trpc.router';
+import { AppRouter, TrpcRouter } from '../utils/trpc/trpc.router';
 
 type ListRequest = inferProcedureInput<
   AppRouter['collectivites']['personnes']['list']

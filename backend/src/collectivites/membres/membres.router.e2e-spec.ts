@@ -8,7 +8,7 @@ import { AuthenticatedUser } from '../../auth/models/auth.models';
 import { invitationTable } from '../../auth/models/invitation.table';
 import { NiveauAcces } from '@/backend/auth/authorizations/roles/niveau-acces.enum';
 import DatabaseService from '../../common/services/database.service';
-import { AppRouter, TrpcRouter } from '../../trpc/trpc.router';
+import { AppRouter, TrpcRouter } from '../../utils/trpc/trpc.router';
 import { MembreFonctionEnum } from '../models/membre-fonction.enum';
 
 type Input = inferProcedureInput<AppRouter['collectivites']['membres']['list']>;

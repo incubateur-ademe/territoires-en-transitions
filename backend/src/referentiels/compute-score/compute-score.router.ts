@@ -1,6 +1,6 @@
 import { Injectable } from '@nestjs/common';
 import z from 'zod';
-import { TrpcService } from '../../trpc/trpc.service';
+import { TrpcService } from '@/backend/utils';
 import { getReferentielScoresRequestSchema } from '../models/get-referentiel-scores.request';
 import { ReferentielType } from '../models/referentiel.enum';
 import ReferentielsScoringService from '../services/referentiels-scoring.service';

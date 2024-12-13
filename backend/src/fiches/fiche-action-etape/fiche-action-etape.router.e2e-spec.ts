@@ -7,7 +7,7 @@ import {
 } from '../../../test/app-utils';
 import { getAuthUser } from '../../../test/auth-utils';
 import DatabaseService from '../../common/services/database.service';
-import { AppRouter, TrpcRouter } from '../../trpc/trpc.router';
+import { AppRouter, TrpcRouter } from '../../utils/trpc/trpc.router';
 import { AuthenticatedUser } from './../../auth/models/auth.models';
 import { ficheActionEtapeTable } from './fiche-action-etape.table';
 

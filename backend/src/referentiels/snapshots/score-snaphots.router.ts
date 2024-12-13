@@ -1,6 +1,6 @@
 import { Injectable } from '@nestjs/common';
 import z from 'zod';
-import { TrpcService } from '../../trpc/trpc.service';
+import { TrpcService } from '@/backend/utils';
 import { ReferentielType } from '../models/referentiel.enum';
 import { ScoreJalon } from '../models/score-jalon.enum';
 import ReferentielsScoringSnapshotsService from '../services/referentiels-scoring-snapshots.service';

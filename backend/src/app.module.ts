@@ -12,8 +12,8 @@ import { PersonnalisationsModule } from './personnalisations/personnalisations.m
 import { ReferentielsModule } from './referentiels/referentiels.module';
 import { SheetModule } from './spreadsheets/sheet.module';
 import { TaxonomieModule } from './taxonomie/taxonomie.module';
-import { TrpcModule } from './trpc/trpc.module';
-import { TrpcRouter } from './trpc/trpc.router';
+import { TrpcModule } from './utils/trpc/trpc.module';
+import { TrpcRouter } from './utils/trpc/trpc.router';
 
 @Module({
   imports: [

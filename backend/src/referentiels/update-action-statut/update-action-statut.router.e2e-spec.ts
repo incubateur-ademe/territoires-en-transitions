@@ -2,7 +2,7 @@ import { inferProcedureInput } from '@trpc/server';
 import { getTestRouter } from '../../../test/app-utils';
 import { getAuthUser } from '../../../test/auth-utils';
 import { getCollectiviteIdBySiren } from '../../../test/collectivites-utils';
-import { AppRouter, TrpcRouter } from '../../trpc/trpc.router';
+import { AppRouter, TrpcRouter } from '../../utils/trpc/trpc.router';
 import { ActionScoreType } from '../models/action-score.dto';
 import { ReferentielType } from '../models/referentiel.enum';
 import { AuthenticatedUser } from './../../auth/models/auth.models';

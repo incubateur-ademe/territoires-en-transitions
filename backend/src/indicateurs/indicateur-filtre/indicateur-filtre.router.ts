@@ -1,5 +1,5 @@
 import { Injectable } from '@nestjs/common';
-import { TrpcService } from '../../trpc/trpc.service';
+import { TrpcService } from '@/backend/utils';
 import IndicateurFiltreService from './indicateur-filtre.service';
 import { getFilteredIndicateursRequestSchema } from './get-filtered-indicateurs.request';
 

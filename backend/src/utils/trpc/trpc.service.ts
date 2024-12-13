@@ -6,7 +6,7 @@ import {
   AuthUser,
   isAnonymousUser,
   isAuthenticatedUser,
-} from '../auth/models/auth.models';
+} from '../../auth/models/auth.models';
 
 @Injectable()
 export class TrpcService {
