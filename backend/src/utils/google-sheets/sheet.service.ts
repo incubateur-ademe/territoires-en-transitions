@@ -11,7 +11,7 @@ import { getPropertyPaths } from '../../common/services/zod.helper';
 import {
   SheetValueInputOption,
   SheetValueRenderOption,
-} from '../models/sheetoptions.models';
+} from './sheet-options.models';
 
 const sheets = google.sheets({ version: 'v4' });
 const drive = google.drive({ version: 'v3' });

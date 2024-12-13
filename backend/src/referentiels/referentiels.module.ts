@@ -4,7 +4,7 @@ import { CollectivitesModule } from '../collectivites/collectivites.module';
 import { CommonModule } from '../common/common.module';
 import { ConfigurationModule } from '../config/configuration.module';
 import { PersonnalisationsModule } from '../personnalisations/personnalisations.module';
-import { SheetModule } from '../spreadsheets/sheet.module';
+import { SheetModule } from '../utils/google-sheets/sheet.module';
 import { ComputeScoreRouter } from './compute-score/compute-score.router';
 import { ReferentielsScoringController } from './controllers/referentiels-scoring.controller';
 import { ReferentielsController } from './controllers/referentiels.controller';

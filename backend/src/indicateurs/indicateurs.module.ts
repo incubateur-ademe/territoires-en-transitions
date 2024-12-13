@@ -3,7 +3,7 @@ import { AuthModule } from '../auth/auth.module';
 import { CollectivitesModule } from '../collectivites/collectivites.module';
 import { CommonModule } from '../common/common.module';
 import { ConfigurationModule } from '../config/configuration.module';
-import { SheetModule } from '../spreadsheets/sheet.module';
+import { SheetModule } from '../utils/google-sheets/sheet.module';
 import { IndicateursController } from './controllers/indicateurs.controller';
 import { TrajectoiresController } from './controllers/trajectoires.controller';
 import { IndicateurFiltreRouter } from './indicateur-filtre/indicateur-filtre.router';

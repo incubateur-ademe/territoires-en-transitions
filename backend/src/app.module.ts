@@ -10,8 +10,8 @@ import { FichesActionModule } from './fiches/fiches-action.module';
 import { IndicateursModule } from './indicateurs/indicateurs.module';
 import { PersonnalisationsModule } from './personnalisations/personnalisations.module';
 import { ReferentielsModule } from './referentiels/referentiels.module';
-import { SheetModule } from './spreadsheets/sheet.module';
 import { TaxonomieModule } from './taxonomie/taxonomie.module';
+import { SheetModule } from './utils/google-sheets/sheet.module';
 import { TrpcModule } from './utils/trpc/trpc.module';
 import { TrpcRouter } from './utils/trpc/trpc.router';
 

@@ -22,7 +22,7 @@ import {
   PersonnalisationType,
 } from '../../personnalisations/models/personnalisation.table';
 import ExpressionParserService from '../../personnalisations/services/expression-parser.service';
-import SheetService from '../../spreadsheets/services/sheet.service';
+import SheetService from '../../utils/google-sheets/sheet.service';
 import {
   actionDefinitionTagTable,
   CreateActionDefinitionTagType,
