@@ -1,14 +1,14 @@
-import {format} from 'date-fns';
-import {fr} from 'date-fns/locale';
+import { format } from 'date-fns';
+import { fr } from 'date-fns/locale';
 import ActionDiscussionCommentaireDropdown from './ActionDiscussionCommentaireDropdown';
 
-import {useAuth} from 'core-logic/api/auth/AuthProvider';
+import { useAuth } from '@/app/core-logic/api/auth/AuthProvider';
 import {
   TActionDiscussion,
   TActionDiscussionCommentaire,
   TActionDiscussionStatut,
 } from './data/types';
-import {useUpdateDiscussionStatus} from './data/useUpdateDiscussionStatus';
+import { useUpdateDiscussionStatus } from './data/useUpdateDiscussionStatus';
 
 type Props = {
   commentaire: TActionDiscussionCommentaire;
@@ -17,12 +17,12 @@ type Props = {
 };
 
 /** Commentaire attaché à une discussion dans une action */
-const ActionDiscussionCommentaire = ({commentaire, discussion}: Props) => {
-  const {user} = useAuth();
+const ActionDiscussionCommentaire = ({ commentaire, discussion }: Props) => {
+  const { user } = useAuth();
 
   const creationDate = new Date(commentaire.created_at);
 
-  const {mutate} = useUpdateDiscussionStatus();
+  const { mutate } = useUpdateDiscussionStatus();
 
   const handleUpdateDiscussionStatus = (
     id: number,
@@ -53,12 +53,12 @@ const ActionDiscussionCommentaire = ({commentaire, discussion}: Props) => {
             {commentaire.created_by_nom}
           </span>
           <span className="text-gray-400 text-sm">
-            {format(creationDate, 'dd/MM/y', {locale: fr})}
+            {format(creationDate, 'dd/MM/y', { locale: fr })}
           </span>
         </div>
         <p
           className="text-sm whitespace-pre-wrap fr-mb-0"
-          style={{overflowWrap: 'anywhere'}}
+          style={{ overflowWrap: 'anywhere' }}
         >
           {commentaire.message}
         </p>

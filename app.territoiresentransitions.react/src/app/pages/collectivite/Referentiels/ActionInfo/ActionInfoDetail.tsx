@@ -1,8 +1,8 @@
-import {Ref, useEffect, useRef} from 'react';
-import {addTargetToContentAnchors} from 'utils/content';
-import {TTOCItem} from './type';
-import {useActionInfoData} from './useActionInfoData';
-import {ActionDefinitionSummary} from 'core-logic/api/endpoints/ActionDefinitionSummaryReadEndpoint';
+import { ActionDefinitionSummary } from '@/app/core-logic/api/endpoints/ActionDefinitionSummaryReadEndpoint';
+import { Ref, useEffect, useRef } from 'react';
+import { addTargetToContentAnchors } from 'utils/content';
+import { TTOCItem } from './type';
+import { useActionInfoData } from './useActionInfoData';
 
 /**
  * Affiche une partie (exemples, ressources, etc.) des infos associées à une action
@@ -14,9 +14,9 @@ export const ActionInfoDetail = ({
   item: TTOCItem;
   action: ActionDefinitionSummary;
 }) => {
-  const {id, label, num} = item;
+  const { id, label, num } = item;
   const titre = `${num}. ${label}`;
-  const {data} = useActionInfoData(id, action);
+  const { data } = useActionInfoData(id, action);
 
   // positionnement au début du contenu lorsqu'on passe d'un item à un autre
   const ref: Ref<HTMLDivElement> = useRef(null);

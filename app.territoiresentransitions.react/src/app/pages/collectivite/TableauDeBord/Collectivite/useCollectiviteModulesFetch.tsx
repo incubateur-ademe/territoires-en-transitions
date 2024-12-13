@@ -1,6 +1,6 @@
 import { modulesFetch } from '@/api/plan-actions/dashboards/collectivite-dashboard';
-import { supabaseClient } from 'core-logic/api/supabase';
-import { useCollectiviteId } from 'core-logic/hooks/params';
+import { supabaseClient } from '@/app/core-logic/api/supabase';
+import { useCollectiviteId } from '@/app/core-logic/hooks/params';
 import { useQuery } from 'react-query';
 
 /** Charge les différents modules du tableau de bord personnel */

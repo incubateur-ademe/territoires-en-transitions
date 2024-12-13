@@ -1,7 +1,7 @@
 import { Database } from '@/api';
+import { ActionDefinitionSummary } from '@/app/core-logic/api/endpoints/ActionDefinitionSummaryReadEndpoint';
+import { supabaseClient } from '@/app/core-logic/api/supabase';
 import { PostgrestResponse } from '@supabase/supabase-js';
-import { ActionDefinitionSummary } from 'core-logic/api/endpoints/ActionDefinitionSummaryReadEndpoint';
-import { supabaseClient } from 'core-logic/api/supabase';
 import { Referentiel } from 'types/litterals';
 
 type RPC_KEY = keyof Database['public']['Functions'];

@@ -1,6 +1,6 @@
-import { supabaseClient } from 'core-logic/api/supabase';
+import { supabaseClient } from '@/app/core-logic/api/supabase';
 import { useMutation, useQueryClient } from 'react-query';
-// import {useFonctionTracker} from 'core-logic/hooks/useFonctionTracker';
+// import {useFonctionTracker} from '@/app/core-logic/hooks/useFonctionTracker';
 import { Indicateurs } from '@/api';
 import { useEventTracker } from '@/ui';
 import { makeCollectiviteTousLesIndicateursUrl } from 'app/paths';

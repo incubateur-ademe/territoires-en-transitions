@@ -1,8 +1,8 @@
-import { supabaseClient } from 'core-logic/api/supabase';
+import { supabaseClient } from '@/app/core-logic/api/supabase';
 import { useMutation, useQueryClient } from 'react-query';
 
+import { useCollectiviteId } from '@/app/core-logic/hooks/params';
 import { makeCollectivitePlanActionUrl } from 'app/paths';
-import { useCollectiviteId } from 'core-logic/hooks/params';
 import { useRouter } from 'next/navigation';
 import { TAxeInsert } from 'types/alias';
 import { waitForMarkup } from 'utils/waitForMarkup';
@@ -16,7 +16,7 @@ import { planNodeFactory, sortPlanNodes } from './utils';
 export const upsertAxe = async (axe: TAxeInsert) => {
   const query = supabaseClient.from('axe').upsert(axe).select();
 
-  const {error, data} = await query;
+  const { error, data } = await query;
 
   if (error) {
     throw new Error(error.message);
@@ -36,9 +36,9 @@ export const useCreatePlanAction = () => {
   const navigation_key = ['plans_navigation', collectivite_id];
 
   return useMutation(upsertAxe, {
-    meta: {disableToast: true},
-    onMutate: async ({nom}) => {
-      await queryClient.cancelQueries({queryKey: navigation_key});
+    meta: { disableToast: true },
+    onMutate: async ({ nom }) => {
+      await queryClient.cancelQueries({ queryKey: navigation_key });
 
       const previousData: PlanNode[] | undefined =
         queryClient.getQueryData(navigation_key);
@@ -47,7 +47,7 @@ export const useCreatePlanAction = () => {
         navigation_key,
         (old: PlanNode[] | undefined) => {
           if (old) {
-            const axe = planNodeFactory({axes: old, nom});
+            const axe = planNodeFactory({ axes: old, nom });
             const tempNavigation = [...old, axe];
             sortPlanNodes(tempNavigation);
             return tempNavigation;
@@ -65,7 +65,7 @@ export const useCreatePlanAction = () => {
     onSettled: () => {
       queryClient.invalidateQueries(navigation_key);
     },
-    onSuccess: data => {
+    onSuccess: (data) => {
       router.push(
         makeCollectivitePlanActionUrl({
           collectiviteId: collectivite_id!,
@@ -91,10 +91,10 @@ export const useAddAxe = (
   const navigation_key = ['plans_navigation', collectivite_id];
 
   return useMutation(upsertAxe, {
-    meta: {disableToast: true},
+    meta: { disableToast: true },
     onMutate: async () => {
-      await queryClient.cancelQueries({queryKey: flat_axes_key});
-      await queryClient.cancelQueries({queryKey: navigation_key});
+      await queryClient.cancelQueries({ queryKey: flat_axes_key });
+      await queryClient.cancelQueries({ queryKey: navigation_key });
 
       const previousData = [
         [flat_axes_key, queryClient.getQueryData(flat_axes_key)],
@@ -141,12 +141,12 @@ export const useAddAxe = (
         queryClient.setQueryData(key as string[], data)
       );
     },
-    onSuccess: data => {
+    onSuccess: (data) => {
       queryClient.invalidateQueries(navigation_key);
       queryClient.invalidateQueries(flat_axes_key).then(() => {
-        waitForMarkup(`#axe-${data[0].id}`).then(el => {
+        waitForMarkup(`#axe-${data[0].id}`).then((el) => {
           // scroll au niveau du nouvel axe créé
-          el?.scrollIntoView({behavior: 'smooth', block: 'center'});
+          el?.scrollIntoView({ behavior: 'smooth', block: 'center' });
           // donne le focus à son titre
           document.getElementById(`axe-titre-${data[0].id}`)?.focus();
         });

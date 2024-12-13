@@ -1,8 +1,8 @@
 /**
  * Affiche le composant d'upload de fichiers
  */
+import { useCollectiviteId } from '@/app/core-logic/hooks/params';
 import { Button, Field, Input } from '@/ui';
-import { useCollectiviteId } from 'core-logic/hooks/params';
 import { FormEvent, useEffect, useState } from 'react';
 import { useUpdateBibliothequeFichierConfidentiel } from '../Bibliotheque/useEditPreuve';
 import { CheckboxConfidentiel } from './CheckboxConfidentiel';

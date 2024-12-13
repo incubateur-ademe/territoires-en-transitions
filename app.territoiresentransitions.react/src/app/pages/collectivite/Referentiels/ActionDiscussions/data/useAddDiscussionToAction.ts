@@ -1,6 +1,6 @@
-import {useMutation, useQueryClient} from 'react-query';
+import { useMutation, useQueryClient } from 'react-query';
 
-import {useCollectiviteId} from 'core-logic/hooks/params';
+import { useCollectiviteId } from '@/app/core-logic/hooks/params';
 import {
   insertActionDiscussionCommentaire,
   upsertActionDiscussion,
@@ -31,12 +31,12 @@ export const useAddDiscussionToAction = (action_id: string) => {
 
 const makeAddDiscussionToAction =
   (collectivite_id: number, action_id: string) => async (message: string) => {
-    const {data: discussions, error: upsertDiscussionFailed} =
-      await upsertActionDiscussion({collectivite_id, action_id});
+    const { data: discussions, error: upsertDiscussionFailed } =
+      await upsertActionDiscussion({ collectivite_id, action_id });
     if (upsertDiscussionFailed) throw new Error(upsertDiscussionFailed.message);
-    const {id: discussion_id} = discussions?.[0];
+    const { id: discussion_id } = discussions?.[0];
 
-    const {error: insertCommentaireFailed} =
+    const { error: insertCommentaireFailed } =
       await insertActionDiscussionCommentaire({
         discussion_id,
         message,

@@ -1,7 +1,7 @@
 import { FicheResume } from '@/api/plan-actions';
+import { useCurrentCollectivite } from '@/app/core-logic/hooks/useCurrentCollectivite';
 import { DragOverlay, useDraggable } from '@dnd-kit/core';
 import classNames from 'classnames';
-import { useCurrentCollectivite } from 'core-logic/hooks/useCurrentCollectivite';
 import { createPortal } from 'react-dom';
 import { QueryKey } from 'react-query';
 import FicheActionCard from '../../FicheAction/Carte/FicheActionCard';

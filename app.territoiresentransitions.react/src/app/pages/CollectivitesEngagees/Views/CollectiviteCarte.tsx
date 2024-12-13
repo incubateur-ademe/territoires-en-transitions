@@ -3,12 +3,12 @@ import {
   GreyStar,
   RedStar,
 } from '@/app/app/pages/collectivite/EtatDesLieux/Accueil/EtatDesLieux/labellisation/Star';
+import { useFonctionTracker } from '@/app/core-logic/hooks/useFonctionTracker';
 import { Icon } from '@/ui';
 import { referentielToName } from 'app/labels';
 import { TCollectiviteCarte } from 'app/pages/CollectivitesEngagees/data/useFilteredCollectivites';
 import { makeCollectiviteAccueilUrl } from 'app/paths';
 import classNames from 'classnames';
-import { useFonctionTracker } from 'core-logic/hooks/useFonctionTracker';
 import Link from 'next/link';
 import { Referentiel } from 'types/litterals';
 import { toPercentString } from 'utils/score';

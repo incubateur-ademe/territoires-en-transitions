@@ -1,5 +1,5 @@
+import { useCollectiviteId } from '@/app/core-logic/hooks/params';
 import { Alert, Button, Card, Modal, TrackPageView } from '@/ui';
-import { useCollectiviteId } from 'core-logic/hooks/params';
 import { useEffect } from 'react';
 import { useQueryClient } from 'react-query';
 import SpinnerLoader from 'ui/shared/SpinnerLoader';

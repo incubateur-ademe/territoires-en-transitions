@@ -1,5 +1,5 @@
 import { NonNullableFields, Views } from '@/api';
-import { supabaseClient } from 'core-logic/api/supabase';
+import { supabaseClient } from '@/app/core-logic/api/supabase';
 import { useQuery } from 'react-query';
 import { Referentiel } from 'types/litterals';
 

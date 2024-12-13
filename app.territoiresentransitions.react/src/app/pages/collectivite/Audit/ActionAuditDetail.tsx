@@ -1,5 +1,5 @@
+import { ActionDefinitionSummary } from '@/app/core-logic/api/endpoints/ActionDefinitionSummaryReadEndpoint';
 import { Field } from '@/ui';
-import { ActionDefinitionSummary } from 'core-logic/api/endpoints/ActionDefinitionSummaryReadEndpoint';
 import React, { ChangeEvent, useState } from 'react';
 import Textarea from 'ui/shared/form/Textarea';
 import { TActionAuditStatut } from './types';

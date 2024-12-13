@@ -1,9 +1,9 @@
-import { useTableData } from './useTableData';
+import { useReferentielId } from '@/app/core-logic/hooks/params';
+import { DesactiverLesFiltres } from 'ui/shared/filters/DesactiverLesFiltres';
 import { Table } from './Table';
 import { getFilterInfoMessage, noFilters } from './filters';
 import { getMaxDepth } from './queries';
-import { useReferentielId } from 'core-logic/hooks/params';
-import { DesactiverLesFiltres } from 'ui/shared/filters/DesactiverLesFiltres';
+import { useTableData } from './useTableData';
 
 const AidePriorisation = () => {
   const tableData = useTableData();

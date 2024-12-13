@@ -1,15 +1,18 @@
-import { useCollectiviteId, useReferentielId } from 'core-logic/hooks/params';
+import {
+  useCollectiviteId,
+  useReferentielId,
+} from '@/app/core-logic/hooks/params';
 import { referentielToName } from 'app/labels';
-import { useCycleLabellisation } from './useCycleLabellisation';
-import HeaderLabellisation from './HeaderLabellisation';
-import { ReferentielOfIndicateur } from 'types/litterals';
 import {
   makeCollectiviteReferentielUrl,
   ReferentielParamOption,
 } from 'app/paths';
-import { LabellisationTabs } from './LabellisationTabs';
-import { useIsUnchangedReferentiel } from './useIsUnchangedReferentiel';
 import Link from 'next/link';
+import { ReferentielOfIndicateur } from 'types/litterals';
+import HeaderLabellisation from './HeaderLabellisation';
+import { LabellisationTabs } from './LabellisationTabs';
+import { useCycleLabellisation } from './useCycleLabellisation';
+import { useIsUnchangedReferentiel } from './useIsUnchangedReferentiel';
 
 const ParcoursLabellisation = () => {
   const collectiviteId = useCollectiviteId();

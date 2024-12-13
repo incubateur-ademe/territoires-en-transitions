@@ -1,6 +1,6 @@
-import {useQuery} from 'react-query';
-import {supabaseClient} from 'core-logic/api/supabase';
-import {TPreuve} from 'ui/shared/preuves/Bibliotheque/types';
+import { supabaseClient } from '@/app/core-logic/api/supabase';
+import { useQuery } from 'react-query';
+import { TPreuve } from 'ui/shared/preuves/Bibliotheque/types';
 
 /** Renvoi les annexes associées à une fiche */
 export const useAnnexesFicheAction = (

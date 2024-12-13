@@ -1,11 +1,11 @@
 /**
  * Affiche l'onglet "Documentation"
  */
+import { ActionDefinitionSummary } from '@/app/core-logic/api/endpoints/ActionDefinitionSummaryReadEndpoint';
 import DOMPurify from 'dompurify';
-import {ActionDefinitionSummary} from 'core-logic/api/endpoints/ActionDefinitionSummaryReadEndpoint';
-import {TPersonnalisationRegleRead} from './useRegles';
-import {ActionScore} from 'types/ClientScore';
-import {toLocaleFixed} from 'utils/toFixed';
+import { ActionScore } from 'types/ClientScore';
+import { toLocaleFixed } from 'utils/toFixed';
+import { TPersonnalisationRegleRead } from './useRegles';
 
 export type TPersoPotentielDocProps = {
   /** Définition de l'action */
@@ -17,11 +17,11 @@ export type TPersoPotentielDocProps = {
 };
 
 export const PersoPotentielDoc = (props: TPersoPotentielDocProps) => {
-  const {actionDef, actionScore, regles} = props;
+  const { actionDef, actionScore, regles } = props;
   return (
     <div data-test="PersoPotentielDoc" className="p-mb-0">
       <ul>
-        {regles.map(({description}, index) =>
+        {regles.map(({ description }, index) =>
           description ? (
             <li
               key={`r${index}`}

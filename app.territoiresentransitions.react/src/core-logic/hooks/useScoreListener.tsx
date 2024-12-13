@@ -1,9 +1,9 @@
-import {createContext, ReactNode, useContext, useRef} from 'react';
-import {useQueryClient} from 'react-query';
-import {RealtimeChannel} from '@supabase/supabase-js';
-import {supabaseClient} from 'core-logic/api/supabase';
-import {getScoreQueryKey} from 'core-logic/hooks/scoreHooks';
-import {getScoreRealiseQueryKey} from 'app/pages/collectivite/EtatDesLieux/Referentiel/data/useScoreRealise';
+import { supabaseClient } from '@/app/core-logic/api/supabase';
+import { getScoreQueryKey } from '@/app/core-logic/hooks/scoreHooks';
+import { RealtimeChannel } from '@supabase/supabase-js';
+import { getScoreRealiseQueryKey } from 'app/pages/collectivite/EtatDesLieux/Referentiel/data/useScoreRealise';
+import { createContext, ReactNode, useContext, useRef } from 'react';
+import { useQueryClient } from 'react-query';
 
 type TScoreListenerContext = {
   subscribe: (collectiviteId: number | null) => void;
@@ -26,7 +26,7 @@ const shouldSubscribe = (contextData: TContextData, collectiviteId: number) => {
   }
 
   // déjà souscrit
-  const {collectiviteId: id, subscription} = contextData;
+  const { collectiviteId: id, subscription } = contextData;
   if (subscription && id === collectiviteId) {
     return false;
   }
@@ -42,7 +42,11 @@ const shouldSubscribe = (contextData: TContextData, collectiviteId: number) => {
 export const useScoreListener = () => useContext(ScoreListenerContext);
 
 // le fournisseur de contexte
-export const ScoreListenerProvider = ({children}: {children: ReactNode}) => {
+export const ScoreListenerProvider = ({
+  children,
+}: {
+  children: ReactNode;
+}) => {
   const contextDataRef = useRef<TContextData>(null);
 
   const queryClient = useQueryClient();
@@ -59,22 +63,24 @@ export const ScoreListenerProvider = ({children}: {children: ReactNode}) => {
         // La payload de l'environnement de développement (supabase/realtime:v0.25.1) contient la clef record
         // celle de prod les clefs new/old.
         const row = payload.new || payload.record;
-        const {collectivite_id, referentiel} = row;
+        const { collectivite_id, referentiel } = row;
         const keys = [
           getScoreQueryKey(collectivite_id, referentiel),
           getScoreRealiseQueryKey(collectivite_id, referentiel),
         ];
-        return Promise.all(keys.map(key => queryClient.invalidateQueries(key)));
+        return Promise.all(
+          keys.map((key) => queryClient.invalidateQueries(key))
+        );
       };
 
       // Souscrit aux changements de `client_scores_update` pour la collectivité.
-      const table = {schema: 'public', table: 'client_scores_update'};
+      const table = { schema: 'public', table: 'client_scores_update' };
       const subscription = supabaseClient
         .channel(
           `public:client_scores_update:collectivite_id=eq.${collectiviteId}` // ,referentiel=eq.${referentiel}
         )
-        .on('postgres_changes', {event: 'INSERT', ...table}, invalidate)
-        .on('postgres_changes', {event: 'UPDATE', ...table}, invalidate)
+        .on('postgres_changes', { event: 'INSERT', ...table }, invalidate)
+        .on('postgres_changes', { event: 'UPDATE', ...table }, invalidate)
         .subscribe();
       contextDataRef.current = {
         collectiviteId,
@@ -84,7 +90,7 @@ export const ScoreListenerProvider = ({children}: {children: ReactNode}) => {
   };
 
   // les données exposées par le fournisseur de contexte
-  const value = {subscribe};
+  const value = { subscribe };
 
   return (
     <ScoreListenerContext.Provider value={value}>

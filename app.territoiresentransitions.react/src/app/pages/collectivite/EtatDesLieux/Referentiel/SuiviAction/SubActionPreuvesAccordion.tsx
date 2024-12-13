@@ -1,8 +1,8 @@
-import {ActionDefinitionSummary} from 'core-logic/api/endpoints/ActionDefinitionSummaryReadEndpoint';
-import {useState} from 'react';
-import {AccordionControlled} from 'ui/Accordion';
-import {ActionPreuvePanel} from 'ui/shared/actions/ActionPreuvePanel';
-import {useActionPreuvesCount} from 'ui/shared/preuves/Bibliotheque/usePreuves';
+import { ActionDefinitionSummary } from '@/app/core-logic/api/endpoints/ActionDefinitionSummaryReadEndpoint';
+import { useState } from 'react';
+import { AccordionControlled } from 'ui/Accordion';
+import { ActionPreuvePanel } from 'ui/shared/actions/ActionPreuvePanel';
+import { useActionPreuvesCount } from 'ui/shared/preuves/Bibliotheque/usePreuves';
 
 type SubActionPreuvesAccordionProps = {
   subAction: ActionDefinitionSummary;
@@ -10,7 +10,7 @@ type SubActionPreuvesAccordionProps = {
 };
 
 const SubActionPreuvesAccordion = (props: SubActionPreuvesAccordionProps) => {
-  const {subAction} = props;
+  const { subAction } = props;
   const preuvesCount = useActionPreuvesCount(subAction);
   const [expanded, setExpanded] = useState(false);
 

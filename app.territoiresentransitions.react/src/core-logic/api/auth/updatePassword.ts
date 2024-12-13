@@ -1,4 +1,4 @@
-import {supabaseClient} from 'core-logic/api/supabase';
+import { supabaseClient } from '@/app/core-logic/api/supabase';
 
 export interface UpdatePasswordParams {
   password: string;
@@ -7,8 +7,8 @@ export interface UpdatePasswordParams {
 /**
  * Met à jour le mot de passe utilisateur courant
  */
-export const updatePassword = async ({password}: UpdatePasswordParams) => {
-  const {error} = await supabaseClient.auth.updateUser({password});
+export const updatePassword = async ({ password }: UpdatePasswordParams) => {
+  const { error } = await supabaseClient.auth.updateUser({ password });
 
   if (error) throw error?.message;
   return true;

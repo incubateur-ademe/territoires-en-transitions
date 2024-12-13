@@ -1,7 +1,7 @@
 import { Indicateurs } from '@/api';
+import { supabaseClient } from '@/app/core-logic/api/supabase';
+import { useCollectiviteId } from '@/app/core-logic/hooks/params';
 import { TIndicateurDefinition } from 'app/pages/collectivite/Indicateurs/types';
-import { supabaseClient } from 'core-logic/api/supabase';
-import { useCollectiviteId } from 'core-logic/hooks/params';
 import { useMutation, useQuery, useQueryClient } from 'react-query';
 import { TThematiqueRow } from 'types/alias';
 

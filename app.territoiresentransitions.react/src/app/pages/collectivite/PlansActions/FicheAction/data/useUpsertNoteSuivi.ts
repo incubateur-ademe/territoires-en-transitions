@@ -1,5 +1,5 @@
 import { FicheAction, FicheActionNote } from '@/api/plan-actions';
-import { useApiClient } from 'core-logic/api/useApiClient';
+import { useApiClient } from '@/app/core-logic/api/useApiClient';
 import { useMutation, useQueryClient } from 'react-query';
 
 export type EditedNote = Pick<FicheActionNote, 'note'> & {

@@ -20,9 +20,9 @@ import {
   makeTableauBordUrl,
   recherchesCollectivitesUrl,
 } from '@/app/app/paths';
+import { useAuth } from '@/app/core-logic/api/auth/AuthProvider';
+import { useCurrentCollectivite } from '@/app/core-logic/hooks/useCurrentCollectivite';
 import { Button } from '@/ui';
-import { useAuth } from 'core-logic/api/auth/AuthProvider';
-import { useCurrentCollectivite } from 'core-logic/hooks/useCurrentCollectivite';
 
 /**
  * Affiche la page d'accueil d'une collectivité

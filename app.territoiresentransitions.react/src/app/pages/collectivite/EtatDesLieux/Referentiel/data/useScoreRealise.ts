@@ -1,11 +1,11 @@
-import {useQuery} from 'react-query';
-import {supabaseClient} from 'core-logic/api/supabase';
-import {useCollectiviteId} from 'core-logic/hooks/params';
-import {ActionReferentiel} from 'app/pages/collectivite/ReferentielTable/useReferentiel';
-import {TActionStatutsRow} from 'types/alias';
-import {ActionDefinitionSummary} from 'core-logic/api/endpoints/ActionDefinitionSummaryReadEndpoint';
-import {Referentiel} from 'types/litterals';
-import {indexBy} from 'utils/indexBy';
+import { ActionDefinitionSummary } from '@/app/core-logic/api/endpoints/ActionDefinitionSummaryReadEndpoint';
+import { supabaseClient } from '@/app/core-logic/api/supabase';
+import { useCollectiviteId } from '@/app/core-logic/hooks/params';
+import { ActionReferentiel } from 'app/pages/collectivite/ReferentielTable/useReferentiel';
+import { useQuery } from 'react-query';
+import { TActionStatutsRow } from 'types/alias';
+import { Referentiel } from 'types/litterals';
+import { indexBy } from 'utils/indexBy';
 
 export type SuiviScoreRow = ActionReferentiel &
   Pick<
@@ -27,12 +27,12 @@ const fetchScore = async (
   referentiel: string | null,
   action_id: string | null
 ) => {
-  const {error, data} = await supabaseClient
+  const { error, data } = await supabaseClient
     .from('action_statuts')
     .select(
       'action_id, concerne, desactive, points_realises, points_max_personnalises, points_max_referentiel'
     )
-    .match({collectivite_id, referentiel})
+    .match({ collectivite_id, referentiel })
     .like('action_id', `${action_id}%`);
 
   if (error) throw new Error(error.message);
@@ -48,7 +48,7 @@ export const useScoreRealise = (action: ActionDefinitionSummary) => {
   const collectiviteId = useCollectiviteId();
 
   // Chargement des données
-  const {data} = useQuery(
+  const { data } = useQuery(
     [
       ...getScoreRealiseQueryKey(collectiviteId, action.referentiel),
       action.id,

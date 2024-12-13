@@ -1,4 +1,4 @@
-// import {useCollectiviteId} from 'core-logic/hooks/params';
+// import {useCollectiviteId} from '@/app/core-logic/hooks/params';
 // import {
 //   TIndicateurPersoDefinitionWrite,
 //   useInsertIndicateurPersoDefinition,

@@ -1,9 +1,9 @@
+import { useCollectiviteId } from '@/app/core-logic/hooks/params';
+import { useFonctionTracker } from '@/app/core-logic/hooks/useFonctionTracker';
 import { Pagination } from '@/ui';
 import HistoriqueItemActionPrecision from 'app/pages/collectivite/Historique/actionPrecision/HistoriqueItemActionPrecision';
 import HistoriqueItemActionStatut from 'app/pages/collectivite/Historique/actionStatut/HistoriqueItemActionStatut';
 import { useHistoriqueItemListe } from 'app/pages/collectivite/Historique/useHistoriqueItemListe';
-import { useCollectiviteId } from 'core-logic/hooks/params';
-import { useFonctionTracker } from 'core-logic/hooks/useFonctionTracker';
 import { FC } from 'react';
 import { NB_ITEMS_PER_PAGE } from './filters';
 import HistoriqueFiltres from './HistoriqueFiltres/HistoriqueFiltres';

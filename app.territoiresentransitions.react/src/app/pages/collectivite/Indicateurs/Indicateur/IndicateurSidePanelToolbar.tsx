@@ -1,12 +1,12 @@
-import {useEffect, useState} from 'react';
+import { useEffect, useState } from 'react';
 
-import {ToolbarIconToggleButton} from 'ui/buttons/ToolbarIconButton';
-import {useOngletTracker} from 'core-logic/hooks/useOngletTracker';
-import {TIndicateurPredefini} from '../types';
+import { useOngletTracker } from '@/app/core-logic/hooks/useOngletTracker';
+import { ToolbarIconToggleButton } from 'ui/buttons/ToolbarIconButton';
 import {
   usePanelDispatch,
   usePanelState,
 } from '../../CollectivitePageLayout/Panel/PanelContext';
+import { TIndicateurPredefini } from '../types';
 
 // identifiant du panneau actif (correspond à l'identifiant de l'icône associée)
 type TPanelId = 'info' | false;
@@ -50,7 +50,7 @@ export const IndicateurSidePanelToolbar = ({
               <div className="overflow-y-auto fr-px-3w fr-py-2w">
                 <div
                   className="fr-text--sm"
-                  dangerouslySetInnerHTML={{__html: definition.description!}}
+                  dangerouslySetInnerHTML={{ __html: definition.description! }}
                 />
               </div>
             )}
@@ -83,7 +83,7 @@ type ToolbarProps = {
   onClick: (v: string | false) => void;
 };
 
-const Toolbar = ({panelId, onClick}: ToolbarProps) => {
+const Toolbar = ({ panelId, onClick }: ToolbarProps) => {
   return (
     <div className="flex gap-4">
       <ToolbarIconToggleButton

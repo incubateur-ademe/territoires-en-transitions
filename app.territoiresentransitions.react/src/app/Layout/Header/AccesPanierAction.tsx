@@ -1,9 +1,9 @@
 import { PanierAPI } from '@/api';
 import { makeCollectivitePanierUrl } from '@/app/app/paths';
+import { supabaseClient } from '@/app/core-logic/api/supabase';
+import { useCollectiviteId } from '@/app/core-logic/hooks/params';
 import { Button } from '@/ui';
 import classNames from 'classnames';
-import { supabaseClient } from 'core-logic/api/supabase';
-import { useCollectiviteId } from 'core-logic/hooks/params';
 import { useQuery } from 'react-query';
 
 const panierAPI = new PanierAPI(supabaseClient);

@@ -1,15 +1,15 @@
+import { ActionDefinitionSummary } from '@/app/core-logic/api/endpoints/ActionDefinitionSummaryReadEndpoint';
+import {
+  useActionStatut,
+  useEditActionStatutIsDisabled,
+  useSaveActionStatut,
+} from '@/app/core-logic/hooks/useActionStatut';
+import { useCurrentCollectivite } from '@/app/core-logic/hooks/useCurrentCollectivite';
 import { Button, Tooltip } from '@/ui';
 import { avancementToLabel } from 'app/labels';
 import { SuiviScoreRow } from 'app/pages/collectivite/EtatDesLieux/Referentiel/data/useScoreRealise';
 import { actionAvancementColors } from 'app/theme';
 import classNames from 'classnames';
-import { ActionDefinitionSummary } from 'core-logic/api/endpoints/ActionDefinitionSummaryReadEndpoint';
-import {
-  useActionStatut,
-  useEditActionStatutIsDisabled,
-  useSaveActionStatut,
-} from 'core-logic/hooks/useActionStatut';
-import { useCurrentCollectivite } from 'core-logic/hooks/useCurrentCollectivite';
 import { useEffect, useState } from 'react';
 import { TActionAvancement, TActionAvancementExt } from 'types/alias';
 import ProgressBarWithTooltip from 'ui/score/ProgressBarWithTooltip';

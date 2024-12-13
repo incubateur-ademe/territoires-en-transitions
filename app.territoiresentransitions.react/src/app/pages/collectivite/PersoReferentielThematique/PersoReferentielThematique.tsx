@@ -1,4 +1,5 @@
-import { useCurrentCollectivite } from 'core-logic/hooks/useCurrentCollectivite';
+import { useCurrentCollectivite } from '@/app/core-logic/hooks/useCurrentCollectivite';
+import { useParams } from 'react-router-dom';
 import { PageHeader } from 'ui/PageHeader';
 import { useChangeReponseHandler } from '../PersoPotentielModal/useChangeReponseHandler';
 import { ThematiqueQR } from './ThematiqueQR';
@@ -6,7 +7,6 @@ import { useCarteIdentite } from './useCarteIdentite';
 import { useNextThematiqueId } from './useNextThematiqueId';
 import { useQuestionsReponses } from './useQuestionsReponses';
 import { useThematique } from './useThematique';
-import { useParams } from 'react-router-dom';
 
 const PersoReferentielThematique = () => {
   const collectivite = useCurrentCollectivite();

@@ -1,20 +1,20 @@
-import {useEffect, useMemo, useRef} from 'react';
+import { useReferentielId } from '@/app/core-logic/hooks/params';
+import { useEffect, useMemo, useRef } from 'react';
 import {
-  Column,
   CellProps,
+  Column,
   HeaderProps,
-  useTable,
   useExpanded,
   useFlexLayout,
+  useTable,
 } from 'react-table';
-import {getMaxDepth, PriorisationRow} from './queries';
-import {TableData} from './useTableData';
-import {CellAction} from '../ReferentielTable/CellAction';
 import ReferentielTable from '../ReferentielTable';
-import {CellPercent, CellPoints, CellPhase} from './Cells';
-import {useReferentielId} from 'core-logic/hooks/params';
-import {makeFiltrePourcentage} from './FiltrePourcentage';
-import {FiltrePhase} from './FiltrePhase';
+import { CellAction } from '../ReferentielTable/CellAction';
+import { CellPercent, CellPhase, CellPoints } from './Cells';
+import { FiltrePhase } from './FiltrePhase';
+import { makeFiltrePourcentage } from './FiltrePourcentage';
+import { getMaxDepth, PriorisationRow } from './queries';
+import { TableData } from './useTableData';
 
 export type TDetailTacheTableProps = {
   tableData: TableData;
@@ -63,23 +63,23 @@ const COLUMNS: TColumn[] = [
  * Affiche la table "Aide à la priorisation"
  */
 export const Table = (props: TDetailTacheTableProps) => {
-  const {tableData} = props;
-  const {table, isLoading, filters, setFilters} = tableData;
+  const { tableData } = props;
+  const { table, isLoading, filters, setFilters } = tableData;
 
   const referentiel = useReferentielId();
   const maxDepth = getMaxDepth(referentiel);
 
   // ajout aux props passées à chaque cellule de ligne et d'en-tête de colonne
-  const customCellProps = useMemo(() => ({maxDepth}), [maxDepth]);
-  const customHeaderProps = useMemo(() => ({filters, setFilters}), [filters]);
+  const customCellProps = useMemo(() => ({ maxDepth }), [maxDepth]);
+  const customHeaderProps = useMemo(() => ({ filters, setFilters }), [filters]);
 
   // crée l'instance de la table
   const tableInstance = useTable(
-    {...table, columns: COLUMNS},
+    { ...table, columns: COLUMNS },
     useExpanded,
     useFlexLayout
   );
-  const {toggleAllRowsExpanded} = tableInstance;
+  const { toggleAllRowsExpanded } = tableInstance;
 
   // initialement tout est déplié
   const isInitialLoading = useRef(true);

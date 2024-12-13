@@ -1,8 +1,8 @@
 import { Indicateurs } from '@/api';
+import { useCurrentCollectivite } from '@/app/core-logic/hooks/useCurrentCollectivite';
 import { Field, Input, Modal, ModalFooterOKCancel } from '@/ui';
 import BadgeIndicateurPerso from 'app/pages/collectivite/Indicateurs/components/BadgeIndicateurPerso';
 import IndicateurDetailChart from 'app/pages/collectivite/Indicateurs/Indicateur/detail/IndicateurDetailChart';
-import { useCurrentCollectivite } from 'core-logic/hooks/useCurrentCollectivite';
 import { useState } from 'react';
 import ScrollTopButton from 'ui/buttons/ScrollTopButton';
 import { ToolbarIconButton } from 'ui/buttons/ToolbarIconButton';

@@ -1,6 +1,6 @@
-import {supabaseClient} from 'core-logic/api/supabase';
-import {useMutation, useQueryClient} from 'react-query';
-import {TActionAuditStatut} from './types';
+import { supabaseClient } from '@/app/core-logic/api/supabase';
+import { useMutation, useQueryClient } from 'react-query';
+import { TActionAuditStatut } from './types';
 
 // renvoie une fonction de modification du statut d'audit d'une action
 export const useUpdateActionAuditStatut = () => {
@@ -8,7 +8,7 @@ export const useUpdateActionAuditStatut = () => {
 
   return useMutation(
     async (actionAuditStatut: TActionAuditStatut) => {
-      const {collectivite_id, action_id, ordre_du_jour, avis, statut} =
+      const { collectivite_id, action_id, ordre_du_jour, avis, statut } =
         actionAuditStatut;
       return supabaseClient.from('action_audit_state').insert({
         collectivite_id,
@@ -42,6 +42,6 @@ export const useUpdateActionAuditStatut = () => {
 };
 
 const getQueryKey = (variables: TActionAuditStatut) => {
-  const {collectivite_id, referentiel, action_id} = variables;
+  const { collectivite_id, referentiel, action_id } = variables;
   return ['action_audit_state', collectivite_id, referentiel, action_id];
 };

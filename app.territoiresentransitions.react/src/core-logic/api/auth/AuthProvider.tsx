@@ -7,12 +7,12 @@ import {
 } from '@/api';
 import { Tables } from '@/api/database.types';
 import { dcpFetch } from '@/api/utilisateurs/shared/data_access/dcp.fetch';
+import { fetchOwnedCollectivites } from '@/app/core-logic/hooks/useOwnedCollectivites';
 import {
   Session,
   SignInWithPasswordCredentials,
   User,
 } from '@supabase/supabase-js';
-import { fetchOwnedCollectivites } from 'core-logic/hooks/useOwnedCollectivites';
 import { ENV } from 'environmentVariables';
 import {
   createContext,

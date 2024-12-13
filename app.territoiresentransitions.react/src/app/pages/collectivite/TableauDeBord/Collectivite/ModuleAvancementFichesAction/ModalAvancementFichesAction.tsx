@@ -12,8 +12,8 @@ import {
 import { modulesSave } from '@/api/plan-actions/dashboards/collectivite-dashboard';
 import { Filtre } from '@/api/plan-actions/dashboards/collectivite-dashboard/domain/fiches-synthese.schema';
 import { ModuleFicheActionCountByStatusSelect } from '@/api/plan-actions/dashboards/collectivite-dashboard/domain/module.schema';
+import { supabaseClient } from '@/app/core-logic/api/supabase';
 import { ModuleDisplaySettings } from 'app/pages/collectivite/TableauDeBord/components/Module';
-import { supabaseClient } from 'core-logic/api/supabase';
 import { TFicheActionCibles } from 'types/alias';
 import CiblesDropdown from 'ui/dropdownLists/ficheAction/CiblesDropdown/CiblesDropdown';
 import PartenairesDropdown from 'ui/dropdownLists/PartenairesDropdown/PartenairesDropdown';

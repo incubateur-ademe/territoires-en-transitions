@@ -1,6 +1,6 @@
-import {DataLayerReadEndpoint} from 'core-logic/api/dataLayerEndpoint';
-import {PostgrestResponse} from '@supabase/supabase-js';
-import {ClientScores} from 'types/ClientScore';
+import { DataLayerReadEndpoint } from '@/app/core-logic/api/dataLayerEndpoint';
+import { PostgrestResponse } from '@supabase/supabase-js';
+import { ClientScores } from 'types/ClientScore';
 
 export interface ClientScoresGetParams {
   collectiviteId: number;

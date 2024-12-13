@@ -1,7 +1,7 @@
 import { TablesInsert } from '@/api';
-import { supabaseClient } from 'core-logic/api/supabase';
-import { useCollectiviteId } from 'core-logic/hooks/params';
-import { useLocalisation } from 'core-logic/hooks/useLocalisation';
+import { supabaseClient } from '@/app/core-logic/api/supabase';
+import { useCollectiviteId } from '@/app/core-logic/hooks/params';
+import { useLocalisation } from '@/app/core-logic/hooks/useLocalisation';
 import { ENV } from 'environmentVariables';
 import { usePathname } from 'next/navigation';
 import { useEffect } from 'react';

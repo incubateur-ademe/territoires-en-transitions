@@ -1,10 +1,10 @@
 import { FicheResume } from '@/api/plan-actions';
+import { useCollectiviteId } from '@/app/core-logic/hooks/params';
 import {
   makeCollectiviteFicheNonClasseeUrl,
   makeCollectivitePlanActionFicheUrl,
 } from 'app/paths';
 import classNames from 'classnames';
-import { useCollectiviteId } from 'core-logic/hooks/params';
 import FicheActionCard from '../Carte/FicheActionCard';
 
 type FichesLieesListeProps = {

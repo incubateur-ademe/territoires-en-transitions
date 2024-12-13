@@ -13,12 +13,12 @@ import {
 import { modulesSave } from '@/api/plan-actions/dashboards/collectivite-dashboard';
 import { ModulePlanActionListSelect } from '@/api/plan-actions/dashboards/collectivite-dashboard/domain/module.schema';
 import { FetchFilter } from '@/api/plan-actions/plan-actions.list/domain/fetch-options.schema';
+import { supabaseClient } from '@/app/core-logic/api/supabase';
 import {
   ModuleDisplay,
   ModuleDisplaySettings,
 } from 'app/pages/collectivite/TableauDeBord/components/Module';
 import { getDisplayButtons } from 'app/pages/collectivite/TableauDeBord/components/utils';
-import { supabaseClient } from 'core-logic/api/supabase';
 import PersonnesDropdown from 'ui/dropdownLists/PersonnesDropdown/PersonnesDropdown';
 import {
   getPilotesValues,

@@ -1,7 +1,7 @@
-import {supabaseClient} from 'core-logic/api/supabase';
+import { supabaseClient } from '@/app/core-logic/api/supabase';
 
 export const claimCollectivite = async (id: number): Promise<boolean> => {
-  const {data, error} = await supabaseClient.rpc('claim_collectivite', {
+  const { data, error } = await supabaseClient.rpc('claim_collectivite', {
     id,
   });
 
@@ -22,7 +22,7 @@ export type ReferentContact = {
 export const getReferentContacts = async (
   collectivite_id: number
 ): Promise<ReferentContact[]> => {
-  const {data, error} = await supabaseClient.rpc('referent_contacts', {
+  const { data, error } = await supabaseClient.rpc('referent_contacts', {
     id: collectivite_id,
   });
 

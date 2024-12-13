@@ -1,12 +1,12 @@
-import {supabaseClient} from 'core-logic/api/supabase';
-import {useQuery} from 'react-query';
-import {useCollectiviteId} from 'core-logic/hooks/params';
-import {TBibliothequeFichier} from './types';
+import { supabaseClient } from '@/app/core-logic/api/supabase';
+import { useCollectiviteId } from '@/app/core-logic/hooks/params';
+import { useQuery } from 'react-query';
+import { TBibliothequeFichier } from './types';
 
 export const NB_ITEMS_PER_PAGE = 5;
 
-export type TFilters = {search: string; page: number};
-type TFetchedData = {items: TBibliothequeFichier[]; total: number};
+export type TFilters = { search: string; page: number };
+type TFetchedData = { items: TBibliothequeFichier[]; total: number };
 
 /**
  * Donne la liste de tous les fichiers de la collectivité, éventuellement
@@ -15,10 +15,10 @@ type TFetchedData = {items: TBibliothequeFichier[]; total: number};
  */
 export const useFichiers = (filters: TFilters) => {
   const collectivite_id = useCollectiviteId();
-  const {data} = useQuery(
+  const { data } = useQuery(
     ['bibliotheque_fichier', collectivite_id, filters],
     () => (collectivite_id ? fetch(collectivite_id, filters) : null),
-    {keepPreviousData: true}
+    { keepPreviousData: true }
   );
 
   return data;
@@ -29,7 +29,7 @@ const fetch = async (
   collectivite_id: number,
   filters: TFilters
 ): Promise<TFetchedData> => {
-  const {search, page} = filters;
+  const { search, page } = filters;
 
   // lit la liste des fichiers de la collectivité
   const query = supabaseClient
@@ -44,12 +44,12 @@ const fetch = async (
     query.ilike('filename', `%${search}%`);
   }
 
-  const {data, count, error} = await query;
+  const { data, count, error } = await query;
   if (error) {
     throw new Error(error.message);
   }
 
-  return {items: (data as TBibliothequeFichier[]) || [], total: count || 0};
+  return { items: (data as TBibliothequeFichier[]) || [], total: count || 0 };
 };
 
 /**
@@ -66,7 +66,7 @@ export const getFilesPerHash = async (
     .eq('collectivite_id', collectivite_id)
     .in('hash', hashes);
 
-  const {data, error} = await query;
+  const { data, error } = await query;
 
   if (error) {
     return null;

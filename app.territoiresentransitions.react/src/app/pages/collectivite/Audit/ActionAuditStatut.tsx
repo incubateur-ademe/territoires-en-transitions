@@ -1,11 +1,11 @@
 import SelectDropdown from 'ui/shared/select/SelectDropdown';
-import {BadgeAuditStatut} from './BadgeAuditStatut';
+import { BadgeAuditStatut } from './BadgeAuditStatut';
 
-import {ActionDefinitionSummary} from 'core-logic/api/endpoints/ActionDefinitionSummaryReadEndpoint';
-import {TActionAuditStatut, TAuditStatut} from './types';
-import {useActionAuditStatut} from './useActionAuditStatut';
-import {useAudit, useIsAuditeur} from './useAudit';
-import {useUpdateActionAuditStatut} from './useUpdateActionAuditStatut';
+import { ActionDefinitionSummary } from '@/app/core-logic/api/endpoints/ActionDefinitionSummaryReadEndpoint';
+import { TActionAuditStatut, TAuditStatut } from './types';
+import { useActionAuditStatut } from './useActionAuditStatut';
+import { useAudit, useIsAuditeur } from './useAudit';
+import { useUpdateActionAuditStatut } from './useUpdateActionAuditStatut';
 
 export type TActionAuditStatutProps = {
   action: ActionDefinitionSummary;
@@ -17,17 +17,17 @@ export type TActionAuditStatutBaseProps = {
   onChange: (newStatut: TAuditStatut) => void;
 };
 
-const options: {value: TAuditStatut; label: string}[] = [
-  {value: 'non_audite', label: 'Non audité'},
-  {value: 'en_cours', label: 'Audit en cours'},
-  {value: 'audite', label: 'Audité'},
+const options: { value: TAuditStatut; label: string }[] = [
+  { value: 'non_audite', label: 'Non audité' },
+  { value: 'en_cours', label: 'Audit en cours' },
+  { value: 'audite', label: 'Audité' },
 ];
 /**
  * Affiche le sélecteur de statut d'audit d'une action
  */
 export const ActionAuditStatutBase = (props: TActionAuditStatutBaseProps) => {
-  const {auditStatut, readonly, onChange} = props;
-  const {statut} = auditStatut;
+  const { auditStatut, readonly, onChange } = props;
+  const { statut } = auditStatut;
   return (
     <div className="px-2 mt-4 w-full bg-primary-2">
       {readonly ? (
@@ -41,10 +41,10 @@ export const ActionAuditStatutBase = (props: TActionAuditStatutBaseProps) => {
             value={statut}
             options={options}
             onSelect={onChange}
-            renderOption={option => (
+            renderOption={(option) => (
               <BadgeAuditStatut statut={option.value as TAuditStatut} />
             )}
-            renderSelection={statut => <BadgeAuditStatut statut={statut} />}
+            renderSelection={(statut) => <BadgeAuditStatut statut={statut} />}
             buttonClassName="w-full"
           />
         </div>
@@ -57,21 +57,21 @@ export const ActionAuditStatutBase = (props: TActionAuditStatutBaseProps) => {
  * Charge les données et fait le rendu
  */
 const ActionAuditStatut = (props: TActionAuditStatutProps) => {
-  const {action} = props;
+  const { action } = props;
 
   // donnée de l'audit en cours (si il y en a un)
-  const {data: audit} = useAudit();
+  const { data: audit } = useAudit();
 
   // indique si l'utilisateur courant est l'auditeur
   const isAuditeur = useIsAuditeur();
 
   // statut d'audit de l'action
-  const {data: auditStatut} = useActionAuditStatut(action);
+  const { data: auditStatut } = useActionAuditStatut(action);
 
   // fonction d'enregistrement des modifications
-  const {mutate} = useUpdateActionAuditStatut();
+  const { mutate } = useUpdateActionAuditStatut();
   const handleChange = (statut: TAuditStatut) =>
-    auditStatut && mutate({...auditStatut, statut});
+    auditStatut && mutate({ ...auditStatut, statut });
 
   return audit && auditStatut ? (
     <ActionAuditStatutBase

@@ -1,12 +1,12 @@
+import { useDroppable } from '@dnd-kit/core';
 import classNames from 'classnames';
-import {useDroppable} from '@dnd-kit/core';
 
-import Axe, {AxeDndData} from './Axe';
-import {PlanNode} from '../data/types';
+import { useCurrentCollectivite } from '@/app/core-logic/hooks/useCurrentCollectivite';
+import { AxeActions } from '../AxeActions';
+import { PlanNode } from '../data/types';
+import { childrenOfPlanNodes } from '../data/utils';
+import Axe, { AxeDndData } from './Axe';
 import Fiches from './Fiches';
-import {useCurrentCollectivite} from 'core-logic/hooks/useCurrentCollectivite';
-import {AxeActions} from '../AxeActions';
-import {childrenOfPlanNodes} from '../data/utils';
 
 interface Props {
   plan: PlanNode;
@@ -20,7 +20,7 @@ interface Props {
  * Bien que contenant des fiches et axes comme le composant `Axe`,
  * il difère car les actions de création sont différentes et la surface de drop d'un élément est aussi différente.
  */
-function NestedDroppableContainers({plan, axe, axes, isAxePage}: Props) {
+function NestedDroppableContainers({ plan, axe, axes, isAxePage }: Props) {
   const collectivite = useCurrentCollectivite();
 
   const {
@@ -53,7 +53,7 @@ function NestedDroppableContainers({plan, axe, axes, isAxePage}: Props) {
           ref={droppableRef}
           className={classNames(
             'p-6 text-sm text-center text-indigo-400 rounded-md border border-dashed border-primary',
-            {'bg-bf925': isOver}
+            { 'bg-bf925': isOver }
           )}
         >
           Glisser l'élément ici pour le mettre à la racine
@@ -68,7 +68,7 @@ function NestedDroppableContainers({plan, axe, axes, isAxePage}: Props) {
           axeId={axe.id}
         />
       )}
-      {childrenOfPlanNodes(axe, axes).map(axe => (
+      {childrenOfPlanNodes(axe, axes).map((axe) => (
         <Axe
           key={axe.id}
           plan={plan}

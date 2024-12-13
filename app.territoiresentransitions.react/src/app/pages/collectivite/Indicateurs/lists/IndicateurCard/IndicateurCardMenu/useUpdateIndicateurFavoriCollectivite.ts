@@ -1,5 +1,5 @@
 import { Indicateurs } from '@/api';
-import { supabaseClient } from 'core-logic/api/supabase';
+import { supabaseClient } from '@/app/core-logic/api/supabase';
 import { useMutation, useQueryClient } from 'react-query';
 
 export const useUpdateIndicateurFavoriCollectivite = (

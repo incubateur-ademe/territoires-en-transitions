@@ -1,8 +1,8 @@
-import {useMutation} from 'react-query';
-import {format as formatDate} from 'date-fns';
-import {supabaseClient} from 'core-logic/api/supabase';
-import {useFonctionTracker} from 'core-logic/hooks/useFonctionTracker';
-import {saveBlob} from 'ui/shared/preuves/Bibliotheque/saveBlob';
+import { supabaseClient } from '@/app/core-logic/api/supabase';
+import { useFonctionTracker } from '@/app/core-logic/hooks/useFonctionTracker';
+import { format as formatDate } from 'date-fns';
+import { useMutation } from 'react-query';
+import { saveBlob } from 'ui/shared/preuves/Bibliotheque/saveBlob';
 
 export const useExportFicheAction = (ficheId: number | null) => {
   const tracker = useFonctionTracker();
@@ -12,10 +12,10 @@ export const useExportFicheAction = (ficheId: number | null) => {
     async (format: 'xlsx' | 'docx') => {
       if (!ficheId) return;
       const titre = await fetchFicheActionTitle(ficheId);
-      const {data} = await supabaseClient.functions.invoke(
+      const { data } = await supabaseClient.functions.invoke(
         'export_plan_action',
         {
-          body: {ficheId, format},
+          body: { ficheId, format },
         }
       );
 
@@ -48,7 +48,7 @@ const fetchFicheActionTitle = async (ficheId: number) => {
     .select('titre')
     .eq('id', ficheId);
 
-  const {error, data} = await query;
+  const { error, data } = await query;
   if (error) {
     throw new Error(error.message);
   }

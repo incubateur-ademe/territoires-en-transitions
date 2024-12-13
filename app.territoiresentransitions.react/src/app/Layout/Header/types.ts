@@ -1,7 +1,7 @@
-import {TAuthContext} from 'core-logic/api/auth/AuthProvider';
-import {CurrentCollectivite} from 'core-logic/hooks/useCurrentCollectivite';
-import {TMesCollectivites} from 'core-logic/hooks/useOwnedCollectivites';
-import {Maintenance} from '../useMaintenance';
+import { TAuthContext } from '@/app/core-logic/api/auth/AuthProvider';
+import { CurrentCollectivite } from '@/app/core-logic/hooks/useCurrentCollectivite';
+import { TMesCollectivites } from '@/app/core-logic/hooks/useOwnedCollectivites';
+import { Maintenance } from '../useMaintenance';
 
 export type TNavItem = {
   label: string;

@@ -1,10 +1,13 @@
-import {supabaseClient} from 'core-logic/api/supabase';
-import {useCollectiviteId, useReferentielId} from 'core-logic/hooks/params';
-import {Referentiel} from 'types/litterals';
-import {TAddFileFromLib} from 'ui/shared/preuves/AddPreuveModal/AddFile';
-import {useAddPreuveLabellisation} from 'ui/shared/preuves/Bibliotheque/useAddPreuves';
-import {TLabellisationDemande} from './types';
-import {useCycleLabellisation} from './useCycleLabellisation';
+import { supabaseClient } from '@/app/core-logic/api/supabase';
+import {
+  useCollectiviteId,
+  useReferentielId,
+} from '@/app/core-logic/hooks/params';
+import { Referentiel } from 'types/litterals';
+import { TAddFileFromLib } from 'ui/shared/preuves/AddPreuveModal/AddFile';
+import { useAddPreuveLabellisation } from 'ui/shared/preuves/Bibliotheque/useAddPreuves';
+import { TLabellisationDemande } from './types';
+import { useCycleLabellisation } from './useCycleLabellisation';
 
 type TAddDocs = () => {
   /** ajoute un fichier sélectionné depuis la bibliothèque */
@@ -16,11 +19,11 @@ type TAddDocs = () => {
 export const useAddPreuveToDemande: TAddDocs = () => {
   const collectivite_id = useCollectiviteId();
   const referentiel = useReferentielId() as Referentiel;
-  const {mutate: addPreuve} = useAddPreuveLabellisation();
-  const {parcours} = useCycleLabellisation(referentiel);
+  const { mutate: addPreuve } = useAddPreuveLabellisation();
+  const { parcours } = useCycleLabellisation(referentiel);
 
   // associe un fichier de la bibliothèque à la demande
-  const addFileFromLib: TAddFileFromLib = async fichier_id => {
+  const addFileFromLib: TAddFileFromLib = async (fichier_id) => {
     if (collectivite_id) {
       const args = {
         collectivite_id,
@@ -30,11 +33,11 @@ export const useAddPreuveToDemande: TAddDocs = () => {
 
       const demande_id = parcours?.demande?.id;
       if (demande_id) {
-        addPreuve({...args, demande_id});
+        addPreuve({ ...args, demande_id });
       } else {
         const demande = await createDemande(collectivite_id, referentiel);
         if (demande?.id) {
-          addPreuve({...args, demande_id: demande.id});
+          addPreuve({ ...args, demande_id: demande.id });
         }
       }
     }
@@ -53,7 +56,7 @@ export const createDemande = async (
   if (!collectivite_id || !referentiel) {
     return null;
   }
-  const {error, data} = await supabaseClient
+  const { error, data } = await supabaseClient
     .rpc('labellisation_demande', {
       collectivite_id,
       referentiel,

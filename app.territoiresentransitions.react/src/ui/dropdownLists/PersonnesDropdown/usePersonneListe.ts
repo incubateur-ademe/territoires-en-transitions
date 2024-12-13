@@ -1,5 +1,5 @@
 import { trpc } from '@/api/utils/trpc/client';
-import { useCollectiviteId } from 'core-logic/hooks/params';
+import { useCollectiviteId } from '@/app/core-logic/hooks/params';
 
 export const usePersonneListe = () => {
   const collectiviteId = useCollectiviteId()!;

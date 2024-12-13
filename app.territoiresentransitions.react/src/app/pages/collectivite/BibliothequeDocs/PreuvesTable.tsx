@@ -1,19 +1,19 @@
-import { useEffect, useRef, Fragment } from 'react';
+import { useCollectiviteId } from '@/app/core-logic/hooks/params';
+import { Fragment, useEffect, useRef } from 'react';
 import {
-  Column,
   CellProps,
-  useTable,
+  Column,
+  Row,
   useExpanded,
   useFlexLayout,
-  Row,
+  useTable,
 } from 'react-table';
 import { Referentiel } from 'types/litterals';
-import { TableData } from './useTableData';
-import { CellAction } from '../ReferentielTable/CellAction';
-import { ActionReferentiel } from '../ReferentielTable/useReferentiel';
-import { useCollectiviteId } from 'core-logic/hooks/params';
-import '../ReferentielTable/styles.css';
 import ActionPreuvePanel from 'ui/shared/actions/ActionPreuvePanel/ActionPreuvePanel';
+import { CellAction } from '../ReferentielTable/CellAction';
+import '../ReferentielTable/styles.css';
+import { ActionReferentiel } from '../ReferentielTable/useReferentiel';
+import { TableData } from './useTableData';
 
 export type TPreuvesTableProps = {
   tableData: TableData;

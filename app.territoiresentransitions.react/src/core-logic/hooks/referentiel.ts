@@ -1,19 +1,19 @@
-import { useEffect, useState } from 'react';
+import {
+  ActionDefinitionSummary,
+  actionDefinitionSummaryReadEndpoint,
+} from '@/app/core-logic/api/endpoints/ActionDefinitionSummaryReadEndpoint';
+import {
+  ActionTitleRead,
+  actionTitleReadEndpoint,
+} from '@/app/core-logic/api/endpoints/ActionTitleReadEndpoint';
 import {
   actionDownToTache,
   actionPreuve,
   referentielDownToAction,
-} from 'core-logic/api/procedures/referentielProcedures';
+} from '@/app/core-logic/api/procedures/referentielProcedures';
+import { useEffect, useState } from 'react';
 import { Referentiel } from 'types/litterals';
 import { parentId } from 'utils/actions';
-import {
-  ActionTitleRead,
-  actionTitleReadEndpoint,
-} from 'core-logic/api/endpoints/ActionTitleReadEndpoint';
-import {
-  ActionDefinitionSummary,
-  actionDefinitionSummaryReadEndpoint,
-} from 'core-logic/api/endpoints/ActionDefinitionSummaryReadEndpoint';
 
 /**
  * Returns a list of actions from the "action" level down to the "tache" level.

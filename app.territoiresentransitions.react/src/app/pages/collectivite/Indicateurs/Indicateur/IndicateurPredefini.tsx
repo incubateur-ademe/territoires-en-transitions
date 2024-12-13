@@ -1,4 +1,6 @@
 import BadgeOpenData from '@/app/app/pages/collectivite/Indicateurs/components/BadgeOpenData';
+import { useCollectiviteId } from '@/app/core-logic/hooks/params';
+import { useCurrentCollectivite } from '@/app/core-logic/hooks/useCurrentCollectivite';
 import { Badge, Field, TrackPageView } from '@/ui';
 import { referentielToName } from 'app/labels';
 import { ImportSourcesSelector } from 'app/pages/collectivite/Indicateurs/Indicateur/detail/ImportSourcesSelector';
@@ -8,8 +10,6 @@ import { IndicateurValuesTabs } from 'app/pages/collectivite/Indicateurs/Indicat
 import { useIndicateurImportSources } from 'app/pages/collectivite/Indicateurs/Indicateur/detail/useImportSources';
 import { FichesActionLiees } from 'app/pages/collectivite/Indicateurs/Indicateur/FichesActionLiees';
 import ActionsLieesListe from 'app/pages/collectivite/PlansActions/FicheAction/ActionsLiees/ActionsLieesListe';
-import { useCollectiviteId } from 'core-logic/hooks/params';
-import { useCurrentCollectivite } from 'core-logic/hooks/useCurrentCollectivite';
 import ScrollTopButton from 'ui/buttons/ScrollTopButton';
 import { ToolbarIconButton } from 'ui/buttons/ToolbarIconButton';
 import { BadgeACompleter } from 'ui/shared/Badge/BadgeACompleter';

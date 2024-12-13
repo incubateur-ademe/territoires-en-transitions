@@ -1,5 +1,5 @@
-import {useMutation, useQueryClient} from 'react-query';
-import {supabaseClient} from 'core-logic/api/supabase';
+import { supabaseClient } from '@/app/core-logic/api/supabase';
+import { useMutation, useQueryClient } from 'react-query';
 
 // on peut ajouter une preuve sous forme de...
 type TFileOrLink =
@@ -109,8 +109,8 @@ export const useAddPreuveAnnexe = () =>
 // recharge la liste des preuves
 export const useRefetchPreuves = (invalidateParcours: boolean = false) => {
   const queryClient = useQueryClient();
-  return (data: unknown, variables: {collectivite_id: number}) => {
-    const {collectivite_id} = variables;
+  return (data: unknown, variables: { collectivite_id: number }) => {
+    const { collectivite_id } = variables;
     queryClient.invalidateQueries(['preuve', collectivite_id]);
     queryClient.invalidateQueries(['annexes_fiche_action']);
     queryClient.invalidateQueries(['fiche_action']);

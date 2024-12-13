@@ -1,14 +1,14 @@
-import {useCollectiviteId} from 'core-logic/hooks/params';
-import {useIntersectionObserver} from 'utils/useIntersectionObserver';
-import {TIndicateurListItem} from '../Indicateurs/types';
+import { useCollectiviteId } from '@/app/core-logic/hooks/params';
+import { useCurrentCollectivite } from '@/app/core-logic/hooks/useCurrentCollectivite';
+import IndicateurCard, {
+  IndicateurCardProps,
+} from 'app/pages/collectivite/Indicateurs/lists/IndicateurCard/IndicateurCard';
 import {
   IndicateurViewParamOption,
   makeCollectiviteIndicateursUrl,
 } from 'app/paths';
-import IndicateurCard, {
-  IndicateurCardProps,
-} from 'app/pages/collectivite/Indicateurs/lists/IndicateurCard/IndicateurCard';
-import {useCurrentCollectivite} from 'core-logic/hooks/useCurrentCollectivite';
+import { useIntersectionObserver } from 'utils/useIntersectionObserver';
+import { TIndicateurListItem } from '../Indicateurs/types';
 
 type TIndicateurChartsGridProps = {
   definitions: TIndicateurListItem[];
@@ -20,11 +20,11 @@ type TIndicateurChartsGridProps = {
  * Les données des graphiques sont chargées dynamiquement lorsqu'ils deviennent visibles à l'écran.
  */
 const IndicateurChartsGrid = (props: TIndicateurChartsGridProps) => {
-  const {definitions, view} = props;
+  const { definitions, view } = props;
 
   return (
     <div className="grid lg:grid-cols-2 gap-x-6 gap-y-8">
-      {definitions?.map(definition => (
+      {definitions?.map((definition) => (
         <IndicateurChartContainer
           key={definition.id}
           definition={definition}
@@ -37,13 +37,13 @@ const IndicateurChartsGrid = (props: TIndicateurChartsGridProps) => {
 
 /** Affiche le graphique uniquement lorsque son conteneur devient visible */
 const IndicateurChartContainer = (
-  props: IndicateurCardProps & {view: IndicateurViewParamOption}
+  props: IndicateurCardProps & { view: IndicateurViewParamOption }
 ) => {
-  const {ref, entry} = useIntersectionObserver();
+  const { ref, entry } = useIntersectionObserver();
   const collectiviteId = useCollectiviteId()!;
   const isReadonly = useCurrentCollectivite()?.readonly ?? true;
 
-  const {definition, view} = props;
+  const { definition, view } = props;
   const url = makeCollectiviteIndicateursUrl({
     collectiviteId,
     indicateurView: view,

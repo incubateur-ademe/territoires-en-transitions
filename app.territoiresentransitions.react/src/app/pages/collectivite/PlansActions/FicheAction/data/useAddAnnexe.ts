@@ -1,7 +1,7 @@
-import {useCollectiviteId} from 'core-logic/hooks/params';
-import {TAddFileFromLib} from 'ui/shared/preuves/AddPreuveModal/AddFile';
-import {TAddLink} from 'ui/shared/preuves/AddPreuveModal/AddLink';
-import {useAddPreuveAnnexe} from 'ui/shared/preuves/Bibliotheque/useAddPreuves';
+import { useCollectiviteId } from '@/app/core-logic/hooks/params';
+import { TAddFileFromLib } from 'ui/shared/preuves/AddPreuveModal/AddFile';
+import { TAddLink } from 'ui/shared/preuves/AddPreuveModal/AddLink';
+import { useAddPreuveAnnexe } from 'ui/shared/preuves/Bibliotheque/useAddPreuves';
 
 type TAddDocs = (demande_id: number) => {
   /** ajoute un fichier sélectionné depuis la bibliothèque */
@@ -14,10 +14,10 @@ type TAddDocs = (demande_id: number) => {
  * fichiers/liens à une fiche action */
 export const useAddAnnexe: TAddDocs = (fiche_id: number) => {
   const collectivite_id = useCollectiviteId();
-  const {mutate: addPreuve, isLoading, isError} = useAddPreuveAnnexe();
+  const { mutate: addPreuve, isLoading, isError } = useAddPreuveAnnexe();
 
   // associe un fichier de la bibliothèque à l'audit
-  const addFileFromLib: TAddFileFromLib = fichier_id => {
+  const addFileFromLib: TAddFileFromLib = (fichier_id) => {
     if (collectivite_id) {
       addPreuve({
         fiche_id,

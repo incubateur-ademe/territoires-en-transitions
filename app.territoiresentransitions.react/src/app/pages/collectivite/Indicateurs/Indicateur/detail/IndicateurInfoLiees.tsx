@@ -1,5 +1,5 @@
+import { useCurrentCollectivite } from '@/app/core-logic/hooks/useCurrentCollectivite';
 import { Field } from '@/ui';
-import { useCurrentCollectivite } from 'core-logic/hooks/useCurrentCollectivite';
 import { objectToCamel } from 'ts-case-convert';
 import PersonnesDropdown from 'ui/dropdownLists/PersonnesDropdown/PersonnesDropdown';
 import ServicesPilotesDropdown from 'ui/dropdownLists/ServicesPilotesDropdown/ServicesPilotesDropdown';

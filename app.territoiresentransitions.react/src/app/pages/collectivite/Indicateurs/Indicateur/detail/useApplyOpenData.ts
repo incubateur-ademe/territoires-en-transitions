@@ -3,8 +3,8 @@
  */
 
 import { Indicateurs } from '@/api';
+import { supabaseClient } from '@/app/core-logic/api/supabase';
 import { useEventTracker } from '@/ui';
-import { supabaseClient } from 'core-logic/api/supabase';
 import { useMutation, useQuery, useQueryClient } from 'react-query';
 import { SOURCE_COLLECTIVITE, SOURCE_TYPE_LABEL } from '../../constants';
 import { TIndicateurDefinition } from '../../types';

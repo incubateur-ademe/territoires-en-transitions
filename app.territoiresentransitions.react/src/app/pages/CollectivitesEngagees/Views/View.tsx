@@ -3,6 +3,7 @@ import classNames from 'classnames';
 import { Button, Pagination, Select } from '@/ui';
 
 import { CollectiviteEngagee } from '@/api';
+import { useFonctionTracker } from '@/app/core-logic/hooks/useFonctionTracker';
 import { Grid } from 'app/pages/CollectivitesEngagees/Views/Grid';
 import { trierParOptions } from 'app/pages/CollectivitesEngagees/data/filtreOptions';
 import { NB_CARDS_PER_PAGE } from 'app/pages/CollectivitesEngagees/data/utils';
@@ -11,7 +12,6 @@ import {
   recherchesPlansUrl,
   RecherchesViewParam,
 } from 'app/paths';
-import { useFonctionTracker } from 'core-logic/hooks/useFonctionTracker';
 import { useRouter, useSearchParams } from 'next/navigation';
 import { getNumberOfActiveFilters, SetFilters } from '../data/filters';
 import { TCollectiviteCarte } from '../data/useFilteredCollectivites';

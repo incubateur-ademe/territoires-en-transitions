@@ -1,9 +1,9 @@
 import { useQuery } from 'react-query';
 
 import { FicheResume } from '@/api/plan-actions';
-import { supabaseClient } from 'core-logic/api/supabase';
-import { useCollectiviteId } from 'core-logic/hooks/params';
-import { useSearchParams } from 'core-logic/hooks/query';
+import { supabaseClient } from '@/app/core-logic/api/supabase';
+import { useCollectiviteId } from '@/app/core-logic/hooks/params';
+import { useSearchParams } from '@/app/core-logic/hooks/query';
 import { objectToCamel } from 'ts-case-convert';
 import { TPersonne } from 'types/alias';
 import { nameToShortNames, NB_FICHES_PER_PAGE, TFilters } from './filters';

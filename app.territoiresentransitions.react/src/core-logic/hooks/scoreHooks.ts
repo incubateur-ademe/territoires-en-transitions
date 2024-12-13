@@ -1,5 +1,5 @@
-import { clientScoresReadEndpoint } from 'core-logic/api/endpoints/ClientScoresReadEndpoint';
-import { useCollectiviteId } from 'core-logic/hooks/params';
+import { clientScoresReadEndpoint } from '@/app/core-logic/api/endpoints/ClientScoresReadEndpoint';
+import { useCollectiviteId } from '@/app/core-logic/hooks/params';
 import { useQuery } from 'react-query';
 import { ActionScore } from 'types/ClientScore';
 import { Referentiel } from 'types/litterals';

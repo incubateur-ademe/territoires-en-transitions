@@ -1,12 +1,12 @@
 import { FicheAction } from '@/api/plan-actions';
 import { Thematique } from '@/api/shared/domain';
+import { useCollectiviteId } from '@/app/core-logic/hooks/params';
 import { Alert, Button, Checkbox, Field, FormSectionGrid } from '@/ui';
 import {
   TIndicateurPersoDefinitionWrite,
   useInsertIndicateurPersoDefinition,
 } from 'app/pages/collectivite/Indicateurs/Indicateur/useInsertIndicateurPersoDefinition';
 import { makeCollectiviteIndicateursUrl } from 'app/paths';
-import { useCollectiviteId } from 'core-logic/hooks/params';
 import { Form, Formik } from 'formik';
 import { useRouter } from 'next/navigation';
 import { useState } from 'react';

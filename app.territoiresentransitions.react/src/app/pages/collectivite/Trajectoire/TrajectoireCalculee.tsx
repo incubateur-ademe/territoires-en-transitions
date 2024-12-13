@@ -1,3 +1,5 @@
+import { useCollectiviteId } from '@/app/core-logic/hooks/params';
+import { useSearchParams } from '@/app/core-logic/hooks/query';
 import {
   Button,
   ButtonGroup,
@@ -8,8 +10,6 @@ import {
   useEventTracker,
   useOngletTracker,
 } from '@/ui';
-import { useCollectiviteId } from 'core-logic/hooks/params';
-import { useSearchParams } from 'core-logic/hooks/query';
 import { AllerPlusLoin } from './AllerPlusLoin';
 import { ComparezLaTrajectoire } from './ComparezLaTrajectoire';
 import { HELPDESK_URL, INDICATEURS_TRAJECTOIRE } from './constants';

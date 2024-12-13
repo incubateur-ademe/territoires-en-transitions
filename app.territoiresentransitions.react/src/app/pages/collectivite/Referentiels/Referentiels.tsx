@@ -1,13 +1,13 @@
+import { ActionDefinitionSummary } from '@/app/core-logic/api/endpoints/ActionDefinitionSummaryReadEndpoint';
+import { useReferentielId } from '@/app/core-logic/hooks/params';
+import { useReferentielDownToAction } from '@/app/core-logic/hooks/referentiel';
+import { useCurrentCollectivite } from '@/app/core-logic/hooks/useCurrentCollectivite';
+import { Referentiel } from 'types/litterals';
 import ActionProgressBar from 'ui/referentiels/ActionProgressBar';
-import {useReferentielDownToAction} from 'core-logic/hooks/referentiel';
-import {ExpandableAction} from 'ui/shared/actions/ExpandableAction';
-import {ActionDefinitionSummary} from 'core-logic/api/endpoints/ActionDefinitionSummaryReadEndpoint';
-import {useExportScore} from './useExportScore';
-import {useCurrentCollectivite} from 'core-logic/hooks/useCurrentCollectivite';
-import {useReferentielId} from 'core-logic/hooks/params';
-import {Referentiel} from 'types/litterals';
+import { ExpandableAction } from 'ui/shared/actions/ExpandableAction';
+import { useExportScore } from './useExportScore';
 
-const ReferentielHead = (props: {referentiel: ActionDefinitionSummary}) => {
+const ReferentielHead = (props: { referentiel: ActionDefinitionSummary }) => {
   return (
     <>
       <header className="flex flex-row mb-6 items-center justify-between">
@@ -23,11 +23,11 @@ export const ActionsReferentiels = () => {
   const current = referentielId ?? 'eci';
 
   const actions = useReferentielDownToAction(current as Referentiel);
-  const axes = actions.filter(a => a.type === 'axe');
-  const referentiel = actions.find(a => a.type === 'referentiel')!;
+  const axes = actions.filter((a) => a.type === 'axe');
+  const referentiel = actions.find((a) => a.type === 'referentiel')!;
 
   const collectivite = useCurrentCollectivite();
-  const {mutate: exportScore, isLoading} = useExportScore(
+  const { mutate: exportScore, isLoading } = useExportScore(
     referentielId,
     collectivite
   );
@@ -38,7 +38,7 @@ export const ActionsReferentiels = () => {
     <main data-test="ActionsReferentiels" className="fr-container mt-9">
       <ReferentielHead referentiel={referentiel} />
       <section>
-        {axes.map(axe => (
+        {axes.map((axe) => (
           <ExpandableAction action={axe} key={axe.id} />
         ))}
       </section>

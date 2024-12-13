@@ -1,7 +1,7 @@
+import { TAuthContext, UserData } from '@/app/core-logic/api/auth/AuthProvider';
 import { Button } from '@/ui';
 import { monComptePath } from 'app/paths';
 import classNames from 'classnames';
-import { TAuthContext, UserData } from 'core-logic/api/auth/AuthProvider';
 import Link from 'next/link';
 import { usePathname, useRouter } from 'next/navigation';
 import { forwardRef, Ref } from 'react';

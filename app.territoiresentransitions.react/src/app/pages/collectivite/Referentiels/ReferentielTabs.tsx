@@ -1,14 +1,14 @@
+import {
+  useCollectiviteId,
+  useReferentielId,
+  useReferentielVue,
+} from '@/app/core-logic/hooks/params';
 import { referentielToName } from 'app/labels';
 import {
   makeCollectiviteReferentielUrl,
   ReferentielParamOption,
   ReferentielVueParamOption,
 } from 'app/paths';
-import {
-  useCollectiviteId,
-  useReferentielId,
-  useReferentielVue,
-} from 'core-logic/hooks/params';
 import { useRouter } from 'next/navigation';
 import { ReferentielOfIndicateur } from 'types/litterals';
 import { Tab, Tabs } from 'ui/shared/Tabs';

@@ -1,7 +1,7 @@
 'use client';
 
-import { useAuth } from 'core-logic/api/auth/AuthProvider';
-import { useCurrentCollectivite } from 'core-logic/hooks/useCurrentCollectivite';
+import { useAuth } from '@/app/core-logic/api/auth/AuthProvider';
+import { useCurrentCollectivite } from '@/app/core-logic/hooks/useCurrentCollectivite';
 import { useMaintenance } from '../useMaintenance';
 import { Header as HeaderBase } from './Header';
 

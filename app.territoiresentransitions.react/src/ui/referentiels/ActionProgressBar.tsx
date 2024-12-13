@@ -1,7 +1,7 @@
-import {actionAvancementColors} from 'app/theme';
-import {useActionScore} from 'core-logic/hooks/scoreHooks';
-import {avancementToLabel} from 'app/labels';
-import {ActionDefinitionSummary} from 'core-logic/api/endpoints/ActionDefinitionSummaryReadEndpoint';
+import { ActionDefinitionSummary } from '@/app/core-logic/api/endpoints/ActionDefinitionSummaryReadEndpoint';
+import { useActionScore } from '@/app/core-logic/hooks/scoreHooks';
+import { avancementToLabel } from 'app/labels';
+import { actionAvancementColors } from 'app/theme';
 import ProgressBarWithTooltip from 'ui/score/ProgressBarWithTooltip';
 
 export const ActionProgressBar = ({

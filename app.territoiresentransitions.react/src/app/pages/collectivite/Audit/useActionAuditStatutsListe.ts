@@ -1,7 +1,10 @@
-import {useQuery} from 'react-query';
-import {supabaseClient} from 'core-logic/api/supabase';
-import {useCollectiviteId, useReferentielId} from 'core-logic/hooks/params';
-import {Referentiel} from 'types/litterals';
+import { supabaseClient } from '@/app/core-logic/api/supabase';
+import {
+  useCollectiviteId,
+  useReferentielId,
+} from '@/app/core-logic/hooks/params';
+import { useQuery } from 'react-query';
+import { Referentiel } from 'types/litterals';
 
 /**
  * Statut d'audit de toutes les actions du référentiel et de la collectivité
@@ -10,7 +13,7 @@ import {Referentiel} from 'types/litterals';
 export const useActionAuditStatutsListe = () => {
   const collectivite_id = useCollectiviteId();
   const referentiel = useReferentielId();
-  const {data} = useQuery(
+  const { data } = useQuery(
     ['action_audit_state_list', collectivite_id, referentiel],
     () =>
       collectivite_id && referentiel
@@ -26,9 +29,9 @@ const fetch = async (collectivite_id: number, referentiel: Referentiel) => {
   const query = supabaseClient
     .from('action_audit_state')
     .select()
-    .match({collectivite_id, referentiel});
+    .match({ collectivite_id, referentiel });
 
-  const {data, error} = await query;
+  const { data, error } = await query;
 
   if (error || !data) {
     return [];

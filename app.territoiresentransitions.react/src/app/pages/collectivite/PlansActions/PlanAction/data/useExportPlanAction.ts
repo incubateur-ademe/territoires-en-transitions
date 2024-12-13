@@ -1,8 +1,8 @@
-import {useMutation} from 'react-query';
-import {format as formatDate} from 'date-fns';
-import {supabaseClient} from 'core-logic/api/supabase';
-import {useFonctionTracker} from 'core-logic/hooks/useFonctionTracker';
-import {saveBlob} from 'ui/shared/preuves/Bibliotheque/saveBlob';
+import { supabaseClient } from '@/app/core-logic/api/supabase';
+import { useFonctionTracker } from '@/app/core-logic/hooks/useFonctionTracker';
+import { format as formatDate } from 'date-fns';
+import { useMutation } from 'react-query';
+import { saveBlob } from 'ui/shared/preuves/Bibliotheque/saveBlob';
 
 export const useExportPlanAction = (planId: number) => {
   const tracker = useFonctionTracker();
@@ -11,10 +11,10 @@ export const useExportPlanAction = (planId: number) => {
     ['export_plan_action', planId],
     async (format: 'xlsx' | 'docx') => {
       const titre = await fetchPlansActionsTitle(planId);
-      const {data} = await supabaseClient.functions.invoke(
+      const { data } = await supabaseClient.functions.invoke(
         'export_plan_action',
         {
-          body: {planId, format},
+          body: { planId, format },
         }
       );
 
@@ -48,7 +48,7 @@ const fetchPlansActionsTitle = async (planId: number) => {
     .eq('id', planId)
     .is('parent', null);
 
-  const {error, data} = await query;
+  const { error, data } = await query;
   if (error) {
     throw new Error(error.message);
   }

@@ -1,5 +1,5 @@
 import { RouterInput, trpc } from '@/api/utils/trpc/client';
-import { useCollectiviteId } from 'core-logic/hooks/params';
+import { useCollectiviteId } from '@/app/core-logic/hooks/params';
 
 type CountByStatutFilter =
   RouterInput['plans']['fiches']['countByStatut']['filter'];

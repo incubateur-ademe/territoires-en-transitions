@@ -1,10 +1,10 @@
+import { useCurrentCollectivite } from '@/app/core-logic/hooks/useCurrentCollectivite';
 import { useState } from 'react';
 import FiltersPlanAction, {
   PlanActionFilter,
   filtreToutesLesFiches,
 } from './FiltersPlanAction';
 import SyntheseGraphsList from './SyntheseGraphsList';
-import { useCurrentCollectivite } from 'core-logic/hooks/useCurrentCollectivite';
 
 /**
  * Contenu de la page Synthèse

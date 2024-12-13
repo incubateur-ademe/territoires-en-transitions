@@ -1,12 +1,12 @@
-import React, {useState} from 'react';
-import {Form, Formik} from 'formik';
+import { Form, Formik } from 'formik';
+import React, { useState } from 'react';
 import * as Yup from 'yup';
 
 import FormikInput from 'ui/shared/form/formik/FormikInput';
 import ModifierEmailModal from './ModifierEmailModal';
 
-import {useAuth, UserData} from 'core-logic/api/auth/AuthProvider';
-import {useUpdateDCP} from 'core-logic/api/auth/useUpdateDCP';
+import { useAuth, UserData } from '@/app/core-logic/api/auth/AuthProvider';
+import { useUpdateDCP } from '@/app/core-logic/api/auth/useUpdateDCP';
 
 interface ModifierCompteData {
   prenom: string;
@@ -22,8 +22,8 @@ const validation = Yup.object({
     .required('Champ requis'),
 });
 
-export const MonCompte = ({user}: {user: UserData}) => {
-  const {handleUpdateDCP} = useUpdateDCP(user.id);
+export const MonCompte = ({ user }: { user: UserData }) => {
+  const { handleUpdateDCP } = useUpdateDCP(user.id);
 
   const [isEmailModalOpen, setIsEmailModalOpen] = useState(false);
 
@@ -44,7 +44,7 @@ export const MonCompte = ({user}: {user: UserData}) => {
           validationSchema={validation}
           onSubmit={() => undefined}
         >
-          {({values, isValid, handleBlur, resetForm}) => (
+          {({ values, isValid, handleBlur, resetForm }) => (
             <Form className="flex flex-col gap-6">
               <FormikInput
                 data-test="prenom"
@@ -54,7 +54,7 @@ export const MonCompte = ({user}: {user: UserData}) => {
                   handleBlur(evt);
                   isValid &&
                     user.prenom !== values.prenom &&
-                    handleUpdateDCP({prenom: values.prenom});
+                    handleUpdateDCP({ prenom: values.prenom });
                 }}
               />
               <FormikInput
@@ -65,7 +65,7 @@ export const MonCompte = ({user}: {user: UserData}) => {
                   handleBlur(evt);
                   isValid &&
                     user.nom !== values.nom &&
-                    handleUpdateDCP({nom: values.nom});
+                    handleUpdateDCP({ nom: values.nom });
                 }}
               />
               <FormikInput
@@ -83,7 +83,7 @@ export const MonCompte = ({user}: {user: UserData}) => {
                 isOpen={isEmailModalOpen}
                 setOpen={setIsEmailModalOpen}
                 resetEmail={() =>
-                  resetForm({values: {...values, email: user.email!}})
+                  resetForm({ values: { ...values, email: user.email! } })
                 }
                 email={values.email}
               />
@@ -96,7 +96,7 @@ export const MonCompte = ({user}: {user: UserData}) => {
 };
 
 const MonCompteConnected = () => {
-  const {user} = useAuth();
+  const { user } = useAuth();
 
   return user && <MonCompte user={user} />;
 };

@@ -1,8 +1,8 @@
-import {useQuery} from 'react-query';
+import { useQuery } from 'react-query';
 
-import {supabaseClient} from 'core-logic/api/supabase';
-import {PlanType} from './types';
-import {useCollectiviteId} from 'core-logic/hooks/params';
+import { supabaseClient } from '@/app/core-logic/api/supabase';
+import { useCollectiviteId } from '@/app/core-logic/hooks/params';
+import { PlanType } from './types';
 
 const fetchPlanType = async ({
   collectivite_id,
@@ -18,7 +18,7 @@ const fetchPlanType = async ({
     .eq('id', planId)
     .returns<PlanType[]>();
 
-  const {error, data} = await query;
+  const { error, data } = await query;
   if (error) {
     throw new Error(error.message);
   }
@@ -30,8 +30,8 @@ const fetchPlanType = async ({
 export const usePlanType = (planId: number) => {
   const collectivite_id = useCollectiviteId();
 
-  const {data} = useQuery(['plan_type', planId], () =>
-    fetchPlanType({collectivite_id: collectivite_id!, planId})
+  const { data } = useQuery(['plan_type', planId], () =>
+    fetchPlanType({ collectivite_id: collectivite_id!, planId })
   );
 
   return data;

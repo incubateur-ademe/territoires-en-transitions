@@ -1,7 +1,7 @@
 import { TableTag } from '@/api';
 import { Tag } from '@/api/shared/domain';
+import { useCollectiviteId } from '@/app/core-logic/hooks/params';
 import { Option, OptionValue, SelectFilter, SelectMultipleProps } from '@/ui';
-import { useCollectiviteId } from 'core-logic/hooks/params';
 import { useEffect } from 'react';
 import { QueryKey } from 'react-query';
 import { useDeleteTag, useTagCreate, useTagUpdate } from '.';

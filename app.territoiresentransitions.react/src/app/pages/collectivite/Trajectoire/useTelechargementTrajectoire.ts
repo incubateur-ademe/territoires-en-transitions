@@ -1,6 +1,6 @@
+import { useApiClient } from '@/app/core-logic/api/useApiClient';
+import { useCurrentCollectivite } from '@/app/core-logic/hooks/useCurrentCollectivite';
 import { useEventTracker } from '@/ui';
-import { useApiClient } from 'core-logic/api/useApiClient';
-import { useCurrentCollectivite } from 'core-logic/hooks/useCurrentCollectivite';
 import { useMutation } from 'react-query';
 import { saveBlob } from 'ui/shared/preuves/Bibliotheque/saveBlob';
 import { DOWNLOAD_FILE_MUTATION_OPTIONS } from 'utils/useDownloadFile';

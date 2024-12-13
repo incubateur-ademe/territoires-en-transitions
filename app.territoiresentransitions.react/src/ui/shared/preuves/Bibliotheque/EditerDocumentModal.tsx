@@ -1,5 +1,5 @@
+import { useEditFilenameState } from '@/app/core-logic/hooks/useEditState';
 import { Field, Input, Modal, ModalFooterOKCancel } from '@/ui';
-import { useEditFilenameState } from 'core-logic/hooks/useEditState';
 import { useState } from 'react';
 import { CheckboxConfidentiel } from '../AddPreuveModal/CheckboxConfidentiel';
 import { TPreuve } from './types';

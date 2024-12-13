@@ -1,11 +1,11 @@
-import {ActionDefinitionSummary} from 'core-logic/api/endpoints/ActionDefinitionSummaryReadEndpoint';
-import {StatusToSavePayload} from 'ui/referentiels/ActionStatusDropdown';
-import {SuiviScoreRow} from '../data/useScoreRealise';
+import { ActionDefinitionSummary } from '@/app/core-logic/api/endpoints/ActionDefinitionSummaryReadEndpoint';
+import { StatusToSavePayload } from 'ui/referentiels/ActionStatusDropdown';
+import { SuiviScoreRow } from '../data/useScoreRealise';
 import SubActionTask from './SubActionTask';
 
 type SubActionTasksListProps = {
   tasks: ActionDefinitionSummary[];
-  actionScores: {[actionId: string]: SuiviScoreRow};
+  actionScores: { [actionId: string]: SuiviScoreRow };
   hideStatus?: boolean;
   statusWarningMessage?: boolean;
   onSaveStatus?: (payload: StatusToSavePayload) => void;
@@ -24,7 +24,7 @@ const SubActionTasksList = ({
 }: SubActionTasksListProps): JSX.Element => {
   return (
     <div className="divide-y divide-[#ddd]">
-      {tasks.map(task => (
+      {tasks.map((task) => (
         <SubActionTask
           key={task.id}
           task={task}

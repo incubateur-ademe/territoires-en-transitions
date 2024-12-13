@@ -1,6 +1,6 @@
 import { Referentiel } from '@/api/referentiel/domain/enum.schema';
-import { supabaseClient } from 'core-logic/api/supabase';
-import { useCollectiviteId } from 'core-logic/hooks/params';
+import { supabaseClient } from '@/app/core-logic/api/supabase';
+import { useCollectiviteId } from '@/app/core-logic/hooks/params';
 import { useQuery } from 'react-query';
 
 const fetchIndicateurSummary = async (

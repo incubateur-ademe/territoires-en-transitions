@@ -1,10 +1,10 @@
-import {ActionDefinitionSummary} from 'core-logic/api/endpoints/ActionDefinitionSummaryReadEndpoint';
-import {ActionCommentaireField} from 'ui/shared/actions/ActionCommentaire';
+import { ActionDefinitionSummary } from '@/app/core-logic/api/endpoints/ActionDefinitionSummaryReadEndpoint';
+import { useEffect, useState } from 'react';
+import { ActionCommentaireField } from 'ui/shared/actions/ActionCommentaire';
 import {
   useActionJustification,
   useSaveActionJustification,
 } from '../data/useActionJustification';
-import {useEffect, useState} from 'react';
 
 type ActionJustificationProps = {
   action: ActionDefinitionSummary;
@@ -32,8 +32,8 @@ const ActionJustification = ({
   onSave,
   onChange,
 }: ActionJustificationProps) => {
-  const {actionJustification, isLoading} = useActionJustification(action.id);
-  const {saveActionJustification} = useSaveActionJustification();
+  const { actionJustification, isLoading } = useActionJustification(action.id);
+  const { saveActionJustification } = useSaveActionJustification();
 
   const [initialValue, setInitialValue] = useState('');
 

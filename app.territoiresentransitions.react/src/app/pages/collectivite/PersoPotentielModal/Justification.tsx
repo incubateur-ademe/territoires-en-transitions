@@ -1,20 +1,20 @@
-import {useEffect, useState} from 'react';
-import {useCurrentCollectivite} from 'core-logic/hooks/useCurrentCollectivite';
-import {TQuestionReponseProps} from './PersoPotentielQR';
-import {Accordion} from 'ui/Accordion';
+import { useCurrentCollectivite } from '@/app/core-logic/hooks/useCurrentCollectivite';
+import { useEffect, useState } from 'react';
+import { Accordion } from 'ui/Accordion';
 import Textarea from 'ui/shared/form/Textarea';
-import {useUpdateJustification} from './useUpdateJustification';
+import { TQuestionReponseProps } from './PersoPotentielQR';
+import { useUpdateJustification } from './useUpdateJustification';
 
 /**
  * Affiche le champ d'édtion de la justification d'une réponse
  * (ou un bouton pour affiche ce champ)
  */
 export const Justification = (props: TQuestionReponseProps) => {
-  const {qr} = props;
-  const {reponse, justification, id} = qr;
+  const { qr } = props;
+  const { reponse, justification, id } = qr;
   const collectivite = useCurrentCollectivite();
   const [value, setValue] = useState(justification);
-  const {mutate: updateJustification} = useUpdateJustification();
+  const { mutate: updateJustification } = useUpdateJustification();
 
   // synchronise la valeur initiale car la réponse est chargée de manière asynchrone
   useEffect(() => {
@@ -40,7 +40,7 @@ export const Justification = (props: TQuestionReponseProps) => {
           value={value || ''}
           placeholder="Exemple : Cette compétence est transférée à Nom de la Collectivité par délibération du JJ-MM-AAAA OU Cette compétence est exercée par la collectivité sur 2/3 des communes soit 3/4 de la population"
           onInputChange={() => null}
-          onChange={evt => setValue(evt.currentTarget.value)}
+          onChange={(evt) => setValue(evt.currentTarget.value)}
           onBlur={() => {
             const newValue = value?.trim() || '';
             if (newValue !== (justification || ''))

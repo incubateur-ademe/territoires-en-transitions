@@ -1,7 +1,7 @@
+import { ActionDefinitionSummary } from '@/app/core-logic/api/endpoints/ActionDefinitionSummaryReadEndpoint';
+import { useSortedActionSummaryChildren } from '@/app/core-logic/hooks/referentiel';
 import { Button } from '@/ui';
 import { TCycleLabellisationStatus } from 'app/pages/collectivite/ParcoursLabellisation/useCycleLabellisation';
-import { ActionDefinitionSummary } from 'core-logic/api/endpoints/ActionDefinitionSummaryReadEndpoint';
-import { useSortedActionSummaryChildren } from 'core-logic/hooks/referentiel';
 import { useState } from 'react';
 import { phaseToLabel } from 'ui/referentiels/utils';
 import { ActionCommentaire } from 'ui/shared/actions/ActionCommentaire';

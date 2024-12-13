@@ -4,8 +4,8 @@ import {
   FetchOptions,
   ficheResumesFetch,
 } from '@/api/plan-actions/fiche-resumes.list';
-import { supabaseClient } from 'core-logic/api/supabase';
-import { useCollectiviteId } from 'core-logic/hooks/params';
+import { supabaseClient } from '@/app/core-logic/api/supabase';
+import { useCollectiviteId } from '@/app/core-logic/hooks/params';
 
 type Props = {
   options?: FetchOptions;

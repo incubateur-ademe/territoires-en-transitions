@@ -1,17 +1,17 @@
-import {useMutation} from 'react-query';
-import {supabaseClient} from 'core-logic/api/supabase';
+import { supabaseClient } from '@/app/core-logic/api/supabase';
 import {
   useEditFilenameState,
   useEditState,
-} from 'core-logic/hooks/useEditState';
-import {useRefetchPreuves} from './useAddPreuves';
-import {TPreuve, TEditHandlers} from './types';
+} from '@/app/core-logic/hooks/useEditState';
+import { useMutation } from 'react-query';
+import { TEditHandlers, TPreuve } from './types';
+import { useRefetchPreuves } from './useAddPreuves';
 
 type TEditPreuve = (preuve: TPreuve) => TEditHandlers;
 
 /** Renvoie les gestionnaires d'événement nécessaires à l'édition des preuves
  * (édition commentaire & suppression) */
-export const useEditPreuve: TEditPreuve = preuve => {
+export const useEditPreuve: TEditPreuve = (preuve) => {
   const {
     mutate: removePreuve,
     isLoading: isRemovePreuveLoading,
@@ -27,16 +27,16 @@ export const useEditPreuve: TEditPreuve = preuve => {
     isLoading: isUpdateFilenameLoading,
     isError: isUpdateFilenameError,
   } = useUpdateBibliothequeFichierFilename();
-  const {commentaire, fichier} = preuve;
+  const { commentaire, fichier } = preuve;
   const editComment = useEditState({
     initialValue: commentaire,
-    onUpdate: updatedComment =>
-      updatePreuveCommentaire({...preuve, commentaire: updatedComment}),
+    onUpdate: (updatedComment) =>
+      updatePreuveCommentaire({ ...preuve, commentaire: updatedComment }),
   });
   const editFilename = useEditFilenameState({
     initialValue: fichier?.filename,
-    onUpdate: updatedFilename =>
-      updateBibliothequeFichierFilename({...preuve, updatedFilename}),
+    onUpdate: (updatedFilename) =>
+      updateBibliothequeFichierFilename({ ...preuve, updatedFilename }),
   });
 
   const remove = () => {
@@ -58,7 +58,7 @@ export const useEditPreuve: TEditPreuve = preuve => {
 
 // le nom de la table dans laquelle sont stockées les infos sur une preuve
 // dépend du type de la preuve
-const tableOfType = ({preuve_type}: TPreuve) =>
+const tableOfType = ({ preuve_type }: TPreuve) =>
   (preuve_type as string) === 'annexe'
     ? 'annexe'
     : (`preuve_${preuve_type}` as const);
@@ -67,8 +67,8 @@ const tableOfType = ({preuve_type}: TPreuve) =>
 const useRemovePreuve = () =>
   useMutation(
     async (preuve: TPreuve) => {
-      const {id} = preuve;
-      return supabaseClient.from(tableOfType(preuve)).delete().match({id});
+      const { id } = preuve;
+      return supabaseClient.from(tableOfType(preuve)).delete().match({ id });
     },
     {
       mutationKey: 'remove_preuve',
@@ -80,13 +80,13 @@ const useRemovePreuve = () =>
 export const useUpdatePreuveLien = () =>
   useMutation(
     async (preuve: TPreuve) => {
-      const {id, lien} = preuve;
+      const { id, lien } = preuve;
       if (!lien) return;
-      const {url, titre} = lien
+      const { url, titre } = lien;
       return supabaseClient
         .from(tableOfType(preuve))
-        .update({url, titre})
-        .match({id});
+        .update({ url, titre })
+        .match({ id });
     },
     {
       mutationKey: 'update_preuve_lien',
@@ -94,16 +94,15 @@ export const useUpdatePreuveLien = () =>
     }
   );
 
-
 // renvoie une fonction de modification du commentaire d'une preuve
 const useUpdatePreuveCommentaire = () =>
   useMutation(
     async (preuve: TPreuve) => {
-      const {id, commentaire} = preuve;
+      const { id, commentaire } = preuve;
       return supabaseClient
         .from(tableOfType(preuve))
-        .update({commentaire: commentaire || ''})
-        .match({id});
+        .update({ commentaire: commentaire || '' })
+        .match({ id });
     },
     {
       mutationKey: 'update_preuve_commentaire',

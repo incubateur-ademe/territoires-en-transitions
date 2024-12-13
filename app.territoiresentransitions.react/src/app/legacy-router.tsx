@@ -1,3 +1,4 @@
+import { ScoreListenerProvider } from '@/app/core-logic/hooks/useScoreListener';
 import { CollectiviteRoutes } from 'app/pages/collectivite/CollectiviteRoutes';
 import { CollectivitesEngageesPage } from 'app/pages/CollectivitesEngagees/CollectivitesEngageesPage';
 import Home from 'app/pages/Home';
@@ -11,7 +12,6 @@ import {
 import { Redirector } from 'app/Redirector';
 import { Toasters } from 'app/Toasters';
 import { VisitTracker } from 'app/VisitTracker';
-import { ScoreListenerProvider } from 'core-logic/hooks/useScoreListener';
 import {
   Redirect,
   Route,
@@ -19,9 +19,9 @@ import {
   Switch,
 } from 'react-router-dom';
 import { E2E } from './E2E';
+import LegacyRouterSync from './legacy-router-sync';
 import AccepterCGUModal from './pages/Auth/AccepterCGUModal';
 import { ProfilPage } from './pages/Profil/ProfilPage';
-import LegacyRouterSync from './legacy-router-sync';
 
 export default function LegacyRouter() {
   return (

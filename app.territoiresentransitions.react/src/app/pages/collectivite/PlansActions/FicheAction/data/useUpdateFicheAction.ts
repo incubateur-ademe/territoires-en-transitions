@@ -1,6 +1,6 @@
 import { FicheAction } from '@/api/plan-actions';
-import { useApiClient } from 'core-logic/api/useApiClient';
-import { useCollectiviteId } from 'core-logic/hooks/params';
+import { useApiClient } from '@/app/core-logic/api/useApiClient';
+import { useCollectiviteId } from '@/app/core-logic/hooks/params';
 import { useMutation, useQueryClient } from 'react-query';
 
 export const useUpdateFicheAction = () => {

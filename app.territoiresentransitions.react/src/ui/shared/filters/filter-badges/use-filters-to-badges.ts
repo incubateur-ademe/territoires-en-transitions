@@ -4,7 +4,7 @@ import { filtreValuesFetch } from '@/api/collectivites/shared/data-access/filtre
 import { FetchFiltre as FiltreIndicateurs } from '@/api/indicateurs';
 import { Filtre as FiltreFicheActions } from '@/api/plan-actions/fiche-resumes.list';
 import { supabaseClient } from '@/api/utils/supabase-client';
-import { useCollectiviteId } from 'core-logic/hooks/params';
+import { useCollectiviteId } from '@/app/core-logic/hooks/params';
 
 import {
   FiltreRessourceLiees,

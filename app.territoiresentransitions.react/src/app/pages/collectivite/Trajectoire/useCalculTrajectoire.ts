@@ -1,7 +1,7 @@
 import { Indicateurs } from '@/api';
+import { useApiClient } from '@/app/core-logic/api/useApiClient';
+import { useCollectiviteId } from '@/app/core-logic/hooks/params';
 import { useEventTracker } from '@/ui';
-import { useApiClient } from 'core-logic/api/useApiClient';
-import { useCollectiviteId } from 'core-logic/hooks/params';
 import { useMutation, useQueryClient } from 'react-query';
 
 export type ResultatTrajectoire = {

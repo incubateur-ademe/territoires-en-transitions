@@ -1,8 +1,11 @@
-import {useCallback, useMemo} from 'react';
-import {TableInstance} from 'react-table';
-import {useCollectiviteId, useReferentielId} from 'core-logic/hooks/params';
-import {ReferentielParamOption} from 'app/paths';
-import {makeRowRenderer} from './Row';
+import {
+  useCollectiviteId,
+  useReferentielId,
+} from '@/app/core-logic/hooks/params';
+import { ReferentielParamOption } from 'app/paths';
+import { useCallback, useMemo } from 'react';
+import { TableInstance } from 'react-table';
+import { makeRowRenderer } from './Row';
 import './styles.css';
 
 type Table = <T extends Record<string, unknown>>(props: {
@@ -14,7 +17,7 @@ type Table = <T extends Record<string, unknown>>(props: {
   dataTest?: string;
 }) => JSX.Element;
 
-const ReferentielTable: Table = props => {
+const ReferentielTable: Table = (props) => {
   const {
     className,
     isLoading,
@@ -23,13 +26,13 @@ const ReferentielTable: Table = props => {
     customCellProps,
     dataTest,
   } = props;
-  const {getTableProps, getTableBodyProps, headerGroups, rows, prepareRow} =
+  const { getTableProps, getTableBodyProps, headerGroups, rows, prepareRow } =
     table;
 
   const collectiviteId = useCollectiviteId();
   const referentielId = useReferentielId() as ReferentielParamOption;
   const cellProps = useMemo(
-    () => ({collectiviteId, referentielId, ...(customCellProps || {})}),
+    () => ({ collectiviteId, referentielId, ...(customCellProps || {}) }),
     [collectiviteId, referentielId, customCellProps]
   );
 

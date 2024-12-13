@@ -1,11 +1,11 @@
-import {supabaseClient} from 'core-logic/api/supabase';
-import {TActionStatutsRow} from 'types/alias';
-import {ActionReferentiel} from '../ReferentielTable/useReferentiel';
-import {TFilters} from './filters';
+import { supabaseClient } from '@/app/core-logic/api/supabase';
+import { TActionStatutsRow } from 'types/alias';
+import { ActionReferentiel } from '../ReferentielTable/useReferentiel';
+import { TFilters } from './filters';
 
 // un sous-ensemble des champs pour alimenter notre table des taches
 export type TacheDetail = ActionReferentiel &
-  ActionStatut & {isExpanded: boolean};
+  ActionStatut & { isExpanded: boolean };
 export type ActionStatut = Pick<
   TActionStatutsRow,
   'action_id' | 'avancement' | 'avancement_descendants'
@@ -21,19 +21,19 @@ export const fetchActionStatutsList = async (
   let query = supabaseClient
     .from('action_statuts')
     .select('action_id,type,avancement,avancement_descendants')
-    .match({collectivite_id, referentiel, concerne: true, desactive: false})
+    .match({ collectivite_id, referentiel, concerne: true, desactive: false })
     .gt('depth', 0);
 
   // construit les filtres complémentaires sauf si "tous" est inclut
-  const {statut} = filters;
+  const { statut } = filters;
   if (!statut.includes('tous')) {
     // traite les autres filtres à propos de l'avancement
     const filteredDescendants = statut
-      .filter(s => s !== 'non_renseigne' && s !== 'detaille')
+      .filter((s) => s !== 'non_renseigne' && s !== 'detaille')
       .join(',');
     const filteredAvancement = statut
-      .filter(s => s !== 'non_renseigne' && s !== 'detaille')
-      .map(s => `"${s}"`)
+      .filter((s) => s !== 'non_renseigne' && s !== 'detaille')
+      .map((s) => `"${s}"`)
       .join(',');
 
     const or = [];
@@ -52,7 +52,9 @@ export const fetchActionStatutsList = async (
       );
     }
 
-    if (statut.filter(s => s !== 'non_renseigne' && s !== 'detaille').length) {
+    if (
+      statut.filter((s) => s !== 'non_renseigne' && s !== 'detaille').length
+    ) {
       or.push(
         ...[
           `and(type.eq.tache,avancement.in.(${filteredAvancement}))`,
@@ -64,13 +66,13 @@ export const fetchActionStatutsList = async (
     }
 
     // ajoute les filtres complémentaires à la requêtes
-      if(or.length > 0){
-          query = query.or(or.join(','));
-      }
+    if (or.length > 0) {
+      query = query.or(or.join(','));
+    }
   }
 
   // attends les données
-  const {error, data} = await query;
+  const { error, data } = await query;
 
   if (error) {
     throw new Error(error.message);
@@ -80,10 +82,10 @@ export const fetchActionStatutsList = async (
 
   // décompte les tâches uniquement
   const count = rows.reduce(
-    (sum, {have_children}) => (have_children ? sum : sum + 1),
+    (sum, { have_children }) => (have_children ? sum : sum + 1),
     0
   );
-  return {rows, count};
+  return { rows, count };
 };
 
 // met à jour l'état d'une tâche
@@ -98,7 +100,7 @@ export const updateTacheStatut = async ({
   avancement: string;
   avancement_detaille?: number[];
 }) => {
-  const {error, data} = await supabaseClient.from('action_statut').upsert(
+  const { error, data } = await supabaseClient.from('action_statut').upsert(
     {
       collectivite_id,
       action_id,
@@ -108,7 +110,7 @@ export const updateTacheStatut = async ({
         (avancement === 'detaille' ? [0.25, 0.5, 0.25] : undefined),
       concerne: true,
     } as never,
-    {onConflict: 'collectivite_id, action_id'}
+    { onConflict: 'collectivite_id, action_id' }
   );
   if (error) {
     throw new Error(error.message);

@@ -1,10 +1,13 @@
-import {useQuery} from 'react-query';
-import {TableOptions} from 'react-table';
-import {useCollectiviteId, useReferentielId} from 'core-logic/hooks/params';
-import {useSearchParams} from 'core-logic/hooks/query';
-import {useReferentiel} from '../ReferentielTable/useReferentiel';
-import {fetchRows, PriorisationRow} from './queries';
-import {initialFilters, nameToShortNames, TFilters} from './filters';
+import {
+  useCollectiviteId,
+  useReferentielId,
+} from '@/app/core-logic/hooks/params';
+import { useSearchParams } from '@/app/core-logic/hooks/query';
+import { useQuery } from 'react-query';
+import { TableOptions } from 'react-table';
+import { useReferentiel } from '../ReferentielTable/useReferentiel';
+import { initialFilters, nameToShortNames, TFilters } from './filters';
+import { fetchRows, PriorisationRow } from './queries';
 
 export type UseTableData = () => TableData;
 
@@ -43,11 +46,11 @@ export const useTableData: UseTableData = () => {
   );
 
   // chargement des données en fonction des filtres
-  const {data, isLoading} = useQuery(
+  const { data, isLoading } = useQuery(
     ['priorisation', collectivite_id, referentiel, filters],
     () => fetchRows(collectivite_id, referentiel, filters)
   );
-  const {rows: actionsStatut} = data || {};
+  const { rows: actionsStatut } = data || {};
 
   // chargement du référentiel
   const {

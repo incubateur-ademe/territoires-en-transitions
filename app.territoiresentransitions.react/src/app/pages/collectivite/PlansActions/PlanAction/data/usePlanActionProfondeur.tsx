@@ -1,8 +1,8 @@
-import {useQuery} from 'react-query';
+import { useQuery } from 'react-query';
 
-import {supabaseClient} from 'core-logic/api/supabase';
-import {useCollectiviteId} from 'core-logic/hooks/params';
-import {TProfondeurPlan} from './types';
+import { supabaseClient } from '@/app/core-logic/api/supabase';
+import { useCollectiviteId } from '@/app/core-logic/hooks/params';
+import { TProfondeurPlan } from './types';
 
 type TFetchedData = {
   plans: TProfondeurPlan[];
@@ -16,12 +16,12 @@ const fetchPlanActionProfondeur = async (
     .select()
     .eq('collectivite_id', collectivite_id);
 
-  const {error, data} = await query;
+  const { error, data } = await query;
   if (error) {
     throw new Error(error.message);
   }
 
-  return {plans: (data as TProfondeurPlan[]) || []};
+  return { plans: (data as TProfondeurPlan[]) || [] };
 };
 
 /** Récupère les plans d'une collectivité avec leurs sous-axe.
@@ -30,7 +30,7 @@ const fetchPlanActionProfondeur = async (
 export const usePlanActionProfondeur = () => {
   const collectivite_id = useCollectiviteId();
 
-  const {data} = useQuery(['plan_action_profondeur', collectivite_id], () =>
+  const { data } = useQuery(['plan_action_profondeur', collectivite_id], () =>
     fetchPlanActionProfondeur(collectivite_id!)
   );
 

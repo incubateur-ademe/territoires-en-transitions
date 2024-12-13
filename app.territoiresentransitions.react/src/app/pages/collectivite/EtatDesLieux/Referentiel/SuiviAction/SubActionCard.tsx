@@ -1,13 +1,13 @@
-import {TCycleLabellisationStatus} from 'app/pages/collectivite/ParcoursLabellisation/useCycleLabellisation';
-import {ActionDefinitionSummary} from 'core-logic/api/endpoints/ActionDefinitionSummaryReadEndpoint';
-import {useActionSummaryChildren} from 'core-logic/hooks/referentiel';
-import {useActionStatut} from 'core-logic/hooks/useActionStatut';
-import {useEffect, useRef, useState} from 'react';
-import {useLocation} from 'react-router-dom';
-import {Accordion} from 'ui/Accordion';
+import { ActionDefinitionSummary } from '@/app/core-logic/api/endpoints/ActionDefinitionSummaryReadEndpoint';
+import { useActionSummaryChildren } from '@/app/core-logic/hooks/referentiel';
+import { useActionStatut } from '@/app/core-logic/hooks/useActionStatut';
 import ActionJustification from 'app/pages/collectivite/EtatDesLieux/Referentiel/SuiviAction/ActionJustification';
-import {ActionCommentaire} from 'ui/shared/actions/ActionCommentaire';
-import {SuiviScoreRow} from '../data/useScoreRealise';
+import { TCycleLabellisationStatus } from 'app/pages/collectivite/ParcoursLabellisation/useCycleLabellisation';
+import { useEffect, useRef, useState } from 'react';
+import { useLocation } from 'react-router-dom';
+import { Accordion } from 'ui/Accordion';
+import { ActionCommentaire } from 'ui/shared/actions/ActionCommentaire';
+import { SuiviScoreRow } from '../data/useScoreRealise';
 import SubActionDescription from './SubActionDescription';
 import SubActionHeader from './SubActionHeader';
 import SubActionPreuvesAccordion from './SubActionPreuvesAccordion';
@@ -15,7 +15,7 @@ import SubActionTasksList from './SubActionTasksList';
 
 type SubActionCardProps = {
   subAction: ActionDefinitionSummary;
-  actionScores: {[actionId: string]: SuiviScoreRow};
+  actionScores: { [actionId: string]: SuiviScoreRow };
   auditStatus: TCycleLabellisationStatus;
   forceOpen: boolean;
   onOpenSubAction: (isOpen: boolean) => void;
@@ -36,9 +36,9 @@ const SubActionCard = ({
 }: SubActionCardProps): JSX.Element => {
   const ref = useRef<HTMLDivElement>(null);
 
-  const {hash} = useLocation();
-  const {statut, filled} = useActionStatut(subAction.id);
-  const {avancement, concerne} = statut || {};
+  const { hash } = useLocation();
+  const { statut, filled } = useActionStatut(subAction.id);
+  const { avancement, concerne } = statut || {};
   const tasks = useActionSummaryChildren(subAction);
 
   const shouldDisplayProgressBar =
@@ -99,7 +99,7 @@ const SubActionCard = ({
 
   const handleToggleOpen = () => {
     onOpenSubAction(!openSubAction);
-    setOpenSubAction(prevState => !prevState);
+    setOpenSubAction((prevState) => !prevState);
   };
 
   return (

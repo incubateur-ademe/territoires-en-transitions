@@ -1,6 +1,6 @@
-import {useHistory} from 'react-router-dom';
-import {supabaseClient} from 'core-logic/api/supabase';
-import {useAuth} from 'core-logic/api/auth/AuthProvider';
+import { useAuth } from '@/app/core-logic/api/auth/AuthProvider';
+import { supabaseClient } from '@/app/core-logic/api/supabase';
+import { useHistory } from 'react-router-dom';
 
 declare global {
   interface Window {
@@ -21,7 +21,7 @@ export const E2E = () => {
 
   if ('Cypress' in window) {
     // expose l'objet history ainsi que le client supabase à l'env. E2E
-    window.e2e = {history, auth, supabaseClient};
+    window.e2e = { history, auth, supabaseClient };
   }
   return null;
 };

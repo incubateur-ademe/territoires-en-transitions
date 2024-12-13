@@ -1,5 +1,5 @@
+import { useFonctionTracker } from '@/app/core-logic/hooks/useFonctionTracker';
 import classNames from 'classnames';
-import { useFonctionTracker } from 'core-logic/hooks/useFonctionTracker';
 import SideNav, { SideNavLinks } from './SideNav';
 
 export type SideNavContainerProps = {

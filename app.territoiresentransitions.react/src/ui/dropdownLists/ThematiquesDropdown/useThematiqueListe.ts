@@ -1,8 +1,8 @@
-import {useQuery} from 'react-query';
-import {supabaseClient} from 'core-logic/api/supabase';
+import { supabaseClient } from '@/app/core-logic/api/supabase';
+import { useQuery } from 'react-query';
 
 const fetchThematiqueListe = async () => {
-  const {error, data} = await supabaseClient.from('thematique').select();
+  const { error, data } = await supabaseClient.from('thematique').select();
 
   if (error) {
     throw new Error(error.message);

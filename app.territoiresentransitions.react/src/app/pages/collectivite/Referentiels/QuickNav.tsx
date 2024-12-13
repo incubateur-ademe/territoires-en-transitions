@@ -1,10 +1,10 @@
+import { ActionDefinitionSummary } from '@/app/core-logic/api/endpoints/ActionDefinitionSummaryReadEndpoint';
+import { ActionTitleRead } from '@/app/core-logic/api/endpoints/ActionTitleReadEndpoint';
+import { useCollectiviteId } from '@/app/core-logic/hooks/params';
+import { useActionTitleList } from '@/app/core-logic/hooks/referentiel';
 import { Menu, MenuItem } from '@mui/material';
 import NestedMenuItem from 'app/pages/collectivite/Referentiels/NestedMenuItem';
 import { makeCollectiviteReferentielUrl } from 'app/paths';
-import { ActionDefinitionSummary } from 'core-logic/api/endpoints/ActionDefinitionSummaryReadEndpoint';
-import { ActionTitleRead } from 'core-logic/api/endpoints/ActionTitleReadEndpoint';
-import { useCollectiviteId } from 'core-logic/hooks/params';
-import { useActionTitleList } from 'core-logic/hooks/referentiel';
 import Link from 'next/link';
 import { useRouter } from 'next/navigation';
 import React, { useState } from 'react';
