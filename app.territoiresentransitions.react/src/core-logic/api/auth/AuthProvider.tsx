@@ -6,6 +6,7 @@ import {
   setAuthTokens,
 } from '@/api';
 import { Tables } from '@/api/database.types';
+import { ENV } from '@/api/environmentVariables';
 import { dcpFetch } from '@/api/utilisateurs/shared/data_access/dcp.fetch';
 import { fetchOwnedCollectivites } from '@/app/core-logic/hooks/useOwnedCollectivites';
 import {
@@ -13,7 +14,6 @@ import {
   SignInWithPasswordCredentials,
   User,
 } from '@supabase/supabase-js';
-import { ENV } from 'environmentVariables';
 import {
   createContext,
   ReactNode,
