@@ -3,7 +3,7 @@ import {
   makeCollectiviteReferentielUrl,
   ReferentielParamOption,
 } from '@/app/app/paths';
-import { toLocaleFixed } from 'utils/toFixed';
+import { toLocaleFixed } from '@/app/utils/toFixed';
 import { CritereRempli } from './CritereRempli';
 
 export type TCritereScoreProps = {

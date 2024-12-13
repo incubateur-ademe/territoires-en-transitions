@@ -1,6 +1,6 @@
+import { formatFileSize, getExtension } from '@/app/utils/file';
+import { getTextFormattedDate } from '@/app/utils/formatUtils';
 import { TPreuve } from './types';
-import { formatFileSize, getExtension } from 'utils/file';
-import { getTextFormattedDate } from 'utils/formatUtils';
 
 export const getFormattedTitle = (preuve: TPreuve) => {
   const { fichier, lien } = preuve;

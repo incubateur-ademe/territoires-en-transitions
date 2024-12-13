@@ -1,6 +1,6 @@
+import { getMaxLengthMessage } from '@/app/utils/formatUtils';
 import { Field, Modal, ModalFooterOKCancel, Textarea } from '@/ui';
 import { useEffect, useState } from 'react';
-import { getMaxLengthMessage } from 'utils/formatUtils';
 
 export const NOTES_MAX_LENGTH = 20000;
 

@@ -13,7 +13,7 @@ import {
   makeCollectiviteReferentielUrl,
 } from '@/app/app/paths';
 import { useFonctionTracker } from '@/app/core-logic/hooks/useFonctionTracker';
-import { toLocaleFixed } from 'utils/toFixed';
+import { toLocaleFixed } from '@/app/utils/toFixed';
 
 import { ProgressionRow } from '@/app/app/pages/collectivite/EtatDesLieux/Accueil/data/useProgressionReferentiel';
 import AccueilCard from '@/app/app/pages/collectivite/EtatDesLieux/Accueil/EtatDesLieux/AccueilCard';

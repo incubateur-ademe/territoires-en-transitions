@@ -1,5 +1,6 @@
 import { FicheAction } from '@/api/plan-actions';
 import { useCurrentCollectivite } from '@/app/core-logic/hooks/useCurrentCollectivite';
+import { getIsoFormattedDate } from '@/app/utils/formatUtils';
 import {
   Checkbox,
   Field,
@@ -15,7 +16,6 @@ import { useEffect, useRef, useState } from 'react';
 import MiseEnOeuvreDropdown from 'ui/dropdownLists/ficheAction/MiseEnOeuvreDropdown/MiseEnOeuvreDropdown';
 import PrioritesSelectDropdown from 'ui/dropdownLists/ficheAction/priorites/PrioritesSelectDropdown';
 import StatutsSelectDropdown from 'ui/dropdownLists/ficheAction/statuts/StatutsSelectDropdown';
-import { getIsoFormattedDate } from 'utils/formatUtils';
 
 type ModalePlanningProps = {
   isOpen: boolean;

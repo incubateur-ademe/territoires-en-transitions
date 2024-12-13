@@ -1,7 +1,7 @@
+import { dedup } from '@/app/utils/dedup';
 import { preset } from '@/ui';
 import { Datum } from '@nivo/line';
 import { LineData } from 'ui/charts/Line/LineChart';
-import { dedup } from 'utils/dedup';
 import { TIndicateurValeur } from '../useIndicateurValeurs';
 
 const {

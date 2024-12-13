@@ -1,9 +1,9 @@
 import { ENV } from '@/api/environmentVariables';
 import { useAuth } from '@/app/core-logic/api/auth/AuthProvider';
 import { useCollectiviteId } from '@/app/core-logic/hooks/params';
+import { shasum256 } from '@/app/utils/shasum256';
 import { useEffect, useState } from 'react';
 import { useDebouncedCallback } from 'use-debounce';
-import { shasum256 } from 'utils/shasum256';
 import {
   TUploader,
   UploadErrorCode,

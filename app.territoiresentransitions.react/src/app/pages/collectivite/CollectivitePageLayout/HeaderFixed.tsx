@@ -1,7 +1,7 @@
 import { Ref, useEffect, useRef, useState } from 'react';
 
 import { appHeaderHeight } from '@/app/app/Layout/Header/Header';
-import { useScrollTop } from 'utils/useScrollTop';
+import { useScrollTop } from '@/app/utils/useScrollTop';
 
 export type RenderProps = {
   isScrolled: boolean;

@@ -3,9 +3,9 @@ import {
   supabaseClient,
 } from '@/app/core-logic/api/supabase';
 import { TActionStatutsRow } from '@/app/types/alias';
+import { indexBy } from '@/app/utils/indexBy';
 import { useCallback, useMemo } from 'react';
 import { useQuery } from 'react-query';
-import { indexBy } from 'utils/indexBy';
 import { useToggleRowExpandedReducer } from './useToggleRowExpandedReducer';
 
 // les informations du référentiel à précharger

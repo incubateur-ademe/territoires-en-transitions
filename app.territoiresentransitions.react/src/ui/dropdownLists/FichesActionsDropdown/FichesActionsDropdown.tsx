@@ -1,6 +1,7 @@
 import { AxeInsert, FicheResume } from '@/api/plan-actions';
 import { useFicheResumesFetch } from '@/app/app/pages/collectivite/PlansActions/FicheAction/data/useFicheResumesFetch';
 import { generateTitle } from '@/app/app/pages/collectivite/PlansActions/FicheAction/data/utils';
+import { naturalSort } from '@/app/utils/naturalSort';
 import {
   Option,
   OptionValue,
@@ -8,7 +9,6 @@ import {
   SelectMultipleProps,
   SelectOption,
 } from '@/ui';
-import { naturalSort } from 'utils/naturalSort';
 
 const sortByLabel = (a: Option, b: Option) => {
   if (!a.label) return -1;

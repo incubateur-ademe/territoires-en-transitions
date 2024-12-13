@@ -3,8 +3,8 @@
  */
 
 import { actionAvancementColors } from '@/app/app/theme';
+import { toPercentString } from '@/app/utils/score';
 import { Dispatch, SetStateAction } from 'react';
-import { toPercentString } from 'utils/score';
 import { AvancementValues, DetailedScoreSlider } from './DetailedScoreSlider';
 
 export type TDetailedScoreProps = {

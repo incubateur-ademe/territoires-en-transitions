@@ -1,5 +1,5 @@
 import { useScores } from '@/app/core-logic/hooks/scoreHooks';
-import { referentielId } from 'utils/actions';
+import { referentielId } from '@/app/utils/actions';
 
 export const useTasksScoreRepartition = (actionId: string) => {
   const scores = useScores();

@@ -1,6 +1,6 @@
-import classNames from 'classnames';
+import { getFormattedNumber } from '@/app/utils/formatUtils';
 import { Text } from '@react-pdf/renderer';
-import { getFormattedNumber } from 'utils/formatUtils';
+import classNames from 'classnames';
 import { Badge } from 'ui/export-pdf/components';
 import { tw } from '../../utils';
 

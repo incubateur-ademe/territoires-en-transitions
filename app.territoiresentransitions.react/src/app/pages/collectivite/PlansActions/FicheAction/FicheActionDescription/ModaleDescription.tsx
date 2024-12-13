@@ -1,6 +1,7 @@
 import { FicheAction } from '@/api/plan-actions';
 import { Thematique } from '@/api/shared/domain';
 import { useCurrentCollectivite } from '@/app/core-logic/hooks/useCurrentCollectivite';
+import { getMaxLengthMessage } from '@/app/utils/formatUtils';
 import {
   Button,
   Field,
@@ -16,7 +17,6 @@ import { useState } from 'react';
 import SousThematiquesDropdown from 'ui/dropdownLists/SousThematiquesDropdown/SousThematiquesDropdown';
 import TagsSuiviPersoDropdown from 'ui/dropdownLists/TagsSuiviPersoDropdown/TagsSuiviPersoDropdown';
 import ThematiquesDropdown from 'ui/dropdownLists/ThematiquesDropdown/ThematiquesDropdown';
-import { getMaxLengthMessage } from 'utils/formatUtils';
 
 const DESCRIPTION_MAX_LENGTH = 20000;
 const MOYENS_MAX_LENGTH = 10000;

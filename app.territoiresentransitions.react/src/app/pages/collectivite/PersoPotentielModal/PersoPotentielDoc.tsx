@@ -3,8 +3,8 @@
  */
 import { ActionDefinitionSummary } from '@/app/core-logic/api/endpoints/ActionDefinitionSummaryReadEndpoint';
 import { ActionScore } from '@/app/types/ClientScore';
+import { toLocaleFixed } from '@/app/utils/toFixed';
 import DOMPurify from 'dompurify';
-import { toLocaleFixed } from 'utils/toFixed';
 import { TPersonnalisationRegleRead } from './useRegles';
 
 export type TPersoPotentielDocProps = {

@@ -1,6 +1,6 @@
+import { useDownloadFile } from '@/app/utils/useDownloadFile';
 import { Button, Card } from '@/ui';
 import SpinnerLoader from 'ui/shared/SpinnerLoader';
-import { useDownloadFile } from 'utils/useDownloadFile';
 import { DOC_METHODO } from './constants';
 import { useTelechargementTrajectoire } from './useTelechargementTrajectoire';
 

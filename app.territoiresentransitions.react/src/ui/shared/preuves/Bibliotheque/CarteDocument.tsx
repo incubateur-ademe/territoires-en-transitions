@@ -1,8 +1,11 @@
+import {
+  getTextFormattedDate,
+  getTruncatedText,
+} from '@/app/utils/formatUtils';
 import { Button, Card, Divider, Icon, Notification, Tooltip } from '@/ui';
 import classNames from 'classnames';
 import { useEffect, useState } from 'react';
 import SpinnerLoader from 'ui/shared/SpinnerLoader';
-import { getTextFormattedDate, getTruncatedText } from 'utils/formatUtils';
 import AlerteSuppression from './AlerteSuppression';
 import DocumentInput from './DocumentInput';
 import { IdentifiantAction } from './IdentifiantAction';

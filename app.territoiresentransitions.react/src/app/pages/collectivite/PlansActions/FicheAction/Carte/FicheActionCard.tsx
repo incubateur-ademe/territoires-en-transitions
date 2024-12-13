@@ -1,10 +1,10 @@
 import { FicheResume } from '@/api/plan-actions/domain';
 import { useCurrentCollectivite } from '@/app/core-logic/hooks/useCurrentCollectivite';
+import { getModifiedSince } from '@/app/utils/formatUtils';
 import { Button, Card, Checkbox, Notification, Tooltip } from '@/ui';
 import classNames from 'classnames';
 import { useState } from 'react';
 import { QueryKey } from 'react-query';
-import { getModifiedSince } from 'utils/formatUtils';
 import BadgePriorite from '../../components/BadgePriorite';
 import BadgeStatut from '../../components/BadgeStatut';
 import { generateTitle } from '../data/utils';

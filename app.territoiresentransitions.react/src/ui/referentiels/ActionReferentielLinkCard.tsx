@@ -1,11 +1,11 @@
 import { makeCollectiviteActionUrl } from '@/app/app/paths';
 import { ActionDefinitionSummary } from '@/app/core-logic/api/endpoints/ActionDefinitionSummaryReadEndpoint';
 import { useCollectiviteId } from '@/app/core-logic/hooks/params';
+import { referentielId } from '@/app/utils/actions';
 import Link from 'next/link';
 import ActionProgressBar from 'ui/referentiels/ActionProgressBar';
 import { ActionReferentielDescription } from 'ui/referentiels/ActionReferentielDescription';
 import { ActionReferentielDisplayTitle } from 'ui/referentiels/ActionReferentielDisplayTitle';
-import { referentielId } from 'utils/actions';
 
 /**
  * Used on referentiels page, links to action page.

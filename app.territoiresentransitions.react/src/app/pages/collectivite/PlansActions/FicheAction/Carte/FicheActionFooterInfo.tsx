@@ -1,9 +1,9 @@
 import { Personne } from '@/api/collectivites';
+import { getTextFormattedDate } from '@/app/utils/formatUtils';
 import { Icon, Tooltip } from '@/ui';
 import classNames from 'classnames';
 import { isBefore, startOfToday } from 'date-fns';
 import { Fragment } from 'react';
-import { getTextFormattedDate } from 'utils/formatUtils';
 
 type FicheActionFooterInfoProps = {
   pilotes: Personne[] | null | undefined;

@@ -1,9 +1,12 @@
 import { FicheAction } from '@/api/plan-actions';
+import {
+  getTextFormattedDate,
+  getTruncatedText,
+} from '@/app/utils/formatUtils';
 import { Button, Divider, EmptyCard, Icon } from '@/ui';
 import classNames from 'classnames';
 import { isBefore, startOfToday } from 'date-fns';
 import { useState } from 'react';
-import { getTextFormattedDate, getTruncatedText } from 'utils/formatUtils';
 import BadgePriorite from '../../components/BadgePriorite';
 import BadgeStatut from '../../components/BadgeStatut';
 import ModalePlanning from './ModalePlanning';

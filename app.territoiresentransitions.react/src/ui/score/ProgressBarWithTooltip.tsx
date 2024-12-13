@@ -1,5 +1,5 @@
+import { toFixed } from '@/app/utils/toFixed';
 import { Tooltip } from '@/ui';
-import { toFixed } from 'utils/toFixed';
 import ProgressBar, { ProgressBarType } from './ProgressBar';
 
 type ProgressBarTooltipContentProps = {

@@ -1,8 +1,8 @@
-import {CellProps} from 'react-table';
-import {getMaxDepth, PriorisationRow} from './queries';
-import {toLocaleFixed} from 'utils/toFixed';
-import {ReactComponent as Up} from './up.svg';
-import {ReactComponent as Down} from './down.svg';
+import { toLocaleFixed } from '@/app/utils/toFixed';
+import { CellProps } from 'react-table';
+import { ReactComponent as Down } from './down.svg';
+import { getMaxDepth, PriorisationRow } from './queries';
+import { ReactComponent as Up } from './up.svg';
 
 const PICTOS = {
   up: Up,
@@ -40,7 +40,7 @@ const CellValue = (
     row?: TCellProps['row'];
   }
 ) => {
-  const {children, difference, row} = props;
+  const { children, difference, row } = props;
   const Picto = difference ? PICTOS[difference] : null;
   const fill = difference
     ? PICTO_COLORS[difference][
@@ -55,7 +55,7 @@ const CellValue = (
       className={'cell-value flex justify-end items-baseline w-full text-right'}
     >
       {Picto ? (
-        <Picto style={fill ? {fill, marginRight: 6} : undefined} />
+        <Picto style={fill ? { fill, marginRight: 6 } : undefined} />
       ) : null}
       {children}
     </span>
@@ -66,7 +66,7 @@ const CellValue = (
  * Affiche une cellule contenant un pourcentage
  */
 export const CellPercent = (props: TCellValueProps) => {
-  const {value} = props;
+  const { value } = props;
 
   return (
     <CellValue {...props}>
@@ -79,7 +79,7 @@ export const CellPercent = (props: TCellValueProps) => {
  * Affiche une cellule contenant un nombre de points
  */
 export const CellPoints = (props: TCellValueProps) => {
-  const {value} = props;
+  const { value } = props;
 
   return (
     <CellValue {...props}>
@@ -92,8 +92,8 @@ export const CellPoints = (props: TCellValueProps) => {
  * Affiche une cellule contenant la phase de priorisation
  */
 export const CellPhase = (props: TCellProps) => {
-  const {value, row, referentiel} = props;
-  const {depth} = row.original;
+  const { value, row, referentiel } = props;
+  const { depth } = row.original;
 
   // on n'affiche pas la phase avant le niveau sous-action
   if (depth < getMaxDepth(referentiel)) {

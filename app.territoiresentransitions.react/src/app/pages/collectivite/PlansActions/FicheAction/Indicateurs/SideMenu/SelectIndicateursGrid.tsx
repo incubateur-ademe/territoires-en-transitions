@@ -2,8 +2,8 @@ import { IndicateurListItem } from '@/api/indicateurs/domain';
 import IndicateurCard, {
   IndicateurCardProps,
 } from '@/app/app/pages/collectivite/Indicateurs/lists/IndicateurCard/IndicateurCard';
+import { useIntersectionObserver } from '@/app/utils/useIntersectionObserver';
 import SpinnerLoader from 'ui/shared/SpinnerLoader';
-import { useIntersectionObserver } from 'utils/useIntersectionObserver';
 
 type Props = {
   definitions?: IndicateurListItem[];

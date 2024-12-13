@@ -1,9 +1,9 @@
 import { useApiClient } from '@/app/core-logic/api/useApiClient';
 import { useCurrentCollectivite } from '@/app/core-logic/hooks/useCurrentCollectivite';
+import { DOWNLOAD_FILE_MUTATION_OPTIONS } from '@/app/utils/useDownloadFile';
 import { useEventTracker } from '@/ui';
 import { useMutation } from 'react-query';
 import { saveBlob } from 'ui/shared/preuves/Bibliotheque/saveBlob';
-import { DOWNLOAD_FILE_MUTATION_OPTIONS } from 'utils/useDownloadFile';
 
 /** Télécharge le fichier xlsx de la trajectoire */
 export const useTelechargementTrajectoire = () => {

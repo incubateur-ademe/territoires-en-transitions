@@ -1,6 +1,6 @@
+import { toLocaleFixed } from '@/app/utils/toFixed';
 import classNames from 'classnames';
 import { IconDoubleCheck } from 'ui/icons/IconDoubleCheck';
-import { toLocaleFixed } from 'utils/toFixed';
 
 type ScoreDisplayProps = {
   score: number | null;

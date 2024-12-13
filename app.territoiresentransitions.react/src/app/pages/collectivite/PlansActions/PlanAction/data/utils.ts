@@ -1,6 +1,5 @@
-import {naturalSort} from 'utils/naturalSort';
-import {FlatAxe, PlanNode} from './types';
-import {TProfondeurAxe} from './types';
+import { naturalSort } from '@/app/utils/naturalSort';
+import { FlatAxe, PlanNode, TProfondeurAxe } from './types';
 
 /**
  * Fonction récursive qui vérifie si des fiches sont présentes dans un axe et ses sous-axes.
@@ -37,7 +36,7 @@ export const checkAxeExistInPlanProfondeur = (
     let ids: number[] = [];
     ids.push(plan.axe.id);
     if (plan.enfants) {
-      plan.enfants.forEach(enfant => {
+      plan.enfants.forEach((enfant) => {
         ids = ids.concat(getAllAxeIds(enfant));
       });
     }
@@ -49,7 +48,7 @@ export const checkAxeExistInPlanProfondeur = (
 
 /** Transforme un tableau de FlatAxe en tableau de PlanNode */
 export const flatAxesToPlanNodes = (axes: FlatAxe[]): PlanNode[] => {
-  return axes.map(({ancestors, ...a}) => {
+  return axes.map(({ ancestors, ...a }) => {
     return {
       ...a,
       parent: ancestors?.length ? ancestors[ancestors.length - 1] : null,
@@ -69,7 +68,7 @@ export const childrenOfPlanNodes = (
   axe: PlanNode,
   axes: PlanNode[]
 ): PlanNode[] => {
-  return sortPlanNodes(axes.filter(a => a.parent === axe.id));
+  return sortPlanNodes(axes.filter((a) => a.parent === axe.id));
 };
 
 type PlanNodeFactory = {
@@ -85,7 +84,7 @@ export const planNodeFactory = ({
   parentDepth,
   nom,
 }: PlanNodeFactory): PlanNode => {
-  const lowerId = axes?.reduce((a, b) => (a.id! < b.id! ? a : b), {id: 0}).id;
+  const lowerId = axes?.reduce((a, b) => (a.id! < b.id! ? a : b), { id: 0 }).id;
   const tempId = Math.min(0, lowerId || 0) - 1;
 
   return {

@@ -7,7 +7,7 @@ import {
 } from '@/app/app/paths';
 import { useCollectiviteId } from '@/app/core-logic/hooks/params';
 import { useCurrentCollectivite } from '@/app/core-logic/hooks/useCurrentCollectivite';
-import { useIntersectionObserver } from 'utils/useIntersectionObserver';
+import { useIntersectionObserver } from '@/app/utils/useIntersectionObserver';
 import { TIndicateurListItem } from '../Indicateurs/types';
 
 type TIndicateurChartsGridProps = {

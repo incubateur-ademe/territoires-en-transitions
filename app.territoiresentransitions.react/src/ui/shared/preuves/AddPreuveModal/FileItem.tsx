@@ -1,3 +1,4 @@
+import { formatFileSize } from '@/app/utils/file';
 import { Button } from '@/ui';
 import { useEffect } from 'react';
 import {
@@ -7,7 +8,6 @@ import {
   UploadStatusRunning,
 } from 'ui/shared/preuves/AddPreuveModal/types';
 import { useUploader } from 'ui/shared/preuves/AddPreuveModal/useUploader';
-import { formatFileSize } from 'utils/file';
 
 export type TFileItem = {
   /** Fichier concerné */
