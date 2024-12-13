@@ -1,7 +1,7 @@
-import React, { useImperativeHandle, useRef, useState } from 'react';
+import { ExpandToggle } from '@/app/ui/icons/ExpandToggle';
 import Menu, { MenuProps } from '@mui/material/Menu';
 import MenuItem, { MenuItemProps } from '@mui/material/MenuItem';
-import { ExpandToggle } from 'ui/icons/ExpandToggle';
+import React, { useImperativeHandle, useRef, useState } from 'react';
 
 export interface NestedMenuItemProps extends Omit<MenuItemProps, 'button'> {
   /**

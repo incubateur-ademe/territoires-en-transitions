@@ -8,10 +8,10 @@ import {
   SortFichesActionValue,
 } from '@/api/plan-actions/fiche-resumes.list/domain/fetch-options.schema';
 import FicheActionCard from '@/app/app/pages/collectivite/PlansActions/FicheAction/Carte/FicheActionCard';
+import PictoExpert from '@/app/ui/pictogrammes/PictoExpert';
+import SpinnerLoader from '@/app/ui/shared/SpinnerLoader';
 import { Checkbox, EmptyCard, Input, Pagination, Select } from '@/ui';
 import { OpenState } from '@/ui/utils/types';
-import PictoExpert from 'ui/pictogrammes/PictoExpert';
-import SpinnerLoader from 'ui/shared/SpinnerLoader';
 
 import { useFicheResumesFetch } from '@/app/app/pages/collectivite/PlansActions/FicheAction/data/useFicheResumesFetch';
 import {
@@ -19,11 +19,11 @@ import {
   makeCollectivitePlanActionFicheUrl,
 } from '@/app/app/paths';
 import { useCollectiviteId } from '@/app/core-logic/hooks/params';
-import { FicheResume } from 'packages/api/src/plan-actions';
 import FilterBadges, {
   CustomFilterBadges,
   useFiltersToBadges,
-} from 'ui/shared/filters/filter-badges';
+} from '@/app/ui/shared/filters/filter-badges';
+import { FicheResume } from 'packages/api/src/plan-actions';
 import ActionsGroupeesMenu from '../ActionsGroupees/ActionsGroupeesMenu';
 import EmptyFichePicto from '../FicheAction/FichesLiees/EmptyFichePicto';
 import { useCreateFicheAction } from '../FicheAction/data/useCreateFicheAction';

@@ -1,9 +1,9 @@
 import { TableOptions } from 'react-table';
 
-// import logoTerritoireEngage from 'ui/logo/logoTerritoireEngage.png';
+// import logoTerritoireEngage from '@/app/ui/logo/logoTerritoireEngage.png';
 import LabellisationInfo from '@/app/app/pages/collectivite/EtatDesLieux/Accueil/EtatDesLieux/labellisation/LabellisationInfo';
-import Chart from 'ui/charts/Chart';
-import logoTerritoireEngage from 'ui/logo/logoTerritoireEngage_big.png';
+import Chart from '@/app/ui/charts/Chart';
+import logoTerritoireEngage from '@/app/ui/logo/logoTerritoireEngage_big.png';
 
 import { useCycleLabellisation } from '@/app/app/pages/collectivite/ParcoursLabellisation/useCycleLabellisation';
 import {

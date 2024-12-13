@@ -1,8 +1,8 @@
 import BadgeOpenData from '@/app/app/pages/collectivite/Indicateurs/components/BadgeOpenData';
+import { ExpandToggle } from '@/app/ui/icons/ExpandToggle';
+import { BadgeACompleter } from '@/app/ui/shared/Badge/BadgeACompleter';
 import { Badge } from '@/ui';
 import classNames from 'classnames';
-import { ExpandToggle } from 'ui/icons/ExpandToggle';
-import { BadgeACompleter } from 'ui/shared/Badge/BadgeACompleter';
 import { TIndicateurPredefini } from '../../types';
 
 /** Affiche l'en-tête du détail d'un indicateur enfant */

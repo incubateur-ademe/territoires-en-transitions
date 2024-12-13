@@ -4,8 +4,8 @@ import {
   useReferentielId,
 } from '@/app/core-logic/hooks/params';
 import { Referentiel } from '@/app/types/litterals';
-import { TAddFileFromLib } from 'ui/shared/preuves/AddPreuveModal/AddFile';
-import { useAddPreuveLabellisation } from 'ui/shared/preuves/Bibliotheque/useAddPreuves';
+import { TAddFileFromLib } from '@/app/ui/shared/preuves/AddPreuveModal/AddFile';
+import { useAddPreuveLabellisation } from '@/app/ui/shared/preuves/Bibliotheque/useAddPreuves';
 import { TLabellisationDemande } from './types';
 import { useCycleLabellisation } from './useCycleLabellisation';
 

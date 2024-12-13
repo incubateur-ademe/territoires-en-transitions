@@ -10,9 +10,9 @@
 // import * as Yup from 'yup';
 // import {TThematiqueRow} from '@/app/types/alias';
 // import {useState} from 'react';
-// import FormikInput from 'ui/shared/form/formik/FormikInput';
-// import FormField from 'ui/shared/form/FormField';
-// import ThematiquesDropdown from 'ui/dropdownLists/ThematiquesDropdown/ThematiquesDropdown';
+// import FormikInput from '@/app/ui/shared/form/formik/FormikInput';
+// import FormField from '@/app/ui/shared/form/FormField';
+// import ThematiquesDropdown from '@/app/ui/dropdownLists/ThematiquesDropdown/ThematiquesDropdown';
 
 // const validation = Yup.object({
 //   titre: Yup.string()

@@ -8,9 +8,9 @@ import {
   useLabellisationVue,
   useReferentielId,
 } from '@/app/core-logic/hooks/params';
+import { Tab, Tabs } from '@/app/ui/shared/Tabs';
 import { Alert } from '@/ui';
 import { useRouter } from 'next/navigation';
-import { Tab, Tabs } from 'ui/shared/Tabs';
 import { useAudit } from '../Audit/useAudit';
 import AuditComparaison from '../AuditComparaison';
 import AuditSuivi from '../AuditSuivi';

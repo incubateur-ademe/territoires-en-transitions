@@ -1,6 +1,6 @@
 import { useCurrentCollectivite } from '@/app/core-logic/hooks/useCurrentCollectivite';
+import { PageHeader } from '@/app/ui/PageHeader';
 import { useParams } from 'react-router-dom';
-import { PageHeader } from 'ui/PageHeader';
 import { useChangeReponseHandler } from '../PersoPotentielModal/useChangeReponseHandler';
 import { ThematiqueQR } from './ThematiqueQR';
 import { useCarteIdentite } from './useCarteIdentite';

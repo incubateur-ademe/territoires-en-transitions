@@ -3,8 +3,8 @@ import {
   useCollectiviteId,
   useReferentielId,
 } from '@/app/core-logic/hooks/params';
+import { TPreuveLabellisation } from '@/app/ui/shared/preuves/Bibliotheque/types';
 import { Alert } from '@/ui';
-import { TPreuveLabellisation } from 'ui/shared/preuves/Bibliotheque/types';
 import { CritereCompletude } from './CritereCompletude';
 import { CriterePreuves } from './CriterePreuves';
 import { CritereScore } from './CritereScore';

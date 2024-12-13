@@ -1,6 +1,6 @@
 import { useCurrentCollectivite } from '@/app/core-logic/hooks/useCurrentCollectivite';
+import FichesActionsDropdown from '@/app/ui/dropdownLists/FichesActionsDropdown/FichesActionsDropdown';
 import { Field } from '@/ui';
-import FichesActionsDropdown from 'ui/dropdownLists/FichesActionsDropdown/FichesActionsDropdown';
 import { useCreateFicheResume } from '../PlansActions/FicheAction/data/useCreateFicheResume';
 import FichesLieesListe from '../PlansActions/FicheAction/FichesLiees/FichesLieesListe';
 import { useFichesActionLiees } from './useFichesActionLiees';

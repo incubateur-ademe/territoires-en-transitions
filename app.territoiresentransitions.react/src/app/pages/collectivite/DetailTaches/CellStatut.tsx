@@ -1,9 +1,9 @@
 import { useEditActionStatutIsDisabled } from '@/app/core-logic/hooks/useActionStatut';
-import { useCallback } from 'react';
 import {
   DEFAULT_ITEMS,
   SelectActionStatut,
-} from 'ui/shared/actions/SelectActionStatut';
+} from '@/app/ui/shared/actions/SelectActionStatut';
+import { useCallback } from 'react';
 import { TCellProps } from './DetailTacheTable';
 
 /** Affiche le sélecteur permettant de mettre à jour le statut d'une tâche */

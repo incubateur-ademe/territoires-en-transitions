@@ -1,7 +1,7 @@
+import CarteDocument from '@/app/ui/shared/preuves/Bibliotheque/CarteDocument';
+import SpinnerLoader from '@/app/ui/shared/SpinnerLoader';
 import { Button, EmptyCard } from '@/ui';
 import { useEffect, useState } from 'react';
-import CarteDocument from 'ui/shared/preuves/Bibliotheque/CarteDocument';
-import SpinnerLoader from 'ui/shared/SpinnerLoader';
 import { useAddAnnexe } from '../../data/useAddAnnexe';
 import { useAnnexesFicheAction } from '../../data/useAnnexesFicheAction';
 import LoadingCard from '../../LoadingCard';

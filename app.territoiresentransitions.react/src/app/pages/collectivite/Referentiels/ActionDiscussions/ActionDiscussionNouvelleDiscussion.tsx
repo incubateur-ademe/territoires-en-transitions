@@ -1,16 +1,16 @@
-import {useState} from 'react';
-import Textarea from 'ui/shared/form/Textarea';
-import {useAddDiscussionToAction} from './data/useAddDiscussionToAction';
+import Textarea from '@/app/ui/shared/form/Textarea';
+import { useState } from 'react';
+import { useAddDiscussionToAction } from './data/useAddDiscussionToAction';
 
 type Props = {
   actionId: string;
 };
 
 /** Input permettant de créer une nouvelle discussion dans une action */
-const ActionDiscussionNouvelleDiscussion = ({actionId}: Props) => {
+const ActionDiscussionNouvelleDiscussion = ({ actionId }: Props) => {
   const [commentaire, setCommentaire] = useState<string>('');
 
-  const {mutate: handleCreateDiscussion} = useAddDiscussionToAction(actionId);
+  const { mutate: handleCreateDiscussion } = useAddDiscussionToAction(actionId);
 
   return (
     <div

@@ -1,10 +1,10 @@
 import { TCycleLabellisationStatus } from '@/app/app/pages/collectivite/ParcoursLabellisation/useCycleLabellisation';
 import { ActionDefinitionSummary } from '@/app/core-logic/api/endpoints/ActionDefinitionSummaryReadEndpoint';
 import { useSortedActionSummaryChildren } from '@/app/core-logic/hooks/referentiel';
+import { phaseToLabel } from '@/app/ui/referentiels/utils';
+import { ActionCommentaire } from '@/app/ui/shared/actions/ActionCommentaire';
 import { Button } from '@/ui';
 import { useState } from 'react';
-import { phaseToLabel } from 'ui/referentiels/utils';
-import { ActionCommentaire } from 'ui/shared/actions/ActionCommentaire';
 import { SuiviScoreRow } from '../data/useScoreRealise';
 import SubActionCard from './SubActionCard';
 

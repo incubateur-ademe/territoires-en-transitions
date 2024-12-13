@@ -1,7 +1,7 @@
 import classNames from 'classnames';
 import { forwardRef, Ref } from 'react';
 
-import DropdownFloater from 'ui/shared/floating-ui/DropdownFloater';
+import DropdownFloater from '@/app/ui/shared/floating-ui/DropdownFloater';
 import {
   buttonDisplayedClassname,
   buttonDisplayedPlaceholderClassname,
@@ -10,7 +10,7 @@ import {
   TOption,
   TSelectBase,
   TSelectSelectionButtonBase,
-} from 'ui/shared/select/commons';
+} from '@/app/ui/shared/select/commons';
 import Options from './Options';
 
 type TMultiSelectDropdownBaseProps<T extends string> = TSelectBase & {

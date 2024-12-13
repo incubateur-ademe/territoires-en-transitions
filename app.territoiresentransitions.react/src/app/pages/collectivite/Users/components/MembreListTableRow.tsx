@@ -10,8 +10,8 @@ import {
 } from '@/app/app/pages/collectivite/Users/types';
 import { TMembreFonction, TNiveauAcces } from '@/app/types/alias';
 import { Referentiel } from '@/app/types/litterals';
-import MultiSelectDropdown from 'ui/shared/select/MultiSelectDropdown';
-import SelectDropdown from 'ui/shared/select/SelectDropdown';
+import MultiSelectDropdown from '@/app/ui/shared/select/MultiSelectDropdown';
+import SelectDropdown from '@/app/ui/shared/select/SelectDropdown';
 import { SendInvitationArgs } from '../useSendInvitation';
 import { ConfirmerSuppressionMembre } from './ConfirmerSuppressionMembre';
 

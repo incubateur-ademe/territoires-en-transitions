@@ -5,11 +5,11 @@ import {
   ExportIndicateursPageName,
   useExportIndicateurs,
 } from '@/app/app/pages/collectivite/Indicateurs/Indicateur/useExportIndicateurs';
-import { Badge } from '@/ui';
 import FilterBadges, {
   CustomFilterBadges,
   useFiltersToBadges,
-} from 'ui/shared/filters/filter-badges';
+} from '@/app/ui/shared/filters/filter-badges';
+import { Badge } from '@/ui';
 
 type Props = {
   pageName: ExportIndicateursPageName; // tracking

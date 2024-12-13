@@ -1,5 +1,5 @@
 import { supabaseClient } from '@/app/core-logic/api/supabase';
-import { ITEM_ALL } from 'ui/shared/filters/commons';
+import { ITEM_ALL } from '@/app/ui/shared/filters/commons';
 import { TActionAuditStatut } from '../Audit/types';
 import { ActionReferentiel } from '../ReferentielTable/useReferentiel';
 import { TFilters } from './filters';

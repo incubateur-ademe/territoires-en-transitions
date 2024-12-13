@@ -1,8 +1,8 @@
 import { ActionDefinitionSummary } from '@/app/core-logic/api/endpoints/ActionDefinitionSummaryReadEndpoint';
+import { AccordionControlled } from '@/app/ui/Accordion';
+import { ActionPreuvePanel } from '@/app/ui/shared/actions/ActionPreuvePanel';
+import { useActionPreuvesCount } from '@/app/ui/shared/preuves/Bibliotheque/usePreuves';
 import { useState } from 'react';
-import { AccordionControlled } from 'ui/Accordion';
-import { ActionPreuvePanel } from 'ui/shared/actions/ActionPreuvePanel';
-import { useActionPreuvesCount } from 'ui/shared/preuves/Bibliotheque/usePreuves';
 
 type SubActionPreuvesAccordionProps = {
   subAction: ActionDefinitionSummary;

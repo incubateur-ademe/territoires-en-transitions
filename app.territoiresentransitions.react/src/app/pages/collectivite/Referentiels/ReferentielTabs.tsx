@@ -10,8 +10,8 @@ import {
   useReferentielVue,
 } from '@/app/core-logic/hooks/params';
 import { ReferentielOfIndicateur } from '@/app/types/litterals';
+import { Tab, Tabs } from '@/app/ui/shared/Tabs';
 import { useRouter } from 'next/navigation';
-import { Tab, Tabs } from 'ui/shared/Tabs';
 import AidePriorisation from '../AidePriorisation';
 import DetailTacheTable from '../DetailTaches';
 import Progression from './Referentiels';

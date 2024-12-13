@@ -1,10 +1,10 @@
 import { ReferentielParamOption } from '@/app/app/paths';
 import { useReferentielId } from '@/app/core-logic/hooks/params';
 import { useCurrentCollectivite } from '@/app/core-logic/hooks/useCurrentCollectivite';
-import { defaultColors } from 'ui/charts/chartsTheme';
+import { defaultColors } from '@/app/ui/charts/chartsTheme';
 import BarChartCardWithSubrows, {
   TBarChartScoreTable,
-} from 'ui/charts/old/BarChartCardWithSubrows';
+} from '@/app/ui/charts/old/BarChartCardWithSubrows';
 import { AuditComparaisonTable } from './AuditComparaisonTable';
 import { TScoreAuditRowData } from './types';
 import { useExportAuditScores } from './useExportAuditScore';

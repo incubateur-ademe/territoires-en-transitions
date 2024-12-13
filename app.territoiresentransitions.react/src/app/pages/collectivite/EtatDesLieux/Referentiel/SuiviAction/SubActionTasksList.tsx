@@ -1,5 +1,5 @@
 import { ActionDefinitionSummary } from '@/app/core-logic/api/endpoints/ActionDefinitionSummaryReadEndpoint';
-import { StatusToSavePayload } from 'ui/referentiels/ActionStatusDropdown';
+import { StatusToSavePayload } from '@/app/ui/referentiels/ActionStatusDropdown';
 import { SuiviScoreRow } from '../data/useScoreRealise';
 import SubActionTask from './SubActionTask';
 

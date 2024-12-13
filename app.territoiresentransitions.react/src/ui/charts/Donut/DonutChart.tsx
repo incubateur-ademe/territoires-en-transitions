@@ -1,7 +1,7 @@
 import { DatumId, ResponsivePie } from '@nivo/pie';
 
+import { getDataColor } from '@/app/ui/charts/utils';
 import classNames from 'classnames';
-import { getDataColor } from 'ui/charts/utils';
 import ChartLegend, { ChartLegendProps } from '../ChartLegend';
 import { theme } from '../chartsTheme';
 import { getDonutTooltip } from './DonutTooltip';

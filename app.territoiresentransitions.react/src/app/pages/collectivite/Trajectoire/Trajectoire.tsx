@@ -1,8 +1,8 @@
 import { useCollectiviteId } from '@/app/core-logic/hooks/params';
+import SpinnerLoader from '@/app/ui/shared/SpinnerLoader';
 import { Alert, Button, Card, Modal, TrackPageView } from '@/ui';
 import { useEffect } from 'react';
 import { useQueryClient } from 'react-query';
-import SpinnerLoader from 'ui/shared/SpinnerLoader';
 import { CommuneNonSupportee } from './CommuneNonSupportee';
 import { HELPDESK_URL } from './constants';
 import { ReactComponent as DbErrorPicto } from './db-error.svg';

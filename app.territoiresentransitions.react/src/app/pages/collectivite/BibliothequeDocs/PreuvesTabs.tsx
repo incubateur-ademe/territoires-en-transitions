@@ -5,7 +5,7 @@
 
 import { referentielToName } from '@/app/app/labels';
 import { Referentiel } from '@/app/types/litterals';
-import { Tab, Tabs } from 'ui/shared/Tabs';
+import { Tab, Tabs } from '@/app/ui/shared/Tabs';
 import { PreuvesTable } from './PreuvesTable';
 import { useTableData } from './useTableData';
 

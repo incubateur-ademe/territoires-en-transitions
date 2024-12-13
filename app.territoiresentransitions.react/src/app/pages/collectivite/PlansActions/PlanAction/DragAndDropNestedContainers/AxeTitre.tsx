@@ -1,9 +1,9 @@
-import { useEffect, useRef, useState } from 'react';
-import TextareaControlled from 'ui/shared/form/TextareaControlled';
-import { useEditAxe } from '../data/useEditAxe';
+import TextareaControlled from '@/app/ui/shared/form/TextareaControlled';
 import classNames from 'classnames';
-import { PlanNode } from '../data/types';
+import { useEffect, useRef, useState } from 'react';
 import { useParams } from 'react-router-dom';
+import { PlanNode } from '../data/types';
+import { useEditAxe } from '../data/useEditAxe';
 
 type Props = {
   axe: PlanNode;

@@ -1,7 +1,7 @@
+import Modal from '@/app/ui/shared/floating-ui/Modal';
 import { Alert } from '@/ui';
 import classNames from 'classnames';
 import { useState } from 'react';
-import Modal from 'ui/shared/floating-ui/Modal';
 import {
   TDemandeLabellisationModalProps,
   submittedAutresEtoiles,

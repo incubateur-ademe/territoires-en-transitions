@@ -5,9 +5,9 @@ import {
 import { supabaseClient } from '@/app/core-logic/api/supabase';
 import { useCollectiviteId } from '@/app/core-logic/hooks/params';
 import { TActionStatutsRow } from '@/app/types/alias';
+import { phaseToLabel } from '@/app/ui/referentiels/utils';
 import { useQuery } from 'react-query';
 import { TableOptions } from 'react-table';
-import { phaseToLabel } from 'ui/referentiels/utils';
 
 // Sous-ensemble des champs pour alimenter la table
 export type ProgressionRow = ActionReferentiel &

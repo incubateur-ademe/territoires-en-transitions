@@ -9,11 +9,11 @@ import { FichesActionLiees } from '@/app/app/pages/collectivite/Indicateurs/Indi
 import ActionsLieesListe from '@/app/app/pages/collectivite/PlansActions/FicheAction/ActionsLiees/ActionsLieesListe';
 import { useCollectiviteId } from '@/app/core-logic/hooks/params';
 import { useCurrentCollectivite } from '@/app/core-logic/hooks/useCurrentCollectivite';
+import ScrollTopButton from '@/app/ui/buttons/ScrollTopButton';
+import { ToolbarIconButton } from '@/app/ui/buttons/ToolbarIconButton';
+import { BadgeACompleter } from '@/app/ui/shared/Badge/BadgeACompleter';
+import TextareaControlled from '@/app/ui/shared/form/TextareaControlled';
 import { Badge, Field, TrackPageView } from '@/ui';
-import ScrollTopButton from 'ui/buttons/ScrollTopButton';
-import { ToolbarIconButton } from 'ui/buttons/ToolbarIconButton';
-import { BadgeACompleter } from 'ui/shared/Badge/BadgeACompleter';
-import TextareaControlled from 'ui/shared/form/TextareaControlled';
 import { TIndicateurDefinition } from '../types';
 import { IndicateurCompose } from './detail/IndicateurCompose';
 import { IndicateurSidePanelToolbar } from './IndicateurSidePanelToolbar';

@@ -3,8 +3,8 @@
  */
 import { referentielToName } from '@/app/app/labels';
 import { TLabellisationParcours } from '@/app/app/pages/collectivite/ParcoursLabellisation/types';
-import PreuveDoc from 'ui/shared/preuves/Bibliotheque/PreuveDoc';
-import { TPreuveLabellisation } from 'ui/shared/preuves/Bibliotheque/types';
+import PreuveDoc from '@/app/ui/shared/preuves/Bibliotheque/PreuveDoc';
+import { TPreuveLabellisation } from '@/app/ui/shared/preuves/Bibliotheque/types';
 import { AddDocsButton } from './AddDocsButton';
 import { CritereRempli } from './CritereRempli';
 

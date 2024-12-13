@@ -1,7 +1,7 @@
 import { indicateurBaseData } from '@/app/app/pages/collectivite/Indicateurs/chart/utils';
 import { SliceTooltipProps } from '@nivo/line';
 
-import { theme } from 'ui/charts/chartsTheme';
+import { theme } from '@/app/ui/charts/chartsTheme';
 
 // Affiche l'infobulle au-dessus des portions du graphe
 export const SliceTooltip = (

@@ -1,8 +1,8 @@
 import { useApiClient } from '@/app/core-logic/api/useApiClient';
 import { useCollectiviteId } from '@/app/core-logic/hooks/params';
+import { saveBlob } from '@/app/ui/shared/preuves/Bibliotheque/saveBlob';
 import { useEventTracker } from '@/ui';
 import { useMutation } from 'react-query';
-import { saveBlob } from 'ui/shared/preuves/Bibliotheque/saveBlob';
 import { TIndicateurListItem } from '../types';
 
 export type ExportIndicateursPageName =

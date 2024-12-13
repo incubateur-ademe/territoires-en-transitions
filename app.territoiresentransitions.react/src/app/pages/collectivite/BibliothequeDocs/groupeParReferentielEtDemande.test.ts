@@ -1,5 +1,5 @@
-import { test, expect, describe } from 'vitest';
-import { TPreuveAuditEtLabellisation } from 'ui/shared/preuves/Bibliotheque/types';
+import { TPreuveAuditEtLabellisation } from '@/app/ui/shared/preuves/Bibliotheque/types';
+import { describe, expect, test } from 'vitest';
 import { groupeParReferentielEtDemande } from './groupeParReferentielEtDemande';
 
 describe('groupeParReferentielEtDemande', () => {

@@ -2,7 +2,7 @@ import classNames from 'classnames';
 
 import MultiSelectDropdown, {
   TMultiSelectDropdownProps,
-} from 'ui/shared/select/MultiSelectDropdown';
+} from '@/app/ui/shared/select/MultiSelectDropdown';
 import { getIsAllSelected, ITEM_ALL } from '../filters/commons';
 import { getOptions } from './commons';
 

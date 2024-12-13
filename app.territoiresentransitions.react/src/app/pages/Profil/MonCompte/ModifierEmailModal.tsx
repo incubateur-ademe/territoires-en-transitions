@@ -1,7 +1,7 @@
 import { Dispatch, SetStateAction, SyntheticEvent } from 'react';
 
 import { useUpdateEmail } from '@/app/core-logic/api/auth/useUpdateEmail';
-import Modal from 'ui/shared/floating-ui/Modal';
+import Modal from '@/app/ui/shared/floating-ui/Modal';
 
 type ModifierEmailModalProps = {
   isOpen: boolean;

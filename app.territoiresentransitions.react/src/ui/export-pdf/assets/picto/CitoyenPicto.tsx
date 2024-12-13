@@ -1,5 +1,5 @@
+import { tw } from '@/app/ui/export-pdf/utils';
 import { G, Path, SVGProps, Svg } from '@react-pdf/renderer';
-import { tw } from 'ui/export-pdf/utils';
 
 type Props = SVGProps & {
   className?: string;

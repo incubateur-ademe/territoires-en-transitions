@@ -1,7 +1,7 @@
 import { FicheAction } from '@/api/plan-actions';
+import SpinnerLoader from '@/app/ui/shared/SpinnerLoader';
 import { Button, EmptyCard } from '@/ui';
 import { useState } from 'react';
-import SpinnerLoader from 'ui/shared/SpinnerLoader';
 import LoadingCard from '../LoadingCard';
 import {
   useFichesActionLiees,

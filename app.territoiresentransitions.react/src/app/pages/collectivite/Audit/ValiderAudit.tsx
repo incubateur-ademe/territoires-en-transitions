@@ -1,6 +1,6 @@
 import { TAudit } from '@/app/app/pages/collectivite/Audit/types';
+import PreuveDoc from '@/app/ui/shared/preuves/Bibliotheque/PreuveDoc';
 import { Modal, RenderProps } from '@/ui';
-import PreuveDoc from 'ui/shared/preuves/Bibliotheque/PreuveDoc';
 import { AddRapportButton } from './AddRapportButton';
 import { useRapportsAudit } from './useAudit';
 

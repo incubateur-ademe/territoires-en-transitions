@@ -1,7 +1,7 @@
 import { useCollectiviteId } from '@/app/core-logic/hooks/params';
+import Markdown from '@/app/ui/Markdown';
 import { InfoActionImpact, Modal, useEventTracker } from '@/ui';
 import { useState } from 'react';
-import Markdown from 'ui/Markdown';
 import { useActionImpact } from './useActionImpact';
 
 type ModaleActionImpactProps = {

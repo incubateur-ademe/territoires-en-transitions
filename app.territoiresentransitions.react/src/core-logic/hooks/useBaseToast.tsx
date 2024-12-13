@@ -1,6 +1,6 @@
+import { ToastFloater } from '@/app/ui/shared/floating-ui/ToastFloater';
 import classNames from 'classnames';
-import {useState} from 'react';
-import {ToastFloater} from 'ui/shared/floating-ui/ToastFloater';
+import { useState } from 'react';
 
 type Hidden = null;
 export type ToastStatus = Hidden | 'success' | 'error' | 'info';
@@ -60,5 +60,5 @@ export const useBaseToast = () => {
     </ToastFloater>
   );
 
-  return {renderToast, setToast};
+  return { renderToast, setToast };
 };

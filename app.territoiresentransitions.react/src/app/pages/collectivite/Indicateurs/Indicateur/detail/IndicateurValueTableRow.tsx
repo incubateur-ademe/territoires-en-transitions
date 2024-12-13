@@ -1,13 +1,13 @@
-import { InfoTooltip, Notification, Tooltip } from '@/ui';
-import classNames from 'classnames';
-import Modal from 'ui/shared/floating-ui/Modal';
-import Textarea from 'ui/shared/form/Textarea';
+import Modal from '@/app/ui/shared/floating-ui/Modal';
+import Textarea from '@/app/ui/shared/form/Textarea';
 import {
   onlyNumericRegExp,
   onlyNumericWithFloatRegExp,
   useInputFilterRef,
-} from 'ui/shared/form/utils';
-import ThreeDotMenu from 'ui/shared/select/ThreeDotMenu';
+} from '@/app/ui/shared/form/utils';
+import ThreeDotMenu from '@/app/ui/shared/select/ThreeDotMenu';
+import { InfoTooltip, Notification, Tooltip } from '@/ui';
+import classNames from 'classnames';
 import { TIndicateurValeur } from '../../useIndicateurValeurs';
 import {
   OPTION_DELETE,

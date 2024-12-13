@@ -1,8 +1,8 @@
 import { TScoreAuditRowData } from '@/app/app/pages/collectivite/AuditComparaison/types';
-import { DonutData } from 'ui/charts/Donut/DonutChart';
-import { LineData } from 'ui/charts/Line/LineChart';
-import { defaultColors, nivoColorsSet } from 'ui/charts/chartsTheme';
-import { ProgressionRow } from 'ui/charts/old/BarChartCardWithSubrows';
+import { DonutData } from '@/app/ui/charts/Donut/DonutChart';
+import { LineData } from '@/app/ui/charts/Line/LineChart';
+import { defaultColors, nivoColorsSet } from '@/app/ui/charts/chartsTheme';
+import { ProgressionRow } from '@/app/ui/charts/old/BarChartCardWithSubrows';
 
 /**
  * Définition des titres des axes pour les graphes

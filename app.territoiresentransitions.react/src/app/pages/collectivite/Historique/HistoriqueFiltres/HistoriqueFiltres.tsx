@@ -1,9 +1,9 @@
 import FiltreMembre from './FiltreMembre';
 import FiltreType from './FiltreType';
 
-import {TFilters, TInitialFilters} from '../filters';
-import {FiltreDateDebut, FiltreDateFin} from './FiltreDate';
-import {DesactiverLesFiltres} from 'ui/shared/filters/DesactiverLesFiltres';
+import { DesactiverLesFiltres } from '@/app/ui/shared/filters/DesactiverLesFiltres';
+import { TFilters, TInitialFilters } from '../filters';
+import { FiltreDateDebut, FiltreDateFin } from './FiltreDate';
 
 export type HistoriqueFiltresProps = {
   itemsNumber: number;

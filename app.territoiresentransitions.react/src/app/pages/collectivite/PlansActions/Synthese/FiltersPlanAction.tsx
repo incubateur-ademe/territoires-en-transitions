@@ -1,11 +1,11 @@
-import TagFilters from 'ui/shared/filters/TagFilters';
-import {useFichesNonClasseesListe} from '../FicheAction/data/useFichesNonClasseesListe';
-import {usePlansActionsListe} from '../PlanAction/data/usePlansActionsListe';
-import {generateTitle} from '../FicheAction/data/utils';
-import {ITEM_ALL} from 'ui/shared/filters/commons';
-import {useEffect} from 'react';
+import { ITEM_ALL } from '@/app/ui/shared/filters/commons';
+import TagFilters from '@/app/ui/shared/filters/TagFilters';
+import { useEffect } from 'react';
+import { useFichesNonClasseesListe } from '../FicheAction/data/useFichesNonClasseesListe';
+import { generateTitle } from '../FicheAction/data/utils';
+import { usePlansActionsListe } from '../PlanAction/data/usePlansActionsListe';
 
-export type PlanActionFilter = {id: number | 'nc' | 'tous'; name: string};
+export type PlanActionFilter = { id: number | 'nc' | 'tous'; name: string };
 export const filtreToutesLesFiches: PlanActionFilter = {
   id: ITEM_ALL,
   name: 'Toutes les fiches',
@@ -27,7 +27,7 @@ type FiltersPlanActionProps = {
   collectiviteId: number;
   initialPlan?: string;
   getInitialPlan?: (plan: PlanActionFilter) => void;
-  onChangePlan: ({id, name}: PlanActionFilter) => void;
+  onChangePlan: ({ id, name }: PlanActionFilter) => void;
 };
 
 const FiltersPlanAction = ({
@@ -36,7 +36,7 @@ const FiltersPlanAction = ({
   getInitialPlan,
   onChangePlan,
 }: FiltersPlanActionProps): JSX.Element => {
-  const {data: fichesNonClassees} = useFichesNonClasseesListe(collectiviteId);
+  const { data: fichesNonClassees } = useFichesNonClasseesListe(collectiviteId);
   const { data: plansActions } = usePlansActionsListe({});
 
   // Construction de la liste de filtres par plan d'action
@@ -49,7 +49,7 @@ const FiltersPlanAction = ({
 
   if (plansActions?.plans && plansActions.plans.length) {
     filters.push(
-      ...plansActions.plans.map(plan => ({
+      ...plansActions.plans.map((plan) => ({
         value: plan.id.toString(),
         label: generateTitle(plan.nom),
       }))
@@ -74,7 +74,7 @@ const FiltersPlanAction = ({
     } else {
       return {
         id: parseInt(value),
-        name: filters.filter(f => f.value === value)[0]?.label ?? '',
+        name: filters.filter((f) => f.value === value)[0]?.label ?? '',
       };
     }
   };
@@ -89,7 +89,7 @@ const FiltersPlanAction = ({
       <TagFilters
         defaultOption={initialPlan}
         options={filters}
-        onChange={value => onChangePlan(generatePlan(value))}
+        onChange={(value) => onChangePlan(generatePlan(value))}
       />
     ) : (
       <></>

@@ -1,8 +1,8 @@
 import { FicheAction } from '@/api/plan-actions';
+import ActionsReferentielsDropdown from '@/app/ui/dropdownLists/ActionsReferentielsDropdown/ActionsReferentielsDropdown';
 import { Field, Modal, ModalFooterOKCancel } from '@/ui';
 import _ from 'lodash';
 import { useEffect, useState } from 'react';
-import ActionsReferentielsDropdown from 'ui/dropdownLists/ActionsReferentielsDropdown/ActionsReferentielsDropdown';
 
 type ModaleActionsLieesProps = {
   isOpen: boolean;

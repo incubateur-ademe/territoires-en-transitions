@@ -1,7 +1,7 @@
+import { Badge } from '@/app/ui/export-pdf/components';
 import { getFormattedNumber } from '@/app/utils/formatUtils';
 import { Text } from '@react-pdf/renderer';
 import classNames from 'classnames';
-import { Badge } from 'ui/export-pdf/components';
 import { tw } from '../../utils';
 
 type BadgeBudgetProps = {

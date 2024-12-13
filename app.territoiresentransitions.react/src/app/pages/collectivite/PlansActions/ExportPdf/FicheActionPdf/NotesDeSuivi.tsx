@@ -1,8 +1,8 @@
 import { FicheActionNote } from '@/api/plan-actions';
+import { EditIcon, UserIcon } from '@/app/ui/export-pdf/assets/icons';
+import { Card, Paragraph, Stack, Title } from '@/app/ui/export-pdf/components';
 import { preset } from '@/ui';
 import { format } from 'date-fns';
-import { EditIcon, UserIcon } from 'ui/export-pdf/assets/icons';
-import { Card, Paragraph, Stack, Title } from 'ui/export-pdf/components';
 
 const { colors } = preset.theme.extend;
 

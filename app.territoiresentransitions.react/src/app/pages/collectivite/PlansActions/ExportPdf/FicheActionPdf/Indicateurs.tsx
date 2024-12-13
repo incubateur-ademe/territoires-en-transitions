@@ -1,6 +1,5 @@
 import { IndicateurDefinition } from '@/api/indicateurs/domain';
 import { FicheAction } from '@/api/plan-actions';
-import classNames from 'classnames';
 import {
   Badge,
   Card,
@@ -8,7 +7,8 @@ import {
   Paragraph,
   Stack,
   Title,
-} from 'ui/export-pdf/components';
+} from '@/app/ui/export-pdf/components';
+import classNames from 'classnames';
 
 type IndicateurCardProps = {
   indicateur: IndicateurDefinition;

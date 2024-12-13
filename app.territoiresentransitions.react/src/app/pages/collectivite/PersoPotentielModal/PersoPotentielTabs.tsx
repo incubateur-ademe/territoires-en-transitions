@@ -2,9 +2,12 @@
  * Affiche le dialogue de personnalisation du potentiel de points d'une sous-action
  */
 
-import {Tabs, Tab} from 'ui/shared/Tabs';
-import {PersoPotentielQR, TPersoPotentielQRProps} from './PersoPotentielQR';
-import {PersoPotentielDoc, TPersoPotentielDocProps} from './PersoPotentielDoc';
+import { Tab, Tabs } from '@/app/ui/shared/Tabs';
+import {
+  PersoPotentielDoc,
+  TPersoPotentielDocProps,
+} from './PersoPotentielDoc';
+import { PersoPotentielQR, TPersoPotentielQRProps } from './PersoPotentielQR';
 
 export type TPersoPotentielTabsProps = TPersoPotentielQRProps &
   TPersoPotentielDocProps & {
@@ -13,7 +16,7 @@ export type TPersoPotentielTabsProps = TPersoPotentielQRProps &
   };
 
 export const PersoPotentielTabs = (props: TPersoPotentielTabsProps) => {
-  const {defaultActiveTab, ...other} = props;
+  const { defaultActiveTab, ...other } = props;
   return (
     <Tabs defaultActiveTab={defaultActiveTab}>
       <Tab label="Personnalisation du potentiel" icon="settings-5">

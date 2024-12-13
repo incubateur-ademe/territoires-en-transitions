@@ -11,12 +11,12 @@ import Module, {
 } from '@/app/app/pages/collectivite/TableauDeBord/components/Module';
 import { TDBViewParam } from '@/app/app/paths';
 import { useCurrentCollectivite } from '@/app/core-logic/hooks/useCurrentCollectivite';
+import Chart from '@/app/ui/charts/Chart';
+import PictoDocument from '@/app/ui/pictogrammes/PictoDocument';
 import { useEventTracker } from '@/ui';
 import Link from 'next/link';
 import { useRouter } from 'next/navigation';
 import { useState } from 'react';
-import Chart from 'ui/charts/Chart';
-import PictoDocument from 'ui/pictogrammes/PictoDocument';
 
 type Props = {
   view: TDBViewParam;

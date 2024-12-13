@@ -1,10 +1,10 @@
-import {CSSProperties} from 'react';
+import { Datum, LineSvgProps, ResponsiveLine } from '@nivo/line';
 import classNames from 'classnames';
-import {Datum, LineSvgProps, ResponsiveLine} from '@nivo/line';
+import { CSSProperties } from 'react';
 
-import {defaultColors, theme} from '../chartsTheme';
-import ChartLegend, {ChartLegendProps} from '../ChartLegend';
-import {generateLineLegendItems} from 'ui/charts/Line/utils';
+import { generateLineLegendItems } from '@/app/ui/charts/Line/utils';
+import ChartLegend, { ChartLegendProps } from '../ChartLegend';
+import { defaultColors, theme } from '../chartsTheme';
 
 /** Format de données pour une droite du graphique Line */
 export type LineData = {
@@ -58,7 +58,7 @@ const LineChart = ({
           curve="monotoneX"
           enableGridX
           enableGridY
-          margin={{top: 16, right: 48, bottom: 48, left: 48}}
+          margin={{ top: 16, right: 48, bottom: 48, left: 48 }}
           pointSize={6}
           enableSlices="x"
           animate

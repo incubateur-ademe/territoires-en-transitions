@@ -1,5 +1,5 @@
+import { Stack, StackProps } from '@/app/ui/export-pdf/components';
 import classNames from 'classnames';
-import { Stack, StackProps } from 'ui/export-pdf/components';
 
 type CardProps = StackProps;
 

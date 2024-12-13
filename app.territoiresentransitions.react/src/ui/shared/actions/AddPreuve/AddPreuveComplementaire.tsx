@@ -1,9 +1,9 @@
 import { useCurrentCollectivite } from '@/app/core-logic/hooks/useCurrentCollectivite';
+import { AddPreuveModal } from '@/app/ui/shared/preuves/AddPreuveModal';
+import { TActionDef } from '@/app/ui/shared/preuves/Bibliotheque/usePreuves';
+import SelectDropdown from '@/app/ui/shared/select/SelectDropdown';
 import { Modal } from '@/ui';
 import { useState } from 'react';
-import { AddPreuveModal } from 'ui/shared/preuves/AddPreuveModal';
-import { TActionDef } from 'ui/shared/preuves/Bibliotheque/usePreuves';
-import SelectDropdown from 'ui/shared/select/SelectDropdown';
 import { useAddPreuveComplementaireToAction } from './useAddPreuveToAction';
 import { useSubActionOptionsListe } from './useSubActions';
 

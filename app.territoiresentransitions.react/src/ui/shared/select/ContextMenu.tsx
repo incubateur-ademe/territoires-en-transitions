@@ -1,8 +1,8 @@
+import DropdownFloater from '@/app/ui/shared/floating-ui/DropdownFloater';
 import classNames from 'classnames';
-import DropdownFloater from 'ui/shared/floating-ui/DropdownFloater';
-import {TOption} from './commons';
+import { TOption } from './commons';
 
-type TOptionWithIcon = TOption & {icon?: string};
+type TOptionWithIcon = TOption & { icon?: string };
 
 /** Affiche un menu contextuel */
 const ContextMenu = ({
@@ -23,10 +23,10 @@ const ContextMenu = ({
   return (
     <DropdownFloater
       placement="bottom-end"
-      render={({close}) => (
+      render={({ close }) => (
         <nav data-test={dataTest}>
           <ul className="m-0 p-0">
-            {options.map(({value, label, icon}) => (
+            {options.map(({ value, label, icon }) => (
               <li
                 key={value}
                 className="fr-nav__item pb-0 border-b border-gray-200"

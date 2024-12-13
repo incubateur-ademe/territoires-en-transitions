@@ -1,5 +1,8 @@
-import { preset } from '@/ui';
-import { DiscussIcon, FileIcon, LinkIcon } from 'ui/export-pdf/assets/icons';
+import {
+  DiscussIcon,
+  FileIcon,
+  LinkIcon,
+} from '@/app/ui/export-pdf/assets/icons';
 import {
   Card,
   Divider,
@@ -7,8 +10,9 @@ import {
   Stack,
   StyledLink,
   Title,
-} from 'ui/export-pdf/components';
-import { getAuthorAndDate } from 'ui/shared/preuves/Bibliotheque/utils';
+} from '@/app/ui/export-pdf/components';
+import { getAuthorAndDate } from '@/app/ui/shared/preuves/Bibliotheque/utils';
+import { preset } from '@/ui';
 import { AnnexeInfo } from '../../FicheAction/data/useAnnexesFicheActionInfos';
 import { generateTitle } from '../../FicheAction/data/utils';
 

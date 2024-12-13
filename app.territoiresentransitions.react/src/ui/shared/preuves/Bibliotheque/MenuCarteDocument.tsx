@@ -1,8 +1,8 @@
+import { EditerDocumentModal } from '@/app/ui/shared/preuves/Bibliotheque/EditerDocumentModal';
+import { TPreuve } from '@/app/ui/shared/preuves/Bibliotheque/types';
 import { Button } from '@/ui';
 import classNames from 'classnames';
 import { useState } from 'react';
-import { EditerDocumentModal } from 'ui/shared/preuves/Bibliotheque/EditerDocumentModal';
-import { TPreuve } from 'ui/shared/preuves/Bibliotheque/types';
 import DeleteButton from '../../../../app/pages/collectivite/PlansActions/FicheAction/DeleteButton';
 import { EditerLienModal } from './EditerLienModal';
 

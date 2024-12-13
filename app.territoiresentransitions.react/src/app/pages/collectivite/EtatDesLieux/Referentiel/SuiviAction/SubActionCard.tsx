@@ -3,10 +3,10 @@ import { TCycleLabellisationStatus } from '@/app/app/pages/collectivite/Parcours
 import { ActionDefinitionSummary } from '@/app/core-logic/api/endpoints/ActionDefinitionSummaryReadEndpoint';
 import { useActionSummaryChildren } from '@/app/core-logic/hooks/referentiel';
 import { useActionStatut } from '@/app/core-logic/hooks/useActionStatut';
+import { Accordion } from '@/app/ui/Accordion';
+import { ActionCommentaire } from '@/app/ui/shared/actions/ActionCommentaire';
 import { useEffect, useRef, useState } from 'react';
 import { useLocation } from 'react-router-dom';
-import { Accordion } from 'ui/Accordion';
-import { ActionCommentaire } from 'ui/shared/actions/ActionCommentaire';
 import { SuiviScoreRow } from '../data/useScoreRealise';
 import SubActionDescription from './SubActionDescription';
 import SubActionHeader from './SubActionHeader';

@@ -7,12 +7,12 @@ import {
   useSensors,
 } from '@dnd-kit/core';
 
-import { PlanNode } from '../data/types';
-import NestedDroppableContainers from './NestedDroppableContainers';
+import PictoLeaf from '@/app/ui/pictogrammes/PictoLeaf';
 import { useFicheChangeAxe } from '../../FicheAction/data/useFicheChangeAxe';
-import PictoLeaf from 'ui/pictogrammes/PictoLeaf';
 import { AxeActions } from '../AxeActions';
+import { PlanNode } from '../data/types';
 import { useDragAxe } from '../data/useDragAxe';
+import NestedDroppableContainers from './NestedDroppableContainers';
 
 import './dropAnimation.css';
 

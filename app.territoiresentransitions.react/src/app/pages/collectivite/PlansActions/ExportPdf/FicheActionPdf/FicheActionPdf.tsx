@@ -1,7 +1,7 @@
 import { IndicateurDefinition } from '@/api/indicateurs/domain';
 import { FicheAction, FicheActionNote, FicheResume } from '@/api/plan-actions';
 import { TActionStatutsRow, TAxeRow } from '@/app/types/alias';
-import { Divider, Stack, Title } from 'ui/export-pdf/components';
+import { Divider, Stack, Title } from '@/app/ui/export-pdf/components';
 import { AnnexeInfo } from '../../FicheAction/data/useAnnexesFicheActionInfos';
 
 import Acteurs from './Acteurs';

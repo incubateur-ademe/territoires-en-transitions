@@ -1,5 +1,5 @@
-import ThreeDotMenu from 'ui/shared/select/ThreeDotMenu';
-import {useDeleteCommentaireFromDiscussion} from './data/useDeleteCommentaireFromDiscussion';
+import ThreeDotMenu from '@/app/ui/shared/select/ThreeDotMenu';
+import { useDeleteCommentaireFromDiscussion } from './data/useDeleteCommentaireFromDiscussion';
 
 type Props = {
   commentaire_id: number;
@@ -14,13 +14,13 @@ const OPTIONS = [
 ];
 
 /** Menu et options pour un commentaire dans une discussion */
-const ActionDiscussionCommentaireDropdown = ({commentaire_id}: Props) => {
-  const {mutate: deleteCommentaire} = useDeleteCommentaireFromDiscussion();
+const ActionDiscussionCommentaireDropdown = ({ commentaire_id }: Props) => {
+  const { mutate: deleteCommentaire } = useDeleteCommentaireFromDiscussion();
 
   return (
     <ThreeDotMenu
       options={OPTIONS}
-      onSelect={value => {
+      onSelect={(value) => {
         if (value === 'delete') {
           deleteCommentaire(commentaire_id);
         }

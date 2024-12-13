@@ -1,7 +1,7 @@
 import { useCurrentCollectivite } from '@/app/core-logic/hooks/useCurrentCollectivite';
+import { Accordion } from '@/app/ui/Accordion';
+import Textarea from '@/app/ui/shared/form/Textarea';
 import { useEffect, useState } from 'react';
-import { Accordion } from 'ui/Accordion';
-import Textarea from 'ui/shared/form/Textarea';
 import { TQuestionReponseProps } from './PersoPotentielQR';
 import { useUpdateJustification } from './useUpdateJustification';
 

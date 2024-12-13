@@ -5,6 +5,12 @@ import { modulesSave } from '@/api/plan-actions/dashboards/personal-dashboard/ac
 import { ModuleIndicateursSelect } from '@/api/plan-actions/dashboards/personal-dashboard/domain/module.schema';
 import { supabaseClient } from '@/app/core-logic/api/supabase';
 import { useCollectiviteId } from '@/app/core-logic/hooks/params';
+import IndicateurCompletsDropdown from '@/app/ui/dropdownLists/indicateur/IndicateurCompletsDropdown';
+import PersonnesDropdown from '@/app/ui/dropdownLists/PersonnesDropdown/PersonnesDropdown';
+import { splitPilotePersonnesAndUsers } from '@/app/ui/dropdownLists/PersonnesDropdown/utils';
+import PlansActionDropdown from '@/app/ui/dropdownLists/PlansActionDropdown';
+import ServicesPilotesDropdown from '@/app/ui/dropdownLists/ServicesPilotesDropdown/ServicesPilotesDropdown';
+import ThematiquesDropdown from '@/app/ui/dropdownLists/ThematiquesDropdown/ThematiquesDropdown';
 import {
   Field,
   FormSection,
@@ -14,12 +20,6 @@ import {
   useEventTracker,
 } from '@/ui';
 import { QueryKey, useQueryClient } from 'react-query';
-import IndicateurCompletsDropdown from 'ui/dropdownLists/indicateur/IndicateurCompletsDropdown';
-import PersonnesDropdown from 'ui/dropdownLists/PersonnesDropdown/PersonnesDropdown';
-import { splitPilotePersonnesAndUsers } from 'ui/dropdownLists/PersonnesDropdown/utils';
-import PlansActionDropdown from 'ui/dropdownLists/PlansActionDropdown';
-import ServicesPilotesDropdown from 'ui/dropdownLists/ServicesPilotesDropdown/ServicesPilotesDropdown';
-import ThematiquesDropdown from 'ui/dropdownLists/ThematiquesDropdown/ThematiquesDropdown';
 
 type Props = ModalProps & {
   module: ModuleIndicateursSelect;

@@ -1,4 +1,4 @@
-import { Badge, BadgeBudget, Stack } from 'ui/export-pdf/components';
+import { Badge, BadgeBudget, Stack } from '@/app/ui/export-pdf/components';
 
 type BadgeFinanceurProps = {
   nom: string;

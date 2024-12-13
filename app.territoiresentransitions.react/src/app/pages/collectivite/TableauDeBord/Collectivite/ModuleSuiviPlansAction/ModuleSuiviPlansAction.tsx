@@ -11,9 +11,9 @@ import {
   makeTableauBordModuleUrl,
   TDBViewParam,
 } from '@/app/app/paths';
+import PictoDocument from '@/app/ui/pictogrammes/PictoDocument';
 import { Button, useEventTracker } from '@/ui';
 import { useRouter } from 'next/navigation';
-import PictoDocument from 'ui/pictogrammes/PictoDocument';
 
 type Props = {
   view: TDBViewParam;

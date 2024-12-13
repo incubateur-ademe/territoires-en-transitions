@@ -1,5 +1,12 @@
 import { FicheAction } from '@/api/plan-actions';
 import { useCurrentCollectivite } from '@/app/core-logic/hooks/useCurrentCollectivite';
+import PartenairesDropdown from '@/app/ui/dropdownLists/PartenairesDropdown/PartenairesDropdown';
+import PersonnesDropdown from '@/app/ui/dropdownLists/PersonnesDropdown/PersonnesDropdown';
+import { getPersonneStringId } from '@/app/ui/dropdownLists/PersonnesDropdown/utils';
+import ServicesPilotesDropdown from '@/app/ui/dropdownLists/ServicesPilotesDropdown/ServicesPilotesDropdown';
+import StructuresDropdown from '@/app/ui/dropdownLists/StructuresDropdown/StructuresDropdown';
+import CiblesDropdown from '@/app/ui/dropdownLists/ficheAction/CiblesDropdown/CiblesDropdown';
+import ParticipationCitoyenneDropdown from '@/app/ui/dropdownLists/ficheAction/ParticipationCitoyenneDropdown/ParticipationCitoyenneDropdown';
 import {
   Field,
   FormSectionGrid,
@@ -10,13 +17,6 @@ import {
 } from '@/ui';
 import _ from 'lodash';
 import { useState } from 'react';
-import PartenairesDropdown from 'ui/dropdownLists/PartenairesDropdown/PartenairesDropdown';
-import PersonnesDropdown from 'ui/dropdownLists/PersonnesDropdown/PersonnesDropdown';
-import { getPersonneStringId } from 'ui/dropdownLists/PersonnesDropdown/utils';
-import ServicesPilotesDropdown from 'ui/dropdownLists/ServicesPilotesDropdown/ServicesPilotesDropdown';
-import StructuresDropdown from 'ui/dropdownLists/StructuresDropdown/StructuresDropdown';
-import CiblesDropdown from 'ui/dropdownLists/ficheAction/CiblesDropdown/CiblesDropdown';
-import ParticipationCitoyenneDropdown from 'ui/dropdownLists/ficheAction/ParticipationCitoyenneDropdown/ParticipationCitoyenneDropdown';
 
 type ModaleActeursProps = {
   isOpen: boolean;

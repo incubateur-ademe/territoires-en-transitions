@@ -1,10 +1,10 @@
 import { avancementToLabel, referentielToName } from '@/app/app/labels';
 import { ReferentielParamOption } from '@/app/app/paths';
 import { actionAvancementColors } from '@/app/app/theme';
-import { TableOptions } from 'react-table';
 import BarChartCardWithSubrows, {
   TBarChartScoreTable,
-} from 'ui/charts/old/BarChartCardWithSubrows';
+} from '@/app/ui/charts/old/BarChartCardWithSubrows';
+import { TableOptions } from 'react-table';
 import { ProgressionRow } from '../../data/useProgressionReferentiel';
 import { getFormattedScore } from '../utils';
 

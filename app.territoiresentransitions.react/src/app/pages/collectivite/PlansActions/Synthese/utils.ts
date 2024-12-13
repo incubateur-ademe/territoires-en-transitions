@@ -1,6 +1,6 @@
 import { Statut } from '@/api/plan-actions';
 import { statutToColor } from '@/app/app/pages/collectivite/PlansActions/FicheAction/utils';
-import { DonutData } from 'ui/charts/Donut/DonutChart';
+import { DonutData } from '@/app/ui/charts/Donut/DonutChart';
 import { FiltersKeys } from '../FicheAction/data/filters';
 import { TPlanActionTableauDeBord } from './data/usePlanActionTableauDeBord';
 

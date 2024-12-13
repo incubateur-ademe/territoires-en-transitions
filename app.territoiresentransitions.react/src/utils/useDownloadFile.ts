@@ -1,5 +1,5 @@
-import {useMutation} from 'react-query';
-import {saveBlob} from 'ui/shared/preuves/Bibliotheque/saveBlob';
+import { saveBlob } from '@/app/ui/shared/preuves/Bibliotheque/saveBlob';
+import { useMutation } from 'react-query';
 
 /** Télécharge un fichier du dossier "public" */
 export const useDownloadFile = () =>

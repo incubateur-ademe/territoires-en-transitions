@@ -2,7 +2,7 @@ import { Form, Formik } from 'formik';
 import React, { useState } from 'react';
 import * as Yup from 'yup';
 
-import FormikInput from 'ui/shared/form/formik/FormikInput';
+import FormikInput from '@/app/ui/shared/form/formik/FormikInput';
 import ModifierEmailModal from './ModifierEmailModal';
 
 import { useAuth, UserData } from '@/app/core-logic/api/auth/AuthProvider';

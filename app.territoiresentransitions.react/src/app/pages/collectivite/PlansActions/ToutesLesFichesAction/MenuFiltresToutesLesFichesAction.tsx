@@ -1,21 +1,21 @@
 import { Filtre } from '@/api/plan-actions/fiche-resumes.list/domain/fetch-options.schema';
-import { Checkbox, Field, FormSection } from '@/ui';
-import FinanceursDropdown from 'ui/dropdownLists/FinanceursDropdown/FinanceursDropdown';
-import PartenairesDropdown from 'ui/dropdownLists/PartenairesDropdown/PartenairesDropdown';
-import PersonnesDropdown from 'ui/dropdownLists/PersonnesDropdown/PersonnesDropdown';
+import FinanceursDropdown from '@/app/ui/dropdownLists/FinanceursDropdown/FinanceursDropdown';
+import PartenairesDropdown from '@/app/ui/dropdownLists/PartenairesDropdown/PartenairesDropdown';
+import PersonnesDropdown from '@/app/ui/dropdownLists/PersonnesDropdown/PersonnesDropdown';
 import {
   getPilotesValues,
   getReferentsValues,
   splitPilotePersonnesAndUsers,
   splitReferentPersonnesAndUsers,
-} from 'ui/dropdownLists/PersonnesDropdown/utils';
-import PlansActionDropdown from 'ui/dropdownLists/PlansActionDropdown';
-import ServicesPilotesDropdown from 'ui/dropdownLists/ServicesPilotesDropdown/ServicesPilotesDropdown';
-import StructuresDropdown from 'ui/dropdownLists/StructuresDropdown/StructuresDropdown';
-import ThematiquesDropdown from 'ui/dropdownLists/ThematiquesDropdown/ThematiquesDropdown';
-import CiblesDropdown from 'ui/dropdownLists/ficheAction/CiblesDropdown/CiblesDropdown';
-import PrioritesFilterDropdown from 'ui/dropdownLists/ficheAction/priorites/PrioritesFilterDropdown';
-import StatutsFilterDropdown from 'ui/dropdownLists/ficheAction/statuts/StatutsFilterDropdown';
+} from '@/app/ui/dropdownLists/PersonnesDropdown/utils';
+import PlansActionDropdown from '@/app/ui/dropdownLists/PlansActionDropdown';
+import ServicesPilotesDropdown from '@/app/ui/dropdownLists/ServicesPilotesDropdown/ServicesPilotesDropdown';
+import StructuresDropdown from '@/app/ui/dropdownLists/StructuresDropdown/StructuresDropdown';
+import ThematiquesDropdown from '@/app/ui/dropdownLists/ThematiquesDropdown/ThematiquesDropdown';
+import CiblesDropdown from '@/app/ui/dropdownLists/ficheAction/CiblesDropdown/CiblesDropdown';
+import PrioritesFilterDropdown from '@/app/ui/dropdownLists/ficheAction/priorites/PrioritesFilterDropdown';
+import StatutsFilterDropdown from '@/app/ui/dropdownLists/ficheAction/statuts/StatutsFilterDropdown';
+import { Checkbox, Field, FormSection } from '@/ui';
 
 type Props = {
   filters: Filtre;

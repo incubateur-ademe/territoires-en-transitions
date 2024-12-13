@@ -6,12 +6,12 @@ import {
 } from '@/app/app/pages/collectivite/Indicateurs/Indicateur/useInsertIndicateurPersoDefinition';
 import { makeCollectiviteIndicateursUrl } from '@/app/app/paths';
 import { useCollectiviteId } from '@/app/core-logic/hooks/params';
+import ThematiquesDropdown from '@/app/ui/dropdownLists/ThematiquesDropdown/ThematiquesDropdown';
+import FormikInput from '@/app/ui/shared/form/formik/FormikInput';
 import { Alert, Button, Checkbox, Field, FormSectionGrid } from '@/ui';
 import { Form, Formik } from 'formik';
 import { useRouter } from 'next/navigation';
 import { useState } from 'react';
-import ThematiquesDropdown from 'ui/dropdownLists/ThematiquesDropdown/ThematiquesDropdown';
-import FormikInput from 'ui/shared/form/formik/FormikInput';
 import * as Yup from 'yup';
 
 const validation = Yup.object({

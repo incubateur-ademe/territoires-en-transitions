@@ -6,12 +6,12 @@ import {
 import { useTasksScoreRepartition } from '@/app/app/pages/collectivite/EtatDesLieux/Referentiel/data/useTasksScores';
 import { actionAvancementColors } from '@/app/app/theme';
 import { ActionDefinitionSummary } from '@/app/core-logic/api/endpoints/ActionDefinitionSummaryReadEndpoint';
+import { DetailedScore } from '@/app/ui/referentiels/ScoreDetailleModal/DetailedScore/DetailedScore';
+import { AvancementValues } from '@/app/ui/referentiels/ScoreDetailleModal/DetailedScore/DetailedScoreSlider';
+import ProgressBarWithTooltip from '@/app/ui/score/ProgressBarWithTooltip';
+import Modal from '@/app/ui/shared/floating-ui/Modal';
 import classNames from 'classnames';
 import { Dispatch, SetStateAction, useEffect, useState } from 'react';
-import { DetailedScore } from 'ui/referentiels/ScoreDetailleModal/DetailedScore/DetailedScore';
-import { AvancementValues } from 'ui/referentiels/ScoreDetailleModal/DetailedScore/DetailedScoreSlider';
-import ProgressBarWithTooltip from 'ui/score/ProgressBarWithTooltip';
-import Modal from 'ui/shared/floating-ui/Modal';
 import ActionJustification from '../../../app/pages/collectivite/EtatDesLieux/Referentiel/SuiviAction/ActionJustification';
 import { AVANCEMENT_DETAILLE_PAR_STATUT, getStatusFromIndex } from '../utils';
 

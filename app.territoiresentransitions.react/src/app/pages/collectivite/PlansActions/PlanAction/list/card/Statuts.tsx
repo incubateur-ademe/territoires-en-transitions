@@ -2,8 +2,8 @@ import { Statut } from '@/api/plan-actions';
 import BadgeStatut from '@/app/app/pages/collectivite/PlansActions/components/BadgeStatut';
 import { statutToColor } from '@/app/app/pages/collectivite/PlansActions/FicheAction/utils';
 import { ModuleDisplay } from '@/app/app/pages/collectivite/TableauDeBord/components/Module';
+import Chart from '@/app/ui/charts/Chart';
 import { Tooltip } from '@/ui';
-import Chart from 'ui/charts/Chart';
 
 type Props = {
   statuts: {

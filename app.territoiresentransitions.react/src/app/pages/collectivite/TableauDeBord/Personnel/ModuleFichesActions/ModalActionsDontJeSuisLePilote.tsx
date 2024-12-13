@@ -6,6 +6,11 @@ import { Filtre as FiltreFichesAction } from '@/api/plan-actions/fiche-resumes.l
 import { useAuth } from '@/app/core-logic/api/auth/AuthProvider';
 import { supabaseClient } from '@/app/core-logic/api/supabase';
 import { useCollectiviteId } from '@/app/core-logic/hooks/params';
+import PrioritesFilterDropdown from '@/app/ui/dropdownLists/ficheAction/priorites/PrioritesFilterDropdown';
+import StatutsFilterDropdown from '@/app/ui/dropdownLists/ficheAction/statuts/StatutsFilterDropdown';
+import PersonnesDropdown from '@/app/ui/dropdownLists/PersonnesDropdown/PersonnesDropdown';
+import { getPilotesValues } from '@/app/ui/dropdownLists/PersonnesDropdown/utils';
+import PlansActionDropdown from '@/app/ui/dropdownLists/PlansActionDropdown';
 import {
   Field,
   FormSection,
@@ -16,11 +21,6 @@ import {
   useEventTracker,
 } from '@/ui';
 import { QueryKey, useQueryClient } from 'react-query';
-import PrioritesFilterDropdown from 'ui/dropdownLists/ficheAction/priorites/PrioritesFilterDropdown';
-import StatutsFilterDropdown from 'ui/dropdownLists/ficheAction/statuts/StatutsFilterDropdown';
-import PersonnesDropdown from 'ui/dropdownLists/PersonnesDropdown/PersonnesDropdown';
-import { getPilotesValues } from 'ui/dropdownLists/PersonnesDropdown/utils';
-import PlansActionDropdown from 'ui/dropdownLists/PlansActionDropdown';
 
 type Props = ModalProps & {
   module: ModuleFicheActionsSelect;

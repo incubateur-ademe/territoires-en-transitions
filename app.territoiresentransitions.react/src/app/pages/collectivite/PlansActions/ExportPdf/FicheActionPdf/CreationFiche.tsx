@@ -1,5 +1,5 @@
+import { Card, Paragraph } from '@/app/ui/export-pdf/components';
 import { format } from 'date-fns';
-import { Card, Paragraph } from 'ui/export-pdf/components';
 import { FicheActionPdfProps } from './FicheActionPdf';
 
 const CreationFiche = ({ fiche }: FicheActionPdfProps) => {

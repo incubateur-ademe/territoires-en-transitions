@@ -2,9 +2,9 @@
  * Affiche le formulaire d'ajout de liens
  */
 
+import FormikInput from '@/app/ui/shared/form/formik/FormikInput';
 import { Button } from '@/ui';
 import { Form, Formik } from 'formik';
-import FormikInput from 'ui/shared/form/formik/FormikInput';
 import * as Yup from 'yup';
 
 export type TAddLink = (titre: string, url: string) => void;

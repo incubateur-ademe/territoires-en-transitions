@@ -2,10 +2,10 @@ import { CustomLayerProps } from '@nivo/line';
 import classNames from 'classnames';
 
 import { SliceTooltip } from '@/app/app/pages/collectivite/Indicateurs/chart/SliceTooltip';
-import Chart, { ChartInfosProps } from 'ui/charts/Chart';
-import { LineChartProps } from 'ui/charts/Line/LineChart';
-import PictoIndicateurVide from 'ui/pictogrammes/PictoIndicateurVide';
-import SpinnerLoader from 'ui/shared/SpinnerLoader';
+import Chart, { ChartInfosProps } from '@/app/ui/charts/Chart';
+import { LineChartProps } from '@/app/ui/charts/Line/LineChart';
+import PictoIndicateurVide from '@/app/ui/pictogrammes/PictoIndicateurVide';
+import SpinnerLoader from '@/app/ui/shared/SpinnerLoader';
 import { TIndicateurValeur } from '../useIndicateurValeurs';
 import { getXTickValues, indicateurBaseData, prepareData } from './utils';
 

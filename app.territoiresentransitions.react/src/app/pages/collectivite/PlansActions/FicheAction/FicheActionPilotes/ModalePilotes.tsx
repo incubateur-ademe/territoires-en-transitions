@@ -1,9 +1,9 @@
 import { FicheAction } from '@/api/plan-actions';
+import PersonnesDropdown from '@/app/ui/dropdownLists/PersonnesDropdown/PersonnesDropdown';
+import { getPersonneStringId } from '@/app/ui/dropdownLists/PersonnesDropdown/utils';
 import { Field, FormSectionGrid, Modal, ModalFooterOKCancel } from '@/ui';
 import _ from 'lodash';
 import { useState } from 'react';
-import PersonnesDropdown from 'ui/dropdownLists/PersonnesDropdown/PersonnesDropdown';
-import { getPersonneStringId } from 'ui/dropdownLists/PersonnesDropdown/utils';
 
 type ModalePilotesProps = {
   isOpen: boolean;

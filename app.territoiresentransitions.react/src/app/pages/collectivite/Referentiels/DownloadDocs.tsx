@@ -1,10 +1,10 @@
 import { ActionDefinitionSummary } from '@/app/core-logic/api/endpoints/ActionDefinitionSummaryReadEndpoint';
 import { supabaseClient } from '@/app/core-logic/api/supabase';
 import { useCurrentCollectivite } from '@/app/core-logic/hooks/useCurrentCollectivite';
+import { saveBlob } from '@/app/ui/shared/preuves/Bibliotheque/saveBlob';
+import { TFichier } from '@/app/ui/shared/preuves/Bibliotheque/types';
+import { usePreuves } from '@/app/ui/shared/preuves/Bibliotheque/usePreuves';
 import { useQuery, useQueryClient } from 'react-query';
-import { saveBlob } from 'ui/shared/preuves/Bibliotheque/saveBlob';
-import { TFichier } from 'ui/shared/preuves/Bibliotheque/types';
-import { usePreuves } from 'ui/shared/preuves/Bibliotheque/usePreuves';
 
 export type TDownloadDocsProps = {
   action: ActionDefinitionSummary;

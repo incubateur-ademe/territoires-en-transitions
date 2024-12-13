@@ -1,7 +1,7 @@
-import {useEffect} from 'react';
+import SpinnerLoader from '@/app/ui/shared/SpinnerLoader';
 import classNames from 'classnames';
-import SpinnerLoader from 'ui/shared/SpinnerLoader';
-import {useActionListe} from '../data/options/useActionListe';
+import { useEffect } from 'react';
+import { useActionListe } from '../data/options/useActionListe';
 import ActionCard from './ActionCard';
 
 type ActionsLieesListeProps = {
@@ -19,7 +19,7 @@ const ActionsLieesListe = ({
   onLoad,
   onUnlink,
 }: ActionsLieesListeProps) => {
-  const {data: actionListe, isLoading} = useActionListe();
+  const { data: actionListe, isLoading } = useActionListe();
 
   useEffect(() => onLoad?.(isLoading), [isLoading]);
 
@@ -27,8 +27,8 @@ const ActionsLieesListe = ({
     return <SpinnerLoader className="mx-auto my-8" />;
   }
 
-  const actionsLiees = (actionListe ?? []).filter(action =>
-    actionsIds.some(id => id === action.action_id)
+  const actionsLiees = (actionListe ?? []).filter((action) =>
+    actionsIds.some((id) => id === action.action_id)
   );
 
   if (actionsLiees.length === 0) return null;
@@ -42,7 +42,7 @@ const ActionsLieesListe = ({
           className
         )}
       >
-        {actionsLiees.map(action => (
+        {actionsLiees.map((action) => (
           <ActionCard
             key={action.action_id}
             isReadonly={isReadonly}
