@@ -17,7 +17,7 @@ import {
   createdBy,
   modifiedAt,
   modifiedBy,
-} from '../../common/models/column.helpers';
+} from '../../utils/column.utils';
 import {
   indicateurDefinitionSchema,
   indicateurDefinitionTable,

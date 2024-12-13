@@ -1,4 +1,4 @@
-import { createdAt, createdBy } from '@/backend/common/models/column.helpers';
+import { createdAt, createdBy } from '@/backend/utils';
 import { integer, pgTable, primaryKey } from 'drizzle-orm/pg-core';
 import { libreTagTable } from '../../taxonomie/models/libre-tag.table';
 import { ficheActionTable } from './fiche-action.table';

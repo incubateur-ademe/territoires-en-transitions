@@ -13,14 +13,14 @@ import {
 import { createInsertSchema, createSelectSchema } from 'drizzle-zod';
 import z from 'zod';
 import { collectiviteTable } from '../../collectivites/models/collectivite.table';
+import { getPersonnalitionReponsesResponseSchema } from '../../personnalisations/models/get-personnalisation-reponses.response';
 import {
   createdAt,
   createdBy,
   modifiedAt,
   modifiedBy,
   TIMESTAMP_OPTIONS,
-} from '../../common/models/column.helpers';
-import { getPersonnalitionReponsesResponseSchema } from '../../personnalisations/models/get-personnalisation-reponses.response';
+} from '../../utils/column.utils';
 import { getReferentielScoresResponseSchema } from './get-referentiel-scores.response';
 import { labellisationAuditTable } from './labellisation-audit.table';
 import {

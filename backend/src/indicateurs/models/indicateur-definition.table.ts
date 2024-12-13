@@ -1,3 +1,4 @@
+import { InferInsertModel, InferSelectModel } from 'drizzle-orm';
 import {
   boolean,
   doublePrecision,
@@ -6,16 +7,15 @@ import {
   serial,
   text,
 } from 'drizzle-orm/pg-core';
-import { collectiviteTable } from '../../collectivites/models/collectivite.table';
-import { InferInsertModel, InferSelectModel } from 'drizzle-orm';
 import { createInsertSchema, createSelectSchema } from 'drizzle-zod';
 import { z } from 'zod';
+import { collectiviteTable } from '../../collectivites/models/collectivite.table';
 import {
   createdAt,
   createdBy,
   modifiedAt,
   modifiedBy,
-} from '../../common/models/column.helpers';
+} from '../../utils/column.utils';
 
 export const indicateurDefinitionTable = pgTable('indicateur_definition', {
   id: serial('id').primaryKey(),

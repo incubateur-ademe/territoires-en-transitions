@@ -3,12 +3,8 @@ import { integer, pgTable, serial, text } from 'drizzle-orm/pg-core';
 import { createSelectSchema } from 'drizzle-zod';
 import { collectiviteTable } from '../../collectivites/models/collectivite.table';
 import { panierTable } from '../../panier/models/panier.table';
+import { createdAt, modifiedAt, modifiedBy } from '../../utils/column.utils';
 import { planActionTypeTable } from './plan-action-type.table';
-import {
-  createdAt,
-  modifiedAt,
-  modifiedBy,
-} from '../../common/models/column.helpers';
 
 export const axeTable: ReturnType<typeof pgTable> = pgTable('axe', {
   id: serial('id').primaryKey(),

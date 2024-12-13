@@ -1,7 +1,7 @@
 import { InferInsertModel, InferSelectModel } from 'drizzle-orm';
 import { boolean, integer, pgTable, serial, uuid } from 'drizzle-orm/pg-core';
 import { collectiviteTable } from '../../collectivites/models/collectivite.table';
-import { createdAt, modifiedAt } from '../../common/models/column.helpers';
+import { createdAt, modifiedAt } from '../../utils/column.utils';
 import { invitationTable } from './invitation.table';
 import { NiveauAcces, niveauAccessEnum } from './niveau-acces.enum';
 

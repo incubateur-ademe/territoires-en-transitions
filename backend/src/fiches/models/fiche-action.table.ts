@@ -14,13 +14,13 @@ import {
 import { createInsertSchema, createSelectSchema } from 'drizzle-zod';
 import { z } from 'zod';
 import { collectiviteTable } from '../../collectivites/models/collectivite.table';
+import { tempsDeMiseEnOeuvreTable } from '../../taxonomie/models/temps-de-mise-en-oeuvre.table';
 import {
   createdAt,
   modifiedAt,
   modifiedBy,
   TIMESTAMP_OPTIONS,
-} from '../../common/models/column.helpers';
-import { tempsDeMiseEnOeuvreTable } from '../../taxonomie/models/temps-de-mise-en-oeuvre.table';
+} from '../../utils/column.utils';
 
 export enum piliersEciEnumType {
   APPROVISIONNEMENT_DURABLE = 'Approvisionnement durable',

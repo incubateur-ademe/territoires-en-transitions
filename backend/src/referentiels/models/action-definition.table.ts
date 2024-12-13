@@ -1,4 +1,4 @@
-import { modifiedAt } from '@/backend/common/models/column.helpers';
+import { modifiedAt } from '@/backend/utils';
 import { InferInsertModel, InferSelectModel } from 'drizzle-orm';
 import {
   doublePrecision,

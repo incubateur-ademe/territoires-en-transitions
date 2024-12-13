@@ -1,3 +1,4 @@
+import { modifiedAt } from '@/backend/utils';
 import { sql } from 'drizzle-orm';
 import {
   boolean,
@@ -6,7 +7,6 @@ import {
   pgEnum,
   serial,
   text,
-  timestamp,
   unique,
   uuid,
 } from 'drizzle-orm/pg-core';
@@ -15,7 +15,6 @@ import { collectiviteTable } from '../../collectivites/models/collectivite.table
 import { actionIdReference } from './action-definition.table';
 import { labellisationAuditTable } from './labellisation-audit.table';
 import { labellisationSchema } from './labellisation.schema';
-import { modifiedAt } from '@/backend/common/models/column.helpers';
 
 export enum AuditStatutEnumType {
   NON_AUDITE = 'non_audite',

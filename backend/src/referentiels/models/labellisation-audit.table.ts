@@ -1,4 +1,4 @@
-import { TIMESTAMP_OPTIONS } from '@/backend/common/models/column.helpers';
+import { TIMESTAMP_OPTIONS } from '@/backend/utils';
 import { InferInsertModel, InferSelectModel, sql } from 'drizzle-orm';
 import {
   boolean,
