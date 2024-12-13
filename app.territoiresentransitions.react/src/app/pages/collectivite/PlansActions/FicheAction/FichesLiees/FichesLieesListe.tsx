@@ -1,9 +1,9 @@
 import { FicheResume } from '@/api/plan-actions';
-import { useCollectiviteId } from '@/app/core-logic/hooks/params';
 import {
   makeCollectiviteFicheNonClasseeUrl,
   makeCollectivitePlanActionFicheUrl,
-} from 'app/paths';
+} from '@/app/app/paths';
+import { useCollectiviteId } from '@/app/core-logic/hooks/params';
 import classNames from 'classnames';
 import FicheActionCard from '../Carte/FicheActionCard';
 

@@ -1,5 +1,5 @@
 import { IndicateurDefinition } from '@/api/indicateurs/domain';
-import { useIndicateurDefinitions } from 'app/pages/collectivite/Indicateurs/Indicateur/useIndicateurDefinition';
+import { useIndicateurDefinitions } from '@/app/app/pages/collectivite/Indicateurs/Indicateur/useIndicateurDefinition';
 import { IndicateurEnfant } from './IndicateurEnfant';
 
 /**

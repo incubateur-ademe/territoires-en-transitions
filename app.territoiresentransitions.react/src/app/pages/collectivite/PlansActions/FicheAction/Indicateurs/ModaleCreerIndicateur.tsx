@@ -1,6 +1,6 @@
 import { FicheAction } from '@/api/plan-actions';
+import IndicateurPersoNouveau from '@/app/app/pages/collectivite/Indicateurs/IndicateurPersoNouveau';
 import { Modal } from '@/ui';
-import IndicateurPersoNouveau from 'app/pages/collectivite/Indicateurs/IndicateurPersoNouveau';
 
 type ModaleCreerIndicateurProps = {
   isOpen: boolean;

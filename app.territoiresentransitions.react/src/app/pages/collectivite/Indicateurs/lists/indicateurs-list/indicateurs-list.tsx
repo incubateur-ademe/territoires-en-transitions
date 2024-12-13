@@ -9,18 +9,18 @@ import {
   useEventTracker,
 } from '@/ui';
 
-import IndicateurCard from 'app/pages/collectivite/Indicateurs/lists/IndicateurCard/IndicateurCard';
+import IndicateurCard from '@/app/app/pages/collectivite/Indicateurs/lists/IndicateurCard/IndicateurCard';
 import PictoExpert from 'ui/pictogrammes/PictoExpert';
 import SpinnerLoader from 'ui/shared/SpinnerLoader';
 
 import { Indicateurs } from '@/api';
 import { ExportIndicateursPageName } from '@/app/app/pages/collectivite/Indicateurs/Indicateur/useExportIndicateurs';
+import { getIndicateurGroup } from '@/app/app/pages/collectivite/Indicateurs/lists/IndicateurCard/utils';
 import BadgeList from '@/app/app/pages/collectivite/Indicateurs/lists/indicateurs-list/badge-list';
+import { useFilteredIndicateurDefinitions } from '@/app/app/pages/collectivite/Indicateurs/lists/useFilteredIndicateurDefinitions';
+import { makeCollectiviteIndicateursUrl } from '@/app/app/paths';
 import { useCurrentCollectivite } from '@/app/core-logic/hooks/useCurrentCollectivite';
 import { OpenState } from '@/ui/utils/types';
-import { getIndicateurGroup } from 'app/pages/collectivite/Indicateurs/lists/IndicateurCard/utils';
-import { useFilteredIndicateurDefinitions } from 'app/pages/collectivite/Indicateurs/lists/useFilteredIndicateurDefinitions';
-import { makeCollectiviteIndicateursUrl } from 'app/paths';
 import { CustomFilterBadges } from 'ui/shared/filters/filter-badges';
 
 type sortByOptionsType = {

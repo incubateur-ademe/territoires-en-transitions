@@ -1,10 +1,10 @@
 import classNames from 'classnames';
 import { useState } from 'react';
 
+import IndicateurChart from '@/app/app/pages/collectivite/Indicateurs/chart/IndicateurChart';
+import { TIndicateurDefinition } from '@/app/app/pages/collectivite/Indicateurs/types';
+import { useIndicateurValeurs } from '@/app/app/pages/collectivite/Indicateurs/useIndicateurValeurs';
 import { Button, Icon } from '@/ui';
-import IndicateurChart from 'app/pages/collectivite/Indicateurs/chart/IndicateurChart';
-import { TIndicateurDefinition } from 'app/pages/collectivite/Indicateurs/types';
-import { useIndicateurValeurs } from 'app/pages/collectivite/Indicateurs/useIndicateurValeurs';
 import { getLeftLineChartMargin } from 'ui/charts/Line/utils';
 import { DataSourceTooltip } from './DataSourceTooltip';
 import { transformeValeurs } from './transformeValeurs';

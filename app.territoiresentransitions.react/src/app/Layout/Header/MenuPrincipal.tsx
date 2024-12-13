@@ -1,8 +1,8 @@
-import { useId } from '@floating-ui/react';
 import {
   finaliserMonInscriptionUrl,
   recherchesCollectivitesUrl,
-} from 'app/paths';
+} from '@/app/app/paths';
+import { useId } from '@floating-ui/react';
 import classNames from 'classnames';
 import Link from 'next/link';
 import { usePathname } from 'next/navigation';

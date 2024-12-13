@@ -1,8 +1,8 @@
-import noResultIllustration from 'app/static/img/no-results-astronaut-bro.svg';
-import SpinnerLoader from 'ui/shared/SpinnerLoader';
-import { Data } from 'app/pages/CollectivitesEngagees/Views/View';
-import { RecherchesViewParam } from 'app/paths';
+import { Data } from '@/app/app/pages/CollectivitesEngagees/Views/View';
+import { RecherchesViewParam } from '@/app/app/paths';
+import noResultIllustration from '@/app/app/static/img/no-results-astronaut-bro.svg';
 import Image from 'next/image';
+import SpinnerLoader from 'ui/shared/SpinnerLoader';
 
 type Props = {
   view: RecherchesViewParam;

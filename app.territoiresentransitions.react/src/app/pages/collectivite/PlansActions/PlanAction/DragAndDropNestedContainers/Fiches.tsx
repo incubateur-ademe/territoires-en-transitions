@@ -1,11 +1,11 @@
-import FicheActionCardSkeleton from '../../FicheAction/Carte/FicheActionCardSkeleton';
 import {
   makeCollectivitePlanActionAxeFicheUrl,
   makeCollectivitePlanActionFicheUrl,
-} from 'app/paths';
+} from '@/app/app/paths';
+import classNames from 'classnames';
+import FicheActionCardSkeleton from '../../FicheAction/Carte/FicheActionCardSkeleton';
 import { useAxeFiches } from '../data/useAxeFiches';
 import Fiche from './Fiche';
-import classNames from 'classnames';
 
 type Props = {
   /** est-ce qu'il y a une élément actif (drag) */

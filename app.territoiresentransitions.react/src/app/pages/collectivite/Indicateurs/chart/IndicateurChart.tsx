@@ -1,13 +1,13 @@
+import { CustomLayerProps } from '@nivo/line';
 import classNames from 'classnames';
-import {CustomLayerProps} from '@nivo/line';
 
-import {TIndicateurValeur} from '../useIndicateurValeurs';
-import {getXTickValues, indicateurBaseData, prepareData} from './utils';
+import { SliceTooltip } from '@/app/app/pages/collectivite/Indicateurs/chart/SliceTooltip';
+import Chart, { ChartInfosProps } from 'ui/charts/Chart';
+import { LineChartProps } from 'ui/charts/Line/LineChart';
 import PictoIndicateurVide from 'ui/pictogrammes/PictoIndicateurVide';
-import Chart, {ChartInfosProps} from 'ui/charts/Chart';
 import SpinnerLoader from 'ui/shared/SpinnerLoader';
-import {LineChartProps} from 'ui/charts/Line/LineChart';
-import {SliceTooltip} from 'app/pages/collectivite/Indicateurs/chart/SliceTooltip';
+import { TIndicateurValeur } from '../useIndicateurValeurs';
+import { getXTickValues, indicateurBaseData, prepareData } from './utils';
 
 /** Data issues de l'api pour générer les données formatées pour Nivo */
 export type IndicateurChartData = {
@@ -45,7 +45,7 @@ const IndicateurChart = ({
    * On déconstruit chartConfig afin de faire un traitement sur la valeur `gridXValues`
    * et quand même spread le reste des valeurs dans `axisBottom`
    */
-  const {axisBottom, ...config} = chartConfig ?? {};
+  const { axisBottom, ...config } = chartConfig ?? {};
 
   /** Permet de faire matcher le nombre de ligne de la grille avec le nombre de valeur affichées sur les ordonnées */
   const axisBottomTickValues = config?.gridXValues
@@ -85,7 +85,7 @@ const IndicateurChart = ({
                     },
                   },
                 },
-                colors: {datum: 'color'},
+                colors: { datum: 'color' },
                 className,
                 layers: [
                   'grid',
@@ -115,7 +115,7 @@ const IndicateurChart = ({
                   tickValues: config.gridYValues ?? 5,
                 },
                 axisLeftLegend: data.unite,
-                sliceTooltip: props => (
+                sliceTooltip: (props) => (
                   <SliceTooltip {...props} unite={data.unite ?? ''} />
                 ),
                 ...config,
@@ -138,12 +138,12 @@ const generateStyledLines = ({
   xScale,
   yScale,
 }: CustomLayerProps) => {
-  return series.map(({id, data, color}) => (
+  return series.map(({ id, data, color }) => (
     <path
       key={id}
       d={
         lineGenerator(
-          data.map(d => ({
+          data.map((d) => ({
             x: (xScale as any)(d.data.x),
             y: (yScale as any)(d.data.y),
           }))

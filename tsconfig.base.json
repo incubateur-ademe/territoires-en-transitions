@@ -29,7 +29,6 @@
       "@/site/*": ["./packages/site/*"],
       "@/ui": ["./packages/ui/src/index.ts"],
       "@/ui/*": ["./packages/ui/src/*"],
-      "app/*": ["./app.territoiresentransitions.react/src/app/*"],
       "environmentVariables": ["./packages/api/src/environmentVariables"],
       "types/*": ["./app.territoiresentransitions.react/src/types/*"],
       "ui": ["./app.territoiresentransitions.react/src/ui/*"],

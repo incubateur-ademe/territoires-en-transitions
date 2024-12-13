@@ -1,5 +1,5 @@
-import {TLabellisationParcours} from 'app/pages/collectivite/ParcoursLabellisation/types';
-import {TCycleLabellisationStatus} from './useCycleLabellisation';
+import { TLabellisationParcours } from '@/app/app/pages/collectivite/ParcoursLabellisation/types';
+import { TCycleLabellisationStatus } from './useCycleLabellisation';
 
 // détermine l'état consolidé du cycle
 type TDemandeEtOuAudit = Pick<TLabellisationParcours, 'demande' | 'audit'>;
@@ -10,7 +10,7 @@ export const getParcoursStatus = (
   if (!demandeEtOuAudit) {
     return 'non_demandee';
   }
-  const {demande, audit} = demandeEtOuAudit;
+  const { demande, audit } = demandeEtOuAudit;
   if (audit?.valide) {
     return 'audit_valide';
   }

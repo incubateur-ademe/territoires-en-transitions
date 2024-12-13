@@ -1,5 +1,5 @@
 import { useCreateFicheAction } from '@/app/app/pages/collectivite/PlansActions/FicheAction/data/useCreateFicheAction';
-import FichesNonClassees from 'app/pages/collectivite/PlansActions/FichesNonClassees';
+import FichesNonClassees from '@/app/app/pages/collectivite/PlansActions/FichesNonClassees';
 import {
   collectiviteFichesNonClasseesPath,
   collectivitePlanActionAxePath,
@@ -10,7 +10,7 @@ import {
   collectivitePlansActionsNouveauPath,
   makeCollectivitePlanActionUrl,
   makeCollectivitePlansActionsNouveauUrl,
-} from 'app/paths';
+} from '@/app/app/paths';
 import Link from 'next/link';
 import { Redirect, Route } from 'react-router-dom';
 import CollectivitePageLayout from '../CollectivitePageLayout/CollectivitePageLayout';

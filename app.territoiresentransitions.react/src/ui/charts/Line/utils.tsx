@@ -1,8 +1,8 @@
-import {CustomLayerProps} from '@nivo/line';
-import {ChartLegendItem} from '../ChartLegend';
-import {getDataColor} from '../utils';
-import {LineData} from './LineChart';
-import {TIndicateurValeur} from 'app/pages/collectivite/Indicateurs/useIndicateurValeurs';
+import { TIndicateurValeur } from '@/app/app/pages/collectivite/Indicateurs/useIndicateurValeurs';
+import { CustomLayerProps } from '@nivo/line';
+import { ChartLegendItem } from '../ChartLegend';
+import { getDataColor } from '../utils';
+import { LineData } from './LineChart';
 
 /** Génère la liste des légendes pour le composant LineChart */
 export const generateLineLegendItems = (
@@ -18,7 +18,7 @@ export const generateLineLegendItems = (
 
 /** Calcule la margin left appliquée au graphique en fonction de la taille des valeurs */
 export const getLeftLineChartMargin = (valeurs: TIndicateurValeur[]) => {
-  const leftAxisValues = valeurs.map(v => v.valeur);
+  const leftAxisValues = valeurs.map((v) => v.valeur);
   const maxValue = Math.round(Math.max(...leftAxisValues));
   const valueLength = maxValue.toString().length;
   // 10px étant +- la largeur d'un caractère, on multiplie par 10 pour obtenir la largeur en px
@@ -32,12 +32,12 @@ export const StyledLineLayer = ({
   xScale,
   yScale,
 }: CustomLayerProps) => {
-  return series.map(({id, data, color, style}) => (
+  return series.map(({ id, data, color, style }) => (
     <path
       key={id}
       d={
         lineGenerator(
-          data.map(d => ({
+          data.map((d) => ({
             x: (xScale as any)(d.data.x),
             y: (yScale as any)(d.data.y),
           }))

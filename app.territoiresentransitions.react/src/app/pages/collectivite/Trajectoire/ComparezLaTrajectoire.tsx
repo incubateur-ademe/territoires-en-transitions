@@ -1,5 +1,5 @@
+import { makeCollectiviteIndicateursUrl } from '@/app/app/paths';
 import { Button, Card } from '@/ui';
-import { makeCollectiviteIndicateursUrl } from 'app/paths';
 
 /** Affiche l'encadré "Comparez la trajectoire SNBC à vos objectifs et vos résultats" */
 export const ComparezLaTrajectoire = ({

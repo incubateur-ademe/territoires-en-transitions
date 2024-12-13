@@ -1,6 +1,6 @@
-import {avancementToLabel} from 'app/labels';
-import {actionAvancementColors} from 'app/theme';
-import {ProgressionRow} from '../data/useProgressionReferentiel';
+import { avancementToLabel } from '@/app/app/labels';
+import { actionAvancementColors } from '@/app/app/theme';
+import { ProgressionRow } from '../data/useProgressionReferentiel';
 
 /**
  * Met en forme les scores pour les graphes de progression des scores
@@ -17,7 +17,7 @@ export const getFormattedScore = (
   if (percentage) {
     // Formate les scores (%) pour un affichage sur 100
     formattedScore.push(
-      ...scoreData.map(d => ({
+      ...scoreData.map((d) => ({
         [indexBy]: `${d.action_id.split('_')[1]}`,
         [avancementToLabel.fait]: d.score_realise * 100,
         [avancementToLabel.programme]: d.score_programme * 100,
@@ -71,7 +71,7 @@ export const getFormattedScore = (
   } else {
     // Formate les scores en points
     formattedScore.push(
-      ...scoreData.map(d => ({
+      ...scoreData.map((d) => ({
         [indexBy]: `${d.action_id.split('_')[1]}`,
         [avancementToLabel.fait]: d.points_realises,
         [avancementToLabel.programme]: d.points_programmes,
@@ -89,8 +89,12 @@ export const getFormattedScore = (
 };
 
 export const getAggregatedScore = (scoreData: readonly ProgressionRow[]) => {
-  const aggregatedScore: {id: string; value: number; color?: string}[] = [
-    {id: avancementToLabel.fait, value: 0, color: actionAvancementColors.fait},
+  const aggregatedScore: { id: string; value: number; color?: string }[] = [
+    {
+      id: avancementToLabel.fait,
+      value: 0,
+      color: actionAvancementColors.fait,
+    },
     {
       id: avancementToLabel.programme,
       value: 0,
@@ -108,7 +112,7 @@ export const getAggregatedScore = (scoreData: readonly ProgressionRow[]) => {
     },
   ];
 
-  scoreData.forEach(score => {
+  scoreData.forEach((score) => {
     aggregatedScore[0].value += score.points_realises;
     aggregatedScore[1].value += score.points_programmes;
     aggregatedScore[2].value +=

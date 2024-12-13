@@ -1,10 +1,10 @@
+import { referentielToName } from '@/app/app/labels';
 import { useAuth } from '@/app/core-logic/api/auth/AuthProvider';
 import {
   CurrentCollectivite,
   useCurrentCollectivite,
 } from '@/app/core-logic/hooks/useCurrentCollectivite';
 import { Button } from '@/ui';
-import { referentielToName } from 'app/labels';
 import { useState } from 'react';
 import { useProgressionReferentiel } from './data/useProgressionReferentiel';
 import EtatDesLieux from './EtatDesLieux/EtatDesLieux';

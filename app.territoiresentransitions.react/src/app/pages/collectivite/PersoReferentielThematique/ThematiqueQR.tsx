@@ -2,11 +2,11 @@
  * Affiche la liste des questions et les éventuelles réponses pour une collectivité
  */
 
-import { Checkbox } from '@/ui';
 import {
   makeCollectivitePersoRefThematiqueUrl,
   makeCollectivitePersoRefUrl,
-} from 'app/paths';
+} from '@/app/app/paths';
+import { Checkbox } from '@/ui';
 import { useState } from 'react';
 import { TChangeReponse, TQuestionReponse } from 'types/personnalisation';
 import { QuestionReponseList } from '../PersoPotentielModal/PersoPotentielQR';

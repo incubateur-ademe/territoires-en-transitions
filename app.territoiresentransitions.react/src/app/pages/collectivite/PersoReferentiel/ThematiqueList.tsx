@@ -1,7 +1,7 @@
-import {makeCollectivitePersoRefThematiqueUrl} from 'app/paths';
-import {TQuestionThematiqueCompletudeRead} from './useQuestionThematiqueCompletude';
-import {Referentiel} from 'types/litterals';
-import {BadgeACompleter} from 'ui/shared/Badge/BadgeACompleter';
+import { makeCollectivitePersoRefThematiqueUrl } from '@/app/app/paths';
+import { Referentiel } from 'types/litterals';
+import { BadgeACompleter } from 'ui/shared/Badge/BadgeACompleter';
+import { TQuestionThematiqueCompletudeRead } from './useQuestionThematiqueCompletude';
 
 export type TThematiqueListProps = {
   collectivite: {
@@ -17,10 +17,10 @@ export type TThematiqueListProps = {
  * Affiche ...
  */
 export const ThematiqueList = (props: TThematiqueListProps) => {
-  const {collectivite, items, className, referentiels} = props;
+  const { collectivite, items, className, referentiels } = props;
   return (
     <ul className={`w-full border pl-0 ${className || ''}`}>
-      {items.map(item => (
+      {items.map((item) => (
         <Item
           key={item.id}
           {...item}
@@ -40,7 +40,7 @@ const Item = (
     referentielsSelected: Referentiel[];
   }
 ) => {
-  const {collectivite_id, id, nom, completude, referentielsSelected} = props;
+  const { collectivite_id, id, nom, completude, referentielsSelected } = props;
   const url = makeCollectivitePersoRefThematiqueUrl({
     collectiviteId: collectivite_id,
     thematiqueId: id,
@@ -51,7 +51,7 @@ const Item = (
     <li className="list-none px-2 py-3 border-b last:border-none hover:bg-primary-1">
       <a
         className="flex justify-between items-center"
-        style={{boxShadow: 'none'}}
+        style={{ boxShadow: 'none' }}
         href={url}
       >
         {nom}

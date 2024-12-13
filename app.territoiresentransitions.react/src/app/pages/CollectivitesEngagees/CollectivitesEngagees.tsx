@@ -1,10 +1,10 @@
 import { getRejoindreCollectivitePath } from '@/api';
-import { EmptyCard } from '@/ui';
 import {
   finaliserMonInscriptionUrl,
   recherchesCollectivitesUrl,
   recherchesPath,
-} from 'app/paths';
+} from '@/app/app/paths';
+import { EmptyCard } from '@/ui';
 import { Route } from 'react-router-dom';
 import DecouvrirLesCollectivites from './DecouvrirLesCollectivites';
 import { ReactComponent as PictoCarte } from './carte.svg';

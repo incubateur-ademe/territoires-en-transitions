@@ -1,4 +1,4 @@
-import PlansView from 'app/pages/CollectivitesEngagees/Views/PlansView';
+import PlansView from '@/app/app/pages/CollectivitesEngagees/Views/PlansView';
 import { Route } from 'react-router-dom';
 import Filters from './Filters/FiltersColonne';
 import CollectivitesView from './Views/CollectivitesView';
@@ -7,9 +7,12 @@ import { useAuth } from '@/app/core-logic/api/auth/AuthProvider';
 import { useSearchParams } from '@/app/core-logic/hooks/query';
 
 import { CollectiviteEngagee, getRejoindreCollectivitePath } from '@/api';
+import {
+  recherchesCollectivitesUrl,
+  recherchesPlansUrl,
+} from '@/app/app/paths';
 import { useSansCollectivite } from '@/app/core-logic/hooks/useOwnedCollectivites';
 import { Alert, Button } from '@/ui';
-import { recherchesCollectivitesUrl, recherchesPlansUrl } from 'app/paths';
 import { initialFilters, nameToShortNames } from './data/filters';
 
 const DecouvrirLesCollectivites = () => {

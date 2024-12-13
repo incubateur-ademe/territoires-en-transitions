@@ -1,7 +1,7 @@
-import noCommentIllustration from 'app/static/img/no-comment-illustration.svg';
+import noCommentIllustration from '@/app/app/static/img/no-comment-illustration.svg';
+import Image from 'next/image';
 import ActionDiscussion from './ActionDiscussion';
 import { TActionDiscussion, TActionDiscussionStatut } from './data/types';
-import Image from 'next/image';
 
 type Props = {
   vue: TActionDiscussionStatut;

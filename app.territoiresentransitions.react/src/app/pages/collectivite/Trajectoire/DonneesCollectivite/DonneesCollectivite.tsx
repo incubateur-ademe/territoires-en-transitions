@@ -1,10 +1,10 @@
-import { Alert, Button, ModalFooter, RenderProps, Tab, Tabs } from '@/ui';
 import {
   DATE_DEBUT,
   INDICATEURS_TRAJECTOIRE,
   SEQUESTRATION_CARBONE,
-} from 'app/pages/collectivite/Trajectoire/constants';
-import { useCalculTrajectoire } from 'app/pages/collectivite/Trajectoire/useCalculTrajectoire';
+} from '@/app/app/pages/collectivite/Trajectoire/constants';
+import { useCalculTrajectoire } from '@/app/app/pages/collectivite/Trajectoire/useCalculTrajectoire';
+import { Alert, Button, ModalFooter, RenderProps, Tab, Tabs } from '@/ui';
 import { useEffect } from 'react';
 import SpinnerLoader from 'ui/shared/SpinnerLoader';
 import { TABS } from './constants';

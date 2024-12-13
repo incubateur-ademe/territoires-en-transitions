@@ -1,8 +1,8 @@
 import Image from 'next/image';
 
 import { signInPath, signUpPath } from '@/app/app/paths';
+import homeImage from '@/app/app/static/img/home.jpg';
 import { Button } from '@/ui';
-import homeImage from 'app/static/img/home.jpg';
 
 const Home = () => {
   return (

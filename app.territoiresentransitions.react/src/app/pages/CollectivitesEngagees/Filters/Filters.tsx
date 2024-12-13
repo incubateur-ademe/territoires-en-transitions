@@ -1,18 +1,18 @@
 import { Field, Input, SelectFilter } from '@/ui';
 
 import { CollectiviteEngagee } from '@/api';
-import { useFonctionTracker } from '@/app/core-logic/hooks/useFonctionTracker';
-import { usePlanTypeListe } from 'app/pages/collectivite/PlansActions/PlanAction/data/usePlanTypeListe';
-import { SetFilters } from 'app/pages/CollectivitesEngagees/data/filters';
+import { usePlanTypeListe } from '@/app/app/pages/collectivite/PlansActions/PlanAction/data/usePlanTypeListe';
+import { SetFilters } from '@/app/app/pages/CollectivitesEngagees/data/filters';
 import {
   niveauLabellisationCollectiviteOptions,
   populationCollectiviteOptions,
   referentielCollectiviteOptions,
   tauxRemplissageCollectiviteOptions,
   typeCollectiviteOptions,
-} from 'app/pages/CollectivitesEngagees/data/filtreOptions';
-import { MultiSelectCheckboxes } from 'app/pages/CollectivitesEngagees/Filters/MultiSelectCheckboxes';
-import { RecherchesViewParam } from 'app/paths';
+} from '@/app/app/pages/CollectivitesEngagees/data/filtreOptions';
+import { MultiSelectCheckboxes } from '@/app/app/pages/CollectivitesEngagees/Filters/MultiSelectCheckboxes';
+import { RecherchesViewParam } from '@/app/app/paths';
+import { useFonctionTracker } from '@/app/core-logic/hooks/useFonctionTracker';
 import { useEffect, useState } from 'react';
 import SpinnerLoader from 'ui/shared/SpinnerLoader';
 import { useDepartements } from '../data/useDepartements';

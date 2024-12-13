@@ -1,6 +1,6 @@
+import ActionJustification from '@/app/app/pages/collectivite/EtatDesLieux/Referentiel/SuiviAction/ActionJustification';
 import { ActionDefinitionSummary } from '@/app/core-logic/api/endpoints/ActionDefinitionSummaryReadEndpoint';
 import { InfoTooltip } from '@/ui';
-import ActionJustification from 'app/pages/collectivite/EtatDesLieux/Referentiel/SuiviAction/ActionJustification';
 import classNames from 'classnames';
 import DOMPurify from 'dompurify';
 import { useEffect, useState } from 'react';

@@ -3,15 +3,15 @@ import { useState } from 'react';
 import { ModulePlanActionListSelect } from '@/api/plan-actions/dashboards/collectivite-dashboard/domain/module.schema';
 import { usePlansActionsListe } from '@/app/app/pages/collectivite/PlansActions/PlanAction/data/usePlansActionsListe';
 import PlanActionCard from '@/app/app/pages/collectivite/PlansActions/PlanAction/list/card/PlanActionCard';
-import { Button, useEventTracker } from '@/ui';
 import Module, {
   ModuleDisplay,
-} from 'app/pages/collectivite/TableauDeBord/components/Module';
+} from '@/app/app/pages/collectivite/TableauDeBord/components/Module';
 import {
   makeCollectivitePlanActionUrl,
   makeTableauBordModuleUrl,
   TDBViewParam,
-} from 'app/paths';
+} from '@/app/app/paths';
+import { Button, useEventTracker } from '@/ui';
 import { useRouter } from 'next/navigation';
 import PictoDocument from 'ui/pictogrammes/PictoDocument';
 

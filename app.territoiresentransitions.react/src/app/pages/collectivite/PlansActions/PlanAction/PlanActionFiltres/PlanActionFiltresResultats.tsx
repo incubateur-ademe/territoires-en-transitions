@@ -1,8 +1,8 @@
 import { DesactiverLesFiltres } from 'ui/shared/filters/DesactiverLesFiltres';
 import FicheActionCard from '../../FicheAction/Carte/FicheActionCard';
 
+import { makeCollectivitePlanActionFicheUrl } from '@/app/app/paths';
 import { useCollectiviteId } from '@/app/core-logic/hooks/params';
-import { makeCollectivitePlanActionFicheUrl } from 'app/paths';
 import { TFichesActionsListe } from '../../FicheAction/data/useFichesActionFiltresListe';
 
 type Props = {

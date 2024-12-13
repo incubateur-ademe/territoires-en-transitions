@@ -4,9 +4,9 @@ import Link from 'next/link';
 import { Badge } from '@/ui';
 
 import { CollectiviteEngagee } from '@/api';
+import { generateTitle } from '@/app/app/pages/collectivite/PlansActions/FicheAction/data/utils';
+import { makeCollectivitePlanActionUrl } from '@/app/app/paths';
 import { useFonctionTracker } from '@/app/core-logic/hooks/useFonctionTracker';
-import { generateTitle } from 'app/pages/collectivite/PlansActions/FicheAction/data/utils';
-import { makeCollectivitePlanActionUrl } from 'app/paths';
 
 type Props = {
   plan: CollectiviteEngagee.TPlanCarte;

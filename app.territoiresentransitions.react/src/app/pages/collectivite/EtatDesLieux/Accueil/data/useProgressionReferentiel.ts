@@ -1,9 +1,9 @@
-import { supabaseClient } from '@/app/core-logic/api/supabase';
-import { useCollectiviteId } from '@/app/core-logic/hooks/params';
 import {
   ActionReferentiel,
   useReferentiel,
-} from 'app/pages/collectivite/ReferentielTable/useReferentiel';
+} from '@/app/app/pages/collectivite/ReferentielTable/useReferentiel';
+import { supabaseClient } from '@/app/core-logic/api/supabase';
+import { useCollectiviteId } from '@/app/core-logic/hooks/params';
 import { useQuery } from 'react-query';
 import { TableOptions } from 'react-table';
 import { TActionStatutsRow } from 'types/alias';

@@ -2,8 +2,8 @@ import { supabaseClient } from '@/app/core-logic/api/supabase';
 import { useMutation, useQueryClient } from 'react-query';
 // import {useFonctionTracker} from '@/app/core-logic/hooks/useFonctionTracker';
 import { Indicateurs } from '@/api';
+import { makeCollectiviteTousLesIndicateursUrl } from '@/app/app/paths';
 import { useEventTracker } from '@/ui';
-import { makeCollectiviteTousLesIndicateursUrl } from 'app/paths';
 import { useRouter } from 'next/navigation';
 
 export const useDeleteIndicateurPerso = (

@@ -1,15 +1,15 @@
 import classNames from 'classnames';
 
-import SmallIconContextMenu from 'app/pages/collectivite/PlansActions/PlanAction/PlanActionHeader/SmallIconContextMenu';
+import SmallIconContextMenu from '@/app/app/pages/collectivite/PlansActions/PlanAction/PlanActionHeader/SmallIconContextMenu';
 
 import RestreindreFichesModal from '../RestreindreFichesModal';
 import SupprimerAxeModal from '../SupprimerAxeModal';
 
-import { Tooltip } from '@/ui';
 import {
   makeCollectivitePlanActionUrl,
   makeCollectivitePlansActionsLandingUrl,
-} from 'app/paths';
+} from '@/app/app/paths';
+import { Tooltip } from '@/ui';
 import { useState } from 'react';
 import { TPlanType } from 'types/alias';
 import { PlanNode } from '../data/types';

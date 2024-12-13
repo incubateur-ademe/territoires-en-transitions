@@ -1,9 +1,9 @@
+import { TLabellisationParcours } from '@/app/app/pages/collectivite/ParcoursLabellisation/types';
 import {
   makeCollectiviteReferentielUrl,
   ReferentielParamOption,
-} from 'app/paths';
-import {TLabellisationParcours} from 'app/pages/collectivite/ParcoursLabellisation/types';
-import {CritereRempli} from './CritereRempli';
+} from '@/app/app/paths';
+import { CritereRempli } from './CritereRempli';
 
 export type TCritereScoreProps = {
   collectiviteId: number;
@@ -14,8 +14,8 @@ export type TCritereScoreProps = {
  * Affiche le critère lié au remplissage du référentiel
  */
 export const CritereCompletude = (props: TCritereScoreProps) => {
-  const {collectiviteId, parcours} = props;
-  const {completude_ok, referentiel} = parcours;
+  const { collectiviteId, parcours } = props;
+  const { completude_ok, referentiel } = parcours;
   const referentielId = referentiel as ReferentielParamOption;
 
   return (

@@ -1,9 +1,9 @@
+import { useIndicateurPilotes } from '@/app/app/pages/collectivite/Indicateurs/Indicateur/detail/useIndicateurPilotes';
+import { useIndicateurServices } from '@/app/app/pages/collectivite/Indicateurs/Indicateur/detail/useIndicateurServices';
+import { useIndicateurThematiques } from '@/app/app/pages/collectivite/Indicateurs/Indicateur/detail/useIndicateurThematiques';
+import IndicateurCardEditModal from '@/app/app/pages/collectivite/Indicateurs/lists/IndicateurCard/IndicateurCardEdit/IndicateurCardEditModal';
+import { TIndicateurListItem } from '@/app/app/pages/collectivite/Indicateurs/types';
 import { OpenState } from '@/ui/utils/types';
-import { useIndicateurPilotes } from 'app/pages/collectivite/Indicateurs/Indicateur/detail/useIndicateurPilotes';
-import { useIndicateurServices } from 'app/pages/collectivite/Indicateurs/Indicateur/detail/useIndicateurServices';
-import { useIndicateurThematiques } from 'app/pages/collectivite/Indicateurs/Indicateur/detail/useIndicateurThematiques';
-import IndicateurCardEditModal from 'app/pages/collectivite/Indicateurs/lists/IndicateurCard/IndicateurCardEdit/IndicateurCardEditModal';
-import { TIndicateurListItem } from 'app/pages/collectivite/Indicateurs/types';
 
 type Props = {
   definition: TIndicateurListItem;

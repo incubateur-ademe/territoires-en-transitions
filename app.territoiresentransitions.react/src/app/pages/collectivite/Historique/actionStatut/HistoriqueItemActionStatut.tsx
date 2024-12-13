@@ -1,18 +1,18 @@
 import {
   DetailNouvelleModificationWrapper,
   DetailPrecedenteModificationWrapper,
-} from 'app/pages/collectivite/Historique/DetailModificationWrapper';
-import ActionStatutBadge from 'ui/shared/actions/ActionStatutBadge';
-import Modification from 'app/pages/collectivite/Historique/Modification';
+} from '@/app/app/pages/collectivite/Historique/DetailModificationWrapper';
+import Modification from '@/app/app/pages/collectivite/Historique/Modification';
 import {
   NouvelleActionStatutDetaille,
   PrecedenteActionStatutDetaille,
-} from 'app/pages/collectivite/Historique/actionStatut/ActionStatutDetaillee';
-import {THistoriqueItemProps} from '../types';
-import {getItemActionProps} from './getItemActionProps';
+} from '@/app/app/pages/collectivite/Historique/actionStatut/ActionStatutDetaillee';
+import ActionStatutBadge from 'ui/shared/actions/ActionStatutBadge';
+import { THistoriqueItemProps } from '../types';
+import { getItemActionProps } from './getItemActionProps';
 
 const HistoriqueItemActionStatut = (props: THistoriqueItemProps) => {
-  const {item} = props;
+  const { item } = props;
 
   return (
     <Modification
@@ -28,7 +28,7 @@ const HistoriqueItemActionStatut = (props: THistoriqueItemProps) => {
 export default HistoriqueItemActionStatut;
 
 const HistoriqueItemActionStatutDetails = (props: THistoriqueItemProps) => {
-  const {item} = props;
+  const { item } = props;
   const {
     previous_avancement,
     previous_avancement_detaille,

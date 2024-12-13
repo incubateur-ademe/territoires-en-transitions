@@ -1,8 +1,8 @@
-import {TLabellisationParcours} from 'app/pages/collectivite/ParcoursLabellisation/types';
-import {referentielToName} from 'app/labels';
-import {makeCollectiviteTacheUrl} from 'app/paths';
-import './CriteresAction.css';
+import { referentielToName } from '@/app/app/labels';
+import { TLabellisationParcours } from '@/app/app/pages/collectivite/ParcoursLabellisation/types';
+import { makeCollectiviteTacheUrl } from '@/app/app/paths';
 import classNames from 'classnames';
+import './CriteresAction.css';
 
 export type TCriteresActionProps = {
   collectiviteId: number;
@@ -15,8 +15,8 @@ type TCriteresActionTable = TCriteresActionProps;
  * Affiche les critères liés aux actions
  */
 export const CriteresAction = (props: TCriteresActionProps) => {
-  const {parcours} = props;
-  const {referentiel} = parcours;
+  const { parcours } = props;
+  const { referentiel } = parcours;
 
   return (
     <>
@@ -34,8 +34,8 @@ export const CriteresAction = (props: TCriteresActionProps) => {
  * Affiche le tableau des critères liés aux actions
  */
 export const CritereActionTable = (props: TCriteresActionTable) => {
-  const {parcours} = props;
-  const {criteres_action} = parcours;
+  const { parcours } = props;
+  const { criteres_action } = parcours;
 
   return (
     <div className="critere-action-table fr-my-4">
@@ -63,12 +63,19 @@ export const CritereActionTable = (props: TCriteresActionTable) => {
 };
 
 /** Affiche une ligne du tableau */
-const CritereActionRow = (props: TCriteresActionTable & {rowIndex: number}) => {
-  const {collectiviteId, rowIndex, parcours} = props;
-  const {criteres_action, referentiel} = parcours;
+const CritereActionRow = (
+  props: TCriteresActionTable & { rowIndex: number }
+) => {
+  const { collectiviteId, rowIndex, parcours } = props;
+  const { criteres_action, referentiel } = parcours;
   const action = criteres_action[rowIndex];
-  const {action_id, action_identifiant, formulation, statut_ou_score, rempli} =
-    action;
+  const {
+    action_id,
+    action_identifiant,
+    formulation,
+    statut_ou_score,
+    rempli,
+  } = action;
 
   const pathname = makeCollectiviteTacheUrl({
     collectiviteId,

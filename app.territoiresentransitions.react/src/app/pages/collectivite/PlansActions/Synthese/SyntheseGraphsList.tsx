@@ -1,8 +1,8 @@
-import { Card } from '@/ui';
 import {
   makeCollectivitePlansActionsNouveauUrl,
   makeCollectivitePlansActionsSyntheseVueUrl,
-} from 'app/paths';
+} from '@/app/app/paths';
+import { Card } from '@/ui';
 import Link from 'next/link';
 import Chart from 'ui/charts/Chart';
 import PictoLeaf from 'ui/pictogrammes/PictoLeaf';

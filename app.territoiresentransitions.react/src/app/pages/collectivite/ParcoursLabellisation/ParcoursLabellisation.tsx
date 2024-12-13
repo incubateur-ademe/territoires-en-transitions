@@ -1,12 +1,12 @@
+import { referentielToName } from '@/app/app/labels';
+import {
+  makeCollectiviteReferentielUrl,
+  ReferentielParamOption,
+} from '@/app/app/paths';
 import {
   useCollectiviteId,
   useReferentielId,
 } from '@/app/core-logic/hooks/params';
-import { referentielToName } from 'app/labels';
-import {
-  makeCollectiviteReferentielUrl,
-  ReferentielParamOption,
-} from 'app/paths';
 import Link from 'next/link';
 import { ReferentielOfIndicateur } from 'types/litterals';
 import HeaderLabellisation from './HeaderLabellisation';

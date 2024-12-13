@@ -1,9 +1,9 @@
-import { useAuth, UserData } from '@/app/core-logic/api/auth/AuthProvider';
-import { CurrentCollectivite } from '@/app/core-logic/hooks/useCurrentCollectivite';
 import {
   makeCollectiviteAccueilUrl,
   makeInvitationLandingPath,
-} from 'app/paths';
+} from '@/app/app/paths';
+import { useAuth, UserData } from '@/app/core-logic/api/auth/AuthProvider';
+import { CurrentCollectivite } from '@/app/core-logic/hooks/useCurrentCollectivite';
 import { useMutation } from 'react-query';
 
 export type SendInvitationArgs = {

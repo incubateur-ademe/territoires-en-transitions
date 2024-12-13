@@ -1,8 +1,10 @@
-import {Suspense} from 'react';
-import {lazy} from 'utils/lazy';
-import {renderLoader} from 'utils/renderLoader';
+import { Suspense } from 'react';
+import { lazy } from 'utils/lazy';
+import { renderLoader } from 'utils/renderLoader';
 
-const Membres = lazy(() => import('app/pages/collectivite/Users/Membres'));
+const Membres = lazy(
+  () => import('@/app/app/pages/collectivite/Users/Membres')
+);
 
 export const MembresPage = () => {
   return (

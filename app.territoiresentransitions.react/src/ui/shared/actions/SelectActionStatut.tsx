@@ -1,8 +1,8 @@
-import {TActionAvancement, TActionAvancementExt} from 'types/alias';
-import SelectDropdown from 'ui/shared/select/SelectDropdown';
-import {avancementToLabel} from 'app/labels';
-import ActionStatutBadge from './ActionStatutBadge';
+import { avancementToLabel } from '@/app/app/labels';
 import classNames from 'classnames';
+import { TActionAvancement, TActionAvancementExt } from 'types/alias';
+import SelectDropdown from 'ui/shared/select/SelectDropdown';
+import ActionStatutBadge from './ActionStatutBadge';
 
 export type TSelectActionStatutProps = {
   // item sélectionné (`non_renseigne` si `undefined` ou `null`)
@@ -18,7 +18,7 @@ export type TSelectActionStatutProps = {
 
 // transforme une liste de statuts en options pour la liste déroulante
 const getOptions = (items: TActionAvancementExt[]) =>
-  items.map(value => ({value, label: avancementToLabel[value]}));
+  items.map((value) => ({ value, label: avancementToLabel[value] }));
 
 // les items par défaut (sans le "non concerné")
 export const DEFAULT_ITEMS: TActionAvancement[] = [
@@ -40,7 +40,7 @@ export const DEFAULT_OPTIONS = getOptions(DEFAULT_ITEMS);
  * Affiche le sélecteur de statut d'une action
  */
 export const SelectActionStatut = (props: TSelectActionStatutProps) => {
-  const {value, onChange, disabled, items, buttonClassName} = props;
+  const { value, onChange, disabled, items, buttonClassName } = props;
 
   const options = items ? getOptions(items) : DEFAULT_OPTIONS;
   const currentValue = value || 'non_renseigne';
@@ -59,10 +59,10 @@ export const SelectActionStatut = (props: TSelectActionStatutProps) => {
         'min-w-5rem !w-fit p-0 !bg-transparent',
         buttonClassName
       )}
-      renderOption={option => (
+      renderOption={(option) => (
         <ActionStatutBadge statut={option.value as TActionAvancementExt} />
       )}
-      renderSelection={value => (
+      renderSelection={(value) => (
         <ActionStatutBadge statut={value} className="mt-1" />
       )}
       required

@@ -1,13 +1,13 @@
 import { Button, Icon, Tooltip } from '@/ui';
 import { useState } from 'react';
 
-import { membreFonctions, referentielToName } from 'app/labels';
-import { ConfirmerChangementNiveau } from 'app/pages/collectivite/Users/components/ConfirmerChangementNiveau';
+import { membreFonctions, referentielToName } from '@/app/app/labels';
+import { ConfirmerChangementNiveau } from '@/app/app/pages/collectivite/Users/components/ConfirmerChangementNiveau';
 import {
   Membre,
   TRemoveFromCollectivite,
   TUpdateMembre,
-} from 'app/pages/collectivite/Users/types';
+} from '@/app/app/pages/collectivite/Users/types';
 import { TMembreFonction, TNiveauAcces } from 'types/alias';
 import { Referentiel } from 'types/litterals';
 import MultiSelectDropdown from 'ui/shared/select/MultiSelectDropdown';

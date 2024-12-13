@@ -1,19 +1,19 @@
 import { Button, useEventTracker } from '@/ui';
 
 import { ModuleIndicateursSelect } from '@/api/plan-actions/dashboards/personal-dashboard/domain/module.schema';
+import IndicateurCard from '@/app/app/pages/collectivite/Indicateurs/lists/IndicateurCard/IndicateurCard';
+import { getIndicateurGroup } from '@/app/app/pages/collectivite/Indicateurs/lists/IndicateurCard/utils';
+import { useFilteredIndicateurDefinitions } from '@/app/app/pages/collectivite/Indicateurs/lists/useFilteredIndicateurDefinitions';
 import Module from '@/app/app/pages/collectivite/TableauDeBord/components/Module';
 import ModalIndicateursSuiviPlan from '@/app/app/pages/collectivite/TableauDeBord/Personnel/ModuleIndicateurs/ModalIndicateursSuiviPlan';
-import { useAuth } from '@/app/core-logic/api/auth/AuthProvider';
-import { useCollectiviteId } from '@/app/core-logic/hooks/params';
-import IndicateurCard from 'app/pages/collectivite/Indicateurs/lists/IndicateurCard/IndicateurCard';
-import { getIndicateurGroup } from 'app/pages/collectivite/Indicateurs/lists/IndicateurCard/utils';
-import { useFilteredIndicateurDefinitions } from 'app/pages/collectivite/Indicateurs/lists/useFilteredIndicateurDefinitions';
 import {
   TDBViewParam,
   makeCollectiviteIndicateursUrl,
   makeCollectiviteTousLesIndicateursUrl,
   makeTableauBordModuleUrl,
-} from 'app/paths';
+} from '@/app/app/paths';
+import { useAuth } from '@/app/core-logic/api/auth/AuthProvider';
+import { useCollectiviteId } from '@/app/core-logic/hooks/params';
 import { useRouter } from 'next/navigation';
 import PictoIndicateurVide from 'ui/pictogrammes/PictoIndicateurVide';
 import { getQueryKey } from '../../Personnel/usePersonalModulesFetch';

@@ -1,9 +1,9 @@
 import { Referentiel } from '@/api/referentiel/domain/enum.schema';
+import { referentielToName } from '@/app/app/labels';
 import AccueilCard from '@/app/app/pages/collectivite/EtatDesLieux/Accueil/EtatDesLieux/AccueilCard';
+import { makeCollectiviteTousLesIndicateursUrl } from '@/app/app/paths';
 import { useFonctionTracker } from '@/app/core-logic/hooks/useFonctionTracker';
 import { Button } from '@/ui';
-import { referentielToName } from 'app/labels';
-import { makeCollectiviteTousLesIndicateursUrl } from 'app/paths';
 import { useIndicateurSummary } from '../data/useIndicateurSummary';
 import { useOpenDataIndicateursCount } from '../data/useOpenDataIndicateurs';
 

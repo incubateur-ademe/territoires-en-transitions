@@ -1,14 +1,14 @@
 import {
+  LabellisationVueParamOption,
+  makeCollectiviteLabellisationUrl,
+  ReferentielParamOption,
+} from '@/app/app/paths';
+import {
   useCollectiviteId,
   useLabellisationVue,
   useReferentielId,
 } from '@/app/core-logic/hooks/params';
 import { Alert } from '@/ui';
-import {
-  LabellisationVueParamOption,
-  makeCollectiviteLabellisationUrl,
-  ReferentielParamOption,
-} from 'app/paths';
 import { useRouter } from 'next/navigation';
 import { Tab, Tabs } from 'ui/shared/Tabs';
 import { useAudit } from '../Audit/useAudit';

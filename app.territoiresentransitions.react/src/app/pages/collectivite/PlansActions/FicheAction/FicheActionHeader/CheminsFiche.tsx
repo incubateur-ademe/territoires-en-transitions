@@ -1,6 +1,6 @@
 import { Axe } from '@/api/plan-actions';
+import { makeCollectiviteFichesNonClasseesUrl } from '@/app/app/paths';
 import { Breadcrumbs, Button } from '@/ui';
-import { makeCollectiviteFichesNonClasseesUrl } from 'app/paths';
 import { useRouter } from 'next/navigation';
 import { useState } from 'react';
 import { useParams } from 'react-router-dom';

@@ -1,6 +1,6 @@
 import { getRejoindreCollectivitePath } from '@/api';
 import CollectivitePageLayout from '@/app/app/pages/collectivite/CollectivitePageLayout/CollectivitePageLayout';
-import { monComptePath } from 'app/paths';
+import { monComptePath } from '@/app/app/paths';
 import { ProfilRoutes } from './ProfileRoutes';
 
 const Profil = () => {

@@ -1,8 +1,8 @@
+import { ReferentielParamOption } from '@/app/app/paths';
 import {
   useCollectiviteId,
   useReferentielId,
 } from '@/app/core-logic/hooks/params';
-import { ReferentielParamOption } from 'app/paths';
 import { useCallback, useMemo } from 'react';
 import { TableInstance } from 'react-table';
 import { makeRowRenderer } from './Row';

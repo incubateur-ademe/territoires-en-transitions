@@ -1,11 +1,11 @@
-import { ActionDefinitionSummary } from '@/app/core-logic/api/endpoints/ActionDefinitionSummaryReadEndpoint';
-import { avancementToLabel } from 'app/labels';
+import { avancementToLabel } from '@/app/app/labels';
 import {
   useActionJustification,
   useSaveActionJustification,
-} from 'app/pages/collectivite/EtatDesLieux/Referentiel/data/useActionJustification';
-import { useTasksScoreRepartition } from 'app/pages/collectivite/EtatDesLieux/Referentiel/data/useTasksScores';
-import { actionAvancementColors } from 'app/theme';
+} from '@/app/app/pages/collectivite/EtatDesLieux/Referentiel/data/useActionJustification';
+import { useTasksScoreRepartition } from '@/app/app/pages/collectivite/EtatDesLieux/Referentiel/data/useTasksScores';
+import { actionAvancementColors } from '@/app/app/theme';
+import { ActionDefinitionSummary } from '@/app/core-logic/api/endpoints/ActionDefinitionSummaryReadEndpoint';
 import classNames from 'classnames';
 import { Dispatch, SetStateAction, useEffect, useState } from 'react';
 import { DetailedScore } from 'ui/referentiels/ScoreDetailleModal/DetailedScore/DetailedScore';

@@ -1,5 +1,8 @@
+import {
+  makeCollectiviteTacheUrl,
+  ReferentielParamOption,
+} from '@/app/app/paths';
 import { Tooltip } from '@/ui';
-import { makeCollectiviteTacheUrl, ReferentielParamOption } from 'app/paths';
 import Link from 'next/link';
 import { CellProps } from 'react-table';
 import { Kbd } from 'ui/shared/Kbd';

@@ -1,14 +1,14 @@
-import Modification from 'app/pages/collectivite/Historique/Modification';
-import {THistoriqueItemProps} from '../types';
+import Modification from '@/app/app/pages/collectivite/Historique/Modification';
+import classNames from 'classnames';
+import { getItemActionProps } from '../actionStatut/getItemActionProps';
 import {
   DetailNouvelleModificationWrapper,
   DetailPrecedenteModificationWrapper,
 } from '../DetailModificationWrapper';
-import classNames from 'classnames';
-import {getItemActionProps} from '../actionStatut/getItemActionProps';
+import { THistoriqueItemProps } from '../types';
 
 const HistoriqueItemActionPrecision = (props: THistoriqueItemProps) => {
-  const {item} = props;
+  const { item } = props;
 
   return (
     <Modification
@@ -24,8 +24,8 @@ const HistoriqueItemActionPrecision = (props: THistoriqueItemProps) => {
 export default HistoriqueItemActionPrecision;
 
 const HistoriqueItemActionPrecisionDetails = (props: THistoriqueItemProps) => {
-  const {item} = props;
-  const {previous_precision, precision} = item;
+  const { item } = props;
+  const { previous_precision, precision } = item;
 
   return (
     <>
@@ -43,7 +43,9 @@ const HistoriqueItemActionPrecisionDetails = (props: THistoriqueItemProps) => {
 
 const renderPrecision = (value: string, isPrevious?: boolean) => (
   <span
-    className={classNames('whitespace-pre-line', {'line-through': isPrevious})}
+    className={classNames('whitespace-pre-line', {
+      'line-through': isPrevious,
+    })}
   >
     {typeof value === 'string' && value.trim() !== '' ? (
       value
