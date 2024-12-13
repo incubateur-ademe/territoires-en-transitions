@@ -1,12 +1,12 @@
+import { ActionDefinitionSummary } from '@/app/core-logic/api/endpoints/ActionDefinitionSummaryReadEndpoint';
 import classNames from 'classnames';
 import ActionProgressBar from 'ui/referentiels/ActionProgressBar';
-import { ActionDefinitionSummary } from 'core-logic/api/endpoints/ActionDefinitionSummaryReadEndpoint';
+import ScoreDisplay from '../../../../ui/referentiels/ScoreDisplay';
+import HeaderFixed from '../CollectivitePageLayout/HeaderFixed';
+import { SuiviScoreRow } from '../EtatDesLieux/Referentiel/data/useScoreRealise';
+import { PersoPotentiel } from '../PersoPotentielModal/PersoPotentiel';
 import { ActionTopNav } from './ActionNav';
 import { ActionSidePanelToolbar } from './ActionSidePanelToolbar';
-import { PersoPotentiel } from '../PersoPotentielModal/PersoPotentiel';
-import ScoreDisplay from '../../../../ui/referentiels/ScoreDisplay';
-import { SuiviScoreRow } from '../EtatDesLieux/Referentiel/data/useScoreRealise';
-import HeaderFixed from '../CollectivitePageLayout/HeaderFixed';
 
 /**
  * Affiche la partie de l'en-tête de la page Action sensible à la position du

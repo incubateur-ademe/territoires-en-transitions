@@ -1,11 +1,11 @@
-import { useQuery } from 'react-query';
-import { supabaseClient } from 'core-logic/api/supabase';
-import { TableOptions } from 'react-table';
-import { useCollectiviteId } from 'core-logic/hooks/params';
+import { supabaseClient } from '@/app/core-logic/api/supabase';
+import { useCollectiviteId } from '@/app/core-logic/hooks/params';
 import {
   ActionReferentiel,
   useReferentiel,
 } from 'app/pages/collectivite/ReferentielTable/useReferentiel';
+import { useQuery } from 'react-query';
+import { TableOptions } from 'react-table';
 import { TActionStatutsRow } from 'types/alias';
 import { phaseToLabel } from 'ui/referentiels/utils';
 

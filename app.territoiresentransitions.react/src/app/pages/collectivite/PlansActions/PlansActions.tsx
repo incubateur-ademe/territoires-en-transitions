@@ -1,5 +1,7 @@
-import {Route, Switch} from 'react-router-dom';
+import { Route, Switch } from 'react-router-dom';
 
+import { useCurrentCollectivite } from '@/app/core-logic/hooks/useCurrentCollectivite';
+import { ToutesLesFichesActionPage } from 'app/pages/collectivite/PlansActions/ToutesLesFichesAction/ToutesLesFichesActionPage';
 import {
   collectiviteFicheNonClasseePath,
   collectivitePlanActionAxeFichePath,
@@ -9,15 +11,13 @@ import {
   collectiviteTDBBasePath,
   collectiviteToutesLesFichesPath,
 } from 'app/paths';
-import {useCurrentCollectivite} from 'core-logic/hooks/useCurrentCollectivite';
 import CollectivitePageLayout from '../CollectivitePageLayout/CollectivitePageLayout';
-import {RouteEnAccesRestreint} from '../CollectiviteRoutes';
-import {TableauDeBordPage} from '../TableauDeBord/TableauDeBordPage';
-import {PlansActionsRoutes} from './PlansActionsRoutes';
-import {SynthesePage} from './Synthese/SynthesePage';
-import {SyntheseVuePage} from './Synthese/SyntheseVue/SyntheseVuePage';
-import {ToutesLesFichesActionPage} from 'app/pages/collectivite/PlansActions/ToutesLesFichesAction/ToutesLesFichesActionPage';
+import { RouteEnAccesRestreint } from '../CollectiviteRoutes';
+import { TableauDeBordPage } from '../TableauDeBord/TableauDeBordPage';
 import FicheActionPage from './FicheAction/FicheActionPage';
+import { PlansActionsRoutes } from './PlansActionsRoutes';
+import { SynthesePage } from './Synthese/SynthesePage';
+import { SyntheseVuePage } from './Synthese/SyntheseVue/SyntheseVuePage';
 
 const PlansActions = () => {
   const collectivite = useCurrentCollectivite();

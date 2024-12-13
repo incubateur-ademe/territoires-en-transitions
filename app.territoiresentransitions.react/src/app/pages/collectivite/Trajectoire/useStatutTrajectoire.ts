@@ -1,6 +1,6 @@
-import {useQuery} from 'react-query';
-import {ApiError, useApiClient} from 'core-logic/api/useApiClient';
-import {useCollectiviteId} from 'core-logic/hooks/params';
+import { ApiError, useApiClient } from '@/app/core-logic/api/useApiClient';
+import { useCollectiviteId } from '@/app/core-logic/hooks/params';
+import { useQuery } from 'react-query';
 
 export enum StatutTrajectoire {
   COMMUNE_NON_SUPPORTEE = 'commune_non_supportee',

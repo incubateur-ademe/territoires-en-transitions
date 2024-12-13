@@ -1,6 +1,6 @@
+import { useReferentielId } from '@/app/core-logic/hooks/params';
+import { useCurrentCollectivite } from '@/app/core-logic/hooks/useCurrentCollectivite';
 import { ReferentielParamOption } from 'app/paths';
-import { useReferentielId } from 'core-logic/hooks/params';
-import { useCurrentCollectivite } from 'core-logic/hooks/useCurrentCollectivite';
 import { defaultColors } from 'ui/charts/chartsTheme';
 import BarChartCardWithSubrows, {
   TBarChartScoreTable,

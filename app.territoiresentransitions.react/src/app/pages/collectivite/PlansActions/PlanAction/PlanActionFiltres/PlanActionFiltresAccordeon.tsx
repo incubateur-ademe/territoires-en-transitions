@@ -1,12 +1,12 @@
-import {useState} from 'react';
+import { useState } from 'react';
 
-import {AccordionControlled} from 'ui/Accordion';
+import { AccordionControlled } from 'ui/Accordion';
 import PlanActionFiltres from './PlanActionFiltres';
 
-import {useCollectiviteId} from 'core-logic/hooks/params';
-import {useSearchParams} from 'core-logic/hooks/query';
-import {TFilters, nameToShortNames} from '../../FicheAction/data/filters';
-import {PlanNode} from '../data/types';
+import { useCollectiviteId } from '@/app/core-logic/hooks/params';
+import { useSearchParams } from '@/app/core-logic/hooks/query';
+import { TFilters, nameToShortNames } from '../../FicheAction/data/filters';
+import { PlanNode } from '../data/types';
 
 type Props = {
   plan: PlanNode;
@@ -29,7 +29,7 @@ const PlanActionFiltresAccordeon = ({
     isAxePage
       ? `/collectivite/${collectivite_id}/plans/plan/${plan.id}/${axe.id}`
       : `/collectivite/${collectivite_id}/plans/plan/${plan.id}`,
-    {collectivite_id: collectivite_id!, axes: [axe.id]},
+    { collectivite_id: collectivite_id!, axes: [axe.id] },
     nameToShortNames
   );
 

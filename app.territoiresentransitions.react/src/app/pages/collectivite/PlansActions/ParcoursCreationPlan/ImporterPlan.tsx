@@ -1,6 +1,6 @@
+import { useCollectiviteId } from '@/app/core-logic/hooks/params';
 import { Alert, useEventTracker } from '@/ui';
 import { makeCollectivitePlansActionsNouveauUrl } from 'app/paths';
-import { useCollectiviteId } from 'core-logic/hooks/params';
 import Link from 'next/link';
 import ContextMenu from 'ui/shared/select/ContextMenu';
 import { MenuTriggerButton } from 'ui/shared/select/MenuTriggerButton';

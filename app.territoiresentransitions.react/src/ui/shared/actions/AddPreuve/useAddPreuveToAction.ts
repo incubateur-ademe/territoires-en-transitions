@@ -1,6 +1,6 @@
-import {useCollectiviteId} from 'core-logic/hooks/params';
-import {TAddFileFromLib} from 'ui/shared/preuves/AddPreuveModal/AddFile';
-import {TAddLink} from 'ui/shared/preuves/AddPreuveModal/AddLink';
+import { useCollectiviteId } from '@/app/core-logic/hooks/params';
+import { TAddFileFromLib } from 'ui/shared/preuves/AddPreuveModal/AddFile';
+import { TAddLink } from 'ui/shared/preuves/AddPreuveModal/AddLink';
 import {
   useAddPreuveComplementaire,
   useAddPreuveReglementaire,
@@ -19,10 +19,10 @@ export const useAddPreuveComplementaireToAction = (
   action_id: string
 ): THandlers => {
   const collectivite_id = useCollectiviteId();
-  const {mutate: addPreuveComplementaire} = useAddPreuveComplementaire();
+  const { mutate: addPreuveComplementaire } = useAddPreuveComplementaire();
 
   // associe un fichier sélectionné depuis la bibliothèque à une action
-  const addFileFromLib: TAddFileFromLib = fichier_id => {
+  const addFileFromLib: TAddFileFromLib = (fichier_id) => {
     if (collectivite_id) {
       addPreuveComplementaire({
         action_id,
@@ -58,10 +58,10 @@ export const useAddPreuveReglementaireToAction = (
   preuve_id: string
 ): THandlers => {
   const collectivite_id = useCollectiviteId();
-  const {mutate: addPreuveReglementaire} = useAddPreuveReglementaire();
+  const { mutate: addPreuveReglementaire } = useAddPreuveReglementaire();
 
   // associe un fichier sélectionné depuis la bibliothèque à une action
-  const addFileFromLib: TAddFileFromLib = fichier_id => {
+  const addFileFromLib: TAddFileFromLib = (fichier_id) => {
     if (collectivite_id) {
       addPreuveReglementaire({
         preuve_id,

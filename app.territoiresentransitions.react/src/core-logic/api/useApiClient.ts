@@ -1,5 +1,5 @@
-import { useAuth } from 'core-logic/api/auth/AuthProvider';
-import { getFileNameFromResponse } from 'core-logic/api/getFilenameFromResponse';
+import { useAuth } from '@/app/core-logic/api/auth/AuthProvider';
+import { getFileNameFromResponse } from '@/app/core-logic/api/getFilenameFromResponse';
 
 const BASE_URL = `${process.env.NEXT_PUBLIC_BACKEND_URL}/api/v1`;
 

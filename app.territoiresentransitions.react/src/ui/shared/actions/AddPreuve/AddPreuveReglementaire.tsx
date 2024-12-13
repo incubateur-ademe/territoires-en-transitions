@@ -1,6 +1,6 @@
+import { useCurrentCollectivite } from '@/app/core-logic/hooks/useCurrentCollectivite';
 import { Modal } from '@/ui';
 import classNames from 'classnames';
-import { useCurrentCollectivite } from 'core-logic/hooks/useCurrentCollectivite';
 import { useState } from 'react';
 import { AddPreuveModal } from 'ui/shared/preuves/AddPreuveModal';
 import { useAddPreuveReglementaireToAction } from './useAddPreuveToAction';

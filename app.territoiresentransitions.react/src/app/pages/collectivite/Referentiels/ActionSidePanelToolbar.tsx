@@ -1,14 +1,14 @@
-import {useEffect, useState} from 'react';
-import {useCurrentCollectivite} from 'core-logic/hooks/useCurrentCollectivite';
-import {ActionDefinitionSummary} from 'core-logic/api/endpoints/ActionDefinitionSummaryReadEndpoint';
-import {ToolbarIconToggleButton} from 'ui/buttons/ToolbarIconButton';
-import ActionDiscussionsPanel from './ActionDiscussions/ActionDiscussionsPanel';
-import {ActionInfoPanel} from './ActionInfo/ActionInfoPanel';
-import {useOngletTracker} from 'core-logic/hooks/useOngletTracker';
+import { ActionDefinitionSummary } from '@/app/core-logic/api/endpoints/ActionDefinitionSummaryReadEndpoint';
+import { useCurrentCollectivite } from '@/app/core-logic/hooks/useCurrentCollectivite';
+import { useOngletTracker } from '@/app/core-logic/hooks/useOngletTracker';
+import { useEffect, useState } from 'react';
+import { ToolbarIconToggleButton } from 'ui/buttons/ToolbarIconButton';
 import {
   usePanelDispatch,
   usePanelState,
 } from '../CollectivitePageLayout/Panel/PanelContext';
+import ActionDiscussionsPanel from './ActionDiscussions/ActionDiscussionsPanel';
+import { ActionInfoPanel } from './ActionInfo/ActionInfoPanel';
 
 export type Props = {
   action: ActionDefinitionSummary;
@@ -24,7 +24,7 @@ const panelIdToTrackerId: Record<string, 'informations' | 'commentaires'> = {
 };
 
 /** Affiche la barre d'outils permettant d'ouvrir/fermer le panneau latéral */
-export const ActionSidePanelToolbar = ({action}: Props) => {
+export const ActionSidePanelToolbar = ({ action }: Props) => {
   const currentCollectivite = useCurrentCollectivite();
   const tracker = useOngletTracker();
 
@@ -91,7 +91,7 @@ type ToolbarProps = {
   isReadonly: boolean;
 };
 
-const Toolbar = ({panelId, onClick, isReadonly}: ToolbarProps) => {
+const Toolbar = ({ panelId, onClick, isReadonly }: ToolbarProps) => {
   return (
     <div className="flex gap-4">
       <ToolbarIconToggleButton

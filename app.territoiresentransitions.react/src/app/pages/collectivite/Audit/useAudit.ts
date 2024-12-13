@@ -1,11 +1,14 @@
-import {useQuery} from 'react-query';
-import {supabaseClient} from 'core-logic/api/supabase';
-import {useCollectiviteId, useReferentielId} from 'core-logic/hooks/params';
-import {TAudit} from './types';
-import {Referentiel} from 'types/litterals';
-import {useAuth} from 'core-logic/api/auth/AuthProvider';
-import {usePreuvesParType} from 'ui/shared/preuves/Bibliotheque/usePreuves';
-import {useCurrentCollectivite} from 'core-logic/hooks/useCurrentCollectivite';
+import { useAuth } from '@/app/core-logic/api/auth/AuthProvider';
+import { supabaseClient } from '@/app/core-logic/api/supabase';
+import {
+  useCollectiviteId,
+  useReferentielId,
+} from '@/app/core-logic/hooks/params';
+import { useCurrentCollectivite } from '@/app/core-logic/hooks/useCurrentCollectivite';
+import { useQuery } from 'react-query';
+import { Referentiel } from 'types/litterals';
+import { usePreuvesParType } from 'ui/shared/preuves/Bibliotheque/usePreuves';
+import { TAudit } from './types';
 
 // charge les données
 export const fetch = async (
@@ -13,10 +16,10 @@ export const fetch = async (
   referentiel: Referentiel
 ) => {
   // lit le statut de l'audit en cours (s'il existe)
-  const {data, error} = await supabaseClient
+  const { data, error } = await supabaseClient
     .from('audit_en_cours')
     .select('*,auditeurs:audit_auditeur (id:auditeur)')
-    .match({collectivite_id, referentiel})
+    .match({ collectivite_id, referentiel })
     .limit(1);
 
   if (error || !data?.length) {
@@ -59,7 +62,7 @@ export const useAuditAuditeurs = (audit_id?: number) => {
     if (!audit_id) {
       return [];
     }
-    const {data} = await supabaseClient
+    const { data } = await supabaseClient
       .from('audit_auditeur')
       .select('auditeur')
       .eq('audit_id', audit_id);
@@ -69,23 +72,23 @@ export const useAuditAuditeurs = (audit_id?: number) => {
 
 /** Indique si l'utilisateur courant est l'auditeur d'un audit donné */
 export const useIsAuditAuditeur = (audit_id?: number) => {
-  const {user} = useAuth();
-  const {data: auditeurs} = useAuditAuditeurs(audit_id);
+  const { user } = useAuth();
+  const { data: auditeurs } = useAuditAuditeurs(audit_id);
   if (!user || !auditeurs?.length) {
     return false;
   }
-  return auditeurs.findIndex(({auditeur}) => auditeur === user.id) !== -1;
+  return auditeurs.findIndex(({ auditeur }) => auditeur === user.id) !== -1;
 };
 
-export type TAuditeur = {nom: string; prenom: string};
+export type TAuditeur = { nom: string; prenom: string };
 const fetchAuditeurs = async (
   collectivite_id: number,
   referentiel: Referentiel
 ) => {
-  const {data, error} = await supabaseClient
+  const { data, error } = await supabaseClient
     .from('auditeurs')
     .select('noms')
-    .match({collectivite_id, referentiel})
+    .match({ collectivite_id, referentiel })
     .limit(1);
 
   if (error || !data?.length) {
@@ -97,18 +100,18 @@ const fetchAuditeurs = async (
 
 /** Rapport(s) associé(s) à un audit */
 export const useRapportsAudit = (audit_id?: number) => {
-  const {audit} = usePreuvesParType({preuve_types: ['audit'], audit_id});
+  const { audit } = usePreuvesParType({ preuve_types: ['audit'], audit_id });
   return audit || [];
 };
 
 /** Détermine si un COT est actif pour la collectivité */
 export const useHasActiveCOT = () => {
   const collectivite_id = useCollectiviteId();
-  const {data} = useQuery(['is_cot', collectivite_id], async () => {
-    const {count} = await supabaseClient
+  const { data } = useQuery(['is_cot', collectivite_id], async () => {
+    const { count } = await supabaseClient
       .from('cot')
-      .select(undefined, {head: true, count: 'exact'})
-      .match({collectivite_id, actif: true});
+      .select(undefined, { head: true, count: 'exact' })
+      .match({ collectivite_id, actif: true });
     return Boolean(count);
   });
   return data || false;
@@ -117,7 +120,7 @@ export const useHasActiveCOT = () => {
 /** Détermine si la description de l'action doit être affichée dans la page
  * Action ou dans le panneau d'information */
 export const useShowDescIntoInfoPanel = () => {
-  const {data: audit} = useAudit();
+  const { data: audit } = useAudit();
   const isAuditeur = useIsAuditeur();
 
   // la description de l'action est affichée dans le panneau uniquement pour

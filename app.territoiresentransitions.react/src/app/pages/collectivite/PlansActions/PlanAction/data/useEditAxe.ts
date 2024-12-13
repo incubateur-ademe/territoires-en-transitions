@@ -1,9 +1,9 @@
-import {supabaseClient} from 'core-logic/api/supabase';
-import {useMutation, useQueryClient} from 'react-query';
+import { supabaseClient } from '@/app/core-logic/api/supabase';
+import { useMutation, useQueryClient } from 'react-query';
 
-import {PlanNode} from './types';
-import {useCollectiviteId} from 'core-logic/hooks/params';
-import {TPlanType} from 'types/alias';
+import { useCollectiviteId } from '@/app/core-logic/hooks/params';
+import { TPlanType } from 'types/alias';
+import { PlanNode } from './types';
 
 /**
  * Édite un axe dans un plan d'action
@@ -18,17 +18,17 @@ export const useEditAxe = (planId: number) => {
   const plan_type_key = ['plan_type', planId];
 
   return useMutation(
-    async (axe: PlanNode & {type?: TPlanType}) => {
+    async (axe: PlanNode & { type?: TPlanType }) => {
       await supabaseClient
         .from('axe')
-        .update({nom: axe.nom, type: axe.type?.id})
+        .update({ nom: axe.nom, type: axe.type?.id })
         .eq('id', axe.id);
     },
     {
-      onMutate: async axe => {
-        await queryClient.cancelQueries({queryKey: flat_axes_key});
-        await queryClient.cancelQueries({queryKey: navigation_key});
-        await queryClient.cancelQueries({queryKey: plan_type_key});
+      onMutate: async (axe) => {
+        await queryClient.cancelQueries({ queryKey: flat_axes_key });
+        await queryClient.cancelQueries({ queryKey: navigation_key });
+        await queryClient.cancelQueries({ queryKey: plan_type_key });
 
         const previousData = [
           [flat_axes_key, queryClient.getQueryData(flat_axes_key)],
@@ -38,14 +38,14 @@ export const useEditAxe = (planId: number) => {
 
         // update les axes d'un plan
         queryClient.setQueryData(flat_axes_key, (old: PlanNode[] | undefined) =>
-          old ? old.map(a => (a.id !== axe.id ? a : axe)) : []
+          old ? old.map((a) => (a.id !== axe.id ? a : axe)) : []
         );
 
         // update les axes de la navigation
         queryClient.setQueryData(
           navigation_key,
           (old: PlanNode[] | undefined) =>
-            old ? old.map(a => (a.id !== axe.id ? a : axe)) : []
+            old ? old.map((a) => (a.id !== axe.id ? a : axe)) : []
         );
 
         // update le type d'un plan

@@ -1,9 +1,9 @@
-import {useQuery} from 'react-query';
+import { useQuery } from 'react-query';
 
-import {supabaseClient} from 'core-logic/api/supabase';
-import {useCollectiviteId} from 'core-logic/hooks/params';
+import { supabaseClient } from '@/app/core-logic/api/supabase';
+import { useCollectiviteId } from '@/app/core-logic/hooks/params';
 
-import {TActionDiscussion, TActionDiscussionStatut} from './types';
+import { TActionDiscussion, TActionDiscussionStatut } from './types';
 
 export type ActionDiscussionFeedArgs = {
   action_id: string;
@@ -16,7 +16,7 @@ export type ActionDiscussionFeedArgs = {
 export const useActionDiscussionFeed = (args: ActionDiscussionFeedArgs) => {
   const collectivite_id = useCollectiviteId();
 
-  const {data} = useQuery(['action_discussion_feed', args.statut], () =>
+  const { data } = useQuery(['action_discussion_feed', args.statut], () =>
     collectivite_id ? fetch(collectivite_id, args.action_id, args.statut) : []
   );
 
@@ -31,7 +31,7 @@ const fetch = async (
   action_id: string,
   statut: TActionDiscussionStatut
 ) => {
-  const {data, error} = await supabaseClient
+  const { data, error } = await supabaseClient
     .from('action_discussion_feed')
     .select()
     .match({
@@ -39,7 +39,7 @@ const fetch = async (
       action_id,
       status: statut,
     })
-    .order('created_at', {ascending: false});
+    .order('created_at', { ascending: false });
 
   if (error) throw error?.message;
 

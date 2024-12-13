@@ -1,6 +1,9 @@
-import {ReferentielParamOption, makeCollectiviteActionUrl} from 'app/paths';
-import {useReferentielDownToAction} from 'core-logic/hooks/referentiel';
-import {useCollectiviteId, useReferentielId} from 'core-logic/hooks/params';
+import {
+  useCollectiviteId,
+  useReferentielId,
+} from '@/app/core-logic/hooks/params';
+import { useReferentielDownToAction } from '@/app/core-logic/hooks/referentiel';
+import { ReferentielParamOption, makeCollectiviteActionUrl } from 'app/paths';
 
 /**
  * Génération des liens "Action précédente" et "Action suivante"
@@ -12,11 +15,11 @@ export const usePrevAndNextActionLinks = (actionId: string) => {
 
   // tableau contenant uniquement les sous-axes et actions
   const actions = useReferentielDownToAction(referentielId);
-  const filteredActions = actions.filter(action => action.type === 'action');
+  const filteredActions = actions.filter((action) => action.type === 'action');
 
   // index de l'action courante
   const currentActionIndex = filteredActions.findIndex(
-    ({id}) => id === actionId
+    ({ id }) => id === actionId
   );
 
   // action précédente
@@ -42,5 +45,5 @@ export const usePrevAndNextActionLinks = (actionId: string) => {
       })
     : undefined;
 
-  return {prevActionLink, nextActionLink};
+  return { prevActionLink, nextActionLink };
 };

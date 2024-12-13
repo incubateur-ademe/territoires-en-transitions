@@ -1,6 +1,6 @@
+import { useCurrentCollectivite } from '@/app/core-logic/hooks/useCurrentCollectivite';
 import { EmptyCard } from '@/ui';
 import { makeCollectivitePlansActionsNouveauUrl } from 'app/paths';
-import { useCurrentCollectivite } from 'core-logic/hooks/useCurrentCollectivite';
 import { useRouter } from 'next/navigation';
 import PictoDashboard from 'ui/pictogrammes/PictoDashboard';
 

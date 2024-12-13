@@ -1,6 +1,6 @@
-import {useQuery} from 'react-query';
-import {supabaseClient} from 'core-logic/api/supabase';
-import {TComparaisonScoreAudit} from './types';
+import { supabaseClient } from '@/app/core-logic/api/supabase';
+import { useQuery } from 'react-query';
+import { TComparaisonScoreAudit } from './types';
 
 // charge les comparaisons de potentiels/scores avant/après audit
 export const useComparaisonScoreAudit = (
@@ -18,9 +18,9 @@ export const fetchComparaisonScoreAudit = async (
   const query = supabaseClient
     .from('comparaison_scores_audit')
     .select('action_id,courant,pre_audit')
-    .match({collectivite_id, referentiel});
+    .match({ collectivite_id, referentiel });
 
-  const {error, data} = await query;
+  const { error, data } = await query;
   if (error) {
     throw new Error(error.message);
   }

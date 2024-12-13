@@ -1,7 +1,7 @@
 import { LibreTag } from '@/api/typeUtils';
+import { useCollectiviteId } from '@/app/core-logic/hooks/params';
 import { Button, Field, useEventTracker } from '@/ui';
 import { OpenState } from '@/ui/utils/types';
-import { useCollectiviteId } from 'core-logic/hooks/params';
 import { useState } from 'react';
 import TagsSuiviPersoDropdown from 'ui/dropdownLists/TagsSuiviPersoDropdown/TagsSuiviPersoDropdown';
 import ActionsGroupeesModale from './ActionsGroupeesModale';

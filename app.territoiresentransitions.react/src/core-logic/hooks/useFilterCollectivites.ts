@@ -1,15 +1,15 @@
-import {useQuery} from 'react-query';
+import { useQuery } from 'react-query';
 
-import {supabaseClient} from 'core-logic/api/supabase';
-import {TNomCollectivite} from 'types/alias';
+import { supabaseClient } from '@/app/core-logic/api/supabase';
+import { TNomCollectivite } from 'types/alias';
 
 export const NB_ITEMS_FETCH = 10;
 
-export type TFilters = {search: string};
+export type TFilters = { search: string };
 
 /** Donne la liste des collectivité associée à une recherche textuelle */
 export const useFilterCollectivites = (filters: TFilters) => {
-  const {data, isLoading} = useQuery(['filter_collectivites', filters], () =>
+  const { data, isLoading } = useQuery(['filter_collectivites', filters], () =>
     fetch(filters)
   );
   return {
@@ -21,7 +21,7 @@ export const useFilterCollectivites = (filters: TFilters) => {
 
 /** Charge les données */
 const fetch = async (filters: TFilters) => {
-  const {search} = filters;
+  const { search } = filters;
 
   // charge les collectivites
   const query = supabaseClient.from('named_collectivite').select().limit(10);
@@ -30,11 +30,11 @@ const fetch = async (filters: TFilters) => {
     query.ilike('nom', `%${search}%`);
   }
 
-  const {error, data} = await query;
+  const { error, data } = await query;
 
   if (error) {
     throw new Error(error.message);
   }
 
-  return {filteredCollectivites: data || []};
+  return { filteredCollectivites: data || [] };
 };

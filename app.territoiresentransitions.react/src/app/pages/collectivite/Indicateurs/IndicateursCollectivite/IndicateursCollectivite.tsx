@@ -1,5 +1,7 @@
 import { FetchFiltre } from '@/api/indicateurs';
 import IndicateursListe from '@/app/app/pages/collectivite/Indicateurs/lists/indicateurs-list';
+import { useSearchParams } from '@/app/core-logic/hooks/query';
+import { useCurrentCollectivite } from '@/app/core-logic/hooks/useCurrentCollectivite';
 import { Button, ButtonMenu, TrackPageView, useEventTracker } from '@/ui';
 import EmptyIndicateurFavori from 'app/pages/collectivite/Indicateurs/IndicateursCollectivite/EmptyIndicateurFavori';
 import { useIndicateursFavorisCollectiviteIds } from 'app/pages/collectivite/Indicateurs/IndicateursCollectivite/useIndicateursFavorisCollectiviteIds';
@@ -7,8 +9,6 @@ import { indicateursNameToParams } from 'app/pages/collectivite/Indicateurs/list
 import MenuFiltresTousLesIndicateurs from 'app/pages/collectivite/Indicateurs/TousLesIndicateurs/MenuFiltresTousLesIndicateurs';
 import ModaleCreerIndicateur from 'app/pages/collectivite/PlansActions/FicheAction/Indicateurs/ModaleCreerIndicateur';
 import { makeCollectiviteIndicateursCollectiviteUrl } from 'app/paths';
-import { useSearchParams } from 'core-logic/hooks/query';
-import { useCurrentCollectivite } from 'core-logic/hooks/useCurrentCollectivite';
 import { useState } from 'react';
 
 /** Page de listing de tous les indicateurs de la collectivité */

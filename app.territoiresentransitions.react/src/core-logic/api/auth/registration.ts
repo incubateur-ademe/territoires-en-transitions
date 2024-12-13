@@ -1,5 +1,5 @@
 import { TablesInsert } from '@/api';
-import { supabaseClient } from 'core-logic/api/supabase';
+import { supabaseClient } from '@/app/core-logic/api/supabase';
 
 export interface InscriptionUtilisateur {
   email: string;

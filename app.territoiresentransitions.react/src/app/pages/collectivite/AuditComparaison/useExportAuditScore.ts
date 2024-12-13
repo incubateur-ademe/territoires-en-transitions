@@ -1,9 +1,9 @@
-import {useMutation} from 'react-query';
-import {format as formatDate} from 'date-fns';
-import {supabaseClient} from 'core-logic/api/supabase';
-import {useFonctionTracker} from 'core-logic/hooks/useFonctionTracker';
-import {CurrentCollectivite} from 'core-logic/hooks/useCurrentCollectivite';
-import {saveBlob} from 'ui/shared/preuves/Bibliotheque/saveBlob';
+import { supabaseClient } from '@/app/core-logic/api/supabase';
+import { CurrentCollectivite } from '@/app/core-logic/hooks/useCurrentCollectivite';
+import { useFonctionTracker } from '@/app/core-logic/hooks/useFonctionTracker';
+import { format as formatDate } from 'date-fns';
+import { useMutation } from 'react-query';
+import { saveBlob } from 'ui/shared/preuves/Bibliotheque/saveBlob';
 
 export const useExportAuditScores = (
   referentiel: string | null,
@@ -16,10 +16,10 @@ export const useExportAuditScores = (
     ['export_audit_score', collectivite_id, referentiel],
     async () => {
       if (!collectivite_id) return;
-      const {data} = await supabaseClient.functions.invoke(
+      const { data } = await supabaseClient.functions.invoke(
         'export_audit_score',
         {
-          body: {collectivite_id, referentiel},
+          body: { collectivite_id, referentiel },
         }
       );
 

@@ -1,5 +1,5 @@
+import { useCollectiviteId } from '@/app/core-logic/hooks/params';
 import { EmptyCard, useEventTracker } from '@/ui';
-import { useCollectiviteId } from 'core-logic/hooks/params';
 import SpinnerLoader from 'ui/shared/SpinnerLoader';
 import { useDownloadFile } from 'utils/useDownloadFile';
 import { DOC_METHODO } from './constants';

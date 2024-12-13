@@ -1,16 +1,16 @@
-import {DesactiverLesFiltres} from 'ui/shared/filters/DesactiverLesFiltres';
+import { DesactiverLesFiltres } from 'ui/shared/filters/DesactiverLesFiltres';
 import FicheActionCard from '../../FicheAction/Carte/FicheActionCard';
 
-import {makeCollectivitePlanActionFicheUrl} from 'app/paths';
-import {useCollectiviteId} from 'core-logic/hooks/params';
-import {TFichesActionsListe} from '../../FicheAction/data/useFichesActionFiltresListe';
+import { useCollectiviteId } from '@/app/core-logic/hooks/params';
+import { makeCollectivitePlanActionFicheUrl } from 'app/paths';
+import { TFichesActionsListe } from '../../FicheAction/data/useFichesActionFiltresListe';
 
 type Props = {
   planId: string;
   filters?: TFichesActionsListe;
 };
 
-const PlanActionFiltresResultats = ({planId, filters}: Props) => {
+const PlanActionFiltresResultats = ({ planId, filters }: Props) => {
   const collectivite_id = useCollectiviteId();
 
   if (filters === undefined) return null;
@@ -27,7 +27,7 @@ const PlanActionFiltresResultats = ({planId, filters}: Props) => {
       </div>
       {filters.items.length > 0 ? (
         <div className="grid grid-cols-2 gap-4">
-          {filters.items.map(fiche => (
+          {filters.items.map((fiche) => (
             <FicheActionCard
               key={fiche.id}
               ficheAction={fiche}

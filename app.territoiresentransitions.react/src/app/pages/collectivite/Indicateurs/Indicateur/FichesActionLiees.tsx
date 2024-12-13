@@ -1,6 +1,6 @@
+import { useCurrentCollectivite } from '@/app/core-logic/hooks/useCurrentCollectivite';
 import { Field } from '@/ui';
 import FichesLieesListe from 'app/pages/collectivite/PlansActions/FicheAction/FichesLiees/FichesLieesListe';
-import { useCurrentCollectivite } from 'core-logic/hooks/useCurrentCollectivite';
 import { objectToSnake } from 'ts-case-convert';
 import FichesActionsDropdown from 'ui/dropdownLists/FichesActionsDropdown/FichesActionsDropdown';
 import { TIndicateurDefinition } from '../types';

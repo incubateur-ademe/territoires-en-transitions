@@ -1,5 +1,5 @@
-import {useMutation, useQueryClient} from 'react-query';
-import {supabaseClient} from 'core-logic/api/supabase';
+import { supabaseClient } from '@/app/core-logic/api/supabase';
+import { useMutation, useQueryClient } from 'react-query';
 
 /**
  * Associe l'utilisateur courant à une collectivité.
@@ -32,7 +32,7 @@ export const useClaimCollectivite = () => {
 };
 
 const claim = async (collectiviteId: number): Promise<boolean> => {
-  const {data, error} = await supabaseClient.rpc('claim_collectivite', {
+  const { data, error } = await supabaseClient.rpc('claim_collectivite', {
     id: collectiviteId,
   });
 

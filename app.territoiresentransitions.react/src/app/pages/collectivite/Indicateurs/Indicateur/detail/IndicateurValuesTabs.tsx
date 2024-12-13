@@ -1,7 +1,7 @@
+import { useCurrentCollectivite } from '@/app/core-logic/hooks/useCurrentCollectivite';
 import { Checkbox, Tooltip } from '@/ui';
 import { transformeValeurs } from 'app/pages/collectivite/Indicateurs/Indicateur/detail/transformeValeurs';
 import { useIndicateurValeurs } from 'app/pages/collectivite/Indicateurs/useIndicateurValeurs';
-import { useCurrentCollectivite } from 'core-logic/hooks/useCurrentCollectivite';
 import { useEffect } from 'react';
 import { Tab, Tabs, useActiveTab } from 'ui/shared/Tabs';
 import { SOURCE_COLLECTIVITE } from '../../constants';

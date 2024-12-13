@@ -1,7 +1,7 @@
 import { useState } from 'react';
 
+import { useCollectiviteId } from '@/app/core-logic/hooks/params';
 import { Button } from '@/ui';
-import { useCollectiviteId } from 'core-logic/hooks/params';
 import Chart, { ChartProps } from 'ui/charts/Chart';
 import { usePlanActionTableauDeBord } from '../data/usePlanActionTableauDeBord';
 import { PlanActionFilter } from '../FiltersPlanAction';

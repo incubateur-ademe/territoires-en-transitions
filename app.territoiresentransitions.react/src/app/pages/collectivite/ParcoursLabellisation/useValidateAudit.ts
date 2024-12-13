@@ -1,6 +1,6 @@
-import {useMutation, useQueryClient} from 'react-query';
-import {supabaseClient} from 'core-logic/api/supabase';
-import {TAudit} from 'app/pages/collectivite/Audit/types';
+import { supabaseClient } from '@/app/core-logic/api/supabase';
+import { TAudit } from 'app/pages/collectivite/Audit/types';
+import { useMutation, useQueryClient } from 'react-query';
 
 export type TValidateAudit = ReturnType<typeof useValidateAudit>['mutate'];
 
@@ -11,20 +11,20 @@ export const useValidateAudit = () => {
   return useMutation(validateAudit, {
     mutationKey: 'validateAudit',
     onSuccess: (data, variables) => {
-      const {collectivite_id, referentiel} = variables;
+      const { collectivite_id, referentiel } = variables;
       queryClient.invalidateQueries(
         ['audit', collectivite_id, referentiel],
         undefined,
-        {cancelRefetch: true}
+        { cancelRefetch: true }
       );
       queryClient.invalidateQueries(
         ['labellisation_parcours', collectivite_id],
         undefined,
-        {cancelRefetch: true}
+        { cancelRefetch: true }
       );
     },
   });
 };
 
 const validateAudit = async (audit: TAudit) =>
-  supabaseClient.rpc('valider_audit',{audit_id : audit.id!});
+  supabaseClient.rpc('valider_audit', { audit_id: audit.id! });

@@ -1,17 +1,17 @@
-import {ENV} from 'environmentVariables';
-import {useEffect, useState} from 'react';
-import {useDebouncedCallback} from 'use-debounce';
+import { useAuth } from '@/app/core-logic/api/auth/AuthProvider';
+import { useCollectiviteId } from '@/app/core-logic/hooks/params';
+import { ENV } from 'environmentVariables';
+import { useEffect, useState } from 'react';
+import { useDebouncedCallback } from 'use-debounce';
+import { shasum256 } from 'utils/shasum256';
 import {
   TUploader,
   UploadErrorCode,
   UploadStatus,
   UploadStatusCode,
 } from './types';
-import {useCollectiviteId} from 'core-logic/hooks/params';
-import {shasum256} from 'utils/shasum256';
-import {useAddFileToLib} from './useAddFileToLib';
-import {useCollectiviteBucketId} from './useCollectiviteBucketId';
-import {useAuth} from 'core-logic/api/auth/AuthProvider';
+import { useAddFileToLib } from './useAddFileToLib';
+import { useCollectiviteBucketId } from './useCollectiviteBucketId';
 
 /**
  * Gère l'upload et envoi une notification après un transfert réussi
@@ -25,7 +25,7 @@ const addFileToBucket = async ({
 }: {
   bucket_id: string;
   file: File;
-  authHeaders: {authorization: string; apikey: string};
+  authHeaders: { authorization: string; apikey: string };
   onStatusChange: (status: UploadStatus) => void;
 }) => {
   // calcule une somme de contrôle du fichier
@@ -72,7 +72,7 @@ const addFileToBucket = async ({
 
   // appelé quand le transfert est interrompu
   xhr.upload.onabort = () => {
-    onStatusChange({code: UploadStatusCode.aborted});
+    onStatusChange({ code: UploadStatusCode.aborted });
   };
 
   // appelé quand le transfert est terminé en erreur
@@ -107,16 +107,16 @@ export const useUploader = (
   });
 
   const collectivite_id = useCollectiviteId()!;
-  const {addFileToLib} = useAddFileToLib();
-  const {authHeaders} = useAuth();
+  const { addFileToLib } = useAddFileToLib();
+  const { authHeaders } = useAuth();
   const bucket_id = useCollectiviteBucketId(collectivite_id);
 
   // appelée quand l'upload est terminé
   const onStatusChange = (status: UploadStatus) => {
     if (status.code === UploadStatusCode.uploaded) {
-      const {filename, hash} = status;
+      const { filename, hash } = status;
       // crée l'entrée dans la bibliothèque
-      addFileToLib({collectivite_id, filename, hash}).then(fichier => {
+      addFileToLib({ collectivite_id, filename, hash }).then((fichier) => {
         setStatus({
           code: UploadStatusCode.completed,
           fichier_id: fichier.id,
@@ -134,9 +134,9 @@ export const useUploader = (
   // démarre l'upload du fichier
   useEffect(() => {
     if (bucket_id && authHeaders) {
-      upload({bucket_id, file, authHeaders, onStatusChange});
+      upload({ bucket_id, file, authHeaders, onStatusChange });
     }
   }, [collectivite_id, bucket_id]);
 
-  return {status};
+  return { status };
 };

@@ -1,14 +1,14 @@
-import {useQuery} from 'react-query';
-import {supabaseClient} from 'core-logic/api/supabase';
+import { supabaseClient } from '@/app/core-logic/api/supabase';
+import { useQuery } from 'react-query';
 
 export type TPlanActionTableauDeBord = {
   collectivite_id: number;
   plan_id: number;
-  pilotes: {id: string; value: number}[];
-  priorites: {id: string; value: number}[];
-  referents: {id: string; value: number}[];
-  statuts: {id: string; value: number}[];
-  echeances: {id: string; value: number}[];
+  pilotes: { id: string; value: number }[];
+  priorites: { id: string; value: number }[];
+  referents: { id: string; value: number }[];
+  statuts: { id: string; value: number }[];
+  echeances: { id: string; value: number }[];
 };
 
 export type TPlanActionTableauDeBordQuery = {
@@ -21,7 +21,7 @@ const fetchDashboardData = async (
   plan_id: number | null,
   sans_plan: boolean | null
 ): Promise<TPlanActionTableauDeBord | null> => {
-  const {error, data} = await supabaseClient.rpc(
+  const { error, data } = await supabaseClient.rpc(
     'plan_action_tableau_de_bord',
     {
       collectivite_id,
@@ -50,7 +50,7 @@ export const usePlanActionTableauDeBord = (
   plan_id: number | null,
   sans_plan: boolean | null
 ): TPlanActionTableauDeBordQuery => {
-  const {data, isLoading} = useQuery(
+  const { data, isLoading } = useQuery(
     ['plan_action_tableau_de_bord', collectivite_id, plan_id, sans_plan],
     () => fetchDashboardData(collectivite_id, plan_id, sans_plan)
   );
@@ -63,7 +63,7 @@ export const usePlanActionTableauDeBord = (
       !data.statuts &&
       !data.echeances
     )
-      return {data: null, isLoading};
+      return { data: null, isLoading };
 
     const sortedData = {
       ...data,
@@ -74,33 +74,33 @@ export const usePlanActionTableauDeBord = (
       echeances: data.echeances ? sortByEcheance(data.echeances) : [],
     };
 
-    return {data: sortedData, isLoading};
-  } else return {data: null, isLoading};
+    return { data: sortedData, isLoading };
+  } else return { data: null, isLoading };
 };
 
 const sortByValue = (
-  data: {id: string; value: number}[]
-): {id: string; value: number}[] => {
-  const sortedData = data.filter(d => d.id !== 'NC');
+  data: { id: string; value: number }[]
+): { id: string; value: number }[] => {
+  const sortedData = data.filter((d) => d.id !== 'NC');
   sortedData.sort((a, b) => b.value - a.value);
 
-  const ncItem = data.find(d => d.id === 'NC');
+  const ncItem = data.find((d) => d.id === 'NC');
   if (ncItem) sortedData.push(ncItem);
 
   return sortedData;
 };
 
 const sortByPriority = (
-  data: {id: string; value: number}[]
-): {id: string; value: number}[] => {
-  const rank: {[key: string]: number} = {Bas: 1, Moyen: 2, Élevé: 3, NC: 4};
+  data: { id: string; value: number }[]
+): { id: string; value: number }[] => {
+  const rank: { [key: string]: number } = { Bas: 1, Moyen: 2, Élevé: 3, NC: 4 };
   return data.sort((a, b) => rank[a.id] - rank[b.id]);
 };
 
 const sortByStatus = (
-  data: {id: string; value: number}[]
-): {id: string; value: number}[] => {
-  const rank: {[key: string]: number} = {
+  data: { id: string; value: number }[]
+): { id: string; value: number }[] => {
+  const rank: { [key: string]: number } = {
     'À venir': 1,
     'En cours': 2,
     Réalisé: 3,
@@ -112,9 +112,9 @@ const sortByStatus = (
 };
 
 const sortByEcheance = (
-  data: {id: string; value: number}[]
-): {id: string; value: number}[] => {
-  const rank: {[key: string]: number} = {
+  data: { id: string; value: number }[]
+): { id: string; value: number }[] => {
+  const rank: { [key: string]: number } = {
     'Échéance dépassée': 1,
     'Échéance dans moins de trois mois': 2,
     'Échéance entre trois mois et 1 an': 3,

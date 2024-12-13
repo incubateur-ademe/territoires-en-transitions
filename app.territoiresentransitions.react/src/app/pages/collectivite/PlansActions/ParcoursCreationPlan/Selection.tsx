@@ -1,4 +1,5 @@
 import { useNbActionsDansPanier } from '@/app/app/Layout/Header/AccesPanierAction';
+import { useCollectiviteId } from '@/app/core-logic/hooks/params';
 import { TrackingPlan, useEventTracker } from '@/ui';
 import {
   makeCollectivitePanierUrl,
@@ -6,7 +7,6 @@ import {
   makeCollectivitePlansActionsImporterUrl,
 } from 'app/paths';
 import classNames from 'classnames';
-import { useCollectiviteId } from 'core-logic/hooks/params';
 import Link from 'next/link';
 import { ReactComponent as DocumentAddPicto } from './document-add.svg';
 import { ReactComponent as DocumentDownloadPicto } from './document-download.svg';

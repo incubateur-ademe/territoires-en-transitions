@@ -1,6 +1,6 @@
-import {useQuery} from 'react-query';
-import {supabaseClient} from 'core-logic/api/supabase';
-import {TLabellisationParcours} from './types';
+import { supabaseClient } from '@/app/core-logic/api/supabase';
+import { useQuery } from 'react-query';
+import { TLabellisationParcours } from './types';
 
 // charge les données du parcours
 export const useLabellisationParcours = ({
@@ -11,7 +11,7 @@ export const useLabellisationParcours = ({
   referentiel: string | null;
 }) => {
   // charge les données du parcours
-  const {data: parcoursList} = useAllLabellisationsParcours(collectivite_id);
+  const { data: parcoursList } = useAllLabellisationsParcours(collectivite_id);
 
   // extrait le parcours correspondant au référentiel courant
   return getReferentielParcours(parcoursList, referentiel);
@@ -32,7 +32,7 @@ const fetchParcours = async (
     return null;
   }
 
-  const {data, error} = await supabaseClient
+  const { data, error } = await supabaseClient
     .rpc('labellisation_parcours', {
       collectivite_id,
     })
@@ -41,7 +41,7 @@ const fetchParcours = async (
   if (error || !data) {
     return null;
   }
-  return data.map(d => ({
+  return data.map((d) => ({
     ...d,
     collectivite_id, // on ajoute l'id qui n'est pas redonné par la vue
   })) as TLabellisationParcours[];
@@ -52,14 +52,14 @@ export const getReferentielParcours = (
   referentiel: string | null
 ) => {
   const parcours: TLabellisationParcours | undefined = parcoursList?.find(
-    p => p.referentiel === referentiel
+    (p) => p.referentiel === referentiel
   );
 
   if (!parcours) {
     return null;
   }
 
-  const {criteres_action} = parcours;
+  const { criteres_action } = parcours;
   return {
     ...parcours,
     // trie les critères action

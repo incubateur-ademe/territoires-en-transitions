@@ -1,6 +1,6 @@
 import { CollectiviteEngagee } from '@/api';
+import { collectiviteEngageeAPI } from '@/app/core-logic/api/apis';
 import { NB_CARDS_PER_PAGE } from 'app/pages/CollectivitesEngagees/data/utils';
-import { collectiviteEngageeAPI } from 'core-logic/api/apis';
 import { useQuery } from 'react-query';
 
 /**

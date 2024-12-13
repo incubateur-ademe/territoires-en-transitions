@@ -5,13 +5,13 @@ import ModalAvancementFichesAction from '@/app/app/pages/collectivite/TableauDeB
 import { useFichesActionStatuts } from '@/app/app/pages/collectivite/TableauDeBord/Collectivite/ModuleAvancementFichesAction/useFichesActionStatuts';
 import { makeFichesActionUrlWithParams } from '@/app/app/pages/collectivite/TableauDeBord/Collectivite/ModuleAvancementFichesAction/utils';
 import { getQueryKey } from '@/app/app/pages/collectivite/TableauDeBord/Collectivite/useCollectiviteModulesFetch';
+import { useCurrentCollectivite } from '@/app/core-logic/hooks/useCurrentCollectivite';
 import { useEventTracker } from '@/ui';
 import BadgeStatut from 'app/pages/collectivite/PlansActions/components/BadgeStatut';
 import Module, {
   ModuleDisplay,
 } from 'app/pages/collectivite/TableauDeBord/components/Module';
 import { TDBViewParam } from 'app/paths';
-import { useCurrentCollectivite } from 'core-logic/hooks/useCurrentCollectivite';
 import Link from 'next/link';
 import { useRouter } from 'next/navigation';
 import { useState } from 'react';

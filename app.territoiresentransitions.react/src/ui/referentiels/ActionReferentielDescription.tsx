@@ -1,7 +1,7 @@
+import { ActionDefinitionSummary } from '@/app/core-logic/api/endpoints/ActionDefinitionSummaryReadEndpoint';
 import DOMPurify from 'dompurify';
-import {addTargetToContentAnchors} from 'utils/content';
-import {ActionReferentiel} from 'types/action_referentiel';
-import {ActionDefinitionSummary} from 'core-logic/api/endpoints/ActionDefinitionSummaryReadEndpoint';
+import { ActionReferentiel } from 'types/action_referentiel';
+import { addTargetToContentAnchors } from 'utils/content';
 
 export const ActionReferentielDescription = ({
   action,

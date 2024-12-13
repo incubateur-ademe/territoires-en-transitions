@@ -1,6 +1,6 @@
-import {ActionType} from 'types/action_referentiel';
-import {ActionDefinitionSummary} from 'core-logic/api/endpoints/ActionDefinitionSummaryReadEndpoint';
-import {useActionScore} from 'core-logic/hooks/scoreHooks';
+import { ActionDefinitionSummary } from '@/app/core-logic/api/endpoints/ActionDefinitionSummaryReadEndpoint';
+import { useActionScore } from '@/app/core-logic/hooks/scoreHooks';
+import { ActionType } from 'types/action_referentiel';
 
 export interface PillParams {
   color: string;
@@ -28,14 +28,14 @@ export const pillParams: Record<ActionType, PillParams> = {
     filled: false,
     height: 20,
   },
-  action: {color: '#000091', textColor: 'white', filled: true, height: 20},
+  action: { color: '#000091', textColor: 'white', filled: true, height: 20 },
   'sous-action': {
     color: '#919BAC',
     textColor: 'white',
     filled: true,
     height: 20,
   },
-  tache: {color: '#E8EBF3', textColor: 'black', filled: true, height: 20},
+  tache: { color: '#E8EBF3', textColor: 'black', filled: true, height: 20 },
 };
 export const ActionPotentiel = ({
   action,

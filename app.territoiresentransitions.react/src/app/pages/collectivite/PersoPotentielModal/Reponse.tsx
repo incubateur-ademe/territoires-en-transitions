@@ -1,9 +1,9 @@
-import {FC, ReactNode} from 'react';
+import { useCurrentCollectivite } from '@/app/core-logic/hooks/useCurrentCollectivite';
 import classNames from 'classnames';
-import {TQuestionReponseProps} from './PersoPotentielQR';
-import {TListeChoix, TReponse} from 'types/personnalisation';
-import {useDebouncedInput} from 'ui/shared/useDebouncedInput';
-import {useCurrentCollectivite} from 'core-logic/hooks/useCurrentCollectivite';
+import { FC, ReactNode } from 'react';
+import { TListeChoix, TReponse } from 'types/personnalisation';
+import { useDebouncedInput } from 'ui/shared/useDebouncedInput';
+import { TQuestionReponseProps } from './PersoPotentielQR';
 
 const ReponseContainer = ({
   children,
@@ -18,14 +18,14 @@ const ReponseContainer = ({
 );
 
 /** Affiche une réponse donnant le choix entre plusieurs énoncés */
-const ReponseChoix = ({qr, onChange}: TQuestionReponseProps) => {
-  const {id: questionId, choix, reponse} = qr;
+const ReponseChoix = ({ qr, onChange }: TQuestionReponseProps) => {
+  const { id: questionId, choix, reponse } = qr;
   const choices = getFilteredChoices(reponse, choix || []);
   const collectivite = useCurrentCollectivite();
 
   return collectivite ? (
     <ReponseContainer className="flex-col">
-      {choices?.map(({id: choiceId, label}) => {
+      {choices?.map(({ id: choiceId, label }) => {
         return (
           <RadioButton
             key={questionId + choiceId}
@@ -43,17 +43,17 @@ const ReponseChoix = ({qr, onChange}: TQuestionReponseProps) => {
 };
 
 /** Affiche une réponse donnant le choix entre oui et non */
-const ReponseBinaire = ({qr, onChange}: TQuestionReponseProps) => {
-  const {id: questionId, reponse} = qr;
+const ReponseBinaire = ({ qr, onChange }: TQuestionReponseProps) => {
+  const { id: questionId, reponse } = qr;
   const choices = getFilteredChoices(reponse, [
-    {id: 'oui', label: 'Oui'},
-    {id: 'non', label: 'Non'},
+    { id: 'oui', label: 'Oui' },
+    { id: 'non', label: 'Non' },
   ]);
   const collectivite = useCurrentCollectivite();
 
   return collectivite ? (
     <ReponseContainer>
-      {choices?.map(({id: choiceId, label}) => (
+      {choices?.map(({ id: choiceId, label }) => (
         <RadioButton
           key={choiceId}
           disabled={collectivite.readonly}
@@ -70,13 +70,13 @@ const ReponseBinaire = ({qr, onChange}: TQuestionReponseProps) => {
 
 /** Affiche une réponse donnant lieu à la saisie d'une valeur entre 0 et 100 */
 const DEFAULT_RANGE = [0, 100];
-const ReponseProportion = ({qr, onChange}: TQuestionReponseProps) => {
-  const {id: questionId, reponse} = qr;
+const ReponseProportion = ({ qr, onChange }: TQuestionReponseProps) => {
+  const { id: questionId, reponse } = qr;
   const [min, max] = DEFAULT_RANGE;
 
   const [value, handleChange, setValue] = useDebouncedInput(
     proportionToString(reponse as number),
-    query => {
+    (query) => {
       const proportion = stringToProportion(query, min, max);
       setValue(proportionToString(proportion));
       onChange(proportion);
@@ -95,7 +95,7 @@ const ReponseProportion = ({qr, onChange}: TQuestionReponseProps) => {
         min={min}
         max={max}
         id={questionId}
-        style={{width: 224}}
+        style={{ width: 224 }}
         className="fr-input"
         value={value === null ? '' : String(value)}
         onChange={handleChange}
@@ -117,7 +117,7 @@ const proportionToString = (value: number | null) =>
   value === null || value === undefined ? '' : String(value);
 
 // correspondances entre un type de réponse et son composant
-export const reponseParType: {[k: string]: FC<TQuestionReponseProps>} = {
+export const reponseParType: { [k: string]: FC<TQuestionReponseProps> } = {
   choix: ReponseChoix,
   binaire: ReponseBinaire,
   proportion: ReponseProportion,
@@ -129,7 +129,7 @@ const getFilteredChoices = (
 ): TListeChoix => {
   const hasReponse = reponse !== null && reponse !== undefined;
   return hasReponse
-    ? choix?.filter(({id: choiceId}) => reponse?.toString() === choiceId)
+    ? choix?.filter(({ id: choiceId }) => reponse?.toString() === choiceId)
     : choix;
 };
 
@@ -171,7 +171,7 @@ const RadioButton = ({
       {hasReponse && (
         <button
           className="fr-link fr-link--icon-left fr-icon-edit-line fr-ml-3w fr-mb-2w !max-w-fit"
-          onClick={e => {
+          onClick={(e) => {
             e.preventDefault();
             onChange(null);
           }}

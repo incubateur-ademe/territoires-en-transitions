@@ -41,7 +41,7 @@ module.exports = {
     });
 
     // chargement des mocks pour le bon fonctionnement des stories dans le storybook
-    config.resolve.alias['core-logic/hooks/useCurrentCollectivite'] =
+    config.resolve.alias['@/app/core-logic/hooks/useCurrentCollectivite'] =
       require.resolve(
         '../src/core-logic/hooks/__mocks__/useCurrentCollectivite.ts'
       );

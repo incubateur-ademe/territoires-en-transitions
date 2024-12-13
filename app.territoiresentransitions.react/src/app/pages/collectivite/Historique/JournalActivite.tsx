@@ -1,5 +1,5 @@
+import { useCollectiviteId } from '@/app/core-logic/hooks/params';
 import { TrackPageView } from '@/ui';
-import { useCollectiviteId } from 'core-logic/hooks/params';
 import { HistoriqueListe } from './HistoriqueListe';
 import { THistoriqueProps } from './types';
 import { useHistoriqueItemListe } from './useHistoriqueItemListe';

@@ -1,5 +1,5 @@
-import {TableOptions} from 'react-table';
-import {useCollectiviteId} from 'core-logic/hooks/params';
+import { useCollectiviteId } from '@/app/core-logic/hooks/params';
+import { TableOptions } from 'react-table';
 import {
   ActionReferentiel,
   useReferentiel,
@@ -20,11 +20,11 @@ export type TableData = {
 /**
  * Memoïze et renvoi les données et paramètres de la table
  */
-export const useTableData: UseTableData = referentiel => {
+export const useTableData: UseTableData = (referentiel) => {
   const collectivite_id = useCollectiviteId();
 
   // chargement du référentiel
-  const {table, total, count, isLoading} = useReferentiel(
+  const { table, total, count, isLoading } = useReferentiel(
     referentiel,
     collectivite_id,
     'all'

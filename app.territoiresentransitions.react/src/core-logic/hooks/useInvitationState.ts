@@ -1,11 +1,11 @@
-import {useRouteMatch} from 'react-router-dom';
-import {supabaseClient} from 'core-logic/api/supabase';
+import { supabaseClient } from '@/app/core-logic/api/supabase';
 import {
   invitationIdParam,
   invitationLandingPath,
   invitationMailParam,
 } from 'app/paths';
 import { useMutation, useQueryClient } from 'react-query';
+import { useRouteMatch } from 'react-router-dom';
 
 // extrait l'id d'invitation de l'url si il est présent
 export const useInvitationState = () => {

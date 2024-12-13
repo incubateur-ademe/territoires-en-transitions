@@ -1,8 +1,8 @@
-import {useQuery} from 'react-query';
-import {supabaseClient} from 'core-logic/api/supabase';
-import {useCollectiviteId} from 'core-logic/hooks/params';
-import {ActionDefinitionSummary} from 'core-logic/api/endpoints/ActionDefinitionSummaryReadEndpoint';
-import {TPreuve, TPreuvesParType, TPreuveType} from './types';
+import { ActionDefinitionSummary } from '@/app/core-logic/api/endpoints/ActionDefinitionSummaryReadEndpoint';
+import { supabaseClient } from '@/app/core-logic/api/supabase';
+import { useCollectiviteId } from '@/app/core-logic/hooks/params';
+import { useQuery } from 'react-query';
+import { TPreuve, TPreuvesParType, TPreuveType } from './types';
 
 export type TActionDef = Pick<
   ActionDefinitionSummary,
@@ -23,15 +23,15 @@ const fetch = async (collectivite_id: number, filters?: TFilters) => {
   const query = supabaseClient
     .from('preuve')
     .select('*')
-    .order('action->>action_id' as 'action', {ascending: true})
+    .order('action->>action_id' as 'action', { ascending: true })
     .order('preuve_reglementaire->>nom' as 'preuve_reglementaire', {
       ascending: true,
     })
-    .order('rapport->>date' as 'rapport', {ascending: false})
-    .order('demande->>referentiel' as 'demande', {ascending: true})
-    .order('demande->>etoiles' as 'demande', {ascending: false})
-    .order('lien->>titre' as 'lien', {ascending: true})
-    .order('fichier->>filename' as 'fichier', {ascending: true})
+    .order('rapport->>date' as 'rapport', { ascending: false })
+    .order('demande->>referentiel' as 'demande', { ascending: true })
+    .order('demande->>etoiles' as 'demande', { ascending: false })
+    .order('lien->>titre' as 'lien', { ascending: true })
+    .order('fichier->>filename' as 'fichier', { ascending: true })
     .eq('collectivite_id', collectivite_id);
 
   // éventuellement filtrées par action (et ses sous-actions si `withSubActions` est aussi fourni)
@@ -64,7 +64,7 @@ const fetch = async (collectivite_id: number, filters?: TFilters) => {
     query.in('preuve_type', preuve_types);
   }
 
-  const {data, error} = await query;
+  const { data, error } = await query;
 
   if (error || !data) {
     return [];
@@ -80,7 +80,7 @@ const fetch = async (collectivite_id: number, filters?: TFilters) => {
  */
 export const usePreuves = (filters?: TFilters) => {
   const collectivite_id = useCollectiviteId();
-  const {data} = useQuery(
+  const { data } = useQuery(
     ['preuve', collectivite_id, filters],
     () => {
       return collectivite_id ? fetch(collectivite_id, filters) : [];
@@ -115,8 +115,8 @@ const fetchActionPreuvesCount = async (
   collectivite_id: number,
   action_id: string
 ) => {
-  const {data} = await supabaseClient
-    .rpc('preuve_count', {collectivite_id, action_id})
+  const { data } = await supabaseClient
+    .rpc('preuve_count', { collectivite_id, action_id })
     .single();
 
   return data || 0;
@@ -128,10 +128,13 @@ const fetchActionPreuvesCount = async (
  */
 export const useActionPreuvesCount = (action: TActionDef) => {
   const collectivite_id = useCollectiviteId();
-  const {data} = useQuery(['preuve_count', collectivite_id, action.id], () => {
-    return collectivite_id && action.id
-      ? fetchActionPreuvesCount(collectivite_id, action.id)
-      : 0;
-  });
+  const { data } = useQuery(
+    ['preuve_count', collectivite_id, action.id],
+    () => {
+      return collectivite_id && action.id
+        ? fetchActionPreuvesCount(collectivite_id, action.id)
+        : 0;
+    }
+  );
   return data ?? 0;
 };

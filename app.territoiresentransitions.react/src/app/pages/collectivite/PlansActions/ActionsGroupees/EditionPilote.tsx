@@ -1,7 +1,7 @@
 import { Personne } from '@/api/collectivites';
+import { useCollectiviteId } from '@/app/core-logic/hooks/params';
 import { Button, Field, useEventTracker } from '@/ui';
 import { OpenState } from '@/ui/utils/types';
-import { useCollectiviteId } from 'core-logic/hooks/params';
 import { useState } from 'react';
 import PersonnesDropdown from 'ui/dropdownLists/PersonnesDropdown/PersonnesDropdown';
 import { getPersonneStringId } from 'ui/dropdownLists/PersonnesDropdown/utils';

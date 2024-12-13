@@ -12,8 +12,8 @@ import {
   getQueryKey,
   usePersonalModuleFetch,
 } from '@/app/app/pages/collectivite/TableauDeBord/Personnel/usePersonalModuleFetch';
+import { useCollectiviteId } from '@/app/core-logic/hooks/params';
 import { TDBViewParam } from 'app/paths';
-import { useCollectiviteId } from 'core-logic/hooks/params';
 
 type Props = {
   view: TDBViewParam;

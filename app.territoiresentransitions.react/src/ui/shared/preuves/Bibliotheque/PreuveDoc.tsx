@@ -1,6 +1,6 @@
-import { TPreuve } from './types';
-import { useCurrentCollectivite } from 'core-logic/hooks/useCurrentCollectivite';
+import { useCurrentCollectivite } from '@/app/core-logic/hooks/useCurrentCollectivite';
 import CarteDocument from './CarteDocument';
+import { TPreuve } from './types';
 
 export type TPreuveDocProps = {
   classComment?: string;

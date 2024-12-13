@@ -1,6 +1,6 @@
-import {supabaseClient} from 'core-logic/api/supabase';
-import {useQuery} from 'react-query';
-import {TActionDef} from 'ui/shared/preuves/Bibliotheque/usePreuves';
+import { supabaseClient } from '@/app/core-logic/api/supabase';
+import { useQuery } from 'react-query';
+import { TActionDef } from 'ui/shared/preuves/Bibliotheque/usePreuves';
 
 type TFetchedData = {
   id: string;
@@ -13,7 +13,7 @@ type TFetchedData = {
  */
 export const useSubActions = (action: TActionDef) => {
   // charge les données
-  const {data} = useQuery(['sub_actions', action.id], () => fetch(action), {
+  const { data } = useQuery(['sub_actions', action.id], () => fetch(action), {
     // il n'est pas nécessaire de recharger trop systématiquement ici
     refetchOnReconnect: false,
     refetchOnWindowFocus: false,
@@ -27,7 +27,7 @@ export const useSubActions = (action: TActionDef) => {
  */
 export const useSubActionOptionsListe = (action: TActionDef) => {
   const actions = useSubActions(action);
-  return actions.map(({id, identifiant, nom}) => ({
+  return actions.map(({ id, identifiant, nom }) => ({
     value: id,
     label: `${identifiant} ${nom}`,
   }));
@@ -35,7 +35,7 @@ export const useSubActionOptionsListe = (action: TActionDef) => {
 
 const fetch = async (action: TActionDef): Promise<TFetchedData[]> => {
   // extrait l'id du référentiel depuis l'id de l'action
-  const {referentiel, identifiant} = action;
+  const { referentiel, identifiant } = action;
 
   // la requête
   const query = supabaseClient
@@ -46,7 +46,7 @@ const fetch = async (action: TActionDef): Promise<TFetchedData[]> => {
     .eq('type', 'sous-action');
 
   // attends les données
-  const {error, data} = await query;
+  const { error, data } = await query;
   if (error) {
     throw new Error(error.message);
   }

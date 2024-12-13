@@ -1,10 +1,10 @@
 import { FicheAction } from '@/api/plan-actions';
+import { useCollectiviteId } from '@/app/core-logic/hooks/params';
 import { Button, Divider, EmptyCard, useEventTracker } from '@/ui';
 import IndicateurCard from 'app/pages/collectivite/Indicateurs/lists/IndicateurCard/IndicateurCard';
 import { getIndicateurGroup } from 'app/pages/collectivite/Indicateurs/lists/IndicateurCard/utils';
 import { TIndicateurListItem } from 'app/pages/collectivite/Indicateurs/types';
 import { makeCollectiviteIndicateursUrl } from 'app/paths';
-import { useCollectiviteId } from 'core-logic/hooks/params';
 import { useState } from 'react';
 import LoadingCard from '../LoadingCard';
 import SideMenu from '../SideMenu';

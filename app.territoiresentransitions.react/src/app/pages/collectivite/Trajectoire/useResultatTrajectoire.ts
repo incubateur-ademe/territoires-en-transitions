@@ -1,12 +1,13 @@
-import {useQuery} from 'react-query';
-import {useApiClient} from 'core-logic/api/useApiClient';
-import {useCollectiviteId} from 'core-logic/hooks/params';
+import { useApiClient } from '@/app/core-logic/api/useApiClient';
+import { useCollectiviteId } from '@/app/core-logic/hooks/params';
+import { useQuery } from 'react-query';
 import {
   DATE_FIN,
   EMISSIONS_NETTES,
   IndicateurTrajectoire,
   SourceIndicateur,
 } from './constants';
+import { COULEURS_SECTEUR, LAYERS } from './graphes/constants';
 import {
   getKey,
   IndicateurAvecValeurs,
@@ -17,7 +18,6 @@ import {
   separeObjectifsEtResultats,
   useIndicateurValeurs,
 } from './useIndicateurValeurs';
-import {COULEURS_SECTEUR, LAYERS} from './graphes/constants';
 
 /** Charge la trajectoire */
 const useTrajectoire = () => {

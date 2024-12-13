@@ -1,3 +1,4 @@
+import { ActionDefinitionSummary } from '@/app/core-logic/api/endpoints/ActionDefinitionSummaryReadEndpoint';
 import { avancementToLabel } from 'app/labels';
 import {
   useActionJustification,
@@ -6,11 +7,10 @@ import {
 import { useTasksScoreRepartition } from 'app/pages/collectivite/EtatDesLieux/Referentiel/data/useTasksScores';
 import { actionAvancementColors } from 'app/theme';
 import classNames from 'classnames';
-import { ActionDefinitionSummary } from 'core-logic/api/endpoints/ActionDefinitionSummaryReadEndpoint';
 import { Dispatch, SetStateAction, useEffect, useState } from 'react';
-import ProgressBarWithTooltip from 'ui/score/ProgressBarWithTooltip';
 import { DetailedScore } from 'ui/referentiels/ScoreDetailleModal/DetailedScore/DetailedScore';
 import { AvancementValues } from 'ui/referentiels/ScoreDetailleModal/DetailedScore/DetailedScoreSlider';
+import ProgressBarWithTooltip from 'ui/score/ProgressBarWithTooltip';
 import Modal from 'ui/shared/floating-ui/Modal';
 import ActionJustification from '../../../app/pages/collectivite/EtatDesLieux/Referentiel/SuiviAction/ActionJustification';
 import { AVANCEMENT_DETAILLE_PAR_STATUT, getStatusFromIndex } from '../utils';

@@ -1,12 +1,12 @@
-import { supabaseClient } from 'core-logic/api/supabase';
+import { supabaseClient } from '@/app/core-logic/api/supabase';
 import { QueryKey, useMutation, useQueryClient } from 'react-query';
 
 import { FicheResume } from '@/api/plan-actions';
+import { useCollectiviteId } from '@/app/core-logic/hooks/params';
 import {
   makeCollectivitePlanActionUrl,
   makeCollectiviteToutesLesFichesUrl,
 } from 'app/paths';
-import { useCollectiviteId } from 'core-logic/hooks/params';
 import { useRouter } from 'next/navigation';
 import { useParams } from 'react-router-dom';
 import { PlanNode } from '../../PlanAction/data/types';

@@ -1,5 +1,5 @@
-import {supabaseClient} from 'core-logic/api/supabase';
-import {useMutation} from 'react-query';
+import { supabaseClient } from '@/app/core-logic/api/supabase';
+import { useMutation } from 'react-query';
 
 export interface UpdateEmailParams {
   email: string;
@@ -9,7 +9,7 @@ export interface UpdateEmailParams {
  * Met à jour l'email de l'utilisateur courant
  */
 export const useUpdateEmail = () => {
-  const {mutate} = useMutation(updateEmail, {
+  const { mutate } = useMutation(updateEmail, {
     mutationKey: 'update_email',
   });
 
@@ -17,13 +17,13 @@ export const useUpdateEmail = () => {
     mutate(email);
   };
 
-  return {handleUpdateEmail};
+  return { handleUpdateEmail };
 };
 
 /**
  * Query pour mettre à jour l'email de l'utilisateur courant
  */
-export const updateEmail = async ({email}: UpdateEmailParams) => {
-  const {error} = await supabaseClient.auth.updateUser({email});
+export const updateEmail = async ({ email }: UpdateEmailParams) => {
+  const { error } = await supabaseClient.auth.updateUser({ email });
   if (error) throw error?.message;
 };

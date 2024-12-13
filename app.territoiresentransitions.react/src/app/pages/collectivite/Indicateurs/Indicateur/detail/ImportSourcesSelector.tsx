@@ -1,4 +1,5 @@
 import { Indicateurs } from '@/api';
+import { useCurrentCollectivite } from '@/app/core-logic/hooks/useCurrentCollectivite';
 import {
   Alert,
   Button,
@@ -9,7 +10,6 @@ import {
   TrackPageView,
   useEventTracker,
 } from '@/ui';
-import { useCurrentCollectivite } from 'core-logic/hooks/useCurrentCollectivite';
 import { useState } from 'react';
 import { getSourceTypeLabel, SOURCE_COLLECTIVITE } from '../../constants';
 import { TIndicateurDefinition } from '../../types';

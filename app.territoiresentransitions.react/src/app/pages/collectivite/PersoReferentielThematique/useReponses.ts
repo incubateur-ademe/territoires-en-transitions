@@ -1,14 +1,14 @@
-import {useQueries} from 'react-query';
-import {supabaseClient} from 'core-logic/api/supabase';
-import {useCollectiviteId} from 'core-logic/hooks/params';
-import {TQuestionRead, TReponseRead, TReponse} from 'types/personnalisation';
+import { supabaseClient } from '@/app/core-logic/api/supabase';
+import { useCollectiviteId } from '@/app/core-logic/hooks/params';
+import { useQueries } from 'react-query';
+import { TQuestionRead, TReponse, TReponseRead } from 'types/personnalisation';
 
 // charge les réponses existantes pour une série de questions donnée
 export const useReponses = (questions: TQuestionRead[]) => {
   const collectivite_id = useCollectiviteId();
 
   // une requête par question pour permettre le rechargement individuel
-  const queries = questions.map(q => ({
+  const queries = questions.map((q) => ({
     queryKey: ['reponse', collectivite_id, q.id],
     queryFn: () => fetchReponse(collectivite_id!, q.id),
     enabled: !!collectivite_id,
@@ -22,10 +22,10 @@ const fetchReponse = async (collectivite_id: number, question_id: string) => {
   const query = supabaseClient
     .from('reponse_display')
     .select()
-    .match({collectivite_id, question_id});
+    .match({ collectivite_id, question_id });
 
   // attends les données
-  const {error, data} = await query;
+  const { error, data } = await query;
 
   if (error) {
     throw new Error(error.message);
@@ -36,8 +36,8 @@ const fetchReponse = async (collectivite_id: number, question_id: string) => {
 
 // met à jour si nécessaire la valeur d'une réponse lue depuis la base
 const transform = (row: TReponseRead) => {
-  const {reponse} = row;
-  const {type, reponse: reponseValue} = reponse;
+  const { reponse } = row;
+  const { type, reponse: reponseValue } = reponse;
 
   // transforme en pourcentage une réponse de type proportion
   if (type === 'proportion') {
@@ -59,7 +59,7 @@ const transform = (row: TReponseRead) => {
 
 // change la valeur dans une réponse et renvoi l'objet résultant
 const setReponseValue = (row: TReponseRead, reponseValue: TReponse) => {
-  const {reponse} = row;
+  const { reponse } = row;
 
   return {
     ...row,

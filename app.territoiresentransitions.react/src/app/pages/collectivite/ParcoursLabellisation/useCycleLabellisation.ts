@@ -1,12 +1,12 @@
-import {TLabellisationParcours} from 'app/pages/collectivite/ParcoursLabellisation/types';
-import {useCurrentCollectivite} from 'core-logic/hooks/useCurrentCollectivite';
-import {useIsAuditeur} from '../Audit/useAudit';
-import {useCarteIdentite} from '../PersoReferentielThematique/useCarteIdentite';
-import {usePreuves} from 'ui/shared/preuves/Bibliotheque/usePreuves';
-import {TPreuveLabellisation} from 'ui/shared/preuves/Bibliotheque/types';
-import {useLabellisationParcours} from './useLabellisationParcours';
-import {getParcoursStatus} from './getParcoursStatus';
-import {usePeutCommencerAudit} from './usePeutCommencerAudit';
+import { useCurrentCollectivite } from '@/app/core-logic/hooks/useCurrentCollectivite';
+import { TLabellisationParcours } from 'app/pages/collectivite/ParcoursLabellisation/types';
+import { TPreuveLabellisation } from 'ui/shared/preuves/Bibliotheque/types';
+import { usePreuves } from 'ui/shared/preuves/Bibliotheque/usePreuves';
+import { useIsAuditeur } from '../Audit/useAudit';
+import { useCarteIdentite } from '../PersoReferentielThematique/useCarteIdentite';
+import { getParcoursStatus } from './getParcoursStatus';
+import { useLabellisationParcours } from './useLabellisationParcours';
+import { usePeutCommencerAudit } from './usePeutCommencerAudit';
 
 // données du cycle de labellisation/audit actuel d'une collectivité
 export type TCycleLabellisation = {
@@ -36,8 +36,8 @@ export const useCycleLabellisation = (
   const identite = useCarteIdentite(collectivite_id);
 
   // charge les données du parcours
-  const parcours = useLabellisationParcours({collectivite_id, referentiel});
-  const {completude_ok, rempli, etoiles} = parcours || {};
+  const parcours = useLabellisationParcours({ collectivite_id, referentiel });
+  const { completude_ok, rempli, etoiles } = parcours || {};
 
   // vérifie si l'utilisateur courant peut commencer l'audit
   const peutCommencerAudit = usePeutCommencerAudit();

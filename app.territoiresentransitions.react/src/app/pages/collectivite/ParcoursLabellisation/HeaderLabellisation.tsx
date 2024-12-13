@@ -2,21 +2,21 @@
  * Affiche l'en-tête de page contenant l'objectif et le bouton pour candidater
  */
 
-import {ReactNode, useState} from 'react';
-import {useReferentielId} from 'core-logic/hooks/params';
-import {PageHeaderLeft} from 'ui/PageHeader';
-import {ValiderAudit} from '../Audit/ValiderAudit';
-import {DemandeLabellisationModal} from './DemandeLabellisationModal';
-import {DemandeAuditModal} from './DemandeAuditModal';
-import {numLabels} from './numLabels';
+import { useReferentielId } from '@/app/core-logic/hooks/params';
+import { ReactNode, useState } from 'react';
+import { PageHeaderLeft } from 'ui/PageHeader';
+import { TAuditeur, useAuditeurs } from '../Audit/useAudit';
+import { ValiderAudit } from '../Audit/ValiderAudit';
+import { DemandeAuditModal } from './DemandeAuditModal';
+import { DemandeLabellisationModal } from './DemandeLabellisationModal';
+import { numLabels } from './numLabels';
+import { TEtoiles } from './types';
 import {
-  useCycleLabellisation,
   TCycleLabellisation,
+  useCycleLabellisation,
 } from './useCycleLabellisation';
-import {useStartAudit, TStartAudit} from './useStartAudit';
-import {useValidateAudit, TValidateAudit} from './useValidateAudit';
-import {TEtoiles} from './types';
-import {TAuditeur, useAuditeurs} from '../Audit/useAudit';
+import { TStartAudit, useStartAudit } from './useStartAudit';
+import { TValidateAudit, useValidateAudit } from './useValidateAudit';
 
 export type THeaderLabellisationProps = {
   parcoursLabellisation: TCycleLabellisation;
@@ -27,7 +27,7 @@ export type THeaderLabellisationProps = {
 export const HeaderLabellisation = (props: THeaderLabellisationProps) => {
   const [opened, setOpened] = useState(false);
   const [opened_1ereEtoileCOT, setOpened_1ereEtoileCOT] = useState(false);
-  const {parcoursLabellisation, onStartAudit, onValidateAudit} = props;
+  const { parcoursLabellisation, onStartAudit, onValidateAudit } = props;
   const {
     parcours,
     status,
@@ -36,7 +36,7 @@ export const HeaderLabellisation = (props: THeaderLabellisationProps) => {
     peutDemanderEtoile,
     peutCommencerAudit,
   } = parcoursLabellisation;
-  const {data: auditeurs} = useAuditeurs();
+  const { data: auditeurs } = useAuditeurs();
 
   if (!parcours) {
     return null;
@@ -46,7 +46,7 @@ export const HeaderLabellisation = (props: THeaderLabellisationProps) => {
     parcoursLabellisation,
     auditeurs
   );
-  const {collectivite_id, referentiel, etoiles, audit, completude_ok} =
+  const { collectivite_id, referentiel, etoiles, audit, completude_ok } =
     parcours;
   const canSubmitDemande = peutDemanderEtoile || (isCOT && completude_ok);
   const DemandeModal = isCOT ? DemandeAuditModal : DemandeLabellisationModal;
@@ -86,7 +86,7 @@ export const HeaderLabellisation = (props: THeaderLabellisationProps) => {
           onClick={() =>
             audit &&
             referentiel &&
-            onStartAudit({collectivite_id, referentiel, audit_id: audit.id!})
+            onStartAudit({ collectivite_id, referentiel, audit_id: audit.id! })
           }
         >
           Commencer l'audit
@@ -98,7 +98,7 @@ export const HeaderLabellisation = (props: THeaderLabellisationProps) => {
       {status === 'audit_en_cours' && isAuditeur ? (
         <ValiderAudit
           audit={audit!}
-          onValidate={audit => onValidateAudit(audit!)}
+          onValidate={(audit) => onValidateAudit(audit!)}
         />
       ) : null}
       {status === 'non_demandee' || status === 'demande_envoyee' ? (
@@ -129,14 +129,14 @@ const getHeaderMessageContent = (
   parcoursLabellisation: TCycleLabellisation,
   auditeurs: TAuditeur[] | null | undefined
 ) => {
-  const {status, isAuditeur, peutCommencerAudit} = parcoursLabellisation;
+  const { status, isAuditeur, peutCommencerAudit } = parcoursLabellisation;
 
   if (status === 'demande_envoyee' && !peutCommencerAudit) {
     return 'Demande envoyée';
   }
 
   const listeAuditeurs = auditeurs
-    ?.map(({prenom, nom}) => `${prenom} ${nom}`)
+    ?.map(({ prenom, nom }) => `${prenom} ${nom}`)
     .join(', ');
 
   if (status === 'audit_en_cours' && !isAuditeur) {
@@ -154,7 +154,7 @@ const getHeaderMessageContent = (
   return null;
 };
 
-const HeaderMessage = ({children}: {children: ReactNode}) => (
+const HeaderMessage = ({ children }: { children: ReactNode }) => (
   <p className="m-0 fr-text-mention--grey" data-test="HeaderMessage">
     {children}
   </p>
@@ -166,9 +166,9 @@ const DerniereLabellisation = ({
 }: {
   parcoursLabellisation: TCycleLabellisation;
 }) => {
-  const {parcours} = parcoursLabellisation;
-  const {labellisation} = parcours || {};
-  const {etoiles, obtenue_le} = labellisation || {};
+  const { parcours } = parcoursLabellisation;
+  const { labellisation } = parcours || {};
+  const { etoiles, obtenue_le } = labellisation || {};
 
   if (!etoiles) {
     return null;
@@ -190,8 +190,8 @@ const DerniereLabellisation = ({
 const HeaderLabellisationConnected = () => {
   const referentiel = useReferentielId();
   const parcoursLabellisation = useCycleLabellisation(referentiel);
-  const {mutate: onStartAudit} = useStartAudit();
-  const {mutate: onValidateAudit} = useValidateAudit();
+  const { mutate: onStartAudit } = useStartAudit();
+  const { mutate: onValidateAudit } = useValidateAudit();
 
   return parcoursLabellisation?.parcours ? (
     <HeaderLabellisation

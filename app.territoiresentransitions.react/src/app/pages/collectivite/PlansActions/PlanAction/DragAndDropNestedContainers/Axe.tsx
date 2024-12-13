@@ -1,20 +1,20 @@
-import {createPortal} from 'react-dom';
-import {useEffect, useState} from 'react';
+import { DragOverlay, useDraggable, useDroppable } from '@dnd-kit/core';
 import classNames from 'classnames';
-import {DragOverlay, useDraggable, useDroppable} from '@dnd-kit/core';
+import { useEffect, useState } from 'react';
+import { createPortal } from 'react-dom';
 
-import Fiches from './Fiches';
-import AxeTitre from './AxeTitre';
-import SupprimerAxeModal from '../SupprimerAxeModal';
-import {PlanNode} from '../data/types';
-import {generateTitle} from '../../FicheAction/data/utils';
+import { useCurrentCollectivite } from '@/app/core-logic/hooks/useCurrentCollectivite';
 import IconDrag from 'ui/icons/IconDrag';
 import IconFolderAddLine from 'ui/icons/IconFolderAddLine';
-import {useAddAxe} from '../data/useUpsertAxe';
-import {checkAxeHasFiche, childrenOfPlanNodes} from '../data/utils';
+import { useCreateFicheResume } from '../../FicheAction/data/useCreateFicheResume';
+import { generateTitle } from '../../FicheAction/data/utils';
+import SupprimerAxeModal from '../SupprimerAxeModal';
+import { PlanNode } from '../data/types';
+import { useAddAxe } from '../data/useUpsertAxe';
+import { checkAxeHasFiche, childrenOfPlanNodes } from '../data/utils';
 import AxeSkeleton from './AxeSkeleton';
-import {useCreateFicheResume} from '../../FicheAction/data/useCreateFicheResume';
-import {useCurrentCollectivite} from 'core-logic/hooks/useCurrentCollectivite';
+import AxeTitre from './AxeTitre';
+import Fiches from './Fiches';
 
 export type AxeDndData = {
   type: 'axe';
@@ -29,7 +29,7 @@ type Props = {
   isReadonly: boolean;
 };
 
-const Axe = ({plan, axe, axes, isAxePage, isReadonly}: Props) => {
+const Axe = ({ plan, axe, axes, isAxePage, isReadonly }: Props) => {
   const collectivite = useCurrentCollectivite();
 
   const canDrag =
@@ -38,9 +38,9 @@ const Axe = ({plan, axe, axes, isAxePage, isReadonly}: Props) => {
 
   const uniqueId = `axe-${axe.id}`;
 
-  const {mutate: addAxe} = useAddAxe(axe.id, axe.depth, plan.id);
+  const { mutate: addAxe } = useAddAxe(axe.id, axe.depth, plan.id);
 
-  const {mutate: createFicheResume} = useCreateFicheResume({
+  const { mutate: createFicheResume } = useCreateFicheResume({
     axeId: axe.id,
     planId: plan.id,
     axeFichesIds: axe.fiches,
@@ -120,8 +120,8 @@ const Axe = ({plan, axe, axes, isAxePage, isReadonly}: Props) => {
         ref={droppableRef}
         className={classNames(
           'relative py-3 pr-4 pl-2',
-          {group: !isOver},
-          {'bg-bf925': isDroppable}
+          { group: !isOver },
+          { 'bg-bf925': isDroppable }
         )}
       >
         <div className="flex items-start">

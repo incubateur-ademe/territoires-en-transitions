@@ -1,6 +1,6 @@
 import { TableTag } from '@/api';
 import { TagUpdate } from '@/api/shared/domain';
-import { supabaseClient } from 'core-logic/api/supabase';
+import { supabaseClient } from '@/app/core-logic/api/supabase';
 import { QueryKey, useMutation, useQueryClient } from 'react-query';
 import { objectToSnake } from 'ts-case-convert';
 

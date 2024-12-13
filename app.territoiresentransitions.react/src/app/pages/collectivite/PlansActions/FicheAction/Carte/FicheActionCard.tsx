@@ -1,7 +1,7 @@
 import { FicheResume } from '@/api/plan-actions/domain';
+import { useCurrentCollectivite } from '@/app/core-logic/hooks/useCurrentCollectivite';
 import { Button, Card, Checkbox, Notification, Tooltip } from '@/ui';
 import classNames from 'classnames';
-import { useCurrentCollectivite } from 'core-logic/hooks/useCurrentCollectivite';
 import { useState } from 'react';
 import { QueryKey } from 'react-query';
 import { getModifiedSince } from 'utils/formatUtils';

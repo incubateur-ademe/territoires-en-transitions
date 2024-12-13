@@ -1,4 +1,4 @@
-import {supabaseClient} from 'core-logic/api/supabase';
+import { supabaseClient } from '@/app/core-logic/api/supabase';
 
 type UpsertArgs = {
   collectivite_id: number;
@@ -12,7 +12,7 @@ export const upsertActionDiscussion = async ({
 }: UpsertArgs) =>
   supabaseClient
     .from('action_discussion')
-    .upsert({collectivite_id, action_id})
+    .upsert({ collectivite_id, action_id })
     .select();
 
 type InsertCommentaireArgs = {
@@ -27,4 +27,4 @@ export const insertActionDiscussionCommentaire = async ({
 }: InsertCommentaireArgs) =>
   supabaseClient
     .from('action_discussion_commentaire')
-    .insert({discussion_id, message});
+    .insert({ discussion_id, message });

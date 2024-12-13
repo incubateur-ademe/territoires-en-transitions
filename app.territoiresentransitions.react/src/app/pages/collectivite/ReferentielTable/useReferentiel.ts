@@ -1,9 +1,12 @@
-import {useCallback, useMemo} from 'react';
-import {useQuery} from 'react-query';
-import {DISABLE_AUTO_REFETCH, supabaseClient} from 'core-logic/api/supabase';
-import {TActionStatutsRow} from 'types/alias';
-import {useToggleRowExpandedReducer} from './useToggleRowExpandedReducer';
-import {indexBy} from 'utils/indexBy';
+import {
+  DISABLE_AUTO_REFETCH,
+  supabaseClient,
+} from '@/app/core-logic/api/supabase';
+import { useCallback, useMemo } from 'react';
+import { useQuery } from 'react-query';
+import { TActionStatutsRow } from 'types/alias';
+import { indexBy } from 'utils/indexBy';
+import { useToggleRowExpandedReducer } from './useToggleRowExpandedReducer';
 
 // les informations du référentiel à précharger
 export type ActionReferentiel = Pick<
@@ -31,7 +34,7 @@ export const useReferentiel = <ActionSubset extends IAction>(
   actions?: ActionSubset[] | 'all'
 ) => {
   // chargement du référentiel
-  const {mergeActions, isLoading, total, sousActionsTotal} =
+  const { mergeActions, isLoading, total, sousActionsTotal } =
     useReferentielData(referentiel);
 
   // agrège les lignes fournies avec celles du référentiel
@@ -42,7 +45,7 @@ export const useReferentiel = <ActionSubset extends IAction>(
 
   // extrait les lignes de 1er niveau
   const data = useMemo(
-    () => rows?.filter(({depth}) => depth === 1) || [],
+    () => rows?.filter(({ depth }) => depth === 1) || [],
     [rows]
   );
 
@@ -51,10 +54,10 @@ export const useReferentiel = <ActionSubset extends IAction>(
 
   // renvoi les sous-lignes d'une ligne
   const getSubRows = useCallback(
-    (parentRow: ActionReferentiel & {have_children: boolean}) =>
+    (parentRow: ActionReferentiel & { have_children: boolean }) =>
       rows && parentRow.have_children
         ? rows?.filter(
-            ({identifiant, depth}) =>
+            ({ identifiant, depth }) =>
               depth === parentRow.depth + 1 &&
               identifiant.startsWith(parentRow.identifiant)
           )
@@ -97,12 +100,12 @@ export const useReferentiel = <ActionSubset extends IAction>(
  */
 export const useReferentielData = (referentiel: string | null) => {
   // chargement du référentiel et indexation par id
-  const {data, isLoading} = useQuery(
+  const { data, isLoading } = useQuery(
     ['action_referentiel', referentiel],
     () => fetchActionsReferentiel(referentiel),
     DISABLE_AUTO_REFETCH
   );
-  const {actionById, total, sousActionsTotal, rows} = data || {};
+  const { actionById, total, sousActionsTotal, rows } = data || {};
 
   // fusionne avec les informations préchargées du référentiel
   const mergeActions = useCallback(
@@ -120,7 +123,7 @@ export const useReferentielData = (referentiel: string | null) => {
       }
 
       // fusionne dans chaque ligne les données complémentaires
-      return actions.map(action => ({
+      return actions.map((action) => ({
         ...action,
         ...(actionById[action.action_id] || {}),
       }));
@@ -144,11 +147,11 @@ const fetchActionsReferentiel = async (referentiel: string | null) => {
   const query = supabaseClient
     .from('action_referentiel')
     .select('action_id,identifiant,have_children,nom,depth,type,phase')
-    .match({referentiel})
+    .match({ referentiel })
     .gt('depth', 0);
 
   // attends les données
-  const {error, data} = await query;
+  const { error, data } = await query;
 
   if (error) {
     throw new Error(error.message);

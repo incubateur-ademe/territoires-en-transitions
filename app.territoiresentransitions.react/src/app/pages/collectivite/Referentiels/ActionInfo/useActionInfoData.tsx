@@ -1,7 +1,10 @@
-import {useQuery} from 'react-query';
-import {DISABLE_AUTO_REFETCH, supabaseClient} from 'core-logic/api/supabase';
-import {TActionInfo, TRPCName} from './type';
-import {ActionDefinitionSummary} from 'core-logic/api/endpoints/ActionDefinitionSummaryReadEndpoint';
+import { ActionDefinitionSummary } from '@/app/core-logic/api/endpoints/ActionDefinitionSummaryReadEndpoint';
+import {
+  DISABLE_AUTO_REFETCH,
+  supabaseClient,
+} from '@/app/core-logic/api/supabase';
+import { useQuery } from 'react-query';
+import { TActionInfo, TRPCName } from './type';
 
 /**
  * Charge une partie (exemples, ressources, etc.) des infos associées à une action
@@ -20,7 +23,7 @@ export const useActionInfoData = (
       }
 
       const rpc = `action_${infoType}` as TRPCName;
-      const {data} = await supabaseClient.rpc(rpc, {id: actionId}).single();
+      const { data } = await supabaseClient.rpc(rpc, { id: actionId }).single();
       return data?.[infoType] as string | undefined;
     },
     DISABLE_AUTO_REFETCH

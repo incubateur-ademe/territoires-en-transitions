@@ -1,8 +1,8 @@
-import {useQuery} from 'react-query';
+import { useQuery } from 'react-query';
 
-import {supabaseClient} from 'core-logic/api/supabase';
-import {useCollectiviteId} from 'core-logic/hooks/params';
-import {TActionStatutsRow} from 'types/alias';
+import { supabaseClient } from '@/app/core-logic/api/supabase';
+import { useCollectiviteId } from '@/app/core-logic/hooks/params';
+import { TActionStatutsRow } from 'types/alias';
 
 const fetchActionListe = async (collectivite_id: number) => {
   const query = supabaseClient
@@ -12,9 +12,9 @@ const fetchActionListe = async (collectivite_id: number) => {
     )
     .eq('collectivite_id', collectivite_id)
     .in('type', ['action', 'sous-action'])
-    .order('action_id', {ascending: true});
+    .order('action_id', { ascending: true });
 
-  const {error, data} = await query;
+  const { error, data } = await query;
 
   if (error) {
     throw new Error(error.message);

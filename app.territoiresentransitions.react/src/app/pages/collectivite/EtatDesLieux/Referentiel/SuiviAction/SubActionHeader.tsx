@@ -1,7 +1,7 @@
+import { ActionDefinitionSummary } from '@/app/core-logic/api/endpoints/ActionDefinitionSummaryReadEndpoint';
 import { InfoTooltip } from '@/ui';
 import ActionJustification from 'app/pages/collectivite/EtatDesLieux/Referentiel/SuiviAction/ActionJustification';
 import classNames from 'classnames';
-import { ActionDefinitionSummary } from 'core-logic/api/endpoints/ActionDefinitionSummaryReadEndpoint';
 import DOMPurify from 'dompurify';
 import { useEffect, useState } from 'react';
 import { TActionAvancement } from 'types/alias';

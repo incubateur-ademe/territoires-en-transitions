@@ -1,4 +1,5 @@
 import { FicheAction } from '@/api/plan-actions';
+import { useCurrentCollectivite } from '@/app/core-logic/hooks/useCurrentCollectivite';
 import {
   Checkbox,
   Field,
@@ -9,7 +10,6 @@ import {
   Textarea,
   useEventTracker,
 } from '@/ui';
-import { useCurrentCollectivite } from 'core-logic/hooks/useCurrentCollectivite';
 import _ from 'lodash';
 import { useEffect, useRef, useState } from 'react';
 import MiseEnOeuvreDropdown from 'ui/dropdownLists/ficheAction/MiseEnOeuvreDropdown/MiseEnOeuvreDropdown';

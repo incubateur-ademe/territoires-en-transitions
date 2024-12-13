@@ -1,5 +1,5 @@
+import { useCollectiviteId } from '@/app/core-logic/hooks/params';
 import { TrackPageView } from '@/ui';
-import { useCollectiviteId } from 'core-logic/hooks/params';
 import PreuveDoc from 'ui/shared/preuves/Bibliotheque/PreuveDoc';
 import {
   TPreuveAuditEtLabellisation,

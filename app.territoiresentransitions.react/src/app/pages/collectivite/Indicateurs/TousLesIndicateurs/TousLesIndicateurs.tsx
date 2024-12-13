@@ -1,12 +1,12 @@
 import { FetchFiltre } from '@/api/indicateurs';
 import IndicateursListe from '@/app/app/pages/collectivite/Indicateurs/lists/indicateurs-list';
+import { useSearchParams } from '@/app/core-logic/hooks/query';
+import { useCurrentCollectivite } from '@/app/core-logic/hooks/useCurrentCollectivite';
 import { Button, ButtonMenu, TrackPageView, useEventTracker } from '@/ui';
 import { indicateursNameToParams } from 'app/pages/collectivite/Indicateurs/lists/utils';
 import MenuFiltresTousLesIndicateurs from 'app/pages/collectivite/Indicateurs/TousLesIndicateurs/MenuFiltresTousLesIndicateurs';
 import ModaleCreerIndicateur from 'app/pages/collectivite/PlansActions/FicheAction/Indicateurs/ModaleCreerIndicateur';
 import { makeCollectiviteTousLesIndicateursUrl } from 'app/paths';
-import { useSearchParams } from 'core-logic/hooks/query';
-import { useCurrentCollectivite } from 'core-logic/hooks/useCurrentCollectivite';
 import { useState } from 'react';
 
 /** Page de listing de toutes les fiches actions de la collectivité */

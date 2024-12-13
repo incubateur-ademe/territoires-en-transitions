@@ -1,6 +1,6 @@
+import { ActionDefinitionSummary } from '@/app/core-logic/api/endpoints/ActionDefinitionSummaryReadEndpoint';
+import { ActionTitleRead } from '@/app/core-logic/api/endpoints/ActionTitleReadEndpoint';
 import { Referentiel } from 'types/litterals';
-import { ActionDefinitionSummary } from 'core-logic/api/endpoints/ActionDefinitionSummaryReadEndpoint';
-import { ActionTitleRead } from 'core-logic/api/endpoints/ActionTitleReadEndpoint';
 
 /**
  * Search for the siblings of an action in the action list.

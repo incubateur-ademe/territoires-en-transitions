@@ -1,7 +1,7 @@
 import { useEffect } from 'react';
 
+import { useCollectiviteId } from '@/app/core-logic/hooks/params';
 import { Option, OptionValue, SelectFilter, SelectMultipleProps } from '@/ui';
-import { useCollectiviteId } from 'core-logic/hooks/params';
 import { useTagCreate } from 'ui/dropdownLists/tags/useTagCreate';
 import { useDeleteTag } from 'ui/dropdownLists/tags/useTagDelete';
 import { useTagUpdate } from 'ui/dropdownLists/tags/useTagUpdate';

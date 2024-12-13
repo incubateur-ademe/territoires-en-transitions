@@ -1,9 +1,9 @@
-import {useMutation, useQueryClient} from 'react-query';
+import { useMutation, useQueryClient } from 'react-query';
 
-import {supabaseClient} from 'core-logic/api/supabase';
-import {useCollectiviteId} from 'core-logic/hooks/params';
-import {dropAnimation} from '../DragAndDropNestedContainers/Arborescence';
-import {PlanNode} from './types';
+import { supabaseClient } from '@/app/core-logic/api/supabase';
+import { useCollectiviteId } from '@/app/core-logic/hooks/params';
+import { dropAnimation } from '../DragAndDropNestedContainers/Arborescence';
+import { PlanNode } from './types';
 
 /**
  * Déplace un axe dans un autre axe
@@ -16,16 +16,16 @@ export const useDragAxe = (planId: number) => {
   const navigation_key = ['plans_navigation', collectivite_id];
 
   return useMutation(
-    async ({axe, newParentId}: {axe: PlanNode; newParentId: number}) => {
+    async ({ axe, newParentId }: { axe: PlanNode; newParentId: number }) => {
       await supabaseClient
         .from('axe')
-        .update({parent: newParentId})
+        .update({ parent: newParentId })
         .eq('id', axe.id);
     },
     {
-      onMutate: async ({axe, newParentId}) => {
-        await queryClient.cancelQueries({queryKey: flat_axes_key});
-        await queryClient.cancelQueries({queryKey: navigation_key});
+      onMutate: async ({ axe, newParentId }) => {
+        await queryClient.cancelQueries({ queryKey: flat_axes_key });
+        await queryClient.cancelQueries({ queryKey: navigation_key });
 
         const previousData = [
           [flat_axes_key, queryClient.getQueryData(flat_axes_key)],
@@ -36,8 +36,8 @@ export const useDragAxe = (planId: number) => {
           flat_axes_key,
           (old: PlanNode[] | undefined) => {
             if (old) {
-              return old.map(a =>
-                a.id === axe.id ? {...a, parent: newParentId} : a
+              return old.map((a) =>
+                a.id === axe.id ? { ...a, parent: newParentId } : a
               );
             } else {
               return [];
@@ -49,10 +49,10 @@ export const useDragAxe = (planId: number) => {
           navigation_key,
           (old: PlanNode[] | undefined) => {
             if (old) {
-              if (old.some(a => a.id === axe.id)) {
-                return old.filter(a => a.id !== axe.id);
+              if (old.some((a) => a.id === axe.id)) {
+                return old.filter((a) => a.id !== axe.id);
               } else {
-                return [...old, {...axe, parent: newParentId}];
+                return [...old, { ...axe, parent: newParentId }];
               }
             } else {
               return [];

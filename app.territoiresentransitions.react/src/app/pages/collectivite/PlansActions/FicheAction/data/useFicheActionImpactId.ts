@@ -1,4 +1,4 @@
-import { supabaseClient } from 'core-logic/api/supabase';
+import { supabaseClient } from '@/app/core-logic/api/supabase';
 import { useQuery } from 'react-query';
 import { objectToCamel } from 'ts-case-convert';
 

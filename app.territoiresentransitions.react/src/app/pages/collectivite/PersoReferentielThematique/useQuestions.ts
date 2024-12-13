@@ -1,7 +1,7 @@
-import {useQuery} from 'react-query';
-import {supabaseClient} from 'core-logic/api/supabase';
-import {useCollectiviteId} from 'core-logic/hooks/params';
-import {TQuestionRead} from 'types/personnalisation';
+import { supabaseClient } from '@/app/core-logic/api/supabase';
+import { useCollectiviteId } from '@/app/core-logic/hooks/params';
+import { useQuery } from 'react-query';
+import { TQuestionRead } from 'types/personnalisation';
 
 export type TFilters = {
   action_ids?: string[];
@@ -18,7 +18,7 @@ export const useQuestions = (filters: TFilters) => {
   return useQuery(
     ['questions', collectivite_id, filters],
     () => fetchQuestions(collectivite_id!, filters),
-    {enabled: !!collectivite_id, initialData: []}
+    { enabled: !!collectivite_id, initialData: [] }
   );
 };
 const fetchQuestions = async (collectivite_id: number, filters: TFilters) => {
@@ -27,7 +27,7 @@ const fetchQuestions = async (collectivite_id: number, filters: TFilters) => {
     .select()
     .eq('collectivite_id', collectivite_id);
 
-  const {action_ids, thematique_id} = filters || {};
+  const { action_ids, thematique_id } = filters || {};
   if (action_ids) {
     query.contains('action_ids', action_ids);
   }
@@ -37,7 +37,7 @@ const fetchQuestions = async (collectivite_id: number, filters: TFilters) => {
   }
 
   // attends les données
-  const {error, data} = await query;
+  const { error, data } = await query;
 
   if (error) {
     throw new Error(error.message);

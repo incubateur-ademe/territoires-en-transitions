@@ -3,11 +3,11 @@ import FiltrePriorites from './FiltrePriorites';
 import FiltreStatuts from './FiltreStatuts';
 import PlanActionFiltresResultats from './PlanActionFiltresResultats';
 
-import {useFichesActionFiltresListe} from '../../FicheAction/data/useFichesActionFiltresListe';
-import {PlanNode} from '../data/types';
-import {useEffect, useState} from 'react';
-import {TFilters} from '../../FicheAction/data/filters';
-import {useCollectiviteId} from 'core-logic/hooks/params';
+import { useCollectiviteId } from '@/app/core-logic/hooks/params';
+import { useEffect, useState } from 'react';
+import { TFilters } from '../../FicheAction/data/filters';
+import { useFichesActionFiltresListe } from '../../FicheAction/data/useFichesActionFiltresListe';
+import { PlanNode } from '../data/types';
 
 type Props = {
   plan: PlanNode;
@@ -16,7 +16,7 @@ type Props = {
   setIsFiltered: (filtered: boolean) => void;
 };
 
-const PlanActionFiltres = ({plan, axe, isAxePage, setIsFiltered}: Props) => {
+const PlanActionFiltres = ({ plan, axe, isAxePage, setIsFiltered }: Props) => {
   const collectivite_id = useCollectiviteId();
 
   const [filtered, setFiltered] = useState(false);

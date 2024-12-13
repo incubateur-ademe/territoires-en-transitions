@@ -1,7 +1,7 @@
-import {Dispatch, SetStateAction, SyntheticEvent} from 'react';
+import { Dispatch, SetStateAction, SyntheticEvent } from 'react';
 
+import { useUpdateEmail } from '@/app/core-logic/api/auth/useUpdateEmail';
 import Modal from 'ui/shared/floating-ui/Modal';
-import {useUpdateEmail} from 'core-logic/api/auth/useUpdateEmail';
 
 type ModifierEmailModalProps = {
   isOpen: boolean;
@@ -16,7 +16,7 @@ const ModifierEmailModal = ({
   email,
   resetEmail,
 }: ModifierEmailModalProps) => {
-  const {handleUpdateEmail} = useUpdateEmail();
+  const { handleUpdateEmail } = useUpdateEmail();
 
   const handleAnnuler = () => {
     setOpen(false);
@@ -28,7 +28,7 @@ const ModifierEmailModal = ({
       size="lg"
       externalOpen={isOpen}
       setExternalOpen={handleAnnuler}
-      render={({labelId, descriptionId}) => (
+      render={({ labelId, descriptionId }) => (
         <div data-test="modification-email-modal">
           <h4 id={labelId} className="fr-h4">
             Modifier mon adresse email
@@ -48,7 +48,7 @@ const ModifierEmailModal = ({
             </button>
             <button
               onClick={() => {
-                handleUpdateEmail({email: email});
+                handleUpdateEmail({ email: email });
                 setOpen(false);
               }}
               aria-label="Confirmer"

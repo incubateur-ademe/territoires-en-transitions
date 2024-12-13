@@ -1,4 +1,5 @@
 import { FicheAction } from '@/api/plan-actions';
+import { useCurrentCollectivite } from '@/app/core-logic/hooks/useCurrentCollectivite';
 import {
   Field,
   FormSectionGrid,
@@ -7,7 +8,6 @@ import {
   Textarea,
   useEventTracker,
 } from '@/ui';
-import { useCurrentCollectivite } from 'core-logic/hooks/useCurrentCollectivite';
 import _ from 'lodash';
 import { useState } from 'react';
 import PartenairesDropdown from 'ui/dropdownLists/PartenairesDropdown/PartenairesDropdown';

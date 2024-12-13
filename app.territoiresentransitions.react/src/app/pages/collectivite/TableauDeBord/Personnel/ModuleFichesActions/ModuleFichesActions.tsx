@@ -6,6 +6,8 @@ import Module from '@/app/app/pages/collectivite/TableauDeBord/components/Module
 import ModalActionsDontJeSuisLePilote from '@/app/app/pages/collectivite/TableauDeBord/Personnel/ModuleFichesActions/ModalActionsDontJeSuisLePilote';
 import ModalActionsRecemmentModifiees from '@/app/app/pages/collectivite/TableauDeBord/Personnel/ModuleFichesActions/ModalActionsRecemmentModifiees';
 import { getQueryKey } from '@/app/app/pages/collectivite/TableauDeBord/Personnel/usePersonalModulesFetch';
+import { useAuth } from '@/app/core-logic/api/auth/AuthProvider';
+import { useCollectiviteId } from '@/app/core-logic/hooks/params';
 import FicheActionCard from 'app/pages/collectivite/PlansActions/FicheAction/Carte/FicheActionCard';
 import { useFicheResumesFetch } from 'app/pages/collectivite/PlansActions/FicheAction/data/useFicheResumesFetch';
 import {
@@ -14,8 +16,6 @@ import {
   makeCollectivitePlanActionFicheUrl,
   makeTableauBordModuleUrl,
 } from 'app/paths';
-import { useAuth } from 'core-logic/api/auth/AuthProvider';
-import { useCollectiviteId } from 'core-logic/hooks/params';
 import { useRouter } from 'next/navigation';
 import PictoExpert from 'ui/pictogrammes/PictoExpert';
 

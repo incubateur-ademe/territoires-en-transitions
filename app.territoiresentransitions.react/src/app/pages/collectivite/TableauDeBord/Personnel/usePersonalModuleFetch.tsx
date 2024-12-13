@@ -1,8 +1,8 @@
 import { moduleFetch } from '@/api/plan-actions/dashboards/personal-dashboard/actions/module.fetch';
 import { Slug } from '@/api/plan-actions/dashboards/personal-dashboard/domain/module.schema';
-import { useAuth } from 'core-logic/api/auth/AuthProvider';
-import { supabaseClient } from 'core-logic/api/supabase';
-import { useCollectiviteId } from 'core-logic/hooks/params';
+import { useAuth } from '@/app/core-logic/api/auth/AuthProvider';
+import { supabaseClient } from '@/app/core-logic/api/supabase';
+import { useCollectiviteId } from '@/app/core-logic/hooks/params';
 import { QueryKey, useQuery } from 'react-query';
 
 /**

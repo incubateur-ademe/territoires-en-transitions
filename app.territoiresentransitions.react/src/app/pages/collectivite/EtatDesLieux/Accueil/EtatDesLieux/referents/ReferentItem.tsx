@@ -1,6 +1,6 @@
+import { useBaseToast } from '@/app/core-logic/hooks/useBaseToast';
 import { Icon, Tooltip, useCopyToClipboard } from '@/ui';
 import { referentielToName } from 'app/labels';
-import { useBaseToast } from 'core-logic/hooks/useBaseToast';
 import { CollectiviteMembre } from './useMembres';
 
 export type ReferentItemProps = {

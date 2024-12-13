@@ -1,5 +1,5 @@
+import { useCollectiviteId } from '@/app/core-logic/hooks/params';
 import { InfoActionImpact, Modal, useEventTracker } from '@/ui';
-import { useCollectiviteId } from 'core-logic/hooks/params';
 import { useState } from 'react';
 import Markdown from 'ui/Markdown';
 import { useActionImpact } from './useActionImpact';

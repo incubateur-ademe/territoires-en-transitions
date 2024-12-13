@@ -3,6 +3,9 @@ import { useState } from 'react';
 import { modulesSave } from '@/api/plan-actions/dashboards/personal-dashboard/actions/modules.save';
 import { ModuleFicheActionsSelect } from '@/api/plan-actions/dashboards/personal-dashboard/domain/module.schema';
 import { Filtre as FiltreFichesAction } from '@/api/plan-actions/fiche-resumes.list/domain/fetch-options.schema';
+import { useAuth } from '@/app/core-logic/api/auth/AuthProvider';
+import { supabaseClient } from '@/app/core-logic/api/supabase';
+import { useCollectiviteId } from '@/app/core-logic/hooks/params';
 import {
   Field,
   FormSection,
@@ -12,9 +15,6 @@ import {
   ModalProps,
   useEventTracker,
 } from '@/ui';
-import { useAuth } from 'core-logic/api/auth/AuthProvider';
-import { supabaseClient } from 'core-logic/api/supabase';
-import { useCollectiviteId } from 'core-logic/hooks/params';
 import { QueryKey, useQueryClient } from 'react-query';
 import PrioritesFilterDropdown from 'ui/dropdownLists/ficheAction/priorites/PrioritesFilterDropdown';
 import StatutsFilterDropdown from 'ui/dropdownLists/ficheAction/statuts/StatutsFilterDropdown';

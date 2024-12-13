@@ -1,6 +1,6 @@
+import { TEditState } from '@/app/core-logic/hooks/useEditState';
 import { Input, Textarea } from '@/ui';
 import classNames from 'classnames';
-import { TEditState } from 'core-logic/hooks/useEditState';
 
 type DocumentInputProps = {
   editElement: TEditState;

@@ -1,5 +1,5 @@
+import { useCollectiviteId } from '@/app/core-logic/hooks/params';
 import { Field, SelectFilter } from '@/ui';
-import { useCollectiviteId } from 'core-logic/hooks/params';
 import { TFiltreProps } from '../filters';
 import { useHistoriqueUtilisateurListe } from '../useHistoriqueUtilisateurListe';
 

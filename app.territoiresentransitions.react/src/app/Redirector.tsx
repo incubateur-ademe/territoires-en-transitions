@@ -1,16 +1,16 @@
 import { getAuthPaths } from '@/api';
+import { useAuth } from '@/app/core-logic/api/auth/AuthProvider';
+import {
+  useConsumeInvitation,
+  useInvitationState,
+} from '@/app/core-logic/hooks/useInvitationState';
+import { usePlanActionsPilotableFetch } from '@/app/core-logic/hooks/useOwnedCollectivites';
 import {
   finaliserMonInscriptionUrl,
   makeCollectiviteAccueilUrl,
   makeTableauBordUrl,
   signUpPath,
 } from 'app/paths';
-import { useAuth } from 'core-logic/api/auth/AuthProvider';
-import {
-  useConsumeInvitation,
-  useInvitationState,
-} from 'core-logic/hooks/useInvitationState';
-import { usePlanActionsPilotableFetch } from 'core-logic/hooks/useOwnedCollectivites';
 import { usePathname, useRouter } from 'next/navigation';
 import { useEffect } from 'react';
 

@@ -2,19 +2,19 @@
  * Affiche l'onglet "Personnalisation du potentiel"
  */
 
-import DOMPurify from 'dompurify';
+import { ActionDefinitionSummary } from '@/app/core-logic/api/endpoints/ActionDefinitionSummaryReadEndpoint';
 import classNames from 'classnames';
-import { ActionDefinitionSummary } from 'core-logic/api/endpoints/ActionDefinitionSummaryReadEndpoint';
+import DOMPurify from 'dompurify';
 import { ActionScore } from 'types/ClientScore';
 import {
+  TChangeReponse,
   TQuestionReponse,
   TReponse,
-  TChangeReponse,
 } from 'types/personnalisation';
-import { PointsPotentiels } from './PointsPotentiels';
-import { reponseParType } from './Reponse';
 import { Accordion } from 'ui/Accordion';
 import { Justification } from './Justification';
+import { PointsPotentiels } from './PointsPotentiels';
+import { reponseParType } from './Reponse';
 
 export type TPersoPotentielQRProps = {
   /** Définition de l'action */

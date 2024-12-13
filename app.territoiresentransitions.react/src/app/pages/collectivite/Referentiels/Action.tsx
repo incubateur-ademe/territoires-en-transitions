@@ -1,3 +1,6 @@
+import { ActionDefinitionSummary } from '@/app/core-logic/api/endpoints/ActionDefinitionSummaryReadEndpoint';
+import { useActionVue, useReferentielId } from '@/app/core-logic/hooks/params';
+import { useCurrentCollectivite } from '@/app/core-logic/hooks/useCurrentCollectivite';
 import { Alert } from '@/ui';
 import HistoriqueListe from 'app/pages/collectivite/Historique/HistoriqueListe';
 import { OrientationQuickNav } from 'app/pages/collectivite/Referentiels/QuickNav';
@@ -6,9 +9,6 @@ import {
   makeCollectiviteActionUrl,
   ReferentielParamOption,
 } from 'app/paths';
-import { ActionDefinitionSummary } from 'core-logic/api/endpoints/ActionDefinitionSummaryReadEndpoint';
-import { useActionVue, useReferentielId } from 'core-logic/hooks/params';
-import { useCurrentCollectivite } from 'core-logic/hooks/useCurrentCollectivite';
 import Link from 'next/link';
 import { useRouter } from 'next/navigation';
 import ScrollTopButton from 'ui/buttons/ScrollTopButton';

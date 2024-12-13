@@ -1,9 +1,9 @@
 import { useEffect } from 'react';
 import { useQuery, useQueryClient } from 'react-query';
 
+import { supabaseClient } from '@/app/core-logic/api/supabase';
+import { useSearchParams } from '@/app/core-logic/hooks/query';
 import { ITEM_ALL } from '@/ui';
-import { supabaseClient } from 'core-logic/api/supabase';
-import { useSearchParams } from 'core-logic/hooks/query';
 import { NB_ITEMS_PER_PAGE, TFilters, nameToShortNames } from './filters';
 import { THistoriqueItem, THistoriqueProps } from './types';
 

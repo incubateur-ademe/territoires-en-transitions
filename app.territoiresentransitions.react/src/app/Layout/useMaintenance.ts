@@ -1,11 +1,11 @@
-import {supabaseClient} from 'core-logic/api/supabase';
-import {useEffect} from 'react';
-import {useQuery, useQueryClient} from 'react-query';
+import { supabaseClient } from '@/app/core-logic/api/supabase';
+import { useEffect } from 'react';
+import { useQuery, useQueryClient } from 'react-query';
 
 // Télécharge la dernière maintenance en cours
 const fetchMaintenance = async () => {
   const query = supabaseClient.from('ongoing_maintenance').select();
-  const {error, data} = await query;
+  const { error, data } = await query;
 
   if (error) {
     throw new Error(error.message);
@@ -23,12 +23,12 @@ export const useMaintenance = () => {
   };
 
   // souscrit aux changements de la table de maintenance
-  const table = {schema: 'public', table: 'maintenance'};
+  const table = { schema: 'public', table: 'maintenance' };
   const subscribe = () =>
     supabaseClient
       .channel('public:maintenance')
-      .on('postgres_changes', {event: 'INSERT', ...table}, refetch)
-      .on('postgres_changes', {event: 'UPDATE', ...table}, refetch)
+      .on('postgres_changes', { event: 'INSERT', ...table }, refetch)
+      .on('postgres_changes', { event: 'UPDATE', ...table }, refetch)
       .subscribe();
 
   useEffect(() => {
@@ -42,7 +42,7 @@ export const useMaintenance = () => {
     };
   }, []);
 
-  const {data} = useQuery(['ongoing_maintenance'], fetchMaintenance);
+  const { data } = useQuery(['ongoing_maintenance'], fetchMaintenance);
   return data || null;
 };
 

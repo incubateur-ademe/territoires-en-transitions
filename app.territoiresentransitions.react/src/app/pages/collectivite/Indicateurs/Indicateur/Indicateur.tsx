@@ -1,14 +1,15 @@
+import { useCollectiviteId } from '@/app/core-logic/hooks/params';
 import {
-  indicateurIdParam,
   indicateurIdentiantReferentielParam,
+  indicateurIdParam,
+  indicateurViewParam,
+  IndicateurViewParamOption,
   makeCollectiviteTousLesIndicateursUrl,
 } from 'app/paths';
-import { IndicateurPersonnalise } from './IndicateurPersonnalise';
-import { IndicateurPredefini } from './IndicateurPredefini';
-import { indicateurViewParam, IndicateurViewParamOption } from 'app/paths';
-import { useCollectiviteId } from 'core-logic/hooks/params';
 import { redirect } from 'next/navigation';
 import { useParams } from 'react-router-dom';
+import { IndicateurPersonnalise } from './IndicateurPersonnalise';
+import { IndicateurPredefini } from './IndicateurPredefini';
 
 /**
  * Affiche le détail d'un indicateur

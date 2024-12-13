@@ -13,12 +13,12 @@ import FicheActionCard from 'app/pages/collectivite/PlansActions/FicheAction/Car
 import PictoExpert from 'ui/pictogrammes/PictoExpert';
 import SpinnerLoader from 'ui/shared/SpinnerLoader';
 
+import { useCollectiviteId } from '@/app/core-logic/hooks/params';
 import { useFicheResumesFetch } from 'app/pages/collectivite/PlansActions/FicheAction/data/useFicheResumesFetch';
 import {
   makeCollectiviteFicheNonClasseeUrl,
   makeCollectivitePlanActionFicheUrl,
 } from 'app/paths';
-import { useCollectiviteId } from 'core-logic/hooks/params';
 import { FicheResume } from 'packages/api/src/plan-actions';
 import FilterBadges, {
   CustomFilterBadges,

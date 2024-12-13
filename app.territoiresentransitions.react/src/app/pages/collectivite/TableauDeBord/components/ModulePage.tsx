@@ -1,6 +1,6 @@
+import { useCollectiviteId } from '@/app/core-logic/hooks/params';
 import { Breadcrumbs } from '@/ui';
 import { TDBViewParam, makeTableauBordUrl } from 'app/paths';
-import { useCollectiviteId } from 'core-logic/hooks/params';
 import { useRouter } from 'next/navigation';
 import { useParams } from 'react-router-dom';
 

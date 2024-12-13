@@ -1,7 +1,7 @@
-import { useCollectiviteId } from 'core-logic/hooks/params';
+import { useCollectiviteId } from '@/app/core-logic/hooks/params';
+import { makeCollectiviteFicheNonClasseeUrl } from 'app/paths';
 import FicheActionCard from './FicheAction/Carte/FicheActionCard';
 import { useFichesNonClasseesListe } from './FicheAction/data/useFichesNonClasseesListe';
-import { makeCollectiviteFicheNonClasseeUrl } from 'app/paths';
 
 const FichesNonClassees = () => {
   const collectivite_id = useCollectiviteId();

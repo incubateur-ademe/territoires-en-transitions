@@ -1,15 +1,15 @@
-import {useEffect, useRef, useState} from 'react';
-import {useLocation} from 'react-router-dom';
-import {ActionDefinitionSummary} from 'core-logic/api/endpoints/ActionDefinitionSummaryReadEndpoint';
-import {useActionCommentaire} from 'core-logic/hooks/useActionCommentaire';
-import {ActionCommentaire} from 'ui/shared/actions/ActionCommentaire';
+import { ActionDefinitionSummary } from '@/app/core-logic/api/endpoints/ActionDefinitionSummaryReadEndpoint';
+import { useActionCommentaire } from '@/app/core-logic/hooks/useActionCommentaire';
+import { useEffect, useRef, useState } from 'react';
+import { useLocation } from 'react-router-dom';
+import { StatusToSavePayload } from 'ui/referentiels/ActionStatusDropdown';
+import { ActionCommentaire } from 'ui/shared/actions/ActionCommentaire';
+import { SuiviScoreRow } from '../data/useScoreRealise';
 import SubActionHeader from './SubActionHeader';
-import {SuiviScoreRow} from '../data/useScoreRealise';
-import {StatusToSavePayload} from 'ui/referentiels/ActionStatusDropdown';
 
 type SubActionTaskProps = {
   task: ActionDefinitionSummary;
-  actionScores: {[actionId: string]: SuiviScoreRow};
+  actionScores: { [actionId: string]: SuiviScoreRow };
   hideStatus?: boolean;
   statusWarningMessage?: boolean;
   onSaveStatus?: (payload: StatusToSavePayload) => void;
@@ -27,11 +27,11 @@ const SubActionTask = ({
   onSaveStatus,
 }: SubActionTaskProps): JSX.Element => {
   const [openCommentaire, setOpenCommentaire] = useState(false);
-  const {actionCommentaire} = useActionCommentaire(task.id);
+  const { actionCommentaire } = useActionCommentaire(task.id);
   const ref = useRef<HTMLDivElement>(null);
 
   // scroll jusqu'à la tâche indiquée dans l'url
-  const {hash} = useLocation();
+  const { hash } = useLocation();
 
   useEffect(() => {
     const id = hash.slice(1); // enlève le "#" au début du hash

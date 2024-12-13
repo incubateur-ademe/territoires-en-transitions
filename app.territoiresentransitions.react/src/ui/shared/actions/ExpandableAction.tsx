@@ -1,10 +1,10 @@
+import { ActionDefinitionSummary } from '@/app/core-logic/api/endpoints/ActionDefinitionSummaryReadEndpoint';
+import { useActionSummaryChildren } from '@/app/core-logic/hooks/referentiel';
+import classNames from 'classnames';
 import { useEffect, useRef, useState } from 'react';
+import ActionProgressBar from 'ui/referentiels/ActionProgressBar';
 import { ActionReferentielDisplayTitle } from 'ui/referentiels/ActionReferentielDisplayTitle';
 import { ActionReferentielLinkCard } from 'ui/referentiels/ActionReferentielLinkCard';
-import ActionProgressBar from 'ui/referentiels/ActionProgressBar';
-import { useActionSummaryChildren } from 'core-logic/hooks/referentiel';
-import { ActionDefinitionSummary } from 'core-logic/api/endpoints/ActionDefinitionSummaryReadEndpoint';
-import classNames from 'classnames';
 
 /**
  * An expandable action used for "axes" and "sous axes", shows Scores.

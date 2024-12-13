@@ -1,14 +1,17 @@
-import {useMutation, useQuery, useQueryClient} from 'react-query';
-import {TableOptions} from 'react-table';
-import {useSearchParams} from 'core-logic/hooks/query';
-import {useCollectiviteId, useReferentielId} from 'core-logic/hooks/params';
+import {
+  useCollectiviteId,
+  useReferentielId,
+} from '@/app/core-logic/hooks/params';
+import { useSearchParams } from '@/app/core-logic/hooks/query';
+import { useMutation, useQuery, useQueryClient } from 'react-query';
+import { TableOptions } from 'react-table';
+import { useReferentiel } from '../ReferentielTable/useReferentiel';
+import { initialFilters, nameToShortNames, TFilters } from './filters';
 import {
   fetchActionStatutsList,
   TacheDetail,
   updateTacheStatut,
 } from './queries';
-import {useReferentiel} from '../ReferentielTable/useReferentiel';
-import {initialFilters, nameToShortNames, TFilters} from './filters';
 
 export type UseTableData = () => TableData;
 
@@ -54,17 +57,17 @@ export const useTableData: UseTableData = () => {
   );
 
   // chargement des données en fonction des filtres
-  const {data, isLoading} = useQuery(
+  const { data, isLoading } = useQuery(
     ['detail_taches', collectivite_id, referentiel, filters],
     () => fetchActionStatutsList(collectivite_id, referentiel, filters)
   );
-  const {rows: actionsStatut} = data || {};
+  const { rows: actionsStatut } = data || {};
 
   const sousActions: string[] = [];
   const sousActionsWithStatut: string[] = [];
 
   const processedData: TacheDetail[] | undefined = actionsStatut
-    ? actionsStatut.map(action => {
+    ? actionsStatut.map((action) => {
         if (
           action.type === 'sous-action' &&
           (action.avancement === 'non_renseigne' || !action.avancement)
@@ -76,32 +79,32 @@ export const useTableData: UseTableData = () => {
           // Si c'est un "vrai" non renseignée, alors isExpanded est à false
           if (
             action.avancement_descendants?.find(
-              av => !!av && av !== 'non_renseigne'
+              (av) => !!av && av !== 'non_renseigne'
             )
           ) {
-            return {...action, avancement: 'detaille', isExpanded: true};
-          } else return {...action, isExpanded: false};
+            return { ...action, avancement: 'detaille', isExpanded: true };
+          } else return { ...action, isExpanded: false };
         } else if (action.type === 'sous-action') {
           // Les autres sous-actions ne sont pas dépliées
           sousActions.push(action.action_id);
           sousActionsWithStatut.push(action.action_id);
-          return {...action, isExpanded: false};
+          return { ...action, isExpanded: false };
         } else if (action.type === 'tache') {
           // Les tâches ne sont pas dépliées
           // Les axes / sous-axes / actions sont dépliés
-          return {...action, isExpanded: false};
-        } else return {...action, isExpanded: true};
+          return { ...action, isExpanded: false };
+        } else return { ...action, isExpanded: true };
       })
     : undefined;
 
   const filteredData = processedData?.filter(
-    data =>
+    (data) =>
       // Affichage des axes / sous-axes / actions dont
       // la sous-action a été récupérée
       (data.type !== 'tache' &&
         data.type !== 'sous-action' &&
         sousActions.filter(
-          ssAc => ssAc.includes(data.action_id) && ssAc !== data.action_id
+          (ssAc) => ssAc.includes(data.action_id) && ssAc !== data.action_id
         ).length > 0) ||
       // Affichage des sous-actions
       data.type === 'sous-action' ||
@@ -133,11 +136,11 @@ export const useTableData: UseTableData = () => {
   } = useReferentiel(referentiel, collectivite_id, filteredData);
 
   // met à jour un statut
-  const {mutate, isLoading: isSaving} = useMutation(updateTacheStatut);
+  const { mutate, isLoading: isSaving } = useMutation(updateTacheStatut);
   const updateStatut = (action_id: string, avancement: string) => {
     if (collectivite_id && !isSaving) {
       mutate(
-        {collectivite_id, action_id, avancement},
+        { collectivite_id, action_id, avancement },
         {
           onSuccess: () => {
             queryClient.invalidateQueries('detail_taches');

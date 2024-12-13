@@ -1,8 +1,11 @@
-import {useQuery} from 'react-query';
-import {supabaseClient} from 'core-logic/api/supabase';
-import {useCollectiviteId, useReferentielId} from 'core-logic/hooks/params';
-import {ActionDefinitionSummary} from 'core-logic/api/endpoints/ActionDefinitionSummaryReadEndpoint';
-import {TActionAuditStatut} from './types';
+import { ActionDefinitionSummary } from '@/app/core-logic/api/endpoints/ActionDefinitionSummaryReadEndpoint';
+import { supabaseClient } from '@/app/core-logic/api/supabase';
+import {
+  useCollectiviteId,
+  useReferentielId,
+} from '@/app/core-logic/hooks/params';
+import { useQuery } from 'react-query';
+import { TActionAuditStatut } from './types';
 
 export type TActionDef = Pick<
   ActionDefinitionSummary,
@@ -18,7 +21,7 @@ export const fetch = async (collectivite_id: number, action: TActionDef) => {
     .eq('collectivite_id', collectivite_id)
     .eq('action_id', action.id);
 
-  const {data, error} = await query;
+  const { data, error } = await query;
 
   if (error || !data?.length) {
     return null;
@@ -47,8 +50,8 @@ export const useActionAuditStatut = (action: TActionDef) => {
     ['action_audit_state', collectivite_id, referentiel, action.id],
     () =>
       collectivite_id && referentiel
-        ? fetch(collectivite_id, action).then(data => data || defaultStatut)
+        ? fetch(collectivite_id, action).then((data) => data || defaultStatut)
         : defaultStatut,
-    {keepPreviousData: true}
+    { keepPreviousData: true }
   );
 };

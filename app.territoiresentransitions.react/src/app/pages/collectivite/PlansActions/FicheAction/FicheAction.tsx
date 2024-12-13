@@ -1,5 +1,5 @@
+import { useCollectiviteId } from '@/app/core-logic/hooks/params';
 import { TrackPageView } from '@/ui';
-import { useCollectiviteId } from 'core-logic/hooks/params';
 import { format } from 'date-fns';
 import { useParams } from 'react-router-dom';
 import { useFicheAction } from './data/useFicheAction';

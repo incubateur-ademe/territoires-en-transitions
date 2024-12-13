@@ -1,6 +1,6 @@
+import { useFonctionTracker } from '@/app/core-logic/hooks/useFonctionTracker';
 import { Button } from '@/ui';
 import { signInPath, signUpPath } from 'app/paths';
-import { useFonctionTracker } from 'core-logic/hooks/useFonctionTracker';
 import { AccesPanierAction } from './AccesPanierAction';
 import MenuUtilisateur from './MenuUtilisateur';
 import { HeaderPropsWithModalState } from './types';
