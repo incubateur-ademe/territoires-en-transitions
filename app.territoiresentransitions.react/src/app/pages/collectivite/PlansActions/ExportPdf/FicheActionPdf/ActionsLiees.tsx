@@ -1,4 +1,4 @@
-import { referentielToName } from '@/app/labels';
+import { referentielToName } from '@/app/app/labels';
 import { TActionStatutsRow } from 'types/alias';
 import {
   BadgeStatutAction,

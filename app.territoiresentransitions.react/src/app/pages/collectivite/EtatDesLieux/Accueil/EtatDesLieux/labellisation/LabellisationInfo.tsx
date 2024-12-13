@@ -1,7 +1,7 @@
 import {
   GreyStar,
   RedStar,
-} from '@/app/pages/collectivite/EtatDesLieux/Accueil/EtatDesLieux/labellisation/Star';
+} from '@/app/app/pages/collectivite/EtatDesLieux/Accueil/EtatDesLieux/labellisation/Star';
 import { Tooltip } from '@/ui';
 import { toLocaleFixed } from 'utils/toFixed';
 import ScoreDisplay from '../../../../../../../ui/referentiels/ScoreDisplay';

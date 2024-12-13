@@ -1,5 +1,5 @@
 import { Filtre } from '@/api/plan-actions/fiche-resumes.list/domain/fetch-options.schema';
-import { useCreateFicheAction } from '@/app/pages/collectivite/PlansActions/FicheAction/data/useCreateFicheAction';
+import { useCreateFicheAction } from '@/app/app/pages/collectivite/PlansActions/FicheAction/data/useCreateFicheAction';
 import { Button, ButtonMenu } from '@/ui';
 import { OpenState } from '@/ui/utils/types';
 import FichesActionListe from 'app/pages/collectivite/PlansActions/ToutesLesFichesAction/FichesActionListe';

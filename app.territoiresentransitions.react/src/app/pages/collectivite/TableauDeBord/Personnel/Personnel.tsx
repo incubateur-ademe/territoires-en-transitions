@@ -1,5 +1,5 @@
-import ModuleFichesActions from '@/app/pages/collectivite/TableauDeBord/Personnel/ModuleFichesActions/ModuleFichesActions';
-import ModuleIndicateurs from '@/app/pages/collectivite/TableauDeBord/Personnel/ModuleIndicateurs/ModuleIndicateurs';
+import ModuleFichesActions from '@/app/app/pages/collectivite/TableauDeBord/Personnel/ModuleFichesActions/ModuleFichesActions';
+import ModuleIndicateurs from '@/app/app/pages/collectivite/TableauDeBord/Personnel/ModuleIndicateurs/ModuleIndicateurs';
 import SpinnerLoader from 'ui/shared/SpinnerLoader';
 import { usePersonalModulesFetch } from './usePersonalModulesFetch';
 

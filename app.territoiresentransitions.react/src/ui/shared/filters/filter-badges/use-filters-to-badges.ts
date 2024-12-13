@@ -10,7 +10,7 @@ import {
   FiltreRessourceLiees,
   FiltreValues,
 } from '@/api/collectivites/shared/domain/filtre-ressource-liees.schema';
-import { generateTitle } from '@/app/pages/collectivite/PlansActions/FicheAction/data/utils';
+import { generateTitle } from '@/app/app/pages/collectivite/PlansActions/FicheAction/data/utils';
 import { getCategorieLabel } from 'ui/dropdownLists/indicateur/utils';
 
 /**

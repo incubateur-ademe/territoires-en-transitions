@@ -1,6 +1,6 @@
-import ModuleAvancementFichesAction from '@/app/pages/collectivite/TableauDeBord/Collectivite/ModuleAvancementFichesAction/ModuleAvancementFichesAction';
-import ModuleAvancementPlansAction from '@/app/pages/collectivite/TableauDeBord/Collectivite/ModuleSuiviPlansAction/ModuleSuiviPlansAction';
-import { useCollectiviteModulesFetch } from '@/app/pages/collectivite/TableauDeBord/Collectivite/useCollectiviteModulesFetch';
+import ModuleAvancementFichesAction from '@/app/app/pages/collectivite/TableauDeBord/Collectivite/ModuleAvancementFichesAction/ModuleAvancementFichesAction';
+import ModuleAvancementPlansAction from '@/app/app/pages/collectivite/TableauDeBord/Collectivite/ModuleSuiviPlansAction/ModuleSuiviPlansAction';
+import { useCollectiviteModulesFetch } from '@/app/app/pages/collectivite/TableauDeBord/Collectivite/useCollectiviteModulesFetch';
 import SpinnerLoader from 'ui/shared/SpinnerLoader';
 
 /** Vue Collectivité du tableau de bord plans d'action */

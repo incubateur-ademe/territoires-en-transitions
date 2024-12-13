@@ -2,10 +2,10 @@ import { Button, useEventTracker } from '@/ui';
 
 import { ModuleFicheActionsSelect } from '@/api/plan-actions/dashboards/personal-dashboard/domain/module.schema';
 import { SortFichesAction } from '@/api/plan-actions/fiche-resumes.list';
-import Module from '@/app/pages/collectivite/TableauDeBord/components/Module';
-import ModalActionsDontJeSuisLePilote from '@/app/pages/collectivite/TableauDeBord/Personnel/ModuleFichesActions/ModalActionsDontJeSuisLePilote';
-import ModalActionsRecemmentModifiees from '@/app/pages/collectivite/TableauDeBord/Personnel/ModuleFichesActions/ModalActionsRecemmentModifiees';
-import { getQueryKey } from '@/app/pages/collectivite/TableauDeBord/Personnel/usePersonalModulesFetch';
+import Module from '@/app/app/pages/collectivite/TableauDeBord/components/Module';
+import ModalActionsDontJeSuisLePilote from '@/app/app/pages/collectivite/TableauDeBord/Personnel/ModuleFichesActions/ModalActionsDontJeSuisLePilote';
+import ModalActionsRecemmentModifiees from '@/app/app/pages/collectivite/TableauDeBord/Personnel/ModuleFichesActions/ModalActionsRecemmentModifiees';
+import { getQueryKey } from '@/app/app/pages/collectivite/TableauDeBord/Personnel/usePersonalModulesFetch';
 import FicheActionCard from 'app/pages/collectivite/PlansActions/FicheAction/Carte/FicheActionCard';
 import { useFicheResumesFetch } from 'app/pages/collectivite/PlansActions/FicheAction/data/useFicheResumesFetch';
 import {

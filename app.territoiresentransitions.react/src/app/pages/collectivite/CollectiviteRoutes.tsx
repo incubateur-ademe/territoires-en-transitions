@@ -1,8 +1,8 @@
 import { ReactNode } from 'react';
 import { Redirect, Route, RouteProps } from 'react-router-dom';
 
-import { AccueilPage } from '@/app/pages/collectivite/Accueil/AccueilPage';
-import { AccueilPage as SyntheseEtatDesLieuxPage } from '@/app/pages/collectivite/EtatDesLieux/Accueil/AccueilPage';
+import { AccueilPage } from '@/app/app/pages/collectivite/Accueil/AccueilPage';
+import { AccueilPage as SyntheseEtatDesLieuxPage } from '@/app/app/pages/collectivite/EtatDesLieux/Accueil/AccueilPage';
 import { IndicateursPage } from 'app/pages/collectivite/Indicateurs/IndicateursPage';
 import { ActionPage } from 'app/pages/collectivite/Referentiels/ActionPage';
 import { ReferentielsPage } from 'app/pages/collectivite/Referentiels/ReferentielsPage';

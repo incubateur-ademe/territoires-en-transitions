@@ -1,4 +1,4 @@
-import { boundariesToQueryFilter } from '@/app/pages/collectivite/AidePriorisation/boundariesToQueryFilter';
+import { boundariesToQueryFilter } from '@/app/app/pages/collectivite/AidePriorisation/boundariesToQueryFilter';
 import { ITEM_ALL } from '@/ui';
 import { ActionReferentiel } from 'app/pages/collectivite/ReferentielTable/useReferentiel';
 import { supabaseClient } from 'core-logic/api/supabase';

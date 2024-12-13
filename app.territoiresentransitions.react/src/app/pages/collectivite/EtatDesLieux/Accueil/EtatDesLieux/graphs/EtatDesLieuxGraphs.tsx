@@ -1,4 +1,4 @@
-import AccueilCard from '@/app/pages/collectivite/EtatDesLieux/Accueil/EtatDesLieux/AccueilCard';
+import AccueilCard from '@/app/app/pages/collectivite/EtatDesLieux/Accueil/EtatDesLieux/AccueilCard';
 import { Button, useEventTracker } from '@/ui';
 import { referentielToName } from 'app/labels';
 import { ReferentielParamOption } from 'app/paths';

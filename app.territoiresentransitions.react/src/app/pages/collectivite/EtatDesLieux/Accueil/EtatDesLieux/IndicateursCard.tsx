@@ -1,5 +1,5 @@
 import { Referentiel } from '@/api/referentiel/domain/enum.schema';
-import AccueilCard from '@/app/pages/collectivite/EtatDesLieux/Accueil/EtatDesLieux/AccueilCard';
+import AccueilCard from '@/app/app/pages/collectivite/EtatDesLieux/Accueil/EtatDesLieux/AccueilCard';
 import { Button } from '@/ui';
 import { referentielToName } from 'app/labels';
 import { makeCollectiviteTousLesIndicateursUrl } from 'app/paths';

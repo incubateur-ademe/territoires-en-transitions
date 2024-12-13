@@ -1,8 +1,8 @@
 import { useState } from 'react';
 
 import { ModulePlanActionListSelect } from '@/api/plan-actions/dashboards/collectivite-dashboard/domain/module.schema';
-import { usePlansActionsListe } from '@/app/pages/collectivite/PlansActions/PlanAction/data/usePlansActionsListe';
-import PlanActionCard from '@/app/pages/collectivite/PlansActions/PlanAction/list/card/PlanActionCard';
+import { usePlansActionsListe } from '@/app/app/pages/collectivite/PlansActions/PlanAction/data/usePlansActionsListe';
+import PlanActionCard from '@/app/app/pages/collectivite/PlansActions/PlanAction/list/card/PlanActionCard';
 import { Button, useEventTracker } from '@/ui';
 import Module, {
   ModuleDisplay,

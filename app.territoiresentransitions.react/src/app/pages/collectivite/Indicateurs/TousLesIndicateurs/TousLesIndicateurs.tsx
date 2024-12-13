@@ -1,5 +1,5 @@
 import { FetchFiltre } from '@/api/indicateurs';
-import IndicateursListe from '@/app/pages/collectivite/Indicateurs/lists/indicateurs-list';
+import IndicateursListe from '@/app/app/pages/collectivite/Indicateurs/lists/indicateurs-list';
 import { Button, ButtonMenu, TrackPageView, useEventTracker } from '@/ui';
 import { indicateursNameToParams } from 'app/pages/collectivite/Indicateurs/lists/utils';
 import MenuFiltresTousLesIndicateurs from 'app/pages/collectivite/Indicateurs/TousLesIndicateurs/MenuFiltresTousLesIndicateurs';

@@ -1,4 +1,4 @@
-import { useNbActionsDansPanier } from '@/app/Layout/Header/AccesPanierAction';
+import { useNbActionsDansPanier } from '@/app/app/Layout/Header/AccesPanierAction';
 import { TrackingPlan, useEventTracker } from '@/ui';
 import {
   makeCollectivitePanierUrl,

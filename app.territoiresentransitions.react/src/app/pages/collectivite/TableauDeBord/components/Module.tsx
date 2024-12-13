@@ -1,4 +1,4 @@
-import { usePlanActionsCount } from '@/app/pages/collectivite/PlansActions/PlanAction/data/usePlanActionsCount';
+import { usePlanActionsCount } from '@/app/app/pages/collectivite/PlansActions/PlanAction/data/usePlanActionsCount';
 import { Button, ButtonGroup } from '@/ui';
 import { OpenState } from '@/ui/utils/types';
 import { getDisplayButtons } from 'app/pages/collectivite/TableauDeBord/components/utils';

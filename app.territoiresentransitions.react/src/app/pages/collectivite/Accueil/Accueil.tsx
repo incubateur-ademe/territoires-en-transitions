@@ -1,15 +1,15 @@
-import { useNbActionsDansPanier } from '@/app/Layout/Header/AccesPanierAction';
-import PictoCollectivite from '@/app/pages/collectivite/Accueil/pictogrammes/PictoCollectivite';
-import PictoEtatDesLieux from '@/app/pages/collectivite/Accueil/pictogrammes/PictoEtatDesLieux';
-import PictoIndicateurs from '@/app/pages/collectivite/Accueil/pictogrammes/PictoIndicateurs';
-import PictoPanierActions from '@/app/pages/collectivite/Accueil/pictogrammes/PictoPanierActions';
-import PictoPlansAction from '@/app/pages/collectivite/Accueil/pictogrammes/PictoPlansAction';
-import PictoTrajectoire from '@/app/pages/collectivite/Accueil/pictogrammes/PictoTrajectoire';
-import SectionCard from '@/app/pages/collectivite/Accueil/SectionCard';
-import CollectivitePageLayout from '@/app/pages/collectivite/CollectivitePageLayout/CollectivitePageLayout';
-import { useCreateFicheAction } from '@/app/pages/collectivite/PlansActions/FicheAction/data/useCreateFicheAction';
-import { useFicheActionCount } from '@/app/pages/collectivite/PlansActions/FicheAction/data/useFicheActionCount';
-import { usePlanActionsCount } from '@/app/pages/collectivite/PlansActions/PlanAction/data/usePlanActionsCount';
+import { useNbActionsDansPanier } from '@/app/app/Layout/Header/AccesPanierAction';
+import PictoCollectivite from '@/app/app/pages/collectivite/Accueil/pictogrammes/PictoCollectivite';
+import PictoEtatDesLieux from '@/app/app/pages/collectivite/Accueil/pictogrammes/PictoEtatDesLieux';
+import PictoIndicateurs from '@/app/app/pages/collectivite/Accueil/pictogrammes/PictoIndicateurs';
+import PictoPanierActions from '@/app/app/pages/collectivite/Accueil/pictogrammes/PictoPanierActions';
+import PictoPlansAction from '@/app/app/pages/collectivite/Accueil/pictogrammes/PictoPlansAction';
+import PictoTrajectoire from '@/app/app/pages/collectivite/Accueil/pictogrammes/PictoTrajectoire';
+import SectionCard from '@/app/app/pages/collectivite/Accueil/SectionCard';
+import CollectivitePageLayout from '@/app/app/pages/collectivite/CollectivitePageLayout/CollectivitePageLayout';
+import { useCreateFicheAction } from '@/app/app/pages/collectivite/PlansActions/FicheAction/data/useCreateFicheAction';
+import { useFicheActionCount } from '@/app/app/pages/collectivite/PlansActions/FicheAction/data/useFicheActionCount';
+import { usePlanActionsCount } from '@/app/app/pages/collectivite/PlansActions/PlanAction/data/usePlanActionsCount';
 import {
   makeCollectivitePanierUrl,
   makeCollectivitePlansActionsNouveauUrl,
@@ -19,7 +19,7 @@ import {
   makeCollectiviteTrajectoirelUrl,
   makeTableauBordUrl,
   recherchesCollectivitesUrl,
-} from '@/app/paths';
+} from '@/app/app/paths';
 import { Button } from '@/ui';
 import { useAuth } from 'core-logic/api/auth/AuthProvider';
 import { useCurrentCollectivite } from 'core-logic/hooks/useCurrentCollectivite';

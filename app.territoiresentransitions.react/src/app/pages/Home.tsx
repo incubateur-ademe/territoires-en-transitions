@@ -1,6 +1,6 @@
 import Image from 'next/image';
 
-import { signInPath, signUpPath } from '@/app/paths';
+import { signInPath, signUpPath } from '@/app/app/paths';
 import { Button } from '@/ui';
 import homeImage from 'app/static/img/home.jpg';
 

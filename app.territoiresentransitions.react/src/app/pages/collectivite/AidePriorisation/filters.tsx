@@ -1,4 +1,4 @@
-import { TBoundary } from '@/app/pages/collectivite/AidePriorisation/boundariesToQueryFilter';
+import { TBoundary } from '@/app/app/pages/collectivite/AidePriorisation/boundariesToQueryFilter';
 import { ITEM_ALL } from '@/ui';
 
 export type TFilters = {
