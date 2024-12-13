@@ -8,10 +8,10 @@ import { TCollectiviteCarte } from '@/app/app/pages/CollectivitesEngagees/data/u
 import { makeCollectiviteAccueilUrl } from '@/app/app/paths';
 import { useFonctionTracker } from '@/app/core-logic/hooks/useFonctionTracker';
 import { Referentiel } from '@/app/types/litterals';
+import { toPercentString } from '@/app/utils/score';
 import { Icon } from '@/ui';
 import classNames from 'classnames';
 import Link from 'next/link';
-import { toPercentString } from 'utils/score';
 
 type Props = {
   collectivite: TCollectiviteCarte;

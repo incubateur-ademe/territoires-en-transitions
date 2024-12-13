@@ -1,6 +1,6 @@
 import { ActionDefinitionSummary } from '@/app/core-logic/api/endpoints/ActionDefinitionSummaryReadEndpoint';
+import { addTargetToContentAnchors } from '@/app/utils/content';
 import { Ref, useEffect, useRef } from 'react';
-import { addTargetToContentAnchors } from 'utils/content';
 import { TTOCItem } from './type';
 import { useActionInfoData } from './useActionInfoData';
 

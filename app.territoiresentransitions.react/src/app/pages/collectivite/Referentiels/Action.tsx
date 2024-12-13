@@ -8,6 +8,7 @@ import {
 import { ActionDefinitionSummary } from '@/app/core-logic/api/endpoints/ActionDefinitionSummaryReadEndpoint';
 import { useActionVue, useReferentielId } from '@/app/core-logic/hooks/params';
 import { useCurrentCollectivite } from '@/app/core-logic/hooks/useCurrentCollectivite';
+import { addTargetToContentAnchors } from '@/app/utils/content';
 import { Alert } from '@/ui';
 import Link from 'next/link';
 import { useRouter } from 'next/navigation';
@@ -15,7 +16,6 @@ import ScrollTopButton from 'ui/buttons/ScrollTopButton';
 import ActionPreuvePanel from 'ui/shared/actions/ActionPreuvePanel/ActionPreuvePanel';
 import { useActionPreuvesCount } from 'ui/shared/preuves/Bibliotheque/usePreuves';
 import { Tab, Tabs } from 'ui/shared/Tabs';
-import { addTargetToContentAnchors } from 'utils/content';
 import { ActionAuditDetail } from '../Audit/ActionAuditDetail';
 import ActionAuditStatut from '../Audit/ActionAuditStatut';
 import { useShowDescIntoInfoPanel } from '../Audit/useAudit';

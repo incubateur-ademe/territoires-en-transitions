@@ -1,19 +1,23 @@
-import {useMemo} from 'react';
+import { toFixed } from '@/app/utils/toFixed';
+import { useMemo } from 'react';
 import {
-  Column,
   CellProps,
+  Column,
   HeaderProps,
-  useTable,
   useExpanded,
   useFlexLayout,
+  useTable,
 } from 'react-table';
-import {TComparaisonScoreAudit, TScoreAudit, TScoreAuditRowData} from './types';
-import {TableData} from './useTableData';
-import {CellAction} from '../ReferentielTable/CellAction';
+import { CellPercent, CellPoints } from '../AidePriorisation/Cells';
 import ReferentielTable from '../ReferentielTable';
-import {CellPercent, CellPoints} from '../AidePriorisation/Cells';
-import {toFixed} from 'utils/toFixed';
+import { CellAction } from '../ReferentielTable/CellAction';
 import './styles.css';
+import {
+  TComparaisonScoreAudit,
+  TScoreAudit,
+  TScoreAuditRowData,
+} from './types';
+import { TableData } from './useTableData';
 
 export type TDetailTacheTableProps = {
   tableData: TableData;
@@ -52,7 +56,7 @@ const getDifferenceOnRow = (
   field: keyof TScoreAudit,
   row: TCellProps['row']
 ) => {
-  const {pre_audit, courant} = row.original;
+  const { pre_audit, courant } = row.original;
   return getDifference(field, pre_audit, courant);
 };
 
@@ -64,7 +68,7 @@ const Header = (props: {
   label: string;
   Cell: typeof CellPoints | typeof CellPercent;
 }) => {
-  const {field, value, previous, label, Cell} = props;
+  const { field, value, previous, label, Cell } = props;
   return (
     <>
       {label}
@@ -82,7 +86,7 @@ const Header = (props: {
 
 /** Renvoie les définitions de colonnes de la table */
 const getColumns = (headerData?: TComparaisonScoreAudit): TColumn[] => {
-  const {pre_audit, courant} = headerData || {};
+  const { pre_audit, courant } = headerData || {};
 
   return [
     {
@@ -226,18 +230,18 @@ const getColumns = (headerData?: TComparaisonScoreAudit): TColumn[] => {
  * Affiche la table "Cycles et comparaison"
  */
 export const AuditComparaisonTable = (props: TDetailTacheTableProps) => {
-  const {tableData} = props;
-  const {table, isLoading, headerData} = tableData;
+  const { tableData } = props;
+  const { table, isLoading, headerData } = tableData;
 
   // ajout aux props passées à chaque cellule de ligne et d'en-tête de colonne
   //  const customCellProps = useMemo(() => ({maxDepth}), [maxDepth]);
-  const customHeaderProps = useMemo(() => ({headerData}), [headerData]);
+  const customHeaderProps = useMemo(() => ({ headerData }), [headerData]);
 
   const columns = useMemo(() => getColumns(headerData), [headerData]);
 
   // crée l'instance de la table
   const tableInstance = useTable(
-    {...table, columns},
+    { ...table, columns },
     useExpanded,
     useFlexLayout
   );

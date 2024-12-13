@@ -1,7 +1,7 @@
+import { getTruncatedText } from '@/app/utils/formatUtils';
 import { Button, Card, Icon } from '@/ui';
 import { useState } from 'react';
 import AlerteSuppression from 'ui/shared/preuves/Bibliotheque/AlerteSuppression';
-import { getTruncatedText } from 'utils/formatUtils';
 import DeleteButton from '../../DeleteButton';
 import ModaleEditionNote from './ModaleEditionNote';
 

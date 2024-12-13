@@ -1,7 +1,7 @@
-import {Suspense} from 'react';
-import {lazy} from 'utils/lazy';
-import {renderLoader} from 'utils/renderLoader';
-import {TActionPreuvePanelProps} from './ActionPreuvePanel';
+import { lazy } from '@/app/utils/lazy';
+import { renderLoader } from '@/app/utils/renderLoader';
+import { Suspense } from 'react';
+import { TActionPreuvePanelProps } from './ActionPreuvePanel';
 
 const Panel = lazy(() => import('./ActionPreuvePanel'));
 

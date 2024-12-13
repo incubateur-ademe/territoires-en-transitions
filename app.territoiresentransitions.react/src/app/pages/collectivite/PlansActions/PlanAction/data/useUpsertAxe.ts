@@ -4,8 +4,8 @@ import { useMutation, useQueryClient } from 'react-query';
 import { makeCollectivitePlanActionUrl } from '@/app/app/paths';
 import { useCollectiviteId } from '@/app/core-logic/hooks/params';
 import { TAxeInsert } from '@/app/types/alias';
+import { waitForMarkup } from '@/app/utils/waitForMarkup';
 import { useRouter } from 'next/navigation';
-import { waitForMarkup } from 'utils/waitForMarkup';
 import { PlanNode } from './types';
 import { planNodeFactory, sortPlanNodes } from './utils';
 

@@ -1,7 +1,7 @@
 import { useActionInfoData } from '@/app/app/pages/collectivite/Referentiels/ActionInfo/useActionInfoData';
 import { ActionDefinitionSummary } from '@/app/core-logic/api/endpoints/ActionDefinitionSummaryReadEndpoint';
+import { addTargetToContentAnchors } from '@/app/utils/content';
 import { Fragment } from 'react';
-import { addTargetToContentAnchors } from 'utils/content';
 
 type SubActionDescriptionProps = {
   subAction: ActionDefinitionSummary;

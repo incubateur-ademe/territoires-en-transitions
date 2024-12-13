@@ -1,6 +1,6 @@
+import { getMaxLengthMessage } from '@/app/utils/formatUtils';
 import { Button, Field, Modal, ModalFooterOKCancel, Textarea } from '@/ui';
 import { useState } from 'react';
-import { getMaxLengthMessage } from 'utils/formatUtils';
 import { NOTES_MAX_LENGTH } from './ModaleCreationNote';
 
 type ModaleEditionNoteProps = {

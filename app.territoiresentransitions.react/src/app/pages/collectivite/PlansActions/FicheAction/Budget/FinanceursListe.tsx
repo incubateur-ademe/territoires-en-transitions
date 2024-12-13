@@ -1,6 +1,6 @@
 import { Financeur } from '@/api/plan-actions';
+import { getFormattedNumber } from '@/app/utils/formatUtils';
 import { Badge } from '@/ui';
-import { getFormattedNumber } from 'utils/formatUtils';
 
 type FinanceursListeProps = {
   financeurs?: Financeur[];

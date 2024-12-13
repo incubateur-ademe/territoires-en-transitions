@@ -2,8 +2,8 @@ import { clientScoresReadEndpoint } from '@/app/core-logic/api/endpoints/ClientS
 import { useCollectiviteId } from '@/app/core-logic/hooks/params';
 import { ActionScore } from '@/app/types/ClientScore';
 import { Referentiel } from '@/app/types/litterals';
+import { referentielId } from '@/app/utils/actions';
 import { useQuery } from 'react-query';
-import { referentielId } from 'utils/actions';
 import { useScoreListener } from './useScoreListener';
 
 export type ReferentielsActionScores = {

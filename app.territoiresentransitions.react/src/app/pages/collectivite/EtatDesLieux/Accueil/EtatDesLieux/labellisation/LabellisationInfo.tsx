@@ -2,8 +2,8 @@ import {
   GreyStar,
   RedStar,
 } from '@/app/app/pages/collectivite/EtatDesLieux/Accueil/EtatDesLieux/labellisation/Star';
+import { toLocaleFixed } from '@/app/utils/toFixed';
 import { Tooltip } from '@/ui';
-import { toLocaleFixed } from 'utils/toFixed';
 import ScoreDisplay from '../../../../../../../ui/referentiels/ScoreDisplay';
 import { TLabellisationParcours } from '../../../../ParcoursLabellisation/types';
 

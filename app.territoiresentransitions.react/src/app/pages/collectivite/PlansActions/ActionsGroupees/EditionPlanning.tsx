@@ -1,8 +1,8 @@
 import { useCollectiviteId } from '@/app/core-logic/hooks/params';
+import { getIsoFormattedDate } from '@/app/utils/formatUtils';
 import { Button, Checkbox, Field, Input, useEventTracker } from '@/ui';
 import { OpenState } from '@/ui/utils/types';
 import { useRef, useState } from 'react';
-import { getIsoFormattedDate } from 'utils/formatUtils';
 import ActionsGroupeesModale from './ActionsGroupeesModale';
 import { useFichesActionsBulkEdit } from './useFichesActionsBulkEdit';
 

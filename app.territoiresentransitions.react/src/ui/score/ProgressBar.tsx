@@ -1,11 +1,11 @@
+import { toFixed } from '@/app/utils/toFixed';
 import classNames from 'classnames';
-import {TweenText} from 'ui/shared/TweenText';
-import {toFixed} from 'utils/toFixed';
+import { TweenText } from 'ui/shared/TweenText';
 
 export type ProgressBarType = {
-  score: {label: string; value: number; color: string}[];
+  score: { label: string; value: number; color: string }[];
   total: number;
-  defaultScore: {label: string; color: string};
+  defaultScore: { label: string; color: string };
   valueToDisplay?: string;
   percent?: boolean;
 };
@@ -21,7 +21,7 @@ const ProgressBar = ({
 
   const percentageAgainstTotal = (x: number): number => (100 * x) / total;
 
-  let localData: {label: string; value: number; color: string}[] = [];
+  let localData: { label: string; value: number; color: string }[] = [];
   score.forEach((s, idx) => {
     localData.push({
       ...s,
@@ -33,7 +33,7 @@ const ProgressBar = ({
 
   const displayedValue =
     valueToDisplay !== undefined
-      ? localData.find(d => d.label === valueToDisplay)?.value
+      ? localData.find((d) => d.label === valueToDisplay)?.value
       : null;
 
   return (
@@ -47,7 +47,7 @@ const ProgressBar = ({
 
       {/* Barre de progression */}
       <div
-        style={{backgroundColor: defaultScore.color}}
+        style={{ backgroundColor: defaultScore.color }}
         className={classNames(
           'relative flex pt-1 min-w-[100px] min-h-[10px]',
           barClasses

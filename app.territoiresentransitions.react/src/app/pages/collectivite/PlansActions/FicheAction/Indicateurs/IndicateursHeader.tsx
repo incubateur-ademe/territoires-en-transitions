@@ -1,8 +1,8 @@
 import { FicheAction } from '@/api/plan-actions';
+import { getTruncatedText } from '@/app/utils/formatUtils';
 import { Badge, Button } from '@/ui';
 import classNames from 'classnames';
 import { useState } from 'react';
-import { getTruncatedText } from 'utils/formatUtils';
 import ModaleIndicateursHeader from './ModaleIndicateursHeader';
 
 type IndicateursHeaderProps = {

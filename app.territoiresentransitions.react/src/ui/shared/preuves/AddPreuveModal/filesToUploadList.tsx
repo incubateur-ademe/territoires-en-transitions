@@ -1,10 +1,10 @@
-import {TFileItem} from './FileItem';
-import {UploadStatusCode, UploadErrorCode} from './types';
-import {MAX_FILE_SIZE_BYTES, EXPECTED_FORMATS} from './constants';
-import {getExtension} from 'utils/file';
-import {TBibliothequeFichier} from '../Bibliotheque/types';
-import {shasum256} from 'utils/shasum256';
-import {getFilesPerHash} from '../Bibliotheque/useFichiers';
+import { getExtension } from '@/app/utils/file';
+import { shasum256 } from '@/app/utils/shasum256';
+import { TBibliothequeFichier } from '../Bibliotheque/types';
+import { getFilesPerHash } from '../Bibliotheque/useFichiers';
+import { EXPECTED_FORMATS, MAX_FILE_SIZE_BYTES } from './constants';
+import { TFileItem } from './FileItem';
+import { UploadErrorCode, UploadStatusCode } from './types';
 
 /**
  * Transforme la sélection de fichiers en une liste d'items
@@ -22,16 +22,16 @@ export const filesToUploadList = async (
   const filesWithHash = await Promise.all(
     filesToArray(files).map(async (file: File) => {
       const hash = await shasum256(file);
-      return {file, hash};
+      return { file, hash };
     })
   );
 
   // récupère la liste des éventuels doublons (fichiers déjà téléversés ayant la même clé)
-  const hashes = filesWithHash.map(({hash}) => hash);
+  const hashes = filesWithHash.map(({ hash }) => hash);
   const duplicatedFiles = await getFilesPerHash(collectivite_id, hashes);
 
-  return filesWithHash.map(({file, hash}: {file: File; hash: string}) => {
-    const duplicatedFile = duplicatedFiles?.find(f => f.hash === hash);
+  return filesWithHash.map(({ file, hash }: { file: File; hash: string }) => {
+    const duplicatedFile = duplicatedFiles?.find((f) => f.hash === hash);
     if (duplicatedFile) {
       return createItemDuplicated(file, duplicatedFile);
     }

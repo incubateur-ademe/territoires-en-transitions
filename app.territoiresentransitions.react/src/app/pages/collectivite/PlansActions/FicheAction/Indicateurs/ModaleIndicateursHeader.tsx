@@ -1,4 +1,5 @@
 import { FicheAction } from '@/api/plan-actions';
+import { getMaxLengthMessage } from '@/app/utils/formatUtils';
 import {
   Field,
   FormSectionGrid,
@@ -10,7 +11,6 @@ import { OpenState } from '@/ui/utils/types';
 import _ from 'lodash';
 import { useState } from 'react';
 import EffetsAttendusDropdown from 'ui/dropdownLists/ficheAction/EffetsAttendusDropdown/EffetsAttendusDropdown';
-import { getMaxLengthMessage } from 'utils/formatUtils';
 
 const OBJECTIFS_MAX_LENGTH = 10000;
 

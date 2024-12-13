@@ -4,17 +4,17 @@ import { ActionDefinitionSummary } from '@/app/core-logic/api/endpoints/ActionDe
 import { ActionTitleRead } from '@/app/core-logic/api/endpoints/ActionTitleReadEndpoint';
 import { useCollectiviteId } from '@/app/core-logic/hooks/params';
 import { useActionTitleList } from '@/app/core-logic/hooks/referentiel';
-import { Menu, MenuItem } from '@mui/material';
-import Link from 'next/link';
-import { useRouter } from 'next/navigation';
-import React, { useState } from 'react';
 import {
   actionPath,
   displayName,
   findActionSiblingsOfId,
   findChildren,
   searchAncestors,
-} from 'utils/actions';
+} from '@/app/utils/actions';
+import { Menu, MenuItem } from '@mui/material';
+import Link from 'next/link';
+import { useRouter } from 'next/navigation';
+import React, { useState } from 'react';
 
 /**
  * Returns a list of menu items

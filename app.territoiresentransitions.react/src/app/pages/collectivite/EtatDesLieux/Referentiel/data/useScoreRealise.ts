@@ -4,8 +4,8 @@ import { supabaseClient } from '@/app/core-logic/api/supabase';
 import { useCollectiviteId } from '@/app/core-logic/hooks/params';
 import { TActionStatutsRow } from '@/app/types/alias';
 import { Referentiel } from '@/app/types/litterals';
+import { indexBy } from '@/app/utils/indexBy';
 import { useQuery } from 'react-query';
-import { indexBy } from 'utils/indexBy';
 
 export type SuiviScoreRow = ActionReferentiel &
   Pick<

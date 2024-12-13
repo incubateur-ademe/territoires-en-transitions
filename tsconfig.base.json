@@ -30,8 +30,7 @@
       "@/ui": ["./packages/ui/src/index.ts"],
       "@/ui/*": ["./packages/ui/src/*"],
       "ui": ["./app.territoiresentransitions.react/src/ui/*"],
-      "ui/*": ["./app.territoiresentransitions.react/src/ui/*"],
-      "utils/*": ["./app.territoiresentransitions.react/src/utils/*"]
+      "ui/*": ["./app.territoiresentransitions.react/src/ui/*"]
     }
   },
   "exclude": ["node_modules", "tmp"]

@@ -12,8 +12,8 @@ import {
   referentielDownToAction,
 } from '@/app/core-logic/api/procedures/referentielProcedures';
 import { Referentiel } from '@/app/types/litterals';
+import { parentId } from '@/app/utils/actions';
 import { useEffect, useState } from 'react';
-import { parentId } from 'utils/actions';
 
 /**
  * Returns a list of actions from the "action" level down to the "tache" level.

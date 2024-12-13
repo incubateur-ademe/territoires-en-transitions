@@ -1,9 +1,9 @@
 import { FicheAction } from '@/api/plan-actions';
+import { getTruncatedText } from '@/app/utils/formatUtils';
 import { Badge, Button } from '@/ui';
 import classNames from 'classnames';
 import { useState } from 'react';
 import Markdown from 'ui/Markdown';
-import { getTruncatedText } from 'utils/formatUtils';
 import MenuDescription from './MenuDescription';
 
 type FicheActionDescriptionProps = {
