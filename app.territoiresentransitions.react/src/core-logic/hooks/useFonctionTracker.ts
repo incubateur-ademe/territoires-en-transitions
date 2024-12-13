@@ -1,9 +1,9 @@
 import { TablesInsert } from '@/api';
+import { ENV } from '@/api/environmentVariables';
 import { useAuth } from '@/app/core-logic/api/auth/AuthProvider';
 import { supabaseClient } from '@/app/core-logic/api/supabase';
 import { useCollectiviteId } from '@/app/core-logic/hooks/params';
 import { useLocalisation } from '@/app/core-logic/hooks/useLocalisation';
-import { ENV } from 'environmentVariables';
 import { useMemo, useRef } from 'react';
 
 /**

@@ -1,9 +1,9 @@
 'use client';
 
+import { ENV } from '@/api/environmentVariables';
 import { TRPCProvider } from '@/api/utils/trpc/client';
 import { createTrackingClient, TrackingProvider } from '@/ui';
 import { createTheme, ThemeProvider } from '@mui/material/styles';
-import { ENV } from 'environmentVariables';
 import { QueryClient, QueryClientProvider } from 'react-query';
 import { ReactQueryDevtools } from 'react-query/devtools';
 import { AuthProvider } from '../core-logic/api/auth/AuthProvider';

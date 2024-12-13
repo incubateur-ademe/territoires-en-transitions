@@ -1,4 +1,4 @@
-import { ENV } from 'environmentVariables';
+import { ENV } from '@/api/environmentVariables';
 import Script from 'next/script';
 
 export default function StonlyWidget() {

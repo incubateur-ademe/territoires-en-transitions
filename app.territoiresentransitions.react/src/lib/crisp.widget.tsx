@@ -1,7 +1,7 @@
 'use client';
 
+import { ENV } from '@/api/environmentVariables';
 import { Crisp } from 'crisp-sdk-web';
-import { ENV } from 'environmentVariables';
 import { useEffect } from 'react';
 
 export default function CrispChat() {
