@@ -1,8 +1,8 @@
 import { useAuth } from '@/app/core-logic/api/auth/AuthProvider';
 import { supabaseClient } from '@/app/core-logic/api/supabase';
+import Modal from '@/app/ui/shared/floating-ui/Modal';
 import { useState } from 'react';
 import { useMutation, useQueryClient } from 'react-query';
-import Modal from 'ui/shared/floating-ui/Modal';
 import { ReactComponent as ContractSVG } from './contract.svg';
 
 export type TAccepterCGUProps = {

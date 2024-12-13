@@ -4,8 +4,8 @@ import { useEffect, useState } from 'react';
 import { createPortal } from 'react-dom';
 
 import { useCurrentCollectivite } from '@/app/core-logic/hooks/useCurrentCollectivite';
-import IconDrag from 'ui/icons/IconDrag';
-import IconFolderAddLine from 'ui/icons/IconFolderAddLine';
+import IconDrag from '@/app/ui/icons/IconDrag';
+import IconFolderAddLine from '@/app/ui/icons/IconFolderAddLine';
 import { useCreateFicheResume } from '../../FicheAction/data/useCreateFicheResume';
 import { generateTitle } from '../../FicheAction/data/utils';
 import SupprimerAxeModal from '../SupprimerAxeModal';

@@ -1,6 +1,6 @@
 import { ActionScore } from '@/app/types/ClientScore';
+import { TweenText } from '@/app/ui/shared/TweenText';
 import { toLocaleFixed } from '@/app/utils/toFixed';
-import { TweenText } from 'ui/shared/TweenText';
 
 export type TPointsPotentielsProps = {
   /** Détail du score associé à l'action */

@@ -1,6 +1,6 @@
 import { ActionDefinitionSummary } from '@/app/core-logic/api/endpoints/ActionDefinitionSummaryReadEndpoint';
+import ActionProgressBar from '@/app/ui/referentiels/ActionProgressBar';
 import classNames from 'classnames';
-import ActionProgressBar from 'ui/referentiels/ActionProgressBar';
 import ScoreDisplay from '../../../../ui/referentiels/ScoreDisplay';
 import HeaderFixed from '../CollectivitePageLayout/HeaderFixed';
 import { SuiviScoreRow } from '../EtatDesLieux/Referentiel/data/useScoreRealise';

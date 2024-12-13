@@ -1,8 +1,8 @@
 import { ActionDefinitionSummary } from '@/app/core-logic/api/endpoints/ActionDefinitionSummaryReadEndpoint';
 import { useCurrentCollectivite } from '@/app/core-logic/hooks/useCurrentCollectivite';
 import { useOngletTracker } from '@/app/core-logic/hooks/useOngletTracker';
+import { ToolbarIconToggleButton } from '@/app/ui/buttons/ToolbarIconButton';
 import { useEffect, useState } from 'react';
-import { ToolbarIconToggleButton } from 'ui/buttons/ToolbarIconButton';
 import {
   usePanelDispatch,
   usePanelState,

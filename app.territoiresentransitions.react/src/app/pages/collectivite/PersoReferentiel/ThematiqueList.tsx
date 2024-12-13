@@ -1,6 +1,6 @@
 import { makeCollectivitePersoRefThematiqueUrl } from '@/app/app/paths';
 import { Referentiel } from '@/app/types/litterals';
-import { BadgeACompleter } from 'ui/shared/Badge/BadgeACompleter';
+import { BadgeACompleter } from '@/app/ui/shared/Badge/BadgeACompleter';
 import { TQuestionThematiqueCompletudeRead } from './useQuestionThematiqueCompletude';
 
 export type TThematiqueListProps = {

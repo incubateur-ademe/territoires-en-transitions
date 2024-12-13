@@ -1,9 +1,9 @@
 import { NiveauPriorite } from '@/api/plan-actions';
 import { useCollectiviteId } from '@/app/core-logic/hooks/params';
+import PrioritesSelectDropdown from '@/app/ui/dropdownLists/ficheAction/priorites/PrioritesSelectDropdown';
 import { Button, Field, useEventTracker } from '@/ui';
 import { OpenState } from '@/ui/utils/types';
 import { useState } from 'react';
-import PrioritesSelectDropdown from 'ui/dropdownLists/ficheAction/priorites/PrioritesSelectDropdown';
 import ActionsGroupeesModale from './ActionsGroupeesModale';
 import { useFichesActionsBulkEdit } from './useFichesActionsBulkEdit';
 

@@ -1,6 +1,6 @@
+import { TweenText } from '@/app/ui/shared/TweenText';
 import { toFixed } from '@/app/utils/toFixed';
 import classNames from 'classnames';
-import { TweenText } from 'ui/shared/TweenText';
 
 export type ProgressBarType = {
   score: { label: string; value: number; color: string }[];

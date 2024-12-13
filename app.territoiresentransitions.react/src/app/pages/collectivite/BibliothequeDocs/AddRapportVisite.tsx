@@ -1,7 +1,7 @@
 import { Modal } from '@/ui';
 import { Dispatch, SetStateAction, useState } from 'react';
 
-import { AddPreuveModal } from 'ui/shared/preuves/AddPreuveModal';
+import { AddPreuveModal } from '@/app/ui/shared/preuves/AddPreuveModal';
 import { useAddRapportVisite } from './useAddRapportVisite';
 
 /**

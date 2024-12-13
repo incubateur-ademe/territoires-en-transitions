@@ -1,5 +1,5 @@
 import { useReferentielId } from '@/app/core-logic/hooks/params';
-import { DesactiverLesFiltres } from 'ui/shared/filters/DesactiverLesFiltres';
+import { DesactiverLesFiltres } from '@/app/ui/shared/filters/DesactiverLesFiltres';
 import { Table } from './Table';
 import { getFilterInfoMessage, noFilters } from './filters';
 import { getMaxDepth } from './queries';

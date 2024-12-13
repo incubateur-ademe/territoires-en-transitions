@@ -1,4 +1,4 @@
-import SelectDropdown from 'ui/shared/select/SelectDropdown';
+import SelectDropdown from '@/app/ui/shared/select/SelectDropdown';
 import { BadgeAuditStatut } from './BadgeAuditStatut';
 
 import { ActionDefinitionSummary } from '@/app/core-logic/api/endpoints/ActionDefinitionSummaryReadEndpoint';

@@ -6,8 +6,8 @@ import {
   Paragraph,
   Stack,
   Title,
-} from 'ui/export-pdf/components';
-import { getActionStatut } from 'ui/referentiels/utils';
+} from '@/app/ui/export-pdf/components';
+import { getActionStatut } from '@/app/ui/referentiels/utils';
 
 type ActionLieeCardProps = {
   action: TActionStatutsRow;

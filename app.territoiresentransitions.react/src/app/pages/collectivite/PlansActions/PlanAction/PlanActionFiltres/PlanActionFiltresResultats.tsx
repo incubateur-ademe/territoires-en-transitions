@@ -1,4 +1,4 @@
-import { DesactiverLesFiltres } from 'ui/shared/filters/DesactiverLesFiltres';
+import { DesactiverLesFiltres } from '@/app/ui/shared/filters/DesactiverLesFiltres';
 import FicheActionCard from '../../FicheAction/Carte/FicheActionCard';
 
 import { makeCollectivitePlanActionFicheUrl } from '@/app/app/paths';

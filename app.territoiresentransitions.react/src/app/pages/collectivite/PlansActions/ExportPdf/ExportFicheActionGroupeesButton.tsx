@@ -1,7 +1,7 @@
 import { useCurrentCollectivite } from '@/app/core-logic/hooks/useCurrentCollectivite';
+import ExportPDFButton from '@/app/ui/export-pdf/ExportPDFButton';
 import { useEventTracker } from '@/ui';
 import { useEffect, useState } from 'react';
-import ExportPDFButton from 'ui/export-pdf/ExportPDFButton';
 import { useFicheAction } from '../FicheAction/data/useFicheAction';
 import { FicheActionPdfContent } from './ExportFicheActionButton';
 

@@ -4,9 +4,9 @@ import { ActionDefinitionSummary } from '@/app/core-logic/api/endpoints/ActionDe
 import { useActionSummaryChildren } from '@/app/core-logic/hooks/referentiel';
 import { useTasksStatus } from '@/app/core-logic/hooks/useActionStatut';
 import { TActionAvancement } from '@/app/types/alias';
+import Modal from '@/app/ui/shared/floating-ui/Modal';
 import { Alert } from '@/ui';
 import { Dispatch, SetStateAction, useState } from 'react';
-import Modal from 'ui/shared/floating-ui/Modal';
 import { StatusToSavePayload } from './ActionStatusDropdown';
 
 /**

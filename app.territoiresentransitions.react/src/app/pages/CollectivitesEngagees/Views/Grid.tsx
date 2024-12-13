@@ -1,8 +1,8 @@
 import { Data } from '@/app/app/pages/CollectivitesEngagees/Views/View';
 import { RecherchesViewParam } from '@/app/app/paths';
 import noResultIllustration from '@/app/app/static/img/no-results-astronaut-bro.svg';
+import SpinnerLoader from '@/app/ui/shared/SpinnerLoader';
 import Image from 'next/image';
-import SpinnerLoader from 'ui/shared/SpinnerLoader';
 
 type Props = {
   view: RecherchesViewParam;

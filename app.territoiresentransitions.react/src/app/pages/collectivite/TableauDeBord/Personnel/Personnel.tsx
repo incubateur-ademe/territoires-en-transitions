@@ -1,6 +1,6 @@
 import ModuleFichesActions from '@/app/app/pages/collectivite/TableauDeBord/Personnel/ModuleFichesActions/ModuleFichesActions';
 import ModuleIndicateurs from '@/app/app/pages/collectivite/TableauDeBord/Personnel/ModuleIndicateurs/ModuleIndicateurs';
-import SpinnerLoader from 'ui/shared/SpinnerLoader';
+import SpinnerLoader from '@/app/ui/shared/SpinnerLoader';
 import { usePersonalModulesFetch } from './usePersonalModulesFetch';
 
 /** Vue personnelle du tableau de bord plans d'action */

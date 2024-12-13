@@ -1,9 +1,9 @@
 import { transformeValeurs } from '@/app/app/pages/collectivite/Indicateurs/Indicateur/detail/transformeValeurs';
 import { useIndicateurValeurs } from '@/app/app/pages/collectivite/Indicateurs/useIndicateurValeurs';
 import { useCurrentCollectivite } from '@/app/core-logic/hooks/useCurrentCollectivite';
+import { Tab, Tabs, useActiveTab } from '@/app/ui/shared/Tabs';
 import { Checkbox, Tooltip } from '@/ui';
 import { useEffect } from 'react';
-import { Tab, Tabs, useActiveTab } from 'ui/shared/Tabs';
 import { SOURCE_COLLECTIVITE } from '../../constants';
 import { TIndicateurDefinition } from '../../types';
 import { IndicateurValuesTable } from './IndicateurValuesTable';

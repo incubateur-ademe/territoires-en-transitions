@@ -1,5 +1,5 @@
+import Modal from '@/app/ui/shared/floating-ui/Modal';
 import { Alert } from '@/ui';
-import Modal from 'ui/shared/floating-ui/Modal';
 import { MessageCompletudeECi } from './MessageCompletudeECi';
 import { numLabels } from './numLabels';
 import { TCycleLabellisation } from './useCycleLabellisation';

@@ -6,8 +6,8 @@ import {
 } from '@/app/core-logic/hooks/params';
 import { useCurrentCollectivite } from '@/app/core-logic/hooks/useCurrentCollectivite';
 import { Referentiel } from '@/app/types/litterals';
+import { usePreuvesParType } from '@/app/ui/shared/preuves/Bibliotheque/usePreuves';
 import { useQuery } from 'react-query';
-import { usePreuvesParType } from 'ui/shared/preuves/Bibliotheque/usePreuves';
 import { TAudit } from './types';
 
 // charge les données

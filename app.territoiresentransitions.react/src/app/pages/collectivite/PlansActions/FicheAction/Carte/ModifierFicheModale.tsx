@@ -17,11 +17,11 @@ import {
   useFicheActionRemoveUserPilote,
 } from '@/app/app/pages/collectivite/PlansActions/FicheAction/data/useFicheActionPilote';
 import { useUpdateFicheResume } from '@/app/app/pages/collectivite/PlansActions/FicheAction/data/useUpdateFicheResume';
+import PersonnesDropdown from '@/app/ui/dropdownLists/PersonnesDropdown/PersonnesDropdown';
+import { getPersonneStringId } from '@/app/ui/dropdownLists/PersonnesDropdown/utils';
+import PrioritesSelectDropdown from '@/app/ui/dropdownLists/ficheAction/priorites/PrioritesSelectDropdown';
+import StatutsSelectDropdown from '@/app/ui/dropdownLists/ficheAction/statuts/StatutsSelectDropdown';
 import { format } from 'date-fns';
-import PersonnesDropdown from 'ui/dropdownLists/PersonnesDropdown/PersonnesDropdown';
-import { getPersonneStringId } from 'ui/dropdownLists/PersonnesDropdown/utils';
-import PrioritesSelectDropdown from 'ui/dropdownLists/ficheAction/priorites/PrioritesSelectDropdown';
-import StatutsSelectDropdown from 'ui/dropdownLists/ficheAction/statuts/StatutsSelectDropdown';
 
 type Props = {
   initialFiche: FicheResume;

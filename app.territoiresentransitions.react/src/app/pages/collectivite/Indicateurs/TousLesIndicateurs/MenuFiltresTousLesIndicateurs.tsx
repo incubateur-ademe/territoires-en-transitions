@@ -1,15 +1,15 @@
 import { FetchFiltre } from '@/api/indicateurs';
-import { Checkbox, Field, FormSection } from '@/ui';
-import PersonnesDropdown from 'ui/dropdownLists/PersonnesDropdown/PersonnesDropdown';
+import PersonnesDropdown from '@/app/ui/dropdownLists/PersonnesDropdown/PersonnesDropdown';
 import {
   getPilotesValues,
   splitPilotePersonnesAndUsers,
-} from 'ui/dropdownLists/PersonnesDropdown/utils';
-import PlansActionDropdown from 'ui/dropdownLists/PlansActionDropdown';
-import ServicesPilotesDropdown from 'ui/dropdownLists/ServicesPilotesDropdown/ServicesPilotesDropdown';
-import ThematiquesDropdown from 'ui/dropdownLists/ThematiquesDropdown/ThematiquesDropdown';
-import IndicateurCategoriesDropdown from 'ui/dropdownLists/indicateur/IndicateurCategoriesDropdown';
-import IndicateurCompletsDropdown from 'ui/dropdownLists/indicateur/IndicateurCompletsDropdown';
+} from '@/app/ui/dropdownLists/PersonnesDropdown/utils';
+import PlansActionDropdown from '@/app/ui/dropdownLists/PlansActionDropdown';
+import ServicesPilotesDropdown from '@/app/ui/dropdownLists/ServicesPilotesDropdown/ServicesPilotesDropdown';
+import ThematiquesDropdown from '@/app/ui/dropdownLists/ThematiquesDropdown/ThematiquesDropdown';
+import IndicateurCategoriesDropdown from '@/app/ui/dropdownLists/indicateur/IndicateurCategoriesDropdown';
+import IndicateurCompletsDropdown from '@/app/ui/dropdownLists/indicateur/IndicateurCompletsDropdown';
+import { Checkbox, Field, FormSection } from '@/ui';
 
 type Props = {
   filters: FetchFiltre;

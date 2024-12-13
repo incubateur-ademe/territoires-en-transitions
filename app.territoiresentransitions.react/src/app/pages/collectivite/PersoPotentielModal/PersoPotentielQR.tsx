@@ -9,9 +9,9 @@ import {
   TQuestionReponse,
   TReponse,
 } from '@/app/types/personnalisation';
+import { Accordion } from '@/app/ui/Accordion';
 import classNames from 'classnames';
 import DOMPurify from 'dompurify';
-import { Accordion } from 'ui/Accordion';
 import { Justification } from './Justification';
 import { PointsPotentiels } from './PointsPotentiels';
 import { reponseParType } from './Reponse';

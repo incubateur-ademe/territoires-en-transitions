@@ -5,7 +5,7 @@ import { Checkbox, Field, Input } from '@/ui';
 
 import { IndicateurListItem } from '@/api/indicateurs/domain';
 import { useFilteredIndicateurDefinitions } from '@/app/app/pages/collectivite/Indicateurs/lists/useFilteredIndicateurDefinitions';
-import ThematiquesDropdown from 'ui/dropdownLists/ThematiquesDropdown/ThematiquesDropdown';
+import ThematiquesDropdown from '@/app/ui/dropdownLists/ThematiquesDropdown/ThematiquesDropdown';
 import SelectIndicateursGrid from './SelectIndicateursGrid';
 
 type Props = {

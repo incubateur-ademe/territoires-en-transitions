@@ -1,9 +1,9 @@
-import IconThreeDotHorizontal from 'ui/icons/IconThreeDotHorizontal';
-import {TOption} from '../../../../../../ui/shared/select/commons';
+import IconThreeDotHorizontal from '@/app/ui/icons/IconThreeDotHorizontal';
+import { TOption } from '../../../../../../ui/shared/select/commons';
 import ContextMenu from '../../../../../../ui/shared/select/ContextMenu';
-import {MenuTriggerButton} from '../../../../../../ui/shared/select/MenuTriggerButton';
+import { MenuTriggerButton } from '../../../../../../ui/shared/select/MenuTriggerButton';
 
-type TOptionWithIcon = TOption & {icon?: string};
+type TOptionWithIcon = TOption & { icon?: string };
 
 /** Affiche un bouton avec une petite icone permettant d'ouvrir un menu déroulant */
 const SmallIconContextMenu = ({

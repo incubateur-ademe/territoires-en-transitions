@@ -1,8 +1,5 @@
-import { getTextFormattedDate } from '@/app/utils/formatUtils';
-import classNames from 'classnames';
-import { isBefore, startOfToday } from 'date-fns';
-import { LoopLeftIcon } from 'ui/export-pdf/assets/icons';
-import { CalendarPicto } from 'ui/export-pdf/assets/picto';
+import { LoopLeftIcon } from '@/app/ui/export-pdf/assets/icons';
+import { CalendarPicto } from '@/app/ui/export-pdf/assets/picto';
 import {
   BadgePriorite,
   BadgeStatut,
@@ -11,7 +8,10 @@ import {
   Paragraph,
   Stack,
   Title,
-} from 'ui/export-pdf/components';
+} from '@/app/ui/export-pdf/components';
+import { getTextFormattedDate } from '@/app/utils/formatUtils';
+import classNames from 'classnames';
+import { isBefore, startOfToday } from 'date-fns';
 import { FicheActionPdfProps } from './FicheActionPdf';
 
 const Planning = ({ fiche }: FicheActionPdfProps) => {

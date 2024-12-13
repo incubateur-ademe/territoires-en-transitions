@@ -1,10 +1,10 @@
 import { useEffect } from 'react';
 
 import { useCollectiviteId } from '@/app/core-logic/hooks/params';
+import { useTagCreate } from '@/app/ui/dropdownLists/tags/useTagCreate';
+import { useDeleteTag } from '@/app/ui/dropdownLists/tags/useTagDelete';
+import { useTagUpdate } from '@/app/ui/dropdownLists/tags/useTagUpdate';
 import { Option, OptionValue, SelectFilter, SelectMultipleProps } from '@/ui';
-import { useTagCreate } from 'ui/dropdownLists/tags/useTagCreate';
-import { useDeleteTag } from 'ui/dropdownLists/tags/useTagDelete';
-import { useTagUpdate } from 'ui/dropdownLists/tags/useTagUpdate';
 
 import { Personne } from '@/api/collectivites';
 import { usePersonneListe } from './usePersonneListe';

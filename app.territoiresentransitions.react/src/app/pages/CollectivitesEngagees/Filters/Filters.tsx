@@ -13,8 +13,8 @@ import {
 import { MultiSelectCheckboxes } from '@/app/app/pages/CollectivitesEngagees/Filters/MultiSelectCheckboxes';
 import { RecherchesViewParam } from '@/app/app/paths';
 import { useFonctionTracker } from '@/app/core-logic/hooks/useFonctionTracker';
+import SpinnerLoader from '@/app/ui/shared/SpinnerLoader';
 import { useEffect, useState } from 'react';
-import SpinnerLoader from 'ui/shared/SpinnerLoader';
 import { useDepartements } from '../data/useDepartements';
 import { useRegions } from '../data/useRegions';
 

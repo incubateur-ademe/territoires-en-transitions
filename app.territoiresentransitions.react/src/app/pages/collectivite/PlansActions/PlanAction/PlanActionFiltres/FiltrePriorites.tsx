@@ -1,6 +1,6 @@
 import { NiveauPriorite } from '@/api/plan-actions';
+import { TOption } from '@/app/ui/shared/select/commons';
 import { Field, OptionValue, SelectFilter } from '@/ui';
-import { TOption } from 'ui/shared/select/commons';
 import { ficheActionNiveauPrioriteOptions } from '../../../../../../ui/dropdownLists/listesStatiques';
 import BadgePriorite from '../../components/BadgePriorite';
 import { SANS_PRIORITE, TFiltreProps } from '../../FicheAction/data/filters';

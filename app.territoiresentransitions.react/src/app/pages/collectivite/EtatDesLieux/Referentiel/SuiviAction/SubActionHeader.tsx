@@ -1,18 +1,18 @@
 import ActionJustification from '@/app/app/pages/collectivite/EtatDesLieux/Referentiel/SuiviAction/ActionJustification';
 import { ActionDefinitionSummary } from '@/app/core-logic/api/endpoints/ActionDefinitionSummaryReadEndpoint';
 import { TActionAvancement } from '@/app/types/alias';
+import { ExpandToggle } from '@/app/ui/icons/ExpandToggle';
+import ActionProgressBar from '@/app/ui/referentiels/ActionProgressBar';
+import {
+  ActionStatusDropdown,
+  StatusToSavePayload,
+} from '@/app/ui/referentiels/ActionStatusDropdown';
+import ScoreDisplay from '@/app/ui/referentiels/ScoreDisplay';
+import { ActionCommentaire } from '@/app/ui/shared/actions/ActionCommentaire';
 import { InfoTooltip } from '@/ui';
 import classNames from 'classnames';
 import DOMPurify from 'dompurify';
 import { useEffect, useState } from 'react';
-import { ExpandToggle } from 'ui/icons/ExpandToggle';
-import ActionProgressBar from 'ui/referentiels/ActionProgressBar';
-import {
-  ActionStatusDropdown,
-  StatusToSavePayload,
-} from 'ui/referentiels/ActionStatusDropdown';
-import ScoreDisplay from 'ui/referentiels/ScoreDisplay';
-import { ActionCommentaire } from 'ui/shared/actions/ActionCommentaire';
 import { SuiviScoreRow } from '../data/useScoreRealise';
 
 type SubActionHeaderProps = {

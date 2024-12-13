@@ -11,7 +11,7 @@ import {
   FiltreValues,
 } from '@/api/collectivites/shared/domain/filtre-ressource-liees.schema';
 import { generateTitle } from '@/app/app/pages/collectivite/PlansActions/FicheAction/data/utils';
-import { getCategorieLabel } from 'ui/dropdownLists/indicateur/utils';
+import { getCategorieLabel } from '@/app/ui/dropdownLists/indicateur/utils';
 
 /**
  * Types de tous les filtres passables au hook `useFiltersToBadges`.

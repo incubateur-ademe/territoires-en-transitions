@@ -1,6 +1,6 @@
 import { ActionDefinitionSummary } from '@/app/core-logic/api/endpoints/ActionDefinitionSummaryReadEndpoint';
+import { ActionCommentaireField } from '@/app/ui/shared/actions/ActionCommentaire';
 import { useEffect, useState } from 'react';
-import { ActionCommentaireField } from 'ui/shared/actions/ActionCommentaire';
 import {
   useActionJustification,
   useSaveActionJustification,

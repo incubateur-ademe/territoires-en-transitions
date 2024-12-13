@@ -20,9 +20,9 @@ import IndicateurCardOptions from '@/app/app/pages/collectivite/Indicateurs/list
 import {
   generateLineLegendItems,
   getLeftLineChartMargin,
-} from 'ui/charts/Line/utils';
-import PictoIndicateurComplet from 'ui/pictogrammes/PictoIndicateurComplet';
-import { BadgeACompleter } from 'ui/shared/Badge/BadgeACompleter';
+} from '@/app/ui/charts/Line/utils';
+import PictoIndicateurComplet from '@/app/ui/pictogrammes/PictoIndicateurComplet';
+import { BadgeACompleter } from '@/app/ui/shared/Badge/BadgeACompleter';
 import { getIndicateurRestant } from './utils';
 
 /** Props de la carte Indicateur */

@@ -1,6 +1,6 @@
 import { Financeur } from '@/api/plan-actions';
+import FinanceursDropdown from '@/app/ui/dropdownLists/FinanceursDropdown/FinanceursDropdown';
 import { Button, Field, Input } from '@/ui';
-import FinanceursDropdown from 'ui/dropdownLists/FinanceursDropdown/FinanceursDropdown';
 
 type FinanceursInputProps = {
   financeurs: Financeur[] | null | undefined;

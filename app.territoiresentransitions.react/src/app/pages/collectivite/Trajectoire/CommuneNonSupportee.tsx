@@ -1,7 +1,7 @@
 import { useCollectiviteId } from '@/app/core-logic/hooks/params';
+import SpinnerLoader from '@/app/ui/shared/SpinnerLoader';
 import { useDownloadFile } from '@/app/utils/useDownloadFile';
 import { EmptyCard, useEventTracker } from '@/ui';
-import SpinnerLoader from 'ui/shared/SpinnerLoader';
 import { DOC_METHODO } from './constants';
 import { ReactComponent as DbErrorPicto } from './db-error.svg';
 import { useTelechargementModele } from './useTelechargementModele';

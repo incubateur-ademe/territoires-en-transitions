@@ -2,11 +2,11 @@ import { referentielToName } from '@/app/app/labels';
 import AccueilCard from '@/app/app/pages/collectivite/EtatDesLieux/Accueil/EtatDesLieux/AccueilCard';
 import { ReferentielParamOption } from '@/app/app/paths';
 import { useCollectiviteId } from '@/app/core-logic/hooks/params';
+import Chart from '@/app/ui/charts/Chart';
 import { toLocaleFixed } from '@/app/utils/toFixed';
 import { Button, useEventTracker } from '@/ui';
 import { useState } from 'react';
 import { TableOptions } from 'react-table';
-import Chart from 'ui/charts/Chart';
 import { ProgressionRow } from '../../data/useProgressionReferentiel';
 import ProgressionReferentiel from './ProgressionReferentiel';
 

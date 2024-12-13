@@ -1,6 +1,6 @@
 import { FicheAction } from '@/api/plan-actions';
+import ExportPDFButton from '@/app/ui/export-pdf/ExportPDFButton';
 import { createElement, useEffect, useState } from 'react';
-import ExportPDFButton from 'ui/export-pdf/ExportPDFButton';
 import { useIndicateurDefinitions } from '../../Indicateurs/Indicateur/useIndicateurDefinition';
 import { useActionListe } from '../FicheAction/data/options/useActionListe';
 import { useAnnexesFicheActionInfos } from '../FicheAction/data/useAnnexesFicheActionInfos';

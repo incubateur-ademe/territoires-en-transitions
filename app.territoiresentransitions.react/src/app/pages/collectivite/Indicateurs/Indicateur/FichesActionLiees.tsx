@@ -1,8 +1,8 @@
 import FichesLieesListe from '@/app/app/pages/collectivite/PlansActions/FicheAction/FichesLiees/FichesLieesListe';
 import { useCurrentCollectivite } from '@/app/core-logic/hooks/useCurrentCollectivite';
+import FichesActionsDropdown from '@/app/ui/dropdownLists/FichesActionsDropdown/FichesActionsDropdown';
 import { Field } from '@/ui';
 import { objectToSnake } from 'ts-case-convert';
-import FichesActionsDropdown from 'ui/dropdownLists/FichesActionsDropdown/FichesActionsDropdown';
 import { TIndicateurDefinition } from '../types';
 import {
   useFichesActionLiees,

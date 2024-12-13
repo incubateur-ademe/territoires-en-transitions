@@ -1,6 +1,6 @@
-import {LineProps} from '@nivo/line';
-import {theme} from 'ui/charts/chartsTheme';
-import {ANNEE_REFERENCE, ANNEE_JALON2} from '../constants';
+import { theme } from '@/app/ui/charts/chartsTheme';
+import { LineProps } from '@nivo/line';
+import { ANNEE_JALON2, ANNEE_REFERENCE } from '../constants';
 
 // couleurs et libellés pour les graphes
 export const COULEURS_SECTEUR = [
@@ -17,19 +17,19 @@ export const COULEURS_SECTEUR = [
 ];
 
 export const LAYERS = {
-  objectifs: {color: '#F5895B', label: 'Mes objectifs'},
-  resultats: {color: '#6A6AF4', label: 'Mes résultats'},
-  trajectoire: {color: '#1E98C6', label: 'SNBC territorialisée'},
+  objectifs: { color: '#F5895B', label: 'Mes objectifs' },
+  resultats: { color: '#6A6AF4', label: 'Mes résultats' },
+  trajectoire: { color: '#1E98C6', label: 'SNBC territorialisée' },
 };
 
 // pour formater les chiffres
-const NumFormat = Intl.NumberFormat('fr', {maximumFractionDigits: 3});
+const NumFormat = Intl.NumberFormat('fr', { maximumFractionDigits: 3 });
 
 // Propriétés communes aux graphes de Trajectoire
 export const COMMON_CHART_PROPS: Partial<LineProps> = {
-  colors: {datum: 'color'},
+  colors: { datum: 'color' },
   theme,
-  margin: {top: 5, right: 5, bottom: 55, left: 50},
+  margin: { top: 5, right: 5, bottom: 55, left: 50 },
   xScale: {
     type: 'time',
     precision: 'year',
@@ -42,7 +42,7 @@ export const COMMON_CHART_PROPS: Partial<LineProps> = {
     max: 'auto',
     stacked: true,
   },
-  yFormat: value => NumFormat.format(value as number),
+  yFormat: (value) => NumFormat.format(value as number),
   axisBottom: {
     format: '%Y',
     legendPosition: 'end',
@@ -52,7 +52,7 @@ export const COMMON_CHART_PROPS: Partial<LineProps> = {
     tickValues: ANNEE_JALON2 - ANNEE_REFERENCE,
   },
   axisLeft: {
-    format: value => NumFormat.format(value as number),
+    format: (value) => NumFormat.format(value as number),
   },
   gridXValues: ANNEE_JALON2 - ANNEE_REFERENCE,
   enableArea: true,

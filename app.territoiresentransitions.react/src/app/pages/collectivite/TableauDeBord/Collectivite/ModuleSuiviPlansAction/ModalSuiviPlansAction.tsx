@@ -19,12 +19,12 @@ import {
 } from '@/app/app/pages/collectivite/TableauDeBord/components/Module';
 import { getDisplayButtons } from '@/app/app/pages/collectivite/TableauDeBord/components/utils';
 import { supabaseClient } from '@/app/core-logic/api/supabase';
-import PersonnesDropdown from 'ui/dropdownLists/PersonnesDropdown/PersonnesDropdown';
+import PersonnesDropdown from '@/app/ui/dropdownLists/PersonnesDropdown/PersonnesDropdown';
 import {
   getPilotesValues,
   splitPilotePersonnesAndUsers,
-} from 'ui/dropdownLists/PersonnesDropdown/utils';
-import PlansActionDropdown from 'ui/dropdownLists/PlansActionDropdown';
+} from '@/app/ui/dropdownLists/PersonnesDropdown/utils';
+import PlansActionDropdown from '@/app/ui/dropdownLists/PlansActionDropdown';
 
 type Props = ModalProps & {
   module: ModulePlanActionListSelect;

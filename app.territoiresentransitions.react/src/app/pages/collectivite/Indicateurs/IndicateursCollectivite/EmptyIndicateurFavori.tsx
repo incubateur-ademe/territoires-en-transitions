@@ -1,9 +1,9 @@
 import ModaleCreerIndicateur from '@/app/app/pages/collectivite/PlansActions/FicheAction/Indicateurs/ModaleCreerIndicateur';
 import { makeCollectiviteTousLesIndicateursUrl } from '@/app/app/paths';
+import PictoDashboard from '@/app/ui/pictogrammes/PictoDashboard';
 import { EmptyCard, useEventTracker } from '@/ui';
 import { useRouter } from 'next/navigation';
 import { useState } from 'react';
-import PictoDashboard from 'ui/pictogrammes/PictoDashboard';
 
 type Props = {
   collectiviteId: number;

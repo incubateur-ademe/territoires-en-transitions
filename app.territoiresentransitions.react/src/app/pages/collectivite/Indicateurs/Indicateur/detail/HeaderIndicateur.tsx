@@ -1,7 +1,7 @@
+import TextareaControlled from '@/app/ui/shared/form/TextareaControlled';
 import { Icon } from '@/ui';
 import classNames from 'classnames';
 import { useEffect, useRef } from 'react';
-import TextareaControlled from 'ui/shared/form/TextareaControlled';
 
 /** Affiche l'en-tête d'une page détail d'un indicateur */
 type HeaderProps = {

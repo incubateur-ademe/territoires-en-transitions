@@ -1,10 +1,10 @@
+import { ITEM_ALL } from '@/app/ui/shared/filters/commons';
 import {
   usePathname,
   useRouter,
   useSearchParams as useSearchParamsNext,
 } from 'next/navigation';
 import { useEffect, useMemo, useState } from 'react';
-import { ITEM_ALL } from 'ui/shared/filters/commons';
 
 export const useQuery = (): URLSearchParams => {
   const search = useSearchParamsNext();

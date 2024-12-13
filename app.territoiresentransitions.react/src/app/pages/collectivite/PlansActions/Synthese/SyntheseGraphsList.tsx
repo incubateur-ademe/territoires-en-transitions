@@ -2,10 +2,10 @@ import {
   makeCollectivitePlansActionsNouveauUrl,
   makeCollectivitePlansActionsSyntheseVueUrl,
 } from '@/app/app/paths';
+import Chart from '@/app/ui/charts/Chart';
+import PictoLeaf from '@/app/ui/pictogrammes/PictoLeaf';
 import { Card } from '@/ui';
 import Link from 'next/link';
-import Chart from 'ui/charts/Chart';
-import PictoLeaf from 'ui/pictogrammes/PictoLeaf';
 import { usePlanActionTableauDeBord } from './data/usePlanActionTableauDeBord';
 import { PlanActionFilter } from './FiltersPlanAction';
 import { generateSyntheseGraphData } from './utils';

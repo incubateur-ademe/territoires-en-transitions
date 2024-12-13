@@ -1,19 +1,19 @@
-import TagFilters from 'ui/shared/filters/TagFilters';
-import {ITEM_ALL} from 'ui/shared/filters/commons';
-import {TFichesActionsListe} from '../../../FicheAction/data/useFichesActionFiltresListe';
-import {TOption} from 'ui/shared/select/commons';
-import {SANS_PILOTE, SANS_REFERENT} from '../../../FicheAction/data/filters';
-import {getPersonneStringId} from 'ui/dropdownLists/PersonnesDropdown/utils';
-import {usePersonneListe} from 'ui/dropdownLists/PersonnesDropdown/usePersonneListe';
+import { usePersonneListe } from '@/app/ui/dropdownLists/PersonnesDropdown/usePersonneListe';
+import { getPersonneStringId } from '@/app/ui/dropdownLists/PersonnesDropdown/utils';
+import TagFilters from '@/app/ui/shared/filters/TagFilters';
+import { ITEM_ALL } from '@/app/ui/shared/filters/commons';
+import { TOption } from '@/app/ui/shared/select/commons';
+import { SANS_PILOTE, SANS_REFERENT } from '../../../FicheAction/data/filters';
+import { TFichesActionsListe } from '../../../FicheAction/data/useFichesActionFiltresListe';
 
 type Props = {
   filterKey: 'pilotes' | 'referents';
   filtersOptions: TFichesActionsListe;
 };
 
-const FiltrePrimairePersonne = ({filterKey, filtersOptions}: Props) => {
-  const {filters, setFilters} = filtersOptions;
-  const {data: personnes} = usePersonneListe();
+const FiltrePrimairePersonne = ({ filterKey, filtersOptions }: Props) => {
+  const { filters, setFilters } = filtersOptions;
+  const { data: personnes } = usePersonneListe();
 
   // Initialisation du tableau d'options pour le multi-select
   const options: TOption[] = [];
@@ -45,7 +45,7 @@ const FiltrePrimairePersonne = ({filterKey, filtersOptions}: Props) => {
 
   // Transformation et ajout des personnes aux options
   personnes &&
-    personnes.forEach(personne =>
+    personnes.forEach((personne) =>
       options.push({
         value: getPersonneStringId(personne),
         label: personne.nom!,
@@ -81,13 +81,13 @@ const FiltrePrimairePersonne = ({filterKey, filtersOptions}: Props) => {
       if (filterKey === 'pilotes') {
         delete newFilters.pilotes;
       }
-      return {...newFilters};
+      return { ...newFilters };
     } else if (value === SANS_PILOTE) {
       delete newFilters.pilotes;
-      return {...newFilters, sans_pilote: 1};
+      return { ...newFilters, sans_pilote: 1 };
     } else if (value === SANS_REFERENT) {
       delete newFilters.referents;
-      return {...newFilters, sans_referent: 1};
+      return { ...newFilters, sans_referent: 1 };
     } else {
       delete newFilters.sans_pilote;
       delete newFilters.sans_referent;
@@ -102,7 +102,7 @@ const FiltrePrimairePersonne = ({filterKey, filtersOptions}: Props) => {
     <TagFilters
       defaultOption={getDefaultOption()}
       options={options}
-      onChange={value => setFilters(onChange(value))}
+      onChange={(value) => setFilters(onChange(value))}
     />
   );
 };

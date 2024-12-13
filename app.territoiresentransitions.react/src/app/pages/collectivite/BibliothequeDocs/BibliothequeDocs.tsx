@@ -1,11 +1,11 @@
 import { useCollectiviteId } from '@/app/core-logic/hooks/params';
-import { TrackPageView } from '@/ui';
-import PreuveDoc from 'ui/shared/preuves/Bibliotheque/PreuveDoc';
+import PreuveDoc from '@/app/ui/shared/preuves/Bibliotheque/PreuveDoc';
 import {
   TPreuveAuditEtLabellisation,
   TPreuveRapport,
-} from 'ui/shared/preuves/Bibliotheque/types';
-import { usePreuvesParType } from 'ui/shared/preuves/Bibliotheque/usePreuves';
+} from '@/app/ui/shared/preuves/Bibliotheque/types';
+import { usePreuvesParType } from '@/app/ui/shared/preuves/Bibliotheque/usePreuves';
+import { TrackPageView } from '@/ui';
 import { AddRapportVisite } from './AddRapportVisite';
 import { PreuvesLabellisation } from './PreuveLabellisation';
 import { PreuvesTabs } from './PreuvesTabs';

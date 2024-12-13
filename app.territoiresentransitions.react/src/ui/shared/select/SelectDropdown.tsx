@@ -1,16 +1,16 @@
 import classNames from 'classnames';
-import {forwardRef, Ref} from 'react';
+import { forwardRef, Ref } from 'react';
 
-import DropdownFloater from 'ui/shared/floating-ui/DropdownFloater';
+import DropdownFloater from '@/app/ui/shared/floating-ui/DropdownFloater';
 import {
   buttonDisplayedClassname,
   buttonDisplayedPlaceholderClassname,
   ExpandCollapseIcon,
+  getOptions,
+  TOption,
   TSelectBase,
   TSelectSelectionButtonBase,
-  TOption,
-  getOptions,
-} from 'ui/shared/select/commons';
+} from '@/app/ui/shared/select/commons';
 import Options from './Options';
 
 type TSelectDropdownBaseProps<T extends string> = TSelectBase & {
@@ -51,13 +51,13 @@ const SelectDropdown = <T extends string>({
     <DropdownFloater
       containerWidthMatchButton={containerWidthMatchButton}
       placement={placement}
-      render={({close}) => (
+      render={({ close }) => (
         <div data-test={`${dataTest}-options`}>
           <Options
             dataTest={dataTest}
             values={value && [value]}
             options={options}
-            onSelect={values => {
+            onSelect={(values) => {
               // comme les options peuvent etre utilisées pour un select simple ou multiple,
               // on ne sélectionne que la dernière valeur du tableau
               if (values.length > 0 || (values.length === 0 && !required)) {
@@ -75,7 +75,7 @@ const SelectDropdown = <T extends string>({
         value={value}
         options={options}
         renderSelection={
-          renderSelection ? value => renderSelection(value as T) : undefined
+          renderSelection ? (value) => renderSelection(value as T) : undefined
         }
         buttonClassName={buttonClassName}
         placeholderText={placeholderText}
@@ -117,7 +117,8 @@ const SelectButtton = forwardRef(
           renderSelection(value)
         ) : (
           <span className="mr-auto flex line-clamp-1">
-            {getOptions(options).find(({value: v}) => v === value)?.label || ''}
+            {getOptions(options).find(({ value: v }) => v === value)?.label ||
+              ''}
           </span>
         )
       ) : (

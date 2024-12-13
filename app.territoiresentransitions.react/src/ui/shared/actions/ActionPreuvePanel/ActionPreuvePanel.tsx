@@ -1,8 +1,8 @@
+import { PreuvesAction } from '@/app/ui/shared/preuves/Bibliotheque/PreuvesAction';
 import {
   TActionDef,
   usePreuvesParType,
-} from 'ui/shared/preuves/Bibliotheque/usePreuves';
-import {PreuvesAction} from 'ui/shared/preuves/Bibliotheque/PreuvesAction';
+} from '@/app/ui/shared/preuves/Bibliotheque/usePreuves';
 
 export type TActionPreuvePanelProps = {
   /** Identifiant de l'action ou de la sous-action concernée */
@@ -22,9 +22,9 @@ export type TActionPreuvePanelProps = {
  * Affiche le panneau "preuves" d'une action
  */
 const ActionPreuvePanel = (props: TActionPreuvePanelProps) => {
-  const {action, withSubActions, showWarning, hideIdentifier, disableFetch} =
+  const { action, withSubActions, showWarning, hideIdentifier, disableFetch } =
     props;
-  const {reglementaire, complementaire} = usePreuvesParType({
+  const { reglementaire, complementaire } = usePreuvesParType({
     action,
     withSubActions,
     disabled: disableFetch,

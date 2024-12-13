@@ -1,6 +1,6 @@
 import { Modal } from '@/ui';
 
-import DownloadCanvasButton from 'ui/buttons/DownloadCanvasButton';
+import DownloadCanvasButton from '@/app/ui/buttons/DownloadCanvasButton';
 import { ChartProps } from './Chart';
 import DonutChart from './Donut/DonutChart';
 import LineChart from './Line/LineChart';

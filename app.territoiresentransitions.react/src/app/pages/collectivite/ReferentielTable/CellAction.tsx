@@ -2,10 +2,10 @@ import {
   makeCollectiviteTacheUrl,
   ReferentielParamOption,
 } from '@/app/app/paths';
+import { Kbd } from '@/app/ui/shared/Kbd';
 import { Tooltip } from '@/ui';
 import Link from 'next/link';
 import { CellProps } from 'react-table';
-import { Kbd } from 'ui/shared/Kbd';
 import { ActionReferentiel } from './useReferentiel';
 
 export type TCellProps = CellProps<ActionReferentiel> & {

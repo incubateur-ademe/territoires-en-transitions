@@ -1,5 +1,5 @@
-import { Card, Paragraph, Stack, Title } from 'ui/export-pdf/components';
-import { PersonnePilotePicto } from 'ui/export-pdf/assets/picto';
+import { PersonnePilotePicto } from '@/app/ui/export-pdf/assets/picto';
+import { Card, Paragraph, Stack, Title } from '@/app/ui/export-pdf/components';
 import { FicheActionPdfProps } from './FicheActionPdf';
 
 const Pilotes = ({ fiche }: FicheActionPdfProps) => {

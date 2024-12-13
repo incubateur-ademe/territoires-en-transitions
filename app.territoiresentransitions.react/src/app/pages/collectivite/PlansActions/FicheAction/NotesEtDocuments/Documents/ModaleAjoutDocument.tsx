@@ -1,8 +1,8 @@
-import { Modal } from '@/ui';
 import {
   AddPreuveModal,
   TAddPreuveModalHandlers,
-} from 'ui/shared/preuves/AddPreuveModal';
+} from '@/app/ui/shared/preuves/AddPreuveModal';
+import { Modal } from '@/ui';
 
 type ModaleAjoutDocumentProps = {
   handlers: TAddPreuveModalHandlers;

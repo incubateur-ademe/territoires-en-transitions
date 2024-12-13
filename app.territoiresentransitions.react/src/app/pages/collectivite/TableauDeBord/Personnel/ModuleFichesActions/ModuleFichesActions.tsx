@@ -16,8 +16,8 @@ import {
 } from '@/app/app/paths';
 import { useAuth } from '@/app/core-logic/api/auth/AuthProvider';
 import { useCollectiviteId } from '@/app/core-logic/hooks/params';
+import PictoExpert from '@/app/ui/pictogrammes/PictoExpert';
 import { useRouter } from 'next/navigation';
-import PictoExpert from 'ui/pictogrammes/PictoExpert';
 
 type Props = {
   view: TDBViewParam;

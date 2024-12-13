@@ -1,8 +1,8 @@
-import { TPreuveComplementaire, TPreuveReglementaire } from './types';
-import { PreuveReglementaire } from './PreuveReglementaire';
-import { AddPreuveComplementaire } from 'ui/shared/actions/AddPreuve/AddPreuveComplementaire';
-import { TActionDef } from './usePreuves';
+import { AddPreuveComplementaire } from '@/app/ui/shared/actions/AddPreuve/AddPreuveComplementaire';
 import PreuveDoc from './PreuveDoc';
+import { PreuveReglementaire } from './PreuveReglementaire';
+import { TPreuveComplementaire, TPreuveReglementaire } from './types';
+import { TActionDef } from './usePreuves';
 
 export type TPreuvesActionProps = {
   /** Identifiant de l'action ou de la sous-action concernée */

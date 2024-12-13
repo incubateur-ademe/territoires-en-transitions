@@ -28,9 +28,7 @@
       "@/panier/*": ["./packages/panier/*"],
       "@/site/*": ["./packages/site/*"],
       "@/ui": ["./packages/ui/src/index.ts"],
-      "@/ui/*": ["./packages/ui/src/*"],
-      "ui": ["./app.territoiresentransitions.react/src/ui/*"],
-      "ui/*": ["./app.territoiresentransitions.react/src/ui/*"]
+      "@/ui/*": ["./packages/ui/src/*"]
     }
   },
   "exclude": ["node_modules", "tmp"]

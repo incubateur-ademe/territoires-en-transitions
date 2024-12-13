@@ -4,9 +4,9 @@ import {
   SEQUESTRATION_CARBONE,
 } from '@/app/app/pages/collectivite/Trajectoire/constants';
 import { useCalculTrajectoire } from '@/app/app/pages/collectivite/Trajectoire/useCalculTrajectoire';
+import SpinnerLoader from '@/app/ui/shared/SpinnerLoader';
 import { Alert, Button, ModalFooter, RenderProps, Tab, Tabs } from '@/ui';
 import { useEffect } from 'react';
-import SpinnerLoader from 'ui/shared/SpinnerLoader';
 import { TABS } from './constants';
 import { Secteur, TableauDonnees } from './TableauDonnees';
 import { useDonneesSectorisees } from './useDonneesSectorisees';

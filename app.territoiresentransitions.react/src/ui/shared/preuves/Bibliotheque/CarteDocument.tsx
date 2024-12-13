@@ -1,3 +1,4 @@
+import SpinnerLoader from '@/app/ui/shared/SpinnerLoader';
 import {
   getTextFormattedDate,
   getTruncatedText,
@@ -5,7 +6,6 @@ import {
 import { Button, Card, Divider, Icon, Notification, Tooltip } from '@/ui';
 import classNames from 'classnames';
 import { useEffect, useState } from 'react';
-import SpinnerLoader from 'ui/shared/SpinnerLoader';
 import AlerteSuppression from './AlerteSuppression';
 import DocumentInput from './DocumentInput';
 import { IdentifiantAction } from './IdentifiantAction';

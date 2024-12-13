@@ -4,9 +4,9 @@ import {
   useSaveActionCommentaire,
 } from '@/app/core-logic/hooks/useActionCommentaire';
 import { useCurrentCollectivite } from '@/app/core-logic/hooks/useCurrentCollectivite';
+import Textarea from '@/app/ui/shared/form/Textarea';
 import classNames from 'classnames';
 import React, { useEffect, useState } from 'react';
-import Textarea from 'ui/shared/form/Textarea';
 
 type ActionCommentaireProps = {
   action: ActionDefinitionSummary;

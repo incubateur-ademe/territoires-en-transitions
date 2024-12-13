@@ -2,9 +2,9 @@ import { referentielToName } from '@/app/app/labels';
 import { makeCollectiviteTacheUrl } from '@/app/app/paths';
 import { useCollectiviteId } from '@/app/core-logic/hooks/params';
 import { TActionStatutsRow } from '@/app/types/alias';
+import { getActionStatut } from '@/app/ui/referentiels/utils';
+import ActionStatutBadge from '@/app/ui/shared/actions/ActionStatutBadge';
 import { Button, Card } from '@/ui';
-import { getActionStatut } from 'ui/referentiels/utils';
-import ActionStatutBadge from 'ui/shared/actions/ActionStatutBadge';
 
 type ActionCardProps = {
   isReadonly?: boolean;

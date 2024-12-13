@@ -1,4 +1,4 @@
-import { ListElement, Stack, StackProps } from 'ui/export-pdf/components';
+import { ListElement, Stack, StackProps } from '@/app/ui/export-pdf/components';
 
 type ListProps = Omit<StackProps, 'children'> & {
   children:

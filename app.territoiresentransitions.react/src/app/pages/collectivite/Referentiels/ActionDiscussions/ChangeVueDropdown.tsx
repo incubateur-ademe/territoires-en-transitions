@@ -1,9 +1,9 @@
-import {forwardRef, Ref} from 'react';
 import classNames from 'classnames';
+import { forwardRef, Ref } from 'react';
 
-import DropdownFloater from 'ui/shared/floating-ui/DropdownFloater';
+import DropdownFloater from '@/app/ui/shared/floating-ui/DropdownFloater';
 
-import {TActionDiscussionStatut} from './data/types';
+import { TActionDiscussionStatut } from './data/types';
 
 /** Menu et options pour changer la vue du feed de discussion dans une action */
 const ChangeVueDropdown = ({
@@ -17,7 +17,7 @@ const ChangeVueDropdown = ({
     <>
       <DropdownFloater
         placement="bottom-start"
-        render={({close}) => (
+        render={({ close }) => (
           <nav data-test="ActionDiscussionsChangeVueMenu">
             <ul className="m-0 p-0">
               {vue === 'ferme' && (

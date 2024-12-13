@@ -1,18 +1,18 @@
-import {useState} from 'react';
-import Textarea from 'ui/shared/form/Textarea';
+import Textarea from '@/app/ui/shared/form/Textarea';
+import { useState } from 'react';
 import ActionDiscussionCommentaire from './ActionDiscussionCommentaire';
-import {TActionDiscussion} from './data/types';
-import {useAddCommentaireToDiscussion} from './data/useAddCommentaireToDiscussion';
+import { TActionDiscussion } from './data/types';
+import { useAddCommentaireToDiscussion } from './data/useAddCommentaireToDiscussion';
 
 export type ActionDiscussionProps = {
   discussion: TActionDiscussion;
 };
 
 /** Discussion contenant des commentaires et un champ de saisie pour répondre */
-const ActionDiscussion = ({discussion}: ActionDiscussionProps) => {
+const ActionDiscussion = ({ discussion }: ActionDiscussionProps) => {
   const [nouveauCommentaire, setNouveauCommentaire] = useState<string>('');
 
-  const {mutate: handleAddCommentaireToDiscussion} =
+  const { mutate: handleAddCommentaireToDiscussion } =
     useAddCommentaireToDiscussion(discussion.id);
 
   return (
@@ -55,7 +55,7 @@ const ActionDiscussionCommentaireListe = ({
 }: {
   discussion: TActionDiscussion;
 }) => {
-  const {commentaires} = discussion;
+  const { commentaires } = discussion;
 
   const [isOpen, setIsOpen] = useState(false);
 

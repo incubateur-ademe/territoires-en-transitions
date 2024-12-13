@@ -1,9 +1,9 @@
 import { RouterInput } from '@/api/utils/trpc/client';
 import { useCollectiviteId } from '@/app/core-logic/hooks/params';
+import StatutsSelectDropdown from '@/app/ui/dropdownLists/ficheAction/statuts/StatutsSelectDropdown';
 import { Button, Field, useEventTracker } from '@/ui';
 import { OpenState } from '@/ui/utils/types';
 import { useState } from 'react';
-import StatutsSelectDropdown from 'ui/dropdownLists/ficheAction/statuts/StatutsSelectDropdown';
 import ActionsGroupeesModale from './ActionsGroupeesModale';
 import { useFichesActionsBulkEdit } from './useFichesActionsBulkEdit';
 

@@ -3,8 +3,8 @@
  */
 
 import { useReferentielId } from '@/app/core-logic/hooks/params';
+import { PageHeaderLeft } from '@/app/ui/PageHeader';
 import { ReactNode, useState } from 'react';
-import { PageHeaderLeft } from 'ui/PageHeader';
 import { TAuditeur, useAuditeurs } from '../Audit/useAudit';
 import { ValiderAudit } from '../Audit/ValiderAudit';
 import { DemandeAuditModal } from './DemandeAuditModal';

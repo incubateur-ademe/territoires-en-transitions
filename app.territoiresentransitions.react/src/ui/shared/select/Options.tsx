@@ -1,7 +1,7 @@
-import { Checkmark, isOptionSection, TOption, TSelectOption } from './commons';
-import IconThreeDotHorizontal from 'ui/icons/IconThreeDotHorizontal';
-import DropdownFloater from '../floating-ui/DropdownFloater';
+import IconThreeDotHorizontal from '@/app/ui/icons/IconThreeDotHorizontal';
 import { forwardRef, Ref } from 'react';
+import DropdownFloater from '../floating-ui/DropdownFloater';
+import { Checkmark, isOptionSection, TOption, TSelectOption } from './commons';
 
 type RenderOptionMenuProps = {
   option: TOption;

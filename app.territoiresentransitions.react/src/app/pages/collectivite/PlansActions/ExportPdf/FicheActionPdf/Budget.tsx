@@ -1,4 +1,3 @@
-import classNames from 'classnames';
 import {
   BadgeBudget,
   BadgeFinanceur,
@@ -6,7 +5,8 @@ import {
   Paragraph,
   Stack,
   Title,
-} from 'ui/export-pdf/components';
+} from '@/app/ui/export-pdf/components';
+import classNames from 'classnames';
 import { FicheActionPdfProps } from './FicheActionPdf';
 
 const Budget = ({ fiche }: FicheActionPdfProps) => {

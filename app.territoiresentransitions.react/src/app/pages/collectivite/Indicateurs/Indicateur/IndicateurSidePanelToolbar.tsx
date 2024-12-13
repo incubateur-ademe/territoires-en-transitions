@@ -1,7 +1,7 @@
 import { useEffect, useState } from 'react';
 
 import { useOngletTracker } from '@/app/core-logic/hooks/useOngletTracker';
-import { ToolbarIconToggleButton } from 'ui/buttons/ToolbarIconButton';
+import { ToolbarIconToggleButton } from '@/app/ui/buttons/ToolbarIconButton';
 import {
   usePanelDispatch,
   usePanelState,

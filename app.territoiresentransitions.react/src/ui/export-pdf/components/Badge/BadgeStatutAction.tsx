@@ -1,7 +1,7 @@
 import { avancementToLabel } from '@/app/app/labels';
 import { TActionAvancementExt } from '@/app/types/alias';
+import { statusToState } from '@/app/ui/shared/actions/ActionStatutBadge';
 import classNames from 'classnames';
-import { statusToState } from 'ui/shared/actions/ActionStatutBadge';
 import { Badge } from './Badge';
 
 type BadgeStatutActionProps = {

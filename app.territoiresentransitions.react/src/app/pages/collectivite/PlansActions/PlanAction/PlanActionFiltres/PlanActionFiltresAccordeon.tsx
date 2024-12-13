@@ -1,6 +1,6 @@
 import { useState } from 'react';
 
-import { AccordionControlled } from 'ui/Accordion';
+import { AccordionControlled } from '@/app/ui/Accordion';
 import PlanActionFiltres from './PlanActionFiltres';
 
 import { useCollectiviteId } from '@/app/core-logic/hooks/params';

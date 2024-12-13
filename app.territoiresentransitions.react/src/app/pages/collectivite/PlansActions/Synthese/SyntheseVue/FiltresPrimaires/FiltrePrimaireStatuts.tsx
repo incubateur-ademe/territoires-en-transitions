@@ -1,6 +1,6 @@
 import { TFicheActionStatuts } from '@/app/types/alias';
-import TagFilters from 'ui/shared/filters/TagFilters';
-import { ITEM_ALL } from 'ui/shared/filters/commons';
+import TagFilters from '@/app/ui/shared/filters/TagFilters';
+import { ITEM_ALL } from '@/app/ui/shared/filters/commons';
 import { ficheActionStatutOptions } from '../../../../../../../ui/dropdownLists/listesStatiques';
 import { SANS_STATUT } from '../../../FicheAction/data/filters';
 import { TFichesActionsListe } from '../../../FicheAction/data/useFichesActionFiltresListe';

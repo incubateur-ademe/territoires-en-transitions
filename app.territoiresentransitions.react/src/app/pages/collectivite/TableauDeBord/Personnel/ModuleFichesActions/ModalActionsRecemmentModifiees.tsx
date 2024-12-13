@@ -8,6 +8,14 @@ import {
 } from '@/api/plan-actions/fiche-resumes.list/domain/fetch-options.schema';
 import { supabaseClient } from '@/app/core-logic/api/supabase';
 import { useCollectiviteId } from '@/app/core-logic/hooks/params';
+import StatutsFilterDropdown from '@/app/ui/dropdownLists/ficheAction/statuts/StatutsFilterDropdown';
+import PeriodeDropdown from '@/app/ui/dropdownLists/PeriodeDropdown';
+import PersonnesDropdown from '@/app/ui/dropdownLists/PersonnesDropdown/PersonnesDropdown';
+import {
+  getPilotesValues,
+  splitPilotePersonnesAndUsers,
+} from '@/app/ui/dropdownLists/PersonnesDropdown/utils';
+import PlansActionDropdown from '@/app/ui/dropdownLists/PlansActionDropdown';
 import {
   Field,
   FormSection,
@@ -17,14 +25,6 @@ import {
   useEventTracker,
 } from '@/ui';
 import { QueryKey, useQueryClient } from 'react-query';
-import StatutsFilterDropdown from 'ui/dropdownLists/ficheAction/statuts/StatutsFilterDropdown';
-import PeriodeDropdown from 'ui/dropdownLists/PeriodeDropdown';
-import PersonnesDropdown from 'ui/dropdownLists/PersonnesDropdown/PersonnesDropdown';
-import {
-  getPilotesValues,
-  splitPilotePersonnesAndUsers,
-} from 'ui/dropdownLists/PersonnesDropdown/utils';
-import PlansActionDropdown from 'ui/dropdownLists/PlansActionDropdown';
 
 type Props = ModalProps & {
   module: ModuleFicheActionsSelect;

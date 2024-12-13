@@ -1,8 +1,8 @@
 import { useState } from 'react';
 
 import { useCollectiviteId } from '@/app/core-logic/hooks/params';
+import Chart, { ChartProps } from '@/app/ui/charts/Chart';
 import { Button } from '@/ui';
-import Chart, { ChartProps } from 'ui/charts/Chart';
 import { usePlanActionTableauDeBord } from '../data/usePlanActionTableauDeBord';
 import { PlanActionFilter } from '../FiltersPlanAction';
 import { TSyntheseVue, getGraphData } from '../utils';

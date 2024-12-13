@@ -1,9 +1,9 @@
 import { makeCollectivitePlansActionsNouveauUrl } from '@/app/app/paths';
 import { useCollectiviteId } from '@/app/core-logic/hooks/params';
+import ContextMenu from '@/app/ui/shared/select/ContextMenu';
+import { MenuTriggerButton } from '@/app/ui/shared/select/MenuTriggerButton';
 import { Alert, useEventTracker } from '@/ui';
 import Link from 'next/link';
-import ContextMenu from 'ui/shared/select/ContextMenu';
-import { MenuTriggerButton } from 'ui/shared/select/MenuTriggerButton';
 
 const DOWNLOAD_TEMPLATE_OPTIONS = [
   { value: 'xlsx', label: 'Format Excel (.xlsx)' },

@@ -1,14 +1,14 @@
 import { usePlanActionsCount } from '@/app/app/pages/collectivite/PlansActions/PlanAction/data/usePlanActionsCount';
 import { getDisplayButtons } from '@/app/app/pages/collectivite/TableauDeBord/components/utils';
+import FilterBadges, {
+  BadgeFilters,
+  useFiltersToBadges,
+} from '@/app/ui/shared/filters/filter-badges';
+import SpinnerLoader from '@/app/ui/shared/SpinnerLoader';
 import { Button, ButtonGroup } from '@/ui';
 import { OpenState } from '@/ui/utils/types';
 import classNames from 'classnames';
 import React, { useState } from 'react';
-import FilterBadges, {
-  BadgeFilters,
-  useFiltersToBadges,
-} from 'ui/shared/filters/filter-badges';
-import SpinnerLoader from 'ui/shared/SpinnerLoader';
 
 export type ModuleDisplay = 'circular' | 'row';
 

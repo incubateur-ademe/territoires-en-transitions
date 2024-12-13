@@ -1,7 +1,7 @@
-import { useTableData } from './useTableData';
+import { DesactiverLesFiltres } from '@/app/ui/shared/filters/DesactiverLesFiltres';
 import { DetailTacheTable } from './DetailTacheTable';
 import { noFilters } from './filters';
-import { DesactiverLesFiltres } from 'ui/shared/filters/DesactiverLesFiltres';
+import { useTableData } from './useTableData';
 
 const DetailTaches = () => {
   const tableData = useTableData();

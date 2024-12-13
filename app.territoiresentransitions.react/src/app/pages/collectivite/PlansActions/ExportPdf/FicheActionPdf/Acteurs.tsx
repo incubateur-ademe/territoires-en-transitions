@@ -1,4 +1,3 @@
-import { getOptionLabel } from '@/ui';
 import {
   CiblePicto,
   CitoyenPicto,
@@ -6,7 +5,7 @@ import {
   PartenairePicto,
   ServicePilotePicto,
   StructurePilotePicto,
-} from 'ui/export-pdf/assets/picto';
+} from '@/app/ui/export-pdf/assets/picto';
 import {
   Card,
   List,
@@ -14,7 +13,8 @@ import {
   Paragraph,
   Stack,
   Title,
-} from 'ui/export-pdf/components';
+} from '@/app/ui/export-pdf/components';
+import { getOptionLabel } from '@/ui';
 import { ficheActionParticipationOptions } from '../../../../../../ui/dropdownLists/listesStatiques';
 import { FicheActionPdfProps } from './FicheActionPdf';
 

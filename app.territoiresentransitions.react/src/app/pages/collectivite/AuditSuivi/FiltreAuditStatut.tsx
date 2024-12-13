@@ -1,10 +1,10 @@
 import { BadgeAuditStatut } from '@/app/app/pages/collectivite/Audit/BadgeAuditStatut';
 import { TAuditStatut } from '@/app/app/pages/collectivite/Audit/types';
-import { ITEM_ALL } from 'ui/shared/filters/commons';
+import { ITEM_ALL } from '@/app/ui/shared/filters/commons';
 import {
   MultiSelectFilter,
   MultiSelectFilterTitle,
-} from 'ui/shared/select/MultiSelectFilter';
+} from '@/app/ui/shared/select/MultiSelectFilter';
 import { TFiltreProps } from './filters';
 
 export const FILTER = 'statut';

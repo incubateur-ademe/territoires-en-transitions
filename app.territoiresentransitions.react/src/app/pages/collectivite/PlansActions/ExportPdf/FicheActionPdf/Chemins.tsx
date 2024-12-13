@@ -1,7 +1,7 @@
 import { TAxeRow } from '@/app/types/alias';
+import { ArrowRightIcon } from '@/app/ui/export-pdf/assets/icons';
+import { Paragraph, Stack } from '@/app/ui/export-pdf/components';
 import { preset } from '@/ui';
-import { ArrowRightIcon } from 'ui/export-pdf/assets/icons';
-import { Paragraph, Stack } from 'ui/export-pdf/components';
 import { generateTitle } from '../../FicheAction/data/utils';
 
 const { colors } = preset.theme.extend;

@@ -1,6 +1,6 @@
+import FichesActionsDropdown from '@/app/ui/dropdownLists/FichesActionsDropdown/FichesActionsDropdown';
 import { Field, Modal, ModalFooterOKCancel } from '@/ui';
 import { useEffect, useState } from 'react';
-import FichesActionsDropdown from 'ui/dropdownLists/FichesActionsDropdown/FichesActionsDropdown';
 
 type ModaleFichesLieesProps = {
   isOpen: boolean;

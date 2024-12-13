@@ -1,8 +1,8 @@
 import { makeCollectivitePlansActionsNouveauUrl } from '@/app/app/paths';
 import { useCurrentCollectivite } from '@/app/core-logic/hooks/useCurrentCollectivite';
+import PictoDashboard from '@/app/ui/pictogrammes/PictoDashboard';
 import { EmptyCard } from '@/ui';
 import { useRouter } from 'next/navigation';
-import PictoDashboard from 'ui/pictogrammes/PictoDashboard';
 
 const TdbVide = () => {
   const currentCollectivite = useCurrentCollectivite();

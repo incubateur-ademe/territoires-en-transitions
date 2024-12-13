@@ -1,10 +1,10 @@
-import {forwardRef, Ref} from 'react';
-import IconThreeDotHorizontal from 'ui/icons/IconThreeDotHorizontal';
-import DropdownFloater from 'ui/shared/floating-ui/DropdownFloater';
-import {TOption} from './commons';
+import IconThreeDotHorizontal from '@/app/ui/icons/IconThreeDotHorizontal';
+import DropdownFloater from '@/app/ui/shared/floating-ui/DropdownFloater';
 import classNames from 'classnames';
+import { forwardRef, Ref } from 'react';
+import { TOption } from './commons';
 
-type TOptionWithIcon = TOption & {icon?: string};
+type TOptionWithIcon = TOption & { icon?: string };
 
 /** Affiche un bouton "..." permettant d'ouvrir un menu déroulant */
 const ThreeDotMenu = ({
@@ -25,10 +25,10 @@ const ThreeDotMenu = ({
   return (
     <DropdownFloater
       placement="bottom-end"
-      render={({close}) => (
+      render={({ close }) => (
         <nav data-test={dataTest}>
           <ul className="m-0 p-0">
-            {options.map(({value, label, icon}) => (
+            {options.map(({ value, label, icon }) => (
               <li
                 key={value}
                 className="fr-nav__item pb-0 border-b border-gray-200"

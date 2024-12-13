@@ -1,8 +1,8 @@
 import { ActionDefinitionSummary } from '@/app/core-logic/api/endpoints/ActionDefinitionSummaryReadEndpoint';
 import { useCollectiviteId } from '@/app/core-logic/hooks/params';
 import { useActionScore } from '@/app/core-logic/hooks/scoreHooks';
+import Modal from '@/app/ui/shared/floating-ui/Modal';
 import { Button } from '@/ui';
-import Modal from 'ui/shared/floating-ui/Modal';
 import { useQuestionsReponses } from '../PersoReferentielThematique/useQuestionsReponses';
 import { PersoPotentielTabs } from './PersoPotentielTabs';
 import { PointsPotentiels } from './PointsPotentiels';

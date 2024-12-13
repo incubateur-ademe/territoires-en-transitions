@@ -1,3 +1,4 @@
+import { useAutoSizeTextarea } from '@/app/ui/shared/form/useAutoSizeTextarea';
 import classNames from 'classnames';
 import React, {
   ForwardedRef,
@@ -5,7 +6,6 @@ import React, {
   RefObject,
   TextareaHTMLAttributes,
 } from 'react';
-import {useAutoSizeTextarea} from 'ui/shared/form/useAutoSizeTextarea';
 
 export type TTextarea<T> = {
   // ref?: RefObject<HTMLTextAreaElement>;
@@ -33,7 +33,7 @@ const Textarea = forwardRef(
       onInputChange && onInputChange(event.target.value);
     };
 
-    const {textareaRef, shadowRef} = useAutoSizeTextarea(
+    const { textareaRef, shadowRef } = useAutoSizeTextarea(
       value?.toString(),
       ref as RefObject<HTMLTextAreaElement>
     );
@@ -49,7 +49,7 @@ const Textarea = forwardRef(
           onChange={textareaChange}
           value={value}
           placeholder={placeholder}
-          style={{minHeight}}
+          style={{ minHeight }}
           {...props}
         />
       </div>

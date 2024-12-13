@@ -1,4 +1,4 @@
-import ScrollTopButton from 'ui/buttons/ScrollTopButton';
+import ScrollTopButton from '@/app/ui/buttons/ScrollTopButton';
 
 const PlanActionFooter = () => {
   return (

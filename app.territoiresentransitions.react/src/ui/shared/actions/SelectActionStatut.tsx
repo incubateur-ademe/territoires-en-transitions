@@ -1,7 +1,7 @@
 import { avancementToLabel } from '@/app/app/labels';
 import { TActionAvancement, TActionAvancementExt } from '@/app/types/alias';
+import SelectDropdown from '@/app/ui/shared/select/SelectDropdown';
 import classNames from 'classnames';
-import SelectDropdown from 'ui/shared/select/SelectDropdown';
 import ActionStatutBadge from './ActionStatutBadge';
 
 export type TSelectActionStatutProps = {

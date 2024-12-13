@@ -1,12 +1,12 @@
-import ActionStatutBadge from 'ui/shared/actions/ActionStatutBadge';
+import ActionStatutBadge from '@/app/ui/shared/actions/ActionStatutBadge';
 import {
   MultiSelectFilter,
   MultiSelectFilterTitle,
-} from 'ui/shared/select/MultiSelectFilter';
+} from '@/app/ui/shared/select/MultiSelectFilter';
 
 import { TActionAvancementExt } from '@/app/types/alias';
-import { DEFAULT_OPTIONS } from 'ui/shared/actions/SelectActionStatut';
-import { ITEM_ALL } from 'ui/shared/filters/commons';
+import { DEFAULT_OPTIONS } from '@/app/ui/shared/actions/SelectActionStatut';
+import { ITEM_ALL } from '@/app/ui/shared/filters/commons';
 import { TFiltreProps } from './filters';
 
 // les options sont celles du sélecteur de statut + une entrée "tous les statuts"
