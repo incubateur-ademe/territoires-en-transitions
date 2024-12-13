@@ -1,5 +1,5 @@
+import { TThematiqueRow } from '@/app/types/alias';
 import { Option, OptionValue, SelectFilter, SelectMultipleProps } from '@/ui';
-import { TThematiqueRow } from 'types/alias';
 import { useThematiqueListe } from './useThematiqueListe';
 
 type Props = Omit<SelectMultipleProps, 'values' | 'onChange' | 'options'> & {

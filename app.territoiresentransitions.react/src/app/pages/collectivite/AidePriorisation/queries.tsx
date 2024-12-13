@@ -1,8 +1,8 @@
 import { boundariesToQueryFilter } from '@/app/app/pages/collectivite/AidePriorisation/boundariesToQueryFilter';
 import { ActionReferentiel } from '@/app/app/pages/collectivite/ReferentielTable/useReferentiel';
 import { supabaseClient } from '@/app/core-logic/api/supabase';
+import { TActionStatutsRow } from '@/app/types/alias';
 import { ITEM_ALL } from '@/ui';
-import { TActionStatutsRow } from 'types/alias';
 import { filterToBoundaries, TFilters } from './filters';
 import { percentBoundaries } from './FiltrePourcentage';
 

@@ -1,4 +1,5 @@
 import { useCollectiviteId } from '@/app/core-logic/hooks/params';
+import { Referentiel } from '@/app/types/litterals';
 import { Fragment, useEffect, useRef } from 'react';
 import {
   CellProps,
@@ -8,7 +9,6 @@ import {
   useFlexLayout,
   useTable,
 } from 'react-table';
-import { Referentiel } from 'types/litterals';
 import ActionPreuvePanel from 'ui/shared/actions/ActionPreuvePanel/ActionPreuvePanel';
 import { CellAction } from '../ReferentielTable/CellAction';
 import '../ReferentielTable/styles.css';

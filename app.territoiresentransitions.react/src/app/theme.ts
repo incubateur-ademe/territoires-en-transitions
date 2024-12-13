@@ -1,4 +1,4 @@
-import { TActionAvancementExt } from 'types/alias';
+import { TActionAvancementExt } from '@/app/types/alias';
 
 export const actionAvancementColors: Record<TActionAvancementExt, string> = {
   non_concerne: '#929292',

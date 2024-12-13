@@ -2,7 +2,7 @@ import {
   TFicheActionEcheances,
   TFicheActionNiveauxPriorite,
   TFicheActionStatuts,
-} from 'types/alias';
+} from '@/app/types/alias';
 
 export type TFilters = {
   /** filtre par collectivite */

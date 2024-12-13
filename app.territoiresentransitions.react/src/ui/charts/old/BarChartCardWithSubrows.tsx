@@ -1,10 +1,10 @@
 import { TScoreAuditRowData } from '@/app/app/pages/collectivite/AuditComparaison/types';
 import { ActionReferentiel } from '@/app/app/pages/collectivite/ReferentielTable/useReferentiel';
 import { ReferentielParamOption } from '@/app/app/paths';
+import { TActionStatutsRow } from '@/app/types/alias';
 import { Breadcrumbs, useEventTracker } from '@/ui';
 import { useEffect, useState } from 'react';
 import { TableOptions } from 'react-table';
-import { TActionStatutsRow } from 'types/alias';
 import TagFilters from 'ui/shared/filters/TagFilters';
 import { useCollectiviteId } from '../../../core-logic/hooks/params';
 import { getIndexTitles } from '../utils';

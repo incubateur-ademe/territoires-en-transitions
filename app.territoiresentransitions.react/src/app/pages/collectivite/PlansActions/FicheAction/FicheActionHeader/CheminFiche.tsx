@@ -1,6 +1,6 @@
+import { TAxeRow } from '@/app/types/alias';
 import { Breadcrumbs } from '@/ui';
 import { useRouter } from 'next/navigation';
-import { TAxeRow } from 'types/alias';
 import {
   generateFilArianeLinks,
   usePlanActionChemin,

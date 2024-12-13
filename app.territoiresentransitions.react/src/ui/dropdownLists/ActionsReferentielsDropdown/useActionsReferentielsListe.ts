@@ -1,7 +1,7 @@
 import { supabaseClient } from '@/app/core-logic/api/supabase';
 import { useCollectiviteId } from '@/app/core-logic/hooks/params';
+import { TActionStatutsRow } from '@/app/types/alias';
 import { useQuery } from 'react-query';
-import { TActionStatutsRow } from 'types/alias';
 
 export const useActionsReferentielsListe = () => {
   const collectivite_id = useCollectiviteId()!;

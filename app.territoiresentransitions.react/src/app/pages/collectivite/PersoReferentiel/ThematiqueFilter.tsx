@@ -3,8 +3,8 @@
  */
 
 import { referentielToName } from '@/app/app/labels';
+import { Referentiel } from '@/app/types/litterals';
 import { FormEvent } from 'react';
-import { Referentiel } from 'types/litterals';
 
 export type TThematiqueFilterProps = {
   referentiels: Referentiel[];

@@ -1,4 +1,4 @@
-import { Referentiel } from 'types/litterals';
+import { Referentiel } from '@/app/types/litterals';
 
 export const signInPath = `${process.env.NEXT_PUBLIC_AUTH_URL}/login`;
 export const signUpPath = `${process.env.NEXT_PUBLIC_AUTH_URL}/signup`;

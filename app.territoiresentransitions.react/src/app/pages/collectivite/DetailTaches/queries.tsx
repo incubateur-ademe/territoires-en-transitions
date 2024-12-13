@@ -1,5 +1,5 @@
 import { supabaseClient } from '@/app/core-logic/api/supabase';
-import { TActionStatutsRow } from 'types/alias';
+import { TActionStatutsRow } from '@/app/types/alias';
 import { ActionReferentiel } from '../ReferentielTable/useReferentiel';
 import { TFilters } from './filters';
 

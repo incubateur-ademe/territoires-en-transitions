@@ -1,7 +1,7 @@
 import { Badge, BadgeState } from '@/ui';
 import classNames from 'classnames';
 
-import { TFicheActionNiveauxPriorite } from 'types/alias';
+import { TFicheActionNiveauxPriorite } from '@/app/types/alias';
 
 export const prioritesToState: Record<TFicheActionNiveauxPriorite, BadgeState> =
   {

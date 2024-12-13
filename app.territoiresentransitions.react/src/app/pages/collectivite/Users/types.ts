@@ -1,5 +1,5 @@
-import {TMembreFonction, TNiveauAcces} from 'types/alias';
-import {Referentiel} from 'types/litterals';
+import { TMembreFonction, TNiveauAcces } from '@/app/types/alias';
+import { Referentiel } from '@/app/types/litterals';
 
 export interface Membre {
   email: string;
@@ -17,10 +17,10 @@ export interface Membre {
 export type TUpdateMembreArgs = {
   membre_id: string;
 } & (
-  | {name: 'fonction'; value: TMembreFonction}
-  | {name: 'details_fonction'; value: string}
-  | {name: 'champ_intervention'; value: Referentiel[]}
-  | {name: 'niveau_acces'; value: TNiveauAcces}
+  | { name: 'fonction'; value: TMembreFonction }
+  | { name: 'details_fonction'; value: string }
+  | { name: 'champ_intervention'; value: Referentiel[] }
+  | { name: 'niveau_acces'; value: TNiveauAcces }
 );
 
 export type TUpdateMembre = (args: TUpdateMembreArgs) => Promise<boolean>;

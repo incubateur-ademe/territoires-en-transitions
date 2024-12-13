@@ -1,6 +1,6 @@
 import { avancementToLabel } from '@/app/app/labels';
+import { TActionAvancement, TActionAvancementExt } from '@/app/types/alias';
 import classNames from 'classnames';
-import { TActionAvancement, TActionAvancementExt } from 'types/alias';
 import SelectDropdown from 'ui/shared/select/SelectDropdown';
 import ActionStatutBadge from './ActionStatutBadge';
 

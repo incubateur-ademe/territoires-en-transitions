@@ -2,9 +2,9 @@ import {
   DISABLE_AUTO_REFETCH,
   supabaseClient,
 } from '@/app/core-logic/api/supabase';
+import { TActionStatutsRow } from '@/app/types/alias';
 import { useCallback, useMemo } from 'react';
 import { useQuery } from 'react-query';
-import { TActionStatutsRow } from 'types/alias';
 import { indexBy } from 'utils/indexBy';
 import { useToggleRowExpandedReducer } from './useToggleRowExpandedReducer';
 

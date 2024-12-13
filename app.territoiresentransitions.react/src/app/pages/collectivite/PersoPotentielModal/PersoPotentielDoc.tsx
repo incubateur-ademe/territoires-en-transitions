@@ -2,8 +2,8 @@
  * Affiche l'onglet "Documentation"
  */
 import { ActionDefinitionSummary } from '@/app/core-logic/api/endpoints/ActionDefinitionSummaryReadEndpoint';
+import { ActionScore } from '@/app/types/ClientScore';
 import DOMPurify from 'dompurify';
-import { ActionScore } from 'types/ClientScore';
 import { toLocaleFixed } from 'utils/toFixed';
 import { TPersonnalisationRegleRead } from './useRegles';
 

@@ -9,9 +9,9 @@ import {
   makeCollectivitePlanActionUrl,
   makeCollectivitePlansActionsLandingUrl,
 } from '@/app/app/paths';
+import { TPlanType } from '@/app/types/alias';
 import { Tooltip } from '@/ui';
 import { useState } from 'react';
-import { TPlanType } from 'types/alias';
 import { PlanNode } from '../data/types';
 import { useExportPlanAction } from '../data/useExportPlanAction';
 import ModifierPlanModale from './ModifierPlanModale';

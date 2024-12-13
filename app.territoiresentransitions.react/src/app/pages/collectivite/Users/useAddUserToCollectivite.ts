@@ -3,8 +3,8 @@ import { useSendInvitation } from '@/app/app/pages/collectivite/Users/useSendInv
 import { UserData } from '@/app/core-logic/api/auth/AuthProvider';
 import { supabaseClient } from '@/app/core-logic/api/supabase';
 import { CurrentCollectivite } from '@/app/core-logic/hooks/useCurrentCollectivite';
+import { TNiveauAcces } from '@/app/types/alias';
 import { useMutation, useQueryClient } from 'react-query';
-import { TNiveauAcces } from 'types/alias';
 
 type AddUserToCollectiviteArgs = {
   email: string;

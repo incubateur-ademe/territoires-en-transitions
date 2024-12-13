@@ -1,6 +1,6 @@
-import {TReponse} from 'types/personnalisation';
-import {TFilters, useQuestions} from './useQuestions';
-import {useReponses} from './useReponses';
+import { TReponse } from '@/app/types/personnalisation';
+import { TFilters, useQuestions } from './useQuestions';
+import { useReponses } from './useReponses';
 
 /**
  * Charge la liste des questions de personnalisation et leur éventuelle réponse
@@ -9,17 +9,17 @@ import {useReponses} from './useReponses';
  */
 export const useQuestionsReponses = (filters: TFilters) => {
   // charge les questions et les réponses
-  const {data: questions} = useQuestions(filters);
+  const { data: questions } = useQuestions(filters);
   const reponses = useReponses(questions!);
 
   // indexe les réponses par id de question
   const reponsesByQuestionId = new Map<
     string,
-    {reponse: TReponse; justification?: string | null}
+    { reponse: TReponse; justification?: string | null }
   >();
-  reponses.forEach(({data}) => {
+  reponses.forEach(({ data }) => {
     if (data) {
-      const {question_id, reponse, justification} = data;
+      const { question_id, reponse, justification } = data;
       reponsesByQuestionId.set(question_id, {
         reponse: reponse.reponse,
         justification,
@@ -28,9 +28,9 @@ export const useQuestionsReponses = (filters: TFilters) => {
   });
 
   // associe les réponses aux questions
-  const qrList = questions?.map(question => {
+  const qrList = questions?.map((question) => {
     const reponse = reponsesByQuestionId.get(question.id);
-    return {...question, ...reponse};
+    return { ...question, ...reponse };
   });
 
   return qrList || [];

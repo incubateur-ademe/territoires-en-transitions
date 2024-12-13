@@ -1,7 +1,11 @@
 import { supabaseClient } from '@/app/core-logic/api/supabase';
 import { useCollectiviteId } from '@/app/core-logic/hooks/params';
+import {
+  TQuestionRead,
+  TReponse,
+  TReponseRead,
+} from '@/app/types/personnalisation';
 import { useQueries } from 'react-query';
-import { TQuestionRead, TReponse, TReponseRead } from 'types/personnalisation';
 
 // charge les réponses existantes pour une série de questions donnée
 export const useReponses = (questions: TQuestionRead[]) => {

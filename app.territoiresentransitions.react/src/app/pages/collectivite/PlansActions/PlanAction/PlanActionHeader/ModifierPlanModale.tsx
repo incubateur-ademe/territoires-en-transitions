@@ -1,8 +1,8 @@
 import { useState } from 'react';
 
+import { TPlanType } from '@/app/types/alias';
 import { Field, Input, Modal, ModalFooterOKCancel } from '@/ui';
 import { OpenState } from '@/ui/utils/types';
-import { TPlanType } from 'types/alias';
 import PlanTypeDropdown from '../PlanTypeDropdown';
 import { PlanNode } from '../data/types';
 import { useEditAxe } from '../data/useEditAxe';

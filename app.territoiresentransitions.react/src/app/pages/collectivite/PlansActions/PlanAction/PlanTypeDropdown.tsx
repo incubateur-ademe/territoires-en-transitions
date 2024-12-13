@@ -1,5 +1,5 @@
+import { TPlanType } from '@/app/types/alias';
 import { Field, Select } from '@/ui';
-import { TPlanType } from 'types/alias';
 import { usePlanTypeListe } from './data/usePlanTypeListe';
 
 type Props = {

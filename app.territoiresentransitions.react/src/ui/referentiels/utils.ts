@@ -1,5 +1,5 @@
 import { Enums } from '@/api';
-import { TActionAvancement, TActionAvancementExt } from 'types/alias';
+import { TActionAvancement, TActionAvancementExt } from '@/app/types/alias';
 
 export const phaseToLabel: Record<Enums<'action_categorie'> | string, string> =
   {

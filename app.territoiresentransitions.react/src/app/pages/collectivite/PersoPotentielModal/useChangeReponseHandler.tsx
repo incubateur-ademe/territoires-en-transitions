@@ -1,12 +1,12 @@
 import { supabaseClient } from '@/app/core-logic/api/supabase';
-import { useMutation, useQueryClient } from 'react-query';
 import {
   TChangeReponse,
   TQuestionRead,
   TQuestionReponseWrite,
   TReponse,
   TReponseWrite,
-} from 'types/personnalisation';
+} from '@/app/types/personnalisation';
+import { useMutation, useQueryClient } from 'react-query';
 
 type TUseChangeReponseHandler = (
   collectivite_id: number | null

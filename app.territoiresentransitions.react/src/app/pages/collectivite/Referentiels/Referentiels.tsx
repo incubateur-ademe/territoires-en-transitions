@@ -2,7 +2,7 @@ import { ActionDefinitionSummary } from '@/app/core-logic/api/endpoints/ActionDe
 import { useReferentielId } from '@/app/core-logic/hooks/params';
 import { useReferentielDownToAction } from '@/app/core-logic/hooks/referentiel';
 import { useCurrentCollectivite } from '@/app/core-logic/hooks/useCurrentCollectivite';
-import { Referentiel } from 'types/litterals';
+import { Referentiel } from '@/app/types/litterals';
 import ActionProgressBar from 'ui/referentiels/ActionProgressBar';
 import { ExpandableAction } from 'ui/shared/actions/ExpandableAction';
 import { useExportScore } from './useExportScore';

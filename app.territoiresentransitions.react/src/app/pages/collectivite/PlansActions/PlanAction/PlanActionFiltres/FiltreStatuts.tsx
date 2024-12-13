@@ -1,6 +1,6 @@
 import { Statut } from '@/api/plan-actions';
+import { TFicheActionStatuts } from '@/app/types/alias';
 import { Field, OptionValue, SelectFilter } from '@/ui';
-import { TFicheActionStatuts } from 'types/alias';
 import { TOption } from 'ui/shared/select/commons';
 import { ficheActionStatutOptions } from '../../../../../../ui/dropdownLists/listesStatiques';
 import BadgeStatut from '../../components/BadgeStatut';
