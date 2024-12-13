@@ -1,9 +1,4 @@
-import {
-  createdAt,
-  createdBy,
-  modifiedAt,
-  modifiedBy,
-} from '@/backend/common/models/column.helpers';
+import { createdAt, createdBy, modifiedAt, modifiedBy } from '@/backend/utils';
 import { InferSelectModel } from 'drizzle-orm';
 import { boolean, integer, pgTable, serial, text } from 'drizzle-orm/pg-core';
 import { createInsertSchema } from 'drizzle-zod';

@@ -12,7 +12,7 @@ import {
   createdAt,
   createdBy,
   TIMESTAMP_OPTIONS,
-} from '../../common/models/column.helpers';
+} from '../../utils/column.utils';
 import { niveauAccessEnum } from './niveau-acces.enum';
 
 export const utilisateurSchema = pgSchema('utilisateur');

@@ -1,4 +1,4 @@
-import { TIMESTAMP_OPTIONS } from '@/backend/common/models/column.helpers';
+import { TIMESTAMP_OPTIONS } from '@/backend/utils';
 import { pgTable, timestamp } from 'drizzle-orm/pg-core';
 import { DocumentBase } from './document.basetable';
 
