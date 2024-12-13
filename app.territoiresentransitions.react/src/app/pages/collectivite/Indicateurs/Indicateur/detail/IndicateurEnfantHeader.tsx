@@ -1,5 +1,5 @@
+import BadgeOpenData from '@/app/app/pages/collectivite/Indicateurs/components/BadgeOpenData';
 import { Badge } from '@/ui';
-import BadgeOpenData from 'app/pages/collectivite/Indicateurs/components/BadgeOpenData';
 import classNames from 'classnames';
 import { ExpandToggle } from 'ui/icons/ExpandToggle';
 import { BadgeACompleter } from 'ui/shared/Badge/BadgeACompleter';

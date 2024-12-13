@@ -2,20 +2,20 @@ import { Button, useEventTracker } from '@/ui';
 
 import { ModuleFicheActionsSelect } from '@/api/plan-actions/dashboards/personal-dashboard/domain/module.schema';
 import { SortFichesAction } from '@/api/plan-actions/fiche-resumes.list';
+import FicheActionCard from '@/app/app/pages/collectivite/PlansActions/FicheAction/Carte/FicheActionCard';
+import { useFicheResumesFetch } from '@/app/app/pages/collectivite/PlansActions/FicheAction/data/useFicheResumesFetch';
 import Module from '@/app/app/pages/collectivite/TableauDeBord/components/Module';
 import ModalActionsDontJeSuisLePilote from '@/app/app/pages/collectivite/TableauDeBord/Personnel/ModuleFichesActions/ModalActionsDontJeSuisLePilote';
 import ModalActionsRecemmentModifiees from '@/app/app/pages/collectivite/TableauDeBord/Personnel/ModuleFichesActions/ModalActionsRecemmentModifiees';
 import { getQueryKey } from '@/app/app/pages/collectivite/TableauDeBord/Personnel/usePersonalModulesFetch';
-import { useAuth } from '@/app/core-logic/api/auth/AuthProvider';
-import { useCollectiviteId } from '@/app/core-logic/hooks/params';
-import FicheActionCard from 'app/pages/collectivite/PlansActions/FicheAction/Carte/FicheActionCard';
-import { useFicheResumesFetch } from 'app/pages/collectivite/PlansActions/FicheAction/data/useFicheResumesFetch';
 import {
   TDBViewParam,
   makeCollectiviteFicheNonClasseeUrl,
   makeCollectivitePlanActionFicheUrl,
   makeTableauBordModuleUrl,
-} from 'app/paths';
+} from '@/app/app/paths';
+import { useAuth } from '@/app/core-logic/api/auth/AuthProvider';
+import { useCollectiviteId } from '@/app/core-logic/hooks/params';
 import { useRouter } from 'next/navigation';
 import PictoExpert from 'ui/pictogrammes/PictoExpert';
 

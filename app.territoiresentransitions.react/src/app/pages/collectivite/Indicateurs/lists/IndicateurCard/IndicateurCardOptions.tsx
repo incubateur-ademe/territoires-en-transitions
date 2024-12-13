@@ -1,12 +1,12 @@
 import classNames from 'classnames';
 import { Fragment, useState } from 'react';
 
-import { Button } from '@/ui';
-import IndicateurCardEdit from 'app/pages/collectivite/Indicateurs/lists/IndicateurCard/IndicateurCardEdit/IndicateurCardEdit';
+import IndicateurCardEdit from '@/app/app/pages/collectivite/Indicateurs/lists/IndicateurCard/IndicateurCardEdit/IndicateurCardEdit';
 import IndicateurCardMenu, {
   ChartDownloadSettings,
-} from 'app/pages/collectivite/Indicateurs/lists/IndicateurCard/IndicateurCardMenu/IndicateurCardMenu';
-import { TIndicateurListItem } from 'app/pages/collectivite/Indicateurs/types';
+} from '@/app/app/pages/collectivite/Indicateurs/lists/IndicateurCard/IndicateurCardMenu/IndicateurCardMenu';
+import { TIndicateurListItem } from '@/app/app/pages/collectivite/Indicateurs/types';
+import { Button } from '@/ui';
 
 type Props = {
   definition: TIndicateurListItem;

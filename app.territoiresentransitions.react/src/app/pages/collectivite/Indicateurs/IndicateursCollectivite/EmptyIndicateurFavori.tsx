@@ -1,6 +1,6 @@
+import ModaleCreerIndicateur from '@/app/app/pages/collectivite/PlansActions/FicheAction/Indicateurs/ModaleCreerIndicateur';
+import { makeCollectiviteTousLesIndicateursUrl } from '@/app/app/paths';
 import { EmptyCard, useEventTracker } from '@/ui';
-import ModaleCreerIndicateur from 'app/pages/collectivite/PlansActions/FicheAction/Indicateurs/ModaleCreerIndicateur';
-import { makeCollectiviteTousLesIndicateursUrl } from 'app/paths';
 import { useRouter } from 'next/navigation';
 import { useState } from 'react';
 import PictoDashboard from 'ui/pictogrammes/PictoDashboard';

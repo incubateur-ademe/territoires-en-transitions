@@ -3,11 +3,11 @@
  * par référentiel et niveau
  */
 
-import { Tabs, Tab } from 'ui/shared/Tabs';
-import { referentielToName } from 'app/labels';
+import { referentielToName } from '@/app/app/labels';
 import { Referentiel } from 'types/litterals';
-import { useTableData } from './useTableData';
+import { Tab, Tabs } from 'ui/shared/Tabs';
 import { PreuvesTable } from './PreuvesTable';
+import { useTableData } from './useTableData';
 
 const REFERENTIELS: Exclude<Referentiel, 'te' | 'te-test'>[] = ['cae', 'eci'];
 

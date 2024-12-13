@@ -1,9 +1,12 @@
 import {
+  ReferentielParamOption,
+  makeCollectiviteActionUrl,
+} from '@/app/app/paths';
+import {
   useCollectiviteId,
   useReferentielId,
 } from '@/app/core-logic/hooks/params';
 import { useReferentielDownToAction } from '@/app/core-logic/hooks/referentiel';
-import { ReferentielParamOption, makeCollectiviteActionUrl } from 'app/paths';
 
 /**
  * Génération des liens "Action précédente" et "Action suivante"

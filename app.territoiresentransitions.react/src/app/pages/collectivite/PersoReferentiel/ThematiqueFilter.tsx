@@ -2,9 +2,9 @@
  * Affiche les boutons pour filtrer les thématiques de personnalisation du référentiel
  */
 
-import {referentielToName} from 'app/labels';
-import {FormEvent} from 'react';
-import {Referentiel} from 'types/litterals';
+import { referentielToName } from '@/app/app/labels';
+import { FormEvent } from 'react';
+import { Referentiel } from 'types/litterals';
 
 export type TThematiqueFilterProps = {
   referentiels: Referentiel[];
@@ -14,21 +14,21 @@ export type TThematiqueFilterProps = {
 const referentielOptions: Referentiel[] = ['cae', 'eci'];
 
 export const ThematiqueFilter = (props: TThematiqueFilterProps) => {
-  const {referentiels, onChange} = props;
+  const { referentiels, onChange } = props;
   return (
     <fieldset className="fr-fieldset fr-fieldset--inline">
       <legend className="fr-fieldset__legend font-bold">
         Référentiels à personnaliser
       </legend>
       <div className="fr-fieldset__content">
-        {referentielOptions.map(referentiel => {
+        {referentielOptions.map((referentiel) => {
           const checked = referentiels.includes(referentiel);
           const handleChange = (e: FormEvent<HTMLInputElement>) => {
-            const {checked: isCheckedNow} = e.currentTarget;
+            const { checked: isCheckedNow } = e.currentTarget;
             onChange(
               isCheckedNow
                 ? [...referentiels, referentiel]
-                : referentiels.filter(r => r !== referentiel)
+                : referentiels.filter((r) => r !== referentiel)
             );
           };
 

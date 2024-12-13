@@ -5,14 +5,14 @@ import LabellisationInfo from '@/app/app/pages/collectivite/EtatDesLieux/Accueil
 import Chart from 'ui/charts/Chart';
 import logoTerritoireEngage from 'ui/logo/logoTerritoireEngage_big.png';
 
-import { useFonctionTracker } from '@/app/core-logic/hooks/useFonctionTracker';
-import { useCycleLabellisation } from 'app/pages/collectivite/ParcoursLabellisation/useCycleLabellisation';
+import { useCycleLabellisation } from '@/app/app/pages/collectivite/ParcoursLabellisation/useCycleLabellisation';
 import {
   ReferentielParamOption,
   makeCollectiviteLabellisationUrl,
   makeCollectivitePersoRefUrl,
   makeCollectiviteReferentielUrl,
-} from 'app/paths';
+} from '@/app/app/paths';
+import { useFonctionTracker } from '@/app/core-logic/hooks/useFonctionTracker';
 import { toLocaleFixed } from 'utils/toFixed';
 
 import { ProgressionRow } from '@/app/app/pages/collectivite/EtatDesLieux/Accueil/data/useProgressionReferentiel';

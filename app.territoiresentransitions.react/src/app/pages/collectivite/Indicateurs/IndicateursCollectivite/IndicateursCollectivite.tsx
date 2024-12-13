@@ -1,14 +1,14 @@
 import { FetchFiltre } from '@/api/indicateurs';
+import EmptyIndicateurFavori from '@/app/app/pages/collectivite/Indicateurs/IndicateursCollectivite/EmptyIndicateurFavori';
+import { useIndicateursFavorisCollectiviteIds } from '@/app/app/pages/collectivite/Indicateurs/IndicateursCollectivite/useIndicateursFavorisCollectiviteIds';
 import IndicateursListe from '@/app/app/pages/collectivite/Indicateurs/lists/indicateurs-list';
+import { indicateursNameToParams } from '@/app/app/pages/collectivite/Indicateurs/lists/utils';
+import MenuFiltresTousLesIndicateurs from '@/app/app/pages/collectivite/Indicateurs/TousLesIndicateurs/MenuFiltresTousLesIndicateurs';
+import ModaleCreerIndicateur from '@/app/app/pages/collectivite/PlansActions/FicheAction/Indicateurs/ModaleCreerIndicateur';
+import { makeCollectiviteIndicateursCollectiviteUrl } from '@/app/app/paths';
 import { useSearchParams } from '@/app/core-logic/hooks/query';
 import { useCurrentCollectivite } from '@/app/core-logic/hooks/useCurrentCollectivite';
 import { Button, ButtonMenu, TrackPageView, useEventTracker } from '@/ui';
-import EmptyIndicateurFavori from 'app/pages/collectivite/Indicateurs/IndicateursCollectivite/EmptyIndicateurFavori';
-import { useIndicateursFavorisCollectiviteIds } from 'app/pages/collectivite/Indicateurs/IndicateursCollectivite/useIndicateursFavorisCollectiviteIds';
-import { indicateursNameToParams } from 'app/pages/collectivite/Indicateurs/lists/utils';
-import MenuFiltresTousLesIndicateurs from 'app/pages/collectivite/Indicateurs/TousLesIndicateurs/MenuFiltresTousLesIndicateurs';
-import ModaleCreerIndicateur from 'app/pages/collectivite/PlansActions/FicheAction/Indicateurs/ModaleCreerIndicateur';
-import { makeCollectiviteIndicateursCollectiviteUrl } from 'app/paths';
 import { useState } from 'react';
 
 /** Page de listing de tous les indicateurs de la collectivité */

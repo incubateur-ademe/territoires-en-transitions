@@ -1,6 +1,6 @@
+import IndicateurDetailChart from '@/app/app/pages/collectivite/Indicateurs/Indicateur/detail/IndicateurDetailChart';
+import ActionsLieesListe from '@/app/app/pages/collectivite/PlansActions/FicheAction/ActionsLiees/ActionsLieesListe';
 import { Field } from '@/ui';
-import IndicateurDetailChart from 'app/pages/collectivite/Indicateurs/Indicateur/detail/IndicateurDetailChart';
-import ActionsLieesListe from 'app/pages/collectivite/PlansActions/FicheAction/ActionsLiees/ActionsLieesListe';
 import { TIndicateurDefinition } from '../../types';
 import { FichesActionLiees } from '../FichesActionLiees';
 import { ImportSourcesSelector } from './ImportSourcesSelector';

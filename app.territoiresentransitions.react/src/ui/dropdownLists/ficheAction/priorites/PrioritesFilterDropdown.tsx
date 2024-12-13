@@ -1,6 +1,6 @@
 import { NiveauPriorite } from '@/api/plan-actions';
+import BadgePriorite from '@/app/app/pages/collectivite/PlansActions/components/BadgePriorite';
 import { SelectFilter, SelectMultipleProps } from '@/ui';
-import BadgePriorite from 'app/pages/collectivite/PlansActions/components/BadgePriorite';
 import { ficheActionNiveauPrioriteOptions } from 'ui/dropdownLists/listesStatiques';
 
 type Props = Omit<SelectMultipleProps, 'values' | 'onChange' | 'options'> & {

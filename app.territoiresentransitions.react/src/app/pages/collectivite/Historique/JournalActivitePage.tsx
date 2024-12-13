@@ -1,9 +1,9 @@
-import {Suspense} from 'react';
-import {lazy} from 'utils/lazy';
-import {renderLoader} from 'utils/renderLoader';
+import { Suspense } from 'react';
+import { lazy } from 'utils/lazy';
+import { renderLoader } from 'utils/renderLoader';
 
 const JournalActivite = lazy(
-  () => import('app/pages/collectivite/Historique/JournalActivite')
+  () => import('@/app/app/pages/collectivite/Historique/JournalActivite')
 );
 
 export const JournalActivitePage = () => {

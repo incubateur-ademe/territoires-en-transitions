@@ -10,13 +10,13 @@ import {
 import IndicateurChart, {
   IndicateurChartData,
   IndicateurChartProps,
-} from 'app/pages/collectivite/Indicateurs/chart/IndicateurChart';
-import { useIndicateurChartInfo } from 'app/pages/collectivite/Indicateurs/chart/useIndicateurChartInfo';
-import { prepareData } from 'app/pages/collectivite/Indicateurs/chart/utils';
-import BadgeIndicateurPerso from 'app/pages/collectivite/Indicateurs/components/BadgeIndicateurPerso';
-import BadgeOpenData from 'app/pages/collectivite/Indicateurs/components/BadgeOpenData';
-import { transformeValeurs } from 'app/pages/collectivite/Indicateurs/Indicateur/detail/transformeValeurs';
-import IndicateurCardOptions from 'app/pages/collectivite/Indicateurs/lists/IndicateurCard/IndicateurCardOptions';
+} from '@/app/app/pages/collectivite/Indicateurs/chart/IndicateurChart';
+import { useIndicateurChartInfo } from '@/app/app/pages/collectivite/Indicateurs/chart/useIndicateurChartInfo';
+import { prepareData } from '@/app/app/pages/collectivite/Indicateurs/chart/utils';
+import BadgeIndicateurPerso from '@/app/app/pages/collectivite/Indicateurs/components/BadgeIndicateurPerso';
+import BadgeOpenData from '@/app/app/pages/collectivite/Indicateurs/components/BadgeOpenData';
+import { transformeValeurs } from '@/app/app/pages/collectivite/Indicateurs/Indicateur/detail/transformeValeurs';
+import IndicateurCardOptions from '@/app/app/pages/collectivite/Indicateurs/lists/IndicateurCard/IndicateurCardOptions';
 import {
   generateLineLegendItems,
   getLeftLineChartMargin,

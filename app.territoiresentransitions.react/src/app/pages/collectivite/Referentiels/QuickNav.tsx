@@ -1,10 +1,10 @@
+import NestedMenuItem from '@/app/app/pages/collectivite/Referentiels/NestedMenuItem';
+import { makeCollectiviteReferentielUrl } from '@/app/app/paths';
 import { ActionDefinitionSummary } from '@/app/core-logic/api/endpoints/ActionDefinitionSummaryReadEndpoint';
 import { ActionTitleRead } from '@/app/core-logic/api/endpoints/ActionTitleReadEndpoint';
 import { useCollectiviteId } from '@/app/core-logic/hooks/params';
 import { useActionTitleList } from '@/app/core-logic/hooks/referentiel';
 import { Menu, MenuItem } from '@mui/material';
-import NestedMenuItem from 'app/pages/collectivite/Referentiels/NestedMenuItem';
-import { makeCollectiviteReferentielUrl } from 'app/paths';
 import Link from 'next/link';
 import { useRouter } from 'next/navigation';
 import React, { useState } from 'react';

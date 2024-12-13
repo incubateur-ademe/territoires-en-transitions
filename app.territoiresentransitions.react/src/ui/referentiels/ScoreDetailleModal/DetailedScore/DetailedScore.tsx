@@ -2,10 +2,10 @@
  * Affiche le dialogue de définition de l'état d'avancement détaillé d'une tâche
  */
 
-import {Dispatch, SetStateAction} from 'react';
-import {DetailedScoreSlider, AvancementValues} from './DetailedScoreSlider';
-import {actionAvancementColors} from 'app/theme';
-import {toPercentString} from 'utils/score';
+import { actionAvancementColors } from '@/app/app/theme';
+import { Dispatch, SetStateAction } from 'react';
+import { toPercentString } from 'utils/score';
+import { AvancementValues, DetailedScoreSlider } from './DetailedScoreSlider';
 
 export type TDetailedScoreProps = {
   avancement: AvancementValues;
@@ -22,21 +22,21 @@ export const DetailedScore = ({
       <div className="grid grid-cols-2 gap-y-4 gap-x-3 my-8">
         <div>Fait</div>
         <div
-          style={{color: actionAvancementColors.fait}}
+          style={{ color: actionAvancementColors.fait }}
           className="text-right"
         >
           {toPercentString(avancement[0])}
         </div>
         <div>Programmé</div>
         <div
-          style={{color: actionAvancementColors.programme}}
+          style={{ color: actionAvancementColors.programme }}
           className="text-right"
         >
           {toPercentString(avancement[1])}
         </div>
         <div>Pas fait</div>
         <div
-          style={{color: actionAvancementColors.pas_fait}}
+          style={{ color: actionAvancementColors.pas_fait }}
           className="text-right"
         >
           {toPercentString(avancement[2])}

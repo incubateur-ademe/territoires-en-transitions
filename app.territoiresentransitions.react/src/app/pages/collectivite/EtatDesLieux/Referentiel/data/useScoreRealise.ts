@@ -1,7 +1,7 @@
+import { ActionReferentiel } from '@/app/app/pages/collectivite/ReferentielTable/useReferentiel';
 import { ActionDefinitionSummary } from '@/app/core-logic/api/endpoints/ActionDefinitionSummaryReadEndpoint';
 import { supabaseClient } from '@/app/core-logic/api/supabase';
 import { useCollectiviteId } from '@/app/core-logic/hooks/params';
-import { ActionReferentiel } from 'app/pages/collectivite/ReferentielTable/useReferentiel';
 import { useQuery } from 'react-query';
 import { TActionStatutsRow } from 'types/alias';
 import { Referentiel } from 'types/litterals';

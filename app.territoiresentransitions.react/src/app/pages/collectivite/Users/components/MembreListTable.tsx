@@ -1,7 +1,7 @@
-import {TNiveauAcces} from 'types/alias';
-import {Membre, TRemoveFromCollectivite, TUpdateMembre} from '../types';
+import { SendInvitationArgs } from '@/app/app/pages/collectivite/Users/useSendInvitation';
+import { TNiveauAcces } from 'types/alias';
+import { Membre, TRemoveFromCollectivite, TUpdateMembre } from '../types';
 import MembreListTableRow from './MembreListTableRow';
-import {SendInvitationArgs} from 'app/pages/collectivite/Users/useSendInvitation';
 
 const thClassNames = 'py-3 px-5 whitespace-nowrap text-primary-9';
 
@@ -70,7 +70,7 @@ const MembreListTable = ({
               </tr>
             ) : null}
             {membres
-              ? membres.map(membre => (
+              ? membres.map((membre) => (
                   <MembreListTableRow
                     key={membre.email}
                     membre={membre}

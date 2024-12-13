@@ -1,8 +1,8 @@
+import { referentielToName } from '@/app/app/labels';
 import AccueilCard from '@/app/app/pages/collectivite/EtatDesLieux/Accueil/EtatDesLieux/AccueilCard';
+import { ReferentielParamOption } from '@/app/app/paths';
 import { useCollectiviteId } from '@/app/core-logic/hooks/params';
 import { Button, useEventTracker } from '@/ui';
-import { referentielToName } from 'app/labels';
-import { ReferentielParamOption } from 'app/paths';
 import { useState } from 'react';
 import { TableOptions } from 'react-table';
 import Chart from 'ui/charts/Chart';

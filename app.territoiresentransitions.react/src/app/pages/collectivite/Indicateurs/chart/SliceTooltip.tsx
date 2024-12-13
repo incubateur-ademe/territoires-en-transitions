@@ -1,7 +1,7 @@
-import {SliceTooltipProps} from '@nivo/line';
-import {indicateurBaseData} from 'app/pages/collectivite/Indicateurs/chart/utils';
+import { indicateurBaseData } from '@/app/app/pages/collectivite/Indicateurs/chart/utils';
+import { SliceTooltipProps } from '@nivo/line';
 
-import {theme} from 'ui/charts/chartsTheme';
+import { theme } from 'ui/charts/chartsTheme';
 
 // Affiche l'infobulle au-dessus des portions du graphe
 export const SliceTooltip = (
@@ -9,7 +9,7 @@ export const SliceTooltip = (
     unite: string;
   }
 ) => {
-  const {slice, unite} = props;
+  const { slice, unite } = props;
   // l'année pour la portion est la valeur formatée du 1er point sur l'axe x
   const annee = new Date(slice.points[0]?.data.xFormatted).getFullYear();
 
@@ -17,7 +17,7 @@ export const SliceTooltip = (
     <div style={theme.tooltip?.container}>
       <div className="pb-1.5 mb-1.5 border-b-[1px]">Année : {annee}</div>
       <div className="flex flex-col gap-2">
-        {slice.points.map(point => {
+        {slice.points.map((point) => {
           const baseData = indicateurBaseData[point.serieId];
           return (
             <div key={point.id} className="flex flex-wrap gap-1">

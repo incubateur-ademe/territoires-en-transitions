@@ -2,7 +2,7 @@ import {
   ActionVueParamOption,
   LabellisationVueParamOption,
   ReferentielVueParamOption,
-} from 'app/paths';
+} from '@/app/app/paths';
 import { usePathname } from 'next/navigation';
 import { useParams } from 'react-router-dom';
 

@@ -3,7 +3,7 @@
 //   TIndicateurPersoDefinitionWrite,
 //   useInsertIndicateurPersoDefinition,
 // } from './useInsertIndicateurPersoDefinition';
-// import {makeCollectiviteIndicateursUrl} from 'app/paths';
+// import {makeCollectiviteIndicateursUrl} from '@/app/app/paths';
 // import classNames from 'classnames';
 // import {FicheAction} from '../../PlansActions/FicheAction/data/types';
 // import {Form, Formik} from 'formik';

@@ -1,7 +1,7 @@
-import {Ref, useEffect, useRef, useState} from 'react';
+import { Ref, useEffect, useRef, useState } from 'react';
 
-import {appHeaderHeight} from 'app/Layout/Header/Header';
-import {useScrollTop} from 'utils/useScrollTop';
+import { appHeaderHeight } from '@/app/app/Layout/Header/Header';
+import { useScrollTop } from 'utils/useScrollTop';
 
 export type RenderProps = {
   isScrolled: boolean;
@@ -17,7 +17,7 @@ type Props = {
  *
  * Le contenu à rendre fixe doit être donner à la propriété `render` dans laquelle est exposée `isScrolled`
  * */
-const HeaderFixed = ({render}: Props) => {
+const HeaderFixed = ({ render }: Props) => {
   // détermine si la page a suffisamment défilée pour afficher la version
   // réduite de l'en-tête
   const scrollTop = useScrollTop('main');
@@ -69,7 +69,7 @@ const HeaderFixed = ({render}: Props) => {
     <div
       ref={headerRef}
       id="page-header-wrapper"
-      style={{minHeight: `${controlledHeight}px`}}
+      style={{ minHeight: `${controlledHeight}px` }}
       className="sticky top-0 z-40 pointer-events-none"
     >
       <div className="pointer-events-auto">

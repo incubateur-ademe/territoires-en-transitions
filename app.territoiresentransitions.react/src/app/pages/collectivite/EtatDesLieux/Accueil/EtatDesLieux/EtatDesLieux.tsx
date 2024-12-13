@@ -3,8 +3,8 @@ import { TableOptions } from 'react-table';
 import EtatDesLieuxGraphs from './graphs/EtatDesLieuxGraphs';
 import { ScoreRempli, ScoreVide } from './labellisation/Scores';
 
-import { ReferentielParamOption } from 'app/paths';
-import { actionIdToLabel } from 'app/labels';
+import { actionIdToLabel } from '@/app/app/labels';
+import { ReferentielParamOption } from '@/app/app/paths';
 import { ProgressionRow } from '../data/useProgressionReferentiel';
 import IndicateursCard from './IndicateursCard';
 

@@ -5,6 +5,9 @@ import {
 import { Button, TrackPageView, useEventTracker } from '@/ui';
 
 import { usePlanActionsCount } from '@/app/app/pages/collectivite/PlansActions/PlanAction/data/usePlanActionsCount';
+import FichesActionListe, {
+  SortFicheActionSettings,
+} from '@/app/app/pages/collectivite/PlansActions/ToutesLesFichesAction/FichesActionListe';
 import ModulePage from '@/app/app/pages/collectivite/TableauDeBord/components/ModulePage';
 import ModalActionsDontJeSuisLePilote from '@/app/app/pages/collectivite/TableauDeBord/Personnel/ModuleFichesActions/ModalActionsDontJeSuisLePilote';
 import ModalActionsRecemmentModifiees from '@/app/app/pages/collectivite/TableauDeBord/Personnel/ModuleFichesActions/ModalActionsRecemmentModifiees';
@@ -12,11 +15,8 @@ import {
   getQueryKey,
   usePersonalModuleFetch,
 } from '@/app/app/pages/collectivite/TableauDeBord/Personnel/usePersonalModuleFetch';
+import { TDBViewParam } from '@/app/app/paths';
 import { useCollectiviteId } from '@/app/core-logic/hooks/params';
-import FichesActionListe, {
-  SortFicheActionSettings,
-} from 'app/pages/collectivite/PlansActions/ToutesLesFichesAction/FichesActionListe';
-import { TDBViewParam } from 'app/paths';
 
 type Props = {
   view: TDBViewParam;

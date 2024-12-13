@@ -1,5 +1,5 @@
+import { TLabellisationParcours } from '@/app/app/pages/collectivite/ParcoursLabellisation/types';
 import { useCurrentCollectivite } from '@/app/core-logic/hooks/useCurrentCollectivite';
-import { TLabellisationParcours } from 'app/pages/collectivite/ParcoursLabellisation/types';
 import { TPreuveLabellisation } from 'ui/shared/preuves/Bibliotheque/types';
 import { usePreuves } from 'ui/shared/preuves/Bibliotheque/usePreuves';
 import { useIsAuditeur } from '../Audit/useAudit';

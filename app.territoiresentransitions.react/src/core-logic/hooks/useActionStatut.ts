@@ -1,6 +1,9 @@
 import { TablesInsert } from '@/api';
+import {
+  useAudit,
+  useIsAuditeur,
+} from '@/app/app/pages/collectivite/Audit/useAudit';
 import { supabaseClient } from '@/app/core-logic/api/supabase';
-import { useAudit, useIsAuditeur } from 'app/pages/collectivite/Audit/useAudit';
 import { useMutation, useQuery, useQueryClient } from 'react-query';
 import { TActionAvancement } from 'types/alias';
 import { useCollectiviteId } from './params';

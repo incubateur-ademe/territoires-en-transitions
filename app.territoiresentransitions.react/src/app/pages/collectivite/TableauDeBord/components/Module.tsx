@@ -1,7 +1,7 @@
 import { usePlanActionsCount } from '@/app/app/pages/collectivite/PlansActions/PlanAction/data/usePlanActionsCount';
+import { getDisplayButtons } from '@/app/app/pages/collectivite/TableauDeBord/components/utils';
 import { Button, ButtonGroup } from '@/ui';
 import { OpenState } from '@/ui/utils/types';
-import { getDisplayButtons } from 'app/pages/collectivite/TableauDeBord/components/utils';
 import classNames from 'classnames';
 import React, { useState } from 'react';
 import FilterBadges, {

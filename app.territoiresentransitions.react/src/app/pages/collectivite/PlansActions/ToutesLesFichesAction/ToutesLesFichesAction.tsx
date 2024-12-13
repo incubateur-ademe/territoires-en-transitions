@@ -1,12 +1,12 @@
 import { Filtre } from '@/api/plan-actions/fiche-resumes.list/domain/fetch-options.schema';
 import { useCreateFicheAction } from '@/app/app/pages/collectivite/PlansActions/FicheAction/data/useCreateFicheAction';
+import FichesActionListe from '@/app/app/pages/collectivite/PlansActions/ToutesLesFichesAction/FichesActionListe';
+import MenuFiltresToutesLesFichesAction from '@/app/app/pages/collectivite/PlansActions/ToutesLesFichesAction/MenuFiltresToutesLesFichesAction';
+import { makeCollectiviteToutesLesFichesUrl } from '@/app/app/paths';
 import { useSearchParams } from '@/app/core-logic/hooks/query';
 import { useCurrentCollectivite } from '@/app/core-logic/hooks/useCurrentCollectivite';
 import { Button, ButtonMenu } from '@/ui';
 import { OpenState } from '@/ui/utils/types';
-import FichesActionListe from 'app/pages/collectivite/PlansActions/ToutesLesFichesAction/FichesActionListe';
-import MenuFiltresToutesLesFichesAction from 'app/pages/collectivite/PlansActions/ToutesLesFichesAction/MenuFiltresToutesLesFichesAction';
-import { makeCollectiviteToutesLesFichesUrl } from 'app/paths';
 import { useFicheResumesFetch } from '../FicheAction/data/useFicheResumesFetch';
 
 /** Paramètres d'URL possibles pour les filtres de fiches action */

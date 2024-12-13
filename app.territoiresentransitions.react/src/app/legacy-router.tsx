@@ -1,17 +1,17 @@
-import { ScoreListenerProvider } from '@/app/core-logic/hooks/useScoreListener';
-import { CollectiviteRoutes } from 'app/pages/collectivite/CollectiviteRoutes';
-import { CollectivitesEngageesPage } from 'app/pages/CollectivitesEngagees/CollectivitesEngageesPage';
-import Home from 'app/pages/Home';
+import { CollectiviteRoutes } from '@/app/app/pages/collectivite/CollectiviteRoutes';
+import { CollectivitesEngageesPage } from '@/app/app/pages/CollectivitesEngagees/CollectivitesEngageesPage';
+import Home from '@/app/app/pages/Home';
 import {
   ancienRecherchesPath,
   finaliserMonInscriptionUrl,
   profilPath,
   recherchesCollectivitesUrl,
   recherchesLandingPath,
-} from 'app/paths';
-import { Redirector } from 'app/Redirector';
-import { Toasters } from 'app/Toasters';
-import { VisitTracker } from 'app/VisitTracker';
+} from '@/app/app/paths';
+import { Redirector } from '@/app/app/Redirector';
+import { Toasters } from '@/app/app/Toasters';
+import { VisitTracker } from '@/app/app/VisitTracker';
+import { ScoreListenerProvider } from '@/app/core-logic/hooks/useScoreListener';
 import {
   Redirect,
   Route,

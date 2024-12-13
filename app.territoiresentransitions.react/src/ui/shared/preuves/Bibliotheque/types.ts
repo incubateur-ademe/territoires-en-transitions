@@ -1,6 +1,6 @@
 import { Database } from '@/api';
+import { TAudit } from '@/app/app/pages/collectivite/Audit/types';
 import { TEditState } from '@/app/core-logic/hooks/useEditState';
-import { TAudit } from 'app/pages/collectivite/Audit/types';
 
 // un fichier de la bibliothèque
 export type TBibliothequeFichier = {

@@ -1,7 +1,7 @@
+import { referentielToName } from '@/app/app/labels';
+import { makeCollectiviteTacheUrl } from '@/app/app/paths';
 import { useCollectiviteId } from '@/app/core-logic/hooks/params';
 import { Button, Card } from '@/ui';
-import { referentielToName } from 'app/labels';
-import { makeCollectiviteTacheUrl } from 'app/paths';
 import { TActionStatutsRow } from 'types/alias';
 import { getActionStatut } from 'ui/referentiels/utils';
 import ActionStatutBadge from 'ui/shared/actions/ActionStatutBadge';

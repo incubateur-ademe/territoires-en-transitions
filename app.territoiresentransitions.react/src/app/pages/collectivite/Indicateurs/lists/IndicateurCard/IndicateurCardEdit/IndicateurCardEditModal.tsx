@@ -1,8 +1,8 @@
 import { SharedDomain } from '@/api';
 import { Personne } from '@/api/collectivites';
+import { useUpdateIndicateurCard } from '@/app/app/pages/collectivite/Indicateurs/lists/IndicateurCard/IndicateurCardEdit/useUpdateIndicateurCard';
 import { Field, Modal, ModalFooterOKCancel } from '@/ui';
 import { OpenState } from '@/ui/utils/types';
-import { useUpdateIndicateurCard } from 'app/pages/collectivite/Indicateurs/lists/IndicateurCard/IndicateurCardEdit/useUpdateIndicateurCard';
 import { useEffect, useState } from 'react';
 import { objectToCamel } from 'ts-case-convert';
 import PersonnesDropdown from 'ui/dropdownLists/PersonnesDropdown/PersonnesDropdown';

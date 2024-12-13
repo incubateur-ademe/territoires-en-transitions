@@ -1,11 +1,11 @@
-import { useCollectiviteId } from '@/app/core-logic/hooks/params';
 import {
   indicateurIdentiantReferentielParam,
   indicateurIdParam,
   indicateurViewParam,
   IndicateurViewParamOption,
   makeCollectiviteTousLesIndicateursUrl,
-} from 'app/paths';
+} from '@/app/app/paths';
+import { useCollectiviteId } from '@/app/core-logic/hooks/params';
 import { redirect } from 'next/navigation';
 import { useParams } from 'react-router-dom';
 import { IndicateurPersonnalise } from './IndicateurPersonnalise';

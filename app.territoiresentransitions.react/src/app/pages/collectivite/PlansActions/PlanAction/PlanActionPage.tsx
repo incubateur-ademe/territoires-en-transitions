@@ -1,9 +1,10 @@
-import {Suspense} from 'react';
-import {lazy} from 'utils/lazy';
-import {renderLoader} from 'utils/renderLoader';
+import { Suspense } from 'react';
+import { lazy } from 'utils/lazy';
+import { renderLoader } from 'utils/renderLoader';
 
 const PlanAction = lazy(
-  () => import('app/pages/collectivite/PlansActions/PlanAction/PlanAction')
+  () =>
+    import('@/app/app/pages/collectivite/PlansActions/PlanAction/PlanAction')
 );
 
 export const PlanActionPage = () => {

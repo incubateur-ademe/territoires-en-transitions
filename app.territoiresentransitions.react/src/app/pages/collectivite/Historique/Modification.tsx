@@ -1,12 +1,12 @@
-import { useState } from 'react';
+import classNames from 'classnames';
 import { format } from 'date-fns';
 import { fr } from 'date-fns/locale';
-import classNames from 'classnames';
+import { useState } from 'react';
 
-import { referentielToName } from 'app/labels';
-import { HistoriqueType, THistoriqueItem } from './types';
-import { ReferentielOfIndicateur } from 'types/litterals';
+import { referentielToName } from '@/app/app/labels';
 import Link from 'next/link';
+import { ReferentielOfIndicateur } from 'types/litterals';
+import { HistoriqueType, THistoriqueItem } from './types';
 
 export type HistoriqueDescription = {
   titre: string;

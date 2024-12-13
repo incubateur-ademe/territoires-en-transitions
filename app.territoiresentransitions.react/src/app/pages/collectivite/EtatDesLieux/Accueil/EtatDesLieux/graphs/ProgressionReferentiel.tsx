@@ -1,6 +1,6 @@
-import { avancementToLabel, referentielToName } from 'app/labels';
-import { ReferentielParamOption } from 'app/paths';
-import { actionAvancementColors } from 'app/theme';
+import { avancementToLabel, referentielToName } from '@/app/app/labels';
+import { ReferentielParamOption } from '@/app/app/paths';
+import { actionAvancementColors } from '@/app/app/theme';
 import { TableOptions } from 'react-table';
 import BarChartCardWithSubrows, {
   TBarChartScoreTable,

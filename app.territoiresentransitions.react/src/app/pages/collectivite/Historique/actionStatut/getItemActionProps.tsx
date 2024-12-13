@@ -1,6 +1,6 @@
-import {makeCollectiviteTacheUrl} from 'app/paths';
-import {THistoriqueItem} from '../types';
-import {referentielId} from 'utils/actions';
+import { makeCollectiviteTacheUrl } from '@/app/app/paths';
+import { referentielId } from 'utils/actions';
+import { THistoriqueItem } from '../types';
 
 /** Génère les propriétés communes aux modifications (statut, précision) sur les
  * actions du référentiel */
@@ -45,5 +45,5 @@ export const getItemActionProps = (item: THistoriqueItem) => {
     actionId: action_id!,
   });
 
-  return {descriptions, pageLink};
+  return { descriptions, pageLink };
 };

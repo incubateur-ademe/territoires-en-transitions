@@ -3,7 +3,7 @@ import { lazy } from 'utils/lazy';
 import { renderLoader } from 'utils/renderLoader';
 
 const Accueil = lazy(
-  () => import('app/pages/collectivite/EtatDesLieux/Accueil/Accueil')
+  () => import('@/app/app/pages/collectivite/EtatDesLieux/Accueil/Accueil')
 );
 
 export const AccueilPage = () => {

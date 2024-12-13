@@ -1,13 +1,13 @@
 import { Route } from 'react-router-dom';
 
+import { usePlansActionsListe } from '@/app/app/pages/collectivite/PlansActions/PlanAction/data/usePlansActionsListe';
+import Collectivite from '@/app/app/pages/collectivite/TableauDeBord/Collectivite/Collectivite';
 import ModulePageRoutes from '@/app/app/pages/collectivite/TableauDeBord/ModulePageRoutes';
-import { usePlansActionsListe } from 'app/pages/collectivite/PlansActions/PlanAction/data/usePlansActionsListe';
-import Collectivite from 'app/pages/collectivite/TableauDeBord/Collectivite/Collectivite';
 import {
   collectiviteTDBCollectivitePath,
   collectiviteTDBModulePath,
   collectiviteTDBPersonnelPath,
-} from 'app/paths';
+} from '@/app/app/paths';
 import Personnel from './Personnel/Personnel';
 import TdbVide from './components/TdbVide';
 import View from './components/View';

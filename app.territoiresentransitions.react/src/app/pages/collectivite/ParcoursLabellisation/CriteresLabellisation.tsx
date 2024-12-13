@@ -1,9 +1,9 @@
+import { TLabellisationParcours } from '@/app/app/pages/collectivite/ParcoursLabellisation/types';
 import {
   useCollectiviteId,
   useReferentielId,
 } from '@/app/core-logic/hooks/params';
 import { Alert } from '@/ui';
-import { TLabellisationParcours } from 'app/pages/collectivite/ParcoursLabellisation/types';
 import { TPreuveLabellisation } from 'ui/shared/preuves/Bibliotheque/types';
 import { CritereCompletude } from './CritereCompletude';
 import { CriterePreuves } from './CriterePreuves';

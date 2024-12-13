@@ -1,5 +1,5 @@
+import { TAudit } from '@/app/app/pages/collectivite/Audit/types';
 import { supabaseClient } from '@/app/core-logic/api/supabase';
-import { TAudit } from 'app/pages/collectivite/Audit/types';
 import { useMutation, useQueryClient } from 'react-query';
 
 export type TValidateAudit = ReturnType<typeof useValidateAudit>['mutate'];

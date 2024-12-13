@@ -7,18 +7,18 @@ import {
   SortFichesAction,
   SortFichesActionValue,
 } from '@/api/plan-actions/fiche-resumes.list/domain/fetch-options.schema';
+import FicheActionCard from '@/app/app/pages/collectivite/PlansActions/FicheAction/Carte/FicheActionCard';
 import { Checkbox, EmptyCard, Input, Pagination, Select } from '@/ui';
 import { OpenState } from '@/ui/utils/types';
-import FicheActionCard from 'app/pages/collectivite/PlansActions/FicheAction/Carte/FicheActionCard';
 import PictoExpert from 'ui/pictogrammes/PictoExpert';
 import SpinnerLoader from 'ui/shared/SpinnerLoader';
 
-import { useCollectiviteId } from '@/app/core-logic/hooks/params';
-import { useFicheResumesFetch } from 'app/pages/collectivite/PlansActions/FicheAction/data/useFicheResumesFetch';
+import { useFicheResumesFetch } from '@/app/app/pages/collectivite/PlansActions/FicheAction/data/useFicheResumesFetch';
 import {
   makeCollectiviteFicheNonClasseeUrl,
   makeCollectivitePlanActionFicheUrl,
-} from 'app/paths';
+} from '@/app/app/paths';
+import { useCollectiviteId } from '@/app/core-logic/hooks/params';
 import { FicheResume } from 'packages/api/src/plan-actions';
 import FilterBadges, {
   CustomFilterBadges,

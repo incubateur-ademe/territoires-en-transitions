@@ -1,3 +1,18 @@
+import { Invite } from '@/app/app/pages/collectivite/Users/components/Invite';
+import MembreListTable from '@/app/app/pages/collectivite/Users/components/MembreListTable';
+import {
+  Membre,
+  TRemoveFromCollectivite,
+  TUpdateMembre,
+} from '@/app/app/pages/collectivite/Users/types';
+import { useAddUserToCollectivite } from '@/app/app/pages/collectivite/Users/useAddUserToCollectivite';
+import {
+  PAGE_SIZE,
+  useCollectiviteMembres,
+} from '@/app/app/pages/collectivite/Users/useCollectiviteMembres';
+import { useRemoveFromCollectivite } from '@/app/app/pages/collectivite/Users/useRemoveFromCollectivite';
+import { useSendInvitation } from '@/app/app/pages/collectivite/Users/useSendInvitation';
+import { useUpdateCollectiviteMembre } from '@/app/app/pages/collectivite/Users/useUpdateCollectiviteMembre';
 import { useAuth, UserData } from '@/app/core-logic/api/auth/AuthProvider';
 import { useCollectiviteId } from '@/app/core-logic/hooks/params';
 import { useBaseToast } from '@/app/core-logic/hooks/useBaseToast';
@@ -6,21 +21,6 @@ import {
   useCurrentCollectivite,
 } from '@/app/core-logic/hooks/useCurrentCollectivite';
 import { Button, Modal, Pagination, TrackPageView } from '@/ui';
-import { Invite } from 'app/pages/collectivite/Users/components/Invite';
-import MembreListTable from 'app/pages/collectivite/Users/components/MembreListTable';
-import {
-  Membre,
-  TRemoveFromCollectivite,
-  TUpdateMembre,
-} from 'app/pages/collectivite/Users/types';
-import { useAddUserToCollectivite } from 'app/pages/collectivite/Users/useAddUserToCollectivite';
-import {
-  PAGE_SIZE,
-  useCollectiviteMembres,
-} from 'app/pages/collectivite/Users/useCollectiviteMembres';
-import { useRemoveFromCollectivite } from 'app/pages/collectivite/Users/useRemoveFromCollectivite';
-import { useSendInvitation } from 'app/pages/collectivite/Users/useSendInvitation';
-import { useUpdateCollectiviteMembre } from 'app/pages/collectivite/Users/useUpdateCollectiviteMembre';
 import { useEffect, useState } from 'react';
 
 export type MembresProps = {

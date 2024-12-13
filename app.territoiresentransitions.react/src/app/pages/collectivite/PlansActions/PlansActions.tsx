@@ -1,7 +1,6 @@
 import { Route, Switch } from 'react-router-dom';
 
-import { useCurrentCollectivite } from '@/app/core-logic/hooks/useCurrentCollectivite';
-import { ToutesLesFichesActionPage } from 'app/pages/collectivite/PlansActions/ToutesLesFichesAction/ToutesLesFichesActionPage';
+import { ToutesLesFichesActionPage } from '@/app/app/pages/collectivite/PlansActions/ToutesLesFichesAction/ToutesLesFichesActionPage';
 import {
   collectiviteFicheNonClasseePath,
   collectivitePlanActionAxeFichePath,
@@ -10,7 +9,8 @@ import {
   collectivitePlansActionsSyntheseVuePath,
   collectiviteTDBBasePath,
   collectiviteToutesLesFichesPath,
-} from 'app/paths';
+} from '@/app/app/paths';
+import { useCurrentCollectivite } from '@/app/core-logic/hooks/useCurrentCollectivite';
 import CollectivitePageLayout from '../CollectivitePageLayout/CollectivitePageLayout';
 import { RouteEnAccesRestreint } from '../CollectiviteRoutes';
 import { TableauDeBordPage } from '../TableauDeBord/TableauDeBordPage';

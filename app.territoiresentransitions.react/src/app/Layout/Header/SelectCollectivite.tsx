@@ -1,5 +1,5 @@
+import { makeCollectiviteAccueilUrl } from '@/app/app/paths';
 import { Tooltip } from '@/ui';
-import { makeCollectiviteAccueilUrl } from 'app/paths';
 import classNames from 'classnames';
 import Link from 'next/link';
 import { BadgeNiveauAcces } from './BadgeNiveauAcces';

@@ -1,6 +1,6 @@
+import { membreFonctionToLabel } from '@/app/app/labels';
+import { makeCollectiviteUsersUrl } from '@/app/app/paths';
 import { Field, Modal, ModalFooterOKCancel, OptionValue } from '@/ui';
-import { membreFonctionToLabel } from 'app/labels';
-import { makeCollectiviteUsersUrl } from 'app/paths';
 import { pick } from 'es-toolkit';
 import Link from 'next/link';
 import { useEffect, useState } from 'react';

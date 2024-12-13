@@ -1,5 +1,5 @@
 import { IndicateurChartInfo } from '@/api/indicateurs/domain';
-import { IndicateurViewParamOption } from 'app/paths';
+import { IndicateurViewParamOption } from '@/app/app/paths';
 
 /** Permet de calculer le nombre d'indicateurs restants à compléter (parent et/ou enfants) */
 export const getIndicateurRestant = (

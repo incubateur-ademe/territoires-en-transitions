@@ -1,12 +1,12 @@
-import { useCollectiviteId } from '@/app/core-logic/hooks/params';
-import { useCurrentCollectivite } from '@/app/core-logic/hooks/useCurrentCollectivite';
 import IndicateurCard, {
   IndicateurCardProps,
-} from 'app/pages/collectivite/Indicateurs/lists/IndicateurCard/IndicateurCard';
+} from '@/app/app/pages/collectivite/Indicateurs/lists/IndicateurCard/IndicateurCard';
 import {
   IndicateurViewParamOption,
   makeCollectiviteIndicateursUrl,
-} from 'app/paths';
+} from '@/app/app/paths';
+import { useCollectiviteId } from '@/app/core-logic/hooks/params';
+import { useCurrentCollectivite } from '@/app/core-logic/hooks/useCurrentCollectivite';
 import { useIntersectionObserver } from 'utils/useIntersectionObserver';
 import { TIndicateurListItem } from '../Indicateurs/types';
 

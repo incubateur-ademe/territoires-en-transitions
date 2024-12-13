@@ -1,11 +1,11 @@
 import { FicheResume } from '@/api/plan-actions';
-import { useCollectiviteId } from '@/app/core-logic/hooks/params';
 import {
   makeCollectiviteFicheNonClasseeUrl,
   makeCollectivitePlanActionFicheUrl,
   makeCollectivitePlansActionsSyntheseUrl,
   makeCollectivitePlansActionsSyntheseVueUrl,
-} from 'app/paths';
+} from '@/app/app/paths';
+import { useCollectiviteId } from '@/app/core-logic/hooks/params';
 import Link from 'next/link';
 import { useSearchParams } from 'next/navigation';
 import { useState } from 'react';

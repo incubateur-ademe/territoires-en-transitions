@@ -1,7 +1,7 @@
+import { useUpdateIndicateurFavoriCollectivite } from '@/app/app/pages/collectivite/Indicateurs/lists/IndicateurCard/IndicateurCardMenu/useUpdateIndicateurFavoriCollectivite';
 import { useCollectiviteId } from '@/app/core-logic/hooks/params';
 import { ButtonMenu } from '@/ui';
 import { OpenState } from '@/ui/utils/types';
-import { useUpdateIndicateurFavoriCollectivite } from 'app/pages/collectivite/Indicateurs/lists/IndicateurCard/IndicateurCardMenu/useUpdateIndicateurFavoriCollectivite';
 
 export type ChartDownloadSettings = {
   showTrigger: boolean;

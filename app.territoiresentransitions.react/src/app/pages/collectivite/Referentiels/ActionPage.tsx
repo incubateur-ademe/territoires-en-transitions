@@ -7,7 +7,7 @@ import { renderLoader } from 'utils/renderLoader';
 import CollectivitePageLayout from '../CollectivitePageLayout/CollectivitePageLayout';
 
 const ActionReferentielAvancement = lazy(
-  () => import('app/pages/collectivite/Referentiels/Action')
+  () => import('@/app/app/pages/collectivite/Referentiels/Action')
 );
 
 export const ActionPage = () => {

@@ -5,9 +5,9 @@ import PlanActionFiltresAccordeon from './PlanActionFiltres/PlanActionFiltresAcc
 import PlanActionFooter from './PlanActionFooter';
 import PlanActionHeader from './PlanActionHeader/PlanActionHeader';
 
+import { makeCollectivitePlanActionUrl } from '@/app/app/paths';
 import { useCurrentCollectivite } from '@/app/core-logic/hooks/useCurrentCollectivite';
 import { Breadcrumbs } from '@/ui';
-import { makeCollectivitePlanActionUrl } from 'app/paths';
 import { useRouter } from 'next/navigation';
 import { useParams } from 'react-router-dom';
 import { generateTitle } from '../FicheAction/data/utils';

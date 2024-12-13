@@ -1,14 +1,14 @@
 /**
  * Affiche le critère Fichiers
  */
-import {TLabellisationParcours} from 'app/pages/collectivite/ParcoursLabellisation/types';
-import {referentielToName} from 'app/labels';
+import { referentielToName } from '@/app/app/labels';
+import { TLabellisationParcours } from '@/app/app/pages/collectivite/ParcoursLabellisation/types';
 import PreuveDoc from 'ui/shared/preuves/Bibliotheque/PreuveDoc';
-import {AddDocsButton} from './AddDocsButton';
-import {CritereRempli} from './CritereRempli';
-import {TPreuveLabellisation} from 'ui/shared/preuves/Bibliotheque/types';
+import { TPreuveLabellisation } from 'ui/shared/preuves/Bibliotheque/types';
+import { AddDocsButton } from './AddDocsButton';
+import { CritereRempli } from './CritereRempli';
 
-const REGLEMENTS: {[k: string]: string} = {
+const REGLEMENTS: { [k: string]: string } = {
   eci: '/Reglement_label_ECi_20220316.pdf',
   cae: '/TE-CAE_Reglement-label_2021.pdf',
 };
@@ -21,8 +21,8 @@ export type TCriterePreuvesProps = {
 };
 
 export const CriterePreuves = (props: TCriterePreuvesProps) => {
-  const {parcours, preuves, isCOT} = props;
-  const {demande, etoiles} = parcours;
+  const { parcours, preuves, isCOT } = props;
+  const { demande, etoiles } = parcours;
 
   // critère nécessitant l'ajout d'une ou plusieurs preuves
   const rempli = preuves.length > 0;
@@ -42,8 +42,8 @@ export const CriterePreuves = (props: TCriterePreuvesProps) => {
 };
 
 const MessageCriterePreuve = (props: TCriterePreuvesProps) => {
-  const {parcours} = props;
-  const {referentiel, etoiles} = parcours;
+  const { parcours } = props;
+  const { referentiel, etoiles } = parcours;
 
   if (referentiel === 'eci' && etoiles !== '1') {
     return (
@@ -62,7 +62,7 @@ const MessageCriterePreuve = (props: TCriterePreuvesProps) => {
 
 // message affiché pour ECi niveau 2+
 const MessageECi2Plus = (props: TCriterePreuvesProps) => {
-  const {referentiel} = props.parcours;
+  const { referentiel } = props.parcours;
   return (
     <>
       <li className="fr-mb-1w">
@@ -109,7 +109,7 @@ const MessageCAE35Plus = () => {
 
 // message affiché dans tous les cas
 const MessageParDefaut = (props: TCriterePreuvesProps) => {
-  const {referentiel} = props.parcours;
+  const { referentiel } = props.parcours;
   return (
     <li className="fr-mb-1w">
       Signer un{' '}
@@ -132,15 +132,15 @@ const MessageParDefaut = (props: TCriterePreuvesProps) => {
  * Affiche les fichiers attachés à la demande
  */
 const LabellisationPreuves = (props: TCriterePreuvesProps) => {
-  const {preuves, parcours} = props;
-  const {demande} = parcours;
+  const { preuves, parcours } = props;
+  const { demande } = parcours;
   if (!preuves.length) {
     return null;
   }
 
   return (
     <div className="mt-2" data-test="LabellisationPreuves">
-      {preuves.map(preuve => (
+      {preuves.map((preuve) => (
         <PreuveDoc
           key={`${preuve.id}`}
           preuve={preuve}

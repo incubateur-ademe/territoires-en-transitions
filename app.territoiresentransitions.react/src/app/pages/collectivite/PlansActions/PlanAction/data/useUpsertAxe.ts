@@ -1,8 +1,8 @@
 import { supabaseClient } from '@/app/core-logic/api/supabase';
 import { useMutation, useQueryClient } from 'react-query';
 
+import { makeCollectivitePlanActionUrl } from '@/app/app/paths';
 import { useCollectiviteId } from '@/app/core-logic/hooks/params';
-import { makeCollectivitePlanActionUrl } from 'app/paths';
 import { useRouter } from 'next/navigation';
 import { TAxeInsert } from 'types/alias';
 import { waitForMarkup } from 'utils/waitForMarkup';

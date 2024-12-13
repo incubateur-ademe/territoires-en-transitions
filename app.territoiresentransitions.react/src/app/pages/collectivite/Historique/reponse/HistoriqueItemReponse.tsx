@@ -1,25 +1,25 @@
-import {makeCollectivitePersoRefThematiqueUrl} from 'app/paths';
 import {
   DetailNouvelleModificationWrapper,
   DetailPrecedenteModificationWrapper,
-} from 'app/pages/collectivite/Historique/DetailModificationWrapper';
-import Modification from 'app/pages/collectivite/Historique/Modification';
-import {THistoriqueItemProps} from '../types';
-import {formatReponseValue} from './formatReponseValue';
+} from '@/app/app/pages/collectivite/Historique/DetailModificationWrapper';
+import Modification from '@/app/app/pages/collectivite/Historique/Modification';
+import { makeCollectivitePersoRefThematiqueUrl } from '@/app/app/paths';
+import { THistoriqueItemProps } from '../types';
+import { formatReponseValue } from './formatReponseValue';
 
 /**
  * Modification d'une réponse à une question de personnalisation du référentiel
  */
 const HistoriqueItemReponse = (props: THistoriqueItemProps) => {
-  const {item} = props;
-  const {collectivite_id, thematique_nom, thematique_id} = item;
+  const { item } = props;
+  const { collectivite_id, thematique_nom, thematique_id } = item;
 
   return (
     <Modification
       historique={item}
       icon="fr-fi-information-fill"
       nom="Caractéristique de la collectivité modifiée"
-      descriptions={[{titre: 'Thématique', description: thematique_nom!}]}
+      descriptions={[{ titre: 'Thématique', description: thematique_nom! }]}
       detail={<HistoriqueItemReponseDetails {...props} />}
       pageLink={makeCollectivitePersoRefThematiqueUrl({
         collectiviteId: collectivite_id,
@@ -32,7 +32,7 @@ const HistoriqueItemReponse = (props: THistoriqueItemProps) => {
 export default HistoriqueItemReponse;
 
 const HistoriqueItemReponseDetails = (props: THistoriqueItemProps) => {
-  const {item} = props;
+  const { item } = props;
   const {
     previous_reponse,
     reponse,

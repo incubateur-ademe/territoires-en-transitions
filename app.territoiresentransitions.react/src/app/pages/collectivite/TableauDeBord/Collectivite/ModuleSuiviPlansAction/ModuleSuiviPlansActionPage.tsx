@@ -10,7 +10,7 @@ import PlansActionListe from '@/app/app/pages/collectivite/PlansActions/PlanActi
 import { useCollectiviteModuleFetch } from '@/app/app/pages/collectivite/TableauDeBord/Collectivite/useColectiviteModuleFetch';
 import { ModuleDisplay } from '@/app/app/pages/collectivite/TableauDeBord/components/Module';
 import ModulePage from '@/app/app/pages/collectivite/TableauDeBord/components/ModulePage';
-import { TDBViewParam } from 'app/paths';
+import { TDBViewParam } from '@/app/app/paths';
 
 type Props = {
   view: TDBViewParam;

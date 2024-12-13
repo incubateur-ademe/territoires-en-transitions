@@ -1,7 +1,7 @@
+import { TScoreAuditRowData } from '@/app/app/pages/collectivite/AuditComparaison/types';
+import { ActionReferentiel } from '@/app/app/pages/collectivite/ReferentielTable/useReferentiel';
+import { ReferentielParamOption } from '@/app/app/paths';
 import { Breadcrumbs, useEventTracker } from '@/ui';
-import { TScoreAuditRowData } from 'app/pages/collectivite/AuditComparaison/types';
-import { ActionReferentiel } from 'app/pages/collectivite/ReferentielTable/useReferentiel';
-import { ReferentielParamOption } from 'app/paths';
 import { useEffect, useState } from 'react';
 import { TableOptions } from 'react-table';
 import { TActionStatutsRow } from 'types/alias';

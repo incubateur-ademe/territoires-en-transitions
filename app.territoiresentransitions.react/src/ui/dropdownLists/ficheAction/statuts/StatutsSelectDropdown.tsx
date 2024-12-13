@@ -1,6 +1,6 @@
 import { Statut } from '@/api/plan-actions';
+import BadgeStatut from '@/app/app/pages/collectivite/PlansActions/components/BadgeStatut';
 import { Select, SelectProps } from '@/ui';
-import BadgeStatut from 'app/pages/collectivite/PlansActions/components/BadgeStatut';
 import { ficheActionStatutOptions } from 'ui/dropdownLists/listesStatiques';
 
 type Props = Omit<SelectProps, 'values' | 'onChange' | 'options'> & {

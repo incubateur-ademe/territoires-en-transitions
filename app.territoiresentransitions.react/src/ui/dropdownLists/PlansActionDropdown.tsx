@@ -1,11 +1,11 @@
+import { generateTitle } from '@/app/app/pages/collectivite/PlansActions/FicheAction/data/utils';
+import { usePlansActionsListe } from '@/app/app/pages/collectivite/PlansActions/PlanAction/data/usePlansActionsListe';
 import {
   Option,
   SelectFilter,
   SelectMultiple,
   SelectMultipleProps,
 } from '@/ui';
-import { generateTitle } from 'app/pages/collectivite/PlansActions/FicheAction/data/utils';
-import { usePlansActionsListe } from 'app/pages/collectivite/PlansActions/PlanAction/data/usePlansActionsListe';
 
 type Props = Omit<SelectMultipleProps, 'values' | 'onChange' | 'options'> & {
   type?: 'multiple' | 'filter';

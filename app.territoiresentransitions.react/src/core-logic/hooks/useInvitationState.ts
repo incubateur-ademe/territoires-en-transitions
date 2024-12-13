@@ -1,9 +1,9 @@
-import { supabaseClient } from '@/app/core-logic/api/supabase';
 import {
   invitationIdParam,
   invitationLandingPath,
   invitationMailParam,
-} from 'app/paths';
+} from '@/app/app/paths';
+import { supabaseClient } from '@/app/core-logic/api/supabase';
 import { useMutation, useQueryClient } from 'react-query';
 import { useRouteMatch } from 'react-router-dom';
 

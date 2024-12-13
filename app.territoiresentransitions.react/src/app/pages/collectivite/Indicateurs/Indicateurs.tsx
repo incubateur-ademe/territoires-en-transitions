@@ -1,15 +1,15 @@
-import CollectivitePageLayout from 'app/pages/collectivite/CollectivitePageLayout/CollectivitePageLayout';
-import {RouteEnAccesRestreint} from 'app/pages/collectivite/CollectiviteRoutes';
-import {IndicateurPage} from 'app/pages/collectivite/Indicateurs/Indicateur/IndicateurPage';
-import {IndicateursCollectivitePage} from 'app/pages/collectivite/Indicateurs/IndicateursCollectivite/IndicateursCollectivitePage';
-import {TousLesIndicateursPage} from 'app/pages/collectivite/Indicateurs/TousLesIndicateurs/TousLesIndicateursPage';
+import CollectivitePageLayout from '@/app/app/pages/collectivite/CollectivitePageLayout/CollectivitePageLayout';
+import { RouteEnAccesRestreint } from '@/app/app/pages/collectivite/CollectiviteRoutes';
+import { IndicateurPage } from '@/app/app/pages/collectivite/Indicateurs/Indicateur/IndicateurPage';
+import { IndicateursCollectivitePage } from '@/app/app/pages/collectivite/Indicateurs/IndicateursCollectivite/IndicateursCollectivitePage';
+import { TousLesIndicateursPage } from '@/app/app/pages/collectivite/Indicateurs/TousLesIndicateurs/TousLesIndicateursPage';
 import {
   collectiviteIndicateurPath,
   collectiviteIndicateurReferentielPath,
   collectiviteIndicateursCollectivitePath,
   collectiviteTousLesIndicateursPath,
-} from 'app/paths';
-import {Route, Switch} from 'react-router-dom';
+} from '@/app/app/paths';
+import { Route, Switch } from 'react-router-dom';
 
 const Indicateurs = () => {
   return (

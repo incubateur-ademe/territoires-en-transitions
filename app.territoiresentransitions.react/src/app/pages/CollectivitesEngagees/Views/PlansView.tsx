@@ -1,9 +1,9 @@
 import { CollectiviteEngagee } from '@/api';
-import { PlanCarte } from 'app/pages/CollectivitesEngagees/Views/PlanCarte';
+import { PlanCarte } from '@/app/app/pages/CollectivitesEngagees/Views/PlanCarte';
 import View, {
   CollectivitesEngageesView,
-} from 'app/pages/CollectivitesEngagees/Views/View';
-import { useFilteredPlans } from 'app/pages/CollectivitesEngagees/data/useFilteredPlans';
+} from '@/app/app/pages/CollectivitesEngagees/Views/View';
+import { useFilteredPlans } from '@/app/app/pages/CollectivitesEngagees/data/useFilteredPlans';
 const PlansView = (props: CollectivitesEngageesView) => {
   /** Data */
   const { plans, plansCount, isLoading } = useFilteredPlans(props.filters);

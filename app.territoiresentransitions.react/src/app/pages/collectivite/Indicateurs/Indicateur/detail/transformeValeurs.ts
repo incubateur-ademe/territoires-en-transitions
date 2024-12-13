@@ -1,5 +1,5 @@
 import { Indicateurs } from '@/api';
-import { TIndicateurValeur } from 'app/pages/collectivite/Indicateurs/useIndicateurValeurs';
+import { TIndicateurValeur } from '@/app/app/pages/collectivite/Indicateurs/useIndicateurValeurs';
 
 /** Sépare les données objectifs/résultats */
 export function transformeValeurs(
