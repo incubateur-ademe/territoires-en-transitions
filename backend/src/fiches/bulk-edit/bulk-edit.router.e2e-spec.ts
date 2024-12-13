@@ -1,13 +1,13 @@
 import { DatabaseService } from '@/backend/common';
 import { inferProcedureInput } from '@trpc/server';
 import { eq, inArray, sql } from 'drizzle-orm';
-import { getAuthUser } from '../../../test/auth/auth-utils';
-import { YOLO_DODO, YULU_DUDU } from '../../../test/auth/test-users.samples';
 import {
   getTestApp,
   getTestDatabase,
   getTestRouter,
-} from '../../../test/common/app-utils';
+} from '../../../test/app-utils';
+import { getAuthUser } from '../../../test/auth-utils';
+import { YOLO_DODO, YULU_DUDU } from '../../../test/test-users.samples';
 import { AuthenticatedUser } from '../../auth/models/auth.models';
 import { libreTagTable } from '../../taxonomie/models/libre-tag.table';
 import { AppRouter, TrpcRouter } from '../../trpc/trpc.router';

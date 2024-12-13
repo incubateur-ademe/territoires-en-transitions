@@ -3,7 +3,7 @@ import {
   FicheActionCiblesEnumType,
   FicheActionStatutsEnumType,
   piliersEciEnumType,
-} from '../../../src/fiches/models/fiche-action.table';
+} from '../../models/fiche-action.table';
 
 export const ficheActionFixture: CreateFicheActionType = {
   id: 9999,

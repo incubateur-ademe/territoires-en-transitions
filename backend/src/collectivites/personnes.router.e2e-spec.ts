@@ -1,12 +1,12 @@
 import { inferProcedureInput } from '@trpc/server';
 import { eq } from 'drizzle-orm';
-import { getAuthUser } from '../../test/auth/auth-utils';
-import { YOLO_DODO, YULU_DUDU } from '../../test/auth/test-users.samples';
 import {
   getTestApp,
   getTestDatabase,
   getTestRouter,
-} from '../../test/common/app-utils';
+} from '../../test/app-utils';
+import { getAuthUser } from '../../test/auth-utils';
+import { YOLO_DODO, YULU_DUDU } from '../../test/test-users.samples';
 import { AuthenticatedUser } from '../auth/models/auth.models';
 import { utilisateurDroitTable } from '../auth/models/private-utilisateur-droit.table';
 import DatabaseService from '../common/services/database.service';

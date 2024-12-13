@@ -1,14 +1,14 @@
 import { INestApplication } from '@nestjs/common';
 import { inferProcedureInput } from '@trpc/server';
 import { sql } from 'drizzle-orm';
-import { getTestApp } from '../../../test/common/app-utils';
-import { getAuthUser } from '../../../test/auth/auth-utils';
-import { YOLO_DODO } from '../../../test/auth/test-users.samples';
+import { getTestApp } from '../../../test/app-utils';
+import { getAuthUser } from '../../../test/auth-utils';
+import { YOLO_DODO } from '../../../test/test-users.samples';
 import { AuthenticatedUser } from '../../auth/models/auth.models';
-import { AppRouter, TrpcRouter } from '../../trpc/trpc.router';
-import DatabaseService from '../../common/services/database.service';
 import { invitationTable } from '../../auth/models/invitation.table';
 import { NiveauAcces } from '../../auth/models/niveau-acces.enum';
+import DatabaseService from '../../common/services/database.service';
+import { AppRouter, TrpcRouter } from '../../trpc/trpc.router';
 import { MembreFonctionEnum } from '../models/membre-fonction.enum';
 
 type Input = inferProcedureInput<AppRouter['collectivites']['membres']['list']>;
@@ -44,7 +44,7 @@ describe('CollectiviteMembresRouter', () => {
 
     // vérifie le retour avant d'insérer une invitation
     const result = await caller.collectivites.membres.list(input);
-    assert(result)
+    assert(result);
     expect(result).toHaveLength(4); // 4 utilisateurs rattachés à la collectivité
     // et qui ont tous un userId
     expect(result.map((m) => m.userId).filter(Boolean)).toHaveLength(4);
@@ -61,7 +61,7 @@ describe('CollectiviteMembresRouter', () => {
 
     // refait l'appel
     const result2 = await caller.collectivites.membres.list(input);
-    assert(result2)
+    assert(result2);
     expect(result2).toHaveLength(5); // 5 utilisateurs rattachés à la collectivité
     // dont 4 avec un userId
     expect(result2.map((m) => m.userId).filter(Boolean)).toHaveLength(4);
@@ -97,7 +97,7 @@ describe('CollectiviteMembresRouter', () => {
     // vérifie l'état avant de modifier
     const result = await caller.collectivites.membres.list(input);
     const yili = result?.find((r) => r.prenom === 'Yili');
-    assert(yili)
+    assert(yili);
     expect(yili).toMatchObject({
       prenom: 'Yili',
       nom: 'Didi',

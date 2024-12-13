@@ -1,9 +1,8 @@
+import { getAuthToken, getTestApp } from '@/backend/test';
 import { INestApplication } from '@nestjs/common';
-import { default as request } from 'supertest';
-import { UpsertIndicateursValeursRequest } from '../../src/indicateurs/models/upsert-indicateurs-valeurs.request';
-import { getAuthToken } from '../auth/auth-utils';
-import { getTestApp } from '../common/app-utils';
 import { Workbook } from 'exceljs';
+import { default as request } from 'supertest';
+import { UpsertIndicateursValeursRequest } from '../models/upsert-indicateurs-valeurs.request';
 
 describe('Route de lecture / ecriture des indicateurs', () => {
   let app: INestApplication;

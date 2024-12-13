@@ -1,10 +1,14 @@
-import { getTestApp, getTestDatabase, getTestRouter } from '../../../test/common/app-utils';
-import { AuthenticatedUser } from './../../auth/models/auth.models';
-import { getAuthUser } from '../../../test/auth/auth-utils';
 import { inferProcedureInput } from '@trpc/server';
-import { AppRouter, TrpcRouter } from '../../trpc/trpc.router';
 import { eq } from 'drizzle-orm';
+import {
+  getTestApp,
+  getTestDatabase,
+  getTestRouter,
+} from '../../../test/app-utils';
+import { getAuthUser } from '../../../test/auth-utils';
 import DatabaseService from '../../common/services/database.service';
+import { AppRouter, TrpcRouter } from '../../trpc/trpc.router';
+import { AuthenticatedUser } from './../../auth/models/auth.models';
 import { ficheActionEtapeTable } from './fiche-action-etape.table';
 
 type upsertInput = inferProcedureInput<
@@ -113,11 +117,11 @@ describe('Route CRUD des étapes des fiches actions', () => {
     expect(ordre[0].ordre).toBe(1);
 
     onTestFinished(async () => {
-      try{
+      try {
         await databaseService.db
           .delete(ficheActionEtapeTable)
           .where(eq(ficheActionEtapeTable.ficheId, 1));
-      }catch(error){
+      } catch (error) {
         console.error('Erreur lors de la suppression:', error);
       }
     });
