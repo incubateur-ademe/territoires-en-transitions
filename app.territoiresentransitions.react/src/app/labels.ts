@@ -1,5 +1,5 @@
-import { TActionAvancementExt, TMembreFonction } from 'types/alias';
-import type { ReferentielOfIndicateur } from 'types/litterals';
+import { TActionAvancementExt, TMembreFonction } from '@/app/types/alias';
+import type { ReferentielOfIndicateur } from '@/app/types/litterals';
 
 // Define all labels from app
 export const referentielToName: Record<

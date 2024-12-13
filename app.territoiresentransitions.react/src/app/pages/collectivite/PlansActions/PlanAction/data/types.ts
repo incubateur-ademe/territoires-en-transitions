@@ -1,4 +1,9 @@
-import {TAxeRow, TFlatAxe, TPlanActionProfondeur, TPlanType} from 'types/alias';
+import {
+  TAxeRow,
+  TFlatAxe,
+  TPlanActionProfondeur,
+  TPlanType,
+} from '@/app/types/alias';
 
 export type PlanType = TAxeRow & {
   type?: TPlanType;

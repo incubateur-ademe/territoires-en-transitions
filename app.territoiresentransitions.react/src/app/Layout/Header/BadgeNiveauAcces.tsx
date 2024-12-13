@@ -1,6 +1,6 @@
+import { TNiveauAcces } from '@/app/types/alias';
 import { Badge } from '@/ui';
 import classNames from 'classnames';
-import { TNiveauAcces } from 'types/alias';
 
 type Props = {
   acces: TNiveauAcces | null;

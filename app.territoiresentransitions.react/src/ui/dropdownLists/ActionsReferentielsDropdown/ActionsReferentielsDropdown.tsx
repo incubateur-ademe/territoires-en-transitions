@@ -1,5 +1,5 @@
+import { TActionRelationInsert, TActionStatutsRow } from '@/app/types/alias';
 import { OptionValue, SelectFilter, SelectMultipleProps } from '@/ui';
-import { TActionRelationInsert, TActionStatutsRow } from 'types/alias';
 import { useActionsReferentielsListe } from './useActionsReferentielsListe';
 
 type ActionsReferentielsDropdownProps = Omit<

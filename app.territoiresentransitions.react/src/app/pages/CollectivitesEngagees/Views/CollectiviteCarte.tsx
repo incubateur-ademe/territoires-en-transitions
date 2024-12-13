@@ -7,10 +7,10 @@ import {
 import { TCollectiviteCarte } from '@/app/app/pages/CollectivitesEngagees/data/useFilteredCollectivites';
 import { makeCollectiviteAccueilUrl } from '@/app/app/paths';
 import { useFonctionTracker } from '@/app/core-logic/hooks/useFonctionTracker';
+import { Referentiel } from '@/app/types/litterals';
 import { Icon } from '@/ui';
 import classNames from 'classnames';
 import Link from 'next/link';
-import { Referentiel } from 'types/litterals';
 import { toPercentString } from 'utils/score';
 
 type Props = {

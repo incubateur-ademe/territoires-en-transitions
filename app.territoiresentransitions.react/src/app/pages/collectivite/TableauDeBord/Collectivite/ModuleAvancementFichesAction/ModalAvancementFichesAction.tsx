@@ -14,7 +14,7 @@ import { Filtre } from '@/api/plan-actions/dashboards/collectivite-dashboard/dom
 import { ModuleFicheActionCountByStatusSelect } from '@/api/plan-actions/dashboards/collectivite-dashboard/domain/module.schema';
 import { ModuleDisplaySettings } from '@/app/app/pages/collectivite/TableauDeBord/components/Module';
 import { supabaseClient } from '@/app/core-logic/api/supabase';
-import { TFicheActionCibles } from 'types/alias';
+import { TFicheActionCibles } from '@/app/types/alias';
 import CiblesDropdown from 'ui/dropdownLists/ficheAction/CiblesDropdown/CiblesDropdown';
 import PartenairesDropdown from 'ui/dropdownLists/PartenairesDropdown/PartenairesDropdown';
 import PersonnesDropdown from 'ui/dropdownLists/PersonnesDropdown/PersonnesDropdown';

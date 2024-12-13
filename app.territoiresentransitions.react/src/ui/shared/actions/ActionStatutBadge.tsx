@@ -1,7 +1,7 @@
 import { avancementToLabel } from '@/app/app/labels';
+import { TActionAvancementExt } from '@/app/types/alias';
 import { Badge, BadgeState } from '@/ui';
 import classNames from 'classnames';
-import { TActionAvancementExt } from 'types/alias';
 
 type Props = {
   className?: string;

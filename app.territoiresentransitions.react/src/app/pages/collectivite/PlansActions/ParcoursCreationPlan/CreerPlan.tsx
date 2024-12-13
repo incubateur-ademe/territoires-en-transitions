@@ -1,8 +1,8 @@
 import { makeCollectivitePlansActionsNouveauUrl } from '@/app/app/paths';
 import { useCollectiviteId } from '@/app/core-logic/hooks/params';
+import { TPlanType } from '@/app/types/alias';
 import { Button, Field, Input } from '@/ui';
 import { useState } from 'react';
-import { TPlanType } from 'types/alias';
 import { useCreatePlanAction } from '../PlanAction/data/useUpsertAxe';
 import PlanTypeDropdown from '../PlanAction/PlanTypeDropdown';
 

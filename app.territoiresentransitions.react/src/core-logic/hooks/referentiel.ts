@@ -11,8 +11,8 @@ import {
   actionPreuve,
   referentielDownToAction,
 } from '@/app/core-logic/api/procedures/referentielProcedures';
+import { Referentiel } from '@/app/types/litterals';
 import { useEffect, useState } from 'react';
-import { Referentiel } from 'types/litterals';
 import { parentId } from 'utils/actions';
 
 /**

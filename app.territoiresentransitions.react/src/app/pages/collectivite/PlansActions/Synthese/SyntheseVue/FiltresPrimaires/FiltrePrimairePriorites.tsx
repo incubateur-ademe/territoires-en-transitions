@@ -1,16 +1,16 @@
+import { TFicheActionNiveauxPriorite } from '@/app/types/alias';
 import TagFilters from 'ui/shared/filters/TagFilters';
-import {ITEM_ALL} from 'ui/shared/filters/commons';
-import {ficheActionNiveauPrioriteOptions} from '../../../../../../../ui/dropdownLists/listesStatiques';
-import {TFicheActionNiveauxPriorite} from 'types/alias';
-import {TFichesActionsListe} from '../../../FicheAction/data/useFichesActionFiltresListe';
-import {SANS_PRIORITE} from '../../../FicheAction/data/filters';
+import { ITEM_ALL } from 'ui/shared/filters/commons';
+import { ficheActionNiveauPrioriteOptions } from '../../../../../../../ui/dropdownLists/listesStatiques';
+import { SANS_PRIORITE } from '../../../FicheAction/data/filters';
+import { TFichesActionsListe } from '../../../FicheAction/data/useFichesActionFiltresListe';
 
 type Props = {
   filtersOptions: TFichesActionsListe;
 };
 
-const FiltrePrimairePriorites = ({filtersOptions}: Props) => {
-  const {filters, setFilters} = filtersOptions;
+const FiltrePrimairePriorites = ({ filtersOptions }: Props) => {
+  const { filters, setFilters } = filtersOptions;
 
   const getDefaultOption = () => {
     if (filters.sans_niveau) {
@@ -27,10 +27,10 @@ const FiltrePrimairePriorites = ({filtersOptions}: Props) => {
     if (priorite === ITEM_ALL) {
       delete newFilters.sans_niveau;
       delete newFilters.priorites;
-      return {...newFilters};
+      return { ...newFilters };
     } else if (priorite === SANS_PRIORITE) {
       delete newFilters.priorites;
-      return {...newFilters, sans_niveau: 1};
+      return { ...newFilters, sans_niveau: 1 };
     } else {
       delete newFilters.sans_niveau;
       return {
@@ -44,11 +44,11 @@ const FiltrePrimairePriorites = ({filtersOptions}: Props) => {
     <TagFilters
       defaultOption={getDefaultOption()}
       options={[
-        {value: ITEM_ALL, label: 'Tous les niveaux de priorité'},
-        {value: SANS_PRIORITE, label: 'Non priorisé'},
+        { value: ITEM_ALL, label: 'Tous les niveaux de priorité' },
+        { value: SANS_PRIORITE, label: 'Non priorisé' },
         ...ficheActionNiveauPrioriteOptions,
       ]}
-      onChange={priorite => setFilters(selectPriorite(priorite))}
+      onChange={(priorite) => setFilters(selectPriorite(priorite))}
     />
   );
 };

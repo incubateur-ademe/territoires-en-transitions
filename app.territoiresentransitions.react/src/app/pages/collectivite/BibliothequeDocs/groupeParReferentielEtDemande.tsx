@@ -1,4 +1,4 @@
-import { Referentiel } from 'types/litterals';
+import { Referentiel } from '@/app/types/litterals';
 import { TPreuveAuditEtLabellisation } from 'ui/shared/preuves/Bibliotheque/types';
 
 // groupe les preuves par référentiel

@@ -3,9 +3,9 @@ import SubActionTasksList from '@/app/app/pages/collectivite/EtatDesLieux/Refere
 import { ActionDefinitionSummary } from '@/app/core-logic/api/endpoints/ActionDefinitionSummaryReadEndpoint';
 import { useActionSummaryChildren } from '@/app/core-logic/hooks/referentiel';
 import { useTasksStatus } from '@/app/core-logic/hooks/useActionStatut';
+import { TActionAvancement } from '@/app/types/alias';
 import { Alert } from '@/ui';
 import { Dispatch, SetStateAction, useState } from 'react';
-import { TActionAvancement } from 'types/alias';
 import Modal from 'ui/shared/floating-ui/Modal';
 import { StatusToSavePayload } from './ActionStatusDropdown';
 

@@ -1,6 +1,6 @@
-import {ActionScore} from 'types/ClientScore';
-import {toLocaleFixed} from 'utils/toFixed';
-import {TweenText} from 'ui/shared/TweenText';
+import { ActionScore } from '@/app/types/ClientScore';
+import { TweenText } from 'ui/shared/TweenText';
+import { toLocaleFixed } from 'utils/toFixed';
 
 export type TPointsPotentielsProps = {
   /** Détail du score associé à l'action */
@@ -9,7 +9,7 @@ export type TPointsPotentielsProps = {
 
 /** Affiche le potentiel de points (normal ou réduit) ainsi qu'un bouton
  * "Personnaliser" si nécessaire */
-export const PointsPotentiels = ({actionScore}: TPointsPotentielsProps) => {
+export const PointsPotentiels = ({ actionScore }: TPointsPotentielsProps) => {
   return (
     <div data-test="PointsPotentiels">
       <TweenText text={getLabel(actionScore)} align-left />
@@ -18,8 +18,12 @@ export const PointsPotentiels = ({actionScore}: TPointsPotentielsProps) => {
 };
 
 const getLabel = (actionScore: ActionScore): string => {
-  const {point_referentiel, point_potentiel, point_potentiel_perso, desactive} =
-    actionScore;
+  const {
+    point_referentiel,
+    point_potentiel,
+    point_potentiel_perso,
+    desactive,
+  } = actionScore;
 
   // affiche toujours le même libellé quand l'action est désactivée
   if (desactive) {

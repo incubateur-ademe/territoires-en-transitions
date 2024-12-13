@@ -1,7 +1,7 @@
 import { useCurrentCollectivite } from '@/app/core-logic/hooks/useCurrentCollectivite';
+import { TListeChoix, TReponse } from '@/app/types/personnalisation';
 import classNames from 'classnames';
 import { FC, ReactNode } from 'react';
-import { TListeChoix, TReponse } from 'types/personnalisation';
 import { useDebouncedInput } from 'ui/shared/useDebouncedInput';
 import { TQuestionReponseProps } from './PersoPotentielQR';
 

@@ -1,5 +1,5 @@
 import { SendInvitationArgs } from '@/app/app/pages/collectivite/Users/useSendInvitation';
-import { TNiveauAcces } from 'types/alias';
+import { TNiveauAcces } from '@/app/types/alias';
 import { Membre, TRemoveFromCollectivite, TUpdateMembre } from '../types';
 import MembreListTableRow from './MembreListTableRow';
 

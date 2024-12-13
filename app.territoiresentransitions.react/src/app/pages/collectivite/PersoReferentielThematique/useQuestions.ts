@@ -1,7 +1,7 @@
 import { supabaseClient } from '@/app/core-logic/api/supabase';
 import { useCollectiviteId } from '@/app/core-logic/hooks/params';
+import { TQuestionRead } from '@/app/types/personnalisation';
 import { useQuery } from 'react-query';
-import { TQuestionRead } from 'types/personnalisation';
 
 export type TFilters = {
   action_ids?: string[];

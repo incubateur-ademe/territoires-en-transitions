@@ -1,5 +1,5 @@
+import { TAxeRow } from '@/app/types/alias';
 import { preset } from '@/ui';
-import { TAxeRow } from 'types/alias';
 import { ArrowRightIcon } from 'ui/export-pdf/assets/icons';
 import { Paragraph, Stack } from 'ui/export-pdf/components';
 import { generateTitle } from '../../FicheAction/data/utils';

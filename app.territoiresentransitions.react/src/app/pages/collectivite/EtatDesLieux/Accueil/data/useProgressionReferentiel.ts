@@ -4,9 +4,9 @@ import {
 } from '@/app/app/pages/collectivite/ReferentielTable/useReferentiel';
 import { supabaseClient } from '@/app/core-logic/api/supabase';
 import { useCollectiviteId } from '@/app/core-logic/hooks/params';
+import { TActionStatutsRow } from '@/app/types/alias';
 import { useQuery } from 'react-query';
 import { TableOptions } from 'react-table';
-import { TActionStatutsRow } from 'types/alias';
 import { phaseToLabel } from 'ui/referentiels/utils';
 
 // Sous-ensemble des champs pour alimenter la table

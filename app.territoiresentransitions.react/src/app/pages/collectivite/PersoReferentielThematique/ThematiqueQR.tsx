@@ -6,9 +6,9 @@ import {
   makeCollectivitePersoRefThematiqueUrl,
   makeCollectivitePersoRefUrl,
 } from '@/app/app/paths';
+import { TChangeReponse, TQuestionReponse } from '@/app/types/personnalisation';
 import { Checkbox } from '@/ui';
 import { useState } from 'react';
-import { TChangeReponse, TQuestionReponse } from 'types/personnalisation';
 import { QuestionReponseList } from '../PersoPotentielModal/PersoPotentielQR';
 import { usePersoFilters } from '../PersoReferentiel/usePersoFilters';
 import { CarteIdentite } from './CarteIdentite';

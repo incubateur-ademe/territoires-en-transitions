@@ -1,5 +1,5 @@
 import { useSearchParams } from '@/app/core-logic/hooks/query';
-import { Referentiel } from 'types/litterals';
+import { Referentiel } from '@/app/types/litterals';
 
 export const usePersoFilters = () =>
   useSearchParams<{ referentiels: Referentiel[] }>(

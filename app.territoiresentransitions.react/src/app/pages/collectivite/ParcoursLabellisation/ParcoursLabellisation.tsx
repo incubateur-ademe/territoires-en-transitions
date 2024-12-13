@@ -7,8 +7,8 @@ import {
   useCollectiviteId,
   useReferentielId,
 } from '@/app/core-logic/hooks/params';
+import { ReferentielOfIndicateur } from '@/app/types/litterals';
 import Link from 'next/link';
-import { ReferentielOfIndicateur } from 'types/litterals';
 import HeaderLabellisation from './HeaderLabellisation';
 import { LabellisationTabs } from './LabellisationTabs';
 import { useCycleLabellisation } from './useCycleLabellisation';

@@ -1,7 +1,7 @@
 import { useActionDownToTache } from '@/app/core-logic/hooks/referentiel';
+import { Referentiel } from '@/app/types/litterals';
 import { Suspense } from 'react';
 import { useParams } from 'react-router-dom';
-import { Referentiel } from 'types/litterals';
 import { lazy } from 'utils/lazy';
 import { renderLoader } from 'utils/renderLoader';
 import CollectivitePageLayout from '../CollectivitePageLayout/CollectivitePageLayout';

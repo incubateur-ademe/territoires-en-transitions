@@ -1,6 +1,6 @@
 import { referentielToName } from '@/app/app/labels';
+import { Referentiel } from '@/app/types/litterals';
 import { Fragment } from 'react';
-import { Referentiel } from 'types/litterals';
 import PreuveDoc from 'ui/shared/preuves/Bibliotheque/PreuveDoc';
 import { TPreuveAuditEtLabellisation } from 'ui/shared/preuves/Bibliotheque/types';
 import { useIsAuditAuditeur } from '../Audit/useAudit';

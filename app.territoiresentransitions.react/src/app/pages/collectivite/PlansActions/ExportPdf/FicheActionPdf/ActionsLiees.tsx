@@ -1,5 +1,5 @@
 import { referentielToName } from '@/app/app/labels';
-import { TActionStatutsRow } from 'types/alias';
+import { TActionStatutsRow } from '@/app/types/alias';
 import {
   BadgeStatutAction,
   Card,

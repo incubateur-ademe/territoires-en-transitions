@@ -2,7 +2,7 @@ import { useQuery } from 'react-query';
 
 import { supabaseClient } from '@/app/core-logic/api/supabase';
 import { useCollectiviteId } from '@/app/core-logic/hooks/params';
-import { TFicheActionServicePiloteRow } from 'types/alias';
+import { TFicheActionServicePiloteRow } from '@/app/types/alias';
 
 export const useServicePiloteListe = () => {
   const collectivite_id = useCollectiviteId()!;

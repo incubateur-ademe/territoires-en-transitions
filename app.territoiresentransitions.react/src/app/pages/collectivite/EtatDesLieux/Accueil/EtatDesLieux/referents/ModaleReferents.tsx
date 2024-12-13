@@ -1,10 +1,10 @@
 import { membreFonctionToLabel } from '@/app/app/labels';
 import { makeCollectiviteUsersUrl } from '@/app/app/paths';
+import { TMembreFonction } from '@/app/types/alias';
 import { Field, Modal, ModalFooterOKCancel, OptionValue } from '@/ui';
 import { pick } from 'es-toolkit';
 import Link from 'next/link';
 import { useEffect, useState } from 'react';
-import { TMembreFonction } from 'types/alias';
 import ReferentsDropdown from './ReferentsDropdown';
 import {
   CollectiviteMembre,

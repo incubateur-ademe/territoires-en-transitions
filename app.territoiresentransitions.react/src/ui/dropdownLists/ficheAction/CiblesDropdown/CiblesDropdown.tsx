@@ -1,5 +1,5 @@
+import { TFicheActionCibles } from '@/app/types/alias';
 import { SelectFilter, SelectMultipleProps } from '@/ui';
-import { TFicheActionCibles } from 'types/alias';
 import { ficheActionCiblesOptions } from '../../listesStatiques';
 
 type CiblesDropdownProps = Omit<

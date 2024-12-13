@@ -2,7 +2,7 @@ import { supabaseClient } from '@/app/core-logic/api/supabase';
 import { useMutation, useQueryClient } from 'react-query';
 
 import { useCollectiviteId } from '@/app/core-logic/hooks/params';
-import { TPlanType } from 'types/alias';
+import { TPlanType } from '@/app/types/alias';
 import { PlanNode } from './types';
 
 /**

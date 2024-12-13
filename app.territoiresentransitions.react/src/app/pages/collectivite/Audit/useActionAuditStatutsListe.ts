@@ -3,8 +3,8 @@ import {
   useCollectiviteId,
   useReferentielId,
 } from '@/app/core-logic/hooks/params';
+import { Referentiel } from '@/app/types/litterals';
 import { useQuery } from 'react-query';
-import { Referentiel } from 'types/litterals';
 
 /**
  * Statut d'audit de toutes les actions du référentiel et de la collectivité

@@ -8,10 +8,10 @@ import {
   useSaveActionStatut,
 } from '@/app/core-logic/hooks/useActionStatut';
 import { useCurrentCollectivite } from '@/app/core-logic/hooks/useCurrentCollectivite';
+import { TActionAvancement, TActionAvancementExt } from '@/app/types/alias';
 import { Button, Tooltip } from '@/ui';
 import classNames from 'classnames';
 import { useEffect, useState } from 'react';
-import { TActionAvancement, TActionAvancementExt } from 'types/alias';
 import ProgressBarWithTooltip from 'ui/score/ProgressBarWithTooltip';
 import {
   ITEMS_AVEC_NON_CONCERNE,

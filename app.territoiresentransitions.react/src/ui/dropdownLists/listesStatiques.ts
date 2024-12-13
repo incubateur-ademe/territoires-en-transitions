@@ -4,7 +4,7 @@ import {
   TFicheActionCibles,
   TFicheActionEcheances,
   TFicheActionNiveauxPriorite,
-} from 'types/alias';
+} from '@/app/types/alias';
 
 type Options<T extends string> = {
   value: T;

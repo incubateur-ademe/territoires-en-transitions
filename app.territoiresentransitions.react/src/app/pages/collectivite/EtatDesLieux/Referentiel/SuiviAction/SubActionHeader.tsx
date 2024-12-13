@@ -1,10 +1,10 @@
 import ActionJustification from '@/app/app/pages/collectivite/EtatDesLieux/Referentiel/SuiviAction/ActionJustification';
 import { ActionDefinitionSummary } from '@/app/core-logic/api/endpoints/ActionDefinitionSummaryReadEndpoint';
+import { TActionAvancement } from '@/app/types/alias';
 import { InfoTooltip } from '@/ui';
 import classNames from 'classnames';
 import DOMPurify from 'dompurify';
 import { useEffect, useState } from 'react';
-import { TActionAvancement } from 'types/alias';
 import { ExpandToggle } from 'ui/icons/ExpandToggle';
 import ActionProgressBar from 'ui/referentiels/ActionProgressBar';
 import {

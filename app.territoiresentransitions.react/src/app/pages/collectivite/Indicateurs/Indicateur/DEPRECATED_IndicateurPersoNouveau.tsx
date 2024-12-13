@@ -8,7 +8,7 @@
 // import {FicheAction} from '../../PlansActions/FicheAction/data/types';
 // import {Form, Formik} from 'formik';
 // import * as Yup from 'yup';
-// import {TThematiqueRow} from 'types/alias';
+// import {TThematiqueRow} from '@/app/types/alias';
 // import {useState} from 'react';
 // import FormikInput from 'ui/shared/form/formik/FormikInput';
 // import FormField from 'ui/shared/form/FormField';
