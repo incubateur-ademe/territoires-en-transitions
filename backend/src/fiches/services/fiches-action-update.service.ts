@@ -13,7 +13,7 @@ import { PgTable, PgTransaction } from 'drizzle-orm/pg-core';
 import { PostgresJsQueryResultHKT } from 'drizzle-orm/postgres-js';
 import { toCamel } from 'postgres';
 import { AuthenticatedUser } from '../../auth/models/auth.models';
-import { buildConflictUpdateColumns } from '../../common/services/conflict.helper';
+import { buildConflictUpdateColumns } from '../../utils/drizzle/conflict.utils';
 import DatabaseService from '../../common/services/database.service';
 import { ficheActionActionTable } from '../models/fiche-action-action.table';
 import { ficheActionAxeTable } from '../models/fiche-action-axe.table';
