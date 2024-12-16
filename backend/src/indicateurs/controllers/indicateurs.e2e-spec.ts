@@ -23,7 +23,7 @@ describe('Route de lecture / ecriture des indicateurs', () => {
       .set('Authorization', `Bearer ${yoloDodoToken}`)
       .expect(401)
       .expect({
-        message: 'Droits insuffisants',
+        message: "Droits insuffisants, l'utilisateur 17440546-f389-4d4f-bfdb-b0c94a1bd0f9 n'a pas l'autorisation indicateurs.lecture sur la ressource Collectivité 3",
         error: 'Unauthorized',
         statusCode: 401,
       });
@@ -54,7 +54,7 @@ describe('Route de lecture / ecriture des indicateurs', () => {
       .send(indicateurValeurPayload)
       .expect(401)
       .expect({
-        message: 'Droits insuffisants',
+        message: "Droits insuffisants, l'utilisateur 17440546-f389-4d4f-bfdb-b0c94a1bd0f9 n'a pas l'autorisation indicateurs.edition sur la ressource Collectivité 3895",
         error: 'Unauthorized',
         statusCode: 401,
       });
