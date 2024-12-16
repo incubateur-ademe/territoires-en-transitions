@@ -126,6 +126,7 @@ const ToutesLesFichesAction = () => {
             <MenuFiltresToutesLesFichesAction
               filters={filters}
               setFilters={(filters) => setFilterParams(filters)}
+              collectiviteId={collectivite?.collectivite_id!}
             />
           </ButtonMenu>
         )}
