@@ -1,4 +1,4 @@
-import { Axe } from '@/api/plan-actions';
+import { Axe } from '@/backend/plans/fiches';
 import { Divider } from '@/ui';
 import CheminsFiche from './CheminsFiche';
 import TitreFiche from './TitreFiche';

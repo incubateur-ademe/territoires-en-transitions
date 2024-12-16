@@ -1,10 +1,10 @@
 import { PermissionOperation } from '@/backend/auth/authorizations/permission-operation.enum';
 import { PermissionService } from '@/backend/auth/authorizations/permission.service';
 import { ResourceType } from '@/backend/auth/authorizations/resource-type.enum';
-import { TrpcService } from '@/backend/utils';
 import { Injectable } from '@nestjs/common';
 import { TRPCError } from '@trpc/server';
 import CollectivitesService from '../collectivites/services/collectivites.service';
+import { TrpcService } from '../utils/trpc/trpc.service';
 import {
   listRequestSchema,
   PersonnesService,

@@ -1,8 +1,8 @@
-import { Axe } from '@/api/plan-actions/domain';
 import { generateTitle } from '@/app/app/pages/collectivite/PlansActions/FicheAction/data/utils';
 import Statuts from '@/app/app/pages/collectivite/PlansActions/PlanAction/list/card/Statuts';
 import { useFichesActionStatuts } from '@/app/app/pages/collectivite/TableauDeBord/Collectivite/ModuleAvancementFichesAction/useFichesActionStatuts';
 import { ModuleDisplay } from '@/app/app/pages/collectivite/TableauDeBord/components/Module';
+import { Axe } from '@/backend/plans/fiches';
 import { Card } from '@/ui';
 import classNames from 'classnames';
 
@@ -29,7 +29,10 @@ const PlanActionCard = ({
   });
 
   const axesCount = plan.axes?.reduce(
-    (acc: { axe: number; sousAxe: number }, axe: Axe) => {
+    (
+      acc: { axe: number; sousAxe: number },
+      axe: NonNullable<Axe['axes']>[number]
+    ) => {
       if (axe.parent === plan.id) {
         acc.axe++;
       } else if (axe.parent) {

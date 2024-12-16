@@ -1,6 +1,6 @@
 import { Injectable } from '@nestjs/common';
 import { z } from 'zod';
-import { TrpcService } from '@/backend/utils';
+import { TrpcService } from '@/backend/utils/trpc/trpc.service';
 import TrajectoiresSpreadsheetService from '../services/trajectoires-spreadsheet.service';
 
 @Injectable()

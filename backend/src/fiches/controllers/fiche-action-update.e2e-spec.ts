@@ -2,10 +2,12 @@ import { INestApplication } from '@nestjs/common';
 import { eq } from 'drizzle-orm';
 import { default as request } from 'supertest';
 import { describe, expect, it } from 'vitest';
+import { getTestApp } from '../../../test/app-utils';
+import { getAuthToken } from '../../../test/auth-utils';
 import DatabaseService from '../../common/services/database.service';
-import { UpdateFicheActionRequestClass } from './fiches-action.controller';
+import { ficheActionAxeTable } from '../../plans/fiches/shared/models/fiche-action-axe.table';
+import { libreTagTable } from '../../taxonomie/models/libre-tag.table';
 import { ficheActionActionTable } from '../models/fiche-action-action.table';
-import { ficheActionAxeTable } from '../models/fiche-action-axe.table';
 import { ficheActionEffetAttenduTable } from '../models/fiche-action-effet-attendu.table';
 import { ficheActionFinanceurTagTable } from '../models/fiche-action-financeur-tag.table';
 import { ficheActionIndicateurTable } from '../models/fiche-action-indicateur.table';
@@ -24,6 +26,7 @@ import {
   ficheActionTable,
   piliersEciEnumType,
 } from '../models/fiche-action.table';
+import { UpdateFicheActionRequestType } from '../models/update-fiche-action.request';
 import {
   actionsFixture,
   axesFixture,
@@ -41,10 +44,7 @@ import {
   thematiquesFixture,
 } from '../shared/fixtures/fiche-action-relations.fixture';
 import { ficheActionFixture } from '../shared/fixtures/fiche-action.fixture';
-import { libreTagTable } from '../../taxonomie/models/libre-tag.table';
-import { getTestApp } from '../../../test/app-utils';
-import { getAuthToken } from '../../../test/auth-utils';
-import { UpdateFicheActionRequestType } from '../models/update-fiche-action.request';
+import { UpdateFicheActionRequestClass } from './fiches-action.controller';
 
 const collectiviteId = 1;
 const ficheActionId = 9999;

@@ -1,7 +1,8 @@
-import { AxeInsert, FicheResume } from '@/api/plan-actions';
+import { FicheResume } from '@/api/plan-actions';
 import { useFicheResumesFetch } from '@/app/app/pages/collectivite/PlansActions/FicheAction/data/useFicheResumesFetch';
 import { generateTitle } from '@/app/app/pages/collectivite/PlansActions/FicheAction/data/utils';
 import { naturalSort } from '@/app/utils/naturalSort';
+import { CreateAxeType } from '@/backend/plans/fiches';
 import {
   Option,
   OptionValue,
@@ -56,7 +57,7 @@ const FichesActionsDropdown = ({
   /* Récupère tous les plans liés aux fiches */
 
   const plans = fichesDisponiblesListe?.reduce<
-    Array<Pick<AxeInsert, 'id' | 'collectiviteId' | 'nom'>>
+    Array<Pick<CreateAxeType, 'id' | 'collectiviteId' | 'nom'>>
   >((acc, fiche) => {
     acc.push(
       fiche.plans?.[0] ?? {

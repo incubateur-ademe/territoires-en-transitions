@@ -6,8 +6,8 @@ import {
   tagSchema,
   thematiqueSchema,
 } from '@/api/shared/domain';
+import { axeSchema } from '@/backend/plans/fiches';
 import { z } from 'zod';
-import { axeSchema } from './axe.schema';
 
 // Enums
 

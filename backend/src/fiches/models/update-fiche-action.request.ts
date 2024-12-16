@@ -1,5 +1,6 @@
 import z from 'zod';
 import { indicateurDefinitionSchema } from '../../indicateurs/models/indicateur-definition.table';
+import { axeSchema } from '../../plans/fiches/shared/models/axe.table';
 import { actionRelationSchema } from '../../referentiels/models/action-relation.table';
 import { effetAttenduSchema } from '../../taxonomie/models/effet-attendu.table';
 import { financeurTagSchema } from '../../taxonomie/models/financeur-tag.table';
@@ -9,7 +10,6 @@ import { serviceTagSchema } from '../../taxonomie/models/service-tag.table';
 import { sousThematiqueSchema } from '../../taxonomie/models/sous-thematique.table';
 import { structureTagSchema } from '../../taxonomie/models/structure-tag.table';
 import { thematiqueSchema } from '../../taxonomie/models/thematique.table';
-import { axeSchema } from './axe.table';
 import {
   FicheActionCiblesEnumType,
   ficheActionSchema,

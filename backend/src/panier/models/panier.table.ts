@@ -1,4 +1,3 @@
-import { createZodDto } from '@anatine/zod-nestjs';
 import { InferSelectModel, SQL, sql } from 'drizzle-orm';
 import {
   boolean,
@@ -37,5 +36,3 @@ export const panierTable = pgTable('panier', {
 export type PanierType = InferSelectModel<typeof panierTable>;
 
 export const panierSchema = createSelectSchema(panierTable);
-
-export class PanierClass extends createZodDto(panierSchema) {}

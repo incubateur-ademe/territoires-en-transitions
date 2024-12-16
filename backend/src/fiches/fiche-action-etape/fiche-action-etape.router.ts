@@ -1,7 +1,7 @@
 import { Injectable } from '@nestjs/common';
 import { upsertFicheActionEtapeSchema } from '@/backend/fiches/fiche-action-etape/fiche-action-etape.table';
 import { z } from 'zod';
-import { TrpcService } from '@/backend/utils';
+import { TrpcService } from '@/backend/utils/trpc/trpc.service';
 import { FicheActionEtapeService } from './fiche-action-etape.service';
 
 @Injectable()

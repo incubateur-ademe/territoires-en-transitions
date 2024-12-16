@@ -1,4 +1,4 @@
-import { TrpcService } from '@/backend/utils';
+import { TrpcService } from '@/backend/utils/trpc/trpc.service';
 import { Injectable } from '@nestjs/common';
 import { z } from 'zod';
 import TagService from '../services/tag.service';

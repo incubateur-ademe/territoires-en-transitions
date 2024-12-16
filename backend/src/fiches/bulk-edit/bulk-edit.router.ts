@@ -1,5 +1,5 @@
 import { Injectable } from '@nestjs/common';
-import { TrpcService } from '@/backend/utils';
+import { TrpcService } from '@/backend/utils/trpc/trpc.service';
 import { BulkEditService } from './bulk-edit.service';
 
 @Injectable()

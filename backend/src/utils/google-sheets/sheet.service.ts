@@ -4,7 +4,7 @@ import { Response } from 'express';
 import * as gaxios from 'gaxios';
 import * as auth from 'google-auth-library';
 import { drive_v3, google, sheets_v4 } from 'googleapis';
-import { default as _ } from 'lodash';
+import * as _ from 'lodash';
 import { z } from 'zod';
 import { initApplicationCredentials } from '../../common/services/gcloud.helper';
 import { getPropertyPaths } from '../../common/services/zod.helper';

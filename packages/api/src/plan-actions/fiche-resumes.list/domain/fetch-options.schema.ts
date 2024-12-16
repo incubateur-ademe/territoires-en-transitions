@@ -1,6 +1,6 @@
+import { getPaginationSchema } from '@/backend/utils';
 import { z } from 'zod';
 import { filtreRessourceLieesSchema } from '../../../collectivites/shared/domain/filtre-ressource-liees.schema';
-import { getQueryOptionsSchema } from '../../../shared/domain/query_options.schema';
 import { cibleSchema, niveauPrioriteSchema, statutSchema } from '../../domain';
 
 export const modifiedSinceSchema = z.enum([
@@ -68,7 +68,7 @@ const sortFicheSchema = z.object({
 
 export type SortFichesAction = z.infer<typeof sortFicheSchema>;
 
-export const fetchOptionsSchema = getQueryOptionsSchema(sortValues).extend({
+export const fetchOptionsSchema = getPaginationSchema(sortValues).extend({
   filtre: filtreSchema,
 });
 
