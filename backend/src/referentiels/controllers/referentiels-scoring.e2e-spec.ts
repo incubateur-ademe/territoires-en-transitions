@@ -1,6 +1,9 @@
 import { INestApplication } from '@nestjs/common';
 import { DateTime } from 'luxon';
 import { default as request } from 'supertest';
+import { getTestApp } from '../../../test/app-utils';
+import { getAuthToken } from '../../../test/auth-utils';
+import { getCollectiviteIdBySiren } from '../../../test/collectivites-utils';
 import { HttpErrorResponse } from '../../common/models/http-error.response';
 import { ActionScoreType } from '../models/action-score.dto';
 import { ActionStatutType } from '../models/action-statut.table';
@@ -12,9 +15,6 @@ import { HistoriqueActionStatutType } from '../models/historique-action-statut.t
 import { ReferentielActionWithScoreType } from '../models/referentiel-action-avec-score.dto';
 import { ReferentielType } from '../models/referentiel.enum';
 import { ScoreJalon } from '../models/score-jalon.enum';
-import { getTestApp } from '../../../test/app-utils';
-import { getAuthToken } from '../../../test/auth-utils';
-import { getCollectiviteIdBySiren } from '../../../test/collectivites-utils';
 
 describe('Referentiels scoring routes', () => {
   let app: INestApplication;
@@ -254,13 +254,15 @@ describe('Referentiels scoring routes', () => {
           createdAt:
             getReferentielScoresCourantResponseType.snapshot!.createdAt,
           createdBy: null,
-          modifiedBy: null,
+          modifiedBy: getReferentielScoresCourantResponseType.snapshot
+            ?.modifiedBy as string,
           date: expect.stringContaining(
             DateTime.fromISO(getReferentielScoresCourantResponseType.date, {
               zone: 'utc',
             }).toSQL({
               includeOffset: false,
               includeOffsetSpace: false,
+              includeZone: false,
             }) as string
           ),
           modifiedAt:
