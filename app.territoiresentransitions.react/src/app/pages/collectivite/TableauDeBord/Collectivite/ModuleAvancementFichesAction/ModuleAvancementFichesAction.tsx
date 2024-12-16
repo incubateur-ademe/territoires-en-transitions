@@ -36,7 +36,6 @@ const ModuleAvancementFichesAction = ({ module }: Props) => {
   const [display, setDisplay] = useState<ModuleDisplay>('row');
 
   const filtres = module.options.filtre;
-  console.log('Filtres:', filtres);
 
   const { data: countByStatut, isLoading } = useFichesActionStatuts(
     Object.fromEntries(
