@@ -1,12 +1,9 @@
 import { personneSchema } from '@/api/collectivites';
 import { indicateurListItemSchema } from '@/api/indicateurs/domain';
 import { actionSchema } from '@/api/referentiel';
-import {
-  sousThematiqueSchemaId,
-  tagSchema,
-  thematiqueSchema,
-} from '@/api/shared/domain';
+import { tagSchema } from '@/api/shared/domain';
 import { axeSchema } from '@/backend/plans/fiches';
+import { sousThematiqueSchema, thematiqueSchema } from '@/backend/shared';
 import { z } from 'zod';
 
 // Enums
@@ -137,7 +134,7 @@ export const ficheActionSchema = z.object({
 
   // Tables liées
   thematiques: thematiqueSchema.array().nullish(),
-  sousThematiques: sousThematiqueSchemaId.array().nullish(),
+  sousThematiques: sousThematiqueSchema.array().nullish(),
   pilotes: personneSchema.array().nullish(),
   referents: personneSchema.array().nullish(),
   services: tagSchema.array().nullish(),

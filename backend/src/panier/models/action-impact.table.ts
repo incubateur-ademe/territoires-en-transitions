@@ -1,3 +1,4 @@
+import { createZodDto } from '@anatine/zod-nestjs';
 import { InferSelectModel } from 'drizzle-orm';
 import {
   boolean,
@@ -7,10 +8,13 @@ import {
   serial,
   text,
 } from 'drizzle-orm/pg-core';
+import { createSelectSchema } from 'drizzle-zod';
+import { z } from 'zod';
+import { lienSchema, lienType } from '../../documents/models/document-lien.dto';
 import {
   thematiqueSchema,
   ThematiqueType,
-} from '../../taxonomie/models/thematique.table';
+} from '../../shared/models/thematique.table';
 import {
   categorieFNVSchema,
   CategorieFNVType,
@@ -18,10 +22,6 @@ import {
 import { tempsDeMiseEnOeuvreTable } from '../../taxonomie/models/temps-de-mise-en-oeuvre.table';
 import { actionImpactFourchetteBudgetaireTable } from './action-impact-fourchette-budgetaire.table';
 import { actionImpactTierTable } from './action-impact-tier.table';
-import { createSelectSchema } from 'drizzle-zod';
-import { lienSchema, lienType } from '../../documents/models/document-lien.dto';
-import { z } from 'zod';
-import { createZodDto } from '@anatine/zod-nestjs';
 
 export const actionImpactTable = pgTable('action_impact', {
   id: serial('id').primaryKey(),

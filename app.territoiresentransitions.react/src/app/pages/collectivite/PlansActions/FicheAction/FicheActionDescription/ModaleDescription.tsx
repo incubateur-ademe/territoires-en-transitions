@@ -1,10 +1,10 @@
 import { FicheAction } from '@/api/plan-actions';
-import { Thematique } from '@/api/shared/domain';
 import { useCurrentCollectivite } from '@/app/core-logic/hooks/useCurrentCollectivite';
 import SousThematiquesDropdown from '@/app/ui/dropdownLists/SousThematiquesDropdown/SousThematiquesDropdown';
 import TagsSuiviPersoDropdown from '@/app/ui/dropdownLists/TagsSuiviPersoDropdown/TagsSuiviPersoDropdown';
 import ThematiquesDropdown from '@/app/ui/dropdownLists/ThematiquesDropdown/ThematiquesDropdown';
 import { getMaxLengthMessage } from '@/app/utils/formatUtils';
+import { Thematique } from '@/backend/shared';
 import {
   Button,
   Field,

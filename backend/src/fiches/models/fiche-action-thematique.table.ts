@@ -1,5 +1,5 @@
 import { integer, pgTable, primaryKey } from 'drizzle-orm/pg-core';
-import { thematiqueTable } from '../../taxonomie/models/thematique.table';
+import { thematiqueTable } from '../../shared/models/thematique.table';
 import { ficheActionTable } from './fiche-action.table';
 
 export const ficheActionThematiqueTable = pgTable(

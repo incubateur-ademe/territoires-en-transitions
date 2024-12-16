@@ -5,26 +5,28 @@ import {
   text,
   uniqueIndex,
 } from 'drizzle-orm/pg-core';
-import { InferSelectModel } from 'drizzle-orm';
-import { thematiqueTable } from './thematique.table';
 import { createSelectSchema } from 'drizzle-zod';
+import z from 'zod';
+import { thematiqueTable } from './thematique.table';
 
 export const sousThematiqueTable = pgTable(
   'sous_thematique',
   {
     id: serial('id').primaryKey(),
+    nom: text('sous_thematique').notNull(),
     thematiqueId: integer('thematique_id')
       .notNull()
       .references(() => thematiqueTable.id),
-    sousThematique: text('sous_thematique').notNull(),
   },
   (table) => {
     return {
-      sousThematiqueSousThematiqueThematiqueIdKey: uniqueIndex(
+      sousThematiqueNonThematiqueIdKey: uniqueIndex(
         'sous_thematique_sous_thematique_thematique_id_key '
-      ).on(table.sousThematique, table.thematiqueId),
+      ).on(table.nom, table.thematiqueId),
     };
   }
 );
-export type SousThematiqueType = InferSelectModel<typeof sousThematiqueTable>;
+
 export const sousThematiqueSchema = createSelectSchema(sousThematiqueTable);
+
+export type SousThematique = z.infer<typeof sousThematiqueSchema>;
