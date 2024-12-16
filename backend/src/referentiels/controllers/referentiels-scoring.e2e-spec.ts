@@ -196,7 +196,7 @@ describe('Referentiels scoring routes', () => {
       .set('Authorization', `Bearer ${process.env.SUPABASE_ANON_KEY}`)
       .expect(401);
     expect((response.body as HttpErrorResponse).message).toEqual(
-      'Droits insuffisants'
+      "L'utilisateur n'a pas de rôles"
     );
 
     const response2 = await request(app.getHttpServer())
@@ -204,7 +204,7 @@ describe('Referentiels scoring routes', () => {
       .set('Authorization', `Bearer ${process.env.SUPABASE_ANON_KEY}`)
       .expect(401);
     expect((response2.body as HttpErrorResponse).message).toEqual(
-      'Droits insuffisants'
+      "L'utilisateur n'a pas de rôles"
     );
   });
 
