@@ -1,7 +1,11 @@
-import { ParticipationCitoyenne, Statut } from '@/api/plan-actions';
 import { ModifiedSince } from '@/api/plan-actions/fiche-resumes.list/domain/fetch-options.schema';
 import { TFicheActionEcheances } from '@/app/types/alias';
-import { Cible, Priorite } from '@/backend/plans/fiches';
+import {
+  Cible,
+  ParticipationCitoyenne,
+  Priorite,
+  Statut,
+} from '@/backend/plans/fiches';
 
 type Options<T extends string> = {
   value: T;

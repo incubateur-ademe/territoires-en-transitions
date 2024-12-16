@@ -5,25 +5,27 @@ import { tagSchema } from '@/api/shared/domain';
 import {
   axeSchema,
   ciblesEnumSchema,
+  participationCitoyenneEnumSchema,
   prioriteEnumSchema,
+  statutsEnumSchema,
 } from '@/backend/plans/fiches';
 import { sousThematiqueSchema, thematiqueSchema } from '@/backend/shared';
 import { z } from 'zod';
 
 // Enums
 
-export const statutSchema = z.enum([
-  'À venir',
-  'En cours',
-  'Réalisé',
-  'En pause',
-  'Abandonné',
-  'Bloqué',
-  'En retard',
-  'A discuter',
-]);
+// export const statutSchema = z.enum([
+//   'À venir',
+//   'En cours',
+//   'Réalisé',
+//   'En pause',
+//   'Abandonné',
+//   'Bloqué',
+//   'En retard',
+//   'A discuter',
+// ]);
 
-export type Statut = z.infer<typeof statutSchema>;
+// export type Statut = z.infer<typeof statutSchema>;
 
 // export const niveauPrioriteSchema = z.enum(['Élevé', 'Moyen', 'Bas']);
 
@@ -47,17 +49,17 @@ export type Statut = z.infer<typeof statutSchema>;
 
 // export type Cible = z.infer<typeof cibleSchema>;
 
-export const participationCitoyenneTypeSchema = z.enum([
-  'pas-de-participation',
-  'information',
-  'consultation',
-  'concertation',
-  'co-construction',
-]);
+// export const participationCitoyenneTypeSchema = z.enum([
+//   'pas-de-participation',
+//   'information',
+//   'consultation',
+//   'concertation',
+//   'co-construction',
+// ]);
 
-export type ParticipationCitoyenne = z.infer<
-  typeof participationCitoyenneTypeSchema
->;
+// export type ParticipationCitoyenne = z.infer<
+//   typeof participationCitoyenne
+// >;
 
 export const effetsAttendus = z.object({
   id: z.number(),
@@ -104,7 +106,7 @@ export const ficheActionSchema = z.object({
   createdBy: auteur.nullable(),
   titre: z.string().nullable(),
   description: z.string().nullish(),
-  statut: statutSchema.nullish(),
+  statut: statutsEnumSchema.nullish(),
   ameliorationContinue: z.boolean().nullish(),
   dateFinProvisoire: z
     .string()
@@ -128,7 +130,7 @@ export const ficheActionSchema = z.object({
   financements: z.string().nullish(),
   instanceGouvernance: z.string().nullish(),
   participationCitoyenne: z.string().nullish(),
-  participationCitoyenneType: participationCitoyenneTypeSchema.nullish(),
+  participationCitoyenneType: participationCitoyenneEnumSchema.nullish(),
   tempsDeMiseEnOeuvre: tempsDeMiseEnOeuvreSchema.nullish(),
 
   actionImpactId: z.number().nullish(),

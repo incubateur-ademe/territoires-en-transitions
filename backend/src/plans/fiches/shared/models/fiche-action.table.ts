@@ -1,4 +1,3 @@
-import { getEnumValues } from '@/backend/utils/enum.utils';
 import { InferInsertModel } from 'drizzle-orm';
 import {
   boolean,
@@ -79,7 +78,16 @@ export enum FicheActionStatutsEnumType {
 
 export const SANS_STATUT_FICHE_ACTION_SYNTHESE_KEY = 'Sans statut';
 
-export const statutsEnumValues = getEnumValues(FicheActionStatutsEnumType);
+export const statutsEnumValues = [
+  'À venir',
+  'En cours',
+  'Réalisé',
+  'En pause',
+  'Abandonné',
+  'Bloqué',
+  'En retard',
+  'A discuter',
+] as const;
 export const statutsEnumSchema = z.enum(statutsEnumValues);
 export const statutsPgEnum = pgEnum('fiche_action_statuts', statutsEnumValues);
 export type Statut = z.infer<typeof statutsEnumSchema>;
@@ -111,13 +119,19 @@ export const prioritePgEnum = pgEnum(
 );
 export type Priorite = z.infer<typeof prioriteEnumSchema>;
 
-export const participationCitoyenneTypeEnumValues = [
+export const participationCitoyenneEnumValues = [
   'pas-de-participation',
   'information',
   'consultation',
   'concertation',
   'co-construction',
 ] as const;
+export const participationCitoyenneEnumSchema = z.enum(
+  participationCitoyenneEnumValues
+);
+export type ParticipationCitoyenne = z.infer<
+  typeof participationCitoyenneEnumSchema
+>;
 
 export const ficheActionTable = pgTable('fiche_action', {
   id: serial('id').primaryKey().notNull(),
@@ -145,7 +159,7 @@ export const ficheActionTable = pgTable('fiche_action', {
   participationCitoyenne: text('participation_citoyenne'),
   participationCitoyenneType: varchar('participation_citoyenne_type', {
     length: 30,
-    enum: participationCitoyenneTypeEnumValues,
+    enum: participationCitoyenneEnumValues,
   }),
   tempsDeMiseEnOeuvre: integer('temps_de_mise_en_oeuvre_id').references(
     () => tempsDeMiseEnOeuvreTable.niveau

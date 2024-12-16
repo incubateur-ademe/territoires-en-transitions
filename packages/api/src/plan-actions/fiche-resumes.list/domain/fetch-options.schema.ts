@@ -1,8 +1,11 @@
-import { ciblesEnumSchema, prioriteEnumSchema } from '@/backend/plans/fiches';
+import {
+  ciblesEnumSchema,
+  prioriteEnumSchema,
+  statutsEnumSchema,
+} from '@/backend/plans/fiches';
 import { getPaginationSchema } from '@/backend/utils';
 import { z } from 'zod';
 import { filtreRessourceLieesSchema } from '../../../collectivites/shared/domain/filtre-ressource-liees.schema';
-import { statutSchema } from '../../domain';
 
 export const modifiedSinceSchema = z.enum([
   'last-90-days',
@@ -14,7 +17,7 @@ export const modifiedSinceSchema = z.enum([
 export type ModifiedSince = z.infer<typeof modifiedSinceSchema>;
 
 export const filtreSpecifiqueSchema = z.object({
-  statuts: statutSchema.array().optional(),
+  statuts: statutsEnumSchema.array().optional(),
   priorites: prioriteEnumSchema.array().optional(),
   cibles: ciblesEnumSchema.array().optional(),
   modifiedSince: modifiedSinceSchema.optional(),
