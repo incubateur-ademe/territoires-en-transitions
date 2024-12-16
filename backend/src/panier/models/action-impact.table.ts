@@ -40,7 +40,7 @@ export const actionImpactTable = pgTable('action_impact', {
   tempsDeMiseEnOeuvre: integer('temps_de_mise_en_oeuvre')
     .notNull()
     .default(1)
-    .references(() => tempsDeMiseEnOeuvreTable.niveau),
+    .references(() => tempsDeMiseEnOeuvreTable.id),
   fourchetteBudgetaire: integer('fourchette_budgetaire')
     .notNull()
     .default(1)

@@ -65,17 +65,6 @@ export const ficheActionResultatsAttendusEnum = pgEnum(
   ]
 );
 
-export enum FicheActionStatutsEnumType {
-  A_VENIR = 'À venir',
-  EN_COURS = 'En cours',
-  REALISE = 'Réalisé',
-  EN_PAUSE = 'En pause',
-  ABANDONNE = 'Abandonné',
-  BLOQUE = 'Bloqué',
-  EN_RETARD = 'En retard',
-  A_DISCUTER = 'A discuter',
-}
-
 export const SANS_STATUT_FICHE_ACTION_SYNTHESE_KEY = 'Sans statut';
 
 export const statutsEnumValues = [
@@ -148,7 +137,7 @@ export const ficheActionTable = pgTable('fiche_action', {
     precision: 12,
     scale: 0,
   }),
-  statut: statutsPgEnum('statut').default(FicheActionStatutsEnumType.A_VENIR),
+  statut: statutsPgEnum('statut').default(statutsEnumSchema.enum['À venir']),
   priorite: prioritePgEnum('niveau_priorite'),
   dateDebut: timestamp('date_debut', TIMESTAMP_OPTIONS),
   dateFin: timestamp('date_fin_provisoire', TIMESTAMP_OPTIONS),
@@ -162,7 +151,7 @@ export const ficheActionTable = pgTable('fiche_action', {
     enum: participationCitoyenneEnumValues,
   }),
   tempsDeMiseEnOeuvre: integer('temps_de_mise_en_oeuvre_id').references(
-    () => tempsDeMiseEnOeuvreTable.niveau
+    () => tempsDeMiseEnOeuvreTable.id
   ),
   majTermine: boolean('maj_termine'),
   collectiviteId: integer('collectivite_id')

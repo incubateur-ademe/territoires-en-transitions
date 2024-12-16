@@ -1,4 +1,5 @@
 import { integer, serial, text } from 'drizzle-orm/pg-core';
+import z from 'zod';
 import { collectiviteTable } from '../../collectivites/models/collectivite.table';
 
 export const tagTableBase = {
@@ -9,8 +10,10 @@ export const tagTableBase = {
     .references(() => collectiviteTable.id),
 };
 
-export type TagType = {
-  id : number,
-  nom : string,
-  collectiviteId : number
-}
+export const tagSchema = z.object({
+  id: z.number(),
+  nom: z.string(),
+  collectiviteId: z.number(),
+});
+
+export type Tag = z.infer<typeof tagSchema>;

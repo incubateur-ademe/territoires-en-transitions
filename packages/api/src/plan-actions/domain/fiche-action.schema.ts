@@ -1,7 +1,6 @@
 import { personneSchema } from '@/api/collectivites';
 import { indicateurListItemSchema } from '@/api/indicateurs/domain';
 import { actionSchema } from '@/api/referentiel';
-import { tagSchema } from '@/api/shared/domain';
 import {
   axeSchema,
   ciblesEnumSchema,
@@ -9,7 +8,12 @@ import {
   prioriteEnumSchema,
   statutsEnumSchema,
 } from '@/backend/plans/fiches';
-import { sousThematiqueSchema, thematiqueSchema } from '@/backend/shared';
+import {
+  sousThematiqueSchema,
+  tagSchema,
+  tempsDeMiseEnOeuvreSchema,
+  thematiqueSchema,
+} from '@/backend/shared';
 import { z } from 'zod';
 
 // Enums
@@ -76,13 +80,6 @@ export const financeurSchema = z.object({
 
 export type Financeur = z.infer<typeof financeurSchema>;
 
-export const tempsDeMiseEnOeuvreSchema = z.object({
-  id: z.number(),
-  nom: z.string(),
-});
-
-export type TempsDeMiseEnOeuvre = z.infer<typeof tempsDeMiseEnOeuvreSchema>;
-
 const auteur = z.object({
   userId: z.string(),
   prenom: z.string(),
@@ -90,13 +87,13 @@ const auteur = z.object({
   email: z.string(),
 });
 
-const libreTagSchema = z.object({
-  id: z.number().nullish(),
-  nom: z.string(),
-  collectivitedId: z.number().nullish(),
-  createdAt: z.string().date().nullish(),
-  createdBy: z.string().nullish(),
-});
+// const libreTagSchema = z.object({
+//   id: z.number().nullish(),
+//   nom: z.string(),
+//   collectivitedId: z.number().nullish(),
+//   createdAt: z.string().date().nullish(),
+//   createdBy: z.string().nullish(),
+// });
 
 export const ficheActionSchema = z.object({
   id: z.number(),
@@ -151,7 +148,7 @@ export const ficheActionSchema = z.object({
   actions: actionSchema.array().nullish(),
   financeurs: financeurSchema.array().nullish(),
   indicateurs: indicateurListItemSchema.array().nullish(),
-  libresTag: libreTagSchema.array().nullish(),
+  libresTag: tagSchema.array().nullish(),
 });
 
 export type FicheAction = z.infer<typeof ficheActionSchema>;

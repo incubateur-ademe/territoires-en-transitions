@@ -7,7 +7,7 @@ import { and, eq, inArray, isNull, or } from 'drizzle-orm';
 import { AuthenticatedUser } from '../../auth/models/auth.models';
 import { groupementCollectiviteTable } from '../../collectivites/models/groupement-collectivite.table';
 import DatabaseService from '../../common/services/database.service';
-import { TagType } from '../../shared/models/tag.table-base';
+import { Tag } from '../../shared/models/tag.table-base';
 import { categorieTagTable } from '../models/categorie-tag.table';
 import { partenaireTagTable } from '../models/partenaire-tag.table';
 
@@ -65,7 +65,7 @@ export default class TagService {
     collectiviteId: number,
     withPredefinedTags: boolean,
     tokenInfo: AuthenticatedUser
-  ): Promise<TagType[]> {
+  ): Promise<Tag[]> {
     // Vérifie les droits
     const collectivitePrivate = await this.collectiviteService.isPrivate(
       collectiviteId

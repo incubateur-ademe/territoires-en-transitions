@@ -18,9 +18,9 @@ import DatabaseService from '../../common/services/database.service';
 import { axeTable } from '../../plans/fiches/shared/models/axe.table';
 import { ficheActionAxeTable } from '../../plans/fiches/shared/models/fiche-action-axe.table';
 import {
-  FicheActionStatutsEnumType,
   ficheActionTable,
   SANS_STATUT_FICHE_ACTION_SYNTHESE_KEY,
+  statutsEnumValues,
 } from '../../plans/fiches/shared/models/fiche-action.table';
 import { ficheActionPartenaireTagTable } from '../models/fiche-action-partenaire-tag.table';
 import { ficheActionPiloteTable } from '../models/fiche-action-pilote.table';
@@ -50,7 +50,7 @@ export class CountByStatutService {
       )}`
     );
 
-    const listeValeurs = Object.values(FicheActionStatutsEnumType);
+    const listeValeurs = statutsEnumValues;
     const conditions = this.getConditions(collectiviteId, filter);
 
     const result = await this.countBy(
@@ -235,7 +235,7 @@ export class CountByStatutService {
   private async countBy<Value extends string, NullValue extends string>(
     propriete: PgColumn,
     conditions: (SQLWrapper | SQL)[],
-    values: Value[],
+    values: readonly Value[],
     nullValue?: NullValue
   ) {
     const ficheActionPartenaireTags = this.getFicheActionPartenaireTagsQuery();
