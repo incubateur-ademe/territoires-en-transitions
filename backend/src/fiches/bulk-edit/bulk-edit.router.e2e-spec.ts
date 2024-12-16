@@ -9,15 +9,15 @@ import {
 import { getAuthUser } from '../../../test/auth-utils';
 import { YOLO_DODO, YULU_DUDU } from '../../../test/test-users.samples';
 import { AuthenticatedUser } from '../../auth/models/auth.models';
-import { libreTagTable } from '../../taxonomie/models/libre-tag.table';
-import { AppRouter, TrpcRouter } from '../../utils/trpc/trpc.router';
-import { ficheActionLibreTagTable } from '../models/fiche-action-libre-tag.table';
-import { ficheActionPiloteTable } from '../models/fiche-action-pilote.table';
 import {
   FicheActionStatutsEnumType,
   ficheActionTable,
   prioriteEnumSchema,
-} from '../models/fiche-action.table';
+} from '../../plans/fiches/shared/models/fiche-action.table';
+import { libreTagTable } from '../../taxonomie/models/libre-tag.table';
+import { AppRouter, TrpcRouter } from '../../utils/trpc/trpc.router';
+import { ficheActionLibreTagTable } from '../models/fiche-action-libre-tag.table';
+import { ficheActionPiloteTable } from '../models/fiche-action-pilote.table';
 
 type Input = inferProcedureInput<AppRouter['plans']['fiches']['bulkEdit']>;
 

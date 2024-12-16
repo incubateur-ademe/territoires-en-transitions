@@ -1,6 +1,6 @@
 import { integer, pgTable, primaryKey } from 'drizzle-orm/pg-core';
-import { ficheActionTable } from '../../../../fiches/models/fiche-action.table';
 import { axeTable } from './axe.table';
+import { ficheActionTable } from './fiche-action.table';
 
 export const ficheActionAxeTable = pgTable(
   'fiche_action_axe',

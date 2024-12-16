@@ -1,6 +1,6 @@
 import { integer, pgTable, primaryKey } from 'drizzle-orm/pg-core';
+import { ficheActionTable } from '../../plans/fiches/shared/models/fiche-action.table';
 import { effetAttenduTable } from '../../taxonomie/models/effet-attendu.table';
-import { ficheActionTable } from './fiche-action.table';
 
 export const ficheActionEffetAttenduTable = pgTable(
   'fiche_action_effet_attendu',

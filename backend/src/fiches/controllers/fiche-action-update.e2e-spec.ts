@@ -6,6 +6,12 @@ import { getTestApp } from '../../../test/app-utils';
 import { getAuthToken } from '../../../test/auth-utils';
 import DatabaseService from '../../common/services/database.service';
 import { ficheActionAxeTable } from '../../plans/fiches/shared/models/fiche-action-axe.table';
+import {
+  ciblesEnumSchema,
+  FicheActionStatutsEnumType,
+  ficheActionTable,
+  piliersEciEnumType,
+} from '../../plans/fiches/shared/models/fiche-action.table';
 import { libreTagTable } from '../../taxonomie/models/libre-tag.table';
 import { ficheActionActionTable } from '../models/fiche-action-action.table';
 import { ficheActionEffetAttenduTable } from '../models/fiche-action-effet-attendu.table';
@@ -20,12 +26,6 @@ import { ficheActionServiceTagTable } from '../models/fiche-action-service.table
 import { ficheActionSousThematiqueTable } from '../models/fiche-action-sous-thematique.table';
 import { ficheActionStructureTagTable } from '../models/fiche-action-structure-tag.table';
 import { ficheActionThematiqueTable } from '../models/fiche-action-thematique.table';
-import {
-  FicheActionCiblesEnumType,
-  FicheActionStatutsEnumType,
-  ficheActionTable,
-  piliersEciEnumType,
-} from '../models/fiche-action.table';
 import { UpdateFicheActionRequestType } from '../models/update-fiche-action.request';
 import {
   actionsFixture,
@@ -206,8 +206,8 @@ describe('FichesActionUpdateService', () => {
         objectifs:
           'Diminution de 15% de la consommation de feuilles de papier / Indicateurs : Nombre de papiers',
         cibles: [
-          FicheActionCiblesEnumType.GRAND_PUBLIC,
-          FicheActionCiblesEnumType.ASSOCIATIONS,
+          ciblesEnumSchema.enum['Grand public'],
+          ciblesEnumSchema.enum['Associations'],
         ],
         ressources: 'Service numérique',
         financements: 'De 40 000€ à 100 000€',

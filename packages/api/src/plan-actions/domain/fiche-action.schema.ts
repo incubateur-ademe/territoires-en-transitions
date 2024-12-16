@@ -2,7 +2,7 @@ import { personneSchema } from '@/api/collectivites';
 import { indicateurListItemSchema } from '@/api/indicateurs/domain';
 import { actionSchema } from '@/api/referentiel';
 import { tagSchema } from '@/api/shared/domain';
-import { axeSchema } from '@/backend/plans/fiches';
+import { axeSchema, ciblesEnumSchema } from '@/backend/plans/fiches';
 import { sousThematiqueSchema, thematiqueSchema } from '@/backend/shared';
 import { z } from 'zod';
 
@@ -25,23 +25,23 @@ export const niveauPrioriteSchema = z.enum(['Élevé', 'Moyen', 'Bas']);
 
 export type NiveauPriorite = z.infer<typeof niveauPrioriteSchema>;
 
-export const cibleSchema = z.enum([
-  'Grand public',
-  'Associations',
-  'Grand public et associations',
-  'Public Scolaire',
-  'Autres collectivités du territoire',
-  'Acteurs économiques',
-  'Acteurs économiques du secteur primaire',
-  'Acteurs économiques du secteur secondaire',
-  'Acteurs économiques du secteur tertiaire',
-  'Partenaires',
-  'Collectivité elle-même',
-  'Elus locaux',
-  'Agents',
-]);
+// export const cibleSchema = z.enum([
+//   'Grand public',
+//   'Associations',
+//   'Grand public et associations',
+//   'Public Scolaire',
+//   'Autres collectivités du territoire',
+//   'Acteurs économiques',
+//   'Acteurs économiques du secteur primaire',
+//   'Acteurs économiques du secteur secondaire',
+//   'Acteurs économiques du secteur tertiaire',
+//   'Partenaires',
+//   'Collectivité elle-même',
+//   'Elus locaux',
+//   'Agents',
+// ]);
 
-export type Cible = z.infer<typeof cibleSchema>;
+// export type Cible = z.infer<typeof cibleSchema>;
 
 export const participationCitoyenneTypeSchema = z.enum([
   'pas-de-participation',
@@ -108,7 +108,7 @@ export const ficheActionSchema = z.object({
     .or(z.string().datetime({ offset: true }))
     .nullish(),
   niveauPriorite: niveauPrioriteSchema.nullish(),
-  cibles: cibleSchema.array().nullish(),
+  cibles: ciblesEnumSchema.array().nullish(),
   restreint: z.boolean().nullish(),
   resultatsAttendus: effetsAttendus.array().nullish(),
   objectifs: z.string().nullish(),

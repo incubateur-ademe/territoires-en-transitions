@@ -1,24 +1,21 @@
 import {
+  ciblesEnumSchema,
   CreateFicheActionType,
-  FicheActionCiblesEnumType,
-  FicheActionStatutsEnumType,
-  piliersEciEnumType,
-} from '../../models/fiche-action.table';
+  piliersEciEnumSchema,
+  statutsEnumSchema,
+} from '../../../plans/fiches/shared/models/fiche-action.table';
 
 export const ficheActionFixture: CreateFicheActionType = {
   id: 9999,
   titre: 'Test Fiche Action',
   description: 'patati',
-  piliersEci: [piliersEciEnumType.APPROVISIONNEMENT_DURABLE],
+  piliersEci: [piliersEciEnumSchema.enum['Approvisionnement durable']],
   objectifs: 'Diminution des émissions de carbone',
-  cibles: [
-    FicheActionCiblesEnumType.GRAND_PUBLIC_ET_ASSOCIATIONS,
-    FicheActionCiblesEnumType.AGENTS,
-  ],
+  cibles: [ciblesEnumSchema.enum.Agents, ciblesEnumSchema.enum['Grand public']],
   ressources: 'Service digitaux',
   financements: '100 000€',
   budgetPrevisionnel: '35000',
-  statut: FicheActionStatutsEnumType.EN_PAUSE,
+  statut: statutsEnumSchema.enum['En pause'],
   priorite: 'Moyen',
   dateDebut: null,
   dateFin: null,

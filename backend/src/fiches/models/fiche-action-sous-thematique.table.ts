@@ -1,6 +1,6 @@
 import { integer, pgTable, primaryKey } from 'drizzle-orm/pg-core';
+import { ficheActionTable } from '../../plans/fiches/shared/models/fiche-action.table';
 import { sousThematiqueTable } from '../../shared/models/sous-thematique.table';
-import { ficheActionTable } from './fiche-action.table';
 
 export const ficheActionSousThematiqueTable = pgTable(
   'fiche_action_sous_thematique',

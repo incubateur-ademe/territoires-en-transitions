@@ -1,10 +1,10 @@
 import { ParticipationCitoyenne, Statut } from '@/api/plan-actions';
 import { ModifiedSince } from '@/api/plan-actions/fiche-resumes.list/domain/fetch-options.schema';
 import {
-  TFicheActionCibles,
   TFicheActionEcheances,
   TFicheActionNiveauxPriorite,
 } from '@/app/types/alias';
+import { Cible } from '@/backend/plans/fiches';
 
 type Options<T extends string> = {
   value: T;
@@ -12,7 +12,7 @@ type Options<T extends string> = {
   disabled?: boolean;
 }[];
 
-export const ficheActionCiblesOptions: Options<TFicheActionCibles> = [
+export const ficheActionCiblesOptions: Options<Cible> = [
   {
     value: 'Grand public',
     label: 'Grand public',

@@ -1,13 +1,13 @@
 import { z } from 'zod';
 import { modifiedSinceSchema } from '../../common/models/modified-since.enum';
-import { ficheActionCiblesEnumSchema } from './fiche-action.table';
+import { ciblesEnumSchema } from '../../plans/fiches/shared/models/fiche-action.table';
 
 export const getFichesActionFilterRequestSchema = z
   .object({
     cibles: z
       .string()
       .transform((value) => value.split(','))
-      .pipe(ficheActionCiblesEnumSchema.array())
+      .pipe(ciblesEnumSchema.array())
       .optional()
       .describe('Liste des cibles séparées par des virgules'),
     partenaire_tag_ids: z

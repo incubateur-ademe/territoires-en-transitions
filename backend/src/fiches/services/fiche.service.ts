@@ -1,7 +1,15 @@
+import { dcpTable } from '@/backend/auth';
+import { PermissionOperation } from '@/backend/auth/authorizations/permission-operation.enum';
+import { PermissionService } from '@/backend/auth/authorizations/permission.service';
+import { ResourceType } from '@/backend/auth/authorizations/resource-type.enum';
 import { Injectable, Logger } from '@nestjs/common';
 import { aliasedTable, desc, eq } from 'drizzle-orm';
 import { AuthenticatedUser } from '../../auth/models/auth.models';
 import DatabaseService from '../../common/services/database.service';
+import {
+  CreateFicheActionType,
+  ficheActionTable,
+} from '../../plans/fiches/shared/models/fiche-action.table';
 import TagService from '../../taxonomie/services/tag.service';
 import { actionImpactFicheActionTable } from '../models/action-impact-fiche-action.table';
 import { ficheActionActionTable } from '../models/fiche-action-action.table';
@@ -11,14 +19,6 @@ import { ficheActionNoteTable } from '../models/fiche-action-note.table';
 import { ficheActionPartenaireTagTable } from '../models/fiche-action-partenaire-tag.table';
 import { ficheActionSousThematiqueTable } from '../models/fiche-action-sous-thematique.table';
 import { ficheActionThematiqueTable } from '../models/fiche-action-thematique.table';
-import {
-  CreateFicheActionType,
-  ficheActionTable,
-} from '../models/fiche-action.table';
-import { dcpTable } from '@/backend/auth';
-import { PermissionService } from '@/backend/auth/authorizations/permission.service';
-import { PermissionOperation } from '@/backend/auth/authorizations/permission-operation.enum';
-import { ResourceType } from '@/backend/auth/authorizations/resource-type.enum';
 
 @Injectable()
 export default class FicheService {

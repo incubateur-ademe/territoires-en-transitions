@@ -11,7 +11,7 @@ import { groupementCollectiviteTable } from '../../collectivites/models/groupeme
 import CollectivitesService from '../../collectivites/services/collectivites.service';
 import DatabaseService from '../../common/services/database.service';
 import { ficheActionIndicateurTable } from '../../fiches/models/fiche-action-indicateur.table';
-import { ficheActionTable } from '../../fiches/models/fiche-action.table';
+import { ficheActionTable } from '../../plans/fiches/shared/models/fiche-action.table';
 import { categorieTagTable } from '../../taxonomie/models/categorie-tag.table';
 import { serviceTagTable } from '../../taxonomie/models/service-tag.table';
 import { indicateurActionTable } from '../models/indicateur-action.table';

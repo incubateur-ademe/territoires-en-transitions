@@ -13,14 +13,14 @@ import {
 } from 'drizzle-orm/pg-core';
 import { createInsertSchema, createSelectSchema } from 'drizzle-zod';
 import { z } from 'zod';
-import { collectiviteTable } from '../../collectivites/models/collectivite.table';
-import { tempsDeMiseEnOeuvreTable } from '../../taxonomie/models/temps-de-mise-en-oeuvre.table';
+import { collectiviteTable } from '../../../../collectivites/models/collectivite.table';
+import { tempsDeMiseEnOeuvreTable } from '../../../../shared/models/temps-de-mise-en-oeuvre.table';
 import {
   createdAt,
   modifiedAt,
   modifiedBy,
   TIMESTAMP_OPTIONS,
-} from '../../utils/column.utils';
+} from '../../../../utils/column.utils';
 
 export enum piliersEciEnumType {
   APPROVISIONNEMENT_DURABLE = 'Approvisionnement durable',
@@ -83,32 +83,24 @@ export const statutsEnumValues = getEnumValues(FicheActionStatutsEnumType);
 export const statutsEnumSchema = z.enum(statutsEnumValues);
 export const statutsPgEnum = pgEnum('fiche_action_statuts', statutsEnumValues);
 
-export enum FicheActionCiblesEnumType {
-  GRAND_PUBLIC = 'Grand public',
-  ASSOCIATIONS = 'Associations',
-  GRAND_PUBLIC_ET_ASSOCIATIONS = 'Grand public et associations',
-  PUBLIC_SCOLAIRE = 'Public Scolaire',
-  AUTRES_COLLECTIVITES_DU_TERRITOIRE = 'Autres collectivités du territoire',
-  ACTEURS_ECONOMIQUES = 'Acteurs économiques',
-  ACTEURS_ECONOMIQUES_DU_SECTEUR_PRIMAIRE = 'Acteurs économiques du secteur primaire',
-  ACTEURS_ECONOMIQUES_DU_SECTEUR_SECONDAIRE = 'Acteurs économiques du secteur secondaire',
-  ACTEURS_ECONOMIQUES_DU_SECTEUR_TERTIAIRE = 'Acteurs économiques du secteur tertiaire',
-  PARTENAIRES = 'Partenaires',
-  COLLECTIVITE_ELLE_MEME = 'Collectivité elle-même',
-  ELUS_LOCAUX = 'Elus locaux',
-  AGENTS = 'Agents',
-}
-
-export const ficheActionCiblesEnumValues = Object.values(
-  FicheActionCiblesEnumType
-) as [FicheActionCiblesEnumType, ...FicheActionCiblesEnumType[]];
-
-export const ficheActionCiblesEnumSchema = z.enum(ficheActionCiblesEnumValues);
-
-export const ficheActionCiblesEnum = pgEnum(
-  'fiche_action_cibles',
-  ficheActionCiblesEnumValues
-);
+export const ciblesEnumValues = [
+  'Grand public',
+  'Associations',
+  'Grand public et associations',
+  'Public Scolaire',
+  'Autres collectivités du territoire',
+  'Acteurs économiques',
+  'Acteurs économiques du secteur primaire',
+  'Acteurs économiques du secteur secondaire',
+  'Acteurs économiques du secteur tertiaire',
+  'Partenaires',
+  'Collectivité elle-même',
+  'Elus locaux',
+  'Agents',
+] as const;
+export const ciblesEnumSchema = z.enum(ciblesEnumValues);
+export const ciblesPgEnum = pgEnum('fiche_action_cibles', ciblesEnumValues);
+export type Cible = z.infer<typeof ciblesEnumSchema>;
 
 export const prioriteEnumValues = ['Élevé', 'Moyen', 'Bas'] as const;
 export const prioriteEnumSchema = z.enum(prioriteEnumValues);
@@ -117,7 +109,7 @@ export const prioritePgEnum = pgEnum(
   prioriteEnumValues
 );
 
-export const ficheActionParticipationCitoyenneTypeEnumValues = [
+export const participationCitoyenneTypeEnumValues = [
   'pas-de-participation',
   'information',
   'consultation',
@@ -132,7 +124,7 @@ export const ficheActionTable = pgTable('fiche_action', {
   piliersEci: piliersEciPgEnum('piliers_eci').array(),
   objectifs: varchar('objectifs', { length: 10000 }),
   cibles: text('cibles', {
-    enum: ficheActionCiblesEnumValues,
+    enum: ciblesEnumValues,
   }).array(),
   ressources: varchar('ressources', { length: 10000 }),
   financements: text('financements'),
@@ -151,7 +143,7 @@ export const ficheActionTable = pgTable('fiche_action', {
   participationCitoyenne: text('participation_citoyenne'),
   participationCitoyenneType: varchar('participation_citoyenne_type', {
     length: 30,
-    enum: ficheActionParticipationCitoyenneTypeEnumValues,
+    enum: participationCitoyenneTypeEnumValues,
   }),
   tempsDeMiseEnOeuvre: integer('temps_de_mise_en_oeuvre_id').references(
     () => tempsDeMiseEnOeuvreTable.niveau
@@ -172,14 +164,14 @@ export const ficheActionSchema = createSelectSchema(ficheActionTable, {
   // Overriding array types as a workaround for drizzle-zod parsing issue
   // See https://github.com/drizzle-team/drizzle-orm/issues/1609
   piliersEci: z.array(piliersEciEnumSchema),
-  cibles: z.array(ficheActionCiblesEnumSchema),
+  cibles: z.array(ciblesEnumSchema),
 });
 
 export const createFicheActionSchema = createInsertSchema(ficheActionTable, {
   // Overriding array types as a workaround for drizzle-zod parsing issue
   // See https://github.com/drizzle-team/drizzle-orm/issues/1609
   piliersEci: z.array(piliersEciEnumSchema),
-  cibles: z.array(ficheActionCiblesEnumSchema),
+  cibles: z.array(ciblesEnumSchema),
 });
 
 export const updateFicheActionSchema = createFicheActionSchema

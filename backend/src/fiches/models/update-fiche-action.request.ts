@@ -1,6 +1,12 @@
 import z from 'zod';
 import { indicateurDefinitionSchema } from '../../indicateurs/models/indicateur-definition.table';
 import { axeSchema } from '../../plans/fiches/shared/models/axe.table';
+import {
+  ciblesEnumSchema,
+  ficheActionSchema,
+  piliersEciEnumType,
+  updateFicheActionSchema,
+} from '../../plans/fiches/shared/models/fiche-action.table';
 import { actionRelationSchema } from '../../referentiels/models/action-relation.table';
 import { sousThematiqueSchema } from '../../shared/models/sous-thematique.table';
 import { thematiqueSchema } from '../../shared/models/thematique.table';
@@ -10,12 +16,6 @@ import { libreTagSchema } from '../../taxonomie/models/libre-tag.table';
 import { partenaireTagSchema } from '../../taxonomie/models/partenaire-tag.table';
 import { serviceTagSchema } from '../../taxonomie/models/service-tag.table';
 import { structureTagSchema } from '../../taxonomie/models/structure-tag.table';
-import {
-  FicheActionCiblesEnumType,
-  ficheActionSchema,
-  piliersEciEnumType,
-  updateFicheActionSchema,
-} from './fiche-action.table';
 
 // There is no proper Pilote or Referent tables, so we use a custom schema here
 export const personneSchema = z.object({
@@ -42,7 +42,7 @@ export const updateFicheActionRequestSchema = updateFicheActionSchema.extend({
     )
     .array()
     .nullish(),
-  cibles: z.nativeEnum(FicheActionCiblesEnumType).array().nullish(),
+  cibles: ciblesEnumSchema.array().nullish(),
   // Overriding because numeric and timestamp types are not properly converted otherwise (a bug with zod/drizzle ?)
   budgetPrevisionnel: z
     .union([z.string(), z.number()])

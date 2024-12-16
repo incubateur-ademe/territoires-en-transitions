@@ -11,6 +11,7 @@ import {
 import { createSelectSchema } from 'drizzle-zod';
 import { z } from 'zod';
 import { lienSchema, lienType } from '../../documents/models/document-lien.dto';
+import { tempsDeMiseEnOeuvreTable } from '../../shared/models/temps-de-mise-en-oeuvre.table';
 import {
   thematiqueSchema,
   ThematiqueType,
@@ -19,7 +20,6 @@ import {
   categorieFNVSchema,
   CategorieFNVType,
 } from '../../taxonomie/models/categorie-fnv.table';
-import { tempsDeMiseEnOeuvreTable } from '../../taxonomie/models/temps-de-mise-en-oeuvre.table';
 import { actionImpactFourchetteBudgetaireTable } from './action-impact-fourchette-budgetaire.table';
 import { actionImpactTierTable } from './action-impact-tier.table';
 

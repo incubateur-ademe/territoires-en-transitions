@@ -1,6 +1,6 @@
 import { integer, pgTable, primaryKey } from 'drizzle-orm/pg-core';
 import { indicateurDefinitionTable } from '../../indicateurs/models/indicateur-definition.table';
-import { ficheActionTable } from './fiche-action.table';
+import { ficheActionTable } from '../../plans/fiches/shared/models/fiche-action.table';
 
 export const ficheActionIndicateurTable = pgTable(
   'fiche_action_indicateur',

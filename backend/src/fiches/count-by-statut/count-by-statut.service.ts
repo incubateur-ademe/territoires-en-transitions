@@ -17,14 +17,14 @@ import { getModifiedSinceDate } from '../../common/models/modified-since.enum';
 import DatabaseService from '../../common/services/database.service';
 import { axeTable } from '../../plans/fiches/shared/models/axe.table';
 import { ficheActionAxeTable } from '../../plans/fiches/shared/models/fiche-action-axe.table';
-import { ficheActionPartenaireTagTable } from '../models/fiche-action-partenaire-tag.table';
-import { ficheActionPiloteTable } from '../models/fiche-action-pilote.table';
-import { ficheActionServiceTagTable } from '../models/fiche-action-service.table';
 import {
   FicheActionStatutsEnumType,
   ficheActionTable,
   SANS_STATUT_FICHE_ACTION_SYNTHESE_KEY,
-} from '../models/fiche-action.table';
+} from '../../plans/fiches/shared/models/fiche-action.table';
+import { ficheActionPartenaireTagTable } from '../models/fiche-action-partenaire-tag.table';
+import { ficheActionPiloteTable } from '../models/fiche-action-pilote.table';
+import { ficheActionServiceTagTable } from '../models/fiche-action-service.table';
 import { GetFichesActionFilterRequestType } from '../models/get-fiches-actions-filter.request';
 
 @Injectable()
