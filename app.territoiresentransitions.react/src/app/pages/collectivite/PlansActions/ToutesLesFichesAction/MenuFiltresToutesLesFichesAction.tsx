@@ -15,14 +15,20 @@ import ThematiquesDropdown from '@/app/ui/dropdownLists/ThematiquesDropdown/Them
 import CiblesDropdown from '@/app/ui/dropdownLists/ficheAction/CiblesDropdown/CiblesDropdown';
 import PrioritesFilterDropdown from '@/app/ui/dropdownLists/ficheAction/priorites/PrioritesFilterDropdown';
 import StatutsFilterDropdown from '@/app/ui/dropdownLists/ficheAction/statuts/StatutsFilterDropdown';
-import { Checkbox, Field, FormSection } from '@/ui';
+import { Checkbox, Field, FormSection, useEventTracker } from '@/ui';
 
 type Props = {
   filters: Filtre;
   setFilters: (filters: Filtre) => void;
+  collectiviteId: number;
 };
 
-const MenuFiltresToutesLesFichesAction = ({ filters, setFilters }: Props) => {
+const MenuFiltresToutesLesFichesAction = ({
+  filters,
+  setFilters,
+  collectiviteId,
+}: Props) => {
+  const tracker = useEventTracker('app/toutes-les-fiches-action');
   const pilotes = getPilotesValues(filters);
   const referents = getReferentsValues(filters);
 
@@ -41,6 +47,9 @@ const MenuFiltresToutesLesFichesAction = ({ filters, setFilters }: Props) => {
                 setFilters({
                   ...rest,
                   ...(plans ? { planActionIds: plans } : {}),
+                });
+                tracker('filtre_plan_action_fa', {
+                  collectivite_id: collectiviteId!,
                 });
               }}
             />
@@ -63,6 +72,9 @@ const MenuFiltresToutesLesFichesAction = ({ filters, setFilters }: Props) => {
                       }
                     : {}),
                 });
+                tracker('filtre_personne_pilote_fa', {
+                  collectivite_id: collectiviteId!,
+                });
               }}
             />
           </Field>
@@ -78,6 +90,9 @@ const MenuFiltresToutesLesFichesAction = ({ filters, setFilters }: Props) => {
                     ? { servicePiloteIds: services.map((s) => s.id) }
                     : {}),
                 });
+                tracker('filtre_direction_pilote_fa', {
+                  collectivite_id: collectiviteId!,
+                });
               }}
             />
           </Field>
@@ -92,6 +107,9 @@ const MenuFiltresToutesLesFichesAction = ({ filters, setFilters }: Props) => {
                   ...(structures
                     ? { structurePiloteIds: structures.map((s) => s.id) }
                     : {}),
+                });
+                tracker('filtre_structure_pilote_fa', {
+                  collectivite_id: collectiviteId!,
                 });
               }}
             />
@@ -119,6 +137,9 @@ const MenuFiltresToutesLesFichesAction = ({ filters, setFilters }: Props) => {
                       }
                     : {}),
                 });
+                tracker('filtre_elu_referent_fa', {
+                  collectivite_id: collectiviteId!,
+                });
               }}
             />
           </Field>
@@ -132,6 +153,9 @@ const MenuFiltresToutesLesFichesAction = ({ filters, setFilters }: Props) => {
                   ...rest,
                   ...(!budgetPrevisionnel ? { budgetPrevisionnel: true } : {}),
                 });
+                tracker('filtre_budge_previsionnel_total_renseigne_fa', {
+                  collectivite_id: collectiviteId!,
+                });
               }}
             />
             <Checkbox
@@ -142,6 +166,9 @@ const MenuFiltresToutesLesFichesAction = ({ filters, setFilters }: Props) => {
                 setFilters({
                   ...rest,
                   ...(!restreint ? { restreint: true } : {}),
+                });
+                tracker('filtre_mode_prive_fa', {
+                  collectivite_id: collectiviteId!,
                 });
               }}
             />
@@ -156,6 +183,9 @@ const MenuFiltresToutesLesFichesAction = ({ filters, setFilters }: Props) => {
                     ? { ameliorationContinue: true }
                     : {}),
                 });
+                tracker('filtre_action_se_repete_ans_fa', {
+                  collectivite_id: collectiviteId!,
+                });
               }}
             />
             <Checkbox
@@ -166,6 +196,9 @@ const MenuFiltresToutesLesFichesAction = ({ filters, setFilters }: Props) => {
                 setFilters({
                   ...rest,
                   ...(!hasIndicateurLies ? { hasIndicateurLies: true } : {}),
+                });
+                tracker('filtre_indicateurs_associes_fa', {
+                  collectivite_id: collectiviteId!,
                 });
               }}
             />
@@ -178,6 +211,9 @@ const MenuFiltresToutesLesFichesAction = ({ filters, setFilters }: Props) => {
                   ...rest,
                   ...(!sansPilote ? { sansPilote: true } : {}),
                 });
+                tracker('filtre_sans_pilote_fa', {
+                  collectivite_id: collectiviteId!,
+                });
               }}
             />
             <Checkbox
@@ -189,6 +225,9 @@ const MenuFiltresToutesLesFichesAction = ({ filters, setFilters }: Props) => {
                   ...rest,
                   ...(!sansServicePilote ? { sansServicePilote: true } : {}),
                 });
+                tracker('filtre_sans_direction_fa', {
+                  collectivite_id: collectiviteId!,
+                });
               }}
             />
             <Checkbox
@@ -199,6 +238,9 @@ const MenuFiltresToutesLesFichesAction = ({ filters, setFilters }: Props) => {
                 setFilters({
                   ...rest,
                   ...(!sansStatut ? { sansStatut: true } : {}),
+                });
+                tracker('filtre_sans_statut_fa', {
+                  collectivite_id: collectiviteId!,
                 });
               }}
             />
@@ -215,6 +257,9 @@ const MenuFiltresToutesLesFichesAction = ({ filters, setFilters }: Props) => {
                   ...rest,
                   ...(statuts ? { statuts } : {}),
                 });
+                tracker('filtre_statut_fa', {
+                  collectivite_id: collectiviteId!,
+                });
               }}
             />
           </Field>
@@ -226,6 +271,9 @@ const MenuFiltresToutesLesFichesAction = ({ filters, setFilters }: Props) => {
                 setFilters({
                   ...rest,
                   ...(priorites ? { priorites } : {}),
+                });
+                tracker('filtre_niveau_priorite_fa', {
+                  collectivite_id: collectiviteId!,
                 });
               }}
             />
@@ -241,6 +289,9 @@ const MenuFiltresToutesLesFichesAction = ({ filters, setFilters }: Props) => {
                     ? { thematiqueIds: thematiques.map((t) => t.id) }
                     : {}),
                 });
+                tracker('filtre_thematique_fa', {
+                  collectivite_id: collectiviteId!,
+                });
               }}
             />
           </Field>
@@ -254,6 +305,9 @@ const MenuFiltresToutesLesFichesAction = ({ filters, setFilters }: Props) => {
                   ...(financeurs
                     ? { financeurIds: financeurs.map((f) => f.id!) }
                     : {}),
+                });
+                tracker('filtre_financeur_fa', {
+                  collectivite_id: collectiviteId!,
                 });
               }}
             />
@@ -269,6 +323,9 @@ const MenuFiltresToutesLesFichesAction = ({ filters, setFilters }: Props) => {
                     ? { partenaireIds: partenaires.map((p) => p.id) }
                     : {}),
                 });
+                tracker('filtre_partenaires_fa', {
+                  collectivite_id: collectiviteId!,
+                });
               }}
             />
           </Field>
@@ -280,6 +337,9 @@ const MenuFiltresToutesLesFichesAction = ({ filters, setFilters }: Props) => {
                 setFilters({
                   ...rest,
                   ...(newCibles ? { cibles: newCibles.map((c) => c) } : {}),
+                });
+                tracker('filtre_cibles_fa', {
+                  collectivite_id: collectiviteId!,
                 });
               }}
             />
