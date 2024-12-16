@@ -12,12 +12,12 @@ ARG --global API_DIR='./packages/api'
 ARG --global BUSINESS_DIR='./business'
 # paramètres de la base de registre des images docker générées
 ARG --global REGISTRY='ghcr.io'
-ARG --global REG_USER='territoiresentransitions'
+ARG --global REG_USER='incubateur-ademe'
 ARG --global REG_TARGET=$REGISTRY/$REG_USER
 # tags appliqués aux images docker générées
 ARG --global ENV_NAME="dev"
 ARG --global FRONT_DEPS_TAG=$(openssl dgst -sha256 -r ./pnpm-lock.yaml | head -c 7 ; echo)
-ARG --global FRONT_DEPS_IMG_NAME=$REG_TARGET/front-deps:$FRONT_DEPS_TAG
+ARG --global FRONT_DEPS_IMG_NAME=$REG_TARGET/tet-front-deps:$FRONT_DEPS_TAG
 ARG --global APP_TAG=$ENV_NAME-$FRONT_DEPS_TAG-$(sh ./subdirs_hash.sh $APP_DIR,$UI_DIR,$API_DIR)
 ARG --global APP_IMG_NAME=$REG_TARGET/app:$APP_TAG
 
@@ -26,15 +26,15 @@ ARG --global APP_IMG_NAME=$REG_TARGET/app:$APP_TAG
 ARG --global APPLICATION_VERSION=$(git describe --tags --always)
 
 # TODO changer le tag
-ARG --global BACKEND_IMG_NAME=$REG_TARGET/backend:$ENV_NAME-$EARTHLY_GIT_SHORT_HASH
-ARG --global SITE_IMG_NAME=$REG_TARGET/site:$ENV_NAME-$FRONT_DEPS_TAG-$(sh ./subdirs_hash.sh $SITE_DIR,$UI_DIR,$API_DIR)
-ARG --global AUTH_IMG_NAME=$REG_TARGET/auth:$ENV_NAME-$FRONT_DEPS_TAG-$(sh ./subdirs_hash.sh $AUTH_DIR,$UI_DIR,$API_DIR)
+ARG --global BACKEND_IMG_NAME=$REG_TARGET/tet-backend:$ENV_NAME-$EARTHLY_GIT_SHORT_HASH
+ARG --global SITE_IMG_NAME=$REG_TARGET/tet-site:$ENV_NAME-$FRONT_DEPS_TAG-$(sh ./subdirs_hash.sh $SITE_DIR,$UI_DIR,$API_DIR)
+ARG --global AUTH_IMG_NAME=$REG_TARGET/tet-auth:$ENV_NAME-$FRONT_DEPS_TAG-$(sh ./subdirs_hash.sh $AUTH_DIR,$UI_DIR,$API_DIR)
 ARG --global PANIER_IMG_NAME=$REG_TARGET/panier:$ENV_NAME-$FRONT_DEPS_TAG-$(sh ./subdirs_hash.sh $PANIER_DIR,$UI_DIR,$API_DIR)
 ARG --global STORYBOOK_TAG=$ENV_NAME-$FRONT_DEPS_TAG-$(sh ./subdirs_hash.sh $UI_DIR)
-ARG --global STORYBOOK_IMG_NAME=$REG_TARGET/storybook:$STORYBOOK_TAG
-ARG --global BUSINESS_IMG_NAME=$REG_TARGET/business:$ENV_NAME-$(sh ./subdirs_hash.sh $BUSINESS_DIR)
+ARG --global STORYBOOK_IMG_NAME=$REG_TARGET/tet-storybook:$STORYBOOK_TAG
+ARG --global BUSINESS_IMG_NAME=$REG_TARGET/tet-business:$ENV_NAME-$(sh ./subdirs_hash.sh $BUSINESS_DIR)
 ARG --global DL_TAG=$ENV_NAME-$(sh ./subdirs_hash.sh data_layer)
-ARG --global DB_SAVE_IMG_NAME=$REG_TARGET/db-save:$DL_TAG
+ARG --global DB_SAVE_IMG_NAME=$REG_TARGET/tet-db-save:$DL_TAG
 ARG --global DB_VOLUME_NAME=supabase_db_tet
 ARG --global GIT_BRANCH=$(git rev-parse --abbrev-ref HEAD)
 

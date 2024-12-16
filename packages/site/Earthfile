@@ -90,7 +90,8 @@ docker:
   # https://nextjs.org/docs/pages/api-reference/next-config-js/output
   CMD ["node", "packages/site/server.js"]
 
-  SAVE IMAGE --push $DOCKER_IMAGE
+  SAVE IMAGE --cache-from $CI_REGISTRY_IMAGE:latest --push $DOCKER_IMAGE my-image:$ENV_NAME-latest
+  # FROM DOCKERFILE
 
 deploy:
   ARG --required KOYEB_API_KEY
