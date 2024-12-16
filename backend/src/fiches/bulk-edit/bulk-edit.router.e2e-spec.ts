@@ -14,7 +14,7 @@ import {
   ficheActionTable,
   prioriteEnumSchema,
 } from '../../plans/fiches/shared/models/fiche-action.table';
-import { libreTagTable } from '../../taxonomie/models/libre-tag.table';
+import { libreTagTable } from '../../shared/models/libre-tag.table';
 import { AppRouter, TrpcRouter } from '../../utils/trpc/trpc.router';
 import { ficheActionLibreTagTable } from '../models/fiche-action-libre-tag.table';
 import { ficheActionPiloteTable } from '../models/fiche-action-pilote.table';

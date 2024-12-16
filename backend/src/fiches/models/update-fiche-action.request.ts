@@ -1,3 +1,4 @@
+import { libreTagSchema } from '@/backend/shared';
 import z from 'zod';
 import { indicateurDefinitionSchema } from '../../indicateurs/models/indicateur-definition.table';
 import { axeSchema } from '../../plans/fiches/shared/models/axe.table';
@@ -12,7 +13,6 @@ import { sousThematiqueSchema } from '../../shared/models/sous-thematique.table'
 import { thematiqueSchema } from '../../shared/models/thematique.table';
 import { effetAttenduSchema } from '../../taxonomie/models/effet-attendu.table';
 import { financeurTagSchema } from '../../taxonomie/models/financeur-tag.table';
-import { libreTagSchema } from '../../taxonomie/models/libre-tag.table';
 import { partenaireTagSchema } from '../../taxonomie/models/partenaire-tag.table';
 import { serviceTagSchema } from '../../taxonomie/models/service-tag.table';
 import { structureTagSchema } from '../../taxonomie/models/structure-tag.table';

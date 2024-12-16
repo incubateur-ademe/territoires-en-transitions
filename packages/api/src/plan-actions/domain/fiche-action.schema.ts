@@ -2,7 +2,11 @@ import { personneSchema } from '@/api/collectivites';
 import { indicateurListItemSchema } from '@/api/indicateurs/domain';
 import { actionSchema } from '@/api/referentiel';
 import { tagSchema } from '@/api/shared/domain';
-import { axeSchema, ciblesEnumSchema } from '@/backend/plans/fiches';
+import {
+  axeSchema,
+  ciblesEnumSchema,
+  prioriteEnumSchema,
+} from '@/backend/plans/fiches';
 import { sousThematiqueSchema, thematiqueSchema } from '@/backend/shared';
 import { z } from 'zod';
 
@@ -21,9 +25,9 @@ export const statutSchema = z.enum([
 
 export type Statut = z.infer<typeof statutSchema>;
 
-export const niveauPrioriteSchema = z.enum(['Élevé', 'Moyen', 'Bas']);
+// export const niveauPrioriteSchema = z.enum(['Élevé', 'Moyen', 'Bas']);
 
-export type NiveauPriorite = z.infer<typeof niveauPrioriteSchema>;
+// export type NiveauPriorite = z.infer<typeof niveauPrioriteSchema>;
 
 // export const cibleSchema = z.enum([
 //   'Grand public',
@@ -107,7 +111,7 @@ export const ficheActionSchema = z.object({
     .date()
     .or(z.string().datetime({ offset: true }))
     .nullish(),
-  niveauPriorite: niveauPrioriteSchema.nullish(),
+  niveauPriorite: prioriteEnumSchema.nullish(),
   cibles: ciblesEnumSchema.array().nullish(),
   restreint: z.boolean().nullish(),
   resultatsAttendus: effetsAttendus.array().nullish(),

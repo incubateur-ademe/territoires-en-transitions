@@ -82,6 +82,7 @@ export const SANS_STATUT_FICHE_ACTION_SYNTHESE_KEY = 'Sans statut';
 export const statutsEnumValues = getEnumValues(FicheActionStatutsEnumType);
 export const statutsEnumSchema = z.enum(statutsEnumValues);
 export const statutsPgEnum = pgEnum('fiche_action_statuts', statutsEnumValues);
+export type Statut = z.infer<typeof statutsEnumSchema>;
 
 export const ciblesEnumValues = [
   'Grand public',
@@ -108,6 +109,7 @@ export const prioritePgEnum = pgEnum(
   'fiche_action_niveaux_priorite',
   prioriteEnumValues
 );
+export type Priorite = z.infer<typeof prioriteEnumSchema>;
 
 export const participationCitoyenneTypeEnumValues = [
   'pas-de-participation',

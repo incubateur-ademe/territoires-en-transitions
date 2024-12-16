@@ -1,10 +1,7 @@
 import { ParticipationCitoyenne, Statut } from '@/api/plan-actions';
 import { ModifiedSince } from '@/api/plan-actions/fiche-resumes.list/domain/fetch-options.schema';
-import {
-  TFicheActionEcheances,
-  TFicheActionNiveauxPriorite,
-} from '@/app/types/alias';
-import { Cible } from '@/backend/plans/fiches';
+import { TFicheActionEcheances } from '@/app/types/alias';
+import { Cible, Priorite } from '@/backend/plans/fiches';
 
 type Options<T extends string> = {
   value: T;
@@ -74,12 +71,11 @@ export const ficheActionStatutOptions: Options<Statut> = [
   { value: 'Bloqué', label: 'Bloqué' },
 ];
 
-export const ficheActionNiveauPrioriteOptions: Options<TFicheActionNiveauxPriorite> =
-  [
-    { value: 'Élevé', label: 'Élevé' },
-    { value: 'Moyen', label: 'Moyen' },
-    { value: 'Bas', label: 'Bas' },
-  ];
+export const ficheActionNiveauPrioriteOptions: Options<Priorite> = [
+  { value: 'Élevé', label: 'Élevé' },
+  { value: 'Moyen', label: 'Moyen' },
+  { value: 'Bas', label: 'Bas' },
+];
 
 export const ficheActionModifiedSinceOptions: Options<ModifiedSince> = [
   { value: 'last-15-days', label: 'les 15 derniers jours' },

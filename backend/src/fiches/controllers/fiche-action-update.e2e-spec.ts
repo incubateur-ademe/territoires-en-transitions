@@ -1,3 +1,4 @@
+import { libreTagTable } from '@/backend/shared';
 import { INestApplication } from '@nestjs/common';
 import { eq } from 'drizzle-orm';
 import { default as request } from 'supertest';
@@ -12,7 +13,6 @@ import {
   ficheActionTable,
   piliersEciEnumType,
 } from '../../plans/fiches/shared/models/fiche-action.table';
-import { libreTagTable } from '../../taxonomie/models/libre-tag.table';
 import { ficheActionActionTable } from '../models/fiche-action-action.table';
 import { ficheActionEffetAttenduTable } from '../models/fiche-action-effet-attendu.table';
 import { ficheActionFinanceurTagTable } from '../models/fiche-action-financeur-tag.table';

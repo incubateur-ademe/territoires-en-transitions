@@ -1,5 +1,5 @@
 import { pgTable, uniqueIndex } from 'drizzle-orm/pg-core';
-import { tagTableBase } from './tag.table-base';
+import { tagTableBase } from '../../shared/models/tag.table-base';
 
 export const personneTagTable = pgTable(
   'personne_tag',
