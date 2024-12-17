@@ -10,10 +10,12 @@ export const useUpdateFicheAction = () => {
 
   return useMutation(
     async (fiche: FicheAction) => {
+      const { dateFinProvisoire, ...rest } = fiche;
+
       return collectiviteId
         ? api.put<any>({
             route: `/collectivites/${collectiviteId}/fiches-action/${fiche.id}`,
-            params: fiche,
+            params: { dateFin: dateFinProvisoire, ...rest },
           })
         : null;
     },
