@@ -18,10 +18,9 @@ export default defineConfig(({ mode }) => ({
     globals: true,
     env: loadEnv(mode, process.cwd(), ''),
 
-    include: [
-      'src/**/*.{test,spec,e2e-spec}.{js,mjs,cjs,ts,mts,cts,jsx,tsx}',
-      './test/**/*.e2e-spec.ts',
-    ],
+    setupFiles: ['./test/vitest-matchers.ts'],
+
+    include: ['src/**/*.{test,spec,e2e-spec}.{ts,mts,cts}'],
 
     reporters: ['default'],
     coverage: {

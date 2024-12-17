@@ -9,11 +9,5 @@
     "src/**/*.e2e-spec.ts",
     "src/**/*.test.ts"
   ],
-  "include": [
-    "src/**/*.ts",
-    "test/indicateurs/indicateurs.e2e-spec.ts",
-    "src/indicateurs/controllers/trajectoire-snbc.e2e-spec.ts",
-    "test/referentiels/referentiels-scoring.e2e-spec.ts",
-    "test/referentiels/referentiels.e2e-spec.ts"
-  ]
+  "include": ["src/**/*.ts"]
 }
