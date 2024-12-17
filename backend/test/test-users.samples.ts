@@ -12,3 +12,11 @@ export const YULU_DUDU = {
   password: 'yulududu',
   collectiviteId: {},
 };
+
+
+// Auditeur de la collectivité 1 et 10
+export const YOULOU_DOUDOU = {
+  email: 'youlou@doudou.com',
+  password: 'youloudoudou',
+  collectiviteId: {},
+};
