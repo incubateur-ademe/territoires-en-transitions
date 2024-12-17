@@ -1,5 +1,6 @@
 import { DBClient } from '@/api/typeUtils';
 import { trpcUtils } from '@/api/utils/trpc/client';
+import { endOfDay, startOfDay } from 'date-fns';
 import { objectToCamel } from 'ts-case-convert';
 import { z } from 'zod';
 import { FicheResume } from '../../domain';
@@ -269,6 +270,35 @@ export async function ficheResumesFetch({
 
   if (filtre.modifiedSince) {
     query.gte('modified_at', getDateSince(filtre.modifiedSince));
+  }
+
+  const addDateRange = (
+    field: 'created_at' | 'modified_at' | 'date_debut' | 'date_fin_provisoire'
+  ) => {
+    if (filtre.debutPeriode)
+      query.gte(field, startOfDay(new Date(filtre.debutPeriode)).toISOString());
+    if (filtre.finPeriode)
+      query.lte(field, endOfDay(new Date(filtre.finPeriode)).toISOString());
+  };
+
+  if (filtre.typePeriode) {
+    switch (filtre.typePeriode) {
+      case 'creation':
+        addDateRange('created_at');
+        break;
+
+      case 'modification':
+        addDateRange('modified_at');
+        break;
+
+      case 'debut':
+        addDateRange('date_debut');
+        break;
+
+      case 'fin':
+        addDateRange('date_fin_provisoire');
+        break;
+    }
   }
 
   if (filtre.texteNomOuDescription) {
