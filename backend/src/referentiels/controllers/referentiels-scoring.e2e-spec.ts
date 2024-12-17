@@ -1,5 +1,4 @@
 import { INestApplication } from '@nestjs/common';
-import { DateTime } from 'luxon';
 import { default as request } from 'supertest';
 import { getTestApp } from '../../../test/app-utils';
 import { getAuthToken } from '../../../test/auth-utils';
@@ -251,22 +250,18 @@ describe('Referentiels scoring routes', () => {
       snapshots: [
         {
           auditId: null,
-          createdAt:
-            getReferentielScoresCourantResponseType.snapshot!.createdAt,
+          createdAt: expect.toEqualDate(
+            getReferentielScoresCourantResponseType.snapshot!.createdAt
+          ),
           createdBy: null,
           modifiedBy: getReferentielScoresCourantResponseType.snapshot
             ?.modifiedBy as string,
-          date: expect.stringContaining(
-            DateTime.fromISO(getReferentielScoresCourantResponseType.date, {
-              zone: 'utc',
-            }).toSQL({
-              includeOffset: false,
-              includeOffsetSpace: false,
-              includeZone: false,
-            }) as string
+          date: expect.toEqualDate(
+            getReferentielScoresCourantResponseType.date
           ),
-          modifiedAt:
-            getReferentielScoresCourantResponseType.snapshot!.modifiedAt,
+          modifiedAt: expect.toEqualDate(
+            getReferentielScoresCourantResponseType.snapshot!.modifiedAt
+          ),
           nom: 'Score courant',
           pointFait: 0.36,
           pointPasFait: 0.03,
@@ -306,14 +301,7 @@ describe('Referentiels scoring routes', () => {
       typesJalon: [ScoreJalon.DATE_PERSONNALISEE],
       snapshots: [
         {
-          date: expect.stringContaining(
-            DateTime.fromISO(getReferentielScoresResponseType.date, {
-              zone: 'utc',
-            }).toSQL({
-              includeOffset: false,
-              includeOffsetSpace: false,
-            }) as string
-          ),
+          date: expect.toEqualDate(getReferentielScoresResponseType.date),
           nom: 'test à accent',
           ref: 'user-test-a-accent',
           typeJalon: ScoreJalon.DATE_PERSONNALISEE,
