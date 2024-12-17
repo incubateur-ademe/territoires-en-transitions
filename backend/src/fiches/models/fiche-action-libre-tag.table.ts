@@ -6,8 +6,12 @@ import { ficheActionTable } from './fiche-action.table';
 export const ficheActionLibreTagTable = pgTable(
   'fiche_action_libre_tag',
   {
-    ficheId: integer('fiche_id').references(() => ficheActionTable.id),
-    libreTagId: integer('libre_tag_id').references(() => libreTagTable.id),
+    ficheId: integer('fiche_id').references(() => ficheActionTable.id, {
+      onDelete: 'cascade',
+    }),
+    libreTagId: integer('libre_tag_id').references(() => libreTagTable.id, {
+      onDelete: 'cascade',
+    }),
     createdAt,
     createdBy,
   },
