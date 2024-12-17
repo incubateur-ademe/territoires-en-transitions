@@ -28,7 +28,7 @@ import { DonneesARemplirValeurType } from '../models/donnees-a-remplir-valeur.dt
 import { DonneesARemplirResultType } from '../models/donnees-a-remplir-result.dto';
 import { PermissionService } from '../../auth/gestion-des-droits/permission.service';
 import { ResourceType } from '../../auth/gestion-des-droits/resource-type.enum';
-import { Autorisation } from '../../auth/gestion-des-droits/autorisation.enum';
+import { Authorization } from '../../auth/gestion-des-droits/authorization.enum';
 import IndicateurSourcesService from './indicateur-sources.service';
 import IndicateursService from './indicateurs.service';
 
@@ -615,12 +615,12 @@ export default class TrajectoiresDataService {
     request: VerificationTrajectoireRequestType,
     tokenInfo: AuthenticatedUser,
     epci?: EpciType,
-    forceRecuperationDonnees = false
+    forceRecuperationDonneesUniquementPourLecture = false
   ): Promise<VerificationTrajectoireResultType> {
-    // Vérification des droits
+    // Vérification des droits pour lire les données
     await this.permissionService.hasTheRightTo(
       tokenInfo,
-      Autorisation.INDICATEURS_TRAJECTOIRE_EDITION,
+      Authorization.INDICATEURS_TRAJECTOIRE_LECTURE,
       ResourceType.COLLECTIVITE,
       request.collectiviteId
     );
@@ -630,7 +630,7 @@ export default class TrajectoiresDataService {
     };
 
     if (request.forceRecuperationDonnees) {
-      forceRecuperationDonnees = true;
+      forceRecuperationDonneesUniquementPourLecture = true;
     }
 
     if (!epci) {
@@ -680,9 +680,18 @@ export default class TrajectoiresDataService {
       response.indentifiantsReferentielManquantsDonneesEntree =
         sourceIdentifiantManquants?.identifiants_referentiel_manquants || [];
       response.status = VerificationTrajectoireStatus.DEJA_CALCULE;
-      if (!forceRecuperationDonnees) {
+      if (!forceRecuperationDonneesUniquementPourLecture) {
         return response;
       }
+    }
+    if(!forceRecuperationDonneesUniquementPourLecture) {
+      // Vérification des droits pour calculer les données
+      await this.permissionService.hasTheRightTo(
+        tokenInfo,
+        Authorization.INDICATEURS_TRAJECTOIRE_EDITION,
+        ResourceType.COLLECTIVITE,
+        request.collectiviteId
+      );
     }
     // sinon, vérifie s'il y a les données suffisantes pour lancer le calcul :
     // Si jamais les données ont déjà été calculées et que l'on a pas défini le flag forceUtilisationDonneesCollectivite, on utilise la meme source
@@ -740,7 +749,7 @@ export default class TrajectoiresDataService {
     if (tokenInfo) {
       await this.permissionService.hasTheRightTo(
         tokenInfo,
-        Autorisation.INDICATEURS_TRAJECTOIRE_EDITION,
+        Authorization.INDICATEURS_TRAJECTOIRE_EDITION,
         ResourceType.COLLECTIVITE,
         collectiviteId
       );
