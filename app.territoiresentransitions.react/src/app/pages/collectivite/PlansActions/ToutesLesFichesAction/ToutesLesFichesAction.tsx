@@ -5,7 +5,7 @@ import MenuFiltresToutesLesFichesAction from '@/app/app/pages/collectivite/Plans
 import { makeCollectiviteToutesLesFichesUrl } from '@/app/app/paths';
 import { useSearchParams } from '@/app/core-logic/hooks/query';
 import { useCurrentCollectivite } from '@/app/core-logic/hooks/useCurrentCollectivite';
-import { Button, ButtonMenu } from '@/ui';
+import { Button, ButtonMenu, useEventTracker } from '@/ui';
 import { OpenState } from '@/ui/utils/types';
 import { useFicheResumesFetch } from '../FicheAction/data/useFicheResumesFetch';
 
@@ -98,6 +98,7 @@ const ToutesLesFichesAction = () => {
   const filters = convertParamsToFilters(filterParams);
 
   const { mutate: createFicheAction } = useCreateFicheAction();
+  const tracker = useEventTracker('app/toutes-les-fiches-action');
 
   return (
     <div className="min-h-[44rem] flex flex-col gap-8">
@@ -125,8 +126,13 @@ const ToutesLesFichesAction = () => {
           >
             <MenuFiltresToutesLesFichesAction
               filters={filters}
-              setFilters={(filters) => setFilterParams(filters)}
-              collectiviteId={collectivite?.collectivite_id!}
+              setFilters={(filters) => {
+                setFilterParams(filters);
+                tracker('filtres', {
+                  collectivite_id: collectivite?.collectivite_id!,
+                  filtreValues: filters,
+                });
+              }}
             />
           </ButtonMenu>
         )}

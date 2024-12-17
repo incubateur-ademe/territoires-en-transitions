@@ -76,6 +76,15 @@ type IndicateursFiltres = {
   hasOpenData?: boolean;
 };
 
+type FichesActionFiltres = {
+  budgetPrevisionnel?: boolean;
+  restreint?: boolean;
+  hasIndicateurLies?: boolean;
+  noPilote?: boolean;
+  noServicePilote?: boolean;
+  noStatut?: boolean;
+};
+
 type EventsGraphReferentiel = {
   zoom_graph: {
     referentiel: string;
@@ -249,24 +258,9 @@ export interface TrackingPlan extends Record<never, Page> {
     properties: { collectivite_id: number };
     onglets: never;
     events: {
-      filtre_plan_action_fa: {};
-      filtre_personne_pilote_fa: {};
-      filtre_direction_pilote_fa: {};
-      filtre_structure_pilote_fa: {};
-      filtre_elu_referent_fa: {};
-      filtre_statut_fa: {};
-      filtre_niveau_priorite_fa: {};
-      filtre_thematique_fa: {};
-      filtre_financeur_fa: {};
-      filtre_partenaires_fa: {};
-      filtre_cibles_fa: {};
-      filtre_budge_previsionnel_total_renseigne_fa: {};
-      filtre_mode_prive_fa: {};
-      filtre_action_se_repete_ans_fa: {};
-      filtre_indicateurs_associes_fa: {};
-      filtre_sans_pilote_fa: {};
-      filtre_sans_direction_fa: {};
-      filtre_sans_statut_fa: {};
+      filtres: {
+        filtreValues: FichesActionFiltres;
+      };
     };
   };
 
