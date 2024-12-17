@@ -4,6 +4,7 @@ import { Modal, ModalFooterOKCancel } from '@/ui';
 import { OpenState } from '@/ui/utils/types';
 
 import { useDeleteEtape } from './use-delete-etape';
+import { useEtapesDispatch } from '../etapes-context';
 
 type Props = {
   openState: OpenState;
@@ -11,6 +12,7 @@ type Props = {
 };
 
 const ModalDeleteEtape = ({ openState, etapeId }: Props) => {
+  const dispatchEtapes = useEtapesDispatch();
   const { mutate: deleteEtape } = useDeleteEtape();
 
   return (
@@ -24,6 +26,10 @@ const ModalDeleteEtape = ({ openState, etapeId }: Props) => {
             children: 'Confirmer',
             onClick: () => {
               deleteEtape({ etapeId });
+              dispatchEtapes({
+                type: 'delete',
+                payload: { etapeId },
+              });
               close();
             },
           }}
