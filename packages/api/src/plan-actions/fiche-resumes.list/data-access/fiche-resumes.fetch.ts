@@ -235,15 +235,15 @@ export async function ficheResumesFetch({
     query.is('restreint', true);
   }
 
-  if (filtre.sansPilote) {
+  if (filtre.noPilote) {
     query.is('pilotes', null);
   }
 
-  if (filtre.sansServicePilote) {
+  if (filtre.noServicePilote) {
     query.is('services', null);
   }
 
-  if (filtre.sansStatut) {
+  if (filtre.noStatut) {
     query.is('statut', null);
   }
 

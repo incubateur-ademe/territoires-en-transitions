@@ -173,11 +173,11 @@ export const useFiltersToBadges = ({ filters, customValues }: Args) => {
         badgeValues.push(`Date de début : ${mergedFilters[key]}`);
       } else if (key === 'dateFin') {
         badgeValues.push(`Date de fin prévisionnelle : ${mergedFilters[key]}`);
-      } else if (key === 'sansStatut') {
+      } else if (key === 'noStatut') {
         mergedFilters[key] && badgeValues.push('Sans statut');
-      } else if (key === 'sansPilote') {
+      } else if (key === 'noPilote') {
         mergedFilters[key] && badgeValues.push('Sans pilote');
-      } else if (key === 'sansServicePilote') {
+      } else if (key === 'noServicePilote') {
         mergedFilters[key] &&
           badgeValues.push('Sans direction ou service pilote');
       }
