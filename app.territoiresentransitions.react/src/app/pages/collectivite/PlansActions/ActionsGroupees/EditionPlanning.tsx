@@ -35,7 +35,7 @@ const ModaleEditionPlanning = ({
       title="Associer un planning"
       actionsCount={selectedIds.length}
       onSave={() => {
-        tracker('associer_priorite_groupe', {
+        tracker('associer_planning_groupe', {
           collectivite_id: collectiviteId,
         });
         mutation.mutate({
@@ -45,7 +45,6 @@ const ModaleEditionPlanning = ({
         });
       }}
     >
-      {/* TODO: check dates de début des fiches sélectionnées ? */}
       <Field title="Date de fin prévisionnelle" className="col-span-2">
         <Input
           ref={dateFinRef}

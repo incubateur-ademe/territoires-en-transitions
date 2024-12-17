@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/no-explicit-any */
 'use client';
 
 import {
@@ -10,6 +11,18 @@ import {
   TrackingProvider,
 } from '@/ui';
 import Script from 'next/script';
+
+declare global {
+  interface Window {
+    $crisp: any;
+    CRISP_WEBSITE_ID: string | undefined;
+    _adftrack: any;
+    dataLayer: any;
+    lintrk: any;
+    _linkedin_partner_id: any;
+    _linkedin_data_partner_ids: any;
+  }
+}
 
 const client = createTrackingClient(getNextTrackingEnv());
 

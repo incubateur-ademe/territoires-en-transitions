@@ -136,7 +136,7 @@ jobs:
           version: 0.8.1
       - uses: supabase/setup-cli@v1
         with:
-          version: latest
+          version: 1.223.10
 
       - name: Login into registry
         run: earthly --use-inline-cache +docker-dev-login --GH_USER=${{ secrets.GH_USER }} --GH_TOKEN=${{ secrets.GH_TOKEN }}
@@ -169,7 +169,7 @@ jobs:
           version: 0.8.1
       - uses: supabase/setup-cli@v1
         with:
-          version: latest
+          version: 1.223.10
 
       - name: Login into registry
         run: earthly --use-inline-cache +docker-dev-login --GH_USER=${{ secrets.GH_USER }} --GH_TOKEN=${{ secrets.GH_TOKEN }}
@@ -222,7 +222,7 @@ jobs:
           version: 0.8.1
       - uses: supabase/setup-cli@v1
         with:
-          version: latest
+          version: 1.223.10
 
       - name: Login into registry
         run: earthly --use-inline-cache +docker-dev-login --GH_USER=${{ secrets.GH_USER }} --GH_TOKEN=${{ secrets.GH_TOKEN }}
@@ -274,7 +274,7 @@ jobs:
           version: 0.8.1
       - uses: supabase/setup-cli@v1
         with:
-          version: latest
+          version: 1.223.10
 
       - name: Login into registry
         run: earthly --use-inline-cache +docker-dev-login --GH_USER=${{ secrets.GH_USER }} --GH_TOKEN=${{ secrets.GH_TOKEN }}
@@ -354,7 +354,7 @@ jobs:
           version: 0.8.1
       - uses: supabase/setup-cli@v1
         with:
-          version: latest
+          version: 1.223.10
 
       - name: Login into registry
         run: earthly --use-inline-cache +docker-dev-login --GH_USER=${{ secrets.GH_USER }} --GH_TOKEN=${{ secrets.GH_TOKEN }}
@@ -403,7 +403,7 @@ jobs:
           version: 0.8.1
       - uses: supabase/setup-cli@v1
         with:
-          version: latest
+          version: 1.223.10
 
       - name: Login into registry
         run: earthly --use-inline-cache +docker-dev-login --GH_USER=${{ secrets.GH_USER }} --GH_TOKEN=${{ secrets.GH_TOKEN }}
@@ -431,7 +431,7 @@ jobs:
           version: 0.8.1
       - uses: supabase/setup-cli@v1
         with:
-          version: latest
+          version: 1.223.10
 
       - name: Login into registry
         run: earthly --use-inline-cache +docker-dev-login --GH_USER=${{ secrets.GH_USER }} --GH_TOKEN=${{ secrets.GH_TOKEN }}
@@ -477,7 +477,7 @@ jobs:
           version: 0.8.1
       - uses: supabase/setup-cli@v1
         with:
-          version: latest
+          version: 1.223.10
 
       - name: Login into registry
         run: earthly --use-inline-cache +docker-dev-login --GH_USER=${{ secrets.GH_USER }} --GH_TOKEN=${{ secrets.GH_TOKEN }}
@@ -529,7 +529,7 @@ jobs:
           version: 0.8.1
       - uses: supabase/setup-cli@v1
         with:
-          version: latest
+          version: 1.223.10
 
       - name: Login into registry
         run: earthly --use-inline-cache +docker-dev-login --GH_USER=${{ secrets.GH_USER }} --GH_TOKEN=${{ secrets.GH_TOKEN }}

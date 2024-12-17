@@ -22,7 +22,7 @@ const InfoService = ({ titre, boutons }: InfoData) => {
           ? boutons.map((b) => (
               <Button
                 key={b.label}
-                href={b.url}
+                href={b.url ?? undefined}
                 variant="white"
                 disabled={!b.url}
                 external={b.url?.startsWith('http')}

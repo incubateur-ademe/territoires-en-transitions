@@ -1,10 +1,10 @@
 'use client';
 
-import { MapContainer, useMap } from 'react-leaflet';
-import 'leaflet/dist/leaflet.css';
-import 'leaflet-defaulticon-compatibility/dist/leaflet-defaulticon-compatibility.css';
 import 'leaflet-defaulticon-compatibility';
+import 'leaflet-defaulticon-compatibility/dist/leaflet-defaulticon-compatibility.css';
+import 'leaflet/dist/leaflet.css';
 import { CSSProperties, ReactNode, useEffect, useState } from 'react';
+import { MapContainer, useMap } from 'react-leaflet';
 import './style.css';
 
 /**
@@ -13,7 +13,8 @@ import './style.css';
  */
 function Debugger() {
   const map = useMap();
-  window['map'] = map;
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  (window as any)['map'] = map;
   return null;
 }
 
