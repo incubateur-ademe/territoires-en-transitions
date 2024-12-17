@@ -15,20 +15,14 @@ import ThematiquesDropdown from '@/app/ui/dropdownLists/ThematiquesDropdown/Them
 import CiblesDropdown from '@/app/ui/dropdownLists/ficheAction/CiblesDropdown/CiblesDropdown';
 import PrioritesFilterDropdown from '@/app/ui/dropdownLists/ficheAction/priorites/PrioritesFilterDropdown';
 import StatutsFilterDropdown from '@/app/ui/dropdownLists/ficheAction/statuts/StatutsFilterDropdown';
-import { Checkbox, Field, FormSection, useEventTracker } from '@/ui';
+import { Checkbox, Field, FormSection } from '@/ui';
 
 type Props = {
   filters: Filtre;
   setFilters: (filters: Filtre) => void;
-  collectiviteId: number;
 };
 
-const MenuFiltresToutesLesFichesAction = ({
-  filters,
-  setFilters,
-  collectiviteId,
-}: Props) => {
-  const tracker = useEventTracker('app/toutes-les-fiches-action');
+const MenuFiltresToutesLesFichesAction = ({ filters, setFilters }: Props) => {
   const pilotes = getPilotesValues(filters);
   const referents = getReferentsValues(filters);
 
@@ -47,9 +41,6 @@ const MenuFiltresToutesLesFichesAction = ({
                 setFilters({
                   ...rest,
                   ...(plans ? { planActionIds: plans } : {}),
-                });
-                tracker('filtre_plan_action_fa', {
-                  collectivite_id: collectiviteId!,
                 });
               }}
             />
@@ -72,9 +63,6 @@ const MenuFiltresToutesLesFichesAction = ({
                       }
                     : {}),
                 });
-                tracker('filtre_personne_pilote_fa', {
-                  collectivite_id: collectiviteId!,
-                });
               }}
             />
           </Field>
@@ -90,9 +78,6 @@ const MenuFiltresToutesLesFichesAction = ({
                     ? { servicePiloteIds: services.map((s) => s.id) }
                     : {}),
                 });
-                tracker('filtre_direction_pilote_fa', {
-                  collectivite_id: collectiviteId!,
-                });
               }}
             />
           </Field>
@@ -107,9 +92,6 @@ const MenuFiltresToutesLesFichesAction = ({
                   ...(structures
                     ? { structurePiloteIds: structures.map((s) => s.id) }
                     : {}),
-                });
-                tracker('filtre_structure_pilote_fa', {
-                  collectivite_id: collectiviteId!,
                 });
               }}
             />
@@ -137,9 +119,6 @@ const MenuFiltresToutesLesFichesAction = ({
                       }
                     : {}),
                 });
-                tracker('filtre_elu_referent_fa', {
-                  collectivite_id: collectiviteId!,
-                });
               }}
             />
           </Field>
@@ -153,9 +132,6 @@ const MenuFiltresToutesLesFichesAction = ({
                   ...rest,
                   ...(!budgetPrevisionnel ? { budgetPrevisionnel: true } : {}),
                 });
-                tracker('filtre_budge_previsionnel_total_renseigne_fa', {
-                  collectivite_id: collectiviteId!,
-                });
               }}
             />
             <Checkbox
@@ -166,9 +142,6 @@ const MenuFiltresToutesLesFichesAction = ({
                 setFilters({
                   ...rest,
                   ...(!restreint ? { restreint: true } : {}),
-                });
-                tracker('filtre_mode_prive_fa', {
-                  collectivite_id: collectiviteId!,
                 });
               }}
             />
@@ -183,9 +156,6 @@ const MenuFiltresToutesLesFichesAction = ({
                     ? { ameliorationContinue: true }
                     : {}),
                 });
-                tracker('filtre_action_se_repete_ans_fa', {
-                  collectivite_id: collectiviteId!,
-                });
               }}
             />
             <Checkbox
@@ -197,50 +167,38 @@ const MenuFiltresToutesLesFichesAction = ({
                   ...rest,
                   ...(!hasIndicateurLies ? { hasIndicateurLies: true } : {}),
                 });
-                tracker('filtre_indicateurs_associes_fa', {
-                  collectivite_id: collectiviteId!,
-                });
               }}
             />
             <Checkbox
               label="Sans pilote"
-              checked={filters.sansPilote}
+              checked={filters.noPilote}
               onChange={() => {
-                const { sansPilote, ...rest } = filters;
+                const { noPilote, ...rest } = filters;
                 setFilters({
                   ...rest,
-                  ...(!sansPilote ? { sansPilote: true } : {}),
-                });
-                tracker('filtre_sans_pilote_fa', {
-                  collectivite_id: collectiviteId!,
+                  ...(!noPilote ? { noPilote: true } : {}),
                 });
               }}
             />
             <Checkbox
               label="Sans direction ou service pilote"
-              checked={filters.sansServicePilote}
+              checked={filters.noServicePilote}
               onChange={() => {
-                const { sansServicePilote, ...rest } = filters;
+                const { noServicePilote, ...rest } = filters;
                 setFilters({
                   ...rest,
-                  ...(!sansServicePilote ? { sansServicePilote: true } : {}),
-                });
-                tracker('filtre_sans_direction_fa', {
-                  collectivite_id: collectiviteId!,
+                  ...(!noServicePilote ? { noServicePilote: true } : {}),
                 });
               }}
             />
             <Checkbox
               label="Sans statut"
-              checked={filters.sansStatut}
+              checked={filters.noStatut}
               onChange={() => {
-                const { sansStatut, ...rest } = filters;
+                const { noStatut, ...rest } = filters;
                 setFilters({
                   ...rest,
-                  ...(!sansStatut ? { sansStatut: true } : {}),
-                });
-                tracker('filtre_sans_statut_fa', {
-                  collectivite_id: collectiviteId!,
+                  ...(!noStatut ? { noStatut: true } : {}),
                 });
               }}
             />
@@ -257,9 +215,6 @@ const MenuFiltresToutesLesFichesAction = ({
                   ...rest,
                   ...(statuts ? { statuts } : {}),
                 });
-                tracker('filtre_statut_fa', {
-                  collectivite_id: collectiviteId!,
-                });
               }}
             />
           </Field>
@@ -271,9 +226,6 @@ const MenuFiltresToutesLesFichesAction = ({
                 setFilters({
                   ...rest,
                   ...(priorites ? { priorites } : {}),
-                });
-                tracker('filtre_niveau_priorite_fa', {
-                  collectivite_id: collectiviteId!,
                 });
               }}
             />
@@ -289,9 +241,6 @@ const MenuFiltresToutesLesFichesAction = ({
                     ? { thematiqueIds: thematiques.map((t) => t.id) }
                     : {}),
                 });
-                tracker('filtre_thematique_fa', {
-                  collectivite_id: collectiviteId!,
-                });
               }}
             />
           </Field>
@@ -305,9 +254,6 @@ const MenuFiltresToutesLesFichesAction = ({
                   ...(financeurs
                     ? { financeurIds: financeurs.map((f) => f.id!) }
                     : {}),
-                });
-                tracker('filtre_financeur_fa', {
-                  collectivite_id: collectiviteId!,
                 });
               }}
             />
@@ -323,9 +269,6 @@ const MenuFiltresToutesLesFichesAction = ({
                     ? { partenaireIds: partenaires.map((p) => p.id) }
                     : {}),
                 });
-                tracker('filtre_partenaires_fa', {
-                  collectivite_id: collectiviteId!,
-                });
               }}
             />
           </Field>
@@ -337,9 +280,6 @@ const MenuFiltresToutesLesFichesAction = ({
                 setFilters({
                   ...rest,
                   ...(newCibles ? { cibles: newCibles.map((c) => c) } : {}),
-                });
-                tracker('filtre_cibles_fa', {
-                  collectivite_id: collectiviteId!,
                 });
               }}
             />
