@@ -27,6 +27,9 @@ export const filtreSpecifiqueSchema = z.object({
   dateDebut: z.string().optional(),
   dateFin: z.string().optional(),
   ameliorationContinue: z.coerce.boolean().default(false).optional(),
+  typePeriode: z.enum(['creation', 'modification', 'debut', 'fin']).optional(),
+  debutPeriode: z.string().optional(),
+  finPeriode: z.string().optional(),
 });
 
 export type FiltreSpecifique = z.infer<typeof filtreSpecifiqueSchema>;
