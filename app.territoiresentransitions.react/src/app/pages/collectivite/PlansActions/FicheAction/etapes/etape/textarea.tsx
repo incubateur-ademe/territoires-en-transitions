@@ -35,6 +35,7 @@ export const Textarea = forwardRef(
         className={classNames(
           'ml-1 !p-0 font-medium !text-base text-grey-8 placeholder:!font-normal placeholder:!text-base placeholder:!italic',
           {
+            '!text-grey-8': disabled && !realise,
             'line-through !text-grey-6': realise,
           }
         )}
@@ -62,3 +63,5 @@ export const Textarea = forwardRef(
     );
   }
 );
+
+Textarea.displayName = 'Textarea';
