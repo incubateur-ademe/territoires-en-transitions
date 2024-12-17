@@ -3,41 +3,31 @@ import { useRef } from 'react';
 import { FicheAction } from '@/api/plan-actions';
 
 import { Checkbox } from '@/ui';
-import SpinnerLoader from 'ui/shared/SpinnerLoader';
 
-import { Etape, Textarea, useUpsertEtape } from './etape';
+import SpinnerLoader from '@/app/ui/shared/SpinnerLoader';
+
+import { Textarea, useUpsertEtape } from './etape';
 import { useGetEtapes } from './use-get-etapes';
+import EtapesList from './etapes-list';
+import {
+  EtapesProvider,
+  useEtapesDispatch,
+  useEtapesState,
+} from './etapes-context';
 
 type Props = {
   fiche: FicheAction;
   isReadonly: boolean;
 };
 
-const Etapes = ({ fiche, isReadonly }: Props) => {
-  const { data, isLoading } = useGetEtapes({ id: fiche.id });
+/** Étapes d'une fiche action */
+const Etapes = (props: Props) => {
+  const { fiche } = props;
 
-  const { mutate: createEtape } = useUpsertEtape();
+  const { data, isLoading } = useGetEtapes({ id: fiche.id });
 
   const etapes = data ?? [];
 
-  const etapesRealiseesCount = etapes.filter((etape) => etape.realise).length;
-
-  const createRef = useRef<HTMLTextAreaElement>(null);
-
-  const handleCreateEtape = (newTitle: string) => {
-    if (newTitle.length) {
-      createEtape({
-        ficheId: fiche.id,
-        ordre: etapes.length + 1,
-        nom: newTitle,
-      });
-      if (createRef.current) {
-        createRef.current.focus();
-      }
-    }
-  };
-
-  /** État de chargement */
   if (isLoading) {
     return (
       <div className="h-80 w-full flex justify-center items-center">
@@ -46,6 +36,57 @@ const Etapes = ({ fiche, isReadonly }: Props) => {
     );
   }
 
+  return (
+    <EtapesProvider initialState={{ etapes }}>
+      <EtapesWithContext {...props} />
+    </EtapesProvider>
+  );
+};
+
+export default Etapes;
+
+/**
+ * Utilisation d'un state localisé, récupéré via le context.
+ * Il faut donc modifier les étapes localement via le dispatch en plus du serveur.
+ *
+ * Le local state permet au drag and drop de fonctionner correctement,
+ * en évitant un bug sur l'animation du `dragEnd` avec le call API.
+ * Normalement, nous devrions faire cela via l'optimistic update de react-query, or cela ne fonctionne pas bien.
+ * Voir cette discussion pour plus d'infos: https://github.com/clauderic/dnd-kit/issues/921#issuecomment-1591744314
+ * Essai avec <DragOverlay /> sans succès.
+ */
+const EtapesWithContext = ({ fiche, isReadonly }: Props) => {
+  const { etapes } = useEtapesState();
+
+  const dispatchEtapes = useEtapesDispatch();
+
+  const { mutate: createEtape } = useUpsertEtape();
+
+  const etapesRealiseesCount = etapes.filter((etape) => etape.realise).length;
+
+  const createRef = useRef<HTMLTextAreaElement>(null);
+
+  const handleCreateEtape = (newTitle: string) => {
+    if (newTitle.length) {
+      createEtape(
+        {
+          ficheId: fiche.id,
+          ordre: etapes.length + 1,
+          nom: newTitle,
+        },
+        {
+          onSuccess: (newEtape) => {
+            dispatchEtapes({ type: 'create', payload: newEtape });
+          },
+        }
+      );
+      // Remet immédiatement le focus sur le champ de création d'étape
+      if (createRef.current) {
+        createRef.current.focus();
+      }
+    }
+  };
+
   /** Liste des étapes */
   return (
     <div className="bg-white border border-grey-3 rounded-lg py-7 lg:py-8 xl:py-10 px-5 lg:px-6 xl:px-8">
@@ -53,19 +94,10 @@ const Etapes = ({ fiche, isReadonly }: Props) => {
         Étapes {etapes.length > 0 && `${etapesRealiseesCount}/${etapes.length}`}
       </h5>
       <p className="mb-0 text-sm text-grey-6">
-        Décomposer une action en étapes distinctes afin de suivre son
-        avancement.
+        Ici, vous pouvez découper votre action comme vous le souhaitez !
       </p>
       <div className="h-[1px] w-full my-4 bg-grey-3" />
-      <div className="flex flex-col gap-1">
-        {etapes.map((etape) => (
-          <Etape
-            key={etape.id}
-            etape={etape as unknown as any}
-            isReadonly={isReadonly}
-          />
-        ))}
-      </div>
+      <EtapesList ficheId={fiche.id} etapes={etapes} isReadonly={isReadonly} />
       {/** Champ d'ajout d'une nouvelle étape */}
       {!isReadonly && (
         <div className="flex items-start p-4">
@@ -81,5 +113,3 @@ const Etapes = ({ fiche, isReadonly }: Props) => {
     </div>
   );
 };
-
-export default Etapes;

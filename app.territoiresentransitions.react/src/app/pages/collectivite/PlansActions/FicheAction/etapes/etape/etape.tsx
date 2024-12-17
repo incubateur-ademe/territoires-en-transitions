@@ -1,43 +1,78 @@
-import classNames from 'classnames';
 import { useState } from 'react';
+import classNames from 'classnames';
+import { useSortable } from '@dnd-kit/sortable';
+import { CSS } from '@dnd-kit/utilities';
 
-import { FicheActionEtapeType } from '@/backend/fiches/fiche-action-etape/fiche-action-etape.table';
+import { RouterOutput } from '@/api/utils/trpc/client';
+
 import { Button, Checkbox } from '@/ui';
 
+import { useEtapesDispatch } from '../etapes-context';
 import ModalDeleteEtape from './modal-delete-etape';
-import { useUpsertEtape } from './use-upsert-etape';
 import { Textarea } from './textarea';
+import { useUpsertEtape } from './use-upsert-etape';
 
 type Props = {
-  etape: FicheActionEtapeType;
-  isCreationEtape?: boolean;
+  etape: RouterOutput['plans']['fiches']['etapes']['list'][0];
   isReadonly: boolean;
 };
 
-export const Etape = ({ etape, isReadonly, isCreationEtape }: Props) => {
+export const Etape = ({ etape, isReadonly }: Props) => {
+  const {
+    attributes,
+    listeners,
+    setNodeRef,
+    transform,
+    transition,
+    isDragging,
+  } = useSortable({
+    id: etape.id,
+    disabled: isReadonly,
+  });
+
+  const style = {
+    transform: CSS.Transform.toString(transform),
+    transition,
+    opacity: isDragging ? 0.5 : 1,
+  };
+
   const [isDeleteModalOpen, setIsDeleteModalOpen] = useState(false);
 
+  const dispatchEtapes = useEtapesDispatch();
   const { mutate: updateEtape } = useUpsertEtape();
 
   return (
     <div
+      ref={setNodeRef}
+      style={style}
+      {...attributes}
+      {...listeners}
       className={classNames(
-        'group relative flex items-start w-full p-4 rounded-lg hover:bg-grey-2',
-        { 'bg-error-2 bg-opacity-50': isDeleteModalOpen }
+        'group relative flex items-start w-full p-4 rounded-lg',
+
+        {
+          'bg-error-2 bg-opacity-50': isDeleteModalOpen,
+          'hover:bg-grey-2': !isReadonly,
+          'cursor-default': isReadonly,
+          'z-10': isDragging,
+        }
       )}
     >
       <Checkbox
         checked={etape.realise}
-        disabled={isReadonly && isCreationEtape}
-        onChange={() =>
-          !isCreationEtape &&
+        disabled={isReadonly}
+        onChange={() => {
+          dispatchEtapes({
+            type: 'toggleRealise',
+            payload: {
+              etapeId: etape.id,
+            },
+          });
           updateEtape({
-            id: etape.id,
-            ficheId: etape.ficheId,
-            ordre: etape.ordre,
+            ...etape,
             realise: !etape.realise,
-          })
-        }
+          });
+        }}
       />
       <Textarea
         nom={etape.nom}
@@ -46,11 +81,15 @@ export const Etape = ({ etape, isReadonly, isCreationEtape }: Props) => {
         disabled={isReadonly}
         onBlur={(newTitle) => {
           if (newTitle.length) {
+            dispatchEtapes({
+              type: 'updateNom',
+              payload: {
+                etapeId: etape.id,
+                nom: newTitle,
+              },
+            });
             updateEtape({
-              id: etape.id,
-              ficheId: etape.ficheId,
-              ordre: etape.ordre,
-              realise: etape.realise,
+              ...etape,
               nom: newTitle,
             });
           } else {
