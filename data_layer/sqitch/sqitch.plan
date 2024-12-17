@@ -790,3 +790,4 @@ plan_action/fiche_note [plan_action/fiche_note@v4.28.1] 2024-12-02T09:23:16Z Mar
 indicateur/change_unite_emission_ges 2024-10-16T21:13:38Z System Administrator <root@AirdeThibaut2.lan> # changement d'unité des indicateurs d'emission GES teq CO2 vers kteq CO2
 @v4.33.0 2024-12-16T10:55:49Z System Administrator <root@MacBook-Air-de-Thibaut-2.local> # changement d'unité des indicateurs d'emission GES teq CO2 vers kteq CO2
 
+plan_action/fiches [plan_action/fiches@v4.33.0] 2024-12-17T14:05:30Z Frederic Arnoux <frederic.arnoux@beta.gouv.fr> # Add cascade constraints
