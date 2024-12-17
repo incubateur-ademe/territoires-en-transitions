@@ -72,9 +72,9 @@ export const nameToparams: Record<
   ameliorationContinue: 'ac',
   page: 'p',
   sort: 'sort',
-  sansPilote: 'ssp',
-  sansServicePilote: 'sssp',
-  sansStatut: 'sss',
+  noPilote: 'ssp',
+  noServicePilote: 'sssp',
+  noStatut: 'sss',
 };
 
 /** Page de listing de toutes les fiches actions de la collectivité */
