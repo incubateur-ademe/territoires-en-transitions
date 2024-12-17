@@ -13,8 +13,8 @@ import { ficheActionTable } from './fiche-action.table';
 export const ficheActionNoteTable = pgTable('fiche_action_note', {
   id: serial('id').primaryKey(),
   ficheId: integer('fiche_id')
-    .references(() => ficheActionTable.id)
-    .notNull(),
+    .notNull()
+    .references(() => ficheActionTable.id, { onDelete: 'cascade' }),
   dateNote: date('date_note').notNull(),
   note: text('note').notNull(),
   createdAt,
