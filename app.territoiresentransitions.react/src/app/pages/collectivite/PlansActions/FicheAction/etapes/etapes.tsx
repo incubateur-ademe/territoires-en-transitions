@@ -60,7 +60,7 @@ const EtapesWithContext = ({ fiche, isReadonly }: Props) => {
 
   const dispatchEtapes = useEtapesDispatch();
 
-  const { mutate: createEtape } = useUpsertEtape();
+  const { mutate: createEtape, isPending } = useUpsertEtape();
 
   const etapesRealiseesCount = etapes.filter((etape) => etape.realise).length;
 
@@ -77,13 +77,15 @@ const EtapesWithContext = ({ fiche, isReadonly }: Props) => {
         {
           onSuccess: (newEtape) => {
             dispatchEtapes({ type: 'create', payload: newEtape });
+            // Remet immédiatement le focus sur le champ de création d'étape
+            if (createRef.current) {
+              // set timeout pour permettre à isPending de se mettre à jour
+              // et éviter le focus si le champ est désactivé
+              setTimeout(() => createRef.current?.focus(), 25);
+            }
           },
         }
       );
-      // Remet immédiatement le focus sur le champ de création d'étape
-      if (createRef.current) {
-        createRef.current.focus();
-      }
     }
   };
 
@@ -105,7 +107,7 @@ const EtapesWithContext = ({ fiche, isReadonly }: Props) => {
           <Textarea
             ref={createRef}
             placeholder="Ajouter une étape"
-            disabled={isReadonly}
+            disabled={isReadonly || isPending}
             onBlur={handleCreateEtape}
           />
         </div>
