@@ -15,7 +15,16 @@ import ThematiquesDropdown from '@/app/ui/dropdownLists/ThematiquesDropdown/Them
 import CiblesDropdown from '@/app/ui/dropdownLists/ficheAction/CiblesDropdown/CiblesDropdown';
 import PrioritesFilterDropdown from '@/app/ui/dropdownLists/ficheAction/priorites/PrioritesFilterDropdown';
 import StatutsFilterDropdown from '@/app/ui/dropdownLists/ficheAction/statuts/StatutsFilterDropdown';
-import { Checkbox, Field, FormSection } from '@/ui';
+import {
+  Checkbox,
+  Field,
+  FormSection,
+  FormSectionGrid,
+  Input,
+  Select,
+  SelectOption,
+} from '@/ui';
+import { useRef } from 'react';
 
 type Props = {
   filters: Filtre;
@@ -25,6 +34,9 @@ type Props = {
 const MenuFiltresToutesLesFichesAction = ({ filters, setFilters }: Props) => {
   const pilotes = getPilotesValues(filters);
   const referents = getReferentsValues(filters);
+
+  const debutPeriodeRef = useRef<HTMLInputElement>(null);
+  const finPeriodeRef = useRef<HTMLInputElement>(null);
 
   return (
     <div className="w-96 md:w-[48rem] p-4 lg:p-8">
@@ -122,87 +134,18 @@ const MenuFiltresToutesLesFichesAction = ({ filters, setFilters }: Props) => {
               }}
             />
           </Field>
-          <div className="flex flex-col gap-4 !mt-6">
-            <Checkbox
-              label="Budget prévisionnel total renseigné"
-              checked={filters.budgetPrevisionnel}
-              onChange={() => {
-                const { budgetPrevisionnel, ...rest } = filters;
+          <Field title="Cibles">
+            <CiblesDropdown
+              values={filters.cibles}
+              onChange={({ cibles: newCibles }) => {
+                const { cibles, ...rest } = filters;
                 setFilters({
                   ...rest,
-                  ...(!budgetPrevisionnel ? { budgetPrevisionnel: true } : {}),
+                  ...(newCibles ? { cibles: newCibles.map((c) => c) } : {}),
                 });
               }}
             />
-            <Checkbox
-              label="Fiche action en mode privé"
-              checked={filters.restreint}
-              onChange={() => {
-                const { restreint, ...rest } = filters;
-                setFilters({
-                  ...rest,
-                  ...(!restreint ? { restreint: true } : {}),
-                });
-              }}
-            />
-            <Checkbox
-              label="L'action se répète tous les ans"
-              checked={filters.ameliorationContinue}
-              onChange={() => {
-                const { ameliorationContinue, ...rest } = filters;
-                setFilters({
-                  ...rest,
-                  ...(!ameliorationContinue
-                    ? { ameliorationContinue: true }
-                    : {}),
-                });
-              }}
-            />
-            <Checkbox
-              label="Indicateur(s) associé(s)"
-              checked={filters.hasIndicateurLies}
-              onChange={() => {
-                const { hasIndicateurLies, ...rest } = filters;
-                setFilters({
-                  ...rest,
-                  ...(!hasIndicateurLies ? { hasIndicateurLies: true } : {}),
-                });
-              }}
-            />
-            <Checkbox
-              label="Sans pilote"
-              checked={filters.noPilote}
-              onChange={() => {
-                const { noPilote, ...rest } = filters;
-                setFilters({
-                  ...rest,
-                  ...(!noPilote ? { noPilote: true } : {}),
-                });
-              }}
-            />
-            <Checkbox
-              label="Sans direction ou service pilote"
-              checked={filters.noServicePilote}
-              onChange={() => {
-                const { noServicePilote, ...rest } = filters;
-                setFilters({
-                  ...rest,
-                  ...(!noServicePilote ? { noServicePilote: true } : {}),
-                });
-              }}
-            />
-            <Checkbox
-              label="Sans statut"
-              checked={filters.noStatut}
-              onChange={() => {
-                const { noStatut, ...rest } = filters;
-                setFilters({
-                  ...rest,
-                  ...(!noStatut ? { noStatut: true } : {}),
-                });
-              }}
-            />
-          </div>
+          </Field>
         </div>
 
         <div className="*:mb-4 first:!mb-0">
@@ -272,22 +215,153 @@ const MenuFiltresToutesLesFichesAction = ({ filters, setFilters }: Props) => {
               }}
             />
           </Field>
-          <Field title="Cibles">
-            <CiblesDropdown
-              values={filters.cibles}
-              onChange={({ cibles: newCibles }) => {
-                const { cibles, ...rest } = filters;
-                setFilters({
-                  ...rest,
-                  ...(newCibles ? { cibles: newCibles.map((c) => c) } : {}),
-                });
-              }}
-            />
-          </Field>
         </div>
       </FormSection>
+
+      <hr />
+
+      <FormSectionGrid className="mb-4">
+        <Field className="col-span-2" title="Période appliquée à la date">
+          <Select
+            options={OPTIONS_FILTRE_DATE as SelectOption[]}
+            values={filters.typePeriode}
+            onChange={(value) => {
+              return setFilters({
+                ...filters,
+                typePeriode: value as Filtre['typePeriode'],
+                ...(value
+                  ? {}
+                  : { debutPeriode: undefined, finPeriode: undefined }),
+              });
+            }}
+          />
+        </Field>
+        <Field title="Du">
+          <Input
+            type="date"
+            ref={debutPeriodeRef}
+            disabled={!filters.typePeriode}
+            value={filters.debutPeriode || ''}
+            max={filters.finPeriode ? filters.finPeriode : undefined}
+            onChange={(e) =>
+              setFilters({ ...filters, debutPeriode: e.currentTarget.value })
+            }
+          />
+        </Field>
+        <Field title="Au">
+          <Input
+            type="date"
+            ref={finPeriodeRef}
+            disabled={!filters.typePeriode}
+            value={filters.finPeriode || ''}
+            min={filters.debutPeriode ? filters.debutPeriode : undefined}
+            onChange={(e) =>
+              setFilters({ ...filters, finPeriode: e.currentTarget.value })
+            }
+          />
+        </Field>
+      </FormSectionGrid>
+
+      <hr />
+
+      <FormSectionGrid>
+        <div className="flex flex-col gap-4">
+          <Checkbox
+            label="Budget prévisionnel total renseigné"
+            checked={filters.budgetPrevisionnel}
+            onChange={() => {
+              const { budgetPrevisionnel, ...rest } = filters;
+              setFilters({
+                ...rest,
+                ...(!budgetPrevisionnel ? { budgetPrevisionnel: true } : {}),
+              });
+            }}
+          />
+          <Checkbox
+            label="Fiche action en mode privé"
+            checked={filters.restreint}
+            onChange={() => {
+              const { restreint, ...rest } = filters;
+              setFilters({
+                ...rest,
+                ...(!restreint ? { restreint: true } : {}),
+              });
+            }}
+          />
+          <Checkbox
+            label="L'action se répète tous les ans"
+            checked={filters.ameliorationContinue}
+            onChange={() => {
+              const { ameliorationContinue, ...rest } = filters;
+              setFilters({
+                ...rest,
+                ...(!ameliorationContinue
+                  ? { ameliorationContinue: true }
+                  : {}),
+              });
+            }}
+          />
+          <Checkbox
+            label="Indicateur(s) associé(s)"
+            checked={filters.hasIndicateurLies}
+            onChange={() => {
+              const { hasIndicateurLies, ...rest } = filters;
+              setFilters({
+                ...rest,
+                ...(!hasIndicateurLies ? { hasIndicateurLies: true } : {}),
+              });
+            }}
+          />
+        </div>
+        <div className="flex flex-col gap-4">
+          <Checkbox
+            label="Sans pilote"
+            checked={filters.noPilote}
+            onChange={() => {
+              const { noPilote, ...rest } = filters;
+              setFilters({
+                ...rest,
+                ...(!noPilote ? { noPilote: true } : {}),
+              });
+            }}
+          />
+          <Checkbox
+            label="Sans direction ou service pilote"
+            checked={filters.noServicePilote}
+            onChange={() => {
+              const { noServicePilote, ...rest } = filters;
+              setFilters({
+                ...rest,
+                ...(!noServicePilote ? { noServicePilote: true } : {}),
+              });
+            }}
+          />
+          <Checkbox
+            label="Sans statut"
+            checked={filters.noStatut}
+            onChange={() => {
+              const { noStatut, ...rest } = filters;
+              setFilters({
+                ...rest,
+                ...(!noStatut ? { noStatut: true } : {}),
+              });
+            }}
+          />
+        </div>
+      </FormSectionGrid>
     </div>
   );
 };
+
+// options pour le filtrage par plage de dates
+const OPTIONS_FILTRE_DATE: Array<{
+  value: Filtre['typePeriode'];
+  label: string;
+}> = [
+  { value: 'creation', label: 'de création' },
+  { value: 'modification', label: 'de modification' },
+  { value: 'debut', label: 'de début' },
+  { value: 'fin', label: 'de fin prévisionnelle' },
+];
 
 export default MenuFiltresToutesLesFichesAction;

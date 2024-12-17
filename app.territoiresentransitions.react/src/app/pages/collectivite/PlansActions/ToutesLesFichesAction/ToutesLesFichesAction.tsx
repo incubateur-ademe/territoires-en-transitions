@@ -39,13 +39,13 @@ export type FicheActionParam =
   | 'sort'
   | 'ssp'
   | 'sssp'
-  | 'sss';
+  | 'sss'
+  | 'tp'
+  | 'dp'
+  | 'fp';
 
 // TODO: implémenter les filtres "sans" (ex. "sans_pilote")
-export const nameToparams: Record<
-  keyof Filtre | 'sort' | 'page',
-  FicheActionParam
-> = {
+export const nameToparams: Record<keyof Filtre | 'sort' | 'page', FicheActionParam> = {
   statuts: 's',
   priorites: 'prio',
   modifiedSince: 'ms',
@@ -75,6 +75,9 @@ export const nameToparams: Record<
   noPilote: 'ssp',
   noServicePilote: 'sssp',
   noStatut: 'sss',
+  typePeriode: 'tp',
+  debutPeriode: 'dp',
+  finPeriode: 'fp',
 };
 
 /** Page de listing de toutes les fiches actions de la collectivité */
@@ -156,6 +159,15 @@ const convertParamsToFilters = (paramFilters: Filtre) => {
   }
   if (paramFilters.dateFin && Array.isArray(paramFilters.dateFin)) {
     paramFilters.dateFin = paramFilters.dateFin[0];
+  }
+  if (paramFilters.typePeriode && Array.isArray(paramFilters.typePeriode)) {
+    paramFilters.typePeriode = paramFilters.typePeriode[0];
+  }
+  if (paramFilters.debutPeriode && Array.isArray(paramFilters.debutPeriode)) {
+    paramFilters.debutPeriode = paramFilters.debutPeriode[0];
+  }
+  if (paramFilters.finPeriode && Array.isArray(paramFilters.finPeriode)) {
+    paramFilters.finPeriode = paramFilters.finPeriode[0];
   }
   return paramFilters;
 };
