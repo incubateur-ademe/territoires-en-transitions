@@ -30,14 +30,20 @@ docker:
 deploy: ## Déploie le backend dans une app Koyeb existante
   ARG --required KOYEB_API_KEY
   ARG --required DEPLOYMENT_TIMESTAMP
-  ARG SERVICE_NAME=$ENV_NAME-tools-automation-api
+  ARG SERVICE_NAME=$ENV_NAME-tools-autom-api ## Max 23 characters
   FROM ../../+koyeb --KOYEB_API_KEY=$KOYEB_API_KEY
 
   RUN ./koyeb services update $SERVICE_NAME/tools-automation-api \
     --debug \
-    --docker $BACKEND_IMG_NAME \
+    --docker $TOOLS_AUTOMATION_API_IMG_NAME \
     --env ENV_NAME=$ENV_NAME \
-    --env DEPLOYMENT_TIMESTAMP=$DEPLOYMENT_TIMESTAMP
+    --env DEPLOYMENT_TIMESTAMP=$DEPLOYMENT_TIMESTAMP \
+    --env CRISP_TOKEN_IDENTIFIER=@CRISP_TOKEN_IDENTIFIER_$ENV_NAME \
+    --env CRISP_TOKEN_KEY=@CRISP_TOKEN_KEY_$ENV_NAME \
+    --env NOTION_TOKEN=@NOTION_TOKEN_$ENV_NAME \
+    --env NOTION_BUG_DATABASE_ID=@NOTION_BUG_DATABASE_ID_$ENV_NAME \
+    --env NOTION_BUG_EPIC_ID=@NOTION_BUG_EPIC_ID_$ENV_NAME \
+    --env NOTION_BUG_TEMPLATE_ID=@NOTION_BUG_TEMPLATE_ID_$ENV_NAME
 
 test-build: ## construit une image pour exécuter les tests du backend
     FROM ../../+front-deps
