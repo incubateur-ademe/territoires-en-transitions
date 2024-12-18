@@ -6,7 +6,6 @@ import {
   makeCollectivitePanierUrl,
   makeCollectivitePersoRefUrl,
   makeCollectivitePlansActionsLandingUrl,
-  makeCollectivitePlansActionsSyntheseUrl,
   makeCollectiviteTousLesIndicateursUrl,
   makeCollectiviteToutesLesFichesUrl,
   makeCollectiviteTrajectoirelUrl,
@@ -199,13 +198,6 @@ const makeNavItemsBase = (
           label: 'Toutes les fiches action',
           dataTest: 'pa-fa-toutes',
           to: makeCollectiviteToutesLesFichesUrl({
-            collectiviteId,
-          }),
-        },
-        {
-          label: 'Répartition des fiches action',
-          dataTest: 'pa-fa-repartition',
-          to: makeCollectivitePlansActionsSyntheseUrl({
             collectiviteId,
           }),
         },

@@ -65,7 +65,7 @@ test-build: ## construit une image pour exécuter les tests du backend
     #ENV SUPABASE_ANON_KEY
     #ENV SUPABASE_SERVICE_ROLE_KEY
     # la commande utilisée pour lancer les tests
-    CMD pnpm run test:backend
+    CMD pnpm --version && pnpm run test:backend
     SAVE IMAGE backend-test:latest
 
 test: ## lance les tests

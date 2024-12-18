@@ -15,7 +15,7 @@ export const moduleCommonSchemaInsert = z.object({
   collectiviteId: z.number(),
   userId: z.string().uuid().nullish(),
   titre: z.string(),
-  slug: z.string(),
+  defaultKey: z.string(),
   type: moduleTypeSchema,
 });
 
@@ -64,13 +64,15 @@ export const moduleSchemaInsert = z.discriminatedUnion('type', [
 export type ModuleSelect = z.input<typeof moduleSchemaSelect>;
 export type ModuleInsert = z.input<typeof moduleSchemaInsert>;
 
-export const defaultSlugsSchema = z.enum([
+export const personalDefaultModuleKeysSchema = z.enum([
   'indicateurs-de-suivi-de-mes-plans',
   'actions-dont-je-suis-pilote',
   'actions-recemment-modifiees',
 ]);
 
-export type Slug = z.infer<typeof defaultSlugsSchema>;
+export type PersonalDefaultModuleKeys = z.infer<
+  typeof personalDefaultModuleKeysSchema
+>;
 
 export type Filtre = FiltreIndicateurs | FiltreFicheActions;
 
@@ -81,22 +83,25 @@ type Props = {
 };
 
 /**
- * Retourne le module de base par défaut correspondant au slug donné.
+ * Retourne le module de base par défaut correspondant à la clé donnée.
  */
 export async function getDefaultModule(
-  slug: string,
+  defaultKey: string,
   { userId, collectiviteId, getPlanActionIds }: Props
 ) {
   const now = new Date().toISOString();
 
-  if (slug === defaultSlugsSchema.enum['actions-dont-je-suis-pilote']) {
+  if (
+    defaultKey ===
+    personalDefaultModuleKeysSchema.enum['actions-dont-je-suis-pilote']
+  ) {
     return {
       id: crypto.randomUUID(),
       userId,
       collectiviteId,
       titre: 'Actions dont je suis le pilote',
       type: 'fiche_action.list',
-      slug,
+      defaultKey,
       options: {
         filtre: {
           utilisateurPiloteIds: [userId],
@@ -107,14 +112,17 @@ export async function getDefaultModule(
     } as ModuleFicheActionsSelect;
   }
 
-  if (slug === defaultSlugsSchema.enum['actions-recemment-modifiees']) {
+  if (
+    defaultKey ===
+    personalDefaultModuleKeysSchema.enum['actions-recemment-modifiees']
+  ) {
     return {
       id: crypto.randomUUID(),
       userId,
       collectiviteId,
       titre: 'Actions récemment modifiées',
       type: 'fiche_action.list',
-      slug,
+      defaultKey,
       options: {
         filtre: {
           modifiedSince: 'last-90-days',
@@ -127,7 +135,10 @@ export async function getDefaultModule(
     } as ModuleFicheActionsSelect;
   }
 
-  if (slug === defaultSlugsSchema.enum['indicateurs-de-suivi-de-mes-plans']) {
+  if (
+    defaultKey ===
+    personalDefaultModuleKeysSchema.enum['indicateurs-de-suivi-de-mes-plans']
+  ) {
     const planActionIds = await getPlanActionIds();
 
     return {
@@ -136,7 +147,10 @@ export async function getDefaultModule(
       collectiviteId,
       titre: 'Indicateurs de suivi de mes plans',
       type: 'indicateur.list',
-      slug: defaultSlugsSchema.enum['indicateurs-de-suivi-de-mes-plans'],
+      defaultKey:
+        personalDefaultModuleKeysSchema.enum[
+          'indicateurs-de-suivi-de-mes-plans'
+        ],
       options: {
         // Le filtre par défaut affiche les indicateurs liés à tous les plans d'actions de la collectivité
         filtre: {
@@ -151,5 +165,7 @@ export async function getDefaultModule(
     } as ModuleIndicateursSelect;
   }
 
-  throw new Error(`Le slug ${slug} n'est pas un slug de module par défaut.`);
+  throw new Error(
+    `La clé ${defaultKey} n'est pas une clé de module par défaut.`
+  );
 }

@@ -1,3 +1,4 @@
 export * from './Input';
-export {validateOTP} from './InputOTP';
-export {validateTel} from './InputTel';
+export * from './InputDateTime';
+export { validateOTP } from './InputOTP';
+export { validateTel } from './InputTel';

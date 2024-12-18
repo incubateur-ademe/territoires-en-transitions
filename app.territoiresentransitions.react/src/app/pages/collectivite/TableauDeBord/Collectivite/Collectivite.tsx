@@ -1,4 +1,4 @@
-import ModuleAvancementFichesAction from '@/app/app/pages/collectivite/TableauDeBord/Collectivite/ModuleAvancementFichesAction/ModuleAvancementFichesAction';
+import ModuleFichesActionCountBy from '@/app/app/pages/collectivite/TableauDeBord/Collectivite/ModuleFichesActionCountBy/ModuleFichesActionCountBy';
 import ModuleAvancementPlansAction from '@/app/app/pages/collectivite/TableauDeBord/Collectivite/ModuleSuiviPlansAction/ModuleSuiviPlansAction';
 import { useCollectiviteModulesFetch } from '@/app/app/pages/collectivite/TableauDeBord/Collectivite/useCollectiviteModulesFetch';
 import SpinnerLoader from '@/app/ui/shared/SpinnerLoader';
@@ -28,22 +28,20 @@ const Collectivite = () => {
   }
 
   return modules.map((module) => {
-    if (module.type === 'fiche-action.count-by-status') {
-      if (module.slug === 'fiche-actions-par-statut') {
-        return (
-          <ModuleAvancementFichesAction
-            key={module.slug}
-            view={'collectivite'}
-            module={module}
-          />
-        );
-      }
+    if (module.type === 'fiche-action.count-by') {
+      return (
+        <ModuleFichesActionCountBy
+          key={module.id}
+          view={'collectivite'}
+          module={module}
+        />
+      );
     }
     if (module.type === 'plan-action.list') {
-      if (module.slug === 'suivi-plan-actions') {
+      if (module.defaultKey === 'suivi-plan-actions') {
         return (
           <ModuleAvancementPlansAction
-            key={module.slug}
+            key={module.id}
             view={'collectivite'}
             module={module}
           />

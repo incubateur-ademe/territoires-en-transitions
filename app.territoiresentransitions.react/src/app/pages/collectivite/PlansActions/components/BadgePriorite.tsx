@@ -3,12 +3,19 @@ import classNames from 'classnames';
 
 import { TFicheActionNiveauxPriorite } from '@/app/types/alias';
 
-export const prioritesToState: Record<TFicheActionNiveauxPriorite, BadgeState> =
-  {
-    Bas: 'success',
-    Moyen: 'warning',
-    Élevé: 'error',
-  };
+type Extends<T, U extends T> = U;
+export type PrioriteState = Extends<
+  BadgeState,
+  'success' | 'warning' | 'error'
+>;
+export const prioritesToState: Record<
+  TFicheActionNiveauxPriorite,
+  PrioriteState
+> = {
+  Bas: 'success',
+  Moyen: 'warning',
+  Élevé: 'error',
+};
 
 type Props = {
   className?: string;

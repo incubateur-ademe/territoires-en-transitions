@@ -1,5 +1,4 @@
 import { useState } from 'react';
-import { QueryKey, useQueryClient } from 'react-query';
 
 import {
   ButtonGroup,
@@ -10,35 +9,32 @@ import {
   ModalProps,
 } from '@/ui';
 
-import { modulesSave } from '@/api/plan-actions/dashboards/collectivite-dashboard';
-import { ModulePlanActionListSelect } from '@/api/plan-actions/dashboards/collectivite-dashboard/domain/module.schema';
 import { FetchFilter } from '@/api/plan-actions/plan-actions.list/domain/fetch-options.schema';
+import { useCollectiviteModuleUpsert } from '@/app/app/pages/collectivite/TableauDeBord/Collectivite/useCollectiviteModuleUpsert';
 import {
   ModuleDisplay,
   ModuleDisplaySettings,
 } from '@/app/app/pages/collectivite/TableauDeBord/components/Module';
 import { getDisplayButtons } from '@/app/app/pages/collectivite/TableauDeBord/components/utils';
-import { supabaseClient } from '@/app/core-logic/api/supabase';
 import PersonnesDropdown from '@/app/ui/dropdownLists/PersonnesDropdown/PersonnesDropdown';
 import {
   getPilotesValues,
   splitPilotePersonnesAndUsers,
 } from '@/app/ui/dropdownLists/PersonnesDropdown/utils';
 import PlansActionDropdown from '@/app/ui/dropdownLists/PlansActionDropdown';
+import { ModulePlanActionListType } from '@/domain/collectivites';
 
 type Props = ModalProps & {
-  module: ModulePlanActionListSelect;
+  module: ModulePlanActionListType;
   displaySettings: ModuleDisplaySettings;
-  keysToInvalidate?: QueryKey[];
 };
 
 const ModalSuiviPlansAction = ({
   openState,
   module,
   displaySettings,
-  keysToInvalidate,
 }: Props) => {
-  const queryClient = useQueryClient();
+  const { mutate: upsertCollectiviteModule } = useCollectiviteModuleUpsert();
 
   const [display, setDisplay] = useState<ModuleDisplay>(
     displaySettings.display
@@ -101,22 +97,11 @@ const ModalSuiviPlansAction = ({
           }}
           btnOKProps={{
             onClick: async () => {
-              await modulesSave({
-                dbClient: supabaseClient,
-                module: {
-                  ...module,
-                  options: {
-                    filtre: filtreState,
-                  },
-                },
-              });
+              upsertCollectiviteModule(module);
 
               displaySettings.display !== display &&
                 displaySettings.setDisplay(display);
 
-              keysToInvalidate?.forEach((key) =>
-                queryClient.invalidateQueries(key)
-              );
               close();
             },
           }}

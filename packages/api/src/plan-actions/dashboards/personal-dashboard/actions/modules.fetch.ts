@@ -2,9 +2,9 @@ import { planActionsFetch } from '@/api/plan-actions';
 import { DBClient } from '@/api/typeUtils';
 import { objectToCamel } from 'ts-case-convert';
 import {
-  ModuleSelect,
-  defaultSlugsSchema,
   getDefaultModule,
+  ModuleSelect,
+  personalDefaultModuleKeysSchema,
 } from '../domain/module.schema';
 
 export type ModuleFetchReturnValue = Array<ModuleSelect>;
@@ -55,18 +55,18 @@ async function mergeWithDefaultModules(
   fetchedModules: ModuleFetchReturnValue,
   props: Props
 ) {
-  // On crée une map des modules récupérés avec le slug comme clé
+  // On crée une map des modules récupérés avec la clé ou l'id (si pas module par défaut) comme clé
   const fetchedModulesMap = new Map(
-    fetchedModules.map((module) => [module.slug, module])
+    fetchedModules.map((module) => [module.defaultKey || module.id, module])
   );
 
   // On ajoute les modules par défaut non présents dans les modules récupérés
-  for (const slug of defaultSlugsSchema.options) {
-    if (fetchedModulesMap.get(slug)) {
+  for (const defaultKey of personalDefaultModuleKeysSchema.options) {
+    if (fetchedModulesMap.get(defaultKey)) {
       continue;
     }
 
-    const defaultModule = await getDefaultModule(slug, {
+    const defaultModule = await getDefaultModule(defaultKey, {
       ...props,
       getPlanActionIds: () =>
         planActionsFetch({ ...props }).then((data) =>
@@ -74,19 +74,19 @@ async function mergeWithDefaultModules(
         ),
     });
 
-    fetchedModulesMap.set(slug, defaultModule);
+    fetchedModulesMap.set(defaultKey, defaultModule);
   }
 
   // Ordonne manuellement les modules pour qu'ils apparaissent dans l'ordre voulu
   return [
     fetchedModulesMap.get(
-      defaultSlugsSchema.enum['indicateurs-de-suivi-de-mes-plans']
+      personalDefaultModuleKeysSchema.enum['indicateurs-de-suivi-de-mes-plans']
     ) as ModuleSelect,
     fetchedModulesMap.get(
-      defaultSlugsSchema.enum['actions-dont-je-suis-pilote']
+      personalDefaultModuleKeysSchema.enum['actions-dont-je-suis-pilote']
     ) as ModuleSelect,
     fetchedModulesMap.get(
-      defaultSlugsSchema.enum['actions-recemment-modifiees']
+      personalDefaultModuleKeysSchema.enum['actions-recemment-modifiees']
     ) as ModuleSelect,
   ];
 }

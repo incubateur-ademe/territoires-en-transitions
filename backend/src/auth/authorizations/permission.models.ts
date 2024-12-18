@@ -54,6 +54,7 @@ export const Permission: Record<Role, PermissionOperation[]> = {
   [Role.ADMIN]: [
     PermissionOperation.COLLECTIVITES_VISITE,
     PermissionOperation.COLLECTIVITES_LECTURE,
+    PermissionOperation.COLLECTIVITES_TABLEAU_DE_BORD_EDITION,
     PermissionOperation.REFERENTIELS_LECTURE,
     PermissionOperation.REFERENTIELS_EDITION,
     PermissionOperation.PLANS_FICHES_VISITE,

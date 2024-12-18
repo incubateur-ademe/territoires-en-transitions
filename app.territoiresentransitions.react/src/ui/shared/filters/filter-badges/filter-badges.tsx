@@ -1,38 +1,45 @@
-import classNames from 'classnames';
-
-import { Badge } from '@/ui';
+import { BadgesContainer } from '@/ui';
 
 type Props = {
   /** valeurs des badges à afficher */
   badges?: string[];
   className?: string;
+  maxDisplayedFilterCount?: number;
   resetFilters?: () => void;
 };
 
 /** Liste de badges représentant les filtres actifs avec
  * bouton de réinitialisation de ces filtres. */
-const FilterBadges = ({ className, badges, resetFilters }: Props) => {
-  if (!badges || badges.length === 0) {
-    return null;
-  }
-
+const FilterBadges = ({
+  className,
+  badges,
+  maxDisplayedFilterCount,
+  resetFilters,
+}: Props) => {
   return (
-    <div className={classNames('flex flex-wrap gap-x-4 gap-y-2', className)}>
-      {badges.map((filter, i) => (
-        <Badge key={i} title={filter} state="standard" size="sm" trim={false} />
-      ))}
-      {resetFilters && (
-        <button onClick={resetFilters}>
-          <Badge
-            icon="delete-bin-6-line"
-            iconPosition="left"
-            title="Supprimer tous les filtres"
-            state="default"
-            size="sm"
-          />
-        </button>
-      )}
-    </div>
+    <BadgesContainer
+      badges={badges}
+      className={className}
+      badgeProps={{ state: 'standard', size: 'sm', trim: false }}
+      maxDisplayedBadge={
+        maxDisplayedFilterCount
+          ? { count: maxDisplayedFilterCount, label: 'filtre(s)' }
+          : undefined
+      }
+      endButtonBadge={
+        resetFilters
+          ? {
+              title: 'Supprimer tous les filtres',
+              onClick: resetFilters,
+              props: {
+                icon: 'delete-bin-6-line',
+                iconPosition: 'left',
+                state: 'default',
+              },
+            }
+          : undefined
+      }
+    />
   );
 };
 

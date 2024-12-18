@@ -1,7 +1,10 @@
 import { signIn, signOut } from '@/api/tests/auth';
 import { supabase } from '@/api/tests/supabase';
 import { beforeEach, expect, test } from 'vitest';
-import { defaultSlugsSchema } from '../domain/module.schema';
+import {
+  ModuleInsert,
+  personalDefaultModuleKeysSchema,
+} from '../domain/module.schema';
 import { modulesFetch } from './modules.fetch';
 import { modulesSave } from './modules.save';
 import { moduleNew, resetModules } from './modules.test-fixture';
@@ -44,11 +47,12 @@ test("Renvoie les 3 modules par défaut si aucun n'a été précédemment enregi
 });
 
 test('Renvoie un module enregistré et les 2 autres par défaut', async () => {
-  const slug = defaultSlugsSchema.enum['actions-dont-je-suis-pilote'];
+  const moduleDefaultKey =
+    personalDefaultModuleKeysSchema.enum['actions-dont-je-suis-pilote'];
 
-  const myModule = {
+  const myModule: ModuleInsert = {
     ...moduleNew,
-    slug: slug,
+    defaultKey: moduleDefaultKey,
   };
 
   await modulesSave({
@@ -76,15 +80,16 @@ test('Renvoie un module enregistré et les 2 autres par défaut', async () => {
     {
       titre: expect.stringMatching(/actions/i),
       type: 'fiche_action.list',
-      slug: expect.not.stringMatching(slug),
+      defaultKey: expect.not.stringMatching(moduleDefaultKey),
     },
   ]);
 });
 
 test("RLS: Vérifie l'accès en lecture sur la collectivité", async () => {
-  const myModule = {
+  const myModule: ModuleInsert = {
     ...moduleNew,
-    slug: defaultSlugsSchema.enum['actions-dont-je-suis-pilote'],
+    defaultKey:
+      personalDefaultModuleKeysSchema.enum['actions-dont-je-suis-pilote'],
   };
 
   await modulesSave({

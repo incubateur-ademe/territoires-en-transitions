@@ -1,6 +1,6 @@
-import {ComponentType, lazy as originalLazy} from 'react';
+import { ComponentType, lazy as originalLazy } from 'react';
 
-type ImportComponent = () => Promise<{default: ComponentType<any>}>;
+type ImportComponent = () => Promise<{ default: ComponentType<any> }>;
 
 const FORCE_REFRESH = 'force-refresh';
 
@@ -25,7 +25,10 @@ export const lazy = (importComponent: ImportComponent) =>
     } catch (error) {
       // en cas d'erreur on essaye de faire un rechargement complet de la page
       // si ça n'a pas déjà été tenté
-      if (!isPageHasBeenForceRefreshed) {
+      if (
+        (error as Error).name === 'ChunkLoadError' &&
+        !isPageHasBeenForceRefreshed
+      ) {
         localStorage.setItem(FORCE_REFRESH, 'true');
         return document.location.reload();
       }

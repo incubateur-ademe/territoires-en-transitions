@@ -1,22 +1,22 @@
-import {cloneElement, useState} from 'react';
 import {
-  useFloating,
-  offset,
-  useInteractions,
-  useDismiss,
-  shift,
-  useClick,
-  FloatingPortal,
   FloatingFocusManager,
+  FloatingPortal,
+  OffsetOptions,
   Placement,
   autoUpdate,
+  offset,
+  shift,
   size,
-  OffsetOptions,
+  useClick,
+  useDismiss,
+  useFloating,
+  useInteractions,
 } from '@floating-ui/react';
+import { cloneElement, useState } from 'react';
 
 type DropdownFloaterProps = {
   children: JSX.Element;
-  render: (data: {close: () => void}) => React.ReactNode;
+  render: (data: { close: () => void }) => React.ReactNode;
   placement?: Placement;
   /** Toggle l'état d'ouverture avec des clics répétés sur le bouton d'ouverture. Défaut `true` */
   toggle?: boolean;
@@ -46,7 +46,7 @@ const DropdownFloater = ({
 }: DropdownFloaterProps) => {
   const [isOpen, setIsOpen] = useState(false);
 
-  const {x, y, strategy, refs, context} = useFloating({
+  const { x, y, strategy, refs, context } = useFloating({
     open: disabled ? false : isOpen,
     onOpenChange: disabled ? () => null : setIsOpen,
     placement: placement ?? 'bottom',
@@ -55,7 +55,7 @@ const DropdownFloater = ({
       offset(offsetValue),
       shift(),
       size({
-        apply({rects, elements, availableHeight}) {
+        apply({ rects, elements, availableHeight }) {
           Object.assign(elements.floating.style, {
             maxHeight: `${availableHeight}px`,
             overflowY: 'auto',
@@ -69,10 +69,10 @@ const DropdownFloater = ({
     ],
   });
 
-  const click = useClick(context, {keyboardHandlers: false, toggle});
+  const click = useClick(context, { keyboardHandlers: false, toggle });
   const dismiss = useDismiss(context);
 
-  const {getReferenceProps, getFloatingProps} = useInteractions([
+  const { getReferenceProps, getFloatingProps } = useInteractions([
     click,
     dismiss,
   ]);
@@ -117,7 +117,9 @@ const DropdownFloater = ({
               })}
             >
               {render({
-                close: () => setIsOpen(false),
+                close: () => {
+                  setIsOpen(false);
+                },
               })}
             </div>
           </FloatingFocusManager>

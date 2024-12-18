@@ -2,7 +2,7 @@ import { Button } from '@/ui/design-system/Button';
 import { ButtonProps } from '../Button/types';
 import { ModalFooter, ModalFooterProps } from './ModalFooter';
 
-type ModalFooterOKCancelProps = Omit<
+export type ModalFooterOKCancelProps = Omit<
   ModalFooterProps,
   'children' | 'variant'
 > & {
