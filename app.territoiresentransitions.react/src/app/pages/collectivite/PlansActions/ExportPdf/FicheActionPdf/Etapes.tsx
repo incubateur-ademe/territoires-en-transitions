@@ -7,14 +7,6 @@ import classNames from 'classnames';
 import { Text } from '@react-pdf/renderer';
 import { tw } from '@/app/ui/export-pdf/utils';
 
-const EtapesCard = () => {
-  <Card wrap={false}>
-    <Title variant="h4" className="text-primary-8">
-      Indicateurs de suivi
-    </Title>
-  </Card>;
-};
-
 type Props = {
   etapes: RouterOutput['plans']['fiches']['etapes']['list'];
 };
@@ -38,7 +30,7 @@ const Etapes = ({ etapes }: Props) => {
             <Text
               style={tw(
                 classNames({
-                  'line-through !text-grey-6': etape.realise,
+                  'line-through': etape.realise,
                 })
               )}
             >
