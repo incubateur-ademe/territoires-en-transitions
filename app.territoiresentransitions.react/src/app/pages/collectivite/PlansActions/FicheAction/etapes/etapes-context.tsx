@@ -42,7 +42,7 @@ type Dispatch = (action: Action) => void;
 const StateContext = createContext<State | undefined>(undefined);
 const DispatchContext = createContext<Dispatch | undefined>(undefined);
 
-const panelReducer = (state: State, action: Action) => {
+const etapesReducer = (state: State, action: Action) => {
   const { etapes } = state;
   switch (action.type) {
     case 'create': {
@@ -92,9 +92,21 @@ const panelReducer = (state: State, action: Action) => {
     }
     case 'delete': {
       const { etapeId } = action.payload;
+
+      const etapeOrder = etapes.find((etape) => etape.id === etapeId)?.ordre;
+
+      const filteredEtapes = etapes.filter((etape) => etape.id !== etapeId);
+
       return {
         ...state,
-        etapes: etapes.filter((etape) => etape.id !== etapeId),
+        etapes: etapeOrder
+          ? filteredEtapes.map((e) => {
+              if (e.ordre > etapeOrder) {
+                return { ...e, ordre: e.ordre - 1 };
+              }
+              return e;
+            })
+          : filteredEtapes,
       };
     }
     default:
@@ -109,7 +121,7 @@ export const EtapesProvider = ({
   initialState: State;
   children: ReactNode;
 }) => {
-  const [state, dispatch] = useReducer(panelReducer, initialState);
+  const [state, dispatch] = useReducer(etapesReducer, initialState);
   return (
     <StateContext.Provider value={state}>
       <DispatchContext.Provider value={dispatch}>
@@ -123,7 +135,7 @@ export const useEtapesState = () => {
   const context = useContext(StateContext);
 
   if (context === undefined) {
-    throw new Error('usePanelSate must be used within a EtapesProvider');
+    throw new Error('useEtapesState must be used within a EtapesProvider');
   }
   return context;
 };
@@ -132,7 +144,7 @@ export const useEtapesDispatch = () => {
   const context = useContext(DispatchContext);
 
   if (context === undefined) {
-    throw new Error('usePanelDispatch must be used within a EtapesProvider');
+    throw new Error('useEtapesDispatch must be used within a EtapesProvider');
   }
   return context;
 };
