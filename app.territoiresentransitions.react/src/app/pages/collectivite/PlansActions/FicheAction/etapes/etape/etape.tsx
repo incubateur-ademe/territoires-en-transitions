@@ -30,10 +30,10 @@ export const Etape = ({ etape, isReadonly }: Props) => {
     disabled: isReadonly,
   });
 
-  // permet de corriger un bug avec le scale de l'élêment qui est drag
+  // permet de corriger un bug de hauteur avec le scale de l'élêment qui est drag
   const custromTransform = transform
     ? isDragging
-      ? { ...transform, scaleY: 1 }
+      ? { ...transform, scaleY: 1 } // renforce le scale
       : transform
     : null;
 
