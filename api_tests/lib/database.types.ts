@@ -13052,7 +13052,7 @@ export type Database = {
           id: string
           modified_at: string
           options: Json
-          slug: string
+          default_key: string
           titre: string
           type: string
           user_id: string | null
@@ -13063,7 +13063,7 @@ export type Database = {
           id?: string
           modified_at?: string
           options: Json
-          slug: string
+          default_key: string
           titre: string
           type: string
           user_id?: string | null
@@ -13074,7 +13074,7 @@ export type Database = {
           id?: string
           modified_at?: string
           options?: Json
-          slug?: string
+          default_key?: string
           titre?: string
           type?: string
           user_id?: string | null

@@ -2,31 +2,30 @@ import { useState } from 'react';
 
 import { TrackPageView } from '@/ui';
 
-import {
-  ModulePlanActionListSelect,
-  Slug,
-} from '@/api/plan-actions/dashboards/collectivite-dashboard/domain/module.schema';
 import PlansActionListe from '@/app/app/pages/collectivite/PlansActions/PlanAction/list/PlansActionListe';
-import { useCollectiviteModuleFetch } from '@/app/app/pages/collectivite/TableauDeBord/Collectivite/useColectiviteModuleFetch';
+import { useCollectiviteModuleFetch } from '@/app/app/pages/collectivite/TableauDeBord/Collectivite/useCollectiviteModuleFetch';
 import { ModuleDisplay } from '@/app/app/pages/collectivite/TableauDeBord/components/Module';
 import ModulePage from '@/app/app/pages/collectivite/TableauDeBord/components/ModulePage';
 import { TDBViewParam } from '@/app/app/paths';
 import { useCurrentCollectivite } from '@/app/core-logic/hooks/useCurrentCollectivite';
+import {
+  ModulePlanActionListType
+} from '@/domain/collectivites';
 import { pick } from 'es-toolkit';
 
 type Props = {
   view: TDBViewParam;
-  slug: Slug;
 };
 
 /** Page du module suivi des plans d'action de la collectivité */
-const ModuleSuiviPlansActionPage = ({ view, slug }: Props) => {
+const ModuleSuiviPlansActionPage = ({ view }: Props) => {
+
   const { data: dataModule, isLoading: isModuleLoading } =
-    useCollectiviteModuleFetch(slug);
+    useCollectiviteModuleFetch('suivi-plan-actions');
 
   const collectivite = useCurrentCollectivite()!;
 
-  const tdbModule = dataModule as ModulePlanActionListSelect;
+  const tdbModule = dataModule as ModulePlanActionListType;
 
   const [display, setDisplay] = useState<ModuleDisplay>('row');
 
@@ -37,7 +36,7 @@ const ModuleSuiviPlansActionPage = ({ view, slug }: Props) => {
   return (
     <ModulePage view={view} title={tdbModule.titre}>
       <TrackPageView
-        pageName={`app/tdb/collectivite/${slug}`}
+        pageName={`app/tdb/collectivite/suivi-plan-actions`}
         properties={pick(collectivite, [
           'collectiviteId',
           'niveauAcces',
@@ -65,7 +64,7 @@ const ModuleSuiviPlansActionPage = ({ view, slug }: Props) => {
         //       module={module}
         //       openState={openState}
         //       displaySettings={{ display, setDisplay }}
-        //       keysToInvalidate={[getQueryKey(slug)]}
+        //       keysToInvalidate={[getQueryKey(defaultModuleKey)]}
         //     />
         //   </>
         // ) : undefined}

@@ -20,7 +20,7 @@ import {
   Field,
   FormSection,
   FormSectionGrid,
-  Input,
+  InputDateTime,
   Select,
   SelectOption,
 } from '@/ui';
@@ -28,11 +28,16 @@ import { useRef } from 'react';
 import TagsSuiviPersoDropdown from '../../../../../ui/dropdownLists/TagsSuiviPersoDropdown/TagsSuiviPersoDropdown';
 
 type Props = {
+  title?: string;
   filters: Filtre;
   setFilters: (filters: Filtre) => void;
 };
 
-const MenuFiltresToutesLesFichesAction = ({ filters, setFilters }: Props) => {
+const MenuFiltresToutesLesFichesAction = ({
+  title = 'Nouveau filtre :',
+  filters,
+  setFilters,
+}: Props) => {
   const pilotes = getPilotesValues(filters);
   const referents = getReferentsValues(filters);
 
@@ -42,7 +47,7 @@ const MenuFiltresToutesLesFichesAction = ({ filters, setFilters }: Props) => {
   return (
     <div className="w-96 md:w-[48rem] p-4 lg:p-8">
       <FormSection
-        title="Nouveau filtre :"
+        title={title}
         className="!grid-cols-1 md:!grid-cols-2 gap-x-8"
       >
         <div className="*:mb-4 first:!mb-0">
@@ -150,18 +155,6 @@ const MenuFiltresToutesLesFichesAction = ({ filters, setFilters }: Props) => {
               }}
             />
           </Field>
-          <Field title="Cibles">
-            <CiblesDropdown
-              values={filters.cibles}
-              onChange={({ cibles: newCibles }) => {
-                const { cibles, ...rest } = filters;
-                setFilters({
-                  ...rest,
-                  ...(newCibles ? { cibles: newCibles.map((c) => c) } : {}),
-                });
-              }}
-            />
-          </Field>
         </div>
 
         <div className="*:mb-4 first:!mb-0">
@@ -231,6 +224,18 @@ const MenuFiltresToutesLesFichesAction = ({ filters, setFilters }: Props) => {
               }}
             />
           </Field>
+          <Field title="Cibles">
+            <CiblesDropdown
+              values={filters.cibles}
+              onChange={({ cibles: newCibles }) => {
+                const { cibles, ...rest } = filters;
+                setFilters({
+                  ...rest,
+                  ...(newCibles ? { cibles: newCibles.map((c) => c) } : {}),
+                });
+              }}
+            />
+          </Field>
         </div>
       </FormSection>
 
@@ -253,27 +258,25 @@ const MenuFiltresToutesLesFichesAction = ({ filters, setFilters }: Props) => {
           />
         </Field>
         <Field title="Du">
-          <Input
-            type="date"
+          <InputDateTime
             ref={debutPeriodeRef}
             disabled={!filters.typePeriode}
-            value={filters.debutPeriode || ''}
-            max={filters.finPeriode ? filters.finPeriode : undefined}
-            onChange={(e) =>
-              setFilters({ ...filters, debutPeriode: e.currentTarget.value })
-            }
+            value={filters.debutPeriode}
+            max={filters.finPeriode ?? undefined}
+            onDateTimeChange={(debutPeriodeValue, e) => {
+              setFilters({ ...filters, debutPeriode: debutPeriodeValue });
+            }}
           />
         </Field>
         <Field title="Au">
-          <Input
-            type="date"
+          <InputDateTime
             ref={finPeriodeRef}
             disabled={!filters.typePeriode}
-            value={filters.finPeriode || ''}
-            min={filters.debutPeriode ? filters.debutPeriode : undefined}
-            onChange={(e) =>
-              setFilters({ ...filters, finPeriode: e.currentTarget.value })
-            }
+            value={filters.finPeriode}
+            min={filters.debutPeriode ?? undefined}
+            onDateTimeChange={(finPeriodeValue, e) => {
+              setFilters({ ...filters, finPeriode: finPeriodeValue });
+            }}
           />
         </Field>
       </FormSectionGrid>

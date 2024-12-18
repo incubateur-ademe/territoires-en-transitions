@@ -9,15 +9,16 @@ export { preset } from './tailwind-preset';
 export * from './hooks/useCopyToClipboard';
 
 // dossier composants
+export * from './components/EmptyCard/EmptyCard';
+export * from './components/InfoActionImpact';
 export * from './components/layout';
 export * from './components/tracking';
-export * from './components/InfoActionImpact';
-export * from './components/EmptyCard/EmptyCard';
 
 // dossier design-system
 export * from './design-system/Accordion';
 export * from './design-system/Alert';
 export * from './design-system/Badge';
+export * from './design-system/BottomOkCancel';
 export * from './design-system/Breadcrumbs';
 export * from './design-system/Button';
 export * from './design-system/Card';
@@ -34,9 +35,9 @@ export * from './design-system/Notification';
 export * from './design-system/Pagination';
 export * from './design-system/RadioButton';
 export * from './design-system/Select';
+export * from './design-system/Table';
 export * from './design-system/Tabs';
 export * from './design-system/Tag';
-export * from './design-system/Table';
 export * from './design-system/Textarea';
 export * from './design-system/Tooltip';
 

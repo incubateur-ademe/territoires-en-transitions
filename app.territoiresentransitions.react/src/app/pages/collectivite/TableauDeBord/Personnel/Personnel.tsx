@@ -31,7 +31,7 @@ const Personnel = () => {
     if (module.type === 'indicateur.list') {
       return (
         <ModuleIndicateurs
-          key={module.slug}
+          key={module.defaultKey}
           view={'personnel'}
           module={module}
         />
@@ -40,7 +40,7 @@ const Personnel = () => {
     if (module.type === 'fiche_action.list') {
       return (
         <ModuleFichesActions
-          key={module.slug}
+          key={module.defaultKey}
           view={'personnel'}
           module={module}
         />

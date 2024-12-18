@@ -4,11 +4,11 @@ import { objectToCamel } from 'ts-case-convert';
 import {
   ModuleFicheActionsSelect,
   ModuleIndicateursSelect,
-  Slug,
+  PersonalDefaultModuleKeys,
   getDefaultModule,
 } from '../domain/module.schema';
 
-export type ReturnType<S extends Slug> =
+export type ReturnType<S extends PersonalDefaultModuleKeys> =
   S extends 'indicateurs-de-suivi-de-mes-plans'
     ? ModuleIndicateursSelect
     : ModuleFicheActionsSelect;
@@ -16,16 +16,16 @@ export type ReturnType<S extends Slug> =
 /**
  * Fetch un module spécifique du tableau de bord d'une collectivité et d'un user.
  */
-export async function moduleFetch<S extends Slug>({
+export async function moduleFetch<S extends PersonalDefaultModuleKeys>({
   dbClient,
   collectiviteId,
   userId,
-  slug,
+  defaultModuleKey,
 }: {
   dbClient: DBClient;
   collectiviteId: number;
   userId: string;
-  slug: S;
+  defaultModuleKey: S;
 }): Promise<ReturnType<S>> {
   try {
     const query = dbClient
@@ -33,7 +33,7 @@ export async function moduleFetch<S extends Slug>({
       .select('*')
       .eq('collectivite_id', collectiviteId)
       .eq('user_id', userId)
-      .eq('slug', slug)
+      .eq('default_key', defaultModuleKey)
       .limit(1);
 
     const { data: rawData, error } = await query;
@@ -46,7 +46,7 @@ export async function moduleFetch<S extends Slug>({
 
     const tdbModule = data.length
       ? data[0]
-      : await getDefaultModule(slug, {
+      : await getDefaultModule(defaultModuleKey, {
           collectiviteId,
           userId,
           getPlanActionIds: () =>
@@ -55,18 +55,18 @@ export async function moduleFetch<S extends Slug>({
             ),
         });
 
-    if (slug === 'indicateurs-de-suivi-de-mes-plans') {
-      return tdbModule as ReturnType<typeof slug>;
+    if (defaultModuleKey === 'indicateurs-de-suivi-de-mes-plans') {
+      return tdbModule as ReturnType<typeof defaultModuleKey>;
     }
 
     if (
-      slug === 'actions-dont-je-suis-pilote' ||
-      slug === 'actions-recemment-modifiees'
+      defaultModuleKey === 'actions-dont-je-suis-pilote' ||
+      defaultModuleKey === 'actions-recemment-modifiees'
     ) {
-      return tdbModule as ReturnType<typeof slug>;
+      return tdbModule as ReturnType<typeof defaultModuleKey>;
     }
 
-    throw new Error(`Module: Slug inconnu '${slug}'`);
+    throw new Error(`Module: clé inconnue '${defaultModuleKey}'`);
   } catch (error) {
     console.error(error);
     throw error;

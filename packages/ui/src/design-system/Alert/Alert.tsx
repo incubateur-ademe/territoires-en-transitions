@@ -3,7 +3,7 @@ import classNames from 'classnames';
 import { useState } from 'react';
 import { AlertState, alertClassnames, stateToIcon } from './utils';
 
-type AlertProps = {
+export type AlertProps = {
   /** Titre du bloc alerte */
   title?: string;
   /** Texte additionnel optionnel */
@@ -79,7 +79,7 @@ export const Alert = ({
         )}
 
         {/* Titre et texte additionnel */}
-        <div className="flex flex-col gap-3 justify-center">
+        <div className="w-full flex flex-col gap-3 justify-center">
           {!!title && (
             <div className={classNames('text-base font-bold', styles.text)}>
               {title}

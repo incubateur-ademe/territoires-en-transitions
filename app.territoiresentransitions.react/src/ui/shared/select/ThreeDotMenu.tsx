@@ -4,7 +4,7 @@ import classNames from 'classnames';
 import { forwardRef, Ref } from 'react';
 import { TOption } from './commons';
 
-type TOptionWithIcon = TOption & { icon?: string };
+export type TOptionWithIcon = TOption & { icon?: string };
 
 /** Affiche un bouton "..." permettant d'ouvrir un menu déroulant */
 const ThreeDotMenu = ({
@@ -14,13 +14,13 @@ const ThreeDotMenu = ({
   options,
   /** styles complémentaires pour le bouton */
   buttonClassname,
-  /** appelée lorsqu'une option est sélectionnée */
+  /** appelée lorsqu'une option est sélectionnée, return true si on veut éviter de fermer le menu pour le fermer plus tard */
   onSelect,
 }: {
   dataTest?: string;
   options: TOptionWithIcon[];
   buttonClassname?: string;
-  onSelect: (value: string) => void;
+  onSelect: (value: string, close: () => void) => boolean | void;
 }) => {
   return (
     <DropdownFloater
@@ -36,8 +36,10 @@ const ThreeDotMenu = ({
                 <button
                   className="fr-nav__link !flex !items-center !text-bf500 !py-2 !px-3 before:!hidden !shadow-none"
                   onClick={() => {
-                    onSelect(value);
-                    close();
+                    const doNotClose = onSelect(value, close);
+                    if (!doNotClose) {
+                      close();
+                    }
                   }}
                 >
                   {icon && (

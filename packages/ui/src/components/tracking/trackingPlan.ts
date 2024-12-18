@@ -1,3 +1,5 @@
+import { CountByPropertyEnumType } from '@/domain/plans/fiches';
+
 /* eslint-disable @typescript-eslint/ban-types */
 type OptionValue = number | string;
 
@@ -180,7 +182,10 @@ export interface TrackingPlan extends Record<never, Page> {
     onglets: never;
     events: {
       // clic sur le bouton "éditer" de chaque module
-      tdb_modifier_filtres_avancement_actions: {};
+      tdb_modifier_filtres_count_by_actions: {
+        countByProperty: CountByPropertyEnumType;
+      };
+      tdb_valider_module_perso: { countByProperty: CountByPropertyEnumType };
       tdb_modifier_filtres_suivi_plans: {};
     };
   };

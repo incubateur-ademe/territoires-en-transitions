@@ -1,8 +1,9 @@
 import { generateTitle } from '@/app/app/pages/collectivite/PlansActions/FicheAction/data/utils';
 import Statuts from '@/app/app/pages/collectivite/PlansActions/PlanAction/list/card/Statuts';
-import { useFichesActionStatuts } from '@/app/app/pages/collectivite/TableauDeBord/Collectivite/ModuleAvancementFichesAction/useFichesActionStatuts';
+import { useFichesActionCountBy } from '@/app/app/pages/collectivite/TableauDeBord/Collectivite/ModuleFichesActionCountBy/useFichesActionCountBy';
 import { ModuleDisplay } from '@/app/app/pages/collectivite/TableauDeBord/components/Module';
-import { Axe } from '@/domain/plans/fiches';
+import { Axe, Statut } from '@/domain/plans/fiches';
+import { CountByRecordType } from '@/domain/utils';
 import { Card } from '@/ui';
 import classNames from 'classnames';
 
@@ -24,8 +25,8 @@ const PlanActionCard = ({
   openInNewTab,
   display = 'row',
 }: Props) => {
-  const { data: countByStatut } = useFichesActionStatuts({
-    plan_ids: plan.id.toString(),
+  const { data: countByResponse } = useFichesActionCountBy('statut', {
+    planActionIds: plan.id.toString(),
   });
 
   const axesCount = plan.axes?.reduce(
@@ -43,9 +44,7 @@ const PlanActionCard = ({
     { axe: 0, sousAxe: 0 }
   );
 
-  const fichesCount = countByStatut
-    ? Object.values(countByStatut).reduce((acc, curr) => acc + curr.count, 0)
-    : 0;
+  const fichesCount = countByResponse?.total || 0;
 
   return (
     <Card
@@ -66,9 +65,9 @@ const PlanActionCard = ({
         )}
       </div>
       {/** Statuts de fiches */}
-      {countByStatut && (
+      {countByResponse?.countByResult && (
         <Statuts
-          statuts={countByStatut}
+          statuts={countByResponse.countByResult as CountByRecordType<Statut>}
           fichesCount={fichesCount}
           display={display}
         />

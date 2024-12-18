@@ -1,5 +1,3 @@
-import { cloneElement, useState } from 'react';
-import { flushSync } from 'react-dom';
 import {
   autoUpdate,
   FloatingNode,
@@ -14,12 +12,14 @@ import {
   useFloatingNodeId,
   useInteractions,
 } from '@floating-ui/react';
+import { cloneElement, useState } from 'react';
+import { flushSync } from 'react-dom';
 
-import { ButtonProps } from './types';
-import { Button } from './Button';
 import { OpenState } from '../../utils/types';
+import { Button } from './Button';
+import { ButtonProps } from './types';
 
-type Props = {
+export type ButtonMenuProps = {
   /** Le contenu du menu */
   children: React.ReactNode;
   /** Placement du menu pour l'élément floating-ui */
@@ -41,7 +41,7 @@ export const ButtonMenu = ({
   children,
   text,
   ...props
-}: Props) => {
+}: ButtonMenuProps) => {
   const isControlled = !!openState;
   const [open, setOpen] = useState(false);
 

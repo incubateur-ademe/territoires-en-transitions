@@ -28,7 +28,9 @@ build:
   ENV NEXT_PUBLIC_CRISP_WEBSITE_ID=$CRISP_WEBSITE_ID
   ENV NEXT_PUBLIC_SENTRY_DSN=$SENTRY_DSN
 
-  RUN pnpm build:app
+  RUN pnpm --version
+
+  RUN pnpm build:app --excludeTaskDependencies
 
   SAVE ARTIFACT ./app.territoiresentransitions.react/.next
   SAVE ARTIFACT ./app.territoiresentransitions.react/public

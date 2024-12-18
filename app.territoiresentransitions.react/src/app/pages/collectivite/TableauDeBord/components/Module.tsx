@@ -1,14 +1,23 @@
 import { usePlanActionsCount } from '@/app/app/pages/collectivite/PlansActions/PlanAction/data/usePlanActionsCount';
+import { ModuleEditDeleteButtons } from '@/app/app/pages/collectivite/TableauDeBord/components/ModuleEditDeleteButtons';
 import { getDisplayButtons } from '@/app/app/pages/collectivite/TableauDeBord/components/utils';
 import FilterBadges, {
   BadgeFilters,
   useFiltersToBadges,
 } from '@/app/ui/shared/filters/filter-badges';
 import SpinnerLoader from '@/app/ui/shared/SpinnerLoader';
-import { Button, ButtonGroup } from '@/ui';
+import { createEnumObject } from '@/domain/utils';
+import {
+  ActionsMenu,
+  BottomOkCancel,
+  ButtonGroup,
+  InfoTooltip,
+  MenuAction,
+} from '@/ui';
+import { PictoWarning } from '@/ui/design-system/Picto/PictoWarning';
 import { OpenState } from '@/ui/utils/types';
 import classNames from 'classnames';
-import React, { useState } from 'react';
+import React, { useCallback, useMemo, useState } from 'react';
 
 export type ModuleDisplay = 'circular' | 'row';
 
@@ -21,14 +30,27 @@ export type ModuleDisplaySettings = {
 type Props = {
   /** Titre du module */
   title: string;
+
+  /**
+   * Texte à afficher quand on survole une icone d'info ajoutée à côté du titre.
+   */
+  titleTooltip?: string;
+
   /** Symbole du module (picto svg) */
   symbole?: React.ReactNode;
   /** Fonction d'affichage de la modale avec les filtres du modules,
    * à afficher au clique des boutons d'édition.
    * Récupère le state d'ouverture en argument */
   editModal?: (modalState: OpenState) => React.ReactNode;
+
+  /**
+   * Fonction appelée lors de la confirmation de suppression du module.
+   */
+  onDeleteConfirmed?: () => void;
   /** État de loading générique */
   isLoading: boolean;
+
+  isError?: boolean;
   /** État vide générique */
   isEmpty: boolean;
   /** Filtre du module */
@@ -46,23 +68,36 @@ type Props = {
   displaySettings?: ModuleDisplaySettings;
   /** Permet par exemple de donner une fonction de tracking */
   onSettingsClick?: () => void;
+
+  /**
+   * Fonction appelée lors du clic sur le bouton de téléchargement.
+   */
+  onDownloadClick?: () => void;
 };
+
+const moduleMenuOptionValues = ['delete', 'edit', 'download'] as const;
+const ModuleMenuOptionEnum = createEnumObject(moduleMenuOptionValues);
 
 /** Composant générique d'un module du tableau de bord plans d'action */
 const Module = ({
   title,
+  titleTooltip,
   filtre = {},
   symbole,
   editModal,
+  onDeleteConfirmed,
   isLoading,
+  isError,
   isEmpty,
   children,
   className,
   footerButtons,
   displaySettings,
   onSettingsClick,
+  onDownloadClick,
 }: Props) => {
-  const [isModalOpen, setIsModalOpen] = useState(false);
+  const [isEditModalOpen, setIsEditModalOpen] = useState(false);
+  const [isConfirmDeleteOpen, setIsConfirmDeleteOpen] = useState(false);
 
   const { count } = usePlanActionsCount();
 
@@ -72,6 +107,78 @@ const Module = ({
       planActions: filtre.planActionIds?.length === count && 'Tous les plans',
     },
   });
+
+  const onDeleteButtonClicked = useCallback(() => {
+    setIsConfirmDeleteOpen(true);
+  }, []);
+
+  const onEditButtonClicked = useCallback(() => {
+    setIsEditModalOpen(true);
+    onSettingsClick?.();
+  }, [onSettingsClick]);
+
+  const moduleOptions = useMemo<MenuAction[]>(() => {
+    const options: MenuAction[] = [];
+    if (editModal) {
+      options.push({
+        label: 'Modifier',
+        icon: 'edit-line',
+        onClick: onEditButtonClicked,
+      });
+    }
+    if (onDeleteConfirmed) {
+      options.push({
+        label: 'Supprimer le module',
+        icon: 'delete-bin-line',
+        onClick: () => {
+          onDeleteButtonClicked();
+          // return true to keep the menu opened. Will be closed by the BottomOkCancel confirmation
+          return true;
+        },
+      });
+    }
+    if (onDownloadClick) {
+      options.push({
+        label: 'Télécharger',
+        icon: 'download-line',
+        onClick: onDownloadClick,
+      });
+    }
+
+    return options;
+  }, [
+    editModal,
+    onDeleteConfirmed,
+    onDeleteButtonClicked,
+    onEditButtonClicked,
+  ]);
+
+  const renderEditModalDeleteAlert = useMemo(() => {
+    return (
+      <>
+        {isConfirmDeleteOpen && (
+          <BottomOkCancel
+            title="Confirmer la suppression du module"
+            btnOKProps={{
+              onClick: () => {
+                onDeleteConfirmed?.();
+                setIsConfirmDeleteOpen(false);
+              },
+            }}
+            btnCancelProps={{
+              onClick: () => {
+                setIsConfirmDeleteOpen(false);
+              },
+            }}
+          />
+        )}
+        {editModal?.({
+          isOpen: isEditModalOpen,
+          setIsOpen: setIsEditModalOpen,
+        })}
+      </>
+    );
+  }, [onDeleteConfirmed, editModal, isEditModalOpen, isConfirmDeleteOpen]);
 
   if (isLoading) {
     return (
@@ -83,7 +190,7 @@ const Module = ({
     );
   }
 
-  if (isEmpty) {
+  if (isError) {
     return (
       <ModuleContainer
         className={classNames(
@@ -91,56 +198,85 @@ const Module = ({
           className
         )}
       >
-        <div className="mb-4">{symbole}</div>
-        <h4 className="mb-2 text-primary-8">{title}</h4>
-        <div className="flex flex-col items-center gap-6">
-          <p className="mb-0 font-bold text-primary-9">
-            Aucun résultat pour ce filtre !
-          </p>
-          <FilterBadges className="justify-center" badges={filterBadges} />
-          {editModal && (
-            <Button
-              size="sm"
-              onClick={() => {
-                setIsModalOpen(true);
-                onSettingsClick?.();
-              }}
-            >
-              Modifier le filtre
-            </Button>
-          )}
+        <div className="mb-4">
+          <PictoWarning />
         </div>
-        {editModal?.({ isOpen: isModalOpen, setIsOpen: setIsModalOpen })}
+        <h6 className="mb-2 text-primary-8">
+          Erreur lors du changement des données !
+        </h6>
+        <div className="w-full flex flex-col items-center gap-6">
+          <p className={classNames('mb-0', 'text-primary-9')}>{title}</p>
+          <FilterBadges
+            maxDisplayedFilterCount={1}
+            className="justify-center"
+            badges={filterBadges}
+          />
+          <ModuleEditDeleteButtons
+            onDeleteClicked={
+              onDeleteConfirmed ? onDeleteButtonClicked : undefined
+            }
+            onEditClicked={editModal ? onEditButtonClicked : undefined}
+          />
+        </div>
+        {renderEditModalDeleteAlert}
+      </ModuleContainer>
+    );
+  }
+
+  if (isEmpty) {
+    return (
+      <ModuleContainer
+        className={classNames(
+          '!gap-0 items-center text-center justify-center !bg-primary-0',
+          className
+        )}
+      >
+        <div className="mb-4">{symbole}</div>
+        <h6 className="mb-2 text-primary-8">{title}</h6>
+        <div className="w-full flex flex-col items-center gap-6">
+          <p className="mb-0 text-primary-9">Aucun résultat pour ce filtre !</p>
+          <FilterBadges
+            maxDisplayedFilterCount={1}
+            className="justify-center"
+            badges={filterBadges}
+          />
+          <ModuleEditDeleteButtons
+            onDeleteClicked={
+              onDeleteConfirmed ? onDeleteButtonClicked : undefined
+            }
+            onEditClicked={editModal ? onEditButtonClicked : undefined}
+          />
+        </div>
+        {renderEditModalDeleteAlert}
       </ModuleContainer>
     );
   }
 
   return (
     <ModuleContainer className={classNames('!border-grey-3', className)}>
-      <div className="flex items-start gap-20">
-        <h6 className="mb-0">{title}</h6>
+      <div className="flex justify-between items-start gap-2">
+        <h6 className="mb-0">
+          {title}
+          {titleTooltip ? (
+            <InfoTooltip
+              iconClassName="ml-2"
+              label={
+                <div className="max-w-sm !font-normal leading-none">
+                  {titleTooltip}
+                </div>
+              }
+            />
+          ) : null}
+        </h6>
         <>
           {/** Bouton d'édition des filtres du module + modale */}
-          {editModal && (
-            <>
-              <Button
-                variant="grey"
-                icon="edit-line"
-                size="xs"
-                className="ml-auto"
-                onClick={() => {
-                  setIsModalOpen(true);
-                  onSettingsClick?.();
-                }}
-              />
-              {isModalOpen &&
-                editModal({ isOpen: isModalOpen, setIsOpen: setIsModalOpen })}
-            </>
+          {(editModal || onDeleteConfirmed) && (
+            <ActionsMenu actions={moduleOptions} />
           )}
         </>
       </div>
       {/** Filtres du module */}
-      <FilterBadges badges={filterBadges} />
+      <FilterBadges maxDisplayedFilterCount={1} badges={filterBadges} />
       {/** Contenu du module */}
       <div className="flex-grow">{children}</div>
       {/** Footer buttons */}
@@ -163,6 +299,7 @@ const Module = ({
           )}
         </div>
       )}
+      {renderEditModalDeleteAlert}
     </ModuleContainer>
   );
 };

@@ -1,10 +1,11 @@
+import PlanActionsService from '@/backend/plans/fiches/plan-actions.service';
 import { Module } from '@nestjs/common';
 import { AuthModule } from '../../auth/auth.module';
 import { CollectivitesModule } from '../../collectivites/collectivites.module';
 import { BulkEditRouter } from './bulk-edit/bulk-edit.router';
 import { BulkEditService } from './bulk-edit/bulk-edit.service';
-import { CountByStatutRouter } from './count-by-statut/count-by-statut.router';
-import { CountByStatutService } from './count-by-statut/count-by-statut.service';
+import { CountByRouter } from './count-by/count-by.router';
+import { CountByService } from './count-by/count-by.service';
 import { FicheActionEtapeRouter } from './fiche-action-etape/fiche-action-etape.router';
 import { FicheActionEtapeService } from './fiche-action-etape/fiche-action-etape.service';
 import FicheService from './fiche.service';
@@ -14,9 +15,10 @@ import { FichesActionController } from './fiches-action.controller';
 @Module({
   imports: [AuthModule, CollectivitesModule],
   providers: [
+    PlanActionsService,
     FicheService,
-    CountByStatutService,
-    CountByStatutRouter,
+    CountByService,
+    CountByRouter,
     BulkEditService,
     BulkEditRouter,
     FichesActionUpdateService,
@@ -24,8 +26,9 @@ import { FichesActionController } from './fiches-action.controller';
     FicheActionEtapeRouter,
   ],
   exports: [
-    CountByStatutService,
-    CountByStatutRouter,
+    PlanActionsService,
+    CountByService,
+    CountByRouter,
     FicheActionEtapeService,
     FicheActionEtapeRouter,
     BulkEditRouter,

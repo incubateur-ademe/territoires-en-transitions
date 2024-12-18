@@ -1,5 +1,8 @@
 import BadgeStatut from '@/app/app/pages/collectivite/PlansActions/components/BadgeStatut';
-import { statutToColor } from '@/app/app/pages/collectivite/PlansActions/FicheAction/utils';
+import {
+  SANS_STATUT_LABEL,
+  statutToColor,
+} from '@/app/app/pages/collectivite/PlansActions/FicheAction/utils';
 import { ModuleDisplay } from '@/app/app/pages/collectivite/TableauDeBord/components/Module';
 import Chart from '@/app/ui/charts/Chart';
 import { Statut } from '@/domain/plans/fiches';
@@ -9,7 +12,7 @@ type Props = {
   statuts: {
     [key: string]: {
       count: number;
-      valeur: Statut | 'Sans statut';
+      value: Statut | null;
     };
   };
   fichesCount: number;
@@ -26,10 +29,10 @@ const Statuts = ({ statuts, fichesCount, display }: Props) => {
             className: '!h-60',
             data: statuts
               ? Object.entries(statuts)
-                  .map(([statut, { count, valeur }]) => ({
+                  .map(([statut, { count, value }]) => ({
                     id: statut,
                     value: count,
-                    color: statutToColor[valeur],
+                    color: statutToColor[value || SANS_STATUT_LABEL],
                   }))
                   .filter(({ value }) => value > 0)
               : [],
@@ -69,18 +72,18 @@ const Statuts = ({ statuts, fichesCount, display }: Props) => {
           label={
             <div className="max-w-56 flex gap-2 flex-wrap">
               {Object.entries(statuts).map(
-                ([statut, { count, valeur }]) =>
+                ([statut, { count, value }]) =>
                   count > 0 && (
                     <BadgeStatut
                       key={statut}
-                      statut={valeur}
+                      statut={value || SANS_STATUT_LABEL}
                       count={count}
                       size="sm"
                     />
                   )
               )}
               {/** Si contient uniquement des fiches sans statut */}
-              {fichesCount === statuts['Sans statut']?.count && (
+              {fichesCount === statuts['null']?.count && (
                 <div className="font-normal">
                   Complétez les statuts de vos fiches action pour voir la
                   répartition
@@ -91,14 +94,15 @@ const Statuts = ({ statuts, fichesCount, display }: Props) => {
         >
           <div className="flex">
             {Object.entries(statuts).map(
-              ([_, { count, valeur }]) =>
+              ([_, { count, value }]) =>
                 count > 0 && (
                   <span
-                    key={valeur}
+                    key={value || SANS_STATUT_LABEL}
                     className="h-3 first:rounded-s-full last:rounded-e-full"
                     style={{
                       width: `${(count / fichesCount) * 100}%`,
-                      backgroundColor: statutToColor[valeur],
+                      backgroundColor:
+                        statutToColor[value || SANS_STATUT_LABEL],
                     }}
                   />
                 )

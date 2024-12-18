@@ -43,7 +43,12 @@ export type FicheActionParam =
   | 'sss'
   | 'tp'
   | 'dp'
-  | 'fp';
+  | 'fp'
+  | 'pe'
+  | 'st'
+  | 'ea'
+  | 'pc'
+  | 'ax';
 
 export const nameToparams: Record<
   keyof Filtre | 'sort' | 'page',
@@ -82,6 +87,12 @@ export const nameToparams: Record<
   typePeriode: 'tp',
   debutPeriode: 'dp',
   finPeriode: 'fp',
+  // Not supported for now in filters
+  //piliersEci: 'pe',
+  // sousThematiques: 'st',
+  //effetsAttendus: 'ea',
+  //participationCitoyenneType: 'pc',
+  //axes: 'ax',
 };
 
 /** Page de listing de toutes les fiches actions de la collectivité */

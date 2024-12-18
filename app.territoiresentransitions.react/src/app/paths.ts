@@ -90,8 +90,6 @@ export const collectivitePlansActionsBasePath = `${collectivitePath}/plans`;
 export const collectivitePlansActionsNouveauPath = `${collectivitePlansActionsBasePath}/nouveau`;
 export const collectivitePlansActionsCreerPath = `${collectivitePlansActionsBasePath}/creer`;
 export const collectivitePlansActionsImporterPath = `${collectivitePlansActionsBasePath}/importer`;
-export const collectivitePlansActionsSynthesePath = `${collectivitePlansActionsBasePath}/synthese`;
-export const collectivitePlansActionsSyntheseVuePath = `${collectivitePlansActionsSynthesePath}/:${syntheseParam}`;
 export const collectivitePlanActionLandingPath = `${collectivitePlansActionsBasePath}/plan`;
 export const collectivitePlanActionPath = `${collectivitePlanActionLandingPath}/:${planParam}`;
 export const collectivitePlanActionFichePath = `${collectivitePlanActionPath}/fiche/:${ficheParam}`;
@@ -322,27 +320,6 @@ export const makeCollectivitePlansActionsLandingUrl = ({
     `:${collectiviteParam}`,
     collectiviteId.toString()
   );
-
-export const makeCollectivitePlansActionsSyntheseUrl = ({
-  collectiviteId,
-}: {
-  collectiviteId: number;
-}) =>
-  collectivitePlansActionsSynthesePath.replace(
-    `:${collectiviteParam}`,
-    collectiviteId.toString()
-  );
-
-export const makeCollectivitePlansActionsSyntheseVueUrl = ({
-  collectiviteId,
-  vue,
-}: {
-  collectiviteId: number;
-  vue: string;
-}) =>
-  collectivitePlansActionsSyntheseVuePath
-    .replace(`:${collectiviteParam}`, collectiviteId.toString())
-    .replace(`:${syntheseParam}`, vue);
 
 export const makeCollectiviteToutesLesFichesUrl = ({
   collectiviteId,

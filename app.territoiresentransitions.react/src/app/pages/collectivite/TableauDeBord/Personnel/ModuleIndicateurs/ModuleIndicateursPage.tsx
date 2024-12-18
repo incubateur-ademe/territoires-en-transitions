@@ -2,7 +2,7 @@ import { Button, TrackPageView, useEventTracker } from '@/ui';
 
 import {
   ModuleIndicateursSelect,
-  Slug,
+  PersonalDefaultModuleKeys,
 } from '@/api/plan-actions/dashboards/personal-dashboard/domain/module.schema';
 import IndicateursListe from '@/app/app/pages/collectivite/Indicateurs/lists/indicateurs-list';
 import { usePlanActionsCount } from '@/app/app/pages/collectivite/PlansActions/PlanAction/data/usePlanActionsCount';
@@ -18,14 +18,14 @@ import { pick } from 'es-toolkit';
 
 type Props = {
   view: TDBViewParam;
-  slug: Slug;
+  defaultModuleKey: PersonalDefaultModuleKeys;
 };
 
-const ModuleIndicateursPage = ({ view, slug }: Props) => {
-  const collectivite = useCurrentCollectivite()!;
+const ModuleIndicateursPage = ({ view, defaultModuleKey }: Props) => {
+  const collectivite = useCurrentCollectivite();
 
   const { data: module, isLoading: isModuleLoading } =
-    usePersonalModuleFetch(slug);
+    usePersonalModuleFetch(defaultModuleKey);
 
   const filtre = module?.options.filtre;
 
@@ -41,8 +41,8 @@ const ModuleIndicateursPage = ({ view, slug }: Props) => {
   return (
     <ModulePage view={view} title={module.titre}>
       <TrackPageView
-        pageName={`app/tdb/personnel/${slug}`}
-        properties={pick(collectivite, [
+        pageName={`app/tdb/personnel/${defaultModuleKey}`}
+        properties={pick(collectivite!, [
           'collectiviteId',
           'niveauAcces',
           'role',
@@ -64,7 +64,7 @@ const ModuleIndicateursPage = ({ view, slug }: Props) => {
               onClick={() => {
                 openState.setIsOpen(true);
                 trackEvent('tdb_modifier_filtres_indicateurs', {
-                  ...collectivite,
+                  ...collectivite!,
                 });
               }}
             >
@@ -74,7 +74,7 @@ const ModuleIndicateursPage = ({ view, slug }: Props) => {
               <ModalIndicateursSuiviPlan
                 openState={openState}
                 module={module as ModuleIndicateursSelect}
-                keysToInvalidate={[getQueryKey(slug)]}
+                keysToInvalidate={[getQueryKey(defaultModuleKey)]}
               />
             )}
           </>

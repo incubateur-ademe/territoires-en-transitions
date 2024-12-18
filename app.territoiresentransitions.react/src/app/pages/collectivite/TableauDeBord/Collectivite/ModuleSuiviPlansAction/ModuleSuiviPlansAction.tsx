@@ -1,6 +1,5 @@
 import { useState } from 'react';
 
-import { ModulePlanActionListSelect } from '@/api/plan-actions/dashboards/collectivite-dashboard/domain/module.schema';
 import { usePlansActionsListe } from '@/app/app/pages/collectivite/PlansActions/PlanAction/data/usePlansActionsListe';
 import PlanActionCard from '@/app/app/pages/collectivite/PlansActions/PlanAction/list/card/PlanActionCard';
 import Module, {
@@ -13,12 +12,13 @@ import {
 } from '@/app/app/paths';
 import { useCurrentCollectivite } from '@/app/core-logic/hooks/useCurrentCollectivite';
 import PictoDocument from '@/app/ui/pictogrammes/PictoDocument';
+import { ModulePlanActionListType } from '@/domain/collectivites';
 import { Button, useEventTracker } from '@/ui';
 import { useRouter } from 'next/navigation';
 
 type Props = {
   view: TDBViewParam;
-  module: ModulePlanActionListSelect;
+  module: ModulePlanActionListType;
 };
 
 /** Module pour afficher l'avancement des fiches action */
@@ -72,7 +72,7 @@ const ModuleSuiviPlansAction = ({ view, module }: Props) => {
                 makeTableauBordModuleUrl({
                   collectiviteId: module.collectiviteId,
                   view,
-                  module: module.slug,
+                  module: module.defaultKey!,
                 })
               )
             }

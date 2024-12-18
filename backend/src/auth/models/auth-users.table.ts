@@ -4,7 +4,7 @@ import { createdAt } from '../../utils/column.utils';
 export const authSchemaDB = pgSchema('auth');
 
 export const authUsersTable = authSchemaDB.table('users', {
-  id: uuid('user_id').primaryKey().notNull(),
+  id: uuid('id').primaryKey().notNull(),
   email: varchar('email', { length: 255 }),
   createdAt,
 

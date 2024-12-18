@@ -1,5 +1,5 @@
 import { createdAt, modifiedAt, modifiedBy } from '@/domain/utils';
-import { InferInsertModel } from 'drizzle-orm';
+import { InferInsertModel, InferSelectModel } from 'drizzle-orm';
 import {
   AnyPgColumn,
   integer,
@@ -34,6 +34,8 @@ export const axeTable = pgTable('axe', {
 export type CreateAxeType = InferInsertModel<typeof axeTable>;
 
 export const axeTableSchema = createSelectSchema(axeTable);
+
+export type AxeType = InferSelectModel<typeof axeTable>;
 
 export const axeSchema = axeTableSchema.extend({
   axes: axeTableSchema.array().nullish(),

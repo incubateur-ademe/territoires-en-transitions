@@ -1,5 +1,5 @@
 import { moduleFetch } from '@/api/plan-actions/dashboards/personal-dashboard/actions/module.fetch';
-import { Slug } from '@/api/plan-actions/dashboards/personal-dashboard/domain/module.schema';
+import { PersonalDefaultModuleKeys } from '@/api/plan-actions/dashboards/personal-dashboard/domain/module.schema';
 import { useAuth } from '@/app/core-logic/api/auth/AuthProvider';
 import { supabaseClient } from '@/app/core-logic/api/supabase';
 import { useCollectiviteId } from '@/app/core-logic/hooks/params';
@@ -8,11 +8,11 @@ import { QueryKey, useQuery } from 'react-query';
 /**
  * Fetch un module spécifique du tableau de bord d'une collectivité et d'un user.
  */
-export const usePersonalModuleFetch = (slug: Slug) => {
+export const usePersonalModuleFetch = (defaultModuleKey: PersonalDefaultModuleKeys) => {
   const collectiviteId = useCollectiviteId();
   const userId = useAuth().user?.id;
 
-  return useQuery(getQueryKey(slug), async () => {
+  return useQuery(getQueryKey(defaultModuleKey), async () => {
     if (!collectiviteId) {
       throw new Error('Aucune collectivité associée');
     }
@@ -25,12 +25,12 @@ export const usePersonalModuleFetch = (slug: Slug) => {
       dbClient: supabaseClient,
       collectiviteId,
       userId,
-      slug,
+      defaultModuleKey,
     });
   });
 };
 
-export const getQueryKey = (slug?: Slug): QueryKey => [
+export const getQueryKey = (defaultModuleKey?: PersonalDefaultModuleKeys): QueryKey => [
   'personal-dashboard-module',
-  slug,
+  defaultModuleKey,
 ];

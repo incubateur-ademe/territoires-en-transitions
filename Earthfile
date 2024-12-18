@@ -291,12 +291,13 @@ node-alpine-with-prod-deps:
 
   COPY pnpm-lock.yaml ./
 
-  # `pnpm fetch` does require only lockfile
-  # See https://pnpm.io/cli/fetch
-  RUN pnpm fetch --prod
-
   COPY package.json ./
-  RUN pnpm install -r --offline --prod
+
+  # Uninstall node-canvas not used by the frontends. 
+  # Otherwise, need to add make g++ jpeg-dev cairo-dev giflib-dev pango-dev libtool autoconf automake in the docker image to do npm install
+  RUN pnpm uninstall canvas
+
+  RUN pnpm install -r --prod
 
 node-alpine-with-all-deps:
   FROM +node-alpine-with-prod-deps
@@ -319,7 +320,7 @@ node-fr:
     # `--PLATFORM=<platform>` pour forcer la plateforme cible, sinon ce sera la
     # même que celle sur laquelle le build est fait
     ARG PLATFORM=$TARGETPLATFORM
-    FROM --platform=$PLATFORM node:20-slim
+    FROM --platform=$PLATFORM node:20.15.1-slim
 
     # Allow CI mode for Nx (and other tools)
     ENV CI=true
@@ -327,6 +328,8 @@ node-fr:
     # locale FR pour que les tests e2e relatifs au formatage localisés des dates et des valeurs numériques puissent passer
     ENV LANG fr_FR.UTF-8
     RUN apt-get update && apt-get install -y locales dumb-init && rm -rf /var/lib/apt/lists/* && locale-gen "fr_FR.UTF-8"
+
+    RUN apt-get update && apt-get install -y build-essential libcairo2-dev libpango1.0-dev libjpeg-dev libgif-dev librsvg2-dev
 
     ENV PNPM_HOME="/pnpm"
     ENV PATH="$PNPM_HOME:$PATH"

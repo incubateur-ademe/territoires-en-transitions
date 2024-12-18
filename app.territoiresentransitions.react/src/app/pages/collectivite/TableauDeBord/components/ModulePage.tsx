@@ -18,11 +18,11 @@ const ModulePage = ({ view, title, children }: Props) => {
   const collectiviteId = useCollectiviteId();
   const router = useRouter();
 
-  const { tdbModule: slug } = useParams<{ tdbModule: string }>();
+  const { tdbModule: defaultModuleKey } = useParams<{ tdbModule: string }>();
 
   return (
     <div
-      data-test={`tdb-${slug}`}
+      data-test={`tdb-${defaultModuleKey}`}
       className="min-h-[44rem] flex flex-col gap-8"
     >
       {/** Header */}

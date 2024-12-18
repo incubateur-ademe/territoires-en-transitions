@@ -1,8 +1,13 @@
 import { Statut } from '@/domain/plans/fiches';
 import { preset } from '@/ui';
 
+export const SANS_STATUT_LABEL = 'Sans statut';
+
 /** Correspondance entre les statuts et couleurs associées */
-export const statutToColor: Record<Statut | 'NC' | 'Sans statut', string> = {
+export const statutToColor: Record<
+  Statut | 'NC' | typeof SANS_STATUT_LABEL,
+  string
+> = {
   'À venir': preset.theme.extend.colors.primary[6],
   'En cours': preset.theme.extend.colors.info[3],
   Réalisé: preset.theme.extend.colors.success[3],
@@ -11,6 +16,6 @@ export const statutToColor: Record<Statut | 'NC' | 'Sans statut', string> = {
   'A discuter': '#9351CF',
   Bloqué: preset.theme.extend.colors.new[2],
   'En retard': preset.theme.extend.colors.error[1],
-  'Sans statut': preset.theme.extend.colors.grey[4],
+  [SANS_STATUT_LABEL]: preset.theme.extend.colors.grey[4],
   NC: preset.theme.extend.colors.grey[3],
 };

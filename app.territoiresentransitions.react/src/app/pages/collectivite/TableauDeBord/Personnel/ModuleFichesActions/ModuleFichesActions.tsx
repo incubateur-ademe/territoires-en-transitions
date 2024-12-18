@@ -24,7 +24,7 @@ type Props = {
   module: ModuleFicheActionsSelect;
 };
 
-const SLUG_TO_TRACKING_ID = {
+const DEFAULT_MODULE_KEY_TO_TRACKING_ID = {
   'actions-dont-je-suis-pilote': 'actions_pilotes',
   'actions-recemment-modifiees': 'actions_modifiees',
 } as const;
@@ -39,7 +39,7 @@ const ModuleFichesActions = ({ view, module }: Props) => {
   const trackEvent = useEventTracker('app/tdb/personnel');
 
   const getSort = (): SortFichesAction[] => {
-    if (module.slug === 'actions-dont-je-suis-pilote') {
+    if (module.defaultKey === 'actions-dont-je-suis-pilote') {
       return [{ field: 'titre', direction: 'asc' }];
     }
     return [{ field: 'modified_at', direction: 'desc' }];
@@ -63,13 +63,15 @@ const ModuleFichesActions = ({ view, module }: Props) => {
       onSettingsClick={() =>
         trackEvent(
           `tdb_modifier_filtres_${
-            SLUG_TO_TRACKING_ID[module.slug as keyof typeof SLUG_TO_TRACKING_ID]
+            DEFAULT_MODULE_KEY_TO_TRACKING_ID[
+              module.defaultKey as keyof typeof DEFAULT_MODULE_KEY_TO_TRACKING_ID
+            ]
           }`,
           { collectiviteId, niveauAcces, role }
         )
       }
       editModal={(openState) => {
-        if (module.slug === 'actions-dont-je-suis-pilote') {
+        if (module.defaultKey === 'actions-dont-je-suis-pilote') {
           return (
             <ModalActionsDontJeSuisLePilote
               openState={openState}
@@ -78,7 +80,7 @@ const ModuleFichesActions = ({ view, module }: Props) => {
             />
           );
         }
-        if (module.slug === 'actions-recemment-modifiees') {
+        if (module.defaultKey === 'actions-recemment-modifiees') {
           return (
             <ModalActionsRecemmentModifiees
               openState={openState}
@@ -100,7 +102,7 @@ const ModuleFichesActions = ({ view, module }: Props) => {
                 makeTableauBordModuleUrl({
                   collectiviteId: collectiviteId!,
                   view,
-                  module: module.slug,
+                  module: module.defaultKey,
                 })
               )
             }

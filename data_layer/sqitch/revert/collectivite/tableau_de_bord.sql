@@ -1,15 +1,13 @@
--- Revert tet:collectivite/tableau_de_bord_filtre from pg
+-- Deploy tet:collectivite/tableau_de_bord_filtre to pg
 
 BEGIN;
 
--- Drop the trigger
-DROP TRIGGER IF EXISTS "on_tableau_de_bord_module_modified" 
-    ON "public"."tableau_de_bord_module";
+UPDATE "public"."tableau_de_bord_module"
+SET 
+type = 'fiche-action.count-by-status',
+options = options - 'countByProperty'
+where type = 'fiche-action.count-by';
 
--- Remove the moddatetime extension from the database
-DROP EXTENSION IF EXISTS "moddatetime";
-
--- Drop the table
-DROP TABLE "public"."tableau_de_bord_module";
+ALTER TABLE tableau_de_bord_module RENAME COLUMN default_key TO slug;
 
 COMMIT;

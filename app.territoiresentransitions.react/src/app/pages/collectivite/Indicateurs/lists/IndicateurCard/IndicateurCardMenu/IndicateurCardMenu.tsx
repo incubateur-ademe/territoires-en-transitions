@@ -1,7 +1,8 @@
 import { useUpdateIndicateurFavoriCollectivite } from '@/app/app/pages/collectivite/Indicateurs/lists/IndicateurCard/IndicateurCardMenu/useUpdateIndicateurFavoriCollectivite';
 import { useCollectiviteId } from '@/app/core-logic/hooks/params';
-import { ButtonMenu } from '@/ui';
+import { ActionsMenu, MenuAction } from '@/ui';
 import { OpenState } from '@/ui/utils/types';
+import { useMemo } from 'react';
 
 export type ChartDownloadSettings = {
   showTrigger: boolean;
@@ -28,50 +29,40 @@ const IndicateurCardMenu = ({
     collectiviteId!,
     indicateurId
   );
-  return (
-    <ButtonMenu
-      openState={openState}
-      icon="more-line"
-      size="xs"
-      variant="grey"
-      title="Ouvrir le menu"
-    >
-      <div className="w-64 flex flex-col divide-y divide-x-0 divide-solid divide-grey-3">
-        {isFavoriCollectivite ? (
-          <button
-            className={buttonClassNames}
-            onClick={() => {
-              toggleFavori(false);
-              openState.setIsOpen(false);
-            }}
-          >
-            Retirer de ma collectivité
-          </button>
-        ) : (
-          <button
-            className={buttonClassNames}
-            onClick={() => {
-              toggleFavori(true);
-              openState.setIsOpen(false);
-            }}
-          >
-            Ajouter à ma collectivité
-          </button>
-        )}
-        {chartDownloadSettings.showTrigger && (
-          <button
-            className={buttonClassNames}
-            onClick={() => {
-              chartDownloadSettings.openModal();
-              openState.setIsOpen(false);
-            }}
-          >
-            Télécharger le graphique (.png)
-          </button>
-        )}
-      </div>
-    </ButtonMenu>
-  );
+
+  const actions = useMemo<MenuAction[]>(() => {
+    const menuActions: MenuAction[] = [];
+    if (isFavoriCollectivite) {
+      menuActions.push({
+        label: 'Retirer de ma collectivité',
+        onClick: () => {
+          toggleFavori(false);
+          openState.setIsOpen(false);
+        },
+      });
+    } else {
+      menuActions.push({
+        label: 'Ajouter à ma collectivité',
+        onClick: () => {
+          toggleFavori(true);
+          openState.setIsOpen(false);
+        },
+      });
+    }
+
+    if (chartDownloadSettings.showTrigger) {
+      menuActions.push({
+        label: 'Télécharger le graphique (.png)',
+        onClick: () => {
+          chartDownloadSettings.openModal();
+          openState.setIsOpen(false);
+        },
+      });
+    }
+    return menuActions;
+  }, [isFavoriCollectivite, chartDownloadSettings.showTrigger]);
+
+  return <ActionsMenu openState={openState} actions={actions} />;
 };
 
 export default IndicateurCardMenu;

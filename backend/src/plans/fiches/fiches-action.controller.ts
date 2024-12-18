@@ -1,5 +1,4 @@
 import { ficheActionNoteSchema } from '@/backend/plans/fiches';
-import { CountByStatutService } from '@/backend/plans/fiches/count-by-statut/count-by-statut.service';
 import { countSyntheseValeurSchema } from '@/backend/utils/count-by.dto';
 import { createZodDto } from '@anatine/zod-nestjs';
 import {
@@ -15,10 +14,13 @@ import { ApiOkResponse, ApiTags } from '@nestjs/swagger';
 import { z } from 'zod';
 import { TokenInfo } from '../../auth/decorators/token-info.decorators';
 import type { AuthenticatedUser } from '../../auth/models/auth.models';
+import { CountByPropertyEnumType } from './count-by/count-by-property-options.enum';
+import { CountByService } from './count-by/count-by.service';
 import FicheService from './fiche.service';
 import FichesActionUpdateService from './fiches-action-update.service';
 import { editFicheRequestSchema } from './shared/edit-fiche.request';
 import { fetchFichesFilterRequestSchema } from './shared/fetch-fiches-filter.request';
+import { getFichesActionResponseSchema } from './shared/models/get-fiche-actions.response';
 import {
   deleteFicheActionNotesRequestSchema,
   upsertFicheActionNotesRequestSchema,
@@ -53,16 +55,20 @@ export class DeleteFicheActionNotesRequestClass extends createZodDto(
   deleteFicheActionNotesRequestSchema
 ) {}
 
+export class GetFichesActionResponseClass extends createZodDto(
+  getFichesActionResponseSchema
+) {}
+
 @ApiTags('Fiches action')
 @Controller('collectivites/:collectivite_id/fiches-action')
 export class FichesActionController {
   constructor(
     private readonly ficheService: FicheService,
-    private readonly fichesActionSyntheseService: CountByStatutService,
+    private readonly fichesActionSyntheseService: CountByService,
     private readonly fichesActionUpdateService: FichesActionUpdateService
   ) {}
 
-  @Get('synthese')
+  @Get('count-by/:countByProperty')
   @ApiOkResponse({
     type: GetFichesActionSyntheseResponseClass,
     description:
@@ -70,29 +76,32 @@ export class FichesActionController {
   })
   async getFichesActionSynthese(
     @Param('collectivite_id') collectiviteId: number,
+    @Param('countByProperty') countByProperty: string,
     @Query() request: GetFichesActionFilterRequestClass,
     @TokenInfo() tokenInfo: AuthenticatedUser
   ) {
-    return this.fichesActionSyntheseService.countByStatut(
+    return this.fichesActionSyntheseService.countByProperty(
       collectiviteId,
+      countByProperty as CountByPropertyEnumType,
       request
     );
   }
 
   @Get('')
-  // TODO: type it for documentation
   @ApiOkResponse({
     description: "Récupération des fiches action d'une collectivité",
+    type: GetFichesActionResponseClass,
   })
   async getFichesAction(
     @Param('collectivite_id') collectiviteId: number,
     @Query() request: GetFichesActionFilterRequestClass,
     @TokenInfo() tokenInfo: AuthenticatedUser
-  ) {
-    return this.fichesActionSyntheseService.getFichesAction(
+  ): Promise<GetFichesActionResponseClass> {
+    const fiches = await this.fichesActionSyntheseService.getFichesAction(
       collectiviteId,
       request
     );
+    return { count: fiches.length, data: fiches };
   }
 
   @Put(':id')

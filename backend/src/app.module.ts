@@ -1,3 +1,5 @@
+import { TableauDeBordModule } from '@/backend/collectivites/tableau-de-bord/tableau-de-bord.module';
+import { EchartsModule } from '@/backend/utils/echarts/echarts.module';
 import { Module } from '@nestjs/common';
 import { ConfigModule } from '@nestjs/config';
 import { SentryModule } from '@sentry/nestjs/setup';
@@ -26,10 +28,12 @@ import { UtilsModule } from './utils/utils.module';
     ConfigurationModule,
     // Test without
     UtilsModule,
+    EchartsModule,
     DatabaseModule,
     TrpcModule,
     SheetModule,
     CollectivitesModule,
+    TableauDeBordModule,
     IndicateursModule,
     AuthModule,
     FichesActionModule,
