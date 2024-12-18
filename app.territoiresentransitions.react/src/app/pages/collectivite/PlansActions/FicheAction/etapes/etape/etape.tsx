@@ -30,8 +30,15 @@ export const Etape = ({ etape, isReadonly }: Props) => {
     disabled: isReadonly,
   });
 
+  // permet de corriger un bug avec le scale de l'élêment qui est drag
+  const custromTransform = transform
+    ? isDragging
+      ? { ...transform, scaleY: 1 }
+      : transform
+    : null;
+
   const style = {
-    transform: CSS.Transform.toString(transform),
+    transform: CSS.Transform.toString(custromTransform),
     transition,
     opacity: isDragging ? 0.5 : 1,
   };
