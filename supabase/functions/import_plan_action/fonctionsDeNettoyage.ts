@@ -105,7 +105,16 @@ const nettoieDate = async (date: any) => {
   if (!date) {
     return null;
   }
-  const d = new Date(date);
+  let d = new Date(date);
+  if (d.toString() == "Invalid Date") {
+    const regex = /^(\d{2})\/(\d{2})\/(\d{4})$/;
+    const match = date.match(regex);
+    if (match) {
+      const [, day, month, year] = match;
+      const invertedDate = `${month}/${day}/${year}`;
+      d = new Date(invertedDate);
+    }
+  }
   if (d.toString() == "Invalid Date") {
     throw Error("La date n'est pas valide");
   }
