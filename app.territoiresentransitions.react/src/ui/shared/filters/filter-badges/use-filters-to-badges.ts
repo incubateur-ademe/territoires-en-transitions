@@ -180,6 +180,19 @@ export const useFiltersToBadges = ({ filters, customValues }: Args) => {
       } else if (key === 'noServicePilote') {
         mergedFilters[key] &&
           badgeValues.push('Sans direction ou service pilote');
+      } else if (
+        key === 'typePeriode' &&
+        mergedFilters[key] &&
+        (mergedFilters.debutPeriode || mergedFilters.finPeriode)
+      ) {
+        badgeValues.push(
+          typePeriodeToLabel[mergedFilters[key]] +
+            ' ' +
+            dateRangeToLabel(
+              mergedFilters.debutPeriode,
+              mergedFilters.finPeriode
+            )
+        );
       }
     });
 
@@ -205,4 +218,24 @@ export const useFiltersToBadges = ({ filters, customValues }: Args) => {
 
     return badgeValues;
   });
+};
+
+const typePeriodeToLabel = {
+  modification: 'Modifiée',
+  creation: 'Créée',
+  debut: 'Commencée',
+  fin: 'Terminée',
+};
+
+const dateRangeToLabel = (
+  debut: string | undefined,
+  fin: string | undefined
+) => {
+  if (debut && !fin) return `depuis le ${new Date(debut).toLocaleDateString()}`;
+  if (!debut && fin) return `avant le ${new Date(fin).toLocaleDateString()}`;
+  if (debut && fin)
+    return `entre le ${new Date(debut).toLocaleDateString()} et le ${new Date(
+      fin
+    ).toLocaleDateString()}`;
+  return '';
 };
