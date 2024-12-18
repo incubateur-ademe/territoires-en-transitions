@@ -34,7 +34,8 @@ export const Checkbox = forwardRef(
       variant = 'checkbox',
       id,
       checked,
-      onChange = () => null,
+      onChange,
+      readOnly,
       ...remainingProps
     }: CheckboxProps,
     ref?: Ref<HTMLInputElement>
@@ -48,6 +49,7 @@ export const Checkbox = forwardRef(
           type="checkbox"
           ref={ref}
           checked={checked ?? false}
+          readOnly={readOnly ?? !onChange}
           onChange={onChange}
           className={classNames(
             // styles communs
