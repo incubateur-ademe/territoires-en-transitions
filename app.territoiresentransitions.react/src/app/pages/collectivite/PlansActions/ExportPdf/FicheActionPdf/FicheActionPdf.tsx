@@ -17,6 +17,8 @@ import Notes from './Notes';
 import NotesDeSuivi from './NotesDeSuivi';
 import Pilotes from './Pilotes';
 import Planning from './Planning';
+import Etapes from '@/app/app/pages/collectivite/PlansActions/ExportPdf/FicheActionPdf/Etapes';
+import { RouterOutput } from '@/api/utils/trpc/client';
 
 export type FicheActionPdfProps = {
   fiche: FicheAction;
@@ -25,6 +27,7 @@ export type FicheActionPdfProps = {
 export type FicheActionPdfExtendedProps = FicheActionPdfProps & {
   chemins: TAxeRow[][];
   indicateursListe: IndicateurDefinition[] | undefined | null;
+  etapes?: RouterOutput['plans']['fiches']['etapes']['list'];
   fichesLiees: FicheResume[];
   actionsLiees: TActionStatutsRow[];
   annexes: AnnexeInfo[] | undefined;
@@ -35,6 +38,7 @@ const FicheActionPdf = ({
   fiche,
   chemins,
   indicateursListe,
+  etapes,
   fichesLiees,
   actionsLiees,
   annexes,
@@ -78,6 +82,9 @@ const FicheActionPdf = ({
 
       {/* Indicateurs */}
       <Indicateurs fiche={fiche} indicateursListe={indicateursListe} />
+
+      {/* Étapes */}
+      {etapes && <Etapes etapes={etapes} />}
 
       {/* Notes de suivi */}
       <NotesDeSuivi notesSuivi={notesSuivi} />

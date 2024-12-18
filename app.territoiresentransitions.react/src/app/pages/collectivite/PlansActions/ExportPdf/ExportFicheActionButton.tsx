@@ -7,6 +7,7 @@ import { useAnnexesFicheActionInfos } from '../FicheAction/data/useAnnexesFicheA
 import { useFicheActionNotesSuivi } from '../FicheAction/data/useFicheActionNotesSuivi';
 import { useFichesActionLiees } from '../FicheAction/data/useFichesActionLiees';
 import { useFicheActionChemins } from '../PlanAction/data/usePlanActionChemin';
+import { useGetEtapes } from '@/app/app/pages/collectivite/PlansActions/FicheAction/etapes/use-get-etapes';
 import FicheActionPdf from './FicheActionPdf/FicheActionPdf';
 
 type FicheActionPdfContentProps = {
@@ -40,13 +41,18 @@ export const FicheActionPdfContent = ({
   const { data: notesSuivi, isLoading: isLoadingNotesSuivi } =
     useFicheActionNotesSuivi(fiche);
 
+  const { data: etapes, isLoading: isLoadingEtapes } = useGetEtapes({
+    id: fiche.id,
+  });
+
   const isLoading =
     isLoadingIndicateurs ||
     isLoadingFichesLiees ||
     isLoadignActionsListe ||
     isLoadingAxes ||
     isLoadingAnnexes ||
-    isLoadingNotesSuivi;
+    isLoadingNotesSuivi ||
+    isLoadingEtapes;
 
   useEffect(() => {
     if (!isLoading) {
@@ -63,6 +69,7 @@ export const FicheActionPdfContent = ({
             .filter((a) => a.chemin !== null)
             .map((a) => a.chemin!),
           indicateursListe,
+          etapes,
           fichesLiees,
           actionsLiees,
           annexes,
