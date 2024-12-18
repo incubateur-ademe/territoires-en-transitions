@@ -61,13 +61,14 @@ export const Etape = ({ etape, isReadonly }: Props) => {
           'bg-error-2 bg-opacity-50': isDeleteModalOpen,
           'hover:bg-grey-2': !isReadonly,
           'cursor-default': isReadonly,
-          'z-10': isDragging,
+          'z-10 hover:cursor-grabbing': isDragging,
         }
       )}
     >
       <Checkbox
         checked={etape.realise}
         disabled={isReadonly}
+        className={classNames({ '!cursor-default': isReadonly })}
         onChange={() => {
           dispatchEtapes({
             type: 'toggleRealise',
@@ -86,6 +87,10 @@ export const Etape = ({ etape, isReadonly }: Props) => {
         realise={etape.realise}
         placeholder="Renseigner l'étape."
         disabled={isReadonly}
+        className={classNames({
+          'cursor-grabbing': isDragging,
+          '!cursor-default': isReadonly,
+        })}
         onBlur={(newTitle) => {
           if (newTitle.length) {
             dispatchEtapes({
@@ -105,7 +110,7 @@ export const Etape = ({ etape, isReadonly }: Props) => {
         }}
       />
       {/** Actions visibles au hover */}
-      {!isReadonly && (
+      {!isReadonly && !isDragging && (
         <div className="invisible group-hover:visible absolute top-3 right-3">
           <Button
             className="hover:!bg-grey-3"

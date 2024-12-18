@@ -7,7 +7,7 @@ import { RouterInput } from '@/api/utils/trpc/client';
 type EtapeUpsert = RouterInput['plans']['fiches']['etapes']['upsert'];
 
 type Props = Pick<EtapeUpsert, 'nom' | 'realise'> &
-  Pick<TextareaProps, 'placeholder' | 'disabled'> & {
+  Pick<TextareaProps, 'className' | 'placeholder' | 'disabled'> & {
     /**
      * Méthode utilisée pour exécuter l'update du titre de l'étape.
      * Reçoit le nouveau titre en paramètre (`trim` appliqué).
@@ -21,7 +21,7 @@ type Props = Pick<EtapeUpsert, 'nom' | 'realise'> &
  */
 export const Textarea = forwardRef(
   (
-    { nom, realise, onBlur, placeholder, disabled }: Props,
+    { nom, realise, onBlur, className, placeholder, disabled }: Props,
     ref?: Ref<HTMLTextAreaElement>
   ) => {
     const initialNom = nom ?? '';
@@ -37,7 +37,8 @@ export const Textarea = forwardRef(
           {
             '!text-grey-8': disabled && !realise,
             'line-through !text-grey-6': realise,
-          }
+          },
+          className
         )}
         value={value}
         onChange={(evt) => setValue(evt.currentTarget.value)}
