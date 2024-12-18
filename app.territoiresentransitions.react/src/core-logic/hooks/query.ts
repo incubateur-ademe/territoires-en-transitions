@@ -92,7 +92,7 @@ export const objectToSearchParams = (
   Object.entries(obj)
     .reduce(
       (ret, [key, value]) =>
-        nameToShorName[key]
+        nameToShorName[key] && value !== undefined
           ? [
               ...ret,
               nameToShorName[key] +
