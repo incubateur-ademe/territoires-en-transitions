@@ -45,6 +45,8 @@ const nomColonnes: string[] = [
   'Calendrier',
   'Actions liées',
   'Fiches des plans liées',
+  'Notes de suivi',
+  'Etapes de la fiche action',
   'Notes complémentaires',
   'Documents et liens',
 ];
@@ -284,10 +286,14 @@ const celluleXLSXToElementFiche = async (
       case 34: // Fiches des plans liées -> AI | 35
         f.fiches_liees = await nettoie.fiches(cellule, memoire);
         break;
-      case 35: // Notes complémentaires -> AJ | 37
+      case 35: // Notes de suivi -> AJ | 37
+        break;
+      case 36: // Etapes de la fiche action -> AK | 38
+        break;
+      case 37: // Notes complémentaires -> AL | 39
         f.notes_complementaires = await nettoie.texte(cellule, false);
         break;
-      case 36: // Documents et liens -> AK | 38
+      case 38: // Documents et liens -> AM | 40
         f.annexesImport = await nettoie.annexes(cellule);
         break;
     }
