@@ -142,7 +142,7 @@ export const SelectBase = (props: SelectProps) => {
     ? options
     : filterOptions(options, inputValue);
 
-  /** Compare la valeur de l'input de recherche avec la première optin de la liste
+  /** Compare la valeur de l'input de recherche avec la première option de la liste
    * pour afficher le bouton de création d'une option */
   const isNotSimilar =
     inputValue.toLowerCase().trim() !==
