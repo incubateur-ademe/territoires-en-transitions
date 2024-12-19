@@ -66,7 +66,6 @@ type Props = {
   maxNbOfCards?: number;
   sortSettings?: SortFicheActionSettings;
   enableGroupedActions?: boolean;
-  hasFiches?: boolean;
   isReadOnly?: boolean;
 };
 
@@ -81,7 +80,6 @@ const FichesActionListe = ({
   settings,
   maxNbOfCards = 15,
   enableGroupedActions = false,
-  hasFiches,
   isReadOnly,
 }: Props) => {
   const collectiviteId = useCollectiviteId();
@@ -142,6 +140,7 @@ const FichesActionListe = ({
   const { data, isLoading } = useFicheResumesFetch({
     options: ficheResumesOptions,
   });
+  const hasFiches = !!data?.data?.length;
 
   /** Gère les fiches sélectionnées pour les actions groupées */
   const handleSelectFiche = (fiche: FicheResume) => {
