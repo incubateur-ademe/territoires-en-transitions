@@ -16,9 +16,9 @@ import {
   ficheActionTable,
 } from '../models/fiche-action.table';
 import { dcpTable } from '@/backend/auth';
-import { PermissionService } from '../../auth/gestion-des-droits/permission.service';
-import { Authorization } from '../../auth/gestion-des-droits/authorization.enum';
-import { ResourceType } from '../../auth/gestion-des-droits/resource-type.enum';
+import { PermissionService } from '@/backend/auth/authorizations/permission.service';
+import { PermissionOperation } from '@/backend/auth/authorizations/permission-operation.enum';
+import { ResourceType } from '@/backend/auth/authorizations/resource-type.enum';
 
 @Injectable()
 export default class FicheService {
@@ -46,11 +46,11 @@ export default class FicheService {
   ): Promise<boolean> {
     const fiche = await this.getFicheFromId(ficheId);
     if (fiche === null) return false;
-    return await this.permissionService.hasTheRightTo(
+    return await this.permissionService.isAllowed(
       tokenInfo,
       fiche.restreint
-        ? Authorization.FICHES_LECTURE
-        : Authorization.FICHES_VISITE,
+        ? PermissionOperation.PLANS_FICHES_LECTURE
+        : PermissionOperation.PLANS_FICHES_VISITE,
       ResourceType.COLLECTIVITE,
       fiche.collectiviteId
     );
@@ -63,9 +63,9 @@ export default class FicheService {
   ): Promise<boolean> {
     const fiche = await this.getFicheFromId(ficheId);
     if (fiche === null) return false;
-    return await this.permissionService.hasTheRightTo(
+    return await this.permissionService.isAllowed(
       tokenInfo,
-      Authorization.FICHES_EDITION,
+      PermissionOperation.PLANS_FICHES_EDITION,
       ResourceType.COLLECTIVITE,
       fiche.collectiviteId
     );

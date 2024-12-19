@@ -5,7 +5,7 @@ import {
   GetFilteredIndicateurRequestQueryOptionType,
   GetFilteredIndicateursRequestOptionType,
 } from './get-filtered-indicateurs.request';
-import { PermissionService } from '../../auth/gestion-des-droits/permission.service';
+import { PermissionService } from '@/backend/auth/authorizations/permission.service';
 import CollectivitesService from '../../collectivites/services/collectivites.service';
 
 describe('IndicateurFiltreService', () => {

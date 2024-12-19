@@ -8,7 +8,7 @@ import {
 import { getAuthUser } from '../../test/auth-utils';
 import { YOLO_DODO, YULU_DUDU } from '../../test/test-users.samples';
 import { AuthenticatedUser } from '../auth/models/auth.models';
-import { utilisateurDroitTable } from '../auth/gestion-des-droits/roles/private-utilisateur-droit.table';
+import { utilisateurDroitTable } from '@/backend/auth/authorizations/roles/private-utilisateur-droit.table';
 import DatabaseService from '../common/services/database.service';
 import { AppRouter, TrpcRouter } from '../trpc/trpc.router';
 

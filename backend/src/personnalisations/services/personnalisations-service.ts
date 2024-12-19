@@ -22,9 +22,9 @@ import { reponseBinaireTable } from '../models/reponse-binaire.table';
 import { reponseChoixTable } from '../models/reponse-choix.table';
 import { reponseProportionTable } from '../models/reponse-proportion.table';
 import ExpressionParserService from './expression-parser.service';
-import { PermissionService } from '../../auth/gestion-des-droits/permission.service';
-import { Authorization } from '../../auth/gestion-des-droits/authorization.enum';
-import { ResourceType } from '../../auth/gestion-des-droits/resource-type.enum';
+import { PermissionService } from '@/backend/auth/authorizations/permission.service';
+import { PermissionOperation } from '@/backend/auth/authorizations/permission-operation.enum';
+import { ResourceType } from '@/backend/auth/authorizations/resource-type.enum';
 
 export type ReponseTables =
   | typeof reponseBinaireTable
@@ -99,9 +99,9 @@ export default class PersonnalisationsService {
 
     // Seulement les personnes ayant l'accès en lecture à la collectivité peuvent voir les réponses historiques
     if (reponsesDate && tokenInfo) {
-      await this.permissionService.hasTheRightTo(
+      await this.permissionService.isAllowed(
         tokenInfo,
-        Authorization.REFERENTIELS_LECTURE,
+        PermissionOperation.REFERENTIELS_LECTURE,
         ResourceType.COLLECTIVITE,
         collectiviteId
       );
@@ -168,9 +168,9 @@ export default class PersonnalisationsService {
   }> {
     // Seulement les personnes ayant l'accès en lecture à la collectivité peuvent voir les réponses historiques
     if (request.date && tokenInfo) {
-      await this.permissionService.hasTheRightTo(
+      await this.permissionService.isAllowed(
         tokenInfo,
-        Authorization.REFERENTIELS_LECTURE,
+        PermissionOperation.REFERENTIELS_LECTURE,
         ResourceType.COLLECTIVITE,
         collectiviteId
       );

@@ -9,8 +9,8 @@ import {
 import { NiveauAcces } from './niveau-acces.enum';
 import { utilisateurSupportTable } from './utilisateur-support.table';
 import { utilisateurVerifieTable } from './utilisateur-verifie.table';
-import { ResourceType } from '@/backend/auth/gestion-des-droits/resource-type.enum';
-import { Role } from '@/backend/auth/gestion-des-droits/roles/role.enum';
+import { ResourceType } from '@/backend/auth/authorizations/resource-type.enum';
+import { Role } from '@/backend/auth/authorizations/roles/role.enum';
 import { dcpTable } from '@/backend/auth';
 
 
@@ -20,7 +20,7 @@ export class RoleService {
 
   constructor(private readonly databaseService: DatabaseService) {}
 
-  async getUserRolesForAResource(
+  async getUserRoles(
     user: AuthUser,
     resourceType: ResourceType,
     resourceId: number | null

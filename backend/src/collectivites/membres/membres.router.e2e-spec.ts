@@ -6,7 +6,7 @@ import { getAuthUser } from '../../../test/auth-utils';
 import { YOLO_DODO } from '../../../test/test-users.samples';
 import { AuthenticatedUser } from '../../auth/models/auth.models';
 import { invitationTable } from '../../auth/models/invitation.table';
-import { NiveauAcces } from '../../auth/gestion-des-droits/roles/niveau-acces.enum';
+import { NiveauAcces } from '@/backend/auth/authorizations/roles/niveau-acces.enum';
 import DatabaseService from '../../common/services/database.service';
 import { AppRouter, TrpcRouter } from '../../trpc/trpc.router';
 import { MembreFonctionEnum } from '../models/membre-fonction.enum';

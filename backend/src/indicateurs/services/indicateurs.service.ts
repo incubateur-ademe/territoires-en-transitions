@@ -45,9 +45,9 @@ import {
 import { indicateurGroupeTable } from '../models/indicateur-groupe.table';
 import { groupementTable } from '../../collectivites/models/groupement.table';
 import { groupementCollectiviteTable } from '../../collectivites/models/groupement-collectivite.table';
-import { PermissionService } from '../../auth/gestion-des-droits/permission.service';
-import { Authorization } from '../../auth/gestion-des-droits/authorization.enum';
-import { ResourceType } from '../../auth/gestion-des-droits/resource-type.enum';
+import { PermissionService } from '@/backend/auth/authorizations/permission.service';
+import { PermissionOperation } from '@/backend/auth/authorizations/permission-operation.enum';
+import { ResourceType } from '@/backend/auth/authorizations/resource-type.enum';
 
 @Injectable()
 export default class IndicateursService {
@@ -202,9 +202,9 @@ export default class IndicateursService {
     options: GetIndicateursValeursRequestType,
     tokenInfo: AuthenticatedUser
   ): Promise<GetIndicateursValeursResponseType> {
-    await this.permissionService.hasTheRightTo(
+    await this.permissionService.isAllowed(
       tokenInfo,
-      Authorization.INDICATEURS_LECTURE,
+      PermissionOperation.INDICATEURS_LECTURE,
       ResourceType.COLLECTIVITE,
       options.collectiviteId
     );
@@ -373,9 +373,9 @@ export default class IndicateursService {
         ...new Set(indicateurValeurs.map((v) => v.collectiviteId)),
       ];
       for (const collectiviteId of collectiviteIds) {
-        await this.permissionService.hasTheRightTo(
+        await this.permissionService.isAllowed(
           tokenInfo,
-          Authorization.INDICATEURS_EDITION,
+          PermissionOperation.INDICATEURS_EDITION,
           ResourceType.COLLECTIVITE,
           collectiviteId
         );

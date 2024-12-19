@@ -5,8 +5,8 @@ import { CollectivitesModule } from '../collectivites/collectivites.module';
 import { CommonModule } from '../common/common.module';
 import { ConfigurationModule } from '../config/configuration.module';
 import { AuthGuard } from './guards/auth.guard';
-import { PermissionService } from '../auth/gestion-des-droits/permission.service';
-import { RoleService } from '../auth/gestion-des-droits/roles/role.service';
+import { PermissionService } from '@/backend/auth/authorizations/permission.service';
+import { RoleService } from '@/backend/auth/authorizations/roles/role.service';
 
 @Global()
 @Module({

@@ -26,7 +26,7 @@ import LabellisationService from './labellisation.service';
 import ReferentielsScoringSnapshotsService from './referentiels-scoring-snapshots.service';
 import ReferentielsScoringService from './referentiels-scoring.service';
 import ReferentielsService from './referentiels.service';
-import { PermissionService } from '../../auth/gestion-des-droits/permission.service';
+import { PermissionService } from '@/backend/auth/authorizations/permission.service';
 
 describe('ReferentielsScoringService', () => {
   let referentielsScoringService: ReferentielsScoringService;
