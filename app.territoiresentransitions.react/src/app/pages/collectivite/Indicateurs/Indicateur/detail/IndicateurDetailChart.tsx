@@ -60,9 +60,7 @@ const IndicateurDetailChart = ({
       <IndicateurChartNew
         data={data}
         isLoading={isLoadingValeurs}
-        height={500}
         title={titre}
-        disableToolbox={!rempli}
       />
 
       {!!metadonnee && (

@@ -1,8 +1,11 @@
 import { theme } from '@/app/ui/charts/chartsTheme';
 import { LineProps } from '@nivo/line';
-import { ANNEE_JALON2, ANNEE_REFERENCE } from '../constants';
+import {
+  ANNEE_JALON2,
+  ANNEE_REFERENCE,
+} from '../../../app/pages/collectivite/Trajectoire/constants';
 
-// couleurs et libellés pour les graphes
+// couleurs et libellés pour les graphes trajectoires et indicateurs
 export const COULEURS_SECTEUR = [
   '#FEF1D8',
   '#F7B1C2',

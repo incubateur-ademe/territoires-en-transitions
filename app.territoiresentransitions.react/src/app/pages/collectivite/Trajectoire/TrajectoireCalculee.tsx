@@ -1,5 +1,6 @@
 import { useSearchParams } from '@/app/core-logic/hooks/query';
 import { useCurrentCollectivite } from '@/app/core-logic/hooks/useCurrentCollectivite';
+import { Dataset } from '@/app/ui/charts/echarts/utils';
 import {
   Button,
   ButtonGroup,
@@ -12,14 +13,13 @@ import {
 } from '@/ui';
 import { AllerPlusLoin } from './AllerPlusLoin';
 import { ComparezLaTrajectoire } from './ComparezLaTrajectoire';
-import { HELPDESK_URL, INDICATEURS_TRAJECTOIRE } from './constants';
 import { DonneesCollectivite } from './DonneesCollectivite/DonneesCollectivite';
 import { DonneesPartiellementDisponibles } from './DonneesPartiellementDisponibles';
+import { Methodologie } from './Methodologie';
+import { HELPDESK_URL, INDICATEURS_TRAJECTOIRE } from './constants';
 import { GrapheSecteur } from './graphes/GrapheSecteur';
 import { GrapheSousSecteurs } from './graphes/GrapheSousSecteurs';
 import { GrapheTousSecteurs } from './graphes/GrapheTousSecteurs';
-import { Dataset } from './graphes/utils';
-import { Methodologie } from './Methodologie';
 import { useResultatTrajectoire } from './useResultatTrajectoire';
 
 const defaultParams = { indicateurIdx: ['0'], secteurIdx: ['0'] };

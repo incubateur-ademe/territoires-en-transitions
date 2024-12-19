@@ -1,5 +1,6 @@
 import { useApiClient } from '@/app/core-logic/api/useApiClient';
 import { useCollectiviteId } from '@/app/core-logic/hooks/params';
+import { COULEURS_SECTEUR, LAYERS } from '@/app/ui/charts/echarts/constants';
 import { useQuery } from 'react-query';
 import {
   DATE_FIN,
@@ -7,11 +8,10 @@ import {
   IndicateurTrajectoire,
   SourceIndicateur,
 } from './constants';
-import { COULEURS_SECTEUR, LAYERS } from './graphes/constants';
 import {
-  getKey,
   IndicateurAvecValeurs,
   ResultatTrajectoire,
+  getKey,
 } from './useCalculTrajectoire';
 import {
   IndicateurValeurGroupee,
