@@ -2,8 +2,8 @@
  * Export d'un plan d'action au format Excel
  */
 import { Workbook, Worksheet } from 'https://esm.sh/exceljs@4.3.0';
-import { TSupabaseClient } from '../_shared/getSupabaseClient.ts';
 import { formatDate, setEuroValue } from '../_shared/exportUtils.ts';
+import { TSupabaseClient } from '../_shared/getSupabaseClient.ts';
 import { ConfigPlanAction } from './config.ts';
 import { TExportData, fetchData, getAnnexesLabels } from './fetchData.ts';
 import { fetchTemplate } from './fetchTemplate.ts';
@@ -18,11 +18,11 @@ export const exportXLSX = async (
   const template = await fetchTemplate('export_plan_action.xlsx');
 
   // extrait la 1ère ligne (titre du plan)
+  // la ligne doit être conservée ssi elle contient une fiche
+  // (cas des fiches à la racine du plan)
   const { plan } = data;
-  const ligne1 = plan.shift();
-  if (!ligne1) {
-    return;
-  }
+  if (!plan?.length) return;
+  const ligne1 = plan[0].fiche ? plan[0] : plan.shift()!;
   const titre = ligne1.axe_nom;
 
   // ouvre le classeur et sélectionne la première feuille de calcul
