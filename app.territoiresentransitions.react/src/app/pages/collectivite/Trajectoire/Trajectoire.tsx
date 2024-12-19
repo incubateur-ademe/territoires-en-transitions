@@ -211,7 +211,7 @@ const Trajectoire = () => {
   const statut = isLoading ? undefined : data?.status ? data.status : 'error';
   const errorProps =
     statut === 'error'
-      ? { error: error?.error, statusCode: error?.statusCode }
+      ? { error: error?.message, statusCode: error?.statusCode }
       : {};
 
   return (
