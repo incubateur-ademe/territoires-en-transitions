@@ -140,7 +140,6 @@ const ToutesLesFichesAction = () => {
           </ButtonMenu>
         )}
         enableGroupedActions={!isReadonly}
-        hasFiches={hasFiches}
         isReadOnly={isReadonly}
       />
     </div>
