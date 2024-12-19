@@ -14,10 +14,10 @@ import {
   updateFicheActionSchema,
 } from '../../plans/fiches/shared/models/fiche-action.table';
 import { actionRelationSchema } from '../../referentiels/models/action-relation.table';
+import { effetAttenduSchema } from '../../shared/models/effet-attendu.table';
 import { financeurTagSchema } from '../../shared/models/financeur-tag.table';
 import { sousThematiqueSchema } from '../../shared/models/sous-thematique.table';
 import { thematiqueSchema } from '../../shared/models/thematique.table';
-import { effetAttenduSchema } from '../../taxonomie/models/effet-attendu.table';
 
 // There is no proper Pilote or Referent tables, so we use a custom schema here
 export const personneSchema = z.object({

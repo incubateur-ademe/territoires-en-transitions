@@ -10,6 +10,7 @@ import {
   statutsEnumSchema,
 } from '@/backend/plans/fiches';
 import {
+  effetAttenduSchema,
   sousThematiqueSchema,
   tagSchema,
   tempsDeMiseEnOeuvreSchema,
@@ -17,84 +18,12 @@ import {
 } from '@/backend/shared';
 import { z } from 'zod';
 
-// Enums
-
-// export const statutSchema = z.enum([
-//   'À venir',
-//   'En cours',
-//   'Réalisé',
-//   'En pause',
-//   'Abandonné',
-//   'Bloqué',
-//   'En retard',
-//   'A discuter',
-// ]);
-
-// export type Statut = z.infer<typeof statutSchema>;
-
-// export const niveauPrioriteSchema = z.enum(['Élevé', 'Moyen', 'Bas']);
-
-// export type NiveauPriorite = z.infer<typeof niveauPrioriteSchema>;
-
-// export const cibleSchema = z.enum([
-//   'Grand public',
-//   'Associations',
-//   'Grand public et associations',
-//   'Public Scolaire',
-//   'Autres collectivités du territoire',
-//   'Acteurs économiques',
-//   'Acteurs économiques du secteur primaire',
-//   'Acteurs économiques du secteur secondaire',
-//   'Acteurs économiques du secteur tertiaire',
-//   'Partenaires',
-//   'Collectivité elle-même',
-//   'Elus locaux',
-//   'Agents',
-// ]);
-
-// export type Cible = z.infer<typeof cibleSchema>;
-
-// export const participationCitoyenneTypeSchema = z.enum([
-//   'pas-de-participation',
-//   'information',
-//   'consultation',
-//   'concertation',
-//   'co-construction',
-// ]);
-
-// export type ParticipationCitoyenne = z.infer<
-//   typeof participationCitoyenne
-// >;
-
-export const effetsAttendus = z.object({
-  id: z.number(),
-  nom: z.string(),
-  notice: z.string().nullish(),
-});
-
-export type EffetsAttendus = z.infer<typeof effetsAttendus>;
-
-// export const financeurSchema = z.object({
-//   financeurTag: tagSchema,
-//   montantTtc: z.number().nullish(),
-// });
-
-// export type Financeur = z.infer<typeof financeurSchema>;
-
 const auteur = z.object({
   userId: z.string(),
   prenom: z.string(),
   nom: z.string(),
   email: z.string(),
 });
-
-// const libreTagSchema = z.object({
-//   id: z.number().nullish(),
-//   nom: z.string(),
-//   collectivitedId: z.number().nullish(),
-//   createdAt: z.string().date().nullish(),
-//   createdBy: z.string().nullish(),
-// });
 
 export const ficheActionSchema = z.object({
   id: z.number(),
@@ -114,7 +43,7 @@ export const ficheActionSchema = z.object({
   niveauPriorite: prioriteEnumSchema.nullish(),
   cibles: ciblesEnumSchema.array().nullish(),
   restreint: z.boolean().nullish(),
-  resultatsAttendus: effetsAttendus.array().nullish(),
+  resultatsAttendus: effetAttenduSchema.array().nullish(),
   objectifs: z.string().nullish(),
   budgetPrevisionnel: z.number().nullish(),
   calendrier: z.string().nullish(),

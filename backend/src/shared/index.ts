@@ -1,3 +1,4 @@
+export * from './models/effet-attendu.table';
 export * from './models/financeur-tag.table';
 export * from './models/libre-tag.table';
 export * from './models/partenaire-tag.table';
