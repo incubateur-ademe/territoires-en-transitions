@@ -1,5 +1,5 @@
+import { serviceTagTable } from '@/backend/shared';
 import { integer, pgTable, primaryKey } from 'drizzle-orm/pg-core';
-import { serviceTagTable } from '../../taxonomie/models/service-tag.table';
 import { collectiviteTable } from '../../collectivites/models/collectivite.table';
 import { indicateurDefinitionTable } from './indicateur-definition.table';
 

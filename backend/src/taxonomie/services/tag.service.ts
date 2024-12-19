@@ -2,6 +2,7 @@ import { PermissionOperation } from '@/backend/auth/authorizations/permission-op
 import { PermissionService } from '@/backend/auth/authorizations/permission.service';
 import { ResourceType } from '@/backend/auth/authorizations/resource-type.enum';
 import CollectivitesService from '@/backend/collectivites/services/collectivites.service';
+import { partenaireTagTable } from '@/backend/shared';
 import { Injectable, Logger } from '@nestjs/common';
 import { and, eq, inArray, isNull, or } from 'drizzle-orm';
 import { AuthenticatedUser } from '../../auth/models/auth.models';
@@ -9,7 +10,6 @@ import { groupementCollectiviteTable } from '../../collectivites/models/groupeme
 import DatabaseService from '../../common/services/database.service';
 import { Tag } from '../../shared/models/tag.table-base';
 import { categorieTagTable } from '../models/categorie-tag.table';
-import { partenaireTagTable } from '../models/partenaire-tag.table';
 
 @Injectable()
 export default class TagService {

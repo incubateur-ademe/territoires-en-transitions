@@ -15,6 +15,7 @@ import { toCamel } from 'postgres';
 import { AuthenticatedUser } from '../../auth/models/auth.models';
 import DatabaseService from '../../common/services/database.service';
 import { ficheActionAxeTable } from '../../plans/fiches/shared/models/fiche-action-axe.table';
+import { ficheActionFinanceurTagTable } from '../../plans/fiches/shared/models/fiche-action-financeur-tag.table';
 import {
   ficheActionTable,
   updateFicheActionSchema,
@@ -22,7 +23,6 @@ import {
 import { buildConflictUpdateColumns } from '../../utils/drizzle/conflict.utils';
 import { ficheActionActionTable } from '../models/fiche-action-action.table';
 import { ficheActionEffetAttenduTable } from '../models/fiche-action-effet-attendu.table';
-import { ficheActionFinanceurTagTable } from '../models/fiche-action-financeur-tag.table';
 import { ficheActionIndicateurTable } from '../models/fiche-action-indicateur.table';
 import { ficheActionLibreTagTable } from '../models/fiche-action-libre-tag.table';
 import { ficheActionLienTable } from '../models/fiche-action-lien.table';

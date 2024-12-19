@@ -1,6 +1,6 @@
 import { CollectiviteTag, TableTag } from '@/api';
-import { TagInsert } from '@/api/shared/domain';
 import { supabaseClient } from '@/app/core-logic/api/supabase';
+import { TagInsert } from '@/backend/shared';
 import { QueryKey, useMutation, useQueryClient } from 'react-query';
 import { objectToSnake } from 'ts-case-convert';
 

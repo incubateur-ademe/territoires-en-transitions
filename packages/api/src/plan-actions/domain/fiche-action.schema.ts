@@ -4,6 +4,7 @@ import { actionSchema } from '@/api/referentiel';
 import {
   axeSchema,
   ciblesEnumSchema,
+  financeurSchema,
   participationCitoyenneEnumSchema,
   prioriteEnumSchema,
   statutsEnumSchema,
@@ -73,12 +74,12 @@ export const effetsAttendus = z.object({
 
 export type EffetsAttendus = z.infer<typeof effetsAttendus>;
 
-export const financeurSchema = z.object({
-  financeurTag: tagSchema,
-  montantTtc: z.number().nullish(),
-});
+// export const financeurSchema = z.object({
+//   financeurTag: tagSchema,
+//   montantTtc: z.number().nullish(),
+// });
 
-export type Financeur = z.infer<typeof financeurSchema>;
+// export type Financeur = z.infer<typeof financeurSchema>;
 
 const auteur = z.object({
   userId: z.string(),

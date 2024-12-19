@@ -1,4 +1,9 @@
-import { libreTagSchema } from '@/backend/shared';
+import {
+  libreTagSchema,
+  partenaireTagSchema,
+  serviceTagSchema,
+  structureTagSchema,
+} from '@/backend/shared';
 import z from 'zod';
 import { indicateurDefinitionSchema } from '../../indicateurs/models/indicateur-definition.table';
 import { axeSchema } from '../../plans/fiches/shared/models/axe.table';
@@ -9,13 +14,10 @@ import {
   updateFicheActionSchema,
 } from '../../plans/fiches/shared/models/fiche-action.table';
 import { actionRelationSchema } from '../../referentiels/models/action-relation.table';
+import { financeurTagSchema } from '../../shared/models/financeur-tag.table';
 import { sousThematiqueSchema } from '../../shared/models/sous-thematique.table';
 import { thematiqueSchema } from '../../shared/models/thematique.table';
 import { effetAttenduSchema } from '../../taxonomie/models/effet-attendu.table';
-import { financeurTagSchema } from '../../taxonomie/models/financeur-tag.table';
-import { partenaireTagSchema } from '../../taxonomie/models/partenaire-tag.table';
-import { serviceTagSchema } from '../../taxonomie/models/service-tag.table';
-import { structureTagSchema } from '../../taxonomie/models/structure-tag.table';
 
 // There is no proper Pilote or Referent tables, so we use a custom schema here
 export const personneSchema = z.object({

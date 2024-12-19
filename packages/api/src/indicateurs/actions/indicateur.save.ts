@@ -1,11 +1,10 @@
-import { Thematique } from '@/backend/shared';
+import { Tag, TagInsert, Thematique } from '@/backend/shared';
 import { isNil } from 'es-toolkit/predicate';
 import { objectToSnake } from 'ts-case-convert';
 import { Personne } from '../../collectivites/shared/domain/personne.schema';
 import { Action } from '../../referentiel/domain/action.schema';
 import { selectTags } from '../../shared/actions/tag.fetch';
 import { insertTags } from '../../shared/actions/tag.save';
-import { Tag, TagInsert } from '../../shared/domain/tag.schema';
 import { DBClient, TablesInsert } from '../../typeUtils';
 import {
   IndicateurDefinition,

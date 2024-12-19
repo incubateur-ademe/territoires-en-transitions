@@ -1,9 +1,8 @@
+import { TagInsert, Thematique } from '@/backend/shared';
 import { beforeAll, describe, expect, test } from 'vitest';
 import { Personne } from '../../collectivites/shared/domain/personne.schema';
 import { FicheResume } from '../../plan-actions/domain/fiche-action.schema';
 import { Action } from '../../referentiel/domain/action.schema';
-import { TagInsert } from '../../shared/domain/tag.schema';
-import { Thematique } from '../../shared/domain/thematique.schema';
 import { signIn, signOut } from '../../tests/auth';
 import { dbAdmin, supabase } from '../../tests/supabase';
 import { testReset } from '../../tests/testReset';

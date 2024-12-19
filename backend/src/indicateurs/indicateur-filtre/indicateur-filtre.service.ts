@@ -13,7 +13,6 @@ import DatabaseService from '../../common/services/database.service';
 import { ficheActionIndicateurTable } from '../../fiches/models/fiche-action-indicateur.table';
 import { ficheActionTable } from '../../plans/fiches/shared/models/fiche-action.table';
 import { categorieTagTable } from '../../taxonomie/models/categorie-tag.table';
-import { serviceTagTable } from '../../taxonomie/models/service-tag.table';
 import { indicateurActionTable } from '../models/indicateur-action.table';
 import { indicateurCategorieTagTable } from '../models/indicateur-categorie-tag.table';
 import { indicateurCollectiviteTable } from '../models/indicateur-collectivite.table';
@@ -28,6 +27,7 @@ import {
   GetFilteredIndicateursRequestOptionType,
 } from './get-filtered-indicateurs.request';
 import { GetFilteredIndicateurResponseType } from './get-filtered-indicateurs.response';
+import { serviceTagTable } from '@/backend/shared';
 
 export type RequestResultIndicateursRaw = {
   id: number;

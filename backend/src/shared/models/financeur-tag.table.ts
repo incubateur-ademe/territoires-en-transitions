@@ -1,6 +1,7 @@
 import { pgTable, uniqueIndex } from 'drizzle-orm/pg-core';
 import { createSelectSchema } from 'drizzle-zod';
-import { tagTableBase } from '../../shared/models/tag.table-base';
+import z from 'zod';
+import { tagTableBase } from './tag.table-base';
 
 export const financeurTagTable = pgTable(
   'financeur_tag',
@@ -15,3 +16,4 @@ export const financeurTagTable = pgTable(
 );
 
 export const financeurTagSchema = createSelectSchema(financeurTagTable);
+export type FinanceurTag = z.infer<typeof financeurTagSchema>;
