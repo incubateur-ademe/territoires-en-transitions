@@ -1,8 +1,8 @@
 import { integer, pgTable, primaryKey } from 'drizzle-orm/pg-core';
-import { actionImpactTable } from '../../panier/models/action-impact.table';
-import { ficheActionTable } from '../../plans/fiches/shared/models/fiche-action.table';
+import { actionImpactTable } from '../../../../panier/models/action-impact.table';
+import { ficheActionTable } from './fiche-action.table';
 
-export const actionImpactFicheActionTable = pgTable(
+export const ficheActionActionImpactTable = pgTable(
   'action_impact_fiche_action',
   {
     ficheId: integer('fiche_id').references(() => ficheActionTable.id),

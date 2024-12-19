@@ -16,13 +16,13 @@ import { ApiOkResponse, ApiTags } from '@nestjs/swagger';
 import { z } from 'zod';
 import { TokenInfo } from '../../auth/decorators/token-info.decorators';
 import type { AuthenticatedUser } from '../../auth/models/auth.models';
-import { updateFicheActionRequestSchema } from '../../fiches/models/update-fiche-action.request';
 import {
   deleteFicheActionNotesRequestSchema,
   upsertFicheActionNotesRequestSchema,
-} from '../../fiches/models/upsert-fiche-action-note.request';
+} from './shared/upsert-fiche-action-note.request';
 import FicheService from './fiche.service';
 import FichesActionUpdateService from './fiches-action-update.service';
+import { editFicheRequestSchema } from './shared/edit-fiche.request';
 import { fetchFichesFilterRequestSchema } from './shared/fetch-fiches-filter.request';
 
 /**
@@ -40,7 +40,7 @@ export class GetFichesActionFilterRequestClass extends createZodDto(
   fetchFichesFilterRequestSchema
 ) {}
 export class UpdateFicheActionRequestClass extends createZodDto(
-  updateFicheActionRequestSchema.refine(
+  editFicheRequestSchema.refine(
     (schema) => Object.keys(schema).length > 0,
     'Body cannot be empty'
   )

@@ -6,8 +6,8 @@ import { Injectable, Logger } from '@nestjs/common';
 import { aliasedTable, desc, eq } from 'drizzle-orm';
 import { AuthenticatedUser } from '../../auth/models/auth.models';
 import DatabaseService from '../../common/services/database.service';
-import { actionImpactFicheActionTable } from '../../fiches/models/action-impact-fiche-action.table';
 import TagService from '../../taxonomie/services/tag.service';
+import { ficheActionActionImpactTable } from './shared/models/fiche-action-action-impact.table';
 import { ficheActionActionTable } from './shared/models/fiche-action-action.table';
 import { ficheActionEffetAttenduTable } from './shared/models/fiche-action-effet-attendu.table';
 import { ficheActionIndicateurTable } from './shared/models/fiche-action-indicateur.table';
@@ -16,7 +16,7 @@ import { ficheActionPartenaireTagTable } from './shared/models/fiche-action-part
 import { ficheActionSousThematiqueTable } from './shared/models/fiche-action-sous-thematique.table';
 import { ficheActionThematiqueTable } from './shared/models/fiche-action-thematique.table';
 import {
-  CreateFicheActionType,
+  FicheCreate,
   ficheActionTable,
 } from './shared/models/fiche-action.table';
 
@@ -76,7 +76,7 @@ export default class FicheService {
    * @param fiche
    * @return identifiant de la fiche crée
    */
-  async createFiche(fiche: CreateFicheActionType): Promise<number> {
+  async createFiche(fiche: FicheCreate): Promise<number> {
     this.logger.log(
       `Création de la fiche ${fiche.titre} pour la collectivité ${fiche.collectiviteId}`
     );
@@ -190,7 +190,7 @@ export default class FicheService {
    * @param actionId identifiant de l'action
    */
   async addActionImpact(ficheId: number, actionId: number): Promise<void> {
-    await this.databaseService.db.insert(actionImpactFicheActionTable).values({
+    await this.databaseService.db.insert(ficheActionActionImpactTable).values({
       ficheId: ficheId,
       actionImpactId: actionId,
     });

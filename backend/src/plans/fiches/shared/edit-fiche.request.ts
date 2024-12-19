@@ -5,19 +5,19 @@ import {
   structureTagSchema,
 } from '@/backend/collectivites';
 import z from 'zod';
-import { financeurTagSchema } from '../../collectivites/shared/models/financeur-tag.table';
-import { indicateurDefinitionSchema } from '../../indicateurs/models/indicateur-definition.table';
-import { axeSchema } from '../../plans/fiches/shared/models/axe.table';
+import { financeurTagSchema } from '../../../collectivites/shared/models/financeur-tag.table';
+import { indicateurDefinitionSchema } from '../../../indicateurs/models/indicateur-definition.table';
+import { actionRelationSchema } from '../../../referentiels/models/action-relation.table';
+import { effetAttenduSchema } from '../../../shared/models/effet-attendu.table';
+import { sousThematiqueSchema } from '../../../shared/models/sous-thematique.table';
+import { thematiqueSchema } from '../../../shared/models/thematique.table';
+import { axeSchema } from './models/axe.table';
 import {
   ciblesEnumSchema,
-  ficheActionSchema,
+  ficheSchema,
+  ficheSchemaUpdate,
   piliersEciEnumType,
-  updateFicheActionSchema,
-} from '../../plans/fiches/shared/models/fiche-action.table';
-import { actionRelationSchema } from '../../referentiels/models/action-relation.table';
-import { effetAttenduSchema } from '../../shared/models/effet-attendu.table';
-import { sousThematiqueSchema } from '../../shared/models/sous-thematique.table';
-import { thematiqueSchema } from '../../shared/models/thematique.table';
+} from './models/fiche-action.table';
 
 // There is no proper Pilote or Referent tables, so we use a custom schema here
 export const personneSchema = z.object({
@@ -34,7 +34,7 @@ const financeurWithMontantSchema = z.object({
   montantTtc: z.number().nullish(),
 });
 
-export const updateFicheActionRequestSchema = updateFicheActionSchema.extend({
+export const editFicheRequestSchema = ficheSchemaUpdate.extend({
   // We're overriding piliersEci and cibles because,
   // for some unknown reason (a bug with zod/drizzle ?), extend() looses enum's array
   piliersEci: z
@@ -83,13 +83,13 @@ export const updateFicheActionRequestSchema = updateFicheActionSchema.extend({
   indicateurs: indicateurDefinitionSchema.pick({ id: true }).array().nullish(),
   services: serviceTagSchema.pick({ id: true }).array().nullish(),
   financeurs: financeurWithMontantSchema.array().nullish(),
-  fichesLiees: ficheActionSchema.pick({ id: true }).array().nullish(),
+  fichesLiees: ficheSchema.pick({ id: true }).array().nullish(),
   resultatsAttendus: effetAttenduSchema.pick({ id: true }).array().nullish(),
   libresTag: libreTagSchema.pick({ id: true }).array().nullish(),
 });
 
 export type UpdateFicheActionRequestType = z.infer<
-  typeof updateFicheActionRequestSchema
+  typeof editFicheRequestSchema
 >;
 
-export type UpdateFicheActionType = z.infer<typeof updateFicheActionSchema>;
+export type UpdateFicheActionType = z.infer<typeof ficheSchemaUpdate>;

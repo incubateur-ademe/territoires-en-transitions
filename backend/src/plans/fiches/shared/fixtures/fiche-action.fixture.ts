@@ -1,11 +1,11 @@
 import {
   ciblesEnumSchema,
-  CreateFicheActionType,
+  FicheCreate,
   piliersEciEnumSchema,
   statutsEnumSchema,
-} from '../../../plans/fiches/shared/models/fiche-action.table';
+} from '../models/fiche-action.table';
 
-export const ficheActionFixture: CreateFicheActionType = {
+export const ficheActionFixture: FicheCreate = {
   id: 9999,
   titre: 'Test Fiche Action',
   description: 'patati',

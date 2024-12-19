@@ -14,9 +14,9 @@ import { PostgresJsQueryResultHKT } from 'drizzle-orm/postgres-js';
 import { toCamel } from 'postgres';
 import { AuthenticatedUser } from '../../auth/models/auth.models';
 import DatabaseService from '../../common/services/database.service';
-import { UpdateFicheActionRequestType } from '../../fiches/models/update-fiche-action.request';
 import { buildConflictUpdateColumns } from '../../utils/drizzle/conflict.utils';
 import FicheService from './fiche.service';
+import { UpdateFicheActionRequestType } from './shared/edit-fiche.request';
 import { ficheActionActionTable } from './shared/models/fiche-action-action.table';
 import { ficheActionAxeTable } from './shared/models/fiche-action-axe.table';
 import { ficheActionEffetAttenduTable } from './shared/models/fiche-action-effet-attendu.table';
@@ -37,7 +37,7 @@ import { ficheActionStructureTagTable } from './shared/models/fiche-action-struc
 import { ficheActionThematiqueTable } from './shared/models/fiche-action-thematique.table';
 import {
   ficheActionTable,
-  updateFicheActionSchema,
+  ficheSchemaUpdate,
 } from './shared/models/fiche-action.table';
 
 type TxType = PgTransaction<
@@ -114,7 +114,7 @@ export default class FichesActionUpdateService {
       }
 
       // Removes all props that are not in the schema
-      const ficheAction = updateFicheActionSchema.parse(unsafeFicheAction);
+      const ficheAction = ficheSchemaUpdate.parse(unsafeFicheAction);
 
       let updatedFicheAction;
       let updatedAxes;

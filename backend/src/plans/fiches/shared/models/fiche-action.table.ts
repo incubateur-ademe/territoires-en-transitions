@@ -163,24 +163,22 @@ export const ficheActionTable = pgTable('fiche_action', {
   restreint: boolean('restreint').default(false),
 });
 
-export type CreateFicheActionType = InferInsertModel<typeof ficheActionTable>;
-
-export const ficheActionSchema = createSelectSchema(ficheActionTable, {
+export const ficheSchema = createSelectSchema(ficheActionTable, {
   // Overriding array types as a workaround for drizzle-zod parsing issue
   // See https://github.com/drizzle-team/drizzle-orm/issues/1609
   piliersEci: z.array(piliersEciEnumSchema),
   cibles: z.array(ciblesEnumSchema),
 });
 
-export const createFicheActionSchema = createInsertSchema(ficheActionTable, {
+export const ficheSchemaCreate = createInsertSchema(ficheActionTable, {
   // Overriding array types as a workaround for drizzle-zod parsing issue
   // See https://github.com/drizzle-team/drizzle-orm/issues/1609
   piliersEci: z.array(piliersEciEnumSchema),
   cibles: z.array(ciblesEnumSchema),
 });
 
-export const updateFicheActionSchema = createFicheActionSchema
+export type FicheCreate = InferInsertModel<typeof ficheActionTable>;
+
+export const ficheSchemaUpdate = ficheSchemaCreate
   .omit({ id: true, createdAt: true, modifiedAt: true, modifiedBy: true })
   .partial();
-
-export type UpdateFicheActionType = z.infer<typeof updateFicheActionSchema>;

@@ -3,12 +3,12 @@ import { PermissionService } from '@/backend/auth/authorizations/permission.serv
 import { ResourceType } from '@/backend/auth/authorizations/resource-type.enum';
 import { AuthUser } from '@/backend/auth/models/auth.models';
 import { DatabaseService } from '@/backend/common';
-import { updateFicheActionRequestSchema } from '@/backend/fiches/models/update-fiche-action.request';
 import {
   ficheActionLibreTagTable,
-  ficheActionSchema,
   ficheActionTable,
+  ficheSchema,
 } from '@/backend/plans/fiches';
+import { editFicheRequestSchema } from '@/backend/plans/fiches/shared/edit-fiche.request';
 import { Injectable } from '@nestjs/common';
 import { and, inArray, or } from 'drizzle-orm';
 import z from 'zod';
@@ -24,18 +24,15 @@ export class BulkEditService {
   ) {}
 
   bulkEditRequestSchema = z.object({
-    ficheIds: ficheActionSchema.shape.id.array(),
-    statut: ficheActionSchema.shape.statut.optional(),
-    priorite: ficheActionSchema.shape.priorite.optional(),
-    dateFin: ficheActionSchema.shape.dateFin.optional(),
-    ameliorationContinue:
-      ficheActionSchema.shape.ameliorationContinue.optional(),
+    ficheIds: ficheSchema.shape.id.array(),
+    statut: ficheSchema.shape.statut.optional(),
+    priorite: ficheSchema.shape.priorite.optional(),
+    dateFin: ficheSchema.shape.dateFin.optional(),
+    ameliorationContinue: ficheSchema.shape.ameliorationContinue.optional(),
 
-    pilotes: listSchema(
-      updateFicheActionRequestSchema.shape.pilotes.unwrap().unwrap()
-    ),
+    pilotes: listSchema(editFicheRequestSchema.shape.pilotes.unwrap().unwrap()),
     libreTags: listSchema(
-      updateFicheActionRequestSchema.shape.libresTag.unwrap().unwrap()
+      editFicheRequestSchema.shape.libresTag.unwrap().unwrap()
     ),
   });
 

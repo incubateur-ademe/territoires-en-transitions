@@ -6,7 +6,8 @@ import { describe, expect, it } from 'vitest';
 import { getTestApp } from '../../../test/app-utils';
 import { getAuthToken } from '../../../test/auth-utils';
 import DatabaseService from '../../common/services/database.service';
-import { UpdateFicheActionRequestType } from '../../fiches/models/update-fiche-action.request';
+import { UpdateFicheActionRequestClass } from './fiches-action.controller';
+import { UpdateFicheActionRequestType } from './shared/edit-fiche.request';
 import {
   actionsFixture,
   axesFixture,
@@ -22,9 +23,8 @@ import {
   sousThematiquesFixture,
   structuresFixture,
   thematiquesFixture,
-} from '../../fiches/shared/fixtures/fiche-action-relations.fixture';
-import { ficheActionFixture } from '../../fiches/shared/fixtures/fiche-action.fixture';
-import { UpdateFicheActionRequestClass } from './fiches-action.controller';
+} from './shared/fixtures/fiche-action-relations.fixture';
+import { ficheActionFixture } from './shared/fixtures/fiche-action.fixture';
 import { ficheActionActionTable } from './shared/models/fiche-action-action.table';
 import { ficheActionAxeTable } from './shared/models/fiche-action-axe.table';
 import { ficheActionEffetAttenduTable } from './shared/models/fiche-action-effet-attendu.table';
