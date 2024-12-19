@@ -18,6 +18,7 @@ const CheminFiche = ({ titre, axeId, collectiviteId }: CheminFicheProps) => {
 
   return (
     <Breadcrumbs
+      size="sm"
       items={generateFilArianeLinks({
         collectiviteId,
         chemin: (data?.chemin ?? []) as TAxeRow[],

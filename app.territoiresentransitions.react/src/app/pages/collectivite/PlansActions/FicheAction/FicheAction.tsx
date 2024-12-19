@@ -6,7 +6,7 @@ import { useFicheAction } from './data/useFicheAction';
 import { useUpdateFicheAction } from './data/useUpdateFicheAction';
 import FicheActionActeurs from './FicheActionActeurs/FicheActionActeurs';
 import FicheActionDescription from './FicheActionDescription/FicheActionDescription';
-import FicheActionHeader from './FicheActionHeader/FicheActionHeader';
+import Header from './Header';
 import FicheActionImpact from './FicheActionImpact';
 import FicheActionOnglets from './FicheActionOnglets';
 import FicheActionPilotes from './FicheActionPilotes/FicheActionPilotes';
@@ -46,10 +46,8 @@ const FicheAction = ({ isReadonly }: FicheActionProps) => {
       >
         <div className="flex flex-col w-full px-2 mx-auto xl:max-w-7xl 2xl:max-w-8xl">
           {/* Header de la fiche action (titre, fil d'ariane) */}
-          <FicheActionHeader
-            titre={fiche.titre}
-            collectiviteId={fiche.collectiviteId}
-            axes={fiche.axes ?? []}
+          <Header
+            fiche={fiche}
             isReadonly={isReadonly}
             updateTitle={(titre) => updateFiche({ ...fiche, titre })}
           />
@@ -76,25 +74,6 @@ const FicheAction = ({ isReadonly }: FicheActionProps) => {
 
                 {/** Fiche action issue du panier d’action */}
                 <FicheActionImpact fiche={fiche} />
-
-                {/* Date de dernière modification */}
-                {fiche.modifiedAt && (
-                  <div className="bg-white border border-grey-3 rounded-lg py-2 px-3.5 text-sm text-primary-10 font-medium italic flex flex-col items-start max-md:items-center gap-1">
-                    <span>
-                      Dernière modification le{' '}
-                      {format(new Date(fiche.modifiedAt), 'dd/MM/yyyy')}
-                    </span>
-                    {fiche.createdAt && (
-                      <span className="text-sm text-primary-10 text-left">
-                        Fiche action créée le{' '}
-                        {format(new Date(fiche.createdAt), 'dd/MM/yyyy')}
-                        {fiche.createdBy !== null
-                          ? ` par ${fiche.createdBy.prenom} ${fiche.createdBy.nom}`
-                          : ''}
-                      </span>
-                    )}
-                  </div>
-                )}
 
                 {/* Pilotes */}
                 <FicheActionPilotes
