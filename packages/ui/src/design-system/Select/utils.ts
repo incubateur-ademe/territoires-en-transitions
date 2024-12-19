@@ -1,3 +1,5 @@
+import Fuse from 'fuse.js';
+
 import {
   ITEM_ALL,
   itemAllOption,
@@ -91,32 +93,44 @@ export const sortOptionByAlphabet = (
 export const filterOptions = (
   options: SelectOption[],
   filterValue: string
-): SelectOption[] =>
-  options.reduce((acc: SelectOption[], currentOption) => {
-    if (isSingleOption(currentOption)) {
+): SelectOption[] => {
+  if (filterValue.trim().length > 0) {
+    const flatOptions = getFlatOptions(options);
+
+    const fuse = new Fuse(flatOptions, {
+      keys: ['label'],
+      threshold: 0.5,
+      shouldSort: false,
+    });
+
+    const fusedOptions = fuse.search(filterValue).map((r) => r.item);
+
+    return options.reduce((acc: SelectOption[], currentOption) => {
       if (
-        currentOption.label.toLowerCase().includes(filterValue.toLowerCase())
+        isSingleOption(currentOption) &&
+        fusedOptions.includes(currentOption)
       ) {
         return [...acc, currentOption];
       }
-    }
 
-    if (isOptionSection(currentOption)) {
-      const filteredOptions = currentOption.options.filter((option) =>
-        option.label.toLowerCase().includes(filterValue.toLowerCase())
-      );
-      if (filteredOptions.length > 0) {
-        return [
-          ...acc,
-          {
-            title: currentOption.title,
-            options: filteredOptions,
-          },
-        ];
-      } else {
-        return acc;
+      if (isOptionSection(currentOption)) {
+        const filteredOptions = currentOption.options.filter((option) =>
+          fusedOptions.includes(option)
+        );
+        return filteredOptions.length > 0
+          ? [
+              ...acc,
+              {
+                title: currentOption.title,
+                options: filteredOptions,
+              },
+            ]
+          : acc;
       }
-    }
 
-    return acc;
-  }, []);
+      return acc;
+    }, []);
+  } else {
+    return options;
+  }
+};
