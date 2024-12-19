@@ -4,22 +4,22 @@
 import {
   AlignmentType,
   Document,
-  Header,
   Footer,
+  Header,
   Packer,
   PageBreak,
   PageNumber,
   Paragraph,
   Tab,
-  TabStopType,
   TabStopPosition,
+  TabStopType,
   TextRun,
 } from 'https://esm.sh/docx@8.2.2';
-import { TSupabaseClient } from '../_shared/getSupabaseClient.ts';
 import { formatDate } from '../_shared/exportUtils.ts';
+import { TSupabaseClient } from '../_shared/getSupabaseClient.ts';
 import { TExportData, fetchData, getAnnexesLabels } from './fetchData.ts';
-import { Financeur, TFicheActionExport } from './types.ts';
 import { styles } from './styles.xml.ts';
+import { Financeur, TFicheActionExport } from './types.ts';
 
 export const exportDOCX = async (
   supabaseClient: TSupabaseClient,
@@ -29,11 +29,11 @@ export const exportDOCX = async (
   const data = await fetchData(supabaseClient, planId);
 
   // extrait la 1ère ligne (titre du plan)
+  // la ligne doit être conservée ssi elle contient une fiche
+  // (cas des fiches à la racine du plan)
   const { plan } = data;
-  const ligne1 = plan.shift();
-  if (!ligne1) {
-    return;
-  }
+  if (!plan?.length) return;
+  const ligne1 = plan[0].fiche ? plan[0] : plan.shift()!;
   const title = ligne1.axe_nom;
 
   // nom du fichier cible
