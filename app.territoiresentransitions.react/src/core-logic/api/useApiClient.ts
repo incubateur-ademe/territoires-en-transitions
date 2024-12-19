@@ -18,19 +18,18 @@ type API_ARGS = {
 };
 
 type ResponseError = {
-  error: string;
+  status: number;
   message: string;
-  statusCode: number;
+  timestamp: string;
+  path: string;
 };
 
 export class ApiError extends Error {
-  error: string;
   statusCode: number;
 
-  constructor({ error, message, statusCode }: ResponseError) {
+  constructor({ message, status }: ResponseError) {
     super(message);
-    this.statusCode = statusCode;
-    this.error = error;
+    this.statusCode = status;
   }
 }
 
