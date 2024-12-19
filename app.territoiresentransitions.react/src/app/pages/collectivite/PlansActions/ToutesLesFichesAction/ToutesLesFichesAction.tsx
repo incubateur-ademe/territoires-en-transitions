@@ -45,7 +45,10 @@ export type FicheActionParam =
   | 'fp';
 
 // TODO: implémenter les filtres "sans" (ex. "sans_pilote")
-export const nameToparams: Record<keyof Filtre | 'sort' | 'page', FicheActionParam> = {
+export const nameToparams: Record<
+  keyof Filtre | 'sort' | 'page',
+  FicheActionParam
+> = {
   statuts: 's',
   priorites: 'prio',
   modifiedSince: 'ms',
@@ -82,7 +85,7 @@ export const nameToparams: Record<keyof Filtre | 'sort' | 'page', FicheActionPar
 
 /** Page de listing de toutes les fiches actions de la collectivité */
 const ToutesLesFichesAction = () => {
-  const collectivite = useCurrentCollectivite();
+  const collectivite = useCurrentCollectivite()!;
 
   const isReadonly = collectivite?.readonly ?? false;
 
@@ -92,7 +95,7 @@ const ToutesLesFichesAction = () => {
 
   const [filterParams, setFilterParams] = useSearchParams<Filtre>(
     makeCollectiviteToutesLesFichesUrl({
-      collectiviteId: collectivite?.collectivite_id!,
+      collectiviteId: collectivite.collectivite_id,
     }),
     {},
     nameToparams
@@ -132,7 +135,7 @@ const ToutesLesFichesAction = () => {
               setFilters={(filters) => {
                 setFilterParams(filters);
                 tracker('filtres', {
-                  collectivite_id: collectivite?.collectivite_id!,
+                  collectivite_id: collectivite.collectivite_id,
                   filtreValues: filters,
                 });
               }}

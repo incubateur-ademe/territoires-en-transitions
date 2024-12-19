@@ -81,7 +81,7 @@ const FichesActionListe = ({
   settings,
   maxNbOfCards = 15,
   enableGroupedActions = false,
-  hasFiches,
+  hasFiches: collectiviteHasAtLeastOneFiche,
   isReadOnly,
 }: Props) => {
   const collectiviteId = useCollectiviteId();
@@ -142,6 +142,11 @@ const FichesActionListe = ({
   const { data, isLoading } = useFicheResumesFetch({
     options: ficheResumesOptions,
   });
+
+  const hasFiches =
+    collectiviteHasAtLeastOneFiche !== undefined
+      ? collectiviteHasAtLeastOneFiche
+      : !!data?.data?.length;
 
   /** Gère les fiches sélectionnées pour les actions groupées */
   const handleSelectFiche = (fiche: FicheResume) => {
