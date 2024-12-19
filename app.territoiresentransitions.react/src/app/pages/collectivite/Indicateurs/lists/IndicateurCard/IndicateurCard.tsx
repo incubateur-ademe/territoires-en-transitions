@@ -256,12 +256,7 @@ export const IndicateurCardBase = ({
               />
             ) : (
               // todo: gérer le téléchargement png (via la modale ?)
-              <IndicateurChartNew
-                data={data}
-                isLoading={isLoading}
-                disableToolbox
-                disabledUnite
-              />
+              <IndicateurChartNew data={data} isLoading={isLoading} size="sm" />
             )}
           </div>
         )}

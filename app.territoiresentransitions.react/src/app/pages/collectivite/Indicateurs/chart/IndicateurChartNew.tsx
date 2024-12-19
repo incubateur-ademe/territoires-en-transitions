@@ -1,6 +1,9 @@
+import {
+  ReactECharts,
+  makeLineSeries,
+  makeOption,
+} from '@/app/ui/charts/echarts';
 import SpinnerLoader from '@/app/ui/shared/SpinnerLoader';
-import { ReactECharts } from '../../Trajectoire/graphes/ReactECharts';
-import { makeLineSeries, makeOption } from '../../Trajectoire/graphes/utils';
 import { TIndicateurValeur } from '../useIndicateurValeurs';
 
 /** Data issues de l'api pour générer les données formatées pour Nivo */
@@ -15,24 +18,22 @@ export type IndicateurChartData = {
 export type IndicateurChartProps = {
   /** Data issues de l'api pour générer les données formatées pour Nivo */
   data: IndicateurChartData;
+  /** Titre du graphe */
+  title?: string;
   /** Booléen de chargement des données et infos du graphique */
   isLoading: boolean;
+  /** Taille du graphe */
+  size?: 'sm' | 'lg';
   /** ClassName du container */
   className?: string;
-  disableToolbox?: boolean;
-  disabledUnite?: boolean;
-  title?: string;
-  height?: number;
 };
 
 const IndicateurChartNew = ({
   data,
-  isLoading,
-  className,
-  disableToolbox,
-  disabledUnite,
   title,
-  height,
+  isLoading,
+  size = 'lg',
+  className,
 }: IndicateurChartProps) => {
   const noData = data.valeurs.length === 0;
 
@@ -67,20 +68,24 @@ const IndicateurChartNew = ({
     option: {
       dataset,
       series: makeLineSeries(dataset),
+      grid: size === 'sm' ? { top: '8%', bottom: '15%', right: '5%' } : {},
     },
     titre: title,
-    unite: !disabledUnite ? data.unite : undefined,
-    disableToolbox,
+    unite: size !== 'sm' ? data.unite : undefined,
+    disableToolbox: size === 'sm',
   });
 
   return (
-    <div className={className} style={{ height: height ?? 320 }}>
+    <div className={className} style={{ height: size === 'sm' ? 320 : 500 }}>
       {isLoading ? (
         <div className="h-full w-full rounded-lg flex justify-center items-center bg-primary-0">
           <SpinnerLoader className="w-8 h-8 fill-primary-5" />
         </div>
       ) : (
-        <ReactECharts option={option} style={{ height: height ?? 320 }} />
+        <ReactECharts
+          option={option}
+          style={{ height: size === 'sm' ? 320 : 500 }}
+        />
       )}
     </div>
   );

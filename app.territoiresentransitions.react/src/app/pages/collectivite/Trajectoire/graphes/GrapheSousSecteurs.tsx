@@ -1,7 +1,10 @@
-import {COULEURS_SECTEUR} from './constants';
-import {ReactECharts} from './ReactECharts';
-import {makeOption, makeStackedSeries} from './utils';
-import {DatasetComponentOption} from 'echarts';
+import {
+  COULEURS_SECTEUR,
+  ReactECharts,
+  makeOption,
+  makeStackedSeries,
+} from '@/app/ui/charts/echarts';
+import { DatasetComponentOption } from 'echarts';
 
 export type GrapheSousSecteursProps = {
   titre: string;
@@ -26,7 +29,7 @@ export const GrapheSousSecteurs = ({
       dimensions: ['x', 'y'],
       color: COULEURS_SECTEUR[i % COULEURS_SECTEUR.length],
     }))
-    .filter(s => !!s.source?.length);
+    .filter((s) => !!s.source?.length);
 
   const option = makeOption({
     option: {

@@ -6,9 +6,13 @@
  * - Mes résultats (simple ligne)
  */
 
-import {ReactECharts} from './ReactECharts';
-import {LAYERS} from './constants';
-import {Dataset, makeLineSeries, makeOption} from './utils';
+import {
+  Dataset,
+  LAYERS,
+  ReactECharts,
+  makeLineSeries,
+  makeOption,
+} from '@/app/ui/charts/echarts';
 
 export type GrapheSecteurProps = {
   titre: string;
@@ -35,7 +39,7 @@ export const GrapheSecteur = ({
       color: LAYERS.trajectoire.color,
       source: secteur.source,
     },
-  ].filter(s => !!s.source?.length);
+  ].filter((s) => !!s.source?.length);
 
   const option = makeOption({
     option: {
