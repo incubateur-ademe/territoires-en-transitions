@@ -3,7 +3,7 @@ import { InferSelectModel } from 'drizzle-orm';
 import { boolean, integer, pgTable, serial, text } from 'drizzle-orm/pg-core';
 import { createInsertSchema } from 'drizzle-zod';
 import { z } from 'zod';
-import { ficheActionTable } from '../../plans/fiches/shared/models/fiche-action.table';
+import { ficheActionTable } from '../shared/models/fiche-action.table';
 
 export const ficheActionEtapeTable = pgTable('fiche_action_etape', {
   id: serial('id').primaryKey(),

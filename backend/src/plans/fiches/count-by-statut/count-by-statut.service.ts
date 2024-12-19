@@ -1,7 +1,15 @@
+import { DatabaseService } from '@/backend/common';
+import { getModifiedSinceDate } from '@/backend/common/models/modified-since.enum';
 import {
+  axeTable,
   ficheActionPartenaireTagTable,
   ficheActionServiceTagTable,
+  ficheActionTable,
+  SANS_STATUT_FICHE_ACTION_SYNTHESE_KEY,
+  statutsEnumValues,
 } from '@/backend/plans/fiches';
+import { GetFichesActionFilterRequestType } from '@/backend/plans/fiches/shared/fetch-fiches-filter.request';
+import { CountByRecordType } from '@/backend/utils/count-by.dto';
 import { Injectable, Logger } from '@nestjs/common';
 import {
   and,
@@ -16,18 +24,8 @@ import {
   SQLWrapper,
 } from 'drizzle-orm';
 import { PgColumn } from 'drizzle-orm/pg-core';
-import { CountByRecordType } from '../../common/models/count-synthese.dto';
-import { getModifiedSinceDate } from '../../common/models/modified-since.enum';
-import DatabaseService from '../../common/services/database.service';
-import { axeTable } from '../../plans/fiches/shared/models/axe.table';
-import { ficheActionAxeTable } from '../../plans/fiches/shared/models/fiche-action-axe.table';
-import { ficheActionPiloteTable } from '../../plans/fiches/shared/models/fiche-action-pilote.table';
-import {
-  ficheActionTable,
-  SANS_STATUT_FICHE_ACTION_SYNTHESE_KEY,
-  statutsEnumValues,
-} from '../../plans/fiches/shared/models/fiche-action.table';
-import { GetFichesActionFilterRequestType } from '../models/get-fiches-actions-filter.request';
+import { ficheActionAxeTable } from '../shared/models/fiche-action-axe.table';
+import { ficheActionPiloteTable } from '../shared/models/fiche-action-pilote.table';
 
 @Injectable()
 export class CountByStatutService {
@@ -38,9 +36,7 @@ export class CountByStatutService {
   private readonly FICHE_ACTION_PARTENAIRE_TAGS_QUERY_FIELD =
     'partenaire_tag_ids';
 
-  constructor(
-    private readonly databaseService: DatabaseService
-  ) {}
+  constructor(private readonly databaseService: DatabaseService) {}
 
   async countByStatut(
     collectiviteId: number,

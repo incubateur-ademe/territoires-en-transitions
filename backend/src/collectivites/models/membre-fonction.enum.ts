@@ -1,5 +1,5 @@
+import { createEnumObject } from '@/backend/utils';
 import { pgEnum } from 'drizzle-orm/pg-core';
-import { createEnumObject } from '../../common/models/enum.helpers';
 
 export const MembreFonction = [
   'conseiller',

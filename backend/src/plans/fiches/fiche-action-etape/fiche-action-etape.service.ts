@@ -1,8 +1,8 @@
+import { AuthenticatedUser } from '@/backend/auth/models/auth.models';
+import { DatabaseService } from '@/backend/common';
 import { Injectable } from '@nestjs/common';
 import { and, eq, gt, gte, lt, lte, sql } from 'drizzle-orm';
-import { AuthenticatedUser } from '../../auth/models/auth.models';
-import DatabaseService from '../../common/services/database.service';
-import FicheService from '../../plans/fiches/fiche.service';
+import FicheService from '../fiche.service';
 import {
   ficheActionEtapeTable,
   FicheActionEtapeType,

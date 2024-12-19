@@ -1,5 +1,8 @@
 import { ficheActionNoteSchema } from '@/backend/plans/fiches';
+import { CountByStatutService } from '@/backend/plans/fiches/count-by-statut/count-by-statut.service';
+import { countSyntheseValeurSchema } from '@/backend/utils/count-by.dto';
 import { createZodDto } from '@anatine/zod-nestjs';
+import { extendApi } from '@anatine/zod-openapi';
 import {
   Body,
   Controller,
@@ -13,26 +16,28 @@ import { ApiOkResponse, ApiTags } from '@nestjs/swagger';
 import { z } from 'zod';
 import { TokenInfo } from '../../auth/decorators/token-info.decorators';
 import type { AuthenticatedUser } from '../../auth/models/auth.models';
-import FicheService from '../../plans/fiches/fiche.service';
-import FichesActionUpdateService from '../../plans/fiches/fiches-action-update.service';
-import { CountByStatutService } from '../count-by-statut/count-by-statut.service';
-import { getFichesActionSyntheseSchema } from '../models/get-fiches-action-synthese.response';
-import { getFichesActionFilterRequestSchema } from '../models/get-fiches-actions-filter.request';
-import { updateFicheActionRequestSchema } from '../models/update-fiche-action.request';
+import { updateFicheActionRequestSchema } from '../../fiches/models/update-fiche-action.request';
 import {
   deleteFicheActionNotesRequestSchema,
   upsertFicheActionNotesRequestSchema,
-} from '../models/upsert-fiche-action-note.request';
+} from '../../fiches/models/upsert-fiche-action-note.request';
+import FicheService from './fiche.service';
+import FichesActionUpdateService from './fiches-action-update.service';
+import { fetchFichesFilterRequestSchema } from './shared/fetch-fiches-filter.request';
 
 /**
  * Création des classes de réponse à partir du schema pour générer automatiquement la documentation OpenAPI
  */
 export class GetFichesActionSyntheseResponseClass extends createZodDto(
-  getFichesActionSyntheseSchema
+  extendApi(
+    z.object({
+      par_statut: countSyntheseValeurSchema,
+    })
+  )
 ) {}
 
 export class GetFichesActionFilterRequestClass extends createZodDto(
-  getFichesActionFilterRequestSchema
+  fetchFichesFilterRequestSchema
 ) {}
 export class UpdateFicheActionRequestClass extends createZodDto(
   updateFicheActionRequestSchema.refine(

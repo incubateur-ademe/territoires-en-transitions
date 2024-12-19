@@ -3,16 +3,16 @@ import { PermissionService } from '@/backend/auth/authorizations/permission.serv
 import { ResourceType } from '@/backend/auth/authorizations/resource-type.enum';
 import { AuthUser } from '@/backend/auth/models/auth.models';
 import { DatabaseService } from '@/backend/common';
-import { ficheActionLibreTagTable } from '@/backend/plans/fiches';
+import { updateFicheActionRequestSchema } from '@/backend/fiches/models/update-fiche-action.request';
+import {
+  ficheActionLibreTagTable,
+  ficheActionSchema,
+  ficheActionTable,
+} from '@/backend/plans/fiches';
 import { Injectable } from '@nestjs/common';
 import { and, inArray, or } from 'drizzle-orm';
 import z from 'zod';
-import { ficheActionPiloteTable } from '../../plans/fiches/shared/models/fiche-action-pilote.table';
-import {
-  ficheActionSchema,
-  ficheActionTable,
-} from '../../plans/fiches/shared/models/fiche-action.table';
-import { updateFicheActionRequestSchema } from '../models/update-fiche-action.request';
+import { ficheActionPiloteTable } from '../shared/models/fiche-action-pilote.table';
 
 @Injectable()
 export class BulkEditService {

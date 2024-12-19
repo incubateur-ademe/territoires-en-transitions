@@ -1,8 +1,8 @@
+import { modifiedSinceSchema } from '@/backend/common/models/modified-since.enum';
 import { z } from 'zod';
-import { modifiedSinceSchema } from '../../common/models/modified-since.enum';
-import { ciblesEnumSchema } from '../../plans/fiches/shared/models/fiche-action.table';
+import { ciblesEnumSchema } from './models/fiche-action.table';
 
-export const getFichesActionFilterRequestSchema = z
+export const fetchFichesFilterRequestSchema = z
   .object({
     cibles: z
       .string()
@@ -64,5 +64,5 @@ export const getFichesActionFilterRequestSchema = z
   .describe('Filtre de récupération des fiches action');
 
 export type GetFichesActionFilterRequestType = z.infer<
-  typeof getFichesActionFilterRequestSchema
+  typeof fetchFichesFilterRequestSchema
 >;
