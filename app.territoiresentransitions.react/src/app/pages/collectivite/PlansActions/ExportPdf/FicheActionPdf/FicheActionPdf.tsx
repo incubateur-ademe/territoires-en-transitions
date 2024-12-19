@@ -84,7 +84,7 @@ const FicheActionPdf = ({
       <Indicateurs fiche={fiche} indicateursListe={indicateursListe} />
 
       {/* Étapes */}
-      {etapes && <Etapes etapes={etapes} />}
+      {etapes?.length && <Etapes etapes={etapes} />}
 
       {/* Notes de suivi */}
       <NotesDeSuivi notesSuivi={notesSuivi} />
