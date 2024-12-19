@@ -1,23 +1,24 @@
+import { AuthenticatedUser } from '@/backend/auth/models/auth.models';
+import { libreTagTable } from '@/backend/collectivites';
 import { DatabaseService } from '@/backend/common';
-import { inferProcedureInput } from '@trpc/server';
-import { eq, inArray, sql } from 'drizzle-orm';
 import {
+  getAuthUser,
   getTestApp,
   getTestDatabase,
   getTestRouter,
-} from '../../../test/app-utils';
-import { getAuthUser } from '../../../test/auth-utils';
-import { YOLO_DODO, YULU_DUDU } from '../../../test/test-users.samples';
-import { AuthenticatedUser } from '../../auth/models/auth.models';
+  YOLO_DODO,
+  YULU_DUDU,
+} from '@/backend/test';
+import { AppRouter, TrpcRouter } from '@/backend/utils/trpc/trpc.router';
+import { inferProcedureInput } from '@trpc/server';
+import { eq, inArray, sql } from 'drizzle-orm';
+import { ficheActionLibreTagTable } from '../shared/models/fiche-action-libre-tag.table';
+import { ficheActionPiloteTable } from '../shared/models/fiche-action-pilote.table';
 import {
-  FicheActionStatutsEnumType,
   ficheActionTable,
   prioriteEnumSchema,
-} from '../../plans/fiches/shared/models/fiche-action.table';
-import { libreTagTable } from '../../shared/models/libre-tag.table';
-import { AppRouter, TrpcRouter } from '../../utils/trpc/trpc.router';
-import { ficheActionLibreTagTable } from '../models/fiche-action-libre-tag.table';
-import { ficheActionPiloteTable } from '../models/fiche-action-pilote.table';
+  statutsEnumSchema,
+} from '../shared/models/fiche-action.table';
 
 type Input = inferProcedureInput<AppRouter['plans']['fiches']['bulkEdit']>;
 
@@ -94,7 +95,7 @@ describe('BulkEditRouter', () => {
 
     const input1: Input = {
       ficheIds,
-      statut: FicheActionStatutsEnumType.EN_RETARD,
+      statut: statutsEnumSchema.enum['En retard'],
     };
 
     const result = await caller.plans.fiches.bulkEdit(input1);
@@ -360,7 +361,7 @@ describe('BulkEditRouter', () => {
 
     const input = {
       ficheIds: [...ficheIds, newFiche.id],
-      statut: FicheActionStatutsEnumType.EN_RETARD,
+      statut: statutsEnumSchema.enum['En retard'],
     };
 
     await expect(() =>
@@ -373,7 +374,7 @@ describe('BulkEditRouter', () => {
 
     const input = {
       ficheIds,
-      statut: FicheActionStatutsEnumType.EN_RETARD,
+      statut: statutsEnumSchema.Enum['En retard'],
     };
 
     await expect(() =>

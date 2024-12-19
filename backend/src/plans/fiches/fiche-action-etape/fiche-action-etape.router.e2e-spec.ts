@@ -1,14 +1,15 @@
-import { inferProcedureInput } from '@trpc/server';
-import { eq } from 'drizzle-orm';
+import { AuthenticatedUser } from '@/backend/auth/models/auth.models';
+import { DatabaseService } from '@/backend/common';
 import {
+  getAuthUser,
   getTestApp,
   getTestDatabase,
   getTestRouter,
-} from '../../../test/app-utils';
-import { getAuthUser } from '../../../test/auth-utils';
-import DatabaseService from '../../common/services/database.service';
-import { AppRouter, TrpcRouter } from '../../utils/trpc/trpc.router';
-import { AuthenticatedUser } from './../../auth/models/auth.models';
+} from '@/backend/test';
+import { AppRouter } from '@/backend/utils';
+import { TrpcRouter } from '@/backend/utils/trpc/trpc.router';
+import { inferProcedureInput } from '@trpc/server';
+import { eq } from 'drizzle-orm';
 import { ficheActionEtapeTable } from './fiche-action-etape.table';
 
 type upsertInput = inferProcedureInput<

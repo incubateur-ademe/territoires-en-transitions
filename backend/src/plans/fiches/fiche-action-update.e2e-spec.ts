@@ -1,4 +1,4 @@
-import { libreTagTable } from '@/backend/shared';
+import { libreTagTable } from '@/backend/collectivites';
 import { INestApplication } from '@nestjs/common';
 import { eq } from 'drizzle-orm';
 import { default as request } from 'supertest';
@@ -6,7 +6,6 @@ import { describe, expect, it } from 'vitest';
 import { getTestApp } from '../../../test/app-utils';
 import { getAuthToken } from '../../../test/auth-utils';
 import DatabaseService from '../../common/services/database.service';
-import { UpdateFicheActionRequestClass } from '../../fiches/controllers/fiches-action.controller';
 import { UpdateFicheActionRequestType } from '../../fiches/models/update-fiche-action.request';
 import {
   actionsFixture,
@@ -25,25 +24,26 @@ import {
   thematiquesFixture,
 } from '../../fiches/shared/fixtures/fiche-action-relations.fixture';
 import { ficheActionFixture } from '../../fiches/shared/fixtures/fiche-action.fixture';
-import { ficheActionActionTable } from '../models/fiche-action-action.table';
-import { ficheActionEffetAttenduTable } from '../models/fiche-action-effet-attendu.table';
-import { ficheActionFinanceurTagTable } from '../models/fiche-action-financeur-tag.table';
-import { ficheActionIndicateurTable } from '../models/fiche-action-indicateur.table';
-import { ficheActionLibreTagTable } from '../models/fiche-action-libre-tag.table';
-import { ficheActionLienTable } from '../models/fiche-action-lien.table';
-import { ficheActionPartenaireTagTable } from '../models/fiche-action-partenaire-tag.table';
-import { ficheActionPiloteTable } from '../models/fiche-action-pilote.table';
-import { ficheActionReferentTable } from '../models/fiche-action-referent.table';
-import { ficheActionServiceTagTable } from '../models/fiche-action-service.table';
-import { ficheActionSousThematiqueTable } from '../models/fiche-action-sous-thematique.table';
-import { ficheActionStructureTagTable } from '../models/fiche-action-structure-tag.table';
-import { ficheActionThematiqueTable } from '../models/fiche-action-thematique.table';
+import { UpdateFicheActionRequestClass } from './fiches-action.controller';
+import { ficheActionActionTable } from './shared/models/fiche-action-action.table';
 import { ficheActionAxeTable } from './shared/models/fiche-action-axe.table';
+import { ficheActionEffetAttenduTable } from './shared/models/fiche-action-effet-attendu.table';
+import { ficheActionFinanceurTagTable } from './shared/models/fiche-action-financeur-tag.table';
+import { ficheActionIndicateurTable } from './shared/models/fiche-action-indicateur.table';
+import { ficheActionLibreTagTable } from './shared/models/fiche-action-libre-tag.table';
+import { ficheActionLienTable } from './shared/models/fiche-action-lien.table';
+import { ficheActionPartenaireTagTable } from './shared/models/fiche-action-partenaire-tag.table';
+import { ficheActionPiloteTable } from './shared/models/fiche-action-pilote.table';
+import { ficheActionReferentTable } from './shared/models/fiche-action-referent.table';
+import { ficheActionServiceTagTable } from './shared/models/fiche-action-service-tag.table';
+import { ficheActionSousThematiqueTable } from './shared/models/fiche-action-sous-thematique.table';
+import { ficheActionStructureTagTable } from './shared/models/fiche-action-structure-tag.table';
+import { ficheActionThematiqueTable } from './shared/models/fiche-action-thematique.table';
 import {
   ciblesEnumSchema,
-  FicheActionStatutsEnumType,
   ficheActionTable,
   piliersEciEnumType,
+  statutsEnumSchema,
 } from './shared/models/fiche-action.table';
 
 const collectiviteId = 1;
@@ -212,7 +212,7 @@ describe('FichesActionUpdateService', () => {
         ressources: 'Service numérique',
         financements: 'De 40 000€ à 100 000€',
         budgetPrevisionnel: '35000',
-        statut: FicheActionStatutsEnumType.EN_PAUSE,
+        statut: statutsEnumSchema.enum['En pause'],
         ameliorationContinue: false,
         calendrier: 'Calendrier prévisionnel',
         notesComplementaires: 'Vive le vélo !',
