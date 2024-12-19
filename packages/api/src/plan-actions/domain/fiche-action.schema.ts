@@ -101,6 +101,7 @@ export const ficheActionSchema = z.object({
   modifiedAt: z.string().datetime().nullish(),
   createdAt: z.string().datetime().nullish(),
   createdBy: auteur.nullable(),
+  modifiedBy: auteur.nullable(),
   titre: z.string().nullable(),
   description: z.string().nullish(),
   statut: statutSchema.nullish(),
