@@ -7,7 +7,7 @@ import { useSearchParams } from '@/app/core-logic/hooks/query';
 import { useCurrentCollectivite } from '@/app/core-logic/hooks/useCurrentCollectivite';
 import { Button, ButtonMenu, useEventTracker } from '@/ui';
 import { OpenState } from '@/ui/utils/types';
-import { useFicheResumesFetch } from '../FicheAction/data/useFicheResumesFetch';
+import { useFicheActionCount } from '../FicheAction/data/useFicheActionCount';
 
 /** Paramètres d'URL possibles pour les filtres de fiches action */
 export type FicheActionParam =
@@ -45,7 +45,10 @@ export type FicheActionParam =
   | 'fp';
 
 // TODO: implémenter les filtres "sans" (ex. "sans_pilote")
-export const nameToparams: Record<keyof Filtre | 'sort' | 'page', FicheActionParam> = {
+export const nameToparams: Record<
+  keyof Filtre | 'sort' | 'page',
+  FicheActionParam
+> = {
   statuts: 's',
   priorites: 'prio',
   modifiedSince: 'ms',
@@ -86,9 +89,7 @@ const ToutesLesFichesAction = () => {
 
   const isReadonly = collectivite?.readonly ?? false;
 
-  const { data: ficheExistenceData } = useFicheResumesFetch();
-
-  const hasFiches = !!ficheExistenceData?.data?.length;
+  const { count } = useFicheActionCount();
 
   const [filterParams, setFilterParams] = useSearchParams<Filtre>(
     makeCollectiviteToutesLesFichesUrl({
@@ -107,7 +108,7 @@ const ToutesLesFichesAction = () => {
     <div className="min-h-[44rem] flex flex-col gap-8">
       <div className="flex justify-between max-sm:flex-col gap-y-4">
         <h2 className="mb-0">Toutes les actions</h2>
-        {!isReadonly && hasFiches && (
+        {!isReadonly && !!count && (
           <Button size="sm" onClick={() => createFicheAction()}>
             Créer une fiche d’action
           </Button>
