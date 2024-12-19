@@ -10,8 +10,9 @@ import {
   makeCollectivitePlansActionsLandingUrl,
 } from '@/app/app/paths';
 import { TPlanType } from '@/app/types/alias';
-import { Tooltip } from '@/ui';
+import { Icon, Tooltip } from '@/ui';
 import { useState } from 'react';
+import SpinnerLoader from '../../../../../../ui/shared/SpinnerLoader';
 import { PlanNode } from '../data/types';
 import { useExportPlanAction } from '../data/useExportPlanAction';
 import ModifierPlanModale from './ModifierPlanModale';
@@ -66,15 +67,23 @@ const Actions = ({
         />
       )}
       {!isAxePage && axeHasFiches ? (
-        <SmallIconContextMenu
-          dataTest="export-pa"
-          title="Exporter"
-          disabled={isLoading}
-          options={EXPORT_OPTIONS}
-          buttonClassname="flex p-2 bg-white hover:bg-primary-1 rounded-lg fr-icon-download-line text-primary before:!w-4 before:!h-4"
-          hideDefaultIcon
-          onSelect={(format) => exportPlanAction(format as any)}
-        />
+        isLoading ? (
+          <div className="inline-flex bg-white gap-2 items-center border rounded-md h-8 px-2 text-xs text-primary-5 font-bold">
+            <Icon icon="download-line" />
+            Export en cours
+            <SpinnerLoader />
+          </div>
+        ) : (
+          <SmallIconContextMenu
+            dataTest="export-pa"
+            title="Exporter"
+            disabled={isLoading}
+            options={EXPORT_OPTIONS}
+            buttonClassname="flex p-2 bg-white hover:bg-primary-1 rounded-lg fr-icon-download-line text-primary before:!w-4 before:!h-4"
+            hideDefaultIcon
+            onSelect={(format) => exportPlanAction(format as any)}
+          />
+        )
       ) : null}
       <SupprimerAxeModal
         planId={plan.id}
