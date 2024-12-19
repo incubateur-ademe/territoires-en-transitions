@@ -793,3 +793,4 @@ indicateur/change_unite_emission_ges 2024-10-16T21:13:38Z System Administrator <
 plan_action/fiches [plan_action/fiches@v4.33.0] 2024-12-17T14:05:30Z Frederic Arnoux <frederic.arnoux@beta.gouv.fr> # Add cascade constraints
 @v4.34.0 2024-12-17T17:16:29Z Frederic Arnoux <frederic.arnoux@beta.gouv.fr> # Tag v4.34.0
 
+plan_action/fiches [plan_action/fiches@v4.34.0] 2024-12-19T09:19:32Z Frederic Arnoux <frederic.arnoux@beta.gouv.fr> # Ajoute des champs manquants de la fiche action dans la vue de lecture
