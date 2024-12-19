@@ -14,9 +14,9 @@ import { ComputeScoreMode } from '../models/compute-scores-mode.enum';
 import { GetReferentielScoresRequestType } from '../models/get-referentiel-scores.request';
 import ReferentielsScoringService from '../services/referentiels-scoring.service';
 import ReferentielsService from '../services/referentiels.service';
-import { PermissionService } from '../../auth/gestion-des-droits/permission.service';
-import { Authorization } from '../../auth/gestion-des-droits/authorization.enum';
-import { ResourceType } from '../../auth/gestion-des-droits/resource-type.enum';
+import { PermissionService } from '@/backend/auth/authorizations/permission.service';
+import { PermissionOperation } from '@/backend/auth/authorizations/permission-operation.enum';
+import { ResourceType } from '@/backend/auth/authorizations/resource-type.enum';
 
 export const upsertActionStatutRequestSchema = z.object({
   actionStatut: createActionStatutSchema,
@@ -41,9 +41,9 @@ export class UpdateActionStatutService {
     user: AuthenticatedUser
   ) {
     // Check user access
-    await this.permissionService.hasTheRightTo(
+    await this.permissionService.isAllowed(
       user,
-      Authorization.REFERENTIELS_EDITION,
+      PermissionOperation.REFERENTIELS_EDITION,
       ResourceType.COLLECTIVITE,
       request.actionStatut.collectiviteId
     );

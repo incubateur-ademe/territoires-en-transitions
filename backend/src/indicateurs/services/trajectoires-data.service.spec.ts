@@ -6,7 +6,7 @@ import { IndicateurValeurType } from '../models/indicateur-valeur.table';
 import IndicateurSourcesService from './indicateur-sources.service';
 import IndicateursService from './indicateurs.service';
 import TrajectoiresDataService from './trajectoires-data.service';
-import { PermissionService } from '../../auth/gestion-des-droits/permission.service';
+import { PermissionService } from '@/backend/auth/authorizations/permission.service';
 
 describe('TrajectoiresDataService test', () => {
   let trajectoiresDataService: TrajectoiresDataService;

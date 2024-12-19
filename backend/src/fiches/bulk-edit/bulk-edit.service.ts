@@ -10,9 +10,9 @@ import {
   ficheActionTable,
 } from '../models/fiche-action.table';
 import { updateFicheActionRequestSchema } from '../models/update-fiche-action.request';
-import { PermissionService } from '../../auth/gestion-des-droits/permission.service';
-import { Authorization } from '../../auth/gestion-des-droits/authorization.enum';
-import { ResourceType } from '../../auth/gestion-des-droits/resource-type.enum';
+import { PermissionService } from '@/backend/auth/authorizations/permission.service';
+import { PermissionOperation } from '@/backend/auth/authorizations/permission-operation.enum';
+import { ResourceType } from '@/backend/auth/authorizations/resource-type.enum';
 
 @Injectable()
 export class BulkEditService {
@@ -53,9 +53,9 @@ export class BulkEditService {
 
     // Check if the user has edition access to all the collectivites
     for (const c of collectiviteIds) {
-      await this.permission.hasTheRightTo(
+      await this.permission.isAllowed(
         user,
-        Authorization.FICHES_EDITION,
+        PermissionOperation.PLANS_FICHES_EDITION,
         ResourceType.COLLECTIVITE,
         c.collectiviteId
       );

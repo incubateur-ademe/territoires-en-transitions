@@ -10,7 +10,7 @@ import {
   IndicateurValeurAvecMetadonnesDefinition,
   IndicateurValeurType,
 } from '../models/indicateur-valeur.table';
-import { PermissionService } from '../../auth/gestion-des-droits/permission.service';
+import { PermissionService } from '@/backend/auth/authorizations/permission.service';
 import IndicateursService from './indicateurs.service';
 
 describe('IndicateursService', () => {

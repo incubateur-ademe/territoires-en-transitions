@@ -24,10 +24,10 @@ import { indicateurCollectiviteTable } from '../models/indicateur-collectivite.t
 import { indicateurActionTable } from '../models/indicateur-action.table';
 import { ficheActionIndicateurTable } from '../../fiches/models/fiche-action-indicateur.table';
 import { indicateurServiceTagTable } from '../models/indicateur-service-tag.table';
-import { PermissionService } from '../../auth/gestion-des-droits/permission.service';
+import { PermissionService } from '@/backend/auth/authorizations/permission.service';
 import CollectivitesService from '../../collectivites/services/collectivites.service';
-import { Authorization } from '../../auth/gestion-des-droits/authorization.enum';
-import { ResourceType } from '../../auth/gestion-des-droits/resource-type.enum';
+import { PermissionOperation } from '@/backend/auth/authorizations/permission-operation.enum';
+import { ResourceType } from '@/backend/auth/authorizations/resource-type.enum';
 
 export type RequestResultIndicateursRaw = {
   id: number;
@@ -128,11 +128,11 @@ export default class IndicateurFiltreService {
     const collectivitePrivate = await this.collectiviteService.isPrivate(
       collectiviteId
     );
-    await this.permissionService.hasTheRightTo(
+    await this.permissionService.isAllowed(
       tokenInfo,
       collectivitePrivate
-        ? Authorization.COLLECTIVITES_CONTENT_LECTURE
-        : Authorization.COLLECTIVITES_CONTENT_VISITE,
+        ? PermissionOperation.COLLECTIVITES_LECTURE
+        : PermissionOperation.COLLECTIVITES_VISITE,
       ResourceType.COLLECTIVITE,
       collectiviteId
     );

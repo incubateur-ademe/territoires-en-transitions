@@ -17,9 +17,9 @@ import {
   normalizeWorksheetName,
 } from '../../common/services/xlsx.helper';
 import CollectivitesService from '../../collectivites/services/collectivites.service';
-import { PermissionService } from '../../auth/gestion-des-droits/permission.service';
-import { ResourceType } from '../../auth/gestion-des-droits/resource-type.enum';
-import { Authorization } from '../../auth/gestion-des-droits/authorization.enum';
+import { PermissionService } from '@/backend/auth/authorizations/permission.service';
+import { ResourceType } from '@/backend/auth/authorizations/resource-type.enum';
+import { PermissionOperation } from '@/backend/auth/authorizations/permission-operation.enum';
 
 @Injectable()
 export default class ExportIndicateursService {
@@ -39,9 +39,9 @@ export default class ExportIndicateursService {
 
     this.logger.log("Vérification des droits avant l'export xlsx");
 
-    await this.permissionService.hasTheRightTo(
+    await this.permissionService.isAllowed(
       tokenInfo,
-      Authorization.FICHES_LECTURE,
+      PermissionOperation.PLANS_FICHES_LECTURE,
       ResourceType.COLLECTIVITE,
       options.collectiviteId
     );

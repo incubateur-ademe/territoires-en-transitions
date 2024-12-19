@@ -26,9 +26,9 @@ import { VerificationTrajectoireRequestType } from '../models/verification-traje
 import { DonneesCalculTrajectoireARemplirType } from '../models/donnees-calcul-trajectoire-a-remplir.dto';
 import { DonneesARemplirValeurType } from '../models/donnees-a-remplir-valeur.dto';
 import { DonneesARemplirResultType } from '../models/donnees-a-remplir-result.dto';
-import { PermissionService } from '../../auth/gestion-des-droits/permission.service';
-import { ResourceType } from '../../auth/gestion-des-droits/resource-type.enum';
-import { Authorization } from '../../auth/gestion-des-droits/authorization.enum';
+import { PermissionService } from '@/backend/auth/authorizations/permission.service';
+import { ResourceType } from '@/backend/auth/authorizations/resource-type.enum';
+import { PermissionOperation } from '@/backend/auth/authorizations/permission-operation.enum';
 import IndicateurSourcesService from './indicateur-sources.service';
 import IndicateursService from './indicateurs.service';
 
@@ -618,9 +618,9 @@ export default class TrajectoiresDataService {
     forceRecuperationDonneesUniquementPourLecture = false
   ): Promise<VerificationTrajectoireResultType> {
     // Vérification des droits pour lire les données
-    await this.permissionService.hasTheRightTo(
+    await this.permissionService.isAllowed(
       tokenInfo,
-      Authorization.INDICATEURS_TRAJECTOIRE_LECTURE,
+      PermissionOperation.INDICATEURS_TRAJECTOIRES_LECTURE,
       ResourceType.COLLECTIVITE,
       request.collectiviteId
     );
@@ -686,9 +686,9 @@ export default class TrajectoiresDataService {
     }
     if(!forceRecuperationDonneesUniquementPourLecture) {
       // Vérification des droits pour calculer les données
-      await this.permissionService.hasTheRightTo(
+      await this.permissionService.isAllowed(
         tokenInfo,
-        Authorization.INDICATEURS_TRAJECTOIRE_EDITION,
+        PermissionOperation.INDICATEURS_TRAJECTOIRES_EDITION,
         ResourceType.COLLECTIVITE,
         request.collectiviteId
       );
@@ -747,9 +747,9 @@ export default class TrajectoiresDataService {
 
     // Vérifie les droits de l'utilisateur
     if (tokenInfo) {
-      await this.permissionService.hasTheRightTo(
+      await this.permissionService.isAllowed(
         tokenInfo,
-        Authorization.INDICATEURS_TRAJECTOIRE_EDITION,
+        PermissionOperation.INDICATEURS_TRAJECTOIRES_EDITION,
         ResourceType.COLLECTIVITE,
         collectiviteId
       );

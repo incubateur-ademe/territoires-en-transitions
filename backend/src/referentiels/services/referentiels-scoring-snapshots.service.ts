@@ -28,9 +28,9 @@ import {
   scoreSnapshotTable,
   ScoreSnapshotType,
 } from '../models/score-snapshot.table';
-import { PermissionService } from '../../auth/gestion-des-droits/permission.service';
-import { Authorization } from '../../auth/gestion-des-droits/authorization.enum';
-import { ResourceType } from '../../auth/gestion-des-droits/resource-type.enum';
+import { PermissionService } from '@/backend/auth/authorizations/permission.service';
+import { PermissionOperation } from '@/backend/auth/authorizations/permission-operation.enum';
+import { ResourceType } from '@/backend/auth/authorizations/resource-type.enum';
 
 @Injectable()
 export default class ReferentielsScoringSnapshotsService {
@@ -477,9 +477,9 @@ export default class ReferentielsScoringSnapshotsService {
     snapshotRef: string,
     tokenInfo: AuthUser
   ): Promise<void> {
-    await this.permissionService.hasTheRightTo(
+    await this.permissionService.isAllowed(
       tokenInfo,
-      Authorization.REFERENTIELS_EDITION,
+      PermissionOperation.REFERENTIELS_EDITION,
       ResourceType.COLLECTIVITE,
       collectiviteId
     );

@@ -20,7 +20,7 @@ import { chunk, isNil } from 'es-toolkit';
 import * as _ from 'lodash';
 import { DateTime } from 'luxon';
 import { AuthenticatedUser } from '../../auth/models/auth.models';
-import { NiveauAcces } from '../../auth/gestion-des-droits/roles/niveau-acces.enum';
+import { NiveauAcces } from '@/backend/auth/authorizations/roles/niveau-acces.enum';
 import { CollectiviteAvecType } from '../../collectivites/models/identite-collectivite.dto';
 import CollectivitesService from '../../collectivites/services/collectivites.service';
 import DatabaseService from '../../common/services/database.service';
@@ -76,9 +76,9 @@ import { ScoreJalon } from '../models/score-jalon.enum';
 import LabellisationService from './labellisation.service';
 import ReferentielsScoringSnapshotsService from './referentiels-scoring-snapshots.service';
 import ReferentielsService from './referentiels.service';
-import { ResourceType } from '../../auth/gestion-des-droits/resource-type.enum';
-import { PermissionService } from '../../auth/gestion-des-droits/permission.service';
-import { Authorization } from '../../auth/gestion-des-droits/authorization.enum';
+import { ResourceType } from '@/backend/auth/authorizations/resource-type.enum';
+import { PermissionService } from '@/backend/auth/authorizations/permission.service';
+import { PermissionOperation } from '@/backend/auth/authorizations/permission-operation.enum';
 
 @Injectable()
 export default class ReferentielsScoringService {
@@ -132,11 +132,11 @@ export default class ReferentielsScoringService {
   ): Promise<CollectiviteAvecType> {
     // Check read access if a date is given (historical data)
     if (tokenInfo) {
-      await this.permissionService.hasTheRightTo(
+      await this.permissionService.isAllowed(
         tokenInfo,
         niveauAccesMinimum === NiveauAcces.LECTURE
-          ? Authorization.REFERENTIELS_LECTURE
-          : Authorization.REFERENTIELS_EDITION,
+          ? PermissionOperation.REFERENTIELS_LECTURE
+          : PermissionOperation.REFERENTIELS_EDITION,
         ResourceType.COLLECTIVITE,
         collectiviteId
       );

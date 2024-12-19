@@ -27,7 +27,7 @@ describe('Calcul de trajectoire SNBC', () => {
       .set('Authorization', `Bearer ${yoloDodoToken}`)
       .expect(401)
       .expect({
-        message: "Droits insuffisants, l'utilisateur 17440546-f389-4d4f-bfdb-b0c94a1bd0f9 n'a pas l'autorisation indicateurs.trajectoire.lecture sur la ressource Collectivité 3",
+        message: "Droits insuffisants, l'utilisateur 17440546-f389-4d4f-bfdb-b0c94a1bd0f9 n'a pas l'autorisation indicateurs.trajectoires.lecture sur la ressource Collectivité 3",
         error: 'Unauthorized',
         statusCode: 401,
       });
@@ -39,7 +39,7 @@ describe('Calcul de trajectoire SNBC', () => {
       .set('Authorization', `Bearer ${yoloDodoToken}`)
       .expect(401)
       .expect({
-        message: "Droits insuffisants, l'utilisateur 17440546-f389-4d4f-bfdb-b0c94a1bd0f9 n'a pas l'autorisation indicateurs.trajectoire.edition sur la ressource Collectivité 3",
+        message: "Droits insuffisants, l'utilisateur 17440546-f389-4d4f-bfdb-b0c94a1bd0f9 n'a pas l'autorisation indicateurs.trajectoires.edition sur la ressource Collectivité 3",
         error: 'Unauthorized',
         statusCode: 401,
       });
@@ -286,7 +286,7 @@ describe('Calcul de trajectoire SNBC', () => {
       .set('Authorization', `Bearer ${yoloDodoToken}`)
       .expect(401)
       .expect({
-        message: "Droits insuffisants, l'utilisateur 17440546-f389-4d4f-bfdb-b0c94a1bd0f9 n'a pas l'autorisation indicateurs.trajectoire.edition sur la ressource Collectivité 3895",
+        message: "Droits insuffisants, l'utilisateur 17440546-f389-4d4f-bfdb-b0c94a1bd0f9 n'a pas l'autorisation indicateurs.trajectoires.edition sur la ressource Collectivité 3895",
         error: 'Unauthorized',
         statusCode: 401,
       });

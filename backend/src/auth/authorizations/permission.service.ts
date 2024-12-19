@@ -1,10 +1,10 @@
 import { Injectable, Logger, UnauthorizedException } from '@nestjs/common';
 import { AuthRole, AuthUser } from '../models/auth.models';
 import { RoleService } from './roles/role.service';
-import { Authorization } from '@/backend/auth/gestion-des-droits/authorization.enum';
-import { ResourceType } from '@/backend/auth/gestion-des-droits/resource-type.enum';
-import { Permission } from '@/backend/auth/gestion-des-droits/permission.models';
-import { Role } from '@/backend/auth/gestion-des-droits/roles/role.enum';
+import { PermissionOperation } from '@/backend/auth/authorizations/permission-operation.enum';
+import { ResourceType } from '@/backend/auth/authorizations/resource-type.enum';
+import { Permission } from '@/backend/auth/authorizations/permission.models';
+import { Role } from '@/backend/auth/authorizations/roles/role.enum';
 
 @Injectable()
 export class PermissionService {
@@ -15,20 +15,20 @@ export class PermissionService {
   /**
    * Vérifie l'autorisation de l'utilisateur sur une ressource
    * @param user
-   * @param authorization
+   * @param operation
    * @param resourceType type de la ressource
    * @param resourceId identifiant de la ressource, null si resourceType = PLATEFORME
    * @param doNotThrow vrai pour ne pas générer une erreur si l'utilisateur n'a pas l'autorisation
    */
-  async hasTheRightTo(
+  async isAllowed(
     user: AuthUser,
-    authorization: Authorization,
+    operation: PermissionOperation,
     resourceType: ResourceType,
     resourceId: number | null,
     doNotThrow?: boolean
   ): Promise<boolean> {
     this.logger.log(
-      `Vérification que l'utilisateur ${user.id} possède l'autorisation ${authorization} sur la ressource ${resourceType} ${resourceId}`
+      `Vérification que l'utilisateur ${user.id} possède l'autorisation ${operation} sur la ressource ${resourceType} ${resourceId}`
     );
     if (user.role === AuthRole.SERVICE_ROLE) {
       // Le service rôle à tous les droits
@@ -36,7 +36,7 @@ export class PermissionService {
     }
 
     // Récupère les rôles de l'utilisateur pour la ressource donnée
-    const roles = await this.roleService.getUserRolesForAResource(
+    const roles = await this.roleService.getUserRoles(
       user,
       resourceType,
       resourceId
@@ -53,33 +53,33 @@ export class PermissionService {
     }
 
     // Récupère les autorisations des rôles de l'utilisateur
-    const authorizations: Set<Authorization> = new Set();
+    const operations: Set<PermissionOperation> = new Set();
     for (const role of roles) {
       Permission[role as Role].forEach((permission) =>
-        authorizations.add(permission)
+        operations.add(permission)
       );
     }
 
     this.logger.log(
       `L'utilisateur ${user.id} possède les autorisations ${JSON.stringify([
-        ...authorizations,
+        ...operations,
       ])} sur la ressource ${resourceType} ${resourceId}`
     );
 
-    // Vérifie si l'autorisation demandée est dans la liste des autorisations de l'utilisateur
-    const hasTheRight = authorizations.has(authorization);
+    // Vérifie si l'opération demandée est dans la liste des autorisations de l'utilisateur
+    const hasTheRight = operations.has(operation);
     if (!hasTheRight) {
       this.logger.log(
-        `L'utilisateur ${user.id} ne possède pas l'autorisation ${authorization} sur la ressource ${resourceType} ${resourceId}`
+        `L'utilisateur ${user.id} ne possède pas l'autorisation ${operation} sur la ressource ${resourceType} ${resourceId}`
       );
       if(!doNotThrow){
         throw new UnauthorizedException(
-          `Droits insuffisants, l'utilisateur ${user.id} n'a pas l'autorisation ${authorization} sur la ressource ${resourceType} ${resourceId}`
+          `Droits insuffisants, l'utilisateur ${user.id} n'a pas l'autorisation ${operation} sur la ressource ${resourceType} ${resourceId}`
         );
       }
     }else{
       this.logger.log(
-        `L'utilisateur ${user.id} possède l'autorisation ${authorization} sur la ressource ${resourceType} ${resourceId}`
+        `L'utilisateur ${user.id} possède l'autorisation ${operation} sur la ressource ${resourceType} ${resourceId}`
       );
     }
 

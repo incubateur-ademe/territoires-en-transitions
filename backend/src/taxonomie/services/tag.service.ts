@@ -6,10 +6,10 @@ import { categorieTagTable } from '../models/categorie-tag.table';
 import { groupementCollectiviteTable } from '../../collectivites/models/groupement-collectivite.table';
 import { TagType } from '../models/tag.table-base';
 import { AuthenticatedUser } from '../../auth/models/auth.models';
-import { Authorization } from '../../auth/gestion-des-droits/authorization.enum';
-import { ResourceType } from '../../auth/gestion-des-droits/resource-type.enum';
+import { PermissionOperation } from '@/backend/auth/authorizations/permission-operation.enum';
+import { ResourceType } from '@/backend/auth/authorizations/resource-type.enum';
 import CollectivitesService from '../../collectivites/services/collectivites.service';
-import { PermissionService } from '../../auth/gestion-des-droits/permission.service';
+import { PermissionService } from '@/backend/auth/authorizations/permission.service';
 
 @Injectable()
 export default class TagService {
@@ -70,11 +70,11 @@ export default class TagService {
     const collectivitePrivate = await this.collectiviteService.isPrivate(
       collectiviteId
     );
-    await this.permissionService.hasTheRightTo(
+    await this.permissionService.isAllowed(
       tokenInfo,
       collectivitePrivate
-        ? Authorization.COLLECTIVITES_CONTENT_LECTURE
-        : Authorization.COLLECTIVITES_CONTENT_VISITE,
+        ? PermissionOperation.COLLECTIVITES_LECTURE
+        : PermissionOperation.COLLECTIVITES_VISITE,
       ResourceType.COLLECTIVITE,
       collectiviteId
     );

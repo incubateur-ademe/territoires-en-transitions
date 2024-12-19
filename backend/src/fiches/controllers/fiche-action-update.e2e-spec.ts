@@ -563,7 +563,7 @@ describe('FichesActionUpdateService', () => {
       const body = response.body;
 
       expect(body).toStrictEqual({
-        message: `Droits insuffisants, l'utilisateur 17440546-f389-4d4f-bfdb-b0c94a1bd0f9 n'a pas l'autorisation fiches.edition sur la ressource Collectivité 3`,
+        message: `Droits insuffisants, l'utilisateur 17440546-f389-4d4f-bfdb-b0c94a1bd0f9 n'a pas l'autorisation plans.fiches.edition sur la ressource Collectivité 3`,
         error: 'Unauthorized',
         statusCode: 401,
       });

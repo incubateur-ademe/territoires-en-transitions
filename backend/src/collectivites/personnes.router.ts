@@ -5,9 +5,9 @@ import {
   listRequestSchema,
   PersonnesService,
 } from './services/personnes.service';
-import { PermissionService } from '../auth/gestion-des-droits/permission.service';
-import { Authorization } from '../auth/gestion-des-droits/authorization.enum';
-import { ResourceType } from '../auth/gestion-des-droits/resource-type.enum';
+import { PermissionService } from '@/backend/auth/authorizations/permission.service';
+import { PermissionOperation } from '@/backend/auth/authorizations/permission-operation.enum';
+import { ResourceType } from '@/backend/auth/authorizations/resource-type.enum';
 import CollectivitesService from '../collectivites/services/collectivites.service';
 
 const inputSchema = listRequestSchema;
@@ -28,11 +28,11 @@ export class PersonnesRouter {
         const collectivitePrivate = await this.collectivite.isPrivate(
           input.collectiviteId
         );
-        const authorized = await this.permission.hasTheRightTo(
+        const authorized = await this.permission.isAllowed(
           ctx.user,
           collectivitePrivate
-            ? Authorization.COLLECTIVITES_CONTENT_LECTURE
-            : Authorization.COLLECTIVITES_CONTENT_VISITE,
+            ? PermissionOperation.COLLECTIVITES_LECTURE
+            : PermissionOperation.COLLECTIVITES_VISITE,
           ResourceType.COLLECTIVITE,
           input.collectiviteId,
           true

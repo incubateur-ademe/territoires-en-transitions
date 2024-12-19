@@ -1,13 +1,13 @@
 import { getAuthUser, getTestApp, getTestDatabase, YOULOU_DOUDOU } from '@/backend/test';
 import { INestApplication } from '@nestjs/common';
-import { PermissionService } from '@/backend/auth/gestion-des-droits/permission.service';
+import { PermissionService } from '@/backend/auth/authorizations/permission.service';
 import { AuthenticatedUser } from '@/backend/auth/models/auth.models';
-import { Authorization } from '@/backend/auth/gestion-des-droits/authorization.enum';
-import { ResourceType } from '@/backend/auth/gestion-des-droits/resource-type.enum';
+import { PermissionOperation } from '@/backend/auth/authorizations/permission-operation.enum';
+import { ResourceType } from '@/backend/auth/authorizations/resource-type.enum';
 import DatabaseService from '../../common/services/database.service';
 import { eq } from 'drizzle-orm';
-import { utilisateurSupportTable } from '@/backend/auth/gestion-des-droits/roles/utilisateur-support.table';
-import { utilisateurVerifieTable } from '@/backend/auth/gestion-des-droits/roles/utilisateur-verifie.table';
+import { utilisateurSupportTable } from '@/backend/auth/authorizations/roles/utilisateur-support.table';
+import { utilisateurVerifieTable } from '@/backend/auth/authorizations/roles/utilisateur-verifie.table';
 import { dcpTable } from '@/backend/auth';
 import { collectiviteTable } from '@/backend/collectivites/models/collectivite.table';
 
@@ -29,9 +29,9 @@ describe('Gestion des droits', () => {
   describe('Droit en visite sur une collectivité -> NOK', async () => {
     test('Utilisateur vérifié -> OK', async () => {
       expect(
-        await permissionService.hasTheRightTo(
+        await permissionService.isAllowed(
           yoloDodoUser,
-          Authorization.COLLECTIVITES_CONTENT_VISITE,
+          PermissionOperation.COLLECTIVITES_VISITE,
           ResourceType.COLLECTIVITE,
           20,
           true
@@ -44,9 +44,9 @@ describe('Gestion des droits', () => {
         .set({ verifie: false })
         .where(eq(utilisateurVerifieTable.userId, yoloDodoUser.id));
       expect(
-        await permissionService.hasTheRightTo(
+        await permissionService.isAllowed(
           yoloDodoUser,
-          Authorization.COLLECTIVITES_CONTENT_VISITE,
+          PermissionOperation.COLLECTIVITES_VISITE,
           ResourceType.COLLECTIVITE,
           20,
           true
@@ -70,9 +70,9 @@ describe('Gestion des droits', () => {
         .set({ accessRestreint: true })
         .where(eq(collectiviteTable.id, 20));
       expect(
-        await permissionService.hasTheRightTo(
+        await permissionService.isAllowed(
           yoloDodoUser,
-          Authorization.COLLECTIVITES_CONTENT_VISITE,
+          PermissionOperation.COLLECTIVITES_VISITE,
           ResourceType.COLLECTIVITE,
           20,
           true
@@ -94,9 +94,9 @@ describe('Gestion des droits', () => {
   describe('Droit en lecture sur une collectivité -> NOK', async () => {
     test('Utilisateur vérifié sur sa collectivité -> OK', async () => {
       expect(
-        await permissionService.hasTheRightTo(
+        await permissionService.isAllowed(
           yoloDodoUser,
-          Authorization.COLLECTIVITES_CONTENT_LECTURE,
+          PermissionOperation.COLLECTIVITES_LECTURE,
           ResourceType.COLLECTIVITE,
           1,
           true
@@ -110,9 +110,9 @@ describe('Gestion des droits', () => {
         .set({ verifie: false })
         .where(eq(utilisateurVerifieTable.userId, yoloDodoUser.id));
       expect(
-        await permissionService.hasTheRightTo(
+        await permissionService.isAllowed(
           yoloDodoUser,
-          Authorization.COLLECTIVITES_CONTENT_LECTURE,
+          PermissionOperation.COLLECTIVITES_LECTURE,
           ResourceType.COLLECTIVITE,
           1,
           true
@@ -133,9 +133,9 @@ describe('Gestion des droits', () => {
 
     test('Utilisateur vérifié sur une autre collectivité -> NOK', async () => {
       expect(
-        await permissionService.hasTheRightTo(
+        await permissionService.isAllowed(
           yoloDodoUser,
-          Authorization.COLLECTIVITES_CONTENT_LECTURE,
+          PermissionOperation.COLLECTIVITES_LECTURE,
           ResourceType.COLLECTIVITE,
           20,
           true
@@ -148,9 +148,9 @@ describe('Gestion des droits', () => {
         .set({ support: true })
         .where(eq(utilisateurSupportTable.userId, yoloDodoUser.id));
       expect(
-        await permissionService.hasTheRightTo(
+        await permissionService.isAllowed(
           yoloDodoUser,
-          Authorization.COLLECTIVITES_CONTENT_LECTURE,
+          PermissionOperation.COLLECTIVITES_LECTURE,
           ResourceType.COLLECTIVITE,
           20,
           true
@@ -170,9 +170,9 @@ describe('Gestion des droits', () => {
     });
     test('Auditeur sur sa collectivité audité -> OK', async () => {
       expect(
-        await permissionService.hasTheRightTo(
+        await permissionService.isAllowed(
           youlouDoudouUser,
-          Authorization.COLLECTIVITES_CONTENT_LECTURE,
+          PermissionOperation.COLLECTIVITES_LECTURE,
           ResourceType.COLLECTIVITE,
           10,
           true
@@ -184,9 +184,9 @@ describe('Gestion des droits', () => {
   describe('Droit en edition sur une collectivité -> NOK', async () => {
     test('Sur sa collectivité -> OK', async () => {
       expect(
-        await permissionService.hasTheRightTo(
+        await permissionService.isAllowed(
           yoloDodoUser,
-          Authorization.FICHES_EDITION,
+          PermissionOperation.PLANS_FICHES_EDITION,
           ResourceType.COLLECTIVITE,
           1,
           true
@@ -195,9 +195,9 @@ describe('Gestion des droits', () => {
     });
     test('Sur une autre collectivité -> NOK', async () => {
       expect(
-        await permissionService.hasTheRightTo(
+        await permissionService.isAllowed(
           yoloDodoUser,
-          Authorization.FICHES_EDITION,
+          PermissionOperation.PLANS_FICHES_EDITION,
           ResourceType.COLLECTIVITE,
           20,
           true
@@ -209,9 +209,9 @@ describe('Gestion des droits', () => {
   describe("Droit en lecture sur la trajectoire d'une collectivité -> NOK", async () => {
     test('Sur sa collectivité -> OK', async () => {
       expect(
-        await permissionService.hasTheRightTo(
+        await permissionService.isAllowed(
           yoloDodoUser,
-          Authorization.INDICATEURS_TRAJECTOIRE_LECTURE,
+          PermissionOperation.INDICATEURS_TRAJECTOIRES_LECTURE,
           ResourceType.COLLECTIVITE,
           1,
           true
@@ -221,9 +221,9 @@ describe('Gestion des droits', () => {
 
     test('Sur une autre collectivité -> NOK', async () => {
       expect(
-        await permissionService.hasTheRightTo(
+        await permissionService.isAllowed(
           yoloDodoUser,
-          Authorization.INDICATEURS_TRAJECTOIRE_LECTURE,
+          PermissionOperation.INDICATEURS_TRAJECTOIRES_LECTURE,
           ResourceType.COLLECTIVITE,
           20,
           true
@@ -237,9 +237,9 @@ describe('Gestion des droits', () => {
         .set({ email: 'yolo@ademe.fr' })
         .where(eq(dcpTable.userId, yoloDodoUser.id));
       expect(
-        await permissionService.hasTheRightTo(
+        await permissionService.isAllowed(
           yoloDodoUser,
-          Authorization.INDICATEURS_TRAJECTOIRE_LECTURE,
+          PermissionOperation.INDICATEURS_TRAJECTOIRES_LECTURE,
           ResourceType.COLLECTIVITE,
           20,
           true
