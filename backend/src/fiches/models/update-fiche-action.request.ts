@@ -3,8 +3,9 @@ import {
   partenaireTagSchema,
   serviceTagSchema,
   structureTagSchema,
-} from '@/backend/shared';
+} from '@/backend/collectivites';
 import z from 'zod';
+import { financeurTagSchema } from '../../collectivites/shared/models/financeur-tag.table';
 import { indicateurDefinitionSchema } from '../../indicateurs/models/indicateur-definition.table';
 import { axeSchema } from '../../plans/fiches/shared/models/axe.table';
 import {
@@ -15,7 +16,6 @@ import {
 } from '../../plans/fiches/shared/models/fiche-action.table';
 import { actionRelationSchema } from '../../referentiels/models/action-relation.table';
 import { effetAttenduSchema } from '../../shared/models/effet-attendu.table';
-import { financeurTagSchema } from '../../shared/models/financeur-tag.table';
 import { sousThematiqueSchema } from '../../shared/models/sous-thematique.table';
 import { thematiqueSchema } from '../../shared/models/thematique.table';
 

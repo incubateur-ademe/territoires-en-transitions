@@ -1,14 +1,14 @@
 import { PermissionOperation } from '@/backend/auth/authorizations/permission-operation.enum';
 import { PermissionService } from '@/backend/auth/authorizations/permission.service';
 import { ResourceType } from '@/backend/auth/authorizations/resource-type.enum';
+import { partenaireTagTable } from '@/backend/collectivites';
 import CollectivitesService from '@/backend/collectivites/services/collectivites.service';
-import { partenaireTagTable } from '@/backend/shared';
 import { Injectable, Logger } from '@nestjs/common';
 import { and, eq, inArray, isNull, or } from 'drizzle-orm';
 import { AuthenticatedUser } from '../../auth/models/auth.models';
 import { groupementCollectiviteTable } from '../../collectivites/models/groupement-collectivite.table';
+import { Tag } from '../../collectivites/shared/models/tag.table-base';
 import DatabaseService from '../../common/services/database.service';
-import { Tag } from '../../shared/models/tag.table-base';
 import { categorieTagTable } from '../models/categorie-tag.table';
 
 @Injectable()

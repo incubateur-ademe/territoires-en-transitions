@@ -3,15 +3,15 @@ import { PermissionService } from '@/backend/auth/authorizations/permission.serv
 import { ResourceType } from '@/backend/auth/authorizations/resource-type.enum';
 import { AuthUser } from '@/backend/auth/models/auth.models';
 import { DatabaseService } from '@/backend/common';
+import { ficheActionLibreTagTable } from '@/backend/plans/fiches';
 import { Injectable } from '@nestjs/common';
 import { and, inArray, or } from 'drizzle-orm';
 import z from 'zod';
+import { ficheActionPiloteTable } from '../../plans/fiches/shared/models/fiche-action-pilote.table';
 import {
   ficheActionSchema,
   ficheActionTable,
 } from '../../plans/fiches/shared/models/fiche-action.table';
-import { ficheActionLibreTagTable } from '../models/fiche-action-libre-tag.table';
-import { ficheActionPiloteTable } from '../models/fiche-action-pilote.table';
 import { updateFicheActionRequestSchema } from '../models/update-fiche-action.request';
 
 @Injectable()

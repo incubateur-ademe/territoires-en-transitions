@@ -1,3 +1,4 @@
+import { ficheActionNoteSchema } from '@/backend/plans/fiches';
 import { createZodDto } from '@anatine/zod-nestjs';
 import {
   Body,
@@ -12,8 +13,9 @@ import { ApiOkResponse, ApiTags } from '@nestjs/swagger';
 import { z } from 'zod';
 import { TokenInfo } from '../../auth/decorators/token-info.decorators';
 import type { AuthenticatedUser } from '../../auth/models/auth.models';
+import FicheService from '../../plans/fiches/fiche.service';
+import FichesActionUpdateService from '../../plans/fiches/fiches-action-update.service';
 import { CountByStatutService } from '../count-by-statut/count-by-statut.service';
-import { ficheActionNoteSchema } from '../models/fiche-action-note.table';
 import { getFichesActionSyntheseSchema } from '../models/get-fiches-action-synthese.response';
 import { getFichesActionFilterRequestSchema } from '../models/get-fiches-actions-filter.request';
 import { updateFicheActionRequestSchema } from '../models/update-fiche-action.request';
@@ -21,8 +23,6 @@ import {
   deleteFicheActionNotesRequestSchema,
   upsertFicheActionNotesRequestSchema,
 } from '../models/upsert-fiche-action-note.request';
-import FicheService from '../services/fiche.service';
-import FichesActionUpdateService from '../services/fiches-action-update.service';
 
 /**
  * Création des classes de réponse à partir du schema pour générer automatiquement la documentation OpenAPI

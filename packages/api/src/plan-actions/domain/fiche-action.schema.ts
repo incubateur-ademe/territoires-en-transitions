@@ -1,10 +1,12 @@
 import { personneSchema } from '@/api/collectivites';
 import { indicateurListItemSchema } from '@/api/indicateurs/domain';
 import { actionSchema } from '@/api/referentiel';
+import { authorSchema } from '@/backend/auth';
+import { tagSchema } from '@/backend/collectivites';
 import {
   axeSchema,
   ciblesEnumSchema,
-  financeurSchema,
+  financeurSchemaUpdate,
   participationCitoyenneEnumSchema,
   prioriteEnumSchema,
   statutsEnumSchema,
@@ -12,25 +14,17 @@ import {
 import {
   effetAttenduSchema,
   sousThematiqueSchema,
-  tagSchema,
   tempsDeMiseEnOeuvreSchema,
   thematiqueSchema,
 } from '@/backend/shared';
 import { z } from 'zod';
-
-const auteur = z.object({
-  userId: z.string(),
-  prenom: z.string(),
-  nom: z.string(),
-  email: z.string(),
-});
 
 export const ficheActionSchema = z.object({
   id: z.number(),
   collectiviteId: z.number(),
   modifiedAt: z.string().datetime().nullish(),
   createdAt: z.string().datetime().nullish(),
-  createdBy: auteur.nullable(),
+  createdBy: authorSchema.nullable(),
   titre: z.string().nullable(),
   description: z.string().nullish(),
   statut: statutsEnumSchema.nullish(),
@@ -76,7 +70,10 @@ export const ficheActionSchema = z.object({
   plans: axeSchema.array().nullish(),
   axes: axeSchema.array().nullish(),
   actions: actionSchema.array().nullish(),
-  financeurs: financeurSchema.array().nullish(),
+  financeurs: financeurSchemaUpdate
+    // .extend({ id: financeurSchema.shape.id.optional() })
+    .array()
+    .nullish(),
   indicateurs: indicateurListItemSchema.array().nullish(),
   libresTag: tagSchema.array().nullish(),
 });

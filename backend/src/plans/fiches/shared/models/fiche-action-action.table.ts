@@ -1,6 +1,6 @@
+import { actionRelationTable } from '@/backend/referentiels';
 import { integer, pgTable, primaryKey, varchar } from 'drizzle-orm/pg-core';
-import { ficheActionTable } from '../../plans/fiches/shared/models/fiche-action.table';
-import { actionRelationTable } from '../../referentiels/models/action-relation.table';
+import { ficheActionTable } from './fiche-action.table';
 
 export const ficheActionActionTable = pgTable(
   'fiche_action_action',

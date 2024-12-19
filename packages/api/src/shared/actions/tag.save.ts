@@ -1,4 +1,4 @@
-import { Tag, TagInsert, TagType } from '@/backend/shared';
+import { Tag, TagInsert, TagType } from '@/backend/collectivites';
 import { objectToCamel, objectToSnake } from 'ts-case-convert';
 import { DBClient } from '../../typeUtils';
 

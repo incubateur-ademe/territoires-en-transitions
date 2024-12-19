@@ -1,6 +1,6 @@
+import { personneTagTable } from '@/backend/collectivites';
 import { integer, pgTable, uniqueIndex, uuid } from 'drizzle-orm/pg-core';
-import { ficheActionTable } from '../../plans/fiches/shared/models/fiche-action.table';
-import { personneTagTable } from '../../taxonomie/models/personne-tag.table';
+import { ficheActionTable } from './fiche-action.table';
 
 export const ficheActionReferentTable = pgTable(
   'fiche_action_referent',

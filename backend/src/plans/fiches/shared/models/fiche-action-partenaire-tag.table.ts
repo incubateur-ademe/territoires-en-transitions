@@ -1,6 +1,6 @@
-import { ficheActionTable } from '@/backend/plans/fiches';
-import { partenaireTagTable } from '@/backend/shared';
+import { partenaireTagTable } from '@/backend/collectivites';
 import { integer, pgTable, primaryKey } from 'drizzle-orm/pg-core';
+import { ficheActionTable } from './fiche-action.table';
 
 export const ficheActionPartenaireTagTable = pgTable(
   'fiche_action_partenaire_tag',

@@ -2,7 +2,7 @@ import { Injectable } from '@nestjs/common';
 import { and, eq, gt, gte, lt, lte, sql } from 'drizzle-orm';
 import { AuthenticatedUser } from '../../auth/models/auth.models';
 import DatabaseService from '../../common/services/database.service';
-import FicheService from '../services/fiche.service';
+import FicheService from '../../plans/fiches/fiche.service';
 import {
   ficheActionEtapeTable,
   FicheActionEtapeType,

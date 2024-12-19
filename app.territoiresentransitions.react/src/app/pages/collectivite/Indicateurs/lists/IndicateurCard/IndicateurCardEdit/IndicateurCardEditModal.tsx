@@ -3,7 +3,8 @@ import { useUpdateIndicateurCard } from '@/app/app/pages/collectivite/Indicateur
 import PersonnesDropdown from '@/app/ui/dropdownLists/PersonnesDropdown/PersonnesDropdown';
 import ServicesPilotesDropdown from '@/app/ui/dropdownLists/ServicesPilotesDropdown/ServicesPilotesDropdown';
 import ThematiquesDropdown from '@/app/ui/dropdownLists/ThematiquesDropdown/ThematiquesDropdown';
-import { Tag, Thematique } from '@/backend/shared';
+import { Tag } from '@/backend/collectivites';
+import { Thematique } from '@/backend/shared';
 import { Field, Modal, ModalFooterOKCancel } from '@/ui';
 import { OpenState } from '@/ui/utils/types';
 import { useEffect, useState } from 'react';

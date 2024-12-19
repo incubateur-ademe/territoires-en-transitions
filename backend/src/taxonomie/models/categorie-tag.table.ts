@@ -1,5 +1,5 @@
 import { boolean, integer, pgTable } from 'drizzle-orm/pg-core';
-import { tagTableBase } from '../../shared/models/tag.table-base';
+import { tagTableBase } from '../../collectivites/shared/models/tag.table-base';
 import { createdAt, createdBy } from '../../utils/column.utils';
 
 export const categorieTagTable = pgTable('categorie_tag', {

@@ -1,6 +1,6 @@
 import { pgTable, uniqueIndex } from 'drizzle-orm/pg-core';
 import { createSelectSchema } from 'drizzle-zod';
-import { tagTableBase } from '../../shared/models/tag.table-base';
+import { tagTableBase } from './tag.table-base';
 
 export const serviceTagTable = pgTable('service_tag', tagTableBase, (table) => {
   return {

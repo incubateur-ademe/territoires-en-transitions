@@ -14,31 +14,31 @@ import { PostgresJsQueryResultHKT } from 'drizzle-orm/postgres-js';
 import { toCamel } from 'postgres';
 import { AuthenticatedUser } from '../../auth/models/auth.models';
 import DatabaseService from '../../common/services/database.service';
-import { ficheActionAxeTable } from '../../plans/fiches/shared/models/fiche-action-axe.table';
-import { ficheActionFinanceurTagTable } from '../../plans/fiches/shared/models/fiche-action-financeur-tag.table';
-import {
-  ficheActionTable,
-  updateFicheActionSchema,
-} from '../../plans/fiches/shared/models/fiche-action.table';
+import { UpdateFicheActionRequestType } from '../../fiches/models/update-fiche-action.request';
 import { buildConflictUpdateColumns } from '../../utils/drizzle/conflict.utils';
-import { ficheActionActionTable } from '../models/fiche-action-action.table';
-import { ficheActionEffetAttenduTable } from '../models/fiche-action-effet-attendu.table';
-import { ficheActionIndicateurTable } from '../models/fiche-action-indicateur.table';
-import { ficheActionLibreTagTable } from '../models/fiche-action-libre-tag.table';
-import { ficheActionLienTable } from '../models/fiche-action-lien.table';
+import FicheService from './fiche.service';
+import { ficheActionActionTable } from './shared/models/fiche-action-action.table';
+import { ficheActionAxeTable } from './shared/models/fiche-action-axe.table';
+import { ficheActionEffetAttenduTable } from './shared/models/fiche-action-effet-attendu.table';
+import { ficheActionFinanceurTagTable } from './shared/models/fiche-action-financeur-tag.table';
+import { ficheActionIndicateurTable } from './shared/models/fiche-action-indicateur.table';
+import { ficheActionLibreTagTable } from './shared/models/fiche-action-libre-tag.table';
+import { ficheActionLienTable } from './shared/models/fiche-action-lien.table';
 import {
   ficheActionNoteTable,
   UpsertFicheActionNoteType,
-} from '../models/fiche-action-note.table';
-import { ficheActionPartenaireTagTable } from '../models/fiche-action-partenaire-tag.table';
-import { ficheActionPiloteTable } from '../models/fiche-action-pilote.table';
-import { ficheActionReferentTable } from '../models/fiche-action-referent.table';
-import { ficheActionServiceTagTable } from '../models/fiche-action-service-tag.table';
-import { ficheActionSousThematiqueTable } from '../models/fiche-action-sous-thematique.table';
-import { ficheActionStructureTagTable } from '../models/fiche-action-structure-tag.table';
-import { ficheActionThematiqueTable } from '../models/fiche-action-thematique.table';
-import { UpdateFicheActionRequestType } from '../models/update-fiche-action.request';
-import FicheService from './fiche.service';
+} from './shared/models/fiche-action-note.table';
+import { ficheActionPartenaireTagTable } from './shared/models/fiche-action-partenaire-tag.table';
+import { ficheActionPiloteTable } from './shared/models/fiche-action-pilote.table';
+import { ficheActionReferentTable } from './shared/models/fiche-action-referent.table';
+import { ficheActionServiceTagTable } from './shared/models/fiche-action-service-tag.table';
+import { ficheActionSousThematiqueTable } from './shared/models/fiche-action-sous-thematique.table';
+import { ficheActionStructureTagTable } from './shared/models/fiche-action-structure-tag.table';
+import { ficheActionThematiqueTable } from './shared/models/fiche-action-thematique.table';
+import {
+  ficheActionTable,
+  updateFicheActionSchema,
+} from './shared/models/fiche-action.table';
 
 type TxType = PgTransaction<
   PostgresJsQueryResultHKT,

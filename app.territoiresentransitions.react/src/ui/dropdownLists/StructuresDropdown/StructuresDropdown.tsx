@@ -1,4 +1,4 @@
-import { Tag } from '@/backend/shared';
+import { Tag } from '@/backend/collectivites';
 import { SelectMultipleProps } from '@/ui';
 import SelectTags from '../tags/SelectTags';
 import { useStructuresListe } from './useStructuresListe';

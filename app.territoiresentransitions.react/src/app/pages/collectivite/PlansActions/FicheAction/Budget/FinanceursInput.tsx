@@ -1,12 +1,12 @@
 import FinanceursDropdown from '@/app/ui/dropdownLists/FinanceursDropdown/FinanceursDropdown';
-import { Financeur } from '@/backend/plans/fiches';
+import { Financeur, FinanceurUpdate } from '@/backend/plans/fiches';
 import { Button, Field, Input } from '@/ui';
 
 type FinanceurPartial = Omit<Financeur, 'id' | 'ficheId' | 'financeurTagId'>;
 
 type FinanceursInputProps = {
-  financeurs: FinanceurPartial[] | null | undefined;
-  onUpdate: (financeurs: FinanceurPartial[]) => void;
+  financeurs: FinanceurUpdate[] | null | undefined;
+  onUpdate: (financeurs: FinanceurUpdate[]) => void;
 };
 
 const FinanceursInput = ({ financeurs, onUpdate }: FinanceursInputProps) => {
@@ -82,7 +82,12 @@ const FinanceursInput = ({ financeurs, onUpdate }: FinanceursInputProps) => {
               selectedFinanceur &&
               onUpdate([
                 ...(financeurs ?? []),
-                { financeurTag: selectedFinanceur, montantTtc: null },
+                {
+                  financeurTag: selectedFinanceur,
+                  financeurTagId: selectedFinanceur.id,
+                  ficheId: financeurs?.[0].ficheId ?? 0,
+                  montantTtc: null,
+                },
               ])
             }
           />

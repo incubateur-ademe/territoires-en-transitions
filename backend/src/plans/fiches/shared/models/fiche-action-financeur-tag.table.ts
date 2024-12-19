@@ -1,10 +1,10 @@
 import { integer, pgTable, serial } from 'drizzle-orm/pg-core';
-import { createSelectSchema } from 'drizzle-zod';
+import { createInsertSchema, createSelectSchema } from 'drizzle-zod';
 import z from 'zod';
 import {
   financeurTagSchema,
   financeurTagTable,
-} from '../../../../shared/models/financeur-tag.table';
+} from '../../../../collectivites/shared/models/financeur-tag.table';
 import { ficheActionTable } from './fiche-action.table';
 
 export const ficheActionFinanceurTagTable = pgTable(
@@ -26,5 +26,11 @@ export const financeurSchema = createSelectSchema(
 ).extend({
   financeurTag: financeurTagSchema,
 });
-
 export type Financeur = z.infer<typeof financeurSchema>;
+
+export const financeurSchemaUpdate = createInsertSchema(
+  ficheActionFinanceurTagTable
+).extend({
+  financeurTag: financeurTagSchema,
+});
+export type FinanceurUpdate = z.infer<typeof financeurSchemaUpdate>;

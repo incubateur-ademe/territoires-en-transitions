@@ -1,10 +1,7 @@
 import { Injectable, Logger } from '@nestjs/common';
 import DatabaseService from '../../common/services/database.service';
-import {
-  axeTable,
-  CreateAxeType,
-} from '../../plans/fiches/shared/models/axe.table';
-import { ficheActionAxeTable } from '../../plans/fiches/shared/models/fiche-action-axe.table';
+import { axeTable, CreateAxeType } from './shared/models/axe.table';
+import { ficheActionAxeTable } from './shared/models/fiche-action-axe.table';
 
 @Injectable()
 export default class AxeService {

@@ -1,7 +1,7 @@
-import { libreTagTable } from '@/backend/shared';
+import { libreTagTable } from '@/backend/collectivites';
 import { createdAt, createdBy } from '@/backend/utils';
 import { integer, pgTable, primaryKey } from 'drizzle-orm/pg-core';
-import { ficheActionTable } from '../../plans/fiches/shared/models/fiche-action.table';
+import { ficheActionTable } from './fiche-action.table';
 
 export const ficheActionLibreTagTable = pgTable(
   'fiche_action_libre_tag',

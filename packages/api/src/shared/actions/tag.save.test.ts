@@ -1,4 +1,4 @@
-import { TagInsert } from '@/backend/shared';
+import { TagInsert } from '@/backend/collectivites';
 import { beforeAll, expect, test } from 'vitest';
 import { signIn, signOut } from '../../tests/auth';
 import { supabase } from '../../tests/supabase';

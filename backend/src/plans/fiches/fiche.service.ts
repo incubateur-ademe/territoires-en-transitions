@@ -6,19 +6,19 @@ import { Injectable, Logger } from '@nestjs/common';
 import { aliasedTable, desc, eq } from 'drizzle-orm';
 import { AuthenticatedUser } from '../../auth/models/auth.models';
 import DatabaseService from '../../common/services/database.service';
+import { actionImpactFicheActionTable } from '../../fiches/models/action-impact-fiche-action.table';
+import TagService from '../../taxonomie/services/tag.service';
+import { ficheActionActionTable } from './shared/models/fiche-action-action.table';
+import { ficheActionEffetAttenduTable } from './shared/models/fiche-action-effet-attendu.table';
+import { ficheActionIndicateurTable } from './shared/models/fiche-action-indicateur.table';
+import { ficheActionNoteTable } from './shared/models/fiche-action-note.table';
+import { ficheActionPartenaireTagTable } from './shared/models/fiche-action-partenaire-tag.table';
+import { ficheActionSousThematiqueTable } from './shared/models/fiche-action-sous-thematique.table';
+import { ficheActionThematiqueTable } from './shared/models/fiche-action-thematique.table';
 import {
   CreateFicheActionType,
   ficheActionTable,
-} from '../../plans/fiches/shared/models/fiche-action.table';
-import TagService from '../../taxonomie/services/tag.service';
-import { actionImpactFicheActionTable } from '../models/action-impact-fiche-action.table';
-import { ficheActionActionTable } from '../models/fiche-action-action.table';
-import { ficheActionEffetAttenduTable } from '../models/fiche-action-effet-attendu.table';
-import { ficheActionIndicateurTable } from '../models/fiche-action-indicateur.table';
-import { ficheActionNoteTable } from '../models/fiche-action-note.table';
-import { ficheActionPartenaireTagTable } from '../models/fiche-action-partenaire-tag.table';
-import { ficheActionSousThematiqueTable } from '../models/fiche-action-sous-thematique.table';
-import { ficheActionThematiqueTable } from '../models/fiche-action-thematique.table';
+} from './shared/models/fiche-action.table';
 
 @Injectable()
 export default class FicheService {

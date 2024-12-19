@@ -1,9 +1,9 @@
 import { getFormattedNumber } from '@/app/utils/formatUtils';
-import { Financeur } from '@/backend/plans/fiches';
+import { FinanceurUpdate } from '@/backend/plans/fiches';
 import { Badge } from '@/ui';
 
 type FinanceursListeProps = {
-  financeurs?: Financeur[];
+  financeurs?: FinanceurUpdate[];
 };
 
 const FinanceursListe = ({ financeurs }: FinanceursListeProps) => {
