@@ -6,12 +6,11 @@ export enum AuthRole {
   ANON = 'anon', // Anonymous
 }
 
-// export type User = Pick<SupabaseUser, 'id' | 'role' | 'is_anonymous'>;
-
 export interface AuthUser<Role extends AuthRole = AuthRole> {
   id: Role extends AuthRole.AUTHENTICATED ? string : null;
   role: Role;
   isAnonymous: Role extends AuthRole.AUTHENTICATED ? false : true;
+  jwtToken: AuthJwtPayload<Role>;
 }
 
 export type AnonymousUser = AuthUser<AuthRole.ANON>;
@@ -49,6 +48,7 @@ export function jwtToUser(jwt: AuthJwtPayload): AuthUser {
       id: jwt.sub,
       role: AuthRole.AUTHENTICATED,
       isAnonymous: false,
+      jwtToken: jwt,
     };
   }
 
@@ -57,6 +57,7 @@ export function jwtToUser(jwt: AuthJwtPayload): AuthUser {
       id: null,
       role: AuthRole.ANON,
       isAnonymous: true,
+      jwtToken: jwt,
     };
   }
 
@@ -65,6 +66,7 @@ export function jwtToUser(jwt: AuthJwtPayload): AuthUser {
       id: null,
       role: AuthRole.SERVICE_ROLE,
       isAnonymous: true,
+      jwtToken: jwt,
     };
   }
 
