@@ -4,7 +4,7 @@ import { useState } from 'react';
 import { TIndicateurDefinition } from '@/app/app/pages/collectivite/Indicateurs/types';
 import { useIndicateurValeurs } from '@/app/app/pages/collectivite/Indicateurs/useIndicateurValeurs';
 import PictoIndicateurVide from '@/app/ui/pictogrammes/PictoIndicateurVide';
-import { EmptyCard, Icon } from '@/ui';
+import { Button, EmptyCard, Icon, Modal } from '@/ui';
 import IndicateurChartNew from '../../chart/IndicateurChartNew';
 import { DataSourceTooltip } from './DataSourceTooltip';
 import { transformeValeurs } from './transformeValeurs';
@@ -56,23 +56,56 @@ const IndicateurDetailChart = ({
   const hasValeurOrObjectif = valeurs.length > 0;
 
   return hasValeurOrObjectif ? (
-    <div
-      data-test={`chart-${definition.id}`}
-      className={classNames('flex flex-col px-2 py-4', className)}
-    >
-      {/* todo: modale téléchargement ? */}
-      <IndicateurChartNew
-        data={data}
-        isLoading={isLoadingValeurs}
-        title={titre}
-      />
+    <>
+      <div
+        data-test={`chart-${definition.id}`}
+        className={classNames(
+          'flex flex-col py-6 border border-grey-4 rounded-lg',
+          className
+        )}
+      >
+        <div className="flex justify-between mx-8">
+          <div className="font-bold text-lg text-primary-9">
+            {definition.titre}
+          </div>
 
-      {!!metadonnee && (
-        <DataSourceTooltip metadonnee={metadonnee}>
-          <Icon icon="information-line" className="text-primary" />
-        </DataSourceTooltip>
+          {!!rempli && (
+            <Button
+              size="xs"
+              variant="outlined"
+              onClick={() => setIsChartOpen(true)}
+            >
+              Télécharger le graphique
+            </Button>
+          )}
+        </div>
+
+        <IndicateurChartNew data={data} isLoading={isLoadingValeurs} />
+
+        {!!metadonnee && (
+          <DataSourceTooltip metadonnee={metadonnee}>
+            <Icon icon="information-line" className="text-primary" />
+          </DataSourceTooltip>
+        )}
+      </div>
+      {isChartOpen && (
+        <Modal
+          size="xl"
+          openState={{
+            isOpen: isChartOpen,
+            setIsOpen: setIsChartOpen,
+          }}
+          render={() => (
+            <IndicateurChartNew
+              data={data}
+              isLoading={isLoadingValeurs}
+              title={definition.titre}
+              variant="modal"
+            />
+          )}
+        />
       )}
-    </div>
+    </>
   ) : (
     <EmptyCard
       size="xs"
