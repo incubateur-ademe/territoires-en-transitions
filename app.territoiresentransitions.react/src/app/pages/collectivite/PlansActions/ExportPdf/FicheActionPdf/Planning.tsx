@@ -20,7 +20,7 @@ const Planning = ({ fiche }: FicheActionPdfProps) => {
     calendrier: justificationCalendrier,
     dateDebut,
     dateFinProvisoire: dateFinPrevisionnelle,
-    niveauPriorite,
+    priorite: niveauPriorite,
     statut,
     tempsDeMiseEnOeuvre,
   } = fiche;
@@ -39,7 +39,7 @@ const Planning = ({ fiche }: FicheActionPdfProps) => {
           Date de début
         </Title>
         <Paragraph className={classNames({ 'text-grey-7': !dateDebut })}>
-          {!!dateDebut
+          {dateDebut
             ? getTextFormattedDate({ date: dateDebut })
             : 'Non renseignée'}
         </Paragraph>
@@ -57,7 +57,7 @@ const Planning = ({ fiche }: FicheActionPdfProps) => {
               'text-error-1': dateFinPrevisionnelle && isLate,
             })}
           >
-            {!!dateFinPrevisionnelle
+            {dateFinPrevisionnelle
               ? getTextFormattedDate({ date: dateFinPrevisionnelle })
               : 'Non renseignée'}
           </Paragraph>

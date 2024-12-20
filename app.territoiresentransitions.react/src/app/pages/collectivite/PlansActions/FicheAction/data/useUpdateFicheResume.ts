@@ -13,7 +13,7 @@ export const useUpdateFicheResume = (invalidationKeys?: QueryKey[]) => {
       const {
         titre,
         statut,
-        niveauPriorite,
+        priorite,
         dateFinProvisoire,
         ameliorationContinue,
       } = fiche;
@@ -22,11 +22,11 @@ export const useUpdateFicheResume = (invalidationKeys?: QueryKey[]) => {
         .update({
           titre,
           statut,
-          niveau_priorite: niveauPriorite,
+          niveau_priorite: priorite,
           date_fin_provisoire: dateFinProvisoire,
           amelioration_continue: ameliorationContinue,
         })
-        .eq('id', fiche.id!);
+        .eq('id', fiche.id);
     },
     {
       onMutate: async () => {
