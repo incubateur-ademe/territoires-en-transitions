@@ -794,3 +794,8 @@ plan_action/fiches [plan_action/fiches@v4.33.0] 2024-12-17T14:05:30Z Frederic Ar
 @v4.34.0 2024-12-17T17:16:29Z Frederic Arnoux <frederic.arnoux@beta.gouv.fr> # Tag v4.34.0
 
 plan_action/fiches [plan_action/fiches@v4.34.0] 2024-12-19T09:19:32Z Frederic Arnoux <frederic.arnoux@beta.gouv.fr> # Ajoute des champs manquants de la fiche action dans la vue de lecture
+@v4.35.0 2024-12-20T14:11:23Z Frederic Arnoux <frederic.arnoux@beta.gouv.fr> # Tag en v4.35.0
+
+plan_action/fiches [plan_action/fiches@v4.35.0] 2024-12-20T14:12:01Z Frederic Arnoux <frederic.arnoux@beta.gouv.fr> # Ajoute des RLS pour les effets attendus dune fiche
+@v4.36.0 2024-12-20T17:21:52Z Frederic Arnoux <frederic.arnoux@beta.gouv.fr> # Tag v4.36.0
+
