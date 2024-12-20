@@ -18,12 +18,11 @@ const ficheActionColumns = [
   'collectivite_id',
   'modified_at',
   'date_fin_provisoire',
-  'niveau_priorite',
+  'priorite:niveau_priorite',
   'cibles',
   'restreint',
   'amelioration_continue',
   'date_debut',
-  'date_fin_provisoire',
   'budget_previsionnel',
 ];
 

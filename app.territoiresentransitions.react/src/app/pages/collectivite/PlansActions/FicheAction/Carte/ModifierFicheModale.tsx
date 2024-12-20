@@ -90,11 +90,11 @@ const ModifierFicheModale = ({
               </Field>
               <Field title="Niveau de priorité">
                 <PrioritesSelectDropdown
-                  values={fiche.niveauPriorite}
+                  values={fiche.priorite}
                   onChange={(priorite) =>
                     setFiche({
                       ...fiche,
-                      niveauPriorite: priorite ?? null,
+                      priorite: priorite ?? null,
                     })
                   }
                 />

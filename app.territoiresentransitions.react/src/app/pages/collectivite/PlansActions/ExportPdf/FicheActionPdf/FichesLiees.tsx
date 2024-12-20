@@ -29,7 +29,7 @@ type FicheLieeCardProps = {
 const FicheLieeCard = ({ ficheLiee }: FicheLieeCardProps) => {
   const {
     statut,
-    niveauPriorite,
+    priorite,
     titre,
     plans,
     pilotes,
@@ -47,9 +47,7 @@ const FicheLieeCard = ({ ficheLiee }: FicheLieeCardProps) => {
     <Card wrap={false} gap={1.5} className="w-[32%] p-3">
       {/* Statut et niveau de priorité */}
       <Stack direction="row" gap={2}>
-        {!!niveauPriorite && (
-          <BadgePriorite priorite={niveauPriorite} size="sm" />
-        )}
+        {!!priorite && <BadgePriorite priorite={priorite} size="sm" />}
         {<BadgeStatut statut={statut ?? 'Sans statut'} size="sm" />}
       </Stack>
 

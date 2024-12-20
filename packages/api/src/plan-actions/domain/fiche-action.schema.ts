@@ -111,7 +111,7 @@ export const ficheActionSchema = z.object({
     .date()
     .or(z.string().datetime({ offset: true }))
     .nullish(),
-  niveauPriorite: niveauPrioriteSchema.nullish(),
+  priorite: niveauPrioriteSchema.nullish(),
   cibles: cibleSchema.array().nullish(),
   restreint: z.boolean().nullish(),
   resultatsAttendus: effetsAttendus.array().nullish(),
@@ -188,7 +188,7 @@ export const ficheResumeSchema = ficheActionSchema
     ameliorationContinue: true,
     dateDebut: true,
     dateFinProvisoire: true,
-    niveauPriorite: true,
+    priorite: true,
     restreint: true,
     pilotes: true,
     plans: true,

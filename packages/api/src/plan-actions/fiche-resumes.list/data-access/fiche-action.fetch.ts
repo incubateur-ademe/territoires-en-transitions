@@ -12,7 +12,6 @@ const ficheActionColumns = [
   // 'collectivite_id',
   // 'modified_at',
   // 'date_fin_provisoire',
-  // 'niveau_priorite',
   // 'cibles',
   // 'restreint',
   // 'amelioration_continue',
@@ -26,6 +25,7 @@ const ficheActionColumns = [
   // 'financements',
   // 'calendrier',
   '*',
+  'priorite:niveau_priorite',
 ];
 
 type Props = {
