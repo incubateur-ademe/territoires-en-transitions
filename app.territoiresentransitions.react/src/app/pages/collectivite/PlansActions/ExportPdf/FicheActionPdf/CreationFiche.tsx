@@ -3,7 +3,7 @@ import { format } from 'date-fns';
 import { FicheActionPdfProps } from './FicheActionPdf';
 
 const CreationFiche = ({ fiche }: FicheActionPdfProps) => {
-  const { modifiedAt, createdAt, createdBy } = fiche;
+  const { modifiedAt, modifiedBy, createdAt, createdBy } = fiche;
 
   if (!modifiedAt && !createdAt) return null;
 
@@ -14,6 +14,9 @@ const CreationFiche = ({ fiche }: FicheActionPdfProps) => {
           <>
             Dernière modification le{' '}
             {format(new Date(modifiedAt), 'dd/MM/yyyy')}
+            {modifiedBy !== null
+              ? ` par ${modifiedBy.prenom} ${modifiedBy.nom}`
+              : ''}
           </>
         )}
       </Paragraph>
