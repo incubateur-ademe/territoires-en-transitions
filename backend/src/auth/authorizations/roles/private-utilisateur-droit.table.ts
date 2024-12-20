@@ -1,9 +1,9 @@
+import { createdAt, modifiedAt } from '@/backend/utils';
 import { InferSelectModel } from 'drizzle-orm';
 import { boolean, integer, pgTable, serial, uuid } from 'drizzle-orm/pg-core';
 import { collectiviteTable } from '../../../collectivites/models/collectivite.table';
+import { invitationTable } from '../../models/invitation.table';
 import { NiveauAcces, niveauAccessEnum } from './niveau-acces.enum';
-import { createdAt, modifiedAt } from '@/backend/utils';
-import { invitationTable } from '@/backend/auth/models/invitation.table';
 
 export const utilisateurDroitTable = pgTable('private_utilisateur_droit', {
   id: serial('id').primaryKey(),

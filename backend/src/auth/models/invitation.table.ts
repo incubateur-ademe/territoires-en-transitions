@@ -13,7 +13,7 @@ import {
   createdBy,
   TIMESTAMP_OPTIONS,
 } from '../../utils/column.utils';
-import { niveauAccessEnum } from '@/backend/auth/authorizations/roles/niveau-acces.enum';
+import { niveauAccessEnum } from '../authorizations/roles/niveau-acces.enum';
 
 export const utilisateurSchema = pgSchema('utilisateur');
 
