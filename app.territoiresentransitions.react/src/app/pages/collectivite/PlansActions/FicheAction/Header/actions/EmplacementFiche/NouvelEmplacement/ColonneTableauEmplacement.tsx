@@ -1,5 +1,5 @@
-import {generateTitle} from '../../../data/utils';
-import {TProfondeurAxe} from '../../../../PlanAction/data/types';
+import { generateTitle } from '@/app/app/pages/collectivite/PlansActions/FicheAction/data/utils';
+import { TProfondeurAxe } from '@/app/app/pages/collectivite/PlansActions/PlanAction/data/types';
 import BoutonTableauEmplacement from './BoutonTableauEmplacement';
 
 type ColonneTableauEmplacementProps = {
@@ -17,7 +17,7 @@ const ColonneTableauEmplacement = ({
 }: ColonneTableauEmplacementProps) => {
   return (
     <div className="flex flex-col gap-4 px-3">
-      {axesList.map(axe => (
+      {axesList.map((axe) => (
         <BoutonTableauEmplacement
           key={axe.axe.id}
           id={axe.axe.id}

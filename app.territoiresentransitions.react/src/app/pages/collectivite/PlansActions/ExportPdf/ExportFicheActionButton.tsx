@@ -93,6 +93,7 @@ const ExportFicheActionButton = ({ fiche }: { fiche: FicheAction }) => {
       <ExportPDFButton
         {...{ content, fileName }}
         requestData={() => setIsDataRequested(true)}
+        variant="grey"
       />
 
       {isDataRequested && (
