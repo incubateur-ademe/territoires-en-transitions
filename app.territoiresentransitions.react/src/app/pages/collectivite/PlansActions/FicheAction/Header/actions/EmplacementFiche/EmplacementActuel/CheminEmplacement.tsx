@@ -1,7 +1,7 @@
+import { useRemoveFicheFromAxe } from '@/app/app/pages/collectivite/PlansActions/FicheAction/data/useRemoveFicheFromAxe';
+import DeleteButton from '@/app/app/pages/collectivite/PlansActions/FicheAction/DeleteButton';
+import { usePlanActionChemin } from '@/app/app/pages/collectivite/PlansActions/PlanAction/data/usePlanActionChemin';
 import { Icon } from '@/ui';
-import { usePlanActionChemin } from '../../../../PlanAction/data/usePlanActionChemin';
-import { useRemoveFicheFromAxe } from '../../../data/useRemoveFicheFromAxe';
-import DeleteButton from '../../../DeleteButton';
 
 type CheminEmplacementProps = {
   ficheId: number;

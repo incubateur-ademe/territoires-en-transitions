@@ -4,7 +4,7 @@ import { getTruncatedText } from '@/app/utils/formatUtils';
 import { Badge, Button } from '@/ui';
 import classNames from 'classnames';
 import { useState } from 'react';
-import MenuDescription from './MenuDescription';
+import ModaleDescription from './ModaleDescription';
 
 type FicheActionDescriptionProps = {
   isReadonly: boolean;
@@ -92,13 +92,12 @@ const FicheActionDescription = ({
           </div>
         )}
 
-        {/* Boutons d'action sur la fiche */}
-        <MenuDescription
-          isReadonly={isReadonly}
-          fiche={fiche}
-          updateFiche={updateFiche}
-          className="ml-auto"
-        />
+        {/* Modale de modification du block description */}
+        {!isReadonly && (
+          <div className="ml-auto">
+            <ModaleDescription fiche={fiche} updateFiche={updateFiche} />
+          </div>
+        )}
       </div>
 
       {/* Description de l'action */}

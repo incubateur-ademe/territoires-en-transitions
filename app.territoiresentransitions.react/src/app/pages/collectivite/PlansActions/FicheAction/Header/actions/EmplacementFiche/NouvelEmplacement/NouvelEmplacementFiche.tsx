@@ -1,11 +1,12 @@
+import { useState } from 'react';
+
 import { FicheAction } from '@/api/plan-actions';
 import { Alert, Button } from '@/ui';
-import { useState } from 'react';
-import { TProfondeurAxe } from '../../../../PlanAction/data/types';
-import { usePlanActionProfondeur } from '../../../../PlanAction/data/usePlanActionProfondeur';
-import { checkAxeExistInPlanProfondeur } from '../../../../PlanAction/data/utils';
-import { useAddFicheToAxe } from '../../../data/useAddFicheToAxe';
 import ColonneTableauEmplacement from './ColonneTableauEmplacement';
+import { usePlanActionProfondeur } from '@/app/app/pages/collectivite/PlansActions/PlanAction/data/usePlanActionProfondeur';
+import { useAddFicheToAxe } from '@/app/app/pages/collectivite/PlansActions/FicheAction/data/useAddFicheToAxe';
+import { checkAxeExistInPlanProfondeur } from '@/app/app/pages/collectivite/PlansActions/PlanAction/data/utils';
+import { TProfondeurAxe } from '@/app/app/pages/collectivite/PlansActions/PlanAction/data/types';
 
 type NouvelEmplacementFicheProps = {
   fiche: FicheAction;

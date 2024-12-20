@@ -42,10 +42,12 @@ const ModaleEmplacement = ({ fiche }: ModaleEmplacementProps) => {
         data-test="BoutonRangerFiche"
         icon="folder-2-line"
         title="Ranger la fiche dans un plan d’action"
-        variant="white"
+        variant="grey"
         size="xs"
         className="h-fit"
-      />
+      >
+        Ranger
+      </Button>
     </Modal>
   );
 };

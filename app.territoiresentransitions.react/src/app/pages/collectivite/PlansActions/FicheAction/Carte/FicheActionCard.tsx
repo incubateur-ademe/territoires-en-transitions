@@ -8,7 +8,7 @@ import { QueryKey } from 'react-query';
 import BadgePriorite from '../../components/BadgePriorite';
 import BadgeStatut from '../../components/BadgeStatut';
 import { generateTitle } from '../data/utils';
-import ModaleSuppression from '../FicheActionDescription/ModaleSuppression';
+import ModaleSuppression from '../Header/actions/ModaleSuppression';
 import FicheActionFooterInfo from './FicheActionFooterInfo';
 import ModifierFicheModale from './ModifierFicheModale';
 

@@ -4,8 +4,12 @@ import { FicheAction } from '@/api/plan-actions';
 
 import { Divider, Icon } from '@/ui';
 
+import ExportFicheActionButton from '@/app/app/pages/collectivite/PlansActions/ExportPdf/ExportFicheActionButton';
+
 import CheminsFiche from './CheminsFiche';
 import TitreFiche from './TitreFiche';
+import ModaleEmplacement from './actions/EmplacementFiche/ModaleEmplacement';
+import ModaleSuppression from './actions/ModaleSuppression';
 
 type FicheActionHeaderProps = {
   fiche: FicheAction;
@@ -17,13 +21,28 @@ const Header = ({ fiche, updateTitle, isReadonly }: FicheActionHeaderProps) => {
   const { titre, collectiviteId, axes } = fiche;
 
   return (
-    <div className="w-full mb-10" data-test="fiche-header">
-      {/* Titre éditable de la fiche action */}
-      <TitreFiche
-        titre={titre}
-        isReadonly={isReadonly}
-        updateTitle={updateTitle}
-      />
+    <div className="w-full mb-6" data-test="fiche-header">
+      <div className="flex flex-col-reverse gap-4 lg:flex-row lg:items-start">
+        {/* Titre éditable de la fiche action */}
+        <TitreFiche
+          titre={titre}
+          isReadonly={isReadonly}
+          updateTitle={updateTitle}
+        />
+
+        {/* Actions génériques de la fiche action */}
+        <div className="flex gap-4 lg:mt-3.5">
+          <ModaleEmplacement fiche={fiche} />
+          <ExportFicheActionButton fiche={fiche} />
+          <ModaleSuppression
+            ficheId={fiche.id}
+            title={titre}
+            isInMultipleAxes={!!axes && axes.length > 1}
+            buttonClassName="!border-error-1 hover:!border-error-1"
+            redirect
+          />
+        </div>
+      </div>
 
       {/* Fils d'ariane avec emplacements de la fiche */}
       <CheminsFiche titre={titre} collectiviteId={collectiviteId} axes={axes} />
