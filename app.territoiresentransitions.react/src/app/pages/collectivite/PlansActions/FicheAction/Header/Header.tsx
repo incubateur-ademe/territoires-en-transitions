@@ -29,8 +29,11 @@ const Header = ({ fiche, updateTitle, isReadonly }: FicheActionHeaderProps) => {
       <CheminsFiche titre={titre} collectiviteId={collectiviteId} axes={axes} />
 
       {/* Création et modification de la fiche */}
-      {fiche.modifiedBy || fiche.createdBy ? (
-        <div className="flex max-md:flex-col gap-2 items-center mt-3 py-3 text-sm text-grey-8 border-y boder-primary-3">
+      {fiche.modifiedBy ||
+      fiche.createdBy ||
+      fiche.modifiedAt ||
+      fiche.createdAt ? (
+        <div className="flex max-md:flex-col gap-2 items-center mt-3 mb-4 py-3 text-sm text-grey-8 border-y boder-primary-3">
           <div className="flex gap-1">
             <Icon icon="calendar-2-line" size="sm" />
             Modifiée{' '}
@@ -54,7 +57,7 @@ const Header = ({ fiche, updateTitle, isReadonly }: FicheActionHeaderProps) => {
           </div>
         </div>
       ) : (
-        <Divider />
+        <Divider className="mt-4" />
       )}
     </div>
   );
