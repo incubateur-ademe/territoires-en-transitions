@@ -7,6 +7,7 @@ import {
   CardProps,
   Checkbox,
   EmptyCard,
+  Modal,
   Notification,
   Tooltip,
 } from '@/ui';
@@ -159,161 +160,182 @@ export const IndicateurCardBase = ({
       (v) => typeof v.valeur === 'number'
     ).length > 0;
 
-  const isNotLoadingNotFilled = !isLoading && !hasValeurOrObjectif;
-
   const isACompleter = chartInfo?.sansValeur
     ? indicateursACompleterRestant > 0
     : !chartInfo?.rempli;
 
   return (
-    <div className="group relative h-full">
-      {/** Cadenas indicateur privé */}
-      {chartInfo?.confidentiel && (
-        <Tooltip label="La dernière valeur de cet indicateur est en mode privé">
-          <div className="absolute -top-5 left-5">
-            <Notification icon="lock-fill" size="sm" classname="w-9 h-9" />
-          </div>
-        </Tooltip>
-      )}
+    <>
+      <div className="group relative h-full">
+        {/** Cadenas indicateur privé */}
+        {chartInfo?.confidentiel && (
+          <Tooltip label="La dernière valeur de cet indicateur est en mode privé">
+            <div className="absolute -top-5 left-5">
+              <Notification icon="lock-fill" size="sm" classname="w-9 h-9" />
+            </div>
+          </Tooltip>
+        )}
 
-      {/** Menus d'édition */}
-      {!readonly && isEditable && (
-        <IndicateurCardOptions
-          definition={definition}
-          isFavoriCollectivite={chartInfo?.favoriCollectivite}
-          otherMenuActions={otherMenuActions}
-          chartDownloadSettings={{
-            showTrigger: showChart && hasValeurOrObjectif,
-            openModal: () => setIsDownloadChartOpen(true),
-          }}
-        />
-      )}
-
-      {/* Carte indicateur */}
-      <Card
-        dataTest={`chart-${definition.id}`}
-        className={classNames('h-full font-normal !gap-3 !p-6', className)}
-        isSelected={selectState?.checkbox && selectState?.selected}
-        href={href}
-        {...card}
-      >
-        {/* En-tête de la carte, avec ou sans checkbox */}
-        {selectState?.checkbox ? (
-          <Checkbox
-            checked={selectState.selected}
-            onChange={() =>
-              selectState.setSelected({
-                id: definition.id,
-                titre: definition.titre,
-                estPerso: definition.estPerso,
-                identifiant: definition.identifiant || null,
-                // description: chartInfo?.titreLong ?? '',
-                // unite: chartInfo?.unite ?? '',
-                hasOpenData: definition.hasOpenData,
-              })
-            }
-            label={chartInfo?.titre}
-            labelClassname="!font-bold"
+        {/** Menus d'édition */}
+        {!readonly && isEditable && (
+          <IndicateurCardOptions
+            definition={definition}
+            isFavoriCollectivite={chartInfo?.favoriCollectivite}
+            otherMenuActions={otherMenuActions}
+            chartDownloadSettings={{
+              showTrigger: showChart && hasValeurOrObjectif,
+              openModal: () => setIsDownloadChartOpen(true),
+            }}
           />
-        ) : (
-          <>
-            <div className="max-w-full font-bold line-clamp-2 text-primary-10">
-              {chartInfo?.titre}{' '}
-              {chartInfo?.unite && (
-                <span className="font-normal text-grey-6">
-                  ({chartInfo?.unite})
-                </span>
+        )}
+
+        {/* Carte indicateur */}
+        <Card
+          dataTest={`chart-${definition.id}`}
+          className={classNames('h-full font-normal !gap-3 !p-6', className)}
+          isSelected={selectState?.checkbox && selectState?.selected}
+          href={href}
+          {...card}
+        >
+          {/* En-tête de la carte, avec ou sans checkbox */}
+          {selectState?.checkbox ? (
+            <Checkbox
+              checked={selectState.selected}
+              onChange={() =>
+                selectState.setSelected({
+                  id: definition.id,
+                  titre: definition.titre,
+                  estPerso: definition.estPerso,
+                  identifiant: definition.identifiant || null,
+                  // description: chartInfo?.titreLong ?? '',
+                  // unite: chartInfo?.unite ?? '',
+                  hasOpenData: definition.hasOpenData,
+                })
+              }
+              label={chartInfo?.titre}
+              labelClassname="!font-bold"
+            />
+          ) : (
+            <>
+              <div className="max-w-full font-bold line-clamp-2 text-primary-10">
+                {chartInfo?.titre}{' '}
+                {chartInfo?.unite && (
+                  <span className="font-normal text-grey-6">
+                    ({chartInfo?.unite})
+                  </span>
+                )}
+              </div>
+              <div className="flex items-center gap-2 flex-wrap">
+                <BadgeACompleter a_completer={isACompleter} size="sm" />
+                {definition.estPerso && <BadgeIndicateurPerso size="sm" />}
+                {definition.hasOpenData && <BadgeOpenData size="sm" />}
+              </div>
+            </>
+          )}
+
+          {/** Graphique */}
+          {showChart && (
+            <div className="mt-auto">
+              {isIndicateurParent &&
+              chartInfo?.sansValeur &&
+              indicateursACompleterRestant === 0 ? (
+                <EmptyCard
+                  size="xs"
+                  className="h-80"
+                  picto={(props) => <PictoIndicateurComplet {...props} />}
+                  subTitle={`${totalNbIndicateurs}/${totalNbIndicateurs} complétés`}
+                />
+              ) : data.valeurs.objectifs.length === 0 &&
+                data.valeurs.resultats.length === 0 ? (
+                <EmptyCard
+                  size="xs"
+                  className="h-80"
+                  picto={(props) => <PictoIndicateurVide {...props} />}
+                  actions={
+                    !readonly && !!href
+                      ? [{ children: "Compléter l'indicateur" }]
+                      : undefined
+                  }
+                />
+              ) : (
+                <IndicateurChartNew
+                  data={data}
+                  isLoading={isLoading}
+                  variant="thumbnail"
+                />
               )}
             </div>
-            <div className="flex items-center gap-2 flex-wrap">
-              <BadgeACompleter a_completer={isACompleter} size="sm" />
-              {definition.estPerso && <BadgeIndicateurPerso size="sm" />}
-              {definition.hasOpenData && <BadgeOpenData size="sm" />}
-            </div>
-          </>
-        )}
+          )}
 
-        {/** Graphique */}
-        {showChart && (
-          <div className="mt-auto">
-            {isIndicateurParent &&
-            chartInfo?.sansValeur &&
-            indicateursACompleterRestant === 0 ? (
-              <EmptyCard
-                size="xs"
-                className="h-80"
-                picto={(props) => <PictoIndicateurComplet {...props} />}
-                subTitle={`${totalNbIndicateurs}/${totalNbIndicateurs} complétés`}
-              />
-            ) : data.valeurs.objectifs.length === 0 &&
-              data.valeurs.resultats.length === 0 ? (
-              <EmptyCard
-                size="xs"
-                className="h-80"
-                picto={(props) => <PictoIndicateurVide {...props} />}
-                actions={
-                  !readonly && !!href
-                    ? [{ children: "Compléter l'indicateur" }]
-                    : undefined
-                }
-              />
-            ) : (
-              // todo: gérer le téléchargement png (via la modale ?)
-              <IndicateurChartNew data={data} isLoading={isLoading} size="sm" />
-            )}
-          </div>
-        )}
-
-        {/** Partie sous le séparateur horizontal */}
-        <div
-          className={classNames({ 'h-7': showChart, 'mt-auto': !showChart })}
-        >
-          {chartInfo &&
-            (showChart ? (
-              <>
-                {/** Barre horizontale */}
-                {hasValeurOrObjectif &&
-                  ((isIndicateurParent &&
-                    !(
-                      chartInfo?.sansValeur &&
-                      indicateursACompleterRestant === 0
-                    )) ||
-                    chartInfo.participationScore) && (
-                    <div className="h-px bg-primary-3" />
-                  )}
-                {(isIndicateurParent || chartInfo.participationScore) && (
-                  <div className="flex flex-wrap gap-2 items-center text-xs text-grey-8 mt-3">
-                    {/* Nombre d'indicateurs */}
-                    {isIndicateurParent && totalNbIndicateurs && (
-                      <div>
-                        {totalNbIndicateurs - indicateursACompleterRestant}/
-                        {totalNbIndicateurs} indicateur
-                        {totalNbIndicateurs > 1 && 's'}
-                      </div>
+          {/** Partie sous le séparateur horizontal */}
+          <div
+            className={classNames({ 'h-7': showChart, 'mt-auto': !showChart })}
+          >
+            {chartInfo &&
+              (showChart ? (
+                <>
+                  {/** Barre horizontale */}
+                  {hasValeurOrObjectif &&
+                    ((isIndicateurParent &&
+                      !(
+                        chartInfo?.sansValeur &&
+                        indicateursACompleterRestant === 0
+                      )) ||
+                      chartInfo.participationScore) && (
+                      <div className="h-px bg-primary-3" />
                     )}
-                    {/** Barre verticale */}
-                    {isIndicateurParent &&
-                      totalNbIndicateurs &&
-                      chartInfo.participationScore && (
-                        <div className="w-px h-3 bg-grey-5" />
+                  {(isIndicateurParent || chartInfo.participationScore) && (
+                    <div className="flex flex-wrap gap-2 items-center text-xs text-grey-8 mt-3">
+                      {/* Nombre d'indicateurs */}
+                      {isIndicateurParent && totalNbIndicateurs && (
+                        <div>
+                          {totalNbIndicateurs - indicateursACompleterRestant}/
+                          {totalNbIndicateurs} indicateur
+                          {totalNbIndicateurs > 1 && 's'}
+                        </div>
                       )}
-                    {/** Participation au score */}
-                    {chartInfo.participationScore && (
-                      <div>Participe au score Climat Air Énergie</div>
-                    )}
-                  </div>
-                )}
-              </>
-            ) : (
-              isACompleter &&
-              !readonly &&
-              href && (
-                // Compléter indicateur bouton
-                <Button size="xs">Compléter l’indicateur</Button>
-              )
-            ))}
-        </div>
-      </Card>
-    </div>
+                      {/** Barre verticale */}
+                      {isIndicateurParent &&
+                        totalNbIndicateurs &&
+                        chartInfo.participationScore && (
+                          <div className="w-px h-3 bg-grey-5" />
+                        )}
+                      {/** Participation au score */}
+                      {chartInfo.participationScore && (
+                        <div>Participe au score Climat Air Énergie</div>
+                      )}
+                    </div>
+                  )}
+                </>
+              ) : (
+                isACompleter &&
+                !readonly &&
+                href && (
+                  // Compléter indicateur bouton
+                  <Button size="xs">Compléter l’indicateur</Button>
+                )
+              ))}
+          </div>
+        </Card>
+      </div>
+
+      {isDownloadChartOpen && (
+        <Modal
+          size="xl"
+          openState={{
+            isOpen: isDownloadChartOpen,
+            setIsOpen: setIsDownloadChartOpen,
+          }}
+          render={() => (
+            <IndicateurChartNew
+              data={data}
+              isLoading={isLoading}
+              title={chartInfo?.titre}
+              variant="modal"
+            />
+          )}
+        />
+      )}
+    </>
   );
 };

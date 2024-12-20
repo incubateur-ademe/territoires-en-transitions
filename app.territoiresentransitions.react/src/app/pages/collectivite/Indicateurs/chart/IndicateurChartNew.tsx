@@ -28,7 +28,7 @@ export type IndicateurChartProps = {
   /** Booléen de chargement des données et infos du graphique */
   isLoading: boolean;
   /** Taille du graphe */
-  size?: 'sm' | 'lg';
+  variant?: 'thumbnail' | 'modal' | 'detail';
   /** ClassName du container */
   className?: string;
 };
@@ -37,7 +37,7 @@ const IndicateurChartNew = ({
   data,
   title,
   isLoading,
-  size = 'lg',
+  variant = 'detail',
   className,
 }: IndicateurChartProps) => {
   const { objectifs, resultats } = data.valeurs;
@@ -67,28 +67,38 @@ const IndicateurChartNew = ({
     },
   ];
 
+  const style = { height: 450 };
+  if (variant === 'thumbnail') style.height = 320;
+  if (variant === 'modal') style.height = 550;
+
+  let grid = {};
+  if (variant === 'thumbnail') {
+    grid = { top: '8%', bottom: '15%', right: '5%' };
+  }
+  if (variant === 'detail') {
+    grid = { left: 32, right: 32 };
+  }
+
   const option = makeOption({
     option: {
       dataset,
       series: makeLineSeries(dataset),
-      grid: size === 'sm' ? { top: '8%', bottom: '15%', right: '5%' } : {},
+      grid,
+      title: variant === 'detail' ? { left: 28 } : {},
     },
     titre: title,
-    unite: size !== 'sm' ? data.unite : undefined,
-    disableToolbox: size === 'sm',
+    unite: variant !== 'thumbnail' ? data.unite : undefined,
+    disableToolbox: variant !== 'modal',
   });
 
   return (
-    <div className={className} style={{ height: size === 'sm' ? 320 : 500 }}>
+    <div className={className} style={style}>
       {isLoading ? (
         <div className="h-full w-full rounded-lg flex justify-center items-center bg-primary-0">
           <SpinnerLoader className="w-8 h-8 fill-primary-5" />
         </div>
       ) : (
-        <ReactECharts
-          option={option}
-          style={{ height: size === 'sm' ? 320 : 500 }}
-        />
+        <ReactECharts option={option} style={style} />
       )}
     </div>
   );

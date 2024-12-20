@@ -112,7 +112,7 @@ export const makeOption = ({
     grid: {
       left: '1%',
       right: '3%',
-      top: '17%',
+      top: '12%',
       bottom: '12%',
       containLabel: true,
       ...customGrid,
@@ -188,7 +188,7 @@ export const makeOption = ({
     toolbox: !disableToolbox
       ? {
           top: 1,
-          right: 10,
+          right: '3%',
           borderType: 'solid',
           borderWidth: 0.5,
           borderColor: colors.primary.DEFAULT,
