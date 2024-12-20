@@ -42,10 +42,14 @@ const IndicateurDetailChart = ({
     });
 
   // sépare les données objectifs/résultats
-  const { valeurs, metadonnee } = transformeValeurs(valeursBrutes, source);
+  const { valeurs, objectifs, resultats, metadonnee } = transformeValeurs(
+    valeursBrutes,
+    source
+  );
+
   const data = {
     unite: definition.unite,
-    valeurs,
+    valeurs: { objectifs, resultats },
   };
 
   // Rempli ne peut pas être utilisé pour l'affichage car les objectifs ne sont pas pris en compte mais doivent quand même apparaître

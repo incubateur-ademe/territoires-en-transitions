@@ -1,4 +1,5 @@
 import {
+  LAYERS,
   ReactECharts,
   makeLineSeries,
   makeOption,
@@ -6,12 +7,16 @@ import {
 import SpinnerLoader from '@/app/ui/shared/SpinnerLoader';
 import { TIndicateurValeur } from '../useIndicateurValeurs';
 
-/** Data issues de l'api pour générer les données formatées pour Nivo */
+/** Data issues de l'api pour générer les données formatées pour echarts */
+/** TODO: le format devra être revu après la refonte indicateurs et la maj du fetch */
 export type IndicateurChartData = {
   /** Unité affichée pour l'axe des abscisses et le tooltip */
   unite?: string;
-  /** Valeurs d'un indicateur issues de l'API  */
-  valeurs: TIndicateurValeur[];
+  /** Valeurs de l'indicateur  */
+  valeurs: {
+    objectifs: TIndicateurValeur[];
+    resultats: TIndicateurValeur[];
+  };
 };
 
 /** Props du graphique générique Indicateur */
@@ -35,32 +40,30 @@ const IndicateurChartNew = ({
   size = 'lg',
   className,
 }: IndicateurChartProps) => {
-  const noData = data.valeurs.length === 0;
+  const { objectifs, resultats } = data.valeurs;
+
+  const noData = objectifs.length === 0 && resultats.length === 0;
 
   if (noData) return null;
 
   const dataset = [
     {
-      color: '#6A6AF4',
+      color: LAYERS.resultats.color,
       id: 'resultats',
-      name: 'Mes résultats',
-      source: data.valeurs
-        .filter((v) => v.type === 'resultat')
-        .map((va) => ({
-          x: `${va.annee}-01-01`,
-          y: va.valeur,
-        })),
+      name: LAYERS.resultats.label,
+      source: resultats.map((res) => ({
+        x: new Date(res.annee, 0, 1).toISOString(),
+        y: res.valeur,
+      })),
     },
     {
-      color: '#F5895B',
+      color: LAYERS.objectifs.color,
       id: 'objectifs',
-      name: 'Mes objectifs',
-      source: data.valeurs
-        .filter((v) => v.type === 'objectif')
-        .map((va) => ({
-          x: `${va.annee}-01-01`,
-          y: va.valeur,
-        })),
+      name: LAYERS.objectifs.label,
+      source: objectifs.map((obj) => ({
+        x: new Date(obj.annee, 0, 1).toISOString(),
+        y: obj.valeur,
+      })),
     },
   ];
 

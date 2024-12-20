@@ -16,10 +16,7 @@ import {
   IndicateurListItem,
 } from '@/api/indicateurs/domain';
 import { transformeValeurs } from '@/app/app/pages/collectivite/Indicateurs/Indicateur/detail/transformeValeurs';
-import {
-  IndicateurChartData,
-  IndicateurChartProps,
-} from '@/app/app/pages/collectivite/Indicateurs/chart/IndicateurChart';
+import { IndicateurChartProps } from '@/app/app/pages/collectivite/Indicateurs/chart/IndicateurChart';
 import { useIndicateurChartInfo } from '@/app/app/pages/collectivite/Indicateurs/chart/useIndicateurChartInfo';
 import BadgeIndicateurPerso from '@/app/app/pages/collectivite/Indicateurs/components/BadgeIndicateurPerso';
 import BadgeOpenData from '@/app/app/pages/collectivite/Indicateurs/components/BadgeOpenData';
@@ -27,7 +24,9 @@ import IndicateurCardOptions from '@/app/app/pages/collectivite/Indicateurs/list
 import PictoIndicateurComplet from '@/app/ui/pictogrammes/PictoIndicateurComplet';
 import PictoIndicateurVide from '@/app/ui/pictogrammes/PictoIndicateurVide';
 import { BadgeACompleter } from '@/app/ui/shared/Badge/BadgeACompleter';
-import IndicateurChartNew from '../../chart/IndicateurChartNew';
+import IndicateurChartNew, {
+  IndicateurChartData,
+} from '../../chart/IndicateurChartNew';
 import { getIndicateurRestant } from './utils';
 
 /** Props de la carte Indicateur */
@@ -87,12 +86,12 @@ const IndicateurCard = ({
   );
 
   // sépare les données objectifs/résultats
-  const { valeurs } = transformeValeurs(chartInfo?.valeurs || []);
+  const { objectifs, resultats } = transformeValeurs(chartInfo?.valeurs || []);
 
   // Assemblage des données pour le graphique
   const data = {
     unite: chartInfo?.unite,
-    valeurs,
+    valeurs: { objectifs, resultats },
   };
 
   return (
@@ -138,7 +137,8 @@ export const IndicateurCardBase = ({
 
   const showChart =
     (!hideChart && !hideChartWithoutValue) ||
-    (hideChartWithoutValue && data.valeurs.length > 0);
+    (hideChartWithoutValue &&
+      (data.valeurs.objectifs.length > 0 || data.valeurs.resultats.length > 0));
 
   const isIndicateurParent = chartInfo?.enfants && chartInfo.enfants.length > 0;
 
@@ -155,7 +155,9 @@ export const IndicateurCardBase = ({
 
   /** Rempli ne peut pas être utilisé pour l'affichage car les objectifs ne sont pas pris en compte mais doivent quand même apparaître */
   const hasValeurOrObjectif =
-    data.valeurs.filter((v) => typeof v.valeur === 'number').length > 0;
+    [...data.valeurs.objectifs, ...data.valeurs.resultats].filter(
+      (v) => typeof v.valeur === 'number'
+    ).length > 0;
 
   const isNotLoadingNotFilled = !isLoading && !hasValeurOrObjectif;
 
@@ -243,7 +245,8 @@ export const IndicateurCardBase = ({
                 picto={(props) => <PictoIndicateurComplet {...props} />}
                 subTitle={`${totalNbIndicateurs}/${totalNbIndicateurs} complétés`}
               />
-            ) : data.valeurs.length === 0 ? (
+            ) : data.valeurs.objectifs.length === 0 &&
+              data.valeurs.resultats.length === 0 ? (
               <EmptyCard
                 size="xs"
                 className="h-80"
