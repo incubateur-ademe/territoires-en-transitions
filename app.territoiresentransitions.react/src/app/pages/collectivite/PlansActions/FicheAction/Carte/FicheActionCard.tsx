@@ -8,7 +8,7 @@ import { QueryKey } from 'react-query';
 import BadgePriorite from '../../components/BadgePriorite';
 import BadgeStatut from '../../components/BadgeStatut';
 import { generateTitle } from '../data/utils';
-import ModaleSuppression from '../FicheActionDescription/ModaleSuppression';
+import ModaleSuppression from '../Header/actions/ModaleSuppression';
 import FicheActionFooterInfo from './FicheActionFooterInfo';
 import ModifierFicheModale from './ModifierFicheModale';
 
@@ -130,15 +130,12 @@ const FicheActionCard = ({
         external={openInNewTab}
         header={
           // Badges priorité et statut de la fiche
-          (ficheAction.niveauPriorite ||
+          (ficheAction.priorite ||
             ficheAction.statut ||
             ficheAction.actionImpactId) && (
             <div className="flex items-center gap-3">
-              {ficheAction.niveauPriorite && (
-                <BadgePriorite
-                  priorite={ficheAction.niveauPriorite}
-                  size="sm"
-                />
+              {ficheAction.priorite && (
+                <BadgePriorite priorite={ficheAction.priorite} size="sm" />
               )}
               {ficheAction.statut && (
                 <BadgeStatut statut={ficheAction.statut} size="sm" />

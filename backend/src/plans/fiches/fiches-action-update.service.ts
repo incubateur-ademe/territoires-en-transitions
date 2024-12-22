@@ -77,9 +77,9 @@ export default class FichesActionUpdateService {
   async updateFicheAction(
     ficheActionId: number,
     body: UpdateFicheActionRequestType,
-    tokenInfo: AuthenticatedUser
+    user: AuthenticatedUser
   ) {
-    await this.ficheService.canWriteFiche(ficheActionId, tokenInfo);
+    await this.ficheService.canWriteFiche(ficheActionId, user);
 
     this.logger.log(
       `Mise à jour de la fiche action dont l'id est ${ficheActionId}`
@@ -103,7 +103,7 @@ export default class FichesActionUpdateService {
       ...unsafeFicheAction
     } = body;
 
-    return await this.databaseService.db.transaction(async (tx) => {
+    return await this.databaseService.rls(user)(async (tx) => {
       const existingFicheAction = await this.databaseService.db
         .select()
         .from(ficheActionTable)
@@ -136,10 +136,15 @@ export default class FichesActionUpdateService {
        * Updates fiche action properties
        */
 
-      if (Object.keys(ficheAction).length > 0) {
+      if (Object.keys(body).length > 0) {
         updatedFicheAction = await tx
           .update(ficheActionTable)
-          .set(ficheAction)
+          // `modifiedBy` in the fiche_action table is automatically updated
+          // via a PG trigger (using the current authenticated user of `db.rls()`).
+          // But we also set it here so that when the updating object `ficheAction` is empty,
+          // the trigger can be well… triggered (corresponding to updates only affecting
+          // related tables, and not directly the fiche_action main table)
+          .set({ ...ficheAction, modifiedBy: user.id })
           .where(eq(ficheActionTable.id, ficheActionId))
           .returning();
       }
@@ -335,7 +340,7 @@ export default class FichesActionUpdateService {
               libresTag.map((relation) => ({
                 ficheId: ficheActionId,
                 libreTagId: relation.id,
-                createdBy: tokenInfo.id,
+                createdBy: user.id,
               }))
             )
             .returning();

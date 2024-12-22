@@ -34,7 +34,7 @@ const FicheActionPlanning = ({
     calendrier: justificationCalendrier,
     dateDebut,
     dateFinProvisoire: dateFinPrevisionnelle,
-    niveauPriorite,
+    priorite: niveauPriorite,
     statut,
     tempsDeMiseEnOeuvre,
   } = fiche;

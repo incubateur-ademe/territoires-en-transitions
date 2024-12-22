@@ -25,6 +25,7 @@ export const ficheActionSchema = z.object({
   modifiedAt: z.string().datetime().nullish(),
   createdAt: z.string().datetime().nullish(),
   createdBy: authorSchema.nullable(),
+  modifiedBy: authorSchema.nullable(),
   titre: z.string().nullable(),
   description: z.string().nullish(),
   statut: statutsEnumSchema.nullish(),
@@ -34,7 +35,7 @@ export const ficheActionSchema = z.object({
     .date()
     .or(z.string().datetime({ offset: true }))
     .nullish(),
-  niveauPriorite: prioriteEnumSchema.nullish(),
+  priorite: prioriteEnumSchema.nullish(),
   cibles: ciblesEnumSchema.array().nullish(),
   restreint: z.boolean().nullish(),
   resultatsAttendus: effetAttenduSchema.array().nullish(),
@@ -114,7 +115,7 @@ export const ficheResumeSchema = ficheActionSchema
     ameliorationContinue: true,
     dateDebut: true,
     dateFinProvisoire: true,
-    niveauPriorite: true,
+    priorite: true,
     restreint: true,
     pilotes: true,
     plans: true,

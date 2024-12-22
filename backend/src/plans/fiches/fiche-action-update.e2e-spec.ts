@@ -69,14 +69,16 @@ describe('FichesActionUpdateService', () => {
       .values(ficheActionFixture);
 
     await insertFixtures(databaseService, ficheActionId);
-  });
 
-  afterAll(async () => {
-    await databaseService.db
-      .delete(ficheActionTable)
-      .where(eq(ficheActionTable.id, ficheActionId));
+    return async () => {
+      await cleanupLibreTags();
 
-    await app.close();
+      await databaseService.db
+        .delete(ficheActionTable)
+        .where(eq(ficheActionTable.id, ficheActionId));
+
+      await app.close();
+    };
   });
 
   describe('Update fiche action fields', () => {

@@ -198,11 +198,11 @@ const ModalePlanning = ({
           {/* Niveau de priorité */}
           <Field title="Niveau de priorité" className="max-md:col-span-2">
             <PrioritesSelectDropdown
-              values={editedFiche.niveauPriorite}
+              values={editedFiche.priorite}
               onChange={(priorite) =>
                 setEditedFiche((prevState) => ({
                   ...prevState,
-                  niveauPriorite: priorite ?? null,
+                  priorite: priorite ?? null,
                 }))
               }
             />

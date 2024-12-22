@@ -9,7 +9,7 @@ import CheminFiche from './CheminFiche';
 type CheminsFicheProps = {
   titre: string | null;
   collectiviteId: number;
-  axes: Axe[] | null;
+  axes?: Axe[] | null;
 };
 
 const CheminsFiche = ({ titre, collectiviteId, axes }: CheminsFicheProps) => {

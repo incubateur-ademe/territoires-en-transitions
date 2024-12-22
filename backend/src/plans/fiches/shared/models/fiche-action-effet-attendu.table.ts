@@ -1,6 +1,8 @@
-import { effetAttenduTable } from '@/backend/shared';
-import { integer, pgTable, primaryKey } from 'drizzle-orm/pg-core';
+import { sql } from 'drizzle-orm';
+import { integer, pgPolicy, pgTable, primaryKey } from 'drizzle-orm/pg-core';
+import { authenticatedRole } from 'drizzle-orm/supabase';
 import { ficheActionTable } from './fiche-action.table';
+import { effetAttenduTable } from '@/backend/shared';
 
 export const ficheActionEffetAttenduTable = pgTable(
   'fiche_action_effet_attendu',
@@ -10,9 +12,32 @@ export const ficheActionEffetAttenduTable = pgTable(
       () => effetAttenduTable.id
     ),
   },
-  (table) => {
-    return {
-      pk: primaryKey({ columns: [table.ficheId, table.effetAttenduId] }),
-    };
-  }
+  (table) => [
+    primaryKey({ columns: [table.ficheId, table.effetAttenduId] }),
+
+    pgPolicy('allow_read', {
+      as: 'permissive',
+      to: authenticatedRole,
+      for: 'select',
+      using: sql`peut_lire_la_fiche(fiche_id)`,
+    }),
+    pgPolicy('allow_insert', {
+      as: 'permissive',
+      to: authenticatedRole,
+      for: 'insert',
+      withCheck: sql`peut_modifier_la_fiche(fiche_id)`,
+    }),
+    pgPolicy('allow_update', {
+      as: 'permissive',
+      to: authenticatedRole,
+      for: 'update',
+      using: sql`peut_lire_la_fiche(fiche_id)`,
+    }),
+    pgPolicy('allow_delete', {
+      as: 'permissive',
+      to: authenticatedRole,
+      for: 'delete',
+      using: sql`peut_lire_la_fiche(fiche_id)`,
+    }),
+  ]
 );
