@@ -10,7 +10,7 @@ import slugify from 'slugify';
 import { AuthenticatedUser } from '../../auth/models/auth.models';
 import GroupementsService from '../../collectivites/services/groupements.service';
 import { EpciType } from '../../collectivites/shared/models/epci.table';
-import ConfigurationService from '../../config/configuration.service';
+import ConfigurationService from '../../utils/config/configuration.service';
 import SheetService from '../../utils/google-sheets/sheet.service';
 import {
   CalculTrajectoireRequestType,

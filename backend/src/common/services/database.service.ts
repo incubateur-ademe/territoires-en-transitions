@@ -3,7 +3,7 @@ import { Injectable, Logger, OnApplicationShutdown } from '@nestjs/common';
 import { sql } from 'drizzle-orm';
 import { drizzle } from 'drizzle-orm/postgres-js';
 import { default as postgres } from 'postgres';
-import ConfigurationService from '../../config/configuration.service';
+import ConfigurationService from '../../utils/config/configuration.service';
 
 @Injectable()
 export default class DatabaseService implements OnApplicationShutdown {

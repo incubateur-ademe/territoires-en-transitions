@@ -31,10 +31,10 @@ import { getErrorMessage } from '../../common/services/errors.helper';
 import MattermostNotificationService from '../../common/services/mattermost-notification.service';
 import { roundTo } from '../../common/services/number.helper';
 import { sleep } from '../../common/services/sleep.helper';
-import ConfigurationService from '../../config/configuration.service';
 import { GetPersonnalitionConsequencesResponseType } from '../../personnalisations/models/get-personnalisation-consequences.response';
 import ExpressionParserService from '../../personnalisations/services/expression-parser.service';
 import PersonnalisationsService from '../../personnalisations/services/personnalisations-service';
+import ConfigurationService from '../../utils/config/configuration.service';
 import { actionCommentaireTable } from '../models/action-commentaire.table';
 import {
   ActionPointScoreType,
