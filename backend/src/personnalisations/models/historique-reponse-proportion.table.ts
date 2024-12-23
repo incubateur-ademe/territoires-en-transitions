@@ -5,7 +5,7 @@ import {
   timestamp,
   varchar,
 } from 'drizzle-orm/pg-core';
-import { collectiviteTable } from '../../collectivites/models/collectivite.table';
+import { collectiviteTable } from '../../collectivites/shared/models/collectivite.table';
 import { historiqueSchema } from './historique-reponse-choix.table';
 
 export const historiqueReponseProportionTable = historiqueSchema.table(

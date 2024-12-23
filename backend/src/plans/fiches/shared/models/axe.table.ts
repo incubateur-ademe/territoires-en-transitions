@@ -9,7 +9,7 @@ import {
 } from 'drizzle-orm/pg-core';
 import { createSelectSchema } from 'drizzle-zod';
 import z from 'zod';
-import { collectiviteTable } from '../../../../collectivites/models/collectivite.table';
+import { collectiviteTable } from '../../../../collectivites/shared/models/collectivite.table';
 import { panierTable } from '../../../../panier/models/panier.table';
 import {
   planActionTypeSchema,

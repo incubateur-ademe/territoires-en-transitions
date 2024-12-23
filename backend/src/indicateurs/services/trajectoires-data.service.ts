@@ -1,3 +1,6 @@
+import { PermissionOperation } from '@/backend/auth/authorizations/permission-operation.enum';
+import { PermissionService } from '@/backend/auth/authorizations/permission.service';
+import { ResourceType } from '@/backend/auth/authorizations/resource-type.enum';
 import {
   Injectable,
   InternalServerErrorException,
@@ -7,8 +10,11 @@ import { isNil } from 'es-toolkit';
 import * as _ from 'lodash';
 import { DateTime } from 'luxon';
 import { AuthenticatedUser } from '../../auth/models/auth.models';
-import { EpciType } from '../../collectivites/models/epci.table';
 import CollectivitesService from '../../collectivites/services/collectivites.service';
+import { EpciType } from '../../collectivites/shared/models/epci.table';
+import { DonneesARemplirResultType } from '../models/donnees-a-remplir-result.dto';
+import { DonneesARemplirValeurType } from '../models/donnees-a-remplir-valeur.dto';
+import { DonneesCalculTrajectoireARemplirType } from '../models/donnees-calcul-trajectoire-a-remplir.dto';
 import {
   CreateIndicateurSourceMetadonneeType,
   IndicateurSourceMetadonneeType,
@@ -18,17 +24,11 @@ import {
   IndicateurValeurAvecMetadonnesDefinition,
   IndicateurValeurType,
 } from '../models/indicateur-valeur.table';
+import { VerificationTrajectoireRequestType } from '../models/verification-trajectoire.request';
 import {
   VerificationTrajectoireResultType,
   VerificationTrajectoireStatus,
 } from '../models/verification-trajectoire.response';
-import { VerificationTrajectoireRequestType } from '../models/verification-trajectoire.request';
-import { DonneesCalculTrajectoireARemplirType } from '../models/donnees-calcul-trajectoire-a-remplir.dto';
-import { DonneesARemplirValeurType } from '../models/donnees-a-remplir-valeur.dto';
-import { DonneesARemplirResultType } from '../models/donnees-a-remplir-result.dto';
-import { PermissionService } from '@/backend/auth/authorizations/permission.service';
-import { ResourceType } from '@/backend/auth/authorizations/resource-type.enum';
-import { PermissionOperation } from '@/backend/auth/authorizations/permission-operation.enum';
 import IndicateurSourcesService from './indicateur-sources.service';
 import IndicateursService from './indicateurs.service';
 
@@ -684,7 +684,7 @@ export default class TrajectoiresDataService {
         return response;
       }
     }
-    if(!forceRecuperationDonneesUniquementPourLecture) {
+    if (!forceRecuperationDonneesUniquementPourLecture) {
       // Vérification des droits pour calculer les données
       await this.permissionService.isAllowed(
         tokenInfo,

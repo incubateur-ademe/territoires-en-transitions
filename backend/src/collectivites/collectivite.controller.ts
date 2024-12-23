@@ -1,7 +1,7 @@
 import { Controller, Get, Param, Query } from '@nestjs/common';
 import { ApiOkResponse } from '@nestjs/swagger';
-import { AllowPublicAccess } from '../../auth/decorators/allow-public-access.decorator';
-import CollectivitesService from '../services/collectivites.service';
+import { AllowPublicAccess } from '../auth/decorators/allow-public-access.decorator';
+import CollectivitesService from './services/collectivites.service';
 
 /**
  * Création des classes de réponse à partir du schema pour générer automatiquement la documentation OpenAPI

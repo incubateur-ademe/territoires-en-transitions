@@ -1,8 +1,8 @@
 import { pgEnum } from 'drizzle-orm/pg-core';
 import { z } from 'zod';
-import { collectiviteSchema } from './collectivite.table';
-import { communeSchema } from './commune.table';
-import { epciSchema } from './epci.table';
+import { collectiviteSchema } from './shared/models/collectivite.table';
+import { communeSchema } from './shared/models/commune.table';
+import { epciSchema } from './shared/models/epci.table';
 
 export enum CollectiviteTypeEnum {
   EPCI = 'EPCI',

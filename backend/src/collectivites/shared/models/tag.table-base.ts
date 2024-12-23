@@ -1,6 +1,6 @@
 import { integer, serial, text } from 'drizzle-orm/pg-core';
 import z from 'zod';
-import { collectiviteTable } from '../../models/collectivite.table';
+import { collectiviteTable } from './collectivite.table';
 
 export type TagType =
   | 'personne'
