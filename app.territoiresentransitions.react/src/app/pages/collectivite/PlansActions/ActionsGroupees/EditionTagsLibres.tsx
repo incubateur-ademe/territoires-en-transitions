@@ -1,6 +1,6 @@
-import { LibreTag } from '@/api/typeUtils';
 import { useCollectiviteId } from '@/app/core-logic/hooks/params';
 import TagsSuiviPersoDropdown from '@/app/ui/dropdownLists/TagsSuiviPersoDropdown/TagsSuiviPersoDropdown';
+import { Tag } from '@/backend/collectivites';
 import { Button, Field, useEventTracker } from '@/ui';
 import { OpenState } from '@/ui/utils/types';
 import { useState } from 'react';
@@ -16,7 +16,7 @@ const ModaleEditionTagsLibres = ({
   openState,
   selectedIds,
 }: ModaleEditionTagsLibresProps) => {
-  const [tags, setTags] = useState<LibreTag[] | null | undefined>();
+  const [tags, setTags] = useState<Tag[] | null | undefined>();
 
   const collectiviteId = useCollectiviteId()!;
   const tracker = useEventTracker('app/actions-groupees-fiches-action');
@@ -35,14 +35,14 @@ const ModaleEditionTagsLibres = ({
         mutation.mutate({
           ficheIds: selectedIds,
           libreTags: {
-            add: tags?.map((t) => ({ id: t.id! })) ?? undefined,
+            add: tags?.map((t) => ({ id: t.id })) ?? undefined,
           },
         });
       }}
     >
       <Field title="Tags" className="col-span-2">
         <TagsSuiviPersoDropdown
-          values={tags?.map((t) => t.id!)}
+          values={tags?.map((t) => t.id)}
           onChange={({ libresTag }) => setTags(libresTag)}
         />
       </Field>

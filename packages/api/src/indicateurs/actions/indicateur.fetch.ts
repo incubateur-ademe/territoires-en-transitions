@@ -7,7 +7,6 @@ import { Groupement } from '../../collectivites/shared/domain/groupement.schema'
 import { Tables } from '../../database.types';
 import { FicheResume } from '../../plan-actions/domain/fiche-action.schema';
 import { Action } from '../../referentiel/domain/action.schema';
-import { Thematique } from '../../shared/domain';
 import { Personne } from '../../collectivites/shared/domain/personne.schema';
 import { DBClient } from '../../typeUtils';
 import { Source, SourceMetadonnee } from '../domain';
@@ -20,6 +19,7 @@ import {
   ValeurComparaison,
   ValeurComparaisonLigne,
 } from '../domain/valeur.schema';
+import { Thematique } from '@/backend/shared';
 
 // cas spécial pour cet indicateur TODO: utiliser un champ distinct dans les markdowns plutôt que cet ID "en dur"
 const ID_COMPACITE_FORMES_URBAINES = 'cae_9';

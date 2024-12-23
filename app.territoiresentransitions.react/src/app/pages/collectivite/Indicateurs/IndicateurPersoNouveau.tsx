@@ -1,5 +1,4 @@
 import { FicheAction } from '@/api/plan-actions';
-import { Thematique } from '@/api/shared/domain';
 import {
   TIndicateurPersoDefinitionWrite,
   useInsertIndicateurPersoDefinition,
@@ -8,6 +7,7 @@ import { makeCollectiviteIndicateursUrl } from '@/app/app/paths';
 import { useCollectiviteId } from '@/app/core-logic/hooks/params';
 import ThematiquesDropdown from '@/app/ui/dropdownLists/ThematiquesDropdown/ThematiquesDropdown';
 import FormikInput from '@/app/ui/shared/form/formik/FormikInput';
+import { Thematique } from '@/backend/shared';
 import { Alert, Button, Checkbox, Field, FormSectionGrid } from '@/ui';
 import { Form, Formik } from 'formik';
 import { useRouter } from 'next/navigation';

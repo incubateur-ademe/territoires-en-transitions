@@ -1,6 +1,7 @@
-import { Indicateurs, SharedDomain } from '@/api';
+import { Indicateurs } from '@/api';
 import { supabaseClient } from '@/app/core-logic/api/supabase';
 import { useCollectiviteId } from '@/app/core-logic/hooks/params';
+import { Tag } from '@/backend/collectivites';
 import { useMutation, useQuery, useQueryClient } from 'react-query';
 
 /** Met à jour les services pilotes d'un indicateur */
@@ -10,7 +11,7 @@ export const useUpsertIndicateurServices = (indicateurId: number) => {
 
   return useMutation({
     mutationKey: 'upsert_indicateur_services',
-    mutationFn: async (services: SharedDomain.Tag[]) => {
+    mutationFn: async (services: Tag[]) => {
       if (!collectiviteId) return;
       return Indicateurs.save.upsertServices(
         supabaseClient,
@@ -19,7 +20,7 @@ export const useUpsertIndicateurServices = (indicateurId: number) => {
         services
       );
     },
-    onSuccess: (data, variables) => {
+    onSuccess: () => {
       // recharge les infos complémentaires associées à l'indicateur
       queryClient.invalidateQueries([
         'indicateur_services',

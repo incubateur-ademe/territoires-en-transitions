@@ -1,4 +1,4 @@
-import { TFicheActionCibles } from '@/app/types/alias';
+import { Cible } from '@/backend/plans/fiches';
 import { SelectFilter, SelectMultipleProps } from '@/ui';
 import { ficheActionCiblesOptions } from '../../listesStatiques';
 
@@ -6,13 +6,13 @@ type CiblesDropdownProps = Omit<
   SelectMultipleProps,
   'values' | 'onChange' | 'options'
 > & {
-  values?: TFicheActionCibles[];
+  values?: Cible[];
   onChange: ({
     cibles,
     selectedCible,
   }: {
-    cibles: TFicheActionCibles[];
-    selectedCible: TFicheActionCibles;
+    cibles: Cible[];
+    selectedCible: Cible;
   }) => void;
 };
 
@@ -25,8 +25,8 @@ const CiblesDropdown = (props: CiblesDropdownProps) => {
       placeholder={props.placeholder ?? 'Sélectionnez une ou plusieurs cibles'}
       onChange={({ values, selectedValue }) =>
         props.onChange({
-          cibles: values as TFicheActionCibles[],
-          selectedCible: selectedValue as TFicheActionCibles,
+          cibles: values as Cible[],
+          selectedCible: selectedValue as Cible,
         })
       }
     />

@@ -30,7 +30,7 @@ const Description = ({ fiche }: FicheActionPdfProps) => {
           {sousThematiques?.map((ssThematique) => (
             <Badge
               key={ssThematique.id}
-              title={ssThematique.sousThematique}
+              title={ssThematique.nom}
               state="info"
             />
           ))}
@@ -44,7 +44,7 @@ const Description = ({ fiche }: FicheActionPdfProps) => {
         {/* Description */}
         <Stack gap={1}>
           <Title variant="h5" className="text-grey-1">
-            Description de l'action :
+            {"Description de l'action :"}
           </Title>
           <Paragraph className="text-grey-1">
             {description || 'Non renseigné'}

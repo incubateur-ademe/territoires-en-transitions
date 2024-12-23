@@ -1,10 +1,12 @@
-import { Financeur } from '@/api/plan-actions';
 import FinanceursDropdown from '@/app/ui/dropdownLists/FinanceursDropdown/FinanceursDropdown';
+import { Financeur, FinanceurUpdate } from '@/backend/plans/fiches';
 import { Button, Field, Input } from '@/ui';
 
+type FinanceurPartial = Omit<Financeur, 'id' | 'ficheId' | 'financeurTagId'>;
+
 type FinanceursInputProps = {
-  financeurs: Financeur[] | null | undefined;
-  onUpdate: (financeurs: Financeur[]) => void;
+  financeurs: FinanceurUpdate[] | null | undefined;
+  onUpdate: (financeurs: FinanceurUpdate[]) => void;
 };
 
 const FinanceursInput = ({ financeurs, onUpdate }: FinanceursInputProps) => {
@@ -24,7 +26,7 @@ const FinanceursInput = ({ financeurs, onUpdate }: FinanceursInputProps) => {
                   : undefined
               }
               disabled={true}
-              onChange={() => {}}
+              onChange={() => ({})}
             />
           </Field>
           <Field title="Montant engagé" className="col-span-4">
@@ -80,7 +82,12 @@ const FinanceursInput = ({ financeurs, onUpdate }: FinanceursInputProps) => {
               selectedFinanceur &&
               onUpdate([
                 ...(financeurs ?? []),
-                { financeurTag: selectedFinanceur, montantTtc: null },
+                {
+                  financeurTag: selectedFinanceur,
+                  financeurTagId: selectedFinanceur.id,
+                  ficheId: financeurs?.[0].ficheId ?? 0,
+                  montantTtc: null,
+                },
               ])
             }
           />

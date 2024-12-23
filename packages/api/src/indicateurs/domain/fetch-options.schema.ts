@@ -1,6 +1,6 @@
+import { getPaginationSchema } from '@/backend/utils';
 import { z } from 'zod';
 import { filtreRessourceLieesSchema } from '../../collectivites/shared/domain/filtre-ressource-liees.schema';
-import { getQueryOptionsSchema } from '../../shared/domain/query_options.schema';
 
 export const filtreSpecifiqueSchema = z.object({
   actionId: z.string().optional(),
@@ -35,7 +35,7 @@ export const filtreSchema = filtreRessourceLieesSchema
 
 export type FetchFiltre = z.infer<typeof filtreSchema>;
 
-export const fetchOptionsSchema = getQueryOptionsSchema([
+export const fetchOptionsSchema = getPaginationSchema([
   'text',
   'estComplet',
 ]).extend({

@@ -13,7 +13,7 @@ import { GetPersonnalisationReponsesResponseType } from '../../personnalisations
 import { caePersonnalisationRegles } from '../../personnalisations/models/samples/cae-personnalisation-regles.sample';
 import ExpressionParserService from '../../personnalisations/services/expression-parser.service';
 import PersonnalisationsService from '../../personnalisations/services/personnalisations-service';
-import SheetService from '../../spreadsheets/services/sheet.service';
+import SheetService from '../../utils/google-sheets/sheet.service';
 import { ActionPointScoreType } from '../models/action-point-score.dto';
 import { ActionType } from '../models/action-type.enum';
 import { GetActionStatutsResponseType } from '../models/get-action-statuts.response';

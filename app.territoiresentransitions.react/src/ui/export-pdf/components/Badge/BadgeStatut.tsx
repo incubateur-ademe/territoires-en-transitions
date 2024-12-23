@@ -1,11 +1,11 @@
-import { Statut as PlanActionStatut } from '@/api/plan-actions/domain';
 import { statusToState } from '@/app/app/pages/collectivite/PlansActions/components/BadgeStatut';
+import { Statut } from '@/backend/plans/fiches';
 import classNames from 'classnames';
 import { Badge } from './Badge';
 
 type BadgeStatutProps = {
   count?: number;
-  statut: PlanActionStatut | 'Sans statut';
+  statut: Statut | 'Sans statut';
   size?: 'sm' | 'md';
   uppercase?: boolean;
   className?: string;

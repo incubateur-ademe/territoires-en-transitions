@@ -3,7 +3,7 @@ import { INestApplication } from '@nestjs/common';
 import { Test } from '@nestjs/testing';
 import { AppModule } from '../src/app.module';
 import DatabaseService from '../src/common/services/database.service';
-import { TrpcRouter } from '../src/trpc/trpc.router';
+import { TrpcRouter } from '../src/utils/trpc/trpc.router';
 
 export const getTestApp = async (): Promise<INestApplication> => {
   const moduleRef = await Test.createTestingModule({

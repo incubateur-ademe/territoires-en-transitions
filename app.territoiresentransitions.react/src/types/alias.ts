@@ -7,7 +7,6 @@ import {
   TablesUpdate,
   Views,
 } from '@/api';
-import { Cible } from '@/api/plan-actions';
 
 export type TFlatAxe = NonNullableFields<CompositeTypes<'flat_axe_node'>>;
 
@@ -62,8 +61,6 @@ export type TFicheResume = Views<'fiche_resume'>;
 export type TPersonne = CompositeTypes<'personne'>;
 
 export type TFinanceurMontant = CompositeTypes<'financeur_montant'>;
-
-export type TFicheActionCibles = Cible;
 
 export type TFicheActionNiveauxPriorite =
   Enums<'fiche_action_niveaux_priorite'>;

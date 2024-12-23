@@ -1,4 +1,4 @@
-import { Tag } from '@/api/shared/domain';
+import { Tag } from '@/backend/collectivites';
 import { SelectMultipleProps } from '@/ui';
 import SelectTags from '../tags/SelectTags';
 import { usePartenairesListe } from './usePartenairesListe';

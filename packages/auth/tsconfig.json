@@ -2,15 +2,11 @@
   "extends": "../../tsconfig.base.json",
   "compilerOptions": {
     "jsx": "preserve",
-    "allowJs": true,
-    "esModuleInterop": true,
+    "allowJs": false,
     "allowSyntheticDefaultImports": true,
-    "strict": true,
-    "forceConsistentCasingInFileNames": true,
     "noEmit": true,
     "resolveJsonModule": true,
     "isolatedModules": true,
-    "incremental": true,
     "plugins": [
       {
         "name": "next"
@@ -24,8 +20,6 @@
     "**/*.js",
     "**/*.jsx",
     "**/*.mjs",
-    "../../packages/auth/.next/types/**/*.ts",
-    "../../dist/apps/auth/.next/types/**/*.ts",
     "next-env.d.ts",
     ".next/types/**/*.ts"
   ],

@@ -1,5 +1,5 @@
-import { NiveauPriorite } from '@/api/plan-actions';
 import { TOption } from '@/app/ui/shared/select/commons';
+import { Priorite } from '@/backend/plans/fiches';
 import { Field, OptionValue, SelectFilter } from '@/ui';
 import { ficheActionNiveauPrioriteOptions } from '../../../../../../ui/dropdownLists/listesStatiques';
 import BadgePriorite from '../../components/BadgePriorite';
@@ -25,7 +25,7 @@ const FiltrePriorites = ({ filters, setFilters }: TFiltreProps) => {
         delete newFilters.sans_niveau;
         return {
           ...newFilters,
-          priorites: priorites as NiveauPriorite[],
+          priorites: priorites as Priorite[],
         };
       } else {
         delete newFilters.priorites;
@@ -34,7 +34,7 @@ const FiltrePriorites = ({ filters, setFilters }: TFiltreProps) => {
     } else {
       return {
         ...newFilters,
-        priorites: priorites as NiveauPriorite[],
+        priorites: priorites as Priorite[],
       };
     }
   };
@@ -54,7 +54,7 @@ const FiltrePriorites = ({ filters, setFilters }: TFiltreProps) => {
           item.value === SANS_PRIORITE ? (
             <span>Non priorisé</span>
           ) : (
-            <BadgePriorite priorite={item.value as NiveauPriorite} />
+            <BadgePriorite priorite={item.value as Priorite} />
           )
         }
         disabled={options.length === 0}

@@ -1,3 +1,4 @@
+import { createZodDto } from '@anatine/zod-nestjs';
 import { InferSelectModel } from 'drizzle-orm';
 import {
   boolean,
@@ -7,21 +8,20 @@ import {
   serial,
   text,
 } from 'drizzle-orm/pg-core';
+import { createSelectSchema } from 'drizzle-zod';
+import { z } from 'zod';
+import { lienSchema, lienType } from '../../documents/models/document-lien.dto';
+import { tempsDeMiseEnOeuvreTable } from '../../shared/models/temps-de-mise-en-oeuvre.table';
 import {
   thematiqueSchema,
   ThematiqueType,
-} from '../../taxonomie/models/thematique.table';
+} from '../../shared/models/thematique.table';
 import {
   categorieFNVSchema,
   CategorieFNVType,
 } from '../../taxonomie/models/categorie-fnv.table';
-import { tempsDeMiseEnOeuvreTable } from '../../taxonomie/models/temps-de-mise-en-oeuvre.table';
 import { actionImpactFourchetteBudgetaireTable } from './action-impact-fourchette-budgetaire.table';
 import { actionImpactTierTable } from './action-impact-tier.table';
-import { createSelectSchema } from 'drizzle-zod';
-import { lienSchema, lienType } from '../../documents/models/document-lien.dto';
-import { z } from 'zod';
-import { createZodDto } from '@anatine/zod-nestjs';
 
 export const actionImpactTable = pgTable('action_impact', {
   id: serial('id').primaryKey(),
@@ -40,7 +40,7 @@ export const actionImpactTable = pgTable('action_impact', {
   tempsDeMiseEnOeuvre: integer('temps_de_mise_en_oeuvre')
     .notNull()
     .default(1)
-    .references(() => tempsDeMiseEnOeuvreTable.niveau),
+    .references(() => tempsDeMiseEnOeuvreTable.id),
   fourchetteBudgetaire: integer('fourchette_budgetaire')
     .notNull()
     .default(1)

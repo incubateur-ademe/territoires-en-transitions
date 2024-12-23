@@ -1,7 +1,7 @@
 import { Test } from '@nestjs/testing';
 import { DateTime } from 'luxon';
 import CollectivitesService from '../../collectivites/services/collectivites.service';
-import SheetService from '../../spreadsheets/services/sheet.service';
+import SheetService from '../../utils/google-sheets/sheet.service';
 import { IndicateurValeurType } from '../models/indicateur-valeur.table';
 import IndicateurSourcesService from './indicateur-sources.service';
 import IndicateursService from './indicateurs.service';

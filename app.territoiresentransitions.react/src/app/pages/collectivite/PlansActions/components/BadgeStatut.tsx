@@ -1,11 +1,8 @@
-import { Statut as PlanActionStatut } from '@/api/plan-actions/domain';
+import { Statut } from '@/backend/plans/fiches';
 import { Badge, BadgeState } from '@/ui';
 import classNames from 'classnames';
 
-export const statusToState: Record<
-  PlanActionStatut | 'Sans statut',
-  BadgeState
-> = {
+export const statusToState: Record<Statut | 'Sans statut', BadgeState> = {
   'À venir': 'standard',
   'En cours': 'info',
   Réalisé: 'success',
@@ -20,7 +17,7 @@ export const statusToState: Record<
 type Props = {
   className?: string;
   count?: number;
-  statut: PlanActionStatut | 'Sans statut';
+  statut: Statut | 'Sans statut';
   // Rend une version plus petite du composant
   size?: 'sm' | 'md';
 };

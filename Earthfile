@@ -302,8 +302,7 @@ node-alpine-with-all-deps:
   # Copy shared libraries
   COPY $API_DIR $API_DIR
   COPY $UI_DIR $UI_DIR
-  # Temporarily consider the Backend as a shared library.
-  # The app build needs it to resolve the import of the trpc AppRouter.
+  # Backend is also used as a shared library
   COPY $BACKEND_DIR $BACKEND_DIR
 
 
@@ -347,6 +346,8 @@ front-deps:
     # Copy only shared libraries
     COPY $API_DIR $API_DIR
     COPY $UI_DIR $UI_DIR
+    # Backend is also used as a shared library
+    COPY $BACKEND_DIR $BACKEND_DIR
 
 front-deps-builder:
     LOCALLY
@@ -398,11 +399,11 @@ backend-test:
 
 tools-automation-api-docker:
     BUILD --pass-args ./apps/tools-automation-api+docker
-      
+
 tools-automation-api-deploy:
     ARG --required KOYEB_API_KEY
     BUILD --pass-args ./apps/tools-automation-api+deploy
-      
+
 tools-automation-api-test:
     BUILD --pass-args ./apps/tools-automation-api+test
 
@@ -465,11 +466,9 @@ app-test-build: ## construit une image pour exécuter les tests unitaires de l'a
     FROM +front-deps
     ENV NEXT_PUBLIC_SUPABASE_URL
     ENV NEXT_PUBLIC_SUPABASE_ANON_KEY
+
     # copie les sources du module à tester
     COPY $APP_DIR $APP_DIR
-    COPY $API_DIR $API_DIR
-    COPY $UI_DIR $UI_DIR
-    COPY ./vitest.workspace.ts ./
 
     # la commande utilisée pour lancer les tests
     CMD pnpm run test:app
@@ -490,8 +489,7 @@ package-api-test-build: ## construit une image pour exécuter les tests d'intég
     ENV SUPABASE_URL
     ENV SUPABASE_ANON_KEY
     ENV SUPABASE_SERVICE_ROLE_KEY
-    # copie les sources du module à tester
-    COPY $API_DIR $API_DIR
+
     # la commande utilisée pour lancer les tests
     CMD pnpm run test:api
     SAVE IMAGE package-api-test:latest
@@ -530,8 +528,7 @@ auth-build: ## construit l'image du module d'authentification
     EXPOSE $PORT
     # copie les sources des modules à construire
     COPY $AUTH_DIR $AUTH_DIR
-    COPY $UI_DIR $UI_DIR
-    COPY $API_DIR $API_DIR
+
     RUN pnpm run build:auth
     CMD ["dumb-init", "./node_modules/.bin/next", "start", "./packages/auth/"]
     SAVE IMAGE --cache-from=$AUTH_IMG_NAME --push $AUTH_IMG_NAME

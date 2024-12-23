@@ -3,6 +3,7 @@ import { INestApplication } from '@nestjs/common';
 import { default as request } from 'supertest';
 import { ActionType } from '../models/action-type.enum';
 import { GetReferentielResponseType } from '../models/get-referentiel.response';
+import { ReferentielActionType } from '../models/referentiel-action.dto';
 
 describe('Referentiels routes', () => {
   let app: INestApplication;
