@@ -1,7 +1,6 @@
-import { integer, pgTable } from 'drizzle-orm/pg-core';
+import { integer, pgTable, primaryKey } from 'drizzle-orm/pg-core';
+import { banaticCompetenceTable } from '../../shared/models/banatic-competence.table';
 import { collectiviteTable } from './collectivite.table';
-import { primaryKey } from 'drizzle-orm/pg-core';
-import { banaticCompetenceTable } from '../../taxonomie/models/banatic-competence.table';
 
 export const collectiviteBanaticCompetenceTable = pgTable(
   'collectivite_banatic_competence',

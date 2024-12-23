@@ -3,6 +3,7 @@ import { CountByStatutRouter } from '@/backend/plans/fiches/count-by-statut/coun
 import { FicheActionEtapeRouter } from '@/backend/plans/fiches/fiche-action-etape/fiche-action-etape.router';
 import { INestApplication, Injectable, Logger } from '@nestjs/common';
 import { createExpressMiddleware } from '@trpc/server/adapters/express';
+import { ListCategoriesRouter } from '../../collectivites/handle-categories/list-categories.router';
 import { CollectiviteMembresRouter } from '../../collectivites/membres/membres.router';
 import { PersonnesRouter } from '../../collectivites/personnes.router';
 import SupabaseService from '../../common/services/supabase.service';
@@ -11,7 +12,6 @@ import { TrajectoiresRouter } from '../../indicateurs/routers/trajectoires.route
 import { ComputeScoreRouter } from '../../referentiels/compute-score/compute-score.router';
 import { ScoreSnapshotsRouter } from '../../referentiels/snapshots/score-snaphots.router';
 import { UpdateActionStatutRouter } from '../../referentiels/update-action-statut/update-action-statut.router';
-import { GetCategoriesByCollectiviteRouter } from '../../taxonomie/routers/get-categories-by-collectivite.router';
 import { createContext, TrpcService } from './trpc.service';
 
 @Injectable()
@@ -23,7 +23,7 @@ export class TrpcRouter {
     private readonly supabase: SupabaseService,
     private readonly trajectoiresRouter: TrajectoiresRouter,
     private readonly countByStatutRouter: CountByStatutRouter,
-    private readonly getCategoriesByCollectiviteRouter: GetCategoriesByCollectiviteRouter,
+    private readonly getCategoriesByCollectiviteRouter: ListCategoriesRouter,
     private readonly personnes: PersonnesRouter,
     private readonly ficheActionEtapeRouter: FicheActionEtapeRouter,
     private readonly indicateurFiltreRouter: IndicateurFiltreRouter,

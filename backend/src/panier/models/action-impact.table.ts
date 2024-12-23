@@ -11,15 +11,15 @@ import {
 import { createSelectSchema } from 'drizzle-zod';
 import { z } from 'zod';
 import { lienSchema, lienType } from '../../documents/models/document-lien.dto';
+import {
+  categorieFNVSchema,
+  CategorieFNVType,
+} from '../../shared/models/categorie-fnv.table';
 import { tempsDeMiseEnOeuvreTable } from '../../shared/models/temps-de-mise-en-oeuvre.table';
 import {
   thematiqueSchema,
   ThematiqueType,
 } from '../../shared/models/thematique.table';
-import {
-  categorieFNVSchema,
-  CategorieFNVType,
-} from '../../taxonomie/models/categorie-fnv.table';
 import { actionImpactFourchetteBudgetaireTable } from './action-impact-fourchette-budgetaire.table';
 import { actionImpactTierTable } from './action-impact-tier.table';
 

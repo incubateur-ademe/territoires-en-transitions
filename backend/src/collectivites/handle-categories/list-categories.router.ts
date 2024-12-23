@@ -1,7 +1,7 @@
 import { TrpcService } from '@/backend/utils/trpc/trpc.service';
 import { Injectable } from '@nestjs/common';
 import { z } from 'zod';
-import TagService from '../services/tag.service';
+import ListCategoriesService from './list-categories.service';
 
 const inputSchema = z.object({
   collectiviteId: z.number(),
@@ -9,10 +9,10 @@ const inputSchema = z.object({
 });
 
 @Injectable()
-export class GetCategoriesByCollectiviteRouter {
+export class ListCategoriesRouter {
   constructor(
     private readonly trpc: TrpcService,
-    private readonly service: TagService
+    private readonly service: ListCategoriesService
   ) {}
 
   router = this.trpc.router({
@@ -20,7 +20,7 @@ export class GetCategoriesByCollectiviteRouter {
       .input(inputSchema)
       .query(({ ctx, input }) => {
         const { collectiviteId, withPredefinedTags } = input;
-        return this.service.getCategoriesByCollectivite(
+        return this.service.listCategories(
           collectiviteId,
           withPredefinedTags,
           ctx.user
