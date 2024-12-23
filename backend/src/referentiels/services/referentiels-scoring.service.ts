@@ -1,3 +1,7 @@
+import { PermissionOperation } from '@/backend/auth/authorizations/permission-operation.enum';
+import { PermissionService } from '@/backend/auth/authorizations/permission.service';
+import { ResourceType } from '@/backend/auth/authorizations/resource-type.enum';
+import { NiveauAcces } from '@/backend/auth/authorizations/roles/niveau-acces.enum';
 import {
   HttpException,
   Injectable,
@@ -20,8 +24,7 @@ import { chunk, isNil } from 'es-toolkit';
 import * as _ from 'lodash';
 import { DateTime } from 'luxon';
 import { AuthenticatedUser } from '../../auth/models/auth.models';
-import { NiveauAcces } from '@/backend/auth/authorizations/roles/niveau-acces.enum';
-import { CollectiviteAvecType } from '../../collectivites/models/identite-collectivite.dto';
+import { CollectiviteAvecType } from '../../collectivites/identite-collectivite.dto';
 import CollectivitesService from '../../collectivites/services/collectivites.service';
 import DatabaseService from '../../common/services/database.service';
 import { getErrorMessage } from '../../common/services/errors.helper';
@@ -76,9 +79,6 @@ import { ScoreJalon } from '../models/score-jalon.enum';
 import LabellisationService from './labellisation.service';
 import ReferentielsScoringSnapshotsService from './referentiels-scoring-snapshots.service';
 import ReferentielsService from './referentiels.service';
-import { ResourceType } from '@/backend/auth/authorizations/resource-type.enum';
-import { PermissionService } from '@/backend/auth/authorizations/permission.service';
-import { PermissionOperation } from '@/backend/auth/authorizations/permission-operation.enum';
 
 @Injectable()
 export default class ReferentielsScoringService {

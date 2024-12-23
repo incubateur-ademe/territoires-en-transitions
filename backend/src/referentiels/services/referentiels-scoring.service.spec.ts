@@ -1,18 +1,19 @@
+import { PermissionService } from '@/backend/auth/authorizations/permission.service';
 import { Test } from '@nestjs/testing';
 import {
   CollectiviteTypeEnum,
   IdentiteCollectivite,
-} from '../../collectivites/models/identite-collectivite.dto';
+} from '../../collectivites/identite-collectivite.dto';
 import CollectivitesService from '../../collectivites/services/collectivites.service';
 import DatabaseService from '../../common/services/database.service';
 import MattermostNotificationService from '../../common/services/mattermost-notification.service';
 import { roundTo } from '../../common/services/number.helper';
-import ConfigurationService from '../../config/configuration.service';
 import { GetPersonnalitionConsequencesResponseType } from '../../personnalisations/models/get-personnalisation-consequences.response';
 import { GetPersonnalisationReponsesResponseType } from '../../personnalisations/models/get-personnalisation-reponses.response';
 import { caePersonnalisationRegles } from '../../personnalisations/models/samples/cae-personnalisation-regles.sample';
 import ExpressionParserService from '../../personnalisations/services/expression-parser.service';
 import PersonnalisationsService from '../../personnalisations/services/personnalisations-service';
+import ConfigurationService from '../../utils/config/configuration.service';
 import SheetService from '../../utils/google-sheets/sheet.service';
 import { ActionPointScoreType } from '../models/action-point-score.dto';
 import { ActionType } from '../models/action-type.enum';
@@ -26,7 +27,6 @@ import LabellisationService from './labellisation.service';
 import ReferentielsScoringSnapshotsService from './referentiels-scoring-snapshots.service';
 import ReferentielsScoringService from './referentiels-scoring.service';
 import ReferentielsService from './referentiels.service';
-import { PermissionService } from '@/backend/auth/authorizations/permission.service';
 
 describe('ReferentielsScoringService', () => {
   let referentielsScoringService: ReferentielsScoringService;

@@ -1,6 +1,6 @@
 import { Module } from '@nestjs/common';
 import { CommonModule } from '../common/common.module';
-import { CollectiviteController } from './controllers/collectivite.controller';
+import { CollectiviteController } from './collectivite.controller';
 import { ListCategoriesRouter } from './handle-categories/list-categories.router';
 import ListCategoriesService from './handle-categories/list-categories.service';
 import { CollectiviteMembresRouter } from './membres/membres.router';

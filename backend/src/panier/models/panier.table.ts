@@ -7,7 +7,7 @@ import {
   uuid,
 } from 'drizzle-orm/pg-core';
 import { createSelectSchema } from 'drizzle-zod';
-import { collectiviteTable } from '../../collectivites/models/collectivite.table';
+import { collectiviteTable } from '../../collectivites/shared/models/collectivite.table';
 
 export const panierTable = pgTable('panier', {
   id: uuid('id').primaryKey().defaultRandom(),

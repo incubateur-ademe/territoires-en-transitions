@@ -1,3 +1,4 @@
+import { NiveauAcces } from '@/backend/auth/authorizations/roles/niveau-acces.enum';
 import { INestApplication } from '@nestjs/common';
 import { inferProcedureInput } from '@trpc/server';
 import { sql } from 'drizzle-orm';
@@ -6,10 +7,9 @@ import { getAuthUser } from '../../../test/auth-utils';
 import { YOLO_DODO } from '../../../test/test-users.samples';
 import { AuthenticatedUser } from '../../auth/models/auth.models';
 import { invitationTable } from '../../auth/models/invitation.table';
-import { NiveauAcces } from '@/backend/auth/authorizations/roles/niveau-acces.enum';
 import DatabaseService from '../../common/services/database.service';
 import { AppRouter, TrpcRouter } from '../../utils/trpc/trpc.router';
-import { MembreFonctionEnum } from '../models/membre-fonction.enum';
+import { MembreFonctionEnum } from '../shared/models/membre-fonction.enum';
 
 type Input = inferProcedureInput<AppRouter['collectivites']['membres']['list']>;
 
