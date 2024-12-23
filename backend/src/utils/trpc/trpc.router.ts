@@ -37,7 +37,7 @@ export class TrpcRouter {
   appRouter = this.trpc.router({
     indicateurs: {
       trajectoires: this.trajectoiresRouter.router,
-      filtre: this.indicateurFiltreRouter.router,
+      list: this.indicateurFiltreRouter.router.list,
     },
     plans: {
       fiches: this.trpc.mergeRouters(
@@ -49,8 +49,6 @@ export class TrpcRouter {
     collectivites: {
       personnes: this.personnes.router,
       membres: this.membresRouter.router,
-    },
-    tags: {
       categories: this.getCategoriesByCollectiviteRouter.router,
     },
     referentiels: {

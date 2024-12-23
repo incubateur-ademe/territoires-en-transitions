@@ -27,7 +27,7 @@ export const useFilteredIndicateurDefinitions = (
     delete options.filtre?.text; // Delete it, search is done locally for now due to backend reasons
   }
 
-  const { data, error, isLoading } = trpc.indicateurs.filtre.list.useQuery(
+  const { data, error, isLoading } = trpc.indicateurs.list.useQuery(
     {
       collectiviteId: collectiviteId!,
       filtre: options.filtre ?? {},
