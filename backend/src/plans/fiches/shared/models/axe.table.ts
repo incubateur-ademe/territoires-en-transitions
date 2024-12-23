@@ -1,3 +1,4 @@
+import { panierTable } from '@/backend/plans/paniers/models/panier.table';
 import { createdAt, modifiedAt, modifiedBy } from '@/backend/utils';
 import { InferInsertModel } from 'drizzle-orm';
 import {
@@ -10,7 +11,6 @@ import {
 import { createSelectSchema } from 'drizzle-zod';
 import z from 'zod';
 import { collectiviteTable } from '../../../../collectivites/shared/models/collectivite.table';
-import { panierTable } from '../../../../panier/models/panier.table';
 import {
   planActionTypeSchema,
   planActionTypeTable,

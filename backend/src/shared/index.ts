@@ -1,3 +1,5 @@
+export * from './models/banatic-competence.table';
+export * from './models/categorie-fnv.table';
 export * from './models/effet-attendu.table';
 export * from './models/sous-thematique.table';
 export * from './models/temps-de-mise-en-oeuvre.table';

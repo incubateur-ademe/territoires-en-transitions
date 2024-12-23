@@ -1,7 +1,7 @@
+import { indicateurDefinitionTable } from '@/backend/indicateurs';
+import { InferSelectModel } from 'drizzle-orm';
 import { integer, pgTable, primaryKey } from 'drizzle-orm/pg-core';
 import { actionImpactTable } from './action-impact.table';
-import { indicateurDefinitionTable } from '../../indicateurs/models/indicateur-definition.table';
-import { InferSelectModel } from 'drizzle-orm';
 
 export const actionImpactIndicateurTable = pgTable(
   'action_impact_indicateur',

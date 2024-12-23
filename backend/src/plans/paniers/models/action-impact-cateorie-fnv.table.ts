@@ -1,21 +1,21 @@
+import { categorieFNVTable } from '@/backend/shared';
 import { integer, pgTable, primaryKey } from 'drizzle-orm/pg-core';
-import { panierPartenaireTable } from '../../shared/models/panier-partenaire.table';
 import { actionImpactTable } from './action-impact.table';
 
-export const actionImpactPartenaireTable = pgTable(
-  'action_impact_partenaire',
+export const actionImpactCategorieFNVTable = pgTable(
+  'action_impact_categorie_fnv',
   {
     actionImpactId: integer('action_impact_id')
       .notNull()
       .references(() => actionImpactTable.id),
-    partenaireId: integer('partenaire_id')
+    categorieFnvId: integer('categorie_fnv_id')
       .notNull()
-      .references(() => panierPartenaireTable.id),
+      .references(() => categorieFNVTable.id),
   },
   (table) => {
     return {
       pk: primaryKey({
-        columns: [table.actionImpactId, table.partenaireId],
+        columns: [table.actionImpactId, table.categorieFnvId],
       }),
     };
   }

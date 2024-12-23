@@ -1,6 +1,6 @@
+import { thematiqueTable } from '@/backend/shared';
 import { InferSelectModel } from 'drizzle-orm';
 import { integer, pgTable, primaryKey } from 'drizzle-orm/pg-core';
-import { thematiqueTable } from '../../shared/models/thematique.table';
 import { actionImpactTable } from './action-impact.table';
 
 export const actionImpactThematiqueTable = pgTable(
