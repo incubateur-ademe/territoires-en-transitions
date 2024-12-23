@@ -6,7 +6,6 @@ import { Injectable, Logger } from '@nestjs/common';
 import { aliasedTable, desc, eq } from 'drizzle-orm';
 import { AuthenticatedUser } from '../../auth/models/auth.models';
 import DatabaseService from '../../common/services/database.service';
-import TagService from '../../taxonomie/services/tag.service';
 import { ficheActionActionImpactTable } from './shared/models/fiche-action-action-impact.table';
 import { ficheActionActionTable } from './shared/models/fiche-action-action.table';
 import { ficheActionEffetAttenduTable } from './shared/models/fiche-action-effet-attendu.table';
@@ -26,8 +25,7 @@ export default class FicheService {
 
   constructor(
     private readonly permissionService: PermissionService,
-    private readonly databaseService: DatabaseService,
-    private readonly tagService: TagService
+    private readonly databaseService: DatabaseService
   ) {}
 
   /** Renvoi une fiche à partir de son id */
@@ -153,21 +151,6 @@ export default class FicheService {
       ficheId: ficheId,
       partenaireTagId: tagId,
     });
-  }
-
-  /**
-   * Ajoute un partenaire à une fiche à partir du nom du partenaire et la collectivité
-   * @param ficheId identifiant de la fiche
-   * @param nomTag nom du partenaire
-   * @param collectiviteId identifiant de la collectivité
-   */
-  async addPartenaireByNom(
-    ficheId: number,
-    nomTag: string,
-    collectiviteId: number
-  ): Promise<void> {
-    const tagId = await this.tagService.getPartenaireId(nomTag, collectiviteId);
-    await this.addPartenaireById(ficheId, tagId);
   }
 
   // On ajoute le financement

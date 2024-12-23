@@ -1,3 +1,4 @@
+export * from './shared/models/categorie-tag.table';
 export * from './shared/models/financeur-tag.table';
 export * from './shared/models/libre-tag.table';
 export * from './shared/models/partenaire-tag.table';

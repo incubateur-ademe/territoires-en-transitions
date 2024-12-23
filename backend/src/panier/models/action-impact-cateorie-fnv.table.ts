@@ -1,6 +1,6 @@
 import { integer, pgTable, primaryKey } from 'drizzle-orm/pg-core';
+import { categorieFNVTable } from '../../shared/models/categorie-fnv.table';
 import { actionImpactTable } from './action-impact.table';
-import { categorieFNVTable } from '../../taxonomie/models/categorie-fnv.table';
 
 export const actionImpactCategorieFNVTable = pgTable(
   'action_impact_categorie_fnv',

@@ -2,7 +2,6 @@ import { Module } from '@nestjs/common';
 import { AuthModule } from '../../auth/auth.module';
 import { CollectivitesModule } from '../../collectivites/collectivites.module';
 import { CommonModule } from '../../common/common.module';
-import TagService from '../../taxonomie/services/tag.service';
 import { BulkEditRouter } from './bulk-edit/bulk-edit.router';
 import { BulkEditService } from './bulk-edit/bulk-edit.service';
 import { CountByStatutRouter } from './count-by-statut/count-by-statut.router';
@@ -22,7 +21,6 @@ import { FichesActionController } from './fiches-action.controller';
     BulkEditService,
     BulkEditRouter,
     FichesActionUpdateService,
-    TagService,
     FicheActionEtapeService,
     FicheActionEtapeRouter,
   ],

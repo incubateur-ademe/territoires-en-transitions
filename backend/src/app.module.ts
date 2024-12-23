@@ -10,7 +10,6 @@ import { IndicateursModule } from './indicateurs/indicateurs.module';
 import { PersonnalisationsModule } from './personnalisations/personnalisations.module';
 import { FichesActionModule } from './plans/fiches/fiches.module';
 import { ReferentielsModule } from './referentiels/referentiels.module';
-import { TaxonomieModule } from './taxonomie/taxonomie.module';
 import { SheetModule } from './utils/google-sheets/sheet.module';
 import { TrpcModule } from './utils/trpc/trpc.module';
 import { TrpcRouter } from './utils/trpc/trpc.router';
@@ -33,7 +32,6 @@ import { TrpcRouter } from './utils/trpc/trpc.router';
     FichesActionModule,
     PersonnalisationsModule,
     ReferentielsModule,
-    TaxonomieModule,
   ],
   providers: [TrpcRouter],
 })
