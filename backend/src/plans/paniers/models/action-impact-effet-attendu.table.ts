@@ -1,6 +1,6 @@
+import { effetAttenduTable } from '@/backend/shared';
 import { InferSelectModel } from 'drizzle-orm';
 import { integer, pgTable, primaryKey } from 'drizzle-orm/pg-core';
-import { effetAttenduTable } from '../../shared/models/effet-attendu.table';
 import { actionImpactTable } from './action-impact.table';
 
 export const actionImpactEffetAttenduTable = pgTable(

@@ -1,5 +1,5 @@
+import { actionImpactTable } from '@/backend/plans/paniers';
 import { integer, pgTable, primaryKey } from 'drizzle-orm/pg-core';
-import { actionImpactTable } from '../../../../panier/models/action-impact.table';
 import { ficheActionTable } from './fiche-action.table';
 
 export const ficheActionActionImpactTable = pgTable(
