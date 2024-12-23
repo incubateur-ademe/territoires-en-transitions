@@ -141,7 +141,7 @@ const FicheActionCard = ({
                 <BadgeStatut statut={ficheAction.statut} size="sm" />
               )}
               {ficheAction.actionImpactId && (
-                <Tooltip label="Action issue du panier d'action">
+                <Tooltip label="Fiche action issue du service “Actions à Impact”">
                   <Button
                     variant="outlined"
                     size="xs"
