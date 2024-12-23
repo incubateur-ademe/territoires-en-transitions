@@ -1,5 +1,5 @@
 import { Injectable, Logger } from '@nestjs/common';
-import ConfigurationService from '../../config/configuration.service';
+import ConfigurationService from '../../utils/config/configuration.service';
 import { getErrorMessage } from './errors.helper';
 
 @Injectable()

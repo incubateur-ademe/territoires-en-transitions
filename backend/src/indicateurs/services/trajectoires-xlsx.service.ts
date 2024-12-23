@@ -9,7 +9,7 @@ import { default as XlsxTemplate } from 'xlsx-template';
 import { AuthenticatedUser } from '../../auth/models/auth.models';
 import { CollectiviteRequestType } from '../../collectivites/collectivite.request';
 import { EpciType } from '../../collectivites/shared/models/epci.table';
-import BackendConfigurationService from '../../config/configuration.service';
+import BackendConfigurationService from '../../utils/config/configuration.service';
 import SheetService from '../../utils/google-sheets/sheet.service';
 import { DonneesCalculTrajectoireARemplirType } from '../models/donnees-calcul-trajectoire-a-remplir.dto';
 import { ModeleTrajectoireTelechargementRequestType } from '../models/modele-trajectoire-telechargement.request';

@@ -2,7 +2,7 @@ import { Module } from '@nestjs/common';
 import { AuthModule } from '../auth/auth.module';
 import { CollectivitesModule } from '../collectivites/collectivites.module';
 import { CommonModule } from '../common/common.module';
-import { ConfigurationModule } from '../config/configuration.module';
+import { ConfigurationModule } from '../utils/config/configuration.module';
 import { SheetModule } from '../utils/google-sheets/sheet.module';
 import { IndicateursController } from './controllers/indicateurs.controller';
 import { TrajectoiresController } from './controllers/trajectoires.controller';
