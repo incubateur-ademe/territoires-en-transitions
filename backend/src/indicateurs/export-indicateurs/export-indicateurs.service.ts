@@ -12,6 +12,7 @@ import {
   BOLD,
   normalizeWorksheetName,
 } from '../../utils/excel/excel.utils';
+import ListDefinitionsService from '../list-indicateurs/list-definitions.service';
 import { ExportIndicateursRequestType } from '../models/export-indicateurs.request';
 import {
   IndicateurDefinitionAvecEnfantsType,
@@ -19,7 +20,7 @@ import {
 } from '../models/indicateur-definition.table';
 import { SourceMetadonnee } from '../models/indicateur-source-metadonnee.table';
 import { IndicateurValeurAvecMetadonnesDefinition } from '../models/indicateur-valeur.table';
-import IndicateursService from '../services/indicateurs.service';
+import CrudValeursService from '../valeurs/crud-valeurs.service';
 
 @Injectable()
 export default class ExportIndicateursService {
@@ -27,7 +28,8 @@ export default class ExportIndicateursService {
 
   constructor(
     private readonly permissionService: PermissionService,
-    private readonly indicateursService: IndicateursService,
+    private readonly indicateursService: ListDefinitionsService,
+    private readonly valeursService: CrudValeursService,
     private readonly collectiviteService: CollectivitesService
   ) {}
 
@@ -77,11 +79,10 @@ export default class ExportIndicateursService {
     ]);
 
     // charge toutes les valeurs
-    const indicateursValeurs =
-      await this.indicateursService.getIndicateursValeurs({
-        collectiviteId: options.collectiviteId,
-        indicateurIds,
-      });
+    const indicateursValeurs = await this.valeursService.getIndicateursValeurs({
+      collectiviteId: options.collectiviteId,
+      indicateurIds,
+    });
 
     // crée le classeur
     const workbook = new Workbook();

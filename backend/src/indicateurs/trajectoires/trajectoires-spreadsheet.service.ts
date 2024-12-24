@@ -12,10 +12,11 @@ import GroupementsService from '../../collectivites/services/groupements.service
 import { EpciType } from '../../collectivites/shared/models/epci.table';
 import ConfigurationService from '../../utils/config/configuration.service';
 import SheetService from '../../utils/google-sheets/sheet.service';
+import ListDefinitionsService from '../list-indicateurs/list-definitions.service';
 import { IndicateurDefinition } from '../models/indicateur-definition.table';
 import { IndicateurValeurInsert } from '../models/indicateur-valeur.table';
 import IndicateurSourcesService from '../services/indicateur-sources.service';
-import IndicateursService from '../services/indicateurs.service';
+import CrudValeursService from '../valeurs/crud-valeurs.service';
 import {
   CalculTrajectoireRequestType,
   CalculTrajectoireReset,
@@ -34,7 +35,8 @@ export default class TrajectoiresSpreadsheetService {
   constructor(
     private readonly configService: ConfigurationService,
     private readonly indicateurSourcesService: IndicateurSourcesService,
-    private readonly indicateursService: IndicateursService,
+    private readonly indicateursService: ListDefinitionsService,
+    private readonly valeursService: CrudValeursService,
     private readonly trajectoiresDataService: TrajectoiresDataService,
     private readonly sheetService: SheetService,
     private readonly groupementsService: GroupementsService
@@ -146,21 +148,21 @@ export default class TrajectoiresSpreadsheetService {
         );
 
         const emissionGesTrajectoire =
-          this.indicateursService.groupeIndicateursValeursParIndicateur(
+          this.valeursService.groupeIndicateursValeursParIndicateur(
             resultatVerification.valeurs,
             indicateurEmissionsDefinitions,
             true
           );
 
         const consommationsTrajectoire =
-          this.indicateursService.groupeIndicateursValeursParIndicateur(
+          this.valeursService.groupeIndicateursValeursParIndicateur(
             resultatVerification.valeurs,
             indicateurConsommationDefinitions,
             true
           );
 
         const sequestrationTrajectoire =
-          this.indicateursService.groupeIndicateursValeursParIndicateur(
+          this.valeursService.groupeIndicateursValeursParIndicateur(
             resultatVerification.valeurs,
             indicateurSequestrationDefinitions,
             true
@@ -320,7 +322,7 @@ export default class TrajectoiresSpreadsheetService {
       `Ecriture des ${indicateurValeursTrajectoireResultat.length} valeurs des indicateurs correspondant à la trajectoire SNBC pour la collectivité ${request.collectiviteId}`
     );
     const upsertedTrajectoireIndicateurValeurs =
-      await this.indicateursService.upsertIndicateurValeurs(
+      await this.valeursService.upsertIndicateurValeurs(
         indicateurValeursTrajectoireResultat,
         tokenInfo
       );
@@ -354,21 +356,21 @@ export default class TrajectoiresSpreadsheetService {
     );
 
     const emissionGesTrajectoire =
-      this.indicateursService.groupeIndicateursValeursParIndicateur(
+      this.valeursService.groupeIndicateursValeursParIndicateur(
         upsertedTrajectoireIndicateurValeurs || [],
         indicateurResultatEmissionsDefinitions,
         true
       );
 
     const consommationsTrajectoire =
-      this.indicateursService.groupeIndicateursValeursParIndicateur(
+      this.valeursService.groupeIndicateursValeursParIndicateur(
         upsertedTrajectoireIndicateurValeurs || [],
         indicateurResultatConsommationDefinitions,
         true
       );
 
     const sequestrationTrajectoire =
-      this.indicateursService.groupeIndicateursValeursParIndicateur(
+      this.valeursService.groupeIndicateursValeursParIndicateur(
         upsertedTrajectoireIndicateurValeurs || [],
         indicateurResultatSequestrationDefinitions,
         true

@@ -9,16 +9,16 @@ import {
   IndicateurValeur,
   IndicateurValeurAvecMetadonnesDefinition,
 } from '../models/indicateur-valeur.table';
-import IndicateursService, {
+import CrudValeursService, {
   IndicateurAvecValeursParSource,
-} from './indicateurs.service';
+} from './crud-valeurs.service';
 
-describe('IndicateursService', () => {
-  let indicateurService: IndicateursService;
+describe('Indicateurs → crud-valeurs.service', () => {
+  let indicateurService: CrudValeursService;
 
   beforeEach(async () => {
     const moduleRef = await Test.createTestingModule({
-      controllers: [IndicateursService],
+      controllers: [CrudValeursService],
     })
       .useMocker((token) => {
         if (token === DatabaseService || token === PermissionService) {
@@ -27,7 +27,7 @@ describe('IndicateursService', () => {
       })
       .compile();
 
-    indicateurService = moduleRef.get(IndicateursService);
+    indicateurService = moduleRef.get(CrudValeursService);
   });
 
   describe('groupeIndicateursValeursParIndicateur', () => {

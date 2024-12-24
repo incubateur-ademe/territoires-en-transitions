@@ -22,7 +22,7 @@ import {
   IndicateurValeurAvecMetadonnesDefinition,
 } from '../models/indicateur-valeur.table';
 import IndicateurSourcesService from '../services/indicateur-sources.service';
-import IndicateursService from '../services/indicateurs.service';
+import CrudValeursService from '../valeurs/crud-valeurs.service';
 import { DonneesARemplirResultType } from './donnees-a-remplir-result.dto';
 import { DonneesARemplirValeurType } from './donnees-a-remplir-valeur.dto';
 import { DonneesCalculTrajectoireARemplirType } from './donnees-calcul-trajectoire-a-remplir.dto';
@@ -206,8 +206,8 @@ export default class TrajectoiresDataService {
 
   constructor(
     private readonly collectivitesService: CollectivitesService,
-    private readonly indicateursService: IndicateursService,
     private readonly indicateurSourcesService: IndicateurSourcesService,
+    private readonly valeursService: CrudValeursService,
     private readonly permissionService: PermissionService
   ) {}
 
@@ -252,8 +252,8 @@ export default class TrajectoiresDataService {
     const source = donneesCalculTrajectoire.sources
       .join(',')
       .replace(
-        IndicateursService.NULL_SOURCE_ID,
-        IndicateursService.NULL_SOURCE_LABEL
+        CrudValeursService.NULL_SOURCE_ID,
+        CrudValeursService.NULL_SOURCE_LABEL
       );
     let commentaitre = `${this.OBJECTIF_COMMENTAIRE_SOURCE} ${source}`;
     if (identifiantsManquants.length) {
@@ -273,8 +273,8 @@ export default class TrajectoiresDataService {
     if (match) {
       const extractedSources = match[1].split(',').map((i) => i.trim());
       const replacedExtractedSource = extractedSources.map((source) => {
-        if (source.localeCompare(IndicateursService.NULL_SOURCE_LABEL) === 0) {
-          return IndicateursService.NULL_SOURCE_ID;
+        if (source.localeCompare(CrudValeursService.NULL_SOURCE_LABEL) === 0) {
+          return CrudValeursService.NULL_SOURCE_ID;
         }
         return source;
       });
@@ -302,7 +302,7 @@ export default class TrajectoiresDataService {
   ): Promise<DonneesCalculTrajectoireARemplirType> {
     // Récupère les valeurs des indicateurs d'émission pour l'année 2015 (valeur directe ou interpolation)
     const sources = forceDonneesCollectivite
-      ? [IndicateursService.NULL_SOURCE_ID]
+      ? [CrudValeursService.NULL_SOURCE_ID]
       : [this.RARE_SOURCE_ID, this.ALDO_SOURCE_ID];
     this.logger.log(
       `Récupération des données d'émission GES et de consommation pour la collectivité ${collectiviteId} depuis les sources ${sources.join(
@@ -311,7 +311,7 @@ export default class TrajectoiresDataService {
     );
 
     const indicateurValeursEmissionsGes =
-      await this.indicateursService.getIndicateursValeurs({
+      await this.valeursService.getIndicateursValeurs({
         collectiviteId: collectiviteId,
         identifiantsReferentiel: _.flatten(
           this.SNBC_EMISSIONS_GES_IDENTIFIANTS_REFERENTIEL
@@ -333,7 +333,7 @@ export default class TrajectoiresDataService {
 
     // Récupère les valeurs des indicateurs de consommation finale pour l'année 2015 (valeur directe ou interpolation)
     const indicateurValeursConsommationsFinales =
-      await this.indicateursService.getIndicateursValeurs({
+      await this.valeursService.getIndicateursValeurs({
         collectiviteId: collectiviteId,
         identifiantsReferentiel: _.flatten(
           this.SNBC_CONSOMMATIONS_IDENTIFIANTS_REFERENTIEL
@@ -355,7 +355,7 @@ export default class TrajectoiresDataService {
 
     // Récupère les valeurs des indicateurs de sequestration pour l'année 2015 (valeur directe ou interpolation)
     const indicateurValeursSequestration =
-      await this.indicateursService.getIndicateursValeurs({
+      await this.valeursService.getIndicateursValeurs({
         collectiviteId: collectiviteId,
         identifiantsReferentiel: _.flatten(
           this.SNBC_SEQUESTRATION_IDENTIFIANTS_REFERENTIEL
@@ -656,7 +656,7 @@ export default class TrajectoiresDataService {
     }
 
     // sinon, vérifie s'il existe déjà des données trajectoire SNBC calculées :
-    const valeurs = await this.indicateursService.getIndicateursValeurs({
+    const valeurs = await this.valeursService.getIndicateursValeurs({
       collectiviteId: request.collectiviteId,
       sources: [this.SNBC_SOURCE.id],
     });
@@ -699,7 +699,7 @@ export default class TrajectoiresDataService {
         !isNil(request.forceUtilisationDonneesCollectivite)
           ? request.forceUtilisationDonneesCollectivite
           : response.sourcesDonneesEntree?.includes(
-              IndicateursService.NULL_SOURCE_ID
+              CrudValeursService.NULL_SOURCE_ID
             )
           ? true
           : false
@@ -753,7 +753,7 @@ export default class TrajectoiresDataService {
       );
     }
 
-    await this.indicateursService.deleteIndicateurValeurs({
+    await this.valeursService.deleteIndicateurValeurs({
       collectiviteId: collectiviteId,
       metadonneeId: snbcMetadonneesId,
     });

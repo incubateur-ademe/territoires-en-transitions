@@ -9,7 +9,7 @@ import {
   UpsertIndicateursValeursRequest,
   UpsertIndicateursValeursResponse,
 } from '../models/upsert-indicateurs-valeurs.request';
-import IndicateursService from '../services/indicateurs.service';
+import CrudValeursService from './crud-valeurs.service';
 
 /**
  * Création des classes de requête/réponse à partir du schema pour générer automatiquement la documentation OpenAPI et la validation des entrées
@@ -27,7 +27,7 @@ class GetIndicateursValeursResponseClass extends createZodDto(
 export class IndicateursController {
   private readonly logger = new Logger(IndicateursController.name);
 
-  constructor(private readonly indicateurService: IndicateursService) {}
+  constructor(private readonly service: CrudValeursService) {}
 
   @Get()
   @ApiResponse({ type: GetIndicateursValeursResponseClass })
@@ -35,10 +35,7 @@ export class IndicateursController {
     @Query() request: GetIndicateursValeursRequestClass,
     @TokenInfo() tokenInfo: AuthenticatedUser
   ): Promise<GetIndicateursValeursResponseClass> {
-    return this.indicateurService.getIndicateurValeursGroupees(
-      request,
-      tokenInfo
-    );
+    return this.service.getIndicateurValeursGroupees(request, tokenInfo);
   }
 
   @Post()
@@ -49,11 +46,10 @@ export class IndicateursController {
     @Body() request: UpsertIndicateursValeursRequest,
     @TokenInfo() tokenInfo: AuthenticatedUser
   ): Promise<UpsertIndicateursValeursResponse> {
-    const upsertedValeurs =
-      await this.indicateurService.upsertIndicateurValeurs(
-        request.valeurs,
-        tokenInfo
-      );
+    const upsertedValeurs = await this.service.upsertIndicateurValeurs(
+      request.valeurs,
+      tokenInfo
+    );
     return { valeurs: upsertedValeurs };
   }
 }

@@ -2,9 +2,10 @@ import { PermissionService } from '@/backend/auth/authorizations/permission.serv
 import { Test } from '@nestjs/testing';
 import CollectivitesService from '../../collectivites/services/collectivites.service';
 import SheetService from '../../utils/google-sheets/sheet.service';
+import ListDefinitionsService from '../list-indicateurs/list-definitions.service';
 import { IndicateurValeur } from '../models/indicateur-valeur.table';
 import IndicateurSourcesService from '../services/indicateur-sources.service';
-import IndicateursService from '../services/indicateurs.service';
+import CrudValeursService from '../valeurs/crud-valeurs.service';
 import TrajectoiresDataService from './trajectoires-data.service';
 
 describe('TrajectoiresDataService test', () => {
@@ -19,7 +20,8 @@ describe('TrajectoiresDataService test', () => {
         if (
           token === CollectivitesService ||
           token === IndicateurSourcesService ||
-          token === IndicateursService ||
+          token === ListDefinitionsService ||
+          token === CrudValeursService ||
           token === PermissionService
         ) {
           return {};

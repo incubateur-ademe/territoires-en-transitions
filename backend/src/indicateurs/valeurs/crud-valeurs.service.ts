@@ -5,10 +5,8 @@ import { createZodDto } from '@anatine/zod-nestjs';
 import { extendApi } from '@anatine/zod-openapi';
 import { Injectable, Logger } from '@nestjs/common';
 import {
-  aliasedTable,
   and,
   eq,
-  getTableColumns,
   gte,
   inArray,
   isNotNull,
@@ -21,21 +19,16 @@ import {
 } from 'drizzle-orm';
 import { groupBy, partition } from 'es-toolkit';
 import * as _ from 'lodash';
-import { objectToCamel } from 'ts-case-convert';
 import { AuthenticatedUser, AuthRole } from '../../auth/models/auth.models';
-import { groupementCollectiviteTable } from '../../collectivites/shared/models/groupement-collectivite.table';
-import { groupementTable } from '../../collectivites/shared/models/groupement.table';
 import { DatabaseService } from '../../utils/database/database.service';
 import { DeleteIndicateursValeursRequestType } from '../models/delete-indicateurs.request';
 import { GetIndicateursValeursRequestType } from '../models/get-indicateurs.request';
 import { GetIndicateursValeursResponseType } from '../models/get-indicateurs.response';
 import {
   IndicateurDefinition,
-  IndicateurDefinitionAvecEnfantsType,
   IndicateurDefinitionEssential,
   indicateurDefinitionTable,
 } from '../models/indicateur-definition.table';
-import { indicateurGroupeTable } from '../models/indicateur-groupe.table';
 import {
   indicateurSourceMetadonneeTable,
   SourceMetadonnee,
@@ -64,8 +57,8 @@ export class IndicateurAvecValeursParSource extends createZodDto(
 ) {}
 
 @Injectable()
-export default class IndicateursService {
-  private readonly logger = new Logger(IndicateursService.name);
+export default class CrudValeursService {
+  private readonly logger = new Logger(CrudValeursService.name);
 
   /**
    * Quand la sourceId est NULL, cela signifie que ce sont des donnees saisies par la collectivite
@@ -110,11 +103,11 @@ export default class IndicateursService {
     }
     if (options.sources?.length) {
       const nullSourceId = options.sources.includes(
-        IndicateursService.NULL_SOURCE_ID
+        CrudValeursService.NULL_SOURCE_ID
       );
       if (nullSourceId) {
         const autreSourceIds = options.sources.filter(
-          (s) => s !== IndicateursService.NULL_SOURCE_ID
+          (s) => s !== CrudValeursService.NULL_SOURCE_ID
         );
         if (autreSourceIds.length) {
           const orCondition = or(
@@ -312,71 +305,6 @@ export default class IndicateursService {
     return definitions;
   }
 
-  /**
-   * Charge la définition des indicateurs à partir de leur id
-   * ainsi que les définitions des indicateurs "enfant" associés.
-   */
-  async getIndicateurDefinitions(
-    collectiviteId: number,
-    indicateurIds: number[]
-  ): Promise<IndicateurDefinitionAvecEnfantsType[]> {
-    this.logger.log(
-      `Charge la définition des indicateurs ${indicateurIds.join(',')}`
-    );
-
-    const definitionEnfantsTable = aliasedTable(
-      indicateurDefinitionTable,
-      'enfants'
-    );
-
-    const definitions = await this.databaseService.db
-      .select({
-        ...getTableColumns(indicateurDefinitionTable),
-        enfants: sql`json_agg(${definitionEnfantsTable})`,
-      })
-      .from(indicateurDefinitionTable)
-      .leftJoin(
-        indicateurGroupeTable,
-        eq(indicateurGroupeTable.parent, indicateurDefinitionTable.id)
-      )
-      .leftJoin(
-        definitionEnfantsTable,
-        eq(definitionEnfantsTable.id, indicateurGroupeTable.enfant)
-      )
-      .leftJoin(
-        groupementTable,
-        eq(groupementTable.id, definitionEnfantsTable.groupementId)
-      )
-      .leftJoin(
-        groupementCollectiviteTable,
-        eq(groupementCollectiviteTable.groupementId, groupementTable.id)
-      )
-      .where(
-        and(
-          inArray(indicateurDefinitionTable.id, indicateurIds),
-          or(
-            isNull(definitionEnfantsTable.groupementId),
-            eq(groupementCollectiviteTable.collectiviteId, collectiviteId)
-          )
-        )
-      )
-      .groupBy(indicateurDefinitionTable.id);
-
-    this.logger.log(`${definitions.length} définitions trouvées`);
-
-    return definitions.map(
-      (def: IndicateurDefinition & { enfants: unknown[] }) => {
-        const enfants = def.enfants?.filter(Boolean);
-        return {
-          ...def,
-          enfants: enfants?.length
-            ? (objectToCamel(enfants) as IndicateurDefinition[])
-            : null,
-        };
-      }
-    );
-  }
-
   async upsertIndicateurValeurs(
     indicateurValeurs: IndicateurValeurInsert[],
     tokenInfo: AuthenticatedUser
@@ -523,7 +451,7 @@ export default class IndicateursService {
           v.indicateur_valeur.collectiviteId
         }_${v.indicateur_valeur.dateValeur}_${
           v.indicateur_source_metadonnee?.sourceId ||
-          IndicateursService.NULL_SOURCE_ID
+          CrudValeursService.NULL_SOURCE_ID
         }`;
         if (!acc[cleUnicite]) {
           acc[cleUnicite] = v;
@@ -653,7 +581,7 @@ export default class IndicateursService {
         > = {};
         const valeursParSource = groupBy(valeurs, (valeur) => {
           if (!valeur.metadonneeId) {
-            return IndicateursService.NULL_SOURCE_ID;
+            return CrudValeursService.NULL_SOURCE_ID;
           }
           const metadonnee = indicateurMetadonnees.find(
             (m) => m.id === valeur.metadonneeId
