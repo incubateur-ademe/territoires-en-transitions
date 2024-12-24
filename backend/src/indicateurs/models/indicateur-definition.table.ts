@@ -43,19 +43,22 @@ export const indicateurDefinitionTable = pgTable('indicateur_definition', {
   createdBy,
   modifiedBy,
 });
-export type IndicateurDefinitionType = InferSelectModel<
-  typeof indicateurDefinitionTable
->;
-export type CreateIndicateurDefinitionType = InferInsertModel<
-  typeof indicateurDefinitionTable
->;
+
 export const indicateurDefinitionSchema = createSelectSchema(
   indicateurDefinitionTable
 );
-export const createIndicateurDefinitionSchema = createInsertSchema(
+export type IndicateurDefinition = InferSelectModel<
+  typeof indicateurDefinitionTable
+>;
+
+export const indicateurDefinitionSchemaInsert = createInsertSchema(
   indicateurDefinitionTable
 );
-export const minimaleIndicateurDefinitionSchema =
+export type IndicateurDefinitionInsert = InferInsertModel<
+  typeof indicateurDefinitionTable
+>;
+
+export const indicateurDefinitionSchemaEssential =
   indicateurDefinitionSchema.pick({
     id: true,
     identifiantReferentiel: true,
@@ -66,10 +69,10 @@ export const minimaleIndicateurDefinitionSchema =
     borneMin: true,
     borneMax: true,
   });
-export type MinimalIndicateurDefinitionType = z.infer<
-  typeof minimaleIndicateurDefinitionSchema
+export type IndicateurDefinitionEssential = z.infer<
+  typeof indicateurDefinitionSchemaEssential
 >;
 
-export type IndicateurDefinitionAvecEnfantsType = IndicateurDefinitionType & {
-  enfants: IndicateurDefinitionType[] | null;
+export type IndicateurDefinitionAvecEnfantsType = IndicateurDefinition & {
+  enfants: IndicateurDefinition[] | null;
 };

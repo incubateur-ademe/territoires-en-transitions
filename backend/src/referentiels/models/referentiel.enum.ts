@@ -1,21 +1,21 @@
 import { pgEnum } from 'drizzle-orm/pg-core';
 import z from 'zod';
 
-export enum ReferentielType {
-  ECI = 'eci',
-  CAE = 'cae',
-  TE = 'te',
-  TE_TEST = 'te-test',
-}
-// WARNING: not using Object.values to use it with pgTable
-export const referentielTypeEnumValues = [
-  ReferentielType.CAE,
-  ReferentielType.ECI,
-  ReferentielType.TE,
-  ReferentielType.TE_TEST,
-] as const;
+// export enum ReferentielId {
+//   ECI = 'eci',
+//   CAE = 'cae',
+//   TE = 'te',
+//   TE_TEST = 'te-test',
+// }
 
-export const referentielTypeEnumSchema = z.enum(referentielTypeEnumValues);
+export const referentielIdEnumValues = ['cae', 'eci', 'te', 'te-test'] as const;
+
+export const referentielIdEnumSchema = z.enum(referentielIdEnumValues);
+
+export type ReferentielId = z.infer<typeof referentielIdEnumSchema>;
 
 // Todo: to be removed
-export const referentielEnum = pgEnum('referentiel', referentielTypeEnumValues);
+export const referentielIdPgEnum = pgEnum(
+  'referentiel',
+  referentielIdEnumValues
+);

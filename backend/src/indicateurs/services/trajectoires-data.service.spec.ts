@@ -1,12 +1,11 @@
+import { PermissionService } from '@/backend/auth/authorizations/permission.service';
 import { Test } from '@nestjs/testing';
-import { DateTime } from 'luxon';
 import CollectivitesService from '../../collectivites/services/collectivites.service';
 import SheetService from '../../utils/google-sheets/sheet.service';
-import { IndicateurValeurType } from '../models/indicateur-valeur.table';
+import { IndicateurValeur } from '../models/indicateur-valeur.table';
 import IndicateurSourcesService from './indicateur-sources.service';
 import IndicateursService from './indicateurs.service';
 import TrajectoiresDataService from './trajectoires-data.service';
-import { PermissionService } from '@/backend/auth/authorizations/permission.service';
 
 describe('TrajectoiresDataService test', () => {
   let trajectoiresDataService: TrajectoiresDataService;
@@ -37,7 +36,7 @@ describe('TrajectoiresDataService test', () => {
 
   describe('getInterpolationValeur', () => {
     it('Interpolation possible, cas de valeurs égales', async () => {
-      const indicateurValeurs: IndicateurValeurType[] = [
+      const indicateurValeurs: IndicateurValeur[] = [
         {
           id: 640644,
           collectiviteId: 3894,
@@ -120,7 +119,7 @@ describe('TrajectoiresDataService test', () => {
     });
 
     it('Interpolation possible, cas de valeurs égales', async () => {
-      const indicateurValeurs: IndicateurValeurType[] = [
+      const indicateurValeurs: IndicateurValeur[] = [
         {
           id: 651923,
           collectiviteId: 3903,
@@ -189,7 +188,7 @@ describe('TrajectoiresDataService test', () => {
 
   describe('getClosestValeur', () => {
     it('Cas standard', async () => {
-      const indicateurValeurs: IndicateurValeurType[] = [
+      const indicateurValeurs: IndicateurValeur[] = [
         {
           id: 640644,
           collectiviteId: 3894,

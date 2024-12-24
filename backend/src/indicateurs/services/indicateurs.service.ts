@@ -1,6 +1,8 @@
 import { PermissionOperation } from '@/backend/auth/authorizations/permission-operation.enum';
 import { PermissionService } from '@/backend/auth/authorizations/permission.service';
 import { ResourceType } from '@/backend/auth/authorizations/resource-type.enum';
+import { createZodDto } from '@anatine/zod-nestjs';
+import { extendApi } from '@anatine/zod-openapi';
 import { Injectable, Logger } from '@nestjs/common';
 import {
   aliasedTable,
@@ -28,26 +30,38 @@ import { DeleteIndicateursValeursRequestType } from '../models/delete-indicateur
 import { GetIndicateursValeursRequestType } from '../models/get-indicateurs.request';
 import { GetIndicateursValeursResponseType } from '../models/get-indicateurs.response';
 import {
+  IndicateurDefinition,
   IndicateurDefinitionAvecEnfantsType,
+  IndicateurDefinitionEssential,
   indicateurDefinitionTable,
-  IndicateurDefinitionType,
-  MinimalIndicateurDefinitionType,
 } from '../models/indicateur-definition.table';
 import { indicateurGroupeTable } from '../models/indicateur-groupe.table';
 import {
   indicateurSourceMetadonneeTable,
-  IndicateurSourceMetadonneeType,
+  SourceMetadonnee,
 } from '../models/indicateur-source-metadonnee.table';
 import {
-  CreateIndicateurValeurType,
-  IndicateurAvecValeursParSource,
-  IndicateurAvecValeursType,
+  IndicateurAvecValeurs,
+  indicateurAvecValeursParSourceSchema,
+  IndicateurValeur,
   IndicateurValeurAvecMetadonnesDefinition,
-  IndicateurValeurGroupee,
-  IndicateurValeursGroupeeParSource,
+  indicateurValeurGroupeeSchema,
+  IndicateurValeurInsert,
+  indicateurValeursGroupeeParSourceSchema,
   indicateurValeurTable,
-  IndicateurValeurType,
 } from '../models/indicateur-valeur.table';
+
+export class IndicateurValeurGroupee extends createZodDto(
+  extendApi(indicateurValeurGroupeeSchema)
+) {}
+
+export class IndicateurValeursGroupeeParSource extends createZodDto(
+  extendApi(indicateurValeursGroupeeParSourceSchema)
+) {}
+
+export class IndicateurAvecValeursParSource extends createZodDto(
+  extendApi(indicateurAvecValeursParSourceSchema)
+) {}
 
 @Injectable()
 export default class IndicateursService {
@@ -213,9 +227,8 @@ export default class IndicateursService {
     const indicateurValeursSeules = indicateurValeurs.map(
       (v) => v.indicateur_valeur
     );
-    const initialDefinitionsAcc: { [key: string]: IndicateurDefinitionType } =
-      {};
-    let uniqueIndicateurDefinitions: IndicateurDefinitionType[];
+    const initialDefinitionsAcc: { [key: string]: IndicateurDefinition } = {};
+    let uniqueIndicateurDefinitions: IndicateurDefinition[];
     if (!options.identifiantsReferentiel?.length) {
       uniqueIndicateurDefinitions = Object.values(
         indicateurValeurs.reduce((acc, v) => {
@@ -225,7 +238,7 @@ export default class IndicateursService {
           }
           return acc;
         }, initialDefinitionsAcc)
-      ) as IndicateurDefinitionType[];
+      ) as IndicateurDefinition[];
     } else {
       uniqueIndicateurDefinitions =
         await this.getReferentielIndicateurDefinitions(
@@ -258,7 +271,7 @@ export default class IndicateursService {
     });
 
     const initialMetadonneesAcc: {
-      [key: string]: IndicateurSourceMetadonneeType;
+      [key: string]: SourceMetadonnee;
     } = {};
     const uniqueIndicateurMetadonnees = Object.values(
       indicateurValeurs.reduce((acc, v) => {
@@ -268,7 +281,7 @@ export default class IndicateursService {
         }
         return acc;
       }, initialMetadonneesAcc)
-    ) as IndicateurSourceMetadonneeType[];
+    ) as SourceMetadonnee[];
 
     const indicateurValeurGroupeesParSource =
       this.groupeIndicateursValeursParIndicateurEtSource(
@@ -352,12 +365,12 @@ export default class IndicateursService {
     this.logger.log(`${definitions.length} définitions trouvées`);
 
     return definitions.map(
-      (def: IndicateurDefinitionType & { enfants: unknown[] }) => {
+      (def: IndicateurDefinition & { enfants: unknown[] }) => {
         const enfants = def.enfants?.filter(Boolean);
         return {
           ...def,
           enfants: enfants?.length
-            ? (objectToCamel(enfants) as IndicateurDefinitionType[])
+            ? (objectToCamel(enfants) as IndicateurDefinition[])
             : null,
         };
       }
@@ -365,9 +378,9 @@ export default class IndicateursService {
   }
 
   async upsertIndicateurValeurs(
-    indicateurValeurs: CreateIndicateurValeurType[],
+    indicateurValeurs: IndicateurValeurInsert[],
     tokenInfo: AuthenticatedUser
-  ): Promise<IndicateurValeurType[]> {
+  ): Promise<IndicateurValeur[]> {
     if (tokenInfo) {
       const collectiviteIds = [
         ...new Set(indicateurValeurs.map((v) => v.collectiviteId)),
@@ -396,7 +409,7 @@ export default class IndicateursService {
     const [indicateurValeursAvecMetadonnees, indicateurValeursSansMetadonnees] =
       partition(indicateurValeurs, (v) => Boolean(v.metadonneeId));
 
-    const indicateurValeursResultat: IndicateurValeurType[] = [];
+    const indicateurValeursResultat: IndicateurValeur[] = [];
     if (indicateurValeursAvecMetadonnees.length) {
       this.logger.log(
         `Upsert des ${
@@ -532,17 +545,17 @@ export default class IndicateursService {
   }
 
   groupeIndicateursValeursParIndicateur(
-    indicateurValeurs: IndicateurValeurType[],
-    indicateurDefinitions: IndicateurDefinitionType[],
+    indicateurValeurs: IndicateurValeur[],
+    indicateurDefinitions: IndicateurDefinition[],
     commentairesNonInclus = false
-  ): IndicateurAvecValeursType[] {
+  ): IndicateurAvecValeurs[] {
     const initialDefinitionsAcc: {
-      [key: string]: MinimalIndicateurDefinitionType;
+      [key: string]: IndicateurDefinitionEssential;
     } = {};
     const uniqueIndicateurDefinitions = Object.values(
       indicateurDefinitions.reduce((acc, def) => {
         if (def?.id) {
-          const minimaleIndicateurDefinition = _.pick<IndicateurDefinitionType>(
+          const minimaleIndicateurDefinition = _.pick<IndicateurDefinition>(
             def,
             [
               'id',
@@ -554,12 +567,12 @@ export default class IndicateursService {
               'borneMin',
               'borneMax',
             ]
-          ) as MinimalIndicateurDefinitionType;
+          ) as IndicateurDefinitionEssential;
           acc[def.id.toString()] = minimaleIndicateurDefinition;
         }
         return acc;
       }, initialDefinitionsAcc)
-    ) as IndicateurDefinitionType[];
+    ) as IndicateurDefinition[];
 
     const indicateurAvecValeurs = uniqueIndicateurDefinitions.map(
       (indicateurDefinition) => {
@@ -588,7 +601,7 @@ export default class IndicateursService {
         valeurs.sort((a, b) => {
           return a.dateValeur.localeCompare(b.dateValeur);
         });
-        const indicateurAvecValeurs: IndicateurAvecValeursType = {
+        const indicateurAvecValeurs: IndicateurAvecValeurs = {
           definition: indicateurDefinition,
           valeurs,
         };
@@ -599,13 +612,12 @@ export default class IndicateursService {
   }
 
   groupeIndicateursValeursParIndicateurEtSource(
-    indicateurValeurs: IndicateurValeurType[],
-    indicateurDefinitions: IndicateurDefinitionType[],
-    indicateurMetadonnees: IndicateurSourceMetadonneeType[],
+    indicateurValeurs: IndicateurValeur[],
+    indicateurDefinitions: IndicateurDefinition[],
+    indicateurMetadonnees: SourceMetadonnee[],
     supprimeIndicateursSansValeurs = true
   ): IndicateurAvecValeursParSource[] {
-    const initialDefinitionsAcc: { [key: string]: IndicateurDefinitionType } =
-      {};
+    const initialDefinitionsAcc: { [key: string]: IndicateurDefinition } = {};
     const uniqueIndicateurDefinitions = Object.values(
       indicateurDefinitions.reduce((acc, def) => {
         if (def?.id) {
@@ -613,7 +625,7 @@ export default class IndicateursService {
         }
         return acc;
       }, initialDefinitionsAcc)
-    ) as IndicateurDefinitionType[];
+    ) as IndicateurDefinition[];
 
     const indicateurAvecValeurs = uniqueIndicateurDefinitions.map(
       (indicateurDefinition) => {
@@ -637,7 +649,7 @@ export default class IndicateursService {
 
         const metadonneesUtilisees: Record<
           string,
-          Record<string, IndicateurSourceMetadonneeType>
+          Record<string, SourceMetadonnee>
         > = {};
         const valeursParSource = groupBy(valeurs, (valeur) => {
           if (!valeur.metadonneeId) {

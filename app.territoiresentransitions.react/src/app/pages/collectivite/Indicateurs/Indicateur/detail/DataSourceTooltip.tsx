@@ -1,4 +1,4 @@
-import { Indicateurs } from '@/api';
+import { Valeur } from '@/api/indicateurs/domain';
 import { Tooltip } from '@/ui';
 
 /**
@@ -9,7 +9,8 @@ export const DataSourceTooltip = ({
   metadonnee,
   children,
 }: {
-  metadonnee: Indicateurs.domain.SourceMetadonnee;
+  metadonnee: NonNullable<Valeur['source']>;
+  // metadonnee: ReturnType<typeof transformeValeurs>['metadonnee'];
   children: JSX.Element;
 }) => {
   return (

@@ -1,7 +1,7 @@
 import { CalculTrajectoireResultatMode } from '../../models/calcul-trajectoire.request';
-import { CalculTrajectoireResponseType } from '../../models/calcul-trajectoire.response';
+import { CalculTrajectoireResponse } from '../../models/calcul-trajectoire.response';
 
-export const trajectoireSnbcCalculRetour: CalculTrajectoireResponseType = {
+export const trajectoireSnbcCalculRetour: CalculTrajectoireResponse = {
   mode: CalculTrajectoireResultatMode.MAJ_SPREADSHEET_EXISTANT,
   sourcesDonneesEntree: ['rare'],
   indentifiantsReferentielManquantsDonneesEntree: [

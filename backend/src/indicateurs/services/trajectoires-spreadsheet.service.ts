@@ -17,10 +17,10 @@ import {
   CalculTrajectoireReset,
   CalculTrajectoireResultatMode,
 } from '../models/calcul-trajectoire.request';
-import { CalculTrajectoireResultType } from '../models/calcul-trajectoire.response';
+import { CalculTrajectoireResult } from '../models/calcul-trajectoire.response';
 import { DonneesCalculTrajectoireARemplirType } from '../models/donnees-calcul-trajectoire-a-remplir.dto';
-import { IndicateurDefinitionType } from '../models/indicateur-definition.table';
-import { CreateIndicateurValeurType } from '../models/indicateur-valeur.table';
+import { IndicateurDefinition } from '../models/indicateur-definition.table';
+import { IndicateurValeurInsert } from '../models/indicateur-valeur.table';
 import { VerificationTrajectoireStatus } from '../models/verification-trajectoire.response';
 import IndicateurSourcesService from './indicateur-sources.service';
 import IndicateursService from './indicateurs.service';
@@ -59,7 +59,7 @@ export default class TrajectoiresSpreadsheetService {
     request: CalculTrajectoireRequestType,
     tokenInfo: AuthenticatedUser,
     epci?: EpciType
-  ): Promise<CalculTrajectoireResultType> {
+  ): Promise<CalculTrajectoireResult> {
     let mode: CalculTrajectoireResultatMode =
       CalculTrajectoireResultatMode.NOUVEAU_SPREADSHEET;
 
@@ -167,7 +167,7 @@ export default class TrajectoiresSpreadsheetService {
           );
 
         mode = CalculTrajectoireResultatMode.DONNEES_EN_BDD;
-        const result: CalculTrajectoireResultType = {
+        const result: CalculTrajectoireResult = {
           mode: mode,
           sourcesDonneesEntree: resultatVerification.sourcesDonneesEntree || [],
           indentifiantsReferentielManquantsDonneesEntree:
@@ -374,7 +374,7 @@ export default class TrajectoiresSpreadsheetService {
         true
       );
 
-    const result: CalculTrajectoireResultType = {
+    const result: CalculTrajectoireResult = {
       mode: mode,
       sourcesDonneesEntree: resultatVerification.donneesEntree!.sources,
       indentifiantsReferentielManquantsDonneesEntree: [
@@ -397,7 +397,7 @@ export default class TrajectoiresSpreadsheetService {
     return result;
   }
 
-  inverseSigneSequestrations(result: CalculTrajectoireResultType) {
+  inverseSigneSequestrations(result: CalculTrajectoireResult) {
     // Il y a le cae_1.csc qui est une exception
     result.trajectoire.emissionsGes.forEach((emissionGes) => {
       if (
@@ -471,9 +471,9 @@ export default class TrajectoiresSpreadsheetService {
     indicateurSourceMetadonneeId: number,
     donneesSpreadsheet: any[][] | null,
     identifiantsReferentielAssocie: string[],
-    indicateurResultatDefinitions: IndicateurDefinitionType[],
+    indicateurResultatDefinitions: IndicateurDefinition[],
     donneesCalculTrajectoire: DonneesCalculTrajectoireARemplirType
-  ): CreateIndicateurValeurType[] {
+  ): IndicateurValeurInsert[] {
     const donneesEntree = [
       ...donneesCalculTrajectoire.emissionsGes.valeurs,
       ...donneesCalculTrajectoire.consommationsFinales.valeurs,
@@ -484,7 +484,7 @@ export default class TrajectoiresSpreadsheetService {
         donneesCalculTrajectoire
       );
 
-    const indicateurValeursResultat: CreateIndicateurValeurType[] = [];
+    const indicateurValeursResultat: IndicateurValeurInsert[] = [];
     donneesSpreadsheet?.forEach((ligne, ligneIndex) => {
       const identifiantReferentielSortie =
         identifiantsReferentielAssocie[ligneIndex];
@@ -587,7 +587,7 @@ export default class TrajectoiresSpreadsheetService {
                   // Les valeurs de séquestration sont positives en base quand il y a une séquestration mais la convention inverse est dans l'excel
                   facteur = -1;
                 }
-                const indicateurValeur: CreateIndicateurValeurType = {
+                const indicateurValeur: IndicateurValeurInsert = {
                   indicateurId: indicateurResultatDefinition.id,
                   collectiviteId: collectiviteId,
                   metadonneeId: indicateurSourceMetadonneeId,

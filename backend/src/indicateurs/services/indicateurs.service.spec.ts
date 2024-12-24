@@ -2,15 +2,16 @@ import { PermissionService } from '@/backend/auth/authorizations/permission.serv
 import { Test } from '@nestjs/testing';
 import * as _ from 'lodash';
 import { DatabaseService } from '../../utils/database/database.service';
-import { IndicateurDefinitionType } from '../models/indicateur-definition.table';
-import { IndicateurSourceMetadonneeType } from '../models/indicateur-source-metadonnee.table';
+import { IndicateurDefinition } from '../models/indicateur-definition.table';
+import { SourceMetadonnee } from '../models/indicateur-source-metadonnee.table';
 import {
-  IndicateurAvecValeursParSource,
-  IndicateurAvecValeursType,
+  IndicateurAvecValeurs,
+  IndicateurValeur,
   IndicateurValeurAvecMetadonnesDefinition,
-  IndicateurValeurType,
 } from '../models/indicateur-valeur.table';
-import IndicateursService from './indicateurs.service';
+import IndicateursService, {
+  IndicateurAvecValeursParSource,
+} from './indicateurs.service';
 
 describe('IndicateursService', () => {
   let indicateurService: IndicateursService;
@@ -31,7 +32,7 @@ describe('IndicateursService', () => {
 
   describe('groupeIndicateursValeursParIndicateur', () => {
     it('Groupe les valeurs par indicateur, trie par date croissante les valeurs', async () => {
-      const indicateur1: IndicateurDefinitionType = {
+      const indicateur1: IndicateurDefinition = {
         id: 456,
         groupementId: null,
         collectiviteId: null,
@@ -50,7 +51,7 @@ describe('IndicateursService', () => {
         modifiedBy: null,
         createdBy: null,
       };
-      const indicateur2: IndicateurDefinitionType = {
+      const indicateur2: IndicateurDefinition = {
         id: 457,
         groupementId: null,
         collectiviteId: null,
@@ -69,7 +70,7 @@ describe('IndicateursService', () => {
         modifiedBy: null,
         createdBy: null,
       };
-      const indicateur3: IndicateurDefinitionType = {
+      const indicateur3: IndicateurDefinition = {
         id: 458,
         groupementId: null,
         collectiviteId: null,
@@ -89,14 +90,14 @@ describe('IndicateursService', () => {
         modifiedBy: null,
         createdBy: null,
       };
-      const indicateurDefinitions: IndicateurDefinitionType[] = [
+      const indicateurDefinitions: IndicateurDefinition[] = [
         indicateur1,
         indicateur2,
         indicateur3,
         indicateur1, // duplicate
       ];
 
-      const indicateurValeurs: IndicateurValeurType[] = [
+      const indicateurValeurs: IndicateurValeur[] = [
         {
           id: 10264,
           collectiviteId: 4936,
@@ -151,7 +152,7 @@ describe('IndicateursService', () => {
           indicateurValeurs,
           indicateurDefinitions
         );
-      const expectedIndicateurValeursGroupees: IndicateurAvecValeursType[] = [
+      const expectedIndicateurValeursGroupees: IndicateurAvecValeurs[] = [
         {
           definition: {
             id: 456,
@@ -206,7 +207,7 @@ describe('IndicateursService', () => {
 
   describe('groupeIndicateursValeursParIndicateurEtSource', () => {
     it('Groupe les valeurs par indicateur et par source, trie par date croissante les valeurs', async () => {
-      const indicateur1: IndicateurDefinitionType = {
+      const indicateur1: IndicateurDefinition = {
         id: 456,
         groupementId: null,
         collectiviteId: null,
@@ -225,7 +226,7 @@ describe('IndicateursService', () => {
         modifiedBy: null,
         createdBy: null,
       };
-      const indicateur2: IndicateurDefinitionType = {
+      const indicateur2: IndicateurDefinition = {
         id: 457,
         groupementId: null,
         collectiviteId: null,
@@ -244,7 +245,7 @@ describe('IndicateursService', () => {
         modifiedBy: null,
         createdBy: null,
       };
-      const indicateur3: IndicateurDefinitionType = {
+      const indicateur3: IndicateurDefinition = {
         id: 458,
         groupementId: null,
         collectiviteId: null,
@@ -264,14 +265,14 @@ describe('IndicateursService', () => {
         modifiedBy: null,
         createdBy: null,
       };
-      const indicateurDefinitions: IndicateurDefinitionType[] = [
+      const indicateurDefinitions: IndicateurDefinition[] = [
         indicateur1,
         indicateur2,
         indicateur3,
         indicateur1, // duplicate
       ];
 
-      const indicateurMetadonnees: IndicateurSourceMetadonneeType[] = [
+      const indicateurMetadonnees: SourceMetadonnee[] = [
         {
           id: 1,
           sourceId: 'rare',
@@ -294,7 +295,7 @@ describe('IndicateursService', () => {
         },
       ];
 
-      const indicateurValeurs: IndicateurValeurType[] = [
+      const indicateurValeurs: IndicateurValeur[] = [
         {
           id: 10264,
           collectiviteId: 4936,

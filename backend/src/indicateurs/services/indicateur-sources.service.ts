@@ -2,13 +2,13 @@ import { Injectable, Logger } from '@nestjs/common';
 import { and, eq } from 'drizzle-orm';
 import { DatabaseService } from '../../utils/database/database.service';
 import {
-  CreateIndicateurSourceMetadonneeType,
   indicateurSourceMetadonneeTable,
-  IndicateurSourceMetadonneeType,
+  SourceMetadonnee,
+  SourceMetadonneeInsert,
 } from '../models/indicateur-source-metadonnee.table';
 import {
-  CreateIndicateurSourceType,
   indicateurSourceTable,
+  SourceInsert,
 } from '../models/indicateur-source.table';
 
 @Injectable()
@@ -18,7 +18,7 @@ export default class IndicateurSourcesService {
   constructor(private readonly databaseService: DatabaseService) {}
 
   async createIndicateurSourceMetadonnee(
-    indicateurSourceMetadonneeType: CreateIndicateurSourceMetadonneeType
+    indicateurSourceMetadonneeType: SourceMetadonneeInsert
   ) {
     this.logger.log(
       `Création de la metadonnees pour la source d'indicateur ${indicateurSourceMetadonneeType.sourceId} et la date ${indicateurSourceMetadonneeType.dateVersion}`
@@ -35,7 +35,7 @@ export default class IndicateurSourcesService {
   async getIndicateurSourceMetadonnee(
     sourceId: string,
     dateVersion: string
-  ): Promise<IndicateurSourceMetadonneeType | null> {
+  ): Promise<SourceMetadonnee | null> {
     this.logger.log(
       `Récupération de la metadonnees pour la source d'indicateur ${sourceId} et la date ${dateVersion}`
     );
@@ -54,7 +54,7 @@ export default class IndicateurSourcesService {
       : null;
   }
 
-  async upsertIndicateurSource(indicateurSource: CreateIndicateurSourceType) {
+  async upsertIndicateurSource(indicateurSource: SourceInsert) {
     this.logger.log(`Upsert de la source d'indicateur ${indicateurSource.id}`);
     return this.databaseService.db
       .insert(indicateurSourceTable)

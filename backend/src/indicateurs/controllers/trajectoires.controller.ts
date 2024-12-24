@@ -22,12 +22,13 @@ import { verificationTrajectoireResponseSchema } from '../models/verification-tr
 import TrajectoiresDataService from '../services/trajectoires-data.service';
 import TrajectoiresSpreadsheetService from '../services/trajectoires-spreadsheet.service';
 import TrajectoiresXlsxService from '../services/trajectoires-xlsx.service';
+import { extendApi } from '@anatine/zod-openapi';
 
 /**
  * Création des classes de requête/réponse à partir du schema pour générer automatiquement la documentation OpenAPI et la validation des entrées
  */
 export class CalculTrajectoireResponseClass extends createZodDto(
-  calculTrajectoireResponseSchema
+  extendApi(calculTrajectoireResponseSchema)
 ) {}
 
 export class CalculTrajectoireRequestClass extends createZodDto(

@@ -1,3 +1,4 @@
+import { Source, SourceMetadonnee } from '@/domain/indicateurs';
 import { Thematique } from '@/domain/shared';
 import { objectToCamel } from 'ts-case-convert';
 import {
@@ -9,7 +10,6 @@ import { Personne } from '../../collectivites/shared/domain/personne.schema';
 import { Tables } from '../../database.types';
 import { FicheResume } from '../../plan-actions/domain/fiche-action.schema';
 import { DBClient } from '../../typeUtils';
-import { Source, SourceMetadonnee } from '../domain';
 import {
   IndicateurChartInfo,
   IndicateurDefinition,

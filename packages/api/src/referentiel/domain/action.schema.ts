@@ -1,4 +1,4 @@
-import { referentielTypeEnumSchema } from '@/domain/referentiels';
+import { referentielIdEnumSchema } from '@/domain/referentiels';
 import { z } from 'zod';
 
 /**
@@ -7,5 +7,5 @@ import { z } from 'zod';
 export const actionSchema = z.object({
   id: z.string(),
   parent: z.string().nullish(),
-  referentiel: referentielTypeEnumSchema,
+  referentiel: referentielIdEnumSchema,
 });

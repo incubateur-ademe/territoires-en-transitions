@@ -5,8 +5,8 @@ import { getAuthUser } from '../../../test/auth-utils';
 import { getCollectiviteIdBySiren } from '../../../test/collectivites-utils';
 import { AuthenticatedUser } from '../../auth/models/auth.models';
 import { AppRouter, TrpcRouter } from '../../utils/trpc/trpc.router';
+import { referentielIdEnumSchema } from '../index-domain';
 import { ScoreSnapshotInfoType } from '../models/get-score-snapshots.response';
-import { ReferentielType } from '../models/referentiel.enum';
 import { ScoreJalon } from '../models/score-jalon.enum';
 
 type ComputeScoreInput = inferProcedureInput<
@@ -28,7 +28,7 @@ describe('ScoreSnapshotsRouter', () => {
     const caller = router.createCaller({ user: null });
 
     const input: ComputeScoreInput = {
-      referentielId: ReferentielType.CAE,
+      referentielId: referentielIdEnumSchema.enum.cae,
       collectiviteId: 1,
       parameters: {
         snapshot: true,
@@ -46,7 +46,7 @@ describe('ScoreSnapshotsRouter', () => {
     const caller = router.createCaller({ user: yoloDodoUser });
 
     const input: ComputeScoreInput = {
-      referentielId: ReferentielType.CAE,
+      referentielId: referentielIdEnumSchema.enum.cae,
       collectiviteId: rhoneAggloCollectiviteId,
       parameters: {
         snapshot: true,
@@ -65,7 +65,7 @@ describe('ScoreSnapshotsRouter', () => {
     const caller = router.createCaller({ user: yoloDodoUser });
 
     const input: ComputeScoreInput = {
-      referentielId: ReferentielType.CAE,
+      referentielId: referentielIdEnumSchema.enum.cae,
       collectiviteId: 1,
       parameters: {
         snapshot: true,
@@ -83,7 +83,7 @@ describe('ScoreSnapshotsRouter', () => {
     const responseSnapshotList =
       await caller.referentiels.snapshots.listSummary({
         collectiviteId: 1,
-        referentielId: ReferentielType.CAE,
+        referentielId: referentielIdEnumSchema.enum.cae,
         parameters: {
           typesJalon: [ScoreJalon.DATE_PERSONNALISEE],
         },
@@ -122,7 +122,7 @@ describe('ScoreSnapshotsRouter', () => {
     // delete the snapshot
     await caller.referentiels.snapshots.delete({
       collectiviteId: 1,
-      referentielId: ReferentielType.CAE,
+      referentielId: referentielIdEnumSchema.enum.cae,
       snapshotRef: 'user-test-trpc',
     });
 
@@ -130,7 +130,7 @@ describe('ScoreSnapshotsRouter', () => {
     const responseSnapshotListAfterDelete =
       await caller.referentiels.snapshots.listSummary({
         collectiviteId: 1,
-        referentielId: ReferentielType.CAE,
+        referentielId: referentielIdEnumSchema.enum.cae,
         parameters: {
           typesJalon: [ScoreJalon.DATE_PERSONNALISEE],
         },

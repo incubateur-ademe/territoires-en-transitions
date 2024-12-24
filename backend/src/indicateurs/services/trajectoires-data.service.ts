@@ -16,13 +16,13 @@ import { DonneesARemplirResultType } from '../models/donnees-a-remplir-result.dt
 import { DonneesARemplirValeurType } from '../models/donnees-a-remplir-valeur.dto';
 import { DonneesCalculTrajectoireARemplirType } from '../models/donnees-calcul-trajectoire-a-remplir.dto';
 import {
-  CreateIndicateurSourceMetadonneeType,
-  IndicateurSourceMetadonneeType,
+  SourceMetadonnee,
+  SourceMetadonneeInsert,
 } from '../models/indicateur-source-metadonnee.table';
-import { CreateIndicateurSourceType } from '../models/indicateur-source.table';
+import { SourceInsert } from '../models/indicateur-source.table';
 import {
+  IndicateurValeur,
   IndicateurValeurAvecMetadonnesDefinition,
-  IndicateurValeurType,
 } from '../models/indicateur-valeur.table';
 import { VerificationTrajectoireRequestType } from '../models/verification-trajectoire.request';
 import {
@@ -48,22 +48,21 @@ export default class TrajectoiresDataService {
 
   public readonly TEST_COLLECTIVITE_VALID_SIREN = '242900314';
 
-  public readonly SNBC_SOURCE: CreateIndicateurSourceType = {
+  public readonly SNBC_SOURCE: SourceInsert = {
     id: 'snbc',
     libelle: 'SNBC',
   };
-  public readonly SNBC_SOURCE_METADONNEES: CreateIndicateurSourceMetadonneeType =
-    {
-      sourceId: this.SNBC_SOURCE.id,
-      dateVersion: DateTime.fromISO('2024-07-11T00:00:00', {
-        zone: 'utc',
-      }).toISO() as string,
-      nomDonnees: 'SNBC',
-      diffuseur: 'ADEME',
-      producteur: 'ADEME',
-      // methodologie: '',
-      // limites: '',
-    };
+  public readonly SNBC_SOURCE_METADONNEES: SourceMetadonneeInsert = {
+    sourceId: this.SNBC_SOURCE.id,
+    dateVersion: DateTime.fromISO('2024-07-11T00:00:00', {
+      zone: 'utc',
+    }).toISO() as string,
+    nomDonnees: 'SNBC',
+    diffuseur: 'ADEME',
+    producteur: 'ADEME',
+    // methodologie: '',
+    // limites: '',
+  };
 
   public readonly SNBC_DATE_REFERENCE = '2015-01-01';
   public readonly SNBC_SIREN_CELLULE = 'Caract_territoire!F6';
@@ -203,8 +202,7 @@ export default class TrajectoiresDataService {
     'cae_2.a', // 297 Total
   ];
 
-  private indicateurSourceMetadonnee: IndicateurSourceMetadonneeType | null =
-    null;
+  private indicateurSourceMetadonnee: SourceMetadonnee | null = null;
 
   constructor(
     private readonly collectivitesService: CollectivitesService,
@@ -213,7 +211,7 @@ export default class TrajectoiresDataService {
     private readonly permissionService: PermissionService
   ) {}
 
-  async getTrajectoireIndicateursMetadonnees(): Promise<IndicateurSourceMetadonneeType> {
+  async getTrajectoireIndicateursMetadonnees(): Promise<SourceMetadonnee> {
     if (!this.indicateurSourceMetadonnee) {
       // Création de la source métadonnée SNBC si elle n'existe pas
       this.indicateurSourceMetadonnee =
@@ -503,7 +501,7 @@ export default class TrajectoiresDataService {
     };
   }
 
-  getClosestValeur(indicateurValeurs: IndicateurValeurType[]): {
+  getClosestValeur(indicateurValeurs: IndicateurValeur[]): {
     valeur: number | null;
     date_min: string | null;
     date_max: string | null;
@@ -533,7 +531,7 @@ export default class TrajectoiresDataService {
     };
   }
 
-  getInterpolationValeur(indicateurValeurs: IndicateurValeurType[]): {
+  getInterpolationValeur(indicateurValeurs: IndicateurValeur[]): {
     valeur: number | null;
     date_min: string | null;
     date_max: string | null;

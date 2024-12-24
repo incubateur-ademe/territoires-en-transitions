@@ -6,8 +6,6 @@ import { FicheResume } from '../../plan-actions/domain/fiche-action.schema';
 import { signIn, signOut } from '../../tests/auth';
 import { dbAdmin, supabase } from '../../tests/supabase';
 import { testReset } from '../../tests/testReset';
-import { IndicateurDefinitionInsert } from '../domain/definition.schema';
-import { Valeur } from '../domain/valeur.schema';
 import {
   selectIndicateurCategoriesUtilisateur,
   selectIndicateurDefinition,
@@ -94,7 +92,7 @@ describe('Test indicateur.save', async () => {
   });
 
   test('Test insertIndicateurDefinition', async () => {
-    const def: IndicateurDefinitionInsert = {
+    const def: Parameters<typeof insertIndicateurDefinition>['1'] = {
       titre: 'test',
       collectiviteId: 1,
       thematiques: [{ id: 1, nom: '' }],
@@ -111,7 +109,7 @@ describe('Test indicateur.save', async () => {
   });
 
   test('Test upsertIndicateurValeur', async () => {
-    const valeur: Valeur = {
+    const valeur: Parameters<typeof upsertIndicateurValeur>['1'] = {
       collectiviteId: 1,
       indicateurId: 1,
       resultat: 1.3,

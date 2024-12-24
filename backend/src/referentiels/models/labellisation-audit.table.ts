@@ -12,7 +12,7 @@ import { createInsertSchema, createSelectSchema } from 'drizzle-zod';
 import { collectiviteTable } from '../../collectivites/shared/models/collectivite.table';
 import { labellisationDemandeTable } from './labellisation-demande.table';
 import { labellisationSchema } from './labellisation.schema';
-import { referentielEnum } from './referentiel.enum';
+import { referentielIdPgEnum } from './referentiel.enum';
 
 export const labellisationAuditTable = labellisationSchema.table(
   'audit',
@@ -20,7 +20,7 @@ export const labellisationAuditTable = labellisationSchema.table(
     id: serial('id').primaryKey().notNull(),
     collectiviteId: integer('collectivite_id').notNull(),
     // TODO: change later to use the referentiel definition table
-    referentiel: referentielEnum('referentiel').notNull(),
+    referentiel: referentielIdPgEnum('referentiel').notNull(),
     demandeId: integer('demande_id'),
     dateDebut: timestamp('date_debut', TIMESTAMP_OPTIONS),
     dateFin: timestamp('date_fin', TIMESTAMP_OPTIONS),

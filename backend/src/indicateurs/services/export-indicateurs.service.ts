@@ -1,25 +1,25 @@
+import { PermissionOperation } from '@/backend/auth/authorizations/permission-operation.enum';
+import { PermissionService } from '@/backend/auth/authorizations/permission.service';
+import { ResourceType } from '@/backend/auth/authorizations/resource-type.enum';
 import { Injectable, Logger } from '@nestjs/common';
-import { Workbook } from 'exceljs';
 import { format } from 'date-fns';
 import { uniq } from 'es-toolkit';
+import { Workbook } from 'exceljs';
 import { AuthenticatedUser } from '../../auth/models/auth.models';
-import IndicateursService from './indicateurs.service';
-import { ExportIndicateursRequestType } from '../models/export-indicateurs.request';
-import {
-  IndicateurDefinitionAvecEnfantsType,
-  MinimalIndicateurDefinitionType,
-} from '../models/indicateur-definition.table';
-import { IndicateurValeurAvecMetadonnesDefinition } from '../models/indicateur-valeur.table';
-import { IndicateurSourceMetadonneeType } from '../models/indicateur-source-metadonnee.table';
+import CollectivitesService from '../../collectivites/services/collectivites.service';
 import {
   adjustColumnWidth,
   BOLD,
   normalizeWorksheetName,
 } from '../../utils/excel/excel.utils';
-import CollectivitesService from '../../collectivites/services/collectivites.service';
-import { PermissionService } from '@/backend/auth/authorizations/permission.service';
-import { ResourceType } from '@/backend/auth/authorizations/resource-type.enum';
-import { PermissionOperation } from '@/backend/auth/authorizations/permission-operation.enum';
+import { ExportIndicateursRequestType } from '../models/export-indicateurs.request';
+import {
+  IndicateurDefinitionAvecEnfantsType,
+  IndicateurDefinitionEssential,
+} from '../models/indicateur-definition.table';
+import { SourceMetadonnee } from '../models/indicateur-source-metadonnee.table';
+import { IndicateurValeurAvecMetadonnesDefinition } from '../models/indicateur-valeur.table';
+import IndicateursService from './indicateurs.service';
 
 @Injectable()
 export default class ExportIndicateursService {
@@ -272,13 +272,13 @@ export default class ExportIndicateursService {
     adjustColumnWidth(worksheet);
   }
 
-  private getSourceName(source: IndicateurSourceMetadonneeType) {
+  private getSourceName(source: SourceMetadonnee) {
     return source.nomDonnees || source.diffuseur || source.producteur;
   }
 
   private sortByDefinitionId(
-    a: MinimalIndicateurDefinitionType,
-    b: MinimalIndicateurDefinitionType
+    a: IndicateurDefinitionEssential,
+    b: IndicateurDefinitionEssential
   ) {
     return `${a.identifiantReferentiel ?? a.id}`.localeCompare(
       `${b.identifiantReferentiel ?? b.id}`,

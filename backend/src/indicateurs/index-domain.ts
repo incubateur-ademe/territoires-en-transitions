@@ -2,3 +2,6 @@
 // Exports from this file can be imported with `@/domain/*` alias path.
 
 export * from './models/indicateur-definition.table';
+export * from './models/indicateur-source-metadonnee.table';
+export * from './models/indicateur-source.table';
+export * from './models/indicateur-valeur.table';

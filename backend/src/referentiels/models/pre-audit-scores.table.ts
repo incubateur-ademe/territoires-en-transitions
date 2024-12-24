@@ -9,13 +9,13 @@ import {
 } from 'drizzle-orm/pg-core';
 import { createInsertSchema, createSelectSchema } from 'drizzle-zod';
 import { labellisationAuditTable } from './labellisation-audit.table';
-import { referentielEnum } from './referentiel.enum';
+import { referentielIdPgEnum } from './referentiel.enum';
 
 export const preAuditScoresTable = pgTable(
   'pre_audit_scores',
   {
     collectiviteId: integer('collectivite_id').notNull(),
-    referentiel: referentielEnum('referentiel').notNull(),
+    referentiel: referentielIdPgEnum('referentiel').notNull(),
     scores: jsonb('scores').notNull(),
     modifiedAt: timestamp('modified_at', {
       withTimezone: true,

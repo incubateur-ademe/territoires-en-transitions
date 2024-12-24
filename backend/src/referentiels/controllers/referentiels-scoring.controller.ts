@@ -25,7 +25,7 @@ import { getReferentielScoresRequestSchema } from '../models/get-referentiel-sco
 import { getReferentielScoresResponseSchema } from '../models/get-referentiel-scores.response';
 import { getScoreSnapshotsRequestSchema } from '../models/get-score-snapshots.request';
 import { getScoreSnapshotsResponseSchema } from '../models/get-score-snapshots.response';
-import { ReferentielType } from '../models/referentiel.enum';
+import { ReferentielId } from '../models/referentiel.enum';
 import ReferentielsScoringSnapshotsService from '../services/referentiels-scoring-snapshots.service';
 import ReferentielsScoringService from '../services/referentiels-scoring.service';
 
@@ -81,7 +81,7 @@ export class ReferentielsScoringController {
   @ApiResponse({ type: GetActionStatutsResponseClass })
   async getReferentielStatuts(
     @Param('collectivite_id') collectiviteId: number,
-    @Param('referentiel_id') referentielId: ReferentielType,
+    @Param('referentiel_id') referentielId: ReferentielId,
     @Query() parameters: GetActionStatutsRequestClass,
     @TokenInfo() tokenInfo: AuthenticatedUser
   ): Promise<GetActionStatutsResponseClass> {
@@ -97,7 +97,7 @@ export class ReferentielsScoringController {
   @Get('referentiels/:referentiel_id/scores')
   @ApiResponse({ type: GetReferentielMultipleScoresResponseClass })
   async getReferentielMultipleScorings(
-    @Param('referentiel_id') referentielId: ReferentielType,
+    @Param('referentiel_id') referentielId: ReferentielId,
     @Query() parameters: GetReferentielMultipleScoresRequestClass,
     @TokenInfo() tokenInfo: AuthenticatedUser
   ): Promise<GetReferentielMultipleScoresResponseClass> {
@@ -113,7 +113,7 @@ export class ReferentielsScoringController {
   @ApiResponse({ type: GetReferentielScoresResponseClass })
   async getReferentielScoring(
     @Param('collectivite_id') collectiviteId: number,
-    @Param('referentiel_id') referentielId: ReferentielType,
+    @Param('referentiel_id') referentielId: ReferentielId,
     @Query() parameters: GetReferentielScoresRequestClass,
     @TokenInfo() tokenInfo: AuthenticatedUser
   ): Promise<GetReferentielScoresResponseClass> {
@@ -132,7 +132,7 @@ export class ReferentielsScoringController {
   )
   async checkReferentielScore(
     @Param('collectivite_id') collectiviteId: number,
-    @Param('referentiel_id') referentielId: ReferentielType,
+    @Param('referentiel_id') referentielId: ReferentielId,
     @Query() parameters: CheckReferentielScoresRequestType,
     @Req() req: Request
   ): Promise<GetCheckScoresResponseType> {
@@ -151,7 +151,7 @@ export class ReferentielsScoringController {
   )
   async listSummary(
     @Param('collectivite_id') collectiviteId: number,
-    @Param('referentiel_id') referentielId: ReferentielType,
+    @Param('referentiel_id') referentielId: ReferentielId,
     @Query() parameters: GetScoreSnapshotsRequestClass,
     @TokenInfo() tokenInfo: AuthUser
   ): Promise<GetScoreSnapshotsResponseClass> {
@@ -168,7 +168,7 @@ export class ReferentielsScoringController {
   )
   async getReferentielScoreSnapshot(
     @Param('collectivite_id') collectiviteId: number,
-    @Param('referentiel_id') referentielId: ReferentielType,
+    @Param('referentiel_id') referentielId: ReferentielId,
     @Param('snapshot_ref') snapshotRef: string,
     @TokenInfo() tokenInfo: AuthenticatedUser
   ) {
@@ -194,7 +194,7 @@ export class ReferentielsScoringController {
   )
   async deleteReferentielScoreSnapshot(
     @Param('collectivite_id') collectiviteId: number,
-    @Param('referentiel_id') referentielId: ReferentielType,
+    @Param('referentiel_id') referentielId: ReferentielId,
     @Param('snapshot_ref') snapshotRef: string,
     @TokenInfo() tokenInfo: AuthUser
   ): Promise<void> {

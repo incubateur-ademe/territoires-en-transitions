@@ -24,7 +24,7 @@ import {
   ScoreSnapshotCollectiviteInfoType,
   ScoreSnapshotInfoType,
 } from '../models/get-score-snapshots.response';
-import { ReferentielType } from '../models/referentiel.enum';
+import { ReferentielId } from '../models/referentiel.enum';
 import { ScoreJalon } from '../models/score-jalon.enum';
 import {
   CreateScoreSnapshotType,
@@ -304,7 +304,7 @@ export default class ReferentielsScoringSnapshotsService {
       if (snapshotForceUpdate) {
         const existingSnapshot = await this.getSummary(
           createScoreSnapshot.collectiviteId,
-          createScoreSnapshot.referentielId as ReferentielType,
+          createScoreSnapshot.referentielId as ReferentielId,
           createScoreSnapshot.ref!,
           true
         );
@@ -353,7 +353,7 @@ export default class ReferentielsScoringSnapshotsService {
 
   async listSummary(
     collectiviteId: number,
-    referentielId: ReferentielType,
+    referentielId: ReferentielId,
     { typesJalon }: GetScoreSnapshotsRequestType
   ): Promise<GetScoreSnapshotsResponseType> {
     const result = await this.databaseService.db
@@ -394,7 +394,7 @@ export default class ReferentielsScoringSnapshotsService {
 
   async getSummary(
     collectiviteId: number,
-    referentielId: ReferentielType,
+    referentielId: ReferentielId,
     snapshotRef: string,
     doNotThrowIfNotFound = false
   ): Promise<ScoreSnapshotInfoType | null> {
@@ -434,7 +434,7 @@ export default class ReferentielsScoringSnapshotsService {
 
   async get(
     collectiviteId: number,
-    referentielId: ReferentielType,
+    referentielId: ReferentielId,
     snapshotRef: string,
     doNotThrowIfNotFound?: boolean
   ): Promise<GetReferentielScoresResponseType | null> {
@@ -473,7 +473,7 @@ export default class ReferentielsScoringSnapshotsService {
 
   async delete(
     collectiviteId: number,
-    referentielId: ReferentielType,
+    referentielId: ReferentielId,
     snapshotRef: string,
     tokenInfo: AuthUser
   ): Promise<void> {

@@ -18,15 +18,19 @@ export const indicateurSourceMetadonneeTable = pgTable(
     limites: text('limites'),
   }
 );
-export type IndicateurSourceMetadonneeType = InferSelectModel<
-  typeof indicateurSourceMetadonneeTable
->;
-export type CreateIndicateurSourceMetadonneeType = InferInsertModel<
-  typeof indicateurSourceMetadonneeTable
->;
-export const indicateurSourceMetadonneeSchema = createSelectSchema(
+
+export const sourceMetadonneeSchema = createSelectSchema(
   indicateurSourceMetadonneeTable
 );
-export const createIndicateurSourceMetadonneeSchema = createInsertSchema(
+
+export type SourceMetadonnee = InferSelectModel<
+  typeof indicateurSourceMetadonneeTable
+>;
+
+export const sourceMetadonneeSchemaInsert = createInsertSchema(
   indicateurSourceMetadonneeTable
 );
+
+export type SourceMetadonneeInsert = InferInsertModel<
+  typeof indicateurSourceMetadonneeTable
+>;

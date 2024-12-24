@@ -3,7 +3,7 @@ import { z } from 'zod';
 import { collectiviteAvecTypeSchema } from '../../collectivites/identite-collectivite.dto';
 import { ComputeScoreMode } from './compute-scores-mode.enum';
 import { referentielActionAvecScoreDtoSchema } from './referentiel-action-avec-score.dto';
-import { ReferentielType } from './referentiel.enum';
+import { referentielIdEnumSchema } from './referentiel.enum';
 import { ScoreJalon } from './score-jalon.enum';
 
 export const getReferentielScoresResponseSnapshotInfoSchema = z.object({
@@ -18,7 +18,7 @@ export const getReferentielScoresResponseSnapshotInfoSchema = z.object({
 export const getReferentielScoresResponseSchema = extendApi(
   z.object({
     collectiviteId: z.number(),
-    referentielId: z.nativeEnum(ReferentielType),
+    referentielId: referentielIdEnumSchema,
     referentielVersion: z.string(),
     collectiviteInfo: collectiviteAvecTypeSchema,
     date: z.string().datetime(),

@@ -59,7 +59,11 @@ import {
   CreateReferentielTagType,
   referentielTagTable,
 } from '../models/referentiel-tag.table';
-import { ReferentielType } from '../models/referentiel.enum';
+import {
+  ReferentielId,
+  referentielIdEnumSchema,
+  referentielIdEnumValues,
+} from '../models/referentiel.enum';
 
 @Injectable()
 export default class ReferentielsService {
@@ -249,7 +253,7 @@ export default class ReferentielsService {
   }
 
   async getActionsOrigine(
-    referentielId: ReferentielType
+    referentielId: ReferentielId
   ): Promise<GetActionOrigineDtoSchema[]> {
     return await this.databaseService.db
       .select({
@@ -262,7 +266,7 @@ export default class ReferentielsService {
         eq(actionOrigineTable.origineActionId, actionDefinitionTable.actionId)
       )
       .where(
-        eq(actionOrigineTable.referentielId, referentielId as ReferentielType)
+        eq(actionOrigineTable.referentielId, referentielId as ReferentielId)
       )
       .orderBy(asc(actionOrigineTable.actionId));
   }
@@ -283,7 +287,7 @@ export default class ReferentielsService {
   }
 
   async getReferentiel(
-    referentielId: ReferentielType,
+    referentielId: ReferentielId,
     onlyForScoring?: boolean,
     getActionsOrigine?: boolean
   ): Promise<GetReferentielResponseType> {
@@ -364,7 +368,7 @@ export default class ReferentielsService {
   }
 
   async getReferentielDefinition(
-    referentielId: ReferentielType
+    referentielId: ReferentielId
   ): Promise<ReferentielDefinitionType> {
     this.logger.log(`Getting referentiel definition for ${referentielId}`);
 
@@ -383,10 +387,10 @@ export default class ReferentielsService {
     return referentielDefinitions[0];
   }
 
-  getReferentielSpreadsheetId(referentielId: ReferentielType): string {
+  getReferentielSpreadsheetId(referentielId: ReferentielId): string {
     if (
-      referentielId === ReferentielType.TE ||
-      referentielId === ReferentielType.TE_TEST
+      referentielId === referentielIdEnumSchema.enum.te ||
+      referentielId === referentielIdEnumSchema.enum['te-test']
     ) {
       return this.backendConfigurationService.get('REFERENTIEL_TE_SHEET_ID');
     }
@@ -396,16 +400,14 @@ export default class ReferentielsService {
     );
   }
 
-  getReferentielIdFromActionId(actionId: string): ReferentielType {
+  getReferentielIdFromActionId(actionId: string): ReferentielId {
     const referentielId = actionId.split('_')[0];
-    if (
-      !Object.values(ReferentielType).includes(referentielId as ReferentielType)
-    ) {
+    if (!referentielIdEnumValues.includes(referentielId as ReferentielId)) {
       throw new UnprocessableEntityException(
         `Invalid referentiel id ${referentielId} for action ${actionId}`
       );
     }
-    return referentielId as ReferentielType;
+    return referentielId as ReferentielId;
   }
 
   getLevelFromActionId(actionId: string): number {
@@ -448,7 +450,7 @@ export default class ReferentielsService {
   }
 
   parseActionsOrigine(
-    referentielId: ReferentielType,
+    referentielId: ReferentielId,
     actionId: string,
     origine: string,
     referentielDefinitions: ReferentielDefinitionType[],
@@ -525,12 +527,12 @@ export default class ReferentielsService {
   async createReferentielTagsIfNeeded(): Promise<void> {
     const referentielTags: CreateReferentielTagType[] = [
       {
-        ref: ReferentielType.CAE,
+        ref: referentielIdEnumSchema.enum.cae,
         nom: 'CAE',
         type: 'Catalogue',
       },
       {
-        ref: ReferentielType.ECI,
+        ref: referentielIdEnumSchema.enum.eci,
         nom: 'ECI',
         type: 'Catalogue',
       },
@@ -547,7 +549,7 @@ export default class ReferentielsService {
   }
 
   async importReferentiel(
-    referentielId: ReferentielType
+    referentielId: ReferentielId
   ): Promise<GetReferentielResponseType> {
     const spreadsheetId = this.getReferentielSpreadsheetId(referentielId);
 

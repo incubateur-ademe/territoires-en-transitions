@@ -12,7 +12,7 @@ import { z } from 'zod';
 import { actionRelationTable } from './action-relation.table';
 import { ActionType } from './action-type.enum';
 import { referentielDefinitionTable } from './referentiel-definition.table';
-import { referentielEnum } from './referentiel.enum';
+import { referentielIdPgEnum } from './referentiel.enum';
 
 export enum ActionCategoryType {
   BASES = 'bases',
@@ -32,7 +32,7 @@ export const actionIdReference = actionIdVarchar.references(
 export const actionDefinitionTable = pgTable('action_definition', {
   modifiedAt,
   actionId: actionIdVarchar.primaryKey().notNull(),
-  referentiel: referentielEnum('referentiel').notNull(),
+  referentiel: referentielIdPgEnum('referentiel').notNull(),
   referentielId: varchar('referentiel_id', { length: 30 })
     .notNull()
     .references(() => referentielDefinitionTable.id),
