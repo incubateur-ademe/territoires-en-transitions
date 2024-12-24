@@ -1,5 +1,6 @@
 import { extendApi } from '@anatine/zod-openapi';
 import { z } from 'zod';
+import { ActionAvancementEnumValues } from './action-statut.table';
 
 export const actionScoreSchema = extendApi(
   z
@@ -104,6 +105,10 @@ export const actionScoreSchema = extendApi(
         .describe(
           'Vrai si un statut a été renseigné pour cette action (sous-action ou tache'
         ),
+      avancement: z
+        .enum(ActionAvancementEnumValues)
+        .optional()
+        .describe("Avancement de l'action"),
       renseigne: z
         .boolean()
         .describe(

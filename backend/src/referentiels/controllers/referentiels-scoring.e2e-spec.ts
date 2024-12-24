@@ -1,4 +1,5 @@
 import { INestApplication } from '@nestjs/common';
+import { DateTime } from 'luxon';
 import { default as request } from 'supertest';
 import { getTestApp } from '../../../test/app-utils';
 import { getAuthToken } from '../../../test/auth-utils';
@@ -26,13 +27,13 @@ describe('Referentiels scoring routes', () => {
     rhoneAggloCollectiviteId = await getCollectiviteIdBySiren('200072015');
   });
 
-  it(`Récupération des statuts des actions sans token non autorisée`, async () => {
+  test(`Récupération des statuts des actions sans token non autorisée`, async () => {
     await request(app.getHttpServer())
       .get('/collectivites/1/referentiels/cae/action-statuts')
       .expect(401);
   });
 
-  it(`Récupération anonyme des statuts des actions`, async () => {
+  test(`Récupération anonyme des statuts des actions`, async () => {
     const response = await request(app.getHttpServer())
       .get('/collectivites/1/referentiels/cae/action-statuts')
       .set('Authorization', `Bearer ${process.env.SUPABASE_ANON_KEY}`)
@@ -51,7 +52,7 @@ describe('Referentiels scoring routes', () => {
     expect(actionStatuts['cae_1.1.1.1.1']).toEqual(expectedActionStatut);
   });
 
-  it(`Récupération anonyme des statuts des actions pour une collectivite inconnue`, async () => {
+  test(`Récupération anonyme des statuts des actions pour une collectivite inconnue`, async () => {
     await request(app.getHttpServer())
       .get('/collectivites/10000000/referentiels/cae/action-statuts')
       .set('Authorization', `Bearer ${process.env.SUPABASE_ANON_KEY}`)
@@ -64,7 +65,7 @@ describe('Referentiels scoring routes', () => {
       });
   });
 
-  it(`Récupération anonyme des statuts des actions d'un référentiel inconnu`, async () => {
+  test(`Récupération anonyme des statuts des actions d'un référentiel inconnu`, async () => {
     await request(app.getHttpServer())
       .get('/collectivites/1/referentiels/inconnu/action-statuts')
       .set('Authorization', `Bearer ${process.env.SUPABASE_ANON_KEY}`)
@@ -76,7 +77,7 @@ describe('Referentiels scoring routes', () => {
       });
   });
 
-  it(`Récupération anonyme des historiques de statuts des actions non autorisé`, async () => {
+  test(`Récupération anonyme des historiques de statuts des actions non autorisé`, async () => {
     await request(app.getHttpServer())
       .get(
         '/collectivites/1/referentiels/cae/action-statuts?date=2020-01-02T00:00:01Z'
@@ -85,7 +86,7 @@ describe('Referentiels scoring routes', () => {
       .expect(401);
   });
 
-  it(`Récupération des historiques de statuts des actions pour un utilisateur autorisé`, async () => {
+  test(`Récupération des historiques de statuts des actions pour un utilisateur autorisé`, async () => {
     const response = await request(app.getHttpServer())
       .get(
         '/collectivites/1/referentiels/cae/action-statuts?date=2020-01-02T00:00:01Z'
@@ -112,13 +113,13 @@ describe('Referentiels scoring routes', () => {
     expect(actionStatuts['cae_1.1.1.1.1']).toEqual(expectedActionStatut);
   });
 
-  it(`Récupération du score d'un référentiel sans token non autorisée`, async () => {
+  test(`Récupération du score d'un référentiel sans token non autorisée`, async () => {
     await request(app.getHttpServer())
       .get('/collectivites/1/referentiels/cae/scores')
       .expect(401);
   });
 
-  it(`Récupération anonyme du score d'un référentiel`, async () => {
+  test(`Récupération anonyme du score d'un référentiel`, async () => {
     const response = await request(app.getHttpServer())
       .get('/collectivites/1/referentiels/cae/scores')
       .set('Authorization', `Bearer ${process.env.SUPABASE_ANON_KEY}`)
@@ -132,6 +133,7 @@ describe('Referentiels scoring routes', () => {
       ...expectedCaeRoot
     }: ReferentielActionWithScoreType = {
       actionId: 'cae',
+      identifiant: '',
       nom: 'Climat Air Énergie',
       points: 500,
       categorie: null,
@@ -165,7 +167,7 @@ describe('Referentiels scoring routes', () => {
     expect(referentielScoreWithoutActionsEnfant).toEqual(expectedCaeRoot);
   });
 
-  it(`Récupération anonyme du score d'un référentiel pour une collectivite inconnue`, async () => {
+  test(`Récupération anonyme du score d'un référentiel pour une collectivite inconnue`, async () => {
     await request(app.getHttpServer())
       .get('/collectivites/10000000/referentiels/cae/scores')
       .set('Authorization', `Bearer ${process.env.SUPABASE_ANON_KEY}`)
@@ -178,7 +180,7 @@ describe('Referentiels scoring routes', () => {
       });
   });
 
-  it(`Récupération anonyme du score d'un référentiel inconnu`, async () => {
+  test(`Récupération anonyme du score d'un référentiel inconnu`, async () => {
     await request(app.getHttpServer())
       .get('/collectivites/1/referentiels/inconnu/scores')
       .set('Authorization', `Bearer ${process.env.SUPABASE_ANON_KEY}`)
@@ -190,7 +192,7 @@ describe('Referentiels scoring routes', () => {
       });
   });
 
-  it(`Récupération anonyme du score d'un référentiel avec sauvegarde d'un snapshot non autorisée`, async () => {
+  test(`Récupération anonyme du score d'un référentiel avec sauvegarde d'un snapshot non autorisée`, async () => {
     const response = await request(app.getHttpServer())
       .get('/collectivites/1/referentiels/cae/scores?snapshotNom=test')
       .set('Authorization', `Bearer ${process.env.SUPABASE_ANON_KEY}`)
@@ -208,7 +210,7 @@ describe('Referentiels scoring routes', () => {
     );
   });
 
-  it(`Récupération du score d'un référentiel avec sauvegarde d'un snapshot non autorisée pour un utilisateur en lecture seule`, async () => {
+  test(`Récupération du score d'un référentiel avec sauvegarde d'un snapshot non autorisée pour un utilisateur en lecture seule`, async () => {
     await request(app.getHttpServer())
       .get(
         `/collectivites/${rhoneAggloCollectiviteId}/referentiels/cae/scores?snapshotNom=test`
@@ -224,7 +226,7 @@ describe('Referentiels scoring routes', () => {
       .expect(401);
   });
 
-  it(`Récupération du score d'un référentiel avec sauvegarde d'un snapshot autorisée pour un utilisateur en écriture`, async () => {
+  test(`Récupération du score d'un référentiel avec sauvegarde d'un snapshot autorisée pour un utilisateur en écriture`, async () => {
     const responseSnapshotScoreCourantCreation = await request(
       app.getHttpServer()
     )
@@ -329,7 +331,7 @@ describe('Referentiels scoring routes', () => {
     });
   });
 
-  it(`Suppression d'un snapshot non-autorisée pour un utilisateur en écriture mais sur un snapshot qui ne soit pas de type date personnalisée`, async () => {
+  test(`Suppression d'un snapshot non-autorisée pour un utilisateur en écriture mais sur un snapshot qui ne soit pas de type date personnalisée`, async () => {
     // Recalcul du score courant
     const responseSnapshotCreation = await request(app.getHttpServer())
       .get(`/collectivites/1/referentiels/cae/scores?snapshot=true`)
@@ -351,7 +353,7 @@ describe('Referentiels scoring routes', () => {
     );
   });
 
-  it(`Récupération du snapshot pour un utilisateur anonyme`, async () => {
+  test(`Récupération du snapshot pour un utilisateur anonyme`, async () => {
     // Recalcul du score courant
     const responseSnapshotCreation = await request(app.getHttpServer())
       .get(`/collectivites/1/referentiels/cae/scores?snapshot=true`)
@@ -399,7 +401,38 @@ describe('Referentiels scoring routes', () => {
     );
   });
 
-  it(`Récupération de l'historique du score d'un référentiel pour un utilisateur autorisé`, async () => {
+  test(`Export du snapshot pour un utilisateur non authentifié`, async () => {
+    await request(app.getHttpServer())
+      .get(
+        `/collectivites/1/referentiels/eci/score-snapshots/score-courant/export`
+      )
+      .expect(401);
+  });
+
+  test(`Export du snapshot pour un utilisateur anonyme`, async () => {
+    const responseSnapshotExport = await request(app.getHttpServer())
+      .get(
+        `/collectivites/1/referentiels/eci/score-snapshots/score-courant/export`
+      )
+      .set('Authorization', `Bearer ${process.env.SUPABASE_ANON_KEY}`)
+      .expect(200)
+      .responseType('blob');
+
+    const currentDate = DateTime.now().toISODate();
+    const exportFileName = responseSnapshotExport.headers['content-disposition']
+      .split('filename=')[1]
+      .split(';')[0];
+    expect(exportFileName).toBe(
+      `"Export_ECI_Ambe?rieu-en-Bugey_${currentDate}.xlsx"`
+    );
+    const expectedExportSize = 33.702;
+    const exportFileSize = parseInt(
+      responseSnapshotExport.headers['content-length']
+    );
+    expect(exportFileSize / 1000).toBeCloseTo(expectedExportSize, 0);
+  }, 30000);
+
+  test(`Récupération de l'historique du score d'un référentiel pour un utilisateur autorisé`, async () => {
     const response = await request(app.getHttpServer())
       .get('/collectivites/1/referentiels/cae/scores?date=2019-01-01T00:00:01Z')
       .set('Authorization', `Bearer ${yoloDodoToken}`)
@@ -415,6 +448,7 @@ describe('Referentiels scoring routes', () => {
       ...expectedCaeRoot
     }: ReferentielActionWithScoreType = {
       actionId: 'cae',
+      identifiant: '',
       nom: 'Climat Air Énergie',
       points: 500,
       categorie: null,
@@ -450,6 +484,8 @@ describe('Referentiels scoring routes', () => {
   });
 
   afterAll(async () => {
-    await app.close();
+    if (app) {
+      await app.close();
+    }
   });
 });

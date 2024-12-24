@@ -7,7 +7,7 @@ export enum ReferentielType {
   TE_TEST = 'te-test',
 }
 // WARNING: not using Object.values to use it with pgTable
-export const referentielList = [
+export const referentielTypeEnumValues = [
   ReferentielType.CAE,
   ReferentielType.ECI,
   ReferentielType.TE,
@@ -15,4 +15,4 @@ export const referentielList = [
 ] as const;
 
 // Todo: to be removed
-export const referentielEnum = pgEnum('referentiel', referentielList);
+export const referentielEnum = pgEnum('referentiel', referentielTypeEnumValues);

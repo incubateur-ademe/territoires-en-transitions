@@ -1,18 +1,22 @@
+import { COLLECTIVITE_ID_PARAM_KEY } from '@/backend/collectivites/shared/models/collectivite-api.constants';
 import { createZodDto } from '@anatine/zod-nestjs';
 import {
   Controller,
   Delete,
   Get,
   Logger,
+  Next,
   Param,
   Query,
   Req,
+  Res,
 } from '@nestjs/common';
 import { ApiExcludeEndpoint, ApiResponse, ApiTags } from '@nestjs/swagger';
-import { Request } from 'express';
+import { NextFunction, Request, Response } from 'express';
 import { AllowAnonymousAccess } from '../../auth/decorators/allow-anonymous-access.decorator';
 import { TokenInfo } from '../../auth/decorators/token-info.decorators';
 import { AuthenticatedUser, AuthUser } from '../../auth/models/auth.models';
+import ExportReferentielScoreService from '../export-score/export-referentiel-score.service';
 import { checkMultipleReferentielScoresRequestSchema } from '../models/check-multiple-referentiel-scores.request';
 import { CheckReferentielScoresRequestType } from '../models/check-referentiel-scores.request';
 import { getActionStatutsRequestSchema } from '../models/get-action-statuts.request';
@@ -22,9 +26,17 @@ import { GetMultipleCheckScoresResponseType } from '../models/get-multiple-check
 import { getReferentielMultipleScoresRequestSchema } from '../models/get-referentiel-multiple-scores.request';
 import { getReferentielMultipleScoresResponseSchema } from '../models/get-referentiel-multiple-scores.response';
 import { getReferentielScoresRequestSchema } from '../models/get-referentiel-scores.request';
-import { getReferentielScoresResponseSchema } from '../models/get-referentiel-scores.response';
+import {
+  getReferentielScoresResponseSchema,
+  GetReferentielScoresResponseType,
+} from '../models/get-referentiel-scores.response';
+import { getScoreSnapshotRequestSchema } from '../models/get-score-snapshot.request';
 import { getScoreSnapshotsRequestSchema } from '../models/get-score-snapshots.request';
 import { getScoreSnapshotsResponseSchema } from '../models/get-score-snapshots.response';
+import {
+  REFERENTIEL_ID_PARAM_KEY,
+  SNAPSHOT_REF_PARAM_KEY,
+} from '../models/referentiel-api.constants';
 import { ReferentielType } from '../models/referentiel.enum';
 import ReferentielsScoringSnapshotsService from '../services/referentiels-scoring-snapshots.service';
 import ReferentielsScoringService from '../services/referentiels-scoring.service';
@@ -64,6 +76,10 @@ class GetScoreSnapshotsResponseClass extends createZodDto(
   getScoreSnapshotsResponseSchema
 ) {}
 
+class GetScoreSnapshotRequestClass extends createZodDto(
+  getScoreSnapshotRequestSchema
+) {}
+
 @ApiTags('Referentiels')
 @Controller('')
 export class ReferentielsScoringController {
@@ -71,7 +87,8 @@ export class ReferentielsScoringController {
 
   constructor(
     private readonly referentielsScoringService: ReferentielsScoringService,
-    private readonly referentielsScoringSnapshotsService: ReferentielsScoringSnapshotsService
+    private readonly referentielsScoringSnapshotsService: ReferentielsScoringSnapshotsService,
+    private readonly exportReferentielScoreService: ExportReferentielScoreService
   ) {}
 
   @AllowAnonymousAccess()
@@ -147,11 +164,11 @@ export class ReferentielsScoringController {
 
   @AllowAnonymousAccess()
   @Get(
-    'collectivites/:collectivite_id/referentiels/:referentiel_id/score-snapshots'
+    `collectivites/:${COLLECTIVITE_ID_PARAM_KEY}/referentiels/:${REFERENTIEL_ID_PARAM_KEY}/score-snapshots`
   )
   async listSummary(
-    @Param('collectivite_id') collectiviteId: number,
-    @Param('referentiel_id') referentielId: ReferentielType,
+    @Param(COLLECTIVITE_ID_PARAM_KEY) collectiviteId: number,
+    @Param(REFERENTIEL_ID_PARAM_KEY) referentielId: ReferentielType,
     @Query() parameters: GetScoreSnapshotsRequestClass,
     @TokenInfo() tokenInfo: AuthUser
   ): Promise<GetScoreSnapshotsResponseClass> {
@@ -164,12 +181,13 @@ export class ReferentielsScoringController {
 
   @AllowAnonymousAccess()
   @Get(
-    'collectivites/:collectivite_id/referentiels/:referentiel_id/score-snapshots/:snapshot_ref'
+    `collectivites/:${COLLECTIVITE_ID_PARAM_KEY}/referentiels/:${REFERENTIEL_ID_PARAM_KEY}/score-snapshots/:${SNAPSHOT_REF_PARAM_KEY}`
   )
   async getReferentielScoreSnapshot(
-    @Param('collectivite_id') collectiviteId: number,
-    @Param('referentiel_id') referentielId: ReferentielType,
-    @Param('snapshot_ref') snapshotRef: string,
+    @Param(COLLECTIVITE_ID_PARAM_KEY) collectiviteId: number,
+    @Param(REFERENTIEL_ID_PARAM_KEY) referentielId: ReferentielType,
+    @Param(SNAPSHOT_REF_PARAM_KEY) snapshotRef: string,
+    @Query() parameters: GetScoreSnapshotRequestClass,
     @TokenInfo() tokenInfo: AuthenticatedUser
   ) {
     if (
@@ -178,15 +196,42 @@ export class ReferentielsScoringController {
     ) {
       return this.referentielsScoringService.getOrCreateCurrentScore(
         collectiviteId,
-        referentielId
+        referentielId,
+        parameters.forceRecalculScoreCourant
       );
     } else {
       return this.referentielsScoringSnapshotsService.get(
         collectiviteId,
         referentielId,
         snapshotRef
-      );
+      ) as Promise<GetReferentielScoresResponseType>;
     }
+  }
+
+  @AllowAnonymousAccess()
+  @Get(
+    `collectivites/:${COLLECTIVITE_ID_PARAM_KEY}/referentiels/:${REFERENTIEL_ID_PARAM_KEY}/score-snapshots/:${SNAPSHOT_REF_PARAM_KEY}/export`
+  )
+  async exportReferentielScoreSnapshot(
+    @Param(COLLECTIVITE_ID_PARAM_KEY) collectiviteId: number,
+    @Param(REFERENTIEL_ID_PARAM_KEY) referentielId: ReferentielType,
+    @Param(SNAPSHOT_REF_PARAM_KEY) snapshotRef: string,
+    @Query() parameters: GetScoreSnapshotRequestClass,
+    @TokenInfo() tokenInfo: AuthenticatedUser,
+    @Res() res: Response,
+    @Next() next: NextFunction
+  ) {
+    this.logger.log(
+      `Export du score du referentiel ${referentielId} pour la collectivite ${collectiviteId} et le snapshot ${snapshotRef}`
+    );
+    this.exportReferentielScoreService.sendExportReferentielScore(
+      collectiviteId,
+      referentielId,
+      snapshotRef,
+      parameters,
+      res,
+      next
+    );
   }
 
   @Delete(

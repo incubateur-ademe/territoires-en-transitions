@@ -1,5 +1,6 @@
 import { extendApi } from '@anatine/zod-openapi';
 import { z } from 'zod';
+import { SimplePreuveDto } from '../../collectivites/documents/models/preuve.dto';
 import { actionDefinitionSeulementIdObligatoireSchema } from './action-definition.table';
 import {
   actionPointScoreSchema,
@@ -23,6 +24,7 @@ export type ReferentielActionWithScoreType = z.infer<
   scoresTag: Record<string, ActionPointScoreType>;
   actionsEnfant: ReferentielActionWithScoreType[];
   referentielsOrigine?: string[];
+  preuves?: SimplePreuveDto[];
   score: ActionScoreType;
 };
 
