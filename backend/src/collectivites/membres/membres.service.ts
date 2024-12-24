@@ -5,7 +5,7 @@ import { and, eq, sql } from 'drizzle-orm';
 import { unionAll } from 'drizzle-orm/pg-core';
 import z from 'zod';
 import { invitationTable } from '../../auth/models/invitation.table';
-import DatabaseService from '../../common/services/database.service';
+import { DatabaseService } from '../../utils/database/database.service';
 import { MembreFonction } from '../shared/models/membre-fonction.enum';
 import { insertMembreSchema, membreTable } from '../shared/models/membre.table';
 

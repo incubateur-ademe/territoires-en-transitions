@@ -1,7 +1,7 @@
+import { DatabaseService } from '@/backend/utils';
 import { Test } from '@nestjs/testing';
-import DatabaseService from '../../common/services/database.service';
-import ConfigurationService from '../../utils/config/configuration.service';
 import ExpressionParserService from '../../personnalisations/services/expression-parser.service';
+import ConfigurationService from '../../utils/config/configuration.service';
 import SheetService from '../../utils/google-sheets/sheet.service';
 import { ActionDefinitionAvecParentType } from '../models/action-definition.table';
 import { CreateActionOrigineType } from '../models/action-origine.table';

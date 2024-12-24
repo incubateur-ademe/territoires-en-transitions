@@ -6,8 +6,8 @@ import * as auth from 'google-auth-library';
 import { drive_v3, google, sheets_v4 } from 'googleapis';
 import * as _ from 'lodash';
 import { z } from 'zod';
-import { initApplicationCredentials } from '../../common/services/gcloud.helper';
-import { getPropertyPaths } from '../../common/services/zod.helper';
+import { getPropertyPaths } from '../zod.utils';
+import { initGoogleCloudCredentials } from './gcloud.helper';
 import {
   SheetValueInputOption,
   SheetValueRenderOption,
@@ -43,7 +43,7 @@ export default class SheetService {
     | auth.Impersonated
   > {
     if (!this.authClient) {
-      initApplicationCredentials();
+      initGoogleCloudCredentials();
       this.authClient = await google.auth.getClient({
         scopes: [
           'https://www.googleapis.com/auth/spreadsheets',

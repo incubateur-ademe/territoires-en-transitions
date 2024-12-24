@@ -1,12 +1,11 @@
 import { AuthenticatedUser } from '@/backend/auth/models/auth.models';
-import { DatabaseService } from '@/backend/common';
 import {
   getAuthUser,
   getTestApp,
   getTestDatabase,
   getTestRouter,
 } from '@/backend/test';
-import { AppRouter } from '@/backend/utils';
+import { AppRouter, DatabaseService } from '@/backend/utils';
 import { TrpcRouter } from '@/backend/utils/trpc/trpc.router';
 import { inferProcedureInput } from '@trpc/server';
 import { eq } from 'drizzle-orm';

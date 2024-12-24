@@ -61,4 +61,4 @@ storybook-static
 **/package.json
 
 # gcloud credentials
-backend/src/common/services/keyfile.json
+keyfile.json

@@ -7,7 +7,7 @@ import { getAuthUser } from '../../../test/auth-utils';
 import { YOLO_DODO } from '../../../test/test-users.samples';
 import { AuthenticatedUser } from '../../auth/models/auth.models';
 import { invitationTable } from '../../auth/models/invitation.table';
-import DatabaseService from '../../common/services/database.service';
+import { DatabaseService } from '../../utils/database/database.service';
 import { AppRouter, TrpcRouter } from '../../utils/trpc/trpc.router';
 import { MembreFonctionEnum } from '../shared/models/membre-fonction.enum';
 

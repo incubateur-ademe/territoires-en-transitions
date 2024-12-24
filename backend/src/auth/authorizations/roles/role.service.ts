@@ -1,18 +1,17 @@
-import { Injectable, Logger } from '@nestjs/common';
-import { and, eq, sql } from 'drizzle-orm';
-import DatabaseService from '../../../common/services/database.service';
-import { AuthRole, AuthUser } from '../../models/auth.models';
 import {
+  dcpTable,
   utilisateurDroitTable,
   UtilisateurDroitType,
 } from '@/backend/auth';
+import { ResourceType } from '@/backend/auth/authorizations/resource-type.enum';
+import { Role } from '@/backend/auth/authorizations/roles/role.enum';
+import { DatabaseService } from '@/backend/utils';
+import { Injectable, Logger } from '@nestjs/common';
+import { and, eq, sql } from 'drizzle-orm';
+import { AuthRole, AuthUser } from '../../models/auth.models';
 import { NiveauAcces } from './niveau-acces.enum';
 import { utilisateurSupportTable } from './utilisateur-support.table';
 import { utilisateurVerifieTable } from './utilisateur-verifie.table';
-import { ResourceType } from '@/backend/auth/authorizations/resource-type.enum';
-import { Role } from '@/backend/auth/authorizations/roles/role.enum';
-import { dcpTable } from '@/backend/auth';
-
 
 @Injectable()
 export class RoleService {

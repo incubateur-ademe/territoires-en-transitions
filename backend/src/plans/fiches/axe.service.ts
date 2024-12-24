@@ -1,5 +1,5 @@
 import { Injectable, Logger } from '@nestjs/common';
-import DatabaseService from '../../common/services/database.service';
+import { DatabaseService } from '../../utils/database/database.service';
 import { axeTable, CreateAxeType } from './shared/models/axe.table';
 import { ficheActionAxeTable } from './shared/models/fiche-action-axe.table';
 

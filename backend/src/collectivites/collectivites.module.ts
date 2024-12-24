@@ -1,5 +1,4 @@
 import { Module } from '@nestjs/common';
-import { CommonModule } from '../common/common.module';
 import { CollectiviteController } from './collectivite.controller';
 import { ListCategoriesRouter } from './handle-categories/list-categories.router';
 import ListCategoriesService from './handle-categories/list-categories.service';
@@ -11,7 +10,7 @@ import GroupementsService from './services/groupements.service';
 import { PersonnesService } from './services/personnes.service';
 
 @Module({
-  imports: [CommonModule],
+  imports: [],
   providers: [
     CollectivitesService,
     CollectiviteMembresService,

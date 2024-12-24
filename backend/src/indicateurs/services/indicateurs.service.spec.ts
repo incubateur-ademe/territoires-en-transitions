@@ -1,7 +1,7 @@
+import { PermissionService } from '@/backend/auth/authorizations/permission.service';
 import { Test } from '@nestjs/testing';
 import * as _ from 'lodash';
-import { DateTime } from 'luxon';
-import DatabaseService from '../../common/services/database.service';
+import { DatabaseService } from '../../utils/database/database.service';
 import { IndicateurDefinitionType } from '../models/indicateur-definition.table';
 import { IndicateurSourceMetadonneeType } from '../models/indicateur-source-metadonnee.table';
 import {
@@ -10,7 +10,6 @@ import {
   IndicateurValeurAvecMetadonnesDefinition,
   IndicateurValeurType,
 } from '../models/indicateur-valeur.table';
-import { PermissionService } from '@/backend/auth/authorizations/permission.service';
 import IndicateursService from './indicateurs.service';
 
 describe('IndicateursService', () => {

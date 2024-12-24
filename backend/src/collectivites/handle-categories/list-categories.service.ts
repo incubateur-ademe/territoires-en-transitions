@@ -5,7 +5,7 @@ import CollectivitesService from '@/backend/collectivites/services/collectivites
 import { Injectable, Logger } from '@nestjs/common';
 import { and, eq, inArray, isNull, or } from 'drizzle-orm';
 import { AuthenticatedUser } from '../../auth/models/auth.models';
-import DatabaseService from '../../common/services/database.service';
+import { DatabaseService } from '../../utils/database/database.service';
 import { categorieTagTable } from '../shared/models/categorie-tag.table';
 import { groupementCollectiviteTable } from '../shared/models/groupement-collectivite.table';
 import { Tag } from '../shared/models/tag.table-base';

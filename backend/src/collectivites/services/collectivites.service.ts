@@ -1,7 +1,7 @@
 import { Injectable, Logger, NotFoundException } from '@nestjs/common';
 import { aliasedTable, eq, or } from 'drizzle-orm';
 import { isNil } from 'es-toolkit';
-import DatabaseService from '../../common/services/database.service';
+import { DatabaseService } from '../../utils/database/database.service';
 import {
   CollectiviteAvecType,
   CollectivitePopulationTypeEnum,

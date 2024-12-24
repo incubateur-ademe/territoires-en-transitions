@@ -3,16 +3,17 @@ import { ConfigModule } from '@nestjs/config';
 import { SentryModule } from '@sentry/nestjs/setup';
 import { AuthModule } from './auth/auth.module';
 import { CollectivitesModule } from './collectivites/collectivites.module';
-import { CommonModule } from './common/common.module';
 import { IndicateursModule } from './indicateurs/indicateurs.module';
 import { PersonnalisationsModule } from './personnalisations/personnalisations.module';
 import { FichesActionModule } from './plans/fiches/fiches.module';
 import { ReferentielsModule } from './referentiels/referentiels.module';
 import configuration from './utils/config/configuration';
 import { ConfigurationModule } from './utils/config/configuration.module';
+import { DatabaseModule } from './utils/database/database.module';
 import { SheetModule } from './utils/google-sheets/sheet.module';
 import { TrpcModule } from './utils/trpc/trpc.module';
 import { TrpcRouter } from './utils/trpc/trpc.router';
+import { UtilsModule } from './utils/utils.module';
 
 @Module({
   imports: [
@@ -23,7 +24,9 @@ import { TrpcRouter } from './utils/trpc/trpc.router';
       load: [configuration],
     }),
     ConfigurationModule,
-    CommonModule,
+    // Test without
+    UtilsModule,
+    DatabaseModule,
     TrpcModule,
     SheetModule,
     CollectivitesModule,

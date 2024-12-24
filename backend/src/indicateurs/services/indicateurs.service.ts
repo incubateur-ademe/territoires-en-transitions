@@ -23,7 +23,7 @@ import { objectToCamel } from 'ts-case-convert';
 import { AuthenticatedUser, AuthRole } from '../../auth/models/auth.models';
 import { groupementCollectiviteTable } from '../../collectivites/shared/models/groupement-collectivite.table';
 import { groupementTable } from '../../collectivites/shared/models/groupement.table';
-import DatabaseService from '../../common/services/database.service';
+import { DatabaseService } from '../../utils/database/database.service';
 import { DeleteIndicateursValeursRequestType } from '../models/delete-indicateurs.request';
 import { GetIndicateursValeursRequestType } from '../models/get-indicateurs.request';
 import { GetIndicateursValeursResponseType } from '../models/get-indicateurs.response';

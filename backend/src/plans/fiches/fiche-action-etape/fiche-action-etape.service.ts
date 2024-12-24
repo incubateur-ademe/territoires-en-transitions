@@ -1,5 +1,5 @@
 import { AuthenticatedUser } from '@/backend/auth/models/auth.models';
-import { DatabaseService } from '@/backend/common';
+import { DatabaseService } from '@/backend/utils';
 import { Injectable } from '@nestjs/common';
 import { and, eq, gt, gte, lt, lte, sql } from 'drizzle-orm';
 import FicheService from '../fiche.service';

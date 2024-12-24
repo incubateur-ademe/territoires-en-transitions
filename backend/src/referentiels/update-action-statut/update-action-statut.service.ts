@@ -1,11 +1,14 @@
+import { PermissionOperation } from '@/backend/auth/authorizations/permission-operation.enum';
+import { PermissionService } from '@/backend/auth/authorizations/permission.service';
+import { ResourceType } from '@/backend/auth/authorizations/resource-type.enum';
+import { DatabaseService } from '@/backend/utils';
 import { Injectable, Logger, NotFoundException } from '@nestjs/common';
 import { sql } from 'drizzle-orm';
 import { PostgresError } from 'postgres';
 import z from 'zod';
 import { AuthenticatedUser } from '../../auth/models/auth.models';
-import { PgIntegrityConstraintViolation } from '../../common/models/postgresql-error-codes.enum';
-import DatabaseService from '../../common/services/database.service';
-import { getErrorWithCode } from '../../common/services/errors.helper';
+import { getErrorWithCode } from '../../utils/nest/errors.utils';
+import { PgIntegrityConstraintViolation } from '../../utils/postgresql-error-codes.enum';
 import {
   actionStatutTable,
   createActionStatutSchema,
@@ -14,9 +17,6 @@ import { ComputeScoreMode } from '../models/compute-scores-mode.enum';
 import { GetReferentielScoresRequestType } from '../models/get-referentiel-scores.request';
 import ReferentielsScoringService from '../services/referentiels-scoring.service';
 import ReferentielsService from '../services/referentiels.service';
-import { PermissionService } from '@/backend/auth/authorizations/permission.service';
-import { PermissionOperation } from '@/backend/auth/authorizations/permission-operation.enum';
-import { ResourceType } from '@/backend/auth/authorizations/resource-type.enum';
 
 export const upsertActionStatutRequestSchema = z.object({
   actionStatut: createActionStatutSchema,

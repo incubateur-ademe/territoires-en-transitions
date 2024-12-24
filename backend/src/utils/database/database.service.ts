@@ -3,10 +3,10 @@ import { Injectable, Logger, OnApplicationShutdown } from '@nestjs/common';
 import { sql } from 'drizzle-orm';
 import { drizzle } from 'drizzle-orm/postgres-js';
 import { default as postgres } from 'postgres';
-import ConfigurationService from '../../utils/config/configuration.service';
+import ConfigurationService from '../config/configuration.service';
 
 @Injectable()
-export default class DatabaseService implements OnApplicationShutdown {
+export class DatabaseService implements OnApplicationShutdown {
   private readonly logger = new Logger(DatabaseService.name);
 
   private readonly client = postgres(
