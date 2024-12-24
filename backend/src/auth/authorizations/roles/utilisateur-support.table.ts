@@ -1,5 +1,5 @@
+import { dcpTable } from '@/domain/auth';
 import { boolean, pgTable, uuid } from 'drizzle-orm/pg-core';
-import { dcpTable } from '@/backend/auth';
 
 export const utilisateurSupportTable = pgTable('utilisateur_support', {
   userId: uuid('user_id')

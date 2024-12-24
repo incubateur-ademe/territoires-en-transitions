@@ -1,14 +1,10 @@
 import {
-  lienSchema,
-  lienType,
-} from '@/backend/documents/models/document-lien.dto';
-import {
   categorieFNVSchema,
   CategorieFNVType,
   tempsDeMiseEnOeuvreTable,
   thematiqueSchema,
   ThematiqueType,
-} from '@/backend/shared';
+} from '@/domain/shared';
 import { createZodDto } from '@anatine/zod-nestjs';
 import { InferSelectModel } from 'drizzle-orm';
 import {
@@ -21,6 +17,10 @@ import {
 } from 'drizzle-orm/pg-core';
 import { createSelectSchema } from 'drizzle-zod';
 import { z } from 'zod';
+import {
+  lienSchema,
+  lienType,
+} from '../../../documents/models/document-lien.dto';
 import { actionImpactFourchetteBudgetaireTable } from './action-impact-fourchette-budgetaire.table';
 import { actionImpactTierTable } from './action-impact-tier.table';
 

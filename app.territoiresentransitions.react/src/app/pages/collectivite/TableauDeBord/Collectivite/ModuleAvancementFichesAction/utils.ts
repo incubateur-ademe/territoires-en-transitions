@@ -1,7 +1,7 @@
 import { Filtre } from '@/api/plan-actions/dashboards/collectivite-dashboard/domain/fiches-synthese.schema';
 import { FicheActionParam } from '@/app/app/pages/collectivite/PlansActions/ToutesLesFichesAction/ToutesLesFichesAction';
 import { makeCollectiviteToutesLesFichesUrl } from '@/app/app/paths';
-import { Statut } from '@/backend/plans/fiches';
+import { Statut } from '@/domain/plans/fiches';
 
 /** Permet de transformer les filtres de modules fiches action en paramètres d'URL */
 export const makeFichesActionUrlWithParams = (

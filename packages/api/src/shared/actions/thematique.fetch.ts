@@ -1,4 +1,4 @@
-import { Thematique } from '@/backend/shared';
+import { Thematique } from '@/domain/shared';
 import { DBClient } from '../../typeUtils';
 
 /**

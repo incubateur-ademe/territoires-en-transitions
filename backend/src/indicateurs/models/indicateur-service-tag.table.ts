@@ -1,4 +1,4 @@
-import { serviceTagTable } from '@/backend/collectivites';
+import { serviceTagTable } from '@/domain/collectivites';
 import { integer, pgTable, primaryKey } from 'drizzle-orm/pg-core';
 import { collectiviteTable } from '../../collectivites/shared/models/collectivite.table';
 import { indicateurDefinitionTable } from './indicateur-definition.table';

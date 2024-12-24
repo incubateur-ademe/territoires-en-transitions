@@ -1,4 +1,4 @@
-import { actionRelationTable } from '@/backend/referentiels';
+import { actionRelationTable } from '@/domain/referentiels';
 import { integer, pgTable, primaryKey, varchar } from 'drizzle-orm/pg-core';
 import { ficheActionTable } from './fiche-action.table';
 

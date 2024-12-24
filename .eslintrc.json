@@ -17,9 +17,9 @@
               // https://github.com/tailwindlabs/tailwindcss/issues/11097
               "../ui/src/tailwind-preset",
 
-              // Backend is an application but is also used as a library,
-              // we want our front apps to be allowed to reference it
-              "@/backend"
+              // `@/domain` imports are used as a library but exists inside the `backend` application.
+              // We explicitely allow our front apps to be allowed to reference it.
+              "@/domain"
             ],
             "depConstraints": [
               {

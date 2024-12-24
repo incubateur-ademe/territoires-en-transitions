@@ -1,6 +1,6 @@
+import { banaticCompetenceTable } from '@/domain/shared';
 import { integer, pgTable, primaryKey } from 'drizzle-orm/pg-core';
 import { actionImpactTable } from './action-impact.table';
-import { banaticCompetenceTable } from '@/backend/shared';
 
 export const actionImpactBanaticCompetenceTable = pgTable(
   'action_impact_banatic_competence',

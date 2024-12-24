@@ -2,8 +2,8 @@ import {
   ciblesEnumSchema,
   prioriteEnumSchema,
   statutsEnumSchema,
-} from '@/backend/plans/fiches';
-import { getPaginationSchema } from '@/backend/utils';
+} from '@/domain/plans/fiches';
+import { getPaginationSchema } from '@/domain/utils';
 import { z } from 'zod';
 import { filtreRessourceLieesSchema } from '../../../collectivites/shared/domain/filtre-ressource-liees.schema';
 

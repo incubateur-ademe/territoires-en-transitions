@@ -1,8 +1,8 @@
 import { personneSchema } from '@/api/collectivites';
 import { indicateurListItemSchema } from '@/api/indicateurs/domain';
 import { actionSchema } from '@/api/referentiel';
-import { authorSchema } from '@/backend/auth';
-import { tagSchema } from '@/backend/collectivites';
+import { authorSchema } from '@/domain/auth';
+import { tagSchema } from '@/domain/collectivites';
 import {
   axeSchema,
   ciblesEnumSchema,
@@ -10,13 +10,13 @@ import {
   participationCitoyenneEnumSchema,
   prioriteEnumSchema,
   statutsEnumSchema,
-} from '@/backend/plans/fiches';
+} from '@/domain/plans/fiches';
 import {
   effetAttenduSchema,
   sousThematiqueSchema,
   tempsDeMiseEnOeuvreSchema,
   thematiqueSchema,
-} from '@/backend/shared';
+} from '@/domain/shared';
 import { z } from 'zod';
 
 export const ficheActionSchema = z.object({

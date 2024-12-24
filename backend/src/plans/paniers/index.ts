@@ -1,1 +1,1 @@
-export * from './models/action-impact.table';
+export * from './index-domain';

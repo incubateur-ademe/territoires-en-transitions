@@ -1,4 +1,4 @@
-import { getPaginationSchema } from '@/backend/utils';
+import { getPaginationSchema } from '@/domain/utils';
 import { z } from 'zod';
 import { filtreRessourceLieesSchema } from '../../../collectivites/shared/domain/filtre-ressource-liees.schema';
 

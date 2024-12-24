@@ -1,4 +1,4 @@
-import { collectiviteTable } from '@/backend/collectivites';
+import { collectiviteTable } from '@/domain/collectivites';
 import { InferSelectModel, SQL, sql } from 'drizzle-orm';
 import {
   boolean,

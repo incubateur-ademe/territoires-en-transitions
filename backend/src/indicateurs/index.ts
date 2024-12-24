@@ -1,1 +1,1 @@
-export * from './models/indicateur-definition.table';
+export * from './index-domain';

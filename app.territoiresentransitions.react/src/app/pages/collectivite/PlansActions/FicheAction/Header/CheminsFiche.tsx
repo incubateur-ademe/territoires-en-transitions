@@ -1,5 +1,5 @@
 import { makeCollectiviteFichesNonClasseesUrl } from '@/app/app/paths';
-import { Axe } from '@/backend/plans/fiches';
+import { Axe } from '@/domain/plans/fiches';
 import { Breadcrumbs, Button } from '@/ui';
 import { useRouter } from 'next/navigation';
 import { useState } from 'react';

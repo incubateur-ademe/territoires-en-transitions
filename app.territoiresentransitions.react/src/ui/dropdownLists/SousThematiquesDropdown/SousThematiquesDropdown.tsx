@@ -1,4 +1,4 @@
-import { SousThematique } from '@/backend/shared';
+import { SousThematique } from '@/domain/shared';
 import { Option, OptionValue, SelectFilter, SelectMultipleProps } from '@/ui';
 import { useEffect } from 'react';
 import { useSousThematiqueListe } from './useSousThematiqueListe';

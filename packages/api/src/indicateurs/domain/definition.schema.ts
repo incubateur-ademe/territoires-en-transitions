@@ -1,4 +1,4 @@
-import { thematiqueSchema } from '@/backend/shared';
+import { thematiqueSchema } from '@/domain/shared';
 import { z } from 'zod';
 import { actionSchema } from '../../referentiel/domain/action.schema';
 import { categorieSchema } from './categorie.schema';

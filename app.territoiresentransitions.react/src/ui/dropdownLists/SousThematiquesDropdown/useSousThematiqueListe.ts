@@ -1,5 +1,5 @@
 import { supabaseClient } from '@/app/core-logic/api/supabase';
-import { SousThematique } from '@/backend/shared';
+import { SousThematique } from '@/domain/shared';
 import { useQuery } from 'react-query';
 import { objectToCamel } from 'ts-case-convert';
 

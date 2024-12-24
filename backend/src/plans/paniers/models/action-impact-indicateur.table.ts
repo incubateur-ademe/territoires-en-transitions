@@ -1,4 +1,4 @@
-import { indicateurDefinitionTable } from '@/backend/indicateurs';
+import { indicateurDefinitionTable } from '@/domain/indicateurs';
 import { InferSelectModel } from 'drizzle-orm';
 import { integer, pgTable, primaryKey } from 'drizzle-orm/pg-core';
 import { actionImpactTable } from './action-impact.table';
