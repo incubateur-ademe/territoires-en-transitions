@@ -3,7 +3,6 @@ import { Thematique } from '@/domain/shared';
 import { isNil } from 'es-toolkit/predicate';
 import { objectToSnake } from 'ts-case-convert';
 import { Personne } from '../../collectivites/shared/domain/personne.schema';
-import { Action } from '../../referentiel/domain/action.schema';
 import { selectTags } from '../../shared/actions/tag.fetch';
 import { insertTags } from '../../shared/actions/tag.save';
 import { DBClient, TablesInsert } from '../../typeUtils';
@@ -431,33 +430,6 @@ export async function upsertFiches(
     fiches.map((fiche_id) => ({ fiche_id, indicateur_id: indicateurId })),
     { onConflict: 'indicateur_id,fiche_id' }
   );
-}
-
-/**
- * Modifie les actions d'un indicateur
- * @param dbClient client supabase
- * @param indicateur indicateur concerné
- * @param actions actions à modifier
- */
-export async function upsertActions(
-  dbClient: DBClient,
-  indicateur: IndicateurDefinition,
-  actions: Action[]
-) {
-  if (indicateur.estPerso) {
-    // Supprime les liens vers les actions qui ne sont plus concernés
-    await dbClient
-      .from('indicateur_action')
-      .delete()
-      .eq('indicateur_id', indicateur.id)
-      .not('action_id', 'in', `(${actions.map((a) => a.id).join(',')})`);
-
-    // Fait les nouveaux liens entre l'indicateur et les fiches
-    await dbClient.from('indicateur_action').upsert(
-      actions.map((a) => ({ action_id: a.id, indicateur_id: indicateur.id })),
-      { onConflict: 'indicateur_id,action_id' }
-    );
-  }
 }
 
 /**

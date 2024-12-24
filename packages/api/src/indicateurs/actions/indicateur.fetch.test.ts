@@ -5,7 +5,6 @@ import { dbAdmin, supabase } from '../../tests/supabase';
 import { testReset } from '../../tests/testReset';
 import {
   getValeursComparaison,
-  selectIndicateurActions,
   selectIndicateurCategoriesUtilisateur,
   selectIndicateurChartInfo,
   selectIndicateurDefinition,
@@ -275,13 +274,6 @@ test('Test selectIndicateurFiches', async () => {
   expect(data).not.toBeNull();
   expect(data).toHaveLength(1);
   expect(data[0].id).eq(1);
-});
-
-test('Test selectIndicateurActions', async () => {
-  const data = await selectIndicateurActions(supabase, 123);
-  expect(data).not.toBeNull();
-  expect(data).toHaveLength(1);
-  expect(data[0].id).eq('eci_4');
 });
 
 test('Test selectIndicateurValeurs', async () => {
