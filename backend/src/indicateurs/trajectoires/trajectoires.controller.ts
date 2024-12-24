@@ -1,4 +1,5 @@
 import { createZodDto } from '@anatine/zod-nestjs';
+import { extendApi } from '@anatine/zod-openapi';
 import {
   Controller,
   Delete,
@@ -14,15 +15,14 @@ import { AllowPublicAccess } from '../../auth/decorators/allow-public-access.dec
 import { TokenInfo } from '../../auth/decorators/token-info.decorators';
 import type { AuthenticatedUser } from '../../auth/models/auth.models';
 import { CollectiviteRequestClass } from '../../collectivites/collectivite.request';
-import { calculTrajectoireRequestSchema } from '../models/calcul-trajectoire.request';
-import { calculTrajectoireResponseSchema } from '../models/calcul-trajectoire.response';
-import { modeleTrajectoireTelechargementRequestSchema } from '../models/modele-trajectoire-telechargement.request';
-import { verificationTrajectoireRequestSchema } from '../models/verification-trajectoire.request';
-import { verificationTrajectoireResponseSchema } from '../models/verification-trajectoire.response';
-import TrajectoiresDataService from '../services/trajectoires-data.service';
-import TrajectoiresSpreadsheetService from '../services/trajectoires-spreadsheet.service';
-import TrajectoiresXlsxService from '../services/trajectoires-xlsx.service';
-import { extendApi } from '@anatine/zod-openapi';
+import { calculTrajectoireRequestSchema } from './calcul-trajectoire.request';
+import { calculTrajectoireResponseSchema } from './calcul-trajectoire.response';
+import { modeleTrajectoireTelechargementRequestSchema } from './modele-trajectoire-telechargement.request';
+import TrajectoiresDataService from './trajectoires-data.service';
+import TrajectoiresSpreadsheetService from './trajectoires-spreadsheet.service';
+import TrajectoiresXlsxService from './trajectoires-xlsx.service';
+import { verificationTrajectoireRequestSchema } from './verification-trajectoire.request';
+import { verificationTrajectoireResponseSchema } from './verification-trajectoire.response';
 
 /**
  * Création des classes de requête/réponse à partir du schema pour générer automatiquement la documentation OpenAPI et la validation des entrées

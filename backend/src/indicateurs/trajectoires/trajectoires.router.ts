@@ -1,7 +1,7 @@
+import { TrpcService } from '@/backend/utils/trpc/trpc.service';
 import { Injectable } from '@nestjs/common';
 import { z } from 'zod';
-import { TrpcService } from '@/backend/utils/trpc/trpc.service';
-import TrajectoiresSpreadsheetService from '../services/trajectoires-spreadsheet.service';
+import TrajectoiresSpreadsheetService from './trajectoires-spreadsheet.service';
 
 @Injectable()
 export class TrajectoiresRouter {

@@ -12,9 +12,6 @@ import { DateTime } from 'luxon';
 import { AuthenticatedUser } from '../../auth/models/auth.models';
 import CollectivitesService from '../../collectivites/services/collectivites.service';
 import { EpciType } from '../../collectivites/shared/models/epci.table';
-import { DonneesARemplirResultType } from '../models/donnees-a-remplir-result.dto';
-import { DonneesARemplirValeurType } from '../models/donnees-a-remplir-valeur.dto';
-import { DonneesCalculTrajectoireARemplirType } from '../models/donnees-calcul-trajectoire-a-remplir.dto';
 import {
   SourceMetadonnee,
   SourceMetadonneeInsert,
@@ -24,13 +21,16 @@ import {
   IndicateurValeur,
   IndicateurValeurAvecMetadonnesDefinition,
 } from '../models/indicateur-valeur.table';
-import { VerificationTrajectoireRequestType } from '../models/verification-trajectoire.request';
+import IndicateurSourcesService from '../services/indicateur-sources.service';
+import IndicateursService from '../services/indicateurs.service';
+import { DonneesARemplirResultType } from './donnees-a-remplir-result.dto';
+import { DonneesARemplirValeurType } from './donnees-a-remplir-valeur.dto';
+import { DonneesCalculTrajectoireARemplirType } from './donnees-calcul-trajectoire-a-remplir.dto';
+import { VerificationTrajectoireRequestType } from './verification-trajectoire.request';
 import {
   VerificationTrajectoireResultType,
   VerificationTrajectoireStatus,
-} from '../models/verification-trajectoire.response';
-import IndicateurSourcesService from './indicateur-sources.service';
-import IndicateursService from './indicateurs.service';
+} from './verification-trajectoire.response';
 
 @Injectable()
 export default class TrajectoiresDataService {

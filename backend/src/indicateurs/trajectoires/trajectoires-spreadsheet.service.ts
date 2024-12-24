@@ -12,19 +12,19 @@ import GroupementsService from '../../collectivites/services/groupements.service
 import { EpciType } from '../../collectivites/shared/models/epci.table';
 import ConfigurationService from '../../utils/config/configuration.service';
 import SheetService from '../../utils/google-sheets/sheet.service';
+import { IndicateurDefinition } from '../models/indicateur-definition.table';
+import { IndicateurValeurInsert } from '../models/indicateur-valeur.table';
+import IndicateurSourcesService from '../services/indicateur-sources.service';
+import IndicateursService from '../services/indicateurs.service';
 import {
   CalculTrajectoireRequestType,
   CalculTrajectoireReset,
   CalculTrajectoireResultatMode,
-} from '../models/calcul-trajectoire.request';
-import { CalculTrajectoireResult } from '../models/calcul-trajectoire.response';
-import { DonneesCalculTrajectoireARemplirType } from '../models/donnees-calcul-trajectoire-a-remplir.dto';
-import { IndicateurDefinition } from '../models/indicateur-definition.table';
-import { IndicateurValeurInsert } from '../models/indicateur-valeur.table';
-import { VerificationTrajectoireStatus } from '../models/verification-trajectoire.response';
-import IndicateurSourcesService from './indicateur-sources.service';
-import IndicateursService from './indicateurs.service';
+} from './calcul-trajectoire.request';
+import { CalculTrajectoireResult } from './calcul-trajectoire.response';
+import { DonneesCalculTrajectoireARemplirType } from './donnees-calcul-trajectoire-a-remplir.dto';
 import TrajectoiresDataService from './trajectoires-data.service';
+import { VerificationTrajectoireStatus } from './verification-trajectoire.response';
 
 @Injectable()
 export default class TrajectoiresSpreadsheetService {

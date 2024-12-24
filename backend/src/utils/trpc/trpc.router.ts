@@ -7,7 +7,7 @@ import { ListCategoriesRouter } from '../../collectivites/handle-categories/list
 import { CollectiviteMembresRouter } from '../../collectivites/membres/membres.router';
 import { PersonnesRouter } from '../../collectivites/personnes.router';
 import { IndicateurFiltreRouter } from '../../indicateurs/indicateur-filtre/indicateur-filtre.router';
-import { TrajectoiresRouter } from '../../indicateurs/routers/trajectoires.router';
+import { TrajectoiresRouter } from '../../indicateurs/trajectoires/trajectoires.router';
 import { ComputeScoreRouter } from '../../referentiels/compute-score/compute-score.router';
 import { ScoreSnapshotsRouter } from '../../referentiels/snapshots/score-snaphots.router';
 import { UpdateActionStatutRouter } from '../../referentiels/update-action-statut/update-action-statut.router';

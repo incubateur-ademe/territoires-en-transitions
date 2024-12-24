@@ -1,5 +1,5 @@
-import { CalculTrajectoireResultatMode } from '../../models/calcul-trajectoire.request';
-import { CalculTrajectoireResponse } from '../../models/calcul-trajectoire.response';
+import { CalculTrajectoireResultatMode } from '../calcul-trajectoire.request';
+import { CalculTrajectoireResponse } from '../calcul-trajectoire.response';
 
 export const trajectoireSnbcCalculRetour: CalculTrajectoireResponse = {
   mode: CalculTrajectoireResultatMode.MAJ_SPREADSHEET_EXISTANT,

@@ -3,8 +3,8 @@ import { Test } from '@nestjs/testing';
 import CollectivitesService from '../../collectivites/services/collectivites.service';
 import SheetService from '../../utils/google-sheets/sheet.service';
 import { IndicateurValeur } from '../models/indicateur-valeur.table';
-import IndicateurSourcesService from './indicateur-sources.service';
-import IndicateursService from './indicateurs.service';
+import IndicateurSourcesService from '../services/indicateur-sources.service';
+import IndicateursService from '../services/indicateurs.service';
 import TrajectoiresDataService from './trajectoires-data.service';
 
 describe('TrajectoiresDataService test', () => {

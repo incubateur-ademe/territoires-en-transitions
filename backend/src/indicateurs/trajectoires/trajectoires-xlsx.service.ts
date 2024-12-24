@@ -11,10 +11,10 @@ import { CollectiviteRequestType } from '../../collectivites/collectivite.reques
 import { EpciType } from '../../collectivites/shared/models/epci.table';
 import BackendConfigurationService from '../../utils/config/configuration.service';
 import SheetService from '../../utils/google-sheets/sheet.service';
-import { DonneesCalculTrajectoireARemplirType } from '../models/donnees-calcul-trajectoire-a-remplir.dto';
-import { ModeleTrajectoireTelechargementRequestType } from '../models/modele-trajectoire-telechargement.request';
-import { VerificationTrajectoireStatus } from '../models/verification-trajectoire.response';
+import { DonneesCalculTrajectoireARemplirType } from './donnees-calcul-trajectoire-a-remplir.dto';
+import { ModeleTrajectoireTelechargementRequestType } from './modele-trajectoire-telechargement.request';
 import TrajectoiresDataService from './trajectoires-data.service';
+import { VerificationTrajectoireStatus } from './verification-trajectoire.response';
 
 @Injectable()
 export default class TrajectoiresXlsxService {
