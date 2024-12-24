@@ -19,7 +19,7 @@ import {
 } from '../models/indicateur-definition.table';
 import { SourceMetadonnee } from '../models/indicateur-source-metadonnee.table';
 import { IndicateurValeurAvecMetadonnesDefinition } from '../models/indicateur-valeur.table';
-import IndicateursService from './indicateurs.service';
+import IndicateursService from '../services/indicateurs.service';
 
 @Injectable()
 export default class ExportIndicateursService {

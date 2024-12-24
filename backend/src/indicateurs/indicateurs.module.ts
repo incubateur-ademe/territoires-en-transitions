@@ -3,9 +3,10 @@ import { AuthModule } from '../auth/auth.module';
 import { CollectivitesModule } from '../collectivites/collectivites.module';
 import { SheetModule } from '../utils/google-sheets/sheet.module';
 import { IndicateursController } from './controllers/indicateurs.controller';
+import { ExportIndicateursController } from './export-indicateurs/export-indicateurs.controller';
+import ExportIndicateursService from './export-indicateurs/export-indicateurs.service';
 import { IndicateurFiltreRouter } from './indicateur-filtre/indicateur-filtre.router';
 import IndicateurFiltreService from './indicateur-filtre/indicateur-filtre.service';
-import ExportIndicateursService from './services/export-indicateurs.service';
 import IndicateurSourcesService from './services/indicateur-sources.service';
 import IndicateursService from './services/indicateurs.service';
 import TrajectoiresDataService from './trajectoires/trajectoires-data.service';
@@ -34,6 +35,10 @@ import { TrajectoiresRouter } from './trajectoires/trajectoires.router';
     IndicateurFiltreService,
     IndicateurFiltreRouter,
   ],
-  controllers: [IndicateursController, TrajectoiresController],
+  controllers: [
+    IndicateursController,
+    ExportIndicateursController,
+    TrajectoiresController,
+  ],
 })
 export class IndicateursModule {}
