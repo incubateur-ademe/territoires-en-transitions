@@ -20,7 +20,7 @@ import { z } from 'zod';
 import {
   lienSchema,
   lienType,
-} from '../../../documents/models/document-lien.dto';
+} from '../../../collectivites/documents/models/document-lien.dto';
 import { actionImpactFourchetteBudgetaireTable } from './action-impact-fourchette-budgetaire.table';
 import { actionImpactTierTable } from './action-impact-tier.table';
 

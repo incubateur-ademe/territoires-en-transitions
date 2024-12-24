@@ -2,6 +2,8 @@ import { PermissionOperation } from '@/backend/auth/authorizations/permission-op
 import { PermissionService } from '@/backend/auth/authorizations/permission.service';
 import { ResourceType } from '@/backend/auth/authorizations/resource-type.enum';
 import { NiveauAcces } from '@/backend/auth/authorizations/roles/niveau-acces.enum';
+import { PreuveDto } from '@/backend/collectivites/documents/models/preuve.dto';
+import DocumentService from '@/backend/collectivites/documents/services/document.service';
 import {
   HttpException,
   Injectable,
@@ -20,7 +22,7 @@ import {
   SQL,
   SQLWrapper,
 } from 'drizzle-orm';
-import { chunk, isNil } from 'es-toolkit';
+import { chunk, isNil, pick } from 'es-toolkit';
 import * as _ from 'lodash';
 import { DateTime } from 'luxon';
 import { AuthenticatedUser } from '../../auth/models/auth.models';
@@ -97,19 +99,23 @@ export default class ReferentielsScoringService {
     private readonly referentielsScoringSnapshotsService: ReferentielsScoringSnapshotsService,
     private readonly personnalisationService: PersonnalisationsService,
     private readonly expressionParserService: ExpressionParserService,
-    private readonly labellisationService: LabellisationService
+    private readonly labellisationService: LabellisationService,
+    private readonly documentService: DocumentService
   ) {}
 
   async getOrCreateCurrentScore(
     collectiviteId: number,
-    referentielId: ReferentielType
+    referentielId: ReferentielType,
+    forceRecalculScoreCourant?: boolean
   ) {
-    let currentScore = await this.referentielsScoringSnapshotsService.get(
-      collectiviteId,
-      referentielId,
-      ReferentielsScoringSnapshotsService.SCORE_COURANT_SNAPSHOT_REF,
-      true
-    );
+    let currentScore = forceRecalculScoreCourant
+      ? null
+      : await this.referentielsScoringSnapshotsService.get(
+          collectiviteId,
+          referentielId,
+          ReferentielsScoringSnapshotsService.SCORE_COURANT_SNAPSHOT_REF,
+          true
+        );
     if (!currentScore) {
       currentScore = await this.computeScoreForCollectivite(
         referentielId,
@@ -149,6 +155,7 @@ export default class ReferentielsScoringService {
   buildReferentielAvecScore(
     referentiel: ReferentielActionType,
     actionStatutExplications?: GetActionStatutExplicationsResponseType,
+    actionPreuves?: { [actionId: string]: PreuveDto[] },
     fillOrigineActionMap?: {
       [origineActionId: string]: ReferentielActionOrigineWithScoreType;
     },
@@ -189,6 +196,24 @@ export default class ReferentielsScoringService {
       referentielAvecScore.score.explication =
         actionStatutExplications[actionId].explication;
     }
+    if (actionPreuves && actionPreuves[actionId]) {
+      referentielAvecScore.preuves = actionPreuves[actionId].map((preuve) => {
+        const simplePreuve = pick(preuve, [
+          'titre',
+          'commentaire',
+          'url',
+          'preuveType',
+          'preuveId',
+          'fichierId',
+          'filename',
+          'modifiedAt',
+          'confidentiel',
+        ]);
+
+        return simplePreuve;
+      });
+    }
+
     if (!referentiel.actionsOrigine) {
       delete referentielAvecScore.actionsOrigine;
     }
@@ -198,6 +223,7 @@ export default class ReferentielsScoringService {
         const actionEnfantAvecScore = this.buildReferentielAvecScore(
           actionEnfant,
           actionStatutExplications,
+          actionPreuves,
           fillOrigineActionMap,
           existingScores
         );
@@ -328,6 +354,7 @@ export default class ReferentielsScoringService {
     const actionStatut = actionStatuts[referentielActionAvecScore.actionId!];
     if (actionStatut) {
       referentielActionAvecScore.score.aStatut = true;
+      referentielActionAvecScore.score.avancement = actionStatut.avancement;
     }
 
     // Si le parent n'est pas déjà désactivé et il y a une desactivation on l'applique et on le propagera aux enfants
@@ -513,6 +540,7 @@ export default class ReferentielsScoringService {
       const actionStatut = actionStatuts[referentielActionAvecScore.actionId!];
       if (actionStatut) {
         referentielActionAvecScore.score.aStatut = true;
+        referentielActionAvecScore.score.avancement = actionStatut.avancement;
       }
 
       if (
@@ -1186,6 +1214,11 @@ export default class ReferentielsScoringService {
           collectiviteId,
           parameters.date
         );
+      const actionPreuves = await this.documentService.getActionPreuves(
+        collectiviteId,
+        referentielId,
+        parameters.date
+      );
 
       const actionLevel = referentiel.orderedItemTypes.indexOf(
         ActionType.ACTION
@@ -1207,6 +1240,7 @@ export default class ReferentielsScoringService {
           parameters.jalon,
           auditId,
           actionStatutExplications,
+          actionPreuves,
           etoilesDefinitions
         );
         referentielWithScore = scoresResult.referentielWithScore;
@@ -1219,6 +1253,7 @@ export default class ReferentielsScoringService {
           actionStatuts,
           actionLevel,
           actionStatutExplications,
+          actionPreuves,
           etoilesDefinitions
         );
       }
@@ -1607,6 +1642,7 @@ export default class ReferentielsScoringService {
     const referentielAvecScore = this.buildReferentielAvecScore(
       referentiel,
       undefined,
+      undefined,
       actionsOrigineMap
     );
 
@@ -1741,6 +1777,7 @@ export default class ReferentielsScoringService {
     actionStatuts: GetActionStatutsResponseType,
     actionLevel: number,
     actionStatutExplications?: GetActionStatutExplicationsResponseType,
+    actionPreuves?: { [actionId: string]: PreuveDto[] },
     etoilesDefinitions?: LabellisationEtoileMetaType[]
   ): ReferentielActionWithScoreType {
     const actionStatutsKeys = Object.keys(actionStatuts);
@@ -1752,7 +1789,8 @@ export default class ReferentielsScoringService {
 
     const referentielAvecScore = this.buildReferentielAvecScore(
       referentiel,
-      actionStatutExplications
+      actionStatutExplications,
+      actionPreuves
     );
 
     let scoreMap = this.fillScoreMap(referentielAvecScore, {});
@@ -1823,11 +1861,13 @@ export default class ReferentielsScoringService {
     jalon: ScoreJalon,
     auditId?: number,
     statutExplications?: GetActionStatutExplicationsResponseType,
+    actionPreuves?: { [actionId: string]: PreuveDto[] },
     etoiles?: LabellisationEtoileMetaType[]
   ): Promise<{
     date: string;
     referentielWithScore: ReferentielActionWithScoreType;
   }> {
+    const referentielId = referentiel.actionId as ReferentielType;
     let scoresResult:
       | {
           date: string;
@@ -1836,20 +1876,20 @@ export default class ReferentielsScoringService {
       | undefined = undefined;
     if (jalon === ScoreJalon.SCORE_COURANT) {
       scoresResult = await this.getClientScoresForCollectivite(
-        referentiel.actionId as ReferentielType,
+        referentielId,
         collectiviteId,
         etoiles
       );
     } else if (jalon === ScoreJalon.PRE_AUDIT) {
       scoresResult = await this.getPreAuditScoresForCollectivite(
-        referentiel.actionId as ReferentielType,
+        referentielId,
         collectiviteId,
         auditId!,
         etoiles
       );
     } else if (jalon === ScoreJalon.POST_AUDIT) {
       scoresResult = await this.getPostAuditScoresForCollectivite(
-        referentiel.actionId as ReferentielType,
+        referentielId,
         collectiviteId,
         auditId!,
         etoiles
@@ -1866,6 +1906,7 @@ export default class ReferentielsScoringService {
     const referentielWithScore = this.buildReferentielAvecScore(
       referentiel,
       statutExplications,
+      actionPreuves,
       undefined,
       scoresResult.scoresMap
     );

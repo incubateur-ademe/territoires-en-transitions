@@ -33,6 +33,7 @@ describe('Referentiels routes', () => {
       ...referentielCaeRoot
     }: ReferentielActionType = {
       actionId: 'cae',
+      identifiant: '',
       actionType: ActionType.REFERENTIEL,
       categorie: null,
       level: 0,

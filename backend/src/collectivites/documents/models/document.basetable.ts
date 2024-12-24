@@ -1,6 +1,6 @@
 import { modifiedAt, modifiedBy } from '@/backend/utils';
 import { integer, jsonb, serial, text } from 'drizzle-orm/pg-core';
-import { collectiviteTable } from '../../collectivites/shared/models/collectivite.table';
+import { collectiviteTable } from '../../shared/models/collectivite.table';
 
 export const DocumentBase = {
   id: serial('id').primaryKey(),

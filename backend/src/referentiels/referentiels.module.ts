@@ -6,6 +6,7 @@ import { SheetModule } from '../utils/google-sheets/sheet.module';
 import { ComputeScoreRouter } from './compute-score/compute-score.router';
 import { ReferentielsScoringController } from './controllers/referentiels-scoring.controller';
 import { ReferentielsController } from './controllers/referentiels.controller';
+import ExportReferentielScoreService from './export-score/export-referentiel-score.service';
 import LabellisationService from './services/labellisation.service';
 import ReferentielsScoringSnapshotsService from './services/referentiels-scoring-snapshots.service';
 import ReferentielsScoringService from './services/referentiels-scoring.service';
@@ -30,6 +31,7 @@ import { UpdateActionStatutService } from './update-action-statut/update-action-
     UpdateActionStatutRouter,
     ComputeScoreRouter,
     ScoreSnapshotsRouter,
+    ExportReferentielScoreService,
   ],
   exports: [
     ReferentielsService,
@@ -40,6 +42,7 @@ import { UpdateActionStatutService } from './update-action-statut/update-action-
     UpdateActionStatutRouter,
     ComputeScoreRouter,
     ScoreSnapshotsRouter,
+    ExportReferentielScoreService,
   ],
   controllers: [ReferentielsController, ReferentielsScoringController],
 })
