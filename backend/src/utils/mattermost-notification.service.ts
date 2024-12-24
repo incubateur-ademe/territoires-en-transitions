@@ -1,6 +1,6 @@
 import { Injectable, Logger } from '@nestjs/common';
-import ConfigurationService from '../../utils/config/configuration.service';
-import { getErrorMessage } from './errors.helper';
+import ConfigurationService from './config/configuration.service';
+import { getErrorMessage } from './nest/errors.utils';
 
 @Injectable()
 export default class MattermostNotificationService {

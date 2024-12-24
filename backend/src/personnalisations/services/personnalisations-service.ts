@@ -9,7 +9,7 @@ import {
   IdentiteCollectivite,
 } from '../../collectivites/identite-collectivite.dto';
 import CollectivitesService from '../../collectivites/services/collectivites.service';
-import DatabaseService from '../../common/services/database.service';
+import { DatabaseService } from '../../utils/database/database.service';
 import { GetPersonnalisationConsequencesRequestType } from '../models/get-personnalisation-consequences.request';
 import { GetPersonnalitionConsequencesResponseType } from '../models/get-personnalisation-consequences.response';
 import { GetPersonnalisationReglesResponseType } from '../models/get-personnalisation-regles.response';

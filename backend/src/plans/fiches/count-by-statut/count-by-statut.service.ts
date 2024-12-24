@@ -1,5 +1,3 @@
-import { DatabaseService } from '@/backend/common';
-import { getModifiedSinceDate } from '@/backend/common/models/modified-since.enum';
 import {
   axeTable,
   ficheActionPartenaireTagTable,
@@ -9,7 +7,9 @@ import {
   statutsEnumValues,
 } from '@/backend/plans/fiches';
 import { GetFichesActionFilterRequestType } from '@/backend/plans/fiches/shared/fetch-fiches-filter.request';
+import { DatabaseService } from '@/backend/utils';
 import { CountByRecordType } from '@/backend/utils/count-by.dto';
+import { getModifiedSinceDate } from '@/backend/utils/modified-since.enum';
 import { Injectable, Logger } from '@nestjs/common';
 import {
   and,

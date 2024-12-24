@@ -1,9 +1,7 @@
 import { Module } from '@nestjs/common';
 import { AuthModule } from '../auth/auth.module';
 import { CollectivitesModule } from '../collectivites/collectivites.module';
-import { CommonModule } from '../common/common.module';
 import { PersonnalisationsModule } from '../personnalisations/personnalisations.module';
-import { ConfigurationModule } from '../utils/config/configuration.module';
 import { SheetModule } from '../utils/google-sheets/sheet.module';
 import { ComputeScoreRouter } from './compute-score/compute-score.router';
 import { ReferentielsScoringController } from './controllers/referentiels-scoring.controller';
@@ -20,8 +18,6 @@ import { UpdateActionStatutService } from './update-action-statut/update-action-
   imports: [
     AuthModule,
     CollectivitesModule,
-    CommonModule,
-    ConfigurationModule,
     SheetModule,
     PersonnalisationsModule,
   ],

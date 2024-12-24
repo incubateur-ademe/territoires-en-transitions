@@ -1,4 +1,4 @@
-import { modifiedSinceSchema } from '@/backend/common/models/modified-since.enum';
+import { modifiedSinceSchema } from '@/backend/utils/modified-since.enum';
 import { z } from 'zod';
 import { ciblesEnumSchema } from './models/fiche-action.table';
 

@@ -1,8 +1,6 @@
 import { Module } from '@nestjs/common';
 import { AuthModule } from '../auth/auth.module';
 import { CollectivitesModule } from '../collectivites/collectivites.module';
-import { CommonModule } from '../common/common.module';
-import { ConfigurationModule } from '../utils/config/configuration.module';
 import { SheetModule } from '../utils/google-sheets/sheet.module';
 import { IndicateursController } from './controllers/indicateurs.controller';
 import { TrajectoiresController } from './controllers/trajectoires.controller';
@@ -17,13 +15,7 @@ import TrajectoiresSpreadsheetService from './services/trajectoires-spreadsheet.
 import TrajectoiresXlsxService from './services/trajectoires-xlsx.service';
 
 @Module({
-  imports: [
-    ConfigurationModule,
-    CommonModule,
-    AuthModule,
-    CollectivitesModule,
-    SheetModule,
-  ],
+  imports: [AuthModule, CollectivitesModule, SheetModule],
   providers: [
     ExportIndicateursService,
     IndicateurSourcesService,

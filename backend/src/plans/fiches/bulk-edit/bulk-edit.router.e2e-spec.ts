@@ -1,6 +1,5 @@
 import { AuthenticatedUser } from '@/backend/auth/models/auth.models';
 import { libreTagTable } from '@/backend/collectivites';
-import { DatabaseService } from '@/backend/common';
 import {
   getAuthUser,
   getTestApp,
@@ -9,6 +8,7 @@ import {
   YOLO_DODO,
   YULU_DUDU,
 } from '@/backend/test';
+import { DatabaseService } from '@/backend/utils';
 import { AppRouter, TrpcRouter } from '@/backend/utils/trpc/trpc.router';
 import { inferProcedureInput } from '@trpc/server';
 import { eq, inArray, sql } from 'drizzle-orm';

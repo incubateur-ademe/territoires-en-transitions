@@ -26,15 +26,15 @@ import { DateTime } from 'luxon';
 import { AuthenticatedUser } from '../../auth/models/auth.models';
 import { CollectiviteAvecType } from '../../collectivites/identite-collectivite.dto';
 import CollectivitesService from '../../collectivites/services/collectivites.service';
-import DatabaseService from '../../common/services/database.service';
-import { getErrorMessage } from '../../common/services/errors.helper';
-import MattermostNotificationService from '../../common/services/mattermost-notification.service';
-import { roundTo } from '../../common/services/number.helper';
-import { sleep } from '../../common/services/sleep.helper';
 import { GetPersonnalitionConsequencesResponseType } from '../../personnalisations/models/get-personnalisation-consequences.response';
 import ExpressionParserService from '../../personnalisations/services/expression-parser.service';
 import PersonnalisationsService from '../../personnalisations/services/personnalisations-service';
 import ConfigurationService from '../../utils/config/configuration.service';
+import { DatabaseService } from '../../utils/database/database.service';
+import MattermostNotificationService from '../../utils/mattermost-notification.service';
+import { getErrorMessage } from '../../utils/nest/errors.utils';
+import { roundTo } from '../../utils/number.helper';
+import { sleep } from '../../utils/sleep.utils';
 import { actionCommentaireTable } from '../models/action-commentaire.table';
 import {
   ActionPointScoreType,

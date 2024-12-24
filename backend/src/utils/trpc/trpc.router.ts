@@ -6,12 +6,12 @@ import { createExpressMiddleware } from '@trpc/server/adapters/express';
 import { ListCategoriesRouter } from '../../collectivites/handle-categories/list-categories.router';
 import { CollectiviteMembresRouter } from '../../collectivites/membres/membres.router';
 import { PersonnesRouter } from '../../collectivites/personnes.router';
-import SupabaseService from '../../common/services/supabase.service';
 import { IndicateurFiltreRouter } from '../../indicateurs/indicateur-filtre/indicateur-filtre.router';
 import { TrajectoiresRouter } from '../../indicateurs/routers/trajectoires.router';
 import { ComputeScoreRouter } from '../../referentiels/compute-score/compute-score.router';
 import { ScoreSnapshotsRouter } from '../../referentiels/snapshots/score-snaphots.router';
 import { UpdateActionStatutRouter } from '../../referentiels/update-action-statut/update-action-statut.router';
+import SupabaseService from '../database/supabase.service';
 import { createContext, TrpcService } from './trpc.service';
 
 @Injectable()

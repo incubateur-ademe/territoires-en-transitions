@@ -3,8 +3,8 @@ import { ArgumentsHost, Catch, HttpException, Logger } from '@nestjs/common';
 import { BaseExceptionFilter } from '@nestjs/core';
 import { SentryExceptionCaptured } from '@sentry/nestjs';
 import { Request, Response } from 'express';
-import { HttpErrorResponse } from '../models/http-error.response';
-import { getErrorWithCode } from '../services/errors.helper';
+import { getErrorWithCode } from './errors.utils';
+import { HttpErrorResponse } from './http-error.response';
 
 export const getHttpErrorResponse = (exception: unknown): HttpErrorResponse => {
   const errorWithCode = getErrorWithCode(exception);

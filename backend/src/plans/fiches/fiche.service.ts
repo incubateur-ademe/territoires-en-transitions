@@ -5,7 +5,7 @@ import { ResourceType } from '@/backend/auth/authorizations/resource-type.enum';
 import { Injectable, Logger } from '@nestjs/common';
 import { aliasedTable, desc, eq } from 'drizzle-orm';
 import { AuthenticatedUser } from '../../auth/models/auth.models';
-import DatabaseService from '../../common/services/database.service';
+import { DatabaseService } from '../../utils/database/database.service';
 import { ficheActionActionImpactTable } from './shared/models/fiche-action-action-impact.table';
 import { ficheActionActionTable } from './shared/models/fiche-action-action.table';
 import { ficheActionEffetAttenduTable } from './shared/models/fiche-action-effet-attendu.table';

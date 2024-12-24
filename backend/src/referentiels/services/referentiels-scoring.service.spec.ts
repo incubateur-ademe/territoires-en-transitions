@@ -5,16 +5,16 @@ import {
   IdentiteCollectivite,
 } from '../../collectivites/identite-collectivite.dto';
 import CollectivitesService from '../../collectivites/services/collectivites.service';
-import DatabaseService from '../../common/services/database.service';
-import MattermostNotificationService from '../../common/services/mattermost-notification.service';
-import { roundTo } from '../../common/services/number.helper';
 import { GetPersonnalitionConsequencesResponseType } from '../../personnalisations/models/get-personnalisation-consequences.response';
 import { GetPersonnalisationReponsesResponseType } from '../../personnalisations/models/get-personnalisation-reponses.response';
 import { caePersonnalisationRegles } from '../../personnalisations/models/samples/cae-personnalisation-regles.sample';
 import ExpressionParserService from '../../personnalisations/services/expression-parser.service';
 import PersonnalisationsService from '../../personnalisations/services/personnalisations-service';
 import ConfigurationService from '../../utils/config/configuration.service';
+import { DatabaseService } from '../../utils/database/database.service';
 import SheetService from '../../utils/google-sheets/sheet.service';
+import MattermostNotificationService from '../../utils/mattermost-notification.service';
+import { roundTo } from '../../utils/number.helper';
 import { ActionPointScoreType } from '../models/action-point-score.dto';
 import { ActionType } from '../models/action-type.enum';
 import { GetActionStatutsResponseType } from '../models/get-action-statuts.response';

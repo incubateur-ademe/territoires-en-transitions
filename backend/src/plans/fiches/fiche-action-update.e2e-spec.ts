@@ -5,7 +5,7 @@ import { default as request } from 'supertest';
 import { describe, expect, it } from 'vitest';
 import { getTestApp } from '../../../test/app-utils';
 import { getAuthToken } from '../../../test/auth-utils';
-import DatabaseService from '../../common/services/database.service';
+import { DatabaseService } from '../../utils/database/database.service';
 import { UpdateFicheActionRequestClass } from './fiches-action.controller';
 import { UpdateFicheActionRequestType } from './shared/edit-fiche.request';
 import {

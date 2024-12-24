@@ -1,3 +1,4 @@
+import { DatabaseService } from '@/backend/utils';
 import { Injectable, Logger, NotFoundException } from '@nestjs/common';
 import {
   and,
@@ -13,8 +14,7 @@ import { PgTable, PgTransaction } from 'drizzle-orm/pg-core';
 import { PostgresJsQueryResultHKT } from 'drizzle-orm/postgres-js';
 import { toCamel } from 'postgres';
 import { AuthenticatedUser } from '../../auth/models/auth.models';
-import DatabaseService from '../../common/services/database.service';
-import { buildConflictUpdateColumns } from '../../utils/drizzle/conflict.utils';
+import { buildConflictUpdateColumns } from '../../utils/database/conflict.utils';
 import FicheService from './fiche.service';
 import { UpdateFicheActionRequestType } from './shared/edit-fiche.request';
 import { ficheActionActionTable } from './shared/models/fiche-action-action.table';

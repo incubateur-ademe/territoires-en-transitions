@@ -3,7 +3,7 @@ import { default as request } from 'supertest';
 import { getTestApp } from '../../../test/app-utils';
 import { getAuthToken } from '../../../test/auth-utils';
 import { getCollectiviteIdBySiren } from '../../../test/collectivites-utils';
-import { HttpErrorResponse } from '../../common/models/http-error.response';
+import { HttpErrorResponse } from '../../utils/nest/http-error.response';
 import { ActionScoreType } from '../models/action-score.dto';
 import { ActionStatutType } from '../models/action-statut.table';
 import { ActionType } from '../models/action-type.enum';

@@ -1,20 +1,20 @@
+import { dcpTable } from '@/backend/auth';
+import { PermissionOperation } from '@/backend/auth/authorizations/permission-operation.enum';
+import { PermissionService } from '@/backend/auth/authorizations/permission.service';
+import { ResourceType } from '@/backend/auth/authorizations/resource-type.enum';
+import { utilisateurSupportTable } from '@/backend/auth/authorizations/roles/utilisateur-support.table';
+import { utilisateurVerifieTable } from '@/backend/auth/authorizations/roles/utilisateur-verifie.table';
+import { AuthenticatedUser } from '@/backend/auth/models/auth.models';
+import { collectiviteTable } from '@/backend/collectivites';
 import {
   getAuthUser,
   getTestApp,
   getTestDatabase,
   YOULOU_DOUDOU,
 } from '@/backend/test';
+import { DatabaseService } from '@/backend/utils';
 import { INestApplication } from '@nestjs/common';
-import { PermissionService } from '@/backend/auth/authorizations/permission.service';
-import { AuthenticatedUser } from '@/backend/auth/models/auth.models';
-import { PermissionOperation } from '@/backend/auth/authorizations/permission-operation.enum';
-import { ResourceType } from '@/backend/auth/authorizations/resource-type.enum';
-import DatabaseService from '../../common/services/database.service';
 import { eq } from 'drizzle-orm';
-import { utilisateurSupportTable } from '@/backend/auth/authorizations/roles/utilisateur-support.table';
-import { utilisateurVerifieTable } from '@/backend/auth/authorizations/roles/utilisateur-verifie.table';
-import { dcpTable } from '@/backend/auth';
-import { collectiviteTable } from '@/backend/collectivites';
 
 describe('Gestion des droits', () => {
   let app: INestApplication;
