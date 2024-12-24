@@ -1,8 +1,8 @@
 import { inferProcedureInput } from '@trpc/server';
 import { getTestRouter } from '../../../test/app-utils';
 import { getAuthUser } from '../../../test/auth-utils';
+import { AuthenticatedUser } from '../../auth/models/auth.models';
 import { AppRouter, TrpcRouter } from '../../utils/trpc/trpc.router';
-import { AuthenticatedUser } from './../../auth/models/auth.models';
 import {
   GetFilteredIndicateurRequestQueryOptionType,
   GetFilteredIndicateursRequestOptionType,
