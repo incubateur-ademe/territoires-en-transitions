@@ -1,5 +1,5 @@
-import { TagInsert } from '@/backend/collectivites';
-import { Thematique } from '@/backend/shared';
+import { TagInsert } from '@/domain/collectivites';
+import { Thematique } from '@/domain/shared';
 import { beforeAll, describe, expect, test } from 'vitest';
 import { Personne } from '../../collectivites/shared/domain/personne.schema';
 import { FicheResume } from '../../plan-actions/domain/fiche-action.schema';

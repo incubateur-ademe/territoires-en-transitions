@@ -1,5 +1,5 @@
 import { getFormattedNumber } from '@/app/utils/formatUtils';
-import { FinanceurUpdate } from '@/backend/plans/fiches';
+import { FinanceurUpdate } from '@/domain/plans/fiches';
 import { Badge } from '@/ui';
 
 type FinanceursListeProps = {

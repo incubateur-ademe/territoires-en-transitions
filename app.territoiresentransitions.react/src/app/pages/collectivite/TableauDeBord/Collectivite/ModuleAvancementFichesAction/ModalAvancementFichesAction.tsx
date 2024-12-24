@@ -23,7 +23,7 @@ import {
 } from '@/app/ui/dropdownLists/PersonnesDropdown/utils';
 import PlansActionDropdown from '@/app/ui/dropdownLists/PlansActionDropdown';
 import ServicesPilotesDropdown from '@/app/ui/dropdownLists/ServicesPilotesDropdown/ServicesPilotesDropdown';
-import { Cible } from '@/backend/plans/fiches';
+import { Cible } from '@/domain/plans/fiches';
 
 type Props = ModalProps & {
   module: ModuleFicheActionCountByStatusSelect;

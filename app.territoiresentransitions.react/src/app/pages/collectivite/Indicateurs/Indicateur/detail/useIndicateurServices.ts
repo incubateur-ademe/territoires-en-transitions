@@ -1,7 +1,7 @@
 import { Indicateurs } from '@/api';
 import { supabaseClient } from '@/app/core-logic/api/supabase';
 import { useCollectiviteId } from '@/app/core-logic/hooks/params';
-import { Tag } from '@/backend/collectivites';
+import { Tag } from '@/domain/collectivites';
 import { useMutation, useQuery, useQueryClient } from 'react-query';
 
 /** Met à jour les services pilotes d'un indicateur */

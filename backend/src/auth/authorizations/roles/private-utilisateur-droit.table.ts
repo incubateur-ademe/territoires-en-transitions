@@ -1,4 +1,4 @@
-import { createdAt, modifiedAt } from '@/backend/utils';
+import { createdAt, modifiedAt } from '@/domain/utils';
 import { InferSelectModel } from 'drizzle-orm';
 import { boolean, integer, pgTable, serial, uuid } from 'drizzle-orm/pg-core';
 import { collectiviteTable } from '../../../collectivites/shared/models/collectivite.table';

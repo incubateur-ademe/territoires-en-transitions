@@ -1,5 +1,5 @@
-import { Tag, TagInsert } from '@/backend/collectivites';
-import { Thematique } from '@/backend/shared';
+import { Tag, TagInsert } from '@/domain/collectivites';
+import { Thematique } from '@/domain/shared';
 import { isNil } from 'es-toolkit/predicate';
 import { objectToSnake } from 'ts-case-convert';
 import { Personne } from '../../collectivites/shared/domain/personne.schema';

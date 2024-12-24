@@ -2,8 +2,8 @@ import { Indicateurs } from '@/api';
 import { Personne } from '@/api/collectivites';
 import { supabaseClient } from '@/app/core-logic/api/supabase';
 import { useCollectiviteId } from '@/app/core-logic/hooks/params';
-import { Tag } from '@/backend/collectivites';
-import { Thematique } from '@/backend/shared';
+import { Tag } from '@/domain/collectivites';
+import { Thematique } from '@/domain/shared';
 import { useMutation } from 'react-query';
 
 /** Met à jour les pilotes, les services pilotes, les thématique d'un indicateur */

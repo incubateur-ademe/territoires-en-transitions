@@ -1,8 +1,8 @@
+import { effetAttenduTable } from '@/domain/shared';
 import { sql } from 'drizzle-orm';
 import { integer, pgPolicy, pgTable, primaryKey } from 'drizzle-orm/pg-core';
 import { authenticatedRole } from 'drizzle-orm/supabase';
 import { ficheActionTable } from './fiche-action.table';
-import { effetAttenduTable } from '@/backend/shared';
 
 export const ficheActionEffetAttenduTable = pgTable(
   'fiche_action_effet_attendu',

@@ -5,7 +5,7 @@ import {
   ParticipationCitoyenne,
   Priorite,
   Statut,
-} from '@/backend/plans/fiches';
+} from '@/domain/plans/fiches';
 
 type Options<T extends string> = {
   value: T;

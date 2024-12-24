@@ -1,4 +1,4 @@
-import { Statut } from '@/backend/plans/fiches';
+import { Statut } from '@/domain/plans/fiches';
 import { preset } from '@/ui';
 
 /** Correspondance entre les statuts et couleurs associées */

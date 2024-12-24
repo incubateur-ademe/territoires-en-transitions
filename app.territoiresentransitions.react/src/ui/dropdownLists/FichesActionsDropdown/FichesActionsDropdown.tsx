@@ -2,7 +2,7 @@ import { FicheResume } from '@/api/plan-actions';
 import { useFicheResumesFetch } from '@/app/app/pages/collectivite/PlansActions/FicheAction/data/useFicheResumesFetch';
 import { generateTitle } from '@/app/app/pages/collectivite/PlansActions/FicheAction/data/utils';
 import { naturalSort } from '@/app/utils/naturalSort';
-import { CreateAxeType } from '@/backend/plans/fiches';
+import { CreateAxeType } from '@/domain/plans/fiches';
 import {
   Option,
   OptionValue,

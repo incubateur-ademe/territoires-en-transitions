@@ -12,7 +12,7 @@ import { TDBViewParam } from '@/app/app/paths';
 import { useCurrentCollectivite } from '@/app/core-logic/hooks/useCurrentCollectivite';
 import Chart from '@/app/ui/charts/Chart';
 import PictoDocument from '@/app/ui/pictogrammes/PictoDocument';
-import { Statut } from '@/backend/plans/fiches';
+import { Statut } from '@/domain/plans/fiches';
 import { useEventTracker } from '@/ui';
 import Link from 'next/link';
 import { useRouter } from 'next/navigation';

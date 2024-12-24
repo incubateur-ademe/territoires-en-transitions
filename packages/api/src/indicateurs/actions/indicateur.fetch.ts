@@ -19,7 +19,7 @@ import {
   ValeurComparaison,
   ValeurComparaisonLigne,
 } from '../domain/valeur.schema';
-import { Thematique } from '@/backend/shared';
+import { Thematique } from '@/domain/shared';
 
 // cas spécial pour cet indicateur TODO: utiliser un champ distinct dans les markdowns plutôt que cet ID "en dur"
 const ID_COMPACITE_FORMES_URBAINES = 'cae_9';

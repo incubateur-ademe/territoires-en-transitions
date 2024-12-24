@@ -1,5 +1,5 @@
 import FinanceursDropdown from '@/app/ui/dropdownLists/FinanceursDropdown/FinanceursDropdown';
-import { Financeur, FinanceurUpdate } from '@/backend/plans/fiches';
+import { Financeur, FinanceurUpdate } from '@/domain/plans/fiches';
 import { Button, Field, Input } from '@/ui';
 
 type FinanceurPartial = Omit<Financeur, 'id' | 'ficheId' | 'financeurTagId'>;

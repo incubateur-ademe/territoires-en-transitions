@@ -1,4 +1,4 @@
-import { EffetAttendu } from '@/backend/shared';
+import { EffetAttendu } from '@/domain/shared';
 import { SelectFilter, SelectMultipleProps } from '@/ui';
 import { useEffetsAttendus } from './useEffetsAttendus';
 

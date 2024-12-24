@@ -2,7 +2,7 @@ import { generateTitle } from '@/app/app/pages/collectivite/PlansActions/FicheAc
 import Statuts from '@/app/app/pages/collectivite/PlansActions/PlanAction/list/card/Statuts';
 import { useFichesActionStatuts } from '@/app/app/pages/collectivite/TableauDeBord/Collectivite/ModuleAvancementFichesAction/useFichesActionStatuts';
 import { ModuleDisplay } from '@/app/app/pages/collectivite/TableauDeBord/components/Module';
-import { Axe } from '@/backend/plans/fiches';
+import { Axe } from '@/domain/plans/fiches';
 import { Card } from '@/ui';
 import classNames from 'classnames';
 

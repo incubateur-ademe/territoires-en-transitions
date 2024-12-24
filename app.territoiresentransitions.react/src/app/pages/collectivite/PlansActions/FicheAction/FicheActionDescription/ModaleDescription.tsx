@@ -4,7 +4,7 @@ import SousThematiquesDropdown from '@/app/ui/dropdownLists/SousThematiquesDropd
 import TagsSuiviPersoDropdown from '@/app/ui/dropdownLists/TagsSuiviPersoDropdown/TagsSuiviPersoDropdown';
 import ThematiquesDropdown from '@/app/ui/dropdownLists/ThematiquesDropdown/ThematiquesDropdown';
 import { getMaxLengthMessage } from '@/app/utils/formatUtils';
-import { Thematique } from '@/backend/shared';
+import { Thematique } from '@/domain/shared';
 import {
   Button,
   Field,

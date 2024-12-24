@@ -1,4 +1,4 @@
-import { modifiedAt, modifiedBy } from '@/backend/utils';
+import { modifiedAt, modifiedBy } from '@/domain/utils';
 import { InferInsertModel, InferSelectModel } from 'drizzle-orm';
 import {
   boolean,

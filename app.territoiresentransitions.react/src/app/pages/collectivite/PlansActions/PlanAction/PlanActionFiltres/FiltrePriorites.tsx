@@ -1,5 +1,5 @@
 import { TOption } from '@/app/ui/shared/select/commons';
-import { Priorite } from '@/backend/plans/fiches';
+import { Priorite } from '@/domain/plans/fiches';
 import { Field, OptionValue, SelectFilter } from '@/ui';
 import { ficheActionNiveauPrioriteOptions } from '../../../../../../ui/dropdownLists/listesStatiques';
 import BadgePriorite from '../../components/BadgePriorite';

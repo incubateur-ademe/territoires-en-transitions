@@ -2,7 +2,7 @@ import BadgeStatut from '@/app/app/pages/collectivite/PlansActions/components/Ba
 import { statutToColor } from '@/app/app/pages/collectivite/PlansActions/FicheAction/utils';
 import { ModuleDisplay } from '@/app/app/pages/collectivite/TableauDeBord/components/Module';
 import Chart from '@/app/ui/charts/Chart';
-import { Statut } from '@/backend/plans/fiches';
+import { Statut } from '@/domain/plans/fiches';
 import { Tooltip } from '@/ui';
 
 type Props = {

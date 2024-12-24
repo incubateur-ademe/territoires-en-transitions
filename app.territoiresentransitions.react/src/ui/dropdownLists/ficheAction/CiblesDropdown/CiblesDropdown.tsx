@@ -1,4 +1,4 @@
-import { Cible } from '@/backend/plans/fiches';
+import { Cible } from '@/domain/plans/fiches';
 import { SelectFilter, SelectMultipleProps } from '@/ui';
 import { ficheActionCiblesOptions } from '../../listesStatiques';
 

@@ -1,5 +1,5 @@
 import { DBClient } from '@/api/typeUtils';
-import { Axe, PlanActionType } from '@/backend/plans/fiches';
+import { Axe, PlanActionType } from '@/domain/plans/fiches';
 import { objectToCamel } from 'ts-case-convert';
 import {
   FetchOptions,

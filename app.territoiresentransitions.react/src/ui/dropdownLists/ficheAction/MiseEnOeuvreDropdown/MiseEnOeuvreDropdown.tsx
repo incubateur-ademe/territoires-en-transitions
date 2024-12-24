@@ -1,4 +1,4 @@
-import { TempsDeMiseEnOeuvre } from '@/backend/shared';
+import { TempsDeMiseEnOeuvre } from '@/domain/shared';
 import { Select, SelectProps } from '@/ui';
 import { useMiseEnOeuvre } from './useMiseEnOeuvre';
 
