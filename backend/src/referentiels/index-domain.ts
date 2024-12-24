@@ -2,3 +2,4 @@
 // Exports from this file can be imported with `@/domain/*` alias path.
 
 export * from './models/action-relation.table';
+export * from './models/referentiel.enum';

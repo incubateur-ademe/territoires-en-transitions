@@ -1,5 +1,5 @@
+import { referentielTypeEnumSchema } from '@/domain/referentiels';
 import { z } from 'zod';
-import { referentielSchema } from './enum.schema';
 
 /**
  * Schéma zod d'une action du référentiel
@@ -7,10 +7,5 @@ import { referentielSchema } from './enum.schema';
 export const actionSchema = z.object({
   id: z.string(),
   parent: z.string().nullish(),
-  referentiel: referentielSchema,
+  referentiel: referentielTypeEnumSchema,
 });
-
-/**
- * Type TS d'une action du référentiel
- */
-export type Action = z.input<typeof actionSchema>;
