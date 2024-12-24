@@ -21,7 +21,7 @@ import {
   IndicateurValeur,
   IndicateurValeurAvecMetadonnesDefinition,
 } from '../models/indicateur-valeur.table';
-import IndicateurSourcesService from '../services/indicateur-sources.service';
+import IndicateurSourcesService from '../sources/indicateur-sources.service';
 import CrudValeursService from '../valeurs/crud-valeurs.service';
 import { DonneesARemplirResultType } from './donnees-a-remplir-result.dto';
 import { DonneesARemplirValeurType } from './donnees-a-remplir-valeur.dto';

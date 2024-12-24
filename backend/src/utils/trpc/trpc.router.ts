@@ -6,7 +6,7 @@ import { createExpressMiddleware } from '@trpc/server/adapters/express';
 import { ListCategoriesRouter } from '../../collectivites/handle-categories/list-categories.router';
 import { CollectiviteMembresRouter } from '../../collectivites/membres/membres.router';
 import { PersonnesRouter } from '../../collectivites/personnes.router';
-import { IndicateurFiltreRouter } from '../../indicateurs/list-indicateurs/indicateur-filtre.router';
+import { IndicateurFiltreRouter } from '../../indicateurs/definitions/indicateur-filtre.router';
 import { TrajectoiresRouter } from '../../indicateurs/trajectoires/trajectoires.router';
 import { ComputeScoreRouter } from '../../referentiels/compute-score/compute-score.router';
 import { ScoreSnapshotsRouter } from '../../referentiels/snapshots/score-snaphots.router';

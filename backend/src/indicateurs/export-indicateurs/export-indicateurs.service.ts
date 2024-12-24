@@ -12,7 +12,7 @@ import {
   BOLD,
   normalizeWorksheetName,
 } from '../../utils/excel/excel.utils';
-import ListDefinitionsService from '../list-indicateurs/list-definitions.service';
+import ListDefinitionsService from '../definitions/list-definitions.service';
 import { ExportIndicateursRequestType } from '../models/export-indicateurs.request';
 import {
   IndicateurDefinitionAvecEnfantsType,
