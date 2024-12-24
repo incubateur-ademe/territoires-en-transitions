@@ -3,12 +3,12 @@ import { Body, Controller, Get, Logger, Post, Query } from '@nestjs/common';
 import { ApiCreatedResponse, ApiResponse, ApiTags } from '@nestjs/swagger';
 import { TokenInfo } from '../../auth/decorators/token-info.decorators';
 import type { AuthenticatedUser } from '../../auth/models/auth.models';
-import { getIndicateursValeursRequestSchema } from '../models/get-indicateurs.request';
-import { getIndicateursValeursResponseSchema } from '../models/get-indicateurs.response';
+import { getIndicateursValeursRequestSchema } from '../shared/models/get-indicateurs.request';
+import { getIndicateursValeursResponseSchema } from '../shared/models/get-indicateurs.response';
 import {
   UpsertIndicateursValeursRequest,
   UpsertIndicateursValeursResponse,
-} from '../models/upsert-indicateurs-valeurs.request';
+} from '../shared/models/upsert-indicateurs-valeurs.request';
 import CrudValeursService from './crud-valeurs.service';
 
 /**

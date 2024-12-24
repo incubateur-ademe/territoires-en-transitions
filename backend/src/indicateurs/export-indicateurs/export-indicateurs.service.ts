@@ -13,13 +13,13 @@ import {
   normalizeWorksheetName,
 } from '../../utils/excel/excel.utils';
 import ListDefinitionsService from '../definitions/list-definitions.service';
-import { ExportIndicateursRequestType } from '../models/export-indicateurs.request';
+import { ExportIndicateursRequestType } from '../shared/models/export-indicateurs.request';
 import {
   IndicateurDefinitionAvecEnfantsType,
   IndicateurDefinitionEssential,
-} from '../models/indicateur-definition.table';
-import { SourceMetadonnee } from '../models/indicateur-source-metadonnee.table';
-import { IndicateurValeurAvecMetadonnesDefinition } from '../models/indicateur-valeur.table';
+} from '../shared/models/indicateur-definition.table';
+import { SourceMetadonnee } from '../shared/models/indicateur-source-metadonnee.table';
+import { IndicateurValeurAvecMetadonnesDefinition } from '../shared/models/indicateur-valeur.table';
 import CrudValeursService from '../valeurs/crud-valeurs.service';
 
 @Injectable()

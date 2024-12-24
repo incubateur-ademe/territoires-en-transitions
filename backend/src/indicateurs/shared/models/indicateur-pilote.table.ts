@@ -1,7 +1,6 @@
 import { integer, pgTable, serial, uuid } from 'drizzle-orm/pg-core';
-import { collectiviteTable } from '../../collectivites/shared/models/collectivite.table';
-import { personneTagTable } from '../../collectivites/shared/models/personne-tag.table';
 import { indicateurDefinitionTable } from './indicateur-definition.table';
+import { collectiviteTable, personneTagTable } from '@/domain/collectivites';
 
 export const indicateurPiloteTable = pgTable('indicateur_pilote', {
   id: serial('id').primaryKey(),

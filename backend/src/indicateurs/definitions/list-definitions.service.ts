@@ -17,8 +17,8 @@ import {
   IndicateurDefinition,
   IndicateurDefinitionAvecEnfantsType,
   indicateurDefinitionTable,
-} from '../models/indicateur-definition.table';
-import { indicateurGroupeTable } from '../models/indicateur-groupe.table';
+} from '../shared/models/indicateur-definition.table';
+import { indicateurGroupeTable } from '../shared/models/indicateur-groupe.table';
 
 @Injectable()
 export default class ListDefinitionsService {

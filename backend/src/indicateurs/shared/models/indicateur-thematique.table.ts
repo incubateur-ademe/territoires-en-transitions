@@ -1,5 +1,5 @@
+import { thematiqueTable } from '@/domain/shared';
 import { integer, pgTable, primaryKey } from 'drizzle-orm/pg-core';
-import { thematiqueTable } from '../../shared/models/thematique.table';
 import { indicateurDefinitionTable } from './indicateur-definition.table';
 
 export const indicateurThematiqueTable = pgTable(

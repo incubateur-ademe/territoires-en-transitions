@@ -13,15 +13,15 @@ import { categorieTagTable } from '../../collectivites/shared/models/categorie-t
 import { groupementCollectiviteTable } from '../../collectivites/shared/models/groupement-collectivite.table';
 import { ficheActionTable } from '../../plans/fiches/shared/models/fiche-action.table';
 import { DatabaseService } from '../../utils/database/database.service';
-import { indicateurActionTable } from '../models/indicateur-action.table';
-import { indicateurCategorieTagTable } from '../models/indicateur-categorie-tag.table';
-import { indicateurCollectiviteTable } from '../models/indicateur-collectivite.table';
-import { indicateurDefinitionTable } from '../models/indicateur-definition.table';
-import { indicateurGroupeTable } from '../models/indicateur-groupe.table';
-import { indicateurPiloteTable } from '../models/indicateur-pilote.table';
-import { indicateurServiceTagTable } from '../models/indicateur-service-tag.table';
-import { indicateurThematiqueTable } from '../models/indicateur-thematique.table';
-import { indicateurValeurTable } from '../models/indicateur-valeur.table';
+import { indicateurActionTable } from '../shared/models/indicateur-action.table';
+import { indicateurCategorieTagTable } from '../shared/models/indicateur-categorie-tag.table';
+import { indicateurCollectiviteTable } from '../shared/models/indicateur-collectivite.table';
+import { indicateurDefinitionTable } from '../shared/models/indicateur-definition.table';
+import { indicateurGroupeTable } from '../shared/models/indicateur-groupe.table';
+import { indicateurPiloteTable } from '../shared/models/indicateur-pilote.table';
+import { indicateurServiceTagTable } from '../shared/models/indicateur-service-tag.table';
+import { indicateurThematiqueTable } from '../shared/models/indicateur-thematique.table';
+import { indicateurValeurTable } from '../shared/models/indicateur-valeur.table';
 import {
   GetFilteredIndicateurRequestQueryOptionType,
   GetFilteredIndicateursRequestOptionType,

@@ -1,7 +1,7 @@
 import { getAuthToken, getTestApp } from '@/backend/test';
 import { INestApplication } from '@nestjs/common';
 import { default as request } from 'supertest';
-import { UpsertIndicateursValeursRequest } from '../models/upsert-indicateurs-valeurs.request';
+import { UpsertIndicateursValeursRequest } from '../shared/models/upsert-indicateurs-valeurs.request';
 
 describe('Indicateurs', () => {
   let app: INestApplication;

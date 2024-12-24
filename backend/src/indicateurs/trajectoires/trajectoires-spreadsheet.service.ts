@@ -13,8 +13,8 @@ import { EpciType } from '../../collectivites/shared/models/epci.table';
 import ConfigurationService from '../../utils/config/configuration.service';
 import SheetService from '../../utils/google-sheets/sheet.service';
 import ListDefinitionsService from '../definitions/list-definitions.service';
-import { IndicateurDefinition } from '../models/indicateur-definition.table';
-import { IndicateurValeurInsert } from '../models/indicateur-valeur.table';
+import { IndicateurDefinition } from '../shared/models/indicateur-definition.table';
+import { IndicateurValeurInsert } from '../shared/models/indicateur-valeur.table';
 import IndicateurSourcesService from '../sources/indicateur-sources.service';
 import CrudValeursService from '../valeurs/crud-valeurs.service';
 import {

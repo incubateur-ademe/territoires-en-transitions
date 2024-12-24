@@ -5,11 +5,11 @@ import {
   indicateurSourceMetadonneeTable,
   SourceMetadonnee,
   SourceMetadonneeInsert,
-} from '../models/indicateur-source-metadonnee.table';
+} from '../shared/models/indicateur-source-metadonnee.table';
 import {
   indicateurSourceTable,
   SourceInsert,
-} from '../models/indicateur-source.table';
+} from '../shared/models/indicateur-source.table';
 
 @Injectable()
 export default class IndicateurSourcesService {

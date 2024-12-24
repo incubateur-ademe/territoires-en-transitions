@@ -2,13 +2,13 @@ import { PermissionService } from '@/backend/auth/authorizations/permission.serv
 import { Test } from '@nestjs/testing';
 import * as _ from 'lodash';
 import { DatabaseService } from '../../utils/database/database.service';
-import { IndicateurDefinition } from '../models/indicateur-definition.table';
-import { SourceMetadonnee } from '../models/indicateur-source-metadonnee.table';
+import { IndicateurDefinition } from '../shared/models/indicateur-definition.table';
+import { SourceMetadonnee } from '../shared/models/indicateur-source-metadonnee.table';
 import {
   IndicateurAvecValeurs,
   IndicateurValeur,
   IndicateurValeurAvecMetadonnesDefinition,
-} from '../models/indicateur-valeur.table';
+} from '../shared/models/indicateur-valeur.table';
 import CrudValeursService, {
   IndicateurAvecValeursParSource,
 } from './crud-valeurs.service';

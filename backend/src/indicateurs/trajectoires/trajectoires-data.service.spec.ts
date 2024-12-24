@@ -3,7 +3,7 @@ import { Test } from '@nestjs/testing';
 import CollectivitesService from '../../collectivites/services/collectivites.service';
 import SheetService from '../../utils/google-sheets/sheet.service';
 import ListDefinitionsService from '../definitions/list-definitions.service';
-import { IndicateurValeur } from '../models/indicateur-valeur.table';
+import { IndicateurValeur } from '../shared/models/indicateur-valeur.table';
 import IndicateurSourcesService from '../sources/indicateur-sources.service';
 import CrudValeursService from '../valeurs/crud-valeurs.service';
 import TrajectoiresDataService from './trajectoires-data.service';

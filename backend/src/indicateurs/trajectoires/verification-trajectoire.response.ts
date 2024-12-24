@@ -1,7 +1,7 @@
 import { extendApi } from '@anatine/zod-openapi';
 import { z } from 'zod';
 import { epciSchema } from '../../collectivites/shared/models/epci.table';
-import { IndicateurValeur } from '../models/indicateur-valeur.table';
+import { IndicateurValeur } from '../shared/models/indicateur-valeur.table';
 import { donneesCalculTrajectoireARemplirSchema } from './donnees-calcul-trajectoire-a-remplir.dto';
 
 export enum VerificationTrajectoireStatus {

@@ -1,5 +1,5 @@
+import { categorieTagTable } from '@/domain/collectivites';
 import { integer, pgTable, primaryKey } from 'drizzle-orm/pg-core';
-import { categorieTagTable } from '../../collectivites/shared/models/categorie-tag.table';
 import { indicateurDefinitionTable } from './indicateur-definition.table';
 
 export const indicateurCategorieTagTable = pgTable(

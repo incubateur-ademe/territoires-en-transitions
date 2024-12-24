@@ -21,18 +21,18 @@ import { groupBy, partition } from 'es-toolkit';
 import * as _ from 'lodash';
 import { AuthenticatedUser, AuthRole } from '../../auth/models/auth.models';
 import { DatabaseService } from '../../utils/database/database.service';
-import { DeleteIndicateursValeursRequestType } from '../models/delete-indicateurs.request';
-import { GetIndicateursValeursRequestType } from '../models/get-indicateurs.request';
-import { GetIndicateursValeursResponseType } from '../models/get-indicateurs.response';
+import { DeleteIndicateursValeursRequestType } from '../shared/models/delete-indicateurs.request';
+import { GetIndicateursValeursRequestType } from '../shared/models/get-indicateurs.request';
+import { GetIndicateursValeursResponseType } from '../shared/models/get-indicateurs.response';
 import {
   IndicateurDefinition,
   IndicateurDefinitionEssential,
   indicateurDefinitionTable,
-} from '../models/indicateur-definition.table';
+} from '../shared/models/indicateur-definition.table';
 import {
   indicateurSourceMetadonneeTable,
   SourceMetadonnee,
-} from '../models/indicateur-source-metadonnee.table';
+} from '../shared/models/indicateur-source-metadonnee.table';
 import {
   IndicateurAvecValeurs,
   indicateurAvecValeursParSourceSchema,
@@ -42,7 +42,7 @@ import {
   IndicateurValeurInsert,
   indicateurValeursGroupeeParSourceSchema,
   indicateurValeurTable,
-} from '../models/indicateur-valeur.table';
+} from '../shared/models/indicateur-valeur.table';
 
 export class IndicateurValeurGroupee extends createZodDto(
   extendApi(indicateurValeurGroupeeSchema)

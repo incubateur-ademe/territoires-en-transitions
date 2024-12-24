@@ -15,12 +15,12 @@ import { EpciType } from '../../collectivites/shared/models/epci.table';
 import {
   SourceMetadonnee,
   SourceMetadonneeInsert,
-} from '../models/indicateur-source-metadonnee.table';
-import { SourceInsert } from '../models/indicateur-source.table';
+} from '../shared/models/indicateur-source-metadonnee.table';
+import { SourceInsert } from '../shared/models/indicateur-source.table';
 import {
   IndicateurValeur,
   IndicateurValeurAvecMetadonnesDefinition,
-} from '../models/indicateur-valeur.table';
+} from '../shared/models/indicateur-valeur.table';
 import IndicateurSourcesService from '../sources/indicateur-sources.service';
 import CrudValeursService from '../valeurs/crud-valeurs.service';
 import { DonneesARemplirResultType } from './donnees-a-remplir-result.dto';
