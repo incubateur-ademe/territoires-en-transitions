@@ -47,7 +47,7 @@ const Selection = () => {
           <SelectFlowButton
             dataTest="InitierPlan"
             title="Initier votre plan d’action"
-            subTitle="grâce au Panier d'Actions à Impact"
+            subTitle="grâce aux “Actions à Impact”"
             icon={<ShoppingBasket className="my-3" />}
             url={makeCollectivitePanierUrl({
               collectiviteId: collectivite_id,
