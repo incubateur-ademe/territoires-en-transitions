@@ -34,7 +34,7 @@ export const AccesPanierAction = () => {
         );
       }}
     >
-      Panier d'action
+      Actions à Impact
     </Button>
   );
 };
