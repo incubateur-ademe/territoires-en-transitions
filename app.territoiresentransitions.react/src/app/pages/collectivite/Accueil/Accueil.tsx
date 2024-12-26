@@ -189,17 +189,19 @@ const Accueil = (): JSX.Element => {
             picto={<PictoPanierActions />}
             title={
               panier && panier.count > 0
-                ? `${panier.count} actions dans votre panier`
-                : 'Panier d’actions'
+                ? `${panier.count} action${
+                    panier.count > 1 ? 's' : ''
+                  } à impact sélectionnée${panier.count > 1 ? 's' : ''}`
+                : 'Actions à Impact'
             }
             description="Identifiez de nouvelles actions à mettre en place sur votre territoire pour accélérer la transition écologique."
-            additionalInfos="Communes ou intercommunalités, quelque soit votre engagement actuel dans la transition écologique, constituez-vous une base d’actions adaptées à vos compétences."
+            additionalInfos="Communes ou intercommunalités, quel que soit votre engagement actuel dans la transition écologique, constituez-vous une base d’actions adaptées à vos compétences."
             buttons={[
               {
                 children:
                   panier && panier.count > 0
                     ? 'Reprendre ma sélection d’actions'
-                    : 'Tester le panier',
+                    : 'Tester les actions à impact',
                 href: makeCollectivitePanierUrl({
                   collectiviteId,
                   panierId: panier?.panierId,
