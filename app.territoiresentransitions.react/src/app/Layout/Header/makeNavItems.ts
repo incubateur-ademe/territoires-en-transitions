@@ -6,6 +6,7 @@ import {
   makeCollectiviteJournalUrl,
   makeCollectiviteLabellisationRootUrl,
   makeCollectiviteLabellisationUrl,
+  makeCollectivitePanierUrl,
   makeCollectivitePersoRefUrl,
   makeCollectivitePlansActionsLandingUrl,
   makeCollectivitePlansActionsSyntheseUrl,
@@ -55,6 +56,13 @@ const makeNavItemsBase = (
       label: 'Accueil',
       to: makeCollectiviteAccueilUrl({ collectiviteId }),
       dataTest: 'nav-home',
+    },
+    {
+      label: 'Actions à Impact',
+      dataTest: 'pa-actions-impact',
+      to: makeCollectivitePanierUrl({
+        collectiviteId,
+      }),
     },
     {
       confidentiel,
