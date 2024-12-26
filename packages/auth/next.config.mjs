@@ -1,4 +1,4 @@
-import {composePlugins, withNx} from '@nx/next';
+import { composePlugins, withNx } from '@nx/next';
 
 /**
  * @type {import('@nx/next/plugins/with-nx').WithNxOptions}
@@ -10,6 +10,10 @@ const nextConfig = {
     svgr: false,
   },
 
+  typescript: {
+    tsconfigPath: './tsconfig.json',
+  },
+
   // active le mode strict pour détecter les problèmes en dev
   reactStrictMode: true,
   // active la minification
@@ -19,7 +23,7 @@ const nextConfig = {
     esmExternals: 'loose',
   },
   // surcharge la config webpack
-  webpack: config => {
+  webpack: (config) => {
     // pour le chargement des fontes au format woff2
     config.module.rules.push({
       test: /\.woff2$/,

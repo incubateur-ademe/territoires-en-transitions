@@ -1,6 +1,6 @@
 import { Injectable, Logger } from '@nestjs/common';
 import { and, eq } from 'drizzle-orm';
-import DatabaseService from '../../common/services/database.service';
+import { DatabaseService } from '../../utils/database/database.service';
 import {
   CreateIndicateurSourceMetadonneeType,
   indicateurSourceMetadonneeTable,

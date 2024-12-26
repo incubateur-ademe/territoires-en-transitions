@@ -1,15 +1,16 @@
 import { Module } from '@nestjs/common';
-import { CommonModule } from '../common/common.module';
-import { CollectiviteController } from './controllers/collectivite.controller';
+import { CollectiviteController } from './collectivite.controller';
+import { ListCategoriesRouter } from './handle-categories/list-categories.router';
+import ListCategoriesService from './handle-categories/list-categories.service';
+import { CollectiviteMembresRouter } from './membres/membres.router';
+import { CollectiviteMembresService } from './membres/membres.service';
 import { PersonnesRouter } from './personnes.router';
 import CollectivitesService from './services/collectivites.service';
 import GroupementsService from './services/groupements.service';
 import { PersonnesService } from './services/personnes.service';
-import { CollectiviteMembresService } from './membres/membres.service';
-import { CollectiviteMembresRouter } from './membres/membres.router';
 
 @Module({
-  imports: [CommonModule],
+  imports: [],
   providers: [
     CollectivitesService,
     CollectiviteMembresService,
@@ -17,6 +18,8 @@ import { CollectiviteMembresRouter } from './membres/membres.router';
     GroupementsService,
     PersonnesService,
     PersonnesRouter,
+    ListCategoriesService,
+    ListCategoriesRouter,
   ],
   exports: [
     CollectivitesService,
@@ -24,6 +27,8 @@ import { CollectiviteMembresRouter } from './membres/membres.router';
     CollectiviteMembresRouter,
     GroupementsService,
     PersonnesRouter,
+    ListCategoriesService,
+    ListCategoriesRouter,
   ],
   controllers: [CollectiviteController],
 })

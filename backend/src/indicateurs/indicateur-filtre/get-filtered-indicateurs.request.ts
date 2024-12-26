@@ -1,4 +1,4 @@
-import { getQueryOptionsSchema } from '@/api/shared/domain';
+import { getPaginationSchema } from '@/backend/utils';
 import { z } from 'zod';
 
 export const getFilteredIndicateursRequestOptionsSchema = z.object({
@@ -134,7 +134,7 @@ export type GetFilteredIndicateursRequestOptionType = z.infer<
 >;
 
 export const getFilteredIndicateurRequestQueryOptionSchema =
-  getQueryOptionsSchema(['text', 'estComplet']);
+  getPaginationSchema(['text', 'estComplet']);
 
 export type GetFilteredIndicateurRequestQueryOptionType = z.infer<
   typeof getFilteredIndicateurRequestQueryOptionSchema

@@ -1,7 +1,11 @@
+import {
+  ciblesEnumSchema,
+  prioriteEnumSchema,
+  statutsEnumSchema,
+} from '@/domain/plans/fiches';
+import { getPaginationSchema } from '@/domain/utils';
 import { z } from 'zod';
 import { filtreRessourceLieesSchema } from '../../../collectivites/shared/domain/filtre-ressource-liees.schema';
-import { getQueryOptionsSchema } from '../../../shared/domain/query_options.schema';
-import { cibleSchema, niveauPrioriteSchema, statutSchema } from '../../domain';
 
 export const modifiedSinceSchema = z.enum([
   'last-90-days',
@@ -13,9 +17,9 @@ export const modifiedSinceSchema = z.enum([
 export type ModifiedSince = z.infer<typeof modifiedSinceSchema>;
 
 export const filtreSpecifiqueSchema = z.object({
-  statuts: statutSchema.array().optional(),
-  priorites: niveauPrioriteSchema.array().optional(),
-  cibles: cibleSchema.array().optional(),
+  statuts: statutsEnumSchema.array().optional(),
+  priorites: prioriteEnumSchema.array().optional(),
+  cibles: ciblesEnumSchema.array().optional(),
   modifiedSince: modifiedSinceSchema.optional(),
   texteNomOuDescription: z.string().optional(),
   budgetPrevisionnel: z.coerce.boolean().default(false).optional(),
@@ -68,7 +72,7 @@ const sortFicheSchema = z.object({
 
 export type SortFichesAction = z.infer<typeof sortFicheSchema>;
 
-export const fetchOptionsSchema = getQueryOptionsSchema(sortValues).extend({
+export const fetchOptionsSchema = getPaginationSchema(sortValues).extend({
   filtre: filtreSchema,
 });
 

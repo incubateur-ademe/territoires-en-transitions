@@ -1,13 +1,6 @@
-import { TIMESTAMP_OPTIONS } from '@/backend/utils';
-import {
-  integer,
-  jsonb,
-  serial,
-  text,
-  timestamp,
-  uuid,
-} from 'drizzle-orm/pg-core';
-import { collectiviteTable } from '../../collectivites/models/collectivite.table';
+import { modifiedAt, modifiedBy } from '@/backend/utils';
+import { integer, jsonb, serial, text } from 'drizzle-orm/pg-core';
+import { collectiviteTable } from '../../collectivites/shared/models/collectivite.table';
 
 export const DocumentBase = {
   id: serial('id').primaryKey(),
@@ -18,9 +11,7 @@ export const DocumentBase = {
   url: text('url'),
   titre: text('titre'),
   commentaire: text('commentaire'),
-  modifiedAt: timestamp('modified_at', TIMESTAMP_OPTIONS)
-    .notNull()
-    .defaultNow(),
-  modifiedBy: uuid('modified_by'), // TODO references auth.uid,
+  modifiedAt,
+  modifiedBy,
   lien: jsonb('lien'),
 };

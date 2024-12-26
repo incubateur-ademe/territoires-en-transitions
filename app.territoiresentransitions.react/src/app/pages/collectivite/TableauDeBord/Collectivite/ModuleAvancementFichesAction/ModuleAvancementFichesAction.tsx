@@ -1,4 +1,3 @@
-import { Statut } from '@/api/plan-actions';
 import { ModuleFicheActionCountByStatusSelect } from '@/api/plan-actions/dashboards/collectivite-dashboard/domain/module.schema';
 import BadgeStatut from '@/app/app/pages/collectivite/PlansActions/components/BadgeStatut';
 import { statutToColor } from '@/app/app/pages/collectivite/PlansActions/FicheAction/utils';
@@ -13,6 +12,7 @@ import { TDBViewParam } from '@/app/app/paths';
 import { useCurrentCollectivite } from '@/app/core-logic/hooks/useCurrentCollectivite';
 import Chart from '@/app/ui/charts/Chart';
 import PictoDocument from '@/app/ui/pictogrammes/PictoDocument';
+import { Statut } from '@/domain/plans/fiches';
 import { useEventTracker } from '@/ui';
 import Link from 'next/link';
 import { useRouter } from 'next/navigation';

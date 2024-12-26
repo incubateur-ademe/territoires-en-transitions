@@ -1,4 +1,4 @@
-import { TIMESTAMP_OPTIONS } from '@/backend/utils';
+import { TIMESTAMP_OPTIONS } from '@/domain/utils';
 import { InferInsertModel, InferSelectModel, sql } from 'drizzle-orm';
 import {
   boolean,
@@ -9,7 +9,7 @@ import {
   uniqueIndex,
 } from 'drizzle-orm/pg-core';
 import { createInsertSchema, createSelectSchema } from 'drizzle-zod';
-import { collectiviteTable } from '../../collectivites/models/collectivite.table';
+import { collectiviteTable } from '../../collectivites/shared/models/collectivite.table';
 import { labellisationDemandeTable } from './labellisation-demande.table';
 import { labellisationSchema } from './labellisation.schema';
 import { referentielEnum } from './referentiel.enum';

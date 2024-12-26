@@ -1,10 +1,10 @@
 import { FicheAction } from '@/api/plan-actions';
-import { Thematique } from '@/api/shared/domain';
 import { useCurrentCollectivite } from '@/app/core-logic/hooks/useCurrentCollectivite';
 import SousThematiquesDropdown from '@/app/ui/dropdownLists/SousThematiquesDropdown/SousThematiquesDropdown';
 import TagsSuiviPersoDropdown from '@/app/ui/dropdownLists/TagsSuiviPersoDropdown/TagsSuiviPersoDropdown';
 import ThematiquesDropdown from '@/app/ui/dropdownLists/ThematiquesDropdown/ThematiquesDropdown';
 import { getMaxLengthMessage } from '@/app/utils/formatUtils';
+import { Thematique } from '@/domain/shared';
 import {
   Button,
   Field,
@@ -99,7 +99,7 @@ const ModaleDescription = ({ fiche, updateFiche }: ModaleDescriptionProps) => {
           {/* Dropdown tags personnalisés */}
           <Field title="Mes tags de suivi" className="col-span-2">
             <TagsSuiviPersoDropdown
-              values={editedFiche.libresTag?.map((t) => t.id!)}
+              values={editedFiche.libresTag?.map((t) => t.id)}
               onChange={({ libresTag }) =>
                 setEditedFiche((prevState) => ({ ...prevState, libresTag }))
               }

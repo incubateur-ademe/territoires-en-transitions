@@ -1,10 +1,11 @@
-import { ParticipationCitoyenne, Statut } from '@/api/plan-actions';
 import { ModifiedSince } from '@/api/plan-actions/fiche-resumes.list/domain/fetch-options.schema';
+import { TFicheActionEcheances } from '@/app/types/alias';
 import {
-  TFicheActionCibles,
-  TFicheActionEcheances,
-  TFicheActionNiveauxPriorite,
-} from '@/app/types/alias';
+  Cible,
+  ParticipationCitoyenne,
+  Priorite,
+  Statut,
+} from '@/domain/plans/fiches';
 
 type Options<T extends string> = {
   value: T;
@@ -12,7 +13,7 @@ type Options<T extends string> = {
   disabled?: boolean;
 }[];
 
-export const ficheActionCiblesOptions: Options<TFicheActionCibles> = [
+export const ficheActionCiblesOptions: Options<Cible> = [
   {
     value: 'Grand public',
     label: 'Grand public',
@@ -74,12 +75,11 @@ export const ficheActionStatutOptions: Options<Statut> = [
   { value: 'Bloqué', label: 'Bloqué' },
 ];
 
-export const ficheActionNiveauPrioriteOptions: Options<TFicheActionNiveauxPriorite> =
-  [
-    { value: 'Élevé', label: 'Élevé' },
-    { value: 'Moyen', label: 'Moyen' },
-    { value: 'Bas', label: 'Bas' },
-  ];
+export const ficheActionNiveauPrioriteOptions: Options<Priorite> = [
+  { value: 'Élevé', label: 'Élevé' },
+  { value: 'Moyen', label: 'Moyen' },
+  { value: 'Bas', label: 'Bas' },
+];
 
 export const ficheActionModifiedSinceOptions: Options<ModifiedSince> = [
   { value: 'last-15-days', label: 'les 15 derniers jours' },

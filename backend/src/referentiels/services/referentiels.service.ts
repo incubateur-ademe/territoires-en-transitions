@@ -1,3 +1,4 @@
+import { DatabaseService } from '@/backend/utils';
 import {
   HttpException,
   HttpStatus,
@@ -10,9 +11,6 @@ import { and, asc, eq, getTableColumns, inArray, sql } from 'drizzle-orm';
 import { isNil } from 'es-toolkit';
 import * as _ from 'lodash';
 import * as semver from 'semver';
-import DatabaseService from '../../common/services/database.service';
-import { getErrorMessage } from '../../common/services/errors.helper';
-import ConfigurationService from '../../config/configuration.service';
 import {
   CreatePersonnalisationRegleType,
   personnalisationRegleTable,
@@ -22,7 +20,9 @@ import {
   PersonnalisationType,
 } from '../../personnalisations/models/personnalisation.table';
 import ExpressionParserService from '../../personnalisations/services/expression-parser.service';
-import SheetService from '../../spreadsheets/services/sheet.service';
+import ConfigurationService from '../../utils/config/configuration.service';
+import SheetService from '../../utils/google-sheets/sheet.service';
+import { getErrorMessage } from '../../utils/nest/errors.utils';
 import {
   actionDefinitionTagTable,
   CreateActionDefinitionTagType,

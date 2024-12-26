@@ -1,5 +1,5 @@
+import { TrpcService } from '@/backend/utils/trpc/trpc.service';
 import { Injectable } from '@nestjs/common';
-import { TrpcService } from '../../trpc/trpc.service';
 import { CollectiviteMembresService } from './membres.service';
 
 @Injectable()

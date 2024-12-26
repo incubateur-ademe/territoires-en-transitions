@@ -1,33 +1,32 @@
+import { PermissionOperation } from '@/backend/auth/authorizations/permission-operation.enum';
+import { PermissionService } from '@/backend/auth/authorizations/permission.service';
+import { ResourceType } from '@/backend/auth/authorizations/resource-type.enum';
+import { serviceTagTable } from '@/backend/collectivites';
+import { axeTable, ficheActionIndicateurTable } from '@/backend/plans/fiches';
+import { ficheActionAxeTable } from '@/backend/plans/fiches/shared/models/fiche-action-axe.table';
 import { Injectable } from '@nestjs/common';
-import DatabaseService from '../../common/services/database.service';
+import { getTableName, sql } from 'drizzle-orm';
+import { intersection, isNil } from 'es-toolkit';
+import { AuthenticatedUser } from '../../auth/models/auth.models';
+import CollectivitesService from '../../collectivites/services/collectivites.service';
+import { categorieTagTable } from '../../collectivites/shared/models/categorie-tag.table';
+import { groupementCollectiviteTable } from '../../collectivites/shared/models/groupement-collectivite.table';
+import { ficheActionTable } from '../../plans/fiches/shared/models/fiche-action.table';
+import { DatabaseService } from '../../utils/database/database.service';
+import { indicateurActionTable } from '../models/indicateur-action.table';
+import { indicateurCategorieTagTable } from '../models/indicateur-categorie-tag.table';
+import { indicateurCollectiviteTable } from '../models/indicateur-collectivite.table';
+import { indicateurDefinitionTable } from '../models/indicateur-definition.table';
+import { indicateurGroupeTable } from '../models/indicateur-groupe.table';
+import { indicateurPiloteTable } from '../models/indicateur-pilote.table';
+import { indicateurServiceTagTable } from '../models/indicateur-service-tag.table';
+import { indicateurThematiqueTable } from '../models/indicateur-thematique.table';
+import { indicateurValeurTable } from '../models/indicateur-valeur.table';
 import {
   GetFilteredIndicateurRequestQueryOptionType,
   GetFilteredIndicateursRequestOptionType,
 } from './get-filtered-indicateurs.request';
-import { getTableName, sql } from 'drizzle-orm';
-import { intersection, isNil } from 'es-toolkit';
 import { GetFilteredIndicateurResponseType } from './get-filtered-indicateurs.response';
-import { AuthenticatedUser } from '../../auth/models/auth.models';
-import { indicateurValeurTable } from '../models/indicateur-valeur.table';
-import { groupementCollectiviteTable } from '../../collectivites/models/groupement-collectivite.table';
-import { indicateurDefinitionTable } from '../models/indicateur-definition.table';
-import { indicateurGroupeTable } from '../models/indicateur-groupe.table';
-import { categorieTagTable } from '../../taxonomie/models/categorie-tag.table';
-import { indicateurCategorieTagTable } from '../models/indicateur-categorie-tag.table';
-import { ficheActionTable } from '../../fiches/models/fiche-action.table';
-import { axeTable } from '../../fiches/models/axe.table';
-import { ficheActionAxeTable } from '../../fiches/models/fiche-action-axe.table';
-import { serviceTagTable } from '../../taxonomie/models/service-tag.table';
-import { indicateurThematiqueTable } from '../models/indicateur-thematique.table';
-import { indicateurPiloteTable } from '../models/indicateur-pilote.table';
-import { indicateurCollectiviteTable } from '../models/indicateur-collectivite.table';
-import { indicateurActionTable } from '../models/indicateur-action.table';
-import { ficheActionIndicateurTable } from '../../fiches/models/fiche-action-indicateur.table';
-import { indicateurServiceTagTable } from '../models/indicateur-service-tag.table';
-import { PermissionService } from '@/backend/auth/authorizations/permission.service';
-import CollectivitesService from '../../collectivites/services/collectivites.service';
-import { PermissionOperation } from '@/backend/auth/authorizations/permission-operation.enum';
-import { ResourceType } from '@/backend/auth/authorizations/resource-type.enum';
 
 export type RequestResultIndicateursRaw = {
   id: number;
@@ -171,7 +170,7 @@ export default class IndicateurFiltreService {
 
     return indicateursSorted.map((indicateur) => ({
       id: indicateur.id,
-      titre: indicateur.titre?indicateur.titre:'',
+      titre: indicateur.titre ? indicateur.titre : '',
       estPerso: !isNil(indicateur.collectiviteId),
       identifiant: indicateur.identifiantReferentiel,
       hasOpenData: indicateur.hasOpenData,
@@ -714,49 +713,39 @@ export default class IndicateurFiltreService {
       const hasOpenData = options.hasOpenData ? indicateur.hasOpenData : true;
       const categoriesNoms =
         options.categorieNoms && options.categorieNoms.length > 0
-          ? intersection(
-              options.categorieNoms,
-              indicateur.categorieNoms
-            ).length>0
+          ? intersection(options.categorieNoms, indicateur.categorieNoms)
+              .length > 0
           : true;
       const planActionIds =
         options.planActionIds && options.planActionIds.length > 0
-          ? intersection(options.planActionIds, indicateur.planIds).length>0
+          ? intersection(options.planActionIds, indicateur.planIds).length > 0
           : true;
       const ficheActionIds =
         options.ficheActionIds && options.ficheActionIds.length > 0
-          ? intersection(options.ficheActionIds, indicateur.ficheIds).length>0
+          ? intersection(options.ficheActionIds, indicateur.ficheIds).length > 0
           : true;
       const fichesNonClassees = options.fichesNonClassees
         ? indicateur.hasFichesNonClassees
         : true;
       const servicePiloteIds =
         options.servicePiloteIds && options.servicePiloteIds.length > 0
-          ? intersection(
-              options.servicePiloteIds,
-              indicateur.serviceIds
-            ).length>0
+          ? intersection(options.servicePiloteIds, indicateur.serviceIds)
+              .length > 0
           : true;
       const thematiqueIds =
         options.thematiqueIds && options.thematiqueIds.length > 0
-          ? intersection(
-              options.thematiqueIds,
-              indicateur.thematiqueIds
-            ).length>0
+          ? intersection(options.thematiqueIds, indicateur.thematiqueIds)
+              .length > 0
           : true;
       const personnePiloteIds =
         options.personnePiloteIds && options.personnePiloteIds.length > 0
-          ? intersection(
-              options.personnePiloteIds,
-              indicateur.piloteTagIds
-            ).length>0
+          ? intersection(options.personnePiloteIds, indicateur.piloteTagIds)
+              .length > 0
           : true;
       const utilisateurPiloteIds =
         options.utilisateurPiloteIds && options.utilisateurPiloteIds.length > 0
-          ? intersection(
-              options.utilisateurPiloteIds,
-              indicateur.piloteUserIds
-            ).length>0
+          ? intersection(options.utilisateurPiloteIds, indicateur.piloteUserIds)
+              .length > 0
           : true;
       const estComplet =
         options.estComplet === true
@@ -784,7 +773,7 @@ export default class IndicateurFiltreService {
         }
       }
       const actionId = options.actionId
-        ? intersection([options.actionId], indicateur.actionIds).length>0
+        ? intersection([options.actionId], indicateur.actionIds).length > 0
         : true;
 
       // Applique les conditions

@@ -95,6 +95,15 @@ export async function ficheActionFetch({ dbClient, ficheActionId }: Props) {
     ...rawFicheAction,
     planId: rawFicheAction.plans?.[0]?.plan,
     indicateurs: indicateurs.data,
+
+    // Transforme les sous-thématiques pour matcher avec le schema officiel
+    sousThematiques: rawFicheAction.sousThematiques
+      ? rawFicheAction.sousThematiques.map((t) => ({
+          ...t,
+          // @ts-expect-error forcing temporaire pour matcher le schema le temps de passer le fetch côté backend
+          nom: t.sousThematique,
+        }))
+      : null,
   };
 
   return ficheAction as FicheAction;

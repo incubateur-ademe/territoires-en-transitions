@@ -7,7 +7,7 @@ import {
   tokenMatcher,
 } from 'chevrotain';
 import * as _ from 'lodash';
-import { IdentiteCollectivite } from '../../collectivites/models/identite-collectivite.dto';
+import { IdentiteCollectivite } from '../../collectivites/identite-collectivite.dto';
 
 // Define all the tokens used in the grammar
 const VRAI = createToken({ name: 'VRAI', pattern: /VRAI/ });

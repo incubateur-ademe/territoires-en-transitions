@@ -76,7 +76,7 @@ const FicheActionDescription = ({
             {sousThematiques?.map((ssThematique) => (
               <Badge
                 key={ssThematique.id}
-                title={ssThematique.sousThematique}
+                title={ssThematique.nom}
                 uppercase={false}
                 state="info"
               />
@@ -103,7 +103,7 @@ const FicheActionDescription = ({
       {/* Description de l'action */}
       <div>
         <h6 className="text-lg leading-6 text-grey-1 mb-2">
-          Description de l'action :
+          {"Description de l'action :"}
         </h6>
         <div className="text-base text-grey-1 whitespace-pre-wrap mb-0">
           {description ? (

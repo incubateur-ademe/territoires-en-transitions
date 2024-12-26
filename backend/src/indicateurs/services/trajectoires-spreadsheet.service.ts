@@ -8,10 +8,10 @@ import { isNil, partition } from 'es-toolkit';
 import * as _ from 'lodash';
 import slugify from 'slugify';
 import { AuthenticatedUser } from '../../auth/models/auth.models';
-import { EpciType } from '../../collectivites/models/epci.table';
 import GroupementsService from '../../collectivites/services/groupements.service';
-import ConfigurationService from '../../config/configuration.service';
-import SheetService from '../../spreadsheets/services/sheet.service';
+import { EpciType } from '../../collectivites/shared/models/epci.table';
+import ConfigurationService from '../../utils/config/configuration.service';
+import SheetService from '../../utils/google-sheets/sheet.service';
 import {
   CalculTrajectoireRequestType,
   CalculTrajectoireReset,
@@ -22,8 +22,8 @@ import { DonneesCalculTrajectoireARemplirType } from '../models/donnees-calcul-t
 import { IndicateurDefinitionType } from '../models/indicateur-definition.table';
 import { CreateIndicateurValeurType } from '../models/indicateur-valeur.table';
 import { VerificationTrajectoireStatus } from '../models/verification-trajectoire.response';
-import IndicateursService from './indicateurs.service';
 import IndicateurSourcesService from './indicateur-sources.service';
+import IndicateursService from './indicateurs.service';
 import TrajectoiresDataService from './trajectoires-data.service';
 
 @Injectable()
@@ -261,7 +261,7 @@ export default class TrajectoiresSpreadsheetService {
     // Ecriture des informations d'émission GES
     const emissionGesSpreadsheetData =
       resultatVerification.donneesEntree!.emissionsGes.valeurs.map((valeur) => [
-        (valeur.valeur || 0),
+        valeur.valeur || 0,
       ]);
     await this.sheetService.overwriteRawDataToSheet(
       trajectoireCalculSheetId,
@@ -273,7 +273,7 @@ export default class TrajectoiresSpreadsheetService {
     // Les valeurs de séquestration sont positives en base quand il y a une séquestration mais doivent être écrites avec le signe opposé
     const sequestrationSpreadsheetData =
       resultatVerification.donneesEntree!.sequestrations.valeurs.map(
-        (valeur) => [((valeur.valeur || 0) * -1)]
+        (valeur) => [(valeur.valeur || 0) * -1]
       );
     await this.sheetService.overwriteRawDataToSheet(
       trajectoireCalculSheetId,

@@ -7,7 +7,7 @@ import {
   unique,
   varchar,
 } from 'drizzle-orm/pg-core';
-import { collectiviteTable } from '../../collectivites/models/collectivite.table';
+import { collectiviteTable } from '../../collectivites/shared/models/collectivite.table';
 import { labellisationSchema } from './labellisation.schema';
 
 export const labellisationBibliothequeFichierTable = labellisationSchema.table(

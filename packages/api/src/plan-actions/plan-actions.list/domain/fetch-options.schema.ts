@@ -1,5 +1,5 @@
+import { getPaginationSchema } from '@/domain/utils';
 import { z } from 'zod';
-import { getQueryOptionsSchema } from '../../../shared/domain/query_options.schema';
 import { filtreRessourceLieesSchema } from '../../../collectivites/shared/domain/filtre-ressource-liees.schema';
 
 /**
@@ -24,7 +24,7 @@ const fetchSortSchema = z.object({
 
 export type FetchSort = z.infer<typeof fetchSortSchema>;
 
-export const fetchOptionsSchema = getQueryOptionsSchema(sortValues).extend({
+export const fetchOptionsSchema = getPaginationSchema(sortValues).extend({
   filtre: fetchFilterSchema.optional(),
 });
 

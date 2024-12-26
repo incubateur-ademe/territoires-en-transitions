@@ -1,7 +1,6 @@
-import { integer, pgTable } from 'drizzle-orm/pg-core';
+import { integer, pgTable, primaryKey } from 'drizzle-orm/pg-core';
+import { categorieTagTable } from '../../collectivites/shared/models/categorie-tag.table';
 import { indicateurDefinitionTable } from './indicateur-definition.table';
-import { primaryKey } from 'drizzle-orm/pg-core';
-import { categorieTagTable } from '../../taxonomie/models/categorie-tag.table';
 
 export const indicateurCategorieTagTable = pgTable(
   'indicateur_categorie_tag',

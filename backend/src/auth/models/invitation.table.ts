@@ -7,13 +7,13 @@ import {
   timestamp,
   uuid,
 } from 'drizzle-orm/pg-core';
-import { collectiviteTable } from '../../collectivites/models/collectivite.table';
+import { collectiviteTable } from '../../collectivites/shared/models/collectivite.table';
 import {
   createdAt,
   createdBy,
   TIMESTAMP_OPTIONS,
 } from '../../utils/column.utils';
-import { niveauAccessEnum } from '@/backend/auth/authorizations/roles/niveau-acces.enum';
+import { niveauAccessEnum } from '../authorizations/roles/niveau-acces.enum';
 
 export const utilisateurSchema = pgSchema('utilisateur');
 

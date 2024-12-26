@@ -7,10 +7,10 @@ import {
 import { NextFunction, Response } from 'express';
 import { default as XlsxTemplate } from 'xlsx-template';
 import { AuthenticatedUser } from '../../auth/models/auth.models';
-import { CollectiviteRequestType } from '../../collectivites/models/collectivite.request';
-import { EpciType } from '../../collectivites/models/epci.table';
-import BackendConfigurationService from '../../config/configuration.service';
-import SheetService from '../../spreadsheets/services/sheet.service';
+import { CollectiviteRequestType } from '../../collectivites/collectivite.request';
+import { EpciType } from '../../collectivites/shared/models/epci.table';
+import BackendConfigurationService from '../../utils/config/configuration.service';
+import SheetService from '../../utils/google-sheets/sheet.service';
 import { DonneesCalculTrajectoireARemplirType } from '../models/donnees-calcul-trajectoire-a-remplir.dto';
 import { ModeleTrajectoireTelechargementRequestType } from '../models/modele-trajectoire-telechargement.request';
 import { VerificationTrajectoireStatus } from '../models/verification-trajectoire.response';
@@ -162,14 +162,14 @@ export default class TrajectoiresXlsxService {
         valeur.identifiantsReferentiel
       );
       emissionGesSequestrationConsommationsSubstitionValeurs[cleSubstitution] =
-        (valeur.valeur || 0);
+        valeur.valeur || 0;
     });
     valeurIndicateurs?.sequestrations.valeurs.forEach((valeur) => {
       const cleSubstitution = this.getXlsxCleSubstitution(
         valeur.identifiantsReferentiel
       );
       emissionGesSequestrationConsommationsSubstitionValeurs[cleSubstitution] =
-        ((valeur.valeur || 0) * -1);
+        (valeur.valeur || 0) * -1;
     });
     valeurIndicateurs?.consommationsFinales.valeurs.forEach((valeur) => {
       const cleSubstitution = this.getXlsxCleSubstitution(

@@ -1,9 +1,9 @@
-import { Financeur } from '@/api/plan-actions';
 import { getFormattedNumber } from '@/app/utils/formatUtils';
+import { FinanceurUpdate } from '@/domain/plans/fiches';
 import { Badge } from '@/ui';
 
 type FinanceursListeProps = {
-  financeurs?: Financeur[];
+  financeurs?: FinanceurUpdate[];
 };
 
 const FinanceursListe = ({ financeurs }: FinanceursListeProps) => {

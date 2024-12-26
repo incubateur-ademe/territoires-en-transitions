@@ -1,4 +1,4 @@
-import { modifiedAt, modifiedBy } from '@/backend/utils';
+import { modifiedAt, modifiedBy } from '@/domain/utils';
 import { InferInsertModel, InferSelectModel } from 'drizzle-orm';
 import {
   foreignKey,
@@ -9,7 +9,7 @@ import {
 } from 'drizzle-orm/pg-core';
 import { createInsertSchema, createSelectSchema } from 'drizzle-zod';
 import { authUsersTable } from '../../auth/models/auth-users.table';
-import { collectiviteTable } from '../../collectivites/models/collectivite.table';
+import { collectiviteTable } from '../../collectivites/shared/models/collectivite.table';
 import { actionIdVarchar } from './action-definition.table';
 import { actionRelationTable } from './action-relation.table';
 

@@ -1,6 +1,6 @@
+import { DatabaseService } from '@/backend/utils';
 import { Injectable, Logger } from '@nestjs/common';
 import { and, desc, eq, isNotNull, SQL, SQLWrapper } from 'drizzle-orm';
-import DatabaseService from '../../common/services/database.service';
 import {
   labellisationAuditTable,
   LabellisationAuditType,

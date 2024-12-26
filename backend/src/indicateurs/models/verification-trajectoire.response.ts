@@ -1,6 +1,6 @@
 import { extendApi } from '@anatine/zod-openapi';
 import { z } from 'zod';
-import { epciSchema } from '../../collectivites/models/epci.table';
+import { epciSchema } from '../../collectivites/shared/models/epci.table';
 import { donneesCalculTrajectoireARemplirSchema } from './donnees-calcul-trajectoire-a-remplir.dto';
 import { IndicateurValeurType } from './indicateur-valeur.table';
 

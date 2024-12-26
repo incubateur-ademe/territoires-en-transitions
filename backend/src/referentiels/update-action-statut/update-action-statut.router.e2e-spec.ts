@@ -2,7 +2,7 @@ import { inferProcedureInput } from '@trpc/server';
 import { getTestRouter } from '../../../test/app-utils';
 import { getAuthUser } from '../../../test/auth-utils';
 import { getCollectiviteIdBySiren } from '../../../test/collectivites-utils';
-import { AppRouter, TrpcRouter } from '../../trpc/trpc.router';
+import { AppRouter, TrpcRouter } from '../../utils/trpc/trpc.router';
 import { ActionScoreType } from '../models/action-score.dto';
 import { ReferentielType } from '../models/referentiel.enum';
 import { AuthenticatedUser } from './../../auth/models/auth.models';
@@ -26,7 +26,6 @@ describe('UpdateActionStatutRouter', () => {
     const caller = router.createCaller({ user: null });
 
     const input: Input = {
-      referentielId: ReferentielType.CAE,
       actionStatut: {
         collectiviteId: 1,
         actionId: 'cae_1.1.1.2',
@@ -47,7 +46,6 @@ describe('UpdateActionStatutRouter', () => {
     const caller = router.createCaller({ user: yoloDodoUser });
 
     const input: Input = {
-      referentielId: ReferentielType.CAE,
       actionStatut: {
         collectiviteId: rhoneAggloCollectiviteId,
         actionId: 'cae_1.1.1.2',
@@ -68,7 +66,6 @@ describe('UpdateActionStatutRouter', () => {
     const caller = router.createCaller({ user: yoloDodoUser });
 
     const input: Input = {
-      referentielId: ReferentielType.CAE,
       actionStatut: {
         collectiviteId: 1,
         actionId: 'cae_1.1.1.11',
@@ -91,7 +88,6 @@ describe('UpdateActionStatutRouter', () => {
     const caller = router.createCaller({ user: yoloDodoUser });
 
     const input: Input = {
-      referentielId: ReferentielType.CAE,
       actionStatut: {
         collectiviteId: 1,
         actionId: 'cae_1.1.1.1.2',
@@ -140,7 +136,6 @@ describe('UpdateActionStatutRouter', () => {
 
     // Restore the previous state
     const actionNonFaite: Input = {
-      referentielId: ReferentielType.CAE,
       actionStatut: {
         collectiviteId: 1,
         actionId: 'cae_1.1.1.1.2',

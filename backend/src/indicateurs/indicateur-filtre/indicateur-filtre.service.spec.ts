@@ -1,12 +1,12 @@
+import { PermissionService } from '@/backend/auth/authorizations/permission.service';
 import { Test } from '@nestjs/testing';
-import DatabaseService from '../../common/services/database.service';
-import IndicateurFiltreService from './indicateur-filtre.service';
+import CollectivitesService from '../../collectivites/services/collectivites.service';
+import { DatabaseService } from '../../utils/database/database.service';
 import {
   GetFilteredIndicateurRequestQueryOptionType,
   GetFilteredIndicateursRequestOptionType,
 } from './get-filtered-indicateurs.request';
-import { PermissionService } from '@/backend/auth/authorizations/permission.service';
-import CollectivitesService from '../../collectivites/services/collectivites.service';
+import IndicateurFiltreService from './indicateur-filtre.service';
 
 describe('IndicateurFiltreService', () => {
   let indicateurFiltreService: IndicateurFiltreService;

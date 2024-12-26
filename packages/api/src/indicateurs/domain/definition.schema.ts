@@ -1,6 +1,6 @@
+import { thematiqueSchema } from '@/domain/shared';
 import { z } from 'zod';
 import { actionSchema } from '../../referentiel/domain/action.schema';
-import { thematiqueSchema } from '../../shared/domain/thematique.schema';
 import { categorieSchema } from './categorie.schema';
 
 /**

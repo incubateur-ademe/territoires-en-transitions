@@ -1,13 +1,13 @@
 import { dcpTable } from '@/backend/auth';
+import { utilisateurDroitTable } from '@/backend/auth/authorizations/roles/private-utilisateur-droit.table';
 import { Injectable, Logger } from '@nestjs/common';
 import { and, eq, sql } from 'drizzle-orm';
 import { unionAll } from 'drizzle-orm/pg-core';
 import z from 'zod';
 import { invitationTable } from '../../auth/models/invitation.table';
-import { utilisateurDroitTable } from '@/backend/auth/authorizations/roles/private-utilisateur-droit.table';
-import DatabaseService from '../../common/services/database.service';
-import { MembreFonction } from '../models/membre-fonction.enum';
-import { insertMembreSchema, membreTable } from '../models/membre.table';
+import { DatabaseService } from '../../utils/database/database.service';
+import { MembreFonction } from '../shared/models/membre-fonction.enum';
+import { insertMembreSchema, membreTable } from '../shared/models/membre.table';
 
 @Injectable()
 export class CollectiviteMembresService {

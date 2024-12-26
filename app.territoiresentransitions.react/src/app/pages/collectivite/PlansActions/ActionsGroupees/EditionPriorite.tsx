@@ -1,6 +1,6 @@
-import { NiveauPriorite } from '@/api/plan-actions';
 import { useCollectiviteId } from '@/app/core-logic/hooks/params';
 import PrioritesSelectDropdown from '@/app/ui/dropdownLists/ficheAction/priorites/PrioritesSelectDropdown';
+import { Priorite } from '@/domain/plans/fiches';
 import { Button, Field, useEventTracker } from '@/ui';
 import { OpenState } from '@/ui/utils/types';
 import { useState } from 'react';
@@ -16,7 +16,7 @@ const ModaleEditionPriorite = ({
   openState,
   selectedIds,
 }: ModaleEditionPrioriteProps) => {
-  const [priorite, setPriorite] = useState<NiveauPriorite>();
+  const [priorite, setPriorite] = useState<Priorite>();
 
   const collectiviteId = useCollectiviteId()!;
   const tracker = useEventTracker('app/actions-groupees-fiches-action');

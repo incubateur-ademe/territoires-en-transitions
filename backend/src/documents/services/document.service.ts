@@ -1,5 +1,5 @@
 import { Injectable, Logger } from '@nestjs/common';
-import DatabaseService from '../../common/services/database.service';
+import { DatabaseService } from '../../utils/database/database.service';
 import { annexeTable } from '../models/annexe.table';
 import { lienType } from '../models/document-lien.dto';
 

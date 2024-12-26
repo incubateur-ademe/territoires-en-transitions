@@ -8,8 +8,8 @@ import {
 import { Reflector } from '@nestjs/core';
 import { JwtService } from '@nestjs/jwt';
 import { Request } from 'express';
-import { getErrorMessage } from '../../common/services/errors.helper';
-import BackendConfigurationService from '../../config/configuration.service';
+import BackendConfigurationService from '../../utils/config/configuration.service';
+import { getErrorMessage } from '../../utils/nest/errors.utils';
 import { AllowAnonymousAccess } from '../decorators/allow-anonymous-access.decorator';
 import { AllowPublicAccess } from '../decorators/allow-public-access.decorator';
 import {

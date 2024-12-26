@@ -1,17 +1,17 @@
-import { SousThematiqueId } from '@/api/shared/domain';
+import { SousThematique } from '@/domain/shared';
 import { Option, OptionValue, SelectFilter, SelectMultipleProps } from '@/ui';
 import { useEffect } from 'react';
 import { useSousThematiqueListe } from './useSousThematiqueListe';
 
 type Props = Omit<SelectMultipleProps, 'values' | 'onChange' | 'options'> & {
   thematiques: number[];
-  sousThematiques: SousThematiqueId[] | null | undefined;
+  sousThematiques: SousThematique[] | null | undefined;
   onChange: ({
     sousThematiques,
     selectedSousThematique,
   }: {
-    sousThematiques: SousThematiqueId[];
-    selectedSousThematique: SousThematiqueId;
+    sousThematiques: SousThematique[];
+    selectedSousThematique: SousThematique;
   }) => void;
 };
 
@@ -27,7 +27,7 @@ const SousThematiquesDropdown = ({
     .filter((st) => thematiques.some((t) => st.thematiqueId === t))
     .map((st) => ({
       value: st.id,
-      label: st.sousThematique,
+      label: st.nom,
     }));
 
   const getSelectedSousThematiques = (values?: OptionValue[]) =>

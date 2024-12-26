@@ -46,20 +46,31 @@ $ nx test backend
 
 ### Tests
 
-Pour lancer tous les tests :
+Les tests sont colocalisés au plus près du fichier testé.
+
+Exemple :
 
 ```
+└ update-action-statut.router.ts
+└ update-action-statut.router.e2e-spec.ts
+```
+
+---
+
+Lancer tous les tests :
+
+```sh
 nx test backend
 ```
 
-Pour lancer uniquement les tests unitaires (dossier `src`) :
+Lancer uniquement un fichier de test donné :
 
-```
-nx test backend src
+```sh
+nx test backend 'update-action-statut.router.e2e-spec.ts'
 ```
 
-Pour lancer uniquement les tests end-to-end (dossier `test`) :
+Lancer uniquement les tests dont le chemin contient `referentiels` :
 
-```
-nx test backend test
+```sh
+nx test backend 'referentiels'
 ```

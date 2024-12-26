@@ -1,9 +1,13 @@
-import { Role } from '@/backend/auth/authorizations/roles/role.enum';
-import { PermissionOperation } from '@/backend/auth/authorizations/permission-operation.enum';
+import { PermissionOperation } from './permission-operation.enum';
+import { Role } from './roles/role.enum';
 
 export const Permission: Record<Role, PermissionOperation[]> = {
   [Role.CONNECTE]: [],
-  [Role.VERIFIE]: [PermissionOperation.COLLECTIVITES_VISITE, PermissionOperation.PLANS_FICHES_VISITE, PermissionOperation.INDICATEURS_VISITE],
+  [Role.VERIFIE]: [
+    PermissionOperation.COLLECTIVITES_VISITE,
+    PermissionOperation.PLANS_FICHES_VISITE,
+    PermissionOperation.INDICATEURS_VISITE,
+  ],
   [Role.SUPPORT]: [
     PermissionOperation.COLLECTIVITES_VISITE,
     PermissionOperation.COLLECTIVITES_LECTURE,

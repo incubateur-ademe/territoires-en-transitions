@@ -1,4 +1,4 @@
-import { LibreTag } from '@/api/typeUtils';
+import { Tag } from '@/domain/collectivites';
 import { SelectMultipleProps } from '@/ui';
 import SelectTags from '../tags/SelectTags';
 import { useTagsSuiviPersoListe } from './useTagsSuiviPersoListe';
@@ -12,8 +12,8 @@ type TagsSuiviPersoDropdownProps = Omit<
     libresTag,
     selectedLibreTag,
   }: {
-    libresTag: LibreTag[];
-    selectedLibreTag: LibreTag;
+    libresTag: Tag[];
+    selectedLibreTag: Tag;
   }) => void;
 };
 

@@ -1,120 +1,44 @@
 import { personneSchema } from '@/api/collectivites';
 import { indicateurListItemSchema } from '@/api/indicateurs/domain';
 import { actionSchema } from '@/api/referentiel';
+import { authorSchema } from '@/domain/auth';
+import { tagSchema } from '@/domain/collectivites';
 import {
-  sousThematiqueSchemaId,
-  tagSchema,
+  axeSchema,
+  ciblesEnumSchema,
+  financeurSchemaUpdate,
+  participationCitoyenneEnumSchema,
+  prioriteEnumSchema,
+  statutsEnumSchema,
+} from '@/domain/plans/fiches';
+import {
+  effetAttenduSchema,
+  sousThematiqueSchema,
+  tempsDeMiseEnOeuvreSchema,
   thematiqueSchema,
-} from '@/api/shared/domain';
+} from '@/domain/shared';
 import { z } from 'zod';
-import { axeSchema } from './axe.schema';
-
-// Enums
-
-export const statutSchema = z.enum([
-  'À venir',
-  'En cours',
-  'Réalisé',
-  'En pause',
-  'Abandonné',
-  'Bloqué',
-  'En retard',
-  'A discuter',
-]);
-
-export type Statut = z.infer<typeof statutSchema>;
-
-export const niveauPrioriteSchema = z.enum(['Élevé', 'Moyen', 'Bas']);
-
-export type NiveauPriorite = z.infer<typeof niveauPrioriteSchema>;
-
-export const cibleSchema = z.enum([
-  'Grand public',
-  'Associations',
-  'Grand public et associations',
-  'Public Scolaire',
-  'Autres collectivités du territoire',
-  'Acteurs économiques',
-  'Acteurs économiques du secteur primaire',
-  'Acteurs économiques du secteur secondaire',
-  'Acteurs économiques du secteur tertiaire',
-  'Partenaires',
-  'Collectivité elle-même',
-  'Elus locaux',
-  'Agents',
-]);
-
-export type Cible = z.infer<typeof cibleSchema>;
-
-export const participationCitoyenneTypeSchema = z.enum([
-  'pas-de-participation',
-  'information',
-  'consultation',
-  'concertation',
-  'co-construction',
-]);
-
-export type ParticipationCitoyenne = z.infer<
-  typeof participationCitoyenneTypeSchema
->;
-
-export const effetsAttendus = z.object({
-  id: z.number(),
-  nom: z.string(),
-  notice: z.string().nullish(),
-});
-
-export type EffetsAttendus = z.infer<typeof effetsAttendus>;
-
-export const financeurSchema = z.object({
-  financeurTag: tagSchema,
-  montantTtc: z.number().nullish(),
-});
-
-export type Financeur = z.infer<typeof financeurSchema>;
-
-export const tempsDeMiseEnOeuvreSchema = z.object({
-  id: z.number(),
-  nom: z.string(),
-});
-
-export type TempsDeMiseEnOeuvre = z.infer<typeof tempsDeMiseEnOeuvreSchema>;
-
-const auteur = z.object({
-  userId: z.string(),
-  prenom: z.string(),
-  nom: z.string(),
-  email: z.string(),
-});
-
-const libreTagSchema = z.object({
-  id: z.number().nullish(),
-  nom: z.string(),
-  collectivitedId: z.number().nullish(),
-  createdAt: z.string().date().nullish(),
-  createdBy: z.string().nullish(),
-});
 
 export const ficheActionSchema = z.object({
   id: z.number(),
   collectiviteId: z.number(),
   modifiedAt: z.string().datetime().nullish(),
   createdAt: z.string().datetime().nullish(),
-  createdBy: auteur.nullable(),
-  modifiedBy: auteur.nullable(),
+  createdBy: authorSchema.nullable(),
+  modifiedBy: authorSchema.nullable(),
   titre: z.string().nullable(),
   description: z.string().nullish(),
-  statut: statutSchema.nullish(),
+  statut: statutsEnumSchema.nullish(),
   ameliorationContinue: z.boolean().nullish(),
   dateFinProvisoire: z
     .string()
     .date()
     .or(z.string().datetime({ offset: true }))
     .nullish(),
-  priorite: niveauPrioriteSchema.nullish(),
-  cibles: cibleSchema.array().nullish(),
+  priorite: prioriteEnumSchema.nullish(),
+  cibles: ciblesEnumSchema.array().nullish(),
   restreint: z.boolean().nullish(),
-  resultatsAttendus: effetsAttendus.array().nullish(),
+  resultatsAttendus: effetAttenduSchema.array().nullish(),
   objectifs: z.string().nullish(),
   budgetPrevisionnel: z.number().nullish(),
   calendrier: z.string().nullish(),
@@ -128,7 +52,7 @@ export const ficheActionSchema = z.object({
   financements: z.string().nullish(),
   instanceGouvernance: z.string().nullish(),
   participationCitoyenne: z.string().nullish(),
-  participationCitoyenneType: participationCitoyenneTypeSchema.nullish(),
+  participationCitoyenneType: participationCitoyenneEnumSchema.nullish(),
   tempsDeMiseEnOeuvre: tempsDeMiseEnOeuvreSchema.nullish(),
 
   actionImpactId: z.number().nullish(),
@@ -138,7 +62,7 @@ export const ficheActionSchema = z.object({
 
   // Tables liées
   thematiques: thematiqueSchema.array().nullish(),
-  sousThematiques: sousThematiqueSchemaId.array().nullish(),
+  sousThematiques: sousThematiqueSchema.array().nullish(),
   pilotes: personneSchema.array().nullish(),
   referents: personneSchema.array().nullish(),
   services: tagSchema.array().nullish(),
@@ -147,9 +71,12 @@ export const ficheActionSchema = z.object({
   plans: axeSchema.array().nullish(),
   axes: axeSchema.array().nullish(),
   actions: actionSchema.array().nullish(),
-  financeurs: financeurSchema.array().nullish(),
+  financeurs: financeurSchemaUpdate
+    // .extend({ id: financeurSchema.shape.id.optional() })
+    .array()
+    .nullish(),
   indicateurs: indicateurListItemSchema.array().nullish(),
-  libresTag: libreTagSchema.array().nullish(),
+  libresTag: tagSchema.array().nullish(),
 });
 
 export type FicheAction = z.infer<typeof ficheActionSchema>;

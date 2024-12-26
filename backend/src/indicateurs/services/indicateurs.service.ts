@@ -1,3 +1,6 @@
+import { PermissionOperation } from '@/backend/auth/authorizations/permission-operation.enum';
+import { PermissionService } from '@/backend/auth/authorizations/permission.service';
+import { ResourceType } from '@/backend/auth/authorizations/resource-type.enum';
 import { Injectable, Logger } from '@nestjs/common';
 import {
   aliasedTable,
@@ -14,11 +17,13 @@ import {
   SQL,
   SQLWrapper,
 } from 'drizzle-orm';
-import { objectToCamel } from 'ts-case-convert';
 import { groupBy, partition } from 'es-toolkit';
 import * as _ from 'lodash';
+import { objectToCamel } from 'ts-case-convert';
 import { AuthenticatedUser, AuthRole } from '../../auth/models/auth.models';
-import DatabaseService from '../../common/services/database.service';
+import { groupementCollectiviteTable } from '../../collectivites/shared/models/groupement-collectivite.table';
+import { groupementTable } from '../../collectivites/shared/models/groupement.table';
+import { DatabaseService } from '../../utils/database/database.service';
 import { DeleteIndicateursValeursRequestType } from '../models/delete-indicateurs.request';
 import { GetIndicateursValeursRequestType } from '../models/get-indicateurs.request';
 import { GetIndicateursValeursResponseType } from '../models/get-indicateurs.response';
@@ -28,6 +33,7 @@ import {
   IndicateurDefinitionType,
   MinimalIndicateurDefinitionType,
 } from '../models/indicateur-definition.table';
+import { indicateurGroupeTable } from '../models/indicateur-groupe.table';
 import {
   indicateurSourceMetadonneeTable,
   IndicateurSourceMetadonneeType,
@@ -42,12 +48,6 @@ import {
   indicateurValeurTable,
   IndicateurValeurType,
 } from '../models/indicateur-valeur.table';
-import { indicateurGroupeTable } from '../models/indicateur-groupe.table';
-import { groupementTable } from '../../collectivites/models/groupement.table';
-import { groupementCollectiviteTable } from '../../collectivites/models/groupement-collectivite.table';
-import { PermissionService } from '@/backend/auth/authorizations/permission.service';
-import { PermissionOperation } from '@/backend/auth/authorizations/permission-operation.enum';
-import { ResourceType } from '@/backend/auth/authorizations/resource-type.enum';
 
 @Injectable()
 export default class IndicateursService {

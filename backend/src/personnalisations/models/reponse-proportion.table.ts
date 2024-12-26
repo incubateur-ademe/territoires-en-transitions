@@ -1,11 +1,11 @@
-import { modifiedAt } from '@/backend/utils';
+import { modifiedAt } from '@/domain/utils';
 import {
   doublePrecision,
   integer,
   pgTable,
   varchar,
 } from 'drizzle-orm/pg-core';
-import { collectiviteTable } from '../../collectivites/models/collectivite.table';
+import { collectiviteTable } from '../../collectivites/shared/models/collectivite.table';
 
 export const reponseProportionTable = pgTable('reponse_proportion', {
   modifiedAt,

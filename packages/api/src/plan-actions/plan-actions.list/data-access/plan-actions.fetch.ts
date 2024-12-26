@@ -1,15 +1,16 @@
 import { DBClient } from '@/api/typeUtils';
+import { Axe, PlanActionType } from '@/domain/plans/fiches';
 import { objectToCamel } from 'ts-case-convert';
-import { Axe } from '../../domain';
 import {
   FetchOptions,
   fetchOptionsSchema,
   FetchSort,
 } from '../domain/fetch-options.schema';
 
-type FetchedPlanAction = Axe & {
+interface FetchedPlanAction extends Omit<Axe, 'type'> {
   axes?: Axe[];
-};
+  type: PlanActionType | null;
+}
 
 type TFetchedData = {
   plans: FetchedPlanAction[];

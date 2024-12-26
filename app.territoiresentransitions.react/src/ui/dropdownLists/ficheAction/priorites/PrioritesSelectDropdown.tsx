@@ -1,11 +1,11 @@
-import { NiveauPriorite } from '@/api/plan-actions';
 import BadgePriorite from '@/app/app/pages/collectivite/PlansActions/components/BadgePriorite';
 import { ficheActionNiveauPrioriteOptions } from '@/app/ui/dropdownLists/listesStatiques';
+import { Priorite } from '@/domain/plans/fiches';
 import { Select, SelectProps } from '@/ui';
 
 type Props = Omit<SelectProps, 'values' | 'onChange' | 'options'> & {
-  values?: NiveauPriorite | null;
-  onChange: (priorite: NiveauPriorite) => void;
+  values?: Priorite | null;
+  onChange: (priorite: Priorite) => void;
 };
 
 const PrioritesSelectDropdown = (props: Props) => {
@@ -15,10 +15,8 @@ const PrioritesSelectDropdown = (props: Props) => {
       values={props.values ?? undefined}
       dataTest={props.dataTest ?? 'priorites'}
       options={ficheActionNiveauPrioriteOptions}
-      onChange={(priorite) => props.onChange(priorite as NiveauPriorite)}
-      customItem={(item) => (
-        <BadgePriorite priorite={item.value as NiveauPriorite} />
-      )}
+      onChange={(priorite) => props.onChange(priorite as Priorite)}
+      customItem={(item) => <BadgePriorite priorite={item.value as Priorite} />}
     />
   );
 };

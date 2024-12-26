@@ -1,4 +1,4 @@
-import { EffetsAttendus } from '@/api/plan-actions';
+import { EffetAttendu } from '@/domain/shared';
 import { SelectFilter, SelectMultipleProps } from '@/ui';
 import { useEffetsAttendus } from './useEffetsAttendus';
 
@@ -6,8 +6,8 @@ type EffetsAttendusDropdownProps = Omit<
   SelectMultipleProps,
   'values' | 'onChange' | 'options'
 > & {
-  values?: EffetsAttendus[];
-  onChange: ({ effets }: { effets: EffetsAttendus[] }) => void;
+  values?: EffetAttendu[];
+  onChange: ({ effets }: { effets: EffetAttendu[] }) => void;
 };
 
 const EffetsAttendusDropdown = ({
@@ -26,7 +26,7 @@ const EffetsAttendusDropdown = ({
         onChange({
           effets: options.filter((v) =>
             values?.includes(v.id)
-          ) as EffetsAttendus[],
+          ) as EffetAttendu[],
         })
       }
     />

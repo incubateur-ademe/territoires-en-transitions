@@ -1,7 +1,7 @@
 import { inferProcedureInput } from '@trpc/server';
 import { getTestRouter } from '../../../test/app-utils';
 import { getAuthUser } from '../../../test/auth-utils';
-import { AppRouter, TrpcRouter } from '../../trpc/trpc.router';
+import { AppRouter, TrpcRouter } from '../../utils/trpc/trpc.router';
 import { AuthenticatedUser } from './../../auth/models/auth.models';
 import {
   GetFilteredIndicateurRequestQueryOptionType,
@@ -9,7 +9,7 @@ import {
 } from './get-filtered-indicateurs.request';
 import { getFilteredIndicateurResponseSchema } from './get-filtered-indicateurs.response';
 
-type Input = inferProcedureInput<AppRouter['indicateurs']['filtre']['list']>;
+type Input = inferProcedureInput<AppRouter['indicateurs']['list']>;
 
 describe('Route de lecture des indicateurs filtrés', () => {
   let router: TrpcRouter;
@@ -39,7 +39,7 @@ describe('Route de lecture des indicateurs filtrés', () => {
       filtre: filtre,
       queryOptions: queryOptions,
     };
-    const result = await caller.indicateurs.filtre.list(input);
+    const result = await caller.indicateurs.list(input);
     expect(result.length).not.toBe(0);
     const toCheck = getFilteredIndicateurResponseSchema.safeParse(result);
     expect(toCheck.success).toBeTruthy;
@@ -73,7 +73,7 @@ describe('Route de lecture des indicateurs filtrés', () => {
       queryOptions: queryOptions,
     };
 
-    const result = await caller.indicateurs.filtre.list(input);
+    const result = await caller.indicateurs.list(input);
     expect(result.length).toBe(0);
   });
 });

@@ -44,7 +44,7 @@ export const ficheResumeFactory = ({
     dateFinProvisoire: null,
     ameliorationContinue: null,
     priorite: null,
-    plans: axeId ? [{ id: axeId, collectiviteId }] : null,
+    plans: axeId ? [{ id: axeId, collectiviteId, nom: null }] : null,
     statut: null,
     titre: '',
     restreint: false,

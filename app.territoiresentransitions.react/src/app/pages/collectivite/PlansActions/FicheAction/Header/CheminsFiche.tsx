@@ -1,5 +1,5 @@
-import { Axe } from '@/api/plan-actions';
 import { makeCollectiviteFichesNonClasseesUrl } from '@/app/app/paths';
+import { Axe } from '@/domain/plans/fiches';
 import { Breadcrumbs, Button } from '@/ui';
 import { useRouter } from 'next/navigation';
 import { useState } from 'react';
@@ -77,9 +77,10 @@ const CheminsFiche = ({ titre, collectiviteId, axes }: CheminsFicheProps) => {
           {isOpen && (
             <div>
               {otherAxes.map(
-                (axe) =>
+                (axe, index) =>
                   axe.id && (
                     <CheminFiche
+                      key={index}
                       titre={titre ?? 'Sans titre'}
                       axeId={axe.id}
                       collectiviteId={collectiviteId}

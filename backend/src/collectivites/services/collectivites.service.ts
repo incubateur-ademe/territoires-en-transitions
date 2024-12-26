@@ -1,20 +1,20 @@
 import { Injectable, Logger, NotFoundException } from '@nestjs/common';
 import { aliasedTable, eq, or } from 'drizzle-orm';
 import { isNil } from 'es-toolkit';
-import DatabaseService from '../../common/services/database.service';
-import { collectiviteTestTable } from '../models/collectivite-test.table';
-import { collectiviteTable } from '../models/collectivite.table';
-import { communeTable, CommuneType } from '../models/commune.table';
-import { epciTable, EpciType } from '../models/epci.table';
+import { DatabaseService } from '../../utils/database/database.service';
 import {
   CollectiviteAvecType,
   CollectivitePopulationTypeEnum,
   CollectiviteSousTypeEnum,
   CollectiviteTypeEnum,
-} from '../models/identite-collectivite.dto';
-import { banaticTable } from '../models/imports-banatic.table';
-import { importCommuneTable } from '../models/imports-commune.table';
-import { regionTable } from '../models/imports-region.table';
+} from '../identite-collectivite.dto';
+import { collectiviteTestTable } from '../shared/models/collectivite-test.table';
+import { collectiviteTable } from '../shared/models/collectivite.table';
+import { communeTable, CommuneType } from '../shared/models/commune.table';
+import { epciTable, EpciType } from '../shared/models/epci.table';
+import { banaticTable } from '../shared/models/imports-banatic.table';
+import { importCommuneTable } from '../shared/models/imports-commune.table';
+import { regionTable } from '../shared/models/imports-region.table';
 
 @Injectable()
 export default class CollectivitesService {
@@ -199,10 +199,8 @@ export default class CollectivitesService {
     return epciBySirenResult[0];
   }
 
-  async isPrivate(collectiviteId : number) : Promise<boolean>{
-    const collectivite = await this.getCollectivite(
-      collectiviteId
-    );
+  async isPrivate(collectiviteId: number): Promise<boolean> {
+    const collectivite = await this.getCollectivite(collectiviteId);
     return collectivite.collectivite.accessRestreint || false;
   }
 }

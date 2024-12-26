@@ -1,12 +1,15 @@
+import { PermissionOperation } from '@/backend/auth/authorizations/permission-operation.enum';
+import { PermissionService } from '@/backend/auth/authorizations/permission.service';
+import { ResourceType } from '@/backend/auth/authorizations/resource-type.enum';
 import { Injectable, Logger } from '@nestjs/common';
 import { and, asc, desc, eq, like, lte, SQL, SQLWrapper } from 'drizzle-orm';
 import { AuthenticatedUser } from '../../auth/models/auth.models';
 import {
   CollectiviteAvecType,
   IdentiteCollectivite,
-} from '../../collectivites/models/identite-collectivite.dto';
+} from '../../collectivites/identite-collectivite.dto';
 import CollectivitesService from '../../collectivites/services/collectivites.service';
-import DatabaseService from '../../common/services/database.service';
+import { DatabaseService } from '../../utils/database/database.service';
 import { GetPersonnalisationConsequencesRequestType } from '../models/get-personnalisation-consequences.request';
 import { GetPersonnalitionConsequencesResponseType } from '../models/get-personnalisation-consequences.response';
 import { GetPersonnalisationReglesResponseType } from '../models/get-personnalisation-regles.response';
@@ -22,9 +25,6 @@ import { reponseBinaireTable } from '../models/reponse-binaire.table';
 import { reponseChoixTable } from '../models/reponse-choix.table';
 import { reponseProportionTable } from '../models/reponse-proportion.table';
 import ExpressionParserService from './expression-parser.service';
-import { PermissionService } from '@/backend/auth/authorizations/permission.service';
-import { PermissionOperation } from '@/backend/auth/authorizations/permission-operation.enum';
-import { ResourceType } from '@/backend/auth/authorizations/resource-type.enum';
 
 export type ReponseTables =
   | typeof reponseBinaireTable

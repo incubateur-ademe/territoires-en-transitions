@@ -1,4 +1,4 @@
-import { TempsDeMiseEnOeuvre } from '@/api/plan-actions';
+import { TempsDeMiseEnOeuvre } from '@/domain/shared';
 import { Select, SelectProps } from '@/ui';
 import { useMiseEnOeuvre } from './useMiseEnOeuvre';
 

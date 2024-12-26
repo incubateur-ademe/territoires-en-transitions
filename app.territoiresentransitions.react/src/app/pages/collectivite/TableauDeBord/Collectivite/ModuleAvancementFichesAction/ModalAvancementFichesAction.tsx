@@ -14,7 +14,6 @@ import { Filtre } from '@/api/plan-actions/dashboards/collectivite-dashboard/dom
 import { ModuleFicheActionCountByStatusSelect } from '@/api/plan-actions/dashboards/collectivite-dashboard/domain/module.schema';
 import { ModuleDisplaySettings } from '@/app/app/pages/collectivite/TableauDeBord/components/Module';
 import { supabaseClient } from '@/app/core-logic/api/supabase';
-import { TFicheActionCibles } from '@/app/types/alias';
 import CiblesDropdown from '@/app/ui/dropdownLists/ficheAction/CiblesDropdown/CiblesDropdown';
 import PartenairesDropdown from '@/app/ui/dropdownLists/PartenairesDropdown/PartenairesDropdown';
 import PersonnesDropdown from '@/app/ui/dropdownLists/PersonnesDropdown/PersonnesDropdown';
@@ -24,6 +23,7 @@ import {
 } from '@/app/ui/dropdownLists/PersonnesDropdown/utils';
 import PlansActionDropdown from '@/app/ui/dropdownLists/PlansActionDropdown';
 import ServicesPilotesDropdown from '@/app/ui/dropdownLists/ServicesPilotesDropdown/ServicesPilotesDropdown';
+import { Cible } from '@/domain/plans/fiches';
 
 type Props = ModalProps & {
   module: ModuleFicheActionCountByStatusSelect;
@@ -101,7 +101,7 @@ const ModalAvancementFichesAction = ({
             </Field>
             <Field title="Cibles :">
               <CiblesDropdown
-                values={filtreState.cibles as TFicheActionCibles[]}
+                values={filtreState.cibles as Cible[]}
                 onChange={({ cibles }) =>
                   setFiltreState({ ...filtreState, cibles })
                 }

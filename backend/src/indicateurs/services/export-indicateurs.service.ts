@@ -15,7 +15,7 @@ import {
   adjustColumnWidth,
   BOLD,
   normalizeWorksheetName,
-} from '../../common/services/xlsx.helper';
+} from '../../utils/excel/excel.utils';
 import CollectivitesService from '../../collectivites/services/collectivites.service';
 import { PermissionService } from '@/backend/auth/authorizations/permission.service';
 import { ResourceType } from '@/backend/auth/authorizations/resource-type.enum';

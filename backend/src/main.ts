@@ -1,21 +1,21 @@
 // WARNING: Do this import first
-import './common/services/sentry.service';
+import './utils/sentry-init';
 // Other imports
 import { patchNestjsSwagger, ZodValidationPipe } from '@anatine/zod-nestjs';
 import { Logger } from '@nestjs/common';
 import { HttpAdapterHost, NestFactory } from '@nestjs/core';
 import { DocumentBuilder, SwaggerModule } from '@nestjs/swagger';
 import { AppModule } from './app.module';
-import { AllExceptionsFilter } from './common/filters/all-exceptions.filter';
-import { initApplicationCredentials } from './common/services/gcloud.helper';
-import { TrpcRouter } from './trpc/trpc.router';
+import { initGoogleCloudCredentials } from './utils/google-sheets/gcloud.helper';
+import { AllExceptionsFilter } from './utils/nest/all-exceptions.filter';
+import { TrpcRouter } from './utils/trpc/trpc.router';
 
 const logger = new Logger('main');
 const port = process.env.PORT || 8080;
 logger.log(`Launching NestJS app on port ${port}`);
 
 async function bootstrap() {
-  initApplicationCredentials();
+  initGoogleCloudCredentials();
 
   const app = await NestFactory.create(AppModule, {
     logger: ['fatal', 'error', 'warn', 'log'], // No debug by default

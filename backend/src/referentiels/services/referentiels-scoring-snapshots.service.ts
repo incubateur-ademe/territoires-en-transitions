@@ -1,3 +1,6 @@
+import { PermissionOperation } from '@/backend/auth/authorizations/permission-operation.enum';
+import { PermissionService } from '@/backend/auth/authorizations/permission.service';
+import { ResourceType } from '@/backend/auth/authorizations/resource-type.enum';
 import {
   BadRequestException,
   Injectable,
@@ -10,10 +13,10 @@ import { and, asc, eq, inArray, sql } from 'drizzle-orm';
 import { DateTime } from 'luxon';
 import slugify from 'slugify';
 import { AuthRole, AuthUser } from '../../auth/models/auth.models';
-import { PgIntegrityConstraintViolation } from '../../common/models/postgresql-error-codes.enum';
-import DatabaseService from '../../common/services/database.service';
-import { getErrorWithCode } from '../../common/services/errors.helper';
 import { GetPersonnalisationReponsesResponseType } from '../../personnalisations/models/get-personnalisation-reponses.response';
+import { DatabaseService } from '../../utils/database/database.service';
+import { getErrorWithCode } from '../../utils/nest/errors.utils';
+import { PgIntegrityConstraintViolation } from '../../utils/postgresql-error-codes.enum';
 import { GetReferentielScoresResponseType } from '../models/get-referentiel-scores.response';
 import { GetScoreSnapshotsRequestType } from '../models/get-score-snapshots.request';
 import {
@@ -28,9 +31,6 @@ import {
   scoreSnapshotTable,
   ScoreSnapshotType,
 } from '../models/score-snapshot.table';
-import { PermissionService } from '@/backend/auth/authorizations/permission.service';
-import { PermissionOperation } from '@/backend/auth/authorizations/permission-operation.enum';
-import { ResourceType } from '@/backend/auth/authorizations/resource-type.enum';
 
 @Injectable()
 export default class ReferentielsScoringSnapshotsService {
