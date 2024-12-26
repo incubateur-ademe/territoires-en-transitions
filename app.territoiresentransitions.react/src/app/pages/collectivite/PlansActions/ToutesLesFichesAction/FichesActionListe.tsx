@@ -140,7 +140,10 @@ const FichesActionListe = ({
   const { data, isLoading } = useFicheResumesFetch({
     options: ficheResumesOptions,
   });
-  const hasFiches = !!data?.data?.length;
+
+  const { data: ficheExistenceData } = useFicheResumesFetch();
+
+  const hasFiches = !!ficheExistenceData?.data?.length;
 
   /** Gère les fiches sélectionnées pour les actions groupées */
   const handleSelectFiche = (fiche: FicheResume) => {
