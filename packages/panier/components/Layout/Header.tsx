@@ -41,7 +41,7 @@ const Header = () => {
               href={
                 collectiviteInfo.isOwnCollectivite
                   ? `${ENV.app_url}/collectivite/${collectiviteInfo.collectivite_id}/accueil`
-                  : undefined
+                  : ''
               }
             >
               {collectiviteInfo.nom}
