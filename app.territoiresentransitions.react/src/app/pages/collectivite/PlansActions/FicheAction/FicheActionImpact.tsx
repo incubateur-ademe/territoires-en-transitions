@@ -27,7 +27,11 @@ const FicheActionImpact = ({ fiche }: FicheActionImpactProps) => {
         <span className="mt-1">
           Fiche action issue du service “Actions à Impact”
         </span>
-        <Icon className="!absolute right-4 text-primary-10" icon="eye-line" />
+        <Icon
+          className="!absolute right-[0.4rem] text-primary-10"
+          icon="eye-line"
+          size="sm"
+        />
       </div>
     </ModaleActionImpact>
   ) : null;
