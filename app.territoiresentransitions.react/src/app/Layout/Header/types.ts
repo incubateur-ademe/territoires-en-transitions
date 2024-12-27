@@ -32,6 +32,7 @@ export type HeaderProps = {
   auth: TAuthContext;
   currentCollectivite: CurrentCollectivite | null;
   ownedCollectivites: TMesCollectivites;
+  panierId: string | undefined;
   maintenance: Maintenance;
 };
 
