@@ -23,6 +23,7 @@ export const MenuPrincipal = (props: HeaderPropsWithModalState) => {
   const {
     currentCollectivite,
     ownedCollectivites,
+    panierId,
     modalOpened,
     setOpenedId,
     auth,
@@ -47,7 +48,7 @@ export const MenuPrincipal = (props: HeaderPropsWithModalState) => {
   let secondaryItems = [] as TNavItemsList;
   if (currentCollectivite) {
     // récupère la liste des items à afficher dans le menu
-    items = makeNavItems(currentCollectivite, auth.user);
+    items = makeNavItems(currentCollectivite, auth.user, panierId);
     secondaryItems = makeSecondaryNavItems(currentCollectivite);
   }
 

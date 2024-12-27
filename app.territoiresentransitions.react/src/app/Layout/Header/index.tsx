@@ -3,6 +3,7 @@
 import { useAuth } from '@/app/core-logic/api/auth/AuthProvider';
 import { useCurrentCollectivite } from '@/app/core-logic/hooks/useCurrentCollectivite';
 import { useMaintenance } from '../useMaintenance';
+import { useNbActionsDansPanier } from './AccesPanierAction';
 import { Header as HeaderBase } from './Header';
 
 /**
@@ -11,6 +12,9 @@ import { Header as HeaderBase } from './Header';
 const Header = () => {
   const auth = useAuth();
   const currentCollectivite = useCurrentCollectivite();
+  const { data: panier } = useNbActionsDansPanier(
+    currentCollectivite?.collectivite_id!
+  );
   const maintenance = useMaintenance();
 
   return (
@@ -18,6 +22,7 @@ const Header = () => {
       auth={auth}
       ownedCollectivites={auth.user?.collectivites ?? []}
       currentCollectivite={currentCollectivite}
+      panierId={panier?.panierId}
       maintenance={maintenance}
     />
   );

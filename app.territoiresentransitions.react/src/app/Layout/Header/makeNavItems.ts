@@ -25,9 +25,10 @@ import { TNavDropdown, TNavItem, TNavItemsList } from './types';
 /** Génère les liens de navigation pour une collectivité donnée */
 export const makeNavItems = (
   collectivite: CurrentCollectivite,
-  user: UserData | null
+  user: UserData | null,
+  panierId: string | undefined
 ): TNavItemsList => {
-  return filtreItems(makeNavItemsBase(collectivite, user));
+  return filtreItems(makeNavItemsBase(collectivite, user, panierId));
 };
 
 const isVisiteur = ({
@@ -43,7 +44,8 @@ const isVisiteur = ({
 
 const makeNavItemsBase = (
   collectivite: CurrentCollectivite,
-  user: UserData | null
+  user: UserData | null,
+  panierId: string | undefined
 ): TNavItemsList => {
   const collectiviteId = collectivite.collectivite_id;
   const confidentiel =
@@ -58,10 +60,11 @@ const makeNavItemsBase = (
       dataTest: 'nav-home',
     },
     {
+      confidentiel,
       label: 'Actions à Impact',
-      dataTest: 'pa-actions-impact',
       to: makeCollectivitePanierUrl({
         collectiviteId,
+        panierId,
       }),
     },
     {
