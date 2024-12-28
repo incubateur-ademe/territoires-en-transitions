@@ -25,6 +25,7 @@ import {
   SelectOption,
 } from '@/ui';
 import { useRef } from 'react';
+import LibreTagsDropdown from '../../../../../ui/dropdownLists/LibreTagsDropdown/LibreTagsDropdown';
 
 type Props = {
   filters: Filtre;
@@ -104,6 +105,19 @@ const MenuFiltresToutesLesFichesAction = ({ filters, setFilters }: Props) => {
                   ...(structures
                     ? { structurePiloteIds: structures.map((s) => s.id) }
                     : {}),
+                });
+              }}
+            />
+          </Field>
+
+          <Field title="Tags libres">
+            <LibreTagsDropdown
+              values={filters.libreTagsIds}
+              onChange={({ tags }) => {
+                const { libreTagsIds, ...rest } = filters;
+                setFilters({
+                  ...rest,
+                  ...(tags ? { libreTagsIds: tags.map((t) => t.id) } : {}),
                 });
               }}
             />
