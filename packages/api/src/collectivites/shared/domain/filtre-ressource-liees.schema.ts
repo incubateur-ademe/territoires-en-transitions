@@ -16,6 +16,7 @@ export const filtreRessourceLieesSchema = z.object({
   thematiqueIds: z.coerce.number().array().optional(),
   financeurIds: z.coerce.number().array().optional(),
   partenaireIds: z.coerce.number().array().optional(),
+  libreTagsIds: z.coerce.number().array().optional(),
 });
 
 export type FiltreRessourceLiees = z.infer<typeof filtreRessourceLieesSchema>;
@@ -67,6 +68,14 @@ export const filtreValuesSchema = z.object({
     .optional(),
 
   structurePilotes: z
+    .object({
+      id: z.number(),
+      nom: z.string(),
+    })
+    .array()
+    .optional(),
+
+  libreTags: z
     .object({
       id: z.number(),
       nom: z.string(),
