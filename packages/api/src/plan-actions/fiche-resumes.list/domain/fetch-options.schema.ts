@@ -54,6 +54,7 @@ export const filtreSchema = filtreRessourceLieesSchema
     personneReferenteIds: true,
     structurePiloteIds: true,
     servicePiloteIds: true,
+    libreTagsIds: true,
     thematiqueIds: true,
     financeurIds: true,
   })
