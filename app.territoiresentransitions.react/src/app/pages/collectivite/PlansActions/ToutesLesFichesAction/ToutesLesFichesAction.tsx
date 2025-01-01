@@ -28,6 +28,7 @@ export type FicheActionParam =
   | 'pr'
   | 'sp'
   | 'sv'
+  | 'lt'
   | 't'
   | 'f'
   | 'c'
@@ -44,7 +45,6 @@ export type FicheActionParam =
   | 'dp'
   | 'fp';
 
-// TODO: implémenter les filtres "sans" (ex. "sans_pilote")
 export const nameToparams: Record<
   keyof Filtre | 'sort' | 'page',
   FicheActionParam
@@ -67,6 +67,7 @@ export const nameToparams: Record<
   personneReferenteIds: 'pr',
   structurePiloteIds: 'sp',
   servicePiloteIds: 'sv',
+  libreTagsIds: 'lt',
   thematiqueIds: 't',
   financeurIds: 'f',
   cibles: 'c',
