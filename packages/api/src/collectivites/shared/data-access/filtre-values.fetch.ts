@@ -55,6 +55,10 @@ export async function filtreValuesFetch({
       relatedTables.add('structurePilotes:structure_tag!inner(*)');
     }
 
+    if (filtre.libreTagsIds?.length) {
+      relatedTables.add('libreTags:libre_tag!inner(*)');
+    }
+
     if (filtre.servicePiloteIds?.length) {
       relatedTables.add(
         'servicePilotes:service_tag!service_tag_collectivite_id_fkey!inner(*)'
@@ -114,6 +118,10 @@ export async function filtreValuesFetch({
 
     if (filtre.structurePiloteIds?.length) {
       query.in('structure_tag.id', filtre.structurePiloteIds);
+    }
+
+    if (filtre.libreTagsIds?.length) {
+      query.in('libre_tag.id', filtre.libreTagsIds);
     }
 
     if (filtre.servicePiloteIds?.length) {

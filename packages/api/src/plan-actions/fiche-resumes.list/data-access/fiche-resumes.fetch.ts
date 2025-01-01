@@ -85,6 +85,10 @@ export async function ficheResumesFetch({
     relatedTables.add('fiche_action_service_tag!inner(*)');
   }
 
+  if (filtre.libreTagsIds?.length) {
+    relatedTables.add('fiche_action_libre_tag!inner(*)');
+  }
+
   if (filtre.thematiqueIds?.length) {
     relatedTables.add('fiche_action_thematique!inner(*)');
   }
@@ -198,6 +202,10 @@ export async function ficheResumesFetch({
       'fiche_action_service_tag.service_tag_id',
       filtre.servicePiloteIds
     );
+  }
+
+  if (filtre.libreTagsIds?.length) {
+    query.in('fiche_action_libre_tag.libre_tag_id', filtre.libreTagsIds);
   }
 
   if (filtre.thematiqueIds?.length) {
