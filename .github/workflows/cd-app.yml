@@ -32,6 +32,7 @@ jobs:
       - name: Build and push app image
         run: >
           earthly
+          --no-cache
           --use-inline-cache --save-inline-cache --push
           --platform=linux/amd64
           +app-docker
