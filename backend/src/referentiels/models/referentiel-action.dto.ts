@@ -1,4 +1,3 @@
-import { extendApi } from '@anatine/zod-openapi';
 import { z } from 'zod';
 import { actionDefinitionSeulementIdObligatoireSchema } from './action-definition.table';
 import { ActionType } from './action-type.enum';
@@ -19,16 +18,14 @@ export type ReferentielActionType = z.infer<
 };
 
 export const referentielActionDtoSchema: z.ZodType<ReferentielActionType> =
-  extendApi(
-    actionDefinitionSeulementIdObligatoireSchema
-      .extend({
-        level: z.number(),
-        actionType: z.nativeEnum(ActionType),
-        referentielsOrigine: z.string().array().optional(),
-        tags: z.string().array().optional(),
-        actionsOrigine: referentielActionOrigineSchema.array().optional(),
-        pointsCatalogue: z.record(z.string(), z.number()).optional(),
-        actionsEnfant: z.lazy(() => referentielActionDtoSchema.array()),
-      })
-      .describe('Référentiel avec ses actions enfants')
-  );
+  actionDefinitionSeulementIdObligatoireSchema
+    .extend({
+      level: z.number(),
+      actionType: z.nativeEnum(ActionType),
+      referentielsOrigine: z.string().array().optional(),
+      tags: z.string().array().optional(),
+      actionsOrigine: referentielActionOrigineSchema.array().optional(),
+      pointsCatalogue: z.record(z.string(), z.number()).optional(),
+      actionsEnfant: z.lazy(() => referentielActionDtoSchema.array()),
+    })
+    .describe('Référentiel avec ses actions enfants');

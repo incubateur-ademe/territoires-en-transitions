@@ -1,4 +1,3 @@
-import { extendApi } from '@anatine/zod-openapi';
 import { z } from 'zod';
 import { collectiviteRequestSchema } from '../../collectivites/collectivite.request';
 
@@ -13,21 +12,19 @@ export enum CalculTrajectoireResultatMode {
   MAJ_SPREADSHEET_EXISTANT = 'maj_spreadsheet_existant',
 }
 
-export const calculTrajectoireRequestSchema = extendApi(
-  collectiviteRequestSchema.extend({
-    mode: z
-      .nativeEnum(CalculTrajectoireReset)
-      .optional()
-      .describe('Mode pour forcer la recréation de la trajectoire'),
-    forceUtilisationDonneesCollectivite: z
-      .enum(['true', 'false'])
-      .transform((value) => value === 'true')
-      .optional()
-      .describe(
-        "Force l'utilisation des données de la collectivité plutôt que celles du rare"
-      ),
-  })
-);
+export const calculTrajectoireRequestSchema = collectiviteRequestSchema.extend({
+  mode: z
+    .nativeEnum(CalculTrajectoireReset)
+    .optional()
+    .describe('Mode pour forcer la recréation de la trajectoire'),
+  forceUtilisationDonneesCollectivite: z
+    .enum(['true', 'false'])
+    .transform((value) => value === 'true')
+    .optional()
+    .describe(
+      "Force l'utilisation des données de la collectivité plutôt que celles du rare"
+    ),
+});
 export type CalculTrajectoireRequestType = z.infer<
   typeof calculTrajectoireRequestSchema
 >;

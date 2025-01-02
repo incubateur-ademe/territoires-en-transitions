@@ -1,11 +1,10 @@
-import { extendApi } from '@anatine/zod-openapi';
 import { z } from 'zod';
 
-export const getActionStatutsRequestSchema = extendApi(
-  z.object({
+export const getActionStatutsRequestSchema = z
+  .object({
     date: z.string().datetime().optional(),
   })
-).describe('Date pour laquelle le statut des actions est demandé');
+  .describe('Date pour laquelle le statut des actions est demandé');
 export type GetActionStatutsRequestType = z.infer<
   typeof getActionStatutsRequestSchema
 >;

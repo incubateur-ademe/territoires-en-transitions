@@ -1,8 +1,7 @@
-import { extendApi } from '@anatine/zod-openapi';
 import { z } from 'zod';
 
-export const getScoreSnapshotRequestSchema = extendApi(
-  z.object({
+export const getScoreSnapshotRequestSchema = z
+  .object({
     forceRecalculScoreCourant: z
       .union([
         z.enum(['true', 'false']).transform((value) => value === 'true'),
@@ -11,7 +10,7 @@ export const getScoreSnapshotRequestSchema = extendApi(
       .optional()
       .describe(`Force le recalcul du score courant`),
   })
-).describe('Paramètres de la requête pour obtenir un snapshots de score');
+  .describe('Paramètres de la requête pour obtenir un snapshots de score');
 export type GetScoreSnapshotRequestType = z.infer<
   typeof getScoreSnapshotRequestSchema
 >;

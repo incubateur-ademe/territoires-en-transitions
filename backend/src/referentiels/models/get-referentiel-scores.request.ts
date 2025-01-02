@@ -1,10 +1,9 @@
-import { extendApi } from '@anatine/zod-openapi';
 import { z } from 'zod';
 import { ComputeScoreMode } from './compute-scores-mode.enum';
 import { ScoreJalon } from './score-jalon.enum';
 
-export const getReferentielScoresRequestSchema = extendApi(
-  z.object({
+export const getReferentielScoresRequestSchema = z
+  .object({
     date: z
       .string()
       .datetime()
@@ -70,9 +69,9 @@ export const getReferentielScoresRequestSchema = extendApi(
       .optional()
       .describe(`Force l'update du snapshot même si il existe déjà`),
   })
-).describe(
-  'Paramètres de la requête pour obtenir les scores des actions dun référentiel'
-);
+  .describe(
+    'Paramètres de la requête pour obtenir les scores des actions dun référentiel'
+  );
 export type GetReferentielScoresRequestType = z.infer<
   typeof getReferentielScoresRequestSchema
 >;

@@ -166,6 +166,7 @@ export class ReferentielsScoringController {
   @Get(
     `collectivites/:${COLLECTIVITE_ID_PARAM_KEY}/referentiels/:${REFERENTIEL_ID_PARAM_KEY}/score-snapshots`
   )
+  @ApiResponse({ type: GetScoreSnapshotsResponseClass })
   async listSummary(
     @Param(COLLECTIVITE_ID_PARAM_KEY) collectiviteId: number,
     @Param(REFERENTIEL_ID_PARAM_KEY) referentielId: ReferentielType,
