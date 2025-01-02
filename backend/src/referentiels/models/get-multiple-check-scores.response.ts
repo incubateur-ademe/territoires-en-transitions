@@ -1,9 +1,8 @@
-import { extendApi } from '@anatine/zod-openapi';
 import { z } from 'zod';
 import { getCheckScoresResponseSchema } from './get-check-scores.response';
 
-export const getMultipleCheckScoresResponseSchema = extendApi(
-  z.object({
+export const getMultipleCheckScoresResponseSchema = z
+  .object({
     count: z.number(),
     countByStatus: z.record(z.string(), z.number()),
     referentielCountByStatus: z.record(
@@ -12,7 +11,7 @@ export const getMultipleCheckScoresResponseSchema = extendApi(
     ),
     resultats: getCheckScoresResponseSchema.array(),
   })
-).describe('Résultat de la vérification multiple de calcul de score');
+  .describe('Résultat de la vérification multiple de calcul de score');
 export type GetMultipleCheckScoresResponseType = z.infer<
   typeof getMultipleCheckScoresResponseSchema
 >;

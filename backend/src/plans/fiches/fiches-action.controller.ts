@@ -2,7 +2,6 @@ import { ficheActionNoteSchema } from '@/backend/plans/fiches';
 import { CountByStatutService } from '@/backend/plans/fiches/count-by-statut/count-by-statut.service';
 import { countSyntheseValeurSchema } from '@/backend/utils/count-by.dto';
 import { createZodDto } from '@anatine/zod-nestjs';
-import { extendApi } from '@anatine/zod-openapi';
 import {
   Body,
   Controller,
@@ -16,24 +15,22 @@ import { ApiOkResponse, ApiTags } from '@nestjs/swagger';
 import { z } from 'zod';
 import { TokenInfo } from '../../auth/decorators/token-info.decorators';
 import type { AuthenticatedUser } from '../../auth/models/auth.models';
-import {
-  deleteFicheActionNotesRequestSchema,
-  upsertFicheActionNotesRequestSchema,
-} from './shared/upsert-fiche-action-note.request';
 import FicheService from './fiche.service';
 import FichesActionUpdateService from './fiches-action-update.service';
 import { editFicheRequestSchema } from './shared/edit-fiche.request';
 import { fetchFichesFilterRequestSchema } from './shared/fetch-fiches-filter.request';
+import {
+  deleteFicheActionNotesRequestSchema,
+  upsertFicheActionNotesRequestSchema,
+} from './shared/upsert-fiche-action-note.request';
 
 /**
  * Création des classes de réponse à partir du schema pour générer automatiquement la documentation OpenAPI
  */
 export class GetFichesActionSyntheseResponseClass extends createZodDto(
-  extendApi(
-    z.object({
-      par_statut: countSyntheseValeurSchema,
-    })
-  )
+  z.object({
+    par_statut: countSyntheseValeurSchema,
+  })
 ) {}
 
 export class GetFichesActionFilterRequestClass extends createZodDto(

@@ -1,8 +1,7 @@
-import { extendApi } from '@anatine/zod-openapi';
 import { z } from 'zod';
 
-export const checkReferentielScoresRequestSchema = extendApi(
-  z.object({
+export const checkReferentielScoresRequestSchema = z
+  .object({
     utiliseDatePourScoreCourant: z
       .enum(['true', 'false'])
       .transform((value) => value === 'true')
@@ -18,9 +17,9 @@ export const checkReferentielScoresRequestSchema = extendApi(
         `Indique si une notification doit être envoyée en cas d'erreur.`
       ),
   })
-).describe(
-  "Paramètres de la requête pour vérifier les scores entre l'ancien (python) et le nouveau (backend typescript) moteur de calul pour un référentiel donné"
-);
+  .describe(
+    "Paramètres de la requête pour vérifier les scores entre l'ancien (python) et le nouveau (backend typescript) moteur de calul pour un référentiel donné"
+  );
 export type CheckReferentielScoresRequestType = z.infer<
   typeof checkReferentielScoresRequestSchema
 >;

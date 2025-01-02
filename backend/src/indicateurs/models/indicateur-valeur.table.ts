@@ -1,5 +1,4 @@
 import { createZodDto } from '@anatine/zod-nestjs';
-import { extendApi } from '@anatine/zod-openapi';
 import { InferInsertModel, InferSelectModel } from 'drizzle-orm';
 import {
   date,
@@ -71,25 +70,23 @@ export const createIndicateurValeurSchema = createInsertSchema(
   indicateurValeurTable
 );
 
-export const indicateurValeurGroupeeSchema = extendApi(
-  indicateurValeurSchema
-    .pick({
-      id: true,
-      dateValeur: true,
-      resultat: true,
-      resultatCommentaire: true,
-      objectif: true,
-      objectifCommentaire: true,
-      metadonneeId: true,
-    })
-    .partial({
-      resultat: true,
-      resultatCommentaire: true,
-      objectif: true,
-      objectifCommentaire: true,
-      metadonneeId: true,
-    })
-);
+export const indicateurValeurGroupeeSchema = indicateurValeurSchema
+  .pick({
+    id: true,
+    dateValeur: true,
+    resultat: true,
+    resultatCommentaire: true,
+    objectif: true,
+    objectifCommentaire: true,
+    metadonneeId: true,
+  })
+  .partial({
+    resultat: true,
+    resultatCommentaire: true,
+    objectif: true,
+    objectifCommentaire: true,
+    metadonneeId: true,
+  });
 
 export type IndicateurValeurGroupeeType = z.infer<
   typeof indicateurValeurGroupeeSchema
@@ -99,14 +96,12 @@ export class IndicateurValeurGroupee extends createZodDto(
   indicateurValeurGroupeeSchema
 ) {}
 
-export const indicateurAvecValeursSchema = extendApi(
-  z
-    .object({
-      definition: minimaleIndicateurDefinitionSchema,
-      valeurs: z.array(indicateurValeurGroupeeSchema),
-    })
-    .describe('Indicateur définition et valeurs ordonnées par date')
-);
+export const indicateurAvecValeursSchema = z
+  .object({
+    definition: minimaleIndicateurDefinitionSchema,
+    valeurs: z.array(indicateurValeurGroupeeSchema),
+  })
+  .describe('Indicateur définition et valeurs ordonnées par date');
 
 export type IndicateurAvecValeursType = z.infer<
   typeof indicateurAvecValeursSchema
@@ -116,28 +111,24 @@ export class IndicateurAvecValeursClass extends createZodDto(
   indicateurAvecValeursSchema
 ) {}
 
-export const indicateurValeursGroupeeParSourceSchema = extendApi(
-  z
-    .object({
-      source: z.string(),
-      metadonnees: z.array(indicateurSourceMetadonneeSchema),
-      valeurs: z.array(indicateurValeurGroupeeSchema),
-    })
-    .describe('Indicateur valeurs pour une source donnée')
-);
+export const indicateurValeursGroupeeParSourceSchema = z
+  .object({
+    source: z.string(),
+    metadonnees: z.array(indicateurSourceMetadonneeSchema),
+    valeurs: z.array(indicateurValeurGroupeeSchema),
+  })
+  .describe('Indicateur valeurs pour une source donnée');
 
 export class IndicateurValeursGroupeeParSource extends createZodDto(
   indicateurValeursGroupeeParSourceSchema
 ) {}
 
-export const indicateurAvecValeursParSourceSchema = extendApi(
-  z
-    .object({
-      definition: indicateurDefinitionSchema,
-      sources: z.record(z.string(), indicateurValeursGroupeeParSourceSchema),
-    })
-    .describe('Filtre de récupération des valeurs des indicateurs')
-);
+export const indicateurAvecValeursParSourceSchema = z
+  .object({
+    definition: indicateurDefinitionSchema,
+    sources: z.record(z.string(), indicateurValeursGroupeeParSourceSchema),
+  })
+  .describe('Filtre de récupération des valeurs des indicateurs');
 
 export class IndicateurAvecValeursParSource extends createZodDto(
   indicateurAvecValeursParSourceSchema
