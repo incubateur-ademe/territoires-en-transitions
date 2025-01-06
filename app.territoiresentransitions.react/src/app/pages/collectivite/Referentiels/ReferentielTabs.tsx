@@ -17,7 +17,7 @@ import { useRouter } from 'next/navigation';
 import ProgressBarWithTooltip from '../../../../ui/score/ProgressBarWithTooltip';
 import AidePriorisation from '../AidePriorisation';
 import DetailTacheTable from '../DetailTaches';
-import Progression from './Referentiels';
+import ActionsReferentiels from './Referentiels';
 
 const TABS_INDEX: Record<ReferentielVueParamOption, number> = {
   progression: 0,
@@ -100,8 +100,8 @@ const ReferentielTabs = () => {
         defaultActiveTab={activeTab}
         onChange={handleChange}
       >
-        <Tab label="Progression">
-          <Progression />
+        <Tab label="Actions">
+          <ActionsReferentiels />
         </Tab>
         <Tab label="Aide à la priorisation">
           {activeTab === TABS_INDEX['priorisation'] ? (
