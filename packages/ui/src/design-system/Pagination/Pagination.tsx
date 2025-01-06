@@ -33,7 +33,7 @@ export const Pagination = ({
   const [nbOfPages, setNbOfPages] = useState(
     Math.ceil(nbOfElements / maxElementsPerPage)
   );
-  const [pageButtons, setPageButtons] = useState<number[]>([]);
+  const [pageButtons, setPageButtons] = useState<(number | undefined)[]>([]);
   const [currentPage, setCurrentPage] = useState(selectedPage);
   const [windowWidth, setWindowWidth] = useState<number>(0);
   const [isMobile, setIsMobile] = useState(false);
@@ -100,7 +100,7 @@ export const Pagination = ({
             key={i}
             pageNumber={pageNum}
             isSelected={currentPage === pageNum}
-            onClick={() => handleChangePage(pageNum)}
+            onClick={() => !!pageNum && handleChangePage(pageNum)}
           />
         ))}
       </div>

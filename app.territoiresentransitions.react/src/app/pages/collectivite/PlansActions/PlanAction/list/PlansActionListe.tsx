@@ -188,15 +188,14 @@ const PlansActionListe = ({
               />
             ))}
           </div>
-          <div className="flex mt-16">
-            <Pagination
-              className="mx-auto"
-              selectedPage={currentPage}
-              nbOfElements={data?.count ?? 0}
-              maxElementsPerPage={maxNbOfCards}
-              onChange={(page) => setCurrentPage(page)}
-            />
-          </div>
+          <Pagination
+            className="mx-auto mt-16"
+            selectedPage={currentPage}
+            nbOfElements={data?.count ?? 0}
+            maxElementsPerPage={maxNbOfCards}
+            idToScrollTo="app-header"
+            onChange={setCurrentPage}
+          />
         </div>
       )}
     </>
