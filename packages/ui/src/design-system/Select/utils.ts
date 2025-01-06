@@ -25,13 +25,12 @@ export type SelectOption = Option | OptionSection;
 
 /** Option section type guards */
 export function isOptionSection(option: SelectOption): option is OptionSection {
-  return (option as OptionSection).title !== undefined;
+  return 'title' in option && option.title !== undefined;
 }
 
 /** Option type guards */
 export function isSingleOption(option: SelectOption): option is Option {
-  type NewType = Option;
-  return (option as NewType).value !== undefined;
+  return 'value' in option && option.value !== undefined;
 }
 
 /** Renvoie un tableau d'options, quelles soient dans une section ou non */
@@ -56,9 +55,9 @@ export const sortOptionByAlphabet = (
   const sectionArray: OptionSection[] = [];
 
   options.forEach((option) => {
-    if (isSingleOption(option)) {
-      option.value !== ITEM_ALL && optionArray.push(option);
-    } else {
+    if (isSingleOption(option) && option.value !== ITEM_ALL) {
+      optionArray.push(option);
+    } else if (isOptionSection(option)) {
       sectionArray.push(option);
     }
   });
