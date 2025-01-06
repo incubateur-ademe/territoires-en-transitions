@@ -11,8 +11,7 @@ import {
   useReferentielVue,
 } from '@/app/core-logic/hooks/params';
 import { ReferentielOfIndicateur } from '@/app/types/litterals';
-import { Tab, Tabs } from '@/app/ui/shared/Tabs';
-import { Button } from '@/ui';
+import { Button, Card, Tab, Tabs } from '@/ui';
 import { useRouter } from 'next/navigation';
 import ProgressBarWithTooltip from '../../../../ui/score/ProgressBarWithTooltip';
 import AidePriorisation from '../AidePriorisation';
@@ -63,7 +62,7 @@ const ReferentielTabs = () => {
   };
 
   return (
-    <main className="fr-container fr-mt-4w flex flex-col">
+    <main className="w-full px-2 md:px-4 lg:px-6 py-12 bg-grey-2 -mb-8">
       <div className="flex justify-between max-sm:flex-col gap-y-4 mb-8">
         <h2 className="mb-0">
           Référentiel{' '}
@@ -96,22 +95,32 @@ const ReferentielTabs = () => {
       </div>
 
       <Tabs
-        className="w-full"
         defaultActiveTab={activeTab}
         onChange={handleChange}
+        tabsListClassName="!justify-start pl-0 flex-nowrap overflow-x-scroll bg-transparent"
       >
         <Tab label="Actions">
-          <ActionsReferentiels />
+          <Card>
+            <ActionsReferentiels />
+          </Card>
         </Tab>
         <Tab label="Aide à la priorisation">
           {activeTab === TABS_INDEX['priorisation'] ? (
-            <AidePriorisation />
+            <Card>
+              <AidePriorisation />
+            </Card>
           ) : (
-            '...'
+            <Card>...</Card>
           )}
         </Tab>
         <Tab label="Détail des statuts">
-          {activeTab === TABS_INDEX['detail'] ? <DetailTacheTable /> : '...'}
+          {activeTab === TABS_INDEX['detail'] ? (
+            <Card>
+              <DetailTacheTable />
+            </Card>
+          ) : (
+            <Card>...</Card>
+          )}
         </Tab>
       </Tabs>
     </main>
