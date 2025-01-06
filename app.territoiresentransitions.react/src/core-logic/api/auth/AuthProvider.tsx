@@ -14,6 +14,7 @@ import {
   SignInWithPasswordCredentials,
   User,
 } from '@supabase/supabase-js';
+import { usePostHog } from 'posthog-js/react';
 import {
   createContext,
   ReactNode,
@@ -109,6 +110,8 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
 
   const { data: userData = null } = useUserData(session);
 
+  const posthog = usePostHog();
+
   useEffect(() => {
     // écoute les changements d'état (connecté, déconnecté, etc.)
     const {
@@ -139,12 +142,22 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
       if (window.location.href.includes('localhost'))
         environment = 'development';
 
+      if (posthog) {
+        posthog.identify(userData.id, {
+          email: userData.email,
+          user_id: userData.id,
+        });
+      }
+
       if (environment === 'production' || environment === 'test') {
         // @ts-expect-error - StonlyWidget is not defined
         window.StonlyWidget('identify', userData.user_id);
       }
     } else {
       clearCrispUserData();
+      if (posthog) {
+        posthog.reset();
+      }
     }
   }, [userData]);
 
