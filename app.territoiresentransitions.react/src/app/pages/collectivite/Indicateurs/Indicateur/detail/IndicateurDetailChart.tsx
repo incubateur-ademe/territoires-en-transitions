@@ -6,7 +6,7 @@ import { useIndicateurValeurs } from '@/app/app/pages/collectivite/Indicateurs/u
 import PictoIndicateurVide from '@/app/ui/pictogrammes/PictoIndicateurVide';
 import { Button, EmptyCard, Icon } from '@/ui';
 import DownloadIndicateurChartModal from '../../chart/DownloadIndicateurChart';
-import IndicateurChartNew from '../../chart/IndicateurChartNew';
+import IndicateurChart from '../../chart/IndicateurChart';
 import { DataSourceTooltip } from './DataSourceTooltip';
 import { transformeValeurs } from './transformeValeurs';
 
@@ -81,7 +81,7 @@ const IndicateurDetailChart = ({
           )}
         </div>
 
-        <IndicateurChartNew data={data} isLoading={isLoadingValeurs} />
+        <IndicateurChart data={data} isLoading={isLoadingValeurs} />
 
         {!!metadonnee && (
           <DataSourceTooltip metadonnee={metadonnee}>

@@ -16,7 +16,6 @@ import {
   IndicateurListItem,
 } from '@/api/indicateurs/domain';
 import { transformeValeurs } from '@/app/app/pages/collectivite/Indicateurs/Indicateur/detail/transformeValeurs';
-import { IndicateurChartProps } from '@/app/app/pages/collectivite/Indicateurs/chart/IndicateurChart';
 import { useIndicateurChartInfo } from '@/app/app/pages/collectivite/Indicateurs/chart/useIndicateurChartInfo';
 import BadgeIndicateurPerso from '@/app/app/pages/collectivite/Indicateurs/components/BadgeIndicateurPerso';
 import BadgeOpenData from '@/app/app/pages/collectivite/Indicateurs/components/BadgeOpenData';
@@ -25,9 +24,9 @@ import PictoIndicateurComplet from '@/app/ui/pictogrammes/PictoIndicateurComplet
 import PictoIndicateurVide from '@/app/ui/pictogrammes/PictoIndicateurVide';
 import { BadgeACompleter } from '@/app/ui/shared/Badge/BadgeACompleter';
 import DownloadIndicateurChartModal from '../../chart/DownloadIndicateurChart';
-import IndicateurChartNew, {
+import IndicateurChart, {
   IndicateurChartData,
-} from '../../chart/IndicateurChartNew';
+} from '../../chart/IndicateurChart';
 import { getIndicateurRestant } from './utils';
 
 /** Props de la carte Indicateur */
@@ -49,8 +48,6 @@ export type IndicateurCardProps = {
   href?: string;
   /** ClassName de la carte */
   className?: string;
-  /** Props du composant `IndicateurChart` sans ce qui est relatif aux données */
-  chart?: Omit<IndicateurChartProps, 'data' | 'isLoading'>;
   /** Affiche ou masque le graphique */
   hideChart?: boolean;
   /** Affiche ou masque le graphique quand il n'y a pas de valeur */
@@ -125,7 +122,6 @@ export const IndicateurCardBase = ({
   className,
   isLoading,
   definition,
-  chart,
   chartInfo,
   isEditable = false,
   hideChart = false,
@@ -258,7 +254,7 @@ export const IndicateurCardBase = ({
                   }
                 />
               ) : (
-                <IndicateurChartNew
+                <IndicateurChart
                   data={data}
                   isLoading={isLoading}
                   variant="thumbnail"

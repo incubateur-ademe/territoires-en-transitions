@@ -1,6 +1,6 @@
 import { Modal } from '@/ui';
 import { OpenState } from '@/ui/utils/types';
-import IndicateurChartNew, { IndicateurChartData } from './IndicateurChartNew';
+import IndicateurChart, { IndicateurChartData } from './IndicateurChart';
 
 type Props = {
   openState: OpenState;
@@ -22,7 +22,7 @@ const DownloadIndicateurChartModal = ({
       size="xl"
       openState={openState}
       render={() => (
-        <IndicateurChartNew
+        <IndicateurChart
           data={data}
           isLoading={isLoading}
           title={title}
