@@ -256,7 +256,11 @@ export async function selectIndicateurFiches(
     .eq('fiche_resume.collectivite_id', collectiviteId)
     .returns<any[]>();
 
-  return data ? (objectToCamel(data) as FicheResume[]) : [];
+  return data
+    ? (objectToCamel(
+        data.map((f) => ({ ...f, priorite: f.niveau_priorite }))
+      ) as FicheResume[])
+    : [];
 }
 
 /**
