@@ -11,13 +11,26 @@ import { createInsertSchema, createSelectSchema } from 'drizzle-zod';
 import { collectiviteTable } from '../../collectivites/shared/models/collectivite.table';
 import { actionIdReference } from './action-definition.table';
 
-export const avancementEnum = pgEnum('avancement', [
-  'fait',
-  'pas_fait',
-  'programme',
-  'non_renseigne',
-  'detaille',
-]);
+export const ActionAvancementEnum = {
+  FAIT: 'fait',
+  PAS_FAIT: 'pas_fait',
+  PROGRAMME: 'programme',
+  NON_RENSEIGNE: 'non_renseigne',
+  DETAILLE: 'detaille',
+} as const;
+
+export type ActionAvancementEnumType =
+  (typeof ActionAvancementEnum)[keyof typeof ActionAvancementEnum];
+
+export const ActionAvancementEnumValues = [
+  ActionAvancementEnum.FAIT,
+  ActionAvancementEnum.PAS_FAIT,
+  ActionAvancementEnum.PROGRAMME,
+  ActionAvancementEnum.NON_RENSEIGNE,
+  ActionAvancementEnum.DETAILLE,
+] as const;
+
+export const avancementEnum = pgEnum('avancement', ActionAvancementEnumValues);
 
 export const actionStatutTable = pgTable('action_statut', {
   collectiviteId: integer('collectivite_id')

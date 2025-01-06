@@ -1,11 +1,10 @@
-import { extendApi } from '@anatine/zod-openapi';
 import { z } from 'zod';
 import { actionScoreSchema } from './action-score.dto';
 import { CheckScoreStatus } from './check-score-status.enum';
 import { referentielIdEnumSchema } from './referentiel.enum';
 
-export const getCheckScoresResponseSchema = extendApi(
-  z.object({
+export const getCheckScoresResponseSchema = z
+  .object({
     collectiviteId: z.number(),
     referentielId: referentielIdEnumSchema,
     date: z.string().datetime(),
@@ -18,7 +17,7 @@ export const getCheckScoresResponseSchema = extendApi(
       })
     ),
   })
-).describe('Résultat de la vérification de calcul de score');
+  .describe('Résultat de la vérification de calcul de score');
 export type GetCheckScoresResponseType = z.infer<
   typeof getCheckScoresResponseSchema
 >;

@@ -1,4 +1,3 @@
-import { extendApi } from '@anatine/zod-openapi';
 import { z } from 'zod';
 import { epciSchema } from '../../collectivites/shared/models/epci.table';
 import { IndicateurValeur } from '../shared/models/indicateur-valeur.table';
@@ -11,34 +10,30 @@ export enum VerificationTrajectoireStatus {
   DONNEES_MANQUANTES = 'donnees_manquantes',
 }
 
-export const verificationTrajectoireResponseSchema = extendApi(
-  z.object({
-    status: z
-      .nativeEnum(VerificationTrajectoireStatus)
-      .describe(
-        'Status de la vérification des données pour le calcul de la trajectoire SNBC'
-      ),
-    donneesEntree: donneesCalculTrajectoireARemplirSchema
-      .optional()
-      .describe(
-        'Données qui seront utilisées pour le calcul de la trajectoire SNBC.'
-      ),
-    epci: epciSchema.optional().describe("Informations de l'EPCI"),
-    sourcesDonneesEntree: z
-      .string()
-      .array()
-      .optional()
-      .describe(
-        'Source des données utilisées lorsque le calcul a déjà été fait'
-      ),
-    indentifiantsReferentielManquantsDonneesEntree: z
-      .array(z.string())
-      .optional()
-      .describe(
-        "Identifiants du référentiel manquants dans les données d'entrée lorsque le calcul a déjà été fait"
-      ),
-  })
-);
+export const verificationTrajectoireResponseSchema = z.object({
+  status: z
+    .nativeEnum(VerificationTrajectoireStatus)
+    .describe(
+      'Status de la vérification des données pour le calcul de la trajectoire SNBC'
+    ),
+  donneesEntree: donneesCalculTrajectoireARemplirSchema
+    .optional()
+    .describe(
+      'Données qui seront utilisées pour le calcul de la trajectoire SNBC.'
+    ),
+  epci: epciSchema.optional().describe("Informations de l'EPCI"),
+  sourcesDonneesEntree: z
+    .string()
+    .array()
+    .optional()
+    .describe('Source des données utilisées lorsque le calcul a déjà été fait'),
+  indentifiantsReferentielManquantsDonneesEntree: z
+    .array(z.string())
+    .optional()
+    .describe(
+      "Identifiants du référentiel manquants dans les données d'entrée lorsque le calcul a déjà été fait"
+    ),
+});
 export type VerificationTrajectoireResponseType = z.infer<
   typeof verificationTrajectoireResponseSchema
 >;

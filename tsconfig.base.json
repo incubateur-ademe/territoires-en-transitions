@@ -20,16 +20,16 @@
     "esModuleInterop": true,
     "incremental": true,
     "paths": {
-      "@/api": ["./packages/api/src/index.ts"],
+      "@/api": ["./packages/api/src/index"],
       "@/api/*": ["./packages/api/src/*"],
       "@/app/*": ["./app.territoiresentransitions.react/src/*"],
       "@/auth/*": ["./packages/auth/*"],
-      "@/domain/*": ["./backend/src/*/index-domain.ts"],
+      "@/domain/*": ["./backend/src/*/index-domain"],
       "@/backend/*": ["./backend/src/*"],
-      "@/backend/test": ["./backend/test/index.ts"],
+      "@/backend/test": ["./backend/test/index"],
       "@/panier/*": ["./packages/panier/*"],
       "@/site/*": ["./packages/site/*"],
-      "@/ui": ["./packages/ui/src/index.ts"],
+      "@/ui": ["./packages/ui/src/index"],
       "@/ui/*": ["./packages/ui/src/*"]
     }
   },

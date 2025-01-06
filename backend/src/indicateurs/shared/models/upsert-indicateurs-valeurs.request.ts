@@ -1,20 +1,15 @@
 import { createZodDto } from '@anatine/zod-nestjs';
-import { extendApi } from '@anatine/zod-openapi';
 import { z } from 'zod';
 import { indicateurValeurSchemaInsert } from './indicateur-valeur.table';
 
-export const upsertIndicateursValeursRequestSchema = extendApi(
-  z
-    .object({
-      valeurs: extendApi(
-        z
-          .array(indicateurValeurSchemaInsert)
-          .min(1)
-          .describe('Liste de valeurs')
-      ),
-    })
-    .describe('Valeurs des indicateurs à insérer ou mettre à jour')
-);
+export const upsertIndicateursValeursRequestSchema = z
+  .object({
+    valeurs: z
+      .array(indicateurValeurSchemaInsert)
+      .min(1)
+      .describe('Liste de valeurs'),
+  })
+  .describe('Valeurs des indicateurs à insérer ou mettre à jour');
 export type UpsertIndicateursValeursRequestType = z.infer<
   typeof upsertIndicateursValeursRequestSchema
 >;

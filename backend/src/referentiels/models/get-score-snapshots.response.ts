@@ -1,4 +1,3 @@
-import { extendApi } from '@anatine/zod-openapi';
 import z from 'zod';
 import { referentielIdEnumSchema } from './referentiel.enum';
 import { ScoreJalon } from './score-jalon.enum';
@@ -46,16 +45,16 @@ export type ScoreSnapshotCollectiviteInfoType = z.infer<
   typeof scoreSnapshotCollectiviteInfo
 >;
 
-export const getScoreSnapshotsResponseSchema = extendApi(
-  z.object({
+export const getScoreSnapshotsResponseSchema = z
+  .object({
     collectiviteId: z.number(),
     referentielId: referentielIdEnumSchema,
     typesJalon: z.nativeEnum(ScoreJalon).array(),
     snapshots: scoreSnapshotInfo.array(),
   })
-).describe(
-  'Liste des snapshots de score pour une collectivité et un référentiel'
-);
+  .describe(
+    'Liste des snapshots de score pour une collectivité et un référentiel'
+  );
 export type GetScoreSnapshotsResponseType = z.infer<
   typeof getScoreSnapshotsResponseSchema
 >;

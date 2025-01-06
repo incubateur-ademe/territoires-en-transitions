@@ -1,4 +1,3 @@
-import { extendApi } from '@anatine/zod-openapi';
 import { z } from 'zod';
 import { collectiviteAvecTypeSchema } from '../../collectivites/identite-collectivite.dto';
 import { ComputeScoreMode } from './compute-scores-mode.enum';
@@ -15,8 +14,8 @@ export const getReferentielScoresResponseSnapshotInfoSchema = z.object({
   modifiedBy: z.string().nullable(),
 });
 
-export const getReferentielScoresResponseSchema = extendApi(
-  z.object({
+export const getReferentielScoresResponseSchema = z
+  .object({
     collectiviteId: z.number(),
     referentielId: referentielIdEnumSchema,
     referentielVersion: z.string(),
@@ -29,7 +28,7 @@ export const getReferentielScoresResponseSchema = extendApi(
     snapshot: getReferentielScoresResponseSnapshotInfoSchema.optional(),
     mode: z.nativeEnum(ComputeScoreMode),
   })
-).describe('Score de la collectivité pour un référentiel et la date donnée');
+  .describe('Score de la collectivité pour un référentiel et la date donnée');
 export type GetReferentielScoresResponseType = z.infer<
   typeof getReferentielScoresResponseSchema
 >;

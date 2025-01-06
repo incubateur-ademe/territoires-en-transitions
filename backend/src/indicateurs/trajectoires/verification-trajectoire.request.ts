@@ -1,8 +1,7 @@
-import { extendApi } from '@anatine/zod-openapi';
 import { z } from 'zod';
 import { collectiviteRequestSchema } from '../../collectivites/collectivite.request';
 
-export const verificationTrajectoireRequestSchema = extendApi(
+export const verificationTrajectoireRequestSchema =
   collectiviteRequestSchema.extend({
     forceRecuperationDonnees: z
       .enum(['true', 'false'])
@@ -23,8 +22,7 @@ export const verificationTrajectoireRequestSchema = extendApi(
       .describe(
         "Force l'utilisation des données de la collectivité plutôt que celles du rare"
       ),
-  })
-);
+  });
 export type VerificationTrajectoireRequestType = z.infer<
   typeof verificationTrajectoireRequestSchema
 >;

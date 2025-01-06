@@ -1,5 +1,5 @@
 import { integer, pgTable } from 'drizzle-orm/pg-core';
-import { ficheActionTable } from '../../plans/fiches/shared/models/fiche-action.table';
+import { ficheActionTable } from '../../../plans/fiches/shared/models/fiche-action.table';
 import { DocumentBase } from './document.basetable';
 
 export const annexeTable = pgTable('annexe', {

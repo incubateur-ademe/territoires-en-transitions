@@ -3,6 +3,7 @@ import {
   HttpException,
   HttpStatus,
   Injectable,
+  InternalServerErrorException,
   Logger,
   NotFoundException,
   UnprocessableEntityException,
@@ -302,6 +303,7 @@ export default class ReferentielsService {
     const colonnes = onlyForScoring
       ? {
           actionId: actionDefinitionTable.actionId,
+          identifiant: actionDefinitionTable.identifiant,
           nom: actionDefinitionTable.nom,
           points: actionDefinitionTable.points,
           categorie: actionDefinitionTable.categorie,
@@ -408,6 +410,29 @@ export default class ReferentielsService {
       );
     }
     return referentielId as ReferentielId;
+  }
+
+  getActionIdentifiantFromActionId(actionId: string): string {
+    const actionParts = actionId.split('_');
+    if (actionParts.length !== 2) {
+      throw new UnprocessableEntityException(`Invalid action id  ${actionId}`);
+    }
+    return actionParts[1];
+  }
+
+  getAxeFromActionId(actionId: string): number {
+    let identifiant = actionId;
+    if (actionId.includes('_')) {
+      identifiant = actionId.split('_')[1];
+    }
+    const identifiantParts = identifiant.split('.');
+    const axe = parseInt(identifiantParts[0]);
+    if (isNaN(axe)) {
+      throw new InternalServerErrorException(
+        `Invalid actionId ${actionId}, axe not found`
+      );
+    }
+    return axe;
   }
 
   getLevelFromActionId(actionId: string): number {

@@ -1,5 +1,5 @@
-import { extendApi } from '@anatine/zod-openapi';
 import { z } from 'zod';
+import { SimplePreuveDto } from '../../collectivites/documents/models/preuve.dto';
 import { actionDefinitionSeulementIdObligatoireSchema } from './action-definition.table';
 import {
   actionPointScoreSchema,
@@ -23,28 +23,25 @@ export type ReferentielActionWithScoreType = z.infer<
   scoresTag: Record<string, ActionPointScoreType>;
   actionsEnfant: ReferentielActionWithScoreType[];
   referentielsOrigine?: string[];
+  preuves?: SimplePreuveDto[];
   score: ActionScoreType;
 };
 
 export const referentielActionAvecScoreDtoSchema: z.ZodType<ReferentielActionWithScoreType> =
-  extendApi(
-    actionDefinitionSeulementIdObligatoireSchema
-      .extend({
-        level: z.number(),
-        actionType: z.nativeEnum(ActionType),
-        referentielsOrigine: z.string().array().optional(),
-        scoresOrigine: z
-          .record(z.string(), actionPointScoreSchema.nullable())
-          .optional(),
-        tags: z.string().array().optional(),
-        scoresTag: z.record(z.string(), actionPointScoreSchema),
-        actionsOrigine: referentielActionOrigineWithScoreSchema
-          .array()
-          .optional(),
-        actionsEnfant: z.lazy(() =>
-          referentielActionAvecScoreDtoSchema.array()
-        ),
-        score: actionScoreSchema,
-      })
-      .describe("Référentiel d'actions avec le score associé")
-  );
+  actionDefinitionSeulementIdObligatoireSchema
+    .extend({
+      level: z.number(),
+      actionType: z.nativeEnum(ActionType),
+      referentielsOrigine: z.string().array().optional(),
+      scoresOrigine: z
+        .record(z.string(), actionPointScoreSchema.nullable())
+        .optional(),
+      tags: z.string().array().optional(),
+      scoresTag: z.record(z.string(), actionPointScoreSchema),
+      actionsOrigine: referentielActionOrigineWithScoreSchema
+        .array()
+        .optional(),
+      actionsEnfant: z.lazy(() => referentielActionAvecScoreDtoSchema.array()),
+      score: actionScoreSchema,
+    })
+    .describe("Référentiel d'actions avec le score associé");
