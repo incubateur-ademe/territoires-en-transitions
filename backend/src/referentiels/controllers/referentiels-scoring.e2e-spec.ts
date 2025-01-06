@@ -5,6 +5,7 @@ import { getTestApp } from '../../../test/app-utils';
 import { getAuthToken } from '../../../test/auth-utils';
 import { getCollectiviteIdBySiren } from '../../../test/collectivites-utils';
 import { HttpErrorResponse } from '../../utils/nest/http-error.response';
+import { referentielIdEnumSchema } from '../index-domain';
 import { ActionScoreType } from '../models/action-score.dto';
 import { ActionStatutType } from '../models/action-statut.table';
 import { ActionType } from '../models/action-type.enum';
@@ -13,7 +14,6 @@ import { GetReferentielScoresResponseType } from '../models/get-referentiel-scor
 import { GetScoreSnapshotsResponseType } from '../models/get-score-snapshots.response';
 import { HistoriqueActionStatutType } from '../models/historique-action-statut.table';
 import { ReferentielActionWithScoreType } from '../models/referentiel-action-avec-score.dto';
-import { ReferentielType } from '../models/referentiel.enum';
 import { ScoreJalon } from '../models/score-jalon.enum';
 
 describe('Referentiels scoring routes', () => {
@@ -247,7 +247,7 @@ describe('Referentiels scoring routes', () => {
       .expect(200);
     const expectedCurrentSnapshotList: GetScoreSnapshotsResponseType = {
       collectiviteId: 1,
-      referentielId: ReferentielType.CAE,
+      referentielId: referentielIdEnumSchema.enum.cae,
       typesJalon: [ScoreJalon.SCORE_COURANT],
       snapshots: [
         {
@@ -299,7 +299,7 @@ describe('Referentiels scoring routes', () => {
       .expect(200);
     const expectedSnapshotList: GetScoreSnapshotsResponseType = {
       collectiviteId: 1,
-      referentielId: ReferentielType.CAE,
+      referentielId: referentielIdEnumSchema.enum.cae,
       typesJalon: [ScoreJalon.DATE_PERSONNALISEE],
       snapshots: [
         {

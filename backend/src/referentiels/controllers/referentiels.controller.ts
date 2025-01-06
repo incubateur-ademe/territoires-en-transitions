@@ -6,7 +6,7 @@ import { AllowPublicAccess } from '../../auth/decorators/allow-public-access.dec
 import { TokenInfo } from '../../auth/decorators/token-info.decorators';
 import { AuthenticatedUser } from '../../auth/models/auth.models';
 import { getReferentielResponseSchema } from '../models/get-referentiel.response';
-import { ReferentielType } from '../models/referentiel.enum';
+import { ReferentielId } from '../models/referentiel.enum';
 import ReferentielsService from '../services/referentiels.service';
 
 class GetReferentielResponseClass extends createZodDto(
@@ -24,7 +24,7 @@ export class ReferentielsController {
   @Get(':referentiel_id')
   @ApiResponse({ type: GetReferentielResponseClass })
   async getReferentiel(
-    @Param('referentiel_id') referentielId: ReferentielType,
+    @Param('referentiel_id') referentielId: ReferentielId,
     @TokenInfo() tokenInfo: AuthenticatedUser
   ): Promise<GetReferentielResponseClass> {
     return this.referentielsService.getReferentiel(referentielId, true);
@@ -34,7 +34,7 @@ export class ReferentielsController {
   @Get(':referentiel_id/import')
   @ApiResponse({ type: GetReferentielResponseClass })
   async importReferentiel(
-    @Param('referentiel_id') referentielId: ReferentielType,
+    @Param('referentiel_id') referentielId: ReferentielId,
     @TokenInfo() tokenInfo: AuthenticatedUser
   ): Promise<GetReferentielResponseClass> {
     return this.referentielsService.importReferentiel(referentielId);

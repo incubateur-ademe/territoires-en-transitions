@@ -8,7 +8,7 @@ import {
 } from 'drizzle-orm/pg-core';
 import { createInsertSchema } from 'drizzle-zod';
 import { authUsersTable } from '../../../auth/models/auth-users.table';
-import { referentielEnum } from '../../../referentiels/models/referentiel.enum';
+import { referentielIdPgEnum } from '../../../referentiels/models/referentiel.enum';
 import { createdAt, modifiedAt } from '../../../utils/column.utils';
 import { collectiviteTable } from './collectivite.table';
 import { membreFonctionEnum } from './membre-fonction.enum';
@@ -24,7 +24,7 @@ export const membreTable = pgTable(
       .notNull(),
     fonction: membreFonctionEnum('fonction'),
     detailsFonction: text('details_fonction'),
-    champIntervention: referentielEnum('champ_intervention').array(),
+    champIntervention: referentielIdPgEnum('champ_intervention').array(),
     estReferent: boolean('est_referent'),
     createdAt,
     modifiedAt,

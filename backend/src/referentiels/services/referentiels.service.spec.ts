@@ -3,12 +3,12 @@ import { Test } from '@nestjs/testing';
 import ExpressionParserService from '../../personnalisations/services/expression-parser.service';
 import ConfigurationService from '../../utils/config/configuration.service';
 import SheetService from '../../utils/google-sheets/sheet.service';
+import { referentielIdEnumSchema } from '../index-domain';
 import { ActionDefinitionAvecParentType } from '../models/action-definition.table';
 import { CreateActionOrigineType } from '../models/action-origine.table';
 import { ActionType } from '../models/action-type.enum';
 import { ReferentielActionType } from '../models/referentiel-action.dto';
 import { ReferentielDefinitionType } from '../models/referentiel-definition.table';
-import { ReferentielType } from '../models/referentiel.enum';
 import ReferentielsService from './referentiels.service';
 
 describe('ReferentielsService', () => {
@@ -302,7 +302,7 @@ describe('ReferentielsService', () => {
       ];
       expect(
         referentielsService.parseActionsOrigine(
-          ReferentielType.TE,
+          referentielIdEnumSchema.enum.te,
           'te_3.5.4',
           `Eci_3.5.3.6
 Eci_3.5.4.2`,
@@ -338,7 +338,7 @@ Eci_3.5.4.2`,
 
       expect(
         referentielsService.parseActionsOrigine(
-          ReferentielType.TE,
+          referentielIdEnumSchema.enum.te,
           'te_3.5.4',
           `Cae_5.1.4.4.1 (1)
 Cae_5.1.4.4.2 (0,5)
@@ -351,7 +351,7 @@ Eci_1.3.2.4 (1)`,
     it('Invalid action id', async () => {
       expect(() =>
         referentielsService.parseActionsOrigine(
-          ReferentielType.TE,
+          referentielIdEnumSchema.enum.te,
           'te_3.5.4',
           `Cae 5.1.4.4.1`,
           refentielDefinitions
@@ -360,7 +360,7 @@ Eci_1.3.2.4 (1)`,
 
       expect(() =>
         referentielsService.parseActionsOrigine(
-          ReferentielType.TE,
+          referentielIdEnumSchema.enum.te,
           'te_3.5.4',
           `test_.1.4.4.1`,
           refentielDefinitions
@@ -369,7 +369,7 @@ Eci_1.3.2.4 (1)`,
 
       expect(() =>
         referentielsService.parseActionsOrigine(
-          ReferentielType.TE,
+          referentielIdEnumSchema.enum.te,
           'te_3.5.4',
           `test_1.1.4.4.1 0.5`,
           refentielDefinitions
@@ -380,7 +380,7 @@ Eci_1.3.2.4 (1)`,
     it('Invalid action id referentiel', async () => {
       expect(() =>
         referentielsService.parseActionsOrigine(
-          ReferentielType.TE,
+          referentielIdEnumSchema.enum.te,
           'te_3.5.4',
           `Ca_5.1.4.4.1`,
           refentielDefinitions
@@ -393,7 +393,7 @@ Eci_1.3.2.4 (1)`,
     it('Invalid ponderation', async () => {
       expect(() =>
         referentielsService.parseActionsOrigine(
-          ReferentielType.TE,
+          referentielIdEnumSchema.enum.te,
           'te_3.5.4',
           `Cae_5.1.4.4.1 (zero)`,
           refentielDefinitions

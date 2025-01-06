@@ -1,13 +1,13 @@
+import { TrpcService } from '@/backend/utils/trpc/trpc.service';
 import { Injectable } from '@nestjs/common';
 import z from 'zod';
-import { TrpcService } from '@/backend/utils/trpc/trpc.service';
-import { ReferentielType } from '../models/referentiel.enum';
+import { referentielIdEnumSchema } from '../models/referentiel.enum';
 import { ScoreJalon } from '../models/score-jalon.enum';
 import ReferentielsScoringSnapshotsService from '../services/referentiels-scoring-snapshots.service';
 import ReferentielsScoringService from '../services/referentiels-scoring.service';
 
 export const getScoreSnapshotInfosTrpcRequestSchema = z.object({
-  referentielId: z.nativeEnum(ReferentielType),
+  referentielId: referentielIdEnumSchema,
   collectiviteId: z.number().int(),
   parameters: z.object({
     typesJalon: z.nativeEnum(ScoreJalon).array(),
@@ -15,7 +15,7 @@ export const getScoreSnapshotInfosTrpcRequestSchema = z.object({
 });
 
 export const getFullScoreSnapshotTrpcRequestSchema = z.object({
-  referentielId: z.nativeEnum(ReferentielType),
+  referentielId: referentielIdEnumSchema,
   collectiviteId: z.number().int(),
   snapshotRef: z.string(),
 });
@@ -41,7 +41,7 @@ export class ScoreSnapshotsRouter {
     getCurrentFullScore: this.trpc.authedProcedure
       .input(
         z.object({
-          referentielId: z.nativeEnum(ReferentielType),
+          referentielId: referentielIdEnumSchema,
           collectiviteId: z.number().int(),
         })
       )

@@ -1,15 +1,15 @@
+import { Source, SourceMetadonnee } from '@/domain/indicateurs';
+import { Thematique } from '@/domain/shared';
 import { objectToCamel } from 'ts-case-convert';
 import {
   selectGroupementParCollectivite,
   selectGroupements,
 } from '../../collectivites/shared/data-access/groupement.fetch';
 import { Groupement } from '../../collectivites/shared/domain/groupement.schema';
+import { Personne } from '../../collectivites/shared/domain/personne.schema';
 import { Tables } from '../../database.types';
 import { FicheResume } from '../../plan-actions/domain/fiche-action.schema';
-import { Action } from '../../referentiel/domain/action.schema';
-import { Personne } from '../../collectivites/shared/domain/personne.schema';
 import { DBClient } from '../../typeUtils';
-import { Source, SourceMetadonnee } from '../domain';
 import {
   IndicateurChartInfo,
   IndicateurDefinition,
@@ -19,7 +19,6 @@ import {
   ValeurComparaison,
   ValeurComparaisonLigne,
 } from '../domain/valeur.schema';
-import { Thematique } from '@/domain/shared';
 
 // cas spécial pour cet indicateur TODO: utiliser un champ distinct dans les markdowns plutôt que cet ID "en dur"
 const ID_COMPACITE_FORMES_URBAINES = 'cae_9';
@@ -258,24 +257,6 @@ export async function selectIndicateurFiches(
     .returns<any[]>();
 
   return data ? (objectToCamel(data) as FicheResume[]) : [];
-}
-
-/**
- * Récupère les actions liées à un indicateur
- * @param dbClient client supabase
- * @param indicateurId identifiant de l'indicateur
- * @return liste d'actions
- */
-export async function selectIndicateurActions(
-  dbClient: DBClient,
-  indicateurId: number
-): Promise<Action[]> {
-  const { data, error } = await dbClient
-    .from('indicateur_action')
-    .select(`...action_relation(*)`)
-    .eq('indicateur_id', indicateurId)
-    .returns<Action[]>();
-  return data ? data : [];
 }
 
 /**

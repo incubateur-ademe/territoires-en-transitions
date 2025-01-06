@@ -9,7 +9,7 @@ import {
   labellisationEtoileMetaTable,
   LabellisationEtoileMetaType,
 } from '../models/labellisation-etoile.table';
-import { ReferentielType } from '../models/referentiel.enum';
+import { ReferentielId } from '../models/referentiel.enum';
 import ReferentielsService from './referentiels.service';
 
 @Injectable()
@@ -34,7 +34,7 @@ export default class LabellisationService {
 
   async getAuditsForCollectivite(
     collectiviteId: number,
-    referentiel: ReferentielType,
+    referentiel: ReferentielId,
     onlyEnded = false
   ): Promise<LabellisationAuditType[]> {
     const filter: (SQLWrapper | SQL)[] = [

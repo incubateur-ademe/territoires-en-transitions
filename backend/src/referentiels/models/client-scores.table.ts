@@ -9,13 +9,13 @@ import {
 } from 'drizzle-orm/pg-core';
 import { createInsertSchema, createSelectSchema } from 'drizzle-zod';
 import { collectiviteTable } from '../../collectivites/shared/models/collectivite.table';
-import { referentielEnum } from './referentiel.enum';
+import { referentielIdPgEnum } from './referentiel.enum';
 
 export const clientScoresTable = pgTable(
   'client_scores',
   {
     collectiviteId: integer('collectivite_id').notNull(),
-    referentiel: referentielEnum('referentiel').notNull(), // TODO: Reference referentiel table
+    referentiel: referentielIdPgEnum('referentiel').notNull(), // TODO: Reference referentiel table
     scores: jsonb('scores').notNull(),
     modifiedAt: timestamp('modified_at', {
       withTimezone: true,

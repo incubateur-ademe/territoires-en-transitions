@@ -76,7 +76,7 @@ import { preAuditScoresTable } from '../models/pre-audit-scores.table';
 import { ReferentielActionWithScoreType } from '../models/referentiel-action-avec-score.dto';
 import { ReferentielActionOrigineWithScoreType } from '../models/referentiel-action-origine-with-score.dto';
 import { ReferentielActionType } from '../models/referentiel-action.dto';
-import { ReferentielType } from '../models/referentiel.enum';
+import { ReferentielId } from '../models/referentiel.enum';
 import { ScoreJalon } from '../models/score-jalon.enum';
 import LabellisationService from './labellisation.service';
 import ReferentielsScoringSnapshotsService from './referentiels-scoring-snapshots.service';
@@ -105,7 +105,7 @@ export default class ReferentielsScoringService {
 
   async getOrCreateCurrentScore(
     collectiviteId: number,
-    referentielId: ReferentielType,
+    referentielId: ReferentielId,
     forceRecalculScoreCourant?: boolean
   ) {
     let currentScore = forceRecalculScoreCourant
@@ -132,7 +132,7 @@ export default class ReferentielsScoringService {
 
   async checkCollectiviteAndReferentielWithAccess(
     collectiviteId: number,
-    referentielId: ReferentielType,
+    referentielId: ReferentielId,
     tokenInfo?: AuthenticatedUser,
     niveauAccesMinimum = NiveauAcces.LECTURE
   ): Promise<CollectiviteAvecType> {
@@ -846,7 +846,7 @@ export default class ReferentielsScoringService {
   }
 
   async getReferentielActionStatuts(
-    referentielId: ReferentielType,
+    referentielId: ReferentielId,
     collectiviteId: number,
     date?: string,
     tokenInfo?: AuthenticatedUser,
@@ -906,7 +906,7 @@ export default class ReferentielsScoringService {
 
   // Called explications to differentiate from discussion commentaire
   async getReferentielActionStatutExplications(
-    referentielId: ReferentielType,
+    referentielId: ReferentielId,
     collectiviteId: number,
     date?: string,
     tokenInfo?: AuthenticatedUser,
@@ -1015,7 +1015,7 @@ export default class ReferentielsScoringService {
   }
 
   async computeScoreForMultipleCollectivite(
-    referentielId: ReferentielType,
+    referentielId: ReferentielId,
     parameters: GetReferentielMultipleScoresRequestType,
     tokenInfo?: AuthenticatedUser
   ): Promise<GetReferentielMultipleScoresResponseType> {
@@ -1065,7 +1065,7 @@ export default class ReferentielsScoringService {
   }
 
   async computeScoreForCollectivite(
-    referentielId: ReferentielType,
+    referentielId: ReferentielId,
     collectiviteId: number,
     parameters: GetReferentielScoresRequestType,
     tokenInfo?: AuthenticatedUser,
@@ -1195,7 +1195,7 @@ export default class ReferentielsScoringService {
         collectiviteId,
         {
           date: parameters.date,
-          referentiel: referentielId as ReferentielType,
+          referentiel: referentielId as ReferentielId,
         },
         undefined, // already checked
         collectiviteInfo
@@ -1680,7 +1680,7 @@ export default class ReferentielsScoringService {
         referentielsOrigine.forEach((referentielOrigine) => {
           referentielsOriginePromiseScores.push(
             this.getClientScoresForCollectivite(
-              referentielOrigine as ReferentielType,
+              referentielOrigine as ReferentielId,
               collectiviteId,
               etoilesDefinitions
             )
@@ -1691,7 +1691,7 @@ export default class ReferentielsScoringService {
         referentielsOrigine.forEach((referentielOrigine) => {
           referentielsOriginePromiseScores.push(
             this.getPreAuditScoresForCollectivite(
-              referentielOrigine as ReferentielType,
+              referentielOrigine as ReferentielId,
               collectiviteId,
               undefined,
               etoilesDefinitions
@@ -1703,7 +1703,7 @@ export default class ReferentielsScoringService {
         referentielsOrigine.forEach((referentielOrigine) => {
           referentielsOriginePromiseScores.push(
             this.getPostAuditScoresForCollectivite(
-              referentielOrigine as ReferentielType,
+              referentielOrigine as ReferentielId,
               collectiviteId,
               undefined,
               etoilesDefinitions
@@ -1725,7 +1725,7 @@ export default class ReferentielsScoringService {
       referentielsOrigine.forEach((referentielOrigine) => {
         referentielsOriginePromiseScores.push(
           this.computeScoreForCollectivite(
-            referentielOrigine as ReferentielType,
+            referentielOrigine as ReferentielId,
             collectiviteId,
             {
               ...parameters,
@@ -1867,7 +1867,7 @@ export default class ReferentielsScoringService {
     date: string;
     referentielWithScore: ReferentielActionWithScoreType;
   }> {
-    const referentielId = referentiel.actionId as ReferentielType;
+    const referentielId = referentiel.actionId as ReferentielId;
     let scoresResult:
       | {
           date: string;
@@ -1917,7 +1917,7 @@ export default class ReferentielsScoringService {
   }
 
   async getClientScoresForCollectivite(
-    referentielId: ReferentielType,
+    referentielId: ReferentielId,
     collectiviteId: number,
     etoilesDefinition?: LabellisationEtoileMetaType[]
   ): Promise<{
@@ -1983,7 +1983,7 @@ export default class ReferentielsScoringService {
   }
 
   async getPreAuditScoresForCollectivite(
-    referentielId: ReferentielType,
+    referentielId: ReferentielId,
     collectiviteId: number,
     auditId?: number,
     etoilesDefinition?: LabellisationEtoileMetaType[]
@@ -2012,7 +2012,7 @@ export default class ReferentielsScoringService {
   }
 
   async getPostAuditScoresForCollectivite(
-    referentielId: ReferentielType,
+    referentielId: ReferentielId,
     collectiviteId: number,
     auditId?: number,
     etoilesDefinition?: LabellisationEtoileMetaType[]
@@ -2115,7 +2115,7 @@ export default class ReferentielsScoringService {
   }
 
   async checkScoreForCollectivite(
-    referentielId: ReferentielType,
+    referentielId: ReferentielId,
     collectiviteId: number,
     parameters: CheckReferentielScoresRequestType,
     hostUrl?: string,

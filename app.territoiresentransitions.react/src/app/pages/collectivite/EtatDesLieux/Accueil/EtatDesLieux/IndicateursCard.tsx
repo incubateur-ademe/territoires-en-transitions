@@ -1,15 +1,15 @@
-import { Referentiel } from '@/api/referentiel/domain/enum.schema';
 import { referentielToName } from '@/app/app/labels';
 import AccueilCard from '@/app/app/pages/collectivite/EtatDesLieux/Accueil/EtatDesLieux/AccueilCard';
 import { makeCollectiviteTousLesIndicateursUrl } from '@/app/app/paths';
 import { useFonctionTracker } from '@/app/core-logic/hooks/useFonctionTracker';
+import { ReferentielId } from '@/domain/referentiels';
 import { Button } from '@/ui';
 import { useIndicateurSummary } from '../data/useIndicateurSummary';
 import { useOpenDataIndicateursCount } from '../data/useOpenDataIndicateurs';
 
 type IndicateursCardProps = {
   collectiviteId: number;
-  referentielId: Referentiel;
+  referentielId: ReferentielId;
 };
 
 /**

@@ -1,9 +1,9 @@
 import { z } from 'zod';
-import { ReferentielType } from '../../referentiels/models/referentiel.enum';
+import { referentielIdEnumSchema } from '../../referentiels/models/referentiel.enum';
 
 export const getPersonnalisationReglesRequestSchema = z
   .object({
-    referentiel: z.nativeEnum(ReferentielType).optional(),
+    referentiel: referentielIdEnumSchema.optional(),
   })
   .describe(
     'Paramètres de la requête pour obtenir les règles de personnalisation'

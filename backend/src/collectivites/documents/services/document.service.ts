@@ -1,5 +1,5 @@
 import { COLLECTIVITE_ID_ROUTE_PARAM } from '@/backend/collectivites/shared/models/collectivite-api.constants';
-import { ReferentielType } from '@/domain/referentiels';
+import { ReferentielId } from '@/domain/referentiels';
 import { Injectable, Logger } from '@nestjs/common';
 import {
   and,
@@ -38,7 +38,7 @@ export default class DocumentService {
 
   async getActionPreuves(
     collectiviteId: number,
-    referentielId: ReferentielType,
+    referentielId: ReferentielId,
     modifiedBeforeDate?: string
   ) {
     const preuves = (
@@ -73,7 +73,7 @@ export default class DocumentService {
 
   async getPreuvesReglementaires(
     collectiviteId: number,
-    referentielId: ReferentielType,
+    referentielId: ReferentielId,
     modifiedBeforeDate?: string
   ): Promise<PreuveDto[]> {
     const conditions: (SQLWrapper | SQL)[] = [
@@ -125,7 +125,7 @@ export default class DocumentService {
 
   async getPreuvesComplementaires(
     collectiviteId: number,
-    referentielId: ReferentielType,
+    referentielId: ReferentielId,
     modifiedBeforeDate?: string
   ): Promise<PreuveDto[]> {
     const conditions: (SQLWrapper | SQL)[] = [

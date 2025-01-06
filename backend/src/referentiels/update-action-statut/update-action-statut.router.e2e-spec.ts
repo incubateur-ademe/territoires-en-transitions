@@ -4,7 +4,7 @@ import { getAuthUser } from '../../../test/auth-utils';
 import { getCollectiviteIdBySiren } from '../../../test/collectivites-utils';
 import { AppRouter, TrpcRouter } from '../../utils/trpc/trpc.router';
 import { ActionScoreType } from '../models/action-score.dto';
-import { ReferentielType } from '../models/referentiel.enum';
+import { referentielIdEnumSchema } from '../models/referentiel.enum';
 import { AuthenticatedUser } from './../../auth/models/auth.models';
 
 type Input = inferProcedureInput<
@@ -127,7 +127,7 @@ describe('UpdateActionStatutRouter', () => {
     // Check that the current score has been correctly updated & saved
     const currentFullCurentScore =
       await caller.referentiels.snapshots.getCurrentFullScore({
-        referentielId: ReferentielType.CAE,
+        referentielId: referentielIdEnumSchema.enum.cae,
         collectiviteId: 1,
       });
     expect(currentFullCurentScore.scores.score).toEqual(

@@ -37,7 +37,7 @@ import {
   REFERENTIEL_ID_PARAM_KEY,
   SNAPSHOT_REF_PARAM_KEY,
 } from '../models/referentiel-api.constants';
-import { ReferentielType } from '../models/referentiel.enum';
+import { ReferentielId } from '../models/referentiel.enum';
 import ReferentielsScoringSnapshotsService from '../services/referentiels-scoring-snapshots.service';
 import ReferentielsScoringService from '../services/referentiels-scoring.service';
 
@@ -98,7 +98,7 @@ export class ReferentielsScoringController {
   @ApiResponse({ type: GetActionStatutsResponseClass })
   async getReferentielStatuts(
     @Param('collectivite_id') collectiviteId: number,
-    @Param('referentiel_id') referentielId: ReferentielType,
+    @Param('referentiel_id') referentielId: ReferentielId,
     @Query() parameters: GetActionStatutsRequestClass,
     @TokenInfo() tokenInfo: AuthenticatedUser
   ): Promise<GetActionStatutsResponseClass> {
@@ -114,7 +114,7 @@ export class ReferentielsScoringController {
   @Get('referentiels/:referentiel_id/scores')
   @ApiResponse({ type: GetReferentielMultipleScoresResponseClass })
   async getReferentielMultipleScorings(
-    @Param('referentiel_id') referentielId: ReferentielType,
+    @Param('referentiel_id') referentielId: ReferentielId,
     @Query() parameters: GetReferentielMultipleScoresRequestClass,
     @TokenInfo() tokenInfo: AuthenticatedUser
   ): Promise<GetReferentielMultipleScoresResponseClass> {
@@ -130,7 +130,7 @@ export class ReferentielsScoringController {
   @ApiResponse({ type: GetReferentielScoresResponseClass })
   async getReferentielScoring(
     @Param('collectivite_id') collectiviteId: number,
-    @Param('referentiel_id') referentielId: ReferentielType,
+    @Param('referentiel_id') referentielId: ReferentielId,
     @Query() parameters: GetReferentielScoresRequestClass,
     @TokenInfo() tokenInfo: AuthenticatedUser
   ): Promise<GetReferentielScoresResponseClass> {
@@ -149,7 +149,7 @@ export class ReferentielsScoringController {
   )
   async checkReferentielScore(
     @Param('collectivite_id') collectiviteId: number,
-    @Param('referentiel_id') referentielId: ReferentielType,
+    @Param('referentiel_id') referentielId: ReferentielId,
     @Query() parameters: CheckReferentielScoresRequestType,
     @Req() req: Request
   ): Promise<GetCheckScoresResponseType> {
@@ -169,7 +169,7 @@ export class ReferentielsScoringController {
   @ApiResponse({ type: GetScoreSnapshotsResponseClass })
   async listSummary(
     @Param(COLLECTIVITE_ID_PARAM_KEY) collectiviteId: number,
-    @Param(REFERENTIEL_ID_PARAM_KEY) referentielId: ReferentielType,
+    @Param(REFERENTIEL_ID_PARAM_KEY) referentielId: ReferentielId,
     @Query() parameters: GetScoreSnapshotsRequestClass,
     @TokenInfo() tokenInfo: AuthUser
   ): Promise<GetScoreSnapshotsResponseClass> {
@@ -186,7 +186,7 @@ export class ReferentielsScoringController {
   )
   async getReferentielScoreSnapshot(
     @Param(COLLECTIVITE_ID_PARAM_KEY) collectiviteId: number,
-    @Param(REFERENTIEL_ID_PARAM_KEY) referentielId: ReferentielType,
+    @Param(REFERENTIEL_ID_PARAM_KEY) referentielId: ReferentielId,
     @Param(SNAPSHOT_REF_PARAM_KEY) snapshotRef: string,
     @Query() parameters: GetScoreSnapshotRequestClass,
     @TokenInfo() tokenInfo: AuthenticatedUser
@@ -215,7 +215,7 @@ export class ReferentielsScoringController {
   )
   async exportReferentielScoreSnapshot(
     @Param(COLLECTIVITE_ID_PARAM_KEY) collectiviteId: number,
-    @Param(REFERENTIEL_ID_PARAM_KEY) referentielId: ReferentielType,
+    @Param(REFERENTIEL_ID_PARAM_KEY) referentielId: ReferentielId,
     @Param(SNAPSHOT_REF_PARAM_KEY) snapshotRef: string,
     @Query() parameters: GetScoreSnapshotRequestClass,
     @TokenInfo() tokenInfo: AuthenticatedUser,
@@ -240,7 +240,7 @@ export class ReferentielsScoringController {
   )
   async deleteReferentielScoreSnapshot(
     @Param('collectivite_id') collectiviteId: number,
-    @Param('referentiel_id') referentielId: ReferentielType,
+    @Param('referentiel_id') referentielId: ReferentielId,
     @Param('snapshot_ref') snapshotRef: string,
     @TokenInfo() tokenInfo: AuthUser
   ): Promise<void> {

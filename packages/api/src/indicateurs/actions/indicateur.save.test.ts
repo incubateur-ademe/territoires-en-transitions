@@ -3,14 +3,10 @@ import { Thematique } from '@/domain/shared';
 import { beforeAll, describe, expect, test } from 'vitest';
 import { Personne } from '../../collectivites/shared/domain/personne.schema';
 import { FicheResume } from '../../plan-actions/domain/fiche-action.schema';
-import { Action } from '../../referentiel/domain/action.schema';
 import { signIn, signOut } from '../../tests/auth';
 import { dbAdmin, supabase } from '../../tests/supabase';
 import { testReset } from '../../tests/testReset';
-import { IndicateurDefinitionInsert } from '../domain/definition.schema';
-import { Valeur } from '../domain/valeur.schema';
 import {
-  selectIndicateurActions,
   selectIndicateurCategoriesUtilisateur,
   selectIndicateurDefinition,
   selectIndicateurFiches,
@@ -23,7 +19,6 @@ import {
 import {
   insertIndicateurDefinition,
   updateIndicateurDefinition,
-  upsertActions,
   upsertCategoriesUtilisateur,
   upsertFiches,
   upsertIndicateurValeur,
@@ -97,7 +92,7 @@ describe('Test indicateur.save', async () => {
   });
 
   test('Test insertIndicateurDefinition', async () => {
-    const def: IndicateurDefinitionInsert = {
+    const def: Parameters<typeof insertIndicateurDefinition>['1'] = {
       titre: 'test',
       collectiviteId: 1,
       thematiques: [{ id: 1, nom: '' }],
@@ -114,7 +109,7 @@ describe('Test indicateur.save', async () => {
   });
 
   test('Test upsertIndicateurValeur', async () => {
-    const valeur: Valeur = {
+    const valeur: Parameters<typeof upsertIndicateurValeur>['1'] = {
       collectiviteId: 1,
       indicateurId: 1,
       resultat: 1.3,
@@ -441,7 +436,7 @@ describe('Test indicateur.save', async () => {
         dateFinProvisoire: '2020-01-01',
         id: 1,
         modifiedAt: '2020-01-01',
-        niveauPriorite: 'Bas',
+        priorite: 'Bas',
         pilotes: [],
         services: [],
         plans: [],
@@ -488,31 +483,6 @@ describe('Test indicateur.save', async () => {
     const data6 = await selectIndicateurFiches(supabase, 1, 2);
     expect(data6).not.toBeNull();
     expect(data6).toHaveLength(1);
-  });
-
-  test('Test upsertActions', async () => {
-    // Ajout action sur indicateur personnalisé
-    const def = await selectIndicateurDefinition(supabase, predefini.id, 1);
-    if (!def) {
-      expect.fail();
-    }
-
-    const act: Action[] = [
-      {
-        parent: null,
-        id: 'eci',
-        referentiel: 'eci',
-      },
-    ];
-    await upsertActions(supabase, def, act);
-    const data = await selectIndicateurActions(supabase, predefini.id);
-    expect(data).not.toBeNull();
-    expect(data).toHaveLength(1);
-    // Enlève action indicateur personnalisé
-    await upsertActions(supabase, def, []);
-    const data2 = await selectIndicateurActions(supabase, predefini.id);
-    expect(data2).not.toBeNull();
-    expect(data2).toHaveLength(0);
   });
 
   test('Test upsertValeursUtilisateurAvecSource', async () => {

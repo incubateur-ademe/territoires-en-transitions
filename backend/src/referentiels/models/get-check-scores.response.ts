@@ -1,12 +1,12 @@
 import { z } from 'zod';
 import { actionScoreSchema } from './action-score.dto';
 import { CheckScoreStatus } from './check-score-status.enum';
-import { ReferentielType } from './referentiel.enum';
+import { referentielIdEnumSchema } from './referentiel.enum';
 
 export const getCheckScoresResponseSchema = z
   .object({
     collectiviteId: z.number(),
-    referentielId: z.nativeEnum(ReferentielType),
+    referentielId: referentielIdEnumSchema,
     date: z.string().datetime(),
     verification_status: z.nativeEnum(CheckScoreStatus),
     differences: z.record(

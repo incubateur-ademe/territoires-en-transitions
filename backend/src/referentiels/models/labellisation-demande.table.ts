@@ -11,7 +11,7 @@ import { authUsersTable } from '../../auth/models/auth-users.table';
 import { collectiviteTable } from '../../collectivites/shared/models/collectivite.table';
 import { labellisationEtoileEnum } from './labellisation-etoile.table';
 import { labellisationSchema } from './labellisation.schema';
-import { referentielEnum } from './referentiel.enum';
+import { referentielIdPgEnum } from './referentiel.enum';
 
 export enum LabellisationSujetDemandeEnumType {
   LABELLISATION = 'labellisation',
@@ -35,7 +35,7 @@ export const labellisationDemandeTable = labellisationSchema.table(
     enCours: boolean('en_cours').default(true).notNull(),
     collectiviteId: integer('collectivite_id').notNull(),
     // TODO: change later to use the referentiel definition table
-    referentiel: referentielEnum('referentiel').notNull(),
+    referentiel: referentielIdPgEnum('referentiel').notNull(),
     etoiles: labellisationEtoileEnum('etoiles'),
     date: timestamp('date', TIMESTAMP_OPTIONS).defaultNow().notNull(),
     sujet: labellisationSujetDemandeEnum('sujet'),

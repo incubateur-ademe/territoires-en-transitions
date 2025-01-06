@@ -15,7 +15,10 @@ import { ActionType } from '../models/action-type.enum';
 import { GetReferentielScoresResponseType } from '../models/get-referentiel-scores.response';
 import { GetScoreSnapshotRequestType } from '../models/get-score-snapshot.request';
 import { ReferentielActionWithScoreType } from '../models/referentiel-action-avec-score.dto';
-import { ReferentielType } from '../models/referentiel.enum';
+import {
+  ReferentielId,
+  referentielIdEnumSchema,
+} from '../models/referentiel.enum';
 import ReferentielsScoringSnapshotsService from '../services/referentiels-scoring-snapshots.service';
 import ReferentielsScoringService from '../services/referentiels-scoring.service';
 import ReferentielsService from '../services/referentiels.service';
@@ -96,14 +99,14 @@ export default class ExportReferentielScoreService {
   // détermine la couleur de fond d'une ligne en fonction de la profondeur dans l'arbo
   getActionRowColor = (
     actionScore: ReferentielActionWithScoreType,
-    referentielId: ReferentielType
+    referentielId: ReferentielId
   ): string | null => {
     if (actionScore) {
       const depth = actionScore.actionId
         ? this.referentielService.getLevelFromActionId(actionScore.actionId)
         : 0;
       if (depth === 3) return this.BG_COLOR3;
-      if (depth === 4 && referentielId === ReferentielType.CAE) {
+      if (depth === 4 && referentielId === referentielIdEnumSchema.enum.cae) {
         return this.BG_COLOR4;
       }
 
@@ -397,7 +400,7 @@ export default class ExportReferentielScoreService {
 
   async getReferentielScoreSnapshot(
     collectiviteId: number,
-    referentielId: ReferentielType,
+    referentielId: ReferentielId,
     snapshotRef: string,
     forceRecalculScoreCourant?: boolean
   ) {
@@ -428,7 +431,7 @@ export default class ExportReferentielScoreService {
 
   async sendExportReferentielScore(
     collectiviteId: number,
-    referentielId: ReferentielType,
+    referentielId: ReferentielId,
     snapshotRef: string,
     parameters: GetScoreSnapshotRequestType,
     res: Response,

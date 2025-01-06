@@ -1,5 +1,5 @@
 import z from 'zod';
-import { ReferentielType } from './referentiel.enum';
+import { referentielIdEnumSchema } from './referentiel.enum';
 import { ScoreJalon } from './score-jalon.enum';
 import { scoreSnapshotSchema } from './score-snapshot.table';
 
@@ -48,7 +48,7 @@ export type ScoreSnapshotCollectiviteInfoType = z.infer<
 export const getScoreSnapshotsResponseSchema = z
   .object({
     collectiviteId: z.number(),
-    referentielId: z.nativeEnum(ReferentielType),
+    referentielId: referentielIdEnumSchema,
     typesJalon: z.nativeEnum(ScoreJalon).array(),
     snapshots: scoreSnapshotInfo.array(),
   })
