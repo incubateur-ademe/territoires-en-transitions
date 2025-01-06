@@ -23,7 +23,7 @@ const IndicateurChartsGrid = (props: TIndicateurChartsGridProps) => {
   const { definitions, view } = props;
 
   return (
-    <div className="grid lg:grid-cols-2 gap-x-6 gap-y-8">
+    <div className="grid lg:grid-cols-2 xl:grid-cols-3 gap-x-6 gap-y-8">
       {definitions?.map((definition) => (
         <IndicateurChartContainer
           key={definition.id}
