@@ -7,7 +7,6 @@ import {
   CardProps,
   Checkbox,
   EmptyCard,
-  Modal,
   Notification,
   Tooltip,
 } from '@/ui';
@@ -25,6 +24,7 @@ import IndicateurCardOptions from '@/app/app/pages/collectivite/Indicateurs/list
 import PictoIndicateurComplet from '@/app/ui/pictogrammes/PictoIndicateurComplet';
 import PictoIndicateurVide from '@/app/ui/pictogrammes/PictoIndicateurVide';
 import { BadgeACompleter } from '@/app/ui/shared/Badge/BadgeACompleter';
+import DownloadIndicateurChartModal from '../../chart/DownloadIndicateurChart';
 import IndicateurChartNew, {
   IndicateurChartData,
 } from '../../chart/IndicateurChartNew';
@@ -319,23 +319,15 @@ export const IndicateurCardBase = ({
         </Card>
       </div>
 
-      {isDownloadChartOpen && (
-        <Modal
-          size="xl"
-          openState={{
-            isOpen: isDownloadChartOpen,
-            setIsOpen: setIsDownloadChartOpen,
-          }}
-          render={() => (
-            <IndicateurChartNew
-              data={data}
-              isLoading={isLoading}
-              title={chartInfo?.titre}
-              variant="modal"
-            />
-          )}
-        />
-      )}
+      <DownloadIndicateurChartModal
+        openState={{
+          isOpen: isDownloadChartOpen,
+          setIsOpen: setIsDownloadChartOpen,
+        }}
+        data={data}
+        isLoading={isLoading}
+        title={definition?.titre}
+      />
     </>
   );
 };

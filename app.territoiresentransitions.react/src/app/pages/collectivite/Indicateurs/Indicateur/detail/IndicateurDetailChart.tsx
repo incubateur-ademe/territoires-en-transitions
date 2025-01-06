@@ -4,7 +4,8 @@ import { useState } from 'react';
 import { TIndicateurDefinition } from '@/app/app/pages/collectivite/Indicateurs/types';
 import { useIndicateurValeurs } from '@/app/app/pages/collectivite/Indicateurs/useIndicateurValeurs';
 import PictoIndicateurVide from '@/app/ui/pictogrammes/PictoIndicateurVide';
-import { Button, EmptyCard, Icon, Modal } from '@/ui';
+import { Button, EmptyCard, Icon } from '@/ui';
+import DownloadIndicateurChartModal from '../../chart/DownloadIndicateurChart';
 import IndicateurChartNew from '../../chart/IndicateurChartNew';
 import { DataSourceTooltip } from './DataSourceTooltip';
 import { transformeValeurs } from './transformeValeurs';
@@ -88,23 +89,13 @@ const IndicateurDetailChart = ({
           </DataSourceTooltip>
         )}
       </div>
-      {isChartOpen && (
-        <Modal
-          size="xl"
-          openState={{
-            isOpen: isChartOpen,
-            setIsOpen: setIsChartOpen,
-          }}
-          render={() => (
-            <IndicateurChartNew
-              data={data}
-              isLoading={isLoadingValeurs}
-              title={definition.titre}
-              variant="modal"
-            />
-          )}
-        />
-      )}
+
+      <DownloadIndicateurChartModal
+        openState={{ isOpen: isChartOpen, setIsOpen: setIsChartOpen }}
+        data={data}
+        isLoading={isLoadingValeurs}
+        title={definition.titre}
+      />
     </>
   ) : (
     <EmptyCard
