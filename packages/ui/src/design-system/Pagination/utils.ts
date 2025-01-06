@@ -70,14 +70,15 @@ export const calculatePaginationArray = ({
       : undefined;
 
   // Construction du tableau final
-  const finalArray = [...leftRange];
-  if (!displayAllPages && leftIntersection !== undefined) {
+  const finalArray: (number | undefined)[] = [...leftRange];
+
+  if (!displayAllPages) {
     finalArray.push(leftIntersection);
   }
 
   finalArray.push(...middleRange);
 
-  if (isMiddlePage && !displayAllPages && rightIntersection !== undefined) {
+  if (isMiddlePage && !displayAllPages) {
     finalArray.push(rightIntersection);
   }
 

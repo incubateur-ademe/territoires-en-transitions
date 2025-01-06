@@ -60,7 +60,7 @@ const Annuaire = () => {
         nbOfElements={total}
         maxElementsPerPage={PAGINATION_LIMIT}
         idToScrollTo="annuaire-header"
-        onChange={(selectedPage) => setSelectPage(selectedPage)}
+        onChange={setSelectPage}
       />
     </Section>
   );
