@@ -107,7 +107,9 @@ export const useFiltersToBadges = ({ filters, customValues }: Args) => {
         );
       } else if (key === 'libreTags') {
         badgeValues.push(
-          `Tags libres : ${mergedFilters[key]?.map((i) => i.nom).join(', ')}`
+          `Tags personnalisés : ${mergedFilters[key]
+            ?.map((i) => i.nom)
+            .join(', ')}`
         );
       } else if (key === 'thematiques') {
         badgeValues.push(
