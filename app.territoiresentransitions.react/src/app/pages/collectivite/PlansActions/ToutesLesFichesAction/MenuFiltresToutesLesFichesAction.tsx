@@ -25,7 +25,7 @@ import {
   SelectOption,
 } from '@/ui';
 import { useRef } from 'react';
-import LibreTagsDropdown from '../../../../../ui/dropdownLists/LibreTagsDropdown/LibreTagsDropdown';
+import TagsSuiviPersoDropdown from '../../../../../ui/dropdownLists/TagsSuiviPersoDropdown/TagsSuiviPersoDropdown';
 
 type Props = {
   filters: Filtre;
@@ -110,14 +110,16 @@ const MenuFiltresToutesLesFichesAction = ({ filters, setFilters }: Props) => {
             />
           </Field>
 
-          <Field title="Tags libres">
-            <LibreTagsDropdown
+          <Field title="Tags personnalisés">
+            <TagsSuiviPersoDropdown
               values={filters.libreTagsIds}
-              onChange={({ tags }) => {
+              onChange={({ libresTag }) => {
                 const { libreTagsIds, ...rest } = filters;
                 setFilters({
                   ...rest,
-                  ...(tags ? { libreTagsIds: tags.map((t) => t.id) } : {}),
+                  ...(libresTag
+                    ? { libreTagsIds: libresTag.map((t) => t.id) }
+                    : {}),
                 });
               }}
             />
