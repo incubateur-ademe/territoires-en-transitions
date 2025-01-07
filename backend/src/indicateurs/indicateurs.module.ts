@@ -14,6 +14,7 @@ import TrajectoiresXlsxService from './trajectoires/trajectoires-xlsx.service';
 import { TrajectoiresController } from './trajectoires/trajectoires.controller';
 import { TrajectoiresRouter } from './trajectoires/trajectoires.router';
 import { IndicateursController } from './valeurs/crud-valeurs.controller';
+import { IndicateurValeursRouter } from './valeurs/crud-valeurs.router';
 import CrudValeursService from './valeurs/crud-valeurs.service';
 
 @Module({
@@ -25,6 +26,7 @@ import CrudValeursService from './valeurs/crud-valeurs.service';
     CrudValeursService,
     IndicateurFiltreService,
     IndicateurFiltreRouter,
+    IndicateurValeursRouter,
     TrajectoiresDataService,
     TrajectoiresSpreadsheetService,
     TrajectoiresXlsxService,
@@ -37,6 +39,7 @@ import CrudValeursService from './valeurs/crud-valeurs.service';
     TrajectoiresRouter,
     IndicateurFiltreService,
     IndicateurFiltreRouter,
+    IndicateurValeursRouter,
   ],
   controllers: [
     IndicateursController,
