@@ -117,7 +117,7 @@ export class RoleService {
       .select()
       .from(utilisateurSupportTable)
       .where(eq(utilisateurSupportTable.userId, userId));
-    return result[0].support || false;
+    return (result.length && result[0]?.support) || false;
   }
 
   /**
