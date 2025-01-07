@@ -3,6 +3,7 @@ import SpinnerLoader from '@/app/ui/shared/SpinnerLoader';
 import { Alert, Button, Card, Modal, TrackPageView } from '@/ui';
 import { useEffect } from 'react';
 import { useQueryClient } from 'react-query';
+import { useCurrentCollectivite } from '../../../../core-logic/hooks/useCurrentCollectivite';
 import { CommuneNonSupportee } from './CommuneNonSupportee';
 import { HELPDESK_URL } from './constants';
 import { ReactComponent as DbErrorPicto } from './db-error.svg';
@@ -63,23 +64,45 @@ const TrajectoireContent = (props: {
  * ne sont pas disponibles.
  */
 const DonneesNonDispo = () => {
+  const collectivite = useCurrentCollectivite();
+
   return (
     <Card className="flex items-center my-16">
       <DbErrorPicto />
       <h2>Données disponibles insuffisantes pour le calcul</h2>
-      <p className="font-normal text-lg text-center">
-        Nous ne disposons pas encore des données suffisantes pour permettre le
-        calcul automatique de la trajectoire SNBC territorialisée de votre
-        collectivité. Vous pouvez néanmoins lancer un calcul en complétant les
-        données disponibles en open data avec vos propres données. Vous pourrez
-        ainsi visualiser facilement votre trajectoire SNBC territorialisée et la
-        comparer aux objectifs fixés et résultats observés.
-      </p>
+      {collectivite?.readonly ? (
+        <p className="font-normal text-lg text-center">
+          Nous ne disposons pas encore des données suffisantes pour permettre le
+          calcul automatique de la trajectoire SNBC territorialisé de votre
+          collectivité.{' '}
+          <b>
+            Un utilisateur en Edition ou Admin sur le profil de cette
+            collectivité
+          </b>{' '}
+          peut néanmoins lancer un calcul en complétant les données disponibles
+          en open data avec celles disponibles au sein de la collectivité. Vous
+          pourrez ensuite visualiser facilement votre trajectoire SNBC
+          territorialisée et la comparer aux objectifs fixés et résultats
+          observés.
+        </p>
+      ) : (
+        <p className="font-normal text-lg text-center">
+          Nous ne disposons pas encore des données suffisantes pour permettre le
+          calcul automatique de la trajectoire SNBC territorialisée de votre
+          collectivité. Vous pouvez néanmoins lancer un calcul en complétant les
+          données disponibles en open data avec vos propres données. Vous
+          pourrez ainsi visualiser facilement votre trajectoire SNBC
+          territorialisée et la comparer aux objectifs fixés et résultats
+          observés.
+        </p>
+      )}
       <Modal
         size="xl"
         render={(props) => <DonneesCollectivite modalProps={props} />}
       >
-        <Button>Compléter mes données</Button>
+        <Button disabled={!collectivite || collectivite.readonly}>
+          Compléter mes données
+        </Button>
       </Modal>
     </Card>
   );

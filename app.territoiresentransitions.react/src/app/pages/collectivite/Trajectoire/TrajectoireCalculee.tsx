@@ -134,7 +134,14 @@ export const TrajectoireCalculee = () => {
             {
               /** Avertissement "Données partiellement disponibles" */
               !secteur && donneesSectoriellesIncompletes && (
-                <DonneesPartiellementDisponibles />
+                <DonneesPartiellementDisponibles
+                  disabled={!collectivite || collectivite.readonly}
+                  description={
+                    !collectivite || collectivite.readonly
+                      ? "Il manque des données pour certains secteurs : un utilisateur en Edition ou Admin sur le profil de cette collectivité peut compléter les données manquantes pour l'année 2015 afin de finaliser le calcul"
+                      : undefined
+                  }
+                />
               )
             }
             {
@@ -187,7 +194,12 @@ export const TrajectoireCalculee = () => {
               secteur && !valeursSecteur && (
                 <DonneesPartiellementDisponibles
                   title="Données non disponibles"
-                  description="Nous ne disposons pas encore des données nécessaires pour calculer la trajectoire SNBC territorialisée de ce secteur. Nous y travaillons activement et espérons vous fournir ces informations très prochainement. En attendant, vous pouvez calculer dès maintenant votre trajectoire pour l’ensemble des secteurs en complétant les données déjà disponibles."
+                  description={
+                    !collectivite || collectivite.readonly
+                      ? 'Nous ne disposons pas encore des données nécessaires pour calculer la trajectoire SNBC territorialisée de ce secteur. Nous y travaillons activement et espérons vous fournir ces informations très prochainement. En attendant, un utilisateur en Edition ou Admin sur le profil de cette collectivité peut compléter les données déjà disponibles pour calculer la trajectoire pour l’ensemble des secteurs.'
+                      : 'Nous ne disposons pas encore des données nécessaires pour calculer la trajectoire SNBC territorialisée de ce secteur. Nous y travaillons activement et espérons vous fournir ces informations très prochainement. En attendant, vous pouvez calculer dès maintenant votre trajectoire pour l’ensemble des secteurs en complétant les données déjà disponibles.'
+                  }
+                  disabled={!collectivite || collectivite.readonly}
                 />
               )
             }
@@ -201,6 +213,7 @@ export const TrajectoireCalculee = () => {
                 <ComparezLaTrajectoire
                   collectiviteId={collectiviteId}
                   identifiantReferentiel={identifiant}
+                  readonly={!collectivite || collectivite.readonly}
                 />
               )}
             {secteur && <Methodologie secteur={secteur} />}

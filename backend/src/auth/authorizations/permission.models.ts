@@ -17,12 +17,14 @@ export const Permission: Record<Role, PermissionOperation[]> = {
     PermissionOperation.INDICATEURS_VISITE,
     PermissionOperation.INDICATEURS_LECTURE,
     PermissionOperation.INDICATEURS_TRAJECTOIRES_LECTURE,
+    PermissionOperation.INDICATEURS_TRAJECTOIRES_EDITION,
   ],
   [Role.ADEME]: [
     PermissionOperation.COLLECTIVITES_VISITE,
     PermissionOperation.PLANS_FICHES_VISITE,
     PermissionOperation.INDICATEURS_VISITE,
     PermissionOperation.INDICATEURS_TRAJECTOIRES_LECTURE,
+    PermissionOperation.INDICATEURS_TRAJECTOIRES_EDITION,
   ],
   [Role.LECTURE]: [
     PermissionOperation.COLLECTIVITES_VISITE,
@@ -33,6 +35,7 @@ export const Permission: Record<Role, PermissionOperation[]> = {
     PermissionOperation.INDICATEURS_VISITE,
     PermissionOperation.INDICATEURS_LECTURE,
     PermissionOperation.INDICATEURS_TRAJECTOIRES_LECTURE,
+    PermissionOperation.INDICATEURS_TRAJECTOIRES_EDITION,
   ],
   [Role.EDITION]: [
     PermissionOperation.COLLECTIVITES_VISITE,
