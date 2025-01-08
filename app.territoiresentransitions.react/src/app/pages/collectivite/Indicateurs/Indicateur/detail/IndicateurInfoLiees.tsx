@@ -56,7 +56,7 @@ export const IndicateurInfoLiees = (props: TIndicateurInfoLieesProps) => {
     .filter((id) => !!id) as string[];
 
   return (
-    <>
+    <div className="flex flex-col gap-8">
       {/** personne pilote */}
       <Field title="Personne pilote">
         <PersonnesDropdown
@@ -97,6 +97,6 @@ export const IndicateurInfoLiees = (props: TIndicateurInfoLieesProps) => {
           />
         </Field>
       )}
-    </>
+    </div>
   );
 };

@@ -1,12 +1,12 @@
+import classNames from 'classnames';
 import React, { useEffect, useMemo, useState } from 'react';
-import SideNavContainer, { SideNavContainerProps } from './SideNavContainer';
+import Panel from './Panel/Panel';
 import {
   PanelProvider,
   usePanelDispatch,
   usePanelState,
 } from './Panel/PanelContext';
-import classNames from 'classnames';
-import Panel from './Panel/Panel';
+import SideNavContainer, { SideNavContainerProps } from './SideNavContainer';
 
 type Props = {
   children: React.ReactNode;
@@ -62,7 +62,7 @@ const PageLayout = ({ children, sideNav, dataTest }: Props) => {
   return (
     <div
       data-test={dataTest}
-      className={`grid ${gridCols} m-auto xl:max-w-[90rem] 2xl:px-6`}
+      className={`grid ${gridCols} mx-auto xl:max-w-[90rem] 2xl:px-6`}
     >
       {/** Side nav */}
       {sideNav && (

@@ -52,7 +52,7 @@ export const HeaderIndicateur = ({
   return (
     <div
       className={classNames(
-        'mt-4 group sticky top-0 flex items-center mx-auto py-6 px-6 text-grey-9 bg-bf925 z-40',
+        'group sticky top-0 flex items-center mx-auto py-6 px-6 text-grey-9 bg-bf925 z-40',
         { 'cursor-text': !isReadonly }
       )}
       onClick={!isReadonly ? handleEditFocus : undefined}
@@ -62,17 +62,22 @@ export const HeaderIndicateur = ({
           data-test="HeaderTitleInput"
           ref={titreInputRef}
           className={classNames(
-            'w-full leading-snug !outline-none !resize-none !text-lg'
+            'w-full leading-snug !outline-none !resize-none !text-lg',
+            {
+              '!cursor-default disabled:!text-grey-9': isReadonly,
+            }
           )}
           initialValue={title}
           placeholder={'Sans titre'}
           onBlur={handleChangeTitle}
           disabled={isReadonly}
         />
-        <Icon
-          icon="edit-line"
-          className="my-auto ml-6 hidden group-hover:block"
-        />
+        {!isReadonly && (
+          <Icon
+            icon="edit-line"
+            className="my-auto ml-6 hidden group-hover:block"
+          />
+        )}
       </div>
     </div>
   );
