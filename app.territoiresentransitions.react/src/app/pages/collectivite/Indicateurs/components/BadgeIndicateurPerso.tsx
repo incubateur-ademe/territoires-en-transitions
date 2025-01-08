@@ -10,7 +10,7 @@ const BadgeIndicateurPerso = ({ size }: Props) => {
       size={size}
       light
       iconPosition="left"
-      icon="line-chart-line"
+      icon="user-line"
     />
   );
 };

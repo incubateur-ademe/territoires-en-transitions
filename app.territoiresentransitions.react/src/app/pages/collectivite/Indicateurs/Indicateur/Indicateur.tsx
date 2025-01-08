@@ -8,7 +8,7 @@ import {
 import { useCollectiviteId } from '@/app/core-logic/hooks/params';
 import { redirect } from 'next/navigation';
 import { useParams } from 'react-router-dom';
-import { IndicateurPersonnalise } from './IndicateurPersonnalise';
+import IndicateurDetail from '../detail/IndicateurDetail';
 import { IndicateurPredefini } from './IndicateurPredefini';
 
 /**
@@ -49,7 +49,8 @@ const Indicateur = () => {
       }
     >
       {isPerso ? (
-        <IndicateurPersonnalise indicateurId={indicateurId as number} />
+        // <IndicateurPersonnalise indicateurId={indicateurId as number} />
+        <IndicateurDetail indicateurId={indicateurId} isPerso />
       ) : (
         <IndicateurPredefini indicateurId={indicateurId} />
       )}

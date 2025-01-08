@@ -26,7 +26,7 @@ export const FichesActionLiees = (props: TFichesActionProps) => {
   const isReadonly = collectivite?.isReadOnly ?? false;
 
   return (
-    <>
+    <div className="flex flex-col gap-8">
       <Field title="Fiches des plans liées">
         <FichesActionsDropdown
           disabled={isReadonly}
@@ -42,6 +42,6 @@ export const FichesActionLiees = (props: TFichesActionProps) => {
       </Field>
 
       <FichesLieesListe fiches={fiches ?? []} />
-    </>
+    </div>
   );
 };
