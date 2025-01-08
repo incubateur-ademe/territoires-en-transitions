@@ -307,7 +307,7 @@ export default class CrudValeursService {
 
   async upsertIndicateurValeurs(
     indicateurValeurs: IndicateurValeurInsert[],
-    tokenInfo: AuthenticatedUser
+    tokenInfo: AuthenticatedUser | undefined
   ): Promise<IndicateurValeur[]> {
     if (tokenInfo) {
       const collectiviteIds = [
@@ -331,7 +331,7 @@ export default class CrudValeursService {
     }
 
     this.logger.log(
-      `Upsert des ${indicateurValeurs.length} valeurs des indicateurs pour l'utilisateur ${tokenInfo.id} (role ${tokenInfo.role})`
+      `Upsert des ${indicateurValeurs.length} valeurs des indicateurs pour l'utilisateur ${tokenInfo?.id} (role ${tokenInfo?.role})`
     );
     // On doit distinguer les valeurs avec et sans métadonnées car la clause d'unicité est différente (onConflictDoUpdate)
     const [indicateurValeursAvecMetadonnees, indicateurValeursSansMetadonnees] =
