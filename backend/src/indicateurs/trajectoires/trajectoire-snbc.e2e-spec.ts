@@ -295,6 +295,13 @@ describe('Calcul de trajectoire SNBC', () => {
       });
   });
 
+  it(`Calcul avec droit suffisant - lecture`, async () => {
+    return request(app.getHttpServer())
+      .get('/trajectoires/snbc?collectiviteId=3895')
+      .set('Authorization', `Bearer ${yoloDodoToken}`)
+      .expect(200);
+  }, 30000);
+
   it(`Verification et calcul avec donnees completes`, async () => {
     // Suppression de la trajectoire snbc existante si le test est joué plusieurs fois
     await request(app.getHttpServer())
