@@ -27,6 +27,7 @@ import { FicheResume } from 'packages/api/src/plan-actions';
 import ActionsGroupeesMenu from '../ActionsGroupees/ActionsGroupeesMenu';
 import EmptyFichePicto from '../FicheAction/FichesLiees/EmptyFichePicto';
 import { useCreateFicheAction } from '../FicheAction/data/useCreateFicheAction';
+import { useFicheActionCount } from '../FicheAction/data/useFicheActionCount';
 import { useCreatePlanAction } from '../PlanAction/data/useUpsertAxe';
 
 type sortByOptionsType = SortFichesAction & {
@@ -140,10 +141,7 @@ const FichesActionListe = ({
   const { data, isLoading } = useFicheResumesFetch({
     options: ficheResumesOptions,
   });
-
-  const { data: ficheExistenceData } = useFicheResumesFetch();
-
-  const hasFiches = !!ficheExistenceData?.data?.length;
+  const { count: hasFiches } = useFicheActionCount();
 
   /** Gère les fiches sélectionnées pour les actions groupées */
   const handleSelectFiche = (fiche: FicheResume) => {
