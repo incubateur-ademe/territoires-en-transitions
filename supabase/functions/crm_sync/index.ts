@@ -21,7 +21,23 @@ serve(async (req) => {
   const { token, table, sync } = await req.json();
 
   // Récupère les données de la table au format csv.
-  const csvResponse = await supabase.from(table).select().csv();
+  const { error, data, count } = await supabase
+    .from(table)
+    .select('*', { count: 'exact' })
+    .range(0, 4999)
+    .csv();
+
+  let allData = data;
+
+  if (count > 5000) {
+    const { data: dataOver5000 } = await supabase
+      .from(table)
+      .select('*')
+      .range(5000, 9999)
+      .csv();
+
+    allData += '\n' + dataOver5000.replace(/.*\n/, '') /* remove header */;
+  }
 
   // Envoie les données à Airtable vers l'endpoint sync.
   const syncResponse = await fetch(sync, {
@@ -30,10 +46,17 @@ serve(async (req) => {
       Authorization: `Bearer ${token}`,
       'Content-Type': 'text/csv',
     },
-    body: csvResponse.data,
+    body: allData,
   });
 
   const { success } = await syncResponse.json();
+  console.log(
+    JSON.stringify({
+      success,
+      table,
+      nbOfRows: allData.split('\n').length - 1 /* without header */,
+    })
+  );
 
   // Renvoie le statut pour persister dans les logs Supabase.
   return new Response(
