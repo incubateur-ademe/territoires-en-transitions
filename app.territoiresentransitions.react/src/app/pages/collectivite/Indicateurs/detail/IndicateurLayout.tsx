@@ -12,6 +12,7 @@ import BadgeOpenData from '../components/BadgeOpenData';
 import { TIndicateurDefinition } from '../types';
 import DonneesIndicateur from './DonneesIndicateur';
 import IndicateurToolbar from './IndicateurToolbar';
+import SousIndicateurs from './SousIndicateurs';
 
 type IndicateurLayoutProps = {
   dataTest?: string;
@@ -24,13 +25,17 @@ const IndicateurLayout = ({
   definition,
   isPerso = false,
 }: IndicateurLayoutProps) => {
-  const { titre, rempli } = definition;
+  const { enfants, sansValeur, rempli, titre } = definition;
 
   const { mutate: updateDefinition } = useUpdateIndicateurDefinition();
+
   const collectivite = useCurrentCollectivite();
 
   const collectiviteId = collectivite?.collectivite_id;
   const isReadonly = !collectivite || collectivite?.readonly;
+
+  const composeSansAgregation = !!enfants && enfants.length > 0 && sansValeur;
+  const composeAvecAgregation = !!enfants && enfants.length > 0 && !sansValeur;
 
   // Mise à jour des champs de l'indicateur
   const handleUpdate = (
@@ -44,6 +49,9 @@ const IndicateurLayout = ({
   };
 
   const handleTitreUpdate = (value: string) => handleUpdate('titre', value);
+
+  const handleCommentaireUpdate = (value: string) =>
+    handleUpdate('commentaire', value);
 
   const handleUniteUpdate = (value: string) => handleUpdate('unite', value);
 
@@ -76,51 +84,72 @@ const IndicateurLayout = ({
 
       <div className="flex flex-col px-10 py-6">
         <div className="flex items-center justify-between">
-          <div className="flex gap-2">
-            <BadgeACompleter a_completer={!rempli} />
-            <BadgeIndicateurPerso />
-            {definition.participationScore && (
-              <Badge
-                title={`Participe au score ${referentielToName.cae}`}
-                uppercase={false}
-                state="grey"
-              />
-            )}
-            {definition.hasOpenData && <BadgeOpenData />}
-          </div>
+          {/* Liste des badges */}
+          {!composeSansAgregation && (
+            <div className="flex gap-2">
+              <BadgeACompleter a_completer={!rempli} />
+              {isPerso && <BadgeIndicateurPerso />}
+              {definition.participationScore && (
+                <Badge
+                  title={`Participe au score ${referentielToName.cae}`}
+                  uppercase={false}
+                  state="grey"
+                />
+              )}
+              {definition.hasOpenData && <BadgeOpenData />}
+            </div>
+          )}
 
+          {/* Menu export / infos / suppression */}
           <IndicateurToolbar
             {...{ definition, isPerso, isReadonly }}
             collectiviteId={collectiviteId!}
+            className="ml-auto"
           />
         </div>
 
-        {/* Indicateur sans enfant, groupe d'indicateurs avec agrégation,
-        ou indicateur personnalisé */}
-        <Tabs className="mt-12" tabsListClassName="!justify-start">
-          {/* Données */}
-          <Tab label="Données">
-            <DonneesIndicateur
-              {...{ definition, isPerso, isReadonly }}
-              updateUnite={handleUniteUpdate}
-              updateDescription={handleDescriptionUpdate}
-            />
-          </Tab>
-
-          {/* Actions des référentiels liées */}
-          {!isPerso ? (
-            <Tab label="Actions des référentiels liées">
-              <ActionsLieesListe
-                actionsIds={(definition.actions ?? []).map((a) => a.id)}
+        {composeSansAgregation ? (
+          // Groupe d'indicateurs sans agrégation
+          <SousIndicateurs definition={definition} enfantsIds={enfants} />
+        ) : (
+          // Indicateur sans enfant, groupe d'indicateurs avec agrégation,
+          // ou indicateur personnalisé
+          <Tabs className="mt-12" tabsListClassName="!justify-start">
+            {/* Données */}
+            <Tab label="Données">
+              <DonneesIndicateur
+                {...{ definition, isPerso, isReadonly }}
+                updateUnite={handleUniteUpdate}
+                updateDescription={(value) =>
+                  isPerso
+                    ? handleDescriptionUpdate(value)
+                    : handleCommentaireUpdate(value)
+                }
               />
             </Tab>
-          ) : undefined}
 
-          {/* Fiches des plans liées */}
-          <Tab label="Fiches des plans liées">
-            <FichesActionLiees definition={definition} />
-          </Tab>
-        </Tabs>
+            {/* Sous indicateurs */}
+            {composeAvecAgregation ? (
+              <Tab label={`${enfants.length} Sous indicateurs`}>
+                <SousIndicateurs definition={definition} enfantsIds={enfants} />
+              </Tab>
+            ) : undefined}
+
+            {/* Actions des référentiels liées */}
+            {!isPerso ? (
+              <Tab label="Actions des référentiels liées">
+                <ActionsLieesListe
+                  actionsIds={(definition.actions ?? []).map((a) => a.id)}
+                />
+              </Tab>
+            ) : undefined}
+
+            {/* Fiches des plans liées */}
+            <Tab label="Fiches des plans liées">
+              <FichesActionLiees definition={definition} />
+            </Tab>
+          </Tabs>
+        )}
 
         <ScrollTopButton className="mt-8" />
       </div>
