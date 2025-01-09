@@ -85,7 +85,7 @@ const IndicateurDetailChart = ({
 
         {!!metadonnee && (
           <DataSourceTooltip metadonnee={metadonnee}>
-            <Icon icon="information-line" className="text-primary" />
+            <Icon icon="information-line" className="text-primary px-6" />
           </DataSourceTooltip>
         )}
       </div>
@@ -100,7 +100,7 @@ const IndicateurDetailChart = ({
   ) : (
     <EmptyCard
       size="xs"
-      className="h-64"
+      className="h-64 my-8"
       picto={(props) => <PictoIndicateurVide {...props} />}
       title="Aucune valeur n'est associée aux résultats ou aux objectifs de la collectivité !"
     />
