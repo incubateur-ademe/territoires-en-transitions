@@ -9,7 +9,6 @@ import { useCollectiviteId } from '@/app/core-logic/hooks/params';
 import { redirect } from 'next/navigation';
 import { useParams } from 'react-router-dom';
 import IndicateurDetail from '../detail/IndicateurDetail';
-import { IndicateurPredefini } from './IndicateurPredefini';
 
 /**
  * Affiche le détail d'un indicateur
@@ -42,19 +41,12 @@ const Indicateur = () => {
   }
 
   return (
-    <div
-      className="w-full"
-      data-test={
+    <IndicateurDetail
+      dataTest={
         indicateurId !== undefined ? `ind-${indicateurId}` : `ind-v-${view}`
       }
-    >
-      {isPerso ? (
-        // <IndicateurPersonnalise indicateurId={indicateurId as number} />
-        <IndicateurDetail indicateurId={indicateurId} isPerso />
-      ) : (
-        <IndicateurPredefini indicateurId={indicateurId} />
-      )}
-    </div>
+      {...{ indicateurId, isPerso }}
+    />
   );
 };
 

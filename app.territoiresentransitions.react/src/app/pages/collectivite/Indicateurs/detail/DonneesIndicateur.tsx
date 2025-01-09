@@ -1,6 +1,8 @@
+import { ImportSourcesSelector } from '../Indicateur/detail/ImportSourcesSelector';
 import IndicateurDetailChart from '../Indicateur/detail/IndicateurDetailChart';
 import { IndicateurInfoLiees } from '../Indicateur/detail/IndicateurInfoLiees';
 import { IndicateurValuesTabs } from '../Indicateur/detail/IndicateurValuesTabs';
+import { useIndicateurImportSources } from '../Indicateur/detail/useImportSources';
 import { TIndicateurDefinition } from '../types';
 import DescriptionIndicateurInput from './DescriptionIndicateurInput';
 import UniteIndicateurInput from './UniteIndicateurInput';
@@ -20,25 +22,42 @@ const DonneesIndicateur = ({
   updateUnite,
   updateDescription,
 }: Props) => {
-  const { description, unite, rempli, titre } = definition;
+  const { description, commentaire, unite, rempli, titre, titreLong } =
+    definition;
+
+  const { sources, currentSource, setCurrentSource } =
+    useIndicateurImportSources(definition.id);
 
   return (
     <div className="flex flex-col gap-8">
+      {!!sources?.length && (
+        <ImportSourcesSelector
+          definition={definition}
+          sources={sources}
+          currentSource={currentSource}
+          setCurrentSource={setCurrentSource}
+        />
+      )}
+
       {/* Graphe */}
       <IndicateurDetailChart
         className="mb-8"
         definition={definition}
+        source={currentSource}
         rempli={rempli}
-        titre={titre}
+        titre={titreLong || titre}
         fileName={titre}
       />
 
       {/* Tableau */}
-      <IndicateurValuesTabs definition={definition} />
+      <IndicateurValuesTabs
+        definition={definition}
+        importSource={currentSource}
+      />
 
       {/* Description */}
       <DescriptionIndicateurInput
-        description={description}
+        description={isPerso ? description : commentaire}
         updateDescription={updateDescription}
         disabled={isReadonly}
       />

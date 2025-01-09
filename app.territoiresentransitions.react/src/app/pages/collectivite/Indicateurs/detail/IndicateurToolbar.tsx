@@ -1,5 +1,6 @@
 import { ToolbarIconButton } from '@/app/ui/buttons/ToolbarIconButton';
 import { Modal, ModalFooterOKCancel } from '@/ui';
+import classNames from 'classnames';
 import { useState } from 'react';
 import { IndicateurSidePanelToolbar } from '../Indicateur/IndicateurSidePanelToolbar';
 import { useExportIndicateurs } from '../Indicateur/useExportIndicateurs';
@@ -11,6 +12,7 @@ type Props = {
   collectiviteId: number;
   isPerso?: boolean;
   isReadonly?: boolean;
+  className?: string;
 };
 
 const IndicateurToolbar = ({
@@ -18,6 +20,7 @@ const IndicateurToolbar = ({
   collectiviteId,
   isPerso = false,
   isReadonly = false,
+  className,
 }: Props) => {
   const [isDeleteModalOpen, setIsDeleteModalOpen] = useState(false);
 
@@ -33,7 +36,7 @@ const IndicateurToolbar = ({
 
   return (
     <>
-      <div className="flex gap-2">
+      <div className={classNames('flex gap-2', className)}>
         <ToolbarIconButton
           disabled={isLoading}
           icon="download"
