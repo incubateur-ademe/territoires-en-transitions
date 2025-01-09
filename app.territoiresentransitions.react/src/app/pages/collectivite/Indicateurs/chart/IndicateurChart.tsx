@@ -5,7 +5,22 @@ import {
   makeOption,
 } from '@/app/ui/charts/echarts';
 import SpinnerLoader from '@/app/ui/shared/SpinnerLoader';
+import { GridComponentOption } from 'echarts';
 import { TIndicateurValeur } from '../useIndicateurValeurs';
+
+type ChartVariant = 'thumbnail' | 'modal' | 'detail';
+
+const variantToHeight: Record<ChartVariant, number> = {
+  thumbnail: 320,
+  modal: 550,
+  detail: 450,
+};
+
+const variantToGrid: Record<ChartVariant, GridComponentOption> = {
+  thumbnail: { top: '8%', bottom: '15%', right: '5%' },
+  modal: {},
+  detail: { left: 32, right: 32 },
+};
 
 /** Data issues de l'api pour générer les données formatées pour echarts */
 /** TODO: le format devra être revu après la refonte indicateurs et la maj du fetch */
@@ -27,8 +42,8 @@ export type IndicateurChartProps = {
   title?: string;
   /** Booléen de chargement des données et infos du graphique */
   isLoading: boolean;
-  /** Taille du graphe */
-  variant?: 'thumbnail' | 'modal' | 'detail';
+  /** Variant du graphe, en fonction du cas d'utilisation */
+  variant?: ChartVariant;
   /** ClassName du container */
   className?: string;
 };
@@ -67,17 +82,9 @@ const IndicateurChart = ({
     },
   ];
 
-  const style = { height: 450 };
-  if (variant === 'thumbnail') style.height = 320;
-  if (variant === 'modal') style.height = 550;
+  const style = { height: variantToHeight[variant] };
 
-  let grid = {};
-  if (variant === 'thumbnail') {
-    grid = { top: '8%', bottom: '15%', right: '5%' };
-  }
-  if (variant === 'detail') {
-    grid = { left: 32, right: 32 };
-  }
+  const grid = variantToGrid[variant];
 
   const option = makeOption({
     option: {
