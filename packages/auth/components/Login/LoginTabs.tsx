@@ -66,11 +66,11 @@ export const LoginTabs = (props: LoginPropsWithState) => {
           }
         }}
       >
-        <Tab label="Connexion sans mot de passe">
-          <SignupStep1Form {...props} form={form} isPasswordless />
-        </Tab>
         <Tab label="Connexion avec mot de passe">
           <SignupStep1Form {...props} form={form} />
+        </Tab>
+        <Tab label="Connexion sans mot de passe">
+          <SignupStep1Form {...props} form={form} isPasswordless />
         </Tab>
       </Tabs>
     </>
