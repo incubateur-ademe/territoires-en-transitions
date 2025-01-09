@@ -24,9 +24,7 @@ const FicheActionImpact = ({ fiche }: FicheActionImpactProps) => {
           size="xs"
           classname="h-6 w-8 justify-center"
         />
-        <span className="mt-1">
-          Fiche action issue du service “Actions à Impact”
-        </span>
+        <span className="mt-1">Fiche issue du service “Actions à Impact”</span>
         <Icon
           className="!absolute right-[0.4rem] text-primary-10"
           icon="eye-line"
