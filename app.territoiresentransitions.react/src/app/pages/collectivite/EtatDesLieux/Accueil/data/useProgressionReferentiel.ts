@@ -4,8 +4,8 @@ import {
 } from '@/app/app/pages/collectivite/ReferentielTable/useReferentiel';
 import { supabaseClient } from '@/app/core-logic/api/supabase';
 import { useCollectiviteId } from '@/app/core-logic/hooks/params';
+import { phaseToLabel } from '@/app/referentiels/utils';
 import { TActionStatutsRow } from '@/app/types/alias';
-import { phaseToLabel } from '@/app/ui/referentiels/utils';
 import { useQuery } from 'react-query';
 import { TableOptions } from 'react-table';
 

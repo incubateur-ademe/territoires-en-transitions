@@ -1,8 +1,8 @@
+import { ActionWithScore } from '../../compute-score/action-with-score.dto';
 import { ActionCategoryType } from '../action-definition.table';
 import { ActionType } from '../action-type.enum';
-import { ReferentielActionWithScoreType } from '../referentiel-action-avec-score.dto';
 
-export const deeperReferentielScoring: ReferentielActionWithScoreType = {
+export const deeperReferentielScoring: ActionWithScore = {
   actionId: 'eci',
   points: 100,
   level: 0,

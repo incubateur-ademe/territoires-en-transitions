@@ -9,6 +9,7 @@ export enum ActionType {
   TACHE = 'tache',
   EXEMPLE = 'exemple',
 }
+
 export const orderedActionType = [
   ActionType.REFERENTIEL,
   ActionType.AXE,
@@ -17,4 +18,5 @@ export const orderedActionType = [
   ActionType.SOUS_ACTION,
   ActionType.TACHE,
 ] as const;
-export const actionTypeEnum = pgEnum('action_type', orderedActionType);
+
+export const actionTypePgEnum = pgEnum('action_type', orderedActionType);

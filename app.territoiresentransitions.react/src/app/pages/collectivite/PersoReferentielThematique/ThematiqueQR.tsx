@@ -6,7 +6,10 @@ import {
   makeCollectivitePersoRefThematiqueUrl,
   makeCollectivitePersoRefUrl,
 } from '@/app/app/paths';
-import { TChangeReponse, TQuestionReponse } from '@/app/types/personnalisation';
+import {
+  TChangeReponse,
+  TQuestionReponse,
+} from '@/app/referentiels/personnalisations/personnalisation.types';
 import { Checkbox } from '@/ui';
 import { useState } from 'react';
 import { QuestionReponseList } from '../PersoPotentielModal/PersoPotentielQR';

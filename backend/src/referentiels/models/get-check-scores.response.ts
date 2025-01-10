@@ -1,5 +1,5 @@
 import { z } from 'zod';
-import { actionScoreSchema } from './action-score.dto';
+import { scoreSchema } from '../compute-score/score.dto';
 import { CheckScoreStatus } from './check-score-status.enum';
 import { referentielIdEnumSchema } from './referentiel.enum';
 
@@ -12,8 +12,8 @@ export const getCheckScoresResponseSchema = z
     differences: z.record(
       z.string(),
       z.object({
-        calcule: actionScoreSchema.partial(),
-        sauvegarde: actionScoreSchema.partial(),
+        calcule: scoreSchema.partial(),
+        sauvegarde: scoreSchema.partial(),
       })
     ),
   })

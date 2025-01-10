@@ -1,8 +1,8 @@
 import { TLabellisationParcours } from '@/app/app/pages/collectivite/ParcoursLabellisation/types';
 import { useCurrentCollectivite } from '@/app/core-logic/hooks/useCurrentCollectivite';
-import { TPreuveLabellisation } from '@/app/ui/shared/preuves/Bibliotheque/types';
-import { usePreuves } from '@/app/ui/shared/preuves/Bibliotheque/usePreuves';
-import { useIsAuditeur } from '../Audit/useAudit';
+import { TPreuveLabellisation } from '@/app/referentiels/preuves/Bibliotheque/types';
+import { usePreuves } from '@/app/referentiels/preuves/usePreuves';
+import { useIsAuditeur } from '../../../../referentiels/audits/useAudit';
 import { useCarteIdentite } from '../PersoReferentielThematique/useCarteIdentite';
 import { getParcoursStatus } from './getParcoursStatus';
 import { useLabellisationParcours } from './useLabellisationParcours';

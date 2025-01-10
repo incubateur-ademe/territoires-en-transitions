@@ -1,5 +1,5 @@
 import { makeCollectivitePersoRefThematiqueUrl } from '@/app/app/paths';
-import { Referentiel } from '@/app/types/litterals';
+import { Referentiel } from '@/app/referentiels/litterals';
 import { BadgeACompleter } from '@/app/ui/shared/Badge/BadgeACompleter';
 import Link from 'next/link';
 import { TQuestionThematiqueCompletudeRead } from './useQuestionThematiqueCompletude';

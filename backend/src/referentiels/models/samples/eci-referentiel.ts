@@ -1,7 +1,7 @@
+import { ReferentielAction } from '../../compute-score/referentiel-action.dto';
 import { ActionType } from '../action-type.enum';
-import { ReferentielActionType } from '../referentiel-action.dto';
 
-export const eciReferentiel: ReferentielActionType = {
+export const eciReferentiel: ReferentielAction = {
   actionId: 'eci',
   nom: 'Économie Circulaire',
   points: 500,

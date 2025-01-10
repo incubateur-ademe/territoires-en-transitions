@@ -11,12 +11,12 @@ import {
 import CollectivitesService from '../../collectivites/services/collectivites.service';
 import { DatabaseService } from '../../utils/database/database.service';
 import { GetPersonnalisationConsequencesRequestType } from '../models/get-personnalisation-consequences.request';
-import { GetPersonnalitionConsequencesResponseType } from '../models/get-personnalisation-consequences.response';
 import { GetPersonnalisationReglesResponseType } from '../models/get-personnalisation-regles.response';
 import { GetPersonnalisationReponsesResponseType } from '../models/get-personnalisation-reponses.response';
 import { historiqueReponseBinaireTable } from '../models/historique-reponse-binaire.table';
 import { historiqueReponseChoixTable } from '../models/historique-reponse-choix.table';
 import { historiqueReponseProportionTable } from '../models/historique-reponse-proportion.table';
+import { PersonnalisationConsequencesByActionId } from '../models/personnalisation-consequence.dto';
 import {
   personnalisationRegleTable,
   PersonnalisationRegleType,
@@ -45,7 +45,7 @@ export default class PersonnalisationsService {
     private readonly permissionService: PermissionService
   ) {}
 
-  async getPersonnalisationReponsesForTable(
+  private async getPersonnalisationReponsesForTable(
     table: ReponseTables,
     collectiviteId: number,
     reponsesDate?: string
@@ -67,7 +67,7 @@ export default class PersonnalisationsService {
     return reponses;
   }
 
-  async fillPersonnalisationReponsesForTable(
+  private async fillPersonnalisationReponsesForTable(
     table: ReponseTables,
     collectiviteId: number,
     reponses: GetPersonnalisationReponsesResponseType,
@@ -164,7 +164,7 @@ export default class PersonnalisationsService {
     collectiviteInfo?: CollectiviteAvecType
   ): Promise<{
     reponses: GetPersonnalisationReponsesResponseType;
-    consequences: GetPersonnalitionConsequencesResponseType;
+    consequences: PersonnalisationConsequencesByActionId;
   }> {
     // Seulement les personnes ayant l'accès en lecture à la collectivité peuvent voir les réponses historiques
     if (request.date && tokenInfo) {
@@ -201,8 +201,8 @@ export default class PersonnalisationsService {
     regles: GetPersonnalisationReglesResponseType,
     reponses: GetPersonnalisationReponsesResponseType,
     collectiviteInfo: IdentiteCollectivite
-  ): Promise<GetPersonnalitionConsequencesResponseType> {
-    const consequences: GetPersonnalitionConsequencesResponseType = {};
+  ): Promise<PersonnalisationConsequencesByActionId> {
+    const consequences: PersonnalisationConsequencesByActionId = {};
 
     regles.regles.forEach((regle) => {
       if (!consequences[regle.actionId]) {

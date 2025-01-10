@@ -7,8 +7,8 @@ import {
 import { TCollectiviteCarte } from '@/app/app/pages/CollectivitesEngagees/data/useFilteredCollectivites';
 import { makeCollectiviteAccueilUrl } from '@/app/app/paths';
 import { useFonctionTracker } from '@/app/core-logic/hooks/useFonctionTracker';
-import { Referentiel } from '@/app/types/litterals';
-import { toPercentString } from '@/app/utils/score';
+import { Referentiel } from '@/app/referentiels/litterals';
+import { toPercentString } from '@/app/utils/to-percent-string';
 import { Icon } from '@/ui';
 import classNames from 'classnames';
 import Link from 'next/link';

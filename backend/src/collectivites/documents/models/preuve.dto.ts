@@ -39,7 +39,7 @@ export const preuveSchema = preuveReglementaireSchema
 
 export type PreuveDto = z.infer<typeof preuveSchema>;
 
-export const simplePreuveSchema = preuveSchema.pick({
+export const preuveSchemaEssential = preuveSchema.pick({
   titre: true,
   commentaire: true,
   url: true,
@@ -51,4 +51,4 @@ export const simplePreuveSchema = preuveSchema.pick({
   modifiedAt: true,
 });
 
-export type SimplePreuveDto = z.infer<typeof simplePreuveSchema>;
+export type PreuveEssential = z.infer<typeof preuveSchemaEssential>;

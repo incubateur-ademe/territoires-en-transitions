@@ -1,7 +1,7 @@
 import { z } from 'zod';
 import { collectiviteAvecTypeSchema } from '../../collectivites/identite-collectivite.dto';
+import { actionWithScoreSchema } from '../compute-score/action-with-score.dto';
 import { ComputeScoreMode } from './compute-scores-mode.enum';
-import { referentielActionAvecScoreDtoSchema } from './referentiel-action-avec-score.dto';
 import { referentielIdEnumSchema } from './referentiel.enum';
 import { ScoreJalon } from './score-jalon.enum';
 
@@ -21,7 +21,7 @@ export const getReferentielScoresResponseSchema = z
     referentielVersion: z.string(),
     collectiviteInfo: collectiviteAvecTypeSchema,
     date: z.string().datetime(),
-    scores: referentielActionAvecScoreDtoSchema,
+    scores: actionWithScoreSchema,
     jalon: z.nativeEnum(ScoreJalon),
     auditId: z.number().optional(),
     anneeAudit: z.number().optional(),
@@ -29,6 +29,7 @@ export const getReferentielScoresResponseSchema = z
     mode: z.nativeEnum(ComputeScoreMode),
   })
   .describe('Score de la collectivité pour un référentiel et la date donnée');
+
 export type GetReferentielScoresResponseType = z.infer<
   typeof getReferentielScoresResponseSchema
 >;

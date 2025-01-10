@@ -59,15 +59,17 @@ export type CreateActionDefinitionType = InferInsertModel<
 >;
 
 export const actionDefinitionSchema = createSelectSchema(actionDefinitionTable);
+
 export const actionDefinitionSeulementIdObligatoireSchema =
   actionDefinitionSchema.partial();
+
 export const actionDefinitionMinimalWithTypeLevel =
   actionDefinitionSchema.extend({
     level: z.number(),
     actionType: z.nativeEnum(ActionType),
   });
 
-export const createActionDefinitionSchema = createInsertSchema(
+export const actionDefinitionSchemaInsert = createInsertSchema(
   actionDefinitionTable
 );
 
@@ -75,7 +77,7 @@ export enum ImportActionDefinitionCoremeasureType {
   COREMEASURE = 'coremeasure',
 }
 
-export const importActionDefinitionSchema = createActionDefinitionSchema
+export const importActionDefinitionSchema = actionDefinitionSchemaInsert
   .partial({
     actionId: true,
     description: true,

@@ -1,5 +1,5 @@
 import { supabaseClient } from '@/app/core-logic/api/supabase';
-import { TPreuve } from '@/app/ui/shared/preuves/Bibliotheque/types';
+import { TPreuve } from '@/app/referentiels/preuves/Bibliotheque/types';
 import { useQuery } from 'react-query';
 
 /** Renvoi les annexes associées à une fiche */

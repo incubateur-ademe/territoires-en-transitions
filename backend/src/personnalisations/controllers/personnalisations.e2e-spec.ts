@@ -1,9 +1,11 @@
 import { getAuthToken, getTestApp } from '@/backend/test';
 import { INestApplication } from '@nestjs/common';
 import { default as request } from 'supertest';
-import { GetPersonnalitionConsequencesResponseType } from '../../src/personnalisations/models/get-personnalisation-consequences.response';
-import { GetPersonnalisationReglesResponseType } from '../../src/personnalisations/models/get-personnalisation-regles.response';
-import { PersonnalisationConsequenceType } from '../../src/personnalisations/models/personnalisation-consequence.dto';
+import { GetPersonnalisationReglesResponseType } from '../models/get-personnalisation-regles.response';
+import {
+  PersonnalisationConsequence,
+  PersonnalisationConsequencesByActionId,
+} from '../models/personnalisation-consequence.dto';
 
 describe('Personnalisations routes', () => {
   let app: INestApplication;
@@ -102,11 +104,11 @@ describe('Personnalisations routes', () => {
       )
       .set('Authorization', `Bearer ${yoloDodoToken}`)
       .expect(200);
-    const getPersonnalisationConsequences: GetPersonnalitionConsequencesResponseType =
+    const getPersonnalisationConsequences: PersonnalisationConsequencesByActionId =
       response.body;
 
     // Do not check the whole response, just a few values
-    const expectedPersonnalisationConsequences_3_7_1: PersonnalisationConsequenceType =
+    const expectedPersonnalisationConsequences_3_7_1: PersonnalisationConsequence =
       {
         desactive: null,
         scoreFormule: null,
@@ -116,7 +118,7 @@ describe('Personnalisations routes', () => {
       expectedPersonnalisationConsequences_3_7_1
     );
 
-    const expectedPersonnalisationConsequences_4_2_1: PersonnalisationConsequenceType =
+    const expectedPersonnalisationConsequences_4_2_1: PersonnalisationConsequence =
       {
         desactive: true,
         scoreFormule: null,

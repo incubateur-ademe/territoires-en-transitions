@@ -4,7 +4,7 @@ import {
   TQuestionRead,
   TReponse,
   TReponseRead,
-} from '@/app/types/personnalisation';
+} from '@/app/referentiels/personnalisations/personnalisation.types';
 import { useQueries } from 'react-query';
 
 // charge les réponses existantes pour une série de questions donnée

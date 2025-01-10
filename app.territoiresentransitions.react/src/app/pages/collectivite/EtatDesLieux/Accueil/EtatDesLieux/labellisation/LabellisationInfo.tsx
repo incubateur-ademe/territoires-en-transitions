@@ -4,7 +4,7 @@ import {
 } from '@/app/app/pages/collectivite/EtatDesLieux/Accueil/EtatDesLieux/labellisation/Star';
 import { toLocaleFixed } from '@/app/utils/toFixed';
 import { Tooltip } from '@/ui';
-import ScoreDisplay from '../../../../../../../ui/referentiels/ScoreDisplay';
+import ScoreShow from '../../../../../../../referentiels/actions/score.show';
 import { TLabellisationParcours } from '../../../../ParcoursLabellisation/types';
 
 export const NIVEAUX = [1, 2, 3, 4, 5];
@@ -67,14 +67,14 @@ const LabellisationInfo = ({
 
       {/** Score */}
       <div className="flex flex-col 2xl:flex-row gap-4">
-        <ScoreDisplay
+        <ScoreShow
           score={score.realises / score.max_personnalise}
           percent
           legend="Score réalisé"
           size="sm"
           bold="value"
         />
-        <ScoreDisplay
+        <ScoreShow
           score={score.programmes / score.max_personnalise}
           percent
           icon="fr-icon-calendar-line"

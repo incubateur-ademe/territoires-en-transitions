@@ -11,7 +11,7 @@ import {
 import { Tab, Tabs } from '@/app/ui/shared/Tabs';
 import { Alert } from '@/ui';
 import { useRouter } from 'next/navigation';
-import { useAudit } from '../Audit/useAudit';
+import { useAudit } from '../../../../referentiels/audits/useAudit';
 import AuditComparaison from '../AuditComparaison';
 import AuditSuivi from '../AuditSuivi';
 import CriteresLabellisation from './CriteresLabellisation';

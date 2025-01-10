@@ -5,15 +5,15 @@ import { getTestApp } from '../../../test/app-utils';
 import { getAuthToken } from '../../../test/auth-utils';
 import { getCollectiviteIdBySiren } from '../../../test/collectivites-utils';
 import { HttpErrorResponse } from '../../utils/nest/http-error.response';
+import { ActionStatutsByActionId } from '../compute-score/action-statuts-by-action-id.dto';
+import { ActionWithScore } from '../compute-score/action-with-score.dto';
+import { Score } from '../compute-score/score.dto';
 import { referentielIdEnumSchema } from '../index-domain';
-import { ActionScoreType } from '../models/action-score.dto';
 import { ActionStatutType } from '../models/action-statut.table';
 import { ActionType } from '../models/action-type.enum';
-import { GetActionStatutsResponseType } from '../models/get-action-statuts.response';
 import { GetReferentielScoresResponseType } from '../models/get-referentiel-scores.response';
 import { GetScoreSnapshotsResponseType } from '../models/get-score-snapshots.response';
 import { HistoriqueActionStatutType } from '../models/historique-action-statut.table';
-import { ReferentielActionWithScoreType } from '../models/referentiel-action-avec-score.dto';
 import { ScoreJalon } from '../models/score-jalon.enum';
 
 describe('Referentiels scoring routes', () => {
@@ -38,7 +38,7 @@ describe('Referentiels scoring routes', () => {
       .get('/collectivites/1/referentiels/cae/action-statuts')
       .set('Authorization', `Bearer ${process.env.SUPABASE_ANON_KEY}`)
       .expect(200);
-    const actionStatuts = response.body as GetActionStatutsResponseType;
+    const actionStatuts = response.body as ActionStatutsByActionId;
     expect(Object.keys(actionStatuts).length).toBe(2);
     const expectedActionStatut: ActionStatutType = {
       collectiviteId: 1,
@@ -93,7 +93,7 @@ describe('Referentiels scoring routes', () => {
       )
       .set('Authorization', `Bearer ${yoloDodoToken}`)
       .expect(200);
-    const actionStatuts = response.body as GetActionStatutsResponseType;
+    const actionStatuts = response.body as ActionStatutsByActionId;
     expect(Object.keys(actionStatuts).length).toBe(1);
 
     const expectedActionStatut: HistoriqueActionStatutType = {
@@ -131,7 +131,7 @@ describe('Referentiels scoring routes', () => {
     const {
       actionsEnfant: expectedActionEnfant,
       ...expectedCaeRoot
-    }: ReferentielActionWithScoreType = {
+    }: ActionWithScore = {
       actionId: 'cae',
       identifiant: '',
       nom: 'Climat Air Énergie',
@@ -376,7 +376,7 @@ describe('Referentiels scoring routes', () => {
     expect(reponseSnapshotGetReferentielScores).toEqual(
       getReferentielScoresResponseType
     );
-    const expectedRootScore: ActionScoreType = {
+    const expectedRootScore: Score = {
       etoiles: 1,
       actionId: 'cae',
       concerne: true,
@@ -446,7 +446,7 @@ describe('Referentiels scoring routes', () => {
     const {
       actionsEnfant: expectedActionEnfant,
       ...expectedCaeRoot
-    }: ReferentielActionWithScoreType = {
+    }: ActionWithScore = {
       actionId: 'cae',
       identifiant: '',
       nom: 'Climat Air Énergie',

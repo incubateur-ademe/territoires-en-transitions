@@ -9,13 +9,14 @@ import z from 'zod';
 import { AuthenticatedUser } from '../../auth/models/auth.models';
 import { getErrorWithCode } from '../../utils/nest/errors.utils';
 import { PgIntegrityConstraintViolation } from '../../utils/postgresql-error-codes.enum';
+import ReferentielsScoringService from '../compute-score/referentiels-scoring.service';
 import {
   actionStatutTable,
   createActionStatutSchema,
 } from '../models/action-statut.table';
 import { ComputeScoreMode } from '../models/compute-scores-mode.enum';
 import { GetReferentielScoresRequestType } from '../models/get-referentiel-scores.request';
-import ReferentielsScoringService from '../services/referentiels-scoring.service';
+import { getReferentielIdFromActionId } from '../referentiels.utils';
 import ReferentielsService from '../services/referentiels.service';
 
 export const upsertActionStatutRequestSchema = z.object({
@@ -48,7 +49,7 @@ export class UpdateActionStatutService {
       request.actionStatut.collectiviteId
     );
 
-    const referentielId = this.referentielService.getReferentielIdFromActionId(
+    const referentielId = getReferentielIdFromActionId(
       request.actionStatut.actionId
     );
 

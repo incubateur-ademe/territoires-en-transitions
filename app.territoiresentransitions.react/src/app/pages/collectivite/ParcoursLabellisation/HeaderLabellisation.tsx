@@ -4,8 +4,11 @@
 
 import { useReferentielId } from '@/app/core-logic/hooks/params';
 import { ReactNode, useState } from 'react';
-import { TAuditeur, useAuditeurs } from '../Audit/useAudit';
-import { ValiderAudit } from '../Audit/ValiderAudit';
+import { ValiderAudit } from '../../../../referentiels/audits/ValiderAudit';
+import {
+  TAuditeur,
+  useAuditeurs,
+} from '../../../../referentiels/audits/useAudit';
 import { DemandeAuditModal } from './DemandeAuditModal';
 import { DemandeLabellisationModal } from './DemandeLabellisationModal';
 import { numLabels } from './numLabels';

@@ -1,6 +1,6 @@
 import { TablesInsert } from '@/api';
 import { supabaseClient } from '@/app/core-logic/api/supabase';
-import { TReponseRead } from '@/app/types/personnalisation';
+import { TReponseRead } from '@/app/referentiels/personnalisations/personnalisation.types';
 import { useMutation, useQueryClient } from 'react-query';
 
 type TJustification = TablesInsert<'justification'>;

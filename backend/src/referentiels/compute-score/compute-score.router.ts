@@ -3,7 +3,7 @@ import { Injectable } from '@nestjs/common';
 import z from 'zod';
 import { getReferentielScoresRequestSchema } from '../models/get-referentiel-scores.request';
 import { referentielIdEnumSchema } from '../models/referentiel.enum';
-import ReferentielsScoringService from '../services/referentiels-scoring.service';
+import ReferentielsScoringService from './referentiels-scoring.service';
 
 export const computeScoreRequestSchema = z.object({
   referentielId: referentielIdEnumSchema,

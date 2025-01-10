@@ -2,7 +2,7 @@ import SpinnerLoader from '@/app/ui/shared/SpinnerLoader';
 import classNames from 'classnames';
 import { useEffect } from 'react';
 import { useActionListe } from '../data/options/useActionListe';
-import ActionCard from './ActionCard';
+import ActionCard from '../../../../../../referentiels/actions/action.card';
 
 type ActionsLieesListeProps = {
   isReadonly?: boolean;

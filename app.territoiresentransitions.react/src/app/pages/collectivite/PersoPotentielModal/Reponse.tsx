@@ -1,5 +1,8 @@
 import { useCurrentCollectivite } from '@/app/core-logic/hooks/useCurrentCollectivite';
-import { TListeChoix, TReponse } from '@/app/types/personnalisation';
+import {
+  TListeChoix,
+  TReponse,
+} from '@/app/referentiels/personnalisations/personnalisation.types';
 import { useDebouncedInput } from '@/app/ui/shared/useDebouncedInput';
 import classNames from 'classnames';
 import { FC, ReactNode } from 'react';

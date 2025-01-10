@@ -7,13 +7,13 @@ import {
   useCollectiviteId,
   useReferentielId,
 } from '@/app/core-logic/hooks/params';
-import { ReferentielOfIndicateur } from '@/app/types/litterals';
+import { ReferentielOfIndicateur } from '@/app/referentiels/litterals';
 import { Button } from '@/ui';
+import PageContainer from '@/ui/components/layout/page-container';
 import HeaderLabellisation from './HeaderLabellisation';
 import { LabellisationTabs } from './LabellisationTabs';
 import { useCycleLabellisation } from './useCycleLabellisation';
 import { useIsUnchangedReferentiel } from './useIsUnchangedReferentiel';
-import PageContainer from '@/ui/components/layout/page-container';
 
 const ParcoursLabellisation = () => {
   const collectiviteId = useCollectiviteId();

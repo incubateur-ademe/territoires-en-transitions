@@ -1,7 +1,7 @@
 import { z } from 'zod';
+import { referentielActionDtoSchema } from '../compute-score/referentiel-action.dto';
 import { actionDefinitionMinimalWithTypeLevel } from './action-definition.table';
 import { ActionType } from './action-type.enum';
-import { referentielActionDtoSchema } from './referentiel-action.dto';
 
 export const getReferentielResponseSchema = z
   .object({

@@ -1,4 +1,4 @@
-import AlerteSuppression from '@/app/ui/shared/preuves/Bibliotheque/AlerteSuppression';
+import AlerteSuppression from '@/app/referentiels/preuves/Bibliotheque/AlerteSuppression';
 import { getTruncatedText } from '@/app/utils/formatUtils';
 import { Button, Card, Icon } from '@/ui';
 import { useState } from 'react';

@@ -1,8 +1,8 @@
-import { useEditActionStatutIsDisabled } from '@/app/core-logic/hooks/useActionStatut';
 import {
   DEFAULT_ITEMS,
   SelectActionStatut,
-} from '@/app/ui/shared/actions/SelectActionStatut';
+} from '@/app/referentiels/actions/action-statut.select';
+import { useEditActionStatutIsDisabled } from '@/app/referentiels/use-action-statut';
 import { useCallback } from 'react';
 import { TCellProps } from './DetailTacheTable';
 

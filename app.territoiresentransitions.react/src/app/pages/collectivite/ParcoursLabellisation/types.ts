@@ -1,5 +1,5 @@
 import { Database, Tables } from '@/api';
-import { TAudit } from '@/app/app/pages/collectivite/Audit/types';
+import { TAudit } from '@/app/referentiels/audits/types';
 
 export type TEtoiles = Database['labellisation']['Enums']['etoile'];
 export type TSujetDemande = Database['labellisation']['Enums']['sujet_demande'];

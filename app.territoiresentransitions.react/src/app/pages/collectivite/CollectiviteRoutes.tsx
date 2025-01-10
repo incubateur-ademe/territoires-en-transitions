@@ -4,8 +4,6 @@ import { Redirect, Route, RouteProps } from 'react-router-dom';
 import { AccueilPage } from '@/app/app/pages/collectivite/Accueil/AccueilPage';
 import { AccueilPage as SyntheseEtatDesLieuxPage } from '@/app/app/pages/collectivite/EtatDesLieux/Accueil/AccueilPage';
 import { IndicateursPage } from '@/app/app/pages/collectivite/Indicateurs/IndicateursPage';
-import { ActionPage } from '@/app/app/pages/collectivite/Referentiels/ActionPage';
-import { ReferentielsPage } from '@/app/app/pages/collectivite/Referentiels/ReferentielsPage';
 import { TrajectoirePage } from '@/app/app/pages/collectivite/Trajectoire/TrajectoirePage';
 import { MembresPage } from '@/app/app/pages/collectivite/Users/MembresPage';
 import {
@@ -25,6 +23,8 @@ import {
   makeCollectiviteAccueilUrl,
 } from '@/app/app/paths';
 import { useCurrentCollectivite } from '@/app/core-logic/hooks/useCurrentCollectivite';
+import { ActionPage } from '@/app/referentiels/actions/action.page';
+import { ReferentielPage } from '@/app/referentiels/referentiel/referentiel.page';
 import { BibliothequeDocsPage } from './BibliothequeDocs/BibliothequeDocsPage';
 import { JournalActivitePage } from './Historique/JournalActivitePage';
 import { ParcoursLabellisationPage } from './ParcoursLabellisation/ParcoursLabellisationPage';
@@ -45,7 +45,7 @@ export const CollectiviteRoutes = () => {
       </Route>
 
       <Route path={collectiviteReferentielPath}>
-        <ReferentielsPage />
+        <ReferentielPage />
       </Route>
       <Route path={collectiviteSyntheseReferentielPath}>
         <SyntheseEtatDesLieuxPage />

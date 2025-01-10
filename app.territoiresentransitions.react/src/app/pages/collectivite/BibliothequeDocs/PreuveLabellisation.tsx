@@ -1,9 +1,9 @@
 import { referentielToName } from '@/app/app/labels';
-import { Referentiel } from '@/app/types/litterals';
-import PreuveDoc from '@/app/ui/shared/preuves/Bibliotheque/PreuveDoc';
-import { TPreuveAuditEtLabellisation } from '@/app/ui/shared/preuves/Bibliotheque/types';
+import { Referentiel } from '@/app/referentiels/litterals';
+import PreuveDoc from '@/app/referentiels/preuves/Bibliotheque/PreuveDoc';
+import { TPreuveAuditEtLabellisation } from '@/app/referentiels/preuves/Bibliotheque/types';
 import { Fragment } from 'react';
-import { useIsAuditAuditeur } from '../Audit/useAudit';
+import { useIsAuditAuditeur } from '../../../../referentiels/audits/useAudit';
 import { getParcoursStatus } from '../ParcoursLabellisation/getParcoursStatus';
 import { numLabels } from '../ParcoursLabellisation/numLabels';
 import { groupeParReferentielEtDemande } from './groupeParReferentielEtDemande';

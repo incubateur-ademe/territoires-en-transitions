@@ -1,5 +1,5 @@
 import { useCurrentCollectivite } from '@/app/core-logic/hooks/useCurrentCollectivite';
-import { AddPreuveModal } from '@/app/ui/shared/preuves/AddPreuveModal';
+import { AddPreuveModal } from '@/app/referentiels/preuves/AddPreuveModal';
 import { Modal } from '@/ui';
 import { useState } from 'react';
 import { useAddPreuveToDemande } from './useAddPreuveToDemande';

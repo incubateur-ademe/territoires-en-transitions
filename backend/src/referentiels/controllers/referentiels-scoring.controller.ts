@@ -16,11 +16,12 @@ import { NextFunction, Request, Response } from 'express';
 import { AllowAnonymousAccess } from '../../auth/decorators/allow-anonymous-access.decorator';
 import { TokenInfo } from '../../auth/decorators/token-info.decorators';
 import { AuthenticatedUser, AuthUser } from '../../auth/models/auth.models';
+import { actionStatutsByActionIdSchema } from '../compute-score/action-statuts-by-action-id.dto';
+import ReferentielsScoringService from '../compute-score/referentiels-scoring.service';
 import ExportReferentielScoreService from '../export-score/export-referentiel-score.service';
 import { checkMultipleReferentielScoresRequestSchema } from '../models/check-multiple-referentiel-scores.request';
 import { CheckReferentielScoresRequestType } from '../models/check-referentiel-scores.request';
 import { getActionStatutsRequestSchema } from '../models/get-action-statuts.request';
-import { getActionStatutsResponseSchema } from '../models/get-action-statuts.response';
 import { GetCheckScoresResponseType } from '../models/get-check-scores.response';
 import { GetMultipleCheckScoresResponseType } from '../models/get-multiple-check-scores.response';
 import { getReferentielMultipleScoresRequestSchema } from '../models/get-referentiel-multiple-scores.request';
@@ -39,7 +40,6 @@ import {
 } from '../models/referentiel-api.constants';
 import { ReferentielId } from '../models/referentiel.enum';
 import ReferentielsScoringSnapshotsService from '../services/referentiels-scoring-snapshots.service';
-import ReferentielsScoringService from '../services/referentiels-scoring.service';
 
 class GetReferentielScoresRequestClass extends createZodDto(
   getReferentielScoresRequestSchema
@@ -61,7 +61,7 @@ class GetActionStatutsRequestClass extends createZodDto(
 ) {}
 
 class GetActionStatutsResponseClass extends createZodDto(
-  getActionStatutsResponseSchema
+  actionStatutsByActionIdSchema
 ) {}
 
 class CheckMultipleReferentielScoresRequestClass extends createZodDto(

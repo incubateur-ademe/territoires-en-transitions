@@ -1,11 +1,11 @@
-import ActionStatutBadge from '@/app/ui/shared/actions/ActionStatutBadge';
+import ActionStatutBadge from '@/app/referentiels/actions/action-statut.badge';
 import {
   MultiSelectFilter,
   MultiSelectFilterTitle,
 } from '@/app/ui/shared/select/MultiSelectFilter';
 
+import { DEFAULT_OPTIONS } from '@/app/referentiels/actions/action-statut.select';
 import { TActionAvancementExt } from '@/app/types/alias';
-import { DEFAULT_OPTIONS } from '@/app/ui/shared/actions/SelectActionStatut';
 import { ITEM_ALL } from '@/app/ui/shared/filters/commons';
 import { TFiltreProps } from './filters';
 

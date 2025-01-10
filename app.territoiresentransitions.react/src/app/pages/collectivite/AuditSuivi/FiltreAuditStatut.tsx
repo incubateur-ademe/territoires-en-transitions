@@ -1,5 +1,5 @@
-import { BadgeAuditStatut } from '@/app/app/pages/collectivite/Audit/BadgeAuditStatut';
-import { TAuditStatut } from '@/app/app/pages/collectivite/Audit/types';
+import { BadgeAuditStatut } from '@/app/referentiels/audits/BadgeAuditStatut';
+import { TAuditStatut } from '@/app/referentiels/audits/types';
 import { ITEM_ALL } from '@/app/ui/shared/filters/commons';
 import {
   MultiSelectFilter,

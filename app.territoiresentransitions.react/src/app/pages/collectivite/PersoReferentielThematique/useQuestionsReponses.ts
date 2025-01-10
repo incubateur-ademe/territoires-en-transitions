@@ -1,4 +1,4 @@
-import { TReponse } from '@/app/types/personnalisation';
+import { TReponse } from '@/app/referentiels/personnalisations/personnalisation.types';
 import { TFilters, useQuestions } from './useQuestions';
 import { useReponses } from './useReponses';
 

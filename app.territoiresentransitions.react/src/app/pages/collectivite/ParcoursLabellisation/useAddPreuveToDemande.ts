@@ -3,9 +3,9 @@ import {
   useCollectiviteId,
   useReferentielId,
 } from '@/app/core-logic/hooks/params';
-import { Referentiel } from '@/app/types/litterals';
-import { TAddFileFromLib } from '@/app/ui/shared/preuves/AddPreuveModal/AddFile';
-import { useAddPreuveLabellisation } from '@/app/ui/shared/preuves/Bibliotheque/useAddPreuves';
+import { Referentiel } from '@/app/referentiels/litterals';
+import { useAddPreuveLabellisation } from '@/app/referentiels/preuves/useAddPreuves';
+import { TAddFileFromLib } from '@/app/referentiels/preuves/AddPreuveModal/AddFile';
 import { TLabellisationDemande } from './types';
 import { useCycleLabellisation } from './useCycleLabellisation';
 
