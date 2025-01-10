@@ -6,7 +6,7 @@ import { createTrackingClient, TrackingProvider } from '@/ui';
 import { createTheme, ThemeProvider } from '@mui/material/styles';
 import { QueryClient, QueryClientProvider } from 'react-query';
 import { ReactQueryDevtools } from 'react-query/devtools';
-import { AuthProvider } from '../core-logic/api/auth/AuthProvider';
+import { AuthProvider } from './core-logic/api/auth/AuthProvider';
 
 const theme = createTheme({
   palette: {

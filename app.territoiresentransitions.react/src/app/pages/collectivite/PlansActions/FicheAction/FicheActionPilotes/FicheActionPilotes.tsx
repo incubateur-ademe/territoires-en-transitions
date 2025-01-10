@@ -5,7 +5,7 @@ import PersonnePilotePicto from './PersonnePilotePicto';
 
 import { Button, EmptyCard } from '@/ui';
 import classNames from 'classnames';
-import ModalePilotes from '../FicheActionPilotes/ModalePilotes';
+import ModalePilotes from './ModalePilotes';
 
 type FicheActionPilotesProps = {
   isReadonly: boolean;

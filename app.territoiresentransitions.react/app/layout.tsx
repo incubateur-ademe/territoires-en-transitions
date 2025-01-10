@@ -1,9 +1,9 @@
 import { Metadata } from 'next';
 import nextDynamic from 'next/dynamic';
-import StonlyWidget from '../lib/stonly.widget';
-import Footer from './Layout/Footer';
-import Header from './Layout/Header';
-import AppProviders from './app-providers';
+import AppProviders from '../src/app-providers';
+import Footer from '../src/app/Layout/Footer';
+import Header from '../src/app/Layout/Header';
+import StonlyWidget from '../src/lib/stonly.widget';
 import './global.css';
 
 export const dynamic = 'force-dynamic';
@@ -69,7 +69,7 @@ export default function RootLayout({
 }: {
   children: React.ReactNode;
 }) {
-  const CrispWithNoSSR = nextDynamic(() => import('../lib/crisp.widget'));
+  const CrispWithNoSSR = nextDynamic(() => import('../src/lib/crisp.widget'));
 
   return (
     <html lang="fr" translate="no" data-fr-scheme="light">

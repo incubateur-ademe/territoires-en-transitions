@@ -18,10 +18,10 @@ import {
   BrowserRouter as Router,
   Switch,
 } from 'react-router-dom';
-import { E2E } from './E2E';
+import { E2E } from './app/E2E';
+import AccepterCGUModal from './app/pages/Auth/AccepterCGUModal';
+import { ProfilPage } from './app/pages/Profil/ProfilPage';
 import LegacyRouterSync from './legacy-router-sync';
-import AccepterCGUModal from './pages/Auth/AccepterCGUModal';
-import { ProfilPage } from './pages/Profil/ProfilPage';
 
 export default function LegacyRouter() {
   return (

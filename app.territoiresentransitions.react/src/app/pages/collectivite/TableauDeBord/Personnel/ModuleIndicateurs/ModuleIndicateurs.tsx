@@ -16,7 +16,7 @@ import { useAuth } from '@/app/core-logic/api/auth/AuthProvider';
 import { useCollectiviteId } from '@/app/core-logic/hooks/params';
 import PictoIndicateurVide from '@/app/ui/pictogrammes/PictoIndicateurVide';
 import { useRouter } from 'next/navigation';
-import { getQueryKey } from '../../Personnel/usePersonalModulesFetch';
+import { getQueryKey } from '../usePersonalModulesFetch';
 
 type Props = {
   view: TDBViewParam;
