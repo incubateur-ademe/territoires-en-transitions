@@ -5,7 +5,7 @@ import { useEffect, useState } from 'react';
 type ModaleFichesLieesProps = {
   isOpen: boolean;
   setIsOpen: (opened: boolean) => void;
-  currentFicheId: number;
+  currentFicheId: number | null;
   linkedFicheIds: number[];
   updateLinkedFicheIds: (ficheIds: number[]) => void;
 };
