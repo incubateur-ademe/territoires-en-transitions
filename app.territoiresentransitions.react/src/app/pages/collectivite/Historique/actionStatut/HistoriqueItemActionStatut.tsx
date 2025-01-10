@@ -7,7 +7,7 @@ import {
   NouvelleActionStatutDetaille,
   PrecedenteActionStatutDetaille,
 } from '@/app/app/pages/collectivite/Historique/actionStatut/ActionStatutDetaillee';
-import ActionStatutBadge from '@/app/ui/shared/actions/ActionStatutBadge';
+import ActionStatutBadge from '@/app/referentiels/actions/action-statut.badge';
 import { THistoriqueItemProps } from '../types';
 import { getItemActionProps } from './getItemActionProps';
 

@@ -1,0 +1,57 @@
+import { preuveSchemaEssential } from '@/backend/collectivites/documents/models/preuve.dto';
+import { z } from 'zod';
+import { actionDefinitionSeulementIdObligatoireSchema } from '../models/action-definition.table';
+import { ActionType } from '../models/action-type.enum';
+import { referentielActionOrigineWithScoreSchema } from './referentiel-action-origine-with-score.dto';
+import {
+  scoreSchema,
+  scoreSchemaNew,
+  scoreWithOnlyPointsSchema,
+} from './score.dto';
+
+const actionWithScoreBaseSchema = actionDefinitionSeulementIdObligatoireSchema
+  .extend({
+    level: z.number(),
+    actionType: z.nativeEnum(ActionType),
+    referentielsOrigine: z.string().array().optional(),
+    actionsOrigine: referentielActionOrigineWithScoreSchema.array().optional(),
+    scoresOrigine: z
+      .record(z.string(), scoreWithOnlyPointsSchema.nullable())
+      .optional(),
+    // action catalogues include cae, eci but also biodiversite, eau
+    tags: z.string().array().optional(),
+    scoresTag: z.record(z.string(), scoreWithOnlyPointsSchema),
+    preuves: preuveSchemaEssential.array().optional(),
+    score: scoreSchema,
+  })
+  .describe("Référentiel d'actions avec le score associé");
+
+// Petit bazar de types Zod pour gérer la récursivité de `actionsEnfants`
+// Cf. https://zod.dev/?id=recursive-types
+export type ActionWithScore = z.infer<typeof actionWithScoreBaseSchema> & {
+  actionsEnfant: ActionWithScore[];
+};
+
+export const actionWithScoreSchema: z.ZodType<ActionWithScore> =
+  actionWithScoreBaseSchema.extend({
+    actionsEnfant: z.lazy(() => actionWithScoreSchema.array()),
+  });
+
+//
+// Same schema and type but with `score` made optional in the root object and its children
+// 👇
+
+const actionWithScoreNewBaseSchema = actionWithScoreBaseSchema.extend({
+  score: scoreSchemaNew,
+});
+
+export type ActionWithScoreNew = z.infer<
+  typeof actionWithScoreNewBaseSchema
+> & {
+  actionsEnfant: ActionWithScoreNew[];
+};
+
+export const actionWithScoreSchemaNew: z.ZodType<ActionWithScoreNew> =
+  actionWithScoreNewBaseSchema.extend({
+    actionsEnfant: z.lazy(() => actionWithScoreSchemaNew.array()),
+  });

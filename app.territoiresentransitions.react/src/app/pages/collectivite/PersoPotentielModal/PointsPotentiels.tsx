@@ -1,4 +1,4 @@
-import { ActionScore } from '@/app/types/ClientScore';
+import { ActionScore } from '@/app/referentiels/scores.types';
 import { TweenText } from '@/app/ui/shared/TweenText';
 import { toLocaleFixed } from '@/app/utils/toFixed';
 

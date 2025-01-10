@@ -1,10 +1,10 @@
 import { TrpcService } from '@/backend/utils/trpc/trpc.service';
 import { Injectable } from '@nestjs/common';
 import z from 'zod';
+import ReferentielsScoringService from '../compute-score/referentiels-scoring.service';
 import { referentielIdEnumSchema } from '../models/referentiel.enum';
 import { ScoreJalon } from '../models/score-jalon.enum';
 import ReferentielsScoringSnapshotsService from '../services/referentiels-scoring-snapshots.service';
-import ReferentielsScoringService from '../services/referentiels-scoring.service';
 
 export const getScoreSnapshotInfosTrpcRequestSchema = z.object({
   referentielId: referentielIdEnumSchema,

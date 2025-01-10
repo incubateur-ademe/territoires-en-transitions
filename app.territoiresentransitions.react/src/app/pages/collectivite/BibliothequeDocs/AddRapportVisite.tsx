@@ -1,8 +1,7 @@
 import { Modal } from '@/ui';
 import { Dispatch, SetStateAction, useState } from 'react';
-
-import { AddPreuveModal } from '@/app/ui/shared/preuves/AddPreuveModal';
 import { useAddRapportVisite } from './useAddRapportVisite';
+import { AddPreuveModal } from '@/app/referentiels/preuves/AddPreuveModal';
 
 /**
  * Affiche un bouton permettant d'ouvrir le sélecteur de fichiers pour ajouter

@@ -1,4 +1,4 @@
-import CarteDocument from '@/app/ui/shared/preuves/Bibliotheque/CarteDocument';
+import CarteDocument from '@/app/referentiels/preuves/Bibliotheque/CarteDocument';
 import SpinnerLoader from '@/app/ui/shared/SpinnerLoader';
 import { Button, EmptyCard } from '@/ui';
 import { useEffect, useState } from 'react';

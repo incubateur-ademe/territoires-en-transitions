@@ -1,7 +1,7 @@
+import { ReferentielAction } from '../../compute-score/referentiel-action.dto';
 import { ActionType } from '../action-type.enum';
-import { ReferentielActionType } from '../referentiel-action.dto';
 
-export const caeReferentiel: ReferentielActionType = {
+export const caeReferentiel: ReferentielAction = {
   actionId: 'cae',
   nom: 'Climat Air Énergie',
   points: 500,

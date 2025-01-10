@@ -3,11 +3,11 @@ import { Test } from '@nestjs/testing';
 import ExpressionParserService from '../../personnalisations/services/expression-parser.service';
 import ConfigurationService from '../../utils/config/configuration.service';
 import SheetService from '../../utils/google-sheets/sheet.service';
+import { ReferentielAction } from '../compute-score/referentiel-action.dto';
 import { referentielIdEnumSchema } from '../index-domain';
 import { ActionDefinitionAvecParentType } from '../models/action-definition.table';
 import { CreateActionOrigineType } from '../models/action-origine.table';
 import { ActionType } from '../models/action-type.enum';
-import { ReferentielActionType } from '../models/referentiel-action.dto';
 import { ReferentielDefinitionType } from '../models/referentiel-definition.table';
 import ReferentielsService from './referentiels.service';
 
@@ -122,7 +122,7 @@ describe('ReferentielsService', () => {
         orderedActionTypes
       );
 
-      const expectedActionEnfant: ReferentielActionType = {
+      const expectedActionEnfant: ReferentielAction = {
         actionId: 'eci',
         points: 100,
         level: 0,
@@ -207,78 +207,6 @@ describe('ReferentielsService', () => {
       };
 
       expect(referentielTree).toEqual(expectedActionEnfant);
-    });
-  });
-
-  describe('getLevelFromActionId', () => {
-    it('Standard action', async () => {
-      expect(referentielsService.getLevelFromActionId('cae_5.1.4.4.1')).toEqual(
-        5
-      );
-    });
-
-    it('Axe', async () => {
-      expect(referentielsService.getLevelFromActionId('cae_5')).toEqual(1);
-    });
-
-    it('Referentiel', async () => {
-      expect(referentielsService.getLevelFromActionId('cae')).toEqual(0);
-    });
-  });
-
-  describe('getActionTypeFromActionId', () => {
-    it('Standard action', async () => {
-      expect(
-        referentielsService.getActionTypeFromActionId('cae_5.1.4.4.1', [
-          ActionType.REFERENTIEL,
-          ActionType.AXE,
-          ActionType.SOUS_AXE,
-          ActionType.ACTION,
-          ActionType.SOUS_ACTION,
-          ActionType.TACHE,
-        ])
-      ).toEqual(ActionType.TACHE);
-    });
-
-    it('Axe', async () => {
-      expect(
-        referentielsService.getActionTypeFromActionId('cae_5', [
-          ActionType.REFERENTIEL,
-          ActionType.AXE,
-          ActionType.SOUS_AXE,
-          ActionType.ACTION,
-          ActionType.SOUS_ACTION,
-          ActionType.TACHE,
-        ])
-      ).toEqual(ActionType.AXE);
-    });
-
-    it('Referentiel', async () => {
-      expect(
-        referentielsService.getActionTypeFromActionId('cae', [
-          ActionType.REFERENTIEL,
-          ActionType.AXE,
-          ActionType.SOUS_AXE,
-          ActionType.ACTION,
-          ActionType.SOUS_ACTION,
-          ActionType.TACHE,
-        ])
-      ).toEqual(ActionType.REFERENTIEL);
-    });
-
-    it('Throw', async () => {
-      expect(() =>
-        referentielsService.getActionTypeFromActionId('cae_5.1.4.4.1.1', [
-          ActionType.REFERENTIEL,
-          ActionType.AXE,
-          ActionType.SOUS_AXE,
-          ActionType.ACTION,
-          ActionType.SOUS_ACTION,
-          ActionType.TACHE,
-        ])
-      ).toThrow(
-        'Action level 6 non consistent with referentiel action types: referentiel,axe,sous-axe,action,sous-action,tache'
-      );
     });
   });
 

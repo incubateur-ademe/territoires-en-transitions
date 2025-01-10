@@ -1,9 +1,9 @@
 import { getTestApp } from '@/backend/test';
 import { INestApplication } from '@nestjs/common';
 import { default as request } from 'supertest';
+import { ReferentielAction } from '../compute-score/referentiel-action.dto';
 import { ActionType } from '../models/action-type.enum';
 import { GetReferentielResponseType } from '../models/get-referentiel.response';
-import { ReferentielActionType } from '../models/referentiel-action.dto';
 
 describe('Referentiels routes', () => {
   let app: INestApplication;
@@ -31,7 +31,7 @@ describe('Referentiels routes', () => {
     const {
       actionsEnfant: expectedActionEnfants,
       ...referentielCaeRoot
-    }: ReferentielActionType = {
+    }: ReferentielAction = {
       actionId: 'cae',
       identifiant: '',
       actionType: ActionType.REFERENTIEL,

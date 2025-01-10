@@ -1,6 +1,6 @@
 import { useCollectiviteId } from '@/app/core-logic/hooks/params';
-import { Referentiel } from '@/app/types/litterals';
-import ActionPreuvePanel from '@/app/ui/shared/actions/ActionPreuvePanel/ActionPreuvePanel';
+import ActionPreuvePanel from '@/app/referentiels/actions/action-preuve.panel';
+import { Referentiel } from '@/app/referentiels/litterals';
 import { Fragment, useEffect, useRef } from 'react';
 import {
   CellProps,

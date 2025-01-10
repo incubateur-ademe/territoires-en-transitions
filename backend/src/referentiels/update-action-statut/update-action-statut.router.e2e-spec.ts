@@ -3,7 +3,7 @@ import { getTestRouter } from '../../../test/app-utils';
 import { getAuthUser } from '../../../test/auth-utils';
 import { getCollectiviteIdBySiren } from '../../../test/collectivites-utils';
 import { AppRouter, TrpcRouter } from '../../utils/trpc/trpc.router';
-import { ActionScoreType } from '../models/action-score.dto';
+import { Score } from '../compute-score/score.dto';
 import { referentielIdEnumSchema } from '../models/referentiel.enum';
 import { AuthenticatedUser } from './../../auth/models/auth.models';
 
@@ -100,7 +100,7 @@ describe('UpdateActionStatutRouter', () => {
     const currentFullScoreStatutUpdateResponse =
       await caller.referentiels.actions.updateStatut(input);
 
-    const expectedCaeRootScoreAfterStatutUpdate: ActionScoreType = {
+    const expectedCaeRootScoreAfterStatutUpdate: Score = {
       actionId: 'cae',
       etoiles: 1,
       pointReferentiel: 500,
@@ -148,7 +148,7 @@ describe('UpdateActionStatutRouter', () => {
     const currentFullScoreStatutRestoreResponse =
       await caller.referentiels.actions.updateStatut(actionNonFaite);
 
-    const expectedCaeRootScoreAfterStatutRestore: ActionScoreType = {
+    const expectedCaeRootScoreAfterStatutRestore: Score = {
       actionId: 'cae',
       etoiles: 1,
       pointReferentiel: 500,

@@ -10,6 +10,16 @@ export const personnalisationConsequenceSchema = z
     'Consequence des règles de personnalisation pour une action donnée'
   );
 
-export type PersonnalisationConsequenceType = z.infer<
+export type PersonnalisationConsequence = z.infer<
   typeof personnalisationConsequenceSchema
+>;
+
+//
+// Schema indexed by actionId
+export const personnalisationConsequencesByActionIdSchema = z
+  .record(z.string(), personnalisationConsequenceSchema)
+  .describe('Conséquence des règles de personnalisation sur les actions');
+
+export type PersonnalisationConsequencesByActionId = z.infer<
+  typeof personnalisationConsequencesByActionIdSchema
 >;

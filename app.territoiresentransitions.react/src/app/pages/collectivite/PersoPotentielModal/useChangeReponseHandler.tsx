@@ -5,7 +5,7 @@ import {
   TQuestionReponseWrite,
   TReponse,
   TReponseWrite,
-} from '@/app/types/personnalisation';
+} from '@/app/referentiels/personnalisations/personnalisation.types';
 import { useMutation, useQueryClient } from 'react-query';
 
 type TUseChangeReponseHandler = (

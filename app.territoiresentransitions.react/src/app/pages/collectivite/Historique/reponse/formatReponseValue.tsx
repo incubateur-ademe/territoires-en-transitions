@@ -1,4 +1,4 @@
-import { toPercentString } from '@/app/utils/score';
+import { toPercentString } from '@/app/utils/to-percent-string';
 import { THistoriqueItem } from '../types';
 
 export const formatReponseValue = (

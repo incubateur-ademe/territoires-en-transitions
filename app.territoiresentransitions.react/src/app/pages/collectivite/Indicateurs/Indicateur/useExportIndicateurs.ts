@@ -1,6 +1,6 @@
 import { useApiClient } from '@/app/core-logic/api/useApiClient';
 import { useCurrentCollectivite } from '@/app/core-logic/hooks/useCurrentCollectivite';
-import { saveBlob } from '@/app/ui/shared/preuves/Bibliotheque/saveBlob';
+import { saveBlob } from '@/app/referentiels/preuves/Bibliotheque/saveBlob';
 import { useEventTracker } from '@/ui';
 import { useMutation } from 'react-query';
 import { TIndicateurListItem } from '../types';

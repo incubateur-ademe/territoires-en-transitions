@@ -1,7 +1,7 @@
 import { useCollectiviteId } from '@/app/core-logic/hooks/params';
-import { TAddFileFromLib } from '@/app/ui/shared/preuves/AddPreuveModal/AddFile';
-import { TAddLink } from '@/app/ui/shared/preuves/AddPreuveModal/AddLink';
-import { useAddPreuveRapport } from '@/app/ui/shared/preuves/Bibliotheque/useAddPreuves';
+import { TAddFileFromLib } from '@/app/referentiels/preuves/AddPreuveModal/AddFile';
+import { TAddLink } from '@/app/referentiels/preuves/AddPreuveModal/AddLink';
+import { useAddPreuveRapport } from '@/app/referentiels/preuves/useAddPreuves';
 
 type TAddDocs = (date: string) => {
   /** ajoute un fichier sélectionné depuis la bibliothèque */

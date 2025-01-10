@@ -3,7 +3,6 @@ import {
   HttpException,
   HttpStatus,
   Injectable,
-  InternalServerErrorException,
   Logger,
   NotFoundException,
   UnprocessableEntityException,
@@ -24,6 +23,7 @@ import ExpressionParserService from '../../personnalisations/services/expression
 import ConfigurationService from '../../utils/config/configuration.service';
 import SheetService from '../../utils/google-sheets/sheet.service';
 import { getErrorMessage } from '../../utils/nest/errors.utils';
+import { ReferentielAction } from '../compute-score/referentiel-action.dto';
 import {
   actionDefinitionTagTable,
   CreateActionDefinitionTagType,
@@ -47,7 +47,6 @@ import {
 import { ActionType } from '../models/action-type.enum';
 import { GetActionOrigineDtoSchema } from '../models/get-action-origine.dto';
 import { GetReferentielResponseType } from '../models/get-referentiel.response';
-import { ReferentielActionType } from '../models/referentiel-action.dto';
 import {
   referentielChangelogSchema,
   ReferentielChangelogType,
@@ -63,8 +62,11 @@ import {
 import {
   ReferentielId,
   referentielIdEnumSchema,
-  referentielIdEnumValues,
 } from '../models/referentiel.enum';
+import {
+  getActionTypeFromActionId,
+  getParentIdFromActionId,
+} from '../referentiels.utils';
 
 @Injectable()
 export default class ReferentielsService {
@@ -87,7 +89,7 @@ export default class ReferentielsService {
     actionDefinitions: ActionDefinitionAvecParentType[],
     orderedActionTypes: ActionType[],
     actionOrigines?: GetActionOrigineDtoSchema[] | null
-  ): ReferentielActionType {
+  ): ReferentielAction {
     const rootAction = actionDefinitions.find(
       (action) => !action.parentActionId
     );
@@ -95,7 +97,7 @@ export default class ReferentielsService {
       throw new NotFoundException(`Referentiel not found`);
     }
     const { parentActionId, ...rootActionSansParent } = rootAction;
-    const referentiel: ReferentielActionType = {
+    const referentiel: ReferentielAction = {
       ...rootActionSansParent,
       level: 0,
       actionType: orderedActionTypes[0],
@@ -114,7 +116,7 @@ export default class ReferentielsService {
   }
 
   attacheActionsEnfant(
-    referentiel: ReferentielActionType,
+    referentiel: ReferentielAction,
     actionDefinitions: ActionDefinitionAvecParentType[],
     orderActionTypes: ActionType[],
     currentLevel: number,
@@ -197,7 +199,7 @@ export default class ReferentielsService {
 
       actionsEnfant.forEach((actionEnfant) => {
         const { parentActionId, ...actionEnfantSansParent } = actionEnfant;
-        const actionEnfantDansReferentiel: ReferentielActionType = {
+        const actionEnfantDansReferentiel: ReferentielAction = {
           ...actionEnfantSansParent,
           actionsEnfant: [],
           level: levelEnfant,
@@ -402,78 +404,6 @@ export default class ReferentielsService {
     );
   }
 
-  getReferentielIdFromActionId(actionId: string): ReferentielId {
-    const referentielId = actionId.split('_')[0];
-    if (!referentielIdEnumValues.includes(referentielId as ReferentielId)) {
-      throw new UnprocessableEntityException(
-        `Invalid referentiel id ${referentielId} for action ${actionId}`
-      );
-    }
-    return referentielId as ReferentielId;
-  }
-
-  getActionIdentifiantFromActionId(actionId: string): string {
-    const actionParts = actionId.split('_');
-    if (actionParts.length !== 2) {
-      throw new UnprocessableEntityException(`Invalid action id  ${actionId}`);
-    }
-    return actionParts[1];
-  }
-
-  getAxeFromActionId(actionId: string): number {
-    let identifiant = actionId;
-    if (actionId.includes('_')) {
-      identifiant = actionId.split('_')[1];
-    }
-    const identifiantParts = identifiant.split('.');
-    const axe = parseInt(identifiantParts[0]);
-    if (isNaN(axe)) {
-      throw new InternalServerErrorException(
-        `Invalid actionId ${actionId}, axe not found`
-      );
-    }
-    return axe;
-  }
-
-  getLevelFromActionId(actionId: string): number {
-    const level = actionId.split('.').length;
-    if (level === 1) {
-      return actionId.split('_').length === 1 ? 0 : 1;
-    }
-    return level;
-  }
-
-  getActionTypeFromActionId(
-    actionId: string,
-    orderedActionTypes: ActionType[]
-  ): ActionType {
-    const level = this.getLevelFromActionId(actionId);
-    if (level >= orderedActionTypes.length) {
-      throw new HttpException(
-        `Action level ${level} non consistent with referentiel action types: ${orderedActionTypes.join(
-          ','
-        )}`,
-        HttpStatus.INTERNAL_SERVER_ERROR
-      );
-    }
-    return orderedActionTypes[level];
-  }
-
-  getActionParent(actionId: string): string | null {
-    const actionIdParts = actionId.split('.');
-    if (actionIdParts.length <= 1) {
-      const firstPart = actionIdParts[0];
-      const firstPartParts = firstPart.split('_');
-      if (firstPartParts.length > 1) {
-        return firstPartParts[0];
-      } else {
-        return null;
-      }
-    } else {
-      return actionIdParts.slice(0, -1).join('.');
-    }
-  }
-
   parseActionsOrigine(
     referentielId: ReferentielId,
     actionId: string,
@@ -672,7 +602,7 @@ export default class ReferentielsService {
           referentielVersion: referentielDefinition.version,
         };
 
-        const actionType = this.getActionTypeFromActionId(
+        const actionType = getActionTypeFromActionId(
           createActionDefinition.actionId,
           referentielDefinition.hierarchie
         );
@@ -781,7 +711,7 @@ export default class ReferentielsService {
     });
     const actionRelations: CreateActionRelationType[] = [];
     actionDefinitions.forEach((action) => {
-      const parent = this.getActionParent(action.actionId);
+      const parent = getParentIdFromActionId(action.actionId);
       if (parent) {
         const foundParent = actionDefinitions.find(
           (action) => action.actionId === parent

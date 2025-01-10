@@ -1,5 +1,5 @@
-import { Referentiel } from '@/app/types/litterals';
-import { TPreuveAuditEtLabellisation } from '@/app/ui/shared/preuves/Bibliotheque/types';
+import { Referentiel } from '@/app/referentiels/litterals';
+import { TPreuveAuditEtLabellisation } from '@/app/referentiels/preuves/Bibliotheque/types';
 
 // groupe les preuves par référentiel
 type TPreuvesParReferentiel = Record<

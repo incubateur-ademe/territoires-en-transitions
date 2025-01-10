@@ -1,6 +1,6 @@
 import { NonNullableFields, Views } from '@/api';
 import { supabaseClient } from '@/app/core-logic/api/supabase';
-import { Referentiel } from '@/app/types/litterals';
+import { Referentiel } from '@/app/referentiels/litterals';
 import { useQuery } from 'react-query';
 
 export type TQuestionThematiqueCompletudeRead = NonNullableFields<

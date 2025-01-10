@@ -1,4 +1,4 @@
-import ActionStatutBadge from '@/app/ui/shared/actions/ActionStatutBadge';
+import ActionStatutBadge from '@/app/referentiels/actions/action-statut.badge';
 
 export const PrecedenteActionStatutDetaille = ({
   avancementDetaille,

@@ -1,9 +1,9 @@
-import { ActionDefinitionSummary } from '@/app/core-logic/api/endpoints/ActionDefinitionSummaryReadEndpoint';
 import { supabaseClient } from '@/app/core-logic/api/supabase';
 import { useCurrentCollectivite } from '@/app/core-logic/hooks/useCurrentCollectivite';
-import { saveBlob } from '@/app/ui/shared/preuves/Bibliotheque/saveBlob';
-import { TFichier } from '@/app/ui/shared/preuves/Bibliotheque/types';
-import { usePreuves } from '@/app/ui/shared/preuves/Bibliotheque/usePreuves';
+import { ActionDefinitionSummary } from '@/app/referentiels/ActionDefinitionSummaryReadEndpoint';
+import { saveBlob } from '@/app/referentiels/preuves/Bibliotheque/saveBlob';
+import { TFichier } from '@/app/referentiels/preuves/Bibliotheque/types';
+import { usePreuves } from '@/app/referentiels/preuves/usePreuves';
 import { useQuery, useQueryClient } from 'react-query';
 
 export type TDownloadDocsProps = {

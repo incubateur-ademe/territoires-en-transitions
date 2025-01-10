@@ -5,8 +5,10 @@
 import { Injectable, Logger } from '@nestjs/common';
 import { Row, Workbook } from 'exceljs';
 import { NextFunction, Response } from 'express';
-import { SimplePreuveDto } from '../../collectivites/documents/models/preuve.dto';
+import { PreuveEssential } from '../../collectivites/documents/models/preuve.dto';
 import * as Utils from '../../utils/excel/export-excel.utils';
+import { ActionWithScore } from '../compute-score/action-with-score.dto';
+import ReferentielsScoringService from '../compute-score/referentiels-scoring.service';
 import {
   ActionAvancementEnum,
   ActionAvancementEnumType,
@@ -14,14 +16,16 @@ import {
 import { ActionType } from '../models/action-type.enum';
 import { GetReferentielScoresResponseType } from '../models/get-referentiel-scores.response';
 import { GetScoreSnapshotRequestType } from '../models/get-score-snapshot.request';
-import { ReferentielActionWithScoreType } from '../models/referentiel-action-avec-score.dto';
 import {
   ReferentielId,
   referentielIdEnumSchema,
 } from '../models/referentiel.enum';
 import ReferentielsScoringSnapshotsService from '../services/referentiels-scoring-snapshots.service';
-import ReferentielsScoringService from '../services/referentiels-scoring.service';
 import ReferentielsService from '../services/referentiels.service';
+import {
+  getAxeFromActionId,
+  getLevelFromActionId,
+} from '../referentiels.utils';
 
 @Injectable()
 export default class ExportReferentielScoreService {
@@ -98,21 +102,19 @@ export default class ExportReferentielScoreService {
 
   // détermine la couleur de fond d'une ligne en fonction de la profondeur dans l'arbo
   getActionRowColor = (
-    actionScore: ReferentielActionWithScoreType,
+    actionScore: ActionWithScore,
     referentielId: ReferentielId
   ): string | null => {
     if (actionScore) {
       const depth = actionScore.actionId
-        ? this.referentielService.getLevelFromActionId(actionScore.actionId)
+        ? getLevelFromActionId(actionScore.actionId)
         : 0;
       if (depth === 3) return this.BG_COLOR3;
       if (depth === 4 && referentielId === referentielIdEnumSchema.enum.cae) {
         return this.BG_COLOR4;
       }
 
-      const axe = this.referentielService.getAxeFromActionId(
-        actionScore.actionId!
-      );
+      const axe = getAxeFromActionId(actionScore.actionId!);
       const colors = this.BG_COLORS[axe];
       if (colors && depth <= colors.length) {
         return colors[depth - 1];
@@ -132,8 +134,8 @@ export default class ExportReferentielScoreService {
   }
 
   formatActionStatut(
-    actionScore: ReferentielActionWithScoreType | undefined,
-    parentActionScore: ReferentielActionWithScoreType | undefined
+    actionScore: ActionWithScore | undefined,
+    parentActionScore: ActionWithScore | undefined
   ): string {
     // pas de statut si les données ne sont pas disponibles ou que l'item n'est ni une sous-action ni une tâche
     if (
@@ -185,7 +187,7 @@ export default class ExportReferentielScoreService {
     return this.AVANCEMENT_TO_LABEL[avancement!];
   }
 
-  formatPreuves(preuves?: SimplePreuveDto[]): string | undefined {
+  formatPreuves(preuves?: PreuveEssential[]): string | undefined {
     return preuves
       ?.map((p) => p?.url || p?.filename || null)
       .filter((s) => !!s)
@@ -193,14 +195,14 @@ export default class ExportReferentielScoreService {
   }
 
   getActionScoreRowValues(
-    actionScore: ReferentielActionWithScoreType,
-    parentActionScore: ReferentielActionWithScoreType | undefined,
+    actionScore: ActionWithScore,
+    parentActionScore: ActionWithScore | undefined,
     rowValues: {
-      actionScore: ReferentielActionWithScoreType;
+      actionScore: ActionWithScore;
       values: (string | number | null | undefined)[];
     }[] = []
   ): {
-    actionScore: ReferentielActionWithScoreType;
+    actionScore: ActionWithScore;
     values: (string | number | null | undefined)[];
   }[] {
     const values = [
@@ -370,9 +372,7 @@ export default class ExportReferentielScoreService {
         );
       } else {
         // niveau de profondeur (case plier/déplier)
-        const depth = this.referentielService.getLevelFromActionId(
-          actionScore.actionId!
-        );
+        const depth = getLevelFromActionId(actionScore.actionId!);
         if (depth && depth > 1) {
           row.outlineLevel = depth;
         }

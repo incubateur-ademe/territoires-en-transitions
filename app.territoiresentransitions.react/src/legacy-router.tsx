@@ -11,7 +11,7 @@ import {
 import { Redirector } from '@/app/app/Redirector';
 import { Toasters } from '@/app/app/Toasters';
 import { VisitTracker } from '@/app/app/VisitTracker';
-import { ScoreListenerProvider } from '@/app/core-logic/hooks/useScoreListener';
+import { ScoreListenerProvider } from '@/app/referentiels/use-score-listener';
 import {
   Redirect,
   Route,

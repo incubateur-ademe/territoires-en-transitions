@@ -1,4 +1,5 @@
 import { referentielToName } from '@/app/app/labels';
+import { getActionStatut } from '@/app/referentiels/utils';
 import { TActionStatutsRow } from '@/app/types/alias';
 import {
   BadgeStatutAction,
@@ -7,7 +8,6 @@ import {
   Stack,
   Title,
 } from '@/app/ui/export-pdf/components';
-import { getActionStatut } from '@/app/ui/referentiels/utils';
 
 type ActionLieeCardProps = {
   action: TActionStatutsRow;

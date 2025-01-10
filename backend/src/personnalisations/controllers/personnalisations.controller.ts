@@ -4,14 +4,14 @@ import { ApiResponse, ApiTags } from '@nestjs/swagger';
 import { AllowAnonymousAccess } from '../../auth/decorators/allow-anonymous-access.decorator';
 import { AllowPublicAccess } from '../../auth/decorators/allow-public-access.decorator';
 import { TokenInfo } from '../../auth/decorators/token-info.decorators';
+import { AuthenticatedUser } from '../../auth/models/auth.models';
 import { getPersonnalisationConsequencesRequestSchema } from '../models/get-personnalisation-consequences.request';
-import { getPersonnalitionConsequencesResponseSchema } from '../models/get-personnalisation-consequences.response';
 import { getPersonnalisationReglesRequestSchema } from '../models/get-personnalisation-regles.request';
 import { getPersonnalisationReglesResponseSchema } from '../models/get-personnalisation-regles.response';
 import { getPersonnalisationReponsesRequestSchema } from '../models/get-personnalisation-reponses.request';
 import { getPersonnalitionReponsesResponseSchema } from '../models/get-personnalisation-reponses.response';
+import { personnalisationConsequencesByActionIdSchema } from '../models/personnalisation-consequence.dto';
 import PersonnalisationService from '../services/personnalisations-service';
-import { AuthenticatedUser } from '../../auth/models/auth.models';
 
 /**
  * Création des classes de requête/réponse à partir du schema pour générer automatiquement la documentation OpenAPI et la validation des entrées
@@ -27,7 +27,7 @@ class GetPersonnalitionConsequencesQueryClass extends createZodDto(
 ) {}
 
 class GetPersonnalitionConsequencesResponseClass extends createZodDto(
-  getPersonnalitionConsequencesResponseSchema
+  personnalisationConsequencesByActionIdSchema
 ) {}
 
 class GetPersonnalisationReglesRequestClass extends createZodDto(

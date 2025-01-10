@@ -1,5 +1,5 @@
 import { makeCollectiviteTacheUrl } from '@/app/app/paths';
-import { referentielId } from '@/app/utils/actions';
+import { referentielId } from '@/app/referentiels/actions.utils';
 import { THistoriqueItem } from '../types';
 
 /** Génère les propriétés communes aux modifications (statut, précision) sur les

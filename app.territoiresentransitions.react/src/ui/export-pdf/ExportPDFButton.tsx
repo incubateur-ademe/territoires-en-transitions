@@ -1,7 +1,7 @@
 import { Button, ButtonProps } from '@/ui';
 import { usePDF } from '@react-pdf/renderer';
 import { useEffect, useState } from 'react';
-import { saveBlob } from '../shared/preuves/Bibliotheque/saveBlob';
+import { saveBlob } from '../../referentiels/preuves/Bibliotheque/saveBlob';
 import DocumentToExport from './DocumentToExport';
 
 const TEST_MODE = false;

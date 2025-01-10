@@ -4,7 +4,7 @@ import { fr } from 'date-fns/locale';
 import { useState } from 'react';
 
 import { referentielToName } from '@/app/app/labels';
-import { ReferentielOfIndicateur } from '@/app/types/litterals';
+import { ReferentielOfIndicateur } from '@/app/referentiels/litterals';
 import Link from 'next/link';
 import { HistoriqueType, THistoriqueItem } from './types';
 

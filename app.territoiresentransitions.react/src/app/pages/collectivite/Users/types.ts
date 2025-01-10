@@ -1,5 +1,5 @@
+import { Referentiel } from '@/app/referentiels/litterals';
 import { TMembreFonction, TNiveauAcces } from '@/app/types/alias';
-import { Referentiel } from '@/app/types/litterals';
 
 export interface Membre {
   email: string;

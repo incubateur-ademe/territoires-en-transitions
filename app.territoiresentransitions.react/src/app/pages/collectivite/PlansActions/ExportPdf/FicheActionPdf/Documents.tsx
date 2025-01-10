@@ -1,3 +1,4 @@
+import { getAuthorAndDate } from '@/app/referentiels/preuves/Bibliotheque/utils';
 import {
   DiscussIcon,
   FileIcon,
@@ -11,7 +12,6 @@ import {
   StyledLink,
   Title,
 } from '@/app/ui/export-pdf/components';
-import { getAuthorAndDate } from '@/app/ui/shared/preuves/Bibliotheque/utils';
 import { preset } from '@/ui';
 import { AnnexeInfo } from '../../FicheAction/data/useAnnexesFicheActionInfos';
 import { generateTitle } from '../../FicheAction/data/utils';

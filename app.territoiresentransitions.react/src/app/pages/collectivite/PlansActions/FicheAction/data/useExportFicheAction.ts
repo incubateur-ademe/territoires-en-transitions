@@ -1,6 +1,6 @@
 import { supabaseClient } from '@/app/core-logic/api/supabase';
 import { useFonctionTracker } from '@/app/core-logic/hooks/useFonctionTracker';
-import { saveBlob } from '@/app/ui/shared/preuves/Bibliotheque/saveBlob';
+import { saveBlob } from '@/app/referentiels/preuves/Bibliotheque/saveBlob';
 import { format as formatDate } from 'date-fns';
 import { useMutation } from 'react-query';
 
