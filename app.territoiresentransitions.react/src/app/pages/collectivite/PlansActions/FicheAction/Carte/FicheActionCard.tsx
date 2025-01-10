@@ -7,8 +7,8 @@ import { useState } from 'react';
 import { QueryKey } from 'react-query';
 import BadgePriorite from '../../components/BadgePriorite';
 import BadgeStatut from '../../components/BadgeStatut';
-import { generateTitle } from '../data/utils';
 import ModaleSuppression from '../Header/actions/ModaleSuppression';
+import { generateTitle } from '../data/utils';
 import FicheActionFooterInfo from './FicheActionFooterInfo';
 import ModifierFicheModale from './ModifierFicheModale';
 
@@ -118,7 +118,7 @@ const FicheActionCard = ({
         dataTest="FicheActionCarte"
         id={carteId}
         className={classNames(
-          'h-full px-4 py-[1.125rem] !gap-3 !text-grey-8 !shadow-none transition',
+          'h-full !p-4 !gap-2 !text-grey-8 !shadow-none transition',
           {
             'hover:border-primary-3 hover:!bg-primary-1': !isNotClickable,
           }
@@ -155,23 +155,27 @@ const FicheActionCard = ({
         }
         footer={
           // Bas de la carte
-          <div className="flex flex-col gap-3 text-grey-8 font-normal">
-            {/* Date de dernière modification */}
-            {!!ficheAction.modifiedAt && (
-              <span
-                className="text-xs font-medium italic"
-                title="Dernière modification"
-              >
-                Modifié {getModifiedSince(ficheAction.modifiedAt)}
-              </span>
-            )}
-
+          <div className="flex flex-col gap-2 font-normal">
             {/* Personnes pilote et date de fin prévisionnelle */}
             <FicheActionFooterInfo
               pilotes={ficheAction.pilotes}
               dateDeFin={ficheAction.dateFinProvisoire}
+              services={ficheAction.services}
               ameliorationContinue={ficheAction.ameliorationContinue}
             />
+
+            {/* Date de dernière modification */}
+            {!!ficheAction.modifiedAt && (
+              <>
+                <div className="h-[0.5px] w-full bg-primary-3 mt-1" />
+                <span
+                  className="text-xs font-medium italic text-grey-6"
+                  title="Dernière modification"
+                >
+                  Modifié {getModifiedSince(ficheAction.modifiedAt)}
+                </span>
+              </>
+            )}
           </div>
         }
       >

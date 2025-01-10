@@ -5,12 +5,12 @@ import ScrollTopButton from '@/app/ui/buttons/ScrollTopButton';
 import { BadgeACompleter } from '@/app/ui/shared/Badge/BadgeACompleter';
 import { Badge, Tab, Tabs } from '@/ui';
 import ActionsLieesListe from '../../PlansActions/FicheAction/ActionsLiees/ActionsLieesListe';
-import { FichesActionLiees } from '../Indicateur/FichesActionLiees';
 import { HeaderIndicateur } from '../Indicateur/detail/HeaderIndicateur';
 import { useUpdateIndicateurDefinition } from '../Indicateur/useUpdateIndicateurDefinition';
 import BadgeOpenData from '../components/BadgeOpenData';
 import { TIndicateurDefinition } from '../types';
 import DonneesIndicateur from './DonneesIndicateur';
+import FichesLiees from './FichesLiees';
 import IndicateurToolbar from './IndicateurToolbar';
 import SousIndicateurs from './SousIndicateurs';
 
@@ -114,7 +114,10 @@ const IndicateurLayout = ({
         ) : (
           // Indicateur sans enfant, groupe d'indicateurs avec agrégation,
           // ou indicateur personnalisé
-          <Tabs className="mt-12" tabsListClassName="!justify-start">
+          <Tabs
+            className="mt-12"
+            tabsListClassName="!justify-start flex-nowrap overflow-x-scroll"
+          >
             {/* Données */}
             <Tab label="Données">
               <DonneesIndicateur
@@ -146,7 +149,7 @@ const IndicateurLayout = ({
 
             {/* Fiches des plans liées */}
             <Tab label="Fiches des plans liées">
-              <FichesActionLiees definition={definition} />
+              <FichesLiees definition={definition} isReadonly={isReadonly} />
             </Tab>
           </Tabs>
         )}

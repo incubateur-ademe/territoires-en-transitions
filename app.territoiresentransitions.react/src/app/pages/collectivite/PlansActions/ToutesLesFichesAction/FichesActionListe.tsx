@@ -1,5 +1,5 @@
 import classNames from 'classnames';
-import { useEffect, useState } from 'react';
+import { useEffect, useRef, useState } from 'react';
 
 import {
   FetchOptions,
@@ -23,6 +23,7 @@ import FilterBadges, {
   CustomFilterBadges,
   useFiltersToBadges,
 } from '@/app/ui/shared/filters/filter-badges';
+import _ from 'lodash';
 import { FicheResume } from 'packages/api/src/plan-actions';
 import ActionsGroupeesMenu from '../ActionsGroupees/ActionsGroupeesMenu';
 import EmptyFichePicto from '../FicheAction/FichesLiees/EmptyFichePicto';
@@ -60,7 +61,7 @@ const sortByOptions: sortByOptionsType[] = [
 ];
 
 type Props = {
-  settings: (openState: OpenState) => React.ReactNode;
+  settings?: (openState: OpenState) => React.ReactNode;
   filtres: Filtre;
   customFilterBadges?: CustomFilterBadges;
   resetFilters?: () => void;
@@ -68,6 +69,7 @@ type Props = {
   sortSettings?: SortFicheActionSettings;
   enableGroupedActions?: boolean;
   isReadOnly?: boolean;
+  containeClassName?: string;
 };
 
 /** Liste de fiches action avec tri et options de fitlre */
@@ -82,8 +84,11 @@ const FichesActionListe = ({
   maxNbOfCards = 15,
   enableGroupedActions = false,
   isReadOnly,
+  containeClassName,
 }: Props) => {
   const collectiviteId = useCollectiviteId();
+
+  const filtresLocal = useRef(filtres);
 
   const [isSettingsOpen, setIsSettingsOpen] = useState(false);
   const [isGroupedActionsOn, setIsGroupedActionsOn] = useState(false);
@@ -153,7 +158,10 @@ const FichesActionListe = ({
   };
 
   useEffect(() => {
-    setCurrentPage(1);
+    if (!_.isEqual(filtres, filtresLocal.current)) {
+      filtresLocal.current = filtres;
+      setCurrentPage(1);
+    }
   }, [filtres]);
 
   useEffect(() => {
@@ -198,9 +206,14 @@ const FichesActionListe = ({
       )}
 
       {hasFiches && (
-        <>
-          <div className="relative">
-            <div className="relative z-[1] bg-grey-2 flex max-xl:flex-col justify-between xl:items-center gap-4 py-6 border-y border-primary-3">
+        <div
+          className={classNames(
+            'flex flex-col gap-8 bg-grey-2',
+            containeClassName
+          )}
+        >
+          <div className="relative bg-inherit">
+            <div className="relative z-[1] bg-inherit flex max-xl:flex-col justify-between xl:items-center gap-4 py-6 border-y border-primary-3">
               <div className="flex max-md:flex-col gap-x-8 gap-y-4 md:items-center">
                 {/** Tri */}
                 <div className="w-full md:w-64">
@@ -257,7 +270,7 @@ const FichesActionListe = ({
                   displaySize="sm"
                 />
                 {/** Bouton d'édition des filtres (une modale avec bouton ou un ButtonMenu) */}
-                {settings({
+                {settings?.({
                   isOpen: isSettingsOpen,
                   setIsOpen: setIsSettingsOpen,
                 })}
@@ -365,7 +378,7 @@ const FichesActionListe = ({
           )}
 
           <ActionsGroupeesMenu {...{ isGroupedActionsOn, selectedFiches }} />
-        </>
+        </div>
       )}
     </>
   );
