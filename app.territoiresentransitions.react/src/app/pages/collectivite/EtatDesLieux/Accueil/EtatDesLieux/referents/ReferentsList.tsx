@@ -12,7 +12,7 @@ export type ReferentsListProps = {
 export const ReferentsList = (props: ReferentsListProps) => {
   const { nomFonction, referents } = props;
   return (
-    <p className="mb-0">
+    <div className="mb-0">
       <span className="text-primary">{nomFonction} :</span>{' '}
       {referents?.length ? (
         referents.map((membre) => (
@@ -21,6 +21,6 @@ export const ReferentsList = (props: ReferentsListProps) => {
       ) : (
         <i>Non renseigné</i>
       )}
-    </p>
+    </div>
   );
 };
