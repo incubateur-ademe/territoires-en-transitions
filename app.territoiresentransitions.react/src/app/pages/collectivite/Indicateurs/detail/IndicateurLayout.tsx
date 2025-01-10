@@ -4,11 +4,11 @@ import { useCurrentCollectivite } from '@/app/core-logic/hooks/useCurrentCollect
 import ScrollTopButton from '@/app/ui/buttons/ScrollTopButton';
 import { BadgeACompleter } from '@/app/ui/shared/Badge/BadgeACompleter';
 import { Badge, Tab, Tabs } from '@/ui';
-import ActionsLieesListe from '../../PlansActions/FicheAction/ActionsLiees/ActionsLieesListe';
 import { HeaderIndicateur } from '../Indicateur/detail/HeaderIndicateur';
 import { useUpdateIndicateurDefinition } from '../Indicateur/useUpdateIndicateurDefinition';
 import BadgeOpenData from '../components/BadgeOpenData';
 import { TIndicateurDefinition } from '../types';
+import ActionsLiees from './ActionsLiees';
 import DonneesIndicateur from './DonneesIndicateur';
 import FichesLiees from './FichesLiees';
 import IndicateurToolbar from './IndicateurToolbar';
@@ -141,7 +141,7 @@ const IndicateurLayout = ({
             {/* Actions des référentiels liées */}
             {!isPerso ? (
               <Tab label="Actions des référentiels liées">
-                <ActionsLieesListe
+                <ActionsLiees
                   actionsIds={(definition.actions ?? []).map((a) => a.id)}
                 />
               </Tab>
