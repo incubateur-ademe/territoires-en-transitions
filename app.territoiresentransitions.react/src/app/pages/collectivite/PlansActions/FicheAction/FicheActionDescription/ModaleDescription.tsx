@@ -17,6 +17,7 @@ import {
 } from '@/ui';
 import _ from 'lodash';
 import { useState } from 'react';
+import { updateFicheActionTagInList } from '../utils';
 
 const DESCRIPTION_MAX_LENGTH = 20000;
 const MOYENS_MAX_LENGTH = 10000;
@@ -100,9 +101,18 @@ const ModaleDescription = ({ fiche, updateFiche }: ModaleDescriptionProps) => {
           <Field title="Mes tags de suivi" className="col-span-2">
             <TagsSuiviPersoDropdown
               values={editedFiche.libresTag?.map((t) => t.id)}
-              onChange={({ libresTag }) =>
-                setEditedFiche((prevState) => ({ ...prevState, libresTag }))
-              }
+              onChange={({ libresTag }) => {
+                setEditedFiche((prevState) => ({ ...prevState, libresTag }));
+              }}
+              onTagEdit={(editedTag) => {
+                setEditedFiche((prevState) => ({
+                  ...prevState,
+                  libresTag: updateFicheActionTagInList(
+                    prevState.libresTag,
+                    editedTag
+                  ),
+                }));
+              }}
             />
           </Field>
 
