@@ -43,25 +43,41 @@ export async function updateSessionOrRedirect(request: NextRequest) {
   // supabase.auth.getUser(). A simple mistake could make it very hard to debug
   // issues with users being randomly logged out.
 
-  const {
-    data: { user },
-  } = await supabase.auth.getUser();
+  let user;
+  try {
+    const {
+      data: { user: supabaseUser },
+      error,
+    } = await supabase.auth.getUser();
 
-  if (!user) {
-    // IMPORTANT: You *must* return the supabaseResponse object as it is. If you're
-    // creating a new response object with NextResponse.next() make sure to:
-    // 1. Pass the request in it, like so:
-    //    const myNewResponse = NextResponse.next({ request })
-    // 2. Copy over the cookies, like so:
-    //    myNewResponse.cookies.setAll(supabaseResponse.cookies.getAll())
-    // 3. Change the myNewResponse object to fit your needs, but avoid changing
-    //    the cookies!
-    // 4. Finally:
-    //    return myNewResponse
-    // If this is not done, you may be causing the browser and server to go out
-    // of sync and terminate the user's session prematurely!
+    user = supabaseUser;
+
+    if (!user) {
+      // IMPORTANT: You *must* return the supabaseResponse object as it is. If you're
+      // creating a new response object with NextResponse.next() make sure to:
+      // 1. Pass the request in it, like so:
+      //    const myNewResponse = NextResponse.next({ request })
+      // 2. Copy over the cookies, like so:
+      //    myNewResponse.cookies.setAll(supabaseResponse.cookies.getAll())
+      // 3. Change the myNewResponse object to fit your needs, but avoid changing
+      //    the cookies!
+      // 4. Finally:
+      //    return myNewResponse
+      // If this is not done, you may be causing the browser and server to go out
+      // of sync and terminate the user's session prematurely!
+      if (error) {
+        console.error('Error getting user session:', JSON.stringify(error));
+      }
+
+      return supabaseResponse;
+    }
+  } catch (error) {
+    console.error('Error getting user session:', JSON.stringify(error));
     return supabaseResponse;
   }
+
+  // ↓ After this line the user is authenticated
+  // so we check for specific scenarios of redirection.
 
   const dcpData = await dcpFetch({
     dbClient: supabase,
@@ -70,17 +86,25 @@ export async function updateSessionOrRedirect(request: NextRequest) {
 
   const url = request.nextUrl.clone();
 
+  // Authorize `/signup` route for the authenticated user
+  // to allow the redirect below to work.
   if (!dcpData && url.pathname.startsWith('/signup')) {
     return supabaseResponse;
   }
 
-  // If user exists (= is authenticated) but no personal data have been filled
+  // If user is authenticated but no personal data have been filled
   // → redirect to the personal data form
   if (!dcpData) {
     url.pathname = '/signup';
     url.searchParams.set('view', 'etape3');
 
     return NextResponse.redirect(url);
+  }
+
+  // If user is authenticated and has filled her personal data
+  // the only remaining allowed route is to join a collectivity
+  if (url.pathname.startsWith('/rejoindre-une-collectivite')) {
+    return supabaseResponse;
   }
 
   // For all other cases → redirect to the app
