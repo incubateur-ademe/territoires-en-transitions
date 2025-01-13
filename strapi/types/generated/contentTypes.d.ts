@@ -804,7 +804,6 @@ export interface ApiCollectiviteCollectivite extends Schema.CollectionType {
     actions: Attribute.Component<'contenu.texte-collectivite', true> &
       Attribute.SetMinMax<{
         min: 1;
-        max: 4;
       }>;
     createdAt: Attribute.DateTime;
     updatedAt: Attribute.DateTime;
