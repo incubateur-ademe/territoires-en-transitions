@@ -20,6 +20,7 @@ type SelectTagsProps = Omit<SelectMultipleProps, 'options' | 'onChange'> & {
     values: Tag[];
     selectedValue: Tag;
   }) => void;
+  onTagEdit?: (editedTag: Tag) => void;
 };
 
 const SelectTags = ({
@@ -29,6 +30,7 @@ const SelectTags = ({
   userCreatedOptionsIds,
   disabledOptionsIds,
   refetchOptions,
+  onTagEdit,
   ...props
 }: SelectTagsProps) => {
   const collectiviteId = useCollectiviteId();
@@ -93,11 +95,14 @@ const SelectTags = ({
   });
 
   const handleTagUpdate = (tagId: OptionValue, tagName: string) => {
-    updateTag({
+    const editedTag = {
       collectiviteId: collectiviteId!,
       id: parseInt(tagId as string),
       nom: tagName,
-    });
+    };
+
+    updateTag(editedTag);
+    onTagEdit?.(editedTag);
   };
 
   // ***

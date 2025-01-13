@@ -15,6 +15,7 @@ type TagsSuiviPersoDropdownProps = Omit<
     libresTag: Tag[];
     selectedLibreTag: Tag;
   }) => void;
+  onTagEdit?: (editedTag: Tag) => void;
 };
 
 const TagsSuiviPersoDropdown = (props: TagsSuiviPersoDropdownProps) => {
@@ -34,6 +35,7 @@ const TagsSuiviPersoDropdown = (props: TagsSuiviPersoDropdownProps) => {
           selectedLibreTag: selectedValue,
         });
       }}
+      onTagEdit={props.onTagEdit}
     />
   );
 };

@@ -15,6 +15,7 @@ type StructuresDropdownProps = Omit<
     structures: Tag[];
     selectedStructure: Tag;
   }) => void;
+  onTagEdit?: (editedTag: Tag) => void;
 };
 
 const StructuresDropdown = (props: StructuresDropdownProps) => {
@@ -34,6 +35,7 @@ const StructuresDropdown = (props: StructuresDropdownProps) => {
           selectedStructure: selectedValue,
         });
       }}
+      onTagEdit={props.onTagEdit}
     />
   );
 };
