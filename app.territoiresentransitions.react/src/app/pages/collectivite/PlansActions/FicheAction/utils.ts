@@ -14,3 +14,25 @@ export const statutToColor: Record<Statut | 'NC' | 'Sans statut', string> = {
   'Sans statut': preset.theme.extend.colors.grey[4],
   NC: preset.theme.extend.colors.grey[3],
 };
+
+/**
+ * Updates a tag in a list of tags
+ * Valid for tags with id, collectiviteId and nom
+ * (! not valid for personnes tags, since they have a different structure)
+ * @param tags Original list of tags
+ * @param editedTag Modified tag
+ * @returns New list with updated tag
+ */
+export const updateFicheActionTagInList = (
+  list:
+    | { id: number; collectiviteId: number; nom: string }[]
+    | null
+    | undefined,
+  editedTag: { id: number; collectiviteId: number; nom: string }
+) => {
+  const existingTags = list ?? [];
+  return existingTags.map((tag) => ({
+    ...tag,
+    ...(tag.id === editedTag.id ? editedTag : {}),
+  }));
+};
