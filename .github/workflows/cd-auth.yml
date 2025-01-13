@@ -1,4 +1,4 @@
-name: Déploiement à la demande du module d'auth.
+name: Déploiement de l'auth
 run-name: Déploiement du module d'auth. sur ${{ github.event.inputs.target }}
 
 on:
