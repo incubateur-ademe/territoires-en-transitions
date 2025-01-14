@@ -100,9 +100,9 @@ const ModaleDescription = ({ fiche, updateFiche }: ModaleDescriptionProps) => {
           <Field title="Mes tags de suivi" className="col-span-2">
             <TagsSuiviPersoDropdown
               values={editedFiche.libresTag?.map((t) => t.id)}
-              onChange={({ libresTag }) => {
-                setEditedFiche((prevState) => ({ ...prevState, libresTag }));
-              }}
+              onChange={({ libresTag }) =>
+                setEditedFiche((prevState) => ({ ...prevState, libresTag }))
+              }
             />
           </Field>
 
