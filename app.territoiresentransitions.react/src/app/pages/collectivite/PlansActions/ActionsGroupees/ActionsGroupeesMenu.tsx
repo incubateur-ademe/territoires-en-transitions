@@ -33,7 +33,7 @@ const ActionsGroupeesMenu = ({
   return (
     <Alert
       className={classNames(
-        'absolute left-0 bottom-0 border-t border-t-info-1 pt-2 pb-4 transition-all duration-500',
+        'fixed left-0 bottom-0 border-t border-t-info-1 pt-2 pb-4 transition-all duration-500',
         {
           'opacity-100 z-50': isGroupedActionsOn && selectedFiches.length > 1,
           'opacity-0 -z-10': selectedFiches.length <= 1,
