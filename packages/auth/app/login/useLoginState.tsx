@@ -110,8 +110,20 @@ export const useLoginState = ({
       setIsLoading(false);
 
       // sort si il y a une erreur
-      if (error || !data.session) {
-        setError('La vérification du compte a échouée');
+      if (error) {
+        setError(
+          'Impossible de se connecter. Veuillez refaire la manipulation "connexion sans mot de passe". Attention le lien envoyé par email n\'est valide qu\'une heure. Si le problème persiste, contactez le support.' +
+            '(' +
+            error.name +
+            error.code +
+            error.message +
+            ')'
+        );
+        return;
+      }
+
+      if (!data.session) {
+        setError('Impossible de se connecter. Veuillez contacter le support.');
         return;
       }
 
@@ -141,7 +153,15 @@ export const useLoginState = ({
 
       // sort si il y a une erreur
       if (error || !data.session) {
-        setError('La vérification du compte a échouée');
+        if (error?.code === '')
+          setError(
+            'Le changement de mot de passe a échoué. Veuillez refaire la manipulation "mot de passe oublié". Attention le lien envoyé par email n\'est valide qu\'une heure. Si le problème persiste, contactez le support.' +
+              '(' +
+              error.name +
+              error.code +
+              error.message +
+              ')'
+          );
         return;
       }
 

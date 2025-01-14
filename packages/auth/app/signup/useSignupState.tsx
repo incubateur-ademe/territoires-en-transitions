@@ -96,8 +96,22 @@ export const useSignupState = ({
       setIsLoading(false);
 
       // sort si il y a une erreur
-      if (error || !data.session) {
-        setError('La vérification du compte a échouée');
+      if (error) {
+        setError(
+          'La création de compte a échoué. Veuillez refaire la manipulation "créer un compte". Attention le lien envoyé par email n\'est valide qu\'une heure. Si le problème persiste, contactez le support.' +
+            '(' +
+            error.name +
+            error.code +
+            error.message +
+            ')'
+        );
+        return;
+      }
+
+      if (!data.session) {
+        setError(
+          'La création de compte a échoué. Veuillez refaire la manipulation "créer un compte".'
+        );
         return;
       }
 
