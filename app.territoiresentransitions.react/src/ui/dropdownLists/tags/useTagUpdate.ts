@@ -21,11 +21,17 @@ export const useTagUpdate = ({
 
   return useMutation(
     async (tag: TagUpdate) => {
-      if (tag.id)
-        await supabaseClient
+      if (tag.id) {
+        const { data, error } = await supabaseClient
           .from(tagTableName)
           .update(objectToSnake(tag))
-          .eq('id', tag.id);
+          .eq('id', tag.id)
+          .select()
+          .single();
+
+        if (error) throw error;
+        return data;
+      }
     },
     {
       mutationKey: 'update_tag',
