@@ -22,6 +22,7 @@ import { makeCollectiviteIndicateursUrl } from '@/app/app/paths';
 import { useCurrentCollectivite } from '@/app/core-logic/hooks/useCurrentCollectivite';
 import { CustomFilterBadges } from '@/app/ui/shared/filters/filter-badges';
 import { OpenState } from '@/ui/utils/types';
+import classNames from 'classnames';
 
 type sortByOptionsType = {
   label: string;
@@ -50,7 +51,7 @@ const sortByOptions: sortByOptionsType[] = [
 ];
 
 type Props = {
-  settings: (openState: OpenState) => React.ReactNode;
+  settings?: (openState: OpenState) => React.ReactNode;
   filtres?: Indicateurs.FetchFiltre;
   customFilterBadges?: CustomFilterBadges;
   resetFilters?: () => void;
@@ -59,7 +60,8 @@ type Props = {
   /** Rend les cartes indicateurs éditables */
   isEditable?: boolean;
   // pour le tracking
-  pageName: ExportIndicateursPageName;
+  pageName?: ExportIndicateursPageName;
+  menuContainerClassname?: string;
 };
 
 /** Liste de fiches action avec tri et options de fitlre */
@@ -74,6 +76,7 @@ const IndicateursListe = ({
   settings,
   isEditable,
   maxNbOfCards = 9,
+  menuContainerClassname,
 }: Props) => {
   const tracker = useEventTracker('app/indicateurs/tous');
 
@@ -153,8 +156,13 @@ const IndicateursListe = ({
   const [displayGraphs, setDisplayGraphs] = useState(true);
 
   return (
-    <>
-      <div className="flex items-center gap-8 py-6 border-y border-primary-3">
+    <div className="flex flex-col gap-8">
+      <div
+        className={classNames(
+          'flex items-center gap-8 py-6 border-y border-primary-3',
+          menuContainerClassname
+        )}
+      >
         {/** Tri */}
         <div className="w-64">
           <Select
@@ -203,7 +211,7 @@ const IndicateursListe = ({
           displaySize="sm"
         />
         {/** Bouton d'édition des filtres (une modale avec bouton ou un ButtonMenu) */}
-        {settings({ isOpen: isSettingsOpen, setIsOpen: setIsSettingsOpen })}
+        {settings?.({ isOpen: isSettingsOpen, setIsOpen: setIsSettingsOpen })}
       </div>
       {/** Liste des filtres appliqués et bouton d'export */}
       <BadgeList
@@ -269,7 +277,7 @@ const IndicateursListe = ({
           />
         </div>
       )}
-    </>
+    </div>
   );
 };
 

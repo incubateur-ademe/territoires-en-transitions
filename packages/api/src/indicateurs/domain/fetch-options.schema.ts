@@ -24,6 +24,7 @@ export type FiltreSpecifique = z.infer<typeof filtreSpecifiqueSchema>;
  */
 export const filtreSchema = filtreRessourceLieesSchema
   .pick({
+    indicateurIds: true,
     thematiqueIds: true,
     planActionIds: true,
     utilisateurPiloteIds: true,

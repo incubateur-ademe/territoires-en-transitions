@@ -1,6 +1,9 @@
 import { FetchFiltre } from '@/api/indicateurs';
 
-export const indicateursNameToParams: Record<keyof FetchFiltre, string> = {
+export const indicateursNameToParams: Record<
+  keyof Omit<FetchFiltre, 'indicateurIds'>,
+  string
+> = {
   thematiqueIds: 't',
   actionId: 'a',
   planActionIds: 'pa',

@@ -83,7 +83,7 @@ const IndicateurLayout = ({
       />
 
       <div className="flex flex-col px-10 py-6">
-        <div className="flex items-center justify-between">
+        <div className="flex items-center justify-between mb-12">
           {/* Liste des badges */}
           {!composeSansAgregation && (
             <div className="flex gap-2">
@@ -110,14 +110,11 @@ const IndicateurLayout = ({
 
         {composeSansAgregation ? (
           // Groupe d'indicateurs sans agrégation
-          <SousIndicateurs definition={definition} enfantsIds={enfants} />
+          <SousIndicateurs enfantsIds={enfants} />
         ) : (
           // Indicateur sans enfant, groupe d'indicateurs avec agrégation,
           // ou indicateur personnalisé
-          <Tabs
-            className="mt-12"
-            tabsListClassName="!justify-start flex-nowrap overflow-x-auto"
-          >
+          <Tabs tabsListClassName="!justify-start flex-nowrap overflow-x-auto">
             {/* Données */}
             <Tab label="Données">
               <DonneesIndicateur
@@ -134,7 +131,7 @@ const IndicateurLayout = ({
             {/* Sous indicateurs */}
             {composeAvecAgregation ? (
               <Tab label={`${enfants.length} Sous indicateurs`}>
-                <SousIndicateurs definition={definition} enfantsIds={enfants} />
+                <SousIndicateurs enfantsIds={enfants} />
               </Tab>
             ) : undefined}
 

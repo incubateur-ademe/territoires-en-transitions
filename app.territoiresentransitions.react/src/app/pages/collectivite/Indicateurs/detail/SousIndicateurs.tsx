@@ -1,40 +1,20 @@
-import { findCommonLinkedActions } from '../Indicateur/detail/IndicateurCompose';
-import { IndicateurEnfant } from '../Indicateur/detail/IndicateurEnfant';
-import { useIndicateurDefinitions } from '../Indicateur/useIndicateurDefinition';
-import { TIndicateurDefinition } from '../types';
+import IndicateursListe from '../lists/indicateurs-list';
 
 type Props = {
-  definition: TIndicateurDefinition;
   enfantsIds: number[];
 };
 
-const SousIndicateurs = ({ definition, enfantsIds }: Props) => {
-  const { data: enfants } = useIndicateurDefinitions(definition.id, enfantsIds);
-
-  if (!enfants?.length) return null;
-
-  const actionsLieesCommunes = findCommonLinkedActions([
-    definition,
-    ...enfants,
-  ]);
-
-  const enfantsTries = enfants.sort((a, b) => {
-    if (!a.identifiant || !b.identifiant) {
-      return 0;
-    }
-    return a.identifiant.localeCompare(b.identifiant);
-  });
+const SousIndicateurs = ({ enfantsIds }: Props) => {
+  if (!enfantsIds?.length) return null;
 
   return (
-    <div>
-      {enfantsTries.map((enfant) => (
-        <IndicateurEnfant
-          key={enfant.id}
-          definition={enfant}
-          actionsLieesCommunes={actionsLieesCommunes}
-        />
-      ))}
-    </div>
+    <IndicateursListe
+      filtres={{ indicateurIds: enfantsIds }}
+      sortSettings={{
+        defaultSort: 'text',
+      }}
+      menuContainerClassname="!border-0 pb-0"
+    />
   );
 };
 

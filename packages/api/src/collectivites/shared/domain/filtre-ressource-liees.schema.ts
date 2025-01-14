@@ -17,6 +17,8 @@ export const filtreRessourceLieesSchema = z.object({
   financeurIds: z.coerce.number().array().optional(),
   partenaireIds: z.coerce.number().array().optional(),
   libreTagsIds: z.coerce.number().array().optional(),
+
+  indicateurIds: z.coerce.number().array().optional(),
 });
 
 export type FiltreRessourceLiees = z.infer<typeof filtreRessourceLieesSchema>;
