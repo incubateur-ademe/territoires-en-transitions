@@ -1,18 +1,13 @@
-import classNames from 'classnames';
-
 import { Indicateurs } from '@/api';
-import {
-  ExportIndicateursPageName,
-  useExportIndicateurs,
-} from '@/app/app/pages/collectivite/Indicateurs/Indicateur/useExportIndicateurs';
+import { ExportIndicateursPageName } from '@/app/app/pages/collectivite/Indicateurs/Indicateur/useExportIndicateurs';
 import FilterBadges, {
   CustomFilterBadges,
   useFiltersToBadges,
 } from '@/app/ui/shared/filters/filter-badges';
-import { Badge } from '@/ui';
+import ExportButton from './export-button';
 
 type Props = {
-  pageName: ExportIndicateursPageName; // tracking
+  pageName?: ExportIndicateursPageName; // tracking
   definitions?: Indicateurs.domain.IndicateurListItem[];
   filters: Indicateurs.FetchFiltre;
   customFilterBadges?: CustomFilterBadges;
@@ -30,42 +25,26 @@ const BadgeList = ({
   isEmpty,
   isLoading,
 }: Props) => {
-  // fonction d'export
-  const { mutate: exportIndicateurs, isLoading: isDownloadingExport } =
-    useExportIndicateurs(pageName, definitions);
-
   const { data: filterBadges } = useFiltersToBadges({
     filters,
     customValues: customFilterBadges,
   });
 
+  const displayBadgesList = !!filterBadges?.length;
+  const displayExportButton = !isEmpty && !isLoading && !!pageName;
+
+  if (!displayBadgesList && !pageName) return null;
+
   return (
     <div className="flex flex-row justify-between items-start">
-      {!!filterBadges?.length && (
+      {displayBadgesList && (
         <FilterBadges badges={filterBadges} resetFilters={resetFilters} />
       )}
-      {!isEmpty && !isLoading && (
-        <button
-          className={classNames('shrink-0 ml-auto', {
-            'opacity-50': isDownloadingExport,
-          })}
-          disabled={isDownloadingExport}
-          onClick={() => exportIndicateurs()}
-        >
-          <Badge
-            className="py-4"
-            icon="download-line"
-            iconPosition="left"
-            title={
-              filterBadges?.length
-                ? 'Exporter le résultat de mon filtre en Excel'
-                : 'Exporter tous les indicateurs en Excel'
-            }
-            state="default"
-            uppercase={false}
-            size="sm"
-          />
-        </button>
+      {displayExportButton && (
+        <ExportButton
+          {...{ pageName, definitions }}
+          isFiltered={!!filterBadges && filterBadges.length > 0}
+        />
       )}
     </div>
   );

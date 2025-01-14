@@ -59,9 +59,7 @@ export const IndicateurCompose = ({
   );
 };
 // détermine les actions liées communes à un ensemble de définitions
-export const findCommonLinkedActions = (
-  definitions: IndicateurDefinition[]
-) => {
+const findCommonLinkedActions = (definitions: IndicateurDefinition[]) => {
   // extrait les tableaux d'ids
   const actionsIds = definitions.map(({ actions }) => actions.map((a) => a.id));
 
