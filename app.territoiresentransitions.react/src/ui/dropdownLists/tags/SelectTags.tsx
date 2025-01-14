@@ -20,7 +20,6 @@ type SelectTagsProps = Omit<SelectMultipleProps, 'options' | 'onChange'> & {
     values: Tag[];
     selectedValue: Tag;
   }) => void;
-  onTagEdit?: (editedTag: Tag) => void;
 };
 
 const SelectTags = ({
@@ -30,7 +29,6 @@ const SelectTags = ({
   userCreatedOptionsIds,
   disabledOptionsIds,
   refetchOptions,
-  onTagEdit,
   ...props
 }: SelectTagsProps) => {
   const collectiviteId = useCollectiviteId();
@@ -88,7 +86,7 @@ const SelectTags = ({
   // Mise à jour d'un tag de la liste d'options
   // ***
 
-  const { mutate: updateTag } = useTagUpdate({
+  const { data: updatedTag, mutate: updateTag } = useTagUpdate({
     key: [queryKey, collectiviteId],
     tagTableName,
     onSuccess: refetchOptions,
@@ -100,10 +98,27 @@ const SelectTags = ({
       id: parseInt(tagId as string),
       nom: tagName,
     };
-
     updateTag(editedTag);
-    onTagEdit?.(editedTag);
   };
+
+  useEffect(() => {
+    if (updatedTag) {
+      const tag = {
+        collectiviteId: collectiviteId!,
+        nom: updatedTag.nom,
+        id: updatedTag.id,
+      };
+
+      const otherTags = getSelectedValues(props.values).filter(
+        (t) => t.id !== tag.id
+      );
+
+      props.onChange({
+        values: [tag, ...otherTags],
+        selectedValue: tag,
+      });
+    }
+  }, [updatedTag]);
 
   // ***
   // Suppression d'un tag de la liste d'options
