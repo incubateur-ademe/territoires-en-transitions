@@ -17,7 +17,6 @@ import {
 } from '@/ui';
 import _ from 'lodash';
 import { useState } from 'react';
-import { updateFicheActionTagInList } from '../utils';
 
 const DESCRIPTION_MAX_LENGTH = 20000;
 const MOYENS_MAX_LENGTH = 10000;

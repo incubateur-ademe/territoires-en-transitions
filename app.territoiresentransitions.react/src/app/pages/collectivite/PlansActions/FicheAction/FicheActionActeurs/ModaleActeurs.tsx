@@ -17,7 +17,6 @@ import {
 } from '@/ui';
 import _ from 'lodash';
 import { useState } from 'react';
-import { updateFicheActionTagInList } from '../utils';
 
 type ModaleActeursProps = {
   isOpen: boolean;
