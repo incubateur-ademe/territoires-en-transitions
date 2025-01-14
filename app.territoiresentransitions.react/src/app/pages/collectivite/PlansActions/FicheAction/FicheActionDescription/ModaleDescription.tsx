@@ -104,15 +104,6 @@ const ModaleDescription = ({ fiche, updateFiche }: ModaleDescriptionProps) => {
               onChange={({ libresTag }) => {
                 setEditedFiche((prevState) => ({ ...prevState, libresTag }));
               }}
-              onTagEdit={(editedTag) => {
-                setEditedFiche((prevState) => ({
-                  ...prevState,
-                  libresTag: updateFicheActionTagInList(
-                    prevState.libresTag,
-                    editedTag
-                  ),
-                }));
-              }}
             />
           </Field>
 

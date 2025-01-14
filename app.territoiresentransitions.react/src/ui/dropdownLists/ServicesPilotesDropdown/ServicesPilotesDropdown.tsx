@@ -16,7 +16,6 @@ type ServicesPilotesDropdownProps = Omit<
     selectedService: Tag;
   }) => void;
   disabledOptionsIds?: number[];
-  onTagEdit?: (editedTag: Tag) => void;
 };
 
 const ServicesPilotesDropdown = (props: ServicesPilotesDropdownProps) => {
@@ -36,7 +35,6 @@ const ServicesPilotesDropdown = (props: ServicesPilotesDropdownProps) => {
           selectedService: selectedValue,
         });
       }}
-      onTagEdit={props.onTagEdit}
     />
   );
 };

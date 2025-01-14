@@ -15,7 +15,6 @@ type PartenairesDropdownProps = Omit<
     partenaires: Tag[];
     selectedPartenaire: Tag;
   }) => void;
-  onTagEdit?: (editedTag: Tag) => void;
 };
 
 const PartenairesDropdown = (props: PartenairesDropdownProps) => {
@@ -35,7 +34,6 @@ const PartenairesDropdown = (props: PartenairesDropdownProps) => {
           selectedPartenaire: selectedValue,
         });
       }}
-      onTagEdit={props.onTagEdit}
     />
   );
 };
