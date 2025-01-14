@@ -62,15 +62,6 @@ const ModaleActeurs = ({
                   services,
                 }))
               }
-              onTagEdit={(editedTag) => {
-                setEditedFiche((prevState) => ({
-                  ...prevState,
-                  services: updateFicheActionTagInList(
-                    prevState.services,
-                    editedTag
-                  ),
-                }));
-              }}
             />
           </Field>
 
@@ -84,15 +75,6 @@ const ModaleActeurs = ({
                   structures,
                 }))
               }
-              onTagEdit={(editedTag) => {
-                setEditedFiche((prevState) => ({
-                  ...prevState,
-                  structures: updateFicheActionTagInList(
-                    prevState.structures,
-                    editedTag
-                  ),
-                }));
-              }}
             />
           </Field>
 
@@ -120,15 +102,6 @@ const ModaleActeurs = ({
                   partenaires,
                 }))
               }
-              onTagEdit={(editedTag) => {
-                setEditedFiche((prevState) => ({
-                  ...prevState,
-                  partenaires: updateFicheActionTagInList(
-                    prevState.partenaires,
-                    editedTag
-                  ),
-                }));
-              }}
             />
           </Field>
 
