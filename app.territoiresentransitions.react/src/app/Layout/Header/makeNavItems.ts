@@ -60,13 +60,6 @@ const makeNavItemsBase = (
       dataTest: 'nav-home',
     },
     {
-      label: 'Actions à Impact',
-      dataTest: 'pa-actions-impact',
-      to: makeCollectivitePanierUrl({
-        collectiviteId,
-      }),
-    },
-    {
       confidentiel,
       label: 'Actions à Impact',
       to: makeCollectivitePanierUrl({
