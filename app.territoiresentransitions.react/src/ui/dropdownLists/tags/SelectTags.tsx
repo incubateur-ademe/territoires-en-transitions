@@ -93,12 +93,11 @@ const SelectTags = ({
   });
 
   const handleTagUpdate = (tagId: OptionValue, tagName: string) => {
-    const editedTag = {
+    updateTag({
       collectiviteId: collectiviteId!,
       id: parseInt(tagId as string),
       nom: tagName,
-    };
-    updateTag(editedTag);
+    });
   };
 
   useEffect(() => {
