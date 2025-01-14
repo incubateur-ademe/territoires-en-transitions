@@ -671,6 +671,17 @@ describe('IndicateurFiltreService', () => {
       );
       expect(toCheck.length).toEqual(1);
     });
+    it('Test le filtre indicateurIds', async () => {
+      const filtres: GetFilteredIndicateursRequestOptionType = {
+        indicateurIds: [1, 2]
+      }
+      const toCheck = indicateurFiltreService.applyFilters(
+        datas,
+        filtres,
+        true
+      );
+      expect(toCheck.length).toEqual(2);
+    })
   });
   describe('applySorts', () => {
     const ind1 = {
