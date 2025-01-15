@@ -9,6 +9,7 @@ import { Option, OptionValue, SelectFilter, SelectMultipleProps } from '@/ui';
 import { Personne } from '@/api/collectivites';
 import { usePersonneListe } from './usePersonneListe';
 import { getPersonneStringId } from './utils';
+import { QueryKey } from 'react-query';
 
 type Props = Omit<SelectMultipleProps, 'values' | 'onChange' | 'options'> & {
   values?: string[];
@@ -21,6 +22,7 @@ type Props = Omit<SelectMultipleProps, 'values' | 'onChange' | 'options'> & {
   }) => void;
   disabledOptionsIds?: string[];
   disableEdition?: boolean;
+  additionalKeysToInvalidate?: QueryKey[];
 };
 
 /** Sélecteur de personnes de la collectivité */
@@ -47,6 +49,7 @@ const PersonnesDropdown = (props: Props) => {
   const { mutate: updateTag } = useTagUpdate({
     key: ['personnes', collectiviteId],
     tagTableName: 'personne_tag',
+    keysToInvalidate: props.additionalKeysToInvalidate,
   });
 
   const { mutate: deleteTag } = useDeleteTag({

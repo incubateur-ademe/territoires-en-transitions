@@ -61,6 +61,9 @@ const ModaleActeurs = ({
                   services,
                 }))
               }
+              additionalKeysToInvalidate={[
+                ['fiche_action', fiche.id.toString()],
+              ]}
             />
           </Field>
 
@@ -74,6 +77,9 @@ const ModaleActeurs = ({
                   structures,
                 }))
               }
+              additionalKeysToInvalidate={[
+                ['fiche_action', fiche.id.toString()],
+              ]}
             />
           </Field>
 
@@ -88,6 +94,9 @@ const ModaleActeurs = ({
                   referents: personnes,
                 }))
               }
+              additionalKeysToInvalidate={[
+                ['fiche_action', fiche.id.toString()],
+              ]}
             />
           </Field>
 
@@ -101,6 +110,9 @@ const ModaleActeurs = ({
                   partenaires,
                 }))
               }
+              additionalKeysToInvalidate={[
+                ['fiche_action', fiche.id.toString()],
+              ]}
             />
           </Field>
 

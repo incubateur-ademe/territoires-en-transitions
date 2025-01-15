@@ -103,6 +103,9 @@ const ModaleDescription = ({ fiche, updateFiche }: ModaleDescriptionProps) => {
               onChange={({ libresTag }) =>
                 setEditedFiche((prevState) => ({ ...prevState, libresTag }))
               }
+              additionalKeysToInvalidate={[
+                ['fiche_action', fiche.id.toString()],
+              ]}
             />
           </Field>
 

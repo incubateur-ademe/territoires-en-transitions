@@ -2,6 +2,7 @@ import { Tag } from '@/domain/collectivites';
 import { SelectMultipleProps } from '@/ui';
 import SelectTags from '../tags/SelectTags';
 import { useStructuresListe } from './useStructuresListe';
+import { QueryKey } from 'react-query';
 
 type StructuresDropdownProps = Omit<
   SelectMultipleProps,
@@ -15,6 +16,7 @@ type StructuresDropdownProps = Omit<
     structures: Tag[];
     selectedStructure: Tag;
   }) => void;
+  additionalKeysToInvalidate?: QueryKey[];
 };
 
 const StructuresDropdown = (props: StructuresDropdownProps) => {
@@ -26,6 +28,7 @@ const StructuresDropdown = (props: StructuresDropdownProps) => {
       placeholder={props.placeholder ?? 'Sélectionnez ou créez un pilote'}
       queryKey="structures"
       tagTableName="structure_tag"
+      additionalKeysToInvalidate={props.additionalKeysToInvalidate}
       optionsListe={data}
       refetchOptions={refetch}
       onChange={({ values, selectedValue }) => {

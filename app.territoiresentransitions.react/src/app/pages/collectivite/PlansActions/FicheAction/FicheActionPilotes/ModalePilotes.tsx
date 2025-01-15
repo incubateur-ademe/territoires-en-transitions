@@ -45,6 +45,9 @@ const ModalePilotes = ({
                   pilotes: personnes,
                 }))
               }
+              additionalKeysToInvalidate={[
+                ['fiche_action', fiche.id.toString()],
+              ]}
             />
           </Field>
         </FormSectionGrid>
