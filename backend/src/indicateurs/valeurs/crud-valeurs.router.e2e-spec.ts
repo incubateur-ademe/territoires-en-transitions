@@ -30,9 +30,11 @@ describe("Route de lecture/écriture des valeurs d'indicateurs", () => {
     app = await getTestApp();
     router = app.get(TrpcRouter);
     yoloDodoUser = await getAuthUser();
-
-    // reset les données avant de commencer les tests
     databaseService = app.get<DatabaseService>(DatabaseService);
+  });
+
+  beforeEach(async () => {
+    // reset les données avant de commencer les tests
     await databaseService.db
       .delete(indicateurValeurTable)
       .where(
@@ -72,14 +74,11 @@ describe("Route de lecture/écriture des valeurs d'indicateurs", () => {
 
     // insère une valeur
     const input: InputUpsert = {
-      valeurs: [
-        {
-          collectiviteId,
-          indicateurId,
-          dateValeur: '2021-01-01',
-          resultat: 42,
-        },
-      ],
+      collectiviteId,
+      indicateurId,
+      dateValeur: '2021-01-01',
+      resultat: 42,
+      resultatCommentaire: 'commentaire',
     };
     const result = await caller.indicateurs.valeurs.upsert(input);
     expect(result).not.toBe(null);
@@ -96,14 +95,11 @@ describe("Route de lecture/écriture des valeurs d'indicateurs", () => {
 
     // insère une valeur
     const inputInsert: InputUpsert = {
-      valeurs: [
-        {
-          collectiviteId,
-          indicateurId,
-          dateValeur: '2021-01-01',
-          resultat: 42,
-        },
-      ],
+      collectiviteId,
+      indicateurId,
+      dateValeur: '2021-01-01',
+      resultat: 42,
+      resultatCommentaire: 'commentaire',
     };
     await caller.indicateurs.valeurs.upsert(inputInsert);
 
@@ -117,16 +113,12 @@ describe("Route de lecture/écriture des valeurs d'indicateurs", () => {
       resultBefore.indicateurs[0].sources.collectivite.valeurs.length
     ).toBe(1);
 
-    // met à jour la valeur
+    // met à jour que la valeur
     const inputUpdate: InputUpsert = {
-      valeurs: [
-        {
-          collectiviteId,
-          indicateurId,
-          dateValeur: '2021-01-01',
-          resultat: 43,
-        },
-      ],
+      collectiviteId,
+      indicateurId,
+      id: resultBefore.indicateurs[0].sources.collectivite.valeurs[0].id,
+      resultat: 43,
     };
     const result = await caller.indicateurs.valeurs.upsert(inputUpdate);
     expect(result).not.toBe(null);
@@ -139,18 +131,17 @@ describe("Route de lecture/écriture des valeurs d'indicateurs", () => {
     expect(
       resultAfter.indicateurs[0].sources.collectivite.valeurs[0].resultat
     ).toBe(43);
+    expect(
+      resultAfter.indicateurs[0].sources.collectivite.valeurs[0]
+        .resultatCommentaire
+    ).toBe('commentaire');
 
     // met à jour la valeur objectif pour la même date
     const inputUpdateObjectif: InputUpsert = {
-      valeurs: [
-        {
-          collectiviteId,
-          indicateurId,
-          dateValeur: '2021-01-01',
-          resultat: 43, // il faut renvoyer aussi le résultat sinon il est effacé
-          objectif: 44,
-        },
-      ],
+      collectiviteId,
+      indicateurId,
+      id: resultBefore.indicateurs[0].sources.collectivite.valeurs[0].id,
+      objectif: 44,
     };
     const resultObjectif = await caller.indicateurs.valeurs.upsert(
       inputUpdateObjectif
@@ -178,14 +169,10 @@ describe("Route de lecture/écriture des valeurs d'indicateurs", () => {
     const caller = router.createCaller({ user: yoloDodoUser });
 
     const input: InputUpsert = {
-      valeurs: [
-        {
-          collectiviteId: 100,
-          indicateurId: 1,
-          dateValeur: '2021-01-01',
-          resultat: 42,
-        },
-      ],
+      collectiviteId: 100,
+      indicateurId: 1,
+      dateValeur: '2021-01-01',
+      resultat: 42,
     };
     await expect(caller.indicateurs.valeurs.upsert(input)).rejects.toThrow();
   });

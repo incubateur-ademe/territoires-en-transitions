@@ -112,3 +112,4 @@ export interface IndicateurValeurAvecMetadonnesDefinition {
 
   indicateur_source_metadonnee: SourceMetadonnee | null;
 }
+
