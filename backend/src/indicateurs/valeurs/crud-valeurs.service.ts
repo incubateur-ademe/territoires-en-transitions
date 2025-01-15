@@ -43,6 +43,7 @@ import {
   indicateurValeursGroupeeParSourceSchema,
   indicateurValeurTable,
 } from '../shared/models/indicateur-valeur.table';
+import { UpsertValeurIndicateur } from '../shared/models/upsert-valeur-indicateur.request';
 
 export class IndicateurValeurGroupee extends createZodDto(
   extendApi(indicateurValeurGroupeeSchema)
@@ -303,6 +304,68 @@ export default class CrudValeursService {
       );
     this.logger.log(`${definitions.length} définitions trouvées`);
     return definitions;
+  }
+
+  async upsertValeur(
+    data: UpsertValeurIndicateur,
+    tokenInfo: AuthenticatedUser
+  ) {
+    const { collectiviteId } = data;
+    await this.permissionService.isAllowed(
+      tokenInfo,
+      PermissionOperation.INDICATEURS_EDITION,
+      ResourceType.COLLECTIVITE,
+      collectiviteId
+    );
+
+    if (tokenInfo.role === AuthRole.AUTHENTICATED && tokenInfo.id) {
+      const now = new Date().toISOString();
+      if (data.id !== undefined) {
+        this.logger.log(
+          `Mise à jour de la valeur id ${data.id} pour la collectivité ${data.collectiviteId}`
+        );
+        const updated = await this.databaseService.db
+          .update(indicateurValeurTable)
+          .set({
+            resultat: data.resultat,
+            resultatCommentaire: data.resultatCommentaire,
+            objectif: data.objectif,
+            objectifCommentaire: data.objectifCommentaire,
+            modifiedBy: tokenInfo.id,
+            modifiedAt: now,
+          })
+          .where(
+            and(
+              eq(indicateurValeurTable.collectiviteId, collectiviteId),
+              eq(indicateurValeurTable.id, data.id)
+            )
+          )
+          .returning();
+        return updated[0];
+      }
+
+      if (data.dateValeur !== undefined) {
+        this.logger.log(
+          `Insertion de la valeur de l'indicateur ${data.indicateurId} pour la collectivité ${data.collectiviteId}`
+        );
+        const inserted = await this.databaseService.db
+          .insert(indicateurValeurTable)
+          .values({
+            collectiviteId,
+            indicateurId: data.indicateurId,
+            dateValeur: data.dateValeur,
+            resultat: data.resultat,
+            resultatCommentaire: data.resultatCommentaire,
+            objectif: data.objectif,
+            objectifCommentaire: data.objectifCommentaire,
+            createdBy: tokenInfo.id,
+            createdAt: now,
+            modifiedBy: tokenInfo.id,
+          })
+          .returning();
+        return inserted[0];
+      }
+    }
   }
 
   async upsertIndicateurValeurs(
