@@ -88,7 +88,7 @@ const SelectTags = ({
   // Mise à jour d'un tag de la liste d'options
   // ***
 
-  const { data: updatedTag, mutate: updateTag } = useTagUpdate({
+  const { mutate: updateTag } = useTagUpdate({
     key: [queryKey, collectiviteId],
     tagTableName,
     keysToInvalidate: additionalKeysToInvalidate,
