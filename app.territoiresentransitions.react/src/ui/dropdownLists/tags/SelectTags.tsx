@@ -8,6 +8,7 @@ import { useDeleteTag, useTagCreate, useTagUpdate } from '.';
 
 type SelectTagsProps = Omit<SelectMultipleProps, 'options' | 'onChange'> & {
   queryKey: QueryKey;
+  additionalKeysToInvalidate?: QueryKey[];
   tagTableName: TableTag;
   optionsListe?: Tag[];
   userCreatedOptionsIds?: number[];
@@ -24,6 +25,7 @@ type SelectTagsProps = Omit<SelectMultipleProps, 'options' | 'onChange'> & {
 
 const SelectTags = ({
   queryKey,
+  additionalKeysToInvalidate,
   tagTableName,
   optionsListe,
   userCreatedOptionsIds,
@@ -89,6 +91,7 @@ const SelectTags = ({
   const { data: updatedTag, mutate: updateTag } = useTagUpdate({
     key: [queryKey, collectiviteId],
     tagTableName,
+    keysToInvalidate: additionalKeysToInvalidate,
     onSuccess: refetchOptions,
   });
 
@@ -99,25 +102,6 @@ const SelectTags = ({
       nom: tagName,
     });
   };
-
-  useEffect(() => {
-    if (updatedTag) {
-      const tag = {
-        collectiviteId: collectiviteId!,
-        nom: updatedTag.nom,
-        id: updatedTag.id,
-      };
-
-      const otherTags = getSelectedValues(props.values).filter(
-        (t) => t.id !== tag.id
-      );
-
-      props.onChange({
-        values: [tag, ...otherTags],
-        selectedValue: tag,
-      });
-    }
-  }, [updatedTag]);
 
   // ***
   // Suppression d'un tag de la liste d'options

@@ -21,17 +21,11 @@ export const useTagUpdate = ({
 
   return useMutation(
     async (tag: TagUpdate) => {
-      if (tag.id) {
-        const { data, error } = await supabaseClient
+      if (tag.id)
+        await supabaseClient
           .from(tagTableName)
           .update(objectToSnake(tag))
-          .eq('id', tag.id)
-          .select()
-          .single();
-
-        if (error) throw error;
-        return data;
-      }
+          .eq('id', tag.id);
     },
     {
       mutationKey: 'update_tag',
@@ -54,7 +48,9 @@ export const useTagUpdate = ({
           queryClient.setQueryData(key, context?.previousdata);
         }
         queryClient.invalidateQueries(key);
-        keysToInvalidate?.forEach((key) => queryClient.invalidateQueries(key));
+        keysToInvalidate?.forEach((key) => {
+          queryClient.invalidateQueries(key);
+        });
       },
       onSuccess: () => onSuccess?.(),
     }

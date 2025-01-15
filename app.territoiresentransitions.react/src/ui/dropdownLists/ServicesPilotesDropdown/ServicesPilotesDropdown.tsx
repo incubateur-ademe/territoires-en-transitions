@@ -2,6 +2,7 @@ import { Tag } from '@/domain/collectivites';
 import { SelectMultipleProps } from '@/ui';
 import SelectTags from '../tags/SelectTags';
 import { useServicesPilotesListe } from './useServicesPilotesListe';
+import { QueryKey } from 'react-query';
 
 type ServicesPilotesDropdownProps = Omit<
   SelectMultipleProps,
@@ -16,6 +17,7 @@ type ServicesPilotesDropdownProps = Omit<
     selectedService: Tag;
   }) => void;
   disabledOptionsIds?: number[];
+  additionalKeysToInvalidate?: QueryKey[];
 };
 
 const ServicesPilotesDropdown = (props: ServicesPilotesDropdownProps) => {
@@ -27,6 +29,7 @@ const ServicesPilotesDropdown = (props: ServicesPilotesDropdownProps) => {
       dataTest={props.dataTest ?? 'ServicePilote'}
       queryKey="services_pilotes"
       tagTableName="service_tag"
+      additionalKeysToInvalidate={props.additionalKeysToInvalidate}
       optionsListe={data}
       refetchOptions={refetch}
       onChange={({ values, selectedValue }) => {
