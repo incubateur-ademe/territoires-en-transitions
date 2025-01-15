@@ -37,6 +37,8 @@ const ModaleActeurs = ({
   const collectivite = useCurrentCollectivite();
   const collectiviteId = collectivite?.collectivite_id || null;
 
+  const ficheActionInvalidationKeys = [['fiche_action', fiche.id.toString()]];
+
   const handleSave = () => {
     if (!_.isEqual(fiche, editedFiche)) {
       updateFiche(editedFiche);
@@ -61,9 +63,7 @@ const ModaleActeurs = ({
                   services,
                 }))
               }
-              additionalKeysToInvalidate={[
-                ['fiche_action', fiche.id.toString()],
-              ]}
+              additionalKeysToInvalidate={ficheActionInvalidationKeys}
             />
           </Field>
 
@@ -77,9 +77,7 @@ const ModaleActeurs = ({
                   structures,
                 }))
               }
-              additionalKeysToInvalidate={[
-                ['fiche_action', fiche.id.toString()],
-              ]}
+              additionalKeysToInvalidate={ficheActionInvalidationKeys}
             />
           </Field>
 
@@ -94,9 +92,7 @@ const ModaleActeurs = ({
                   referents: personnes,
                 }))
               }
-              additionalKeysToInvalidate={[
-                ['fiche_action', fiche.id.toString()],
-              ]}
+              additionalKeysToInvalidate={ficheActionInvalidationKeys}
             />
           </Field>
 
@@ -110,9 +106,7 @@ const ModaleActeurs = ({
                   partenaires,
                 }))
               }
-              additionalKeysToInvalidate={[
-                ['fiche_action', fiche.id.toString()],
-              ]}
+              additionalKeysToInvalidate={ficheActionInvalidationKeys}
             />
           </Field>
 
