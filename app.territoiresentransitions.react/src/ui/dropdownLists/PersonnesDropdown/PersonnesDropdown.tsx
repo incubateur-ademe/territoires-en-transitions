@@ -29,7 +29,7 @@ type Props = Omit<SelectMultipleProps, 'values' | 'onChange' | 'options'> & {
 const PersonnesDropdown = (props: Props) => {
   const collectiviteId = useCollectiviteId();
 
-  const { data: personneListe } = usePersonneListe();
+  const { data: personneListe, refetch } = usePersonneListe();
 
   const options: Option[] = personneListe
     ? personneListe.map((personne) => ({
@@ -50,16 +50,25 @@ const PersonnesDropdown = (props: Props) => {
     key: ['personnes', collectiviteId],
     tagTableName: 'personne_tag',
     keysToInvalidate: props.additionalKeysToInvalidate,
+    onSuccess: () => {
+      refetch();
+    },
   });
 
   const { mutate: deleteTag } = useDeleteTag({
     key: ['personnes', collectiviteId],
     tagTableName: 'personne_tag',
+    onSuccess: () => {
+      refetch();
+    },
   });
 
   const { data: newTag, mutate: createTag } = useTagCreate({
     key: ['personnes', collectiviteId],
     tagTableName: 'personne_tag',
+    onSuccess: () => {
+      refetch();
+    },
   });
 
   const newTagId = newTag?.data?.[0].id;
