@@ -23,6 +23,7 @@ export const ReferentielCard = ({
   const collectiviteId = useCollectiviteId();
   const referentiel = referentielId(action.id);
 
+  // TODO: remove fake data
   const FAKE_pilotes = [
     {
       nom: 'John Doe',
@@ -67,17 +68,16 @@ export const ReferentielCard = ({
               }}
             />
             <div>
-              <Counter value={1} total={10} className="mb-3" />
+              <Counter actionId={action.id} className="mb-3" />
               <ActionProgressBar
                 action={action}
-                className=""
                 styleOptions={{ justify: 'start', fullWidth: true }}
               />
             </div>
           </>
         ) : (
           <div>
-            <Counter value={1} total={10} className="mb-3" />
+            <Counter actionId={action.id} className="mb-3" />
             <ActionProgressBar
               action={action}
               styleOptions={{ justify: 'start', fullWidth: true }}

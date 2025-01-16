@@ -1,14 +1,20 @@
 import { Badge } from '@/ui';
 import classNames from 'classnames';
+import { useActionScore } from '../../core-logic/hooks/scoreHooks';
 
 type CounterProps = {
-  value: number;
-  total: number;
+  actionId: string;
   className?: string;
 };
 
-export const Counter = ({ value, total, className }: CounterProps) => {
-  const percentage = (value / total) * 100;
+export const Counter = ({ actionId, className }: CounterProps) => {
+  const score = useActionScore(actionId);
+
+  if (!score) return null;
+
+  const percentage = Number(
+    (score.point_fait / score.point_potentiel) * 100
+  ).toFixed(1);
 
   return (
     <div className={classNames('flex', className)}>
@@ -19,7 +25,7 @@ export const Counter = ({ value, total, className }: CounterProps) => {
         className="!rounded-r-none border-2 border-r-0"
       />
       <Badge
-        title={value && total ? `${value} / ${total} points` : 'Non renseigné'}
+        title={`${score.point_fait} / ${score.point_potentiel} points`}
         state="success"
         light
         className="!rounded-l-none border-2"

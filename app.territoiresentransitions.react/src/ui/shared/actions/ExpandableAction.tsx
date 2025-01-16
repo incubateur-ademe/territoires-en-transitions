@@ -67,8 +67,15 @@ export const ExpandableAction = ({
           >
             <ActionReferentielDisplayTitle action={action} isOpen={isOpen} />
             <div className="flex items-center">
-              <ActionProgressBar action={action} />
-              <Counter value={1} total={10} className="ml-28" />
+              <div className="w-48">
+                <ActionProgressBar
+                  action={action}
+                  styleOptions={{ fullWidth: true }}
+                />
+              </div>
+              <div className="w-96">
+                <Counter actionId={action.id} className="justify-end" />
+              </div>
             </div>
           </div>
         </div>
