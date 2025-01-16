@@ -11,6 +11,8 @@ import { InputBase, InputBaseProps } from './InputBase';
 
 export type InputNumberProps = Omit<NumericFormatProps, 'type' | 'value'> & {
   value: InputBaseProps['value'];
+  /** Taille d'affichage */
+  displaySize?: InputBaseProps['displaySize'];
   /** Type de saisie numérique attendue */
   numType?: 'float' | 'int';
   /** Contenu optionnel pour la zone d'icône à droite du champ */
