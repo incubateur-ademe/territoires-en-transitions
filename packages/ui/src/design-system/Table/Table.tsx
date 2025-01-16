@@ -46,22 +46,18 @@ export const THead = (props: THeadProps) => {
  */
 export const THeadRow = (props: TRowProps) => {
   const {children, className} = props;
-  return <th className={className}>{children}</th>;
+  return <tr className={className}>{children}</tr>;
 };
 
 /**
  * Affiche une cellule d'en-tête de tableau
- */
+*/
+export const HEAD_CELL_STYLE =
+  'px-5 py-4 [&:not(:last-child)]:border-r border-primary-4 text-primary-9 text-xs';
 export const THeadCell = (props: TCellProps) => {
   const {children, className} = props;
   return (
-    <th
-      scope="col"
-      className={classNames(
-        'px-5 py-4 [&:not(:last-child)]:border-r border-primary-4 text-primary-9 text-xs',
-        className
-      )}
-    >
+    <th scope="col" className={classNames(HEAD_CELL_STYLE, className)}>
       {children}
     </th>
   );
