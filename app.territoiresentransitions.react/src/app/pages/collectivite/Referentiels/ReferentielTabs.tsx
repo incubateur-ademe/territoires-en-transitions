@@ -11,7 +11,7 @@ import {
   useReferentielVue,
 } from '@/app/core-logic/hooks/params';
 import { ReferentielOfIndicateur } from '@/app/types/litterals';
-import { Button, Card, Tab, Tabs } from '@/ui';
+import { Button, Card, Select, Tab, Tabs } from '@/ui';
 import { useRouter } from 'next/navigation';
 import ProgressBarWithTooltip from '../../../../ui/score/ProgressBarWithTooltip';
 import AidePriorisation from '../AidePriorisation';
@@ -62,68 +62,83 @@ const ReferentielTabs = () => {
   };
 
   return (
-    <main className="w-full px-2 md:px-4 lg:px-6 py-12 bg-grey-2 -mb-8">
-      <div className="flex justify-between max-sm:flex-col gap-y-4 mb-8">
-        <h2 className="mb-0">
-          Référentiel{' '}
-          {referentielToName[referentielId as ReferentielOfIndicateur]}
-        </h2>
-        <Button icon="save-3-line" size="xs">
-          Figer le référentiel
-        </Button>
-      </div>
-      <div className="mb-8">
-        <ProgressBarWithTooltip
-          score={[
-            {
-              label: avancementToLabel.fait,
-              value: 10,
-              color: actionAvancementColors.fait,
-            },
-          ]}
-          total={100}
-          defaultScore={{
-            label: avancementToLabel.non_renseigne,
-            color: actionAvancementColors.non_renseigne,
-          }}
-          valueToDisplay={avancementToLabel.fait}
-          styleOptions={{
-            justify: 'start',
-            fullWidth: true,
-          }}
-        />
-      </div>
+    <div className="grow bg-grey-2 -mb-8 py-12 px-4 lg:px-6 2xl:px-0">
+      <div className="m-auto xl:max-w-[90rem] 2xl:px-6">
+        <div className="flex justify-between max-sm:flex-col gap-y-4">
+          <h2 className="mb-0">
+            Référentiel{' '}
+            {referentielToName[referentielId as ReferentielOfIndicateur]}
+          </h2>
+          <div className="flex gap-x-4">
+            <Select
+              options={[]}
+              onChange={() => {}}
+              values={[]}
+              customItem={(v) => <span className="text-grey-8">{v.label}</span>}
+              small
+            />
+            <Button
+              icon="save-3-line"
+              size="sm"
+              className="whitespace-nowrap min-w-fit"
+            >
+              Figer le référentiel
+            </Button>
+          </div>
+        </div>
+        <div className="mt-4 mb-8">
+          <ProgressBarWithTooltip
+            score={[
+              {
+                label: avancementToLabel.fait,
+                value: 10,
+                color: actionAvancementColors.fait,
+              },
+            ]}
+            total={100}
+            defaultScore={{
+              label: avancementToLabel.non_renseigne,
+              color: actionAvancementColors.non_renseigne,
+            }}
+            valueToDisplay={avancementToLabel.fait}
+            styleOptions={{
+              justify: 'start',
+              fullWidth: true,
+            }}
+          />
+        </div>
 
-      <Tabs
-        defaultActiveTab={activeTab}
-        onChange={handleChange}
-        tabsListClassName="!justify-start pl-0 flex-nowrap overflow-x-scroll bg-transparent"
-      >
-        <Tab label="Actions">
-          <Card>
-            <ActionsReferentiels />
-          </Card>
-        </Tab>
-        <Tab label="Aide à la priorisation">
-          {activeTab === TABS_INDEX['priorisation'] ? (
+        <Tabs
+          defaultActiveTab={activeTab}
+          onChange={handleChange}
+          tabsListClassName="!justify-start pl-0 flex-nowrap overflow-x-scroll bg-transparent"
+        >
+          <Tab label="Actions">
             <Card>
-              <AidePriorisation />
+              <ActionsReferentiels />
             </Card>
-          ) : (
-            <Card>...</Card>
-          )}
-        </Tab>
-        <Tab label="Détail des statuts">
-          {activeTab === TABS_INDEX['detail'] ? (
-            <Card>
-              <DetailTacheTable />
-            </Card>
-          ) : (
-            <Card>...</Card>
-          )}
-        </Tab>
-      </Tabs>
-    </main>
+          </Tab>
+          <Tab label="Aide à la priorisation">
+            {activeTab === TABS_INDEX['priorisation'] ? (
+              <Card>
+                <AidePriorisation />
+              </Card>
+            ) : (
+              <Card>...</Card>
+            )}
+          </Tab>
+          <Tab label="Détail des statuts">
+            {activeTab === TABS_INDEX['detail'] ? (
+              <Card>
+                <DetailTacheTable />
+              </Card>
+            ) : (
+              <Card>...</Card>
+            )}
+          </Tab>
+        </Tabs>
+      </div>
+    </div>
   );
 };
 

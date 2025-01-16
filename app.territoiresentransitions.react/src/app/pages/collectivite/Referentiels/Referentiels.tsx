@@ -1,22 +1,10 @@
-import { ActionDefinitionSummary } from '@/app/core-logic/api/endpoints/ActionDefinitionSummaryReadEndpoint';
 import { useReferentielId } from '@/app/core-logic/hooks/params';
 import { useReferentielDownToAction } from '@/app/core-logic/hooks/referentiel';
 import { useCurrentCollectivite } from '@/app/core-logic/hooks/useCurrentCollectivite';
 import { Referentiel } from '@/app/types/litterals';
-import ActionProgressBar from '@/app/ui/referentiels/ActionProgressBar';
 import { ExpandableAction } from '@/app/ui/shared/actions/ExpandableAction';
+import { Checkbox, Input, Select } from '@/ui';
 import { useExportScore } from './useExportScore';
-
-const ReferentielHead = (props: { referentiel: ActionDefinitionSummary }) => {
-  return (
-    <>
-      <header className="flex flex-row mb-6 items-center justify-between">
-        <h2 className="fr-h2">{props.referentiel.nom}</h2>
-        <ActionProgressBar action={props.referentiel} />
-      </header>
-    </>
-  );
-};
 
 export const ActionsReferentiels = () => {
   const referentielId = useReferentielId();
@@ -35,9 +23,63 @@ export const ActionsReferentiels = () => {
   if (!referentiel) return <></>;
 
   return (
-    <main data-test="ActionsReferentiels" className="fr-container mt-9">
-      <ReferentielHead referentiel={referentiel} />
+    <main data-test="ActionsReferentiels" className="fr-container mt-2">
       <section>
+        <>
+          <div className="relative">
+            <div className="relative z-[1] flex max-xl:flex-col justify-between xl:items-center gap-4 pb-6 border-b border-primary-3">
+              <div className="flex max-md:flex-col gap-x-8 gap-y-4 md:items-center">
+                {/** Tri */}
+                <div className="w-full md:w-64">
+                  <Select
+                    options={[]}
+                    onChange={() => {}}
+                    values={[]}
+                    customItem={(v) => (
+                      <span className="text-grey-8">{v.label}</span>
+                    )}
+                    small
+                  />
+                </div>
+              </div>
+
+              <div className="flex gap-x-6">
+                <Checkbox
+                  label="Afficher la description des actions"
+                  variant="switch"
+                  labelClassname="font-normal text-sm !text-grey-7"
+                  containerClassname="items-center"
+                  checked={true}
+                  onChange={() => {}}
+                  disabled={isLoading}
+                />
+
+                <Checkbox
+                  label="Appliquer des actions groupées"
+                  variant="switch"
+                  labelClassname="font-normal text-sm !text-grey-7"
+                  containerClassname="items-center"
+                  checked={true}
+                  onChange={() => {}}
+                  disabled={isLoading}
+                />
+              </div>
+              <div className="flex gap-x-8 gap-y-4">
+                {/** Champ de recherche */}
+                <Input
+                  type="search"
+                  onChange={() => {}}
+                  onSearch={() => {}}
+                  value={''}
+                  containerClassname="w-full xl:w-96"
+                  placeholder="Rechercher par nom ou description"
+                  displaySize="sm"
+                />
+              </div>
+            </div>
+          </div>
+        </>
+
         {axes.map((axe) => (
           <ExpandableAction action={axe} key={axe.id} />
         ))}
