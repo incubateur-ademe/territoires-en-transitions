@@ -11,6 +11,7 @@ type CellAnneeListProps = {
   confidentiel?: boolean;
   data: PreparedData;
   definition: IndicateurDefinition;
+  readonly?: boolean;
   type: SourceType;
   onDelete: (valeur: IndicateurSourceValeur) => void;
 };
@@ -20,6 +21,7 @@ export const CellAnneeList = ({
   confidentiel,
   data,
   definition,
+  readonly,
   type,
   onDelete,
 }: CellAnneeListProps) => {
@@ -44,7 +46,7 @@ export const CellAnneeList = ({
         )}
         <div className="flex items-center justify-between">
           <span className="w-full">{annee}</span>
-          {valeur && (
+          {valeur && !readonly && (
             <Button
               className="!bg-transparent !border-none"
               icon="delete-bin-6-line"
