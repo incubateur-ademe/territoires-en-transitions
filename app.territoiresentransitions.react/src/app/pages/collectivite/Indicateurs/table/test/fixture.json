@@ -1,0 +1,79 @@
+{
+  "indicateurs": [
+    {
+      "definition": {
+        "id": 177,
+        "groupementId": null,
+        "collectiviteId": null,
+        "identifiantReferentiel": "cae_8",
+        "titre": "Rénovation énergétique des logements",
+        "titreLong": "Nombre de logements rénovés énergétiquement (nombre logements rénovés/100 logements existants)",
+        "description": "<p>L'indicateur mesure le nombre annuel de logements rénovés via les dispositifs de subventionnement et d’accompagnement dont la collectivité est partenaire, ramené au nombre de logements du territoire (pour 100 logements).</p>\n<p>Pour rappel l’objectif national du plan de rénovation énergétique de l’habitat est de 500 000 logements rénovés par an, soit 1,4 logements rénovés pour 100 logements existants (36,1 millions de logements en 2020 selon l’INSEE).</p>\n",
+        "unite": "nombre logements rénovés/100 logements existants",
+        "borneMin": null,
+        "borneMax": null,
+        "participationScore": false,
+        "sansValeurUtilisateur": false,
+        "valeurCalcule": null,
+        "createdAt": "2025-01-07 13:36:56.274496+00",
+        "modifiedAt": "2025-01-07 14:43:06.928657+00",
+        "createdBy": null,
+        "modifiedBy": null
+      },
+      "sources": {
+        "collectivite": {
+          "source": "collectivite",
+          "metadonnees": [],
+          "valeurs": [
+            {
+              "id": 1,
+              "dateValeur": "2020-01-01",
+              "resultat": 20,
+              "objectif": 21,
+              "resultatCommentaire": "commentaire résultat 2020"
+            },
+            {
+              "id": 2,
+              "dateValeur": "2021-01-01",
+              "resultat": 12,
+              "objectif": 13,
+              "objectifCommentaire": "commentaire objectif 2021"
+            }
+          ]
+        },
+        "citepa": {
+          "source": "citepa",
+          "metadonnees": [],
+          "valeurs": [
+            {
+              "id": 3,
+              "dateValeur": "2020-01-01",
+              "resultat": 20.1
+            },
+            {
+              "id": 4,
+              "dateValeur": "2022-01-01",
+              "resultat": 12.2
+            }
+          ]
+        },
+        "pcaet": {
+          "source": "pcaet",
+          "metadonnees": [],
+          "valeurs": [
+            {
+              "id": 5,
+              "dateValeur": "2020-01-01",
+              "objectif": 19
+            },
+            {
+              "id": 6,
+              "dateValeur": "2021-01-01",
+              "objectif": 10
+            }
+          ]
+        }
+      }
+    }
+  ]
+}
