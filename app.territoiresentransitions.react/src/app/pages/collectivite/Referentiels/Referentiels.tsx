@@ -5,6 +5,7 @@ import { Referentiel } from '@/app/types/litterals';
 import { ExpandableAction } from '@/app/ui/shared/actions/ExpandableAction';
 import { Checkbox, Input, OptionValue, Select } from '@/ui';
 import { useState } from 'react';
+import { ReferentielCard } from '../../../../ui/referentiels/Card/ReferentielCard';
 import { useExportScore } from './useExportScore';
 
 export const ActionsReferentiels = () => {
@@ -30,9 +31,8 @@ export const ActionsReferentiels = () => {
       <section>
         <>
           <div className="relative">
-            <div className="relative z-[1] flex max-xl:flex-col justify-between xl:items-center gap-4 pb-6 border-b border-primary-3">
+            <div className="relative z-[1] flex max-xl:flex-col justify-between xl:items-center gap-4 pb-6 border-b border-primary-3 mb-6">
               <div className="flex max-md:flex-col gap-x-8 gap-y-4 md:items-center">
-                {/** Tri */}
                 <div className="w-full md:w-64">
                   <Select
                     options={[
@@ -43,8 +43,9 @@ export const ActionsReferentiels = () => {
                     onChange={(value) => setDisplayOption(value ?? 'axes')}
                     values={[displayOption]}
                     customItem={(v) => (
-                      <span className="text-grey-8">{v.label}</span>
+                      <span className="text-grey-8 font-normal">{v.label}</span>
                     )}
+                    small
                   />
                 </div>
               </div>
@@ -73,20 +74,35 @@ export const ActionsReferentiels = () => {
                 />
               </div>
               <div className="flex gap-x-8 gap-y-4">
-                {/** Champ de recherche */}
                 <Input
                   type="search"
                   onChange={() => {}}
                   onSearch={() => {}}
                   value={''}
                   containerClassname="w-full xl:w-96"
-                  placeholder="Rechercher par nom ou description"
+                  placeholder="Rechercher une action"
                   displaySize="sm"
                 />
               </div>
             </div>
           </div>
         </>
+
+        {displayOption === 'actions' && (
+          <div>
+            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
+              {actions
+                .filter((action) => action.type === 'action')
+                .map((action) => (
+                  <ReferentielCard
+                    key={action.id}
+                    action={action}
+                    isDescriptionOn={isDescriptionOn}
+                  />
+                ))}
+            </div>
+          </div>
+        )}
 
         {displayOption === 'axes' &&
           axes.map((axe) => (
