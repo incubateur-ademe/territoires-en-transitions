@@ -176,4 +176,41 @@ describe("Route de lecture/écriture des valeurs d'indicateurs", () => {
     };
     await expect(caller.indicateurs.valeurs.upsert(input)).rejects.toThrow();
   });
+
+  test('Permet de supprimer une valeur', async () => {
+    const caller = router.createCaller({ user: yoloDodoUser });
+
+    // insère une valeur
+    const inputInsert: InputUpsert = {
+      collectiviteId,
+      indicateurId,
+      dateValeur: '2021-01-01',
+      resultat: 42,
+      resultatCommentaire: 'commentaire',
+    };
+    await caller.indicateurs.valeurs.upsert(inputInsert);
+
+    // vérifie le nombre de valeurs avant la suppression
+    const inputBefore: InputList = {
+      collectiviteId,
+      indicateurIds: [indicateurId],
+    };
+    const resultBefore = await caller.indicateurs.valeurs.list(inputBefore);
+    expect(
+      resultBefore.indicateurs[0].sources.collectivite.valeurs.length
+    ).toBe(1);
+
+    // supprime l'entrée
+    const valeurId =
+      resultBefore.indicateurs[0].sources.collectivite.valeurs[0].id;
+    await caller.indicateurs.valeurs.delete({
+      collectiviteId,
+      indicateurId,
+      id: valeurId,
+    });
+
+    // vérifie le nombre de valeurs après la suppression
+    const resultAfter = await caller.indicateurs.valeurs.list(inputBefore);
+    expect(resultAfter.indicateurs.length).toBe(0);
+  });
 });

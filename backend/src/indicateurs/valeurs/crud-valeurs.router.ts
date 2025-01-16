@@ -1,6 +1,6 @@
 import { TrpcService } from '@/backend/utils/trpc/trpc.service';
 import { Injectable } from '@nestjs/common';
-import { upsertValeurIndicateurSchema } from '../index-domain';
+import { deleteValeurIndicateurSchema } from '../shared/models/delete-valeur-indicateur.request';
 import { getIndicateursValeursRequestSchema } from '../shared/models/get-indicateurs.request';
 import { upsertValeurIndicateurSchema } from '../shared/models/upsert-valeur-indicateur.request';
 import IndicateurValeursService from './crud-valeurs.service';
@@ -22,6 +22,11 @@ export class IndicateurValeursRouter {
       .input(upsertValeurIndicateurSchema)
       .mutation(({ input, ctx }) => {
         return this.service.upsertValeur(input, ctx.user);
+      }),
+    delete: this.trpc.authedProcedure
+      .input(deleteValeurIndicateurSchema)
+      .mutation(({ input, ctx }) => {
+        return this.service.deleteValeurIndicateur(input, ctx.user);
       }),
   });
 }

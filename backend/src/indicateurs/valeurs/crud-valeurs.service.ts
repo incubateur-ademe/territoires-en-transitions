@@ -22,6 +22,7 @@ import * as _ from 'lodash';
 import { AuthenticatedUser, AuthRole } from '../../auth/models/auth.models';
 import { DatabaseService } from '../../utils/database/database.service';
 import { DeleteIndicateursValeursRequestType } from '../shared/models/delete-indicateurs.request';
+import { DeleteValeurIndicateur } from '../shared/models/delete-valeur-indicateur.request';
 import { GetIndicateursValeursRequestType } from '../shared/models/get-indicateurs.request';
 import { GetIndicateursValeursResponseType } from '../shared/models/get-indicateurs.response';
 import {
@@ -365,6 +366,31 @@ export default class CrudValeursService {
           .returning();
         return inserted[0];
       }
+    }
+  }
+
+  async deleteValeurIndicateur(
+    data: DeleteValeurIndicateur,
+    tokenInfo: AuthenticatedUser
+  ) {
+    const { collectiviteId, indicateurId, id } = data;
+    await this.permissionService.isAllowed(
+      tokenInfo,
+      PermissionOperation.INDICATEURS_EDITION,
+      ResourceType.COLLECTIVITE,
+      collectiviteId
+    );
+
+    if (tokenInfo.role === AuthRole.AUTHENTICATED && tokenInfo.id) {
+      await this.databaseService.db
+        .delete(indicateurValeurTable)
+        .where(
+          and(
+            eq(indicateurValeurTable.collectiviteId, collectiviteId),
+            eq(indicateurValeurTable.indicateurId, indicateurId),
+            eq(indicateurValeurTable.id, id)
+          )
+        );
     }
   }
 
