@@ -16,13 +16,13 @@ export const Counter = ({ value, total, className }: CounterProps) => {
         title={`${percentage} %`}
         state="success"
         uppercase={false}
-        className="!rounded-r-none border-[0.5px] border-r-0 !border-grey-7"
+        className="!rounded-r-none border-2 border-r-0"
       />
       <Badge
         title={value && total ? `${value} / ${total} points` : 'Non renseigné'}
         state="success"
         light
-        className="!rounded-l-none border-[0.5px] !border-grey-7"
+        className="!rounded-l-none border-2"
         uppercase={false}
       />
     </div>

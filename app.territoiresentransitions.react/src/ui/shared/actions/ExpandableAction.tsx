@@ -13,8 +13,10 @@ import { Counter } from '../../score/Counter';
  */
 export const ExpandableAction = ({
   action,
+  isDescriptionOn,
 }: {
   action: ActionDefinitionSummary;
+  isDescriptionOn: boolean;
 }) => {
   const ref = useRef<HTMLDivElement>(null);
 
@@ -76,17 +78,28 @@ export const ExpandableAction = ({
           if (action.type === 'axe' || action.type === 'sous-axe') {
             return (
               <div key={action.id} className="ml-4">
-                <ExpandableAction action={action} />
+                <ExpandableAction
+                  action={action}
+                  isDescriptionOn={isDescriptionOn}
+                />
               </div>
             );
           }
         })}
       {isOpen && children.some((action) => action.type === 'action') && (
-        <div className="grid grid-cols-3 gap-4">
+        <div
+          className={`grid ${
+            isDescriptionOn ? 'grid-cols-1' : 'grid-cols-3'
+          } gap-4`}
+        >
           {children
             .filter((action) => action.type === 'action')
             .map((action) => (
-              <ReferentielCard key={action.id} action={action} />
+              <ReferentielCard
+                key={action.id}
+                action={action}
+                isDescriptionOn={isDescriptionOn}
+              />
             ))}
         </div>
       )}
