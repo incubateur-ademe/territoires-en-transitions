@@ -125,8 +125,15 @@ export const getFilteredIndicateursRequestOptionsSchema = z.object({
     .describe(
       'Faux ou non renseigné pour ne récupérer que les parents. \n' +
         'Vrai pour ne récupérer que les indicateurs directement ciblés par les filtres, parents ou enfants. \n' +
-        "Ignore ce filtre si le filtre 'text' recherche sur un #identifiant."
+        "Ignore ce filtre si le filtre 'text' recherche sur un #identifiant ou si le filtre indicateurIds n'est pas vide."
     ),
+  indicateurIds: z
+    .number()
+    .array()
+    .optional()
+    .describe(
+      "Liste des identifiants des indicateurs à récupérer."
+    )
 });
 
 export type GetFilteredIndicateursRequestOptionType = z.infer<

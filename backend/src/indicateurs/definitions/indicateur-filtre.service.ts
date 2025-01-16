@@ -139,7 +139,8 @@ export default class IndicateurFiltreService {
     // Vérifie s'il faut inclure les enfants dans le retour filtré ou dans le filtre des parents
     const avecEnfant =
       filters.withChildren === true ||
-      (filters.text && filters.text.startsWith('#')) === true;
+      (filters.text && filters.text.startsWith('#')) === true ||
+      (filters.indicateurIds && filters.indicateurIds.length > 0) === true;
 
     // Crée la requête pour avoir tous les indicateurs de la collectivité ainsi que leurs tables liées utiles aux filters voulus
     const query = this.getQueryString(collectiviteId, filters);
@@ -776,6 +777,11 @@ export default class IndicateurFiltreService {
         ? intersection([options.actionId], indicateur.actionIds).length > 0
         : true;
 
+      const indicateurIds =
+        options.indicateurIds && options.indicateurIds.length > 0
+          ? options.indicateurIds.includes(indicateur.id)
+          : true;
+
       // Applique les conditions
       return (
         parents &&
@@ -793,7 +799,8 @@ export default class IndicateurFiltreService {
         utilisateurPiloteIds &&
         estComplet &&
         text &&
-        actionId
+        actionId &&
+        indicateurIds
       );
     });
   }
