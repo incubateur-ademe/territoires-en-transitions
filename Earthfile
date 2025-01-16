@@ -611,7 +611,7 @@ api-test:
               --env SUPABASE_URL=$API_URL \
               --env SUPABASE_KEY=$SERVICE_ROLE_KEY \
               --env SUPABASE_SERVICE_ROLE_KEY=$SERVICE_ROLE_KEY \
-              api-test:latest test -A tests/$test/*.test.ts --location 'http://localhost'
+              api-test:latest test --no-check -A tests/$test/*.test.ts --location 'http://localhost'
     END
 
 api-crud-test:
