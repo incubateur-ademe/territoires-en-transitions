@@ -49,11 +49,13 @@ const ProgressBar = ({
       className={classNames('flex gap-3 items-center', `justify-${justify}`)}
     >
       {/* Légende à gauche de la barre de progression */}
-      {displayedValue !== undefined && displayedValue !== null && (
-        <div className="text-sm font-bold">
-          <TweenText text={`${toFixed(displayedValue)} %`} align-right />
-        </div>
-      )}
+      {valueToDisplay &&
+        displayedValue !== undefined &&
+        displayedValue !== null && (
+          <div className="text-sm font-bold">
+            <TweenText text={`${toFixed(displayedValue)} %`} align-right />
+          </div>
+        )}
 
       {/* Barre de progression */}
       <div
