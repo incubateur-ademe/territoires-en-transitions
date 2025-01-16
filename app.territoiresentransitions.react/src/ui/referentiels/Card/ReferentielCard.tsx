@@ -11,11 +11,15 @@ import ReferentielCardFooter from './ReferentielCardFooter';
 /**
  * Used on referentiels page, links to action page.
  */
+interface ReferentielCardProps {
+  action: ActionDefinitionSummary;
+  isDescriptionOn: boolean;
+}
+
 export const ReferentielCard = ({
   action,
-}: {
-  action: ActionDefinitionSummary;
-}) => {
+  isDescriptionOn,
+}: ReferentielCardProps) => {
   const collectiviteId = useCollectiviteId();
   const referentiel = referentielId(action.id);
 
@@ -50,17 +54,35 @@ export const ReferentielCard = ({
         }
       >
         <div className="flex min-w-min">
-          <span className="text-md font-bold text-primary-9 font-normal">
+          <span className="text-md font-bold text-primary-9 font-bold">
             {action.identifiant} {action.nom}
           </span>
         </div>
-        <div>
-          <Counter value={1} total={10} className="mb-3" />
-          <ActionProgressBar
-            action={action}
-            styleOptions={{ justify: 'start' }}
-          />
-        </div>
+        {isDescriptionOn && action.description ? (
+          <>
+            <p
+              className="htmlContent text-sm text-grey-9 font-light"
+              dangerouslySetInnerHTML={{
+                __html: action.description,
+              }}
+            />
+            <div>
+              <Counter value={1} total={10} className="mb-3" />
+              <ActionProgressBar
+                action={action}
+                styleOptions={{ justify: 'start' }}
+              />
+            </div>
+          </>
+        ) : (
+          <div>
+            <Counter value={1} total={10} className="mb-3" />
+            <ActionProgressBar
+              action={action}
+              styleOptions={{ justify: 'start' }}
+            />
+          </div>
+        )}
       </Card>
     </Link>
   );

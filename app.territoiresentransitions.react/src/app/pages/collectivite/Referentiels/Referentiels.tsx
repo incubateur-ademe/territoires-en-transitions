@@ -3,7 +3,8 @@ import { useReferentielDownToAction } from '@/app/core-logic/hooks/referentiel';
 import { useCurrentCollectivite } from '@/app/core-logic/hooks/useCurrentCollectivite';
 import { Referentiel } from '@/app/types/litterals';
 import { ExpandableAction } from '@/app/ui/shared/actions/ExpandableAction';
-import { Checkbox, Input, Select } from '@/ui';
+import { Checkbox, Input, OptionValue, Select } from '@/ui';
+import { useState } from 'react';
 import { useExportScore } from './useExportScore';
 
 export const ActionsReferentiels = () => {
@@ -19,6 +20,8 @@ export const ActionsReferentiels = () => {
     referentielId,
     collectivite
   );
+  const [isDescriptionOn, setIsDescriptionOn] = useState(false);
+  const [displayOption, setDisplayOption] = useState<OptionValue>('axes');
 
   if (!referentiel) return <></>;
 
@@ -32,13 +35,16 @@ export const ActionsReferentiels = () => {
                 {/** Tri */}
                 <div className="w-full md:w-64">
                   <Select
-                    options={[]}
-                    onChange={() => {}}
-                    values={[]}
+                    options={[
+                      { value: 'axes', label: 'Par axes' },
+                      { value: 'actions', label: 'Par actions' },
+                      { value: 'competences', label: 'Par compétences' },
+                    ]}
+                    onChange={(value) => setDisplayOption(value ?? 'axes')}
+                    values={[displayOption]}
                     customItem={(v) => (
                       <span className="text-grey-8">{v.label}</span>
                     )}
-                    small
                   />
                 </div>
               </div>
@@ -49,8 +55,10 @@ export const ActionsReferentiels = () => {
                   variant="switch"
                   labelClassname="font-normal text-sm !text-grey-7"
                   containerClassname="items-center"
-                  checked={true}
-                  onChange={() => {}}
+                  checked={isDescriptionOn}
+                  onChange={(evt) => {
+                    setIsDescriptionOn(!isDescriptionOn);
+                  }}
                   disabled={isLoading}
                 />
 
@@ -80,9 +88,14 @@ export const ActionsReferentiels = () => {
           </div>
         </>
 
-        {axes.map((axe) => (
-          <ExpandableAction action={axe} key={axe.id} />
-        ))}
+        {displayOption === 'axes' &&
+          axes.map((axe) => (
+            <ExpandableAction
+              action={axe}
+              key={axe.id}
+              isDescriptionOn={isDescriptionOn}
+            />
+          ))}
       </section>
       <button
         data-test="export-scores"
