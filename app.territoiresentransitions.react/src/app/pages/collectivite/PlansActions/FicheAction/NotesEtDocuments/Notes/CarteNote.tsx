@@ -1,8 +1,8 @@
 import AlerteSuppression from '@/app/referentiels/preuves/Bibliotheque/AlerteSuppression';
+import DeleteButton from '@/app/ui/buttons/DeleteButton';
 import { getTruncatedText } from '@/app/utils/formatUtils';
 import { Button, Card, Icon } from '@/ui';
 import { useState } from 'react';
-import DeleteButton from '../../DeleteButton';
 import ModaleEditionNote from './ModaleEditionNote';
 
 type CarteNoteProps = {

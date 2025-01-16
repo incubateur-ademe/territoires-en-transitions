@@ -1,9 +1,9 @@
 import { EditerDocumentModal } from '@/app/referentiels/preuves/Bibliotheque/EditerDocumentModal';
 import { TPreuve } from '@/app/referentiels/preuves/Bibliotheque/types';
+import DeleteButton from '@/app/ui/buttons/DeleteButton';
 import { Button } from '@/ui';
 import classNames from 'classnames';
 import { useState } from 'react';
-import DeleteButton from '../../../app/pages/collectivite/PlansActions/FicheAction/DeleteButton';
 import { EditerLienModal } from './EditerLienModal';
 
 type MenuCarteDocumentProps = {

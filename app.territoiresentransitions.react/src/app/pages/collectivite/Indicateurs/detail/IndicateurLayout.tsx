@@ -1,17 +1,11 @@
-import { referentielToName } from '@/app/app/labels';
-import BadgeIndicateurPerso from '@/app/app/pages/collectivite/Indicateurs/components/BadgeIndicateurPerso';
 import { useCurrentCollectivite } from '@/app/core-logic/hooks/useCurrentCollectivite';
-import ScrollTopButton from '@/app/ui/buttons/ScrollTopButton';
-import { BadgeACompleter } from '@/app/ui/shared/Badge/BadgeACompleter';
-import { Badge, Tab, Tabs } from '@/ui';
-import { HeaderIndicateur } from '../Indicateur/detail/HeaderIndicateur';
+import { Tab, Tabs } from '@/ui';
 import { useUpdateIndicateurDefinition } from '../Indicateur/useUpdateIndicateurDefinition';
-import BadgeOpenData from '../components/BadgeOpenData';
 import { TIndicateurDefinition } from '../types';
 import ActionsLiees from './ActionsLiees';
 import DonneesIndicateur from './DonneesIndicateur';
 import FichesLiees from './FichesLiees';
-import IndicateurToolbar from './IndicateurToolbar';
+import IndicateurHeader from './Header/IndicateurHeader';
 import SousIndicateurs from './SousIndicateurs';
 
 type IndicateurLayoutProps = {
@@ -25,7 +19,7 @@ const IndicateurLayout = ({
   definition,
   isPerso = false,
 }: IndicateurLayoutProps) => {
-  const { enfants, sansValeur, rempli, titre } = definition;
+  const { enfants, sansValeur } = definition;
 
   const { mutate: updateDefinition } = useUpdateIndicateurDefinition();
 
@@ -75,38 +69,19 @@ const IndicateurLayout = ({
   };
 
   return (
-    <div data-test={dataTest} className="w-full min-h-full !mt-0">
-      <HeaderIndicateur
-        title={titre}
-        isReadonly={isReadonly || !isPerso}
-        onUpdate={handleTitreUpdate}
-      />
-
-      <div className="flex flex-col px-10 pt-6 pb-14">
-        <div className="flex items-center justify-between mb-12">
-          {/* Liste des badges */}
-          {!composeSansAgregation && (
-            <div className="flex gap-2">
-              <BadgeACompleter a_completer={!rempli} />
-              {isPerso && <BadgeIndicateurPerso />}
-              {definition.participationScore && (
-                <Badge
-                  title={`Participe au score ${referentielToName.cae}`}
-                  uppercase={false}
-                  state="grey"
-                />
-              )}
-              {definition.hasOpenData && <BadgeOpenData />}
-            </div>
-          )}
-
-          {/* Menu export / infos / suppression */}
-          <IndicateurToolbar
-            {...{ definition, isPerso, isReadonly }}
-            collectiviteId={collectiviteId!}
-            className="ml-auto"
-          />
-        </div>
+    <div
+      data-test={dataTest}
+      className="w-full px-2 md:px-4 lg:px-6 py-12 bg-grey-2"
+    >
+      <div className="flex flex-col w-full px-2 mx-auto xl:max-w-7xl 2xl:max-w-8xl">
+        <IndicateurHeader
+          collectiviteId={collectiviteId!}
+          definition={definition}
+          isReadonly={isReadonly}
+          isPerso={isPerso}
+          composeSansAgregation={composeSansAgregation}
+          onUpdate={handleTitreUpdate}
+        />
 
         {composeSansAgregation ? (
           // Groupe d'indicateurs sans agrégation
@@ -150,8 +125,6 @@ const IndicateurLayout = ({
             </Tab>
           </Tabs>
         )}
-
-        <ScrollTopButton className="mt-8" />
       </div>
     </div>
   );

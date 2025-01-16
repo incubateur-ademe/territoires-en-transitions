@@ -18,7 +18,21 @@ type FicheActionHeaderProps = {
 };
 
 const Header = ({ fiche, updateTitle, isReadonly }: FicheActionHeaderProps) => {
-  const { titre, collectiviteId, axes } = fiche;
+  const {
+    titre,
+    collectiviteId,
+    axes,
+    modifiedBy,
+    modifiedAt,
+    createdBy,
+    createdAt,
+  } = fiche;
+
+  const displayCreationInfo = createdBy || createdAt;
+  const displayModificationInfo =
+    (modifiedBy || modifiedAt) && modifiedAt !== createdAt;
+
+  const displayInfoSection = displayCreationInfo || displayModificationInfo;
 
   return (
     <div className="w-full mb-6" data-test="fiche-header">
@@ -47,33 +61,37 @@ const Header = ({ fiche, updateTitle, isReadonly }: FicheActionHeaderProps) => {
       {/* Fils d'ariane avec emplacements de la fiche */}
       <CheminsFiche titre={titre} collectiviteId={collectiviteId} axes={axes} />
 
-      {/* Création et modification de la fiche */}
-      {fiche.modifiedBy ||
-      fiche.createdBy ||
-      fiche.modifiedAt ||
-      fiche.createdAt ? (
-        <div className="flex max-md:flex-col gap-2 items-center mt-3 mb-4 py-3 text-sm text-grey-8 border-y boder-primary-3">
-          <div className="flex gap-1">
-            <Icon icon="calendar-2-line" size="sm" />
-            Modifiée{' '}
-            {fiche.modifiedAt
-              ? `le ${format(new Date(fiche.modifiedAt), 'dd/MM/yyyy')}`
-              : ''}{' '}
-            {fiche.modifiedBy
-              ? `par ${fiche.modifiedBy?.prenom} ${fiche.modifiedBy?.nom}`
-              : ''}
-          </div>
-          <div className="max-md:hidden w-[1px] h-5 bg-grey-5" />
-          <div className="flex gap-1">
-            <Icon icon="file-add-line" size="sm" />
-            Créée{' '}
-            {fiche.createdAt
-              ? `le ${format(new Date(fiche.createdAt), 'dd/MM/yyyy')}`
-              : ''}{' '}
-            {fiche.createdBy
-              ? `par ${fiche.createdBy?.prenom} ${fiche.createdBy?.nom}`
-              : ''}
-          </div>
+      {/* Infos de création et de modification de la fiche */}
+      {displayInfoSection ? (
+        <div className="flex max-md:flex-col gap-3 items-center mt-3 mb-4 py-3 text-sm text-grey-8 border-y border-primary-3">
+          {displayModificationInfo && (
+            <div className="flex gap-1 items-center">
+              <Icon icon="calendar-2-line" size="sm" />
+              Modifiée{' '}
+              {modifiedAt
+                ? `le ${format(new Date(modifiedAt), 'dd/MM/yyyy')}`
+                : ''}{' '}
+              {modifiedBy ? `par ${modifiedBy?.prenom} ${modifiedBy?.nom}` : ''}
+            </div>
+          )}
+
+          {displayCreationInfo && (
+            <>
+              {displayModificationInfo && (
+                <div className="max-md:hidden w-[1px] h-5 bg-grey-5" />
+              )}
+              <div className="flex gap-1 items-center">
+                <Icon icon="file-add-line" size="sm" />
+                Créée{' '}
+                {createdAt
+                  ? `le ${format(new Date(createdAt), 'dd/MM/yyyy')}`
+                  : ''}{' '}
+                {createdBy
+                  ? `par ${fiche.createdBy?.prenom} ${createdBy?.nom}`
+                  : ''}
+              </div>
+            </>
+          )}
         </div>
       ) : (
         <Divider className="mt-4" />

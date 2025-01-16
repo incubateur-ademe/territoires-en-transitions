@@ -16,7 +16,7 @@ const ActionsLiees = ({ actionsIds }: Props) => {
       size="xs"
     />
   ) : (
-    <div>
+    <div className="bg-white p-10 border border-grey-3 rounded-xl">
       <div className="w-full border-b border-primary-3 mb-6">
         <h6 className="text-lg h-[2.125rem] mb-5">
           Actions des référentiels liées

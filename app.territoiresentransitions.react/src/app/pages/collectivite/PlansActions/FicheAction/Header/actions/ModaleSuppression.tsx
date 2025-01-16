@@ -1,7 +1,7 @@
+import DeleteButton from '@/app/ui/buttons/DeleteButton';
 import { Modal, ModalFooterOKCancel } from '@/ui';
 import { QueryKey } from 'react-query';
 import { useDeleteFicheAction } from '../../data/useDeleteFicheAction';
-import DeleteButton from '../../DeleteButton';
 
 type ModaleSuppressionProps = {
   ficheId: number | null;
