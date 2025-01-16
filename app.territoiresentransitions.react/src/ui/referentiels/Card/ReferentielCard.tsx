@@ -70,7 +70,8 @@ export const ReferentielCard = ({
               <Counter value={1} total={10} className="mb-3" />
               <ActionProgressBar
                 action={action}
-                styleOptions={{ justify: 'start' }}
+                className=""
+                styleOptions={{ justify: 'start', fullWidth: true }}
               />
             </div>
           </>
@@ -79,7 +80,7 @@ export const ReferentielCard = ({
             <Counter value={1} total={10} className="mb-3" />
             <ActionProgressBar
               action={action}
-              styleOptions={{ justify: 'start' }}
+              styleOptions={{ justify: 'start', fullWidth: true }}
             />
           </div>
         )}
