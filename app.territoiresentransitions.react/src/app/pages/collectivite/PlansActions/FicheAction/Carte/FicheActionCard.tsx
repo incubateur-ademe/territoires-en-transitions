@@ -1,5 +1,6 @@
 import { FicheResume } from '@/api/plan-actions/domain';
 import { useCurrentCollectivite } from '@/app/core-logic/hooks/useCurrentCollectivite';
+import ListWithTooltip from '@/app/ui/lists/ListWithTooltip';
 import { getModifiedSince } from '@/app/utils/formatUtils';
 import { Button, Card, Checkbox, Notification, Tooltip } from '@/ui';
 import classNames from 'classnames';
@@ -190,25 +191,9 @@ const FicheActionCard = ({
         {/* Plans d'action dans lesquels sont la fiche */}
         <span title="Emplacements" className="text-sm font-medium">
           {!!ficheAction.plans && !!ficheAction.plans?.[0] ? (
-            <>
-              {generateTitle(ficheAction.plans[0].nom)}
-              {ficheAction.plans.length > 1 && (
-                <Tooltip
-                  openingDelay={250}
-                  label={
-                    <ul className="max-w-xs list-disc list-inside">
-                      {ficheAction.plans.map((plan, i) => (
-                        <li key={i}>{generateTitle(plan.nom)}</li>
-                      ))}
-                    </ul>
-                  }
-                >
-                  <span className="ml-1.5 font-medium text-primary-8">
-                    +{ficheAction.plans.length - 1}
-                  </span>
-                </Tooltip>
-              )}
-            </>
+            <ListWithTooltip
+              list={ficheAction.plans.map((p) => generateTitle(p.nom))}
+            />
           ) : (
             'Fiche non classée'
           )}

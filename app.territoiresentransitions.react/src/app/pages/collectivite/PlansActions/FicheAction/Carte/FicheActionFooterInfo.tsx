@@ -1,7 +1,8 @@
 import { Personne } from '@/api/collectivites';
+import ListWithTooltip from '@/app/ui/lists/ListWithTooltip';
 import { getTextFormattedDate } from '@/app/utils/formatUtils';
 import { Tag } from '@/domain/collectivites';
-import { Icon, Tooltip } from '@/ui';
+import { Icon } from '@/ui';
 import classNames from 'classnames';
 import { isBefore, startOfToday } from 'date-fns';
 
@@ -54,26 +55,11 @@ const FicheActionFooterInfo = ({
           {(hasDateDeFin || ameliorationContinue) && (
             <div className="w-[0.5px] h-4 bg-grey-5" />
           )}
-          <span title="Pilotes">
-            <Icon icon="user-line" size="sm" className="mr-1" />
-            {pilotes[0].nom}
-            {pilotes.length > 1 && (
-              <Tooltip
-                openingDelay={250}
-                label={
-                  <ul className="max-w-xs list-disc list-inside">
-                    {pilotes.map((pilote, i) => (
-                      <li key={i}>{pilote.nom}</li>
-                    ))}
-                  </ul>
-                }
-              >
-                <span className="ml-1.5 font-medium text-primary-8">
-                  +{pilotes.length - 1}
-                </span>
-              </Tooltip>
-            )}
-          </span>
+          <ListWithTooltip
+            title="Pilotes"
+            list={pilotes.map((p) => p.nom!)}
+            icon="user-line"
+          />
         </>
       )}
 
@@ -82,27 +68,12 @@ const FicheActionFooterInfo = ({
         <>
           {(hasDateDeFin || ameliorationContinue || hasPilotes) && (
             <div className="w-[0.5px] h-4 bg-grey-5" />
-          )}{' '}
-          <span title="Direction ou service pilote">
-            <Icon icon="leaf-line" size="sm" className="mr-1" />
-            {services[0].nom}
-            {services.length > 1 && (
-              <Tooltip
-                openingDelay={250}
-                label={
-                  <ul className="max-w-xs list-disc list-inside">
-                    {services.map((service, i) => (
-                      <li key={i}>{service.nom}</li>
-                    ))}
-                  </ul>
-                }
-              >
-                <span className="ml-1.5 font-medium text-primary-8">
-                  +{services.length - 1}
-                </span>
-              </Tooltip>
-            )}
-          </span>
+          )}
+          <ListWithTooltip
+            title="Direction ou service pilote"
+            list={services.map((s) => s.nom)}
+            icon="leaf-line"
+          />
         </>
       )}
     </div>
