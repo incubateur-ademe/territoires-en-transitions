@@ -29,7 +29,7 @@ const DonneesIndicateur = ({
     useIndicateurImportSources(definition.id);
 
   return (
-    <div className="flex flex-col gap-8">
+    <div className="flex flex-col gap-8 bg-white p-10 border border-grey-3 rounded-xl">
       {!!sources?.length && (
         <ImportSourcesSelector
           definition={definition}

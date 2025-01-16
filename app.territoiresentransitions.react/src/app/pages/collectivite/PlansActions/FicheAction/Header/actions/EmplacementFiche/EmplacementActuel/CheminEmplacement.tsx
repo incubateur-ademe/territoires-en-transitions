@@ -1,6 +1,6 @@
 import { useRemoveFicheFromAxe } from '@/app/app/pages/collectivite/PlansActions/FicheAction/data/useRemoveFicheFromAxe';
-import DeleteButton from '@/app/app/pages/collectivite/PlansActions/FicheAction/DeleteButton';
 import { usePlanActionChemin } from '@/app/app/pages/collectivite/PlansActions/PlanAction/data/usePlanActionChemin';
+import DeleteButton from '@/app/ui/buttons/DeleteButton';
 import { Icon } from '@/ui';
 
 type CheminEmplacementProps = {

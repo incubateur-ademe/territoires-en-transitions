@@ -43,7 +43,7 @@ const FichesLiees = ({ definition, isReadonly }: Props) => {
           size="xs"
         />
       ) : (
-        <div>
+        <div className="bg-white p-10 border border-grey-3 rounded-xl">
           <div className="flex justify-between items-center flex-wrap mb-5">
             <h6 className="text-lg mb-0">Fiches des plans liées</h6>
             {!isReadonly && (

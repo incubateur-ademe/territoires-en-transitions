@@ -1,6 +1,6 @@
 import { FicheActionNote } from '@/api/plan-actions';
+import DeleteButton from '@/app/ui/buttons/DeleteButton';
 import { Modal, ModalFooterOKCancel } from '@/ui';
-import DeleteButton from '../DeleteButton';
 import { DeletedNote } from '../data/useUpsertNoteSuivi';
 
 type ModaleSuppressionNoteProps = {

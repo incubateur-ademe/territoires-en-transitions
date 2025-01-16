@@ -35,9 +35,7 @@ const Indicateurs = () => {
           collectiviteIndicateurReferentielPath,
         ]}
       >
-        <CollectivitePageLayout>
-          <IndicateurPage />
-        </CollectivitePageLayout>
+        <IndicateurPage />
       </RouteEnAccesRestreint>
     </Switch>
   );
