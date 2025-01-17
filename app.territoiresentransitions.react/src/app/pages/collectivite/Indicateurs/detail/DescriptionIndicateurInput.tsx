@@ -1,4 +1,4 @@
-import { AutoResizedTextarea, Field } from '@/ui';
+import { Field, Textarea } from '@/ui';
 
 type Props = {
   description: string | undefined | null;
@@ -13,8 +13,9 @@ const DescriptionIndicateurInput = ({
 }: Props) => {
   return (
     <Field title="Description et méthodologie de calcul">
-      <AutoResizedTextarea
+      <Textarea
         data-test="desc"
+        rows={3}
         value={description ?? undefined}
         disabled={disabled}
         onBlur={(evt) => updateDescription(evt.currentTarget.value)}

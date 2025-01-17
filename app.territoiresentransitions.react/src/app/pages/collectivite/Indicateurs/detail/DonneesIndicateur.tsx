@@ -1,10 +1,10 @@
 import { ImportSourcesSelector } from '../Indicateur/detail/ImportSourcesSelector';
 import IndicateurDetailChart from '../Indicateur/detail/IndicateurDetailChart';
-import { IndicateurInfoLiees } from '../Indicateur/detail/IndicateurInfoLiees';
 import { IndicateurValuesTabs } from '../Indicateur/detail/IndicateurValuesTabs';
 import { useIndicateurImportSources } from '../Indicateur/detail/useImportSources';
 import { TIndicateurDefinition } from '../types';
 import DescriptionIndicateurInput from './DescriptionIndicateurInput';
+import ThematiquesIndicateurInput from './ThematiquesIndicateurInput';
 import UniteIndicateurInput from './UniteIndicateurInput';
 
 type Props = {
@@ -55,15 +55,20 @@ const DonneesIndicateur = ({
         importSource={currentSource}
       />
 
+      {/* Thématiques */}
+      {isPerso && (
+        <ThematiquesIndicateurInput
+          definition={definition}
+          disabled={isReadonly}
+        />
+      )}
+
       {/* Description */}
       <DescriptionIndicateurInput
         description={isPerso ? description : commentaire}
         updateDescription={updateDescription}
         disabled={isReadonly}
       />
-
-      {/* Infos liées - à déplacer */}
-      <IndicateurInfoLiees definition={definition} />
 
       {/* Unité personnalisée - à déplacer */}
       {isPerso && (

@@ -3,6 +3,7 @@ import classNames from 'classnames';
 import { useExportIndicateurs } from '../../Indicateur/useExportIndicateurs';
 import { TIndicateurDefinition } from '../../types';
 import DeleteModal from './DeleteModal';
+import EditModal from './EditModal';
 
 type Props = {
   definition: TIndicateurDefinition;
@@ -27,6 +28,10 @@ const IndicateurToolbar = ({
   return (
     <>
       <div className={classNames('flex gap-4 lg:mt-3.5', className)}>
+        {!isReadonly && (
+          <EditModal {...{ collectiviteId, definition, isLoading }} />
+        )}
+
         <Button
           loading={isLoading}
           disabled={isLoading}
