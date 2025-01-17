@@ -32,19 +32,20 @@ export const CellAnneeList = ({
 
   return annees?.map((annee) => {
     const valeur = valeursExistantes.find((v) => v.annee === annee);
+    const modePrive =
+      confidentiel && type === 'resultat' && annee === anneeModePrive;
 
     return (
       <TCell
         key={annee}
         className={classNames(
           HEAD_CELL_STYLE,
-          'font-bold text-center relative min-w-40'
+          'font-bold text-center relative w-[8.5rem]',
+          { '!py-2': modePrive }
         )}
       >
-        {confidentiel && type === 'resultat' && annee === anneeModePrive && (
-          <ResultatModePrive />
-        )}
         <div className="flex items-center justify-between">
+          {modePrive && <ResultatModePrive />}
           <span className="w-full">{annee}</span>
           {valeur && !readonly && (
             <Button
@@ -89,7 +90,7 @@ export const CellAnneeList = ({
 
 const ResultatModePrive = () => (
   <Tooltip label={<p className="min-w-max">Le résultat est en mode privé</p>}>
-    <div className="absolute top-3 left-5">
+    <div>
       <Notification icon="lock-fill" classname="!h-10 w-10" />
     </div>
   </Tooltip>
