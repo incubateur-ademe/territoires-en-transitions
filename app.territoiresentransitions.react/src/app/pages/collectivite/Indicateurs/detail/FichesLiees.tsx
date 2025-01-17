@@ -64,7 +64,7 @@ const FichesLiees = ({ definition, isReadonly }: Props) => {
             }}
             isReadOnly={isReadonly}
             enableGroupedActions
-            containeClassName="bg-white"
+            containerClassName="bg-white"
           />
         </div>
       )}

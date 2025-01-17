@@ -23,7 +23,7 @@ import FilterBadges, {
   CustomFilterBadges,
   useFiltersToBadges,
 } from '@/app/ui/shared/filters/filter-badges';
-import _ from 'lodash';
+import { isEqual } from 'es-toolkit';
 import { FicheResume } from 'packages/api/src/plan-actions';
 import ActionsGroupeesMenu from '../ActionsGroupees/ActionsGroupeesMenu';
 import EmptyFichePicto from '../FicheAction/FichesLiees/EmptyFichePicto';
@@ -69,7 +69,7 @@ type Props = {
   sortSettings?: SortFicheActionSettings;
   enableGroupedActions?: boolean;
   isReadOnly?: boolean;
-  containeClassName?: string;
+  containerClassName?: string;
 };
 
 /** Liste de fiches action avec tri et options de fitlre */
@@ -84,7 +84,7 @@ const FichesActionListe = ({
   maxNbOfCards = 15,
   enableGroupedActions = false,
   isReadOnly,
-  containeClassName,
+  containerClassName,
 }: Props) => {
   const collectiviteId = useCollectiviteId();
 
@@ -158,7 +158,7 @@ const FichesActionListe = ({
   };
 
   useEffect(() => {
-    if (!_.isEqual(filtres, filtresLocal.current)) {
+    if (!isEqual(filtres, filtresLocal.current)) {
       filtresLocal.current = filtres;
       setCurrentPage(1);
     }
@@ -209,7 +209,7 @@ const FichesActionListe = ({
         <div
           className={classNames(
             'flex flex-col gap-8 bg-grey-2',
-            containeClassName
+            containerClassName
           )}
         >
           <div className="relative bg-inherit">
