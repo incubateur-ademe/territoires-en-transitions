@@ -58,7 +58,7 @@ export const EditValeursModal = (props: EditValeursModalProps) => {
       render={() => {
         return (
           <>
-            <Field title="Année">
+            <Field title="Année *">
               <Input
                 type="text"
                 value={annee?.toString() ?? ''}
@@ -70,24 +70,6 @@ export const EditValeursModal = (props: EditValeursModalProps) => {
                   );
                   setValeur(valeurExistante || {});
                 }}
-              />
-            </Field>
-
-            <Divider />
-
-            <Field title="Objectif" className="-mt-8">
-              <InputValue
-                value={objectif ?? ''}
-                onChange={(value) => setValeur({ ...valeur, objectif: value })}
-              />
-            </Field>
-            <Field title="Ajouter un commentaire sur l’objectif">
-              <Input
-                type="text"
-                value={objectifCommentaire ?? ''}
-                onChange={(e) =>
-                  setValeur({ ...valeur, objectifCommentaire: e.target.value })
-                }
               />
             </Field>
 
@@ -105,6 +87,24 @@ export const EditValeursModal = (props: EditValeursModalProps) => {
                 value={resultatCommentaire ?? ''}
                 onChange={(e) =>
                   setValeur({ ...valeur, resultatCommentaire: e.target.value })
+                }
+              />
+            </Field>
+
+            <Divider />
+
+            <Field title="Objectif" className="-mt-8">
+              <InputValue
+                value={objectif ?? ''}
+                onChange={(value) => setValeur({ ...valeur, objectif: value })}
+              />
+            </Field>
+            <Field title="Ajouter un commentaire sur l’objectif">
+              <Input
+                type="text"
+                value={objectifCommentaire ?? ''}
+                onChange={(e) =>
+                  setValeur({ ...valeur, objectifCommentaire: e.target.value })
                 }
               />
             </Field>
