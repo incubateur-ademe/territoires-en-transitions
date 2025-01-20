@@ -16,7 +16,10 @@ export const InputValue = (props: InputValueProps) => {
   const { className, disabled, displaySize, value, onChange } = props;
   return (
     <Input
-      className={classNames('max-w-[8.5rem]', className)}
+      className={classNames(
+        { 'max-w-[8.5rem]': displaySize === 'sm' },
+        className
+      )}
       disabled={disabled}
       displaySize={displaySize}
       type="number"
