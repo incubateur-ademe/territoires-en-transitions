@@ -1,7 +1,7 @@
 /**
  * Export d'un plan d'action au format Excel
  */
-import { Workbook, Worksheet } from 'https://esm.sh/exceljs@4.3.0';
+import Excel from 'https://esm.sh/exceljs@4.3.0';
 import { formatDate, setEuroValue } from '../_shared/exportUtils.ts';
 import { TSupabaseClient } from '../_shared/getSupabaseClient.ts';
 import { ConfigPlanAction } from './config.ts';
@@ -26,7 +26,7 @@ export const exportXLSX = async (
   const titre = ligne1.axe_nom;
 
   // ouvre le classeur et sélectionne la première feuille de calcul
-  const workbook = new Workbook();
+  const workbook = new Excel.Workbook();
   await workbook.xlsx.load(template);
   const worksheet = workbook.worksheets[0];
 
@@ -50,7 +50,7 @@ export const exportXLSX = async (
 
 const exportPlan = (
   // feuille de calcul dans laquelle écrire
-  worksheet: Worksheet,
+  worksheet: Excel.Worksheet,
   // données de l'export
   data: TExportData
 ) => {
