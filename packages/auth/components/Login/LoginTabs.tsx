@@ -44,7 +44,7 @@ const useLoginForm = (isPasswordless: boolean, email: string) => {
 export const LoginTabs = (props: LoginPropsWithState) => {
   const { formState: signupState, withPassword } = props;
   const { email } = signupState;
-  const [isPasswordless, setIsPasswordless] = useState(!withPassword);
+  const [isPasswordless, setIsPasswordless] = useState(false);
   const form = useLoginForm(isPasswordless, email);
   const ongletTracker = useOngletTracker('auth/login');
 
@@ -53,16 +53,16 @@ export const LoginTabs = (props: LoginPropsWithState) => {
       <TrackPageView pageName="auth/login" />
       <Tabs
         className="justify-center"
-        defaultActiveTab={isPasswordless ? 0 : 1}
+        defaultActiveTab={isPasswordless ? 1 : 0}
         onChange={(activeTab) => {
           if (activeTab === 0) {
             // reset le champ mdp qui peut être rempli quand on passe d'un onglet à l'autre
+            setIsPasswordless(false);
+            ongletTracker('avec_mdp');
+          } else {
             form.setValue('password', '');
             setIsPasswordless(true);
             ongletTracker('sans_mdp');
-          } else {
-            setIsPasswordless(false);
-            ongletTracker('avec_mdp');
           }
         }}
       >
