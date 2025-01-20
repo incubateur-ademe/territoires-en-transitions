@@ -21,7 +21,7 @@ const ProgressBarWithTooltip = ({
   defaultScore,
   valueToDisplay,
   percent = false,
-  styleOptions,
+  progressBarStyleOptions,
 }: ProgressBarType): JSX.Element => {
   return (
     <Tooltip
@@ -41,7 +41,7 @@ const ProgressBarWithTooltip = ({
           defaultScore={defaultScore}
           valueToDisplay={valueToDisplay}
           percent={percent}
-          styleOptions={styleOptions}
+          progressBarStyleOptions={progressBarStyleOptions}
         />
       </div>
     </Tooltip>

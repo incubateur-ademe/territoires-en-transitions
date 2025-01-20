@@ -69,8 +69,9 @@ const ReferentielTabs = () => {
             Référentiel{' '}
             {referentielToName[referentielId as ReferentielOfIndicateur]}
           </h2>
-          <div className="flex gap-x-4">
-            {/* <Select
+          {/* *** For future use *** */}
+          {/* <div className="flex gap-x-4"> */}
+          {/* <Select
               options={[]}
               onChange={() => {}}
               values={[]}
@@ -84,7 +85,7 @@ const ReferentielTabs = () => {
             >
               Figer le référentiel
             </Button> */}
-          </div>
+          {/* </div> */}
         </div>
         <div className="my-5">
           <ProgressBarWithTooltip
@@ -101,10 +102,7 @@ const ReferentielTabs = () => {
               color: actionAvancementColors.non_renseigne,
             }}
             valueToDisplay={avancementToLabel.fait}
-            styleOptions={{
-              justify: 'start',
-              fullWidth: true,
-            }}
+            progressBarStyleOptions={{ justify: 'start', fullWidth: true }}
           />
         </div>
 

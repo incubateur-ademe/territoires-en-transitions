@@ -9,11 +9,11 @@ export const ActionProgressBar = ({
   action,
   // remettre actionId au lieu de action une fois l'affichage des scores par % généralisé
   className,
-  styleOptions,
+  progressBarStyleOptions,
 }: {
   action: ActionDefinitionSummary;
   className?: string;
-  styleOptions?: ProgressBarStyleOptions;
+  progressBarStyleOptions?: ProgressBarStyleOptions;
 }) => {
   const score = useActionScore(action.id);
 
@@ -63,7 +63,7 @@ export const ActionProgressBar = ({
           color: actionAvancementColors.non_renseigne,
         }}
         percent={action.type === 'tache'}
-        styleOptions={styleOptions}
+        progressBarStyleOptions={progressBarStyleOptions}
       />
     </div>
   );
