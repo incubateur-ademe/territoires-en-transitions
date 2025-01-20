@@ -88,6 +88,7 @@ type OptionsProps = {
   titre?: string;
   unite?: string;
   disableToolbox?: boolean;
+  hideMinMaxLabel?: boolean;
 };
 
 // génère le paramétrage du graphe
@@ -96,6 +97,7 @@ export const makeOption = ({
   titre,
   unite,
   disableToolbox = false,
+  hideMinMaxLabel = false,
 }: OptionsProps): EChartsOption => {
   const {
     grid: customGrid,
@@ -144,8 +146,8 @@ export const makeOption = ({
       axisLabel: {
         formatter: '{yyyy}',
         color: colors.primary['9'],
-        showMinLabel: true,
-        showMaxLabel: true,
+        showMinLabel: !hideMinMaxLabel,
+        showMaxLabel: !hideMinMaxLabel,
         margin: 15,
       },
     },

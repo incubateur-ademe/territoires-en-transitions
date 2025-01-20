@@ -96,6 +96,8 @@ const IndicateurChart = ({
     titre: title,
     unite: variant !== 'thumbnail' ? data.unite : undefined,
     disableToolbox: variant !== 'modal',
+    hideMinMaxLabel:
+      dataset[0].source.length <= 1 && dataset[1].source.length <= 1,
   });
 
   return (
