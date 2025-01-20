@@ -13,7 +13,7 @@ const Header = () => {
   const auth = useAuth();
   const currentCollectivite = useCurrentCollectivite();
   const { data: panier } = useNbActionsDansPanier(
-    currentCollectivite?.collectivite_id!
+    currentCollectivite?.collectiviteId!
   );
   const maintenance = useMaintenance();
 

@@ -1,6 +1,6 @@
 import { useState } from 'react';
 
-import { TrackPageView, useEventTracker } from '@/ui';
+import { TrackPageView } from '@/ui';
 
 import {
   ModulePlanActionListSelect,
@@ -11,6 +11,8 @@ import { useCollectiviteModuleFetch } from '@/app/app/pages/collectivite/Tableau
 import { ModuleDisplay } from '@/app/app/pages/collectivite/TableauDeBord/components/Module';
 import ModulePage from '@/app/app/pages/collectivite/TableauDeBord/components/ModulePage';
 import { TDBViewParam } from '@/app/app/paths';
+import { useCurrentCollectivite } from '@/app/core-logic/hooks/useCurrentCollectivite';
+import { pick } from 'es-toolkit';
 
 type Props = {
   view: TDBViewParam;
@@ -19,27 +21,31 @@ type Props = {
 
 /** Page du module suivi des plans d'action de la collectivité */
 const ModuleSuiviPlansActionPage = ({ view, slug }: Props) => {
-  const trackEvent = useEventTracker('app/tdb/collectivite/suivi-plan-actions');
-
   const { data: dataModule, isLoading: isModuleLoading } =
     useCollectiviteModuleFetch(slug);
 
-  const module = dataModule as ModulePlanActionListSelect;
+  const collectivite = useCurrentCollectivite()!;
+
+  const tdbModule = dataModule as ModulePlanActionListSelect;
 
   const [display, setDisplay] = useState<ModuleDisplay>('row');
 
-  if (isModuleLoading || !module) {
+  if (isModuleLoading || !tdbModule) {
     return null;
   }
 
   return (
-    <ModulePage view={view} title={module.titre}>
+    <ModulePage view={view} title={tdbModule.titre}>
       <TrackPageView
         pageName={`app/tdb/collectivite/${slug}`}
-        properties={{ collectivite_id: module.collectiviteId }}
+        properties={pick(collectivite, [
+          'collectiviteId',
+          'niveauAcces',
+          'role',
+        ])}
       />
       <PlansActionListe
-        filtres={module.options.filtre ?? {}}
+        filtres={tdbModule.options.filtre ?? {}}
         displaySettings={{ display, setDisplay }}
         // settings={collectivite?.niveau_acces === 'admin' ? (openState) => (
         //   <>

@@ -24,8 +24,8 @@ const Fiche = ({ planId, axeId, url, fiche, editKeysToInvalidate }: Props) => {
   const collectivite = useCurrentCollectivite();
 
   const canDrag =
-    collectivite?.niveau_acces === 'admin' ||
-    collectivite?.niveau_acces === 'edition';
+    collectivite?.niveauAcces === 'admin' ||
+    collectivite?.niveauAcces === 'edition';
 
   const {
     active,

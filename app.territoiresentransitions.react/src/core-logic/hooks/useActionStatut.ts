@@ -113,7 +113,7 @@ export const useEditActionStatutIsDisabled = (actionId: string) => {
 
   return Boolean(
     !collectivite ||
-      collectivite.readonly ||
+      collectivite.isReadOnly ||
       !score ||
       score.desactive ||
       (audit && (!isAuditeur || audit.valide))

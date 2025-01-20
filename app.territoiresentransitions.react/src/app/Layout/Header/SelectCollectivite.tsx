@@ -58,8 +58,8 @@ export const SelectCollectivite = (props: HeaderPropsWithModalState) => {
               {currentCollectivite.nom}
             </b>
             <BadgeNiveauAcces
-              acces={currentCollectivite.niveau_acces}
-              isAuditeur={currentCollectivite.est_auditeur}
+              acces={currentCollectivite.niveauAcces}
+              isAuditeur={currentCollectivite.role === 'auditeur'}
               className="ml-4"
             />
           </button>

@@ -100,10 +100,10 @@ export const RouteEnAccesRestreint = (props: RouteProps) => {
     <Route
       {...other}
       render={({ location }) =>
-        collectivite.acces_restreint && collectivite.niveau_acces === null ? (
+        collectivite.accesRestreint && collectivite.niveauAcces === null ? (
           <Redirect
             to={makeCollectiviteAccueilUrl({
-              collectiviteId: collectivite.collectivite_id,
+              collectiviteId: collectivite.collectiviteId,
             })}
           />
         ) : (

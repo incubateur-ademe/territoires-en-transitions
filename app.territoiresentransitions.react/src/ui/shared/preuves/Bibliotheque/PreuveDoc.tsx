@@ -18,7 +18,7 @@ const PreuveDoc = (props: TPreuveDocProps) => {
       document={props.preuve}
       isReadonly={
         !currentCollectivite ||
-        currentCollectivite.readonly ||
+        currentCollectivite.isReadOnly ||
         props.readonly ||
         false
       }

@@ -17,7 +17,7 @@ export const AddRapportButton = (props: TAddDocsButtonProps) => {
   const [opened, setOpened] = useState(false);
   const handlers = useAddPreuveToAudit(props.audit_id);
   const currentCollectivite = useCurrentCollectivite();
-  if (!currentCollectivite || currentCollectivite.readonly) {
+  if (!currentCollectivite || currentCollectivite.isReadOnly) {
     return null;
   }
 

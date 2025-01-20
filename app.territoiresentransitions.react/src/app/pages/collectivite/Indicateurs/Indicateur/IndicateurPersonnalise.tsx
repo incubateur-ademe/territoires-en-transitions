@@ -26,7 +26,7 @@ const IndicateurPersonnaliseBase = ({
   const { description, unite, titre, rempli } = definition;
   const { mutate: updateDefinition } = useUpdateIndicateurDefinition();
   const collectivite = useCurrentCollectivite();
-  const isReadonly = !collectivite || collectivite?.readonly;
+  const isReadonly = !collectivite || collectivite?.isReadOnly;
   const { mutate: exportIndicateurs, isLoading } = useExportIndicateurs(
     'app/indicateurs/perso',
     [definition]
@@ -37,7 +37,7 @@ const IndicateurPersonnaliseBase = ({
     name: 'description' | 'commentaire' | 'unite' | 'titre',
     value: string
   ) => {
-    const collectivite_id = collectivite?.collectivite_id;
+    const collectivite_id = collectivite?.collectiviteId;
     const nouveau = value?.trim();
     if (collectivite_id && nouveau !== definition[name]) {
       updateDefinition({ ...definition, [name]: nouveau });
@@ -67,7 +67,6 @@ const IndicateurPersonnaliseBase = ({
 
   const [showConfirm, setShowConfirm] = useState(false);
   const { mutate: deleteIndicateurPerso } = useDeleteIndicateurPerso(
-    collectivite?.collectivite_id as number,
     definition.id
   );
 

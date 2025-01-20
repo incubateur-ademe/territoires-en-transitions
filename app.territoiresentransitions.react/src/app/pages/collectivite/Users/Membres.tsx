@@ -21,6 +21,7 @@ import {
   useCurrentCollectivite,
 } from '@/app/core-logic/hooks/useCurrentCollectivite';
 import { Button, Modal, Pagination, TrackPageView } from '@/ui';
+import { pick } from 'es-toolkit';
 import { useEffect, useState } from 'react';
 
 export type MembresProps = {
@@ -44,8 +45,8 @@ export const Membres = ({
   updateMembre,
   removeFromCollectivite,
 }: MembresProps) => {
-  const { niveau_acces } = collectivite;
-  const canInvite = niveau_acces === 'admin' || niveau_acces === 'edition';
+  const { niveauAcces } = collectivite;
+  const canInvite = niveauAcces === 'admin' || niveauAcces === 'edition';
   const { data, mutate: addUser } = useAddUserToCollectivite(
     collectivite,
     currentUser
@@ -84,7 +85,11 @@ export const Membres = ({
     <>
       <TrackPageView
         pageName="app/parametres/membres"
-        properties={{ collectivite_id: collectivite.collectivite_id }}
+        properties={pick(collectivite, [
+          'collectiviteId',
+          'niveauAcces',
+          'role',
+        ])}
       />
       <main data-test="Users" className="fr-container mt-9 mb-16">
         <h1 className="mb-10 lg:mb-14 lg:text-center flex flex-row justify-between">
@@ -94,7 +99,7 @@ export const Membres = ({
               title="Inviter un membre"
               render={({ close }) => (
                 <Invite
-                  niveauAcces={niveau_acces}
+                  niveauAcces={niveauAcces}
                   onCancel={close}
                   onSubmit={(data) => {
                     addUser(data);
@@ -111,7 +116,7 @@ export const Membres = ({
         <MembreListTable
           currentUserId={currentUser.id}
           currentUserAccess={
-            collectivite.niveau_acces ? collectivite.niveau_acces : 'lecture'
+            collectivite.niveauAcces ? collectivite.niveauAcces : 'lecture'
           }
           membres={membres}
           isLoading={isLoading}

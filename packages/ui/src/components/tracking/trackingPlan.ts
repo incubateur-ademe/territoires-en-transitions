@@ -55,7 +55,7 @@ type AuthPageAvecOnglets = {
 };
 
 type OpenDataSource = {
-  source_id: string;
+  sourceId: string;
   type: 'resultat' | 'objectif';
 };
 
@@ -96,25 +96,31 @@ type EventsGraphReferentiel = {
   };
 };
 
+type CollectiviteDefaultProps = {
+  collectiviteId: number;
+  niveauAcces: string | null;
+  role: 'auditeur' | null;
+};
+
 /**
  * Permet de respecter le plan de tracking.
  */
 export interface TrackingPlan extends Record<never, Page> {
   'app/edl/synthese': {
-    properties: { collectivite_id: number };
+    properties: CollectiviteDefaultProps;
     onglets: never;
     events: EventsGraphReferentiel;
   };
 
   'app/audit/comparaison': {
-    properties: { collectivite_id: number };
+    properties: CollectiviteDefaultProps;
     onglets: never;
     events: EventsGraphReferentiel;
   };
 
   /** Page "Tous les indicateurs" */
   'app/indicateurs/tous': {
-    properties: { collectivite_id: number };
+    properties: CollectiviteDefaultProps;
     onglets: never;
     events: {
       toggle_graphique: { actif: boolean };
@@ -127,7 +133,7 @@ export interface TrackingPlan extends Record<never, Page> {
 
   /** Page "Indicateurs de la collectivité" */
   'app/indicateurs/collectivite': {
-    properties: { collectivite_id: number };
+    properties: CollectiviteDefaultProps;
     onglets: never;
     events: {
       explorerIndicateursClick: {};
@@ -140,7 +146,7 @@ export interface TrackingPlan extends Record<never, Page> {
 
   /** Page indicateur perso */
   'app/indicateurs/perso': {
-    properties: { collectivite_id: number };
+    properties: CollectiviteDefaultProps;
     onglets: never;
     events: {
       indicateur_suppression: { indicateur_id: number };
@@ -150,7 +156,7 @@ export interface TrackingPlan extends Record<never, Page> {
 
   /** Page indicateur prédéfini */
   'app/indicateurs/predefini': {
-    properties: { collectivite_id: number; indicateur_id: string };
+    properties: CollectiviteDefaultProps & { indicateurId: string };
     onglets: never;
     events: {
       /** Consultation des données open data par fournisseur */
@@ -163,14 +169,14 @@ export interface TrackingPlan extends Record<never, Page> {
 
   /** Modale qui affiche les données open-data en conflits avec les données déjà saisies */
   'app/indicateurs/predefini/conflits': {
-    properties: { collectivite_id: number; indicateur_id: string };
+    properties: CollectiviteDefaultProps & { indicateurId: string };
     onglets: never;
     events: never;
   };
 
   /** Page tableau de bord de la collectivité */
   'app/tdb/collectivite': {
-    properties: { collectivite_id: number };
+    properties: CollectiviteDefaultProps;
     onglets: never;
     events: {
       // clic sur le bouton "éditer" de chaque module
@@ -181,7 +187,7 @@ export interface TrackingPlan extends Record<never, Page> {
 
   /** Page tableau de bord personnel */
   'app/tdb/personnel': {
-    properties: { collectivite_id: number };
+    properties: CollectiviteDefaultProps;
     onglets: never;
     events: {
       // clic sur le bouton "éditer" de chaque module
@@ -193,7 +199,7 @@ export interface TrackingPlan extends Record<never, Page> {
 
   /** Page TDB "indicateurs de suivi de mes plans" */
   'app/tdb/personnel/indicateurs-de-suivi-de-mes-plans': {
-    properties: { collectivite_id: number };
+    properties: CollectiviteDefaultProps;
     onglets: never;
     events: {
       tdb_modifier_filtres_indicateurs: {};
@@ -204,7 +210,7 @@ export interface TrackingPlan extends Record<never, Page> {
 
   /** Page TDB “actions dont je suis le pilote" */
   'app/tdb/personnel/actions-dont-je-suis-pilote': {
-    properties: { collectivite_id: number };
+    properties: CollectiviteDefaultProps;
     onglets: never;
     events: {
       tdb_modifier_filtres_actions_pilotes: {};
@@ -214,7 +220,7 @@ export interface TrackingPlan extends Record<never, Page> {
 
   /** Page TDB "actions récemment modifiées" */
   'app/tdb/personnel/actions-recemment-modifiees': {
-    properties: { collectivite_id: number };
+    properties: CollectiviteDefaultProps;
     onglets: never;
     events: {
       tdb_modifier_filtres_actions_modifiees: {};
@@ -224,7 +230,7 @@ export interface TrackingPlan extends Record<never, Page> {
 
   /** Page TDB "avancement des fiches action" */
   'app/tdb/collectivite/fiche-actions-par-statut': {
-    properties: { collectivite_id: number };
+    properties: CollectiviteDefaultProps;
     onglets: never;
     events: {
       tdb_modifier_filtres_avancement_actions: {};
@@ -233,7 +239,7 @@ export interface TrackingPlan extends Record<never, Page> {
 
   /** Page TDB "suivi des plans d'actions" */
   'app/tdb/collectivite/suivi-plan-actions': {
-    properties: { collectivite_id: number };
+    properties: CollectiviteDefaultProps;
     onglets: never;
     events: {
       tdb_modifier_filtres_suivi_plan_actions: {};
@@ -242,7 +248,7 @@ export interface TrackingPlan extends Record<never, Page> {
 
   /** Page fiche action */
   'app/fiche-action': {
-    properties: { collectivite_id: number };
+    properties: CollectiviteDefaultProps;
     onglets: never;
     events: {
       validation_modale_modifier_fa: {};
@@ -255,7 +261,7 @@ export interface TrackingPlan extends Record<never, Page> {
 
   /** Page toutes les fiches action */
   'app/toutes-les-fiches-action': {
-    properties: { collectivite_id: number };
+    properties: CollectiviteDefaultProps;
     onglets: never;
     events: {
       filtres: {
@@ -266,7 +272,7 @@ export interface TrackingPlan extends Record<never, Page> {
 
   /** Actions groupées sur les fiches actions */
   'app/actions-groupees-fiches-action': {
-    properties: { collectivite_id: number };
+    properties: CollectiviteDefaultProps;
     onglets: never;
     events: {
       editer_personne_pilote_groupe: {};
@@ -280,7 +286,7 @@ export interface TrackingPlan extends Record<never, Page> {
 
   /** Page "créer un plan" */
   'app/creer-plan': {
-    properties: { collectivite_id: number };
+    properties: CollectiviteDefaultProps;
     onglets: never;
     events: {
       cta_creer: {};
@@ -292,19 +298,18 @@ export interface TrackingPlan extends Record<never, Page> {
 
   /** Trajectoire SNBC territorialisée */
   'app/trajectoires/snbc': {
-    properties: {
-      collectivite_id: number;
-    } & (
-      | {
-          statut:
-            | 'commune_non_supportee'
-            | 'deja_calcule'
-            | 'pret_a_calculer'
-            | 'donnees_manquantes';
-        }
-      | { statut: 'error'; error?: string; statusCode?: number }
-      | { statut?: undefined }
-    );
+    properties: CollectiviteDefaultProps &
+      (
+        | {
+            statut:
+              | 'commune_non_supportee'
+              | 'deja_calcule'
+              | 'pret_a_calculer'
+              | 'donnees_manquantes';
+          }
+        | { statut: 'error'; error?: string; statusCode?: number }
+        | { statut?: undefined }
+      );
     onglets: 'emissions_ges' | 'consommations_finales';
     events: {
       cta_lancer_calcul: { source: 'open_data' | 'collectivite' };
@@ -315,21 +320,21 @@ export interface TrackingPlan extends Record<never, Page> {
 
   /** Page "Gestion des membres de la collectivité" */
   'app/parametres/membres': {
-    properties: { collectivite_id: number };
+    properties: CollectiviteDefaultProps;
     onglets: never;
     events: never;
   };
 
   /** Page "journal de bord de la collectivité" */
   'app/parametres/historique': {
-    properties: { collectivite_id: number };
+    properties: CollectiviteDefaultProps;
     onglets: never;
     events: never;
   };
 
   /** Page "Bibliothèque de documents de la collectivité" */
   'app/parametres/bibliotheque': {
-    properties: { collectivite_id: number };
+    properties: CollectiviteDefaultProps;
     onglets: never;
     events: never;
   };

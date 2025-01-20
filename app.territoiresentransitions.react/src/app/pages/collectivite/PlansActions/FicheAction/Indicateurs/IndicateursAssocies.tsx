@@ -3,7 +3,7 @@ import IndicateurCard from '@/app/app/pages/collectivite/Indicateurs/lists/Indic
 import { getIndicateurGroup } from '@/app/app/pages/collectivite/Indicateurs/lists/IndicateurCard/utils';
 import { TIndicateurListItem } from '@/app/app/pages/collectivite/Indicateurs/types';
 import { makeCollectiviteIndicateursUrl } from '@/app/app/paths';
-import { useCollectiviteId } from '@/app/core-logic/hooks/params';
+import { useCurrentCollectivite } from '@/app/core-logic/hooks/useCurrentCollectivite';
 import { Button, Divider, EmptyCard, useEventTracker } from '@/ui';
 import { useState } from 'react';
 import LoadingCard from '../LoadingCard';
@@ -25,7 +25,7 @@ const IndicateursAssocies = ({
   fiche,
   updateFiche,
 }: IndicateursAssociesProps) => {
-  const collectiviteId = useCollectiviteId()!;
+  const { collectiviteId, niveauAcces, role } = useCurrentCollectivite()!;
 
   const [isPanelOpen, setIsPanelOpen] = useState(false);
   const [isModalOpen, setIsModalOpen] = useState(false);
@@ -66,7 +66,9 @@ const IndicateursAssocies = ({
               onClick: () => {
                 collectiviteId &&
                   tracker('cta_indicateur_perso_fa', {
-                    collectivite_id: collectiviteId,
+                    collectiviteId,
+                    niveauAcces,
+                    role,
                   });
                 setIsModalOpen(true);
                 setIsPanelOpen(false);
@@ -101,7 +103,9 @@ const IndicateursAssocies = ({
                     onClick={() => {
                       collectiviteId &&
                         tracker('cta_indicateur_perso_fa', {
-                          collectivite_id: collectiviteId,
+                          collectiviteId,
+                          niveauAcces,
+                          role,
                         });
                       setIsModalOpen(true);
                       setIsPanelOpen(false);

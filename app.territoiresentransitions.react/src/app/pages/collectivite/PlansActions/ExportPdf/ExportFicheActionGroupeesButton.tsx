@@ -28,13 +28,13 @@ const ExportFicheActionGroupeesButton = ({
 }: {
   fichesIds: number[];
 }) => {
-  const collectivite = useCurrentCollectivite()!;
+  const { collectiviteId, niveauAcces, role } = useCurrentCollectivite()!;
   const tracker = useEventTracker('app/actions-groupees-fiches-action');
 
   const [isDataRequested, setIsDataRequested] = useState(false);
   const [content, setContent] = useState<JSX.Element[] | undefined>(undefined);
 
-  const fileName = `fiches-actions-${collectivite.collectivite_id}`;
+  const fileName = `fiches-actions-${collectiviteId}`;
 
   useEffect(() => {
     if (content?.length === fichesIds.length) {
@@ -54,7 +54,9 @@ const ExportFicheActionGroupeesButton = ({
         variant="outlined"
         onClick={() =>
           tracker('export_PDF_telechargement_groupe', {
-            collectivite_id: collectivite.collectivite_id,
+            collectiviteId,
+            niveauAcces,
+            role,
           })
         }
       >

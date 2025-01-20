@@ -29,7 +29,7 @@ export const useSendInvitation = (
         (invitationId
           ? makeInvitationLandingPath(invitationId, email)
           : makeCollectiviteAccueilUrl({
-              collectiviteId: collectivite.collectivite_id,
+              collectiviteId: collectivite.collectiviteId,
             }));
       const urlType = invitationId ? 'invitation' : 'rattachement';
 

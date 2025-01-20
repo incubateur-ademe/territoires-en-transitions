@@ -10,7 +10,7 @@ export const useExportAuditScores = (
   collectivite: CurrentCollectivite | null
 ) => {
   const tracker = useFonctionTracker();
-  const collectivite_id = collectivite?.collectivite_id;
+  const collectivite_id = collectivite?.collectiviteId;
 
   return useMutation(
     ['export_audit_score', collectivite_id, referentiel],

@@ -1,4 +1,4 @@
-import { useCollectiviteId } from '@/app/core-logic/hooks/params';
+import { useCurrentCollectivite } from '@/app/core-logic/hooks/useCurrentCollectivite';
 import PreuveDoc from '@/app/ui/shared/preuves/Bibliotheque/PreuveDoc';
 import {
   TPreuveAuditEtLabellisation,
@@ -6,6 +6,7 @@ import {
 } from '@/app/ui/shared/preuves/Bibliotheque/types';
 import { usePreuvesParType } from '@/app/ui/shared/preuves/Bibliotheque/usePreuves';
 import { TrackPageView } from '@/ui';
+import { pick } from 'es-toolkit';
 import { AddRapportVisite } from './AddRapportVisite';
 import { PreuvesLabellisation } from './PreuveLabellisation';
 import { PreuvesTabs } from './PreuvesTabs';
@@ -50,7 +51,7 @@ export const BibliothequeDocs = ({
 };
 
 const BibliothequeDocsConnected = () => {
-  const collectivite_id = useCollectiviteId()!;
+  const collectivite = useCurrentCollectivite()!;
   const preuves = usePreuvesParType({
     preuve_types: ['audit', 'labellisation', 'rapport'],
   });
@@ -62,7 +63,11 @@ const BibliothequeDocsConnected = () => {
     <>
       <TrackPageView
         pageName="app/parametres/bibliotheque"
-        properties={{ collectivite_id }}
+        properties={pick(collectivite, [
+          'collectiviteId',
+          'niveauAcces',
+          'role',
+        ])}
       />
       <BibliothequeDocs
         labellisationEtAudit={labellisationEtAudit}

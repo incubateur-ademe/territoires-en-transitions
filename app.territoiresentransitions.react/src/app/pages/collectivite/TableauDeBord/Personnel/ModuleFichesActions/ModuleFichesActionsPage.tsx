@@ -16,7 +16,8 @@ import {
   usePersonalModuleFetch,
 } from '@/app/app/pages/collectivite/TableauDeBord/Personnel/usePersonalModuleFetch';
 import { TDBViewParam } from '@/app/app/paths';
-import { useCollectiviteId } from '@/app/core-logic/hooks/params';
+import { useCurrentCollectivite } from '@/app/core-logic/hooks/useCurrentCollectivite';
+import { pick } from 'es-toolkit';
 
 type Props = {
   view: TDBViewParam;
@@ -26,7 +27,7 @@ type Props = {
 
 /** Page d'un module du tableau de bord plans d'action */
 const ModuleFichesActionsPage = ({ view, slug, sortSettings }: Props) => {
-  const collectiviteId = useCollectiviteId();
+  const collectivite = useCurrentCollectivite()!;
 
   const { data: module, isLoading: isModuleLoading } =
     usePersonalModuleFetch(slug);
@@ -43,7 +44,11 @@ const ModuleFichesActionsPage = ({ view, slug, sortSettings }: Props) => {
     <ModulePage view={view} title={module.titre}>
       <TrackPageView
         pageName={`app/tdb/personnel/${slug}`}
-        properties={{ collectivite_id: collectiviteId! }}
+        properties={pick(collectivite, [
+          'collectiviteId',
+          'niveauAcces',
+          'role',
+        ])}
       />
       <FichesActionListe
         filtres={module.options.filtre ?? {}}
@@ -65,7 +70,7 @@ const ModuleFichesActionsPage = ({ view, slug, sortSettings }: Props) => {
                   (slug === 'actions-dont-je-suis-pilote'
                     ? 'tdb_modifier_filtres_actions_pilotes'
                     : 'tdb_modifier_filtres_actions_modifiees') as never,
-                  { collectivite_id: collectiviteId } as never
+                  { ...collectivite } as never
                 );
               }}
             >

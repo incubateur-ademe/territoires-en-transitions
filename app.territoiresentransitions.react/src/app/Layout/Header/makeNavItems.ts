@@ -38,18 +38,18 @@ const isVisiteur = ({
   user: UserData | null;
   collectivite: CurrentCollectivite;
 }) =>
-  collectivite.niveau_acces === null &&
+  collectivite.niveauAcces === null &&
   !user?.isSupport &&
-  !collectivite.est_auditeur;
+  !collectivite.isRoleAuditeur;
 
 const makeNavItemsBase = (
   collectivite: CurrentCollectivite,
   user: UserData | null,
   panierId: string | undefined
 ): TNavItemsList => {
-  const collectiviteId = collectivite.collectivite_id;
+  const collectiviteId = collectivite.collectiviteId;
   const confidentiel =
-    collectivite.acces_restreint && collectivite.niveau_acces === null;
+    collectivite.accesRestreint && collectivite.niveauAcces === null;
   const hideToVisitor = isVisiteur({ user, collectivite });
 
   // items communs qque soient les droits de l'utilisateur courant
@@ -178,7 +178,7 @@ const makeNavItemsBase = (
     {
       confidentiel,
       title: "Plans d'action",
-      urlPrefix: [`${collectivite.collectivite_id}/plans/`],
+      urlPrefix: [`${collectivite.collectiviteId}/plans/`],
       dataTest: 'nav-pa',
       items: [
         {
@@ -227,7 +227,7 @@ const makeNavItemsBase = (
       confidentiel,
       title: 'Indicateurs',
       dataTest: 'nav-ind',
-      urlPrefix: [`${collectivite.collectivite_id}/indicateurs/`],
+      urlPrefix: [`${collectivite.collectiviteId}/indicateurs/`],
       items: [
         {
           label: 'Tous les indicateurs',
@@ -273,10 +273,10 @@ const filtreItems = (items: TNavItemsList): TNavItemsList =>
 export const makeSecondaryNavItems = (
   collectivite: CurrentCollectivite
 ): TNavItemsList => {
-  const collectiviteId = collectivite.collectivite_id;
+  const collectiviteId = collectivite.collectiviteId;
 
   const confidentiel =
-    collectivite.acces_restreint && collectivite.niveau_acces === null;
+    collectivite.accesRestreint && collectivite.niveauAcces === null;
 
   return filtreItems([
     {

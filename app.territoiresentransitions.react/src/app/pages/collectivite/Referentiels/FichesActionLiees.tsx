@@ -23,7 +23,7 @@ export const FichesActionLiees = (props: TFichesActionProps) => {
   });
   const { mutate: updateFichesActionLiees } =
     useUpdateFichesActionLiees(actionId);
-  const isReadonly = collectivite?.readonly ?? false;
+  const isReadonly = collectivite?.isReadOnly ?? false;
 
   return (
     <div className="flex flex-col gap-8">

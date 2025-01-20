@@ -1,5 +1,5 @@
 import { useApiClient } from '@/app/core-logic/api/useApiClient';
-import { useCollectiviteId } from '@/app/core-logic/hooks/params';
+import { useCurrentCollectivite } from '@/app/core-logic/hooks/useCurrentCollectivite';
 import { saveBlob } from '@/app/ui/shared/preuves/Bibliotheque/saveBlob';
 import { DOWNLOAD_FILE_MUTATION_OPTIONS } from '@/app/utils/useDownloadFile';
 import { useEventTracker } from '@/ui';
@@ -9,12 +9,17 @@ import { useMutation } from 'react-query';
 export const useTelechargementModele = () => {
   const api = useApiClient();
   const trackEvent = useEventTracker('app/trajectoires/snbc');
-  const collectivite_id = useCollectiviteId()!;
+  const { collectiviteId, niveauAcces, role } = useCurrentCollectivite()!;
 
   return useMutation(
     'snbc/modele',
     async () => {
-      trackEvent('cta_download', { collectivite_id, file: 'modele' });
+      trackEvent('cta_download', {
+        collectiviteId,
+        niveauAcces,
+        role,
+        file: 'modele',
+      });
       const { blob, filename } = await api.getAsBlob({
         route: '/trajectoires/snbc/modele',
       });

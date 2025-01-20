@@ -1,5 +1,6 @@
-import { useCollectiviteId } from '@/app/core-logic/hooks/params';
+import { useCurrentCollectivite } from '@/app/core-logic/hooks/useCurrentCollectivite';
 import { TrackPageView } from '@/ui';
+import { pick } from 'es-toolkit';
 import { HistoriqueListe } from './HistoriqueListe';
 import { THistoriqueProps } from './types';
 import { useHistoriqueItemListe } from './useHistoriqueItemListe';
@@ -10,7 +11,7 @@ import { useHistoriqueItemListe } from './useHistoriqueItemListe';
 export const JournalActivite = (props: THistoriqueProps) => {
   return (
     <main data-test="JournalActivite" className="fr-container mt-9 mb-16">
-      <h1 className="text-center fr-mt-6w fr-mb-6w">Journal d'activité</h1>
+      <h1 className="text-center fr-mt-6w fr-mb-6w">{"Journal d'activité"}</h1>
       <hr />
       <HistoriqueListe {...props} />
     </main>
@@ -18,13 +19,17 @@ export const JournalActivite = (props: THistoriqueProps) => {
 };
 
 const JournalActiviteConnected = () => {
-  const collectivite_id = useCollectiviteId()!;
-  const historique = useHistoriqueItemListe(collectivite_id);
+  const collectivite = useCurrentCollectivite()!;
+  const historique = useHistoriqueItemListe(collectivite.collectiviteId);
   return (
     <>
       <TrackPageView
         pageName="app/parametres/historique"
-        properties={{ collectivite_id }}
+        properties={pick(collectivite, [
+          'collectiviteId',
+          'niveauAcces',
+          'role',
+        ])}
       />
       <JournalActivite {...historique} />;
     </>

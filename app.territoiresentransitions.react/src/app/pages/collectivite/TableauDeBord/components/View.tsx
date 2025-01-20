@@ -1,6 +1,7 @@
 import { TDBViewParam } from '@/app/app/paths';
-import { useCollectiviteId } from '@/app/core-logic/hooks/params';
+import { useCurrentCollectivite } from '@/app/core-logic/hooks/useCurrentCollectivite';
 import { TrackPageView } from '@/ui';
+import { pick } from 'es-toolkit';
 
 type Props = {
   view: TDBViewParam;
@@ -11,13 +12,17 @@ type Props = {
 
 /** Vue générique parent pour les pages tableau de bord de la collectivité et personnel */
 const View = ({ view, title, description, children }: Props) => {
-  const collectivite_id = useCollectiviteId()!;
+  const collectivite = useCurrentCollectivite()!;
 
   return (
     <div data-test={`tdb-${view}`}>
       <TrackPageView
         pageName={`app/tdb/${view}`}
-        properties={{ collectivite_id }}
+        properties={pick(collectivite, [
+          'collectiviteId',
+          'niveauAcces',
+          'role',
+        ])}
       />
       {/** Header */}
       <h2 className="mb-4">{title}</h2>

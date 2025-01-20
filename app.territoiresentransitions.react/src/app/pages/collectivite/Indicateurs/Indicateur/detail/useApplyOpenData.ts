@@ -4,6 +4,7 @@
 
 import { Indicateurs } from '@/api';
 import { supabaseClient } from '@/app/core-logic/api/supabase';
+import { useCurrentCollectivite } from '@/app/core-logic/hooks/useCurrentCollectivite';
 import { useEventTracker } from '@/ui';
 import { useMutation, useQuery, useQueryClient } from 'react-query';
 import { SOURCE_COLLECTIVITE, SOURCE_TYPE_LABEL } from '../../constants';
@@ -11,7 +12,6 @@ import { TIndicateurDefinition } from '../../types';
 import { useOnSuccess } from './useEditIndicateurValeur';
 
 type UseApplyOpenDataArgs = {
-  collectiviteId: number | null;
   definition: Indicateurs.domain.IndicateurDefinition;
   source?: Indicateurs.fetch.IndicateurImportSource;
 };
@@ -20,11 +20,11 @@ type UseApplyOpenDataArgs = {
  * Applique les changements
  */
 export const useApplyOpenData = ({
-  collectiviteId,
   definition,
   source,
 }: UseApplyOpenDataArgs) => {
   const trackEvent = useEventTracker('app/indicateurs/predefini');
+  const { collectiviteId, niveauAcces, role } = useCurrentCollectivite()!;
 
   const type = source?.type || 'resultat';
   const onSuccess = useOnSuccess({
@@ -70,9 +70,11 @@ export const useApplyOpenData = ({
           source!.id,
         ]);
         trackEvent('apply_open_data', {
-          collectivite_id: collectiviteId!,
-          indicateur_id: definition.identifiant!,
-          source_id: source!.id,
+          collectiviteId,
+          niveauAcces,
+          role,
+          indicateurId: definition.identifiant!,
+          sourceId: source!.id,
           type,
           overwrite,
         });

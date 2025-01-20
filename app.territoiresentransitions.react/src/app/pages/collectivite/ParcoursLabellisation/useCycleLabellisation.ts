@@ -31,7 +31,7 @@ export const useCycleLabellisation = (
   referentiel: string | null
 ): TCycleLabellisation => {
   const collectivite = useCurrentCollectivite();
-  const collectivite_id = collectivite?.collectivite_id || null;
+  const collectivite_id = collectivite?.collectiviteId || null;
   const isAuditeur = useIsAuditeur();
   const identite = useCarteIdentite(collectivite_id);
 
@@ -56,7 +56,7 @@ export const useCycleLabellisation = (
       rempli &&
       // et l'utilisateur a le droit requis
       collectivite &&
-      !collectivite?.readonly
+      !collectivite?.isReadOnly
   );
 
   // on peut soumettre une demande de labellisation si...

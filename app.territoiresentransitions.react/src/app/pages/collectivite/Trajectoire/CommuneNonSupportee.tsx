@@ -1,4 +1,4 @@
-import { useCollectiviteId } from '@/app/core-logic/hooks/params';
+import { useCurrentCollectivite } from '@/app/core-logic/hooks/useCurrentCollectivite';
 import SpinnerLoader from '@/app/ui/shared/SpinnerLoader';
 import { useDownloadFile } from '@/app/utils/useDownloadFile';
 import { EmptyCard, useEventTracker } from '@/ui';
@@ -16,7 +16,7 @@ export const CommuneNonSupportee = () => {
   const { mutate: downloadFile, isLoading: isDownloadingFile } =
     useDownloadFile();
   const trackEvent = useEventTracker('app/trajectoires/snbc');
-  const collectivite_id = useCollectiviteId()!;
+  const { collectiviteId, niveauAcces, role } = useCurrentCollectivite()!;
 
   return (
     <EmptyCard
@@ -39,7 +39,12 @@ export const CommuneNonSupportee = () => {
         {
           children: 'Télécharger la méthodologie (.pdf)',
           onClick: () => {
-            trackEvent('cta_download', { collectivite_id, file: 'methodo' });
+            trackEvent('cta_download', {
+              collectiviteId,
+              niveauAcces,
+              role,
+              file: 'methodo',
+            });
             downloadFile(DOC_METHODO);
           },
           disabled: isDownloadingFile,

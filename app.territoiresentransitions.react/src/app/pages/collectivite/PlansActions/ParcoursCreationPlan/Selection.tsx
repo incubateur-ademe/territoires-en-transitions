@@ -5,6 +5,7 @@ import {
   makeCollectivitePlansActionsImporterUrl,
 } from '@/app/app/paths';
 import { useCollectiviteId } from '@/app/core-logic/hooks/params';
+import { useCurrentCollectivite } from '@/app/core-logic/hooks/useCurrentCollectivite';
 import { TrackingPlan, useEventTracker } from '@/ui';
 import classNames from 'classnames';
 import Link from 'next/link';
@@ -83,7 +84,7 @@ const SelectFlowButton = ({
   trackingId,
 }: SelectFlowButtonProps) => {
   const trackEvent = useEventTracker('app/creer-plan');
-  const collectivite_id = useCollectiviteId()!;
+  const { collectiviteId, niveauAcces, role } = useCurrentCollectivite()!;
 
   return (
     <div
@@ -97,7 +98,7 @@ const SelectFlowButton = ({
         className="flex flex-col w-full py-6 items-center text-center text-sm !bg-none"
         href={url}
         onClick={() => {
-          trackEvent(trackingId, { collectivite_id });
+          trackEvent(trackingId, { collectiviteId, niveauAcces, role });
         }}
       >
         {icon}

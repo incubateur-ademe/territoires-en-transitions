@@ -34,8 +34,7 @@ const ModaleDescription = ({ fiche, updateFiche }: ModaleDescriptionProps) => {
   const [editedFiche, setEditedFiche] = useState(fiche);
 
   const tracker = useEventTracker('app/fiche-action');
-  const collectivite = useCurrentCollectivite();
-  const collectiviteId = collectivite?.collectivite_id || null;
+  const { collectiviteId, niveauAcces, role } = useCurrentCollectivite()!;
 
   const handleSave = () => {
     if (!_.isEqual(fiche, editedFiche)) {
@@ -200,7 +199,9 @@ const ModaleDescription = ({ fiche, updateFiche }: ModaleDescriptionProps) => {
             onClick: () => {
               collectiviteId &&
                 tracker('validation_modale_modifier_fa', {
-                  collectivite_id: collectiviteId,
+                  collectiviteId,
+                  niveauAcces,
+                  role,
                 });
               handleSave();
               close();

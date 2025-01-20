@@ -1,17 +1,17 @@
-import { useCollectiviteId } from '@/app/core-logic/hooks/params';
+import { useCurrentCollectivite } from '@/app/core-logic/hooks/useCurrentCollectivite';
 import { TrackPageView } from '@/ui';
-import { format } from 'date-fns';
+import { pick } from 'es-toolkit';
 import { useParams } from 'react-router-dom';
 import { useFicheAction } from './data/useFicheAction';
 import { useUpdateFicheAction } from './data/useUpdateFicheAction';
 import FicheActionActeurs from './FicheActionActeurs/FicheActionActeurs';
 import FicheActionDescription from './FicheActionDescription/FicheActionDescription';
-import Header from './Header';
 import FicheActionImpact from './FicheActionImpact';
 import FicheActionOnglets from './FicheActionOnglets';
 import FicheActionPilotes from './FicheActionPilotes/FicheActionPilotes';
 import FicheActionPlanning from './FicheActionPlanning/FicheActionPlanning';
 import FicheActionRestreint from './FicheActionRestreint/FicheActionRestreint';
+import Header from './Header';
 
 type FicheActionProps = {
   isReadonly: boolean;
@@ -20,7 +20,7 @@ type FicheActionProps = {
 const FicheAction = ({ isReadonly }: FicheActionProps) => {
   const { ficheUid } = useParams<{ ficheUid: string }>();
 
-  const collectiviteId = useCollectiviteId()!;
+  const collectivite = useCurrentCollectivite()!;
 
   const { data, isLoading } = useFicheAction(ficheUid);
 
@@ -37,7 +37,11 @@ const FicheAction = ({ isReadonly }: FicheActionProps) => {
     <>
       <TrackPageView
         pageName={'app/fiche-action'}
-        properties={{ collectivite_id: collectiviteId }}
+        properties={pick(collectivite, [
+          'collectiviteId',
+          'niveauAcces',
+          'role',
+        ])}
       />
 
       <div

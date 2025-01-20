@@ -1,12 +1,12 @@
 import { TScoreAuditRowData } from '@/app/app/pages/collectivite/AuditComparaison/types';
 import { ActionReferentiel } from '@/app/app/pages/collectivite/ReferentielTable/useReferentiel';
 import { ReferentielParamOption } from '@/app/app/paths';
+import { useCurrentCollectivite } from '@/app/core-logic/hooks/useCurrentCollectivite';
 import { TActionStatutsRow } from '@/app/types/alias';
 import TagFilters from '@/app/ui/shared/filters/TagFilters';
 import { Breadcrumbs, useEventTracker } from '@/ui';
 import { useEffect, useState } from 'react';
 import { TableOptions } from 'react-table';
-import { useCollectiviteId } from '../../../core-logic/hooks/params';
 import { getIndexTitles } from '../utils';
 import ChartCard from './ChartCard';
 
@@ -168,7 +168,7 @@ const BarChartCardWithSubrows = ({
   const localChartInfo = {
     title: chartInfo?.title
       ? `${chartInfo.title} ${
-          !!indexBy ? `par ${indexBy === 'tache' ? 'tâche' : indexBy}` : ''
+          indexBy ? `par ${indexBy === 'tache' ? 'tâche' : indexBy}` : ''
         } : ${relativeMode ? 'pourcentages' : 'nombre de points'}`
       : undefined,
     subtitle: chartInfo?.subtitle,
@@ -185,7 +185,7 @@ const BarChartCardWithSubrows = ({
   };
 
   const trackEvent = useEventTracker(pageName);
-  const collectiviteId = useCollectiviteId();
+  const { collectiviteId, niveauAcces, role } = useCurrentCollectivite()!;
 
   return (
     <ChartCard
@@ -226,7 +226,9 @@ const BarChartCardWithSubrows = ({
       onOpenModal={() =>
         collectiviteId &&
         trackEvent('zoom_graph', {
-          collectivite_id: collectiviteId,
+          collectiviteId,
+          niveauAcces,
+          role,
           referentiel,
           type: relativeMode ? 'percentage' : 'points',
         })
@@ -234,7 +236,9 @@ const BarChartCardWithSubrows = ({
       onDownload={() =>
         collectiviteId &&
         trackEvent('export_graph', {
-          collectivite_id: collectiviteId,
+          collectiviteId,
+          niveauAcces,
+          role,
           referentiel,
           type: relativeMode ? 'percentage' : 'points',
         })

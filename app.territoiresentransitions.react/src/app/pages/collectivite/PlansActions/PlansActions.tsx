@@ -34,7 +34,7 @@ const PlansActions = () => {
       {/* Page de synthèse */}
       <Route exact path={[collectivitePlansActionsSynthesePath]}>
         <CollectivitePageLayout dataTest="PlansAction">
-          <SynthesePage collectiviteId={collectivite.collectivite_id} />
+          <SynthesePage collectiviteId={collectivite.collectiviteId} />
         </CollectivitePageLayout>
       </Route>
 
@@ -63,13 +63,13 @@ const PlansActions = () => {
           collectivitePlanActionAxeFichePath,
         ]}
       >
-        <FicheActionPage isReadonly={collectivite.readonly} />
+        <FicheActionPage isReadonly={collectivite.isReadOnly} />
       </Route>
 
       {/* Autres routes */}
       <PlansActionsRoutes
-        collectivite_id={collectivite.collectivite_id}
-        readonly={collectivite.readonly}
+        collectivite_id={collectivite.collectiviteId}
+        readonly={collectivite.isReadOnly}
       />
     </Switch>
   );

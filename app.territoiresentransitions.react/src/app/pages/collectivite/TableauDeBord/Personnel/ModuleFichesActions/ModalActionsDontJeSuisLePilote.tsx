@@ -5,7 +5,7 @@ import { ModuleFicheActionsSelect } from '@/api/plan-actions/dashboards/personal
 import { Filtre as FiltreFichesAction } from '@/api/plan-actions/fiche-resumes.list/domain/fetch-options.schema';
 import { useAuth } from '@/app/core-logic/api/auth/AuthProvider';
 import { supabaseClient } from '@/app/core-logic/api/supabase';
-import { useCollectiviteId } from '@/app/core-logic/hooks/params';
+import { useCurrentCollectivite } from '@/app/core-logic/hooks/useCurrentCollectivite';
 import PrioritesFilterDropdown from '@/app/ui/dropdownLists/ficheAction/priorites/PrioritesFilterDropdown';
 import StatutsFilterDropdown from '@/app/ui/dropdownLists/ficheAction/statuts/StatutsFilterDropdown';
 import PersonnesDropdown from '@/app/ui/dropdownLists/PersonnesDropdown/PersonnesDropdown';
@@ -32,7 +32,7 @@ const ModalActionsDontJeSuisLePilote = ({
   module,
   keysToInvalidate,
 }: Props) => {
-  const collectiviteId = useCollectiviteId();
+  const { collectiviteId, niveauAcces, role } = useCurrentCollectivite()!;
   const queryClient = useQueryClient();
   const userId = useAuth().user?.id;
 
@@ -105,7 +105,9 @@ const ModalActionsDontJeSuisLePilote = ({
           btnOKProps={{
             onClick: async () => {
               trackEvent('tdb_valider_filtres_actions_pilotes', {
-                collectivite_id: collectiviteId!,
+                collectiviteId,
+                niveauAcces,
+                role,
               });
               await modulesSave({
                 dbClient: supabaseClient,

@@ -22,7 +22,7 @@ export const AddPreuveReglementaire = (props: TAddPreuveButtonProps) => {
   const { preuve_id, isDisabled } = props;
   const handlers = useAddPreuveReglementaireToAction(preuve_id);
   const currentCollectivite = useCurrentCollectivite();
-  if (!currentCollectivite || currentCollectivite.readonly) {
+  if (!currentCollectivite || currentCollectivite.isReadOnly) {
     return null;
   }
 

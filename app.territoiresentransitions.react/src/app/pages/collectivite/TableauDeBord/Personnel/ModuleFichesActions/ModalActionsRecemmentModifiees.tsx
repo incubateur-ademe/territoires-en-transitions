@@ -7,7 +7,7 @@ import {
   ModifiedSince,
 } from '@/api/plan-actions/fiche-resumes.list/domain/fetch-options.schema';
 import { supabaseClient } from '@/app/core-logic/api/supabase';
-import { useCollectiviteId } from '@/app/core-logic/hooks/params';
+import { useCurrentCollectivite } from '@/app/core-logic/hooks/useCurrentCollectivite';
 import StatutsFilterDropdown from '@/app/ui/dropdownLists/ficheAction/statuts/StatutsFilterDropdown';
 import PeriodeDropdown from '@/app/ui/dropdownLists/PeriodeDropdown';
 import PersonnesDropdown from '@/app/ui/dropdownLists/PersonnesDropdown/PersonnesDropdown';
@@ -36,7 +36,7 @@ const ModalActionsRecemmentModifiees = ({
   module,
   keysToInvalidate,
 }: Props) => {
-  const collectiviteId = useCollectiviteId();
+  const { collectiviteId, niveauAcces, role } = useCurrentCollectivite()!;
   const queryClient = useQueryClient();
 
   const [filtreState, setFiltreState] = useState<FiltreFichesAction>(
@@ -110,7 +110,9 @@ const ModalActionsRecemmentModifiees = ({
           btnOKProps={{
             onClick: async () => {
               trackEvent('tdb_valider_filtres_actions_modifiees', {
-                collectivite_id: collectiviteId!,
+                collectiviteId,
+                niveauAcces,
+                role,
               });
               await modulesSave({
                 dbClient: supabaseClient,

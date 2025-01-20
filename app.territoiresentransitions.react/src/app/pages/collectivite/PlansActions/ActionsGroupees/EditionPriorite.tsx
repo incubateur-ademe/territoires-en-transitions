@@ -1,4 +1,4 @@
-import { useCollectiviteId } from '@/app/core-logic/hooks/params';
+import { useCurrentCollectivite } from '@/app/core-logic/hooks/useCurrentCollectivite';
 import PrioritesSelectDropdown from '@/app/ui/dropdownLists/ficheAction/priorites/PrioritesSelectDropdown';
 import { Priorite } from '@/domain/plans/fiches';
 import { Button, Field, useEventTracker } from '@/ui';
@@ -18,7 +18,7 @@ const ModaleEditionPriorite = ({
 }: ModaleEditionPrioriteProps) => {
   const [priorite, setPriorite] = useState<Priorite>();
 
-  const collectiviteId = useCollectiviteId()!;
+  const { collectiviteId, niveauAcces, role } = useCurrentCollectivite()!;
   const tracker = useEventTracker('app/actions-groupees-fiches-action');
 
   const mutation = useFichesActionsBulkEdit();
@@ -30,7 +30,9 @@ const ModaleEditionPriorite = ({
       actionsCount={selectedIds.length}
       onSave={() => {
         tracker('associer_priorite_groupe', {
-          collectivite_id: collectiviteId,
+          collectiviteId,
+          niveauAcces,
+          role,
         });
         mutation.mutate({
           ficheIds: selectedIds,

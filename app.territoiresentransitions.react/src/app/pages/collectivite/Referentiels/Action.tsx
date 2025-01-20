@@ -43,7 +43,7 @@ const Action = ({ action }: { action: ActionDefinitionSummary }) => {
   const actionVue = useActionVue();
   const router = useRouter();
   const collectivite = useCurrentCollectivite();
-  const collectiviteId = collectivite?.collectivite_id;
+  const collectiviteId = collectivite?.collectiviteId;
   const referentielId = useReferentielId() as ReferentielParamOption;
   const { prevActionLink, nextActionLink } = usePrevAndNextActionLinks(
     action.id
@@ -71,7 +71,7 @@ const Action = ({ action }: { action: ActionDefinitionSummary }) => {
   // le contenu de l'onglet Indicateurs n'est pas affiché si la collectivité est
   // en accès restreint
   const noIndicateursTab =
-    collectivite.acces_restreint && collectivite.niveau_acces === null;
+    collectivite.accesRestreint && collectivite.niveauAcces === null;
 
   // synchronise l'url lors du passage d'un onglet à l'autre
   const handleChange = (activeTab: number) => {

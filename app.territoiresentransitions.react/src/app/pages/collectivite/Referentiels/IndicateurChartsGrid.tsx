@@ -41,7 +41,7 @@ const IndicateurChartContainer = (
 ) => {
   const { ref, entry } = useIntersectionObserver();
   const collectiviteId = useCollectiviteId()!;
-  const isReadonly = useCurrentCollectivite()?.readonly ?? true;
+  const isReadonly = useCurrentCollectivite()?.isReadOnly ?? true;
 
   const { definition, view } = props;
   const url = makeCollectiviteIndicateursUrl({

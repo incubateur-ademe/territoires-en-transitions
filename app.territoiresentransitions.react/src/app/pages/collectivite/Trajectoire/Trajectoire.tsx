@@ -1,6 +1,7 @@
 import { useCollectiviteId } from '@/app/core-logic/hooks/params';
 import SpinnerLoader from '@/app/ui/shared/SpinnerLoader';
 import { Alert, Button, Card, Modal, TrackPageView } from '@/ui';
+import { pick } from 'es-toolkit';
 import { useEffect } from 'react';
 import { useQueryClient } from 'react-query';
 import { useCurrentCollectivite } from '../../../../core-logic/hooks/useCurrentCollectivite';
@@ -70,7 +71,7 @@ const DonneesNonDispo = () => {
     <Card className="flex items-center my-16">
       <DbErrorPicto />
       <h2>Données disponibles insuffisantes pour le calcul</h2>
-      {collectivite?.readonly ? (
+      {collectivite?.isReadOnly ? (
         <p className="font-normal text-lg text-center">
           Nous ne disposons pas encore des données suffisantes pour permettre le
           calcul automatique de la trajectoire SNBC territorialisé de votre
@@ -100,7 +101,7 @@ const DonneesNonDispo = () => {
         size="xl"
         render={(props) => <DonneesCollectivite modalProps={props} />}
       >
-        <Button disabled={!collectivite || collectivite.readonly}>
+        <Button disabled={!collectivite || collectivite.isReadOnly}>
           Compléter mes données
         </Button>
       </Modal>
@@ -170,15 +171,17 @@ const Presentation = () => {
           </p>
           <ul className="w-11/12 text-lg list-disc ml-4 mb-0">
             <li>
-              Définir ou évaluer vos objectifs, par exemple lors d'un suivi
-              annuel ou d'un bilan à mi-parcours de PCAET
+              {
+                "Définir ou évaluer vos objectifs, par exemple lors d'un suivi annuel ou d'un bilan à mi-parcours de PCAET"
+              }
             </li>
             <li>Quantifier les efforts nécessaires secteur par secteur</li>
             <li>Identifier votre contribution à la SNBC</li>
           </ul>
           <p className="text-lg mt-2">
-            Cette trajectoire n'est pas prescriptive, mais peut constituer un
-            repère pour guider votre stratégie, vos actions.
+            {
+              "Cette trajectoire n'est pas prescriptive, mais peut constituer un repère pour guider votre stratégie, vos actions."
+            }
           </p>
           <Button
             size="md"
@@ -230,7 +233,7 @@ const Presentation = () => {
 const Trajectoire = () => {
   const statutTrajectoire = useStatutTrajectoire();
   const { data, error, isLoading } = statutTrajectoire;
-  const collectiviteId = useCollectiviteId();
+  const collectivite = useCurrentCollectivite()!;
   const statut = isLoading ? undefined : data?.status ? data.status : 'error';
   const errorProps =
     statut === 'error'
@@ -238,13 +241,13 @@ const Trajectoire = () => {
       : {};
 
   return (
-    collectiviteId && (
+    collectivite.collectiviteId && (
       <div className="bg-grey-2 -mb-8">
         {!isLoading && (
           <TrackPageView
             pageName="app/trajectoires/snbc"
             properties={{
-              collectivite_id: collectiviteId,
+              ...pick(collectivite, ['collectiviteId', 'niveauAcces', 'role']),
               statut,
               ...errorProps,
             }}

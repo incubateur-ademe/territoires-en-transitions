@@ -86,15 +86,14 @@ export const nameToparams: Record<
 
 /** Page de listing de toutes les fiches actions de la collectivité */
 const ToutesLesFichesAction = () => {
-  const collectivite = useCurrentCollectivite();
-
-  const isReadonly = collectivite?.readonly ?? false;
+  const { collectiviteId, niveauAcces, role, isReadOnly } =
+    useCurrentCollectivite()!;
 
   const { count } = useFicheActionCount();
 
   const [filterParams, setFilterParams] = useSearchParams<Filtre>(
     makeCollectiviteToutesLesFichesUrl({
-      collectiviteId: collectivite?.collectivite_id!,
+      collectiviteId,
     }),
     {},
     nameToparams
@@ -109,7 +108,7 @@ const ToutesLesFichesAction = () => {
     <div className="min-h-[44rem] flex flex-col gap-8">
       <div className="flex justify-between max-sm:flex-col gap-y-4">
         <h2 className="mb-0">Toutes les actions</h2>
-        {!isReadonly && !!count && (
+        {!isReadOnly && !!count && (
           <Button size="sm" onClick={() => createFicheAction()}>
             Créer une fiche d’action
           </Button>
@@ -134,15 +133,17 @@ const ToutesLesFichesAction = () => {
               setFilters={(filters) => {
                 setFilterParams(filters);
                 tracker('filtres', {
-                  collectivite_id: collectivite?.collectivite_id!,
+                  collectiviteId,
+                  niveauAcces,
+                  role,
                   filtreValues: filters,
                 });
               }}
             />
           </ButtonMenu>
         )}
-        enableGroupedActions={!isReadonly}
-        isReadOnly={isReadonly}
+        enableGroupedActions={!isReadOnly}
+        isReadOnly={isReadOnly}
       />
     </div>
   );

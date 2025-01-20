@@ -35,8 +35,7 @@ const ModalePlanning = ({
   const [isDateFinError, setIsDateFinError] = useState(false);
 
   const tracker = useEventTracker('app/fiche-action');
-  const collectivite = useCurrentCollectivite();
-  const collectiviteId = collectivite?.collectivite_id || null;
+  const { collectiviteId, niveauAcces, role } = useCurrentCollectivite()!;
 
   useEffect(() => {
     if (isOpen) setEditedFiche(fiche);
@@ -236,7 +235,9 @@ const ModalePlanning = ({
             onClick: () => {
               collectiviteId &&
                 tracker('validation_modale_planning_fa', {
-                  collectivite_id: collectiviteId,
+                  collectiviteId,
+                  niveauAcces,
+                  role,
                 });
               handleSave();
               close();

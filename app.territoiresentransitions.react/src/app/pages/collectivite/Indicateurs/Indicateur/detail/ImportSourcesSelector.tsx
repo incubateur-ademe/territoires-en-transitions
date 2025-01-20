@@ -10,6 +10,7 @@ import {
   TrackPageView,
   useEventTracker,
 } from '@/ui';
+import { pick } from 'es-toolkit';
 import { useState } from 'react';
 import { getSourceTypeLabel, SOURCE_COLLECTIVITE } from '../../constants';
 import { TIndicateurDefinition } from '../../types';
@@ -41,8 +42,8 @@ export const ImportSourcesSelector = ({
   const sourceTypeLabel = getSourceTypeLabel(sourceType);
 
   // collectivité courante
-  const collectivite = useCurrentCollectivite();
-  const collectiviteId = collectivite?.collectivite_id || null;
+  const collectivite = useCurrentCollectivite()!;
+  const collectiviteId = collectivite.collectiviteId;
 
   // compare les données open-data avec les données courantes (si la source est externe)
   const openDataComparaison = useOpenDataComparaison({
@@ -58,14 +59,13 @@ export const ImportSourcesSelector = ({
   // détermine si le bouton "appliquer à mes objectifs/résultats" doit être affiché
   const canApplyOpenData =
     collectivite &&
-    !collectivite.readonly &&
+    !collectivite.isReadOnly &&
     currentSource !== SOURCE_COLLECTIVITE &&
     sourceType &&
     !!(comparaison?.conflits || comparaison?.ajouts);
 
   // mutation pour appliquer les données
   const { mutate: applyOpenData } = useApplyOpenData({
-    collectiviteId,
     definition,
     source,
   });
@@ -88,9 +88,9 @@ export const ImportSourcesSelector = ({
           setCurrentSource(sourceId);
           if (sourceId !== SOURCE_COLLECTIVITE && sourceType)
             trackEvent('view_open_data', {
-              collectivite_id: collectiviteId!,
-              indicateur_id: String(definition.id),
-              source_id: sourceId,
+              ...collectivite,
+              indicateurId: String(definition.id),
+              sourceId: sourceId,
               type: sourceType,
             });
         }}
@@ -137,8 +137,12 @@ export const ImportSourcesSelector = ({
                   <TrackPageView
                     pageName="app/indicateurs/predefini/conflits"
                     properties={{
-                      collectivite_id: collectiviteId!,
-                      indicateur_id: String(definition.id),
+                      ...pick(collectivite, [
+                        'collectiviteId',
+                        'niveauAcces',
+                        'role',
+                      ]),
+                      indicateurId: String(definition.id),
                     }}
                   />
                   <ApplyOpenDataModal

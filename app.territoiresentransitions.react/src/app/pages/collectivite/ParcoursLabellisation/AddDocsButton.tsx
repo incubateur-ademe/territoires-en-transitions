@@ -12,7 +12,7 @@ export const AddDocsButton = () => {
   const [opened, setOpened] = useState(false);
   const handlers = useAddPreuveToDemande();
   const currentCollectivite = useCurrentCollectivite();
-  if (!currentCollectivite || currentCollectivite.readonly) {
+  if (!currentCollectivite || currentCollectivite.isReadOnly) {
     return null;
   }
 

@@ -33,7 +33,7 @@ export const useAddUserToCollectivite = (
   collectivite: CurrentCollectivite,
   user: UserData
 ) => {
-  const { collectivite_id: collectiviteId } = collectivite;
+  const { collectiviteId: collectiviteId } = collectivite;
   const queryClient = useQueryClient();
   const { mutate: sendInvitation } = useSendInvitation(collectivite, user);
   const utils = trpc.useUtils();
