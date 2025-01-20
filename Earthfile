@@ -609,7 +609,7 @@ api-test:
               --name api_test_tet \
               --network $network \
               --env SUPABASE_URL=$API_URL \
-              --env SUPABASE_KEY=$SERVICE_ROLE_KEY \
+              --env SUPABASE_ANON_KEY=$SERVICE_ROLE_KEY \
               --env SUPABASE_SERVICE_ROLE_KEY=$SERVICE_ROLE_KEY \
               api-test:latest test --no-check -A tests/$test/*.test.ts --location 'http://localhost'
     END
@@ -625,7 +625,7 @@ api-crud-test:
       --name api_crud_test_tet \
       --network $network \
       --env SUPABASE_URL=$API_URL \
-      --env SUPABASE_KEY=$ANON_KEY \
+      --env SUPABASE_ANON_KEY=$ANON_KEY \
       api-test:latest test -A tests/crud/crud.test.ts --location 'http://localhost' -- elements:axe
 
 cypress-wip:
