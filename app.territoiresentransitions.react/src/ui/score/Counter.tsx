@@ -12,14 +12,29 @@ export const Counter = ({ actionId, className }: CounterProps) => {
 
   if (!score) return null;
 
-  const percentage = Number(
-    (score.point_fait / score.point_potentiel) * 100
-  ).toFixed(1);
+  const calculatePercentage = (
+    pointFait: number,
+    pointPotentiel: number
+  ): string => {
+    const ratio = pointFait / pointPotentiel;
+    if (Number.isNaN(ratio)) {
+      return '-';
+    }
+    return Number(ratio * 100).toFixed(1);
+  };
+
+  const percentage = calculatePercentage(
+    score.point_fait,
+    score.point_potentiel
+  );
 
   return (
     <div className={classNames('flex', className)}>
       <Badge
-        title={`${percentage} %`}
+        title={`${calculatePercentage(
+          score.point_fait,
+          score.point_potentiel
+        )} %`}
         state="success"
         uppercase={false}
         className="!rounded-r-none border-2 border-r-0"
