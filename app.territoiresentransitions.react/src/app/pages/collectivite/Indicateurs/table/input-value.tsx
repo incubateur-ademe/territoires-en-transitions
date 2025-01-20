@@ -25,7 +25,7 @@ export const InputValue = (props: InputValueProps) => {
       type="number"
       numType="float"
       value={value?.toString() ?? ''}
-      onBlur={(e) => {
+      onChange={(e) => {
         const parsedValue = parseFloat(
           e.currentTarget.value.trim().replaceAll(',', '.').replaceAll(' ', '')
         );

@@ -28,7 +28,10 @@ export const EditValeursModal = (props: EditValeursModalProps) => {
   const { objectif, objectifCommentaire, resultat, resultatCommentaire } =
     valeur || {};
 
-  const disabled = !annee || !(objectif || resultat) || isPending;
+  const disabled =
+    !annee ||
+    !(typeof objectif === 'number' || typeof resultat === 'number') ||
+    isPending;
 
   const upsert = () =>
     upsertValeur({
