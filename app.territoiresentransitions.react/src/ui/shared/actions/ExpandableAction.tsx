@@ -67,13 +67,13 @@ export const ExpandableAction = ({
           >
             <ActionReferentielDisplayTitle action={action} isOpen={isOpen} />
             <div className="flex items-center">
-              <div className="w-48">
+              <div className="w-48 ml-6">
                 <ActionProgressBar
                   action={action}
-                  styleOptions={{ fullWidth: true }}
+                  progressBarStyleOptions={{ fullWidth: true }}
                 />
               </div>
-              <div className="w-96">
+              <div className="w-64 ml-6">
                 <Counter actionId={action.id} className="justify-end" />
               </div>
             </div>
@@ -95,7 +95,7 @@ export const ExpandableAction = ({
         })}
       {isOpen && children.some((action) => action.type === 'action') && (
         <div
-          className={`grid ${
+          className={`ml-6 grid ${
             isDescriptionOn ? 'grid-cols-1' : 'grid-cols-3'
           } gap-4`}
         >

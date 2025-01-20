@@ -13,7 +13,7 @@ export type ProgressBarType = {
   defaultScore: { label: string; color: string };
   valueToDisplay?: string;
   percent?: boolean;
-  styleOptions?: ProgressBarStyleOptions;
+  progressBarStyleOptions?: ProgressBarStyleOptions;
 };
 
 const ProgressBar = ({
@@ -22,9 +22,9 @@ const ProgressBar = ({
   defaultScore,
   valueToDisplay,
   percent = false,
-  styleOptions = { justify: 'end', fullWidth: false },
+  progressBarStyleOptions = { justify: 'end', fullWidth: false },
 }: ProgressBarType): JSX.Element => {
-  const { justify, fullWidth } = styleOptions;
+  const { justify, fullWidth } = progressBarStyleOptions;
   const barClasses = 'transition-width duration-500 ease-in-out rounded-[4px]';
 
   const percentageAgainstTotal = (x: number): number => (100 * x) / total;
@@ -49,13 +49,11 @@ const ProgressBar = ({
       className={classNames('flex gap-3 items-center', `justify-${justify}`)}
     >
       {/* Légende à gauche de la barre de progression */}
-      {valueToDisplay &&
-        displayedValue !== undefined &&
-        displayedValue !== null && (
-          <div className="text-sm font-bold">
-            <TweenText text={`${toFixed(displayedValue)} %`} align-right />
-          </div>
-        )}
+      {displayedValue !== undefined && displayedValue !== null && (
+        <div className="text-sm font-bold">
+          <TweenText text={`${toFixed(displayedValue)} %`} align-right />
+        </div>
+      )}
 
       {/* Barre de progression */}
       <div
