@@ -45,6 +45,8 @@ export const createTrackingClient = ({
   posthog.init(key, {
     api_host: apiHost,
     ui_host: host,
+    // create profiles for authenticated users only
+    person_profiles: 'identified_only',
     persistence: getConsent() ? 'cookie' : 'memory',
     capture_pageview: false, // on utilise PostHogPageView pour capturer les `page views`
 
