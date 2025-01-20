@@ -11,7 +11,7 @@ import {
   useReferentielVue,
 } from '@/app/core-logic/hooks/params';
 import { ReferentielOfIndicateur } from '@/app/types/litterals';
-import { Button, Card, Select, Tab, Tabs } from '@/ui';
+import { Card, Tab, Tabs } from '@/ui';
 import { useRouter } from 'next/navigation';
 import ProgressBarWithTooltip from '../../../../ui/score/ProgressBarWithTooltip';
 import AidePriorisation from '../AidePriorisation';
@@ -70,7 +70,7 @@ const ReferentielTabs = () => {
             {referentielToName[referentielId as ReferentielOfIndicateur]}
           </h2>
           <div className="flex gap-x-4">
-            <Select
+            {/* <Select
               options={[]}
               onChange={() => {}}
               values={[]}
@@ -83,10 +83,10 @@ const ReferentielTabs = () => {
               className="whitespace-nowrap min-w-fit"
             >
               Figer le référentiel
-            </Button>
+            </Button> */}
           </div>
         </div>
-        <div className="mt-4 mb-8">
+        <div className="my-5">
           <ProgressBarWithTooltip
             score={[
               {

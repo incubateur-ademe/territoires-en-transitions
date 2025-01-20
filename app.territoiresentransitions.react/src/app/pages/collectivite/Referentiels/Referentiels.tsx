@@ -3,7 +3,7 @@ import { useReferentielDownToAction } from '@/app/core-logic/hooks/referentiel';
 import { useCurrentCollectivite } from '@/app/core-logic/hooks/useCurrentCollectivite';
 import { Referentiel } from '@/app/types/litterals';
 import { ExpandableAction } from '@/app/ui/shared/actions/ExpandableAction';
-import { Checkbox, Input, OptionValue, Select } from '@/ui';
+import { Checkbox, OptionValue, Select } from '@/ui';
 import { useState } from 'react';
 import { ReferentielCard } from '../../../../ui/referentiels/Card/ReferentielCard';
 import { useExportScore } from './useExportScore';
@@ -22,7 +22,7 @@ export const ActionsReferentiels = () => {
     collectivite
   );
   const [isDescriptionOn, setIsDescriptionOn] = useState(false);
-  const [displayOption, setDisplayOption] = useState<OptionValue>('axes');
+  const [displayOption, setDisplayOption] = useState<OptionValue>('axe');
 
   if (!referentiel) return <></>;
 
@@ -31,16 +31,17 @@ export const ActionsReferentiels = () => {
       <section>
         <>
           <div className="relative">
-            <div className="relative z-[1] flex max-xl:flex-col justify-between xl:items-center gap-4 pb-6 border-b border-primary-3 mb-6">
+            <div className="relative z-[1] flex max-xl:flex-col xl:items-center gap-4 pb-6 border-b border-primary-3 mb-6">
               <div className="flex max-md:flex-col gap-x-8 gap-y-4 md:items-center">
                 <div className="w-full md:w-64">
                   <Select
                     options={[
-                      { value: 'axes', label: 'Par axes' },
-                      { value: 'actions', label: 'Par actions' },
-                      { value: 'competences', label: 'Par compétences' },
+                      { value: 'axe', label: 'Par axe' },
+                      { value: 'action', label: 'Par action' },
+                      // *** For future use ***
+                      // { value: 'competences', label: 'Par compétences' },
                     ]}
-                    onChange={(value) => setDisplayOption(value ?? 'axes')}
+                    onChange={(value) => setDisplayOption(value ?? 'axe')}
                     values={[displayOption]}
                     customItem={(v) => (
                       <span className="text-grey-8 font-normal">{v.label}</span>
@@ -62,33 +63,12 @@ export const ActionsReferentiels = () => {
                   }}
                   disabled={isLoading}
                 />
-
-                <Checkbox
-                  label="Appliquer des actions groupées"
-                  variant="switch"
-                  labelClassname="font-normal text-sm !text-grey-7"
-                  containerClassname="items-center"
-                  checked={true}
-                  onChange={() => {}}
-                  disabled={isLoading}
-                />
-              </div>
-              <div className="flex gap-x-8 gap-y-4">
-                <Input
-                  type="search"
-                  onChange={() => {}}
-                  onSearch={() => {}}
-                  value={''}
-                  containerClassname="w-full xl:w-96"
-                  placeholder="Rechercher une action"
-                  displaySize="sm"
-                />
               </div>
             </div>
           </div>
         </>
 
-        {displayOption === 'actions' && (
+        {displayOption === 'action' && (
           <div>
             <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
               {actions
@@ -104,7 +84,7 @@ export const ActionsReferentiels = () => {
           </div>
         )}
 
-        {displayOption === 'axes' &&
+        {displayOption === 'axe' &&
           axes.map((axe) => (
             <ExpandableAction
               action={axe}
