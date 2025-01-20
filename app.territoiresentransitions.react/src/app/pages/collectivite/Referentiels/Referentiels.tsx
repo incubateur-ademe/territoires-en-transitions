@@ -3,7 +3,7 @@ import { useReferentielDownToAction } from '@/app/core-logic/hooks/referentiel';
 import { useCurrentCollectivite } from '@/app/core-logic/hooks/useCurrentCollectivite';
 import { Referentiel } from '@/app/types/litterals';
 import { ExpandableAction } from '@/app/ui/shared/actions/ExpandableAction';
-import { Checkbox, OptionValue, Select } from '@/ui';
+import { Button, Checkbox, OptionValue, Select } from '@/ui';
 import { useState } from 'react';
 import { ReferentielCard } from '../../../../ui/referentiels/Card/ReferentielCard';
 import { useExportScore } from './useExportScore';
@@ -31,7 +31,7 @@ export const ActionsReferentiels = () => {
       <section>
         <>
           <div className="relative">
-            <div className="relative z-[1] flex max-xl:flex-col xl:items-center gap-4 pb-6 border-b border-primary-3 mb-6">
+            <div className="relative z-[1] flex justify-between max-xl:flex-col xl:items-center gap-4 pb-6 border-b border-primary-3 mb-6">
               <div className="flex max-md:flex-col gap-x-8 gap-y-4 md:items-center">
                 <div className="w-full md:w-64">
                   <Select
@@ -49,19 +49,30 @@ export const ActionsReferentiels = () => {
                     small
                   />
                 </div>
-              </div>
 
-              <div className="flex gap-x-6">
-                <Checkbox
-                  label="Afficher la description des actions"
-                  variant="switch"
-                  labelClassname="font-normal text-sm !text-grey-7"
-                  containerClassname="items-center"
-                  checked={isDescriptionOn}
-                  onChange={(evt) => {
-                    setIsDescriptionOn(!isDescriptionOn);
-                  }}
+                <div className="flex gap-x-6">
+                  <Checkbox
+                    label="Afficher la description des actions"
+                    variant="switch"
+                    labelClassname="font-normal text-sm !text-grey-7"
+                    containerClassname="items-center"
+                    checked={isDescriptionOn}
+                    onChange={(evt) => {
+                      setIsDescriptionOn(!isDescriptionOn);
+                    }}
+                    disabled={isLoading}
+                  />
+                </div>
+              </div>
+              <div>
+                <Button
+                  data-test="export-scores"
+                  icon={'download-fill'}
                   disabled={isLoading}
+                  onClick={() => {
+                    exportScore();
+                  }}
+                  size="sm"
                 />
               </div>
             </div>
@@ -93,16 +104,6 @@ export const ActionsReferentiels = () => {
             />
           ))}
       </section>
-      <button
-        data-test="export-scores"
-        className="fr-btn fr-btn--icon-left fr-fi-download-line fr-mt-6w"
-        disabled={isLoading}
-        onClick={() => {
-          exportScore();
-        }}
-      >
-        Exporter
-      </button>
     </main>
   );
 };
