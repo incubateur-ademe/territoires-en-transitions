@@ -89,4 +89,4 @@ export const prepareData = (
 };
 
 export type PreparedData = ReturnType<typeof prepareData>;
-export type PreparedValue = PreparedData['sources'][number]['valeurs'][number];
+export type PreparedValue = PreparedData['valeursExistantes'][number];
