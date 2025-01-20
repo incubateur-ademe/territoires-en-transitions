@@ -1,8 +1,8 @@
-import {useState} from 'react';
-import {Meta, StoryObj} from '@storybook/react';
-import {action} from '@storybook/addon-actions';
-import {Login} from './Login';
-import {LoginView} from './type';
+import { action } from '@storybook/addon-actions';
+import { Meta, StoryObj } from '@storybook/react';
+import { useState } from 'react';
+import { Login } from './Login';
+import { LoginView } from './type';
 
 const meta: Meta<typeof Login> = {
   component: Login,
@@ -14,9 +14,9 @@ const meta: Meta<typeof Login> = {
       action('getPasswordStrength')(...args);
       return null;
     },
-    defaultValues: {email: 'yolo@dodo.com', otp: ''},
+    defaultValues: { email: 'yolo@dodo.com', otp: '' },
   },
-  render: props => {
+  render: (props) => {
     // eslint-disable-next-line react-hooks/rules-of-hooks
     const [view, setView] = useState<LoginView>(props.view || 'etape1');
     const onSetView: typeof setView = (...args) => {
@@ -31,38 +31,30 @@ export default meta;
 
 type Story = StoryObj<typeof Login>;
 
-export const SansMotDePasse: Story = {
+export const Default: Story = {
   args: {},
 };
 
 export const MsgLienEnvoye: Story = {
-  args: {view: 'msg_lien_envoye'},
+  args: { view: 'msg_lien_envoye' },
 };
 
 export const AvecErreur: Story = {
-  args: {error: 'Une erreur est survenue...'},
-};
-
-export const AvecMotDePasse: Story = {
-  args: {withPassword: true},
-};
-
-export const AvecMotDePasseEtErreur: Story = {
-  args: {withPassword: true, error: 'Une erreur est survenue...'},
+  args: { error: 'Une erreur est survenue...' },
 };
 
 export const MotDePasseOublie: Story = {
-  args: {view: 'mdp_oublie'},
+  args: { view: 'mdp_oublie' },
 };
 
 export const MsgInitMdp: Story = {
-  args: {view: 'msg_init_mdp'},
+  args: { view: 'msg_init_mdp' },
 };
 
 export const Recover: Story = {
-  args: {view: 'recover'},
+  args: { view: 'recover' },
 };
 
 export const ReinitMotDePasse: Story = {
-  args: {view: 'reset_mdp'},
+  args: { view: 'reset_mdp' },
 };
