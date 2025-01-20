@@ -1,4 +1,5 @@
 import { TIndicateurDefinition } from '../../types';
+import CheminIndicateur from './CheminIndicateur';
 import IndicateurInfos from './IndicateurInfos';
 import IndicateurTitle from './IndicateurTitle';
 import IndicateurToolbar from './IndicateurToolbar';
@@ -41,6 +42,9 @@ const IndicateurHeader = ({
           className="ml-auto"
         />
       </div>
+
+      {/* Chemin de l'indicateur */}
+      <CheminIndicateur {...{ collectiviteId, titre, unite }} />
 
       {/* Infos générales sur l'indicateur */}
       <IndicateurInfos {...{ definition, isPerso, composeSansAgregation }} />
