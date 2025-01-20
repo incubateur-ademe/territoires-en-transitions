@@ -2,19 +2,18 @@ import { ActionDefinitionSummary } from '@/app/core-logic/api/endpoints/ActionDe
 import { useCollectiviteId } from '@/app/core-logic/hooks/params';
 import { referentielId } from '@/app/utils/actions';
 import Link from 'next/link';
-import { Badge, Card } from '../../../../../packages/ui/src';
+import { Card } from '../../../../../packages/ui/src';
 import { makeCollectiviteActionUrl } from '../../../app/paths';
 import { Counter } from '../../score/Counter';
 import ActionProgressBar from '../ActionProgressBar';
-import ReferentielCardFooter from './ReferentielCardFooter';
 
 /**
  * Used on referentiels page, links to action page.
  */
-interface ReferentielCardProps {
+type ReferentielCardProps = {
   action: ActionDefinitionSummary;
   isDescriptionOn: boolean;
-}
+};
 
 export const ReferentielCard = ({
   action,
@@ -23,15 +22,16 @@ export const ReferentielCard = ({
   const collectiviteId = useCollectiviteId();
   const referentiel = referentielId(action.id);
 
-  // TODO: remove fake data
-  const FAKE_pilotes = [
-    {
-      nom: 'John Doe',
-      collectiviteId: collectiviteId!,
-      tagId: 1,
-      userId: '1',
-    },
-  ];
+  // *** For future use ***
+  // Replace with real data :)
+  // const FAKE_pilotes = [
+  //   {
+  //     nom: 'John Doe',
+  //     collectiviteId: collectiviteId!,
+  //     tagId: 1,
+  //     userId: '1',
+  //   },
+  // ];
 
   return (
     <Link
@@ -43,16 +43,17 @@ export const ReferentielCard = ({
     >
       <Card
         className="h-full !p-y-2 !p-x-4"
-        header={
-          <div className="flex items-center gap-3">
-            <Badge state="standard" title="Compétence 1" size="sm" />
-          </div>
-        }
-        footer={
-          <div className="flex flex-col">
-            <ReferentielCardFooter pilotes={FAKE_pilotes} />
-          </div>
-        }
+        // *** For future use ***
+        // header={
+        //   <div className="flex items-center gap-3">
+        //     <Badge state="standard" title="Compétence 1" size="sm" />
+        //   </div>
+        // }
+        // footer={
+        //   <div className="flex flex-col">
+        //     <ReferentielCardFooter pilotes={FAKE_pilotes} />
+        //   </div>
+        // }
       >
         <div className="flex min-w-min">
           <span className="text-md font-bold text-primary-9 font-bold">
