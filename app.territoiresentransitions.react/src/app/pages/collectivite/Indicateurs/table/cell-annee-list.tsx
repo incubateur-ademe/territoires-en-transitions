@@ -4,8 +4,7 @@ import classNames from 'classnames';
 import { useState } from 'react';
 import { SourceType } from '../types';
 import { ConfirmDelete } from './confirm-delete';
-import { PreparedData } from './prepare-data';
-import { IndicateurSourceValeur } from './use-indicateur-valeurs';
+import { PreparedData, PreparedValue } from './prepare-data';
 
 type CellAnneeListProps = {
   confidentiel?: boolean;
@@ -13,7 +12,7 @@ type CellAnneeListProps = {
   definition: IndicateurDefinition;
   readonly?: boolean;
   type: SourceType;
-  onDelete: (valeur: IndicateurSourceValeur) => void;
+  onDelete: (valeur: PreparedValue) => void;
 };
 
 /** Affiche les cellules des années dans l'en-tête du tableau */
@@ -26,9 +25,7 @@ export const CellAnneeList = ({
   onDelete,
 }: CellAnneeListProps) => {
   const { annees, anneeModePrive, valeursExistantes } = data;
-  const [toBeDeleted, setToBeDeleted] = useState<IndicateurSourceValeur | null>(
-    null
-  );
+  const [toBeDeleted, setToBeDeleted] = useState<PreparedValue | null>(null);
 
   return annees?.map((annee) => {
     const valeur = valeursExistantes.find((v) => v.annee === annee);
@@ -72,7 +69,6 @@ export const CellAnneeList = ({
         </div>
         {toBeDeleted && (
           <ConfirmDelete
-            annee={annee}
             valeur={toBeDeleted}
             unite={definition.unite}
             onDismissConfirm={(confirmed) => {

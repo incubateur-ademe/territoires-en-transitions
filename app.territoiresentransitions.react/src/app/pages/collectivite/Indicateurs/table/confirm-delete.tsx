@@ -11,22 +11,26 @@ import {
 } from '@/ui';
 import { useState } from 'react';
 import { CellValue } from './cell-value';
-import { IndicateurSourceValeur } from './use-indicateur-valeurs';
+import { PreparedValue } from './prepare-data';
 
 type ConfirmDeleteProps = {
   unite: string;
-  annee: number;
-  valeur: IndicateurSourceValeur;
+  valeur: PreparedValue;
   onDismissConfirm: (overwrite: boolean) => void;
 };
 
 /** Affiche un dialogue de confirmation avant suppression d'une valeur
  */
 export const ConfirmDelete = (props: ConfirmDeleteProps) => {
-  const { annee, valeur, unite, onDismissConfirm } = props;
+  const { valeur, unite, onDismissConfirm } = props;
   const [isOpen, setIsOpen] = useState(true);
-  const { objectif, objectifCommentaire, resultat, resultatCommentaire } =
-    valeur;
+  const {
+    objectif,
+    objectifCommentaire,
+    resultat,
+    resultatCommentaire,
+    annee,
+  } = valeur;
 
   return (
     <Modal
