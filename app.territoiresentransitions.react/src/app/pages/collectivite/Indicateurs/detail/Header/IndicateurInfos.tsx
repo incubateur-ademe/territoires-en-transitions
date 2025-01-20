@@ -38,7 +38,7 @@ const IndicateurInfos = ({
     (!composeSansAgregation && (isPerso || hasOpenData));
 
   return displayInfo ? (
-    <div className="flex max-md:flex-col gap-3 items-center mt-3 mb-4 py-3 text-sm text-grey-8 border-y border-primary-3">
+    <div className="flex flex-wrap gap-3 items-center mt-3 mb-4 py-3 text-sm text-grey-8 border-y border-primary-3">
       {/* Pilotes */}
       {hasPilotes && (
         <ListWithTooltip
@@ -51,9 +51,7 @@ const IndicateurInfos = ({
       {/* Services pilotes */}
       {hasServices && (
         <>
-          {hasPilotes && (
-            <div className="max-md:hidden w-[1px] h-5 bg-grey-5" />
-          )}
+          {hasPilotes && <div className="w-[1px] h-5 bg-grey-5" />}
           <ListWithTooltip
             title="Direction ou service pilote"
             list={services.map((s) => s.nom)}
@@ -66,7 +64,7 @@ const IndicateurInfos = ({
       {participationScore && (
         <>
           {(hasPilotes || hasServices) && (
-            <div className="max-md:hidden w-[1px] h-5 bg-grey-5" />
+            <div className="w-[1px] h-5 bg-grey-5" />
           )}
           <span>Participe au score {referentielToName.cae}</span>
         </>
@@ -76,7 +74,7 @@ const IndicateurInfos = ({
       {!composeSansAgregation && (
         <>
           {(hasPilotes || participationScore) && (isPerso || hasOpenData) && (
-            <div className="max-md:hidden w-[1px] h-5 bg-grey-5" />
+            <div className="w-[1px] h-5 bg-grey-5" />
           )}
           {isPerso && <BadgeIndicateurPerso size="sm" />}
           {hasOpenData && <BadgeOpenData size="sm" />}
