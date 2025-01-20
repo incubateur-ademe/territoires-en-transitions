@@ -30,8 +30,6 @@ export type LoginProps = {
   error: string | null;
   /** Indique qu'un appel réseau est en cours */
   isLoading?: boolean;
-  /** Indique que l'option "avec mot de passe" est activée */
-  withPassword?: boolean;
   /** Fonction appelée à l'envoi du formulaire */
   onSubmit: (formData: LoginData) => void;
   /** Fonction appelée à l'annulation du formulaire */

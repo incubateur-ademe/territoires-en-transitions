@@ -40,8 +40,6 @@ export type SignupProps = {
   error: string | null;
   /** Indique qu'un appel réseau est en cours */
   isLoading?: boolean;
-  /** Indique que l'option "avec mot de passe" est activée */
-  withPassword?: boolean;
   /** Liste de collectivités auxquelles le compte peut être rattaché */
   collectivites: Array<{ value: number; label: string }>;
   /** Appelé pour filtrer la liste des collectivités */

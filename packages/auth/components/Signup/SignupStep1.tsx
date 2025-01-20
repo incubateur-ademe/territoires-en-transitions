@@ -41,7 +41,7 @@ const useSignupStep1 = (isPasswordless: boolean, email: string) => {
  * (saisir un email et éventuellement un mot de passe)
  */
 export const SignupStep1 = (props: SignupPropsWithState) => {
-  const { formState, withPassword } = props;
+  const { formState } = props;
   const { email } = formState;
   const [isPasswordless, setIsPasswordless] = useState(false);
   const form = useSignupStep1(isPasswordless, email);
