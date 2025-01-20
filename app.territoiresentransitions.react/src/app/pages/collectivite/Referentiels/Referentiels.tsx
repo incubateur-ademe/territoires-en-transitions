@@ -29,55 +29,53 @@ export const ActionsReferentiels = () => {
   return (
     <main data-test="ActionsReferentiels" className="fr-container mt-2">
       <section>
-        <>
-          <div className="relative">
-            <div className="relative z-[1] flex justify-between max-xl:flex-col xl:items-center gap-4 pb-6 border-b border-primary-3 mb-6">
-              <div className="flex max-md:flex-col gap-x-8 gap-y-4 md:items-center">
-                <div className="w-full md:w-64">
-                  <Select
-                    options={[
-                      { value: 'axe', label: 'Par axe' },
-                      { value: 'action', label: 'Par action' },
-                      // *** For future use ***
-                      // { value: 'competences', label: 'Par compétences' },
-                    ]}
-                    onChange={(value) => setDisplayOption(value ?? 'axe')}
-                    values={[displayOption]}
-                    customItem={(v) => (
-                      <span className="text-grey-8 font-normal">{v.label}</span>
-                    )}
-                    small
-                  />
-                </div>
-
-                <div className="flex gap-x-6">
-                  <Checkbox
-                    label="Afficher la description des actions"
-                    variant="switch"
-                    labelClassname="font-normal text-sm !text-grey-7"
-                    containerClassname="items-center"
-                    checked={isDescriptionOn}
-                    onChange={(evt) => {
-                      setIsDescriptionOn(!isDescriptionOn);
-                    }}
-                    disabled={isLoading}
-                  />
-                </div>
-              </div>
-              <div>
-                <Button
-                  data-test="export-scores"
-                  icon={'download-fill'}
-                  disabled={isLoading}
-                  onClick={() => {
-                    exportScore();
-                  }}
-                  size="sm"
-                />
-              </div>
+        <div className="relative z-[1] flex justify-between max-xl:flex-col xl:items-center gap-4 pb-6 border-b border-primary-3 mb-6">
+          <div className="flex max-md:flex-col gap-x-8 gap-y-4 md:items-center">
+            <div className="w-full md:w-64">
+              <Select
+                options={[
+                  { value: 'axe', label: 'Par axe' },
+                  { value: 'action', label: 'Par action' },
+                  // *** For future use ***
+                  // { value: 'competences', label: 'Par compétences' },
+                ]}
+                onChange={(value) => setDisplayOption(value ?? 'axe')}
+                values={[displayOption]}
+                customItem={(v) => (
+                  <span className="text-grey-8 font-normal">{v.label}</span>
+                )}
+                small
+              />
             </div>
+
+            <Checkbox
+              label="Afficher la description des actions"
+              variant="switch"
+              labelClassname="font-normal text-sm !text-grey-7"
+              containerClassname="items-center"
+              checked={isDescriptionOn}
+              onChange={() => setIsDescriptionOn(!isDescriptionOn)}
+              disabled={isLoading}
+            />
           </div>
-        </>
+
+          <Button
+            data-test="export-scores"
+            icon={'download-fill'}
+            disabled={isLoading}
+            onClick={() => exportScore()}
+            size="sm"
+          />
+        </div>
+
+        {displayOption === 'axe' &&
+          axes.map((axe) => (
+            <ExpandableAction
+              action={axe}
+              key={axe.id}
+              isDescriptionOn={isDescriptionOn}
+            />
+          ))}
 
         {displayOption === 'action' && (
           <div>
@@ -94,15 +92,6 @@ export const ActionsReferentiels = () => {
             </div>
           </div>
         )}
-
-        {displayOption === 'axe' &&
-          axes.map((axe) => (
-            <ExpandableAction
-              action={axe}
-              key={axe.id}
-              isDescriptionOn={isDescriptionOn}
-            />
-          ))}
       </section>
     </main>
   );

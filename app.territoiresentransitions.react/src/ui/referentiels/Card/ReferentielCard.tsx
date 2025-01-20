@@ -55,36 +55,27 @@ export const ReferentielCard = ({
         //   </div>
         // }
       >
-        <div className="flex min-w-min">
-          <span className="text-md font-bold text-primary-9 font-bold">
+        <div className={`flex min-w-min ${!isDescriptionOn && 'min-h-36'}`}>
+          <span className="text-lg font-bold text-primary-9 font-bold">
             {action.identifiant} {action.nom}
           </span>
         </div>
-        {isDescriptionOn && action.description ? (
-          <>
+
+        <div>
+          {isDescriptionOn && action.description && (
             <p
-              className="htmlContent text-sm text-grey-9 font-light"
+              className="htmlContent text-sm text-grey-9 font-light mb-6"
               dangerouslySetInnerHTML={{
                 __html: action.description,
               }}
             />
-            <div>
-              <Counter actionId={action.id} className="mb-3" />
-              <ActionProgressBar
-                action={action}
-                styleOptions={{ justify: 'start', fullWidth: true }}
-              />
-            </div>
-          </>
-        ) : (
-          <div>
-            <Counter actionId={action.id} className="mb-3" />
-            <ActionProgressBar
-              action={action}
-              styleOptions={{ justify: 'start', fullWidth: true }}
-            />
-          </div>
-        )}
+          )}
+          <Counter actionId={action.id} className={'mb-3'} />
+          <ActionProgressBar
+            action={action}
+            progressBarStyleOptions={{ justify: 'start', fullWidth: true }}
+          />
+        </div>
       </Card>
     </Link>
   );
