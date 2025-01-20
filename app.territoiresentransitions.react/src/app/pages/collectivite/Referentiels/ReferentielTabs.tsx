@@ -1,10 +1,9 @@
-import { avancementToLabel, referentielToName } from '@/app/app/labels';
+import { referentielToName } from '@/app/app/labels';
 import {
   makeCollectiviteReferentielUrl,
   ReferentielParamOption,
   ReferentielVueParamOption,
 } from '@/app/app/paths';
-import { actionAvancementColors } from '@/app/app/theme';
 import {
   useCollectiviteId,
   useReferentielId,
@@ -13,7 +12,6 @@ import {
 import { ReferentielOfIndicateur } from '@/app/types/litterals';
 import { Card, Tab, Tabs } from '@/ui';
 import { useRouter } from 'next/navigation';
-import ProgressBarWithTooltip from '../../../../ui/score/ProgressBarWithTooltip';
 import AidePriorisation from '../AidePriorisation';
 import DetailTacheTable from '../DetailTaches';
 import ActionsReferentiels from './Referentiels';
@@ -88,7 +86,9 @@ const ReferentielTabs = () => {
           {/* </div> */}
         </div>
         <div className="my-5">
-          <ProgressBarWithTooltip
+          {/* *** For future use *** */}
+          {/* <ProgressBarWithTooltip
+            // Fake data, replace with real data when available
             score={[
               {
                 label: avancementToLabel.fait,
@@ -103,7 +103,7 @@ const ReferentielTabs = () => {
             }}
             valueToDisplay={avancementToLabel.fait}
             progressBarStyleOptions={{ justify: 'start', fullWidth: true }}
-          />
+          /> */}
         </div>
 
         <Tabs

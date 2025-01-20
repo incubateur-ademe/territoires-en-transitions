@@ -20,25 +20,24 @@ export const ExpandableAction = ({
 }) => {
   const ref = useRef<HTMLDivElement>(null);
 
-  const queryParameters = new URLSearchParams(window.location.search);
-  const axeIdParam = queryParameters.get('axe');
+  const axeIdParam = new URLSearchParams(window.location.search).get('axe');
+
+  const isAxe = action.type === 'axe';
+  const isSousAxe = action.type === 'sous-axe';
 
   const [isOpen, setOpened] = useState(
-    (action.type === 'axe' && action.id === axeIdParam) ||
-      (action.type === 'sous-axe' &&
-        !!axeIdParam &&
-        action.id.includes(axeIdParam))
+    (isAxe && action.id === axeIdParam) ||
+      (isSousAxe && !!axeIdParam && action.id.includes(axeIdParam))
   );
 
   const children = useActionSummaryChildren(action as ActionDefinitionSummary);
+  const expandableChildren = children.filter(
+    (child) => child.type === 'axe' || child.type === 'sous-axe'
+  );
+  const actionChildren = children.filter((child) => child.type === 'action');
 
   useEffect(() => {
-    if (
-      action.type === 'axe' &&
-      action.id === axeIdParam &&
-      ref &&
-      ref.current
-    ) {
+    if (isAxe && action.id === axeIdParam && ref?.current) {
       setTimeout(() => {
         ref.current?.scrollIntoView({
           behavior: 'smooth',
@@ -46,7 +45,7 @@ export const ExpandableAction = ({
         });
       }, 0);
     }
-  }, [ref, axeIdParam]);
+  }, [ref, axeIdParam, action.id, isAxe]);
 
   return (
     <section
@@ -81,33 +80,28 @@ export const ExpandableAction = ({
         </div>
       </header>
       {isOpen &&
-        children.map((action) => {
-          if (action.type === 'axe' || action.type === 'sous-axe') {
-            return (
-              <div key={action.id} className="ml-4">
-                <ExpandableAction
-                  action={action}
-                  isDescriptionOn={isDescriptionOn}
-                />
-              </div>
-            );
-          }
-        })}
-      {isOpen && children.some((action) => action.type === 'action') && (
+        expandableChildren.map((action) => (
+          <div key={action.id} className="ml-4">
+            <ExpandableAction
+              action={action}
+              isDescriptionOn={isDescriptionOn}
+            />
+          </div>
+        ))}
+
+      {isOpen && actionChildren.length > 0 && (
         <div
           className={`ml-6 grid ${
             isDescriptionOn ? 'grid-cols-1' : 'grid-cols-3'
           } gap-4`}
         >
-          {children
-            .filter((action) => action.type === 'action')
-            .map((action) => (
-              <ReferentielCard
-                key={action.id}
-                action={action}
-                isDescriptionOn={isDescriptionOn}
-              />
-            ))}
+          {actionChildren.map((action) => (
+            <ReferentielCard
+              key={action.id}
+              action={action}
+              isDescriptionOn={isDescriptionOn}
+            />
+          ))}
         </div>
       )}
     </section>
