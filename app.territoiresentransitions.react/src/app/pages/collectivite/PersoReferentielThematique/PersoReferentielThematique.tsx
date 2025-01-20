@@ -10,7 +10,7 @@ import { useThematique } from './useThematique';
 
 const PersoReferentielThematique = () => {
   const collectivite = useCurrentCollectivite();
-  const { collectivite_id, nom } = collectivite || {};
+  const { collectiviteId: collectivite_id, nom } = collectivite || {};
   const { thematiqueId } = useParams<{ thematiqueId: string }>();
   const thematique = useThematique(thematiqueId);
   const qr = useQuestionsReponses({ thematique_id: thematiqueId });

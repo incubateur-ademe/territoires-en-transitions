@@ -1,7 +1,7 @@
 import { referentielToName } from '@/app/app/labels';
 import AccueilCard from '@/app/app/pages/collectivite/EtatDesLieux/Accueil/EtatDesLieux/AccueilCard';
 import { ReferentielParamOption } from '@/app/app/paths';
-import { useCollectiviteId } from '@/app/core-logic/hooks/params';
+import { useCurrentCollectivite } from '@/app/core-logic/hooks/useCurrentCollectivite';
 import Chart from '@/app/ui/charts/Chart';
 import { toLocaleFixed } from '@/app/utils/toFixed';
 import { Button, useEventTracker } from '@/ui';
@@ -49,7 +49,8 @@ const EtatDesLieuxGraphs = ({
   } point${Math.round(scoreTotal) <= 1 ? '' : 's'})`;
 
   const trackEvent = useEventTracker('app/edl/synthese');
-  const collectiviteId = useCollectiviteId();
+
+  const { collectiviteId, niveauAcces, role } = useCurrentCollectivite()!;
 
   return (
     <>
@@ -71,7 +72,9 @@ const EtatDesLieuxGraphs = ({
         onOpenModal={() =>
           collectiviteId &&
           trackEvent('zoom_graph', {
-            collectivite_id: collectiviteId,
+            collectiviteId,
+            niveauAcces,
+            role,
             referentiel,
             type: 'phase',
           })
@@ -97,7 +100,9 @@ const EtatDesLieuxGraphs = ({
             onDownload={() =>
               collectiviteId &&
               trackEvent('export_graph', {
-                collectivite_id: collectiviteId,
+                collectiviteId,
+                niveauAcces,
+                role,
                 referentiel,
                 type: 'phase',
               })

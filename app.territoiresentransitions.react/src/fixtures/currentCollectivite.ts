@@ -1,24 +1,24 @@
 import { CurrentCollectivite } from '@/app/core-logic/hooks/useCurrentCollectivite';
 
 const fakeCurrentCollectiviteBase = {
-  collectivite_id: 1,
+  collectiviteId: 1,
   nom: 'Fake Collectivite',
 };
 
 export const fakeCurrentCollectiviteAdmin: CurrentCollectivite = {
   ...fakeCurrentCollectiviteBase,
-  niveau_acces: 'admin',
-  isAdmin: true,
-  est_auditeur: false,
-  readonly: false,
-  acces_restreint: false,
+  niveauAcces: 'admin',
+  isRoleAuditeur: false,
+  role: null,
+  isReadOnly: false,
+  accesRestreint: false,
 };
 
 export const fakeCurrentCollectiviteLecture: CurrentCollectivite = {
   ...fakeCurrentCollectiviteBase,
-  niveau_acces: 'lecture',
-  isAdmin: false,
-  est_auditeur: false,
-  readonly: true,
-  acces_restreint: false,
+  niveauAcces: 'lecture',
+  isRoleAuditeur: false,
+  role: null,
+  isReadOnly: true,
+  accesRestreint: false,
 };

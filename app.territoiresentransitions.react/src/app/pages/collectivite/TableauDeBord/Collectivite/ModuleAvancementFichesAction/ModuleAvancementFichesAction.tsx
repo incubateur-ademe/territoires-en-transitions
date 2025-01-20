@@ -25,11 +25,9 @@ type Props = {
 
 /** Module pour afficher l'avancement des fiches action */
 const ModuleAvancementFichesAction = ({ module }: Props) => {
-  const collectivite = useCurrentCollectivite();
+  const { collectiviteId, niveauAcces, role } = useCurrentCollectivite()!;
 
   const router = useRouter();
-
-  const collectiviteId = collectivite?.collectivite_id;
 
   const trackEvent = useEventTracker('app/tdb/collectivite');
 
@@ -67,11 +65,13 @@ const ModuleAvancementFichesAction = ({ module }: Props) => {
       symbole={<PictoDocument className="w-16 h-16" />}
       onSettingsClick={() =>
         trackEvent('tdb_modifier_filtres_avancement_actions', {
-          collectivite_id: module.collectiviteId,
+          collectiviteId,
+          niveauAcces,
+          role,
         })
       }
       editModal={
-        collectivite?.niveau_acces === 'admin'
+        niveauAcces === 'admin'
           ? (openState) => (
               <ModalAvancementFichesAction
                 module={module}

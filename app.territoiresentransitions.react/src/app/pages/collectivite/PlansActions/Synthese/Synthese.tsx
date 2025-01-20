@@ -42,7 +42,7 @@ const Synthese = ({ collectiviteId }: SyntheseProps): JSX.Element => {
           collectiviteId={collectiviteId}
           selectedPlan={selectedPlan}
           withoutPlan={selectedPlan.id === 'nc'}
-          isReadonly={collectivite?.readonly ?? true}
+          isReadonly={collectivite?.isReadOnly ?? true}
         />
       </div>
     </div>

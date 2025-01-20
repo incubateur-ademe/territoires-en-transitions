@@ -5,14 +5,13 @@ import { TNiveauAcces } from '@/app/types/alias';
 import { useQuery } from 'react-query';
 
 export type CurrentCollectivite = {
-  collectivite_id: number;
+  collectiviteId: number;
   nom: string;
-  niveau_acces: TNiveauAcces | null;
-  acces_restreint: boolean;
-  est_auditeur: boolean;
-  // états dérivés
-  isAdmin: boolean;
-  readonly: boolean;
+  niveauAcces: TNiveauAcces | null;
+  accesRestreint: boolean;
+  isRoleAuditeur: boolean;
+  role: 'auditeur' | null;
+  isReadOnly: boolean;
 };
 
 // charge une collectivité
@@ -28,13 +27,13 @@ const fetchCurrentCollectivite = async (collectivite_id: number) => {
 
 function toCurrentCollectivite(collectivite: any): CurrentCollectivite {
   return {
-    collectivite_id: collectivite.collectivite_id,
+    collectiviteId: collectivite.collectivite_id,
     nom: collectivite.nom,
-    niveau_acces: collectivite.niveau_acces,
-    isAdmin: collectivite.niveau_acces === 'admin',
-    est_auditeur: collectivite.est_auditeur,
-    acces_restreint: collectivite.access_restreint || false,
-    readonly:
+    niveauAcces: collectivite.niveau_acces,
+    isRoleAuditeur: collectivite.est_auditeur,
+    role: collectivite.est_auditeur ? 'auditeur' : null,
+    accesRestreint: collectivite.access_restreint || false,
+    isReadOnly:
       (collectivite.niveau_acces === null ||
         collectivite.niveau_acces === 'lecture') &&
       !collectivite.est_auditeur,

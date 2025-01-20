@@ -44,7 +44,7 @@ export const useAudit = () => {
  * collectivité courante */
 export const useIsAuditeur = () => {
   const collectivite = useCurrentCollectivite();
-  return collectivite?.est_auditeur || false;
+  return collectivite?.isRoleAuditeur || false;
 };
 
 /** Liste des auditeurs pour la collectivité et le référentiel courant */

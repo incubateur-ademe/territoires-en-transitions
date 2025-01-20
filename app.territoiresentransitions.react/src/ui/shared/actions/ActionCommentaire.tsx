@@ -107,11 +107,11 @@ export const ActionCommentaireField = ({
           commentaire.trim() !== (initialValue || '') &&
             onSave({
               action_id: action.id,
-              collectivite_id: collectivite.collectivite_id,
+              collectivite_id: collectivite.collectiviteId,
               commentaire: commentaire.trim(),
             });
         }}
-        disabled={collectivite.readonly || disabled}
+        disabled={collectivite.isReadOnly || disabled}
         autoFocus={autoFocus}
       />
     </>

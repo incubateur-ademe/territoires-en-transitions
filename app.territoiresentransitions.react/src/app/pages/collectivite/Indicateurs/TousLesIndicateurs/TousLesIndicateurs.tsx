@@ -7,21 +7,22 @@ import { makeCollectiviteTousLesIndicateursUrl } from '@/app/app/paths';
 import { useSearchParams } from '@/app/core-logic/hooks/query';
 import { useCurrentCollectivite } from '@/app/core-logic/hooks/useCurrentCollectivite';
 import { Button, ButtonMenu, TrackPageView, useEventTracker } from '@/ui';
+import { pick } from 'es-toolkit';
 import { useState } from 'react';
 
 /** Page de listing de toutes les fiches actions de la collectivité */
 const TousLesIndicateurs = () => {
-  const collectivite = useCurrentCollectivite();
+  const collectivite = useCurrentCollectivite()!;
 
   const tracker = useEventTracker('app/indicateurs/tous');
 
-  const isReadonly = collectivite?.readonly ?? false;
+  const isReadonly = collectivite?.isReadOnly ?? false;
 
   const [isNewIndicateurOpen, setIsNewIndicateurOpen] = useState(false);
 
   const [filters, setFilters] = useSearchParams<FetchFiltre>(
     makeCollectiviteTousLesIndicateursUrl({
-      collectiviteId: collectivite?.collectivite_id!,
+      collectiviteId: collectivite.collectiviteId,
     }),
     {},
     indicateursNameToParams
@@ -30,7 +31,7 @@ const TousLesIndicateurs = () => {
   const handleSetFilters = (newFilters: FetchFiltre) => {
     setFilters(newFilters);
     tracker('filtres', {
-      collectivite_id: collectivite?.collectivite_id!,
+      ...collectivite,
       filtreValues: newFilters,
     });
   };
@@ -39,7 +40,11 @@ const TousLesIndicateurs = () => {
     <>
       <TrackPageView
         pageName={'app/indicateurs/tous'}
-        properties={{ collectivite_id: collectivite?.collectivite_id! }}
+        properties={pick(collectivite, [
+          'collectiviteId',
+          'niveauAcces',
+          'role',
+        ])}
       />
       <div
         className="min-h-[44rem] flex flex-col gap-8"

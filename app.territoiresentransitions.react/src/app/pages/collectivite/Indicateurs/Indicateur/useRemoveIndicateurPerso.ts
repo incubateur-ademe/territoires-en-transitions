@@ -1,29 +1,27 @@
-import { supabaseClient } from '@/app/core-logic/api/supabase';
-import { useMutation, useQueryClient } from 'react-query';
-// import {useFonctionTracker} from '@/app/core-logic/hooks/useFonctionTracker';
 import { Indicateurs } from '@/api';
 import { makeCollectiviteTousLesIndicateursUrl } from '@/app/app/paths';
+import { supabaseClient } from '@/app/core-logic/api/supabase';
+import { useCurrentCollectivite } from '@/app/core-logic/hooks/useCurrentCollectivite';
 import { useEventTracker } from '@/ui';
 import { useRouter } from 'next/navigation';
+import { useMutation, useQueryClient } from 'react-query';
 
-export const useDeleteIndicateurPerso = (
-  collectivite_id: number,
-  indicateur_id: number
-) => {
+export const useDeleteIndicateurPerso = (indicateurId: number) => {
   const tracker = useEventTracker('app/indicateurs/perso');
   const queryClient = useQueryClient();
   const router = useRouter();
+  const { collectiviteId, niveauAcces, role } = useCurrentCollectivite()!;
 
   return useMutation(
-    ['delete_indicateur_perso', indicateur_id],
+    ['delete_indicateur_perso', indicateurId],
     async () => {
-      if (collectivite_id === undefined || indicateur_id === undefined) {
+      if (collectiviteId === undefined || indicateurId === undefined) {
         throw Error('invalid args');
       }
       return Indicateurs.delete.deleteIndicateur(
         supabaseClient,
-        indicateur_id,
-        collectivite_id
+        indicateurId,
+        collectiviteId
       );
     },
     {
@@ -32,17 +30,22 @@ export const useDeleteIndicateurPerso = (
         error: "L'indicateur personnalisé n'a pas pu être supprimé",
       },
       onSuccess: () => {
-        tracker('indicateur_suppression', { collectivite_id, indicateur_id });
+        tracker('indicateur_suppression', {
+          collectiviteId,
+          niveauAcces,
+          role,
+          indicateur_id: indicateurId,
+        });
 
         queryClient.invalidateQueries([
           'indicateur_definitions',
-          collectivite_id,
+          collectiviteId,
           'perso',
         ]);
 
         router.push(
           makeCollectiviteTousLesIndicateursUrl({
-            collectiviteId: collectivite_id,
+            collectiviteId,
           })
         );
       },

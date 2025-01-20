@@ -23,7 +23,7 @@ export const FichesActionLiees = (props: TFichesActionProps) => {
 
   const { mutate: updateFichesActionLiees } =
     useUpdateFichesActionLiees(definition);
-  const isReadonly = collectivite?.readonly ?? false;
+  const isReadonly = collectivite?.isReadOnly ?? false;
 
   return (
     <>

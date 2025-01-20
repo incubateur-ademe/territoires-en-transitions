@@ -48,7 +48,7 @@ export const IndicateurInfoLiees = (props: TIndicateurInfoLieesProps) => {
 
   const collectivite = useCurrentCollectivite();
   if (!collectivite) return;
-  const isReadonly = !collectivite || collectivite.readonly;
+  const isReadonly = !collectivite || collectivite.isReadOnly;
 
   // extrait les userId et les tagId
   const pilotesValues = pilotes
@@ -64,7 +64,7 @@ export const IndicateurInfoLiees = (props: TIndicateurInfoLieesProps) => {
           onChange={({ personnes }) => {
             upsertIndicateurPilote(
               personnes.map((personne) => ({
-                collectiviteId: collectivite.collectivite_id,
+                collectiviteId: collectivite.collectiviteId,
                 tagId: personne.tagId,
                 userId: personne.userId,
               }))

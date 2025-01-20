@@ -24,7 +24,7 @@ export const IndicateurValuesTabs = ({
   const collectivite = useCurrentCollectivite();
   const isReadonly =
     !collectivite ||
-    collectivite.readonly ||
+    collectivite.isReadOnly ||
     (!!importSource && importSource !== SOURCE_COLLECTIVITE);
   const { mutate: toggleIndicateurConfidentiel, isLoading } =
     useToggleIndicateurConfidentiel(definition);

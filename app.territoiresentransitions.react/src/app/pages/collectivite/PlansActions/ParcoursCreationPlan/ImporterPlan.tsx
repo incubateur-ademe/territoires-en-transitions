@@ -1,5 +1,5 @@
 import { makeCollectivitePlansActionsNouveauUrl } from '@/app/app/paths';
-import { useCollectiviteId } from '@/app/core-logic/hooks/params';
+import { useCurrentCollectivite } from '@/app/core-logic/hooks/useCurrentCollectivite';
 import ContextMenu from '@/app/ui/shared/select/ContextMenu';
 import { MenuTriggerButton } from '@/app/ui/shared/select/MenuTriggerButton';
 import { Alert, useEventTracker } from '@/ui';
@@ -14,7 +14,7 @@ const URL_VIDEO_IMPORT_PA =
   'https://www.loom.com/share/9daea45015014616a4ab4e79556bcce9?sid=971d9818-0acf-4be5-af65-74a0f1161f1b';
 
 const ImporterPlan = () => {
-  const collectiviteId = useCollectiviteId();
+  const { collectiviteId, niveauAcces, role } = useCurrentCollectivite()!;
 
   const trackeEvent = useEventTracker('app/creer-plan');
 
@@ -97,7 +97,9 @@ const ImporterPlan = () => {
                 options={DOWNLOAD_TEMPLATE_OPTIONS}
                 onSelect={(format: string) => {
                   trackeEvent('cta_telecharger_modele', {
-                    collectivite_id: collectiviteId,
+                    collectiviteId,
+                    niveauAcces,
+                    role,
                     format,
                   });
                   window.open(`/modele-import-pa.${format}`, '_blank');

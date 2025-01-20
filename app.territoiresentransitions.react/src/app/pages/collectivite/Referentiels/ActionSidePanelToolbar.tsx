@@ -33,7 +33,7 @@ export const ActionSidePanelToolbar = ({ action }: Props) => {
 
   const [panelId, setPanelId] = useState<TPanelId | false>(false);
 
-  const isReadonly = currentCollectivite?.readonly ?? false;
+  const isReadonly = currentCollectivite?.isReadOnly ?? false;
 
   useEffect(() => {
     !panelState.isOpen && setPanelId(false);

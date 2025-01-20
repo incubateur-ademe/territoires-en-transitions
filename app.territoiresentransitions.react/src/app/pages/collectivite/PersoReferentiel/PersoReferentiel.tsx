@@ -5,7 +5,7 @@ import { useQuestionThematiqueCompletude } from './useQuestionThematiqueCompletu
 
 const PersoReferentiel = () => {
   const collectivite = useCurrentCollectivite();
-  const { collectivite_id, nom } = collectivite || {};
+  const { collectiviteId: collectivite_id, nom } = collectivite || {};
 
   // filtre initial
   const [filters, setFilters] = usePersoFilters();

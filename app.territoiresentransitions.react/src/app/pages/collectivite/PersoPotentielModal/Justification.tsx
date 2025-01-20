@@ -45,13 +45,13 @@ export const Justification = (props: TQuestionReponseProps) => {
             const newValue = value?.trim() || '';
             if (newValue !== (justification || ''))
               updateJustification({
-                collectivite_id: collectivite.collectivite_id,
+                collectivite_id: collectivite.collectiviteId,
                 question_id: id,
                 texte: newValue,
                 modified_at: new Date().toISOString(),
               });
           }}
-          disabled={collectivite.readonly}
+          disabled={collectivite.isReadOnly}
           autoFocus={!hasValue}
         />
       }

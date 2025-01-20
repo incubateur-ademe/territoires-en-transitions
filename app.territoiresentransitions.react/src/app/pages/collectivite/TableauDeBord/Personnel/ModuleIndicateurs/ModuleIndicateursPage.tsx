@@ -13,7 +13,8 @@ import {
   usePersonalModuleFetch,
 } from '@/app/app/pages/collectivite/TableauDeBord/Personnel/usePersonalModuleFetch';
 import { TDBViewParam } from '@/app/app/paths';
-import { useCollectiviteId } from '@/app/core-logic/hooks/params';
+import { useCurrentCollectivite } from '@/app/core-logic/hooks/useCurrentCollectivite';
+import { pick } from 'es-toolkit';
 
 type Props = {
   view: TDBViewParam;
@@ -21,7 +22,7 @@ type Props = {
 };
 
 const ModuleIndicateursPage = ({ view, slug }: Props) => {
-  const collectiviteId = useCollectiviteId();
+  const collectivite = useCurrentCollectivite()!;
 
   const { data: module, isLoading: isModuleLoading } =
     usePersonalModuleFetch(slug);
@@ -41,7 +42,11 @@ const ModuleIndicateursPage = ({ view, slug }: Props) => {
     <ModulePage view={view} title={module.titre}>
       <TrackPageView
         pageName={`app/tdb/personnel/${slug}`}
-        properties={{ collectivite_id: collectiviteId! }}
+        properties={pick(collectivite, [
+          'collectiviteId',
+          'niveauAcces',
+          'role',
+        ])}
       />
       <IndicateursListe
         pageName={pageName}
@@ -59,7 +64,7 @@ const ModuleIndicateursPage = ({ view, slug }: Props) => {
               onClick={() => {
                 openState.setIsOpen(true);
                 trackEvent('tdb_modifier_filtres_indicateurs', {
-                  collectivite_id: collectiviteId!,
+                  ...collectivite,
                 });
               }}
             >

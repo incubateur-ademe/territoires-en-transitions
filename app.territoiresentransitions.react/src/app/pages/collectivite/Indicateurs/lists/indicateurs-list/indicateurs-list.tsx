@@ -77,10 +77,10 @@ const IndicateursListe = ({
 }: Props) => {
   const tracker = useEventTracker('app/indicateurs/tous');
 
-  const collectivite = useCurrentCollectivite();
-  const collectiviteId = collectivite?.collectivite_id;
+  const collectivite = useCurrentCollectivite()!;
+  const collectiviteId = collectivite.collectiviteId;
 
-  const isReadonly = collectivite?.readonly ?? false;
+  const isReadonly = collectivite.isReadOnly ?? false;
 
   const [isSettingsOpen, setIsSettingsOpen] = useState(false);
 
@@ -178,7 +178,9 @@ const IndicateursListe = ({
           onChange={() => {
             setDisplayGraphs(!displayGraphs);
             tracker('toggle_graphique', {
-              collectivite_id: collectiviteId!,
+              collectiviteId,
+              niveauAcces: collectivite.niveauAcces,
+              role: collectivite.role,
               actif: !displayGraphs,
             });
           }}

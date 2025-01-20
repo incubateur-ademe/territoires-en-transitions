@@ -4,7 +4,7 @@ import { Indicateurs } from '@/api';
 import { modulesSave } from '@/api/plan-actions/dashboards/personal-dashboard/actions/modules.save';
 import { ModuleIndicateursSelect } from '@/api/plan-actions/dashboards/personal-dashboard/domain/module.schema';
 import { supabaseClient } from '@/app/core-logic/api/supabase';
-import { useCollectiviteId } from '@/app/core-logic/hooks/params';
+import { useCurrentCollectivite } from '@/app/core-logic/hooks/useCurrentCollectivite';
 import IndicateurCompletsDropdown from '@/app/ui/dropdownLists/indicateur/IndicateurCompletsDropdown';
 import PersonnesDropdown from '@/app/ui/dropdownLists/PersonnesDropdown/PersonnesDropdown';
 import { splitPilotePersonnesAndUsers } from '@/app/ui/dropdownLists/PersonnesDropdown/utils';
@@ -31,10 +31,7 @@ const ModalIndicateursSuiviPlan = ({
   module,
   keysToInvalidate,
 }: Props) => {
-  const collectiviteId = useCollectiviteId();
-  if (!collectiviteId) {
-    throw new Error('Aucune collectivité associée');
-  }
+  const { collectiviteId, niveauAcces, role } = useCurrentCollectivite()!;
 
   const queryClient = useQueryClient();
 
@@ -144,7 +141,9 @@ const ModalIndicateursSuiviPlan = ({
           btnOKProps={{
             onClick: async () => {
               trackEvent('tdb_valider_filtres_indicateurs', {
-                collectivite_id: collectiviteId!,
+                collectiviteId,
+                niveauAcces,
+                role,
               });
               await modulesSave({
                 dbClient: supabaseClient,

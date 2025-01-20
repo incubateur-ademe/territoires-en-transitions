@@ -29,7 +29,7 @@ const ReponseChoix = ({ qr, onChange }: TQuestionReponseProps) => {
         return (
           <RadioButton
             key={questionId + choiceId}
-            disabled={collectivite.readonly}
+            disabled={collectivite.isReadOnly}
             questionId={questionId}
             choiceId={choiceId}
             label={label}
@@ -56,7 +56,7 @@ const ReponseBinaire = ({ qr, onChange }: TQuestionReponseProps) => {
       {choices?.map(({ id: choiceId, label }) => (
         <RadioButton
           key={choiceId}
-          disabled={collectivite.readonly}
+          disabled={collectivite.isReadOnly}
           questionId={questionId}
           choiceId={choiceId}
           label={label}
@@ -91,7 +91,7 @@ const ReponseProportion = ({ qr, onChange }: TQuestionReponseProps) => {
       </label>
       <input
         type="number"
-        disabled={collectivite.readonly}
+        disabled={collectivite.isReadOnly}
         min={min}
         max={max}
         id={questionId}

@@ -7,27 +7,32 @@ import { useMutation } from 'react-query';
 
 /** Télécharge le fichier xlsx de la trajectoire */
 export const useTelechargementTrajectoire = () => {
-  const collectivite = useCurrentCollectivite();
+  const {
+    collectiviteId,
+    niveauAcces,
+    role,
+    nom: collectiviteName,
+  } = useCurrentCollectivite()!;
   const trackEvent = useEventTracker('app/trajectoires/snbc');
   const api = useApiClient();
 
   return useMutation(
     'snbc/telechargement',
     async () => {
-      if (!collectivite) return;
-
       trackEvent('cta_download', {
-        collectivite_id: collectivite.collectivite_id,
+        collectiviteId,
+        niveauAcces,
+        role,
         file: 'donnees',
       });
       const { blob, filename } = await api.getAsBlob({
         route: '/trajectoires/snbc/telechargement',
-        params: { collectiviteId: collectivite.collectivite_id },
+        params: { collectiviteId },
       });
       if (blob) {
         await saveBlob(
           blob,
-          filename || `Trajectoire SNBC - ${collectivite.nom}.xlsx`
+          filename || `Trajectoire SNBC - ${collectiviteName}.xlsx`
         );
       }
     },

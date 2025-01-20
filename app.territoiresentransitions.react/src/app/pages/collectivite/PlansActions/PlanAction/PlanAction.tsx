@@ -28,7 +28,7 @@ export const PlanAction = ({ plan, axe, axes }: PlanActionProps) => {
   const router = useRouter();
   const collectivite = useCurrentCollectivite();
 
-  const isReadonly = collectivite?.readonly ?? false;
+  const isReadonly = collectivite?.isReadOnly ?? false;
 
   // Permet de différentier une page axe d'une page plan
   const isAxePage = axe.depth === 1;
@@ -41,7 +41,7 @@ export const PlanAction = ({ plan, axe, axes }: PlanActionProps) => {
     <div data-test={isAxePage ? 'PageAxe' : 'PlanAction'} className="w-full">
       {/** Header */}
       <PlanActionHeader
-        collectivite_id={collectivite?.collectivite_id!}
+        collectivite_id={collectivite?.collectiviteId!}
         plan={plan}
         axe={axe}
         axes={axes}
@@ -61,7 +61,7 @@ export const PlanAction = ({ plan, axe, axes }: PlanActionProps) => {
                   onClick: () =>
                     router.push(
                       makeCollectivitePlanActionUrl({
-                        collectiviteId: collectivite?.collectivite_id!,
+                        collectiviteId: collectivite?.collectiviteId!,
                         planActionUid: axe.id.toString(),
                       })
                     ),

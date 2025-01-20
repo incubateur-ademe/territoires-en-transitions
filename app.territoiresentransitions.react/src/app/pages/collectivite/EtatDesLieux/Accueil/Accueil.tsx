@@ -23,14 +23,14 @@ const Accueil = (): JSX.Element => {
 
   const { user } = useAuth();
 
-  if (!collectivite?.collectivite_id) return <></>;
+  if (!collectivite?.collectiviteId) return <></>;
 
   /** Vérifie que l'utilisateur peut accéder à la collectivité */
   const hasNoAccessToCollectivite =
-    collectivite.acces_restreint &&
-    collectivite.niveau_acces === null &&
+    collectivite.accesRestreint &&
+    collectivite.niveauAcces === null &&
     !user?.isSupport &&
-    !collectivite.est_auditeur;
+    !collectivite.isRoleAuditeur;
 
   /** S'il ne peut pas, on affiche un message */
   if (hasNoAccessToCollectivite) {
@@ -64,7 +64,7 @@ const AccueilNonConfidentielle = ({
     eciPotentiel,
   } = useProgressionReferentiel();
 
-  const { collectivite_id: collectiviteId, readonly } = collectivite;
+  const { collectiviteId: collectiviteId, isReadOnly: readonly } = collectivite;
   const { data: referents } = useMembres({ collectiviteId, estReferent: true });
   const referentsParFonction = groupeParFonction(referents || []);
 

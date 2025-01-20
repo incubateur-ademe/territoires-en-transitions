@@ -13,7 +13,7 @@ import {
   makeTableauBordModuleUrl,
 } from '@/app/app/paths';
 import { useAuth } from '@/app/core-logic/api/auth/AuthProvider';
-import { useCollectiviteId } from '@/app/core-logic/hooks/params';
+import { useCurrentCollectivite } from '@/app/core-logic/hooks/useCurrentCollectivite';
 import PictoIndicateurVide from '@/app/ui/pictogrammes/PictoIndicateurVide';
 import { useRouter } from 'next/navigation';
 import { getQueryKey } from '../usePersonalModulesFetch';
@@ -24,7 +24,7 @@ type Props = {
 };
 
 const ModuleIndicateurs = ({ view, module }: Props) => {
-  const collectiviteId = useCollectiviteId();
+  const { collectiviteId, niveauAcces, role } = useCurrentCollectivite()!;
   const userId = useAuth().user?.id;
   const router = useRouter();
 
@@ -49,7 +49,9 @@ const ModuleIndicateurs = ({ view, module }: Props) => {
       )}
       onSettingsClick={() =>
         trackEvent('tdb_modifier_filtres_indicateurs', {
-          collectivite_id: module.collectiviteId,
+          collectiviteId,
+          niveauAcces,
+          role,
         })
       }
       isLoading={isLoading}

@@ -7,13 +7,13 @@ import { IndicateurValuesTabs } from '@/app/app/pages/collectivite/Indicateurs/I
 import { useIndicateurImportSources } from '@/app/app/pages/collectivite/Indicateurs/Indicateur/detail/useImportSources';
 import { FichesActionLiees } from '@/app/app/pages/collectivite/Indicateurs/Indicateur/FichesActionLiees';
 import ActionsLieesListe from '@/app/app/pages/collectivite/PlansActions/FicheAction/ActionsLiees/ActionsLieesListe';
-import { useCollectiviteId } from '@/app/core-logic/hooks/params';
 import { useCurrentCollectivite } from '@/app/core-logic/hooks/useCurrentCollectivite';
 import ScrollTopButton from '@/app/ui/buttons/ScrollTopButton';
 import { ToolbarIconButton } from '@/app/ui/buttons/ToolbarIconButton';
 import { BadgeACompleter } from '@/app/ui/shared/Badge/BadgeACompleter';
 import TextareaControlled from '@/app/ui/shared/form/TextareaControlled';
 import { Badge, Field, TrackPageView } from '@/ui';
+import { pick } from 'es-toolkit';
 import { TIndicateurDefinition } from '../types';
 import { IndicateurCompose } from './detail/IndicateurCompose';
 import { IndicateurSidePanelToolbar } from './IndicateurSidePanelToolbar';
@@ -29,21 +29,19 @@ export const IndicateurPredefiniBase = ({
 }) => {
   const { commentaire } = definition;
   const { mutate: updateDefinition } = useUpdateIndicateurDefinition();
-  const collectivite = useCurrentCollectivite();
-  const isReadonly = !collectivite || collectivite?.readonly;
+  const collectivite = useCurrentCollectivite()!;
+  const isReadonly = !collectivite || collectivite?.isReadOnly;
   const { mutate: exportIndicateurs, isLoading } = useExportIndicateurs(
     'app/indicateurs/predefini',
     [definition]
   );
-
-  const collectivite_id = useCollectiviteId()!;
 
   const { sources, currentSource, setCurrentSource } =
     useIndicateurImportSources(definition.id);
 
   // génère les fonctions d'enregistrement des modifications
   const handleUpdate = (name: 'commentaire', value: string) => {
-    const collectivite_id = collectivite?.collectivite_id;
+    const collectivite_id = collectivite?.collectiviteId;
     const nouveau = value?.trim();
     if (collectivite_id && nouveau !== definition[name]) {
       updateDefinition({ ...definition, [name]: nouveau });
@@ -54,7 +52,10 @@ export const IndicateurPredefiniBase = ({
     <>
       <TrackPageView
         pageName="app/indicateurs/predefini"
-        properties={{ collectivite_id, indicateur_id: definition.identifiant! }}
+        properties={{
+          ...pick(collectivite, ['collectiviteId', 'niveauAcces', 'role']),
+          indicateurId: definition.identifiant!,
+        }}
       />
       <h5 className="sticky top-0 mb-0 py-8 px-12 text-[#3a3a3a] text-lg bg-bf925 z-40">
         {definition.titre}

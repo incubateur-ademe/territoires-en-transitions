@@ -1,5 +1,6 @@
-import { useEffect } from 'react';
 import { usePostHog } from 'posthog-js/react';
+import { useEffect } from 'react';
+import { objectToSnake } from 'ts-case-convert';
 import { PageName, PageProperties } from './trackingPlan';
 
 // extrait l'id de la collectivité depuis l'objet donné si une des propriétés
@@ -47,14 +48,17 @@ export function TrackPageView<N extends PageName>({
 
   useEffect(() => {
     if (posthog) {
-      // Spécifie le groupe des évenements qui suivent cet appel
-      // https://posthog.com/docs/getting-started/group-analytics
-      posthog.group('collectivite', getCollectiviteId(properties) ?? '');
+      const collectiviteId = getCollectiviteId(properties);
+      if (collectiviteId) {
+        // Spécifie le groupe des évenements qui suivent cet appel
+        // https://posthog.com/docs/getting-started/group-analytics
+        posthog.group('collectivite', collectiviteId);
+      }
 
       // Envoie la pageview manuellement à PostHog conformément au tracking plan
       posthog.capture('$pageview', {
         $current_url: pageName,
-        ...(properties ?? {}),
+        ...objectToSnake(properties ?? {}),
       });
     }
   }, [posthog, pageName]);

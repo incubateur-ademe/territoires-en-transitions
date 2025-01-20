@@ -15,7 +15,7 @@ import {
   makeTableauBordModuleUrl,
 } from '@/app/app/paths';
 import { useAuth } from '@/app/core-logic/api/auth/AuthProvider';
-import { useCollectiviteId } from '@/app/core-logic/hooks/params';
+import { useCurrentCollectivite } from '@/app/core-logic/hooks/useCurrentCollectivite';
 import PictoExpert from '@/app/ui/pictogrammes/PictoExpert';
 import { useRouter } from 'next/navigation';
 
@@ -32,7 +32,7 @@ const SLUG_TO_TRACKING_ID = {
 /** Module pour afficher des fiches action
  ** dans la page tableau de bord plans d'action */
 const ModuleFichesActions = ({ view, module }: Props) => {
-  const collectiviteId = useCollectiviteId();
+  const { collectiviteId, niveauAcces, role } = useCurrentCollectivite()!;
   const userId = useAuth().user?.id;
   const router = useRouter();
 
@@ -65,9 +65,7 @@ const ModuleFichesActions = ({ view, module }: Props) => {
           `tdb_modifier_filtres_${
             SLUG_TO_TRACKING_ID[module.slug as keyof typeof SLUG_TO_TRACKING_ID]
           }`,
-          {
-            collectivite_id: module.collectiviteId,
-          }
+          { collectiviteId, niveauAcces, role }
         )
       }
       editModal={(openState) => {

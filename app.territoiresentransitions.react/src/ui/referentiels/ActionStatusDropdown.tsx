@@ -60,7 +60,7 @@ export const ActionStatusDropdown = ({
 
   const args = {
     action_id: action.id,
-    collectivite_id: collectivite?.collectivite_id || 0,
+    collectivite_id: collectivite?.collectiviteId || 0,
   };
   const { statut, filled } = useActionStatut(action.id);
   const { avancement, avancement_detaille, concerne } = statut || {};

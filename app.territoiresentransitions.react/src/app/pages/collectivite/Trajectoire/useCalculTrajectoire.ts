@@ -1,6 +1,6 @@
 import { Indicateurs } from '@/api';
 import { useApiClient } from '@/app/core-logic/api/useApiClient';
-import { useCollectiviteId } from '@/app/core-logic/hooks/params';
+import { useCurrentCollectivite } from '@/app/core-logic/hooks/useCurrentCollectivite';
 import { useEventTracker } from '@/ui';
 import { useMutation, useQueryClient } from 'react-query';
 
@@ -33,7 +33,7 @@ export const getKey = (collectiviteId: number | null) => [
 
 /** Déclenche le calcul de la trajectoire */
 export const useCalculTrajectoire = (args?: { nouveauCalcul: boolean }) => {
-  const collectiviteId = useCollectiviteId();
+  const { collectiviteId, niveauAcces, role } = useCurrentCollectivite()!;
   const api = useApiClient();
   const queryClient = useQueryClient();
   const trackEvent = useEventTracker('app/trajectoires/snbc');
@@ -43,7 +43,9 @@ export const useCalculTrajectoire = (args?: { nouveauCalcul: boolean }) => {
     async () => {
       if (!collectiviteId) return;
       trackEvent('cta_lancer_calcul', {
-        collectivite_id: collectiviteId,
+        collectiviteId,
+        niveauAcces,
+        role,
         source: args?.nouveauCalcul ? 'collectivite' : 'open_data',
       });
       return api.get<ResultatTrajectoire>({

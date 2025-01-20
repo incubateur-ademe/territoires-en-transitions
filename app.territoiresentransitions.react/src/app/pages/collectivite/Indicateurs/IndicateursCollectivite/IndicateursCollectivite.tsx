@@ -9,16 +9,17 @@ import { makeCollectiviteIndicateursCollectiviteUrl } from '@/app/app/paths';
 import { useSearchParams } from '@/app/core-logic/hooks/query';
 import { useCurrentCollectivite } from '@/app/core-logic/hooks/useCurrentCollectivite';
 import { Button, ButtonMenu, TrackPageView, useEventTracker } from '@/ui';
+import { pick } from 'es-toolkit';
 import { useState } from 'react';
 
 /** Page de listing de tous les indicateurs de la collectivité */
 const IndicateursCollectivite = () => {
   const tracker = useEventTracker('app/indicateurs/collectivite');
 
-  const collectivite = useCurrentCollectivite();
-  const collectiviteId = collectivite?.collectivite_id;
+  const collectivite = useCurrentCollectivite()!;
+  const collectiviteId = collectivite.collectiviteId;
 
-  const isReadonly = collectivite?.readonly ?? false;
+  const isReadonly = collectivite.isReadOnly ?? false;
 
   const [isNewIndicateurOpen, setIsNewIndicateurOpen] = useState(false);
 
@@ -26,7 +27,7 @@ const IndicateursCollectivite = () => {
 
   const [filters, setFilters] = useSearchParams<FetchFiltre>(
     makeCollectiviteIndicateursCollectiviteUrl({
-      collectiviteId: collectiviteId!,
+      collectiviteId,
     }),
     {},
     indicateursNameToParams
@@ -36,7 +37,11 @@ const IndicateursCollectivite = () => {
     <>
       <TrackPageView
         pageName={'app/indicateurs/collectivite'}
-        properties={{ collectivite_id: collectiviteId! }}
+        properties={pick(collectivite, [
+          'collectiviteId',
+          'niveauAcces',
+          'role',
+        ])}
       />
       <div className="min-h-[44rem] flex flex-col gap-8">
         <div className="flex items-end justify-between">
@@ -57,10 +62,7 @@ const IndicateursCollectivite = () => {
           )}
         </div>
         {data?.count === 0 ? (
-          <EmptyIndicateurFavori
-            collectiviteId={collectiviteId!}
-            isReadonly={isReadonly}
-          />
+          <EmptyIndicateurFavori />
         ) : (
           <IndicateursListe
             pageName="app/indicateurs/collectivite"
@@ -81,7 +83,7 @@ const IndicateursCollectivite = () => {
                   setFilters={(newFilters) => {
                     setFilters(newFilters);
                     tracker('filtres', {
-                      collectivite_id: collectiviteId!,
+                      ...collectivite,
                       filtreValues: newFilters,
                     });
                   }}

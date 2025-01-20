@@ -39,12 +39,12 @@ const Accueil = (): JSX.Element => {
   const { count: ficheActionCount } = useFicheActionCount();
 
   const { data: panier } = useNbActionsDansPanier(
-    collectivite?.collectivite_id!
+    collectivite?.collectiviteId!
   );
 
-  if (!collectivite?.collectivite_id) return <></>;
+  if (!collectivite?.collectiviteId) return <></>;
 
-  const { collectivite_id: collectiviteId } = collectivite;
+  const { collectiviteId: collectiviteId } = collectivite;
 
   return (
     <main
@@ -100,7 +100,7 @@ const Accueil = (): JSX.Element => {
             }`}
             description="Centralisez et réalisez le suivi des plans d'actions de transition écologique de votre collectivité. Collaborez à plusieurs sur les fiches action pour planifier et piloter leur mise en oeuvre !"
             buttons={[
-              collectivite.readonly
+              collectivite.isReadOnly
                 ? {
                     children: 'Aller sur le tableau de bord de la collectivité',
                     href: makeTableauBordUrl({

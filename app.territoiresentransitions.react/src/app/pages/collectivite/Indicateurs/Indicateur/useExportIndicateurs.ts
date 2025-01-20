@@ -1,5 +1,5 @@
 import { useApiClient } from '@/app/core-logic/api/useApiClient';
-import { useCollectiviteId } from '@/app/core-logic/hooks/params';
+import { useCurrentCollectivite } from '@/app/core-logic/hooks/useCurrentCollectivite';
 import { saveBlob } from '@/app/ui/shared/preuves/Bibliotheque/saveBlob';
 import { useEventTracker } from '@/ui';
 import { useMutation } from 'react-query';
@@ -17,7 +17,7 @@ export const useExportIndicateurs = (
   definitions?: TIndicateurListItem[]
 ) => {
   const trackEvent = useEventTracker(pageName);
-  const collectiviteId = useCollectiviteId();
+  const { collectiviteId, niveauAcces, role } = useCurrentCollectivite()!;
   const apiClient = useApiClient();
 
   return useMutation(
@@ -37,7 +37,9 @@ export const useExportIndicateurs = (
         saveBlob(blob, filename);
 
         trackEvent('export_xlsx_telechargement', {
-          collectivite_id: collectiviteId,
+          collectiviteId,
+          niveauAcces,
+          role,
         });
       }
     },
