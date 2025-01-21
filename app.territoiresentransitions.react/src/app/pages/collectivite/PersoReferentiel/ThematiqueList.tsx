@@ -1,6 +1,7 @@
 import { makeCollectivitePersoRefThematiqueUrl } from '@/app/app/paths';
 import { Referentiel } from '@/app/types/litterals';
 import { BadgeACompleter } from '@/app/ui/shared/Badge/BadgeACompleter';
+import Link from 'next/link';
 import { TQuestionThematiqueCompletudeRead } from './useQuestionThematiqueCompletude';
 
 export type TThematiqueListProps = {
@@ -48,15 +49,14 @@ const Item = (
   });
 
   return (
-    <li className="list-none px-2 py-3 border-b last:border-none hover:bg-primary-1">
-      <a
-        className="flex justify-between items-center"
-        style={{ boxShadow: 'none' }}
+    <li className="list-none py-0 border-b last:border-none hover:bg-primary-1">
+      <Link
+        className="flex justify-between items-center px-2 py-3 bg-none"
         href={url}
       >
         {nom}
         <BadgeACompleter a_completer={completude === 'a_completer'} />
-      </a>
+      </Link>
     </li>
   );
 };
