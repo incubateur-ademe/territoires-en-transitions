@@ -70,6 +70,8 @@ type Props = {
   enableGroupedActions?: boolean;
   isReadOnly?: boolean;
   containerClassName?: string;
+  displayEditionMenu?: boolean;
+  onUnlink?: (ficheId: number) => void;
 };
 
 /** Liste de fiches action avec tri et options de fitlre */
@@ -85,6 +87,8 @@ const FichesActionListe = ({
   enableGroupedActions = false,
   isReadOnly,
   containerClassName,
+  displayEditionMenu = false,
+  onUnlink,
 }: Props) => {
   const collectiviteId = useCollectiviteId();
 
@@ -335,7 +339,8 @@ const FichesActionListe = ({
                   <FicheActionCard
                     key={fiche.id}
                     ficheAction={fiche}
-                    isEditable
+                    isEditable={displayEditionMenu}
+                    onUnlink={onUnlink ? () => onUnlink(fiche.id) : undefined}
                     onSelect={
                       isGroupedActionsOn
                         ? () => handleSelectFiche(fiche)

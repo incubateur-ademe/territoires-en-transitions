@@ -144,6 +144,7 @@ const ToutesLesFichesAction = () => {
         )}
         enableGroupedActions={!isReadOnly}
         isReadOnly={isReadOnly}
+        displayEditionMenu
       />
     </div>
   );
