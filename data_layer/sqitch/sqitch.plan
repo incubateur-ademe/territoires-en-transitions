@@ -800,3 +800,4 @@ plan_action/fiches [plan_action/fiches@v4.35.0] 2024-12-20T14:12:01Z Frederic Ar
 @v4.36.0 2024-12-20T17:21:52Z Frederic Arnoux <frederic.arnoux@beta.gouv.fr> # Tag v4.36.0
 
 referentiel/score_snapshot [referentiel/score_snapshot@v4.36.0] 2025-01-21T17:03:53Z Frederic Arnoux <frederic.arnoux@beta.gouv.fr> # Branche les snapshots de referentiel
+indicateur/fix_json_upsert [indicateur/fix_json_upsert@v4.36.0] 2025-01-21T19:00:28Z Marc Rutkowski <marc@attractive-media.fr> # Ajoute le traitement du champ `titre_court`.

@@ -2,9 +2,6 @@
 
 BEGIN;
 
-alter table indicateur_definition
-  drop column titre_court;
-
 create or replace function
     private.upsert_indicateurs_after_json_insert()
     returns trigger
