@@ -10,7 +10,7 @@ export const PrivateModeSwitch = ({
   definition: TIndicateurDefinition;
 }) => {
   const collectivite = useCurrentCollectivite();
-  const isReadonly = !collectivite || collectivite.readonly;
+  const isReadonly = !collectivite || collectivite.isReadOnly;
   const { mutate: toggleIndicateurConfidentiel } =
     useToggleIndicateurConfidentiel(definition);
   const { confidentiel } = definition;
