@@ -4,8 +4,8 @@ import { actionDefinitionSeulementIdObligatoireSchema } from '../models/action-d
 import { ActionType } from '../models/action-type.enum';
 import { referentielActionOrigineWithScoreSchema } from './referentiel-action-origine-with-score.dto';
 import {
+  scoreFinalSchema,
   scoreSchema,
-  scoreSchemaNew,
   scoreWithOnlyPointsSchema,
 } from './score.dto';
 
@@ -41,17 +41,17 @@ export const actionWithScoreSchema: z.ZodType<ActionWithScore> =
 // Same schema and type but with `score` made optional in the root object and its children
 // 👇
 
-const actionWithScoreNewBaseSchema = actionWithScoreBaseSchema.extend({
-  score: scoreSchemaNew,
+const actionWithScoreFinalBaseSchema = actionWithScoreBaseSchema.extend({
+  score: scoreFinalSchema,
 });
 
-export type ActionWithScoreNew = z.infer<
-  typeof actionWithScoreNewBaseSchema
+export type ActionWithScoreFinal = z.infer<
+  typeof actionWithScoreFinalBaseSchema
 > & {
-  actionsEnfant: ActionWithScoreNew[];
+  actionsEnfant: ActionWithScoreFinal[];
 };
 
-export const actionWithScoreSchemaNew: z.ZodType<ActionWithScoreNew> =
-  actionWithScoreNewBaseSchema.extend({
-    actionsEnfant: z.lazy(() => actionWithScoreSchemaNew.array()),
+export const actionWithScoreFinalSchema: z.ZodType<ActionWithScoreFinal> =
+  actionWithScoreFinalBaseSchema.extend({
+    actionsEnfant: z.lazy(() => actionWithScoreFinalSchema.array()),
   });

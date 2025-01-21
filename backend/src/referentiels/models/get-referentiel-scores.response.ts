@@ -1,6 +1,6 @@
 import { z } from 'zod';
 import { collectiviteAvecTypeSchema } from '../../collectivites/identite-collectivite.dto';
-import { actionWithScoreSchema } from '../compute-score/action-with-score.dto';
+import { actionWithScoreFinalSchema } from '../compute-score/action-with-score.dto';
 import { ComputeScoreMode } from './compute-scores-mode.enum';
 import { referentielIdEnumSchema } from './referentiel.enum';
 import { ScoreJalon } from './score-jalon.enum';
@@ -21,7 +21,7 @@ export const getReferentielScoresResponseSchema = z
     referentielVersion: z.string(),
     collectiviteInfo: collectiviteAvecTypeSchema,
     date: z.string().datetime(),
-    scores: actionWithScoreSchema,
+    scores: actionWithScoreFinalSchema,
     jalon: z.nativeEnum(ScoreJalon),
     auditId: z.number().optional(),
     anneeAudit: z.number().optional(),

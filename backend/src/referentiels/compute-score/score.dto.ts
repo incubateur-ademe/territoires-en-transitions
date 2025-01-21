@@ -171,23 +171,23 @@ export type ScoreWithOnlyPointsAndStatuts = z.infer<
 >;
 
 //
-// Variation of the schema with `undefined` allowed for points and statuts.
-// Useful while computing all those fields.
-export const scoreSchemaNew = scoreSchema.partial({
-  pointReferentiel: true,
-  pointPotentiel: true,
-  // pointPotentielPerso: true,
-  pointFait: true,
-  pointPasFait: true,
-  pointNonRenseigne: true,
-  pointProgramme: true,
-  concerne: true,
-  completedTachesCount: true,
-  totalTachesCount: true,
-  faitTachesAvancement: true,
-  programmeTachesAvancement: true,
-  pasFaitTachesAvancement: true,
-  pasConcerneTachesAvancement: true,
+// Variation of the schema with `nullable` not allowed for points and statuts.
+// Useful while returning the score after the computing of all those fields.
+export const scoreFinalSchema = scoreSchema.extend({
+  pointReferentiel: scoreSchema.shape.pointReferentiel.unwrap(),
+  pointPotentiel: scoreSchema.shape.pointPotentiel.unwrap(),
+  // We omit volontarily `pointPotentielPerso` because it is not always computed (when there is no personnalisation)
+  pointFait: scoreSchema.shape.pointFait.unwrap(),
+  pointPasFait: scoreSchema.shape.pointPasFait.unwrap(),
+  pointNonRenseigne: scoreSchema.shape.pointNonRenseigne.unwrap(),
+  pointProgramme: scoreSchema.shape.pointProgramme.unwrap(),
+  completedTachesCount: scoreSchema.shape.completedTachesCount.unwrap(),
+  faitTachesAvancement: scoreSchema.shape.faitTachesAvancement.unwrap(),
+  programmeTachesAvancement:
+    scoreSchema.shape.programmeTachesAvancement.unwrap(),
+  pasFaitTachesAvancement: scoreSchema.shape.pasFaitTachesAvancement.unwrap(),
+  pasConcerneTachesAvancement:
+    scoreSchema.shape.pasConcerneTachesAvancement.unwrap(),
 });
 
-export type ActionScoreNew = z.infer<typeof scoreSchemaNew>;
+export type ScoreFinal = z.infer<typeof scoreFinalSchema>;
