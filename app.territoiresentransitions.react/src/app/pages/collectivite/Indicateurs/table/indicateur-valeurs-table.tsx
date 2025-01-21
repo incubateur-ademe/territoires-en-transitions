@@ -4,7 +4,7 @@ import { Button, Table, TBody, TCell, TRow } from '@/ui';
 import { useState } from 'react';
 import { SourceType } from '../types';
 import { CellAnneeList } from './cell-annee-list';
-import { CellSourceName, getSourceLabel } from './cell-source-name';
+import { CellSourceName } from './cell-source-name';
 import { CellValue } from './cell-value';
 import { EditCommentaireModal } from './edit-commentaire-modal';
 import { PreparedData } from './prepare-data';
@@ -49,111 +49,113 @@ export const IndicateurValeursTable = ({
   const { mutate: deleteValeur } = useDeleteIndicateurValeur(definition);
 
   return (
-    <Table>
-      <TBody>
-        <TRow className="bg-primary-2 border-b-2 border-primary-4">
-          <TCell className="bg-white">&nbsp;</TCell>
-          {/* colonnes pour chaque année */}
-          {data && (
-            <CellAnneeList
-              data={data}
-              definition={definition}
-              confidentiel={confidentiel}
-              readonly={readonly}
-              type={type}
-              onDelete={(valeur) => {
-                deleteValeur({
-                  collectiviteId,
-                  indicateurId: definition.id,
-                  id: valeur.id,
-                });
-              }}
-            />
-          )}
-          {/** placeholders */}
-          {!!placeholdersCount &&
-            Array.from({ length: placeholdersCount }).map((_, i) => (
-              <PlaceholderColumn key={i} rowSpan={(sources?.length ?? 0) + 2} />
-            ))}
-        </TRow>
-        {/* lignes pour chaque source */}
-        {sources?.map((s) => (
-          <TRow key={s.source}>
-            {/* nom de la source et rappel de l'unité */}
-            <CellSourceName
-              nom={getSourceLabel(s.source, type)}
-              unite={definition.unite}
-            />
-            {/* cellule pour chaque année */}
-            {annees?.map((annee) => {
-              const entry = s.valeurs.find((v) => v.annee === annee);
-              return (
-                <CellValue
-                  key={annee}
-                  readonly={readonly || s.source !== 'collectivite'}
-                  value={entry?.valeur ?? ''}
-                  onChange={(newValue) => {
-                    upsertValeur({
-                      id: entry?.id,
-                      collectiviteId,
-                      indicateurId: definition.id,
-                      dateValeur: `${annee}-01-01`,
-                      [type]: newValue,
-                    });
-                  }}
+    <>
+      <Table>
+        <TBody>
+          <TRow className="bg-primary-2 border-b-2 border-primary-4">
+            <TCell className="bg-white">&nbsp;</TCell>
+            {/* colonnes pour chaque année */}
+            {data && (
+              <CellAnneeList
+                data={data}
+                definition={definition}
+                confidentiel={confidentiel}
+                readonly={readonly}
+                type={type}
+                onDelete={(valeur) => {
+                  deleteValeur({
+                    collectiviteId,
+                    indicateurId: definition.id,
+                    id: valeur.id,
+                  });
+                }}
+              />
+            )}
+            {/** placeholders */}
+            {!!placeholdersCount &&
+              Array.from({ length: placeholdersCount }).map((_, i) => (
+                <PlaceholderColumn
+                  key={i}
+                  rowSpan={(sources?.length ?? 0) + 2}
                 />
+              ))}
+          </TRow>
+          {/* lignes pour chaque source */}
+          {sources?.map((s) => (
+            <TRow key={s.source}>
+              {/* nom de la source et rappel de l'unité */}
+              <CellSourceName source={s} type={type} unite={definition.unite} />
+              {/* cellule pour chaque année */}
+              {annees?.map((annee) => {
+                const entry = s.valeurs.find((v) => v.annee === annee);
+                return (
+                  <CellValue
+                    key={annee}
+                    readonly={readonly || s.source !== 'collectivite'}
+                    value={entry?.valeur ?? ''}
+                    onChange={(newValue) => {
+                      upsertValeur({
+                        id: entry?.id,
+                        collectiviteId,
+                        indicateurId: definition.id,
+                        dateValeur: `${annee}-01-01`,
+                        [type]: newValue,
+                      });
+                    }}
+                  />
+                );
+              })}
+            </TRow>
+          ))}
+          {/* ligne pour les boutons "commentaire" */}
+          <TRow>
+            <TCell>&nbsp;</TCell>
+            {annees?.map((annee) => {
+              const entry = donneesCollectivite?.valeurs.find(
+                (v) => v.annee === annee
+              );
+
+              const commentaire = entry?.commentaire ?? '';
+
+              return (
+                <TCell key={annee}>
+                  <div className="flex justify-center">
+                    <Button
+                      size="sm"
+                      variant="outlined"
+                      icon="question-answer-fill"
+                      notification={commentaire ? { number: 1 } : undefined}
+                      onClick={() => setCommentaireValeur(entry ?? { annee })}
+                    />
+                  </div>
+                </TCell>
               );
             })}
           </TRow>
-        ))}
-        {/* ligne pour les boutons "commentaire" */}
-        <TRow>
-          <TCell>&nbsp;</TCell>
-          {annees?.map((annee) => {
-            const entry = donneesCollectivite?.valeurs.find(
-              (v) => v.annee === annee
-            );
-
-            const commentaire = entry?.commentaire ?? '';
-
-            return (
-              <TCell key={annee}>
-                <div className="flex justify-center">
-                  <Button
-                    size="sm"
-                    variant="outlined"
-                    icon="question-answer-fill"
-                    notification={commentaire ? { number: 1 } : undefined}
-                    onClick={() => setCommentaireValeur(entry ?? { annee })}
-                  />
-                  {commentaireValeur && (
-                    <EditCommentaireModal
-                      annee={commentaireValeur.annee}
-                      type={type}
-                      definition={definition}
-                      commentaire={commentaireValeur.commentaire ?? ''}
-                      openState={{
-                        isOpen: true,
-                        setIsOpen: () => setCommentaireValeur(null),
-                      }}
-                      onChange={(newComment) => {
-                        upsertValeur({
-                          id: commentaireValeur?.id,
-                          collectiviteId,
-                          indicateurId: definition.id,
-                          dateValeur: `${commentaireValeur.annee}-01-01`,
-                          [`${type}Commentaire`]: newComment,
-                        });
-                      }}
-                    />
-                  )}
-                </div>
-              </TCell>
-            );
-          })}
-        </TRow>
-      </TBody>
-    </Table>
+        </TBody>
+      </Table>
+      {commentaireValeur && (
+        <EditCommentaireModal
+          annee={commentaireValeur.annee}
+          type={type}
+          definition={definition}
+          commentaire={commentaireValeur.commentaire ?? ''}
+          openState={{
+            isOpen: true,
+            setIsOpen: () => setCommentaireValeur(null),
+          }}
+          onChange={(newComment) => {
+            upsertValeur({
+              id: commentaireValeur?.id,
+              collectiviteId,
+              indicateurId: definition.id,
+              dateValeur: `${commentaireValeur.annee}-01-01`,
+              [`${type}Commentaire`]: newComment,
+            });
+          }}
+        />
+      )}
+    </>
   );
 };
 
