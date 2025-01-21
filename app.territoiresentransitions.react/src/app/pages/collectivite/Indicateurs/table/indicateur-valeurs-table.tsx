@@ -6,8 +6,9 @@ import { SourceType } from '../types';
 import { CellAnneeList } from './cell-annee-list';
 import { CellSourceName } from './cell-source-name';
 import { CellValue } from './cell-value';
+import { ConfirmDelete } from './confirm-delete';
 import { EditCommentaireModal } from './edit-commentaire-modal';
-import { PreparedData } from './prepare-data';
+import { PreparedData, PreparedValue } from './prepare-data';
 import { useDeleteIndicateurValeur } from './use-delete-indicateur-valeur';
 import { useUpsertIndicateurValeur } from './use-upsert-indicateur-valeur';
 
@@ -45,6 +46,8 @@ export const IndicateurValeursTable = ({
     annee: number;
     commentaire?: string | null;
   }>(null);
+  const [toBeDeleted, setToBeDeleted] = useState<PreparedValue | null>(null);
+
   const { mutate: upsertValeur } = useUpsertIndicateurValeur(definition);
   const { mutate: deleteValeur } = useDeleteIndicateurValeur(definition);
 
@@ -63,11 +66,22 @@ export const IndicateurValeursTable = ({
                 readonly={readonly}
                 type={type}
                 onDelete={(valeur) => {
-                  deleteValeur({
-                    collectiviteId,
-                    indicateurId: definition.id,
-                    id: valeur.id,
-                  });
+                  // demande confirmation avant de supprimer
+                  if (
+                    (valeur.objectif ?? false) ||
+                    (valeur.resultat ?? false) ||
+                    valeur.resultatCommentaire ||
+                    valeur.objectifCommentaire
+                  ) {
+                    setToBeDeleted(valeur);
+                  } else {
+                    // sauf pour les lignes n'ayant ni valeur ni commentaire
+                    deleteValeur({
+                      collectiviteId,
+                      indicateurId: definition.id,
+                      id: valeur.id,
+                    });
+                  }
                 }}
               />
             )}
@@ -152,6 +166,22 @@ export const IndicateurValeursTable = ({
               dateValeur: `${commentaireValeur.annee}-01-01`,
               [`${type}Commentaire`]: newComment,
             });
+          }}
+        />
+      )}
+      {toBeDeleted && (
+        <ConfirmDelete
+          valeur={toBeDeleted}
+          unite={definition.unite}
+          onDismissConfirm={(confirmed) => {
+            if (confirmed) {
+              deleteValeur({
+                collectiviteId,
+                indicateurId: definition.id,
+                id: toBeDeleted.id,
+              });
+            }
+            setToBeDeleted(null);
           }}
         />
       )}
