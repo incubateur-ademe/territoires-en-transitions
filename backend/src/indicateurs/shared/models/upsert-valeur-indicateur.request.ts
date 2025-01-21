@@ -1,16 +1,23 @@
 import { z } from 'zod';
+import { indicateurValeurSchemaInsert } from './indicateur-valeur.table';
 
 /** Upsert d'une valeur d'indicateur pour une collectivité */
-export const upsertValeurIndicateurSchema = z.object({
-  collectiviteId: z.number(),
-  indicateurId: z.number(),
-  id: z.number().optional(), // pour un update
-  dateValeur: z.string().optional(), // pour un insert
-  resultat: z.number().nullish(),
-  resultatCommentaire: z.string().nullish(),
-  objectif: z.number().nullish(),
-  objectifCommentaire: z.string().nullish(),
-});
+const shape = indicateurValeurSchemaInsert.shape;
+const upsertValeurIndicateurSchema = indicateurValeurSchemaInsert
+  .pick({
+    collectiviteId: true,
+    indicateurId: true,
+  })
+  .merge(
+    z.object({
+      id: shape.id.optional(), // pour un update
+      dateValeur: shape.dateValeur.optional(), // pour un insert
+      resultat: shape.resultat.nullish(),
+      resultatCommentaire: shape.resultatCommentaire.nullish(),
+      objectif: shape.objectif.nullish(),
+      objectifCommentaire: shape.objectifCommentaire.nullish(),
+    })
+  );
 
 export type UpsertValeurIndicateur = z.infer<
   typeof upsertValeurIndicateurSchema
