@@ -23,7 +23,7 @@ const CollectivitesEngagees = () => {
 };
 
 const FinaliserMonInscription = () => (
-  <div className="mx-auto my-8" data-test="FinaliserInscription">
+  <div className="fr-container my-8" data-test="FinaliserInscription">
     <EmptyCard
       picto={(props) => <PictoCarte {...props} />}
       title="Merci pour votre inscription !"
@@ -33,6 +33,7 @@ const FinaliserMonInscription = () => (
           children: 'Découvrir les collectivités',
           onClick: () => (window.location.href = recherchesCollectivitesUrl),
           variant: 'outlined',
+          size: 'md',
         },
         {
           children: 'Rejoindre une collectivité',
@@ -40,6 +41,7 @@ const FinaliserMonInscription = () => (
             (window.location.href = getRejoindreCollectivitePath(
               document.location.origin
             )),
+          size: 'md',
         },
       ]}
       size="xl"
