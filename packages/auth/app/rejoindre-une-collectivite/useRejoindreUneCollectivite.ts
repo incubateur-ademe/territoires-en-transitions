@@ -1,8 +1,4 @@
-import {
-  getCollectivitePath,
-  makeSearchString,
-  restoreSessionFromAuthTokens,
-} from '@/api';
+import { getCollectivitePath, makeSearchString } from '@/api';
 import {
   CollectiviteInfo,
   CollectiviteNom,
@@ -23,7 +19,6 @@ export const useRejoindreUneCollectivite = ({
   redirectTo: string;
 }) => {
   const router = useRouter();
-  restoreSessionFromAuthTokens(supabase);
 
   const [error, setError] = useState<string | null>(null);
   const [isLoading, setIsLoading] = useState(false);

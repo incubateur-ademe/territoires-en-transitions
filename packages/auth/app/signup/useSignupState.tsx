@@ -128,9 +128,9 @@ export const useSignupState = ({
     // ETAPE 3
     if (view === 'etape3') {
       // enregistre les DCP
-      const { data } = await supabase.auth.getSession();
-      const user_id = data.session?.user.id;
-      const email = data.session?.user.email;
+      const { data } = await supabase.auth.getUser();
+      const user_id = data.user?.id;
+      const email = data.user?.email;
 
       if (user_id && email) {
         const { telephone, prenom, nom } = formData as SignupDataStep3;
