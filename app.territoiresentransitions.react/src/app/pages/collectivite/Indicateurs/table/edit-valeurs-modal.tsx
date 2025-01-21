@@ -62,13 +62,18 @@ export const EditValeursModal = (props: EditValeursModalProps) => {
               <Input
                 type="text"
                 value={annee?.toString() ?? ''}
-                onChange={(e) => setAnnee(parseInt(e.target.value, 10))}
+                onChange={(e) => {
+                  const a = parseInt(e.target.value, 10);
+                  setAnnee(isNaN(a) ? null : a);
+                }}
                 onBlur={() => {
                   if (!annee) return;
                   const valeurExistante = valeursExistantes.find(
                     (v) => v.annee === annee
                   );
-                  setValeur(valeurExistante || {});
+                  if (valeurExistante) {
+                    setValeur(valeurExistante);
+                  }
                 }}
               />
             </Field>
