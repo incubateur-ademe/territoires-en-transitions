@@ -73,7 +73,7 @@ import LabellisationService from '../services/labellisation.service';
 import ReferentielsScoringSnapshotsService from '../services/referentiels-scoring-snapshots.service';
 import ReferentielsService from '../services/referentiels.service';
 import { ActionStatutsByActionId } from './action-statuts-by-action-id.dto';
-import { ActionWithScore } from './action-with-score.dto';
+import { ActionWithScore, ActionWithScoreFinal } from './action-with-score.dto';
 import { ReferentielActionOrigineWithScoreType } from './referentiel-action-origine-with-score.dto';
 import { ReferentielAction } from './referentiel-action.dto';
 import {
@@ -161,7 +161,7 @@ export default class ReferentielsScoringService {
       [origineActionId: string]: ReferentielActionOrigineWithScoreType;
     },
     existingScores?: ScoresByActionId
-  ): ActionWithScore {
+  ): ActionWithScoreFinal {
     const actionId = referentiel.actionId!;
 
     const score =
@@ -267,7 +267,7 @@ export default class ReferentielsScoringService {
       : 1;
     referentielAvecScore.score.totalTachesCount = totalTachesCount;
 
-    return referentielAvecScore;
+    return referentielAvecScore as ActionWithScoreFinal;
   }
 
   private appliquePersonnalisationPotentielPerso(
@@ -1223,7 +1223,7 @@ export default class ReferentielsScoringService {
           500
         );
       }
-      let referentielWithScore: ActionWithScore;
+      let referentielWithScore;
       if (parameters.mode === ComputeScoreMode.DEPUIS_SAUVEGARDE) {
         this.logger.log(
           `Récupération des scores depuis la sauvegarde dans la base de données`
@@ -1619,7 +1619,7 @@ export default class ReferentielsScoringService {
     referentiel: ReferentielAction,
     personnalisationConsequences: PersonnalisationConsequencesByActionId,
     etoilesDefinitions?: LabellisationEtoileMetaType[]
-  ): Promise<ActionWithScore> {
+  ): Promise<ActionWithScoreFinal> {
     const actionsOrigineMap: {
       [origineActionId: string]: ReferentielActionOrigineWithScoreType;
     } = {};
@@ -1753,7 +1753,7 @@ export default class ReferentielsScoringService {
       this.computeEtoiles(referentielAvecScore, etoilesDefinitions);
     }
 
-    return referentielAvecScore;
+    return referentielAvecScore as ActionWithScoreFinal;
   }
 
   private computeScore(
@@ -1764,7 +1764,7 @@ export default class ReferentielsScoringService {
     actionStatutExplications?: GetActionStatutExplicationsResponseType,
     actionPreuves?: { [actionId: string]: PreuveDto[] },
     etoilesDefinitions?: LabellisationEtoileMetaType[]
-  ): ActionWithScore {
+  ): ActionWithScoreFinal {
     const actionStatutsKeys = Object.keys(actionStatuts);
     for (const actionStatutKey of actionStatutsKeys) {
       const actionStatut = actionStatuts[actionStatutKey];
@@ -1778,14 +1778,11 @@ export default class ReferentielsScoringService {
       actionPreuves
     );
 
-    let scoreMap = this.fillScoreMap(referentielAvecScore, {});
-
     // On applique recursivement le facteur de potentiel perso
     this.appliquePersonnalisationPotentielPerso(
       referentielAvecScore,
       personnalisationConsequences
     );
-    scoreMap = this.fillScoreMap(referentielAvecScore, {});
 
     // On applique recursivement la desactivation liée à la personnalisation
     // la desactivation mais également le flag concerné à false
@@ -1793,7 +1790,6 @@ export default class ReferentielsScoringService {
       referentielAvecScore,
       personnalisationConsequences
     );
-    scoreMap = this.fillScoreMap(referentielAvecScore, {});
 
     // On désactive les actions non concernées
     // on remonte aux parents pour les rendre non concernés si tous les enfants sont non concernés
@@ -1801,7 +1797,6 @@ export default class ReferentielsScoringService {
       referentielAvecScore,
       actionStatuts
     );
-    scoreMap = this.fillScoreMap(referentielAvecScore, {});
 
     // On redistribue les points liés aux actions désactivées et non concernées aux action frères/soeurs
     this.redistribuePotentielActionsDesactiveesNonConcernees(
@@ -1832,7 +1827,7 @@ export default class ReferentielsScoringService {
       this.computeEtoiles(referentielAvecScore, etoilesDefinitions);
     }
 
-    return referentielAvecScore;
+    return referentielAvecScore as ActionWithScoreFinal;
   }
 
   private async getCamelcaseKeysFunction(): Promise<any> {
@@ -1850,7 +1845,7 @@ export default class ReferentielsScoringService {
     etoiles?: LabellisationEtoileMetaType[]
   ): Promise<{
     date: string;
-    referentielWithScore: ActionWithScore;
+    referentielWithScore: ActionWithScoreFinal;
   }> {
     const referentielId = referentiel.actionId as ReferentielId;
     let scoresResult:
