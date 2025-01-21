@@ -25,12 +25,12 @@ import {
   ScoreSnapshotInfoType,
 } from '../models/get-score-snapshots.response';
 import { ReferentielId } from '../models/referentiel.enum';
-import { ScoreJalon } from '../models/score-jalon.enum';
+import { SnapshotJalon } from './snapshot-jalon.enum';
 import {
   CreateScoreSnapshotType,
   scoreSnapshotTable,
   ScoreSnapshotType,
-} from '../models/score-snapshot.table';
+} from './snapshot.table';
 
 @Injectable()
 export default class ReferentielsScoringSnapshotsService {
@@ -44,9 +44,9 @@ export default class ReferentielsScoringSnapshotsService {
   static SCORE_PERSONNALISE_REF_PREFIX = 'user-';
   static JOUR_SNAPSHOT_NOM_PREFIX = ' - jour du ';
 
-  static USER_DELETION_ALLOWED_SNAPSHOT_TYPES: ScoreJalon[] = [
-    ScoreJalon.DATE_PERSONNALISEE,
-    ScoreJalon.VISITE_ANNUELLE,
+  static USER_DELETION_ALLOWED_SNAPSHOT_TYPES: SnapshotJalon[] = [
+    SnapshotJalon.DATE_PERSONNALISEE,
+    SnapshotJalon.VISITE_ANNUELLE,
   ];
 
   private readonly logger = new Logger(
@@ -87,8 +87,8 @@ export default class ReferentielsScoringSnapshotsService {
     }
 
     if (
-      (scoreResponse.jalon === ScoreJalon.PRE_AUDIT ||
-        scoreResponse.jalon === ScoreJalon.POST_AUDIT) &&
+      (scoreResponse.jalon === SnapshotJalon.PRE_AUDIT ||
+        scoreResponse.jalon === SnapshotJalon.POST_AUDIT) &&
       !scoreResponse.anneeAudit
     ) {
       throw new InternalServerErrorException(
@@ -98,15 +98,15 @@ export default class ReferentielsScoringSnapshotsService {
     const dateTime = DateTime.fromISO(scoreResponse.date);
 
     switch (scoreResponse.jalon) {
-      case ScoreJalon.PRE_AUDIT:
+      case SnapshotJalon.PRE_AUDIT:
         scoreResponse.snapshot.ref = `${ReferentielsScoringSnapshotsService.PRE_AUDIT_SNAPSHOT_REF_PREFIX}${scoreResponse.anneeAudit}`;
         scoreResponse.snapshot.nom = `${scoreResponse.anneeAudit}${ReferentielsScoringSnapshotsService.PRE_AUDIT_SNAPSHOT_NOM_SUFFIX}`;
         break;
-      case ScoreJalon.POST_AUDIT:
+      case SnapshotJalon.POST_AUDIT:
         scoreResponse.snapshot.ref = `${ReferentielsScoringSnapshotsService.POST_AUDIT_SNAPSHOT_REF_PREFIX}${scoreResponse.anneeAudit}`;
         scoreResponse.snapshot.nom = `${scoreResponse.anneeAudit}${ReferentielsScoringSnapshotsService.POST_AUDIT_SNAPSHOT_NOM_SUFFIX}`;
         break;
-      case ScoreJalon.SCORE_COURANT:
+      case SnapshotJalon.SCORE_COURANT:
         scoreResponse.snapshot.ref = scoreResponse.snapshot.nom
           ? `${
               ReferentielsScoringSnapshotsService.SCORE_PERSONNALISE_REF_PREFIX
@@ -116,7 +116,7 @@ export default class ReferentielsScoringSnapshotsService {
           scoreResponse.snapshot.nom ||
           ReferentielsScoringSnapshotsService.SCORE_COURANT_SNAPSHOT_NOM;
         break;
-      case ScoreJalon.JOUR_AUTO:
+      case SnapshotJalon.JOUR_AUTO:
         scoreResponse.snapshot.ref = `${
           ReferentielsScoringSnapshotsService.JOUR_SNAPSHOT_REF_PREFIX
         }${dateTime.toISODate()}`;
@@ -124,7 +124,7 @@ export default class ReferentielsScoringSnapshotsService {
           ReferentielsScoringSnapshotsService.JOUR_SNAPSHOT_NOM_PREFIX
         }${dateTime.toFormat('dd/MM/yyyy')}`;
         break;
-      case ScoreJalon.DATE_PERSONNALISEE:
+      case SnapshotJalon.DATE_PERSONNALISEE:
         scoreResponse.snapshot.ref = scoreResponse.snapshot.nom
           ? this.slugifyName(scoreResponse.snapshot.nom)
           : '';
@@ -232,7 +232,10 @@ export default class ReferentielsScoringSnapshotsService {
           scoreSnapshotTable.collectiviteId,
           scoreSnapshotTable.referentielId,
         ],
-        targetWhere: eq(scoreSnapshotTable.typeJalon, ScoreJalon.SCORE_COURANT),
+        targetWhere: eq(
+          scoreSnapshotTable.typeJalon,
+          SnapshotJalon.SCORE_COURANT
+        ),
         set: {
           date: sql.raw(`excluded.${scoreSnapshotTable.date.name}`),
           pointFait: sql.raw(`excluded.${scoreSnapshotTable.pointFait.name}`),
@@ -284,8 +287,8 @@ export default class ReferentielsScoringSnapshotsService {
       typeJalon:
         scoreResponse.snapshot?.ref !==
           ReferentielsScoringSnapshotsService.SCORE_COURANT_SNAPSHOT_REF &&
-        scoreResponse.jalon === ScoreJalon.SCORE_COURANT
-          ? ScoreJalon.DATE_PERSONNALISEE
+        scoreResponse.jalon === SnapshotJalon.SCORE_COURANT
+          ? SnapshotJalon.DATE_PERSONNALISEE
           : scoreResponse.jalon,
       pointFait: scoreResponse.scores.score.pointFait || 0,
       pointProgramme: scoreResponse.scores.score.pointProgramme || 0,

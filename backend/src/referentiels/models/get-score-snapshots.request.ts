@@ -1,9 +1,9 @@
 import { z } from 'zod';
-import { ScoreJalon } from './score-jalon.enum';
+import { SnapshotJalon } from '../snapshots/snapshot-jalon.enum';
 
-export const typesJalonEnumValues = Object.values(ScoreJalon) as [
-  ScoreJalon,
-  ...ScoreJalon[]
+export const typesJalonEnumValues = Object.values(SnapshotJalon) as [
+  SnapshotJalon,
+  ...SnapshotJalon[]
 ];
 export const typesJalonEnumSchema = z.enum(typesJalonEnumValues);
 
@@ -14,7 +14,7 @@ export const getScoreSnapshotsRequestSchema = z
       .transform((value) => value.split(','))
       .pipe(typesJalonEnumSchema.array())
       .default(
-        `${ScoreJalon.PRE_AUDIT},${ScoreJalon.POST_AUDIT},${ScoreJalon.DATE_PERSONNALISEE},${ScoreJalon.SCORE_COURANT},${ScoreJalon.VISITE_ANNUELLE}`
+        `${SnapshotJalon.PRE_AUDIT},${SnapshotJalon.POST_AUDIT},${SnapshotJalon.DATE_PERSONNALISEE},${SnapshotJalon.SCORE_COURANT},${SnapshotJalon.VISITE_ANNUELLE}`
       ), // All except JOUR_AUTO
   })
   .describe(

@@ -3,14 +3,14 @@ import { Injectable } from '@nestjs/common';
 import z from 'zod';
 import ReferentielsScoringService from '../compute-score/referentiels-scoring.service';
 import { referentielIdEnumSchema } from '../models/referentiel.enum';
-import { ScoreJalon } from '../models/score-jalon.enum';
-import ReferentielsScoringSnapshotsService from '../services/referentiels-scoring-snapshots.service';
+import ReferentielsScoringSnapshotsService from './referentiels-scoring-snapshots.service';
+import { SnapshotJalon } from './snapshot-jalon.enum';
 
 export const getScoreSnapshotInfosTrpcRequestSchema = z.object({
   referentielId: referentielIdEnumSchema,
   collectiviteId: z.number().int(),
   parameters: z.object({
-    typesJalon: z.nativeEnum(ScoreJalon).array(),
+    typesJalon: z.nativeEnum(SnapshotJalon).array(),
   }),
 });
 

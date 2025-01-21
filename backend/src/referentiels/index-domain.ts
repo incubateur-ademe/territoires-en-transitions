@@ -5,3 +5,4 @@ export * from './models/action-relation.table';
 export * from './models/action-type.enum';
 export * from './models/referentiel.enum';
 export * from './referentiels.utils';
+export * from './compute-score/score.dto';

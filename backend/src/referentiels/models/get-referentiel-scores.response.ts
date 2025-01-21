@@ -1,9 +1,9 @@
 import { z } from 'zod';
 import { collectiviteAvecTypeSchema } from '../../collectivites/identite-collectivite.dto';
 import { actionWithScoreFinalSchema } from '../compute-score/action-with-score.dto';
+import { SnapshotJalon } from '../snapshots/snapshot-jalon.enum';
 import { ComputeScoreMode } from './compute-scores-mode.enum';
 import { referentielIdEnumSchema } from './referentiel.enum';
-import { ScoreJalon } from './score-jalon.enum';
 
 export const getReferentielScoresResponseSnapshotInfoSchema = z.object({
   ref: z.string(),
@@ -22,7 +22,7 @@ export const getReferentielScoresResponseSchema = z
     collectiviteInfo: collectiviteAvecTypeSchema,
     date: z.string().datetime(),
     scores: actionWithScoreFinalSchema,
-    jalon: z.nativeEnum(ScoreJalon),
+    jalon: z.nativeEnum(SnapshotJalon),
     auditId: z.number().optional(),
     anneeAudit: z.number().optional(),
     snapshot: getReferentielScoresResponseSnapshotInfoSchema.optional(),
