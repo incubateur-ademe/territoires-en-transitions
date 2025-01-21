@@ -21,21 +21,21 @@ import {
   modifiedBy,
   TIMESTAMP_OPTIONS,
 } from '../../utils/column.utils';
-import { getReferentielScoresResponseSchema } from './get-referentiel-scores.response';
-import { labellisationAuditTable } from './labellisation-audit.table';
+import { getReferentielScoresResponseSchema } from '../models/get-referentiel-scores.response';
+import { labellisationAuditTable } from '../models/labellisation-audit.table';
 import {
   referentielDefinitionTable,
   referentielIdVarchar,
-} from './referentiel-definition.table';
-import { ScoreJalon } from './score-jalon.enum';
+} from '../models/referentiel-definition.table';
+import { SnapshotJalon } from './snapshot-jalon.enum';
 
 const scoreJalonEnumValues = pgEnum('type_jalon', [
-  ScoreJalon.PRE_AUDIT,
-  ScoreJalon.POST_AUDIT,
-  ScoreJalon.SCORE_COURANT,
-  ScoreJalon.VISITE_ANNUELLE,
-  ScoreJalon.DATE_PERSONNALISEE,
-  ScoreJalon.JOUR_AUTO,
+  SnapshotJalon.PRE_AUDIT,
+  SnapshotJalon.POST_AUDIT,
+  SnapshotJalon.SCORE_COURANT,
+  SnapshotJalon.VISITE_ANNUELLE,
+  SnapshotJalon.DATE_PERSONNALISEE,
+  SnapshotJalon.JOUR_AUTO,
 ]);
 
 export const scoreSnapshotTable = pgTable(

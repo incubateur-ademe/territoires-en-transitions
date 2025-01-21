@@ -67,11 +67,11 @@ import { LabellisationEtoileMetaType } from '../models/labellisation-etoile.tabl
 import { postAuditScoresTable } from '../models/post-audit-scores.table';
 import { preAuditScoresTable } from '../models/pre-audit-scores.table';
 import { ReferentielId } from '../models/referentiel.enum';
-import { ScoreJalon } from '../models/score-jalon.enum';
 import { getParentIdFromActionId } from '../referentiels.utils';
 import LabellisationService from '../services/labellisation.service';
-import ReferentielsScoringSnapshotsService from '../services/referentiels-scoring-snapshots.service';
 import ReferentielsService from '../services/referentiels.service';
+import ReferentielsScoringSnapshotsService from '../snapshots/referentiels-scoring-snapshots.service';
+import { SnapshotJalon } from '../snapshots/snapshot-jalon.enum';
 import { ActionStatutsByActionId } from './action-statuts-by-action-id.dto';
 import { ActionWithScore, ActionWithScoreFinal } from './action-with-score.dto';
 import { ReferentielActionOrigineWithScoreType } from './referentiel-action-origine-with-score.dto';
@@ -1082,8 +1082,8 @@ export default class ReferentielsScoringService {
       }
       // Later we can have snapshots for other jalon
       if (
-        (parameters.jalon === ScoreJalon.PRE_AUDIT ||
-          parameters.jalon === ScoreJalon.POST_AUDIT) &&
+        (parameters.jalon === SnapshotJalon.PRE_AUDIT ||
+          parameters.jalon === SnapshotJalon.POST_AUDIT) &&
         !parameters.avecReferentielsOrigine
       ) {
         const audits = await this.labellisationService.getAuditsForCollectivite(
@@ -1127,7 +1127,7 @@ export default class ReferentielsScoringService {
         }
         auditId = audit.id;
         parameters.date =
-          (parameters.jalon === ScoreJalon.PRE_AUDIT
+          (parameters.jalon === SnapshotJalon.PRE_AUDIT
             ? audit.dateDebut
             : audit.dateFin) || undefined;
 
@@ -1137,15 +1137,15 @@ export default class ReferentielsScoringService {
       }
     } else {
       parameters.jalon = parameters.date
-        ? ScoreJalon.DATE_PERSONNALISEE
-        : ScoreJalon.SCORE_COURANT;
+        ? SnapshotJalon.DATE_PERSONNALISEE
+        : SnapshotJalon.SCORE_COURANT;
     }
 
     if (parameters.snapshotNom) {
       parameters.snapshot = true;
       if (
-        parameters.jalon !== ScoreJalon.SCORE_COURANT &&
-        parameters.jalon !== ScoreJalon.DATE_PERSONNALISEE
+        parameters.jalon !== SnapshotJalon.SCORE_COURANT &&
+        parameters.jalon !== SnapshotJalon.DATE_PERSONNALISEE
       ) {
         throw new HttpException(
           `Un nom de snapshot ne peut être défini que pour le score courant ou une date personnalisée`,
@@ -1660,7 +1660,7 @@ export default class ReferentielsScoringService {
           `Une date ne doit pas être fournie lorsqu'on veut récupérer les scores depuis une sauvegarde`,
           400
         );
-      } else if (parameters.jalon === ScoreJalon.SCORE_COURANT) {
+      } else if (parameters.jalon === SnapshotJalon.SCORE_COURANT) {
         // Get scores from sauvegarde
         referentielsOrigine.forEach((referentielOrigine) => {
           referentielsOriginePromiseScores.push(
@@ -1671,7 +1671,7 @@ export default class ReferentielsScoringService {
             )
           );
         });
-      } else if (parameters.jalon === ScoreJalon.PRE_AUDIT) {
+      } else if (parameters.jalon === SnapshotJalon.PRE_AUDIT) {
         // Get scores from sauvegarde
         referentielsOrigine.forEach((referentielOrigine) => {
           referentielsOriginePromiseScores.push(
@@ -1683,7 +1683,7 @@ export default class ReferentielsScoringService {
             )
           );
         });
-      } else if (parameters.jalon === ScoreJalon.POST_AUDIT) {
+      } else if (parameters.jalon === SnapshotJalon.POST_AUDIT) {
         // Get scores from sauvegarde
         referentielsOrigine.forEach((referentielOrigine) => {
           referentielsOriginePromiseScores.push(
@@ -1838,7 +1838,7 @@ export default class ReferentielsScoringService {
   private async getScoresResultFromDb(
     referentiel: ReferentielAction,
     collectiviteId: number,
-    jalon: ScoreJalon,
+    jalon: SnapshotJalon,
     auditId?: number,
     statutExplications?: GetActionStatutExplicationsResponseType,
     actionPreuves?: { [actionId: string]: PreuveDto[] },
@@ -1854,20 +1854,20 @@ export default class ReferentielsScoringService {
           scoresMap: ScoresByActionId;
         }
       | undefined = undefined;
-    if (jalon === ScoreJalon.SCORE_COURANT) {
+    if (jalon === SnapshotJalon.SCORE_COURANT) {
       scoresResult = await this.getClientScoresForCollectivite(
         referentielId,
         collectiviteId,
         etoiles
       );
-    } else if (jalon === ScoreJalon.PRE_AUDIT) {
+    } else if (jalon === SnapshotJalon.PRE_AUDIT) {
       scoresResult = await this.getPreAuditScoresForCollectivite(
         referentielId,
         collectiviteId,
         auditId!,
         etoiles
       );
-    } else if (jalon === ScoreJalon.POST_AUDIT) {
+    } else if (jalon === SnapshotJalon.POST_AUDIT) {
       scoresResult = await this.getPostAuditScoresForCollectivite(
         referentielId,
         collectiviteId,
@@ -2269,7 +2269,7 @@ export default class ReferentielsScoringService {
       collectiviteId: score.collectiviteId,
       referentiel: score.referentiel,
       auditId: score.auditId,
-      jalon: ScoreJalon.POST_AUDIT,
+      jalon: SnapshotJalon.POST_AUDIT,
     }));
     this.logger.log(`Found ${postAuditScores.length} post audit scores`);
 
@@ -2286,7 +2286,7 @@ export default class ReferentielsScoringService {
       collectiviteId: score.collectiviteId,
       referentiel: score.referentiel,
       auditId: score.auditId,
-      jalon: ScoreJalon.PRE_AUDIT,
+      jalon: SnapshotJalon.PRE_AUDIT,
     }));
     this.logger.log(`Found ${preAuditScores.length} post audit scores`);
 
@@ -2302,7 +2302,7 @@ export default class ReferentielsScoringService {
       collectiviteId: score.collectiviteId,
       referentiel: score.referentiel,
       auditId: undefined,
-      jalon: ScoreJalon.SCORE_COURANT,
+      jalon: SnapshotJalon.SCORE_COURANT,
     }));
     this.logger.log(`Found ${preAuditScores.length} client current scores`);
 

@@ -39,7 +39,7 @@ import {
   SNAPSHOT_REF_PARAM_KEY,
 } from '../models/referentiel-api.constants';
 import { ReferentielId } from '../models/referentiel.enum';
-import ReferentielsScoringSnapshotsService from '../services/referentiels-scoring-snapshots.service';
+import ReferentielsScoringSnapshotsService from '../snapshots/referentiels-scoring-snapshots.service';
 
 class GetReferentielScoresRequestClass extends createZodDto(
   getReferentielScoresRequestSchema

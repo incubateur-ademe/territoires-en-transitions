@@ -9,8 +9,8 @@ import { ReferentielsScoringController } from './controllers/referentiels-scorin
 import { ReferentielsController } from './controllers/referentiels.controller';
 import ExportReferentielScoreService from './export-score/export-referentiel-score.service';
 import LabellisationService from './services/labellisation.service';
-import ReferentielsScoringSnapshotsService from './services/referentiels-scoring-snapshots.service';
 import ReferentielsService from './services/referentiels.service';
+import ReferentielsScoringSnapshotsService from './snapshots/referentiels-scoring-snapshots.service';
 import { ScoreSnapshotsRouter } from './snapshots/score-snaphots.router';
 import { UpdateActionStatutRouter } from './update-action-statut/update-action-statut.router';
 import { UpdateActionStatutService } from './update-action-statut/update-action-statut.service';

@@ -20,12 +20,12 @@ import {
   ReferentielId,
   referentielIdEnumSchema,
 } from '../models/referentiel.enum';
-import ReferentielsScoringSnapshotsService from '../services/referentiels-scoring-snapshots.service';
-import ReferentielsService from '../services/referentiels.service';
 import {
   getAxeFromActionId,
   getLevelFromActionId,
 } from '../referentiels.utils';
+import ReferentielsService from '../services/referentiels.service';
+import ReferentielsScoringSnapshotsService from '../snapshots/referentiels-scoring-snapshots.service';
 
 @Injectable()
 export default class ExportReferentielScoreService {
