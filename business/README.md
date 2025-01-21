@@ -8,6 +8,10 @@ Ce dossier contient le code de différents services python de l'outil Territoire
 Par souci de simplicité, les services partagent les mêmes dépendances. 
 Les instructions sont donc les mêmes pour tous les services. 
 
+La version requise de Python est la 3.10.
+
+Utiliser [`pyenv`](https://github.com/pyenv/pyenv) pour l'installer.
+
 Créer un nouvel environnement virtuel, et y installer les paquets et la source.
 
 ```sh
