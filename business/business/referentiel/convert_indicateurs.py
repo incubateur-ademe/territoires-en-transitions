@@ -31,6 +31,7 @@ class MarkdownIndicateur:
     # Valeurs optionnelles de la partie yaml :
     identifiant: Optional[Any]
     titre_long: Optional[str]
+    titre_court: Optional[str]
     obligation_cae: Optional[bool]
     obligation_eci: Optional[bool]
     valeur: Optional[str]
@@ -61,6 +62,7 @@ class Indicateur:
     description: str
     participation_score: bool
     titre_long: str
+    titre_court: str
     thematiques: List[str]
     programmes: List[str]
     action_ids: List[str]
@@ -103,7 +105,7 @@ def parse_indicateurs(
                 md_indicateurs.append(md_indicateur)
             except ValidationError as error:
                 parsing_errors.append(f"In file {Path(md_file).name} {str(error)}")
-    
+
     md_indicateurs.sort(key=lambda indicateur: indicateur.id)
     for indicateur in md_indicateurs:
         if indicateur.programmes is not None:
@@ -149,6 +151,7 @@ def convert_indicateurs(path: str, json_filename: str):
             valeur_indicateur=md.valeur,
             participation_score=True if md.participation_score else False,
             titre_long=md.titre_long or md.nom,
+            titre_court=md.titre_court,
             thematiques=md.thematiques or [],
             action_ids=md.actions or [],
             programmes=programmes(md),
