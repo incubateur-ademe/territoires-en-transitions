@@ -69,11 +69,8 @@ const IndicateurLayout = ({
   };
 
   return (
-    <div
-      data-test={dataTest}
-      className="w-full px-2 md:px-4 lg:px-6 py-12 bg-grey-2"
-    >
-      <div className="flex flex-col w-full px-2 mx-auto xl:max-w-7xl 2xl:max-w-8xl">
+    <div className="bg-grey-2">
+      <div className="py-12">
         <IndicateurHeader
           collectiviteId={collectiviteId!}
           definition={definition}
@@ -83,48 +80,55 @@ const IndicateurLayout = ({
           onUpdate={handleTitreUpdate}
         />
 
-        {composeSansAgregation ? (
-          // Groupe d'indicateurs sans agrégation
-          <SousIndicateurs enfantsIds={enfants} />
-        ) : (
-          // Indicateur sans enfant, groupe d'indicateurs avec agrégation,
-          // ou indicateur personnalisé
-          <Tabs tabsListClassName="!justify-start flex-nowrap overflow-x-auto">
-            {/* Données */}
-            <Tab label="Données">
-              <DonneesIndicateur
-                {...{ definition, isPerso, isReadonly }}
-                updateUnite={handleUniteUpdate}
-                updateDescription={(value) =>
-                  isPerso
-                    ? handleDescriptionUpdate(value)
-                    : handleCommentaireUpdate(value)
-                }
-              />
-            </Tab>
+        <div data-test={dataTest} className="w-full px-2 md:px-4 lg:px-6">
+          <div className="w-full px-2 mx-auto xl:max-w-7xl 2xl:max-w-8xl">
+            {composeSansAgregation ? (
+              // Groupe d'indicateurs sans agrégation
+              <SousIndicateurs enfantsIds={enfants} />
+            ) : (
+              // Indicateur sans enfant, groupe d'indicateurs avec agrégation,
+              // ou indicateur personnalisé
+              <Tabs tabsListClassName="!justify-start flex-nowrap overflow-x-auto">
+                {/* Données */}
+                <Tab label="Données">
+                  <DonneesIndicateur
+                    {...{ definition, isPerso, isReadonly }}
+                    updateUnite={handleUniteUpdate}
+                    updateDescription={(value) =>
+                      isPerso
+                        ? handleDescriptionUpdate(value)
+                        : handleCommentaireUpdate(value)
+                    }
+                  />
+                </Tab>
 
-            {/* Sous indicateurs */}
-            {composeAvecAgregation ? (
-              <Tab label={`${enfants.length} Sous indicateurs`}>
-                <SousIndicateurs enfantsIds={enfants} />
-              </Tab>
-            ) : undefined}
+                {/* Sous indicateurs */}
+                {composeAvecAgregation ? (
+                  <Tab label={`${enfants.length} Sous indicateurs`}>
+                    <SousIndicateurs enfantsIds={enfants} />
+                  </Tab>
+                ) : undefined}
 
-            {/* Actions des référentiels liées */}
-            {!isPerso ? (
-              <Tab label="Actions des référentiels liées">
-                <ActionsLiees
-                  actionsIds={(definition.actions ?? []).map((a) => a.id)}
-                />
-              </Tab>
-            ) : undefined}
+                {/* Actions des référentiels liées */}
+                {!isPerso ? (
+                  <Tab label="Actions des référentiels liées">
+                    <ActionsLiees
+                      actionsIds={(definition.actions ?? []).map((a) => a.id)}
+                    />
+                  </Tab>
+                ) : undefined}
 
-            {/* Fiches des plans liées */}
-            <Tab label="Fiches des plans liées">
-              <FichesLiees definition={definition} isReadonly={isReadonly} />
-            </Tab>
-          </Tabs>
-        )}
+                {/* Fiches des plans liées */}
+                <Tab label="Fiches des plans liées">
+                  <FichesLiees
+                    definition={definition}
+                    isReadonly={isReadonly}
+                  />
+                </Tab>
+              </Tabs>
+            )}
+          </div>
+        </div>
       </div>
     </div>
   );

@@ -1,3 +1,5 @@
+import { useIntersectionObserver } from '@/app/utils/useIntersectionObserver';
+import classNames from 'classnames';
 import { TIndicateurDefinition } from '../../types';
 import CheminIndicateur from './CheminIndicateur';
 import IndicateurInfos from './IndicateurInfos';
@@ -23,31 +25,46 @@ const IndicateurHeader = ({
 }: Props) => {
   const { titre, unite } = definition;
 
+  const { ref, entry } = useIntersectionObserver({
+    threshold: 1,
+  });
+
   return (
-    <div className="w-full mb-6">
-      <div className="flex flex-col-reverse gap-4 lg:flex-row lg:items-start">
-        {/* Titre éditable de l'indicateur */}
-        <IndicateurTitle
-          title={titre}
-          unite={unite}
-          isReadonly={isReadonly || !isPerso}
-          composeSansAgregation={composeSansAgregation}
-          updateTitle={(value) => onUpdate?.(value)}
-        />
+    <div
+      ref={ref}
+      className={classNames(
+        'w-full p-2 pt-3 -mt-3 md:px-4 lg:px-6 z-50 sticky -top-px shadow-none transition-all duration-200',
+        {
+          'bg-white !shadow-[0px_4px_20px_0px_rgba(0,0,0,0.05)] border-b border-b-primary-3':
+            !entry?.isIntersecting,
+        }
+      )}
+    >
+      <div className="w-full px-2 mx-auto xl:max-w-7xl 2xl:max-w-8xl">
+        <div className="flex flex-col-reverse gap-4 lg:flex-row lg:items-start">
+          {/* Titre éditable de l'indicateur */}
+          <IndicateurTitle
+            title={titre}
+            unite={unite}
+            isReadonly={isReadonly || !isPerso}
+            composeSansAgregation={composeSansAgregation}
+            updateTitle={(value) => onUpdate?.(value)}
+          />
 
-        {/* Actions sur l'indicateur */}
-        <IndicateurToolbar
-          {...{ definition, isPerso, isReadonly }}
-          collectiviteId={collectiviteId!}
-          className="ml-auto"
-        />
+          {/* Actions sur l'indicateur */}
+          <IndicateurToolbar
+            {...{ definition, isPerso, isReadonly }}
+            collectiviteId={collectiviteId!}
+            className="ml-auto"
+          />
+        </div>
+
+        {/* Chemin de l'indicateur */}
+        <CheminIndicateur {...{ collectiviteId, titre, unite }} />
+
+        {/* Infos générales sur l'indicateur */}
+        <IndicateurInfos {...{ definition, isPerso, composeSansAgregation }} />
       </div>
-
-      {/* Chemin de l'indicateur */}
-      <CheminIndicateur {...{ collectiviteId, titre, unite }} />
-
-      {/* Infos générales sur l'indicateur */}
-      <IndicateurInfos {...{ definition, isPerso, composeSansAgregation }} />
     </div>
   );
 };
