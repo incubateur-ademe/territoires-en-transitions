@@ -75,11 +75,10 @@ export default function RootLayout({
     <html lang="fr" translate="no" data-fr-scheme="light">
       <body>
         <div id="root">
-          <div className="flex flex-col h-[100vh] overflow-hidden">
-            <div
-              id="main"
-              className="flex-grow flex flex-col w-full overflow-x-hidden overflow-y-auto"
-            >
+          {/* L'utilisation de overflow-hidden ou overflow-auto sur le container
+           /* empêche l'utilisation de la propriété sticky dans l'app */}
+          <div className="min-h-screen flex flex-col w-screen">
+            <div id="main" className="grow flex flex-col w-full">
               <AppProviders>
                 <Header />
                 {children}
