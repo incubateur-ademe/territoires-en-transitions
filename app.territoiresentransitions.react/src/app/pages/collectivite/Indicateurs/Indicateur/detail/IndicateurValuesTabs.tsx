@@ -35,12 +35,12 @@ export const IndicateurValuesTabs = ({
           )}
         </>
       )}
-      {!!collectivite?.collectivite_id && (
+      {!!collectivite?.collectiviteId && (
         <IndicateurTable
-          collectiviteId={collectivite.collectivite_id}
+          collectiviteId={collectivite.collectiviteId}
           definition={definition}
           confidentiel={confidentiel}
-          readonly={!collectivite || collectivite.readonly}
+          readonly={!collectivite || collectivite.isReadOnly}
         />
       )}
     </>
