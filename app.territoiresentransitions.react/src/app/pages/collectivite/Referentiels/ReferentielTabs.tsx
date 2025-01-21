@@ -118,20 +118,20 @@ const ReferentielTabs = () => {
           </Tab>
           <Tab label="Aide à la priorisation">
             {activeTab === TABS_INDEX['priorisation'] ? (
-              <Card>
+              <div>
                 <AidePriorisation />
-              </Card>
+              </div>
             ) : (
-              <Card>...</Card>
+              <div>...</div>
             )}
           </Tab>
           <Tab label="Détail des statuts">
             {activeTab === TABS_INDEX['detail'] ? (
-              <Card>
+              <div>
                 <DetailTacheTable />
-              </Card>
+              </div>
             ) : (
-              <Card>...</Card>
+              <div>...</div>
             )}
           </Tab>
         </Tabs>
