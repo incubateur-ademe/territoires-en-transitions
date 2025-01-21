@@ -3,7 +3,7 @@
  */
 
 import { useReferentielId } from '@/app/core-logic/hooks/params';
-import { PageHeaderLeft } from '@/app/ui/PageHeader';
+import { PageContainer } from '@/app/ui/layout/page-layout';
 import { ReactNode, useState } from 'react';
 import { TAuditeur, useAuditeurs } from '../Audit/useAudit';
 import { ValiderAudit } from '../Audit/ValiderAudit';
@@ -52,74 +52,80 @@ export const HeaderLabellisation = (props: THeaderLabellisationProps) => {
   const DemandeModal = isCOT ? DemandeAuditModal : DemandeLabellisationModal;
 
   return (
-    <PageHeaderLeft>
-      <DerniereLabellisation parcoursLabellisation={parcoursLabellisation} />
-      <h2 className="mb-4">Objectif : {numLabels[etoiles]} étoile</h2>
-      {status === 'non_demandee' && !isAuditeur ? (
-        <>
-          {etoiles === '1' && isCOT ? (
+    <div className="sticky top-0 z-40 bg-bf925 w-full min-h-[112px] flex items-center justify-center mt-8">
+      <PageContainer className="my-4">
+        <DerniereLabellisation parcoursLabellisation={parcoursLabellisation} />
+        <h2 className="mb-4">Objectif : {numLabels[etoiles]} étoile</h2>
+        {status === 'non_demandee' && !isAuditeur ? (
+          <>
+            {etoiles === '1' && isCOT ? (
+              <button
+                className="fr-btn self-start fr-mr-2w"
+                data-test="1ereEtoileCOT"
+                disabled={!peutDemanderEtoile}
+                onClick={() => setOpened_1ereEtoileCOT(true)}
+              >
+                Demander la première étoile
+              </button>
+            ) : null}
             <button
-              className="fr-btn self-start fr-mr-2w"
-              data-test="1ereEtoileCOT"
-              disabled={!peutDemanderEtoile}
-              onClick={() => setOpened_1ereEtoileCOT(true)}
+              className="fr-btn self-start"
+              data-test="SubmitDemandeBtn"
+              disabled={!canSubmitDemande}
+              onClick={() => setOpened(true)}
             >
-              Demander la première étoile
+              {etoiles === '1' && !isCOT
+                ? 'Demander la première étoile'
+                : 'Demander un audit'}
             </button>
-          ) : null}
+          </>
+        ) : null}
+        {peutCommencerAudit ? (
           <button
             className="fr-btn self-start"
-            data-test="SubmitDemandeBtn"
-            disabled={!canSubmitDemande}
-            onClick={() => setOpened(true)}
+            data-test="StartAuditBtn"
+            onClick={() =>
+              audit &&
+              referentiel &&
+              onStartAudit({
+                collectivite_id,
+                referentiel,
+                audit_id: audit.id!,
+              })
+            }
           >
-            {etoiles === '1' && !isCOT
-              ? 'Demander la première étoile'
-              : 'Demander un audit'}
+            Commencer l'audit
           </button>
-        </>
-      ) : null}
-      {peutCommencerAudit ? (
-        <button
-          className="fr-btn self-start"
-          data-test="StartAuditBtn"
-          onClick={() =>
-            audit &&
-            referentiel &&
-            onStartAudit({ collectivite_id, referentiel, audit_id: audit.id! })
-          }
-        >
-          Commencer l'audit
-        </button>
-      ) : null}
-      {!!headerMessageContent && (
-        <HeaderMessage>{headerMessageContent}</HeaderMessage>
-      )}
-      {status === 'audit_en_cours' && isAuditeur ? (
-        <ValiderAudit
-          audit={audit!}
-          onValidate={(audit) => onValidateAudit(audit!)}
-        />
-      ) : null}
-      {status === 'non_demandee' || status === 'demande_envoyee' ? (
-        <>
-          <DemandeModal
-            parcoursLabellisation={parcoursLabellisation}
-            isCOT={isCOT}
-            opened={opened}
-            setOpened={setOpened}
+        ) : null}
+        {!!headerMessageContent && (
+          <HeaderMessage>{headerMessageContent}</HeaderMessage>
+        )}
+        {status === 'audit_en_cours' && isAuditeur ? (
+          <ValiderAudit
+            audit={audit!}
+            onValidate={(audit) => onValidateAudit(audit!)}
           />
-          {etoiles === '1' && isCOT ? (
-            <DemandeLabellisationModal
+        ) : null}
+        {status === 'non_demandee' || status === 'demande_envoyee' ? (
+          <>
+            <DemandeModal
               parcoursLabellisation={parcoursLabellisation}
-              opened={opened_1ereEtoileCOT}
-              setOpened={setOpened_1ereEtoileCOT}
               isCOT={isCOT}
+              opened={opened}
+              setOpened={setOpened}
             />
-          ) : null}
-        </>
-      ) : null}
-    </PageHeaderLeft>
+            {etoiles === '1' && isCOT ? (
+              <DemandeLabellisationModal
+                parcoursLabellisation={parcoursLabellisation}
+                opened={opened_1ereEtoileCOT}
+                setOpened={setOpened_1ereEtoileCOT}
+                isCOT={isCOT}
+              />
+            ) : null}
+          </>
+        ) : null}
+      </PageContainer>
+    </div>
   );
 };
 
