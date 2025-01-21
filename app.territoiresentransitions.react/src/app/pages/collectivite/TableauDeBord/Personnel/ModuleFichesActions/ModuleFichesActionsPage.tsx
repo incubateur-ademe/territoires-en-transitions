@@ -94,6 +94,7 @@ const ModuleFichesActionsPage = ({ view, slug, sortSettings }: Props) => {
               )}
           </>
         )}
+        displayEditionMenu
       />
     </ModulePage>
   );

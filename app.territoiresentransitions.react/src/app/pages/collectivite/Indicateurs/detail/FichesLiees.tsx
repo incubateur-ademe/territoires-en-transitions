@@ -65,6 +65,11 @@ const FichesLiees = ({ definition, isReadonly }: Props) => {
             isReadOnly={isReadonly}
             enableGroupedActions
             containerClassName="bg-white"
+            onUnlink={(ficheId) =>
+              updateFichesActionLiees(
+                fichesLiees.filter((id) => id !== ficheId)
+              )
+            }
           />
         </div>
       )}
