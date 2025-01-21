@@ -1,9 +1,7 @@
 'use client';
 
-import { getAuthPaths, restoreSessionFromAuthTokens } from '@/api';
 import { useRejoindreUneCollectivite } from '@/auth/app/rejoindre-une-collectivite/useRejoindreUneCollectivite';
 import { RejoindreUneCollectiviteModal } from '@/auth/components/RejoindreUneCollectivite';
-import { supabase } from '@/auth/src/clientAPI';
 import { useEffect } from 'react';
 
 /**
@@ -22,17 +20,6 @@ const RejoindreUneCollectivitePage = ({
   };
 }) => {
   const state = useRejoindreUneCollectivite({ redirectTo: redirect_to });
-
-  // redirige sur la page de login si l'utilisateur n'est pas  connecté
-  useEffect(() => {
-    const restore = async () => {
-      const ret = await restoreSessionFromAuthTokens(supabase);
-      if (!ret?.data.session) {
-        document.location.replace(getAuthPaths(redirect_to).login);
-      }
-    };
-    restore();
-  }, [redirect_to]);
 
   // initialement charge les 10 premières collectivités
   useEffect(() => {
