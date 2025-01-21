@@ -4,6 +4,7 @@ import {
   CurrentCollectivite,
   useCurrentCollectivite,
 } from '@/app/core-logic/hooks/useCurrentCollectivite';
+import { PageContainer } from '@/app/ui/layout/page-layout';
 import { Button } from '@/ui';
 import { useState } from 'react';
 import { useProgressionReferentiel } from './data/useProgressionReferentiel';
@@ -73,8 +74,8 @@ const AccueilNonConfidentielle = ({
   return (
     <main data-test="TableauBord" className="bg-bf975 -mb-8">
       {!!collectiviteId && (
-        <div className="fr-container flex flex-col pt-8 pb-16">
-          <div className="flex flex-row justify-between content-center py-4 mb-4 border-b border-b-primary-3">
+        <PageContainer className="pt-12 pb-16">
+          <div className="flex flex-row justify-between content-center pb-4 mb-4 border-b border-b-primary-3">
             <h2 className="mb-0">{"Synthèse de l'état des lieux"}</h2>
             {!readonly && (
               <Button size="sm" onClick={() => setIsModalOpen(true)}>
@@ -118,7 +119,7 @@ const AccueilNonConfidentielle = ({
               title={referentielToName.eci}
             />
           </div>
-        </div>
+        </PageContainer>
       )}
 
       {!readonly && isModalOpen && (

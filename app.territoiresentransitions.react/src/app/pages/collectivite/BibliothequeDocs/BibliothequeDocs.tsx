@@ -1,4 +1,5 @@
 import { useCurrentCollectivite } from '@/app/core-logic/hooks/useCurrentCollectivite';
+import { PageContainer } from '@/app/ui/layout/page-layout';
 import PreuveDoc from '@/app/ui/shared/preuves/Bibliotheque/PreuveDoc';
 import {
   TPreuveAuditEtLabellisation,
@@ -21,7 +22,7 @@ export const BibliothequeDocs = ({
   rapports,
 }: TBibliothequeDocsProps) => {
   return (
-    <main data-test="BibliothequeDocs" className="fr-container mt-9 mb-16">
+    <PageContainer dataTest="BibliothequeDocs" className="mt-9 mb-16">
       <h1 className="text-center fr-mt-4w fr-mb-4w">
         Bibliothèque de documents
       </h1>
@@ -46,7 +47,7 @@ export const BibliothequeDocs = ({
         <h2>Documents</h2>
         <PreuvesTabs />
       </section>
-    </main>
+    </PageContainer>
   );
 };
 

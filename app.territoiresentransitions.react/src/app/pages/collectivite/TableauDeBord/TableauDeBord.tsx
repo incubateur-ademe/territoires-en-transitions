@@ -1,5 +1,6 @@
 import { Route } from 'react-router-dom';
 
+import { PageContainer } from '@/app/ui/layout/page-layout';
 import { usePlansActionsListe } from '@/app/app/pages/collectivite/PlansActions/PlanAction/data/usePlansActionsListe';
 import Collectivite from '@/app/app/pages/collectivite/TableauDeBord/Collectivite/Collectivite';
 import ModulePageRoutes from '@/app/app/pages/collectivite/TableauDeBord/ModulePageRoutes';
@@ -20,7 +21,7 @@ const TableauDeBord = () => {
 
   return (
     <div className="grow bg-grey-2 -mb-8 py-12">
-      <div className="fr-container">
+      <PageContainer>
         {/** Tableau de bord personnel */}
         <Route exact path={collectiviteTDBPersonnelPath}>
           <View
@@ -45,7 +46,7 @@ const TableauDeBord = () => {
         <Route path={collectiviteTDBModulePath}>
           <ModulePageRoutes />
         </Route>
-      </div>
+      </PageContainer>
     </div>
   );
 };

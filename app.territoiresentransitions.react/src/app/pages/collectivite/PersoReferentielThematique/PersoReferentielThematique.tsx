@@ -1,5 +1,6 @@
 import { useCurrentCollectivite } from '@/app/core-logic/hooks/useCurrentCollectivite';
 import { PageHeader } from '@/app/ui/PageHeader';
+import { PageContainer } from '@/app/ui/layout/page-layout';
 import { useParams } from 'react-router-dom';
 import { useChangeReponseHandler } from '../PersoPotentielModal/useChangeReponseHandler';
 import { ThematiqueQR } from './ThematiqueQR';
@@ -27,7 +28,7 @@ const PersoReferentielThematique = () => {
       <PageHeader>
         <h2 className="w-full text-center m-0">{thematique.nom}</h2>
       </PageHeader>
-      <main className="fr-container fr-mt-1w fr-mb-4w" data-test="thematique">
+      <PageContainer dataTest="thematique" className="mt-2 mb-8">
         <ThematiqueQR
           collectivite={{ id: collectivite_id, nom: nom || '' }}
           thematique={thematique}
@@ -38,7 +39,7 @@ const PersoReferentielThematique = () => {
           }
           onChange={handleChange}
         />
-      </main>
+      </PageContainer>
     </>
   );
 };

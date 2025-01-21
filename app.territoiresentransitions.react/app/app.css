@@ -1,14 +1,3 @@
-/** Layout global **/
-@media (min-width: 90em) {
-  .fr-container,
-  .fr-container-sm,
-  .fr-container-md,
-  .fr-container-lg,
-  .fr-container-xl {
-    max-width: 90rem;
-  }
-}
-
 .htmlContent *:last-of-type {
   margin-bottom: 0;
 }

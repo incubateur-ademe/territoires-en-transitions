@@ -1,4 +1,5 @@
 import { useCurrentCollectivite } from '@/app/core-logic/hooks/useCurrentCollectivite';
+import { PageContainer } from '@/app/ui/layout/page-layout';
 import { TrackPageView } from '@/ui';
 import { pick } from 'es-toolkit';
 import { HistoriqueListe } from './HistoriqueListe';
@@ -10,11 +11,11 @@ import { useHistoriqueItemListe } from './useHistoriqueItemListe';
  */
 export const JournalActivite = (props: THistoriqueProps) => {
   return (
-    <main data-test="JournalActivite" className="fr-container mt-9 mb-16">
-      <h1 className="text-center fr-mt-6w fr-mb-6w">{"Journal d'activité"}</h1>
+    <PageContainer dataTest="JournalActivite" className="mt-9 mb-16">
+      <h1 className="text-center my-12">{"Journal d'activité"}</h1>
       <hr />
       <HistoriqueListe {...props} />
-    </main>
+    </PageContainer>
   );
 };
 

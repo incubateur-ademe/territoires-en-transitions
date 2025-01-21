@@ -9,6 +9,7 @@ import { ActionDefinitionSummary } from '@/app/core-logic/api/endpoints/ActionDe
 import { useActionVue, useReferentielId } from '@/app/core-logic/hooks/params';
 import { useCurrentCollectivite } from '@/app/core-logic/hooks/useCurrentCollectivite';
 import ScrollTopButton from '@/app/ui/buttons/ScrollTopButton';
+import { PageContainer } from '@/app/ui/layout/page-layout';
 import ActionPreuvePanel from '@/app/ui/shared/actions/ActionPreuvePanel/ActionPreuvePanel';
 import { useActionPreuvesCount } from '@/app/ui/shared/preuves/Bibliotheque/usePreuves';
 import { Tab, Tabs } from '@/app/ui/shared/Tabs';
@@ -106,10 +107,7 @@ const Action = ({ action }: { action: ActionDefinitionSummary }) => {
         nextActionLink={nextActionLink}
         prevActionLink={prevActionLink}
       />
-      <main
-        className="fr-container mt-6"
-        data-test={`Action-${action.identifiant}`}
-      >
+      <PageContainer dataTest={`Action-${action.identifiant}`} className="mt-6">
         <OrientationQuickNav action={action} />
         <ActionAuditStatut action={action} />
         <ActionAuditDetail action={action} />
@@ -191,7 +189,7 @@ const Action = ({ action }: { action: ActionDefinitionSummary }) => {
           nextActionLink={nextActionLink}
         />
         <ScrollTopButton className="mt-8" />
-      </main>
+      </PageContainer>
     </>
   );
 };

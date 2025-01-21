@@ -12,6 +12,7 @@ import {
   recherchesPlansUrl,
 } from '@/app/app/paths';
 import { useSansCollectivite } from '@/app/core-logic/hooks/useOwnedCollectivites';
+import { PageContainer } from '@/app/ui/layout/page-layout';
 import { Alert, Button } from '@/ui';
 import { initialFilters, nameToShortNames } from './data/filters';
 
@@ -47,10 +48,7 @@ const DecouvrirLesCollectivites = () => {
           }
         />
       )}
-      <div
-        data-test="ToutesLesCollectivites"
-        className="app fr-container py-16"
-      >
+      <PageContainer dataTest="ToutesLesCollectivites" className="py-16">
         <div className="md:flex md:gap-6 xl:gap-12">
           <Route path={recherchesCollectivitesUrl}>
             <Filters
@@ -77,7 +75,7 @@ const DecouvrirLesCollectivites = () => {
             />
           </Route>
         </div>
-      </div>
+      </PageContainer>
     </div>
   );
 };
