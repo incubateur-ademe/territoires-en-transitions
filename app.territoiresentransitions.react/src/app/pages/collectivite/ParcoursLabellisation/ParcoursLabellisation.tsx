@@ -8,7 +8,8 @@ import {
   useReferentielId,
 } from '@/app/core-logic/hooks/params';
 import { ReferentielOfIndicateur } from '@/app/types/litterals';
-import Link from 'next/link';
+import { PageContainer } from '@/app/ui/layout/page-layout';
+import { Button } from '@/ui';
 import HeaderLabellisation from './HeaderLabellisation';
 import { LabellisationTabs } from './LabellisationTabs';
 import { useCycleLabellisation } from './useCycleLabellisation';
@@ -26,33 +27,31 @@ const ParcoursLabellisation = () => {
   // cas particulier : le référentiel n'est pas du tout renseigné
   if (isUnchangedReferentiel) {
     return (
-      <>
+      <PageContainer
+        dataTest={`labellisation-${referentiel}`}
+        className="mb-16"
+      >
         <Title referentiel={referentiel} />
-        <main
-          className="fr-container mt-9 mb-16"
-          data-test={`labellisation-${referentiel}`}
-        >
-          <p>
-            Ce référentiel n’est pas encore renseigné pour votre collectivité.
-            Pour commencer à visualiser votre progression, mettez à jour les
-            statuts des actions.
-          </p>
+        <p className="my-12 text-center">
+          Ce référentiel n’est pas encore renseigné pour votre collectivité.
+          <br />
+          Pour commencer à visualiser votre progression, mettez à jour les
+          statuts des actions.
+        </p>
 
-          {collectiviteId && referentiel ? (
-            <div className="flex justify-center">
-              <Link
-                className="fr-btn fr-btn--secondary "
-                href={makeCollectiviteReferentielUrl({
-                  collectiviteId,
-                  referentielId: referentiel as ReferentielParamOption,
-                })}
-              >
-                Mettre à jour le référentiel
-              </Link>
-            </div>
-          ) : null}
-        </main>
-      </>
+        {collectiviteId && referentiel ? (
+          <div className="flex justify-center">
+            <Button
+              href={makeCollectiviteReferentielUrl({
+                collectiviteId,
+                referentielId: referentiel as ReferentielParamOption,
+              })}
+            >
+              Mettre à jour le référentiel
+            </Button>
+          </div>
+        ) : null}
+      </PageContainer>
     );
   }
 
@@ -60,12 +59,9 @@ const ParcoursLabellisation = () => {
     <>
       <Title referentiel={parcours.referentiel} />
       <HeaderLabellisation />
-      <main
-        className="fr-container mt-9 mb-16"
-        data-test={`labellisation-${parcours.referentiel}`}
-      >
+      <PageContainer dataTest={`labellisation-${parcours.referentiel}`}>
         <LabellisationTabs />
-      </main>
+      </PageContainer>
     </>
   ) : (
     <div>...</div>
@@ -74,7 +70,7 @@ const ParcoursLabellisation = () => {
 
 const Title = ({ referentiel }: { referentiel: string | null }) => (
   <>
-    <h1 className="text-center fr-mt-4w fr-mb-1w">Audit et labellisation</h1>
+    <h1 className="text-center mt-12 mb-4">Audit et labellisation</h1>
     {referentiel ? (
       <p className="text-center text-[22px]">
         Référentiel {referentielToName[referentiel as ReferentielOfIndicateur]}

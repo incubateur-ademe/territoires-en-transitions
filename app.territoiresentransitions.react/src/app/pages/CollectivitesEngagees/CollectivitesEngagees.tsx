@@ -4,6 +4,7 @@ import {
   recherchesCollectivitesUrl,
   recherchesPath,
 } from '@/app/app/paths';
+import { PageContainer } from '@/app/ui/layout/page-layout';
 import { EmptyCard } from '@/ui';
 import { Route } from 'react-router-dom';
 import DecouvrirLesCollectivites from './DecouvrirLesCollectivites';
@@ -23,7 +24,7 @@ const CollectivitesEngagees = () => {
 };
 
 const FinaliserMonInscription = () => (
-  <div className="fr-container my-8" data-test="FinaliserInscription">
+  <PageContainer dataTest="FinaliserInscription" className="my-8">
     <EmptyCard
       picto={(props) => <PictoCarte {...props} />}
       title="Merci pour votre inscription !"
@@ -46,7 +47,7 @@ const FinaliserMonInscription = () => (
       ]}
       size="xl"
     />
-  </div>
+  </PageContainer>
 );
 
 export default CollectivitesEngagees;

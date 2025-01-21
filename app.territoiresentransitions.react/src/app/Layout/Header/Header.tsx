@@ -2,6 +2,8 @@ import classNames from 'classnames';
 import Image from 'next/image';
 import Link from 'next/link';
 import { useState } from 'react';
+
+import { PageContainer } from '@/app/ui/layout/page-layout';
 import ademeSrc from '../../static/img/ademe.svg';
 import { AccesRapide } from './AccesRapide';
 import { MaintenanceNotice } from './MaintenanceNotice';
@@ -45,30 +47,28 @@ export const Header = (props: HeaderProps) => {
  *  incluse dans Menu). */
 const Body = (props: HeaderPropsWithModalState) => {
   return (
-    <div className="fr-header__body">
-      <div className="fr-container">
-        <div className="fr-header__body-row">
-          <div className="fr-header__brand fr-enlarge-link">
-            <Brand {...props} />
-            <div className="fr-header__service">
-              <Link href="/" title="Accueil - Territoires en Transitions">
-                <p className="fr-header__service-title m-0">
-                  Territoires en Transitions
-                </p>
-                <p className="fr-header__service-tagline m-0">
-                  Accompagner la transition écologique des collectivités
-                </p>
-              </Link>
-            </div>
+    <PageContainer>
+      <div className="flex items-center justify-start -mx-4 lg:py-6">
+        <div className="fr-header__brand fr-enlarge-link">
+          <Brand {...props} />
+          <div className="fr-header__service">
+            <Link href="/" title="Accueil - Territoires en Transitions">
+              <p className="fr-header__service-title m-0">
+                Territoires en Transitions
+              </p>
+              <p className="fr-header__service-tagline m-0">
+                Accompagner la transition écologique des collectivités
+              </p>
+            </Link>
           </div>
-          <div className="fr-header__tools">
-            <div className="fr-header__tools-links">
-              <AccesRapide {...props} />
-            </div>
+        </div>
+        <div className="fr-header__tools">
+          <div className="fr-header__tools-links">
+            <AccesRapide {...props} />
           </div>
         </div>
       </div>
-    </div>
+    </PageContainer>
   );
 };
 
@@ -85,7 +85,7 @@ const Menu = (props: HeaderPropsWithModalState) => {
       })}
       role={modalOpened ? 'dialog' : undefined}
     >
-      <div className="fr-container">
+      <PageContainer>
         <button
           aria-controls="modal-header__menu"
           className="fr-btn fr-btn--close"
@@ -97,7 +97,7 @@ const Menu = (props: HeaderPropsWithModalState) => {
         <div className="fr-header__menu-links">
           <AccesRapide {...props} />
         </div>
-      </div>
+      </PageContainer>
     </div>
   );
 };

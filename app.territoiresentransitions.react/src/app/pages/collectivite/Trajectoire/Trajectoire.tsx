@@ -1,4 +1,5 @@
 import { useCollectiviteId } from '@/app/core-logic/hooks/params';
+import { PageContainer } from '@/app/ui/layout/page-layout';
 import SpinnerLoader from '@/app/ui/shared/SpinnerLoader';
 import { Alert, Button, Card, Modal, TrackPageView } from '@/ui';
 import { pick } from 'es-toolkit';
@@ -253,9 +254,9 @@ const Trajectoire = () => {
             }}
           />
         )}
-        <div className="fr-container flex flex-col gap-16">
+        <PageContainer className="flex flex-col gap-16">
           <TrajectoireContent statut={statutTrajectoire} />
-        </div>
+        </PageContainer>
       </div>
     )
   );

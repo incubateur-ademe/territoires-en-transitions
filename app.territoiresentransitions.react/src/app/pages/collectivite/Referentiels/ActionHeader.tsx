@@ -1,4 +1,5 @@
 import { ActionDefinitionSummary } from '@/app/core-logic/api/endpoints/ActionDefinitionSummaryReadEndpoint';
+import { PageContainer } from '@/app/ui/layout/page-layout';
 import ActionProgressBar from '@/app/ui/referentiels/ActionProgressBar';
 import classNames from 'classnames';
 import ScoreDisplay from '../../../../ui/referentiels/ScoreDisplay';
@@ -40,24 +41,22 @@ export const ActionHeader = ({
               }
             )}
           >
-            <div className="fr-container">
-              <p
-                className={classNames('text-white font-bold !mb-0', {
-                  'text-[1.375rem]': !isScrolled,
-                  'text-md': isScrolled,
-                })}
-              >
-                {action.identifiant} {action.nom}
-              </p>
-              {!isScrolled && (
-                <ActionTopNav
-                  prevActionLink={prevActionLink}
-                  nextActionLink={nextActionLink}
-                />
-              )}
-            </div>
+            <p
+              className={classNames('text-white font-bold !mb-0', {
+                'text-[1.375rem]': !isScrolled,
+                'text-md': isScrolled,
+              })}
+            >
+              {action.identifiant} {action.nom}
+            </p>
+            {!isScrolled && (
+              <ActionTopNav
+                prevActionLink={prevActionLink}
+                nextActionLink={nextActionLink}
+              />
+            )}
           </div>
-          <div className="fr-container flex justify-between items-center fr-text--sm fr-my-2w">
+          <PageContainer className="flex justify-between items-center fr-text--sm my-4">
             <div className="flex gap-4 items-center fr-pl-1v text-grey425">
               <ActionProgressBar
                 action={action}
@@ -78,7 +77,7 @@ export const ActionHeader = ({
               )}
             </div>
             <ActionSidePanelToolbar action={action} />
-          </div>
+          </PageContainer>
         </div>
       )}
     />

@@ -18,6 +18,7 @@ import { Counter } from '../../../../ui/referentiels/Counter';
 import AidePriorisation from '../AidePriorisation';
 import DetailTacheTable from '../DetailTaches';
 import ActionsReferentiels from './Referentiels';
+import { PageContainer } from '@/app/ui/layout/page-layout';
 
 const TABS_INDEX: Record<ReferentielVueParamOption, number> = {
   progression: 0,
@@ -122,40 +123,38 @@ const ReferentielTabs = () => {
   };
 
   return (
-    <div className="grow bg-grey-2 -mb-8 py-12 px-4 lg:px-6 2xl:px-0">
-      <div className="m-auto xl:max-w-[90rem] 2xl:px-6">
-        <ReferentielHeader referentielId={referentielId} />
-        <Tabs
-          defaultActiveTab={activeTab}
-          onChange={handleChange}
-          tabsListClassName="!justify-start pl-0 flex-nowrap bg-transparent"
-        >
-          <Tab label="Actions">
+    <PageContainer>
+      <ReferentielHeader referentielId={referentielId} />
+      <Tabs
+        defaultActiveTab={activeTab}
+        onChange={handleChange}
+        tabsListClassName="!justify-start pl-0 flex-nowrap bg-transparent"
+      >
+        <Tab label="Actions">
+          <div className="p-7 border border-primary-2 bg-white rounded-lg">
+            <ActionsReferentiels />
+          </div>
+        </Tab>
+        <Tab label="Aide à la priorisation" className="!text-primary-500">
+          {activeTab === TABS_INDEX['priorisation'] ? (
             <div className="p-7 border border-primary-2 bg-white rounded-lg">
-              <ActionsReferentiels />
+              <AidePriorisation />
             </div>
-          </Tab>
-          <Tab label="Aide à la priorisation" className="!text-primary-500">
-            {activeTab === TABS_INDEX['priorisation'] ? (
-              <div className="p-7 border border-primary-2 bg-white rounded-lg">
-                <AidePriorisation />
-              </div>
-            ) : (
-              '...'
-            )}
-          </Tab>
-          <Tab label="Détail des statuts">
-            {activeTab === TABS_INDEX['detail'] ? (
-              <div className="p-7 border border-primary-2 bg-white rounded-lg">
-                <DetailTacheTable />
-              </div>
-            ) : (
-              '...'
-            )}
-          </Tab>
-        </Tabs>
-      </div>
-    </div>
+          ) : (
+            '...'
+          )}
+        </Tab>
+        <Tab label="Détail des statuts">
+          {activeTab === TABS_INDEX['detail'] ? (
+            <div className="p-7 border border-primary-2 bg-white rounded-lg">
+              <DetailTacheTable />
+            </div>
+          ) : (
+            '...'
+          )}
+        </Tab>
+      </Tabs>
+    </PageContainer>
   );
 };
 

@@ -1,4 +1,5 @@
 import { useCurrentCollectivite } from '@/app/core-logic/hooks/useCurrentCollectivite';
+import { PageContainer } from '@/app/ui/layout/page-layout';
 import Thematiques from './Thematiques';
 import { usePersoFilters } from './usePersoFilters';
 import { useQuestionThematiqueCompletude } from './useQuestionThematiqueCompletude';
@@ -21,14 +22,14 @@ const PersoReferentiel = () => {
   }
 
   return (
-    <main data-test="personnalisation" className="fr-container mt-9 mb-16">
+    <PageContainer dataTest="personnalisation" className="mt-9 mb-16">
       <Thematiques
         collectivite={{ id: collectivite_id, nom: nom || '' }}
         referentiels={referentiels}
         onChange={(newSelection) => setFilters({ referentiels: newSelection })}
         items={thematiques}
       />
-    </main>
+    </PageContainer>
   );
 };
 
