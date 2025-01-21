@@ -2,6 +2,9 @@
 
 BEGIN;
 
+alter table indicateur_definition
+  add column titre_court text null;
+
 create or replace function
     private.upsert_indicateurs_after_json_insert()
     returns trigger
@@ -16,6 +19,7 @@ begin
             insert into indicateur_definition(identifiant_referentiel,
                                               titre,
                                               titre_long,
+                                              titre_court,
                                               description,
                                               unite,
                                               participation_score,
@@ -24,6 +28,7 @@ begin
             values (indicateur ->> 'id',
                     indicateur ->> 'nom',
                     indicateur ->> 'titre_long',
+                    indicateur ->> 'titre_court',
                     indicateur ->> 'description',
                     indicateur ->> 'unite',
                     (indicateur -> 'participation_score')::bool,
@@ -34,6 +39,7 @@ begin
                 set identifiant_referentiel         = excluded.identifiant_referentiel,
                     titre                 = excluded.titre,
                     titre_long          = excluded.titre_long,
+                    titre_court          = excluded.titre_court,
                     description         = excluded.description,
                     unite               = excluded.unite,
                     participation_score = excluded.participation_score,

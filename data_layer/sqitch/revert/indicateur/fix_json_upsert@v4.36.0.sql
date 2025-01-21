@@ -1,9 +1,6 @@
--- Deploy tet:indicateurs/fix_json_upsert to pg
+-- Revert tet:indicateurs/fix_json_upsert from pg
 
 BEGIN;
-
-alter table indicateur_definition
-  drop column titre_court;
 
 create or replace function
     private.upsert_indicateurs_after_json_insert()
@@ -130,15 +127,15 @@ begin
             if indicateur -> 'parent' != 'null'
                 and (select count(*)>0
                      from indicateur_definition
-                     where identifiant_referentiel = indicateur ->> 'parent') then
+                     where identifiant_referentiel = (indicateur -> 'parent')::text) then
                 insert into indicateur_groupe (parent, enfant)
                 values ((select id
                          from indicateur_definition
-                         where identifiant_referentiel = indicateur ->> 'parent'
+                         where identifiant_referentiel = (indicateur -> 'parent')::text
                          limit 1),
                         (select id
                          from indicateur_definition
-                         where identifiant_referentiel = indicateur ->> 'id'
+                         where identifiant_referentiel = (indicateur -> 'id')::text
                          limit 1));
             end if;
         end loop;
