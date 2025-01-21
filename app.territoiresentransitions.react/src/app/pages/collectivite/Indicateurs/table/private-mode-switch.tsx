@@ -11,7 +11,7 @@ export const PrivateModeSwitch = ({
 }) => {
   const collectivite = useCurrentCollectivite();
   const isReadonly = !collectivite || collectivite.readonly;
-  const { mutate: toggleIndicateurConfidentiel, isLoading } =
+  const { mutate: toggleIndicateurConfidentiel } =
     useToggleIndicateurConfidentiel(definition);
   const { confidentiel } = definition;
 
@@ -31,7 +31,6 @@ export const PrivateModeSwitch = ({
               variant="switch"
               label="Résultat récent en mode privé"
               checked={confidentiel}
-              disabled={isLoading}
               onChange={() =>
                 toggleIndicateurConfidentiel(confidentiel || false)
               }
