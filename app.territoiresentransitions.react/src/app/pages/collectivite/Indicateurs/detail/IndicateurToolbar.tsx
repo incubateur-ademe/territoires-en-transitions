@@ -30,7 +30,6 @@ const IndicateurToolbar = ({
   );
 
   const { mutate: deleteIndicateurPerso } = useDeleteIndicateurPerso(
-    collectiviteId,
     definition.id
   );
 

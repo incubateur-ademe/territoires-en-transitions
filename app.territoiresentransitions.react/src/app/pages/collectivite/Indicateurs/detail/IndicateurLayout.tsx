@@ -31,8 +31,8 @@ const IndicateurLayout = ({
 
   const collectivite = useCurrentCollectivite();
 
-  const collectiviteId = collectivite?.collectivite_id;
-  const isReadonly = !collectivite || collectivite?.readonly;
+  const collectiviteId = collectivite?.collectiviteId;
+  const isReadonly = !collectivite || collectivite?.isReadOnly;
 
   const composeSansAgregation = !!enfants && enfants.length > 0 && sansValeur;
   const composeAvecAgregation = !!enfants && enfants.length > 0 && !sansValeur;
