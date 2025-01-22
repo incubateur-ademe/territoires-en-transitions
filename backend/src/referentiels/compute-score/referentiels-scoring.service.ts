@@ -66,7 +66,7 @@ import { LabellisationAuditType } from '../models/labellisation-audit.table';
 import { LabellisationEtoileMetaType } from '../models/labellisation-etoile.table';
 import { postAuditScoresTable } from '../models/post-audit-scores.table';
 import { preAuditScoresTable } from '../models/pre-audit-scores.table';
-import { ReferentielId } from '../models/referentiel.enum';
+import { ReferentielId } from '../models/referentiel-id.enum';
 import { getParentIdFromActionId } from '../referentiels.utils';
 import LabellisationService from '../services/labellisation.service';
 import ReferentielsService from '../services/referentiels.service';

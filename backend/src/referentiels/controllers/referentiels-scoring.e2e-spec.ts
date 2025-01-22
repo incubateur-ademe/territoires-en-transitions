@@ -8,13 +8,12 @@ import { HttpErrorResponse } from '../../utils/nest/http-error.response';
 import { ActionStatutsByActionId } from '../compute-score/action-statuts-by-action-id.dto';
 import { ActionWithScore } from '../compute-score/action-with-score.dto';
 import { Score } from '../compute-score/score.dto';
-import { referentielIdEnumSchema } from '../index-domain';
-import { ActionStatutType } from '../models/action-statut.table';
+import { ActionStatut, referentielIdEnumSchema } from '../index-domain';
 import { ActionType } from '../models/action-type.enum';
 import { GetReferentielScoresResponseType } from '../models/get-referentiel-scores.response';
 import { GetScoreSnapshotsResponseType } from '../models/get-score-snapshots.response';
 import { HistoriqueActionStatutType } from '../models/historique-action-statut.table';
-import { ScoreJalon } from '../models/score-jalon.enum';
+import { SnapshotJalon } from '../snapshots/snapshot-jalon.enum';
 
 describe('Referentiels scoring routes', () => {
   let app: INestApplication;
@@ -40,7 +39,7 @@ describe('Referentiels scoring routes', () => {
       .expect(200);
     const actionStatuts = response.body as ActionStatutsByActionId;
     expect(Object.keys(actionStatuts).length).toBe(2);
-    const expectedActionStatut: ActionStatutType = {
+    const expectedActionStatut: ActionStatut = {
       collectiviteId: 1,
       actionId: 'cae_1.1.1.1.1',
       avancement: 'fait',
@@ -248,7 +247,7 @@ describe('Referentiels scoring routes', () => {
     const expectedCurrentSnapshotList: GetScoreSnapshotsResponseType = {
       collectiviteId: 1,
       referentielId: referentielIdEnumSchema.enum.cae,
-      typesJalon: [ScoreJalon.SCORE_COURANT],
+      typesJalon: [SnapshotJalon.SCORE_COURANT],
       snapshots: [
         {
           auditId: null,
@@ -271,7 +270,7 @@ describe('Referentiels scoring routes', () => {
           pointProgramme: 0.21,
           ref: 'score-courant',
           referentielVersion: '1.0.0',
-          typeJalon: ScoreJalon.SCORE_COURANT,
+          typeJalon: SnapshotJalon.SCORE_COURANT,
         },
       ],
     };
@@ -300,13 +299,13 @@ describe('Referentiels scoring routes', () => {
     const expectedSnapshotList: GetScoreSnapshotsResponseType = {
       collectiviteId: 1,
       referentielId: referentielIdEnumSchema.enum.cae,
-      typesJalon: [ScoreJalon.DATE_PERSONNALISEE],
+      typesJalon: [SnapshotJalon.DATE_PERSONNALISEE],
       snapshots: [
         {
           date: expect.toEqualDate(getReferentielScoresResponseType.date),
           nom: 'test à accent',
           ref: 'user-test-a-accent',
-          typeJalon: ScoreJalon.DATE_PERSONNALISEE,
+          typeJalon: SnapshotJalon.DATE_PERSONNALISEE,
           modifiedAt: getReferentielScoresResponseType.snapshot!.modifiedAt,
           createdAt: getReferentielScoresResponseType.snapshot!.createdAt,
           referentielVersion: '1.0.0',

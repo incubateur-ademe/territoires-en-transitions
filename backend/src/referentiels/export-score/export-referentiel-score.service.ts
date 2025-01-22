@@ -19,7 +19,7 @@ import { GetScoreSnapshotRequestType } from '../models/get-score-snapshot.reques
 import {
   ReferentielId,
   referentielIdEnumSchema,
-} from '../models/referentiel.enum';
+} from '../models/referentiel-id.enum';
 import {
   getAxeFromActionId,
   getLevelFromActionId,

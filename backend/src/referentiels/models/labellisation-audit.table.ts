@@ -12,7 +12,7 @@ import { createInsertSchema, createSelectSchema } from 'drizzle-zod';
 import { collectiviteTable } from '../../collectivites/shared/models/collectivite.table';
 import { labellisationDemandeTable } from './labellisation-demande.table';
 import { labellisationSchema } from './labellisation.schema';
-import { referentielIdPgEnum } from './referentiel.enum';
+import { referentielIdPgEnum } from './referentiel-id.enum';
 
 export const labellisationAuditTable = labellisationSchema.table(
   'audit',

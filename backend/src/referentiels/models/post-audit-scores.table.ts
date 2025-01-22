@@ -9,7 +9,7 @@ import {
 } from 'drizzle-orm/pg-core';
 import { createInsertSchema, createSelectSchema } from 'drizzle-zod';
 import { labellisationAuditTable } from './labellisation-audit.table';
-import { referentielIdPgEnum } from './referentiel.enum';
+import { referentielIdPgEnum } from './referentiel-id.enum';
 
 export const postAuditScoresTable = pgTable(
   'post_audit_scores',

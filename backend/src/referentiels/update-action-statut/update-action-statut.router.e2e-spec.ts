@@ -4,7 +4,7 @@ import { getAuthUser } from '../../../test/auth-utils';
 import { getCollectiviteIdBySiren } from '../../../test/collectivites-utils';
 import { AppRouter, TrpcRouter } from '../../utils/trpc/trpc.router';
 import { Score } from '../compute-score/score.dto';
-import { referentielIdEnumSchema } from '../models/referentiel.enum';
+import { referentielIdEnumSchema } from '../index-domain';
 import { AuthenticatedUser } from './../../auth/models/auth.models';
 
 type Input = inferProcedureInput<

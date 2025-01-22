@@ -12,7 +12,7 @@ import { z } from 'zod';
 import { actionRelationTable } from './action-relation.table';
 import { ActionType } from './action-type.enum';
 import { referentielDefinitionTable } from './referentiel-definition.table';
-import { referentielIdPgEnum } from './referentiel.enum';
+import { referentielIdPgEnum } from './referentiel-id.enum';
 
 export enum ActionCategoryType {
   BASES = 'bases',

@@ -2,7 +2,7 @@ import { TrpcService } from '@/backend/utils/trpc/trpc.service';
 import { Injectable } from '@nestjs/common';
 import z from 'zod';
 import ReferentielsScoringService from '../compute-score/referentiels-scoring.service';
-import { referentielIdEnumSchema } from '../models/referentiel.enum';
+import { referentielIdEnumSchema } from '../models/referentiel-id.enum';
 import ReferentielsScoringSnapshotsService from './referentiels-scoring-snapshots.service';
 import { SnapshotJalon } from './snapshot-jalon.enum';
 

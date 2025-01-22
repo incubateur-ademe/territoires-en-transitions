@@ -1,7 +1,7 @@
 import { z } from 'zod';
 import { scoreSchema } from '../compute-score/score.dto';
 import { CheckScoreStatus } from './check-score-status.enum';
-import { referentielIdEnumSchema } from './referentiel.enum';
+import { referentielIdEnumSchema } from './referentiel-id.enum';
 
 export const getCheckScoresResponseSchema = z
   .object({

@@ -1,10 +1,10 @@
 import { Test } from '@nestjs/testing';
+import ReferentielsScoringService from '../compute-score/referentiels-scoring.service';
 import { deeperReferentielScoring } from '../models/samples/deeper-referentiel-scoring.sample';
 import { simpleReferentielScoring } from '../models/samples/simple-referentiel-scoring.sample';
-import ReferentielsScoringSnapshotsService from '../services/referentiels-scoring-snapshots.service';
 import ReferentielsService from '../services/referentiels.service';
+import ReferentielsScoringSnapshotsService from '../snapshots/referentiels-scoring-snapshots.service';
 import ExportReferentielScoreService from './export-referentiel-score.service';
-import ReferentielsScoringService from '../compute-score/referentiels-scoring.service';
 
 describe('ExportReferentielScoreService', () => {
   let exportReferentielScoreService: ExportReferentielScoreService;

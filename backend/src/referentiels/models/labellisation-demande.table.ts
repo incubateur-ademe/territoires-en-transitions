@@ -11,7 +11,7 @@ import { authUsersTable } from '../../auth/models/auth-users.table';
 import { collectiviteTable } from '../../collectivites/shared/models/collectivite.table';
 import { labellisationEtoileEnum } from './labellisation-etoile.table';
 import { labellisationSchema } from './labellisation.schema';
-import { referentielIdPgEnum } from './referentiel.enum';
+import { referentielIdPgEnum } from './referentiel-id.enum';
 
 export enum LabellisationSujetDemandeEnumType {
   LABELLISATION = 'labellisation',
