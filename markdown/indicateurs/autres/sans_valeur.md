@@ -8,6 +8,7 @@ selection: yes
 sans_valeur: yes
 programmes:
   - cae
+  - agregation
 thematiques:
   - mobilite_et_transport
 ```
