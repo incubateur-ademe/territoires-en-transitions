@@ -74,27 +74,3 @@ export const actionDownToTache = async (
 
   return data as ActionDefinitionSummary[];
 };
-
-/**
- * Action Preuve
- * The preuve section contents
- */
-export interface ActionPreuve {
-  id: string;
-  preuve: string;
-}
-
-/**
- * Returns action preuve text
- */
-export const actionPreuve = async (id: string): Promise<ActionPreuve> => {
-  const { data, error } = await rpcCache.rpc('action_preuve', {
-    id: id,
-  });
-
-  if (error) {
-    console.error('actionPreuve rpc error ', error);
-    return { id: id, preuve: '' };
-  }
-  return data as unknown as ActionPreuve;
-};

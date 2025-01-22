@@ -10,7 +10,6 @@ import {
 import { Referentiel } from '@/app/referentiels/litterals';
 import {
   actionDownToTache,
-  actionPreuve,
   referentielDownToAction,
 } from '@/app/referentiels/referentiel/data';
 import { useEffect, useState } from 'react';
@@ -48,19 +47,6 @@ export const useReferentielDownToAction = (
     );
   }, [referentiel]);
   return summaries;
-};
-
-/**
- * Returns action ressources html contents
- */
-export const useActionPreuve = (actionId: string) => {
-  const [preuve, setPreuve] = useState<string>('...');
-
-  useEffect(() => {
-    actionPreuve(actionId).then((preuve) => setPreuve(preuve.preuve));
-  }, [actionId]);
-
-  return preuve;
 };
 
 /**
