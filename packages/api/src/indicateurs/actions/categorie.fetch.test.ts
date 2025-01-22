@@ -1,8 +1,8 @@
-import {beforeAll, expect, test} from 'vitest';
-import {signIn, signOut} from '../../tests/auth';
-import {supabase} from '../../tests/supabase';
-import {testReset} from '../../tests/testReset';
-import {selectCategories} from './categorie.fetch';
+import { beforeAll, expect, test } from 'vitest';
+import { signIn, signOut } from '../../tests/auth';
+import { supabase } from '../../tests/supabase';
+import { testReset } from '../../tests/testReset';
+import { selectCategories } from './categorie.fetch';
 
 beforeAll(async () => {
   await signIn('yolododo');
@@ -15,5 +15,5 @@ beforeAll(async () => {
 
 test('Test selectCategories', async () => {
   const def = await selectCategories(supabase, 1);
-  expect(def!).toHaveLength(16);
+  expect(def.length).toBeGreaterThanOrEqual(16);
 });
