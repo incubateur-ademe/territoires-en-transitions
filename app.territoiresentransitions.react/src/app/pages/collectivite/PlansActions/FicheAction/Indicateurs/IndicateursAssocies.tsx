@@ -7,10 +7,10 @@ import { useCurrentCollectivite } from '@/app/core-logic/hooks/useCurrentCollect
 import { Button, Divider, EmptyCard, useEventTracker } from '@/ui';
 import { useState } from 'react';
 import LoadingCard from '../LoadingCard';
-import SideMenu from '../SideMenu';
 import DatavizPicto from './DatavizPicto';
 import ModaleCreerIndicateur from './ModaleCreerIndicateur';
 import Content from './SideMenu/Content';
+import SideMenu from '@/app/ui/layout/side-menu';
 
 type IndicateursAssociesProps = {
   isReadonly: boolean;

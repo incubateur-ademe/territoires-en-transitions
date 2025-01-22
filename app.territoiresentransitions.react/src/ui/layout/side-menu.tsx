@@ -7,9 +7,16 @@ type SideMenuProps = {
   title: string;
   isOpen: boolean;
   setIsOpen: (value: boolean) => void;
+  dataTest?: string;
 };
 
-const SideMenu = ({ children, title, isOpen, setIsOpen }: SideMenuProps) => {
+const SideMenu = ({
+  children,
+  title,
+  isOpen,
+  setIsOpen,
+  dataTest,
+}: SideMenuProps) => {
   const [displayContent, setDisplayContent] = useState(false);
 
   useEffect(() => {
@@ -28,6 +35,7 @@ const SideMenu = ({ children, title, isOpen, setIsOpen }: SideMenuProps) => {
 
   return (
     <div
+      data-test={dataTest}
       className={classNames(
         'fixed z-[800] top-0 h-screen max-h-screen overflow-hidden w-[50%] lg:w-[33%] xl:w-[30%] flex flex-col bg-white rounded-l-lg border-l border-l-grey-3 transition-all duration-500',
         {
