@@ -9,6 +9,7 @@ titre_court: Modes actifs et TC
 parent: modes_de_deplacement
 programmes:
   - crte
+  - agregation
 climat_pratic_ids:
   - mobilites
 thematiques:
