@@ -11,7 +11,7 @@ const UniteIndicateurInput = ({ unite, disabled, updateUnite }: Props) => {
   const [uniteInput, setUniteInput] = useState(unite);
 
   return (
-    <Field title="Unité">
+    <Field title="Unité" className="w-72">
       <Input
         type="text"
         value={uniteInput}
