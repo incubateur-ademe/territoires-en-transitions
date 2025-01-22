@@ -1,7 +1,7 @@
 import z from 'zod';
 import { SnapshotJalon } from '../snapshots/snapshot-jalon.enum';
 import { scoreSnapshotSchema } from '../snapshots/snapshot.table';
-import { referentielIdEnumSchema } from './referentiel.enum';
+import { referentielIdEnumSchema } from './referentiel-id.enum';
 
 export const scoreSnapshotInfo = scoreSnapshotSchema.pick({
   ref: true,

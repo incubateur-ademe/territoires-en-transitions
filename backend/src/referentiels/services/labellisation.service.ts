@@ -9,7 +9,7 @@ import {
   labellisationEtoileMetaTable,
   LabellisationEtoileMetaType,
 } from '../models/labellisation-etoile.table';
-import { ReferentielId } from '../models/referentiel.enum';
+import { ReferentielId } from '../models/referentiel-id.enum';
 import ReferentielsService from './referentiels.service';
 
 @Injectable()

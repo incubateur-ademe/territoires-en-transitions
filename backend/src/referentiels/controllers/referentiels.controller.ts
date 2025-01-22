@@ -6,7 +6,7 @@ import { AllowPublicAccess } from '../../auth/decorators/allow-public-access.dec
 import { TokenInfo } from '../../auth/decorators/token-info.decorators';
 import { AuthenticatedUser } from '../../auth/models/auth.models';
 import { getReferentielResponseSchema } from '../models/get-referentiel.response';
-import { ReferentielId } from '../models/referentiel.enum';
+import { ReferentielId } from '../models/referentiel-id.enum';
 import ReferentielsService from '../services/referentiels.service';
 
 class GetReferentielResponseClass extends createZodDto(

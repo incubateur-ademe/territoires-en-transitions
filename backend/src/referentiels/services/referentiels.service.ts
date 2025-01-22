@@ -56,13 +56,13 @@ import {
   ReferentielDefinitionType,
 } from '../models/referentiel-definition.table';
 import {
+  ReferentielId,
+  referentielIdEnumSchema,
+} from '../models/referentiel-id.enum';
+import {
   CreateReferentielTagType,
   referentielTagTable,
 } from '../models/referentiel-tag.table';
-import {
-  ReferentielId,
-  referentielIdEnumSchema,
-} from '../models/referentiel.enum';
 import {
   getActionTypeFromActionId,
   getParentIdFromActionId,

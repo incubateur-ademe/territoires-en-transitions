@@ -9,7 +9,7 @@ import {
 } from 'drizzle-orm/pg-core';
 import { createInsertSchema, createSelectSchema } from 'drizzle-zod';
 import { collectiviteTable } from '../../collectivites/shared/models/collectivite.table';
-import { referentielIdPgEnum } from './referentiel.enum';
+import { referentielIdPgEnum } from './referentiel-id.enum';
 
 export const clientScoresTable = pgTable(
   'client_scores',

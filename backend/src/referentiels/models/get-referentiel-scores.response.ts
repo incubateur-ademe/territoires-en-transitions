@@ -3,7 +3,7 @@ import { collectiviteAvecTypeSchema } from '../../collectivites/identite-collect
 import { actionWithScoreFinalSchema } from '../compute-score/action-with-score.dto';
 import { SnapshotJalon } from '../snapshots/snapshot-jalon.enum';
 import { ComputeScoreMode } from './compute-scores-mode.enum';
-import { referentielIdEnumSchema } from './referentiel.enum';
+import { referentielIdEnumSchema } from './referentiel-id.enum';
 
 export const getReferentielScoresResponseSnapshotInfoSchema = z.object({
   ref: z.string(),

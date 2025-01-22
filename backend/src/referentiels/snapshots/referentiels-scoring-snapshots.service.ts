@@ -24,7 +24,7 @@ import {
   ScoreSnapshotCollectiviteInfoType,
   ScoreSnapshotInfoType,
 } from '../models/get-score-snapshots.response';
-import { ReferentielId } from '../models/referentiel.enum';
+import { ReferentielId } from '../models/referentiel-id.enum';
 import { SnapshotJalon } from './snapshot-jalon.enum';
 import {
   CreateScoreSnapshotType,

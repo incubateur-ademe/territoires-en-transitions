@@ -8,7 +8,7 @@ import {
 } from 'drizzle-orm/pg-core';
 import { createInsertSchema } from 'drizzle-zod';
 import { authUsersTable } from '../../../auth/models/auth-users.table';
-import { referentielIdPgEnum } from '../../../referentiels/models/referentiel.enum';
+import { referentielIdPgEnum } from '../../../referentiels/models/referentiel-id.enum';
 import { createdAt, modifiedAt } from '../../../utils/column.utils';
 import { collectiviteTable } from './collectivite.table';
 import { membreFonctionEnum } from './membre-fonction.enum';

@@ -7,7 +7,7 @@ import { AuthenticatedUser } from '../../auth/models/auth.models';
 import { AppRouter, TrpcRouter } from '../../utils/trpc/trpc.router';
 import { referentielIdEnumSchema } from '../index-domain';
 import { ScoreSnapshotInfoType } from '../models/get-score-snapshots.response';
-import { ScoreJalon } from '../models/score-jalon.enum';
+import { SnapshotJalon } from './snapshot-jalon.enum';
 
 type ComputeScoreInput = inferProcedureInput<
   AppRouter['referentiels']['scores']['computeScore']
@@ -85,7 +85,7 @@ describe('ScoreSnapshotsRouter', () => {
         collectiviteId: 1,
         referentielId: referentielIdEnumSchema.enum.cae,
         parameters: {
-          typesJalon: [ScoreJalon.DATE_PERSONNALISEE],
+          typesJalon: [SnapshotJalon.DATE_PERSONNALISEE],
         },
       });
 
@@ -101,7 +101,7 @@ describe('ScoreSnapshotsRouter', () => {
       date: DateTime.fromISO(referentielScore.date).toISO() as string,
       nom: 'Test trpc',
       ref: 'user-test-trpc',
-      typeJalon: ScoreJalon.DATE_PERSONNALISEE,
+      typeJalon: SnapshotJalon.DATE_PERSONNALISEE,
       modifiedAt: referentielScore.snapshot!.modifiedAt,
       createdAt: referentielScore.snapshot!.createdAt,
       referentielVersion: '1.0.0',
@@ -132,7 +132,7 @@ describe('ScoreSnapshotsRouter', () => {
         collectiviteId: 1,
         referentielId: referentielIdEnumSchema.enum.cae,
         parameters: {
-          typesJalon: [ScoreJalon.DATE_PERSONNALISEE],
+          typesJalon: [SnapshotJalon.DATE_PERSONNALISEE],
         },
       });
     const foundSnapshotAfterDelete =
