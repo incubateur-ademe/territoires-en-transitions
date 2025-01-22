@@ -89,7 +89,7 @@ export const CellAction = (props: TCellProps) => {
           {depth > 0 ? (
             depth > idDepth ? (
               <Link
-                className="hover:underline active:underline active:!bg-transparent"
+                className="bg-none hover:underline active:underline active:!bg-transparent"
                 onClick={(evt) => evt.stopPropagation()}
                 href={makeCollectiviteTacheUrl({
                   collectiviteId,

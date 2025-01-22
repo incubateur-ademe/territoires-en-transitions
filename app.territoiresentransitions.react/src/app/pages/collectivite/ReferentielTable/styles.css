@@ -204,3 +204,7 @@
 .referentiel-table .body .row.d2 .cell-value.modified {
   color: black;
 }
+
+.referentiel-table .row {
+  font-weight: normal;
+}
