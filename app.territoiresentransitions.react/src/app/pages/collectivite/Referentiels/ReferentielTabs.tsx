@@ -14,6 +14,7 @@ import { Card, Tab, Tabs } from '@/ui';
 import { useRouter } from 'next/navigation';
 import { useReferentielDownToAction } from '../../../../core-logic/hooks/referentiel';
 import ActionProgressBar from '../../../../ui/referentiels/ActionProgressBar';
+import { Counter } from '../../../../ui/referentiels/Counter';
 import AidePriorisation from '../AidePriorisation';
 import DetailTacheTable from '../DetailTaches';
 import ActionsReferentiels from './ActionsReferentiels';
@@ -72,11 +73,15 @@ const ReferentielHeader = ({
       {/**********************************/}
 
       {referentiel && (
-        <ActionProgressBar
-          action={referentiel}
-          progressBarStyleOptions={{ fullWidth: true }}
-          className="mb-4"
-        />
+        <div className="flex items-center gap-4">
+          <div className="w-[80%]">
+            <ActionProgressBar
+              action={referentiel}
+              progressBarStyleOptions={{ fullWidth: true }}
+            />
+          </div>
+          <Counter actionId={referentiel.id} />
+        </div>
       )}
     </div>
   );
