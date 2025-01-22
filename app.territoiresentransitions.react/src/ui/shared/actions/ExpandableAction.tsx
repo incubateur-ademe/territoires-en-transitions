@@ -4,7 +4,7 @@ import ActionProgressBar from '@/app/ui/referentiels/ActionProgressBar';
 import { ActionReferentielDisplayTitle } from '@/app/ui/referentiels/ActionReferentielDisplayTitle';
 import { useEffect, useRef, useState } from 'react';
 import { ReferentielCard } from '../../referentiels/Card/ReferentielCard';
-import { Counter } from '../../score/Counter';
+import { Counter } from '../../referentiels/Counter';
 
 /**
  * An expandable action used for "axes" and "sous axes", shows Scores.
@@ -93,7 +93,7 @@ export const ExpandableAction = ({
         <div
           className={`ml-6 grid ${
             isDescriptionOn ? 'grid-cols-1' : 'grid-cols-3'
-          } gap-4`}
+          } gap-4 grid-rows-1`}
         >
           {actionChildren.map((action) => (
             <ReferentielCard

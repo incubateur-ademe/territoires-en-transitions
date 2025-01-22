@@ -4,8 +4,8 @@ import { referentielId } from '@/app/utils/actions';
 import Link from 'next/link';
 import { Card } from '../../../../../packages/ui/src';
 import { makeCollectiviteActionUrl } from '../../../app/paths';
-import { Counter } from '../../score/Counter';
 import ActionProgressBar from '../ActionProgressBar';
+import { Counter } from '../Counter';
 
 /**
  * Used on referentiels page, links to action page.
@@ -42,7 +42,7 @@ export const ReferentielCard = ({
       })}
     >
       <Card
-        className="h-full !p-y-2 !p-x-4"
+        className="h-full !p-y-2 !p-x-4 flex flex-col"
         // *** For future use ***
         // header={
         //   <div className="flex items-center gap-3">
@@ -55,21 +55,24 @@ export const ReferentielCard = ({
         //   </div>
         // }
       >
-        <div className={`flex min-w-min ${!isDescriptionOn && 'min-h-36'}`}>
-          <span className="text-lg font-bold text-primary-9 font-bold">
-            {action.identifiant} {action.nom}
-          </span>
-        </div>
+        <div className="flex-grow">
+          <div className="flex min-w-min">
+            <span className="text-lg font-bold text-primary-9 font-bold">
+              {action.identifiant} {action.nom}
+            </span>
+          </div>
 
-        <div>
           {isDescriptionOn && action.description && (
             <p
-              className="htmlContent text-sm text-grey-9 font-light mb-6"
+              className="htmlContent text-sm text-grey-9 font-light my-6"
               dangerouslySetInnerHTML={{
                 __html: action.description,
               }}
             />
           )}
+        </div>
+
+        <div className="mt-auto">
           <Counter actionId={action.id} className={'mb-3'} />
           <ActionProgressBar
             action={action}
