@@ -20,6 +20,7 @@ import { generateSyntheseVue } from '../utils';
 import FiltresPrimaires from './FiltresPrimaires/FiltresPrimaires';
 import FiltresSecondaires from './FiltresSecondaires';
 import SyntheseVueGraph from './SyntheseVueGraph';
+import { PageContainer } from '@/app/ui/layout/page-layout';
 
 const SyntheseVue = () => {
   const collectivite_id = useCollectiviteId();
@@ -67,8 +68,12 @@ const SyntheseVue = () => {
 
   return (
     <div data-test="PageGraphSynthese" className="w-full">
-      <h5 className="mb-0 py-8 px-12 text-white bg-primary">{vue.titre}</h5>
-      <div className="px-6">
+      <div className="bg-primary">
+        <PageContainer dataTest="PlansAction" className="py-8">
+          <h5 className="mb-0 text-white">{vue.titre}</h5>
+        </PageContainer>
+      </div>
+      <PageContainer>
         {/** Header */}
         <div className="py-6">
           <Link
@@ -167,7 +172,7 @@ const SyntheseVue = () => {
             </div>
           )}
         </div>
-      </div>
+      </PageContainer>
     </div>
   );
 };
