@@ -7,11 +7,11 @@ import {
   ActionTitleRead,
   actionTitleReadEndpoint,
 } from '@/app/referentiels/ActionTitleReadEndpoint';
-import { Referentiel } from '@/app/referentiels/litterals';
 import {
   actionDownToTache,
   referentielDownToAction,
-} from '@/app/referentiels/referentiel/data';
+} from '@/app/referentiels/data';
+import { Referentiel } from '@/app/referentiels/litterals';
 import { useEffect, useState } from 'react';
 
 /**

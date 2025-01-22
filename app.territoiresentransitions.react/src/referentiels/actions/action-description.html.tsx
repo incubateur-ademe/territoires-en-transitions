@@ -1,13 +1,12 @@
 import { ActionDefinitionSummary } from '@/app/referentiels/ActionDefinitionSummaryReadEndpoint';
-import { ActionReferentiel } from '@/app/referentiels/referentiels.types';
 import { addTargetToContentAnchors } from '@/app/utils/content';
 import DOMPurify from 'dompurify';
 
-export const ActionReferentielDescription = ({
+export const ActionDescriptionHtml = ({
   action,
   className,
 }: {
-  action: ActionReferentiel | ActionDefinitionSummary;
+  action: ActionDefinitionSummary;
   className?: string;
 }) => (
   <div

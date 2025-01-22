@@ -6,7 +6,6 @@ import { useActionStatut } from '@/app/referentiels/use-action-statut';
 import { Accordion } from '@/app/ui/Accordion';
 import { useEffect, useRef, useState } from 'react';
 import { useLocation } from 'react-router-dom';
-import { SuiviScoreRow } from '../useScoreRealise';
 import ActionJustification from './sub-action-justification';
 import SubActionPreuvesAccordion from './sub-action-preuves.accordion';
 import SubActionTasksList from './sub-action-task.list';
@@ -15,7 +14,6 @@ import SubActionHeader from './sub-action.header';
 
 type SubActionCardProps = {
   subAction: ActionDefinitionSummary;
-  actionScores: { [actionId: string]: SuiviScoreRow };
   auditStatus: TCycleLabellisationStatus;
   forceOpen: boolean;
   onOpenSubAction: (isOpen: boolean) => void;
@@ -29,7 +27,6 @@ type SubActionCardProps = {
 
 const SubActionCard = ({
   subAction,
-  actionScores,
   auditStatus,
   forceOpen,
   onOpenSubAction,
@@ -110,8 +107,7 @@ const SubActionCard = ({
     >
       {/* En-tête */}
       <SubActionHeader
-        action={subAction}
-        actionScores={actionScores}
+        actionDefinition={subAction}
         actionAvancement={avancement}
         displayProgressBar={shouldDisplayProgressBar}
         displayActionCommentaire={
@@ -161,7 +157,6 @@ const SubActionCard = ({
               html={
                 <SubActionTasksList
                   tasks={tasks}
-                  actionScores={actionScores}
                   hideStatus={shouldHideTasksStatus}
                   statusWarningMessage={
                     statut !== null && statut?.avancement === 'detaille'

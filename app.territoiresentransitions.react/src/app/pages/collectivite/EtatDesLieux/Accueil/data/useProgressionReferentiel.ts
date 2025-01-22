@@ -57,6 +57,7 @@ export type TableData = {
 /**
  * Memoïze et renvoie les données et paramètres de la table
  * de progression pour un référentiel donné et sans filtres
+ * @deprecated
  */
 
 export const useProgressionReferentiel = () => {

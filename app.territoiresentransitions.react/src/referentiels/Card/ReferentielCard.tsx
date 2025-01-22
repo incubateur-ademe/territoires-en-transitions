@@ -1,11 +1,11 @@
+import { makeCollectiviteActionUrl } from '@/app/app/paths';
 import { useCollectiviteId } from '@/app/core-logic/hooks/params';
 import { Card } from '@/ui';
 import Link from 'next/link';
-import { makeCollectiviteActionUrl } from '../../../app/paths';
-import { ActionDefinitionSummary } from '../../ActionDefinitionSummaryReadEndpoint';
-import { referentielId } from '../../actions.utils';
-import ActionProgressBar from '../../actions/action.progress-bar';
-import { Counter } from '../Counter';
+import { ActionDefinitionSummary } from '../ActionDefinitionSummaryReadEndpoint';
+import { referentielId } from '../actions.utils';
+import ActionProgressBar from '../actions/action.progress-bar';
+import { ScoreRatioBadge } from '../scores/score.ratio-badge';
 
 /**
  * Used on referentiels page, links to action page.
@@ -73,9 +73,9 @@ export const ReferentielCard = ({
         </div>
 
         <div className="mt-auto">
-          <Counter actionId={action.id} className={'mb-3'} />
+          <ScoreRatioBadge actionId={action.id} className={'mb-3'} />
           <ActionProgressBar
-            action={action}
+            actionDefinition={action}
             progressBarStyleOptions={{ fullWidth: true }}
           />
         </div>

@@ -25,6 +25,7 @@ import IndicateurChartsGrid from '../../app/pages/collectivite/Referentiels/Indi
 import { ActionAuditDetail } from '../audits/ActionAuditDetail';
 import ActionAuditStatut from '../audits/ActionAuditStatut';
 import { useShowDescIntoInfoPanel } from '../audits/useAudit';
+import { useAction } from '../use-snapshot';
 import ActionDetail from './action-detail';
 import { ActionHeader } from './action.header';
 import { ActionBottomNav } from './action.nav';
@@ -40,30 +41,37 @@ const TABS_INDEX: Record<ActionVueParamOption, number> = {
   historique: 4,
 };
 
-const ActionShow = ({ action }: { action: ActionDefinitionSummary }) => {
+const ActionShow = ({
+  actionDefinition,
+}: {
+  actionDefinition: ActionDefinitionSummary;
+}) => {
   const actionVue = useActionVue();
   const router = useRouter();
   const collectivite = useCurrentCollectivite();
   const collectiviteId = collectivite?.collectiviteId;
   const referentielId = useReferentielId() as ReferentielParamOption;
   const { prevActionLink, nextActionLink } = usePrevAndNextActionLinks(
-    action.id
+    actionDefinition.id
   );
-  const preuvesCount = useActionPreuvesCount(action.id);
+  const preuvesCount = useActionPreuvesCount(actionDefinition.id);
   const showDescIntoInfoPanel = useShowDescIntoInfoPanel();
 
   const { data: indicateursLies } = useFilteredIndicateurDefinitions({
     filtre: {
-      actionId: action.id,
+      actionId: actionDefinition.id,
       withChildren: true,
     },
   });
 
-  const actionScores = useScoreRealise(action);
+  const DEPRECATED_actionScores = useScoreRealise(actionDefinition);
+  const NEW_action = useAction(actionDefinition.id);
 
-  const { status: auditStatus } = useCycleLabellisation(action.referentiel);
+  const { status: auditStatus } = useCycleLabellisation(
+    actionDefinition.referentiel
+  );
 
-  if (!action || !collectivite) {
+  if (!actionDefinition || !collectivite) {
     return <Link href="./referentiels" />;
   }
 
@@ -89,32 +97,33 @@ const ActionShow = ({ action }: { action: ActionDefinitionSummary }) => {
           collectiviteId,
           referentielId,
           actionVue: name,
-          actionId: action.id,
+          actionId: actionDefinition.id,
         })
       );
     }
   };
 
-  if (!action || !collectiviteId) {
+  if (!actionDefinition || !collectiviteId || !NEW_action) {
     return <Link href="./referentiels" />;
   }
 
   return (
     <>
       <ActionHeader
-        action={action}
-        actionScore={actionScores[action.id]}
+        actionDefinition={actionDefinition}
+        DEPRECATED_actionScore={DEPRECATED_actionScores[actionDefinition.id]}
+        action={NEW_action}
         nextActionLink={nextActionLink}
         prevActionLink={prevActionLink}
       />
       <PageContainer
-        dataTest={`Action-${action.identifiant}`}
+        dataTest={`Action-${actionDefinition.identifiant}`}
         innerContainerClassName="pt-6"
         bgColor="white"
       >
-        <ActionBreadcrumb action={action} />
-        <ActionAuditStatut action={action} />
-        <ActionAuditDetail action={action} />
+        <ActionBreadcrumb action={actionDefinition} />
+        <ActionAuditStatut action={actionDefinition} />
+        <ActionAuditDetail action={actionDefinition} />
 
         {!showDescIntoInfoPanel && (
           <Alert
@@ -123,7 +132,9 @@ const ActionShow = ({ action }: { action: ActionDefinitionSummary }) => {
               <div
                 className="htmlContent"
                 dangerouslySetInnerHTML={{
-                  __html: addTargetToContentAnchors(action.description || ''),
+                  __html: addTargetToContentAnchors(
+                    actionDefinition.description || ''
+                  ),
                 }}
               />
             }
@@ -136,11 +147,7 @@ const ActionShow = ({ action }: { action: ActionDefinitionSummary }) => {
           className="fr-mt-9v"
         >
           <Tab label="Suivi de l'action" icon="seedling">
-            <ActionDetail
-              action={action}
-              actionScores={actionScores}
-              auditStatus={auditStatus}
-            />
+            <ActionDetail action={actionDefinition} auditStatus={auditStatus} />
           </Tab>
           <Tab
             label={`Documents${
@@ -150,8 +157,12 @@ const ActionShow = ({ action }: { action: ActionDefinitionSummary }) => {
           >
             {activeTab === TABS_INDEX['preuves'] ? (
               <section>
-                <ActionPreuvePanel withSubActions showWarning action={action} />
-                <DownloadDocs action={action} />
+                <ActionPreuvePanel
+                  withSubActions
+                  showWarning
+                  action={actionDefinition}
+                />
+                <DownloadDocs action={actionDefinition} />
               </section>
             ) : (
               '...'
@@ -175,14 +186,14 @@ const ActionShow = ({ action }: { action: ActionDefinitionSummary }) => {
           </Tab>
           <Tab label="Fiches action" icon="todo">
             {activeTab === TABS_INDEX['fiches'] ? (
-              <FichesActionLiees actionId={action.id} />
+              <FichesActionLiees actionId={actionDefinition.id} />
             ) : (
               '...'
             )}
           </Tab>
           <Tab label="Historique" icon="history">
             {activeTab === TABS_INDEX['historique'] ? (
-              <HistoriqueListe actionId={action.id} />
+              <HistoriqueListe actionId={actionDefinition.id} />
             ) : (
               '...'
             )}

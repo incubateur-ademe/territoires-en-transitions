@@ -19,7 +19,7 @@ import ActionJustification from '../sub-action/sub-action-justification';
 import { AvancementValues } from './DetailedScoreSlider';
 
 type ScoreDetailleModalProps = {
-  action: ActionDefinitionSummary;
+  actionDefinition: ActionDefinitionSummary;
   avancementDetaille?: number[] | null;
   externalOpen: boolean;
   saveAtValidation?: boolean;
@@ -30,7 +30,7 @@ type ScoreDetailleModalProps = {
 };
 
 const ScoreDetailleModal = ({
-  action,
+  actionDefinition,
   avancementDetaille,
   externalOpen,
   saveAtValidation = true,
@@ -57,8 +57,8 @@ const ScoreDetailleModal = ({
 
   const [justification, setJustification] = useState<string>('');
 
-  const scores = useTasksScoreRepartition(action.id);
-  const { actionJustification } = useActionJustification(action.id);
+  const scores = useTasksScoreRepartition(actionDefinition.id);
+  const { actionJustification } = useActionJustification(actionDefinition.id);
   const { saveActionJustification } = useSaveActionJustification();
 
   useEffect(() => {
@@ -81,8 +81,12 @@ const ScoreDetailleModal = ({
               {isScorePerso
                 ? 'Personnaliser le score'
                 : `Détailler l'avancement de cette
-              ${action.type === 'tache' ? 'tâche' : action.type}`}{' '}
-              : {action.id.split('_')[1]}
+              ${
+                actionDefinition.type === 'tache'
+                  ? 'tâche'
+                  : actionDefinition.type
+              }`}{' '}
+              : {actionDefinition.id.split('_')[1]}
             </h4>
 
             {/* Score automatique */}
@@ -121,7 +125,7 @@ const ScoreDetailleModal = ({
               />
 
               {/* Message d'info pour les tâches */}
-              {action.type === 'tache' && (
+              {actionDefinition.type === 'tache' && (
                 <p className="mb-16">
                   Pour faciliter la relecture, vous pouvez préciser les raisons
                   de cette répartition en cliquant sur le bouton{' '}
@@ -136,7 +140,7 @@ const ScoreDetailleModal = ({
               {/* Champ de justification pour les scores personnalisés */}
               {isScorePerso && (
                 <ActionJustification
-                  action={action}
+                  action={actionDefinition}
                   title="Justification de l’ajustement manuel (obligatoire)"
                   subtitle="Précisez les raisons de cette répartition, dont les initiatives complémentaires à valoriser, pour faciliter la relecture et l’audit"
                   onSave={setJustificationPayload}

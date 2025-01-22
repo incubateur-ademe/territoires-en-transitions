@@ -3,7 +3,7 @@ import { renderLoader } from '@/app/utils/renderLoader';
 import { Suspense } from 'react';
 
 const ReferentielTabs = lazy(
-  () => import('@/app/referentiels/referentiel/referentiel.tabs')
+  () => import('@/app/referentiels/referentiel.tabs')
 );
 
 export const ReferentielPage = () => {

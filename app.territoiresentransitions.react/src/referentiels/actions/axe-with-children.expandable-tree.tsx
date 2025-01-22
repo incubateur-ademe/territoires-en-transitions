@@ -1,16 +1,17 @@
 import { ActionDefinitionSummary } from '@/app/referentiels/ActionDefinitionSummaryReadEndpoint';
 import ActionProgressBar from '@/app/referentiels/actions/action.progress-bar';
 import { useActionSummaryChildren } from '@/app/referentiels/referentiel-hooks';
-import { ActionReferentielDisplayTitle } from '@/app/referentiels/referentiel/ActionReferentielDisplayTitle';
 import { useEffect, useRef, useState } from 'react';
-import { Counter } from '../referentiel/Counter';
+import { ReferentielCard } from '../Card/ReferentielCard';
+import { ScoreRatioBadge } from '../scores/score.ratio-badge';
+import { ActionReferentielDisplayTitle } from './ActionReferentielDisplayTitle';
 
 /**
  * An expandable action used for "axes" and "sous axes", shows Scores.
  *
  * Note: could be made recursive to simplify display on "axes" pages.
  */
-export const AxeExpandableSection = ({
+export const AxeWithChildrenExpandableTree = ({
   action,
   isDescriptionOn,
 }: {
@@ -66,11 +67,14 @@ export const AxeExpandableSection = ({
             <ActionReferentielDisplayTitle action={action} isOpen={isOpen} />
             <div className="flex items-center">
               <ActionProgressBar
-                action={action}
+                actionDefinition={action}
                 progressBarStyleOptions={{ fullWidth: true }}
                 className="w-48"
               />
-              <Counter actionId={action.id} className="justify-end w-64" />
+              <ScoreRatioBadge
+                actionId={action.id}
+                className="justify-end w-64"
+              />
             </div>
           </div>
         </div>
@@ -78,7 +82,7 @@ export const AxeExpandableSection = ({
       {isOpen &&
         expandableChildren.map((action) => (
           <div key={action.id} className="ml-4">
-            <AxeExpandableSection
+            <AxeWithChildrenExpandableTree
               action={action}
               isDescriptionOn={isDescriptionOn}
             />

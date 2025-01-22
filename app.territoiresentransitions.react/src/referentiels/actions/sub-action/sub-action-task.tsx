@@ -4,12 +4,10 @@ import { StatusToSavePayload } from '@/app/referentiels/actions/sub-action-statu
 import { useActionCommentaire } from '@/app/referentiels/use-action-commentaire';
 import { useEffect, useRef, useState } from 'react';
 import { useLocation } from 'react-router-dom';
-import { SuiviScoreRow } from '../useScoreRealise';
 import SubActionHeader from './sub-action.header';
 
 type SubActionTaskProps = {
   task: ActionDefinitionSummary;
-  actionScores: { [actionId: string]: SuiviScoreRow };
   hideStatus?: boolean;
   statusWarningMessage?: boolean;
   onSaveStatus?: (payload: StatusToSavePayload) => void;
@@ -21,7 +19,6 @@ type SubActionTaskProps = {
 
 const SubActionTask = ({
   task,
-  actionScores,
   hideStatus = false,
   statusWarningMessage = false,
   onSaveStatus,
@@ -50,8 +47,7 @@ const SubActionTask = ({
     <div data-test={`task-${task.id}`} ref={ref}>
       {/* Première ligne */}
       <SubActionHeader
-        action={task}
-        actionScores={actionScores}
+        actionDefinition={task}
         hideStatus={hideStatus}
         statusWarningMessage={statusWarningMessage}
         onSaveStatus={onSaveStatus}

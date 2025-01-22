@@ -1,16 +1,31 @@
 import { Badge } from '@/ui';
 import classNames from 'classnames';
-import { useActionScore } from '../../core-logic/hooks/scoreHooks';
+import { useActionScore } from '../DEPRECATED_score-hooks';
+import { useScore, useSnapshotFlagEnabled } from '../use-snapshot';
 
-type CounterProps = {
+type Props = {
   actionId: string;
   className?: string;
 };
 
-export const Counter = ({ actionId, className }: CounterProps) => {
-  const score = useActionScore(actionId);
+export const ScoreRatioBadge = ({ actionId, className }: Props) => {
+  const DEPRECATED_score = useActionScore(actionId);
+  const isSnapshotEnabled = useSnapshotFlagEnabled();
+  const NEW_score = useScore(actionId);
 
-  if (!score) return null;
+  if (
+    (!isSnapshotEnabled && !DEPRECATED_score) ||
+    (isSnapshotEnabled && !NEW_score)
+  ) {
+    return null;
+  }
+
+  const pointsFait = isSnapshotEnabled
+    ? NEW_score!.pointFait
+    : DEPRECATED_score!.point_fait;
+  const pointsPotentiel = isSnapshotEnabled
+    ? NEW_score!.pointPotentiel
+    : DEPRECATED_score!.point_potentiel;
 
   const troncateIfZero = (value: string) => {
     return value.endsWith('.0') ? value.slice(0, -2) : value;
@@ -24,20 +39,17 @@ export const Counter = ({ actionId, className }: CounterProps) => {
     return troncateIfZero(percentage);
   };
 
-  const roundPointFait = troncateIfZero(score.point_fait.toFixed(1));
-  const roundPointPotentiel = troncateIfZero(score.point_potentiel.toFixed(1));
+  const roundPointFait = troncateIfZero(pointsFait.toFixed(1));
+  const roundPointPotentiel = troncateIfZero(pointsPotentiel.toFixed(1));
 
   return (
     <div className={classNames('flex', className)}>
-      {score.point_potentiel === 0 ? (
+      {pointsPotentiel === 0 ? (
         <Badge title="0 point" state="grey" uppercase={false} />
       ) : (
         <>
           <Badge
-            title={`${calculatePercentage(
-              score.point_fait,
-              score.point_potentiel
-            )} %`}
+            title={`${calculatePercentage(pointsFait, pointsPotentiel)} %`}
             state="success"
             uppercase={false}
             className="!rounded-r-none border-2 border-r-0"

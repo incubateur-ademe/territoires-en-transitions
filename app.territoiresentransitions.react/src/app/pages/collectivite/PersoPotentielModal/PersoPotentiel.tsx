@@ -1,6 +1,10 @@
 import { useCollectiviteId } from '@/app/core-logic/hooks/params';
 import { ActionDefinitionSummary } from '@/app/referentiels/ActionDefinitionSummaryReadEndpoint';
-import { useActionScore } from '@/app/referentiels/score-hooks';
+import { useActionScore } from '@/app/referentiels/DEPRECATED_score-hooks';
+import {
+  useScore,
+  useSnapshotFlagEnabled,
+} from '@/app/referentiels/use-snapshot';
 import Modal from '@/app/ui/shared/floating-ui/Modal';
 import { Button } from '@/ui';
 import { useQuestionsReponses } from '../PersoReferentielThematique/useQuestionsReponses';
@@ -19,15 +23,18 @@ export type TPersoPotentielButtonProps = {
  * bouton permettant d'ouvrir le dialogue "personnaliser le potentiel de points"
  * d'une action, et le dialogue lui-même
  */
-export const PersoPotentiel = (props: TPersoPotentielButtonProps) => {
-  const { id: actionId, type, identifiant, nom } = props.actionDef;
-  const collectivite_id = useCollectiviteId();
+export const PersoPotentiel = ({ actionDef }: TPersoPotentielButtonProps) => {
+  const { id: actionId, type, identifiant, nom } = actionDef;
+  const collectiviteId = useCollectiviteId();
   const qr = useQuestionsReponses({ action_ids: [actionId] });
   const regles = useRegles(actionId);
-  const handleChange = useChangeReponseHandler(collectivite_id);
+  const handleChange = useChangeReponseHandler(collectiviteId);
 
-  const actionScore = useActionScore(actionId);
-  if (!actionScore) {
+  const DEPRECATED_actionScore = useActionScore(actionId);
+  const FLAG_isSnapshotEnabled = useSnapshotFlagEnabled();
+  const NEW_score = useScore(actionId);
+
+  if (!DEPRECATED_actionScore || !NEW_score) {
     return null;
   }
 
@@ -37,7 +44,23 @@ export const PersoPotentiel = (props: TPersoPotentielButtonProps) => {
       className="flex items-center"
       onClick={(event) => event.stopPropagation()}
     >
-      <PointsPotentiels actionScore={actionScore} />
+      <PointsPotentiels
+        score={
+          FLAG_isSnapshotEnabled
+            ? {
+                ...NEW_score,
+              }
+            : {
+                pointPotentiel: DEPRECATED_actionScore.point_potentiel,
+                pointPotentielPerso:
+                  DEPRECATED_actionScore.point_potentiel_perso === undefined
+                    ? null
+                    : DEPRECATED_actionScore.point_potentiel_perso,
+                pointReferentiel: DEPRECATED_actionScore.point_referentiel,
+                desactive: DEPRECATED_actionScore.desactive,
+              }
+        }
+      />
       <Modal
         size="lg"
         render={() => (
@@ -47,10 +70,9 @@ export const PersoPotentiel = (props: TPersoPotentielButtonProps) => {
               {type[0].toUpperCase() + type.slice(1)} {identifiant} : {nom}
             </span>
             <div className="w-full">
-              {qr && collectivite_id ? (
+              {qr && collectiviteId ? (
                 <PersoPotentielTabs
-                  {...props}
-                  actionScore={actionScore}
+                  actionDef={actionDef}
                   questionReponses={qr}
                   regles={regles}
                   onChange={handleChange}

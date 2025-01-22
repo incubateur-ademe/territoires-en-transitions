@@ -81,6 +81,7 @@ export const displayName = (
     ? referentielDisplayName(action)
     : `${action.identifiant} - ${action.nom}`;
 
+// TODO-REFERENTIEL: replace with `getReferentielIdFromActionId`
 export const referentielId = (
   actionId: string
 ): Exclude<Referentiel, 'te' | 'te-test'> =>

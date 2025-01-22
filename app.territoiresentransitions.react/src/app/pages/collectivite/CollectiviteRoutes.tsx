@@ -24,7 +24,7 @@ import {
 } from '@/app/app/paths';
 import { useCurrentCollectivite } from '@/app/core-logic/hooks/useCurrentCollectivite';
 import { ActionPage } from '@/app/referentiels/actions/action.page';
-import { ReferentielPage } from '@/app/referentiels/referentiel/referentiel.page';
+import { ReferentielPage } from '@/app/referentiels/referentiel.page';
 import { BibliothequeDocsPage } from './BibliothequeDocs/BibliothequeDocsPage';
 import { JournalActivitePage } from './Historique/JournalActivitePage';
 import { ParcoursLabellisationPage } from './ParcoursLabellisation/ParcoursLabellisationPage';

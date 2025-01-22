@@ -7,12 +7,12 @@ import { useTableData } from './useTableData';
 
 const AidePriorisation = () => {
   const tableData = useTableData();
-  const referentiel = useReferentielId();
+  const referentielId = useReferentielId();
   const { setFilters, filtersCount } = tableData;
   const labelFilters = filtersCount > 1 ? 'filtres actifs' : 'filtre actif';
   const filterInfoMessage = getFilterInfoMessage(
     filtersCount,
-    getMaxDepth(referentiel)
+    getMaxDepth(referentielId)
   );
 
   return (
