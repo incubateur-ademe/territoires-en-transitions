@@ -61,7 +61,6 @@ export const IndicateurValeursTable = ({
             {data && (
               <CellAnneeList
                 data={data}
-                definition={definition}
                 confidentiel={confidentiel}
                 readonly={readonly}
                 type={type}
