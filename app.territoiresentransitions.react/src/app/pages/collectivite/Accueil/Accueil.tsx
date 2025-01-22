@@ -6,7 +6,6 @@ import PictoPanierActions from '@/app/app/pages/collectivite/Accueil/pictogramme
 import PictoPlansAction from '@/app/app/pages/collectivite/Accueil/pictogrammes/PictoPlansAction';
 import PictoTrajectoire from '@/app/app/pages/collectivite/Accueil/pictogrammes/PictoTrajectoire';
 import SectionCard from '@/app/app/pages/collectivite/Accueil/SectionCard';
-import CollectivitePageLayout from '@/app/app/pages/collectivite/CollectivitePageLayout/CollectivitePageLayout';
 import { useCreateFicheAction } from '@/app/app/pages/collectivite/PlansActions/FicheAction/data/useCreateFicheAction';
 import { useFicheActionCount } from '@/app/app/pages/collectivite/PlansActions/FicheAction/data/useFicheActionCount';
 import { usePlanActionsCount } from '@/app/app/pages/collectivite/PlansActions/PlanAction/data/usePlanActionsCount';
@@ -22,6 +21,7 @@ import {
 } from '@/app/app/paths';
 import { useAuth } from '@/app/core-logic/api/auth/AuthProvider';
 import { useCurrentCollectivite } from '@/app/core-logic/hooks/useCurrentCollectivite';
+import { PageContainer } from '@/app/ui/layout/page-layout';
 import { Button } from '@/ui';
 
 /**
@@ -48,10 +48,10 @@ const Accueil = (): JSX.Element => {
 
   return (
     <main
-      className="grow -mb-8 py-12 px-4 lg:px-6 bg-grey-2"
+      className="grow -mb-8 py-12 bg-grey-2"
       data-test="accueil-collectivite"
     >
-      <CollectivitePageLayout>
+      <PageContainer>
         <h2 className="mb-4">Bonjour {user?.prenom} !</h2>
         <div className="mb-12 text-lg text-grey-8">
           <p>
@@ -218,7 +218,7 @@ const Accueil = (): JSX.Element => {
         >
           Retourner sur le site
         </Button>
-      </CollectivitePageLayout>
+      </PageContainer>
     </main>
   );
 };
