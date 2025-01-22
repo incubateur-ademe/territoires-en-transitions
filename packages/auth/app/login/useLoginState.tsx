@@ -153,7 +153,7 @@ export const useLoginState = ({
 
       // sort si il y a une erreur
       if (error || !data.session) {
-        if (error)
+        if (error?.code === '')
           setError(
             'Le changement de mot de passe a échoué. Veuillez refaire la manipulation "mot de passe oublié". Attention le lien envoyé par email n\'est valide qu\'une heure. Si le problème persiste, contactez le support.' +
               '(' +
