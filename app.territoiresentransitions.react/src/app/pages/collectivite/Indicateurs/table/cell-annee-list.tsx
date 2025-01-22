@@ -1,4 +1,3 @@
-import { IndicateurDefinition } from '@/api/indicateurs/domain/definition.schema';
 import { Button, HEAD_CELL_STYLE, Notification, TCell, Tooltip } from '@/ui';
 import classNames from 'classnames';
 import { SourceType } from '../types';
@@ -7,7 +6,6 @@ import { PreparedData, PreparedValue } from './prepare-data';
 type CellAnneeListProps = {
   confidentiel?: boolean;
   data: PreparedData;
-  definition: IndicateurDefinition;
   readonly?: boolean;
   type: SourceType;
   onDelete: (valeur: PreparedValue) => void;
