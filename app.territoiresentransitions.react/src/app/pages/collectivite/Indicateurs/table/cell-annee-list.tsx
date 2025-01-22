@@ -36,7 +36,15 @@ export const CellAnneeList = ({
         )}
       >
         <div className="flex items-center justify-between">
-          {modePrive && <ResultatModePrive />}
+          {modePrive && (
+            <Tooltip
+              label={<p className="min-w-max">Le résultat est en mode privé</p>}
+            >
+              <div>
+                <Notification icon="lock-fill" classname="w-8 h-8" size="sm" />
+              </div>
+            </Tooltip>
+          )}
           <span className="w-full text-sm">{annee}</span>
           {valeur && !readonly && (
             <Button
@@ -52,11 +60,3 @@ export const CellAnneeList = ({
     );
   });
 };
-
-const ResultatModePrive = () => (
-  <Tooltip label={<p className="min-w-max">Le résultat est en mode privé</p>}>
-    <div>
-      <Notification icon="lock-fill" classname="w-8 h-8" size="sm" />
-    </div>
-  </Tooltip>
-);
