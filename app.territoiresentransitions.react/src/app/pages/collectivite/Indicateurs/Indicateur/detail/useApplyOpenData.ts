@@ -3,6 +3,7 @@
  */
 
 import { Indicateurs } from '@/api';
+import { trpc } from '@/api/utils/trpc/client';
 import { supabaseClient } from '@/app/core-logic/api/supabase';
 import { useCurrentCollectivite } from '@/app/core-logic/hooks/useCurrentCollectivite';
 import { useEventTracker } from '@/ui';
@@ -34,6 +35,7 @@ export const useApplyOpenData = ({
   });
 
   const queryClient = useQueryClient();
+  const utils = trpc.useUtils();
 
   return useMutation(
     async ({ overwrite }: { overwrite: boolean }) => {
@@ -69,6 +71,13 @@ export const useApplyOpenData = ({
           definition.id,
           source!.id,
         ]);
+
+        // invalide les données pour mettre à jour le nouveau tableau des valeurs
+        utils.indicateurs.valeurs.list.invalidate({
+          collectiviteId,
+          indicateurIds: [definition.id],
+        });
+
         trackEvent('apply_open_data', {
           collectiviteId,
           niveauAcces,
