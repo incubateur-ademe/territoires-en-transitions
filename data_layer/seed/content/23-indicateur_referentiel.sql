@@ -8,7 +8,11 @@ do $$
                (null, 'crte', true, now(), null),
                (null, 'resultat', false, now(), null),
                (null, 'impact', false, now(), null),
-               (null, 'prioritaire', true, now(), null);
+               (null, 'prioritaire', true, now(), null),
+               (null, 'agregation', false, now(), null),
+               (null, 'secteur', false, now(), null),
+               (null, 'vecteur', false, now(), null),
+               (null, 'vecteur_filiere', false, now(), null);
 
         create temporary table indicateur_def
         (

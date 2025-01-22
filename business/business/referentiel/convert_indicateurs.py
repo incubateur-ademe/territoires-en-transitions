@@ -11,10 +11,10 @@ from marshmallow import ValidationError
 from business.utils.exceptions import MarkdownError
 from business.utils.find_duplicates import find_duplicates
 from business.utils.markdown_import.markdown_parser import \
-    build_markdown_parser
+  build_markdown_parser
 from business.utils.markdown_import.markdown_utils import load_md
 
-Programme = Literal["eci", "cae", "crte", "pcaet", "clef"]
+Programme = Literal["eci", "cae", "crte", "pcaet", "clef", "agregation", "secteur", "vecteur", "vecteur_filiere"]
 Type = Literal["impact", "resultat"]
 
 
