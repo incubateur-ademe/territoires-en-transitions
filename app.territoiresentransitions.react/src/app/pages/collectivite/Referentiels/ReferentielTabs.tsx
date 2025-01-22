@@ -9,12 +9,14 @@ import {
   useReferentielId,
   useReferentielVue,
 } from '@/app/core-logic/hooks/params';
-import { ReferentielOfIndicateur } from '@/app/types/litterals';
+import { Referentiel, ReferentielOfIndicateur } from '@/app/types/litterals';
 import { Card, Tab, Tabs } from '@/ui';
 import { useRouter } from 'next/navigation';
+import { useReferentielDownToAction } from '../../../../core-logic/hooks/referentiel';
+import ActionProgressBar from '../../../../ui/referentiels/ActionProgressBar';
 import AidePriorisation from '../AidePriorisation';
 import DetailTacheTable from '../DetailTaches';
-import ActionsReferentiels from './Referentiels';
+import ActionsReferentiels from './ActionsReferentiels';
 
 const TABS_INDEX: Record<ReferentielVueParamOption, number> = {
   progression: 0,
@@ -22,9 +24,64 @@ const TABS_INDEX: Record<ReferentielVueParamOption, number> = {
   detail: 2,
 };
 
-/**
- * Affiche les onglets des vues tabulaires sur le référentiel
- */
+const ReferentielHeader = ({
+  referentielId,
+  className,
+}: {
+  referentielId: ReferentielParamOption;
+  className?: string;
+}) => {
+  const current = referentielId ?? 'eci';
+  const actions = useReferentielDownToAction(current as Referentiel);
+  const referentiel = actions.find((a) => a.type === 'referentiel')!;
+
+  return (
+    <div className={className}>
+      <h2 className="mb-0">
+        Référentiel{' '}
+        {referentielToName[referentielId as ReferentielOfIndicateur]}
+      </h2>
+      {/*****************************************/}
+      {/*                                       */}
+      {/*       For future use: start           */}
+      {/*   (Figer une version du référentiel)  */}
+      {/*                                       */}
+      {/*****************************************/}
+
+      {/* <div className="flex gap-x-4"> */}
+      {/* <Select
+                  options={[]}
+                  onChange={() => {}}
+                  values={[]}
+                  customItem={(v) => <span className="text-grey-8">{v.label}</span>}
+                  small
+                />
+                <Button
+                  icon="save-3-line"
+                  size="sm"
+                  className="whitespace-nowrap min-w-fit"
+                >
+                  Figer le référentiel
+                </Button> */}
+      {/* </div> */}
+
+      {/**********************************/}
+      {/*                                */}
+      {/*     For future use: end        */}
+      {/*                                */}
+      {/**********************************/}
+
+      {referentiel && (
+        <ActionProgressBar
+          action={referentiel}
+          progressBarStyleOptions={{ fullWidth: true }}
+          className="mb-4"
+        />
+      )}
+    </div>
+  );
+};
+
 const ReferentielTabs = () => {
   const collectiviteId = useCollectiviteId();
   const referentielId = useReferentielId() as ReferentielParamOption;
@@ -62,50 +119,10 @@ const ReferentielTabs = () => {
   return (
     <div className="grow bg-grey-2 -mb-8 py-12 px-4 lg:px-6 2xl:px-0">
       <div className="m-auto xl:max-w-[90rem] 2xl:px-6">
-        <div className="flex justify-between max-sm:flex-col gap-y-4">
-          <h2 className="mb-0">
-            Référentiel{' '}
-            {referentielToName[referentielId as ReferentielOfIndicateur]}
-          </h2>
-          {/* *** For future use *** */}
-          {/* <div className="flex gap-x-4"> */}
-          {/* <Select
-              options={[]}
-              onChange={() => {}}
-              values={[]}
-              customItem={(v) => <span className="text-grey-8">{v.label}</span>}
-              small
-            />
-            <Button
-              icon="save-3-line"
-              size="sm"
-              className="whitespace-nowrap min-w-fit"
-            >
-              Figer le référentiel
-            </Button> */}
-          {/* </div> */}
-        </div>
-        <div className="my-5">
-          {/* *** For future use *** */}
-          {/* <ProgressBarWithTooltip
-            // Fake data, replace with real data when available
-            score={[
-              {
-                label: avancementToLabel.fait,
-                value: 10,
-                color: actionAvancementColors.fait,
-              },
-            ]}
-            total={100}
-            defaultScore={{
-              label: avancementToLabel.non_renseigne,
-              color: actionAvancementColors.non_renseigne,
-            }}
-            valueToDisplay={avancementToLabel.fait}
-            progressBarStyleOptions={{ justify: 'start', fullWidth: true }}
-          /> */}
-        </div>
-
+        <ReferentielHeader
+          referentielId={referentielId}
+          className="flex flex-col justify-between max-sm:flex-col gap-y-4"
+        />
         <Tabs
           defaultActiveTab={activeTab}
           onChange={handleChange}
@@ -116,23 +133,17 @@ const ReferentielTabs = () => {
               <ActionsReferentiels />
             </Card>
           </Tab>
-          <Tab label="Aide à la priorisation">
+          <Tab label="Aide à la priorisation" className="!text-primary-500">
             {activeTab === TABS_INDEX['priorisation'] ? (
-              <div>
+              <Card>
                 <AidePriorisation />
-              </div>
+              </Card>
             ) : (
-              <div>...</div>
+              '...'
             )}
           </Tab>
           <Tab label="Détail des statuts">
-            {activeTab === TABS_INDEX['detail'] ? (
-              <div>
-                <DetailTacheTable />
-              </div>
-            ) : (
-              <div>...</div>
-            )}
+            {activeTab === TABS_INDEX['detail'] ? <DetailTacheTable /> : '...'}
           </Tab>
         </Tabs>
       </div>
