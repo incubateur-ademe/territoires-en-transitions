@@ -307,6 +307,12 @@ export default class CrudValeursService {
     return definitions;
   }
 
+  /**
+   * Variante de `upsertIndicateurValeurs` qui permet de ne pas être obligé de
+   * redonner l'objet complet sans pour autant écraser la valeur existante. Et
+   * donc de mettre à jour la colonne resultat indépendamment de la valeur
+   * objectif (et pareil pour les commentaires).
+   */
   async upsertValeur(
     data: UpsertValeurIndicateur,
     tokenInfo: AuthenticatedUser
