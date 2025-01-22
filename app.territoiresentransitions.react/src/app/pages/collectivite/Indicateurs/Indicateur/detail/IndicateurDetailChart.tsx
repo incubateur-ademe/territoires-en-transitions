@@ -60,20 +60,14 @@ const IndicateurDetailChart = ({
     <>
       <div
         data-test={`chart-${definition.id}`}
-        className={classNames(
-          'flex flex-col py-6 border border-grey-4 rounded-lg',
-          className
-        )}
+        className={classNames('flex flex-col', className)}
       >
         <div className="flex justify-between mx-8">
-          <div className="font-bold text-lg text-primary-9">
-            {definition.titre}
-          </div>
-
           {!!rempli && (
             <Button
               size="xs"
               variant="outlined"
+              className="ml-auto"
               onClick={() => setIsChartOpen(true)}
             >
               Télécharger le graphique

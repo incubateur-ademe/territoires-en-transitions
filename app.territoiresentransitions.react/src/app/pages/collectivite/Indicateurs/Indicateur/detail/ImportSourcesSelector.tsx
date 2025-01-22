@@ -12,7 +12,7 @@ import {
 } from '@/ui';
 import { pick } from 'es-toolkit';
 import { useState } from 'react';
-import { getSourceTypeLabel, SOURCE_COLLECTIVITE } from '../../constants';
+import { SOURCE_COLLECTIVITE, getSourceTypeLabel } from '../../constants';
 import { TIndicateurDefinition } from '../../types';
 import { ApplyOpenDataModal } from './ApplyOpenDataModal';
 import { useApplyOpenData, useOpenDataComparaison } from './useApplyOpenData';
@@ -81,7 +81,7 @@ export const ImportSourcesSelector = ({
     <>
       <Tabs
         data-test="sources"
-        tabsListClassName="!justify-start"
+        tabsListClassName="!justify-start mb-0"
         defaultActiveTab={idToIndex(currentSource)}
         onChange={(activeTab) => {
           const sourceId = indexToId(activeTab);

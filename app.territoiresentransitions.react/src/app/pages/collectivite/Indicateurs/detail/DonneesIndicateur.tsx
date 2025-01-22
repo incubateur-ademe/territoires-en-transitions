@@ -1,3 +1,4 @@
+import { Divider } from '@/ui';
 import { ImportSourcesSelector } from '../Indicateur/detail/ImportSourcesSelector';
 import IndicateurDetailChart from '../Indicateur/detail/IndicateurDetailChart';
 import { IndicateurValuesTabs } from '../Indicateur/detail/IndicateurValuesTabs';
@@ -29,13 +30,22 @@ const DonneesIndicateur = ({
     useIndicateurImportSources(definition.id);
 
   return (
-    <div className="flex flex-col gap-8 bg-white p-10 border border-grey-3 rounded-xl">
+    <div className="flex flex-col gap-7 bg-white p-10 border border-grey-3 rounded-xl">
       {!!sources?.length && (
         <ImportSourcesSelector
           definition={definition}
           sources={sources}
           currentSource={currentSource}
           setCurrentSource={setCurrentSource}
+        />
+      )}
+
+      {/* Unité personnalisée - à metttre à jour */}
+      {isPerso && (
+        <UniteIndicateurInput
+          unite={unite}
+          updateUnite={updateUnite}
+          disabled={isReadonly}
         />
       )}
 
@@ -49,11 +59,15 @@ const DonneesIndicateur = ({
         fileName={titre}
       />
 
+      <Divider />
+
       {/* Tableau */}
       <IndicateurValuesTabs
         definition={definition}
         importSource={currentSource}
       />
+
+      <Divider className="mt-6" />
 
       {/* Thématiques */}
       {isPerso && (
@@ -69,15 +83,6 @@ const DonneesIndicateur = ({
         updateDescription={updateDescription}
         disabled={isReadonly}
       />
-
-      {/* Unité personnalisée - à déplacer */}
-      {isPerso && (
-        <UniteIndicateurInput
-          unite={unite}
-          updateUnite={updateUnite}
-          disabled={isReadonly}
-        />
-      )}
     </div>
   );
 };
