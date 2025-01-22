@@ -116,7 +116,7 @@ const IndicateurLayout = ({
           // ou indicateur personnalisé
           <Tabs
             className="mt-12"
-            tabsListClassName="!justify-start flex-nowrap overflow-x-scroll"
+            tabsListClassName="!justify-start flex-nowrap overflow-x-auto"
           >
             {/* Données */}
             <Tab label="Données">
