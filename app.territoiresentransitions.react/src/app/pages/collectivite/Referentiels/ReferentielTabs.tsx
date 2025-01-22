@@ -73,14 +73,14 @@ const ReferentielHeader = ({
       {/**********************************/}
 
       {referentiel && (
-        <div className="flex items-center gap-4">
+        <div className="flex items-center">
           <div className="w-[80%]">
             <ActionProgressBar
               action={referentiel}
               progressBarStyleOptions={{ fullWidth: true }}
             />
           </div>
-          <Counter actionId={referentiel.id} />
+          <Counter actionId={referentiel.id} className="ml-auto" />
         </div>
       )}
     </div>
