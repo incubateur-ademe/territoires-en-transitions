@@ -3,7 +3,7 @@ import { TActionDef } from '@/app/referentiels/preuves/usePreuves';
 import SelectDropdown from '@/app/ui/shared/select/SelectDropdown';
 import { Modal } from '@/ui';
 import { useState } from 'react';
-import { useSubActionOptionsListe } from '../useSubActions';
+import { useSubActionOptionsListe } from '../use-sub-action-definitions';
 import { AddPreuveModal } from './AddPreuveModal';
 import { useAddPreuveComplementaireToAction } from './useAddPreuveToAction';
 

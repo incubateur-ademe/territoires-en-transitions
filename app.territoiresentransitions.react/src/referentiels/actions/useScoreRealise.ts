@@ -21,7 +21,6 @@ export type SuiviScoreRow = ActionReferentiel &
 /**
  * Récupère les entrées d'un référentiel pour une collectivité donnée
  */
-
 const fetchScore = async (
   collectivite_id: number | null,
   referentiel: string | null,
@@ -42,8 +41,8 @@ const fetchScore = async (
 
 /**
  * Renvoie les scores réalisés et max d'une action donnée
+ * @deprecated in favor of `useScore()` using data from snpashot
  */
-
 export const useScoreRealise = (action: ActionDefinitionSummary) => {
   const collectiviteId = useCollectiviteId();
 

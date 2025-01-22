@@ -3,12 +3,16 @@
  */
 
 import { ActionDefinitionSummary } from '@/app/referentiels/ActionDefinitionSummaryReadEndpoint';
+import { useActionScore } from '@/app/referentiels/DEPRECATED_score-hooks';
 import {
   TChangeReponse,
   TQuestionReponse,
   TReponse,
 } from '@/app/referentiels/personnalisations/personnalisation.types';
-import { ActionScore } from '@/app/referentiels/scores.types';
+import {
+  useScore,
+  useSnapshotFlagEnabled,
+} from '@/app/referentiels/use-snapshot';
 import { Accordion } from '@/app/ui/Accordion';
 import classNames from 'classnames';
 import DOMPurify from 'dompurify';
@@ -19,8 +23,6 @@ import { reponseParType } from './Reponse';
 export type TPersoPotentielQRProps = {
   /** Définition de l'action */
   actionDef: ActionDefinitionSummary;
-  /** Détail du score associé à l'action */
-  actionScore: ActionScore;
   /** Liste des questions/réponses associées à l'action */
   questionReponses: TQuestionReponse[];
   /** Fonction appelée quand une réponse est modifiée */
@@ -31,7 +33,19 @@ export type TPersoPotentielQRProps = {
  *
  * Affiche le potentiel réduit ou augmenté ainsi que la liste des questions/réponses
  */
-export const PersoPotentielQR = (props: TPersoPotentielQRProps) => {
+export const PersoPotentielQR = ({
+  actionDef,
+  questionReponses,
+  onChange,
+}: TPersoPotentielQRProps) => {
+  const DEPRECATED_actionScore = useActionScore(actionDef.id);
+  const FLAG_isSnapshotEnabled = useSnapshotFlagEnabled();
+  const NEW_score = useScore(actionDef.id);
+
+  if (!DEPRECATED_actionScore || !NEW_score) {
+    return null;
+  }
+
   const color = 'var(--yellow-moutarde-850-200)';
   return (
     <div data-test="PersoPotentielQR">
@@ -47,9 +61,29 @@ export const PersoPotentielQR = (props: TPersoPotentielQRProps) => {
           border: `1px solid ${color}`,
         }}
       >
-        <PointsPotentiels {...props} />
+        <PointsPotentiels
+          score={
+            FLAG_isSnapshotEnabled
+              ? {
+                  ...NEW_score,
+                }
+              : {
+                  pointPotentiel: DEPRECATED_actionScore.point_potentiel,
+                  pointPotentielPerso:
+                    DEPRECATED_actionScore.point_potentiel_perso === undefined
+                      ? null
+                      : DEPRECATED_actionScore.point_potentiel_perso,
+                  pointReferentiel: DEPRECATED_actionScore.point_referentiel,
+                  desactive: DEPRECATED_actionScore.desactive,
+                }
+          }
+        />
       </div>
-      <QuestionReponseList {...props} variant="modal" />
+      <QuestionReponseList
+        questionReponses={questionReponses}
+        onChange={onChange}
+        variant="modal"
+      />
     </div>
   );
 };

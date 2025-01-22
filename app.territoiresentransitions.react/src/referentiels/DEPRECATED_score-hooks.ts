@@ -1,12 +1,12 @@
-import { clientScoresReadEndpoint } from '@/app/referentiels/ClientScoresReadEndpoint';
 import { useCollectiviteId } from '@/app/core-logic/hooks/params';
 import { referentielId } from '@/app/referentiels/actions.utils';
+import { clientScoresReadEndpoint } from '@/app/referentiels/DEPRECATED_ClientScoresReadEndpoint';
+import { ActionScore } from '@/app/referentiels/DEPRECATED_scores.types';
 import { Referentiel } from '@/app/referentiels/litterals';
-import { ActionScore } from '@/app/referentiels/scores.types';
 import { useQuery } from 'react-query';
-import { useScoreListener } from './use-score-listener';
+import { useScoreListener } from './DEPRECATED_use-score-listener';
 
-export type ReferentielsActionScores = {
+type ReferentielsActionScores = {
   eci: ActionScore[];
   cae: ActionScore[];
 };

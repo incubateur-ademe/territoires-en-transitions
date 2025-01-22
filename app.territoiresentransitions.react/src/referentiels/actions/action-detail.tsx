@@ -6,11 +6,9 @@ import { phaseToLabel } from '@/app/referentiels/utils';
 import { Button } from '@/ui';
 import { useState } from 'react';
 import SubActionCard from './sub-action/sub-action.card';
-import { SuiviScoreRow } from './useScoreRealise';
 
 type ActionFollowUpProps = {
   action: ActionDefinitionSummary;
-  actionScores: { [actionId: string]: SuiviScoreRow };
   auditStatus: TCycleLabellisationStatus;
 };
 
@@ -21,7 +19,6 @@ type ActionFollowUpProps = {
 
 const ActionDetail = ({
   action,
-  actionScores,
   auditStatus,
 }: ActionFollowUpProps): JSX.Element => {
   const subActions = useSortedActionSummaryChildren(action);
@@ -80,7 +77,6 @@ const ActionDetail = ({
                   <SubActionCard
                     key={subAction.id}
                     subAction={subAction}
-                    actionScores={actionScores}
                     auditStatus={auditStatus}
                     forceOpen={openAll}
                     onOpenSubAction={updateOpenedSubActionsCount}

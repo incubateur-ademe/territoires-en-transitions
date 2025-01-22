@@ -27,6 +27,7 @@ export type TActionsSubset<ActionSubset> = (ActionSubset & ActionReferentiel)[];
  * Agrège les lignes fournies avec l'arborescence du référentiel
  * et renvoi les éléments nécessaires pour afficher une vue tabulaire
  * @returns
+ * @deprecated
  */
 export const useReferentiel = <ActionSubset extends IAction>(
   referentiel: string | null,
@@ -98,7 +99,7 @@ export const useReferentiel = <ActionSubset extends IAction>(
  * Charge l'arborescence d'un référentiel et renvoi une fonction permettant de
  * créer une copie des données fusionnées avec celles de l'arborescence
  */
-export const useReferentielData = (referentiel: string | null) => {
+const useReferentielData = (referentiel: string | null) => {
   // chargement du référentiel et indexation par id
   const { data, isLoading } = useQuery(
     ['action_referentiel', referentiel],

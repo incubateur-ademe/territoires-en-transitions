@@ -1,11 +1,9 @@
 import { ActionDefinitionSummary } from '@/app/referentiels/ActionDefinitionSummaryReadEndpoint';
 import { StatusToSavePayload } from '@/app/referentiels/actions/sub-action-statut.dropdown';
-import { SuiviScoreRow } from '../useScoreRealise';
 import SubActionTask from './sub-action-task';
 
 type SubActionTasksListProps = {
   tasks: ActionDefinitionSummary[];
-  actionScores: { [actionId: string]: SuiviScoreRow };
   hideStatus?: boolean;
   statusWarningMessage?: boolean;
   onSaveStatus?: (payload: StatusToSavePayload) => void;
@@ -17,7 +15,6 @@ type SubActionTasksListProps = {
 
 const SubActionTasksList = ({
   tasks,
-  actionScores,
   hideStatus = false,
   statusWarningMessage = false,
   onSaveStatus,
@@ -28,7 +25,6 @@ const SubActionTasksList = ({
         <SubActionTask
           key={task.id}
           task={task}
-          actionScores={actionScores}
           hideStatus={hideStatus}
           statusWarningMessage={statusWarningMessage}
           onSaveStatus={onSaveStatus}

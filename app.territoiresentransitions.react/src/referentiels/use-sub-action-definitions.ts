@@ -11,7 +11,7 @@ type TFetchedData = {
 /**
  * Toutes les sous-actions rattachées à une action
  */
-export const useSubActions = (action: TActionDef) => {
+const useSubActions = (action: TActionDef) => {
   // charge les données
   const { data } = useQuery(['sub_actions', action.id], () => fetch(action), {
     // il n'est pas nécessaire de recharger trop systématiquement ici

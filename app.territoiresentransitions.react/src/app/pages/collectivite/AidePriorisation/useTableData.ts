@@ -33,10 +33,11 @@ export type TableData = {
 
 /**
  * Memoïze et renvoi les données et paramètres de la table
+ * @deprecated
  */
 export const useTableData: UseTableData = () => {
-  const collectivite_id = useCollectiviteId();
-  const referentiel = useReferentielId();
+  const collectiviteId = useCollectiviteId();
+  const referentielId = useReferentielId();
 
   // filtre initial
   const [filters, setFilters, filtersCount] = useSearchParams<TFilters>(
@@ -47,8 +48,8 @@ export const useTableData: UseTableData = () => {
 
   // chargement des données en fonction des filtres
   const { data, isLoading } = useQuery(
-    ['priorisation', collectivite_id, referentiel, filters],
-    () => fetchRows(collectivite_id, referentiel, filters)
+    ['priorisation', collectiviteId, referentielId, filters],
+    () => fetchRows(collectiviteId, referentielId, filters)
   );
   const { rows: actionsStatut } = data || {};
 
@@ -58,7 +59,7 @@ export const useTableData: UseTableData = () => {
     total,
     count,
     isLoading: isLoadingReferentiel,
-  } = useReferentiel(referentiel, collectivite_id, actionsStatut);
+  } = useReferentiel(referentielId, collectiviteId, actionsStatut);
 
   return {
     table,

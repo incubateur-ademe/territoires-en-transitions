@@ -1,6 +1,5 @@
 import { ActionDefinitionSummary } from '@/app/referentiels/ActionDefinitionSummaryReadEndpoint';
 import SubActionTasksList from '@/app/referentiels/actions/sub-action/sub-action-task.list';
-import { SuiviScoreRow } from '@/app/referentiels/actions/useScoreRealise';
 import { useActionSummaryChildren } from '@/app/referentiels/referentiel-hooks';
 import { useTasksStatus } from '@/app/referentiels/use-action-statut';
 import { TActionAvancement } from '@/app/types/alias';
@@ -54,8 +53,7 @@ const isCustomScoreGranted = (
 };
 
 type ScoreAutoModalProps = {
-  action: ActionDefinitionSummary;
-  actionScores: { [actionId: string]: SuiviScoreRow };
+  actionDefinition: ActionDefinitionSummary;
   externalOpen: boolean;
   setExternalOpen: Dispatch<SetStateAction<boolean>>;
   onSaveScore: (payload: StatusToSavePayload[]) => void;
@@ -63,14 +61,13 @@ type ScoreAutoModalProps = {
 };
 
 const ScoreAutoModal = ({
-  action,
-  actionScores,
+  actionDefinition: actionDefinition,
   externalOpen,
   setExternalOpen,
   onSaveScore,
   onOpenScorePerso,
 }: ScoreAutoModalProps): JSX.Element => {
-  const tasks = useActionSummaryChildren(action);
+  const tasks = useActionSummaryChildren(actionDefinition);
 
   const { tasksStatus } = useTasksStatus(tasks.map((task) => task.id));
 
@@ -112,18 +109,19 @@ const ScoreAutoModal = ({
       render={() => {
         return (
           <>
-            <h4>Détailler l'avancement : {action.id.split('_')[1]}</h4>
+            <h4>
+              Détailler l'avancement : {actionDefinition.id.split('_')[1]}
+            </h4>
 
             <hr className="p-1" />
 
             <div className="w-full -mt-1">
               <SubActionTasksList
                 tasks={tasks}
-                actionScores={actionScores}
                 onSaveStatus={handleChangeStatus}
               />
 
-              {action.referentiel === 'cae' &&
+              {actionDefinition.referentiel === 'cae' &&
                 !isCustomScoreGranted(tasks, tasksStatus, localStatus) && (
                   <Alert
                     state="warning"
@@ -134,7 +132,7 @@ const ScoreAutoModal = ({
                 )}
 
               <div className="w-full flex justify-end gap-4 mt-12 mb-4">
-                {action.referentiel === 'eci' && (
+                {actionDefinition.referentiel === 'eci' && (
                   <button
                     className="fr-btn fr-btn--secondary"
                     onClick={() => setExternalOpen(false)}
@@ -143,11 +141,11 @@ const ScoreAutoModal = ({
                   </button>
                 )}
                 <button className="fr-btn" onClick={handleSaveScoreAuto}>
-                  {action.referentiel === 'eci'
+                  {actionDefinition.referentiel === 'eci'
                     ? 'Enregistrer ce score'
                     : 'Enregistrer le score automatique'}
                 </button>
-                {action.referentiel === 'cae' && (
+                {actionDefinition.referentiel === 'cae' && (
                   <button
                     onClick={() => {
                       if (JSON.stringify(localStatus) !== '{}')

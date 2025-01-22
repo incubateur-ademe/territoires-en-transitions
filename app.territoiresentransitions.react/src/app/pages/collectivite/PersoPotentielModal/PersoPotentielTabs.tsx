@@ -15,15 +15,24 @@ export type TPersoPotentielTabsProps = TPersoPotentielQRProps &
     defaultActiveTab?: number;
   };
 
-export const PersoPotentielTabs = (props: TPersoPotentielTabsProps) => {
-  const { defaultActiveTab, ...other } = props;
+export const PersoPotentielTabs = ({
+  defaultActiveTab,
+  actionDef,
+  regles,
+  questionReponses,
+  onChange,
+}: TPersoPotentielTabsProps) => {
   return (
     <Tabs defaultActiveTab={defaultActiveTab}>
       <Tab label="Personnalisation du potentiel" icon="settings-5">
-        <PersoPotentielQR {...other} />
+        <PersoPotentielQR
+          actionDef={actionDef}
+          questionReponses={questionReponses}
+          onChange={onChange}
+        />
       </Tab>
       <Tab label="Règles applicables" icon="information">
-        <PersoPotentielDoc {...other} />
+        <PersoPotentielDoc actionDef={actionDef} regles={regles} />
       </Tab>
     </Tabs>
   );

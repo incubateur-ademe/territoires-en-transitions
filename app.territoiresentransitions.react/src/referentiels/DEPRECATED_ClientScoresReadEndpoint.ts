@@ -1,8 +1,8 @@
 import { DataLayerReadEndpoint } from '@/app/core-logic/api/dataLayerEndpoint';
-import { ClientScores } from '@/app/referentiels/scores.types';
+import { ClientScores } from '@/app/referentiels/DEPRECATED_scores.types';
 import { PostgrestResponse } from '@supabase/supabase-js';
 
-export interface ClientScoresGetParams {
+interface ClientScoresGetParams {
   collectiviteId: number;
   referentiel?: 'eci' | 'cae';
 }

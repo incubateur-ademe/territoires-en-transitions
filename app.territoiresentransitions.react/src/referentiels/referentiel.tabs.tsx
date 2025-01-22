@@ -14,14 +14,15 @@ import {
   Referentiel,
   ReferentielOfIndicateur,
 } from '@/app/referentiels/litterals';
-import { Tab, Tabs } from '@/app/ui/shared/Tabs';
+import { Tab, Tabs } from '@/ui';
 import PageContainer from '@/ui/components/layout/page-container';
 import { useRouter } from 'next/navigation';
-import DetailTacheTable from '../../app/pages/collectivite/DetailTaches';
-import ActionProgressBar from '../actions/action.progress-bar';
-import { useReferentielDownToAction } from '../referentiel-hooks';
-import { Counter } from './Counter';
-import { ActionsOverviewTree } from './referentiel-overview.tree';
+import AidePriorisation from '../app/pages/collectivite/AidePriorisation';
+import DetailTacheTable from '../app/pages/collectivite/DetailTaches';
+import ActionProgressBar from './actions/action.progress-bar';
+import { useReferentielDownToAction } from './referentiel-hooks';
+import { AxesOverviewTree } from './referentiel-overview.tree';
+import { ScoreRatioBadge } from './scores/score.ratio-badge';
 
 const TABS_INDEX: Record<ReferentielVueParamOption, number> = {
   progression: 0,
@@ -84,11 +85,11 @@ const ReferentielHeader = ({
         <div className="flex items-center gap-4 pb-4 mb-4 border-b border-primary-3">
           <div className="grow">
             <ActionProgressBar
-              action={referentiel}
+              actionDefinition={referentiel}
               progressBarStyleOptions={{ fullWidth: true }}
             />
           </div>
-          <Counter actionId={referentiel.id} className="ml-auto" />
+          <ScoreRatioBadge actionId={referentiel.id} className="ml-auto" />
         </div>
       )}
     </div>
@@ -139,13 +140,13 @@ const ReferentielTabs = () => {
       >
         <Tab label="Actions">
           <div className="p-8 border border-primary-2 bg-white rounded-lg">
-            <ActionsOverviewTree />
+            <AxesOverviewTree />
           </div>
         </Tab>
         <Tab label="Aide à la priorisation" className="!text-primary-500">
           {activeTab === TABS_INDEX['priorisation'] ? (
             <div className="p-7 border border-primary-2 bg-white rounded-lg">
-              <ActionsOverviewTree />
+              <AidePriorisation />
             </div>
           ) : (
             '...'

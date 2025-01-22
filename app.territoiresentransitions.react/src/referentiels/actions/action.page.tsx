@@ -22,7 +22,7 @@ export const ActionPage = () => {
   return (
     <Suspense fallback={renderLoader()}>
       <CollectivitePageLayout>
-        {action && <ActionShow action={action} />}
+        {action && <ActionShow actionDefinition={action} />}
       </CollectivitePageLayout>
     </Suspense>
   );
