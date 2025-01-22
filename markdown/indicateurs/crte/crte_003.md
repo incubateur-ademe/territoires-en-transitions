@@ -54,9 +54,11 @@ identifiant: 3.2
 unite: MWh
 
 titre_long: Production annuelle d’énergie hydroélectrique (ou hydraulique)
+titre_court: Electrique - Hydroélectricité
 parent: cae_3.a
 programmes:
   - crte
+  - vecteur_filiere
 climat_pratic_ids:
   - strategie
 thematiques:
