@@ -76,7 +76,7 @@ export const ReferentielCard = ({
           <Counter actionId={action.id} className={'mb-3'} />
           <ActionProgressBar
             action={action}
-            progressBarStyleOptions={{ justify: 'start', fullWidth: true }}
+            progressBarStyleOptions={{ fullWidth: true }}
           />
         </div>
       </Card>
