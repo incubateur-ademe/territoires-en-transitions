@@ -10,14 +10,14 @@ import {
   useReferentielVue,
 } from '@/app/core-logic/hooks/params';
 import { Referentiel, ReferentielOfIndicateur } from '@/app/types/litterals';
-import { Card, Tab, Tabs } from '@/ui';
+import { Tab, Tabs } from '@/ui';
 import { useRouter } from 'next/navigation';
 import { useReferentielDownToAction } from '../../../../core-logic/hooks/referentiel';
 import ActionProgressBar from '../../../../ui/referentiels/ActionProgressBar';
 import { Counter } from '../../../../ui/referentiels/Counter';
 import AidePriorisation from '../AidePriorisation';
 import DetailTacheTable from '../DetailTaches';
-import ActionsReferentiels from './ActionsReferentiels';
+import ActionsReferentiels from './Referentiels';
 
 const TABS_INDEX: Record<ReferentielVueParamOption, number> = {
   progression: 0,
@@ -38,7 +38,7 @@ const ReferentielHeader = ({
 
   return (
     <div className={className}>
-      <h2 className="mb-0">
+      <h2 className="mb-4">
         Référentiel{' '}
         {referentielToName[referentielId as ReferentielOfIndicateur]}
       </h2>
@@ -73,8 +73,8 @@ const ReferentielHeader = ({
       {/**********************************/}
 
       {referentiel && (
-        <div className="flex items-center">
-          <div className="w-[80%]">
+        <div className="flex items-center gap-4 pb-4 mb-4 border-b border-primary-3">
+          <div className="grow">
             <ActionProgressBar
               action={referentiel}
               progressBarStyleOptions={{ fullWidth: true }}
@@ -124,31 +124,34 @@ const ReferentielTabs = () => {
   return (
     <div className="grow bg-grey-2 -mb-8 py-12 px-4 lg:px-6 2xl:px-0">
       <div className="m-auto xl:max-w-[90rem] 2xl:px-6">
-        <ReferentielHeader
-          referentielId={referentielId}
-          className="flex flex-col justify-between max-sm:flex-col gap-y-4"
-        />
+        <ReferentielHeader referentielId={referentielId} />
         <Tabs
           defaultActiveTab={activeTab}
           onChange={handleChange}
           tabsListClassName="!justify-start pl-0 flex-nowrap overflow-x-scroll bg-transparent"
         >
           <Tab label="Actions">
-            <Card>
+            <div className="p-7 border border-primary-2 bg-white rounded-lg">
               <ActionsReferentiels />
-            </Card>
+            </div>
           </Tab>
           <Tab label="Aide à la priorisation" className="!text-primary-500">
             {activeTab === TABS_INDEX['priorisation'] ? (
-              <Card>
+              <div className="p-7 border border-primary-2 bg-white rounded-lg">
                 <AidePriorisation />
-              </Card>
+              </div>
             ) : (
               '...'
             )}
           </Tab>
           <Tab label="Détail des statuts">
-            {activeTab === TABS_INDEX['detail'] ? <DetailTacheTable /> : '...'}
+            {activeTab === TABS_INDEX['detail'] ? (
+              <div className="p-7 border border-primary-2 bg-white rounded-lg">
+                <DetailTacheTable />
+              </div>
+            ) : (
+              '...'
+            )}
           </Tab>
         </Tabs>
       </div>
