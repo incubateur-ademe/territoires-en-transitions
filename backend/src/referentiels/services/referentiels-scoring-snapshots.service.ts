@@ -37,12 +37,12 @@ export default class ReferentielsScoringSnapshotsService {
   static SCORE_COURANT_SNAPSHOT_REF = 'score-courant';
   static SCORE_COURANT_SNAPSHOT_NOM = 'Score courant';
   static PRE_AUDIT_SNAPSHOT_REF_PREFIX = 'pre-audit-';
-  static PRE_AUDIT_SNAPSHOT_NOM_PREFIX = 'Avant audit ';
+  static PRE_AUDIT_SNAPSHOT_NOM_SUFFIX = ' - avant audit ';
   static POST_AUDIT_SNAPSHOT_REF_PREFIX = 'post-audit-';
-  static POST_AUDIT_SNAPSHOT_NOM_PREFIX = 'Audité ';
+  static POST_AUDIT_SNAPSHOT_NOM_SUFFIX = ' - audit ';
   static JOUR_SNAPSHOT_REF_PREFIX = 'jour-';
   static SCORE_PERSONNALISE_REF_PREFIX = 'user-';
-  static JOUR_SNAPSHOT_NOM_PREFIX = 'Jour du ';
+  static JOUR_SNAPSHOT_NOM_PREFIX = ' - jour du ';
 
   static USER_DELETION_ALLOWED_SNAPSHOT_TYPES: ScoreJalon[] = [
     ScoreJalon.DATE_PERSONNALISEE,
@@ -100,11 +100,11 @@ export default class ReferentielsScoringSnapshotsService {
     switch (scoreResponse.jalon) {
       case ScoreJalon.PRE_AUDIT:
         scoreResponse.snapshot.ref = `${ReferentielsScoringSnapshotsService.PRE_AUDIT_SNAPSHOT_REF_PREFIX}${scoreResponse.anneeAudit}`;
-        scoreResponse.snapshot.nom = `${ReferentielsScoringSnapshotsService.PRE_AUDIT_SNAPSHOT_NOM_PREFIX}${scoreResponse.anneeAudit}`;
+        scoreResponse.snapshot.nom = `${scoreResponse.anneeAudit}${ReferentielsScoringSnapshotsService.PRE_AUDIT_SNAPSHOT_NOM_SUFFIX}`;
         break;
       case ScoreJalon.POST_AUDIT:
         scoreResponse.snapshot.ref = `${ReferentielsScoringSnapshotsService.POST_AUDIT_SNAPSHOT_REF_PREFIX}${scoreResponse.anneeAudit}`;
-        scoreResponse.snapshot.nom = `${ReferentielsScoringSnapshotsService.POST_AUDIT_SNAPSHOT_NOM_PREFIX}${scoreResponse.anneeAudit}`;
+        scoreResponse.snapshot.nom = `${scoreResponse.anneeAudit}${ReferentielsScoringSnapshotsService.POST_AUDIT_SNAPSHOT_NOM_SUFFIX}`;
         break;
       case ScoreJalon.SCORE_COURANT:
         scoreResponse.snapshot.ref = scoreResponse.snapshot.nom
@@ -120,7 +120,7 @@ export default class ReferentielsScoringSnapshotsService {
         scoreResponse.snapshot.ref = `${
           ReferentielsScoringSnapshotsService.JOUR_SNAPSHOT_REF_PREFIX
         }${dateTime.toISODate()}`;
-        scoreResponse.snapshot.nom = `${
+        scoreResponse.snapshot.nom = `${dateTime.year}${
           ReferentielsScoringSnapshotsService.JOUR_SNAPSHOT_NOM_PREFIX
         }${dateTime.toFormat('dd/MM/yyyy')}`;
         break;
