@@ -3,15 +3,10 @@ import PersonnesDropdown from '@/app/ui/dropdownLists/PersonnesDropdown/Personne
 import { getPersonneStringId } from '@/app/ui/dropdownLists/PersonnesDropdown/utils';
 import ServicesPilotesDropdown from '@/app/ui/dropdownLists/ServicesPilotesDropdown/ServicesPilotesDropdown';
 import { Tag } from '@/domain/collectivites';
-import {
-  Button,
-  Field,
-  FormSectionGrid,
-  Modal,
-  ModalFooterOKCancel,
-} from '@/ui';
+import { Field, FormSectionGrid, Modal, ModalFooterOKCancel } from '@/ui';
+import { OpenState } from '@/ui/utils/types';
 import { isEqual } from 'es-toolkit';
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 import { objectToCamel } from 'ts-case-convert';
 import {
   useIndicateurPilotes,
@@ -24,12 +19,12 @@ import {
 import { TIndicateurDefinition } from '../../types';
 
 type Props = {
+  openState?: OpenState;
   collectiviteId: number;
   definition: TIndicateurDefinition;
-  isLoading?: boolean;
 };
 
-const EditModal = ({ collectiviteId, definition, isLoading }: Props) => {
+const EditModal = ({ openState, collectiviteId, definition }: Props) => {
   const [editedPilotes, setEditedPilotes] = useState<Personne[] | undefined>();
   const [editedServices, setEditedServices] = useState<Tag[] | undefined>();
 
@@ -42,6 +37,16 @@ const EditModal = ({ collectiviteId, definition, isLoading }: Props) => {
   );
   const { mutate: upsertIndicateurServicePilote } = useUpsertIndicateurServices(
     definition.id
+  );
+
+  useEffect(() => setEditedPilotes(pilotes), [pilotes]);
+
+  useEffect(
+    () =>
+      setEditedServices(
+        serviceIds?.map((s) => ({ nom: '', id: s, collectiviteId: 0 }))
+      ),
+    [serviceIds]
   );
 
   const handleSave = () => {
@@ -68,6 +73,7 @@ const EditModal = ({ collectiviteId, definition, isLoading }: Props) => {
 
   return (
     <Modal
+      openState={openState}
       title="Modifier l'indicateur"
       subTitle={definition.titre}
       render={({ descriptionId }) => (
@@ -104,24 +110,7 @@ const EditModal = ({ collectiviteId, definition, isLoading }: Props) => {
           }}
         />
       )}
-    >
-      {/* Bouton d'ouverture de la modale */}
-      <Button
-        disabled={isLoading}
-        title="Modifier l'indicateur"
-        aria-label="Modifier l'indicateur"
-        size="xs"
-        variant="grey"
-        onClick={() => {
-          setEditedPilotes(pilotes);
-          setEditedServices(
-            serviceIds?.map((s) => ({ nom: '', id: s, collectiviteId: 0 }))
-          );
-        }}
-      >
-        Modifier
-      </Button>
-    </Modal>
+    />
   );
 };
 
