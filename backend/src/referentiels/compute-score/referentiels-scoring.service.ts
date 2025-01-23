@@ -38,10 +38,7 @@ import { getErrorMessage } from '../../utils/nest/errors.utils';
 import { roundTo } from '../../utils/number.helper';
 import { sleep } from '../../utils/sleep.utils';
 import { actionCommentaireTable } from '../models/action-commentaire.table';
-import {
-  actionStatutTable,
-  ActionStatutType,
-} from '../models/action-statut.table';
+import { ActionStatut, actionStatutTable } from '../models/action-statut.table';
 import { ActionType } from '../models/action-type.enum';
 import { CheckMultipleReferentielScoresRequestType } from '../models/check-multiple-referentiel-scores.request';
 import { CheckReferentielScoresRequestType } from '../models/check-referentiel-scores.request';
@@ -828,7 +825,7 @@ export default class ReferentielsScoringService {
   }
 
   private fillAvancementDetailleFromAvancement(
-    actionStatut: Pick<ActionStatutType, 'avancement' | 'avancementDetaille'>
+    actionStatut: Pick<ActionStatut, 'avancement' | 'avancementDetaille'>
   ) {
     if (actionStatut.avancement === 'fait') {
       actionStatut.avancementDetaille = [1, 0, 0];

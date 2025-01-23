@@ -1,8 +1,6 @@
-import {
-  DEFAULT_ITEMS,
-  SelectActionStatut,
-} from '@/app/referentiels/actions/action-statut.select';
+import { SelectActionStatut } from '@/app/referentiels/actions/action-statut.select';
 import { useEditActionStatutIsDisabled } from '@/app/referentiels/use-action-statut';
+import { statutAvancementEnumSchema } from '@/domain/referentiels';
 import { useCallback } from 'react';
 import { TCellProps } from './DetailTacheTable';
 
@@ -14,7 +12,7 @@ export const CellStatut = ({ row, value, updateStatut }: TCellProps) => {
     row.original.avancement_descendants?.filter((av) => av !== 'non_renseigne')
       .length > 0;
 
-  let items = DEFAULT_ITEMS;
+  let items = [...statutAvancementEnumSchema.options];
 
   if (type === 'sous-action' && value !== 'non_renseigne' && filled) {
     items = items.filter((item) => item !== 'non_renseigne');
@@ -45,7 +43,7 @@ export const CellStatut = ({ row, value, updateStatut }: TCellProps) => {
         }, 1000);
       }
     },
-    [action_id]
+    [action_id, type, updateStatut]
   );
 
   return type === 'sous-action' || type === 'tache' ? (

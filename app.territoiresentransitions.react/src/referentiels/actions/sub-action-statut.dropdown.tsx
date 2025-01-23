@@ -2,10 +2,7 @@ import { avancementToLabel } from '@/app/app/labels';
 import { actionAvancementColors } from '@/app/app/theme';
 import { useCurrentCollectivite } from '@/app/core-logic/hooks/useCurrentCollectivite';
 import { ActionDefinitionSummary } from '@/app/referentiels/ActionDefinitionSummaryReadEndpoint';
-import {
-  ITEMS_AVEC_NON_CONCERNE,
-  SelectActionStatut,
-} from '@/app/referentiels/actions/action-statut.select';
+import { SelectActionStatut } from '@/app/referentiels/actions/action-statut.select';
 import { useScoreRealise } from '@/app/referentiels/actions/useScoreRealise';
 import ProgressBarWithTooltip from '@/app/referentiels/scores/progress-bar-with-tooltip';
 import {
@@ -13,7 +10,12 @@ import {
   useEditActionStatutIsDisabled,
   useSaveActionStatut,
 } from '@/app/referentiels/use-action-statut';
-import { TActionAvancement, TActionAvancementExt } from '@/app/types/alias';
+import {
+  ActionStatutInsert,
+  statutAvancementEnumSchema,
+  StatutAvancementIncludingNonConcerne,
+  statutAvancementIncludingNonConcerneEnumSchema,
+} from '@/domain/referentiels';
 import { Button, Tooltip } from '@/ui';
 import classNames from 'classnames';
 import { useEffect, useState } from 'react';
@@ -29,16 +31,8 @@ import ScoreDetailleModal from './sub-action.detail/ScoreDetailleModal';
 
 export type StatusToSavePayload = {
   actionId: string;
-  statut: {
-    action_id: string;
-    avancement: TActionAvancement;
-    avancement_detaille: number[] | null;
-    collectivite_id: number;
-    concerne: boolean;
-    modified_at?: string;
-    modified_by?: string;
-  } | null;
-  avancement: TActionAvancementExt;
+  statut: ActionStatutInsert | null;
+  avancement: StatutAvancementIncludingNonConcerne;
   avancementDetaille?: number[];
 };
 
@@ -62,11 +56,11 @@ export const SubActionStatutDropdown = ({
   const [openScorePerso, setOpenScorePerso] = useState(false);
 
   const args = {
-    action_id: actionDefinition.id,
-    collectivite_id: collectivite?.collectiviteId || 0,
+    actionId: actionDefinition.id,
+    collectiviteId: collectivite?.collectiviteId || 0,
   };
   const { statut, filled } = useActionStatut(actionDefinition.id);
-  const { avancement, avancement_detaille, concerne } = statut || {};
+  const { avancement, avancementDetaille, concerne } = statut || {};
 
   const score = FLAG_isSnapshotEnabled
     ? NEW_score
@@ -84,7 +78,7 @@ export const SubActionStatutDropdown = ({
 
   const [localAvancement, setLocalAvancement] = useState(avancementExt);
   const [localAvancementDetaille, setLocalAvancementDetaille] =
-    useState(avancement_detaille);
+    useState(avancementDetaille);
 
   // Détermine si l'édition du statut est désactivée
   const disabled = useEditActionStatutIsDisabled(actionDefinition.id);
@@ -102,14 +96,23 @@ export const SubActionStatutDropdown = ({
     } else {
       setLocalAvancement(avancementExt);
     }
-    setLocalAvancementDetaille(avancement_detaille);
-  }, [avancementExt, avancement_detaille, concerne, filled]);
+    setLocalAvancementDetaille(avancementDetaille);
+  }, [
+    avancementExt,
+    avancementDetaille,
+    concerne,
+    filled,
+    actionDefinition.type,
+  ]);
 
   // Mise à jour du statut lorsque une nouvelle valeur
   // est sélectionnée sur le dropdown
-  const handleChange = (value: TActionAvancementExt) => {
-    const { avancement, concerne, avancement_detaille } =
-      statutParAvancement(value);
+  const handleChange = (value: StatutAvancementIncludingNonConcerne) => {
+    const {
+      avancement,
+      concerne,
+      avancementDetaille: avancement_detaille,
+    } = statutParAvancement(value);
 
     if (avancement === 'detaille') {
       // Si "détaillé" est sélectionné sur une sous-action
@@ -142,7 +145,7 @@ export const SubActionStatutDropdown = ({
           ...args,
           ...statut,
           avancement,
-          avancement_detaille:
+          avancementDetaille:
             actionDefinition.type === 'sous-action'
               ? localAvancementDetaille
               : avancement_detaille,
@@ -168,13 +171,11 @@ export const SubActionStatutDropdown = ({
         );
 
         saveActionStatut({
-          action_id: element.actionId,
+          actionId: element.actionId,
           avancement,
-          avancement_detaille: element.avancementDetaille,
-          collectivite_id: args.collectivite_id,
+          avancementDetaille: element.avancementDetaille,
+          collectiviteId: args.collectiviteId,
           concerne,
-          modified_at: element.statut?.modified_at,
-          modified_by: element.statut?.modified_by,
         });
       });
 
@@ -188,10 +189,8 @@ export const SubActionStatutDropdown = ({
         saveActionStatut({
           ...args,
           avancement: 'non_renseigne',
-          avancement_detaille: localAvancementDetaille,
+          avancementDetaille: localAvancementDetaille,
           concerne: true,
-          modified_at: statut?.modified_at,
-          modified_by: statut?.modified_by,
         });
       }, 100);
     } else if (actionDefinition.type === 'sous-action') {
@@ -199,8 +198,6 @@ export const SubActionStatutDropdown = ({
         ...args,
         avancement: 'non_renseigne',
         concerne: true,
-        modified_at: statut?.modified_at,
-        modified_by: statut?.modified_by,
       });
     }
   };
@@ -238,7 +235,7 @@ export const SubActionStatutDropdown = ({
         ...statut,
         ...args,
         avancement,
-        avancement_detaille: values,
+        avancementDetaille: values,
         concerne: true,
       });
     }
@@ -272,10 +269,8 @@ export const SubActionStatutDropdown = ({
               actionDefinition.type === 'sous-action' &&
               localAvancement !== 'non_renseigne' &&
               filled
-                ? ITEMS_AVEC_NON_CONCERNE.filter(
-                    (item) => item !== 'non_renseigne'
-                  )
-                : ITEMS_AVEC_NON_CONCERNE
+                ? statutAvancementEnumSchema.options
+                : statutAvancementIncludingNonConcerneEnumSchema.options
             }
             disabled={disabled}
             value={localAvancement}

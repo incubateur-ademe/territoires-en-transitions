@@ -10,7 +10,7 @@ import { createInsertSchema, createSelectSchema } from 'drizzle-zod';
 import { collectiviteTable } from '../../collectivites/shared/models/collectivite.table';
 import { historiqueSchema } from '../../personnalisations/models/historique-reponse-choix.table';
 import { actionIdReference } from './action-definition.table';
-import { avancementEnum } from './action-statut.table';
+import { statutAvancementPgEnum } from './action-statut.table';
 
 export const historiqueActionStatutTable = historiqueSchema.table(
   'action_statut',
@@ -19,8 +19,8 @@ export const historiqueActionStatutTable = historiqueSchema.table(
       .notNull()
       .references(() => collectiviteTable.id),
     actionId: actionIdReference.notNull(),
-    avancement: avancementEnum('avancement').notNull(),
-    previousAvancement: avancementEnum('previous_avancement'),
+    avancement: statutAvancementPgEnum('avancement').notNull(),
+    previousAvancement: statutAvancementPgEnum('previous_avancement'),
     avancementDetaille: doublePrecision('avancement_detaille').array(),
     previousAvancementDetaille: doublePrecision(
       'previous_avancement_detaille'

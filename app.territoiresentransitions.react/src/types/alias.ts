@@ -71,9 +71,6 @@ export type TFicheActionEcheances = Enums<'fiche_action_echeances'>;
 
 export type TActionRelationInsert = TablesInsert<'action_relation'>;
 
-export type TActionAvancement = Enums<'avancement'>;
-export type TActionAvancementExt = TActionAvancement | 'non_concerne';
-
 export type TActionStatutsRow = NonNullableFields<Views<'action_statuts'>>;
 
 export type TNomCollectivite = NonNullableFields<Views<'named_collectivite'>>;

@@ -1,5 +1,6 @@
 import type { ReferentielOfIndicateur } from '@/app/referentiels/litterals';
-import { TActionAvancementExt, TMembreFonction } from '@/app/types/alias';
+import { TMembreFonction } from '@/app/types/alias';
+import { StatutAvancementIncludingNonConcerne } from '@/domain/referentiels';
 
 // Define all labels from app
 export const referentielToName: Record<
@@ -11,7 +12,10 @@ export const referentielToName: Record<
   crte: 'Contrat Relance Transition Écologique',
 };
 
-export const avancementToLabel: Record<TActionAvancementExt, string> = {
+export const avancementToLabel: Record<
+  StatutAvancementIncludingNonConcerne,
+  string
+> = {
   non_renseigne: 'Non renseigné',
   fait: 'Fait',
   pas_fait: 'Pas fait',

@@ -89,6 +89,7 @@ export const fetchActionStatutsList = async (
 };
 
 // met à jour l'état d'une tâche
+// TODO-SNAPSHOT
 export const updateTacheStatut = async ({
   collectivite_id,
   action_id,

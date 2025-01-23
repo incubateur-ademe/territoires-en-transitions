@@ -1,11 +1,11 @@
 import { avancementToLabel } from '@/app/app/labels';
 import { statusToState } from '@/app/referentiels/actions/action-statut.badge';
-import { TActionAvancementExt } from '@/app/types/alias';
+import { StatutAvancementIncludingNonConcerne } from '@/domain/referentiels';
 import classNames from 'classnames';
 import { Badge } from './Badge';
 
 type BadgeStatutActionProps = {
-  statut: TActionAvancementExt;
+  statut: StatutAvancementIncludingNonConcerne;
   barre?: boolean;
   size?: 'sm' | 'md';
   uppercase?: boolean;

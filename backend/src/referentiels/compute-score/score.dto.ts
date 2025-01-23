@@ -1,5 +1,5 @@
 import { z } from 'zod';
-import { ActionAvancementEnumValues } from '../models/action-statut.table';
+import { statutAvancementEnumValues } from '../models/action-statut.table';
 
 export const scoreSchema = z
   .object({
@@ -113,7 +113,7 @@ export const scoreSchema = z
         'Vrai si un statut a été renseigné pour cette action (sous-action ou tache)'
       ),
     avancement: z
-      .enum(ActionAvancementEnumValues)
+      .enum(statutAvancementEnumValues)
       .optional()
       .describe("Avancement de l'action"),
     renseigne: z

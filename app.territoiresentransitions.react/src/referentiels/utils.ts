@@ -1,5 +1,9 @@
 import { Enums } from '@/api';
-import { TActionAvancement, TActionAvancementExt } from '@/app/types/alias';
+import {
+  StatutAvancement,
+  StatutAvancementEnum,
+  StatutAvancementIncludingNonConcerne,
+} from '@/domain/referentiels';
 
 export const phaseToLabel: Record<Enums<'action_categorie'> | string, string> =
   {
@@ -10,7 +14,7 @@ export const phaseToLabel: Record<Enums<'action_categorie'> | string, string> =
 
 // Valeurs par défaut de l'avancement détaillé par statut d'avancement
 export const AVANCEMENT_DETAILLE_PAR_STATUT: Record<
-  TActionAvancement,
+  StatutAvancement,
   number[] | undefined
 > = {
   non_renseigne: undefined,
@@ -21,11 +25,13 @@ export const AVANCEMENT_DETAILLE_PAR_STATUT: Record<
 };
 
 // Génère les propriétés de l'objet statut à écrire lors du changement de l'avancement
-export const statutParAvancement = (avancement: TActionAvancementExt) => {
+export const statutParAvancement = (
+  avancement: StatutAvancementIncludingNonConcerne
+) => {
   // cas spécial pour le faux statut "non concerné"
-  if (avancement === 'non_concerne') {
+  if (avancement === StatutAvancementEnum.NON_CONCERNE) {
     return {
-      avancement: 'non_renseigne' as TActionAvancement,
+      avancement: StatutAvancementEnum.NON_RENSEIGNE,
       concerne: false,
     };
   }
@@ -34,7 +40,7 @@ export const statutParAvancement = (avancement: TActionAvancementExt) => {
     avancement,
     // quand on change l'avancement, l'avancement détaillé est réinitialisé à la
     // valeur par défaut correspondante
-    avancement_detaille: AVANCEMENT_DETAILLE_PAR_STATUT[avancement],
+    avancementDetaille: AVANCEMENT_DETAILLE_PAR_STATUT[avancement],
     concerne: true,
   };
 };
@@ -47,10 +53,10 @@ export const getAvancementExt = ({
   desactive,
   concerne,
 }: {
-  avancement: TActionAvancement | undefined;
+  avancement: StatutAvancement | undefined;
   desactive: boolean | undefined;
   concerne: boolean | undefined;
-}): TActionAvancementExt | undefined => {
+}): StatutAvancementIncludingNonConcerne | undefined => {
   // affiche le statut "non concerné" quand l'action est désactivée par la
   // personnalisation ou que l'option "non concerné" a été sélectionnée
   // explicitement par l'utilisateur
@@ -67,15 +73,15 @@ export const getAvancementExt = ({
  * en compte l'avancement des tâches pour déterminer le statut à la sous-action
  */
 export const getActionStatut = (action: {
-  avancement: TActionAvancement | undefined;
+  avancement: StatutAvancement | undefined;
   desactive: boolean | undefined;
   concerne: boolean | undefined;
-  avancement_descendants: TActionAvancement[] | undefined;
+  avancementDescendants: StatutAvancement[] | undefined;
 }) => {
   const avancementExt = getAvancementExt(action);
 
   return (!avancementExt || avancementExt === 'non_renseigne') &&
-    action.avancement_descendants?.find((av) => !!av && av !== 'non_renseigne')
+    action.avancementDescendants?.find((av) => !!av && av !== 'non_renseigne')
     ? // Une sous-action "non renseigné" mais avec au moins une tâche renseignée a
       // le statut "détaillé"
       'detaille'
@@ -85,7 +91,7 @@ export const getActionStatut = (action: {
 /**
  * Renvoie le statut en fonction de l'index dans le tableau avancement détaillé
  */
-export const getStatusFromIndex = (index: number): TActionAvancement => {
+export const getStatusFromIndex = (index: number): StatutAvancement => {
   switch (index) {
     case 0:
       return 'fait';

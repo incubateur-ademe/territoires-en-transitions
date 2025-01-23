@@ -10,8 +10,8 @@ import * as Utils from '../../utils/excel/export-excel.utils';
 import { ActionWithScore } from '../compute-score/action-with-score.dto';
 import ReferentielsScoringService from '../compute-score/referentiels-scoring.service';
 import {
-  ActionAvancementEnum,
-  ActionAvancementEnumType,
+  StatutAvancement,
+  StatutAvancementEnum,
 } from '../models/action-statut.table';
 import { ActionType } from '../models/action-type.enum';
 import { GetReferentielScoresResponseType } from '../models/get-referentiel-scores.response';
@@ -64,15 +64,15 @@ export default class ExportReferentielScoreService {
   ];
 
   private readonly AVANCEMENT_TO_LABEL: Record<
-    ActionAvancementEnumType | 'non_concerne',
+    StatutAvancement | 'non_concerne',
     string
   > = {
-    [ActionAvancementEnum.NON_RENSEIGNE]: 'Non renseigné',
-    [ActionAvancementEnum.FAIT]: 'Fait',
-    [ActionAvancementEnum.PAS_FAIT]: 'Pas fait',
-    [ActionAvancementEnum.DETAILLE]: 'Détaillé',
-    [ActionAvancementEnum.PROGRAMME]: 'Programmé',
-    non_concerne: 'Non concerné',
+    [StatutAvancementEnum.NON_RENSEIGNE]: 'Non renseigné',
+    [StatutAvancementEnum.FAIT]: 'Fait',
+    [StatutAvancementEnum.PAS_FAIT]: 'Pas fait',
+    [StatutAvancementEnum.DETAILLE]: 'Détaillé',
+    [StatutAvancementEnum.PROGRAMME]: 'Programmé',
+    [StatutAvancementEnum.NON_CONCERNE]: 'Non concerné',
   };
 
   private readonly TOTAL_LABEL = 'Total';

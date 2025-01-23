@@ -1,18 +1,21 @@
 import { avancementToLabel } from '@/app/app/labels';
-import { TActionAvancementExt } from '@/app/types/alias';
+import { StatutAvancementIncludingNonConcerne } from '@/domain/referentiels';
 import { Badge, BadgeState } from '@/ui';
 import classNames from 'classnames';
 
 type Props = {
   className?: string;
-  statut: TActionAvancementExt;
+  statut: StatutAvancementIncludingNonConcerne;
   // Indique si le statut est barré
   barre?: boolean;
   // Rend une version plus petite du composant
   size?: 'sm' | 'md';
 };
 
-export const statusToState: Record<TActionAvancementExt, BadgeState> = {
+export const statusToState: Record<
+  StatutAvancementIncludingNonConcerne,
+  BadgeState
+> = {
   non_renseigne: 'grey',
   pas_fait: 'warning',
   programme: 'info',

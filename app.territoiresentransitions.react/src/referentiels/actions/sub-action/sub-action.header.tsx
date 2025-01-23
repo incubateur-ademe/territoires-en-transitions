@@ -6,7 +6,6 @@ import {
   StatusToSavePayload,
   SubActionStatutDropdown,
 } from '@/app/referentiels/actions/sub-action-statut.dropdown';
-import { TActionAvancement } from '@/app/types/alias';
 import { ExpandToggle } from '@/app/ui/icons/ExpandToggle';
 import { InfoTooltip } from '@/ui';
 import classNames from 'classnames';
@@ -15,10 +14,11 @@ import { useEffect, useState } from 'react';
 import { useScore, useSnapshotFlagEnabled } from '../../use-snapshot';
 import { useScoreRealise } from '../useScoreRealise';
 import ActionJustification from './sub-action-justification';
+import { StatutAvancement } from '@/domain/referentiels';
 
 type SubActionHeaderProps = {
   actionDefinition: ActionDefinitionSummary;
-  actionAvancement?: TActionAvancement;
+  actionAvancement?: StatutAvancement;
   hideStatus?: boolean;
   statusWarningMessage?: boolean;
   displayProgressBar?: boolean;

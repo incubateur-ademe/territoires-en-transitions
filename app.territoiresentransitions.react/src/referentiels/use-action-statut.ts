@@ -1,8 +1,11 @@
-import { TablesInsert } from '@/api';
 import { supabaseClient } from '@/app/core-logic/api/supabase';
 import { useAudit, useIsAuditeur } from '@/app/referentiels/audits/useAudit';
-import { TActionAvancement } from '@/app/types/alias';
-import { useMutation, useQuery, useQueryClient } from 'react-query';
+// import { useMutation, useQuery, useQueryClient } from 'react-query';
+import { trpcUtils } from '@/api/utils/trpc/client';
+import { ActionStatutInsert, StatutAvancement } from '@/domain/referentiels';
+import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
+import { omit } from 'es-toolkit';
+import { objectToCamel, objectToSnake } from 'ts-case-convert';
 import { useCollectiviteId } from '../core-logic/hooks/params';
 import { useCurrentCollectivite } from '../core-logic/hooks/useCurrentCollectivite';
 import { useActionScore } from './DEPRECATED_score-hooks';
@@ -12,18 +15,21 @@ import { useScore, useSnapshotFlagEnabled } from './use-snapshot';
  * Charge le statut d'une action
  */
 export const useActionStatut = (actionId: string) => {
-  const collectivite_id = useCollectiviteId();
-  const { data, isLoading } = useQuery(['action_statut', collectivite_id], () =>
-    fetchCollectiviteActionStatuts(collectivite_id ?? undefined)
-  );
+  const collectiviteId = useCollectiviteId();
 
-  const statut = data?.find((action) => action.action_id === actionId) || null;
+  const { data, isLoading } = useQuery({
+    queryKey: ['action_statut', collectiviteId],
+    queryFn: () =>
+      collectiviteId ? fetchCollectiviteActionStatuts(collectiviteId) : null,
+  });
+
+  const statut = data?.find((action) => action.actionId === actionId) || null;
 
   const filled =
     data?.find(
       (action) =>
-        action.action_id.includes(actionId) &&
-        action.action_id.split(actionId)[1] !== '' &&
+        action.actionId.includes(actionId) &&
+        action.actionId.split(actionId)[1] !== '' &&
         action.avancement !== 'non_renseigne'
     ) !== undefined || null;
 
@@ -34,18 +40,66 @@ export const useActionStatut = (actionId: string) => {
   };
 };
 
+async function fetchCollectiviteActionStatuts(collectiviteId: number) {
+  const query = supabaseClient
+    .from('action_statut')
+    .select()
+    .eq('collectivite_id', collectiviteId);
+
+  const { error, data } = await query;
+
+  if (error) {
+    throw new Error(error.message);
+  }
+
+  return objectToCamel(data);
+}
+
+/**
+ * Met à jour le statut d'une action
+ */
+// TODO-SNAPSHOT
+export const useSaveActionStatut = () => {
+  const collectiviteId = useCollectiviteId();
+  const queryClient = useQueryClient();
+
+  const { isPending, mutate: saveActionStatut } = useMutation({
+    mutationFn: async (statut: ActionStatutInsert) => {
+      return supabaseClient
+        .from('action_statut')
+        .upsert([objectToSnake(omit(statut, ['modifiedAt', 'modifiedBy']))], {
+          onConflict: 'collectivite_id,action_id',
+        });
+    },
+    onSuccess: () => {
+      trpcUtils.referentiels.snapshots.getCurrentFullScore.invalidate();
+      queryClient.invalidateQueries({
+        queryKey: ['action_statut', collectiviteId],
+      });
+    },
+  });
+
+  return {
+    isLoading: isPending,
+    saveActionStatut,
+  };
+};
+
 export const useTasksStatus = (tasksIds: string[]) => {
-  const collectivite_id = useCollectiviteId();
-  const { data, isLoading } = useQuery(['action_statut', collectivite_id], () =>
-    fetchCollectiviteActionStatuts(collectivite_id ?? undefined)
-  );
+  const collectiviteId = useCollectiviteId();
+
+  const { data, isLoading } = useQuery({
+    queryKey: ['action_statut', collectiviteId],
+    queryFn: () =>
+      collectiviteId ? fetchCollectiviteActionStatuts(collectiviteId) : null,
+  });
 
   let tasksStatus: {
-    [key: string]: { avancement: TActionAvancement; concerne: boolean };
+    [key: string]: { avancement: StatutAvancement; concerne: boolean };
   } = {};
 
   tasksIds.forEach((taskId) => {
-    const task = data?.find((action) => action.action_id === taskId);
+    const task = data?.find((action) => action.actionId === taskId);
     if (task !== undefined)
       tasksStatus = {
         ...tasksStatus,
@@ -54,50 +108,6 @@ export const useTasksStatus = (tasksIds: string[]) => {
   });
 
   return { tasksStatus, isLoading };
-};
-
-const fetchCollectiviteActionStatuts = async (collectivite_id?: number) => {
-  if (!collectivite_id) {
-    return null;
-  }
-  const query = supabaseClient
-    .from('action_statut')
-    .select()
-    .eq('collectivite_id', collectivite_id);
-  const { error, data } = await query;
-
-  if (error) {
-    throw new Error(error.message);
-  }
-  return data;
-};
-
-/**
- * Met à jour le statut d'une action
- */
-export const useSaveActionStatut = () => {
-  const collectivite_id = useCollectiviteId();
-  const queryClient = useQueryClient();
-  const { isLoading, mutate: saveActionStatut } = useMutation(write, {
-    mutationKey: 'action_statut',
-    onSuccess: () => {
-      queryClient.invalidateQueries(['action_statut', collectivite_id]);
-    },
-  });
-
-  return {
-    isLoading,
-    saveActionStatut,
-  };
-};
-
-type TActionStatutWrite = TablesInsert<'action_statut'>;
-const write = async (statut: TActionStatutWrite) => {
-  delete statut.modified_at;
-  delete statut.modified_by;
-  return supabaseClient.from('action_statut').upsert([statut], {
-    onConflict: 'collectivite_id,action_id',
-  });
 };
 
 /**
