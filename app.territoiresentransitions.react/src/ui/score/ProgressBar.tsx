@@ -1,9 +1,6 @@
-import { TweenText } from '@/app/ui/shared/TweenText';
-import { toFixed } from '@/app/utils/toFixed';
 import classNames from 'classnames';
 
 export type ProgressBarStyleOptions = {
-  justify?: 'start' | 'end' | 'center';
   fullWidth?: boolean;
 };
 
@@ -22,9 +19,9 @@ const ProgressBar = ({
   defaultScore,
   valueToDisplay,
   percent = false,
-  progressBarStyleOptions = { justify: 'end', fullWidth: false },
+  progressBarStyleOptions = { fullWidth: false },
 }: ProgressBarType): JSX.Element => {
-  const { justify, fullWidth } = progressBarStyleOptions;
+  const { fullWidth } = progressBarStyleOptions;
   const barClasses = 'transition-width duration-500 ease-in-out rounded-[4px]';
 
   const percentageAgainstTotal = (x: number): number => (100 * x) / total;
@@ -45,17 +42,7 @@ const ProgressBar = ({
       : null;
 
   return (
-    <div
-      className={classNames('flex gap-3 items-center', `justify-${justify}`)}
-    >
-      {/* Légende à gauche de la barre de progression */}
-      {displayedValue !== undefined && displayedValue !== null && (
-        <div className="text-sm font-bold">
-          <TweenText text={`${toFixed(displayedValue)} %`} align-right />
-        </div>
-      )}
-
-      {/* Barre de progression */}
+    <div className="flex gap-3 items-center">
       <div
         style={{ backgroundColor: defaultScore.color }}
         className={classNames(
