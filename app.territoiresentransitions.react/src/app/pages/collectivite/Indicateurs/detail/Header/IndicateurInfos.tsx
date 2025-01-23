@@ -1,7 +1,8 @@
 import { referentielToName } from '@/app/app/labels';
 import { useServicesPilotesListe } from '@/app/ui/dropdownLists/ServicesPilotesDropdown/useServicesPilotesListe';
 import ListWithTooltip from '@/app/ui/lists/ListWithTooltip';
-import { Divider } from '@/ui';
+import { Divider, Icon } from '@/ui';
+import { format } from 'date-fns';
 import { useIndicateurPilotes } from '../../Indicateur/detail/useIndicateurPilotes';
 import { useIndicateurServices } from '../../Indicateur/detail/useIndicateurServices';
 import BadgeIndicateurPerso from '../../components/BadgeIndicateurPerso';
@@ -19,7 +20,7 @@ const IndicateurInfos = ({
   isPerso,
   composeSansAgregation,
 }: Props) => {
-  const { participationScore, hasOpenData, enfants, sansValeur } = definition;
+  const { participationScore, hasOpenData, modifiedAt } = definition;
 
   const { data: pilotes } = useIndicateurPilotes(definition.id);
   const { data: serviceIds } = useIndicateurServices(definition.id);
@@ -39,19 +40,32 @@ const IndicateurInfos = ({
 
   return displayInfo ? (
     <div className="flex flex-wrap gap-3 items-center mt-3 mb-4 py-3 text-sm text-grey-8 border-y border-primary-3">
+      {/* Infos de modification (date et auteur) */}
+      {!!modifiedAt && (
+        <span>
+          <Icon icon="calendar-2-line" size="sm" className="mr-1" />
+          Modifié le {format(new Date(modifiedAt), 'dd/MM/yyyy')}
+        </span>
+      )}
+
       {/* Pilotes */}
       {hasPilotes && (
-        <ListWithTooltip
-          title="Pilotes"
-          list={pilotes.map((p) => p.nom!)}
-          icon="user-line"
-        />
+        <>
+          {!!modifiedAt && <div className="w-[1px] h-5 bg-grey-5" />}
+          <ListWithTooltip
+            title="Pilotes"
+            list={pilotes.map((p) => p.nom!)}
+            icon="user-line"
+          />
+        </>
       )}
 
       {/* Services pilotes */}
       {hasServices && (
         <>
-          {hasPilotes && <div className="w-[1px] h-5 bg-grey-5" />}
+          {(!!modifiedAt || hasPilotes) && (
+            <div className="w-[1px] h-5 bg-grey-5" />
+          )}
           <ListWithTooltip
             title="Direction ou service pilote"
             list={services.map((s) => s.nom)}
@@ -63,7 +77,7 @@ const IndicateurInfos = ({
       {/* Participe au score CAE */}
       {participationScore && (
         <>
-          {(hasPilotes || hasServices) && (
+          {(!!modifiedAt || hasPilotes || hasServices) && (
             <div className="w-[1px] h-5 bg-grey-5" />
           )}
           <span>Participe au score {referentielToName.cae}</span>
@@ -73,9 +87,10 @@ const IndicateurInfos = ({
       {/* Badges */}
       {!composeSansAgregation && (
         <>
-          {(hasPilotes || participationScore) && (isPerso || hasOpenData) && (
-            <div className="w-[1px] h-5 bg-grey-5" />
-          )}
+          {(!!modifiedAt || hasPilotes || hasServices || participationScore) &&
+            (isPerso || hasOpenData) && (
+              <div className="w-[1px] h-5 bg-grey-5" />
+            )}
           {isPerso && <BadgeIndicateurPerso size="sm" />}
           {hasOpenData && <BadgeOpenData size="sm" />}
         </>

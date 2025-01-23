@@ -50,6 +50,7 @@ export const definitionSchema = z.object({
   enfants: z.number().array().nullish(),
   parents: z.number().array().nullish(),
   hasOpenData: z.boolean().nullish(),
+  modifiedAt: z.string().datetime().nullish(),
 });
 
 /**
