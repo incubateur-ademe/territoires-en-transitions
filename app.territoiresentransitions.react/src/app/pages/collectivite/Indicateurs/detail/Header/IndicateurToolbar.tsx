@@ -1,5 +1,6 @@
 import { Button } from '@/ui';
 import classNames from 'classnames';
+import { useState } from 'react';
 import { useExportIndicateurs } from '../../Indicateur/useExportIndicateurs';
 import { TIndicateurDefinition } from '../../types';
 import DeleteModal from './DeleteModal';
@@ -20,6 +21,8 @@ const IndicateurToolbar = ({
   isReadonly = false,
   className,
 }: Props) => {
+  const [isEditModalOpen, setIsEditModalOpen] = useState(false);
+
   const { mutate: exportIndicateurs, isLoading } = useExportIndicateurs(
     isPerso ? 'app/indicateurs/perso' : 'app/indicateurs/predefini',
     [definition]
@@ -29,7 +32,16 @@ const IndicateurToolbar = ({
     <>
       <div className={classNames('flex gap-4 lg:mt-3.5', className)}>
         {!isReadonly && (
-          <EditModal {...{ collectiviteId, definition, isLoading }} />
+          <Button
+            disabled={isLoading}
+            title="Modifier l'indicateur"
+            aria-label="Modifier l'indicateur"
+            size="xs"
+            variant="grey"
+            onClick={() => setIsEditModalOpen(true)}
+          >
+            Modifier
+          </Button>
         )}
 
         <Button
@@ -49,6 +61,13 @@ const IndicateurToolbar = ({
         {/* TODO : déplacer les infos dans l'onglet dédié */}
         {/* {!isPerso && <IndicateurSidePanelToolbar definition={definition} />} */}
       </div>
+
+      {isEditModalOpen && (
+        <EditModal
+          openState={{ isOpen: isEditModalOpen, setIsOpen: setIsEditModalOpen }}
+          {...{ collectiviteId, definition }}
+        />
+      )}
     </>
   );
 };
