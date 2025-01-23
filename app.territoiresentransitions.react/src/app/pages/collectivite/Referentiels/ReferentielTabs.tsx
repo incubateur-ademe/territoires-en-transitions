@@ -128,7 +128,7 @@ const ReferentielTabs = () => {
         <Tabs
           defaultActiveTab={activeTab}
           onChange={handleChange}
-          tabsListClassName="!justify-start pl-0 flex-nowrap overflow-x-scroll bg-transparent"
+          tabsListClassName="!justify-start pl-0 flex-nowrap bg-transparent"
         >
           <Tab label="Actions">
             <div className="p-7 border border-primary-2 bg-white rounded-lg">
