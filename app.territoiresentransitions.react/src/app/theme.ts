@@ -1,6 +1,9 @@
-import { TActionAvancementExt } from '@/app/types/alias';
+import { StatutAvancementIncludingNonConcerne } from '@/domain/referentiels';
 
-export const actionAvancementColors: Record<TActionAvancementExt, string> = {
+export const actionAvancementColors: Record<
+  StatutAvancementIncludingNonConcerne,
+  string
+> = {
   non_concerne: '#929292',
   non_renseigne: '#E5E5E5',
   pas_fait: '#FFCA79',

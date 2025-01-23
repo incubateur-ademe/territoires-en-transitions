@@ -8,6 +8,7 @@ import {
   Stack,
   Title,
 } from '@/app/ui/export-pdf/components';
+import { objectToCamel } from 'ts-case-convert';
 
 type ActionLieeCardProps = {
   action: TActionStatutsRow;
@@ -15,7 +16,7 @@ type ActionLieeCardProps = {
 
 const ActionLieeCard = ({ action }: ActionLieeCardProps) => {
   const { identifiant, nom, referentiel } = action;
-  const statut = getActionStatut(action);
+  const statut = getActionStatut(objectToCamel(action));
 
   return (
     <Card wrap={false} gap={1.5} className="w-[32%] p-3">

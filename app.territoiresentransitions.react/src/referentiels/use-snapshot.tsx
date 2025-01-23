@@ -47,6 +47,7 @@ export function useScore(actionId: string) {
   return action.score;
 }
 
+// TODO-SNAPSHOT: remove this after successful and validated release
 export function useSnapshotFlagEnabled() {
   return useFeatureFlagEnabled('is-referentiel-on-snapshot-enabled');
 }

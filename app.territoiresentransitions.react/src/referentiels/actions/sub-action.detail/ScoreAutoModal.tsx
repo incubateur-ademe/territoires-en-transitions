@@ -1,11 +1,11 @@
 import { ActionDefinitionSummary } from '@/app/referentiels/ActionDefinitionSummaryReadEndpoint';
 import SubActionTasksList from '@/app/referentiels/actions/sub-action/sub-action-task.list';
 import { useActionSummaryChildren } from '@/app/referentiels/referentiel-hooks';
-import { useTasksStatus } from '@/app/referentiels/use-action-statut';
-import { TActionAvancement } from '@/app/types/alias';
 import Modal from '@/app/ui/shared/floating-ui/Modal';
+import { StatutAvancement } from '@/domain/referentiels';
 import { Alert } from '@/ui';
 import { Dispatch, SetStateAction, useState } from 'react';
+import { useTasksStatus } from '../../use-action-statut';
 import { StatusToSavePayload } from '../sub-action-statut.dropdown';
 
 /**
@@ -16,7 +16,7 @@ import { StatusToSavePayload } from '../sub-action-statut.dropdown';
 const isCustomScoreGranted = (
   tasks: ActionDefinitionSummary[],
   tasksStatus: {
-    [key: string]: { avancement: TActionAvancement; concerne: boolean };
+    [key: string]: { avancement: StatutAvancement; concerne: boolean };
   },
   localStatus: {
     [key: string]: StatusToSavePayload;
@@ -110,7 +110,7 @@ const ScoreAutoModal = ({
         return (
           <>
             <h4>
-              Détailler l'avancement : {actionDefinition.id.split('_')[1]}
+              {`Détailler l'avancement : ${actionDefinition.id.split('_')[1]}`}
             </h4>
 
             <hr className="p-1" />

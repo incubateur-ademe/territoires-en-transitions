@@ -5,6 +5,7 @@ import ActionStatutBadge from '@/app/referentiels/actions/action-statut.badge';
 import { getActionStatut } from '@/app/referentiels/utils';
 import { TActionStatutsRow } from '@/app/types/alias';
 import { Button, Card } from '@/ui';
+import { objectToCamel } from 'ts-case-convert';
 
 type ActionCardProps = {
   isReadonly?: boolean;
@@ -21,7 +22,7 @@ const ActionCard = ({
 }: ActionCardProps) => {
   const collectiviteId = useCollectiviteId()!;
   const { action_id: actionId, identifiant, nom, referentiel } = action;
-  const statut = getActionStatut(action);
+  const statut = getActionStatut(objectToCamel(action));
 
   const link = makeCollectiviteTacheUrl({
     collectiviteId,

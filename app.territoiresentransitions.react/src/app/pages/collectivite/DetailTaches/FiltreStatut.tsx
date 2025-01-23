@@ -5,8 +5,8 @@ import {
 } from '@/app/ui/shared/select/MultiSelectFilter';
 
 import { DEFAULT_OPTIONS } from '@/app/referentiels/actions/action-statut.select';
-import { TActionAvancementExt } from '@/app/types/alias';
 import { ITEM_ALL } from '@/app/ui/shared/filters/commons';
+import { StatutAvancementIncludingNonConcerne } from '@/domain/referentiels';
 import { TFiltreProps } from './filters';
 
 // les options sont celles du sélecteur de statut + une entrée "tous les statuts"
@@ -34,7 +34,9 @@ export const FiltreStatut = (props: TFiltreProps) => {
         option.value === ITEM_ALL ? (
           <span className="leading-6">Tous les statuts</span>
         ) : (
-          <ActionStatutBadge statut={option.value as TActionAvancementExt} />
+          <ActionStatutBadge
+            statut={option.value as StatutAvancementIncludingNonConcerne}
+          />
         )
       }
     />

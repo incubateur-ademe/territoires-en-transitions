@@ -11,8 +11,8 @@ import { getErrorWithCode } from '../../utils/nest/errors.utils';
 import { PgIntegrityConstraintViolation } from '../../utils/postgresql-error-codes.enum';
 import ReferentielsScoringService from '../compute-score/referentiels-scoring.service';
 import {
+  actionStatutSchemaInsert,
   actionStatutTable,
-  createActionStatutSchema,
 } from '../models/action-statut.table';
 import { ComputeScoreMode } from '../models/compute-scores-mode.enum';
 import { GetReferentielScoresRequestType } from '../models/get-referentiel-scores.request';
@@ -20,7 +20,7 @@ import { getReferentielIdFromActionId } from '../referentiels.utils';
 import ReferentielsService from '../services/referentiels.service';
 
 export const upsertActionStatutRequestSchema = z.object({
-  actionStatut: createActionStatutSchema,
+  actionStatut: actionStatutSchemaInsert,
 });
 export type UpsertActionStatutRequest = z.infer<
   typeof upsertActionStatutRequestSchema

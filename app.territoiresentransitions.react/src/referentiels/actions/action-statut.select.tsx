@@ -1,40 +1,29 @@
 import { avancementToLabel } from '@/app/app/labels';
-import { TActionAvancement, TActionAvancementExt } from '@/app/types/alias';
 import SelectDropdown from '@/app/ui/shared/select/SelectDropdown';
+import {
+  statutAvancementEnumSchema,
+  StatutAvancementIncludingNonConcerne,
+} from '@/domain/referentiels';
 import classNames from 'classnames';
 import ActionStatutBadge from './action-statut.badge';
 
 export type TSelectActionStatutProps = {
   // item sélectionné (`non_renseigne` si `undefined` ou `null`)
-  value: TActionAvancementExt | undefined | null;
+  value: StatutAvancementIncludingNonConcerne | undefined | null;
   // appelée quand la sélection change
-  onChange: (value: TActionAvancementExt) => void;
+  onChange: (value: StatutAvancementIncludingNonConcerne) => void;
   // mode "lecture seule"
   disabled?: boolean;
   // pour afficher une liste différente d'items (`DEFAULT_ITEMS` si non spécifié)
-  items?: TActionAvancementExt[];
+  items?: StatutAvancementIncludingNonConcerne[];
   buttonClassName?: string;
 };
 
 // transforme une liste de statuts en options pour la liste déroulante
-const getOptions = (items: TActionAvancementExt[]) =>
+const getOptions = (items: StatutAvancementIncludingNonConcerne[]) =>
   items.map((value) => ({ value, label: avancementToLabel[value] }));
 
-// les items par défaut (sans le "non concerné")
-export const DEFAULT_ITEMS: TActionAvancement[] = [
-  'non_renseigne',
-  'fait',
-  'programme',
-  'pas_fait',
-  'detaille',
-];
-
-export const ITEMS_AVEC_NON_CONCERNE: TActionAvancementExt[] = [
-  ...DEFAULT_ITEMS,
-  'non_concerne',
-];
-
-export const DEFAULT_OPTIONS = getOptions(DEFAULT_ITEMS);
+export const DEFAULT_OPTIONS = getOptions(statutAvancementEnumSchema.options);
 
 /**
  * Affiche le sélecteur de statut d'une action
@@ -46,7 +35,11 @@ export const SelectActionStatut = (props: TSelectActionStatutProps) => {
   const currentValue = value || 'non_renseigne';
 
   if (disabled) {
-    return <ActionStatutBadge statut={currentValue as TActionAvancementExt} />;
+    return (
+      <ActionStatutBadge
+        statut={currentValue as StatutAvancementIncludingNonConcerne}
+      />
+    );
   }
 
   return (
@@ -60,7 +53,9 @@ export const SelectActionStatut = (props: TSelectActionStatutProps) => {
         buttonClassName
       )}
       renderOption={(option) => (
-        <ActionStatutBadge statut={option.value as TActionAvancementExt} />
+        <ActionStatutBadge
+          statut={option.value as StatutAvancementIncludingNonConcerne}
+        />
       )}
       renderSelection={(value) => (
         <ActionStatutBadge statut={value} className="mt-1" />
