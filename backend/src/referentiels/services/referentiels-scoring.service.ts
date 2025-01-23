@@ -1111,7 +1111,8 @@ export default class ReferentielsScoringService {
           audit = audits.find(
             (a) =>
               a.dateFin &&
-              DateTime.fromISO(a.dateFin).year === parameters.anneeAudit
+              (DateTime.fromISO(a.dateFin).year === parameters.anneeAudit ||
+              DateTime.fromSQL(a.dateFin).year === parameters.anneeAudit)
           );
           if (!audit) {
             throw new HttpException(
