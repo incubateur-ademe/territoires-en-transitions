@@ -65,14 +65,14 @@ const Header = ({ fiche, updateTitle, isReadonly }: FicheActionHeaderProps) => {
       {displayInfoSection ? (
         <div className="flex max-md:flex-col gap-3 items-center mt-3 mb-4 py-3 text-sm text-grey-8 border-y border-primary-3">
           {displayModificationInfo && (
-            <div className="flex gap-1 items-center">
-              <Icon icon="calendar-2-line" size="sm" />
+            <span>
+              <Icon icon="calendar-2-line" size="sm" className="mr-1" />
               Modifiée{' '}
               {modifiedAt
                 ? `le ${format(new Date(modifiedAt), 'dd/MM/yyyy')}`
                 : ''}{' '}
               {modifiedBy ? `par ${modifiedBy?.prenom} ${modifiedBy?.nom}` : ''}
-            </div>
+            </span>
           )}
 
           {displayCreationInfo && (
@@ -80,8 +80,8 @@ const Header = ({ fiche, updateTitle, isReadonly }: FicheActionHeaderProps) => {
               {displayModificationInfo && (
                 <div className="max-md:hidden w-[1px] h-5 bg-grey-5" />
               )}
-              <div className="flex gap-1 items-center">
-                <Icon icon="file-add-line" size="sm" />
+              <span>
+                <Icon icon="file-add-line" size="sm" className="mr-1" />
                 Créée{' '}
                 {createdAt
                   ? `le ${format(new Date(createdAt), 'dd/MM/yyyy')}`
@@ -89,7 +89,7 @@ const Header = ({ fiche, updateTitle, isReadonly }: FicheActionHeaderProps) => {
                 {createdBy
                   ? `par ${fiche.createdBy?.prenom} ${createdBy?.nom}`
                   : ''}
-              </div>
+              </span>
             </>
           )}
         </div>

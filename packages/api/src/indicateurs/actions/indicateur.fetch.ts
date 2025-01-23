@@ -58,6 +58,7 @@ const COLONNES_DEFINITION = [
   'valeurs:indicateur_valeur(' + `${COLONNES_VALEURS.join(',')}` + ')',
   'enfants:indicateur_enfants(id, groupement_id)',
   'parents:indicateur_parents(id)',
+  'modified_at',
 ] as const;
 
 /**
