@@ -62,6 +62,8 @@ export const ActionHeader = ({
               <ActionProgressBar
                 action={action}
                 className="border-r border-r-[#ddd] fr-pr-5v"
+                // TODO(temporary): Temporary patch to display percentage
+                TEMP_displayValue={true}
               />
               <ScoreDisplay
                 score={actionScore?.points_realises ?? null}

@@ -10,10 +10,15 @@ export const ActionProgressBar = ({
   // remettre actionId au lieu de action une fois l'affichage des scores par % généralisé
   className,
   progressBarStyleOptions,
+  // TODO(temporary): This prop is a temporary patch to only display percentage
+  // in ActionHeader and SubActionHeader components. Should be revisited during
+  // the score display refactoring.
+  TEMP_displayValue = false,
 }: {
   action: ActionDefinitionSummary;
   className?: string;
   progressBarStyleOptions?: ProgressBarStyleOptions;
+  TEMP_displayValue?: boolean; // TEMP: see comment above
 }) => {
   const score = useActionScore(action.id);
 
@@ -64,6 +69,7 @@ export const ActionProgressBar = ({
         }}
         percent={action.type === 'tache'}
         progressBarStyleOptions={progressBarStyleOptions}
+        valueToDisplay={TEMP_displayValue ? avancementToLabel.fait : undefined}
       />
     </div>
   );
