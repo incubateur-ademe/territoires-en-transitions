@@ -2,11 +2,12 @@ import { Indicateurs } from '@/api';
 import { useCurrentCollectivite } from '@/app/core-logic/hooks/useCurrentCollectivite';
 import {
   Alert,
+  Badge,
   Button,
+  Field,
   Modal,
   ModalFooterOKCancel,
-  Tab,
-  Tabs,
+  Select,
   TrackPageView,
   useEventTracker,
 } from '@/ui';
@@ -79,31 +80,32 @@ export const ImportSourcesSelector = ({
   return indexedSources && setCurrentSource ? (
     /** onglets de sélection de la source si il y a des sources open-data dispo */
     <>
-      <Tabs
-        data-test="sources"
-        tabsListClassName="!justify-start mb-0"
-        defaultActiveTab={idToIndex(currentSource)}
-        onChange={(activeTab) => {
-          const sourceId = indexToId(activeTab);
-          setCurrentSource(sourceId);
-          if (sourceId !== SOURCE_COLLECTIVITE && sourceType)
-            trackEvent('view_open_data', {
-              ...collectivite,
-              indicateurId: String(definition.id),
-              sourceId: sourceId,
-              type: sourceType,
-            });
-        }}
-      >
-        {indexedSources?.map(({ id, libelle }) => (
-          <Tab key={id} label={libelle} />
-        ))}
-      </Tabs>
+      <Field title="" className="w-96">
+        <Select
+          values={currentSource}
+          options={indexedSources.map(({ id, libelle }) => ({
+            value: id,
+            label: libelle,
+          }))}
+          onChange={(value) => {
+            const sourceId = value as string;
+            setCurrentSource(sourceId);
+            if (sourceId !== SOURCE_COLLECTIVITE && sourceType)
+              trackEvent('view_open_data', {
+                ...collectivite,
+                indicateurId: String(definition.id),
+                sourceId: sourceId,
+                type: sourceType,
+              });
+          }}
+          customItem={(option) => <Badge title={option.label} />}
+        />
+      </Field>
+
       {canApplyOpenData && (
         /** bandeau & bouton "appliquer à mes objectifs/résultats" */
         <>
           <Alert
-            className="mb-8"
             state="info"
             title={`Vous pouvez appliquer ces données à vos ${sourceTypeLabel} : les données seront alors disponibles dans le tableau “Mes données” et seront éditables`}
             footer={
