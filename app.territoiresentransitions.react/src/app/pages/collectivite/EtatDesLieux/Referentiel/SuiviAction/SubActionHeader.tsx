@@ -112,7 +112,8 @@ const SubActionHeader = ({
 
             {displayProgressBar && (
               <div className="flex justify-end w-[155px]">
-                <ActionProgressBar action={action} />
+                {/* TODO(temporary): Temporary patch to display percentage */}
+                <ActionProgressBar action={action} TEMP_displayValue={true} />
               </div>
             )}
           </div>
