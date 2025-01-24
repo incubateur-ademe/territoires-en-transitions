@@ -1,4 +1,5 @@
 import MarkdownBase from 'react-markdown';
+import rehypeRaw from 'rehype-raw';
 import remarkGfm from 'remark-gfm';
 
 type MarkdownProps = {
@@ -6,8 +7,12 @@ type MarkdownProps = {
   className?: string;
 };
 
-const Markdown = ({content, className}: MarkdownProps) => (
-  <MarkdownBase remarkPlugins={[remarkGfm]} className={className}>
+const Markdown = ({ content, className }: MarkdownProps) => (
+  <MarkdownBase
+    rehypePlugins={[rehypeRaw]}
+    remarkPlugins={[remarkGfm]}
+    className={className}
+  >
     {content}
   </MarkdownBase>
 );

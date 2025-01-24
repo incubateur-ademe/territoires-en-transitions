@@ -1,4 +1,5 @@
 import { useCurrentCollectivite } from '@/app/core-logic/hooks/useCurrentCollectivite';
+import Markdown from '@/app/ui/Markdown';
 import { Tab, Tabs } from '@/ui';
 import { useUpdateIndicateurDefinition } from '../Indicateur/useUpdateIndicateurDefinition';
 import { TIndicateurDefinition } from '../types';
@@ -19,7 +20,7 @@ const IndicateurLayout = ({
   definition,
   isPerso = false,
 }: IndicateurLayoutProps) => {
-  const { enfants, sansValeur } = definition;
+  const { enfants, sansValeur, description } = definition;
 
   const { mutate: updateDefinition } = useUpdateIndicateurDefinition();
 
@@ -125,6 +126,15 @@ const IndicateurLayout = ({
                     isReadonly={isReadonly}
                   />
                 </Tab>
+
+                {!isPerso && !!description ? (
+                  <Tab label="Informations sur l’indicateur">
+                    <Markdown
+                      content={description}
+                      className="bg-white p-10 border border-grey-3 rounded-xl paragraphe-16 paragraphe-primary-9 [&>*:last-child]:mb-0"
+                    />
+                  </Tab>
+                ) : undefined}
               </Tabs>
             )}
           </div>
