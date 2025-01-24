@@ -1,3 +1,5 @@
+import { TweenText } from '@/app/ui/shared/TweenText';
+import { toFixed } from '@/app/utils/toFixed';
 import classNames from 'classnames';
 
 export type ProgressBarStyleOptions = {
@@ -43,6 +45,13 @@ const ProgressBar = ({
 
   return (
     <div className="flex gap-3 items-center">
+      {/* Légende à gauche de la barre de progression */}
+      {displayedValue !== undefined && displayedValue !== null && (
+        <div className="text-sm font-bold">
+          <TweenText text={`${toFixed(displayedValue)} %`} align-right />
+        </div>
+      )}
+      {/* Barre de progression */}
       <div
         style={{ backgroundColor: defaultScore.color }}
         className={classNames(
