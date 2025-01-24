@@ -31,13 +31,29 @@ export class ScoreSnapshotsRouter {
   router = this.trpc.router({
     listSummary: this.trpc.authedProcedure
       .input(getScoreSnapshotInfosTrpcRequestSchema)
-      .query(({ input, ctx }) => {
+      .query(({ input }) => {
         return this.service.listSummary(
           input.collectiviteId,
           input.referentielId,
           input.parameters
         );
       }),
+
+    computeAndSave: this.trpc.authedProcedure
+      .input(
+        z.object({
+          collectiviteId: z.number().int(),
+          referentielId: referentielIdEnumSchema,
+        })
+      )
+      .mutation(({ input }) => {
+        return this.referentielsScoringService.getOrCreateCurrentScore(
+          input.collectiviteId,
+          input.referentielId,
+          true
+        );
+      }),
+
     getCurrentFullScore: this.trpc.authedProcedure
       .input(
         z.object({

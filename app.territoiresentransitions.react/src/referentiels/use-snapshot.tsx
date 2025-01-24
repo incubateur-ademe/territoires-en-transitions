@@ -1,4 +1,4 @@
-import { RouterOutput, trpc } from '@/api/utils/trpc/client';
+import { RouterOutput, trpc, trpcUtils } from '@/api/utils/trpc/client';
 import {
   getReferentielIdFromActionId,
   ReferentielException,
@@ -16,8 +16,8 @@ export function useSnapshot({ actionId }: { actionId: string }) {
   const referentielId = getReferentielIdFromActionId(actionId);
 
   return trpc.referentiels.snapshots.getCurrentFullScore.useQuery({
-    referentielId,
     collectiviteId,
+    referentielId,
   });
 }
 
@@ -45,6 +45,27 @@ export function useScore(actionId: string) {
   }
 
   return action.score;
+}
+
+/**
+ * @returns the mutation that will re-compute all action's scores,
+ * save them into current snapshot, and invalidate the current snapshot query
+ */
+export function useSnapshotComputeAndUpdate() {
+  const { mutate: computeScoreAndUpdateCurrentSnapshot } =
+    trpc.referentiels.snapshots.computeAndSave.useMutation({
+      onSuccess: (snapshot, inputParams) => {
+        // trpcUtils.referentiels.snapshots.getCurrentFullScore.invalidate();
+        trpcUtils.referentiels.snapshots.getCurrentFullScore.setData(
+          inputParams,
+          snapshot
+        );
+      },
+    });
+
+  return {
+    computeScoreAndUpdateCurrentSnapshot,
+  };
 }
 
 // TODO-SNAPSHOT: remove this after successful and validated release
