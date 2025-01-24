@@ -1,15 +1,22 @@
 import { supabaseClient } from '@/app/core-logic/api/supabase';
 import { useAudit, useIsAuditeur } from '@/app/referentiels/audits/useAudit';
 // import { useMutation, useQuery, useQueryClient } from 'react-query';
-import { trpcUtils } from '@/api/utils/trpc/client';
-import { ActionStatutInsert, StatutAvancement } from '@/domain/referentiels';
+import {
+  ActionStatutInsert,
+  getReferentielIdFromActionId,
+  StatutAvancement,
+} from '@/domain/referentiels';
 import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
 import { omit } from 'es-toolkit';
 import { objectToCamel, objectToSnake } from 'ts-case-convert';
 import { useCollectiviteId } from '../core-logic/hooks/params';
 import { useCurrentCollectivite } from '../core-logic/hooks/useCurrentCollectivite';
 import { useActionScore } from './DEPRECATED_score-hooks';
-import { useScore, useSnapshotFlagEnabled } from './use-snapshot';
+import {
+  useScore,
+  useSnapshotComputeAndUpdate,
+  useSnapshotFlagEnabled,
+} from './use-snapshot';
 
 /**
  * Charge le statut d'une action
@@ -60,8 +67,11 @@ async function fetchCollectiviteActionStatuts(collectiviteId: number) {
  */
 // TODO-SNAPSHOT
 export const useSaveActionStatut = () => {
-  const collectiviteId = useCollectiviteId();
+  const collectiviteId = useCollectiviteId()!;
   const queryClient = useQueryClient();
+
+  const { computeScoreAndUpdateCurrentSnapshot } =
+    useSnapshotComputeAndUpdate();
 
   const { isPending, mutate: saveActionStatut } = useMutation({
     mutationFn: async (statut: ActionStatutInsert) => {
@@ -71,10 +81,15 @@ export const useSaveActionStatut = () => {
           onConflict: 'collectivite_id,action_id',
         });
     },
-    onSuccess: () => {
-      trpcUtils.referentiels.snapshots.getCurrentFullScore.invalidate();
+    onSuccess: (_, statut) => {
+      // Invalidate cache for all action statuts
       queryClient.invalidateQueries({
         queryKey: ['action_statut', collectiviteId],
+      });
+
+      computeScoreAndUpdateCurrentSnapshot({
+        collectiviteId,
+        referentielId: getReferentielIdFromActionId(statut.actionId),
       });
     },
   });
