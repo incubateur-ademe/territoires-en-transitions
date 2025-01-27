@@ -2,7 +2,6 @@ import HistoriqueListe from '@/app/app/pages/collectivite/Historique/HistoriqueL
 import {
   ActionVueParamOption,
   makeCollectiviteActionUrl,
-  ReferentielParamOption,
 } from '@/app/app/paths';
 import { useActionVue, useReferentielId } from '@/app/core-logic/hooks/params';
 import { useCurrentCollectivite } from '@/app/core-logic/hooks/useCurrentCollectivite';
@@ -50,7 +49,7 @@ const ActionShow = ({
   const router = useRouter();
   const collectivite = useCurrentCollectivite();
   const collectiviteId = collectivite?.collectiviteId;
-  const referentielId = useReferentielId() as ReferentielParamOption;
+  const referentielId = useReferentielId();
   const { prevActionLink, nextActionLink } = usePrevAndNextActionLinks(
     actionDefinition.id
   );

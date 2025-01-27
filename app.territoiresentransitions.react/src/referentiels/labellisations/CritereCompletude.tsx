@@ -1,6 +1,5 @@
 import {
   makeCollectiviteReferentielUrl,
-  ReferentielParamOption,
 } from '@/app/app/paths';
 import { TLabellisationParcours } from '@/app/referentiels/labellisations/types';
 import { CritereRempli } from './CritereRempli';
@@ -16,7 +15,7 @@ export type TCritereScoreProps = {
 export const CritereCompletude = (props: TCritereScoreProps) => {
   const { collectiviteId, parcours } = props;
   const { completude_ok, referentiel } = parcours;
-  const referentielId = referentiel as ReferentielParamOption;
+  const referentielId = referentiel;
 
   return (
     <>

@@ -1,4 +1,3 @@
-import { ReferentielParamOption } from '@/app/app/paths';
 import { useReferentielId } from '@/app/core-logic/hooks/params';
 import { useCurrentCollectivite } from '@/app/core-logic/hooks/useCurrentCollectivite';
 import { defaultColors } from '@/app/ui/charts/chartsTheme';
@@ -14,7 +13,7 @@ import { getFormattedScore } from './utils';
 export const AuditComparaison = () => {
   const tableData = useTableData();
 
-  const referentiel = useReferentielId() as ReferentielParamOption;
+  const referentiel = useReferentielId();
   const collectivite = useCurrentCollectivite();
   const { mutate: exportAuditScores, isLoading } = useExportAuditScores(
     referentiel,

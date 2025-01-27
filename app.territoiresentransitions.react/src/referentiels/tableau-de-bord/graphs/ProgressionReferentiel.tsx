@@ -1,9 +1,9 @@
 import { avancementToLabel, referentielToName } from '@/app/app/labels';
-import { ReferentielParamOption } from '@/app/app/paths';
 import { actionAvancementColors } from '@/app/app/theme';
 import BarChartCardWithSubrows, {
   TBarChartScoreTable,
 } from '@/app/ui/charts/old/BarChartCardWithSubrows';
+import { ReferentielId } from '@/domain/referentiels';
 import { TableOptions } from 'react-table';
 import { ProgressionRow } from '../useProgressionReferentiel';
 import { getFormattedScore } from '../utils';
@@ -42,7 +42,7 @@ type ProgressionReferentielProps = {
     TableOptions<ProgressionRow>,
     'data' | 'getRowId' | 'getSubRows' | 'autoResetExpanded'
   >;
-  referentiel: ReferentielParamOption;
+  referentiel: ReferentielId;
   percentage?: boolean;
   customStyle?: React.CSSProperties;
 };

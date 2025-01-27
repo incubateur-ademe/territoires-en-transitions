@@ -1,6 +1,6 @@
-import { ReferentielParamOption } from '@/app/app/paths';
 import { supabaseClient } from '@/app/core-logic/api/supabase';
 import { useCollectiviteId } from '@/app/core-logic/hooks/params';
+import { ReferentielId } from '@/domain/referentiels';
 import { useQuery } from 'react-query';
 
 type OpenDataIndicateur = {
@@ -8,9 +8,7 @@ type OpenDataIndicateur = {
   metadonneeId: number | null;
 };
 
-export const useOpenDataIndicateursCount = (
-  categorie: ReferentielParamOption
-) => {
+export const useOpenDataIndicateursCount = (categorie: ReferentielId) => {
   const collectiviteId = useCollectiviteId();
 
   return useQuery(
@@ -28,7 +26,7 @@ export const useOpenDataIndicateursCount = (
 
 const buildOpenDataIndicateursByCategorie = async (
   collectivite_id: number,
-  categorie: ReferentielParamOption
+  categorie: ReferentielId
 ) => {
   const openDataIndicateurs = await fetchOpenDataIndicateurs(collectivite_id);
 
@@ -77,7 +75,7 @@ const buildKeys = (indicateurs: OpenDataIndicateur[]): number[] => {
 
 const fetchOpenDataIndicateursByCategorie = async (
   indicateurIds: number[],
-  categorie: ReferentielParamOption
+  categorie: ReferentielId
 ) => {
   try {
     const { error, data } = await supabaseClient

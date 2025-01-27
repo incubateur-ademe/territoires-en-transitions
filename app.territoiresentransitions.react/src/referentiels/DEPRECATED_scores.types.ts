@@ -1,7 +1,7 @@
-import { Referentiel } from '@/app/referentiels/litterals';
+import { ReferentielId } from '@/domain/referentiels';
 
 export interface ActionScore {
-  referentiel: Referentiel;
+  referentiel: ReferentielId;
   action_id: string;
   fait_taches_avancement: number;
   pas_concerne_taches_avancement: number;
@@ -29,7 +29,7 @@ export interface ActionScore {
 export interface ClientScores {
   id: number;
   collectivite_id: number;
-  referentiel: Referentiel;
+  referentiel: ReferentielId;
   scores: ActionScore[];
   score_created_at: string;
 }

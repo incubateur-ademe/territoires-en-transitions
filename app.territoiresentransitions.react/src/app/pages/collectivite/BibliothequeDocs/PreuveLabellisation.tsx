@@ -1,7 +1,7 @@
 import { referentielToName } from '@/app/app/labels';
-import { Referentiel } from '@/app/referentiels/litterals';
 import PreuveDoc from '@/app/referentiels/preuves/Bibliotheque/PreuveDoc';
 import { TPreuveAuditEtLabellisation } from '@/app/referentiels/preuves/Bibliotheque/types';
+import { ReferentielId } from '@/domain/referentiels';
 import { Fragment } from 'react';
 import { useIsAuditAuditeur } from '../../../../referentiels/audits/useAudit';
 import { getParcoursStatus } from '../../../../referentiels/labellisations/getParcoursStatus';
@@ -29,7 +29,7 @@ export const PreuvesLabellisation = ({
             <Fragment key={referentiel}>
               <h2>
                 Documents d'audit et de labellisation - Référentiel{' '}
-                {referentielToName[referentiel as Referentiel]}
+                {referentielToName[referentiel as ReferentielId]}
               </h2>
               {parDemande.map(({ id, docs, info }, index) => {
                 return (

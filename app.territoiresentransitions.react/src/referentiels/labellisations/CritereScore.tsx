@@ -1,6 +1,5 @@
 import {
   makeCollectiviteReferentielUrl,
-  ReferentielParamOption,
 } from '@/app/app/paths';
 import { TLabellisationParcours } from '@/app/referentiels/labellisations/types';
 import { toLocaleFixed } from '@/app/utils/toFixed';
@@ -18,7 +17,7 @@ export const CritereScore = (props: TCritereScoreProps) => {
   const { collectiviteId, parcours } = props;
   const { critere_score, referentiel } = parcours;
   const { atteint, score_a_realiser } = critere_score;
-  const referentielId = referentiel as ReferentielParamOption;
+  const referentielId = referentiel;
 
   return (
     <>

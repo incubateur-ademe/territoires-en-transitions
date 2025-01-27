@@ -1,8 +1,6 @@
-import {
-  makeCollectiviteTacheUrl,
-  ReferentielParamOption,
-} from '@/app/app/paths';
+import { makeCollectiviteTacheUrl } from '@/app/app/paths';
 import { Kbd } from '@/app/ui/shared/Kbd';
+import { ReferentielId } from '@/domain/referentiels';
 import { Tooltip } from '@/ui';
 import Link from 'next/link';
 import { CellProps } from 'react-table';
@@ -10,14 +8,14 @@ import { ActionReferentiel } from './useReferentiel';
 
 export type TCellProps = CellProps<ActionReferentiel> & {
   collectiviteId: number | null;
-  referentielId: Exclude<ReferentielParamOption, 'te' | 'te-test'> | null;
+  referentielId: Exclude<ReferentielId, 'te' | 'te-test'> | null;
   maxDepth?: number | null;
   alwaysShowExpand?: boolean;
 };
 
 // décalage à gauche des lignes en fonction du niveau
 const paddingByLevel: Record<
-  Exclude<ReferentielParamOption, 'te' | 'te-test'>,
+  Exclude<ReferentielId, 'te' | 'te-test'>,
   Record<number, number>
 > = {
   cae: {

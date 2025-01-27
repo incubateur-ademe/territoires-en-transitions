@@ -1,6 +1,6 @@
 import { NonNullableFields, Views } from '@/api';
 import { supabaseClient } from '@/app/core-logic/api/supabase';
-import { Referentiel } from '@/app/referentiels/litterals';
+import { ReferentielId } from '@/domain/referentiels';
 import { useQuery } from 'react-query';
 
 export type TQuestionThematiqueCompletudeRead = NonNullableFields<
@@ -9,7 +9,7 @@ export type TQuestionThematiqueCompletudeRead = NonNullableFields<
 
 type TUseQuestionThematiqueCompletude = (
   collectivite_id: number | undefined,
-  filters?: Referentiel[]
+  filters?: ReferentielId[]
 ) => TQuestionThematiqueCompletudeRead[];
 
 // charge l'état de complétude de la personnalisation groupé par thématique
@@ -42,7 +42,7 @@ const fetch = async (collectivite_id: number) => {
 // applique les filtres aux données chargées
 const applyFilter = (
   thematiques: TQuestionThematiqueCompletudeRead[],
-  filters?: Referentiel[]
+  filters?: ReferentielId[]
 ): TQuestionThematiqueCompletudeRead[] => {
   if (!filters) {
     return thematiques;

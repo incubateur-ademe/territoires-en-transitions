@@ -34,7 +34,7 @@ export const LabellisationTabs = () => {
   const router = useRouter();
   const { data: audit } = useAudit();
   const collectiviteId = useCollectiviteId();
-  const referentielId = useReferentielId() as ReferentielParamOption;
+  const referentielId = useReferentielId();
   const vue = useLabellisationVue();
   const activeTab = vue ? TABS_INDEX[vue] : TABS_INDEX['suivi'];
 

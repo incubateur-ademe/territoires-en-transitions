@@ -1,5 +1,4 @@
 import {
-  ReferentielParamOption,
   makeCollectiviteActionUrl,
 } from '@/app/app/paths';
 import {
@@ -13,8 +12,8 @@ import { useReferentielDownToAction } from '@/app/referentiels/referentiel-hooks
  */
 export const usePrevAndNextActionLinks = (actionId: string) => {
   // collectivité et référentiel courant
-  const collectiviteId = useCollectiviteId()!;
-  const referentielId = useReferentielId() as ReferentielParamOption;
+  const collectiviteId = useCollectiviteId();
+  const referentielId = useReferentielId();
 
   // tableau contenant uniquement les sous-axes et actions
   const actions = useReferentielDownToAction(referentielId);

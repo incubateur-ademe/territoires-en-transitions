@@ -1,5 +1,5 @@
-import { Referentiel } from '@/app/referentiels/litterals';
 import { TMembreFonction, TNiveauAcces } from '@/app/types/alias';
+import { ReferentielId } from '@/domain/referentiels';
 
 export interface Membre {
   email: string;
@@ -8,7 +8,7 @@ export interface Membre {
   prenom?: string;
   telephone?: string;
   fonction?: TMembreFonction;
-  champ_intervention?: Referentiel[];
+  champ_intervention?: ReferentielId[];
   details_fonction?: string;
   niveau_acces: TNiveauAcces;
   invitation_id: string | null;
@@ -19,7 +19,7 @@ export type TUpdateMembreArgs = {
 } & (
   | { name: 'fonction'; value: TMembreFonction }
   | { name: 'details_fonction'; value: string }
-  | { name: 'champ_intervention'; value: Referentiel[] }
+  | { name: 'champ_intervention'; value: ReferentielId[] }
   | { name: 'niveau_acces'; value: TNiveauAcces }
 );
 

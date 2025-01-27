@@ -1,5 +1,5 @@
 import { actionIdToLabel } from '@/app/app/labels';
-import { ReferentielParamOption } from '@/app/app/paths';
+import { ReferentielId } from '@/domain/referentiels';
 import { TableOptions } from 'react-table';
 import EtatDesLieuxGraphs from './graphs/EtatDesLieuxGraphs';
 import IndicateursCard from './IndicateursCard';
@@ -14,7 +14,7 @@ type Props = {
   >;
   repartitionPhases: { id: string; value: number }[];
   potentiel: number | undefined;
-  referentiel: ReferentielParamOption;
+  referentiel: ReferentielId;
   title: string;
 };
 

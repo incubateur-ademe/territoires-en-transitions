@@ -1,6 +1,6 @@
 import { makeCollectivitePersoRefThematiqueUrl } from '@/app/app/paths';
-import { Referentiel } from '@/app/referentiels/litterals';
 import { BadgeACompleter } from '@/app/ui/shared/Badge/BadgeACompleter';
+import { ReferentielId } from '@/domain/referentiels';
 import Link from 'next/link';
 import { TQuestionThematiqueCompletudeRead } from './useQuestionThematiqueCompletude';
 
@@ -11,7 +11,7 @@ export type TThematiqueListProps = {
   };
   items: TQuestionThematiqueCompletudeRead[];
   className?: string;
-  referentiels: Referentiel[];
+  referentiels: ReferentielId[];
 };
 
 /**
@@ -38,7 +38,7 @@ export const ThematiqueList = (props: TThematiqueListProps) => {
  */
 const Item = (
   props: TQuestionThematiqueCompletudeRead & {
-    referentielsSelected: Referentiel[];
+    referentielsSelected: ReferentielId[];
   }
 ) => {
   const { collectivite_id, id, nom, completude, referentielsSelected } = props;

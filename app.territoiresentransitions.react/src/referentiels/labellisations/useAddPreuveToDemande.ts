@@ -3,9 +3,9 @@ import {
   useCollectiviteId,
   useReferentielId,
 } from '@/app/core-logic/hooks/params';
-import { Referentiel } from '@/app/referentiels/litterals';
-import { useAddPreuveLabellisation } from '@/app/referentiels/preuves/useAddPreuves';
 import { TAddFileFromLib } from '@/app/referentiels/preuves/AddPreuveModal/AddFile';
+import { useAddPreuveLabellisation } from '@/app/referentiels/preuves/useAddPreuves';
+import { ReferentielId } from '@/domain/referentiels';
 import { TLabellisationDemande } from './types';
 import { useCycleLabellisation } from './useCycleLabellisation';
 
@@ -18,7 +18,7 @@ type TAddDocs = () => {
  * fichiers au parcours de labellisation en cours */
 export const useAddPreuveToDemande: TAddDocs = () => {
   const collectivite_id = useCollectiviteId();
-  const referentiel = useReferentielId() as Referentiel;
+  const referentiel = useReferentielId();
   const { mutate: addPreuve } = useAddPreuveLabellisation();
   const { parcours } = useCycleLabellisation(referentiel);
 
@@ -51,7 +51,7 @@ export const useAddPreuveToDemande: TAddDocs = () => {
 // collectivité pour un référentiel et un niveau
 export const createDemande = async (
   collectivite_id: number | null,
-  referentiel: Referentiel | null
+  referentiel: ReferentielId | null
 ) => {
   if (!collectivite_id || !referentiel) {
     return null;

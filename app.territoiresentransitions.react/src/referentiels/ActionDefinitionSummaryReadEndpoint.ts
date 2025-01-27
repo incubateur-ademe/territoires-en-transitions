@@ -1,11 +1,11 @@
 import { Enums } from '@/api';
 import { DataLayerReadCachedEndpoint } from '@/app/core-logic/api/dataLayerEndpoint';
-import { Referentiel } from '@/app/referentiels/litterals';
 import { ActionType } from '@/app/referentiels/referentiels.types';
+import { ReferentielId } from '@/domain/referentiels';
 import { PostgrestResponse } from '@supabase/supabase-js';
 
 export interface ActionDefinitionSummaryParams {
-  referentiel: Referentiel;
+  referentiel: ReferentielId;
   identifiant: string;
 }
 /**
@@ -14,7 +14,7 @@ export interface ActionDefinitionSummaryParams {
  */
 export interface ActionDefinitionSummary {
   id: string;
-  referentiel: Referentiel;
+  referentiel: ReferentielId;
   nom: string;
   identifiant: string;
   children: string[];

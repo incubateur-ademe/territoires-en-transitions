@@ -1,14 +1,14 @@
-import { ReferentielParamOption } from '@/app/app/paths';
 import { useCurrentCollectivite } from '@/app/core-logic/hooks/useCurrentCollectivite';
+import { TScoreAuditRowData } from '@/app/referentiels/audits/AuditComparaison/types';
 import { ActionReferentiel } from '@/app/referentiels/ReferentielTable/useReferentiel';
 import { TActionStatutsRow } from '@/app/types/alias';
 import TagFilters from '@/app/ui/shared/filters/TagFilters';
+import { ReferentielId } from '@/domain/referentiels';
 import { Breadcrumbs, useEventTracker } from '@/ui';
 import { useEffect, useState } from 'react';
 import { TableOptions } from 'react-table';
 import { getIndexTitles } from '../utils';
 import ChartCard from './ChartCard';
-import { TScoreAuditRowData } from '@/app/referentiels/audits/AuditComparaison/types';
 
 export type ProgressionRow = ActionReferentiel &
   Pick<
@@ -36,7 +36,7 @@ export type TBarChartScoreTable =
     >;
 
 type BarChartCardWithSubrowsProps = {
-  referentiel: ReferentielParamOption;
+  referentiel: ReferentielId;
   percentage?: boolean;
   score: TBarChartScoreTable;
   chartProps: {

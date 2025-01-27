@@ -1,15 +1,15 @@
 import { DataLayerReadCachedEndpoint } from '@/app/core-logic/api/dataLayerEndpoint';
-import { Referentiel } from '@/app/referentiels/litterals';
 import { ActionType } from '@/app/referentiels/referentiels.types';
+import { ReferentielId } from '@/domain/referentiels';
 import { PostgrestResponse } from '@supabase/supabase-js';
 
 export interface ActionTitleGetParams {
-  referentiel?: Referentiel;
+  referentiel?: ReferentielId;
 }
 
 export interface ActionTitleRead {
   id: string;
-  referentiel: Referentiel;
+  referentiel: ReferentielId;
   children: string[];
   type: ActionType;
   identifiant: string;
