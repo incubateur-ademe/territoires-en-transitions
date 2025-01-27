@@ -83,8 +83,10 @@ drop function public.services; -- Utilise public.indicateur_definitions
 drop function public.thematiques; -- Utilise public.indicateur_definitions
 drop trigger if exists upsert on public.fiches_action; -- Utilise public.upsert_fiche_action
 drop function public.upsert_fiche_action; -- Utilise private.ajouter_indicateur & trigger
-drop function private.ajouter_indicateur;
-drop function private.enlever_indicateur;
+drop function if exists private.ajouter_indicateur;
+drop function if exists private.enlever_indicateur;
+drop function if exists public.ajouter_indicateur;
+drop function if exists public.enlever_indicateur;
 drop function private.indicateur_personnalise_collectivite_id;
 drop function private.is_valeur_confidentielle(integer, indicateur_id, integer);
 drop function private.is_valeur_confidentielle(integer, integer);

@@ -9,7 +9,7 @@ drop view private.fiches_action;
 drop function filter_fiches_action;
 
 -- Thématiques
-drop function private.ajouter_thematique;
+drop function if exists private.ajouter_thematique;
 
 alter table thematique
     add id serial;

@@ -803,3 +803,5 @@ referentiel/score_snapshot [referentiel/score_snapshot@v4.36.0] 2025-01-21T17:03
 indicateur/fix_json_upsert [indicateur/fix_json_upsert@v4.36.0] 2025-01-21T19:00:28Z Marc Rutkowski <marc@attractive-media.fr> # Ajoute le traitement du champ `titre_court`.
 collectivite/tableau_de_bord [collectivite/tableau_de_bord@v4.36.0] 2025-01-06T14:53:35Z System Administrator <root@MacBook-Air-de-Thibaut-2.local> # generalisation du count by
 @v4.37.0 2025-02-05T17:13:37Z System Administrator <root@MacBook-Air-de-Thibaut-2.local> # Branche les snapshots de referentiel, Tableau de bord personnalisé
+
+collectivite/bucket [collectivite/bucket@v4.36.0] 2025-01-27T09:46:51Z System Administrator <root@MacBook-Air-de-Thibaut-2.local> # Maj de la fonction create_bucket pour permettre la syncho de bdd

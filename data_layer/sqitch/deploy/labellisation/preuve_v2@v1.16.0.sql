@@ -250,8 +250,41 @@ group by r.referentiel;
 $$ language sql;
 
 -- Archive les contenus des utilisateurs
-alter table labellisation_preuve_fichier set schema archive;
-alter table  preuve_lien set schema archive;
-alter table  preuve_fichier set schema archive;
+DROP TABLE IF EXISTS labellisation_preuve_fichier;
+CREATE TABLE archive.labellisation_preuve_fichier (
+	collectivite_id int4 NOT NULL,
+	demande_id int4 NOT NULL,
+	file_id uuid NOT NULL,
+	commentaire text NOT NULL DEFAULT ''::text,
+	CONSTRAINT labellisation_preuve_fichier_pkey PRIMARY KEY (collectivite_id, demande_id, file_id),
+	CONSTRAINT labellisation_preuve_fichier_collectivite_id_fkey FOREIGN KEY (collectivite_id) REFERENCES public.collectivite(id),
+	CONSTRAINT labellisation_preuve_fichier_demande_id_fkey FOREIGN KEY (demande_id) REFERENCES labellisation.demande(id),
+	CONSTRAINT labellisation_preuve_fichier_file_id_fkey FOREIGN KEY (file_id) REFERENCES "storage".objects(id)
+);
+
+DROP TABLE IF EXISTS preuve_lien;
+CREATE TABLE archive.preuve_lien (
+	id serial4 NOT NULL,
+	collectivite_id int4 NULL,
+	"action_id" public."action_id" NULL,
+	url text NOT NULL,
+	titre text NOT NULL,
+	commentaire text NOT NULL DEFAULT ''::text,
+	CONSTRAINT preuve_lien_pkey PRIMARY KEY (id),
+	CONSTRAINT preuve_lien_action_id_fkey FOREIGN KEY ("action_id") REFERENCES public.action_relation(id),
+	CONSTRAINT preuve_lien_collectivite_id_fkey FOREIGN KEY (collectivite_id) REFERENCES public.collectivite(id)
+);
+
+DROP TABLE IF EXISTS preuve_fichier;
+CREATE TABLE archive.preuve_fichier (
+	collectivite_id int4 NOT NULL,
+	"action_id" public."action_id" NOT NULL,
+	file_id uuid NOT NULL,
+	commentaire text NOT NULL DEFAULT ''::text,
+	CONSTRAINT preuve_fichier_pkey PRIMARY KEY (collectivite_id, action_id, file_id),
+	CONSTRAINT preuve_fichier_action_id_fkey FOREIGN KEY ("action_id") REFERENCES public.action_relation(id),
+	CONSTRAINT preuve_fichier_collectivite_id_fkey FOREIGN KEY (collectivite_id) REFERENCES public.collectivite(id),
+	CONSTRAINT preuve_fichier_file_id_fkey FOREIGN KEY (file_id) REFERENCES "storage".objects(id)
+);
 
 COMMIT;
