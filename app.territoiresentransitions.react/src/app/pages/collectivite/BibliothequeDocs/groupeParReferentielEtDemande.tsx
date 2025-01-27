@@ -1,9 +1,9 @@
-import { Referentiel } from '@/app/referentiels/litterals';
 import { TPreuveAuditEtLabellisation } from '@/app/referentiels/preuves/Bibliotheque/types';
+import { ReferentielId } from '@/domain/referentiels';
 
 // groupe les preuves par référentiel
 type TPreuvesParReferentiel = Record<
-  Referentiel,
+  ReferentielId,
   TPreuveAuditEtLabellisation[]
 >;
 const groupeParReferentiel = (

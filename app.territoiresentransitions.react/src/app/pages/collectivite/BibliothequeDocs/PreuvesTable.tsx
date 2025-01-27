@@ -1,6 +1,6 @@
 import { useCollectiviteId } from '@/app/core-logic/hooks/params';
 import ActionPreuvePanel from '@/app/referentiels/actions/action-preuve.panel';
-import { Referentiel } from '@/app/referentiels/litterals';
+import { ReferentielId } from '@/domain/referentiels';
 import { Fragment, useEffect, useRef } from 'react';
 import {
   CellProps,
@@ -17,7 +17,7 @@ import { TableData } from './useTableData';
 
 export type TPreuvesTableProps = {
   tableData: TableData;
-  referentielId: Exclude<Referentiel, 'te' | 'te-test'>;
+  referentielId: Exclude<ReferentielId, 'te' | 'te-test'>;
 };
 
 export type TCellProps = CellProps<ActionReferentiel>;

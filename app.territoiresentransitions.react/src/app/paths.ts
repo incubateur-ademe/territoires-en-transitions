@@ -1,4 +1,4 @@
-import { Referentiel } from '@/app/referentiels/litterals';
+import { ReferentielId } from '@/domain/referentiels';
 
 export const signInPath = `${process.env.NEXT_PUBLIC_AUTH_URL}/login`;
 export const signUpPath = `${process.env.NEXT_PUBLIC_AUTH_URL}/signup`;
@@ -38,7 +38,6 @@ const actionVueParam = 'actionVue';
 const labellisationVueParam = 'labellisationVue';
 export const thematiqueParam = 'thematiqueId';
 
-export type ReferentielParamOption = 'cae' | 'eci' | 'te' | 'te-test';
 export type IndicateurViewParamOption =
   | 'cae'
   | 'eci'
@@ -199,8 +198,8 @@ export const makeCollectiviteReferentielUrl = ({
   axeId,
 }: {
   collectiviteId: number;
-  referentielId: ReferentielParamOption;
   referentielVue?: ReferentielVueParamOption | '';
+  referentielId: ReferentielId;
   axeId?: string;
 }) => {
   let pathName = collectiviteReferentielPath
@@ -223,7 +222,7 @@ export const makeCollectiviteActionUrl = ({
 }: {
   collectiviteId: number;
   actionId: string;
-  referentielId: ReferentielParamOption;
+  referentielId: ReferentielId;
   actionVue?: ActionVueParamOption;
 }) =>
   collectiviteActionPath
@@ -239,7 +238,7 @@ export const makeCollectiviteTacheUrl = ({
 }: {
   collectiviteId: number;
   actionId: string;
-  referentielId: ReferentielParamOption;
+  referentielId: ReferentielId;
 }) => {
   const levels = actionId?.split('.') || [];
   const limitedLevels = levels
@@ -260,7 +259,7 @@ export const makeCollectiviteLabellisationRootUrl = ({
   referentielId,
 }: {
   collectiviteId: number;
-  referentielId: ReferentielParamOption;
+  referentielId: ReferentielId;
 }) =>
   collectiviteLabellisationRootPath
     .replace(`:${collectiviteParam}`, collectiviteId.toString())
@@ -272,7 +271,7 @@ export const makeCollectiviteLabellisationUrl = ({
   labellisationVue,
 }: {
   collectiviteId: number;
-  referentielId: ReferentielParamOption;
+  referentielId: ReferentielId;
   labellisationVue?: LabellisationVueParamOption;
 }) =>
   collectiviteLabellisationPath
@@ -463,7 +462,7 @@ export const makeCollectivitePersoRefUrl = ({
   referentiels,
 }: {
   collectiviteId: number;
-  referentiels?: Referentiel[];
+  referentiels?: ReferentielId[];
 }) =>
   collectivitePersoRefPath.replace(
     `:${collectiviteParam}`,
@@ -487,7 +486,7 @@ export const makeCollectivitePersoRefThematiqueUrl = ({
 }: {
   collectiviteId: number;
   thematiqueId: string;
-  referentiels?: Referentiel[];
+  referentiels?: ReferentielId[];
 }) =>
   collectivitePersoRefThematiquePath
     .replace(`:${collectiviteParam}`, collectiviteId.toString())

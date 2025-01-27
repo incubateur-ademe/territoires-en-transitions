@@ -3,13 +3,12 @@ import {
   useCollectiviteId,
   useReferentielId,
 } from '@/app/core-logic/hooks/params';
-import { Referentiel } from '@/app/referentiels/litterals';
 import { useQuery } from 'react-query';
 
 // vérifie si l'utilisateur courant peut commencer l'audit
 export const usePeutCommencerAudit = () => {
   const collectivite_id = useCollectiviteId();
-  const referentiel = useReferentielId() as Referentiel;
+  const referentiel = useReferentielId();
 
   const { data } = useQuery(
     ['peut_commencer_audit', collectivite_id, referentiel],

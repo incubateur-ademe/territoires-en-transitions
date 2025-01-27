@@ -5,15 +5,15 @@ import {
   useReferentielId,
 } from '@/app/core-logic/hooks/params';
 import { useCurrentCollectivite } from '@/app/core-logic/hooks/useCurrentCollectivite';
-import { Referentiel } from '@/app/referentiels/litterals';
 import { usePreuvesParType } from '@/app/referentiels/preuves/usePreuves';
+import { ReferentielId } from '@/domain/referentiels';
 import { useQuery } from 'react-query';
 import { TAudit } from './types';
 
 // charge les données
 export const fetch = async (
   collectivite_id: number,
-  referentiel: Referentiel
+  referentiel: ReferentielId
 ) => {
   // lit le statut de l'audit en cours (s'il existe)
   const { data, error } = await supabaseClient
@@ -34,7 +34,7 @@ export const fetch = async (
  */
 export const useAudit = () => {
   const collectivite_id = useCollectiviteId();
-  const referentiel = useReferentielId() as Referentiel;
+  const referentiel = useReferentielId();
   return useQuery(['audit', collectivite_id, referentiel], () =>
     collectivite_id && referentiel ? fetch(collectivite_id, referentiel) : null
   );
@@ -50,7 +50,7 @@ export const useIsAuditeur = () => {
 /** Liste des auditeurs pour la collectivité et le référentiel courant */
 export const useAuditeurs = () => {
   const collectivite_id = useCollectiviteId();
-  const referentiel = useReferentielId() as Referentiel;
+  const referentiel = useReferentielId();
   return useQuery(['auditeurs', collectivite_id, referentiel], () =>
     collectivite_id ? fetchAuditeurs(collectivite_id, referentiel) : null
   );
@@ -83,7 +83,7 @@ export const useIsAuditAuditeur = (audit_id?: number) => {
 export type TAuditeur = { nom: string; prenom: string };
 const fetchAuditeurs = async (
   collectivite_id: number,
-  referentiel: Referentiel
+  referentiel: ReferentielId
 ) => {
   const { data, error } = await supabaseClient
     .from('auditeurs')

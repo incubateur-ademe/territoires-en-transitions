@@ -1,5 +1,4 @@
 import {
-  ReferentielParamOption,
   makeCollectiviteLabellisationUrl,
   makeCollectivitePersoRefUrl,
   makeCollectiviteReferentielUrl,
@@ -9,6 +8,7 @@ import { useCycleLabellisation } from '@/app/referentiels/labellisations/useCycl
 import Chart from '@/app/ui/charts/Chart';
 import logoTerritoireEngage from '@/app/ui/logo/logoTerritoireEngage_big.png';
 import { toLocaleFixed } from '@/app/utils/toFixed';
+import { ReferentielId } from '@/domain/referentiels';
 import { Button } from '@/ui';
 import Image from 'next/image';
 import { TableOptions } from 'react-table';
@@ -19,7 +19,7 @@ import LabellisationInfo from './LabellisationInfo';
 
 type ScoreRempliProps = {
   collectiviteId: number;
-  referentiel: ReferentielParamOption;
+  referentiel: ReferentielId;
   title: string;
   progressionScore: Pick<
     TableOptions<ProgressionRow>,
@@ -100,7 +100,7 @@ export const ScoreRempli = ({
 
 type ScoreVideProps = {
   collectiviteId: number;
-  referentiel: ReferentielParamOption;
+  referentiel: ReferentielId;
   title: string;
   tags: { label: string; axeId: string }[];
 };

@@ -8,10 +8,10 @@ import {
   TRemoveFromCollectivite,
   TUpdateMembre,
 } from '@/app/app/pages/collectivite/Users/types';
-import { Referentiel } from '@/app/referentiels/litterals';
 import { TMembreFonction, TNiveauAcces } from '@/app/types/alias';
 import MultiSelectDropdown from '@/app/ui/shared/select/MultiSelectDropdown';
 import SelectDropdown from '@/app/ui/shared/select/SelectDropdown';
+import { ReferentielId } from '@/domain/referentiels';
 import { SendInvitationArgs } from '../useSendInvitation';
 import { ConfirmerSuppressionMembre } from './ConfirmerSuppressionMembre';
 
@@ -344,8 +344,8 @@ const ChampsInterventionDropdown = ({
   values,
   onChange,
 }: {
-  values: Referentiel[];
-  onChange: (value: Referentiel[]) => void;
+  values: ReferentielId[];
+  onChange: (value: ReferentielId[]) => void;
 }) => (
   <div data-test="champ_intervention-dropdown">
     <MultiSelectDropdown

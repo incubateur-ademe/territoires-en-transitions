@@ -11,14 +11,14 @@ import {
   actionDownToTache,
   referentielDownToAction,
 } from '@/app/referentiels/data';
-import { Referentiel } from '@/app/referentiels/litterals';
+import { ReferentielId } from '@/domain/referentiels';
 import { useEffect, useState } from 'react';
 
 /**
  * Returns a list of actions from the "action" level down to the "tache" level.
  */
 export const useActionDownToTache = (
-  referentiel: Referentiel,
+  referentiel: ReferentielId,
   identifiant: string
 ): ActionDefinitionSummary[] => {
   const [summaries, setSummaries] = useState<ActionDefinitionSummary[]>([]);
@@ -37,7 +37,7 @@ export const useActionDownToTache = (
  * level.
  */
 export const useReferentielDownToAction = (
-  referentiel: Referentiel
+  referentiel: ReferentielId
 ): ActionDefinitionSummary[] => {
   const [summaries, setSummaries] = useState<ActionDefinitionSummary[]>([]);
 
@@ -143,7 +143,7 @@ export const useActionTitleList = (
  * Returns an action summary.
  */
 export const useActionSummary = (
-  referentiel: Referentiel,
+  referentiel: ReferentielId,
   identifiant: string
 ): ActionDefinitionSummary | null => {
   const [actionSummary, setActionSummary] =

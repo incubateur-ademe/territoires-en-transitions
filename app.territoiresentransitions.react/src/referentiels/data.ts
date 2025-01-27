@@ -1,7 +1,7 @@
 import { Database } from '@/api';
 import { supabaseClient } from '@/app/core-logic/api/supabase';
 import { ActionDefinitionSummary } from '@/app/referentiels/ActionDefinitionSummaryReadEndpoint';
-import { Referentiel } from '@/app/referentiels/litterals';
+import { ReferentielId } from '@/domain/referentiels';
 import { PostgrestResponse } from '@supabase/supabase-js';
 
 type RPC_KEY = keyof Database['public']['Functions'];
@@ -42,7 +42,7 @@ const rpcCache = new RpcCache();
  * Returns a view of a réferentiel down to the action level
  */
 export const referentielDownToAction = async (
-  referentiel: Referentiel
+  referentiel: ReferentielId
 ): Promise<ActionDefinitionSummary[]> => {
   const { data, error } = await rpcCache.rpc('referentiel_down_to_action', {
     referentiel,
@@ -59,7 +59,7 @@ export const referentielDownToAction = async (
  * Returns a view of an action down to the tache level
  */
 export const actionDownToTache = async (
-  referentiel: Referentiel,
+  referentiel: ReferentielId,
   identifiant: string
 ): Promise<ActionDefinitionSummary[]> => {
   const { data, error } = await rpcCache.rpc('action_down_to_tache', {

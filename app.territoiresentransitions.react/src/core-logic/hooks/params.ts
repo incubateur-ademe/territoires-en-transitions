@@ -3,6 +3,7 @@ import {
   LabellisationVueParamOption,
   ReferentielVueParamOption,
 } from '@/app/app/paths';
+import { ReferentielId } from '@/domain/referentiels';
 import { usePathname } from 'next/navigation';
 import { useParams } from 'react-router-dom';
 
@@ -16,9 +17,9 @@ export const useCollectiviteId = (): number | null => {
   return collectiviteId;
 };
 
-export const useReferentielId = (): string | null => {
+export const useReferentielId = (): ReferentielId => {
   const { referentielId } = useParams<{ referentielId: string | undefined }>();
-  return referentielId || null;
+  return referentielId as ReferentielId;
 };
 
 export const useReferentielVue = (): ReferentielVueParamOption | null => {

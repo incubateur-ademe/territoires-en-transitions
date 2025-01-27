@@ -4,15 +4,15 @@
  */
 
 import { referentielToName } from '@/app/app/labels';
-import { Referentiel } from '@/app/referentiels/litterals';
 import { Tab, Tabs } from '@/app/ui/shared/Tabs';
+import { ReferentielId } from '@/domain/referentiels';
 import { PreuvesTable } from './PreuvesTable';
 import { useTableData } from './useTableData';
 
-const REFERENTIELS: Exclude<Referentiel, 'te' | 'te-test'>[] = ['cae', 'eci'];
+const REFERENTIELS: Exclude<ReferentielId, 'te' | 'te-test'>[] = ['cae', 'eci'];
 
 const PreuvesTab = (props: {
-  referentielId: Exclude<Referentiel, 'te' | 'te-test'>;
+  referentielId: Exclude<ReferentielId, 'te' | 'te-test'>;
 }) => {
   const tableData = useTableData(props.referentielId);
   return (
@@ -28,9 +28,7 @@ export const PreuvesTabs = () => {
           <Tab
             key={referentielId}
             data-test={referentielId}
-            label={`Référentiel ${
-              referentielToName[referentielId as Referentiel]
-            }`}
+            label={`Référentiel ${referentielToName[referentielId]}`}
           >
             <PreuvesTab referentielId={referentielId} />
           </Tab>

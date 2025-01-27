@@ -3,15 +3,15 @@
  */
 
 import { referentielToName } from '@/app/app/labels';
-import { Referentiel } from '@/app/referentiels/litterals';
+import { ReferentielId } from '@/domain/referentiels';
 import { FormEvent } from 'react';
 
 export type TThematiqueFilterProps = {
-  referentiels: Referentiel[];
-  onChange: (newSelection: Referentiel[]) => void;
+  referentiels: ReferentielId[];
+  onChange: (newSelection: ReferentielId[]) => void;
 };
 
-const referentielOptions: Referentiel[] = ['cae', 'eci'];
+const referentielOptions: ReferentielId[] = ['cae', 'eci'];
 
 export const ThematiqueFilter = (props: TThematiqueFilterProps) => {
   const { referentiels, onChange } = props;

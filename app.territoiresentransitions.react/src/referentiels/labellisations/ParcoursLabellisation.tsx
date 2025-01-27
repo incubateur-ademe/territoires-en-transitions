@@ -1,8 +1,5 @@
 import { referentielToName } from '@/app/app/labels';
-import {
-  makeCollectiviteReferentielUrl,
-  ReferentielParamOption,
-} from '@/app/app/paths';
+import { makeCollectiviteReferentielUrl } from '@/app/app/paths';
 import {
   useCollectiviteId,
   useReferentielId,
@@ -17,22 +14,22 @@ import { useIsUnchangedReferentiel } from './useIsUnchangedReferentiel';
 
 const ParcoursLabellisation = () => {
   const collectiviteId = useCollectiviteId();
-  const referentiel = useReferentielId();
-  const { parcours } = useCycleLabellisation(referentiel);
+  const referentielId = useReferentielId();
+  const { parcours } = useCycleLabellisation(referentielId);
   const isUnchangedReferentiel = useIsUnchangedReferentiel(
     collectiviteId,
-    referentiel
+    referentielId
   );
 
   // cas particulier : le référentiel n'est pas du tout renseigné
   if (isUnchangedReferentiel) {
     return (
       <PageContainer
-        dataTest={`labellisation-${referentiel}`}
+        dataTest={`labellisation-${referentielId}`}
         bgColor="white"
         innerContainerClassName="!pt-0"
       >
-        <Title referentiel={referentiel} />
+        <Title referentiel={referentielId} />
         <p className="my-12 text-center">
           Ce référentiel n’est pas encore renseigné pour votre collectivité.
           <br />
@@ -40,12 +37,12 @@ const ParcoursLabellisation = () => {
           statuts des actions.
         </p>
 
-        {collectiviteId && referentiel ? (
+        {collectiviteId && referentielId ? (
           <div className="flex justify-center">
             <Button
               href={makeCollectiviteReferentielUrl({
                 collectiviteId,
-                referentielId: referentiel as ReferentielParamOption,
+                referentielId,
               })}
             >
               Mettre à jour le référentiel

@@ -1,6 +1,6 @@
 import { ActionDefinitionSummary } from '@/app/referentiels/ActionDefinitionSummaryReadEndpoint';
 import { ActionTitleRead } from '@/app/referentiels/ActionTitleReadEndpoint';
-import { Referentiel } from '@/app/referentiels/litterals';
+import { ReferentielId } from '@/domain/referentiels';
 
 /**
  * Search for the siblings of an action in the action list.
@@ -84,7 +84,7 @@ export const displayName = (
 // TODO-REFERENTIEL: replace with `getReferentielIdFromActionId`
 export const referentielId = (
   actionId: string
-): Exclude<Referentiel, 'te' | 'te-test'> =>
+): Exclude<ReferentielId, 'te' | 'te-test'> =>
   actionId.startsWith('eci') ? 'eci' : 'cae';
 
 export const actionPath = (

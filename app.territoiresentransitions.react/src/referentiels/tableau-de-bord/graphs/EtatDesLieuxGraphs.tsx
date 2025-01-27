@@ -1,8 +1,8 @@
 import { referentielToName } from '@/app/app/labels';
-import { ReferentielParamOption } from '@/app/app/paths';
 import { useCurrentCollectivite } from '@/app/core-logic/hooks/useCurrentCollectivite';
 import Chart from '@/app/ui/charts/Chart';
 import { toLocaleFixed } from '@/app/utils/toFixed';
+import { ReferentielId } from '@/domain/referentiels';
 import { Button, useEventTracker } from '@/ui';
 import { useState } from 'react';
 import { TableOptions } from 'react-table';
@@ -11,7 +11,7 @@ import { ProgressionRow } from '../useProgressionReferentiel';
 import ProgressionReferentiel from './ProgressionReferentiel';
 
 type EtatDesLieuxGraphsProps = {
-  referentiel: ReferentielParamOption;
+  referentiel: ReferentielId;
   displayEtatDesLieux: boolean;
   progressionScore: Pick<
     TableOptions<ProgressionRow>,

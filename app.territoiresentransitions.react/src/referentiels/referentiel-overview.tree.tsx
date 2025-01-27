@@ -1,19 +1,19 @@
 import { useReferentielId } from '@/app/core-logic/hooks/params';
 import { useCurrentCollectivite } from '@/app/core-logic/hooks/useCurrentCollectivite';
 import SpinnerLoader from '@/app/ui/shared/SpinnerLoader';
+import { ReferentielId } from '@/domain/referentiels';
 import { Button, Checkbox, OptionValue, Select } from '@/ui';
 import { useState } from 'react';
 import { useExportScore } from './useExportScore';
 import { ActionCard } from './actions/action.card';
 import { AxeWithChildrenExpandableTree } from './actions/axe-with-children.expandable-tree';
-import { Referentiel } from './litterals';
 import { useReferentielDownToAction } from './referentiel-hooks';
 
 export const AxesOverviewTree = () => {
   const referentielId = useReferentielId();
   const current = referentielId ?? 'eci';
 
-  const actions = useReferentielDownToAction(current as Referentiel);
+  const actions = useReferentielDownToAction(referentielId as ReferentielId);
   const axes = actions.filter((a) => a.type === 'axe');
   const referentiel = actions.find((a) => a.type === 'referentiel')!;
 

@@ -2,7 +2,7 @@ import { useCollectiviteId } from '@/app/core-logic/hooks/params';
 import { referentielId } from '@/app/referentiels/actions.utils';
 import { clientScoresReadEndpoint } from '@/app/referentiels/DEPRECATED_ClientScoresReadEndpoint';
 import { ActionScore } from '@/app/referentiels/DEPRECATED_scores.types';
-import { Referentiel } from '@/app/referentiels/litterals';
+import { ReferentielId } from '@/domain/referentiels';
 import { useQuery } from 'react-query';
 import { useScoreListener } from './DEPRECATED_use-score-listener';
 
@@ -13,12 +13,12 @@ type ReferentielsActionScores = {
 
 export const getScoreQueryKey = (
   collectiviteId: number | null,
-  referentiel: Referentiel
+  referentiel: ReferentielId
 ) => ['client_scores', collectiviteId, referentiel];
 
 const fetchScoresForCollectiviteAndReferentiel = async (
   collectiviteId: number,
-  referentiel: Exclude<Referentiel, 'te' | 'te-test'>
+  referentiel: Exclude<ReferentielId, 'te' | 'te-test'>
 ): Promise<ActionScore[]> => {
   const clientScores = await clientScoresReadEndpoint.getBy({
     collectiviteId,
@@ -29,7 +29,7 @@ const fetchScoresForCollectiviteAndReferentiel = async (
 
 // donne accès aux scores d'un référentiel
 const useReferentielScores = (
-  referentiel: Exclude<Referentiel, 'te' | 'te-test'>
+  referentiel: Exclude<ReferentielId, 'te' | 'te-test'>
 ) => {
   const collectiviteId = useCollectiviteId();
 

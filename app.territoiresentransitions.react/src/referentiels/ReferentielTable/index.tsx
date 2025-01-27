@@ -1,12 +1,9 @@
-import { ReferentielParamOption } from '@/app/app/paths';
-import {
-  useCollectiviteId,
-  useReferentielId,
-} from '@/app/core-logic/hooks/params';
 import { useCallback, useMemo } from 'react';
 import { TableInstance } from 'react-table';
 import { makeRowRenderer } from './Row';
 import './styles.css';
+import { useCollectiviteId } from '@/app/collectivites/collectivite-context';
+import { useReferentielId } from '../referentiel-context';
 
 type Table = <T extends Record<string, unknown>>(props: {
   className?: string;
@@ -30,7 +27,7 @@ export const ReferentielTable: Table = (props) => {
     table;
 
   const collectiviteId = useCollectiviteId();
-  const referentielId = useReferentielId() as ReferentielParamOption;
+  const referentielId = useReferentielId();
   const cellProps = useMemo(
     () => ({ collectiviteId, referentielId, ...(customCellProps || {}) }),
     [collectiviteId, referentielId, customCellProps]

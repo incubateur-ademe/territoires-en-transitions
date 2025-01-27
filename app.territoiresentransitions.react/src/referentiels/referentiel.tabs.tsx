@@ -9,11 +9,8 @@ import {
   useReferentielId,
   useReferentielVue,
 } from '@/app/core-logic/hooks/params';
-import { useCurrentCollectivite } from '@/app/core-logic/hooks/useCurrentCollectivite';
-import {
-  Referentiel,
-  ReferentielOfIndicateur,
-} from '@/app/referentiels/litterals';
+import { ReferentielOfIndicateur } from '@/app/referentiels/litterals';
+import { ReferentielId } from '@/domain/referentiels';
 import { Tab, Tabs } from '@/ui';
 import PageContainer from '@/ui/components/layout/page-container';
 import { useRouter } from 'next/navigation';
@@ -23,6 +20,7 @@ import { useReferentielDownToAction } from './referentiel-hooks';
 import { AxesOverviewTree } from './referentiel-overview.tree';
 import ScoreProgressBar from './scores/score.progress-bar';
 import { ScoreRatioBadge } from './scores/score.ratio-badge';
+import { useCurrentCollectivite } from '../core-logic/hooks/useCurrentCollectivite';
 
 const TABS_INDEX: Record<ReferentielVueParamOption, number> = {
   progression: 0,
@@ -38,7 +36,7 @@ const ReferentielHeader = ({
   className?: string;
 }) => {
   const current = referentielId ?? 'eci';
-  const actions = useReferentielDownToAction(current as Referentiel);
+  const actions = useReferentielDownToAction(current as ReferentielId);
   const referentiel = actions.find((a) => a.type === 'referentiel')!;
   const collectivite = useCurrentCollectivite();
   const collectiviteId = collectivite?.collectiviteId;
