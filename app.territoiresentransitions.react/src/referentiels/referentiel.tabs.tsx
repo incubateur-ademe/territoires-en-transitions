@@ -17,11 +17,11 @@ import {
 import { Tab, Tabs } from '@/ui';
 import PageContainer from '@/ui/components/layout/page-container';
 import { useRouter } from 'next/navigation';
-import AidePriorisation from '../app/pages/collectivite/AidePriorisation';
-import DetailTacheTable from '../app/pages/collectivite/DetailTaches';
-import ActionProgressBar from './actions/action.progress-bar';
+import AidePriorisation from './AidePriorisation';
+import DetailTacheTable from './DetailTaches';
 import { useReferentielDownToAction } from './referentiel-hooks';
 import { AxesOverviewTree } from './referentiel-overview.tree';
+import ScoreProgressBar from './scores/score.progress-bar';
 import { ScoreRatioBadge } from './scores/score.ratio-badge';
 
 const TABS_INDEX: Record<ReferentielVueParamOption, number> = {
@@ -84,7 +84,7 @@ const ReferentielHeader = ({
       {referentiel && (
         <div className="flex items-center gap-4 pb-4 mb-4 border-b border-primary-3">
           <div className="grow">
-            <ActionProgressBar
+            <ScoreProgressBar
               actionDefinition={referentiel}
               progressBarStyleOptions={{ fullWidth: true }}
             />

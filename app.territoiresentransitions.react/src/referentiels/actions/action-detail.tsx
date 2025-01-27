@@ -1,6 +1,6 @@
-import { TCycleLabellisationStatus } from '@/app/app/pages/collectivite/ParcoursLabellisation/useCycleLabellisation';
 import { ActionDefinitionSummary } from '@/app/referentiels/ActionDefinitionSummaryReadEndpoint';
 import { ActionCommentaire } from '@/app/referentiels/actions/action-commentaire';
+import { TCycleLabellisationStatus } from '@/app/referentiels/labellisations/useCycleLabellisation';
 import { useSortedActionSummaryChildren } from '@/app/referentiels/referentiel-hooks';
 import { phaseToLabel } from '@/app/referentiels/utils';
 import { Button } from '@/ui';

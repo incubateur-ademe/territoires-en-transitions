@@ -1,72 +1,85 @@
-import { referentielToName } from '@/app/app/labels';
-import { makeCollectiviteTacheUrl } from '@/app/app/paths';
+import { makeCollectiviteActionUrl } from '@/app/app/paths';
 import { useCollectiviteId } from '@/app/core-logic/hooks/params';
-import ActionStatutBadge from '@/app/referentiels/actions/action-statut.badge';
-import { getActionStatut } from '@/app/referentiels/utils';
-import { TActionStatutsRow } from '@/app/types/alias';
-import { Button, Card } from '@/ui';
-import { objectToCamel } from 'ts-case-convert';
+import { Card } from '@/ui';
+import Link from 'next/link';
+import { ActionDefinitionSummary } from '../ActionDefinitionSummaryReadEndpoint';
+import { referentielId } from '../actions.utils';
+import ScoreProgressBar from '../scores/score.progress-bar';
+import { ScoreRatioBadge } from '../scores/score.ratio-badge';
 
-type ActionCardProps = {
-  isReadonly?: boolean;
-  action: TActionStatutsRow;
-  openInNewTab?: boolean;
-  onUnlink?: () => void;
+/**
+ * Used on referentiels page, links to action page.
+ */
+type ReferentielCardProps = {
+  action: ActionDefinitionSummary;
+  isDescriptionOn: boolean;
 };
 
-const ActionCard = ({
-  isReadonly = true,
+export const ActionCard = ({
   action,
-  openInNewTab = false,
-  onUnlink,
-}: ActionCardProps) => {
-  const collectiviteId = useCollectiviteId()!;
-  const { action_id: actionId, identifiant, nom, referentiel } = action;
-  const statut = getActionStatut(objectToCamel(action));
+  isDescriptionOn,
+}: ReferentielCardProps) => {
+  const collectiviteId = useCollectiviteId();
+  const referentiel = referentielId(action.id);
 
-  const link = makeCollectiviteTacheUrl({
-    collectiviteId,
-    actionId: actionId,
-    referentielId: referentiel,
-  });
+  // *** For future use ***
+  // Replace with real data :)
+  // const FAKE_pilotes = [
+  //   {
+  //     nom: 'John Doe',
+  //     collectiviteId: collectiviteId!,
+  //     tagId: 1,
+  //     userId: '1',
+  //   },
+  // ];
 
   return (
-    <div className="relative group">
-      <div className="invisible group-hover:visible absolute top-4 right-4">
-        {!isReadonly && onUnlink && (
-          <Button
-            icon="link-unlink"
-            title="Dissocier l'action"
-            variant="grey"
-            size="xs"
-            onClick={onUnlink}
-          />
-        )}
-      </div>
-
+    <Link
+      href={makeCollectiviteActionUrl({
+        collectiviteId: collectiviteId!,
+        referentielId: referentiel,
+        actionId: action.id,
+      })}
+    >
       <Card
-        dataTest="ActionCarte"
-        id={`action-${action.action_id}`}
-        className="h-full px-4 py-[1.125rem] !gap-3 text-grey-8 hover:border-primary-3 hover:!bg-primary-1 !shadow-none transition"
-        href={link}
-        external={openInNewTab}
-        header={
-          // Statut de l'action
-          <ActionStatutBadge statut={statut} />
-        }
+        className="h-full !p-y-2 !p-x-4 flex flex-col"
+        // *** For future use ***
+        // header={
+        //   <div className="flex items-center gap-3">
+        //     <Badge state="standard" title="Compétence 1" size="sm" />
+        //   </div>
+        // }
+        // footer={
+        //   <div className="flex flex-col">
+        //     <ActionCardFooter pilotes={FAKE_pilotes} />
+        //   </div>
+        // }
       >
-        {/* Référentiel de l'action */}
-        <span className="text-grey-8 text-sm font-medium">
-          Référentiel {referentielToName[referentiel]}
-        </span>
+        <div className="flex-grow">
+          <div className="flex min-w-min">
+            <span className="text-lg font-bold text-primary-9 font-bold">
+              {action.identifiant} {action.nom}
+            </span>
+          </div>
 
-        {/* Identifiant et titre de l'action */}
-        <span className="text-base font-bold text-primary-9">
-          {identifiant} {nom}
-        </span>
+          {isDescriptionOn && action.description && (
+            <p
+              className="htmlContent text-sm text-grey-9 font-light my-6"
+              dangerouslySetInnerHTML={{
+                __html: action.description,
+              }}
+            />
+          )}
+        </div>
+
+        <div className="mt-auto">
+          <ScoreRatioBadge actionId={action.id} className={'mb-3'} />
+          <ScoreProgressBar
+            actionDefinition={action}
+            progressBarStyleOptions={{ fullWidth: true }}
+          />
+        </div>
       </Card>
-    </div>
+    </Link>
   );
 };
-
-export default ActionCard;

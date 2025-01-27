@@ -1,12 +1,13 @@
 import { ActionDefinitionSummary } from '@/app/referentiels/ActionDefinitionSummaryReadEndpoint';
 import { ActionCommentaire } from '@/app/referentiels/actions/action-commentaire';
-import ActionProgressBar from '@/app/referentiels/actions/action.progress-bar';
-import ScoreShow from '@/app/referentiels/actions/score.show';
 import {
   StatusToSavePayload,
   SubActionStatutDropdown,
 } from '@/app/referentiels/actions/sub-action-statut.dropdown';
+import ScoreProgressBar from '@/app/referentiels/scores/score.progress-bar';
+import ScoreShow from '@/app/referentiels/scores/score.show';
 import { ExpandToggle } from '@/app/ui/icons/ExpandToggle';
+import { StatutAvancement } from '@/domain/referentiels';
 import { InfoTooltip } from '@/ui';
 import classNames from 'classnames';
 import DOMPurify from 'dompurify';
@@ -14,7 +15,6 @@ import { useEffect, useState } from 'react';
 import { useScore, useSnapshotFlagEnabled } from '../../use-snapshot';
 import { useScoreRealise } from '../useScoreRealise';
 import ActionJustification from './sub-action-justification';
-import { StatutAvancement } from '@/domain/referentiels';
 
 type SubActionHeaderProps = {
   actionDefinition: ActionDefinitionSummary;
@@ -129,7 +129,7 @@ const SubActionHeader = ({
             {displayProgressBar && (
               <div className="flex justify-end w-[155px]">
                 {/* TODO(temporary): Temporary patch to display percentage */}
-                <ActionProgressBar
+                <ScoreProgressBar
                   actionDefinition={actionDefinition}
                   TEMP_displayValue={true}
                 />

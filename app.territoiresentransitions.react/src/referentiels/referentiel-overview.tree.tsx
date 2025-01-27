@@ -3,9 +3,9 @@ import { useCurrentCollectivite } from '@/app/core-logic/hooks/useCurrentCollect
 import SpinnerLoader from '@/app/ui/shared/SpinnerLoader';
 import { Button, Checkbox, OptionValue, Select } from '@/ui';
 import { useState } from 'react';
-import { useExportScore } from '../app/pages/collectivite/Referentiels/useExportScore';
+import { useExportScore } from './useExportScore';
+import { ActionCard } from './actions/action.card';
 import { AxeWithChildrenExpandableTree } from './actions/axe-with-children.expandable-tree';
-import { ReferentielCard } from './Card/ReferentielCard';
 import { Referentiel } from './litterals';
 import { useReferentielDownToAction } from './referentiel-hooks';
 
@@ -85,7 +85,7 @@ export const AxesOverviewTree = () => {
             {actions
               .filter((action) => action.type === 'action')
               .map((action) => (
-                <ReferentielCard
+                <ActionCard
                   key={action.id}
                   action={action}
                   isDescriptionOn={isDescriptionOn}

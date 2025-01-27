@@ -1,4 +1,4 @@
-import { TScoreAuditRowData } from '@/app/app/pages/collectivite/AuditComparaison/types';
+import { TScoreAuditRowData } from '@/app/referentiels/audits/AuditComparaison/types';
 import { DonutData } from '@/app/ui/charts/Donut/DonutChart';
 import { LineData } from '@/app/ui/charts/Line/LineChart';
 import { defaultColors, nivoColorsSet } from '@/app/ui/charts/chartsTheme';

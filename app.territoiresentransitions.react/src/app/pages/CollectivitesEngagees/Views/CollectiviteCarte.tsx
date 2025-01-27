@@ -1,13 +1,13 @@
 import { referentielToName } from '@/app/app/labels';
-import { NIVEAUX } from '@/app/app/pages/collectivite/EtatDesLieux/Accueil/EtatDesLieux/labellisation/LabellisationInfo';
-import {
-  GreyStar,
-  RedStar,
-} from '@/app/app/pages/collectivite/EtatDesLieux/Accueil/EtatDesLieux/labellisation/Star';
 import { TCollectiviteCarte } from '@/app/app/pages/CollectivitesEngagees/data/useFilteredCollectivites';
 import { makeCollectiviteAccueilUrl } from '@/app/app/paths';
 import { useFonctionTracker } from '@/app/core-logic/hooks/useFonctionTracker';
 import { Referentiel } from '@/app/referentiels/litterals';
+import { NIVEAUX } from '@/app/referentiels/tableau-de-bord/labellisation/LabellisationInfo';
+import {
+  GreyStar,
+  RedStar,
+} from '@/app/referentiels/tableau-de-bord/labellisation/Star';
 import { toPercentString } from '@/app/utils/to-percent-string';
 import { Icon } from '@/ui';
 import classNames from 'classnames';

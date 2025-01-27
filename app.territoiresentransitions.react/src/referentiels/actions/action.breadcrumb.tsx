@@ -1,4 +1,4 @@
-import NestedMenuItem from '@/app/app/pages/collectivite/Referentiels/NestedMenuItem';
+import NestedMenuItem from '@/app/referentiels/action.show/NestedMenuItem';
 import { makeCollectiviteReferentielUrl } from '@/app/app/paths';
 import { useCollectiviteId } from '@/app/core-logic/hooks/params';
 import { ActionDefinitionSummary } from '@/app/referentiels/ActionDefinitionSummaryReadEndpoint';

@@ -1,8 +1,8 @@
-import { ActionReferentiel } from '@/app/app/pages/collectivite/ReferentielTable/useReferentiel';
 import { supabaseClient } from '@/app/core-logic/api/supabase';
 import { useCollectiviteId } from '@/app/core-logic/hooks/params';
 import { ActionDefinitionSummary } from '@/app/referentiels/ActionDefinitionSummaryReadEndpoint';
 import { Referentiel } from '@/app/referentiels/litterals';
+import { ActionReferentiel } from '@/app/referentiels/ReferentielTable/useReferentiel';
 import { TActionStatutsRow } from '@/app/types/alias';
 import { indexBy } from '@/app/utils/indexBy';
 import { useQuery } from 'react-query';

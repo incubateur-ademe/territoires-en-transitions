@@ -1,13 +1,13 @@
 import { ActionDefinitionSummary } from '@/app/referentiels/ActionDefinitionSummaryReadEndpoint';
-import ActionProgressBar from '@/app/referentiels/actions/action.progress-bar';
 import PageContainer from '@/ui/components/layout/page-container';
 import classNames from 'classnames';
 import HeaderFixed from '../../app/pages/collectivite/CollectivitePageLayout/HeaderFixed';
-import { PersoPotentiel } from '../../app/pages/collectivite/PersoPotentielModal/PersoPotentiel';
+import { PersoPotentiel } from '../personnalisations/PersoPotentielModal/PersoPotentiel';
+import ScoreProgressBar from '../scores/score.progress-bar';
+import ScoreShow from '../scores/score.show';
 import { ActionDetailed, useSnapshotFlagEnabled } from '../use-snapshot';
 import { ActionTopNav } from './action.nav';
 import { ActionSidePanelToolbar } from './action.side-panel.toolbar';
-import ScoreShow from './score.show';
 import { SuiviScoreRow } from './useScoreRealise';
 
 /**
@@ -65,7 +65,7 @@ export const ActionHeader = ({
             innerContainerClassName="flex justify-between items-center fr-text--sm my-4 !py-0"
           >
             <div className="flex gap-4 items-center fr-pl-1v text-grey425">
-              <ActionProgressBar
+              <ScoreProgressBar
                 actionDefinition={actionDefinition}
                 className="border-r border-r-[#ddd] fr-pr-5v"
                 // TODO(temporary): Temporary patch to display percentage
@@ -98,7 +98,7 @@ export const ActionHeader = ({
                 </div>
               )}
             </div>
-            <ActionSidePanelToolbar action={action} />
+            <ActionSidePanelToolbar action={actionDefinition} />
           </PageContainer>
         </div>
       )}

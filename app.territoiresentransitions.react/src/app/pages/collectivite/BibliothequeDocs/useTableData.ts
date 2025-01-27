@@ -3,7 +3,7 @@ import { TableOptions } from 'react-table';
 import {
   ActionReferentiel,
   useReferentiel,
-} from '../ReferentielTable/useReferentiel';
+} from '../../../../referentiels/ReferentielTable/useReferentiel';
 
 export type UseTableData = (referentiel: string) => TableData;
 
