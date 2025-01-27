@@ -52,7 +52,7 @@ const SaveScoreModal = ({
           'error',
           `Une sauvegarde du référentiel à la date ${
             dateVersion ? dateVersion : `d'aujourd'hui`
-          } existe déjà.`,
+          } ou/et avec le nom "${nomVersion}" existe déjà.`,
           5000
         );
       } else {
