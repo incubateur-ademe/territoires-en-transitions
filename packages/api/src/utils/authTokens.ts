@@ -4,7 +4,8 @@
 
  * Ref: https://github.com/orgs/supabase/discussions/5742#discussioncomment-4050444
 */
-import { Session, SupabaseClient } from '@supabase/supabase-js';
+import { getRootDomain } from '@/api/utils/pathUtils';
+import { Session, SupabaseClient, UserResponse } from '@supabase/supabase-js';
 import { ENV } from '../environmentVariables';
 import { supabaseClient } from './supabase-client';
 
@@ -69,10 +70,23 @@ export const restoreSessionFromAuthTokens = async (
   const refreshTokenCookie = cookies.find((x) => x[0] === REFRESH_TOKEN);
 
   if (accessTokenCookie && refreshTokenCookie) {
-    return supabase.auth.setSession({
+    // Check that the user still exists
+    let userResponse: UserResponse | null = null;
+    try {
+      userResponse = await supabase.auth.getUser(accessTokenCookie[1]);
+    } catch (error) {}
+    if (!userResponse || userResponse.error) {
+      // Disconnect by clearing the tokens
+      clearAuthTokens(getRootDomain(document.location.hostname));
+
+      return null;
+    }
+
+    const authResponse = await supabase.auth.setSession({
       access_token: accessTokenCookie[1],
       refresh_token: refreshTokenCookie[1],
     });
+    return authResponse;
   }
   return null;
 };
