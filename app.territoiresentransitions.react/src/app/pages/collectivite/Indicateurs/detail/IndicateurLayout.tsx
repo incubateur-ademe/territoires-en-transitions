@@ -70,7 +70,7 @@ const IndicateurLayout = ({
   };
 
   return (
-    <div className="bg-grey-2">
+    <div className="bg-grey-2 grow">
       <div className="py-12">
         <IndicateurHeader
           collectiviteId={collectiviteId!}
