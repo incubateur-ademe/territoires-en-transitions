@@ -43,7 +43,7 @@ const Home = () => {
           <Button href={signInPath}>Se connecter</Button>
         </div>
         <Image
-          className="-mb-8 rounded-t-3xl border-t border-l border-r border-primary-4"
+          className="rounded-t-3xl border-t border-l border-r border-primary-4"
           src={homeImage}
           alt="interface territoires en transition"
         />

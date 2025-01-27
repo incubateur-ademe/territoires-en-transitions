@@ -82,7 +82,7 @@ const IndicateurLayout = ({
         onUpdate={handleTitreUpdate}
       />
 
-      <div className="flex flex-col px-10 py-6">
+      <div className="flex flex-col px-10 pt-6 pb-14">
         <div className="flex items-center justify-between mb-12">
           {/* Liste des badges */}
           {!composeSansAgregation && (
