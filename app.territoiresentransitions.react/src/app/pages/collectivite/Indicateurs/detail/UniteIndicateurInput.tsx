@@ -11,9 +11,10 @@ const UniteIndicateurInput = ({ unite, disabled, updateUnite }: Props) => {
   const [uniteInput, setUniteInput] = useState(unite);
 
   return (
-    <Field title="Unité" className="w-72">
+    <Field title="Unité" className="max-w-72" small>
       <Input
         type="text"
+        displaySize="sm"
         value={uniteInput}
         onChange={(evt) => setUniteInput(evt.target.value)}
         onBlur={(evt) => updateUnite(evt.target.value)}

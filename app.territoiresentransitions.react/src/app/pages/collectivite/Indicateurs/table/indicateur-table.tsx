@@ -35,7 +35,7 @@ export const IndicateurTable = (props: IndicateurTableProps) => {
       <div className="flex">
         {/** bascule entre résultats et objectifs */}
         <ButtonGroup
-          size="sm"
+          size="xs"
           activeButtonId={type}
           buttons={[
             {
@@ -51,7 +51,7 @@ export const IndicateurTable = (props: IndicateurTableProps) => {
           ]}
         />
         {/** pour ouvrir le dialogue d'édition des valeurs */}
-        <Button size="sm" onClick={() => setIsOpen(true)} disabled={readonly}>
+        <Button size="xs" onClick={() => setIsOpen(true)} disabled={readonly}>
           Ajouter une année
         </Button>
       </div>

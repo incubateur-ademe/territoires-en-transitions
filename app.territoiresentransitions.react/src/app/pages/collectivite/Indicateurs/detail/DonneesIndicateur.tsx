@@ -34,11 +34,12 @@ const DonneesIndicateur = ({
         />
       )}
 
-      {/* Graphe */}
-      <IndicateurDetailChart
-        className="mb-8"
-        definition={definition}
-      />
+        {/* Graphe */}
+        <IndicateurDetailChart
+          className="mb-6"
+          definition={definition}
+        />
+
 
       <Divider />
 

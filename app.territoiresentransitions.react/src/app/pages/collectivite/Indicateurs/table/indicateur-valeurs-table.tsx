@@ -139,7 +139,7 @@ export const IndicateurValeursTable = ({
                 <TCell key={annee}>
                   <div className="flex justify-center">
                     <Button
-                      size="sm"
+                      size="xs"
                       variant="outlined"
                       icon="question-answer-fill"
                       notification={commentaire ? { number: 1 } : undefined}
