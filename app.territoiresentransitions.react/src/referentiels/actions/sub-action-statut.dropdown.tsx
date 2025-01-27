@@ -19,13 +19,13 @@ import {
 import { Button, Tooltip } from '@/ui';
 import classNames from 'classnames';
 import { useEffect, useState } from 'react';
+import ScoreProgressBar from '../scores/score.progress-bar';
 import { useScore, useSnapshotFlagEnabled } from '../use-snapshot';
 import {
   getAvancementExt,
   getStatusFromIndex,
   statutParAvancement,
 } from '../utils';
-import ActionProgressBar from './action.progress-bar';
 import ScoreAutoModal from './sub-action.detail/ScoreAutoModal';
 import ScoreDetailleModal from './sub-action.detail/ScoreDetailleModal';
 
@@ -285,7 +285,7 @@ export const SubActionStatutDropdown = ({
           {/* Affichage de la jauge de score sur les tâches */}
           {actionDefinition.type === 'tache' &&
             (onSaveStatus === undefined ? (
-              <ActionProgressBar actionDefinition={actionDefinition} />
+              <ScoreProgressBar actionDefinition={actionDefinition} />
             ) : (
               <ProgressBarWithTooltip
                 score={

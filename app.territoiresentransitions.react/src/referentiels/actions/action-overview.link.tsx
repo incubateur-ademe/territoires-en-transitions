@@ -2,7 +2,7 @@ import { makeCollectiviteActionUrl } from '@/app/app/paths';
 import { useCollectiviteId } from '@/app/core-logic/hooks/params';
 import { ActionDefinitionSummary } from '@/app/referentiels/ActionDefinitionSummaryReadEndpoint';
 import { referentielId } from '@/app/referentiels/actions.utils';
-import ActionProgressBar from '@/app/referentiels/actions/action.progress-bar';
+import ScoreProgressBar from '@/app/referentiels/scores/score.progress-bar';
 import Link from 'next/link';
 import { ActionDescriptionHtml } from './action-description.html';
 import { ActionTitleWithScorePotentielHeader } from './action-title-with-score-potentiel.header';
@@ -35,7 +35,7 @@ export const ActionOverviewLink = ({
           <ActionDescriptionHtml action={action} />
         </div>
         <div className="w-1/6 pl-4">
-          <ActionProgressBar actionDefinition={action} />
+          <ScoreProgressBar actionDefinition={action} />
         </div>
       </div>
     </article>

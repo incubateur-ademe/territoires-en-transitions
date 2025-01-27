@@ -1,8 +1,8 @@
 import SpinnerLoader from '@/app/ui/shared/SpinnerLoader';
 import classNames from 'classnames';
 import { useEffect } from 'react';
+import ActionLinkedCard from '../../../../../../referentiels/actions/action.linked-card';
 import { useActionListe } from '../data/options/useActionListe';
-import ActionCard from '../../../../../../referentiels/actions/action.card';
 
 type ActionsLieesListeProps = {
   isReadonly?: boolean;
@@ -43,7 +43,7 @@ const ActionsLieesListe = ({
         )}
       >
         {actionsLiees.map((action) => (
-          <ActionCard
+          <ActionLinkedCard
             key={action.action_id}
             isReadonly={isReadonly}
             action={action}

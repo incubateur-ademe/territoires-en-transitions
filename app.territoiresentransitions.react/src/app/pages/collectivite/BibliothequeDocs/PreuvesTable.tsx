@@ -10,9 +10,9 @@ import {
   useFlexLayout,
   useTable,
 } from 'react-table';
-import { CellAction } from '../ReferentielTable/CellAction';
-import '../ReferentielTable/styles.css';
-import { ActionReferentiel } from '../ReferentielTable/useReferentiel';
+import { CellAction } from '../../../../referentiels/ReferentielTable/CellAction';
+import '../../../../referentiels/ReferentielTable/styles.css';
+import { ActionReferentiel } from '../../../../referentiels/ReferentielTable/useReferentiel';
 import { TableData } from './useTableData';
 
 export type TPreuvesTableProps = {

@@ -2,7 +2,6 @@ import { ReactNode } from 'react';
 import { Redirect, Route, RouteProps } from 'react-router-dom';
 
 import { AccueilPage } from '@/app/app/pages/collectivite/Accueil/AccueilPage';
-import { AccueilPage as SyntheseEtatDesLieuxPage } from '@/app/app/pages/collectivite/EtatDesLieux/Accueil/AccueilPage';
 import { IndicateursPage } from '@/app/app/pages/collectivite/Indicateurs/IndicateursPage';
 import { TrajectoirePage } from '@/app/app/pages/collectivite/Trajectoire/TrajectoirePage';
 import { MembresPage } from '@/app/app/pages/collectivite/Users/MembresPage';
@@ -24,12 +23,13 @@ import {
 } from '@/app/app/paths';
 import { useCurrentCollectivite } from '@/app/core-logic/hooks/useCurrentCollectivite';
 import { ActionPage } from '@/app/referentiels/actions/action.page';
+import { PersoReferentielPage } from '@/app/referentiels/personnalisations/PersoReferentiel/PersoReferentielPage';
+import { PersoReferentielThematiquePage } from '@/app/referentiels/personnalisations/PersoReferentielThematique/PersoReferentielThematiquePage';
 import { ReferentielPage } from '@/app/referentiels/referentiel.page';
+import { TableauDeBordPage as SyntheseEtatDesLieuxPage } from '@/app/referentiels/tableau-de-bord/tableau-de-bord.page';
+import { ParcoursLabellisationPage } from '../../../referentiels/labellisations/ParcoursLabellisationPage';
 import { BibliothequeDocsPage } from './BibliothequeDocs/BibliothequeDocsPage';
 import { JournalActivitePage } from './Historique/JournalActivitePage';
-import { ParcoursLabellisationPage } from './ParcoursLabellisation/ParcoursLabellisationPage';
-import { PersoReferentielPage } from './PersoReferentiel/PersoReferentielPage';
-import { PersoReferentielThematiquePage } from './PersoReferentielThematique/PersoReferentielThematiquePage';
 import { PlansActionsPage } from './PlansActions/PlansActionsPage';
 
 /**
