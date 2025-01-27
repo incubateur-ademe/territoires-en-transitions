@@ -3,7 +3,6 @@ import Image from 'next/image';
 import Link from 'next/link';
 import { useState } from 'react';
 
-import { PageContainer } from '@/app/ui/layout/page-layout';
 import ademeSrc from '../../static/img/ademe.svg';
 import { AccesRapide } from './AccesRapide';
 import { MaintenanceNotice } from './MaintenanceNotice';
@@ -47,7 +46,7 @@ export const Header = (props: HeaderProps) => {
  *  incluse dans Menu). */
 const Body = (props: HeaderPropsWithModalState) => {
   return (
-    <PageContainer>
+    <div className="w-full max-w-[90rem] mx-auto px-2 md:px-4 lg:px-6">
       <div className="flex items-center justify-start -mx-4 lg:py-6">
         <div className="fr-header__brand fr-enlarge-link">
           <Brand {...props} />
@@ -68,7 +67,7 @@ const Body = (props: HeaderPropsWithModalState) => {
           </div>
         </div>
       </div>
-    </PageContainer>
+    </div>
   );
 };
 
@@ -85,7 +84,7 @@ const Menu = (props: HeaderPropsWithModalState) => {
       })}
       role={modalOpened ? 'dialog' : undefined}
     >
-      <PageContainer>
+      <div className="w-full max-w-[90rem] mx-auto px-2 md:px-4 lg:px-6">
         <button
           aria-controls="modal-header__menu"
           className="fr-btn fr-btn--close"
@@ -97,7 +96,7 @@ const Menu = (props: HeaderPropsWithModalState) => {
         <div className="fr-header__menu-links">
           <AccesRapide {...props} />
         </div>
-      </PageContainer>
+      </div>
     </div>
   );
 };
