@@ -10,6 +10,7 @@ import { useIndicateurChartInfo } from '../../data/use-indicateur-chart';
 type Props = {
   definition: TIndicateurDefinition;
   className?: string;
+  buttonClassName?: string;
 };
 
 const SegmentationNames: Record<string, string> = {
@@ -56,7 +57,7 @@ const IndicateurDetailChart = ({ definition, className }: Props) => {
 
       <div
         data-test={`chart-${definition.id}`}
-        className={classNames('flex flex-col', className)}
+        className={classNames('w-full', className)}
       >
         <div className="flex justify-between mx-8">
           <Button
@@ -82,7 +83,7 @@ const IndicateurDetailChart = ({ definition, className }: Props) => {
   ) : (
     <EmptyCard
       size="xs"
-      className="h-64 my-8"
+      className="h-64 w-full"
       picto={(props) => <PictoIndicateurVide {...props} />}
       title="Aucune valeur n'est associée aux résultats ou aux objectifs de la collectivité !"
     />

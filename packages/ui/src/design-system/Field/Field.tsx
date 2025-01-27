@@ -1,6 +1,6 @@
 import classNames from 'classnames';
 
-import {FieldMessage, FieldMessageProps} from './FieldMessage';
+import { FieldMessage, FieldMessageProps } from './FieldMessage';
 
 export type FieldState =
   | 'default'
@@ -42,7 +42,14 @@ export const Field = ({
   return (
     <div
       id={fieldId}
-      className={classNames(`flex-grow flex flex-col gap-3`, className)}
+      className={classNames(
+        'flex-grow flex flex-col',
+        {
+          'gap-2': !small,
+          'gap-1': small,
+        },
+        className
+      )}
     >
       <label htmlFor={htmlFor} className="ml-0 mb-0">
         {/** Title */}
