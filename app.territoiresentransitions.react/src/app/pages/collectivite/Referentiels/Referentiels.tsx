@@ -28,7 +28,7 @@ export const ActionsReferentiels = () => {
   if (!referentiel) return <SpinnerLoader />;
 
   return (
-    <main data-test="ActionsReferentiels" className="fr-container mt-2">
+    <main data-test="ActionsReferentiels">
       <div className="relative flex justify-between max-xl:flex-col xl:items-center gap-4 pb-6 border-b border-primary-3 mb-6">
         <div className="flex max-md:flex-col gap-x-8 gap-y-4 md:items-center">
           <div className="w-full md:w-64">

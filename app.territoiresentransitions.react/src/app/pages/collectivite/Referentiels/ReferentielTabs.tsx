@@ -131,7 +131,7 @@ const ReferentielTabs = () => {
         tabsListClassName="!justify-start pl-0 flex-nowrap bg-transparent"
       >
         <Tab label="Actions">
-          <div className="p-7 border border-primary-2 bg-white rounded-lg">
+          <div className="p-8 border border-primary-2 bg-white rounded-lg">
             <ActionsReferentiels />
           </div>
         </Tab>
