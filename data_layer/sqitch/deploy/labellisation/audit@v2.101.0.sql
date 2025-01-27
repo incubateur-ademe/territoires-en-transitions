@@ -103,6 +103,21 @@ begin
 end;
 $$;
 
+create or replace view audit (id, collectivite_id, referentiel, demande_id, date_debut, date_fin, valide) as
+SELECT audit.id,
+       audit.collectivite_id,
+       audit.referentiel,
+       audit.demande_id,
+       audit.date_debut,
+       audit.date_fin,
+       audit.valide,
+       audit.date_cnl,
+       audit.valide_labellisation,
+       audit.clos
+FROM labellisation.audit
+WHERE is_authenticated()
+   OR is_service_role();
+
 create or replace function labellisation.active_audit(collectivite_id integer, referentiel referentiel) returns labellisation.audit
     language sql
 BEGIN ATOMIC
@@ -116,7 +131,7 @@ SELECT a.id,
        a.date_cnl,
        a.valide_labellisation,
        a.clos
-FROM labellisation.audit a
+FROM public.audit a
 WHERE a.collectivite_id = active_audit.collectivite_id
   AND a.referentiel = active_audit.referentiel
   AND NOT a.clos
@@ -366,21 +381,6 @@ SELECT a.id,
 FROM labellisation.audit a
 WHERE now() >= a.date_debut AND not a.clos
   AND est_verifie();
-
-create or replace view audit (id, collectivite_id, referentiel, demande_id, date_debut, date_fin, valide) as
-SELECT audit.id,
-       audit.collectivite_id,
-       audit.referentiel,
-       audit.demande_id,
-       audit.date_debut,
-       audit.date_fin,
-       audit.valide,
-       audit.date_cnl,
-       audit.valide_labellisation,
-       audit.clos
-FROM labellisation.audit
-WHERE is_authenticated()
-   OR is_service_role();
 
 create function labellisation_validate_audit(
     audit_id integer,
