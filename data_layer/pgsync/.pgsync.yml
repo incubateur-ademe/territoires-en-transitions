@@ -1,0 +1,155 @@
+# source database URL
+# database URLs take the format of:
+#   postgres://user:password@host:port/dbname
+#
+# we recommend a command which outputs a database URL
+# so sensitive information is not included in this file
+#
+# we *highly recommend* you use sslmode=verify-full when possible
+# see https://ankane.org/postgres-sslmode-explained for more info
+#from: 
+# destination database URL
+#to: postgresql://postgres:postgres@localhost:54322/postgres
+
+# define groups
+groups:
+  collectivites_group:
+    - collectivite
+    - collectivite_banatic_competence
+    - commune
+    - epci
+    - collectivite_test
+    - auth.users
+    - dcp
+    - utilisateur.invitation
+    - utilisateur_support
+    - utilisateur_verifie
+    - private_collectivite_membre
+    - private_utilisateur_droit
+    - labellisation.demande
+    - labellisation.audit
+    - labellisation.etoile_meta
+    - audit_auditeur
+    - cot
+    - groupement
+    - groupement_collectivite
+    - partenaire_tag
+    - personne_tag
+    - structure_tag
+    - financeur_tag
+    - libre_tag
+    - service_tag
+    - thematique
+    - sous_thematique
+    - categorie_tag
+    - tableau_de_bord_module
+    # Part of other group bu done here because shared by groups
+    - action_relation
+    - action_definition
+    - indicateur_definition
+    - panier
+
+  referentiels_group:
+    - referentiel_tag
+    - action_definition_tag
+    - action_origine
+    - preuve_reglementaire_definition
+    - question
+    - question_action
+    - question_choix
+    - personnalisation
+    - personnalisation_regle
+    - reponse_choix
+    - reponse_binaire
+    - reponse_proportion
+    - action_discussion
+    - action_discussion_commentaire
+    - action_commentaire
+    - justification
+    - justification_ajustement
+    - labellisation.preuve_base
+    - labellisation.bibliotheque_fichier
+    - labellisation.action_audit_state
+    - preuve_action
+    - preuve_audit
+    - preuve_complementaire
+    - preuve_reglementaire
+    - preuve_labellisation
+    - preuve_rapport
+    - action_statut
+    - labellisation
+    - labellisation_action_critere
+    - labellisation_calendrier
+    - labellisation_fichier_critere
+    - score_snapshot
+    # A supprimer lorsqu'on utilisera uniquement le nouveau moteur
+    - personnalisation_consequence
+    - action_computed_points
+    - client_scores
+    - client_scores_update
+    - pre_audit_scores
+    - post_audit_scores
+
+  indicateurs_group:
+    - indicateur_definition
+    - indicateur_thematique
+    - indicateur_sous_thematique
+    - indicateur_service_tag
+    - indicateur_pilote
+    - indicateur_action
+    - indicateur_categorie_tag
+    - indicateur_groupe
+    - indicateur_collectivite
+    - indicateur_artificialisation # utilise par quoi ?
+    - indicateur_source
+    - indicateur_source_metadonnee
+    - indicateur_valeur
+
+  pai_group:
+    - action_impact_typologie
+    - action_impact
+    - panier
+    - action_impact_panier
+    - action_impact_thematique
+    - action_impact_sous_thematique
+    - action_impact_banatic_competence
+    - action_impact_categorie_fnv
+    - action_impact_action
+    - action_impact_effet_attendu
+    - action_impact_statut
+    - fiche_action
+    - action_impact_fiche_action
+    - action_impact_indicateur
+    - panier_partenaire
+    - action_impact_partenaire
+    - action_impact_action
+  
+  plans_group:
+    - plan_action_type_categorie
+    - plan_action_type
+    - axe # Axe reference panier
+    - fiche_action
+    - action_relation
+    - fiche_action_axe
+    - fiche_action_thematique
+    - fiche_action_sous_thematique
+    - fiche_action_financeur_tag
+    - fiche_action_service_tag
+    - fiche_action_lien
+    - fiche_action_effet_attendu
+    - fiche_action_indicateur # References indicateur_definition
+    - fiche_action_libre_tag
+    - fiche_action_partenaire_tag
+    - fiche_action_structure_tag
+    - fiche_action_note
+    - fiche_action_etape
+    - fiche_action_referent
+    - fiche_action_pilote
+
+# protect sensitive information
+data_rules:
+  email: untouched
+  phone: null
+  telephone: null
+  encrypted_password: 
+    value: $2a$10$zHta6/ak2n7cONYwYodHJOJ0cmnhyXKUomwX0D4X0j3sQqWfXNs0C
