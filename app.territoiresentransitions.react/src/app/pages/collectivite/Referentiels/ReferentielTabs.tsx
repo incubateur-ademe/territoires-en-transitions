@@ -19,6 +19,8 @@ import AidePriorisation from '../AidePriorisation';
 import DetailTacheTable from '../DetailTaches';
 import ActionsReferentiels from './Referentiels';
 import PageContainer from '@/ui/components/layout/page-container';
+import SaveScoreButton from '@/app/app/pages/collectivite/Referentiels/SaveScore/save-score.button';
+import { useCurrentCollectivite } from '@/app/core-logic/hooks/useCurrentCollectivite';
 
 const TABS_INDEX: Record<ReferentielVueParamOption, number> = {
   progression: 0,
@@ -36,42 +38,46 @@ const ReferentielHeader = ({
   const current = referentielId ?? 'eci';
   const actions = useReferentielDownToAction(current as Referentiel);
   const referentiel = actions.find((a) => a.type === 'referentiel')!;
+  const collectivite = useCurrentCollectivite();
+  const collectiviteId = collectivite?.collectiviteId;
+  const haveEditionAccess =
+    collectivite?.niveauAcces == 'edition' ||
+    collectivite?.niveauAcces == 'admin';
 
   return (
     <div className={className}>
-      <h2 className="mb-4">
-        Référentiel{' '}
-        {referentielToName[referentielId as ReferentielOfIndicateur]}
-      </h2>
-      {/*****************************************/}
-      {/*                                       */}
-      {/*       For future use: start           */}
-      {/*   (Figer une version du référentiel)  */}
-      {/*                                       */}
-      {/*****************************************/}
-
-      {/* <div className="flex gap-x-4"> */}
-      {/* <Select
+      <div className="flex items-center justify-between mb-4">
+        <h2 className="mb-4">
+          Référentiel{' '}
+          {referentielToName[referentielId as ReferentielOfIndicateur]}
+        </h2>
+        <div className="flex gap-x-4">
+          {/**********************************************/}
+          {/*                                            */}
+          {/*       For future use: start                */}
+          {/*   (Récupérer une version du référentiel)   */}
+          {/*                                            */}
+          {/**********************************************/}
+          {/*<Select
                   options={[]}
                   onChange={() => {}}
                   values={[]}
                   customItem={(v) => <span className="text-grey-8">{v.label}</span>}
                   small
-                />
-                <Button
-                  icon="save-3-line"
-                  size="sm"
-                  className="whitespace-nowrap min-w-fit"
-                >
-                  Figer le référentiel
-                </Button> */}
-      {/* </div> */}
-
-      {/**********************************/}
-      {/*                                */}
-      {/*     For future use: end        */}
-      {/*                                */}
-      {/**********************************/}
+                />*/}
+          {/**********************************************/}
+          {/*                                            */}
+          {/*     For future use: end                    */}
+          {/*                                            */}
+          {/**********************************************/}
+          {collectiviteId && haveEditionAccess && (
+            <SaveScoreButton
+              referentielId={current}
+              collectiviteId={collectiviteId}
+            />
+          )}
+        </div>
+      </div>
 
       {referentiel && (
         <div className="flex items-center gap-4 pb-4 mb-4 border-b border-primary-3">
