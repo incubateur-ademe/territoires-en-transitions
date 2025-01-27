@@ -18,7 +18,7 @@ import { Counter } from '../../../../ui/referentiels/Counter';
 import AidePriorisation from '../AidePriorisation';
 import DetailTacheTable from '../DetailTaches';
 import ActionsReferentiels from './Referentiels';
-import { PageContainer } from '@/app/ui/layout/page-layout';
+import PageContainer from '@/ui/components/layout/page-container';
 
 const TABS_INDEX: Record<ReferentielVueParamOption, number> = {
   progression: 0,

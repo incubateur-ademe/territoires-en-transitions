@@ -1,5 +1,4 @@
 import { ActionDefinitionSummary } from '@/app/core-logic/api/endpoints/ActionDefinitionSummaryReadEndpoint';
-import { PageContainer } from '@/app/ui/layout/page-layout';
 import ActionProgressBar from '@/app/ui/referentiels/ActionProgressBar';
 import classNames from 'classnames';
 import ScoreDisplay from '../../../../ui/referentiels/ScoreDisplay';
@@ -8,6 +7,7 @@ import { SuiviScoreRow } from '../EtatDesLieux/Referentiel/data/useScoreRealise'
 import { PersoPotentiel } from '../PersoPotentielModal/PersoPotentiel';
 import { ActionTopNav } from './ActionNav';
 import { ActionSidePanelToolbar } from './ActionSidePanelToolbar';
+import PageContainer from '@/ui/components/layout/page-container';
 
 /**
  * Affiche la partie de l'en-tête de la page Action sensible à la position du
@@ -56,7 +56,10 @@ export const ActionHeader = ({
               />
             )}
           </div>
-          <PageContainer className="flex justify-between items-center fr-text--sm my-4">
+          <PageContainer
+            bgColor="white"
+            innerContainerClassName="flex justify-between items-center fr-text--sm my-4 !py-0"
+          >
             <div className="flex gap-4 items-center fr-pl-1v text-grey425">
               <ActionProgressBar
                 action={action}

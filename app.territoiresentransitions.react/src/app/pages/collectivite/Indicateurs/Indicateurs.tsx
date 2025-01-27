@@ -9,7 +9,7 @@ import {
   collectiviteIndicateursCollectivitePath,
   collectiviteTousLesIndicateursPath,
 } from '@/app/app/paths';
-import { PageContainer } from '@/app/ui/layout/page-layout';
+import PageContainer from '@/ui/components/layout/page-container';
 import { Route, Switch } from 'react-router-dom';
 
 const Indicateurs = () => {
@@ -17,19 +17,15 @@ const Indicateurs = () => {
     <Switch>
       {/** Liste tous les indicateurs */}
       <Route exact path={collectiviteTousLesIndicateursPath}>
-        <div className="grow bg-grey-2 -mb-8 py-12 px-4 lg:px-6 2xl:px-0">
-          <PageContainer>
-            <TousLesIndicateursPage />
-          </PageContainer>
-        </div>
+        <PageContainer>
+          <TousLesIndicateursPage />
+        </PageContainer>
       </Route>
 
       <Route exact path={collectiviteIndicateursCollectivitePath}>
-        <div className="grow bg-grey-2 -mb-8 py-12 px-4 lg:px-6 2xl:px-0">
-          <PageContainer>
-            <IndicateursCollectivitePage />
-          </PageContainer>
-        </div>
+        <PageContainer>
+          <IndicateursCollectivitePage />
+        </PageContainer>
       </Route>
 
       {/** Page d'un indicateur */}

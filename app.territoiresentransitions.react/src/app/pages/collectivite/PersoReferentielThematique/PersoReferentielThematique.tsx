@@ -1,5 +1,4 @@
 import { useCurrentCollectivite } from '@/app/core-logic/hooks/useCurrentCollectivite';
-import { PageContainer } from '@/app/ui/layout/page-layout';
 import { useParams } from 'react-router-dom';
 import { useChangeReponseHandler } from '../PersoPotentielModal/useChangeReponseHandler';
 import { ThematiqueQR } from './ThematiqueQR';
@@ -7,6 +6,7 @@ import { useCarteIdentite } from './useCarteIdentite';
 import { useNextThematiqueId } from './useNextThematiqueId';
 import { useQuestionsReponses } from './useQuestionsReponses';
 import { useThematique } from './useThematique';
+import PageContainer from '@/ui/components/layout/page-container';
 
 const PersoReferentielThematique = () => {
   const collectivite = useCurrentCollectivite();
@@ -24,10 +24,14 @@ const PersoReferentielThematique = () => {
 
   return (
     <>
-      <h2 className="w-full mb-0 py-9 text-center bg-bf925">
+      <h2 className="w-full mb-0 py-9 text-center bg-primary-3">
         {thematique.nom}
       </h2>
-      <PageContainer dataTest="thematique" className="mt-2 mb-8">
+      <PageContainer
+        dataTest="thematique"
+        bgColor="white"
+        innerContainerClassName="pt-2"
+      >
         <ThematiqueQR
           collectivite={{ id: collectivite_id, nom: nom || '' }}
           thematique={thematique}

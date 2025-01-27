@@ -68,7 +68,7 @@ export const TrajectoireCalculee = () => {
 
   return (
     collectiviteId && (
-      <div className="grow py-12">
+      <div className="grow">
         {/** En-tête */}
         <div className="flex items-start mb-4">
           <div className="flex-grow">

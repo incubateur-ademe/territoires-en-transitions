@@ -5,7 +5,7 @@ import FiltersPlanAction, {
   filtreToutesLesFiches,
 } from './FiltersPlanAction';
 import SyntheseGraphsList from './SyntheseGraphsList';
-import { PageContainer } from '@/app/ui/layout/page-layout';
+import PageContainer from '@/ui/components/layout/page-container';
 
 /**
  * Contenu de la page Synthèse
@@ -26,12 +26,13 @@ const Synthese = ({ collectiviteId }: SyntheseProps): JSX.Element => {
 
   return (
     <div data-test="PlansAction" className="w-full">
-      <div className="bg-primary">
-        <PageContainer className="py-8">
-          <h2 className="mb-0 text-white">Répartition des fiches action</h2>
-        </PageContainer>
-      </div>
-      <PageContainer className="py-10">
+      <PageContainer
+        containerClassName="!bg-primary"
+        innerContainerClassName="!py-8"
+      >
+        <h2 className="mb-0 text-white">Répartition des fiches action</h2>
+      </PageContainer>
+      <PageContainer bgColor="white">
         {/* Filtres par plan d'actions */}
         <div className="mb-8">
           <FiltersPlanAction

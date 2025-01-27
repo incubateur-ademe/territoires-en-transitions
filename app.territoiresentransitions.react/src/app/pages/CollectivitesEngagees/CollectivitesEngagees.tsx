@@ -4,11 +4,11 @@ import {
   recherchesCollectivitesUrl,
   recherchesPath,
 } from '@/app/app/paths';
-import { PageContainer } from '@/app/ui/layout/page-layout';
 import { EmptyCard } from '@/ui';
 import { Route } from 'react-router-dom';
 import DecouvrirLesCollectivites from './DecouvrirLesCollectivites';
 import { ReactComponent as PictoCarte } from './carte.svg';
+import PageContainer from '@/ui/components/layout/page-container';
 
 const CollectivitesEngagees = () => {
   return (
@@ -24,7 +24,7 @@ const CollectivitesEngagees = () => {
 };
 
 const FinaliserMonInscription = () => (
-  <PageContainer dataTest="FinaliserInscription" className="my-8">
+  <PageContainer dataTest="FinaliserInscription">
     <EmptyCard
       picto={(props) => <PictoCarte {...props} />}
       title="Merci pour votre inscription !"

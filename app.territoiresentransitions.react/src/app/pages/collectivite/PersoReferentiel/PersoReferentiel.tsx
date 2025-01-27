@@ -1,8 +1,8 @@
 import { useCurrentCollectivite } from '@/app/core-logic/hooks/useCurrentCollectivite';
-import { PageContainer } from '@/app/ui/layout/page-layout';
 import Thematiques from './Thematiques';
 import { usePersoFilters } from './usePersoFilters';
 import { useQuestionThematiqueCompletude } from './useQuestionThematiqueCompletude';
+import PageContainer from '@/ui/components/layout/page-container';
 
 const PersoReferentiel = () => {
   const collectivite = useCurrentCollectivite();
@@ -22,7 +22,7 @@ const PersoReferentiel = () => {
   }
 
   return (
-    <PageContainer dataTest="personnalisation" className="mt-9 mb-16">
+    <PageContainer dataTest="personnalisation" bgColor="white">
       <Thematiques
         collectivite={{ id: collectivite_id, nom: nom || '' }}
         referentiels={referentiels}
