@@ -77,7 +77,7 @@ export default function RootLayout({
         <div id="root">
           {/* L'utilisation de overflow-hidden ou overflow-auto sur le container
            /* empêche l'utilisation de la propriété sticky dans l'app */}
-          <div className="min-h-screen flex flex-col w-screen">
+          <div className="h-screen w-screen flex flex-col">
             <div id="main" className="grow flex flex-col w-full">
               <AppProviders>
                 <Header />
