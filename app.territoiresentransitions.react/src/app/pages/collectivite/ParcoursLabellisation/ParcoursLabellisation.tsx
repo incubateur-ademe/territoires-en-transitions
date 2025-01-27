@@ -8,12 +8,12 @@ import {
   useReferentielId,
 } from '@/app/core-logic/hooks/params';
 import { ReferentielOfIndicateur } from '@/app/types/litterals';
-import { PageContainer } from '@/app/ui/layout/page-layout';
 import { Button } from '@/ui';
 import HeaderLabellisation from './HeaderLabellisation';
 import { LabellisationTabs } from './LabellisationTabs';
 import { useCycleLabellisation } from './useCycleLabellisation';
 import { useIsUnchangedReferentiel } from './useIsUnchangedReferentiel';
+import PageContainer from '@/ui/components/layout/page-container';
 
 const ParcoursLabellisation = () => {
   const collectiviteId = useCollectiviteId();
@@ -29,7 +29,8 @@ const ParcoursLabellisation = () => {
     return (
       <PageContainer
         dataTest={`labellisation-${referentiel}`}
-        className="mb-16"
+        bgColor="white"
+        innerContainerClassName="!pt-0"
       >
         <Title referentiel={referentiel} />
         <p className="my-12 text-center">
@@ -59,7 +60,11 @@ const ParcoursLabellisation = () => {
     <>
       <Title referentiel={parcours.referentiel} />
       <HeaderLabellisation />
-      <PageContainer dataTest={`labellisation-${parcours.referentiel}`}>
+      <PageContainer
+        dataTest={`labellisation-${parcours.referentiel}`}
+        bgColor="white"
+        innerContainerClassName="!pt-0"
+      >
         <LabellisationTabs />
       </PageContainer>
     </>

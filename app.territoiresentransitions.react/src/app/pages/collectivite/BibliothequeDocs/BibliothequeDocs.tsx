@@ -1,5 +1,4 @@
 import { useCurrentCollectivite } from '@/app/core-logic/hooks/useCurrentCollectivite';
-import { PageContainer } from '@/app/ui/layout/page-layout';
 import PreuveDoc from '@/app/ui/shared/preuves/Bibliotheque/PreuveDoc';
 import {
   TPreuveAuditEtLabellisation,
@@ -11,6 +10,7 @@ import { pick } from 'es-toolkit';
 import { AddRapportVisite } from './AddRapportVisite';
 import { PreuvesLabellisation } from './PreuveLabellisation';
 import { PreuvesTabs } from './PreuvesTabs';
+import PageContainer from '@/ui/components/layout/page-container';
 
 type TBibliothequeDocsProps = {
   labellisationEtAudit?: TPreuveAuditEtLabellisation[];
@@ -22,7 +22,7 @@ export const BibliothequeDocs = ({
   rapports,
 }: TBibliothequeDocsProps) => {
   return (
-    <PageContainer dataTest="BibliothequeDocs" className="mt-9 mb-16">
+    <PageContainer dataTest="BibliothequeDocs" bgColor="white">
       <h1 className="text-center fr-mt-4w fr-mb-4w">
         Bibliothèque de documents
       </h1>

@@ -1,5 +1,4 @@
 import { useCollectiviteId } from '@/app/core-logic/hooks/params';
-import { PageContainer } from '@/app/ui/layout/page-layout';
 import SpinnerLoader from '@/app/ui/shared/SpinnerLoader';
 import { Alert, Button, Card, Modal, TrackPageView } from '@/ui';
 import { pick } from 'es-toolkit';
@@ -18,6 +17,7 @@ import {
   StatutTrajectoire,
   useStatutTrajectoire,
 } from './useStatutTrajectoire';
+import PageContainer from '@/ui/components/layout/page-container';
 
 /**
  * Affiche l'écran approprié en fonction du statut du calcul de la trajectoire SNBC
@@ -160,7 +160,7 @@ const Presentation = () => {
   const collectiviteId = useCollectiviteId();
 
   return (
-    <div className="flex flex-col py-12">
+    <div className="flex flex-col">
       <div className="flex flex-row gap-14">
         <div className="w-3/5">
           <h1>
@@ -243,7 +243,7 @@ const Trajectoire = () => {
 
   return (
     collectivite.collectiviteId && (
-      <div className="bg-grey-2 -mb-8">
+      <PageContainer innerContainerClassName="flex flex-col gap-16">
         {!isLoading && (
           <TrackPageView
             pageName="app/trajectoires/snbc"
@@ -254,10 +254,8 @@ const Trajectoire = () => {
             }}
           />
         )}
-        <PageContainer className="flex flex-col gap-16">
-          <TrajectoireContent statut={statutTrajectoire} />
-        </PageContainer>
-      </div>
+        <TrajectoireContent statut={statutTrajectoire} />
+      </PageContainer>
     )
   );
 };

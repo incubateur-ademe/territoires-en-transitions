@@ -3,7 +3,6 @@
  */
 
 import { useReferentielId } from '@/app/core-logic/hooks/params';
-import { PageContainer } from '@/app/ui/layout/page-layout';
 import { ReactNode, useState } from 'react';
 import { TAuditeur, useAuditeurs } from '../Audit/useAudit';
 import { ValiderAudit } from '../Audit/ValiderAudit';
@@ -17,6 +16,7 @@ import {
 } from './useCycleLabellisation';
 import { TStartAudit, useStartAudit } from './useStartAudit';
 import { TValidateAudit, useValidateAudit } from './useValidateAudit';
+import PageContainer from '@/ui/components/layout/page-container';
 
 export type THeaderLabellisationProps = {
   parcoursLabellisation: TCycleLabellisation;
@@ -52,8 +52,11 @@ export const HeaderLabellisation = (props: THeaderLabellisationProps) => {
   const DemandeModal = isCOT ? DemandeAuditModal : DemandeLabellisationModal;
 
   return (
-    <div className="sticky top-0 z-40 bg-bf925 w-full min-h-[112px] flex items-center justify-center mt-8">
-      <PageContainer className="my-4">
+    <div className="sticky top-0 z-40 w-full my-8">
+      <PageContainer
+        containerClassName="min-h-[112px] py-4 bg-primary-3"
+        innerContainerClassName="!py-0"
+      >
         <DerniereLabellisation parcoursLabellisation={parcoursLabellisation} />
         <h2 className="mb-4">Objectif : {numLabels[etoiles]} étoile</h2>
         {status === 'non_demandee' && !isAuditeur ? (

@@ -20,8 +20,8 @@ import {
   CurrentCollectivite,
   useCurrentCollectivite,
 } from '@/app/core-logic/hooks/useCurrentCollectivite';
-import { PageContainer } from '@/app/ui/layout/page-layout';
 import { Button, Modal, Pagination, TrackPageView } from '@/ui';
+import PageContainer from '@/ui/components/layout/page-container';
 import { pick } from 'es-toolkit';
 import { useEffect, useState } from 'react';
 
@@ -92,7 +92,7 @@ export const Membres = ({
           'role',
         ])}
       />
-      <PageContainer dataTest="Users" className="mt-9 mb-16">
+      <PageContainer dataTest="Users" bgColor="white">
         <h1 className="mb-10 lg:mb-14 lg:text-center flex flex-row justify-between">
           Gestion des membres
           {canInvite && (

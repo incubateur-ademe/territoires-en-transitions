@@ -12,9 +12,9 @@ import {
   recherchesPlansUrl,
 } from '@/app/app/paths';
 import { useSansCollectivite } from '@/app/core-logic/hooks/useOwnedCollectivites';
-import { PageContainer } from '@/app/ui/layout/page-layout';
 import { Alert, Button } from '@/ui';
 import { initialFilters, nameToShortNames } from './data/filters';
+import PageContainer from '@/ui/components/layout/page-container';
 
 const DecouvrirLesCollectivites = () => {
   const auth = useAuth();
@@ -30,7 +30,7 @@ const DecouvrirLesCollectivites = () => {
   );
 
   return (
-    <div className="bg-primary-1 -mb-8">
+    <>
       {!!sansCollectivite && (
         <Alert
           fullPageWidth
@@ -48,7 +48,7 @@ const DecouvrirLesCollectivites = () => {
           }
         />
       )}
-      <PageContainer dataTest="ToutesLesCollectivites" className="py-16">
+      <PageContainer dataTest="ToutesLesCollectivites" bgColor="primary">
         <div className="md:flex md:gap-6 xl:gap-12">
           <Route path={recherchesCollectivitesUrl}>
             <Filters
@@ -76,7 +76,7 @@ const DecouvrirLesCollectivites = () => {
           </Route>
         </div>
       </PageContainer>
-    </div>
+    </>
   );
 };
 

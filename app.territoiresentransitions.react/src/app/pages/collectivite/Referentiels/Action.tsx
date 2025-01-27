@@ -9,7 +9,6 @@ import { ActionDefinitionSummary } from '@/app/core-logic/api/endpoints/ActionDe
 import { useActionVue, useReferentielId } from '@/app/core-logic/hooks/params';
 import { useCurrentCollectivite } from '@/app/core-logic/hooks/useCurrentCollectivite';
 import ScrollTopButton from '@/app/ui/buttons/ScrollTopButton';
-import { PageContainer } from '@/app/ui/layout/page-layout';
 import ActionPreuvePanel from '@/app/ui/shared/actions/ActionPreuvePanel/ActionPreuvePanel';
 import { useActionPreuvesCount } from '@/app/ui/shared/preuves/Bibliotheque/usePreuves';
 import { Tab, Tabs } from '@/app/ui/shared/Tabs';
@@ -30,6 +29,7 @@ import { DownloadDocs } from './DownloadDocs';
 import { FichesActionLiees } from './FichesActionLiees';
 import IndicateurChartsGrid from './IndicateurChartsGrid';
 import { usePrevAndNextActionLinks } from './usePrevAndNextActionLinks';
+import PageContainer from '@/ui/components/layout/page-container';
 
 // index des onglets de la page Action
 const TABS_INDEX: Record<ActionVueParamOption, number> = {
@@ -107,7 +107,11 @@ const Action = ({ action }: { action: ActionDefinitionSummary }) => {
         nextActionLink={nextActionLink}
         prevActionLink={prevActionLink}
       />
-      <PageContainer dataTest={`Action-${action.identifiant}`} className="mt-6">
+      <PageContainer
+        dataTest={`Action-${action.identifiant}`}
+        innerContainerClassName="pt-6"
+        bgColor="white"
+      >
         <OrientationQuickNav action={action} />
         <ActionAuditStatut action={action} />
         <ActionAuditDetail action={action} />

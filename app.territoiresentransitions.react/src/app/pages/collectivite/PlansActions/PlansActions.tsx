@@ -17,7 +17,7 @@ import FicheActionPage from './FicheAction/FicheActionPage';
 import { PlansActionsRoutes } from './PlansActionsRoutes';
 import { SynthesePage } from './Synthese/SynthesePage';
 import { SyntheseVuePage } from './Synthese/SyntheseVue/SyntheseVuePage';
-import { PageContainer } from '@/app/ui/layout/page-layout';
+import PageContainer from '@/ui/components/layout/page-container';
 
 const PlansActions = () => {
   const collectivite = useCurrentCollectivite();
@@ -43,11 +43,9 @@ const PlansActions = () => {
 
       {/* Page de visualisation de toutes les fiches */}
       <Route exact path={collectiviteToutesLesFichesPath}>
-        <div className="grow bg-grey-2 -mb-8 py-12">
-          <PageContainer dataTest="ToutesLesFichesAction">
-            <ToutesLesFichesActionPage />
-          </PageContainer>
-        </div>
+        <PageContainer dataTest="ToutesLesFichesAction">
+          <ToutesLesFichesActionPage />
+        </PageContainer>
       </Route>
 
       {/* Pages fiche action - nouvelle version */}

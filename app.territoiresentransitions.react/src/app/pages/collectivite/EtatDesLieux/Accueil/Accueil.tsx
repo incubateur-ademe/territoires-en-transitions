@@ -4,7 +4,6 @@ import {
   CurrentCollectivite,
   useCurrentCollectivite,
 } from '@/app/core-logic/hooks/useCurrentCollectivite';
-import { PageContainer } from '@/app/ui/layout/page-layout';
 import { Button } from '@/ui';
 import { useState } from 'react';
 import { useProgressionReferentiel } from './data/useProgressionReferentiel';
@@ -15,6 +14,7 @@ import {
   groupeParFonction,
   useMembres,
 } from './EtatDesLieux/referents/useMembres';
+import PageContainer from '@/ui/components/layout/page-container';
 
 /**
  * Affiche la page d'accueil d'une collectivité
@@ -72,9 +72,9 @@ const AccueilNonConfidentielle = ({
   const [isModalOpen, setIsModalOpen] = useState(false);
 
   return (
-    <main data-test="TableauBord" className="bg-bf975 -mb-8">
+    <PageContainer dataTest="TableauBord" bgColor="primary">
       {!!collectiviteId && (
-        <PageContainer className="pt-12 pb-16">
+        <>
           <div className="flex flex-row justify-between content-center pb-4 mb-4 border-b border-b-primary-3">
             <h2 className="mb-0">{"Synthèse de l'état des lieux"}</h2>
             {!readonly && (
@@ -119,7 +119,7 @@ const AccueilNonConfidentielle = ({
               title={referentielToName.eci}
             />
           </div>
-        </PageContainer>
+        </>
       )}
 
       {!readonly && isModalOpen && (
@@ -129,7 +129,7 @@ const AccueilNonConfidentielle = ({
           setIsOpen={setIsModalOpen}
         />
       )}
-    </main>
+    </PageContainer>
   );
 };
 
