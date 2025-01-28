@@ -14,6 +14,7 @@ import { ComputeScoreRouter } from '../../referentiels/compute-score/compute-sco
 import { ScoreSnapshotsRouter } from '../../referentiels/snapshots/score-snaphots.router';
 import SupabaseService from '../database/supabase.service';
 import { TrpcService } from './trpc.service';
+import { ImportPlanRouter } from '@/backend/plans/fiches/import/import-plan.router';
 
 @Injectable()
 export class TrpcRouter {
@@ -33,7 +34,8 @@ export class TrpcRouter {
     private readonly updateActionStatutRouter: UpdateActionStatutRouter,
     private readonly scoreSnapshotsRouter: ScoreSnapshotsRouter,
     private readonly computeScoreRouter: ComputeScoreRouter,
-    private readonly collectivitesRouter: CollectivitesRouter
+    private readonly collectivitesRouter: CollectivitesRouter,
+    private readonly importRouter: ImportPlanRouter,
   ) {}
 
   appRouter = this.trpc.router({
@@ -49,7 +51,8 @@ export class TrpcRouter {
       fiches: this.trpc.mergeRouters(
         this.countByRouter.router,
         this.bulkEditRouter.router,
-        this.ficheActionEtapeRouter.router
+        this.ficheActionEtapeRouter.router,
+        this.importRouter.router,
       ),
     },
     referentiels: {
