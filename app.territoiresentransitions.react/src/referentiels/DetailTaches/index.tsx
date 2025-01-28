@@ -1,9 +1,11 @@
+'use client';
+
 import { DesactiverLesFiltres } from '@/app/ui/shared/filters/DesactiverLesFiltres';
 import { DetailTacheTable } from './DetailTacheTable';
 import { noFilters } from './filters';
 import { useTableData } from './useTableData';
 
-const DetailTaches = () => {
+export const DetailTaches = () => {
   const tableData = useTableData();
   const {
     count,
@@ -33,5 +35,3 @@ const DetailTaches = () => {
     </>
   );
 };
-
-export default DetailTaches;

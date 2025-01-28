@@ -1,4 +1,3 @@
-import { useReferentielId } from '@/app/core-logic/hooks/params';
 import { useEffect, useMemo, useRef } from 'react';
 import {
   CellProps,
@@ -8,6 +7,7 @@ import {
   useFlexLayout,
   useTable,
 } from 'react-table';
+import { useReferentielId } from '../referentiel-context';
 import { ReferentielTable } from '../ReferentielTable';
 import { CellAction } from '../ReferentielTable/CellAction';
 import { CellPercent, CellPhase, CellPoints } from './Cells';

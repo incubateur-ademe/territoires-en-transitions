@@ -1,4 +1,4 @@
-import { makeCollectiviteActionUrl } from '@/app/app/paths';
+import { makeReferentielActionUrl } from '@/app/app/paths';
 import { useCollectiviteId } from '@/app/core-logic/hooks/params';
 import { Card } from '@/ui';
 import Link from 'next/link';
@@ -35,7 +35,7 @@ export const ActionCard = ({
 
   return (
     <Link
-      href={makeCollectiviteActionUrl({
+      href={makeReferentielActionUrl({
         collectiviteId: collectiviteId!,
         referentielId: referentiel,
         actionId: action.id,

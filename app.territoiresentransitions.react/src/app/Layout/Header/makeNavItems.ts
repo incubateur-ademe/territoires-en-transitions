@@ -1,21 +1,21 @@
 import {
   makeCollectiviteAccueilUrl,
-  makeCollectiviteActionUrl,
   makeCollectiviteBibliothequeUrl,
   makeCollectiviteIndicateursCollectiviteUrl,
   makeCollectiviteJournalUrl,
-  makeCollectiviteLabellisationRootUrl,
-  makeCollectiviteLabellisationUrl,
   makeCollectivitePanierUrl,
   makeCollectivitePersoRefUrl,
   makeCollectivitePlansActionsLandingUrl,
   makeCollectivitePlansActionsSyntheseUrl,
-  makeCollectiviteReferentielUrl,
-  makeCollectiviteSyntheseReferentielUrl,
   makeCollectiviteTousLesIndicateursUrl,
   makeCollectiviteToutesLesFichesUrl,
   makeCollectiviteTrajectoirelUrl,
   makeCollectiviteUsersUrl,
+  makeReferentielActionUrl,
+  makeReferentielLabellisationRootUrl,
+  makeReferentielLabellisationUrl,
+  makeReferentielRootUrl,
+  makeReferentielUrl,
   makeTableauBordUrl,
 } from '@/app/app/paths';
 import { UserData } from '@/app/core-logic/api/auth/AuthProvider';
@@ -73,30 +73,28 @@ const makeNavItemsBase = (
       dataTest: 'nav-edl',
       // Chemin de base pour garder le menu actif quand un change d'onglet
       urlPrefix: [
-        makeCollectiviteReferentielUrl({
-          collectiviteId,
-          referentielId: 'cae',
-          referentielVue: '',
-        }),
-        makeCollectiviteReferentielUrl({
-          collectiviteId,
-          referentielId: 'eci',
-          referentielVue: '',
-        }),
-        makeCollectiviteLabellisationRootUrl({
+        makeReferentielUrl({
           collectiviteId,
           referentielId: 'cae',
         }),
-        makeCollectiviteLabellisationRootUrl({
+        makeReferentielUrl({
           collectiviteId,
           referentielId: 'eci',
         }),
-        makeCollectiviteActionUrl({
+        makeReferentielLabellisationRootUrl({
+          collectiviteId,
+          referentielId: 'cae',
+        }),
+        makeReferentielLabellisationRootUrl({
+          collectiviteId,
+          referentielId: 'eci',
+        }),
+        makeReferentielActionUrl({
           collectiviteId,
           referentielId: 'cae',
           actionId: '',
         }),
-        makeCollectiviteActionUrl({
+        makeReferentielActionUrl({
           collectiviteId,
           referentielId: 'eci',
           actionId: '',
@@ -105,7 +103,7 @@ const makeNavItemsBase = (
       items: [
         {
           label: "Synthèse de l'état des lieux",
-          to: makeCollectiviteSyntheseReferentielUrl({ collectiviteId }),
+          to: makeReferentielRootUrl({ collectiviteId }),
           dataTest: 'edl-synthese',
         },
         {
@@ -118,17 +116,16 @@ const makeNavItemsBase = (
         {
           label: 'Référentiel Climat-Air-Énergie',
           dataTest: 'edl-cae',
-          to: makeCollectiviteReferentielUrl({
+          to: makeReferentielUrl({
             collectiviteId,
             referentielId: 'cae',
           }),
           urlPrefix: [
-            makeCollectiviteReferentielUrl({
+            makeReferentielUrl({
               collectiviteId,
               referentielId: 'cae',
-              referentielVue: '',
             }),
-            makeCollectiviteActionUrl({
+            makeReferentielActionUrl({
               collectiviteId,
               referentielId: 'cae',
               actionId: '',
@@ -138,7 +135,7 @@ const makeNavItemsBase = (
         {
           label: 'Labellisation Climat-Air-Énergie',
           dataTest: 'labellisation-cae',
-          to: makeCollectiviteLabellisationUrl({
+          to: makeReferentielLabellisationUrl({
             collectiviteId,
             referentielId: 'cae',
           }),
@@ -147,17 +144,16 @@ const makeNavItemsBase = (
         {
           label: 'Référentiel Économie Circulaire',
           dataTest: 'edl-eci',
-          to: makeCollectiviteReferentielUrl({
+          to: makeReferentielUrl({
             collectiviteId,
             referentielId: 'eci',
           }),
           urlPrefix: [
-            makeCollectiviteReferentielUrl({
+            makeReferentielUrl({
               collectiviteId,
               referentielId: 'eci',
-              referentielVue: '',
             }),
-            makeCollectiviteActionUrl({
+            makeReferentielActionUrl({
               collectiviteId,
               referentielId: 'eci',
               actionId: '',
@@ -167,7 +163,7 @@ const makeNavItemsBase = (
         {
           label: 'Labellisation Économie Circulaire',
           dataTest: 'labellisation-eci',
-          to: makeCollectiviteLabellisationUrl({
+          to: makeReferentielLabellisationUrl({
             collectiviteId,
             referentielId: 'eci',
           }),

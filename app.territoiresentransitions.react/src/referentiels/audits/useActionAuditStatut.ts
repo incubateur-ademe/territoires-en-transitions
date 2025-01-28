@@ -1,10 +1,8 @@
+import { useCollectiviteId } from '@/app/collectivites/collectivite-context';
 import { supabaseClient } from '@/app/core-logic/api/supabase';
-import {
-  useCollectiviteId,
-  useReferentielId,
-} from '@/app/core-logic/hooks/params';
 import { ActionDefinitionSummary } from '@/app/referentiels/ActionDefinitionSummaryReadEndpoint';
 import { useQuery } from 'react-query';
+import { useReferentielId } from '../referentiel-context';
 import { TActionAuditStatut } from './types';
 
 export type TActionDef = Pick<
@@ -35,11 +33,11 @@ export const fetch = async (collectivite_id: number, action: TActionDef) => {
  * Renvoi un objet par défaut si le statut n'est pas trouvé.
  */
 export const useActionAuditStatut = (action: TActionDef) => {
-  const collectivite_id = useCollectiviteId();
-  const referentiel = useReferentielId();
+  const collectiviteId = useCollectiviteId();
+  const referentielId = useReferentielId();
   const defaultStatut = {
-    collectivite_id,
-    referentiel,
+    collectivite_id: collectiviteId,
+    referentiel: referentielId,
     action_id: action.id,
     ordre_du_jour: false,
     avis: '',
@@ -47,10 +45,10 @@ export const useActionAuditStatut = (action: TActionDef) => {
   } as TActionAuditStatut;
 
   return useQuery(
-    ['action_audit_state', collectivite_id, referentiel, action.id],
+    ['action_audit_state', collectiviteId, referentielId, action.id],
     () =>
-      collectivite_id && referentiel
-        ? fetch(collectivite_id, action).then((data) => data || defaultStatut)
+      collectiviteId && referentielId
+        ? fetch(collectiviteId, action).then((data) => data || defaultStatut)
         : defaultStatut,
     { keepPreviousData: true }
   );

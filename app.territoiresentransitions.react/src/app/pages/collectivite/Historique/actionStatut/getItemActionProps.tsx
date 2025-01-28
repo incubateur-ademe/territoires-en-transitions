@@ -1,4 +1,4 @@
-import { makeCollectiviteTacheUrl } from '@/app/app/paths';
+import { makeReferentielTacheUrl } from '@/app/app/paths';
 import { referentielId } from '@/app/referentiels/actions.utils';
 import { THistoriqueItem } from '../types';
 
@@ -39,7 +39,7 @@ export const getItemActionProps = (item: THistoriqueItem) => {
   }
 
   // génère le lien vers la page concernée
-  const pageLink = makeCollectiviteTacheUrl({
+  const pageLink = makeReferentielTacheUrl({
     referentielId: referentielId(action_id || ''),
     collectiviteId: collectivite_id,
     actionId: action_id!,

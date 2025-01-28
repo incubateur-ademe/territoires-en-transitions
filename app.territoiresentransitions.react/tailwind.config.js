@@ -4,7 +4,7 @@ const { preset } = require('../packages/ui/src/tailwind-preset');
 module.exports = {
   presets: [preset],
   content: [
-    './src/**/*.{js,jsx,ts,tsx}',
+    './**/*.{js,jsx,ts,tsx}',
     '../packages/ui/src/**/*.{js,jsx,ts,tsx}',
     './public/index.html',
   ],

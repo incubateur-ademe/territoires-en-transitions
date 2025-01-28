@@ -1,13 +1,11 @@
-import {
-  useCollectiviteId,
-  useReferentielId,
-} from '@/app/core-logic/hooks/params';
+import { useCollectiviteId } from '@/app/collectivites/collectivite-context';
 import { useSearchParams } from '@/app/core-logic/hooks/query';
 import { useQuery } from 'react-query';
 import { TableOptions } from 'react-table';
+import { useReferentielId } from '../../referentiel-context';
+import { useReferentiel } from '../../ReferentielTable/useReferentiel';
 import { initialFilters, nameToShortNames, TFilters } from './filters';
 import { fetchRows, TAuditSuiviRow } from './queries';
-import { useReferentiel } from '../../ReferentielTable/useReferentiel';
 
 export type UseTableData = () => TableData;
 
@@ -35,8 +33,8 @@ export type TableData = {
  * Memoïze et renvoi les données et paramètres de la table
  */
 export const useTableData: UseTableData = () => {
-  const collectivite_id = useCollectiviteId();
-  const referentiel = useReferentielId();
+  const collectiviteId = useCollectiviteId();
+  const referentielId = useReferentielId();
 
   // filtre initial
   const [filters, setFilters, filtersCount] = useSearchParams<TFilters>(
@@ -47,8 +45,8 @@ export const useTableData: UseTableData = () => {
 
   // chargement des données en fonction des filtres
   const { data, isLoading } = useQuery(
-    ['audit-suivi', collectivite_id, referentiel, filters],
-    () => fetchRows(collectivite_id, referentiel, filters)
+    ['audit-suivi', collectiviteId, referentielId, filters],
+    () => fetchRows(collectiviteId, referentielId, filters)
   );
   const { rows: actionsAuditStatut } = data || {};
 
@@ -58,7 +56,7 @@ export const useTableData: UseTableData = () => {
     total,
     count,
     isLoading: isLoadingReferentiel,
-  } = useReferentiel(referentiel, collectivite_id, actionsAuditStatut);
+  } = useReferentiel(referentielId, collectiviteId, actionsAuditStatut);
 
   return {
     table,

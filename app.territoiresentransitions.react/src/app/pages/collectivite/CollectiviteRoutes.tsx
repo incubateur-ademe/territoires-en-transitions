@@ -7,27 +7,15 @@ import { TrajectoirePage } from '@/app/app/pages/collectivite/Trajectoire/Trajec
 import { MembresPage } from '@/app/app/pages/collectivite/Users/MembresPage';
 import {
   collectiviteAccueilPath,
-  collectiviteActionPath,
   collectiviteBibliothequePath,
   collectiviteIndicateursBasePath,
   collectiviteJournalPath,
-  collectiviteLabellisationPath,
-  collectivitePersoRefPath,
-  collectivitePersoRefThematiquePath,
   collectivitePlansActionsBasePath,
-  collectiviteReferentielPath,
-  collectiviteSyntheseReferentielPath,
   collectiviteTrajectoirePath,
   collectiviteUsersPath,
   makeCollectiviteAccueilUrl,
 } from '@/app/app/paths';
 import { useCurrentCollectivite } from '@/app/core-logic/hooks/useCurrentCollectivite';
-import { ActionPage } from '@/app/referentiels/actions/action.page';
-import { PersoReferentielPage } from '@/app/referentiels/personnalisations/PersoReferentiel/PersoReferentielPage';
-import { PersoReferentielThematiquePage } from '@/app/referentiels/personnalisations/PersoReferentielThematique/PersoReferentielThematiquePage';
-import { ReferentielPage } from '@/app/referentiels/referentiel.page';
-import { TableauDeBordPage as SyntheseEtatDesLieuxPage } from '@/app/referentiels/tableau-de-bord/tableau-de-bord.page';
-import { ParcoursLabellisationPage } from '../../../referentiels/labellisations/ParcoursLabellisationPage';
 import { BibliothequeDocsPage } from './BibliothequeDocs/BibliothequeDocsPage';
 import { JournalActivitePage } from './Historique/JournalActivitePage';
 import { PlansActionsPage } from './PlansActions/PlansActionsPage';
@@ -44,16 +32,6 @@ export const CollectiviteRoutes = () => {
         <AccueilPage />
       </Route>
 
-      <Route path={collectiviteReferentielPath}>
-        <ReferentielPage />
-      </Route>
-      <Route path={collectiviteSyntheseReferentielPath}>
-        <SyntheseEtatDesLieuxPage />
-      </Route>
-      <Route path={collectiviteActionPath}>
-        <ActionPage />
-      </Route>
-
       <RouteEnAccesRestreint path={collectiviteIndicateursBasePath}>
         <IndicateursPage />
       </RouteEnAccesRestreint>
@@ -68,21 +46,13 @@ export const CollectiviteRoutes = () => {
       <RouteEnAccesRestreint path={collectiviteUsersPath}>
         <MembresPage />
       </RouteEnAccesRestreint>
-      <Route path={collectivitePersoRefPath} exact>
-        <PersoReferentielPage />
-      </Route>
-      <Route path={collectivitePersoRefThematiquePath}>
-        <PersoReferentielThematiquePage />
-      </Route>
+
       <RouteEnAccesRestreint path={collectiviteJournalPath}>
         <JournalActivitePage />
       </RouteEnAccesRestreint>
       <RouteEnAccesRestreint path={collectiviteBibliothequePath}>
         <BibliothequeDocsPage />
       </RouteEnAccesRestreint>
-      <Route path={collectiviteLabellisationPath}>
-        <ParcoursLabellisationPage />
-      </Route>
     </>
   );
 };

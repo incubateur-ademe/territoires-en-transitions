@@ -1,14 +1,16 @@
+'use client';
+
 import { useCurrentCollectivite } from '@/app/core-logic/hooks/useCurrentCollectivite';
-import { useParams } from 'react-router-dom';
+import PageContainer from '@/ui/components/layout/page-container';
+import { useParams } from 'next/navigation';
 import { useChangeReponseHandler } from '../PersoPotentielModal/useChangeReponseHandler';
 import { ThematiqueQR } from './ThematiqueQR';
 import { useCarteIdentite } from './useCarteIdentite';
 import { useNextThematiqueId } from './useNextThematiqueId';
 import { useQuestionsReponses } from './useQuestionsReponses';
 import { useThematique } from './useThematique';
-import PageContainer from '@/ui/components/layout/page-container';
 
-const PersoReferentielThematique = () => {
+export const PersoReferentielThematique = () => {
   const collectivite = useCurrentCollectivite();
   const { collectiviteId: collectivite_id, nom } = collectivite || {};
   const { thematiqueId } = useParams<{ thematiqueId: string }>();

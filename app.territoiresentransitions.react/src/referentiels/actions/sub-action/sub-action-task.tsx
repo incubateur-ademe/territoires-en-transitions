@@ -3,7 +3,7 @@ import { ActionCommentaire } from '@/app/referentiels/actions/action-commentaire
 import { StatusToSavePayload } from '@/app/referentiels/actions/sub-action-statut.dropdown';
 import { useActionCommentaire } from '@/app/referentiels/use-action-commentaire';
 import { useEffect, useRef, useState } from 'react';
-import { useLocation } from 'react-router-dom';
+import { getHashFromUrl } from './sub-action.card';
 import SubActionHeader from './sub-action.header';
 
 type SubActionTaskProps = {
@@ -28,11 +28,10 @@ const SubActionTask = ({
   const ref = useRef<HTMLDivElement>(null);
 
   // scroll jusqu'à la tâche indiquée dans l'url
-  const { hash } = useLocation();
+  const hash = getHashFromUrl();
 
   useEffect(() => {
-    const id = hash.slice(1); // enlève le "#" au début du hash
-    if (id === task.id && ref && ref.current) {
+    if (hash === task.id && ref && ref.current) {
       setTimeout(() => {
         ref.current?.scrollIntoView({
           behavior: 'smooth',
@@ -41,7 +40,7 @@ const SubActionTask = ({
         });
       }, 0);
     }
-  }, [hash, ref]);
+  }, [hash, ref, task.id]);
 
   return (
     <div data-test={`task-${task.id}`} ref={ref}>

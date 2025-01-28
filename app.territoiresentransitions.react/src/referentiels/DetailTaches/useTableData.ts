@@ -1,10 +1,8 @@
-import {
-  useCollectiviteId,
-  useReferentielId,
-} from '@/app/core-logic/hooks/params';
+import { useCollectiviteId } from '@/app/collectivites/collectivite-context';
 import { useSearchParams } from '@/app/core-logic/hooks/query';
 import { useMutation, useQuery, useQueryClient } from 'react-query';
 import { TableOptions } from 'react-table';
+import { useReferentielId } from '../referentiel-context';
 import { useReferentiel } from '../ReferentielTable/useReferentiel';
 import { initialFilters, nameToShortNames, TFilters } from './filters';
 import {

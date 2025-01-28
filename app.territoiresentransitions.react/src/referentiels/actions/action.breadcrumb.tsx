@@ -1,6 +1,6 @@
+import { makeReferentielUrl } from '@/app/app/paths';
+import { useCollectiviteId } from '@/app/collectivites/collectivite-context';
 import NestedMenuItem from '@/app/referentiels/action.show/NestedMenuItem';
-import { makeCollectiviteReferentielUrl } from '@/app/app/paths';
-import { useCollectiviteId } from '@/app/core-logic/hooks/params';
 import { ActionDefinitionSummary } from '@/app/referentiels/ActionDefinitionSummaryReadEndpoint';
 import {
   actionPath,
@@ -62,7 +62,7 @@ export const ActionBreadcrumb = (props: {
   action: ActionDefinitionSummary;
 }) => {
   const { action } = props;
-  const collectiviteId = useCollectiviteId()!;
+  const collectiviteId = useCollectiviteId();
   const titles = useActionTitleList(action.referentiel);
 
   if (titles.length === 0) return null;
@@ -74,7 +74,7 @@ export const ActionBreadcrumb = (props: {
     <nav className="flex flex-row text-sm text-grey425 items-start">
       <div className="flex flex-row flex-nowrap">
         <Link
-          href={makeCollectiviteReferentielUrl({
+          href={makeReferentielUrl({
             collectiviteId,
             referentielId: action.referentiel,
           })}
@@ -107,7 +107,7 @@ const OrientationSwitcher = (props: {
   const [opened, setOpened] = useState(false);
   const [anchorEl, setAnchorEl] = React.useState<HTMLElement | null>(null);
   const router = useRouter();
-  const collectiviteId = useCollectiviteId()!;
+  const collectiviteId = useCollectiviteId();
 
   const menuId = `${props.action.id}-menu`;
   const siblings = findActionSiblingsOfId(props.action, props.titles);
@@ -142,7 +142,7 @@ const OrientationSwitcher = (props: {
         anchorOrigin={{ vertical: 'bottom', horizontal: 'left' }}
         transformOrigin={{ vertical: 'top', horizontal: 'left' }}
       >
-        {actionsToMenuItems(siblings!, props.titles, onSelect)}
+        {actionsToMenuItems(siblings, props.titles, onSelect)}
       </Menu>
     </>
   );

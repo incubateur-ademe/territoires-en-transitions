@@ -1,4 +1,4 @@
-import { makeCollectiviteTacheUrl } from '@/app/app/paths';
+import { makeReferentielTacheUrl } from '@/app/app/paths';
 import { Kbd } from '@/app/ui/shared/Kbd';
 import { ReferentielId } from '@/domain/referentiels';
 import { Tooltip } from '@/ui';
@@ -89,7 +89,7 @@ export const CellAction = (props: TCellProps) => {
               <Link
                 className="bg-none hover:underline active:underline active:!bg-transparent"
                 onClick={(evt) => evt.stopPropagation()}
-                href={makeCollectiviteTacheUrl({
+                href={makeReferentielTacheUrl({
                   collectiviteId,
                   actionId: row.original.action_id,
                   referentielId,

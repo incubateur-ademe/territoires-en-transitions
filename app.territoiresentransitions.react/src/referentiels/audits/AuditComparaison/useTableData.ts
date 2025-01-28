@@ -1,11 +1,9 @@
-import {
-  useCollectiviteId,
-  useReferentielId,
-} from '@/app/core-logic/hooks/params';
+import { useCollectiviteId } from '@/app/collectivites/collectivite-context';
 import { TableOptions } from 'react-table';
+import { useReferentielId } from '../../referentiel-context';
+import { useReferentiel } from '../../ReferentielTable/useReferentiel';
 import { TComparaisonScoreAudit, TScoreAuditRowData } from './types';
 import { useComparaisonScoreAudit } from './useComparaisonScoreAudit';
-import { useReferentiel } from '../../ReferentielTable/useReferentiel';
 
 export type UseTableData = () => TableData;
 

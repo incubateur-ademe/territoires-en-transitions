@@ -1,6 +1,4 @@
-import {
-  makeCollectiviteReferentielUrl,
-} from '@/app/app/paths';
+import { makeReferentielUrl } from '@/app/app/paths';
 import { TLabellisationParcours } from '@/app/referentiels/labellisations/types';
 import { toLocaleFixed } from '@/app/utils/toFixed';
 import { CritereRempli } from './CritereRempli';
@@ -32,7 +30,7 @@ export const CritereScore = (props: TCritereScoreProps) => {
         <a
           className="fr-link fr-link--icon-right fr-fi-arrow-right-line fr-mb-2w"
           target="_blank"
-          href={makeCollectiviteReferentielUrl({
+          href={makeReferentielUrl({
             collectiviteId,
             referentielId,
           })}

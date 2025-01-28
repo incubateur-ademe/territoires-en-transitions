@@ -1,10 +1,10 @@
-import {
-  useCollectiviteId,
-  useReferentielId,
-} from '@/app/core-logic/hooks/params';
+'use client';
+
+import { useCollectiviteId } from '@/app/collectivites/collectivite-context';
 import { TLabellisationParcours } from '@/app/referentiels/labellisations/types';
 import { TPreuveLabellisation } from '@/app/referentiels/preuves/Bibliotheque/types';
 import { Alert } from '@/ui';
+import { useReferentielId } from '../referentiel-context';
 import { CritereCompletude } from './CritereCompletude';
 import { CriterePreuves } from './CriterePreuves';
 import { CritereScore } from './CritereScore';

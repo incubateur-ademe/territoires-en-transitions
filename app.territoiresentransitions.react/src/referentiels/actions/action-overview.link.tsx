@@ -1,4 +1,4 @@
-import { makeCollectiviteActionUrl } from '@/app/app/paths';
+import { makeReferentielActionUrl } from '@/app/app/paths';
 import { useCollectiviteId } from '@/app/core-logic/hooks/params';
 import { ActionDefinitionSummary } from '@/app/referentiels/ActionDefinitionSummaryReadEndpoint';
 import { referentielId } from '@/app/referentiels/actions.utils';
@@ -22,7 +22,7 @@ export const ActionOverviewLink = ({
       <div className="pt-8 flex flex-row justify-between">
         <div className="flex flex-col w-4/5">
           <Link
-            href={makeCollectiviteActionUrl({
+            href={makeReferentielActionUrl({
               collectiviteId,
               referentielId: referentiel,
               actionId: action.id,

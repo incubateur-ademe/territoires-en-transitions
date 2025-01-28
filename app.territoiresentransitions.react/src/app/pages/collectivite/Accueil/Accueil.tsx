@@ -12,10 +12,10 @@ import { usePlanActionsCount } from '@/app/app/pages/collectivite/PlansActions/P
 import {
   makeCollectivitePanierUrl,
   makeCollectivitePlansActionsNouveauUrl,
-  makeCollectiviteSyntheseReferentielUrl,
   makeCollectiviteTousLesIndicateursUrl,
   makeCollectiviteToutesLesFichesUrl,
   makeCollectiviteTrajectoirelUrl,
+  makeReferentielRootUrl,
   makeTableauBordUrl,
   recherchesCollectivitesUrl,
 } from '@/app/app/paths';
@@ -77,7 +77,7 @@ const Accueil = (): JSX.Element => {
           buttons={[
             {
               children: "Synthèse de l'EDL",
-              href: makeCollectiviteSyntheseReferentielUrl({
+              href: makeReferentielRootUrl({
                 collectiviteId,
               }),
             },

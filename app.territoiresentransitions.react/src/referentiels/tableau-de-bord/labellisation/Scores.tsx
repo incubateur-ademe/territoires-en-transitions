@@ -1,7 +1,7 @@
 import {
-  makeCollectiviteLabellisationUrl,
   makeCollectivitePersoRefUrl,
-  makeCollectiviteReferentielUrl,
+  makeReferentielLabellisationUrl,
+  makeReferentielUrl,
 } from '@/app/app/paths';
 import { useFonctionTracker } from '@/app/core-logic/hooks/useFonctionTracker';
 import { useCycleLabellisation } from '@/app/referentiels/labellisations/useCycleLabellisation';
@@ -81,10 +81,10 @@ export const ScoreRempli = ({
           onClick={() =>
             tracker({ fonction: 'cta_labellisation', action: 'clic' })
           }
-          href={makeCollectiviteLabellisationUrl({
+          href={makeReferentielLabellisationUrl({
             collectiviteId,
             referentielId: referentiel,
-            labellisationVue: 'suivi',
+            labellisationTab: 'suivi',
           })}
           disabled={status === 'audit_en_cours' || status === 'demande_envoyee'}
           size="sm"
@@ -131,10 +131,10 @@ export const ScoreVide = ({
         {tags.map((tag, index) => (
           <li key={index} className="pb-0">
             <a
-              href={makeCollectiviteReferentielUrl({
+              href={makeReferentielUrl({
                 collectiviteId,
                 referentielId: referentiel,
-                referentielVue: 'progression',
+                referentielTab: 'progression',
                 axeId: tag.axeId,
               })}
               className="fr-tag !text-[#ff5655] hover:!bg-[#ffcdc1] !bg-[#fddfd8]"
@@ -152,10 +152,10 @@ export const ScoreVide = ({
           onClick={() =>
             tracker({ fonction: 'cta_edl_commencer', action: 'clic' })
           }
-          href={makeCollectiviteReferentielUrl({
+          href={makeReferentielUrl({
             collectiviteId,
             referentielId: referentiel,
-            referentielVue: 'progression',
+            referentielTab: 'progression',
           })}
         >
           {"Commencer l'état des lieux"}
