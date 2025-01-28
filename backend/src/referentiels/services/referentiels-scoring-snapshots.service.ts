@@ -135,6 +135,7 @@ export default class ReferentielsScoringSnapshotsService {
           `Un nom de snapshot doit être défini pour le jalon ${scoreResponse.jalon}`
         );
     }
+    scoreResponse.snapshot.ref = scoreResponse.snapshot.ref.slice(0, 30);
 
     this.logger.log(
       `Snapshot ref: ${scoreResponse.snapshot.ref}, nom: ${scoreResponse.snapshot.nom}`
