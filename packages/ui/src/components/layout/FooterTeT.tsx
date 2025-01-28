@@ -84,6 +84,11 @@ export const FooterTeT = ({
           external: true,
         },
         {
+          label: 'Feuille de route',
+          href: 'https://feuille-de-route.territoiresentransitions.fr/fr/roadmap',
+          external: true,
+        },
+        {
           label: 'Conditions générales d’utilisation',
           href: `${SITE_BASE_URL}/cgu`,
         },
