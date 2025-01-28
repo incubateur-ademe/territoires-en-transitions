@@ -125,7 +125,8 @@ const NavItem = (props: HeaderPropsWithModalState & { item: TNavItem }) => {
       <Link
         data-test={item.dataTest}
         href={to}
-        target="_self"
+        target={item.openInNewTab ? '_blank' : '_self'}
+        rel={item.openInNewTab ? 'noopener noreferrer' : undefined}
         className="fr-nav__link"
         aria-controls="modal-header__menu"
         aria-current={current}

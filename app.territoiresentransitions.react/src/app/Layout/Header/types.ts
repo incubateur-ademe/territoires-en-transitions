@@ -8,9 +8,11 @@ export type TNavItem = {
   to: string;
   dataTest?: string;
   urlPrefix?: string[];
-  // indique que l'item n'est pas affiché quand la collectivité est confidentielle
+  /** Permet d'ouvrir le lien dans un nouvel onglet */
+  openInNewTab?: boolean;
+  /** indique que l'item n'est pas affiché quand la collectivité est confidentielle */
   confidentiel?: boolean;
-  // indique que l'item n'est pas affiché quand l'utilisateur est un visiteur
+  /** indique que l'item n'est pas affiché quand l'utilisateur est un visiteur */
   hideToVisitor?: boolean;
 };
 

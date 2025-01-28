@@ -61,14 +61,6 @@ const makeNavItemsBase = (
     },
     {
       confidentiel,
-      label: 'Actions à Impact',
-      to: makeCollectivitePanierUrl({
-        collectiviteId,
-        panierId,
-      }),
-    },
-    {
-      confidentiel,
       title: 'État des lieux',
       dataTest: 'nav-edl',
       // Chemin de base pour garder le menu actif quand un change d'onglet
@@ -173,7 +165,7 @@ const makeNavItemsBase = (
     },
     {
       confidentiel,
-      title: "Plans d'action",
+      title: 'Plans & Actions',
       urlPrefix: [`${collectivite.collectiviteId}/plans/`],
       dataTest: 'nav-pa',
       items: [
@@ -216,6 +208,16 @@ const makeNavItemsBase = (
           to: makeCollectivitePlansActionsSyntheseUrl({
             collectiviteId,
           }),
+        },
+        {
+          confidentiel,
+          label: 'Actions à Impact',
+          dataTest: 'pa-ai',
+          to: makeCollectivitePanierUrl({
+            collectiviteId,
+            panierId,
+          }),
+          openInNewTab: true,
         },
       ],
     },
