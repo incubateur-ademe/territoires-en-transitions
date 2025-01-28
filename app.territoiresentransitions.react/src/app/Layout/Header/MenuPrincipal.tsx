@@ -118,9 +118,7 @@ const NavItem = (props: HeaderPropsWithModalState & { item: TNavItem }) => {
   // vérifie si l'item correspond au début du chemin courant
   const pathname = usePathname();
   const current =
-    pathname.startsWith(to) || pathIncludes(pathname, urlPrefix)
-      ? 'page'
-      : undefined;
+    pathname === to || pathIncludes(pathname, urlPrefix) ? 'page' : undefined;
 
   return (
     <li className="fr-nav__item">

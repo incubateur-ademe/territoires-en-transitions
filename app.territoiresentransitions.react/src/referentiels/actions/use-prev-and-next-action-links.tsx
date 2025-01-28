@@ -1,11 +1,7 @@
-import {
-  makeCollectiviteActionUrl,
-} from '@/app/app/paths';
-import {
-  useCollectiviteId,
-  useReferentielId,
-} from '@/app/core-logic/hooks/params';
+import { makeReferentielActionUrl } from '@/app/app/paths';
+import { useCollectiviteId } from '@/app/collectivites/collectivite-context';
 import { useReferentielDownToAction } from '@/app/referentiels/referentiel-hooks';
+import { useReferentielId } from '../referentiel-context';
 
 /**
  * Génération des liens "Action précédente" et "Action suivante"
@@ -28,7 +24,7 @@ export const usePrevAndNextActionLinks = (actionId: string) => {
   const prevAction =
     currentActionIndex > 0 && filteredActions[currentActionIndex - 1];
   const prevActionLink = prevAction
-    ? makeCollectiviteActionUrl({
+    ? makeReferentielActionUrl({
         collectiviteId,
         referentielId,
         actionId: prevAction.id,
@@ -40,7 +36,7 @@ export const usePrevAndNextActionLinks = (actionId: string) => {
     currentActionIndex < filteredActions.length - 1 &&
     filteredActions[currentActionIndex + 1];
   const nextActionLink = nextAction
-    ? makeCollectiviteActionUrl({
+    ? makeReferentielActionUrl({
         collectiviteId,
         referentielId,
         actionId: nextAction.id,

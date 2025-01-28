@@ -1,3 +1,5 @@
+'use client';
+
 import { referentielToName } from '@/app/app/labels';
 import { useAuth } from '@/app/core-logic/api/auth/AuthProvider';
 import {
@@ -16,7 +18,7 @@ import { useProgressionReferentiel } from './useProgressionReferentiel';
 /**
  * Affiche la page d'accueil d'une collectivité
  */
-const TableauDeBordShow = (): JSX.Element => {
+export const TableauDeBordShow = () => {
   const collectivite = useCurrentCollectivite();
 
   const { user } = useAuth();
@@ -129,5 +131,3 @@ const AccueilNonConfidentielle = ({
     </PageContainer>
   );
 };
-
-export default TableauDeBordShow;

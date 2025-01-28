@@ -1,3 +1,5 @@
+'use client';
+
 import { useCurrentCollectivite } from '@/app/core-logic/hooks/useCurrentCollectivite';
 import Thematiques from './Thematiques';
 import { usePersoFilters } from './usePersoFilters';

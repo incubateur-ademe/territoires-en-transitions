@@ -1,10 +1,8 @@
+import { useCollectiviteId } from '@/app/collectivites/collectivite-context';
 import { supabaseClient } from '@/app/core-logic/api/supabase';
-import {
-  useCollectiviteId,
-  useReferentielId,
-} from '@/app/core-logic/hooks/params';
 import { ReferentielId } from '@/domain/referentiels';
 import { useQuery } from 'react-query';
+import { useReferentielId } from '../referentiel-context';
 
 /**
  * Statut d'audit de toutes les actions du référentiel et de la collectivité

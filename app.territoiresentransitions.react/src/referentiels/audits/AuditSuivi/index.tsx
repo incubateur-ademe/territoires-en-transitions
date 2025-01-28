@@ -1,3 +1,5 @@
+'use client';
+
 import { DesactiverLesFiltres } from '@/app/ui/shared/filters/DesactiverLesFiltres';
 import { Table } from './Table';
 import { noFilters } from './filters';

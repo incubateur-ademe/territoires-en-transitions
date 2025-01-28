@@ -5,12 +5,22 @@ import { useActionSummaryChildren } from '@/app/referentiels/referentiel-hooks';
 import { useActionStatut } from '@/app/referentiels/use-action-statut';
 import { Accordion } from '@/app/ui/Accordion';
 import { useEffect, useRef, useState } from 'react';
-import { useLocation } from 'react-router-dom';
 import ActionJustification from './sub-action-justification';
 import SubActionPreuvesAccordion from './sub-action-preuves.accordion';
 import SubActionTasksList from './sub-action-task.list';
 import SubActionDescription from './sub-action.description';
 import SubActionHeader from './sub-action.header';
+
+export const getHashFromUrl = () => {
+  // Only run on client side since window is not available on server
+  if (typeof window !== 'undefined') {
+    // Get everything after # symbol, removing the # itself
+    const hash = window.location.hash.slice(1);
+    return hash;
+  }
+
+  return '';
+};
 
 type SubActionCardProps = {
   subAction: ActionDefinitionSummary;
@@ -33,7 +43,8 @@ const SubActionCard = ({
 }: SubActionCardProps): JSX.Element => {
   const ref = useRef<HTMLDivElement>(null);
 
-  const { hash } = useLocation();
+  const hash = getHashFromUrl();
+
   const { statut, filled } = useActionStatut(subAction.id);
   const { avancement, concerne } = statut || {};
   const tasks = useActionSummaryChildren(subAction);
@@ -60,7 +71,7 @@ const SubActionCard = ({
       (avancement === 'detaille' ||
         (avancement === 'non_renseigne' && filled === true) ||
         (statut === null && filled === true))) ||
-    (hash.slice(1).includes(subAction.id) && hash.slice(1) !== subAction.id);
+    (hash.includes(subAction.id) && hash !== subAction.id);
 
   const [openTasks, setOpenTasks] = useState(false);
   const [openSubAction, setOpenSubAction] = useState(forceOpen);

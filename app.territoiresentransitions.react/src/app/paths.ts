@@ -31,8 +31,7 @@ export const indicateurViewParam = 'vue';
 export const indicateurIdParam = 'indicateurId';
 export const indicateurIdentiantReferentielParam =
   'indicateurIdentiantReferentielParam';
-export const referentielParam = 'referentielId';
-export const referentielVueParam = 'referentielVue';
+
 const actionParam = 'actionId';
 const actionVueParam = 'actionVue';
 const labellisationVueParam = 'labellisationVue';
@@ -47,17 +46,17 @@ export type IndicateurViewParamOption =
   | 'perso'
   | 'cles'
   | 'selection';
-export type ReferentielVueParamOption =
-  | 'progression'
-  | 'priorisation'
-  | 'detail';
-export type ActionVueParamOption =
+
+type ReferentielTab = 'progression' | 'priorisation' | 'detail';
+
+export type ActionTabParamOption =
   | 'suivi'
   | 'preuves'
   | 'indicateurs'
   | 'fiches'
   | 'historique';
-export type LabellisationVueParamOption = 'suivi' | 'cycles' | 'criteres';
+
+type LabellisationTab = 'suivi' | 'cycles' | 'criteres';
 
 export const collectivitePath = `/collectivite/:${collectiviteParam}`;
 export const collectiviteIndicateursBasePath = `${collectivitePath}/indicateurs`;
@@ -66,16 +65,21 @@ export const collectiviteIndicateursCollectivitePath = `${collectiviteIndicateur
 export const collectiviteIndicateurPath = `${collectiviteIndicateursBasePath}/:${indicateurViewParam}/id/:${indicateurIdParam}?`;
 export const collectiviteIndicateurReferentielPath = `${collectiviteIndicateursBasePath}/:${indicateurViewParam}/:${indicateurIdentiantReferentielParam}?`;
 export const collectiviteTrajectoirePath = `${collectivitePath}/trajectoire`;
-export const collectiviteSyntheseReferentielPath = `${collectivitePath}/referentiels/accueil`;
-export const collectiviteReferentielPath = `${collectivitePath}/referentiels/:${referentielParam}/:${referentielVueParam}`;
 export const collectiviteAccueilPath = `${collectivitePath}/accueil`;
-export const collectiviteActionPath = `${collectivitePath}/action/:${referentielParam}/:${actionParam}/:${actionVueParam}?`;
-export const collectiviteLabellisationRootPath = `${collectivitePath}/labellisation/:${referentielParam}`;
-export const collectiviteLabellisationPath = `${collectiviteLabellisationRootPath}/:${labellisationVueParam}?`;
+
+const referentielIdParam = 'referentielId';
+const referentielVueParam = 'referentielVue';
+
+const referentielRootPath = `${collectivitePath}/referentiel`;
+const referentielPath = `${referentielRootPath}/:${referentielIdParam}/:${referentielVueParam}`;
+const referentielActionPath = `${referentielRootPath}/:${referentielIdParam}/action/:${actionParam}/:${actionVueParam}?`;
+const referentielLabellisationRootPath = `${referentielRootPath}/:${referentielIdParam}/labellisation`;
+const referentielLabellisationPath = `${referentielLabellisationRootPath}/:${labellisationVueParam}?`;
+const referentielPersonnalisationPath = `${referentielRootPath}/personnalisation`;
+const referentielPersonnalisationThematiquePath = `${referentielPersonnalisationPath}/:${thematiqueParam}`;
+
 export const collectiviteUsersPath = `${collectivitePath}/users`;
-export const collectivitePersoRefPath = `${collectivitePath}/personnalisation`;
 export const collectiviteBibliothequePath = `${collectivitePath}/bibliotheque`;
-export const collectivitePersoRefThematiquePath = `${collectivitePersoRefPath}/:${thematiqueParam}`;
 export const collectiviteJournalPath = `${collectivitePath}/historique`;
 
 const ficheParam = 'ficheUid';
@@ -191,30 +195,30 @@ export const makeCollectiviteTrajectoirelUrl = ({
 export const makeCollectiviteRootUrl = (collectiviteId: number) =>
   collectivitePath.replace(':collectiviteId', collectiviteId.toString());
 
-export const makeCollectiviteReferentielUrl = ({
+export const makeReferentielUrl = ({
   collectiviteId,
   referentielId,
-  referentielVue,
+  referentielTab = 'progression',
   axeId,
 }: {
   collectiviteId: number;
-  referentielVue?: ReferentielVueParamOption | '';
   referentielId: ReferentielId;
+  referentielTab?: ReferentielTab;
   axeId?: string;
 }) => {
-  let pathName = collectiviteReferentielPath
+  let pathName = referentielPath
     .replace(`:${collectiviteParam}`, collectiviteId.toString())
-    .replace(`:${referentielParam}`, referentielId)
-    .replace(
-      `:${referentielVueParam}`,
-      referentielVue === undefined ? 'progression' : referentielVue
-    );
+    .replace(`:${referentielIdParam}`, referentielId)
+    .replace(`:${referentielVueParam}`, referentielTab);
 
-  if (!!axeId && axeId.length) pathName += `?axe=${axeId}`;
+  if (!!axeId && axeId.length) {
+    pathName += `?axe=${axeId}`;
+  }
+
   return pathName;
 };
 
-export const makeCollectiviteActionUrl = ({
+export const makeReferentielActionUrl = ({
   collectiviteId,
   actionId,
   referentielId,
@@ -223,15 +227,15 @@ export const makeCollectiviteActionUrl = ({
   collectiviteId: number;
   actionId: string;
   referentielId: ReferentielId;
-  actionVue?: ActionVueParamOption;
+  actionVue?: ActionTabParamOption;
 }) =>
-  collectiviteActionPath
+  referentielActionPath
     .replace(`:${collectiviteParam}`, collectiviteId.toString())
-    .replace(`:${referentielParam}`, referentielId)
+    .replace(`:${referentielIdParam}`, referentielId)
     .replace(`:${actionParam}`, actionId)
     .replace(`:${actionVueParam}`, actionVue || '');
 
-export const makeCollectiviteTacheUrl = ({
+export const makeReferentielTacheUrl = ({
   collectiviteId,
   actionId,
   referentielId,
@@ -245,7 +249,7 @@ export const makeCollectiviteTacheUrl = ({
     .slice(0, referentielId === 'cae' ? 3 : 2)
     .join('.');
 
-  const pathname = makeCollectiviteActionUrl({
+  const pathname = makeReferentielActionUrl({
     collectiviteId,
     referentielId,
     actionId: limitedLevels,
@@ -254,30 +258,30 @@ export const makeCollectiviteTacheUrl = ({
   return pathname + hash;
 };
 
-export const makeCollectiviteLabellisationRootUrl = ({
+export const makeReferentielLabellisationRootUrl = ({
   collectiviteId,
   referentielId,
 }: {
   collectiviteId: number;
   referentielId: ReferentielId;
 }) =>
-  collectiviteLabellisationRootPath
+  referentielLabellisationRootPath
     .replace(`:${collectiviteParam}`, collectiviteId.toString())
-    .replace(`:${referentielParam}`, referentielId);
+    .replace(`:${referentielIdParam}`, referentielId);
 
-export const makeCollectiviteLabellisationUrl = ({
+export const makeReferentielLabellisationUrl = ({
   collectiviteId,
   referentielId,
-  labellisationVue,
+  labellisationTab,
 }: {
   collectiviteId: number;
   referentielId: ReferentielId;
-  labellisationVue?: LabellisationVueParamOption;
+  labellisationTab?: LabellisationTab;
 }) =>
-  collectiviteLabellisationPath
+  referentielLabellisationPath
     .replace(`:${collectiviteParam}`, collectiviteId.toString())
-    .replace(`:${referentielParam}`, referentielId)
-    .replace(`:${labellisationVueParam}`, labellisationVue || 'suivi');
+    .replace(`:${referentielIdParam}`, referentielId)
+    .replace(`:${labellisationVueParam}`, labellisationTab || 'suivi');
 
 export const makeCollectivitePlansActionsNouveauUrl = ({
   collectiviteId,
@@ -427,12 +431,12 @@ export const makeCollectivitePlanActionAxeUrl = ({
     .replace(`:${planParam}`, planActionUid)
     .replace(`:${axeParam}`, axeUid);
 
-export const makeCollectiviteSyntheseReferentielUrl = ({
+export const makeReferentielRootUrl = ({
   collectiviteId,
 }: {
   collectiviteId: number;
 }) =>
-  collectiviteSyntheseReferentielPath.replace(
+  referentielRootPath.replace(
     `:${collectiviteParam}`,
     collectiviteId.toString()
   );
@@ -464,7 +468,7 @@ export const makeCollectivitePersoRefUrl = ({
   collectiviteId: number;
   referentiels?: ReferentielId[];
 }) =>
-  collectivitePersoRefPath.replace(
+  referentielPersonnalisationPath.replace(
     `:${collectiviteParam}`,
     collectiviteId.toString()
   ) + (referentiels ? '?r=' + referentiels.join(',') : '');
@@ -488,7 +492,7 @@ export const makeCollectivitePersoRefThematiqueUrl = ({
   thematiqueId: string;
   referentiels?: ReferentielId[];
 }) =>
-  collectivitePersoRefThematiquePath
+  referentielPersonnalisationThematiquePath
     .replace(`:${collectiviteParam}`, collectiviteId.toString())
     .replace(`:${thematiqueParam}`, thematiqueId) +
   (referentiels ? '?r=' + referentiels.join(',') : '');

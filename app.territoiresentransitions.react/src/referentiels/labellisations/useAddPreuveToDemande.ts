@@ -1,11 +1,9 @@
+import { useCollectiviteId } from '@/app/collectivites/collectivite-context';
 import { supabaseClient } from '@/app/core-logic/api/supabase';
-import {
-  useCollectiviteId,
-  useReferentielId,
-} from '@/app/core-logic/hooks/params';
 import { TAddFileFromLib } from '@/app/referentiels/preuves/AddPreuveModal/AddFile';
 import { useAddPreuveLabellisation } from '@/app/referentiels/preuves/useAddPreuves';
 import { ReferentielId } from '@/domain/referentiels';
+import { useReferentielId } from '../referentiel-context';
 import { TLabellisationDemande } from './types';
 import { useCycleLabellisation } from './useCycleLabellisation';
 

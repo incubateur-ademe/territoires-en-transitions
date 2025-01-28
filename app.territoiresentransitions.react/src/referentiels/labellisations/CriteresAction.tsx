@@ -1,5 +1,5 @@
 import { referentielToName } from '@/app/app/labels';
-import { makeCollectiviteTacheUrl } from '@/app/app/paths';
+import { makeReferentielTacheUrl } from '@/app/app/paths';
 import { TLabellisationParcours } from '@/app/referentiels/labellisations/types';
 import classNames from 'classnames';
 import './CriteresAction.css';
@@ -77,7 +77,7 @@ const CritereActionRow = (
     rempli,
   } = action;
 
-  const pathname = makeCollectiviteTacheUrl({
+  const pathname = makeReferentielTacheUrl({
     collectiviteId,
     referentielId: referentiel,
     actionId: action_id,

@@ -1,5 +1,5 @@
 import { referentielToName } from '@/app/app/labels';
-import { makeCollectiviteTacheUrl } from '@/app/app/paths';
+import { makeReferentielTacheUrl } from '@/app/app/paths';
 import { useCollectiviteId } from '@/app/core-logic/hooks/params';
 import ActionStatutBadge from '@/app/referentiels/actions/action-statut.badge';
 import { getActionStatut } from '@/app/referentiels/utils';
@@ -24,7 +24,7 @@ const ActionLinkedCard = ({
   const { action_id: actionId, identifiant, nom, referentiel } = action;
   const statut = getActionStatut(objectToCamel(action));
 
-  const link = makeCollectiviteTacheUrl({
+  const link = makeReferentielTacheUrl({
     collectiviteId,
     actionId: actionId,
     referentielId: referentiel,

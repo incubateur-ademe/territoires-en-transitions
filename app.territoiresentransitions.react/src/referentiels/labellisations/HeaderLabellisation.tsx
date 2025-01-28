@@ -1,11 +1,11 @@
 /**
  * Affiche l'en-tête de page contenant l'objectif et le bouton pour candidater
  */
-
-import { useReferentielId } from '@/app/core-logic/hooks/params';
+import PageContainer from '@/ui/components/layout/page-container';
 import { ReactNode, useState } from 'react';
 import { ValiderAudit } from '../audits/ValiderAudit';
 import { TAuditeur, useAuditeurs } from '../audits/useAudit';
+import { useReferentielId } from '../referentiel-context';
 import { DemandeAuditModal } from './DemandeAuditModal';
 import { DemandeLabellisationModal } from './DemandeLabellisationModal';
 import { numLabels } from './numLabels';
@@ -16,7 +16,6 @@ import {
 } from './useCycleLabellisation';
 import { TStartAudit, useStartAudit } from './useStartAudit';
 import { TValidateAudit, useValidateAudit } from './useValidateAudit';
-import PageContainer from '@/ui/components/layout/page-container';
 
 export type THeaderLabellisationProps = {
   parcoursLabellisation: TCycleLabellisation;
