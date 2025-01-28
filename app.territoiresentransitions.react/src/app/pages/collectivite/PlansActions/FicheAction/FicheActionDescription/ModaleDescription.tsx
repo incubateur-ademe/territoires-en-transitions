@@ -6,13 +6,13 @@ import ThematiquesDropdown from '@/app/ui/dropdownLists/ThematiquesDropdown/Them
 import { getMaxLengthMessage } from '@/app/utils/formatUtils';
 import { Thematique } from '@/domain/shared';
 import {
+  AutoResizedTextarea,
   Button,
   Field,
   FormSectionGrid,
   Input,
   Modal,
   ModalFooterOKCancel,
-  Textarea,
   useEventTracker,
 } from '@/ui';
 import _ from 'lodash';
@@ -122,7 +122,7 @@ const ModaleDescription = ({ fiche, updateFiche }: ModaleDescriptionProps) => {
               DESCRIPTION_MAX_LENGTH
             )}
           >
-            <Textarea
+            <AutoResizedTextarea
               className="min-h-[100px]"
               value={editedFiche.description ?? ''}
               maxLength={DESCRIPTION_MAX_LENGTH}
@@ -149,7 +149,7 @@ const ModaleDescription = ({ fiche, updateFiche }: ModaleDescriptionProps) => {
               MOYENS_MAX_LENGTH
             )}
           >
-            <Textarea
+            <AutoResizedTextarea
               className="min-h-[100px]"
               value={editedFiche.ressources ?? ''}
               maxLength={MOYENS_MAX_LENGTH}
@@ -176,7 +176,7 @@ const ModaleDescription = ({ fiche, updateFiche }: ModaleDescriptionProps) => {
               INSTANCES_MAX_LENGTH
             )}
           >
-            <Textarea
+            <AutoResizedTextarea
               className="min-h-[100px]"
               value={editedFiche.instanceGouvernance ?? ''}
               maxLength={INSTANCES_MAX_LENGTH}
