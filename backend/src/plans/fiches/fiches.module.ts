@@ -10,6 +10,8 @@ import { FicheActionEtapeService } from './fiche-action-etape/fiche-action-etape
 import FicheService from './fiche.service';
 import FichesActionUpdateService from './fiches-action-update.service';
 import { FichesActionController } from './fiches-action.controller';
+import { ImportPlanRouter } from '@/backend/plans/fiches/import/import-plan.router';
+import { ImportPlanService } from '@/backend/plans/fiches/import/import-plan.service';
 
 @Module({
   imports: [forwardRef(() => CollectivitesModule)],
@@ -23,6 +25,8 @@ import { FichesActionController } from './fiches-action.controller';
     FichesActionUpdateService,
     FicheActionEtapeService,
     FicheActionEtapeRouter,
+    ImportPlanService,
+    ImportPlanRouter,
   ],
   exports: [
     PlanActionsService,
@@ -31,6 +35,8 @@ import { FichesActionController } from './fiches-action.controller';
     FicheActionEtapeService,
     FicheActionEtapeRouter,
     BulkEditRouter,
+    ImportPlanService,
+    ImportPlanRouter
   ],
   controllers: [FichesActionController],
 })

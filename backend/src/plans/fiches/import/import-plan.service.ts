@@ -1,0 +1,400 @@
+import { Injectable } from '@nestjs/common';
+import { DatabaseService } from '@/backend/utils';
+import ExcelJS from 'exceljs';
+import {
+  AxeImport,
+  FicheImport,
+  ficheTagTypes,
+  FinanceurImport,
+  MemoryImport,
+  TagImport,
+} from '@/backend/plans/fiches/import/import-plan.dto';
+import { TagEnum, TagType } from '@/backend/collectivites';
+import { ImportPlanFetchService } from '@/backend/plans/fiches/import/import-plan-fetch.service';
+import { ImportPlanSaveService } from '@/backend/plans/fiches/import/import-plan-save.service';
+import { ImportPlanCleanService } from '@/backend/plans/fiches/import/import-plan-clean.service';
+
+/** Column names ordered (order is important) */
+enum ColumnNames {
+  Axe = 'Axe (x)',
+  SousAxe = 'Sous-axe (x.x)',
+  SousSousAxe = 'Sous-sous axe (x.x.x)',
+  TitreFicheAction = 'Titre de la fiche action',
+  Descriptif = 'Descriptif',
+  ThematiquePrincipale = 'Thématique principale',
+  SousThematiques = 'Sous-thématiques',
+  InstancesGouvernance = 'Instances de gouvernance',
+  Objectifs = 'Objectifs',
+  IndicateursLies = 'Indicateurs liés',
+  ResultatsAttendus = 'Résultats attendus',
+  Cibles = 'Cibles',
+  StructurePilote = 'Structure pilote',
+  MoyensHumainsTechniques = 'Moyens humains et techniques',
+  Partenaires = 'Partenaires',
+  ServiceDepartementPolePilote = 'Service-département-pôle pilote',
+  PersonnePilote = 'Personne pilote',
+  EluReferent = 'Élu·e référent·e',
+  ParticipationCitoyenne = 'Participation Citoyenne',
+  Financements = 'Financements',
+  Financeur1 = 'Financeur 1',
+  Montant1 = 'Montant € TTC',
+  Financeur2 = 'Financeur 2',
+  // eslint-disable-next-line @typescript-eslint/no-duplicate-enum-values
+  Montant2 = 'Montant € TTC',
+  Financeur3 = 'Financeur 3',
+  // eslint-disable-next-line @typescript-eslint/no-duplicate-enum-values
+  Montant3 = 'Montant € TTC',
+  BudgetPrevisionnel = 'Budget prévisionnel total € TTC',
+  Statut = 'Statut',
+  NiveauPriorite = 'Niveau de priorité',
+  DateDebut = 'Date de début',
+  DateFin = 'Date de fin',
+  ActionAmeliorationContinue = 'Action en amélioration continue',
+  Calendrier = 'Calendrier',
+  ActionsLiees = 'Actions liées',
+  FichesPlansLiees = 'Fiches des plans liées',
+  NotesSuivi = 'Notes de suivi',
+  EtapesFicheAction = 'Etapes de la fiche action',
+  NotesComplementaires = 'Notes complémentaires',
+  DocumentsLiens = 'Documents et liens',
+}
+
+/** Column names ordered in array */
+const OrderedColumnNames: string[] = Object.values(ColumnNames);
+
+/** Uses column name comparison instead of indexes to facilitate potential insertion of new columns */
+const columnIndexes: Record<ColumnNames, number> = {} as Record<
+  ColumnNames,
+  number
+>;
+OrderedColumnNames.forEach((col, index) => {
+  columnIndexes[col as ColumnNames] = index;
+});
+
+@Injectable()
+export class ImportPlanService {
+  constructor(
+    private readonly databaseService: DatabaseService,
+    private readonly fetch: ImportPlanFetchService,
+    private readonly save: ImportPlanSaveService,
+    private readonly clean: ImportPlanCleanService
+  ) {}
+
+  /**
+   * todo
+   * @param file
+   * @param collectiviteId
+   * @param planName
+   * @param planType
+   */
+  async import(
+    file: File,
+    collectiviteId: number,
+    planName: string,
+    planType?: number
+  ): Promise<boolean> {
+    const plan: AxeImport = {
+      nom: planName,
+      type: planType,
+      enfants: new Set<AxeImport>(),
+      fiches: [],
+    };
+
+    // Open and check if the file is ok
+    const fileBuffer = await file.arrayBuffer();
+    const workbook = new ExcelJS.Workbook();
+    await workbook.xlsx.load(fileBuffer);
+    const worksheet = workbook.worksheets[0];
+    const header = worksheet.getRow(2).values as any[];
+    header.shift();
+    this.checkColumns(worksheet, header);
+
+    // Retrieves and creates useful data
+    const memoryData = await this.fetchData(collectiviteId, plan);
+
+    // Browse the file and retrieve the data
+    worksheet.eachRow(async (row, rowNumber) => {
+      if (rowNumber === 1 || rowNumber === 2) return; // Ignorer the header
+      const rowData = row.values as any[];
+      rowData.shift(); // data start at [1]
+      this.createAxes(rowData, plan, memoryData);
+    });
+
+    // Save datas
+    await this.saveData(collectiviteId, memoryData);
+
+    return true;
+  }
+
+  /**
+   * Check that the excel columns match the expected pattern
+   * @param worksheet
+   * @param row
+   * @private
+   */
+  private checkColumns(worksheet: ExcelJS.Worksheet, row: any[]): boolean {
+    for (let columnId = 0; columnId < OrderedColumnNames.length; columnId++) {
+      if (OrderedColumnNames[columnId].trim() !== row[columnId].trim()) {
+        const columnExcel = worksheet.getColumn(columnId + 1).letter;
+        throw new Error(
+          `Mauvaise colonne :
+          La colonne ${columnExcel} devrait être "${OrderedColumnNames[columnId]}" et non "${row[columnId]}"
+          Les colonnes attendues sont : ${OrderedColumnNames}
+          Les colonnes données sont   : ${row}`
+        );
+      }
+    }
+    return true;
+  }
+
+  /**
+   * Create "axe", "sous-axe", and "sous-sous-axe"
+   * Add the "fiche" from rowData in the good "axe"
+   * @param rowData
+   * @param plan
+   * @param memory
+   * @private
+   */
+  private createAxes(
+    rowData: any[],
+    plan: AxeImport,
+    memory: MemoryImport
+  ): void {
+    const axeNames = [
+      this.clean.text(rowData[columnIndexes[ColumnNames.Axe]], true),
+      this.clean.text(rowData[columnIndexes[ColumnNames.SousAxe]], true),
+      this.clean.text(rowData[columnIndexes[ColumnNames.SousSousAxe]], true),
+    ];
+
+    let parent = plan;
+    let currentAxe: AxeImport | undefined = undefined;
+
+    for (const axeName of axeNames) {
+      if (!axeName) continue;
+      currentAxe = this.getOrCreateAxe(axeName, parent, memory.axes);
+      parent.enfants.add(currentAxe);
+      parent = currentAxe;
+    }
+
+    const axeFiche = currentAxe ?? plan;
+    const fiche = this.createFiche(rowData, memory);
+    if (fiche) {
+      axeFiche.fiches.push(fiche);
+      memory.fiches.add(fiche);
+    }
+  }
+
+  /**
+   * Get an existing axe with the same name or create a new one
+   * @param nom
+   * @param parent
+   * @param existingAxes
+   * @private
+   */
+  private getOrCreateAxe(
+    nom: string,
+    parent: AxeImport,
+    existingAxes: Set<AxeImport>
+  ): AxeImport {
+    // Get an existing "axe" given its name and parent
+    for (const existingAxe of existingAxes) {
+      if (existingAxe.nom === nom && existingAxe.parent === parent) {
+        return existingAxe;
+      }
+    }
+
+    // If there is no "axe", create a new one
+    const newAxe: AxeImport = {
+      nom,
+      parent,
+      enfants: new Set<AxeImport>(),
+      fiches: [],
+    };
+
+    existingAxes.add(newAxe); // Add the new "axe"
+    return newAxe;
+  }
+
+  /**
+   * Create a "fiche"
+   * @param rowData
+   * @param memory
+   * @private
+   */
+  private createFiche(
+    rowData: any[],
+    memory: MemoryImport
+  ): FicheImport | null {
+    const title = this.clean.text(
+      rowData[columnIndexes[ColumnNames.TitreFicheAction]],
+      true
+    );
+    if (!title) {
+      return null;
+    }
+    return {
+      titre: title,
+      description: this.clean.text(
+        rowData[columnIndexes[ColumnNames.Descriptif]]
+      ),
+      thematique: this.clean.thematique(
+        rowData[columnIndexes[ColumnNames.ThematiquePrincipale]],
+        memory.thematiques
+      ),
+      sousThematique: this.clean.thematique(
+        rowData[columnIndexes[ColumnNames.SousThematiques]],
+        memory.sousThematiques
+      ),
+      gouvernance: this.clean.text(
+        rowData[columnIndexes[ColumnNames.InstancesGouvernance]]
+      ),
+      objectifs: this.clean.text(rowData[columnIndexes[ColumnNames.Objectifs]]),
+      indicateurs: undefined, // unavailable
+      resultats: this.clean.effetAttendu(
+        rowData[columnIndexes[ColumnNames.ResultatsAttendus]],
+        memory.effetsAttendu
+      ),
+      cibles: this.clean.cible(rowData[columnIndexes[ColumnNames.Cibles]]),
+      structures: this.clean.tags(
+        rowData[columnIndexes[ColumnNames.StructurePilote]],
+        TagEnum.Structure,
+        memory.tags
+      ),
+      resources: this.clean.text(
+        rowData[columnIndexes[ColumnNames.MoyensHumainsTechniques]]
+      ),
+      partenaires: this.clean.tags(
+        rowData[columnIndexes[ColumnNames.Partenaires]],
+        TagEnum.Partenaire,
+        memory.tags
+      ),
+      services: this.clean.tags(
+        rowData[columnIndexes[ColumnNames.ServiceDepartementPolePilote]],
+        TagEnum.Service,
+        memory.tags
+      ),
+      pilotes: this.clean.persons(
+        rowData[columnIndexes[ColumnNames.PersonnePilote]],
+        memory.tags,
+        memory.members
+      ),
+      referents: this.clean.persons(
+        rowData[columnIndexes[ColumnNames.EluReferent]],
+        memory.tags,
+        memory.members
+      ),
+      participation: this.clean.participation(
+        rowData[columnIndexes[ColumnNames.ParticipationCitoyenne]]
+      ),
+      financements: this.clean.text(
+        rowData[columnIndexes[ColumnNames.Financements]]
+      ),
+      financeurs: this.createFinanceur(rowData, memory.tags),
+      budget: this.clean.int(
+        rowData[columnIndexes[ColumnNames.BudgetPrevisionnel]]
+      ),
+      statut: this.clean.statut(rowData[columnIndexes[ColumnNames.Statut]]),
+      priorite: this.clean.priorite(
+        rowData[columnIndexes[ColumnNames.NiveauPriorite]]
+      ),
+      dateDebut: this.clean.date(rowData[columnIndexes[ColumnNames.DateDebut]]),
+      dateFin: this.clean.date(rowData[columnIndexes[ColumnNames.DateFin]]),
+      ameliorationContinue: this.clean.boolean(
+        rowData[columnIndexes[ColumnNames.ActionAmeliorationContinue]]
+      ),
+      calendrier: this.clean.text(
+        rowData[columnIndexes[ColumnNames.Calendrier]]
+      ),
+      actions: undefined, // unavailable
+      fiches: undefined, // unavailable
+      notesSuivi: undefined, // unavailable
+      etapes: undefined, // unavailable
+      notesComplementaire: this.clean.text(
+        rowData[columnIndexes[ColumnNames.NotesComplementaires]]
+      ),
+      annexes: undefined, // unavailable
+    };
+  }
+
+  /**
+   * Create "financeur" tags and the associated "montant"
+   * @param rowData
+   * @param existingTags
+   * @private
+   */
+  private createFinanceur(
+    rowData: any[],
+    existingTags: Set<TagImport>
+  ): FinanceurImport[] {
+    const toReturn: FinanceurImport[] = [];
+    const financeursIndex: number[] = [];
+    const f1index = columnIndexes[ColumnNames.Financeur1];
+    if (f1index) financeursIndex.push(f1index);
+    const f2index = columnIndexes[ColumnNames.Financeur2];
+    if (f2index) financeursIndex.push(f2index);
+    const f3index = columnIndexes[ColumnNames.Financeur3];
+    if (f3index) financeursIndex.push(f3index);
+
+    for (const index of financeursIndex) {
+      const tag: TagImport[] | undefined = this.clean.tags(
+        rowData[index],
+        TagEnum.Financeur,
+        existingTags
+      );
+      // The three column "Montant € TTC" have the same name
+      // so we can't use columnIndexes[ColumnNames.MontantX]
+      const montant: number | undefined = this.clean.int(rowData[index + 1]);
+      if (tag && tag.length == 1 && montant) {
+        const financeur: FinanceurImport = {
+          tag: tag[0],
+          montant: montant,
+        };
+        toReturn.push(financeur);
+      }
+    }
+    return toReturn;
+  }
+
+  /**
+   * Fetch data
+   * @param collectiviteId
+   * @param plan
+   * @private
+   */
+  private async fetchData(
+    collectiviteId: number,
+    plan: AxeImport
+  ): Promise<MemoryImport> {
+    const memoryData: MemoryImport = {
+      plan: plan,
+      axes: new Set<AxeImport>(),
+      tags: new Set<TagImport>(),
+      fiches: new Set<FicheImport>(),
+      effetsAttendu: await this.fetch.effetsAttendus(),
+      members: await this.fetch.members(collectiviteId),
+      thematiques : await this.fetch.thematiques(),
+      sousThematiques : await this.fetch.sousThematiques(),
+    };
+
+    for (const ficheTag of ficheTagTypes) {
+      (await this.fetch.tags(collectiviteId, ficheTag as TagType)).forEach(
+        (tag) => memoryData.tags.add(tag)
+      );
+    }
+
+    return memoryData;
+  }
+
+  /**
+   * Save datas
+   * @param collectiviteId
+   * @param memoryData
+   * @private
+   */
+  private async saveData(collectiviteId: number, memoryData: MemoryImport) {
+    // Order is important tags -> fiches -> axes
+    await this.save.tags(collectiviteId, memoryData.tags);
+    await this.save.fiches(collectiviteId, memoryData.fiches);
+    await this.save.axe(collectiviteId, memoryData.plan);
+  }
+}
