@@ -141,7 +141,7 @@ export const makeOption = ({
       type: 'time',
       splitLine: { show: true, lineStyle: { opacity: 0.5 } },
       // graduation de 5 en 5 années
-      maxInterval: 6 * 365 * 24 * 50 * 60 * 1000,
+      maxInterval: 12 * 365 * 24 * 50 * 60 * 1000,
       minInterval: 365 * 24 * 50 * 60 * 1000,
       axisLabel: {
         formatter: '{yyyy}',
