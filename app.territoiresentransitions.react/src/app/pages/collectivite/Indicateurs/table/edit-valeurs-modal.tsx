@@ -1,11 +1,11 @@
 import { Button, Divider, Field, Input, Modal, ModalFooter } from '@/ui';
 import { OpenState } from '@/ui/utils/types';
 import { useState } from 'react';
+import { PreparedData } from '../data/prepare-data';
+import { IndicateurSourceValeur } from '../data/use-indicateur-valeurs';
+import { useUpsertIndicateurValeur } from '../data/use-upsert-indicateur-valeur';
 import { TIndicateurDefinition } from '../types';
 import { InputValue } from './input-value';
-import { PreparedData } from './prepare-data';
-import { IndicateurSourceValeur } from './use-indicateur-valeurs';
-import { useUpsertIndicateurValeur } from './use-upsert-indicateur-valeur';
 
 export type EditValeursModalProps = {
   collectiviteId: number;

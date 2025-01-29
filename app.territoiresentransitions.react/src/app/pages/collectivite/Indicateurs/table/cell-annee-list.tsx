@@ -1,7 +1,7 @@
 import { Button, HEAD_CELL_STYLE, Notification, TCell, Tooltip } from '@/ui';
 import classNames from 'classnames';
+import { PreparedData, PreparedValue } from '../data/prepare-data';
 import { SourceType } from '../types';
-import { PreparedData, PreparedValue } from './prepare-data';
 
 type CellAnneeListProps = {
   confidentiel?: boolean;
