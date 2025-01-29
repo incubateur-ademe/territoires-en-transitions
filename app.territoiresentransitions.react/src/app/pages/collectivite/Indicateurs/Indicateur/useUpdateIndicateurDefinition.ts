@@ -1,10 +1,11 @@
 import { Indicateurs } from '@/api';
-import { supabaseClient } from '@/api/utils/supabase/browser-client';
+import { trpc } from '@/api/utils/trpc/client';
+import { supabaseClient } from '@/app/core-logic/api/supabase';
 import { useCollectiviteId } from '@/app/core-logic/hooks/params';
-import { useMutation, useQueryClient } from 'react-query';
+import { useMutation } from 'react-query';
 
 export const useUpdateIndicateurDefinition = () => {
-  const queryClient = useQueryClient();
+  const utils = trpc.useUtils();
   const collectiviteId = useCollectiviteId()!;
 
   return useMutation({
@@ -23,16 +24,10 @@ export const useUpdateIndicateurDefinition = () => {
     },
     onSuccess: ({ definition }) => {
       const { collectiviteId, id } = definition;
-      queryClient.invalidateQueries([
-        'indicateur_definition',
-        collectiviteId,
-        id,
-      ]);
-      queryClient.invalidateQueries([
-        'indicateur_chart_info',
-        collectiviteId,
-        id,
-      ]);
+      utils.indicateurs.definitions.list.invalidate({
+        collectiviteId: collectiviteId!,
+        indicateurIds: [id],
+      });
     },
   });
 };
