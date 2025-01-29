@@ -1,17 +1,18 @@
 import { Modal } from '@/ui';
 import { OpenState } from '@/ui/utils/types';
-import IndicateurChart, { IndicateurChartData } from './IndicateurChart';
+import { IndicateurChartInfo } from '../data/use-indicateur-chart';
+import IndicateurChart from './IndicateurChart';
 
 type Props = {
   openState: OpenState;
-  data: IndicateurChartData;
+  chartInfo: IndicateurChartInfo;
   isLoading: boolean;
   title?: string;
 };
 
 const DownloadIndicateurChartModal = ({
   openState,
-  data,
+  chartInfo,
   isLoading,
   title,
 }: Props) => {
@@ -23,7 +24,7 @@ const DownloadIndicateurChartModal = ({
       openState={openState}
       render={() => (
         <IndicateurChart
-          data={data}
+          chartInfo={chartInfo}
           isLoading={isLoading}
           title={title}
           variant="modal"
