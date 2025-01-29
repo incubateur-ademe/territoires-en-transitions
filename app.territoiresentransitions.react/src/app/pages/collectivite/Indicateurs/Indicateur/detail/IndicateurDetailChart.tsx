@@ -1,93 +1,81 @@
+import { TIndicateurDefinition } from '@/app/app/pages/collectivite/Indicateurs/types';
+import PictoIndicateurVide from '@/app/ui/pictogrammes/PictoIndicateurVide';
+import { Button, EmptyCard, Select } from '@/ui';
 import classNames from 'classnames';
 import { useState } from 'react';
-
-import { TIndicateurDefinition } from '@/app/app/pages/collectivite/Indicateurs/types';
-import { useIndicateurValeurs } from '@/app/app/pages/collectivite/Indicateurs/useIndicateurValeurs';
-import PictoIndicateurVide from '@/app/ui/pictogrammes/PictoIndicateurVide';
-import { Button, EmptyCard, Icon } from '@/ui';
 import DownloadIndicateurChartModal from '../../chart/DownloadIndicateurChart';
 import IndicateurChart from '../../chart/IndicateurChart';
-import { DataSourceTooltip } from './DataSourceTooltip';
-import { transformeValeurs } from './transformeValeurs';
+import { useIndicateurChartInfo } from '../../data/use-indicateur-chart';
 
 type Props = {
   definition: TIndicateurDefinition;
-  titre: string;
-  fileName: string;
-  rempli: boolean | null;
-  source?: string;
   className?: string;
 };
 
+const SegmentationNames: Record<string, string> = {
+  secteur: 'Indicateurs sectoriels',
+  vecteur: 'Indicateurs vectoriels',
+  vecteur_filiere: 'Indicateurs vecteur x filière',
+};
+
 /**
- * Utiliser dans les pages indicateurs.
+ * Utilisé dans les pages indicateurs.
  * Permet notamment de télécharger le graphique.
  */
-const IndicateurDetailChart = ({
-  definition,
-  rempli,
-  source,
-  titre,
-  fileName,
-  className,
-}: Props) => {
+const IndicateurDetailChart = ({ definition, className }: Props) => {
   /** Gère l'affichage de la modale */
   const [isChartOpen, setIsChartOpen] = useState(false);
 
   // charge les valeurs à afficher dans le graphe
-  const { data: valeursBrutes, isLoading: isLoadingValeurs } =
-    useIndicateurValeurs({
-      id: definition.id,
-      importSource: source,
-      autoRefresh: true,
-    });
+  const chartInfo = useIndicateurChartInfo({
+    definition,
+  });
+  const {
+    typesSegmentation,
+    segmentation,
+    setSegmentation,
+    hasValeur,
+    isLoading,
+  } = chartInfo;
 
-  // sépare les données objectifs/résultats
-  const { valeurs, objectifs, resultats, metadonnee } = transformeValeurs(
-    valeursBrutes,
-    source
-  );
-
-  const data = {
-    unite: definition.unite,
-    valeurs: { objectifs, resultats },
-  };
-
-  // Rempli ne peut pas être utilisé pour l'affichage car les objectifs ne sont pas pris en compte mais doivent quand même apparaître
-  const hasValeurOrObjectif = valeurs.length > 0;
-
-  return hasValeurOrObjectif ? (
+  return hasValeur ? (
     <>
+      {
+        /* sélecteur de segmentation */
+        typesSegmentation?.length > 1 && (
+          <Select
+            values={segmentation}
+            options={typesSegmentation.map((type) => ({
+              label: SegmentationNames[type],
+              value: type,
+            }))}
+            onChange={(v) => v && setSegmentation(v as string)}
+          />
+        )
+      }
+
       <div
         data-test={`chart-${definition.id}`}
         className={classNames('flex flex-col', className)}
       >
         <div className="flex justify-between mx-8">
-          {!!rempli && (
-            <Button
-              size="xs"
-              variant="outlined"
-              className="ml-auto"
-              onClick={() => setIsChartOpen(true)}
-            >
-              Télécharger le graphique
-            </Button>
-          )}
+          <Button
+            size="xs"
+            variant="outlined"
+            className="ml-auto"
+            onClick={() => setIsChartOpen(true)}
+          >
+            Télécharger le graphique
+          </Button>
         </div>
 
-        <IndicateurChart data={data} isLoading={isLoadingValeurs} />
-
-        {!!metadonnee && (
-          <DataSourceTooltip metadonnee={metadonnee}>
-            <Icon icon="information-line" className="text-primary px-6" />
-          </DataSourceTooltip>
-        )}
+        <IndicateurChart chartInfo={chartInfo} isLoading={isLoading} />
       </div>
 
       <DownloadIndicateurChartModal
         openState={{ isOpen: isChartOpen, setIsOpen: setIsChartOpen }}
-        data={data}
-        isLoading={isLoadingValeurs}
+        chartInfo={chartInfo}
+        isLoading={isLoading}
         title={definition.titre}
       />
     </>
