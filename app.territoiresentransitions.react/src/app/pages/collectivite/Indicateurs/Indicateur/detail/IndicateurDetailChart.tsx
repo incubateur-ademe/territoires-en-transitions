@@ -11,6 +11,8 @@ type Props = {
   definition: TIndicateurDefinition;
   className?: string;
   buttonClassName?: string;
+  isReadonly?: boolean;
+  onAddValue?: () => void;
 };
 
 const SegmentationNames: Record<string, string> = {
@@ -20,10 +22,11 @@ const SegmentationNames: Record<string, string> = {
 };
 
 /**
+ *
  * Utilisé dans les pages indicateurs.
  * Permet notamment de télécharger le graphique.
  */
-const IndicateurDetailChart = ({ definition, className }: Props) => {
+const IndicateurDetailChart = ({ definition, className, buttonClassName, isReadonly = true, onAddValue }: Props) => {
   /** Gère l'affichage de la modale */
   const [isChartOpen, setIsChartOpen] = useState(false);
 
@@ -63,7 +66,7 @@ const IndicateurDetailChart = ({ definition, className }: Props) => {
           <Button
             size="xs"
             variant="outlined"
-            className="ml-auto"
+            className={classNames('ml-auto', buttonClassName)}
             onClick={() => setIsChartOpen(true)}
           >
             Télécharger le graphique
@@ -86,6 +89,16 @@ const IndicateurDetailChart = ({ definition, className }: Props) => {
       className="h-64 w-full"
       picto={(props) => <PictoIndicateurVide {...props} />}
       title="Aucune valeur n'est associée aux résultats ou aux objectifs de la collectivité !"
+      actions={
+        !isReadonly && onAddValue
+          ? [
+              {
+                children: 'Ajouter une valeur',
+                onClick: () => onAddValue(),
+              },
+            ]
+          : undefined
+      }
     />
   );
 };

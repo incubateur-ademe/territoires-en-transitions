@@ -1,5 +1,6 @@
 import { Button, ButtonGroup } from '@/ui';
-import { useState } from 'react';
+import { OpenState } from '@/ui/utils/types';
+import { useEffect, useState } from 'react';
 import { prepareData } from '../data/prepare-data';
 import { useIndicateurValeurs } from '../data/use-indicateur-valeurs';
 import { SourceType, TIndicateurDefinition } from '../types';
@@ -12,13 +13,14 @@ export type IndicateurTableProps = {
   definition: TIndicateurDefinition;
   readonly?: boolean;
   confidentiel?: boolean;
+  openModalState?: OpenState;
 };
 
 /**
  * Affiche les boutons et le tableau des valeurs d'un indicateur
  */
 export const IndicateurTable = (props: IndicateurTableProps) => {
-  const { collectiviteId, definition, readonly } = props;
+  const { collectiviteId, definition, readonly, openModalState } = props;
   const { data: valeurs } = useIndicateurValeurs({
     collectiviteId,
     indicateurIds: [definition.id],
@@ -28,14 +30,18 @@ export const IndicateurTable = (props: IndicateurTableProps) => {
   const rawData = valeurs?.indicateurs?.[0];
   const data = prepareData(rawData, type);
 
-  const [isOpen, setIsOpen] = useState(false);
+  const [isOpen, setIsOpen] = useState(openModalState?.isOpen ?? false);
+
+  useEffect(() => {
+    setIsOpen(openModalState?.isOpen ?? false);
+  }, [openModalState?.isOpen]);
 
   return (
     <div className="flex flex-col gap-4">
       <div className="flex">
         {/** bascule entre résultats et objectifs */}
         <ButtonGroup
-          size="xs"
+          size="sm"
           activeButtonId={type}
           buttons={[
             {
@@ -51,7 +57,7 @@ export const IndicateurTable = (props: IndicateurTableProps) => {
           ]}
         />
         {/** pour ouvrir le dialogue d'édition des valeurs */}
-        <Button size="xs" onClick={() => setIsOpen(true)} disabled={readonly}>
+        <Button size="sm" onClick={() => setIsOpen(true)} disabled={readonly}>
           Ajouter une année
         </Button>
       </div>
@@ -64,7 +70,13 @@ export const IndicateurTable = (props: IndicateurTableProps) => {
         <EditValeursModal
           collectiviteId={collectiviteId}
           definition={definition}
-          openState={{ isOpen, setIsOpen }}
+          openState={{
+            isOpen,
+            setIsOpen: (value) => {
+              setIsOpen(value);
+              openModalState?.setIsOpen(value);
+            },
+          }}
           data={data}
         />
       )}
