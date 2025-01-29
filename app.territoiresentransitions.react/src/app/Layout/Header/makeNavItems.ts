@@ -26,9 +26,12 @@ import { TNavDropdown, TNavItem, TNavItemsList } from './types';
 export const makeNavItems = (
   collectivite: CurrentCollectivite,
   user: UserData | null,
-  panierId: string | undefined
+  panierId: string | undefined,
+  hasPlansAction?: boolean
 ): TNavItemsList => {
-  return filtreItems(makeNavItemsBase(collectivite, user, panierId));
+  return filtreItems(
+    makeNavItemsBase(collectivite, user, panierId, hasPlansAction)
+  );
 };
 
 const isVisiteur = ({
@@ -45,7 +48,8 @@ const isVisiteur = ({
 const makeNavItemsBase = (
   collectivite: CurrentCollectivite,
   user: UserData | null,
-  panierId: string | undefined
+  panierId: string | undefined,
+  hasPlansAction?: boolean
 ): TNavItemsList => {
   const collectiviteId = collectivite.collectiviteId;
   const confidentiel =
@@ -206,6 +210,29 @@ const makeNavItemsBase = (
           to: makeCollectivitePlansActionsLandingUrl({
             collectiviteId,
           }),
+          onClick: () => {
+            console.log(hasPlansAction);
+            if (!hasPlansAction) {
+              $crisp.push(['do', 'chat:open']);
+              $crisp.push([
+                'do',
+                'message:show',
+                [
+                  'text',
+                  'On est là pour vous aider à mettre en ligne vos plans d’action. Si vous hésitez entre les options de mise en ligne ou que vous avez des questions, contactez-nous !',
+                ],
+              ]);
+              $crisp.push([
+                'do',
+                'message:show',
+                [
+                  'text',
+                  "Vous trouverez aussi des infos utiles dans notre [Centre d'aide](https://aide.territoiresentransitions.fr/fr/article/comment-mettre-en-ligne-votre-plan-daction-1skcwdw/)",
+                ],
+              ]);
+              $crisp.push(['do', 'message:show', ['text', 'À bientôt 😄']]);
+            }
+          },
         },
         {
           label: 'Toutes les fiches action',

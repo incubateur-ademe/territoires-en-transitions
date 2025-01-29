@@ -15,6 +15,7 @@ import {
   TNavItem,
   TNavItemsList,
 } from './types';
+import { usePlansNavigation } from '@/app/app/pages/collectivite/PlansActions/PlanAction/data/usePlansNavigation';
 
 /**
  * Affiche la nvaigation principale et le sélecteur de collectivité
@@ -44,11 +45,20 @@ export const MenuPrincipal = (props: HeaderPropsWithModalState) => {
     return () => document.body.removeEventListener('mousedown', onClickOutside);
   }, []);
 
+  const { data: axes } = usePlansNavigation();
+  const hasPlansAction =
+    axes && axes.filter((axe) => axe.depth === 0).length > 0;
+
   let items = [] as TNavItemsList;
   let secondaryItems = [] as TNavItemsList;
   if (currentCollectivite) {
     // récupère la liste des items à afficher dans le menu
-    items = makeNavItems(currentCollectivite, auth.user, panierId);
+    items = makeNavItems(
+      currentCollectivite,
+      auth.user,
+      panierId,
+      hasPlansAction
+    );
     secondaryItems = makeSecondaryNavItems(currentCollectivite);
   }
 
@@ -132,6 +142,7 @@ const NavItem = (props: HeaderPropsWithModalState & { item: TNavItem }) => {
         aria-controls="modal-header__menu"
         aria-current={current}
         onClick={() => {
+          item.onClick?.();
           setModalOpened(false);
           setOpenedId(null);
         }}
