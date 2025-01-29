@@ -58,8 +58,6 @@ const IndicateurToolbar = ({
           <DeleteModal {...{ definition, isLoading }} />
         )}
 
-        {/* TODO : déplacer les infos dans l'onglet dédié */}
-        {/* {!isPerso && <IndicateurSidePanelToolbar definition={definition} />} */}
       </div>
 
       {isEditModalOpen && (

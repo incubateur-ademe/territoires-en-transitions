@@ -1,33 +1,12 @@
 import { Tag, TagInsert } from '@/domain/collectivites';
 import { indicateurDefinitionSchemaInsert } from '@/domain/indicateurs';
 import { Thematique, thematiqueSchema } from '@/domain/shared';
-import { isNil } from 'es-toolkit/predicate';
 import { objectToSnake } from 'ts-case-convert';
 import { z } from 'zod';
 import { Personne } from '../../collectivites/shared/domain/personne.schema';
-import { selectTags } from '../../shared/actions/tag.fetch';
 import { insertTags } from '../../shared/actions/tag.save';
-import { DBClient, TablesInsert } from '../../typeUtils';
-import { Valeur, valeurSchema } from '../domain';
-import { IndicateurDefinition } from '../domain/definition.schema';
-import {
-  IndicateurImportSource,
-  getValeursComparaison,
-} from './indicateur.fetch';
-
-export type upsertValeursUtilisateurAvecSourceParametres = {
-  dbClient: DBClient;
-  indicateurId: number;
-  collectiviteId: number;
-  source: Pick<
-    IndicateurImportSource,
-    'id' | 'libelle' | 'dateVersion' | 'methodologie'
-  >;
-  appliquerResultat: boolean;
-  appliquerObjectif: boolean;
-  ecraserResultat: boolean;
-  ecraserObjectif: boolean;
-};
+import { DBClient } from '../../typeUtils';
+import { IndicateurDefinitionUpdate } from '../domain/definition.schema';
 
 /**
  * Modifie la définition d'un indicateur pour une collectivité
@@ -37,7 +16,7 @@ export type upsertValeursUtilisateurAvecSourceParametres = {
  */
 export async function updateIndicateurDefinition(
   dbClient: DBClient,
-  indicateur: IndicateurDefinition,
+  indicateur: IndicateurDefinitionUpdate,
   collectiviteId: number
 ) {
   // Modifier commentaire && confidentiel
@@ -143,55 +122,6 @@ export async function insertIndicateurDefinition(
 }
 
 /**
- * Upsert la valeur utilisateur d'un indicateur, supprime la valeur si aucun champ rempli
- * @param dbClient client supabase
- * @param indicateurValeur valeur à ajouter/modifier
- * @return identifiant de la valeur ajoutée/modifiée, null si supprimée
- */
-export async function upsertIndicateurValeur(
-  dbClient: DBClient,
-  indicateurValeur: Valeur
-): Promise<number | null> {
-  valeurSchema.parse(indicateurValeur); // Vérifie le type
-  if (
-    isNil(indicateurValeur.resultat) &&
-    isNil(indicateurValeur.objectif) &&
-    isNil(indicateurValeur.estimation) &&
-    (!indicateurValeur.resultatCommentaire ||
-      indicateurValeur.resultatCommentaire === '') &&
-    (!indicateurValeur.objectifCommentaire ||
-      indicateurValeur.objectifCommentaire === '')
-  ) {
-    if (indicateurValeur.id) {
-      await dbClient
-        .from('indicateur_valeur')
-        .delete()
-        .eq('id', indicateurValeur.id);
-    }
-    return null;
-  }
-  // eslint-disable-next-line @typescript-eslint/no-unused-vars
-  const { annee, ...rest } = indicateurValeur;
-  const toUpsert = {
-    ...rest,
-    dateValeur: new Date(indicateurValeur.annee, 0, 1).toLocaleDateString(),
-    source: undefined,
-    metadonneeId: rest.source?.id || null,
-  };
-  const { data, error } = await dbClient
-    .from('indicateur_valeur')
-    .upsert(objectToSnake(toUpsert) as TablesInsert<'indicateur_valeur'>)
-    .select('id')
-    .single();
-
-  if (error) {
-    throw error;
-  }
-
-  return data.id;
-}
-
-/**
  * Modifie les thématiques d'un indicateur
  * @param dbClient client supabase
  * @param indicateur indicateur concerné
@@ -272,60 +202,6 @@ export async function upsertServices(
 
   await dbClient.from('indicateur_service_tag').upsert(toUpsert, {
     onConflict: 'indicateur_id, collectivite_id, service_tag_id',
-  });
-}
-
-/**
- * Modifie les categories utilisateur d'un indicateur
- * @param dbClient client supabase
- * @param indicateur indicateur concerné
- * @param collectiviteId identifiant de la collectivité concernée
- * @param categories categories à modifier
- */
-export async function upsertCategoriesUtilisateur(
-  dbClient: DBClient,
-  indicateur: IndicateurDefinition,
-  collectiviteId: number,
-  categories: TagInsert[]
-) {
-  const tagIds: number[] = [];
-  const newTags: TagInsert[] = [];
-  const categoriesCollectivite = await selectTags(
-    dbClient,
-    collectiviteId,
-    'categorie'
-  );
-
-  categories.forEach((s) => {
-    if (s.id) {
-      tagIds.push(s.id as number);
-    } else if (s.nom && s.collectiviteId === collectiviteId) {
-      newTags.push(s);
-    }
-  });
-
-  // Supprime les categories qui ne sont plus concernés
-  await dbClient
-    .from('indicateur_categorie_tag')
-    .delete()
-    .eq('indicateur_id', indicateur.id)
-    // Ne supprime que les catégories de la collectivité
-    .in(
-      'categorie_tag_id',
-      categoriesCollectivite.map((c) => c.id)
-    )
-    .not('categorie_tag_id', 'in', `(${tagIds.join(',')})`);
-
-  // Ajoute les nouveaux tags
-  const newTagsAdded: Tag[] = await insertTags(dbClient, 'categorie', newTags);
-
-  // Fait les nouveaux liens entre l'indicateur et les pilotes
-  const toUpsert = tagIds
-    .concat(newTagsAdded.map((t) => t.id as number))
-    .map((s) => ({ indicateur_id: indicateur.id, categorie_tag_id: s }));
-
-  await dbClient.from('indicateur_categorie_tag').upsert(toUpsert, {
-    onConflict: 'indicateur_id, categorie_tag_id',
   });
 }
 
@@ -444,93 +320,4 @@ export async function upsertFiches(
     fiches.map((fiche_id) => ({ fiche_id, indicateur_id: indicateurId })),
     { onConflict: 'indicateur_id,fiche_id' }
   );
-}
-
-/**
- * Applique les valeurs d'une source aux valeurs utilisateurs d'un indicateur
- * @param args upsertValeursUtilisateurAvecSourceParametres <ul>
- *<li><u>dbClient</u> : client supabase</li>
- *<li><u>indicateurId</u> : identifiant de l'indicateur</li>
- *<li><u>collectiviteId</u>: identifiant de la collectivite</li>
- *<li><u>source</u> : source à appliquer</li>
- *<li><u>appliquerResultat</u> : vrai pour appliquer les résultats de la source</li>
- *<li><u>appliquerObjectif</u> : vrai pour appliquer les objectifs de la source</li>
- *<li><u>ecraserResultat</u> : vrai pour écraser les résultats existants utilisateur par ceux de la source</li>
- *<li><u>ecraserObjectif</u> : vrai pour écraser les objectifs existants utilisateur par ceux de la source</li>
- *</ul>
- */
-export async function upsertValeursUtilisateurAvecSource(
-  args: upsertValeursUtilisateurAvecSourceParametres
-) {
-  const valeurs = await getValeursComparaison(
-    args.dbClient,
-    args.indicateurId,
-    args.collectiviteId,
-    args.source.id
-  );
-  const valeursToUpsert: Map<number, Valeur> = new Map<number, Valeur>();
-
-  if (valeurs) {
-    const commentaire = [
-      args.source.libelle,
-      !!args.source.dateVersion &&
-        new Date(args.source.dateVersion)?.getFullYear(),
-      args.source.methodologie,
-    ]
-      .filter((s) => !!s)
-      .join(', ');
-    if (args.appliquerResultat) {
-      for (const ligne of valeurs.resultats.lignes) {
-        // Si nouvelle ligne, ou nouveau résultat qu'on écrase
-        if (
-          !ligne.idAEcraser ||
-          !ligne.conflit ||
-          (ligne.conflit && args.ecraserResultat)
-        ) {
-          const valeurToUpsert: Valeur = {
-            id: ligne.idAEcraser ? ligne.idAEcraser : undefined,
-            indicateurId: args.indicateurId,
-            annee: ligne.annee,
-            collectiviteId: args.collectiviteId,
-            source: null,
-            resultat: ligne.valeurAAppliquer,
-          };
-          if (!ligne.idAEcraser || !ligne.conflit)
-            valeurToUpsert.resultatCommentaire = commentaire;
-          valeursToUpsert.set(ligne.annee, valeurToUpsert);
-        }
-      }
-    }
-    if (args.appliquerObjectif) {
-      for (const ligne of valeurs.objectifs.lignes) {
-        if (
-          !ligne.idAEcraser ||
-          !ligne.conflit ||
-          (ligne.conflit && args.ecraserObjectif)
-        ) {
-          const valeurFromResultat = valeursToUpsert.get(ligne.annee);
-          const valeurToUpsert: Valeur = valeurFromResultat
-            ? valeurFromResultat
-            : {
-                id: ligne.idAEcraser ? ligne.idAEcraser : undefined,
-                indicateurId: args.indicateurId,
-                annee: ligne.annee,
-                collectiviteId: args.collectiviteId,
-                source: null,
-                objectif: ligne.valeurAAppliquer,
-              };
-          if (!ligne.idAEcraser || !ligne.conflit)
-            valeurToUpsert.objectifCommentaire = commentaire;
-          valeursToUpsert.set(ligne.annee, valeurToUpsert);
-        }
-      }
-    }
-
-    // TODO faire un upsert de plusieurs valeurs en une fois
-    await Promise.all(
-      [...valeursToUpsert.values()].map((v) =>
-        upsertIndicateurValeur(args.dbClient, v)
-      )
-    );
-  }
 }
