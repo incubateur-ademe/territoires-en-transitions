@@ -22,6 +22,7 @@ import {
   SourceMetadonnee,
   sourceMetadonneeSchema,
 } from './indicateur-source-metadonnee.table';
+import { indicateurSourceSchema } from './indicateur-source.table';
 
 export const indicateurValeurTable = pgTable('indicateur_valeur', {
   id: serial('id').primaryKey(),
@@ -95,6 +96,8 @@ export const indicateurValeursGroupeeParSourceSchema = z
     source: z.string(),
     metadonnees: z.array(sourceMetadonneeSchema),
     valeurs: z.array(indicateurValeurGroupeeSchema),
+    ordreAffichage: indicateurSourceSchema.shape.ordreAffichage,
+    libelle: indicateurSourceSchema.shape.libelle,
   })
   .describe('Indicateur valeurs pour une source donnée');
 
@@ -112,4 +115,3 @@ export interface IndicateurValeurAvecMetadonnesDefinition {
 
   indicateur_source_metadonnee: SourceMetadonnee | null;
 }
-

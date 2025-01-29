@@ -12,6 +12,7 @@ import {
 import CrudValeursService, {
   IndicateurAvecValeursParSource,
 } from './crud-valeurs.service';
+import { indicateur1, indicateur2, indicateur3 } from './tests/fixture';
 
 describe('Indicateurs → crud-valeurs.service', () => {
   let indicateurService: CrudValeursService;
@@ -32,64 +33,6 @@ describe('Indicateurs → crud-valeurs.service', () => {
 
   describe('groupeIndicateursValeursParIndicateur', () => {
     it('Groupe les valeurs par indicateur, trie par date croissante les valeurs', async () => {
-      const indicateur1: IndicateurDefinition = {
-        id: 456,
-        groupementId: null,
-        collectiviteId: null,
-        identifiantReferentiel: 'cae_1.c',
-        titre: 'Emissions de gaz à effet de serre - résidentiel',
-        titreLong: 'Emissions de gaz à effet de serre du secteur résidentiel',
-        description: '',
-        unite: 'teq CO2',
-        borneMin: null,
-        borneMax: null,
-        participationScore: false,
-        sansValeurUtilisateur: false,
-        valeurCalcule: null,
-        modifiedAt: '2024-08-12T12:07:14.638Z',
-        createdAt: '2024-08-12T12:07:14.638Z',
-        modifiedBy: null,
-        createdBy: null,
-      };
-      const indicateur2: IndicateurDefinition = {
-        id: 457,
-        groupementId: null,
-        collectiviteId: null,
-        identifiantReferentiel: 'cae_1.d',
-        titre: 'Emissions de gaz à effet de serre - tertiaire',
-        titreLong: 'Emissions de gaz à effet de serre du secteur tertiaire',
-        description: '',
-        unite: 'teq CO2',
-        borneMin: null,
-        borneMax: null,
-        participationScore: false,
-        sansValeurUtilisateur: false,
-        valeurCalcule: null,
-        modifiedAt: '2024-08-12T12:07:14.638Z',
-        createdAt: '2024-08-12T12:07:14.638Z',
-        modifiedBy: null,
-        createdBy: null,
-      };
-      const indicateur3: IndicateurDefinition = {
-        id: 458,
-        groupementId: null,
-        collectiviteId: null,
-        identifiantReferentiel: 'cae_1.e',
-        titre: 'Emissions de gaz à effet de serre - transport routier',
-        titreLong:
-          'Emissions de gaz à effet de serre du secteur du transport routier',
-        description: '',
-        unite: 'teq CO2',
-        borneMin: null,
-        borneMax: null,
-        participationScore: false,
-        sansValeurUtilisateur: false,
-        valeurCalcule: null,
-        modifiedAt: '2024-08-12T12:07:14.638Z',
-        createdAt: '2024-08-12T12:07:14.638Z',
-        modifiedBy: null,
-        createdBy: null,
-      };
       const indicateurDefinitions: IndicateurDefinition[] = [
         indicateur1,
         indicateur2,
@@ -207,64 +150,6 @@ describe('Indicateurs → crud-valeurs.service', () => {
 
   describe('groupeIndicateursValeursParIndicateurEtSource', () => {
     it('Groupe les valeurs par indicateur et par source, trie par date croissante les valeurs', async () => {
-      const indicateur1: IndicateurDefinition = {
-        id: 456,
-        groupementId: null,
-        collectiviteId: null,
-        identifiantReferentiel: 'cae_1.c',
-        titre: 'Emissions de gaz à effet de serre - résidentiel',
-        titreLong: 'Emissions de gaz à effet de serre du secteur résidentiel',
-        description: '',
-        unite: 'teq CO2',
-        borneMin: null,
-        borneMax: null,
-        participationScore: false,
-        sansValeurUtilisateur: false,
-        valeurCalcule: null,
-        modifiedAt: '2024-08-12T12:07:14.638Z',
-        createdAt: '2024-08-12T12:07:14.638Z',
-        modifiedBy: null,
-        createdBy: null,
-      };
-      const indicateur2: IndicateurDefinition = {
-        id: 457,
-        groupementId: null,
-        collectiviteId: null,
-        identifiantReferentiel: 'cae_1.d',
-        titre: 'Emissions de gaz à effet de serre - tertiaire',
-        titreLong: 'Emissions de gaz à effet de serre du secteur tertiaire',
-        description: '',
-        unite: 'teq CO2',
-        borneMin: null,
-        borneMax: null,
-        participationScore: false,
-        sansValeurUtilisateur: false,
-        valeurCalcule: null,
-        modifiedAt: '2024-08-12T12:07:14.638Z',
-        createdAt: '2024-08-12T12:07:14.638Z',
-        modifiedBy: null,
-        createdBy: null,
-      };
-      const indicateur3: IndicateurDefinition = {
-        id: 458,
-        groupementId: null,
-        collectiviteId: null,
-        identifiantReferentiel: 'cae_1.e',
-        titre: 'Emissions de gaz à effet de serre - transport routier',
-        titreLong:
-          'Emissions de gaz à effet de serre du secteur du transport routier',
-        description: '',
-        unite: 'teq CO2',
-        borneMin: null,
-        borneMax: null,
-        participationScore: false,
-        sansValeurUtilisateur: false,
-        valeurCalcule: null,
-        modifiedAt: '2024-08-12T12:07:14.638Z',
-        createdAt: '2024-08-12T12:07:14.638Z',
-        modifiedBy: null,
-        createdBy: null,
-      };
       const indicateurDefinitions: IndicateurDefinition[] = [
         indicateur1,
         indicateur2,
@@ -274,7 +159,7 @@ describe('Indicateurs → crud-valeurs.service', () => {
 
       const indicateurMetadonnees: SourceMetadonnee[] = [
         {
-          id: 1,
+          id: 2,
           sourceId: 'rare',
           dateVersion: '2024-07-18T00:00:00.000Z',
           nomDonnees: '',
@@ -284,7 +169,7 @@ describe('Indicateurs → crud-valeurs.service', () => {
           limites: '',
         },
         {
-          id: 2,
+          id: 3,
           sourceId: 'snbc',
           dateVersion: '2024-07-11T00:00:00.000Z',
           nomDonnees: null,
@@ -301,7 +186,7 @@ describe('Indicateurs → crud-valeurs.service', () => {
           collectiviteId: 4936,
           indicateurId: 456,
           dateValeur: '2016-01-01',
-          metadonneeId: 1,
+          metadonneeId: 2,
           resultat: null,
           resultatCommentaire: null,
           objectif: 527.25,
@@ -317,7 +202,7 @@ describe('Indicateurs → crud-valeurs.service', () => {
           collectiviteId: 4936,
           indicateurId: 456,
           dateValeur: '2015-01-01',
-          metadonneeId: 1,
+          metadonneeId: 2,
           resultat: null,
           resultatCommentaire: null,
           objectif: 513.79,
@@ -365,7 +250,11 @@ describe('Indicateurs → crud-valeurs.service', () => {
         indicateurService.groupeIndicateursValeursParIndicateurEtSource(
           indicateurValeurs,
           indicateurDefinitions,
-          indicateurMetadonnees
+          indicateurMetadonnees,
+          [
+            { id: 'rare', libelle: 'RARE-OREC', ordreAffichage: 1 },
+            { id: 'snbc', libelle: 'SNBC', ordreAffichage: null },
+          ]
         );
       const expectedIndicateurValeursGroupees: IndicateurAvecValeursParSource[] =
         [
@@ -376,6 +265,7 @@ describe('Indicateurs → crud-valeurs.service', () => {
               collectiviteId: null,
               identifiantReferentiel: 'cae_1.c',
               titre: 'Emissions de gaz à effet de serre - résidentiel',
+              titreCourt: 'Résidentiel',
               titreLong:
                 'Emissions de gaz à effet de serre du secteur résidentiel',
               description: '',
@@ -393,9 +283,11 @@ describe('Indicateurs → crud-valeurs.service', () => {
             sources: {
               rare: {
                 source: 'rare',
+                libelle: 'RARE-OREC',
+                ordreAffichage: 1,
                 metadonnees: [
                   {
-                    id: 1,
+                    id: 2,
                     sourceId: 'rare',
                     dateVersion: '2024-07-18T00:00:00.000Z',
                     nomDonnees: '',
@@ -410,18 +302,20 @@ describe('Indicateurs → crud-valeurs.service', () => {
                     id: 10263,
                     dateValeur: '2015-01-01',
                     objectif: 513.79,
-                    metadonneeId: 1,
+                    metadonneeId: 2,
                   },
                   {
                     id: 10264,
                     dateValeur: '2016-01-01',
                     objectif: 527.25,
-                    metadonneeId: 1,
+                    metadonneeId: 2,
                   },
                 ],
               },
               collectivite: {
                 source: 'collectivite',
+                libelle: '',
+                ordreAffichage: null,
                 metadonnees: [],
                 valeurs: [
                   { id: 10264, dateValeur: '2015-01-01', resultat: 625 },
@@ -436,6 +330,7 @@ describe('Indicateurs → crud-valeurs.service', () => {
               collectiviteId: null,
               identifiantReferentiel: 'cae_1.d',
               titre: 'Emissions de gaz à effet de serre - tertiaire',
+              titreCourt: 'Tertiaire',
               titreLong:
                 'Emissions de gaz à effet de serre du secteur tertiaire',
               description: '',
@@ -451,9 +346,22 @@ describe('Indicateurs → crud-valeurs.service', () => {
               createdBy: null,
             },
             sources: {
-              unknown: {
-                source: 'unknown',
-                metadonnees: [],
+              snbc: {
+                source: 'snbc',
+                libelle: 'SNBC',
+                ordreAffichage: null,
+                metadonnees: [
+                  {
+                    dateVersion: '2024-07-11T00:00:00.000Z',
+                    diffuseur: null,
+                    id: 3,
+                    limites: null,
+                    methodologie: null,
+                    nomDonnees: null,
+                    producteur: null,
+                    sourceId: 'snbc',
+                  },
+                ],
                 valeurs: [
                   {
                     id: 10300,
