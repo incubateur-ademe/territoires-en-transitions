@@ -16,6 +16,8 @@ const ListWithTooltip = ({
   hoveringColor = 'primary',
   onClick,
 }: Props) => {
+  if (list.length === 0) return null;
+
   return (
     <span
       title={title}
