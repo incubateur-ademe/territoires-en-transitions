@@ -1,4 +1,6 @@
 import { Divider } from '@/ui';
+import classNames from 'classnames';
+import { useState } from 'react';
 import IndicateurDetailChart from '../Indicateur/detail/IndicateurDetailChart';
 import { IndicateurValuesTabs } from '../Indicateur/detail/IndicateurValuesTabs';
 import { TIndicateurDefinition } from '../types';
@@ -21,6 +23,8 @@ const DonneesIndicateur = ({
   updateUnite,
   updateDescription,
 }: Props) => {
+  const [isTableModalOpen, setIsTableModalOpen] = useState(false);
+
   const { description, commentaire, unite } = definition;
 
   return (
@@ -41,14 +45,24 @@ const DonneesIndicateur = ({
         />
 
 
-      <Divider />
+      <div
+        className={classNames('flex flex-col gap-7', {
+          'invisible h-0': !rempli,
+        })}
+      >
+        <Divider />
 
-      {/* Tableau */}
-      <IndicateurValuesTabs
-        definition={definition}
-      />
+        {/* Tableau */}
+        <IndicateurValuesTabs
+          definition={definition}
+          openModalState={{
+            isOpen: isTableModalOpen,
+            setIsOpen: setIsTableModalOpen,
+          }}
+        />
 
-      <Divider className="mt-6" />
+        <Divider className="mt-6" />
+      </div>
 
       {/* Thématiques */}
       {isPerso && (

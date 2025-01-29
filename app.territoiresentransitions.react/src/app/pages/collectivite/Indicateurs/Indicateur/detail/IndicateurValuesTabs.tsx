@@ -1,5 +1,6 @@
 import { useCurrentCollectivite } from '@/app/core-logic/hooks/useCurrentCollectivite';
 import { Alert } from '@/ui';
+import { OpenState } from '@/ui/utils/types';
 import { IndicateurTable } from '../../table/indicateur-table';
 import { TIndicateurDefinition } from '../../types';
 
@@ -9,8 +10,10 @@ const ID_SEQUESTRATION = 'cae_63.';
 /** Affiche les onglets résultats/objectifs */
 export const IndicateurValuesTabs = ({
   definition,
+  openModalState,
 }: {
   definition: TIndicateurDefinition;
+  openModalState?: OpenState;
 }) => {
   const collectivite = useCurrentCollectivite();
   const isReadonly = !collectivite || collectivite.isReadOnly;
@@ -35,6 +38,7 @@ export const IndicateurValuesTabs = ({
           definition={definition}
           confidentiel={confidentiel}
           readonly={!collectivite || collectivite.isReadOnly}
+          openModalState={openModalState}
         />
       )}
     </>
