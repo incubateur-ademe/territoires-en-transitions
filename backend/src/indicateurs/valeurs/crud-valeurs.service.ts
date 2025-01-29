@@ -17,10 +17,11 @@ import {
   SQL,
   SQLWrapper,
 } from 'drizzle-orm';
-import { groupBy, partition } from 'es-toolkit';
+import { groupBy, keyBy, partition } from 'es-toolkit';
 import * as _ from 'lodash';
 import { AuthenticatedUser, AuthRole } from '../../auth/models/auth.models';
 import { DatabaseService } from '../../utils/database/database.service';
+import { indicateurSourceTable, Source } from '../index-domain';
 import { DeleteIndicateursValeursRequestType } from '../shared/models/delete-indicateurs.request';
 import { DeleteValeurIndicateur } from '../shared/models/delete-valeur-indicateur.request';
 import { GetIndicateursValeursRequestType } from '../shared/models/get-indicateurs.request';
@@ -211,6 +212,10 @@ export default class CrudValeursService {
     options: GetIndicateursValeursRequestType,
     tokenInfo: AuthenticatedUser
   ): Promise<GetIndicateursValeursResponseType> {
+    const { indicateurIds, identifiantsReferentiel } = options;
+    if (!indicateurIds?.length && !identifiantsReferentiel?.length)
+      return Promise.resolve({ indicateurs: [] });
+
     await this.permissionService.isAllowed(
       tokenInfo,
       PermissionOperation.INDICATEURS_LECTURE,
@@ -278,11 +283,22 @@ export default class CrudValeursService {
       }, initialMetadonneesAcc)
     ) as SourceMetadonnee[];
 
+    const sources = await this.databaseService.db
+      .select()
+      .from(indicateurSourceTable)
+      .where(
+        inArray(
+          indicateurSourceTable.id,
+          uniqueIndicateurMetadonnees.map((metadonnee) => metadonnee.sourceId)
+        )
+      );
+
     const indicateurValeurGroupeesParSource =
       this.groupeIndicateursValeursParIndicateurEtSource(
         indicateurValeursSeules,
         uniqueIndicateurDefinitions,
         uniqueIndicateurMetadonnees,
+        sources,
         false
       );
     return { indicateurs: indicateurValeurGroupeesParSource };
@@ -638,6 +654,7 @@ export default class CrudValeursService {
     indicateurValeurs: IndicateurValeur[],
     indicateurDefinitions: IndicateurDefinition[],
     indicateurMetadonnees: SourceMetadonnee[],
+    sources: Source[],
     supprimeIndicateursSansValeurs = true
   ): IndicateurAvecValeursParSource[] {
     const initialDefinitionsAcc: { [key: string]: IndicateurDefinition } = {};
@@ -649,6 +666,10 @@ export default class CrudValeursService {
         return acc;
       }, initialDefinitionsAcc)
     ) as IndicateurDefinition[];
+
+    const sourcesParId = sources?.length
+      ? keyBy(sources, (item) => item.id)
+      : {};
 
     const indicateurAvecValeurs = uniqueIndicateurDefinitions.map(
       (indicateurDefinition) => {
@@ -709,6 +730,8 @@ export default class CrudValeursService {
             source: sourceId,
             metadonnees: Object.values(metadonneesUtilisees[sourceId] || {}),
             valeurs: valeursParSource[sourceId],
+            libelle: sourcesParId[sourceId]?.libelle ?? '',
+            ordreAffichage: sourcesParId[sourceId]?.ordreAffichage ?? null,
           };
         }
         const IndicateurAvecValeursParSource: IndicateurAvecValeursParSource = {
