@@ -1,13 +1,12 @@
-import { Indicateurs } from '@/api';
 import BadgeIndicateurPerso from '@/app/app/pages/collectivite/Indicateurs/components/BadgeIndicateurPerso';
 import IndicateurDetailChart from '@/app/app/pages/collectivite/Indicateurs/Indicateur/detail/IndicateurDetailChart';
 import { useCurrentCollectivite } from '@/app/core-logic/hooks/useCurrentCollectivite';
 import ScrollTopButton from '@/app/ui/buttons/ScrollTopButton';
 import { ToolbarIconButton } from '@/app/ui/buttons/ToolbarIconButton';
-import { BadgeACompleter } from '@/app/ui/shared/Badge/BadgeACompleter';
 import TextareaControlled from '@/app/ui/shared/form/TextareaControlled';
 import { Field, Input, Modal, ModalFooterOKCancel } from '@/ui';
 import { useState } from 'react';
+import { TIndicateurDefinition } from '../types';
 import { HeaderIndicateur } from './detail/HeaderIndicateur';
 import { IndicateurInfoLiees } from './detail/IndicateurInfoLiees';
 import { IndicateurValuesTabs } from './detail/IndicateurValuesTabs';
@@ -21,9 +20,9 @@ import { useUpdateIndicateurDefinition } from './useUpdateIndicateurDefinition';
 const IndicateurPersonnaliseBase = ({
   definition,
 }: {
-  definition: Indicateurs.domain.IndicateurDefinition;
+  definition: TIndicateurDefinition;
 }) => {
-  const { description, unite, titre, rempli } = definition;
+  const { description, unite, titre } = definition;
   const { mutate: updateDefinition } = useUpdateIndicateurDefinition();
   const collectivite = useCurrentCollectivite();
   const isReadonly = !collectivite || collectivite?.isReadOnly;
@@ -82,7 +81,6 @@ const IndicateurPersonnaliseBase = ({
       <div className="px-10 py-6">
         <div className="flex flex-row items-center justify-between mb-6">
           <div className="flex items-center gap-4">
-            <BadgeACompleter a_completer={!rempli} />
             <BadgeIndicateurPerso />
           </div>
           <div>

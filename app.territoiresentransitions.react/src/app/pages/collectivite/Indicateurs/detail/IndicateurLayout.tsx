@@ -20,7 +20,7 @@ const IndicateurLayout = ({
   definition,
   isPerso = false,
 }: IndicateurLayoutProps) => {
-  const { enfants, sansValeur, description } = definition;
+  const { enfants, sansValeurUtilisateur:sansValeur, description } = definition;
 
   const { mutate: updateDefinition } = useUpdateIndicateurDefinition();
 
@@ -69,6 +69,8 @@ const IndicateurLayout = ({
     });
   };
 
+  const enfantsIds = enfants?.map(({ id }) => id) || [];
+
   return (
     <div className="bg-grey-2 grow">
       <div className="py-12">
@@ -85,7 +87,7 @@ const IndicateurLayout = ({
           <div className="w-full px-2 mx-auto xl:max-w-7xl 2xl:max-w-8xl">
             {composeSansAgregation ? (
               // Groupe d'indicateurs sans agrégation
-              <SousIndicateurs enfantsIds={enfants} />
+              <SousIndicateurs enfantsIds={enfantsIds} />
             ) : (
               // Indicateur sans enfant, groupe d'indicateurs avec agrégation,
               // ou indicateur personnalisé
@@ -106,7 +108,7 @@ const IndicateurLayout = ({
                 {/* Sous indicateurs */}
                 {composeAvecAgregation ? (
                   <Tab label={`${enfants.length} Sous indicateurs`}>
-                    <SousIndicateurs enfantsIds={enfants} />
+                    <SousIndicateurs enfantsIds={enfantsIds} />
                   </Tab>
                 ) : undefined}
 
@@ -114,7 +116,7 @@ const IndicateurLayout = ({
                 {!isPerso ? (
                   <Tab label="Actions des référentiels liées">
                     <ActionsLiees
-                      actionsIds={(definition.actions ?? []).map((a) => a.id)}
+                      actionsIds={(definition.actions ?? [])}
                     />
                   </Tab>
                 ) : undefined}
