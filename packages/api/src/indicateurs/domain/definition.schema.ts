@@ -59,6 +59,26 @@ export const definitionSchema = z.object({
 export type IndicateurDefinition = z.input<typeof definitionSchema>;
 
 /**
+ * Schéma zod de la définition d'un indicateur à màj
+ */
+export const indicateurDefinitionSchemaUpdate = definitionSchema.pick({
+  id: true,
+  collectiviteId: true,
+  commentaire: true,
+  confidentiel: true,
+  estPerso: true,
+  titre: true,
+  titreLong: true,
+  description: true,
+  unite: true,
+  borneMin: true,
+  borneMax: true,
+});
+
+export type IndicateurDefinitionUpdate = z.input<typeof indicateurDefinitionSchemaUpdate>;
+
+
+/**
  * Schéma zod d'un élément d'une liste d'indicateurs
  */
 export const indicateurListItemSchema = definitionSchema.pick({

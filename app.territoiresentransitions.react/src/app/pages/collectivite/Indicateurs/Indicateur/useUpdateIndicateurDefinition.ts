@@ -10,7 +10,9 @@ export const useUpdateIndicateurDefinition = () => {
 
   return useMutation({
     mutationKey: 'upsert_indicateur_perso_def',
-    mutationFn: async (definition: Indicateurs.domain.IndicateurDefinition) => {
+    mutationFn: async (
+      definition: Indicateurs.domain.IndicateurDefinitionUpdate
+    ) => {
       await Indicateurs.save.updateIndicateurDefinition(
         supabaseClient,
         definition,
