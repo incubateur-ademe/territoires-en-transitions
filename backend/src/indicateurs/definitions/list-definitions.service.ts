@@ -10,21 +10,43 @@ import {
   sql,
 } from 'drizzle-orm';
 import { objectToCamel } from 'ts-case-convert';
+import {
+  AuthenticatedUser,
+  AuthRole,
+  PermissionOperation,
+  ResourceType,
+} from '../../auth';
+import { PermissionService } from '../../auth/authorizations/permission.service';
+import { categorieTagTable } from '../../collectivites';
 import { groupementCollectiviteTable } from '../../collectivites/shared/models/groupement-collectivite.table';
 import { groupementTable } from '../../collectivites/shared/models/groupement.table';
+import { thematiqueTable } from '../../shared';
 import { DatabaseService } from '../../utils/database/database.service';
+import {
+  indicateurSourceMetadonneeTable,
+  indicateurValeurTable,
+} from '../index-domain';
+import { indicateurActionTable } from '../shared/models/indicateur-action.table';
+import { indicateurCategorieTagTable } from '../shared/models/indicateur-categorie-tag.table';
+import { indicateurCollectiviteTable } from '../shared/models/indicateur-collectivite.table';
 import {
   IndicateurDefinition,
   IndicateurDefinitionAvecEnfantsType,
+  IndicateurDefinitionDetaillee,
   indicateurDefinitionTable,
 } from '../shared/models/indicateur-definition.table';
 import { indicateurGroupeTable } from '../shared/models/indicateur-groupe.table';
+import { indicateurThematiqueTable } from '../shared/models/indicateur-thematique.table';
+import { ListDefinitionsRequest } from './list-definitions.request';
 
 @Injectable()
 export default class ListDefinitionsService {
   private readonly logger = new Logger(ListDefinitionsService.name);
 
-  constructor(private readonly databaseService: DatabaseService) {}
+  constructor(
+    private readonly databaseService: DatabaseService,
+    private readonly permissionService: PermissionService
+  ) {}
 
   async getReferentielIndicateurDefinitions(identifiantsReferentiel: string[]) {
     this.logger.log(
@@ -48,6 +70,7 @@ export default class ListDefinitionsService {
   /**
    * Charge la définition des indicateurs à partir de leur id
    * ainsi que les définitions des indicateurs "enfant" associés.
+   * (utilisé pour l'export)
    */
   async getIndicateurDefinitions(
     collectiviteId: number,
@@ -108,5 +131,176 @@ export default class ListDefinitionsService {
         };
       }
     );
+  }
+
+  /**
+   * Renvoi les définitions détaillées d'indicateur à partir de leur id ou de
+   * leur identifiant référentiel
+   */
+  async getDefinitionsDetaillees(
+    data: ListDefinitionsRequest,
+    tokenInfo: AuthenticatedUser
+  ) {
+    const { collectiviteId, indicateurIds, identifiantsReferentiel } = data;
+    await this.permissionService.isAllowed(
+      tokenInfo,
+      PermissionOperation.INDICATEURS_VISITE,
+      ResourceType.COLLECTIVITE,
+      collectiviteId
+    );
+
+    if (tokenInfo.role === AuthRole.AUTHENTICATED && tokenInfo.id) {
+      this.logger.log(
+        `Lecture des définitions détaillées d'indicateur id ${[
+          ...(indicateurIds || []),
+          identifiantsReferentiel || [],
+        ].join(',')} pour la collectivité ${data.collectiviteId}`
+      );
+
+      const definitionEnfantsTable = aliasedTable(
+        indicateurDefinitionTable,
+        'enfants'
+      );
+
+      const { identifiantReferentiel, ...cols } = getTableColumns(
+        indicateurDefinitionTable
+      );
+      const definitions = await this.databaseService.db
+        .select({
+          ...cols,
+          identifiant: identifiantReferentiel,
+          commentaire: indicateurCollectiviteTable.commentaire,
+          confidentiel: indicateurCollectiviteTable.confidentiel,
+          favoris: indicateurCollectiviteTable.favoris,
+          categories: sql`array_remove(array_agg(distinct ${categorieTagTable.nom}), null)`,
+          thematiques: sql`array_remove(array_agg(distinct ${thematiqueTable.nom}), null)`,
+          //          enfants: sql`array_remove(array_agg(distinct ${definitionEnfantsTable.id}), null)`,
+          enfants: sql`jsonb_agg(distinct jsonb_build_object(
+            'id', ${definitionEnfantsTable.id},
+            'identifiantReferentiel', ${definitionEnfantsTable.identifiantReferentiel},
+            'titre', ${definitionEnfantsTable.titre},
+            'titreCourt', ${definitionEnfantsTable.titreCourt}
+          )) filter (where ${definitionEnfantsTable.id} is not null)`,
+          actions: sql`to_json(array_remove(array_agg(distinct ${indicateurActionTable.actionId}), null)) as actions`,
+          hasOpenData: sql`bool_or(${indicateurValeurTable.metadonneeId} is not null and ${indicateurSourceMetadonneeTable.sourceId} != 'snbc')`,
+          estPerso: sql`bool_or(${indicateurDefinitionTable.identifiantReferentiel} is null)`,
+          estAgregation: sql`bool_or(${categorieTagTable.nom} = 'agregation')`,
+        })
+        .from(indicateurDefinitionTable)
+        // infos complémentaires sur l'indicateur pour la collectivité
+        .leftJoin(
+          indicateurCollectiviteTable,
+          and(
+            eq(
+              indicateurCollectiviteTable.indicateurId,
+              indicateurDefinitionTable.id
+            ),
+            eq(indicateurCollectiviteTable.collectiviteId, collectiviteId)
+          )
+        )
+        // catégories
+        .leftJoin(
+          indicateurCategorieTagTable,
+          eq(
+            indicateurCategorieTagTable.indicateurId,
+            indicateurDefinitionTable.id
+          )
+        )
+        .leftJoin(
+          categorieTagTable,
+          eq(categorieTagTable.id, indicateurCategorieTagTable.categorieTagId)
+        )
+        // thématiques
+        .leftJoin(
+          indicateurThematiqueTable,
+          eq(
+            indicateurThematiqueTable.indicateurId,
+            indicateurDefinitionTable.id
+          )
+        )
+        .leftJoin(
+          thematiqueTable,
+          eq(thematiqueTable.id, indicateurThematiqueTable.thematiqueId)
+        )
+        // enfants
+        .leftJoin(
+          indicateurGroupeTable,
+          eq(indicateurGroupeTable.parent, indicateurDefinitionTable.id)
+        )
+        .leftJoin(
+          definitionEnfantsTable,
+          eq(definitionEnfantsTable.id, indicateurGroupeTable.enfant)
+        )
+        // enfants liés aux groupements de la collectivité
+        .leftJoin(
+          groupementTable,
+          eq(groupementTable.id, definitionEnfantsTable.groupementId)
+        )
+        .leftJoin(
+          groupementCollectiviteTable,
+          eq(groupementCollectiviteTable.groupementId, groupementTable.id)
+        )
+        // actions du référentiel
+        .leftJoin(
+          indicateurActionTable,
+          eq(indicateurActionTable.indicateurId, indicateurDefinitionTable.id)
+        )
+        // valeurs (pour déterminer hasOpenData)
+        .leftJoin(
+          indicateurValeurTable,
+          and(
+            eq(
+              indicateurValeurTable.indicateurId,
+              indicateurDefinitionTable.id
+            ),
+            eq(indicateurValeurTable.collectiviteId, collectiviteId)
+          )
+        )
+        // source des valeurs (pour déterminer hasOpenData)
+        .leftJoin(
+          indicateurSourceMetadonneeTable,
+          and(
+            eq(
+              indicateurSourceMetadonneeTable.id,
+              indicateurValeurTable.metadonneeId
+            )
+          )
+        )
+        .where(
+          and(
+            or(
+              indicateurIds?.length
+                ? and(inArray(indicateurDefinitionTable.id, indicateurIds))
+                : undefined,
+              identifiantsReferentiel?.length
+                ? inArray(
+                    indicateurDefinitionTable.identifiantReferentiel,
+                    identifiantsReferentiel
+                  )
+                : undefined
+            ),
+            or(
+              isNull(definitionEnfantsTable.groupementId),
+              eq(groupementCollectiviteTable.collectiviteId, collectiviteId)
+            ),
+            or(
+              isNull(categorieTagTable.collectiviteId),
+              eq(categorieTagTable.collectiviteId, collectiviteId)
+            )
+          )
+        )
+        .groupBy(
+          indicateurDefinitionTable.id,
+          indicateurCollectiviteTable.commentaire,
+          indicateurCollectiviteTable.confidentiel,
+          indicateurCollectiviteTable.favoris
+        );
+
+      this.logger.log(`${definitions.length} définitions trouvées`);
+
+      return definitions as IndicateurDefinitionDetaillee[];
+    }
+
+    return [];
   }
 }
