@@ -25,6 +25,42 @@ export const LAYERS = {
   trajectoire: { color: '#1E98C6', label: 'SNBC territorialisée' },
 };
 
+export const PALETTE = [
+  '#929292',
+  '#FFE8BD',
+  '#F55B5B',
+  '#1CC272',
+  '#91B2EE',
+  '#4380F5',
+  '#1E98C6',
+  '#6A6AF4',
+  '#FFAF8B',
+  '#F5895B',
+  '#FFCA79',
+  '#B55DDC',
+  '#9351CF',
+  '#E1DBDB',
+  '#2A2A62',
+];
+
+export const PALETTE_LIGHT = [
+  '#D9D9D9',
+  '#FEF1D8',
+  '#F7B1C2',
+  '#A4E7C7',
+  '#D8EEFE',
+  '#B8D6F7',
+  '#96C7DA',
+  '#E1E1FD',
+  '#FFD0BB',
+  '#FFB595',
+  '#FBE7B5',
+  '#E4CDEE',
+  '#C6C3E3',
+  '#EEEEEE',
+  '#C3C3FB',
+];
+
 // pour formater les chiffres
 const NumFormat = Intl.NumberFormat('fr', { maximumFractionDigits: 3 });
 
