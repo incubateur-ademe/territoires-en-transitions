@@ -19,7 +19,7 @@ const AidePriorisation = () => {
 
   return (
     <>
-      <p>
+      <div className="mb-6">
         {filtersCount} {labelFilters}
         {filtersCount > 0 && (
           <DesactiverLesFiltres
@@ -33,7 +33,7 @@ const AidePriorisation = () => {
             {filterInfoMessage}
           </>
         ) : null}
-      </p>
+      </div>
       <Table tableData={tableData} />
     </>
   );
