@@ -1,5 +1,6 @@
 import { Indicateurs } from '@/api';
 import { supabaseClient } from '@/api/utils/supabase/browser-client';
+import { trpc } from '@/api/utils/trpc/client';
 import { useCollectiviteId } from '@/app/core-logic/hooks/params';
 import { useMutation, useQueryClient } from 'react-query';
 
@@ -10,6 +11,7 @@ export const useInsertIndicateurPersoDefinition = (options?: {
   onSuccess: (indicateurId: number) => void;
 }) => {
   const queryClient = useQueryClient();
+  const utils = trpc.useUtils();
   const collectiviteId = useCollectiviteId()!;
 
   return useMutation({
@@ -54,11 +56,12 @@ export const useInsertIndicateurPersoDefinition = (options?: {
       error: "L'indicateur n'a pas été enregistré",
     },
     onSuccess: ({ indicateurId }, { definition: { collectiviteId } }) => {
-      queryClient.invalidateQueries([
-        'indicateur_definition',
-        collectiviteId,
-        indicateurId,
-      ]);
+      if (indicateurId) {
+        utils.indicateurs.definitions.list.invalidate({
+          collectiviteId,
+          indicateurIds: [indicateurId],
+        });
+      }
       queryClient.invalidateQueries([
         'indicateur_chart_info',
         collectiviteId,
