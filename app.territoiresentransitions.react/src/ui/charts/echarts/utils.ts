@@ -42,7 +42,7 @@ export const makeStackedSeries = (dataset: Dataset[]): LineSeriesOption[] =>
   }));
 
 const estLignePointillee = ({ id }: { id?: string | number }) =>
-  id !== 'resultats';
+  typeof id !== 'string' || !id.startsWith('resultat');
 
 // génère le paramétrage de séries de données sous forme de lignes
 export const makeLineSeries = (dataset: Dataset[]): LineSeriesOption[] =>
