@@ -1,23 +1,22 @@
-import { IndicateurDefinition } from '@/api/indicateurs/domain/definition.schema';
 import PictoIndicateurVide from '@/app/ui/pictogrammes/PictoIndicateurVide';
 import { Button, Table, TBody, TCell, TRow } from '@/ui';
 import { useState } from 'react';
-import { SourceType } from '../types';
+import { PreparedData, PreparedValue } from '../data/prepare-data';
+import { useDeleteIndicateurValeur } from '../data/use-delete-indicateur-valeur';
+import { useUpsertIndicateurValeur } from '../data/use-upsert-indicateur-valeur';
+import { SourceType, TIndicateurDefinition } from '../types';
 import { CellAnneeList } from './cell-annee-list';
 import { CellSourceName } from './cell-source-name';
 import { CellValue } from './cell-value';
 import { ConfirmDelete } from './confirm-delete';
 import { EditCommentaireModal } from './edit-commentaire-modal';
-import { PreparedData, PreparedValue } from './prepare-data';
-import { useDeleteIndicateurValeur } from './use-delete-indicateur-valeur';
-import { useUpsertIndicateurValeur } from './use-upsert-indicateur-valeur';
 
 // nombre maximum de colonnes vides à afficher
 export const MAX_PLACEHOLDERS_COUNT = 5;
 
 type IndicateurValeursTable = {
   collectiviteId: number;
-  definition: IndicateurDefinition;
+  definition: TIndicateurDefinition;
   readonly?: boolean;
   confidentiel?: boolean;
   data: PreparedData | null;

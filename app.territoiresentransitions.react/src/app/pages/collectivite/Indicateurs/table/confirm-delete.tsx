@@ -10,8 +10,8 @@ import {
   TRow,
 } from '@/ui';
 import { useState } from 'react';
+import { PreparedValue } from '../data/prepare-data';
 import { CellValue } from './cell-value';
-import { PreparedValue } from './prepare-data';
 
 type ConfirmDeleteProps = {
   unite: string;

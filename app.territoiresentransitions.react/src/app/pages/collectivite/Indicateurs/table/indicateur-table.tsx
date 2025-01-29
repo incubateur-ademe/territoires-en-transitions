@@ -1,16 +1,15 @@
-import { IndicateurDefinition } from '@/api/indicateurs/domain/definition.schema';
 import { Button, ButtonGroup } from '@/ui';
 import { useState } from 'react';
-import { SourceType } from '../types';
+import { prepareData } from '../data/prepare-data';
+import { useIndicateurValeurs } from '../data/use-indicateur-valeurs';
+import { SourceType, TIndicateurDefinition } from '../types';
 import { EditValeursModal } from './edit-valeurs-modal';
 import { IndicateurValeursTable } from './indicateur-valeurs-table';
-import { prepareData } from './prepare-data';
 import { PrivateModeSwitch } from './private-mode-switch';
-import { useIndicateurValeurs } from './use-indicateur-valeurs';
 
 export type IndicateurTableProps = {
   collectiviteId: number;
-  definition: IndicateurDefinition;
+  definition: TIndicateurDefinition;
   readonly?: boolean;
   confidentiel?: boolean;
 };
