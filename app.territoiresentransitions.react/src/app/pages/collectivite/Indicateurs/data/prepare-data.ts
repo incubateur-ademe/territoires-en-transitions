@@ -26,12 +26,16 @@ export const prepareData = (
   // transforme les valeurs de chaque source
   const sourcesEtValeursModifiees = sourcesFiltrees.map((sourceData) => ({
     ...sourceData,
-    valeurs: sourceData.valeurs.map((v) => ({
-      id: v.id,
-      annee: new Date(v.dateValeur).getFullYear(),
-      valeur: v[type],
-      commentaire: v[`${type}Commentaire`],
-    })),
+    valeurs: sourceData.valeurs.map((v) => {
+      const annee = new Date(v.dateValeur).getFullYear();
+      return {
+        id: v.id,
+        annee,
+        anneeISO: new Date(annee, 0, 1).toISOString(),
+        valeur: v[type],
+        commentaire: v[`${type}Commentaire`],
+      };
+    }),
   }));
 
   // fusionne les tableaux de valeurs de toutes les sources
@@ -58,8 +62,8 @@ export const prepareData = (
       source: 'collectivite',
       valeurs: [],
       metadonnees: [],
+      ordreAffichage: -1,
       libelle: '',
-      ordreAffichage: null,
     };
     sources.unshift(donneesCollectivite);
   }
@@ -82,6 +86,7 @@ export const prepareData = (
     })) || [];
 
   return {
+    indicateurId: data?.definition.id,
     annees,
     anneeModePrive,
     sources,
