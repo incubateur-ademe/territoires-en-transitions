@@ -42,7 +42,7 @@ const SaveScoreModal = ({
     finalNomVersion,
   );
 
-  const handleSave = async () => {
+  const handleSave = async (close: () => void) => {
     if (!nomVersion?.trim()) return;
     const result = await refetch();
 
@@ -61,6 +61,7 @@ const SaveScoreModal = ({
     }
     if (result.isSuccess) {
       setToast('success', 'Référentiel sauvegardé', 5000);
+      close();
     }
   };
 
@@ -141,7 +142,7 @@ const SaveScoreModal = ({
                   (selectedButton !== 'now' && !dateVersion)
                 }
                 onClick={() => {
-                  handleSave();
+                  handleSave(close);
                 }}
               >
                 {isFetching ? 'Sauvegarde en cours...' : 'Figer cette version'}
