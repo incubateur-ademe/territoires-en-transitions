@@ -1,6 +1,11 @@
 import { Valeur } from '@/api/indicateurs/domain';
 import { Tooltip } from '@/ui';
 
+type DataSourceTooltipProps = {
+  metadonnee: NonNullable<Valeur['source']>;
+  children: JSX.Element;
+};
+
 /**
  * Affiche une infobulle donnant les informations disponibles pour une source de
  * données externe.
@@ -8,40 +13,47 @@ import { Tooltip } from '@/ui';
 export const DataSourceTooltip = ({
   metadonnee,
   children,
-}: {
-  metadonnee: NonNullable<Valeur['source']>;
-  // metadonnee: ReturnType<typeof transformeValeurs>['metadonnee'];
-  children: JSX.Element;
-}) => {
+}: DataSourceTooltipProps) => {
   return (
-    <Tooltip
-      label={
-        <div>
-          {!!metadonnee.diffuseur && (
-            <p>
-              Diffuseur : <b>{metadonnee.diffuseur}</b>
-            </p>
-          )}
-          {!!metadonnee.producteur && (
-            <p>
-              Producteur : <b>{metadonnee.producteur}</b>
-            </p>
-          )}
-          Version : <b>{new Date(metadonnee.dateVersion).getFullYear()}</b>
-          {!!metadonnee.methodologie && (
-            <p>
-              Méthodologie / Périmètre : <b>{metadonnee.methodologie}</b>
-            </p>
-          )}
-          {!!metadonnee.limites && (
-            <p>
-              Points d’attention / Limites : <b>{metadonnee.limites}</b>
-            </p>
-          )}
-        </div>
-      }
-    >
+    <Tooltip label={<DataSourceTooltipContent metadonnee={metadonnee} />}>
       {children}
     </Tooltip>
   );
 };
+
+export const DataSourceTooltipContent = ({
+  metadonnee,
+  className,
+}: {
+  metadonnee: DataSourceTooltipProps['metadonnee'];
+  className?: string;
+}) => (
+  <div className={className}>
+    {!!metadonnee.nomDonnees && (
+      <p>
+        <b>{metadonnee.nomDonnees}</b>
+      </p>
+    )}
+    {!!metadonnee.diffuseur && (
+      <p>
+        Diffuseur : <b>{metadonnee.diffuseur}</b>
+      </p>
+    )}
+    {!!metadonnee.producteur && (
+      <p>
+        Producteur : <b>{metadonnee.producteur}</b>
+      </p>
+    )}
+    Version : <b>{new Date(metadonnee.dateVersion).getFullYear()}</b>
+    {!!metadonnee.methodologie && (
+      <p>
+        Méthodologie / Périmètre : <b>{metadonnee.methodologie}</b>
+      </p>
+    )}
+    {!!metadonnee.limites && (
+      <p>
+        Points d’attention / Limites : <b>{metadonnee.limites}</b>
+      </p>
+    )}
+  </div>
+);
