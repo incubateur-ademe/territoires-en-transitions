@@ -11,23 +11,21 @@ import {
   Tooltip,
 } from '@/ui';
 
-import {
-  IndicateurChartInfo,
-  IndicateurListItem,
-} from '@/api/indicateurs/domain';
-import { transformeValeurs } from '@/app/app/pages/collectivite/Indicateurs/Indicateur/detail/transformeValeurs';
-import { useIndicateurChartInfo } from '@/app/app/pages/collectivite/Indicateurs/chart/useIndicateurChartInfo';
+import { IndicateurListItem } from '@/api/indicateurs/domain';
 import BadgeIndicateurPerso from '@/app/app/pages/collectivite/Indicateurs/components/BadgeIndicateurPerso';
 import BadgeOpenData from '@/app/app/pages/collectivite/Indicateurs/components/BadgeOpenData';
 import IndicateurCardOptions from '@/app/app/pages/collectivite/Indicateurs/lists/IndicateurCard/IndicateurCardOptions';
-import PictoIndicateurComplet from '@/app/ui/pictogrammes/PictoIndicateurComplet';
+import ChartLegend, { AreaSymbol } from '@/app/ui/charts/ChartLegend';
 import PictoIndicateurVide from '@/app/ui/pictogrammes/PictoIndicateurVide';
-import { BadgeACompleter } from '@/app/ui/shared/Badge/BadgeACompleter';
+import { useIndicateurDefinition } from '../../Indicateur/useIndicateurDefinition';
 import DownloadIndicateurChartModal from '../../chart/DownloadIndicateurChart';
-import IndicateurChart, {
-  IndicateurChartData,
-} from '../../chart/IndicateurChart';
-import { getIndicateurRestant } from './utils';
+import IndicateurChart from '../../chart/IndicateurChart';
+import BadgeGroupement from '../../components/BadgeGroupement';
+import BadgeIndicateurCompose from '../../components/BadgeIndicateurCompose';
+import {
+  IndicateurChartInfo,
+  useIndicateurChartInfo,
+} from '../../data/use-indicateur-chart';
 
 /** Props de la carte Indicateur */
 export type IndicateurCardProps = {
@@ -77,38 +75,22 @@ const IndicateurCard = ({
     );
   }
 
+  // on a besoin de la définition avec les catégories, l'unité et le flag `estAgregation`
+  const definition = useIndicateurDefinition(props.definition.id);
+
   // lit les données nécessaires à l'affichage du graphe
-  const { data: chartInfo, isLoading } = useIndicateurChartInfo(
-    props.definition.id,
-    autoRefresh
-  );
+  const chartInfo = useIndicateurChartInfo({
+    definition,
+  });
 
-  // sépare les données objectifs/résultats
-  const { objectifs, resultats } = transformeValeurs(chartInfo?.valeurs || []);
-
-  // Assemblage des données pour le graphique
-  const data = {
-    unite: chartInfo?.unite,
-    valeurs: { objectifs, resultats },
-  };
-
-  return (
-    <IndicateurCardBase
-      data={data}
-      isLoading={isLoading}
-      chartInfo={chartInfo}
-      {...props}
-    />
-  );
+  return <IndicateurCardBase chartInfo={chartInfo} {...props} />;
 };
 
 export default IndicateurCard;
 
 /** Props pour la story de la carte */
 export type IndicateurCardBaseProps = IndicateurCardProps & {
-  data: IndicateurChartData;
-  isLoading: boolean;
-  chartInfo?: IndicateurChartInfo | null;
+  chartInfo: IndicateurChartInfo;
 };
 
 /**
@@ -116,13 +98,11 @@ export type IndicateurCardBaseProps = IndicateurCardProps & {
  * Ne pas utilisé ce composant directement, il est uniquement créé pour pouvoir faire une story de la carte indicateur.
  */
 export const IndicateurCardBase = ({
-  data,
+  chartInfo,
+  definition: definitionSimple,
   selectState,
   href,
   className,
-  isLoading,
-  definition,
-  chartInfo,
   isEditable = false,
   hideChart = false,
   hideChartWithoutValue = false,
@@ -132,39 +112,25 @@ export const IndicateurCardBase = ({
 }: IndicateurCardBaseProps) => {
   const [isDownloadChartOpen, setIsDownloadChartOpen] = useState(false);
 
+  const { definition, hasValeur, segmentItemParId, isLoading } = chartInfo;
+  if (!definition) {
+    return;
+  }
+
   const showChart =
     (!hideChart && !hideChartWithoutValue) ||
-    (hideChartWithoutValue &&
-      (data.valeurs.objectifs.length > 0 || data.valeurs.resultats.length > 0));
+    (hideChartWithoutValue && hasValeur);
 
-  const isIndicateurParent = chartInfo?.enfants && chartInfo.enfants.length > 0;
-
-  // uniquement utilisé pour `totalNbIndicateurs`
-  const totalEnfants = chartInfo?.enfants?.length;
-  /** Nombre total d'indicateurs, qu'il y ait des enfants ou non */
-  const totalNbIndicateurs = chartInfo?.sansValeur
-    ? totalEnfants
-    : (totalEnfants ?? 0) + 1;
-
-  /** Nombre total d'indicateurs restant à compléter, qu'il y ait des enfants ou non */
-  const indicateursACompleterRestant =
-    (chartInfo && getIndicateurRestant(chartInfo)) ?? 0;
-
-  /** Rempli ne peut pas être utilisé pour l'affichage car les objectifs ne sont pas pris en compte mais doivent quand même apparaître */
-  const hasValeurOrObjectif =
-    [...data.valeurs.objectifs, ...data.valeurs.resultats].filter(
-      (v) => typeof v.valeur === 'number'
-    ).length > 0;
-
-  const isACompleter = chartInfo?.sansValeur
-    ? indicateursACompleterRestant > 0
-    : !chartInfo?.rempli;
+  const totalEnfants = definition.enfants?.length ?? 0;
+  const isIndicateurParent = totalEnfants > 0;
+  const estCompose = isIndicateurParent && definition.estAgregation;
+  const estGroupement = isIndicateurParent && !definition.estAgregation;
 
   return (
     <>
       <div className="group relative h-full">
         {/** Cadenas indicateur privé */}
-        {chartInfo?.confidentiel && (
+        {definition?.confidentiel && (
           <Tooltip label="La dernière valeur de cet indicateur est en mode privé">
             <div className="absolute -top-5 left-5">
               <Notification icon="lock-fill" size="sm" classname="w-9 h-9" />
@@ -175,11 +141,11 @@ export const IndicateurCardBase = ({
         {/** Menus d'édition */}
         {!readonly && isEditable && (
           <IndicateurCardOptions
-            definition={definition}
-            isFavoriCollectivite={chartInfo?.favoriCollectivite}
+            definition={definitionSimple}
+            isFavoriCollectivite={definition.favoris}
             otherMenuActions={otherMenuActions}
             chartDownloadSettings={{
-              showTrigger: showChart && hasValeurOrObjectif,
+              showTrigger: showChart && hasValeur,
               openModal: () => setIsDownloadChartOpen(true),
             }}
           />
@@ -208,18 +174,24 @@ export const IndicateurCardBase = ({
                   hasOpenData: definition.hasOpenData,
                 })
               }
-              label={chartInfo?.titre}
+              label={definition.titre}
               labelClassname="!font-bold"
             />
           ) : (
             <>
               <div className="max-w-full font-bold line-clamp-2 text-primary-10">
-                {chartInfo?.titre}
+                {definition.titre}{' '}
+                {definition.unite && (
+                  <span className="font-normal text-grey-6">
+                    ({definition.unite})
+                  </span>
+                )}
               </div>
               <div className="flex items-center gap-2 flex-wrap">
-                <BadgeACompleter a_completer={isACompleter} size="sm" />
                 {definition.estPerso && <BadgeIndicateurPerso size="sm" />}
                 {definition.hasOpenData && <BadgeOpenData size="sm" />}
+                {estGroupement && <BadgeGroupement size="sm" />}
+                {estCompose && <BadgeIndicateurCompose size="sm" />}
               </div>
             </>
           )}
@@ -227,17 +199,7 @@ export const IndicateurCardBase = ({
           {/** Graphique */}
           {showChart && (
             <div className="mt-auto">
-              {isIndicateurParent &&
-              chartInfo?.sansValeur &&
-              indicateursACompleterRestant === 0 ? (
-                <EmptyCard
-                  size="xs"
-                  className="h-80"
-                  picto={(props) => <PictoIndicateurComplet {...props} />}
-                  subTitle={`${totalNbIndicateurs}/${totalNbIndicateurs} complétés`}
-                />
-              ) : data.valeurs.objectifs.length === 0 &&
-                data.valeurs.resultats.length === 0 ? (
+              {!hasValeur && !estCompose ? (
                 <EmptyCard
                   size="xs"
                   className="h-80"
@@ -250,7 +212,7 @@ export const IndicateurCardBase = ({
                 />
               ) : (
                 <IndicateurChart
-                  data={data}
+                  chartInfo={chartInfo}
                   isLoading={isLoading}
                   variant="thumbnail"
                 />
@@ -266,40 +228,56 @@ export const IndicateurCardBase = ({
               (showChart ? (
                 <>
                   {/** Barre horizontale */}
-                  {hasValeurOrObjectif &&
-                    ((isIndicateurParent &&
-                      !(
-                        chartInfo?.sansValeur &&
-                        indicateursACompleterRestant === 0
-                      )) ||
-                      chartInfo.participationScore) && (
+                  {(isIndicateurParent || definition.participationScore) && (
+                    <>
                       <div className="h-px bg-primary-3" />
-                    )}
-                  {(isIndicateurParent || chartInfo.participationScore) && (
-                    <div className="flex flex-wrap gap-2 items-center text-xs text-grey-8 mt-3">
-                      {/* Nombre d'indicateurs */}
-                      {isIndicateurParent && totalNbIndicateurs && (
-                        <div>
-                          {totalNbIndicateurs - indicateursACompleterRestant}/
-                          {totalNbIndicateurs} indicateur
-                          {totalNbIndicateurs > 1 && 's'}
-                        </div>
-                      )}
-                      {/** Barre verticale */}
-                      {isIndicateurParent &&
-                        totalNbIndicateurs &&
-                        chartInfo.participationScore && (
-                          <div className="w-px h-3 bg-grey-5" />
+                      <div className="flex flex-wrap gap-2 items-center text-xs text-grey-8 mt-3">
+                        {/* infobulle avec la légende des sous-indicateurs */}
+                        {isIndicateurParent &&
+                          totalEnfants &&
+                          (segmentItemParId.size ? (
+                            <Tooltip
+                              label={
+                                <ChartLegend
+                                  className="flex-col items-baseline pb-3 px-4"
+                                  items={Array.from(
+                                    segmentItemParId.values()
+                                  ).map(({ name, color }) => ({
+                                    name,
+                                    color,
+                                    symbole: AreaSymbol,
+                                  }))}
+                                />
+                              }
+                            >
+                              {/* Nombre de sous-indicateurs */}
+                              <span>
+                                {`+${totalEnfants} sous-indicateur`}
+                                {totalEnfants > 1 && 's'}
+                              </span>
+                            </Tooltip>
+                          ) : (
+                            <span>
+                              {`${totalEnfants} indicateur`}
+                              {totalEnfants > 1 && 's'}
+                            </span>
+                          ))}
+                        {/** Barre verticale */}
+                        {isIndicateurParent &&
+                          totalEnfants &&
+                          definition.participationScore && (
+                            <div className="w-px h-3 bg-grey-5" />
+                          )}
+                        {/** Participation au score */}
+                        {definition.participationScore && (
+                          <div>Participe au score Climat Air Énergie</div>
                         )}
-                      {/** Participation au score */}
-                      {chartInfo.participationScore && (
-                        <div>Participe au score Climat Air Énergie</div>
-                      )}
-                    </div>
+                      </div>
+                    </>
                   )}
                 </>
               ) : (
-                isACompleter &&
+                !hasValeur &&
                 !readonly &&
                 href && (
                   // Compléter indicateur bouton
@@ -315,7 +293,7 @@ export const IndicateurCardBase = ({
           isOpen: isDownloadChartOpen,
           setIsOpen: setIsDownloadChartOpen,
         }}
-        data={data}
+        chartInfo={chartInfo}
         isLoading={isLoading}
         title={definition?.titre}
       />
