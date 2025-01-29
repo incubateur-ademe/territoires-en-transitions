@@ -21,7 +21,7 @@ export const DetailTaches = () => {
 
   return (
     <>
-      <p>
+      <div className="mb-6">
         {filtersCount} {labelFilters} ; {sousActionsCount} {labelSousActions}{' '}
         sur {sousActionsTotal} ; {count} {labelTaches} sur {total}
         {filtersCount > 0 && (
@@ -30,7 +30,7 @@ export const DetailTaches = () => {
             onClick={() => setFilters(noFilters)}
           />
         )}
-      </p>
+      </div>
       <DetailTacheTable tableData={tableData} />
     </>
   );

@@ -12,7 +12,7 @@ export const AuditSuivi = () => {
 
   return (
     <>
-      <p>
+      <div className="mb-6">
         {filtersCount} {labelFilters}
         {filtersCount > 0 && (
           <DesactiverLesFiltres
@@ -20,7 +20,7 @@ export const AuditSuivi = () => {
             onClick={() => setFilters(noFilters)}
           />
         )}
-      </p>
+      </div>
       <Table tableData={tableData} />
     </>
   );
