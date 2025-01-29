@@ -17,7 +17,7 @@ const variantToHeight: Record<ChartVariant, number> = {
 };
 
 const variantToGrid: Record<ChartVariant, GridComponentOption> = {
-  thumbnail: { top: '8%', bottom: '15%', right: '5%' },
+  thumbnail: { bottom: '15%', right: '5%' },
   modal: {},
   detail: { left: 32, right: 32 },
 };
@@ -94,7 +94,7 @@ const IndicateurChart = ({
       title: variant === 'detail' ? { left: 28 } : {},
     },
     titre: title,
-    unite: variant !== 'thumbnail' ? data.unite : undefined,
+    unite: data.unite,
     disableToolbox: variant !== 'modal',
     hideMinMaxLabel:
       dataset[0].source.length <= 1 && dataset[1].source.length <= 1,
