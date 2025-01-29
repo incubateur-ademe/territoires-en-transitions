@@ -2,11 +2,12 @@ import { useCurrentCollectivite } from '@/app/core-logic/hooks/useCurrentCollect
 import { TLabellisationParcours } from '@/app/referentiels/labellisations/types';
 import { TPreuveLabellisation } from '@/app/referentiels/preuves/Bibliotheque/types';
 import { usePreuves } from '@/app/referentiels/preuves/usePreuves';
+import { ReferentielId } from '@/domain/referentiels';
 import { useIsAuditeur } from '../audits/useAudit';
+import { useCarteIdentite } from '../personnalisations/PersoReferentielThematique/useCarteIdentite';
 import { getParcoursStatus } from './getParcoursStatus';
 import { useLabellisationParcours } from './useLabellisationParcours';
 import { usePeutCommencerAudit } from './usePeutCommencerAudit';
-import { useCarteIdentite } from '../personnalisations/PersoReferentielThematique/useCarteIdentite';
 
 // données du cycle de labellisation/audit actuel d'une collectivité
 export type TCycleLabellisation = {
@@ -28,7 +29,7 @@ export type TCycleLabellisationStatus =
 
 /** Renvoie les données de labellisation/audit de la collectivité courante */
 export const useCycleLabellisation = (
-  referentiel: string | null
+  referentielId: ReferentielId
 ): TCycleLabellisation => {
   const collectivite = useCurrentCollectivite();
   const collectivite_id = collectivite?.collectiviteId || null;
@@ -36,11 +37,17 @@ export const useCycleLabellisation = (
   const identite = useCarteIdentite(collectivite_id);
 
   // charge les données du parcours
-  const parcours = useLabellisationParcours({ collectivite_id, referentiel });
+  const parcours = useLabellisationParcours({
+    collectivite_id,
+    referentiel: referentielId,
+  });
   const { completude_ok, rempli, etoiles } = parcours || {};
 
   // vérifie si l'utilisateur courant peut commencer l'audit
-  const peutCommencerAudit = usePeutCommencerAudit();
+  const peutCommencerAudit = usePeutCommencerAudit({
+    collectiviteId: collectivite_id as number,
+    referentielId,
+  });
 
   // états dérivés
   const status = getParcoursStatus(parcours);

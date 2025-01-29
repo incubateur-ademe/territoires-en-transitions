@@ -1,23 +1,25 @@
-import { useCollectiviteId } from '@/app/collectivites/collectivite-context';
 import { supabaseClient } from '@/app/core-logic/api/supabase';
+import { ReferentielId } from '@/domain/referentiels';
 import { useQuery } from 'react-query';
-import { useReferentielId } from '../referentiel-context';
 
 // vérifie si l'utilisateur courant peut commencer l'audit
-export const usePeutCommencerAudit = () => {
-  const collectivite_id = useCollectiviteId();
-  const referentiel = useReferentielId();
-
+export const usePeutCommencerAudit = ({
+  collectiviteId,
+  referentielId,
+}: {
+  collectiviteId: number;
+  referentielId: ReferentielId;
+}) => {
   const { data } = useQuery(
-    ['peut_commencer_audit', collectivite_id, referentiel],
+    ['peut_commencer_audit', collectiviteId, referentielId],
     async () => {
-      if (!collectivite_id || !referentiel) {
+      if (!collectiviteId || !referentielId) {
         return false;
       }
       const { data } = await supabaseClient
         .rpc('labellisation_peut_commencer_audit', {
-          collectivite_id,
-          referentiel,
+          collectivite_id: collectiviteId,
+          referentiel: referentielId,
         })
         .single();
       return data || false;
