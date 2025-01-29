@@ -106,13 +106,7 @@ const IndicateurPersonnaliseBase = ({
           </div>
         </div>
 
-        <IndicateurDetailChart
-          className="mb-10"
-          definition={definition}
-          rempli={definition.rempli}
-          titre={definition.titre}
-          fileName={definition.titre}
-        />
+        <IndicateurDetailChart className="mb-10" definition={definition} />
 
         <IndicateurValuesTabs definition={definition} />
         <div className="flex flex-col gap-8 mt-10">

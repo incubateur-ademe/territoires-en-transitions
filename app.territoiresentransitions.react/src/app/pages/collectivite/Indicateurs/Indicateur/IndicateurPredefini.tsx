@@ -97,19 +97,9 @@ export const IndicateurPredefiniBase = ({
                 setCurrentSource={setCurrentSource}
               />
             )}
-            <IndicateurDetailChart
-              className="mb-10"
-              definition={definition}
-              rempli={definition.rempli}
-              source={currentSource}
-              titre={definition.titreLong || definition.titre}
-              fileName={definition.titre}
-            />
+            <IndicateurDetailChart className="mb-10" definition={definition} />
 
-            <IndicateurValuesTabs
-              definition={definition}
-              importSource={currentSource}
-            />
+            <IndicateurValuesTabs definition={definition} />
 
             <div className="flex flex-col gap-8 mt-10">
               <Field title="Description et méthodologie de calcul">
