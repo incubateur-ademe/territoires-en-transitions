@@ -159,59 +159,68 @@ const IndicateursListe = ({
     <div className="flex flex-col gap-8">
       <div
         className={classNames(
-          'flex items-center gap-8 py-6 border-y border-primary-3',
+          'flex max-xl:flex-col justify-between xl:items-center gap-4 py-6 border-y border-primary-3',
           menuContainerClassname
         )}
       >
-        {/** Tri */}
-        <div className="w-64">
-          <Select
-            options={sortOptions}
-            onChange={(value) =>
-              value && setSort(sortByOptions.find((o) => o.value === value)!)
-            }
-            values={sort.value}
-            customItem={(v) => <span className="text-grey-8">{v.label}</span>}
-            disabled={sortOptions.length === 1}
-            small
-          />
+        <div className="flex max-md:flex-col gap-x-8 gap-y-4 md:items-center">
+          {/** Tri */}
+          <div className="w-full md:w-64">
+            <Select
+              options={sortOptions}
+              onChange={(value) =>
+                value && setSort(sortByOptions.find((o) => o.value === value)!)
+              }
+              values={sort.value}
+              customItem={(v) => <span className="text-grey-8">{v.label}</span>}
+              disabled={sortOptions.length === 1}
+              small
+            />
+          </div>
+
+          <div className="flex flex-wrap gap-x-8 gap-y-4 max-md:order-first">
+            {/** Toggle affichage des graph */}
+            <Checkbox
+              variant="switch"
+              label="Afficher les graphiques"
+              containerClassname="shrink-0"
+              labelClassname="font-normal !text-grey-7"
+              checked={displayGraphs}
+              onChange={() => {
+                setDisplayGraphs(!displayGraphs);
+                tracker('toggle_graphique', {
+                  collectiviteId,
+                  niveauAcces: collectivite.niveauAcces,
+                  role: collectivite.role,
+                  actif: !displayGraphs,
+                });
+              }}
+            />
+
+            {/** Nombre total de résultats */}
+            <span className="shrink-0 text-grey-7">
+              {isLoading ? '--' : countTotal}
+              {` `}
+              {`indicateur`}
+              {countTotal > 1 ? 's' : ''}
+            </span>
+          </div>
         </div>
-        {/** Toggle affichage des graph */}
-        <Checkbox
-          variant="switch"
-          label="Afficher les graphiques"
-          containerClassname="shrink-0"
-          labelClassname="font-normal !text-grey-7"
-          checked={displayGraphs}
-          onChange={() => {
-            setDisplayGraphs(!displayGraphs);
-            tracker('toggle_graphique', {
-              collectiviteId,
-              niveauAcces: collectivite.niveauAcces,
-              role: collectivite.role,
-              actif: !displayGraphs,
-            });
-          }}
-        />
-        {/** Nombre total de résultats */}
-        <span className="shrink-0 text-grey-7">
-          {isLoading ? '--' : countTotal}
-          {` `}
-          {`indicateur`}
-          {countTotal > 1 ? 's' : ''}
-        </span>
-        {/** Champ de recherche */}
-        <Input
-          type="search"
-          onChange={(e) => setSearch(e.target.value)}
-          onSearch={(v) => setDebouncedSearch(v)}
-          value={search}
-          containerClassname="ml-auto w-full md:w-96"
-          placeholder="Rechercher par nom ou description"
-          displaySize="sm"
-        />
-        {/** Bouton d'édition des filtres (une modale avec bouton ou un ButtonMenu) */}
-        {settings?.({ isOpen: isSettingsOpen, setIsOpen: setIsSettingsOpen })}
+
+        <div className="flex gap-x-8 gap-y-4">
+          {/** Champ de recherche */}
+          <Input
+            type="search"
+            onChange={(e) => setSearch(e.target.value)}
+            onSearch={(v) => setDebouncedSearch(v)}
+            value={search}
+            containerClassname="w-full xl:w-96"
+            placeholder="Rechercher par nom ou description"
+            displaySize="sm"
+          />
+          {/** Bouton d'édition des filtres (une modale avec bouton ou un ButtonMenu) */}
+          {settings?.({ isOpen: isSettingsOpen, setIsOpen: setIsSettingsOpen })}
+        </div>
       </div>
       {/** Liste des filtres appliqués et bouton d'export */}
       <BadgeList
@@ -247,7 +256,7 @@ const IndicateursListe = ({
         /** Liste des indicateurs */
         // besoin de cette div car `grid` semble rentrer en conflit avec le container `flex` sur Safari
         <div>
-          <div className="grid grid-cols-2 2xl:grid-cols-3 gap-4">
+          <div className="grid grid-cols-1 md:grid-cols-2 2xl:grid-cols-3 gap-4">
             {currentDefs?.map((definition) => (
               <IndicateurCard
                 key={definition.id}
