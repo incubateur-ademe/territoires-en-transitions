@@ -1,4 +1,5 @@
 import { Indicateurs } from '@/api';
+import { IndicateurDefinitionDetaillee } from '@/domain/indicateurs';
 
 /** type de données importées */
 export type SourceType = 'resultat' | 'objectif';
@@ -9,4 +10,4 @@ export type TIndicateurListItem = Indicateurs.domain.IndicateurListItem;
 export type TIndicateurPredefini =
   Indicateurs.domain.IndicateurDefinitionPredefini;
 
-export type TIndicateurDefinition = Indicateurs.domain.IndicateurDefinition;
+export type TIndicateurDefinition = IndicateurDefinitionDetaillee;
