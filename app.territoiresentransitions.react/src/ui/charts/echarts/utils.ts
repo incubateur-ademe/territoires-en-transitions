@@ -161,7 +161,7 @@ export const makeOption = ({
     title: {
       text: titre,
       subtext: unite,
-      itemGap: 15,
+      itemGap: !!titre ? 15 : 0,
       textStyle: {
         color: colors.primary['9'],
       },

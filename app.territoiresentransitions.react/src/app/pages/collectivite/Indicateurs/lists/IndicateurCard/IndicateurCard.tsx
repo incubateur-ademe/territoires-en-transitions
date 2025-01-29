@@ -214,12 +214,7 @@ export const IndicateurCardBase = ({
           ) : (
             <>
               <div className="max-w-full font-bold line-clamp-2 text-primary-10">
-                {chartInfo?.titre}{' '}
-                {chartInfo?.unite && (
-                  <span className="font-normal text-grey-6">
-                    ({chartInfo?.unite})
-                  </span>
-                )}
+                {chartInfo?.titre}
               </div>
               <div className="flex items-center gap-2 flex-wrap">
                 <BadgeACompleter a_completer={isACompleter} size="sm" />
