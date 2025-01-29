@@ -50,7 +50,7 @@ const TousLesIndicateurs = () => {
         className="min-h-[44rem] flex flex-col gap-8"
         data-test="tous-les-indicateurs"
       >
-        <div className="flex items-end">
+        <div className="flex justify-between max-sm:flex-col gap-y-4">
           <h2 className="mb-0 mr-auto">Tous les indicateurs</h2>
           {!isReadonly && (
             <>
