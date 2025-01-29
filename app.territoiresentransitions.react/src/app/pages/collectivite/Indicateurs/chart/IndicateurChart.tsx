@@ -1,12 +1,20 @@
 import {
   LAYERS,
+  PALETTE,
   ReactECharts,
+  makeLegendData,
   makeLineSeries,
   makeOption,
+  makeStackedSeries,
 } from '@/app/ui/charts/echarts';
+import { renderToString } from '@/app/ui/charts/echarts/renderToString';
 import SpinnerLoader from '@/app/ui/shared/SpinnerLoader';
 import { GridComponentOption } from 'echarts';
-import { TIndicateurValeur } from '../useIndicateurValeurs';
+import { getSourceLabel } from '../data/get-source-label';
+import { PreparedData } from '../data/prepare-data';
+import { IndicateurChartInfo } from '../data/use-indicateur-chart';
+import { DataSourceTooltipContent } from '../Indicateur/detail/DataSourceTooltip';
+import { TIndicateurDefinition } from '../types';
 
 type ChartVariant = 'thumbnail' | 'modal' | 'detail';
 
@@ -19,25 +27,54 @@ const variantToHeight: Record<ChartVariant, number> = {
 const variantToGrid: Record<ChartVariant, GridComponentOption> = {
   thumbnail: { bottom: '15%', right: '5%' },
   modal: {},
-  detail: { left: 32, right: 32 },
+  detail: { left: 32, right: 32, bottom: '14%' },
 };
 
 /** Data issues de l'api pour générer les données formatées pour echarts */
-/** TODO: le format devra être revu après la refonte indicateurs et la maj du fetch */
 export type IndicateurChartData = {
   /** Unité affichée pour l'axe des abscisses et le tooltip */
   unite?: string;
   /** Valeurs de l'indicateur  */
   valeurs: {
-    objectifs: TIndicateurValeur[];
-    resultats: TIndicateurValeur[];
+    objectifs: PreparedData;
+    resultats: PreparedData;
+    segments?:
+      | {
+          definition: TIndicateurDefinition;
+          source: PreparedData['sources'][number];
+        }[]
+      | null;
   };
 };
 
+// prépare les données pour l'affichage des lignes objectifs/résultats pour
+// chaque source disponible
+const prepareDataset = (
+  data: IndicateurChartData,
+  type: 'resultat' | 'objectif'
+) =>
+  data.valeurs[`${type}s`].sources
+    ?.filter(({ valeurs }) => valeurs?.length > 0)
+    .map(({ source, libelle, valeurs, metadonnees }, index) => {
+      const metadonnee = metadonnees?.find((m) => m.sourceId === source);
+
+      return {
+        color:
+          source === 'collectivite'
+            ? LAYERS[`${type}s`].color
+            : PALETTE[index % PALETTE.length],
+        id: `${type}-${source}`,
+        name: getSourceLabel(source, libelle, type),
+        source: valeurs,
+        dimensions: ['anneeISO', 'valeur'],
+        metadonnee,
+      };
+    }) ?? [];
+
 /** Props du graphique générique Indicateur */
 export type IndicateurChartProps = {
-  /** Data issues de l'api pour générer les données formatées pour Nivo */
-  data: IndicateurChartData;
+  /** Données pour le graphe */
+  chartInfo: IndicateurChartInfo;
   /** Titre du graphe */
   title?: string;
   /** Booléen de chargement des données et infos du graphique */
@@ -49,55 +86,86 @@ export type IndicateurChartProps = {
 };
 
 const IndicateurChart = ({
-  data,
+  chartInfo,
   title,
   isLoading,
   variant = 'detail',
   className,
 }: IndicateurChartProps) => {
-  const { objectifs, resultats } = data.valeurs;
+  const { data, segmentItemParId } = chartInfo;
+  const { objectifs, resultats, segments } = data.valeurs;
 
-  const noData = objectifs.length === 0 && resultats.length === 0;
+  const noData = objectifs.sources?.length + resultats.sources?.length === 0;
 
   if (noData) return null;
 
-  const dataset = [
-    {
-      color: LAYERS.resultats.color,
-      id: 'resultats',
-      name: LAYERS.resultats.label,
-      source: resultats.map((res) => ({
-        x: new Date(res.annee, 0, 1).toISOString(),
-        y: res.valeur,
-      })),
-    },
-    {
-      color: LAYERS.objectifs.color,
-      id: 'objectifs',
-      name: LAYERS.objectifs.label,
-      source: objectifs.map((obj) => ({
-        x: new Date(obj.annee, 0, 1).toISOString(),
-        y: obj.valeur,
-      })),
-    },
+  const donneesResultatObjectif = [
+    ...prepareDataset(data, 'resultat'),
+    ...prepareDataset(data, 'objectif'),
   ];
+
+  // dataset pour les segments
+  const donneesSegments =
+    segments?.map(({ definition, source }, i) => {
+      const metadonnee = source.metadonnees?.find(
+        (m) => m.sourceId === source.source
+      );
+
+      return {
+        ...(segmentItemParId.get(definition.id) || {}),
+        source: source.valeurs,
+        dimensions: ['anneeISO', 'valeur'],
+        metadonnee,
+      };
+    }) || [];
+
+  const dataset = [...donneesResultatObjectif, ...donneesSegments];
 
   const style = { height: variantToHeight[variant] };
 
   const grid = variantToGrid[variant];
 
+  const series = [
+    ...makeLineSeries(donneesResultatObjectif),
+    ...makeStackedSeries(donneesSegments),
+  ];
   const option = makeOption({
     option: {
       dataset,
-      series: makeLineSeries(dataset),
+      series,
       grid,
       title: variant === 'detail' ? { left: 28 } : {},
+      legend: {
+        textStyle: variant === 'thumbnail' ? { fontSize: '0.7rem' } : {},
+        // pour la variante vignette on affiche la légende seulement pour résultats/objectifs
+        data:
+          variant === 'thumbnail'
+            ? makeLegendData(donneesResultatObjectif)
+            : makeLegendData(series),
+        // infobulle avec les métadonnées associées à la source open data
+        tooltip: {
+          show: true,
+          formatter: (params) => {
+            const metadonnee = dataset?.find(
+              (s) => s.name === params.name
+            )?.metadonnee;
+            return metadonnee
+              ? renderToString(
+                  <DataSourceTooltipContent
+                    metadonnee={metadonnee}
+                    className="text-xs [&_*]:text-xs [&_*]:mb-0"
+                  />
+                )
+              : '';
+          },
+        },
+      },
     },
     titre: title,
     unite: data.unite,
     disableToolbox: variant !== 'modal',
     hideMinMaxLabel:
-      dataset[0].source.length <= 1 && dataset[1].source.length <= 1,
+      dataset[0]?.source.length <= 1 && dataset[1]?.source.length <= 1,
   });
 
   return (
