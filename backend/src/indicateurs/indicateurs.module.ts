@@ -4,6 +4,7 @@ import { CollectivitesModule } from '../collectivites/collectivites.module';
 import { SheetModule } from '../utils/google-sheets/sheet.module';
 import { IndicateurFiltreRouter } from './definitions/indicateur-filtre.router';
 import IndicateurFiltreService from './definitions/indicateur-filtre.service';
+import { IndicateurDefinitionsRouter } from './definitions/list-definitions.router';
 import ListDefinitionsService from './definitions/list-definitions.service';
 import { ExportIndicateursController } from './export-indicateurs/export-indicateurs.controller';
 import ExportIndicateursService from './export-indicateurs/export-indicateurs.service';
@@ -23,6 +24,7 @@ import CrudValeursService from './valeurs/crud-valeurs.service';
     ExportIndicateursService,
     IndicateurSourcesService,
     ListDefinitionsService,
+    IndicateurDefinitionsRouter,
     CrudValeursService,
     IndicateurFiltreService,
     IndicateurFiltreRouter,
@@ -35,6 +37,7 @@ import CrudValeursService from './valeurs/crud-valeurs.service';
   exports: [
     IndicateurSourcesService,
     ListDefinitionsService,
+    IndicateurDefinitionsRouter,
     CrudValeursService,
     TrajectoiresRouter,
     IndicateurFiltreService,

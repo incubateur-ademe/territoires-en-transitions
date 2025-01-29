@@ -8,6 +8,7 @@ import { ListCategoriesRouter } from '../../collectivites/handle-categories/list
 import { CollectiviteMembresRouter } from '../../collectivites/membres/membres.router';
 import { PersonnesRouter } from '../../collectivites/personnes.router';
 import { IndicateurFiltreRouter } from '../../indicateurs/definitions/indicateur-filtre.router';
+import { IndicateurDefinitionsRouter } from '../../indicateurs/definitions/list-definitions.router';
 import { TrajectoiresRouter } from '../../indicateurs/trajectoires/trajectoires.router';
 import { IndicateurValeursRouter } from '../../indicateurs/valeurs/crud-valeurs.router';
 import { ComputeScoreRouter } from '../../referentiels/compute-score/compute-score.router';
@@ -31,6 +32,7 @@ export class TrpcRouter {
     private readonly ficheActionEtapeRouter: FicheActionEtapeRouter,
     private readonly indicateurFiltreRouter: IndicateurFiltreRouter,
     private readonly indicateurValeursRouter: IndicateurValeursRouter,
+    private readonly indicateurDefinitionsRouter: IndicateurDefinitionsRouter,
     private readonly bulkEditRouter: BulkEditRouter,
     private readonly membresRouter: CollectiviteMembresRouter,
     private readonly updateActionStatutRouter: UpdateActionStatutRouter,
@@ -43,6 +45,7 @@ export class TrpcRouter {
       trajectoires: this.trajectoiresRouter.router,
       list: this.indicateurFiltreRouter.router.list,
       valeurs: this.indicateurValeursRouter.router,
+      definitions: this.indicateurDefinitionsRouter.router,
     },
     plans: {
       fiches: this.trpc.mergeRouters(
