@@ -6,6 +6,7 @@ import {
   primaryKey,
   text,
 } from 'drizzle-orm/pg-core';
+import { createSelectSchema } from 'drizzle-zod';
 import { indicateurDefinitionTable } from './indicateur-definition.table';
 
 export const indicateurCollectiviteTable = pgTable(
@@ -30,4 +31,8 @@ export const indicateurCollectiviteTable = pgTable(
       pk: primaryKey({ columns: [table.collectiviteId, table.indicateurId] }),
     };
   }
+);
+
+export const indicateurCollectiviteSchema = createSelectSchema(
+  indicateurCollectiviteTable
 );
