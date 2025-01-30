@@ -1,4 +1,3 @@
-import { useNbActionsDansPanier } from '@/app/app/Layout/Header/AccesPanierAction';
 import {
   makeCollectivitePanierUrl,
   makeCollectivitePlansActionsCreerUrl,
@@ -12,6 +11,7 @@ import Link from 'next/link';
 import { ReactComponent as DocumentAddPicto } from './document-add.svg';
 import { ReactComponent as DocumentDownloadPicto } from './document-download.svg';
 import { ReactComponent as ShoppingBasket } from './shopping-basket.svg';
+import { useNbActionsDansPanier } from '@/app/app/Layout/Header/useNbActionsDansPanier';
 
 const Selection = () => {
   const collectivite_id = useCollectiviteId();

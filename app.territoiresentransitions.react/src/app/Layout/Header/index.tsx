@@ -3,8 +3,8 @@
 import { useAuth } from '@/app/core-logic/api/auth/AuthProvider';
 import { useCurrentCollectivite } from '@/app/core-logic/hooks/useCurrentCollectivite';
 import { useMaintenance } from '../useMaintenance';
-import { useNbActionsDansPanier } from './AccesPanierAction';
 import { Header as HeaderBase } from './Header';
+import { useNbActionsDansPanier } from '@/app/app/Layout/Header/useNbActionsDansPanier';
 
 /**
  * En-tête de l'application raccordé aux données

@@ -1,7 +1,6 @@
 import { signInPath, signUpPath } from '@/app/app/paths';
 import { useFonctionTracker } from '@/app/core-logic/hooks/useFonctionTracker';
 import { Button } from '@/ui';
-import { AccesPanierAction } from './AccesPanierAction';
 import MenuUtilisateur from './MenuUtilisateur';
 import { HeaderPropsWithModalState } from './types';
 
@@ -12,11 +11,6 @@ export const AccesRapide = (props: HeaderPropsWithModalState) => {
 
   return (
     <ul className="fr-btns-group">
-      {isConnected && user && (
-        <li>
-          <AccesPanierAction />
-        </li>
-      )}
       <li onClick={() => setModalOpened(false)}>
         <Aide />
       </li>

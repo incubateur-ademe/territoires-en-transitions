@@ -1,4 +1,4 @@
-import { useNbActionsDansPanier } from '@/app/app/Layout/Header/AccesPanierAction';
+import { useNbActionsDansPanier } from '@/app/app/Layout/Header/useNbActionsDansPanier';
 import PictoCollectivite from '@/app/app/pages/collectivite/Accueil/pictogrammes/PictoCollectivite';
 import PictoEtatDesLieux from '@/app/app/pages/collectivite/Accueil/pictogrammes/PictoEtatDesLieux';
 import PictoIndicateurs from '@/app/app/pages/collectivite/Accueil/pictogrammes/PictoIndicateurs';
