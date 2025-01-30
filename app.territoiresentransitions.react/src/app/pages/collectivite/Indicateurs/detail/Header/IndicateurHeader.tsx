@@ -1,4 +1,4 @@
-import { useIntersectionObserver } from '@/app/utils/useIntersectionObserver';
+import { useSticky } from '@/app/utils/useSticky';
 import classNames from 'classnames';
 import { TIndicateurDefinition } from '../../types';
 import CheminIndicateur from './CheminIndicateur';
@@ -25,18 +25,17 @@ const IndicateurHeader = ({
 }: Props) => {
   const { titre, unite } = definition;
 
-  const { ref, entry } = useIntersectionObserver({
-    threshold: 1,
-  });
+  const headerContainer = useSticky();
 
   return (
     <div
-      ref={ref}
+      ref={headerContainer.ref}
       className={classNames(
-        'w-full p-2 pt-3 -mt-3 md:px-4 lg:px-6 z-50 sticky -top-px shadow-none transition-all duration-200',
+        'w-full p-2 pt-3 -mt-3 md:px-4 lg:px-6 z-50 sticky top-0 shadow-none transition-all duration-100',
         {
           'bg-white !shadow-[0px_4px_20px_0px_rgba(0,0,0,0.05)] border-b border-b-primary-3':
-            !entry?.isIntersecting,
+            headerContainer.isSticky,
+          'bg-none shadow-none border-0': !headerContainer.isSticky,
         }
       )}
     >
