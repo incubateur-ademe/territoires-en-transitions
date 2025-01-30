@@ -13,16 +13,25 @@ import { ActionType } from './action-type.enum';
 import { referentielDefinitionTable } from './referentiel-definition.table';
 import { referentielIdPgEnum } from './referentiel-id.enum';
 
-export enum ActionCategoryType {
-  BASES = 'bases',
-  MISE_EN_OEUVRE = 'mise en œuvre',
-  EFFETS = 'effets',
-}
-export const actionCategorieEnum = pgEnum('action_categorie', [
-  ActionCategoryType.BASES,
-  ActionCategoryType.MISE_EN_OEUVRE,
-  ActionCategoryType.EFFETS,
+export const ActionCategorieEnum = {
+  BASES: 'bases',
+  MISE_EN_OEUVRE: 'mise en œuvre',
+  EFFETS: 'effets',
+} as const;
+
+export const actionCategorieEnumSchema = z.enum([
+  ActionCategorieEnum.BASES,
+  ActionCategorieEnum.MISE_EN_OEUVRE,
+  ActionCategorieEnum.EFFETS,
 ]);
+
+export type ActionCategorie = z.infer<typeof actionCategorieEnumSchema>;
+
+export const actionCategoriePgEnum = pgEnum(
+  'action_categorie',
+  actionCategorieEnumSchema.options
+);
+
 export const actionIdVarchar = varchar('action_id', { length: 30 });
 export const actionDefinitionTable = pgTable('action_definition', {
   modifiedAt,
@@ -43,7 +52,7 @@ export const actionDefinitionTable = pgTable('action_definition', {
   preuve: text('preuve'),
   points: doublePrecision('points'),
   pourcentage: doublePrecision('pourcentage'),
-  categorie: actionCategorieEnum('categorie'),
+  categorie: actionCategoriePgEnum('categorie'),
 });
 
 export type ActionDefinitionType = InferSelectModel<
@@ -90,7 +99,7 @@ export const importActionDefinitionSchema = actionDefinitionSchemaInsert
     categorie: z
       .string()
       .toLowerCase()
-      .pipe(z.nativeEnum(ActionCategoryType))
+      .pipe(z.nativeEnum(ActionCategorieEnum))
       .optional(),
     origine: z.string().optional(),
     coremeasure: z.string().optional(),

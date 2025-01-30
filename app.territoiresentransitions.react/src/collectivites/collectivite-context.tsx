@@ -18,7 +18,9 @@ export function CollectiviteProvider({
   const collectiviteId = z.coerce.number().parse(unsafeCollectiviteId);
 
   return (
-    <CollectiviteContext.Provider value={{ collectiviteId }}>
+    <CollectiviteContext.Provider
+      value={{ collectiviteId: z.coerce.number().parse(collectiviteId) }}
+    >
       {children}
     </CollectiviteContext.Provider>
   );

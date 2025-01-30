@@ -11,14 +11,11 @@ import { useReferentielId } from '../referentiel-context';
 import { ReferentielTable } from '../ReferentielTable';
 import { CellAction } from '../ReferentielTable/CellAction';
 import { CellPercent, CellPhase, CellPoints } from './Cells';
+import { TableData } from './DEPRECATED_useTableData';
 import { FiltrePhase } from './FiltrePhase';
 import { makeFiltrePourcentage } from './FiltrePourcentage';
 import { getMaxDepth, PriorisationRow } from './queries';
-import { TableData } from './useTableData';
 
-export type TDetailTacheTableProps = {
-  tableData: TableData;
-};
 export type THeaderProps = HeaderProps<PriorisationRow> & {
   setFilters: (filters: string[]) => void;
 };
@@ -62,7 +59,7 @@ const COLUMNS: TColumn[] = [
 /**
  * Affiche la table "Aide à la priorisation"
  */
-export const Table = (props: TDetailTacheTableProps) => {
+export const Table = (props: { tableData: TableData }) => {
   const { tableData } = props;
   const { table, isLoading, filters, setFilters } = tableData;
 

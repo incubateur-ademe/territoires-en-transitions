@@ -1,5 +1,5 @@
 import { ActionWithScore } from '../../compute-score/action-with-score.dto';
-import { ActionCategoryType } from '../action-definition.table';
+import { ActionCategorieEnum } from '../action-definition.table';
 import { ActionType } from '../action-type.enum';
 
 export const simpleReferentielScoring: ActionWithScore = {
@@ -142,7 +142,7 @@ export const simpleReferentielScoring: ActionWithScore = {
           points: 65,
           level: 2,
           actionType: ActionType.SOUS_ACTION,
-          categorie: ActionCategoryType.MISE_EN_OEUVRE,
+          categorie: ActionCategorieEnum.MISE_EN_OEUVRE,
           actionsEnfant: [],
           score: {
             actionId: 'eci_2.1',

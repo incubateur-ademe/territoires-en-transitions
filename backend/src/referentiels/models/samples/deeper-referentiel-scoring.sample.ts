@@ -1,5 +1,5 @@
 import { ActionWithScore } from '../../compute-score/action-with-score.dto';
-import { ActionCategoryType } from '../action-definition.table';
+import { ActionCategorieEnum } from '../action-definition.table';
 import { ActionType } from '../action-type.enum';
 
 export const deeperReferentielScoring: ActionWithScore = {
@@ -20,7 +20,7 @@ export const deeperReferentielScoring: ActionWithScore = {
           actionId: 'eci_1.1',
           identifiant: '1.1',
           nom: 'Sous-action 1.1',
-          categorie: ActionCategoryType.EFFETS,
+          categorie: ActionCategorieEnum.EFFETS,
           points: 10,
           level: 2,
           actionType: ActionType.SOUS_ACTION,
@@ -138,7 +138,7 @@ export const deeperReferentielScoring: ActionWithScore = {
           actionId: 'eci_2.1',
           identifiant: '2.1',
           nom: 'Sous-action 2.1',
-          categorie: ActionCategoryType.MISE_EN_OEUVRE,
+          categorie: ActionCategorieEnum.MISE_EN_OEUVRE,
           points: 65,
           level: 2,
           actionType: ActionType.SOUS_ACTION,
@@ -260,7 +260,7 @@ export const deeperReferentielScoring: ActionWithScore = {
           actionId: 'eci_2.2',
           identifiant: '2.2',
           nom: 'Sous-action 2.2',
-          categorie: ActionCategoryType.BASES,
+          categorie: ActionCategorieEnum.BASES,
           points: 5,
           level: 2,
           actionType: ActionType.SOUS_ACTION,

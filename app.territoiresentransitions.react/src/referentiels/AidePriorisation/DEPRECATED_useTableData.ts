@@ -1,14 +1,11 @@
-import { useCollectiviteId } from '@/app/core-logic/hooks/params';
+import { useSupabase } from '@/api/utils/supabase/use-supabase';
 import { useSearchParams } from '@/app/core-logic/hooks/query';
+import { ReferentielId } from '@/domain/referentiels';
 import { useQuery } from 'react-query';
 import { TableOptions } from 'react-table';
-import { useReferentielId } from '../referentiel-context';
 import { useReferentiel } from '../ReferentielTable/useReferentiel';
 import { initialFilters, nameToShortNames, TFilters } from './filters';
 import { fetchRows, PriorisationRow } from './queries';
-import { useSupabase } from '@/api/utils/supabase/use-supabase';
-
-export type UseTableData = () => TableData;
 
 export type TableData = {
   /** données à passer à useTable */
@@ -34,11 +31,14 @@ export type TableData = {
  * Memoïze et renvoi les données et paramètres de la table
  * @deprecated
  */
-export const useTableData: UseTableData = () => {
-  const collectiviteId = useCollectiviteId();
-  const referentielId = useReferentielId();
+export const useTableData = ({
+  collectiviteId,
+  referentielId,
+}: {
+  collectiviteId: number;
+  referentielId: ReferentielId;
+}) => {
   const supabase = useSupabase();
-
   // filtre initial
   const [filters, setFilters, filtersCount] = useSearchParams<TFilters>(
     'priorisation',
