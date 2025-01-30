@@ -1,8 +1,13 @@
-import { TIndicateurValeur } from '@/app/app/pages/collectivite/Indicateurs/useIndicateurValeurs';
 import { CustomLayerProps } from '@nivo/line';
 import { ChartLegendItem } from '../ChartLegend';
 import { getDataColor } from '../utils';
 import { LineData } from './LineChart';
+
+type TIndicateurValeur = {
+  id: number;
+  annee: number;
+  valeur: number;
+};
 
 /** Génère la liste des légendes pour le composant LineChart */
 export const generateLineLegendItems = (
