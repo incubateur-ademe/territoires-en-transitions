@@ -4,7 +4,7 @@ import z from 'zod';
 import {
   financeurTagSchema,
   financeurTagTable,
-} from '../../../../collectivites/shared/models/financeur-tag.table';
+} from '../../../../collectivites/tags/financeur-tag.table';
 import { ficheActionTable } from './fiche-action.table';
 
 export const ficheActionFinanceurTagTable = pgTable(

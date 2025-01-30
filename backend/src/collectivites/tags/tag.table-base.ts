@@ -1,15 +1,18 @@
 import { integer, serial, text } from 'drizzle-orm/pg-core';
 import z from 'zod';
-import { collectiviteTable } from './collectivite.table';
+import { collectiviteTable } from '../shared/models/collectivite.table';
 
-export type TagType =
-  | 'personne'
-  | 'service'
-  | 'partenaire'
-  | 'categorie'
-  | 'financeur'
-  | 'structure'
-  | 'libre';
+export enum TagEnum {
+  Financeur = 'financeur',
+  Personne = 'personne',
+  Partenaire = 'partenaire',
+  Service = 'service',
+  Structure = 'structure',
+  Categorie = 'categorie',
+  Libre = 'libre'
+}
+
+export type TagType = `${TagEnum}`;
 
 export const tagTableBase = {
   id: serial('id').primaryKey(),

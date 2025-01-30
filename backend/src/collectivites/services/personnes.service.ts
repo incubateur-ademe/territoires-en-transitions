@@ -1,5 +1,5 @@
 import { dcpTable, utilisateurDroitTable } from '@/backend/auth';
-import { personneTagTable } from '@/backend/collectivites/shared/models/personne-tag.table';
+import { personneTagTable } from '@/backend/collectivites/tags/personne-tag.table';
 import { DatabaseService } from '@/backend/utils';
 import { Injectable } from '@nestjs/common';
 import { and, eq, sql } from 'drizzle-orm';

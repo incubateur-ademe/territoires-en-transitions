@@ -9,7 +9,7 @@ import { getTableName, sql } from 'drizzle-orm';
 import { intersection, isNil } from 'es-toolkit';
 import { AuthenticatedUser } from '../../auth/models/auth.models';
 import CollectivitesService from '../../collectivites/services/collectivites.service';
-import { categorieTagTable } from '../../collectivites/shared/models/categorie-tag.table';
+import { categorieTagTable } from '../../collectivites/tags/categorie-tag.table';
 import { groupementCollectiviteTable } from '../../collectivites/shared/models/groupement-collectivite.table';
 import { ficheActionTable } from '../../plans/fiches/shared/models/fiche-action.table';
 import { DatabaseService } from '../../utils/database/database.service';
