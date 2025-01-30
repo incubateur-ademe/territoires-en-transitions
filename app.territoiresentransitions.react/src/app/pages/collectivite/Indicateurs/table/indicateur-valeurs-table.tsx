@@ -47,8 +47,8 @@ export const IndicateurValeursTable = ({
   }>(null);
   const [toBeDeleted, setToBeDeleted] = useState<PreparedValue | null>(null);
 
-  const { mutate: upsertValeur } = useUpsertIndicateurValeur(definition);
-  const { mutate: deleteValeur } = useDeleteIndicateurValeur(definition);
+  const { mutate: upsertValeur } = useUpsertIndicateurValeur();
+  const { mutate: deleteValeur } = useDeleteIndicateurValeur();
 
   return (
     <>
