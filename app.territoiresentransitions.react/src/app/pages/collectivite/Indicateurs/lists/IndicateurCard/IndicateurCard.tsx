@@ -199,7 +199,7 @@ export const IndicateurCardBase = ({
           {/** Graphique */}
           {showChart && (
             <div className="mt-auto">
-              {!hasValeur && !estCompose ? (
+              {!hasValeur ? (
                 <EmptyCard
                   size="xs"
                   className="h-80"
@@ -240,6 +240,7 @@ export const IndicateurCardBase = ({
                               label={
                                 <ChartLegend
                                   className="flex-col items-baseline pb-3 px-4"
+                                  isOpen
                                   items={Array.from(
                                     segmentItemParId.values()
                                   ).map(({ name, color }) => ({
