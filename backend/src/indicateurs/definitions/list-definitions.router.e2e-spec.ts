@@ -23,12 +23,13 @@ describe("Route de lecture des définitions d'indicateurs", () => {
 
     const input: Input = {
       collectiviteId: 1,
-      identifiantsReferentiel: ['cae_1.ca'],
+      identifiantsReferentiel: ['cae_1.a'],
       //indicateurIds: [177],
     };
     const result = await caller.indicateurs.definitions.list(input);
     expect(result.length).toBe(1);
     const toCheck1 = indicateurDefinitionDetailleeSchema.safeParse(result[0]);
     expect(toCheck1.success).toBeTruthy;
+    expect(result[0]?.enfants?.length).toBeGreaterThan(2);
   });
 });
