@@ -26,16 +26,18 @@ export const prepareData = (
   // transforme les valeurs de chaque source
   const sourcesEtValeursModifiees = sourcesFiltrees.map((sourceData) => ({
     ...sourceData,
-    valeurs: sourceData.valeurs.map((v) => {
-      const annee = new Date(v.dateValeur).getFullYear();
-      return {
-        id: v.id,
-        annee,
-        anneeISO: new Date(annee, 0, 1).toISOString(),
-        valeur: v[type],
-        commentaire: v[`${type}Commentaire`],
-      };
-    }),
+    valeurs: sourceData.valeurs
+      .filter((v) => typeof v[type] === 'number')
+      .map((v) => {
+        const annee = new Date(v.dateValeur).getFullYear();
+        return {
+          id: v.id,
+          annee,
+          anneeISO: new Date(annee, 0, 1).toISOString(),
+          valeur: v[type],
+          commentaire: v[`${type}Commentaire`],
+        };
+      }),
   }));
 
   // fusionne les tableaux de valeurs de toutes les sources
