@@ -125,7 +125,8 @@ export const useIndicateurChartInfo = ({
     0;
 
   // détermine si l'indicateur a au moins une valeur
-  const hasValeur = objectifs.annees.length + resultats.annees.length > 0;
+  const hasValeur =
+    objectifs.annees.length + resultats.annees.length > 0 || !!segments?.length;
 
   const isLoading = isLoadingValeurs || isLoadingSegments || isLoadingEnfants;
   return {
