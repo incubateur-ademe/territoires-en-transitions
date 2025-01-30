@@ -174,7 +174,6 @@ export default class ListDefinitionsService {
           favoris: indicateurCollectiviteTable.favoris,
           categories: sql`array_remove(array_agg(distinct ${categorieTagTable.nom}), null)`,
           thematiques: sql`array_remove(array_agg(distinct ${thematiqueTable.nom}), null)`,
-          //          enfants: sql`array_remove(array_agg(distinct ${definitionEnfantsTable.id}), null)`,
           enfants: sql`jsonb_agg(distinct jsonb_build_object(
             'id', ${definitionEnfantsTable.id},
             'identifiantReferentiel', ${definitionEnfantsTable.identifiantReferentiel},
@@ -208,7 +207,16 @@ export default class ListDefinitionsService {
         )
         .leftJoin(
           categorieTagTable,
-          eq(categorieTagTable.id, indicateurCategorieTagTable.categorieTagId)
+          and(
+            eq(
+              categorieTagTable.id,
+              indicateurCategorieTagTable.categorieTagId
+            ),
+            or(
+              isNull(categorieTagTable.collectiviteId),
+              eq(categorieTagTable.collectiviteId, collectiviteId)
+            )
+          )
         )
         // thématiques
         .leftJoin(
@@ -229,7 +237,10 @@ export default class ListDefinitionsService {
         )
         .leftJoin(
           definitionEnfantsTable,
-          eq(definitionEnfantsTable.id, indicateurGroupeTable.enfant)
+          and(
+            eq(definitionEnfantsTable.id, indicateurGroupeTable.enfant),
+            isNull(definitionEnfantsTable.groupementId)
+          )
         )
         // enfants liés aux groupements de la collectivité
         .leftJoin(
@@ -238,7 +249,10 @@ export default class ListDefinitionsService {
         )
         .leftJoin(
           groupementCollectiviteTable,
-          eq(groupementCollectiviteTable.groupementId, groupementTable.id)
+          and(
+            eq(groupementCollectiviteTable.groupementId, groupementTable.id),
+            eq(groupementCollectiviteTable.collectiviteId, collectiviteId)
+          )
         )
         // actions du référentiel
         .leftJoin(
@@ -278,14 +292,6 @@ export default class ListDefinitionsService {
                     identifiantsReferentiel
                   )
                 : undefined
-            ),
-            or(
-              isNull(definitionEnfantsTable.groupementId),
-              eq(groupementCollectiviteTable.collectiviteId, collectiviteId)
-            ),
-            or(
-              isNull(categorieTagTable.collectiviteId),
-              eq(categorieTagTable.collectiviteId, collectiviteId)
             )
           )
         )
