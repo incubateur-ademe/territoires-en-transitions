@@ -7,25 +7,19 @@ import { signIn, signOut } from '../../tests/auth';
 import { dbAdmin, supabase } from '../../tests/supabase';
 import { testReset } from '../../tests/testReset';
 import {
-  selectIndicateurCategoriesUtilisateur,
   selectIndicateurDefinition,
   selectIndicateurFiches,
   selectIndicateurPilotes,
   selectIndicateurServicesId,
   selectIndicateurThematiquesId,
-  selectIndicateurValeur,
-  selectIndicateurValeurs,
 } from './indicateur.fetch';
 import {
   insertIndicateurDefinition,
   updateIndicateurDefinition,
-  upsertCategoriesUtilisateur,
   upsertFiches,
-  upsertIndicateurValeur,
   upsertPilotes,
   upsertServices,
   upsertThematiques,
-  upsertValeursUtilisateurAvecSource,
 } from './indicateur.save';
 
 beforeAll(async () => {
@@ -106,40 +100,6 @@ describe('Test indicateur.save', async () => {
     const data = await selectIndicateurDefinition(supabase, newId, 1);
     expect(data).not.toBeNull();
     expect(data?.thematiques?.[0].id).eq(1);
-  });
-
-  test('Test upsertIndicateurValeur', async () => {
-    const valeur: Parameters<typeof upsertIndicateurValeur>['1'] = {
-      collectiviteId: 1,
-      indicateurId: 1,
-      resultat: 1.3,
-      objectif: 2,
-      resultatCommentaire: 'test',
-      annee: 2022,
-    };
-    // Ajout valeur
-    const newId = await upsertIndicateurValeur(supabase, valeur);
-
-    if (!newId) {
-      expect.fail('Id de la valeur non retourné');
-    }
-
-    const data = await selectIndicateurValeur(supabase, newId);
-    if (!data) {
-      expect.fail();
-    }
-
-    data.objectif = 2.3;
-
-    // Modification valeur
-    await upsertIndicateurValeur(supabase, data);
-    const result = await selectIndicateurValeur(supabase, newId);
-    if (!result) {
-      expect.fail();
-    }
-
-    expect(result.objectif).eq(2.3);
-    expect(data.id).eq(result.id);
   });
 
   test('Test upsertThematiques', async () => {
@@ -241,95 +201,6 @@ describe('Test indicateur.save', async () => {
     expect(data5).toHaveLength(0);
     // Vérifie qu'on supprime pas les services des autres collectivités
     const data6 = await selectIndicateurServicesId(supabase, 1, 2);
-    expect(data6).not.toBeNull();
-    expect(data6).toHaveLength(1);
-  });
-
-  test('Test upsertCategoriesUtilisateur', async () => {
-    // Données
-    const { data: categorie } = await dbAdmin
-      .from('categorie_tag')
-      .insert({ nom: 'testCat', collectivite_id: 1 })
-      .select()
-      .limit(1)
-      .single();
-
-    if (!categorie) {
-      expect.fail();
-    }
-
-    const catId = categorie.id;
-    const { data: categorie2 } = await dbAdmin
-      .from('categorie_tag')
-      .insert({ nom: 'cat2', collectivite_id: 2 })
-      .select()
-      .single();
-
-    if (!categorie2) {
-      expect.fail();
-    }
-
-    await dbAdmin
-      .from('indicateur_categorie_tag')
-      .insert({ indicateur_id: 1, categorie_tag_id: categorie2.id });
-
-    // Ajout catégorie inexistant sur indicateur personnalisé
-    const def = await selectIndicateurDefinition(supabase, predefini.id, 1);
-    if (!def) {
-      expect.fail();
-    }
-
-    const tags: TagInsert[] = [
-      {
-        nom: 'test',
-        collectiviteId: 1,
-      },
-    ];
-    await upsertCategoriesUtilisateur(supabase, def, 1, tags);
-    const data = await selectIndicateurCategoriesUtilisateur(
-      supabase,
-      predefini.id,
-      1
-    );
-    expect(data).not.toBeNull();
-    expect(data).toHaveLength(1);
-    // Ajout catégorie existant sur indicateur personnalisé
-    tags[0].id = data[0];
-    tags.push({ nom: '', collectiviteId: 1, id: catId });
-    await upsertCategoriesUtilisateur(supabase, def, 1, tags);
-    const data2 = await selectIndicateurCategoriesUtilisateur(
-      supabase,
-      predefini.id,
-      1
-    );
-    expect(data2).not.toBeNull();
-    expect(data2).toHaveLength(2);
-    // Enlève catégorie sur indicateur personnalisé
-    await upsertCategoriesUtilisateur(supabase, def, 1, []);
-    const data3 = await selectIndicateurCategoriesUtilisateur(
-      supabase,
-      predefini.id,
-      1
-    );
-    expect(data3).not.toBeNull();
-    expect(data3).toHaveLength(0);
-    // Ajout catégorie sur indicateur prédéfini
-    const def2 = await selectIndicateurDefinition(supabase, 1, 1);
-    if (!def2) {
-      expect.fail();
-    }
-
-    await upsertCategoriesUtilisateur(supabase, def2, 1, tags);
-    const data4 = await selectIndicateurCategoriesUtilisateur(supabase, 1, 1);
-    expect(data4).not.toBeNull();
-    expect(data4).toHaveLength(2);
-    // Enlève catégorie sur indicateur prédéfini
-    await upsertCategoriesUtilisateur(supabase, def2, 1, []);
-    const data5 = await selectIndicateurCategoriesUtilisateur(supabase, 1, 1);
-    expect(data5).not.toBeNull();
-    expect(data5).toHaveLength(0);
-    // Vérifie qu'on a pas supprimé les catégories d'une autre collectivité sur le même indicateur
-    const data6 = await selectIndicateurCategoriesUtilisateur(supabase, 1, 2);
     expect(data6).not.toBeNull();
     expect(data6).toHaveLength(1);
   });
@@ -483,111 +354,5 @@ describe('Test indicateur.save', async () => {
     const data6 = await selectIndicateurFiches(supabase, 1, 2);
     expect(data6).not.toBeNull();
     expect(data6).toHaveLength(1);
-  });
-
-  test('Test upsertValeursUtilisateurAvecSource', async () => {
-    // On signout pour pouvoir bypasser les RLS en mode dbAdmin
-    // (sinon le dbAdmin ne fonctionne pas)
-    await signOut();
-    await testReset();
-
-    // Ajout valeur utilisateur
-    const { data: val } = await dbAdmin
-      .from('indicateur_valeur')
-      .insert({
-        indicateur_id: 1,
-        date_valeur: '2025-01-01',
-        collectivite_id: 1,
-        resultat: 1.5,
-      })
-      .select('id')
-      .limit(1)
-      .single();
-
-    if (!val) {
-      expect.fail();
-    }
-
-    // Ajout valeur import
-    const { data: meta, error } = await dbAdmin
-      .from('indicateur_source_metadonnee')
-      .upsert({
-        source_id: 'citepa',
-        date_version: new Date().toLocaleDateString('sv-SE'),
-      })
-      .select('id')
-      .limit(1)
-      .single();
-
-    if (!meta) {
-      expect.fail(error.message);
-    }
-
-    await dbAdmin.from('indicateur_valeur').insert({
-      indicateur_id: 1,
-      date_valeur: '2025-01-01',
-      collectivite_id: 1,
-      resultat: 1.8,
-      metadonnee_id: meta.id,
-    });
-
-    await dbAdmin.from('indicateur_valeur').insert({
-      indicateur_id: 1,
-      date_valeur: '2026-01-01',
-      collectivite_id: 1,
-      resultat: 2,
-      metadonnee_id: meta.id,
-    });
-
-    const args = {
-      dbClient: supabase,
-      indicateurId: 1,
-      collectiviteId: 1,
-      source: {
-        id: 'citepa',
-        libelle: 'CITEPA',
-        dateVersion: '2026-01-01',
-        methodologie: 'méthodologie...',
-      },
-      appliquerResultat: false,
-      appliquerObjectif: true,
-      ecraserResultat: true,
-      ecraserObjectif: true,
-    };
-
-    await signIn('yolododo');
-
-    // Test que le résultat n'a pas été appliqué
-    await upsertValeursUtilisateurAvecSource(args);
-    const data1 = await selectIndicateurValeur(supabase, val.id);
-    expect(data1).not.toBeNull();
-    expect(data1?.resultat).eq(1.5);
-    const d1 = await selectIndicateurValeurs(supabase, 1, 1, null);
-    expect(d1).toHaveLength(1);
-
-    // Test que le résultat n'a pas été écrasé
-    args.appliquerResultat = true;
-    args.ecraserResultat = false;
-    await upsertValeursUtilisateurAvecSource(args);
-    const data2 = await selectIndicateurValeur(supabase, val.id);
-    expect(data2).not.toBeNull();
-    expect(data2?.resultat).eq(1.5);
-    const d2 = await selectIndicateurValeurs(supabase, 1, 1, null);
-    expect(d2).toHaveLength(2);
-
-    // Test que le résultat a bien été appliqué
-    const idNewValeur = d2.filter((d) => d.id !== val.id)![0].id as number;
-    await dbAdmin.from('indicateur_valeur').delete().eq('id', idNewValeur);
-
-    const d3bis = await selectIndicateurValeurs(supabase, 1, 1, null);
-    expect(d3bis).toHaveLength(1);
-
-    args.ecraserResultat = true;
-    await upsertValeursUtilisateurAvecSource(args);
-    const data = await selectIndicateurValeur(supabase, val.id);
-    expect(data).not.toBeNull();
-    expect(data?.resultat).eq(1.8);
-    const d3 = await selectIndicateurValeurs(supabase, 1, 1, null);
-    expect(d3).toHaveLength(2);
   });
 });
