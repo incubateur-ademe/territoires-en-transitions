@@ -33,11 +33,12 @@ export const prepareData = (
         return {
           id: v.id,
           annee,
-          anneeISO: new Date(annee, 0, 1).toISOString(),
+          anneeISO: `${annee}-01-01T00:00:00.000Z`,
           valeur: v[type],
           commentaire: v[`${type}Commentaire`],
         };
       }),
+    metadonnees: sourceData.metadonnees || [],
   }));
 
   // fusionne les tableaux de valeurs de toutes les sources
