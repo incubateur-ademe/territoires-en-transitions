@@ -2,7 +2,7 @@
 
 import dynamic from 'next/dynamic';
 
-const LegacyRouter = dynamic(() => import('../../src/legacy-router'), {
+const LegacyRouter = dynamic(() => import('./legacy-router'), {
   ssr: false,
 });
 

@@ -1,9 +1,9 @@
 import { Metadata } from 'next';
 import nextDynamic from 'next/dynamic';
-import AppProviders from '../src/app-providers';
 import Footer from '../src/app/Layout/Footer';
 import Header from '../src/app/Layout/Header';
 import StonlyWidget from '../src/lib/stonly.widget';
+import AppProviders from './app-providers';
 import './global.css';
 
 export const dynamic = 'force-dynamic';

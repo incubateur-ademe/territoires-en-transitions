@@ -4,17 +4,24 @@ import {
   invitationMailParam,
 } from '@/app/app/paths';
 import { supabaseClient } from '@/app/core-logic/api/supabase';
+import { usePathname } from 'next/navigation';
 import { useMutation, useQueryClient } from 'react-query';
-import { useRouteMatch } from 'react-router-dom';
 
 // extrait l'id d'invitation de l'url si il est présent
 export const useInvitationState = () => {
-  const match = useRouteMatch<{
-    [invitationIdParam]: string;
-    [invitationMailParam]: string;
-  }>(invitationLandingPath);
-  const invitationId = match?.params?.[invitationIdParam] || null;
-  const invitationEmail = match?.params?.[invitationMailParam] || null;
+  const pathname = usePathname();
+
+  const match = pathname.match(
+    new RegExp(
+      `^${invitationLandingPath
+        .replace(`:${invitationIdParam}`, '(.*)')
+        .replace(`:${invitationMailParam}`, '(.*)')}$`
+    )
+  );
+
+  const invitationId = match?.[1] || null;
+  const invitationEmail = match?.[2] || null;
+
   if (!invitationId) return { invitationId };
 
   const params = new URLSearchParams(document.location.search);
