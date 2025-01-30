@@ -19,7 +19,7 @@ export const E2E = () => {
   const auth = useAuth();
   const history = useHistory();
 
-  if ('Cypress' in window) {
+  if (typeof window !== 'undefined' && 'Cypress' in window) {
     // expose l'objet history ainsi que le client supabase à l'env. E2E
     window.e2e = { history, auth, supabaseClient };
   }
