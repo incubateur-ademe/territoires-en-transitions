@@ -21,8 +21,7 @@ export const EditValeursModal = (props: EditValeursModalProps) => {
   const { collectiviteId, data, definition, openState } = props;
   const { valeursExistantes } = data;
 
-  const { mutate: upsertValeur, isPending } =
-    useUpsertIndicateurValeur(definition);
+  const { mutate: upsertValeur, isPending } = useUpsertIndicateurValeur();
   const [valeur, setValeur] = useState<Partial<IndicateurSourceValeur>>({});
   const [annee, setAnnee] = useState<number | null>(null);
   const { objectif, objectifCommentaire, resultat, resultatCommentaire } =
