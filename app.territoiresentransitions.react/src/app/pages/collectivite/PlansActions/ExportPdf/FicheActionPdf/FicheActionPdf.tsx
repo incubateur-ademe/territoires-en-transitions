@@ -1,4 +1,3 @@
-import { IndicateurDefinition } from '@/api/indicateurs/domain';
 import { FicheAction, FicheActionNote, FicheResume } from '@/api/plan-actions';
 import { TActionStatutsRow, TAxeRow } from '@/app/types/alias';
 import { Divider, Stack, Title } from '@/app/ui/export-pdf/components';
@@ -6,6 +5,7 @@ import { AnnexeInfo } from '../../FicheAction/data/useAnnexesFicheActionInfos';
 
 import { RouterOutput } from '@/api/utils/trpc/client';
 import Etapes from '@/app/app/pages/collectivite/PlansActions/ExportPdf/FicheActionPdf/Etapes';
+import { TIndicateurDefinition } from '../../../Indicateurs/types';
 import Acteurs from './Acteurs';
 import ActionsLiees from './ActionsLiees';
 import Budget from './Budget';
@@ -26,7 +26,7 @@ export type FicheActionPdfProps = {
 
 export type FicheActionPdfExtendedProps = FicheActionPdfProps & {
   chemins: TAxeRow[][];
-  indicateursListe: IndicateurDefinition[] | undefined | null;
+  indicateursListe: TIndicateurDefinition[] | undefined | null;
   etapes?: RouterOutput['plans']['fiches']['etapes']['list'];
   fichesLiees: FicheResume[];
   actionsLiees: TActionStatutsRow[];
