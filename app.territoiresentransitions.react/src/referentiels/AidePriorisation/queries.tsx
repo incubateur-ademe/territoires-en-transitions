@@ -3,7 +3,7 @@ import { ActionReferentiel } from '@/app/referentiels/ReferentielTable/useRefere
 import { TActionStatutsRow } from '@/app/types/alias';
 import { ITEM_ALL } from '@/ui';
 import { boundariesToQueryFilter } from './boundariesToQueryFilter';
-import { filterToBoundaries, TFilters } from './filters';
+import { filterToBoundaries, TFilters, TValueToBoundary } from './filters';
 import { percentBoundaries } from './FiltrePourcentage';
 
 // un sous-ensemble des champs pour alimenter notre table
@@ -23,8 +23,8 @@ export const getMaxDepth = (referentiel: string | null) =>
 // toutes les entrées d'un référentiel pour une collectivité et des filtres donnés
 export const fetchRows = async (
   supabase: DBClient,
-  collectivite_id: number | null,
-  referentiel: string | null,
+  collectivite_id: number,
+  referentiel: string,
   filters: TFilters
 ) => {
   const maxDepth = getMaxDepth(referentiel);
@@ -73,7 +73,7 @@ export const fetchRows = async (
 
 const getPercentFilter = (filters: TFilters, column: keyof TFilters) => {
   const qf = boundariesToQueryFilter(
-    filterToBoundaries(filters[column], percentBoundaries),
+    filterToBoundaries(filters[column], percentBoundaries as TValueToBoundary),
     column
   );
 

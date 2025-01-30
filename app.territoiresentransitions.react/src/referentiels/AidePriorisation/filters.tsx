@@ -1,9 +1,14 @@
 import { ITEM_ALL } from '@/ui';
 import { TBoundary } from './boundariesToQueryFilter';
+import { percentBoundaries } from './FiltrePourcentage';
+
+export type PercentFilterValues =
+  | keyof typeof percentBoundaries
+  | typeof ITEM_ALL;
 
 export type TFilters = {
-  score_realise: string[];
-  score_programme: string[];
+  score_realise: PercentFilterValues[];
+  score_programme: PercentFilterValues[];
   phase: string[];
 };
 

@@ -1,4 +1,4 @@
-import AidePriorisation from '@/app/referentiels/AidePriorisation';
+import { AidePriorisation } from '@/app/referentiels/AidePriorisation';
 
 export default function Page() {
   return <AidePriorisation />;

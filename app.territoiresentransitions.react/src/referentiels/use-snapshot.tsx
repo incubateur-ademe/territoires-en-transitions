@@ -5,7 +5,7 @@ import {
   ReferentielId,
 } from '@/domain/referentiels';
 import { useFeatureFlagEnabled } from 'posthog-js/react';
-import { useCollectiviteId } from '@/app/collectivites/collectivite-context';
+import { useCollectiviteId } from '../collectivites/collectivite-context';
 
 export type Snapshot =
   RouterOutput['referentiels']['snapshots']['getCurrentFullScore'];
@@ -16,7 +16,7 @@ export type SnapshotDetails =
 export type ActionDetailed = Snapshot['scores'];
 
 export function useSnapshot({ actionId }: { actionId: string }) {
-  const collectiviteId = useCollectiviteId()!;
+  const collectiviteId = useCollectiviteId();
   const referentielId = getReferentielIdFromActionId(actionId);
 
   return trpc.referentiels.snapshots.getCurrentFullScore.useQuery({

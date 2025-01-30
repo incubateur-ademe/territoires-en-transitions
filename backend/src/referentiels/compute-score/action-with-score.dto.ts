@@ -38,10 +38,14 @@ export const actionWithScoreSchema: z.ZodType<ActionWithScore> =
   });
 
 //
-// Same schema and type but with `score` made optional in the root object and its children
+// Same schema and type but with `score` fields and other root fields made required
 // 👇
 
 const actionWithScoreFinalBaseSchema = actionWithScoreBaseSchema.extend({
+  actionId: actionWithScoreBaseSchema.shape.actionId.unwrap(),
+  identifiant: actionWithScoreBaseSchema.shape.identifiant.unwrap(),
+  nom: actionWithScoreBaseSchema.shape.nom.unwrap(),
+  categorie: actionWithScoreBaseSchema.shape.categorie.unwrap(),
   score: scoreFinalSchema,
 });
 

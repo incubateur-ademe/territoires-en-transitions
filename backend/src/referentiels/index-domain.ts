@@ -2,6 +2,7 @@
 // Exports from this file can be imported with `@/domain/*` alias path.
 
 export * from './compute-score/score.dto';
+export * from './models/action-definition.table';
 export * from './models/action-relation.table';
 export * from './models/action-statut.table';
 export * from './models/action-type.enum';

@@ -3,7 +3,7 @@ import {
   MultiSelectFilter,
   MultiSelectFilterTitle,
 } from '@/app/ui/shared/select/MultiSelectFilter';
-import { TFilters, TFiltreProps, TValueToBoundary } from './filters';
+import { TFilters, TFiltreProps } from './filters';
 
 export const SCORE_REALISE = 'score_realise';
 
@@ -16,14 +16,14 @@ export const percentItems = [
   { value: '65', label: '65 à 74 %' },
   { value: '75', label: '75 à 100 %' },
 ];
-export const percentBoundaries: TValueToBoundary = {
+export const percentBoundaries = {
   '0': { lower: 0, upper: 0.1, include: 'lower' },
   '1': { lower: 0.1, upper: 0.35, include: 'lower' },
   '35': { lower: 0.35, upper: 0.5, include: 'lower' },
   '50': { lower: 0.5, upper: 0.65, include: 'lower' },
   '65': { lower: 0.65, upper: 0.75, include: 'lower' },
-  '75': { lower: 0.75, upper: 1, include: 'both' },
-};
+  '75': { lower: 0.75, upper: 1.001, include: 'both' },
+} as const;
 
 export const makeFiltrePourcentage =
   (filterKey: string, label: string) => (props: TFiltreProps) => {
