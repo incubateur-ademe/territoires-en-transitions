@@ -6,7 +6,7 @@ import {
 } from '@/backend/collectivites';
 import { indicateurDefinitionSchema } from '@/domain/indicateurs';
 import z from 'zod';
-import { financeurTagSchema } from '../../../collectivites/shared/models/financeur-tag.table';
+import { financeurTagSchema } from '../../../collectivites/tags/financeur-tag.table';
 import { actionRelationSchema } from '../../../referentiels/models/action-relation.table';
 import { effetAttenduSchema } from '../../../shared/models/effet-attendu.table';
 import { sousThematiqueSchema } from '../../../shared/models/sous-thematique.table';
