@@ -339,6 +339,15 @@ export interface TrackingPlan extends Record<never, Page> {
     events: never;
   };
 
+  /** Modale "Figer un référentiel" */
+  'app/referentiel/save-score' : {
+    properties: CollectiviteDefaultProps;
+    onglets: never;
+    events: {
+      sauvegarde: { dateDuJour : boolean };
+    };
+  }
+
   /* La page à la racine de https://auth.territoiresentransitions.fr */
   'auth/': NoProps;
 
