@@ -209,7 +209,7 @@ const FichesActionListe = ({
         </div>
       )}
 
-      {hasFiches && (
+      {!!hasFiches && (
         <div
           className={classNames(
             'flex flex-col gap-8 bg-grey-2',
