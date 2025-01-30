@@ -1,4 +1,3 @@
-import { IndicateurDefinition } from '@/api/indicateurs/domain';
 import { FicheAction } from '@/api/plan-actions';
 import {
   Badge,
@@ -9,22 +8,17 @@ import {
   Title,
 } from '@/app/ui/export-pdf/components';
 import classNames from 'classnames';
+import { TIndicateurDefinition } from '../../../Indicateurs/types';
 
 type IndicateurCardProps = {
-  indicateur: IndicateurDefinition;
+  indicateur: TIndicateurDefinition;
 };
 
 const IndicateurCard = ({ indicateur }: IndicateurCardProps) => {
-  const { titre, unite, rempli, participationScore } = indicateur;
+  const { titre, unite, participationScore } = indicateur;
 
   return (
     <Card wrap={false} gap={1.5} className="w-[32%] p-3">
-      <Badge
-        title={rempli ? 'Complété' : 'À compléter'}
-        state={rempli ? 'success' : 'info'}
-        size="sm"
-        uppercase
-      />
       <Title variant="h6" className="leading-5 text-primary-8">
         {titre}
         <Paragraph className="text-grey-6 text-[0.7rem] font-normal">
@@ -47,7 +41,7 @@ const IndicateurCard = ({ indicateur }: IndicateurCardProps) => {
 
 type IndicateursProps = {
   fiche: FicheAction;
-  indicateursListe: IndicateurDefinition[] | undefined | null;
+  indicateursListe: TIndicateurDefinition[] | undefined | null;
 };
 
 const Indicateurs = ({ fiche, indicateursListe }: IndicateursProps) => {

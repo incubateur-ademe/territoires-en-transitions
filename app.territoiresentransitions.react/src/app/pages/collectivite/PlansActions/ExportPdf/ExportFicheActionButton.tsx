@@ -1,4 +1,5 @@
 import { FicheAction } from '@/api/plan-actions';
+import { useGetEtapes } from '@/app/app/pages/collectivite/PlansActions/FicheAction/etapes/use-get-etapes';
 import ExportPDFButton from '@/app/ui/export-pdf/ExportPDFButton';
 import { createElement, useEffect, useState } from 'react';
 import { useIndicateurDefinitions } from '../../Indicateurs/Indicateur/useIndicateurDefinition';
@@ -7,7 +8,6 @@ import { useAnnexesFicheActionInfos } from '../FicheAction/data/useAnnexesFicheA
 import { useFicheActionNotesSuivi } from '../FicheAction/data/useFicheActionNotesSuivi';
 import { useFichesActionLiees } from '../FicheAction/data/useFichesActionLiees';
 import { useFicheActionChemins } from '../PlanAction/data/usePlanActionChemin';
-import { useGetEtapes } from '@/app/app/pages/collectivite/PlansActions/FicheAction/etapes/use-get-etapes';
 import FicheActionPdf from './FicheActionPdf/FicheActionPdf';
 
 type FicheActionPdfContentProps = {
@@ -24,10 +24,7 @@ export const FicheActionPdfContent = ({
   );
 
   const { data: indicateursListe, isLoading: isLoadingIndicateurs } =
-    useIndicateurDefinitions(
-      0,
-      (fiche.indicateurs ?? []).map((ind) => ind.id)
-    );
+    useIndicateurDefinitions((fiche.indicateurs ?? []).map((ind) => ind.id));
 
   const { data: fichesLiees, isLoading: isLoadingFichesLiees } =
     useFichesActionLiees(fiche.id);
