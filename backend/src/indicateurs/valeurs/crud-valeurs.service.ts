@@ -213,8 +213,6 @@ export default class CrudValeursService {
     tokenInfo: AuthenticatedUser
   ): Promise<GetIndicateursValeursResponseType> {
     const { indicateurIds, identifiantsReferentiel } = options;
-    if (!indicateurIds?.length && !identifiantsReferentiel?.length)
-      return Promise.resolve({ indicateurs: [] });
 
     await this.permissionService.isAllowed(
       tokenInfo,
@@ -222,6 +220,9 @@ export default class CrudValeursService {
       ResourceType.COLLECTIVITE,
       options.collectiviteId
     );
+
+    if (!indicateurIds?.length && !identifiantsReferentiel?.length)
+      return Promise.resolve({ indicateurs: [] });
 
     const indicateurValeurs = await this.getIndicateursValeurs(options);
     const indicateurValeursSeules = indicateurValeurs.map(
