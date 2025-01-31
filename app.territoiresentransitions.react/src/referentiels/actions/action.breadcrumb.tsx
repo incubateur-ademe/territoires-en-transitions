@@ -3,7 +3,6 @@ import { useCollectiviteId } from '@/app/collectivites/collectivite-context';
 import NestedMenuItem from '@/app/referentiels/action.show/NestedMenuItem';
 import { ActionDefinitionSummary } from '@/app/referentiels/ActionDefinitionSummaryReadEndpoint';
 import {
-  actionPath,
   displayName,
   findActionSiblingsOfId,
   findChildren,
@@ -11,10 +10,12 @@ import {
 } from '@/app/referentiels/actions.utils';
 import { ActionTitleRead } from '@/app/referentiels/ActionTitleReadEndpoint';
 import { useActionTitleList } from '@/app/referentiels/referentiel-hooks';
+import { getReferentielIdFromActionId } from '@/domain/referentiels';
 import { Menu, MenuItem } from '@mui/material';
 import Link from 'next/link';
 import { useRouter } from 'next/navigation';
 import React, { useState } from 'react';
+import { makeReferentielActionUrl } from '../../app/paths';
 
 /**
  * Returns a list of menu items
@@ -118,7 +119,13 @@ const OrientationSwitcher = (props: {
 
   const onSelect = (selectedId: string) => {
     setOpened(false);
-    router.push(actionPath(collectiviteId, selectedId));
+    router.push(
+      makeReferentielActionUrl({
+        collectiviteId,
+        referentielId: getReferentielIdFromActionId(selectedId),
+        actionId: selectedId,
+      })
+    );
   };
 
   return (

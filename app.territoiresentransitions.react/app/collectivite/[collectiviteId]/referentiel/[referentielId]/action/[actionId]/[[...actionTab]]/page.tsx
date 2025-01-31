@@ -1,4 +1,4 @@
-import { ActionPage } from 'app.territoiresentransitions.react/app/collectivite/[collectiviteId]/referentiel/[referentielId]/action/[actionId]/[[...actionTab]]/action.page';
+import { ActionPage } from './action.page';
 
 export default async function Page({
   params,

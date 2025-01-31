@@ -87,26 +87,6 @@ export const referentielId = (
 ): Exclude<ReferentielId, 'te' | 'te-test'> =>
   actionId.startsWith('eci') ? 'eci' : 'cae';
 
-export const actionPath = (
-  collectiviteId: number,
-  actionId: string
-): string => {
-  const elements = actionId.split('.');
-  const depth = elements.length;
-  const mesureDepth = referentielMesureDepth(actionId);
-  const epciPath = `/collectivite/${collectiviteId}`;
-
-  if (depth < mesureDepth) {
-    return `${epciPath}/referentiels/${referentielId(actionId)}/#${actionId}`;
-  }
-  if (depth === mesureDepth) {
-    return `${epciPath}/action/${referentielId(actionId)}/${actionId}`;
-  }
-  while (elements.length > mesureDepth) elements.pop();
-  const mesureId = elements.join('.');
-  return `${epciPath}/action/${referentielId(actionId)}/${mesureId}`;
-};
-
 export const referentielDisplayName = (
   action: ActionDefinitionSummary | ActionTitleRead
 ): string =>

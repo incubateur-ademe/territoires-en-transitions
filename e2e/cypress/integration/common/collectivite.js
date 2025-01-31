@@ -1,35 +1,35 @@
 /**
  * Génère une collectivité et diverses données de test (utilisateur, scores, etc.)
  */
-import {When} from '@badeball/cypress-cucumber-preprocessor';
-import {Views, CollectivitePages} from './views';
-import {waitForApp, logout} from './shared';
+import { When } from '@badeball/cypress-cucumber-preprocessor';
+import { Views, CollectivitePages } from './views';
+import { waitForApp, logout } from './shared';
 
 // crée une collectivité de test
 When('une collectivité nommée {string}', createCollectivite);
 function createCollectivite(nom, alias = 'collectivite') {
   cy.task('supabase_rpc', {
     name: 'test_create_collectivite',
-    params: {nom},
+    params: { nom },
   })
-    .then(res => res.data)
+    .then((res) => res.data)
     .as(alias);
 }
 
 // passe cette collectivité en COT
 When('avec un COT actif', setCOT);
 function setCOT() {
-  const {collectivite_id} = this.collectivite;
+  const { collectivite_id } = this.collectivite;
   cy.task('supabase_rpc', {
     name: 'test_set_cot',
-    params: {collectivite_id, actif: true},
+    params: { collectivite_id, actif: true },
   });
 }
 
 // crée un utilisateur de la collectivité
 When('un utilisateur avec les droits en {string}', addUserWithProfile);
 function addUserWithProfile(niveau) {
-  const {collectivite_id} = this.collectivite;
+  const { collectivite_id } = this.collectivite;
   addRandomUser(collectivite_id, niveau, `user_${niveau}`);
 }
 
@@ -37,9 +37,9 @@ function addRandomUser(collectivite_id, niveau, alias) {
   return cy
     .task('supabase_rpc', {
       name: 'test_add_random_user',
-      params: {collectivite_id, niveau},
+      params: { collectivite_id, niveau },
     })
-    .then(res => res.data)
+    .then((res) => res.data)
     .as(alias);
 }
 
@@ -55,10 +55,10 @@ function loginAs(userAlias) {
     cy.get('[data-test=nav-user]').should('contain.text', user.prenom);
   });
 }
-function login({email, password}) {
-  cy.get('@auth').then(async auth => {
+function login({ email, password }) {
+  cy.get('@auth').then(async (auth) => {
     await auth.disconnect();
-    await auth.connect({email, password});
+    await auth.connect({ email, password });
   });
 }
 
@@ -76,8 +76,8 @@ When("je me reconnecte en tant qu'auditeur de la collectivité", function () {
 });
 function addAuditeur() {
   //const {collectivite_id} = this.collectivite;
-  const {id: demande_id} = this.demande_envoyee;
-  addRandomUser(null, null, 'auditeur').then(auditeur =>
+  const { id: demande_id } = this.demande_envoyee;
+  addRandomUser(null, null, 'auditeur').then((auditeur) =>
     setAuditeur(demande_id, auditeur.user_id)
   );
 }
@@ -85,9 +85,9 @@ function setAuditeur(demande_id, user_id) {
   return cy
     .task('supabase_rpc', {
       name: 'test_set_auditeur',
-      params: {demande_id, user_id},
+      params: { demande_id, user_id },
     })
-    .then(({data}) => data)
+    .then(({ data }) => data)
     .as('audit_auditeur');
 }
 
@@ -97,7 +97,7 @@ When('je me reconnecte en tant que visiteur', function () {
   waitForApp();
   createCollectivite('une autre collectivité', 'autre_collectivite');
   cy.get('@autre_collectivite').then(function (autre_collectivite) {
-    const {collectivite_id} = autre_collectivite;
+    const { collectivite_id } = autre_collectivite;
     return addRandomUser(collectivite_id, 'edition', 'visiteur');
   });
   loginAs.call(this, '@visiteur');
@@ -105,10 +105,10 @@ When('je me reconnecte en tant que visiteur', function () {
 
 When("l'audit est commencé", commencerAudit);
 function commencerAudit() {
-  cy.get('@audit_auditeur').then(({audit_id}) => {
+  cy.get('@audit_auditeur').then(({ audit_id }) => {
     cy.task('supabase_rpc', {
       name: 'labellisation_commencer_audit',
-      params: {audit_id},
+      params: { audit_id },
     });
   });
 }
@@ -118,10 +118,10 @@ When("un score permettant d'obtenir la {int}ème étoile", fulfill);
 When("le score permet d'obtenir la {int}ème étoile", fulfill);
 When("le score permet d'obtenir la {int}ère étoile", fulfill);
 function fulfill(etoile) {
-  cy.get('@collectivite').then(({collectivite_id}) =>
+  cy.get('@collectivite').then(({ collectivite_id }) =>
     cy.task('supabase_rpc', {
       name: 'test_fulfill',
-      params: {collectivite_id, etoile},
+      params: { collectivite_id, etoile },
     })
   );
 }
@@ -135,11 +135,11 @@ When(
   /avec un audit demandé pour la labellisation "(eci|cae)" (1|2|3|4|5)è(?:r|m)e étoile/,
   envoyerDemande
 );
-When('avec un audit COT sans labellisation demandé', referentiel =>
+When('avec un audit COT sans labellisation demandé', (referentiel) =>
   envoyerDemande('cae', null, 'cot')
 );
 function envoyerDemande(referentiel, etoile, sujet = 'labellisation') {
-  return cy.get('@collectivite').then(function ({collectivite_id}) {
+  return cy.get('@collectivite').then(function ({ collectivite_id }) {
     return labellisationDemande(collectivite_id, referentiel).then(function () {
       return labellisationSubmitDemande(
         collectivite_id,
@@ -155,9 +155,9 @@ function labellisationDemande(collectivite_id, referentiel) {
   return cy
     .task('supabase_rpc', {
       name: 'labellisation_demande',
-      params: {collectivite_id, referentiel},
+      params: { collectivite_id, referentiel },
     })
-    .then(({data}) => data);
+    .then(({ data }) => data);
 }
 
 function labellisationSubmitDemande(
@@ -169,9 +169,9 @@ function labellisationSubmitDemande(
   return cy
     .task('supabase_rpc', {
       name: 'labellisation_submit_demande',
-      params: {collectivite_id, referentiel, sujet, etoiles},
+      params: { collectivite_id, referentiel, sujet, etoiles },
     })
-    .then(({data}) => data)
+    .then(({ data }) => data)
     .as('demande_envoyee');
 }
 
@@ -189,8 +189,8 @@ When(
 When('je suis sur la page {string} de la collectivité courante', visitPage);
 When('je retourne sur la page {string} de la collectivité courante', visitPage);
 function visitPage(page) {
-  cy.get('@collectivite').then(({collectivite_id}) => {
-    const {route, selector} = CollectivitePages[page];
+  cy.get('@collectivite').then(({ collectivite_id }) => {
+    const { route, selector } = CollectivitePages[page];
     cy.visit(`/collectivite/${collectivite_id}/${route}`);
     cy.get(selector).should('be.visible');
   });
@@ -199,7 +199,7 @@ function visitPage(page) {
 When(
   /je visite l'onglet "([^"]*)" du référentiel "([^"]*)" de la collectivité courante/,
   function (tabName, referentiel) {
-    const {collectivite_id} = this.collectivite;
+    const { collectivite_id } = this.collectivite;
     cy.visit(
       `/collectivite/${collectivite_id}/referentiels/${referentiel}/${tabName}`
     );
@@ -209,10 +209,10 @@ When(
 When(
   "je visite l'action {string} de la collectivité courante",
   function (action) {
-    cy.get('@collectivite').then(({collectivite_id}) => {
+    cy.get('@collectivite').then(({ collectivite_id }) => {
       const [referentiel, identifiant] = action.split('_');
       cy.visit(
-        `/collectivite/${collectivite_id}/action/${referentiel}/${action}`
+        `/collectivite/${collectivite_id}/referentiel/${referentiel}/action/${action}`
       );
       cy.get(`[data-test="Action-${identifiant}"]`).should('be.visible');
     });
@@ -222,7 +222,7 @@ When(
 When(
   "je visite l'indicateur {string} de la collectivité courante",
   function (indicateur_id) {
-    cy.get('@collectivite').then(({collectivite_id}) => {
+    cy.get('@collectivite').then(({ collectivite_id }) => {
       cy.visit(`/collectivite/${collectivite_id}/indicateurs/${indicateur_id}`);
       cy.get(`[data-test="ind-${indicateur_id.split('/').pop()}"]`).should(
         'be.visible'
@@ -232,7 +232,7 @@ When(
 );
 
 When('avec comme réponses initiales :', function (dataTable) {
-  const {collectivite_id} = this.collectivite;
+  const { collectivite_id } = this.collectivite;
 
   cy.wrap(dataTable.rows()).each(([question_id, reponse]) =>
     saveReponse(collectivite_id, question_id, reponse)
@@ -249,7 +249,7 @@ const saveReponse = (collectivite_id, question_id, reponse) => {
   });
 };
 
-const transformReponse = reponse => {
+const transformReponse = (reponse) => {
   if (reponse.toLowerCase() === 'oui') {
     return true;
   }
@@ -262,7 +262,7 @@ const transformReponse = reponse => {
 When(
   'je change la réponse à la question {string} depuis la thématique {string} en {string}',
   function (question_id, thematique, reponse) {
-    const {collectivite_id} = this.collectivite;
+    const { collectivite_id } = this.collectivite;
     cy.visit(`/collectivite/${collectivite_id}/personnalisation/${thematique}`);
     cy.get(`label[for^=${question_id}] button`).click();
     cy.get(`input[id=${question_id}-${reponse}]`).parent().click();
