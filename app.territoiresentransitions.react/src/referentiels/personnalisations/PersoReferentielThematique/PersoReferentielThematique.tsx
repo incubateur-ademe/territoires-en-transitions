@@ -9,16 +9,18 @@ import { useCarteIdentite } from './useCarteIdentite';
 import { useNextThematiqueId } from './useNextThematiqueId';
 import { useQuestionsReponses } from './useQuestionsReponses';
 import { useThematique } from './useThematique';
+import { useCollectiviteId } from '@/app/collectivites/collectivite-context';
 
 export const PersoReferentielThematique = () => {
+  const collectivite_id = useCollectiviteId();
   const collectivite = useCurrentCollectivite();
-  const { collectiviteId: collectivite_id, nom } = collectivite || {};
+  const { nom } = collectivite || {};
   const { thematiqueId } = useParams<{ thematiqueId: string }>();
   const thematique = useThematique(thematiqueId);
   const qr = useQuestionsReponses({ thematique_id: thematiqueId });
   const nextThematiqueId = useNextThematiqueId(collectivite_id, thematiqueId);
   const identite = useCarteIdentite(collectivite_id);
-  const handleChange = useChangeReponseHandler(collectivite_id || null);
+  const handleChange = useChangeReponseHandler(collectivite_id, ['cae', 'eci']);
 
   if (!collectivite_id || !thematique) {
     return null;

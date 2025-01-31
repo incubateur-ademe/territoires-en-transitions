@@ -32,7 +32,6 @@ export const useTasksScoreRepartition = (actionId: string) => {
       scoreMax: NEW_subActionScore.pointPotentiel,
     };
   } else if (DEPRECATED_scores[getReferentielIdFromActionId(actionId)]) {
-    // Modification nécessaire côté back sur "action_statuts" pour éviter l'appel de useScores
     const tasksScores = DEPRECATED_scores[
       getReferentielIdFromActionId(actionId)
     ].filter(
