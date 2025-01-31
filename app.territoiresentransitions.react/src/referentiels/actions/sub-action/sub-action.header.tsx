@@ -13,7 +13,7 @@ import classNames from 'classnames';
 import DOMPurify from 'dompurify';
 import { useEffect, useState } from 'react';
 import { useScore, useSnapshotFlagEnabled } from '../../use-snapshot';
-import { useScoreRealise } from '../useScoreRealise';
+import { useScoreRealise } from '../DEPRECATED_useScoreRealise';
 import ActionJustification from './sub-action-justification';
 
 type SubActionHeaderProps = {

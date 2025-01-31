@@ -35,23 +35,26 @@ export function useSnapshotList(referentielId: ReferentielId) {
 }
 
 export function useAction(actionId: string) {
-  const { data: snapshot } = useSnapshot({ actionId });
+  const { data: snapshot, ...rest } = useSnapshot({ actionId });
 
-  if (!snapshot) {
-    return;
-  }
+  const toAction = (snapshot: Snapshot) => {
+    const subAction = findByActionId(snapshot.scores, actionId);
 
-  const subAction = findByActionId(snapshot.scores, actionId);
+    if (subAction === null) {
+      throw new ReferentielException(`Action not found: '${actionId}'`);
+    }
 
-  if (subAction === null) {
-    throw new ReferentielException(`Action not found: '${actionId}'`);
-  }
+    return subAction;
+  };
 
-  return subAction;
+  return {
+    ...rest,
+    data: snapshot ? toAction(snapshot) : undefined,
+  };
 }
 
 export function useScore(actionId: string) {
-  const action = useAction(actionId);
+  const { data: action } = useAction(actionId);
 
   if (!action) {
     return;

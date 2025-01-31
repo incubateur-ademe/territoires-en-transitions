@@ -3,7 +3,7 @@ import { actionAvancementColors } from '@/app/app/theme';
 import { useCurrentCollectivite } from '@/app/core-logic/hooks/useCurrentCollectivite';
 import { ActionDefinitionSummary } from '@/app/referentiels/ActionDefinitionSummaryReadEndpoint';
 import { SelectActionStatut } from '@/app/referentiels/actions/action-statut.select';
-import { useScoreRealise } from '@/app/referentiels/actions/useScoreRealise';
+import { useScoreRealise } from '@/app/referentiels/actions/DEPRECATED_useScoreRealise';
 import ProgressBarWithTooltip from '@/app/referentiels/scores/progress-bar-with-tooltip';
 import {
   useActionStatut,

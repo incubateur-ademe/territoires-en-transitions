@@ -5,14 +5,17 @@ import {
   CurrentCollectivite,
   useCurrentCollectivite,
 } from '@/app/core-logic/hooks/useCurrentCollectivite';
+import { ReferentielCard } from '@/app/referentiels/tableau-de-bord/referentiel.card';
+import { ModaleReferents } from '@/app/referentiels/tableau-de-bord/referents/ModaleReferents';
+import { ReferentsList } from '@/app/referentiels/tableau-de-bord/referents/ReferentsList';
+import {
+  groupeParFonction,
+  useMembres,
+} from '@/app/referentiels/tableau-de-bord/referents/useMembres';
+import { useProgressionReferentiel } from '@/app/referentiels/tableau-de-bord/useProgressionReferentiel';
 import { Button } from '@/ui';
 import PageContainer from '@/ui/components/layout/page-container';
 import { useState } from 'react';
-import { ReferentielCard } from './referentiel.card';
-import { ModaleReferents } from './referents/ModaleReferents';
-import { ReferentsList } from './referents/ReferentsList';
-import { groupeParFonction, useMembres } from './referents/useMembres';
-import { useProgressionReferentiel } from './useProgressionReferentiel';
 
 /**
  * Affiche la page d'accueil d'une collectivité

@@ -1,9 +1,7 @@
 import { useCollectiviteId } from '@/app/core-logic/hooks/params';
+import { ActionReferentiel } from '@/app/referentiels/DEPRECATED_scores.types';
 import { TableOptions } from 'react-table';
-import {
-  ActionReferentiel,
-  useReferentiel,
-} from '../../../../referentiels/ReferentielTable/useReferentiel';
+import { useReferentiel } from '../../../../referentiels/ReferentielTable/useReferentiel';
 
 export type UseTableData = (referentiel: string) => TableData;
 

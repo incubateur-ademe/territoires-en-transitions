@@ -1,9 +1,9 @@
 import { makeReferentielActionUrl } from '@/app/app/paths';
 import { useCollectiviteId } from '@/app/core-logic/hooks/params';
+import { getReferentielIdFromActionId } from '@/domain/referentiels';
 import { Card } from '@/ui';
 import Link from 'next/link';
 import { ActionDefinitionSummary } from '../ActionDefinitionSummaryReadEndpoint';
-import { referentielId } from '../actions.utils';
 import ScoreProgressBar from '../scores/score.progress-bar';
 import { ScoreRatioBadge } from '../scores/score.ratio-badge';
 
@@ -20,7 +20,7 @@ export const ActionCard = ({
   isDescriptionOn,
 }: ReferentielCardProps) => {
   const collectiviteId = useCollectiviteId();
-  const referentiel = referentielId(action.id);
+  const referentiel = getReferentielIdFromActionId(action.id);
 
   // *** For future use ***
   // Replace with real data :)

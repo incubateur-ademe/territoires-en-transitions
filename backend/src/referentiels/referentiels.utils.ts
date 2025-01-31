@@ -92,3 +92,22 @@ export function getParentIdFromActionId(actionId: string): string | null {
     return actionIdParts.slice(0, -1).join('.');
   }
 }
+
+/**
+ * Equivalent to a `reduce` function but for a list of actions and their children.
+ */
+export function reduceActions<A extends { actionsEnfant: A[] }, T>(
+  actions: A[],
+  initialValue: T,
+  callbackfn: (previousValue: T, currentValue: A) => T
+): T {
+  return actions.reduce((previousValue, action) => {
+    const newValue = callbackfn(previousValue, action);
+
+    if (action.actionsEnfant && action.actionsEnfant.length > 0) {
+      return reduceActions(action.actionsEnfant, newValue, callbackfn);
+    }
+
+    return newValue;
+  }, initialValue);
+}

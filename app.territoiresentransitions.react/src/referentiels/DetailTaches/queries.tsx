@@ -1,6 +1,6 @@
 import { DBClient } from '@/api';
 import { TActionStatutsRow } from '@/app/types/alias';
-import { ActionReferentiel } from '../ReferentielTable/useReferentiel';
+import { ActionReferentiel } from '../DEPRECATED_scores.types';
 import { TFilters } from './filters';
 
 // un sous-ensemble des champs pour alimenter notre table des taches

@@ -1,21 +1,9 @@
 import { DBClient } from '@/api';
-import { ActionReferentiel } from '@/app/referentiels/ReferentielTable/useReferentiel';
-import { TActionStatutsRow } from '@/app/types/alias';
 import { ITEM_ALL } from '@/ui';
+import { ProgressionRow } from '../DEPRECATED_scores.types';
 import { boundariesToQueryFilter } from './boundariesToQueryFilter';
 import { filterToBoundaries, TFilters, TValueToBoundary } from './filters';
 import { percentBoundaries } from './FiltrePourcentage';
-
-// un sous-ensemble des champs pour alimenter notre table
-export type PriorisationRow = ActionReferentiel &
-  Pick<
-    TActionStatutsRow,
-    | 'action_id'
-    | 'phase'
-    | 'score_realise'
-    | 'score_programme'
-    | 'points_restants'
-  >;
 
 export const getMaxDepth = (referentiel: string | null) =>
   referentiel === 'cae' ? 4 : 3;
@@ -61,7 +49,7 @@ export const fetchRows = async (
     throw new Error(error.message);
   }
 
-  const rows = data as PriorisationRow[];
+  const rows = data as ProgressionRow[];
 
   // décompte les sous-actions uniquement
   const count = rows.reduce(

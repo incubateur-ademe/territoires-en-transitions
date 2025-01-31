@@ -1,7 +1,7 @@
 import { ActionDefinitionSummary } from '@/app/referentiels/ActionDefinitionSummaryReadEndpoint';
 import { ActionTopNav } from '@/app/referentiels/actions/action.nav';
 import { ActionSidePanelToolbar } from '@/app/referentiels/actions/action.side-panel.toolbar';
-import { SuiviScoreRow } from '@/app/referentiels/actions/useScoreRealise';
+import { ProgressionRow } from '@/app/referentiels/DEPRECATED_scores.types';
 import { PersoPotentiel } from '@/app/referentiels/personnalisations/PersoPotentielModal/PersoPotentiel';
 import { ScoreProgressBar } from '@/app/referentiels/scores/score.progress-bar';
 import ScoreShow from '@/app/referentiels/scores/score.show';
@@ -22,7 +22,7 @@ export const ActionHeader = ({
   prevActionLink,
 }: {
   actionDefinition: ActionDefinitionSummary;
-  DEPRECATED_actionScore: SuiviScoreRow;
+  DEPRECATED_actionScore: ProgressionRow;
   action: ActionDetailed;
   nextActionLink: string | undefined;
   prevActionLink: string | undefined;

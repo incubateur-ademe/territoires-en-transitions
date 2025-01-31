@@ -7,6 +7,7 @@ import {
   useFlexLayout,
   useTable,
 } from 'react-table';
+import { ProgressionRow } from '../DEPRECATED_scores.types';
 import { useReferentielId } from '../referentiel-context';
 import { ReferentielTable } from '../ReferentielTable';
 import { CellAction } from '../ReferentielTable/CellAction';
@@ -14,13 +15,13 @@ import { CellPercent, CellPhase, CellPoints } from './Cells';
 import { TableData } from './DEPRECATED_useTableData';
 import { FiltrePhase } from './FiltrePhase';
 import { makeFiltrePourcentage } from './FiltrePourcentage';
-import { getMaxDepth, PriorisationRow } from './queries';
+import { getMaxDepth } from './queries';
 
-export type THeaderProps = HeaderProps<PriorisationRow> & {
+export type THeaderProps = HeaderProps<ProgressionRow> & {
   setFilters: (filters: string[]) => void;
 };
-export type TCellProps = CellProps<PriorisationRow>;
-export type TColumn = Column<PriorisationRow>;
+export type TCellProps = CellProps<ProgressionRow>;
+export type TColumn = Column<ProgressionRow>;
 
 // défini les colonnes de la table
 const COLUMNS: TColumn[] = [

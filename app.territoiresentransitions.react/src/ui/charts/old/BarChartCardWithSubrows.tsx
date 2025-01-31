@@ -1,6 +1,6 @@
 import { useCurrentCollectivite } from '@/app/core-logic/hooks/useCurrentCollectivite';
 import { TScoreAuditRowData } from '@/app/referentiels/audits/AuditComparaison/types';
-import { ActionReferentiel } from '@/app/referentiels/ReferentielTable/useReferentiel';
+import { ActionReferentiel } from '@/app/referentiels/DEPRECATED_scores.types';
 import { TActionStatutsRow } from '@/app/types/alias';
 import TagFilters from '@/app/ui/shared/filters/TagFilters';
 import { ReferentielId } from '@/domain/referentiels';

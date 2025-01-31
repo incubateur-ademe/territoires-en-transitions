@@ -1,5 +1,5 @@
 import { useSupabase } from '@/api/utils/supabase/use-supabase';
-import { getScoreRealiseQueryKey } from '@/app/referentiels/actions/useScoreRealise';
+import { getScoreRealiseQueryKey } from '@/app/referentiels/actions/DEPRECATED_useScoreRealise';
 import { getScoreQueryKey } from '@/app/referentiels/DEPRECATED_score-hooks';
 import { RealtimeChannel } from '@supabase/supabase-js';
 import { createContext, ReactNode, useContext, useRef } from 'react';

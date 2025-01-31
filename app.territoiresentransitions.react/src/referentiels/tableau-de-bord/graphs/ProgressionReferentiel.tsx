@@ -5,7 +5,7 @@ import BarChartCardWithSubrows, {
 } from '@/app/ui/charts/old/BarChartCardWithSubrows';
 import { ReferentielId } from '@/domain/referentiels';
 import { TableOptions } from 'react-table';
-import { ProgressionRow } from '../useProgressionReferentiel';
+import { ProgressionRow } from '../../DEPRECATED_scores.types';
 import { getFormattedScore } from '../utils';
 
 // Définition des couleurs des graphes

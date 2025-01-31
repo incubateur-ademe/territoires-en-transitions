@@ -1,7 +1,8 @@
 import { toLocaleFixed } from '@/app/utils/toFixed';
 import { CellProps } from 'react-table';
+import { ProgressionRow } from '../DEPRECATED_scores.types';
 import { ReactComponent as Down } from './down.svg';
-import { getMaxDepth, PriorisationRow } from './queries';
+import { getMaxDepth } from './queries';
 import { ReactComponent as Up } from './up.svg';
 
 const PICTOS = {
@@ -20,7 +21,7 @@ const PICTO_COLORS = {
   },
 };
 
-type TCellProps = CellProps<PriorisationRow> & {
+type TCellProps = CellProps<ProgressionRow> & {
   referentiel: string | null;
   difference?: keyof typeof PICTOS;
 };

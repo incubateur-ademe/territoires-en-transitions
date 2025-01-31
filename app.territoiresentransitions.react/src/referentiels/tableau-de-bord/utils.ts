@@ -1,6 +1,6 @@
 import { avancementToLabel } from '@/app/app/labels';
 import { actionAvancementColors } from '@/app/app/theme';
-import { ProgressionRow } from './useProgressionReferentiel';
+import { ProgressionRow } from '../DEPRECATED_scores.types';
 
 /**
  * Met en forme les scores pour les graphes de progression des scores

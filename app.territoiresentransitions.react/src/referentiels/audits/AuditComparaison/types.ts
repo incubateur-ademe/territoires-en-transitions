@@ -1,5 +1,5 @@
 import { Tables, Views } from '@/api';
-import { ActionReferentiel } from '../../ReferentielTable/useReferentiel';
+import { ActionReferentiel } from '../../DEPRECATED_scores.types';
 
 // alias et règle les imperfections du typage auto-généré
 export type TScoreAudit = Tables<'type_tabular_score'>;
