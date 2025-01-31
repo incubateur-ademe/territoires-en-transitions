@@ -1,7 +1,6 @@
 import { Enums } from '@/api';
 import { DataLayerReadCachedEndpoint } from '@/app/core-logic/api/dataLayerEndpoint';
-import { ActionType } from '@/app/referentiels/referentiels.types';
-import { ReferentielId } from '@/domain/referentiels';
+import { ActionType, ReferentielId } from '@/domain/referentiels';
 import { PostgrestResponse } from '@supabase/supabase-js';
 
 export interface ActionDefinitionSummaryParams {

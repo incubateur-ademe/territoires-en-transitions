@@ -1,12 +1,12 @@
 import { ActionWithScore } from '../../compute-score/action-with-score.dto';
 import { ActionCategorieEnum } from '../action-definition.table';
-import { ActionType } from '../action-type.enum';
+import { ActionTypeEnum } from '../action-type.enum';
 
 export const deeperReferentielScoring: ActionWithScore = {
   actionId: 'eci',
   points: 100,
   level: 0,
-  actionType: ActionType.REFERENTIEL,
+  actionType: ActionTypeEnum.REFERENTIEL,
   actionsEnfant: [
     {
       actionId: 'eci_1',
@@ -14,7 +14,7 @@ export const deeperReferentielScoring: ActionWithScore = {
       nom: 'Action 1',
       points: 30,
       level: 1,
-      actionType: ActionType.ACTION,
+      actionType: ActionTypeEnum.ACTION,
       actionsEnfant: [
         {
           actionId: 'eci_1.1',
@@ -23,7 +23,7 @@ export const deeperReferentielScoring: ActionWithScore = {
           categorie: ActionCategorieEnum.EFFETS,
           points: 10,
           level: 2,
-          actionType: ActionType.SOUS_ACTION,
+          actionType: ActionTypeEnum.SOUS_ACTION,
           actionsEnfant: [],
           score: {
             actionId: 'eci_1.1',
@@ -52,7 +52,7 @@ export const deeperReferentielScoring: ActionWithScore = {
           nom: 'Sous-action 1.2',
           points: 20,
           level: 2,
-          actionType: ActionType.SOUS_ACTION,
+          actionType: ActionTypeEnum.SOUS_ACTION,
           actionsEnfant: [],
           score: {
             actionId: 'eci_1.2',
@@ -103,7 +103,7 @@ export const deeperReferentielScoring: ActionWithScore = {
       nom: 'Action 2',
       points: 70,
       level: 1,
-      actionType: ActionType.ACTION,
+      actionType: ActionTypeEnum.ACTION,
       actionsEnfant: [
         {
           actionId: 'eci_2.0',
@@ -111,7 +111,7 @@ export const deeperReferentielScoring: ActionWithScore = {
           nom: 'Sous-action 2.0',
           points: 0,
           level: 2,
-          actionType: ActionType.SOUS_ACTION,
+          actionType: ActionTypeEnum.SOUS_ACTION,
           actionsEnfant: [],
           score: {
             actionId: 'eci_2.0',
@@ -141,7 +141,7 @@ export const deeperReferentielScoring: ActionWithScore = {
           categorie: ActionCategorieEnum.MISE_EN_OEUVRE,
           points: 65,
           level: 2,
-          actionType: ActionType.SOUS_ACTION,
+          actionType: ActionTypeEnum.SOUS_ACTION,
           actionsEnfant: [
             {
               actionId: 'eci_2.1.0',
@@ -149,7 +149,7 @@ export const deeperReferentielScoring: ActionWithScore = {
               nom: 'Tache 2.1.0',
               points: 0,
               level: 3,
-              actionType: ActionType.TACHE,
+              actionType: ActionTypeEnum.TACHE,
               actionsEnfant: [],
               score: {
                 actionId: 'eci_2.1.0',
@@ -178,7 +178,7 @@ export const deeperReferentielScoring: ActionWithScore = {
               nom: 'Tache 2.1.1',
               points: 40,
               level: 3,
-              actionType: ActionType.TACHE,
+              actionType: ActionTypeEnum.TACHE,
               actionsEnfant: [],
               score: {
                 actionId: 'eci_2.1.1',
@@ -209,7 +209,7 @@ export const deeperReferentielScoring: ActionWithScore = {
               nom: 'Tache 2.1.2',
               points: 25,
               level: 3,
-              actionType: ActionType.TACHE,
+              actionType: ActionTypeEnum.TACHE,
               actionsEnfant: [],
               score: {
                 actionId: 'eci_2.1.2',
@@ -263,7 +263,7 @@ export const deeperReferentielScoring: ActionWithScore = {
           categorie: ActionCategorieEnum.BASES,
           points: 5,
           level: 2,
-          actionType: ActionType.SOUS_ACTION,
+          actionType: ActionTypeEnum.SOUS_ACTION,
           actionsEnfant: [
             {
               actionId: 'eci_2.2.1',
@@ -271,7 +271,7 @@ export const deeperReferentielScoring: ActionWithScore = {
               nom: 'Tache 2.2.1',
               points: 2,
               level: 3,
-              actionType: ActionType.TACHE,
+              actionType: ActionTypeEnum.TACHE,
               actionsEnfant: [],
               score: {
                 actionId: 'eci_2.2.1',
@@ -300,7 +300,7 @@ export const deeperReferentielScoring: ActionWithScore = {
               nom: 'Tache 2.2.2',
               points: 1.5,
               level: 3,
-              actionType: ActionType.TACHE,
+              actionType: ActionTypeEnum.TACHE,
               actionsEnfant: [],
               score: {
                 actionId: 'eci_2.2.2',
@@ -331,7 +331,7 @@ export const deeperReferentielScoring: ActionWithScore = {
               nom: 'Tache 2.2.3',
               points: 1.5,
               level: 3,
-              actionType: ActionType.TACHE,
+              actionType: ActionTypeEnum.TACHE,
               actionsEnfant: [],
               score: {
                 actionId: 'eci_2.2.3',

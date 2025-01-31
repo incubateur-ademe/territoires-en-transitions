@@ -24,6 +24,7 @@ import ConfigurationService from '../../utils/config/configuration.service';
 import SheetService from '../../utils/google-sheets/sheet.service';
 import { getErrorMessage } from '../../utils/nest/errors.utils';
 import { ReferentielAction } from '../compute-score/referentiel-action.dto';
+import { ActionTypeEnum, ActionTypeIncludingExemple } from '../index-domain';
 import {
   actionDefinitionTagTable,
   CreateActionDefinitionTagType,
@@ -44,7 +45,6 @@ import {
   actionRelationTable,
   CreateActionRelationType,
 } from '../models/action-relation.table';
-import { ActionType } from '../models/action-type.enum';
 import { GetActionOrigineDtoSchema } from '../models/get-action-origine.dto';
 import { GetReferentielResponseType } from '../models/get-referentiel.response';
 import {
@@ -87,7 +87,7 @@ export default class ReferentielsService {
 
   buildReferentielTree(
     actionDefinitions: ActionDefinitionAvecParentType[],
-    orderedActionTypes: ActionType[],
+    orderedActionTypes: ActionTypeIncludingExemple[],
     actionOrigines?: GetActionOrigineDtoSchema[] | null
   ): ReferentielAction {
     const rootAction = actionDefinitions.find(
@@ -118,7 +118,7 @@ export default class ReferentielsService {
   attacheActionsEnfant(
     referentiel: ReferentielAction,
     actionDefinitions: ActionDefinitionAvecParentType[],
-    orderActionTypes: ActionType[],
+    orderActionTypes: ActionTypeIncludingExemple[],
     currentLevel: number,
     actionOrigines?: GetActionOrigineDtoSchema[] | null
   ): void {
@@ -606,7 +606,7 @@ export default class ReferentielsService {
           createActionDefinition.actionId,
           referentielDefinition.hierarchie
         );
-        if (actionType === ActionType.SOUS_ACTION) {
+        if (actionType === ActionTypeEnum.SOUS_ACTION) {
           createActionDefinition.points = action.points;
           if (isNil(createActionDefinition.points)) {
             throw new UnprocessableEntityException(

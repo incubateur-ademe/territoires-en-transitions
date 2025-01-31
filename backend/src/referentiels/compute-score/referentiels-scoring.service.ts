@@ -39,7 +39,7 @@ import { roundTo } from '../../utils/number.helper';
 import { sleep } from '../../utils/sleep.utils';
 import { actionCommentaireTable } from '../models/action-commentaire.table';
 import { ActionStatut, actionStatutTable } from '../models/action-statut.table';
-import { ActionType } from '../models/action-type.enum';
+import { ActionTypeEnum } from '../models/action-type.enum';
 import { CheckMultipleReferentielScoresRequestType } from '../models/check-multiple-referentiel-scores.request';
 import { CheckReferentielScoresRequestType } from '../models/check-referentiel-scores.request';
 import { CheckScoreStatus } from '../models/check-score-status.enum';
@@ -223,7 +223,7 @@ export default class ReferentielsScoringService {
 
     referentiel.actionsEnfant.forEach((actionEnfant) => {
       // Examples are not included in the score
-      if (actionEnfant.actionType !== ActionType.EXEMPLE) {
+      if (actionEnfant.actionType !== ActionTypeEnum.EXEMPLE) {
         const actionEnfantAvecScore = this.buildReferentielAvecScore(
           actionEnfant,
           actionStatutExplications,
@@ -1212,11 +1212,11 @@ export default class ReferentielsScoringService {
       );
 
       const actionLevel = referentiel.orderedItemTypes.indexOf(
-        ActionType.ACTION
+        ActionTypeEnum.ACTION
       );
       if (actionLevel === -1) {
         throw new HttpException(
-          `Action type ${ActionType.ACTION} not found for referentiel ${referentielId}`,
+          `Action type ${ActionTypeEnum.ACTION} not found for referentiel ${referentielId}`,
           500
         );
       }
@@ -1486,7 +1486,7 @@ export default class ReferentielsScoringService {
       });
     }
 
-    if (action.actionType === ActionType.SOUS_ACTION) {
+    if (action.actionType === ActionTypeEnum.SOUS_ACTION) {
       this.updateFromOrigineActions(action);
     } else {
       // Consolidate score from children

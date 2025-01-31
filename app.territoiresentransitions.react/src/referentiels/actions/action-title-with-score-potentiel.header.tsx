@@ -1,6 +1,6 @@
 import { ActionDefinitionSummary } from '@/app/referentiels/ActionDefinitionSummaryReadEndpoint';
 import { useActionScore } from '@/app/referentiels/DEPRECATED_score-hooks';
-import { ActionType } from '@/app/referentiels/referentiels.types';
+import { ActionType } from '@/domain/referentiels';
 import { useScore, useSnapshotFlagEnabled } from '../use-snapshot';
 
 interface PillParams {

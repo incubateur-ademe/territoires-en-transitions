@@ -1,6 +1,9 @@
 import { z } from 'zod';
 import { actionDefinitionSeulementIdObligatoireSchema } from '../models/action-definition.table';
-import { ActionType } from '../models/action-type.enum';
+import {
+  ActionTypeIncludingExemple,
+  actionTypeIncludingExempleSchema,
+} from '../models/action-type.enum';
 import {
   referentielActionOrigineSchema,
   ReferentielActionOrigineType,
@@ -10,7 +13,7 @@ export type ReferentielAction = z.infer<
   typeof actionDefinitionSeulementIdObligatoireSchema
 > & {
   level: number;
-  actionType: ActionType;
+  actionType: ActionTypeIncludingExemple;
   referentielsOrigine?: string[];
   tags?: string[]; // action tags include cae, eci but also biodiversite, eau, coremeasure
   actionsOrigine?: ReferentielActionOrigineType[];
@@ -21,7 +24,7 @@ export const referentielActionDtoSchema: z.ZodType<ReferentielAction> =
   actionDefinitionSeulementIdObligatoireSchema
     .extend({
       level: z.number(),
-      actionType: z.nativeEnum(ActionType),
+      actionType: actionTypeIncludingExempleSchema,
       referentielsOrigine: z.string().array().optional(),
       tags: z.string().array().optional(),
       actionsOrigine: referentielActionOrigineSchema.array().optional(),

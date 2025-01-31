@@ -9,7 +9,7 @@ import {
 } from 'drizzle-orm/pg-core';
 import { createInsertSchema, createSelectSchema } from 'drizzle-zod';
 import { z } from 'zod';
-import { ActionType } from './action-type.enum';
+import { actionTypeIncludingExempleSchema } from './action-type.enum';
 import { referentielDefinitionTable } from './referentiel-definition.table';
 import { referentielIdPgEnum } from './referentiel-id.enum';
 
@@ -70,7 +70,7 @@ export const actionDefinitionSeulementIdObligatoireSchema =
 export const actionDefinitionMinimalWithTypeLevel =
   actionDefinitionSchema.extend({
     level: z.number(),
-    actionType: z.nativeEnum(ActionType),
+    actionType: actionTypeIncludingExempleSchema,
   });
 
 export const actionDefinitionSchemaInsert = createInsertSchema(

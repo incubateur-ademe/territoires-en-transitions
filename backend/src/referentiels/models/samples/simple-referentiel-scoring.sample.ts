@@ -1,12 +1,12 @@
 import { ActionWithScore } from '../../compute-score/action-with-score.dto';
 import { ActionCategorieEnum } from '../action-definition.table';
-import { ActionType } from '../action-type.enum';
+import { ActionTypeEnum } from '../action-type.enum';
 
 export const simpleReferentielScoring: ActionWithScore = {
   actionId: 'eci',
   points: 100,
   level: 0,
-  actionType: ActionType.REFERENTIEL,
+  actionType: ActionTypeEnum.REFERENTIEL,
   actionsEnfant: [
     {
       actionId: 'eci_1',
@@ -14,7 +14,7 @@ export const simpleReferentielScoring: ActionWithScore = {
       nom: "Définition d'une stratégie globale de la politique économie circulaire et inscription dans le territoire",
       points: 30,
       level: 1,
-      actionType: ActionType.ACTION,
+      actionType: ActionTypeEnum.ACTION,
       actionsEnfant: [
         {
           actionId: 'eci_1.1',
@@ -22,7 +22,7 @@ export const simpleReferentielScoring: ActionWithScore = {
           nom: 'Définir une stratégie globale de la politique Economie Circulaire et assurer un portage politique fort',
           points: 10,
           level: 2,
-          actionType: ActionType.SOUS_ACTION,
+          actionType: ActionTypeEnum.SOUS_ACTION,
           actionsEnfant: [],
           score: {
             actionId: 'eci_1.1',
@@ -53,7 +53,7 @@ export const simpleReferentielScoring: ActionWithScore = {
           nom: "Développer une démarche transversale avec l'ensemble des politiques de la collectivité",
           points: 20,
           level: 2,
-          actionType: ActionType.SOUS_ACTION,
+          actionType: ActionTypeEnum.SOUS_ACTION,
           actionsEnfant: [],
           score: {
             actionId: 'eci_1.2',
@@ -104,7 +104,7 @@ export const simpleReferentielScoring: ActionWithScore = {
       nom: 'Développement des services de réduction, collecte et valorisation des déchets',
       points: 70,
       level: 1,
-      actionType: ActionType.ACTION,
+      actionType: ActionTypeEnum.ACTION,
       actionsEnfant: [
         {
           actionId: 'eci_2.0',
@@ -112,7 +112,7 @@ export const simpleReferentielScoring: ActionWithScore = {
           nom: 'Respecter la réglementation en matière de prévention de déchets',
           points: 0,
           level: 2,
-          actionType: ActionType.SOUS_ACTION,
+          actionType: ActionTypeEnum.SOUS_ACTION,
           actionsEnfant: [],
           score: {
             actionId: 'eci_2.0',
@@ -141,7 +141,7 @@ export const simpleReferentielScoring: ActionWithScore = {
           nom: 'Mettre en œuvre les actions du PLPDMA',
           points: 65,
           level: 2,
-          actionType: ActionType.SOUS_ACTION,
+          actionType: ActionTypeEnum.SOUS_ACTION,
           categorie: ActionCategorieEnum.MISE_EN_OEUVRE,
           actionsEnfant: [],
           score: {
@@ -194,7 +194,7 @@ export const simpleReferentielScoring: ActionWithScore = {
           nom: "Disposer d'une commission consultative d'élaboration et de suivi (CCES) élargie",
           points: 5,
           level: 2,
-          actionType: ActionType.SOUS_ACTION,
+          actionType: ActionTypeEnum.SOUS_ACTION,
           actionsEnfant: [],
           score: {
             actionId: 'eci_2.2',

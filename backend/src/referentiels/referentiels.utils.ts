@@ -1,4 +1,4 @@
-import { ActionType } from './models/action-type.enum';
+import { ActionTypeIncludingExemple } from './models/action-type.enum';
 import { referentielIdEnumSchema } from './models/referentiel-id.enum';
 
 export class ReferentielException extends Error {
@@ -42,8 +42,8 @@ export function getAxeFromActionId(actionId: string): number {
 
 export function getActionTypeFromActionId(
   actionId: string,
-  orderedActionTypes: ActionType[]
-): ActionType {
+  orderedActionTypes: ActionTypeIncludingExemple[]
+): ActionTypeIncludingExemple {
   const level = getLevelFromActionId(actionId);
 
   if (level >= orderedActionTypes.length) {
