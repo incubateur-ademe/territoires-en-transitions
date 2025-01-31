@@ -37,6 +37,7 @@ import {
 } from '../shared/models/indicateur-definition.table';
 import { indicateurGroupeTable } from '../shared/models/indicateur-groupe.table';
 import { indicateurThematiqueTable } from '../shared/models/indicateur-thematique.table';
+import { GetPathRequest } from './get-path.request';
 import { ListDefinitionsRequest } from './list-definitions.request';
 
 @Injectable()
@@ -305,6 +306,71 @@ export default class ListDefinitionsService {
       this.logger.log(`${definitions.length} définitions trouvées`);
 
       return definitions as IndicateurDefinitionDetaillee[];
+    }
+
+    return [];
+  }
+
+  /**
+   * Donne le chemin d'un indicateur à partir de son id
+   */
+  async getPath(data: GetPathRequest, tokenInfo: AuthenticatedUser) {
+    const { collectiviteId, indicateurId } = data;
+    await this.permissionService.isAllowed(
+      tokenInfo,
+      PermissionOperation.INDICATEURS_VISITE,
+      ResourceType.COLLECTIVITE,
+      collectiviteId
+    );
+
+    if (tokenInfo.role === AuthRole.AUTHENTICATED && tokenInfo.id) {
+      this.logger.log(
+        `Lecture du chemin de l'indicateur id ${indicateurId} pour la collectivité ${collectiviteId}`
+      );
+
+      // TODO: à changer quand `with recursive` sera supporté
+      // ref: https://github.com/drizzle-team/drizzle-orm/issues/209
+      const chemins = await this.databaseService.db.execute<{
+        id: number;
+        chemin: { id: number; identifiant?: string; titre: string }[];
+      }>(sql`
+          with recursive chemin_indicateur (id, identifiant_referentiel, chemin) as (
+            select id,
+              identifiant_referentiel,
+              array [row_to_json(
+                (select r from (select titre, id, identifiant_referentiel as identifiant) r)
+              )]::jsonb []
+            from indicateur_definition
+            where id not in (
+                select enfant
+                from indicateur_groupe
+              )
+            union
+            select t1.id,
+              t1.identifiant_referentiel,
+              array_append(
+                t2.chemin,
+                jsonb_build_object(
+                  'titre',
+                  coalesce(t1.titre_court, t1.titre),
+                  'id',
+                  t1.id,
+                  'identifiant',
+                  t1.identifiant_referentiel
+                )
+              )
+            from indicateur_definition t1
+              inner join indicateur_groupe g on t1.id = g.enfant
+              inner join chemin_indicateur t2 on t2.id = g.parent
+          )
+          select *
+          from chemin_indicateur
+          where id = ${indicateurId}
+        `);
+
+      this.logger.log(`chemin ${chemins.length ? '' : 'non'} trouvé`);
+
+      return chemins[0]?.chemin;
     }
 
     return [];
