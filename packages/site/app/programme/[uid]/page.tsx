@@ -10,11 +10,12 @@ import { InfoData, ListeData, ParagrapheData } from './types';
 import { getServiceStrapiData } from './utils';
 
 export async function generateMetadata(
-  { params }: { params: { uid: string } },
+  { params }: { params: Promise<{ uid: string }> },
   parent: ResolvingMetadata
 ): Promise<Metadata> {
   const metadata = (await parent) as Metadata;
-  const strapiData = await getServiceStrapiData(params.uid);
+  const { uid } = await params;
+  const strapiData = await getServiceStrapiData(uid);
 
   return getUpdatedMetadata(metadata, {
     title: strapiData?.seo.metaTitle,
@@ -25,10 +26,11 @@ export async function generateMetadata(
 }
 
 type ServiceProgrammeProps = {
-  params: { uid: string };
+  params: Promise<{ uid: string }>;
 };
 
-const ServiceProgramme = async ({ params: { uid } }: ServiceProgrammeProps) => {
+const ServiceProgramme = async ({ params }: ServiceProgrammeProps) => {
+  const { uid } = await params;
   const data = await getServiceStrapiData(uid);
 
   if (!data || data.contenu.length === 0) return notFound();

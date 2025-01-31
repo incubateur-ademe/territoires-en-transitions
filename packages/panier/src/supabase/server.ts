@@ -7,7 +7,7 @@ import { cookies } from 'next/headers';
  * Pour accéder à supabase depuis les composants serveur
  */
 export function createClient(
-  cookieStore: ReturnType<typeof cookies>
+  cookieStore: Awaited<ReturnType<typeof cookies>>
 ): SupabaseClient<Database> {
   return createServerClient<Database>(
     process.env.NEXT_PUBLIC_SUPABASE_URL!,

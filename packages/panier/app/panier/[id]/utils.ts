@@ -27,7 +27,7 @@ export const fetchPanier = async ({
   panierId: string;
   filtre: FiltreAction;
 }): Promise<Panier | null> => {
-  const supabase = createClient(cookies());
+  const supabase = createClient(await cookies());
   const api = new PanierAPI(supabase);
 
   const panier: Panier | null = await api.fetchPanier({

@@ -1,7 +1,7 @@
 'use client';
 
 import { SignupModal } from '@/auth/components/Signup';
-import { useState } from 'react';
+import { use, useState } from 'react';
 import { useCollectivites } from './useCollectivites';
 import { useSignupState } from './useSignupState';
 
@@ -13,15 +13,22 @@ import { useSignupState } from './useSignupState';
  * l'app.
  */
 const SignupPage = ({
-  searchParams: { view = null, email = null, otp = null, redirect_to = '/' },
+  searchParams,
 }: {
-  searchParams: {
+  searchParams: Promise<{
     view: string | null;
     email: string | null;
     otp: string | null;
     redirect_to: string;
-  };
+  }>;
 }) => {
+  const {
+    view = null,
+    email = null,
+    otp = null,
+    redirect_to = '/',
+  } = use(searchParams);
+
   const [filter, setFilter] = useState('');
   const { data: collectivites } = useCollectivites(filter);
 

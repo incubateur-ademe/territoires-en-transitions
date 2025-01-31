@@ -13,10 +13,11 @@ import ParagrapheArticle from './ParagrapheArticle';
 import { getData, getMetaData } from './utils';
 
 export async function generateMetadata(
-  { params }: { params: { id: string } },
+  { params }: { params: Promise<{ id: string }> },
   parent: ResolvingMetadata
 ): Promise<Metadata> {
-  const data = await getMetaData(parseInt(params.id));
+  const { id } = await params;
+  const data = await getMetaData(parseInt(id));
   const metadata = (await parent) as Metadata;
 
   const newMetaData = getUpdatedMetadata(metadata, {
@@ -37,8 +38,8 @@ export async function generateMetadata(
   };
 }
 
-const Article = async ({ params }: { params: { id: string } }) => {
-  const id = parseInt(params.id);
+const Article = async ({ params }: { params: Promise<{ id: string }> }) => {
+  const id = parseInt((await params).id);
   const data = await getData(id);
 
   if (!data) return notFound();
