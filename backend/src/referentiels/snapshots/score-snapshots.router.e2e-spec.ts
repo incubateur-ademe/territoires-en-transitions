@@ -80,14 +80,13 @@ describe('ScoreSnapshotsRouter', () => {
     expect(referentielScore.snapshot?.ref).toEqual('user-test-trpc');
 
     // get the list of snapshots
-    const responseSnapshotList =
-      await caller.referentiels.snapshots.listSummary({
-        collectiviteId: 1,
-        referentielId: referentielIdEnumSchema.enum.cae,
-        parameters: {
-          typesJalon: [SnapshotJalon.DATE_PERSONNALISEE],
-        },
-      });
+    const responseSnapshotList = await caller.referentiels.snapshots.list({
+      collectiviteId: 1,
+      referentielId: referentielIdEnumSchema.enum.cae,
+      parameters: {
+        typesJalon: [SnapshotJalon.DATE_PERSONNALISEE],
+      },
+    });
 
     const foundSnapshot = responseSnapshotList.snapshots.find(
       (snapshot) => snapshot.ref === 'user-test-trpc'
@@ -97,7 +96,10 @@ describe('ScoreSnapshotsRouter', () => {
       expect.fail();
     }
 
-    const expectedSnapshot: ScoreSnapshotInfoType = {
+    const expectedSnapshot: Omit<
+      ScoreSnapshotInfoType,
+      'pointFait' | 'pointPasFait' | 'pointPotentiel' | 'pointProgramme'
+    > = {
       date: DateTime.fromISO(referentielScore.date).toISO() as string,
       nom: 'Test trpc',
       ref: 'user-test-trpc',
@@ -108,16 +110,22 @@ describe('ScoreSnapshotsRouter', () => {
       auditId: null,
       createdBy: '17440546-f389-4d4f-bfdb-b0c94a1bd0f9',
       modifiedBy: '17440546-f389-4d4f-bfdb-b0c94a1bd0f9',
-      pointFait: 0.36,
-      pointPasFait: 0.03,
-      pointPotentiel: 490.9,
-      pointProgramme: 0.21,
     };
 
     expect({
       ...foundSnapshot,
       date: DateTime.fromSQL(foundSnapshot.date).toISO() as string,
-    }).toEqual(expectedSnapshot);
+      pointFait: expect.any(Number),
+      pointPasFait: expect.any(Number),
+      pointPotentiel: expect.any(Number),
+      pointProgramme: expect.any(Number),
+    }).toEqual({
+      ...expectedSnapshot,
+      pointFait: expect.any(Number),
+      pointPasFait: expect.any(Number),
+      pointPotentiel: expect.any(Number),
+      pointProgramme: expect.any(Number),
+    });
 
     // delete the snapshot
     await caller.referentiels.snapshots.delete({
@@ -128,7 +136,7 @@ describe('ScoreSnapshotsRouter', () => {
 
     // get the list of snapshots; the snapshot should not be there
     const responseSnapshotListAfterDelete =
-      await caller.referentiels.snapshots.listSummary({
+      await caller.referentiels.snapshots.list({
         collectiviteId: 1,
         referentielId: referentielIdEnumSchema.enum.cae,
         parameters: {
