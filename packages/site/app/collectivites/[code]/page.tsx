@@ -19,16 +19,15 @@ export async function generateMetadata(): Promise<Metadata> {
 const DetailCodeCollectivite = async ({
   params,
 }: {
-  params: { code: string };
+  params: Promise<{ code: string }>;
 }) => {
-  const data = await fetchCollectivite(params.code);
+  const { code } = await params;
+  const data = await fetchCollectivite(code);
 
   if (!data) return notFound();
 
   redirect(
-    `/collectivites/${params.code}/${convertNameToSlug(
-      data?.collectivite.nom ?? ''
-    )}`
+    `/collectivites/${code}/${convertNameToSlug(data?.collectivite.nom ?? '')}`
   );
 };
 

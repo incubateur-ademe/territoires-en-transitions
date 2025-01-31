@@ -20,12 +20,13 @@ import IndicateursCollectivite from './IndicateursCollectivite';
 import PageContent from './PageContent';
 
 export async function generateMetadata(
-  { params }: { params: { code: string } },
+  { params }: { params: Promise<{ code: string }> },
   parent: ResolvingMetadata
 ): Promise<Metadata> {
+  const { code } = await params;
   const metadata = (await parent) as Metadata;
-  const collectiviteData = await fetchCollectivite(params.code);
-  const strapiData = await getStrapiData(params.code);
+  const collectiviteData = await fetchCollectivite(code);
+  const strapiData = await getStrapiData(code);
   const strapiDefaultData = await getStrapiDefaultData();
   const couverture = strapiData?.couverture?.attributes ?? undefined;
 
@@ -56,9 +57,14 @@ export async function generateMetadata(
   });
 }
 
-const DetailCollectivite = async ({ params }: { params: { code: string } }) => {
-  const collectiviteData = await fetchCollectivite(params.code);
-  const strapiData = await getStrapiData(params.code);
+const DetailCollectivite = async ({
+  params,
+}: {
+  params: Promise<{ code: string }>;
+}) => {
+  const { code } = await params;
+  const collectiviteData = await fetchCollectivite(code);
+  const strapiData = await getStrapiData(code);
   const strapiDefaultData = await getStrapiDefaultData();
 
   if (!collectiviteData || !collectiviteData.collectivite.nom)

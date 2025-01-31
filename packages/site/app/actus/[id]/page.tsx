@@ -9,12 +9,16 @@ import { getData } from './[slug]/utils';
  * l'ID est renseigné dans l'url
  */
 
-const ArticleParId = async ({ params }: { params: { id: string } }) => {
-  const id = parseInt(params.id);
+const ArticleParId = async ({
+  params,
+}: {
+  params: Promise<{ id: string }>;
+}) => {
+  const id = parseInt((await params).id);
   const data = await getData(id);
 
   if (!data || !data.titre) return notFound();
-  redirect(`/actus/${params.id}/${convertNameToSlug(data.titre)}`);
+  redirect(`/actus/${id}/${convertNameToSlug(data.titre)}`);
 };
 
 export default ArticleParId;

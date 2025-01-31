@@ -26,17 +26,18 @@ async function Page({
   params,
   searchParams,
 }: {
-  params: { id: string };
-  searchParams: { [key: string]: string | string[] | undefined };
+  params: Promise<{ id: string }>;
+  searchParams: Promise<{ [key: string]: string | string[] | undefined }>;
 }) {
-  const panierId = params.id;
+  const { id: panierId } = await params;
+  const filtreParams = await searchParams;
 
   const filtre = {
-    thematique_ids: extractIdsFromParam(searchParams['t'] as string),
-    typologie_ids: extractIdsFromParam(searchParams['ty'] as string),
-    niveau_budget_ids: extractIdsFromParam(searchParams['b'] as string),
-    niveau_temps_ids: extractIdsFromParam(searchParams['m'] as string),
-    matches_competences: searchParams['c'] !== 'true',
+    thematique_ids: extractIdsFromParam(filtreParams['t'] as string),
+    typologie_ids: extractIdsFromParam(filtreParams['ty'] as string),
+    niveau_budget_ids: extractIdsFromParam(filtreParams['b'] as string),
+    niveau_temps_ids: extractIdsFromParam(filtreParams['m'] as string),
+    matches_competences: filtreParams['c'] !== 'true',
   };
   const panier = await fetchPanier({ panierId, filtre });
 
