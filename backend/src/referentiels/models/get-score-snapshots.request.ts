@@ -1,6 +1,14 @@
 import { z } from 'zod';
 import { SnapshotJalon } from '../snapshots/snapshot-jalon.enum';
 
+export const DEFAULT_SNAPSHOT_JALONS = [
+  SnapshotJalon.PRE_AUDIT,
+  SnapshotJalon.POST_AUDIT,
+  SnapshotJalon.DATE_PERSONNALISEE,
+  SnapshotJalon.SCORE_COURANT,
+  SnapshotJalon.VISITE_ANNUELLE,
+];
+
 export const typesJalonEnumValues = Object.values(SnapshotJalon) as [
   SnapshotJalon,
   ...SnapshotJalon[]
@@ -13,13 +21,21 @@ export const getScoreSnapshotsRequestSchema = z
       .string()
       .transform((value) => value.split(','))
       .pipe(typesJalonEnumSchema.array())
-      .default(
-        `${SnapshotJalon.PRE_AUDIT},${SnapshotJalon.POST_AUDIT},${SnapshotJalon.DATE_PERSONNALISEE},${SnapshotJalon.SCORE_COURANT},${SnapshotJalon.VISITE_ANNUELLE}`
-      ), // All except JOUR_AUTO
+      .optional()
+      .default(DEFAULT_SNAPSHOT_JALONS.join(',')),
+    descendingOrder: z
+      .string()
+      .transform((val) => val === 'true')
+      .default('false'),
+    limit: z
+      .string()
+      .transform((val) => parseInt(val))
+      .optional(),
   })
   .describe(
     'Paramètres de la requête pour obtenir la liste des snapshots de score'
   );
+
 export type GetScoreSnapshotsRequestType = z.infer<
   typeof getScoreSnapshotsRequestSchema
 >;

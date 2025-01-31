@@ -167,13 +167,13 @@ export class ReferentielsScoringController {
     `collectivites/:${COLLECTIVITE_ID_PARAM_KEY}/referentiels/:${REFERENTIEL_ID_PARAM_KEY}/score-snapshots`
   )
   @ApiResponse({ type: GetScoreSnapshotsResponseClass })
-  async listSummary(
+  async list(
     @Param(COLLECTIVITE_ID_PARAM_KEY) collectiviteId: number,
     @Param(REFERENTIEL_ID_PARAM_KEY) referentielId: ReferentielId,
     @Query() parameters: GetScoreSnapshotsRequestClass,
     @TokenInfo() tokenInfo: AuthUser
   ): Promise<GetScoreSnapshotsResponseClass> {
-    return this.referentielsScoringSnapshotsService.listSummary(
+    return this.referentielsScoringSnapshotsService.list(
       collectiviteId,
       referentielId,
       parameters
