@@ -1,10 +1,12 @@
-import { Button } from '@/ui';
+import { useUpdateIndicateurFavoriCollectivite } from '@/app/app/pages/collectivite/Indicateurs/lists/IndicateurCard/IndicateurCardMenu/useUpdateIndicateurFavoriCollectivite';
+import { Button, Tooltip } from '@/ui';
 import classNames from 'classnames';
 import { useState } from 'react';
 import { useExportIndicateurs } from '../../Indicateur/useExportIndicateurs';
 import { TIndicateurDefinition } from '../../types';
 import DeleteModal from './DeleteModal';
 import EditModal from './EditModal';
+import { useIsIndicateurFavori } from './use-is-indicateur-favori';
 
 type Props = {
   definition: TIndicateurDefinition;
@@ -28,6 +30,16 @@ const IndicateurToolbar = ({
     [definition]
   );
 
+  const { data: isFavoriData, isLoading: isFavoriLoading } =
+    useIsIndicateurFavori(definition.id);
+
+  const isFavori = isFavoriData && isFavoriData.data?.[0].favoris;
+
+  const { mutate: toggleFavori } = useUpdateIndicateurFavoriCollectivite(
+    collectiviteId!,
+    definition.id
+  );
+
   return (
     <>
       <div className={classNames('flex gap-4 lg:mt-3.5', className)}>
@@ -43,6 +55,22 @@ const IndicateurToolbar = ({
             Modifier
           </Button>
         )}
+
+        <Tooltip
+          label={isFavori ? 'Retirer des favoris' : 'Ajouter aux favoris'}
+        >
+          <Button
+            loading={isFavoriLoading}
+            disabled={isFavoriLoading}
+            icon={isFavori ? 'star-fill' : 'star-line'}
+            size="xs"
+            variant="grey"
+            className={classNames({
+              'text-warning-1 hover:text-warning-1': isFavori,
+            })}
+            onClick={() => toggleFavori(!isFavori)}
+          />
+        </Tooltip>
 
         <Button
           loading={isLoading}
