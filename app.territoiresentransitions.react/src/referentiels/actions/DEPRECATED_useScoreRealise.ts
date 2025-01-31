@@ -2,22 +2,10 @@ import { DBClient } from '@/api';
 import { useSupabase } from '@/api/utils/supabase/use-supabase';
 import { useCollectiviteId } from '@/app/core-logic/hooks/params';
 import { ActionDefinitionSummary } from '@/app/referentiels/ActionDefinitionSummaryReadEndpoint';
-import { ActionReferentiel } from '@/app/referentiels/ReferentielTable/useReferentiel';
-import { TActionStatutsRow } from '@/app/types/alias';
 import { indexBy } from '@/app/utils/indexBy';
 import { ReferentielId } from '@/domain/referentiels';
 import { useQuery } from 'react-query';
-
-export type SuiviScoreRow = ActionReferentiel &
-  Pick<
-    TActionStatutsRow,
-    | 'action_id'
-    | 'concerne'
-    | 'desactive'
-    | 'points_realises'
-    | 'points_max_personnalises'
-    | 'points_max_referentiel'
-  >;
+import { ProgressionRow } from '../DEPRECATED_scores.types';
 
 /**
  * Récupère les entrées d'un référentiel pour une collectivité donnée
@@ -38,7 +26,7 @@ const fetchScore = async (
 
   if (error) throw new Error(error.message);
 
-  return data as SuiviScoreRow[];
+  return data as ProgressionRow[];
 };
 
 /**

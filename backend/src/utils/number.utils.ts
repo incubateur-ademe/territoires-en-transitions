@@ -1,5 +1,21 @@
 import { isNil } from 'es-toolkit';
 
+export function divisionOrZero(a: number | null, b: number | null) {
+  return division(a, b, 0);
+}
+
+export function division<T extends number | null>(
+  a: number | null,
+  b: number | null,
+  defaultValue: T = null as T
+): number | T {
+  if (isNil(a) || isNil(b) || b === 0) {
+    return defaultValue;
+  }
+
+  return a / b;
+}
+
 export function roundTo(num: number | null, precision?: number): number | null {
   if (!num || isNil(precision)) {
     return num;

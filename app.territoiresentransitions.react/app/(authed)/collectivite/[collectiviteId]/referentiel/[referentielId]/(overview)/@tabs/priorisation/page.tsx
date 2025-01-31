@@ -1,5 +1,5 @@
-import { AidePriorisation } from '@/app/referentiels/AidePriorisation';
+import { ActionScoresTable } from './action-scores.table';
 
 export default function Page() {
-  return <AidePriorisation />;
+  return <ActionScoresTable />;
 }

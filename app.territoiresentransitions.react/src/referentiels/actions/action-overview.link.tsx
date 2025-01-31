@@ -1,8 +1,8 @@
 import { makeReferentielActionUrl } from '@/app/app/paths';
-import { useCollectiviteId } from '@/app/core-logic/hooks/params';
+import { useCollectiviteId } from '@/app/collectivites/collectivite-context';
 import { ActionDefinitionSummary } from '@/app/referentiels/ActionDefinitionSummaryReadEndpoint';
-import { referentielId } from '@/app/referentiels/actions.utils';
 import ScoreProgressBar from '@/app/referentiels/scores/score.progress-bar';
+import { getReferentielIdFromActionId } from '@/domain/referentiels';
 import Link from 'next/link';
 import { ActionDescriptionHtml } from './action-description.html';
 import { ActionTitleWithScorePotentielHeader } from './action-title-with-score-potentiel.header';
@@ -15,8 +15,8 @@ export const ActionOverviewLink = ({
 }: {
   action: ActionDefinitionSummary;
 }) => {
-  const collectiviteId = useCollectiviteId()!;
-  const referentiel = referentielId(action.id);
+  const collectiviteId = useCollectiviteId();
+  const referentiel = getReferentielIdFromActionId(action.id);
   return (
     <article>
       <div className="pt-8 flex flex-row justify-between">

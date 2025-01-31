@@ -1,16 +1,16 @@
 import { referentielToName } from '@/app/app/labels';
+import { makeReferentielUrl } from '@/app/app/paths';
 import { useCurrentCollectivite } from '@/app/core-logic/hooks/useCurrentCollectivite';
 import Chart from '@/app/ui/charts/Chart';
 import { toLocaleFixed } from '@/app/utils/toFixed';
 import { ReferentielId } from '@/domain/referentiels';
 import { Button, useEventTracker } from '@/ui';
+import Link from 'next/link';
 import { useState } from 'react';
 import { TableOptions } from 'react-table';
+import { ProgressionRow } from '../../DEPRECATED_scores.types';
 import { AccueilCard } from '../AccueilCard';
-import { ProgressionRow } from '../useProgressionReferentiel';
 import ProgressionReferentiel from './ProgressionReferentiel';
-import Link from 'next/link';
-import { makeReferentielUrl } from '@/app/app/paths';
 import { ScoreEvolutionsGraphs } from './tdb-score-total.chart';
 
 type EtatDesLieuxGraphsProps = {
@@ -27,7 +27,7 @@ type EtatDesLieuxGraphsProps = {
  * Affichage des graphiques sous les cartes "état des lieux"
  */
 
-const EtatDesLieuxGraphs = ({
+export const EtatDesLieuxGraphs = ({
   referentiel,
   progressionScore,
   repartitionPhases,
@@ -126,8 +126,6 @@ const EtatDesLieuxGraphs = ({
     </>
   );
 };
-
-export default EtatDesLieuxGraphs;
 
 type GraphCardProps = {
   title: string;

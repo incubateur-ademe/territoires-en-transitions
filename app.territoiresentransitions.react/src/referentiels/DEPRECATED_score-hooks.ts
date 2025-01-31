@@ -1,14 +1,18 @@
 import { useCollectiviteId } from '@/app/core-logic/hooks/params';
-import { referentielId } from '@/app/referentiels/actions.utils';
 import { clientScoresReadEndpoint } from '@/app/referentiels/DEPRECATED_ClientScoresReadEndpoint';
 import { ActionScore } from '@/app/referentiels/DEPRECATED_scores.types';
-import { ReferentielId } from '@/domain/referentiels';
+import {
+  getReferentielIdFromActionId,
+  ReferentielId,
+} from '@/domain/referentiels';
 import { useQuery } from 'react-query';
 import { useScoreListener } from './DEPRECATED_use-score-listener';
 
 type ReferentielsActionScores = {
   eci: ActionScore[];
   cae: ActionScore[];
+  te: ActionScore[];
+  'te-test': ActionScore[];
 };
 
 export const getScoreQueryKey = (
@@ -55,12 +59,12 @@ export const useScores = (): ReferentielsActionScores => {
   const { data: cae } = useReferentielScores('cae');
   const { data: eci } = useReferentielScores('eci');
 
-  return { cae: cae || [], eci: eci || [] };
+  return { cae: cae || [], eci: eci || [], te: [], 'te-test': [] };
 };
 
 export const useActionScore = (actionId: string): ActionScore | null => {
   const scores = useScores();
-  const score = scores[referentielId(actionId)].find(
+  const score = scores[getReferentielIdFromActionId(actionId)].find(
     (score) => score.action_id === actionId
   );
   return score ? { ...score } : null;

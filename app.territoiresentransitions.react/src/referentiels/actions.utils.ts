@@ -1,6 +1,5 @@
 import { ActionDefinitionSummary } from '@/app/referentiels/ActionDefinitionSummaryReadEndpoint';
 import { ActionTitleRead } from '@/app/referentiels/ActionTitleReadEndpoint';
-import { ReferentielId } from '@/domain/referentiels';
 
 /**
  * Search for the siblings of an action in the action list.
@@ -80,12 +79,6 @@ export const displayName = (
   action.type === 'referentiel'
     ? referentielDisplayName(action)
     : `${action.identifiant} - ${action.nom}`;
-
-// TODO-REFERENTIEL: replace with `getReferentielIdFromActionId`
-export const referentielId = (
-  actionId: string
-): Exclude<ReferentielId, 'te' | 'te-test'> =>
-  actionId.startsWith('eci') ? 'eci' : 'cae';
 
 export const referentielDisplayName = (
   action: ActionDefinitionSummary | ActionTitleRead

@@ -4,7 +4,7 @@ import { ReferentielId } from '@/domain/referentiels';
 import { Tooltip } from '@/ui';
 import Link from 'next/link';
 import { CellProps } from 'react-table';
-import { ActionReferentiel } from './useReferentiel';
+import { ActionReferentiel } from '../DEPRECATED_scores.types';
 
 export type TCellProps = CellProps<ActionReferentiel> & {
   collectiviteId: number | null;

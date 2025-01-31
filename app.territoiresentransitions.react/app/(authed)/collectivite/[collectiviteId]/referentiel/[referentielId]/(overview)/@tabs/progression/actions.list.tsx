@@ -1,17 +1,17 @@
 'use client';
 
 import { useCurrentCollectivite } from '@/app/core-logic/hooks/useCurrentCollectivite';
+import { ActionCard } from '@/app/referentiels/actions/action.card';
+import { AxeWithChildrenExpandableTree } from '@/app/referentiels/actions/axe-with-children.expandable-tree';
+import { useReferentielId } from '@/app/referentiels/referentiel-context';
+import { useReferentielDownToAction } from '@/app/referentiels/referentiel-hooks';
+import { useExportScore } from '@/app/referentiels/useExportScore';
 import SpinnerLoader from '@/app/ui/shared/SpinnerLoader';
 import { ReferentielId } from '@/domain/referentiels';
 import { Button, Checkbox, OptionValue, Select } from '@/ui';
 import { useState } from 'react';
-import { ActionCard } from './actions/action.card';
-import { AxeWithChildrenExpandableTree } from './actions/axe-with-children.expandable-tree';
-import { useReferentielId } from './referentiel-context';
-import { useReferentielDownToAction } from './referentiel-hooks';
-import { useExportScore } from './useExportScore';
 
-export const AxesOverviewTree = () => {
+export const ActionsList = () => {
   const referentielId = useReferentielId();
 
   const actions = useReferentielDownToAction(referentielId as ReferentielId);

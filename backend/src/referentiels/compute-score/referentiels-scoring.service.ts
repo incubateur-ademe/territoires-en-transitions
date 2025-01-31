@@ -35,7 +35,7 @@ import ConfigurationService from '../../utils/config/configuration.service';
 import { DatabaseService } from '../../utils/database/database.service';
 import MattermostNotificationService from '../../utils/mattermost-notification.service';
 import { getErrorMessage } from '../../utils/nest/errors.utils';
-import { roundTo } from '../../utils/number.helper';
+import { roundTo } from '../../utils/number.utils';
 import { sleep } from '../../utils/sleep.utils';
 import { actionCommentaireTable } from '../models/action-commentaire.table';
 import { ActionStatut, actionStatutTable } from '../models/action-statut.table';

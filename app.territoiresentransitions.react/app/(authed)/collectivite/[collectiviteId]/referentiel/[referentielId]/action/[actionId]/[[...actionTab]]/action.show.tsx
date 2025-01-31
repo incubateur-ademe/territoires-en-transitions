@@ -13,8 +13,8 @@ import { DownloadDocs } from '@/app/referentiels/actions/action-documents.downlo
 import ActionPreuvePanel from '@/app/referentiels/actions/action-preuve.panel';
 import { ActionBreadcrumb } from '@/app/referentiels/actions/action.breadcrumb';
 import { ActionBottomNav } from '@/app/referentiels/actions/action.nav';
+import { useScoreRealise } from '@/app/referentiels/actions/DEPRECATED_useScoreRealise';
 import { usePrevAndNextActionLinks } from '@/app/referentiels/actions/use-prev-and-next-action-links';
-import { useScoreRealise } from '@/app/referentiels/actions/useScoreRealise';
 import { ActionAuditDetail } from '@/app/referentiels/audits/ActionAuditDetail';
 import ActionAuditStatut from '@/app/referentiels/audits/ActionAuditStatut';
 import { useShowDescIntoInfoPanel } from '@/app/referentiels/audits/useAudit';
@@ -67,7 +67,7 @@ const ActionShow = ({
   });
 
   const DEPRECATED_actionScores = useScoreRealise(actionDefinition);
-  const NEW_action = useAction(actionDefinition.id);
+  const { data: NEW_action } = useAction(actionDefinition.id);
 
   const { status: auditStatus } = useCycleLabellisation(
     actionDefinition.referentiel

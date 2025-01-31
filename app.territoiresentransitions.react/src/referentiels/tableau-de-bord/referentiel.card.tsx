@@ -1,10 +1,10 @@
 import { actionIdToLabel } from '@/app/app/labels';
 import { ReferentielId } from '@/domain/referentiels';
 import { TableOptions } from 'react-table';
-import EtatDesLieuxGraphs from './graphs/EtatDesLieuxGraphs';
+import { ProgressionRow } from '../DEPRECATED_scores.types';
+import { EtatDesLieuxGraphs } from './graphs/EtatDesLieuxGraphs';
 import IndicateursCard from './IndicateursCard';
 import { ScoreRempli, ScoreVide } from './labellisation/Scores';
-import { ProgressionRow } from './useProgressionReferentiel';
 
 type Props = {
   collectiviteId: number;
@@ -26,7 +26,7 @@ export const ReferentielCard = ({
   potentiel,
   referentiel,
   title,
-}: Props): JSX.Element => {
+}: Props) => {
   const displayEtatDesLieux =
     progressionScore.data.find((d) => d.score_non_renseigne !== 1) !==
     undefined;

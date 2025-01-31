@@ -1,5 +1,6 @@
 import { useCollectiviteId } from '@/app/core-logic/hooks/params';
 import ActionPreuvePanel from '@/app/referentiels/actions/action-preuve.panel';
+import { ActionReferentiel } from '@/app/referentiels/DEPRECATED_scores.types';
 import { ReferentielId } from '@/domain/referentiels';
 import { Fragment, useEffect, useRef } from 'react';
 import {
@@ -12,7 +13,6 @@ import {
 } from 'react-table';
 import { CellAction } from '../../../../referentiels/ReferentielTable/CellAction';
 import '../../../../referentiels/ReferentielTable/styles.css';
-import { ActionReferentiel } from '../../../../referentiels/ReferentielTable/useReferentiel';
 import { TableData } from './useTableData';
 
 export type TPreuvesTableProps = {

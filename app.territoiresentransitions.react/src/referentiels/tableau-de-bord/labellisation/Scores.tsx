@@ -12,8 +12,8 @@ import { ReferentielId } from '@/domain/referentiels';
 import { Button } from '@/ui';
 import Image from 'next/image';
 import { TableOptions } from 'react-table';
+import { ProgressionRow } from '../../DEPRECATED_scores.types';
 import { AccueilCard } from '../AccueilCard';
-import { ProgressionRow } from '../useProgressionReferentiel';
 import { getAggregatedScore } from '../utils';
 import LabellisationInfo from './LabellisationInfo';
 

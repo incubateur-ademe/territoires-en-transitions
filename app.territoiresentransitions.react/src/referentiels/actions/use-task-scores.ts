@@ -1,11 +1,14 @@
-import { referentielId } from '@/app/referentiels/actions.utils';
 import { useScores } from '@/app/referentiels/DEPRECATED_score-hooks';
+import { getReferentielIdFromActionId } from '@/domain/referentiels';
 import { useAction, useSnapshotFlagEnabled } from '../use-snapshot';
 
+/**
+ * @deprecated use snapshot insteaad
+ */
 export const useTasksScoreRepartition = (actionId: string) => {
   const DEPRECATED_scores = useScores();
   const FLAG_isSnapshotEnabled = useSnapshotFlagEnabled();
-  const NEW_subAction = useAction(actionId);
+  const { data: NEW_subAction } = useAction(actionId);
 
   if (FLAG_isSnapshotEnabled && NEW_subAction) {
     const NEW_subActionScore = NEW_subAction.score;
@@ -28,14 +31,16 @@ export const useTasksScoreRepartition = (actionId: string) => {
       avancementDetaille: [scoreFait, scoreProgramme, scorePasFait],
       scoreMax: NEW_subActionScore.pointPotentiel,
     };
-  } else if (DEPRECATED_scores[referentielId(actionId)]) {
+  } else if (DEPRECATED_scores[getReferentielIdFromActionId(actionId)]) {
     // Modification nécessaire côté back sur "action_statuts" pour éviter l'appel de useScores
-    const tasksScores = DEPRECATED_scores[referentielId(actionId)].filter(
+    const tasksScores = DEPRECATED_scores[
+      getReferentielIdFromActionId(actionId)
+    ].filter(
       (act) => act.action_id.includes(actionId) && act.action_id !== actionId
     );
-    const subActionScore = DEPRECATED_scores[referentielId(actionId)].filter(
-      (act) => act.action_id === actionId
-    );
+    const subActionScore = DEPRECATED_scores[
+      getReferentielIdFromActionId(actionId)
+    ].filter((act) => act.action_id === actionId);
 
     let scoreFait = 0;
     let scoreProgramme = 0;

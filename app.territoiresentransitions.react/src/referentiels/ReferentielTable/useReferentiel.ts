@@ -3,22 +3,60 @@ import { DISABLE_AUTO_REFETCH } from '@/api/utils/react-query/query-options';
 import { useSupabase } from '@/api/utils/supabase/use-supabase';
 import { TActionStatutsRow } from '@/app/types/alias';
 import { indexBy } from '@/app/utils/indexBy';
+import { ReferentielId } from '@/domain/referentiels';
 import { useCallback, useMemo } from 'react';
 import { useQuery } from 'react-query';
 import { ActionType, TableState } from 'react-table';
+import { getMaxDepth } from '../AidePriorisation/queries';
+import {
+  actionNewToDeprecated,
+  ActionReferentiel,
+} from '../DEPRECATED_scores.types';
+import { useSnapshot } from '../use-snapshot';
 import { useModifierStateRef } from './useModifierStateRef';
 
-// les informations du référentiel à précharger
-export type ActionReferentiel = Pick<
-  TActionStatutsRow,
-  | 'action_id'
-  | 'identifiant'
-  | 'nom'
-  | 'depth'
-  | 'have_children'
-  | 'type'
-  | 'phase'
->;
+export function NEW_useTable({
+  referentielId,
+}: {
+  referentielId: ReferentielId;
+}) {
+  const { data: snapshot, isPending } = useSnapshot({
+    actionId: referentielId,
+  });
+
+  // Uniquement les actions de niveau 1 (axes)
+  const axesOnly = snapshot?.scores.actionsEnfant.map(actionNewToDeprecated);
+
+  const getRowId = useCallback((row: any) => row.identifiant, []);
+
+  const maxLevel = getMaxDepth(referentielId);
+
+  // Renvoie les sous-lignes d'une ligne, donc les enfants d'une action
+  // mais seulement jusqu'au niveau 3
+  const getSubRows = (row: any) => {
+    const action = (row as ReturnType<typeof actionNewToDeprecated>)
+      .sourceAction;
+
+    // On s'arrête aux sous-actions (on ne descend pas aux taches)
+    if (action.level > maxLevel - 1) {
+      return [];
+    }
+
+    return action.actionsEnfant.map(actionNewToDeprecated);
+  };
+
+  const table = {
+    data: axesOnly ?? [],
+    getRowId,
+    getSubRows,
+    autoResetExpanded: false,
+  };
+
+  return {
+    table,
+    isLoading: isPending,
+  };
+}
 
 export type IAction = Pick<TActionStatutsRow, 'action_id'>;
 export type TActionsSubset<ActionSubset> = (ActionSubset & ActionReferentiel)[];

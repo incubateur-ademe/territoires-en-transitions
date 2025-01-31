@@ -3,14 +3,15 @@ import { useSearchParams } from '@/app/core-logic/hooks/query';
 import { ReferentielId } from '@/domain/referentiels';
 import { useQuery } from 'react-query';
 import { TableOptions } from 'react-table';
+import { ProgressionRow } from '../DEPRECATED_scores.types';
 import { useReferentiel } from '../ReferentielTable/useReferentiel';
 import { initialFilters, nameToShortNames, TFilters } from './filters';
-import { fetchRows, PriorisationRow } from './queries';
+import { fetchRows } from './queries';
 
 export type TableData = {
   /** données à passer à useTable */
   table: Pick<
-    TableOptions<PriorisationRow>,
+    TableOptions<ProgressionRow>,
     'data' | 'getRowId' | 'getSubRows' | 'autoResetExpanded'
   >;
   /** Indique que le chargement des données est en cours */
