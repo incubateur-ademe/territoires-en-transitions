@@ -59,7 +59,9 @@ const IndicateurHeader = ({
         </div>
 
         {/* Chemin de l'indicateur */}
-        <CheminIndicateur {...{ collectiviteId, titre, unite }} />
+        <CheminIndicateur
+          {...{ collectiviteId, indicateurId: definition.id }}
+        />
 
         {/* Infos générales sur l'indicateur */}
         <IndicateurInfos
