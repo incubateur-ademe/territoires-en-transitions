@@ -1,5 +1,6 @@
 import { TrpcService } from '@/backend/utils/trpc/trpc.service';
 import { Injectable } from '@nestjs/common';
+import { getPathRequestSchema } from './get-path.request';
 import { listDefinitionsRequestSchema } from './list-definitions.request';
 import ListDefinitionsService from './list-definitions.service';
 
@@ -15,6 +16,11 @@ export class IndicateurDefinitionsRouter {
       .input(listDefinitionsRequestSchema)
       .query(({ ctx, input }) => {
         return this.service.getDefinitionsDetaillees(input, ctx.user);
+      }),
+    getPath: this.trpc.authedProcedure
+      .input(getPathRequestSchema)
+      .query(({ ctx, input }) => {
+        return this.service.getPath(input, ctx.user);
       }),
   });
 }
