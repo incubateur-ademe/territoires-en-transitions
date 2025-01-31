@@ -9,7 +9,7 @@ import {
   NotFoundException,
   UnauthorizedException,
 } from '@nestjs/common';
-import { and, asc, eq, inArray, sql } from 'drizzle-orm';
+import { and, asc, desc, eq, inArray, sql } from 'drizzle-orm';
 import { DateTime } from 'luxon';
 import slugify from 'slugify';
 import { AuthRole, AuthUser } from '../../auth/models/auth.models';
@@ -355,12 +355,26 @@ export default class ReferentielsScoringSnapshotsService {
     return scoreSnapshot;
   }
 
-  async listSummary(
+  async list(
     collectiviteId: number,
     referentielId: ReferentielId,
-    { typesJalon }: GetScoreSnapshotsRequestType
+    parameters?: GetScoreSnapshotsRequestType
   ): Promise<GetScoreSnapshotsResponseType> {
-    const result = await this.databaseService.db
+    const { typesJalon, descendingOrder, limit } = parameters ?? {};
+
+    const baseConditions = [
+      eq(scoreSnapshotTable.collectiviteId, collectiviteId),
+      eq(scoreSnapshotTable.referentielId, referentielId),
+    ];
+
+    const whereConditions = [
+      ...baseConditions,
+      ...(typesJalon
+        ? [inArray(scoreSnapshotTable.typeJalon, typesJalon)]
+        : []),
+    ];
+
+    const baseQuery = this.databaseService.db
       .select({
         ref: scoreSnapshotTable.ref,
         nom: scoreSnapshotTable.nom,
@@ -378,19 +392,20 @@ export default class ReferentielsScoringSnapshotsService {
         modifiedBy: scoreSnapshotTable.modifiedBy,
       })
       .from(scoreSnapshotTable)
-      .where(
-        and(
-          eq(scoreSnapshotTable.collectiviteId, collectiviteId),
-          eq(scoreSnapshotTable.referentielId, referentielId),
-          inArray(scoreSnapshotTable.typeJalon, typesJalon)
-        )
-      )
-      .orderBy(asc(scoreSnapshotTable.date));
+      .where(and(...whereConditions))
+      .orderBy(
+        descendingOrder
+          ? desc(scoreSnapshotTable.date)
+          : asc(scoreSnapshotTable.date)
+      );
+
+    const query = limit ? baseQuery.limit(limit) : baseQuery;
+    const result = await query;
 
     const getScoreSnapshotsResponseType: GetScoreSnapshotsResponseType = {
       collectiviteId: parseInt(collectiviteId as unknown as string),
       referentielId,
-      typesJalon,
+      typesJalon: typesJalon ?? [],
       snapshots: result,
     };
     return getScoreSnapshotsResponseType;

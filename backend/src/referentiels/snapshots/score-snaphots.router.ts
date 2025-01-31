@@ -11,9 +11,17 @@ import { upsertSnapshotRequestSchema } from './upsert-snapshot.request';
 export const getScoreSnapshotInfosTrpcRequestSchema = z.object({
   referentielId: referentielIdEnumSchema,
   collectiviteId: z.number().int(),
-  parameters: z.object({
-    typesJalon: z.nativeEnum(SnapshotJalon).array(),
-  }),
+  parameters: z
+    .object({
+      typesJalon: z
+        .nativeEnum(SnapshotJalon)
+        .array()
+        .optional()
+        .default(DEFAULT_SNAPSHOT_JALONS),
+      descendingOrder: z.boolean().optional().default(false),
+      limit: z.number().int().optional(),
+    })
+    .optional(),
 });
 
 export const getFullScoreSnapshotTrpcRequestSchema = z.object({
@@ -31,10 +39,10 @@ export class ScoreSnapshotsRouter {
   ) {}
 
   router = this.trpc.router({
-    listSummary: this.trpc.authedProcedure
+    list: this.trpc.authedProcedure
       .input(getScoreSnapshotInfosTrpcRequestSchema)
       .query(({ input }) => {
-        return this.service.listSummary(
+        return this.service.list(
           input.collectiviteId,
           input.referentielId,
           input.parameters
