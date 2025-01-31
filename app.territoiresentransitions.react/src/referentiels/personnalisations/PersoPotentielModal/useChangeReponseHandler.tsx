@@ -6,16 +6,23 @@ import {
   TReponse,
   TReponseWrite,
 } from '@/app/referentiels/personnalisations/personnalisation.types';
+import { ReferentielId } from '@/domain/referentiels';
 import { useMutation, useQueryClient } from 'react-query';
+import { useSnapshotComputeAndUpdate } from '../../use-snapshot';
 
 type TUseChangeReponseHandler = (
-  collectivite_id: number | null
+  collectiviteId: number,
+  referentielIds: ReferentielId[]
 ) => TChangeReponse;
 
 // gestionnaire d'enregistrement des réponses
 export const useChangeReponseHandler: TUseChangeReponseHandler = (
-  collectivite_id
+  collectiviteId,
+  referentielIds
 ) => {
+  const { computeScoreAndUpdateCurrentSnapshot } =
+    useSnapshotComputeAndUpdate();
+
   const queryClient = useQueryClient();
   const supabase = useSupabase();
 
@@ -26,11 +33,15 @@ export const useChangeReponseHandler: TUseChangeReponseHandler = (
     question: TQuestionRead;
     reponse: TReponse;
   }): Promise<boolean> => {
-    if (!collectivite_id) {
+    if (!collectiviteId) {
       return false;
     }
 
-    const newReponse = transform({ collectivite_id, question, reponse });
+    const newReponse = transform({
+      collectivite_id: collectiviteId,
+      question,
+      reponse,
+    });
     const ret = await supabase.rpc('save_reponse', {
       json: newReponse,
     } as any);
@@ -49,7 +60,7 @@ export const useChangeReponseHandler: TUseChangeReponseHandler = (
     // avant que la mutation soit exécutée...
     onMutate: async ({ question, reponse }) => {
       // la clé dans le cache
-      const queryKey = ['reponse', collectivite_id, question.id];
+      const queryKey = ['reponse', collectiviteId, question.id];
 
       // annule un éventuel fetch en cours pour que la MàJ optimiste ne soit pas écrasée
       await queryClient.cancelQueries(queryKey);
@@ -60,12 +71,12 @@ export const useChangeReponseHandler: TUseChangeReponseHandler = (
       // crée la nouvelle valeur à partir des entrées
       const question_id = question.id;
       const newValue = {
-        collectivite_id,
+        collectivite_id: collectiviteId,
         question_id,
         reponse: {
           type: question.type,
           reponse,
-          collectivite_id,
+          collectivite_id: collectiviteId,
           question_id,
         },
       };
@@ -94,10 +105,17 @@ export const useChangeReponseHandler: TUseChangeReponseHandler = (
     },
     //
     onSuccess(data, variables, context) {
+      referentielIds.forEach((referentielId) => {
+        computeScoreAndUpdateCurrentSnapshot({
+          collectiviteId,
+          referentielId,
+        });
+      });
+
       if (context) {
         queryClient.invalidateQueries([
           'question_thematique_completude',
-          collectivite_id,
+          collectiviteId,
         ]);
       }
     },

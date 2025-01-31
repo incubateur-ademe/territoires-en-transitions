@@ -1,4 +1,4 @@
-import { useCollectiviteId } from '@/app/core-logic/hooks/params';
+import { useCollectiviteId } from '@/app/collectivites/collectivite-context';
 import { ActionDefinitionSummary } from '@/app/referentiels/ActionDefinitionSummaryReadEndpoint';
 import { useActionScore } from '@/app/referentiels/DEPRECATED_score-hooks';
 import {
@@ -6,6 +6,7 @@ import {
   useSnapshotFlagEnabled,
 } from '@/app/referentiels/use-snapshot';
 import Modal from '@/app/ui/shared/floating-ui/Modal';
+import { getReferentielIdFromActionId } from '@/domain/referentiels';
 import { Button } from '@/ui';
 import { useQuestionsReponses } from '../PersoReferentielThematique/useQuestionsReponses';
 import { PersoPotentielTabs } from './PersoPotentielTabs';
@@ -28,7 +29,9 @@ export const PersoPotentiel = ({ actionDef }: TPersoPotentielButtonProps) => {
   const collectiviteId = useCollectiviteId();
   const qr = useQuestionsReponses({ action_ids: [actionId] });
   const regles = useRegles(actionId);
-  const handleChange = useChangeReponseHandler(collectiviteId);
+  const handleChange = useChangeReponseHandler(collectiviteId, [
+    getReferentielIdFromActionId(actionId),
+  ]);
 
   const DEPRECATED_actionScore = useActionScore(actionId);
   const FLAG_isSnapshotEnabled = useSnapshotFlagEnabled();
