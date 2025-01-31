@@ -2,6 +2,7 @@
 'use client';
 
 import { LoginModal } from '@/auth/components/Login';
+import { use } from 'react';
 import { useLoginState } from './useLoginState';
 
 /**
@@ -12,15 +13,22 @@ import { useLoginState } from './useLoginState';
  * l'app.
  */
 const LoginPage = ({
-  searchParams: { view = null, email = null, otp = null, redirect_to = '/' },
+  searchParams,
 }: {
-  searchParams: {
+  searchParams: Promise<{
     view: string | null;
     email: string | null;
     otp: string | null;
     redirect_to: string;
-  };
+  }>;
 }) => {
+  const {
+    view = null,
+    email = null,
+    otp = null,
+    redirect_to = '/',
+  } = use(searchParams);
+
   const defaultValues = {
     email,
     otp,

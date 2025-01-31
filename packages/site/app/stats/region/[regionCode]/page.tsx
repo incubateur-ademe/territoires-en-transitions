@@ -1,4 +1,4 @@
-import {Metadata} from 'next';
+import { Metadata } from 'next';
 import StatisticsDisplay from '../../StatisticsDisplay';
 
 export async function generateMetadata(): Promise<Metadata> {
@@ -14,10 +14,11 @@ export async function generateMetadata(): Promise<Metadata> {
  */
 
 type RegionStatsProps = {
-  params: {regionCode: string};
+  params: Promise<{ regionCode: string }>;
 };
 
-const RegionStats = ({params: {regionCode}}: RegionStatsProps) => {
+const RegionStats = async ({ params }: RegionStatsProps) => {
+  const { regionCode } = await params;
   return <StatisticsDisplay regionCode={regionCode} />;
 };
 
