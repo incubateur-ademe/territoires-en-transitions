@@ -13,7 +13,7 @@ import {
   StatutAvancement,
   StatutAvancementEnum,
 } from '../models/action-statut.table';
-import { ActionType } from '../models/action-type.enum';
+import { ActionTypeEnum } from '../models/action-type.enum';
 import { GetReferentielScoresResponseType } from '../models/get-referentiel-scores.response';
 import { GetScoreSnapshotRequestType } from '../models/get-score-snapshot.request';
 import {
@@ -140,8 +140,8 @@ export default class ExportReferentielScoreService {
     // pas de statut si les données ne sont pas disponibles ou que l'item n'est ni une sous-action ni une tâche
     if (
       !actionScore ||
-      (actionScore.actionType !== ActionType.SOUS_ACTION &&
-        actionScore.actionType !== ActionType.TACHE)
+      (actionScore.actionType !== ActionTypeEnum.SOUS_ACTION &&
+        actionScore.actionType !== ActionTypeEnum.TACHE)
     ) {
       return '';
     }
@@ -154,7 +154,7 @@ export default class ExportReferentielScoreService {
 
     // pour éviter d'afficher "non renseigné" pour une tâche sans statut mais ayant un statut à la sous-action
     if (
-      (actionScore.actionType === ActionType.TACHE &&
+      (actionScore.actionType === ActionTypeEnum.TACHE &&
         !actionScore.score.avancement &&
         parentActionScore &&
         parentActionScore?.score?.avancement !== 'non_renseigne' &&
@@ -171,7 +171,7 @@ export default class ExportReferentielScoreService {
         actionScoreEnfant.score?.avancement !== 'non_renseigne'
     );
     if (
-      actionScore.actionType === ActionType.SOUS_ACTION &&
+      actionScore.actionType === ActionTypeEnum.SOUS_ACTION &&
       !actionScore.score.avancement &&
       hasChildrenAvancement
     ) {
@@ -207,11 +207,13 @@ export default class ExportReferentielScoreService {
   }[] {
     const values = [
       // id
-      actionScore.actionType === ActionType.REFERENTIEL
+      actionScore.actionType === ActionTypeEnum.REFERENTIEL
         ? this.TOTAL_LABEL
         : actionScore.identifiant,
       // intitulé
-      actionScore.actionType === ActionType.REFERENTIEL ? '' : actionScore?.nom,
+      actionScore.actionType === ActionTypeEnum.REFERENTIEL
+        ? ''
+        : actionScore?.nom,
       // phase
       Utils.capitalize(actionScore?.categorie),
 
@@ -234,7 +236,7 @@ export default class ExportReferentielScoreService {
     ];
 
     // Referentiel actions est mis en dernier
-    if (actionScore.actionType !== ActionType.REFERENTIEL) {
+    if (actionScore.actionType !== ActionTypeEnum.REFERENTIEL) {
       rowValues.push({ actionScore, values: values });
     }
 
@@ -243,7 +245,7 @@ export default class ExportReferentielScoreService {
       this.getActionScoreRowValues(actionEnfantScore, actionScore, rowValues);
     });
 
-    if (actionScore.actionType === ActionType.REFERENTIEL) {
+    if (actionScore.actionType === ActionTypeEnum.REFERENTIEL) {
       rowValues.push({ actionScore, values: values });
     }
 
@@ -359,7 +361,7 @@ export default class ExportReferentielScoreService {
       const r = rowIndex.dataStart + index;
       const row = worksheet.getRow(r);
 
-      if (actionScore.actionType === ActionType.REFERENTIEL) {
+      if (actionScore.actionType === ActionTypeEnum.REFERENTIEL) {
         // ligne "total"
         Utils.setCellsStyle(
           worksheet,

@@ -1,7 +1,7 @@
 import { preuveSchemaEssential } from '@/backend/collectivites/documents/models/preuve.dto';
 import { z } from 'zod';
 import { actionDefinitionSeulementIdObligatoireSchema } from '../models/action-definition.table';
-import { ActionType } from '../models/action-type.enum';
+import { actionTypeIncludingExempleSchema } from '../models/action-type.enum';
 import { referentielActionOrigineWithScoreSchema } from './referentiel-action-origine-with-score.dto';
 import {
   scoreFinalSchema,
@@ -12,7 +12,7 @@ import {
 const actionWithScoreBaseSchema = actionDefinitionSeulementIdObligatoireSchema
   .extend({
     level: z.number(),
-    actionType: z.nativeEnum(ActionType),
+    actionType: actionTypeIncludingExempleSchema,
     referentielsOrigine: z.string().array().optional(),
     actionsOrigine: referentielActionOrigineWithScoreSchema.array().optional(),
     scoresOrigine: z

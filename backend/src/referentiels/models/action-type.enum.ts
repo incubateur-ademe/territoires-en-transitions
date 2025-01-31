@@ -1,6 +1,7 @@
 import { pgEnum } from 'drizzle-orm/pg-core';
+import z from 'zod';
 
-export enum ActionType {
+export enum ActionTypeEnum {
   REFERENTIEL = 'referentiel',
   AXE = 'axe',
   SOUS_AXE = 'sous-axe',
@@ -11,12 +12,23 @@ export enum ActionType {
 }
 
 export const orderedActionType = [
-  ActionType.REFERENTIEL,
-  ActionType.AXE,
-  ActionType.SOUS_AXE,
-  ActionType.ACTION,
-  ActionType.SOUS_ACTION,
-  ActionType.TACHE,
+  ActionTypeEnum.REFERENTIEL,
+  ActionTypeEnum.AXE,
+  ActionTypeEnum.SOUS_AXE,
+  ActionTypeEnum.ACTION,
+  ActionTypeEnum.SOUS_ACTION,
+  ActionTypeEnum.TACHE,
 ] as const;
+
+export const actionTypeSchema = z.enum(orderedActionType);
+export type ActionType = z.infer<typeof actionTypeSchema>;
+
+export const actionTypeIncludingExempleSchema = z.enum([
+  ...orderedActionType,
+  ActionTypeEnum.EXEMPLE,
+]);
+export type ActionTypeIncludingExemple = z.infer<
+  typeof actionTypeIncludingExempleSchema
+>;
 
 export const actionTypePgEnum = pgEnum('action_type', orderedActionType);
