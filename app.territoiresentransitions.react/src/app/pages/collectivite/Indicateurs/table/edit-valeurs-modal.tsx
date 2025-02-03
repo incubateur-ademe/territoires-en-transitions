@@ -1,4 +1,12 @@
-import { Button, Divider, Field, Input, Modal, ModalFooter } from '@/ui';
+import {
+  AutoResizedTextarea,
+  Button,
+  Divider,
+  Field,
+  Input,
+  Modal,
+  ModalFooter,
+} from '@/ui';
 import { OpenState } from '@/ui/utils/types';
 import { useState } from 'react';
 import { PreparedData } from '../data/prepare-data';
@@ -82,8 +90,7 @@ export const EditValeursModal = (props: EditValeursModalProps) => {
               />
             </Field>
             <Field title="Ajouter un commentaire sur le résultat">
-              <Input
-                type="text"
+              <AutoResizedTextarea
                 value={resultatCommentaire ?? ''}
                 onChange={(e) =>
                   setValeur({ ...valeur, resultatCommentaire: e.target.value })
@@ -100,8 +107,7 @@ export const EditValeursModal = (props: EditValeursModalProps) => {
               />
             </Field>
             <Field title="Ajouter un commentaire sur l’objectif">
-              <Input
-                type="text"
+              <AutoResizedTextarea
                 value={objectifCommentaire ?? ''}
                 onChange={(e) =>
                   setValeur({ ...valeur, objectifCommentaire: e.target.value })
