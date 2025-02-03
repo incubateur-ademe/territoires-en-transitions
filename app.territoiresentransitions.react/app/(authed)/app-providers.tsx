@@ -10,9 +10,10 @@ import AccepterCGUModal from '@/app/app/pages/Auth/AccepterCGUModal';
 import { ScoreListenerProvider } from '@/app/referentiels/DEPRECATED_use-score-listener';
 import { createTrackingClient, TrackingProvider } from '@/ui';
 import { createTheme, ThemeProvider } from '@mui/material/styles';
+import { User } from '@supabase/supabase-js';
 import { QueryClient, QueryClientProvider } from 'react-query';
 import { ReactQueryDevtools } from 'react-query/devtools';
-import { AuthProvider } from '../src/core-logic/api/auth/AuthProvider';
+import { AuthProvider } from '../../src/core-logic/api/auth/AuthProvider';
 
 const theme = createTheme({
   palette: {
@@ -26,8 +27,10 @@ const trackingClient = createTrackingClient(ENV.posthog);
 const queryClient = new QueryClient();
 
 export default function AppProviders({
+  user,
   children,
 }: {
+  user: User;
   children: React.ReactNode;
 }) {
   return (
@@ -35,7 +38,7 @@ export default function AppProviders({
       <TRPCProvider>
         <QueryClientProvider client={queryClient}>
           <Toasters />
-          <AuthProvider>
+          <AuthProvider user={user}>
             <ScoreListenerProvider>
               <E2E />
               <Redirector />

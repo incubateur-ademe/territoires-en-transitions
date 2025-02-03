@@ -1,4 +1,4 @@
-import { getRootDomain, setAuthTokens } from '@/api';
+import { supabaseClient as supabase } from '@/api/utils/supabase/browser-client';
 import { useGetPasswordStrength } from '@/auth/components/PasswordStrengthMeter/useGetPasswordStrength';
 import {
   SignupData,
@@ -9,7 +9,6 @@ import {
   isValidSignupView,
 } from '@/auth/components/Signup';
 import { ResendFunction } from '@/auth/components/VerifyOTP';
-import { supabase } from '@/auth/src/clientAPI';
 import { useRouter } from 'next/navigation';
 import { useState } from 'react';
 
@@ -114,12 +113,6 @@ export const useSignupState = ({
         );
         return;
       }
-
-      // le partage des tokens entre sous-domaines nécessite le nom du domaine racine.
-      const domain = getRootDomain(document.location.hostname);
-
-      // enregistre les tokens dans le domaine racine pour pouvoir les partager entre les sous-domaines
-      setAuthTokens(data.session, domain);
 
       // demande la saisie des DCP et l'acceptation des CGU
       setView('etape3');

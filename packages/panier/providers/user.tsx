@@ -1,7 +1,6 @@
 'use client';
 
-import { restoreSessionFromAuthTokens } from '@/api';
-import { supabase } from '@/panier/src/clientAPI';
+import { supabaseClient as supabase } from '@/api/utils/supabase/browser-client';
 import { User } from '@supabase/supabase-js';
 import {
   Dispatch,
@@ -47,8 +46,6 @@ export const UserProvider = ({ children }: { children: React.ReactNode }) => {
       setUser(updatedSession?.user ?? null);
     });
 
-    // restaure une éventuelle session précédente
-    restoreSessionFromAuthTokens(supabase);
     return () => {
       subscription?.unsubscribe();
     };

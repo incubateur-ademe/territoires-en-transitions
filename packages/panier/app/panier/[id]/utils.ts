@@ -7,8 +7,7 @@ import {
   Panier,
   PanierAPI,
 } from '@/api';
-import { createClient } from '@/panier/src/supabase/server';
-import { cookies } from 'next/headers';
+import { createClient } from '@/api/utils/supabase/server-client';
 
 const apiKey = process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY;
 const apiUrl = process.env.NEXT_PUBLIC_SUPABASE_URL;
@@ -27,7 +26,7 @@ export const fetchPanier = async ({
   panierId: string;
   filtre: FiltreAction;
 }): Promise<Panier | null> => {
-  const supabase = createClient(cookies());
+  const supabase = await createClient();
   const api = new PanierAPI(supabase);
 
   const panier: Panier | null = await api.fetchPanier({

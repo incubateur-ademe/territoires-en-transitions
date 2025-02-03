@@ -1,37 +1,17 @@
-import {
-  clearAuthTokens,
-  getRootDomain,
-  getSession,
-  MaCollectivite,
-  setAuthTokens,
-} from '@/api';
+import { MaCollectivite } from '@/api';
 import { Tables } from '@/api/database.types';
-import { ENV } from '@/api/environmentVariables';
 import { dcpFetch } from '@/api/utilisateurs/shared/data_access/dcp.fetch';
 import { supabaseClient } from '@/api/utils/supabase/browser-client';
 import { fetchOwnedCollectivites } from '@/app/core-logic/hooks/useOwnedCollectivites';
-import {
-  Session,
-  SignInWithPasswordCredentials,
-  User,
-} from '@supabase/supabase-js';
+import { User } from '@supabase/supabase-js';
+import { usePathname, useRouter } from 'next/navigation';
 import { usePostHog } from 'posthog-js/react';
-import {
-  createContext,
-  ReactNode,
-  useContext,
-  useEffect,
-  useState,
-} from 'react';
+import { createContext, ReactNode, useContext, useEffect } from 'react';
 import { useQuery } from 'react-query';
 
 // typage du contexte exposé par le fournisseur
 export type TAuthContext = {
-  connect: (data: SignInWithPasswordCredentials) => Promise<boolean>;
-  disconnect: () => Promise<boolean>;
   user: UserData | null;
-  authError: string | null;
-  authHeaders: { authorization: string; apikey: string } | null;
   isConnected: boolean;
 };
 
@@ -49,9 +29,7 @@ export interface UserData extends User, DCP {
   >;
 }
 
-function useUserData(session: Session | null) {
-  const { user } = session ?? {};
-
+function useUserData(user: User) {
   return useQuery(['user_data', user?.id], async () => {
     if (!user?.id) {
       return null;
@@ -100,15 +78,17 @@ export const AuthContext = createContext<TAuthContext | null>(null);
 export const useAuth = () => useContext(AuthContext) as TAuthContext;
 
 // le fournisseur de contexte
-export const AuthProvider = ({ children }: { children: ReactNode }) => {
-  // récupère la session courante
-  const currentSession = useCurrentSession();
-  const [session, setSession] = useState(currentSession);
+export const AuthProvider = ({
+  user,
+  children,
+}: {
+  user: User;
+  children: ReactNode;
+}) => {
+  const router = useRouter();
+  const pathname = usePathname();
 
-  // pour stocker la dernière erreur d'authentification
-  const [authError, setAuthError] = useState<string | null>(null);
-
-  const { data: userData = null } = useUserData(session);
+  const { data: userData = null } = useUserData(user);
 
   const posthog = usePostHog();
 
@@ -116,21 +96,18 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
     // écoute les changements d'état (connecté, déconnecté, etc.)
     const {
       data: { subscription },
-    } = supabaseClient.auth.onAuthStateChange(async (event, updatedSession) => {
-      setSession(updatedSession);
-      if (updatedSession?.user) {
-        setAuthError(null);
-      }
-      if (event === 'SIGNED_OUT' && document.location.pathname !== '/') {
+    } = supabaseClient.auth.onAuthStateChange(async (event) => {
+      console.log('onAuthStateChange', event);
+      if (event === 'SIGNED_OUT' && pathname !== '/') {
         // redirige sur la home si l'utilisateur a été déconnecté
-        document.location.href = '/';
+        // router.replace('/');
       }
     });
 
     return () => {
-      subscription?.unsubscribe();
+      subscription.unsubscribe();
     };
-  }, []);
+  }, [pathname, router]);
 
   // Initialise les widgets externes.
   useEffect(() => {
@@ -142,12 +119,10 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
       if (window.location.href.includes('localhost'))
         environment = 'development';
 
-      if (posthog) {
-        posthog.identify(userData.id, {
-          email: userData.email,
-          user_id: userData.id,
-        });
-      }
+      posthog.identify(userData.id, {
+        email: userData.email,
+        user_id: userData.id,
+      });
 
       if (environment === 'production' || environment === 'test') {
         // @ts-expect-error - StonlyWidget is not defined
@@ -161,47 +136,9 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
     }
   }, [userData]);
 
-  // pour authentifier l'utilisateur (utilisé uniquement depuis les tests e2e)
-  const connect = async (data: SignInWithPasswordCredentials) =>
-    supabaseClient.auth
-      .signInWithPassword(data)
-      .then(({ data }) => {
-        if (!data.user) {
-          setAuthError("L'email et le mot de passe ne correspondent pas.");
-          return false;
-        }
-        setAuthTokens(data.session, getRootDomain(document.location.hostname));
-        return true;
-      })
-      .catch(() => {
-        return false;
-      });
-
-  // pour déconnecter l'utilisateur
-  const disconnect = () =>
-    supabaseClient.auth.signOut().then((response) => {
-      if (response.error) {
-        setAuthError(response.error.message);
-        return false;
-      }
-      clearAuthTokens(getRootDomain(document.location.hostname));
-      return true;
-    });
-
-  const authHeaders = session?.access_token
-    ? {
-        authorization: `Bearer ${session.access_token}`,
-        apikey: `${ENV.supabase_anon_key}`,
-      }
-    : null;
-
   const value = {
-    connect,
-    disconnect,
     user: userData,
     isConnected: userData !== null,
-    authError,
-    authHeaders,
   };
 
   return <AuthContext.Provider value={value}>{children}</AuthContext.Provider>;
@@ -238,16 +175,4 @@ const clearCrispUserData = () => {
     const { $crisp } = window;
     $crisp.push(['do', 'session:reset']);
   }
-};
-
-const useCurrentSession = () => {
-  const { data, error } = useQuery(['session'], async () => {
-    return getSession();
-  });
-
-  if (error || !data) {
-    return null;
-  }
-
-  return data;
 };

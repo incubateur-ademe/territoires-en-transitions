@@ -1,8 +1,9 @@
+import { getAuthHeaders } from '@/api/utils/supabase/auth-session.client';
 import {
   makeCollectiviteAccueilUrl,
   makeInvitationLandingPath,
 } from '@/app/app/paths';
-import { useAuth, UserData } from '@/app/core-logic/api/auth/AuthProvider';
+import { UserData } from '@/app/core-logic/api/auth/AuthProvider';
 import { CurrentCollectivite } from '@/app/core-logic/hooks/useCurrentCollectivite';
 import { useMutation } from 'react-query';
 
@@ -19,7 +20,6 @@ export const useSendInvitation = (
   user: UserData
 ) => {
   const { nom: nomCollectivite } = collectivite;
-  const { authHeaders } = useAuth();
 
   return useMutation(
     async ({ invitationId, email: rawEmail }: SendInvitationArgs) => {
@@ -40,7 +40,7 @@ export const useSendInvitation = (
         method: 'POST',
         headers: {
           'content-type': 'application/json',
-          ...authHeaders,
+          ...((await getAuthHeaders()) ?? {}),
         },
         body: JSON.stringify({
           to: email,

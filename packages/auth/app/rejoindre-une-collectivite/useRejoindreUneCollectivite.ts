@@ -1,10 +1,10 @@
 import { getCollectivitePath, makeSearchString } from '@/api';
+import { supabaseClient as supabase } from '@/api/utils/supabase/browser-client';
 import {
   CollectiviteInfo,
   CollectiviteNom,
   RejoindreUneCollectiviteData,
 } from '@/auth/components/RejoindreUneCollectivite';
-import { supabase } from '@/auth/src/clientAPI';
 import { useRouter } from 'next/navigation';
 import { useState } from 'react';
 

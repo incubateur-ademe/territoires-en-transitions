@@ -1,9 +1,9 @@
-import { supabase } from '@/auth/src/clientAPI';
+import { supabaseClient } from '@/api/utils/supabase/browser-client';
 import useSWR from 'swr';
 
 /** Charge la liste des collectivités */
 const getCollectivites = async (nom?: string) => {
-  const query = supabase
+  const query = supabaseClient
     .from('collectivite_card')
     .select('value: collectivite_id, label: nom');
 

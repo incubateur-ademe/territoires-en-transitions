@@ -4,7 +4,7 @@ import { signInPath, signUpPath } from '@/app/app/paths';
 import homeImage from '@/app/app/static/img/home.jpg';
 import { Button } from '@/ui';
 
-const Home = () => {
+export const HomePage = () => {
   return (
     <section
       data-test="home"
@@ -51,5 +51,3 @@ const Home = () => {
     </section>
   );
 };
-
-export default Home;

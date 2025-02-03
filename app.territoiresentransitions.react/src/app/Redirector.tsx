@@ -23,8 +23,6 @@ export const Redirector = () => {
   const collectiviteId = user?.collectivites?.[0]?.collectivite_id;
   const { data: plansData } = usePlanActionsPilotableFetch(collectiviteId);
 
-  const isLandingConnected = user && pathname === '/'; // L'utilisateur est connecté et arrive sur '/'.
-
   const { mutateAsync: consumeInvitation } = useConsumeInvitation();
 
   // Quand l'utilisateur connecté
@@ -40,7 +38,8 @@ export const Redirector = () => {
       document.location.replace(`${signUpPath}&view=etape3`);
     }
 
-    if (!isLandingConnected) {
+    console.log('Redirector', 'on en est là', pathname);
+    if (!(user && pathname === '/collectivite')) {
       return;
     }
 
@@ -50,6 +49,8 @@ export const Redirector = () => {
     }
 
     if (plansData?.plans?.length) {
+      console.log('Redirector', 'go to plans');
+
       router.push(
         makeTableauBordUrl({
           collectiviteId,
@@ -66,7 +67,7 @@ export const Redirector = () => {
     if (!plansData?.plans) return;
 
     router.push(makeCollectiviteAccueilUrl({ collectiviteId }));
-  }, [isLandingConnected, collectiviteId, user, plansData]);
+  }, [collectiviteId, user, plansData, router]);
 
   // réagit aux changements de l'état "invitation"
   useEffect(() => {
