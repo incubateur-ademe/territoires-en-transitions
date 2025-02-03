@@ -67,7 +67,7 @@ export const Filters = ({ vue, filters, setFilters }: Props) => {
                 onChange={({ values }) => {
                   setFilters({
                     ...filters,
-                    typesPlan: (values as string[]) ?? [],
+                    typesPlan: (values as number[]) ?? [],
                   });
                   tracker({
                     fonction: 'filtre_type_de_plan',
