@@ -131,7 +131,7 @@ const IndicateurLayout = ({
                   <Tab label="Informations sur l’indicateur">
                     <Markdown
                       content={description}
-                      className="bg-white p-10 border border-grey-3 rounded-xl paragraphe-16 paragraphe-primary-9 [&>*:last-child]:mb-0"
+                      className="bg-white p-10 border border-grey-3 rounded-xl paragraphe-16 paragraphe-primary-9"
                     />
                   </Tab>
                 ) : undefined}
