@@ -1,4 +1,4 @@
-import { Field, Modal, ModalFooterOKCancel, Textarea } from '@/ui';
+import { AutoResizedTextarea, Field, Modal, ModalFooterOKCancel } from '@/ui';
 import { OpenState } from '@/ui/utils/types';
 import { useState } from 'react';
 import { getSourceTypeLabel } from '../constants';
@@ -37,7 +37,7 @@ export const EditCommentaireModal = (props: EditCommentaireModalProps) => {
       render={() => {
         return (
           <Field title="Commentaire">
-            <Textarea
+            <AutoResizedTextarea
               rows={10}
               value={commentaire ?? ''}
               onChange={(e) => setCommentaire(e.target.value)}
