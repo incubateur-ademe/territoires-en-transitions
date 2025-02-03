@@ -1,4 +1,4 @@
-import { getPaginationSchema } from '@/backend/utils';
+import { getPaginationSchema } from '@/domain/utils';
 import { z } from 'zod';
 
 export const getFilteredIndicateursRequestOptionsSchema = z.object({
@@ -131,9 +131,7 @@ export const getFilteredIndicateursRequestOptionsSchema = z.object({
     .number()
     .array()
     .optional()
-    .describe(
-      "Liste des identifiants des indicateurs à récupérer."
-    )
+    .describe('Liste des identifiants des indicateurs à récupérer.'),
 });
 
 export type GetFilteredIndicateursRequestOptionType = z.infer<
