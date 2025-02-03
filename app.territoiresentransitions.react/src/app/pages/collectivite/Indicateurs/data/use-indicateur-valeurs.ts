@@ -11,9 +11,5 @@ export type IndicateurSourceData = IndicateurSources['sources'][number];
 export type IndicateurSourceValeur = IndicateurSourceData['valeurs'][number];
 
 export const useIndicateurValeurs = (input: ListIndicateurValeursInput) => {
-  return trpc.indicateurs.valeurs.list.useQuery(input, {
-    trpc: {
-      context: { skipBatch: true },
-    },
-  });
+  return trpc.indicateurs.valeurs.list.useQuery(input);
 };
