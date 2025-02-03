@@ -1,3 +1,3 @@
-import React from 'react';
+import Loading from 'app.territoiresentransitions.react/app/loading';
 
-export const renderLoader = () => <p>Chargement en cours.</p>;
+export const renderLoader = () => <Loading />;
