@@ -1,8 +1,6 @@
 import { Indicateurs } from '@/api';
-import {
-  DISABLE_AUTO_REFETCH,
-  supabaseClient,
-} from '@/app/core-logic/api/supabase';
+import { DISABLE_AUTO_REFETCH } from '@/api/utils/react-query/query-options';
+import { supabaseClient } from '@/api/utils/supabase/browser-client';
 import { useCollectiviteId } from '@/app/core-logic/hooks/params';
 import { useQuery } from 'react-query';
 import { SOURCE_COLLECTIVITE } from './constants';

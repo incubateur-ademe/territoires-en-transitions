@@ -1,6 +1,6 @@
+import { supabaseClient } from '@/api/utils/supabase/browser-client';
 import { ChangeNotifier } from '@/app/core-logic/api/reactivity';
 import { PostgrestResponse } from '@supabase/supabase-js';
-import { supabaseClient } from './supabase';
 
 export interface DataEvent<T> {
   outcome: 'error' | 'success';

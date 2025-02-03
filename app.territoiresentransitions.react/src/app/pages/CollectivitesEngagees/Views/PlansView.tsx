@@ -4,6 +4,7 @@ import View, {
   CollectivitesEngageesView,
 } from '@/app/app/pages/CollectivitesEngagees/Views/View';
 import { useFilteredPlans } from '@/app/app/pages/CollectivitesEngagees/data/useFilteredPlans';
+
 const PlansView = (props: CollectivitesEngageesView) => {
   /** Data */
   const { plans, plansCount, isLoading } = useFilteredPlans(props.filters);

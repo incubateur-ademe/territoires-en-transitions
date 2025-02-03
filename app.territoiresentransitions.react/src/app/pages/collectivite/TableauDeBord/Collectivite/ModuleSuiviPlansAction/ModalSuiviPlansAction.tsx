@@ -1,14 +1,5 @@
 import { useState } from 'react';
 
-import {
-  ButtonGroup,
-  Field,
-  FormSection,
-  Modal,
-  ModalFooterOKCancel,
-  ModalProps,
-} from '@/ui';
-
 import { FetchFilter } from '@/api/plan-actions/plan-actions.list/domain/fetch-options.schema';
 import { useCollectiviteModuleUpsert } from '@/app/app/pages/collectivite/TableauDeBord/Collectivite/useCollectiviteModuleUpsert';
 import {
@@ -23,6 +14,14 @@ import {
 } from '@/app/ui/dropdownLists/PersonnesDropdown/utils';
 import PlansActionDropdown from '@/app/ui/dropdownLists/PlansActionDropdown';
 import { ModulePlanActionListType } from '@/domain/collectivites';
+import {
+  ButtonGroup,
+  Field,
+  FormSection,
+  Modal,
+  ModalFooterOKCancel,
+  ModalProps,
+} from '@/ui';
 
 type Props = ModalProps & {
   module: ModulePlanActionListType;

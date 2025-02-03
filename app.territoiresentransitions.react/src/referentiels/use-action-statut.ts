@@ -1,4 +1,4 @@
-import { supabaseClient } from '@/app/core-logic/api/supabase';
+import { supabaseClient } from '@/api/utils/supabase/browser-client';
 import { useAudit, useIsAuditeur } from '@/app/referentiels/audits/useAudit';
 // import { useMutation, useQuery, useQueryClient } from 'react-query';
 import {

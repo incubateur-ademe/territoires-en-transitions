@@ -1,4 +1,4 @@
-import { supabaseClient } from '@/app/core-logic/api/supabase';
+import { supabaseClient } from '@/api/utils/supabase/browser-client';
 import { useMutation } from 'react-query';
 
 export interface UpdateEmailParams {

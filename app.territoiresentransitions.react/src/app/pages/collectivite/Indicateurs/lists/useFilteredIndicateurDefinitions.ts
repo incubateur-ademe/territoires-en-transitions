@@ -1,6 +1,6 @@
 import { FetchOptions } from '@/api/indicateurs/domain';
+import { DISABLE_AUTO_REFETCH } from '@/api/utils/react-query/query-options';
 import { trpc } from '@/api/utils/trpc/client';
-import { DISABLE_AUTO_REFETCH } from '@/app/core-logic/api/supabase';
 import { useCollectiviteId } from '@/app/core-logic/hooks/params';
 import Fuse from 'fuse.js';
 

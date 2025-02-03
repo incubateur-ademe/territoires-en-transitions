@@ -1,7 +1,5 @@
-import {
-  DISABLE_AUTO_REFETCH,
-  supabaseClient,
-} from '@/app/core-logic/api/supabase';
+import { DISABLE_AUTO_REFETCH } from '@/api/utils/react-query/query-options';
+import { supabaseClient } from '@/api/utils/supabase/browser-client';
 import { TActionStatutsRow } from '@/app/types/alias';
 import { indexBy } from '@/app/utils/indexBy';
 import { useCallback, useMemo } from 'react';

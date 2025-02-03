@@ -1,7 +1,7 @@
 import { useQuery } from 'react-query';
 
 import { FicheResume } from '@/api/plan-actions';
-import { supabaseClient } from '@/app/core-logic/api/supabase';
+import { supabaseClient } from '@/api/utils/supabase/browser-client';
 import { useCollectiviteId } from '@/app/core-logic/hooks/params';
 import { useSearchParams } from '@/app/core-logic/hooks/query';
 import { TPersonne } from '@/app/types/alias';

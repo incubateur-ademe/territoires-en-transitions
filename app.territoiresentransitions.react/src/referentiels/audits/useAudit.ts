@@ -1,6 +1,6 @@
+import { supabaseClient } from '@/api/utils/supabase/browser-client';
 import { useCollectiviteId } from '@/app/collectivites/collectivite-context';
 import { useAuth } from '@/app/core-logic/api/auth/AuthProvider';
-import { supabaseClient } from '@/app/core-logic/api/supabase';
 import { useCurrentCollectivite } from '@/app/core-logic/hooks/useCurrentCollectivite';
 import { usePreuvesParType } from '@/app/referentiels/preuves/usePreuves';
 import { ReferentielId } from '@/domain/referentiels';

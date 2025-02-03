@@ -6,7 +6,7 @@ import {
   Filtre as FiltreFichesAction,
   ModifiedSince,
 } from '@/api/plan-actions/fiche-resumes.list/domain/fetch-options.schema';
-import { supabaseClient } from '@/app/core-logic/api/supabase';
+import { supabaseClient } from '@/api/utils/supabase/browser-client';
 import { useCurrentCollectivite } from '@/app/core-logic/hooks/useCurrentCollectivite';
 import StatutsFilterDropdown from '@/app/ui/dropdownLists/ficheAction/statuts/StatutsFilterDropdown';
 import PeriodeDropdown from '@/app/ui/dropdownLists/PeriodeDropdown';

@@ -1,4 +1,4 @@
-import { supabaseClient } from '@/app/core-logic/api/supabase';
+import { supabaseClient } from '@/api/utils/supabase/browser-client';
 import { ActionReferentiel } from '@/app/referentiels/ReferentielTable/useReferentiel';
 import { TActionStatutsRow } from '@/app/types/alias';
 import { ITEM_ALL } from '@/ui';

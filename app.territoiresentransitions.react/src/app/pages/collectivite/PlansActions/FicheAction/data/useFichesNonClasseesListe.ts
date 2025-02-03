@@ -1,5 +1,5 @@
 import { FicheResume } from '@/api/plan-actions';
-import { supabaseClient } from '@/app/core-logic/api/supabase';
+import { supabaseClient } from '@/api/utils/supabase/browser-client';
 import { useQuery } from 'react-query';
 import { objectToCamel } from 'ts-case-convert';
 import { sortFichesResume } from './utils';

@@ -1,4 +1,4 @@
-import { supabaseClient } from '@/app/core-logic/api/supabase';
+import { supabaseClient } from '@/api/utils/supabase/browser-client';
 import { getScoreRealiseQueryKey } from '@/app/referentiels/actions/useScoreRealise';
 import { getScoreQueryKey } from '@/app/referentiels/DEPRECATED_score-hooks';
 import { RealtimeChannel } from '@supabase/supabase-js';

@@ -1,11 +1,11 @@
 import { useQuery } from 'react-query';
 
+import { supabaseClient } from '@/api/utils/supabase/browser-client';
 import {
   makeCollectiviteFichesNonClasseesUrl,
   makeCollectivitePlanActionAxeUrl,
   makeCollectivitePlanActionUrl,
 } from '@/app/app/paths';
-import { supabaseClient } from '@/app/core-logic/api/supabase';
 import { useCollectiviteId } from '@/app/core-logic/hooks/params';
 import { SideNavLinks } from '../../../CollectivitePageLayout/SideNav';
 import { generateTitle } from '../../FicheAction/data/utils';

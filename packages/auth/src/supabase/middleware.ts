@@ -4,6 +4,7 @@ import { Database } from '@/api';
 import { dcpFetch } from '@/api/utilisateurs/shared/data_access/dcp.fetch';
 import { createServerClient } from '@supabase/ssr';
 import { NextResponse, type NextRequest } from 'next/server';
+import { supabaseCookieOptions } from '@/api/utils/supabase/cookie-options';
 
 export async function updateSessionOrRedirect(request: NextRequest) {
   let supabaseResponse = NextResponse.next({
@@ -14,12 +15,7 @@ export async function updateSessionOrRedirect(request: NextRequest) {
     process.env.NEXT_PUBLIC_SUPABASE_URL!,
     process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY!,
     {
-      cookieOptions: {
-        domain:
-          process.env.NODE_ENV === 'production'
-            ? '.territoiresentransitions.fr'
-            : '.localhost',
-      },
+      cookieOptions: supabaseCookieOptions,
       cookies: {
         getAll() {
           return request.cookies.getAll();
