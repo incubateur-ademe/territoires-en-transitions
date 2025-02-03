@@ -44,9 +44,10 @@ export const EditValeursModal = (props: EditValeursModalProps) => {
       objectifCommentaire,
     });
 
-  const reset = () => {
-    setAnnee(annee ? annee + 1 : null);
-    setValeur({});
+  // cherche si il existe déjà une valeur
+  const getValeurExistante = (a: number | null) => {
+    if (!a) return null;
+    return valeursExistantes.find((v) => v.annee === a);
   };
 
   return (
@@ -66,13 +67,8 @@ export const EditValeursModal = (props: EditValeursModalProps) => {
                   setAnnee(isNaN(a) ? null : a);
                 }}
                 onBlur={() => {
-                  if (!annee) return;
-                  const valeurExistante = valeursExistantes.find(
-                    (v) => v.annee === annee
-                  );
-                  if (valeurExistante) {
-                    setValeur(valeurExistante);
-                  }
+                  const valeurExistante = getValeurExistante(annee);
+                  if (valeurExistante) setValeur(valeurExistante);
                 }}
               />
             </Field>
@@ -124,7 +120,12 @@ export const EditValeursModal = (props: EditValeursModalProps) => {
             disabled={disabled}
             onClick={() => {
               upsert();
-              reset();
+              // pré-rempli le champ avec l'année suivante
+              const anneeSuivante = annee ? annee + 1 : null;
+              setAnnee(anneeSuivante);
+              // pré-rempli (ou reset) les autres champs avec les valeurs existantes
+              const valeurExistante = getValeurExistante(anneeSuivante);
+              setValeur(valeurExistante ? valeurExistante : {});
             }}
           >
             Valider et ajouter une année
