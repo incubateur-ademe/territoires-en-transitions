@@ -4,6 +4,8 @@ import { TActionStatutsRow, TAxeRow } from '@/app/types/alias';
 import { Divider, Stack, Title } from '@/app/ui/export-pdf/components';
 import { AnnexeInfo } from '../../FicheAction/data/useAnnexesFicheActionInfos';
 
+import { RouterOutput } from '@/api/utils/trpc/client';
+import Etapes from '@/app/app/pages/collectivite/PlansActions/ExportPdf/FicheActionPdf/Etapes';
 import Acteurs from './Acteurs';
 import ActionsLiees from './ActionsLiees';
 import Budget from './Budget';
@@ -17,8 +19,6 @@ import Notes from './Notes';
 import NotesDeSuivi from './NotesDeSuivi';
 import Pilotes from './Pilotes';
 import Planning from './Planning';
-import Etapes from '@/app/app/pages/collectivite/PlansActions/ExportPdf/FicheActionPdf/Etapes';
-import { RouterOutput } from '@/api/utils/trpc/client';
 
 export type FicheActionPdfProps = {
   fiche: FicheAction;
@@ -63,22 +63,17 @@ const FicheActionPdf = ({
       {/* Description de la fiche */}
       <Description fiche={fiche} />
 
-      {/* Informations principales */}
-      <Stack wrap={false} direction="row">
-        <Stack className="w-[49%]">
-          {/* Dates et auteurs */}
-          <CreationFiche fiche={fiche} />
+      {/* Dates et auteurs */}
+      <CreationFiche fiche={fiche} />
 
-          {/* Pilotes */}
-          <Pilotes fiche={fiche} />
-        </Stack>
-
-        {/* Planning */}
-        <Planning fiche={fiche} />
-      </Stack>
+      {/* Pilotes */}
+      <Pilotes fiche={fiche} />
 
       {/* Acteurs */}
       <Acteurs fiche={fiche} />
+
+      {/* Planning */}
+      <Planning fiche={fiche} />
 
       {/* Indicateurs */}
       <Indicateurs fiche={fiche} indicateursListe={indicateursListe} />
