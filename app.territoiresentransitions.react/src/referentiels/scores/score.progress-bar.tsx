@@ -8,7 +8,6 @@ import { ProgressBarStyleOptions } from './progress-bar';
 
 export const ScoreProgressBar = ({
   actionDefinition,
-  // remettre actionId au lieu de actionDefinition une fois l'affichage des scores par % généralisé
   className,
   progressBarStyleOptions,
   // TODO(temporary): This prop is a temporary patch to only display percentage
