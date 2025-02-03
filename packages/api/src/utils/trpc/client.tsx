@@ -6,6 +6,8 @@ import {
   createTRPCQueryUtils,
   createTRPCReact,
   httpBatchLink,
+  httpLink,
+  splitLink,
 } from '@trpc/react-query';
 import type { inferRouterInputs, inferRouterOutputs } from '@trpc/server';
 import { useState } from 'react';
@@ -41,12 +43,29 @@ export const trpc = createTRPCReact<AppRouter>();
 
 export const trpcClient = trpc.createClient({
   links: [
-    httpBatchLink({
+    splitLink({
+      condition(op) {
+        // check for context property `skipBatch`
+        return Boolean(op.context.skipBatch);
+      },
+      // when condition is true, use normal request
+      true: httpLink({
+        url: getUrl(),
+        async headers() {
+          const authHeaders = await getAuthHeaders();
+          return {
+            ...(authHeaders ?? {}),
+          };
+        },
+      }),
+      // when condition is false, use batching
+      false: httpBatchLink({
       // transformer: superjson, <-- if you use a data transformer
       url: getUrl(),
       async headers() {
         return (await getAuthHeaders()) ?? {};
       },
+      }),
     }),
   ],
 });
