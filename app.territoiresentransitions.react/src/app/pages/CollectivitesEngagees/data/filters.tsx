@@ -1,6 +1,7 @@
 import { CollectiviteEngagee } from '@/api';
 
-const notEmpty = (l: string[]): boolean => l.length > 0;
+const notEmpty = (l: unknown[]): boolean => l.length > 0;
+
 export const getNumberOfActiveFilters = (
   filtres: CollectiviteEngagee.Filters
 ): number => {

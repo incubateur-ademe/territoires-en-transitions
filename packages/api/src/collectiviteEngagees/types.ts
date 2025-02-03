@@ -1,8 +1,8 @@
-import {Database} from '../database.types';
-import {NonNullableFields} from '../typeUtils';
+import { Database } from '../database.types';
+import { NonNullableFields } from '../typeUtils';
 
 export type FilterPlan = {
-  typesPlan: string[];
+  typesPlan: number[];
 };
 export type FilterCollectivite = {
   nom?: string;
