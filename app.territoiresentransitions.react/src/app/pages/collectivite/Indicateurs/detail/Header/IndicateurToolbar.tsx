@@ -33,7 +33,8 @@ const IndicateurToolbar = ({
   const { data: isFavoriData, isLoading: isFavoriLoading } =
     useIsIndicateurFavori(definition.id);
 
-  const isFavori = isFavoriData && isFavoriData.data?.[0].favoris;
+  const isFavori =
+    isFavoriData && isFavoriData.data?.[0] && isFavoriData.data[0].favoris;
 
   const { mutate: toggleFavori } = useUpdateIndicateurFavoriCollectivite(
     collectiviteId!,
