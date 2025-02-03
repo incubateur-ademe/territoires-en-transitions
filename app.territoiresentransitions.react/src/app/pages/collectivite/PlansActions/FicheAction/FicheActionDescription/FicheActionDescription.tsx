@@ -108,7 +108,7 @@ const FicheActionDescription = ({
         <div className="text-base text-grey-1 whitespace-pre-wrap mb-0">
           {description ? (
             <Markdown
-              className="[&_ul]:list-disc [&_ul]:pl-8 [&_p]:mb-0"
+              className="[&_ul]:mb-0 [&_ol]:mb-0 [&_p]:mb-0"
               content={(isFullDescription || !isDescriptionTruncated
                 ? description
                 : truncatedDescription
