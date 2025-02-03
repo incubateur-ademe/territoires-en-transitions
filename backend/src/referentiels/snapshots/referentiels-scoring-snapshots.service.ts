@@ -400,15 +400,22 @@ export default class ReferentielsScoringSnapshotsService {
       );
 
     const query = limit ? baseQuery.limit(limit) : baseQuery;
-    const result = await query;
+    const snapshotList = await query;
 
-    const getScoreSnapshotsResponseType: GetScoreSnapshotsResponseType = {
+    const response: GetScoreSnapshotsResponseType = {
       collectiviteId: parseInt(collectiviteId as unknown as string),
       referentielId,
       typesJalon: typesJalon ?? [],
-      snapshots: result,
+      snapshots: snapshotList.map((snapshot) => ({
+        ...snapshot,
+        pointNonRenseigne:
+          snapshot.pointPotentiel -
+          (snapshot.pointFait +
+            snapshot.pointPasFait +
+            snapshot.pointProgramme),
+      })),
     };
-    return getScoreSnapshotsResponseType;
+    return response;
   }
 
   async getSummary(
