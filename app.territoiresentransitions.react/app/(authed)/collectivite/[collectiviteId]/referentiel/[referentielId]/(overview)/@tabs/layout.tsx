@@ -27,6 +27,7 @@ export default async function Layout({
           <TabsTab href="progression" label="Actions"></TabsTab>
           <TabsTab href="priorisation" label="Aide à la priorisation"></TabsTab>
           <TabsTab href="detail" label="Détail des statuts"></TabsTab>
+          <TabsTab href="evolutions" label="Évolutions du score"></TabsTab>
         </TabsList>
 
         <TabsPanel>{children}</TabsPanel>
