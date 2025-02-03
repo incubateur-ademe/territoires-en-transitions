@@ -1,4 +1,4 @@
-import { supabase } from '../../src/clientAPI';
+import { supabaseClient as supabase } from '@/api/utils/supabase/browser-client';
 import useSWR from 'swr';
 
 type Collectivite = {

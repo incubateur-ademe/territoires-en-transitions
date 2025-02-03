@@ -9,13 +9,13 @@ import {
 } from '@trpc/react-query';
 import type { inferRouterInputs, inferRouterOutputs } from '@trpc/server';
 import { useState } from 'react';
+import { getAuthHeaders } from '../supabase/auth-session.client';
 import { makeQueryClient } from './query-client';
 
 // By using `import type` you ensure that the reference will be stripped at compile-time, meaning you don't inadvertently import server-side code into your client.
 // For more information, see the Typescript docs: https://www.typescriptlang.org/docs/handbook/release-notes/typescript-3-8.html#type-only-imports-and-export
 // eslint-disable-next-line @nx/enforce-module-boundaries
 import type { AppRouter } from '@/domain/utils';
-import { getAuthHeaders } from '../authTokens';
 
 export type RouterInput = inferRouterInputs<AppRouter>;
 export type RouterOutput = inferRouterOutputs<AppRouter>;
@@ -45,10 +45,7 @@ export const trpcClient = trpc.createClient({
       // transformer: superjson, <-- if you use a data transformer
       url: getUrl(),
       async headers() {
-        const authHeaders = await getAuthHeaders();
-        return {
-          ...(authHeaders ?? {}),
-        };
+        return (await getAuthHeaders()) ?? {};
       },
     }),
   ],

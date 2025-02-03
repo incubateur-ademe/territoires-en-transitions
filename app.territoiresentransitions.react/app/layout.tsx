@@ -1,9 +1,6 @@
 import { Metadata } from 'next';
 import nextDynamic from 'next/dynamic';
-import Footer from '../src/app/Layout/Footer';
-import Header from '../src/app/Layout/Header';
 import StonlyWidget from '../src/lib/stonly.widget';
-import AppProviders from './app-providers';
 import './global.css';
 
 export const dynamic = 'force-dynamic';
@@ -64,7 +61,7 @@ export const metadata: Metadata = {
   },
 };
 
-export default function RootLayout({
+export default async function RootLayout({
   children,
 }: {
   children: React.ReactNode;
@@ -79,11 +76,7 @@ export default function RootLayout({
            /* empêche l'utilisation de la propriété sticky dans l'app */}
           <div className="h-screen w-screen flex flex-col">
             <div id="main" className="grow flex flex-col w-full">
-              <AppProviders>
-                <Header />
-                {children}
-                <Footer />
-              </AppProviders>
+              {children}
             </div>
           </div>
         </div>

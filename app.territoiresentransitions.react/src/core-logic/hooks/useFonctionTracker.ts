@@ -33,7 +33,8 @@ export const useFonctionTracker = (): ((usage: Usage) => Promise<boolean>) => {
   const collectivite_id = useCollectiviteId();
   const localisation = useLocalisation();
   const ref = useRef();
-  const { user } = useAuth();
+  const authContext = useAuth();
+  const user = authContext?.user;
 
   const factory = () => {
     // Garde la dernière valeur d'usage pour éviter d'envoyer

@@ -4,9 +4,8 @@ import DropdownFloater from '@/app/ui/shared/floating-ui/DropdownFloater';
 import { Button } from '@/ui';
 import classNames from 'classnames';
 import Link from 'next/link';
-import { usePathname, useRouter } from 'next/navigation';
+import { usePathname } from 'next/navigation';
 import { forwardRef, Ref } from 'react';
-import { useQueryClient } from 'react-query';
 import './MenuUtilisateur.css';
 import { HeaderPropsWithModalState } from './types';
 
@@ -101,24 +100,12 @@ MenuUtilisateurBtn.displayName = 'MenuUtilisateurBtn';
  * Bouton "Déconnexion"
  */
 const Deconnexion = ({ auth }: { auth: TAuthContext }) => {
-  const router = useRouter();
-  const queryClient = useQueryClient();
   return (
     <Link
       className="fr-nav__link"
       style={{ backgroundImage: 'none' }}
       data-test="user-logout"
-      href="/"
-      onClick={() => {
-        auth.disconnect().then(() => {
-          // Supprime le cache de la session
-          queryClient.removeQueries({
-            queryKey: ['session'],
-          });
-
-          router.push('/');
-        });
-      }}
+      href="/sign-out"
     >
       <span className="px-6">Déconnexion</span>
     </Link>

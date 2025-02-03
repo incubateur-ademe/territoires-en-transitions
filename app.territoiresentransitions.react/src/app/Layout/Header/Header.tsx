@@ -1,8 +1,9 @@
+'use client';
+
 import classNames from 'classnames';
 import Image from 'next/image';
 import Link from 'next/link';
 import { useState } from 'react';
-
 import ademeSrc from '../../static/img/ademe.svg';
 import { AccesRapide } from './AccesRapide';
 import { MaintenanceNotice } from './MaintenanceNotice';

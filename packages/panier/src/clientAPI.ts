@@ -1,6 +1,4 @@
 import { PanierAPI } from '@/api';
-import { createClient } from './supabase/client';
-
-export const supabase = createClient();
+import { supabaseClient as supabase } from '@/api/utils/supabase/browser-client';
 
 export const panierAPI = new PanierAPI(supabase);

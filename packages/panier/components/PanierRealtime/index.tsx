@@ -1,6 +1,7 @@
 'use client';
 
 import { Panier } from '@/api';
+import { supabaseClient as supabase } from '@/api/utils/supabase/browser-client';
 import ListeActions from '@/panier/components/ListeActions';
 import PanierActions from '@/panier/components/PanierActions';
 import {
@@ -8,7 +9,7 @@ import {
   usePanierContext,
   useUserContext,
 } from '@/panier/providers';
-import { panierAPI, supabase } from '@/panier/src/clientAPI';
+import { panierAPI } from '@/panier/src/clientAPI';
 import { PanierOngletName, useEventTracker, useOngletTracker } from '@/ui';
 import { useRouter } from 'next/navigation';
 import { useEffect, useState } from 'react';

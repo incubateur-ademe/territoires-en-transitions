@@ -1,5 +1,5 @@
 import { ENV } from '@/api/environmentVariables';
-import { useAuth } from '@/app/core-logic/api/auth/AuthProvider';
+import { getAuthHeaders } from '@/api/utils/supabase/auth-session.client';
 import { useCollectiviteId } from '@/app/core-logic/hooks/params';
 import { shasum256 } from '@/app/utils/shasum256';
 import { useEffect, useState } from 'react';
@@ -108,35 +108,38 @@ export const useUploader = (
 
   const collectivite_id = useCollectiviteId()!;
   const { addFileToLib } = useAddFileToLib();
-  const { authHeaders } = useAuth();
   const bucket_id = useCollectiviteBucketId(collectivite_id);
-
-  // appelée quand l'upload est terminé
-  const onStatusChange = (status: UploadStatus) => {
-    if (status.code === UploadStatusCode.uploaded) {
-      const { filename, hash } = status;
-      // crée l'entrée dans la bibliothèque
-      addFileToLib({ collectivite_id, filename, hash }).then((fichier) => {
-        setStatus({
-          code: UploadStatusCode.completed,
-          fichier_id: fichier.id,
-          hash,
-        });
-      });
-    } else {
-      setStatus(status);
-    }
-  };
 
   // pour éviter les uploads multiples du même fichier
   const upload = useDebouncedCallback(addFileToBucket, 500);
 
   // démarre l'upload du fichier
   useEffect(() => {
-    if (bucket_id && authHeaders) {
-      upload({ bucket_id, file, authHeaders, onStatusChange });
-    }
-  }, [collectivite_id, bucket_id]);
+    // appelée quand l'upload est terminé
+    const onStatusChange = (status: UploadStatus) => {
+      if (status.code === UploadStatusCode.uploaded) {
+        const { filename, hash } = status;
+        // crée l'entrée dans la bibliothèque
+        addFileToLib({ collectivite_id, filename, hash }).then((fichier) => {
+          setStatus({
+            code: UploadStatusCode.completed,
+            fichier_id: fichier.id,
+            hash,
+          });
+        });
+      } else {
+        setStatus(status);
+      }
+    };
+
+    const fetchData = async () => {
+      const authHeaders = await getAuthHeaders();
+      if (bucket_id && authHeaders) {
+        upload({ bucket_id, file, authHeaders, onStatusChange });
+      }
+    };
+    fetchData();
+  }, [collectivite_id, bucket_id, upload, file, addFileToLib]);
 
   return { status };
 };

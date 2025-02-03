@@ -1,4 +1,5 @@
-import { getRootDomain, setAuthTokens } from '@/api';
+import { getRootDomain } from '@/api';
+import { supabaseClient as supabase } from '@/api/utils/supabase/browser-client';
 import {
   Credentials,
   isValidLoginView,
@@ -7,7 +8,6 @@ import {
 } from '@/auth/components/Login';
 import { useGetPasswordStrength } from '@/auth/components/PasswordStrengthMeter/useGetPasswordStrength';
 import { ResendFunction, VerifyOTPData } from '@/auth/components/VerifyOTP';
-import { supabase } from '@/auth/src/clientAPI';
 import { useRouter } from 'next/navigation';
 import { useState } from 'react';
 
@@ -83,8 +83,6 @@ export const useLoginState = ({
       }
       const session = data.session;
       if (session) {
-        // enregistre les coookies de session
-        setAuthTokens(session, getRootDomain(document.location.hostname));
         // et redirige sur la page voulue une fois authentifié
         router.push(redirectTo);
       }
@@ -127,9 +125,6 @@ export const useLoginState = ({
         return;
       }
 
-      // enregistre les tokens dans le domaine racine pour pouvoir les partager entre les sous-domaines
-      setAuthTokens(data.session, getDomain());
-
       // redirige
       router.push(redirectTo);
     }
@@ -164,9 +159,6 @@ export const useLoginState = ({
           );
         return;
       }
-
-      // enregistre les tokens dans le domaine racine pour pouvoir les partager entre les sous-domaines
-      setAuthTokens(data.session, getDomain());
 
       // redirige
       setView('reset_mdp');

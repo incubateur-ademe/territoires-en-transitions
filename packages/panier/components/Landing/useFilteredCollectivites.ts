@@ -1,6 +1,6 @@
 import { makeSearchString } from '@/api';
+import { supabaseClient as supabase } from '@/api/utils/supabase/browser-client';
 import useSWR from 'swr';
-import { supabase } from '../../src/clientAPI';
 
 type Collectivite = {
   collectivite_id: number;

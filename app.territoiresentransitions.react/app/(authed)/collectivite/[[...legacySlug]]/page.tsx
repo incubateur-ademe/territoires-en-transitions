@@ -6,6 +6,7 @@ const LegacyRouter = dynamic(() => import('./legacy-router'), {
   ssr: false,
 });
 
-export function ClientOnly() {
+// TODO-NEXTJS: Replace BrowserRouter with NextRouter
+export default function Page() {
   return <LegacyRouter />;
 }
