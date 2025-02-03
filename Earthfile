@@ -284,7 +284,8 @@ node-alpine-with-prod-deps:
 
   ENV PNPM_HOME="/pnpm"
   ENV PATH="$PNPM_HOME:$PATH"
-  RUN corepack enable pnpm
+  RUN npm install -g corepack@latest
+  RUN corepack enable && corepack prepare pnpm@latest --activate
 
   RUN pnpm fetch --prod
 
@@ -320,7 +321,8 @@ node-fr:
 
     ENV PNPM_HOME="/pnpm"
     ENV PATH="$PNPM_HOME:$PATH"
-    RUN corepack enable pnpm
+    RUN npm install -g corepack@latest
+    RUN corepack enable && corepack prepare pnpm@latest --activate
 
     WORKDIR /app
 
