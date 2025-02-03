@@ -1,4 +1,4 @@
-import { createEnumObject } from '@/backend/utils';
+import { createEnumObject } from '@/domain/utils';
 import { pgEnum } from 'drizzle-orm/pg-core';
 
 export const preuveTypeValues = [
