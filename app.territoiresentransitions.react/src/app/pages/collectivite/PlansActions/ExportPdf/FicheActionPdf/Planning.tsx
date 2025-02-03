@@ -30,7 +30,7 @@ const Planning = ({ fiche }: FicheActionPdfProps) => {
     isBefore(new Date(dateFinPrevisionnelle), startOfToday());
 
   return (
-    <Card className="w-[49%] justify-center">
+    <Card className="justify-center">
       <CalendarPicto className="h-14 w-14 mx-auto" />
 
       {/* Date de début */}
@@ -118,7 +118,7 @@ const Planning = ({ fiche }: FicheActionPdfProps) => {
       {!!justificationCalendrier && (
         <Stack gap={2}>
           <Title variant="h6" className="uppercase">
-            Précisions statut :
+            Calendrier :
           </Title>
           <Paragraph>{justificationCalendrier}</Paragraph>
         </Stack>
