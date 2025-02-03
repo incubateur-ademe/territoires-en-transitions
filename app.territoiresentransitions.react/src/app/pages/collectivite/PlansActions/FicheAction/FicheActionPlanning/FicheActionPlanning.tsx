@@ -43,7 +43,8 @@ const FicheActionPlanning = ({
     !ameliorationContinue &&
     !dateDebut &&
     !dateFinPrevisionnelle &&
-    !tempsDeMiseEnOeuvre;
+    !tempsDeMiseEnOeuvre &&
+    !justificationCalendrier;
 
   const isLate =
     dateFinPrevisionnelle &&
