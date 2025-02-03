@@ -1,5 +1,5 @@
 import { Database } from '@/api';
-import { supabaseClient } from '@/app/core-logic/api/supabase';
+import { supabaseClient } from '@/api/utils/supabase/browser-client';
 import { ActionDefinitionSummary } from '@/app/referentiels/ActionDefinitionSummaryReadEndpoint';
 import { ReferentielId } from '@/domain/referentiels';
 import { PostgrestResponse } from '@supabase/supabase-js';

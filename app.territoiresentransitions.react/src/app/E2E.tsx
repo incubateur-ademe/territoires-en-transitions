@@ -1,5 +1,5 @@
+import { supabaseClient } from '@/api/utils/supabase/browser-client';
 import { useAuth } from '@/app/core-logic/api/auth/AuthProvider';
-import { supabaseClient } from '@/app/core-logic/api/supabase';
 import { useHistory } from 'react-router-dom';
 
 declare global {

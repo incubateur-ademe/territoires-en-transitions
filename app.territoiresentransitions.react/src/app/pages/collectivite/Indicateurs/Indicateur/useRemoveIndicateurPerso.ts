@@ -1,6 +1,6 @@
 import { Indicateurs } from '@/api';
+import { supabaseClient } from '@/api/utils/supabase/browser-client';
 import { makeCollectiviteTousLesIndicateursUrl } from '@/app/app/paths';
-import { supabaseClient } from '@/app/core-logic/api/supabase';
 import { useCurrentCollectivite } from '@/app/core-logic/hooks/useCurrentCollectivite';
 import { useEventTracker } from '@/ui';
 import { useRouter } from 'next/navigation';

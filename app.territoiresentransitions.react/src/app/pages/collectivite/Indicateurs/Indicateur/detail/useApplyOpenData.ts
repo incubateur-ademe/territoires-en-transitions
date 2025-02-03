@@ -3,8 +3,8 @@
  */
 
 import { Indicateurs } from '@/api';
+import { supabaseClient } from '@/api/utils/supabase/browser-client';
 import { trpc } from '@/api/utils/trpc/client';
-import { supabaseClient } from '@/app/core-logic/api/supabase';
 import { useCurrentCollectivite } from '@/app/core-logic/hooks/useCurrentCollectivite';
 import { useEventTracker } from '@/ui';
 import { useMutation, useQuery, useQueryClient } from 'react-query';

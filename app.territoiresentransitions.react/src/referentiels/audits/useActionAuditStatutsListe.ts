@@ -1,5 +1,5 @@
+import { supabaseClient } from '@/api/utils/supabase/browser-client';
 import { useCollectiviteId } from '@/app/collectivites/collectivite-context';
-import { supabaseClient } from '@/app/core-logic/api/supabase';
 import { ReferentielId } from '@/domain/referentiels';
 import { useQuery } from 'react-query';
 import { useReferentielId } from '../referentiel-context';

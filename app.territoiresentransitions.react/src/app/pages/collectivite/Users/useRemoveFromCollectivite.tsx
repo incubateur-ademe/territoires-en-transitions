@@ -1,5 +1,5 @@
+import { supabaseClient } from '@/api/utils/supabase/browser-client';
 import { trpc } from '@/api/utils/trpc/client';
-import { supabaseClient } from '@/app/core-logic/api/supabase';
 import { useCollectiviteId } from '@/app/core-logic/hooks/params';
 import { useMutation, useQueryClient } from 'react-query';
 import { TRemoveFromCollectivite } from './types';

@@ -1,7 +1,7 @@
 import { MaCollectivite } from '@/api';
 import { planActionsPilotableFetch } from '@/api/plan-actions';
+import { supabaseClient } from '@/api/utils/supabase/browser-client';
 import { useAuth } from '@/app/core-logic/api/auth/AuthProvider';
-import { supabaseClient } from '@/app/core-logic/api/supabase';
 import { useQuery } from 'react-query';
 
 // charge les collectivités associées au compte de l'utilisateur courant

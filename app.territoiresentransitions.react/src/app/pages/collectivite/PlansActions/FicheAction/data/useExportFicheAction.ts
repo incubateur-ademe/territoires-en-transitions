@@ -1,4 +1,4 @@
-import { supabaseClient } from '@/app/core-logic/api/supabase';
+import { supabaseClient } from '@/api/utils/supabase/browser-client';
 import { useFonctionTracker } from '@/app/core-logic/hooks/useFonctionTracker';
 import { saveBlob } from '@/app/referentiels/preuves/Bibliotheque/saveBlob';
 import { format as formatDate } from 'date-fns';

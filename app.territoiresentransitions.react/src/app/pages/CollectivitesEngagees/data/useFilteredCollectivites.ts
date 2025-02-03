@@ -1,6 +1,6 @@
 import { CollectiviteEngagee, NonNullableFields, Views } from '@/api';
+import { supabaseClient } from '@/api/utils/supabase/browser-client';
 import { NB_CARDS_PER_PAGE } from '@/app/app/pages/CollectivitesEngagees/data/utils';
-import { supabaseClient } from '@/app/core-logic/api/supabase';
 import { useQuery } from 'react-query';
 
 /**

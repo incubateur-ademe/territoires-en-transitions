@@ -1,10 +1,10 @@
 import { useQuery } from 'react-query';
 
+import { supabaseClient } from '@/api/utils/supabase/browser-client';
 import {
   makeCollectivitePlanActionAxeUrl,
   makeCollectivitePlanActionUrl,
 } from '@/app/app/paths';
-import { supabaseClient } from '@/app/core-logic/api/supabase';
 import { TAxeRow } from '@/app/types/alias';
 import { generateTitle } from '../../FicheAction/data/utils';
 

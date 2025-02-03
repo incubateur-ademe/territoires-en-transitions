@@ -1,4 +1,4 @@
-import { supabaseClient } from '@/app/core-logic/api/supabase';
+import { supabaseClient } from '@/api/utils/supabase/browser-client';
 import { TPreuve } from '@/app/referentiels/preuves/Bibliotheque/types';
 import { useQuery } from 'react-query';
 

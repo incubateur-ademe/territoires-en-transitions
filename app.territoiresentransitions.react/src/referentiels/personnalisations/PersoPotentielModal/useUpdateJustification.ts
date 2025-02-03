@@ -1,5 +1,5 @@
 import { TablesInsert } from '@/api';
-import { supabaseClient } from '@/app/core-logic/api/supabase';
+import { supabaseClient } from '@/api/utils/supabase/browser-client';
 import { TReponseRead } from '@/app/referentiels/personnalisations/personnalisation.types';
 import { useMutation, useQueryClient } from 'react-query';
 

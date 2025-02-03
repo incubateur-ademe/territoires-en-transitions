@@ -1,4 +1,4 @@
-import { supabaseClient } from '@/app/core-logic/api/supabase';
+import { supabaseClient } from '@/api/utils/supabase/browser-client';
 import { QueryKey, useMutation, useQueryClient } from 'react-query';
 import { objectToSnake } from 'ts-case-convert';
 

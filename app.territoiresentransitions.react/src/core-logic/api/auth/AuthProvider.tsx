@@ -8,6 +8,7 @@ import {
 import { Tables } from '@/api/database.types';
 import { ENV } from '@/api/environmentVariables';
 import { dcpFetch } from '@/api/utilisateurs/shared/data_access/dcp.fetch';
+import { supabaseClient } from '@/api/utils/supabase/browser-client';
 import { fetchOwnedCollectivites } from '@/app/core-logic/hooks/useOwnedCollectivites';
 import {
   Session,
@@ -23,7 +24,6 @@ import {
   useState,
 } from 'react';
 import { useQuery } from 'react-query';
-import { supabaseClient } from '../supabase';
 
 // typage du contexte exposé par le fournisseur
 export type TAuthContext = {

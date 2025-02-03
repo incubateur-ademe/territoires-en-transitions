@@ -2,7 +2,7 @@ import { useQuery } from 'react-query';
 
 import { OptionSection } from '@/ui';
 
-import { supabaseClient } from '@/app/core-logic/api/supabase';
+import { supabaseClient } from '@/api/utils/supabase/browser-client';
 
 const fetchPlanTypeListe = async () => {
   const query = supabaseClient.from('plan_action_type').select();
