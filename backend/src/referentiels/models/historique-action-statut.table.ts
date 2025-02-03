@@ -9,7 +9,7 @@ import {
 import { createInsertSchema, createSelectSchema } from 'drizzle-zod';
 import { collectiviteTable } from '../../collectivites/shared/models/collectivite.table';
 import { historiqueSchema } from '../../personnalisations/models/historique-reponse-choix.table';
-import { actionIdReference } from './action-definition.table';
+import { actionIdReference } from './action-relation.table';
 import { statutAvancementPgEnum } from './action-statut.table';
 
 export const historiqueActionStatutTable = historiqueSchema.table(

@@ -9,7 +9,6 @@ import {
 } from 'drizzle-orm/pg-core';
 import { createInsertSchema, createSelectSchema } from 'drizzle-zod';
 import { z } from 'zod';
-import { actionRelationTable } from './action-relation.table';
 import { ActionType } from './action-type.enum';
 import { referentielDefinitionTable } from './referentiel-definition.table';
 import { referentielIdPgEnum } from './referentiel-id.enum';
@@ -25,10 +24,6 @@ export const actionCategorieEnum = pgEnum('action_categorie', [
   ActionCategoryType.EFFETS,
 ]);
 export const actionIdVarchar = varchar('action_id', { length: 30 });
-export const actionIdReference = actionIdVarchar.references(
-  () => actionRelationTable.id
-);
-
 export const actionDefinitionTable = pgTable('action_definition', {
   modifiedAt,
   actionId: actionIdVarchar.primaryKey().notNull(),

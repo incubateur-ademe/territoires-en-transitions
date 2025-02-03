@@ -1,7 +1,7 @@
+import { actionIdReference } from '@/backend/referentiels/models/action-relation.table';
 import { InferInsertModel, InferSelectModel } from 'drizzle-orm';
 import { pgTable, text } from 'drizzle-orm/pg-core';
 import { createInsertSchema, createSelectSchema } from 'drizzle-zod';
-import { actionIdReference } from '../../referentiels/models/action-definition.table';
 
 export const personnalisationTable = pgTable('personnalisation', {
   actionId: actionIdReference.primaryKey().notNull(),

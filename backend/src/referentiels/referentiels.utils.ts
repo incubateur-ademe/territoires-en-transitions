@@ -1,4 +1,5 @@
-import { ActionType, referentielIdEnumSchema } from './index-domain';
+import { ActionType } from './models/action-type.enum';
+import { referentielIdEnumSchema } from './models/referentiel-id.enum';
 
 export class ReferentielException extends Error {
   constructor(message: string) {

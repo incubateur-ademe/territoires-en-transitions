@@ -10,7 +10,7 @@ import {
 import { createInsertSchema, createSelectSchema } from 'drizzle-zod';
 import z from 'zod';
 import { collectiviteTable } from '../../collectivites/shared/models/collectivite.table';
-import { actionIdReference } from './action-definition.table';
+import { actionIdReference } from './action-relation.table';
 
 export const StatutAvancementEnum = {
   FAIT: 'fait',

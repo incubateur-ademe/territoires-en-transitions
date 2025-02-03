@@ -2,7 +2,7 @@ import { modifiedAt } from '@/domain/utils';
 import { InferInsertModel, InferSelectModel } from 'drizzle-orm';
 import { doublePrecision, pgTable } from 'drizzle-orm/pg-core';
 import { createInsertSchema, createSelectSchema } from 'drizzle-zod';
-import { actionIdReference } from './action-definition.table';
+import { actionIdReference } from './action-relation.table';
 
 export const actionComputedPointsTable = pgTable('action_computed_points', {
   modifiedAt,
