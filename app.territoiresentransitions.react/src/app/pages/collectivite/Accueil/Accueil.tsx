@@ -21,8 +21,9 @@ import {
 } from '@/app/app/paths';
 import { useCurrentCollectivite } from '@/app/core-logic/hooks/useCurrentCollectivite';
 import { useUser } from '@/app/users/user-provider';
-import { Button } from '@/ui';
+import { Button, TrackPageView, useEventTracker } from '@/ui';
 import PageContainer from '@/ui/components/layout/page-container';
+import { pick } from 'es-toolkit';
 
 /**
  * Affiche la page d'accueil d'une collectivité
@@ -42,12 +43,22 @@ const Accueil = (): JSX.Element => {
     collectivite?.collectiviteId!
   );
 
+  const trackEvent = useEventTracker('app/accueil');
+
   if (!collectivite?.collectiviteId) return <></>;
 
   const { collectiviteId: collectiviteId } = collectivite;
 
   return (
     <PageContainer dataTest="accueil-collectivite">
+      <TrackPageView
+        pageName={`app/accueil`}
+        properties={pick(collectivite, [
+          'collectiviteId',
+          'niveauAcces',
+          'role',
+        ])}
+      />
       <h2 className="mb-4">Bonjour {user?.prenom} !</h2>
       <div className="mb-12 text-lg text-grey-8">
         <p>
@@ -80,12 +91,14 @@ const Accueil = (): JSX.Element => {
               href: makeReferentielRootUrl({
                 collectiviteId,
               }),
+              onClick: () => trackEvent('edl_synthese', { ...collectivite }),
             },
             {
               children: "Plus d'informations sur le programme",
               href: 'https://www.territoiresentransitions.fr/programme',
               external: true,
               variant: 'outlined',
+              onClick: () => trackEvent('edl_plus_infos', { ...collectivite }),
             },
           ]}
         />
@@ -103,6 +116,10 @@ const Accueil = (): JSX.Element => {
                     collectiviteId,
                     view: 'collectivite',
                   }),
+                  onClick: () =>
+                    trackEvent('plan_actions_tableau_de_bord_collectivite', {
+                      ...collectivite,
+                    }),
                 }
               : planActionsCount > 0
               ? {
@@ -111,12 +128,18 @@ const Accueil = (): JSX.Element => {
                     collectiviteId,
                     view: 'personnel',
                   }),
+                  onClick: () =>
+                    trackEvent('plan_actions_mon_suivi_personnel', {
+                      ...collectivite,
+                    }),
                 }
               : {
                   children: 'Créer mon 1er plan !',
                   href: makeCollectivitePlansActionsNouveauUrl({
                     collectiviteId,
                   }),
+                  onClick: () =>
+                    trackEvent('plan_actions_creer_plan', { ...collectivite }),
                 },
             ficheActionCount > 0
               ? {
@@ -125,10 +148,17 @@ const Accueil = (): JSX.Element => {
                     collectiviteId,
                   }),
                   variant: 'outlined',
+                  onClick: () =>
+                    trackEvent('plan_actions_toutes_les_fiches', {
+                      ...collectivite,
+                    }),
                 }
               : {
                   children: 'Créer une fiche action',
-                  onClick: () => createFicheAction(),
+                  onClick: () => {
+                    createFicheAction();
+                    trackEvent('plan_actions_creer_fiche', { ...collectivite });
+                  },
                   variant: 'outlined',
                 },
           ]}
@@ -142,12 +172,20 @@ const Accueil = (): JSX.Element => {
             {
               children: 'Voir tous les indicateurs',
               href: makeCollectiviteTousLesIndicateursUrl({ collectiviteId }),
+              onClick: () =>
+                trackEvent('indicateurs_tous', {
+                  ...collectivite,
+                }),
             },
             {
               children: 'Découvrir les indicateurs disponibles en open data',
               href: `${makeCollectiviteTousLesIndicateursUrl({
                 collectiviteId,
               })}?od=true`,
+              onClick: () =>
+                trackEvent('indicateurs_open_data', {
+                  ...collectivite,
+                }),
               variant: 'outlined',
             },
           ]}
@@ -160,6 +198,10 @@ const Accueil = (): JSX.Element => {
             {
               children: 'Découvrir la fonctionnalité',
               href: makeCollectiviteTrajectoirelUrl({ collectiviteId }),
+              onClick: () =>
+                trackEvent('trajectoires_decouvrir', {
+                  ...collectivite,
+                }),
             },
           ]}
         />
@@ -172,10 +214,18 @@ const Accueil = (): JSX.Element => {
             {
               children: "S'inspirer",
               href: recherchesCollectivitesUrl,
+              onClick: () =>
+                trackEvent('collectivites_inspiration', {
+                  ...collectivite,
+                }),
             },
             {
               children: 'En savoir plus sur la confidentialité',
               href: 'https://aide.territoiresentransitions.fr/fr/article/la-confidentialite-sur-territoires-en-transitions-18gpnno/',
+              onClick: () =>
+                trackEvent('collectivites_confidentialite', {
+                  ...collectivite,
+                }),
               variant: 'outlined',
               external: true,
             },
@@ -202,6 +252,10 @@ const Accueil = (): JSX.Element => {
                 collectiviteId,
                 panierId: panier?.panierId,
               }),
+              onClick: () =>
+                trackEvent('panier_actions_tester', {
+                  ...collectivite,
+                }),
               external: true,
             },
           ]}
@@ -211,6 +265,11 @@ const Accueil = (): JSX.Element => {
         className="mt-20 mb-8 mx-auto"
         variant="outlined"
         href="https://www.territoiresentransitions.fr/"
+        onClick={() =>
+          trackEvent('retourner_site', {
+            ...collectivite,
+          })
+        }
       >
         Retourner sur le site
       </Button>

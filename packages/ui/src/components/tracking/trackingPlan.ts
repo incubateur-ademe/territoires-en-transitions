@@ -108,6 +108,26 @@ type CollectiviteDefaultProps = {
  * Permet de respecter le plan de tracking.
  */
 export interface TrackingPlan extends Record<never, Page> {
+  'app/accueil': {
+    properties: {};
+    onglets: never;
+    events: {
+      edl_synthese: {};
+      edl_plus_infos: {};
+      plan_actions_mon_suivi_personnel: {};
+      plan_actions_tableau_de_bord_collectivite: {};
+      plan_actions_creer_plan: {};
+      plan_actions_creer_fiche: {};
+      plan_actions_toutes_les_fiches: {};
+      indicateurs_tous: {};
+      indicateurs_open_data: {};
+      trajectoires_decouvrir: {};
+      collectivites_inspiration: {};
+      collectivites_confidentialite: {};
+      panier_actions_tester: {};
+      retourner_site: {};
+    };
+  };
   'app/edl/synthese': {
     properties: CollectiviteDefaultProps;
     onglets: never;
