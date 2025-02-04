@@ -47,7 +47,8 @@ export const ThematiqueQR = (props: TThematiqueQRProps) => {
 
   const qrList = onlyNoResponse
     ? questionReponses.filter(
-        ({ reponse }) => reponse === null || reponse === undefined
+        ({ reponse }) =>
+          reponse === null || reponse === undefined || reponse === ''
       )
     : questionReponses;
 
