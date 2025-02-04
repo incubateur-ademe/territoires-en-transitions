@@ -1,5 +1,5 @@
 import { Injectable, Logger } from '@nestjs/common';
-import { and, eq } from 'drizzle-orm';
+import { and, asc, eq } from 'drizzle-orm';
 import { DatabaseService } from '../../utils/database/database.service';
 import {
   indicateurSourceMetadonneeTable,
@@ -63,5 +63,16 @@ export default class IndicateurSourcesService {
         target: indicateurSourceTable.id,
         set: { libelle: indicateurSource.libelle },
       });
+  }
+
+  async getSources() {
+    this.logger.log('Liste les sources de données');
+    return this.databaseService.db
+      .select()
+      .from(indicateurSourceTable)
+      .orderBy(
+        asc(indicateurSourceTable.ordreAffichage),
+        asc(indicateurSourceTable.libelle)
+      );
   }
 }
