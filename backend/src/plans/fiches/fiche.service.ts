@@ -18,6 +18,11 @@ import {
   FicheCreate,
   ficheActionTable,
 } from './shared/models/fiche-action.table';
+import { ficheActionStructureTagTable } from '@/backend/plans/fiches/shared/models/fiche-action-structure-tag.table';
+import { ficheActionServiceTagTable } from '@/backend/plans/fiches/shared/models/fiche-action-service-tag.table';
+import { ficheActionFinanceurTagTable } from '@/backend/plans/fiches/shared/models/fiche-action-financeur-tag.table';
+import { ficheActionPiloteTable } from '@/backend/plans/fiches/shared/models/fiche-action-pilote.table';
+import { ficheActionReferentTable } from '@/backend/plans/fiches/shared/models/fiche-action-referent.table';
 
 @Injectable()
 export default class FicheService {
@@ -146,14 +151,80 @@ export default class FicheService {
    * @param ficheId identifiant de la fiche
    * @param tagId identifiant du partenaire
    */
-  async addPartenaireById(ficheId: number, tagId: number): Promise<void> {
+  async addPartenaire(ficheId: number, tagId: number): Promise<void> {
     await this.databaseService.db.insert(ficheActionPartenaireTagTable).values({
       ficheId: ficheId,
       partenaireTagId: tagId,
     });
   }
 
-  // On ajoute le financement
+  /**
+   * Ajoute une structure à une fiche à partir de l'id du tag
+   * @param ficheId identifiant de la fiche
+   * @param tagId identifiant de la structure
+   */
+  async addStructure(ficheId: number, tagId: number): Promise<void> {
+    await this.databaseService.db.insert(ficheActionStructureTagTable).values({
+      ficheId: ficheId,
+      structureTagId: tagId,
+    });
+  }
+
+  /**
+   * Ajoute un service à une fiche à partir de l'id du tag
+   * @param ficheId identifiant de la fiche
+   * @param tagId identifiant du service
+   */
+  async addService(ficheId: number, tagId: number): Promise<void> {
+    await this.databaseService.db.insert(ficheActionServiceTagTable).values({
+      ficheId: ficheId,
+      serviceTagId: tagId,
+    });
+  }
+
+  /**
+   * Ajoute un financeur à une fiche à partir de l'id du tag
+   * @param ficheId identifiant de la fiche
+   * @param tagId identifiant du financeur
+   * @param montant montant du financement par ce financeur
+   */
+  async addFinanceur(ficheId: number, tagId: number, montant : number): Promise<void> {
+    await this.databaseService.db.insert(ficheActionFinanceurTagTable).values({
+      ficheId: ficheId,
+      financeurTagId: tagId,
+      montantTtc : montant
+    });
+  }
+
+  /**
+   * Ajoute un pilote à une fiche à partir de l'id du tag ou de l'identifiant utilisateur
+   * @param ficheId identifiant de la fiche
+   * @param tagId identifiant du pilote
+   * @param userId identifiant de l'utilisateur pilote
+   */
+  async addPilote(ficheId: number, tagId?: number, userId?: string): Promise<void> {
+    if(tagId || userId)
+    await this.databaseService.db.insert(ficheActionPiloteTable).values({
+      ficheId: ficheId,
+      tagId: tagId,
+      userId: userId
+    });
+  }
+
+  /**
+   * Ajoute un référent à une fiche à partir de l'id du tag ou de l'identifiant utilisateur
+   * @param ficheId identifiant de la fiche
+   * @param tagId identifiant du référent
+   * @param userId identifiant de l'utilisateur référent
+   */
+  async addReferent(ficheId: number, tagId?: number, userId?: string): Promise<void> {
+    if(tagId || userId)
+      await this.databaseService.db.insert(ficheActionReferentTable).values({
+        ficheId: ficheId,
+        tagId: tagId,
+        userId: userId
+      });
+  }
 
   /**
    * Ajoute une action du référentiel à une fiche
