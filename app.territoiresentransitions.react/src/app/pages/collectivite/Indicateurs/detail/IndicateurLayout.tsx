@@ -87,7 +87,10 @@ const IndicateurLayout = ({
           <div className="w-full px-2 mx-auto xl:max-w-7xl 2xl:max-w-8xl">
             {composeSansAgregation ? (
               // Groupe d'indicateurs sans agrégation
-              <SousIndicateurs enfantsIds={enfantsIds} />
+              <SousIndicateurs
+                enfantsIds={enfantsIds}
+                isReadonly={isReadonly}
+              />
             ) : (
               // Indicateur sans enfant, groupe d'indicateurs avec agrégation,
               // ou indicateur personnalisé
@@ -108,16 +111,17 @@ const IndicateurLayout = ({
                 {/* Sous indicateurs */}
                 {composeAvecAgregation ? (
                   <Tab label={`${enfants.length} Sous indicateurs`}>
-                    <SousIndicateurs enfantsIds={enfantsIds} />
+                    <SousIndicateurs
+                      enfantsIds={enfantsIds}
+                      isReadonly={isReadonly}
+                    />
                   </Tab>
                 ) : undefined}
 
                 {/* Actions des référentiels liées */}
                 {!isPerso ? (
                   <Tab label="Actions des référentiels liées">
-                    <ActionsLiees
-                      actionsIds={(definition.actions ?? [])}
-                    />
+                    <ActionsLiees actionsIds={definition.actions ?? []} />
                   </Tab>
                 ) : undefined}
 
