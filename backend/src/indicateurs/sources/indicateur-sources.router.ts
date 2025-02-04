@@ -1,0 +1,17 @@
+import { TrpcService } from '@/backend/utils/trpc/trpc.service';
+import { Injectable } from '@nestjs/common';
+import IndicateurSourcesService from './indicateur-sources.service';
+
+@Injectable()
+export class IndicateurSourcesRouter {
+  constructor(
+    private readonly trpc: TrpcService,
+    private readonly service: IndicateurSourcesService
+  ) {}
+
+  router = this.trpc.router({
+    list: this.trpc.authedProcedure.query(() => {
+      return this.service.getSources();
+    }),
+  });
+}
