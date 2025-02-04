@@ -1,7 +1,6 @@
 'use server';
 
 import NoResult from '@/site/components/info/NoResult';
-import { TrackPageView } from '@/ui';
 import Accompagnement from './Accompagnement';
 import AccueilBanner from './AccueilBanner';
 import Communaute from './Communaute';
@@ -14,29 +13,25 @@ import { getData } from './utils';
 const Accueil = async () => {
   const data = await getData();
 
+  if (!data) {
+    return <NoResult />;
+  }
+
   return (
     <>
-      <TrackPageView pageName={'site/accueil'} properties={{}} />
+      <AccueilBanner {...data.banner} />
 
-      {data ? (
-        <>
-          <AccueilBanner {...data.banner} />
+      <Accompagnement {...data.accompagnement} />
 
-          <Accompagnement {...data.accompagnement} />
+      <Objectifs {...data.objectifs} />
 
-          <Objectifs {...data.objectifs} />
+      <Communaute {...data.collectivites} />
 
-          <Communaute {...data.collectivites} />
+      <DemandeContact {...data.contact} />
 
-          <DemandeContact {...data.contact} />
+      {data.temoignages && <Temoignages {...data.temoignages} />}
 
-          {data.temoignages && <Temoignages {...data.temoignages} />}
-
-          <Newsletter {...data.newsletter} />
-        </>
-      ) : (
-        <NoResult />
-      )}
+      <Newsletter {...data.newsletter} />
     </>
   );
 };

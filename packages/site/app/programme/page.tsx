@@ -2,7 +2,6 @@
 
 import NoResult from '@/site/components/info/NoResult';
 import { getUpdatedMetadata } from '@/site/src/utils/getUpdatedMetadata';
-import { TrackPageView } from '@/ui';
 import { Metadata, ResolvingMetadata } from 'next';
 import Benefices from './Benefices';
 import CollectivitesEngagees from './CollectivitesEngagees';
@@ -31,33 +30,29 @@ export async function generateMetadata(
 const Programme = async () => {
   const data = await getStrapiData();
 
+  if (!data) {
+    return <NoResult />;
+  }
+
   return (
     <>
-      <TrackPageView pageName={'site/programme'} properties={{}} />
+      <ProgrammeBanner
+        titre={data.titre}
+        description={data.description}
+        couvertureURL={data.couvertureURL}
+      />
 
-      {data ? (
-        <>
-          <ProgrammeBanner
-            titre={data.titre}
-            description={data.description}
-            couvertureURL={data.couvertureURL}
-          />
+      <Benefices {...data.benefices} />
 
-          <Benefices {...data.benefices} />
+      <Contact {...data.contact} />
 
-          <Contact {...data.contact} />
+      <Etapes {...data.etapes} />
 
-          <Etapes {...data.etapes} />
+      <Services {...data.services} />
 
-          <Services {...data.services} />
+      <CollectivitesEngagees {...data.collectivites} />
 
-          <CollectivitesEngagees {...data.collectivites} />
-
-          <Compte {...data.compte} />
-        </>
-      ) : (
-        <NoResult />
-      )}
+      <Compte {...data.compte} />
     </>
   );
 };

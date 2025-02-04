@@ -1,10 +1,12 @@
 'use client';
 
+import posthog from 'posthog-js';
+
 import Markdown from '@/site/components/markdown/Markdown';
 import Section from '@/site/components/sections/Section';
 import { StrapiImage } from '@/site/components/strapiImage/StrapiImage';
 import { StrapiItem } from '@/site/src/strapi/StrapiItem';
-import { Button, useEventTracker } from '@/ui';
+import { Button } from '@/ui';
 
 type TrajectoireProps = {
   titre: string;
@@ -14,8 +16,6 @@ type TrajectoireProps = {
 };
 
 const Trajectoire = ({ titre, description, cta, image }: TrajectoireProps) => {
-  const tracker = useEventTracker('site/outil-numerique');
-
   return (
     <Section
       className="flex lg:!flex-row justify-between items-center !gap-12"
@@ -29,7 +29,7 @@ const Trajectoire = ({ titre, description, cta, image }: TrajectoireProps) => {
         />
         <Button
           href="/trajectoire"
-          onClick={() => tracker('decouvrir_trajectoire', {})}
+          onClick={() => posthog.capture('decouvrir_trajectoire')}
           className="mt-6 max-lg:mx-auto"
         >
           {cta}

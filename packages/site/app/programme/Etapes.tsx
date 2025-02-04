@@ -1,9 +1,11 @@
 'use client';
 
+import posthog from 'posthog-js';
+
 import Card from '@/site/components/cards/Card';
 import CardsWrapper from '@/site/components/cards/CardsWrapper';
 import CardsSection from '@/site/components/sections/CardsSection';
-import { Button, useEventTracker } from '@/ui';
+import { Button } from '@/ui';
 import { Content } from './types';
 
 type EtapesProps = {
@@ -13,8 +15,6 @@ type EtapesProps = {
 };
 
 const Etapes = ({ titre, contenu, cta }: EtapesProps) => {
-  const tracker = useEventTracker('site/programme');
-
   return contenu && contenu.length ? (
     <CardsSection
       containerClassName="bg-primary-1 max-md:!py-6 md:max-lg:!py-12 lg:!py-20"
@@ -34,7 +34,7 @@ const Etapes = ({ titre, contenu, cta }: EtapesProps) => {
     >
       <Button
         href="/contact?objet=programme"
-        onClick={() => tracker('demarrer_programme', {})}
+        onClick={() => posthog.capture('demarrer_programme')}
         className="mt-3 lg:mt-6 mx-auto"
       >
         {cta}

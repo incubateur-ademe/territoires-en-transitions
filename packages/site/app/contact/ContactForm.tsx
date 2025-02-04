@@ -9,10 +9,10 @@ import {
   OptionValue,
   Select,
   Textarea,
-  useEventTracker,
 } from '@/ui';
 import classNames from 'classnames';
 import { useRouter, useSearchParams } from 'next/navigation';
+import posthog from 'posthog-js';
 import { useEffect, useState } from 'react';
 import { supabase } from '../initSupabase';
 import { options } from './data';
@@ -44,7 +44,6 @@ const ContactForm = () => {
 
   const searchParams = useSearchParams();
   const router = useRouter();
-  const tracker = useEventTracker('site/contact');
 
   const objet = searchParams.get('objet');
 
@@ -144,7 +143,7 @@ const ContactForm = () => {
       <form
         onSubmit={(event) => {
           handleSubmit(event);
-          tracker('envoyer_message', {});
+          posthog.capture('envoyer_message');
         }}
         className="border border-grey-4 rounded-lg max-md:p-4 md:max-lg:p-10 p-20"
       >

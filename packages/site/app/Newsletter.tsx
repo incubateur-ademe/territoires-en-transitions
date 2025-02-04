@@ -1,7 +1,9 @@
 'use client';
 
+import posthog from 'posthog-js';
+
 import Section from '@/site/components/sections/Section';
-import { Button, useEventTracker } from '@/ui';
+import { Button } from '@/ui';
 
 type NewsletterProps = {
   titre: string;
@@ -16,8 +18,6 @@ const Newsletter = ({
   ctaLinkedin,
   ctaNewsletter,
 }: NewsletterProps) => {
-  const tracker = useEventTracker('site/accueil');
-
   return (
     <Section containerClassName="bg-primary-1 max-md:!py-6 md:max-lg:!py-12 lg:!py-20">
       <h2 className="text-center mb-0">{titre}</h2>
@@ -34,7 +34,7 @@ const Newsletter = ({
         </Button>
         <Button
           href="https://cloud.contact.ademe.fr/inscription-tete"
-          onClick={() => tracker('inscription_newsletter', {})}
+          onClick={() => posthog.capture('inscription_newsletter')}
           external
         >
           {ctaNewsletter}

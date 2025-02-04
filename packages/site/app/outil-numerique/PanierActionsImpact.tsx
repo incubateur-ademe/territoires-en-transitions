@@ -4,7 +4,8 @@ import Markdown from '@/site/components/markdown/Markdown';
 import Section from '@/site/components/sections/Section';
 import { StrapiImage } from '@/site/components/strapiImage/StrapiImage';
 import { StrapiItem } from '@/site/src/strapi/StrapiItem';
-import { Button, useEventTracker } from '@/ui';
+import { Button } from '@/ui';
+import posthog from 'posthog-js';
 
 type PanierActionsImpactProps = {
   titre: string;
@@ -19,8 +20,6 @@ const PanierActionsImpact = ({
   cta,
   image,
 }: PanierActionsImpactProps) => {
-  const tracker = useEventTracker('site/outil-numerique');
-
   return (
     <Section
       className="flex lg:!flex-row justify-between items-center !gap-12"
@@ -41,7 +40,7 @@ const PanierActionsImpact = ({
         />
         <Button
           href={`${process.env.NEXT_PUBLIC_PANIER_URL}/landing`}
-          onClick={() => tracker('decouvrir_pai', {})}
+          onClick={() => posthog.capture('decouvrir_pai')}
           className="mt-6 max-lg:mx-auto"
         >
           {cta}

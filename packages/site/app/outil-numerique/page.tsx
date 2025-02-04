@@ -3,7 +3,6 @@
 import Trajectoire from '@/site/app/outil-numerique/Trajectoire';
 import NoResult from '@/site/components/info/NoResult';
 import { getUpdatedMetadata } from '@/site/src/utils/getUpdatedMetadata';
-import { TrackPageView } from '@/ui';
 import { Metadata, ResolvingMetadata } from 'next';
 import AvantagesPlateforme from './AvantagesPlateforme';
 import EquipePlateforme from './EquipePlateforme';
@@ -29,34 +28,29 @@ export async function generateMetadata(
 }
 
 const OutilNumerique = async () => {
-  const strapiData = await getStrapiData();
+  const data = await getStrapiData();
 
+  if (!data) {
+    return <NoResult />;
+  }
   return (
-    <>
-      <TrackPageView pageName={'site/outil-numerique'} properties={{}} />
+    <div className="grow">
+      <HeaderPlateforme {...data.header} />
 
-      {strapiData ? (
-        <div className="grow">
-          <HeaderPlateforme {...strapiData.header} />
+      <AvantagesPlateforme avantages={data.avantages} />
 
-          <AvantagesPlateforme avantages={strapiData.avantages} />
+      <PanierActionsImpact {...data.panier} />
 
-          <PanierActionsImpact {...strapiData.panier} />
+      <Trajectoire {...data.trajectoire} />
 
-          <Trajectoire {...strapiData.trajectoire} />
-
-          {strapiData.temoignages.length > 0 && (
-            <TemoignagesPlateforme temoignages={strapiData.temoignages} />
-          )}
-
-          <EquipePlateforme {...strapiData.equipe} />
-
-          <QuestionsPlateforme {...strapiData.questions} />
-        </div>
-      ) : (
-        <NoResult />
+      {data.temoignages.length > 0 && (
+        <TemoignagesPlateforme temoignages={data.temoignages} />
       )}
-    </>
+
+      <EquipePlateforme {...data.equipe} />
+
+      <QuestionsPlateforme {...data.questions} />
+    </div>
   );
 };
 

@@ -4,7 +4,8 @@ import { useEvolutionTotalActivation } from '@/site/app/stats/EvolutionTotalActi
 import Section from '@/site/components/sections/Section';
 import { StrapiImage } from '@/site/components/strapiImage/StrapiImage';
 import { StrapiItem } from '@/site/src/strapi/StrapiItem';
-import { Button, useEventTracker } from '@/ui';
+import { Button } from '@/ui';
+import posthog from 'posthog-js';
 import Arrow from './Arrow';
 
 type HeaderPlateformeProps = {
@@ -28,7 +29,6 @@ const HeaderPlateforme = ({
 }: HeaderPlateformeProps) => {
   const { data } = useEvolutionTotalActivation('', '');
   const collectivitesActivees = data ? data.courant.total : undefined;
-  const tracker = useEventTracker('site/outil-numerique');
 
   return (
     <Section containerClassName="bg-gradient-to-b from-[#F4F5FD] to-[#FFFFFF] !pb-0">
@@ -42,7 +42,7 @@ const HeaderPlateforme = ({
         <div className="max-md:flex max-md:flex-col max-md:items-center">
           <Button
             href={url_inscription}
-            onClick={() => tracker('inscription_plateforme', {})}
+            onClick={() => posthog.capture('inscription_plateforme')}
           >
             {cta_inscription}
           </Button>
@@ -55,7 +55,7 @@ const HeaderPlateforme = ({
 
         <Button
           href={url_demo}
-          onClick={() => tracker('inscription_demo', {})}
+          onClick={() => posthog.capture('inscription_demo')}
           variant="outlined"
           icon="play-circle-line"
         >
