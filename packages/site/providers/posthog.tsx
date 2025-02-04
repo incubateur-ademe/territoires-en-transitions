@@ -3,14 +3,13 @@
 
 import {
   Consent,
-  createTrackingClient,
   getConsent,
   getNextConsentEnvId,
-  getNextTrackingEnv,
+  NextPostHogProvider,
   ScriptLikeProps,
-  TrackingProvider,
 } from '@/ui';
 import Script from 'next/script';
+import posthog from 'posthog-js';
 
 declare global {
   interface Window {
@@ -24,16 +23,14 @@ declare global {
   }
 }
 
-const client = createTrackingClient(getNextTrackingEnv());
-
 const onConsentSave = () => {
-  client.set_config({ persistence: getConsent() ? 'cookie' : 'memory' });
+  posthog.set_config({ persistence: getConsent() ? 'cookie' : 'memory' });
 };
 
 export const Trackers = ({ children }: { children: React.ReactNode }) => {
   return (
     <>
-      <TrackingProvider client={client}>{children}</TrackingProvider>
+      <NextPostHogProvider>{children}</NextPostHogProvider>
 
       <Consent
         onConsentSave={onConsentSave}

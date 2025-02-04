@@ -1,12 +1,14 @@
 'use client';
 
+import posthog from 'posthog-js';
+
 import {
   useCollectivitesEngagees,
   useTerritoiresCOT,
   useTerritoiresLabellises,
 } from '@/site/app/stats/NombreCollectivitesEngagees';
 import Section from '@/site/components/sections/Section';
-import { Button, useEventTracker } from '@/ui';
+import { Button } from '@/ui';
 
 type CollectivitesEngageesProps = {
   titre: string;
@@ -17,7 +19,6 @@ const CollectivitesEngagees = ({ titre, cta }: CollectivitesEngageesProps) => {
   const { data: cot } = useTerritoiresCOT('', '');
   const { data: labellises } = useTerritoiresLabellises('', '');
   const { data: engages } = useCollectivitesEngagees('', '');
-  const tracker = useEventTracker('site/programme');
 
   return (
     <Section containerClassName="bg-primary-1 max-md:!py-6 md:max-lg:!py-12 lg:!py-18">
@@ -56,7 +57,7 @@ const CollectivitesEngagees = ({ titre, cta }: CollectivitesEngageesProps) => {
       <Button
         className="mx-auto max-md:mt-3 mt-6"
         href="/collectivites"
-        onClick={() => tracker('voir_collectivites', {})}
+        onClick={() => posthog.capture('voir_collectivites')}
       >
         {cta}
       </Button>

@@ -1,10 +1,12 @@
 'use client';
 
+import posthog from 'posthog-js';
+
 import Markdown from '@/site/components/markdown/Markdown';
 import Section from '@/site/components/sections/Section';
 import { StrapiImage } from '@/site/components/strapiImage/StrapiImage';
 import { StrapiItem } from '@/site/src/strapi/StrapiItem';
-import { Button, useEventTracker } from '@/ui';
+import { Button } from '@/ui';
 
 type AccompagnementProps = {
   titre: string;
@@ -22,8 +24,6 @@ const Accompagnement = ({
   description,
   contenu,
 }: AccompagnementProps) => {
-  const tracker = useEventTracker('site/accueil');
-
   return (
     <Section
       containerClassName="max-md:!py-6 md:!pt-14"
@@ -62,9 +62,9 @@ const Accompagnement = ({
                 href={c.button.href}
                 onClick={() => {
                   if (c.button.href === '/programme')
-                    tracker('decouvrir_programme', {});
+                    posthog.capture('decouvrir_programme');
                   if (c.button.href === '/outil-numerique')
-                    tracker('decouvrir_plateforme', {});
+                    posthog.capture('decouvrir_plateforme');
                 }}
                 size="xs"
               >

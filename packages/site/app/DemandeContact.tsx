@@ -1,7 +1,9 @@
 'use client';
 
+import posthog from 'posthog-js';
+
 import Section from '@/site/components/sections/Section';
-import { Button, useEventTracker } from '@/ui';
+import { Button } from '@/ui';
 
 type DemandeContactProps = {
   description: string;
@@ -9,8 +11,6 @@ type DemandeContactProps = {
 };
 
 const DemandeContact = ({ description, cta }: DemandeContactProps) => {
-  const tracker = useEventTracker('site/accueil');
-
   return (
     <Section
       className="items-center justify-center !gap-8"
@@ -19,7 +19,7 @@ const DemandeContact = ({ description, cta }: DemandeContactProps) => {
       <h2 className="text-white text-center max-w-5xl mb-0">{description}</h2>
       <Button
         href="/contact"
-        onClick={() => tracker('demande_contact', {})}
+        onClick={() => posthog.capture('demande_contact')}
         variant="secondary"
         className="!bg-[#FFE8BD] !border-[#FFE8BD] !text-primary-7 hover:!text-primary-8"
       >

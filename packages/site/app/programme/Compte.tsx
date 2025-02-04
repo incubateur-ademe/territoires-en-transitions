@@ -1,12 +1,14 @@
 'use client';
 
+import posthog from 'posthog-js';
+
 import Arrow from '@/site/app/outil-numerique/Arrow';
 import { useEvolutionTotalActivation } from '@/site/app/stats/EvolutionTotalActivationParType';
 import Markdown from '@/site/components/markdown/Markdown';
 import Section from '@/site/components/sections/Section';
 import { StrapiImage } from '@/site/components/strapiImage/StrapiImage';
 import { StrapiItem } from '@/site/src/strapi/StrapiItem';
-import { Button, useEventTracker } from '@/ui';
+import { Button } from '@/ui';
 
 type CompteProps = {
   titre: string;
@@ -18,7 +20,6 @@ type CompteProps = {
 const Compte = ({ titre, description, cta, image }: CompteProps) => {
   const { data } = useEvolutionTotalActivation('', '');
   const collectivitesActivees = data ? data.courant.total : undefined;
-  const tracker = useEventTracker('site/programme');
 
   return (
     <Section containerClassName="max-md:!py-6 md:max-lg:!py-12 lg:!py-20">
@@ -39,7 +40,7 @@ const Compte = ({ titre, description, cta, image }: CompteProps) => {
           />
           <Button
             href="https://auth.territoiresentransitions.fr/signup"
-            onClick={() => tracker('inscription_plateforme', {})}
+            onClick={() => posthog.capture('inscription_plateforme')}
             className="mt-8 max-lg:mx-auto"
             external
           >
