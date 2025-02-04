@@ -203,7 +203,17 @@ export const IndicateurCardBase = ({
                 <EmptyCard
                   size="xs"
                   className="h-80"
-                  picto={(props) => <PictoIndicateurVide {...props} />}
+                  picto={(props) => (
+                    <>
+                      <PictoIndicateurVide {...props} />
+                      {estGroupement ? (
+                        <p className="text-primary-9 text-lg font-bold">
+                          {totalEnfants} indicateur{totalEnfants > 1 ? 's' : ''}{' '}
+                          dans ce groupe
+                        </p>
+                      ) : null}
+                    </>
+                  )}
                   actions={
                     !readonly && !!href
                       ? [{ children: "Compléter l'indicateur" }]
