@@ -828,7 +828,10 @@ export default class IndicateurFiltreService {
     // Tri une seconde fois si demandé par complétude
     if (queryOptions?.sort?.at(0)?.field === 'estComplet') {
       toReturn = toReturn.sort((a, b) => {
-        return Number(a.isCompleted) - Number(b.isCompleted);
+        return (
+          Number(b.isCompleted || b.hasOpenData) -
+          Number(a.isCompleted || a.hasOpenData)
+        );
       });
     }
     return toReturn;

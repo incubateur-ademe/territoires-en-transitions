@@ -783,7 +783,7 @@ describe('IndicateurFiltreService', () => {
         [ind1, ind2, ind3],
         queryOptions
       );
-      expect(toCheck).toEqual([ind2, ind1, ind3]);
+      expect(toCheck).toEqual([ind1, ind3, ind2]);
     });
   });
 });
