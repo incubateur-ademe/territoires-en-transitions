@@ -1,6 +1,4 @@
 import {
-  LAYERS,
-  PALETTE,
   ReactECharts,
   makeLegendData,
   makeLineSeries,
@@ -13,8 +11,12 @@ import { GridComponentOption } from 'echarts';
 import { getSourceLabel } from '../data/get-source-label';
 import { PreparedData } from '../data/prepare-data';
 import { IndicateurChartInfo } from '../data/use-indicateur-chart';
+import {
+  GetColorBySourceId,
+  useGetColorBySourceId,
+} from '../data/use-indicateur-sources';
 import { DataSourceTooltipContent } from '../Indicateur/detail/DataSourceTooltip';
-import { TIndicateurDefinition } from '../types';
+import { SourceType, TIndicateurDefinition } from '../types';
 
 type ChartVariant = 'thumbnail' | 'modal' | 'detail';
 
@@ -51,18 +53,16 @@ export type IndicateurChartData = {
 // chaque source disponible
 const prepareDataset = (
   data: IndicateurChartData,
-  type: 'resultat' | 'objectif'
+  type: SourceType,
+  getColorBySourceId: GetColorBySourceId
 ) =>
   data.valeurs[`${type}s`].sources
     ?.filter(({ valeurs }) => valeurs?.length > 0)
-    .map(({ source, libelle, valeurs, metadonnees }, index) => {
+    .map(({ source, libelle, valeurs, metadonnees }) => {
       const metadonnee = metadonnees?.find((m) => m.sourceId === source);
 
       return {
-        color:
-          source === 'collectivite'
-            ? LAYERS[`${type}s`].color
-            : PALETTE[index % PALETTE.length],
+        color: getColorBySourceId(source, type),
         id: `${type}-${source}`,
         name: getSourceLabel(source, libelle, type),
         source: valeurs,
@@ -97,11 +97,13 @@ const IndicateurChart = ({
 
   const noData = objectifs.sources?.length + resultats.sources?.length === 0;
 
+  const getColorBySourceId = useGetColorBySourceId();
+
   if (noData) return null;
 
   const donneesResultatObjectif = [
-    ...prepareDataset(data, 'resultat'),
-    ...prepareDataset(data, 'objectif'),
+    ...prepareDataset(data, 'resultat', getColorBySourceId),
+    ...prepareDataset(data, 'objectif', getColorBySourceId),
   ];
 
   // dataset pour les segments
