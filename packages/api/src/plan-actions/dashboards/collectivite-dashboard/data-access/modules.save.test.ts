@@ -21,7 +21,7 @@ beforeEach(async () => {
   };
 });
 
-test.only('Enregistre un nouveau module', async () => {
+test('Enregistre un nouveau module', async () => {
   const myModule = moduleNew;
 
   const { error } = await modulesSave({
