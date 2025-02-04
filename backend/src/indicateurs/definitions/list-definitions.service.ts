@@ -238,10 +238,7 @@ export default class ListDefinitionsService {
         )
         .leftJoin(
           definitionEnfantsTable,
-          and(
-            eq(definitionEnfantsTable.id, indicateurGroupeTable.enfant),
-            isNull(definitionEnfantsTable.groupementId)
-          )
+          eq(definitionEnfantsTable.id, indicateurGroupeTable.enfant)
         )
         // enfants liés aux groupements de la collectivité
         .leftJoin(
@@ -250,10 +247,7 @@ export default class ListDefinitionsService {
         )
         .leftJoin(
           groupementCollectiviteTable,
-          and(
-            eq(groupementCollectiviteTable.groupementId, groupementTable.id),
-            eq(groupementCollectiviteTable.collectiviteId, collectiviteId)
-          )
+          eq(groupementCollectiviteTable.groupementId, groupementTable.id)
         )
         // actions du référentiel
         .leftJoin(
@@ -293,6 +287,10 @@ export default class ListDefinitionsService {
                     identifiantsReferentiel
                   )
                 : undefined
+            ),
+            or(
+              isNull(definitionEnfantsTable.groupementId),
+              eq(groupementCollectiviteTable.collectiviteId, collectiviteId)
             )
           )
         )
