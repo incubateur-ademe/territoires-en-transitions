@@ -2,9 +2,10 @@ import IndicateursListe from '../lists/indicateurs-list';
 
 type Props = {
   enfantsIds: number[];
+  isReadonly: boolean;
 };
 
-const SousIndicateurs = ({ enfantsIds }: Props) => {
+const SousIndicateurs = ({ enfantsIds, isReadonly }: Props) => {
   if (!enfantsIds?.length) return null;
 
   return (
@@ -15,6 +16,7 @@ const SousIndicateurs = ({ enfantsIds }: Props) => {
           defaultSort: 'text',
         }}
         menuContainerClassname="!border-0 pb-0"
+        isEditable={!isReadonly}
       />
     </div>
   );
