@@ -15,6 +15,8 @@ import { SheetModule } from './utils/google-sheets/sheet.module';
 import { TrpcModule } from './utils/trpc/trpc.module';
 import { TrpcRouter } from './utils/trpc/trpc.router';
 import { UtilsModule } from './utils/utils.module';
+import { SharedModule } from '@/backend/shared/shared.module';
+import { ImportPlanModule } from '@/backend/plans/fiches/import/import-plan.module';
 
 @Module({
   imports: [
@@ -37,6 +39,8 @@ import { UtilsModule } from './utils/utils.module';
     FichesActionModule,
     PersonnalisationsModule,
     ReferentielsModule,
+    SharedModule,
+    ImportPlanModule,
   ],
   providers: [TrpcRouter],
 })
