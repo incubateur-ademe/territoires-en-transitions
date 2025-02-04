@@ -100,7 +100,8 @@ const ActionShow = ({
           referentielId,
           actionVue: name,
           actionId: actionDefinition.id,
-        })
+        }),
+        { scroll: false }
       );
     }
   };
