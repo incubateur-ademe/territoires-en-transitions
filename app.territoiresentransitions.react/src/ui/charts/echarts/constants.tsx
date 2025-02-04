@@ -26,21 +26,21 @@ export const LAYERS = {
 };
 
 export const PALETTE = [
-  '#6A6AF4',
-  '#1E98C6',
-  '#929292',
-  '#B55DDC',
-  '#FFE8BD',
+  '#1CC272',
+  '#91B2EE',
+  '#EA27C2',
+  '#FFCA79',
   '#F55B5B',
   '#9351CF',
-  '#1CC272',
   '#FFAF8B',
   '#2A2A62',
-  '#E1DBDB',
-  '#F5895B',
-  '#91B2EE',
-  '#FFCA79',
+  '#48A775',
+  '#EEAB2E',
+  '#B55DDC',
+  '#F4C447',
   '#4380F5',
+  '#FE5000',
+  '#929292',
 ];
 
 export const PALETTE_LIGHT = [
