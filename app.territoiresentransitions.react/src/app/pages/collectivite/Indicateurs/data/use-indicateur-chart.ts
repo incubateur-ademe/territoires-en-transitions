@@ -170,13 +170,18 @@ function prepareEnfantsParSegmentation(
     const data = prepareData(valeursEnfant, type);
 
     // sélectionne la source la plus appropriée
-    const sourceValeursEnfant = data.sources.find(
-      // il faut au moins 2 valeurs pour afficher une surface dans le graphe StackedArea
-      (s) =>
-        s.valeurs?.length > 1 &&
-        // et on n'affiche pas les objectifs de la SNBC
-        s.source !== 'snbc'
-    );
+    const sourceValeursEnfant = data.sources
+      // tri les sources par ordre d'affichage (si disponible)
+      .sort(({ ordreAffichage: a }, { ordreAffichage: b }) =>
+        a === null ? 1 : b === null ? -1 : a - b
+      )
+      .find(
+        // il faut au moins 2 valeurs pour afficher une surface dans le graphe StackedArea
+        (s) =>
+          s.valeurs?.length > 1 &&
+          // et on n'affiche pas les objectifs de la SNBC
+          s.source !== 'snbc'
+      );
 
     if (sourceValeursEnfant) {
       // segmentations auxquelles est rattaché l'indicateur
