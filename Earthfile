@@ -328,10 +328,9 @@ node-alpine-with-prod-deps:
   RUN corepack enable && corepack prepare pnpm@latest-9 --activate
 
   COPY pnpm-lock.yaml ./
-
   COPY package.json ./
 
-  # Uninstall node-canvas not used by the frontends. 
+  # Uninstall node-canvas not used by the frontends.
   # Otherwise, need to add make g++ jpeg-dev cairo-dev giflib-dev pango-dev libtool autoconf automake in the docker image to do npm install
   RUN pnpm uninstall canvas
 
