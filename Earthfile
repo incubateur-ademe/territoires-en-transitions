@@ -273,6 +273,9 @@ node-alpine:
   # https://www.reddit.com/r/node/comments/1ejzn64/sudden_inexplicable_memory_leak_on_new_builds/
   FROM node:20.15.1-alpine
 
+  # Allow CI mode for Nx (and other tools)
+  ENV CI=true
+
   # Check https://github.com/nodejs/docker-node/tree/b4117f9333da4138b03a546ec926ef50a31506c3#nodealpine to understand why libc6-compat might be needed.
   RUN apk add --no-cache libc6-compat
   WORKDIR /app
@@ -280,13 +283,16 @@ node-alpine:
 node-alpine-with-prod-deps:
   FROM +node-alpine
 
-  COPY pnpm-lock.yaml ./
-
   ENV PNPM_HOME="/pnpm"
   ENV PATH="$PNPM_HOME:$PATH"
-  RUN npm install -g corepack@latest
-  RUN corepack enable && corepack prepare pnpm@latest --activate
 
+  RUN npm install -g corepack@latest
+  RUN corepack enable && corepack prepare pnpm@latest-9 --activate
+
+  COPY pnpm-lock.yaml ./
+
+  # `pnpm fetch` does require only lockfile
+  # See https://pnpm.io/cli/fetch
   RUN pnpm fetch --prod
 
   COPY package.json ./
@@ -315,20 +321,25 @@ node-fr:
     ARG PLATFORM=$TARGETPLATFORM
     FROM --platform=$PLATFORM node:20-slim
 
+    # Allow CI mode for Nx (and other tools)
+    ENV CI=true
+
     # locale FR pour que les tests e2e relatifs au formatage localisés des dates et des valeurs numériques puissent passer
     ENV LANG fr_FR.UTF-8
     RUN apt-get update && apt-get install -y locales dumb-init && rm -rf /var/lib/apt/lists/* && locale-gen "fr_FR.UTF-8"
 
     ENV PNPM_HOME="/pnpm"
     ENV PATH="$PNPM_HOME:$PATH"
+
     RUN npm install -g corepack@latest
-    RUN corepack enable && corepack prepare pnpm@latest --activate
+    RUN corepack enable && corepack prepare pnpm@latest-9 --activate
 
     WORKDIR /app
 
 prod-deps:
     FROM +node-fr
 
+    # `pnpm fetch` does require only lockfile
     # See https://pnpm.io/cli/fetch
     COPY pnpm-lock.yaml ./
     RUN pnpm fetch --prod
