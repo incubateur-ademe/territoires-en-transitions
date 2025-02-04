@@ -8,7 +8,7 @@ import { indicateurDefinitionSchema } from '@/domain/indicateurs';
 import z from 'zod';
 import { financeurTagSchema } from '../../../collectivites/tags/financeur-tag.table';
 import { actionRelationSchema } from '../../../referentiels/models/action-relation.table';
-import { effetAttenduSchema } from '../../../shared/models/effet-attendu.table';
+import { effetAttenduSchema } from '@/backend/shared/effet-attendu/effet-attendu.table';
 import { sousThematiqueSchema } from '../../../shared/models/sous-thematique.table';
 import { thematiqueSchema } from '../../../shared/models/thematique.table';
 import { axeSchema } from './models/axe.table';
