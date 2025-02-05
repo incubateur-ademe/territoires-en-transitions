@@ -1,7 +1,7 @@
 'use client';
 
-import { useState } from 'react';
-import VersionsDropdown from './VersionsDropdown';
+import { useState, useEffect } from 'react';
+
 import { EmptyCard, Badge } from '@/ui';
 import ScoreEvolutionsTotalChart from './charts/ScoreEvolutionsTotalChart';
 import PictoDashboard from '../../ui/pictogrammes/PictoDashboard';
@@ -9,13 +9,12 @@ import { SnapshotDetails, useSnapshotList } from '../use-snapshot';
 import SaveScoreModal from '../../app/pages/collectivite/Referentiels/SaveScore/save-score.modal';
 import { useCurrentCollectivite } from '@/app/core-logic/hooks/useCurrentCollectivite';
 import { useParams } from 'next/navigation';
+import SnapshotsDropdown from './SnapshotsDropdown';
 
 export const ScoreEvolutions = () => {
   const { referentielId } = useParams();
   const collectivite = useCurrentCollectivite();
   const collectiviteId = collectivite?.collectiviteId;
-
-  const [selectedSnapshots, setSelectedSnapshots] = useState<string[]>([]);
 
   const HOW_MANY_SNAPSHOTS_TO_SHOW = 4;
 
@@ -28,10 +27,21 @@ export const ScoreEvolutions = () => {
 
   const snapshotNames = snapshots.map((snap) => snap?.nom);
 
+  const [selectedSnapshots, setSelectedSnapshots] = useState<string[]>([]);
+  const [isInitialized, setIsInitialized] = useState(false);
+
+  useEffect(() => {
+    if (!isInitialized && snapshotNames.length > 0) {
+      setSelectedSnapshots(snapshotNames);
+      setIsInitialized(true);
+    }
+  }, [snapshotNames, isInitialized]);
+
   const dropdownOptions =
-    snapshotNames?.map((snap) => ({
+    snapshotNames?.map((snap, index) => ({
       value: snap ?? '',
       label: snap ?? '',
+      date: snapshots[index]?.date ?? '',
     })) ?? [];
 
   const getSelectedSnapshots = (names: string[]) => {
@@ -47,7 +57,7 @@ export const ScoreEvolutions = () => {
           <EmptyCard
             picto={(props) => <PictoDashboard {...props} />}
             title="Aucune version du référentiel n'est figée."
-            description="Figer le référentiel vous permet de sauvegarder une version à une date donnée, afin de pouvoir comparer l'évolution du score sur plusieurs versions."
+            description="Figer l'état des lieux vous permet de sauvegarder une version à une date donnée, afin de pouvoir comparer l'évolution du score sur plusieurs versions."
             actions={[
               {
                 children: (
@@ -56,7 +66,7 @@ export const ScoreEvolutions = () => {
                     collectiviteId={collectiviteId as number}
                     when="before"
                   >
-                    <span>Figer le référentiel à une date antérieure</span>
+                    <span>Figer l'état des lieux à une date antérieure</span>
                   </SaveScoreModal>
                 ),
                 onClick: () => {},
@@ -69,7 +79,7 @@ export const ScoreEvolutions = () => {
                     referentielId={referentielId as string}
                     collectiviteId={collectiviteId as number}
                   >
-                    <span>Figer le référentiel</span>
+                    <span>Figer l'état des lieux</span>
                   </SaveScoreModal>
                 ),
                 onClick: () => {},
@@ -82,7 +92,7 @@ export const ScoreEvolutions = () => {
       {hasSavedSnapshots && (
         <>
           <div className="flex items-end justify-between">
-            <VersionsDropdown
+            <SnapshotsDropdown
               values={selectedSnapshots ?? []}
               onChange={({ snapshots }) => {
                 setSelectedSnapshots(snapshots);
