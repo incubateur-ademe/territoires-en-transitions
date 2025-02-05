@@ -268,10 +268,20 @@ export const IndicateurCardBase = ({
                               </span>
                             </Tooltip>
                           ) : (
-                            <span>
-                              {`${totalEnfants} indicateur`}
-                              {totalEnfants > 1 && 's'}
-                            </span>
+                            <Tooltip
+                              label={
+                                <ul>
+                                  {definition.enfants?.map((enfant) => (
+                                    <li key={enfant.id}>{enfant.titre}</li>
+                                  ))}
+                                </ul>
+                              }
+                            >
+                              <span>
+                                {`${totalEnfants} indicateur`}
+                                {totalEnfants > 1 && 's'}
+                              </span>
+                            </Tooltip>
                           ))}
                         {/** Barre verticale */}
                         {isIndicateurParent &&
