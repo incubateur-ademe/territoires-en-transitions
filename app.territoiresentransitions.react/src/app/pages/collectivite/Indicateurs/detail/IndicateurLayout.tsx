@@ -110,7 +110,11 @@ const IndicateurLayout = ({
 
                 {/* Sous indicateurs */}
                 {composeAvecAgregation ? (
-                  <Tab label={`${enfants.length} Sous indicateurs`}>
+                  <Tab
+                    label={`${enfants.length} sous-indicateur${
+                      enfants.length > 1 ? 's' : ''
+                    }`}
+                  >
                     <SousIndicateurs
                       enfantsIds={enfantsIds}
                       isReadonly={isReadonly}
