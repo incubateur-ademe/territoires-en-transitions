@@ -25,9 +25,9 @@ const BudgetConsomme = ({
   infoTva,
 }: BudgetConsommeProps) => {
   return (
-    <div className="bg-white md:rounded-[10px] py-8 md:py-12 px-6 md:px-10">
-      <h2 className="text-primary-9">{titre}</h2>
-      {/* <p className="paragraphe-16 text-primary-11 mb-8">{description}</p> */}
+    <div className="bg-white md:rounded-xl py-8 md:py-12 px-6 md:px-10">
+      <h2 className="text-primary-9 mb-10">{titre}</h2>
+
       <Markdown
         texte={description}
         className="paragraphe-16 paragraphe-primary-11"

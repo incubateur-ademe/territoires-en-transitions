@@ -1,8 +1,8 @@
 'use client';
 
+import { useEffect, useState } from 'react';
 import DonutChart from '../../components/charts/DonutChart';
 import { TTableauBudget } from './utils';
-import { useEffect, useState } from 'react';
 
 export type RepartitionCoutsProps = {
   titre: string;
@@ -42,7 +42,7 @@ const RepartitionCouts = ({ titre, data }: RepartitionCoutsProps) => {
 
   return (
     <>
-      <h5>{titre}</h5>
+      <h5 className="text-primary-8 mb-10">{titre}</h5>
       <div className="max-sm:h-[300px] h-[430px] my-10 max-md:-mx-6">
         <DonutChart
           data={chartData}

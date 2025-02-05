@@ -12,26 +12,28 @@ const PerformanceBudget = ({
   titre_fa,
 }: PerformanceBudgetProps) => {
   return (
-    <div className="bg-white md:rounded-[10px] py-8 md:py-12 px-6 md:px-10">
-      <h2 className="text-primary-9">{titre}</h2>
+    <div className="bg-white md:rounded-xl py-8 md:py-12 px-6 md:px-10 flex flex-col gap-10">
+      <h2 className="text-primary-9 mb-0">{titre}</h2>
 
-      <h5>{titre_edl}</h5>
-      <Image
-        src="/budget/graph2.png"
-        alt={titre_edl}
-        width={861}
-        height={391}
-        className="mt-10 mb-20"
-      />
+      <div>
+        <h5 className="text-primary text-lg">{titre_edl}</h5>
+        <Image
+          src="/budget/graph2.png"
+          alt={titre_edl}
+          width={861}
+          height={391}
+        />
+      </div>
 
-      <h5>{titre_fa}</h5>
-      <Image
-        src="/budget/graph3.png"
-        alt={titre_fa}
-        width={839}
-        height={383}
-        className="mt-10"
-      />
+      <div>
+        <h5 className="text-primary text-lg">{titre_fa}</h5>
+        <Image
+          src="/budget/graph3.png"
+          alt={titre_fa}
+          width={839}
+          height={383}
+        />
+      </div>
     </div>
   );
 };

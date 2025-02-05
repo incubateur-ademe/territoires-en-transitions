@@ -17,16 +17,16 @@ const ChiffresClefs = () => {
   return (
     <div className="grid sm:max-lg:grid-cols-2 xl:grid-cols-2 md:gap-10">
       {!!collectivitesActivees && (
-        <div className="bg-grey-1 max-md:bg-primary-1 md:rounded-[10px] py-8 px-6 flex flex-col max-md:items-center justify-center">
-          <span className="text-primary-7 text-[48px] leading-[32px] font-bold">
+        <div className="bg-grey-1 max-md:bg-primary-1 md:rounded-xl py-8 px-6 flex flex-col max-md:items-center justify-center">
+          <span className="text-primary-7 text-5xl leading-8 font-bold">
             {collectivitesActivees}
           </span>
-          <p className="text-primary-10 text-[20px] leading-[32px] font-bold mt-2 mb-0">
+          <p className="text-primary-10 text-2xl leading-8 font-bold mt-2 mb-0">
             Collectivités activées
           </p>
           <a
             href="/stats"
-            className="text-primary-5 text-[10px] font-bold w-fit"
+            className="text-primary-5 text-[0.6rem] font-bold w-fit"
             target="_blank"
             rel="noreferrer noopener"
           >
@@ -36,11 +36,11 @@ const ChiffresClefs = () => {
       )}
 
       {!!totalUtilisateurs && (
-        <div className="bg-grey-1 max-md:bg-primary-1 md:rounded-[10px] py-9 px-8 flex flex-col max-md:items-center justify-center">
-          <span className="text-primary-7 text-[48px] leading-[32px] font-bold">
+        <div className="bg-grey-1 max-md:bg-primary-1 md:rounded-xl py-9 px-8 flex flex-col max-md:items-center justify-center">
+          <span className="text-primary-7 text-5xl leading-8 font-bold">
             {totalUtilisateurs}
           </span>
-          <p className="text-primary-10 text-[20px] leading-[32px] font-bold mt-2 mb-0">
+          <p className="text-primary-10 text-xl leading-8 font-bold mt-2 mb-0">
             Utilisateurs
           </p>
         </div>
