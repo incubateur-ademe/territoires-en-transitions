@@ -17,6 +17,7 @@ on:
 jobs:
   build-app:
     name: Build l'app
+    if: ${{ github.event.inputs.is-test-app != 'true' }}
     environment: ${{ github.event.inputs.target }}
     runs-on: ubuntu-latest
 
@@ -46,6 +47,38 @@ jobs:
           --POSTHOG_HOST=${{ secrets.POSTHOG_HOST }}
           --POSTHOG_KEY=${{ secrets.POSTHOG_KEY }}
 
+  build-test-app:
+    name: Build l'app de test # TODO: only on variable change, improve to avoid duplicate
+    if: ${{ github.event.inputs.is-test-app == 'true' }}
+    environment: ${{ github.event.inputs.target }}
+    runs-on: ubuntu-latest
+
+    steps:
+      - uses: actions/checkout@v4
+      - uses: earthly/actions-setup@v1
+        with:
+          github-token: ${{ secrets.GH_TOKEN }}
+          version: ^0.8.0
+      - name: Login into registry
+        run: docker login ghcr.io/territoiresentransitions --username "${{ secrets.GH_USER }}" --password "${{ secrets.GH_TOKEN }}"
+
+      - name: Build and push app test image
+        run: >
+          earthly
+          --use-inline-cache --save-inline-cache --push
+          --platform=linux/amd64
+          +app-test-docker
+          --ENV_NAME=${{ github.event.inputs.target }}
+          --ANON_KEY=${{ secrets.ANON_KEY }}
+          --API_URL=${{ secrets.API_URL }}
+          --AUTH_URL=${{ vars.AUTH_URL }}
+          --BACKEND_URL=${{ vars.BACKEND_TEST_URL }}
+          --PANIER_URL=${{ vars.PANIER_URL }}
+          --SENTRY_DSN=${{ vars.SENTRY_DSN }}
+          --CRISP_WEBSITE_ID=${{ vars.CRISP_WEBSITE_ID }}
+          --POSTHOG_HOST=${{ secrets.POSTHOG_HOST }}
+          --POSTHOG_KEY=${{ secrets.POSTHOG_KEY }}
+
   deploy-app:
     name: Déploie l'app
     if: ${{ github.event.inputs.is-test-app != 'true' }}
@@ -69,14 +102,11 @@ jobs:
           +app-deploy
           --ENV_NAME=${{ github.event.inputs.target }}
           --KOYEB_API_KEY=${{ secrets.KOYEB_API_KEY }}
-          --AUTH_URL=${{ vars.AUTH_URL }}
-          --BACKEND_URL=${{ vars.BACKEND_URL }}
-          --PANIER_URL=${{ vars.PANIER_URL }}
 
   deploy-test-app:
     name: Déploie l'app de test
     if: ${{ github.event.inputs.is-test-app == 'true' }}
-    needs: build-app
+    needs: build-test-app
     environment: preprod-koyeb
     runs-on: ubuntu-latest
 
@@ -96,6 +126,3 @@ jobs:
           +app-deploy-test
           --ENV_NAME=${{ github.event.inputs.target }}
           --KOYEB_API_KEY=${{ secrets.KOYEB_API_KEY }}
-          --AUTH_URL=${{ vars.AUTH_URL }}
-          --BACKEND_URL=${{ vars.BACKEND_TEST_URL }}
-          --PANIER_URL=${{ vars.PANIER_URL }}
