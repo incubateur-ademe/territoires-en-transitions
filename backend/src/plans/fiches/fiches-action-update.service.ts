@@ -37,8 +37,7 @@ import {
   ficheActionTable,
   ficheSchemaUpdate,
 } from './shared/models/fiche-action.table';
-
-type TxType = Parameters<Parameters<ReturnType<DatabaseService['rls']>>[0]>[0];
+import { Transaction } from '@/backend/utils/database/transaction.utils';
 
 type ColumnType = Column<
   ColumnBaseConfig<ColumnDataType, string>,
@@ -376,7 +375,7 @@ export default class FichesActionUpdateService {
   private async updateRelations(
     ficheActionId: number,
     relations: any[] | null,
-    tx: TxType,
+    tx: Transaction,
     table: PgTable<TableConfig>,
     relationIdKeys: string[],
     ficheIdColumn: ColumnType,

@@ -7,6 +7,7 @@ import {
 import { TagService } from '@/backend/collectivites/tags/tag.service';
 import AxeService from '../axe.service';
 import FicheService from '@/backend/plans/fiches/fiche.service';
+import { Transaction } from '@/backend/utils/database/transaction.utils';
 
 @Injectable()
 export class ImportPlanSaveService {
@@ -16,7 +17,17 @@ export class ImportPlanSaveService {
     private readonly ficheService: FicheService
   ) {}
 
-  async tags(collectiviteId: number, tags: Set<TagImport>): Promise<void> {
+  /**
+   * Save tags
+   * @param collectiviteId
+   * @param tags
+   * @param tx transaction
+   */
+  async tags(
+    collectiviteId: number,
+    tags: Set<TagImport>,
+    tx: Transaction
+  ): Promise<void> {
     for (const tag of tags) {
       if (!tag.id && tag.nom) {
         const tagSaved = await this.tagService.saveTag(
@@ -24,7 +35,8 @@ export class ImportPlanSaveService {
             nom: tag.nom,
             collectiviteId: collectiviteId,
           },
-          tag.type
+          tag.type,
+          tx
         );
         tag.id = tagSaved.id;
       }
@@ -35,57 +47,63 @@ export class ImportPlanSaveService {
    * Save a "fiche" and its linked elements
    * @param collectiviteId
    * @param fiches
+   * @param tx transaction
    */
   async fiches(
     collectiviteId: number,
-    fiches: Set<FicheImport>
+    fiches: Set<FicheImport>,
+    tx: Transaction
   ): Promise<void> {
     for (const fiche of fiches) {
       // Save "fiche"
-      const ficheId = await this.ficheService.createFiche({
-        collectiviteId: collectiviteId,
-        titre: fiche.titre,
-        description: fiche.description,
-        objectifs: fiche.objectifs,
-        cibles: fiche?.cibles ? [fiche?.cibles] : [],
-        ressources: fiche.resources,
-        financements: fiche.financements,
-        budgetPrevisionnel: fiche.budget?.toString(),
-        statut: fiche.statut,
-        priorite: fiche.priorite,
-        dateDebut: fiche.dateDebut,
-        dateFin: fiche.dateFin,
-        ameliorationContinue: fiche.ameliorationContinue,
-        calendrier: fiche.calendrier,
-        notesComplementaires: fiche.notesComplementaire,
-        instanceGouvernance: fiche.gouvernance,
-        participationCitoyenneType: fiche.participation,
-      });
+      const ficheId = await this.ficheService.createFiche(
+        {
+          collectiviteId: collectiviteId,
+          titre: fiche.titre,
+          description: fiche.description,
+          objectifs: fiche.objectifs,
+          cibles: fiche?.cibles ? [fiche?.cibles] : [],
+          ressources: fiche.resources,
+          financements: fiche.financements,
+          budgetPrevisionnel: fiche.budget?.toString(),
+          statut: fiche.statut,
+          priorite: fiche.priorite,
+          dateDebut: fiche.dateDebut,
+          dateFin: fiche.dateFin,
+          ameliorationContinue: fiche.ameliorationContinue,
+          calendrier: fiche.calendrier,
+          notesComplementaires: fiche.notesComplementaire,
+          instanceGouvernance: fiche.gouvernance,
+          participationCitoyenneType: fiche.participation,
+        },
+        tx
+      );
       fiche.id = ficheId;
 
       // Save "thématique"
       if (fiche.thematique)
-        await this.ficheService.addThematique(ficheId, fiche.thematique);
+        await this.ficheService.addThematique(ficheId, fiche.thematique, tx);
       // Save "sous thématique"
       if (fiche.sousThematique)
         await this.ficheService.addSousThematique(
           ficheId,
-          fiche.sousThematique
+          fiche.sousThematique,
+          tx
         );
       // Save "effet attendu"
       if (fiche.resultats)
-        await this.ficheService.addEffetAttendu(ficheId, fiche.resultats);
+        await this.ficheService.addEffetAttendu(ficheId, fiche.resultats, tx);
       // Save "structures"
       for (const tag of fiche.structures) {
-        if (tag.id) await this.ficheService.addStructure(ficheId, tag.id);
+        if (tag.id) await this.ficheService.addStructure(ficheId, tag.id, tx);
       }
       // Save "partenaires"
       for (const tag of fiche.partenaires) {
-        if (tag.id) await this.ficheService.addPartenaire(ficheId, tag.id);
+        if (tag.id) await this.ficheService.addPartenaire(ficheId, tag.id, tx);
       }
       // Save "services"
       for (const tag of fiche.services) {
-        if (tag.id) await this.ficheService.addService(ficheId, tag.id);
+        if (tag.id) await this.ficheService.addService(ficheId, tag.id, tx);
       }
       // Save "pilotes"
       for (const personne of fiche.pilotes) {
@@ -93,7 +111,8 @@ export class ImportPlanSaveService {
           await this.ficheService.addPilote(
             ficheId,
             personne.tag?.id,
-            personne.userId
+            personne.userId,
+            tx
           );
       }
       // Save "referents"
@@ -102,7 +121,8 @@ export class ImportPlanSaveService {
           await this.ficheService.addReferent(
             ficheId,
             personne.tag?.id,
-            personne.userId
+            personne.userId,
+            tx
           );
       }
       // Save "financeurs"
@@ -111,7 +131,8 @@ export class ImportPlanSaveService {
           await this.ficheService.addFinanceur(
             ficheId,
             financeur.tag.id,
-            financeur.montant
+            financeur.montant,
+            tx
           );
       }
     }
@@ -121,23 +142,31 @@ export class ImportPlanSaveService {
    * Recursive function that saves an "axe" and its sub-"axes"
    * @param collectiviteId
    * @param axe
+   * @param tx transaction
    */
-  async axe(collectiviteId: number, axe: AxeImport): Promise<void> {
+  async axe(
+    collectiviteId: number,
+    axe: AxeImport,
+    tx: Transaction
+  ): Promise<void> {
     // Save "axe"
-    axe.id = await this.axeService.createAxe({
-      nom: axe.nom,
-      collectiviteId: collectiviteId,
-      parent: axe.parent?.id ?? undefined,
-      typeId: axe.type ?? undefined,
-    });
+    axe.id = await this.axeService.createAxe(
+      {
+        nom: axe.nom,
+        collectiviteId: collectiviteId,
+        parent: axe.parent?.id ?? undefined,
+        typeId: axe.type ?? undefined,
+      },
+      tx
+    );
     // Save link with "fiche".
     // All "fiches" are saved before
     for (const fiche of axe.fiches) {
-      if (fiche.id) await this.axeService.addFicheAction(fiche.id, axe.id);
+      if (fiche.id) await this.axeService.addFicheAction(fiche.id, axe.id, tx);
     }
     // Save sub-"axe"
     for (const enfant of axe.enfants) {
-      await this.axe(collectiviteId, enfant);
+      await this.axe(collectiviteId, enfant, tx);
     }
   }
 }

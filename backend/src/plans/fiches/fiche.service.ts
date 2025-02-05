@@ -23,6 +23,7 @@ import { ficheActionServiceTagTable } from '@/backend/plans/fiches/shared/models
 import { ficheActionFinanceurTagTable } from '@/backend/plans/fiches/shared/models/fiche-action-financeur-tag.table';
 import { ficheActionPiloteTable } from '@/backend/plans/fiches/shared/models/fiche-action-pilote.table';
 import { ficheActionReferentTable } from '@/backend/plans/fiches/shared/models/fiche-action-referent.table';
+import { Transaction } from '@/backend/utils/database/transaction.utils';
 
 @Injectable()
 export default class FicheService {
@@ -77,13 +78,14 @@ export default class FicheService {
   /**
    * Crée une fiche action
    * @param fiche
+   * @param tx transaction
    * @return identifiant de la fiche crée
    */
-  async createFiche(fiche: FicheCreate): Promise<number> {
+  async createFiche(fiche: FicheCreate, tx?: Transaction): Promise<number> {
     this.logger.log(
       `Création de la fiche ${fiche.titre} pour la collectivité ${fiche.collectiviteId}`
     );
-    const ficheCree = await this.databaseService.db
+    const ficheCree = await (tx ?? this.databaseService.db)
       .insert(ficheActionTable)
       .values(fiche)
       .returning();
@@ -94,24 +96,33 @@ export default class FicheService {
    * Ajoute une thématique à une fiche
    * @param ficheId identifiant de la fiche
    * @param thematiqueId identifiant de la thématique
+   * @param tx transaction
    */
-  async addThematique(ficheId: number, thematiqueId: number): Promise<void> {
-    await this.databaseService.db.insert(ficheActionThematiqueTable).values({
-      ficheId: ficheId,
-      thematiqueId: thematiqueId,
-    });
+  async addThematique(
+    ficheId: number,
+    thematiqueId: number,
+    tx?: Transaction
+  ): Promise<void> {
+    await (tx ?? this.databaseService.db)
+      .insert(ficheActionThematiqueTable)
+      .values({
+        ficheId: ficheId,
+        thematiqueId: thematiqueId,
+      });
   }
 
   /**
    * Ajoute une sous-thématique à une fiche
    * @param ficheId identifiant de la fiche
    * @param thematiqueId identifiant de la sous-thématique
+   * @param tx transaction
    */
   async addSousThematique(
     ficheId: number,
-    thematiqueId: number
+    thematiqueId: number,
+    tx?: Transaction
   ): Promise<void> {
-    await this.databaseService.db
+    await (tx ?? this.databaseService.db)
       .insert(ficheActionSousThematiqueTable)
       .values({
         ficheId: ficheId,
@@ -123,63 +134,95 @@ export default class FicheService {
    * Ajoute un indicateur à une fiche
    * @param ficheId identifiant de la fiche
    * @param indicateurId identifiant de l'indicateur
+   * @param tx transaction
    */
-  async addIndicateur(ficheId: number, indicateurId: number): Promise<void> {
-    await this.databaseService.db.insert(ficheActionIndicateurTable).values({
-      ficheId: ficheId,
-      indicateurId: indicateurId,
-    });
+  async addIndicateur(
+    ficheId: number,
+    indicateurId: number,
+    tx?: Transaction
+  ): Promise<void> {
+    await (tx ?? this.databaseService.db)
+      .insert(ficheActionIndicateurTable)
+      .values({
+        ficheId: ficheId,
+        indicateurId: indicateurId,
+      });
   }
 
   /**
    * Ajoute un effet attendu à une fiche
    * @param ficheId identifiant de la fiche
    * @param effetAttenduId identifiant de l'effet
+   * @param tx transaction
    */
   async addEffetAttendu(
     ficheId: number,
-    effetAttenduId: number
+    effetAttenduId: number,
+    tx?: Transaction
   ): Promise<void> {
-    await this.databaseService.db.insert(ficheActionEffetAttenduTable).values({
-      ficheId: ficheId,
-      effetAttenduId: effetAttenduId,
-    });
+    await (tx ?? this.databaseService.db)
+      .insert(ficheActionEffetAttenduTable)
+      .values({
+        ficheId: ficheId,
+        effetAttenduId: effetAttenduId,
+      });
   }
 
   /**
    * Ajoute un partenaire à une fiche à partir de l'id du tag
    * @param ficheId identifiant de la fiche
    * @param tagId identifiant du partenaire
+   * @param tx transaction
    */
-  async addPartenaire(ficheId: number, tagId: number): Promise<void> {
-    await this.databaseService.db.insert(ficheActionPartenaireTagTable).values({
-      ficheId: ficheId,
-      partenaireTagId: tagId,
-    });
+  async addPartenaire(
+    ficheId: number,
+    tagId: number,
+    tx?: Transaction
+  ): Promise<void> {
+    await (tx ?? this.databaseService.db)
+      .insert(ficheActionPartenaireTagTable)
+      .values({
+        ficheId: ficheId,
+        partenaireTagId: tagId,
+      });
   }
 
   /**
    * Ajoute une structure à une fiche à partir de l'id du tag
    * @param ficheId identifiant de la fiche
    * @param tagId identifiant de la structure
+   * @param tx transaction
    */
-  async addStructure(ficheId: number, tagId: number): Promise<void> {
-    await this.databaseService.db.insert(ficheActionStructureTagTable).values({
-      ficheId: ficheId,
-      structureTagId: tagId,
-    });
+  async addStructure(
+    ficheId: number,
+    tagId: number,
+    tx?: Transaction
+  ): Promise<void> {
+    await (tx ?? this.databaseService.db)
+      .insert(ficheActionStructureTagTable)
+      .values({
+        ficheId: ficheId,
+        structureTagId: tagId,
+      });
   }
 
   /**
    * Ajoute un service à une fiche à partir de l'id du tag
    * @param ficheId identifiant de la fiche
    * @param tagId identifiant du service
+   * @param tx transaction
    */
-  async addService(ficheId: number, tagId: number): Promise<void> {
-    await this.databaseService.db.insert(ficheActionServiceTagTable).values({
-      ficheId: ficheId,
-      serviceTagId: tagId,
-    });
+  async addService(
+    ficheId: number,
+    tagId: number,
+    tx?: Transaction
+  ): Promise<void> {
+    await (tx ?? this.databaseService.db)
+      .insert(ficheActionServiceTagTable)
+      .values({
+        ficheId: ficheId,
+        serviceTagId: tagId,
+      });
   }
 
   /**
@@ -187,13 +230,21 @@ export default class FicheService {
    * @param ficheId identifiant de la fiche
    * @param tagId identifiant du financeur
    * @param montant montant du financement par ce financeur
+   * @param tx transaction
    */
-  async addFinanceur(ficheId: number, tagId: number, montant : number): Promise<void> {
-    await this.databaseService.db.insert(ficheActionFinanceurTagTable).values({
-      ficheId: ficheId,
-      financeurTagId: tagId,
-      montantTtc : montant
-    });
+  async addFinanceur(
+    ficheId: number,
+    tagId: number,
+    montant: number,
+    tx?: Transaction
+  ): Promise<void> {
+    await (tx ?? this.databaseService.db)
+      .insert(ficheActionFinanceurTagTable)
+      .values({
+        ficheId: ficheId,
+        financeurTagId: tagId,
+        montantTtc: montant,
+      });
   }
 
   /**
@@ -201,14 +252,22 @@ export default class FicheService {
    * @param ficheId identifiant de la fiche
    * @param tagId identifiant du pilote
    * @param userId identifiant de l'utilisateur pilote
+   * @param tx transaction
    */
-  async addPilote(ficheId: number, tagId?: number, userId?: string): Promise<void> {
-    if(tagId || userId)
-    await this.databaseService.db.insert(ficheActionPiloteTable).values({
-      ficheId: ficheId,
-      tagId: tagId,
-      userId: userId
-    });
+  async addPilote(
+    ficheId: number,
+    tagId?: number,
+    userId?: string,
+    tx?: Transaction
+  ): Promise<void> {
+    if (tagId || userId)
+      await (tx ?? this.databaseService.db)
+        .insert(ficheActionPiloteTable)
+        .values({
+          ficheId: ficheId,
+          tagId: tagId,
+          userId: userId,
+        });
   }
 
   /**
@@ -216,38 +275,60 @@ export default class FicheService {
    * @param ficheId identifiant de la fiche
    * @param tagId identifiant du référent
    * @param userId identifiant de l'utilisateur référent
+   * @param tx transaction
    */
-  async addReferent(ficheId: number, tagId?: number, userId?: string): Promise<void> {
-    if(tagId || userId)
-      await this.databaseService.db.insert(ficheActionReferentTable).values({
-        ficheId: ficheId,
-        tagId: tagId,
-        userId: userId
-      });
+  async addReferent(
+    ficheId: number,
+    tagId?: number,
+    userId?: string,
+    tx?: Transaction
+  ): Promise<void> {
+    if (tagId || userId)
+      await (tx ?? this.databaseService.db)
+        .insert(ficheActionReferentTable)
+        .values({
+          ficheId: ficheId,
+          tagId: tagId,
+          userId: userId,
+        });
   }
 
   /**
    * Ajoute une action du référentiel à une fiche
    * @param ficheId identifiant de la fiche
    * @param actionId identifiant de l'action
+   * @param tx transaction
    */
-  async addActionReferentiel(ficheId: number, actionId: string): Promise<void> {
-    await this.databaseService.db.insert(ficheActionActionTable).values({
-      ficheId: ficheId,
-      actionId: actionId,
-    });
+  async addActionReferentiel(
+    ficheId: number,
+    actionId: string,
+    tx?: Transaction
+  ): Promise<void> {
+    await (tx ?? this.databaseService.db)
+      .insert(ficheActionActionTable)
+      .values({
+        ficheId: ficheId,
+        actionId: actionId,
+      });
   }
 
   /**
    * Ajoute une action à impact à une fiche
    * @param ficheId identifiant de la fiche
    * @param actionId identifiant de l'action
+   * @param tx transaction
    */
-  async addActionImpact(ficheId: number, actionId: number): Promise<void> {
-    await this.databaseService.db.insert(ficheActionActionImpactTable).values({
-      ficheId: ficheId,
-      actionImpactId: actionId,
-    });
+  async addActionImpact(
+    ficheId: number,
+    actionId: number,
+    tx?: Transaction
+  ): Promise<void> {
+    await (tx ?? this.databaseService.db)
+      .insert(ficheActionActionImpactTable)
+      .values({
+        ficheId: ficheId,
+        actionImpactId: actionId,
+      });
   }
 
   /** Lit les notes de suivi attachées à la fiche */
