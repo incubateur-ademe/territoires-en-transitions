@@ -10,6 +10,9 @@ import { useReferentielId } from './referentiel-context';
 export type Snapshot =
   RouterOutput['referentiels']['snapshots']['getCurrentFullScore'];
 
+export type SnapshotDetails =
+  RouterOutput['referentiels']['snapshots']['list']['snapshots'][number];
+
 export type ActionDetailed = Snapshot['scores'];
 
 export function useSnapshot({ actionId }: { actionId: string }) {
@@ -22,13 +25,23 @@ export function useSnapshot({ actionId }: { actionId: string }) {
   });
 }
 
-export function useSnapshotList() {
+export function useSnapshotList({
+  limit,
+  mostRecentFirst,
+}: {
+  limit?: number;
+  mostRecentFirst?: boolean;
+}) {
   const collectiviteId = useCollectiviteId()!;
   const referentielId = useReferentielId();
 
   return trpc.referentiels.snapshots.list.useQuery({
     collectiviteId,
     referentielId,
+    parameters: {
+      limit,
+      mostRecentFirst,
+    },
   });
 }
 
