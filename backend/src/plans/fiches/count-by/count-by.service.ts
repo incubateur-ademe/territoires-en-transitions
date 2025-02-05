@@ -679,21 +679,17 @@ export class CountByService {
         >`array_agg(json_build_object('id', ${ficheActionAxeTable.axeId}, 'nom', ${axeTable.nom}, 'parentId', ${parentAxeTable.id}, 'parentNom', ${parentAxeTable.nom}))`.as(
           'axes'
         ),
-        plan_ids: sql<number[]>`array_agg(${axeTable.plan})`.as('plan_ids'),
+        plan_ids: sql<
+          number[]
+        >`array_agg(COALESCE(${axeTable.plan}, ${axeTable.id}))`.as('plan_ids'),
         plans: sql<
           { id: number; nom: string }[]
-        >`array_agg(json_build_object('id', ${axeTable.plan}, 'nom', ${planTable.nom}))`.as(
+        >`array_agg(json_build_object('id', COALESCE(${axeTable.plan}, ${axeTable.id}), 'nom', COALESCE(${planTable.nom}, ${axeTable.nom})))`.as(
           'plans'
         ),
       })
       .from(ficheActionAxeTable)
-      .leftJoin(
-        axeTable,
-        and(
-          eq(axeTable.id, ficheActionAxeTable.axeId),
-          isNotNull(axeTable.parent)
-        )
-      )
+      .leftJoin(axeTable, and(eq(axeTable.id, ficheActionAxeTable.axeId)))
       .leftJoin(
         parentAxeTable,
         and(

@@ -353,17 +353,17 @@ export default class TableauDeBordCollectiviteService {
 
     if (
       key ===
-      collectiviteDefaultModuleKeysSchema.enum['fiche-actions-par-elu-referent']
+      collectiviteDefaultModuleKeysSchema.enum['fiche-actions-par-indicateurs-associes']
     ) {
       return {
         id: crypto.randomUUID(),
         collectiviteId,
         userId: null,
-        titre: 'Répartition des fiches par élu·e référent·e',
+        titre: 'Actions et indicateurs associés',
         type: 'fiche-action.count-by',
         defaultKey: key,
         options: {
-          countByProperty: 'referents',
+          countByProperty: 'indicateurs',
           filtre: {
             // Le filtre par défaut se base sur tous les plans d'actions de la collectivité
             planActionIds,
