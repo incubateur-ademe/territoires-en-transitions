@@ -2,15 +2,30 @@ import { ReactECharts } from '@/app/ui/charts/echarts';
 
 import type { EChartsOption } from 'echarts';
 import { actionAvancementColors } from '@/app/app/theme';
+import { SnapshotDetails } from '../../use-snapshot';
 
-const ScoreEvolutionsTotalChart = ({ snapshots }: { snapshots: any[] }) => {
-  console.log('snapshots', snapshots);
+const ScoreEvolutionsTotalChart = ({
+  snapshots,
+}: {
+  snapshots: SnapshotDetails[];
+}) => {
+  // Sort snapshots by year specified in name.
+  // If no year is specified, puts at the end.
+  const sortedSnapshots = snapshots?.length
+    ? [...snapshots].sort((a, b) => {
+        const yearA =
+          parseInt(a.nom?.split(' - ')[0] || '') || Number.MAX_SAFE_INTEGER;
+        const yearB =
+          parseInt(b.nom?.split(' - ')[0] || '') || Number.MAX_SAFE_INTEGER;
+        return yearA - yearB;
+      })
+    : [];
 
-  const yearAndNameLabels = snapshots.map((snapshot) => {
+  const nameLabels = sortedSnapshots?.map((snapshot) => {
     if (!snapshot.nom) {
       return 'Sans nom';
     }
-    return `${extractYearFromDate(snapshot.createdAt)} - ${snapshot.nom}`;
+    return `${snapshot.nom}`;
   });
 
   const getBarWidth = (snapshotsCount: number) => {
@@ -25,44 +40,50 @@ const ScoreEvolutionsTotalChart = ({ snapshots }: { snapshots: any[] }) => {
       name: 'Fait',
       type: 'bar' as const,
       stack: 'total',
-      barWidth: getBarWidth(snapshots.length),
+      barWidth: getBarWidth(snapshots?.length ?? 0),
       emphasis: {
         focus: 'series' as const,
       },
       itemStyle: {
         color: actionAvancementColors.fait,
       },
-      data: snapshots.map((snapshot) =>
-        computePercentage(snapshot.pointFait, snapshot.pointPotentiel)
+      data: sortedSnapshots?.map((snapshot) =>
+        computePercentage(
+          snapshot?.pointFait ?? 0,
+          snapshot?.pointPotentiel ?? 0
+        )
       ),
     },
     {
       name: 'Programmé',
       type: 'bar' as const,
       stack: 'total',
-      barWidth: getBarWidth(snapshots.length),
+      barWidth: getBarWidth(snapshots?.length ?? 0),
       emphasis: {
         focus: 'series' as const,
       },
       itemStyle: {
         color: actionAvancementColors.programme,
       },
-      data: snapshots.map((snapshot) =>
-        computePercentage(snapshot.pointProgramme, snapshot.pointPotentiel)
+      data: sortedSnapshots?.map((snapshot) =>
+        computePercentage(
+          snapshot?.pointProgramme ?? 0,
+          snapshot?.pointPotentiel ?? 0
+        )
       ),
     },
     {
       name: 'Pas fait',
       type: 'bar' as const,
       stack: 'total',
-      barWidth: getBarWidth(snapshots.length),
+      barWidth: getBarWidth(snapshots?.length ?? 0),
       emphasis: {
         focus: 'series' as const,
       },
       itemStyle: {
         color: actionAvancementColors.pas_fait,
       },
-      data: snapshots.map((snapshot) =>
+      data: sortedSnapshots?.map((snapshot) =>
         computePercentage(snapshot.pointPasFait, snapshot.pointPotentiel)
       ),
     },
@@ -70,15 +91,18 @@ const ScoreEvolutionsTotalChart = ({ snapshots }: { snapshots: any[] }) => {
       name: 'Non renseigné',
       type: 'bar' as const,
       stack: 'total',
-      barWidth: getBarWidth(snapshots.length),
+      barWidth: getBarWidth(snapshots?.length ?? 0),
       emphasis: {
         focus: 'series' as const,
       },
       itemStyle: {
         color: actionAvancementColors.non_renseigne,
       },
-      data: snapshots.map((snapshot) =>
-        computePercentage(snapshot.pointNonRenseigne, snapshot.pointPotentiel)
+      data: sortedSnapshots?.map((snapshot) =>
+        computePercentage(
+          snapshot.pointNonRenseigne ?? 0,
+          snapshot.pointPotentiel ?? 0
+        )
       ),
       label: {
         show: true,
@@ -86,8 +110,8 @@ const ScoreEvolutionsTotalChart = ({ snapshots }: { snapshots: any[] }) => {
         distance: 5,
         formatter: (params: any) =>
           makeScoreSnapshotLabel(
-            snapshots[params.dataIndex].pointFait,
-            snapshots[params.dataIndex].pointPotentiel
+            sortedSnapshots[params.dataIndex].pointFait,
+            sortedSnapshots[params.dataIndex].pointPotentiel
           ),
         fontWeight: 'normal' as const,
         rich: {
@@ -141,7 +165,7 @@ const ScoreEvolutionsTotalChart = ({ snapshots }: { snapshots: any[] }) => {
     xAxis: [
       {
         type: 'category' as const,
-        data: yearAndNameLabels,
+        data: nameLabels,
       },
     ],
     yAxis: [
@@ -163,11 +187,6 @@ const ScoreEvolutionsTotalChart = ({ snapshots }: { snapshots: any[] }) => {
 };
 
 export default ScoreEvolutionsTotalChart;
-
-const extractYearFromDate = (dateString: string): string => {
-  const date = new Date(dateString);
-  return date.getFullYear().toString();
-};
 
 const makeScoreSnapshotLabel = (pointFait: number, pointPotentiel: number) => {
   const percentage = (pointFait / pointPotentiel) * 100;
