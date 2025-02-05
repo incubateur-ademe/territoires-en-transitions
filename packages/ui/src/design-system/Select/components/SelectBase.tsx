@@ -34,6 +34,8 @@ export type SelectProps = {
   onChange: (value: OptionValue) => void;
   /** Valeurs sélectionnées, peut recevoir une valeur seule ou un tableau de valeurs */
   values?: OptionValue | OptionValue[];
+  /** Si true, le sélecteur affichera toutes les valeurs sélectionnées plutôt qu'une seule valeur et un badge +n */
+  displayAllBadges?: boolean;
   /** Active la multi sélection */
   multiple?: boolean;
   /** Permet la recherche dans la liste d'option */
@@ -85,6 +87,7 @@ export const SelectBase = (props: SelectProps) => {
   const {
     dataTest,
     values,
+    displayAllBadges,
     options,
     onChange,
     createProps,
@@ -221,6 +224,7 @@ export const SelectBase = (props: SelectProps) => {
       <SelectButton
         dataTest={dataTest}
         values={arrayValues}
+        displayAllBadges={displayAllBadges}
         options={options}
         onChange={onChange}
         isSearcheable={hasSearch}
@@ -252,6 +256,7 @@ const SelectButton = forwardRef(
       isOpen,
       options,
       values,
+      displayAllBadges,
       onChange,
       inputValue,
       isSearcheable,
@@ -274,6 +279,43 @@ const SelectButton = forwardRef(
     );
 
     const firstValueDisabled = firstValue?.disabled ?? false;
+
+    /** Affiche soit toutes les valeurs sélectionnées, soit seulement la première valeur et un badge +n */
+    const displayBadges = (values: OptionValue[]) => {
+      if (displayAllBadges) {
+        return values.map((value) => (
+          <Badge title={value} state="info" key={value.toString()} />
+        ));
+      }
+      return (
+        <>
+          {customItem && firstValue ? (
+            // Item custom
+            customItem(firstValue)
+          ) : (
+            // Badge par défaut
+            <Badge
+              state={
+                firstValueDisabled
+                  ? 'grey'
+                  : createProps &&
+                    firstValue &&
+                    createProps.userCreatedOptions.includes(firstValue.value)
+                  ? 'standard'
+                  : 'default'
+              }
+              light={firstValueDisabled ?? undefined}
+              disabled={firstValueDisabled}
+              title={getOptionLabel(values[0], getFlatOptions(options)) ?? ''}
+              onClose={() => !disabled && onChange(values[0])}
+            />
+          )}
+          {values.length > 1 && (
+            <Badge title={`+${values.length - 1}`} state="info" />
+          )}
+        </>
+      );
+    };
 
     return (
       <button
@@ -310,35 +352,7 @@ const SelectButton = forwardRef(
             {values && Array.isArray(values) && values.length > 0 ? (
               /** Listes des valeurs sélectionnées */
               <div className="flex items-center gap-2 grow">
-                {customItem && firstValue ? (
-                  // Item custom
-                  customItem(firstValue)
-                ) : (
-                  // Badge par défaut
-                  <Badge
-                    state={
-                      firstValueDisabled
-                        ? 'grey'
-                        : createProps &&
-                          firstValue &&
-                          createProps.userCreatedOptions.includes(
-                            firstValue.value
-                          )
-                        ? 'standard'
-                        : 'default'
-                    }
-                    light={firstValueDisabled ?? undefined}
-                    disabled={firstValueDisabled}
-                    title={
-                      getOptionLabel(values[0], getFlatOptions(options)) ?? ''
-                    }
-                    onClose={() => !disabled && onChange(values[0])}
-                  />
-                )}
-                {/** Nombre de valeurs sélectionnées supplémentaires */}
-                {values.length > 1 && (
-                  <Badge title={`+${values.length - 1}`} state="info" />
-                )}
+                {displayBadges(values)}
               </div>
             ) : (
               /** Si pas de valeur et que la recherche n'est pas activée, on affiche un placeholder */

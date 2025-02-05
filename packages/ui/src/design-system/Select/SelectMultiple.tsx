@@ -15,6 +15,10 @@ export type SelectMultipleProps = Omit<SelectProps, 'onChange' | 'values'> & {
   onChange: (args: SelectMultipleOnChangeArgs) => void;
   /** Valeurs sélectionnées */
   values?: OptionValue[];
+  /**
+   * Si true, le sélecteur affichera toutes les valeurs sélectionnées
+   */
+  displayAllBadges?: boolean;
 };
 /**
  * Sélecteur de valeur multiple
@@ -24,6 +28,7 @@ export type SelectMultipleProps = Omit<SelectProps, 'onChange' | 'values'> & {
 export const SelectMultiple = ({
   values,
   onChange,
+  displayAllBadges,
   ...props
 }: SelectMultipleProps) => {
   return (
@@ -52,6 +57,7 @@ export const SelectMultiple = ({
       }}
       multiple
       values={values}
+      displayAllBadges={displayAllBadges}
     />
   );
 };
