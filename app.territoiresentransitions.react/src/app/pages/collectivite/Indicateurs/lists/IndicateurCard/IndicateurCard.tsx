@@ -20,8 +20,6 @@ import PictoIndicateurVide from '@/app/ui/pictogrammes/PictoIndicateurVide';
 import { useIndicateurDefinition } from '../../Indicateur/useIndicateurDefinition';
 import DownloadIndicateurChartModal from '../../chart/DownloadIndicateurChart';
 import IndicateurChart from '../../chart/IndicateurChart';
-import BadgeGroupement from '../../components/BadgeGroupement';
-import BadgeIndicateurCompose from '../../components/BadgeIndicateurCompose';
 import {
   IndicateurChartInfo,
   useIndicateurChartInfo,
@@ -123,7 +121,6 @@ export const IndicateurCardBase = ({
 
   const totalEnfants = definition.enfants?.length ?? 0;
   const isIndicateurParent = totalEnfants > 0;
-  const estCompose = isIndicateurParent && definition.estAgregation;
   const estGroupement = isIndicateurParent && !definition.estAgregation;
 
   return (
@@ -190,8 +187,6 @@ export const IndicateurCardBase = ({
               <div className="flex items-center gap-2 flex-wrap">
                 {definition.estPerso && <BadgeIndicateurPerso size="sm" />}
                 {definition.hasOpenData && <BadgeOpenData size="sm" />}
-                {estGroupement && <BadgeGroupement size="sm" />}
-                {estCompose && <BadgeIndicateurCompose size="sm" />}
               </div>
             </>
           )}
