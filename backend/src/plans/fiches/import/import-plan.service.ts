@@ -81,7 +81,7 @@ export class ImportPlanService {
   ) {}
 
   /**
-   * todo
+   * Import a "plan" from an Excel file
    * @param file
    * @param collectiviteId
    * @param planName
@@ -99,7 +99,6 @@ export class ImportPlanService {
       enfants: new Set<AxeImport>(),
       fiches: [],
     };
-
     // Open and check if the file is ok
     const fileBuffer = await file.arrayBuffer();
     const workbook = new ExcelJS.Workbook();
@@ -113,21 +112,40 @@ export class ImportPlanService {
     const memoryData = await this.fetchData(collectiviteId, plan);
 
     // Browse the file and retrieve the data
+    const errors: string[] = [];
     worksheet.eachRow(async (row, rowNumber) => {
       if (rowNumber === 1 || rowNumber === 2) return; // Ignorer the header
       const rowData = row.values as any[];
       rowData.shift(); // data start at [1]
-      this.createAxes(rowData, plan, memoryData);
+      try {
+        this.createAxes(rowData, plan, memoryData);
+      } catch (e) {
+        errors.push(`Ligne ${rowNumber} : ${e as string}`);
+      }
     });
 
+    if (errors.length > 0) {
+      throw new Error(`Erreur(s) rencontrée(s) dans le fichier Excel :
+      ${errors.join('\n- ')}
+
+      Merci de la/les corriger avant de retenter un import.`);
+    }
+
     // Save datas
-    await this.saveData(collectiviteId, memoryData);
+    try {
+      await this.saveData(collectiviteId, memoryData);
+    } catch (e) {
+      throw new Error(`Erreur rencontrée lors de la sauvegarde.
+      Merci de contacter un dev en fournissant l'erreur ci-dessous :
+
+            ${e}`);
+    }
 
     return true;
   }
 
   /**
-   * Check that the excel columns match the expected pattern
+   * Check that the Excel columns match the expected pattern
    * @param worksheet
    * @param row
    * @private
@@ -137,10 +155,12 @@ export class ImportPlanService {
       if (OrderedColumnNames[columnId].trim() !== row[columnId].trim()) {
         const columnExcel = worksheet.getColumn(columnId + 1).letter;
         throw new Error(
-          `Mauvaise colonne :
+          `Erreur rencontrée dans le fichier Excel :
           La colonne ${columnExcel} devrait être "${OrderedColumnNames[columnId]}" et non "${row[columnId]}"
           Les colonnes attendues sont : ${OrderedColumnNames}
-          Les colonnes données sont   : ${row}`
+          Les colonnes données sont   : ${row}
+
+          Merci de la corriger avant de retenter un import.`
         );
       }
     }
@@ -229,7 +249,7 @@ export class ImportPlanService {
       rowData[columnIndexes[ColumnNames.TitreFicheAction]],
       true
     );
-    if (!title) {
+    if (!title || title.includes('Champ obligatoire')) {
       return null;
     }
     return {
@@ -372,8 +392,8 @@ export class ImportPlanService {
       fiches: new Set<FicheImport>(),
       effetsAttendu: await this.fetch.effetsAttendus(),
       members: await this.fetch.members(collectiviteId),
-      thematiques : await this.fetch.thematiques(),
-      sousThematiques : await this.fetch.sousThematiques(),
+      thematiques: await this.fetch.thematiques(),
+      sousThematiques: await this.fetch.sousThematiques(),
     };
 
     for (const ficheTag of ficheTagTypes) {
@@ -393,8 +413,10 @@ export class ImportPlanService {
    */
   private async saveData(collectiviteId: number, memoryData: MemoryImport) {
     // Order is important tags -> fiches -> axes
-    await this.save.tags(collectiviteId, memoryData.tags);
-    await this.save.fiches(collectiviteId, memoryData.fiches);
-    await this.save.axe(collectiviteId, memoryData.plan);
+    await this.databaseService.db.transaction(async (tx) => {
+      await this.save.tags(collectiviteId, memoryData.tags, tx);
+      await this.save.fiches(collectiviteId, memoryData.fiches, tx);
+      await this.save.axe(collectiviteId, memoryData.plan, tx);
+    });
   }
 }

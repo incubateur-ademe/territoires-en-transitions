@@ -21,15 +21,7 @@ const regexEspace = /\\t|\\r|\\n/;
 
 /** Regex to detect tags in a string */
 const regexSplit =
-  /((et\/ou)|[,/+?&;]|\n|\r| - | -|- |^-| et (?!de))(?![^(]*[)])(?![^«]*[»])/;
-
-/** Regex to detect "thematique" in a string */
-const regexSplitThematique =
-  /([/+?&;]|\n|\r| - | -|- |^-)(?![^(]*[)])(?![^«]*[»])/;
-
-/** Regex to check URL format */
-const regexURL =
-  /(https?:\/\/)?(www\.)?[-a-zA-Z0-9@:%._~#=]{1,256}\.[a-zA-Z0-9()]{1,6}\b([-a-zA-Z0-9()@:%_.~#?&//=]*)/;
+  /((et\/ou)|[,/+?&;]|\n|\r| - | -|- |^-| et (?!de))(?![^(]*[)])(?![^«]*»)/;
 
 /** Accept some synonyms for "niveau de priorité" */
 const niveauxPrioritesSynonyme: Record<string, string> = {
@@ -66,7 +58,7 @@ export class ImportPlanCleanService {
     const toReturn = parseInt(integer);
     if (isNaN(toReturn)) {
       throw new Error(
-        'Les montants ne doivent contenir que des chiffres : ' + String(integer)
+        `Le montant ${String(integer)} est incorrect, les montants ne doivent contenir que des chiffres.`
       );
     }
     return toReturn;
@@ -112,7 +104,7 @@ export class ImportPlanCleanService {
       }
     }
     if (d.toString() == 'Invalid Date') {
-      throw Error("La date n'est pas valide");
+      throw Error(`La date ${date} n'est pas valide.`);
     }
     const toReturn = d.toISOString();
     if (toReturn.substring(0, 10) === '1970-01-01') {
@@ -141,8 +133,8 @@ export class ImportPlanCleanService {
       const cleaned = this.text(element);
       if (cleaned && !cleaned.match(regexSplit)) {
         const found = fuse.search(cleaned)?.[0]?.item;
-        let tag: TagImport | undefined = undefined;
-        let userId: string | undefined = undefined;
+        let tag: TagImport | undefined;
+        let userId: string | undefined;
         if (found) {
           userId = members[found];
         } else {
@@ -195,7 +187,7 @@ export class ImportPlanCleanService {
     existingTags: Set<TagImport>
   ): TagImport | undefined {
     if (!tagName) return undefined;
-    let toReturn: TagImport | undefined = undefined;
+    let toReturn: TagImport | undefined;
     toReturn = [...existingTags].find(
       (tag) => tag.nom === tagName && tag.type === tagType
     );
@@ -283,7 +275,7 @@ export class ImportPlanCleanService {
   }
 
   /**
-   * Clean an "thematique"
+   * Clean a "thematique"
    * @param thematique
    * @param thematiques
    * @return associated id
