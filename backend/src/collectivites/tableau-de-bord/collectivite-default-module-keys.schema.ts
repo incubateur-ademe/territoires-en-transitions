@@ -4,7 +4,7 @@ export const collectiviteDefaultModuleKeysSchema = z.enum([
   'suivi-plan-actions',
   'fiche-actions-par-statut',
   'fiche-actions-par-personne-pilote',
-  'fiche-actions-par-elu-referent',
+  'fiche-actions-par-indicateurs-associes',
   'fiche-actions-par-priorite',
 ]);
 

@@ -26,7 +26,7 @@ export const BottomOkCancel = (props: BottomOkCancelProps) => {
     >
       <div
         className={classNames(
-          'py-3 flex gap-4 w-full mx-auto xl:max-w-7xl 2xl:max-w-8xl',
+          'py-3 flex gap-4 w-full mx-auto xl:max-w-6xl 2xl:max-w-8xl',
           styles.background
         )}
       >
