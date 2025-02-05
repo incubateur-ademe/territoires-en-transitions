@@ -11,12 +11,12 @@ export type InfoTvaProps = {
 const InfoTva = ({ titre, description }: InfoTvaProps) => {
   return (
     <Alert
-      className="p-3 mt-10 rounded-[10px]"
+      className="p-3 mt-10 rounded-xl"
       title={titre}
       description={
         <Markdown
           texte={description}
-          className="paragraphe-14 paragraphe-info-1 paragraphe-medium -mb-6 [&>p]:mb-0"
+          className="paragraphe-14 paragraphe-info-1 paragraphe-medium [&>p]:mb-0"
         />
       }
     />

@@ -36,13 +36,13 @@ const Budget = async () => {
       className="max-md:px-0 !gap-0"
     >
       <div className="max-md:px-6 mb-6">
-        <h1 className="text-primary-10 text-[25px] mb-4">
+        <h2 className="text-primary-10 text-2xl mb-3">
           {strapiData.header.titre_secondaire}
-        </h1>
-        <h2 className="text-primary-7 text-[42px] md:text-[53px] max-md:leading-[50px] mb-8">
-          {strapiData.header.titre_principal}
         </h2>
-        <p className="text-primary-10 text-[18px] font-bold mb-10">
+        <h1 className="text-primary-7 text-[2.625rem] md:text-5xl max-md:leading-[3rem] mb-8">
+          {strapiData.header.titre_principal}
+        </h1>
+        <p className="text-primary-10 text-lg font-bold mb-10">
           {strapiData.header.description}
         </p>
       </div>
