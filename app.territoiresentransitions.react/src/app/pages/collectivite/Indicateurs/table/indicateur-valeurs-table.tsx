@@ -34,7 +34,8 @@ export const IndicateurValeursTable = ({
   readonly,
   confidentiel,
 }: IndicateurValeursTable) => {
-  const { annees, sources, donneesCollectivite } = data || {};
+  const { annees, sources, donneesCollectivite, valeursExistantes } =
+    data || {};
   const placeholdersCount = Math.max(
     0,
     MAX_PLACEHOLDERS_COUNT - (annees?.length ?? 0)
@@ -100,6 +101,11 @@ export const IndicateurValeursTable = ({
               {/* cellule pour chaque année */}
               {annees?.map((annee) => {
                 const entry = s.valeurs.find((v) => v.annee === annee);
+                // récupère l'id de la ligne à mettre à jour
+                const id =
+                  (s.source === 'collectivite'
+                    ? valeursExistantes?.find((v) => v.annee === annee)?.id
+                    : undefined) ?? undefined;
                 return (
                   <CellValue
                     key={annee}
@@ -107,7 +113,7 @@ export const IndicateurValeursTable = ({
                     value={entry?.valeur ?? ''}
                     onChange={(newValue) => {
                       upsertValeur({
-                        id: entry?.id,
+                        id,
                         collectiviteId,
                         indicateurId: definition.id,
                         dateValeur: `${annee}-01-01`,
