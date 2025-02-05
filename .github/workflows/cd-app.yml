@@ -97,5 +97,5 @@ jobs:
           --ENV_NAME=${{ github.event.inputs.target }}
           --KOYEB_API_KEY=${{ secrets.KOYEB_API_KEY }}
           --AUTH_URL=${{ vars.AUTH_URL }}
-          --BACKEND_URL=${{ vars.BACKEND_URL }}
+          --BACKEND_URL=${{ vars.BACKEND_TEST_URL }}
           --PANIER_URL=${{ vars.PANIER_URL }}
