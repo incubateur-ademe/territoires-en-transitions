@@ -1,15 +1,20 @@
 import { getAuthToken, getTestApp } from '@/backend/test';
 import { INestApplication } from '@nestjs/common';
+import { eq } from 'drizzle-orm';
 import { Workbook } from 'exceljs';
 import { default as request } from 'supertest';
+import { DatabaseService } from '../../utils';
+import { indicateurDefinitionTable } from '../index-domain';
 
 describe('Indicateurs', () => {
   let app: INestApplication;
   let yoloDodoToken: string;
+  let databaseService: DatabaseService;
 
   beforeAll(async () => {
     app = await getTestApp();
     yoloDodoToken = await getAuthToken();
+    databaseService = app.get<DatabaseService>(DatabaseService);
   });
 
   afterAll(async () => {
@@ -17,7 +22,12 @@ describe('Indicateurs', () => {
   });
 
   test('Exporte un indicateur au format XLSX', async () => {
-    const indicateurId = 177; // cae_8
+    const rows = await databaseService.db
+      .select()
+      .from(indicateurDefinitionTable)
+      .where(eq(indicateurDefinitionTable.identifiantReferentiel, 'cae_8'));
+
+    const indicateurId = rows[0].id;
 
     const response = await request(app.getHttpServer())
       .post('/indicateurs/xlsx')
