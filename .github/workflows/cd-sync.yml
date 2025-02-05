@@ -1,6 +1,15 @@
 name: Synchronise la base de données de staging avec la base de données de production
 run-name: Synchronisation de la BDD staging
 
+on:
+  workflow_dispatch:
+    inputs:
+      target:
+        type: choice
+        description: Quel environnement ?
+        options:
+          - prod
+
 jobs:
   sync-production-to-staging:
     name: Synchronisation de la BDD staging avec les données de production
