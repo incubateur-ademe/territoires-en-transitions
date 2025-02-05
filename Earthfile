@@ -143,6 +143,43 @@ db-deploy-test:
         --env SQITCH_TARGET=db:$DB_URL \
         $REG_TARGET/db-deploy:$DL_TAG deploy --mode change --verify
 
+db-sync-build:
+    ARG TARGETPLATFORM
+    # `--PLATFORM=<platform>` pour forcer la plateforme cible, sinon ce sera la
+    # même que celle sur laquelle le build est fait
+    ARG PLATFORM=$TARGETPLATFORM
+    FROM --platform=$PLATFORM ankane/pgsync
+    COPY ./data_layer/pgsync/.pgsync.yml ./.pgsync.yml
+    COPY ./data_layer/pgsync/sync-databases.sh ./sync-databases.sh
+    RUN chmod +x ./sync-databases.sh
+    ENTRYPOINT ["./sync-databases.sh"]
+    SAVE IMAGE --push $REG_TARGET/db-sync:$DL_TAG
+
+
+db-sync:
+    ARG --required FROM_DB_URL
+    ARG --required TO_DB_URL
+    ARG network=host
+    LOCALLY
+    DO +BUILD_IF_NO_IMG --IMG_NAME=db-sync --IMG_TAG=$DL_TAG --BUILD_TARGET=db-sync-build
+    RUN docker run --rm \
+        --network $network \
+        --env FROM_DB_URL=$FROM_DB_URL \
+        --env TO_DB_URL=$TO_DB_URL \
+        $REG_TARGET/db-sync:$DL_TAG
+
+db-sync-local:
+    ARG --required FROM_DB_URL
+    ARG --required DB_URL
+    ARG network=host
+    LOCALLY
+    DO +BUILD_IF_NO_IMG --IMG_NAME=db-sync --IMG_TAG=$DL_TAG --BUILD_TARGET=db-sync-build
+    RUN docker run --rm \
+        --network $network \
+        --env FROM_DB_URL=$FROM_DB_URL \
+        --env TO_DB_URL=$DB_URL \
+        $REG_TARGET/db-sync:$DL_TAG
+
 seed-build:
     FROM +postgres
     ENV SKIP_TEST_DOMAIN=0
