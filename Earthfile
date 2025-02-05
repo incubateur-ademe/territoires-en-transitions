@@ -21,6 +21,7 @@ ARG --global FRONT_DEPS_TAG=$(openssl dgst -sha256 -r ./pnpm-lock.yaml | head -c
 ARG --global FRONT_DEPS_IMG_NAME=$REG_TARGET/front-deps:$FRONT_DEPS_TAG
 ARG --global APP_TAG=$ENV_NAME-$FRONT_DEPS_TAG-$(sh ./subdirs_hash.sh $APP_DIR,$UI_DIR,$API_DIR)
 ARG --global APP_IMG_NAME=$REG_TARGET/app:$APP_TAG
+ARG --global APP_TEST_IMG_NAME=$REG_TARGET/app-test:$APP_TAG
 ARG --global DEPLOYMENT_TIMESTAMP=$(date -u +"%Y-%m-%dT%H:%M:%SZ")
 
 # ARG --global GIT_COMMIT_SHORT_SHA=$(git rev-parse --short HEAD)
@@ -375,6 +376,9 @@ front-deps-builder:
 
 app-docker:
   BUILD --pass-args ./app.territoiresentransitions.react+docker
+
+app-test-docker:
+  BUILD --pass-args ./app.territoiresentransitions.react+docker --DOCKER_IMAGE=$APP_TEST_IMG_NAME
 
 app-deploy:
   ARG --required KOYEB_API_KEY
@@ -919,9 +923,6 @@ auth-deploy:
 
 app-deploy-test: ## Déploie une app de test et crée une app Koyeb si nécessaire
     ARG --required KOYEB_API_KEY
-    ARG --required AUTH_URL
-    ARG --required BACKEND_URL
-    ARG --required PANIER_URL
     LOCALLY
     # Limite des noms dans Koyeb : 23 caractères.
     # Comme on prefixe avec `test-app-`, on garde 14 caractères max dans le nom de la branche.
@@ -932,18 +933,12 @@ app-deploy-test: ## Déploie une app de test et crée une app Koyeb si nécessai
     FROM +koyeb --KOYEB_API_KEY=$KOYEB_API_KEY
     IF [ "./koyeb apps list | grep test-app-$name" ]
         RUN echo "Test app already deployed on Koyeb at test-app-$name, updating..."
-        RUN /koyeb services update test-app-$name/test-app-$name --docker $APP_IMG_NAME \
-          --env NEXT_PUBLIC_AUTH_URL=$AUTH_URL \
-          --env NEXT_PUBLIC_BACKEND_URL=$BACKEND_URL \
-          --env NEXT_PUBLIC_PANIER_URL=$PANIER_URL
+        RUN /koyeb services update test-app-$name/test-app-$name --docker $APP_TEST_IMG_NAME
     ELSE
-        RUN echo "Test app not found on Koyeb at test-app-$name, creating with $APP_IMG_NAME..."
+        RUN echo "Test app not found on Koyeb at test-app-$name, creating with $APP_TEST_IMG_NAME..."
         RUN /koyeb apps init "test-app-$name" \
-          --docker "$APP_IMG_NAME" --docker-private-registry-secret ghcr \
+          --docker "$APP_TEST_IMG_NAME" --docker-private-registry-secret ghcr \
           --type web --port 3000:http --route /:3000 --env PORT=3000 \
-          --env NEXT_PUBLIC_AUTH_URL=$AUTH_URL \
-          --env NEXT_PUBLIC_BACKEND_URL=$BACKEND_URL \
-          --env NEXT_PUBLIC_PANIER_URL=$PANIER_URL \
           --regions par
     END
 
