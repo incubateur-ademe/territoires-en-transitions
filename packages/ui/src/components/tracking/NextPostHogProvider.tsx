@@ -26,7 +26,7 @@ export const NextPostHogProvider = ({
         capture_pageview: false,
         // create profiles for authenticated users only
         person_profiles: 'identified_only',
-        persistence: getConsent() ? 'cookie' : 'memory',
+        persistence: getConsent() ? 'localStorage+cookie' : 'memory',
         loaded: (posthog) => {
           if (env === 'development') posthog.debug();
         },

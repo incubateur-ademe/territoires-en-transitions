@@ -24,7 +24,9 @@ declare global {
 }
 
 const onConsentSave = () => {
-  posthog.set_config({ persistence: getConsent() ? 'cookie' : 'memory' });
+  posthog.set_config({
+    persistence: getConsent() ? 'localStorage+cookie' : 'memory',
+  });
 };
 
 export const Trackers = ({ children }: { children: React.ReactNode }) => {
