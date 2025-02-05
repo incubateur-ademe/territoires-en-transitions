@@ -802,3 +802,4 @@ plan_action/fiches [plan_action/fiches@v4.35.0] 2024-12-20T14:12:01Z Frederic Ar
 referentiel/score_snapshot [referentiel/score_snapshot@v4.36.0] 2025-01-21T17:03:53Z Frederic Arnoux <frederic.arnoux@beta.gouv.fr> # Branche les snapshots de referentiel
 indicateur/fix_json_upsert [indicateur/fix_json_upsert@v4.36.0] 2025-01-21T19:00:28Z Marc Rutkowski <marc@attractive-media.fr> # Ajoute le traitement du champ `titre_court`.
 collectivite/tableau_de_bord [collectivite/tableau_de_bord@v4.36.0] 2025-01-06T14:53:35Z System Administrator <root@MacBook-Air-de-Thibaut-2.local> # generalisation du count by
+@v4.37.0 2025-02-05T17:13:37Z System Administrator <root@MacBook-Air-de-Thibaut-2.local> # Branche les snapshots de referentiel, Tableau de bord personnalisé
