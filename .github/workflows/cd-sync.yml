@@ -1,0 +1,27 @@
+name: Synchronise la base de données de staging avec la base de données de production
+run-name: Synchronisation de la BDD staging
+
+jobs:
+  sync-production-to-staging:
+    name: Synchronisation de la BDD staging avec les données de production
+    environment: prod
+    runs-on: ubuntu-latest
+    timeout-minutes: 20
+
+    steps:
+      - uses: actions/checkout@v4
+      - uses: earthly/actions-setup@v1
+        with:
+          github-token: ${{ secrets.GH_TOKEN }}
+          version: ^0.8.0
+      - name: Login into registry
+        run: docker login ghcr.io/territoiresentransitions --username "${{ secrets.GH_USER }}" --password "${{ secrets.GH_TOKEN }}"
+
+      - name: Trigger db sync
+        run: >
+          earthly
+          --use-inline-cache --save-inline-cache --push
+          --platform=linux/amd64
+          +db-sync
+          --FROM_DB_URL=${{ secrets.DB_URL }}
+          --TO_DB_URL=${{ secrets.STAGING_DB_URL }}

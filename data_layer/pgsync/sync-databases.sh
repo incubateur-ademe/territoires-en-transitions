@@ -1,3 +1,4 @@
+#!/bin/sh
 if [ -z "$TO_DB_URL" ]; then
     if [ -z "$CI" ]; then
         TO_DB_URL=postgresql://postgres:postgres@localhost:54322/postgres
