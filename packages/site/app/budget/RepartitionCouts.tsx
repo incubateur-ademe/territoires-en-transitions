@@ -1,5 +1,6 @@
 'use client';
 
+import { defaultVarColors } from '@/site/components/charts/chartsTheme';
 import { useEffect, useState } from 'react';
 import DonutChart from '../../components/charts/DonutChart';
 import { TTableauBudget } from './utils';
@@ -46,7 +47,7 @@ const RepartitionCouts = ({ titre, data }: RepartitionCoutsProps) => {
       <div className="max-sm:h-[300px] h-[430px] my-10 max-md:-mx-6">
         <DonutChart
           data={chartData}
-          customColors={['#6A6AF4', '#5555C3', '#F0F0FE', '#C3C3FB', '#A5A5F8']}
+          customColors={defaultVarColors}
           customMargin={{
             top: 30,
             right: 140,
@@ -61,7 +62,7 @@ const RepartitionCouts = ({ titre, data }: RepartitionCoutsProps) => {
             windowWidth && windowWidth > smBreakpoint ? false : true
           }
           startAngle={-10}
-          arcLinkLabelsSkipAngle={0}
+          arcLinkLabelsSkipAngle={15}
           arcLinkLabelFontSize={
             windowWidth && windowWidth > smBreakpoint ? 14 : undefined
           }
