@@ -12,7 +12,7 @@ const PerformanceBudget = ({
   titre_fa,
 }: PerformanceBudgetProps) => {
   return (
-    <div className="bg-white md:rounded-xl py-8 md:py-12 px-6 md:px-10 flex flex-col gap-10">
+    <div className="bg-white md:rounded-xl py-8 md:py-12 px-6 md:px-10 flex flex-col gap-12">
       <h2 className="text-primary-9 mb-0">{titre}</h2>
 
       <div>
