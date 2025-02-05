@@ -58,6 +58,8 @@ export const prepareData = (
       source: 'collectivite',
       valeurs: [],
       metadonnees: [],
+      libelle: '',
+      ordreAffichage: null,
     };
     sources.unshift(donneesCollectivite);
   }
