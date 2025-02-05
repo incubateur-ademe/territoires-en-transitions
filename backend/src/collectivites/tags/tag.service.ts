@@ -15,6 +15,7 @@ import {
 } from '@/backend/collectivites';
 import { AnyColumn, eq } from 'drizzle-orm';
 import { PgTable } from 'drizzle-orm/pg-core';
+import { Transaction } from '@/backend/utils/database/transaction.utils';
 
 const tagTypeTable: Record<TagType, PgTable & { collectiviteId: AnyColumn }> = {
   [TagEnum.Financeur]: financeurTagTable,
@@ -57,9 +58,14 @@ export class TagService {
    * Permet de sauvegarder un tag d'un type sous un format générique {nom, id, collectiviteId}
    * @param tag
    * @param tagType
+   * @param tx transaction
    */
-  async saveTag(tag: TagInsert, tagType: TagType): Promise<Tag> {
-    const [result] = await this.databaseService.db
+  async saveTag(
+    tag: TagInsert,
+    tagType: TagType,
+    tx?: Transaction
+  ): Promise<Tag> {
+    const [result] = await (tx ?? this.databaseService.db)
       .insert(tagTypeTable[tagType])
       .values({ nom: tag.nom, collectiviteId: tag.collectiviteId })
       .onConflictDoNothing()
