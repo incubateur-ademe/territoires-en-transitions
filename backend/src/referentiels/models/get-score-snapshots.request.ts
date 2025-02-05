@@ -23,7 +23,7 @@ export const getScoreSnapshotsRequestSchema = z
       .pipe(typesJalonEnumSchema.array())
       .optional()
       .default(DEFAULT_SNAPSHOT_JALONS.join(',')),
-    descendingOrder: z
+    mostRecentFirst: z
       .string()
       .transform((val) => val === 'true')
       .default('false'),

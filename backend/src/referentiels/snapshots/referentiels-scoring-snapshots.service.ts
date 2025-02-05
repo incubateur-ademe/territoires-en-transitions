@@ -360,7 +360,7 @@ export default class ReferentielsScoringSnapshotsService {
     referentielId: ReferentielId,
     parameters?: GetScoreSnapshotsRequestType
   ): Promise<GetScoreSnapshotsResponseType> {
-    const { typesJalon, descendingOrder, limit } = parameters ?? {};
+    const { typesJalon, mostRecentFirst, limit } = parameters ?? {};
 
     const baseConditions = [
       eq(scoreSnapshotTable.collectiviteId, collectiviteId),
@@ -394,7 +394,7 @@ export default class ReferentielsScoringSnapshotsService {
       .from(scoreSnapshotTable)
       .where(and(...whereConditions))
       .orderBy(
-        descendingOrder
+        mostRecentFirst
           ? desc(scoreSnapshotTable.date)
           : asc(scoreSnapshotTable.date)
       );
