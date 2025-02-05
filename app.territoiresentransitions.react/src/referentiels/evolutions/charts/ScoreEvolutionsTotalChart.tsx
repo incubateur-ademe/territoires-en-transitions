@@ -3,23 +3,18 @@ import { ReactECharts } from '@/app/ui/charts/echarts';
 import type { EChartsOption } from 'echarts';
 import { actionAvancementColors } from '@/app/app/theme';
 import { SnapshotDetails } from '../../use-snapshot';
+import { sortByDate } from '../utils';
 
 const ScoreEvolutionsTotalChart = ({
   snapshots,
 }: {
   snapshots: SnapshotDetails[];
 }) => {
-  // Sort snapshots by year specified in name.
-  // If no year is specified, puts at the end.
-  const sortedSnapshots = snapshots?.length
-    ? [...snapshots].sort((a, b) => {
-        const yearA =
-          parseInt(a.nom?.split(' - ')[0] || '') || Number.MAX_SAFE_INTEGER;
-        const yearB =
-          parseInt(b.nom?.split(' - ')[0] || '') || Number.MAX_SAFE_INTEGER;
-        return yearA - yearB;
-      })
-    : [];
+  const sortSnapshots = (snapshots: SnapshotDetails[], ascending = true) => {
+    return [...snapshots].sort((a, b) => sortByDate(a.date, b.date, ascending));
+  };
+
+  const sortedSnapshots = sortSnapshots(snapshots, true);
 
   const nameLabels = sortedSnapshots?.map((snapshot) => {
     if (!snapshot.nom) {
@@ -123,20 +118,6 @@ const ScoreEvolutionsTotalChart = ({
     },
   ];
 
-  const generateCategoryCircle = (color: string) => {
-    return (
-      <span
-        style={{
-          display: 'inline-block',
-          marginRight: '4px',
-          borderRadius: '10px',
-          width: '10px',
-          height: '10px',
-          backgroundColor: color,
-        }}
-      ></span>
-    );
-  };
   const option: EChartsOption = {
     tooltip: {
       trigger: 'axis' as const,
