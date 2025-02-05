@@ -215,7 +215,7 @@ export const IndicateurCardBase = ({
                     </>
                   )}
                   actions={
-                    !readonly && !!href
+                    !readonly && !!href && !estGroupement
                       ? [{ children: "Compléter l'indicateur" }]
                       : undefined
                   }
