@@ -284,7 +284,20 @@ const SelectButton = forwardRef(
     const displayBadges = (values: OptionValue[]) => {
       if (displayAllBadges) {
         return values.map((value) => (
-          <Badge title={value} state="info" key={value.toString()} />
+          <Badge
+            title={getOptionLabel(value, getFlatOptions(options)) ?? ''}
+            state={
+              firstValueDisabled
+                ? 'grey'
+                : createProps &&
+                  firstValue &&
+                  createProps.userCreatedOptions.includes(firstValue.value)
+                ? 'standard'
+                : 'default'
+            }
+            key={value.toString()}
+            onClose={() => !disabled && onChange(value)}
+          />
         ));
       }
       return (
