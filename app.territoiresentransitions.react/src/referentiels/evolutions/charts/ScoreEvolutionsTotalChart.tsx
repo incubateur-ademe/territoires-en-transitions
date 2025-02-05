@@ -11,6 +11,7 @@ const ScoreEvolutionsTotalChart = ({
   snapshots: SnapshotDetails[];
 }) => {
   const sortSnapshots = (snapshots: SnapshotDetails[], ascending = true) => {
+    if (!snapshots?.length) return [];
     return [...snapshots].sort((a, b) => sortByDate(a.date, b.date, ascending));
   };
 
