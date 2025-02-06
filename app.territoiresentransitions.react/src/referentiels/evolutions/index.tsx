@@ -1,7 +1,6 @@
 'use client';
 
 import { useState, useEffect } from 'react';
-
 import { EmptyCard, Badge } from '@/ui';
 import ScoreTotalEvolutionsChart from './charts/ScoreTotalEvolutionsChart';
 import PictoDashboard from '../../ui/pictogrammes/PictoDashboard';
@@ -16,33 +15,33 @@ export const ScoreEvolutions = () => {
   const collectivite = useCurrentCollectivite();
   const collectiviteId = collectivite?.collectiviteId;
 
-  const HOW_MANY_SNAPSHOTS_TO_SHOW = 4;
+  const { data: snapshotList } = useSnapshotList();
 
-  const { data: snapshotList } = useSnapshotList({
-    limit: HOW_MANY_SNAPSHOTS_TO_SHOW,
-    mostRecentFirst: true,
-  });
   const hasSavedSnapshots = !!snapshotList;
-  const snapshots = snapshotList?.snapshots ?? [];
 
-  const snapshotNames = snapshots.map((snap) => snap?.nom);
+  const snapshots = removeScoreCourant(snapshotList?.snapshots ?? []);
+
+  const allSnapsNames = snapshots?.map((snap) => snap?.nom);
+  const dropdownOptions =
+    allSnapsNames?.map((snap, index) => ({
+      value: snap ?? '',
+      label: snap ?? '',
+      date: snapshots[index]?.date ?? '',
+    })) ?? [];
+
+  const initialDisplaySnapsNames = organizeSnaps(snapshots)?.map(
+    (snap) => snap?.nom
+  );
 
   const [selectedSnapshots, setSelectedSnapshots] = useState<string[]>([]);
   const [isInitialized, setIsInitialized] = useState(false);
 
   useEffect(() => {
-    if (!isInitialized && snapshotNames.length > 0) {
-      setSelectedSnapshots(snapshotNames);
+    if (!isInitialized && initialDisplaySnapsNames.length > 0) {
+      setSelectedSnapshots(initialDisplaySnapsNames);
       setIsInitialized(true);
     }
-  }, [snapshotNames, isInitialized]);
-
-  const dropdownOptions =
-    snapshotNames?.map((snap, index) => ({
-      value: snap ?? '',
-      label: snap ?? '',
-      date: snapshots[index]?.date ?? '',
-    })) ?? [];
+  }, [initialDisplaySnapsNames, isInitialized]);
 
   const getSelectedSnapshots = (names: string[]) => {
     return names
@@ -103,13 +102,31 @@ export const ScoreEvolutions = () => {
           </div>
           <div>
             <ScoreTotalEvolutionsChart
-              snapshots={getSelectedSnapshots(selectedSnapshots)}
+              allSnapshots={getSelectedSnapshots(selectedSnapshots)}
             />
           </div>
         </>
       )}
     </>
   );
+};
+
+const removeScoreCourant = (snapshots: SnapshotDetails[]) => {
+  return snapshots.filter((snap) => snap?.nom !== 'Score courant');
+};
+
+const organizeSnaps = (snapshots: SnapshotDetails[]) => {
+  const invertedSnapshots = snapshots.reverse();
+  const limitedSnapshots = limitSnapshots(invertedSnapshots);
+  return limitedSnapshots;
+};
+
+const limitSnapshots = (snapshots: SnapshotDetails[]) => {
+  const HOW_MANY_SNAPSHOTS_TO_SHOW_BY_DEFAULT = 4;
+  if (snapshots.length > HOW_MANY_SNAPSHOTS_TO_SHOW_BY_DEFAULT) {
+    return snapshots.slice(0, HOW_MANY_SNAPSHOTS_TO_SHOW_BY_DEFAULT);
+  }
+  return snapshots;
 };
 
 export default ScoreEvolutions;

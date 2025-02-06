@@ -2,6 +2,7 @@ import { RouterOutput, trpc } from '@/api/utils/trpc/client';
 import {
   getReferentielIdFromActionId,
   ReferentielException,
+  ReferentielId,
 } from '@/domain/referentiels';
 import { useFeatureFlagEnabled } from 'posthog-js/react';
 import { useCollectiviteId } from '../core-logic/hooks/params';
@@ -28,12 +29,17 @@ export function useSnapshot({ actionId }: { actionId: string }) {
 export function useSnapshotList({
   limit,
   mostRecentFirst,
+  referentielId,
 }: {
   limit?: number;
   mostRecentFirst?: boolean;
-}) {
+  referentielId?: ReferentielId;
+} = {}) {
   const collectiviteId = useCollectiviteId()!;
-  const referentielId = useReferentielId();
+
+  if (!referentielId) {
+    referentielId = useReferentielId();
+  }
 
   return trpc.referentiels.snapshots.list.useQuery({
     collectiviteId,

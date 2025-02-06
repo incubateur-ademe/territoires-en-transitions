@@ -6,18 +6,21 @@ import { sortByDate } from '../utils';
 import { theme as importedTheme } from '../../../ui/charts/chartsTheme';
 
 const ScoreTotalEvolutionsChart = ({
-  snapshots,
+  allSnapshots,
 }: {
-  snapshots: SnapshotDetails[];
+  allSnapshots: SnapshotDetails[];
 }) => {
+  /**
+   * Ensures a snapshot is always displayed in the correct position on the graph according to its date.
+   */
   const sortSnapshots = (snapshots: SnapshotDetails[], ascending = true) => {
     if (!snapshots?.length) return [];
     return [...snapshots].sort((a, b) => sortByDate(a.date, b.date, ascending));
   };
 
-  const sortedSnapshots = sortSnapshots(snapshots, true);
+  const snapshots = sortSnapshots(allSnapshots, true);
 
-  const nameLabels = sortedSnapshots?.map((snapshot) => {
+  const nameLabels = snapshots?.map((snapshot) => {
     if (!snapshot.nom) {
       return 'Sans nom';
     }
@@ -37,7 +40,7 @@ const ScoreTotalEvolutionsChart = ({
       itemStyle: {
         color: actionAvancementColors.fait,
       },
-      data: sortedSnapshots?.map((snapshot) =>
+      data: snapshots?.map((snapshot) =>
         computePercentage(
           snapshot?.pointFait ?? 0,
           snapshot?.pointPotentiel ?? 0
@@ -54,7 +57,7 @@ const ScoreTotalEvolutionsChart = ({
       itemStyle: {
         color: actionAvancementColors.programme,
       },
-      data: sortedSnapshots?.map((snapshot) =>
+      data: snapshots?.map((snapshot) =>
         computePercentage(
           snapshot?.pointProgramme ?? 0,
           snapshot?.pointPotentiel ?? 0
@@ -71,7 +74,7 @@ const ScoreTotalEvolutionsChart = ({
       itemStyle: {
         color: actionAvancementColors.pas_fait,
       },
-      data: sortedSnapshots?.map((snapshot) =>
+      data: snapshots?.map((snapshot) =>
         computePercentage(snapshot.pointPasFait, snapshot.pointPotentiel)
       ),
     },
@@ -85,7 +88,7 @@ const ScoreTotalEvolutionsChart = ({
       itemStyle: {
         color: actionAvancementColors.non_renseigne,
       },
-      data: sortedSnapshots?.map((snapshot) =>
+      data: snapshots?.map((snapshot) =>
         computePercentage(
           snapshot.pointNonRenseigne ?? 0,
           snapshot.pointPotentiel ?? 0
@@ -97,8 +100,8 @@ const ScoreTotalEvolutionsChart = ({
         distance: 5,
         formatter: (params: any) =>
           makeScoreSnapshotLabel(
-            sortedSnapshots[params.dataIndex].pointFait,
-            sortedSnapshots[params.dataIndex].pointPotentiel
+            snapshots[params.dataIndex].pointFait,
+            snapshots[params.dataIndex].pointPotentiel
           ),
         fontWeight: 'normal' as const,
         fontFamily: theme.fontFamily,
@@ -106,6 +109,7 @@ const ScoreTotalEvolutionsChart = ({
         rich: {
           percent: {
             fontWeight: 'bold' as const,
+            fontSize: 14,
           },
         },
       },
@@ -155,6 +159,7 @@ const ScoreTotalEvolutionsChart = ({
           color: theme.textColor,
           fontSize: 14,
           padding: [15, 0, 0, 0],
+          interval: 0, // needed to avoid overlapping labels in synthèse de l'état des lieux view (which is small)
         },
         axisTick: {
           show: false,
