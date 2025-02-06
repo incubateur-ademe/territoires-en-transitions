@@ -1,9 +1,8 @@
 import { getTestApp } from '@/backend/test';
 import { INestApplication } from '@nestjs/common';
 import { default as request } from 'supertest';
-import { ReferentielAction } from '../compute-score/referentiel-action.dto';
-import { ActionType } from '../models/action-type.enum';
-import { GetReferentielResponseType } from '../models/get-referentiel.response';
+import { ActionTypeEnum } from '../models/action-type.enum';
+import { GetReferentielResponseType } from './get-referentiel.response';
 
 describe('Referentiels routes', () => {
   let app: INestApplication;
@@ -17,24 +16,25 @@ describe('Referentiels routes', () => {
       .get('/referentiels/cae')
       .expect(200);
     const referentiel = response.body as GetReferentielResponseType;
+
     expect(referentiel.orderedItemTypes).toEqual([
-      ActionType.REFERENTIEL,
-      ActionType.AXE,
-      ActionType.SOUS_AXE,
-      ActionType.ACTION,
-      ActionType.SOUS_ACTION,
-      ActionType.TACHE,
+      ActionTypeEnum.REFERENTIEL,
+      ActionTypeEnum.AXE,
+      ActionTypeEnum.SOUS_AXE,
+      ActionTypeEnum.ACTION,
+      ActionTypeEnum.SOUS_ACTION,
+      ActionTypeEnum.TACHE,
     ]);
+
     const { actionsEnfant, ...referentielWithoutActionsEnfant } =
-      referentiel.itemsTree!;
+      referentiel.itemsTree;
+
     expect(actionsEnfant.length).toBe(6);
-    const {
-      actionsEnfant: expectedActionEnfants,
-      ...referentielCaeRoot
-    }: ReferentielAction = {
+
+    const { actionsEnfant: expectedActionEnfants, ...referentielCaeRoot } = {
       actionId: 'cae',
       identifiant: '',
-      actionType: ActionType.REFERENTIEL,
+      actionType: ActionTypeEnum.REFERENTIEL,
       categorie: null,
       level: 0,
       nom: 'Climat Air Énergie',
@@ -43,11 +43,12 @@ describe('Referentiels routes', () => {
       actionsEnfant: [],
       tags: [],
     };
+
     expect(referentielWithoutActionsEnfant).toEqual(referentielCaeRoot);
   });
 
   it(`Référentiel inconnu`, async () => {
-    const response = await request(app.getHttpServer())
+    await request(app.getHttpServer())
       .get('/referentiels/inconnu')
       .expect(404)
       .expect({

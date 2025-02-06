@@ -5,15 +5,14 @@ import { getTestApp } from '../../../test/app-utils';
 import { getAuthToken } from '../../../test/auth-utils';
 import { getCollectiviteIdBySiren } from '../../../test/collectivites-utils';
 import { HttpErrorResponse } from '../../utils/nest/http-error.response';
-import { ActionStatutsByActionId } from '../compute-score/action-statuts-by-action-id.dto';
-import { ActionWithScore } from '../compute-score/action-with-score.dto';
-import { Score } from '../compute-score/score.dto';
 import { ActionStatut, referentielIdEnumSchema } from '../index-domain';
-import { ActionType } from '../models/action-type.enum';
-import { GetReferentielScoresResponseType } from '../models/get-referentiel-scores.response';
+import { ActionTypeEnum } from '../models/action-type.enum';
 import { GetScoreSnapshotsResponseType } from '../models/get-score-snapshots.response';
 import { HistoriqueActionStatutType } from '../models/historique-action-statut.table';
 import { SnapshotJalon } from '../snapshots/snapshot-jalon.enum';
+import { ActionStatutsByActionId } from './action-statuts-by-action-id.dto';
+import { GetReferentielScoresResponseType } from './get-referentiel-scores.response';
+import { Score } from './score.dto';
 
 describe('Referentiels scoring routes', () => {
   let app: INestApplication;
@@ -127,10 +126,7 @@ describe('Referentiels scoring routes', () => {
     const { actionsEnfant, ...referentielScoreWithoutActionsEnfant } =
       referentielScores.scores;
     expect(actionsEnfant.length).toBe(6);
-    const {
-      actionsEnfant: expectedActionEnfant,
-      ...expectedCaeRoot
-    }: ActionWithScore = {
+    const { actionsEnfant: expectedActionEnfant, ...expectedCaeRoot } = {
       actionId: 'cae',
       identifiant: '',
       nom: 'Climat Air Énergie',
@@ -138,7 +134,7 @@ describe('Referentiels scoring routes', () => {
       categorie: null,
       pourcentage: null,
       level: 0,
-      actionType: ActionType.REFERENTIEL,
+      actionType: ActionTypeEnum.REFERENTIEL,
       score: {
         actionId: 'cae',
         etoiles: 1,
@@ -444,10 +440,7 @@ describe('Referentiels scoring routes', () => {
     expect(referentielScores.date).toBe('2019-01-01T00:00:01Z');
     expect(actionsEnfant.length).toBe(6);
 
-    const {
-      actionsEnfant: expectedActionEnfant,
-      ...expectedCaeRoot
-    }: ActionWithScore = {
+    const { actionsEnfant: expectedActionEnfant, ...expectedCaeRoot } = {
       actionId: 'cae',
       identifiant: '',
       nom: 'Climat Air Énergie',
@@ -455,7 +448,7 @@ describe('Referentiels scoring routes', () => {
       categorie: null,
       pourcentage: null,
       level: 0,
-      actionType: ActionType.REFERENTIEL,
+      actionType: ActionTypeEnum.REFERENTIEL,
       score: {
         actionId: 'cae',
         etoiles: 1,

@@ -18,13 +18,11 @@ export const actionRelationTable = pgTable('action_relation', {
   ),
 });
 
-export type ActionRelationType = InferSelectModel<typeof actionRelationTable>;
-export type CreateActionRelationType = InferInsertModel<
-  typeof actionRelationTable
->;
+export type ActionRelation = InferSelectModel<typeof actionRelationTable>;
+export type ActionRelationInsert = InferInsertModel<typeof actionRelationTable>;
 
 export const actionRelationSchema = createSelectSchema(actionRelationTable);
-export const createActionRelationSchema =
+export const actionRelationInsertSchema =
   createInsertSchema(actionRelationTable);
 
 export const actionIdReference = actionIdVarchar.references(

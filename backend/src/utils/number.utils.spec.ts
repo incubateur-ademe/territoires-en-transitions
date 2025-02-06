@@ -1,4 +1,4 @@
-import { roundTo } from './number.helper';
+import { roundTo } from './number.utils';
 
 describe('number helper', () => {
   describe('roundTo', () => {

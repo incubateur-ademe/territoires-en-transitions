@@ -10,6 +10,7 @@ import { AuthenticatedUser } from '../../auth/models/auth.models';
 import { getErrorWithCode } from '../../utils/nest/errors.utils';
 import { PgIntegrityConstraintViolation } from '../../utils/postgresql-error-codes.enum';
 import ReferentielsScoringService from '../compute-score/referentiels-scoring.service';
+import { GetReferentielService } from '../get-referentiel/get-referentiel.service';
 import {
   actionStatutSchemaInsert,
   actionStatutTable,
@@ -17,11 +18,11 @@ import {
 import { ComputeScoreMode } from '../models/compute-scores-mode.enum';
 import { GetReferentielScoresRequestType } from '../models/get-referentiel-scores.request';
 import { getReferentielIdFromActionId } from '../referentiels.utils';
-import ReferentielsService from '../services/referentiels.service';
 
 export const upsertActionStatutRequestSchema = z.object({
   actionStatut: actionStatutSchemaInsert,
 });
+
 export type UpsertActionStatutRequest = z.infer<
   typeof upsertActionStatutRequestSchema
 >;
@@ -33,7 +34,7 @@ export class UpdateActionStatutService {
   constructor(
     private readonly databaseService: DatabaseService,
     private readonly permissionService: PermissionService,
-    private readonly referentielService: ReferentielsService,
+    private readonly referentielService: GetReferentielService,
     private readonly referentielScoringService: ReferentielsScoringService
   ) {}
 

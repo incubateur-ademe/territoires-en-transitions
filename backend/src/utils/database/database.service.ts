@@ -5,6 +5,8 @@ import { sql } from 'drizzle-orm/sql';
 import { Pool } from 'pg';
 import ConfigurationService from '../config/configuration.service';
 
+const dbSchema = {};
+
 @Injectable()
 export class DatabaseService implements OnApplicationShutdown {
   private readonly logger = new Logger(DatabaseService.name);
@@ -16,6 +18,7 @@ export class DatabaseService implements OnApplicationShutdown {
 
   public readonly db = drizzle({
     client: this.pool,
+    schema: dbSchema,
   });
 
   constructor(private readonly configService: ConfigurationService) {

@@ -6,6 +6,4 @@ export const referentielChangelogSchema = z.object({
   description: z.string().describe('Description des changements de la version'),
 });
 
-export type ReferentielChangelogType = z.infer<
-  typeof referentielChangelogSchema
->;
+export type ReferentielChangelog = z.infer<typeof referentielChangelogSchema>;

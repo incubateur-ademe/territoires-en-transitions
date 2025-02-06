@@ -190,4 +190,30 @@ export const scoreFinalSchema = scoreSchema.extend({
     scoreSchema.shape.pasConcerneTachesAvancement.unwrap(),
 });
 
-export type ScoreFinal = z.infer<typeof scoreFinalSchema>;
+export type ScoreFinal = Score & {
+  pointReferentiel: number;
+  pointPotentiel: number;
+  pointFait: number;
+  pointPasFait: number;
+  pointNonRenseigne: number;
+  pointProgramme: number;
+  completedTachesCount: number;
+  faitTachesAvancement: number;
+  programmeTachesAvancement: number;
+  pasFaitTachesAvancement: number;
+  pasConcerneTachesAvancement: number;
+};
+
+export const scoreFieldsSchema = z.object({
+  scoresTag: z.record(z.string(), scoreWithOnlyPointsSchema),
+  score: scoreSchema,
+});
+
+export type ScoreFields = z.infer<typeof scoreFieldsSchema>;
+
+export const scoreFinalFieldsSchema = z.object({
+  scoresTag: z.record(z.string(), scoreWithOnlyPointsSchema),
+  score: scoreFinalSchema,
+});
+
+export type ScoreFinalFields = z.infer<typeof scoreFinalFieldsSchema>;

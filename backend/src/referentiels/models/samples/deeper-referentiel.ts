@@ -1,7 +1,7 @@
-import { ReferentielAction } from '../../compute-score/referentiel-action.dto';
+import { ActionDefinitionEssential, TreeNode } from '../action-definition.dto';
 import { ActionTypeEnum } from '../action-type.enum';
 
-export const deeperReferentiel: ReferentielAction = {
+export const deeperReferentiel: TreeNode<ActionDefinitionEssential> = {
   actionId: 'eci',
   points: 100,
   level: 0,

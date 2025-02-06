@@ -1,4 +1,3 @@
-import { InferSelectModel } from 'drizzle-orm';
 import { pgTable, unique, varchar } from 'drizzle-orm/pg-core';
 import { createInsertSchema, createSelectSchema } from 'drizzle-zod';
 import { actionDefinitionTable } from './action-definition.table';
@@ -18,21 +17,16 @@ export const actionDefinitionTagTable = pgTable(
       .notNull(),
     tagRef: varchar('tag_ref', { length: 300 }).notNull(),
   },
-  (t) => ({
-    unq: unique().on(t.referentielId, t.actionId, t.tagRef),
-  })
+  (t) => [unique().on(t.referentielId, t.actionId, t.tagRef)]
 );
 
-export type ActionDefinitionTagType = InferSelectModel<
-  typeof actionDefinitionTagTable
->;
-export type CreateActionDefinitionTagType = InferSelectModel<
-  typeof actionDefinitionTagTable
->;
+export type ActionDefinitionTag = typeof actionDefinitionTagTable.$inferSelect;
+export type ActionDefinitionTagInsert =
+  typeof actionDefinitionTagTable.$inferInsert;
 
 export const actionDefinitionTagSchema = createSelectSchema(
   actionDefinitionTagTable
 );
-export const createActionDefinitionTagSchema = createInsertSchema(
+export const actionDefinitionTagInsertSchema = createInsertSchema(
   actionDefinitionTagTable
 );

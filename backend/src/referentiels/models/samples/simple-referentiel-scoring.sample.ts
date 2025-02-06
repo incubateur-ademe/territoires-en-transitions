@@ -1,8 +1,17 @@
-import { ActionWithScore } from '../../compute-score/action-with-score.dto';
-import { ActionCategorieEnum } from '../action-definition.table';
+import { ScoreFields } from '@/domain/referentiels';
+import { ActionDefinitionEssential, TreeNode } from '../action-definition.dto';
+import {
+  ActionCategorieEnum,
+  ActionDefinition,
+} from '../action-definition.table';
 import { ActionTypeEnum } from '../action-type.enum';
 
-export const simpleReferentielScoring: ActionWithScore = {
+type ActionDefinitionFields = ActionDefinitionEssential &
+  Partial<Pick<ActionDefinition, 'identifiant' | 'nom' | 'categorie'>>;
+
+export const simpleReferentielScoring: TreeNode<
+  ActionDefinitionFields & ScoreFields
+> = {
   actionId: 'eci',
   points: 100,
   level: 0,

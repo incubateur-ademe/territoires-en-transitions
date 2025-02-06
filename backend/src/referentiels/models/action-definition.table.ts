@@ -1,5 +1,4 @@
 import { modifiedAt } from '@/domain/utils';
-import { InferInsertModel, InferSelectModel } from 'drizzle-orm';
 import {
   doublePrecision,
   pgEnum,
@@ -55,14 +54,13 @@ export const actionDefinitionTable = pgTable('action_definition', {
   categorie: actionCategoriePgEnum('categorie'),
 });
 
-export type ActionDefinitionType = InferSelectModel<
-  typeof actionDefinitionTable
->;
-export type CreateActionDefinitionType = InferInsertModel<
-  typeof actionDefinitionTable
->;
-
 export const actionDefinitionSchema = createSelectSchema(actionDefinitionTable);
+export type ActionDefinition = typeof actionDefinitionTable.$inferSelect;
+
+export const actionDefinitionSchemaInsert = createInsertSchema(
+  actionDefinitionTable
+);
+export type ActionDefinitionInsert = typeof actionDefinitionTable.$inferInsert;
 
 export const actionDefinitionSeulementIdObligatoireSchema =
   actionDefinitionSchema.partial();
@@ -72,47 +70,3 @@ export const actionDefinitionMinimalWithTypeLevel =
     level: z.number(),
     actionType: actionTypeIncludingExempleSchema,
   });
-
-export const actionDefinitionSchemaInsert = createInsertSchema(
-  actionDefinitionTable
-);
-
-export enum ImportActionDefinitionCoremeasureType {
-  COREMEASURE = 'coremeasure',
-}
-
-export const importActionDefinitionSchema = actionDefinitionSchemaInsert
-  .partial({
-    actionId: true,
-    description: true,
-    nom: true,
-    contexte: true,
-    exemples: true,
-    ressources: true,
-    referentiel: true,
-    referentielId: true,
-    referentielVersion: true,
-    reductionPotentiel: true,
-    perimetreEvaluation: true,
-  })
-  .extend({
-    categorie: z
-      .string()
-      .toLowerCase()
-      .pipe(z.nativeEnum(ActionCategorieEnum))
-      .optional(),
-    origine: z.string().optional(),
-    coremeasure: z.string().optional(),
-    desactivation: z.string().optional(),
-  });
-export type ImportActionDefinitionType = z.infer<
-  typeof importActionDefinitionSchema
->;
-
-export type ActionDefinitionAvecParentType = Pick<
-  ActionDefinitionType,
-  'actionId'
-> &
-  Partial<ActionDefinitionType> & {
-    parentActionId: string | null;
-  };
