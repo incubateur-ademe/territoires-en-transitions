@@ -96,7 +96,7 @@ export function getParentIdFromActionId(actionId: string): string | null {
 /**
  * Equivalent to a `reduce` function but for a list of actions and their children.
  */
-export function reduceActions<A extends { actionsEnfant: A[] }, T>(
+export function reduceActions<A extends { actionsEnfant?: A[] }, T>(
   actions: A[],
   initialValue: T,
   callbackfn: (previousValue: T, currentValue: A) => T
@@ -110,4 +110,13 @@ export function reduceActions<A extends { actionsEnfant: A[] }, T>(
 
     return newValue;
   }, initialValue);
+}
+
+export function flatMapActionsEnfants<A extends { actionsEnfant?: A[] }>(
+  action: A
+): A[] {
+  return reduceActions([action], [] as A[], (allActionsEnfants, action) => [
+    ...allActionsEnfants,
+    action,
+  ]);
 }

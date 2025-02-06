@@ -6,6 +6,7 @@ import {
 } from '@/domain/referentiels';
 import { useFeatureFlagEnabled } from 'posthog-js/react';
 import { useCollectiviteId } from '../collectivites/collectivite-context';
+import { DISABLE_AUTO_REFETCH } from '../core-logic/api/supabase';
 
 export type Snapshot =
   RouterOutput['referentiels']['snapshots']['getCurrentFullScore'];
@@ -19,10 +20,13 @@ export function useSnapshot({ actionId }: { actionId: string }) {
   const collectiviteId = useCollectiviteId();
   const referentielId = getReferentielIdFromActionId(actionId);
 
-  return trpc.referentiels.snapshots.getCurrentFullScore.useQuery({
-    collectiviteId,
-    referentielId,
-  });
+  return trpc.referentiels.snapshots.getCurrentFullScore.useQuery(
+    {
+      collectiviteId,
+      referentielId,
+    },
+    DISABLE_AUTO_REFETCH
+  );
 }
 
 export function useSnapshotList(referentielId: ReferentielId) {

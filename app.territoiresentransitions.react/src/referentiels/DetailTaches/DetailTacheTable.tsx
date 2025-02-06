@@ -7,12 +7,12 @@ import {
   useFlexLayout,
   useTable,
 } from 'react-table';
+import { ReferentielTable } from '../ReferentielTable';
 import { CellAction } from '../ReferentielTable/CellAction';
 import { CellStatut } from './CellStatut';
 import { FiltreStatut } from './FiltreStatut';
 import { TacheDetail } from './queries';
 import { TableData } from './useTableData';
-import { ReferentielTable } from '../ReferentielTable';
 
 export type TDetailTacheTableProps = {
   tableData: TableData;
@@ -50,7 +50,7 @@ export const DetailTacheTable = (props: TDetailTacheTableProps) => {
   // ajout aux props passées à chaque cellule de ligne et d'en-tête de colonne
   const customCellProps = useMemo(
     () => ({ updateStatut, isSaving }),
-    [isSaving]
+    [isSaving, updateStatut]
   );
   const customHeaderProps = useMemo(() => ({ filters, setFilters }), [filters]);
 

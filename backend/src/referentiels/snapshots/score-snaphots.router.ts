@@ -92,6 +92,7 @@ export class ScoreSnapshotsRouter {
           input.referentielId
         );
       }),
+
     get: this.trpc.authedProcedure
       .input(getFullScoreSnapshotTrpcRequestSchema)
       .query(({ input, ctx }) => {

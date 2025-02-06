@@ -1,5 +1,5 @@
-import { DetailTaches } from '@/app/referentiels/DetailTaches';
+import { ActionStatutsTable } from './action-statuts.table';
 
 export default function Page() {
-  return <DetailTaches />;
+  return <ActionStatutsTable />;
 }

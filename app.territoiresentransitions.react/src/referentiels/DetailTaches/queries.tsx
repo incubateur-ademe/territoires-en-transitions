@@ -1,15 +1,9 @@
 import { DBClient } from '@/api';
-import { TActionStatutsRow } from '@/app/types/alias';
-import { ActionReferentiel } from '../DEPRECATED_scores.types';
+import { ProgressionRow } from '../DEPRECATED_scores.types';
 import { TFilters } from './filters';
 
 // un sous-ensemble des champs pour alimenter notre table des taches
-export type TacheDetail = ActionReferentiel &
-  ActionStatut & { isExpanded: boolean };
-export type ActionStatut = Pick<
-  TActionStatutsRow,
-  'action_id' | 'avancement' | 'avancement_descendants'
->;
+export type TacheDetail = ProgressionRow & { isExpanded: boolean };
 
 /**
  * toutes les entrées d'un référentiel pour une collectivité et des filtres donnés
@@ -93,7 +87,7 @@ export const fetchActionStatutsList = async (
 };
 
 // met à jour l'état d'une tâche
-// TODO-SNAPSHOT
+// TODO-SNAPSHOT mutualiser avec le hook similaire `useSaveActionStatut`
 export const updateTacheStatut = async ({
   dbClient,
   collectivite_id,

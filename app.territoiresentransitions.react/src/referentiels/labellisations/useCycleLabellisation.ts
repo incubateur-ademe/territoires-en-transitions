@@ -27,7 +27,9 @@ export type TCycleLabellisationStatus =
   | 'audit_en_cours'
   | 'audit_valide';
 
-/** Renvoie les données de labellisation/audit de la collectivité courante */
+/**
+ * Renvoie les données de labellisation/audit de la collectivité courante
+ */
 export const useCycleLabellisation = (
   referentielId: ReferentielId
 ): TCycleLabellisation => {
