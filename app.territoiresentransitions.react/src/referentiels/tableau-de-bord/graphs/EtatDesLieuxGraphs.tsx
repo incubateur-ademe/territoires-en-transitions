@@ -9,6 +9,11 @@ import { TableOptions } from 'react-table';
 import { AccueilCard } from '../AccueilCard';
 import { ProgressionRow } from '../useProgressionReferentiel';
 import ProgressionReferentiel from './ProgressionReferentiel';
+import ScoreTotalEvolutionsChart from '../../evolutions/charts/ScoreTotalEvolutionsChart';
+import { useSnapshotList } from '../../use-snapshot';
+import Link from 'next/link';
+import { makeReferentielUrl } from '@/app/app/paths';
+import ScoreEvolutionsGraphs from './ScoreEvolutionsGraphs';
 
 type EtatDesLieuxGraphsProps = {
   referentiel: ReferentielId;
@@ -54,6 +59,16 @@ const EtatDesLieuxGraphs = ({
 
   return (
     <>
+      <ScoreEvolutionsGraphs
+        title="L'évolution du score en points"
+        subTitle={referentielToName[referentiel]}
+        referentiel={referentiel}
+        href={makeReferentielUrl({
+          collectiviteId,
+          referentielId: referentiel,
+          referentielTab: 'evolutions',
+        })}
+      />
       <ProgressionReferentiel
         score={progressionScore}
         referentiel={referentiel}
@@ -116,7 +131,7 @@ const EtatDesLieuxGraphs = ({
 
 export default EtatDesLieuxGraphs;
 
-type Props = {
+type GraphCardProps = {
   title: string;
   subTitle: string;
   renderGraph: (openState: {
@@ -124,11 +139,24 @@ type Props = {
     setIsOpen: () => void;
   }) => React.ReactNode;
   onOpenModal?: () => void;
+  href?: string;
 };
 
-const GraphCard = ({ title, subTitle, renderGraph, onOpenModal }: Props) => {
+export const GraphCard = ({
+  title,
+  subTitle,
+  renderGraph,
+  onOpenModal,
+  href,
+}: GraphCardProps) => {
   const [isOpen, setIsOpen] = useState(false);
   const toggleOpen = () => setIsOpen(!isOpen);
+
+  const handleZoom = () => {
+    toggleOpen();
+    onOpenModal?.();
+  };
+
   return (
     <AccueilCard>
       <div className="flex gap-6 mb-6">
@@ -136,20 +164,43 @@ const GraphCard = ({ title, subTitle, renderGraph, onOpenModal }: Props) => {
           <div className="mb-1 font-bold">{title}</div>
           <div className="font-medium text-grey-8">{subTitle}</div>
         </div>
-        <Button
-          icon="zoom-in-line"
-          size="xs"
-          variant="outlined"
-          onClick={() => {
-            toggleOpen();
-            onOpenModal?.();
-          }}
-          className="ml-auto h-fit"
-        >
-          Détails
-        </Button>
+        {href ? <LinkButton href={href} /> : <ZoomButton onZoom={handleZoom} />}
       </div>
       {renderGraph({ isOpen, setIsOpen: toggleOpen })}
     </AccueilCard>
+  );
+};
+
+type ZoomButtonProps = {
+  onZoom: () => void;
+};
+
+const ZoomButton = ({ onZoom }: ZoomButtonProps) => (
+  <Button
+    icon="zoom-in-line"
+    size="xs"
+    variant="outlined"
+    onClick={onZoom}
+    className="ml-auto h-fit"
+  ></Button>
+);
+
+type LinkButtonProps = {
+  href: string;
+};
+
+const LinkButton = ({ href }: LinkButtonProps) => {
+  if (!href) return null;
+  return (
+    <Button
+      icon="zoom-in-line"
+      size="xs"
+      variant="outlined"
+      className="ml-auto h-fit"
+    >
+      <Link href={href} className="bg-none">
+        Afficher le détail
+      </Link>
+    </Button>
   );
 };
