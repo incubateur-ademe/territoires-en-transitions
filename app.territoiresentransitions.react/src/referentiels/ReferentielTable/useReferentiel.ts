@@ -3,7 +3,7 @@ import { DISABLE_AUTO_REFETCH } from '@/api/utils/react-query/query-options';
 import { useSupabase } from '@/api/utils/supabase/use-supabase';
 import { TActionStatutsRow } from '@/app/types/alias';
 import { indexBy } from '@/app/utils/indexBy';
-import { ReferentielId } from '@/domain/referentiels';
+import { reduceActions, ReferentielId } from '@/domain/referentiels';
 import { useCallback, useMemo } from 'react';
 import { useQuery } from 'react-query';
 import { ActionType, TableState } from 'react-table';
@@ -14,6 +14,8 @@ import {
 } from '../DEPRECATED_scores.types';
 import { useSnapshot } from '../use-snapshot';
 import { useModifierStateRef } from './useModifierStateRef';
+
+type Action = ReturnType<typeof actionNewToDeprecated>;
 
 export function NEW_useTable({
   referentielId,
@@ -33,17 +35,20 @@ export function NEW_useTable({
 
   // Renvoie les sous-lignes d'une ligne, donc les enfants d'une action
   // mais seulement jusqu'au niveau 3
-  const getSubRows = (row: any) => {
-    const action = (row as ReturnType<typeof actionNewToDeprecated>)
-      .sourceAction;
+  const getSubRows = useCallback(
+    (row: any) => {
+      const action = (row as ReturnType<typeof actionNewToDeprecated>)
+        .sourceAction;
 
-    // On s'arrête aux sous-actions (on ne descend pas aux taches)
-    if (action.level > maxLevel - 1) {
-      return [];
-    }
+      // On s'arrête aux sous-actions (on ne descend pas aux taches)
+      if (action.level > maxLevel - 1) {
+        return [];
+      }
 
-    return action.actionsEnfant.map(actionNewToDeprecated);
-  };
+      return action.actionsEnfant.map(actionNewToDeprecated);
+    },
+    [maxLevel]
+  );
 
   const table = {
     data: axesOnly ?? [],
@@ -52,8 +57,35 @@ export function NEW_useTable({
     autoResetExpanded: false,
   };
 
+  const tachesTotalCount = reduceActions(
+    snapshot?.scores.actionsEnfant ?? [],
+    0,
+    (count, action) => {
+      if (action.actionType === 'tache') {
+        return count + 1;
+      }
+      return count;
+    }
+  );
+
+  const sousActionsTotalCount = reduceActions(
+    snapshot?.scores.actionsEnfant ?? [],
+    0,
+    (count, action) => {
+      if (action.actionType === 'sous-action') {
+        return count + 1;
+      }
+      return count;
+    }
+  );
+
+  //  rows.filter(isTache).length || 0;
+  // const sousActionsTotal = rows.filter(isSousAction).length;
+
   return {
     table,
+    total: tachesTotalCount,
+    sousActionsTotal: sousActionsTotalCount,
     isLoading: isPending,
   };
 }

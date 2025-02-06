@@ -1,11 +1,11 @@
 'use client';
 
+import { DetailTacheTable } from '@/app/referentiels/DetailTaches/DetailTacheTable';
+import { noFilters } from '@/app/referentiels/DetailTaches/filters';
+import { useTableData } from '@/app/referentiels/DetailTaches/useTableData';
 import { DesactiverLesFiltres } from '@/app/ui/shared/filters/DesactiverLesFiltres';
-import { DetailTacheTable } from './DetailTacheTable';
-import { noFilters } from './filters';
-import { useTableData } from './useTableData';
 
-export const DetailTaches = () => {
+export const ActionStatutsTable = () => {
   const tableData = useTableData();
   const {
     count,

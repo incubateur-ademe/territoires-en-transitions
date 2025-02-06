@@ -2,8 +2,12 @@ import { DBClient } from '@/api';
 import { useSupabase } from '@/api/utils/supabase/use-supabase';
 import { useQuery } from 'react-query';
 import { TLabellisationParcours } from './types';
+import { useSnapshotFlagEnabled } from '../use-snapshot';
 
-// charge les données du parcours
+/**
+ * charge les données du parcours
+ * @deprecated use score from snapshots instead
+ */
 export const useLabellisationParcours = ({
   collectivite_id,
   referentiel,
@@ -11,6 +15,8 @@ export const useLabellisationParcours = ({
   collectivite_id: number | null;
   referentiel: string | null;
 }) => {
+  const FLAG_isSnapshotEnabled = useSnapshotFlagEnabled();
+
   // charge les données du parcours
   const { data: parcoursList } = useAllLabellisationsParcours(collectivite_id);
 
@@ -50,7 +56,7 @@ const fetchParcours = async (
   })) as TLabellisationParcours[];
 };
 
-export const getReferentielParcours = (
+const getReferentielParcours = (
   parcoursList: TLabellisationParcours[] | null | undefined,
   referentiel: string | null
 ) => {

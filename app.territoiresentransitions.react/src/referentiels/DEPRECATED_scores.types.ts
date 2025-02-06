@@ -1,4 +1,9 @@
-import { ActionCategorie, ReferentielId } from '@/domain/referentiels';
+import {
+  ActionCategorie,
+  ReferentielId,
+  StatutAvancement,
+  StatutAvancementEnum,
+} from '@/domain/referentiels';
 import { divisionOrZero } from '@/domain/utils';
 import { TActionStatutsRow } from '../types/alias';
 import { ActionDetailed } from './use-snapshot';
@@ -68,6 +73,8 @@ export type ProgressionRow = ActionReferentiel &
     | 'phase'
     | 'concerne'
     | 'desactive'
+    | 'avancement'
+    | 'avancement_descendants'
   >;
 
 export function actionNewToDeprecated(action: ActionDetailed) {
@@ -105,6 +112,22 @@ export function actionNewToDeprecated(action: ActionDetailed) {
     have_children: action.actionsEnfant.length > 0,
     concerne: action.score.concerne,
     desactive: action.score.desactive,
+    avancement: action.score.avancement as StatutAvancement,
+    // WHEN NOT s.have_children THEN '{}'::avancement[]
+    // WHEN s.pp > 0.0::double precision AND s.pnr = s.pp THEN '{non_renseigne}'::avancement[]
+    // WHEN s.pnr > 0.0::double precision THEN '{non_renseigne}'::avancement[] || array_agg(DISTINCT statut.avancement)
+    // ELSE array_agg(DISTINCT statut.avancement)
+    avancement_descendants: !action.actionsEnfant.length
+      ? []
+      : action.score.pointPotentiel > 0 &&
+        action.score.pointPotentiel === action.score.pointNonRenseigne
+      ? [StatutAvancementEnum.NON_RENSEIGNE]
+      : action.score.pointNonRenseigne > 0
+      ? [
+          StatutAvancementEnum.NON_RENSEIGNE,
+          ...action.actionsEnfant.flatMap((a) => a.score.avancement ?? []),
+        ]
+      : action.actionsEnfant.flatMap((a) => a.score.avancement ?? []),
   };
 
   return {

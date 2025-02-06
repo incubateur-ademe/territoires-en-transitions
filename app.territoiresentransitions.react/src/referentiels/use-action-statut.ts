@@ -9,7 +9,7 @@ import {
 import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
 import { omit } from 'es-toolkit';
 import { objectToCamel, objectToSnake } from 'ts-case-convert';
-import { useCollectiviteId } from '../core-logic/hooks/params';
+import { useCollectiviteId } from '../collectivites/collectivite-context';
 import { useCurrentCollectivite } from '../core-logic/hooks/useCurrentCollectivite';
 import { useActionScore } from './DEPRECATED_score-hooks';
 import {
@@ -73,7 +73,7 @@ async function fetchCollectiviteActionStatuts(
  */
 // TODO-SNAPSHOT
 export const useSaveActionStatut = () => {
-  const collectiviteId = useCollectiviteId()!;
+  const collectiviteId = useCollectiviteId();
   const queryClient = useQueryClient();
   const supabase = useSupabase();
 
