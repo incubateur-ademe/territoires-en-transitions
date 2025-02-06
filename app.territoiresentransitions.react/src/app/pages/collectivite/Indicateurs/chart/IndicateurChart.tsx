@@ -28,7 +28,7 @@ const variantToHeight: Record<ChartVariant, number> = {
 };
 
 const variantToGrid: Record<ChartVariant, GridComponentOption> = {
-  thumbnail: { bottom: '15%', right: '5%' },
+  thumbnail: { bottom: 0, right: '5%' },
   modal: {},
   detail: { left: 32, right: 32, bottom: '14%' },
 };
@@ -157,6 +157,7 @@ const IndicateurChart = ({
       grid,
       title: variant === 'detail' ? { left: 28 } : {},
       legend: {
+        show: variant !== 'thumbnail',
         textStyle: variant === 'thumbnail' ? { fontSize: '0.7rem' } : {},
         // pour la variante vignette on affiche la légende seulement pour résultats/objectifs
         data:
