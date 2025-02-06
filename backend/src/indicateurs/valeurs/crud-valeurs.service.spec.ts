@@ -1,6 +1,7 @@
 import { PermissionService } from '@/backend/auth/authorizations/permission.service';
 import { Test } from '@nestjs/testing';
 import * as _ from 'lodash';
+import CollectivitesService from '../../collectivites/services/collectivites.service';
 import { DatabaseService } from '../../utils/database/database.service';
 import { IndicateurDefinition } from '../shared/models/indicateur-definition.table';
 import { SourceMetadonnee } from '../shared/models/indicateur-source-metadonnee.table';
@@ -22,7 +23,11 @@ describe('Indicateurs → crud-valeurs.service', () => {
       controllers: [CrudValeursService],
     })
       .useMocker((token) => {
-        if (token === DatabaseService || token === PermissionService) {
+        if (
+          token === DatabaseService ||
+          token === PermissionService ||
+          token === CollectivitesService
+        ) {
           return {};
         }
       })
