@@ -112,17 +112,23 @@ export class ImportPlanService {
     const memoryData = await this.fetchData(collectiviteId, plan);
 
     // Browse the file and retrieve the data
+    // Do not execute the code directly in 'eachRow' because it does not work with getFuse
     const errors: string[] = [];
-    worksheet.eachRow(async (row, rowNumber) => {
-      if (rowNumber === 1 || rowNumber === 2) return; // Ignorer the header
+    const rows: ExcelJS.Row[] = [];
+    worksheet.eachRow((row) => {
+      rows.push(row);
+    });
+    for (const row of rows) {
+      const rowNumber = row.number;
+      if (rowNumber === 1 || rowNumber === 2) continue; // Ignorer the header
       const rowData = row.values as any[];
       rowData.shift(); // data start at [1]
       try {
-        this.createAxes(rowData, plan, memoryData);
+        await this.createAxes(rowData, plan, memoryData);
       } catch (e) {
         errors.push(`Ligne ${rowNumber} : ${e as string}`);
       }
-    });
+    }
 
     if (errors.length > 0) {
       throw new Error(`Erreur(s) rencontrée(s) dans le fichier Excel :
@@ -175,11 +181,11 @@ export class ImportPlanService {
    * @param memory
    * @private
    */
-  private createAxes(
+  private async createAxes(
     rowData: any[],
     plan: AxeImport,
     memory: MemoryImport
-  ): void {
+  ): Promise<void> {
     const axeNames = [
       this.clean.text(rowData[columnIndexes[ColumnNames.Axe]], true),
       this.clean.text(rowData[columnIndexes[ColumnNames.SousAxe]], true),
@@ -197,7 +203,7 @@ export class ImportPlanService {
     }
 
     const axeFiche = currentAxe ?? plan;
-    const fiche = this.createFiche(rowData, memory);
+    const fiche = await this.createFiche(rowData, memory);
     if (fiche) {
       axeFiche.fiches.push(fiche);
       memory.fiches.add(fiche);
@@ -241,10 +247,10 @@ export class ImportPlanService {
    * @param memory
    * @private
    */
-  private createFiche(
+  private async createFiche(
     rowData: any[],
     memory: MemoryImport
-  ): FicheImport | null {
+  ): Promise<FicheImport | null> {
     const title = this.clean.text(
       rowData[columnIndexes[ColumnNames.TitreFicheAction]],
       true
@@ -252,16 +258,17 @@ export class ImportPlanService {
     if (!title || title.includes('Champ obligatoire')) {
       return null;
     }
-    return {
+
+    const toReturn = {
       titre: title,
       description: this.clean.text(
         rowData[columnIndexes[ColumnNames.Descriptif]]
       ),
-      thematique: this.clean.thematique(
+      thematique: await this.clean.thematique(
         rowData[columnIndexes[ColumnNames.ThematiquePrincipale]],
         memory.thematiques
       ),
-      sousThematique: this.clean.thematique(
+      sousThematique: await this.clean.sousThematique(
         rowData[columnIndexes[ColumnNames.SousThematiques]],
         memory.sousThematiques
       ),
@@ -270,11 +277,13 @@ export class ImportPlanService {
       ),
       objectifs: this.clean.text(rowData[columnIndexes[ColumnNames.Objectifs]]),
       indicateurs: undefined, // unavailable
-      resultats: this.clean.effetAttendu(
+      resultats: await this.clean.effetAttendu(
         rowData[columnIndexes[ColumnNames.ResultatsAttendus]],
         memory.effetsAttendu
       ),
-      cibles: this.clean.cible(rowData[columnIndexes[ColumnNames.Cibles]]),
+      cibles: await this.clean.cible(
+        rowData[columnIndexes[ColumnNames.Cibles]]
+      ),
       structures: this.clean.tags(
         rowData[columnIndexes[ColumnNames.StructurePilote]],
         TagEnum.Structure,
@@ -293,17 +302,17 @@ export class ImportPlanService {
         TagEnum.Service,
         memory.tags
       ),
-      pilotes: this.clean.persons(
+      pilotes: await this.clean.persons(
         rowData[columnIndexes[ColumnNames.PersonnePilote]],
         memory.tags,
         memory.members
       ),
-      referents: this.clean.persons(
+      referents: await this.clean.persons(
         rowData[columnIndexes[ColumnNames.EluReferent]],
         memory.tags,
         memory.members
       ),
-      participation: this.clean.participation(
+      participation: await this.clean.participation(
         rowData[columnIndexes[ColumnNames.ParticipationCitoyenne]]
       ),
       financements: this.clean.text(
@@ -313,8 +322,10 @@ export class ImportPlanService {
       budget: this.clean.int(
         rowData[columnIndexes[ColumnNames.BudgetPrevisionnel]]
       ),
-      statut: this.clean.statut(rowData[columnIndexes[ColumnNames.Statut]]),
-      priorite: this.clean.priorite(
+      statut: await this.clean.statut(
+        rowData[columnIndexes[ColumnNames.Statut]]
+      ),
+      priorite: await this.clean.priorite(
         rowData[columnIndexes[ColumnNames.NiveauPriorite]]
       ),
       dateDebut: this.clean.date(rowData[columnIndexes[ColumnNames.DateDebut]]),
@@ -334,6 +345,7 @@ export class ImportPlanService {
       ),
       annexes: undefined, // unavailable
     };
+    return toReturn;
   }
 
   /**
