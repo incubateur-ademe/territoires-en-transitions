@@ -91,15 +91,22 @@ export const ScoreEvolutions = () => {
       )}
       {hasSavedSnapshots && (
         <>
-          <div className="flex items-end justify-between">
-            <SnapshotsDropdown
-              values={selectedSnapshots ?? []}
-              onChange={({ snapshots }) => {
-                setSelectedSnapshots(snapshots);
-              }}
-              options={dropdownOptions}
-            />
-            <Badge title="Score total" />
+          <div>
+            <label className="mb-2">
+              Sélectionner les versions à afficher :
+            </label>
+            <div className="flex items-center justify-between">
+              <div className="w-full max-w-4xl">
+                <SnapshotsDropdown
+                  values={selectedSnapshots ?? []}
+                  onChange={({ snapshots }) => {
+                    setSelectedSnapshots(snapshots);
+                  }}
+                  options={dropdownOptions}
+                />
+              </div>
+              <Badge title="Score total" />
+            </div>
           </div>
           <div>
             <ScoreTotalEvolutionsChart
