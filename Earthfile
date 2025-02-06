@@ -127,7 +127,7 @@ db-deploy:
 db-deploy-test:
     ARG --required DB_URL
     ARG network=host
-    ARG tag=v2.92.0
+    ARG tag=v4.0.0
     LOCALLY
     RUN earthly --use-inline-cache +db-deploy-build
     RUN docker run --rm \
