@@ -1,24 +1,24 @@
 import { DatabaseService } from '@/backend/utils';
 import { Injectable, Logger } from '@nestjs/common';
 import { and, desc, eq, isNotNull, SQL, SQLWrapper } from 'drizzle-orm';
+import { GetReferentielService } from './get-referentiel/get-referentiel.service';
+import { ReferentielId } from './index-domain';
 import {
   labellisationAuditTable,
   LabellisationAuditType,
-} from '../models/labellisation-audit.table';
+} from './models/labellisation-audit.table';
 import {
   labellisationEtoileMetaTable,
   LabellisationEtoileMetaType,
-} from '../models/labellisation-etoile.table';
-import { ReferentielId } from '../models/referentiel-id.enum';
-import ReferentielsService from './referentiels.service';
+} from './models/labellisation-etoile.table';
 
 @Injectable()
-export default class LabellisationService {
+export class LabellisationService {
   private readonly logger = new Logger(LabellisationService.name);
 
   constructor(
     private readonly databaseService: DatabaseService,
-    private readonly referentielsService: ReferentielsService
+    private readonly referentielsService: GetReferentielService
   ) {}
 
   async getEtoileDefinitions(): Promise<LabellisationEtoileMetaType[]> {

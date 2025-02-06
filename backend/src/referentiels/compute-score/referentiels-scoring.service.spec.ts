@@ -15,19 +15,23 @@ import ConfigurationService from '../../utils/config/configuration.service';
 import { DatabaseService } from '../../utils/database/database.service';
 import SheetService from '../../utils/google-sheets/sheet.service';
 import MattermostNotificationService from '../../utils/mattermost-notification.service';
-import { roundTo } from '../../utils/number.helper';
-import { ActionType } from '../models/action-type.enum';
+import { roundTo } from '../../utils/number.utils';
+import { CorrelatedActionsWithScoreFields } from '../correlated-actions/correlated-actions.dto';
+import { GetReferentielService } from '../get-referentiel/get-referentiel.service';
+import { LabellisationService } from '../labellisation.service';
+import {
+  ActionDefinitionEssential,
+  TreeNode,
+} from '../models/action-definition.dto';
+import { ActionTypeEnum } from '../models/action-type.enum';
 import { caeReferentiel } from '../models/samples/cae-referentiel';
 import { deeperReferentiel } from '../models/samples/deeper-referentiel';
 import { eciReferentiel } from '../models/samples/eci-referentiel';
 import { simpleReferentiel } from '../models/samples/simple-referentiel';
-import LabellisationService from '../services/labellisation.service';
-import ReferentielsService from '../services/referentiels.service';
 import ReferentielsScoringSnapshotsService from '../snapshots/referentiels-scoring-snapshots.service';
 import { ActionStatutsByActionId } from './action-statuts-by-action-id.dto';
-import { ActionWithScore } from './action-with-score.dto';
 import ReferentielsScoringService from './referentiels-scoring.service';
-import { ScoreWithOnlyPoints } from './score.dto';
+import { ScoreFields, ScoreWithOnlyPoints } from './score.dto';
 
 describe('ReferentielsScoringService', () => {
   let referentielsScoringService: ReferentielsScoringService;
@@ -40,7 +44,7 @@ describe('ReferentielsScoringService', () => {
         ReferentielsScoringSnapshotsService,
         PersonnalisationsService,
         ExpressionParserService,
-        ReferentielsService,
+        GetReferentielService,
       ],
     })
       .useMocker((token) => {
@@ -65,14 +69,18 @@ describe('ReferentielsScoringService', () => {
 
   describe('updateFromOrigineActions', () => {
     it('Standard test without change in total points in new referentiel', async () => {
-      const referectielActionWithScore: ActionWithScore = {
+      const referectielActionWithScore: TreeNode<
+        ActionDefinitionEssential &
+          ScoreFields &
+          CorrelatedActionsWithScoreFields & { [key: string]: unknown }
+      > = {
         actionId: 'te_1.3.1.3',
         nom: 'Mettre la politique d’urbanisme en cohérence avec les objectifs de transition écologique',
         points: 5,
         pourcentage: 21.760391198044008,
         actionsEnfant: [],
         level: 4,
-        actionType: ActionType.SOUS_ACTION,
+        actionType: ActionTypeEnum.SOUS_ACTION,
         actionsOrigine: [
           {
             referentielId: 'cae',
@@ -135,9 +143,11 @@ describe('ReferentielsScoringService', () => {
         },
         scoresTag: {},
       };
+
       referentielsScoringService.updateFromOrigineActions(
         referectielActionWithScore
       );
+
       expect(referectielActionWithScore.score).toEqual({
         actionId: 'te_1.3.1.3',
         completedTachesCount: null,
@@ -187,14 +197,18 @@ describe('ReferentielsScoringService', () => {
     it('Standard test with change in total points in new referentiel', async () => {
       // 3 pts + 4 pts * 0.5 = 5 pts in total but we have 4 pts in the new referentiel
 
-      const referectielActionWithScore: ActionWithScore = {
+      const referectielActionWithScore: TreeNode<
+        ActionDefinitionEssential &
+          ScoreFields &
+          CorrelatedActionsWithScoreFields & { [key: string]: unknown }
+      > = {
         actionId: 'te_1.3.1.3',
         nom: 'Mettre la politique d’urbanisme en cohérence avec les objectifs de transition écologique',
         points: 4,
         pourcentage: 21.760391198044008,
         actionsEnfant: [],
         level: 4,
-        actionType: ActionType.SOUS_ACTION,
+        actionType: ActionTypeEnum.SOUS_ACTION,
         actionsOrigine: [
           {
             referentielId: 'cae',

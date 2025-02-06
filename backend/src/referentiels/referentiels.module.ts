@@ -3,17 +3,19 @@ import { AuthModule } from '../auth/auth.module';
 import { CollectivitesModule } from '../collectivites/collectivites.module';
 import { PersonnalisationsModule } from '../personnalisations/personnalisations.module';
 import { SheetModule } from '../utils/google-sheets/sheet.module';
+import { UpdateActionStatutRouter } from './action-statut.update/action-statut.update.router';
+import { UpdateActionStatutService } from './action-statut.update/action-statut.update.service';
 import { ComputeScoreRouter } from './compute-score/compute-score.router';
+import { ReferentielsScoringController } from './compute-score/referentiels-scoring.controller';
 import ReferentielsScoringService from './compute-score/referentiels-scoring.service';
-import { ReferentielsScoringController } from './controllers/referentiels-scoring.controller';
-import { ReferentielsController } from './controllers/referentiels.controller';
 import ExportReferentielScoreService from './export-score/export-referentiel-score.service';
-import LabellisationService from './services/labellisation.service';
-import ReferentielsService from './services/referentiels.service';
+import { GetReferentielController } from './get-referentiel/get-referentiel.controller';
+import { GetReferentielService } from './get-referentiel/get-referentiel.service';
+import { ImportReferentielController } from './import-referentiel/import-referentiel.controller';
+import ImportReferentielService from './import-referentiel/import-referentiel.service';
+import { LabellisationService } from './labellisation.service';
 import ReferentielsScoringSnapshotsService from './snapshots/referentiels-scoring-snapshots.service';
 import { ScoreSnapshotsRouter } from './snapshots/score-snaphots.router';
-import { UpdateActionStatutRouter } from './update-action-statut/update-action-statut.router';
-import { UpdateActionStatutService } from './update-action-statut/update-action-statut.service';
 
 @Module({
   imports: [
@@ -23,7 +25,7 @@ import { UpdateActionStatutService } from './update-action-statut/update-action-
     PersonnalisationsModule,
   ],
   providers: [
-    ReferentielsService,
+    GetReferentielService,
     LabellisationService,
     ReferentielsScoringSnapshotsService,
     ReferentielsScoringService,
@@ -32,9 +34,9 @@ import { UpdateActionStatutService } from './update-action-statut/update-action-
     ComputeScoreRouter,
     ScoreSnapshotsRouter,
     ExportReferentielScoreService,
+    ImportReferentielService,
   ],
   exports: [
-    ReferentielsService,
     LabellisationService,
     ReferentielsScoringSnapshotsService,
     ReferentielsScoringService,
@@ -44,6 +46,10 @@ import { UpdateActionStatutService } from './update-action-statut/update-action-
     ScoreSnapshotsRouter,
     ExportReferentielScoreService,
   ],
-  controllers: [ReferentielsController, ReferentielsScoringController],
+  controllers: [
+    GetReferentielController,
+    ImportReferentielController,
+    ReferentielsScoringController,
+  ],
 })
 export class ReferentielsModule {}

@@ -1,7 +1,6 @@
 import { createdAt, modifiedAt } from '@/domain/utils';
-import { InferSelectModel } from 'drizzle-orm';
 import { pgTable, varchar } from 'drizzle-orm/pg-core';
-import { createInsertSchema, createSelectSchema } from 'drizzle-zod';
+import { createSelectSchema } from 'drizzle-zod';
 import { actionTypePgEnum } from './action-type.enum';
 
 export const referentielIdVarchar = varchar('referentiel_id', { length: 30 });
@@ -15,16 +14,9 @@ export const referentielDefinitionTable = pgTable('referentiel_definition', {
   modifiedAt,
 });
 
-export type ReferentielDefinitionType = InferSelectModel<
-  typeof referentielDefinitionTable
->;
-export type CreateRefentielDefinitionType = InferSelectModel<
-  typeof referentielDefinitionTable
->;
+export type ReferentielDefinition =
+  typeof referentielDefinitionTable.$inferSelect;
 
 export const referentielDefinitionSchema = createSelectSchema(
-  referentielDefinitionTable
-);
-export const createReferentielDefinitionSchema = createInsertSchema(
   referentielDefinitionTable
 );

@@ -9,9 +9,9 @@ import { IndicateurDefinitionsRouter } from '../../indicateurs/definitions/list-
 import { IndicateurSourcesRouter } from '../../indicateurs/sources/indicateur-sources.router';
 import { TrajectoiresRouter } from '../../indicateurs/trajectoires/trajectoires.router';
 import { IndicateurValeursRouter } from '../../indicateurs/valeurs/crud-valeurs.router';
+import { UpdateActionStatutRouter } from '../../referentiels/action-statut.update/action-statut.update.router';
 import { ComputeScoreRouter } from '../../referentiels/compute-score/compute-score.router';
 import { ScoreSnapshotsRouter } from '../../referentiels/snapshots/score-snaphots.router';
-import { UpdateActionStatutRouter } from '../../referentiels/update-action-statut/update-action-statut.router';
 import SupabaseService from '../database/supabase.service';
 import { TrpcService } from './trpc.service';
 

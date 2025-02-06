@@ -1,4 +1,4 @@
-import { ActionType } from './index-domain';
+import { ActionTypeEnum } from './index-domain';
 import {
   getActionTypeFromActionId,
   getLevelFromActionId,
@@ -22,51 +22,51 @@ describe('getActionTypeFromActionId', () => {
   test('Standard action', async () => {
     expect(
       getActionTypeFromActionId('cae_5.1.4.4.1', [
-        ActionType.REFERENTIEL,
-        ActionType.AXE,
-        ActionType.SOUS_AXE,
-        ActionType.ACTION,
-        ActionType.SOUS_ACTION,
-        ActionType.TACHE,
+        ActionTypeEnum.REFERENTIEL,
+        ActionTypeEnum.AXE,
+        ActionTypeEnum.SOUS_AXE,
+        ActionTypeEnum.ACTION,
+        ActionTypeEnum.SOUS_ACTION,
+        ActionTypeEnum.TACHE,
       ])
-    ).toEqual(ActionType.TACHE);
+    ).toEqual(ActionTypeEnum.TACHE);
   });
 
   test('Axe', async () => {
     expect(
       getActionTypeFromActionId('cae_5', [
-        ActionType.REFERENTIEL,
-        ActionType.AXE,
-        ActionType.SOUS_AXE,
-        ActionType.ACTION,
-        ActionType.SOUS_ACTION,
-        ActionType.TACHE,
+        ActionTypeEnum.REFERENTIEL,
+        ActionTypeEnum.AXE,
+        ActionTypeEnum.SOUS_AXE,
+        ActionTypeEnum.ACTION,
+        ActionTypeEnum.SOUS_ACTION,
+        ActionTypeEnum.TACHE,
       ])
-    ).toEqual(ActionType.AXE);
+    ).toEqual(ActionTypeEnum.AXE);
   });
 
   test('Referentiel', async () => {
     expect(
       getActionTypeFromActionId('cae', [
-        ActionType.REFERENTIEL,
-        ActionType.AXE,
-        ActionType.SOUS_AXE,
-        ActionType.ACTION,
-        ActionType.SOUS_ACTION,
-        ActionType.TACHE,
+        ActionTypeEnum.REFERENTIEL,
+        ActionTypeEnum.AXE,
+        ActionTypeEnum.SOUS_AXE,
+        ActionTypeEnum.ACTION,
+        ActionTypeEnum.SOUS_ACTION,
+        ActionTypeEnum.TACHE,
       ])
-    ).toEqual(ActionType.REFERENTIEL);
+    ).toEqual(ActionTypeEnum.REFERENTIEL);
   });
 
   test('Throw', async () => {
     expect(() =>
       getActionTypeFromActionId('cae_5.1.4.4.1.1', [
-        ActionType.REFERENTIEL,
-        ActionType.AXE,
-        ActionType.SOUS_AXE,
-        ActionType.ACTION,
-        ActionType.SOUS_ACTION,
-        ActionType.TACHE,
+        ActionTypeEnum.REFERENTIEL,
+        ActionTypeEnum.AXE,
+        ActionTypeEnum.SOUS_AXE,
+        ActionTypeEnum.ACTION,
+        ActionTypeEnum.SOUS_ACTION,
+        ActionTypeEnum.TACHE,
       ])
     ).toThrow(
       'Action level 6 non consistent with referentiel action types: referentiel,axe,sous-axe,action,sous-action,tache'

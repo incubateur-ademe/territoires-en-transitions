@@ -1,6 +1,5 @@
 import { actionIdReference } from '@/backend/referentiels/models/action-relation.table';
 import { modifiedAt } from '@/domain/utils';
-import { InferInsertModel, InferSelectModel } from 'drizzle-orm';
 import { pgEnum, pgTable, primaryKey, text } from 'drizzle-orm/pg-core';
 import { createInsertSchema, createSelectSchema } from 'drizzle-zod';
 
@@ -19,25 +18,22 @@ export const personnalisationRegleTable = pgTable(
     description: text('description').notNull(),
     modifiedAt,
   },
-  (table) => {
-    return {
-      personnalisationReglePkey: primaryKey({
-        columns: [table.actionId, table.type],
-        name: 'personnalisation_regle_pkey',
-      }),
-    };
-  }
+  (table) => [
+    primaryKey({
+      columns: [table.actionId, table.type],
+      name: 'personnalisation_regle_pkey',
+    }),
+  ]
 );
 
-export type PersonnalisationRegleType = InferSelectModel<
-  typeof personnalisationRegleTable
->;
-export type CreatePersonnalisationRegleType = InferInsertModel<
-  typeof personnalisationRegleTable
->;
+export type PersonnalisationRegle =
+  typeof personnalisationRegleTable.$inferSelect;
+export type PersonnalisationRegleInsert =
+  typeof personnalisationRegleTable.$inferInsert;
+
 export const personnalisationRegleSchema = createSelectSchema(
   personnalisationRegleTable
 );
-export const createPersonnalisationRegleSchema = createInsertSchema(
+export const personnalisationRegleInsertSchema = createInsertSchema(
   personnalisationRegleTable
 );

@@ -1,5 +1,5 @@
 import { z } from 'zod';
-import { getReferentielScoresResponseSchema } from './get-referentiel-scores.response';
+import { getReferentielScoresResponseSchema } from '../compute-score/get-referentiel-scores.response';
 
 export const getReferentielMultipleScoresResponseSchema = z
   .object({

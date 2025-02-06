@@ -16,8 +16,6 @@ import { NextFunction, Request, Response } from 'express';
 import { AllowAnonymousAccess } from '../../auth/decorators/allow-anonymous-access.decorator';
 import { TokenInfo } from '../../auth/decorators/token-info.decorators';
 import { AuthenticatedUser, AuthUser } from '../../auth/models/auth.models';
-import { actionStatutsByActionIdSchema } from '../compute-score/action-statuts-by-action-id.dto';
-import ReferentielsScoringService from '../compute-score/referentiels-scoring.service';
 import ExportReferentielScoreService from '../export-score/export-referentiel-score.service';
 import { checkMultipleReferentielScoresRequestSchema } from '../models/check-multiple-referentiel-scores.request';
 import { CheckReferentielScoresRequestType } from '../models/check-referentiel-scores.request';
@@ -27,10 +25,6 @@ import { GetMultipleCheckScoresResponseType } from '../models/get-multiple-check
 import { getReferentielMultipleScoresRequestSchema } from '../models/get-referentiel-multiple-scores.request';
 import { getReferentielMultipleScoresResponseSchema } from '../models/get-referentiel-multiple-scores.response';
 import { getReferentielScoresRequestSchema } from '../models/get-referentiel-scores.request';
-import {
-  getReferentielScoresResponseSchema,
-  GetReferentielScoresResponseType,
-} from '../models/get-referentiel-scores.response';
 import { getScoreSnapshotRequestSchema } from '../models/get-score-snapshot.request';
 import { getScoreSnapshotsRequestSchema } from '../models/get-score-snapshots.request';
 import { getScoreSnapshotsResponseSchema } from '../models/get-score-snapshots.response';
@@ -40,6 +34,12 @@ import {
 } from '../models/referentiel-api.constants';
 import { ReferentielId } from '../models/referentiel-id.enum';
 import ReferentielsScoringSnapshotsService from '../snapshots/referentiels-scoring-snapshots.service';
+import { actionStatutsByActionIdSchema } from './action-statuts-by-action-id.dto';
+import {
+  getReferentielScoresResponseSchema,
+  GetReferentielScoresResponseType,
+} from './get-referentiel-scores.response';
+import ReferentielsScoringService from './referentiels-scoring.service';
 
 class GetReferentielScoresRequestClass extends createZodDto(
   getReferentielScoresRequestSchema

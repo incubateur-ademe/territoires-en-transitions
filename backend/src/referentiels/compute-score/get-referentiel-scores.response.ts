@@ -1,9 +1,14 @@
 import { z } from 'zod';
 import { collectiviteAvecTypeSchema } from '../../collectivites/identite-collectivite.dto';
-import { actionWithScoreFinalSchema } from '../compute-score/action-with-score.dto';
+import { actionDefinitionSchema } from '../index-domain';
+import {
+  actionDefinitionEssentialSchema,
+  treeNodeSchema,
+} from '../models/action-definition.dto';
+import { ComputeScoreMode } from '../models/compute-scores-mode.enum';
+import { referentielIdEnumSchema } from '../models/referentiel-id.enum';
 import { SnapshotJalon } from '../snapshots/snapshot-jalon.enum';
-import { ComputeScoreMode } from './compute-scores-mode.enum';
-import { referentielIdEnumSchema } from './referentiel-id.enum';
+import { scoreFinalFieldsSchema } from './score.dto';
 
 export const getReferentielScoresResponseSnapshotInfoSchema = z.object({
   ref: z.string(),
@@ -21,7 +26,12 @@ export const getReferentielScoresResponseSchema = z
     referentielVersion: z.string(),
     collectiviteInfo: collectiviteAvecTypeSchema,
     date: z.string().datetime(),
-    scores: actionWithScoreFinalSchema,
+    scores: treeNodeSchema(
+      actionDefinitionSchema
+        .pick({ identifiant: true, nom: true, categorie: true })
+        .merge(actionDefinitionEssentialSchema)
+        .merge(scoreFinalFieldsSchema)
+    ),
     jalon: z.nativeEnum(SnapshotJalon),
     auditId: z.number().optional(),
     anneeAudit: z.number().optional(),

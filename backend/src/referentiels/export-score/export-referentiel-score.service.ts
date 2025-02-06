@@ -1,20 +1,21 @@
-/**
- *
- */
-
 import { Injectable, Logger } from '@nestjs/common';
 import { Row, Workbook } from 'exceljs';
 import { NextFunction, Response } from 'express';
 import { PreuveEssential } from '../../collectivites/documents/models/preuve.dto';
 import * as Utils from '../../utils/excel/export-excel.utils';
-import { ActionWithScore } from '../compute-score/action-with-score.dto';
+import { GetReferentielScoresResponseType } from '../compute-score/get-referentiel-scores.response';
 import ReferentielsScoringService from '../compute-score/referentiels-scoring.service';
+import { GetReferentielService } from '../get-referentiel/get-referentiel.service';
+import { ActionDefinition, ScoreFinalFields } from '../index-domain';
+import {
+  ActionDefinitionEssential,
+  TreeNode,
+} from '../models/action-definition.dto';
 import {
   StatutAvancement,
   StatutAvancementEnum,
 } from '../models/action-statut.table';
 import { ActionTypeEnum } from '../models/action-type.enum';
-import { GetReferentielScoresResponseType } from '../models/get-referentiel-scores.response';
 import { GetScoreSnapshotRequestType } from '../models/get-score-snapshot.request';
 import {
   ReferentielId,
@@ -24,8 +25,12 @@ import {
   getAxeFromActionId,
   getLevelFromActionId,
 } from '../referentiels.utils';
-import ReferentielsService from '../services/referentiels.service';
 import ReferentielsScoringSnapshotsService from '../snapshots/referentiels-scoring-snapshots.service';
+
+type ActionDefinitionFields = ActionDefinitionEssential &
+  Partial<Pick<ActionDefinition, 'identifiant' | 'nom' | 'categorie'>>;
+
+type ActionWithScore = TreeNode<ActionDefinitionFields & ScoreFinalFields>;
 
 @Injectable()
 export default class ExportReferentielScoreService {
@@ -81,7 +86,7 @@ export default class ExportReferentielScoreService {
   private readonly EXPORT_SUBTITLE = 'Évaluation dans la plateforme';
 
   constructor(
-    private readonly referentielService: ReferentielsService,
+    private readonly referentielService: GetReferentielService,
     private readonly referentielsScoringService: ReferentielsScoringService,
     private readonly referentielsScoringSnapshotsService: ReferentielsScoringSnapshotsService
   ) {}
@@ -114,7 +119,7 @@ export default class ExportReferentielScoreService {
         return this.BG_COLOR4;
       }
 
-      const axe = getAxeFromActionId(actionScore.actionId!);
+      const axe = getAxeFromActionId(actionScore.actionId);
       const colors = this.BG_COLORS[axe];
       if (colors && depth <= colors.length) {
         return colors[depth - 1];
@@ -179,12 +184,12 @@ export default class ExportReferentielScoreService {
     }
 
     // affiche "non renseigné" si l'avancement n'est pas renseigné
-    if (!avancement || !this.AVANCEMENT_TO_LABEL[avancement!]) {
+    if (!avancement || !this.AVANCEMENT_TO_LABEL[avancement]) {
       return this.AVANCEMENT_TO_LABEL['non_renseigne'];
     }
 
     // affiche le libellé correspondant à l'avancement
-    return this.AVANCEMENT_TO_LABEL[avancement!];
+    return this.AVANCEMENT_TO_LABEL[avancement];
   }
 
   formatPreuves(preuves?: PreuveEssential[]): string | undefined {
@@ -271,7 +276,7 @@ export default class ExportReferentielScoreService {
 
     // génère les lignes d'en-tête
     const headerRows = [
-      [referentielScore.collectiviteInfo!.nom],
+      [referentielScore.collectiviteInfo.nom],
       [this.EXPORT_DATE_LABEL, new Date()],
       // 2 lignes vides
       [],
@@ -374,7 +379,7 @@ export default class ExportReferentielScoreService {
         );
       } else {
         // niveau de profondeur (case plier/déplier)
-        const depth = getLevelFromActionId(actionScore.actionId!);
+        const depth = getLevelFromActionId(actionScore.actionId);
         if (depth && depth > 1) {
           row.outlineLevel = depth;
         }

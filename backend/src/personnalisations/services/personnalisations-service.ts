@@ -18,8 +18,8 @@ import { historiqueReponseChoixTable } from '../models/historique-reponse-choix.
 import { historiqueReponseProportionTable } from '../models/historique-reponse-proportion.table';
 import { PersonnalisationConsequencesByActionId } from '../models/personnalisation-consequence.dto';
 import {
+  PersonnalisationRegle,
   personnalisationRegleTable,
-  PersonnalisationRegleType,
 } from '../models/personnalisation-regle.table';
 import { reponseBinaireTable } from '../models/reponse-binaire.table';
 import { reponseChoixTable } from '../models/reponse-choix.table';
@@ -141,7 +141,7 @@ export default class PersonnalisationsService {
       .select()
       .from(personnalisationRegleTable);
 
-    let regles: PersonnalisationRegleType[];
+    let regles: PersonnalisationRegle[];
     if (referentiel) {
       // TODO: add referentiel to personnalisationTable
       regles = await reglesQuery

@@ -1,7 +1,9 @@
-import { ReferentielAction } from '../../compute-score/referentiel-action.dto';
+import { ActionDefinitionEssential, TreeNode } from '../action-definition.dto';
 import { ActionTypeEnum } from '../action-type.enum';
 
-export const caeReferentiel: ReferentielAction = {
+export const caeReferentiel: TreeNode<
+  ActionDefinitionEssential & { [key: string]: unknown }
+> = {
   actionId: 'cae',
   nom: 'Climat Air Énergie',
   points: 500,

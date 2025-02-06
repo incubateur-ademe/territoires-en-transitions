@@ -16,8 +16,9 @@ import { AuthRole, AuthUser } from '../../auth/models/auth.models';
 import { GetPersonnalisationReponsesResponseType } from '../../personnalisations/models/get-personnalisation-reponses.response';
 import { DatabaseService } from '../../utils/database/database.service';
 import { getErrorWithCode } from '../../utils/nest/errors.utils';
+import { roundTo } from '../../utils/number.utils';
 import { PgIntegrityConstraintViolation } from '../../utils/postgresql-error-codes.enum';
-import { GetReferentielScoresResponseType } from '../models/get-referentiel-scores.response';
+import { GetReferentielScoresResponseType } from '../compute-score/get-referentiel-scores.response';
 import { GetScoreSnapshotsRequestType } from '../models/get-score-snapshots.request';
 import {
   GetScoreSnapshotsResponseType,
@@ -31,7 +32,6 @@ import {
   scoreSnapshotTable,
   ScoreSnapshotType,
 } from './snapshot.table';
-import { roundTo } from '../../utils/number.helper';
 
 @Injectable()
 export default class ReferentielsScoringSnapshotsService {

@@ -1,7 +1,9 @@
-import { ReferentielAction } from '../../compute-score/referentiel-action.dto';
+import { ActionDefinitionEssential, TreeNode } from '../action-definition.dto';
 import { ActionTypeEnum } from '../action-type.enum';
 
-export const eciReferentiel: ReferentielAction = {
+export const eciReferentiel: TreeNode<
+  ActionDefinitionEssential & { [key: string]: unknown }
+> = {
   actionId: 'eci',
   nom: 'Économie Circulaire',
   points: 500,

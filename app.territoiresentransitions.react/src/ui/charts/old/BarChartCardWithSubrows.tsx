@@ -1,7 +1,6 @@
 import { useCurrentCollectivite } from '@/app/core-logic/hooks/useCurrentCollectivite';
 import { TScoreAuditRowData } from '@/app/referentiels/audits/AuditComparaison/types';
-import { ActionReferentiel } from '@/app/referentiels/DEPRECATED_scores.types';
-import { TActionStatutsRow } from '@/app/types/alias';
+import { ProgressionRow } from '@/app/referentiels/DEPRECATED_scores.types';
 import TagFilters from '@/app/ui/shared/filters/TagFilters';
 import { ReferentielId } from '@/domain/referentiels';
 import { Breadcrumbs, useEventTracker } from '@/ui';
@@ -9,21 +8,6 @@ import { useEffect, useState } from 'react';
 import { TableOptions } from 'react-table';
 import { getIndexTitles } from '../utils';
 import ChartCard from './ChartCard';
-
-export type ProgressionRow = ActionReferentiel &
-  Pick<
-    TActionStatutsRow,
-    | 'action_id'
-    | 'score_realise'
-    | 'score_programme'
-    | 'score_realise_plus_programme'
-    | 'score_pas_fait'
-    | 'score_non_renseigne'
-    | 'points_realises'
-    | 'points_programmes'
-    | 'points_max_personnalises'
-    | 'points_max_referentiel'
-  >;
 
 export type TBarChartScoreTable =
   | Pick<

@@ -21,7 +21,7 @@ import {
   modifiedBy,
   TIMESTAMP_OPTIONS,
 } from '../../utils/column.utils';
-import { getReferentielScoresResponseSchema } from '../models/get-referentiel-scores.response';
+import { getReferentielScoresResponseSchema } from '../compute-score/get-referentiel-scores.response';
 import { labellisationAuditTable } from '../models/labellisation-audit.table';
 import {
   referentielDefinitionTable,

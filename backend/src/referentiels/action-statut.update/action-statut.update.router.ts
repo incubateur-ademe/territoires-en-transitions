@@ -1,9 +1,9 @@
-import { Injectable } from '@nestjs/common';
 import { TrpcService } from '@/backend/utils/trpc/trpc.service';
+import { Injectable } from '@nestjs/common';
 import {
   UpdateActionStatutService,
   upsertActionStatutRequestSchema,
-} from './update-action-statut.service';
+} from './action-statut.update.service';
 
 @Injectable()
 export class UpdateActionStatutRouter {

@@ -1,8 +1,7 @@
-import { InferInsertModel, InferSelectModel } from 'drizzle-orm';
 import { doublePrecision, pgTable, unique, varchar } from 'drizzle-orm/pg-core';
 import { createInsertSchema, createSelectSchema } from 'drizzle-zod';
-import { actionDefinitionTable } from './action-definition.table';
-import { referentielDefinitionTable } from './referentiel-definition.table';
+import { actionDefinitionTable } from '../models/action-definition.table';
+import { referentielDefinitionTable } from '../models/referentiel-definition.table';
 
 /**
  * Track relation between how one action from a referentiel is related to another action from another referentiel
@@ -36,10 +35,8 @@ export const actionOrigineTable = pgTable(
   })
 );
 
-export type ActionOrigineType = InferSelectModel<typeof actionOrigineTable>;
-export type CreateActionOrigineType = InferInsertModel<
-  typeof actionOrigineTable
->;
+export type ActionOrigine = typeof actionOrigineTable.$inferSelect;
+export type ActionOrigineInsert = typeof actionOrigineTable.$inferInsert;
 
 export const actionOrigineSchema = createSelectSchema(actionOrigineTable);
-export const createActionOrigineSchema = createInsertSchema(actionOrigineTable);
+export const actionOrigineInsertSchema = createInsertSchema(actionOrigineTable);
