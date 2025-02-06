@@ -8,6 +8,7 @@ import {
 import { renderToString } from '@/app/ui/charts/echarts/renderToString';
 import SpinnerLoader from '@/app/ui/shared/SpinnerLoader';
 import { GridComponentOption } from 'echarts';
+import { uniq } from 'es-toolkit';
 import { getSourceLabel } from '../data/get-source-label';
 import { PreparedData } from '../data/prepare-data';
 import { IndicateurChartInfo } from '../data/use-indicateur-chart';
@@ -71,6 +72,37 @@ const prepareDataset = (
       };
     }) ?? [];
 
+// prépare les données pour l'affichage des surfaces superposées pour
+// les segments (sous-indicateurs d'un indicateur composé avec agrégation)
+const prepareSegmentsDataset = (chartInfo: IndicateurChartInfo) => {
+  const { data, segmentItemParId } = chartInfo;
+  const { segments } = data.valeurs;
+
+  if (!segments?.length) return [];
+
+  // extrait les années uniques pour les segments
+  const annees = uniq(
+    segments.flatMap(({ source }) => source.valeurs.map(({ annee }) => annee))
+  ).sort();
+
+  return segments.map(({ definition, source }) => {
+    const metadonnee = source.metadonnees?.find(
+      (m) => m.sourceId === source.source
+    );
+
+    return {
+      ...(segmentItemParId.get(definition.id) || {}),
+      source: annees.map((annee) => {
+        const valeur = source.valeurs.find((v) => v.annee === annee);
+        // remplace les années manquantes par 0 pour améliorer l'affichage des surfaces empilées
+        return valeur ?? 0;
+      }),
+      dimensions: ['anneeISO', 'valeur'],
+      metadonnee,
+    };
+  });
+};
+
 /** Props du graphique générique Indicateur */
 export type IndicateurChartProps = {
   /** Données pour le graphe */
@@ -92,8 +124,8 @@ const IndicateurChart = ({
   variant = 'detail',
   className,
 }: IndicateurChartProps) => {
-  const { data, segmentItemParId } = chartInfo;
-  const { objectifs, resultats, segments } = data.valeurs;
+  const { data } = chartInfo;
+  const { objectifs, resultats } = data.valeurs;
 
   const noData = objectifs.sources?.length + resultats.sources?.length === 0;
 
@@ -106,20 +138,7 @@ const IndicateurChart = ({
     ...prepareDataset(data, 'objectif', getColorBySourceId),
   ];
 
-  // dataset pour les segments
-  const donneesSegments =
-    segments?.map(({ definition, source }, i) => {
-      const metadonnee = source.metadonnees?.find(
-        (m) => m.sourceId === source.source
-      );
-
-      return {
-        ...(segmentItemParId.get(definition.id) || {}),
-        source: source.valeurs,
-        dimensions: ['anneeISO', 'valeur'],
-        metadonnee,
-      };
-    }) || [];
+  const donneesSegments = prepareSegmentsDataset(chartInfo);
 
   const dataset = [...donneesResultatObjectif, ...donneesSegments];
 
