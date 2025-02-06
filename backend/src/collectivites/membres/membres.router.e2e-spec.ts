@@ -27,7 +27,8 @@ describe('CollectiviteMembresRouter', () => {
     databaseService = app.get<DatabaseService>(DatabaseService);
 
     // reset les données avant de commencer les tests
-    await databaseService.db.execute(sql`select test_reset()`);
+    await databaseService.db.execute(sql`select test_reset_droits()`);
+    await databaseService.db.execute(sql`select test_reset_membres()`);
   });
 
   afterAll(async () => {
