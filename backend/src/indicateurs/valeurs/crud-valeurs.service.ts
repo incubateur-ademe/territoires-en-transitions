@@ -20,6 +20,7 @@ import {
 import { groupBy, keyBy, partition } from 'es-toolkit';
 import * as _ from 'lodash';
 import { AuthenticatedUser, AuthRole } from '../../auth/models/auth.models';
+import CollectivitesService from '../../collectivites/services/collectivites.service';
 import { DatabaseService } from '../../utils/database/database.service';
 import { indicateurSourceTable, Source } from '../index-domain';
 import { DeleteIndicateursValeursRequestType } from '../shared/models/delete-indicateurs.request';
@@ -72,6 +73,7 @@ export default class CrudValeursService {
   public readonly UNKOWN_SOURCE_ID = 'unknown';
 
   constructor(
+    private readonly collectiviteService: CollectivitesService,
     private readonly databaseService: DatabaseService,
     private readonly permissionService: PermissionService
   ) {}
@@ -212,13 +214,19 @@ export default class CrudValeursService {
     options: GetIndicateursValeursRequestType,
     tokenInfo: AuthenticatedUser
   ): Promise<GetIndicateursValeursResponseType> {
-    const { indicateurIds, identifiantsReferentiel } = options;
+    const { collectiviteId, indicateurIds, identifiantsReferentiel } = options;
 
+    // Vérifie les droits
+    const collectivitePrivate = await this.collectiviteService.isPrivate(
+      collectiviteId
+    );
     await this.permissionService.isAllowed(
       tokenInfo,
-      PermissionOperation.INDICATEURS_LECTURE,
+      collectivitePrivate
+        ? PermissionOperation.INDICATEURS_LECTURE
+        : PermissionOperation.INDICATEURS_VISITE,
       ResourceType.COLLECTIVITE,
-      options.collectiviteId
+      collectiviteId
     );
 
     if (!indicateurIds?.length && !identifiantsReferentiel?.length)
