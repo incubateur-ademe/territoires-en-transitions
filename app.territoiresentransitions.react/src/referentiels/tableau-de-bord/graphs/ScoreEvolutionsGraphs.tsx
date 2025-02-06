@@ -20,7 +20,15 @@ const ScoreEvolutionsGraphs = ({
     referentielId: referentiel,
   });
 
-  const snapshots = organizeSnaps(snapshotList?.snapshots ?? []);
+  const snapshotWithoutScoreCourant = removeScoreCourant(
+    snapshotList?.snapshots ?? []
+  );
+
+  if (!snapshotWithoutScoreCourant?.length) {
+    return <></>;
+  }
+
+  const snapshots = organizeSnaps(snapshotWithoutScoreCourant);
 
   return (
     <GraphCard
@@ -33,8 +41,7 @@ const ScoreEvolutionsGraphs = ({
 };
 
 const organizeSnaps = (snapshots: SnapshotDetails[]) => {
-  const snapsWithoutScoreCourant = removeScoreCourant(snapshots);
-  const invertedSnapshots = snapsWithoutScoreCourant.reverse();
+  const invertedSnapshots = snapshots.reverse();
   const limitedSnapshots = limitSnapshots(invertedSnapshots);
   return limitedSnapshots;
 };
