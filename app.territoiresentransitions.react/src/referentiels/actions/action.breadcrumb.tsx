@@ -80,7 +80,7 @@ export const ActionBreadcrumb = (props: {
             referentielId: action.referentiel,
           })}
         >
-          {displayName(parents[0])}
+          {parents.length > 0 && displayName(parents[0])}
         </Link>
         <span className="mx-2">&gt;</span>
       </div>
