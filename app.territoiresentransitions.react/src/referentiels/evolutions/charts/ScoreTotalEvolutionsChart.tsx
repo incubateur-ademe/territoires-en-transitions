@@ -198,12 +198,18 @@ const ScoreTotalEvolutionsChart = ({
 export default ScoreTotalEvolutionsChart;
 
 const makeScoreSnapshotLabel = (pointFait: number, pointPotentiel: number) => {
-  const percentage = (pointFait / pointPotentiel) * 100;
-  return `{percent|${percentage.toFixed(1)}%} ${pointFait.toFixed(
-    1
-  )}/${pointPotentiel.toFixed(1)} pts`;
+  const percentage = troncateIfZero(
+    computePercentage(pointFait, pointPotentiel)
+  );
+  return `{percent|${percentage}%} ${troncateIfZero(
+    pointFait.toFixed(1)
+  )}/${troncateIfZero(pointPotentiel.toFixed(1))} pts`;
 };
 
 const computePercentage = (point: number, pointPotentiel: number) => {
   return ((point / pointPotentiel) * 100).toFixed(1);
+};
+
+const troncateIfZero = (value: string) => {
+  return value.endsWith('.0') ? value.slice(0, -2) : value;
 };
