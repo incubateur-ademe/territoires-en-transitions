@@ -12,7 +12,6 @@ import {
 import { objectToCamel } from 'ts-case-convert';
 import {
   AuthenticatedUser,
-  AuthRole,
   PermissionOperation,
   ResourceType,
 } from '../../auth';
@@ -150,163 +149,150 @@ export default class ListDefinitionsService {
       collectiviteId
     );
 
-    if (tokenInfo.role === AuthRole.AUTHENTICATED && tokenInfo.id) {
-      this.logger.log(
-        `Lecture des définitions détaillées d'indicateur id ${[
-          ...(indicateurIds || []),
-          identifiantsReferentiel || [],
-        ].join(',')} pour la collectivité ${data.collectiviteId}`
-      );
+    this.logger.log(
+      `Lecture des définitions détaillées d'indicateur id ${[
+        ...(indicateurIds || []),
+        identifiantsReferentiel || [],
+      ].join(',')} pour la collectivité ${data.collectiviteId}`
+    );
 
-      const definitionEnfantsTable = aliasedTable(
-        indicateurDefinitionTable,
-        'enfants'
-      );
+    const definitionEnfantsTable = aliasedTable(
+      indicateurDefinitionTable,
+      'enfants'
+    );
 
-      const { identifiantReferentiel, ...cols } = getTableColumns(
-        indicateurDefinitionTable
-      );
-      const definitions = await this.databaseService.db
-        .select({
-          ...cols,
-          identifiant: identifiantReferentiel,
-          commentaire: indicateurCollectiviteTable.commentaire,
-          confidentiel: indicateurCollectiviteTable.confidentiel,
-          favoris: indicateurCollectiviteTable.favoris,
-          categories: sql`array_remove(array_agg(distinct ${categorieTagTable.nom}), null)`,
-          thematiques: sql`array_remove(array_agg(distinct ${thematiqueTable.nom}), null)`,
-          enfants: sql`jsonb_agg(distinct jsonb_build_object(
+    const { identifiantReferentiel, ...cols } = getTableColumns(
+      indicateurDefinitionTable
+    );
+    const definitions = await this.databaseService.db
+      .select({
+        ...cols,
+        identifiant: identifiantReferentiel,
+        commentaire: indicateurCollectiviteTable.commentaire,
+        confidentiel: indicateurCollectiviteTable.confidentiel,
+        favoris: indicateurCollectiviteTable.favoris,
+        categories: sql`array_remove(array_agg(distinct ${categorieTagTable.nom}), null)`,
+        thematiques: sql`array_remove(array_agg(distinct ${thematiqueTable.nom}), null)`,
+        enfants: sql`jsonb_agg(distinct jsonb_build_object(
             'id', ${definitionEnfantsTable.id},
             'identifiantReferentiel', ${definitionEnfantsTable.identifiantReferentiel},
             'titre', ${definitionEnfantsTable.titre},
             'titreCourt', ${definitionEnfantsTable.titreCourt}
           )) filter (where ${definitionEnfantsTable.id} is not null)`,
-          actions: sql`to_json(array_remove(array_agg(distinct ${indicateurActionTable.actionId}), null)) as actions`,
-          hasOpenData: sql`bool_or(${indicateurValeurTable.metadonneeId} is not null and ${indicateurSourceMetadonneeTable.sourceId} != 'snbc')`,
-          estPerso: sql`bool_or(${indicateurDefinitionTable.identifiantReferentiel} is null)`,
-          estAgregation: sql`bool_or(${categorieTagTable.nom} = 'agregation')`,
-        })
-        .from(indicateurDefinitionTable)
-        // infos complémentaires sur l'indicateur pour la collectivité
-        .leftJoin(
-          indicateurCollectiviteTable,
-          and(
-            eq(
-              indicateurCollectiviteTable.indicateurId,
-              indicateurDefinitionTable.id
-            ),
-            eq(indicateurCollectiviteTable.collectiviteId, collectiviteId)
-          )
-        )
-        // catégories
-        .leftJoin(
-          indicateurCategorieTagTable,
+        actions: sql`to_json(array_remove(array_agg(distinct ${indicateurActionTable.actionId}), null)) as actions`,
+        hasOpenData: sql`bool_or(${indicateurValeurTable.metadonneeId} is not null and ${indicateurSourceMetadonneeTable.sourceId} != 'snbc')`,
+        estPerso: sql`bool_or(${indicateurDefinitionTable.identifiantReferentiel} is null)`,
+        estAgregation: sql`bool_or(${categorieTagTable.nom} = 'agregation')`,
+      })
+      .from(indicateurDefinitionTable)
+      // infos complémentaires sur l'indicateur pour la collectivité
+      .leftJoin(
+        indicateurCollectiviteTable,
+        and(
           eq(
-            indicateurCategorieTagTable.indicateurId,
+            indicateurCollectiviteTable.indicateurId,
             indicateurDefinitionTable.id
+          ),
+          eq(indicateurCollectiviteTable.collectiviteId, collectiviteId)
+        )
+      )
+      // catégories
+      .leftJoin(
+        indicateurCategorieTagTable,
+        eq(
+          indicateurCategorieTagTable.indicateurId,
+          indicateurDefinitionTable.id
+        )
+      )
+      .leftJoin(
+        categorieTagTable,
+        and(
+          eq(categorieTagTable.id, indicateurCategorieTagTable.categorieTagId),
+          or(
+            isNull(categorieTagTable.collectiviteId),
+            eq(categorieTagTable.collectiviteId, collectiviteId)
           )
         )
-        .leftJoin(
-          categorieTagTable,
-          and(
-            eq(
-              categorieTagTable.id,
-              indicateurCategorieTagTable.categorieTagId
-            ),
-            or(
-              isNull(categorieTagTable.collectiviteId),
-              eq(categorieTagTable.collectiviteId, collectiviteId)
-            )
-          )
+      )
+      // thématiques
+      .leftJoin(
+        indicateurThematiqueTable,
+        eq(indicateurThematiqueTable.indicateurId, indicateurDefinitionTable.id)
+      )
+      .leftJoin(
+        thematiqueTable,
+        eq(thematiqueTable.id, indicateurThematiqueTable.thematiqueId)
+      )
+      // enfants
+      .leftJoin(
+        indicateurGroupeTable,
+        eq(indicateurGroupeTable.parent, indicateurDefinitionTable.id)
+      )
+      .leftJoin(
+        definitionEnfantsTable,
+        eq(definitionEnfantsTable.id, indicateurGroupeTable.enfant)
+      )
+      // enfants liés aux groupements de la collectivité
+      .leftJoin(
+        groupementTable,
+        eq(groupementTable.id, definitionEnfantsTable.groupementId)
+      )
+      .leftJoin(
+        groupementCollectiviteTable,
+        eq(groupementCollectiviteTable.groupementId, groupementTable.id)
+      )
+      // actions du référentiel
+      .leftJoin(
+        indicateurActionTable,
+        eq(indicateurActionTable.indicateurId, indicateurDefinitionTable.id)
+      )
+      // valeurs (pour déterminer hasOpenData)
+      .leftJoin(
+        indicateurValeurTable,
+        and(
+          eq(indicateurValeurTable.indicateurId, indicateurDefinitionTable.id),
+          eq(indicateurValeurTable.collectiviteId, collectiviteId)
         )
-        // thématiques
-        .leftJoin(
-          indicateurThematiqueTable,
+      )
+      // source des valeurs (pour déterminer hasOpenData)
+      .leftJoin(
+        indicateurSourceMetadonneeTable,
+        and(
           eq(
-            indicateurThematiqueTable.indicateurId,
-            indicateurDefinitionTable.id
+            indicateurSourceMetadonneeTable.id,
+            indicateurValeurTable.metadonneeId
           )
         )
-        .leftJoin(
-          thematiqueTable,
-          eq(thematiqueTable.id, indicateurThematiqueTable.thematiqueId)
-        )
-        // enfants
-        .leftJoin(
-          indicateurGroupeTable,
-          eq(indicateurGroupeTable.parent, indicateurDefinitionTable.id)
-        )
-        .leftJoin(
-          definitionEnfantsTable,
-          eq(definitionEnfantsTable.id, indicateurGroupeTable.enfant)
-        )
-        // enfants liés aux groupements de la collectivité
-        .leftJoin(
-          groupementTable,
-          eq(groupementTable.id, definitionEnfantsTable.groupementId)
-        )
-        .leftJoin(
-          groupementCollectiviteTable,
-          eq(groupementCollectiviteTable.groupementId, groupementTable.id)
-        )
-        // actions du référentiel
-        .leftJoin(
-          indicateurActionTable,
-          eq(indicateurActionTable.indicateurId, indicateurDefinitionTable.id)
-        )
-        // valeurs (pour déterminer hasOpenData)
-        .leftJoin(
-          indicateurValeurTable,
-          and(
-            eq(
-              indicateurValeurTable.indicateurId,
-              indicateurDefinitionTable.id
-            ),
-            eq(indicateurValeurTable.collectiviteId, collectiviteId)
+      )
+      .where(
+        and(
+          or(
+            indicateurIds?.length
+              ? and(inArray(indicateurDefinitionTable.id, indicateurIds))
+              : undefined,
+            identifiantsReferentiel?.length
+              ? inArray(
+                  indicateurDefinitionTable.identifiantReferentiel,
+                  identifiantsReferentiel
+                )
+              : undefined
+          ),
+          or(
+            isNull(definitionEnfantsTable.groupementId),
+            eq(groupementCollectiviteTable.collectiviteId, collectiviteId)
           )
         )
-        // source des valeurs (pour déterminer hasOpenData)
-        .leftJoin(
-          indicateurSourceMetadonneeTable,
-          and(
-            eq(
-              indicateurSourceMetadonneeTable.id,
-              indicateurValeurTable.metadonneeId
-            )
-          )
-        )
-        .where(
-          and(
-            or(
-              indicateurIds?.length
-                ? and(inArray(indicateurDefinitionTable.id, indicateurIds))
-                : undefined,
-              identifiantsReferentiel?.length
-                ? inArray(
-                    indicateurDefinitionTable.identifiantReferentiel,
-                    identifiantsReferentiel
-                  )
-                : undefined
-            ),
-            or(
-              isNull(definitionEnfantsTable.groupementId),
-              eq(groupementCollectiviteTable.collectiviteId, collectiviteId)
-            )
-          )
-        )
-        .groupBy(
-          indicateurDefinitionTable.id,
-          indicateurCollectiviteTable.commentaire,
-          indicateurCollectiviteTable.confidentiel,
-          indicateurCollectiviteTable.favoris
-        );
+      )
+      .groupBy(
+        indicateurDefinitionTable.id,
+        indicateurCollectiviteTable.commentaire,
+        indicateurCollectiviteTable.confidentiel,
+        indicateurCollectiviteTable.favoris
+      );
 
-      this.logger.log(`${definitions.length} définitions trouvées`);
+    this.logger.log(`${definitions.length} définitions trouvées`);
 
-      return definitions as IndicateurDefinitionDetaillee[];
-    }
-
-    return [];
+    return definitions as IndicateurDefinitionDetaillee[];
   }
 
   /**
@@ -321,17 +307,16 @@ export default class ListDefinitionsService {
       collectiviteId
     );
 
-    if (tokenInfo.role === AuthRole.AUTHENTICATED && tokenInfo.id) {
-      this.logger.log(
-        `Lecture du chemin de l'indicateur id ${indicateurId} pour la collectivité ${collectiviteId}`
-      );
+    this.logger.log(
+      `Lecture du chemin de l'indicateur id ${indicateurId} pour la collectivité ${collectiviteId}`
+    );
 
-      // TODO: à changer quand `with recursive` sera supporté
-      // ref: https://github.com/drizzle-team/drizzle-orm/issues/209
-      const chemins = await this.databaseService.db.execute<{
-        id: number;
-        chemin: { id: number; identifiant?: string; titre: string }[];
-      }>(sql`
+    // TODO: à changer quand `with recursive` sera supporté
+    // ref: https://github.com/drizzle-team/drizzle-orm/issues/209
+    const chemins = await this.databaseService.db.execute<{
+      id: number;
+      chemin: { id: number; identifiant?: string; titre: string }[];
+    }>(sql`
           with recursive chemin_indicateur (id, identifiant_referentiel, chemin) as (
             select id,
               identifiant_referentiel,
@@ -366,11 +351,8 @@ export default class ListDefinitionsService {
           where id = ${indicateurId}
         `);
 
-      this.logger.log(`chemin ${chemins.length ? '' : 'non'} trouvé`);
+    this.logger.log(`chemin ${chemins.length ? '' : 'non'} trouvé`);
 
-      return chemins[0]?.chemin;
-    }
-
-    return [];
+    return chemins[0]?.chemin;
   }
 }
