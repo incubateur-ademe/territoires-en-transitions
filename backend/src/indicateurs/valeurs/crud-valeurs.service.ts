@@ -73,9 +73,9 @@ export default class CrudValeursService {
   public readonly UNKOWN_SOURCE_ID = 'unknown';
 
   constructor(
-    private readonly collectiviteService: CollectivitesService,
     private readonly databaseService: DatabaseService,
-    private readonly permissionService: PermissionService
+    private readonly permissionService: PermissionService,
+    private readonly collectiviteService: CollectivitesService
   ) {}
 
   private getIndicateurValeursSqlConditions(
