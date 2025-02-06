@@ -11,6 +11,8 @@ export const useUpdateIndicateurFavoriCollectivite = (
 
   const queryClient = useQueryClient();
 
+  const trpcUtils = trpc.useUtils();
+
   return useMutation(
     ['update_indicateur_favori_collectivite', indicateurId],
     async (isFavori: boolean) =>
@@ -32,6 +34,7 @@ export const useUpdateIndicateurFavoriCollectivite = (
           collectiviteId,
         });
         queryClient.invalidateQueries(['indicateur_favori', indicateurId]);
+        trpcUtils.indicateurs.list.invalidate({ collectiviteId });
       },
     }
   );
