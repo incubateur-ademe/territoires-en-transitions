@@ -1,11 +1,11 @@
 import { ReactECharts } from '@/app/ui/charts/echarts';
-
 import type { EChartsOption } from 'echarts';
 import { actionAvancementColors } from '@/app/app/theme';
 import { SnapshotDetails } from '../../use-snapshot';
 import { sortByDate } from '../utils';
+import { theme as importedTheme } from '../../../ui/charts/chartsTheme';
 
-const ScoreEvolutionsTotalChart = ({
+const ScoreTotalEvolutionsChart = ({
   snapshots,
 }: {
   snapshots: SnapshotDetails[];
@@ -24,19 +24,13 @@ const ScoreEvolutionsTotalChart = ({
     return `${snapshot.nom}`;
   });
 
-  const getBarWidth = (snapshotsCount: number) => {
-    if (snapshotsCount === 1) return '20%';
-    if (snapshotsCount === 2) return '30%';
-    if (snapshotsCount === 3) return '40%';
-    return '60%';
-  };
+  const theme = importedTheme;
 
   const series = [
     {
       name: 'Fait',
       type: 'bar' as const,
       stack: 'total',
-      barWidth: getBarWidth(snapshots?.length ?? 0),
       emphasis: {
         focus: 'series' as const,
       },
@@ -54,7 +48,6 @@ const ScoreEvolutionsTotalChart = ({
       name: 'Programmé',
       type: 'bar' as const,
       stack: 'total',
-      barWidth: getBarWidth(snapshots?.length ?? 0),
       emphasis: {
         focus: 'series' as const,
       },
@@ -72,7 +65,6 @@ const ScoreEvolutionsTotalChart = ({
       name: 'Pas fait',
       type: 'bar' as const,
       stack: 'total',
-      barWidth: getBarWidth(snapshots?.length ?? 0),
       emphasis: {
         focus: 'series' as const,
       },
@@ -87,7 +79,6 @@ const ScoreEvolutionsTotalChart = ({
       name: 'Non renseigné',
       type: 'bar' as const,
       stack: 'total',
-      barWidth: getBarWidth(snapshots?.length ?? 0),
       emphasis: {
         focus: 'series' as const,
       },
@@ -110,6 +101,8 @@ const ScoreEvolutionsTotalChart = ({
             sortedSnapshots[params.dataIndex].pointPotentiel
           ),
         fontWeight: 'normal' as const,
+        fontFamily: theme.fontFamily,
+        fontSize: 14,
         rich: {
           percent: {
             fontWeight: 'bold' as const,
@@ -133,21 +126,42 @@ const ScoreEvolutionsTotalChart = ({
           })
           .join('<br/>');
       },
+      textStyle: {
+        fontFamily: theme.fontFamily,
+        color: theme.textColor,
+      },
     },
     legend: {
       data: ['Non renseigné', 'Pas fait', 'Programmé', 'Fait'],
       bottom: 0,
+      textStyle: {
+        color: theme.textColor,
+        fontSize: theme?.axis?.legend?.text?.fontSize,
+        fontFamily: theme?.axis?.legend?.text?.fontFamily,
+      },
     },
     grid: {
       left: '3%',
       right: '4%',
-      bottom: '10%',
+      bottom: '15%',
       containLabel: true,
     },
     xAxis: [
       {
         type: 'category' as const,
         data: nameLabels,
+        axisLabel: {
+          fontFamily: theme.fontFamily,
+          color: theme.textColor,
+          fontSize: 14,
+          padding: [15, 0, 0, 0],
+        },
+        axisTick: {
+          show: false,
+        },
+        axisLine: {
+          show: false,
+        },
       },
     ],
     yAxis: [
@@ -158,17 +172,25 @@ const ScoreEvolutionsTotalChart = ({
         max: 100,
         interval: 10,
         axisLabel: {
-          formatter: '{value}%',
+          formatter: '{value}',
+          fontFamily: theme.fontFamily,
+        },
+        nameTextStyle: {
+          fontFamily: theme.fontFamily,
+          padding: [0, 0, 0, -30],
         },
       },
     ],
     series,
   };
 
-  return <ReactECharts option={option} style={{ height: 400 }} />;
+  return (
+    <div className="flex flex-col">
+      <ReactECharts option={option} style={{ height: 500 }} />
+    </div>
+  );
 };
-
-export default ScoreEvolutionsTotalChart;
+export default ScoreTotalEvolutionsChart;
 
 const makeScoreSnapshotLabel = (pointFait: number, pointPotentiel: number) => {
   const percentage = (pointFait / pointPotentiel) * 100;

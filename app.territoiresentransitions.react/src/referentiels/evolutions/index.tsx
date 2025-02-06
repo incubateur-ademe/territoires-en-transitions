@@ -3,7 +3,7 @@
 import { useState, useEffect } from 'react';
 
 import { EmptyCard, Badge } from '@/ui';
-import ScoreEvolutionsTotalChart from './charts/ScoreEvolutionsTotalChart';
+import ScoreTotalEvolutionsChart from './charts/ScoreTotalEvolutionsChart';
 import PictoDashboard from '../../ui/pictogrammes/PictoDashboard';
 import { SnapshotDetails, useSnapshotList } from '../use-snapshot';
 import SaveScoreModal from '../../app/pages/collectivite/Referentiels/SaveScore/save-score.modal';
@@ -102,7 +102,7 @@ export const ScoreEvolutions = () => {
             <Badge title="Score total" />
           </div>
           <div>
-            <ScoreEvolutionsTotalChart
+            <ScoreTotalEvolutionsChart
               snapshots={getSelectedSnapshots(selectedSnapshots)}
             />
           </div>
