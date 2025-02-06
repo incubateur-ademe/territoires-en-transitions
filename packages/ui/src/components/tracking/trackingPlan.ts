@@ -112,20 +112,20 @@ export interface TrackingPlan extends Record<never, Page> {
     properties: {};
     onglets: never;
     events: {
-      edl_synthese: {};
-      edl_plus_infos: {};
-      plan_actions_mon_suivi_personnel: {};
-      plan_actions_tableau_de_bord_collectivite: {};
-      plan_actions_creer_plan: {};
-      plan_actions_creer_fiche: {};
-      plan_actions_toutes_les_fiches: {};
-      indicateurs_tous: {};
-      indicateurs_open_data: {};
-      trajectoires_decouvrir: {};
-      collectivites_inspiration: {};
-      collectivites_confidentialite: {};
-      panier_actions_tester: {};
-      retourner_site: {};
+      'accueil:edl_synthese_click': {};
+      'accueil:edl_plus_infos_click': {};
+      'accueil:PA_mon_suivi_personnel_click': {};
+      'accueil:PA_tableau_de_bord_collectivite_click': {};
+      'accueil:PA_creer_plan_click': {};
+      'accueil:PA_creer_fiche_click': {};
+      'accueil:PA_toutes_les_fiches_click': {};
+      'accueil:indicateurs_tous_click': {};
+      'accueil:indicateurs_open_data_click': {};
+      'accueil:trajectoires_decouvrir_click': {};
+      'accueil:collectivites_inspiration_click': {};
+      'accueil:collectivites_confidentialite_click': {};
+      'accueil:panier_actions_tester_click': {};
+      'accueil:retourner_site_click': {};
     };
   };
   'app/edl/synthese': {
