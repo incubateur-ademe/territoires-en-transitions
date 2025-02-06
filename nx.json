@@ -18,6 +18,11 @@
     "sharedGlobals": ["{workspaceRoot}/.github/workflows/ci-new.yml"]
   },
   "neverConnectToCloud": true,
+  "targetDefaults": {
+    "build": {
+      "dependsOn": [""]
+    }
+  },
   "plugins": [
     {
       "plugin": "@nx/next/plugin",
