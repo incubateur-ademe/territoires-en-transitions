@@ -17,7 +17,8 @@ export const ScoreEvolutions = () => {
 
   const { data: snapshotList } = useSnapshotList();
 
-  const hasSavedSnapshots = !!snapshotList;
+  const hasSavedSnapshots =
+    !!snapshotList && snapshotList?.snapshots?.length > 0;
 
   const snapshots = removeScoreCourant(snapshotList?.snapshots ?? []);
 
