@@ -17,10 +17,8 @@ export const ScoreEvolutions = () => {
 
   const { data: snapshotList } = useSnapshotList();
 
-  const hasSavedSnapshots =
-    !!snapshotList && snapshotList?.snapshots?.length > 0;
-
   const snapshots = removeScoreCourant(snapshotList?.snapshots ?? []);
+  const hasSavedSnapshots = !!snapshots?.length;
 
   const allSnapsNames = snapshots?.map((snap) => snap?.nom);
   const dropdownOptions =
