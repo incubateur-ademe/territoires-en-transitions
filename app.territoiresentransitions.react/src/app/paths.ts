@@ -45,7 +45,7 @@ export type IndicateurViewParamOption =
   | 'cles'
   | 'selection';
 
-type ReferentielTab = 'progression' | 'priorisation' | 'detail';
+type ReferentielTab = 'progression' | 'priorisation' | 'detail' | 'evolutions';
 
 export type ActionTabParamOption =
   | 'suivi'
