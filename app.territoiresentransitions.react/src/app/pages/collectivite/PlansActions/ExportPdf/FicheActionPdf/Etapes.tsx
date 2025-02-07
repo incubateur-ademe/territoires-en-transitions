@@ -1,44 +1,34 @@
-import React from 'react';
-
-import { Card, Stack, Title } from '@/app/ui/export-pdf/components';
-
 import { RouterOutput } from '@/api/utils/trpc/client';
+import { Card, List, ListElement, Title } from '@/app/ui/export-pdf/components';
 import classNames from 'classnames';
-import { Text } from '@react-pdf/renderer';
-import { tw } from '@/app/ui/export-pdf/utils';
 
 type Props = {
-  etapes: RouterOutput['plans']['fiches']['etapes']['list'];
+  etapes: RouterOutput['plans']['fiches']['etapes']['list'] | undefined;
 };
 
 const Etapes = ({ etapes }: Props) => {
+  if (!etapes || etapes.length === 0) return null;
+
   const etapesRealiseesCount = etapes.filter((etape) => etape.realise).length;
 
   return (
     <Card wrap={false}>
       <Title variant="h4" className="text-primary-8">
-        Étapes {etapes.length > 0 && `${etapesRealiseesCount}/${etapes.length}`}
+        Étapes ({etapesRealiseesCount}/{etapes.length})
       </Title>
-      <Stack gap={3}>
+      <List gap={3}>
         {etapes.map((etape) => (
-          <Stack
+          <ListElement
             key={etape.id}
-            gap={2}
-            className="w-[95%] flex-row items-start text-xs text-grey-8 leading-6"
+            className={classNames({
+              'text-grey-8': !etape.realise,
+              'text-grey-7 line-through': etape.realise,
+            })}
           >
-            <Text style={tw('ml-1')}>•</Text>
-            <Text
-              style={tw(
-                classNames({
-                  'line-through': etape.realise,
-                })
-              )}
-            >
-              {etape.nom}
-            </Text>
-          </Stack>
+            {etape.nom}
+          </ListElement>
         ))}
-      </Stack>
+      </List>
     </Card>
   );
 };
