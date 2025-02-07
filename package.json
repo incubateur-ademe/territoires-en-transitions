@@ -192,7 +192,7 @@
     "eslint-plugin-react-hooks": "4.6.0",
     "eslint-plugin-storybook": "^0.6.13",
     "nx": "20.4.0",
-    "postcss": "^8.4.16",
+    "postcss": "^8.4.48",
     "postcss-loader": "^8.1.1",
     "prettier": "^2.6.2",
     "react-test-renderer": "^18.2.0",
