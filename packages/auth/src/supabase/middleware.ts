@@ -74,7 +74,7 @@ export async function updateSessionOrRedirect(request: NextRequest) {
   const searchParams = url.searchParams;
   const redirectTo = searchParams.get('redirect_to');
 
-  url.href = process.env.NEXT_PUBLIC_APP_URL!;
+  url.href = process.env.NEXT_PUBLIC_APP_URL as string;
 
   if (redirectTo?.startsWith('/')) {
     url.href = url.href + redirectTo;

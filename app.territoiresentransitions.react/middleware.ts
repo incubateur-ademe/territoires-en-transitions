@@ -1,4 +1,5 @@
 import { getAuthUrl } from '@/api';
+import { ENV } from '@/api/environmentVariables';
 import { plansPilotablesFetch } from '@/api/plan-actions';
 import { dcpFetch } from '@/api/utilisateurs/shared/data_access/dcp.fetch';
 import { createClient } from '@/api/utils/supabase/middleware-client';
@@ -41,11 +42,15 @@ export const config = {
 export async function middleware(request: NextRequest) {
   const url = request.nextUrl;
   const pathname = url.pathname;
-  // const hostname = request.headers.get('host') as string; // e.g. 'app.territoiresentransitions.fr'
+
+  // Get the hostname of the request, e.g. 'app.territoiresentransitions.fr'
+  // We cannot simply use `url.hostname` because it returns '0.0.0.0' in Docker environment
+  url.hostname = request.headers.get('host') ?? url.hostname;
+  url.port = ENV.node_env !== 'development' ? '443' : url.port;
 
   if (isAuthPathname(pathname)) {
     const searchParams = new URLSearchParams({
-      redirect_to: new URL('/', request.url).toString(),
+      redirect_to: new URL('/', url).toString(),
     });
 
     console.log('redirecting to auth domain', pathname);
@@ -71,7 +76,7 @@ export async function middleware(request: NextRequest) {
   // If the user is not authenticated, redirect to the home page
   if (!user) {
     if (!isPublicPathname(pathname)) {
-      return NextResponse.redirect(new URL('/', request.url));
+      return NextResponse.redirect(new URL('/', url));
     }
 
     return supabaseResponse;
@@ -89,7 +94,7 @@ export async function middleware(request: NextRequest) {
   if (!userDetails) {
     const searchParams = new URLSearchParams({
       view: 'etape3',
-      redirect_to: request.url.toString(),
+      redirect_to: url.toString(),
     });
 
     return redirectToAuthDomain(signUpPath, searchParams, url.hostname);
@@ -103,9 +108,7 @@ export async function middleware(request: NextRequest) {
       return supabaseResponse;
     }
 
-    return NextResponse.redirect(
-      new URL(finaliserMonInscriptionUrl, request.url)
-    );
+    return NextResponse.redirect(new URL(finaliserMonInscriptionUrl, url));
   }
 
   // If pathname is not the home page, let the response being handled by the app router
@@ -140,12 +143,12 @@ export async function middleware(request: NextRequest) {
       view,
     });
 
-    return NextResponse.redirect(new URL(tableauBordUrl, request.url));
+    return NextResponse.redirect(new URL(tableauBordUrl, url));
   }
 
   // Sinon on redirige vers la page d'accueil globale de la collectivité
   const accueilUrl = makeCollectiviteAccueilUrl({ collectiviteId });
-  return NextResponse.redirect(new URL(accueilUrl, request.url));
+  return NextResponse.redirect(new URL(accueilUrl, url));
 }
 
 function isAuthPathname(pathname: string) {
