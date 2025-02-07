@@ -36,7 +36,7 @@ export const AxesOverviewTree = () => {
             <Select
               options={[
                 { value: 'axe', label: 'Par axe' },
-                { value: 'action', label: 'Par action' },
+                { value: 'action', label: 'Par mesure' },
               ]}
               onChange={(value) => setDisplayOption(value ?? 'axe')}
               values={[displayOption]}
@@ -48,7 +48,7 @@ export const AxesOverviewTree = () => {
           </div>
 
           <Checkbox
-            label="Afficher la description des actions"
+            label="Afficher la description des mesures"
             variant="switch"
             labelClassname="font-normal text-sm !text-grey-7"
             containerClassname="items-center"
