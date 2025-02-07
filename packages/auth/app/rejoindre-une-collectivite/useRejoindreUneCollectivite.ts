@@ -1,5 +1,5 @@
 import { getCollectivitePath, makeSearchString } from '@/api';
-import { supabaseClient as supabase } from '@/api/utils/supabase/browser-client';
+import { useSupabase } from '@/api/utils/supabase/use-supabase';
 import {
   CollectiviteInfo,
   CollectiviteNom,
@@ -19,6 +19,7 @@ export const useRejoindreUneCollectivite = ({
   redirectTo: string;
 }) => {
   const router = useRouter();
+  const supabase = useSupabase();
 
   const [error, setError] = useState<string | null>(null);
   const [isLoading, setIsLoading] = useState(false);

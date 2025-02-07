@@ -1,5 +1,8 @@
+import { getCookieOptions } from '@/api/utils/supabase/cookie-options';
+import { SupabaseProvider } from '@/api/utils/supabase/use-supabase';
 import Header from '@/auth/components/Layout/Header';
 import PHProvider from '@/auth/providers/posthog';
+import { headers } from 'next/headers';
 import './global.css';
 
 export const metadata = {
@@ -26,20 +29,26 @@ export const metadata = {
   },
 };
 
-export default function RootLayout({
+export default async function RootLayout({
   children,
 }: {
   children: React.ReactNode;
 }) {
+  const hostname = (await headers()).get('host');
+  console.log('hostname', hostname);
+  const supabaseCookieOptions = getCookieOptions(hostname ?? undefined);
+
   return (
     <html lang="fr">
       <PHProvider>
         <body className="min-h-screen overflow-x-visible flex flex-col">
           <div className="flex flex-col grow">
-            <Header />
-            <div className="bg-grey-2 grow flex flex-col">
-              <div className="grow">{children}</div>
-            </div>
+            <SupabaseProvider cookieOptions={supabaseCookieOptions}>
+              <Header />
+              <div className="bg-grey-2 grow flex flex-col">
+                <div className="grow">{children}</div>
+              </div>
+            </SupabaseProvider>
           </div>
         </body>
       </PHProvider>

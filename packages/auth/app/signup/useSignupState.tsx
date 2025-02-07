@@ -1,4 +1,4 @@
-import { supabaseClient as supabase } from '@/api/utils/supabase/browser-client';
+import { useSupabase } from '@/api/utils/supabase/use-supabase';
 import { useGetPasswordStrength } from '@/auth/components/PasswordStrengthMeter/useGetPasswordStrength';
 import {
   SignupData,
@@ -28,6 +28,7 @@ export const useSignupState = ({
   };
 }) => {
   const router = useRouter();
+  const supabase = useSupabase();
 
   const getPasswordStrength = useGetPasswordStrength();
 

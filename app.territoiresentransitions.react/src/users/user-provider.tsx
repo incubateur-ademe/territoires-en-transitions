@@ -1,6 +1,6 @@
 'use client';
 
-import { supabaseClient } from '@/api/utils/supabase/browser-client';
+import { useSupabase } from '@/api/utils/supabase/use-supabase';
 import { usePostHog } from 'posthog-js/react';
 import { createContext, ReactNode, useContext, useEffect } from 'react';
 import { UserDetails } from './fetch-user-details.server';
@@ -31,6 +31,7 @@ export const UserProvider = ({
   children: ReactNode;
 }) => {
   const posthog = usePostHog();
+  const supabaseClient = useSupabase();
 
   useEffect(() => {
     // écoute les changements d'état (connecté, déconnecté, etc.)

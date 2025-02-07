@@ -1,13 +1,12 @@
 import { ENV } from '@/api/environmentVariables';
-import { supabaseClient } from './browser-client';
-
-export async function getAuthSession() {
-  const { data: session } = await supabaseClient.auth.getSession();
-  return session;
-}
+import { createClientWithCookieOptions } from './browser-client';
 
 export async function getAuthHeaders() {
-  const session = await getAuthSession();
+  const supabaseClient = createClientWithCookieOptions(
+    window.location.hostname
+  );
+
+  const { data: session } = await supabaseClient.auth.getSession();
 
   if (!session) {
     return null;

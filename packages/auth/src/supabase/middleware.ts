@@ -1,5 +1,6 @@
 // Code partially taken from https://supabase.com/docs/guides/auth/server-side/nextjs
 
+import { ENV } from '@/api/environmentVariables';
 import { dcpFetch } from '@/api/utilisateurs/shared/data_access/dcp.fetch';
 import { getRootDomain } from '@/api/utils/pathUtils';
 import { createClient } from '@/api/utils/supabase/middleware-client';
@@ -48,6 +49,11 @@ export async function updateSessionOrRedirect(request: NextRequest) {
     user_id: user.id,
   });
 
+  // Get the hostname of the request, e.g. 'app.territoiresentransitions.fr' or 'xyz.koyeb.app'
+  // We cannot simply use `url.hostname` because it returns '0.0.0.0' in Docker environment
+  url.hostname = request.headers.get('host') ?? url.hostname;
+  url.port = ENV.node_env !== 'development' ? '443' : url.port;
+
   // Authorize `/signup` route for the authenticated user
   // to allow the redirect below to work.
   if (!userDetails && url.pathname.startsWith('/signup')) {
@@ -77,21 +83,23 @@ export async function updateSessionOrRedirect(request: NextRequest) {
   const searchParams = url.searchParams;
   const redirectTo = searchParams.get('redirect_to');
 
-  url.href = process.env.NEXT_PUBLIC_APP_URL as string;
-
-  if (redirectTo?.startsWith('/')) {
-    url.href = url.href + redirectTo;
-  } else if (redirectTo?.startsWith('http')) {
+  if (redirectTo?.startsWith('http')) {
     const newUrl = new URL(redirectTo);
 
     console.log('newUrl.hostname', newUrl.hostname);
     console.log('url.hostname', url.hostname);
 
-    // Allow redirection only to the same domain
+    // Allow redirection only to the same root domain
     if (getRootDomain(newUrl.hostname) === getRootDomain(url.hostname)) {
       return NextResponse.redirect(newUrl);
     }
   }
 
-  return NextResponse.redirect(url);
+  const appUrl = new URL(process.env.NEXT_PUBLIC_APP_URL as string);
+
+  if (redirectTo?.startsWith('/')) {
+    appUrl.pathname = redirectTo;
+  }
+
+  return NextResponse.redirect(appUrl);
 }

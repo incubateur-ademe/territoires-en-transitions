@@ -1,4 +1,4 @@
-import { supabaseClient as supabase } from '@/api/utils/supabase/browser-client';
+import { useSupabase } from '@/api/utils/supabase/use-supabase';
 import {
   Credentials,
   isValidLoginView,
@@ -26,6 +26,8 @@ export const useLoginState = ({
   };
 }) => {
   const router = useRouter();
+
+  const supabase = useSupabase();
 
   const getPasswordStrength = useGetPasswordStrength();
 
