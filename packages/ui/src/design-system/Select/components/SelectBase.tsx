@@ -34,8 +34,9 @@ export type SelectProps = {
   onChange: (value: OptionValue) => void;
   /** Valeurs sélectionnées, peut recevoir une valeur seule ou un tableau de valeurs */
   values?: OptionValue | OptionValue[];
-  /** Si true, le sélecteur affichera toutes les valeurs sélectionnées plutôt qu'une seule valeur et un badge +n */
-  displayAllBadges?: boolean;
+  /** Permet de choisir combien de badges afficher et d'afficher un "+" avec le nombre de badges cachés */
+  maxBadgesToShow?: number;
+
   /** Active la multi sélection */
   multiple?: boolean;
   /** Permet la recherche dans la liste d'option */
@@ -87,7 +88,7 @@ export const SelectBase = (props: SelectProps) => {
   const {
     dataTest,
     values,
-    displayAllBadges,
+    maxBadgesToShow,
     options,
     onChange,
     createProps,
@@ -224,7 +225,7 @@ export const SelectBase = (props: SelectProps) => {
       <SelectButton
         dataTest={dataTest}
         values={arrayValues}
-        displayAllBadges={displayAllBadges}
+        maxBadgesToShow={maxBadgesToShow}
         options={options}
         onChange={onChange}
         isSearcheable={hasSearch}
@@ -256,7 +257,7 @@ const SelectButton = forwardRef(
       isOpen,
       options,
       values,
-      displayAllBadges,
+      maxBadgesToShow,
       onChange,
       inputValue,
       isSearcheable,
@@ -280,25 +281,39 @@ const SelectButton = forwardRef(
 
     const firstValueDisabled = firstValue?.disabled ?? false;
 
-    /** Affiche soit toutes les valeurs sélectionnées, soit seulement la première valeur et un badge +n */
+    // TODO: refactor to simplify the code and use custom hidden count everywhere?
     const displayBadges = (values: OptionValue[]) => {
-      if (displayAllBadges) {
-        return values.map((value) => (
-          <Badge
-            title={getOptionLabel(value, getFlatOptions(options)) ?? ''}
-            state={
-              firstValueDisabled
-                ? 'grey'
-                : createProps &&
-                  firstValue &&
-                  createProps.userCreatedOptions.includes(firstValue.value)
-                ? 'standard'
-                : 'default'
-            }
-            key={value.toString()}
-            onClose={() => !disabled && onChange(value)}
-          />
-        ));
+      if (maxBadgesToShow) {
+        const badgesToDisplay = values
+          .slice(0, maxBadgesToShow)
+          .map((value) => (
+            <Badge
+              state={
+                firstValueDisabled
+                  ? 'grey'
+                  : createProps &&
+                    firstValue &&
+                    createProps.userCreatedOptions.includes(firstValue.value)
+                  ? 'standard'
+                  : 'default'
+              }
+              key={value.toString()}
+              title={getOptionLabel(value, getFlatOptions(options)) ?? ''}
+              onClose={() => !disabled && onChange(value)}
+            />
+          ));
+        if (values.length > maxBadgesToShow) {
+          return (
+            <>
+              {badgesToDisplay}
+              <Badge
+                title={`+${values.length - maxBadgesToShow}`}
+                state="info"
+              />
+            </>
+          );
+        }
+        return badgesToDisplay;
       }
       return (
         <>
