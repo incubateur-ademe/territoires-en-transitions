@@ -20,6 +20,7 @@ type SnapshotsDropdownProps = Omit<
     snapshots: Array<string>;
     selectedSnapshot: string;
   }) => void;
+  maxBadgesToShow: number;
 };
 
 const SnapshotsDropdown = (props: SnapshotsDropdownProps) => {
@@ -37,7 +38,7 @@ const SnapshotsDropdown = (props: SnapshotsDropdownProps) => {
   return (
     <SelectMultiple
       {...props}
-      displayAllBadges
+      maxBadgesToShow={props.maxBadgesToShow}
       options={props.options}
       placeholder={
         props.placeholder ?? 'Sélectionnez une ou plusieurs versions'

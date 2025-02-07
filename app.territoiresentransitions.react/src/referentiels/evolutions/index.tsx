@@ -95,13 +95,14 @@ export const ScoreEvolutions = () => {
               Sélectionner les versions à afficher :
             </label>
             <div className="flex items-center justify-between">
-              <div className="w-full max-w-4xl">
+              <div className="w-full max-w-6xl">
                 <SnapshotsDropdown
                   values={selectedSnapshots ?? []}
                   onChange={({ snapshots }) => {
                     setSelectedSnapshots(snapshots);
                   }}
                   options={dropdownOptions}
+                  maxBadgesToShow={3}
                 />
               </div>
               <Badge title="Score total" />
