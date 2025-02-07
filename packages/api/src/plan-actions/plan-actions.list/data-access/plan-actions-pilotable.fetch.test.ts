@@ -1,7 +1,7 @@
 import { beforeEach, expect, test } from 'vitest';
-import { supabase } from '../../../tests/supabase';
 import { signIn, signOut } from '../../../tests/auth';
-import { planActionsPilotableFetch } from './plan-actions-pilotable.fetch';
+import { supabase } from '../../../tests/supabase';
+import { plansPilotablesFetch } from './plan-actions-pilotable.fetch';
 
 const params = {
   dbClient: supabase,
@@ -17,11 +17,11 @@ beforeEach(async () => {
 });
 
 test("Indique que la collectivité a deux plans d'actions pilotables", async () => {
-  const data = await planActionsPilotableFetch(params);
+  const data = await plansPilotablesFetch(params);
 
   expect(data).toHaveLength(2);
 
-  data?.forEach(plan => {
+  data?.forEach((plan) => {
     expect(plan).toHaveProperty('planId');
     expect(plan).toHaveProperty('fiches');
   });
