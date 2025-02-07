@@ -11,7 +11,6 @@ import {
   recherchesPlansUrl,
   RecherchesViewParam,
 } from '@/app/app/paths';
-import { useFonctionTracker } from '@/app/core-logic/hooks/useFonctionTracker';
 import { useRouter, useSearchParams } from 'next/navigation';
 import { getNumberOfActiveFilters, SetFilters } from '../data/filters';
 import { TCollectiviteCarte } from '../data/useFilteredCollectivites';
@@ -48,7 +47,6 @@ const View = ({
 }: ViewProps) => {
   const router = useRouter();
   const search = useSearchParams();
-  const tracker = useFonctionTracker();
 
   const viewToText: Record<RecherchesViewParam, string> = {
     collectivites: 'collectivité',
@@ -164,7 +162,6 @@ const View = ({
         maxElementsPerPage={NB_CARDS_PER_PAGE}
         onChange={(selected) => {
           setFilters({ ...filters, page: selected });
-          tracker({ fonction: 'pagination', action: 'clic' });
         }}
         idToScrollTo="app-header"
       />
