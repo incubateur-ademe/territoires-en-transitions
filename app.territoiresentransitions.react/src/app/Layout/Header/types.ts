@@ -1,7 +1,4 @@
-import { TAuthContext } from '@/app/core-logic/api/auth/AuthProvider';
-import { CurrentCollectivite } from '@/app/core-logic/hooks/useCurrentCollectivite';
-import { TMesCollectivites } from '@/app/core-logic/hooks/useOwnedCollectivites';
-import { Maintenance } from '../useMaintenance';
+import { HeaderProps } from './Header';
 
 export type TNavItem = {
   label: string;
@@ -29,14 +26,6 @@ export type TNavDropdown = {
 };
 
 export type TNavItemsList = (TNavItem | TNavDropdown)[];
-
-export type HeaderProps = {
-  auth: TAuthContext;
-  currentCollectivite: CurrentCollectivite | null;
-  ownedCollectivites: TMesCollectivites;
-  panierId: string | undefined;
-  maintenance: Maintenance;
-};
 
 export type HeaderPropsWithModalState = HeaderProps & {
   modalOpened: boolean;

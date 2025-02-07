@@ -1,12 +1,11 @@
-import { MaCollectivite } from '@/api';
-import { planActionsPilotableFetch } from '@/api/plan-actions';
+import { DBClient, MaCollectivite } from '@/api';
 import { supabaseClient } from '@/api/utils/supabase/browser-client';
 import { useAuth } from '@/app/core-logic/api/auth/AuthProvider';
 import { useQuery } from 'react-query';
 
 // charge les collectivités associées au compte de l'utilisateur courant
 // (identifié à partir du token passant dans toutes les requêtes)
-export const fetchOwnedCollectivites = async () => {
+export const fetchOwnedCollectivites = async (supabaseClient: DBClient) => {
   const query = supabaseClient
     .from('mes_collectivites')
     .select()
@@ -36,27 +35,6 @@ export const useSansCollectivite = () => {
     }
   );
   return sansCollectivite;
-};
-
-// une variante qui renvoi aussi les plans d'actions pilotables de la 1ère collectivité
-export const usePlanActionsPilotableFetch = (
-  collectiviteId: number | null | undefined
-) => {
-  return useQuery(
-    ['plans_action_pilotable_fetch', collectiviteId],
-    async () => {
-      if (!collectiviteId) {
-        return { plans: null };
-      }
-
-      const plans = await planActionsPilotableFetch({
-        dbClient: supabaseClient,
-        collectiviteId,
-      });
-
-      return { plans };
-    }
-  );
 };
 
 export type TMesCollectivites = Awaited<

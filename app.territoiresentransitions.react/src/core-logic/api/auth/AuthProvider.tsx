@@ -43,7 +43,7 @@ function useUserData(user: User) {
     ] = await Promise.all([
       dcpFetch({ dbClient: supabaseClient, user_id: user.id }),
       supabaseClient.rpc('est_support'),
-      fetchOwnedCollectivites(),
+      fetchOwnedCollectivites(supabaseClient),
       supabaseClient
         .from('private_collectivite_membre')
         .select('*')

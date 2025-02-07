@@ -71,6 +71,22 @@ export const getAuthPaths = (redirect_to: string) => {
   };
 };
 
+export function getAuthUrl(
+  pathname: string,
+  searchParams: URLSearchParams,
+  originHostname: string
+) {
+  const search = searchParams.size > 0 ? `?${searchParams.toString()}` : '';
+
+  const base =
+    getRootDomain(originHostname) === 'koyeb.app'
+      ? `https://preprod-auth-tet.koyeb.app`
+      : process.env.NEXT_PUBLIC_AUTH_URL;
+
+  const authUrl = new URL(`${pathname}${search}`, base);
+  return authUrl;
+}
+
 /** Donne l'url d'une page collectivité */
 export const getCollectivitePath = (collectivite_id: number) =>
   `${process.env.NEXT_PUBLIC_APP_URL}/collectivite/${collectivite_id}/accueil`;
@@ -83,7 +99,8 @@ export const getCollectivitePlanPath = (
   `${process.env.NEXT_PUBLIC_APP_URL}/collectivite/${collectivite_id}/plans/plan/${plan_id}`;
 
 /** Donne l'url de la page "rejoindre une collectivité" */
-export const getRejoindreCollectivitePath = (redirectTo: string) => {
-  const params = new URLSearchParams({ redirect_to: redirectTo });
-  return `${process.env.NEXT_PUBLIC_AUTH_URL}/rejoindre-une-collectivite?${params}`;
+export const getRejoindreCollectivitePath = (originUrl: string) => {
+  const searchParams = new URLSearchParams({ redirect_to: originUrl });
+  const url = new URL(originUrl);
+  return getAuthUrl('/rejoindre-une-collectivite', searchParams, url.hostname).toString();
 };

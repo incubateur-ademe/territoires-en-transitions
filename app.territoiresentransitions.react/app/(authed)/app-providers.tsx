@@ -3,7 +3,6 @@
 import { ENV } from '@/api/environmentVariables';
 import { TRPCProvider } from '@/api/utils/trpc/client';
 import { E2E } from '@/app/app/E2E';
-import { Redirector } from '@/app/app/Redirector';
 import { Toasters } from '@/app/app/Toasters';
 import { VisitTracker } from '@/app/app/VisitTracker';
 import AccepterCGUModal from '@/app/app/pages/Auth/AccepterCGUModal';
@@ -41,7 +40,6 @@ export default function AppProviders({
           <AuthProvider user={user}>
             <ScoreListenerProvider>
               <E2E />
-              <Redirector />
               <VisitTracker />
               <AccepterCGUModal />
               <ThemeProvider theme={theme}>
