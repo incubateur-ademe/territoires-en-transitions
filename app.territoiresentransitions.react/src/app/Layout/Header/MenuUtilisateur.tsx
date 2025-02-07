@@ -1,5 +1,6 @@
+import { signOutUser } from '@/api/utils/supabase/sign-out-user.server';
 import { monComptePath } from '@/app/app/paths';
-import { TAuthContext, UserData } from '@/app/core-logic/api/auth/AuthProvider';
+import { UserData } from '@/app/core-logic/api/auth/AuthProvider';
 import DropdownFloater from '@/app/ui/shared/floating-ui/DropdownFloater';
 import { Button } from '@/ui';
 import classNames from 'classnames';
@@ -43,7 +44,7 @@ const MenuUtilisateur = (props: HeaderPropsWithModalState) => {
           >
             <span className="px-6">Profil</span>
           </Link>
-          <Deconnexion auth={auth} />
+          <Deconnexion />
         </div>
       )}
     >
@@ -99,13 +100,14 @@ MenuUtilisateurBtn.displayName = 'MenuUtilisateurBtn';
 /**
  * Bouton "Déconnexion"
  */
-const Deconnexion = ({ auth }: { auth: TAuthContext }) => {
+const Deconnexion = () => {
   return (
     <Link
       className="fr-nav__link"
       style={{ backgroundImage: 'none' }}
       data-test="user-logout"
-      href="/sign-out"
+      onClick={async () => await signOutUser()}
+      href="/"
     >
       <span className="px-6">Déconnexion</span>
     </Link>

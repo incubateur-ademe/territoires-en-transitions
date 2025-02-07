@@ -11,8 +11,3 @@ export async function getAuthUser() {
 
   return user;
 }
-
-export async function signOutUser() {
-  const supabaseClient = await createClient();
-  await supabaseClient.auth.signOut();
-}

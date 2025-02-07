@@ -1,17 +1,29 @@
 'use client';
 
+import { TAuthContext } from '@/app/core-logic/api/auth/AuthProvider';
+import { CurrentCollectivite } from '@/app/core-logic/hooks/useCurrentCollectivite';
+import { TMesCollectivites } from '@/app/core-logic/hooks/useOwnedCollectivites';
 import classNames from 'classnames';
 import Image from 'next/image';
 import Link from 'next/link';
 import { useState } from 'react';
 import ademeSrc from '../../static/img/ademe.svg';
+import { Maintenance } from '../useMaintenance';
 import { AccesRapide } from './AccesRapide';
 import { MaintenanceNotice } from './MaintenanceNotice';
 import { MenuPrincipal } from './MenuPrincipal';
-import { HeaderProps, HeaderPropsWithModalState } from './types';
+import { HeaderPropsWithModalState } from './types';
 
 /** Valeur de la hauteur sur header de l'application */
 export const appHeaderHeight = 183;
+
+export type HeaderProps = {
+  auth: TAuthContext;
+  currentCollectivite: CurrentCollectivite | null;
+  ownedCollectivites: TMesCollectivites;
+  panierId: string | undefined;
+  maintenance: Maintenance;
+};
 
 /**
  * Affiche l'en-tête

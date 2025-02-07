@@ -14,7 +14,7 @@ type Props = {
  * Renvoi la liste des plans d'actions d'une collectivité comportant au moins 5
  * fiches dont le titre a été renseigné.
  */
-export const planActionsPilotableFetch = async ({
+export const plansPilotablesFetch = async ({
   dbClient,
   collectiviteId,
 }: Props) => {

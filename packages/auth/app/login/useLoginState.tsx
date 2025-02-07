@@ -1,4 +1,3 @@
-import { getRootDomain } from '@/api';
 import { supabaseClient as supabase } from '@/api/utils/supabase/browser-client';
 import {
   Credentials,
@@ -242,7 +241,3 @@ export const useLoginState = ({
     getPasswordStrength,
   };
 };
-
-// détermine le domaine racine depuis l'url courante car il est nécessaire
-// pour le partage des tokens entre sous-domaines
-const getDomain = () => getRootDomain(document.location.hostname);
