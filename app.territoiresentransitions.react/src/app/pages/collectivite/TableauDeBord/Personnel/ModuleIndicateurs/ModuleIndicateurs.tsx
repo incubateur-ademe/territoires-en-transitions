@@ -12,9 +12,9 @@ import {
   makeCollectiviteTousLesIndicateursUrl,
   makeTableauBordModuleUrl,
 } from '@/app/app/paths';
-import { useAuth } from '@/app/core-logic/api/auth/AuthProvider';
 import { useCurrentCollectivite } from '@/app/core-logic/hooks/useCurrentCollectivite';
 import PictoIndicateurVide from '@/app/ui/pictogrammes/PictoIndicateurVide';
+import { useAuth } from '@/app/users/auth-provider';
 import { useRouter } from 'next/navigation';
 import { getQueryKey } from '../usePersonalModulesFetch';
 

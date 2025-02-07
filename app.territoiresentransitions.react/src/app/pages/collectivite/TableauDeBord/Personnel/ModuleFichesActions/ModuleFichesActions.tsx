@@ -14,9 +14,9 @@ import {
   makeCollectivitePlanActionFicheUrl,
   makeTableauBordModuleUrl,
 } from '@/app/app/paths';
-import { useAuth } from '@/app/core-logic/api/auth/AuthProvider';
 import { useCurrentCollectivite } from '@/app/core-logic/hooks/useCurrentCollectivite';
 import PictoExpert from '@/app/ui/pictogrammes/PictoExpert';
+import { useAuth } from '@/app/users/auth-provider';
 import { useRouter } from 'next/navigation';
 
 type Props = {

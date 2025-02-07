@@ -1,21 +1,21 @@
 import { supabaseClient } from '@/api/utils/supabase/browser-client';
 import { useMutation, useQueryClient } from 'react-query';
-import { DCP } from './AuthProvider';
+import { DCP } from './auth-provider';
 
 /**
  * Met à jour les DCP de l'utilisateur courant
  */
-export const useUpdateDCP = (user_id: string) => {
+export const useUpdatePersonalDetails = (userId: string) => {
   const queryClient = useQueryClient();
 
   const { mutate } = useMutation(updateDCP, {
     mutationKey: 'update_DCP',
     onSuccess: () => {
-      queryClient.invalidateQueries(['dcp', user_id]);
+      queryClient.invalidateQueries(['dcp', userId]);
     },
   });
 
-  const handleUpdateDCP = (dcp: DCP) => mutate({ dcp, user_id });
+  const handleUpdateDCP = (dcp: DCP) => mutate({ dcp, user_id: userId });
 
   return { handleUpdateDCP };
 };

@@ -1,11 +1,11 @@
 'use client';
 
 import { referentielToName } from '@/app/app/labels';
-import { useAuth } from '@/app/core-logic/api/auth/AuthProvider';
 import {
   CurrentCollectivite,
   useCurrentCollectivite,
 } from '@/app/core-logic/hooks/useCurrentCollectivite';
+import { useAuth } from '@/app/users/auth-provider';
 import { Button } from '@/ui';
 import PageContainer from '@/ui/components/layout/page-container';
 import { useState } from 'react';

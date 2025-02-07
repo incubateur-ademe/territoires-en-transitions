@@ -35,19 +35,10 @@ function useUserData(user: User) {
       return null;
     }
 
-    const [
-      dcp,
-      { data: isSupport },
-      collectivites,
-      { data: collectiviteMembres },
-    ] = await Promise.all([
+    const [dcp, { data: isSupport }, collectivites] = await Promise.all([
       dcpFetch({ dbClient: supabaseClient, user_id: user.id }),
       supabaseClient.rpc('est_support'),
       fetchOwnedCollectivites(supabaseClient),
-      supabaseClient
-        .from('private_collectivite_membre')
-        .select('*')
-        .eq('user_id', user.id),
     ]);
 
     if (!dcp) {
@@ -61,12 +52,7 @@ function useUserData(user: User) {
       ...dcp,
       dcp,
       isSupport: isSupport ?? false,
-      collectivites: collectivites.map((c) => ({
-        ...c,
-        membre: collectiviteMembres?.find(
-          (m) => m.collectivite_id === c.collectivite_id
-        ),
-      })),
+      collectivites,
     };
   });
 }

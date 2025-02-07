@@ -5,8 +5,8 @@ import * as Yup from 'yup';
 import FormikInput from '@/app/ui/shared/form/formik/FormikInput';
 import ModifierEmailModal from './ModifierEmailModal';
 
-import { useAuth, UserData } from '@/app/core-logic/api/auth/AuthProvider';
-import { useUpdateDCP } from '@/app/core-logic/api/auth/useUpdateDCP';
+import { useAuth, UserData } from '@/app/users/auth-provider';
+import { useUpdatePersonalDetails } from '@/app/users/use-update-personal-details';
 
 interface ModifierCompteData {
   prenom: string;
@@ -23,7 +23,7 @@ const validation = Yup.object({
 });
 
 export const MonCompte = ({ user }: { user: UserData }) => {
-  const { handleUpdateDCP } = useUpdateDCP(user.id);
+  const { handleUpdateDCP } = useUpdatePersonalDetails(user.id);
 
   const [isEmailModalOpen, setIsEmailModalOpen] = useState(false);
 

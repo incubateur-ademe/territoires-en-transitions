@@ -19,8 +19,8 @@ import {
   makeTableauBordUrl,
   recherchesCollectivitesUrl,
 } from '@/app/app/paths';
-import { useAuth } from '@/app/core-logic/api/auth/AuthProvider';
 import { useCurrentCollectivite } from '@/app/core-logic/hooks/useCurrentCollectivite';
+import { useAuth } from '@/app/users/auth-provider';
 import { Button } from '@/ui';
 import PageContainer from '@/ui/components/layout/page-container';
 

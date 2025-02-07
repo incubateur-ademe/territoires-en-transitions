@@ -13,13 +13,13 @@ import {
 import { useRemoveFromCollectivite } from '@/app/app/pages/collectivite/Users/useRemoveFromCollectivite';
 import { useSendInvitation } from '@/app/app/pages/collectivite/Users/useSendInvitation';
 import { useUpdateCollectiviteMembre } from '@/app/app/pages/collectivite/Users/useUpdateCollectiviteMembre';
-import { useAuth, UserData } from '@/app/core-logic/api/auth/AuthProvider';
 import { useCollectiviteId } from '@/app/core-logic/hooks/params';
 import { useBaseToast } from '@/app/core-logic/hooks/useBaseToast';
 import {
   CurrentCollectivite,
   useCurrentCollectivite,
 } from '@/app/core-logic/hooks/useCurrentCollectivite';
+import { useAuth, UserData } from '@/app/users/auth-provider';
 import { Button, Modal, Pagination, TrackPageView } from '@/ui';
 import PageContainer from '@/ui/components/layout/page-container';
 import { pick } from 'es-toolkit';

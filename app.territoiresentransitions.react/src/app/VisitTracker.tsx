@@ -5,7 +5,7 @@ import { useCollectiviteId } from '@/app/core-logic/hooks/params';
 import { useLocalisation } from '@/app/core-logic/hooks/useLocalisation';
 import { usePathname } from 'next/navigation';
 import { useEffect } from 'react';
-import { useAuth } from '../core-logic/api/auth/AuthProvider';
+import { useAuth } from '../users/auth-provider';
 
 /**
  * Représente la visite d'une page.
