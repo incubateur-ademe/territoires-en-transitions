@@ -1,6 +1,7 @@
 import { FicheResume } from '@/api/plan-actions';
 import {
   CalendarIcon,
+  LeafIcon,
   LoopLeftIcon,
   UserIcon,
 } from '@/app/ui/export-pdf/assets/icons';
@@ -35,25 +36,27 @@ const FicheLieeCard = ({ ficheLiee }: FicheLieeCardProps) => {
     pilotes,
     dateFinProvisoire: dateDeFin,
     ameliorationContinue,
+    services,
     modifiedAt,
   } = ficheLiee;
 
   const hasPilotes = !!pilotes && pilotes.length > 0;
   const hasDateDeFin = !!dateDeFin;
+  const hasServices = !!services && services.length > 0;
 
   const isLate = hasDateDeFin && isBefore(new Date(dateDeFin), startOfToday());
 
   return (
-    <Card wrap={false} gap={1.5} className="w-[32%] p-3">
+    <Card wrap={false} gap={1.5} className="w-[49%] p-3">
       {/* Statut et niveau de priorité */}
       <Stack direction="row" gap={2}>
         {!!priorite && <BadgePriorite priorite={priorite} size="sm" />}
         {<BadgeStatut statut={statut ?? 'Sans statut'} size="sm" />}
       </Stack>
 
-      <Stack gap={1}>
+      <Stack gap={1} className="mb-1">
         {/* Titre de la fiche */}
-        <Title variant="h6" className="leading-5 text-primary-8">
+        <Title variant="h6" className="leading-5 text-primary-9 mb-1">
           {generateTitle(titre)}
         </Title>
 
@@ -75,53 +78,76 @@ const FicheLieeCard = ({ ficheLiee }: FicheLieeCardProps) => {
         </Paragraph>
       </Stack>
 
-      <Stack className="mt-auto" gap={1}>
+      <Stack className="mt-auto" gap={2}>
         {/* Pilotes et date de fin prévisionnelle */}
-        {(hasPilotes || hasDateDeFin || ameliorationContinue) && (
+        {(hasPilotes ||
+          hasDateDeFin ||
+          ameliorationContinue ||
+          hasServices) && (
           <Stack direction="row" gap={2} className="flex-wrap">
-            {/* Personnes pilote */}
-            {hasPilotes && (
+            {/* Date de fin prévisionnelle */}
+            {!!dateDeFin && (
               <Stack gap={1} direction="row" className="items-center">
-                <UserIcon />
-                <Paragraph className="text-[0.65rem]">
-                  {pilotes[0].nom}
-                  {pilotes.length > 1 && (
-                    <Paragraph className="text-[0.65rem] text-primary-8">
-                      {' '}
-                      +{pilotes.length - 1}
-                    </Paragraph>
-                  )}
+                <CalendarIcon fill={isLate ? colors.error[1] : undefined} />
+                <Paragraph
+                  className={classNames('text-[0.65rem]', {
+                    'text-error-1': isLate,
+                  })}
+                >
+                  {getTextFormattedDate({
+                    date: dateDeFin,
+                    shortMonth: true,
+                  })}
                 </Paragraph>
               </Stack>
             )}
 
-            {/* Date de fin prévisionnelle */}
-            {!!dateDeFin && (
+            {/* Action récurrente */}
+            {!hasDateDeFin && ameliorationContinue && (
+              <Stack gap={1} direction="row" className="items-center">
+                <LoopLeftIcon />
+                <Paragraph className="text-[0.65rem]">Tous les ans</Paragraph>
+              </Stack>
+            )}
+
+            {/* Personnes pilote */}
+            {hasPilotes && (
               <>
-                {hasPilotes && <Box className="w-[0.5px] h-4 bg-primary-3" />}
+                {(hasDateDeFin || ameliorationContinue) && (
+                  <Box className="w-[0.5px] h-4 bg-primary-3" />
+                )}
                 <Stack gap={1} direction="row" className="items-center">
-                  <CalendarIcon fill={isLate ? colors.error[1] : undefined} />
-                  <Paragraph
-                    className={classNames('text-[0.65rem]', {
-                      'text-error-1': isLate,
-                    })}
-                  >
-                    {getTextFormattedDate({
-                      date: dateDeFin,
-                      shortMonth: true,
-                    })}
+                  <UserIcon />
+                  <Paragraph className="text-[0.65rem]">
+                    {pilotes[0].nom}
+                    {pilotes.length > 1 && (
+                      <Paragraph className="text-[0.65rem] text-primary-8">
+                        {' '}
+                        +{pilotes.length - 1}
+                      </Paragraph>
+                    )}
                   </Paragraph>
                 </Stack>
               </>
             )}
 
-            {/* Action récurrente */}
-            {!hasDateDeFin && ameliorationContinue && (
+            {/* Services pilotes */}
+            {hasServices && (
               <>
-                {hasPilotes && <Box className="w-[0.5px] h-4 bg-primary-3" />}
+                {(hasDateDeFin || ameliorationContinue || hasPilotes) && (
+                  <Box className="w-[0.5px] h-4 bg-primary-3" />
+                )}
                 <Stack gap={1} direction="row" className="items-center">
-                  <LoopLeftIcon />
-                  <Paragraph className="text-[0.65rem]">Tous les ans</Paragraph>
+                  <LeafIcon />
+                  <Paragraph className="text-[0.65rem]">
+                    {services[0].nom}
+                    {services.length > 1 && (
+                      <Paragraph className="text-[0.65rem] text-primary-8">
+                        {' '}
+                        +{services.length - 1}
+                      </Paragraph>
+                    )}
+                  </Paragraph>
                 </Stack>
               </>
             )}
@@ -130,10 +156,10 @@ const FicheLieeCard = ({ ficheLiee }: FicheLieeCardProps) => {
 
         {/* Date de modification */}
         {!!modifiedAt && (
-          <Stack gap={2}>
+          <Stack gap={1}>
             <Divider className="h-[0.5px]" />
             <Paragraph className="text-[0.65rem] text-grey-6 font-medium italic">
-              Modifié le {format(new Date(modifiedAt), 'dd/MM/yyyy')}
+              Modifiée le {format(new Date(modifiedAt), 'dd/MM/yyyy')}
             </Paragraph>
           </Stack>
         )}
