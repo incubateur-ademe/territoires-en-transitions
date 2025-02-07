@@ -1,7 +1,7 @@
 import { supabaseClient } from '@/api/utils/supabase/browser-client';
 import { useCollectiviteId } from '@/app/core-logic/hooks/params';
 import { TNiveauAcces } from '@/app/types/alias';
-import { useAuth } from '@/app/users/auth-provider';
+import { useUser } from '@/app/users/user-provider';
 import { useQuery } from 'react-query';
 
 export type CurrentCollectivite = {
@@ -44,7 +44,7 @@ function toCurrentCollectivite(collectivite: any): CurrentCollectivite {
 // et détermine si elle est en lecture seule pour l'utilisateur courant ou non
 // la requête est rechargée quand le user id ou le collectivite id changent
 export const useCurrentCollectivite = () => {
-  const { user } = useAuth();
+  const user = useUser();
   const collectiviteId = useCollectiviteId();
 
   const { data } = useQuery(

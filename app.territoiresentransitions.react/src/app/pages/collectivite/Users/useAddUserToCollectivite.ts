@@ -3,7 +3,7 @@ import { trpc } from '@/api/utils/trpc/client';
 import { useSendInvitation } from '@/app/app/pages/collectivite/Users/useSendInvitation';
 import { CurrentCollectivite } from '@/app/core-logic/hooks/useCurrentCollectivite';
 import { TNiveauAcces } from '@/app/types/alias';
-import { UserData } from '@/app/users/auth-provider';
+import { UserDetails } from '@/app/users/fetch-user-details.server';
 import { useMutation, useQueryClient } from 'react-query';
 
 type AddUserToCollectiviteArgs = {
@@ -31,7 +31,7 @@ interface AddUserToCollectiviteData {
  */
 export const useAddUserToCollectivite = (
   collectivite: CurrentCollectivite,
-  user: UserData
+  user: UserDetails
 ) => {
   const { collectiviteId: collectiviteId } = collectivite;
   const queryClient = useQueryClient();

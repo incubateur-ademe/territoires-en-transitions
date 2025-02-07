@@ -5,7 +5,7 @@ import {
   CurrentCollectivite,
   useCurrentCollectivite,
 } from '@/app/core-logic/hooks/useCurrentCollectivite';
-import { useAuth } from '@/app/users/auth-provider';
+import { useUser } from '@/app/users/user-provider';
 import { Button } from '@/ui';
 import PageContainer from '@/ui/components/layout/page-container';
 import { useState } from 'react';
@@ -21,7 +21,7 @@ import { useProgressionReferentiel } from './useProgressionReferentiel';
 export const TableauDeBordShow = () => {
   const collectivite = useCurrentCollectivite();
 
-  const { user } = useAuth();
+  const user = useUser();
 
   if (!collectivite?.collectiviteId) return <></>;
 

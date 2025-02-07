@@ -4,21 +4,21 @@ import Filters from './Filters/FiltersColonne';
 import CollectivitesView from './Views/CollectivitesView';
 
 import { useSearchParams } from '@/app/core-logic/hooks/query';
-import { useAuth } from '@/app/users/auth-provider';
+import { useUser } from '@/app/users/user-provider';
 
 import { CollectiviteEngagee, getRejoindreCollectivitePath } from '@/api';
 import {
   recherchesCollectivitesUrl,
   recherchesPlansUrl,
 } from '@/app/app/paths';
-import { useSansCollectivite } from '@/app/core-logic/hooks/useOwnedCollectivites';
+import { useSansCollectivite } from '@/app/core-logic/hooks/useSansCollectivite';
 import { Alert, Button } from '@/ui';
 import PageContainer from '@/ui/components/layout/page-container';
 import { initialFilters, nameToShortNames } from './data/filters';
 
 const DecouvrirLesCollectivites = () => {
-  const auth = useAuth();
-  const { isConnected } = auth;
+  const user = useUser();
+  const isConnected = !!user;
 
   const sansCollectivite = useSansCollectivite();
 

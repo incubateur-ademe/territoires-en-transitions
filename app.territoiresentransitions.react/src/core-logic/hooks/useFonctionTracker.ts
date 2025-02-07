@@ -3,7 +3,7 @@ import { ENV } from '@/api/environmentVariables';
 import { supabaseClient } from '@/api/utils/supabase/browser-client';
 import { useCollectiviteId } from '@/app/core-logic/hooks/params';
 import { useLocalisation } from '@/app/core-logic/hooks/useLocalisation';
-import { useAuth } from '@/app/users/auth-provider';
+import { useUser } from '@/app/users/user-provider';
 import { useMemo, useRef } from 'react';
 
 /**
@@ -33,8 +33,7 @@ export const useFonctionTracker = (): ((usage: Usage) => Promise<boolean>) => {
   const collectivite_id = useCollectiviteId();
   const localisation = useLocalisation();
   const ref = useRef();
-  const authContext = useAuth();
-  const user = authContext?.user;
+  const user = useUser();
 
   const factory = () => {
     // Garde la dernière valeur d'usage pour éviter d'envoyer

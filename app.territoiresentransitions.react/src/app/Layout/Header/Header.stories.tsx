@@ -1,40 +1,25 @@
-import React from 'react';
-import {action} from '@storybook/addon-actions';
-
-import {Header} from './Header';
+import { Header } from './Header';
 
 export default {
   component: Header,
 };
 
-const baseAuth = {
-  connect: action('connect'),
-  disconnect: action('disconnect'),
-  authError: null,
-};
-
-const notConnectedAuth = {
-  ...baseAuth,
-  user: null,
-  isConnected: false,
-};
-
-const connectedAuth = {
-  ...baseAuth,
-  user: {
-    id: '1',
-    nom: 'Dodo',
-    prenom: 'Yolo',
-  },
-  isConnected: true,
+const connectedUser = {
+  id: '1',
+  nom: 'Dodo',
+  prenom: 'Yolo',
 };
 
 const currentCollectivite = {
-  collectivite_id: 1,
+  collectiviteId: 1,
   nom: 'Collectivité test',
-  niveau_acces: 'admin',
+  niveauAcces: 'admin',
   isAdmin: true,
   readonly: false,
+  accesRestreint: false,
+  isRoleAuditeur: false,
+  role: null,
+  isReadOnly: false,
 };
 
 const ownedCollectivites = [
@@ -56,39 +41,36 @@ const ownedCollectivites = [
 
 export const NotConnected = () => (
   <Header
-    auth={notConnectedAuth}
+    user={null}
     currentCollectivite={null}
-    ownedCollectivites={null}
     maintenance={null}
+    panierId={undefined}
   />
 );
 
 export const Connected = () => (
   <Header
-    auth={connectedAuth}
+    user={connectedUser}
     currentCollectivite={currentCollectivite}
-    ownedCollectivites={ownedCollectivites}
     maintenance={null}
   />
 );
 
 export const ConnectedVisite = () => (
   <Header
-    auth={connectedAuth}
-    currentCollectivite={{...currentCollectivite, niveau_acces: null}}
-    ownedCollectivites={ownedCollectivites}
+    user={connectedUser}
+    currentCollectivite={{ ...currentCollectivite, niveauAcces: null }}
     maintenance={null}
   />
 );
 
 export const ConnectedVisiteSupport = () => (
   <Header
-    auth={{
-      ...connectedAuth,
-      user: {...connectedAuth.user, isSupport: true},
+    user={{
+      ...connectedUser,
+      isSupport: true,
     }}
-    currentCollectivite={{...currentCollectivite, niveau_acces: null}}
-    ownedCollectivites={ownedCollectivites}
+    currentCollectivite={{ ...currentCollectivite, niveauAcces: null }}
     maintenance={null}
   />
 );

@@ -10,7 +10,7 @@ import StatutsFilterDropdown from '@/app/ui/dropdownLists/ficheAction/statuts/St
 import PersonnesDropdown from '@/app/ui/dropdownLists/PersonnesDropdown/PersonnesDropdown';
 import { getPilotesValues } from '@/app/ui/dropdownLists/PersonnesDropdown/utils';
 import PlansActionDropdown from '@/app/ui/dropdownLists/PlansActionDropdown';
-import { useAuth } from '@/app/users/auth-provider';
+import { useUser } from '@/app/users/user-provider';
 import {
   Field,
   FormSection,
@@ -34,7 +34,7 @@ const ModalActionsDontJeSuisLePilote = ({
 }: Props) => {
   const { collectiviteId, niveauAcces, role } = useCurrentCollectivite()!;
   const queryClient = useQueryClient();
-  const userId = useAuth().user?.id;
+  const userId = useUser().id;
 
   const [filtreState, setFiltreState] = useState<FiltreFichesAction>(
     module.options.filtre

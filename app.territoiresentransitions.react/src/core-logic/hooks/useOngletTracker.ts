@@ -3,7 +3,7 @@ import { ENV } from '@/api/environmentVariables';
 import { supabaseClient } from '@/api/utils/supabase/browser-client';
 import { useCollectiviteId } from '@/app/core-logic/hooks/params';
 import { useLocalisation } from '@/app/core-logic/hooks/useLocalisation';
-import { useAuth } from '@/app/users/auth-provider';
+import { useUser } from '@/app/users/user-provider';
 import { useMemo, useRef } from 'react';
 
 /**
@@ -38,7 +38,7 @@ export const useOngletTracker = (): ((onglet: Onglet) => Promise<boolean>) => {
   const collectivite_id = useCollectiviteId();
   const localisation = useLocalisation();
   const ref = useRef();
-  const { user } = useAuth();
+  const user = useUser();
 
   const factory = () => {
     // Garde la dernière visite pour éviter d'envoyer

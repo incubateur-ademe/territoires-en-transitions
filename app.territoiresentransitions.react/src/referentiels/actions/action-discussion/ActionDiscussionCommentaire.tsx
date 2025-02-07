@@ -2,7 +2,7 @@ import { format } from 'date-fns';
 import { fr } from 'date-fns/locale';
 import ActionDiscussionCommentaireDropdown from './ActionDiscussionCommentaireDropdown';
 
-import { useAuth } from '@/app/users/auth-provider';
+import { useUser } from '@/app/users/user-provider';
 import {
   TActionDiscussion,
   TActionDiscussionCommentaire,
@@ -18,7 +18,7 @@ type Props = {
 
 /** Commentaire attaché à une discussion dans une action */
 const ActionDiscussionCommentaire = ({ commentaire, discussion }: Props) => {
-  const { user } = useAuth();
+  const user = useUser();
 
   const creationDate = new Date(commentaire.created_at);
 

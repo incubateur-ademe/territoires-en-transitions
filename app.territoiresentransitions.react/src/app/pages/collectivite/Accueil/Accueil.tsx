@@ -20,7 +20,7 @@ import {
   recherchesCollectivitesUrl,
 } from '@/app/app/paths';
 import { useCurrentCollectivite } from '@/app/core-logic/hooks/useCurrentCollectivite';
-import { useAuth } from '@/app/users/auth-provider';
+import { useUser } from '@/app/users/user-provider';
 import { Button } from '@/ui';
 import PageContainer from '@/ui/components/layout/page-container';
 
@@ -30,7 +30,7 @@ import PageContainer from '@/ui/components/layout/page-container';
 const Accueil = (): JSX.Element => {
   const collectivite = useCurrentCollectivite();
 
-  const { user } = useAuth();
+  const user = useUser();
 
   const { mutate: createFicheAction } = useCreateFicheAction();
 

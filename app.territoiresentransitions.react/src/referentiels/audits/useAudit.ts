@@ -2,7 +2,7 @@ import { supabaseClient } from '@/api/utils/supabase/browser-client';
 import { useCollectiviteId } from '@/app/collectivites/collectivite-context';
 import { useCurrentCollectivite } from '@/app/core-logic/hooks/useCurrentCollectivite';
 import { usePreuvesParType } from '@/app/referentiels/preuves/usePreuves';
-import { useAuth } from '@/app/users/auth-provider';
+import { useUser } from '@/app/users/user-provider';
 import { ReferentielId } from '@/domain/referentiels';
 import { useQuery } from 'react-query';
 import { useReferentielId } from '../referentiel-context';
@@ -70,7 +70,7 @@ export const useAuditAuditeurs = (audit_id?: number) => {
 
 /** Indique si l'utilisateur courant est l'auditeur d'un audit donné */
 export const useIsAuditAuditeur = (audit_id?: number) => {
-  const { user } = useAuth();
+  const user = useUser();
   const { data: auditeurs } = useAuditAuditeurs(audit_id);
   if (!user || !auditeurs?.length) {
     return false;

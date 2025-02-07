@@ -4,7 +4,7 @@ import {
   makeInvitationLandingPath,
 } from '@/app/app/paths';
 import { CurrentCollectivite } from '@/app/core-logic/hooks/useCurrentCollectivite';
-import { UserData } from '@/app/users/auth-provider';
+import { UserDetails } from '@/app/users/fetch-user-details.server';
 import { useMutation } from 'react-query';
 
 export type SendInvitationArgs = {
@@ -17,7 +17,7 @@ export type SendInvitationArgs = {
  */
 export const useSendInvitation = (
   collectivite: CurrentCollectivite,
-  user: UserData
+  user: UserDetails
 ) => {
   const { nom: nomCollectivite } = collectivite;
 

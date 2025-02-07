@@ -1,8 +1,7 @@
 'use client';
 
 import { CurrentCollectivite } from '@/app/core-logic/hooks/useCurrentCollectivite';
-import { TMesCollectivites } from '@/app/core-logic/hooks/useOwnedCollectivites';
-import { TAuthContext } from '@/app/users/auth-provider';
+import { UserDetails } from '@/app/users/fetch-user-details.server';
 import classNames from 'classnames';
 import Image from 'next/image';
 import Link from 'next/link';
@@ -18,9 +17,8 @@ import { HeaderPropsWithModalState } from './types';
 export const appHeaderHeight = 183;
 
 export type HeaderProps = {
-  auth: TAuthContext;
+  user: UserDetails | null;
   currentCollectivite: CurrentCollectivite | null;
-  ownedCollectivites: TMesCollectivites;
   panierId: string | undefined;
   maintenance: Maintenance;
 };
