@@ -1,10 +1,11 @@
 import { FicheAction, FicheActionNote, FicheResume } from '@/api/plan-actions';
 import { TAxeRow } from '@/app/types/alias';
-import { Divider, Stack, Title } from '@/app/ui/export-pdf/components';
+import { Stack, Title } from '@/app/ui/export-pdf/components';
 import { AnnexeInfo } from '../../FicheAction/data/useAnnexesFicheActionInfos';
 
 import { RouterOutput } from '@/api/utils/trpc/client';
 import Etapes from '@/app/app/pages/collectivite/PlansActions/ExportPdf/FicheActionPdf/Etapes';
+import { ActionWithStatut } from '@/app/referentiels/actions/use-list-actions';
 import { TIndicateurDefinition } from '../../../Indicateurs/types';
 import Acteurs from './Acteurs';
 import ActionsLiees from './ActionsLiees';
@@ -19,7 +20,6 @@ import Notes from './Notes';
 import NotesDeSuivi from './NotesDeSuivi';
 import Pilotes from './Pilotes';
 import Planning from './Planning';
-import { ActionWithStatut } from '@/app/referentiels/actions/use-list-actions';
 
 export type FicheActionPdfProps = {
   fiche: FicheAction;
@@ -49,7 +49,7 @@ const FicheActionPdf = ({
 
   return (
     <Stack>
-      <Stack fixed>
+      <Stack fixed gap={3} className="mb-3">
         {/* Titre */}
         <Title variant="h1" className="leading-5">
           {titre || 'Sans titre'}
@@ -58,14 +58,12 @@ const FicheActionPdf = ({
         {/* Emplacements de la fiche */}
         <Chemins chemins={chemins} />
 
-        <Divider />
+        {/* Dates et auteurs */}
+        <CreationFiche fiche={fiche} />
       </Stack>
 
       {/* Description de la fiche */}
       <Description fiche={fiche} />
-
-      {/* Dates et auteurs */}
-      <CreationFiche fiche={fiche} />
 
       {/* Pilotes */}
       <Pilotes fiche={fiche} />
@@ -80,7 +78,7 @@ const FicheActionPdf = ({
       <Indicateurs fiche={fiche} indicateursListe={indicateursListe} />
 
       {/* Étapes */}
-      {etapes?.length && <Etapes etapes={etapes} />}
+      <Etapes etapes={etapes} />
 
       {/* Notes de suivi */}
       <NotesDeSuivi notesSuivi={notesSuivi} />
