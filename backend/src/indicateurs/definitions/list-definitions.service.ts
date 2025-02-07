@@ -142,6 +142,7 @@ export default class ListDefinitionsService {
     tokenInfo: AuthenticatedUser
   ) {
     const { collectiviteId, indicateurIds, identifiantsReferentiel } = data;
+
     await this.permissionService.isAllowed(
       tokenInfo,
       PermissionOperation.INDICATEURS_VISITE,
@@ -156,14 +157,57 @@ export default class ListDefinitionsService {
       ].join(',')} pour la collectivité ${data.collectiviteId}`
     );
 
-    const definitionEnfantsTable = aliasedTable(
+    const enfantsDefinition = aliasedTable(
       indicateurDefinitionTable,
       'enfants'
+    );
+    const enfantsGroupe = aliasedTable(indicateurGroupeTable, 'enfantsGroupe');
+    const enfantsGroupement = aliasedTable(
+      groupementTable,
+      'enfantsGroupement'
+    );
+    const enfantGroupementCollectivite = aliasedTable(
+      groupementCollectiviteTable,
+      'enfantGroupementCollectivite'
     );
 
     const { identifiantReferentiel, ...cols } = getTableColumns(
       indicateurDefinitionTable
     );
+
+    // sous-requête pour sélectionner les enfants rattachés à chaque définition trouvé
+    const enfant = this.databaseService.db
+      .selectDistinctOn([enfantsDefinition.identifiantReferentiel], {
+        identifiant: enfantsDefinition.identifiantReferentiel,
+        id: enfantsDefinition.id,
+        titre: enfantsDefinition.titre,
+        titreCourt: enfantsDefinition.titreCourt,
+      })
+      .from(enfantsDefinition)
+      // enfants reliés au groupe
+      .leftJoin(enfantsGroupe, eq(enfantsGroupe.enfant, enfantsDefinition.id))
+      // filtrés sur les groupements de la collectivité
+      .leftJoin(
+        enfantsGroupement,
+        eq(enfantsGroupement.id, enfantsDefinition.groupementId)
+      )
+      .leftJoin(
+        enfantGroupementCollectivite,
+        eq(enfantGroupementCollectivite.groupementId, enfantsGroupement.id)
+      )
+      .where(
+        and(
+          eq(enfantsGroupe.parent, indicateurDefinitionTable.id),
+          or(
+            isNull(enfantsDefinition.groupementId),
+            eq(enfantGroupementCollectivite.collectiviteId, collectiviteId)
+          )
+        )
+      )
+      .orderBy(enfantsDefinition.identifiantReferentiel)
+      .as('enfant');
+
+    // sélectionne les définitions voulues
     const definitions = await this.databaseService.db
       .select({
         ...cols,
@@ -173,12 +217,12 @@ export default class ListDefinitionsService {
         favoris: indicateurCollectiviteTable.favoris,
         categories: sql`array_remove(array_agg(distinct ${categorieTagTable.nom}), null)`,
         thematiques: sql`array_remove(array_agg(distinct ${thematiqueTable.nom}), null)`,
-        enfants: sql`jsonb_agg(distinct jsonb_build_object(
-            'id', ${definitionEnfantsTable.id},
-            'identifiantReferentiel', ${definitionEnfantsTable.identifiantReferentiel},
-            'titre', ${definitionEnfantsTable.titre},
-            'titreCourt', ${definitionEnfantsTable.titreCourt}
-          )) filter (where ${definitionEnfantsTable.id} is not null)`,
+        enfants: sql`(select jsonb_agg(jsonb_build_object(
+          'id', ${enfant.id},
+          'identifiant', ${enfant.identifiant},
+          'titre', ${enfant.titre},
+          'titreCourt', ${enfant.titreCourt}
+        )) from ${enfant})`,
         actions: sql`to_json(array_remove(array_agg(distinct ${indicateurActionTable.actionId}), null)) as actions`,
         hasOpenData: sql`bool_or(${indicateurValeurTable.metadonneeId} is not null and ${indicateurSourceMetadonneeTable.sourceId} != 'snbc')`,
         estPerso: sql`bool_or(${indicateurDefinitionTable.identifiantReferentiel} is null)`,
@@ -223,19 +267,10 @@ export default class ListDefinitionsService {
         thematiqueTable,
         eq(thematiqueTable.id, indicateurThematiqueTable.thematiqueId)
       )
-      // enfants
-      .leftJoin(
-        indicateurGroupeTable,
-        eq(indicateurGroupeTable.parent, indicateurDefinitionTable.id)
-      )
-      .leftJoin(
-        definitionEnfantsTable,
-        eq(definitionEnfantsTable.id, indicateurGroupeTable.enfant)
-      )
-      // enfants liés aux groupements de la collectivité
+      // définitions liées aux groupements de la collectivité
       .leftJoin(
         groupementTable,
-        eq(groupementTable.id, definitionEnfantsTable.groupementId)
+        eq(groupementTable.id, indicateurDefinitionTable.groupementId)
       )
       .leftJoin(
         groupementCollectiviteTable,
@@ -278,7 +313,7 @@ export default class ListDefinitionsService {
               : undefined
           ),
           or(
-            isNull(definitionEnfantsTable.groupementId),
+            isNull(indicateurDefinitionTable.groupementId),
             eq(groupementCollectiviteTable.collectiviteId, collectiviteId)
           )
         )
@@ -356,3 +391,4 @@ export default class ListDefinitionsService {
     return chemins[0]?.chemin;
   }
 }
+
