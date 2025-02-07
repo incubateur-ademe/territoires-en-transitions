@@ -12,7 +12,6 @@ import {
 } from '@/app/app/pages/CollectivitesEngagees/data/filtreOptions';
 import { MultiSelectCheckboxes } from '@/app/app/pages/CollectivitesEngagees/Filters/MultiSelectCheckboxes';
 import { RecherchesViewParam } from '@/app/app/paths';
-import { useFonctionTracker } from '@/app/core-logic/hooks/useFonctionTracker';
 import SpinnerLoader from '@/app/ui/shared/SpinnerLoader';
 import { useEffect, useState } from 'react';
 import { useDepartements } from '../data/useDepartements';
@@ -25,7 +24,6 @@ type Props = {
 };
 
 export const Filters = ({ vue, filters, setFilters }: Props) => {
-  const tracker = useFonctionTracker();
   const { regions, isLoading: isRegionsLoading } = useRegions();
   const { departements, isLoading: isDepartementsLoading } = useDepartements();
   const { options: planTypeOptions } = usePlanTypeListe();
@@ -53,7 +51,6 @@ export const Filters = ({ vue, filters, setFilters }: Props) => {
             onChange={(e) => setSearch(e.target.value)}
             onSearch={(v) => {
               setFilters({ ...filters, nom: v });
-              tracker({ fonction: 'recherche', action: 'saisie' });
             }}
             value={search}
             placeholder="Rechercher par nom de collectivité"
@@ -68,10 +65,6 @@ export const Filters = ({ vue, filters, setFilters }: Props) => {
                   setFilters({
                     ...filters,
                     typesPlan: (values as number[]) ?? [],
-                  });
-                  tracker({
-                    fonction: 'filtre_type_de_plan',
-                    action: 'selection',
                   });
                 }}
                 values={filters.typesPlan}
@@ -128,7 +121,6 @@ export const Filters = ({ vue, filters, setFilters }: Props) => {
                     });
                   }
                 }
-                tracker({ fonction: 'filtre_region', action: 'selection' });
               }}
               values={filters.regions}
               small
@@ -153,10 +145,6 @@ export const Filters = ({ vue, filters, setFilters }: Props) => {
                   ...filters,
                   departments: (values as string[]) ?? [],
                 });
-                tracker({
-                  fonction: 'filtre_departement',
-                  action: 'selection',
-                });
               }}
               values={filters.departments}
               small
@@ -172,7 +160,6 @@ export const Filters = ({ vue, filters, setFilters }: Props) => {
                   ...filters,
                   typesCollectivite: (values as string[]) ?? [],
                 });
-                tracker({ fonction: 'filtre_type', action: 'selection' });
               }}
               values={filters.typesCollectivite}
               small
@@ -187,7 +174,6 @@ export const Filters = ({ vue, filters, setFilters }: Props) => {
                   ...filters,
                   population: (values as string[]) ?? [],
                 });
-                tracker({ fonction: 'filtre_population', action: 'selection' });
               }}
               values={filters.population}
               small
@@ -201,10 +187,6 @@ export const Filters = ({ vue, filters, setFilters }: Props) => {
                 options={referentielCollectiviteOptions}
                 onChange={(selected) => {
                   setFilters({ ...filters, referentiel: selected });
-                  tracker({
-                    fonction: 'filtre_referentiel',
-                    action: 'selection',
-                  });
                 }}
                 selected={filters.referentiel}
               />
@@ -214,7 +196,6 @@ export const Filters = ({ vue, filters, setFilters }: Props) => {
                 options={niveauLabellisationCollectiviteOptions}
                 onChange={(selected) => {
                   setFilters({ ...filters, niveauDeLabellisation: selected });
-                  tracker({ fonction: 'filtre_niveau', action: 'selection' });
                 }}
                 selected={filters.niveauDeLabellisation}
               />
@@ -226,10 +207,6 @@ export const Filters = ({ vue, filters, setFilters }: Props) => {
                     setFilters({
                       ...filters,
                       tauxDeRemplissage: (values as string[]) ?? [],
-                    });
-                    tracker({
-                      fonction: 'filtre_remplissage',
-                      action: 'selection',
                     });
                   }}
                   values={filters.tauxDeRemplissage}

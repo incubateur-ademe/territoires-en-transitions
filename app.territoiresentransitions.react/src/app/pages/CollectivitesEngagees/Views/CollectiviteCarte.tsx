@@ -1,7 +1,6 @@
 import { referentielToName } from '@/app/app/labels';
 import { TCollectiviteCarte } from '@/app/app/pages/CollectivitesEngagees/data/useFilteredCollectivites';
 import { makeCollectiviteAccueilUrl } from '@/app/app/paths';
-import { useFonctionTracker } from '@/app/core-logic/hooks/useFonctionTracker';
 import { NIVEAUX } from '@/app/referentiels/tableau-de-bord/labellisation/LabellisationInfo';
 import {
   GreyStar,
@@ -29,14 +28,9 @@ export const CollectiviteCarte = ({
   collectivite,
   canUserClickCard,
 }: Props) => {
-  const tracker = useFonctionTracker();
-
   return (
     <Link
       data-test="CollectiviteCarte"
-      onClick={() =>
-        tracker({ fonction: 'collectivite_carte', action: 'clic' })
-      }
       href={
         canUserClickCard
           ? makeCollectiviteAccueilUrl({

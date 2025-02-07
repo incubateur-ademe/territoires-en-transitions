@@ -1,5 +1,4 @@
 import { signInPath, signUpPath } from '@/app/app/paths';
-import { useFonctionTracker } from '@/app/core-logic/hooks/useFonctionTracker';
 import { Button } from '@/ui';
 import MenuUtilisateur from './MenuUtilisateur';
 import { HeaderPropsWithModalState } from './types';
@@ -55,14 +54,10 @@ export const AccesRapide = (props: HeaderPropsWithModalState) => {
  * Ouvre le lien vers le centre d'aide.
  */
 const Aide = () => {
-  const tracker = useFonctionTracker();
-
   const onClick = async () => {
     // on utilise un bouton avec ouverture explicite du lien pour ne pas
     // utiliser <a target="_blank"> qui empêche de mettre une icône...
     window.open('https://aide.territoiresentransitions.fr/fr/', '_blank');
-
-    await tracker({ fonction: 'aide', action: 'clic' });
   };
 
   return (
