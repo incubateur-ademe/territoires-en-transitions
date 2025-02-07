@@ -18,13 +18,13 @@ import {
   makeTableauBordUrl,
 } from '@/app/app/paths';
 import { CurrentCollectivite } from '@/app/core-logic/hooks/useCurrentCollectivite';
-import { UserData } from '@/app/users/auth-provider';
+import { UserDetails } from '@/app/users/fetch-user-details.server';
 import { TNavDropdown, TNavItem, TNavItemsList } from './types';
 
 /** Génère les liens de navigation pour une collectivité donnée */
 export const makeNavItems = (
   collectivite: CurrentCollectivite,
-  user: UserData | null,
+  user: UserDetails | null,
   panierId: string | undefined
 ): TNavItemsList => {
   return filtreItems(makeNavItemsBase(collectivite, user, panierId));
@@ -34,7 +34,7 @@ const isVisiteur = ({
   user,
   collectivite,
 }: {
-  user: UserData | null;
+  user: UserDetails | null;
   collectivite: CurrentCollectivite;
 }) =>
   collectivite.niveauAcces === null &&
@@ -43,7 +43,7 @@ const isVisiteur = ({
 
 const makeNavItemsBase = (
   collectivite: CurrentCollectivite,
-  user: UserData | null,
+  user: UserDetails | null,
   panierId: string | undefined
 ): TNavItemsList => {
   const collectiviteId = collectivite.collectiviteId;

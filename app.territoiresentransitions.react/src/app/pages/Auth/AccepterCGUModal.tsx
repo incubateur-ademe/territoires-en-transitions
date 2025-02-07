@@ -1,6 +1,6 @@
 import { supabaseClient } from '@/api/utils/supabase/browser-client';
 import Modal from '@/app/ui/shared/floating-ui/Modal';
-import { useAuth } from '@/app/users/auth-provider';
+import { useUser } from '@/app/users/user-provider';
 import { useState } from 'react';
 import { useMutation, useQueryClient } from 'react-query';
 import { ReactComponent as ContractSVG } from './contract.svg';
@@ -53,7 +53,7 @@ export const AccepterCGUContent = (props: TAccepterCGUProps) => {
 const AccepterCGUModal = () => {
   const [opened, setOpened] = useState(true);
   const { mutate, isLoading } = useAccepterCGU();
-  const { user } = useAuth();
+  const user = useUser();
   if (!user || user.cgu_acceptees_le) {
     return null;
   }
@@ -80,7 +80,7 @@ export default AccepterCGUModal;
 
 // enregistre l'acceptation des CGU
 const useAccepterCGU = () => {
-  const { user } = useAuth();
+  const user = useUser();
   const queryClient = useQueryClient();
 
   return useMutation(

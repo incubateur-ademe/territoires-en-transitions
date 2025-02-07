@@ -1,12 +1,13 @@
-import { UserData } from '@/app/users/auth-provider';
+import { UserDetails } from '../users/fetch-user-details.server';
 
-export const fakeUserData: UserData = {
+export const fakeUserData: UserDetails = {
   app_metadata: {},
   aud: '',
   confirmed_at: '2022-02-10T14:28:45.304559Z',
   created_at: '2022-02-10T14:28:45.262861Z',
   email: 'yolo@dodo.com',
   email_confirmed_at: '2022-02-10T14:28:45.304559Z',
+  cgu_acceptees_le: null,
   id: '1',
   identities: [],
   last_sign_in_at: '2022-07-26T12:38:32.0722822Z',

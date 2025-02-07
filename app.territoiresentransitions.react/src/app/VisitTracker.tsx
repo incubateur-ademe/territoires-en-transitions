@@ -5,7 +5,7 @@ import { useCollectiviteId } from '@/app/core-logic/hooks/params';
 import { useLocalisation } from '@/app/core-logic/hooks/useLocalisation';
 import { usePathname } from 'next/navigation';
 import { useEffect } from 'react';
-import { useAuth } from '../users/auth-provider';
+import { useUser } from '../users/user-provider';
 
 /**
  * Représente la visite d'une page.
@@ -29,7 +29,7 @@ const track = async (visite: Visite): Promise<boolean> => {
 export const VisitTracker = () => {
   const pathname = usePathname();
   const localisation = useLocalisation();
-  const { user } = useAuth();
+  const user = useUser();
   const collectivite_id = useCollectiviteId();
 
   useEffect(() => {

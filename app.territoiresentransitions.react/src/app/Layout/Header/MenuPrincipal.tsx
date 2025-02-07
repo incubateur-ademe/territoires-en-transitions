@@ -20,14 +20,8 @@ import {
  * Affiche la nvaigation principale et le sélecteur de collectivité
  */
 export const MenuPrincipal = (props: HeaderPropsWithModalState) => {
-  const {
-    currentCollectivite,
-    ownedCollectivites,
-    panierId,
-    modalOpened,
-    setOpenedId,
-    auth,
-  } = props;
+  const { currentCollectivite, panierId, modalOpened, setOpenedId, user } =
+    props;
 
   // enregistre un écouteur d'événements pour fermer un éventuel sous-menu ouvert
   // quand on clique en dehors
@@ -48,7 +42,7 @@ export const MenuPrincipal = (props: HeaderPropsWithModalState) => {
   let secondaryItems = [] as TNavItemsList;
   if (currentCollectivite) {
     // récupère la liste des items à afficher dans le menu
-    items = makeNavItems(currentCollectivite, auth.user, panierId);
+    items = makeNavItems(currentCollectivite, user, panierId);
     secondaryItems = makeSecondaryNavItems(currentCollectivite);
   }
 
@@ -68,9 +62,9 @@ export const MenuPrincipal = (props: HeaderPropsWithModalState) => {
             <NavDropdown key={i} item={item as TNavDropdown} {...props} />
           )
         )}
-        {auth.isConnected && (
+        {user && (
           <>
-            {!ownedCollectivites?.length && (
+            {!user.collectivites?.length && (
               <NavItem
                 item={{
                   label: 'Finaliser mon inscription',
@@ -100,7 +94,7 @@ export const MenuPrincipal = (props: HeaderPropsWithModalState) => {
             <NavDropdown key={i} item={item as TNavDropdown} {...props} />
           )
         )}
-        {ownedCollectivites ? (
+        {user?.collectivites ? (
           <li>
             <SelectCollectivite {...props} />
           </li>

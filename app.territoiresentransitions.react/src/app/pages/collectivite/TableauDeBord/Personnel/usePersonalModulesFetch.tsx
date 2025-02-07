@@ -1,13 +1,13 @@
 import { modulesFetch } from '@/api/plan-actions/dashboards/personal-dashboard';
 import { supabaseClient } from '@/api/utils/supabase/browser-client';
 import { useCollectiviteId } from '@/app/core-logic/hooks/params';
-import { useAuth } from '@/app/users/auth-provider';
+import { useUser } from '@/app/users/user-provider';
 import { useQuery } from 'react-query';
 
 /** Charges les différents modules du tableau de bord personnel */
 export const usePersonalModulesFetch = () => {
   const collectiviteId = useCollectiviteId();
-  const userId = useAuth().user?.id;
+  const userId = useUser().id;
 
   return useQuery(getQueryKey(collectiviteId, userId), async () => {
     if (!collectiviteId) {

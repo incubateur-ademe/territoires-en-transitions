@@ -6,11 +6,7 @@ export default async function Layout({ children }: { children: ReactNode }) {
   return (
     <>
       <Header
-        auth={{
-          user: null,
-          isConnected: false,
-        }}
-        ownedCollectivites={[]}
+        user={null}
         currentCollectivite={null}
         panierId={undefined}
         maintenance={null}

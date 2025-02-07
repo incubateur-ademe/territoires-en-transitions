@@ -13,20 +13,20 @@ const ID = 'SelectCollectivite';
 export const SelectCollectivite = (props: HeaderPropsWithModalState) => {
   const {
     currentCollectivite,
-    ownedCollectivites,
+    user,
     openedId,
     modalOpened,
     setOpenedId,
     setModalOpened,
   } = props;
-  if (!currentCollectivite || !ownedCollectivites) {
+  if (!currentCollectivite || !user?.collectivites) {
     return null;
   }
 
   const opened = openedId === ID; // vérifie si le menu est ouvert
 
   // liste des collectivités à afficher
-  const listCollectivites = ownedCollectivites?.filter(
+  const listCollectivites = user.collectivites?.filter(
     ({ nom }) => nom !== currentCollectivite.nom
   );
 

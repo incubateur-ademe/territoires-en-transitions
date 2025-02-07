@@ -7,12 +7,13 @@ import { Toasters } from '@/app/app/Toasters';
 import { VisitTracker } from '@/app/app/VisitTracker';
 import AccepterCGUModal from '@/app/app/pages/Auth/AccepterCGUModal';
 import { ScoreListenerProvider } from '@/app/referentiels/DEPRECATED_use-score-listener';
+import { UserDetails } from '@/app/users/fetch-user-details.server';
+import { UserProvider } from '@/app/users/user-provider';
 import { createTrackingClient, TrackingProvider } from '@/ui';
 import { createTheme, ThemeProvider } from '@mui/material/styles';
-import { User } from '@supabase/supabase-js';
+import { ReactNode } from 'react';
 import { QueryClient, QueryClientProvider } from 'react-query';
 import { ReactQueryDevtools } from 'react-query/devtools';
-import { AuthProvider } from '../../src/users/auth-provider';
 
 const theme = createTheme({
   palette: {
@@ -29,14 +30,14 @@ export default function AppProviders({
   user,
   children,
 }: {
-  user: User;
-  children: React.ReactNode;
+  user: UserDetails;
+  children: ReactNode;
 }) {
   return (
-    <AuthProvider user={user}>
-      <TrackingProvider client={trackingClient}>
-        <TRPCProvider>
-          <QueryClientProvider client={queryClient}>
+    <TrackingProvider client={trackingClient}>
+      <TRPCProvider>
+        <QueryClientProvider client={queryClient}>
+          <UserProvider user={user}>
             <Toasters />
             <ScoreListenerProvider>
               <E2E />
@@ -47,9 +48,9 @@ export default function AppProviders({
                 {children}
               </ThemeProvider>
             </ScoreListenerProvider>
-          </QueryClientProvider>
-        </TRPCProvider>
-      </TrackingProvider>
-    </AuthProvider>
+          </UserProvider>
+        </QueryClientProvider>
+      </TRPCProvider>
+    </TrackingProvider>
   );
 }

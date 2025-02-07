@@ -6,15 +6,14 @@ import { HeaderPropsWithModalState } from './types';
 
 /** liens en "accès rapide" */
 export const AccesRapide = (props: HeaderPropsWithModalState) => {
-  const { auth, setModalOpened } = props;
-  const { isConnected, user } = auth;
+  const { user, setModalOpened } = props;
 
   return (
     <ul className="fr-btns-group">
       <li onClick={() => setModalOpened(false)}>
         <Aide />
       </li>
-      {isConnected && user ? (
+      {user ? (
         <li>
           <MenuUtilisateur {...props} />
         </li>

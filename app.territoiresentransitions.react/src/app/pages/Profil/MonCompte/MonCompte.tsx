@@ -1,3 +1,5 @@
+'use client';
+
 import { Form, Formik } from 'formik';
 import React, { useState } from 'react';
 import * as Yup from 'yup';
@@ -5,8 +7,9 @@ import * as Yup from 'yup';
 import FormikInput from '@/app/ui/shared/form/formik/FormikInput';
 import ModifierEmailModal from './ModifierEmailModal';
 
-import { useAuth, UserData } from '@/app/users/auth-provider';
+import { UserDetails } from '@/app/users/fetch-user-details.server';
 import { useUpdatePersonalDetails } from '@/app/users/use-update-personal-details';
+import { useUser } from '@/app/users/user-provider';
 
 interface ModifierCompteData {
   prenom: string;
@@ -22,7 +25,7 @@ const validation = Yup.object({
     .required('Champ requis'),
 });
 
-export const MonCompte = ({ user }: { user: UserData }) => {
+export const MonCompte = ({ user }: { user: UserDetails }) => {
   const { handleUpdateDCP } = useUpdatePersonalDetails(user.id);
 
   const [isEmailModalOpen, setIsEmailModalOpen] = useState(false);
@@ -37,9 +40,9 @@ export const MonCompte = ({ user }: { user: UserData }) => {
         <p className="text-sm">Information requises</p>
         <Formik<ModifierCompteData>
           initialValues={{
-            prenom: user.prenom!,
-            nom: user.nom!,
-            email: user.email!,
+            prenom: user.prenom,
+            nom: user.nom,
+            email: user.email ?? '',
           }}
           validationSchema={validation}
           onSubmit={() => undefined}
@@ -96,7 +99,7 @@ export const MonCompte = ({ user }: { user: UserData }) => {
 };
 
 const MonCompteConnected = () => {
-  const { user } = useAuth();
+  const user = useUser();
 
   return user && <MonCompte user={user} />;
 };

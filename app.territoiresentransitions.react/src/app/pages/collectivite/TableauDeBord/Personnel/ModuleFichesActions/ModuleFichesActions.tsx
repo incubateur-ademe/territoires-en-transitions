@@ -16,7 +16,7 @@ import {
 } from '@/app/app/paths';
 import { useCurrentCollectivite } from '@/app/core-logic/hooks/useCurrentCollectivite';
 import PictoExpert from '@/app/ui/pictogrammes/PictoExpert';
-import { useAuth } from '@/app/users/auth-provider';
+import { useUser } from '@/app/users/user-provider';
 import { useRouter } from 'next/navigation';
 
 type Props = {
@@ -33,7 +33,7 @@ const DEFAULT_MODULE_KEY_TO_TRACKING_ID = {
  ** dans la page tableau de bord plans d'action */
 const ModuleFichesActions = ({ view, module }: Props) => {
   const { collectiviteId, niveauAcces, role } = useCurrentCollectivite()!;
-  const userId = useAuth().user?.id;
+  const userId = useUser().id;
   const router = useRouter();
 
   const trackEvent = useEventTracker('app/tdb/personnel');

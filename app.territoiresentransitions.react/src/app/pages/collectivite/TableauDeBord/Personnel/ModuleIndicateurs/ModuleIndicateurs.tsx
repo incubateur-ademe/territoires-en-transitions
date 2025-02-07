@@ -14,7 +14,7 @@ import {
 } from '@/app/app/paths';
 import { useCurrentCollectivite } from '@/app/core-logic/hooks/useCurrentCollectivite';
 import PictoIndicateurVide from '@/app/ui/pictogrammes/PictoIndicateurVide';
-import { useAuth } from '@/app/users/auth-provider';
+import { useUser } from '@/app/users/user-provider';
 import { useRouter } from 'next/navigation';
 import { getQueryKey } from '../usePersonalModulesFetch';
 
@@ -25,7 +25,7 @@ type Props = {
 
 const ModuleIndicateurs = ({ view, module }: Props) => {
   const { collectiviteId, niveauAcces, role } = useCurrentCollectivite()!;
-  const userId = useAuth().user?.id;
+  const { id: userId } = useUser();
   const router = useRouter();
 
   const trackEvent = useEventTracker('app/tdb/personnel');

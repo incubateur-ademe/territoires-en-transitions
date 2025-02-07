@@ -1,7 +1,7 @@
 import { signOutUser } from '@/api/utils/supabase/sign-out-user.server';
 import { monComptePath } from '@/app/app/paths';
 import DropdownFloater from '@/app/ui/shared/floating-ui/DropdownFloater';
-import { UserData } from '@/app/users/auth-provider';
+import { UserDetails } from '@/app/users/fetch-user-details.server';
 import { Button } from '@/ui';
 import classNames from 'classnames';
 import Link from 'next/link';
@@ -14,8 +14,7 @@ import { HeaderPropsWithModalState } from './types';
  * Affiche le menu associé à l'utilisateur courant
  */
 const MenuUtilisateur = (props: HeaderPropsWithModalState) => {
-  const { auth, setModalOpened } = props;
-  const { user } = auth;
+  const { user, setModalOpened } = props;
   const pathname = usePathname();
 
   if (!user) {
@@ -66,7 +65,7 @@ const MenuUtilisateurBtn = forwardRef(
     }: {
       isOpen?: boolean;
       isUserPath: boolean;
-      user: UserData;
+      user: UserDetails;
     },
     ref?: Ref<HTMLButtonElement>
   ) => (

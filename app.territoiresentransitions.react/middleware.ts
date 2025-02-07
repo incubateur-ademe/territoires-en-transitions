@@ -15,7 +15,7 @@ import {
   signInPath,
   signUpPath,
 } from './src/app/paths';
-import { fetchOwnedCollectivites } from './src/core-logic/hooks/useOwnedCollectivites';
+import { fetchUserCollectivites } from './src/users/fetch-user-collectivites.server';
 
 export const config = {
   matcher: [
@@ -97,7 +97,7 @@ export async function middleware(request: NextRequest) {
 
   // Check if the user has at least one collectivite
   // If not, redirect to the page finaliser mon inscription
-  const collectivites = await fetchOwnedCollectivites(supabase);
+  const collectivites = await fetchUserCollectivites(supabase);
   if (collectivites.length === 0) {
     if (isAllowedPathnameWhenNoCollectivite(pathname)) {
       return supabaseResponse;

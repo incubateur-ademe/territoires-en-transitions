@@ -19,7 +19,8 @@ import {
   CurrentCollectivite,
   useCurrentCollectivite,
 } from '@/app/core-logic/hooks/useCurrentCollectivite';
-import { useAuth, UserData } from '@/app/users/auth-provider';
+import { UserDetails } from '@/app/users/fetch-user-details.server';
+import { useUser } from '@/app/users/user-provider';
 import { Button, Modal, Pagination, TrackPageView } from '@/ui';
 import PageContainer from '@/ui/components/layout/page-container';
 import { pick } from 'es-toolkit';
@@ -29,7 +30,7 @@ export type MembresProps = {
   membres: Membre[];
   collectivite: CurrentCollectivite;
   isLoading: boolean;
-  currentUser: UserData;
+  currentUser: UserDetails;
   updateMembre: TUpdateMembre;
   removeFromCollectivite: TRemoveFromCollectivite;
 };
@@ -139,8 +140,7 @@ const mailSentMessage = (
   `L'invitation à rejoindre la collectivité ${collectivite.nom} a bien été envoyée à ${data.email}`;
 
 const MembresConnected = () => {
-  const auth = useAuth();
-  const user = auth.user;
+  const user = useUser();
   const collectivite_id = useCollectiviteId();
   const collectivite = useCurrentCollectivite();
 
