@@ -24,7 +24,7 @@ export default async function Layout({
 
       <Tabs tabsListClassName="!justify-start pl-0 flex-nowrap bg-transparent">
         <TabsList>
-          <TabsTab href="progression" label="Actions"></TabsTab>
+          <TabsTab href="progression" label="Mesures"></TabsTab>
           <TabsTab href="priorisation" label="Aide à la priorisation"></TabsTab>
           <TabsTab href="detail" label="Détail des statuts"></TabsTab>
           <TabsTab href="evolutions" label="Évolutions du score"></TabsTab>
