@@ -1,9 +1,6 @@
 'use client';
 
-import { SignupModal } from '@/auth/components/Signup';
-import { use, useState } from 'react';
-import { useCollectivites } from './useCollectivites';
-import { useSignupState } from './useSignupState';
+import { SignupPageClient } from './page.client';
 
 /**
  * Affiche la page de création de compte
@@ -12,7 +9,7 @@ import { useSignupState } from './useSignupState';
  * `redirect_to`, l'utilisateur est redirigé sur la page voulue, et à défaut sur
  * l'app.
  */
-const SignupPage = ({
+export default async function SignupPage({
   searchParams,
 }: {
   searchParams: Promise<{
@@ -21,36 +18,20 @@ const SignupPage = ({
     otp: string | null;
     redirect_to: string;
   }>;
-}) => {
+}) {
   const {
     view = null,
     email = null,
     otp = null,
     redirect_to = '/',
-  } = use(searchParams);
-
-  const [filter, setFilter] = useState('');
-  const { data: collectivites } = useCollectivites(filter);
-
-  const defaultValues = {
-    email,
-    otp,
-  };
-
-  const state = useSignupState({
-    redirectTo: redirect_to,
-    defaultView: view,
-    defaultValues,
-  });
+  } = await searchParams;
 
   return (
-    <SignupModal
-      collectivites={collectivites || []}
-      onFilterCollectivites={setFilter}
-      defaultValues={defaultValues}
-      {...state}
+    <SignupPageClient
+      view={view}
+      email={email}
+      otp={otp}
+      redirect_to={redirect_to}
     />
   );
-};
-
-export default SignupPage;
+}

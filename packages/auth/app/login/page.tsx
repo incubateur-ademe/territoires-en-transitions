@@ -1,9 +1,4 @@
-// modale floating-ui ne pouvant s'afficher que côté client...
-'use client';
-
-import { LoginModal } from '@/auth/components/Login';
-import { use } from 'react';
-import { useLoginState } from './useLoginState';
+import { LoginPageClient } from './page.client';
 
 /**
  * Affiche la page d'authentification
@@ -12,7 +7,7 @@ import { useLoginState } from './useLoginState';
  * `redirect_to`, l'utilisateur est redirigé sur la page voulue, et à défaut sur
  * l'app.
  */
-const LoginPage = ({
+export default async function LoginPage({
   searchParams,
 }: {
   searchParams: Promise<{
@@ -21,33 +16,15 @@ const LoginPage = ({
     otp: string | null;
     redirect_to: string;
   }>;
-}) => {
-  const {
-    view = null,
-    email = null,
-    otp = null,
-    redirect_to = '/',
-  } = use(searchParams);
-
-  const defaultValues = {
-    email,
-    otp,
-  };
-
-  const state = useLoginState({
-    redirectTo: redirect_to,
-    defaultView: view,
-    defaultValues,
-  });
+}) {
+  const { view, email, otp, redirect_to } = await searchParams;
 
   return (
-    <LoginModal
-      defaultValues={defaultValues}
-      // TODO: intégrer crisp dans le package pour pouvoir le raccorder ici
-      //onOpenChatbox={() => {}}
-      {...state}
+    <LoginPageClient
+      view={view}
+      email={email}
+      otp={otp}
+      redirect_to={redirect_to}
     />
   );
-};
-
-export default LoginPage;
+}
