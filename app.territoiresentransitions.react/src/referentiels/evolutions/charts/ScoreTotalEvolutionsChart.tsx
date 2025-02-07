@@ -7,8 +7,10 @@ import { theme as importedTheme } from '../../../ui/charts/chartsTheme';
 
 const ScoreTotalEvolutionsChart = ({
   allSnapshots,
+  chartSize = 'lg',
 }: {
   allSnapshots: SnapshotDetails[];
+  chartSize: 'sm' | 'lg';
 }) => {
   /**
    * Ensures a snapshot is always displayed in the correct position on the graph according to its date.
@@ -28,6 +30,38 @@ const ScoreTotalEvolutionsChart = ({
   });
 
   const theme = importedTheme;
+
+  const sizeConfig = {
+    chartSize: {
+      sm: { xAxisLabelWidth: 100 },
+      lg: { xAxisLabelWidth: 'auto' as const },
+    },
+  } as const;
+
+  /**
+   * Adjusts the width of the x-axis labels based on the number of snapshots and the size of the chart.
+   * The width is fixed for small charts and auto for large charts.
+   * @param snapshotsCount - The number of snapshots.
+   * @param sizeOptions - The size options.
+   * @param chartSize - The size of the chart.
+   * @returns The width of the x-axis labels.
+   */
+  const adjustXAxisLabelWidth = (
+    snapshotsCount: number,
+    sizeOptions: typeof sizeConfig,
+    chartSize: 'sm' | 'lg'
+  ) => {
+    const SMALL_FIXED_WIDTH = 70;
+    const MEDIUM_FIXED_WIDTH = 100;
+
+    if (snapshotsCount > 10) {
+      return SMALL_FIXED_WIDTH;
+    }
+    if (snapshotsCount > 4) {
+      return MEDIUM_FIXED_WIDTH;
+    }
+    return sizeOptions.chartSize[chartSize]?.xAxisLabelWidth;
+  };
 
   const series = [
     {
@@ -159,7 +193,9 @@ const ScoreTotalEvolutionsChart = ({
           color: theme.textColor,
           fontSize: 14,
           padding: [15, 0, 0, 0],
-          interval: 0, // needed to avoid overlapping labels in synthèse de l'état des lieux view (which is small)
+          interval: 0,
+          width: adjustXAxisLabelWidth(snapshots.length, sizeConfig, chartSize),
+          overflow: 'break',
         },
         axisTick: {
           show: false,

@@ -35,7 +35,9 @@ const ScoreEvolutionsGraphs = ({
       title={title}
       subTitle={subTitle}
       href={href}
-      renderGraph={() => <ScoreTotalEvolutionsChart allSnapshots={snapshots} />}
+      renderGraph={() => (
+        <ScoreTotalEvolutionsChart allSnapshots={snapshots} chartSize="sm" />
+      )}
     />
   );
 };

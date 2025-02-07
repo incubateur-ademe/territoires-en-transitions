@@ -111,6 +111,7 @@ export const ScoreEvolutions = () => {
           <div>
             <ScoreTotalEvolutionsChart
               allSnapshots={getSelectedSnapshots(selectedSnapshots)}
+              chartSize="lg"
             />
           </div>
         </>
