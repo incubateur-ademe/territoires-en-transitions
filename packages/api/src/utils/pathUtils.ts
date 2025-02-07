@@ -43,11 +43,14 @@ export const getBaseUrl = (
  * - garde `territoiresentransitions.fr` inchangé
  * - garde `localhost` inchangé
  */
-export const getRootDomain = (hostname: string) => {
+export const getRootDomain = (host: string) => {
   // Si le hostname est une IP, on le renvoie tel quel
-  if (/^\d{1,3}\.\d{1,3}\.\d{1,3}\.\d{1,3}$/.test(hostname)) {
-    return hostname;
+  if (/^\d{1,3}\.\d{1,3}\.\d{1,3}\.\d{1,3}$/.test(host)) {
+    return host;
   }
+
+  // Remove port if present
+  const hostname = host.split(':')[0];
 
   const parts = hostname.split('.');
   if (parts.length < 3) {

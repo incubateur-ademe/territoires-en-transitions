@@ -1,5 +1,3 @@
-'use client';
-
 import { SignupPageClient } from './page.client';
 
 /**

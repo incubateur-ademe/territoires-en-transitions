@@ -1,5 +1,3 @@
-import { createClientWithOldCookie } from '@/api/utils/supabase/server-client';
-import { redirect } from 'next/navigation';
 import { LoginPageClient } from './page.client';
 
 /**
@@ -20,22 +18,6 @@ export default async function LoginPage({
   }>;
 }) {
   const { view, email, otp, redirect_to } = await searchParams;
-
-  // Log out to clear old auth cookie
-  const signOut = async () => {
-    'use server';
-    const supabase = await createClientWithOldCookie();
-    await supabase.auth.signOut({ scope: 'global' });
-
-    redirect('/login');
-  };
-
-  const supabase = await createClientWithOldCookie();
-  const { data: user } = await supabase.auth.getUser();
-
-  if (user.user) {
-    await signOut();
-  }
 
   return (
     <LoginPageClient
