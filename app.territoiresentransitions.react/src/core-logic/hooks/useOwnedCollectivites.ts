@@ -1,6 +1,6 @@
 import { DBClient, MaCollectivite } from '@/api';
 import { supabaseClient } from '@/api/utils/supabase/browser-client';
-import { useAuth } from '@/app/core-logic/api/auth/AuthProvider';
+import { useAuth } from '@/app/users/auth-provider';
 import { useQuery } from 'react-query';
 
 // charge les collectivités associées au compte de l'utilisateur courant

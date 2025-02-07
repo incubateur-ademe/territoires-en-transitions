@@ -3,8 +3,8 @@ import { Route } from 'react-router-dom';
 import Filters from './Filters/FiltersColonne';
 import CollectivitesView from './Views/CollectivitesView';
 
-import { useAuth } from '@/app/core-logic/api/auth/AuthProvider';
 import { useSearchParams } from '@/app/core-logic/hooks/query';
+import { useAuth } from '@/app/users/auth-provider';
 
 import { CollectiviteEngagee, getRejoindreCollectivitePath } from '@/api';
 import {
@@ -13,8 +13,8 @@ import {
 } from '@/app/app/paths';
 import { useSansCollectivite } from '@/app/core-logic/hooks/useOwnedCollectivites';
 import { Alert, Button } from '@/ui';
-import { initialFilters, nameToShortNames } from './data/filters';
 import PageContainer from '@/ui/components/layout/page-container';
+import { initialFilters, nameToShortNames } from './data/filters';
 
 const DecouvrirLesCollectivites = () => {
   const auth = useAuth();

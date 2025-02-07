@@ -1,6 +1,6 @@
 import { supabaseClient } from '@/api/utils/supabase/browser-client';
-import { useAuth } from '@/app/core-logic/api/auth/AuthProvider';
 import Modal from '@/app/ui/shared/floating-ui/Modal';
+import { useAuth } from '@/app/users/auth-provider';
 import { useState } from 'react';
 import { useMutation, useQueryClient } from 'react-query';
 import { ReactComponent as ContractSVG } from './contract.svg';

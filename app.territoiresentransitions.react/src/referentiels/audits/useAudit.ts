@@ -1,8 +1,8 @@
 import { supabaseClient } from '@/api/utils/supabase/browser-client';
 import { useCollectiviteId } from '@/app/collectivites/collectivite-context';
-import { useAuth } from '@/app/core-logic/api/auth/AuthProvider';
 import { useCurrentCollectivite } from '@/app/core-logic/hooks/useCurrentCollectivite';
 import { usePreuvesParType } from '@/app/referentiels/preuves/usePreuves';
+import { useAuth } from '@/app/users/auth-provider';
 import { ReferentielId } from '@/domain/referentiels';
 import { useQuery } from 'react-query';
 import { useReferentielId } from '../referentiel-context';

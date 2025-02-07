@@ -1,9 +1,9 @@
 import { supabaseClient } from '@/api/utils/supabase/browser-client';
 import { trpc } from '@/api/utils/trpc/client';
 import { useSendInvitation } from '@/app/app/pages/collectivite/Users/useSendInvitation';
-import { UserData } from '@/app/core-logic/api/auth/AuthProvider';
 import { CurrentCollectivite } from '@/app/core-logic/hooks/useCurrentCollectivite';
 import { TNiveauAcces } from '@/app/types/alias';
+import { UserData } from '@/app/users/auth-provider';
 import { useMutation, useQueryClient } from 'react-query';
 
 type AddUserToCollectiviteArgs = {

@@ -17,8 +17,8 @@ import {
   makeReferentielUrl,
   makeTableauBordUrl,
 } from '@/app/app/paths';
-import { UserData } from '@/app/core-logic/api/auth/AuthProvider';
 import { CurrentCollectivite } from '@/app/core-logic/hooks/useCurrentCollectivite';
+import { UserData } from '@/app/users/auth-provider';
 import { TNavDropdown, TNavItem, TNavItemsList } from './types';
 
 /** Génère les liens de navigation pour une collectivité donnée */

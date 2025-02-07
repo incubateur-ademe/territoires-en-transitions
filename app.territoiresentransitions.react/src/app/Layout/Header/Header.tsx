@@ -1,8 +1,8 @@
 'use client';
 
-import { TAuthContext } from '@/app/core-logic/api/auth/AuthProvider';
 import { CurrentCollectivite } from '@/app/core-logic/hooks/useCurrentCollectivite';
 import { TMesCollectivites } from '@/app/core-logic/hooks/useOwnedCollectivites';
+import { TAuthContext } from '@/app/users/auth-provider';
 import classNames from 'classnames';
 import Image from 'next/image';
 import Link from 'next/link';

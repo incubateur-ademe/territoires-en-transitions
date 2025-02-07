@@ -1,7 +1,7 @@
 import { signOutUser } from '@/api/utils/supabase/sign-out-user.server';
 import { monComptePath } from '@/app/app/paths';
-import { UserData } from '@/app/core-logic/api/auth/AuthProvider';
 import DropdownFloater from '@/app/ui/shared/floating-ui/DropdownFloater';
+import { UserData } from '@/app/users/auth-provider';
 import { Button } from '@/ui';
 import classNames from 'classnames';
 import Link from 'next/link';

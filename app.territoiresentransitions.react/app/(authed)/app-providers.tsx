@@ -12,7 +12,7 @@ import { createTheme, ThemeProvider } from '@mui/material/styles';
 import { User } from '@supabase/supabase-js';
 import { QueryClient, QueryClientProvider } from 'react-query';
 import { ReactQueryDevtools } from 'react-query/devtools';
-import { AuthProvider } from '../../src/core-logic/api/auth/AuthProvider';
+import { AuthProvider } from '../../src/users/auth-provider';
 
 const theme = createTheme({
   palette: {
@@ -33,11 +33,11 @@ export default function AppProviders({
   children: React.ReactNode;
 }) {
   return (
-    <TrackingProvider client={trackingClient}>
-      <TRPCProvider>
-        <QueryClientProvider client={queryClient}>
-          <Toasters />
-          <AuthProvider user={user}>
+    <AuthProvider user={user}>
+      <TrackingProvider client={trackingClient}>
+        <TRPCProvider>
+          <QueryClientProvider client={queryClient}>
+            <Toasters />
             <ScoreListenerProvider>
               <E2E />
               <VisitTracker />
@@ -47,9 +47,9 @@ export default function AppProviders({
                 {children}
               </ThemeProvider>
             </ScoreListenerProvider>
-          </AuthProvider>
-        </QueryClientProvider>
-      </TRPCProvider>
-    </TrackingProvider>
+          </QueryClientProvider>
+        </TRPCProvider>
+      </TrackingProvider>
+    </AuthProvider>
   );
 }

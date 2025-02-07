@@ -1,7 +1,7 @@
 import { modulesFetch } from '@/api/plan-actions/dashboards/personal-dashboard';
 import { supabaseClient } from '@/api/utils/supabase/browser-client';
-import { useAuth } from '@/app/core-logic/api/auth/AuthProvider';
 import { useCollectiviteId } from '@/app/core-logic/hooks/params';
+import { useAuth } from '@/app/users/auth-provider';
 import { useQuery } from 'react-query';
 
 /** Charges les différents modules du tableau de bord personnel */

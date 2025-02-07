@@ -1,10 +1,10 @@
 'use client';
 
-import { useAuth } from '@/app/core-logic/api/auth/AuthProvider';
+import { useNbActionsDansPanier } from '@/app/app/Layout/Header/useNbActionsDansPanier';
 import { useCurrentCollectivite } from '@/app/core-logic/hooks/useCurrentCollectivite';
+import { useAuth } from '@/app/users/auth-provider';
 import { useMaintenance } from '../useMaintenance';
 import { Header as HeaderBase } from './Header';
-import { useNbActionsDansPanier } from '@/app/app/Layout/Header/useNbActionsDansPanier';
 
 /**
  * En-tête de l'application raccordé aux données

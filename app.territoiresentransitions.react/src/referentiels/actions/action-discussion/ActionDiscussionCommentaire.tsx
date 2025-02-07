@@ -2,7 +2,7 @@ import { format } from 'date-fns';
 import { fr } from 'date-fns/locale';
 import ActionDiscussionCommentaireDropdown from './ActionDiscussionCommentaireDropdown';
 
-import { useAuth } from '@/app/core-logic/api/auth/AuthProvider';
+import { useAuth } from '@/app/users/auth-provider';
 import {
   TActionDiscussion,
   TActionDiscussionCommentaire,

@@ -1,4 +1,4 @@
-import { UserData } from '@/app/core-logic/api/auth/AuthProvider';
+import { UserData } from '@/app/users/auth-provider';
 
 export const fakeUserData: UserData = {
   app_metadata: {},
