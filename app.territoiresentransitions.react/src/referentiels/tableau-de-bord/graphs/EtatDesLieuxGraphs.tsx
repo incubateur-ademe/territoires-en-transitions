@@ -9,8 +9,6 @@ import { TableOptions } from 'react-table';
 import { AccueilCard } from '../AccueilCard';
 import { ProgressionRow } from '../useProgressionReferentiel';
 import ProgressionReferentiel from './ProgressionReferentiel';
-import ScoreTotalEvolutionsChart from '../../evolutions/charts/ScoreTotalEvolutionsChart';
-import { useSnapshotList } from '../../use-snapshot';
 import Link from 'next/link';
 import { makeReferentielUrl } from '@/app/app/paths';
 import ScoreEvolutionsGraphs from './ScoreEvolutionsGraphs';
