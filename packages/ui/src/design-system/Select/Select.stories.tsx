@@ -372,3 +372,23 @@ export const ZIndex: Story = {
     );
   },
 };
+
+export const MultiSelectWithMaxBadges: Story = {
+  args: {
+    options: optionsWithSections,
+    multiple: true,
+    maxBadgesToShow: 2,
+  },
+  render: (args) => {
+    const [values, setValues] = useState<OptionValue[] | undefined>();
+    return (
+      <SelectMultiple
+        {...args}
+        values={values}
+        onChange={({ values }) => {
+          setValues(values);
+        }}
+      />
+    );
+  },
+};
