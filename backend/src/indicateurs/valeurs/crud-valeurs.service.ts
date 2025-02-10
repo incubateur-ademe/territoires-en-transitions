@@ -1,6 +1,8 @@
 import { PermissionOperation } from '@/backend/auth/authorizations/permission-operation.enum';
 import { PermissionService } from '@/backend/auth/authorizations/permission.service';
 import { ResourceType } from '@/backend/auth/authorizations/resource-type.enum';
+import CollectivitesService from '@/backend/collectivites/services/collectivites.service';
+import { buildConflictUpdateColumns } from '@/backend/utils/database/conflict.utils';
 import { createZodDto } from '@anatine/zod-nestjs';
 import { extendApi } from '@anatine/zod-openapi';
 import { Injectable, Logger } from '@nestjs/common';
@@ -19,9 +21,11 @@ import {
 } from 'drizzle-orm';
 import { groupBy, keyBy, partition } from 'es-toolkit';
 import * as _ from 'lodash';
-import { AuthenticatedUser, AuthRole } from '../../auth/models/auth.models';
-import CollectivitesService from '../../collectivites/services/collectivites.service';
-import { buildConflictUpdateColumns } from '../../utils/database/conflict.utils';
+import {
+  AuthenticatedUser,
+  AuthRole,
+  AuthUser,
+} from '../../auth/models/auth.models';
 import { DatabaseService } from '../../utils/database/database.service';
 import { indicateurSourceTable, Source } from '../index-domain';
 import { DeleteIndicateursValeursRequestType } from '../shared/models/delete-indicateurs.request';
@@ -213,7 +217,7 @@ export default class CrudValeursService {
 
   async getIndicateurValeursGroupees(
     options: GetIndicateursValeursRequestType,
-    tokenInfo: AuthenticatedUser
+    tokenInfo: AuthUser
   ): Promise<GetIndicateursValeursResponseType> {
     const { collectiviteId, indicateurIds, identifiantsReferentiel } = options;
 
@@ -339,10 +343,7 @@ export default class CrudValeursService {
    * donc de mettre à jour la colonne resultat indépendamment de la valeur
    * objectif (et pareil pour les commentaires).
    */
-  async upsertValeur(
-    data: UpsertValeurIndicateur,
-    tokenInfo: AuthenticatedUser
-  ) {
+  async upsertValeur(data: UpsertValeurIndicateur, tokenInfo: AuthUser) {
     const { collectiviteId } = data;
     await this.permissionService.isAllowed(
       tokenInfo,
@@ -419,7 +420,7 @@ export default class CrudValeursService {
 
   async deleteValeurIndicateur(
     data: DeleteValeurIndicateur,
-    tokenInfo: AuthenticatedUser
+    tokenInfo: AuthUser
   ) {
     const { collectiviteId, indicateurId, id } = data;
     await this.permissionService.isAllowed(

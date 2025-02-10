@@ -5,6 +5,7 @@ import { FicheActionEtapeRouter } from '@/backend/plans/fiches/fiche-action-etap
 import { ImportPlanRouter } from '@/backend/plans/fiches/import/import-plan.router';
 import { ReferentielsRouter } from '@/backend/referentiels/referentiels.router';
 import { INestApplication, Injectable, Logger } from '@nestjs/common';
+import { JwtService } from '@nestjs/jwt';
 import { createExpressMiddleware } from '@trpc/server/adapters/express';
 import { IndicateurFiltreRouter } from '../../indicateurs/definitions/indicateur-filtre.router';
 import { IndicateurDefinitionsRouter } from '../../indicateurs/definitions/list-definitions.router';
@@ -19,6 +20,8 @@ export class TrpcRouter {
   private readonly logger = new Logger(TrpcRouter.name);
 
   constructor(
+    private readonly jwtService: JwtService,
+    private readonly backendConfigurationService: ConfigurationService,
     private readonly trpc: TrpcService,
     private readonly supabase: SupabaseService,
     private readonly trajectoiresRouter: TrajectoiresRouter,
@@ -63,7 +66,18 @@ export class TrpcRouter {
       createExpressMiddleware({
         router: this.appRouter,
         createContext: (opts) =>
-          this.trpc.createContext(this.supabase.client, opts),
+          createContext(
+            this.supabase.client,
+            opts,
+            this.jwtService,
+            this.backendConfigurationService.get('SUPABASE_JWT_SECRET'),
+            this.logger
+          ),
+        onError: (opts) => {
+          const { error, type, path, input, ctx, req } = opts;
+          this.logger.error(error);
+          // TODO: report it to sentry
+        },
       })
     );
   }

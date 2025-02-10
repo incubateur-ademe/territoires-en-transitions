@@ -10,7 +10,7 @@ import { Transaction } from '@/backend/utils/database/transaction.utils';
 import { dcpTable } from '@/domain/auth';
 import { Injectable, Logger } from '@nestjs/common';
 import { aliasedTable, desc, eq } from 'drizzle-orm';
-import { AuthenticatedUser } from '../../auth/models/auth.models';
+import { AuthenticatedUser, AuthUser } from '../../auth/models/auth.models';
 import { DatabaseService } from '../../utils/database/database.service';
 import { ficheActionActionImpactTable } from './shared/models/fiche-action-action-impact.table';
 import { ficheActionActionTable } from './shared/models/fiche-action-action.table';
@@ -21,8 +21,8 @@ import { ficheActionPartenaireTagTable } from './shared/models/fiche-action-part
 import { ficheActionSousThematiqueTable } from './shared/models/fiche-action-sous-thematique.table';
 import { ficheActionThematiqueTable } from './shared/models/fiche-action-thematique.table';
 import {
-  FicheCreate,
   ficheActionTable,
+  FicheCreate,
 } from './shared/models/fiche-action.table';
 
 @Injectable()
@@ -44,10 +44,7 @@ export default class FicheService {
   }
 
   /** Détermine si un utilisateur peut lire une fiche */
-  async canReadFiche(
-    ficheId: number,
-    tokenInfo: AuthenticatedUser
-  ): Promise<boolean> {
+  async canReadFiche(ficheId: number, tokenInfo: AuthUser): Promise<boolean> {
     const fiche = await this.getFicheFromId(ficheId);
     if (fiche === null) return false;
     return await this.permissionService.isAllowed(
@@ -61,10 +58,7 @@ export default class FicheService {
   }
 
   /** Détermine si un utilisateur peut modifier une fiche */
-  async canWriteFiche(
-    ficheId: number,
-    tokenInfo: AuthenticatedUser
-  ): Promise<boolean> {
+  async canWriteFiche(ficheId: number, tokenInfo: AuthUser): Promise<boolean> {
     const fiche = await this.getFicheFromId(ficheId);
     if (fiche === null) return false;
     return await this.permissionService.isAllowed(

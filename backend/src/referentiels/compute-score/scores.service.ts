@@ -25,7 +25,10 @@ import {
 import { chunk, isNil, pick } from 'es-toolkit';
 import * as _ from 'lodash';
 import { DateTime } from 'luxon';
-import { AuthenticatedUser } from '../../auth/models/auth.models';
+import {
+  AuthenticatedUser,
+  AuthUser as InternalAuthUser,
+} from '../../auth/models/auth.models';
 import { CollectiviteAvecType } from '../../collectivites/identite-collectivite.dto';
 import CollectivitesService from '../../collectivites/services/collectivites.service';
 import { PersonnalisationConsequencesByActionId } from '../../personnalisations/models/personnalisation-consequence.dto';
@@ -149,7 +152,7 @@ export default class ScoresService {
   private async checkCollectiviteAndReferentielWithAccess(
     collectiviteId: number,
     referentielId: ReferentielId,
-    tokenInfo?: AuthenticatedUser,
+    tokenInfo?: InternalAuthUser,
     niveauAccesMinimum = NiveauAcces.LECTURE
   ): Promise<CollectiviteAvecType> {
     // Check read access if a date is given (historical data)
@@ -936,7 +939,7 @@ export default class ScoresService {
     referentielId: ReferentielId,
     collectiviteId: number,
     date?: string,
-    tokenInfo?: AuthenticatedUser,
+    tokenInfo?: InternalAuthUser,
     noCheck?: boolean
   ): Promise<GetActionStatutExplicationsResponseType> {
     const getActionStatutsExplications: GetActionStatutExplicationsResponseType =
@@ -1092,7 +1095,7 @@ export default class ScoresService {
     referentielId: ReferentielId,
     collectiviteId: number,
     parameters: GetReferentielScoresRequestType,
-    tokenInfo?: AuthenticatedUser,
+    tokenInfo?: InternalAuthUser,
     referentiel?: GetReferentielResponseType,
     noCheck?: boolean
   ): Promise<GetReferentielScoresResponseType> {

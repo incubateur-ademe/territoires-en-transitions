@@ -4,7 +4,7 @@ import { ResourceType } from '@/backend/auth/authorizations/resource-type.enum';
 import CollectivitesService from '@/backend/collectivites/services/collectivites.service';
 import { Injectable, Logger } from '@nestjs/common';
 import { and, eq, inArray, isNull, or } from 'drizzle-orm';
-import { AuthenticatedUser } from '../../auth/models/auth.models';
+import { AuthUser } from '../../auth/models/auth.models';
 import { DatabaseService } from '../../utils/database/database.service';
 import { categorieTagTable } from '../tags/categorie-tag.table';
 import { groupementCollectiviteTable } from '../shared/models/groupement-collectivite.table';
@@ -29,7 +29,7 @@ export default class ListCategoriesService {
   async listCategories(
     collectiviteId: number,
     withPredefinedTags: boolean,
-    tokenInfo: AuthenticatedUser
+    tokenInfo: AuthUser
   ): Promise<Tag[]> {
     // Vérifie les droits
     const collectivitePrivate = await this.collectiviteService.isPrivate(

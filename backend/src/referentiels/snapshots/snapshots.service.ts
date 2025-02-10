@@ -257,7 +257,7 @@ export class SnapshotsService {
     personnalisationResponses: GetPersonnalisationReponsesResponseType,
     snapshotNom?: string,
     snapshotForceUpdate?: boolean,
-    userId?: string
+    userId?: string | null
   ): Promise<ScoreSnapshotType> {
     const scoreDate = scoreResponse.date;
 

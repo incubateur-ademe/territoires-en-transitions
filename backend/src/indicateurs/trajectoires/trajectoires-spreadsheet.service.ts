@@ -7,7 +7,7 @@ import {
 import { isNil, partition } from 'es-toolkit';
 import * as _ from 'lodash';
 import slugify from 'slugify';
-import { AuthenticatedUser } from '../../auth/models/auth.models';
+import { AuthUser } from '../../auth/models/auth.models';
 import GroupementsService from '../../collectivites/services/groupements.service';
 import { EpciType } from '../../collectivites/shared/models/epci.table';
 import ConfigurationService from '../../utils/config/configuration.service';
@@ -59,7 +59,7 @@ export default class TrajectoiresSpreadsheetService {
 
   async calculeTrajectoireSnbc(
     request: CalculTrajectoireRequestType,
-    tokenInfo: AuthenticatedUser,
+    tokenInfo: AuthUser,
     epci?: EpciType
   ): Promise<CalculTrajectoireResult> {
     let mode: CalculTrajectoireResultatMode =
