@@ -11,6 +11,7 @@ export enum PermissionOperation {
   PLANS_FICHES_EDITION = 'plans.fiches.edition',
   PLANS_FICHES_LECTURE = 'plans.fiches.lecture',
   PLANS_FICHES_VISITE = 'plans.fiches.visite',
+  PLANS_FICHES_IMPORT = 'plans.fiches.import',
   // Indicateurs
   INDICATEURS_LECTURE = 'indicateurs.lecture',
   INDICATEURS_VISITE = 'indicateurs.visite',

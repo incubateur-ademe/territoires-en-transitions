@@ -14,6 +14,7 @@ export const Permission: Record<Role, PermissionOperation[]> = {
     PermissionOperation.REFERENTIELS_LECTURE,
     PermissionOperation.PLANS_FICHES_VISITE,
     PermissionOperation.PLANS_FICHES_LECTURE,
+    PermissionOperation.PLANS_FICHES_IMPORT,
     PermissionOperation.INDICATEURS_VISITE,
     PermissionOperation.INDICATEURS_LECTURE,
     PermissionOperation.INDICATEURS_TRAJECTOIRES_LECTURE,
