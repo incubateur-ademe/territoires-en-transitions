@@ -1,5 +1,6 @@
 import { FicheAction } from '@/api/plan-actions';
 import { Tab, Tabs } from '@/ui';
+import { LesCommuns } from '@betagouv/les-communs-widget';
 import ActionsLieesTab from './ActionsLiees/ActionsLieesTab';
 import BudgetTab from './Budget/BudgetTab';
 import FichesLieesTab from './FichesLiees/FichesLieesTab';
@@ -86,6 +87,10 @@ const FicheActionOnglets = ({
           fiche={fiche}
           updateFiche={updateFiche}
         />
+      </Tab>
+
+      <Tab label="Services liés">
+        <LesCommuns projectId="123" isStagingEnv={true} />
       </Tab>
     </Tabs>
   );
