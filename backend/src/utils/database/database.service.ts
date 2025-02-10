@@ -1,25 +1,22 @@
 import { AuthUser } from '@/backend/auth/models/auth.models';
 import { Injectable, Logger, OnApplicationShutdown } from '@nestjs/common';
-import { sql } from 'drizzle-orm';
-import { drizzle } from 'drizzle-orm/postgres-js';
-import { default as postgres } from 'postgres';
+import { drizzle } from 'drizzle-orm/node-postgres';
+import { sql } from 'drizzle-orm/sql';
+import { Pool } from 'pg';
 import ConfigurationService from '../config/configuration.service';
 
 @Injectable()
 export class DatabaseService implements OnApplicationShutdown {
   private readonly logger = new Logger(DatabaseService.name);
 
-  private readonly client = postgres(
-    this.configService.get('SUPABASE_DATABASE_URL'),
-    {
-      prepare: false,
-      connection: {
-        application_name: `Backend ${process.env.APPLICATION_VERSION}`,
-      },
-    }
-  );
+  private readonly pool = new Pool({
+    connectionString: this.configService.get('SUPABASE_DATABASE_URL'),
+    application_name: `Backend ${process.env.APPLICATION_VERSION}`,
+  });
 
-  public readonly db = drizzle(this.client);
+  public readonly db = drizzle({
+    client: this.pool,
+  });
 
   constructor(private readonly configService: ConfigurationService) {
     this.logger.log(`Initializing database service`);
@@ -59,6 +56,6 @@ export class DatabaseService implements OnApplicationShutdown {
 
   async onApplicationShutdown(signal: string) {
     this.logger.log(`Closing database service for signal ${signal}`);
-    await this.client.end();
+    await this.pool.end();
   }
 }

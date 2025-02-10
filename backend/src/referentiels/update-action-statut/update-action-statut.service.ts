@@ -2,9 +2,9 @@ import { PermissionOperation } from '@/backend/auth/authorizations/permission-op
 import { PermissionService } from '@/backend/auth/authorizations/permission.service';
 import { ResourceType } from '@/backend/auth/authorizations/resource-type.enum';
 import { DatabaseService } from '@/backend/utils';
+import NodePostgresError from '@/backend/utils/node-postgres-error.dto';
 import { Injectable, Logger, NotFoundException } from '@nestjs/common';
 import { sql } from 'drizzle-orm';
-import { PostgresError } from 'postgres';
 import z from 'zod';
 import { AuthenticatedUser } from '../../auth/models/auth.models';
 import { getErrorWithCode } from '../../utils/nest/errors.utils';
@@ -84,8 +84,8 @@ export class UpdateActionStatutService {
       ) {
         this.logger.error(error);
 
-        const postgresError = error as PostgresError;
-        if (postgresError.constraint_name === 'action_statut_action_id_fkey') {
+        const nodePostgresError = error as NodePostgresError;
+        if (nodePostgresError.constraint === 'action_statut_action_id_fkey') {
           throw new NotFoundException(
             `L'action ${request.actionStatut.actionId} n'existe pas pour le referentiel ${referentielId}`
           );

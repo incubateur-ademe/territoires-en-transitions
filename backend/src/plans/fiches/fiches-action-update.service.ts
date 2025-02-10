@@ -12,7 +12,7 @@ import {
 } from 'drizzle-orm';
 import { PgTable, PgTransaction } from 'drizzle-orm/pg-core';
 import { PostgresJsQueryResultHKT } from 'drizzle-orm/postgres-js';
-import { toCamel } from 'postgres';
+import { toCamel } from 'ts-case-convert';
 import { AuthenticatedUser } from '../../auth/models/auth.models';
 import { buildConflictUpdateColumns } from '../../utils/database/conflict.utils';
 import FicheService from './fiche.service';
