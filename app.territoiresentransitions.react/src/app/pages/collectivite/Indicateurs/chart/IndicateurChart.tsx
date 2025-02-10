@@ -158,7 +158,10 @@ const IndicateurChart = ({
       title: variant === 'detail' ? { left: 28 } : {},
       legend: {
         show: variant !== 'thumbnail',
-        textStyle: variant === 'thumbnail' ? { fontSize: '0.7rem' } : {},
+        textStyle:
+          variant === 'thumbnail'
+            ? { fontSize: '0.7rem' }
+            : { fontSize: '0.9rem' },
         // pour la variante vignette on affiche la légende seulement pour résultats/objectifs
         data:
           variant === 'thumbnail'
