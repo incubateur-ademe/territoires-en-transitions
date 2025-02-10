@@ -5,7 +5,7 @@ identifiant: 5.1
 unite: '%'
 
 titre_long: Part modale des modes actifs et transports en commun dans les déplacements domicile-travail
-titre_court: Modes actifs et TC
+titre_court: Modes actifs et transports en commun
 parent: modes_de_deplacement
 programmes:
   - crte
