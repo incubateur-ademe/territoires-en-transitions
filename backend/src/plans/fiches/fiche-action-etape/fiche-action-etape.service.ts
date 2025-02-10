@@ -1,4 +1,4 @@
-import { AuthenticatedUser } from '@/backend/auth/models/auth.models';
+import { AuthUser } from '@/backend/auth/models/auth.models';
 import { DatabaseService } from '@/backend/utils';
 import { Injectable } from '@nestjs/common';
 import { and, eq, gt, gte, lt, lte, sql } from 'drizzle-orm';
@@ -24,7 +24,7 @@ export class FicheActionEtapeService {
    */
   async upsertEtape(
     etape: UpsertFicheActionEtapeType,
-    tokenInfo: AuthenticatedUser
+    tokenInfo: AuthUser
   ): Promise<FicheActionEtapeType> {
     const { id, ficheId, nom, ordre, realise = false } = etape;
     await this.ficheService.canWriteFiche(ficheId, tokenInfo);
@@ -126,7 +126,7 @@ export class FicheActionEtapeService {
    * @param etapeId
    * @param tokenInfo
    */
-  async deleteEtape(etapeId: number, tokenInfo: AuthenticatedUser) {
+  async deleteEtape(etapeId: number, tokenInfo: AuthUser) {
     return this.databaseService.db.transaction(async (trx) => {
       // Récupérer l'ordre et la fiche de l'étape à supprimer
       const stepToDelete = await trx
@@ -170,7 +170,7 @@ export class FicheActionEtapeService {
    */
   async getEtapesByFicheId(
     ficheId: number,
-    tokenInfo: AuthenticatedUser
+    tokenInfo: AuthUser
   ): Promise<FicheActionEtapeType[]> {
     await this.ficheService.canReadFiche(ficheId, tokenInfo);
     return this.databaseService.db

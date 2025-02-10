@@ -1,3 +1,4 @@
+import { AuthUser } from '@/backend/auth';
 import { PermissionOperation } from '@/backend/auth/authorizations/permission-operation.enum';
 import { PermissionService } from '@/backend/auth/authorizations/permission.service';
 import { ResourceType } from '@/backend/auth/authorizations/resource-type.enum';
@@ -6,7 +7,6 @@ import NodePostgresError from '@/backend/utils/node-postgres-error.dto';
 import { Injectable, Logger, NotFoundException } from '@nestjs/common';
 import { sql } from 'drizzle-orm';
 import z from 'zod';
-import { AuthenticatedUser } from '../../auth/models/auth.models';
 import { getErrorWithCode } from '../../utils/nest/errors.utils';
 import { PgIntegrityConstraintViolation } from '../../utils/postgresql-error-codes.enum';
 import ScoresService from '../compute-score/scores.service';
@@ -38,10 +38,7 @@ export class UpdateActionStatutService {
     private readonly referentielScoringService: ScoresService
   ) {}
 
-  async upsertActionStatut(
-    request: UpsertActionStatutRequest,
-    user: AuthenticatedUser
-  ) {
+  async upsertActionStatut(request: UpsertActionStatutRequest, user: AuthUser) {
     // Check user access
     await this.permissionService.isAllowed(
       user,

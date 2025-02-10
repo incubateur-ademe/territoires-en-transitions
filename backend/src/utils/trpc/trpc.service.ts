@@ -1,3 +1,4 @@
+import { getErrorMessage } from '@/backend/utils/nest/errors.utils';
 import { Injectable, Logger } from '@nestjs/common';
 import { JwtService } from '@nestjs/jwt';
 import { SupabaseClient } from '@supabase/supabase-js';
@@ -8,10 +9,10 @@ import {
   AuthUser,
   isAnonymousUser,
   isAuthenticatedUser,
+  isServiceRoleUser,
   jwtToUser,
 } from '../../auth/models/auth.models';
 import ConfigurationService from '../../utils/config/configuration.service';
-import { getErrorMessage } from '../nest/errors.utils';
 
 @Injectable()
 export class TrpcService {
@@ -64,7 +65,7 @@ export class TrpcService {
     this.trpc.middleware(({ next, ctx }) => {
       const user = ctx.user;
 
-      if (isAuthenticatedUser(user)) {
+      if (isAuthenticatedUser(user) || isServiceRoleUser(user)) {
         return next({
           ctx: {
             user,
@@ -136,7 +137,7 @@ export class TrpcService {
     }
 
     if (!user) {
-      return { user: null };
+      return { user: null, decodedToken: jwtPayload };
     }
 
     return {

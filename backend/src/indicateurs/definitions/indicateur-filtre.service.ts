@@ -6,7 +6,7 @@ import { serviceTagTable } from '@/domain/collectivites';
 import { Injectable } from '@nestjs/common';
 import { getTableName, sql } from 'drizzle-orm';
 import { intersection, isNil } from 'es-toolkit';
-import { AuthenticatedUser } from '../../auth/models/auth.models';
+import { AuthUser } from '../../auth/models/auth.models';
 import CollectivitesService from '../../collectivites/services/collectivites.service';
 import { groupementCollectiviteTable } from '../../collectivites/shared/models/groupement-collectivite.table';
 import { categorieTagTable } from '../../collectivites/tags/categorie-tag.table';
@@ -122,7 +122,7 @@ export default class IndicateurFiltreService {
     collectiviteId: number,
     filters: GetFilteredIndicateursRequestOptionType,
     queryOptions: GetFilteredIndicateurRequestQueryOptionType,
-    tokenInfo: AuthenticatedUser
+    tokenInfo: AuthUser
   ): Promise<GetFilteredIndicateurResponseType[]> {
     // Vérifie les droits
     const collectivitePrivate = await this.collectiviteService.isPrivate(

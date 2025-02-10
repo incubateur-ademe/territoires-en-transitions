@@ -9,7 +9,7 @@ import {
 import { isNil } from 'es-toolkit';
 import * as _ from 'lodash';
 import { DateTime } from 'luxon';
-import { AuthenticatedUser } from '../../auth/models/auth.models';
+import { AuthenticatedUser, AuthUser } from '../../auth/models/auth.models';
 import CollectivitesService from '../../collectivites/services/collectivites.service';
 import { EpciType } from '../../collectivites/shared/models/epci.table';
 import {
@@ -611,7 +611,7 @@ export default class TrajectoiresDataService {
    */
   async verificationDonneesSnbc(
     request: VerificationTrajectoireRequestType,
-    tokenInfo: AuthenticatedUser,
+    tokenInfo: AuthUser,
     epci?: EpciType,
     forceRecuperationDonneesUniquementPourLecture = false
   ): Promise<VerificationTrajectoireResultType> {
