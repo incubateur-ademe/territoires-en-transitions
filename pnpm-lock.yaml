@@ -14,6 +14,12 @@ importers:
       '@anatine/zod-openapi':
         specifier: ^2.2.6
         version: 2.2.6(openapi3-ts@4.4.0)(zod@3.23.8)
+      '@betagouv/les-communs-widget':
+        specifier: ^0.1.0
+        version: 0.1.0(@codegouvfr/react-dsfr@1.17.0)(react-dom@18.3.1(react@18.3.1))(react@18.3.1)
+      '@codegouvfr/react-dsfr':
+        specifier: ^1.17.0
+        version: 1.17.0
       '@dnd-kit/core':
         specifier: ^6.0.8
         version: 6.1.0(react-dom@18.3.1(react@18.3.1))(react@18.3.1)
@@ -1985,6 +1991,13 @@ packages:
   '@bcoe/v8-coverage@0.2.3':
     resolution: {integrity: sha512-0hYQ8SB4Db5zvZB4axdMHGwEaQjkZzFjQiN9LVYvIFB2nSUHW9tYpxWriPrWDASIxiaXax83REcLxuSdnGPZtw==}
 
+  '@betagouv/les-communs-widget@0.1.0':
+    resolution: {integrity: sha512-+Kb8X4FVwRBjhirhOlGWZ2OM1kI7FGu61qBSXTFBX4vsDZDqQqnWT/jRtL8GjxXFg90UTMNE0btcQJAoE4x0Sw==}
+    peerDependencies:
+      '@codegouvfr/react-dsfr': ^1.14.6
+      react: ^18.0.0 || ^19.0.0
+      react-dom: ^18.0.0 || ^19.0.0
+
   '@chevrotain/cst-dts-gen@10.5.0':
     resolution: {integrity: sha512-lhmC/FyqQ2o7pGK4Om+hzuDrm9rhFYIJ/AXoQBeongmn870Xeb0L6oGEiuR8nohFNL5sMaQEJWCxr1oIVIVXrw==}
 
@@ -1996,6 +2009,15 @@ packages:
 
   '@chevrotain/utils@10.5.0':
     resolution: {integrity: sha512-hBzuU5+JjB2cqNZyszkDHZgOSrUUT8V3dhgRl8Q9Gp6dAj/H5+KILGjbhDpc3Iy9qmqlm/akuOI2ut9VUtzJxQ==}
+
+  '@codegouvfr/react-dsfr@1.17.0':
+    resolution: {integrity: sha512-zYluHhGRD39ckZvQFgK8hSeo76TbxPtuot+I6N66vC6XXkILvv0llbIvezkxv3xlz4J8fvq4Ou5Hngt5EWtpeg==}
+    hasBin: true
+    peerDependencies:
+      '@gouvfr/dsfr-chart': ^1.0.0
+    peerDependenciesMeta:
+      '@gouvfr/dsfr-chart':
+        optional: true
 
   '@colors/colors@1.5.0':
     resolution: {integrity: sha512-ooWCrlZP11i8GImSjTHYHLkvFDP48nS4+204nGb1RiX/WXYHmJA2III9/e2DWVabCESdW7hBAEzHRqUn9OUVvQ==}
@@ -2838,6 +2860,15 @@ packages:
   '@humanwhocodes/object-schema@2.0.3':
     resolution: {integrity: sha512-93zYdMES/c1D69yZiKDBj0V24vqNzB/koF26KPaagAfd3P/4gUlh3Dys5ogAK+Exi9QyzlD8x/08Zt7wIKcDcA==}
     deprecated: Use @eslint/object-schema instead
+
+  '@iframe-resizer/core@5.3.2':
+    resolution: {integrity: sha512-is6VXW1m/9y7ZUwyjUuHu5101TPFa69Rv8jNY0HrT5svwb1ICPZKeaoVzDw0TTBBa5eE7XfEFcXCeiP6UR9W3w==}
+
+  '@iframe-resizer/react@5.3.2':
+    resolution: {integrity: sha512-RGPMYj69Kfzpvonfx0pj5JrKc152DNB8MGum2AoXdupjyaKzLJ4Bvi0NHV8ic4xSHlsMb3eqFXYNRekcACcWxA==}
+    peerDependencies:
+      react: ^16.8.0 || ^17.0.0 || ^18.0.0  || ^19.0.0
+      react-dom: ^16.8.0 || ^17.0.0 || ^18.0.0  || ^19.0.0
 
   '@img/sharp-darwin-arm64@0.33.5':
     resolution: {integrity: sha512-UT4p+iz/2H4twwAoLCqfA9UH5pI6DggwKEGuaPy7nCVQ8ZsiY5PIcrRvD1DzuY3qYL07NtIQcWnBSY/heikIFQ==}
@@ -14097,6 +14128,9 @@ packages:
       typescript:
         optional: true
 
+  tsafe@1.8.5:
+    resolution: {integrity: sha512-LFWTWQrW6rwSY+IBNFl2ridGfUzVsPwrZ26T4KUJww/py8rzaQ/SY+MIz6YROozpUCaRcuISqagmlwub9YT9kw==}
+
   tsconfck@3.1.4:
     resolution: {integrity: sha512-kdqWFGVJqe+KGYvlSO9NIaWn9jT1Ny4oKVzAJsKii5eoE9snzTJzL4+MMVOMn+fikWGFmKEylcXL710V/kIPJQ==}
     engines: {node: ^18 || >=20}
@@ -17776,6 +17810,14 @@ snapshots:
 
   '@bcoe/v8-coverage@0.2.3': {}
 
+  '@betagouv/les-communs-widget@0.1.0(@codegouvfr/react-dsfr@1.17.0)(react-dom@18.3.1(react@18.3.1))(react@18.3.1)':
+    dependencies:
+      '@codegouvfr/react-dsfr': 1.17.0
+      '@iframe-resizer/react': 5.3.2(react-dom@18.3.1(react@18.3.1))(react@18.3.1)
+      classnames: 2.5.1
+      react: 18.3.1
+      react-dom: 18.3.1(react@18.3.1)
+
   '@chevrotain/cst-dts-gen@10.5.0':
     dependencies:
       '@chevrotain/gast': 10.5.0
@@ -17790,6 +17832,11 @@ snapshots:
   '@chevrotain/types@10.5.0': {}
 
   '@chevrotain/utils@10.5.0': {}
+
+  '@codegouvfr/react-dsfr@1.17.0':
+    dependencies:
+      tsafe: 1.8.5
+      yargs-parser: 21.1.1
 
   '@colors/colors@1.5.0':
     optional: true
@@ -18387,6 +18434,15 @@ snapshots:
   '@humanwhocodes/module-importer@1.0.1': {}
 
   '@humanwhocodes/object-schema@2.0.3': {}
+
+  '@iframe-resizer/core@5.3.2': {}
+
+  '@iframe-resizer/react@5.3.2(react-dom@18.3.1(react@18.3.1))(react@18.3.1)':
+    dependencies:
+      '@babel/runtime': 7.26.0
+      '@iframe-resizer/core': 5.3.2
+      react: 18.3.1
+      react-dom: 18.3.1(react@18.3.1)
 
   '@img/sharp-darwin-arm64@0.33.5':
     optionalDependencies:
@@ -33484,6 +33540,8 @@ snapshots:
   ts-pnp@1.2.0(typescript@5.6.2):
     optionalDependencies:
       typescript: 5.6.2
+
+  tsafe@1.8.5: {}
 
   tsconfck@3.1.4(typescript@5.6.2):
     optionalDependencies:
