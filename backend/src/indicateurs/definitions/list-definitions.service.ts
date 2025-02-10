@@ -2,6 +2,7 @@ import { Injectable, Logger } from '@nestjs/common';
 import {
   aliasedTable,
   and,
+  count,
   eq,
   getTableColumns,
   inArray,
@@ -36,6 +37,7 @@ import {
 } from '../shared/models/indicateur-definition.table';
 import { indicateurGroupeTable } from '../shared/models/indicateur-groupe.table';
 import { indicateurThematiqueTable } from '../shared/models/indicateur-thematique.table';
+import { GetFavorisCountRequest } from './get-favoris-count.request';
 import { GetPathRequest } from './get-path.request';
 import { ListDefinitionsRequest } from './list-definitions.request';
 
@@ -389,6 +391,35 @@ export default class ListDefinitionsService {
     this.logger.log(`chemin ${chemins.length ? '' : 'non'} trouvé`);
 
     return chemins[0]?.chemin;
+  }
+
+  /** Donne le nombre d'indicateurs favoris de la collectivité */
+  async getFavorisCount(
+    data: GetFavorisCountRequest,
+    tokenInfo: AuthenticatedUser
+  ) {
+    const { collectiviteId } = data;
+    await this.permissionService.isAllowed(
+      tokenInfo,
+      PermissionOperation.INDICATEURS_VISITE,
+      ResourceType.COLLECTIVITE,
+      collectiviteId
+    );
+
+    this.logger.log(
+      `Lecture du nombre d'indicateurs favoris de la collectivité ${collectiviteId}`
+    );
+
+    const rows = await this.databaseService.db
+      .select({ value: count(indicateurCollectiviteTable.favoris) })
+      .from(indicateurCollectiviteTable)
+      .where(
+        and(
+          eq(indicateurCollectiviteTable.collectiviteId, collectiviteId),
+          eq(indicateurCollectiviteTable.favoris, true)
+        )
+      );
+    return rows[0]?.value ?? 0;
   }
 }
 
