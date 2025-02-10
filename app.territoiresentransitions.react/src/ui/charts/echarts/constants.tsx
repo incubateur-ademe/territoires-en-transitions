@@ -1,10 +1,3 @@
-import { theme } from '@/app/ui/charts/chartsTheme';
-import { LineProps } from '@nivo/line';
-import {
-  ANNEE_JALON2,
-  ANNEE_REFERENCE,
-} from '../../../app/pages/collectivite/Trajectoire/constants';
-
 // couleurs et libellés pour les graphes trajectoires et indicateurs
 export const COULEURS_SECTEUR = [
   '#FEF1D8',
@@ -60,44 +53,3 @@ export const PALETTE_LIGHT = [
   '#FBE7B5',
   '#B8D6F7',
 ];
-
-// pour formater les chiffres
-const NumFormat = Intl.NumberFormat('fr', { maximumFractionDigits: 3 });
-
-// Propriétés communes aux graphes de Trajectoire
-export const COMMON_CHART_PROPS: Partial<LineProps> = {
-  colors: { datum: 'color' },
-  theme,
-  margin: { top: 5, right: 5, bottom: 55, left: 50 },
-  xScale: {
-    type: 'time',
-    precision: 'year',
-    format: '%Y',
-    max: `${ANNEE_JALON2 + 1}`,
-  },
-  yScale: {
-    type: 'linear',
-    min: 'auto',
-    max: 'auto',
-    stacked: true,
-  },
-  yFormat: (value) => NumFormat.format(value as number),
-  axisBottom: {
-    format: '%Y',
-    legendPosition: 'end',
-    tickSize: 5,
-    tickPadding: 15,
-    tickRotation: -35,
-    tickValues: ANNEE_JALON2 - ANNEE_REFERENCE,
-  },
-  axisLeft: {
-    format: (value) => NumFormat.format(value as number),
-  },
-  gridXValues: ANNEE_JALON2 - ANNEE_REFERENCE,
-  enableArea: true,
-  areaOpacity: 0.8,
-  enablePoints: false,
-  lineWidth: 0,
-  curve: 'natural',
-  enableSlices: 'x',
-} as const;

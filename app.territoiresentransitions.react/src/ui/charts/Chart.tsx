@@ -2,7 +2,6 @@ import { ModalSize } from '@/ui';
 
 import ChartModal from './ChartModal';
 import DonutChart, { DonutChartProps } from './Donut/DonutChart';
-import LineChart, { LineChartProps } from './Line/LineChart';
 
 /** Informations détaillées du graphique visible sur la modale de téléchargement */
 export type ChartInfosProps = {
@@ -33,14 +32,6 @@ export type ChartProps = {
      * Si non défini, le graphique de la modale sera identique à celui de base. */
     modalChart?: Omit<DonutChartProps, 'data'>;
   };
-  /** Graphique droites */
-  line?: {
-    /** Propriétés du graphique droites */
-    chart: LineChartProps;
-    /** Propriétés du graphique droite de la modale, permet d'ajouter des configurations additionnelles.
-     * Si non défini, le graphique de la modale sera identique à celui de base. */
-    modalChart?: Omit<LineChartProps, 'data'>;
-  };
   /** Les informations détaillées à afficher dans la modale de téléchargement */
   infos?: ChartInfosProps;
   // appelée lors du clic sur le bouton "Télécharger"
@@ -52,17 +43,10 @@ export type ChartProps = {
  * Il permet d'afficher le graphique et de le télécharger.
  */
 const Chart = (props: ChartProps) => {
-  const { infos, line, donut } = props;
-
-  if (line && donut) {
-    throw new Error(
-      'Chart ne peut pas être utilisé avec plusieurs graphiques.'
-    );
-  }
+  const { infos, donut } = props;
 
   return (
     <>
-      {line && <LineChart {...line.chart} />}
       {donut && <DonutChart {...donut.chart} />}
       {infos?.modal?.isOpen && <ChartModal {...props} />}
     </>
