@@ -268,7 +268,6 @@ const IndicateursListe = ({
                   identifiantReferentiel: definition.identifiant,
                 })}
                 className="hover:!bg-white"
-                card={{ external: true }}
                 hideChart={!displayGraphs}
                 isEditable={isEditable}
                 readonly={isReadonly}
