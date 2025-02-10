@@ -17,6 +17,7 @@ import BadgeOpenData from '@/app/app/pages/collectivite/Indicateurs/components/B
 import IndicateurCardOptions from '@/app/app/pages/collectivite/Indicateurs/lists/IndicateurCard/IndicateurCardOptions';
 import ChartLegend, { AreaSymbol } from '@/app/ui/charts/ChartLegend';
 import PictoIndicateurVide from '@/app/ui/pictogrammes/PictoIndicateurVide';
+import SpinnerLoader from '@/app/ui/shared/SpinnerLoader';
 import { useIndicateurDefinition } from '../../Indicateur/useIndicateurDefinition';
 import DownloadIndicateurChartModal from '../../chart/DownloadIndicateurChart';
 import IndicateurChart from '../../chart/IndicateurChart';
@@ -74,13 +75,16 @@ const IndicateurCard = ({
   }
 
   // on a besoin de la définition avec les catégories, l'unité et le flag `estAgregation`
-  const definition = useIndicateurDefinition(props.definition.id);
+  const { data: definition, isLoading } = useIndicateurDefinition(
+    props.definition.id
+  );
 
   // lit les données nécessaires à l'affichage du graphe
   const chartInfo = useIndicateurChartInfo({
     definition,
   });
 
+  if (isLoading) return <SpinnerLoader />;
   return <IndicateurCardBase chartInfo={chartInfo} {...props} />;
 };
 
