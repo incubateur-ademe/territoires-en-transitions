@@ -4,6 +4,8 @@ import ContextMenu from '@/app/ui/shared/select/ContextMenu';
 import { MenuTriggerButton } from '@/app/ui/shared/select/MenuTriggerButton';
 import { Alert, useEventTracker } from '@/ui';
 import Link from 'next/link';
+import ImportPlanButton from '@/app/app/pages/collectivite/PlansActions/ParcoursCreationPlan/Import/import-plan.button';
+import { useUser } from '@/api/users/user-provider';
 
 const DOWNLOAD_TEMPLATE_OPTIONS = [
   { value: 'xlsx', label: 'Format Excel (.xlsx)' },
@@ -15,6 +17,7 @@ const URL_VIDEO_IMPORT_PA =
 
 const ImporterPlan = () => {
   const { collectiviteId, niveauAcces, role } = useCurrentCollectivite()!;
+  const user = useUser();
 
   const trackeEvent = useEventTracker('app/creer-plan');
 
@@ -22,10 +25,15 @@ const ImporterPlan = () => {
     collectiviteId && (
       <div className="max-w-3xl mx-auto flex flex-col grow py-12">
         <div className="w-full mx-auto">
-          <h3 className="mb-8">
-            <span className="fr-icon-upload-fill mr-2" /> Importer un plan
-            d’action
-          </h3>
+          <div className="flex items-center justify-between items-baseline">
+            <h3 className="mb-8">
+              <span className="fr-icon-upload-fill mr-2" /> Importer un plan
+              d’action
+            </h3>
+            {collectiviteId && user?.isSupport && (
+              <ImportPlanButton collectiviteId={collectiviteId} />
+            )}
+          </div>
           <div className="flex flex-col mt-2 mb-10 py-14 px-24 bg-[#f6f6f6]">
             <div className="mb-1 text-sm">Étape 1</div>
             <h6 className="mb-4">Téléchargez le modèle de plan d’action</h6>
