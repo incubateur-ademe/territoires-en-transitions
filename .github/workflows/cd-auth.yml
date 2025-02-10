@@ -9,6 +9,7 @@ on:
         description: Où déployer
         options:
           - preprod
+          - staging
           - prod
 
 jobs:
