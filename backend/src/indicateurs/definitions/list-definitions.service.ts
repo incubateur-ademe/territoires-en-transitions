@@ -388,9 +388,9 @@ export default class ListDefinitionsService {
           where id = ${indicateurId}
         `);
 
-    this.logger.log(`chemin ${chemins.length ? '' : 'non'} trouvé`);
+    this.logger.log(`chemin ${chemins.rowCount ? '' : 'non'} trouvé`);
 
-    return chemins[0]?.chemin;
+    return chemins.rows[0]?.chemin;
   }
 
   /** Donne le nombre d'indicateurs favoris de la collectivité */
@@ -422,4 +422,3 @@ export default class ListDefinitionsService {
     return rows[0]?.value ?? 0;
   }
 }
-

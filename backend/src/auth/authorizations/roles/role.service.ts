@@ -169,6 +169,6 @@ export class RoleService {
             AND aa.auditeur = ${userId}`
     );
 
-    return result?.length > 0 || false;
+    return (result?.rowCount && result.rowCount > 0) || false;
   }
 }

@@ -454,7 +454,7 @@ export default class IndicateurFiltreService {
   ): Promise<RequestResultIndicateursRaw[]> {
     try {
       const result = await this.databaseService.db.execute(sql.raw(query));
-      return result.map((row) => ({
+      return result.rows.map((row) => ({
         id: row.id as number,
         identifiantReferentiel: row.identifiantReferentiel as string | null,
         titre: row.titre as string | null,

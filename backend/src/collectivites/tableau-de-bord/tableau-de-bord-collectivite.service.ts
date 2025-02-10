@@ -138,7 +138,7 @@ export default class TableauDeBordCollectiviteService {
         )
       );
 
-    if (result.count === 0) {
+    if (result.rowCount === 0) {
       throw new NotFoundException(
         `Aucun module avec l'id ${tableauDeBordModuleTable.id} n'a été trouvé`
       );
@@ -353,7 +353,9 @@ export default class TableauDeBordCollectiviteService {
 
     if (
       key ===
-      collectiviteDefaultModuleKeysSchema.enum['fiche-actions-par-indicateurs-associes']
+      collectiviteDefaultModuleKeysSchema.enum[
+        'fiche-actions-par-indicateurs-associes'
+      ]
     ) {
       return {
         id: crypto.randomUUID(),

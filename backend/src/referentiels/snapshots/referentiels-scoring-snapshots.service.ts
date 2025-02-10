@@ -516,7 +516,7 @@ export default class ReferentielsScoringSnapshotsService {
         )
       );
 
-    if (result.count === 0) {
+    if (result.rowCount === 0) {
       throw new NotFoundException(
         `Aucun snapshot de score avec la référence ${snapshotRef} n'a été trouvé`
       );
