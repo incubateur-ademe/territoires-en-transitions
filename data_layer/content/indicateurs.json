@@ -5122,6 +5122,7 @@
       "parent": "cae_49.a",
       "participation_score": false,
       "programmes": [
+        "agregation",
         "cae"
       ],
       "sans_valeur": false,
@@ -5710,7 +5711,7 @@
       "thematiques": [
         "agri_alim"
       ],
-      "titre_court": "For\u00eat",
+      "titre_court": "For\u00eats",
       "titre_long": "S\u00e9questration nette de CO2 dans la for\u00eat",
       "type": null,
       "unite": "kteq CO2",
@@ -6346,7 +6347,7 @@
       "thematiques": [
         "mobilite_et_transport"
       ],
-      "titre_court": "Modes actifs et TC",
+      "titre_court": "Modes actifs et transports en commun",
       "titre_long": "Part modale des modes actifs et transports en commun dans les d\u00e9placements domicile-travail",
       "type": null,
       "unite": "%",
