@@ -1102,7 +1102,7 @@ export default class ReferentielsScoringService {
             (a) =>
               a.dateFin &&
               (DateTime.fromISO(a.dateFin).year === parameters.anneeAudit ||
-              DateTime.fromSQL(a.dateFin).year === parameters.anneeAudit)
+                DateTime.fromSQL(a.dateFin).year === parameters.anneeAudit)
           );
           if (!audit) {
             throw new HttpException(
@@ -1118,9 +1118,9 @@ export default class ReferentielsScoringService {
               400
             );
           }
-          parameters.anneeAudit = DateTime.fromISO(
-            (audit.dateFin || audit.dateDebut)!
-          ).year;
+          parameters.anneeAudit =
+            DateTime.fromISO((audit.dateFin || audit.dateDebut)!).year ||
+            DateTime.fromSQL((audit.dateFin || audit.dateDebut)!).year;
         }
         auditId = audit.id;
         parameters.date =
@@ -1262,6 +1262,9 @@ export default class ReferentielsScoringService {
       };
 
       if (parameters.snapshot) {
+        this.logger.log(
+          `Sauvegarde du snapshot pour la date ${getScoreResult.date} correspondant au jalon ${getScoreResult.jalon} et à l'année d'audit ${getScoreResult.anneeAudit}`
+        );
         // The snapshot slug is automatically set in saveSnapshotForScoreResponse
         await this.referentielsScoringSnapshotsService.saveSnapshotForScoreResponse(
           getScoreResult,
