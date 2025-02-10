@@ -152,17 +152,30 @@ const ScoreTotalEvolutionsChart = ({
 
   const option: EChartsOption = {
     tooltip: {
-      trigger: 'axis' as const,
-      axisPointer: {
-        type: 'shadow' as const,
-      },
+      trigger: 'item' as const,
       formatter: (params: any) => {
-        return params
-          .map((param: any) => {
-            const circle = `<span style="display: inline-block; margin-right: 4px; border-radius: 10px; width: 10px; height: 10px; background-color: ${param.color};"></span>`;
-            return `${circle}${param.seriesName}: ${param.value}%`;
-          })
-          .join('<br/>');
+        const circle = `<span style="display: inline-block; margin-right: 4px; border-radius: 10px; width: 10px; height: 10px; background-color: ${params.color};"></span>`;
+        const snapshot = snapshots[params.dataIndex];
+        let points = 0;
+
+        switch (params.seriesName) {
+          case 'Fait':
+            points = snapshot.pointFait;
+            break;
+          case 'Programmé':
+            points = snapshot.pointProgramme;
+            break;
+          case 'Pas fait':
+            points = snapshot.pointPasFait;
+            break;
+          case 'Non renseigné':
+            points = snapshot.pointNonRenseigne ?? 0;
+            break;
+        }
+
+        return `${circle}${params.seriesName}: ${
+          params.value
+        }% (${troncateIfZero(points.toFixed(1))} pts)`;
       },
       textStyle: {
         fontFamily: theme.fontFamily,
