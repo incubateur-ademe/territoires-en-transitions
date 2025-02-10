@@ -270,7 +270,6 @@ const IndicateursListe = ({
                 className="hover:!bg-white"
                 card={{ external: true }}
                 hideChart={!displayGraphs}
-                autoRefresh
                 isEditable={isEditable}
                 readonly={isReadonly}
               />

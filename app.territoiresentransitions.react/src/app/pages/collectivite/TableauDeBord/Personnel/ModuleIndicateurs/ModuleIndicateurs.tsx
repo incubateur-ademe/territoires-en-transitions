@@ -108,7 +108,6 @@ const ModuleIndicateurs = ({ view, module }: Props) => {
                     identifiantReferentiel: definition.identifiant,
                   })}
                   card={{ external: true }}
-                  autoRefresh
                 />
               )
           )}

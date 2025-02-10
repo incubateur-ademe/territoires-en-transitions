@@ -4,13 +4,13 @@ import { getIndicateurGroup } from '@/app/app/pages/collectivite/Indicateurs/lis
 import { TIndicateurListItem } from '@/app/app/pages/collectivite/Indicateurs/types';
 import { makeCollectiviteIndicateursUrl } from '@/app/app/paths';
 import { useCurrentCollectivite } from '@/app/core-logic/hooks/useCurrentCollectivite';
+import SideMenu from '@/app/ui/layout/side-menu';
 import { Button, Divider, EmptyCard, useEventTracker } from '@/ui';
 import { useState } from 'react';
 import LoadingCard from '../LoadingCard';
 import DatavizPicto from './DatavizPicto';
 import ModaleCreerIndicateur from './ModaleCreerIndicateur';
 import Content from './SideMenu/Content';
-import SideMenu from '@/app/ui/layout/side-menu';
 
 type IndicateursAssociesProps = {
   isReadonly: boolean;
@@ -132,7 +132,6 @@ const IndicateursAssocies = ({
                 key={`${indicateur.id}-${indicateur.titre}`}
                 readonly={isReadonly}
                 definition={indicateur}
-                autoRefresh
                 isEditable
                 card={{ external: true }}
                 href={makeCollectiviteIndicateursUrl({
