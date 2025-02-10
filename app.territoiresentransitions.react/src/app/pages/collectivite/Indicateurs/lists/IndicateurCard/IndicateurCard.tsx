@@ -57,16 +57,10 @@ export type IndicateurCardProps = {
   card?: CardProps;
   /** Si l'utilisateur est lecteur ou non */
   readonly?: boolean;
-  /** Indique si le rafraichissement des datas du graphique doit se faire automatiquement.
-      `false` par défaut. */
-  autoRefresh?: boolean;
 };
 
 /** Carte qui permet d'afficher un graphique dans une liste */
-const IndicateurCard = ({
-  autoRefresh = false,
-  ...props
-}: IndicateurCardProps) => {
+const IndicateurCard = (props: IndicateurCardProps) => {
   /** La carte ne peut pas être à la fois un  */
   if (props.selectState?.checkbox && !!props.href) {
     throw new Error(
