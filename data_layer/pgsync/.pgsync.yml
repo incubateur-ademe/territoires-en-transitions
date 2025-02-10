@@ -129,7 +129,6 @@ groups:
     - plan_action_type
     - axe # Axe reference panier
     - fiche_action
-    - action_relation
     - fiche_action_axe
     - fiche_action_thematique
     - fiche_action_sous_thematique
@@ -152,4 +151,4 @@ data_rules:
   phone: null
   telephone: null
   encrypted_password: 
-    value: $2a$10$zHta6/ak2n7cONYwYodHJOJ0cmnhyXKUomwX0D4X0j3sQqWfXNs0C
+    value: $2a$10$7KKJgeM7.RzpTRX7eAWUluh6PsfJ6yy1EFm5uK2XTUUhC98nz.CG2
