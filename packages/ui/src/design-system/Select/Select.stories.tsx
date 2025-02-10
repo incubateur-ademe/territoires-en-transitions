@@ -267,7 +267,9 @@ export const CreateOption: Story = {
               getFlatOptions(options).filter((o) => o.value !== value)
             );
             setValues(
-              values.length > 1 ? values.filter((v) => v !== value) : undefined
+              values && values.length > 1
+                ? values.filter((v) => v !== value)
+                : undefined
             );
           },
         }}
@@ -326,7 +328,7 @@ export const WithField: Story = {
         title="Description de l'action"
         hint="Texte description additionnel"
         state="info"
-        message="Message d’information"
+        message="Message d'information"
       >
         <Select
           {...args}
