@@ -9,6 +9,7 @@ on:
         description: Quel environnement ?
         options:
           - preprod
+          - staging
           - prod
 
 jobs:
