@@ -1,6 +1,6 @@
 import { FetchFiltre } from '@/api/indicateurs';
+import { useIndicateursFavorisCount } from '@/app/app/pages/collectivite/Indicateurs/data/use-indicateurs-favoris-count';
 import EmptyIndicateurFavori from '@/app/app/pages/collectivite/Indicateurs/IndicateursCollectivite/EmptyIndicateurFavori';
-import { useIndicateursFavorisCollectiviteIds } from '@/app/app/pages/collectivite/Indicateurs/IndicateursCollectivite/useIndicateursFavorisCollectiviteIds';
 import IndicateursListe from '@/app/app/pages/collectivite/Indicateurs/lists/indicateurs-list';
 import { indicateursNameToParams } from '@/app/app/pages/collectivite/Indicateurs/lists/utils';
 import MenuFiltresTousLesIndicateurs from '@/app/app/pages/collectivite/Indicateurs/TousLesIndicateurs/MenuFiltresTousLesIndicateurs';
@@ -23,7 +23,7 @@ const IndicateursCollectivite = () => {
 
   const [isNewIndicateurOpen, setIsNewIndicateurOpen] = useState(false);
 
-  const { data } = useIndicateursFavorisCollectiviteIds();
+  const { data: count } = useIndicateursFavorisCount();
 
   const [filters, setFilters] = useSearchParams<FetchFiltre>(
     makeCollectiviteIndicateursCollectiviteUrl({
@@ -61,7 +61,7 @@ const IndicateursCollectivite = () => {
             </>
           )}
         </div>
-        {data?.count === 0 ? (
+        {!count ? (
           <EmptyIndicateurFavori />
         ) : (
           <IndicateursListe
