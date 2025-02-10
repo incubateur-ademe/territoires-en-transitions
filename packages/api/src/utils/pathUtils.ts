@@ -1,3 +1,5 @@
+import { ENV } from '../environmentVariables';
+
 /**
  * URL DES MODULES SUIVANT L'ENVIRONNEMENT
  *
@@ -61,7 +63,7 @@ export const getRootDomain = (hostname: string) => {
  * @returns
  */
 export const getAuthPaths = (redirect_to: string) => {
-  const base = process.env.NEXT_PUBLIC_AUTH_URL;
+  const base = ENV.app_url;
   const params = new URLSearchParams({ redirect_to });
   return {
     base,
@@ -102,5 +104,9 @@ export const getCollectivitePlanPath = (
 export const getRejoindreCollectivitePath = (originUrl: string) => {
   const searchParams = new URLSearchParams({ redirect_to: originUrl });
   const url = new URL(originUrl);
-  return getAuthUrl('/rejoindre-une-collectivite', searchParams, url.hostname).toString();
+  return getAuthUrl(
+    '/rejoindre-une-collectivite',
+    searchParams,
+    url.hostname
+  ).toString();
 };
