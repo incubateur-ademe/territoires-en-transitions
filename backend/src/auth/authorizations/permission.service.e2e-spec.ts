@@ -2,8 +2,6 @@ import { dcpTable } from '@/backend/auth';
 import { PermissionOperation } from '@/backend/auth/authorizations/permission-operation.enum';
 import { PermissionService } from '@/backend/auth/authorizations/permission.service';
 import { ResourceType } from '@/backend/auth/authorizations/resource-type.enum';
-import { utilisateurSupportTable } from '@/backend/auth/authorizations/roles/utilisateur-support.table';
-import { utilisateurVerifieTable } from '@/backend/auth/authorizations/roles/utilisateur-verifie.table';
 import { AuthenticatedUser } from '@/backend/auth/models/auth.models';
 import { collectiviteTable } from '@/backend/collectivites';
 import {
@@ -15,6 +13,7 @@ import {
 import { DatabaseService } from '@/backend/utils';
 import { INestApplication } from '@nestjs/common';
 import { eq } from 'drizzle-orm';
+import { RoleUpdateService } from '@/backend/auth/authorizations/roles/role-update.service';
 
 describe('Gestion des droits', () => {
   let app: INestApplication;
@@ -22,10 +21,12 @@ describe('Gestion des droits', () => {
   let yoloDodoUser: AuthenticatedUser;
   let youlouDoudouUser: AuthenticatedUser;
   let databaseService: DatabaseService;
+  let roleUpdateService : RoleUpdateService;
 
   beforeAll(async () => {
     app = await getTestApp();
     permissionService = app.get(PermissionService);
+    roleUpdateService  = app.get(RoleUpdateService);
     yoloDodoUser = await getAuthUser();
     youlouDoudouUser = await getAuthUser(YOULOU_DOUDOU);
     databaseService = await getTestDatabase(app);
@@ -44,10 +45,7 @@ describe('Gestion des droits', () => {
       ).toBeTruthy;
     });
     test('Utilisateur non vérifié -> NOK', async () => {
-      await databaseService.db
-        .update(utilisateurVerifieTable)
-        .set({ verifie: false })
-        .where(eq(utilisateurVerifieTable.userId, yoloDodoUser.id));
+      await roleUpdateService.setVerified(yoloDodoUser.id, false);
       expect(
         await permissionService.isAllowed(
           yoloDodoUser,
@@ -60,10 +58,7 @@ describe('Gestion des droits', () => {
 
       onTestFinished(async () => {
         try {
-          await databaseService.db
-            .update(utilisateurVerifieTable)
-            .set({ verifie: true })
-            .where(eq(utilisateurVerifieTable.userId, yoloDodoUser.id));
+          await roleUpdateService.setVerified(yoloDodoUser.id, true)
         } catch (error) {
           console.error('Erreur lors de la remise à zéro des données.', error);
         }
@@ -110,10 +105,7 @@ describe('Gestion des droits', () => {
     });
 
     test('Utilisateur non vérifié sur sa collectivité -> OK', async () => {
-      await databaseService.db
-        .update(utilisateurVerifieTable)
-        .set({ verifie: false })
-        .where(eq(utilisateurVerifieTable.userId, yoloDodoUser.id));
+      await roleUpdateService.setVerified(yoloDodoUser.id, false)
       expect(
         await permissionService.isAllowed(
           yoloDodoUser,
@@ -126,10 +118,7 @@ describe('Gestion des droits', () => {
 
       onTestFinished(async () => {
         try {
-          await databaseService.db
-            .update(utilisateurVerifieTable)
-            .set({ verifie: true })
-            .where(eq(utilisateurVerifieTable.userId, yoloDodoUser.id));
+          await roleUpdateService.setVerified(yoloDodoUser.id, true)
         } catch (error) {
           console.error('Erreur lors de la remise à zéro des données.', error);
         }
@@ -148,10 +137,7 @@ describe('Gestion des droits', () => {
       ).toBeFalsy;
     });
     test('Support sur une collectivité -> OK', async () => {
-      await databaseService.db
-        .update(utilisateurSupportTable)
-        .set({ support: true })
-        .where(eq(utilisateurSupportTable.userId, yoloDodoUser.id));
+      await roleUpdateService.setSupport(yoloDodoUser.id, true);
       expect(
         await permissionService.isAllowed(
           yoloDodoUser,
@@ -164,10 +150,7 @@ describe('Gestion des droits', () => {
 
       onTestFinished(async () => {
         try {
-          await databaseService.db
-            .update(utilisateurSupportTable)
-            .set({ support: false })
-            .where(eq(utilisateurSupportTable.userId, yoloDodoUser.id));
+          await roleUpdateService.setSupport(yoloDodoUser.id, false)
         } catch (error) {
           console.error('Erreur lors de la remise à zéro des données.', error);
         }

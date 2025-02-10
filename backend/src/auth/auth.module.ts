@@ -5,6 +5,7 @@ import { APP_GUARD } from '@nestjs/core';
 import { JwtModule } from '@nestjs/jwt';
 import { CollectivitesModule } from '../collectivites/collectivites.module';
 import { AuthGuard } from './guards/auth.guard';
+import { RoleUpdateService } from '@/backend/auth/authorizations/roles/role-update.service';
 
 @Global()
 @Module({
@@ -22,7 +23,8 @@ import { AuthGuard } from './guards/auth.guard';
     },
     PermissionService,
     RoleService,
+    RoleUpdateService,
   ],
-  exports: [PermissionService],
+  exports: [PermissionService, RoleUpdateService],
 })
 export class AuthModule {}
