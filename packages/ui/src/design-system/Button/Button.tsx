@@ -27,6 +27,7 @@ export const Button = forwardRef<
       loading,
       external,
       notification,
+      dataTest,
       // eslint-disable-next-line @typescript-eslint/no-unused-vars
       isOpen, // obligé de le déstructurer pour ne pas le passer au bouton (donnée par un élément floating-ui comme la modale)
       ...props
@@ -88,6 +89,7 @@ export const Button = forwardRef<
         <button
           ref={ref as Ref<HTMLButtonElement>}
           {...buttonProps}
+          {...(dataTest ? { 'data-test': dataTest } : {})}
           className={classNames(
             buttonClassname,
             { 'flex-row-reverse': iconPosition === 'right' },
@@ -122,6 +124,7 @@ export const Button = forwardRef<
           },
           className
         )}
+        {...(dataTest ? { 'data-test': dataTest } : {})}
         target={openInNewTab ? '_blank' : anchorProps.target}
         rel={openInNewTab ? 'noreferrer noopener' : anchorProps.rel}
         onClick={(evt) => {
