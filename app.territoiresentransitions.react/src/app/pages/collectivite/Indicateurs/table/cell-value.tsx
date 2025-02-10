@@ -1,4 +1,5 @@
 import { TCell } from '@/ui';
+import { useDebouncedCallback } from 'use-debounce';
 import { InputValue } from './input-value';
 
 // pour formater les chiffres
@@ -11,18 +12,28 @@ type CellValueProps = {
 };
 
 // Affiche une cellule du tableau (chiffre ou champ de saisie)
-export const CellValue = ({ value, readonly, onChange }: CellValueProps) => {
+export const CellValue = (props: CellValueProps) => {
+  const { readonly, onChange } = props;
+  return !readonly && onChange ? (
+    <CellValueInput {...props} />
+  ) : (
+    <CellValueReadOnly {...props} />
+  );
+};
+
+const CellValueReadOnly = ({ value }: CellValueProps) => {
   return (
-    <TCell variant={readonly ? 'number' : 'input'}>
-      {readonly ? (
-        typeof value === 'number' ? (
-          NumFormat.format(value)
-        ) : (
-          ''
-        )
-      ) : (
-        <InputValue displaySize="sm" value={value} onChange={onChange} />
-      )}
+    <TCell variant="number">
+      {typeof value === 'number' ? NumFormat.format(value) : ''}
+    </TCell>
+  );
+};
+
+const CellValueInput = ({ value, onChange }: CellValueProps) => {
+  const handleChange = useDebouncedCallback(onChange!, 500);
+  return (
+    <TCell variant="input">
+      <InputValue displaySize="sm" value={value} onChange={handleChange} />
     </TCell>
   );
 };
