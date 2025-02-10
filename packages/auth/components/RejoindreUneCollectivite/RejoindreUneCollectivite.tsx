@@ -78,9 +78,14 @@ export const RejoindreUneCollectivite = (
         }}
       >
         <FormSectionGrid>
-          <Field className="md:col-span-2" title="Nom de la collectivité *">
+          <Field
+            className="md:col-span-2"
+            title="Nom de la collectivité *"
+            hint="pas besoin de saisir CC ou Communauté de communes pour les intercommunalités par exemple"
+          >
             <Select
               dataTest="select-collectivite"
+              placeholder="Renseignez le nom et sélectionnez votre collectivité"
               debounce={500}
               options={
                 collectivites?.map((c) => ({
