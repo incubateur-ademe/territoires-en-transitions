@@ -6,13 +6,13 @@ export const useIndicateurDefinition = (indicateurId: number | string) => {
   const collectiviteId = useCollectiviteId()!;
 
   const estIdReferentiel = typeof indicateurId === 'string';
-  const { data } = trpc.indicateurs.definitions.list.useQuery({
+  const { data, ...other } = trpc.indicateurs.definitions.list.useQuery({
     collectiviteId,
     ...(estIdReferentiel
       ? { identifiantsReferentiel: [indicateurId] }
       : { indicateurIds: [indicateurId] }),
   });
-  return data?.[0];
+  return { data: data?.[0], ...other };
 };
 
 /** Charge la définition détaillée de plusieurs indicateurs */

@@ -1,3 +1,4 @@
+import SpinnerLoader from '@/app/ui/shared/SpinnerLoader';
 import { useIndicateurDefinition } from '../Indicateur/useIndicateurDefinition';
 import IndicateurLayout from './IndicateurLayout';
 
@@ -12,8 +13,9 @@ const IndicateurDetail = ({
   indicateurId,
   isPerso = false,
 }: Props) => {
-  const definition = useIndicateurDefinition(indicateurId);
+  const { data: definition, isLoading } = useIndicateurDefinition(indicateurId);
 
+  if (isLoading) return <SpinnerLoader />;
   if (!definition) return null;
 
   return <IndicateurLayout {...{ dataTest, definition, isPerso }} />;
