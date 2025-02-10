@@ -64,7 +64,7 @@ type Props = {
   menuContainerClassname?: string;
 };
 
-/** Liste de fiches action avec tri et options de fitlre */
+/** Liste d'indicateurs avec tri et options de fitlre */
 const IndicateursListe = ({
   pageName,
   sortSettings = {

@@ -27,6 +27,13 @@ export const useFilteredIndicateurDefinitions = (
     delete options.filtre?.text; // Delete it, search is done locally for now due to backend reasons
   }
 
+  if (options.filtre?.estFavorisCollectivite) {
+    // pour le filtre "favoris" (page "Indicateurs de la collectivité") il faut
+    // désactiver l'agrégation pour que ce soit bien les indicateurs enfants mis
+    // en favoris qui remontent et non pas leur parent
+    options.filtre.withChildren = true;
+  }
+
   const { data, error, isLoading } = trpc.indicateurs.list.useQuery(
     {
       collectiviteId: collectiviteId!,
