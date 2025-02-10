@@ -34,7 +34,7 @@ const variantToGrid: Record<ChartVariant, GridComponentOption> = {
 };
 
 /** Data issues de l'api pour générer les données formatées pour echarts */
-export type IndicateurChartData = {
+type IndicateurChartData = {
   /** Unité affichée pour l'axe des abscisses et le tooltip */
   unite?: string;
   /** Valeurs de l'indicateur  */
