@@ -6,7 +6,6 @@ import { Button } from '@/ui';
 import Chart from './Chart';
 import { fakeComplexeDonutData, fakeSimpleDonutData } from './Donut/fixtures';
 import { additionalInfos, fakeChartInfos } from './fixtures';
-import { fakeManyXLineData } from './Line/fixtures';
 
 const meta: Meta<typeof Chart> = {
   component: Chart,
@@ -49,11 +48,6 @@ export const Charts: Story = {
           }}
         />
         <div className="h-px bg-grey-4" />
-        <Chart
-          line={{
-            chart: { data: fakeManyXLineData },
-          }}
-        />
       </div>
     );
   },
@@ -61,7 +55,6 @@ export const Charts: Story = {
 
 export const Download = () => {
   const [donutOpen, setDonutOpen] = useState(false);
-  const [lineOpen, setLineOpen] = useState(false);
   return (
     <div className="flex flex-col gap-6">
       <div className="w-80">
@@ -82,40 +75,6 @@ export const Download = () => {
               setIsOpen: setDonutOpen,
             },
             fileName: 'donut-chart',
-            additionalInfos,
-          }}
-        />
-      </div>
-      <div className="h-px bg-grey-4" />
-      <div>
-        <Button
-          icon="zoom-in-line"
-          size="sm"
-          variant="outlined"
-          onClick={() => setLineOpen(true)}
-          className="mb-6"
-        />
-        <Chart
-          line={{
-            chart: {
-              data: fakeManyXLineData,
-              colors: { datum: 'color' },
-              axisLeftLegend: 'Nombre de yolo en kw/h',
-            },
-            modalChart: {
-              axisBottom: {
-                tickValues: 5,
-              },
-            },
-          }}
-          infos={{
-            ...fakeChartInfos,
-            modal: {
-              isOpen: lineOpen,
-              setIsOpen: setLineOpen,
-              size: 'xl',
-            },
-            fileName: 'line-chart',
             additionalInfos,
           }}
         />

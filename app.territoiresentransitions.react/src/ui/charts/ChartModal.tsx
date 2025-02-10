@@ -3,11 +3,10 @@ import { Modal } from '@/ui';
 import DownloadCanvasButton from '@/app/ui/buttons/DownloadCanvasButton';
 import { ChartProps } from './Chart';
 import DonutChart from './Donut/DonutChart';
-import LineChart from './Line/LineChart';
 
 /** Modale qui présente le graphique complet et permet de le télécharger */
 const ChartModal = (props: ChartProps) => {
-  const { infos, line, donut, onDownload } = props;
+  const { infos, donut, onDownload } = props;
 
   // Si la modale est ouverte alors elle est forcément définie
   const modal = infos?.modal;
@@ -47,16 +46,6 @@ const ChartModal = (props: ChartProps) => {
             >
               Télécharger
             </DownloadCanvasButton>
-          )}
-          {line && (
-            <LineChart
-              {...line.chart}
-              legend={{
-                ...legendBase,
-                ...line.chart.legend,
-              }}
-              {...line.modalChart}
-            />
           )}
           {donut && (
             <DonutChart
