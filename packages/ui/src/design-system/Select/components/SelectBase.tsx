@@ -257,7 +257,7 @@ const SelectButton = forwardRef(
       isOpen,
       options,
       values,
-      maxBadgesToShow,
+      maxBadgesToShow = 1,
       onChange,
       inputValue,
       isSearcheable,
@@ -281,12 +281,13 @@ const SelectButton = forwardRef(
 
     const firstValueDisabled = firstValue?.disabled ?? false;
 
-    // TODO: refactor to simplify the code and use custom hidden count everywhere?
     const displayBadges = (values: OptionValue[]) => {
-      if (maxBadgesToShow) {
-        const badgesToDisplay = values
-          .slice(0, maxBadgesToShow)
-          .map((value) => (
+      const badgesToDisplay = values
+        .slice(0, maxBadgesToShow)
+        .map((value) =>
+          customItem && firstValue ? (
+            customItem(firstValue)
+          ) : (
             <Badge
               state={
                 firstValueDisabled
@@ -301,48 +302,17 @@ const SelectButton = forwardRef(
               title={getOptionLabel(value, getFlatOptions(options)) ?? ''}
               onClose={() => !disabled && onChange(value)}
             />
-          ));
-        if (values.length > maxBadgesToShow) {
-          return (
-            <>
-              {badgesToDisplay}
-              <Badge
-                title={`+${values.length - maxBadgesToShow}`}
-                state="info"
-              />
-            </>
-          );
-        }
-        return badgesToDisplay;
+          )
+        );
+      if (values.length > maxBadgesToShow) {
+        return (
+          <>
+            {badgesToDisplay}
+            <Badge title={`+${values.length - maxBadgesToShow}`} state="info" />
+          </>
+        );
       }
-      return (
-        <>
-          {customItem && firstValue ? (
-            // Item custom
-            customItem(firstValue)
-          ) : (
-            // Badge par défaut
-            <Badge
-              state={
-                firstValueDisabled
-                  ? 'grey'
-                  : createProps &&
-                    firstValue &&
-                    createProps.userCreatedOptions.includes(firstValue.value)
-                  ? 'standard'
-                  : 'default'
-              }
-              light={firstValueDisabled ?? undefined}
-              disabled={firstValueDisabled}
-              title={getOptionLabel(values[0], getFlatOptions(options)) ?? ''}
-              onClose={() => !disabled && onChange(values[0])}
-            />
-          )}
-          {values.length > 1 && (
-            <Badge title={`+${values.length - 1}`} state="info" />
-          )}
-        </>
-      );
+      return badgesToDisplay;
     };
 
     return (
