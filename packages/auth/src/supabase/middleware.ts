@@ -10,6 +10,8 @@ export async function updateSessionOrRedirect(request: NextRequest) {
     request,
   });
 
+  const url = request.nextUrl.clone();
+
   const supabase = await createClient(request, supabaseResponse);
 
   // IMPORTANT: Avoid writing any logic between createServerClient and
@@ -46,8 +48,6 @@ export async function updateSessionOrRedirect(request: NextRequest) {
     user_id: user.id,
   });
 
-  const url = request.nextUrl.clone();
-
   // Authorize `/signup` route for the authenticated user
   // to allow the redirect below to work.
   if (!userDetails && url.pathname.startsWith('/signup')) {
@@ -65,7 +65,10 @@ export async function updateSessionOrRedirect(request: NextRequest) {
 
   // If user is authenticated and has filled her personal data
   // the only remaining allowed route is to join a collectivity
-  if (url.pathname.startsWith('/rejoindre-une-collectivite')) {
+  if (
+    url.pathname.startsWith('/rejoindre-une-collectivite') ||
+    url.pathname.startsWith('/login')
+  ) {
     return supabaseResponse;
   }
 

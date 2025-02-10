@@ -1,4 +1,6 @@
 import { isAllowedOrigin } from '@/api';
+import { ENV } from '@/api/environmentVariables';
+import { getRootDomain } from '@/api/utils/pathUtils';
 import { NextRequest } from 'next/server';
 import { updateSessionOrRedirect } from './src/supabase/middleware';
 
@@ -9,6 +11,13 @@ import { updateSessionOrRedirect } from './src/supabase/middleware';
  *
  */
 export async function middleware(request: NextRequest) {
+  const url = request.nextUrl;
+
+  // Get the hostname of the request, e.g. 'app.territoiresentransitions.fr'
+  // We cannot simply use `url.hostname` because it returns '0.0.0.0' in Docker environment
+  url.hostname = request.headers.get('host') ?? url.hostname;
+  url.port = ENV.node_env !== 'development' ? '443' : url.port;
+
   // Génère un id unique à chaque requête
   const nonce = Buffer.from(crypto.randomUUID()).toString('base64');
 
@@ -37,7 +46,7 @@ export async function middleware(request: NextRequest) {
     connect-src 'self'
       ${process.env.NEXT_PUBLIC_SUPABASE_URL!}
       ${process.env.NEXT_PUBLIC_SUPABASE_URL!.replace('http', 'ws')}
-      ws://${request.nextUrl.host}
+      *.${getRootDomain(url.hostname)}
       *.posthog.com;
     base-uri 'self';
     form-action 'self';
