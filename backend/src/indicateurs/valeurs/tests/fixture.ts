@@ -2,6 +2,7 @@ import { IndicateurDefinition } from '../../index-domain';
 
 export const indicateur1: IndicateurDefinition = {
   id: 456,
+  version: '1.0.0',
   groupementId: null,
   collectiviteId: null,
   identifiantReferentiel: 'cae_1.c',
@@ -19,10 +20,12 @@ export const indicateur1: IndicateurDefinition = {
   createdAt: '2024-08-12T12:07:14.638Z',
   modifiedBy: null,
   createdBy: null,
+  precision: 2,
 };
 
 export const indicateur2: IndicateurDefinition = {
   id: 457,
+  version: '1.0.0',
   groupementId: null,
   collectiviteId: null,
   identifiantReferentiel: 'cae_1.d',
@@ -40,10 +43,12 @@ export const indicateur2: IndicateurDefinition = {
   createdAt: '2024-08-12T12:07:14.638Z',
   modifiedBy: null,
   createdBy: null,
+  precision: 2,
 };
 
 export const indicateur3: IndicateurDefinition = {
   id: 458,
+  version: '1.0.0',
   groupementId: null,
   collectiviteId: null,
   identifiantReferentiel: 'cae_1.e',
@@ -62,4 +67,5 @@ export const indicateur3: IndicateurDefinition = {
   createdAt: '2024-08-12T12:07:14.638Z',
   modifiedBy: null,
   createdBy: null,
+  precision: 2,
 };

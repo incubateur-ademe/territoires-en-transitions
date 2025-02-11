@@ -18,6 +18,16 @@ describe('ExpressionParserService', () => {
     expressionParserService = moduleRef.get(ExpressionParserService);
   });
 
+  describe('parseExpression', () => {
+    it('score(cae_1.2.3) + score(cae_1.2.4)', async () => {
+      expect(
+        expressionParserService.parseExpression(
+          'score(cae_1.2.3) + score(cae_1.2.4)'
+        )
+      ).toBeTruthy();
+    });
+  });
+
   describe('parseAndEvaluateExpression', () => {
     it('si VRAI alors 2', async () => {
       expect(

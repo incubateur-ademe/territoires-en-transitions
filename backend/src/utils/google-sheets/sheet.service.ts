@@ -1,5 +1,6 @@
 import { HttpException, HttpStatus, Injectable, Logger } from '@nestjs/common';
 import { Options, default as retry } from 'async-retry';
+import { isNil } from 'es-toolkit';
 import { Response } from 'express';
 import * as gaxios from 'gaxios';
 import * as auth from 'google-auth-library';
@@ -227,6 +228,43 @@ export default class SheetService {
     }, this.RETRY_STRATEGY) as Promise<T>;
   }
 
+  getRecordRowToWrite(record: any, header: string[]): any[] {
+    const row: any[] = [];
+    header.forEach((fieldName) => {
+      if (record[fieldName] !== undefined && record[fieldName] !== null) {
+        if (Array.isArray(record[fieldName])) {
+          row.push(record[fieldName].join(', '));
+        } else {
+          row.push(record[fieldName]);
+        }
+      } else {
+        row.push('');
+      }
+    });
+    return row;
+  }
+
+  async overwriteTypedDataToSheet<T>(
+    spreadhsheetId: string,
+    header: (keyof T)[],
+    data: T[],
+    sheetName?: string,
+    valueInputOption?: SheetValueInputOption
+  ) {
+    const stringHeader = header as string[];
+    const range = this.getDefaultRangeFromHeader(stringHeader, sheetName);
+    const rowDataToWrite: any[][] = data.map((record) =>
+      this.getRecordRowToWrite(record, stringHeader)
+    );
+    const allData = [header, ...rowDataToWrite];
+    return this.overwriteRawDataToSheet(
+      spreadhsheetId,
+      range,
+      allData,
+      valueInputOption
+    );
+  }
+
   async overwriteRawDataToSheet(
     spreadsheetId: string,
     range: string,
@@ -272,7 +310,8 @@ export default class SheetService {
     spreadsheetId: string,
     schema: z.ZodObject<any>,
     range?: string,
-    idProperties?: string[]
+    idProperties?: (keyof T)[],
+    templateData?: Partial<T>
   ): Promise<{ data: T[]; header: string[] | null }> {
     const expectedHeader = getPropertyPaths(schema);
     this.logger.log(
@@ -294,69 +333,77 @@ export default class SheetService {
     if (readDataResult.data) {
       header = readDataResult.data[0];
       for (let iRow = 1; iRow < readDataResult.data.length; iRow++) {
-        const dataRecord: any = {};
+        const dataRecord: any = { ...templateData };
         const row = readDataResult.data[iRow];
-        for (let iField = 0; iField < row.length; iField++) {
-          if (header[iField]) {
-            const fieldName = header[iField].trim();
-            const fieldNameSchema = expectedHeader.find(
-              (header) => header.toLowerCase() === fieldName.toLowerCase()
-            );
-            let fieldDef =
-              fieldNameSchema && schema.shape
-                ? schema.shape[fieldNameSchema]
-                : null;
-            if (fieldDef instanceof z.ZodOptional) {
-              fieldDef = fieldDef.unwrap();
-            }
-            if (fieldDef instanceof z.ZodNullable) {
-              fieldDef = fieldDef.unwrap();
-            }
-            // Skip empty fields, warning: 0 is not empty
-            if (
-              fieldNameSchema &&
-              row[iField] !== undefined &&
-              row[iField] !== null &&
-              row[iField] !== ''
-            ) {
-              let value: string | number | boolean = `${row[iField]}`.trim();
-              // Always save original field name, to be able to keep it for debugging
-              _.set(dataRecord, fieldNameSchema, value);
-
-              //logger.info(`Found field ${fieldName} with value ${row[iField]}`);
-
-              // try to parse as float
-              if (fieldDef instanceof z.ZodNumber) {
-                // Remove spaces
-                const valueWithoutSpace = value.replace(/\s/g, '');
-                //console.log(valueWithoutSpace);
-                let floatValue = parseFloat(valueWithoutSpace);
-                if (!isNaN(floatValue)) {
-                  //console.log(`Parsed as float ${floatValue}`);
-                  // Try to replace , by .
-                  floatValue = parseFloat(valueWithoutSpace.replace(/,/g, '.'));
-                  //console.log(`Parsed as float ${floatValue}`);
-                  const floatValueStr = floatValue.toString();
-                  if (
-                    fieldNameSchema ||
-                    floatValueStr.length === value.length
-                  ) {
-                    value = floatValue;
-                  }
-                }
-              } else if (fieldDef instanceof z.ZodBoolean) {
-                // Remove spaces
-                const valueWithoutSpace = value
-                  .replace(/\s/g, '')
-                  .toLowerCase();
-                value = valueWithoutSpace === 'true' ? true : false;
+        const emptyRow = row.every(
+          (cell) =>
+            isNil(cell) || cell === '' || cell?.toLowerCase() === 'false'
+        );
+        if (!emptyRow) {
+          for (let iField = 0; iField < row.length; iField++) {
+            if (header[iField]) {
+              const fieldName = header[iField].trim();
+              const fieldNameSchema = expectedHeader.find(
+                (header) => header.toLowerCase() === fieldName.toLowerCase()
+              );
+              let fieldDef =
+                fieldNameSchema && schema.shape
+                  ? schema.shape[fieldNameSchema]
+                  : null;
+              if (fieldDef instanceof z.ZodOptional) {
+                fieldDef = fieldDef.unwrap();
               }
-              _.set(dataRecord, fieldNameSchema, value);
+              if (fieldDef instanceof z.ZodNullable) {
+                fieldDef = fieldDef.unwrap();
+              }
+              // Skip empty fields, warning: 0 is not empty
+              if (
+                fieldNameSchema &&
+                row[iField] !== undefined &&
+                row[iField] !== null &&
+                row[iField] !== ''
+              ) {
+                let value: string | number | boolean = `${row[iField]}`.trim();
+                // Always save original field name, to be able to keep it for debugging
+                _.set(dataRecord, fieldNameSchema, value);
+
+                //logger.info(`Found field ${fieldName} with value ${row[iField]}`);
+
+                // try to parse as float
+                if (fieldDef instanceof z.ZodNumber) {
+                  // Remove spaces
+                  const valueWithoutSpace = value.replace(/\s/g, '');
+                  //console.log(valueWithoutSpace);
+                  let floatValue = parseFloat(valueWithoutSpace);
+                  if (!isNaN(floatValue)) {
+                    //console.log(`Parsed as float ${floatValue}`);
+                    // Try to replace , by .
+                    floatValue = parseFloat(
+                      valueWithoutSpace.replace(/,/g, '.')
+                    );
+                    //console.log(`Parsed as float ${floatValue}`);
+                    const floatValueStr = floatValue.toString();
+                    if (
+                      fieldNameSchema ||
+                      floatValueStr.length === value.length
+                    ) {
+                      value = floatValue;
+                    }
+                  }
+                } else if (fieldDef instanceof z.ZodBoolean) {
+                  // Remove spaces
+                  const valueWithoutSpace = value
+                    .replace(/\s/g, '')
+                    .toLowerCase();
+                  value = valueWithoutSpace === 'true' ? true : false;
+                }
+                _.set(dataRecord, fieldNameSchema, value);
+              }
             }
           }
         }
 
-        if (Object.keys(dataRecord).length > 0) {
+        if (!emptyRow && Object.keys(dataRecord).length > 0) {
           // lines without id are ignored
           let missingIdProperties = false;
           if (idProperties) {

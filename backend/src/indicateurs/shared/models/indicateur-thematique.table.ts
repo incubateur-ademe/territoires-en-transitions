@@ -1,4 +1,5 @@
 import { thematiqueTable } from '@/domain/shared';
+import { InferInsertModel, InferSelectModel } from 'drizzle-orm';
 import { integer, pgTable, primaryKey } from 'drizzle-orm/pg-core';
 import { indicateurDefinitionTable } from './indicateur-definition.table';
 
@@ -24,3 +25,10 @@ export const indicateurThematiqueTable = pgTable(
     };
   }
 );
+
+export type IndicateurThematique = InferSelectModel<
+  typeof indicateurThematiqueTable
+>;
+export type CreateIndicateurThematique = InferInsertModel<
+  typeof indicateurThematiqueTable
+>;

@@ -31,8 +31,8 @@ export class AllExceptionsFilter extends BaseExceptionFilter {
     const response = ctx.getResponse<Response>();
     const request = ctx.getRequest<Request>();
 
-    // Log the error
-    this.logger.error(exception);
+    // Log the error using json string to have full details
+    this.logger.error(JSON.stringify(exception));
 
     const httpErrorResponse = getHttpErrorResponse(exception);
     httpErrorResponse.path = request.url;

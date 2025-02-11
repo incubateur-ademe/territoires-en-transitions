@@ -7,6 +7,10 @@ import {
   PersonnalisationType,
 } from '@/backend/personnalisations/models/personnalisation.table';
 import ExpressionParserService from '@/backend/personnalisations/services/expression-parser.service';
+import {
+  changelogSchema,
+  ChangelogType,
+} from '@/backend/shared/models/changelog.dto';
 import { DatabaseService } from '@/backend/utils';
 import ConfigurationService from '@/backend/utils/config/configuration.service';
 import SheetService from '@/backend/utils/google-sheets/sheet.service';
@@ -53,10 +57,6 @@ import {
   CreateReferentielTagType,
   referentielTagTable,
 } from '../models/referentiel-tag.table';
-import {
-  ReferentielChangelog,
-  referentielChangelogSchema,
-} from './referentiel-changelog.dto';
 
 export enum ImportActionDefinitionCoremeasureType {
   COREMEASURE = 'coremeasure',
@@ -124,12 +124,12 @@ export default class ImportReferentielService {
 
     await this.createReferentielTagsIfNeeded();
 
-    let changeLogVersions: ReferentielChangelog[] = [];
+    let changeLogVersions: ChangelogType[] = [];
     try {
       const changelogData =
-        await this.sheetService.getDataFromSheet<ReferentielChangelog>(
+        await this.sheetService.getDataFromSheet<ChangelogType>(
           spreadsheetId,
-          referentielChangelogSchema,
+          changelogSchema,
           CHANGELOG_SPREADSHEET_RANGE,
           ['version']
         );

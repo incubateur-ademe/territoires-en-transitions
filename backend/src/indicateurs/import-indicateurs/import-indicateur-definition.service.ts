@@ -1,0 +1,521 @@
+import {
+  CreateIndicateurActionType,
+  indicateurActionTable,
+} from '@/backend/indicateurs/shared/models/indicateur-action.table';
+import {
+  CreateIndicateurCategorieTag,
+  indicateurCategorieTagTable,
+} from '@/backend/indicateurs/shared/models/indicateur-categorie-tag.table';
+import {
+  CreateIndicateurGroupe,
+  indicateurGroupeTable,
+} from '@/backend/indicateurs/shared/models/indicateur-groupe.table';
+import {
+  CreateIndicateurThematique,
+  indicateurThematiqueTable,
+} from '@/backend/indicateurs/shared/models/indicateur-thematique.table';
+import { DatabaseService } from '@/backend/utils';
+import {
+  categorieTagTable,
+  CreateCategorieTagType,
+} from '@/domain/collectivites';
+import { indicateurDefinitionTable } from '@/domain/indicateurs';
+import { actionRelationTable } from '@/domain/referentiels';
+import { CreateThematiqueType, thematiqueTable } from '@/domain/shared';
+import { HttpException, HttpStatus, Injectable, Logger } from '@nestjs/common';
+import { DepGraph } from 'dependency-graph';
+import DOMPurify from 'dompurify';
+import { inArray } from 'drizzle-orm';
+import { JSDOM } from 'jsdom';
+import { omit } from 'lodash';
+import { parse } from 'marked';
+import TurndownService from 'turndown';
+import BaseSpreadsheetImporterService from '../../shared/services/base-spreadsheet-importer.service';
+import ConfigurationService from '../../utils/config/configuration.service';
+import { buildConflictUpdateColumns } from '../../utils/database/conflict.utils';
+import SheetService from '../../utils/google-sheets/sheet.service';
+import { getErrorMessage } from '../../utils/nest/errors.utils';
+import ListDefinitionsService from '../definitions/list-definitions.service';
+import IndicateurValeurExpressionParserService from '../valeurs/indicateur-valeur-expression-parser.service';
+import {
+  importIndicateurDefinitionSchema,
+  ImportIndicateurDefinitionType,
+} from './import-indicateur-definition.dto';
+
+type GetReferentielIndicateurDefinitionsReturnType = Awaited<
+  ReturnType<ListDefinitionsService['getReferentielIndicateurDefinitions']>
+>;
+
+const { window } = new JSDOM('<!DOCTYPE html>');
+const domPurify = DOMPurify(window);
+const turndownService = new TurndownService({
+  bulletListMarker: '-',
+});
+
+@Injectable()
+export default class ImportIndicateurDefinitionService extends BaseSpreadsheetImporterService {
+  /**
+   * Number of decimal in order to round the value
+   */
+  static DEFAULT_ROUNDING_PRECISION = 2;
+
+  private readonly INDICATEUR_DEFINITIONS_SPREADSHEET_NAME =
+    'Indicateur definitions';
+
+  private readonly INDICATEUR_DEFINITIONS_SPREADSHEET_HEADER: (keyof ImportIndicateurDefinitionType)[] =
+    [
+      'identifiantReferentiel',
+      'titre',
+      'unite',
+      'titreCourt',
+      'titreLong',
+      'parents',
+      'categories',
+      'thematiques',
+      'actionIds',
+      'valeurCalcule',
+      'participationScore',
+      'sansValeurUtilisateur',
+      'borneMin',
+      'borneMax',
+      'precision',
+      'description',
+    ];
+
+  constructor(
+    private readonly configurationService: ConfigurationService,
+    private readonly indicateurDefinitionService: ListDefinitionsService,
+    private readonly indicateurValeurExpressionParserService: IndicateurValeurExpressionParserService,
+    private readonly databaseService: DatabaseService,
+    sheetService: SheetService
+  ) {
+    super(new Logger(ImportIndicateurDefinitionService.name), sheetService);
+  }
+
+  getSpreadsheetId(): string {
+    const spreadsheetId = this.configurationService.get(
+      'INDICATEUR_DEFINITIONS_SHEET_ID'
+    );
+    if (!spreadsheetId) {
+      throw new HttpException(
+        `Indicateur defintions cannot be imported, missing configuration`,
+        HttpStatus.INTERNAL_SERVER_ERROR
+      );
+    }
+    return spreadsheetId;
+  }
+
+  async fillSpreadsheetWithIndicateurDefinitions(): Promise<{
+    data: ImportIndicateurDefinitionType[];
+  }> {
+    const indicateurDefinitions =
+      await this.indicateurDefinitionService.getReferentielIndicateurDefinitions();
+    const importIndicateurDefinitions = indicateurDefinitions.map(
+      (indicateur) => {
+        const importIndicateurDefinitions: ImportIndicateurDefinitionType =
+          omit(
+            indicateur,
+            'thematiques',
+            'actions',
+            'categories',
+            'parents',
+            'groupementId',
+            'collectiviteId',
+            'modifiedAt',
+            'modifiedBy',
+            'createdAt',
+            'createdBy',
+            'id'
+          ) as ImportIndicateurDefinitionType; // we are sure in this case that identifiantReferentiel is defined
+
+        if (importIndicateurDefinitions.description) {
+          importIndicateurDefinitions.description = turndownService.turndown(
+            importIndicateurDefinitions.description
+          );
+        }
+        const thematiqueMids: string[] = indicateur.thematiques
+          ?.filter((thematique) => Boolean(thematique.mdId))
+          .map((thematique) => thematique.mdId) as string[];
+        importIndicateurDefinitions.thematiques = thematiqueMids;
+
+        const categories: string[] = indicateur.categories?.map(
+          (categorie) => categorie.nom
+        );
+        importIndicateurDefinitions.categories = categories;
+
+        const actionIds: string[] = indicateur.actions?.map(
+          (action) => action.id
+        );
+        importIndicateurDefinitions.actionIds = actionIds;
+
+        const parents: string[] = indicateur.parents?.map(
+          (ind) => ind.identifiantReferentiel
+        );
+        importIndicateurDefinitions.parents = parents;
+        return importIndicateurDefinitions;
+      }
+    );
+
+    await this.sheetService.overwriteTypedDataToSheet<ImportIndicateurDefinitionType>(
+      this.getSpreadsheetId(),
+      this.INDICATEUR_DEFINITIONS_SPREADSHEET_HEADER,
+      importIndicateurDefinitions,
+      this.INDICATEUR_DEFINITIONS_SPREADSHEET_NAME
+    );
+
+    return { data: importIndicateurDefinitions };
+  }
+
+  async importIndicateurDefinitions(): Promise<GetReferentielIndicateurDefinitionsReturnType> {
+    const indicateurDefinitions =
+      await this.indicateurDefinitionService.getReferentielIndicateurDefinitions(
+        ['cae_1.a']
+      );
+
+    const spreadsheetId = this.getSpreadsheetId();
+    const lastVersion = await this.checkLastVersion(
+      indicateurDefinitions.length ? indicateurDefinitions[0].version : null
+    );
+
+    const sheetRange = this.sheetService.getDefaultRangeFromHeader(
+      this.INDICATEUR_DEFINITIONS_SPREADSHEET_HEADER,
+      this.INDICATEUR_DEFINITIONS_SPREADSHEET_NAME
+    );
+    // Create a template data to set version & initialize null properties
+    const templateData: Partial<ImportIndicateurDefinitionType> = {
+      version: lastVersion,
+      titreCourt: null,
+      titreLong: null,
+      description: null,
+      borneMin: null,
+      borneMax: null,
+      valeurCalcule: null,
+      precision: ImportIndicateurDefinitionService.DEFAULT_ROUNDING_PRECISION,
+    };
+
+    const indicateurDefinitionsData =
+      await this.sheetService.getDataFromSheet<ImportIndicateurDefinitionType>(
+        spreadsheetId,
+        importIndicateurDefinitionSchema,
+        sheetRange,
+        undefined,
+        templateData
+      );
+    this.logger.log(
+      `Found ${indicateurDefinitionsData.data.length} indicateur definitions`
+    );
+
+    return this.upsertIndicateurDefinitions(indicateurDefinitionsData.data);
+  }
+
+  async checkIndicateurDefinitions(
+    indicateurDefinitions: ImportIndicateurDefinitionType[]
+  ): Promise<void> {
+    const graph = new DepGraph();
+    indicateurDefinitions.forEach((indicateur) => {
+      if (indicateur.valeurCalcule) {
+        try {
+          const neededSourceIndicateurs =
+            this.indicateurValeurExpressionParserService.extractNeededSourceIndicateursFromFormula(
+              indicateur.valeurCalcule
+            );
+          if (
+            neededSourceIndicateurs.find(
+              (sourceIndicateur) =>
+                sourceIndicateur.identifiant ===
+                indicateur.identifiantReferentiel
+            )
+          ) {
+            throw new HttpException(
+              `Indicateur ${indicateur.identifiantReferentiel} cannot depend on itself in formula`,
+              HttpStatus.BAD_REQUEST
+            );
+          }
+
+          neededSourceIndicateurs.forEach((sourceIndicateur) => {
+            const foundIndicateur = indicateurDefinitions.find(
+              (ind) =>
+                ind.identifiantReferentiel === sourceIndicateur.identifiant
+            );
+            if (!foundIndicateur) {
+              throw new HttpException(
+                `Indicateur ${indicateur.identifiantReferentiel} depends on unknown indicateur ${sourceIndicateur.identifiant}`,
+                HttpStatus.BAD_REQUEST
+              );
+            }
+          });
+
+          this.indicateurValeurExpressionParserService.parseExpression(
+            indicateur.valeurCalcule
+          );
+
+          if (!graph.hasNode(indicateur.identifiantReferentiel)) {
+            graph.addNode(indicateur.identifiantReferentiel, {
+              formula: indicateur.valeurCalcule,
+            });
+          }
+          neededSourceIndicateurs.forEach((sourceIndicateur) => {
+            if (!graph.hasNode(sourceIndicateur.identifiant)) {
+              graph.addNode(sourceIndicateur.identifiant);
+            }
+            graph.addDependency(
+              indicateur.identifiantReferentiel,
+              sourceIndicateur.identifiant
+            );
+          });
+        } catch (e) {
+          throw new HttpException(
+            `Error parsing formula ${indicateur.valeurCalcule} for indicateur ${
+              indicateur.identifiantReferentiel
+            }: ${getErrorMessage(e)}`,
+            HttpStatus.BAD_REQUEST
+          );
+        }
+      }
+    });
+
+    try {
+      // overallOrder() will throw an error if a cycle exists
+      const order = graph.overallOrder();
+      this.logger.log(
+        `No circular dependencies detected. Order: ${order.join(', ')}`
+      );
+    } catch (e) {
+      throw new HttpException(
+        `Circular dependency detected in indicateur definitions: ${getErrorMessage(
+          e
+        )}`,
+        HttpStatus.BAD_REQUEST
+      );
+    }
+  }
+
+  async upsertIndicateurDefinitions(
+    indicateurDefinitions: ImportIndicateurDefinitionType[]
+  ): Promise<GetReferentielIndicateurDefinitionsReturnType> {
+    await this.checkIndicateurDefinitions(indicateurDefinitions);
+
+    const thematiques = await this.databaseService.db
+      .select()
+      .from(thematiqueTable);
+    const categories = await this.databaseService.db
+      .select()
+      .from(categorieTagTable);
+    const actionIds = await this.databaseService.db
+      .select()
+      .from(actionRelationTable);
+
+    // Check that existing thematiques, categories and actions are present
+    const categoriesToCreate: CreateCategorieTagType[] = [];
+    const thematiquesToCreate: CreateThematiqueType[] = [];
+    indicateurDefinitions.forEach((indicateur) => {
+      // Convert description from markdown to html
+      if (indicateur.description) {
+        const htmlDescription = parse(indicateur.description) as string;
+        indicateur.description = domPurify.sanitize(htmlDescription);
+      }
+
+      indicateur.thematiques?.forEach((thematique) => {
+        if (
+          !thematiques.find((th) => thematique === th.mdId) &&
+          !thematiquesToCreate.find((th) => thematique === th.mdId)
+        ) {
+          thematiquesToCreate.push({ nom: thematique, mdId: thematique });
+        }
+      });
+      indicateur.categories?.forEach((categorie) => {
+        if (
+          !categories.find((cat) => categorie === cat.nom) &&
+          !categoriesToCreate.find((cat) => categorie === cat.nom)
+        ) {
+          // Ok to create new categories automatically
+          categoriesToCreate.push({ nom: categorie });
+        }
+      });
+      indicateur.actionIds?.forEach((actionId) => {
+        if (!actionIds.find((act) => actionId === act.id)) {
+          throw new HttpException(
+            `Action ${actionId} not found for indicateur ${indicateur.identifiantReferentiel}`,
+            HttpStatus.BAD_REQUEST
+          );
+        }
+      });
+    });
+
+    const indicateurDefinitionsToCreate = indicateurDefinitions.map(
+      (indicateur) =>
+        omit(indicateur, 'actionIds', 'categories', 'thematiques', 'parents')
+    );
+
+    this.logger.log(
+      `Upserting ${indicateurDefinitionsToCreate.length} indicateurs with thematiques, categories and actions in a transaction`
+    );
+
+    await this.databaseService.db.transaction(async (tx) => {
+      const createdIndicateurs = await tx
+        .insert(indicateurDefinitionTable)
+        .values(indicateurDefinitionsToCreate)
+        .onConflictDoUpdate({
+          target: [indicateurDefinitionTable.identifiantReferentiel],
+          set: buildConflictUpdateColumns(indicateurDefinitionTable, [
+            'titre',
+            'titreLong',
+            'titreCourt',
+            'unite',
+            'borneMin',
+            'borneMax',
+            'collectiviteId',
+            'participationScore',
+            'sansValeurUtilisateur',
+            'description',
+            //'groupementId',
+            'valeurCalcule',
+            'modifiedAt',
+            'modifiedBy',
+            'version',
+          ]),
+        })
+        .returning();
+      const indicateurIds = createdIndicateurs.map(
+        (indicateur) => indicateur.id
+      );
+
+      // Recreate action relationships
+      const indicateurActionValues: CreateIndicateurActionType[] = [];
+      indicateurDefinitions.forEach((indicateur) => {
+        indicateur.actionIds?.forEach((actionId) => {
+          indicateurActionValues.push({
+            indicateurId: createdIndicateurs.find(
+              (ind) =>
+                ind.identifiantReferentiel === indicateur.identifiantReferentiel
+            )!.id,
+            actionId,
+          });
+        });
+      });
+      this.logger.log(
+        `Recreating ${indicateurActionValues.length} indicateur action relations`
+      );
+      await tx
+        .delete(indicateurActionTable)
+        .where(inArray(indicateurActionTable.indicateurId, indicateurIds));
+      await tx.insert(indicateurActionTable).values(indicateurActionValues);
+
+      // Recreate category relationships
+      // Add missing categories
+      if (categoriesToCreate.length) {
+        this.logger.log(
+          `Creating ${categoriesToCreate.length} missing categories`
+        );
+        const createdCategories = await tx
+          .insert(categorieTagTable)
+          .values(categoriesToCreate)
+          .returning();
+        categories.push(...createdCategories);
+      }
+      const indicateurCategorieValues: CreateIndicateurCategorieTag[] = [];
+      indicateurDefinitions.forEach((indicateur) => {
+        indicateur.categories?.forEach((categorie) => {
+          const categorieId = categories.find(
+            (cat) => cat.nom === categorie
+          )?.id;
+          if (!categorieId) {
+            throw new HttpException(
+              `Categorie ${categorieId} not found for indicateur ${indicateur.identifiantReferentiel}`,
+              HttpStatus.BAD_REQUEST
+            );
+          }
+
+          indicateurCategorieValues.push({
+            indicateurId: createdIndicateurs.find(
+              (ind) =>
+                ind.identifiantReferentiel === indicateur.identifiantReferentiel
+            )!.id,
+            categorieTagId: categorieId,
+          });
+        });
+      });
+      this.logger.log(
+        `Recreating ${indicateurCategorieValues.length} indicateur categorie relations`
+      );
+      await tx
+        .delete(indicateurCategorieTagTable)
+        .where(
+          inArray(indicateurCategorieTagTable.indicateurId, indicateurIds)
+        );
+      await tx
+        .insert(indicateurCategorieTagTable)
+        .values(indicateurCategorieValues);
+
+      // Recreate thematiques relationships
+      // Add missing thematiques
+      if (thematiquesToCreate.length) {
+        this.logger.log(
+          `Creating ${thematiquesToCreate.length} missing thematiques`
+        );
+        const createdThematiques = await tx
+          .insert(thematiqueTable)
+          .values(thematiquesToCreate)
+          .returning();
+        thematiques.push(...createdThematiques);
+      }
+      const indicateurThematiqueValues: CreateIndicateurThematique[] = [];
+      indicateurDefinitions.forEach((indicateur) => {
+        indicateur.thematiques?.forEach((thematique) => {
+          const thematiqueId = thematiques.find(
+            (them) => them.mdId === thematique || them.nom === thematique
+          )?.id;
+          if (!thematiqueId) {
+            throw new HttpException(
+              `Thematique ${thematique} not found for indicateur ${indicateur.identifiantReferentiel}`,
+              HttpStatus.BAD_REQUEST
+            );
+          }
+
+          indicateurThematiqueValues.push({
+            indicateurId: createdIndicateurs.find(
+              (ind) =>
+                ind.identifiantReferentiel === indicateur.identifiantReferentiel
+            )!.id,
+            thematiqueId: thematiqueId,
+          });
+        });
+      });
+      this.logger.log(
+        `Recreating ${indicateurThematiqueValues.length} indicateur thematique relations`
+      );
+      await tx
+        .delete(indicateurThematiqueTable)
+        .where(inArray(indicateurThematiqueTable.indicateurId, indicateurIds));
+      await tx
+        .insert(indicateurThematiqueTable)
+        .values(indicateurThematiqueValues);
+
+      // Recreate parents relationships
+      const indicateurGroupeValues: CreateIndicateurGroupe[] = [];
+      indicateurDefinitions.forEach((indicateur) => {
+        indicateur.parents?.forEach((parent) => {
+          indicateurGroupeValues.push({
+            enfant: createdIndicateurs.find(
+              (ind) =>
+                ind.identifiantReferentiel === indicateur.identifiantReferentiel
+            )!.id,
+            parent: createdIndicateurs.find(
+              (ind) => ind.identifiantReferentiel === parent
+            )!.id,
+          });
+        });
+      });
+      this.logger.log(
+        `Recreating ${indicateurGroupeValues.length} indicateur parent relations`
+      );
+      await tx
+        .delete(indicateurGroupeTable)
+        .where(inArray(indicateurGroupeTable.enfant, indicateurIds));
+      await tx.insert(indicateurGroupeTable).values(indicateurGroupeValues);
+    });
+
+    // We query again the db to get indicateurs with parents, etc.
+    return this.indicateurDefinitionService.getReferentielIndicateurDefinitions();
+  }
+}

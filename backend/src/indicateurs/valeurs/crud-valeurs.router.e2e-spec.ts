@@ -1,3 +1,8 @@
+import {
+  deleteIndicateurValeursForCollectivite,
+  getCollectiviteIdBySiren,
+  getIndicateurIdByIdentifiant,
+} from '@/backend/test';
 import { INestApplication } from '@nestjs/common';
 import { inferProcedureInput } from '@trpc/server';
 import { and, eq } from 'drizzle-orm';
@@ -25,12 +30,17 @@ describe("Route de lecture/écriture des valeurs d'indicateurs", () => {
   let router: TrpcRouter;
   let yoloDodoUser: AuthenticatedUser;
   let databaseService: DatabaseService;
+  let paysDuLaonCollectiviteId: number;
 
   beforeAll(async () => {
     app = await getTestApp();
     router = app.get(TrpcRouter);
     yoloDodoUser = await getAuthUser();
     databaseService = app.get<DatabaseService>(DatabaseService);
+    paysDuLaonCollectiviteId = await getCollectiviteIdBySiren(
+      databaseService,
+      '200043495'
+    );
   });
 
   beforeEach(async () => {
@@ -77,11 +87,12 @@ describe("Route de lecture/écriture des valeurs d'indicateurs", () => {
       collectiviteId,
       indicateurId,
       dateValeur: '2021-01-01',
-      resultat: 42,
+      resultat: 42.0001,
       resultatCommentaire: 'commentaire',
     };
     const result = await caller.indicateurs.valeurs.upsert(input);
     expect(result).not.toBe(null);
+    expect(result?.resultat).toBe(42);
 
     // vérifie le nombre de valeurs après insertion
     const resultAfter = await caller.indicateurs.valeurs.list(inputBefore);
@@ -98,7 +109,7 @@ describe("Route de lecture/écriture des valeurs d'indicateurs", () => {
       collectiviteId,
       indicateurId,
       dateValeur: '2021-01-01',
-      resultat: 42,
+      resultat: 42.0001,
       resultatCommentaire: 'commentaire',
     };
     await caller.indicateurs.valeurs.upsert(inputInsert);
@@ -118,10 +129,11 @@ describe("Route de lecture/écriture des valeurs d'indicateurs", () => {
       collectiviteId,
       indicateurId,
       id: resultBefore.indicateurs[0].sources.collectivite.valeurs[0].id,
-      resultat: 43,
+      resultat: 43.001,
     };
     const result = await caller.indicateurs.valeurs.upsert(inputUpdate);
     expect(result).not.toBe(null);
+    expect(result?.resultat).toBe(43);
 
     // vérifie le nombre de valeurs après mise à jour
     const resultAfter = await caller.indicateurs.valeurs.list(inputBefore);
@@ -163,6 +175,54 @@ describe("Route de lecture/écriture des valeurs d'indicateurs", () => {
       resultAfterObjectif.indicateurs[0].sources.collectivite.valeurs[0]
         .objectif
     ).toBe(44);
+  });
+
+  test("Valeurs calculées lors de l'insertion d'une valeur", async () => {
+    const caller = router.createCaller({ user: yoloDodoUser });
+
+    const indicateurUpsertId = await getIndicateurIdByIdentifiant(
+      databaseService,
+      'cae_1.f'
+    );
+    const indicateurCalculeId = await getIndicateurIdByIdentifiant(
+      databaseService,
+      'cae_1.k'
+    );
+
+    await deleteIndicateurValeursForCollectivite(
+      databaseService,
+      paysDuLaonCollectiviteId,
+      [indicateurCalculeId]
+    );
+
+    // vérifie le nombre de valeurs avant insertion
+    const inputBefore: InputList = {
+      collectiviteId: paysDuLaonCollectiviteId,
+      indicateurIds: [indicateurCalculeId],
+    };
+
+    const resultBefore = await caller.indicateurs.valeurs.list(inputBefore);
+    expect(resultBefore.indicateurs.length).toBe(0);
+
+    // insère une valeur
+    const input: InputUpsert = {
+      collectiviteId: paysDuLaonCollectiviteId,
+      indicateurId: indicateurUpsertId,
+      dateValeur: '2015-01-01',
+      resultat: 2.039,
+    };
+    const result = await caller.indicateurs.valeurs.upsert(input);
+    expect(result).not.toBe(null);
+    expect(result?.resultat).toBe(2.04);
+
+    // vérifie le nombre de valeurs après insertion
+    const resultAfter = await caller.indicateurs.valeurs.list(inputBefore);
+    expect(resultAfter.indicateurs[0].sources.collectivite.valeurs.length).toBe(
+      1
+    );
+    expect(
+      resultAfter.indicateurs[0].sources.collectivite.valeurs[0].resultat
+    ).toBe(2.04);
   });
 
   test("Ne permet pas d'insérer une valeur si on n'a pas le droit requis", async () => {
