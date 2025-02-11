@@ -810,3 +810,4 @@ pg_trgm_extension 2025-02-13T09:46:04Z Frederic Arnoux <frederic.arnoux@beta.gou
 collectivite/collectivite [collectivite/collectivite@v4.37.0] 2025-02-13T14:43:13Z Frederic Arnoux <frederic.arnoux@beta.gouv.fr> # Supprime la vue named_collectivite
 @v4.38.0 2025-02-14T14:00:37Z Frederic Arnoux <frederic.arnoux@beta.gouv.fr> # Tag en 4.38.0
 
+indicateur/fusion [indicateur/fusion@v4.37.0] 2025-02-12T11:04:46Z System Administrator <root@MacBook-Air-de-Thibaut-2.local> # ajoute la version dans les definitions d'indicateur

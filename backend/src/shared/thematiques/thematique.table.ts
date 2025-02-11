@@ -1,4 +1,4 @@
-import { InferSelectModel } from 'drizzle-orm';
+import { InferInsertModel, InferSelectModel } from 'drizzle-orm';
 import { pgTable, serial, text, varchar } from 'drizzle-orm/pg-core';
 import { createSelectSchema } from 'drizzle-zod';
 import z from 'zod';
@@ -8,6 +8,8 @@ export const thematiqueTable = pgTable('thematique', {
   nom: text('nom').notNull(),
   mdId: varchar('md_id'),
 });
+
+export type CreateThematiqueType = InferInsertModel<typeof thematiqueTable>;
 
 export type ThematiqueAvecAncienIdentifiantType = InferSelectModel<
   typeof thematiqueTable

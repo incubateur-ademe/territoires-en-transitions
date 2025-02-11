@@ -12,10 +12,4 @@ earthly +business-parse
 ./load_json_content.sh
 ```
 
-→ Va uploader les JSON pour referentiels, preuves, personnalisations, et indicateurs
-
-```shell
-./load_json_indicateurs.sh
-```
-
-→ Va uploader uniquement le JSON pour les indicateurs
+→ Va uploader les JSON pour referentiels, preuves, personnalisations

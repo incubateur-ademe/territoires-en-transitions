@@ -1,4 +1,5 @@
 import { actionRelationTable } from '@/domain/referentiels';
+import { InferInsertModel, InferSelectModel } from 'drizzle-orm';
 import { integer, pgTable, primaryKey, varchar } from 'drizzle-orm/pg-core';
 import { indicateurDefinitionTable } from './indicateur-definition.table';
 
@@ -21,3 +22,10 @@ export const indicateurActionTable = pgTable(
     };
   }
 );
+
+export type IndicateurActionType = InferSelectModel<
+  typeof indicateurActionTable
+>;
+export type CreateIndicateurActionType = InferInsertModel<
+  typeof indicateurActionTable
+>;

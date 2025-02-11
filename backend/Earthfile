@@ -5,9 +5,14 @@ build:
 
   COPY . ./backend
 
-  RUN pnpm build:backend
+  RUN pnpm build:backend 
 
   SAVE ARTIFACT dist /dist AS LOCAL earthly-build/dist
+
+local-seed:
+  LOCALLY
+  # Trigger import indicateur & referentiel to seed the database
+  RUN pnpm test:backend --skipNxCache src/indicateurs/import-indicateurs/import-indicateur-definition.controller.e2e-spec.ts src/referentiels/import-referentiel/import-referentiel.controller.e2e-spec.ts
 
 docker:
   FROM ../+prod-deps
@@ -33,6 +38,7 @@ deploy: ## Déploie le backend dans une app Koyeb existante
   ARG --required TRAJECTOIRE_SNBC_XLSX_ID
   ARG --required TRAJECTOIRE_SNBC_RESULT_FOLDER_ID
   ARG --required REFERENTIEL_TE_SHEET_ID
+  ARG --required INDICATEUR_DEFINITIONS_SHEET_ID
   ARG --required DEPLOYMENT_TIMESTAMP
   ARG SERVICE_NAME=$ENV_NAME-backend
   FROM ../+koyeb --KOYEB_API_KEY=$KOYEB_API_KEY
@@ -54,16 +60,13 @@ deploy: ## Déploie le backend dans une app Koyeb existante
     --env MATTERMOST_NOTIFICATIONS_WEBHOOK_URL=@MATTERMOST_NOTIFICATIONS_WEBHOOK_URL_$ENV_NAME \
     --env BREVO_API_KEY=@BREVO_API_KEY \
     --env DIRECTUS_API_KEY=@DIRECTUS_API_KEY \
-    --env REFERENTIEL_TE_SHEET_ID=$REFERENTIEL_TE_SHEET_ID
+    --env REFERENTIEL_TE_SHEET_ID=$REFERENTIEL_TE_SHEET_ID \
+    --env INDICATEUR_DEFINITIONS_SHEET_ID=$INDICATEUR_DEFINITIONS_SHEET_ID
 
 test-build: ## construit une image pour exécuter les tests du backend
     FROM ../+front-deps
     COPY . ./backend
     
-    #FROM ../+prod-deps
-    #ENV SUPABASE_URL
-    #ENV SUPABASE_ANON_KEY
-    #ENV SUPABASE_SERVICE_ROLE_KEY
     # la commande utilisée pour lancer les tests
     CMD pnpm --version && pnpm run test:backend
     SAVE IMAGE backend-test:latest
@@ -73,6 +76,7 @@ test: ## lance les tests
     ARG --required TRAJECTOIRE_SNBC_XLSX_ID
     ARG --required TRAJECTOIRE_SNBC_RESULT_FOLDER_ID
     ARG --required REFERENTIEL_TE_SHEET_ID
+    ARG --required INDICATEUR_DEFINITIONS_SHEET_ID
     ARG --required GCLOUD_SERVICE_ACCOUNT_KEY
     ARG --required SUPABASE_DATABASE_URL
     ARG --required SUPABASE_URL
@@ -91,6 +95,7 @@ test: ## lance les tests
         --env TRAJECTOIRE_SNBC_XLSX_ID=$TRAJECTOIRE_SNBC_XLSX_ID \
         --env TRAJECTOIRE_SNBC_RESULT_FOLDER_ID=$TRAJECTOIRE_SNBC_RESULT_FOLDER_ID \
         --env REFERENTIEL_TE_SHEET_ID=$REFERENTIEL_TE_SHEET_ID \
+        --env INDICATEUR_DEFINITIONS_SHEET_ID=$INDICATEUR_DEFINITIONS_SHEET_ID \
         --env GCLOUD_SERVICE_ACCOUNT_KEY=$GCLOUD_SERVICE_ACCOUNT_KEY \
         --env SUPABASE_DATABASE_URL=$SUPABASE_DATABASE_URL \
         --env SUPABASE_URL=$SUPABASE_URL \
@@ -100,4 +105,47 @@ test: ## lance les tests
         --env BREVO_API_KEY=$BREVO_API_KEY \
         --env DIRECTUS_API_KEY=$DIRECTUS_API_KEY \
         backend-test:latest
+
+seed-build: ## construit une image pour exécuter les tests du backend
+    FROM ../+front-deps
+    COPY . ./backend
+    
+    # la commande utilisée pour lancer les tests
+    CMD pnpm --version && pnpm run test:backend src/indicateurs/import-indicateurs/import-indicateur-definition.controller.e2e-spec.ts src/referentiels/import-referentiel/import-referentiel.controller.e2e-spec.ts
+    SAVE IMAGE backend-seed:latest
+
+seed: ## lance le seed
+    ARG --required TRAJECTOIRE_SNBC_SHEET_ID
+    ARG --required TRAJECTOIRE_SNBC_XLSX_ID
+    ARG --required TRAJECTOIRE_SNBC_RESULT_FOLDER_ID
+    ARG --required REFERENTIEL_TE_SHEET_ID
+    ARG --required INDICATEUR_DEFINITIONS_SHEET_ID
+    ARG --required GCLOUD_SERVICE_ACCOUNT_KEY
+    ARG --required SUPABASE_DATABASE_URL
+    ARG --required SUPABASE_URL
+    ARG --required SUPABASE_ANON_KEY
+    ARG --required SUPABASE_SERVICE_ROLE_KEY
+    ARG --required SUPABASE_JWT_SECRET
+    ARG --required BREVO_API_KEY
+    ARG --required DIRECTUS_API_KEY
+    ARG network=host
+    LOCALLY
+    RUN earthly +seed-build
+    RUN docker run --rm \
+        --name backend-seed_tet \
+        --network $network \
+        --env TRAJECTOIRE_SNBC_SHEET_ID=$TRAJECTOIRE_SNBC_SHEET_ID \
+        --env TRAJECTOIRE_SNBC_XLSX_ID=$TRAJECTOIRE_SNBC_XLSX_ID \
+        --env TRAJECTOIRE_SNBC_RESULT_FOLDER_ID=$TRAJECTOIRE_SNBC_RESULT_FOLDER_ID \
+        --env REFERENTIEL_TE_SHEET_ID=$REFERENTIEL_TE_SHEET_ID \
+        --env INDICATEUR_DEFINITIONS_SHEET_ID=$INDICATEUR_DEFINITIONS_SHEET_ID \
+        --env GCLOUD_SERVICE_ACCOUNT_KEY=$GCLOUD_SERVICE_ACCOUNT_KEY \
+        --env SUPABASE_DATABASE_URL=$SUPABASE_DATABASE_URL \
+        --env SUPABASE_URL=$SUPABASE_URL \
+        --env SUPABASE_ANON_KEY=$SUPABASE_ANON_KEY \
+        --env SUPABASE_SERVICE_ROLE_KEY=$SUPABASE_SERVICE_ROLE_KEY \
+        --env SUPABASE_JWT_SECRET=$SUPABASE_JWT_SECRET \
+        --env BREVO_API_KEY=$BREVO_API_KEY \
+        --env DIRECTUS_API_KEY=$DIRECTUS_API_KEY \
+        backend-seed:latest
 
