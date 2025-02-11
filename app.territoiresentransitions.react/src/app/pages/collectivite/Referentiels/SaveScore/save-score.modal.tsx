@@ -34,9 +34,22 @@ const SaveScoreModal = ({
     return new Date().getFullYear().toString();
   };
 
-  // TODO: change date to include hours
-  const finalDateVersion = dateVersion || getIsoFormattedDate('');
+  const generateBeforeDate = (date: string) => {
+    const dateObject = new Date(date);
+    dateObject.setHours(23, 59, 0);
+    return dateObject.toISOString();
+  };
+
+  const useServerTimestampForNowDate = () => {
+    // We're returning undefined to let the backend timestamp the current date
+    return undefined;
+  };
+
   const finalNomVersion = `${getDisplayedYear()} - ${nomVersion?.trim()}`;
+
+  const finalDateVersion = dateVersion
+    ? generateBeforeDate(dateVersion)
+    : useServerTimestampForNowDate();
 
   const { refetch, isFetching } = useSaveScore(
     referentielId as computeScoreType['referentielId'],

@@ -3,9 +3,9 @@ import { RouterInput, trpc } from '@/api/utils/trpc/client';
 type computeScoreType = RouterInput['referentiels']['scores']['computeScore'];
 
 export const useSaveScore = (
-  referentielId: computeScoreType["referentielId"],
+  referentielId: computeScoreType['referentielId'],
   collectiviteId: number,
-  dateVersion: string,
+  dateVersion: string | undefined, // If undefined, the backend will timestamp the current date
   nomVersion: string
 ) => {
   // It's a query, not a mutation because the call doesn't save if parameters.snapshot is false
@@ -16,7 +16,7 @@ export const useSaveScore = (
       parameters: {
         snapshot: true,
         snapshotNom: nomVersion,
-        date: new Date(dateVersion).toISOString(),
+        date: dateVersion || undefined,
       },
     },
     {
