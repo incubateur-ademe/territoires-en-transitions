@@ -16,7 +16,7 @@ export const useSaveScore = (
       parameters: {
         snapshot: true,
         snapshotNom: nomVersion,
-        date: dateVersion || undefined,
+        date: dateVersion,
       },
     },
     {
