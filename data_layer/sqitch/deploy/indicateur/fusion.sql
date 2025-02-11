@@ -2,24 +2,28 @@
 
 BEGIN;
 
-drop trigger modified_by on indicateur_valeur;
+create table if not exists public.indicateur_source_source_calcul (
+  source_id text not null,
+  source_calcul_id text not null,
+  constraint fk_indicateur_source_source_entree_source_id
+    foreign key (source_id)
+    references public.indicateur_source (id)
+    on delete cascade,
+  constraint fk_indicateur_source_source_entree_source_calcul_id
+    foreign key (source_calcul_id)
+    references public.indicateur_source (id)
+    on delete cascade,
+  unique(source_id, source_calcul_id)
+);
 
-create function optional_enforce_modified_by()
-    returns trigger
-as
-$$
-begin
-    if auth.uid() is not null then
-        new.modified_by = auth.uid();
-    end if;
-    return new;
-end;
-$$ language plpgsql;
+alter table public.indicateur_definition
+  add column if not exists version varchar(16) not null default '1.0.0';
 
-create trigger modified_by
-    before insert or update
-    on indicateur_valeur
-    for each row
-execute procedure optional_enforce_modified_by();
+alter table public.indicateur_definition
+  add column if not exists precision integer not null default 2;
+
+drop table if exists indicateurs_json;
+
+drop function if exists private.upsert_indicateurs_after_json_insert();
 
 COMMIT;

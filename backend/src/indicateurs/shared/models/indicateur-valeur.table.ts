@@ -57,6 +57,11 @@ export const indicateurValeurTable = pgTable('indicateur_valeur', {
 export const indicateurValeurSchema = createSelectSchema(indicateurValeurTable);
 export type IndicateurValeur = InferSelectModel<typeof indicateurValeurTable>;
 
+export type IndicateurValeurWithIdentifiant = IndicateurValeur & {
+  indicateurIdentifiant?: string | null;
+  sourceId?: string | null;
+};
+
 export const indicateurValeurSchemaInsert = createInsertSchema(
   indicateurValeurTable
 );

@@ -16,9 +16,12 @@ export function division<T extends number | null>(
   return a / b;
 }
 
-export function roundTo(num: number | null, precision?: number): number | null {
+export function roundTo(
+  num: number | null | undefined,
+  precision?: number
+): number | null {
   if (!num || isNil(precision)) {
-    return num;
+    return !isNil(num) ? num : null;
   }
   const factor = Math.pow(10, precision);
   return Math.round(num * factor + Number.EPSILON) / factor;

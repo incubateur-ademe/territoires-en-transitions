@@ -159,7 +159,7 @@ beforeAll(async () => {
   const meta = await dbAdmin
     .from('indicateur_source_metadonnee')
     .insert({
-      id: 5,
+      id: 6,
       source_id: 'citepa',
       date_version: new Date().toLocaleDateString('sv-SE'),
     })
@@ -171,13 +171,13 @@ beforeAll(async () => {
   }
   expect(meta.error).toBeNull();
   expect(meta.status).toEqual(201);
-  expect(meta.data[0].id).toEqual(5);
+  expect(meta.data[0].id).toEqual(6);
 
   // Pas de critère d'unicité, donc on doit définir un id
   const meta2 = await dbAdmin
     .from('indicateur_source_metadonnee')
     .insert({
-      id: 6,
+      id: 7,
       source_id: 'citepa',
       producteur: 'test',
       date_version: new Date().toLocaleDateString('sv-SE'),
@@ -185,7 +185,7 @@ beforeAll(async () => {
     .select('id');
   expect(meta2.error).toBeNull();
   expect(meta2.status).toEqual(201);
-  expect(meta2.data?.[0].id).toEqual(6);
+  expect(meta2.data?.[0].id).toEqual(7);
 
   // Valeurs
   response = await dbAdmin.from('indicateur_valeur').insert({

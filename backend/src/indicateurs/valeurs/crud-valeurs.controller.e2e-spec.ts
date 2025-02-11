@@ -1,10 +1,20 @@
-import { getAuthToken, getTestApp, getTestDatabase } from '@/backend/test';
+import {
+  getAuthToken,
+  getCollectiviteIdBySiren,
+  getIndicateurIdByIdentifiant,
+  getTestApp,
+  getTestDatabase,
+  YOLO_DODO,
+} from '@/backend/test';
 import { DatabaseService } from '@/backend/utils';
+import { collectiviteTable } from '@/domain/collectivites';
 import { INestApplication } from '@nestjs/common';
 import { eq } from 'drizzle-orm';
 import { default as request } from 'supertest';
-import { UpsertIndicateursValeursRequest } from '../shared/models/upsert-indicateurs-valeurs.request';
-import { collectiviteTable } from '@/domain/collectivites';
+import {
+  UpsertIndicateursValeursRequest,
+  UpsertIndicateursValeursResponse,
+} from '../shared/models/upsert-indicateurs-valeurs.request';
 
 const collectiviteId = 3;
 
@@ -12,11 +22,16 @@ describe('Indicateurs', () => {
   let app: INestApplication;
   let yoloDodoToken: string;
   let databaseService: DatabaseService;
+  let paysDuLaonCollectiviteId: number;
 
   beforeAll(async () => {
     app = await getTestApp();
     yoloDodoToken = await getAuthToken();
     databaseService = await getTestDatabase(app);
+    paysDuLaonCollectiviteId = await getCollectiviteIdBySiren(
+      databaseService,
+      '200043495'
+    );
 
     await databaseService.db
       .update(collectiviteTable)
@@ -32,7 +47,6 @@ describe('Indicateurs', () => {
       await app.close();
     };
   });
-
 
   it(`Lecture sans acces`, async () => {
     // on peut lire les valeurs en mode visite
@@ -91,5 +105,206 @@ describe('Indicateurs', () => {
         error: 'Unauthorized',
         statusCode: 401,
       });
+  });
+
+  it(`Ecriture avec accès et calcul d'un autre indicateur de la même source`, async () => {
+    const indicateurId = await getIndicateurIdByIdentifiant(
+      databaseService,
+      'cae_1.f'
+    );
+    const indicateurValeurPayload: UpsertIndicateursValeursRequest = {
+      valeurs: [
+        {
+          collectiviteId: paysDuLaonCollectiviteId,
+          indicateurId: indicateurId,
+          dateValeur: '2015-01-01',
+          metadonneeId: 2,
+          resultat: 2.039,
+        },
+      ],
+    };
+    const response = await request(app.getHttpServer())
+      .post('/indicateurs')
+      .set('Authorization', `Bearer ${yoloDodoToken}`)
+      .send(indicateurValeurPayload)
+      .expect(201);
+    const upserIndicateurValeursResponse: UpsertIndicateursValeursResponse =
+      response.body;
+    expect(upserIndicateurValeursResponse.valeurs).toBeInstanceOf(Array);
+    expect(upserIndicateurValeursResponse.valeurs).toHaveLength(2);
+    expect(upserIndicateurValeursResponse.valeurs[0]).toMatchObject({
+      collectiviteId: paysDuLaonCollectiviteId,
+      dateValeur: '2015-01-01',
+      estimation: null,
+      indicateurId: 15,
+      indicateurIdentifiant: 'cae_1.f',
+      metadonneeId: 2,
+      modifiedBy: YOLO_DODO.id,
+      objectif: null,
+      objectifCommentaire: null,
+      resultat: 2.04,
+      resultatCommentaire: null,
+      sourceId: 'rare',
+    });
+    // Calculated indicateur
+    expect(upserIndicateurValeursResponse.valeurs[1]).toMatchObject({
+      collectiviteId: paysDuLaonCollectiviteId,
+      dateValeur: '2015-01-01',
+      estimation: null,
+      indicateurId: 30,
+      indicateurIdentifiant: 'cae_1.k',
+      metadonneeId: 2,
+      objectif: null,
+      objectifCommentaire: null,
+      resultat: 104.09,
+      resultatCommentaire: null,
+      sourceId: 'rare',
+    });
+  });
+
+  it(`Ecriture avec accès et calcul d'un autre indicateur impliquant une autre source avec arrondi`, async () => {
+    const indicateurId = await getIndicateurIdByIdentifiant(
+      databaseService,
+      'cae_1.a'
+    );
+    const indicateurPopulationId = await getIndicateurIdByIdentifiant(
+      databaseService,
+      'terr_1'
+    );
+
+    // restore the population value
+    await request(app.getHttpServer())
+      .post('/indicateurs')
+      .set('Authorization', `Bearer ${yoloDodoToken}`)
+      .send({
+        valeurs: [
+          {
+            collectiviteId: paysDuLaonCollectiviteId,
+            indicateurId: indicateurPopulationId,
+            dateValeur: '2015-01-01',
+            metadonneeId: 5,
+            resultat: 41739,
+          },
+        ],
+      })
+      .expect(201);
+
+    const indicateurValeurPayload: UpsertIndicateursValeursRequest = {
+      valeurs: [
+        {
+          collectiviteId: paysDuLaonCollectiviteId,
+          indicateurId: indicateurId,
+          dateValeur: '2015-01-01',
+          metadonneeId: 2,
+          resultat: 10000.000002,
+        },
+      ],
+    };
+    const response = await request(app.getHttpServer())
+      .post('/indicateurs')
+      .set('Authorization', `Bearer ${yoloDodoToken}`)
+      .send(indicateurValeurPayload)
+      .expect(201);
+    const upserIndicateurValeursResponse: UpsertIndicateursValeursResponse =
+      response.body;
+    expect(upserIndicateurValeursResponse.valeurs).toBeInstanceOf(Array);
+    expect(upserIndicateurValeursResponse.valeurs).toHaveLength(2);
+    expect(upserIndicateurValeursResponse.valeurs[0]).toMatchObject({
+      collectiviteId: paysDuLaonCollectiviteId,
+      dateValeur: '2015-01-01',
+      estimation: null,
+      indicateurId: indicateurId,
+      indicateurIdentifiant: 'cae_1.a',
+      metadonneeId: 2,
+      modifiedBy: YOLO_DODO.id,
+      objectif: null,
+      objectifCommentaire: null,
+      resultat: 10000,
+      resultatCommentaire: null,
+      sourceId: 'rare',
+    });
+    // Calculated indicateur
+    expect(upserIndicateurValeursResponse.valeurs[1]).toMatchObject({
+      collectiviteId: paysDuLaonCollectiviteId,
+      dateValeur: '2015-01-01',
+      estimation: null,
+      indicateurId: 3,
+      indicateurIdentifiant: 'cae_1.b',
+      metadonneeId: 2,
+      objectif: null,
+      objectifCommentaire: null,
+      resultat: 239.58,
+      resultatCommentaire: null,
+      sourceId: 'rare',
+    });
+
+    // We now test to change the population value from 41739 to 20000
+    const indicateurPopulationValeurPayload: UpsertIndicateursValeursRequest = {
+      valeurs: [
+        {
+          collectiviteId: paysDuLaonCollectiviteId,
+          indicateurId: indicateurPopulationId,
+          dateValeur: '2015-01-01',
+          metadonneeId: 5,
+          resultat: 20000,
+        },
+      ],
+    };
+    const responseAfterPopulationUpdate = await request(app.getHttpServer())
+      .post('/indicateurs')
+      .set('Authorization', `Bearer ${yoloDodoToken}`)
+      .send(indicateurPopulationValeurPayload)
+      .expect(201);
+    const upsertIndicateurPopulationValeursResponse: UpsertIndicateursValeursResponse =
+      responseAfterPopulationUpdate.body;
+    expect(upsertIndicateurPopulationValeursResponse.valeurs).toBeInstanceOf(
+      Array
+    );
+    expect(upsertIndicateurPopulationValeursResponse.valeurs).toHaveLength(2);
+    expect(upsertIndicateurPopulationValeursResponse.valeurs[0]).toMatchObject({
+      collectiviteId: paysDuLaonCollectiviteId,
+      dateValeur: '2015-01-01',
+      estimation: null,
+      indicateurId: indicateurPopulationId,
+      indicateurIdentifiant: 'terr_1',
+      metadonneeId: 5,
+      modifiedBy: YOLO_DODO.id,
+      objectif: null,
+      objectifCommentaire: null,
+      resultat: 20000,
+      resultatCommentaire: null,
+      sourceId: 'insee',
+    });
+    // Calculated indicateur
+    expect(upsertIndicateurPopulationValeursResponse.valeurs[1]).toMatchObject({
+      collectiviteId: paysDuLaonCollectiviteId,
+      dateValeur: '2015-01-01',
+      estimation: null,
+      indicateurId: 3,
+      indicateurIdentifiant: 'cae_1.b',
+      metadonneeId: 2,
+      objectif: null,
+      objectifCommentaire: null,
+      resultat: 500,
+      resultatCommentaire: null,
+      sourceId: 'rare',
+    });
+
+    // restore the population value
+    await request(app.getHttpServer())
+      .post('/indicateurs')
+      .set('Authorization', `Bearer ${yoloDodoToken}`)
+      .send({
+        valeurs: [
+          {
+            collectiviteId: paysDuLaonCollectiviteId,
+            indicateurId: indicateurPopulationId,
+            dateValeur: '2015-01-01',
+            metadonneeId: 5,
+            resultat: 41739,
+          },
+        ],
+      })
+      .expect(201);
   });
 });
