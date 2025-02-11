@@ -23,6 +23,7 @@ import {
   generatePlanActionNavigationLinks,
   usePlansNavigation,
 } from './PlanAction/data/usePlansNavigation';
+import { Button } from '@/ui';
 
 type Props = {
   collectivite_id: number;
@@ -55,19 +56,20 @@ export const PlansActionsRoutes = ({ collectivite_id, readonly }: Props) => {
         ),
         actions: !readonly && (
           <>
-            <li className="fr-sidemenu_item p-0 list-none">
-              <button
-                data-test="CreerFicheAction"
-                className="fr-btn fr-btn--primary"
+            <li className="p-0 list-none">
+              <Button
+                dataTest="CreerFicheAction"
+                variant="outlined"
+                size="sm"
                 onClick={() => createFicheAction()}
               >
                 Créer une fiche action
-              </button>
+              </Button>
             </li>
-            <li className="fr-sidemenu_item mt-6 p-0 list-none">
-              <Link
-                data-test="AjouterPlanAction"
-                className="fr-btn fr-btn--tertiary"
+            <li className="mt-4 p-0 list-none">
+              <Button
+                dataTest="AjouterPlanAction"
+                size="sm"
                 href={makeCollectivitePlansActionsNouveauUrl({
                   collectiviteId: collectivite_id,
                 })}
@@ -93,7 +95,7 @@ export const PlansActionsRoutes = ({ collectivite_id, readonly }: Props) => {
                 }}
               >
                 Ajouter un plan d&apos;action
-              </Link>
+              </Button>
             </li>
           </>
         ),
