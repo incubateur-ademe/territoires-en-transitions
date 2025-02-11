@@ -5,10 +5,11 @@ import classNames from 'classnames';
 import { useState } from 'react';
 import DownloadIndicateurChartModal from '../../chart/DownloadIndicateurChart';
 import IndicateurChart from '../../chart/IndicateurChart';
-import { useIndicateurChartInfo } from '../../data/use-indicateur-chart';
+import { IndicateurChartInfo } from '../../data/use-indicateur-chart';
 
 type Props = {
   definition: TIndicateurDefinition;
+  chartInfo: IndicateurChartInfo;
   className?: string;
   buttonClassName?: string;
   isReadonly?: boolean;
@@ -26,14 +27,17 @@ const SegmentationNames: Record<string, string> = {
  * Utilisé dans les pages indicateurs.
  * Permet notamment de télécharger le graphique.
  */
-const IndicateurDetailChart = ({ definition, className, buttonClassName, isReadonly = true, onAddValue }: Props) => {
+const IndicateurDetailChart = ({
+  definition,
+  chartInfo,
+  className,
+  buttonClassName,
+  isReadonly = true,
+  onAddValue,
+}: Props) => {
   /** Gère l'affichage de la modale */
   const [isChartOpen, setIsChartOpen] = useState(false);
 
-  // charge les valeurs à afficher dans le graphe
-  const chartInfo = useIndicateurChartInfo({
-    definition,
-  });
   const {
     typesSegmentation,
     segmentation,
