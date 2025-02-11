@@ -321,6 +321,19 @@ export interface TrackingPlan extends Record<never, Page> {
     };
   };
 
+  /**
+   * Match toutes les pages du pilier plan d'action.
+   * Permet de tracker des événements communs à plusieurs pages
+   * comme le bouton "Ajouter un plan d'action".
+   */
+  'app/plans': {
+    properties: CollectiviteDefaultProps;
+    onglets: never;
+    events: {
+      'plansAction:side-nav-ajouter-plan-click': {};
+    };
+  };
+
   /** Trajectoire SNBC territorialisée */
   'app/trajectoires/snbc': {
     properties: CollectiviteDefaultProps &

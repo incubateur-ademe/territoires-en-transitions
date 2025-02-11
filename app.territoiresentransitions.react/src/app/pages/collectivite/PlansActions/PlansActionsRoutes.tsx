@@ -23,7 +23,8 @@ import {
   generatePlanActionNavigationLinks,
   usePlansNavigation,
 } from './PlanAction/data/usePlansNavigation';
-import { Button } from '@/ui';
+import { Button, useEventTracker } from '@/ui';
+import { useCurrentCollectivite } from '@/app/core-logic/hooks/useCurrentCollectivite';
 
 type Props = {
   collectivite_id: number;
@@ -34,11 +35,15 @@ type Props = {
  * Routes starting with collectivite/:collectiviteId/plans see CollectiviteRoutes.tsx
  */
 export const PlansActionsRoutes = ({ collectivite_id, readonly }: Props) => {
+  const collectivite = useCurrentCollectivite()!;
+
   const { data: axes } = usePlansNavigation();
   const { data: fichesNonClasseesListe } =
     useFichesNonClasseesListe(collectivite_id);
 
   const { mutate: createFicheAction } = useCreateFicheAction();
+
+  const trackEvent = useEventTracker('app/plans');
 
   const hasFicheNonClassees =
     (fichesNonClasseesListe && fichesNonClasseesListe.length > 0) || false;
@@ -58,7 +63,7 @@ export const PlansActionsRoutes = ({ collectivite_id, readonly }: Props) => {
           <>
             <li className="p-0 list-none">
               <Button
-                dataTest="CreerFicheAction"
+                data-test="CreerFicheAction"
                 variant="outlined"
                 size="sm"
                 onClick={() => createFicheAction()}
@@ -68,12 +73,16 @@ export const PlansActionsRoutes = ({ collectivite_id, readonly }: Props) => {
             </li>
             <li className="mt-4 p-0 list-none">
               <Button
-                dataTest="AjouterPlanAction"
+                data-test="AjouterPlanAction"
                 size="sm"
                 href={makeCollectivitePlansActionsNouveauUrl({
                   collectiviteId: collectivite_id,
                 })}
                 onClick={() => {
+                  trackEvent(
+                    'plansAction:side-nav-ajouter-plan-click',
+                    collectivite
+                  );
                   $crisp.push(['do', 'chat:open']);
                   $crisp.push([
                     'do',
