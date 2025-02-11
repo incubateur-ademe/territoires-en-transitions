@@ -2,6 +2,8 @@
 'use client';
 
 import { LoginModal } from '@/auth/components/Login';
+import { useEffect } from 'react';
+import { deleteOldAuthCookie } from './delete-old-auth-cookie.server';
 import { useLoginState } from './useLoginState';
 
 /**
@@ -32,6 +34,16 @@ export const LoginPageClient = ({
     defaultView: view,
     defaultValues,
   });
+
+  useEffect(() => {
+    async function callServerFunction() {
+      await deleteOldAuthCookie();
+    }
+
+    if (view === null) {
+      callServerFunction();
+    }
+  }, [view]);
 
   return (
     <LoginModal
