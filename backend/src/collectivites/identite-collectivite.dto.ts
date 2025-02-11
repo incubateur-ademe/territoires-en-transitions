@@ -46,7 +46,7 @@ export const identiteCollectiviteSchema = z.object({
   soustype: z.nativeEnum(CollectiviteSousTypeEnum).nullable(),
   populationTags: z.array(z.nativeEnum(CollectivitePopulationTypeEnum)),
   drom: z.boolean().nullable(),
-  test: z.boolean(),
+  test: z.boolean().optional(),
 });
 
 export type IdentiteCollectivite = z.infer<typeof identiteCollectiviteSchema>;

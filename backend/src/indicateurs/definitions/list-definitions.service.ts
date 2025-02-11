@@ -9,9 +9,13 @@ import {
   eq,
   getTableColumns,
   inArray,
+  isNotNull,
   isNull,
+  like,
   or,
+  SQL,
   sql,
+  SQLWrapper,
 } from 'drizzle-orm';
 import { objectToCamel } from 'ts-case-convert';
 import { PermissionService } from '../../auth/authorizations/permission.service';
@@ -130,6 +134,54 @@ export default class ListDefinitionsService {
       }
     );
   }
+
+  async getIndicateurIdToIdentifiant(
+    indicateurIds: number[]
+  ): Promise<Record<number, string>> {
+    const indicateurDefinitions = await this.databaseService.db
+      .select({
+        id: indicateurDefinitionTable.id,
+        identifiantReferentiel:
+          indicateurDefinitionTable.identifiantReferentiel,
+      })
+      .from(indicateurDefinitionTable)
+      .where(inArray(indicateurDefinitionTable.id, indicateurIds));
+    return indicateurDefinitions.reduce((acc, def) => {
+      if (!def.identifiantReferentiel) {
+        return acc;
+      } else {
+        return { ...acc, [def.id]: def.identifiantReferentiel };
+      }
+    }, {});
+  }
+
+  async getComputedIndicateurDefinitions(
+    sourceIndicateurIdentifiants: string[]
+  ): Promise<IndicateurDefinition[]> {
+    const sqlConditions: (SQLWrapper | SQL)[] =
+      sourceIndicateurIdentifiants.map((identifiant) =>
+        like(indicateurDefinitionTable.valeurCalcule, `%${identifiant}%`)
+      );
+
+    const computedIndicateurDefinitions = await this.databaseService.db
+      .select()
+      .from(indicateurDefinitionTable)
+      .where(
+        and(
+          isNotNull(indicateurDefinitionTable.valeurCalcule),
+          or(...sqlConditions)
+        )
+      );
+    this.logger.log(
+      `Found ${
+        computedIndicateurDefinitions.length
+      } computed indicateur definitions: ${computedIndicateurDefinitions
+        .map((def) => def.identifiantReferentiel || `${def.id}`)
+        .join(',')} for indicateurs ${sourceIndicateurIdentifiants.join(',')}`
+    );
+
+    return computedIndicateurDefinitions;
+}
 
   /**
    * Renvoi les définitions détaillées d'indicateur à partir de leur id ou de

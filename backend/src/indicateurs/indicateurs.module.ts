@@ -1,3 +1,4 @@
+import IndicateurValeurExpressionParserService from '@/backend/indicateurs/valeurs/indicateur-valeur-expression-parser.service';
 import { Module } from '@nestjs/common';
 import { AuthModule } from '../auth/auth.module';
 import { CollectivitesModule } from '../collectivites/collectivites.module';
@@ -27,6 +28,7 @@ import CrudValeursService from './valeurs/crud-valeurs.service';
     ListDefinitionsService,
     IndicateurDefinitionsRouter,
     IndicateurSourcesService,
+    IndicateurValeurExpressionParserService,
     CrudValeursService,
     IndicateurFiltreService,
     IndicateurFiltreRouter,
