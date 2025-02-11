@@ -1,14 +1,20 @@
-import { RouterInput } from '@/api/utils/trpc/client';
 import { useSaveScore } from '@/app/app/pages/collectivite/Referentiels/SaveScore/useSaveScore';
 import { useBaseToast } from '@/app/core-logic/hooks/useBaseToast';
 import { getIsoFormattedDate } from '@/app/utils/formatUtils';
 import { Alert, Button, ButtonGroup, Field, Input, Modal } from '@/ui';
 import { ReactNode, useRef, useState } from 'react';
+import { ReferentielId } from '../../../../../../../backend/src/referentiels/index-domain';
 
-type computeScoreType = RouterInput['referentiels']['scores']['computeScore'];
+
 export type SaveScoreProps = {
   referentielId: string;
   collectiviteId: number;
+};
+
+const generateBeforeDate = (date: string) => {
+  const dateObject = new Date(date);
+  dateObject.setHours(23, 59, 0);
+  return dateObject.toISOString();
 };
 
 const SaveScoreModal = ({
@@ -34,34 +40,22 @@ const SaveScoreModal = ({
     return new Date().getFullYear().toString();
   };
 
-  const generateBeforeDate = (date: string) => {
-    const dateObject = new Date(date);
-    dateObject.setHours(23, 59, 0);
-    return dateObject.toISOString();
-  };
-
-  const useServerTimestampForNowDate = () => {
-    // We're returning undefined to let the backend timestamp the current date
-    return undefined;
-  };
-
   const finalNomVersion = `${getDisplayedYear()} - ${nomVersion?.trim()}`;
 
-  const finalDateVersion = dateVersion
-    ? generateBeforeDate(dateVersion)
-    : useServerTimestampForNowDate();
 
-  const { refetch, isFetching } = useSaveScore(
-    referentielId as computeScoreType['referentielId'],
-    collectiviteId,
-    finalDateVersion,
-    finalNomVersion
-  );
+  const { mutate: upsertSnapshot, isPending: isSaving, isSuccess } = useSaveScore();
 
   const handleSave = async (close: () => void) => {
     if (!nomVersion?.trim()) return;
-    const result = await refetch();
 
+    upsertSnapshot({
+      collectiviteId,
+      referentiel: referentielId as ReferentielId,
+      snapshotNom: finalNomVersion,
+      date: dateVersion ? generateBeforeDate(dateVersion) : undefined
+    }, {} );
+
+    /*
     if (result.error) {
       if (result.error.message.includes('existe déjà')) {
         setToast(
@@ -78,7 +72,7 @@ const SaveScoreModal = ({
     if (result.isSuccess) {
       setToast('success', 'Référentiel sauvegardé', 5000);
       close();
-    }
+    }*/
   };
 
   return (
@@ -153,7 +147,7 @@ const SaveScoreModal = ({
                 variant="primary"
                 size="sm"
                 disabled={
-                  isFetching ||
+                  isSaving ||
                   !nomVersion?.trim() ||
                   (selectedButton !== 'now' && !dateVersion)
                 }
@@ -167,7 +161,7 @@ const SaveScoreModal = ({
                   handleSave(close);
                 }}
               >
-                {isFetching ? 'Sauvegarde en cours...' : 'Figer cette version'}
+                {isSaving ? 'Sauvegarde en cours...' : 'Figer cette version'}
               </Button>
             </div>
           </div>

@@ -1,27 +1,25 @@
-import { RouterInput, trpc } from '@/api/utils/trpc/client';
+import { trpc } from '@/api/utils/trpc/client';
 
-type computeScoreType = RouterInput['referentiels']['scores']['computeScore'];
+type MutationOptions = Parameters<
+  typeof trpc.referentiels.snapshots.upsert.useMutation
+>[0];
 
-export const useSaveScore = (
-  referentielId: computeScoreType['referentielId'],
-  collectiviteId: number,
-  dateVersion: string | undefined, // If undefined, the backend will timestamp the current date
-  nomVersion: string
-) => {
-  // It's a query, not a mutation because the call doesn't save if parameters.snapshot is false
-  return trpc.referentiels.scores.computeScore.useQuery(
-    {
-      referentielId: referentielId,
-      collectiviteId: collectiviteId,
-      parameters: {
-        snapshot: true,
-        snapshotNom: nomVersion,
-        date: dateVersion,
-      },
+export const useSaveScore = (mutationOptions?: MutationOptions) => {
+  const utils = trpc.useUtils();
+
+  return trpc.referentiels.snapshots.upsert.useMutation({
+    ...mutationOptions,
+    onSuccess: (data, variables, context) => {
+      /*
+      utils.collectivites.tableauDeBord.list.invalidate({
+        collectiviteId: data.collectiviteId,
+      });
+
+      utils.collectivites.tableauDeBord.get.invalidate({
+        collectiviteId: data.collectiviteId,
+        id: data.id,
+      });*/
+      mutationOptions?.onSuccess?.(data, variables, context);
     },
-    {
-      enabled: false,
-      refetchOnWindowFocus: false,
-    }
-  );
+  });
 };

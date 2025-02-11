@@ -2,9 +2,11 @@ import { TrpcService } from '@/backend/utils/trpc/trpc.service';
 import { Injectable } from '@nestjs/common';
 import z from 'zod';
 import ReferentielsScoringService from '../compute-score/referentiels-scoring.service';
+import { ComputeScoreMode } from '../models/compute-scores-mode.enum';
 import { referentielIdEnumSchema } from '../models/referentiel-id.enum';
 import ReferentielsScoringSnapshotsService from './referentiels-scoring-snapshots.service';
 import { SnapshotJalon } from './snapshot-jalon.enum';
+import { upsertSnapshotRequestSchema } from './upsert-snapshot.request';
 
 export const getScoreSnapshotInfosTrpcRequestSchema = z.object({
   referentielId: referentielIdEnumSchema,
@@ -51,6 +53,22 @@ export class ScoreSnapshotsRouter {
           input.collectiviteId,
           input.referentielId,
           true
+        );
+      }),
+
+    upsert: this.trpc.authedProcedure
+      .input(upsertSnapshotRequestSchema)
+      .mutation(({ input, ctx }) => {
+        return this.referentielsScoringService.computeScoreForCollectivite(
+          input.referentiel,
+          input.collectiviteId,
+          {
+            mode: ComputeScoreMode.RECALCUL,
+            snapshot: true,
+            snapshotNom: input.snapshotNom,
+            date: input.date,
+          },
+          ctx.user
         );
       }),
 
