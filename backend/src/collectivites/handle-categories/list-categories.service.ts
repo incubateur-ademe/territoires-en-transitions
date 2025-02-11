@@ -79,6 +79,6 @@ export default class ListCategoriesService {
             )
           : // Récupère seulement les catégories propres à la collectivité
             eq(categorieTagTable.collectiviteId, collectiviteId)
-      );
+      ) as Promise<Tag[]>; // We know that the collectiviteId is not null in this case
   }
 }

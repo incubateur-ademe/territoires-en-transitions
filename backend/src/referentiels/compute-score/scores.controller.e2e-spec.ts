@@ -1,7 +1,8 @@
+import { DatabaseService } from '@/backend/utils';
 import { INestApplication } from '@nestjs/common';
 import { DateTime } from 'luxon';
 import { default as request } from 'supertest';
-import { getTestApp } from '../../../test/app-utils';
+import { getTestApp, getTestDatabase } from '../../../test/app-utils';
 import { getAuthToken } from '../../../test/auth-utils';
 import { getCollectiviteIdBySiren } from '../../../test/collectivites-utils';
 import { HttpErrorResponse } from '../../utils/nest/http-error.response';
@@ -16,13 +17,18 @@ import { Score } from './score.dto';
 
 describe('Referentiels scoring routes', () => {
   let app: INestApplication;
+  let databaseService: DatabaseService;
   let yoloDodoToken: string;
   let rhoneAggloCollectiviteId: number;
 
   beforeAll(async () => {
     app = await getTestApp();
+    databaseService = await getTestDatabase(app);
     yoloDodoToken = await getAuthToken();
-    rhoneAggloCollectiviteId = await getCollectiviteIdBySiren('200072015');
+    rhoneAggloCollectiviteId = await getCollectiviteIdBySiren(
+      databaseService,
+      '200072015'
+    );
   });
 
   test(`Récupération des statuts des actions sans token non autorisée`, async () => {

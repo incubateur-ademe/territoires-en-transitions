@@ -1,0 +1,50 @@
+import { getTestApp, getTestDatabase } from '@/backend/test';
+import { DatabaseService } from '@/backend/utils';
+import { indicateurDefinitionTable } from '@/domain/indicateurs';
+import { INestApplication } from '@nestjs/common';
+import { sql } from 'drizzle-orm';
+import { default as request } from 'supertest';
+
+describe('import-indicateur-definition.controller.e2e-spec', () => {
+  let app: INestApplication;
+  let databaseService: DatabaseService;
+
+  beforeAll(async () => {
+    app = await getTestApp();
+    databaseService = await getTestDatabase(app);
+
+    return async () => {
+      await app.close();
+    };
+  });
+
+  it(`Import des indicateurs depuis le spreadsheet`, async () => {
+    // Reset the version
+    await databaseService.db
+      .update(indicateurDefinitionTable)
+      .set({ version: '1.0.0' })
+      .where(sql`TRUE`);
+
+    // Import a first time the definitions
+    const response = await request(app.getHttpServer())
+      .get(`/indicateurs/import`)
+      .set('Authorization', `Bearer ${process.env.SUPABASE_ANON_KEY}`);
+    expect(response.body).toBeInstanceOf(Array);
+    expect(response.status).toBe(200);
+    expect(response.body.length).toBeGreaterThan(0);
+
+    // Import a second time the definitions, must be refused because the version is the same
+    const errorResponse = await request(app.getHttpServer())
+      .get(`/indicateurs/import`)
+      .set('Authorization', `Bearer ${process.env.SUPABASE_ANON_KEY}`)
+      .expect(422);
+
+    expect(errorResponse.body).toMatchObject({
+      error: 'Unprocessable Entity',
+      message: expect.stringMatching(
+        /please add a new version in the changelog/i
+      ),
+      statusCode: 422,
+    });
+  });
+});

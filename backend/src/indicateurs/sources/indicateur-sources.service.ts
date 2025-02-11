@@ -34,6 +34,18 @@ export default class IndicateurSourcesService {
     return model;
   }
 
+  async getAllIndicateurSourceMetadonnees(): Promise<SourceMetadonnee[]> {
+    this.logger.log(`Get all metadonnees for indicateur sources`);
+    const indicateurSourceMetadonnees = await this.databaseService.db
+      .select()
+      .from(indicateurSourceMetadonneeTable);
+
+    this.logger.log(
+      `Found ${indicateurSourceMetadonnees.length} metadonnees for indicateur sources`
+    );
+    return indicateurSourceMetadonnees;
+  }
+
   async getIndicateurSourceMetadonnee(
     sourceId: string,
     dateVersion: string
