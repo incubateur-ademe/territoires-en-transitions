@@ -1,6 +1,7 @@
 import { useFonctionTracker } from '@/app/core-logic/hooks/useFonctionTracker';
 import classNames from 'classnames';
 import SideNav, { SideNavLinks } from './SideNav';
+import { Button } from '@/ui';
 
 export type SideNavContainerProps = {
   links: SideNavLinks;
@@ -29,8 +30,11 @@ const SideNavContainer = ({ isOpen, setIsOpen, sideNav }: Props) => {
           )}
         >
           {isHideable && (
-            <button
-              className="ml-auto mr-4 mb-4 fr-btn fr-btn--tertiary fr-btn--icon fr-btn--sm fr-fi-arrow-left-s-line-double"
+            <Button
+              className="ml-auto mr-4 mb-4"
+              variant="grey"
+              size="xs"
+              icon="arrow-left-double-line"
               onClick={() => {
                 setIsOpen(false);
                 tracker({
@@ -46,8 +50,11 @@ const SideNavContainer = ({ isOpen, setIsOpen, sideNav }: Props) => {
           </div>
         </div>
       ) : (
-        <button
-          className="mt-4 mx-auto fr-btn fr-btn--tertiary fr-btn--icon fr-btn--sm fr-fi-arrow-right-s-line-double"
+        <Button
+          className="mt-4 mx-auto"
+          variant="grey"
+          size="xs"
+          icon="arrow-right-double-line"
           onClick={() => {
             setIsOpen(true);
             tracker({ fonction: 'navigation_laterale', action: 'ouverture' });
