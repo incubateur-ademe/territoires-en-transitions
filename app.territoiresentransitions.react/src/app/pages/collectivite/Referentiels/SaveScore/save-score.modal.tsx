@@ -1,17 +1,8 @@
 import { RouterInput } from '@/api/utils/trpc/client';
 import { useSaveScore } from '@/app/app/pages/collectivite/Referentiels/SaveScore/useSaveScore';
 import { useBaseToast } from '@/app/core-logic/hooks/useBaseToast';
-import { useCurrentCollectivite } from '@/app/core-logic/hooks/useCurrentCollectivite';
 import { getIsoFormattedDate } from '@/app/utils/formatUtils';
-import {
-  Alert,
-  Button,
-  ButtonGroup,
-  Field,
-  Input,
-  Modal,
-  useEventTracker,
-} from '@/ui';
+import { Alert, Button, ButtonGroup, Field, Input, Modal } from '@/ui';
 import { ReactNode, useRef, useState } from 'react';
 
 type computeScoreType = RouterInput['referentiels']['scores']['computeScore'];
@@ -43,6 +34,7 @@ const SaveScoreModal = ({
     return new Date().getFullYear().toString();
   };
 
+  // TODO: change date to include hours
   const finalDateVersion = dateVersion || getIsoFormattedDate('');
   const finalNomVersion = `${getDisplayedYear()} - ${nomVersion?.trim()}`;
 
