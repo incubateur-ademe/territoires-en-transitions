@@ -1,6 +1,7 @@
 import { Divider } from '@/ui';
 import classNames from 'classnames';
 import { useState } from 'react';
+import { useIndicateurChartInfo } from '../data/use-indicateur-chart';
 import IndicateurDetailChart from '../Indicateur/detail/IndicateurDetailChart';
 import { IndicateurValuesTabs } from '../Indicateur/detail/IndicateurValuesTabs';
 import { TIndicateurDefinition } from '../types';
@@ -27,6 +28,11 @@ const DonneesIndicateur = ({
 
   const { description, commentaire, unite } = definition;
 
+  // charge les valeurs à afficher dans le graphe
+  const chartInfo = useIndicateurChartInfo({
+    definition,
+  });
+
   return (
     <div className="flex flex-col gap-7 bg-white p-10 border border-grey-3 rounded-xl">
       {/* Unité personnalisée - à metttre à jour */}
@@ -38,16 +44,18 @@ const DonneesIndicateur = ({
         />
       )}
 
-        {/* Graphe */}
-        <IndicateurDetailChart
-          className="mb-6"
-          definition={definition}
-        />
-
+      {/* Graphe */}
+      <IndicateurDetailChart
+        className="mb-6"
+        chartInfo={chartInfo}
+        definition={definition}
+        isReadonly={isReadonly}
+        onAddValue={() => setIsTableModalOpen(true)}
+      />
 
       <div
         className={classNames('flex flex-col gap-7', {
-          'invisible h-0': !rempli,
+          'invisible h-0': !chartInfo.hasValeur,
         })}
       >
         <Divider />
