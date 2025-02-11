@@ -1,17 +1,13 @@
 import { Indicateurs } from '@/api';
 import { supabaseClient } from '@/api/utils/supabase/browser-client';
 import { trpc } from '@/api/utils/trpc/client';
-import { useMutation, useQueryClient } from 'react-query';
+import { useMutation } from 'react-query';
 
 export const useUpdateIndicateurFavoriCollectivite = (
   collectiviteId: number,
   indicateurId: number
 ) => {
   const utils = trpc.useUtils();
-
-  const queryClient = useQueryClient();
-
-  const trpcUtils = trpc.useUtils();
 
   return useMutation(
     ['update_indicateur_favori_collectivite', indicateurId],
@@ -30,11 +26,13 @@ export const useUpdateIndicateurFavoriCollectivite = (
         utils.indicateurs.definitions.list.invalidate({
           collectiviteId,
         });
+        utils.indicateurs.definitions.list.invalidate({
+          collectiviteId,
+          indicateurIds: [indicateurId],
+        });
         utils.indicateurs.definitions.getFavorisCount.invalidate({
           collectiviteId,
         });
-        queryClient.invalidateQueries(['indicateur_favori', indicateurId]);
-        trpcUtils.indicateurs.list.invalidate({ collectiviteId });
       },
     }
   );

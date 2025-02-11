@@ -6,7 +6,6 @@ import { useExportIndicateurs } from '../../Indicateur/useExportIndicateurs';
 import { TIndicateurDefinition } from '../../types';
 import DeleteModal from './DeleteModal';
 import EditModal from './EditModal';
-import { useIsIndicateurFavori } from './use-is-indicateur-favori';
 
 type Props = {
   definition: TIndicateurDefinition;
@@ -30,11 +29,7 @@ const IndicateurToolbar = ({
     [definition]
   );
 
-  const { data: isFavoriData, isLoading: isFavoriLoading } =
-    useIsIndicateurFavori(definition.id);
-
-  const isFavori =
-    isFavoriData && isFavoriData.data?.[0] && isFavoriData.data[0].favoris;
+  const isFavori = definition.favoris;
 
   const { mutate: toggleFavori } = useUpdateIndicateurFavoriCollectivite(
     collectiviteId!,
@@ -65,8 +60,6 @@ const IndicateurToolbar = ({
           }
         >
           <Button
-            loading={isFavoriLoading}
-            disabled={isFavoriLoading}
             icon={isFavori ? 'star-fill' : 'star-line'}
             size="xs"
             variant="grey"
@@ -90,7 +83,6 @@ const IndicateurToolbar = ({
         {!isReadonly && isPerso && (
           <DeleteModal {...{ definition, isLoading }} />
         )}
-
       </div>
 
       {isEditModalOpen && (

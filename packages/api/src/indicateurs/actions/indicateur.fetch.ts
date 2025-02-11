@@ -282,22 +282,6 @@ export async function selectIndicateursFavorisCollectiviteIds(
 }
 
 /**
- * Détermine si un indicateur est favori pour une collectivité
- * @param dbClient
- * @param indicateurId
- * @returns
- */
-export async function selectIndicateurFavori(
-  dbClient: DBClient,
-  indicateurId: number
-) {
-  return await dbClient
-    .from('indicateur_collectivite')
-    .select(`favoris`)
-    .eq('indicateur_id', indicateurId);
-}
-
-/**
  * Récupère les valeurs d'un indicateur
  * @param dbClient client supabase
  * @param indicateurId identifiant de l'indicateur
