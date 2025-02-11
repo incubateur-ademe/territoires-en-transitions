@@ -5,12 +5,7 @@ import { ReactNode } from 'react';
 export default async function Layout({ children }: { children: ReactNode }) {
   return (
     <>
-      <Header
-        user={null}
-        currentCollectivite={null}
-        panierId={undefined}
-        maintenance={null}
-      />
+      <Header user={null} currentCollectivite={null} panierId={undefined} />
       {children}
       <Footer />
     </>

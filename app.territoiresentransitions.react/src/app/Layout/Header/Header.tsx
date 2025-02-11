@@ -7,9 +7,7 @@ import Image from 'next/image';
 import Link from 'next/link';
 import { useState } from 'react';
 import ademeSrc from '../../static/img/ademe.svg';
-import { Maintenance } from '../useMaintenance';
 import { AccesRapide } from './AccesRapide';
-import { MaintenanceNotice } from './MaintenanceNotice';
 import { MenuPrincipal } from './MenuPrincipal';
 import { HeaderPropsWithModalState } from './types';
 
@@ -20,14 +18,12 @@ export type HeaderProps = {
   user: UserDetails | null;
   currentCollectivite: CurrentCollectivite | null;
   panierId: string | undefined;
-  maintenance: Maintenance;
 };
 
 /**
  * Affiche l'en-tête
  */
 export const Header = (props: HeaderProps) => {
-  const { maintenance } = props;
   // état ouverture menu mobile
   const [modalOpened, setModalOpened] = useState(false);
   // id du menu ouvert
@@ -47,7 +43,6 @@ export const Header = (props: HeaderProps) => {
         <Body {...propsWithState} />
         <Menu {...propsWithState} />
       </header>
-      <MaintenanceNotice maintenance={maintenance} />
     </>
   );
 };

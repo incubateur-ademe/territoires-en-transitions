@@ -603,10 +603,6 @@ begin
     values (id, 500, 'partenaire'::membre_fonction),
            (id, 501, 'partenaire'::membre_fonction),
            (id, 502, 'partenaire'::membre_fonction);
-
-    -- Maintenance
-    insert into maintenance (begins_at, ends_at)
-    values ((now()-interval'1 year'), (now()+ interval '1 year'));
 end;
 $$language plpgsql security definer;
 comment on function private.confidentialite_init_test_collectivite

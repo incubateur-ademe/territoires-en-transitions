@@ -3,7 +3,6 @@
 import { useNbActionsDansPanier } from '@/app/app/Layout/Header/useNbActionsDansPanier';
 import { useCurrentCollectivite } from '@/app/core-logic/hooks/useCurrentCollectivite';
 import { useUser } from '@/app/users/user-provider';
-import { useMaintenance } from '../useMaintenance';
 import { Header as HeaderBase } from './Header';
 
 /**
@@ -15,14 +14,12 @@ const Header = () => {
   const { data: panier } = useNbActionsDansPanier(
     currentCollectivite?.collectiviteId ?? null
   );
-  const maintenance = useMaintenance();
 
   return (
     <HeaderBase
       user={user}
       currentCollectivite={currentCollectivite}
       panierId={panier?.panierId}
-      maintenance={maintenance}
     />
   );
 };

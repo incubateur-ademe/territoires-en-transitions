@@ -40,27 +40,17 @@ const ownedCollectivites = [
 ];
 
 export const NotConnected = () => (
-  <Header
-    user={null}
-    currentCollectivite={null}
-    maintenance={null}
-    panierId={undefined}
-  />
+  <Header user={null} currentCollectivite={null} panierId={undefined} />
 );
 
 export const Connected = () => (
-  <Header
-    user={connectedUser}
-    currentCollectivite={currentCollectivite}
-    maintenance={null}
-  />
+  <Header user={connectedUser} currentCollectivite={currentCollectivite} />
 );
 
 export const ConnectedVisite = () => (
   <Header
     user={connectedUser}
     currentCollectivite={{ ...currentCollectivite, niveauAcces: null }}
-    maintenance={null}
   />
 );
 
@@ -71,6 +61,5 @@ export const ConnectedVisiteSupport = () => (
       isSupport: true,
     }}
     currentCollectivite={{ ...currentCollectivite, niveauAcces: null }}
-    maintenance={null}
   />
 );
