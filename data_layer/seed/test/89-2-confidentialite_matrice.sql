@@ -597,15 +597,6 @@ values
     ('table', 'labellisation_fichier_critere', 'edition', 'non', 'oui', 'non', 'non'),
     ('table', 'labellisation_fichier_critere', 'admin', 'non', 'oui', 'non', 'non'),
     ('table', 'labellisation_fichier_critere', 'auditeur', 'non', 'oui', 'non', 'non'),
-    -- Table maintenance
-    ('table', 'maintenance', 'public', 'non', 'non', 'non', 'non'),
-    ('table', 'maintenance', 'connecte', 'non', 'non', 'non', 'non'),
-    ('table', 'maintenance', 'verifie', 'non', 'non', 'non', 'non'),
-    ('table', 'maintenance', 'support', 'non', 'non', 'non', 'non'),
-    ('table', 'maintenance', 'lecture', 'non', 'non', 'non', 'non'),
-    ('table', 'maintenance', 'edition', 'non', 'non', 'non', 'non'),
-    ('table', 'maintenance', 'admin', 'non', 'non', 'non', 'non'),
-    ('table', 'maintenance', 'auditeur', 'non', 'non', 'non', 'non'),
     -- Table partenaire_tag
     ('table', 'partenaire_tag', 'public', 'non', 'non', 'non', 'non'),
     ('table', 'partenaire_tag', 'connecte', 'non', 'non', 'non', 'non'),
@@ -2190,15 +2181,6 @@ values
     ('vue', 'named_collectivite', 'edition', 'non', 'oui', 'non', 'non'),
     ('vue', 'named_collectivite', 'admin', 'non', 'oui', 'non', 'non'),
     ('vue', 'named_collectivite', 'auditeur', 'non', 'oui', 'non', 'non'),
-    -- Vue ongoing_maintenance
-    ('vue', 'ongoing_maintenance', 'public', 'non', 'oui', 'non', 'non'),
-    ('vue', 'ongoing_maintenance', 'connecte', 'non', 'oui', 'non', 'non'),
-    ('vue', 'ongoing_maintenance', 'verifie', 'non', 'oui', 'non', 'non'),
-    ('vue', 'ongoing_maintenance', 'support', 'non', 'oui', 'non', 'non'),
-    ('vue', 'ongoing_maintenance', 'lecture', 'non', 'oui', 'non', 'non'),
-    ('vue', 'ongoing_maintenance', 'edition', 'non', 'oui', 'non', 'non'),
-    ('vue', 'ongoing_maintenance', 'admin', 'non', 'oui', 'non', 'non'),
-    ('vue', 'ongoing_maintenance', 'auditeur', 'non', 'oui', 'non', 'non'),
     -- Vue plan_action
     ('vue', 'plan_action', 'public', 'non', 'non', 'non', 'non'),
     ('vue', 'plan_action', 'connecte', 'non', 'non', 'non', 'non'),

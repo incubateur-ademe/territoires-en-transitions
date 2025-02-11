@@ -32,8 +32,6 @@ $$
 -- Supprime toutes les collectivités de test et cot.
     delete from collectivite_test cascade where true;
     delete from cot where true;
--- Vide maintenance
-    delete from maintenance where true;
 -- Fix - Reset de la table fiche_action_pilote qui a été vidé lors du truncate dcp cascade
     select test.reset_from_copy('public', 'fiche_action_pilote');
     select test.reset_from_copy('public', 'fiche_action_referent');

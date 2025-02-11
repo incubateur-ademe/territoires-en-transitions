@@ -2,6 +2,7 @@
 
 BEGIN;
 
-alter publication supabase_realtime add table maintenance;
+DROP VIEW IF EXISTS ongoing_maintenance;
+DROP TABLE IF EXISTS maintenance;
 
 COMMIT;
