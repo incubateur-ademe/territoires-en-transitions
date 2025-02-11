@@ -53,8 +53,11 @@ export async function middleware(request: NextRequest) {
     frame-ancestors 'none';
     frame-src 'none';
     block-all-mixed-content;
-    upgrade-insecure-requests;
-`;
+    ${
+      /* ce header est activé uniquement en prod pour éviter que safari redirige tjrs en https en dev */
+      process.env.NODE_ENV === 'production' ? 'upgrade-insecure-requests;' : ''
+    }
+  `;
 
   // supprime les retours à la ligne et les espaces en trop
   const contentSecurityPolicyHeaderValue = cspHeader
