@@ -2,13 +2,13 @@
 
 import { useState, useEffect } from 'react';
 import { EmptyCard, Badge } from '@/ui';
-import ScoreTotalEvolutionsChart from './charts/ScoreTotalEvolutionsChart';
+import ScoreTotalEvolutionsChart from './evolutions-score-total.chart';
 import PictoDashboard from '../../ui/pictogrammes/PictoDashboard';
 import { SnapshotDetails, useSnapshotList } from '../use-snapshot';
 import SaveScoreModal from '../../app/pages/collectivite/Referentiels/SaveScore/save-score.modal';
 import { useCurrentCollectivite } from '@/app/core-logic/hooks/useCurrentCollectivite';
 import { useParams } from 'next/navigation';
-import SnapshotsDropdown from './SnapshotsDropdown';
+import SnapshotsDropdown from './evolutions-snapshots.dropdown';
 
 const removeScoreCourant = (snapshots: SnapshotDetails[]) => {
   return snapshots.filter((snap) => snap?.nom !== 'Score courant');

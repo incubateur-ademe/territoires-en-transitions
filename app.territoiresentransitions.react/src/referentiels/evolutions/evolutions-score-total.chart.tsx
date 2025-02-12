@@ -1,9 +1,9 @@
 import { ReactECharts } from '@/app/ui/charts/echarts';
 import type { EChartsOption } from 'echarts';
 import { actionAvancementColors } from '@/app/app/theme';
-import { SnapshotDetails } from '../../use-snapshot';
-import { sortByDate } from '../utils';
-import { theme as importedTheme } from '../../../ui/charts/chartsTheme';
+import { SnapshotDetails } from '../use-snapshot';
+import { sortByDate } from './utils';
+import { theme as importedTheme } from '../../ui/charts/chartsTheme';
 
 const ScoreTotalEvolutionsChart = ({
   allSnapshots,
