@@ -10,9 +10,9 @@ export const useSaveScore = (mutationOptions?: MutationOptions) => {
   return trpc.referentiels.snapshots.upsert.useMutation({
     ...mutationOptions,
     onSuccess: (data, variables, context) => {
-      /*
-      utils.collectivites.tableauDeBord.list.invalidate({
+      utils.referentiels.snapshots.listSummary.invalidate({
         collectiviteId: data.collectiviteId,
+        referentielId: data.referentielId,
       });
 
       utils.collectivites.tableauDeBord.get.invalidate({
