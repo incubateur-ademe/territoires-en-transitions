@@ -1,8 +1,8 @@
 import { DBClient } from '@/api';
+import { useUser } from '@/api/users/user-provider';
 import { useSupabase } from '@/api/utils/supabase/use-supabase';
 import { useCollectiviteId } from '@/app/core-logic/hooks/params';
 import { TNiveauAcces } from '@/app/types/alias';
-import { useUser } from '@/app/users/user-provider';
 import { useQuery } from 'react-query';
 
 export type CurrentCollectivite = {

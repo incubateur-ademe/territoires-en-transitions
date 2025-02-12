@@ -1,7 +1,8 @@
 import { getAuthUrl } from '@/api';
 import { ENV } from '@/api/environmentVariables';
 import { plansPilotablesFetch } from '@/api/plan-actions';
-import { dcpFetch } from '@/api/utilisateurs/shared/data_access/dcp.fetch';
+import { dcpFetch } from '@/api/users/dcp.fetch';
+import { fetchUserCollectivites } from '@/api/users/user-collectivites.fetch.server';
 import { createClient } from '@/api/utils/supabase/middleware-client';
 import type { NextRequest } from 'next/server';
 import { NextResponse } from 'next/server';
@@ -16,7 +17,6 @@ import {
   signInPath,
   signUpPath,
 } from './src/app/paths';
-import { fetchUserCollectivites } from './src/users/fetch-user-collectivites.server';
 
 export const config = {
   matcher: [

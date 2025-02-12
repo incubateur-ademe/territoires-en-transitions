@@ -1,4 +1,5 @@
-import { getAuthHeaders } from '@/api/utils/supabase/auth-session.client';
+import { useUserSession } from '@/api/users/user-provider';
+import { getAuthHeaders } from '@/api/utils/supabase/get-auth-headers';
 import { getFileNameFromResponse } from '@/app/core-logic/api/getFilenameFromResponse';
 
 const BASE_URL = `${process.env.NEXT_PUBLIC_BACKEND_URL}/api/v1`;
@@ -35,6 +36,8 @@ export class ApiError extends Error {
 
 /** Expose un client pour accéder au nouveau backend en attendant de pouvoir intégrer tRPC */
 export const useApiClient = () => {
+  const session = useUserSession();
+
   // construit l'url pour la route et les paramètres donnés
   const makeUrl = ({ route, params }: API_ARGS) => {
     const url = new URL(`${BASE_URL}${route}`);
@@ -54,7 +57,7 @@ export const useApiClient = () => {
     const response = await fetch(makeUrl(args), {
       headers: {
         'content-type': 'application/json',
-        ...((await getAuthHeaders()) ?? {}),
+        ...(await getAuthHeaders(session)),
       },
     });
     const body = await response.json();
@@ -75,7 +78,7 @@ export const useApiClient = () => {
         method,
         headers: {
           'content-type': 'application/json',
-          ...((await getAuthHeaders()) ?? {}),
+          ...(await getAuthHeaders(session)),
         },
         body: method === 'GET' ? undefined : JSON.stringify(params),
       }
@@ -101,7 +104,7 @@ export const useApiClient = () => {
         body: JSON.stringify(params),
         headers: {
           'content-type': 'application/json',
-          ...((await getAuthHeaders()) ?? {}),
+          ...(await getAuthHeaders(session)),
         },
       });
       const body = await response.json();

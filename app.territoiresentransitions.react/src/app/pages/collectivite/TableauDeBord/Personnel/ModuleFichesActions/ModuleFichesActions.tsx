@@ -2,6 +2,7 @@ import { Button, useEventTracker } from '@/ui';
 
 import { ModuleFicheActionsSelect } from '@/api/plan-actions/dashboards/personal-dashboard/domain/module.schema';
 import { SortFichesAction } from '@/api/plan-actions/fiche-resumes.list';
+import { useUser } from '@/api/users/user-provider';
 import FicheActionCard from '@/app/app/pages/collectivite/PlansActions/FicheAction/Carte/FicheActionCard';
 import { useFicheResumesFetch } from '@/app/app/pages/collectivite/PlansActions/FicheAction/data/useFicheResumesFetch';
 import Module from '@/app/app/pages/collectivite/TableauDeBord/components/Module';
@@ -16,7 +17,6 @@ import {
 } from '@/app/app/paths';
 import { useCurrentCollectivite } from '@/app/core-logic/hooks/useCurrentCollectivite';
 import PictoExpert from '@/app/ui/pictogrammes/PictoExpert';
-import { useUser } from '@/app/users/user-provider';
 import { useRouter } from 'next/navigation';
 
 type Props = {

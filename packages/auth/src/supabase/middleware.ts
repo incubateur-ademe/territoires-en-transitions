@@ -1,7 +1,7 @@
 // Code partially taken from https://supabase.com/docs/guides/auth/server-side/nextjs
 
 import { ENV } from '@/api/environmentVariables';
-import { dcpFetch } from '@/api/utilisateurs/shared/data_access/dcp.fetch';
+import { dcpFetch } from '@/api/users/dcp.fetch';
 import { getRootDomain } from '@/api/utils/pathUtils';
 import { createClient } from '@/api/utils/supabase/middleware-client';
 import { NextResponse, type NextRequest } from 'next/server';

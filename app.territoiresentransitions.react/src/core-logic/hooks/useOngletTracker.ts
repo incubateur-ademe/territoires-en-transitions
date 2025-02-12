@@ -1,9 +1,9 @@
 import { Enums, TablesInsert } from '@/api';
 import { ENV } from '@/api/environmentVariables';
+import { useUser } from '@/api/users/user-provider';
 import { useSupabase } from '@/api/utils/supabase/use-supabase';
 import { useCollectiviteId } from '@/app/core-logic/hooks/params';
 import { useLocalisation } from '@/app/core-logic/hooks/useLocalisation';
-import { useUser } from '@/app/users/user-provider';
 import { useMemo, useRef } from 'react';
 
 /**

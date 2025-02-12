@@ -2,26 +2,30 @@
 
 import {
   Consent,
-  createTrackingClient,
   getConsent,
   getNextConsentEnvId,
-  getNextTrackingEnv,
   ScriptLikeProps,
   TrackingProvider,
 } from '@/ui';
 import Script from 'next/script';
+import { PostHog } from 'posthog-js';
+import { ReactNode, useState } from 'react';
 
-const client = createTrackingClient(getNextTrackingEnv());
-const onConsentSave = () => {
-  client.set_config({ persistence: getConsent() ? 'cookie' : 'memory' });
-};
+export const PHProvider = ({ children }: { children: ReactNode }) => {
+  const [posthogClient, setPosthogClient] = useState<PostHog | null>(null);
 
-export const PHProvider = ({ children }: { children: React.ReactNode }) => {
   return (
     <>
-      <TrackingProvider client={client}>{children}</TrackingProvider>
+      <TrackingProvider onClientInit={(client) => setPosthogClient(client)}>
+        {children}
+      </TrackingProvider>
+
       <Consent
-        onConsentSave={onConsentSave}
+        onConsentSave={() => {
+          posthogClient?.set_config({
+            persistence: getConsent() ? 'cookie' : 'memory',
+          });
+        }}
         consentId={getNextConsentEnvId()}
         script={(props: ScriptLikeProps) => <Script {...props} />}
       />

@@ -1,5 +1,6 @@
 import { ficheResumesFetch } from '@/api/plan-actions';
 import { useSupabase } from '@/api/utils/supabase/use-supabase';
+import { trpc } from '@/api/utils/trpc/client';
 import { useCollectiviteId } from '@/app/core-logic/hooks/params';
 import { useQuery } from 'react-query';
 
@@ -7,6 +8,7 @@ import { useQuery } from 'react-query';
 export const useFichesActionLiees = (actionId: string) => {
   const collectiviteId = useCollectiviteId();
   const supabase = useSupabase();
+  const trpcUtils = trpc.useUtils();
 
   // charge les fiches action liées à une action
   const { data, isLoading } = useQuery(
@@ -18,6 +20,7 @@ export const useFichesActionLiees = (actionId: string) => {
 
       return ficheResumesFetch({
         dbClient: supabase,
+        trpcUtils,
         collectiviteId,
         options: {
           filtre: {

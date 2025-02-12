@@ -1,4 +1,4 @@
-import { UserDetails } from '../users/fetch-user-details.server';
+import { UserDetails } from '@/api/users/user-details.fetch.server';
 
 export const fakeUserData: UserDetails = {
   app_metadata: {},

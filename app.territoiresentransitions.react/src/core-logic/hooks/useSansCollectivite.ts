@@ -1,7 +1,7 @@
 'use client';
 
+import { useUser } from '@/api/users/user-provider';
 import { useSupabase } from '@/api/utils/supabase/use-supabase';
-import { useUser } from '@/app/users/user-provider';
 import { useQuery } from 'react-query';
 
 /** Indique si l'utilisateur courant n'est pas associé à au moins une collectivité */

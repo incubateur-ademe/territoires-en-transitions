@@ -1,3 +1,4 @@
+import { trpc } from '@/api/utils/trpc/client';
 import { beforeAll, expect, test } from 'vitest';
 import { signIn, signOut } from '../../../tests/auth';
 import { dbAdmin, supabase } from '../../../tests/supabase';
@@ -6,28 +7,42 @@ import { ficheResumesFetch } from './fiche-resumes.fetch';
 const params = {
   dbClient: supabase,
   collectiviteId: 1,
+  trpcUtils: {
+    collectivites: {
+      personnes: {
+        list: {
+          ensureData: vi.fn(async () => {
+            return [
+              { tagId: 1, nom: 'Lou Piote' },
+              { tagId: null, userId: yoloDodoUuid, nom: 'Yolo Dodo' },
+            ];
+          }),
+        },
+      },
+    },
+  } as unknown as ReturnType<typeof trpc.useUtils>,
 };
 
 const yoloDodoUuid = '17440546-f389-4d4f-bfdb-b0c94a1bd0f9';
 
-vi.mock('@/api/utils/trpc/client', () => {
-  return {
-    trpcUtils: {
-      collectivites: {
-        personnes: {
-          list: {
-            ensureData: vi.fn(async () => {
-              return [
-                { tagId: 1, nom: 'Lou Piote' },
-                { tagId: null, userId: yoloDodoUuid, nom: 'Yolo Dodo' },
-              ];
-            }),
-          },
-        },
-      },
-    },
-  };
-});
+// vi.mock('@/api/utils/trpc/client', () => {
+//   return {
+//     trpcUtils: {
+//       collectivites: {
+//         personnes: {
+//           list: {
+//             ensureData: vi.fn(async () => {
+//               return [
+//                 { tagId: 1, nom: 'Lou Piote' },
+//                 { tagId: null, userId: yoloDodoUuid, nom: 'Yolo Dodo' },
+//               ];
+//             }),
+//           },
+//         },
+//       },
+//     },
+//   };
+// });
 
 beforeAll(async () => {
   await signIn('yolododo');

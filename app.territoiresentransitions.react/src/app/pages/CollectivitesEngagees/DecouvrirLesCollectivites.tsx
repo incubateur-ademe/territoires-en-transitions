@@ -3,8 +3,8 @@ import { Route } from 'react-router-dom';
 import Filters from './Filters/FiltersColonne';
 import CollectivitesView from './Views/CollectivitesView';
 
+import { useUser } from '@/api/users/user-provider';
 import { useSearchParams } from '@/app/core-logic/hooks/query';
-import { useUser } from '@/app/users/user-provider';
 
 import { CollectiviteEngagee, getRejoindreCollectivitePath } from '@/api';
 import {

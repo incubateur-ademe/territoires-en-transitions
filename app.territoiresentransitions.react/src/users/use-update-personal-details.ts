@@ -1,6 +1,6 @@
+import { DCP } from '@/api/users/user-details.fetch.server';
 import { useSupabase } from '@/api/utils/supabase/use-supabase';
 import { useMutation, useQueryClient } from 'react-query';
-import { DCP } from './fetch-user-details.server';
 
 /**
  * Met à jour les DCP de l'utilisateur courant

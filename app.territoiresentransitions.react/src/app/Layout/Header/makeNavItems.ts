@@ -1,3 +1,4 @@
+import { UserDetails } from '@/api/users/user-details.fetch.server';
 import {
   makeCollectiviteAccueilUrl,
   makeCollectiviteBibliothequeUrl,
@@ -18,7 +19,6 @@ import {
   makeTableauBordUrl,
 } from '@/app/app/paths';
 import { CurrentCollectivite } from '@/app/core-logic/hooks/useCurrentCollectivite';
-import { UserDetails } from '@/app/users/fetch-user-details.server';
 import { TNavDropdown, TNavItem, TNavItemsList } from './types';
 
 /** Génère les liens de navigation pour une collectivité donnée */

@@ -8,7 +8,7 @@ import { useQuery } from 'react-query';
 export const useActionImpact = (actionImpactId: number) => {
   const supabase = useSupabase();
 
-  useQuery(['action_impact', actionImpactId], async () => {
+  return useQuery(['action_impact', actionImpactId], async () => {
     const { data, error } = await supabase
       .from('action_impact')
       .select(

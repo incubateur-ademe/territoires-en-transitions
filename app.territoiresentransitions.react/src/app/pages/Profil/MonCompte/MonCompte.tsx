@@ -7,9 +7,9 @@ import * as Yup from 'yup';
 import FormikInput from '@/app/ui/shared/form/formik/FormikInput';
 import ModifierEmailModal from './ModifierEmailModal';
 
-import { UserDetails } from '@/app/users/fetch-user-details.server';
+import { UserDetails } from '@/api/users/user-details.fetch.server';
+import { useUser } from '@/api/users/user-provider';
 import { useUpdatePersonalDetails } from '@/app/users/use-update-personal-details';
-import { useUser } from '@/app/users/user-provider';
 
 interface ModifierCompteData {
   prenom: string;

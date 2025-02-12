@@ -1,7 +1,7 @@
 'use client';
 
+import { UserDetails } from '@/api/users/user-details.fetch.server';
 import { CurrentCollectivite } from '@/app/core-logic/hooks/useCurrentCollectivite';
-import { UserDetails } from '@/app/users/fetch-user-details.server';
 import classNames from 'classnames';
 import Image from 'next/image';
 import Link from 'next/link';

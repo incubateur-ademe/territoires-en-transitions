@@ -1,5 +1,5 @@
 import { DBClient } from '@/api/typeUtils';
-import { trpcUtils } from '@/api/utils/trpc/client';
+import { trpc } from '@/api/utils/trpc/client';
 import { endOfDay, startOfDay } from 'date-fns';
 import { objectToCamel } from 'ts-case-convert';
 import { z } from 'zod';
@@ -28,6 +28,7 @@ const ficheActionColumns = [
 
 type Props = {
   dbClient: DBClient;
+  trpcUtils: ReturnType<typeof trpc.useUtils>;
   collectiviteId: number;
   options?: FetchOptions;
 };
@@ -37,6 +38,7 @@ type Props = {
  */
 export async function ficheResumesFetch({
   dbClient,
+  trpcUtils,
   collectiviteId: unsafeCollectiviteId,
   options = { filtre: {} },
 }: Props) {

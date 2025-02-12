@@ -13,7 +13,7 @@ export type TActionDef = Pick<
 
 // charge les données
 export const fetch = async (
-  supabase: DBClient,§
+  supabase: DBClient,
   collectivite_id: number,
   action: TActionDef
 ) => {
