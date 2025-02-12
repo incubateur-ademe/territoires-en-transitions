@@ -1,4 +1,4 @@
-import { supabaseClient } from '@/api/utils/supabase/browser-client';
+import { useSupabase } from '@/api/utils/supabase/use-supabase';
 import { useCollectiviteId } from '@/app/core-logic/hooks/params';
 import { useRouter } from 'next/navigation';
 import { useMutation, useQueryClient } from 'react-query';
@@ -12,13 +12,14 @@ export const useDeleteAxe = (
   const queryClient = useQueryClient();
   const collectivite_id = useCollectiviteId();
   const router = useRouter();
+  const supabase = useSupabase();
 
   const flat_axes_key = ['flat_axes', planId];
   const navigation_key = ['plans_navigation', collectivite_id];
 
   return useMutation(
     async () => {
-      await supabaseClient.rpc('delete_axe_all', { axe_id });
+      await supabase.rpc('delete_axe_all', { axe_id });
     },
     {
       onMutate: async () => {

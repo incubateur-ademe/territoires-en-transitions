@@ -1,4 +1,4 @@
-import { supabaseClient } from '@/api/utils/supabase/browser-client';
+import { useSupabase } from '@/api/utils/supabase/use-supabase';
 import { QueryKey, useMutation, useQueryClient } from 'react-query';
 import { objectToSnake } from 'ts-case-convert';
 
@@ -10,10 +10,11 @@ type Pilote = {
 
 export const useFicheActionAddPilote = (keysToInvalidate?: QueryKey[]) => {
   const queryClient = useQueryClient();
+  const supabase = useSupabase();
 
   return useMutation(
     async (pilotes: Pilote[]) => {
-      await supabaseClient
+      await supabase
         .from('fiche_action_pilote')
         .upsert(objectToSnake(pilotes), { onConflict: 'fiche_id,user_id' });
     },
@@ -29,10 +30,11 @@ export const useFicheActionRemoveUserPilote = (
   keysToInvalidate?: QueryKey[]
 ) => {
   const queryClient = useQueryClient();
+  const supabase = useSupabase();
 
   return useMutation(
     async (pilotes: Pilote[]) => {
-      await supabaseClient
+      await supabase
         .from('fiche_action_pilote')
         .delete()
         .in(
@@ -56,10 +58,11 @@ export const useFicheActionRemoveTagPilote = (
   keysToInvalidate?: QueryKey[]
 ) => {
   const queryClient = useQueryClient();
+  const supabase = useSupabase();
 
   return useMutation(
     async (pilotes: Pilote[]) => {
-      await supabaseClient
+      await supabase
         .from('fiche_action_pilote')
         .delete()
         .in(

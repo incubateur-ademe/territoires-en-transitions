@@ -1,11 +1,10 @@
+import { DBClient } from '@/api';
+import { useSupabase } from '@/api/utils/supabase/use-supabase';
+import { OptionSection } from '@/ui';
 import { useQuery } from 'react-query';
 
-import { OptionSection } from '@/ui';
-
-import { supabaseClient } from '@/api/utils/supabase/browser-client';
-
-const fetchPlanTypeListe = async () => {
-  const query = supabaseClient.from('plan_action_type').select();
+const fetchPlanTypeListe = async (supabase: DBClient) => {
+  const query = supabase.from('plan_action_type').select();
 
   const { error, data } = await query;
   if (error) {
@@ -17,7 +16,10 @@ const fetchPlanTypeListe = async () => {
 
 /** Renvoie la liste complète des types possibles de plan d'action */
 export const usePlanTypeListe = () => {
-  const { data } = useQuery(['plan_action_type'], () => fetchPlanTypeListe());
+  const supabase = useSupabase();
+  const { data } = useQuery(['plan_action_type'], () =>
+    fetchPlanTypeListe(supabase)
+  );
 
   /** Formate la liste pour créer des options avec section */
   const options = data?.reduce((acc: OptionSection[], curr) => {

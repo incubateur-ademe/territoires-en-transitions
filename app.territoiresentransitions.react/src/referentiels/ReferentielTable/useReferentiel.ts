@@ -1,5 +1,6 @@
+import { DBClient } from '@/api';
 import { DISABLE_AUTO_REFETCH } from '@/api/utils/react-query/query-options';
-import { supabaseClient } from '@/api/utils/supabase/browser-client';
+import { useSupabase } from '@/api/utils/supabase/use-supabase';
 import { TActionStatutsRow } from '@/app/types/alias';
 import { indexBy } from '@/app/utils/indexBy';
 import { useCallback, useMemo } from 'react';
@@ -99,10 +100,11 @@ export const useReferentiel = <ActionSubset extends IAction>(
  * créer une copie des données fusionnées avec celles de l'arborescence
  */
 const useReferentielData = (referentiel: string | null) => {
+  const supabase = useSupabase();
   // chargement du référentiel et indexation par id
   const { data, isLoading } = useQuery(
     ['action_referentiel', referentiel],
-    () => fetchActionsReferentiel(referentiel),
+    () => fetchActionsReferentiel(supabase, referentiel),
     DISABLE_AUTO_REFETCH
   );
   const { actionById, total, sousActionsTotal, rows } = data || {};
@@ -142,9 +144,12 @@ const useReferentielData = (referentiel: string | null) => {
 };
 
 // toutes les entrées d'un référentiel
-const fetchActionsReferentiel = async (referentiel: string | null) => {
+const fetchActionsReferentiel = async (
+  supabase: DBClient,
+  referentiel: string | null
+) => {
   // la requête
-  const query = supabaseClient
+  const query = supabase
     .from('action_referentiel')
     .select('action_id,identifiant,have_children,nom,depth,type,phase')
     .match({ referentiel })

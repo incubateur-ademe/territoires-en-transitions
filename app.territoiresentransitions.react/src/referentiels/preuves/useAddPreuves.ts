@@ -1,4 +1,4 @@
-import { supabaseClient } from '@/api/utils/supabase/browser-client';
+import { useSupabase } from '@/api/utils/supabase/use-supabase';
 import { useMutation, useQueryClient } from 'react-query';
 
 // on peut ajouter une preuve sous forme de...
@@ -20,30 +20,34 @@ type TAddPreuveReglementaireArgs = {
   collectivite_id: number;
   preuve_id: string;
 } & TFileOrLink;
-export const useAddPreuveReglementaire = () =>
-  useMutation(
+export const useAddPreuveReglementaire = () => {
+  const supabase = useSupabase();
+  return useMutation(
     async (preuve: TAddPreuveReglementaireArgs) =>
-      supabaseClient.from('preuve_reglementaire').insert(preuve),
+      supabase.from('preuve_reglementaire').insert(preuve),
     {
       mutationKey: 'add_preuve_reglementaire',
       onSuccess: useRefetchPreuves(),
     }
   );
+};
 
 /** Ajoute une preuve complémentaire à une action */
 type TAddPreuveComplementaireArgs = {
   collectivite_id: number;
   action_id: string;
 } & TFileOrLink;
-export const useAddPreuveComplementaire = () =>
-  useMutation(
+export const useAddPreuveComplementaire = () => {
+  const supabase = useSupabase();
+  return useMutation(
     async (preuve: TAddPreuveComplementaireArgs) =>
-      supabaseClient.from('preuve_complementaire').insert(preuve),
+      supabase.from('preuve_complementaire').insert(preuve),
     {
       mutationKey: 'add_preuve_complementaire',
       onSuccess: useRefetchPreuves(),
     }
   );
+};
 
 /** Ajoute une preuve à une demande de labellisation */
 type TAddPreuveLabellisationArgs = {
@@ -51,9 +55,10 @@ type TAddPreuveLabellisationArgs = {
   demande_id: number;
 } & TFileOrLink;
 export const useAddPreuveLabellisation = () => {
+  const supabase = useSupabase();
   return useMutation(
     async (preuve: TAddPreuveLabellisationArgs) =>
-      supabaseClient.from('preuve_labellisation').insert(preuve),
+      supabase.from('preuve_labellisation').insert(preuve),
     {
       mutationKey: 'add_preuve_labellisation',
       onSuccess: useRefetchPreuves(true),
@@ -66,48 +71,54 @@ type TAddPreuveAuditArgs = {
   collectivite_id: number;
   audit_id: number;
 } & TFileOrLink;
-export const useAddPreuveAudit = () =>
-  useMutation(
+export const useAddPreuveAudit = () => {
+  const supabase = useSupabase();
+  return useMutation(
     async (preuve: TAddPreuveAuditArgs) =>
-      supabaseClient.from('preuve_audit').insert(preuve),
+      supabase.from('preuve_audit').insert(preuve),
     {
       mutationKey: 'add_preuve_audit',
       onSuccess: useRefetchPreuves(true),
     }
   );
+};
 
 /** Ajoute un rapport de visite annuelle */
 type TAddPreuveRapportArgs = {
   collectivite_id: number;
   date: string;
 } & TFileOrLink;
-export const useAddPreuveRapport = () =>
-  useMutation(
+export const useAddPreuveRapport = () => {
+  const supabase = useSupabase();
+  return useMutation(
     async (preuve: TAddPreuveRapportArgs) =>
-      supabaseClient.from('preuve_rapport').insert(preuve),
+      supabase.from('preuve_rapport').insert(preuve),
     {
       mutationKey: 'add_preuve_rapport',
       onSuccess: useRefetchPreuves(),
     }
   );
+};
 
 /** Ajoute une annexe à une fiche action */
 type TAddPreuveAnnexeArgs = {
   collectivite_id: number;
   fiche_id: number;
 } & TFileOrLink;
-export const useAddPreuveAnnexe = () =>
+export const useAddPreuveAnnexe = () => {
+  const supabase = useSupabase();
   useMutation(
     async (preuve: TAddPreuveAnnexeArgs) =>
-      supabaseClient.from('annexe').insert(preuve),
+      supabase.from('annexe').insert(preuve),
     {
       mutationKey: 'add_annexe',
       onSuccess: useRefetchPreuves(),
     }
   );
+};
 
 // recharge la liste des preuves
-export const useRefetchPreuves = (invalidateParcours: boolean = false) => {
+export const useRefetchPreuves = (invalidateParcours = false) => {
   const queryClient = useQueryClient();
   return (data: unknown, variables: { collectivite_id: number }) => {
     const { collectivite_id } = variables;

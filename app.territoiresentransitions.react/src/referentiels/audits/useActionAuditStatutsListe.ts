@@ -1,4 +1,5 @@
-import { supabaseClient } from '@/api/utils/supabase/browser-client';
+import { DBClient } from '@/api';
+import { useSupabase } from '@/api/utils/supabase/use-supabase';
 import { useCollectiviteId } from '@/app/collectivites/collectivite-context';
 import { ReferentielId } from '@/domain/referentiels';
 import { useQuery } from 'react-query';
@@ -11,18 +12,26 @@ import { useReferentielId } from '../referentiel-context';
 export const useActionAuditStatutsListe = () => {
   const collectivite_id = useCollectiviteId();
   const referentiel = useReferentielId();
+  const supabase = useSupabase();
+
   const { data } = useQuery(
     ['action_audit_state_list', collectivite_id, referentiel],
     () =>
-      collectivite_id && referentiel ? fetch(collectivite_id, referentiel) : []
+      collectivite_id && referentiel
+        ? fetch(supabase, collectivite_id, referentiel)
+        : []
   );
   return data || [];
 };
 
 // charge les données
-const fetch = async (collectivite_id: number, referentiel: ReferentielId) => {
+const fetch = async (
+  supabase: DBClient,
+  collectivite_id: number,
+  referentiel: ReferentielId
+) => {
   // lit la liste des statuts d'audit des actions
-  const query = supabaseClient
+  const query = supabase
     .from('action_audit_state')
     .select()
     .match({ collectivite_id, referentiel });

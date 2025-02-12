@@ -3,7 +3,7 @@ import { useState } from 'react';
 import { modulesSave } from '@/api/plan-actions/dashboards/personal-dashboard/actions/modules.save';
 import { ModuleFicheActionsSelect } from '@/api/plan-actions/dashboards/personal-dashboard/domain/module.schema';
 import { Filtre as FiltreFichesAction } from '@/api/plan-actions/fiche-resumes.list/domain/fetch-options.schema';
-import { supabaseClient } from '@/api/utils/supabase/browser-client';
+import { useSupabase } from '@/api/utils/supabase/use-supabase';
 import { useCurrentCollectivite } from '@/app/core-logic/hooks/useCurrentCollectivite';
 import PrioritesFilterDropdown from '@/app/ui/dropdownLists/ficheAction/priorites/PrioritesFilterDropdown';
 import StatutsFilterDropdown from '@/app/ui/dropdownLists/ficheAction/statuts/StatutsFilterDropdown';
@@ -35,6 +35,7 @@ const ModalActionsDontJeSuisLePilote = ({
   const { collectiviteId, niveauAcces, role } = useCurrentCollectivite()!;
   const queryClient = useQueryClient();
   const userId = useUser().id;
+  const supabase = useSupabase();
 
   const [filtreState, setFiltreState] = useState<FiltreFichesAction>(
     module.options.filtre
@@ -110,7 +111,7 @@ const ModalActionsDontJeSuisLePilote = ({
                 role,
               });
               await modulesSave({
-                dbClient: supabaseClient,
+                dbClient: supabase,
                 module: {
                   ...module,
                   options: {

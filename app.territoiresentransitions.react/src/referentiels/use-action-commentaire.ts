@@ -1,6 +1,7 @@
-import { TablesInsert } from '@/api';
-import { supabaseClient } from '@/api/utils/supabase/browser-client';
+import { DBClient, TablesInsert } from '@/api';
+import { useSupabase } from '@/api/utils/supabase/use-supabase';
 import { useCollectiviteId } from '@/app/core-logic/hooks/params';
+import { getReferentielIdFromActionId } from '@/domain/referentiels';
 import { useMutation, useQuery, useQueryClient } from 'react-query';
 
 /**
@@ -13,7 +14,7 @@ import { useMutation, useQuery, useQueryClient } from 'react-query';
  */
 export const useActionCommentaire = (action_id: string) => {
   const collectivite_id = useCollectiviteId();
-  const referentiel = getReferentielFromActionId(action_id);
+  const referentiel = getReferentielIdFromActionId(action_id);
   const { data, isLoading } = useReferentielCommentaires(
     collectivite_id,
     referentiel
@@ -41,18 +42,22 @@ export const useReferentielCommentaires = (
   collectivite_id: number | null,
   referentiel: string | null
 ) => {
+  const supabase = useSupabase();
   return useQuery(['action_commentaire', collectivite_id, referentiel], () =>
     collectivite_id && referentiel
-      ? read({ collectivite_id, referentiel })
+      ? read(supabase, { collectivite_id, referentiel })
       : null
   );
 };
 
-const read = async ({
-  collectivite_id,
-  referentiel,
-}: Pick<CommentaireParams, 'collectivite_id'> & { referentiel: string }) => {
-  const { data } = await supabaseClient
+const read = async (
+  supabase: DBClient,
+  {
+    collectivite_id,
+    referentiel,
+  }: Pick<CommentaireParams, 'collectivite_id'> & { referentiel: string }
+) => {
+  const { data } = await supabase
     .from('action_commentaire')
     .select()
     .eq('collectivite_id', collectivite_id)
@@ -63,20 +68,28 @@ const read = async ({
 
 export const useSaveActionCommentaire = () => {
   const queryClient = useQueryClient();
+  const supabase = useSupabase();
+
   const {
     isLoading,
     mutate: saveActionCommentaire,
     data: lastReply,
-  } = useMutation(write, {
-    mutationKey: 'action_commentaire',
-    onSuccess: (data, variables) => {
-      queryClient.refetchQueries([
-        'action_commentaire',
-        variables.collectivite_id,
-        getReferentielFromActionId(variables.action_id),
-      ]);
-    },
-  });
+  } = useMutation(
+    async (commentaire: ActionCommentaireWrite) =>
+      supabase.from('action_commentaire').upsert([commentaire], {
+        onConflict: 'collectivite_id,action_id',
+      }),
+    {
+      mutationKey: 'action_commentaire',
+      onSuccess: (data, variables) => {
+        queryClient.refetchQueries([
+          'action_commentaire',
+          variables.collectivite_id,
+          getReferentielIdFromActionId(variables.action_id),
+        ]);
+      },
+    }
+  );
 
   return {
     isLoading,
@@ -86,10 +99,3 @@ export const useSaveActionCommentaire = () => {
 };
 
 type ActionCommentaireWrite = TablesInsert<'action_commentaire'>;
-const write = async (commentaire: ActionCommentaireWrite) =>
-  supabaseClient.from('action_commentaire').upsert([commentaire], {
-    onConflict: 'collectivite_id,action_id',
-  });
-
-const getReferentielFromActionId = (action_id: string) =>
-  action_id.split('_')[0];

@@ -1,4 +1,6 @@
-import { supabaseClient } from '@/api/utils/supabase/browser-client';
+import { DBClient } from '@/api';
+import { createClientWithoutCookieOptions } from '@/api/utils/supabase/browser-client';
+import { useSupabase } from '@/api/utils/supabase/use-supabase';
 import { useCollectiviteId } from '@/app/core-logic/hooks/params';
 import { useQuery } from 'react-query';
 import { TBibliothequeFichier } from './types';
@@ -15,9 +17,11 @@ type TFetchedData = { items: TBibliothequeFichier[]; total: number };
  */
 export const useFichiers = (filters: TFilters) => {
   const collectivite_id = useCollectiviteId();
+  const supabase = useSupabase();
+
   const { data } = useQuery(
     ['bibliotheque_fichier', collectivite_id, filters],
-    () => (collectivite_id ? fetch(collectivite_id, filters) : null),
+    () => (collectivite_id ? fetch(supabase, collectivite_id, filters) : null),
     { keepPreviousData: true }
   );
 
@@ -26,13 +30,14 @@ export const useFichiers = (filters: TFilters) => {
 
 // charge les données
 const fetch = async (
+  supabase: DBClient,
   collectivite_id: number,
   filters: TFilters
 ): Promise<TFetchedData> => {
   const { search, page } = filters;
 
   // lit la liste des fichiers de la collectivité
-  const query = supabaseClient
+  const query = supabase
     .from('bibliotheque_fichier')
     .select('id,filename,filesize,hash,confidentiel', { count: 'exact' })
     .eq('collectivite_id', collectivite_id)
@@ -60,7 +65,10 @@ export const getFilesPerHash = async (
   collectivite_id: number,
   hashes: string[]
 ) => {
-  const query = supabaseClient
+  // TODO: replace with `useSupabase()`
+  const supabase = createClientWithoutCookieOptions();
+
+  const query = supabase
     .from('bibliotheque_fichier')
     .select('id,filename,filesize,hash')
     .eq('collectivite_id', collectivite_id)

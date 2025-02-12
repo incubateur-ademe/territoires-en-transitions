@@ -1,5 +1,5 @@
-import { Views } from '@/api';
-import { supabaseClient } from '@/api/utils/supabase/browser-client';
+import { DBClient, Views } from '@/api';
+import { useSupabase } from '@/api/utils/supabase/use-supabase';
 import { useQuery } from 'react-query';
 
 type TFetchedData = {
@@ -7,11 +7,12 @@ type TFetchedData = {
   modified_by_nom: Views<'historique_utilisateur'>['modified_by_nom'];
 }[];
 
-export const fetchHistoriqueUtilisateur = async (
+const fetchHistoriqueUtilisateur = async (
+  supabase: DBClient,
   collectivite_id: number
 ): Promise<TFetchedData> => {
   // la requête
-  let query = supabaseClient
+  const query = supabase
     .from('historique_utilisateur')
     .select('modified_by_id, modified_by_nom')
     .eq('collectivite_id', collectivite_id);
@@ -31,9 +32,10 @@ export const fetchHistoriqueUtilisateur = async (
 export const useHistoriqueUtilisateurListe = (
   collectivite_id: number
 ): TFetchedData | undefined => {
+  const supabase = useSupabase();
   // charge les données
   const { data } = useQuery(['historique_utilisateur', collectivite_id], () =>
-    fetchHistoriqueUtilisateur(collectivite_id)
+    fetchHistoriqueUtilisateur(supabase, collectivite_id)
   );
 
   return data;

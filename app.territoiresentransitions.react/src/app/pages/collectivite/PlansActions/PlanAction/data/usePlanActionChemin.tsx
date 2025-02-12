@@ -1,6 +1,6 @@
 import { useQuery } from 'react-query';
 
-import { supabaseClient } from '@/api/utils/supabase/browser-client';
+import { useSupabase } from '@/api/utils/supabase/use-supabase';
 import {
   makeCollectivitePlanActionAxeUrl,
   makeCollectivitePlanActionUrl,
@@ -68,8 +68,10 @@ export const generateFilArianeLinks = ({
  * ainsi que le chemin jusqu'à l'axe donné.
  */
 export const usePlanActionChemin = (axe_id: number) => {
+  const supabase = useSupabase();
+
   return useQuery(['plan_action_chemin', axe_id], async () => {
-    const { data } = await supabaseClient
+    const { data } = await supabase
       .from('plan_action_chemin')
       .select()
       .eq('axe_id', axe_id);
@@ -78,10 +80,12 @@ export const usePlanActionChemin = (axe_id: number) => {
 };
 
 export const useFicheActionChemins = (axesIds: number[]) => {
+  const supabase = useSupabase();
+
   const { data, isLoading } = useQuery(
     ['fiche_action_chemins', axesIds],
     async () => {
-      return await supabaseClient
+      return await supabase
         .from('plan_action_chemin')
         .select()
         .in('axe_id', axesIds);

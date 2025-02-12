@@ -1,4 +1,4 @@
-import { supabaseClient } from '@/api/utils/supabase/browser-client';
+import { useSupabase } from '@/api/utils/supabase/use-supabase';
 import {
   TChangeReponse,
   TQuestionRead,
@@ -17,6 +17,7 @@ export const useChangeReponseHandler: TUseChangeReponseHandler = (
   collectivite_id
 ) => {
   const queryClient = useQueryClient();
+  const supabase = useSupabase();
 
   const saveReponse = async ({
     question,
@@ -30,7 +31,7 @@ export const useChangeReponseHandler: TUseChangeReponseHandler = (
     }
 
     const newReponse = transform({ collectivite_id, question, reponse });
-    const ret = await supabaseClient.rpc('save_reponse', {
+    const ret = await supabase.rpc('save_reponse', {
       json: newReponse,
     } as any);
     if (ret?.error) {

@@ -1,4 +1,5 @@
-import { supabaseClient } from '@/api/utils/supabase/browser-client';
+import { DBClient } from '@/api';
+import { useSupabase } from '@/api/utils/supabase/use-supabase';
 import { trpc } from '@/api/utils/trpc/client';
 import { useCollectiviteId } from '@/app/core-logic/hooks/params';
 import { useMutation, useQueryClient } from 'react-query';
@@ -10,10 +11,11 @@ type RemoveMembreResponse = {
 };
 
 const removeMembre = async (
+  supabase: DBClient,
   collectiviteId: number,
   userEmail: string
 ): Promise<RemoveMembreResponse | null> => {
-  const { data, error } = await supabaseClient.rpc(
+  const { data, error } = await supabase.rpc(
     'remove_membre_from_collectivite',
     {
       email: userEmail,
@@ -34,11 +36,12 @@ export const useRemoveFromCollectivite = () => {
   const collectiviteId = useCollectiviteId();
   const queryClient = useQueryClient();
   const utils = trpc.useUtils();
+  const supabase = useSupabase();
 
   const { isLoading, mutate } = useMutation(
     (userEmail: string) =>
       collectiviteId
-        ? removeMembre(collectiviteId, userEmail)
+        ? removeMembre(supabase, collectiviteId, userEmail)
         : Promise.resolve(null),
     {
       onSuccess: () => {

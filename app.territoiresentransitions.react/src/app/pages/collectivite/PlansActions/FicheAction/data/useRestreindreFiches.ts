@@ -1,10 +1,11 @@
 import { FicheResume } from '@/api/plan-actions';
-import { supabaseClient } from '@/api/utils/supabase/browser-client';
+import { useSupabase } from '@/api/utils/supabase/use-supabase';
 import { useMutation, useQueryClient } from 'react-query';
 import { PlanNode } from '../../PlanAction/data/types';
 
 export const useRestreindreFiches = (axes: PlanNode[]) => {
   const queryClient = useQueryClient();
+  const supabase = useSupabase();
 
   const axesWithFiches = axes.filter(
     (axe) => axe.fiches && axe.fiches.length > 0
@@ -20,7 +21,7 @@ export const useRestreindreFiches = (axes: PlanNode[]) => {
       plan_id: number;
       restreindre: boolean;
     }) => {
-      await supabaseClient.rpc('restreindre_plan', { plan_id, restreindre });
+      await supabase.rpc('restreindre_plan', { plan_id, restreindre });
     },
     {
       onMutate: async ({ restreindre }) => {

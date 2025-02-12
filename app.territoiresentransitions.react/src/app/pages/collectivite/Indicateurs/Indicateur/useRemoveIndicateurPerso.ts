@@ -1,5 +1,5 @@
 import { Indicateurs } from '@/api';
-import { supabaseClient } from '@/api/utils/supabase/browser-client';
+import { useSupabase } from '@/api/utils/supabase/use-supabase';
 import { makeCollectiviteTousLesIndicateursUrl } from '@/app/app/paths';
 import { useCurrentCollectivite } from '@/app/core-logic/hooks/useCurrentCollectivite';
 import { useEventTracker } from '@/ui';
@@ -11,6 +11,7 @@ export const useDeleteIndicateurPerso = (indicateurId: number) => {
   const queryClient = useQueryClient();
   const router = useRouter();
   const { collectiviteId, niveauAcces, role } = useCurrentCollectivite()!;
+  const supabase = useSupabase();
 
   return useMutation(
     ['delete_indicateur_perso', indicateurId],
@@ -19,7 +20,7 @@ export const useDeleteIndicateurPerso = (indicateurId: number) => {
         throw Error('invalid args');
       }
       return Indicateurs.delete.deleteIndicateur(
-        supabaseClient,
+        supabase,
         indicateurId,
         collectiviteId
       );

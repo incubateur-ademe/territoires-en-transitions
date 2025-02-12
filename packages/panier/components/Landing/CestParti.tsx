@@ -1,7 +1,7 @@
 'use client';
 
-import { getAuthPaths } from '@/api';
-import { panierAPI } from '@/panier/src/clientAPI';
+import { getAuthPaths, PanierAPI } from '@/api';
+import { useSupabase } from '@/api/utils/supabase/use-supabase';
 import { Button, Icon, useEventTracker } from '@/ui';
 import { useParams, usePathname, useRouter } from 'next/navigation';
 import { useState } from 'react';
@@ -25,9 +25,12 @@ const CestParti = () => {
   const tracker = useEventTracker(
     collectiviteId ? 'panier/landing/collectivite' : 'panier/landing'
   );
+  const supabase = useSupabase();
 
   const onClick = async () => {
-    const base = await panierAPI.panierFromLanding(collectiviteId);
+    const base = await new PanierAPI(supabase).panierFromLanding(
+      collectiviteId
+    );
     collectiviteId
       ? tracker('cta_panier_click', { collectivite_preset: collectiviteId })
       : // @ts-expect-error traque même si la collectivité n'est pas spécifiée

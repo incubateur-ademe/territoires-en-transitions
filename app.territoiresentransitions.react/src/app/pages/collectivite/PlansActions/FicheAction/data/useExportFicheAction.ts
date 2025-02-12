@@ -1,4 +1,5 @@
-import { supabaseClient } from '@/api/utils/supabase/browser-client';
+import { DBClient } from '@/api';
+import { useSupabase } from '@/api/utils/supabase/use-supabase';
 import { useFonctionTracker } from '@/app/core-logic/hooks/useFonctionTracker';
 import { saveBlob } from '@/app/referentiels/preuves/Bibliotheque/saveBlob';
 import { format as formatDate } from 'date-fns';
@@ -6,18 +7,16 @@ import { useMutation } from 'react-query';
 
 export const useExportFicheAction = (ficheId: number | null) => {
   const tracker = useFonctionTracker();
+  const supabase = useSupabase();
 
   return useMutation(
     ['export_fiche_action', ficheId],
     async (format: 'xlsx' | 'docx') => {
       if (!ficheId) return;
-      const titre = await fetchFicheActionTitle(ficheId);
-      const { data } = await supabaseClient.functions.invoke(
-        'export_plan_action',
-        {
-          body: { ficheId, format },
-        }
-      );
+      const titre = await fetchFicheActionTitle(supabase, ficheId);
+      const { data } = await supabase.functions.invoke('export_plan_action', {
+        body: { ficheId, format },
+      });
 
       if (data) {
         // on génère le nom du fichier car l'en-tête "content-disposition" de la
@@ -42,11 +41,8 @@ export const useExportFicheAction = (ficheId: number | null) => {
   );
 };
 
-const fetchFicheActionTitle = async (ficheId: number) => {
-  const query = supabaseClient
-    .from('fiche_action')
-    .select('titre')
-    .eq('id', ficheId);
+const fetchFicheActionTitle = async (supabase: DBClient, ficheId: number) => {
+  const query = supabase.from('fiche_action').select('titre').eq('id', ficheId);
 
   const { error, data } = await query;
   if (error) {

@@ -1,5 +1,5 @@
 import { TableTag } from '@/api';
-import { supabaseClient } from '@/api/utils/supabase/browser-client';
+import { useSupabase } from '@/api/utils/supabase/use-supabase';
 import { TagUpdate } from '@/domain/collectivites';
 import { QueryKey, useMutation, useQueryClient } from 'react-query';
 import { objectToSnake } from 'ts-case-convert';
@@ -18,11 +18,12 @@ export const useTagUpdate = ({
   onSuccess,
 }: Args) => {
   const queryClient = useQueryClient();
+  const supabase = useSupabase();
 
   return useMutation(
     async (tag: TagUpdate) => {
       if (tag.id)
-        await supabaseClient
+        await supabase
           .from(tagTableName)
           .update(objectToSnake(tag))
           .eq('id', tag.id);

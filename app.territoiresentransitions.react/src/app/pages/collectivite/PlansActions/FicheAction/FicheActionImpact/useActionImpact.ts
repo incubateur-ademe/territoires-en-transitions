@@ -1,23 +1,25 @@
 import { ActionImpactDetails } from '@/api';
-import { supabaseClient } from '@/api/utils/supabase/browser-client';
+import { useSupabase } from '@/api/utils/supabase/use-supabase';
 import { useQuery } from 'react-query';
 
 /**
  * Charge le détail d'une action à impact
  */
-export const useActionImpact = (actionImpactId: number) =>
+export const useActionImpact = (actionImpactId: number) => {
+  const supabase = useSupabase();
+
   useQuery(['action_impact', actionImpactId], async () => {
-    const { data, error } = await supabaseClient
+    const { data, error } = await supabase
       .from('action_impact')
       .select(
         `titre,
-        typologie:action_impact_typologie(*),
-        thematiques:action_impact_thematique(...thematique(id,nom)),
-        budget:action_impact_fourchette_budgetaire(*),
-        miseEnOeuvre:action_impact_temps_de_mise_en_oeuvre(*),
-        ressources:ressources_externes,
-        rex,
-        subventions:subventions_mobilisables
+      typologie:action_impact_typologie(*),
+      thematiques:action_impact_thematique(...thematique(id,nom)),
+      budget:action_impact_fourchette_budgetaire(*),
+      miseEnOeuvre:action_impact_temps_de_mise_en_oeuvre(*),
+      ressources:ressources_externes,
+      rex,
+      subventions:subventions_mobilisables
       `
       )
       .eq('id', actionImpactId)
@@ -27,3 +29,4 @@ export const useActionImpact = (actionImpactId: number) =>
 
     return data?.[0];
   });
+};

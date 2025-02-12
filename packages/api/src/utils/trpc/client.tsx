@@ -41,7 +41,7 @@ function getUrl() {
 
 export const trpc = createTRPCReact<AppRouter>();
 
-export const trpcClient = trpc.createClient({
+const trpcClient = trpc.createClient({
   links: [
     splitLink({
       condition(op) {
@@ -60,11 +60,11 @@ export const trpcClient = trpc.createClient({
       }),
       // when condition is false, use batching
       false: httpBatchLink({
-      // transformer: superjson, <-- if you use a data transformer
-      url: getUrl(),
-      async headers() {
-        return (await getAuthHeaders()) ?? {};
-      },
+        // transformer: superjson, <-- if you use a data transformer
+        url: getUrl(),
+        async headers() {
+          return (await getAuthHeaders()) ?? {};
+        },
       }),
     }),
   ],
@@ -75,11 +75,11 @@ export const trpcUtils = createTRPCQueryUtils({
   client: trpcClient,
 });
 
-export function TRPCProvider(
-  props: Readonly<{
-    children: React.ReactNode;
-  }>
-) {
+export function TRPCProvider({
+  children,
+}: Readonly<{
+  children: React.ReactNode;
+}>) {
   // NOTE:
   // Avoid useState when initializing the query client if you don't
   // have a suspense boundary between this and the code that may
@@ -87,11 +87,10 @@ export function TRPCProvider(
   // render if it suspends and there is no boundary
   const queryClient = getTrpcQueryClient();
   const [trpcClientState] = useState(trpcClient);
+
   return (
     <trpc.Provider client={trpcClientState} queryClient={queryClient}>
-      <QueryClientProvider client={queryClient}>
-        {props.children}
-      </QueryClientProvider>
+      <QueryClientProvider client={queryClient}>{children}</QueryClientProvider>
     </trpc.Provider>
   );
 }

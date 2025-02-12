@@ -1,4 +1,4 @@
-import { supabaseClient } from '@/api/utils/supabase/browser-client';
+import { DBClient } from '@/api';
 import { ITEM_ALL } from '@/app/ui/shared/filters/commons';
 import { ActionReferentiel } from '../../ReferentielTable/useReferentiel';
 import { TActionAuditStatut } from '../types';
@@ -10,12 +10,13 @@ export type TAuditSuiviRow = ActionReferentiel &
 
 // toutes les entrées d'un référentiel pour une collectivité et des filtres donnés
 export const fetchRows = async (
+  supabase: DBClient,
   collectivite_id: number | null,
   referentiel: string | null,
   filters: TFilters
 ) => {
   // la requête
-  const query = supabaseClient
+  const query = supabase
     .from('suivi_audit')
     .select('action_id,statut,ordre_du_jour')
     .match({ collectivite_id, referentiel });

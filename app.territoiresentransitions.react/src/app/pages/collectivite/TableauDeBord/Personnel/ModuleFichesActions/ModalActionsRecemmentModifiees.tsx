@@ -6,7 +6,7 @@ import {
   Filtre as FiltreFichesAction,
   ModifiedSince,
 } from '@/api/plan-actions/fiche-resumes.list/domain/fetch-options.schema';
-import { supabaseClient } from '@/api/utils/supabase/browser-client';
+import { useSupabase } from '@/api/utils/supabase/use-supabase';
 import { useCurrentCollectivite } from '@/app/core-logic/hooks/useCurrentCollectivite';
 import StatutsFilterDropdown from '@/app/ui/dropdownLists/ficheAction/statuts/StatutsFilterDropdown';
 import PeriodeDropdown from '@/app/ui/dropdownLists/PeriodeDropdown';
@@ -38,6 +38,7 @@ const ModalActionsRecemmentModifiees = ({
 }: Props) => {
   const { collectiviteId, niveauAcces, role } = useCurrentCollectivite()!;
   const queryClient = useQueryClient();
+  const supabase = useSupabase();
 
   const [filtreState, setFiltreState] = useState<FiltreFichesAction>(
     module.options.filtre
@@ -115,7 +116,7 @@ const ModalActionsRecemmentModifiees = ({
                 role,
               });
               await modulesSave({
-                dbClient: supabaseClient,
+                dbClient: supabase,
                 module: {
                   ...module,
                   options: {

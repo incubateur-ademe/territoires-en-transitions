@@ -1,16 +1,19 @@
 import { useQuery } from 'react-query';
 
-import { supabaseClient } from '@/api/utils/supabase/browser-client';
+import { DBClient } from '@/api';
+import { useSupabase } from '@/api/utils/supabase/use-supabase';
 import { TNomCollectivite } from '@/app/types/alias';
 
-export const NB_ITEMS_FETCH = 10;
+const NB_ITEMS_FETCH = 10;
 
-export type TFilters = { search: string };
+type TFilters = { search: string };
 
 /** Donne la liste des collectivité associée à une recherche textuelle */
 export const useFilterCollectivites = (filters: TFilters) => {
+  const supabase = useSupabase();
+
   const { data, isLoading } = useQuery(['filter_collectivites', filters], () =>
-    fetch(filters)
+    fetch(supabase, filters)
   );
   return {
     filteredCollectivites:
@@ -20,11 +23,14 @@ export const useFilterCollectivites = (filters: TFilters) => {
 };
 
 /** Charge les données */
-const fetch = async (filters: TFilters) => {
+const fetch = async (supabase: DBClient, filters: TFilters) => {
   const { search } = filters;
 
   // charge les collectivites
-  const query = supabaseClient.from('named_collectivite').select().limit(10);
+  const query = supabase
+    .from('named_collectivite')
+    .select()
+    .limit(NB_ITEMS_FETCH);
 
   if (search) {
     query.ilike('nom', `%${search}%`);

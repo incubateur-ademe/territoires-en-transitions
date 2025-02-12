@@ -1,11 +1,12 @@
 import { ficheResumesFetch } from '@/api/plan-actions';
-import { supabaseClient } from '@/api/utils/supabase/browser-client';
+import { useSupabase } from '@/api/utils/supabase/use-supabase';
 import { useCollectiviteId } from '@/app/core-logic/hooks/params';
 import { useQuery } from 'react-query';
 
 // charge les fiches actions liées à une action du référentiel
 export const useFichesActionLiees = (actionId: string) => {
   const collectiviteId = useCollectiviteId();
+  const supabase = useSupabase();
 
   // charge les fiches action liées à une action
   const { data, isLoading } = useQuery(
@@ -16,7 +17,7 @@ export const useFichesActionLiees = (actionId: string) => {
       }
 
       return ficheResumesFetch({
-        dbClient: supabaseClient,
+        dbClient: supabase,
         collectiviteId,
         options: {
           filtre: {

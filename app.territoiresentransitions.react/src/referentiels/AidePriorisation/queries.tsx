@@ -1,4 +1,4 @@
-import { supabaseClient } from '@/api/utils/supabase/browser-client';
+import { DBClient } from '@/api';
 import { ActionReferentiel } from '@/app/referentiels/ReferentielTable/useReferentiel';
 import { TActionStatutsRow } from '@/app/types/alias';
 import { ITEM_ALL } from '@/ui';
@@ -22,6 +22,7 @@ export const getMaxDepth = (referentiel: string | null) =>
 
 // toutes les entrées d'un référentiel pour une collectivité et des filtres donnés
 export const fetchRows = async (
+  supabase: DBClient,
   collectivite_id: number | null,
   referentiel: string | null,
   filters: TFilters
@@ -30,7 +31,7 @@ export const fetchRows = async (
 
   // la requête
   //TODO-REFERENTIEL
-  const query = supabaseClient
+  const query = supabase
     .from('action_statuts')
     .select('action_id,phase,score_realise,score_programme,points_restants')
     .match({ collectivite_id, referentiel, concerne: true, desactive: false })

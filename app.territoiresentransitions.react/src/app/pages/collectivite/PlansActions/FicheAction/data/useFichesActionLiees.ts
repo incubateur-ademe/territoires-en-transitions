@@ -1,5 +1,5 @@
 import { ficheResumesFetch, updateLinkedFiches } from '@/api/plan-actions';
-import { supabaseClient } from '@/api/utils/supabase/browser-client';
+import { useSupabase } from '@/api/utils/supabase/use-supabase';
 import { useCollectiviteId } from '@/app/core-logic/hooks/params';
 import { useMutation, useQuery, useQueryClient } from 'react-query';
 
@@ -8,12 +8,13 @@ import { useMutation, useQuery, useQueryClient } from 'react-query';
  */
 export const useFichesActionLiees = (ficheId: number) => {
   const collectiviteId = useCollectiviteId()!;
+  const supabase = useSupabase();
 
   const { data, ...other } = useQuery(
     ['fiche_action_fiche_action_liees', collectiviteId, ficheId],
     async () =>
       ficheResumesFetch({
-        dbClient: supabaseClient,
+        dbClient: supabase,
         collectiviteId,
         options: { filtre: { linkedFicheActionIds: [ficheId] } },
       })
@@ -27,15 +28,11 @@ export const useFichesActionLiees = (ficheId: number) => {
 export const useUpdateFichesActionLiees = (ficheId: number) => {
   const queryClient = useQueryClient();
   const collectiviteId = useCollectiviteId()!;
+  const supabase = useSupabase();
 
   return useMutation(
     async (linkedFicheIds: number[]) =>
-      updateLinkedFiches(
-        supabaseClient,
-        collectiviteId,
-        ficheId,
-        linkedFicheIds
-      ),
+      updateLinkedFiches(supabase, collectiviteId, ficheId, linkedFicheIds),
 
     {
       onSuccess: () => {

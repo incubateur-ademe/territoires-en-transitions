@@ -1,5 +1,8 @@
+import { getCookieOptions } from '@/api/utils/supabase/cookie-options';
+import { SupabaseProvider } from '@/api/utils/supabase/use-supabase';
 import { Metadata } from 'next';
 import nextDynamic from 'next/dynamic';
+import { headers } from 'next/headers';
 import StonlyWidget from '../src/lib/stonly.widget';
 import './global.css';
 
@@ -68,6 +71,9 @@ export default async function RootLayout({
 }) {
   const CrispWithNoSSR = nextDynamic(() => import('../src/lib/crisp.widget'));
 
+  const hostname = (await headers()).get('host');
+  const supabaseCookieOptions = getCookieOptions(hostname ?? undefined);
+
   return (
     <html lang="fr" translate="no" data-fr-scheme="light">
       <body>
@@ -76,7 +82,9 @@ export default async function RootLayout({
            /* empêche l'utilisation de la propriété sticky dans l'app */}
           <div className="h-screen w-screen flex flex-col">
             <div id="main" className="grow flex flex-col w-full">
-              {children}
+              <SupabaseProvider cookieOptions={supabaseCookieOptions}>
+                {children}
+              </SupabaseProvider>
             </div>
           </div>
         </div>

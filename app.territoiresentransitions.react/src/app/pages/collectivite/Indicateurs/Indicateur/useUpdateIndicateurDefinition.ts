@@ -1,5 +1,5 @@
 import { Indicateurs } from '@/api';
-import { supabaseClient } from '@/api/utils/supabase/browser-client';
+import { useSupabase } from '@/api/utils/supabase/use-supabase';
 import { trpc } from '@/api/utils/trpc/client';
 import { useCollectiviteId } from '@/app/core-logic/hooks/params';
 import { useMutation } from 'react-query';
@@ -7,6 +7,7 @@ import { useMutation } from 'react-query';
 export const useUpdateIndicateurDefinition = () => {
   const utils = trpc.useUtils();
   const collectiviteId = useCollectiviteId()!;
+  const supabase = useSupabase();
 
   return useMutation({
     mutationKey: 'upsert_indicateur_perso_def',
@@ -14,7 +15,7 @@ export const useUpdateIndicateurDefinition = () => {
       definition: Indicateurs.domain.IndicateurDefinitionUpdate
     ) => {
       await Indicateurs.save.updateIndicateurDefinition(
-        supabaseClient,
+        supabase,
         definition,
         collectiviteId
       );

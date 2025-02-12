@@ -1,4 +1,4 @@
-import { supabaseClient } from '@/api/utils/supabase/browser-client';
+import { useSupabase } from '@/api/utils/supabase/use-supabase';
 import { getScoreRealiseQueryKey } from '@/app/referentiels/actions/useScoreRealise';
 import { getScoreQueryKey } from '@/app/referentiels/DEPRECATED_score-hooks';
 import { RealtimeChannel } from '@supabase/supabase-js';
@@ -48,6 +48,7 @@ export const ScoreListenerProvider = ({
   children: ReactNode;
 }) => {
   const contextDataRef = useRef<TContextData>(null);
+  const supabase = useSupabase();
 
   const queryClient = useQueryClient();
 
@@ -75,7 +76,7 @@ export const ScoreListenerProvider = ({
 
       // Souscrit aux changements de `client_scores_update` pour la collectivité.
       const table = { schema: 'public', table: 'client_scores_update' };
-      const subscription = supabaseClient
+      const subscription = supabase
         .channel(
           `public:client_scores_update:collectivite_id=eq.${collectiviteId}` // ,referentiel=eq.${referentiel}
         )

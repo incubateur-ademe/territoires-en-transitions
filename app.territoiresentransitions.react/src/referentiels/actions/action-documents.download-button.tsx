@@ -1,4 +1,5 @@
-import { supabaseClient } from '@/api/utils/supabase/browser-client';
+import { DBClient } from '@/api';
+import { useSupabase } from '@/api/utils/supabase/use-supabase';
 import { useCurrentCollectivite } from '@/app/core-logic/hooks/useCurrentCollectivite';
 import { ActionDefinitionSummary } from '@/app/referentiels/ActionDefinitionSummaryReadEndpoint';
 import { saveBlob } from '@/app/referentiels/preuves/Bibliotheque/saveBlob';
@@ -58,6 +59,7 @@ export const DownloadDocs = (props: TDownloadDocsProps) => {
  */
 const useDownloadDocs = (action: ActionDefinitionSummary) => {
   const { referentiel, identifiant } = action;
+  const supabase = useSupabase();
   const collectivite = useCurrentCollectivite();
   const { nom } = collectivite || {};
 
@@ -85,7 +87,7 @@ const useDownloadDocs = (action: ActionDefinitionSummary) => {
     async ({ signal }) => {
       if (collectivite) {
         // génère les URLs de téléchargement
-        const signedUrls = await getSignedUrls(fichiers);
+        const signedUrls = await getSignedUrls(supabase, fichiers);
         if (signedUrls?.length) {
           // et appelle le endpoint de génération du zip
           const response = await fetch(URL, {
@@ -109,10 +111,10 @@ const useDownloadDocs = (action: ActionDefinitionSummary) => {
 };
 
 // crée une url signée temporaire pour chaque fichier
-const getSignedUrls = async (fichiers: TFichier[]) => {
+const getSignedUrls = async (supabase: DBClient, fichiers: TFichier[]) => {
   const signedUrls = await Promise.all(
     fichiers.map(({ bucket_id, hash }) =>
-      supabaseClient.storage
+      supabase.storage
         .from(bucket_id)
         .createSignedUrl(hash, LINKS_EXPIRES_IN_SEC)
     )

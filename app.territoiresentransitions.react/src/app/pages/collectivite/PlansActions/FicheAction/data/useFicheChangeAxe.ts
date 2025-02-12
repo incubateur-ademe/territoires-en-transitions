@@ -1,5 +1,5 @@
 import { FicheResume } from '@/api/plan-actions';
-import { supabaseClient } from '@/api/utils/supabase/browser-client';
+import { useSupabase } from '@/api/utils/supabase/use-supabase';
 import { useMutation, useQueryClient } from 'react-query';
 import { dropAnimation } from '../../PlanAction/DragAndDropNestedContainers/Arborescence';
 import { PlanNode } from '../../PlanAction/data/types';
@@ -13,12 +13,13 @@ type Args = {
 
 export const useFicheChangeAxe = ({ planId }: { planId: number }) => {
   const queryClient = useQueryClient();
+  const supabase = useSupabase();
 
   const flat_axes_Key = ['flat_axes', planId];
 
   return useMutation(
     async ({ fiche, new_axe_id, old_axe_id }: Args) => {
-      await supabaseClient.rpc('deplacer_fiche_action_dans_un_axe', {
+      await supabase.rpc('deplacer_fiche_action_dans_un_axe', {
         fiche_id: fiche.id!,
         new_axe_id,
         old_axe_id,

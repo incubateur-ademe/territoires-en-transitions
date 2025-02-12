@@ -1,4 +1,4 @@
-import { supabaseClient } from '@/api/utils/supabase/browser-client';
+import { useSupabase } from '@/api/utils/supabase/use-supabase';
 import { trpc } from '@/api/utils/trpc/client';
 import { useSendInvitation } from '@/app/app/pages/collectivite/Users/useSendInvitation';
 import { CurrentCollectivite } from '@/app/core-logic/hooks/useCurrentCollectivite';
@@ -35,13 +35,14 @@ export const useAddUserToCollectivite = (
 ) => {
   const { collectiviteId: collectiviteId } = collectivite;
   const queryClient = useQueryClient();
+  const supabase = useSupabase();
   const { mutate: sendInvitation } = useSendInvitation(collectivite, user);
   const utils = trpc.useUtils();
 
   return useMutation(
     async ({ email: rawEmail, niveau }: AddUserToCollectiviteArgs) => {
       const email = rawEmail.toLowerCase();
-      const { data, error } = await supabaseClient.rpc('add_user', {
+      const { data, error } = await supabase.rpc('add_user', {
         collectivite_id: collectiviteId,
         email,
         niveau,

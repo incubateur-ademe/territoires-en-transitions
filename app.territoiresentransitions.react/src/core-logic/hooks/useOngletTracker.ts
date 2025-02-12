@@ -1,6 +1,6 @@
 import { Enums, TablesInsert } from '@/api';
 import { ENV } from '@/api/environmentVariables';
-import { supabaseClient } from '@/api/utils/supabase/browser-client';
+import { useSupabase } from '@/api/utils/supabase/use-supabase';
 import { useCollectiviteId } from '@/app/core-logic/hooks/params';
 import { useLocalisation } from '@/app/core-logic/hooks/useLocalisation';
 import { useUser } from '@/app/users/user-provider';
@@ -17,17 +17,6 @@ type Visite = TablesInsert<'visite'>;
 type Onglet = Enums<'visite_onglet'>;
 
 /**
- * Enregistre une visite.
- *
- * @param visite
- * @returns success
- */
-const track = async (visite: Visite): Promise<boolean> => {
-  const { status } = await supabaseClient.from('visite').insert(visite);
-  return status === 201;
-};
-
-/**
  * Permet de suivre les ouvertures des onglets qui ne sont pas
  * prises en compte par le `VisitTracker` car elles ne changent pas l'URL.
  *
@@ -39,6 +28,7 @@ export const useOngletTracker = (): ((onglet: Onglet) => Promise<boolean>) => {
   const localisation = useLocalisation();
   const ref = useRef();
   const user = useUser();
+  const supabase = useSupabase();
 
   const factory = () => {
     // Garde la dernière visite pour éviter d'envoyer
@@ -64,7 +54,8 @@ export const useOngletTracker = (): ((onglet: Onglet) => Promise<boolean>) => {
         console.info('\x1B[0;96mtrack visite\x1B[m', 'visite', visite);
       }
 
-      return track(visite);
+      const { status } = await supabase.from('visite').insert(visite);
+      return status === 201;
     };
   };
 

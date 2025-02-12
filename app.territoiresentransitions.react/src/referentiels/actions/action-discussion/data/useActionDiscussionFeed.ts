@@ -1,8 +1,9 @@
 import { useQuery } from 'react-query';
 
-import { supabaseClient } from '@/api/utils/supabase/browser-client';
 import { useCollectiviteId } from '@/app/core-logic/hooks/params';
 
+import { DBClient } from '@/api';
+import { useSupabase } from '@/api/utils/supabase/use-supabase';
 import { TActionDiscussion, TActionDiscussionStatut } from './types';
 
 export type ActionDiscussionFeedArgs = {
@@ -15,9 +16,12 @@ export type ActionDiscussionFeedArgs = {
  */
 export const useActionDiscussionFeed = (args: ActionDiscussionFeedArgs) => {
   const collectivite_id = useCollectiviteId();
+  const supabase = useSupabase();
 
   const { data } = useQuery(['action_discussion_feed', args.statut], () =>
-    collectivite_id ? fetch(collectivite_id, args.action_id, args.statut) : []
+    collectivite_id
+      ? fetch(supabase, collectivite_id, args.action_id, args.statut)
+      : []
   );
 
   return (data as TActionDiscussion[]) || [];
@@ -27,11 +31,12 @@ export const useActionDiscussionFeed = (args: ActionDiscussionFeedArgs) => {
  * fetch les données
  */
 const fetch = async (
+  supabase: DBClient,
   collectivite_id: number,
   action_id: string,
   statut: TActionDiscussionStatut
 ) => {
-  const { data, error } = await supabaseClient
+  const { data, error } = await supabase
     .from('action_discussion_feed')
     .select()
     .match({

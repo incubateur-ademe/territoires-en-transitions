@@ -1,6 +1,6 @@
 import { Indicateurs } from '@/api';
 import { Personne } from '@/api/collectivites';
-import { supabaseClient } from '@/api/utils/supabase/browser-client';
+import { useSupabase } from '@/api/utils/supabase/use-supabase';
 import { useCollectiviteId } from '@/app/core-logic/hooks/params';
 import { Tag } from '@/domain/collectivites';
 import { Thematique } from '@/domain/shared';
@@ -12,6 +12,7 @@ export const useUpdateIndicateurCard = (
   estPerso: boolean
 ) => {
   const collectiviteId = useCollectiviteId();
+  const supabase = useSupabase();
 
   return useMutation({
     mutationKey: 'update_indicateur_card',
@@ -26,7 +27,7 @@ export const useUpdateIndicateurCard = (
     }) => {
       if (!collectiviteId) return;
       return Indicateurs.save.updateIndicateurCard(
-        supabaseClient,
+        supabase,
         {
           id: indicateurId,
           estPerso,

@@ -1,5 +1,5 @@
 import { CollectiviteTag, TableTag } from '@/api';
-import { supabaseClient } from '@/api/utils/supabase/browser-client';
+import { useSupabase } from '@/api/utils/supabase/use-supabase';
 import { QueryKey, useMutation, useQueryClient } from 'react-query';
 
 type Tag = CollectiviteTag;
@@ -18,10 +18,11 @@ export const useDeleteTag = ({
   onSuccess,
 }: Args) => {
   const queryClient = useQueryClient();
+  const supabase = useSupabase();
 
   return useMutation(
     async (tag_id: number) => {
-      await supabaseClient.from(tagTableName).delete().eq('id', tag_id);
+      await supabase.from(tagTableName).delete().eq('id', tag_id);
     },
     {
       mutationKey: 'delete_tag',

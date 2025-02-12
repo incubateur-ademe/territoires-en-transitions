@@ -1,13 +1,14 @@
-import { TablesInsert } from '@/api';
-import { supabaseClient } from '@/api/utils/supabase/browser-client';
+import { DBClient, TablesInsert } from '@/api';
+import { useSupabase } from '@/api/utils/supabase/use-supabase';
 import { useCollectiviteId } from '@/app/core-logic/hooks/params';
 import { useMutation, useQuery, useQueryClient } from 'react-query';
 
 const fetchJustification = async (
+  supabase: DBClient,
   collectivite_id: number | null,
   action_id: string | null
 ) => {
-  const { error, data } = await supabaseClient
+  const { error, data } = await supabase
     .from('justification_ajustement')
     .select()
     .match({ collectivite_id, action_id });
@@ -19,10 +20,11 @@ const fetchJustification = async (
 
 export const useActionJustification = (action_id: string) => {
   const collectivite_id = useCollectiviteId();
+  const supabase = useSupabase();
 
   const { data, isLoading } = useQuery(
     ['action_justification', collectivite_id, action_id],
-    () => fetchJustification(collectivite_id, action_id)
+    () => fetchJustification(supabase, collectivite_id, action_id)
   );
 
   return {
@@ -33,20 +35,28 @@ export const useActionJustification = (action_id: string) => {
 
 export const useSaveActionJustification = () => {
   const queryClient = useQueryClient();
+  const supabase = useSupabase();
+
   const {
     isLoading,
     mutate: saveActionJustification,
     data: lastReply,
-  } = useMutation(write, {
-    mutationKey: 'action_justification',
-    onSuccess: (data, variables) => {
-      queryClient.refetchQueries([
-        'action_justification',
-        variables.collectivite_id,
-        variables.action_id,
-      ]);
-    },
-  });
+  } = useMutation(
+    async (justification: ActionJustificationWrite) =>
+      supabase.from('justification_ajustement').upsert([justification], {
+        onConflict: 'collectivite_id,action_id',
+      }),
+    {
+      mutationKey: 'action_justification',
+      onSuccess: (data, variables) => {
+        queryClient.refetchQueries([
+          'action_justification',
+          variables.collectivite_id,
+          variables.action_id,
+        ]);
+      },
+    }
+  );
 
   return {
     isLoading,
@@ -56,7 +66,3 @@ export const useSaveActionJustification = () => {
 };
 
 type ActionJustificationWrite = TablesInsert<'justification_ajustement'>;
-const write = async (justification: ActionJustificationWrite) =>
-  supabaseClient.from('justification_ajustement').upsert([justification], {
-    onConflict: 'collectivite_id,action_id',
-  });

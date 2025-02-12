@@ -1,11 +1,12 @@
 import { useQuery } from 'react-query';
 
 import { planActionsCount } from '@/api/plan-actions';
-import { supabaseClient } from '@/api/utils/supabase/browser-client';
+import { useSupabase } from '@/api/utils/supabase/use-supabase';
 import { useCollectiviteId } from '@/app/core-logic/hooks/params';
 
 export const usePlanActionsCount = () => {
   const collectiviteId = useCollectiviteId();
+  const supabase = useSupabase();
 
   const { data } = useQuery(
     ['plan_actions_count', collectiviteId],
@@ -15,7 +16,7 @@ export const usePlanActionsCount = () => {
       }
 
       return await planActionsCount({
-        dbClient: supabaseClient,
+        dbClient: supabase,
         collectiviteId,
       });
     }

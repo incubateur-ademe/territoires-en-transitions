@@ -1,4 +1,5 @@
-import { supabaseClient } from '@/api/utils/supabase/browser-client';
+import { DBClient } from '@/api';
+import { useSupabase } from '@/api/utils/supabase/use-supabase';
 import { useCollectiviteId } from '@/app/collectivites/collectivite-context';
 import { TAddFileFromLib } from '@/app/referentiels/preuves/AddPreuveModal/AddFile';
 import { useAddPreuveLabellisation } from '@/app/referentiels/preuves/useAddPreuves';
@@ -19,6 +20,7 @@ export const useAddPreuveToDemande: TAddDocs = () => {
   const referentiel = useReferentielId();
   const { mutate: addPreuve } = useAddPreuveLabellisation();
   const { parcours } = useCycleLabellisation(referentiel);
+  const supabase = useSupabase();
 
   // associe un fichier de la bibliothèque à la demande
   const addFileFromLib: TAddFileFromLib = async (fichier_id) => {
@@ -33,7 +35,11 @@ export const useAddPreuveToDemande: TAddDocs = () => {
       if (demande_id) {
         addPreuve({ ...args, demande_id });
       } else {
-        const demande = await createDemande(collectivite_id, referentiel);
+        const demande = await createDemande(
+          supabase,
+          collectivite_id,
+          referentiel
+        );
         if (demande?.id) {
           addPreuve({ ...args, demande_id: demande.id });
         }
@@ -47,14 +53,15 @@ export const useAddPreuveToDemande: TAddDocs = () => {
 
 // charge la demande (ou la crée) associée au parcours de labellisation d'une
 // collectivité pour un référentiel et un niveau
-export const createDemande = async (
+const createDemande = async (
+  supabase: DBClient,
   collectivite_id: number | null,
   referentiel: ReferentielId | null
 ) => {
   if (!collectivite_id || !referentiel) {
     return null;
   }
-  const { error, data } = await supabaseClient
+  const { error, data } = await supabase
     .rpc('labellisation_demande', {
       collectivite_id,
       referentiel,

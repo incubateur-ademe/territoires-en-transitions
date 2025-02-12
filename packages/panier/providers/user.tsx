@@ -1,6 +1,6 @@
 'use client';
 
-import { supabaseClient as supabase } from '@/api/utils/supabase/browser-client';
+import { useSupabase } from '@/api/utils/supabase/use-supabase';
 import { User } from '@supabase/supabase-js';
 import {
   Dispatch,
@@ -37,6 +37,7 @@ export const useUserContext = () => {
  */
 export const UserProvider = ({ children }: { children: React.ReactNode }) => {
   const [user, setUser] = useState(contextDefaultValue.user);
+  const supabase = useSupabase();
 
   useEffect(() => {
     // écoute les changements d'état (connecté, déconnecté, etc.)

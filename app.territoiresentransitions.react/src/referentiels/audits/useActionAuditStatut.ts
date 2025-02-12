@@ -1,4 +1,5 @@
-import { supabaseClient } from '@/api/utils/supabase/browser-client';
+import { DBClient } from '@/api';
+import { useSupabase } from '@/api/utils/supabase/use-supabase';
 import { useCollectiviteId } from '@/app/collectivites/collectivite-context';
 import { ActionDefinitionSummary } from '@/app/referentiels/ActionDefinitionSummaryReadEndpoint';
 import { useQuery } from 'react-query';
@@ -11,9 +12,13 @@ export type TActionDef = Pick<
 >;
 
 // charge les données
-export const fetch = async (collectivite_id: number, action: TActionDef) => {
+export const fetch = async (
+  supabase: DBClient,§
+  collectivite_id: number,
+  action: TActionDef
+) => {
   // lit le statut d'audit d'une action
-  const query = supabaseClient
+  const query = supabase
     .from('action_audit_state')
     .select()
     .eq('collectivite_id', collectivite_id)
@@ -35,6 +40,8 @@ export const fetch = async (collectivite_id: number, action: TActionDef) => {
 export const useActionAuditStatut = (action: TActionDef) => {
   const collectiviteId = useCollectiviteId();
   const referentielId = useReferentielId();
+  const supabase = useSupabase();
+
   const defaultStatut = {
     collectivite_id: collectiviteId,
     referentiel: referentielId,
@@ -48,7 +55,9 @@ export const useActionAuditStatut = (action: TActionDef) => {
     ['action_audit_state', collectiviteId, referentielId, action.id],
     () =>
       collectiviteId && referentielId
-        ? fetch(collectiviteId, action).then((data) => data || defaultStatut)
+        ? fetch(supabase, collectiviteId, action).then(
+            (data) => data || defaultStatut
+          )
         : defaultStatut,
     { keepPreviousData: true }
   );

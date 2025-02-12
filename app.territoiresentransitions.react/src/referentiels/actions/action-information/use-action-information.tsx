@@ -1,5 +1,5 @@
 import { DISABLE_AUTO_REFETCH } from '@/api/utils/react-query/query-options';
-import { supabaseClient } from '@/api/utils/supabase/browser-client';
+import { useSupabase } from '@/api/utils/supabase/use-supabase';
 import { ActionDefinitionSummary } from '@/app/referentiels/ActionDefinitionSummaryReadEndpoint';
 import { useQuery } from 'react-query';
 import { TActionInfo, TRPCName } from './action-information.types';
@@ -12,6 +12,7 @@ export const useActionInfoData = (
   action: ActionDefinitionSummary
 ) => {
   const actionId = action.id;
+  const supabase = useSupabase();
 
   return useQuery(
     ['action', infoType, actionId],
@@ -21,7 +22,7 @@ export const useActionInfoData = (
       }
 
       const rpc = `action_${infoType}` as TRPCName;
-      const { data } = await supabaseClient.rpc(rpc, { id: actionId }).single();
+      const { data } = await supabase.rpc(rpc, { id: actionId }).single();
       return data?.[infoType] as string | undefined;
     },
     DISABLE_AUTO_REFETCH

@@ -1,6 +1,6 @@
 import { useMutation, useQueryClient } from 'react-query';
 
-import { supabaseClient } from '@/api/utils/supabase/browser-client';
+import { useSupabase } from '@/api/utils/supabase/use-supabase';
 import { TActionDiscussionStatut } from './types';
 
 /**
@@ -8,33 +8,32 @@ import { TActionDiscussionStatut } from './types';
  */
 export const useUpdateDiscussionStatus = () => {
   const queryClient = useQueryClient();
+  const supabase = useSupabase();
 
-  return useMutation(update, {
-    mutationKey: 'update_discussion_status',
-    meta: {
-      disableToast: true,
+  return useMutation(
+    async (args: UpdateArgs) => {
+      const { error } = await supabase
+        .from('action_discussion')
+        .update({ status: args.status })
+        .eq('id', args.discussion_id);
+
+      if (error) throw error?.message;
+
+      return true;
     },
-    onSuccess: () => {
-      queryClient.invalidateQueries(['action_discussion_feed']);
-    },
-  });
+    {
+      mutationKey: 'update_discussion_status',
+      meta: {
+        disableToast: true,
+      },
+      onSuccess: () => {
+        queryClient.invalidateQueries(['action_discussion_feed']);
+      },
+    }
+  );
 };
 
 type UpdateArgs = {
   discussion_id: number;
   status: TActionDiscussionStatut;
-};
-
-/**
- * update query
- */
-const update = async (args: UpdateArgs) => {
-  const { error } = await supabaseClient
-    .from('action_discussion')
-    .update({ status: args.status })
-    .eq('id', args.discussion_id);
-
-  if (error) throw error?.message;
-
-  return true;
 };

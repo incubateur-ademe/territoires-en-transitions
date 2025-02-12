@@ -1,14 +1,14 @@
-import { useEffect } from 'react';
-import { useQuery, useQueryClient } from 'react-query';
-
-import { supabaseClient } from '@/api/utils/supabase/browser-client';
+import { DBClient } from '@/api';
+import { useSupabase } from '@/api/utils/supabase/use-supabase';
 import { useSearchParams } from '@/app/core-logic/hooks/query';
 import { ITEM_ALL } from '@/ui';
+import { useEffect } from 'react';
+import { useQuery, useQueryClient } from 'react-query';
 import { NB_ITEMS_PER_PAGE, TFilters, nameToShortNames } from './filters';
 import { THistoriqueItem, THistoriqueProps } from './types';
 
 /** vérifie si ITEM_ALL n'est pas présent dans un filtre */
-export const isValidFilter = (values: string[] | undefined | null) =>
+const isValidFilter = (values: string[] | undefined | null) =>
   values?.length && !values.includes(ITEM_ALL);
 
 type TFetchedData = { items: THistoriqueItem[]; total: number };
@@ -16,7 +16,8 @@ type TFetchedData = { items: THistoriqueItem[]; total: number };
 /**
  * Toutes les entrées d'un référentiel pour une collectivité et des filtres donnés
  */
-export const fetchHistorique = async (
+const fetchHistorique = async (
+  supabase: DBClient,
   filters: TFilters
 ): Promise<TFetchedData> => {
   const {
@@ -30,7 +31,7 @@ export const fetchHistorique = async (
   } = filters;
 
   // la requête
-  const query = supabaseClient
+  const query = supabase
     .from('historique')
     .select('*', { count: 'exact' })
     .match({ collectivite_id })
@@ -91,6 +92,7 @@ export const useHistoriqueItemListe = (
   action_id?: string
 ): THistoriqueProps => {
   const queryClient = useQueryClient();
+  const supabase = useSupabase();
 
   // recharge les données lors de la mise à jour d'une des mutations écoutées
   const refetch = () => {
@@ -117,7 +119,7 @@ export const useHistoriqueItemListe = (
 
   // charge les données
   const { data } = useQuery(['historique', collectivite_id, filters], () =>
-    fetchHistorique(filters)
+    fetchHistorique(supabase, filters)
   );
 
   return {

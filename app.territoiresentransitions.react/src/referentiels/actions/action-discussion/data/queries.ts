@@ -1,4 +1,4 @@
-import { supabaseClient } from '@/api/utils/supabase/browser-client';
+import { DBClient } from '@/api';
 
 type UpsertArgs = {
   collectivite_id: number;
@@ -6,11 +6,11 @@ type UpsertArgs = {
 };
 
 /** Ajoute une discussion à une action pour une collectivité */
-export const upsertActionDiscussion = async ({
-  collectivite_id,
-  action_id,
-}: UpsertArgs) =>
-  supabaseClient
+export const upsertActionDiscussion = async (
+  supabase: DBClient,
+  { collectivite_id, action_id }: UpsertArgs
+) =>
+  supabase
     .from('action_discussion')
     .upsert({ collectivite_id, action_id })
     .select();
@@ -21,10 +21,10 @@ type InsertCommentaireArgs = {
 };
 
 /** Attache un nouveau commentaire à une discussion */
-export const insertActionDiscussionCommentaire = async ({
-  discussion_id,
-  message,
-}: InsertCommentaireArgs) =>
-  supabaseClient
+export const insertActionDiscussionCommentaire = async (
+  supabase: DBClient,
+  { discussion_id, message }: InsertCommentaireArgs
+) =>
+  supabase
     .from('action_discussion_commentaire')
     .insert({ discussion_id, message });

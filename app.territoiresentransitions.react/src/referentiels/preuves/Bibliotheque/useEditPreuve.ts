@@ -1,4 +1,4 @@
-import { supabaseClient } from '@/api/utils/supabase/browser-client';
+import { useSupabase } from '@/api/utils/supabase/use-supabase';
 import {
   useEditFilenameState,
   useEditState,
@@ -64,26 +64,29 @@ const tableOfType = ({ preuve_type }: TPreuve) =>
     : (`preuve_${preuve_type}` as const);
 
 // renvoie une fonction de suppression d'une preuve
-const useRemovePreuve = () =>
-  useMutation(
+const useRemovePreuve = () => {
+  const supabase = useSupabase();
+  return useMutation(
     async (preuve: TPreuve) => {
       const { id } = preuve;
-      return supabaseClient.from(tableOfType(preuve)).delete().match({ id });
+      return supabase.from(tableOfType(preuve)).delete().match({ id });
     },
     {
       mutationKey: 'remove_preuve',
       onSuccess: useRefetchPreuves(),
     }
   );
+};
 
 // renvoie une fonction de modification d'une preuve de type lien
-export const useUpdatePreuveLien = () =>
-  useMutation(
+export const useUpdatePreuveLien = () => {
+  const supabase = useSupabase();
+  return useMutation(
     async (preuve: TPreuve) => {
       const { id, lien } = preuve;
       if (!lien) return;
       const { url, titre } = lien;
-      return supabaseClient
+      return supabase
         .from(tableOfType(preuve))
         .update({ url, titre })
         .match({ id });
@@ -93,13 +96,15 @@ export const useUpdatePreuveLien = () =>
       onSuccess: useRefetchPreuves(),
     }
   );
+};
 
 // renvoie une fonction de modification du commentaire d'une preuve
-const useUpdatePreuveCommentaire = () =>
-  useMutation(
+const useUpdatePreuveCommentaire = () => {
+  const supabase = useSupabase();
+  return useMutation(
     async (preuve: TPreuve) => {
       const { id, commentaire } = preuve;
-      return supabaseClient
+      return supabase
         .from(tableOfType(preuve))
         .update({ commentaire: commentaire || '' })
         .match({ id });
@@ -109,17 +114,19 @@ const useUpdatePreuveCommentaire = () =>
       onSuccess: useRefetchPreuves(),
     }
   );
+};
 
 // renvoie une fonction de renommage d'un fichier de la bibliothèque
-export const useUpdateBibliothequeFichierFilename = () =>
-  useMutation(
+export const useUpdateBibliothequeFichierFilename = () => {
+  const supabase = useSupabase();
+  return useMutation(
     async (preuve: TPreuve & { updatedFilename: string }) => {
       if (!preuve?.fichier) {
         return null;
       }
       const { collectivite_id, fichier, updatedFilename } = preuve;
       const { hash } = fichier;
-      return supabaseClient.rpc('update_bibliotheque_fichier_filename', {
+      return supabase.rpc('update_bibliotheque_fichier_filename', {
         collectivite_id,
         filename: updatedFilename,
         hash,
@@ -130,10 +137,12 @@ export const useUpdateBibliothequeFichierFilename = () =>
       onSuccess: useRefetchPreuves(),
     }
   );
+};
 
 // renvoie une fonction d'édition de l'option "confidentiel" d'un fichier
-export const useUpdateBibliothequeFichierConfidentiel = () =>
-  useMutation(
+export const useUpdateBibliothequeFichierConfidentiel = () => {
+  const supabase = useSupabase();
+  return useMutation(
     async (preuve: {
       collectivite_id: number;
       fichier: { hash: string };
@@ -144,7 +153,7 @@ export const useUpdateBibliothequeFichierConfidentiel = () =>
       }
       const { collectivite_id, fichier, updatedConfidentiel } = preuve;
       const { hash } = fichier;
-      return supabaseClient.rpc('update_bibliotheque_fichier_confidentiel', {
+      return supabase.rpc('update_bibliotheque_fichier_confidentiel', {
         collectivite_id,
         confidentiel: updatedConfidentiel,
         hash,
@@ -155,3 +164,4 @@ export const useUpdateBibliothequeFichierConfidentiel = () =>
       onSuccess: useRefetchPreuves(),
     }
   );
+};

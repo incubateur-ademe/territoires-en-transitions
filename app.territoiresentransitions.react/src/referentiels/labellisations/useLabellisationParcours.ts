@@ -1,4 +1,5 @@
-import { supabaseClient } from '@/api/utils/supabase/browser-client';
+import { DBClient } from '@/api';
+import { useSupabase } from '@/api/utils/supabase/use-supabase';
 import { useQuery } from 'react-query';
 import { TLabellisationParcours } from './types';
 
@@ -19,20 +20,22 @@ export const useLabellisationParcours = ({
 
 // charge les données des parcours de tous les référentiels
 const useAllLabellisationsParcours = (collectivite_id: number | null) => {
+  const supabase = useSupabase();
   return useQuery(['labellisation_parcours', collectivite_id], () =>
-    fetchParcours(collectivite_id)
+    fetchParcours(supabase, collectivite_id)
   );
 };
 
 // charge les parcours (eci/cae) de labellisation d'une collectivité donnée
 const fetchParcours = async (
+  supabase: DBClient,
   collectivite_id: number | null
 ): Promise<TLabellisationParcours[] | null> => {
   if (!collectivite_id) {
     return null;
   }
 
-  const { data, error } = await supabaseClient
+  const { data, error } = await supabase
     .rpc('labellisation_parcours', {
       collectivite_id,
     })

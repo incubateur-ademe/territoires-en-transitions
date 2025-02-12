@@ -1,5 +1,5 @@
 import { TablesInsert } from '@/api';
-import { supabaseClient } from '@/api/utils/supabase/browser-client';
+import { useSupabase } from '@/api/utils/supabase/use-supabase';
 import { TReponseRead } from '@/app/referentiels/personnalisations/personnalisation.types';
 import { useMutation, useQueryClient } from 'react-query';
 
@@ -10,10 +10,11 @@ type TJustification = TablesInsert<'justification'>;
  */
 export const useUpdateJustification = () => {
   const queryClient = useQueryClient();
+  const supabase = useSupabase();
 
   return useMutation(
     async (justification: TJustification) => {
-      return supabaseClient.from('justification').upsert(justification);
+      return supabase.from('justification').upsert(justification);
     },
     {
       mutationKey: 'update_justification',

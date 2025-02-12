@@ -1,4 +1,5 @@
-import { supabaseClient } from '@/api/utils/supabase/browser-client';
+import { DBClient } from '@/api';
+import { useSupabase } from '@/api/utils/supabase/use-supabase';
 import { useUser } from '@/app/users/user-provider';
 import { useHistory } from 'react-router-dom';
 
@@ -7,7 +8,7 @@ declare global {
     e2e: {
       history: ReturnType<typeof useHistory>;
       user: ReturnType<typeof useUser>;
-      supabaseClient: typeof supabaseClient;
+      supabase: DBClient;
     };
   }
 }
@@ -18,10 +19,11 @@ declare global {
 export const E2E = () => {
   const user = useUser();
   const history = useHistory();
+  const supabase = useSupabase();
 
   if (typeof window !== 'undefined' && 'Cypress' in window) {
     // expose l'objet history ainsi que le client supabase à l'env. E2E
-    window.e2e = { history, user, supabaseClient };
+    window.e2e = { history, user, supabase };
   }
   return null;
 };

@@ -1,5 +1,8 @@
+import { getCookieOptions } from '@/api/utils/supabase/cookie-options';
+import { SupabaseProvider } from '@/api/utils/supabase/use-supabase';
 import Footer from '@/panier/components/Layout/Footer';
 import Header from '@/panier/components/Layout/Header';
+import { headers } from 'next/headers';
 import Script from 'next/script';
 import { StoreProvider } from '../providers';
 import './global.css';
@@ -28,24 +31,29 @@ export const metadata = {
   },
 };
 
-export default function RootLayout({
+export default async function RootLayout({
   children,
 }: {
   children: React.ReactNode;
 }) {
+  const hostname = (await headers()).get('host');
+  const supabaseCookieOptions = getCookieOptions(hostname ?? undefined);
+
   return (
     <html lang="fr">
-      <StoreProvider>
-        <body className="min-h-screen overflow-x-visible flex flex-col">
-          <div className="flex flex-col grow">
-            <Header />
-            <div className="bg-grey-2 grow flex flex-col">
-              <div className="grow">{children}</div>
+      <SupabaseProvider cookieOptions={supabaseCookieOptions}>
+        <StoreProvider>
+          <body className="min-h-screen overflow-x-visible flex flex-col">
+            <div className="flex flex-col grow">
+              <Header />
+              <div className="bg-grey-2 grow flex flex-col">
+                <div className="grow">{children}</div>
+              </div>
             </div>
-          </div>
-          <Footer />
-        </body>
-      </StoreProvider>
+            <Footer />
+          </body>
+        </StoreProvider>
+      </SupabaseProvider>
       {/* crisp widget */}
       <Script id="crisp" type="text/javascript">{`
           window.$crisp = [];
