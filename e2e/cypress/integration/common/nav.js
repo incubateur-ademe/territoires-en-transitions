@@ -2,11 +2,11 @@
  * Steps dédiés à la navigation
  */
 import { When } from '@badeball/cypress-cucumber-preprocessor';
-import { Views, CollectivitePages } from './views';
+import { CollectivitePages, Views } from './views';
 
 export const navigateTo = (view) => {
   const { route, selector } = Views[view];
-  cy.get('@router').then((router) => router.push(route));
+  cy.visit(route);
   cy.get(selector).should('be.visible');
 };
 

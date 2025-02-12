@@ -23,6 +23,9 @@ export const Selectors = {
   'le tableau de bord personnel': {
     selector: '[data-test="tdb-personnel"]',
   },
+  'menu collectivités': {
+    selector: '[data-test=nav-collectivites]',
+  },
   'toutes les collectivités': {
     selector: '[data-test=ToutesLesCollectivites]',
   },

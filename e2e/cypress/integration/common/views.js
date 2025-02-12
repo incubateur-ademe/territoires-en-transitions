@@ -4,7 +4,7 @@ export const Views = {
     selector: '[data-test=home]',
   },
   'Toutes les collectivités': {
-    route: '/toutes_collectivites',
+    route: '/recherches/collectivites',
     selector: '[data-test=ToutesLesCollectivites]',
   },
   'Mon compte': {
