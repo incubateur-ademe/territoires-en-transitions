@@ -1,15 +1,15 @@
-import {When} from '@badeball/cypress-cucumber-preprocessor';
+import { When } from '@badeball/cypress-cucumber-preprocessor';
 
-import {Selectors} from '../common/selectors';
-import {LocalSelectors} from './selectors';
-import {LocalSelectors as LoginSelector} from '../01-se-connecter/selectors';
-import {LocalSelectors as SignupSelectors} from '../09-creer-un-compte/selectors';
+import { LocalSelectors as LoginSelector } from '../01-se-connecter/selectors';
+import { LocalSelectors as SignupSelectors } from '../09-creer-un-compte/selectors';
+import { Selectors } from '../common/selectors';
+import { LocalSelectors } from './selectors';
 
 const tableauMembresSelector = Selectors['tableau des membres'];
 
 beforeEach(() => {
   // enregistre les définitions locales
-  cy.wrap({...LoginSelector, ...SignupSelectors, ...LocalSelectors}).as(
+  cy.wrap({ ...LoginSelector, ...SignupSelectors, ...LocalSelectors }).as(
     'LocalSelectors',
     {
       type: 'static',
@@ -32,14 +32,14 @@ When(
   }
 );
 
-When(/le tableau des membres doit contenir l'utilisateur "([^"]+)"/, mail => {
+When(/le tableau des membres doit contenir l'utilisateur "([^"]+)"/, (mail) => {
   cy.get(LocalSelectors['tableau des membres'].selector).should(
     'contain.text',
     mail
   );
 });
 
-When(/le tableau des membres n'inclus pas l'utilisateur "([^"]+)"/, mail => {
+When(/le tableau des membres n'inclus pas l'utilisateur "([^"]+)"/, (mail) => {
   cy.get(LocalSelectors['tableau des membres'].selector).should(
     'not.contain.text',
     mail
@@ -48,7 +48,7 @@ When(/le tableau des membres n'inclus pas l'utilisateur "([^"]+)"/, mail => {
 
 When(
   'le tableau des membres indique que le compte {string} est en attente de création',
-  mail => {
+  (mail) => {
     cy.get(`[data-test="MembreRow-${mail}"]`)
       .should('contain.text', mail)
       .should('contain.text', 'Création de compte en attente');
@@ -57,8 +57,8 @@ When(
 
 When(
   /la page contient (?:les|la) collectivités? "([^"]*)"/,
-  collectiviteNames => {
-    const names = collectiviteNames.split(',').map(s => s.trim());
+  (collectiviteNames) => {
+    const names = collectiviteNames.split(',').map((s) => s.trim());
     cy.get('[data-test=SimpleCollectiviteCard]').each(($el, index) =>
       cy.wrap($el).should('contain.text', names[index])
     );
@@ -78,7 +78,7 @@ When('le tableau charge les informations', () => {
 
 When(
   /le tableau des membres ne doit pas contenir l'utilisateur "([^"]+)"/,
-  mail => {
+  (mail) => {
     cy.get(tableauMembresSelector.selector).should('not.contain', mail);
   }
 );
@@ -89,7 +89,6 @@ const FIELD = {
     'Équipe politique': 'politique',
     'Équipe technique': 'technique',
     Partenaire: 'partenaire',
-    'Référent·e': 'referent',
   },
   acces: {
     Admin: 'admin',
@@ -130,13 +129,13 @@ When(
   (value, champ, email) => clickOnDropdownValue(champ, email, value)
 );
 
-const getUtilisateurRow = email => cy.get(`[data-test="MembreRow-${email}"]`);
+const getUtilisateurRow = (email) => cy.get(`[data-test="MembreRow-${email}"]`);
 
-When(/je vois une modale intitulée "([^"]+)"/, titre => {
+When(/je vois une modale intitulée "([^"]+)"/, (titre) => {
   cy.get(LocalSelectors['modale'].selector).should('contain', titre);
 });
 
-When(/je clique sur le bouton "([^"]+)" de la modale/, label => {
+When(/je clique sur le bouton "([^"]+)" de la modale/, (label) => {
   cy.get('button').contains(label).click();
 });
 
