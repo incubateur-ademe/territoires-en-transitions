@@ -1,5 +1,4 @@
 import { useSaveScore } from '@/app/app/pages/collectivite/Referentiels/SaveScore/useSaveScore';
-import { useBaseToast } from '@/app/core-logic/hooks/useBaseToast';
 import { useCurrentCollectivite } from '@/app/core-logic/hooks/useCurrentCollectivite';
 import { getIsoFormattedDate } from '@/app/utils/formatUtils';
 import {
@@ -51,7 +50,6 @@ const SaveScoreModal = ({
   children: ReactNode;
 }) => {
   const [selectedButton, setSelectedButton] = useState<string>('now');
-  const { renderToast, setToast } = useBaseToast();
   const tracker = useEventTracker('app/referentiel');
   const { niveauAcces, role } = useCurrentCollectivite()!;
   const [nomVersion, setNomVersion] = useState<string>('');
@@ -59,23 +57,17 @@ const SaveScoreModal = ({
 
   const ref = useRef<HTMLInputElement>(null);
 
-  const getDisplayedYear = (): string => {
-    if (selectedButton === 'before' && dateVersion) {
-      return new Date(dateVersion).getFullYear().toString();
-    }
-    return new Date().getFullYear().toString();
+  const displayedYear = getDisplayedYear(selectedButton, dateVersion);
+  const finalNomVersion = `${displayedYear} - ${nomVersion?.trim()}`;
+
+  const { mutate: upsertSnapshot, isPending: isSaving, reset } = useSaveScore();
+
+  const handleClose = () => {
+    reset();
   };
 
-  const finalNomVersion = `${getDisplayedYear()} - ${nomVersion?.trim()}`;
-
-  const {
-    mutate: upsertSnapshot,
-    isPending: isSaving,
-    isSuccess,
-  } = useSaveScore();
-
   const handleSave = async (close: () => void) => {
-    if (!nomVersion?.trim()) return;
+    if (!nomVersion.trim()) return;
 
     upsertSnapshot(
       {
@@ -84,16 +76,20 @@ const SaveScoreModal = ({
         snapshotNom: finalNomVersion,
         date: dateVersion ? generateBeforeDate(dateVersion) : undefined,
       },
-      {}
+      {
+        onSuccess: () => {
+          close();
+        },
+      }
     );
   };
 
   return (
     <>
-      {renderToast()}
       <Modal
         title="Figer l'état des lieux"
         size="md"
+        onClose={handleClose}
         render={({ descriptionId, close }) => (
           <div id={descriptionId} className="space-y-6">
             {/*Info */}
@@ -139,7 +135,7 @@ Une sauvegarde sera automatiquement réalisée lors du démarrage d'un audit et 
             <Field title="Nom de la version à enregistrer">
               <div className="flex items-center border border-grey-4 rounded-lg bg-grey-1 focus-within:border-primary-5">
                 <span className="text-sm px-3 py-3 text-primary-7 border-r border-grey-4">
-                  {getDisplayedYear()} -
+                  {displayedYear} -
                 </span>
                 <Input
                   type="text"

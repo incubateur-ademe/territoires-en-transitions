@@ -15,11 +15,15 @@ export const useSaveScore = (mutationOptions?: MutationOptions) => {
         referentielId: data.referentielId,
       });
 
-      utils.collectivites.tableauDeBord.get.invalidate({
-        collectiviteId: data.collectiviteId,
-        id: data.id,
-      });*/
       mutationOptions?.onSuccess?.(data, variables, context);
+    },
+    meta: {
+      success: 'État des lieux figé avec succès',
+      error: `Une sauvegarde de l'état des lieux à la date ${
+        mutationOptions?.meta?.date
+          ? mutationOptions?.meta?.date
+          : `d'aujourd'hui`
+      } ou/et avec le nom "${mutationOptions?.meta?.snapshotNom}" existe déjà.`,
     },
   });
 };
