@@ -1,3 +1,4 @@
+import { RouterInput } from '@/api/utils/trpc/client';
 import { useSaveScore } from '@/app/app/pages/collectivite/Referentiels/SaveScore/useSaveScore';
 import { useCurrentCollectivite } from '@/app/core-logic/hooks/useCurrentCollectivite';
 import { getIsoFormattedDate } from '@/app/utils/formatUtils';
@@ -12,7 +13,6 @@ import {
 } from '@/ui';
 import { DateTime } from 'luxon';
 import { ReactNode, useRef, useState } from 'react';
-import { ReferentielId } from '../../../../../../../backend/src/referentiels/index-domain';
 
 const generateBeforeDate = (
   date: string | null | undefined
@@ -36,6 +36,8 @@ const getDisplayedYear = (
   }
   return new Date().getFullYear().toString();
 };
+
+type ComputeScoreType = RouterInput['referentiels']['scores']['computeScore'];
 
 export type SaveScoreProps = {
   referentielId: string;
@@ -72,7 +74,7 @@ const SaveScoreModal = ({
     upsertSnapshot(
       {
         collectiviteId,
-        referentiel: referentielId as ReferentielId,
+        referentiel: referentielId as ComputeScoreType['referentielId'],
         snapshotNom: finalNomVersion,
         date: dateVersion ? generateBeforeDate(dateVersion) : undefined,
       },
