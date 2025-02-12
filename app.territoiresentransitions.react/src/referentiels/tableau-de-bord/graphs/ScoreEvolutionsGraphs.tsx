@@ -16,9 +16,7 @@ const ScoreEvolutionsGraphs = ({
   subTitle,
   href,
 }: ScoreEvolutionsGraphsProps): JSX.Element => {
-  const { data: snapshotList } = useSnapshotList({
-    referentielId: referentiel,
-  });
+  const { data: snapshotList } = useSnapshotList(referentiel);
 
   const snapshotWithoutScoreCourant = removeScoreCourant(
     snapshotList?.snapshots ?? []

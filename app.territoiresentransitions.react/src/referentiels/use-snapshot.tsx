@@ -26,15 +26,7 @@ export function useSnapshot({ actionId }: { actionId: string }) {
   });
 }
 
-export function useSnapshotList({
-  limit,
-  mostRecentFirst,
-  referentielId,
-}: {
-  limit?: number;
-  mostRecentFirst?: boolean;
-  referentielId?: ReferentielId;
-} = {}) {
+export function useSnapshotList(referentielId?: ReferentielId) {
   const collectiviteId = useCollectiviteId()!;
 
   if (!referentielId) {
@@ -44,10 +36,6 @@ export function useSnapshotList({
   return trpc.referentiels.snapshots.list.useQuery({
     collectiviteId,
     referentielId,
-    parameters: {
-      limit,
-      mostRecentFirst,
-    },
   });
 }
 

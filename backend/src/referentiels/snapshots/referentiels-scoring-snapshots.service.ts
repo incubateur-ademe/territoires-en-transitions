@@ -9,7 +9,7 @@ import {
   NotFoundException,
   UnauthorizedException,
 } from '@nestjs/common';
-import { and, asc, desc, eq, inArray, sql } from 'drizzle-orm';
+import { and, asc, eq, inArray, sql } from 'drizzle-orm';
 import { DateTime } from 'luxon';
 import slugify from 'slugify';
 import { AuthRole, AuthUser } from '../../auth/models/auth.models';
@@ -360,7 +360,7 @@ export default class ReferentielsScoringSnapshotsService {
     referentielId: ReferentielId,
     parameters?: GetScoreSnapshotsRequestType
   ): Promise<GetScoreSnapshotsResponseType> {
-    const { typesJalon, mostRecentFirst, limit } = parameters ?? {};
+    const { typesJalon } = parameters ?? {};
 
     const baseConditions = [
       eq(scoreSnapshotTable.collectiviteId, collectiviteId),
@@ -374,7 +374,7 @@ export default class ReferentielsScoringSnapshotsService {
         : []),
     ];
 
-    const baseQuery = this.databaseService.db
+    const snapshotList = await this.databaseService.db
       .select({
         ref: scoreSnapshotTable.ref,
         nom: scoreSnapshotTable.nom,
@@ -393,14 +393,7 @@ export default class ReferentielsScoringSnapshotsService {
       })
       .from(scoreSnapshotTable)
       .where(and(...whereConditions))
-      .orderBy(
-        mostRecentFirst
-          ? desc(scoreSnapshotTable.date)
-          : asc(scoreSnapshotTable.date)
-      );
-
-    const query = limit ? baseQuery.limit(limit) : baseQuery;
-    const snapshotList = await query;
+      .orderBy(asc(scoreSnapshotTable.date));
 
     const response: GetScoreSnapshotsResponseType = {
       collectiviteId: parseInt(collectiviteId as unknown as string),

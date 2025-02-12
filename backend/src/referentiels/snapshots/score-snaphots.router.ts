@@ -18,8 +18,6 @@ export const getScoreSnapshotInfosTrpcRequestSchema = z.object({
         .array()
         .optional()
         .default(DEFAULT_SNAPSHOT_JALONS),
-      mostRecentFirst: z.boolean().optional().default(false),
-      limit: z.number().int().optional(),
     })
     .optional(),
 });
