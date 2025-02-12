@@ -2,9 +2,32 @@ import { useSaveScore } from '@/app/app/pages/collectivite/Referentiels/SaveScor
 import { useBaseToast } from '@/app/core-logic/hooks/useBaseToast';
 import { getIsoFormattedDate } from '@/app/utils/formatUtils';
 import { Alert, Button, ButtonGroup, Field, Input, Modal } from '@/ui';
+import { DateTime } from 'luxon';
 import { ReactNode, useRef, useState } from 'react';
 import { ReferentielId } from '../../../../../../../backend/src/referentiels/index-domain';
 
+const generateBeforeDate = (
+  date: string | null | undefined
+): string | undefined => {
+  if (!date) return undefined;
+
+  const result = DateTime.fromISO(date, { zone: 'Europe/Paris' })
+    .set({ hour: 23, minute: 59, second: 0 })
+    .toUTC()
+    .toISO();
+
+  return result ?? undefined;
+};
+
+const getDisplayedYear = (
+  selectedButton: string,
+  dateVersion: string | undefined
+): string => {
+  if (selectedButton === 'before' && dateVersion) {
+    return new Date(dateVersion).getFullYear().toString();
+  }
+  return new Date().getFullYear().toString();
+};
 
 export type SaveScoreProps = {
   referentielId: string;
