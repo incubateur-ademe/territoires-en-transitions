@@ -23,14 +23,6 @@ export const getScoreSnapshotsRequestSchema = z
       .pipe(typesJalonEnumSchema.array())
       .optional()
       .default(DEFAULT_SNAPSHOT_JALONS.join(',')),
-    mostRecentFirst: z
-      .string()
-      .transform((val) => val === 'true')
-      .default('false'),
-    limit: z
-      .string()
-      .transform((val) => parseInt(val))
-      .optional(),
   })
   .describe(
     'Paramètres de la requête pour obtenir la liste des snapshots de score'

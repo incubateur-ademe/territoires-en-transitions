@@ -96,10 +96,7 @@ describe('ScoreSnapshotsRouter', () => {
       expect.fail();
     }
 
-    const expectedSnapshot: Omit<
-      ScoreSnapshotInfoType,
-      'pointFait' | 'pointPasFait' | 'pointPotentiel' | 'pointProgramme'
-    > = {
+    const expectedSnapshot: ScoreSnapshotInfoType = {
       date: DateTime.fromISO(referentielScore.date).toISO() as string,
       nom: 'Test trpc',
       ref: 'user-test-trpc',
@@ -110,22 +107,16 @@ describe('ScoreSnapshotsRouter', () => {
       auditId: null,
       createdBy: '17440546-f389-4d4f-bfdb-b0c94a1bd0f9',
       modifiedBy: '17440546-f389-4d4f-bfdb-b0c94a1bd0f9',
+      pointFait: 0.36,
+      pointPasFait: 0.03,
+      pointPotentiel: 490.9,
+      pointProgramme: 0.21,
     };
 
     expect({
       ...foundSnapshot,
       date: DateTime.fromSQL(foundSnapshot.date).toISO() as string,
-      pointFait: expect.any(Number),
-      pointPasFait: expect.any(Number),
-      pointPotentiel: expect.any(Number),
-      pointProgramme: expect.any(Number),
-    }).toEqual({
-      ...expectedSnapshot,
-      pointFait: expect.any(Number),
-      pointPasFait: expect.any(Number),
-      pointPotentiel: expect.any(Number),
-      pointProgramme: expect.any(Number),
-    });
+    }).toEqual(expectedSnapshot);
 
     // delete the snapshot
     await caller.referentiels.snapshots.delete({
