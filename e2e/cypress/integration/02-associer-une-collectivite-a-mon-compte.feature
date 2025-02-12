@@ -3,7 +3,7 @@ Fonctionnalité: Associer une collectivité à mon compte
 
   Scénario: Sélectionner la première collectivité à associer à mon compte (cas d'une collectivité déjà activée)
     Etant donné que je suis connecté en tant que "yulu"
-    Quand je visite la vue "Toutes les collectivités"
+    Quand je clique sur le bouton "menu collectivités"
     Et que je clique sur le bouton "Associer une collectivité à mon compte"
     Alors je suis redirigé sur l'authentification
     Et le "dialogue Associer une collectivité à mon compte" vérifie les conditions suivantes :
