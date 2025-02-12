@@ -1,5 +1,6 @@
 import { ENV } from '@/api/environmentVariables';
-import { getAuthHeaders } from '@/api/utils/supabase/auth-session.client';
+import { useUserSession } from '@/api/users/user-provider';
+import { getAuthHeaders } from '@/api/utils/supabase/get-auth-headers';
 import { useCollectiviteId } from '@/app/core-logic/hooks/params';
 import { shasum256 } from '@/app/utils/shasum256';
 import { useEffect, useState } from 'react';
@@ -100,6 +101,7 @@ export const useUploader = (
   /** contenu à stocker */
   file: File
 ): TUploader => {
+  const session = useUserSession();
   // état de la progression
   const [status, setStatus] = useState<UploadStatus>({
     code: UploadStatusCode.running,
@@ -133,7 +135,7 @@ export const useUploader = (
     };
 
     const fetchData = async () => {
-      const authHeaders = await getAuthHeaders();
+      const authHeaders = await getAuthHeaders(session);
       if (bucket_id && authHeaders) {
         upload({ bucket_id, file, authHeaders, onStatusChange });
       }

@@ -1,7 +1,7 @@
+import { UserDetails } from '@/api/users/user-details.fetch.server';
 import { signOutUser } from '@/api/utils/supabase/sign-out-user.server';
 import { monComptePath } from '@/app/app/paths';
 import DropdownFloater from '@/app/ui/shared/floating-ui/DropdownFloater';
-import { UserDetails } from '@/app/users/fetch-user-details.server';
 import { Button } from '@/ui';
 import classNames from 'classnames';
 import Link from 'next/link';

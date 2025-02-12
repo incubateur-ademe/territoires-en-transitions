@@ -1,3 +1,4 @@
+import { useUser } from '@/api/users/user-provider';
 import { useNbActionsDansPanier } from '@/app/app/Layout/Header/useNbActionsDansPanier';
 import PictoCollectivite from '@/app/app/pages/collectivite/Accueil/pictogrammes/PictoCollectivite';
 import PictoEtatDesLieux from '@/app/app/pages/collectivite/Accueil/pictogrammes/PictoEtatDesLieux';
@@ -20,7 +21,6 @@ import {
   recherchesCollectivitesUrl,
 } from '@/app/app/paths';
 import { useCurrentCollectivite } from '@/app/core-logic/hooks/useCurrentCollectivite';
-import { useUser } from '@/app/users/user-provider';
 import { Button, TrackPageView, useEventTracker } from '@/ui';
 import PageContainer from '@/ui/components/layout/page-container';
 import { pick } from 'es-toolkit';

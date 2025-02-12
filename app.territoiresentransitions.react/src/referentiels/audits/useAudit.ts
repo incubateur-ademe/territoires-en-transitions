@@ -1,16 +1,17 @@
 import { DBClient } from '@/api';
+import { useUser } from '@/api/users/user-provider';
 import { useSupabase } from '@/api/utils/supabase/use-supabase';
 import { useCollectiviteId } from '@/app/collectivites/collectivite-context';
 import { useCurrentCollectivite } from '@/app/core-logic/hooks/useCurrentCollectivite';
 import { usePreuvesParType } from '@/app/referentiels/preuves/usePreuves';
-import { useUser } from '@/app/users/user-provider';
 import { ReferentielId } from '@/domain/referentiels';
 import { useQuery } from 'react-query';
 import { useReferentielId } from '../referentiel-context';
 import { TAudit } from './types';
 
 // charge les données
-export const fetch = async (
+const fetch = async (
+  supabase: DBClient,
   collectivite_id: number,
   referentiel: ReferentielId
 ) => {
@@ -34,8 +35,11 @@ export const fetch = async (
 export const useAudit = () => {
   const collectivite_id = useCollectiviteId();
   const referentiel = useReferentielId();
+  const supabase = useSupabase();
   return useQuery(['audit', collectivite_id, referentiel], () =>
-    collectivite_id && referentiel ? fetch(collectivite_id, referentiel) : null
+    collectivite_id && referentiel
+      ? fetch(supabase, collectivite_id, referentiel)
+      : null
   );
 };
 

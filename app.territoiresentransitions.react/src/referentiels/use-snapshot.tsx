@@ -1,4 +1,4 @@
-import { RouterOutput, trpc, trpcUtils } from '@/api/utils/trpc/client';
+import { RouterOutput, trpc } from '@/api/utils/trpc/client';
 import {
   getReferentielIdFromActionId,
   ReferentielException,
@@ -52,6 +52,8 @@ export function useScore(actionId: string) {
  * save them into current snapshot, and invalidate the current snapshot query
  */
 export function useSnapshotComputeAndUpdate() {
+  const trpcUtils = trpc.useUtils();
+
   const { mutate: computeScoreAndUpdateCurrentSnapshot } =
     trpc.referentiels.snapshots.computeAndSave.useMutation({
       onSuccess: (snapshot, inputParams) => {

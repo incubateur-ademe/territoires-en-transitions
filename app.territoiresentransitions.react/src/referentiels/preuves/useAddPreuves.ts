@@ -107,7 +107,7 @@ type TAddPreuveAnnexeArgs = {
 } & TFileOrLink;
 export const useAddPreuveAnnexe = () => {
   const supabase = useSupabase();
-  useMutation(
+  return useMutation(
     async (preuve: TAddPreuveAnnexeArgs) =>
       supabase.from('annexe').insert(preuve),
     {

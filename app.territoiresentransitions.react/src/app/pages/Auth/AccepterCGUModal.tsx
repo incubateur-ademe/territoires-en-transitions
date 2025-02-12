@@ -1,6 +1,6 @@
+import { useUser } from '@/api/users/user-provider';
 import { useSupabase } from '@/api/utils/supabase/use-supabase';
 import Modal from '@/app/ui/shared/floating-ui/Modal';
-import { useUser } from '@/app/users/user-provider';
 import { useState } from 'react';
 import { useMutation, useQueryClient } from 'react-query';
 import { ReactComponent as ContractSVG } from './contract.svg';

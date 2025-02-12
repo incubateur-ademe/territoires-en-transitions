@@ -1,11 +1,11 @@
 import { TablesInsert } from '@/api';
 import { ENV } from '@/api/environmentVariables';
+import { useUser } from '@/api/users/user-provider';
 import { useSupabase } from '@/api/utils/supabase/use-supabase';
 import { useCollectiviteId } from '@/app/core-logic/hooks/params';
 import { useLocalisation } from '@/app/core-logic/hooks/useLocalisation';
 import { usePathname } from 'next/navigation';
 import { useEffect } from 'react';
-import { useUser } from '../users/user-provider';
 
 /**
  * Représente la visite d'une page.

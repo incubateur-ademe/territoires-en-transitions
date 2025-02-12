@@ -1,7 +1,7 @@
+import { fetchUserDetails } from '@/api/users/user-details.fetch.server';
 import { getAuthUser } from '@/api/utils/supabase/auth-user.server';
 import Footer from '@/app/app/Layout/Footer';
 import Header from '@/app/app/Layout/Header';
-import { fetchUserDetails } from '@/app/users/fetch-user-details.server';
 import { redirect } from 'next/navigation';
 import { ReactNode } from 'react';
 import AppProviders from './app-providers';

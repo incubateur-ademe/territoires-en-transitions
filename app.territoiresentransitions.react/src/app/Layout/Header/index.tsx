@@ -1,8 +1,8 @@
 'use client';
 
+import { useUser } from '@/api/users/user-provider';
 import { useNbActionsDansPanier } from '@/app/app/Layout/Header/useNbActionsDansPanier';
 import { useCurrentCollectivite } from '@/app/core-logic/hooks/useCurrentCollectivite';
-import { useUser } from '@/app/users/user-provider';
 import { Header as HeaderBase } from './Header';
 
 /**

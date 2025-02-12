@@ -1,3 +1,5 @@
+import { UserDetails } from '@/api/users/user-details.fetch.server';
+import { useUser } from '@/api/users/user-provider';
 import { Invite } from '@/app/app/pages/collectivite/Users/components/Invite';
 import MembreListTable from '@/app/app/pages/collectivite/Users/components/MembreListTable';
 import {
@@ -19,8 +21,6 @@ import {
   CurrentCollectivite,
   useCurrentCollectivite,
 } from '@/app/core-logic/hooks/useCurrentCollectivite';
-import { UserDetails } from '@/app/users/fetch-user-details.server';
-import { useUser } from '@/app/users/user-provider';
 import { Button, Modal, Pagination, TrackPageView } from '@/ui';
 import PageContainer from '@/ui/components/layout/page-container';
 import { pick } from 'es-toolkit';

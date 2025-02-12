@@ -1,6 +1,6 @@
 import { DBClient } from '@/api';
+import { useUser } from '@/api/users/user-provider';
 import { useSupabase } from '@/api/utils/supabase/use-supabase';
-import { useUser } from '@/app/users/user-provider';
 import { useHistory } from 'react-router-dom';
 
 declare global {

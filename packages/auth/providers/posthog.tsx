@@ -1,15 +1,9 @@
 'use client';
 
-import {
-  TrackingProvider,
-  createTrackingClient,
-  getNextTrackingEnv,
-} from '@/ui';
-
-const client = createTrackingClient(getNextTrackingEnv());
+import { TrackingProvider } from '@/ui';
 
 const PHProvider = ({ children }: { children: React.ReactNode }) => {
-  return <TrackingProvider client={client}>{children}</TrackingProvider>;
+  return <TrackingProvider>{children}</TrackingProvider>;
 };
 
 export default PHProvider;

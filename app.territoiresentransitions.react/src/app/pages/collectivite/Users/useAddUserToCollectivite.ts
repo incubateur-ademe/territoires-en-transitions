@@ -1,9 +1,9 @@
+import { UserDetails } from '@/api/users/user-details.fetch.server';
 import { useSupabase } from '@/api/utils/supabase/use-supabase';
 import { trpc } from '@/api/utils/trpc/client';
 import { useSendInvitation } from '@/app/app/pages/collectivite/Users/useSendInvitation';
 import { CurrentCollectivite } from '@/app/core-logic/hooks/useCurrentCollectivite';
 import { TNiveauAcces } from '@/app/types/alias';
-import { UserDetails } from '@/app/users/fetch-user-details.server';
 import { useMutation, useQueryClient } from 'react-query';
 
 type AddUserToCollectiviteArgs = {

@@ -1,23 +1,15 @@
+'use client';
+
+import { ENV } from '@/api/environmentVariables';
 import posthog, { PostHog } from 'posthog-js';
 import { PostHogProvider } from 'posthog-js/react';
-import React from 'react';
+import { ReactNode, useEffect } from 'react';
 import { getConsent } from './Consent';
-
-/**
- * Renvoi les vars d'env. pour le tracking depuis un module next js
- */
-export const getNextTrackingEnv = () => {
-  const host = process.env.NEXT_PUBLIC_POSTHOG_HOST;
-  const key = process.env.NEXT_PUBLIC_POSTHOG_KEY;
-  const env = process.env.NODE_ENV;
-
-  return { host, key, env };
-};
 
 /**
  * Crée le client de tracking
  */
-export const createTrackingClient = ({
+const createTrackingClient = ({
   host,
   key,
   env,
@@ -58,19 +50,21 @@ export const createTrackingClient = ({
   return posthog;
 };
 
+const posthogClient = createTrackingClient(ENV.posthog);
+
 /**
  * Encapsule le client de tracking dans un provider react
  */
 export const TrackingProvider = ({
+  onClientInit,
   children,
-  client,
 }: {
-  children: React.ReactNode;
-  client: PostHog;
+  onClientInit?: (client: PostHog) => void;
+  children: ReactNode;
 }) => {
-  return typeof window !== 'undefined' ? (
-    <PostHogProvider client={client}>{children}</PostHogProvider>
-  ) : (
-    children
-  );
+  useEffect(() => {
+    onClientInit?.(posthogClient);
+  });
+
+  return <PostHogProvider client={posthogClient}>{children}</PostHogProvider>;
 };

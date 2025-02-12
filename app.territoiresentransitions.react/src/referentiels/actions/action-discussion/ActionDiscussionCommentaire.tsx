@@ -2,7 +2,7 @@ import { format } from 'date-fns';
 import { fr } from 'date-fns/locale';
 import ActionDiscussionCommentaireDropdown from './ActionDiscussionCommentaireDropdown';
 
-import { useUser } from '@/app/users/user-provider';
+import { useUser } from '@/api/users/user-provider';
 import {
   TActionDiscussion,
   TActionDiscussionCommentaire,

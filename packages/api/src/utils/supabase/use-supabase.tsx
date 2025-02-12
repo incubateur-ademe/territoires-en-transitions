@@ -1,11 +1,11 @@
 'use client';
 
+import { DBClient } from '@/api/typeUtils';
 import { CookieOptionsWithName } from '@supabase/ssr';
-import { SupabaseClient } from '@supabase/supabase-js';
 import { createContext, ReactNode, useContext, useState } from 'react';
 import { createClient } from './browser-client';
 
-const SupabaseContext = createContext<SupabaseClient | null>(null);
+const SupabaseContext = createContext<DBClient | null>(null);
 
 export const SupabaseProvider = ({
   cookieOptions,
