@@ -1,5 +1,6 @@
 import { getCookieOptions } from '@/api/utils/supabase/cookie-options';
 import { SupabaseProvider } from '@/api/utils/supabase/use-supabase';
+import { E2EProvider } from '@/app/app/E2E';
 import { TrackingProvider } from '@/ui';
 import { Metadata } from 'next';
 import nextDynamic from 'next/dynamic';
@@ -84,6 +85,7 @@ export default async function RootLayout({
           <div className="h-screen w-screen flex flex-col">
             <div id="main" className="grow flex flex-col w-full">
               <SupabaseProvider cookieOptions={supabaseCookieOptions}>
+                <E2EProvider />
                 <TrackingProvider>{children}</TrackingProvider>
               </SupabaseProvider>
             </div>

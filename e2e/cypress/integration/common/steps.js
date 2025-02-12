@@ -2,14 +2,14 @@
  * Définitions de "steps" communes à tous les tests
  */
 
-import {Selectors} from './selectors';
-import {Expectations} from './expectations';
-import {waitForApp, logout, clickOutside} from './shared';
-import {When} from '@badeball/cypress-cucumber-preprocessor';
+import { When } from '@badeball/cypress-cucumber-preprocessor';
+import { Expectations } from './expectations';
+import { Selectors } from './selectors';
+import { clickOutside, logout, waitForApp } from './shared';
 
 function testReset(retry = 0) {
   // réinitialise les données fake
-  cy.task('supabase_rpc', {name: 'test_reset'}).then(ret => {
+  cy.task('supabase_rpc', { name: 'test_reset' }).then((ret) => {
     if (ret.status !== 200 && retry < 3) {
       // attends un peu et ré-essaye si ça a échoué
       cy.wait(100);
@@ -34,7 +34,7 @@ beforeEach(function () {
 
   // bouchon pour la fonction window.open
   const stub = cy.stub().as('open');
-  cy.on('window:before:load', win => {
+  cy.on('window:before:load', (win) => {
     cy.stub(win, 'open').callsFake(stub);
   });
 });
@@ -43,7 +43,7 @@ When("j'ouvre le site", () => {
   cy.get('[data-test=home]').should('be.visible');
 });
 
-const genUser = userName => {
+const genUser = (userName) => {
   const letter = userName.slice(1, userName.indexOf('l'));
   const dd = `d${letter}d${letter}`;
   return {
@@ -54,9 +54,10 @@ const genUser = userName => {
 
 const SignInPage = Selectors['formulaire de connexion'];
 When(/je suis connecté en tant que "([^"]*)"/, login);
+
 function login(userName) {
   const u = genUser(userName);
-  cy.get('@auth').then((auth) => auth.connect(u));
+  cy.get('@supabase').then((supabase) => supabase.auth.signInWithPassword(u));
   cy.get(SignInPage.selector).should('not.exist');
   cy.get('[data-test=nav-user]').should('be.visible');
 }
@@ -70,7 +71,9 @@ When(
         params: { collectivite_id, niveau: 'edition', cgu_acceptees: false },
       })
       .then(({ data: user }) => {
-        cy.get('@auth').then((auth) => auth.connect(user));
+        cy.get('@supabase').then((supabase) =>
+          supabase.auth.signInWithPassword(user)
+        );
         cy.get(SignInPage.selector).should('not.exist');
         cy.get('[data-test=nav-user]').should('be.visible');
       });
@@ -78,22 +81,22 @@ When(
 );
 
 When('les discussions sont réinitialisées', () => {
-  cy.task('supabase_rpc', {name: 'test_reset_discussion_et_commentaires'});
+  cy.task('supabase_rpc', { name: 'test_reset_discussion_et_commentaires' });
 });
 
 When('les droits utilisateur sont réinitialisés', () => {
-  cy.task('supabase_rpc', {name: 'test_reset_droits'});
+  cy.task('supabase_rpc', { name: 'test_reset_droits' });
 });
 
-When(/l'utilisateur "([^"]*)" est supprimé/, email => {
+When(/l'utilisateur "([^"]*)" est supprimé/, (email) => {
   cy.task('supabase_rpc', {
     name: 'test_remove_user',
-    params: {email: email},
+    params: { email: email },
   });
 });
 
 When('les informations des membres sont réinitialisées', () => {
-  cy.task('supabase_rpc', {name: 'test_reset_membres'});
+  cy.task('supabase_rpc', { name: 'test_reset_membres' });
 });
 
 When('je me déconnecte', logout);
@@ -192,7 +195,7 @@ When(/^je clique sur le bouton "([^"]*)"$/, function (btnName) {
   cy.get(resolveSelector(this, btnName).selector).click();
 });
 When(/^je clique sur le bouton invisible "([^"]*)"$/, function (btnName) {
-  cy.get(resolveSelector(this, btnName).selector).click({force: true});
+  cy.get(resolveSelector(this, btnName).selector).click({ force: true });
 });
 When(/^je clique sur le bouton radio "([^"]*)"$/, function (btnName) {
   // le bouton radio natif est masqué par la version stylé alors on clique sur le libellé qui le suit immédiatement
@@ -295,7 +298,7 @@ When('je recharge la page', () => {
 const tableauMembresSelector = Selectors['tableau des membres'];
 When(
   'le tableau des membres doit contenir les informations suivantes',
-  dataTable => {
+  (dataTable) => {
     cy.get(tableauMembresSelector.selector).within(() => {
       // Attend la disparition du chargement.
       cy.get('[data-test=Loading]').should('not.exist');
@@ -327,18 +330,18 @@ When(
   }
 );
 
-When(/je clique sur l'onglet "([^"]+)"$/, tabName => {
+When(/je clique sur l'onglet "([^"]+)"$/, (tabName) => {
   cy.get('.fr-tabs__tab').contains(tabName).click();
 });
 
-When(/je vois (\d+) onglets?/, count =>
+When(/je vois (\d+) onglets?/, (count) =>
   cy.get('.fr-tabs__tab').should('have.length', count)
 );
 When('je ne vois aucun onglet', () =>
   cy.get('.fr-tabs__tab').should('have.length', 0)
 );
 
-When(/l'onglet "([^"]+)" est sélectionné/, tabName =>
+When(/l'onglet "([^"]+)" est sélectionné/, (tabName) =>
   cy
     .get('.fr-tabs__tab')
     .contains(tabName)
@@ -351,14 +354,14 @@ When('le badge {string} est visible', (text) => {
     .scrollIntoView()
     .should('be.visible');
 });
-When('le badge {string} est absent', text => {
+When('le badge {string} est absent', (text) => {
   cy.get('[data-test=Badge-a-completer]').contains(text).should('not.exist');
 });
 
-When(/le texte "([^"]*)" est visible/, texte => {
+When(/le texte "([^"]*)" est visible/, (texte) => {
   cy.contains(texte).should('be.visible');
 });
-When(/le texte "([^"]*)" est absent/, texte => {
+When(/le texte "([^"]*)" est absent/, (texte) => {
   cy.contains(texte).should('not.exist');
 });
 

@@ -28,5 +28,5 @@ Fonctionnalité: Modifier mes informations personnelles
       | nom             | mail          | fonction         | champ_intervention                    | details_fonction                     | acces   |
       | Yolosan Dodoran | yolo@dodo.com | Référent·e       | Climat Air ÉnergieÉconomie Circulaire | Référent YOLO de cette collectivité  | Admin   |
 
-    # Vide la boite à la fin du test pour ne pas caser le `@history`
+    # Vide la boite à la fin du test pour ne pas casser le `@router`
     Alors je vide la boîte de réception de "yolo@doudou.com"

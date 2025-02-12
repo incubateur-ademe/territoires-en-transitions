@@ -3,11 +3,10 @@
 // `cy.get('@auth')` soit bien résolue une 2ème fois dans le même scénario
 // (utilisée avec le step "je me reconnecte en tant que ...")
 export function waitForApp() {
-  cy.window({log: false}).its('e2e.history').as('history', {type: 'static'});
-  cy.window({log: false}).its('e2e.auth').as('auth', {type: 'static'});
-  cy.window({log: false})
-    .its('e2e.supabaseClient')
-    .as('supabaseClient', {type: 'static'});
+  cy.window({ log: false }).its('e2e.router').as('router', { type: 'static' });
+  cy.window({ log: false })
+    .its('e2e.supabase')
+    .as('supabase', { type: 'static' });
 }
 
 // déconnecte via l'ui

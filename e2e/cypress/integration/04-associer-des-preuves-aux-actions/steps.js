@@ -1,18 +1,18 @@
-import {When} from '@badeball/cypress-cucumber-preprocessor';
+import { When } from '@badeball/cypress-cucumber-preprocessor';
 
-import {LocalSelectors} from './selectors';
 import {
-  noPreuvesComplementaires,
   checkPreuvesComplementaires,
   checkPreuvesReglementaires,
+  noPreuvesComplementaires,
 } from './checkPreuves';
+import { LocalSelectors } from './selectors';
 
 beforeEach(() => {
   // enregistre les définitions locales
-  cy.wrap(LocalSelectors).as('LocalSelectors', {type: 'static'});
+  cy.wrap(LocalSelectors).as('LocalSelectors', { type: 'static' });
 });
 
-When(/je déplie le panneau Preuves de l'action "([^"]+)"/, action =>
+When(/je déplie le panneau Preuves de l'action "([^"]+)"/, (action) =>
   getPreuvePanel(action).within(() => {
     // clic pour déplier le panneau
     cy.root().click();
@@ -23,16 +23,16 @@ When(/je déplie le panneau Preuves de l'action "([^"]+)"/, action =>
 
 When(
   /la table des preuves complémentaires est initialisée avec les données suivantes/,
-  dataTable => {
-    cy.get('@supabaseClient').then(client =>
+  (dataTable) => {
+    cy.get('@supabase').then((client) =>
       client.from('preuve_complementaire').insert(dataTable.hashes())
     );
   }
 );
 When(
   /la table des preuves réglementaires est initialisée avec les données suivantes/,
-  dataTable => {
-    cy.get('@supabaseClient').then(client =>
+  (dataTable) => {
+    cy.get('@supabase').then((client) =>
       client.from('preuve_reglementaire').insert(dataTable.hashes())
     );
   }
@@ -40,7 +40,7 @@ When(
 
 When(
   /la liste des preuves complémentaires de la sous-action "([^"]+)" est vide/,
-  action => {
+  (action) => {
     noPreuvesComplementaires(getPreuvePanel(action));
   }
 );
@@ -58,7 +58,7 @@ When(
 
 When(
   /la liste des preuves complémentaires de l'action contient les lignes suivantes/,
-  dataTable => {
+  (dataTable) => {
     checkPreuvesComplementaires(getPreuveTab(), dataTable);
   }
 );
@@ -72,7 +72,7 @@ When(
 
 When(
   /la liste des preuves attendues de l'action contient les lignes suivantes/,
-  dataTable => {
+  (dataTable) => {
     checkPreuvesReglementaires(getPreuveTab(), dataTable);
   }
 );
