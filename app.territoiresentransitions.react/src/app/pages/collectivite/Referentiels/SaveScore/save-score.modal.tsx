@@ -1,7 +1,16 @@
 import { useSaveScore } from '@/app/app/pages/collectivite/Referentiels/SaveScore/useSaveScore';
 import { useBaseToast } from '@/app/core-logic/hooks/useBaseToast';
+import { useCurrentCollectivite } from '@/app/core-logic/hooks/useCurrentCollectivite';
 import { getIsoFormattedDate } from '@/app/utils/formatUtils';
-import { Alert, Button, ButtonGroup, Field, Input, Modal } from '@/ui';
+import {
+  Alert,
+  Button,
+  ButtonGroup,
+  Field,
+  Input,
+  Modal,
+  useEventTracker,
+} from '@/ui';
 import { DateTime } from 'luxon';
 import { ReactNode, useRef, useState } from 'react';
 import { ReferentielId } from '../../../../../../../backend/src/referentiels/index-domain';
@@ -34,12 +43,6 @@ export type SaveScoreProps = {
   collectiviteId: number;
 };
 
-const generateBeforeDate = (date: string) => {
-  const dateObject = new Date(date);
-  dateObject.setHours(23, 59, 0);
-  return dateObject.toISOString();
-};
-
 const SaveScoreModal = ({
   referentielId,
   collectiviteId,
@@ -48,11 +51,11 @@ const SaveScoreModal = ({
   children: ReactNode;
 }) => {
   const [selectedButton, setSelectedButton] = useState<string>('now');
-  const [nomVersion, setNomVersion] = useState<string | undefined>();
-  const [dateVersion, setDateVersion] = useState<string | undefined>();
   const { renderToast, setToast } = useBaseToast();
   const tracker = useEventTracker('app/referentiel');
   const { niveauAcces, role } = useCurrentCollectivite()!;
+  const [nomVersion, setNomVersion] = useState<string>('');
+  const [dateVersion, setDateVersion] = useState<string>('');
 
   const ref = useRef<HTMLInputElement>(null);
 
@@ -65,37 +68,24 @@ const SaveScoreModal = ({
 
   const finalNomVersion = `${getDisplayedYear()} - ${nomVersion?.trim()}`;
 
-
-  const { mutate: upsertSnapshot, isPending: isSaving, isSuccess } = useSaveScore();
+  const {
+    mutate: upsertSnapshot,
+    isPending: isSaving,
+    isSuccess,
+  } = useSaveScore();
 
   const handleSave = async (close: () => void) => {
     if (!nomVersion?.trim()) return;
 
-    upsertSnapshot({
-      collectiviteId,
-      referentiel: referentielId as ReferentielId,
-      snapshotNom: finalNomVersion,
-      date: dateVersion ? generateBeforeDate(dateVersion) : undefined
-    }, {} );
-
-    /*
-    if (result.error) {
-      if (result.error.message.includes('existe déjà')) {
-        setToast(
-          'error',
-          `Une sauvegarde du référentiel à la date ${
-            dateVersion ? dateVersion : `d'aujourd'hui`
-          } ou/et avec le nom "${nomVersion}" existe déjà.`,
-          5000
-        );
-      } else {
-        setToast('error', `Erreur lors de la sauvegarde`, 5000);
-      }
-    }
-    if (result.isSuccess) {
-      setToast('success', 'Référentiel sauvegardé', 5000);
-      close();
-    }*/
+    upsertSnapshot(
+      {
+        collectiviteId,
+        referentiel: referentielId as ReferentielId,
+        snapshotNom: finalNomVersion,
+        date: dateVersion ? generateBeforeDate(dateVersion) : undefined,
+      },
+      {}
+    );
   };
 
   return (
@@ -121,7 +111,7 @@ Une sauvegarde sera automatiquement réalisée lors du démarrage d'un audit et 
                   id: 'now',
                   onClick: () => {
                     setSelectedButton('now');
-                    setDateVersion(undefined);
+                    setDateVersion('');
                   },
                 },
                 {
