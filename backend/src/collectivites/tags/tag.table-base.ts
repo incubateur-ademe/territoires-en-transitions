@@ -29,6 +29,13 @@ export const tagSchema = z.object({
 });
 export type Tag = z.infer<typeof tagSchema>;
 
+export const tagWithOptionalCollectiviteSchema = tagSchema.extend({
+  collectiviteId: z.number().optional().nullable(),
+});
+export type TagWithOptionalCollectivite = z.infer<
+  typeof tagWithOptionalCollectiviteSchema
+>;
+
 export const tagUpdateSchema = tagSchema.partial();
 export type TagUpdate = z.input<typeof tagUpdateSchema>;
 

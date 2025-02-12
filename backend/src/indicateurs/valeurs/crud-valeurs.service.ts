@@ -89,7 +89,7 @@ export default class CrudValeursService {
   constructor(
     private readonly databaseService: DatabaseService,
     private readonly permissionService: PermissionService,
-    private readonly collectiviteService: CollectivitesService
+    private readonly collectiviteService: CollectivitesService,
     private readonly indicateurDefinitionService: ListDefinitionsService,
     private readonly indicateurValeurExpressionParserService: IndicateurValeurExpressionParserService
   ) {}

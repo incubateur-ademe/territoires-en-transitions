@@ -10,6 +10,8 @@ import ListDefinitionsService from './definitions/list-definitions.service';
 import { ExportIndicateursController } from './export-indicateurs/export-indicateurs.controller';
 import ExportIndicateursService from './export-indicateurs/export-indicateurs.service';
 import { IndicateurSourcesRouter } from './sources/indicateur-sources.router';
+import { ImportIndicateurDefinitionController } from './import-indicateurs/import-indicateur-definition.controller';
+import ImportIndicateurDefinitionService from './import-indicateurs/import-indicateur-definition.service';
 import IndicateurSourcesService from './sources/indicateur-sources.service';
 import TrajectoiresDataService from './trajectoires/trajectoires-data.service';
 import TrajectoiresSpreadsheetService from './trajectoires/trajectoires-spreadsheet.service';
@@ -29,6 +31,7 @@ import CrudValeursService from './valeurs/crud-valeurs.service';
     IndicateurDefinitionsRouter,
     IndicateurSourcesService,
     IndicateurValeurExpressionParserService,
+    ImportIndicateurDefinitionService,
     CrudValeursService,
     IndicateurFiltreService,
     IndicateurFiltreRouter,
@@ -52,6 +55,7 @@ import CrudValeursService from './valeurs/crud-valeurs.service';
   ],
   controllers: [
     IndicateursController,
+    ImportIndicateurDefinitionController,
     ExportIndicateursController,
     TrajectoiresController,
   ],

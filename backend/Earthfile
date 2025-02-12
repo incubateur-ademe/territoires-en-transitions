@@ -33,6 +33,7 @@ deploy: ## Déploie le backend dans une app Koyeb existante
   ARG --required TRAJECTOIRE_SNBC_XLSX_ID
   ARG --required TRAJECTOIRE_SNBC_RESULT_FOLDER_ID
   ARG --required REFERENTIEL_TE_SHEET_ID
+  ARG --required INDICATEUR_DEFINITIONS_SHEET_ID
   ARG --required DEPLOYMENT_TIMESTAMP
   ARG SERVICE_NAME=$ENV_NAME-backend
   FROM ../+koyeb --KOYEB_API_KEY=$KOYEB_API_KEY
@@ -54,7 +55,8 @@ deploy: ## Déploie le backend dans une app Koyeb existante
     --env MATTERMOST_NOTIFICATIONS_WEBHOOK_URL=@MATTERMOST_NOTIFICATIONS_WEBHOOK_URL_$ENV_NAME \
     --env BREVO_API_KEY=@BREVO_API_KEY \
     --env DIRECTUS_API_KEY=@DIRECTUS_API_KEY \
-    --env REFERENTIEL_TE_SHEET_ID=$REFERENTIEL_TE_SHEET_ID
+    --env REFERENTIEL_TE_SHEET_ID=$REFERENTIEL_TE_SHEET_ID \
+    --env INDICATEUR_DEFINITIONS_SHEET_ID=$INDICATEUR_DEFINITIONS_SHEET_ID
 
 test-build: ## construit une image pour exécuter les tests du backend
     FROM ../+front-deps
