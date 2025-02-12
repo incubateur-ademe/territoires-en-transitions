@@ -1,5 +1,5 @@
 import { FicheAction } from '@/api/plan-actions';
-import { supabaseClient } from '@/api/utils/supabase/browser-client';
+import { useSupabase } from '@/api/utils/supabase/use-supabase';
 import { useMutation, useQueryClient } from 'react-query';
 
 type Args = {
@@ -9,10 +9,11 @@ type Args = {
 
 export const useRemoveFicheFromAxe = () => {
   const queryClient = useQueryClient();
+  const supabase = useSupabase();
 
   return useMutation(
     async ({ axe_id, fiche_id }: Args) => {
-      await supabaseClient.rpc('enlever_fiche_action_d_un_axe', {
+      await supabase.rpc('enlever_fiche_action_d_un_axe', {
         axe_id,
         fiche_id,
       });

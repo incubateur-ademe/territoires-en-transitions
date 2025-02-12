@@ -1,4 +1,4 @@
-import { supabaseClient as supabase } from '@/api/utils/supabase/browser-client';
+import { useSupabase } from '@/api/utils/supabase/use-supabase';
 import useSWR from 'swr';
 
 type Collectivite = {
@@ -11,6 +11,8 @@ type Collectivite = {
 /** Donne des infos sur une collectivité */
 export const useCollectiviteInfo = (collectiviteId: number | null) => {
   const key = `collectivite-info-${collectiviteId}`;
+  const supabase = useSupabase();
+
   return useSWR(key, async () => {
     if (!collectiviteId) return null;
 

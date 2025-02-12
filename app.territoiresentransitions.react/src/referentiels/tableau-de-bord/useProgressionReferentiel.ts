@@ -1,4 +1,5 @@
-import { supabaseClient } from '@/api/utils/supabase/browser-client';
+import { DBClient } from '@/api';
+import { useSupabase } from '@/api/utils/supabase/use-supabase';
 import { useCollectiviteId } from '@/app/core-logic/hooks/params';
 import {
   ActionReferentiel,
@@ -28,8 +29,11 @@ export type ProgressionRow = ActionReferentiel &
  * Récupère les entrées d'un référentiel pour une collectivité donnée
  */
 
-const fetchRows = async (collectivite_id: number | null) => {
-  const { error, data } = await supabaseClient
+const fetchRows = async (
+  supabase: DBClient,
+  collectivite_id: number | null
+) => {
+  const { error, data } = await supabase
     .from('action_statuts')
     .select(
       'action_id,score_realise,score_programme,score_pas_fait,score_non_renseigne,points_realises,points_programmes,points_max_personnalises,phase'
@@ -62,11 +66,12 @@ export type TableData = {
 
 export const useProgressionReferentiel = () => {
   const collectiviteId = useCollectiviteId();
+  const supabase = useSupabase();
 
   // Chargement des données
   const { data: actionsStatut, isLoading } = useQuery(
     ['progression_referentiel', collectiviteId],
-    () => fetchRows(collectiviteId)
+    () => fetchRows(supabase, collectiviteId)
   );
 
   const caeActionsStatut: ProgressionRow[] | undefined = [];

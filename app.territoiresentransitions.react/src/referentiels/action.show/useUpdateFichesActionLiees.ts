@@ -1,5 +1,5 @@
 import { FicheResume } from '@/api/plan-actions';
-import { supabaseClient } from '@/api/utils/supabase/browser-client';
+import { useSupabase } from '@/api/utils/supabase/use-supabase';
 import { useCollectiviteId } from '@/app/core-logic/hooks/params';
 import { diff } from '@/app/utils/diff';
 import { useMutation, useQueryClient } from 'react-query';
@@ -17,6 +17,7 @@ type TUpdateFichesActionLieesArgs = {
 export const useUpdateFichesActionLiees = (action_id: string) => {
   const queryClient = useQueryClient();
   const collectivite_id = useCollectiviteId();
+  const supabase = useSupabase();
 
   return useMutation(
     async ({ fiches, fiches_liees }: TUpdateFichesActionLieesArgs) => {
@@ -28,7 +29,7 @@ export const useUpdateFichesActionLiees = (action_id: string) => {
 
       // supprime les anciennes entrées
       if (idsToDelete.length) {
-        await supabaseClient
+        await supabase
           .from('fiche_action_action')
           .delete()
           .match({ fiche_id: idsToDelete })
@@ -41,7 +42,7 @@ export const useUpdateFichesActionLiees = (action_id: string) => {
           fiche_id: fiche_id!,
           action_id,
         }));
-        await supabaseClient.from('fiche_action_action').insert(toAdd);
+        await supabase.from('fiche_action_action').insert(toAdd);
       }
     },
     {

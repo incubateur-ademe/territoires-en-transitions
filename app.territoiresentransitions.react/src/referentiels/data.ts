@@ -1,5 +1,5 @@
 import { Database } from '@/api';
-import { supabaseClient } from '@/api/utils/supabase/browser-client';
+import { createClientWithoutCookieOptions } from '@/api/utils/supabase/browser-client';
 import { ActionDefinitionSummary } from '@/app/referentiels/ActionDefinitionSummaryReadEndpoint';
 import { ReferentielId } from '@/domain/referentiels';
 import { PostgrestResponse } from '@supabase/supabase-js';
@@ -26,8 +26,10 @@ class RpcCache {
       return this.cache[key];
     }
 
-    if (this.promises[key] === undefined)
-      this.promises[key] = supabaseClient.rpc(fn, args as any);
+    if (this.promises[key] === undefined) {
+      const supabase = createClientWithoutCookieOptions();
+      this.promises[key] = supabase.rpc(fn, args as any);
+    }
     const queryResponse = await this.promises[key];
     delete this.promises[key];
 

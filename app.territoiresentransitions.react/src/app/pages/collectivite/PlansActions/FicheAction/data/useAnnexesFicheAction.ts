@@ -1,4 +1,5 @@
-import { supabaseClient } from '@/api/utils/supabase/browser-client';
+import { DBClient } from '@/api';
+import { useSupabase } from '@/api/utils/supabase/use-supabase';
 import { TPreuve } from '@/app/referentiels/preuves/Bibliotheque/types';
 import { useQuery } from 'react-query';
 
@@ -6,12 +7,16 @@ import { useQuery } from 'react-query';
 export const useAnnexesFicheAction = (
   collectiviteId: number,
   ficheId: number | null
-) =>
-  useQuery(['annexes_fiche_action', collectiviteId, ficheId], () =>
-    fetchAnnexesFicheAction(collectiviteId, ficheId)
+) => {
+  const supabase = useSupabase();
+
+  return useQuery(['annexes_fiche_action', collectiviteId, ficheId], () =>
+    fetchAnnexesFicheAction(supabase, collectiviteId, ficheId)
   );
+};
 
 const fetchAnnexesFicheAction = async (
+  supabase: DBClient,
   collectiviteId: number,
   ficheId: number | null
 ) => {
@@ -20,7 +25,7 @@ const fetchAnnexesFicheAction = async (
   }
 
   // charge la liste des annexes associées à la fiche
-  const { data, error } = await supabaseClient
+  const { data, error } = await supabase
     .from('bibliotheque_annexe')
     .select()
     .match({ collectivite_id: collectiviteId, fiche_id: ficheId })

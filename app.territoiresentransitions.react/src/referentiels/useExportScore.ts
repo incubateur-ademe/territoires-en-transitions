@@ -1,4 +1,4 @@
-import { supabaseClient } from '@/api/utils/supabase/browser-client';
+import { useSupabase } from '@/api/utils/supabase/use-supabase';
 import { CurrentCollectivite } from '@/app/core-logic/hooks/useCurrentCollectivite';
 import { useFonctionTracker } from '@/app/core-logic/hooks/useFonctionTracker';
 import { saveBlob } from '@/app/referentiels/preuves/Bibliotheque/saveBlob';
@@ -10,13 +10,14 @@ export const useExportScore = (
   collectivite: CurrentCollectivite | null
 ) => {
   const tracker = useFonctionTracker();
+  const supabase = useSupabase();
   const collectivite_id = collectivite?.collectiviteId;
 
   return useMutation(
     ['export_score', collectivite_id, referentiel],
     async () => {
       if (!collectivite_id) return;
-      const { data } = await supabaseClient.functions.invoke('export_score', {
+      const { data } = await supabase.functions.invoke('export_score', {
         body: { collectivite_id, referentiel },
       });
 

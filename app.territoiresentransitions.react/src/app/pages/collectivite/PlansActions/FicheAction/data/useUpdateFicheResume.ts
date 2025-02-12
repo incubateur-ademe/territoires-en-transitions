@@ -1,5 +1,5 @@
 import { FicheResume } from '@/api/plan-actions';
-import { supabaseClient } from '@/api/utils/supabase/browser-client';
+import { useSupabase } from '@/api/utils/supabase/use-supabase';
 import { QueryKey, useMutation, useQueryClient } from 'react-query';
 
 /**
@@ -7,6 +7,7 @@ import { QueryKey, useMutation, useQueryClient } from 'react-query';
  */
 export const useUpdateFicheResume = (invalidationKeys?: QueryKey[]) => {
   const queryClient = useQueryClient();
+  const supabase = useSupabase();
 
   return useMutation(
     async (fiche: FicheResume) => {
@@ -17,7 +18,7 @@ export const useUpdateFicheResume = (invalidationKeys?: QueryKey[]) => {
         dateFinProvisoire,
         ameliorationContinue,
       } = fiche;
-      await supabaseClient
+      await supabase
         .from('fiche_action')
         .update({
           titre,

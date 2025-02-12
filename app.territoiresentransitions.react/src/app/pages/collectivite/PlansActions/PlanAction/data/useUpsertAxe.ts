@@ -1,6 +1,7 @@
-import { supabaseClient } from '@/api/utils/supabase/browser-client';
 import { useMutation, useQueryClient } from 'react-query';
 
+import { DBClient } from '@/api';
+import { useSupabase } from '@/api/utils/supabase/use-supabase';
 import { makeCollectivitePlanActionUrl } from '@/app/app/paths';
 import { useCollectiviteId } from '@/app/core-logic/hooks/params';
 import { TAxeInsert } from '@/app/types/alias';
@@ -13,8 +14,8 @@ import { planNodeFactory, sortPlanNodes } from './utils';
  * Upsert un axe pour une collectivité.
  * S'il n'a pas de parent, alors cela est considéré comme un nouveau plan
  */
-export const upsertAxe = async (axe: TAxeInsert) => {
-  const query = supabaseClient.from('axe').upsert(axe).select();
+const upsertAxe = async (supabase: DBClient, axe: TAxeInsert) => {
+  const query = supabase.from('axe').upsert(axe).select();
 
   const { error, data } = await query;
 
@@ -32,10 +33,11 @@ export const useCreatePlanAction = () => {
   const queryClient = useQueryClient();
   const collectivite_id = useCollectiviteId();
   const router = useRouter();
+  const supabase = useSupabase();
 
   const navigation_key = ['plans_navigation', collectivite_id];
 
-  return useMutation(upsertAxe, {
+  return useMutation((axe: TAxeInsert) => upsertAxe(supabase, axe), {
     meta: { disableToast: true },
     onMutate: async ({ nom }) => {
       await queryClient.cancelQueries({ queryKey: navigation_key });
@@ -86,11 +88,12 @@ export const useAddAxe = (
 ) => {
   const queryClient = useQueryClient();
   const collectivite_id = useCollectiviteId();
+  const supabase = useSupabase();
 
   const flat_axes_key = ['flat_axes', planActionId];
   const navigation_key = ['plans_navigation', collectivite_id];
 
-  return useMutation(upsertAxe, {
+  return useMutation((axe: TAxeInsert) => upsertAxe(supabase, axe), {
     meta: { disableToast: true },
     onMutate: async () => {
       await queryClient.cancelQueries({ queryKey: flat_axes_key });

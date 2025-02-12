@@ -1,3 +1,4 @@
+import { useSupabase } from '@/api/utils/supabase/use-supabase';
 import { useCollectiviteId } from '@/app/collectivites/collectivite-context';
 import { useSearchParams } from '@/app/core-logic/hooks/query';
 import { useQuery } from 'react-query';
@@ -35,6 +36,7 @@ export type TableData = {
 export const useTableData: UseTableData = () => {
   const collectiviteId = useCollectiviteId();
   const referentielId = useReferentielId();
+  const supabase = useSupabase();
 
   // filtre initial
   const [filters, setFilters, filtersCount] = useSearchParams<TFilters>(
@@ -46,7 +48,7 @@ export const useTableData: UseTableData = () => {
   // chargement des données en fonction des filtres
   const { data, isLoading } = useQuery(
     ['audit-suivi', collectiviteId, referentielId, filters],
-    () => fetchRows(collectiviteId, referentielId, filters)
+    () => fetchRows(supabase, collectiviteId, referentielId, filters)
   );
   const { rows: actionsAuditStatut } = data || {};
 

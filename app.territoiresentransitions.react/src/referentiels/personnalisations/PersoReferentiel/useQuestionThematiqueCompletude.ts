@@ -1,5 +1,5 @@
-import { NonNullableFields, Views } from '@/api';
-import { supabaseClient } from '@/api/utils/supabase/browser-client';
+import { DBClient, NonNullableFields, Views } from '@/api';
+import { useSupabase } from '@/api/utils/supabase/use-supabase';
 import { ReferentielId } from '@/domain/referentiels';
 import { useQuery } from 'react-query';
 
@@ -15,9 +15,10 @@ type TUseQuestionThematiqueCompletude = (
 // charge l'état de complétude de la personnalisation groupé par thématique
 export const useQuestionThematiqueCompletude: TUseQuestionThematiqueCompletude =
   (collectivite_id, filters) => {
+    const supabase = useSupabase();
     const { data } = useQuery(
       ['question_thematique_completude', collectivite_id],
-      () => (collectivite_id ? fetch(collectivite_id) : []),
+      () => (collectivite_id ? fetch(supabase, collectivite_id) : []),
       { enabled: !!collectivite_id }
     );
 
@@ -28,9 +29,9 @@ export const useQuestionThematiqueCompletude: TUseQuestionThematiqueCompletude =
   };
 
 // charge les données
-const fetch = async (collectivite_id: number) => {
+const fetch = async (supabase: DBClient, collectivite_id: number) => {
   if (collectivite_id) {
-    const { data: thematiques } = await supabaseClient
+    const { data: thematiques } = await supabase
       .from('question_thematique_completude')
       .select()
       .eq('collectivite_id', collectivite_id);

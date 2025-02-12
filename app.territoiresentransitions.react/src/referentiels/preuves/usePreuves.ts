@@ -1,4 +1,5 @@
-import { supabaseClient } from '@/api/utils/supabase/browser-client';
+import { DBClient } from '@/api';
+import { useSupabase } from '@/api/utils/supabase/use-supabase';
 import { useCollectiviteId } from '@/app/core-logic/hooks/params';
 import { ActionDefinitionSummary } from '@/app/referentiels/ActionDefinitionSummaryReadEndpoint';
 import { useQuery } from 'react-query';
@@ -18,9 +19,13 @@ type TFilters = {
 };
 
 // charge les données
-const fetch = async (collectivite_id: number, filters?: TFilters) => {
+const fetch = async (
+  supabase: DBClient,
+  collectivite_id: number,
+  filters?: TFilters
+) => {
   // lit la liste des preuves de la collectivité
-  const query = supabaseClient
+  const query = supabase
     .from('preuve')
     .select('*')
     .order('action->>action_id' as 'action', { ascending: true })
@@ -80,10 +85,12 @@ const fetch = async (collectivite_id: number, filters?: TFilters) => {
  */
 export const usePreuves = (filters?: TFilters) => {
   const collectivite_id = useCollectiviteId();
+  const supabase = useSupabase();
+
   const { data } = useQuery(
     ['preuve', collectivite_id, filters],
     () => {
-      return collectivite_id ? fetch(collectivite_id, filters) : [];
+      return collectivite_id ? fetch(supabase, collectivite_id, filters) : [];
     },
     {
       enabled: !filters?.disabled,
@@ -112,10 +119,11 @@ const groupByType = (preuves: TPreuve[]) => {
 };
 
 const fetchActionPreuvesCount = async (
+  supabase: DBClient,
   collectivite_id: number,
   action_id: string
 ) => {
-  const { data } = await supabaseClient
+  const { data } = await supabase
     .rpc('preuve_count', { collectivite_id, action_id })
     .single();
 
@@ -128,9 +136,11 @@ const fetchActionPreuvesCount = async (
  */
 export const useActionPreuvesCount = (actionId: string) => {
   const collectivite_id = useCollectiviteId();
+  const supabase = useSupabase();
+
   const { data } = useQuery(['preuve_count', collectivite_id, actionId], () => {
     return collectivite_id && actionId
-      ? fetchActionPreuvesCount(collectivite_id, actionId)
+      ? fetchActionPreuvesCount(supabase, collectivite_id, actionId)
       : 0;
   });
   return data ?? 0;

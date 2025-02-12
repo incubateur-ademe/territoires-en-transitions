@@ -1,6 +1,6 @@
 import { useMutation, useQueryClient } from 'react-query';
 
-import { supabaseClient } from '@/api/utils/supabase/browser-client';
+import { useSupabase } from '@/api/utils/supabase/use-supabase';
 import { useCollectiviteId } from '@/app/core-logic/hooks/params';
 import { dropAnimation } from '../DragAndDropNestedContainers/Arborescence';
 import { PlanNode } from './types';
@@ -11,13 +11,14 @@ import { PlanNode } from './types';
 export const useDragAxe = (planId: number) => {
   const collectivite_id = useCollectiviteId();
   const queryClient = useQueryClient();
+  const supabase = useSupabase();
 
   const flat_axes_key = ['flat_axes', planId];
   const navigation_key = ['plans_navigation', collectivite_id];
 
   return useMutation(
     async ({ axe, newParentId }: { axe: PlanNode; newParentId: number }) => {
-      await supabaseClient
+      await supabase
         .from('axe')
         .update({ parent: newParentId })
         .eq('id', axe.id);

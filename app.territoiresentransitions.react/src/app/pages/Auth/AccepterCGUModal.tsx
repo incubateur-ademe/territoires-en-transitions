@@ -1,4 +1,4 @@
-import { supabaseClient } from '@/api/utils/supabase/browser-client';
+import { useSupabase } from '@/api/utils/supabase/use-supabase';
 import Modal from '@/app/ui/shared/floating-ui/Modal';
 import { useUser } from '@/app/users/user-provider';
 import { useState } from 'react';
@@ -82,14 +82,12 @@ export default AccepterCGUModal;
 const useAccepterCGU = () => {
   const user = useUser();
   const queryClient = useQueryClient();
+  const supabase = useSupabase();
 
-  return useMutation(
-    async () => user?.id && supabaseClient.rpc('accepter_cgu'),
-    {
-      mutationKey: 'accepter_cgu',
-      onSuccess: () => {
-        queryClient.invalidateQueries(['dcp', user!.id]);
-      },
-    }
-  );
+  return useMutation(async () => user.id && supabase.rpc('accepter_cgu'), {
+    mutationKey: 'accepter_cgu',
+    onSuccess: () => {
+      queryClient.invalidateQueries(['dcp', user.id]);
+    },
+  });
 };

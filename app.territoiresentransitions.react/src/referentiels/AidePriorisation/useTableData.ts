@@ -6,6 +6,7 @@ import { useReferentielId } from '../referentiel-context';
 import { useReferentiel } from '../ReferentielTable/useReferentiel';
 import { initialFilters, nameToShortNames, TFilters } from './filters';
 import { fetchRows, PriorisationRow } from './queries';
+import { useSupabase } from '@/api/utils/supabase/use-supabase';
 
 export type UseTableData = () => TableData;
 
@@ -36,6 +37,7 @@ export type TableData = {
 export const useTableData: UseTableData = () => {
   const collectiviteId = useCollectiviteId();
   const referentielId = useReferentielId();
+  const supabase = useSupabase();
 
   // filtre initial
   const [filters, setFilters, filtersCount] = useSearchParams<TFilters>(
@@ -47,7 +49,7 @@ export const useTableData: UseTableData = () => {
   // chargement des données en fonction des filtres
   const { data, isLoading } = useQuery(
     ['priorisation', collectiviteId, referentielId, filters],
-    () => fetchRows(collectiviteId, referentielId, filters)
+    () => fetchRows(supabase, collectiviteId, referentielId, filters)
   );
   const { rows: actionsStatut } = data || {};
 

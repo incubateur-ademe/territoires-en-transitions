@@ -1,6 +1,6 @@
 import { TablesInsert } from '@/api';
 import { ENV } from '@/api/environmentVariables';
-import { supabaseClient } from '@/api/utils/supabase/browser-client';
+import { useSupabase } from '@/api/utils/supabase/use-supabase';
 import { useCollectiviteId } from '@/app/core-logic/hooks/params';
 import { useLocalisation } from '@/app/core-logic/hooks/useLocalisation';
 import { usePathname } from 'next/navigation';
@@ -13,17 +13,6 @@ import { useUser } from '../users/user-provider';
 type Visite = TablesInsert<'visite'>;
 
 /**
- * Enregistre une visite.
- *
- * @param visite
- * @returns success
- */
-const track = async (visite: Visite): Promise<boolean> => {
-  const { status } = await supabaseClient.from('visite').insert(visite);
-  return status === 201;
-};
-
-/**
  * Permet d'enregistrer les visites.
  */
 export const VisitTracker = () => {
@@ -31,6 +20,7 @@ export const VisitTracker = () => {
   const localisation = useLocalisation();
   const user = useUser();
   const collectivite_id = useCollectiviteId();
+  const supabase = useSupabase();
 
   useEffect(() => {
     if (!user) return;
@@ -48,7 +38,7 @@ export const VisitTracker = () => {
         console.error('\x1B[0;92;1mtrack visite\x1B[m', 'Page non reconnue !');
     }
 
-    track(visite);
+    supabase.from('visite').insert(visite);
   }, [pathname]);
 
   return null;

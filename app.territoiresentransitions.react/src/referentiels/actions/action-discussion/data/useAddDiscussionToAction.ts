@@ -1,5 +1,7 @@
 import { useMutation, useQueryClient } from 'react-query';
 
+import { DBClient } from '@/api';
+import { useSupabase } from '@/api/utils/supabase/use-supabase';
 import { useCollectiviteId } from '@/app/core-logic/hooks/params';
 import {
   insertActionDiscussionCommentaire,
@@ -12,8 +14,10 @@ import {
 export const useAddDiscussionToAction = (action_id: string) => {
   const queryClient = useQueryClient();
   const collectivite_id = useCollectiviteId();
+  const supabase = useSupabase();
 
   const addDiscussionToAction = makeAddDiscussionToAction(
+    supabase,
     collectivite_id!,
     action_id
   );
@@ -30,14 +34,15 @@ export const useAddDiscussionToAction = (action_id: string) => {
 };
 
 const makeAddDiscussionToAction =
-  (collectivite_id: number, action_id: string) => async (message: string) => {
+  (supabase: DBClient, collectivite_id: number, action_id: string) =>
+  async (message: string) => {
     const { data: discussions, error: upsertDiscussionFailed } =
-      await upsertActionDiscussion({ collectivite_id, action_id });
+      await upsertActionDiscussion(supabase, { collectivite_id, action_id });
     if (upsertDiscussionFailed) throw new Error(upsertDiscussionFailed.message);
     const { id: discussion_id } = discussions?.[0];
 
     const { error: insertCommentaireFailed } =
-      await insertActionDiscussionCommentaire({
+      await insertActionDiscussionCommentaire(supabase, {
         discussion_id,
         message,
       });

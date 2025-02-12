@@ -31,13 +31,13 @@ export const UserProvider = ({
   children: ReactNode;
 }) => {
   const posthog = usePostHog();
-  const supabaseClient = useSupabase();
+  const supabase = useSupabase();
 
   useEffect(() => {
     // écoute les changements d'état (connecté, déconnecté, etc.)
     const {
       data: { subscription },
-    } = supabaseClient.auth.onAuthStateChange(async (event, session) => {
+    } = supabase.auth.onAuthStateChange(async (event, session) => {
       console.log('onAuthStateChange', event, session?.user);
 
       if (event === 'INITIAL_SESSION') {

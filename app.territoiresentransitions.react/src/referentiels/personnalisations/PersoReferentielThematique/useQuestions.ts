@@ -1,4 +1,5 @@
-import { supabaseClient } from '@/api/utils/supabase/browser-client';
+import { DBClient } from '@/api';
+import { useSupabase } from '@/api/utils/supabase/use-supabase';
 import { useCollectiviteId } from '@/app/core-logic/hooks/params';
 import { TQuestionRead } from '@/app/referentiels/personnalisations/personnalisation.types';
 import { useQuery } from 'react-query';
@@ -14,15 +15,20 @@ export type TFilters = {
  */
 export const useQuestions = (filters: TFilters) => {
   const collectivite_id = useCollectiviteId();
+  const supabase = useSupabase();
 
   return useQuery(
     ['questions', collectivite_id, filters],
-    () => fetchQuestions(collectivite_id!, filters),
+    () => fetchQuestions(supabase, collectivite_id!, filters),
     { enabled: !!collectivite_id, initialData: [] }
   );
 };
-const fetchQuestions = async (collectivite_id: number, filters: TFilters) => {
-  const query = supabaseClient
+const fetchQuestions = async (
+  supabase: DBClient,
+  collectivite_id: number,
+  filters: TFilters
+) => {
+  const query = supabase
     .from('question_display')
     .select()
     .eq('collectivite_id', collectivite_id);

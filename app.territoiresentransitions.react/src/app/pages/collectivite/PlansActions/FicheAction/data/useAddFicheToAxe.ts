@@ -1,5 +1,5 @@
 import { FicheAction } from '@/api/plan-actions';
-import { supabaseClient } from '@/api/utils/supabase/browser-client';
+import { useSupabase } from '@/api/utils/supabase/use-supabase';
 import { useCollectiviteId } from '@/app/core-logic/hooks/params';
 import { TAxeInsert } from '@/app/types/alias';
 import { useMutation, useQueryClient } from 'react-query';
@@ -15,10 +15,11 @@ type Args = {
 export const useAddFicheToAxe = () => {
   const queryClient = useQueryClient();
   const collectivite_id = useCollectiviteId();
+  const supabase = useSupabase();
 
   return useMutation(
     async ({ axe, fiche_id }: Args) => {
-      await supabaseClient.rpc('ajouter_fiche_action_dans_un_axe', {
+      await supabase.rpc('ajouter_fiche_action_dans_un_axe', {
         axe_id: axe.id,
         fiche_id,
       });

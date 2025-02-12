@@ -1,5 +1,5 @@
 import { Indicateurs } from '@/api';
-import { supabaseClient } from '@/api/utils/supabase/browser-client';
+import { useSupabase } from '@/api/utils/supabase/use-supabase';
 import { trpc } from '@/api/utils/trpc/client';
 import { useCollectiviteId } from '@/app/core-logic/hooks/params';
 import { useMutation, useQueryClient } from 'react-query';
@@ -13,6 +13,7 @@ export const useInsertIndicateurPersoDefinition = (options?: {
   const queryClient = useQueryClient();
   const utils = trpc.useUtils();
   const collectiviteId = useCollectiviteId()!;
+  const supabase = useSupabase();
 
   return useMutation({
     mutationKey: 'insert_indicateur_perso_def',
@@ -26,7 +27,7 @@ export const useInsertIndicateurPersoDefinition = (options?: {
       isFavoriCollectivite?: boolean;
     }) => {
       const indicateurId = await Indicateurs.save.insertIndicateurDefinition(
-        supabaseClient,
+        supabase,
         definition
       );
 
@@ -34,7 +35,7 @@ export const useInsertIndicateurPersoDefinition = (options?: {
         // rattache le nouvel indicateur à une fiche action si un `ficheId` est spécifié
         if (ficheId) {
           Indicateurs.save.upsertFiches(
-            supabaseClient,
+            supabase,
             indicateurId,
             collectiviteId,
             [ficheId]
@@ -42,7 +43,7 @@ export const useInsertIndicateurPersoDefinition = (options?: {
         }
         if (isFavoriCollectivite) {
           Indicateurs.save.updateIndicateurFavoriCollectivite(
-            supabaseClient,
+            supabase,
             indicateurId,
             collectiviteId,
             isFavoriCollectivite

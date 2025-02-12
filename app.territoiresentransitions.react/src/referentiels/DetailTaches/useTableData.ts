@@ -1,3 +1,4 @@
+import { useSupabase } from '@/api/utils/supabase/use-supabase';
 import { useCollectiviteId } from '@/app/collectivites/collectivite-context';
 import { useSearchParams } from '@/app/core-logic/hooks/query';
 import { useMutation, useQuery, useQueryClient } from 'react-query';
@@ -46,6 +47,7 @@ export const useTableData: UseTableData = () => {
   const collectivite_id = useCollectiviteId();
   const referentiel = useReferentielId();
   const queryClient = useQueryClient();
+  const supabase = useSupabase();
 
   // filtre initial
   const [filters, setFilters, filtersCount] = useSearchParams<TFilters>(
@@ -57,7 +59,8 @@ export const useTableData: UseTableData = () => {
   // chargement des données en fonction des filtres
   const { data, isLoading } = useQuery(
     ['detail_taches', collectivite_id, referentiel, filters],
-    () => fetchActionStatutsList(collectivite_id, referentiel, filters)
+    () =>
+      fetchActionStatutsList(supabase, collectivite_id, referentiel, filters)
   );
   const { rows: actionsStatut } = data || {};
 
@@ -135,10 +138,11 @@ export const useTableData: UseTableData = () => {
 
   // met à jour un statut
   const { mutate, isLoading: isSaving } = useMutation(updateTacheStatut);
+
   const updateStatut = (action_id: string, avancement: string) => {
     if (collectivite_id && !isSaving) {
       mutate(
-        { collectivite_id, action_id, avancement },
+        { dbClient: supabase, collectivite_id, action_id, avancement },
         {
           onSuccess: () => {
             queryClient.invalidateQueries('detail_taches');

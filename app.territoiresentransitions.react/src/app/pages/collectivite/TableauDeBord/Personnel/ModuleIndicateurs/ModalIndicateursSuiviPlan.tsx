@@ -3,7 +3,7 @@ import { useState } from 'react';
 import { Indicateurs } from '@/api';
 import { modulesSave } from '@/api/plan-actions/dashboards/personal-dashboard/actions/modules.save';
 import { ModuleIndicateursSelect } from '@/api/plan-actions/dashboards/personal-dashboard/domain/module.schema';
-import { supabaseClient } from '@/api/utils/supabase/browser-client';
+import { useSupabase } from '@/api/utils/supabase/use-supabase';
 import { useCurrentCollectivite } from '@/app/core-logic/hooks/useCurrentCollectivite';
 import IndicateurCompletsDropdown from '@/app/ui/dropdownLists/indicateur/IndicateurCompletsDropdown';
 import PersonnesDropdown from '@/app/ui/dropdownLists/PersonnesDropdown/PersonnesDropdown';
@@ -34,6 +34,7 @@ const ModalIndicateursSuiviPlan = ({
   const { collectiviteId, niveauAcces, role } = useCurrentCollectivite()!;
 
   const queryClient = useQueryClient();
+  const supabase = useSupabase();
 
   const [filtreState, setFiltreState] = useState<
     Indicateurs.domain.FetchFiltre | undefined
@@ -146,7 +147,7 @@ const ModalIndicateursSuiviPlan = ({
                 role,
               });
               await modulesSave({
-                dbClient: supabaseClient,
+                dbClient: supabase,
                 module: {
                   ...module,
                   options: {

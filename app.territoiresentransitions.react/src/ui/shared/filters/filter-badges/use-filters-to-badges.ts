@@ -1,15 +1,15 @@
 import { useQuery } from 'react-query';
 
 import { filtreValuesFetch } from '@/api/collectivites/shared/data-access/filtre-values.fetch';
-import { FetchFiltre as FiltreIndicateurs } from '@/api/indicateurs';
-import { Filtre as FiltreFicheActions } from '@/api/plan-actions/fiche-resumes.list';
-import { useCollectiviteId } from '@/app/core-logic/hooks/params';
 import {
   FiltreRessourceLiees,
   FiltreValues,
 } from '@/api/collectivites/shared/domain/filtre-ressource-liees.schema';
-import { supabaseClient } from '@/api/utils/supabase/browser-client';
+import { FetchFiltre as FiltreIndicateurs } from '@/api/indicateurs';
+import { Filtre as FiltreFicheActions } from '@/api/plan-actions/fiche-resumes.list';
+import { useSupabase } from '@/api/utils/supabase/use-supabase';
 import { generateTitle } from '@/app/app/pages/collectivite/PlansActions/FicheAction/data/utils';
+import { useCollectiviteId } from '@/app/core-logic/hooks/params';
 import { getCategorieLabel } from '@/app/ui/dropdownLists/indicateur/utils';
 
 /**
@@ -39,6 +39,7 @@ type Args = {
 /** Transforme les filtres en string associées à afficher dans les badges. */
 export const useFiltersToBadges = ({ filters, customValues }: Args) => {
   const collectiviteId = useCollectiviteId();
+  const supabase = useSupabase();
 
   // On nettoie les valeurs vides de l'objet customValues.
   // Permet de ne pas avoir à le faire dans les composants utilisant le hook.
@@ -56,7 +57,7 @@ export const useFiltersToBadges = ({ filters, customValues }: Args) => {
 
     /** Valeurs des filtres pour les champs où l'on ne connait que les ids */
     const { data } = await filtreValuesFetch({
-      dbClient: supabaseClient,
+      dbClient: supabase,
       collectiviteId,
       filtre: filters,
     });

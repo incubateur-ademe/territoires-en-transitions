@@ -1,4 +1,4 @@
-import { supabaseClient } from '@/api/utils/supabase/browser-client';
+import { DBClient } from '@/api';
 import { TActionStatutsRow } from '@/app/types/alias';
 import { ActionReferentiel } from '../ReferentielTable/useReferentiel';
 import { TFilters } from './filters';
@@ -16,12 +16,13 @@ export type ActionStatut = Pick<
  * @deprecated stop using `action_statuts` PG view
  */
 export const fetchActionStatutsList = async (
+  supabase: DBClient,
   collectivite_id: number | null,
   referentiel: string | null,
   filters: TFilters
 ) => {
   // la requête
-  let query = supabaseClient
+  let query = supabase
     .from('action_statuts')
     .select('action_id,type,avancement,avancement_descendants')
     .match({ collectivite_id, referentiel, concerne: true, desactive: false })
@@ -94,17 +95,19 @@ export const fetchActionStatutsList = async (
 // met à jour l'état d'une tâche
 // TODO-SNAPSHOT
 export const updateTacheStatut = async ({
+  dbClient,
   collectivite_id,
   action_id,
   avancement,
   avancement_detaille,
 }: {
+  dbClient: DBClient;
   collectivite_id: number | null;
   action_id: string;
   avancement: string;
   avancement_detaille?: number[];
 }) => {
-  const { error, data } = await supabaseClient.from('action_statut').upsert(
+  const { error, data } = await dbClient.from('action_statut').upsert(
     {
       collectivite_id,
       action_id,

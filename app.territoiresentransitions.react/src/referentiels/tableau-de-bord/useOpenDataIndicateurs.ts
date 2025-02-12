@@ -1,4 +1,5 @@
-import { supabaseClient } from '@/api/utils/supabase/browser-client';
+import { DBClient } from '@/api';
+import { useSupabase } from '@/api/utils/supabase/use-supabase';
 import { useCollectiviteId } from '@/app/core-logic/hooks/params';
 import { ReferentielId } from '@/domain/referentiels';
 import { useQuery } from 'react-query';
@@ -10,12 +11,14 @@ type OpenDataIndicateur = {
 
 export const useOpenDataIndicateursCount = (categorie: ReferentielId) => {
   const collectiviteId = useCollectiviteId();
+  const supabase = useSupabase();
 
   return useQuery(
     ['open_data_indicateurs_count', collectiviteId, categorie],
     async () => {
       if (!collectiviteId) return;
       const indicateurs = await buildOpenDataIndicateursByCategorie(
+        supabase,
         collectiviteId,
         categorie
       );
@@ -25,13 +28,18 @@ export const useOpenDataIndicateursCount = (categorie: ReferentielId) => {
 };
 
 const buildOpenDataIndicateursByCategorie = async (
+  supabase: DBClient,
   collectivite_id: number,
   categorie: ReferentielId
 ) => {
-  const openDataIndicateurs = await fetchOpenDataIndicateurs(collectivite_id);
+  const openDataIndicateurs = await fetchOpenDataIndicateurs(
+    supabase,
+    collectivite_id
+  );
 
   const openDataIndicateursWithCategorie =
     await fetchOpenDataIndicateursByCategorie(
+      supabase,
       buildKeys(openDataIndicateurs),
       categorie
     );
@@ -42,9 +50,12 @@ const buildOpenDataIndicateursByCategorie = async (
 /**
  * Only open data indicateurs have metadonnee_id, so we use this column to fetch them.
  */
-const fetchOpenDataIndicateurs = async (collectivite_id: number) => {
+const fetchOpenDataIndicateurs = async (
+  supabase: DBClient,
+  collectivite_id: number
+) => {
   try {
-    const { error, data } = await supabaseClient
+    const { error, data } = await supabase
       .from('indicateur_valeur')
       .select(
         `indicateur_id,
@@ -74,11 +85,12 @@ const buildKeys = (indicateurs: OpenDataIndicateur[]): number[] => {
 };
 
 const fetchOpenDataIndicateursByCategorie = async (
+  supabase: DBClient,
   indicateurIds: number[],
   categorie: ReferentielId
 ) => {
   try {
-    const { error, data } = await supabaseClient
+    const { error, data } = await supabase
       .from('indicateur_categorie_tag')
       .select(
         `indicateur_id,

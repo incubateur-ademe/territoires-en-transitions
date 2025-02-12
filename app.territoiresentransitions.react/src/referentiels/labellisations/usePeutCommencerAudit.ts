@@ -1,4 +1,4 @@
-import { supabaseClient } from '@/api/utils/supabase/browser-client';
+import { useSupabase } from '@/api/utils/supabase/use-supabase';
 import { ReferentielId } from '@/domain/referentiels';
 import { useQuery } from 'react-query';
 
@@ -10,13 +10,15 @@ export const usePeutCommencerAudit = ({
   collectiviteId: number;
   referentielId: ReferentielId;
 }) => {
+  const supabase = useSupabase();
+
   const { data } = useQuery(
     ['peut_commencer_audit', collectiviteId, referentielId],
     async () => {
       if (!collectiviteId || !referentielId) {
         return false;
       }
-      const { data } = await supabaseClient
+      const { data } = await supabase
         .rpc('labellisation_peut_commencer_audit', {
           collectivite_id: collectiviteId,
           referentiel: referentielId,

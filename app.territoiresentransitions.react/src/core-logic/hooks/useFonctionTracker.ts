@@ -1,6 +1,6 @@
-import { TablesInsert } from '@/api';
+import { DBClient, TablesInsert } from '@/api';
 import { ENV } from '@/api/environmentVariables';
-import { supabaseClient } from '@/api/utils/supabase/browser-client';
+import { useSupabase } from '@/api/utils/supabase/use-supabase';
 import { useCollectiviteId } from '@/app/core-logic/hooks/params';
 import { useLocalisation } from '@/app/core-logic/hooks/useLocalisation';
 import { useUser } from '@/app/users/user-provider';
@@ -17,8 +17,8 @@ type Usage = TablesInsert<'usage'>;
  * @param usage
  * @returns success
  */
-const track = async (usage: Usage): Promise<boolean> => {
-  const { status } = await supabaseClient.from('usage').insert(usage);
+const track = async (supabase: DBClient, usage: Usage): Promise<boolean> => {
+  const { status } = await supabase.from('usage').insert(usage);
   return status === 201;
 };
 
@@ -34,6 +34,7 @@ export const useFonctionTracker = (): ((usage: Usage) => Promise<boolean>) => {
   const localisation = useLocalisation();
   const ref = useRef();
   const user = useUser();
+  const supabase = useSupabase();
 
   const factory = () => {
     // Garde la dernière valeur d'usage pour éviter d'envoyer
@@ -53,7 +54,7 @@ export const useFonctionTracker = (): ((usage: Usage) => Promise<boolean>) => {
         console.info('\x1B[0;96mtrack usage\x1B[m', 'usage', usage);
       }
 
-      return track(usage);
+      return track(supabase, usage);
     };
 
     return tracker;

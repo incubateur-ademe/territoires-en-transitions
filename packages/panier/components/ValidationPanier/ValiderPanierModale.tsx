@@ -1,16 +1,17 @@
 import {
   MesCollectivite,
+  PanierAPI,
   getAuthPaths,
   getCollectivitePlanPath,
   getRejoindreCollectivitePath,
 } from '@/api';
+import { useSupabase } from '@/api/utils/supabase/use-supabase';
 import StepperValidation from '@/panier/components/Stepper/StepperValidation';
 import {
   useCollectiviteContext,
   usePanierContext,
   useUserContext,
 } from '@/panier/providers';
-import { panierAPI } from '@/panier/src/clientAPI';
 import {
   Button,
   Divider,
@@ -99,8 +100,9 @@ const ModeDeconnecte = () => {
  * selon s'il est possible de créer un plan d'action dans une collectivité.
  */
 const ModeConnecte = () => {
+  const supabase = useSupabase();
   const { data } = useSWR<MesCollectivite>(['mesCollectivites'], () =>
-    panierAPI.mesCollectivites()
+    new PanierAPI(supabase).mesCollectivites()
   );
 
   // const data: MesCollectivite = [
@@ -160,6 +162,7 @@ const ModeConnecteRattache = ({
   const { panier } = usePanierContext();
   const router = useRouter();
   const { collectiviteId: savedCollectiviteId } = useCollectiviteContext();
+  const supabase = useSupabase();
 
   // vérifie que l'id est bien présent dans la liste
   const found =
@@ -179,7 +182,7 @@ const ModeConnecteRattache = ({
       collectivite_preset: collectivite.collectivite_id,
       panier_id: panier?.id ?? '',
     });
-    const plan_id = await panierAPI.createPlanFromPanier(
+    const plan_id = await new PanierAPI(supabase).createPlanFromPanier(
       collectivite.collectivite_id,
       panier?.id ?? ''
     );
@@ -205,7 +208,7 @@ const ModeConnecteRattache = ({
         />
       </Field>
       <Button onClick={handleOnClick} disabled={!collectiviteId}>
-        Créer le plan d'action
+        {"Créer le plan d'action"}
       </Button>
     </>
   );

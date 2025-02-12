@@ -1,5 +1,5 @@
 import { CollectiviteTag, TableTag } from '@/api';
-import { supabaseClient } from '@/api/utils/supabase/browser-client';
+import { useSupabase } from '@/api/utils/supabase/use-supabase';
 import { TagInsert } from '@/domain/collectivites';
 import { QueryKey, useMutation, useQueryClient } from 'react-query';
 import { objectToSnake } from 'ts-case-convert';
@@ -20,13 +20,11 @@ export const useTagCreate = ({
   onSuccess,
 }: Args) => {
   const queryClient = useQueryClient();
+  const supabase = useSupabase();
 
   return useMutation(
     async (tag: TagInsert) =>
-      await supabaseClient
-        .from(tagTableName)
-        .insert(objectToSnake(tag))
-        .select(),
+      await supabase.from(tagTableName).insert(objectToSnake(tag)).select(),
     {
       mutationKey: 'create_tag',
       onMutate: async (tag) => {

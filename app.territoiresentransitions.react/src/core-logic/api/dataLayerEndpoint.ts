@@ -1,4 +1,4 @@
-import { supabaseClient } from '@/api/utils/supabase/browser-client';
+import { createClientWithoutCookieOptions } from '@/api/utils/supabase/browser-client';
 import { ChangeNotifier } from '@/app/core-logic/api/reactivity';
 import { PostgrestResponse } from '@supabase/supabase-js';
 
@@ -29,8 +29,9 @@ export abstract class DataLayerReadEndpoint<
   }
 
   get _table() {
-    // @ts-ignore
-    return supabaseClient.from(this.name).select();
+    const supabase = createClientWithoutCookieOptions();
+    //@ts-expect-error dynamic table name
+    return supabase.from(this.name).select();
   }
 
   /**
@@ -124,79 +125,5 @@ export abstract class DataLayerReadCachedEndpoint<
     this._cache[key] = this.handleResponse(queryResponse);
 
     return this._cache[key];
-  }
-}
-
-/**
- * Data layer write only endpoint
- */
-export abstract class DataLayerWriteEndpoint<T> extends ChangeNotifier {
-  abstract readonly name: string;
-  private _lastEvent: DataEvent<T> | null = null;
-  private _lastResponse: PostgrestResponse<T> | null = null;
-
-  get lastResponse(): PostgrestResponse<T> | null {
-    return this._lastResponse;
-  }
-
-  get lastEvent(): DataEvent<T> | null {
-    return this._lastEvent;
-  }
-
-  get _table() {
-    // @ts-ignore
-    return supabaseClient.from(this.name);
-  }
-
-  // get _select() {
-  //   return this._table.select();
-  // }
-
-  /**
-   * Get a list of T using getParams.
-   *
-   * Uses query.
-   */
-  async save(storable: T): Promise<T | null> {
-    const queryResponse = await this._write(storable);
-
-    return this.handleResponse(queryResponse);
-  }
-
-  /**
-   * Query our data layer.
-   */
-  abstract _write(storable: T): Promise<PostgrestResponse<T>>;
-
-  /**
-   * Default response handler.
-   *
-   * Returns response data on success (usually the insert data)
-   * and null on failure.
-   * Saves last response and last event.
-   */
-  handleResponse(response: PostgrestResponse<T>): T | null {
-    this._lastResponse = response;
-
-    if (response.error !== null) {
-      this._lastEvent = {
-        outcome: 'error',
-        intent: 'store',
-        stored: null,
-        status: response.status,
-      };
-      this.notifyListeners();
-      return null;
-    }
-
-    const saved = response.data[0];
-    this._lastEvent = {
-      outcome: 'success',
-      intent: 'store',
-      stored: saved,
-      status: response.status,
-    };
-    this.notifyListeners();
-    return saved;
   }
 }

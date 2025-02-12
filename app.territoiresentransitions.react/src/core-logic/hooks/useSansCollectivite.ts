@@ -1,6 +1,6 @@
 'use client';
 
-import { supabaseClient } from '@/api/utils/supabase/browser-client';
+import { useSupabase } from '@/api/utils/supabase/use-supabase';
 import { useUser } from '@/app/users/user-provider';
 import { useQuery } from 'react-query';
 
@@ -8,12 +8,14 @@ import { useQuery } from 'react-query';
 
 export const useSansCollectivite = () => {
   const user = useUser();
+  const supabase = useSupabase();
+
   const { data: sansCollectivite } = useQuery(
     ['sans_collectivite', user.id],
     async () => {
       if (!user) return null;
 
-      const { count } = await supabaseClient
+      const { count } = await supabase
         .from('mes_collectivites')
         .select(undefined, { head: true, count: 'exact' });
       return count === null ? null : count === 0;

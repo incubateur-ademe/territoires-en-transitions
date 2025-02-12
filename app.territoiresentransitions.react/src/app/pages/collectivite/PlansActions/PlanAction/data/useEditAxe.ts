@@ -1,6 +1,6 @@
-import { supabaseClient } from '@/api/utils/supabase/browser-client';
 import { useMutation, useQueryClient } from 'react-query';
 
+import { useSupabase } from '@/api/utils/supabase/use-supabase';
 import { useCollectiviteId } from '@/app/core-logic/hooks/params';
 import { TPlanType } from '@/app/types/alias';
 import { PlanNode } from './types';
@@ -11,6 +11,7 @@ import { PlanNode } from './types';
 export const useEditAxe = (planId: number) => {
   const collectivite_id = useCollectiviteId();
   const queryClient = useQueryClient();
+  const supabase = useSupabase();
 
   // clés dans le cache
   const flat_axes_key = ['flat_axes', planId];
@@ -19,7 +20,7 @@ export const useEditAxe = (planId: number) => {
 
   return useMutation(
     async (axe: PlanNode & { type?: TPlanType }) => {
-      await supabaseClient
+      await supabase
         .from('axe')
         .update({ nom: axe.nom, type: axe.type?.id })
         .eq('id', axe.id);

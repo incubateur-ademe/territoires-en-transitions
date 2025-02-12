@@ -1,5 +1,5 @@
 import { Indicateurs } from '@/api';
-import { supabaseClient } from '@/api/utils/supabase/browser-client';
+import { useSupabase } from '@/api/utils/supabase/use-supabase';
 import { TIndicateurDefinition } from '@/app/app/pages/collectivite/Indicateurs/types';
 import { useCollectiviteId } from '@/app/core-logic/hooks/params';
 import { TThematiqueRow } from '@/app/types/alias';
@@ -12,12 +12,13 @@ export const useUpsertIndicateurThematiques = ({
 }: Pick<TIndicateurDefinition, 'id' | 'estPerso'>) => {
   const queryClient = useQueryClient();
   const collectivite_id = useCollectiviteId();
+  const supabase = useSupabase();
 
   return useMutation({
     mutationKey: 'upsert_indicateur_personnalise_thematique',
     mutationFn: async (thematiques: TThematiqueRow[]) => {
       return Indicateurs.save.upsertThematiques(
-        supabaseClient,
+        supabase,
         indicateurId,
         estPerso,
         thematiques
@@ -37,12 +38,13 @@ export const useUpsertIndicateurThematiques = ({
 /** Charge les thématiques d'un indicateur */
 export const useIndicateurThematiques = (indicateurId: number) => {
   const collectivite_id = useCollectiviteId();
+  const supabase = useSupabase();
 
   return useQuery(
     ['indicateur_thematiques', collectivite_id, indicateurId],
     async () => {
       return Indicateurs.fetch.selectIndicateurThematiquesId(
-        supabaseClient,
+        supabase,
         indicateurId
       );
     }

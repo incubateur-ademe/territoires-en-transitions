@@ -1,13 +1,12 @@
-import { supabaseClient } from '@/api/utils/supabase/browser-client';
-import { QueryKey, useMutation, useQueryClient } from 'react-query';
-
 import { FicheResume } from '@/api/plan-actions';
+import { useSupabase } from '@/api/utils/supabase/use-supabase';
 import {
   makeCollectivitePlanActionUrl,
   makeCollectiviteToutesLesFichesUrl,
 } from '@/app/app/paths';
 import { useCollectiviteId } from '@/app/core-logic/hooks/params';
 import { useRouter } from 'next/navigation';
+import { QueryKey, useMutation, useQueryClient } from 'react-query';
 import { useParams } from 'react-router-dom';
 import { PlanNode } from '../../PlanAction/data/types';
 
@@ -27,6 +26,8 @@ export const useDeleteFicheAction = (args: Args) => {
   const collectivite_id = useCollectiviteId();
   const queryClient = useQueryClient();
   const router = useRouter();
+  const supabase = useSupabase();
+
   const { planUid } = useParams<{ planUid: string }>();
 
   const { ficheId, axeId } = args;
@@ -37,7 +38,7 @@ export const useDeleteFicheAction = (args: Args) => {
 
   return useMutation(
     async () => {
-      await supabaseClient.from('fiche_action').delete().eq('id', ficheId);
+      await supabase.from('fiche_action').delete().eq('id', ficheId);
     },
     {
       meta: { disableToast: true },

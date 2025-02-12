@@ -1,7 +1,7 @@
 'use client';
 
-import { Panier } from '@/api';
-import { supabaseClient as supabase } from '@/api/utils/supabase/browser-client';
+import { Panier, PanierAPI } from '@/api';
+import { useSupabase } from '@/api/utils/supabase/use-supabase';
 import ListeActions from '@/panier/components/ListeActions';
 import PanierActions from '@/panier/components/PanierActions';
 import {
@@ -9,7 +9,6 @@ import {
   usePanierContext,
   useUserContext,
 } from '@/panier/providers';
-import { panierAPI } from '@/panier/src/clientAPI';
 import { PanierOngletName, useEventTracker, useOngletTracker } from '@/ui';
 import { useRouter } from 'next/navigation';
 import { useEffect, useState } from 'react';
@@ -48,6 +47,9 @@ const PanierRealtime = ({
 
   const tracker = useEventTracker('panier/panier', currentTab);
   const ongletTracker = useOngletTracker('panier/panier');
+
+  const supabase = useSupabase();
+  const panierAPI = new PanierAPI(supabase);
 
   useEffect(() => {
     setPanier(panier);

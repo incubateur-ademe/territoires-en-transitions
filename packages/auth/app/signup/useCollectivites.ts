@@ -1,13 +1,9 @@
-import { Database } from '@/api';
+import { DBClient } from '@/api';
 import { useSupabase } from '@/api/utils/supabase/use-supabase';
-import { SupabaseClient } from '@supabase/supabase-js';
 import useSWR from 'swr';
 
 /** Charge la liste des collectivités */
-const getCollectivites = async (
-  supabase: SupabaseClient<Database>,
-  nom?: string
-) => {
+const getCollectivites = async (supabase: DBClient, nom?: string) => {
   const query = supabase
     .from('collectivite_card')
     .select('value: collectivite_id, label: nom');

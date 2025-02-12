@@ -1,4 +1,5 @@
-import { supabaseClient } from '@/api/utils/supabase/browser-client';
+import { DBClient } from '@/api';
+import { useSupabase } from '@/api/utils/supabase/use-supabase';
 import { useCollectiviteId } from '@/app/collectivites/collectivite-context';
 import { useCurrentCollectivite } from '@/app/core-logic/hooks/useCurrentCollectivite';
 import { usePreuvesParType } from '@/app/referentiels/preuves/usePreuves';
@@ -14,7 +15,7 @@ export const fetch = async (
   referentiel: ReferentielId
 ) => {
   // lit le statut de l'audit en cours (s'il existe)
-  const { data, error } = await supabaseClient
+  const { data, error } = await supabase
     .from('audit_en_cours')
     .select('*,auditeurs:audit_auditeur (id:auditeur)')
     .match({ collectivite_id, referentiel })
@@ -49,18 +50,23 @@ export const useIsAuditeur = () => {
 export const useAuditeurs = () => {
   const collectivite_id = useCollectiviteId();
   const referentiel = useReferentielId();
+  const supabase = useSupabase();
   return useQuery(['auditeurs', collectivite_id, referentiel], () =>
-    collectivite_id ? fetchAuditeurs(collectivite_id, referentiel) : null
+    collectivite_id
+      ? fetchAuditeurs(supabase, collectivite_id, referentiel)
+      : null
   );
 };
 
 /** Liste des auditeurs d'un audit donné */
 export const useAuditAuditeurs = (audit_id?: number) => {
+  const supabase = useSupabase();
+
   return useQuery(['audit_auditeurs', audit_id], async () => {
     if (!audit_id) {
       return [];
     }
-    const { data } = await supabaseClient
+    const { data } = await supabase
       .from('audit_auditeur')
       .select('auditeur')
       .eq('audit_id', audit_id);
@@ -80,10 +86,11 @@ export const useIsAuditAuditeur = (audit_id?: number) => {
 
 export type TAuditeur = { nom: string; prenom: string };
 const fetchAuditeurs = async (
+  supabase: DBClient,
   collectivite_id: number,
   referentiel: ReferentielId
 ) => {
-  const { data, error } = await supabaseClient
+  const { data, error } = await supabase
     .from('auditeurs')
     .select('noms')
     .match({ collectivite_id, referentiel })
@@ -105,8 +112,10 @@ export const useRapportsAudit = (audit_id?: number) => {
 /** Détermine si un COT est actif pour la collectivité */
 export const useHasActiveCOT = () => {
   const collectivite_id = useCollectiviteId();
+  const supabase = useSupabase();
+
   const { data } = useQuery(['is_cot', collectivite_id], async () => {
-    const { count } = await supabaseClient
+    const { count } = await supabase
       .from('cot')
       .select(undefined, { head: true, count: 'exact' })
       .match({ collectivite_id, actif: true });

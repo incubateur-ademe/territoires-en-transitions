@@ -1,5 +1,6 @@
+import { DBClient } from '@/api';
 import { FicheResume } from '@/api/plan-actions';
-import { supabaseClient } from '@/api/utils/supabase/browser-client';
+import { useSupabase } from '@/api/utils/supabase/use-supabase';
 import { makeCollectiviteFicheNonClasseeUrl } from '@/app/app/paths';
 import { useCollectiviteId } from '@/app/core-logic/hooks/params';
 import { waitForMarkup } from '@/app/utils/waitForMarkup';
@@ -16,12 +17,11 @@ type queryArgs = {
   actionId?: string;
 };
 
-const createFicheResume = async ({
-  collectiviteId,
-  axeId,
-  actionId,
-}: queryArgs) => {
-  const query = supabaseClient.rpc('create_fiche', {
+const createFicheResume = async (
+  supabase: DBClient,
+  { collectiviteId, axeId, actionId }: queryArgs
+) => {
+  const query = supabase.rpc('create_fiche', {
     collectivite_id: collectiviteId,
     axe_id: axeId,
     action_id: actionId,
@@ -52,6 +52,7 @@ export const useCreateFicheResume = (args: Args) => {
   const queryClient = useQueryClient();
   const collectivite_id = useCollectiviteId();
   const router = useRouter();
+  const supabase = useSupabase();
 
   const { axeId, planId, actionId, axeFichesIds, openInNewTab } = args;
 
@@ -68,7 +69,11 @@ export const useCreateFicheResume = (args: Args) => {
 
   return useMutation(
     () =>
-      createFicheResume({ collectiviteId: collectivite_id!, axeId, actionId }),
+      createFicheResume(supabase, {
+        collectiviteId: collectivite_id!,
+        axeId,
+        actionId,
+      }),
     {
       onMutate: async () => {
         if (axeId) {

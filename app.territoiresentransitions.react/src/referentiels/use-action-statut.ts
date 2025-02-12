@@ -1,6 +1,7 @@
-import { supabaseClient } from '@/api/utils/supabase/browser-client';
 import { useAudit, useIsAuditeur } from '@/app/referentiels/audits/useAudit';
 // import { useMutation, useQuery, useQueryClient } from 'react-query';
+import { DBClient } from '@/api';
+import { useSupabase } from '@/api/utils/supabase/use-supabase';
 import {
   ActionStatutInsert,
   getReferentielIdFromActionId,
@@ -23,11 +24,14 @@ import {
  */
 export const useActionStatut = (actionId: string) => {
   const collectiviteId = useCollectiviteId();
+  const supabase = useSupabase();
 
   const { data, isLoading } = useQuery({
     queryKey: ['action_statut', collectiviteId],
     queryFn: () =>
-      collectiviteId ? fetchCollectiviteActionStatuts(collectiviteId) : null,
+      collectiviteId
+        ? fetchCollectiviteActionStatuts(supabase, collectiviteId)
+        : null,
   });
 
   const statut = data?.find((action) => action.actionId === actionId) || null;
@@ -47,8 +51,11 @@ export const useActionStatut = (actionId: string) => {
   };
 };
 
-async function fetchCollectiviteActionStatuts(collectiviteId: number) {
-  const query = supabaseClient
+async function fetchCollectiviteActionStatuts(
+  supabase: DBClient,
+  collectiviteId: number
+) {
+  const query = supabase
     .from('action_statut')
     .select()
     .eq('collectivite_id', collectiviteId);
@@ -69,13 +76,14 @@ async function fetchCollectiviteActionStatuts(collectiviteId: number) {
 export const useSaveActionStatut = () => {
   const collectiviteId = useCollectiviteId()!;
   const queryClient = useQueryClient();
+  const supabase = useSupabase();
 
   const { computeScoreAndUpdateCurrentSnapshot } =
     useSnapshotComputeAndUpdate();
 
   const { isPending, mutate: saveActionStatut } = useMutation({
     mutationFn: async (statut: ActionStatutInsert) => {
-      return supabaseClient
+      return supabase
         .from('action_statut')
         .upsert([objectToSnake(omit(statut, ['modifiedAt', 'modifiedBy']))], {
           onConflict: 'collectivite_id,action_id',
@@ -102,11 +110,14 @@ export const useSaveActionStatut = () => {
 
 export const useTasksStatus = (tasksIds: string[]) => {
   const collectiviteId = useCollectiviteId();
+  const supabase = useSupabase();
 
   const { data, isLoading } = useQuery({
     queryKey: ['action_statut', collectiviteId],
     queryFn: () =>
-      collectiviteId ? fetchCollectiviteActionStatuts(collectiviteId) : null,
+      collectiviteId
+        ? fetchCollectiviteActionStatuts(supabase, collectiviteId)
+        : null,
   });
 
   let tasksStatus: {

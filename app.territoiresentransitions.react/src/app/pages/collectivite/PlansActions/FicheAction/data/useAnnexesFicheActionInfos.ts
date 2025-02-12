@@ -1,4 +1,4 @@
-import { supabaseClient } from '@/api/utils/supabase/browser-client';
+import { useSupabase } from '@/api/utils/supabase/use-supabase';
 import { useQuery } from 'react-query';
 
 export type AnnexeInfo = {
@@ -12,10 +12,12 @@ export type AnnexeInfo = {
 };
 
 export const useAnnexesFicheActionInfos = (fiche_id: number | null) => {
+  const supabase = useSupabase();
+
   return useQuery(['annexes_fiche_action_infos', fiche_id], async () => {
     if (!fiche_id) return [];
 
-    const { data, error } = await supabaseClient
+    const { data, error } = await supabase
       .from('bibliotheque_annexe')
       .select(
         'id, created_at, created_by_nom, commentaire, fichier->>filename, lien->>titre, lien->>url'

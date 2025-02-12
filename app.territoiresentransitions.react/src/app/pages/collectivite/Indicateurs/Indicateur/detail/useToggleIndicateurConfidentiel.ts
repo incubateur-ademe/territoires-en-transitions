@@ -1,5 +1,4 @@
 import { Indicateurs } from '@/api';
-import { supabaseClient } from '@/api/utils/supabase/browser-client';
 import { trpc } from '@/api/utils/trpc/client';
 import { useCollectiviteId } from '@/app/core-logic/hooks/params';
 import { useMutation } from 'react-query';
@@ -11,13 +10,14 @@ export const useToggleIndicateurConfidentiel = (
 ) => {
   const utils = trpc.useUtils();
   const collectiviteId = useCollectiviteId();
+  const supabase = useSupabase();
 
   return useMutation({
     mutationKey: 'toggle_indicateur_confidentiel',
     mutationFn: async (confidentiel: boolean) => {
       if (collectiviteId) {
         return Indicateurs.save.updateIndicateurDefinition(
-          supabaseClient,
+          supabase,
           {
             ...definition,
             collectiviteId,

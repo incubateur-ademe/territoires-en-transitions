@@ -1,4 +1,4 @@
-import { supabaseClient } from '@/api/utils/supabase/browser-client';
+import { createClientWithoutCookieOptions } from '@/api/utils/supabase/browser-client';
 import { saveBlob } from './saveBlob';
 import { TPreuve } from './types';
 
@@ -20,8 +20,9 @@ export const openPreuve = async (preuve: TPreuve) => {
 const downloadPreuve = async (preuve: TPreuve) => {
   const { filename, hash, bucket_id } = preuve.fichier!;
 
-  // télécharge le fichier
-  const { data } = await supabaseClient.storage.from(bucket_id).download(hash);
+  // TODO: plutôt utiliser le client supabase de `useSupabase()`
+  const supabase = createClientWithoutCookieOptions(); // télécharge le fichier
+  const { data } = await supabase.storage.from(bucket_id).download(hash);
 
   if (data) {
     // et le sauvegarde si le téléchargement a réussi

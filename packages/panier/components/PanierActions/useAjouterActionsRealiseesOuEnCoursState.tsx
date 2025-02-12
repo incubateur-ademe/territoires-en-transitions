@@ -1,7 +1,7 @@
-import { Panier } from '@/api';
+import { Panier, PanierAPI } from '@/api';
+import { useSupabase } from '@/api/utils/supabase/use-supabase';
 import { useEffect, useState } from 'react';
 import { usePanierContext } from '../../providers';
-import { panierAPI } from '../../src/clientAPI';
 
 /**
  * Fourni les décomptes d'actions réalisées/en cours totaux et ajouter dans le panier
@@ -44,6 +44,8 @@ const useToggleAjoutActions = (
   subset: 'en_cours' | 'realise'
 ) => {
   const [ajout, setAjout] = useState(false);
+  const supabase = useSupabase();
+  const panierAPI = new PanierAPI(supabase);
 
   const panierId = panier?.id;
 

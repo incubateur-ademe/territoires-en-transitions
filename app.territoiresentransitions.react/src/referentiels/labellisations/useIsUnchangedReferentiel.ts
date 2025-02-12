@@ -1,4 +1,4 @@
-import { supabaseClient } from '@/api/utils/supabase/browser-client';
+import { useSupabase } from '@/api/utils/supabase/use-supabase';
 import { useQuery } from 'react-query';
 
 /**
@@ -9,13 +9,14 @@ export const useIsUnchangedReferentiel = (
   collectivite_id: number | null,
   referentiel: string | null
 ) => {
+  const supabase = useSupabase();
   const { data } = useQuery(
     ['unchanged_referentiel', collectivite_id, referentiel],
     async () => {
       if (!collectivite_id || !referentiel) {
         return 0;
       }
-      const { count } = await supabaseClient
+      const { count } = await supabase
         .from('action_statuts')
         .select('*', { head: true, count: 'exact' })
         .match({

@@ -3,7 +3,7 @@ import {
   WithSelect,
 } from '@/api/plan-actions/plan-actions.list/data-access/plan-actions.fetch';
 import { FetchOptions } from '@/api/plan-actions/plan-actions.list/domain/fetch-options.schema';
-import { supabaseClient } from '@/api/utils/supabase/browser-client';
+import { useSupabase } from '@/api/utils/supabase/use-supabase';
 import { useCollectiviteId } from '@/app/core-logic/hooks/params';
 import { useQuery } from 'react-query';
 
@@ -19,10 +19,11 @@ type Props = {
  */
 export const usePlansActionsListe = ({ options, withSelect }: Props) => {
   const collectiviteId = useCollectiviteId();
+  const supabase = useSupabase();
 
   return useQuery(['plans_actions', collectiviteId!, options, withSelect], () =>
     planActionsFetch({
-      dbClient: supabaseClient,
+      dbClient: supabase,
       collectiviteId: collectiviteId!,
       options,
       withSelect,

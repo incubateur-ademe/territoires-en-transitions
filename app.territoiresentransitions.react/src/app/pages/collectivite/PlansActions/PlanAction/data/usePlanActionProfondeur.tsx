@@ -1,6 +1,7 @@
 import { useQuery } from 'react-query';
 
-import { supabaseClient } from '@/api/utils/supabase/browser-client';
+import { DBClient } from '@/api';
+import { useSupabase } from '@/api/utils/supabase/use-supabase';
 import { useCollectiviteId } from '@/app/core-logic/hooks/params';
 import { TProfondeurPlan } from './types';
 
@@ -9,9 +10,10 @@ type TFetchedData = {
 };
 
 const fetchPlanActionProfondeur = async (
+  supabase: DBClient,
   collectivite_id: number
 ): Promise<TFetchedData> => {
-  const query = supabaseClient
+  const query = supabase
     .from('plan_action_profondeur')
     .select()
     .eq('collectivite_id', collectivite_id);
@@ -28,10 +30,11 @@ const fetchPlanActionProfondeur = async (
  * Ne contient pas de fiche.
  */
 export const usePlanActionProfondeur = () => {
-  const collectivite_id = useCollectiviteId();
+  const collectiviteId = useCollectiviteId();
+  const supabase = useSupabase();
 
-  const { data } = useQuery(['plan_action_profondeur', collectivite_id], () =>
-    fetchPlanActionProfondeur(collectivite_id!)
+  const { data } = useQuery(['plan_action_profondeur', collectiviteId], () =>
+    fetchPlanActionProfondeur(supabase, collectiviteId!)
   );
 
   return data;

@@ -1,4 +1,5 @@
-import { supabaseClient } from '@/api/utils/supabase/browser-client';
+import { DBClient } from '@/api';
+import { useSupabase } from '@/api/utils/supabase/use-supabase';
 import { useQuery } from 'react-query';
 import { TComparaisonScoreAudit } from './types';
 
@@ -6,16 +7,20 @@ import { TComparaisonScoreAudit } from './types';
 export const useComparaisonScoreAudit = (
   collectivite_id: number | null,
   referentiel: string | null
-) =>
-  useQuery(['comparaison_scores_audit', collectivite_id, referentiel], () =>
-    fetchComparaisonScoreAudit(collectivite_id, referentiel)
+) => {
+  const supabase = useSupabase();
+  return useQuery(
+    ['comparaison_scores_audit', collectivite_id, referentiel],
+    () => fetchComparaisonScoreAudit(supabase, collectivite_id, referentiel)
   );
+};
 
 export const fetchComparaisonScoreAudit = async (
+  supabase: DBClient,
   collectivite_id: number | null,
   referentiel: string | null
 ) => {
-  const query = supabaseClient
+  const query = supabase
     .from('comparaison_scores_audit')
     .select('action_id,courant,pre_audit')
     .match({ collectivite_id, referentiel });

@@ -1,4 +1,5 @@
-import { supabaseClient } from '@/api/utils/supabase/browser-client';
+import { DBClient } from '@/api';
+import { useSupabase } from '@/api/utils/supabase/use-supabase';
 import { useCollectiviteId } from '@/app/core-logic/hooks/params';
 import {
   TQuestionRead,
@@ -10,11 +11,12 @@ import { useQueries } from 'react-query';
 // charge les réponses existantes pour une série de questions donnée
 export const useReponses = (questions: TQuestionRead[]) => {
   const collectivite_id = useCollectiviteId();
+  const supabase = useSupabase();
 
   // une requête par question pour permettre le rechargement individuel
   const queries = questions.map((q) => ({
     queryKey: ['reponse', collectivite_id, q.id],
-    queryFn: () => fetchReponse(collectivite_id!, q.id),
+    queryFn: () => fetchReponse(supabase, collectivite_id!, q.id),
     enabled: !!collectivite_id,
   }));
 
@@ -22,8 +24,12 @@ export const useReponses = (questions: TQuestionRead[]) => {
 };
 
 // chargement des données
-const fetchReponse = async (collectivite_id: number, question_id: string) => {
-  const query = supabaseClient
+const fetchReponse = async (
+  supabase: DBClient,
+  collectivite_id: number,
+  question_id: string
+) => {
+  const query = supabase
     .from('reponse_display')
     .select()
     .match({ collectivite_id, question_id });

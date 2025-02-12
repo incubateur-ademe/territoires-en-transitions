@@ -1,14 +1,17 @@
-import { useMutation, useQueryClient } from 'react-query';
-
-import { supabaseClient } from '@/api/utils/supabase/browser-client';
+import { DBClient } from '@/api';
+import { useSupabase } from '@/api/utils/supabase/use-supabase';
 import { makeCollectiviteFicheNonClasseeUrl } from '@/app/app/paths';
 import { useCollectiviteId } from '@/app/core-logic/hooks/params';
 import { useRouter } from 'next/navigation';
+import { useMutation, useQueryClient } from 'react-query';
 import { objectToCamel } from 'ts-case-convert';
 
 /** Upsert une fiche action pour une collectivité */
-const upsertFicheAction = async (collectiviteId: number) => {
-  const query = supabaseClient
+const upsertFicheAction = async (
+  supabase: DBClient,
+  collectiviteId: number
+) => {
+  const query = supabase
     .from('fiches_action')
     .insert({ collectivite_id: collectiviteId } as any)
     .select()
@@ -27,8 +30,9 @@ export const useCreateFicheAction = () => {
   const queryClient = useQueryClient();
   const collectiviteId = useCollectiviteId();
   const router = useRouter();
+  const supabase = useSupabase();
 
-  return useMutation(() => upsertFicheAction(collectiviteId!), {
+  return useMutation(() => upsertFicheAction(supabase, collectiviteId!), {
     meta: { disableToast: true },
     onSuccess: (data) => {
       queryClient.invalidateQueries(['axe_fiches', null]);

@@ -35,7 +35,6 @@ export default async function RootLayout({
   children: React.ReactNode;
 }) {
   const hostname = (await headers()).get('host');
-  console.log('hostname', hostname);
   const supabaseCookieOptions = getCookieOptions(hostname ?? undefined);
 
   return (

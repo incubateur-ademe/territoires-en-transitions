@@ -1,7 +1,8 @@
 import { useQuery } from 'react-query';
 
+import { DBClient } from '@/api';
 import { FicheResume } from '@/api/plan-actions';
-import { supabaseClient } from '@/api/utils/supabase/browser-client';
+import { useSupabase } from '@/api/utils/supabase/use-supabase';
 import { useCollectiviteId } from '@/app/core-logic/hooks/params';
 import { useSearchParams } from '@/app/core-logic/hooks/query';
 import { TPersonne } from '@/app/types/alias';
@@ -33,7 +34,8 @@ export type TFichesActionsListe = {
 
 type TFetchedData = { items: FicheResume[]; total: number };
 
-export const fetchFichesActionFiltresListe = async (
+const fetchFichesActionFiltresListe = async (
+  supabase: DBClient,
   filters: TFilters
 ): Promise<TFetchedData> => {
   const {
@@ -62,7 +64,7 @@ export const fetchFichesActionFiltresListe = async (
   const sansStatut = getBooleanFromNumber(sans_statut);
   const sansPriorite = getBooleanFromNumber(sans_niveau);
 
-  const { error, data, count } = await supabaseClient.rpc(
+  const { error, data, count } = await supabase.rpc(
     'filter_fiches_action',
     {
       collectivite_id: collectivite_id!,
@@ -105,6 +107,7 @@ export const useFichesActionFiltresListe = ({
   initialFilters,
 }: Args): TFichesActionsListe => {
   const collectivite_id = useCollectiviteId();
+  const supabase = useSupabase();
 
   const [filters, setFilters, filtersCount] = useSearchParams<TFilters>(
     url,
@@ -114,7 +117,7 @@ export const useFichesActionFiltresListe = ({
 
   // charge les données
   const { data } = useQuery(['fiches_Actions', collectivite_id, filters], () =>
-    fetchFichesActionFiltresListe(filters)
+    fetchFichesActionFiltresListe(supabase, filters)
   );
 
   return {

@@ -4,7 +4,7 @@ import {
   FetchOptions,
   ficheResumesFetch,
 } from '@/api/plan-actions/fiche-resumes.list';
-import { supabaseClient } from '@/api/utils/supabase/browser-client';
+import { useSupabase } from '@/api/utils/supabase/use-supabase';
 import { useCollectiviteId } from '@/app/core-logic/hooks/params';
 
 type Props = {
@@ -14,6 +14,7 @@ type Props = {
 export const useFicheResumesFetch = (props?: Props) => {
   const { options } = props || {};
   const collectiviteId = useCollectiviteId();
+  const supabase = useSupabase();
 
   return useQuery(
     ['fiches_resume_collectivite', collectiviteId, options],
@@ -23,7 +24,7 @@ export const useFicheResumesFetch = (props?: Props) => {
       }
 
       return await ficheResumesFetch({
-        dbClient: supabaseClient,
+        dbClient: supabase,
         collectiviteId,
         options: options ?? { filtre: {} },
       });

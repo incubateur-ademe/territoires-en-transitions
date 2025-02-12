@@ -1,6 +1,6 @@
 import { Indicateurs } from '@/api';
 import { Personne } from '@/api/collectivites';
-import { supabaseClient } from '@/api/utils/supabase/browser-client';
+import { useSupabase } from '@/api/utils/supabase/use-supabase';
 import { useCollectiviteId } from '@/app/core-logic/hooks/params';
 import { useMutation, useQuery, useQueryClient } from 'react-query';
 
@@ -8,13 +8,14 @@ import { useMutation, useQuery, useQueryClient } from 'react-query';
 export const useUpsertIndicateurPilote = (indicateurId: number) => {
   const queryClient = useQueryClient();
   const collectivite_id = useCollectiviteId();
+  const supabase = useSupabase();
 
   return useMutation({
     mutationKey: `upsert_indicateur_pilotes`,
     mutationFn: async (pilotes: Personne[]) => {
       if (!collectivite_id) return;
       return Indicateurs.save.upsertPilotes(
-        supabaseClient,
+        supabase,
         indicateurId,
         collectivite_id,
         pilotes
@@ -35,13 +36,14 @@ export const useUpsertIndicateurPilote = (indicateurId: number) => {
 /** Charge les personnes pilotes d'un indicateur */
 export const useIndicateurPilotes = (indicateurId: number) => {
   const collectivite_id = useCollectiviteId();
+  const supabase = useSupabase();
 
   return useQuery(
     ['indicateur_pilotes', collectivite_id, indicateurId],
     async () => {
       if (!collectivite_id) return;
       return Indicateurs.fetch.selectIndicateurPilotes(
-        supabaseClient,
+        supabase,
         indicateurId,
         collectivite_id
       );

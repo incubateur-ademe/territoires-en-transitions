@@ -1,6 +1,6 @@
 import { moduleFetch } from '@/api/plan-actions/dashboards/personal-dashboard/actions/module.fetch';
 import { PersonalDefaultModuleKeys } from '@/api/plan-actions/dashboards/personal-dashboard/domain/module.schema';
-import { supabaseClient } from '@/api/utils/supabase/browser-client';
+import { useSupabase } from '@/api/utils/supabase/use-supabase';
 import { useCollectiviteId } from '@/app/core-logic/hooks/params';
 import { useUser } from '@/app/users/user-provider';
 import { QueryKey, useQuery } from 'react-query';
@@ -13,6 +13,7 @@ export const usePersonalModuleFetch = (
 ) => {
   const collectiviteId = useCollectiviteId();
   const userId = useUser().id;
+  const supabase = useSupabase();
 
   return useQuery(getQueryKey(defaultModuleKey), async () => {
     if (!collectiviteId) {
@@ -24,7 +25,7 @@ export const usePersonalModuleFetch = (
     }
 
     return await moduleFetch({
-      dbClient: supabaseClient,
+      dbClient: supabase,
       collectiviteId,
       userId,
       defaultModuleKey,

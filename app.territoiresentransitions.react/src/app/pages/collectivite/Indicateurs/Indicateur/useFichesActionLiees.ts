@@ -1,5 +1,5 @@
 import { Indicateurs } from '@/api';
-import { supabaseClient } from '@/api/utils/supabase/browser-client';
+import { useSupabase } from '@/api/utils/supabase/use-supabase';
 import { useCollectiviteId } from '@/app/core-logic/hooks/params';
 import { useMutation, useQuery, useQueryClient } from 'react-query';
 import { TIndicateurDefinition } from '../types';
@@ -9,17 +9,14 @@ import { TIndicateurDefinition } from '../types';
  */
 export const useFichesActionLiees = (definition: TIndicateurDefinition) => {
   const collectiviteId = useCollectiviteId()!;
+  const supabase = useSupabase();
 
   const { id } = definition;
 
   const { data, ...other } = useQuery(
     ['fiche_action_indicateur_lies', collectiviteId, id],
     async () =>
-      Indicateurs.fetch.selectIndicateurFiches(
-        supabaseClient,
-        id,
-        collectiviteId
-      )
+      Indicateurs.fetch.selectIndicateurFiches(supabase, id, collectiviteId)
   );
   return { data: data || [], ...other };
 };
@@ -32,12 +29,14 @@ export const useUpdateFichesActionLiees = (
 ) => {
   const queryClient = useQueryClient();
   const collectiviteId = useCollectiviteId();
+  const supabase = useSupabase();
+
   const { id } = definition;
 
   return useMutation(
     async (fiches_liees: number[]) =>
       Indicateurs.save.upsertFiches(
-        supabaseClient,
+        supabase,
         id,
         collectiviteId!,
         fiches_liees

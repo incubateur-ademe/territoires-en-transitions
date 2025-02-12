@@ -1,5 +1,5 @@
 import { makeSearchString } from '@/api';
-import { supabaseClient as supabase } from '@/api/utils/supabase/browser-client';
+import { useSupabase } from '@/api/utils/supabase/use-supabase';
 import useSWR from 'swr';
 
 type Collectivite = {
@@ -11,6 +11,7 @@ type Collectivite = {
 
 /** Donne la liste des collectivités dont le nom inclus la chaîne recherchée */
 export const useFilteredCollectivites = (search: string, limit = 10) => {
+  const supabase = useSupabase();
   const key = `site_labellisation-filtered-${search}`;
   return useSWR(key, async () => {
     const query = supabase
