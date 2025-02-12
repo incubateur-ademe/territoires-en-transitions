@@ -75,4 +75,7 @@ export const Selectors = {
       'se connecter': '[data-test=SeConnecter]',
     },
   },
+  'Compte sans mot de passe': {
+    selector: '[id="tab-1"]',
+  },
 };

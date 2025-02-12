@@ -51,7 +51,8 @@ Fonctionnalité: Ajouter un membre au profil de la collectivité
       | Champ | Condition          | Valeur        |
       | email | contient la valeur | nono@dodo.com |
 
-    Quand je clique sur le bouton "Valider" du "formulaire de création de compte"
+    Quand je clique sur le bouton "Compte sans mot de passe"
+    Et que je clique sur le bouton "Valider" du "formulaire de création de compte"
     Alors le "message lien envoyé" est visible
 
     Quand je visite le lien contenu dans le dernier message de la mailbox de "nono"
