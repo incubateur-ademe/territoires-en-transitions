@@ -45,6 +45,9 @@ export const LocalSelectors = {
     selector: '[data-test=AccepterCGUBtn]',
   },
   'Connexion avec mot de passe': {
+    selector: '[id="tab-0"]',
+  },
+  'Connexion sans mot de passe': {
     selector: '[id="tab-1"]',
   },
 };
