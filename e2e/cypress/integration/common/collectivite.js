@@ -48,6 +48,7 @@ When('je suis connecté avec les droits en {string}', loginWithProfile);
 function loginWithProfile(niveau) {
   return loginAs.call(this, `@user_${niveau}`);
 }
+
 function loginAs(userAlias) {
   cy.get(userAlias).then(function (user) {
     login.call(this, user);
@@ -55,10 +56,11 @@ function loginAs(userAlias) {
     cy.get('[data-test=nav-user]').should('contain.text', user.prenom);
   });
 }
+
 function login({ email, password }) {
-  cy.get('@auth').then(async (auth) => {
-    await auth.disconnect();
-    await auth.connect({ email, password });
+  cy.get('@supabase').then(async (supabase) => {
+    await supabase.auth.signOut();
+    await supabase.auth.signInWithPassword({ email, password });
   });
 }
 

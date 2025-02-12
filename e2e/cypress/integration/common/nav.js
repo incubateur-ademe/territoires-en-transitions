@@ -6,7 +6,7 @@ import { Views, CollectivitePages } from './views';
 
 export const navigateTo = (view) => {
   const { route, selector } = Views[view];
-  cy.get('@history').then((history) => history.replace(route));
+  cy.get('@router').then((router) => router.push(route));
   cy.get(selector).should('be.visible');
 };
 
