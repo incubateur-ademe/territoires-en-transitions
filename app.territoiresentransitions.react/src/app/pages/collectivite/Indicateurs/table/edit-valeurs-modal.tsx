@@ -3,6 +3,7 @@ import {
   Button,
   Divider,
   Field,
+  FieldMessage,
   Input,
   Modal,
   ModalFooter,
@@ -58,6 +59,16 @@ export const EditValeursModal = (props: EditValeursModalProps) => {
     return valeursExistantes.find((v) => v.annee === a);
   };
 
+  const validateAndAddNewValue = () => {
+    upsert();
+    // pré-rempli le champ avec l'année suivante
+    const anneeSuivante = annee ? annee + 1 : null;
+    setAnnee(anneeSuivante);
+    // pré-rempli (ou reset) les autres champs avec les valeurs existantes
+    const valeurExistante = getValeurExistante(anneeSuivante);
+    setValeur(valeurExistante ? valeurExistante : {});
+  };
+
   return (
     <Modal
       size="lg"
@@ -65,7 +76,14 @@ export const EditValeursModal = (props: EditValeursModalProps) => {
       title="Compléter le tableau"
       render={() => {
         return (
-          <>
+          <div
+            className="flex flex-col gap-8"
+            onKeyUp={(evt) => {
+              if (!disabled && evt.key === 'Enter') {
+                validateAndAddNewValue();
+              }
+            }}
+          >
             <Field title="Année *">
               <Input
                 type="text"
@@ -114,7 +132,13 @@ export const EditValeursModal = (props: EditValeursModalProps) => {
                 }
               />
             </Field>
-          </>
+            {!disabled && (
+              <FieldMessage
+                state="info"
+                message="Astuce : appuyer sur Entrée pour valider et ajouter une autre année rapidement."
+              />
+            )}
+          </div>
         );
       }}
       renderFooter={({ close }) => (
@@ -122,18 +146,7 @@ export const EditValeursModal = (props: EditValeursModalProps) => {
           <Button variant="outlined" onClick={close}>
             Annuler
           </Button>
-          <Button
-            disabled={disabled}
-            onClick={() => {
-              upsert();
-              // pré-rempli le champ avec l'année suivante
-              const anneeSuivante = annee ? annee + 1 : null;
-              setAnnee(anneeSuivante);
-              // pré-rempli (ou reset) les autres champs avec les valeurs existantes
-              const valeurExistante = getValeurExistante(anneeSuivante);
-              setValeur(valeurExistante ? valeurExistante : {});
-            }}
-          >
+          <Button disabled={disabled} onClick={validateAndAddNewValue}>
             Valider et ajouter une année
           </Button>
           <Button
