@@ -57,7 +57,10 @@ When(/je suis connecté en tant que "([^"]*)"/, login);
 
 function login(userName) {
   const u = genUser(userName);
-  cy.get('@supabase').then((supabase) => supabase.auth.signInWithPassword(u));
+  cy.get('@supabase').then(
+    async (supabase) => await supabase.auth.signInWithPassword(u)
+  );
+  cy.reload();
   cy.get(SignInPage.selector).should('not.exist');
   cy.get('[data-test=nav-user]').should('be.visible');
 }
@@ -71,9 +74,10 @@ When(
         params: { collectivite_id, niveau: 'edition', cgu_acceptees: false },
       })
       .then(({ data: user }) => {
-        cy.get('@supabase').then((supabase) =>
-          supabase.auth.signInWithPassword(user)
+        cy.get('@supabase').then(
+          async (supabase) => await supabase.auth.signInWithPassword(user)
         );
+        cy.reload();
         cy.get(SignInPage.selector).should('not.exist');
         cy.get('[data-test=nav-user]').should('be.visible');
       });
