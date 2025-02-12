@@ -1,5 +1,5 @@
 import { ReferentielId } from '@/domain/referentiels';
-import ScoreTotalEvolutionsChart from '../../evolutions/charts/ScoreTotalEvolutionsChart';
+import ScoreTotalEvolutionsChart from '../../evolutions/evolutions-score-total.chart';
 import { SnapshotDetails, useSnapshotList } from '../../use-snapshot';
 import { GraphCard } from './EtatDesLieuxGraphs';
 
