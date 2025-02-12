@@ -8,7 +8,7 @@ import {
 import { useRouter } from 'next/navigation';
 import { useState } from 'react';
 
-export const NB_COLLECTIVITES_FETCH = 10;
+export const NB_COLLECTIVITES_FETCH = 20;
 
 /**
  * Gère l'appel à la fonction de rattachement à une collectivité et la redirection après un rattachement réussi
