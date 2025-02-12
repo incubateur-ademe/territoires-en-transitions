@@ -87,3 +87,18 @@ Les trois indicateurs permettent d'évaluer la compacité des formes urbaines. I
 - Nombre de nouveaux logements collectifs et individuels groupés / nb total de logements autorisés dans l’année (disponibles dans la base SITADEL) la valeur moyenne des régions françaises est indiquée pour information (45 %).
 
 - Part du foncier en friche : L’indicateur permet d’identifier et caractériser les gisements fonciers locaux qualifiés comme étant « en friche ». Les enjeux sont d’effectuer une veille foncière, d’anticiper la formation de friches et d’étudier la mutabilité des espaces en friche. Compacité des formes urbaines
+
+# Restauration collective publique
+```yaml
+id: restauration_collective
+unite: '%'
+
+titre_long: Restauration collective publique
+sans_valeur: yes
+programmes:
+  - cae
+thematiques:
+  - agri_alim
+  - activites_economiques
+```
+
