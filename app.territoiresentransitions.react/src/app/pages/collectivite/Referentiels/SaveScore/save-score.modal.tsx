@@ -102,15 +102,14 @@ const SaveScoreModal = ({
     <>
       {renderToast()}
       <Modal
-        title="Figer le référentiel"
+        title="Figer l'état des lieux"
         size="md"
         render={({ descriptionId, close }) => (
           <div id={descriptionId} className="space-y-6">
             {/*Info */}
             <Alert
-              description="Une sauvegarde sera automatiquement réalisée lors du démarrage d'un audit et lors de la clôture d'un audit.
-          Une sauvegarde sera proposée lors du dépôt du rapport de visite annuelle.
-          Vous pouvez figer le référentiel à la fin de l'état des lieux initial (ex: Etat-des-lieux-initial) ou à un autre moment clé (ex: pre-visite-annuelle), etc."
+              description="Vous pouvez figer les scores et textes renseignés dans le référentiel à la fin de l'état des lieux initial (ex: Etat-des-lieux-initial) ou à un autre moment clé (ex: pre-visite-annuelle), etc.
+Une sauvegarde sera automatiquement réalisée lors du démarrage d'un audit et lors de la clôture d'un audit. Une sauvegarde sera également prochainement proposée lors du dépôt du rapport de visite annuelle."
               rounded
             />
             {/* Choix entre 'Date d'aujourd'hui' et 'A une date antérieure' */}
