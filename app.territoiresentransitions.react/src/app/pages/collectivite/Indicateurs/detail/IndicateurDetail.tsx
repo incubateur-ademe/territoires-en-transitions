@@ -1,3 +1,5 @@
+'use client';
+
 import SpinnerLoader from '@/app/ui/shared/SpinnerLoader';
 import { useIndicateurDefinition } from '../Indicateur/useIndicateurDefinition';
 import IndicateurLayout from './IndicateurLayout';
@@ -8,7 +10,7 @@ type Props = {
   isPerso?: boolean;
 };
 
-const IndicateurDetail = ({
+export const IndicateurDetail = ({
   dataTest,
   indicateurId,
   isPerso = false,
@@ -20,5 +22,3 @@ const IndicateurDetail = ({
 
   return <IndicateurLayout {...{ dataTest, definition, isPerso }} />;
 };
-
-export default IndicateurDetail;
