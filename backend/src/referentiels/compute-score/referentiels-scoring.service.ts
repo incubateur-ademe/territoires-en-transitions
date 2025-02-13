@@ -1257,8 +1257,7 @@ export default class ReferentielsScoringService {
         referentielVersion: referentiel.version,
         collectiviteId,
         collectiviteInfo,
-        date:
-          parameters.date || DateTime.now().setZone('Europe/Paris').toISO()!,
+        date: parameters.date || DateTime.now().toISO(),
         scores: referentielWithScore,
       };
 
