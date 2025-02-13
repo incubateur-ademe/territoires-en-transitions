@@ -807,3 +807,4 @@ collectivite/tableau_de_bord [collectivite/tableau_de_bord@v4.36.0] 2025-01-06T1
 collectivite/bucket [collectivite/bucket@v4.36.0] 2025-01-27T09:46:51Z System Administrator <root@MacBook-Air-de-Thibaut-2.local> # Maj de la fonction create_bucket pour permettre la syncho de bdd
 utils/maintenance [utils/maintenance@v4.37.0] 2025-02-11T18:09:33Z Frederic Arnoux <frederic.arnoux@beta.gouv.fr> # Supprime la table de maintenance
 pg_trgm_extension 2025-02-13T09:46:04Z Frederic Arnoux <frederic.arnoux@beta.gouv.fr> # Ajoute une extension de recherche textuelle de similarités
+collectivite/collectivite [collectivite/collectivite@v4.37.0] 2025-02-13T14:43:13Z Frederic Arnoux <frederic.arnoux@beta.gouv.fr> # Supprime la vue named_collectivite
