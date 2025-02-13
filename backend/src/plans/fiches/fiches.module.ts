@@ -1,6 +1,5 @@
 import PlanActionsService from '@/backend/plans/fiches/plan-actions.service';
-import { Module } from '@nestjs/common';
-import { AuthModule } from '../../auth/auth.module';
+import { forwardRef, Module } from '@nestjs/common';
 import { CollectivitesModule } from '../../collectivites/collectivites.module';
 import { BulkEditRouter } from './bulk-edit/bulk-edit.router';
 import { BulkEditService } from './bulk-edit/bulk-edit.service';
@@ -13,7 +12,7 @@ import FichesActionUpdateService from './fiches-action-update.service';
 import { FichesActionController } from './fiches-action.controller';
 
 @Module({
-  imports: [AuthModule, CollectivitesModule],
+  imports: [forwardRef(() => CollectivitesModule)],
   providers: [
     PlanActionsService,
     FicheService,

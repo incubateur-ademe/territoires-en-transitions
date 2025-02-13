@@ -2,7 +2,10 @@
 // Exports from this file can be imported with `@/domain/*` alias path.
 
 export * from './shared/models/categorie-tag.table';
+export * from './shared/models/collectivite-test.table';
 export * from './shared/models/collectivite.table';
+export * from './shared/models/commune.table';
+export * from './shared/models/epci.table';
 export * from './shared/models/financeur-tag.table';
 export * from './shared/models/libre-tag.table';
 export * from './shared/models/partenaire-tag.table';
