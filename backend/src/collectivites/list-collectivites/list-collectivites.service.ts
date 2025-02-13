@@ -3,12 +3,7 @@ import { Injectable, Logger } from '@nestjs/common';
 import { eq, sql } from 'drizzle-orm';
 import z from 'zod';
 import { DatabaseService } from '../../utils/database/database.service';
-import {
-  collectiviteTable,
-  collectiviteTestTable,
-  communeTable,
-  epciTable,
-} from '../index-domain';
+import { collectiviteTable, communeTable, epciTable } from '../index-domain';
 
 export const inputSchema = z
   .object({
@@ -37,7 +32,7 @@ export default class ListCollectivitesService {
     const db = this.db.db;
 
     const collectiviteNom =
-      sql`COALESCE(${epciTable.nom}, ${communeTable.nom}, ${collectiviteTestTable.nom})`.mapWith(
+      sql`COALESCE(${epciTable.nom}, ${communeTable.nom})`.mapWith(
         epciTable.nom
       );
 
@@ -51,10 +46,6 @@ export default class ListCollectivitesService {
       .leftJoin(
         communeTable,
         eq(communeTable.collectiviteId, collectiviteTable.id)
-      )
-      .leftJoin(
-        collectiviteTestTable,
-        eq(collectiviteTestTable.collectiviteId, collectiviteTable.id)
       );
 
     if (input?.text) {
