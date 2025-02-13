@@ -1,4 +1,4 @@
-import { Injectable } from '@nestjs/common';
+import { Injectable, Logger } from '@nestjs/common';
 import { DatabaseService } from '@/backend/utils';
 import ExcelJS from 'exceljs';
 import {
@@ -73,6 +73,7 @@ OrderedColumnNames.forEach((col, index) => {
 
 @Injectable()
 export class ImportPlanService {
+  private readonly logger = new Logger(ImportPlanService.name);
   constructor(
     private readonly databaseService: DatabaseService,
     private readonly fetch: ImportPlanFetchService,
@@ -88,19 +89,22 @@ export class ImportPlanService {
    * @param planType
    */
   async import(
-    file: File,
+    file: string,
     collectiviteId: number,
     planName: string,
     planType?: number
   ): Promise<boolean> {
+
+    this.logger.log(`Début de l'import ${planName} avec le type ${planType} pour la collectivité ${collectiviteId}`);
     const plan: AxeImport = {
       nom: planName,
-      type: planType,
+      type: (planType && !Number.isNaN(planType)) ? planType : undefined,
       enfants: new Set<AxeImport>(),
       fiches: [],
     };
+
     // Open and check if the file is ok
-    const fileBuffer = await file.arrayBuffer();
+    const fileBuffer = Buffer.from(file, 'base64');
     const workbook = new ExcelJS.Workbook();
     await workbook.xlsx.load(fileBuffer);
     const worksheet = workbook.worksheets[0];
@@ -126,14 +130,16 @@ export class ImportPlanService {
       try {
         await this.createAxes(rowData, plan, memoryData);
       } catch (e) {
-        errors.push(`Ligne ${rowNumber} : ${e as string}`);
+        errors.push(`<strong>Ligne ${rowNumber} :</strong> ${e as string}`);
       }
     }
 
     if (errors.length > 0) {
-      throw new Error(`Erreur(s) rencontrée(s) dans le fichier Excel :
-      ${errors.join('\n- ')}
-
+      throw new Error(`<strong>Erreur(s) rencontrée(s) dans le fichier Excel :</strong></br>
+      <ul>
+      ${errors.map((error) => `<li>${error}</li>`).join('')}
+      </ul>
+      <br><br>
       Merci de la/les corriger avant de retenter un import.`);
     }
 
@@ -141,12 +147,12 @@ export class ImportPlanService {
     try {
       await this.saveData(collectiviteId, memoryData);
     } catch (e) {
-      throw new Error(`Erreur rencontrée lors de la sauvegarde.
-      Merci de contacter un dev en fournissant l'erreur ci-dessous :
+      throw new Error(`<strong>Erreur rencontrée lors de la sauvegarde.</strong></br>
+      Merci de contacter un dev en fournissant l'erreur ci-dessous :<br><br>
 
             ${e}`);
     }
-
+    this.logger.log(`Fin de l'import`);
     return true;
   }
 
@@ -158,13 +164,13 @@ export class ImportPlanService {
    */
   private checkColumns(worksheet: ExcelJS.Worksheet, row: any[]): boolean {
     for (let columnId = 0; columnId < OrderedColumnNames.length; columnId++) {
-      if (OrderedColumnNames[columnId].trim() !== row[columnId].trim()) {
+      if (OrderedColumnNames[columnId].trim() !== String(row[columnId] ?? '').trim()) {
         const columnExcel = worksheet.getColumn(columnId + 1).letter;
         throw new Error(
-          `Erreur rencontrée dans le fichier Excel :
-          La colonne ${columnExcel} devrait être "${OrderedColumnNames[columnId]}" et non "${row[columnId]}"
-          Les colonnes attendues sont : ${OrderedColumnNames}
-          Les colonnes données sont   : ${row}
+          `<strong>Erreur rencontrée dans le fichier Excel :</strong><br>
+          La colonne <em>${columnExcel}</em> devrait être "<strong>${OrderedColumnNames[columnId]}</strong>" et non "<strong>${row[columnId]}</strong>"<br><br>
+          <strong>Les colonnes attendues sont :</strong> <pre>${OrderedColumnNames}</pre><br>
+          <strong>Les colonnes données sont   :</strong> <pre>${row}</pre><br><br>
 
           Merci de la corriger avant de retenter un import.`
         );
@@ -268,7 +274,7 @@ export class ImportPlanService {
         rowData[columnIndexes[ColumnNames.ThematiquePrincipale]],
         memory.thematiques
       ),
-      sousThematique: await this.clean.sousThematique(
+      sousThematique: await this.clean.thematique(
         rowData[columnIndexes[ColumnNames.SousThematiques]],
         memory.sousThematiques
       ),
