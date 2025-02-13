@@ -1,8 +1,8 @@
 'use client';
 
-import { useRejoindreUneCollectivite } from '@/auth/app/rejoindre-une-collectivite/useRejoindreUneCollectivite';
-import { RejoindreUneCollectiviteModal } from '@/auth/components/RejoindreUneCollectivite';
 import { useEffect } from 'react';
+import { RejoindreUneCollectiviteModal } from './RejoindreUneCollectiviteModal';
+import { useRejoindreUneCollectivite } from './useRejoindreUneCollectivite';
 
 /**
  * Affiche la page "rejoindre une collectivité"

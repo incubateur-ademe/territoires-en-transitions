@@ -1,7 +1,7 @@
 import { Modal } from '@/ui';
 import { useState } from 'react';
 import { RejoindreUneCollectivite } from './RejoindreUneCollectivite';
-import { RejoindreUneCollectiviteProps } from './type';
+import { RejoindreUneCollectiviteProps } from './useRejoindreUneCollectivite';
 
 /**
  * Encapsule le formulaire dans une modale
