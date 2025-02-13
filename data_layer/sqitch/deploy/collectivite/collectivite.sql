@@ -2,83 +2,12 @@
 
 BEGIN;
 
--- Ajoute des computed fields associées à la collectivité
--- 👇
 
-CREATE OR REPLACE FUNCTION public.collectivite_service_tag(public.collectivite)
-    RETURNS SETOF public.service_tag
-    LANGUAGE SQL
-    STABLE
-    SECURITY DEFINER
-    SET search_path TO ''
-BEGIN ATOMIC
-    SELECT *
-    FROM public.service_tag
-    WHERE collectivite_id = $1.id
-    ;
-END;
+-- Create a GIN index for faster trigram searches (enabled by the extension `pg_trgm`)
+-- (slower to update but faster to search than a GIST index)
+CREATE INDEX epci_nom_gin_trgm_ops_idx ON epci USING gin (nom gin_trgm_ops);
+CREATE INDEX commune_nom_gin_trgm_ops_idx ON commune USING gin (nom gin_trgm_ops);
 
-CREATE OR REPLACE FUNCTION public.collectivite_structure_tag(public.collectivite)
-    RETURNS SETOF public.structure_tag
-    LANGUAGE SQL
-    STABLE
-    SECURITY DEFINER
-    SET search_path TO ''
-BEGIN ATOMIC
-    SELECT *
-    FROM public.structure_tag
-    WHERE collectivite_id = $1.id
-    ;
-END;
-
-CREATE OR REPLACE FUNCTION public.collectivite_personne_tag(public.collectivite)
-    RETURNS SETOF public.personne_tag
-    LANGUAGE SQL
-    STABLE
-    SECURITY DEFINER
-    SET search_path TO ''
-BEGIN ATOMIC
-    SELECT *
-    FROM public.personne_tag
-    WHERE collectivite_id = $1.id
-    ;
-END;
-
-CREATE OR REPLACE FUNCTION public.collectivite_utilisateur(public.collectivite)
-    RETURNS SETOF public.dcp
-    LANGUAGE SQL
-    STABLE
-    SECURITY DEFINER
-    SET search_path TO ''
-BEGIN ATOMIC
-    SELECT *
-    FROM public.dcp
-    ;
-END;
-
-CREATE OR REPLACE FUNCTION public.collectivite_axe(public.collectivite)
-    RETURNS SETOF public.axe
-    LANGUAGE SQL
-    STABLE
-    SECURITY DEFINER
-    SET search_path TO ''
-BEGIN ATOMIC
-    SELECT axe.*
-    FROM public.axe
-    WHERE collectivite_id = $1.id
-    ;
-END;
-
-CREATE OR REPLACE FUNCTION public.collectivite_thematique(public.collectivite)
-    RETURNS SETOF public.thematique
-    LANGUAGE SQL
-    STABLE
-    SECURITY DEFINER
-    SET search_path TO ''
-BEGIN ATOMIC
-    SELECT thematique.*
-    FROM public.thematique
-    ;
-END;
 
 COMMIT;
+

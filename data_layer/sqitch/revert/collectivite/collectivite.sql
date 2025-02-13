@@ -1,11 +1,8 @@
--- Deploy tet:collectivites to pg
+-- Deploy tet:plan_action/fiches to pg
 
 BEGIN;
 
-DROP FUNCTION public.collectivite_service_tag(public.collectivite);
-DROP FUNCTION public.collectivite_structure_tag(public.collectivite);
-DROP FUNCTION public.collectivite_personne_tag(public.collectivite);
-DROP FUNCTION public.collectivite_utilisateur(public.collectivite);
-DROP FUNCTION public.collectivite_axe(public.collectivite);
+DROP INDEX epci_nom_gin_trgm_ops_idx;
+DROP INDEX commune_nom_gin_trgm_ops_idx;
 
 COMMIT;
