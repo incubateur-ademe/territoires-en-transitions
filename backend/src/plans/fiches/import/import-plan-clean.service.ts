@@ -19,9 +19,11 @@ import { getFuse } from '@/backend/utils/fuse/fuse.utils';
 /** Regex to detect spaces */
 const regexEspace = /\\t|\\r|\\n/;
 
-/** Regex to detect tags in a string */
-const regexSplit =
-  /((et\/ou)|[,/+?&;]|\n|\r| - | -|- |^-| et (?!de))(?![^(]*[)])(?![^«]*»)/;
+/**
+ * Regex to detect tags in a string
+ * Separates when there is a comma unless it is in parentheses or quotation marks
+ */
+const regexSplit = /,(?![^()]*\))(?=(?:(?:[^"]*"){2})*[^"]*$)(?![^«]*»)/;
 
 /** Accept some synonyms for "niveau de priorité" */
 const niveauxPrioritesSynonyme: Record<string, string> = {
@@ -34,8 +36,6 @@ const niveauxPriorites =
 
 @Injectable()
 export class ImportPlanCleanService {
-  private fuseInstances: Record<string, any> = {};
-
   /**
    * Clean a text
    * @param text
@@ -60,9 +60,9 @@ export class ImportPlanCleanService {
     const toReturn = parseInt(integer);
     if (isNaN(toReturn)) {
       throw new Error(
-        `Le montant ${String(
+        `Le montant "<em>${String(
           integer
-        )} est incorrect, les montants ne doivent contenir que des chiffres.`
+        )}</em>" est incorrect, les montants ne doivent contenir que des chiffres.`
       );
     }
     return toReturn;
@@ -108,7 +108,7 @@ export class ImportPlanCleanService {
       }
     }
     if (d.toString() == 'Invalid Date') {
-      throw Error(`La date ${date} n'est pas valide.`);
+      throw Error(`La date <em>${date}</em> n'est pas valide.`);
     }
     const toReturn = d.toISOString();
     if (toReturn.substring(0, 10) === '1970-01-01') {
@@ -132,14 +132,12 @@ export class ImportPlanCleanService {
     if (!personnes) return [];
     const toReturn: PersonneImport[] = [];
     const tab: string[] = String(personnes).split(regexSplit);
-    if (!this.fuseInstances.members) {
-      const Fuse = await getFuse();
-      this.fuseInstances.members = new Fuse(Array.from(Object.keys(members)));
-    }
+    const Fuse = await getFuse();
+    const fuse = new Fuse(Array.from(Object.keys(members)), {threshold: 0.3, distance: 100});
     for (const element of tab) {
       const cleaned = this.text(element);
       if (cleaned && !cleaned.match(regexSplit)) {
-        const found = this.fuseInstances.members.search(cleaned)?.[0]?.item;
+        const found = fuse.search(cleaned)?.[0]?.item;
         let tag: TagImport | undefined;
         let userId: string | undefined;
         if (found) {
@@ -215,13 +213,11 @@ export class ImportPlanCleanService {
    */
   async cible(cible: string): Promise<Cible | undefined> {
     if (!cible) return undefined;
-    if (!this.fuseInstances.cibles) {
-      const Fuse = await getFuse();
-      this.fuseInstances.cibles = new Fuse(ciblesEnumValues);
-    }
+    const Fuse = await getFuse();
+    const fuse = new Fuse(ciblesEnumValues);
     const cleaned = this.text(cible);
     if (!cleaned) return undefined;
-    return this.fuseInstances.cibles.search(cleaned)?.[0]?.item;
+    return fuse.search(cleaned)?.[0]?.item;
   }
 
   /**
@@ -235,15 +231,11 @@ export class ImportPlanCleanService {
     effetsAttendus: Record<string, number>
   ): Promise<number | undefined> {
     if (!effetAttendu) return undefined;
-    if (!this.fuseInstances.effetsAttendus) {
-      const Fuse = await getFuse();
-      this.fuseInstances.effetsAttendus = new Fuse(
-        Array.from(Object.keys(effetsAttendus))
-      );
-    }
+    const Fuse = await getFuse();
+    const fuse = new Fuse(Array.from(Object.keys(effetsAttendus)));
     const cleaned = this.text(effetAttendu);
     if (!cleaned) return undefined;
-    const found = this.fuseInstances.effetsAttendus.search(cleaned)?.[0]?.item;
+    const found = fuse.search(cleaned)?.[0]?.item;
     if (!found) return undefined;
     return effetsAttendus[found];
   }
@@ -257,15 +249,11 @@ export class ImportPlanCleanService {
     participation: string
   ): Promise<ParticipationCitoyenne | undefined> {
     if (!participation) return undefined;
-    if (!this.fuseInstances.participation) {
-      const Fuse = await getFuse();
-      this.fuseInstances.participation = new Fuse(
-        participationCitoyenneEnumValues
-      );
-    }
+    const Fuse = await getFuse();
+    const fuse = new Fuse(participationCitoyenneEnumValues);
     const cleaned = this.text(participation);
     if (!cleaned) return undefined;
-    return this.fuseInstances.participation.search(cleaned)?.[0]?.item;
+    return fuse.search(cleaned)?.[0]?.item;
   }
 
   /**
@@ -275,13 +263,11 @@ export class ImportPlanCleanService {
    */
   async statut(statut: string): Promise<Statut | undefined> {
     if (!statut) return undefined;
-    if (!this.fuseInstances.statut) {
-      const Fuse = await getFuse();
-      this.fuseInstances.statut = new Fuse(statutsEnumValues);
-    }
+    const Fuse = await getFuse();
+    const fuse = new Fuse(statutsEnumValues);
     const cleaned = this.text(statut);
     if (!cleaned) return undefined;
-    return this.fuseInstances.statut.search(cleaned)?.[0]?.item;
+    return fuse.search(cleaned)?.[0]?.item;
   }
 
   /**
@@ -291,14 +277,11 @@ export class ImportPlanCleanService {
    */
   async priorite(priorite: string): Promise<Priorite | undefined> {
     if (!priorite) return undefined;
-    if (!this.fuseInstances.niveauxPriorites) {
-      const Fuse = await getFuse();
-      this.fuseInstances.niveauxPriorites = new Fuse(niveauxPriorites);
-    }
+    const Fuse = await getFuse();
+    const fuse = new Fuse(niveauxPriorites);
     const cleaned = this.text(priorite);
     if (!cleaned) return undefined;
-    const found =
-      this.fuseInstances.niveauxPriorites.search(cleaned)?.[0]?.item;
+    const found = fuse.search(cleaned)?.[0]?.item;
     if (!found) return undefined;
     return (niveauxPrioritesSynonyme[found] || found) as Priorite;
   }
@@ -314,39 +297,11 @@ export class ImportPlanCleanService {
     thematiques: Record<string, number>
   ): Promise<number | undefined> {
     if (!thematique) return undefined;
-    if (!this.fuseInstances.thematiques) {
-      const Fuse = await getFuse();
-      this.fuseInstances.thematiques = new Fuse(
-        Array.from(Object.keys(thematiques))
-      );
-    }
+    const Fuse = await getFuse();
+    const fuse = new Fuse(Array.from(Object.keys(thematiques)));
     const cleaned = this.text(thematique);
     if (!cleaned) return undefined;
-    const found = this.fuseInstances.thematiques.search(cleaned)?.[0]?.item;
-    if (!found) return undefined;
-    return thematiques[found];
-  }
-
-  /**
-   * Clean a "sous-thematique"
-   * @param thematique
-   * @param thematiques
-   * @return associated id
-   */
-  async sousThematique(
-    thematique: string,
-    thematiques: Record<string, number>
-  ): Promise<number | undefined> {
-    if (!thematique) return undefined;
-    if (!this.fuseInstances.sousThematiques) {
-      const Fuse = await getFuse();
-      this.fuseInstances.sousThematiques = new Fuse(
-        Array.from(Object.keys(thematiques))
-      );
-    }
-    const cleaned = this.text(thematique);
-    if (!cleaned) return undefined;
-    const found = this.fuseInstances.sousThematiques.search(cleaned)?.[0]?.item;
+    const found = fuse.search(cleaned)?.[0]?.item;
     if (!found) return undefined;
     return thematiques[found];
   }
