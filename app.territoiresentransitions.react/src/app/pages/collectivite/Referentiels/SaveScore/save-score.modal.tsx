@@ -11,8 +11,9 @@ import {
   Modal,
   useEventTracker,
 } from '@/ui';
+import { OpenState } from '@/ui/utils/types';
 import { DateTime } from 'luxon';
-import { ReactNode, useRef, useState } from 'react';
+import { useRef, useState } from 'react';
 
 const generateBeforeDate = (
   date: string | null | undefined
@@ -47,9 +48,9 @@ export type SaveScoreProps = {
 const SaveScoreModal = ({
   referentielId,
   collectiviteId,
-  children,
+  openState,
 }: SaveScoreProps & {
-  children: ReactNode;
+  openState: OpenState;
 }) => {
   const [selectedButton, setSelectedButton] = useState<string>('now');
   const tracker = useEventTracker('app/referentiel');
@@ -62,13 +63,9 @@ const SaveScoreModal = ({
   const displayedYear = getDisplayedYear(selectedButton, dateVersion);
   const finalNomVersion = `${displayedYear} - ${nomVersion?.trim()}`;
 
-  const { mutate: upsertSnapshot, isPending: isSaving, reset } = useSaveScore();
+  const { mutate: upsertSnapshot, isPending: isSaving } = useSaveScore();
 
-  const handleClose = () => {
-    reset();
-  };
-
-  const handleSave = async (close: () => void) => {
+  const handleSave = async () => {
     if (!nomVersion.trim()) return;
 
     upsertSnapshot(
@@ -79,8 +76,8 @@ const SaveScoreModal = ({
         date: dateVersion ? generateBeforeDate(dateVersion) : undefined,
       },
       {
-        onSuccess: () => {
-          close();
+        onSettled: () => {
+          openState.setIsOpen(false);
         },
       }
     );
@@ -91,8 +88,8 @@ const SaveScoreModal = ({
       <Modal
         title="Figer l'état des lieux"
         size="md"
-        onClose={handleClose}
-        render={({ descriptionId, close }) => (
+        openState={openState}
+        render={({ descriptionId }) => (
           <div id={descriptionId} className="space-y-6">
             {/*Info */}
             <Alert
@@ -150,7 +147,11 @@ Une sauvegarde sera automatiquement réalisée lors du démarrage d'un audit et 
             </Field>
             {/* Boutons annuler et valider */}
             <div className="flex gap-4 justify-end">
-              <Button variant="grey" size="sm" onClick={close}>
+              <Button
+                variant="grey"
+                size="sm"
+                onClick={() => openState.setIsOpen(false)}
+              >
                 Annuler
               </Button>
               <Button
@@ -168,7 +169,7 @@ Une sauvegarde sera automatiquement réalisée lors du démarrage d'un audit et 
                     role,
                     dateDuJour: selectedButton === 'now',
                   });
-                  handleSave(close);
+                  handleSave();
                 }}
               >
                 {isSaving ? 'Sauvegarde en cours...' : 'Figer cette version'}
@@ -176,9 +177,7 @@ Une sauvegarde sera automatiquement réalisée lors du démarrage d'un audit et 
             </div>
           </div>
         )}
-      >
-        {children as React.ReactElement}
-      </Modal>
+      />
     </>
   );
 };
