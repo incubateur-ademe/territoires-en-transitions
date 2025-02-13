@@ -1,6 +1,9 @@
+'use client';
+
 import { useCollectiviteId } from '@/app/core-logic/hooks/params';
 import SpinnerLoader from '@/app/ui/shared/SpinnerLoader';
 import { Alert, Button, Card, Modal, TrackPageView } from '@/ui';
+import PageContainer from '@/ui/components/layout/page-container';
 import { pick } from 'es-toolkit';
 import { useEffect } from 'react';
 import { useQueryClient } from 'react-query';
@@ -17,7 +20,6 @@ import {
   StatutTrajectoire,
   useStatutTrajectoire,
 } from './useStatutTrajectoire';
-import PageContainer from '@/ui/components/layout/page-container';
 
 /**
  * Affiche l'écran approprié en fonction du statut du calcul de la trajectoire SNBC
