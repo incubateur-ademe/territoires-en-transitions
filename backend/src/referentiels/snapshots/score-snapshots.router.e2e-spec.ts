@@ -109,6 +109,7 @@ describe('ScoreSnapshotsRouter', () => {
       modifiedBy: '17440546-f389-4d4f-bfdb-b0c94a1bd0f9',
       pointFait: 0.36,
       pointPasFait: 0.03,
+      pointNonRenseigne: 490.3,
       pointPotentiel: 490.9,
       pointProgramme: 0.21,
     };

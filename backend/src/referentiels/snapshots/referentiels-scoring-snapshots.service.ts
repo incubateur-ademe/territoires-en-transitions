@@ -31,6 +31,7 @@ import {
   scoreSnapshotTable,
   ScoreSnapshotType,
 } from './snapshot.table';
+import { roundTo } from '../../utils/number.helper';
 
 @Injectable()
 export default class ReferentielsScoringSnapshotsService {
@@ -402,10 +403,13 @@ export default class ReferentielsScoringSnapshotsService {
       snapshots: snapshotList.map((snapshot) => ({
         ...snapshot,
         pointNonRenseigne:
-          snapshot.pointPotentiel -
-          (snapshot.pointFait +
-            snapshot.pointPasFait +
-            snapshot.pointProgramme),
+          roundTo(
+            snapshot.pointPotentiel -
+              (snapshot.pointFait +
+                snapshot.pointPasFait +
+                snapshot.pointProgramme),
+            2
+          ) || undefined,
       })),
     };
     return response;
