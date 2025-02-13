@@ -4,10 +4,6 @@ import {
 } from '@/app/referentiels/ActionDefinitionSummaryReadEndpoint';
 import { parentId } from '@/app/referentiels/actions.utils';
 import {
-  ActionTitleRead,
-  actionTitleReadEndpoint,
-} from '@/app/referentiels/ActionTitleReadEndpoint';
-import {
   actionDownToTache,
   referentielDownToAction,
 } from '@/app/referentiels/data';
@@ -117,26 +113,6 @@ export const useSortedActionSummaryChildren = (
   });
 
   return { sortedActions, count: actions.length };
-};
-
-/**
- * Returns action titles relative to the scope
- */
-export const useActionTitleList = (
-  scope: 'all' | 'cae' | 'eci' | 'te' | 'te-test'
-): ActionTitleRead[] => {
-  const [actionTitles, setActionTitles] = useState<ActionTitleRead[]>([]);
-
-  useEffect(() => {
-    if (scope === 'all')
-      actionTitleReadEndpoint.getBy({}).then(setActionTitles);
-    else
-      actionTitleReadEndpoint
-        .getBy({ referentiel: scope })
-        .then(setActionTitles);
-  }, [scope]);
-
-  return actionTitles;
 };
 
 /**
