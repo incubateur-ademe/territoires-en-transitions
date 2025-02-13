@@ -69,7 +69,7 @@ const IndicateursCollectivite = () => {
             isEditable
             filtres={{ ...filters, estFavorisCollectivite: true }}
             resetFilters={() => setFilters({})}
-            sortSettings={{ defaultSort: 'text' }}
+            sortSettings={{ defaultSort: 'estComplet' }}
             settings={(openState) => (
               <ButtonMenu
                 openState={openState}

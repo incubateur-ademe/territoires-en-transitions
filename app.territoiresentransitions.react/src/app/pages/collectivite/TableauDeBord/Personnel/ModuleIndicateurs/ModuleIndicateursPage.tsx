@@ -51,6 +51,7 @@ const ModuleIndicateursPage = ({ view, defaultModuleKey }: Props) => {
       <IndicateursListe
         pageName={pageName}
         filtres={filtre}
+        sortSettings={{ defaultSort: 'estComplet' }}
         customFilterBadges={{
           planActions:
             filtre?.planActionIds?.length === count && 'Tous les plans',

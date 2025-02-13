@@ -31,7 +31,7 @@ const ModuleIndicateurs = ({ view, module }: Props) => {
   const trackEvent = useEventTracker('app/tdb/personnel');
 
   const { data, isLoading } = useFilteredIndicateurDefinitions(
-    module.options,
+    { ...module.options, sort: [{ field: 'estComplet', direction: 'desc' }] },
     false
   );
 
