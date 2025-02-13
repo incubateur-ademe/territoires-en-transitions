@@ -60,6 +60,24 @@ describe('Route de recherche des collectivités', () => {
     // Vérifie que le résultat contient bien "Lion d'Angers"
     const lionAngers = result.find((c) => c.nom.includes("Le Lion-d'Angers"));
     expect(lionAngers).toBeDefined();
+  });
+
+  test(`Requête avec filtre insensible aux accents`, async () => {
+    const caller = router.createCaller({ user: null });
+
+    const input: Input = {
+      text: 'bage',
+    };
+
+    const result = await caller.collectivites.collectivites.list(input);
+    expect(result.length).toBeGreaterThan(0);
+
+    const collectivite = result.find((c) => c.nom.includes('Bâgé-Dommartin'));
+    expect(collectivite).toBeDefined();
+  });
+
+  test(`Requête avec zéro collectivi†és en retour`, async () => {
+    const caller = router.createCaller({ user: null });
 
     const resultWithNonExistentText =
       await caller.collectivites.collectivites.list({

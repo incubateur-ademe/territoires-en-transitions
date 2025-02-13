@@ -1,6 +1,6 @@
 import { PermissionService } from '@/backend/auth/authorizations/permission.service';
 import { Injectable, Logger } from '@nestjs/common';
-import { eq, sql } from 'drizzle-orm';
+import { desc, eq, sql } from 'drizzle-orm';
 import z from 'zod';
 import { DatabaseService } from '../../utils/database/database.service';
 import { collectiviteTable, communeTable, epciTable } from '../index-domain';
@@ -49,7 +49,12 @@ export default class ListCollectivitesService {
       );
 
     if (input?.text) {
-      request.where(sql`${collectiviteNom} % (${input.text})`);
+      request.where(
+        sql`unaccent(${collectiviteNom}) % unaccent(${input.text})`
+      );
+
+      // Le plus pertinent en premier
+      request.orderBy(desc(sql`similarity(${collectiviteNom}, ${input.text})`));
     }
 
     if (input?.limit) {
