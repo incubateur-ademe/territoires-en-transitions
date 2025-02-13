@@ -1,6 +1,5 @@
 'use client';
 
-import { useUser } from '@/api/users/user-provider';
 import { referentielToName } from '@/app/app/labels';
 import {
   CurrentCollectivite,
@@ -21,32 +20,9 @@ import { useProgressionReferentiel } from './useProgressionReferentiel';
 export const TableauDeBordShow = () => {
   const collectivite = useCurrentCollectivite();
 
-  const user = useUser();
-
-  if (!collectivite?.collectiviteId) return <></>;
-
-  /** Vérifie que l'utilisateur peut accéder à la collectivité */
-  const hasNoAccessToCollectivite =
-    collectivite.accesRestreint &&
-    collectivite.niveauAcces === null &&
-    !user?.isSupport &&
-    !collectivite.isRoleAuditeur;
-
-  /** S'il ne peut pas, on affiche un message */
-  if (hasNoAccessToCollectivite) {
-    return (
-      <div className="flex-grow flex">
-        <div className="m-auto text-grey-7">
-          Cette collectivité n’est pas accessible en mode visite.
-        </div>
-      </div>
-    );
-  }
-
-  /** Sinon on affiche la page.
-   * Ceci permet de ne pas appeler `useProgressionReferentiel`
-   * qui ne marche pas si l'utilisateur n'a pas les droits */
-  return <AccueilNonConfidentielle collectivite={collectivite} />;
+  return (
+    collectivite && <AccueilNonConfidentielle collectivite={collectivite} />
+  );
 };
 
 /** Affiche le tableau de bord de l'accueil pour les utilisateurs avec les droits nécessaires */
