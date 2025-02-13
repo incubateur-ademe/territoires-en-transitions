@@ -141,4 +141,26 @@ describe('ScoreSnapshotsRouter', () => {
       );
     expect(foundSnapshotAfterDelete).toBeUndefined();
   });
+
+  test("Création d'un snapshot avec nom et date spécifique", async () => {
+    const caller = router.createCaller({ user: yoloDodoUser });
+    const snapshotDate = '2024-09-21T21:59:00.000Z';
+    const snapshotNom = 'Test snapshot avec date';
+
+    const input = {
+      referentiel: referentielIdEnumSchema.enum.cae,
+      collectiviteId: 1,
+      snapshotNom,
+      date: snapshotDate,
+    };
+
+    const result = await caller.referentiels.snapshots.upsert(input);
+
+    expect(result.snapshot).toBeDefined();
+    expect(result.snapshot?.nom).toBe(snapshotNom);
+    expect(result.date).toBe(snapshotDate);
+    expect(result.snapshot?.ref).toBe(
+      `${snapshotNom.toLowerCase().replace(/\s+/g, '-')}`
+    );
+  });
 });
