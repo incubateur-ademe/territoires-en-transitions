@@ -1,4 +1,3 @@
-import { TableauDeBordModule } from '@/backend/collectivites/tableau-de-bord/tableau-de-bord.module';
 import { EchartsModule } from '@/backend/utils/echarts/echarts.module';
 import { Module } from '@nestjs/common';
 import { ConfigModule } from '@nestjs/config';
@@ -33,7 +32,6 @@ import { UtilsModule } from './utils/utils.module';
     TrpcModule,
     SheetModule,
     CollectivitesModule,
-    TableauDeBordModule,
     IndicateursModule,
     AuthModule,
     FichesActionModule,

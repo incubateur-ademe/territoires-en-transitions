@@ -1,12 +1,9 @@
-import { TableauDeBordCollectiviteRouter } from '@/backend/collectivites/tableau-de-bord/tableau-de-bord-collectivite.router';
+import { CollectivitesRouter } from '@/backend/collectivites/collectivites.router';
 import { BulkEditRouter } from '@/backend/plans/fiches/bulk-edit/bulk-edit.router';
 import { CountByRouter } from '@/backend/plans/fiches/count-by/count-by.router';
 import { FicheActionEtapeRouter } from '@/backend/plans/fiches/fiche-action-etape/fiche-action-etape.router';
 import { INestApplication, Injectable, Logger } from '@nestjs/common';
 import { createExpressMiddleware } from '@trpc/server/adapters/express';
-import { ListCategoriesRouter } from '../../collectivites/handle-categories/list-categories.router';
-import { CollectiviteMembresRouter } from '../../collectivites/membres/membres.router';
-import { PersonnesRouter } from '../../collectivites/personnes.router';
 import { IndicateurFiltreRouter } from '../../indicateurs/definitions/indicateur-filtre.router';
 import { IndicateurDefinitionsRouter } from '../../indicateurs/definitions/list-definitions.router';
 import { IndicateurSourcesRouter } from '../../indicateurs/sources/indicateur-sources.router';
@@ -27,22 +24,20 @@ export class TrpcRouter {
     private readonly supabase: SupabaseService,
     private readonly trajectoiresRouter: TrajectoiresRouter,
     private readonly countByRouter: CountByRouter,
-    private readonly getCategoriesByCollectiviteRouter: ListCategoriesRouter,
-    private readonly personnes: PersonnesRouter,
-    private readonly tableauxDeBordCollectiviteRouter: TableauDeBordCollectiviteRouter,
     private readonly ficheActionEtapeRouter: FicheActionEtapeRouter,
     private readonly indicateurFiltreRouter: IndicateurFiltreRouter,
     private readonly indicateurValeursRouter: IndicateurValeursRouter,
     private readonly indicateurSourcesRouter: IndicateurSourcesRouter,
     private readonly indicateurDefinitionsRouter: IndicateurDefinitionsRouter,
     private readonly bulkEditRouter: BulkEditRouter,
-    private readonly membresRouter: CollectiviteMembresRouter,
     private readonly updateActionStatutRouter: UpdateActionStatutRouter,
     private readonly scoreSnapshotsRouter: ScoreSnapshotsRouter,
-    private readonly computeScoreRouter: ComputeScoreRouter
+    private readonly computeScoreRouter: ComputeScoreRouter,
+    private readonly collectivitesRouter: CollectivitesRouter
   ) {}
 
   appRouter = this.trpc.router({
+    collectivites: this.collectivitesRouter.router,
     indicateurs: {
       trajectoires: this.trajectoiresRouter.router,
       list: this.indicateurFiltreRouter.router.list,
@@ -56,12 +51,6 @@ export class TrpcRouter {
         this.bulkEditRouter.router,
         this.ficheActionEtapeRouter.router
       ),
-    },
-    collectivites: {
-      personnes: this.personnes.router,
-      membres: this.membresRouter.router,
-      tableauDeBord: this.tableauxDeBordCollectiviteRouter.router,
-      categories: this.getCategoriesByCollectiviteRouter.router,
     },
     referentiels: {
       actions: this.updateActionStatutRouter.router,
