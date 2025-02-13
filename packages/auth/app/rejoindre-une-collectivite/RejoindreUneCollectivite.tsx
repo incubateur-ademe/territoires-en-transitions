@@ -18,7 +18,7 @@ import { CollectiviteSelectionnee } from './CollectiviteSelectionnee';
 import {
   RejoindreUneCollectiviteData,
   RejoindreUneCollectiviteProps,
-} from './type';
+} from './useRejoindreUneCollectivite';
 
 const ROLES: Array<{ value: Enums<'membre_fonction'>; label: string }> = [
   { value: 'politique', label: 'Équipe politique' },
@@ -89,7 +89,7 @@ export const RejoindreUneCollectivite = (
               debounce={500}
               options={
                 collectivites?.map((c) => ({
-                  value: c.collectivite_id,
+                  value: c.id,
                   label: c.nom,
                 })) || []
               }

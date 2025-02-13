@@ -1,5 +1,7 @@
+import { UserProvider } from '@/api/users/user-provider';
 import { getCookieOptions } from '@/api/utils/supabase/cookie-options';
 import { SupabaseProvider } from '@/api/utils/supabase/use-supabase';
+import { TRPCProvider } from '@/api/utils/trpc/client';
 import Header from '@/auth/components/Layout/Header';
 import PHProvider from '@/auth/providers/posthog';
 import { headers } from 'next/headers';
@@ -43,10 +45,14 @@ export default async function RootLayout({
         <body className="min-h-screen overflow-x-visible flex flex-col">
           <div className="flex flex-col grow">
             <SupabaseProvider cookieOptions={supabaseCookieOptions}>
-              <Header />
-              <div className="bg-grey-2 grow flex flex-col">
-                <div className="grow">{children}</div>
-              </div>
+              <UserProvider user={null}>
+                <TRPCProvider>
+                  <Header />
+                  <div className="bg-grey-2 grow flex flex-col">
+                    <div className="grow">{children}</div>
+                  </div>
+                </TRPCProvider>
+              </UserProvider>
             </SupabaseProvider>
           </div>
         </body>

@@ -47,6 +47,7 @@ export async function middleware(request: NextRequest) {
       ${process.env.NEXT_PUBLIC_SUPABASE_URL!}
       ${process.env.NEXT_PUBLIC_SUPABASE_URL!.replace('http', 'ws')}
       *.${getRootDomain(url.hostname)}
+      ${process.env.NEXT_PUBLIC_BACKEND_URL ?? ''}
       *.posthog.com;
     base-uri 'self';
     form-action 'self';

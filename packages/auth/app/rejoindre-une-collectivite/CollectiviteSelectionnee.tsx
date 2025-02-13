@@ -1,5 +1,5 @@
-import { CollectiviteInfo } from '@/auth/components/RejoindreUneCollectivite/type';
 import { Alert, Button, Icon, useCopyToClipboard } from '@/ui';
+import { CollectiviteInfo } from './useRejoindreUneCollectivite';
 
 type Props = {
   collectivite: CollectiviteInfo | null;

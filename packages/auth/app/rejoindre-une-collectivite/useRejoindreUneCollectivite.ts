@@ -1,14 +1,50 @@
-import { getCollectivitePath, makeSearchString } from '@/api';
+import { Database, Enums, getCollectivitePath } from '@/api';
 import { useSupabase } from '@/api/utils/supabase/use-supabase';
-import {
-  CollectiviteInfo,
-  CollectiviteNom,
-  RejoindreUneCollectiviteData,
-} from '@/auth/components/RejoindreUneCollectivite';
+import { RouterOutput, trpc } from '@/api/utils/trpc/client';
 import { useRouter } from 'next/navigation';
 import { useState } from 'react';
 
 export const NB_COLLECTIVITES_FETCH = 20;
+export type MatchingCollectivites =
+  RouterOutput['collectivites']['collectivites']['list'];
+
+export type RejoindreUneCollectiviteData = {
+  collectiviteId?: number | null;
+  role?: Enums<'membre_fonction'> | null;
+  champ_intervention?: Array<Enums<'referentiel'>>;
+  poste?: string;
+  est_referent?: boolean;
+};
+
+export type RejoindreUneCollectiviteProps = {
+  /** Erreur à afficher */
+  error: string | null;
+  /** Indique qu'un appel réseau est en cours */
+  isLoading?: boolean;
+  /** Liste de collectivités auxquelles le compte peut être rattaché */
+  collectivites: MatchingCollectivites | null;
+  /** Info sur la collectivité courante */
+  collectiviteSelectionnee: CollectiviteInfo | null;
+  /** Appelé pour filtrer la liste des collectivités */
+  onFilterCollectivites: (search: string) => void;
+  /** Appelé à l'envoi du formulaire */
+  onSubmit: (data: RejoindreUneCollectiviteData) => void;
+  /** Appelé lors du changement de sélection d'une collectivité dans la liste déroulante */
+  onSelectCollectivite: (id: number | null) => void;
+  /** Appelé à l'annulation du formulaire */
+  onCancel: () => void;
+};
+
+type GetReferentContacts = Database['public']['Functions']['referent_contacts'];
+
+type ReferentContact = GetReferentContacts['Returns'][0];
+
+export type CollectiviteInfo = {
+  id: number;
+  nom: string;
+  url: string;
+  contacts?: ReferentContact[];
+};
 
 /**
  * Gère l'appel à la fonction de rattachement à une collectivité et la redirection après un rattachement réussi
@@ -20,12 +56,11 @@ export const useRejoindreUneCollectivite = ({
 }) => {
   const router = useRouter();
   const supabase = useSupabase();
+  const trpcUtils = trpc.useUtils();
 
   const [error, setError] = useState<string | null>(null);
   const [isLoading, setIsLoading] = useState(false);
-  const [collectivites, setCollectivites] = useState<Array<CollectiviteNom>>(
-    []
-  );
+  const [collectivites, setCollectivites] = useState<MatchingCollectivites>([]);
   const [collectiviteSelectionnee, setCollectiviteSelectionnee] =
     useState<CollectiviteInfo | null>(null);
 
@@ -62,23 +97,27 @@ export const useRejoindreUneCollectivite = ({
     // charge les collectivites
     if (isLoading) return;
     setIsLoading(true);
-    const query = supabase
-      .from('named_collectivite')
-      .select('*,collectivite_test(id)')
-      .limit(NB_COLLECTIVITES_FETCH);
 
-    const processedSearch = makeSearchString(search, 'nom');
-    if (processedSearch) {
-      query.or(processedSearch);
-    }
+    const matchingCollectivites =
+      await trpcUtils.collectivites.collectivites.list.ensureData({
+        text: search,
+        limit: NB_COLLECTIVITES_FETCH,
+      });
 
-    const { error, data } = await query;
+    // const query = supabase
+    //   .from('named_collectivite')
+    //   .select('*,collectivite_test(id)')
+    //   .limit(NB_COLLECTIVITES_FETCH);
+
+    // const processedSearch = makeSearchString(search, 'nom');
+    // if (processedSearch) {
+    //   query.or(processedSearch);
+    // }
+
+    // const { error, data } = await query;
     setIsLoading(false);
-    if (!error && data) {
-      setCollectivites(
-        data.filter((c) => !c.collectivite_test?.length) as CollectiviteNom[]
-      );
-    }
+
+    setCollectivites(matchingCollectivites);
   };
 
   const onSelectCollectivite = async (id: number | null) => {
@@ -90,7 +129,7 @@ export const useRejoindreUneCollectivite = ({
         }
       );
 
-      const nom = collectivites?.find((c) => c.collectivite_id === id)?.nom;
+      const nom = collectivites?.find((c) => c.id === id)?.nom;
       if (!error && nom) {
         setCollectiviteSelectionnee({
           id,
@@ -107,9 +146,7 @@ export const useRejoindreUneCollectivite = ({
   const selectionIsNotIntoFetchedData =
     collectiviteSelectionnee?.id &&
     collectivites &&
-    !collectivites?.find(
-      (c) => c.collectivite_id === collectiviteSelectionnee?.id
-    );
+    !collectivites?.find((c) => c.id === collectiviteSelectionnee?.id);
 
   return {
     // on s'assure que la collectivité sélectionnée est bien présente dans les
@@ -118,7 +155,7 @@ export const useRejoindreUneCollectivite = ({
       ? [
           ...(collectivites || []),
           {
-            collectivite_id: collectiviteSelectionnee.id,
+            id: collectiviteSelectionnee.id,
             nom: collectiviteSelectionnee.nom,
           },
         ]

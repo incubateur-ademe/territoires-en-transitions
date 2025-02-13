@@ -13,7 +13,7 @@ import {
 import { UserDetails } from './user-details.fetch.server';
 
 type UserContextProps = {
-  user: UserDetails;
+  user: UserDetails | null;
   session: Session | null;
 };
 
@@ -30,7 +30,7 @@ function useUserContext() {
 
 export function useUser() {
   const { user } = useUserContext();
-  return user;
+  return user as UserDetails;
 }
 
 export function useUserSession() {
@@ -45,7 +45,7 @@ export const UserProvider = ({
   onSignedOut,
   children,
 }: {
-  user: UserDetails;
+  user: UserDetails | null;
   onInitialSession?: (user: UserDetails, session: Session) => void;
   onSignedOut?: () => void;
   children: ReactNode;
@@ -64,7 +64,7 @@ export const UserProvider = ({
 
       if (event === 'INITIAL_SESSION' || event === 'SIGNED_IN') {
         setSession(session);
-        onInitialSession?.(user, session as Session);
+        onInitialSession?.(user as UserDetails, session as Session);
       } else if (event === 'SIGNED_OUT') {
         setSession(null);
         onSignedOut?.();
