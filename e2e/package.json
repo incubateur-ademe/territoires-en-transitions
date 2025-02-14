@@ -22,7 +22,7 @@
     }
   },
   "dependencies": {
-    "@badeball/cypress-cucumber-preprocessor": "^18.0.6",
+    "@badeball/cypress-cucumber-preprocessor": "^22.0.1",
     "@bahmutov/cypress-esbuild-preprocessor": "^2.2.0",
     "@esbuild-plugins/node-modules-polyfill": "^0.2.2",
     "@supabase/supabase-js": "^1.35.4",
@@ -33,7 +33,7 @@
     "cypress": "^13.15.1",
     "cypress-terminal-report": "^6.0.1",
     "dotenv": "^16.0.3",
-    "esbuild": "^0.17.15",
+    "esbuild": "^0.25.0",
     "prettier": "^2.8.7"
   }
 }
