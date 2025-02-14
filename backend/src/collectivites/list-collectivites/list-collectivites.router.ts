@@ -12,11 +12,8 @@ export class ListCollectivitesRouter {
   ) {}
 
   router = this.trpc.router({
-    list: this.trpc.publicProcedure
-      .input(inputSchema)
-      .query(({ ctx, input }) => {
-        // const { text } = input;
-        return this.service.listCollectivites(input);
-      }),
+    list: this.trpc.anonProcedure.input(inputSchema).query(({ input }) => {
+      return this.service.listCollectivites(input);
+    }),
   });
 }
