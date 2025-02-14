@@ -1,18 +1,18 @@
 import { IndicateurDetail } from '@/app/app/pages/collectivite/Indicateurs/detail/IndicateurDetail';
 
-export default function Page({
+export default async function Page({
   params,
 }: {
-  params: {
+  params: Promise<{
     referentielId: string;
-    identifiant: string;
-  };
+    indicateurId: string;
+  }>;
 }) {
-  const { referentielId, identifiant } = params;
+  const { referentielId, indicateurId } = await params;
   return (
     <IndicateurDetail
       dataTest={`ind-v-${referentielId}`}
-      indicateurId={identifiant}
+      indicateurId={indicateurId}
     />
   );
 }

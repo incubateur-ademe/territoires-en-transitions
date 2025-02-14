@@ -29,8 +29,6 @@ export const homePath = recherchesCollectivitesUrl;
 const collectiviteParam = 'collectiviteId';
 export const indicateurViewParam = 'vue';
 export const indicateurIdParam = 'indicateurId';
-export const indicateurIdentiantReferentielParam =
-  'indicateurIdentiantReferentielParam';
 
 const actionParam = 'actionId';
 const actionVueParam = 'actionVue';
@@ -59,11 +57,11 @@ export type ActionTabParamOption =
 type LabellisationTab = 'suivi' | 'cycles' | 'criteres';
 
 export const collectivitePath = `/collectivite/:${collectiviteParam}`;
+
 export const collectiviteIndicateursBasePath = `${collectivitePath}/indicateurs`;
 export const collectiviteTousLesIndicateursPath = `${collectiviteIndicateursBasePath}/tous-les-indicateurs`;
 export const collectiviteIndicateursCollectivitePath = `${collectiviteIndicateursBasePath}/collectivite`;
-export const collectiviteIndicateurPath = `${collectiviteIndicateursBasePath}/:${indicateurViewParam}/id/:${indicateurIdParam}?`;
-export const collectiviteIndicateurReferentielPath = `${collectiviteIndicateursBasePath}/:${indicateurViewParam}/:${indicateurIdentiantReferentielParam}?`;
+export const collectiviteIndicateurPath = `${collectiviteIndicateursBasePath}/:${indicateurViewParam}/:${indicateurIdParam}?`;
 export const collectiviteTrajectoirePath = `${collectivitePath}/trajectoire`;
 export const collectiviteAccueilPath = `${collectivitePath}/accueil`;
 
@@ -85,7 +83,6 @@ export const collectiviteJournalPath = `${collectivitePath}/historique`;
 const ficheParam = 'ficheUid';
 const planParam = 'planUid';
 const axeParam = 'axeUid';
-const syntheseParam = 'syntheseVue';
 export const collectivitePlansActionsBasePath = `${collectivitePath}/plans`;
 export const collectivitePlansActionsNouveauPath = `${collectivitePlansActionsBasePath}/nouveau`;
 export const collectivitePlansActionsCreerPath = `${collectivitePlansActionsBasePath}/creer`;
@@ -167,18 +164,15 @@ export const makeCollectiviteIndicateursUrl = ({
   indicateurId?: number;
   identifiantReferentiel?: string | null;
 }) =>
-  identifiantReferentiel
-    ? collectiviteIndicateurReferentielPath
-        .replace(`:${collectiviteParam}`, collectiviteId.toString())
-        .replace(`:${indicateurViewParam}`, indicateurView || '')
-        .replace(
-          `:${indicateurIdentiantReferentielParam}`,
-          identifiantReferentiel?.toString() || ''
-        )
-    : collectiviteIndicateurPath
-        .replace(`:${collectiviteParam}`, collectiviteId.toString())
-        .replace(`:${indicateurViewParam}`, indicateurView || '')
-        .replace(`:${indicateurIdParam}`, indicateurId?.toString() || '');
+  collectiviteIndicateurPath
+    .replace(`:${collectiviteParam}`, collectiviteId.toString())
+    .replace(`:${indicateurViewParam}`, indicateurView || '')
+    .replace(
+      `:${indicateurIdParam}`,
+      identifiantReferentiel
+        ? identifiantReferentiel.toString()
+        : indicateurId?.toString() || ''
+    );
 
 export const makeCollectiviteTrajectoirelUrl = ({
   collectiviteId,
