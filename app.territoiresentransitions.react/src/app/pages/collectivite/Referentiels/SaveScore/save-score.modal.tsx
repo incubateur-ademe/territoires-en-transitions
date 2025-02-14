@@ -1,18 +1,18 @@
+import { RouterInput } from '@/api/utils/trpc/client';
+import { useSaveScore } from '@/app/app/pages/collectivite/Referentiels/SaveScore/useSaveScore';
+import { useBaseToast } from '@/app/core-logic/hooks/useBaseToast';
+import { useCurrentCollectivite } from '@/app/core-logic/hooks/useCurrentCollectivite';
+import { getIsoFormattedDate } from '@/app/utils/formatUtils';
 import {
+  Alert,
   Button,
+  ButtonGroup,
   Field,
   Input,
   Modal,
-  Alert,
-  ButtonGroup,
   useEventTracker,
 } from '@/ui';
 import { ReactNode, useRef, useState } from 'react';
-import { getIsoFormattedDate } from '@/app/utils/formatUtils';
-import { useSaveScore } from '@/app/app/pages/collectivite/Referentiels/SaveScore/useSaveScore';
-import { useBaseToast } from '@/app/core-logic/hooks/useBaseToast';
-import { RouterInput } from '@/api/utils/trpc/client';
-import { useCurrentCollectivite } from '@/app/core-logic/hooks/useCurrentCollectivite';
 
 type computeScoreType = RouterInput['referentiels']['scores']['computeScore'];
 export type SaveScoreProps = {
@@ -31,7 +31,7 @@ const SaveScoreModal = ({
   const [nomVersion, setNomVersion] = useState<string | undefined>();
   const [dateVersion, setDateVersion] = useState<string | undefined>();
   const { renderToast, setToast } = useBaseToast();
-  const tracker = useEventTracker('app/referentiel/save-score');
+  const tracker = useEventTracker('app/referentiel');
   const { niveauAcces, role } = useCurrentCollectivite()!;
 
   const ref = useRef<HTMLInputElement>(null);
@@ -153,7 +153,7 @@ const SaveScoreModal = ({
                   (selectedButton !== 'now' && !dateVersion)
                 }
                 onClick={() => {
-                  tracker('sauvegarde', {
+                  tracker('referentiels:scores:sauvegarde', {
                     collectiviteId,
                     niveauAcces,
                     role,
