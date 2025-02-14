@@ -501,7 +501,7 @@ jobs:
 
   test-e2e:
     # Disable job temporarily until we have a stable environment for Next.js et new Earthly config
-    if: false
+    if: true
     needs:
       - build-business-dev
       - build-tools
@@ -553,7 +553,7 @@ jobs:
           --API_URL=${{ secrets.API_URL }}
           --ANON_KEY=${{ secrets.ANON_KEY }}
 
-      - run: docker restart supabase_rest_tet
+      # - run: docker restart supabase_rest_tet
 
       # run tests into electron
       - name: Cypress run
