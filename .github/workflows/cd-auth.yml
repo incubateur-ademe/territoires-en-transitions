@@ -35,8 +35,11 @@ jobs:
           --platform=linux/amd64
           +auth-build
           --ENV_NAME=${{ github.event.inputs.target }}
-          --POSTHOG_HOST=${{ secrets.POSTHOG_HOST }} --POSTHOG_KEY=${{ secrets.POSTHOG_KEY }}
-          --ANON_KEY=${{ secrets.ANON_KEY }} --API_URL=${{ secrets.API_URL }}
+          --POSTHOG_HOST=${{ secrets.POSTHOG_HOST }}
+          --POSTHOG_KEY=${{ secrets.POSTHOG_KEY }}
+          --ANON_KEY=${{ secrets.ANON_KEY }}
+          --API_URL=${{ secrets.API_URL }}
+          --BACKEND_URL=${{ vars.BACKEND_URL }}
 
       - name: Deploy auth on Koyeb
         run: >
