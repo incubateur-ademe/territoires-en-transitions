@@ -59,26 +59,6 @@ jobs:
       - name: Build and push business deps image
         run: earthly --use-inline-cache --save-inline-cache --push +business-build
 
-  prepare-front-deps:
-    environment: dev
-    runs-on: ubuntu-latest
-    timeout-minutes: 30
-
-    steps:
-      - uses: actions/checkout@v4
-        with:
-          ref: ${{ github.event.pull_request.head.sha }}
-          fetch-depth: 0
-      - uses: earthly/actions-setup@v1
-        with:
-          version: 0.8.1
-
-      - name: Login into registry
-        run: earthly --use-inline-cache +docker-dev-login --GH_USER=${{ secrets.GH_USER }} --GH_TOKEN=${{ secrets.GH_TOKEN }}
-
-      - name: Build and push front deps image
-        run: earthly --use-inline-cache --save-inline-cache --push +front-deps-builder
-
   build-app-dev:
     environment: dev
     runs-on: ubuntu-latest
@@ -101,7 +81,6 @@ jobs:
           --PANIER_URL=${{ vars.PANIER_URL }}
 
   build-auth-dev:
-    needs: prepare-front-deps
     environment: dev
     runs-on: ubuntu-latest
     timeout-minutes: 30
@@ -210,7 +189,6 @@ jobs:
       - build-business-dev
       - build-tools
       - build-db
-      - prepare-front-deps
     environment: dev
     runs-on: ubuntu-latest
     timeout-minutes: 30
@@ -262,7 +240,6 @@ jobs:
       - build-business-dev
       - build-tools
       - build-db
-      - prepare-front-deps
     environment: dev
     runs-on: ubuntu-latest
     timeout-minutes: 30
@@ -391,7 +368,6 @@ jobs:
           --API_URL=${{ secrets.API_URL }}
 
   test-app:
-    needs: prepare-front-deps
     environment: dev
     runs-on: ubuntu-latest
     timeout-minutes: 30
