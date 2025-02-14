@@ -808,3 +808,5 @@ collectivite/bucket [collectivite/bucket@v4.36.0] 2025-01-27T09:46:51Z System Ad
 utils/maintenance [utils/maintenance@v4.37.0] 2025-02-11T18:09:33Z Frederic Arnoux <frederic.arnoux@beta.gouv.fr> # Supprime la table de maintenance
 pg_trgm_extension 2025-02-13T09:46:04Z Frederic Arnoux <frederic.arnoux@beta.gouv.fr> # Ajoute une extension de recherche textuelle de similarités
 collectivite/collectivite [collectivite/collectivite@v4.37.0] 2025-02-13T14:43:13Z Frederic Arnoux <frederic.arnoux@beta.gouv.fr> # Supprime la vue named_collectivite
+@v4.38.0 2025-02-14T14:00:37Z Frederic Arnoux <frederic.arnoux@beta.gouv.fr> # Tag en 4.38.0
+
