@@ -119,7 +119,10 @@ jobs:
         run: earthly --use-inline-cache +docker-dev-login --GH_USER=${{ secrets.GH_USER }} --GH_TOKEN=${{ secrets.GH_TOKEN }}
 
       - name: Build and push auth. image
-        run: earthly --use-inline-cache --save-inline-cache --push +auth-build --ANON_KEY=${{ secrets.ANON_KEY }} --API_URL=${{ secrets.API_URL }}
+        run: earthly --use-inline-cache --save-inline-cache --push +auth-build
+          --ANON_KEY=${{ secrets.ANON_KEY }}
+          --API_URL=${{ secrets.API_URL }}
+          --BACKEND_URL=${{ secrets.BACKEND_URL }}
 
   build-db:
     environment: dev
