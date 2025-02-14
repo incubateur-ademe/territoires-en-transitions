@@ -3,7 +3,11 @@ import {
   SignInWithPasswordCredentials,
   SupabaseClient,
 } from '@supabase/supabase-js';
-import { AuthUser, isAuthenticatedUser } from '../src/auth/models/auth.models';
+import {
+  AuthRole,
+  AuthUser,
+  isAuthenticatedUser,
+} from '../src/auth/models/auth.models';
 import { YOLO_DODO } from './test-users.samples';
 
 let supabase: SupabaseClient;
@@ -52,4 +56,13 @@ export async function getAuthUser(
   }
 
   return authUser;
+}
+
+export function getAnonUser(): AuthUser<AuthRole.ANON> {
+  return {
+    id: null,
+    role: AuthRole.ANON,
+    isAnonymous: true,
+    jwtToken: { role: AuthRole.ANON },
+  };
 }

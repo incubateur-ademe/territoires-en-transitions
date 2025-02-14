@@ -1,7 +1,7 @@
+import { AuthRole, AuthUser } from '@/domain/auth';
 import { inferProcedureInput } from '@trpc/server';
+import { getAnonUser } from 'backend/test/auth-utils';
 import { getTestRouter } from '../../../test/app-utils';
-import { getAuthUser } from '../../../test/auth-utils';
-import { AuthenticatedUser } from '../../auth/models/auth.models';
 import { AppRouter, TrpcRouter } from '../../utils/trpc/trpc.router';
 
 type Input = inferProcedureInput<
@@ -10,15 +10,23 @@ type Input = inferProcedureInput<
 
 describe('Route de recherche des collectivités', () => {
   let router: TrpcRouter;
-  let yoloDodoUser: AuthenticatedUser;
+  let anonUser: AuthUser<AuthRole.ANON>;
 
   beforeAll(async () => {
     router = await getTestRouter();
-    yoloDodoUser = await getAuthUser();
+    anonUser = getAnonUser();
   });
 
-  test(`Requête sans filtre et sans authentification`, async () => {
+  test('Non autorisé si pas minimum en role anonymous', async () => {
     const caller = router.createCaller({ user: null });
+
+    await expect(async () => {
+      await caller.collectivites.collectivites.list();
+    }).rejects.toThrowError(/not anonymous/i);
+  });
+
+  test(`Requête sans filtre`, async () => {
+    const caller = router.createCaller({ user: anonUser });
 
     // Par défaut retourne les 20 premiers résultats
     const result = await caller.collectivites.collectivites.list();
@@ -37,7 +45,7 @@ describe('Route de recherche des collectivités', () => {
   });
 
   test(`Requête avec filtre simple`, async () => {
-    const caller = router.createCaller({ user: null });
+    const caller = router.createCaller({ user: anonUser });
 
     const input: Input = {
       text: 'Angers',
@@ -48,7 +56,7 @@ describe('Route de recherche des collectivités', () => {
   });
 
   test(`Requête avec filtre avancé`, async () => {
-    const caller = router.createCaller({ user: null });
+    const caller = router.createCaller({ user: anonUser });
 
     const input: Input = {
       text: 'lion angers',
@@ -63,7 +71,7 @@ describe('Route de recherche des collectivités', () => {
   });
 
   test(`Requête avec filtre insensible aux accents`, async () => {
-    const caller = router.createCaller({ user: null });
+    const caller = router.createCaller({ user: anonUser });
 
     const input: Input = {
       text: 'bage',
@@ -77,7 +85,7 @@ describe('Route de recherche des collectivités', () => {
   });
 
   test(`Requête avec zéro collectivi†és en retour`, async () => {
-    const caller = router.createCaller({ user: null });
+    const caller = router.createCaller({ user: anonUser });
 
     const resultWithNonExistentText =
       await caller.collectivites.collectivites.list({
