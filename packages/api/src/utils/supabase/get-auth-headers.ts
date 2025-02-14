@@ -4,7 +4,7 @@ import { Session } from '@supabase/supabase-js';
 export function getAuthHeaders(session: Session | null) {
   if (!session) {
     return {
-      authorization: `Bearer `,
+      authorization: `Bearer ${ENV.supabase_anon_key}`,
       apikey: `${ENV.supabase_anon_key}`,
     };
   }

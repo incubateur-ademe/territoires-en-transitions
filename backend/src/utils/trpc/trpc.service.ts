@@ -1,21 +1,35 @@
-import { Injectable } from '@nestjs/common';
+import { Injectable, Logger } from '@nestjs/common';
+import { JwtService } from '@nestjs/jwt';
 import { SupabaseClient } from '@supabase/supabase-js';
 import { initTRPC, TRPCError } from '@trpc/server';
 import { CreateExpressContextOptions } from '@trpc/server/adapters/express';
 import {
+  AuthJwtPayload,
   AuthUser,
   isAnonymousUser,
   isAuthenticatedUser,
+  jwtToUser,
 } from '../../auth/models/auth.models';
+import ConfigurationService from '../../utils/config/configuration.service';
+import { getErrorMessage } from '../nest/errors.utils';
 
 @Injectable()
 export class TrpcService {
-  trpc = initTRPC.context<Context>().create({
-    // transformer: superJson,
-    errorFormatter({ shape }) {
-      return shape;
-    },
-  });
+  private readonly logger = new Logger(TrpcService.name);
+
+  constructor(
+    private readonly jwtService: JwtService,
+    private readonly config: ConfigurationService
+  ) {}
+
+  trpc = initTRPC
+    .context<Awaited<ReturnType<typeof this.createContext>>>()
+    .create({
+      // transformer: superJson,
+      errorFormatter({ shape }) {
+        return shape;
+      },
+    });
 
   /**
    * Create an unprotected public procedure
@@ -29,16 +43,16 @@ export class TrpcService {
    **/
   anonProcedure = this.trpc.procedure.use(
     this.trpc.middleware(({ next, ctx }) => {
-      const anonUser = ctx.user;
+      const user = ctx.user;
 
-      if (!isAnonymousUser(anonUser)) {
-        throw new TRPCError({
-          code: 'UNAUTHORIZED',
-          message: 'Not anonymous',
-        });
+      if (isAnonymousUser(user) || isAuthenticatedUser(user)) {
+        return next({ ctx: { user } });
       }
 
-      return next({ ctx: { user: anonUser } });
+      throw new TRPCError({
+        code: 'UNAUTHORIZED',
+        message: 'Not anonymous',
+      });
     })
   );
 
@@ -48,19 +62,19 @@ export class TrpcService {
    **/
   authedProcedure = this.trpc.procedure.use(
     this.trpc.middleware(({ next, ctx }) => {
-      const authUser = ctx.user;
+      const user = ctx.user;
 
-      if (!isAuthenticatedUser(authUser)) {
-        throw new TRPCError({
-          code: 'UNAUTHORIZED',
-          message: 'Not authenticated',
+      if (isAuthenticatedUser(user)) {
+        return next({
+          ctx: {
+            user,
+          },
         });
       }
 
-      return next({
-        ctx: {
-          user: authUser,
-        },
+      throw new TRPCError({
+        code: 'UNAUTHORIZED',
+        message: 'Not authenticated',
       });
     })
   );
@@ -82,39 +96,51 @@ export class TrpcService {
    * @see https://trpc.io/docs/v11/server/server-side-calls
    */
   createCallerFactory = this.trpc.createCallerFactory;
-}
 
-/**
- * Creates context for an incoming request
- * @see https://trpc.io/docs/v11/context
- */
-export async function createContext(
-  supabase: SupabaseClient,
-  { req }: CreateExpressContextOptions
-) {
-  // Extract Supabase session from cookies or headers
-  const supabaseToken = req.headers.authorization?.split('Bearer ')[1];
+  /**
+   * Creates context for an incoming request
+   * @see https://trpc.io/docs/v11/context
+   */
+  async createContext(
+    supabase: SupabaseClient,
+    { req }: CreateExpressContextOptions
+  ) {
+    // Extract Supabase session from cookies or headers
+    const supabaseToken = req.headers.authorization?.split('Bearer ')[1];
 
-  try {
-    // Verify the token from supabase
-    const {
-      data: { user },
-    } = await supabase.auth.getUser(supabaseToken);
+    if (!supabaseToken) {
+      return { user: null };
+    }
+
+    // Validate JWT token and extract payload
+    let jwtPayload: AuthJwtPayload;
+    try {
+      jwtPayload = await this.jwtService.verifyAsync<AuthJwtPayload>(
+        supabaseToken,
+        {
+          secret: this.config.get('SUPABASE_JWT_SECRET'),
+        }
+      );
+    } catch (err) {
+      this.logger.error(`Failed to validate token: ${getErrorMessage(err)}`);
+      return { user: null };
+    }
+
+    // Convert JWT payload to user
+    let user: AuthUser;
+    try {
+      user = jwtToUser(jwtPayload);
+    } catch (err) {
+      this.logger.error(`Failed to convert token: ${getErrorMessage(err)}`);
+      return { user: null };
+    }
 
     if (!user) {
       return { user: null };
     }
 
     return {
-      user: {
-        id: user.id ?? null,
-        role: user.role,
-        isAnonymous: user.is_anonymous,
-      } as AuthUser,
+      user,
     };
-  } catch (error) {
-    return { user: null };
   }
 }
-
-export type Context = Awaited<ReturnType<typeof createContext>>;

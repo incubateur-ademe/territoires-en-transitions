@@ -13,7 +13,7 @@ import { ComputeScoreRouter } from '../../referentiels/compute-score/compute-sco
 import { ScoreSnapshotsRouter } from '../../referentiels/snapshots/score-snaphots.router';
 import { UpdateActionStatutRouter } from '../../referentiels/update-action-statut/update-action-statut.router';
 import SupabaseService from '../database/supabase.service';
-import { createContext, TrpcService } from './trpc.service';
+import { TrpcService } from './trpc.service';
 
 @Injectable()
 export class TrpcRouter {
@@ -67,7 +67,8 @@ export class TrpcRouter {
       `/trpc`,
       createExpressMiddleware({
         router: this.appRouter,
-        createContext: (opts) => createContext(this.supabase.client, opts),
+        createContext: (opts) =>
+          this.trpc.createContext(this.supabase.client, opts),
       })
     );
   }
