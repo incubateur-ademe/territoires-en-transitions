@@ -502,12 +502,12 @@ jobs:
   test-e2e:
     # Disable job temporarily until we have a stable environment for Next.js et new Earthly config
     if: true
-    needs:
-      - build-business-dev
-      - build-tools
-      - build-app-dev
-      - build-auth-dev
-      - build-db
+    # needs:
+    #   - build-business-dev
+    #   - build-tools
+    #   - build-app-dev
+    #   - build-auth-dev
+    #   - build-db
     environment: dev
     name: End-to-end tests
     runs-on: ubuntu-latest

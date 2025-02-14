@@ -17,6 +17,9 @@ build:
 
   # Disable telemetry during build
   ENV NEXT_TELEMETRY_DISABLED=1
+  ENV NODE_ENV production
+  # Set the memory limit to 4GB (adjust as needed)
+  ENV NODE_OPTIONS="--max-old-space-size=4096"
 
   ENV NEXT_PUBLIC_SUPABASE_ANON_KEY=$ANON_KEY
   ENV NEXT_PUBLIC_SUPABASE_URL=$API_URL
@@ -106,4 +109,15 @@ deploy:
     --docker $DOCKER_IMAGE \
     --docker-private-registry-secret ghcr
 
+# Construit et lance l'image de l'app en local
+run:
+  ARG network=supabase_network_tet
 
+  LOCALLY
+  WITH DOCKER --load +docker
+    RUN docker run -d --rm \
+      --name app_tet \
+      --network $network \
+      --publish 3000:3000 \
+      $APP_IMG_NAME
+  END

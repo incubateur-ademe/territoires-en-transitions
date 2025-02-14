@@ -407,8 +407,9 @@ front-deps-builder:
     DO +BUILD_IF_NO_IMG --IMG_NAME=front-deps --IMG_TAG=$FRONT_DEPS_TAG --BUILD_TARGET=front-deps
 
 
-# APP ENTRYPOINTS
 # ---------------
+# APP ENTRYPOINTS
+# ↓ ----------- ↓
 
 app-docker:
   BUILD --pass-args ./app.territoiresentransitions.react+docker
@@ -419,6 +420,9 @@ app-test-docker:
 app-deploy:
   ARG --required KOYEB_API_KEY
   BUILD --pass-args ./app.territoiresentransitions.react+deploy
+
+app-run:
+  BUILD --pass-args ./app.territoiresentransitions.react+run
 
 
 # BACKEND ENTRYPOINTS
@@ -504,19 +508,7 @@ site-run: ## construit et lance l'image du site en local
         --publish 3001:80 \
         $SITE_IMG_NAME
 
-app-run: ## construit et lance l'image de l'app en local
-    ARG --required ANON_KEY
-    ARG --required API_URL
-    ARG network=supabase_network_tet
-    LOCALLY
-    # DO +BUILD_IF_NO_IMG --IMG_NAME=front-deps --IMG_TAG=$FRONT_DEPS_TAG --BUILD_TARGET=front-deps
-    DO +BUILD_IF_NO_IMG --IMG_NAME=app --IMG_TAG=$APP_TAG --BUILD_TARGET=app-docker
-    ARG kong_url=http://supabase_kong_tet:8000
-    RUN docker run -d --rm \
-        --name app_tet \
-        --network $network \
-        --publish 3000:3000 \
-        $APP_IMG_NAME
+
 
 app-test-build: ## construit une image pour exécuter les tests unitaires de l'app
     FROM +front-deps
