@@ -12,7 +12,7 @@ import {
   useRole,
 } from '@floating-ui/react';
 import classNames from 'classnames';
-import { cloneElement, RefObject, useState } from 'react';
+import { RefObject, cloneElement, useState } from 'react';
 
 import { preset } from '@/ui/tailwind-preset';
 import { OpenState } from '@/ui/utils/types';
@@ -193,7 +193,7 @@ export const Modal = ({
                         </h3>
                       )}
                       {subTitle && (
-                        <p className="mb-0 font-medium text-grey-6">
+                        <p className="mb-0 font-bold text-primary">
                           {subTitle}
                         </p>
                       )}
