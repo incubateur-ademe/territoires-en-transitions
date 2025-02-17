@@ -15,7 +15,14 @@ export const DataSourceTooltip = ({
   children,
 }: DataSourceTooltipProps) => {
   return (
-    <Tooltip label={<DataSourceTooltipContent metadonnee={metadonnee} />}>
+    <Tooltip
+      label={
+        <DataSourceTooltipContent
+          className="font-normal"
+          metadonnee={metadonnee}
+        />
+      }
+    >
       {children}
     </Tooltip>
   );
