@@ -5,7 +5,7 @@ import {
   ReferentielId,
 } from '@/domain/referentiels';
 import { useFeatureFlagEnabled } from 'posthog-js/react';
-import { useCollectiviteId } from '../core-logic/hooks/params';
+import { useCollectiviteId } from '@/app/collectivites/collectivite-context';
 import { useReferentielId } from './referentiel-context';
 
 export type Snapshot =
@@ -27,7 +27,7 @@ export function useSnapshot({ actionId }: { actionId: string }) {
 }
 
 export function useSnapshotList(referentielId?: ReferentielId) {
-  const collectiviteId = useCollectiviteId()!;
+  const collectiviteId = useCollectiviteId();
 
   if (!referentielId) {
     referentielId = useReferentielId();

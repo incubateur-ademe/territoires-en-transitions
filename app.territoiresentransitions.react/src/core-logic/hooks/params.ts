@@ -1,6 +1,8 @@
 import { usePathname } from 'next/navigation';
 
-// TODO: Utiliser un react context here basé sur les useParams quand toutes les routes seront sous Next
+/**
+ * @deprecated: use hook from collectivite-context.tsx instead
+ */
 export const useCollectiviteId = (): number | null => {
   const pathname = usePathname();
   // Match /collectivite/123 or /collectivite/123/

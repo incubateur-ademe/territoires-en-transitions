@@ -1,6 +1,6 @@
 'use client';
-
 import { createContext, ReactNode, useContext } from 'react';
+import { z } from 'zod';
 
 type ContextProps = {
   collectiviteId: number;
@@ -9,12 +9,14 @@ type ContextProps = {
 const CollectiviteContext = createContext<ContextProps | null>(null);
 
 export function CollectiviteProvider({
-  collectiviteId,
+  unsafeCollectiviteId,
   children,
 }: {
-  collectiviteId: number;
+  unsafeCollectiviteId: number;
   children: ReactNode;
 }) {
+  const collectiviteId = z.coerce.number().parse(unsafeCollectiviteId);
+
   return (
     <CollectiviteContext.Provider value={{ collectiviteId }}>
       {children}
