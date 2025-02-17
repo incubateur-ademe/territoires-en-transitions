@@ -116,9 +116,6 @@ importers:
       '@sentry/profiling-node':
         specifier: ^8.54.0
         version: 8.54.0
-      '@supabase/postgrest-js':
-        specifier: ^1.16.0
-        version: 1.16.1
       '@supabase/realtime-js':
         specifier: ^2.9.3
         version: 2.10.6
