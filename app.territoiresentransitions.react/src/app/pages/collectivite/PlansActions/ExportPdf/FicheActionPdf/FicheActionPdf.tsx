@@ -7,6 +7,7 @@ import { RouterOutput } from '@/api/utils/trpc/client';
 import Etapes from '@/app/app/pages/collectivite/PlansActions/ExportPdf/FicheActionPdf/Etapes';
 import { ActionWithStatut } from '@/app/referentiels/actions/use-list-actions';
 import { TIndicateurDefinition } from '../../../Indicateurs/types';
+import { TSectionsValues, sectionsInitValue } from '../utils';
 import Acteurs from './Acteurs';
 import ActionsLiees from './ActionsLiees';
 import Budget from './Budget';
@@ -27,6 +28,7 @@ export type FicheActionPdfProps = {
 
 export type FicheActionPdfExtendedProps = FicheActionPdfProps & {
   chemins: TAxeRow[][];
+  sections?: TSectionsValues;
   indicateursListe: TIndicateurDefinition[] | undefined | null;
   etapes?: RouterOutput['plans']['fiches']['etapes']['list'];
   fichesLiees: FicheResume[];
@@ -37,6 +39,7 @@ export type FicheActionPdfExtendedProps = FicheActionPdfProps & {
 
 const FicheActionPdf = ({
   fiche,
+  sections = sectionsInitValue,
   chemins,
   indicateursListe,
   etapes,
@@ -63,40 +66,52 @@ const FicheActionPdf = ({
       </Stack>
 
       {/* Description de la fiche */}
-      <Description fiche={fiche} />
+      {sections.intro.isChecked && <Description fiche={fiche} />}
 
-      {/* Pilotes */}
-      <Pilotes fiche={fiche} />
+      {sections.acteurs.isChecked && (
+        <>
+          {/* Pilotes */}
+          <Pilotes fiche={fiche} />
 
-      {/* Acteurs */}
-      <Acteurs fiche={fiche} />
+          {/* Acteurs */}
+          <Acteurs fiche={fiche} />
+        </>
+      )}
 
       {/* Planning */}
-      <Planning fiche={fiche} />
+      {sections.planning.isChecked && <Planning fiche={fiche} />}
 
       {/* Indicateurs */}
-      <Indicateurs fiche={fiche} indicateursListe={indicateursListe} />
+      {sections.indicateurs.isChecked && (
+        <Indicateurs fiche={fiche} indicateursListe={indicateursListe} />
+      )}
 
       {/* Étapes */}
-      <Etapes etapes={etapes} />
+      {sections.etapes.isChecked && <Etapes etapes={etapes} />}
 
       {/* Notes de suivi */}
-      <NotesDeSuivi notesSuivi={notesSuivi} />
+      {sections.suivi.isChecked && <NotesDeSuivi notesSuivi={notesSuivi} />}
 
       {/* Budget */}
-      <Budget fiche={fiche} />
+      {sections.budget.isChecked && <Budget fiche={fiche} />}
 
       {/* Fiches des plans liées */}
-      <FichesLiees fichesLiees={fichesLiees} />
+      {sections.fiches.isChecked && <FichesLiees fichesLiees={fichesLiees} />}
 
       {/* Actions des référentiels liées */}
-      <ActionsLiees actionsLiees={actionsLiees} />
+      {sections.actions.isChecked && (
+        <ActionsLiees actionsLiees={actionsLiees} />
+      )}
 
-      {/* Notes */}
-      <Notes fiche={fiche} />
+      {sections.notes.isChecked && (
+        <>
+          {/* Notes */}
+          <Notes fiche={fiche} />
 
-      {/* Documents */}
-      <Documents annexes={annexes} />
+          {/* Documents */}
+          <Documents annexes={annexes} />
+        </>
+      )}
     </Stack>
   );
 };
