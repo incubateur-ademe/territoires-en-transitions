@@ -6,12 +6,10 @@ import {
   ColumnBaseConfig,
   ColumnDataType,
   eq,
-  ExtractTablesWithRelations,
   or,
   TableConfig,
 } from 'drizzle-orm';
-import { PgTable, PgTransaction } from 'drizzle-orm/pg-core';
-import { PostgresJsQueryResultHKT } from 'drizzle-orm/postgres-js';
+import { PgTable } from 'drizzle-orm/pg-core';
 import { toCamel } from 'ts-case-convert';
 import { AuthenticatedUser } from '../../auth/models/auth.models';
 import { buildConflictUpdateColumns } from '../../utils/database/conflict.utils';
@@ -40,11 +38,7 @@ import {
   ficheSchemaUpdate,
 } from './shared/models/fiche-action.table';
 
-type TxType = PgTransaction<
-  PostgresJsQueryResultHKT,
-  Record<string, never>,
-  ExtractTablesWithRelations<Record<string, never>>
->;
+type TxType = Parameters<Parameters<ReturnType<DatabaseService['rls']>>[0]>[0];
 
 type ColumnType = Column<
   ColumnBaseConfig<ColumnDataType, string>,
