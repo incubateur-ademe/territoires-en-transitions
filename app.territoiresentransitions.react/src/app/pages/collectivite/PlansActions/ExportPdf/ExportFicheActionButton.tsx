@@ -1,5 +1,6 @@
 import { FicheAction } from '@/api/plan-actions';
 import { useGetEtapes } from '@/app/app/pages/collectivite/PlansActions/FicheAction/etapes/use-get-etapes';
+import { useListActionsWithStatuts } from '@/app/referentiels/actions/use-list-actions';
 import ExportPDFButton from '@/app/ui/export-pdf/ExportPDFButton';
 import { createElement, useEffect, useState } from 'react';
 import { useIndicateurDefinitions } from '../../Indicateurs/Indicateur/useIndicateurDefinition';
@@ -8,15 +9,17 @@ import { useFicheActionNotesSuivi } from '../FicheAction/data/useFicheActionNote
 import { useFichesActionLiees } from '../FicheAction/data/useFichesActionLiees';
 import { useFicheActionChemins } from '../PlanAction/data/usePlanActionChemin';
 import FicheActionPdf from './FicheActionPdf/FicheActionPdf';
-import { useListActionsWithStatuts } from '@/app/referentiels/actions/use-list-actions';
+import { TSectionsValues } from './utils';
 
 type FicheActionPdfContentProps = {
   fiche: FicheAction;
+  options?: TSectionsValues;
   generateContent: (content: JSX.Element) => void;
 };
 
 export const FicheActionPdfContent = ({
   fiche,
+  options,
   generateContent,
 }: FicheActionPdfContentProps) => {
   const { data: axes, isLoading: isLoadingAxes } = useFicheActionChemins(
@@ -58,6 +61,7 @@ export const FicheActionPdfContent = ({
       generateContent(
         createElement(FicheActionPdf, {
           fiche,
+          sections: options,
           chemins: (axes ?? [])
             .filter((a) => a.chemin !== null)
             .map((a) => a.chemin!),
@@ -75,7 +79,15 @@ export const FicheActionPdfContent = ({
   return <></>;
 };
 
-const ExportFicheActionButton = ({ fiche }: { fiche: FicheAction }) => {
+type ExportFicheActionButtonProps = {
+  fiche: FicheAction;
+  options?: TSectionsValues;
+};
+
+const ExportFicheActionButton = ({
+  fiche,
+  options,
+}: ExportFicheActionButtonProps) => {
   const [isDataRequested, setIsDataRequested] = useState(false);
   const [content, setContent] = useState<JSX.Element | undefined>(undefined);
 
@@ -89,12 +101,11 @@ const ExportFicheActionButton = ({ fiche }: { fiche: FicheAction }) => {
         size="md"
         variant="primary"
         children="Exporter en PDF"
-        icon=""
       />
 
       {isDataRequested && (
         <FicheActionPdfContent
-          fiche={fiche}
+          {...{ fiche, options }}
           generateContent={(newContent) => {
             setContent(newContent);
             setIsDataRequested(false);
