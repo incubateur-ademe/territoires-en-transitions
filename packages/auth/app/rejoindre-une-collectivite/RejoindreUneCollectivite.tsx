@@ -81,7 +81,7 @@ export const RejoindreUneCollectivite = (
           <Field className="md:col-span-2" title="Nom de la collectivité *">
             <div className="flex flex-col gap-1 mb-2 text-xs text-grey-6">
               <span>{`Il n'est pas nécessaire de taper "Communauté de commune".`}</span>
-              <span>{`Ex : si votre collectivité est « Communauté de Commune des Terres d’Auxois », tapez strictement « terres d'auxois ».`}</span>
+              <span>{`Ex : si votre collectivité est « Communauté de Commune des Terres d’Auxois », tapez « terres d'auxois ».`}</span>
             </div>
             <Select
               dataTest="select-collectivite"
