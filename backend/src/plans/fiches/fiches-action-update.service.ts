@@ -482,6 +482,7 @@ export default class FichesActionUpdateService {
       .onConflictDoUpdate({
         target: [ficheActionNoteTable.id],
         set: buildConflictUpdateColumns(ficheActionNoteTable, [
+          'dateNote',
           'note',
           'modifiedAt',
           'modifiedBy',
