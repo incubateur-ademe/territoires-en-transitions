@@ -1,6 +1,7 @@
 import { FicheAction } from '@/api/plan-actions';
 import { Tab, Tabs } from '@/ui';
 import { LesCommuns } from '@betagouv/les-communs-widget';
+import { useFeatureFlagEnabled } from 'posthog-js/react';
 import ActionsLieesTab from './ActionsLiees/ActionsLieesTab';
 import BudgetTab from './Budget/BudgetTab';
 import FichesLieesTab from './FichesLiees/FichesLieesTab';
@@ -26,6 +27,9 @@ const FicheActionOnglets = ({
   className,
   updateFiche,
 }: FicheActionOngletsProps) => {
+  const widgetCommunsFlagEnabled = useFeatureFlagEnabled(
+    'is-widget-communs-enabled'
+  );
   return (
     <Tabs
       className={className}
@@ -89,9 +93,11 @@ const FicheActionOnglets = ({
         />
       </Tab>
 
-      <Tab label="Services liés">
-        <LesCommuns projectId="123" isStagingEnv={true} />
-      </Tab>
+      {widgetCommunsFlagEnabled ? (
+        <Tab label="Services liés">
+          <LesCommuns projectId="123" isStagingEnv={true} />
+        </Tab>
+      ) : undefined}
     </Tabs>
   );
 };
