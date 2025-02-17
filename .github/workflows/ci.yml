@@ -527,6 +527,9 @@ jobs:
           --SERVICE_ROLE_KEY=${{ secrets.SERVICE_ROLE_KEY }}
           --API_URL=${{ secrets.API_URL }}
           --ANON_KEY=${{ secrets.ANON_KEY }}
+          --APP_URL=${{ vars.APP_URL }}
+          --AUTH_URL=${{ vars.AUTH_URL }}
+          --BACKEND_URL=${{ vars.BACKEND_URL }}
 
       # - run: docker restart supabase_rest_tet
 

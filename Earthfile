@@ -593,6 +593,10 @@ auth-run: ## construit et lance l'image du module d'authentification en local
         --name auth_tet \
         --network $network \
         --publish 3003:80 \
+        --env NEXT_PUBLIC_SUPABASE_ANON_KEY=$ANON_KEY \
+        --env NEXT_PUBLIC_SUPABASE_URL=$API_URL \
+        --env NEXT_PUBLIC_APP_URL=$APP_URL \
+        --env NEXT_PUBLIC_PANIER_URL=$PANIER_URL \
         $AUTH_IMG_NAME
     END
 
@@ -800,8 +804,8 @@ e2e-run:
   BUILD +business --SERVICE_ROLE_KEY=$SERVICE_ROLE_KEY
   BUILD +update-scores --DB_URL=$DB_URL
 
-  BUILD +app-run --API_URL=$API_URL --ANON_KEY=$ANON_KEY
-  BUILD +auth-run --API_URL=$API_URL --ANON_KEY=$ANON_KEY
+  BUILD --pass-args +app-run
+  BUILD --pass-args +auth-run
 
   BUILD +refresh-views --DB_URL=$DB_URL
 

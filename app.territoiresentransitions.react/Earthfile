@@ -119,5 +119,11 @@ run:
       --name app_tet \
       --network $network \
       --publish 3000:3000 \
+      --env NODE_ENV=production \
+      --env NEXT_PUBLIC_SUPABASE_ANON_KEY=$ANON_KEY \
+      --env NEXT_PUBLIC_SUPABASE_URL=$API_URL \
+      --env NEXT_PUBLIC_AUTH_URL=$AUTH_URL \
+      --env NEXT_PUBLIC_PANIER_URL=$PANIER_URL \
+      --env NEXT_PUBLIC_BACKEND_URL=$BACKEND_URL \
       $APP_IMG_NAME
   END
