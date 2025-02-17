@@ -1,5 +1,6 @@
 import type { Meta, StoryObj } from '@storybook/react';
 import { EmptyCard } from './EmptyCard';
+import { Button } from '@/ui/design-system/Button';
 
 const DemoIcon = (
   className: string,
@@ -112,5 +113,27 @@ export const Transparent: Story = {
     ...Default.args,
     background: 'bg-transparent',
     border: 'border-transparent',
+  },
+};
+
+export const WithCustomButton: Story = {
+  args: {
+    ...Default.args,
+    actions: [
+      <Button
+        key="custom-button"
+        variant="outlined"
+        onClick={() => console.log('Custom button clicked')}
+      >
+        Bouton d'action secondaire
+      </Button>,
+      <Button
+        key="custom-button"
+        variant="primary"
+        onClick={() => console.log('Custom button clicked')}
+      >
+        Bouton d'action principale
+      </Button>,
+    ],
   },
 };

@@ -23,7 +23,7 @@ type SnapshotsDropdownProps = Omit<
   maxBadgesToShow: number;
 };
 
-const SnapshotsDropdown = (props: SnapshotsDropdownProps) => {
+export const SnapshotsDropdown = (props: SnapshotsDropdownProps) => {
   const values = props.values ?? [];
 
   /**
@@ -53,5 +53,3 @@ const SnapshotsDropdown = (props: SnapshotsDropdownProps) => {
     />
   );
 };
-
-export default SnapshotsDropdown;

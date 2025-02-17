@@ -4,18 +4,30 @@ import SaveScoreModal, {
 import { Button } from '@/ui';
 import { useState } from 'react';
 
-const SaveScoreButton = ({ referentielId, collectiviteId }: SaveScoreProps) => {
+type SaveScoreButtonProps = SaveScoreProps & {
+  label?: string;
+  when?: 'now' | 'before';
+  variant?: 'primary' | 'outlined';
+};
+
+const SaveScoreButton = ({
+  referentielId,
+  collectiviteId,
+  label = "Figer l'état des lieux",
+  when = 'now',
+  variant = 'primary',
+}: SaveScoreButtonProps) => {
   const [isOpen, setIsOpen] = useState(false);
   return (
     <>
       <Button
         icon="save-3-line"
-        variant="primary"
+        variant={variant}
         size="sm"
         className="whitespace-nowrap"
         onClick={() => setIsOpen(true)}
       >
-        Figer l'état des lieux
+        {label}
       </Button>
       {isOpen && (
         <SaveScoreModal
@@ -25,6 +37,7 @@ const SaveScoreButton = ({ referentielId, collectiviteId }: SaveScoreProps) => {
             isOpen,
             setIsOpen,
           }}
+          when={when}
         />
       )}
     </>

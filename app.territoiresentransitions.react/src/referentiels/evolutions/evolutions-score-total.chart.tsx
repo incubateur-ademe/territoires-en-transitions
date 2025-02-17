@@ -5,21 +5,55 @@ import { SnapshotDetails } from '../use-snapshot';
 import { sortByDate } from './utils';
 import { theme as importedTheme } from '../../ui/charts/chartsTheme';
 
-const ScoreTotalEvolutionsChart = ({
+/**
+ * Ensures a snapshot is always displayed in the correct position on the graph according to its date.
+ */
+const sortSnapshots = (snapshots: SnapshotDetails[], ascending = true) => {
+  if (!snapshots?.length) return [];
+  return [...snapshots].sort((a, b) => sortByDate(a.date, b.date, ascending));
+};
+
+const theme = importedTheme;
+
+const sizeConfig = {
+  chartSize: {
+    sm: { xAxisLabelWidth: 100 },
+    lg: { xAxisLabelWidth: 'auto' as const },
+  },
+} as const;
+
+/**
+ * Adjusts the width of the x-axis labels based on the number of snapshots and the size of the chart.
+ * The width is fixed for small charts and auto for large charts.
+ * @param snapshotsCount - The number of snapshots.
+ * @param sizeOptions - The size options.
+ * @param chartSize - The size of the chart.
+ * @returns The width of the x-axis labels.
+ */
+const adjustXAxisLabelWidth = (
+  snapshotsCount: number,
+  sizeOptions: typeof sizeConfig,
+  chartSize: 'sm' | 'lg'
+) => {
+  const SMALL_FIXED_WIDTH = 70;
+  const MEDIUM_FIXED_WIDTH = 100;
+
+  if (snapshotsCount > 10) {
+    return SMALL_FIXED_WIDTH;
+  }
+  if (snapshotsCount > 4) {
+    return MEDIUM_FIXED_WIDTH;
+  }
+  return sizeOptions.chartSize[chartSize]?.xAxisLabelWidth;
+};
+
+export const ScoreTotalEvolutionsChart = ({
   allSnapshots,
   chartSize = 'lg',
 }: {
   allSnapshots: SnapshotDetails[];
   chartSize: 'sm' | 'lg';
 }) => {
-  /**
-   * Ensures a snapshot is always displayed in the correct position on the graph according to its date.
-   */
-  const sortSnapshots = (snapshots: SnapshotDetails[], ascending = true) => {
-    if (!snapshots?.length) return [];
-    return [...snapshots].sort((a, b) => sortByDate(a.date, b.date, ascending));
-  };
-
   const snapshots = sortSnapshots(allSnapshots, true);
 
   const nameLabels = snapshots?.map((snapshot) => {
@@ -28,40 +62,6 @@ const ScoreTotalEvolutionsChart = ({
     }
     return `${snapshot.nom}`;
   });
-
-  const theme = importedTheme;
-
-  const sizeConfig = {
-    chartSize: {
-      sm: { xAxisLabelWidth: 100 },
-      lg: { xAxisLabelWidth: 'auto' as const },
-    },
-  } as const;
-
-  /**
-   * Adjusts the width of the x-axis labels based on the number of snapshots and the size of the chart.
-   * The width is fixed for small charts and auto for large charts.
-   * @param snapshotsCount - The number of snapshots.
-   * @param sizeOptions - The size options.
-   * @param chartSize - The size of the chart.
-   * @returns The width of the x-axis labels.
-   */
-  const adjustXAxisLabelWidth = (
-    snapshotsCount: number,
-    sizeOptions: typeof sizeConfig,
-    chartSize: 'sm' | 'lg'
-  ) => {
-    const SMALL_FIXED_WIDTH = 70;
-    const MEDIUM_FIXED_WIDTH = 100;
-
-    if (snapshotsCount > 10) {
-      return SMALL_FIXED_WIDTH;
-    }
-    if (snapshotsCount > 4) {
-      return MEDIUM_FIXED_WIDTH;
-    }
-    return sizeOptions.chartSize[chartSize]?.xAxisLabelWidth;
-  };
 
   const series = [
     {
@@ -109,7 +109,10 @@ const ScoreTotalEvolutionsChart = ({
         color: actionAvancementColors.pas_fait,
       },
       data: snapshots?.map((snapshot) =>
-        computePercentage(snapshot.pointPasFait, snapshot.pointPotentiel)
+        computePercentage(
+          snapshot.pointPasFait ?? 0,
+          snapshot.pointPotentiel ?? 0
+        )
       ),
     },
     {
@@ -238,13 +241,8 @@ const ScoreTotalEvolutionsChart = ({
     series,
   };
 
-  return (
-    <div className="flex flex-col">
-      <ReactECharts option={option} style={{ height: 500 }} />
-    </div>
-  );
+  return <ReactECharts option={option} style={{ height: 500 }} />;
 };
-export default ScoreTotalEvolutionsChart;
 
 const makeScoreSnapshotLabel = (pointFait: number, pointPotentiel: number) => {
   const percentage = troncateIfZero(

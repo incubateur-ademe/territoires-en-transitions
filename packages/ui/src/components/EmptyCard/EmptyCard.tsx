@@ -1,5 +1,6 @@
 import { Button, ButtonProps, ButtonSize } from '@/ui';
 import classNames from 'classnames';
+import React from 'react';
 
 type EmptyCardSize = 'xs' | 'md' | 'xl';
 
@@ -14,7 +15,11 @@ type EmptyCardProps = {
   description?: string;
   additionalContent?: React.ReactNode;
   isReadonly?: boolean;
-  actions?: ButtonProps[];
+  /**
+   * @description The actions to display in the card.
+   * @description Can be a a Button component or a ButtonProps object.
+   */
+  actions?: (ButtonProps | React.ReactElement)[];
   className?: string;
   dataTest?: string;
   background?: 'bg-primary-0' | 'bg-transparent';
@@ -118,13 +123,17 @@ export const EmptyCard = ({
             sizeClasses[size].actionsContainer
           )}
         >
-          {actions.map((action, index) => (
-            <Button
-              key={index}
-              size={sizeClasses[size].buttonSize}
-              {...action}
-            />
-          ))}
+          {actions.map((action, index) => {
+            return React.isValidElement(action) ? (
+              <React.Fragment key={index}>{action}</React.Fragment>
+            ) : (
+              <Button
+                key={index}
+                size={sizeClasses[size].buttonSize}
+                {...(action as ButtonProps)}
+              />
+            );
+          })}
         </div>
       )}
     </div>
