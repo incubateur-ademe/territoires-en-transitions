@@ -3,6 +3,7 @@ import { Button, Table, TBody, TCell, TRow } from '@/ui';
 import { useState } from 'react';
 import { PreparedData, PreparedValue } from '../data/prepare-data';
 import { useDeleteIndicateurValeur } from '../data/use-delete-indicateur-valeur';
+import { useGetColorBySourceId } from '../data/use-indicateur-sources';
 import { useUpsertIndicateurValeur } from '../data/use-upsert-indicateur-valeur';
 import { SourceType, TIndicateurDefinition } from '../types';
 import { CellAnneeList } from './cell-annee-list';
@@ -50,6 +51,7 @@ export const IndicateurValeursTable = ({
 
   const { mutate: upsertValeur } = useUpsertIndicateurValeur();
   const { mutate: deleteValeur } = useDeleteIndicateurValeur();
+  const getColorBySourceId = useGetColorBySourceId();
 
   return (
     <>
@@ -97,7 +99,12 @@ export const IndicateurValeursTable = ({
           {sources?.map((s) => (
             <TRow key={s.source}>
               {/* nom de la source et rappel de l'unité */}
-              <CellSourceName source={s} type={type} unite={definition.unite} />
+              <CellSourceName
+                source={s}
+                type={type}
+                unite={definition.unite}
+                getColorBySourceId={getColorBySourceId}
+              />
               {/* cellule pour chaque année */}
               {annees?.map((annee) => {
                 const entry = s.valeurs.find((v) => v.annee === annee);
