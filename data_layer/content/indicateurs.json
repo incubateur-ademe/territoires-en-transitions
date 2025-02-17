@@ -726,6 +726,29 @@
       "valeur_indicateur": null
     },
     {
+      "action_ids": [],
+      "description": "<p>Indicateur sp\u00e9cifique \u00e0 la r\u00e9gion Occitanie qui ne d\u00e9taille pas les 2 secteurs avec et hors branche \u00e9nergie.</p>\n",
+      "id": "cae_1.l",
+      "identifiant": "1.l",
+      "nom": "Emissions de gaz \u00e0 effet de serre - Total industrie",
+      "parent": "cae_1.a",
+      "participation_score": false,
+      "programmes": [
+        "cae"
+      ],
+      "sans_valeur": false,
+      "selection": false,
+      "source": null,
+      "thematiques": [
+        "activites_economiques"
+      ],
+      "titre_court": "Industrie",
+      "titre_long": "Emissions de gaz \u00e0 effet de serre secteur industrie (branche \u00e9nergie et hors branche \u00e9nergie)",
+      "type": null,
+      "unite": "kteq CO2",
+      "valeur_indicateur": null
+    },
+    {
       "action_ids": [
         "cae_1.3.1"
       ],
@@ -2932,6 +2955,54 @@
       "valeur_indicateur": null
     },
     {
+      "action_ids": [],
+      "description": "<p>Cet indicateur est sp\u00e9cifique \u00e0 la r\u00e9gion Occitanie.</p>\n",
+      "id": "cae_3.ap",
+      "identifiant": "3.ap",
+      "nom": "Production d\u2019\u00e9nergie renouvelable - Thermique - Autre fili\u00e8re",
+      "parent": "cae_3.a",
+      "participation_score": false,
+      "programmes": [
+        "cae",
+        "vecteur_filiere"
+      ],
+      "sans_valeur": false,
+      "selection": false,
+      "source": null,
+      "thematiques": [
+        "energie_et_climat"
+      ],
+      "titre_court": "Thermique - Autre",
+      "titre_long": "Production d\u2019\u00e9nergie renouvelable thermique autre fili\u00e8re",
+      "type": null,
+      "unite": "MWh",
+      "valeur_indicateur": null
+    },
+    {
+      "action_ids": [],
+      "description": "<p>Cet indicateur est sp\u00e9cifique \u00e0 deux EPCIs.</p>\n",
+      "id": "cae_3.aq",
+      "identifiant": "3.aq",
+      "nom": "Production d\u2019\u00e9nergie renouvelable - Electrique - Hydrolien",
+      "parent": "cae_3.a",
+      "participation_score": false,
+      "programmes": [
+        "cae",
+        "vecteur_filiere"
+      ],
+      "sans_valeur": false,
+      "selection": false,
+      "source": null,
+      "thematiques": [
+        "energie_et_climat"
+      ],
+      "titre_court": "Electrique - Hydrolien",
+      "titre_long": "Production d\u2019\u00e9nergie renouvelable \u00e9lectrique fili\u00e8re hydrolien",
+      "type": null,
+      "unite": "MWh",
+      "valeur_indicateur": null
+    },
+    {
       "action_ids": [
         "cae_1.1.1"
       ],
@@ -4668,7 +4739,7 @@
       "description": "<p>L'indicateur mesure le nombre de places de stationnement public pour les voitures par habitant (stationnements publics gratuit ou payant, sur voirie ou dans des ouvrages, exploit\u00e9 en r\u00e9gie par la collectivit\u00e9 \u2013commune ou EPCI- ou d\u00e9l\u00e9gu\u00e9). Si le p\u00e9rim\u00e8tre suivi est partiel, l\u2019indiquer en commentaire.</p>\n",
       "id": "cae_42",
       "identifiant": 42,
-      "nom": "Stationnement public voiture",
+      "nom": "Stationnement public voiture par habitant",
       "parent": null,
       "participation_score": false,
       "programmes": [
@@ -4683,7 +4754,7 @@
       "titre_court": null,
       "titre_long": "Nombre de places de stationnement public pour les voitures par habitant",
       "type": null,
-      "unite": "nombre de places",
+      "unite": "nombre/habitant",
       "valeur_indicateur": null
     },
     {
@@ -4744,7 +4815,7 @@
       "description": "<p>L'indicateur mesure le nombre de places de stationnement v\u00e9lo pour 100 habitants : arceaux sur l\u2019espace public, consignes ou boxes \u00e0 v\u00e9los, stationnements v\u00e9los en gare, en parking automobiles... Attention, les stationnements de type r\u00e2telier v\u00e9lo ou \u00ab pince-roues \u00bb sur l\u2019espace public, qui ne permettent pas une accroche s\u00e9curitaire, ne sont pas pris en compte.</p>\n<ul>\n<li>\n<p>Valeurs limites : 2 (commune) et 1 (EPCI)</p>\n</li>\n<li>\n<p>Valeurs cibles : 4 (communes) et 2 (EPCI)</p>\n</li>\n</ul>\n<p>Pour les collectivit\u00e9s rurales, se focaliser sur la pr\u00e9sence d\u2019abris et de stationnements propos\u00e9s aux endroits cl\u00e9s (centres bourgs, autour des \u00e9coles et p\u00f4les d\u2019activit\u00e9s, lieux publics de rencontre, commerces, etc).</p>\n",
       "id": "cae_45",
       "identifiant": 45,
-      "nom": "Stationnement v\u00e9lo",
+      "nom": "Stationnement v\u00e9lo pour 100 habitants",
       "parent": null,
       "participation_score": true,
       "programmes": [
@@ -4759,7 +4830,7 @@
       "titre_court": null,
       "titre_long": "Nombre de places de stationnement v\u00e9lo, hors pince-roues pour 100 habitants",
       "type": null,
-      "unite": "nombre de places",
+      "unite": "nombre/100 habitants",
       "valeur_indicateur": null
     },
     {
@@ -5567,6 +5638,29 @@
       "action_ids": [
         "cae_1.2.3"
       ],
+      "description": "<p>D\u00e9chets fermentescibles</p>\n",
+      "id": "cae_6.cc",
+      "identifiant": "6.cc",
+      "nom": "Production de biod\u00e9chets collect\u00e9s s\u00e9lectivement",
+      "parent": "cae_6.c",
+      "participation_score": false,
+      "programmes": [
+        "cae"
+      ],
+      "sans_valeur": false,
+      "selection": false,
+      "source": null,
+      "thematiques": [],
+      "titre_court": "Biod\u00e9chets",
+      "titre_long": "D\u00e9chets fermentescibles collect\u00e9s s\u00e9lectivement, soit en porte-\u00e0-porte, soit en apport volontaire",
+      "type": null,
+      "unite": "kg/hab",
+      "valeur_indicateur": null
+    },
+    {
+      "action_ids": [
+        "cae_1.2.3"
+      ],
       "description": "<p>encombrants, d\u00e9chets verts, d\u00e9blais et gravats\u2026</p>\n",
       "id": "cae_6.d",
       "identifiant": "6.d",
@@ -5594,7 +5688,7 @@
       "id": "cae_60",
       "identifiant": 60,
       "nom": "Produits biologiques dans la restauration collective publique",
-      "parent": null,
+      "parent": "restauration_collective",
       "participation_score": true,
       "programmes": [
         "cae"
@@ -5615,11 +5709,11 @@
       "action_ids": [
         "cae_6.4.1"
       ],
-      "description": "<p>L\u2019indicateur mesure le ratio moyen de viande par repas\u00a0: la quantit\u00e9 totale annuelle de viande achet\u00e9e dans la restauration collectivit\u00e9 publique (ma\u00eetris\u00e9e par la collectivit\u00e9) est divis\u00e9e par le nombre de repas servi sur l\u2019ann\u00e9e.</p>\n",
+      "description": "<p>L\u2019indicateur mesure le ratio moyen de viande par repas : la quantit\u00e9 totale annuelle de viande achet\u00e9e dans la restauration collectivit\u00e9 publique (ma\u00eetris\u00e9e par la collectivit\u00e9) est divis\u00e9e par le nombre de repas servi sur l\u2019ann\u00e9e.</p>\n",
       "id": "cae_61",
       "identifiant": 61,
       "nom": "Consommation de viande dans la restauration collective publique",
-      "parent": null,
+      "parent": "restauration_collective",
       "participation_score": false,
       "programmes": [
         "cae"
@@ -5628,12 +5722,63 @@
       "selection": false,
       "source": null,
       "thematiques": [
-        "activites_economiques"
+        "activites_economiques",
+        "agri_alim"
       ],
       "titre_court": null,
       "titre_long": "Quantit\u00e9 moyenne de viande par repas dans la restauration collective publique",
       "type": null,
       "unite": "g/repas",
+      "valeur_indicateur": null
+    },
+    {
+      "action_ids": [
+        "cae_6.4.1"
+      ],
+      "description": "<p>L\u2019indicateur mesure le nombre de menus v\u00e9g\u00e9tariens (d\u00e9finition de la loi Egalim) par rapport au nombre de menus totaux servis. La valeur cible en restauration scolaire est de 20 \u00e0 25%, selon le nombre de services hebdomadaires (4 \u00e0 5 services).</p>\n",
+      "id": "cae_61.b",
+      "identifiant": "61.b",
+      "nom": "Part de menus v\u00e9g\u00e9tariens dans la restauration collective publique",
+      "parent": "restauration_collective",
+      "participation_score": false,
+      "programmes": [
+        "cae"
+      ],
+      "sans_valeur": false,
+      "selection": false,
+      "source": null,
+      "thematiques": [
+        "activites_economiques",
+        "agri_alim"
+      ],
+      "titre_court": null,
+      "titre_long": "Part de menus v\u00e9g\u00e9tariens dans la restauration collective publique",
+      "type": null,
+      "unite": "%",
+      "valeur_indicateur": null
+    },
+    {
+      "action_ids": [],
+      "description": "<p>Part de restaurants collectifs inscrits et ayant r\u00e9alis\u00e9 leur t\u00e9l\u00e9d\u00e9claration sur &quot;ma cantine&quot; par rapport au nombre total de restaurants collectifs sous la responsabilit\u00e9 des partenaires PAT.</p>\n",
+      "id": "cae_61.c",
+      "identifiant": "61.c",
+      "nom": "Part de restaurants collectifs ayant r\u00e9alis\u00e9 leur t\u00e9l\u00e9d\u00e9claration",
+      "parent": "restauration_collective",
+      "participation_score": false,
+      "programmes": [
+        "cae"
+      ],
+      "sans_valeur": false,
+      "selection": false,
+      "source": null,
+      "thematiques": [
+        "activites_economiques",
+        "agri_alim"
+      ],
+      "titre_court": null,
+      "titre_long": "Part de restaurants collectifs ayant r\u00e9alis\u00e9 leur t\u00e9l\u00e9d\u00e9claration sur \"ma cantine\"",
+      "type": null,
+      "unite": "%",
       "valeur_indicateur": null
     },
     {
@@ -6678,7 +6823,7 @@
       "id": "eci_20",
       "identifiant": 20,
       "nom": "Alimentation sous signe de qualit\u00e9 dans la restauration collective publique",
-      "parent": null,
+      "parent": "restauration_collective",
       "participation_score": false,
       "programmes": [
         "eci"
@@ -6702,7 +6847,7 @@
       "id": "eci_21",
       "identifiant": 21,
       "nom": "Gaspillage alimentaire dans la restauration collective publique",
-      "parent": null,
+      "parent": "restauration_collective",
       "participation_score": false,
       "programmes": [
         "eci"
@@ -6725,7 +6870,7 @@
       "id": "eci_22",
       "identifiant": 22,
       "nom": "R\u00e9duction du gaspillage alimentaire dans la restauration collective publique",
-      "parent": null,
+      "parent": "restauration_collective",
       "participation_score": false,
       "programmes": [
         "eci"
@@ -7297,6 +7442,30 @@
       ],
       "titre_court": null,
       "titre_long": "Couverture des Plans de d\u00e9placements",
+      "type": null,
+      "unite": "%",
+      "valeur_indicateur": null
+    },
+    {
+      "action_ids": [],
+      "description": "",
+      "id": "restauration_collective",
+      "identifiant": null,
+      "nom": "Restauration collective publique",
+      "parent": null,
+      "participation_score": false,
+      "programmes": [
+        "cae"
+      ],
+      "sans_valeur": true,
+      "selection": false,
+      "source": null,
+      "thematiques": [
+        "activites_economiques",
+        "agri_alim"
+      ],
+      "titre_court": null,
+      "titre_long": "Restauration collective publique",
       "type": null,
       "unite": "%",
       "valeur_indicateur": null
@@ -10958,6 +11127,25 @@
       "titre_long": "Nombre d'artisans labellis\u00e9s RGE",
       "type": null,
       "unite": "Nombre d'artisans",
+      "valeur_indicateur": null
+    },
+    {
+      "action_ids": [],
+      "description": "<p>Nombre d'habitants par an.</p>\n",
+      "id": "terr_1",
+      "identifiant": 1,
+      "nom": "Population",
+      "parent": null,
+      "participation_score": false,
+      "programmes": [],
+      "sans_valeur": false,
+      "selection": false,
+      "source": null,
+      "thematiques": [],
+      "titre_court": null,
+      "titre_long": "Nombre d'habitants",
+      "type": null,
+      "unite": "nombre",
       "valeur_indicateur": null
     }
   ]
