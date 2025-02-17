@@ -4,8 +4,7 @@ import { FicheAction } from '@/api/plan-actions';
 
 import { Divider, Icon } from '@/ui';
 
-import ExportFicheActionButton from '@/app/app/pages/collectivite/PlansActions/ExportPdf/ExportFicheActionButton';
-
+import ExportFicheActionModal from '@/app/app/pages/collectivite/PlansActions/ExportPdf/export-pdf-fa.modal';
 import CheminsFiche from './CheminsFiche';
 import TitreFiche from './TitreFiche';
 import ModaleEmplacement from './actions/EmplacementFiche/ModaleEmplacement';
@@ -47,7 +46,7 @@ const Header = ({ fiche, updateTitle, isReadonly }: FicheActionHeaderProps) => {
         {/* Actions génériques de la fiche action */}
         <div className="flex gap-4 lg:mt-3.5">
           <ModaleEmplacement fiche={fiche} />
-          <ExportFicheActionButton fiche={fiche} />
+          <ExportFicheActionModal fiche={fiche} />
           <ModaleSuppression
             ficheId={fiche.id}
             title={titre}
