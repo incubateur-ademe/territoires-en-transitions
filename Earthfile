@@ -422,6 +422,7 @@ app-deploy:
   BUILD --pass-args ./app.territoiresentransitions.react+deploy
 
 app-run:
+  LOCALLY
   BUILD --pass-args ./app.territoiresentransitions.react+run
 
 
@@ -585,9 +586,9 @@ auth-build: ## construit l'image du module d'authentification
     SAVE IMAGE --cache-from=$AUTH_IMG_NAME --push $AUTH_IMG_NAME
 
 auth-run: ## construit et lance l'image du module d'authentification en local
+    LOCALLY
     ARG network=supabase_network_tet
 
-    LOCALLY
     WITH DOCKER --load +auth-build
       RUN docker run -d --rm \
         --name auth_tet \
