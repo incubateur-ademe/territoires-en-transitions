@@ -30,6 +30,9 @@ const nextConfig = {
   },
 };
 
+/**
+ * @type {import('@sentry/nextjs').SentryBuildOptions}
+ **/
 const sentryConfig = {
   // For all available options, see:
   // https://github.com/getsentry/sentry-webpack-plugin#options
@@ -66,7 +69,13 @@ const sentryConfig = {
   // See the following for more information:
   // https://docs.sentry.io/product/crons/
   // https://vercel.com/docs/cron-jobs
-  automaticVercelMonitors: true,
+  automaticVercelMonitors: false,
+
+  telemetry: false,
+
+  sourcemaps: {
+    disable: true,
+  },
 };
 
 const plugins = [
