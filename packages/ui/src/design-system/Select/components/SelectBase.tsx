@@ -1,6 +1,6 @@
 import { Placement } from '@floating-ui/react';
 import classNames from 'classnames';
-import { Ref, forwardRef, useEffect, useState } from 'react';
+import { Ref, forwardRef, useEffect, useState, Fragment } from 'react';
 import { useDebouncedCallback } from 'use-debounce';
 
 import { Badge } from '@/ui/design-system/Badge';
@@ -286,7 +286,7 @@ const SelectButton = forwardRef(
         .slice(0, maxBadgesToShow)
         .map((value) =>
           customItem && firstValue ? (
-            customItem(firstValue)
+            <Fragment key={value.toString()}>{customItem(firstValue)}</Fragment>
           ) : (
             <Badge
               state={
