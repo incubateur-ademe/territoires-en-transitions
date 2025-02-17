@@ -309,6 +309,9 @@ export default class IndicateurFiltreService {
       FROM ${getTableName(indicateurValeurTable)}
       WHERE ${indicateurValeurTable.collectiviteId.name} = ${collectiviteId}
         AND ${indicateurValeurTable.indicateurId.name} = i.id
+        AND (${indicateurValeurTable.objectif.name} is not null OR ${
+      indicateurValeurTable.resultat.name
+    } is not null)
                   ) v ON true
                   LEFT JOIN ${getTableName(
                     indicateurGroupeTable
