@@ -23,9 +23,7 @@ const SaveScoreButton = ({ referentielId, collectiviteId }: SaveScoreProps) => {
           referentielId={referentielId}
           openState={{
             isOpen,
-            setIsOpen: (value: boolean) => {
-              setIsOpen(value);
-            },
+            setIsOpen,
           }}
         />
       )}
