@@ -19,11 +19,8 @@ export const useSaveScore = (mutationOptions?: MutationOptions) => {
     },
     meta: {
       success: 'État des lieux figé avec succès',
-      error: `Une sauvegarde de l'état des lieux à la date ${
-        mutationOptions?.meta?.date
-          ? mutationOptions?.meta?.date
-          : `d'aujourd'hui`
-      } ou/et avec le nom "${mutationOptions?.meta?.snapshotNom}" existe déjà.`,
+      error:
+        "Une sauvegarde de l'état des lieux à cette date et/ou avec ce nom existe déjà.",
     },
   });
 };
