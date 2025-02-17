@@ -4,11 +4,11 @@ import { useCurrentCollectivite } from '@/app/core-logic/hooks/useCurrentCollect
 import { getIsoFormattedDate } from '@/app/utils/formatUtils';
 import {
   Alert,
-  Button,
   ButtonGroup,
   Field,
   Input,
   Modal,
+  ModalFooterOKCancel,
   useEventTracker,
 } from '@/ui';
 import { OpenState } from '@/ui/utils/types';
@@ -145,37 +145,25 @@ Une sauvegarde sera automatiquement réalisée lors du démarrage d'un audit et 
                 />
               </div>
             </Field>
-            {/* Boutons annuler et valider */}
-            <div className="flex gap-4 justify-end">
-              <Button
-                variant="grey"
-                size="sm"
-                onClick={() => openState.setIsOpen(false)}
-              >
-                Annuler
-              </Button>
-              <Button
-                variant="primary"
-                size="sm"
-                disabled={
-                  isSaving ||
-                  !nomVersion?.trim() ||
-                  (selectedButton !== 'now' && !dateVersion)
-                }
-                onClick={() => {
-                  tracker('referentiels:scores:sauvegarde', {
-                    collectiviteId,
-                    niveauAcces,
-                    role,
-                    dateDuJour: selectedButton === 'now',
-                  });
-                  handleSave();
-                }}
-              >
-                {isSaving ? 'Sauvegarde en cours...' : 'Figer cette version'}
-              </Button>
-            </div>
           </div>
+        )}
+        renderFooter={({ close }) => (
+          <ModalFooterOKCancel
+            btnCancelProps={{ onClick: close }}
+            btnOKProps={{
+              children: `Figer l'état des lieux`,
+              onClick: () => {
+                tracker('referentiels:scores:sauvegarde', {
+                  collectiviteId,
+                  niveauAcces,
+                  role,
+                  dateDuJour: selectedButton === 'now',
+                });
+                handleSave();
+                close();
+              },
+            }}
+          />
         )}
       />
     </>
