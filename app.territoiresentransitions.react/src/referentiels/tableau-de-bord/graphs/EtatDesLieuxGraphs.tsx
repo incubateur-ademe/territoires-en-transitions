@@ -11,7 +11,7 @@ import { ProgressionRow } from '../useProgressionReferentiel';
 import ProgressionReferentiel from './ProgressionReferentiel';
 import Link from 'next/link';
 import { makeReferentielUrl } from '@/app/app/paths';
-import ScoreEvolutionsGraphs from './tdb-score-total.chart';
+import { ScoreEvolutionsGraphs } from './tdb-score-total.chart';
 
 type EtatDesLieuxGraphsProps = {
   referentiel: ReferentielId;

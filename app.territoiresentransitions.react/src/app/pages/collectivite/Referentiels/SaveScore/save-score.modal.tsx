@@ -1,6 +1,5 @@
 import { RouterInput } from '@/api/utils/trpc/client';
 import { useSaveScore } from '@/app/app/pages/collectivite/Referentiels/SaveScore/useSaveScore';
-import { useCurrentCollectivite } from '@/app/core-logic/hooks/useCurrentCollectivite';
 import { getIsoFormattedDate } from '@/app/utils/formatUtils';
 import {
   Alert,
@@ -49,12 +48,14 @@ const SaveScoreModal = ({
   referentielId,
   collectiviteId,
   openState,
+  when = 'now',
 }: SaveScoreProps & {
   openState: OpenState;
+  when?: 'now' | 'before';
 }) => {
-  const [selectedButton, setSelectedButton] = useState<string>('now');
+  const [selectedButton, setSelectedButton] = useState<string>(when);
   const tracker = useEventTracker('app/referentiel');
-  const { niveauAcces, role } = useCurrentCollectivite()!;
+  // const { niveauAcces, role } = useCurrentCollectivite()!;
   const [nomVersion, setNomVersion] = useState<string>('');
   const [dateVersion, setDateVersion] = useState<string>('');
 
@@ -153,12 +154,12 @@ Une sauvegarde sera automatiquement réalisée lors du démarrage d'un audit et 
             btnOKProps={{
               children: `Figer l'état des lieux`,
               onClick: () => {
-                tracker('referentiels:scores:sauvegarde', {
-                  collectiviteId,
-                  niveauAcces,
-                  role,
-                  dateDuJour: selectedButton === 'now',
-                });
+                // tracker('referentiels:scores:sauvegarde', {
+                //   collectiviteId,
+                //   niveauAcces,
+                //   role,
+                //   dateDuJour: selectedButton === 'now',
+                // });
                 handleSave();
                 close();
               },
