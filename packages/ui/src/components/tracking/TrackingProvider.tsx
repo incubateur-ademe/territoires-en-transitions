@@ -17,6 +17,11 @@ export const TrackingProvider = ({
   children: ReactNode;
 }) => {
   useEffect(() => {
+    if (!ENV.posthog.key) {
+      console.log('PostHog was not initialized, token is missing.');
+      return;
+    }
+
     // en mode dev, on envoie les données à PostHog, sinon on passe par le `rewrites` de `next.config.mjs`
     const apiHost =
       process.env.NODE_ENV !== 'production'
