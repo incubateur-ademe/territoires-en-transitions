@@ -149,7 +149,9 @@ export const useFiltersToBadges = ({ filters, customValues }: Args) => {
         );
       } else if (key === 'estComplet') {
         badgeValues.push(
-          `Complétion : ${mergedFilters[key] ? 'Complet' : 'Incomplet'}`
+          `Indicateur complété par la collectivité : ${
+            mergedFilters[key] ? 'Complet' : 'Incomplet'
+          }`
         );
       } else if (key === 'participationScore') {
         mergedFilters[key] && badgeValues.push('Participe au score CAE');
