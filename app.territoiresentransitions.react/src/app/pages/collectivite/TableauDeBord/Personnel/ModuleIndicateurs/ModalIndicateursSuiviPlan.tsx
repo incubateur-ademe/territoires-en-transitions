@@ -112,7 +112,7 @@ const ModalIndicateursSuiviPlan = ({
               }
             />
           </Field>
-          <Field title="Complétion indicateur :">
+          <Field title="Indicateur complété par la collectivité :">
             <IndicateurCompletsDropdown
               values={
                 filtreState?.estComplet === undefined

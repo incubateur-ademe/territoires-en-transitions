@@ -45,7 +45,7 @@ const MenuFiltresTousLesIndicateurs = ({ filters, setFilters }: Props) => {
             }}
           />
         </Field>
-        <Field title="Indicateur complété">
+        <Field title="Indicateur complété par la collectivité">
           <IndicateurCompletsDropdown
             values={
               filters.estComplet === undefined
