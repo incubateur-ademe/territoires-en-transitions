@@ -515,15 +515,14 @@ jobs:
 
       # fixe la langue de l'environnement de test : permet de faire passer les
       # tests de composant utilisant des fonctions telles que toLocaleString()
-      - name: Set locale
-        run: |
-          sudo locale-gen ${{env.LANG}}
-          sudo update-locale LANG=${{env.LANG}}
+      # - name: Set locale
+      #   run: |
+      #     sudo locale-gen ${{env.LANG}}
+      #     sudo update-locale LANG=${{env.LANG}}
 
       - name: Start services
         run: >
-          earthly --use-inline-cache +dev
-          --stop=no --datalayer=yes --business=yes --app=yes --auth=yes --eco=yes --faster=yes --version=HEAD
+          earthly +e2e-run
           --DB_URL=${{ secrets.DB_URL }}
           --SERVICE_ROLE_KEY=${{ secrets.SERVICE_ROLE_KEY }}
           --API_URL=${{ secrets.API_URL }}

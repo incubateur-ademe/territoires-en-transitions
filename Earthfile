@@ -586,12 +586,15 @@ auth-build: ## construit l'image du module d'authentification
 
 auth-run: ## construit et lance l'image du module d'authentification en local
     ARG network=supabase_network_tet
+
     LOCALLY
-    RUN docker run -d --rm \
+    WITH DOCKER --load +auth-build
+      RUN docker run -d --rm \
         --name auth_tet \
         --network $network \
         --publish 3003:80 \
         $AUTH_IMG_NAME
+    END
 
 package-ui-storybook-test:
     ARG PLATFORM
@@ -678,15 +681,6 @@ api-crud-test:
       --env SUPABASE_URL=$API_URL \
       --env SUPABASE_ANON_KEY=$ANON_KEY \
       api-test:latest test -A tests/crud/crud.test.ts --location 'http://localhost' -- elements:axe
-
-cypress-wip:
-    FROM cypress/included:12.3.0
-    ENV ELECTRON_EXTRA_LAUNCH_ARGS="--disable-gpu"
-    WORKDIR /e2e
-    COPY ./e2e/package.json /e2e/package.json
-    RUN npm install
-    COPY ./e2e/ /e2e
-    RUN npm test
 
 gen-types: ## génère le typage à partir de la base de données
     LOCALLY
@@ -791,6 +785,25 @@ dev:
     END
 
     RUN earthly +refresh-views --DB_URL=$DB_URL
+
+e2e-run:
+  LOCALLY
+  # --stop=no --datalayer=yes --business=yes --app=yes --auth=yes --eco=yes --faster=yes --version=HEAD
+  ARG --required DB_URL
+  ARG --required API_URL
+  ARG --required ANON_KEY
+  ARG --required SERVICE_ROLE_KEY
+
+  BUILD +restore-db --pull=yes
+  RUN supabase start --exclude vector,postgres-meta,imgproxy,studio
+
+  BUILD +business --SERVICE_ROLE_KEY=$SERVICE_ROLE_KEY
+  BUILD +update-scores --DB_URL=$DB_URL
+
+  BUILD +app-run --API_URL=$API_URL --ANON_KEY=$ANON_KEY
+  BUILD +auth-run --API_URL=$API_URL --ANON_KEY=$ANON_KEY
+
+  BUILD +refresh-views --DB_URL=$DB_URL
 
 BUILD_IF_NO_IMG:
     FUNCTION
