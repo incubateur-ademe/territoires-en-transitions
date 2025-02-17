@@ -15,7 +15,7 @@ const SaveScoreButton = ({ referentielId, collectiviteId }: SaveScoreProps) => {
         className="whitespace-nowrap"
         onClick={() => setIsOpen(true)}
       >
-        Figer le référentiel
+        Figer l'état des lieux
       </Button>
       {isOpen && (
         <SaveScoreModal
