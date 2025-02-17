@@ -19,7 +19,7 @@ const ActionsLieesListe = ({
   onLoad,
   onUnlink,
 }: ActionsLieesListeProps) => {
-  const { data: actionListe, isLoading } = useActionListe();
+  const { data: actionsLiees, isLoading } = useActionListe(actionsIds);
 
   useEffect(() => onLoad?.(isLoading), [isLoading]);
 
@@ -27,11 +27,7 @@ const ActionsLieesListe = ({
     return <SpinnerLoader className="mx-auto my-8" />;
   }
 
-  const actionsLiees = (actionListe ?? []).filter((action) =>
-    actionsIds.some((id) => id === action.action_id)
-  );
-
-  if (actionsLiees.length === 0) return null;
+  if (!actionsLiees?.length) return null;
 
   return (
     // besoin de cette div car `grid` semble rentrer en conflit avec le container `flex` sur Safari
