@@ -5,7 +5,7 @@ import { useState } from 'react';
 
 import { referentielToName } from '@/app/app/labels';
 import { ReferentielOfIndicateur } from '@/app/referentiels/litterals';
-import Link from 'next/link';
+import { Button, Icon } from '@/ui';
 import { HistoriqueType, THistoriqueItem } from './types';
 
 export type HistoriqueDescription = {
@@ -15,12 +15,12 @@ export type HistoriqueDescription = {
 
 type Props = {
   historique: THistoriqueItem;
-  // la classe du DSFR affichant l'icon. ex: 'fr-fi-information-fill'
-  icon: string;
   // nom de la modification. ex: 'Action: statut modifié'
   nom: string;
   // tableau contenant par exemple l'action et la tache pour une modification de statut
   descriptions: HistoriqueDescription[];
+  // icon affiché à côté du nom de la modification
+  icon?: string;
   // le nouvel état et/ou le précédent en fonction du type d'historique
   detail?: JSX.Element;
   // à utiliser pour voir la page où se trouve la modification
@@ -36,7 +36,7 @@ const SHOW_REFERENTIEL: HistoriqueType[] = [
 
 const Modification = ({
   historique,
-  icon,
+  icon = 'information-fill',
   nom,
   descriptions,
   detail,
@@ -67,7 +67,7 @@ const Modification = ({
       {/* MAIN */}
       <div className="flex flex-col grow overflow-hidden md:flex-row">
         {/* ICON */}
-        <div className={`mr-4 mt-0.5 text-blue-600 ${icon}`} />
+        <Icon size="lg" icon={icon} className="mr-4 mt-0.5 text-primary" />
         {/* CONTENT */}
         <div className="flex flex-col grow overflow-hidden">
           {/* DESCRIPTION */}
@@ -103,13 +103,12 @@ const Modification = ({
                 <div className="font-bold">
                   {isDetailsOpen ? 'Masquer le détail' : 'Afficher le détail'}
                 </div>
-                <div
-                  className={classNames(
-                    'ml-auto fr-fi-arrow-down-s-line duration-100',
-                    {
-                      'rotate-180': isDetailsOpen,
-                    }
-                  )}
+                <Icon
+                  size="lg"
+                  icon="arrow-down-s-line"
+                  className={classNames('ml-auto duration-100', {
+                    'rotate-180': isDetailsOpen,
+                  })}
                 />
               </button>
               {isDetailsOpen && (
@@ -118,13 +117,16 @@ const Modification = ({
             </div>
           )}
           {!!pageLink && (
-            <Link
+            <Button
+              className="ml-auto"
+              icon="arrow-right-line"
+              iconPosition="right"
+              size="sm"
+              variant="outlined"
               href={pageLink}
-              className="flex items-center ml-auto fr-btn fr-btn--secondary !px-4 border border-bf500"
             >
-              Voir la page{' '}
-              <span className="ml-1 mt-1 fr-fi-arrow-right-line scale-75" />
-            </Link>
+              Voir la page
+            </Button>
           )}
         </div>
       </div>

@@ -17,7 +17,6 @@ const HistoriqueItemReponse = (props: THistoriqueItemProps) => {
   return (
     <Modification
       historique={item}
-      icon="fr-fi-information-fill"
       nom="Caractéristique de la collectivité modifiée"
       descriptions={[{ titre: 'Thématique', description: thematique_nom! }]}
       detail={<HistoriqueItemReponseDetails {...props} />}
