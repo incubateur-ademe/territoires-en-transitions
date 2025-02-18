@@ -1,4 +1,4 @@
-import { useCollectiviteId } from '@/app/core-logic/hooks/params';
+import { useCollectiviteId } from '@/app/collectivites/collectivite-context';
 import { intersection } from 'es-toolkit';
 import { useEffect, useState } from 'react';
 import { PALETTE_LIGHT } from '../../../../../ui/charts/echarts';
@@ -9,6 +9,7 @@ import {
   ListIndicateurValeursOutput,
   useIndicateurValeurs,
 } from './use-indicateur-valeurs';
+import { useSourceFilter } from './use-source-filter';
 
 const SEGMENTATIONS = ['secteur', 'vecteur', 'vecteur_filiere'];
 const SEGMENTATION_PAR_DEFAUT = 'parDefaut';
@@ -22,18 +23,28 @@ export const useIndicateurChartInfo = ({
   definition?: TIndicateurDefinition;
 }) => {
   const { id: indicateurId, estAgregation, enfants, unite } = definition ?? {};
+  const sourceFilter = useSourceFilter();
 
   // charge les valeurs à afficher dans le graphe
-  const collectiviteId = useCollectiviteId()!;
+  const collectiviteId = useCollectiviteId();
   const { data: valeurs, isLoading: isLoadingValeurs } = useIndicateurValeurs({
     collectiviteId,
     indicateurIds: indicateurId ? [indicateurId] : undefined,
+    sources: sourceFilter.sources?.join(','),
   });
 
   // sépare objectifs et résultats
   const rawData = valeurs?.indicateurs?.[0];
-  const objectifs = prepareData(rawData, 'objectif');
-  const resultats = prepareData(rawData, 'resultat');
+  const objectifs = prepareData(
+    rawData,
+    'objectif',
+    sourceFilter.avecDonneesCollectivite
+  );
+  const resultats = prepareData(
+    rawData,
+    'resultat',
+    sourceFilter.avecDonneesCollectivite
+  );
 
   // pour les agrégations il faut aussi charger les valeurs des sous-indicateurs
   const indicateurIds =
@@ -42,6 +53,7 @@ export const useIndicateurChartInfo = ({
     useIndicateurValeurs({
       collectiviteId,
       indicateurIds,
+      sources: sourceFilter.sources?.join(','),
     });
 
   // charge aussi les définitions détaillées des enfants pour avoir les
@@ -87,6 +99,7 @@ export const useIndicateurChartInfo = ({
     enfantsParSegmentation?.find(
       ({ segmentation: segment }) => segment === segmentation
     )?.indicateurs || [];
+
   const data = {
     unite,
     valeurs: { objectifs, resultats, segments },
@@ -120,8 +133,8 @@ export const useIndicateurChartInfo = ({
   // détermine si l'indicateur a au moins une valeur résultat ou objectif saisie
   // par la collectivité
   const hasValeurCollectivite =
-    objectifs.donneesCollectivite.valeurs.length +
-      resultats.donneesCollectivite.valeurs.length >
+    (objectifs.donneesCollectivite?.valeurs.length ?? 0) +
+      (resultats.donneesCollectivite?.valeurs.length ?? 0) >
     0;
 
   // détermine si l'indicateur a au moins une valeur
@@ -135,6 +148,7 @@ export const useIndicateurChartInfo = ({
     segmentation,
     setSegmentation,
     segmentItemParId,
+    sourceFilter,
     data,
     hasValeurCollectivite,
     hasValeur,
