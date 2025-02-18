@@ -56,9 +56,11 @@ export const IndicateurTable = (props: IndicateurTableProps) => {
           ]}
         />
         {/** pour ouvrir le dialogue d'édition des valeurs */}
+        {chartInfo.sourceFilter.avecDonneesCollectivite && (
         <Button size="sm" onClick={() => setIsOpen(true)} disabled={readonly}>
           Ajouter une année
         </Button>
+        )}
       </div>
       {/** tableau pour le type de valeurs (objectif | résultat) sélectionné */}
       <IndicateurValeursTable {...props} data={data} type={type} />
