@@ -167,7 +167,7 @@ function prepareEnfantsParSegmentation(
     }
 
     // et transformées pour l'affichage
-    const data = prepareData(valeursEnfant, type);
+    const data = prepareData(valeursEnfant, type, false);
 
     // sélectionne la source la plus appropriée
     const sourceValeursEnfant = data.sources

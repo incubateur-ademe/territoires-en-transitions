@@ -10,7 +10,8 @@ type IndicateurData =
 /** Prépare les données pour l'affichage dans le tableau */
 export const prepareData = (
   data: IndicateurData | undefined,
-  type: SourceType
+  type: SourceType,
+  avecDonneesCollectiviteVides: boolean
 ) => {
   // conserve uniquement les sources ayant des valeurs pour le type de données voulu
   const { collectivite, ...autresSources } = data?.sources || {};
@@ -59,8 +60,9 @@ export const prepareData = (
 
   // ajoute une source vide pour les données de la collectivité si elles n'existent pas
   // afin que la ligne soit toujours affichée dans le tableau
+  // (sauf si le flag `avecDonneesCollectiviteVides` n'est pas activé)
   let donneesCollectivite = sources?.find((s) => s.source === 'collectivite');
-  if (!donneesCollectivite) {
+  if (!donneesCollectivite && avecDonneesCollectiviteVides) {
     donneesCollectivite = {
       source: 'collectivite',
       valeurs: [],
@@ -74,7 +76,7 @@ export const prepareData = (
   // dernière année pour laquelle le résultat peut être en mode privé
   let anneeModePrive: number | undefined;
   if (type === 'resultat') {
-    anneeModePrive = donneesCollectivite.valeurs
+    anneeModePrive = donneesCollectivite?.valeurs
       .filter((v) => v.valeur ?? false)
       .map((v) => v.annee)
       .sort()
