@@ -27,11 +27,12 @@ export default function Layout({ tabs }: { tabs: ReactNode }) {
     return (
       <>
         <Title referentielId={referentielId} />
-        <main
-          className="fr-container mt-9 mb-16"
-          data-test={`labellisation-${referentielId}`}
+        <PageContainer
+          dataTest={`labellisation-${referentielId}`}
+          bgColor="white"
+          innerContainerClassName="pt-8 pb-16"
         >
-          <p>
+          <p className="text-center">
             Ce référentiel n’est pas encore renseigné pour votre collectivité.
             Pour commencer à visualiser votre progression, mettez à jour les
             statuts des actions.
@@ -48,7 +49,7 @@ export default function Layout({ tabs }: { tabs: ReactNode }) {
               Mettre à jour le référentiel
             </Link>
           </div>
-        </main>
+        </PageContainer>
       </>
     );
   }
