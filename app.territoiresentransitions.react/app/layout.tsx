@@ -1,6 +1,7 @@
 import { getCookieOptions } from '@/api/utils/supabase/cookie-options';
 import { SupabaseProvider } from '@/api/utils/supabase/use-supabase';
 import { E2EProvider } from '@/app/app/E2E';
+import Footer from '@/app/app/Layout/Footer';
 import { TrackingProvider } from '@/ui';
 import { Metadata } from 'next';
 import nextDynamic from 'next/dynamic';
@@ -80,16 +81,17 @@ export default async function RootLayout({
     <html lang="fr" translate="no" data-fr-scheme="light">
       <body>
         <div id="root">
-          {/* L'utilisation de overflow-hidden ou overflow-auto sur le container
-           /* empêche l'utilisation de la propriété sticky dans l'app */}
-          <div className="h-screen w-screen flex flex-col">
-            <div id="main" className="grow flex flex-col w-full">
-              <SupabaseProvider cookieOptions={supabaseCookieOptions}>
-                <E2EProvider />
-                <TrackingProvider>{children}</TrackingProvider>
-              </SupabaseProvider>
-            </div>
-          </div>
+          <SupabaseProvider cookieOptions={supabaseCookieOptions}>
+            <E2EProvider />
+            <TrackingProvider>
+              {/* L'utilisation de overflow-hidden ou overflow-auto sur le container
+              /* empêche l'utilisation de la propriété sticky dans l'app */}
+              <div id="main" className="min-h-screen flex flex-col">
+                <div className="flex flex-col grow">{children}</div>
+                <Footer />
+              </div>
+            </TrackingProvider>
+          </SupabaseProvider>
         </div>
         <CrispWithNoSSR />
         <StonlyWidget />

@@ -1,6 +1,5 @@
 import { fetchUserDetails } from '@/api/users/user-details.fetch.server';
 import { getAuthUser } from '@/api/utils/supabase/auth-user.server';
-import Footer from '@/app/app/Layout/Footer';
 import Header from '@/app/app/Layout/Header';
 import { redirect } from 'next/navigation';
 import { ReactNode } from 'react';
@@ -19,7 +18,6 @@ export default async function Layout({ children }: { children: ReactNode }) {
     <AppProviders user={user}>
       <Header />
       {children}
-      <Footer />
     </AppProviders>
   );
 }
