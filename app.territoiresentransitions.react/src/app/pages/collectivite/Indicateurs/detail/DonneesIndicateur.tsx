@@ -63,6 +63,7 @@ const DonneesIndicateur = ({
         {/* Tableau */}
         <IndicateurValuesTabs
           definition={definition}
+          chartInfo={chartInfo}
           openModalState={{
             isOpen: isTableModalOpen,
             setIsOpen: setIsTableModalOpen,
