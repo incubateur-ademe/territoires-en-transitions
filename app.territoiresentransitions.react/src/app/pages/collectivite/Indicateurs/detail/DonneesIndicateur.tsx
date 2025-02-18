@@ -6,6 +6,7 @@ import IndicateurDetailChart from '../Indicateur/detail/IndicateurDetailChart';
 import { IndicateurValuesTabs } from '../Indicateur/detail/IndicateurValuesTabs';
 import { TIndicateurDefinition } from '../types';
 import DescriptionIndicateurInput from './DescriptionIndicateurInput';
+import { IndicateurSourcesSelect } from './indicateur-sources.select';
 import ThematiquesIndicateurInput from './ThematiquesIndicateurInput';
 import UniteIndicateurInput from './UniteIndicateurInput';
 
@@ -42,6 +43,11 @@ const DonneesIndicateur = ({
           updateUnite={updateUnite}
           disabled={isReadonly}
         />
+      )}
+
+      {/** Sélecteur de sources de données */}
+      {!isPerso && (
+        <IndicateurSourcesSelect sourceFilter={chartInfo.sourceFilter} />
       )}
 
       {/* Graphe */}
