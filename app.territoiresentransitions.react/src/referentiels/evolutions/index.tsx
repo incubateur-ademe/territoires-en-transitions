@@ -122,5 +122,3 @@ export const ScoreEvolutions = () => {
     </>
   );
 };
-
-export default ScoreEvolutions;

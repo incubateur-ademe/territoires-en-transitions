@@ -9,10 +9,10 @@ type ContextProps = {
 const CollectiviteContext = createContext<ContextProps | null>(null);
 
 export function CollectiviteProvider({
-  unsafeCollectiviteId,
+  collectiviteId: unsafeCollectiviteId,
   children,
 }: {
-  unsafeCollectiviteId: number;
+  collectiviteId: number;
   children: ReactNode;
 }) {
   const collectiviteId = z.coerce.number().parse(unsafeCollectiviteId);
