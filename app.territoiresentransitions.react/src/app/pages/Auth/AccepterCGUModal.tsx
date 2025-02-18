@@ -1,6 +1,6 @@
 import { useUser } from '@/api/users/user-provider';
 import { useSupabase } from '@/api/utils/supabase/use-supabase';
-import Modal from '@/app/ui/shared/floating-ui/Modal';
+import { Button, Modal, ModalFooter } from '@/ui';
 import { useState } from 'react';
 import { useMutation, useQueryClient } from 'react-query';
 import { ReactComponent as ContractSVG } from './contract.svg';
@@ -8,43 +8,6 @@ import { ReactComponent as ContractSVG } from './contract.svg';
 export type TAccepterCGUProps = {
   isLoading?: boolean;
   onOK: () => void;
-};
-
-/**
- * Affiche le contenu de la modale d'acceptation des CGU
- */
-export const AccepterCGUContent = (props: TAccepterCGUProps) => {
-  const { isLoading, onOK } = props;
-  return (
-    <div className="fr-mb-4w" data-test="AccepterCGU">
-      <div className="flex flex-col fr-mb-2w">
-        <ContractSVG className="self-center" />
-      </div>
-      <h4>Mise à jour des conditions générales d’utilisation </h4>
-      <p>
-        Pour continuer à utiliser la plateforme territoiresentransitions.fr,
-        nous vous invitons à accepter les conditions générales d’utilisation.
-      </p>
-      <p>
-        <a
-          target="_blank"
-          rel="noopener noreferrer"
-          className="text-bf500"
-          href="https://territoiresentransitions.fr/cgu"
-        >
-          Lire les conditions générales
-        </a>
-      </p>
-      <button
-        className="fr-btn fr-btn--icon-right fr-fi-arrow-right-line"
-        data-test="AccepterCGUBtn"
-        disabled={isLoading}
-        onClick={onOK}
-      >
-        Accepter et poursuivre
-      </button>
-    </div>
-  );
 };
 
 /**
@@ -58,19 +21,49 @@ const AccepterCGUModal = () => {
     return null;
   }
 
-  const accepterCGU = () => {
-    mutate();
-    setOpened(false);
-  };
-
   return (
     <Modal
       size="lg"
-      externalOpen={opened}
+      openState={{ isOpen: opened, setIsOpen: setOpened }}
       disableDismiss
       noCloseButton
+      dataTest="AccepterCGU"
       render={() => (
-        <AccepterCGUContent onOK={accepterCGU} isLoading={isLoading} />
+        <>
+          <ContractSVG className="self-center" />
+          <h4 className="mb-0">
+            Mise à jour des conditions générales d’utilisation{' '}
+          </h4>
+          <p className="mb-0">
+            Pour continuer à utiliser la plateforme territoiresentransitions.fr,
+            nous vous invitons à accepter les conditions générales
+            d’utilisation.
+          </p>
+        </>
+      )}
+      renderFooter={() => (
+        <ModalFooter>
+          <Button
+            href="https://territoiresentransitions.fr/cgu"
+            external
+            variant="underlined"
+            className="mr-4"
+          >
+            Lire les conditions générales
+          </Button>
+          <Button
+            data-test="AccepterCGUBtn"
+            icon="arrow-right-line"
+            iconPosition="right"
+            disabled={isLoading}
+            onClick={() => {
+              mutate();
+              setOpened(false);
+            }}
+          >
+            Accepter et poursuivre
+          </Button>
+        </ModalFooter>
       )}
     />
   );
