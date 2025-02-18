@@ -44,6 +44,7 @@ const IndicateurDetailChart = ({
     setSegmentation,
     hasValeur,
     isLoading,
+    sourceFilter,
   } = chartInfo;
 
   return hasValeur ? (
@@ -92,16 +93,27 @@ const IndicateurDetailChart = ({
       size="xs"
       className="h-64 w-full"
       picto={(props) => <PictoIndicateurVide {...props} />}
-      title="Aucune valeur n'est associée aux résultats ou aux objectifs de la collectivité !"
+      title={
+        sourceFilter.avecDonneesCollectivite
+          ? "Aucune valeur n'est associée aux résultats ou aux objectifs de la collectivité !"
+          : 'Aucune valeur trouvée'
+      }
       actions={
-        !isReadonly && onAddValue
-          ? [
+        sourceFilter.avecDonneesCollectivite
+          ? !isReadonly && onAddValue
+            ? [
+                {
+                  children: 'Ajouter une valeur',
+                  onClick: () => onAddValue(),
+                },
+              ]
+            : undefined
+          : [
               {
-                children: 'Ajouter une valeur',
-                onClick: () => onAddValue(),
+                children: 'Supprimer tous les filtres',
+                onClick: () => sourceFilter.setFiltresSource([]),
               },
             ]
-          : undefined
       }
     />
   );
