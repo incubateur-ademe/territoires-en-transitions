@@ -355,6 +355,7 @@ export const SubActionStatutDropdown = ({
           onOpenScoreAuto={() => setOpenScoreAuto(true)}
         />
       )}
+      {/* <AvancementDetailleModal action={actionDefinition} /> */}
     </div>
   );
 };
