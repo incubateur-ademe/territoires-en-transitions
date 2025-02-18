@@ -7,19 +7,10 @@ import { Toasters } from '@/app/app/Toasters';
 import { VisitTracker } from '@/app/app/VisitTracker';
 import AccepterCGUModal from '@/app/app/pages/Auth/AccepterCGUModal';
 import { ScoreListenerProvider } from '@/app/referentiels/DEPRECATED_use-score-listener';
-import { createTheme, ThemeProvider } from '@mui/material/styles';
 import posthog from 'posthog-js';
 import { ReactNode } from 'react';
 import { QueryClient, QueryClientProvider } from 'react-query';
 import { ReactQueryDevtools } from 'react-query/devtools';
-
-const theme = createTheme({
-  palette: {
-    primary: {
-      main: '#000091',
-    },
-  },
-});
 
 const queryClient = new QueryClient();
 
@@ -57,10 +48,8 @@ export default function AppProviders({
           <ScoreListenerProvider>
             <VisitTracker />
             <AccepterCGUModal />
-            <ThemeProvider theme={theme}>
-              <ReactQueryDevtools initialIsOpen={false} />
-              {children}
-            </ThemeProvider>
+            <ReactQueryDevtools initialIsOpen={false} />
+            {children}
           </ScoreListenerProvider>
         </QueryClientProvider>
       </TRPCProvider>
