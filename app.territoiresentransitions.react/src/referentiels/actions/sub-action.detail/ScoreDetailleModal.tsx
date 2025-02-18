@@ -1,7 +1,6 @@
 import { avancementToLabel } from '@/app/app/labels';
 import { actionAvancementColors } from '@/app/app/theme';
 import { ActionDefinitionSummary } from '@/app/referentiels/ActionDefinitionSummaryReadEndpoint';
-import { DetailedScore } from '@/app/referentiels/actions/sub-action.detail/DetailedScore';
 import {
   useActionJustification,
   useSaveActionJustification,
@@ -16,7 +15,9 @@ import {
   getStatusFromIndex,
 } from '../../utils';
 import ActionJustification from '../sub-action/sub-action-justification';
-import { AvancementValues } from './DetailedScoreSlider';
+import AvancementDetailleSlider, {
+  AvancementValues,
+} from './avancement-detaille.slider';
 
 type ScoreDetailleModalProps = {
   actionDefinition: ActionDefinitionSummary;
@@ -118,15 +119,16 @@ const ScoreDetailleModal = ({
             <hr className="p-1" />
 
             <div className="w-full flex flex-col">
-              {/* Slider du score et détails */}
-              <DetailedScore
+              {/* Slider du statut avancé*/}
+              <AvancementDetailleSlider
+                className="my-8"
                 avancement={currentAvancement}
-                setCurrentAvancement={setCurrentAvancement}
+                onChange={setCurrentAvancement}
               />
 
               {/* Message d'info pour les tâches */}
               {actionDefinition.type === 'tache' && (
-                <p className="mb-16">
+                <p className="mb-0">
                   Pour faciliter la relecture, vous pouvez préciser les raisons
                   de cette répartition en cliquant sur le bouton{' '}
                   <span
