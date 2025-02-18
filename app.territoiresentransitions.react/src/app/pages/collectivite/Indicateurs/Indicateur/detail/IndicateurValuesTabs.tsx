@@ -1,6 +1,7 @@
 import { useCurrentCollectivite } from '@/app/core-logic/hooks/useCurrentCollectivite';
 import { Alert } from '@/ui';
 import { OpenState } from '@/ui/utils/types';
+import { IndicateurChartInfo } from '../../data/use-indicateur-chart';
 import { IndicateurTable } from '../../table/indicateur-table';
 import { TIndicateurDefinition } from '../../types';
 
@@ -10,9 +11,11 @@ const ID_SEQUESTRATION = 'cae_63.';
 /** Affiche les onglets résultats/objectifs */
 export const IndicateurValuesTabs = ({
   definition,
+  chartInfo,
   openModalState,
 }: {
   definition: TIndicateurDefinition;
+  chartInfo: IndicateurChartInfo;
   openModalState?: OpenState;
 }) => {
   const collectivite = useCurrentCollectivite();
@@ -34,6 +37,7 @@ export const IndicateurValuesTabs = ({
       )}
       {!!collectivite?.collectiviteId && (
         <IndicateurTable
+          chartInfo={chartInfo}
           collectiviteId={collectivite.collectiviteId}
           definition={definition}
           confidentiel={confidentiel}

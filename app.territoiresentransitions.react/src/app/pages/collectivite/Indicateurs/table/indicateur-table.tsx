@@ -1,14 +1,14 @@
 import { Button, ButtonGroup } from '@/ui';
 import { OpenState } from '@/ui/utils/types';
 import { useEffect, useState } from 'react';
-import { prepareData } from '../data/prepare-data';
-import { useIndicateurValeurs } from '../data/use-indicateur-valeurs';
+import { IndicateurChartInfo } from '../data/use-indicateur-chart';
 import { SourceType, TIndicateurDefinition } from '../types';
 import { EditValeursModal } from './edit-valeurs-modal';
 import { IndicateurValeursTable } from './indicateur-valeurs-table';
 import { PrivateModeSwitch } from './private-mode-switch';
 
 export type IndicateurTableProps = {
+  chartInfo: IndicateurChartInfo;
   collectiviteId: number;
   definition: TIndicateurDefinition;
   readonly?: boolean;
@@ -20,15 +20,14 @@ export type IndicateurTableProps = {
  * Affiche les boutons et le tableau des valeurs d'un indicateur
  */
 export const IndicateurTable = (props: IndicateurTableProps) => {
-  const { collectiviteId, definition, readonly, openModalState } = props;
-  const { data: valeurs } = useIndicateurValeurs({
-    collectiviteId,
-    indicateurIds: [definition.id],
-  });
+  const { chartInfo, collectiviteId, definition, readonly, openModalState } =
+    props;
 
   const [type, setType] = useState<SourceType>('resultat');
-  const rawData = valeurs?.indicateurs?.[0];
-  const data = prepareData(rawData, type);
+  const data =
+    type === 'resultat'
+      ? chartInfo.data.valeurs.resultats
+      : chartInfo.data.valeurs.objectifs;
 
   const [isOpen, setIsOpen] = useState(openModalState?.isOpen ?? false);
 
