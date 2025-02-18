@@ -3,7 +3,7 @@ import { ExportIndicateursPageName } from '@/app/app/pages/collectivite/Indicate
 import FilterBadges, {
   CustomFilterBadges,
   useFiltersToBadges,
-} from '@/app/ui/shared/filters/filter-badges';
+} from '@/app/ui/lists/filter-badges';
 import ExportButton from './export-button';
 
 type Props = {

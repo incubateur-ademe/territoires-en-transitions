@@ -8,10 +8,8 @@ import { usePlansActionsListe } from '@/app/app/pages/collectivite/PlansActions/
 import PlanActionCard from '@/app/app/pages/collectivite/PlansActions/PlanAction/list/card/PlanActionCard';
 import { ModuleDisplay } from '@/app/app/pages/collectivite/TableauDeBord/components/Module';
 import { makeCollectivitePlanActionUrl } from '@/app/app/paths';
+import FilterBadges, { useFiltersToBadges } from '@/app/ui/lists/filter-badges';
 import PictoDocument from '@/app/ui/pictogrammes/PictoDocument';
-import FilterBadges, {
-  useFiltersToBadges,
-} from '@/app/ui/shared/filters/filter-badges';
 import SpinnerLoader from '@/app/ui/shared/SpinnerLoader';
 import { Button, ButtonGroup, Pagination, Select } from '@/ui';
 import { OpenState } from '@/ui/utils/types';
