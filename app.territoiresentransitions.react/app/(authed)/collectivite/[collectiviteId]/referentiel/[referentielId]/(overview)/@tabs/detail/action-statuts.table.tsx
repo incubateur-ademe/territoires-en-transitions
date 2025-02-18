@@ -3,7 +3,7 @@
 import { DetailTacheTable } from '@/app/referentiels/DetailTaches/DetailTacheTable';
 import { noFilters } from '@/app/referentiels/DetailTaches/filters';
 import { useTableData } from '@/app/referentiels/DetailTaches/useTableData';
-import { DesactiverLesFiltres } from '@/app/ui/shared/filters/DesactiverLesFiltres';
+import { DeleteFiltersButton } from '@/app/ui/lists/filter-badges/delete-filters.button';
 
 export const ActionStatutsTable = () => {
   const tableData = useTableData();
@@ -25,7 +25,7 @@ export const ActionStatutsTable = () => {
         {filtersCount} {labelFilters} ; {sousActionsCount} {labelSousActions}{' '}
         sur {sousActionsTotal} ; {count} {labelTaches} sur {total}
         {filtersCount > 0 && (
-          <DesactiverLesFiltres
+          <DeleteFiltersButton
             className="ml-5"
             onClick={() => setFilters(noFilters)}
           />
