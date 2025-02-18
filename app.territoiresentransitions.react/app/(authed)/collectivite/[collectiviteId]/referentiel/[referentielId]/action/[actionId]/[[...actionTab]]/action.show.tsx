@@ -190,7 +190,7 @@ const ActionShow = ({
             '...'
           )}
         </Tab>
-        <Tab label="Historique" icon="history">
+        <Tab label="Historique" icon="time">
           {activeTab === TABS_INDEX['historique'] ? (
             <HistoriqueListe actionId={actionDefinition.id} />
           ) : (
