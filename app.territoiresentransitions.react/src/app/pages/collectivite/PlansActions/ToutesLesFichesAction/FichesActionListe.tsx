@@ -22,7 +22,7 @@ import { useCollectiviteId } from '@/app/core-logic/hooks/params';
 import FilterBadges, {
   CustomFilterBadges,
   useFiltersToBadges,
-} from '@/app/ui/shared/filters/filter-badges';
+} from '@/app/ui/lists/filter-badges';
 import { isEqual } from 'es-toolkit';
 import { FicheResume } from 'packages/api/src/plan-actions';
 import ActionsGroupeesMenu from '../ActionsGroupees/ActionsGroupeesMenu';

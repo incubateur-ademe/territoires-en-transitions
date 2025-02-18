@@ -20,7 +20,7 @@ import BadgeList from '@/app/app/pages/collectivite/Indicateurs/lists/indicateur
 import { useFilteredIndicateurDefinitions } from '@/app/app/pages/collectivite/Indicateurs/lists/useFilteredIndicateurDefinitions';
 import { makeCollectiviteIndicateursUrl } from '@/app/app/paths';
 import { useCurrentCollectivite } from '@/app/core-logic/hooks/useCurrentCollectivite';
-import { CustomFilterBadges } from '@/app/ui/shared/filters/filter-badges';
+import { CustomFilterBadges } from '@/app/ui/lists/filter-badges';
 import { OpenState } from '@/ui/utils/types';
 import classNames from 'classnames';
 

@@ -12,12 +12,7 @@ type BadgesContainerProps = {
     label?: string;
     state?: BadgeProps['state'];
   };
-  endButtonBadge?: {
-    dataTest?: string;
-    title: string;
-    onClick: () => void;
-    props?: Omit<BadgeProps, 'title'>;
-  };
+  endButtonBadge?: React.ReactNode;
   className?: string;
   resetFilters?: () => void;
 };
@@ -75,18 +70,7 @@ export const BadgesContainer = ({
           </div>
         </Tooltip>
       )}
-      {endButtonBadge && (
-        <button
-          onClick={endButtonBadge.onClick}
-          data-test={endButtonBadge.dataTest}
-        >
-          <Badge
-            {...badgeProps}
-            {...endButtonBadge.props}
-            title={endButtonBadge.title}
-          />
-        </button>
-      )}
+      {endButtonBadge}
     </div>
   );
 };

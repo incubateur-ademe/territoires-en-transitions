@@ -4,7 +4,7 @@ import { getDisplayButtons } from '@/app/app/pages/collectivite/TableauDeBord/co
 import FilterBadges, {
   BadgeFilters,
   useFiltersToBadges,
-} from '@/app/ui/shared/filters/filter-badges';
+} from '@/app/ui/lists/filter-badges';
 import SpinnerLoader from '@/app/ui/shared/SpinnerLoader';
 import { createEnumObject } from '@/domain/utils';
 import {
