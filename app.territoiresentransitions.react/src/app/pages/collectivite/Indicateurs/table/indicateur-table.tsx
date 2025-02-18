@@ -22,12 +22,9 @@ export type IndicateurTableProps = {
 export const IndicateurTable = (props: IndicateurTableProps) => {
   const { chartInfo, collectiviteId, definition, readonly, openModalState } =
     props;
-
   const [type, setType] = useState<SourceType>('resultat');
-  const data =
-    type === 'resultat'
-      ? chartInfo.data.valeurs.resultats
-      : chartInfo.data.valeurs.objectifs;
+  const valeurs = chartInfo.data.valeurs;
+  const data = type === 'resultat' ? valeurs.resultats : valeurs.objectifs;
 
   const [isOpen, setIsOpen] = useState(openModalState?.isOpen ?? false);
 
@@ -45,21 +42,21 @@ export const IndicateurTable = (props: IndicateurTableProps) => {
           buttons={[
             {
               id: 'resultat',
-              children: 'Mes résultats',
+              children: 'Résultats',
               onClick: () => setType('resultat'),
             },
             {
               id: 'objectif',
-              children: 'Mes objectifs',
+              children: 'Objectifs',
               onClick: () => setType('objectif'),
             },
           ]}
         />
         {/** pour ouvrir le dialogue d'édition des valeurs */}
         {chartInfo.sourceFilter.avecDonneesCollectivite && (
-        <Button size="sm" onClick={() => setIsOpen(true)} disabled={readonly}>
-          Ajouter une année
-        </Button>
+          <Button size="sm" onClick={() => setIsOpen(true)} disabled={readonly}>
+            Ajouter une année
+          </Button>
         )}
       </div>
       {/** tableau pour le type de valeurs (objectif | résultat) sélectionné */}
