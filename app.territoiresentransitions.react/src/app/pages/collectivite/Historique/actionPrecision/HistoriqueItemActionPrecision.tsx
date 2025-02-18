@@ -13,7 +13,6 @@ const HistoriqueItemActionPrecision = (props: THistoriqueItemProps) => {
   return (
     <Modification
       historique={item}
-      icon="fr-fi-information-fill"
       nom="Action : texte modifié"
       detail={<HistoriqueItemActionPrecisionDetails item={item} />}
       {...getItemActionProps(item)}

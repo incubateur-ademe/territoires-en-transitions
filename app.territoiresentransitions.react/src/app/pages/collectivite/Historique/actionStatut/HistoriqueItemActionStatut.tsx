@@ -17,7 +17,6 @@ const HistoriqueItemActionStatut = (props: THistoriqueItemProps) => {
   return (
     <Modification
       historique={item}
-      icon="fr-fi-information-fill"
       nom="Action : statut modifié"
       detail={<HistoriqueItemActionStatutDetails {...props} />}
       {...getItemActionProps(item)}
