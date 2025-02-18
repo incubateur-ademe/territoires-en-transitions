@@ -1,7 +1,9 @@
-import { Modal } from '@/ui';
-import { Dispatch, SetStateAction, useState } from 'react';
-import { useAddRapportVisite } from './useAddRapportVisite';
 import { AddPreuveModal } from '@/app/referentiels/preuves/AddPreuveModal';
+import { Button, Field, Modal } from '@/ui';
+import { InputDate } from '@/ui/design-system/Input/InputDate';
+import { format } from 'date-fns';
+import { Dispatch, SetStateAction, useRef, useState } from 'react';
+import { useAddRapportVisite } from './useAddRapportVisite';
 
 /**
  * Affiche un bouton permettant d'ouvrir le sélecteur de fichiers pour ajouter
@@ -27,6 +29,11 @@ export const AddRapportVisite = () => {
       size="lg"
       openState={{ isOpen: opened, setIsOpen: onSetOpened }}
       title="Ajouter un rapport de visite annuelle"
+      subTitle={
+        date
+          ? `Date de la visite : ${format(new Date(date), 'dd/MM/yyyy')}`
+          : undefined
+      }
       render={({ close }) => {
         return !date ? (
           <SelectDate setDate={setDate} />
@@ -35,13 +42,15 @@ export const AddRapportVisite = () => {
         );
       }}
     >
-      <button
-        data-test="AddDocsButton"
-        className="fr-btn fr-btn--sm fr-btn--secondary"
+      <Button
+        dataTest="AddDocsButton"
+        icon="add-line"
+        variant="outlined"
+        size="sm"
         onClick={() => setOpened(true)}
       >
-        +&nbsp;Ajouter
-      </button>
+        Ajouter
+      </Button>
     </Modal>
   );
 };
@@ -50,32 +59,26 @@ export const AddRapportVisite = () => {
 const SelectDate = ({ setDate }: { setDate: (value: string) => void }) => {
   const [isValid, setIsValid] = useState(false);
   const [value, setValue] = useState('');
+  const inputRef = useRef<HTMLInputElement>(null);
 
   return (
-    <fieldset className="fr-fieldset h-52" data-test="date-visite">
-      <label className="fr-label mb-2 fr-mr-2w">
-        Date de la visite annuelle (obligatoire)
-      </label>
-      <div className="fr-input-wrap fr-fi-calendar-line max-w-min">
-        <input
-          className="fr-input"
-          type="date"
-          required
+    <>
+      <Field
+        data-test="date-visite"
+        title="Date de la visite annuelle (obligatoire)"
+      >
+        <InputDate
+          ref={inputRef}
           pattern="\d{4}-\d{2}-\d{2}"
           onChange={(e) => {
             setIsValid(e.target.validity.valid || false);
             setValue(e.target.value || '');
           }}
         />
-      </div>
-      <br />
-      <button
-        className="fr-btn fr-mt-2w fr-ml-2w"
-        disabled={!isValid}
-        onClick={() => value && setDate(value)}
-      >
+      </Field>
+      <Button disabled={!isValid} onClick={() => value && setDate(value)}>
         Ajouter le rapport
-      </button>
-    </fieldset>
+      </Button>
+    </>
   );
 };
