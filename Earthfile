@@ -596,8 +596,7 @@ auth-run: ## construit et lance l'image du module d'authentification en local
         --publish 3003:80 \
         --env NEXT_PUBLIC_SUPABASE_ANON_KEY=$ANON_KEY \
         --env NEXT_PUBLIC_SUPABASE_URL=$API_URL \
-        --env NEXT_PUBLIC_APP_URL=$APP_URL \
-        --env NEXT_PUBLIC_PANIER_URL=$PANIER_URL \
+        --env NEXT_PUBLIC_APP_URL=http://app_tet:3000 \
         $AUTH_IMG_NAME
     END
 

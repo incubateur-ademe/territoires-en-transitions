@@ -122,8 +122,7 @@ run:
       --env NODE_ENV=production \
       --env NEXT_PUBLIC_SUPABASE_ANON_KEY=$ANON_KEY \
       --env NEXT_PUBLIC_SUPABASE_URL=$API_URL \
-      --env NEXT_PUBLIC_AUTH_URL=http://localhost:3003 \
-      --env NEXT_PUBLIC_PANIER_URL=$PANIER_URL \
-      --env NEXT_PUBLIC_BACKEND_URL=$BACKEND_URL \
+      --env NEXT_PUBLIC_AUTH_URL=http://auth_tet \
+      --env NEXT_PUBLIC_BACKEND_URL=http://localhost:8080 \
       $APP_IMG_NAME
   END
