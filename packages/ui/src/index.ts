@@ -41,5 +41,8 @@ export * from './design-system/Tag';
 export * from './design-system/Textarea';
 export * from './design-system/Tooltip';
 
+// dossier shadcn
+export * from './shadcn/slider';
+
 // dossier utils
 export * from './utils/constants';
