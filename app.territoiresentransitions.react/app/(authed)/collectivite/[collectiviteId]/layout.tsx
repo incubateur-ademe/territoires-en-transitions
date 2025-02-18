@@ -11,7 +11,7 @@ export default async function Layout({
   const { collectiviteId } = await params;
 
   return (
-    <CollectiviteProvider unsafeCollectiviteId={collectiviteId}>
+    <CollectiviteProvider collectiviteId={collectiviteId}>
       {children}
     </CollectiviteProvider>
   );
