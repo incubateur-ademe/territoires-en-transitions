@@ -1,6 +1,6 @@
 'use client';
 
-import { DesactiverLesFiltres } from '@/app/ui/shared/filters/DesactiverLesFiltres';
+import { DeleteFiltersButton } from '@/app/ui/lists/filter-badges/delete-filters.button';
 import { Table } from './Table';
 import { noFilters } from './filters';
 import { useTableData } from './useTableData';
@@ -15,7 +15,7 @@ export const AuditSuivi = () => {
       <div className="mb-6">
         {filtersCount} {labelFilters}
         {filtersCount > 0 && (
-          <DesactiverLesFiltres
+          <DeleteFiltersButton
             className="ml-5"
             onClick={() => setFilters(noFilters)}
           />

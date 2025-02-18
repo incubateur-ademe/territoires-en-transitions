@@ -1,7 +1,7 @@
 import FiltreMembre from './FiltreMembre';
 import FiltreType from './FiltreType';
 
-import { DesactiverLesFiltres } from '@/app/ui/shared/filters/DesactiverLesFiltres';
+import { DeleteFiltersButton } from '@/app/ui/lists/filter-badges/delete-filters.button';
 import { TFilters, TInitialFilters } from '../filters';
 import { FiltreDateDebut, FiltreDateFin } from './FiltreDate';
 
@@ -37,7 +37,7 @@ const HistoriqueFiltres = ({
           <span className="text-sm text-gray-400">
             {itemsNumber} résultat{itemsNumber > 1 && 's'}
           </span>
-          <DesactiverLesFiltres onClick={() => setFilters(initialFilters)} />
+          <DeleteFiltersButton onClick={() => setFilters(initialFilters)} />
         </div>
       )}
     </div>
