@@ -1,7 +1,8 @@
 import { useCurrentCollectivite } from '@/app/core-logic/hooks/useCurrentCollectivite';
 import { useOngletTracker } from '@/app/core-logic/hooks/useOngletTracker';
 import { ActionDefinitionSummary } from '@/app/referentiels/ActionDefinitionSummaryReadEndpoint';
-import { ToolbarIconToggleButton } from '@/app/ui/buttons/ToolbarIconButton';
+import { Button, ButtonProps } from '@/ui';
+import classNames from 'classnames';
 import { useEffect, useState } from 'react';
 import {
   usePanelDispatch,
@@ -15,7 +16,8 @@ export type Props = {
 };
 
 // identifiant du panneau actif (correspond à l'identifiant de l'icône associée)
-type TPanelId = 'info' | 'question-answer';
+type PanelId = 'info' | 'question-answer';
+type PanelValue = PanelId | false;
 
 // correspondances entre les identifiants des panneaux et les identifiants de tracking
 const panelIdToTrackerId: Record<string, 'informations' | 'commentaires'> = {
@@ -31,7 +33,7 @@ export const ActionSidePanelToolbar = ({ action }: Props) => {
   const panelState = usePanelState();
   const panelDispatch = usePanelDispatch();
 
-  const [panelId, setPanelId] = useState<TPanelId | false>(false);
+  const [panelId, setPanelId] = useState<PanelValue>(false);
 
   const isReadonly = currentCollectivite?.isReadOnly ?? false;
 
@@ -69,8 +71,8 @@ export const ActionSidePanelToolbar = ({ action }: Props) => {
     }
   }, [panelId]);
 
-  const handleClick = (value: string | false) => {
-    setPanelId(value as TPanelId);
+  const handleClick = (value: PanelValue) => {
+    setPanelId(value as PanelId);
 
     // enregistre quand un panneau est ouvert
     const id = value && panelIdToTrackerId[value];
@@ -86,29 +88,62 @@ export const ActionSidePanelToolbar = ({ action }: Props) => {
 };
 
 type ToolbarProps = {
-  panelId: string | false;
-  onClick: (v: string | false) => void;
+  panelId: PanelValue;
+  onClick: (v: PanelValue) => void;
   isReadonly: boolean;
 };
 
 const Toolbar = ({ panelId, onClick, isReadonly }: ToolbarProps) => {
   return (
     <div className="flex gap-4">
-      <ToolbarIconToggleButton
-        icon="info"
+      <ToolbarButton
+        panelId="info"
+        isActive={panelId === 'info'}
+        iconFill="information-fill"
+        iconLine="information-line"
         title="Informations"
-        active={panelId}
-        onClick={onClick}
+        size="xs"
+        onToggle={onClick}
       />
       {!isReadonly && (
-        <ToolbarIconToggleButton
-          data-test="ActionDiscussionsButton"
-          icon="question-answer"
+        <ToolbarButton
+          dataTest="ActionDiscussionsButton"
+          panelId="question-answer"
+          isActive={panelId === 'question-answer'}
+          iconFill="question-answer-fill"
+          iconLine="question-answer-line"
           title="Commentaires"
-          active={panelId}
-          onClick={onClick}
+          size="xs"
+          onToggle={onClick}
         />
       )}
     </div>
+  );
+};
+
+const ToolbarButton = ({
+  isActive,
+  iconFill,
+  iconLine,
+  onToggle,
+  panelId,
+  ...props
+}: {
+  panelId: PanelId;
+  isActive: boolean;
+  iconFill: string;
+  iconLine: string;
+  onToggle: (v: PanelValue) => void;
+} & ButtonProps) => {
+  return (
+    <Button
+      icon={isActive ? iconFill : iconLine}
+      variant="grey"
+      className={classNames({
+        '!bg-grey-3 hover:!bg-grey-4': isActive,
+      })}
+      onClick={() => onToggle(isActive ? false : panelId)}
+      {...props}
+    />
   );
 };
