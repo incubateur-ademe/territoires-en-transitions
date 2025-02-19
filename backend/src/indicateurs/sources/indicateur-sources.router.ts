@@ -1,5 +1,6 @@
 import { TrpcService } from '@/backend/utils/trpc/trpc.service';
 import { Injectable } from '@nestjs/common';
+import { getAvailableSourcesRequestSchema } from './get-available-sources.request';
 import IndicateurSourcesService from './indicateur-sources.service';
 
 @Injectable()
@@ -11,7 +12,12 @@ export class IndicateurSourcesRouter {
 
   router = this.trpc.router({
     list: this.trpc.authedProcedure.query(() => {
-      return this.service.getSources();
+      return this.service.getAllSources();
     }),
+    available: this.trpc.authedProcedure
+      .input(getAvailableSourcesRequestSchema)
+      .query(({ input }) => {
+        return this.service.getAvailableSources(input);
+      }),
   });
 }
