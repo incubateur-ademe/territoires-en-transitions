@@ -4,6 +4,7 @@ import { useIndicateurSources } from './use-indicateur-sources';
 // liste des filtres sur les sources de données
 export const FILTRES_SOURCE = [
   'snbc',
+  'pcaet',
   'opendata',
   'collectivite',
   /*
@@ -30,9 +31,12 @@ export const useSourceFilter = () => {
     if (filtresSource.includes('snbc')) {
       sources.push('snbc');
     }
+    if (filtresSource.includes('pcaet')) {
+      sources.push('pcaet');
+    }
     if (filtresSource.includes('opendata')) {
       const openSourcesId = data
-        .filter((s) => s.id !== 'snbc')
+        .filter((s) => !FILTRES_SOURCE.includes(s.id as FiltresSource))
         .map((s) => s.id);
       sources.push(...openSourcesId);
     }
@@ -42,7 +46,8 @@ export const useSourceFilter = () => {
   }
 
   // indique si les données de la collectivité doivent être incluses
-  const avecDonneesCollectivite = !sources.length || sources.includes('collectivite');
+  const avecDonneesCollectivite =
+    !sources.length || sources.includes('collectivite');
 
   return {
     isLoading,
