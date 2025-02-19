@@ -5,6 +5,7 @@ import { defaultColors } from '@/app/ui/charts/chartsTheme';
 import BarChartCardWithSubrows, {
   TBarChartScoreTable,
 } from '@/app/ui/charts/old/BarChartCardWithSubrows';
+import { Button } from '@/ui';
 import { useReferentielId } from '../../referentiel-context';
 import { AuditComparaisonTable } from './AuditComparaisonTable';
 import { TScoreAuditRowData } from './types';
@@ -25,16 +26,17 @@ export const AuditComparaison = () => {
   return (
     <>
       <AuditComparaisonTable tableData={tableData} />
-      <button
-        data-test="export-audit-comp"
-        className="fr-btn fr-btn--icon-left fr-fi-download-line"
+      <Button
+        dataTest="export-audit-comp"
+        icon="download-line"
+        size="sm"
         disabled={isLoading}
         onClick={() => {
           exportAuditScores();
         }}
       >
         Exporter
-      </button>
+      </Button>
 
       <BarChartCardWithSubrows
         pageName="app/audit/comparaison"

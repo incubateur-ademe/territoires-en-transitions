@@ -1,6 +1,6 @@
 import { TAudit } from '@/app/referentiels/audits/types';
 import PreuveDoc from '@/app/referentiels/preuves/Bibliotheque/PreuveDoc';
-import { Modal, RenderProps } from '@/ui';
+import { Button, Modal, RenderProps } from '@/ui';
 import { AddRapportButton } from './AddRapportButton';
 import { useRapportsAudit } from './useAudit';
 
@@ -18,9 +18,9 @@ export const ValiderAudit = (props: TValiderAuditProps) => (
     disableDismiss
     render={(modalProps) => <ValiderAuditModal {...modalProps} {...props} />}
   >
-    <button className="fr-btn" data-test="ValiderAuditBtn">
-      Valider l'audit
-    </button>
+    <Button dataTest="ValiderAuditBtn" size="sm">
+      {"Valider l'audit"}
+    </Button>
   </Modal>
 );
 
@@ -56,27 +56,24 @@ export const ValiderAuditModal = (props: RenderProps & TValiderAuditProps) => {
           ))}
         </div>
       ) : null}
-      <p className="fr-mt-2w">
+      <p className="mt-4">
         {demande_id ? auditLabellisation : auditSansLabellisation}
       </p>
-      <div className="flex">
-        <button
-          data-test="validate"
-          className="fr-btn fr-btn--sm fr-mr-2w"
+      <div className="flex gap-4">
+        <Button
+          dataTest="validate"
+          size="sm"
           onClick={() => {
             onValidate(audit);
             close();
           }}
           disabled={!canValidate}
         >
-          Valider l'audit
-        </button>
-        <button
-          className="fr-btn fr-btn--sm fr-btn--secondary"
-          onClick={() => close()}
-        >
+          {"Valider l'audit"}
+        </Button>
+        <Button size="sm" variant="outlined" onClick={() => close()}>
           Annuler
-        </button>
+        </Button>
       </div>
     </div>
   );

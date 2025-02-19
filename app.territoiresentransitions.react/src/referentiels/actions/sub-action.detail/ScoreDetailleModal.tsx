@@ -8,7 +8,7 @@ import {
 import { useTasksScoreRepartition } from '@/app/referentiels/actions/use-task-scores';
 import ProgressBarWithTooltip from '@/app/referentiels/scores/progress-bar-with-tooltip';
 import Modal from '@/app/ui/shared/floating-ui/Modal';
-import classNames from 'classnames';
+import { Button } from '@/ui';
 import { Dispatch, SetStateAction, useEffect, useState } from 'react';
 import {
   AVANCEMENT_DETAILLE_PAR_STATUT,
@@ -153,20 +153,21 @@ const ScoreDetailleModal = ({
               {/* Boutons retour / enregistrement */}
               <div className="w-full flex justify-end gap-4 mt-12 mb-4">
                 {isScorePerso && (
-                  <button
+                  <Button
+                    icon="arrow-left-line"
+                    size="sm"
+                    variant="outlined"
                     onClick={() => {
                       if (onOpenScoreAuto) onOpenScoreAuto();
                       setExternalOpen(false);
                     }}
-                    className="fr-btn fr-btn--secondary fr-btn--icon-left fr-icon-arrow-left-line"
                   >
                     Revenir au score automatique
-                  </button>
+                  </Button>
                 )}
-                <button
-                  className={classNames('fr-btn', {
-                    'fr-btn--icon-left fr-fi-save-line': saveAtValidation,
-                  })}
+                <Button
+                  icon={saveAtValidation ? 'save-line' : undefined}
+                  size="sm"
                   onClick={() => {
                     onSaveScore(currentAvancement);
                     setExternalOpen(false);
@@ -182,7 +183,7 @@ const ScoreDetailleModal = ({
                       ? 'Enregistrer le score personnalisé'
                       : 'Enregistrer la répartition'
                     : 'Valider la répartition'}
-                </button>
+                </Button>
               </div>
             </div>
           </>

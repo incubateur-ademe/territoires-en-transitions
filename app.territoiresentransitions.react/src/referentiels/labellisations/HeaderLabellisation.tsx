@@ -1,6 +1,7 @@
 /**
  * Affiche l'en-tête de page contenant l'objectif et le bouton pour candidater
  */
+import { Button } from '@/ui';
 import PageContainer from '@/ui/components/layout/page-container';
 import { ReactNode, useState } from 'react';
 import { ValiderAudit } from '../audits/ValiderAudit';
@@ -61,31 +62,31 @@ export const HeaderLabellisation = (props: THeaderLabellisationProps) => {
         {status === 'non_demandee' && !isAuditeur ? (
           <>
             {etoiles === '1' && isCOT ? (
-              <button
-                className="fr-btn self-start fr-mr-2w"
-                data-test="1ereEtoileCOT"
+              <Button
+                dataTest="1ereEtoileCOT"
+                size="sm"
                 disabled={!peutDemanderEtoile}
                 onClick={() => setOpened_1ereEtoileCOT(true)}
               >
                 Demander la première étoile
-              </button>
+              </Button>
             ) : null}
-            <button
-              className="fr-btn self-start"
-              data-test="SubmitDemandeBtn"
+            <Button
+              dataTest="SubmitDemandeBtn"
+              size="sm"
               disabled={!canSubmitDemande}
               onClick={() => setOpened(true)}
             >
               {etoiles === '1' && !isCOT
                 ? 'Demander la première étoile'
                 : 'Demander un audit'}
-            </button>
+            </Button>
           </>
         ) : null}
         {peutCommencerAudit ? (
-          <button
-            className="fr-btn self-start"
-            data-test="StartAuditBtn"
+          <Button
+            dataTest="StartAuditBtn"
+            size="sm"
             onClick={() =>
               audit &&
               referentiel &&
@@ -96,8 +97,8 @@ export const HeaderLabellisation = (props: THeaderLabellisationProps) => {
               })
             }
           >
-            Commencer l'audit
-          </button>
+            {"Commencer l'audit"}
+          </Button>
         ) : null}
         {!!headerMessageContent && (
           <HeaderMessage>{headerMessageContent}</HeaderMessage>

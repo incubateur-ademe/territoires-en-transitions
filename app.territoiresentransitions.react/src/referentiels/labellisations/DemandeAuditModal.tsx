@@ -1,5 +1,5 @@
 import Modal from '@/app/ui/shared/floating-ui/Modal';
-import { Alert } from '@/ui';
+import { Alert, Button } from '@/ui';
 import classNames from 'classnames';
 import { useState } from 'react';
 import {
@@ -103,10 +103,10 @@ export const DemandeAuditModalContent = (
               </RadioButton>
             </fieldset>
             {aide}
-            <div className={classNames({ 'fr-mt-2w': !aide })}>
-              <button
-                className="fr-btn"
-                data-test="EnvoyerDemandeBtn"
+            <div className={classNames('flex gap-4', { 'mt-4': !aide })}>
+              <Button
+                dataTest="EnvoyerDemandeBtn"
+                size="sm"
                 disabled={!sujet}
                 onClick={() =>
                   sujet &&
@@ -119,13 +119,10 @@ export const DemandeAuditModalContent = (
                 }
               >
                 Envoyer ma demande
-              </button>
-              <button
-                className="fr-btn fr-btn--secondary fr-ml-4w"
-                onClick={onClose}
-              >
+              </Button>
+              <Button variant="outlined" size="sm" onClick={onClose}>
                 Annuler
-              </button>
+              </Button>
             </div>
           </>
         ) : null}

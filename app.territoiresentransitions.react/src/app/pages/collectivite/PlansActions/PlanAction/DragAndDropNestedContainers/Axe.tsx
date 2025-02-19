@@ -5,7 +5,7 @@ import { createPortal } from 'react-dom';
 
 import { useCurrentCollectivite } from '@/app/core-logic/hooks/useCurrentCollectivite';
 import IconDrag from '@/app/ui/icons/IconDrag';
-import IconFolderAddLine from '@/app/ui/icons/IconFolderAddLine';
+import { Button, Icon } from '@/ui';
 import { useCreateFicheResume } from '../../FicheAction/data/useCreateFicheResume';
 import { generateTitle } from '../../FicheAction/data/utils';
 import SupprimerAxeModal from '../SupprimerAxeModal';
@@ -108,7 +108,11 @@ const Axe = ({ plan, axe, axes, isAxePage, isReadonly }: Props) => {
           <DragOverlay dropAnimation={null}>
             <div className="opacity-80 cursor-grabbing">
               <div className="flex items-start w-[30rem] ml-4 p-2 rounded bg-white border border-gray-200">
-                <div className="mr-2 fr-icon-arrow-right-s-fill text-bf500" />
+                <Icon
+                  icon="arrow-right-s-fill"
+                  size="lg"
+                  className="mr-2 text-primary"
+                />
                 {generateTitle(axe.nom)}
               </div>
             </div>
@@ -146,16 +150,15 @@ const Axe = ({ plan, axe, axes, isAxePage, isReadonly }: Props) => {
             <div className="flex mr-3 group-hover:outline group-hover:outline-gray-100">
               <button
                 data-test="BoutonDeplierAxe"
-                className="p-0.5"
+                className={classNames('p-0.5 text-primary', {
+                  'rotate-90': isOpen && !isDragging,
+                })}
                 onClick={() => setIsOpen(!isOpen)}
               >
-                <div
-                  className={classNames(
-                    'h-6 fr-icon-arrow-right-s-fill text-bf500',
-                    {
-                      'rotate-90': isOpen && !isDragging,
-                    }
-                  )}
+                <Icon
+                  icon="arrow-right-s-fill"
+                  size="lg"
+                  className="text-primary"
                 />
               </button>
             </div>
@@ -167,17 +170,21 @@ const Axe = ({ plan, axe, axes, isAxePage, isReadonly }: Props) => {
             isReadonly={isReadonly}
           />
           {!isReadonly && (
-            <>
-              <button
-                className="invisible group-hover:visible fr-btn fr-btn--tertiary fr-btn--sm fr-icon-file-add-line ml-3 mt-1"
+            <div className="invisible group-hover:visible flex items-center gap-3 mt-1 ml-3">
+              <Button
+                icon="file-add-line"
+                variant="grey"
+                size="xs"
                 title="Créer une fiche"
                 onClick={() => {
                   setIsOpen(true);
                   createFicheResume();
                 }}
               />
-              <button
-                className="invisible group-hover:visible fr-btn fr-btn--tertiary fr-btn--sm ml-3 mt-1 !px-2"
+              <Button
+                icon="folder-add-line"
+                variant="grey"
+                size="xs"
                 title="Créer un sous-titre"
                 onClick={() => {
                   setIsOpen(true);
@@ -186,21 +193,21 @@ const Axe = ({ plan, axe, axes, isAxePage, isReadonly }: Props) => {
                     parent: axe.id,
                   });
                 }}
-              >
-                <IconFolderAddLine className="h-4 w-4 fill-bf500" />
-              </button>
+              />
               <SupprimerAxeModal
                 planId={plan.id}
                 axe={axe}
                 axeHasFiche={checkAxeHasFiche(axe, axes)}
               >
-                <button
-                  data-test="SupprimerAxeBouton"
-                  className="invisible group-hover:visible fr-btn fr-btn--tertiary fr-btn--sm fr-fi-delete-line ml-3 mt-1"
+                <Button
+                  dataTest="SupprimerAxeBouton"
+                  icon="delete-bin-line"
+                  variant="grey"
+                  size="xs"
                   title="Supprimer ce titre"
                 />
               </SupprimerAxeModal>
-            </>
+            </div>
           )}
         </div>
         {isDroppable && (

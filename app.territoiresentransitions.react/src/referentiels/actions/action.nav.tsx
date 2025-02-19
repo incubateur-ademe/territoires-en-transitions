@@ -1,4 +1,4 @@
-import Link from 'next/link';
+import { Button } from '@/ui';
 
 /**
  * Affiche les boutons "Action précédente" et "Action suivante" en haut de page
@@ -10,24 +10,29 @@ export const ActionTopNav = ({
   prevActionLink: string | undefined;
   nextActionLink: string | undefined;
 }) => (
-  <div className="min-h-[1.5rem] flex justify-between fr-text--sm !m-0 fr-mt-2w overflow-hidden">
-    {prevActionLink ? (
-      <Link
+  <div className="min-h-[1.5rem] flex justify-between overflow-hidden">
+    {!!prevActionLink && (
+      <Button
+        className="text-white border-b-white"
+        variant="underlined"
+        icon="arrow-left-line"
+        size="sm"
         href={prevActionLink}
-        className="fr-fi-arrow-left-line fr-btn--icon-left active-transparent"
       >
         Action précédente
-      </Link>
-    ) : (
-      <div />
+      </Button>
     )}
     {!!nextActionLink && (
-      <Link
+      <Button
+        className="ml-auto text-white border-b-white"
+        variant="underlined"
+        icon="arrow-right-line"
+        iconPosition="right"
+        size="sm"
         href={nextActionLink}
-        className="justify-self-end fr-fi-arrow-right-line fr-btn--icon-right active-transparent"
       >
         Action suivante
-      </Link>
+      </Button>
     )}
   </div>
 );
@@ -44,20 +49,24 @@ export const ActionBottomNav = ({
 }) => (
   <div className="flex justify-end mt-8 gap-4">
     {!!prevActionLink && (
-      <Link
+      <Button
+        variant="outlined"
+        icon="arrow-left-line"
+        size="sm"
         href={prevActionLink}
-        className="fr-btn fr-btn--secondary fr-fi-arrow-left-line fr-btn--icon-left"
       >
         Action précédente
-      </Link>
+      </Button>
     )}
     {!!nextActionLink && (
-      <Link
+      <Button
+        icon="arrow-right-line"
+        iconPosition="right"
+        size="sm"
         href={nextActionLink}
-        className="fr-btn fr-btn fr-fi-arrow-right-line fr-btn--icon-right"
       >
         Action suivante
-      </Link>
+      </Button>
     )}
   </div>
 );

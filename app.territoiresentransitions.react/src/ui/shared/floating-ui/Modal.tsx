@@ -1,4 +1,4 @@
-import React, {cloneElement, Dispatch, SetStateAction, useState} from 'react';
+import { Button } from '@/ui';
 import {
   FloatingFocusManager,
   FloatingOverlay,
@@ -11,6 +11,7 @@ import {
   useRole,
 } from '@floating-ui/react';
 import classNames from 'classnames';
+import React, { cloneElement, Dispatch, SetStateAction, useState } from 'react';
 
 export type RenderProps = {
   close: () => void;
@@ -67,7 +68,7 @@ const Modal = ({
     }
   };
 
-  const {refs, context} = useFloating({
+  const { refs, context } = useFloating({
     open: externalOpen ?? open,
     onOpenChange: handleOpenChange,
   });
@@ -76,10 +77,10 @@ const Modal = ({
   const labelId = `${id}-label`;
   const descriptionId = `${id}-description`;
 
-  const {getReferenceProps, getFloatingProps} = useInteractions([
+  const { getReferenceProps, getFloatingProps } = useInteractions([
     useClick(context),
     useRole(context),
-    useDismiss(context, {enabled: !disableDismiss}),
+    useDismiss(context, { enabled: !disableDismiss }),
   ]);
 
   return (
@@ -87,7 +88,7 @@ const Modal = ({
       {children &&
         cloneElement(
           children,
-          getReferenceProps({ref: refs.setReference, ...children.props})
+          getReferenceProps({ ref: refs.setReference, ...children.props })
         )}
       <FloatingPortal>
         {(open || externalOpen) && (
@@ -122,14 +123,15 @@ const Modal = ({
               >
                 <div className="flex flex-col p-4 bg-white md:px-8">
                   {noCloseButton ? null : (
-                    <button
+                    <Button
+                      dataTest="close-modal"
+                      className="ml-auto mb-2 md:-mr-4"
+                      icon="close-line"
+                      iconPosition="right"
+                      size="xs"
+                      variant="grey"
                       onClick={handleOpenChange}
-                      className="flex items-center ml-auto mb-2 pl-2 py-0.5 md:-mr-4 fr-btn--secondary !shadow-none"
-                      data-test="close-modal"
-                    >
-                      <span className="text-sm underline">Fermer</span>
-                      <div className="fr-fi-close-line ml-0.5 scale-75" />
-                    </button>
+                    />
                   )}
                   {render({
                     close: () => setOpen(false),

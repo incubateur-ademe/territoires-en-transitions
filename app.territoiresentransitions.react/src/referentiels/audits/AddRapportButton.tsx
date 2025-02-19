@@ -1,6 +1,6 @@
 import { useCurrentCollectivite } from '@/app/core-logic/hooks/useCurrentCollectivite';
 import { AddPreuveModal } from '@/app/referentiels/preuves/AddPreuveModal';
-import { Modal } from '@/ui';
+import { Button, Modal } from '@/ui';
 import { useState } from 'react';
 import { useAddPreuveToAudit } from './useAddPreuveToAudit';
 
@@ -29,13 +29,15 @@ export const AddRapportButton = (props: TAddDocsButtonProps) => {
         return <AddPreuveModal onClose={close} handlers={handlers} />;
       }}
     >
-      <button
-        data-test="AddRapportButton"
-        className="fr-btn fr-btn--sm fr-btn--secondary fr-mb-2w"
+      <Button
+        dataTest="AddRapportButton"
+        className="mb-6"
         onClick={() => setOpened(true)}
+        variant="outlined"
+        size="sm"
       >
         {"Ajouter le rapport d'audit"}
-      </button>
+      </Button>
     </Modal>
   );
 };

@@ -1,7 +1,6 @@
 import { useCurrentCollectivite } from '@/app/core-logic/hooks/useCurrentCollectivite';
 import { AddPreuveModal } from '@/app/referentiels/preuves/AddPreuveModal';
-import { Modal } from '@/ui';
-import classNames from 'classnames';
+import { Button, Modal } from '@/ui';
 import { useState } from 'react';
 import { useAddPreuveReglementaireToAction } from './useAddPreuveToAction';
 
@@ -41,11 +40,11 @@ export const AddPreuveReglementaire = (props: TAddPreuveButtonProps) => {
         );
       }}
     >
-      <button
-        data-test="AddPreuveReglementaire"
-        className={classNames('fr-btn fr-icon-add-line box-border', {
-          'fr-btn--secondary': isDisabled,
-        })}
+      <Button
+        dataTest="AddPreuveReglementaire"
+        size="sm"
+        icon="add-line"
+        variant={isDisabled ? 'outlined' : 'primary'}
         title="Ajouter une preuve"
         onClick={() => setOpened(true)}
       />

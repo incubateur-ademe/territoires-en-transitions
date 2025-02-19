@@ -3,7 +3,7 @@ import SubActionTasksList from '@/app/referentiels/actions/sub-action/sub-action
 import { useActionSummaryChildren } from '@/app/referentiels/referentiel-hooks';
 import Modal from '@/app/ui/shared/floating-ui/Modal';
 import { StatutAvancement } from '@/domain/referentiels';
-import { Alert } from '@/ui';
+import { Alert, Button } from '@/ui';
 import { Dispatch, SetStateAction, useState } from 'react';
 import { useTasksStatus } from '../../use-action-statut';
 import { StatusToSavePayload } from '../sub-action-statut.dropdown';
@@ -133,20 +133,24 @@ const ScoreAutoModal = ({
 
               <div className="w-full flex justify-end gap-4 mt-12 mb-4">
                 {actionDefinition.referentiel === 'eci' && (
-                  <button
-                    className="fr-btn fr-btn--secondary"
+                  <Button
                     onClick={() => setExternalOpen(false)}
+                    variant="outlined"
+                    size="sm"
                   >
                     Annuler
-                  </button>
+                  </Button>
                 )}
-                <button className="fr-btn" onClick={handleSaveScoreAuto}>
+                <Button onClick={handleSaveScoreAuto} size="sm">
                   {actionDefinition.referentiel === 'eci'
                     ? 'Enregistrer ce score'
                     : 'Enregistrer le score automatique'}
-                </button>
+                </Button>
                 {actionDefinition.referentiel === 'cae' && (
-                  <button
+                  <Button
+                    variant="outlined"
+                    icon="arrow-right-line"
+                    iconPosition="right"
                     onClick={() => {
                       if (JSON.stringify(localStatus) !== '{}')
                         handleSaveScoreAuto(); // Sauvegarde du score auto s'il y a eu des modifications
@@ -156,10 +160,9 @@ const ScoreAutoModal = ({
                     disabled={
                       !isCustomScoreGranted(tasks, tasksStatus, localStatus)
                     }
-                    className="fr-btn fr-btn--secondary fr-btn--icon-right fr-icon-arrow-right-line"
                   >
                     Personnaliser ce score
-                  </button>
+                  </Button>
                 )}
               </div>
             </div>

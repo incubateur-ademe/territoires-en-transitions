@@ -1,4 +1,5 @@
 import Textarea from '@/app/ui/shared/form/Textarea';
+import { Button } from '@/ui';
 import { useState } from 'react';
 import ActionDiscussionCommentaire from './ActionDiscussionCommentaire';
 import { TActionDiscussion } from './data/types';
@@ -28,17 +29,16 @@ const ActionDiscussion = ({ discussion }: ActionDiscussionProps) => {
           />
         )}
         {nouveauCommentaire.trim().length > 0 && (
-          <div className="mt-4 ml-2">
-            <button
-              className="fr-btn"
-              onClick={() => {
-                setNouveauCommentaire('');
-                handleAddCommentaireToDiscussion(nouveauCommentaire);
-              }}
-            >
-              Publier
-            </button>
-          </div>
+          <Button
+            className="mt-4 ml-2"
+            size="xs"
+            onClick={() => {
+              setNouveauCommentaire('');
+              handleAddCommentaireToDiscussion(nouveauCommentaire);
+            }}
+          >
+            Publier
+          </Button>
         )}
       </div>
     </div>
@@ -77,17 +77,18 @@ const ActionDiscussionCommentaireListe = ({
               )
           )
         ) : (
-          <div className="inline-flex mb-4 border-b border-bf500">
-            <button
-              className="flex text-sm text-bf500 hover:!bg-none"
-              onClick={() => setIsOpen(true)}
-            >
-              {commentaires.length - 2} autre
-              {commentaires.length === 3 ? '' : 's'} réponse
-              {commentaires.length === 3 ? '' : 's'}
-              <div className="fr-fi-arrow-down-s-line scale-75" />
-            </button>
-          </div>
+          <Button
+            icon="arrow-down-s-line"
+            iconPosition="right"
+            variant="underlined"
+            size="sm"
+            onClick={() => setIsOpen(true)}
+            className="mb-4"
+          >
+            {commentaires.length - 2} autre
+            {commentaires.length === 3 ? '' : 's'} réponse
+            {commentaires.length === 3 ? '' : 's'}
+          </Button>
         ))}
       {/** Suite des commentaires */}
       {commentaires.length > 1 && (

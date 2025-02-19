@@ -1,4 +1,5 @@
 import { useCollectiviteId } from '@/app/core-logic/hooks/params';
+import { Button } from '@/ui';
 import { useCreateFicheResume } from '../FicheAction/data/useCreateFicheResume';
 import { PlanNode } from './data/types';
 import { useAddAxe } from './data/useUpsertAxe';
@@ -20,21 +21,19 @@ export const AxeActions = ({ plan, axe }: Props) => {
 
   return (
     <div className="flex items-center gap-6">
-      <button
-        data-test="AjouterAxe"
-        className="fr-btn fr-btn--sm fr-btn--secondary"
+      <Button
+        dataTest="AjouterAxe"
+        size="xs"
+        variant="outlined"
         onClick={() =>
           addAxe({ collectivite_id: collectivite_id!, parent: axe.id })
         }
       >
         Ajouter un nouveau titre
-      </button>
-      <button
-        className="fr-btn fr-btn--sm fr-btn--primary"
-        onClick={() => createFicheResume()}
-      >
+      </Button>
+      <Button size="xs" onClick={() => createFicheResume()}>
         Créer une fiche action
-      </button>
+      </Button>
     </div>
   );
 };

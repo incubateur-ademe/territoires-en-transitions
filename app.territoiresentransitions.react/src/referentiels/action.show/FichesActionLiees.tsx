@@ -1,6 +1,6 @@
 import { useCurrentCollectivite } from '@/app/core-logic/hooks/useCurrentCollectivite';
 import FichesActionsDropdown from '@/app/ui/dropdownLists/FichesActionsDropdown/FichesActionsDropdown';
-import { Field } from '@/ui';
+import { Button, Field } from '@/ui';
 import { useCreateFicheResume } from '../../app/pages/collectivite/PlansActions/FicheAction/data/useCreateFicheResume';
 import FichesLieesListe from '../../app/pages/collectivite/PlansActions/FicheAction/FichesLiees/FichesLieesListe';
 import { useFichesActionLiees } from './useFichesActionLiees';
@@ -28,12 +28,9 @@ export const FichesActionLiees = (props: TFichesActionProps) => {
   return (
     <div className="flex flex-col gap-8">
       {!isReadonly && (
-        <button
-          className="fr-btn fr-btn--icon-left fr-icon-add-line"
-          onClick={() => createFicheResume()}
-        >
+        <Button icon="add-line" size="sm" onClick={() => createFicheResume()}>
           Créer une fiche action
-        </button>
+        </Button>
       )}
 
       <Field title="Fiches des plans liées">

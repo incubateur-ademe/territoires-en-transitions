@@ -9,8 +9,8 @@ import { useIsUnchangedReferentiel } from '@/app/referentiels/labellisations/use
 import { ReferentielOfIndicateur } from '@/app/referentiels/litterals';
 import { useReferentielId } from '@/app/referentiels/referentiel-context';
 import { ReferentielId } from '@/domain/referentiels';
+import { Button } from '@/ui';
 import PageContainer from '@/ui/components/layout/page-container';
-import Link from 'next/link';
 import { ReactNode } from 'react';
 
 export default function Layout({ tabs }: { tabs: ReactNode }) {
@@ -37,18 +37,15 @@ export default function Layout({ tabs }: { tabs: ReactNode }) {
             Pour commencer à visualiser votre progression, mettez à jour les
             statuts des actions.
           </p>
-
-          <div className="flex justify-center">
-            <Link
-              className="fr-btn fr-btn--secondary "
-              href={makeReferentielUrl({
-                collectiviteId,
-                referentielId,
-              })}
-            >
-              Mettre à jour le référentiel
-            </Link>
-          </div>
+          <Button
+            className="mx-auto"
+            href={makeReferentielUrl({
+              collectiviteId,
+              referentielId,
+            })}
+          >
+            Mettre à jour le référentiel
+          </Button>
         </PageContainer>
       </>
     );
@@ -77,7 +74,7 @@ export default function Layout({ tabs }: { tabs: ReactNode }) {
 
 const Title = ({ referentielId }: { referentielId: ReferentielId }) => (
   <>
-    <h1 className="text-center fr-mt-4w fr-mb-1w">Audit et labellisation</h1>
+    <h1 className="text-center mt-8 mb-2">Audit et labellisation</h1>
     <p className="text-center text-[22px]">
       Référentiel {referentielToName[referentielId as ReferentielOfIndicateur]}
     </p>

@@ -1,9 +1,7 @@
 import { makeCollectivitePlansActionsNouveauUrl } from '@/app/app/paths';
 import { useCurrentCollectivite } from '@/app/core-logic/hooks/useCurrentCollectivite';
 import ContextMenu from '@/app/ui/shared/select/ContextMenu';
-import { MenuTriggerButton } from '@/app/ui/shared/select/MenuTriggerButton';
-import { Alert, useEventTracker } from '@/ui';
-import Link from 'next/link';
+import { Alert, Button, Icon, useEventTracker } from '@/ui';
 
 const DOWNLOAD_TEMPLATE_OPTIONS = [
   { value: 'xlsx', label: 'Format Excel (.xlsx)' },
@@ -23,8 +21,8 @@ const ImporterPlan = () => {
       <div className="max-w-3xl mx-auto flex flex-col grow py-12">
         <div className="w-full mx-auto">
           <h3 className="mb-8">
-            <span className="fr-icon-upload-fill mr-2" /> Importer un plan
-            d’action
+            <Icon icon="import-fill" size="lg" className="mr-2" />
+            Importer un plan d’action
           </h3>
           <div className="flex flex-col mt-2 mb-10 py-14 px-24 bg-[#f6f6f6]">
             <div className="mb-1 text-sm">Étape 1</div>
@@ -85,14 +83,16 @@ const ImporterPlan = () => {
             </p>
 
             <div className="flex items-center gap-6 ml-auto mt-6">
-              <Link
-                className="fr-btn fr-btn--tertiary fr-btn--icon-left !mb-0 fr-icon-arrow-left-line hover:!bg-[#EEEEEE]"
+              <Button
+                variant="outlined"
+                icon="arrow-left-line"
+                size="sm"
                 href={makeCollectivitePlansActionsNouveauUrl({
                   collectiviteId,
                 })}
               >
                 Revenir à l’étape précédente
-              </Link>
+              </Button>
               <ContextMenu
                 options={DOWNLOAD_TEMPLATE_OPTIONS}
                 onSelect={(format: string) => {
@@ -105,9 +105,9 @@ const ImporterPlan = () => {
                   window.open(`/modele-import-pa.${format}`, '_blank');
                 }}
               >
-                <MenuTriggerButton className="fr-btn fr-btn--icon-left fr-icon-download-line">
+                <Button icon="download-line" size="sm">
                   Télécharger le modèle
-                </MenuTriggerButton>
+                </Button>
               </ContextMenu>
             </div>
           </div>

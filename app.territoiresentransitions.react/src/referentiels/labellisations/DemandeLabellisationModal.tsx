@@ -1,5 +1,5 @@
 import Modal from '@/app/ui/shared/floating-ui/Modal';
-import { Alert } from '@/ui';
+import { Alert, Button } from '@/ui';
 import { MessageCompletudeECi } from './MessageCompletudeECi';
 import { numLabels } from './numLabels';
 import { TCycleLabellisation } from './useCycleLabellisation';
@@ -125,30 +125,29 @@ export const DemandeLabellisationModalContent = (
               <p key={index}>{line}</p>
             ))}
             <MessageCompletudeECi parcours={parcours} />
-            <button
-              className="fr-btn"
-              data-test="EnvoyerDemandeBtn"
-              disabled={!canSubmit}
-              onClick={() =>
-                canSubmit &&
-                envoiDemande({
-                  collectivite_id: collectivite_id!,
-                  referentiel,
-                  etoiles,
-                  sujet: 'labellisation',
-                })
-              }
-            >
-              Envoyer ma demande
-            </button>
-            {etoiles !== '1' ? (
-              <button
-                className="fr-btn fr-btn--secondary fr-ml-4w"
-                onClick={onClose}
+            <div className="flex gap-4">
+              <Button
+                dataTest="EnvoyerDemandeBtn"
+                size="sm"
+                disabled={!canSubmit}
+                onClick={() =>
+                  canSubmit &&
+                  envoiDemande({
+                    collectivite_id: collectivite_id!,
+                    referentiel,
+                    etoiles,
+                    sujet: 'labellisation',
+                  })
+                }
               >
-                Revenir à la préparation de l’audit
-              </button>
-            ) : null}
+                Envoyer ma demande
+              </Button>
+              {etoiles !== '1' && (
+                <Button variant="outlined" size="sm" onClick={onClose}>
+                  Revenir à la préparation de l’audit
+                </Button>
+              )}
+            </div>
           </>
         ) : null}
       </div>
