@@ -7,7 +7,8 @@ import {
 
 const filtreToLabel: Record<FiltresSource, string> = {
   snbc: 'SNBC',
-  opendata: 'Open data',
+  opendata: 'Résultats Open data',
+  pcaet: 'Territoires & Climat',
   collectivite: 'Données de la collectivité',
   /*
    moyenne: 'Moyenne',
