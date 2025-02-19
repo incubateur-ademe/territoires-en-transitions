@@ -1,9 +1,10 @@
 import { Button } from '@/ui';
-import ImportPlanModal, {
+import {
+  ImportPlanModal,
   ImportPlanProps
 } from '@/app/app/pages/collectivite/PlansActions/ParcoursCreationPlan/Import/import-plan.modal';
 
-const ImportPlanButton = ({ collectiviteId }: ImportPlanProps) => {
+export const ImportPlanButton = ({ collectiviteId }: ImportPlanProps) => {
   return (
     <ImportPlanModal collectiviteId={collectiviteId}>
       <Button icon="import-line" variant="primary" size="sm" className="whitespace-nowrap">
@@ -13,4 +14,3 @@ const ImportPlanButton = ({ collectiviteId }: ImportPlanProps) => {
   );
 };
 
-export default ImportPlanButton;

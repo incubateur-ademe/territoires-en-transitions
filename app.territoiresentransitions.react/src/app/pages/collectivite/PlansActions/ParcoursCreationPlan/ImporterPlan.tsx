@@ -4,7 +4,9 @@ import ContextMenu from '@/app/ui/shared/select/ContextMenu';
 import { MenuTriggerButton } from '@/app/ui/shared/select/MenuTriggerButton';
 import { Alert, useEventTracker } from '@/ui';
 import Link from 'next/link';
-import ImportPlanButton from '@/app/app/pages/collectivite/PlansActions/ParcoursCreationPlan/Import/import-plan.button';
+import {
+  ImportPlanButton
+} from '@/app/app/pages/collectivite/PlansActions/ParcoursCreationPlan/Import/import-plan.button';
 import { useUser } from '@/api/users/user-provider';
 
 const DOWNLOAD_TEMPLATE_OPTIONS = [
@@ -30,7 +32,7 @@ const ImporterPlan = () => {
               <span className="fr-icon-upload-fill mr-2" /> Importer un plan
               d’action
             </h3>
-            {collectiviteId && user?.isSupport && (
+            {user.isSupport && (
               <ImportPlanButton collectiviteId={collectiviteId} />
             )}
           </div>

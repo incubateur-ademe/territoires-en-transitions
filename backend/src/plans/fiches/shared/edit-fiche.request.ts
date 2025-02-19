@@ -1,14 +1,12 @@
-import {
-  libreTagSchema,
-  partenaireTagSchema,
-  serviceTagSchema,
-  structureTagSchema,
-} from '@/backend/collectivites';
 import { indicateurDefinitionSchema } from '@/domain/indicateurs';
 import z from 'zod';
+import { libreTagSchema } from '../../../collectivites/tags/libre-tag.table';
+import { serviceTagSchema } from '../../../collectivites/tags/service-tag.table';
+import { partenaireTagSchema } from '../../../collectivites/tags/partenaire-tag.table';
+import { structureTagSchema } from '../../../collectivites/tags/structure-tag.table';
 import { financeurTagSchema } from '../../../collectivites/tags/financeur-tag.table';
 import { actionRelationSchema } from '../../../referentiels/models/action-relation.table';
-import { effetAttenduSchema } from '@/backend/shared/effet-attendu/effet-attendu.table';
+import { effetAttenduSchema } from '../../../shared/effet-attendu/effet-attendu.table';
 import { sousThematiqueSchema } from '../../../shared/thematiques/sous-thematique.table';
 import { thematiqueSchema } from '../../../shared/thematiques/thematique.table';
 import { axeSchema } from './models/axe.table';

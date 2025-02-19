@@ -34,7 +34,7 @@ describe('Test import PA', () => {
   });
 
   test('Test utilisateur non support', async () => {
-    await roleUpdateService.setSupport(yoloDodoUser.id, false);
+    await roleUpdateService.setIsSupport(yoloDodoUser.id, false);
     const caller = router.createCaller({ user: yoloDodoUser });
     const pathName = './resources/Plan_nouveau.xlsx';
     const input = await pathToInput(pathName);
@@ -44,7 +44,7 @@ describe('Test import PA', () => {
   });
 
   test('Test nouveau plan', async () => {
-    await roleUpdateService.setSupport(yoloDodoUser.id, true);
+    await roleUpdateService.setIsSupport(yoloDodoUser.id, true);
     const caller = router.createCaller({ user: yoloDodoUser });
     const pathName = './resources/Plan_nouveau.xlsx';
     const input = await pathToInput(pathName);
@@ -53,7 +53,7 @@ describe('Test import PA', () => {
     // TODO reset les données créés lors de l'import (plans, fiches, tags)
     onTestFinished(async () => {
       try {
-        await roleUpdateService.setSupport(yoloDodoUser.id, false);
+        await roleUpdateService.setIsSupport(yoloDodoUser.id, false);
       } catch (error) {
         console.error('Erreur lors de la remise à zéro des données.', error);
       }
@@ -61,7 +61,7 @@ describe('Test import PA', () => {
   });
 
   test('Test erreur budget', async () => {
-    await roleUpdateService.setSupport(yoloDodoUser.id, true);
+    await roleUpdateService.setIsSupport(yoloDodoUser.id, true);
     const caller = router.createCaller({ user: yoloDodoUser });
     const pathName = './resources/Plan_erreur_montant.xlsx';
     const input = await pathToInput(pathName);
@@ -75,7 +75,7 @@ describe('Test import PA', () => {
     );
     onTestFinished(async () => {
       try {
-        await roleUpdateService.setSupport(yoloDodoUser.id, false);
+        await roleUpdateService.setIsSupport(yoloDodoUser.id, false);
       } catch (error) {
         console.error('Erreur lors de la remise à zéro des données.', error);
       }
@@ -83,7 +83,7 @@ describe('Test import PA', () => {
   });
 
   test('Test erreur colonne', async () => {
-    await roleUpdateService.setSupport(yoloDodoUser.id, true);
+    await roleUpdateService.setIsSupport(yoloDodoUser.id, true);
     const caller = router.createCaller({ user: yoloDodoUser });
     const pathName = './resources/Plan_erreur_colonnes.xlsx';
     const input = await pathToInput(pathName);
@@ -96,7 +96,7 @@ describe('Test import PA', () => {
           Merci de la corriger avant de retenter un import.`);
     onTestFinished(async () => {
       try {
-        await roleUpdateService.setSupport(yoloDodoUser.id, false);
+        await roleUpdateService.setIsSupport(yoloDodoUser.id, false);
       } catch (error) {
         console.error('Erreur lors de la remise à zéro des données.', error);
       }

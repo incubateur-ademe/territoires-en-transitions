@@ -15,7 +15,7 @@ export class RoleUpdateService {
    * @param userId identifiant de l'utilisateur
    * @param isSupport
    */
-  async setSupport(userId: string, isSupport : boolean): Promise<void> {
+  async setIsSupport(userId: string, isSupport : boolean): Promise<void> {
     await this.databaseService.db
       .update(utilisateurSupportTable)
       .set({ support: isSupport })
@@ -27,7 +27,7 @@ export class RoleUpdateService {
    * @param userId identifiant de l'utilisateur
    * @param isVerified
    */
-  async setVerified(userId: string, isVerified : boolean): Promise<void> {
+  async setIsVerified(userId: string, isVerified : boolean): Promise<void> {
     await this.databaseService.db
       .update(utilisateurVerifieTable)
       .set({ verifie: isVerified })

@@ -1,18 +1,7 @@
 import { useState } from 'react';
 import { trpc } from '@/api/utils/trpc/client';
+import { convertFileToBase64 } from '@/app/utils/convert-file-to-base64';
 
-const convertFileToBase64 = (file: File): Promise<string> => {
-  return new Promise((resolve, reject) => {
-    const reader = new FileReader();
-    reader.onloadend = () => {
-      resolve(reader.result as string);
-    };
-    reader.onerror = (error) => {
-      reject(error);
-    };
-    reader.readAsDataURL(file);
-  });
-}
 
 export const useImportPlan = () => {
   const [successMessage, setSuccessMessage] = useState<string | null>(null);
@@ -21,7 +10,7 @@ export const useImportPlan = () => {
 
   const { mutate } = trpc.plans.fiches.import.useMutation({
     onSuccess: () => {
-      setSuccessMessage('Import réussie ! Le plan apparaîtra après avoir actualisé la page.');
+      setSuccessMessage('Import réussi ! Le plan apparaîtra après avoir actualisé la page.');
       setErrorMessage(null);
       setIsLoading(false);
     },
