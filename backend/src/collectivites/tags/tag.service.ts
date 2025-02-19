@@ -1,21 +1,16 @@
 import { Injectable } from '@nestjs/common';
 import { DatabaseService } from '@/backend/utils';
-import {
-  categorieTagTable,
-  financeurTagTable,
-  libreTagTable,
-  partenaireTagTable,
-  personneTagTable,
-  serviceTagTable,
-  structureTagTable,
-  Tag,
-  TagEnum,
-  TagInsert,
-  TagType,
-} from '@/backend/collectivites';
 import { AnyColumn, eq } from 'drizzle-orm';
 import { PgTable } from 'drizzle-orm/pg-core';
 import { Transaction } from '@/backend/utils/database/transaction.utils';
+import { Tag, TagEnum, TagInsert, TagType } from './tag.table-base';
+import { financeurTagTable } from './financeur-tag.table';
+import { personneTagTable } from './personne-tag.table';
+import { partenaireTagTable } from './partenaire-tag.table';
+import { serviceTagTable } from './service-tag.table';
+import { structureTagTable } from './structure-tag.table';
+import { categorieTagTable } from './categorie-tag.table';
+import { libreTagTable } from './libre-tag.table';
 
 const tagTypeTable: Record<TagType, PgTable & { collectiviteId: AnyColumn }> = {
   [TagEnum.Financeur]: financeurTagTable,
@@ -39,16 +34,19 @@ export class TagService {
   async getTags(collectiviteId: number, tagType: TagType): Promise<Tag[]> {
     const toReturn: Tag[] = [];
     const table = tagTypeTable[tagType];
+
     const tags = await this.databaseService.db
       .select()
       .from(table)
       .where(eq(table.collectiviteId, collectiviteId));
+
     for (const tag of tags) {
       const toAdd: Tag = {
         nom: tag.nom as string,
         id: tag.id as number,
         collectiviteId: tag.collectiviteId as number,
       };
+
       toReturn.push(toAdd);
     }
     return toReturn;
@@ -70,6 +68,7 @@ export class TagService {
       .values({ nom: tag.nom, collectiviteId: tag.collectiviteId })
       .onConflictDoNothing()
       .returning();
+
     return {
       nom: result.nom as string,
       collectiviteId: result.collectiviteId as number,

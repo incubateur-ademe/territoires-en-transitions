@@ -45,7 +45,7 @@ describe('Gestion des droits', () => {
       ).toBeTruthy;
     });
     test('Utilisateur non vérifié -> NOK', async () => {
-      await roleUpdateService.setVerified(yoloDodoUser.id, false);
+      await roleUpdateService.setIsVerified(yoloDodoUser.id, false);
       expect(
         await permissionService.isAllowed(
           yoloDodoUser,
@@ -58,7 +58,7 @@ describe('Gestion des droits', () => {
 
       onTestFinished(async () => {
         try {
-          await roleUpdateService.setVerified(yoloDodoUser.id, true)
+          await roleUpdateService.setIsVerified(yoloDodoUser.id, true)
         } catch (error) {
           console.error('Erreur lors de la remise à zéro des données.', error);
         }
@@ -105,7 +105,7 @@ describe('Gestion des droits', () => {
     });
 
     test('Utilisateur non vérifié sur sa collectivité -> OK', async () => {
-      await roleUpdateService.setVerified(yoloDodoUser.id, false)
+      await roleUpdateService.setIsVerified(yoloDodoUser.id, false)
       expect(
         await permissionService.isAllowed(
           yoloDodoUser,
@@ -118,7 +118,7 @@ describe('Gestion des droits', () => {
 
       onTestFinished(async () => {
         try {
-          await roleUpdateService.setVerified(yoloDodoUser.id, true)
+          await roleUpdateService.setIsVerified(yoloDodoUser.id, true)
         } catch (error) {
           console.error('Erreur lors de la remise à zéro des données.', error);
         }
@@ -137,7 +137,7 @@ describe('Gestion des droits', () => {
       ).toBeFalsy;
     });
     test('Support sur une collectivité -> OK', async () => {
-      await roleUpdateService.setSupport(yoloDodoUser.id, true);
+      await roleUpdateService.setIsSupport(yoloDodoUser.id, true);
       expect(
         await permissionService.isAllowed(
           yoloDodoUser,
@@ -150,7 +150,7 @@ describe('Gestion des droits', () => {
 
       onTestFinished(async () => {
         try {
-          await roleUpdateService.setSupport(yoloDodoUser.id, false)
+          await roleUpdateService.setIsSupport(yoloDodoUser.id, false)
         } catch (error) {
           console.error('Erreur lors de la remise à zéro des données.', error);
         }

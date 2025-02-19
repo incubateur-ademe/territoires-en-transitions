@@ -11,13 +11,12 @@ export const libreTagTable = pgTable(
     createdAt,
     createdBy,
   },
-  (table) => {
-    return {
-      libreTagNomCollectiviteIdKey: uniqueIndex(
-        'libre_tag_nom_collectivite_id_key'
-      ).on(table.nom, table.collectiviteId),
-    };
-  }
+  (table) => [
+    uniqueIndex('libre_tag_nom_collectivite_id_key').on(
+      table.nom,
+      table.collectiviteId
+    ),
+  ]
 );
 
 export const libreTagSchema = createSelectSchema(libreTagTable);

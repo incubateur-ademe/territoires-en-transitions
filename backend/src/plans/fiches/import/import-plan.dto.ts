@@ -1,4 +1,4 @@
-import { TagEnum, TagType } from '@/backend/collectivites';
+import { TagEnum, TagType } from '@/backend/collectivites/tags/tag.table-base';
 import { Cible, ParticipationCitoyenne, Priorite, Statut } from '@/backend/plans/fiches';
 
 export const ficheTagTypes =

@@ -8,7 +8,7 @@ export type ImportPlanProps = {
   collectiviteId: number;
 };
 
-const ImportPlanModal = ({
+export const ImportPlanModal = ({
   collectiviteId,
   children,
 }: ImportPlanProps & {
@@ -115,5 +115,3 @@ const ImportPlanModal = ({
     </Modal>
   );
 };
-
-export default ImportPlanModal;

@@ -5,14 +5,13 @@ import { tagTableBase } from './tag.table-base';
 
 export const financeurTagTable = pgTable(
   'financeur_tag',
-  tagTableBase,
-  (table) => {
-    return {
-      financeurTagNomCollectiviteIdKey: uniqueIndex(
-        'financeur_tag_nom_collectivite_id_key'
-      ).on(table.nom, table.collectiviteId),
-    };
-  }
+  {...tagTableBase},
+  (table) => [
+    uniqueIndex('financeur_tag_nom_collectivite_id_key').on(
+      table.nom,
+      table.collectiviteId
+    ),
+  ]
 );
 
 export const financeurTagSchema = createSelectSchema(financeurTagTable);
