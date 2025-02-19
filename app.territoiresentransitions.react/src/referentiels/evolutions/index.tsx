@@ -34,8 +34,12 @@ export const ScoreEvolutions = () => {
 
   const { data: snapshotList } = useSnapshotList(referentielId);
 
+  // We don't want to display current score in the chart
   const snapshots = removeScoreCourant(snapshotList?.snapshots ?? []);
+
   const hasSavedSnapshots = !!snapshots?.length;
+
+  /** Snapshots processing for the dropdown **/
 
   const allSnapsNames = snapshots?.map((snap) => snap?.nom);
   const dropdownOptions =
@@ -45,25 +49,27 @@ export const ScoreEvolutions = () => {
       date: snapshots[index]?.date ?? '',
     })) ?? [];
 
+  /** Snapshots processing for the chart **/
+
   const initialDisplaySnapsNames = organizeSnaps(snapshots)?.map(
     (snap) => snap?.nom
   );
 
-  const [selectedSnapshots, setSelectedSnapshots] = useState<string[]>([]);
-  const [isInitialized, setIsInitialized] = useState(false);
-
-  useEffect(() => {
-    if (!isInitialized && initialDisplaySnapsNames.length > 0) {
-      setSelectedSnapshots(initialDisplaySnapsNames);
-      setIsInitialized(true);
-    }
-  }, [initialDisplaySnapsNames, isInitialized]);
-
-  const getSelectedSnapshots = (names: string[]) => {
+  const getSnapshotsFromSelectedSnapsNames = (names: string[]) => {
     return names
       ?.map((name) => snapshots.find((snap) => snap?.nom === name) ?? null)
       .filter((snap): snap is SnapshotDetails => snap !== null);
   };
+
+  /** State management for the dropdown and the chart **/
+
+  const [selectedSnapsNames, setSelectedSnapsNames] = useState<string[]>([]);
+
+  useEffect(() => {
+    if (initialDisplaySnapsNames.length > 0) {
+      setSelectedSnapsNames(initialDisplaySnapsNames);
+    }
+  }, [snapshotList]);
 
   if (hasSavedSnapshots) {
     return (
@@ -73,9 +79,9 @@ export const ScoreEvolutions = () => {
           <div className="flex items-center justify-between">
             <div className="w-full max-w-6xl">
               <SnapshotsDropdown
-                values={selectedSnapshots ?? []}
+                values={selectedSnapsNames ?? []}
                 onChange={({ snapshots }) => {
-                  setSelectedSnapshots(snapshots);
+                  setSelectedSnapsNames(snapshots);
                 }}
                 options={dropdownOptions}
                 maxBadgesToShow={3}
@@ -86,8 +92,11 @@ export const ScoreEvolutions = () => {
         </div>
         <div>
           <ScoreTotalEvolutionsChart
-            allSnapshots={getSelectedSnapshots(selectedSnapshots)}
+            allSnapshots={getSnapshotsFromSelectedSnapsNames(
+              selectedSnapsNames
+            )}
             chartSize="lg"
+            referentielId={referentielId}
           />
         </div>
       </>
