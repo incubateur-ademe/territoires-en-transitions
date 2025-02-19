@@ -1,8 +1,11 @@
 import { useState } from 'react';
-import { useIndicateurSources } from './use-indicateur-sources';
+import {
+  GetAvailableSourcesInput,
+  useIndicateurAvailableSources,
+} from './use-indicateur-sources';
 
 // liste des filtres sur les sources de données
-export const FILTRES_SOURCE = [
+const FILTRES_SOURCE = [
   'snbc',
   'pcaet',
   'opendata',
@@ -13,17 +16,51 @@ export const FILTRES_SOURCE = [
   'seuil',
   */
 ] as const;
+
 export type FiltresSource = (typeof FILTRES_SOURCE)[number];
+
+const filtreToLabel: Record<FiltresSource, string> = {
+  snbc: 'SNBC',
+  opendata: 'Résultats Open data',
+  pcaet: 'Territoires & Climat',
+  collectivite: 'Données de la collectivité',
+  /*
+   moyenne: 'Moyenne',
+   cible: 'Valeur cible',
+   seuil: 'Valeur seuil',
+   */
+};
 
 /**
  * Conserve l'état du filtre sur les sources de données et fourni le filtre à
  * passer lors de la lecture des valeurs.
  */
-export const useSourceFilter = () => {
+export const useSourceFilter = (input: GetAvailableSourcesInput) => {
   // conserve les filtres sur les sources de données
   const [filtresSource, setFiltresSource] = useState<FiltresSource[]>([]);
 
-  const { data, isLoading } = useIndicateurSources();
+  const { data, isLoading } = useIndicateurAvailableSources(input);
+
+  // génère la liste des options possibles en fonction des sources disponibles
+  const options: FiltresSource[] = [];
+  if (data?.length) {
+    const availableSourceIds = data.map((s) => s.id);
+    if (availableSourceIds.includes('snbc')) {
+      options.push('snbc');
+    }
+    if (availableSourceIds.includes('pcaet')) {
+      options.push('pcaet');
+    }
+    // il y a d'autres sources open data disponibles
+    if (availableSourceIds.length > options.length) {
+      options.push('opendata');
+    }
+    options.push('collectivite');
+  }
+  const availableOptions = options.map((value) => ({
+    value,
+    label: filtreToLabel[value],
+  }));
 
   // détermine le filtre sur les sources à appliquer pour la lecture des valeurs
   const sources: Array<string> = [];
@@ -49,12 +86,19 @@ export const useSourceFilter = () => {
   const avecDonneesCollectivite =
     !sources.length || sources.includes('collectivite');
 
+  // pour afficher les sous-indicateurs avec les données de la trajectoire
+  // uniquement quand le filtre SNBC est le seul sélectionné
+  const avecSecteursSNBC =
+    filtresSource.length === 1 && filtresSource[0] === 'snbc';
+
   return {
     isLoading,
+    availableOptions,
     filtresSource,
     setFiltresSource,
     sources: sources.length ? sources : undefined,
     avecDonneesCollectivite,
+    avecSecteursSNBC,
   };
 };
 
