@@ -3,6 +3,7 @@ import { Tooltip } from '@/ui';
 
 type DataSourceTooltipProps = {
   metadonnee: NonNullable<Valeur['source']>;
+  nomSource: string;
   children: JSX.Element;
 };
 
@@ -12,6 +13,7 @@ type DataSourceTooltipProps = {
  */
 export const DataSourceTooltip = ({
   metadonnee,
+  nomSource,
   children,
 }: DataSourceTooltipProps) => {
   return (
@@ -20,6 +22,7 @@ export const DataSourceTooltip = ({
         <DataSourceTooltipContent
           className="font-normal"
           metadonnee={metadonnee}
+          nomSource={nomSource}
         />
       }
     >
@@ -30,13 +33,20 @@ export const DataSourceTooltip = ({
 
 export const DataSourceTooltipContent = ({
   metadonnee,
+  nomSource,
   className,
 }: {
   metadonnee: DataSourceTooltipProps['metadonnee'];
+  nomSource: string;
   className?: string;
 }) => (
   <div className={className}>
-    {!!metadonnee.nomDonnees && (
+    {!!nomSource && (
+      <p>
+        <b>{nomSource}</b>
+      </p>
+    )}
+    {!!metadonnee.nomDonnees && metadonnee.nomDonnees !== nomSource && (
       <p>
         <b>{metadonnee.nomDonnees}</b>
       </p>
