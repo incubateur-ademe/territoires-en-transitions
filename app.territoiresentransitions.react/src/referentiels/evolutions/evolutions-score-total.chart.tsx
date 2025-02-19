@@ -1,9 +1,12 @@
-import { ReactECharts } from '@/app/ui/charts/echarts';
+import { ReactECharts, TOOLBOX_BASE } from '@/app/ui/charts/echarts';
 import type { EChartsOption } from 'echarts';
 import { actionAvancementColors } from '@/app/app/theme';
 import { SnapshotDetails } from '../use-snapshot';
 import { sortByDate } from './utils';
 import { theme as importedTheme } from '../../ui/charts/chartsTheme';
+import { ReferentielId } from '@/domain/referentiels';
+
+const theme = importedTheme;
 
 /**
  * Ensures a snapshot is always displayed in the correct position on the graph according to its date.
@@ -12,8 +15,6 @@ const sortSnapshots = (snapshots: SnapshotDetails[], ascending = true) => {
   if (!snapshots?.length) return [];
   return [...snapshots].sort((a, b) => sortByDate(a.date, b.date, ascending));
 };
-
-const theme = importedTheme;
 
 const sizeConfig = {
   chartSize: {
@@ -49,9 +50,11 @@ const adjustXAxisLabelWidth = (
 
 export const ScoreTotalEvolutionsChart = ({
   allSnapshots,
+  referentielId,
   chartSize = 'lg',
 }: {
   allSnapshots: SnapshotDetails[];
+  referentielId: ReferentielId;
   chartSize: 'sm' | 'lg';
 }) => {
   const snapshots = sortSnapshots(allSnapshots, true);
@@ -238,6 +241,15 @@ export const ScoreTotalEvolutionsChart = ({
         },
       },
     ],
+    toolbox: {
+      ...TOOLBOX_BASE,
+      feature: {
+        saveAsImage: {
+          ...TOOLBOX_BASE.feature.saveAsImage,
+          name: `${referentielId}_referentiel_progression-total`,
+        },
+      },
+    },
     series,
   };
 
