@@ -1,42 +1,25 @@
 import { SelectMultiple } from '@/ui';
-import {
-  FILTRES_SOURCE,
-  FiltresSource,
-  SourceFilter,
-} from '../data/use-source-filter';
+import { FiltresSource, SourceFilter } from '../data/use-source-filter';
 
-const filtreToLabel: Record<FiltresSource, string> = {
-  snbc: 'SNBC',
-  opendata: 'Résultats Open data',
-  pcaet: 'Territoires & Climat',
-  collectivite: 'Données de la collectivité',
-  /*
-   moyenne: 'Moyenne',
-   cible: 'Valeur cible',
-   seuil: 'Valeur seuil',
-   */
+type Props = {
+  sourceFilter: SourceFilter;
 };
-
-const OPTIONS = FILTRES_SOURCE.map((value) => ({
-  value,
-  label: filtreToLabel[value],
-}));
 
 /**
  * Affiche le sélecteur de source de données
  */
-export const IndicateurSourcesSelect = ({
-  sourceFilter,
-}: {
-  sourceFilter: SourceFilter;
-}) => {
-  const { filtresSource, setFiltresSource } = sourceFilter;
+export const IndicateurSourcesSelect = ({ sourceFilter }: Props) => {
+  const { availableOptions, filtresSource, setFiltresSource, isLoading } =
+    sourceFilter;
   return (
     <SelectMultiple
-      maxBadgesToShow={FILTRES_SOURCE.length}
-      options={OPTIONS}
+      isLoading={isLoading}
+      maxBadgesToShow={availableOptions.length}
+      options={availableOptions}
       values={filtresSource}
-      onChange={({values}) => setFiltresSource(values as FiltresSource[] || [])}
+      onChange={({ values }) =>
+        setFiltresSource((values as FiltresSource[]) || [])
+      }
     />
   );
 };

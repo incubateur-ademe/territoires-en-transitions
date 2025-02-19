@@ -1,10 +1,17 @@
-import { trpc } from '@/api/utils/trpc/client';
+import { RouterInput, trpc } from '@/api/utils/trpc/client';
 import { LAYERS, PALETTE } from '@/app/ui/charts/echarts';
 import { SourceType } from '../types';
 
 /** Charge la liste des sources de données indicateurs */
 export const useIndicateurSources = () =>
   trpc.indicateurs.sources.list.useQuery();
+
+/** Charge la liste des sources de données disponible pour un indicateur */
+export type GetAvailableSourcesInput =
+  RouterInput['indicateurs']['sources']['available'];
+export const useIndicateurAvailableSources = (
+  input: GetAvailableSourcesInput
+) => trpc.indicateurs.sources.available.useQuery(input);
 
 /** Attribut une couleur à chaque source de données  */
 export const useColorBySourceId = () => {
