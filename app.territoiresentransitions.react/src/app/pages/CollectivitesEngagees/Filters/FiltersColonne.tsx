@@ -59,18 +59,15 @@ const FiltersColonne = ({ vue, filters, setFilters }: Props) => {
       {/* Trigger filters on mobile */}
       {!isMobileFilterOpen && (
         <div className="fixed bottom-0 inset-x-0 z-[1000] md:hidden">
-          <button
-            className={`fr-btn justify-center !py-6 text-center ${
-              numberOfActiveFilters > 0
-                ? 'fr-fi-filter-fill'
-                : 'fr-fi-filter-line'
-            } fr-fi--sm min-w-full text-center`}
+          <Button
+            className="w-full justify-center rounded-none"
+            icon={numberOfActiveFilters > 0 ? 'filter-fill' : 'filter-line'}
             onClick={() => setIsMobileFilterOpen(true)}
           >
             {numberOfActiveFilters > 0
               ? `Filtrer (${numberOfActiveFilters})`
               : 'Filtrer'}
-          </button>
+          </Button>
         </div>
       )}
     </>

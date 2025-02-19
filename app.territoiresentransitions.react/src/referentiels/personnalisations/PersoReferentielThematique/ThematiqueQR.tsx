@@ -10,7 +10,7 @@ import {
   TChangeReponse,
   TQuestionReponse,
 } from '@/app/referentiels/personnalisations/personnalisation.types';
-import { Checkbox } from '@/ui';
+import { Button, Checkbox } from '@/ui';
 import { useState } from 'react';
 import { QuestionReponseList } from '../PersoPotentielModal/PersoPotentielQR';
 import { usePersoFilters } from '../PersoReferentiel/usePersoFilters';
@@ -70,21 +70,25 @@ export const ThematiqueQR = (props: TThematiqueQRProps) => {
           </>
         ) : null}
         <QuestionReponseList questionReponses={qrList} onChange={onChange} />
-        <div className="flex fr-pt-4w">
-          <a
-            className="fr-btn fr-btn--secondary fr-btn--icon-left fr-fi-arrow-left-line self-start"
-            data-test="btn-toc"
+        <div className="flex gap-4 pt-8">
+          <Button
+            variant="outlined"
+            size="sm"
+            icon="arrow-left-line"
+            dataTest="btn-toc"
             href={makeCollectivitePersoRefUrl({
               collectiviteId: collectivite.id,
               referentiels,
             })}
           >
             Revenir au sommaire
-          </a>
-          {nextThematiqueId ? (
-            <a
-              className="fr-btn fr-btn--icon-right fr-fi-arrow-right-line self-start fr-ml-3w"
-              data-test="btn-next"
+          </Button>
+          {nextThematiqueId && (
+            <Button
+              dataTest="btn-next"
+              icon="arrow-right-line"
+              iconPosition="right"
+              size="sm"
               href={makeCollectivitePersoRefThematiqueUrl({
                 collectiviteId: collectivite.id,
                 thematiqueId: nextThematiqueId,
@@ -92,8 +96,8 @@ export const ThematiqueQR = (props: TThematiqueQRProps) => {
               })}
             >
               Afficher la catégorie suivante
-            </a>
-          ) : null}
+            </Button>
+          )}
         </div>
       </div>
     </div>

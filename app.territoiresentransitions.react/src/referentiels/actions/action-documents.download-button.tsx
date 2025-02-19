@@ -5,6 +5,7 @@ import { ActionDefinitionSummary } from '@/app/referentiels/ActionDefinitionSumm
 import { saveBlob } from '@/app/referentiels/preuves/Bibliotheque/saveBlob';
 import { TFichier } from '@/app/referentiels/preuves/Bibliotheque/types';
 import { usePreuves } from '@/app/referentiels/preuves/usePreuves';
+import { Button } from '@/ui';
 import { useQuery, useQueryClient } from 'react-query';
 
 export type TDownloadDocsProps = {
@@ -16,8 +17,6 @@ const URL = `/api/zip`;
 // durée de validité des liens générées (en secondes)
 const LINKS_EXPIRES_IN_SEC = 360;
 
-const BTN = 'fr-btn fr-btn--secondary fr-btn--icon-left fr-btn--sm';
-
 /**
  * Affiche le bouton de téléchargement des documents preuves
  */
@@ -28,27 +27,32 @@ export const DownloadDocs = (props: TDownloadDocsProps) => {
 
   if (isFetching) {
     return (
-      <p>
+      <div className="flex items-center">
         Téléchargement en cours...
-        <button
-          className={`${BTN} fr-ml-4w fr-fi-close-line`}
+        <Button
           onClick={() => queryClient.cancelQueries('zip-action')}
+          icon="close-line"
+          variant="outlined"
+          size="xs"
+          className="ml-6"
         >
           Annuler
-        </button>
-      </p>
+        </Button>
+      </div>
     );
   }
 
   return refetch ? (
-    <button
-      data-test="DownloadDocs"
-      className={`${BTN} fr-fi-download-line`}
+    <Button
+      dataTest="DownloadDocs"
+      icon="download-line"
       disabled={isFetching}
       onClick={() => refetch()}
+      variant="outlined"
+      size="xs"
     >
       Télécharger tous les documents
-    </button>
+    </Button>
   ) : null;
 };
 

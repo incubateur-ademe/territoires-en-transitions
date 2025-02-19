@@ -1,6 +1,6 @@
 import { useCurrentCollectivite } from '@/app/core-logic/hooks/useCurrentCollectivite';
 import { AddPreuveModal } from '@/app/referentiels/preuves/AddPreuveModal';
-import { Modal } from '@/ui';
+import { Button, Modal } from '@/ui';
 import { useState } from 'react';
 import { useAddPreuveToDemande } from './useAddPreuveToDemande';
 
@@ -25,13 +25,15 @@ export const AddDocsButton = () => {
         return <AddPreuveModal onClose={close} handlers={handlers} />;
       }}
     >
-      <button
-        data-test="AddDocsButton"
-        className="fr-btn fr-btn--sm fr-btn--secondary"
+      <Button
+        dataTest="AddDocsButton"
+        icon="add-line"
+        variant="outlined"
+        size="sm"
         onClick={() => setOpened(true)}
       >
-        +&nbsp;Ajouter
-      </button>
+        Ajouter
+      </Button>
     </Modal>
   );
 };

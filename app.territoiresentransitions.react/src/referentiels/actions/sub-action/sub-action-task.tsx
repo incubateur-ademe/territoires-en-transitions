@@ -2,6 +2,7 @@ import { ActionDefinitionSummary } from '@/app/referentiels/ActionDefinitionSumm
 import { ActionCommentaire } from '@/app/referentiels/actions/action-commentaire';
 import { StatusToSavePayload } from '@/app/referentiels/actions/sub-action-statut.dropdown';
 import { useActionCommentaire } from '@/app/referentiels/use-action-commentaire';
+import { Button } from '@/ui';
 import { useEffect, useRef, useState } from 'react';
 import { getHashFromUrl } from './sub-action.card';
 import SubActionHeader from './sub-action.header';
@@ -61,10 +62,12 @@ const SubActionTask = ({
             onSave={() => setOpenCommentaire(false)}
           />
         ) : (
-          <button
-            className="fr-btn fr-btn--tertiary fr-btn--sm fr-icon-pencil-line box-border"
+          <Button
+            icon="pencil-line"
             title="Explications sur l'état d'avancement"
             onClick={() => setOpenCommentaire(true)}
+            variant="grey"
+            size="xs"
           />
         )}
       </div>

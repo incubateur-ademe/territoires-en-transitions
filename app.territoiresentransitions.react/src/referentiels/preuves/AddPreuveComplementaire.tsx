@@ -1,7 +1,7 @@
 import { useCurrentCollectivite } from '@/app/core-logic/hooks/useCurrentCollectivite';
 import { TActionDef } from '@/app/referentiels/preuves/usePreuves';
 import SelectDropdown from '@/app/ui/shared/select/SelectDropdown';
-import { Modal } from '@/ui';
+import { Button, Modal } from '@/ui';
 import { useState } from 'react';
 import { useSubActionOptionsListe } from '../use-sub-action-definitions';
 import { AddPreuveModal } from './AddPreuveModal';
@@ -72,13 +72,15 @@ export const AddPreuveComplementaire = (props: TAddPreuveButtonProps) => {
         );
       }}
     >
-      <button
-        data-test="AddPreuveComplementaire"
-        className="fr-btn fr-btn--sm fr-btn--secondary fr-btn--icon-left fr-fi-add-line"
+      <Button
+        dataTest="AddPreuveComplementaire"
+        variant="outlined"
+        size="xs"
+        icon="add-line"
         onClick={() => setOpened(true)}
       >
         Ajouter un document complémentaire
-      </button>
+      </Button>
     </Modal>
   );
 };

@@ -1,4 +1,5 @@
 import Textarea from '@/app/ui/shared/form/Textarea';
+import { Button } from '@/ui';
 import { useState } from 'react';
 import { useAddDiscussionToAction } from './data/useAddDiscussionToAction';
 
@@ -15,7 +16,7 @@ const ActionDiscussionNouvelleDiscussion = ({ actionId }: Props) => {
   return (
     <div
       data-test="ActionDiscussionsNouvelleDiscussion"
-      className="fr-pt-2w fr-pb-1w fr-px-2w bg-gray-100"
+      className="pt-4 pb-2 px-4 bg-grey-3"
     >
       <Textarea
         className="bg-white"
@@ -25,17 +26,16 @@ const ActionDiscussionNouvelleDiscussion = ({ actionId }: Props) => {
       />
 
       {commentaire.trim().length > 0 && (
-        <div className="mt-4 ml-2">
-          <button
-            className="fr-btn"
-            onClick={() => {
-              setCommentaire('');
-              handleCreateDiscussion(commentaire);
-            }}
-          >
-            Publier
-          </button>
-        </div>
+        <Button
+          className="mt-4 ml-2"
+          size="xs"
+          onClick={() => {
+            setCommentaire('');
+            handleCreateDiscussion(commentaire);
+          }}
+        >
+          Publier
+        </Button>
       )}
     </div>
   );

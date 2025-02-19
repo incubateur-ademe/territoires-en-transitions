@@ -103,13 +103,14 @@ const Actions = ({
               })
         }
       >
-        <button
-          data-test="SupprimerPlanBouton"
-          className="p-2 bg-white hover:!bg-primary-1 rounded-lg"
+        <Button
+          dataTest="SupprimerPlanBouton"
+          icon="delete-bin-6-line"
+          className="!text-error-1"
           title={isAxePage ? 'Supprimer cet axe' : "Supprimer ce plan d'action"}
-        >
-          <span className="flex fr-fi-delete-line before:!h-4 before:!w-4 before:text-error-1"></span>
-        </button>
+          size="xs"
+          variant="white"
+        />
       </SupprimerAxeModal>
       {!isAxePage && (
         <>
