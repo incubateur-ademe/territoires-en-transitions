@@ -1,9 +1,9 @@
 import { trpc } from '@/api/utils/trpc/client';
-import { useCollectiviteId } from '@/app/core-logic/hooks/params';
+import { useCollectiviteId } from '@/app/collectivites/collectivite-context';
 
 /** Charge la définition détaillée d'un indicateur */
 export const useIndicateurDefinition = (indicateurId: number | string) => {
-  const collectiviteId = useCollectiviteId()!;
+  const collectiviteId = useCollectiviteId();
 
   const estIdReferentiel = typeof indicateurId === 'string';
   const { data, ...other } = trpc.indicateurs.definitions.list.useQuery({
@@ -17,7 +17,7 @@ export const useIndicateurDefinition = (indicateurId: number | string) => {
 
 /** Charge la définition détaillée de plusieurs indicateurs */
 export const useIndicateurDefinitions = (indicateurIds: number[]) => {
-  const collectiviteId = useCollectiviteId()!;
+  const collectiviteId = useCollectiviteId();
 
   return trpc.indicateurs.definitions.list.useQuery(
     {
