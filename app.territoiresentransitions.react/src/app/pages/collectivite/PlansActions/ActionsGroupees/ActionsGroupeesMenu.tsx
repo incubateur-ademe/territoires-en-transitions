@@ -1,7 +1,7 @@
 import { Alert } from '@/ui';
 import classNames from 'classnames';
 import { FicheResume } from 'packages/api/src/plan-actions';
-import ExportFicheActionGroupeesButton from '../ExportPdf/ExportFicheActionGroupeesButton';
+import ExportFicheActionModal from '../ExportPdf/export-pdf-fa.modal';
 import EditionPilote from './EditionPilote';
 import EditionPlanning from './EditionPlanning';
 import EditionPriorite from './EditionPriorite';
@@ -47,7 +47,15 @@ const ActionsGroupeesMenu = ({
           <EditionPriorite selectedIds={selectedIds} />
           <EditionPlanning selectedIds={selectedIds} minDateFin={minDateFin} />
           <EditionTagsLibres selectedIds={selectedIds} />
-          <ExportFicheActionGroupeesButton fichesIds={selectedIds} />
+          <ExportFicheActionModal
+            fichesIds={selectedIds}
+            buttonProps={{
+              icon: 'file-pdf-line',
+              size: 'xs',
+              variant: 'outlined',
+              children: 'Exporter au format PDF',
+            }}
+          />
         </div>
       }
       fullPageWidth
