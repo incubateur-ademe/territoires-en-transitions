@@ -23,10 +23,13 @@ export const useIndicateurChartInfo = ({
   definition?: TIndicateurDefinition;
 }) => {
   const { id: indicateurId, estAgregation, enfants, unite } = definition ?? {};
-  const sourceFilter = useSourceFilter();
+  const collectiviteId = useCollectiviteId();
+  const sourceFilter = useSourceFilter({
+    collectiviteId,
+    indicateurId: indicateurId ?? 0,
+  });
 
   // charge les valeurs à afficher dans le graphe
-  const collectiviteId = useCollectiviteId();
   const { data: valeurs, isLoading: isLoadingValeurs } = useIndicateurValeurs({
     collectiviteId,
     indicateurIds: indicateurId ? [indicateurId] : undefined,
@@ -66,12 +69,14 @@ export const useIndicateurChartInfo = ({
   const enfantsParSegmentation = prepareEnfantsParSegmentation(
     definitionEnfants,
     valeursSegments,
-    'resultat'
+    'resultat',
+    sourceFilter.avecSecteursSNBC
   );
   const objectifsParSegment = prepareEnfantsParSegmentation(
     definitionEnfants,
     valeursSegments,
-    'objectif'
+    'objectif',
+    sourceFilter.avecSecteursSNBC
   );
   const segmentsResultats = enfantsParSegmentation.map(
     ({ segmentation: segment }) => segment
@@ -160,7 +165,8 @@ export const useIndicateurChartInfo = ({
 function prepareEnfantsParSegmentation(
   enfants: TIndicateurDefinition[] | undefined,
   valeursSegments: ListIndicateurValeursOutput | undefined,
-  type: 'objectif' | 'resultat'
+  type: 'objectif' | 'resultat',
+  avecSecteursSNBC: boolean
 ) {
   const enfantsParSegmentation: Record<
     string,
@@ -198,8 +204,9 @@ function prepareEnfantsParSegmentation(
         // il faut au moins 2 valeurs pour afficher une surface dans le graphe StackedArea
         (s) =>
           s.valeurs?.length > 1 &&
-          // et on n'affiche pas les objectifs de la SNBC
-          s.source !== 'snbc'
+          // et on n'affiche pas les objectifs de la SNBC à part si le filtre
+          // SNBC est le seul sélectionné
+          (s.source !== 'snbc' || avecSecteursSNBC)
       );
 
     if (sourceValeursEnfant) {
