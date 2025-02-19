@@ -52,7 +52,11 @@ export const ScoreEvolutionsGraphs = ({
       subTitle={subTitle}
       href={href}
       renderGraph={() => (
-        <ScoreTotalEvolutionsChart allSnapshots={snapshots} chartSize="sm" />
+        <ScoreTotalEvolutionsChart
+          allSnapshots={snapshots}
+          chartSize="sm"
+          referentielId={referentiel}
+        />
       )}
     />
   );

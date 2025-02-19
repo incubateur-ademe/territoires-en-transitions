@@ -12,7 +12,7 @@ const { colors } = preset.theme.extend;
 const NumFormat = Intl.NumberFormat('fr', { maximumFractionDigits: 3 });
 
 // icône bouton "télécharger"
-const DOWNLOAD_ICON =
+export const DOWNLOAD_ICON =
   'path://M11 22S23 22 23 22 23 23.33 23 23.33 11 23.33 11 23.33 11 22 11 22ZM17.67 15.33S22.33 15.33 22.33 15.33 17 20.67 17 20.67 11.67 15.33 11.67 15.33 16.33 15.33 16.33 15.33 16.33 10 16.33 10 17.67 10 17.67 10 17.67 15.33 17.67 15.33Z';
 
 // texture pour les surfaces "objectif"
@@ -103,6 +103,35 @@ type OptionsProps = {
   disableToolbox?: boolean;
   hideMinMaxLabel?: boolean;
 };
+
+// Configuration de la toolbox pour les graphiques (bouton télécharger)
+export const TOOLBOX_BASE = {
+  borderType: 'solid',
+  borderWidth: 0.5,
+  borderColor: colors.primary.DEFAULT,
+  borderRadius: 8,
+  padding: 10,
+  iconStyle: {
+    color: colors.primary.DEFAULT,
+    borderWidth: 0,
+  },
+  emphasis: {
+    iconStyle: {
+      textBackgroundColor: '#222',
+      textFill: '#fff',
+      textBorderRadius: 3,
+      textPadding: [5, 8],
+      color: colors.primary.DEFAULT,
+    },
+  },
+  feature: {
+    saveAsImage: {
+      title: 'Télécharger',
+      name: undefined, // Le titre sera défini lors de l'utilisation
+      icon: DOWNLOAD_ICON,
+    },
+  },
+} as const;
 
 // génère le paramétrage du graphe
 export const makeOption = ({
@@ -202,32 +231,13 @@ export const makeOption = ({
     },
     toolbox: !disableToolbox
       ? {
+          ...TOOLBOX_BASE,
           top: 1,
           right: '3%',
-          borderType: 'solid',
-          borderWidth: 0.5,
-          borderColor: colors.primary.DEFAULT,
-          borderRadius: 8,
-          padding: 10,
-          iconStyle: {
-            color: colors.primary.DEFAULT,
-            borderWidth: 0,
-          },
-          emphasis: {
-            iconStyle: {
-              // @ts-expect-error les props `text*` fonctionnent mais ne sont pas dans le typage
-              textBackgroundColor: '#222',
-              textFill: '#fff',
-              textBorderRadius: 3,
-              textPadding: [5, 8],
-              color: colors.primary.DEFAULT,
-            },
-          },
           feature: {
             saveAsImage: {
-              title: 'Télécharger',
+              ...TOOLBOX_BASE.feature.saveAsImage,
               name: titre,
-              icon: DOWNLOAD_ICON,
             },
           },
         }
