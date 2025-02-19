@@ -18,7 +18,7 @@ export const CellSourceName = ({
   type: SourceType;
   getColorBySourceId: GetColorBySourceId;
 }) => {
-  const metadonnee = source?.metadonnees?.[0];
+  const metadonnee = source.metadonnees?.[0];
   const color = getColorBySourceId(source.source, type);
 
   return (
@@ -28,7 +28,7 @@ export const CellSourceName = ({
         {getSourceLabel(source.source, source.libelle, type)}
         <sup className="text-primary-9 leading-tight">({unite})</sup>
         {!!metadonnee && (
-          <DataSourceTooltip metadonnee={metadonnee}>
+          <DataSourceTooltip nomSource={source.libelle} metadonnee={metadonnee}>
             <Icon
               icon="information-line"
               className="text-primary float-right"

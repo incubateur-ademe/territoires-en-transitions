@@ -69,6 +69,7 @@ const prepareDataset = (
         source: valeurs,
         dimensions: ['anneeISO', 'valeur'],
         metadonnee,
+        nomSource: libelle,
       };
     }) ?? [];
 
@@ -99,6 +100,7 @@ const prepareSegmentsDataset = (chartInfo: IndicateurChartInfo) => {
       }),
       dimensions: ['anneeISO', 'valeur'],
       metadonnee,
+      nomSource: source.libelle,
     };
   });
 };
@@ -168,13 +170,12 @@ const IndicateurChart = ({
         tooltip: {
           show: true,
           formatter: (params) => {
-            const metadonnee = dataset?.find(
-              (s) => s.name === params.name
-            )?.metadonnee;
-            return metadonnee
+            const item = dataset?.find((s) => s.name === params.name);
+            return item?.metadonnee
               ? renderToString(
                   <DataSourceTooltipContent
-                    metadonnee={metadonnee}
+                    metadonnee={item.metadonnee}
+                    nomSource={item.nomSource}
                     className="text-xs [&_*]:text-xs [&_*]:mb-0"
                   />
                 )
