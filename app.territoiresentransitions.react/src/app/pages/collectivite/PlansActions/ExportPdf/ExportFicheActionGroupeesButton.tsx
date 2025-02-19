@@ -4,29 +4,38 @@ import { useEventTracker } from '@/ui';
 import { useEffect, useState } from 'react';
 import { useFicheAction } from '../FicheAction/data/useFicheAction';
 import { FicheActionPdfContent } from './ExportFicheActionButton';
+import { TSectionsValues } from './utils';
 
 type FicheActionPdfWrapperProps = {
   ficheId: number;
+  options?: TSectionsValues;
   generateContent: (content: JSX.Element) => void;
 };
 
 const FicheActionPdfWrapper = ({
   ficheId,
+  options,
   generateContent,
 }: FicheActionPdfWrapperProps) => {
   const { data: fiche } = useFicheAction(ficheId.toString());
 
   return (
     fiche && (
-      <FicheActionPdfContent fiche={fiche} generateContent={generateContent} />
+      <FicheActionPdfContent
+        fiche={fiche}
+        options={options}
+        generateContent={generateContent}
+      />
     )
   );
 };
 
 const ExportFicheActionGroupeesButton = ({
   fichesIds,
+  options,
 }: {
   fichesIds: number[];
+  options?: TSectionsValues;
 }) => {
   const { collectiviteId, niveauAcces, role } = useCurrentCollectivite()!;
   const tracker = useEventTracker('app/actions-groupees-fiches-action');
@@ -50,8 +59,8 @@ const ExportFicheActionGroupeesButton = ({
         {...{ fileName }}
         content={content?.length === fichesIds.length ? content : undefined}
         requestData={() => setIsDataRequested(true)}
-        icon="file-pdf-line"
-        variant="outlined"
+        size="md"
+        variant="primary"
         onClick={() =>
           tracker('export_PDF_telechargement_groupe', {
             collectiviteId,
@@ -68,6 +77,7 @@ const ExportFicheActionGroupeesButton = ({
           <FicheActionPdfWrapper
             key={id}
             ficheId={id}
+            options={options}
             generateContent={(newContent) => {
               setContent((prevState) => [...(prevState ?? []), newContent]);
             }}

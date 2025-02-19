@@ -13,10 +13,12 @@ import {
   Table,
 } from '@/ui';
 import { useState } from 'react';
+import ExportFicheActionGroupeesButton from './ExportFicheActionGroupeesButton';
 import { sectionsInitValue, sectionsList } from './utils';
 
 type Props = {
-  fiche: FicheAction;
+  fiche?: FicheAction;
+  fichesIds?: number[];
   buttonProps?: Pick<
     ButtonProps,
     'children' | 'title' | 'variant' | 'size' | 'icon' | 'iconPosition'
@@ -33,6 +35,7 @@ const defaultButtonProps: ButtonProps = {
 
 const ExportFicheActionModal = ({
   fiche,
+  fichesIds,
   buttonProps = defaultButtonProps,
 }: Props) => {
   const [options, setOptions] = useState(sectionsInitValue);
@@ -83,7 +86,15 @@ const ExportFicheActionModal = ({
           <Button variant="outlined" onClick={close}>
             Annuler
           </Button>
-          <ExportFicheActionButton fiche={fiche} options={options} />
+          {!!fiche && (
+            <ExportFicheActionButton fiche={fiche} options={options} />
+          )}
+          {!!fichesIds && (
+            <ExportFicheActionGroupeesButton
+              fichesIds={fichesIds}
+              options={options}
+            />
+          )}
         </ModalFooter>
       )}
     >
