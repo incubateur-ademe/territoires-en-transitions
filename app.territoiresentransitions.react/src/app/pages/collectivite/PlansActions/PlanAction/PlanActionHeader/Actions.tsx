@@ -1,7 +1,5 @@
 import classNames from 'classnames';
 
-import SmallIconContextMenu from '@/app/app/pages/collectivite/PlansActions/PlanAction/PlanActionHeader/SmallIconContextMenu';
-
 import RestreindreFichesModal from '../RestreindreFichesModal';
 import SupprimerAxeModal from '../SupprimerAxeModal';
 
@@ -10,7 +8,8 @@ import {
   makeCollectivitePlansActionsLandingUrl,
 } from '@/app/app/paths';
 import { TPlanType } from '@/app/types/alias';
-import { Icon, Tooltip } from '@/ui';
+import ContextMenu from '@/app/ui/shared/select/ContextMenu';
+import { Button, Icon, Tooltip } from '@/ui';
 import { useState } from 'react';
 import SpinnerLoader from '../../../../../../ui/shared/SpinnerLoader';
 import { PlanNode } from '../data/types';
@@ -74,15 +73,19 @@ const Actions = ({
             <SpinnerLoader />
           </div>
         ) : (
-          <SmallIconContextMenu
+          <ContextMenu
             dataTest="export-pa"
-            title="Exporter"
-            disabled={isLoading}
             options={EXPORT_OPTIONS}
-            buttonClassname="flex p-2 bg-white hover:bg-primary-1 rounded-lg fr-icon-download-line text-primary before:!w-4 before:!h-4"
-            hideDefaultIcon
             onSelect={(format) => exportPlanAction(format as any)}
-          />
+          >
+            <Button
+              disabled={isLoading}
+              title="Exporter"
+              icon="download-line"
+              variant="white"
+              size="xs"
+            />
+          </ContextMenu>
         )
       ) : null}
       <SupprimerAxeModal
