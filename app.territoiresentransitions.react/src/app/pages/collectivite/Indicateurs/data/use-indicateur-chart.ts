@@ -170,6 +170,10 @@ function prepareEnfantsParSegmentation(
     }[]
   > = { [SEGMENTATION_PAR_DEFAUT]: [] };
 
+  const dataParId: Record<number, PreparedData> = {};
+  const sources: Array<{ source: string; ordreAffichage: number | null }> = [];
+
+  // recherche la source la plus appropriée pour chaque sous-indicateur
   enfants?.forEach((enfant) => {
     // valeurs associées à l'indicateur
     const valeursEnfant = valeursSegments?.indicateurs.find(
@@ -182,6 +186,7 @@ function prepareEnfantsParSegmentation(
 
     // et transformées pour l'affichage
     const data = prepareData(valeursEnfant, type, false);
+    dataParId[enfant.id] = data;
 
     // sélectionne la source la plus appropriée
     const sourceValeursEnfant = data.sources
@@ -196,6 +201,25 @@ function prepareEnfantsParSegmentation(
           // et on n'affiche pas les objectifs de la SNBC
           s.source !== 'snbc'
       );
+
+    if (sourceValeursEnfant) {
+      const { source, ordreAffichage } = sourceValeursEnfant;
+      sources.push({ source, ordreAffichage });
+    }
+  });
+
+  // puis sélectionne la meilleure source par ordre d'affichage
+  const bestSource = sources.sort(parOrdreAffichage)[0]?.source;
+  if (!bestSource) return [];
+
+  // ventile les données par segmentation pour chaque indicateur
+  enfants?.forEach((enfant) => {
+    const data = dataParId[enfant.id];
+
+    // sélectionne les données pour la source voulue
+    const sourceValeursEnfant = data?.sources.find(
+      (s) => s.source === bestSource
+    );
 
     if (sourceValeursEnfant) {
       // segmentations auxquelles est rattaché l'indicateur
@@ -220,6 +244,13 @@ function prepareEnfantsParSegmentation(
     .filter(([, indicateurs]) => indicateurs?.length)
     .map(([segmentation, indicateurs]) => ({ segmentation, indicateurs }));
 }
+
+type ItemSource = { ordreAffichage: number | null };
+const parOrdreAffichage = (
+  { ordreAffichage: a }: ItemSource,
+  { ordreAffichage: b }: ItemSource
+) => (a === null ? 1 : b === null ? -1 : a - b);
+
 
 export type IndicateursParSegment = ReturnType<
   typeof prepareEnfantsParSegmentation
