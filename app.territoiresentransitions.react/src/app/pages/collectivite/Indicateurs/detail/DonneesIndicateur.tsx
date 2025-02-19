@@ -46,7 +46,7 @@ const DonneesIndicateur = ({
       )}
 
       {/** Sélecteur de sources de données */}
-      {!isPerso && (
+      {!isPerso && chartInfo.sourceFilter.availableOptions.length > 1 && (
         <IndicateurSourcesSelect sourceFilter={chartInfo.sourceFilter} />
       )}
 
