@@ -1,6 +1,7 @@
 import { Injectable, Logger } from '@nestjs/common';
-import { and, asc, eq } from 'drizzle-orm';
+import { and, asc, eq, inArray, isNotNull, or } from 'drizzle-orm';
 import { DatabaseService } from '../../utils/database/database.service';
+import { indicateurValeurTable } from '../index-domain';
 import {
   indicateurSourceMetadonneeTable,
   SourceMetadonnee,
@@ -10,6 +11,7 @@ import {
   indicateurSourceTable,
   SourceInsert,
 } from '../shared/models/indicateur-source.table';
+import { GetAvailableSourcesRequestSchemaRequestType } from './get-available-sources.request';
 
 @Injectable()
 export default class IndicateurSourcesService {
@@ -65,11 +67,49 @@ export default class IndicateurSourcesService {
       });
   }
 
-  async getSources() {
-    this.logger.log('Liste les sources de données');
+  async getAllSources() {
+    this.logger.log('Liste toutes les sources de données');
     return this.databaseService.db
       .select()
       .from(indicateurSourceTable)
+      .orderBy(
+        asc(indicateurSourceTable.ordreAffichage),
+        asc(indicateurSourceTable.libelle)
+      );
+  }
+
+  async getAvailableSources(
+    input: GetAvailableSourcesRequestSchemaRequestType
+  ) {
+    const { collectiviteId, indicateurId } = input;
+    this.logger.log(
+      `Liste les sources de données disponibles pour l'indicateur ${indicateurId} et la collectivité ${collectiviteId}`
+    );
+
+    const metadonneeIds = this.databaseService.db
+      .select({ id: indicateurValeurTable.metadonneeId })
+      .from(indicateurValeurTable)
+      .where(
+        and(
+          isNotNull(indicateurValeurTable.metadonneeId),
+          eq(indicateurValeurTable.collectiviteId, collectiviteId),
+          eq(indicateurValeurTable.indicateurId, indicateurId),
+          or(
+            isNotNull(indicateurValeurTable.resultat),
+            isNotNull(indicateurValeurTable.objectif)
+          )
+        )
+      );
+
+    const sourceId = this.databaseService.db
+      .selectDistinct({ sourceId: indicateurSourceMetadonneeTable.sourceId })
+      .from(indicateurSourceMetadonneeTable)
+      .where(inArray(indicateurSourceMetadonneeTable.id, metadonneeIds));
+
+    return this.databaseService.db
+      .select()
+      .from(indicateurSourceTable)
+      .where(inArray(indicateurSourceTable.id, sourceId))
       .orderBy(
         asc(indicateurSourceTable.ordreAffichage),
         asc(indicateurSourceTable.libelle)
