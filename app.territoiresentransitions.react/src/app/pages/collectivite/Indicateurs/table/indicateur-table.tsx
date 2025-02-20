@@ -90,7 +90,9 @@ export const IndicateurTable = (props: IndicateurTableProps) => {
         disableComments={!chartInfo.sourceFilter.avecDonneesCollectivite}
       />
       {/** résultat récent en mode privé */}
-      {type === 'resultat' && <PrivateModeSwitch definition={definition} />}
+      {type === 'resultat' && !!data.donneesCollectivite?.valeurs.length && (
+        <PrivateModeSwitch definition={definition} />
+      )}
       {/** dialogue d'édition des valeurs */}
       {isOpen && (
         <EditValeursModal
