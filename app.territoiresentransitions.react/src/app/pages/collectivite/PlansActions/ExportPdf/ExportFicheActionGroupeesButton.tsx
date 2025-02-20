@@ -30,13 +30,17 @@ const FicheActionPdfWrapper = ({
   );
 };
 
+type Props = {
+  fichesIds: number[];
+  options?: TSectionsValues;
+  onDownloadEnd?: () => void;
+};
+
 const ExportFicheActionGroupeesButton = ({
   fichesIds,
   options,
-}: {
-  fichesIds: number[];
-  options?: TSectionsValues;
-}) => {
+  onDownloadEnd,
+}: Props) => {
   const { collectiviteId, niveauAcces, role } = useCurrentCollectivite()!;
   const tracker = useEventTracker('app/actions-groupees-fiches-action');
 
@@ -68,6 +72,7 @@ const ExportFicheActionGroupeesButton = ({
             role,
           })
         }
+        onDownloadEnd={onDownloadEnd}
       >
         Exporter au format PDF
       </ExportPDFButton>

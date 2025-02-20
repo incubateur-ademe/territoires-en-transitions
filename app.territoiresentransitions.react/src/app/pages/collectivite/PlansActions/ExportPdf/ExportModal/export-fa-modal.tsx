@@ -42,12 +42,23 @@ const ExportFicheActionModal = ({
             Annuler
           </Button>
           {!!fiche && (
-            <ExportFicheActionButton fiche={fiche} options={options} />
+            <ExportFicheActionButton
+              fiche={fiche}
+              options={options}
+              onDownloadEnd={() => {
+                close();
+                setOptions(sectionsInitValue);
+              }}
+            />
           )}
           {!!fichesIds && (
             <ExportFicheActionGroupeesButton
               fichesIds={fichesIds}
               options={options}
+              onDownloadEnd={() => {
+                close();
+                setOptions(sectionsInitValue);
+              }}
             />
           )}
         </ModalFooter>
