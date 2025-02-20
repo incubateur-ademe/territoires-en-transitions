@@ -58,6 +58,13 @@ const prepareDataset = (
   getColorBySourceId: GetColorBySourceId
 ) =>
   data.valeurs[`${type}s`].sources
+    // filtre les valeurs null/undefined
+    ?.map(({ valeurs, ...other }) => ({
+      ...other,
+      valeurs: valeurs.filter(({ valeur }) => valeur != null),
+    }))
+    // et les jeux de valeurs vides pour éviter d'avoir dans la légende des
+    // items sans données associées
     ?.filter(({ valeurs }) => valeurs?.length > 0)
     .map(({ source, libelle, valeurs, metadonnees }) => {
       const metadonnee = metadonnees?.find((m) => m.sourceId === source);

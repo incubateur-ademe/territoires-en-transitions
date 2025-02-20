@@ -27,18 +27,16 @@ export const prepareData = (
   // transforme les valeurs de chaque source
   const sourcesEtValeursModifiees = sourcesFiltrees.map((sourceData) => ({
     ...sourceData,
-    valeurs: sourceData.valeurs
-      .filter((v) => typeof v[type] === 'number')
-      .map((v) => {
-        const annee = new Date(v.dateValeur).getFullYear();
-        return {
-          id: v.id,
-          annee,
-          anneeISO: `${annee}-01-01T00:00:00.000Z`,
-          valeur: v[type],
-          commentaire: v[`${type}Commentaire`],
-        };
-      }),
+    valeurs: sourceData.valeurs.map((v) => {
+      const annee = new Date(v.dateValeur).getFullYear();
+      return {
+        id: v.id,
+        annee,
+        anneeISO: `${annee}-01-01T00:00:00.000Z`,
+        valeur: v[type],
+        commentaire: v[`${type}Commentaire`],
+      };
+    }),
     metadonnees: sourceData.metadonnees || [],
     type,
   }));
