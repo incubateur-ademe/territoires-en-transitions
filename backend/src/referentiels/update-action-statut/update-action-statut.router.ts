@@ -3,7 +3,7 @@ import { Injectable } from '@nestjs/common';
 import {
   UpdateActionStatutService,
   upsertActionStatutRequestSchema,
-} from './action-statut.update.service';
+} from './update-action-statut.service';
 
 @Injectable()
 export class UpdateActionStatutRouter {

@@ -3,8 +3,6 @@ import { AuthModule } from '../auth/auth.module';
 import { CollectivitesModule } from '../collectivites/collectivites.module';
 import { PersonnalisationsModule } from '../personnalisations/personnalisations.module';
 import { SheetModule } from '../utils/google-sheets/sheet.module';
-import { UpdateActionStatutRouter } from './action-statut.update/action-statut.update.router';
-import { UpdateActionStatutService } from './action-statut.update/action-statut.update.service';
 import { ComputeScoreRouter } from './compute-score/compute-score.router';
 import { ReferentielsScoringController } from './compute-score/referentiels-scoring.controller';
 import ReferentielsScoringService from './compute-score/referentiels-scoring.service';
@@ -16,6 +14,8 @@ import ImportReferentielService from './import-referentiel/import-referentiel.se
 import { LabellisationService } from './labellisation.service';
 import ReferentielsScoringSnapshotsService from './snapshots/referentiels-scoring-snapshots.service';
 import { ScoreSnapshotsRouter } from './snapshots/score-snaphots.router';
+import { UpdateActionStatutRouter } from './update-action-statut/update-action-statut.router';
+import { UpdateActionStatutService } from './update-action-statut/update-action-statut.service';
 
 @Module({
   imports: [
