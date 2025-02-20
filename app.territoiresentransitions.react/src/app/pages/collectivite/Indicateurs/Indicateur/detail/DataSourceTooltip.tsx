@@ -1,4 +1,5 @@
 import { Valeur } from '@/api/indicateurs/domain';
+import Markdown from '@/app/ui/Markdown';
 import { Tooltip } from '@/ui';
 
 type DataSourceTooltipProps = {
@@ -18,6 +19,7 @@ export const DataSourceTooltip = ({
 }: DataSourceTooltipProps) => {
   return (
     <Tooltip
+      activatedBy="click"
       label={
         <DataSourceTooltipContent
           className="font-normal"
@@ -64,7 +66,10 @@ export const DataSourceTooltipContent = ({
     Version : <b>{new Date(metadonnee.dateVersion).getFullYear()}</b>
     {!!metadonnee.methodologie && (
       <p>
-        Méthodologie / Périmètre : <b>{metadonnee.methodologie}</b>
+        Méthodologie / Périmètre :{' '}
+        <b>
+          <Markdown content={metadonnee.methodologie} />
+        </b>
       </p>
     )}
     {!!metadonnee.limites && (
