@@ -19,7 +19,7 @@ export const DataSourceTooltip = ({
 }: DataSourceTooltipProps) => {
   return (
     <Tooltip
-      activatedBy="click"
+      closingDelay={500}
       label={
         <DataSourceTooltipContent
           className="font-normal"
@@ -67,9 +67,11 @@ export const DataSourceTooltipContent = ({
     {!!metadonnee.methodologie && (
       <p>
         Méthodologie / Périmètre :{' '}
-        <b>
-          <Markdown content={metadonnee.methodologie} />
-        </b>
+        <Markdown
+          content={metadonnee.methodologie}
+          as="b"
+          options={{ disallowedElements: ['p'], unwrapDisallowed: true }}
+        />
       </p>
     )}
     {!!metadonnee.limites && (
