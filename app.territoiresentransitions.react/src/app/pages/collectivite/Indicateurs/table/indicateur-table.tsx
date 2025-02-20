@@ -83,7 +83,12 @@ export const IndicateurTable = (props: IndicateurTableProps) => {
         )}
       </div>
       {/** tableau pour le type de valeurs (objectif | résultat) sélectionné */}
-      <IndicateurValeursTable {...props} data={data} type={type} />
+      <IndicateurValeursTable
+        {...props}
+        data={data}
+        type={type}
+        disableComments={!chartInfo.sourceFilter.avecDonneesCollectivite}
+      />
       {/** résultat récent en mode privé */}
       {type === 'resultat' && <PrivateModeSwitch definition={definition} />}
       {/** dialogue d'édition des valeurs */}
