@@ -62,7 +62,7 @@ export type ModalProps = {
   openState?: OpenState;
   /** fonction appelée lors de la fermeture de la modale */
   onClose?: () => void;
-  /** max-width prédéfinies dans le DSFR, valeur par défaut "md" */
+  /** max-width prédéfinies, valeur par défaut "md" */
   size?: ModalSize;
   /** désactive la fermeture lors du clic sur le fond */
   disableDismiss?: boolean;
