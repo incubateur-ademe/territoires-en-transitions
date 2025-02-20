@@ -82,11 +82,13 @@ export const FicheActionPdfContent = ({
 type ExportFicheActionButtonProps = {
   fiche: FicheAction;
   options?: TSectionsValues;
+  onDownloadEnd?: () => void;
 };
 
 const ExportFicheActionButton = ({
   fiche,
   options,
+  onDownloadEnd,
 }: ExportFicheActionButtonProps) => {
   const [isDataRequested, setIsDataRequested] = useState(false);
   const [content, setContent] = useState<JSX.Element | undefined>(undefined);
@@ -100,6 +102,7 @@ const ExportFicheActionButton = ({
         requestData={() => setIsDataRequested(true)}
         size="md"
         variant="primary"
+        onDownloadEnd={onDownloadEnd}
       >
         Exporter au format PDF
       </ExportPDFButton>
