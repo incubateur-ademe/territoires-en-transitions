@@ -21,7 +21,7 @@ import { actionNewToDeprecated } from '@/app/referentiels/DEPRECATED_scores.type
 import { NEW_useTable } from '@/app/referentiels/ReferentielTable/useReferentiel';
 import { useReferentielId } from '@/app/referentiels/referentiel-context';
 import { useSnapshotFlagEnabled } from '@/app/referentiels/use-snapshot';
-import { DesactiverLesFiltres } from '@/app/ui/shared/filters/DesactiverLesFiltres';
+import { DeleteFiltersButton } from '@/app/ui/lists/filter-badges/delete-filters.button';
 import { ReferentielId } from '@/domain/referentiels';
 import { ITEM_ALL } from '@/ui';
 import { flow } from 'es-toolkit';
@@ -129,20 +129,16 @@ export const ActionScoresTable = () => {
 
   return (
     <>
-      <div className="mb-6">
-        {filtersCount} {labelFilters}
-        {filtersCount > 0 && (
-          <DesactiverLesFiltres
-            className="ml-5"
-            onClick={() => setFilters(noFilters)}
-          />
-        )}
-        {filterInfoMessage ? (
-          <>
-            <br />
-            {filterInfoMessage}
-          </>
-        ) : null}
+      <div className="flex flex-col gap-4 mb-6">
+        <div className="flex items-center gap-6">
+          <span>
+            {filtersCount} {labelFilters}
+          </span>
+          {filtersCount > 0 && (
+            <DeleteFiltersButton onClick={() => setFilters(noFilters)} />
+          )}
+        </div>
+        {filterInfoMessage && <p className="mb-0">{filterInfoMessage}</p>}
       </div>
       <Table tableData={tableData} />
     </>
