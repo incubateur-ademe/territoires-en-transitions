@@ -1,7 +1,7 @@
 import { makeCollectivitePlansActionsNouveauUrl } from '@/app/app/paths';
 import { useCollectiviteId } from '@/app/core-logic/hooks/params';
 import { TPlanType } from '@/app/types/alias';
-import { Button, Field, Input } from '@/ui';
+import { Button, Field, Icon, Input } from '@/ui';
 import { useState } from 'react';
 import { useCreatePlanAction } from '../PlanAction/data/useUpsertAxe';
 import PlanTypeDropdown from '../PlanAction/PlanTypeDropdown';
@@ -25,7 +25,7 @@ const CreerPlan = () => {
     <div className="max-w-3xl mx-auto flex flex-col grow py-12">
       <div className="w-full mx-auto">
         <h3 className="mb-8">
-          <span className="fr-icon-edit-box-fill mr-2" />
+          <Icon icon="edit-box-fill" size="lg" className="mr-2" />
           Créer un plan d’action
         </h3>
         <div className="flex flex-col gap-6 mt-2 mb-10 pt-16 pb-20 px-24 bg-primary-0 rounded-2xl">

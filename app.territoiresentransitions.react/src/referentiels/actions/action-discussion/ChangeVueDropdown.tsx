@@ -3,6 +3,7 @@ import { forwardRef, Ref } from 'react';
 
 import DropdownFloater from '@/app/ui/shared/floating-ui/DropdownFloater';
 
+import { Icon } from '@/ui';
 import { TActionDiscussionStatut } from './data/types';
 
 /** Menu et options pour changer la vue du feed de discussion dans une action */
@@ -77,15 +78,16 @@ const ChangeVueDropdownButtonDisplayed = forwardRef(
       >
         {vue === 'ouvert' && 'Ouverts'}
         {vue === 'ferme' && 'Fermés'}{' '}
-        <div
-          className={classNames(
-            'fr-fi-arrow-down-s-line mt-0.5 ml-1 scale-90',
-            {
-              'rotate-180': isOpen,
-            }
-          )}
+        <Icon
+          icon="arrow-down-s-line"
+          className={classNames('mt-0.5 ml-1', {
+            'rotate-180': isOpen,
+          })}
         />
       </button>
     </div>
   )
 );
+
+ChangeVueDropdownButtonDisplayed.displayName =
+  'ChangeVueDropdownButtonDisplayed';

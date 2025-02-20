@@ -1,6 +1,7 @@
+import { Icon } from '@/ui';
 import { CellProps } from 'react-table';
-import { TAuditSuiviRow } from './queries';
 import { BadgeAuditStatut } from '../BadgeAuditStatut';
+import { TAuditSuiviRow } from './queries';
 
 type TCellProps = CellProps<TAuditSuiviRow>;
 
@@ -21,7 +22,5 @@ export const CellAuditStatut = (props: TCellProps) => {
 export const CellCheckmark = (props: TCellProps) => {
   const { value } = props;
 
-  return value ? (
-    <span className="block fr-fi-check-line scale-75 text-center" />
-  ) : null;
+  return value ? <Icon icon="check-line" /> : null;
 };
