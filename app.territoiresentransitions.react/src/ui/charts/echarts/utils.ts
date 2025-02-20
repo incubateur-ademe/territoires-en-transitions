@@ -104,7 +104,7 @@ type OptionsProps = {
   hideMinMaxLabel?: boolean;
 };
 
-// Configuration de la toolbox pour les graphiques (bouton télécharger)
+// configure la toolbox pour les graphiques (bouton télécharger)
 export const TOOLBOX_BASE = {
   borderType: 'solid',
   borderWidth: 0.5,
@@ -127,7 +127,7 @@ export const TOOLBOX_BASE = {
   feature: {
     saveAsImage: {
       title: 'Télécharger',
-      name: undefined, // Le titre sera défini lors de l'utilisation
+      name: undefined,
       icon: DOWNLOAD_ICON,
     },
   },
