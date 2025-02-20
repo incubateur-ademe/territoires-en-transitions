@@ -21,6 +21,7 @@ import { groupBy, keyBy, partition } from 'es-toolkit';
 import * as _ from 'lodash';
 import { AuthenticatedUser, AuthRole } from '../../auth/models/auth.models';
 import CollectivitesService from '../../collectivites/services/collectivites.service';
+import { buildConflictUpdateColumns } from '../../utils/database/conflict.utils';
 import { DatabaseService } from '../../utils/database/database.service';
 import { indicateurSourceTable, Source } from '../index-domain';
 import { DeleteIndicateursValeursRequestType } from '../shared/models/delete-indicateurs.request';
@@ -393,6 +394,22 @@ export default class CrudValeursService {
             createdBy: tokenInfo.id,
             createdAt: now,
             modifiedBy: tokenInfo.id,
+            modifiedAt: now,
+            metadonneeId: null,
+          })
+          .onConflictDoUpdate({
+            target: [
+              indicateurValeurTable.indicateurId,
+              indicateurValeurTable.collectiviteId,
+              indicateurValeurTable.dateValeur,
+            ],
+            targetWhere: isNull(indicateurValeurTable.metadonneeId),
+            set: buildConflictUpdateColumns(indicateurValeurTable, [
+              'objectifCommentaire',
+              'resultatCommentaire',
+              'modifiedBy',
+              'modifiedAt',
+            ]),
           })
           .returning();
         return inserted[0];
