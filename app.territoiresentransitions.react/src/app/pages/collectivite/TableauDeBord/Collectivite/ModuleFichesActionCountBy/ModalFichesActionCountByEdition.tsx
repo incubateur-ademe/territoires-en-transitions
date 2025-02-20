@@ -16,7 +16,7 @@ import { cloneDeep, pick } from 'es-toolkit';
 
 import { useCollectiviteModuleUpsert } from '@/app/app/pages/collectivite/TableauDeBord/Collectivite/useCollectiviteModuleUpsert';
 import { useCurrentCollectivite } from '@/app/core-logic/hooks/useCurrentCollectivite';
-import { CreateModuleFicheActionCountByType } from '@/backend/collectivites/tableau-de-bord/module-fiche-action-count-by.schema';
+import { CreateModuleFicheActionCountByType } from '@/domain/collectivites';
 import {
   CountByPropertyEnumType,
   ficheActionForCountBySchema,
