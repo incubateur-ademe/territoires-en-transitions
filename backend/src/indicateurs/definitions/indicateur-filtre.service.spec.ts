@@ -1,7 +1,7 @@
 import { PermissionService } from '@/backend/auth/authorizations/permission.service';
 import { Test } from '@nestjs/testing';
 import CollectivitesService from '../../collectivites/services/collectivites.service';
-import { DatabaseService } from '../../utils/database/database.service';
+import { DatabaseService } from '@/backend/utils/database/database.service';
 import {
   GetFilteredIndicateurRequestQueryOptionType,
   GetFilteredIndicateursRequestOptionType,
@@ -673,15 +673,15 @@ describe('IndicateurFiltreService', () => {
     });
     it('Test le filtre indicateurIds', async () => {
       const filtres: GetFilteredIndicateursRequestOptionType = {
-        indicateurIds: [1, 2]
-      }
+        indicateurIds: [1, 2],
+      };
       const toCheck = indicateurFiltreService.applyFilters(
         datas,
         filtres,
         true
       );
       expect(toCheck.length).toEqual(2);
-    })
+    });
   });
   describe('applySorts', () => {
     const ind1 = {

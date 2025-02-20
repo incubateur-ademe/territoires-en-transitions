@@ -3,14 +3,19 @@ import { DatabaseService } from '@/backend/utils';
 import { AnyColumn, eq } from 'drizzle-orm';
 import { PgTable } from 'drizzle-orm/pg-core';
 import { Transaction } from '@/backend/utils/database/transaction.utils';
-import { Tag, TagEnum, TagInsert, TagType } from './tag.table-base';
-import { financeurTagTable } from './financeur-tag.table';
-import { personneTagTable } from './personne-tag.table';
-import { partenaireTagTable } from './partenaire-tag.table';
-import { serviceTagTable } from './service-tag.table';
-import { structureTagTable } from './structure-tag.table';
-import { categorieTagTable } from './categorie-tag.table';
-import { libreTagTable } from './libre-tag.table';
+import { financeurTagTable } from '@/backend/collectivites/tags/financeur-tag.table';
+import { personneTagTable } from '@/backend/collectivites/tags/personne-tag.table';
+import { partenaireTagTable } from '@/backend/collectivites/tags/partenaire-tag.table';
+import { serviceTagTable } from '@/backend/collectivites/tags/service-tag.table';
+import { structureTagTable } from '@/backend/collectivites/tags/structure-tag.table';
+import { categorieTagTable } from '@/backend/collectivites/tags/categorie-tag.table';
+import { libreTagTable } from '@/backend/collectivites/tags/libre-tag.table';
+import {
+  Tag,
+  TagEnum,
+  TagInsert,
+  TagType,
+} from '@/backend/collectivites/tags/tag.table-base';
 
 const tagTypeTable: Record<TagType, PgTable & { collectiviteId: AnyColumn }> = {
   [TagEnum.Financeur]: financeurTagTable,
