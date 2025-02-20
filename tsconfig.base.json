@@ -25,6 +25,7 @@
       "@/app/*": ["./app.territoiresentransitions.react/src/*"],
       "@/auth/*": ["./packages/auth/*"],
       "@/domain/*": ["./backend/src/*/index-domain"],
+      "@/domain/trpc-router": ["./backend/src/utils/trpc/trpc.router"],
       "@/backend/*": ["./backend/src/*"],
       "@/backend/test": ["./backend/test/index"],
       "@/panier/*": ["./packages/panier/*"],
