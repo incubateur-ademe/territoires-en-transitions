@@ -176,7 +176,7 @@ const IndicateurChart = ({
                   <DataSourceTooltipContent
                     metadonnee={item.metadonnee}
                     nomSource={item.nomSource}
-                    className="text-xs [&_*]:text-xs [&_*]:mb-0"
+                    className="max-w-80 break-words whitespace-normal text-xs [&_*]:text-xs [&_*]:mb-0"
                   />
                 )
               : '';
