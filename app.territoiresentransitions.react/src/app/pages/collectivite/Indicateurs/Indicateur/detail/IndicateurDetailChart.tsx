@@ -1,6 +1,6 @@
 import { TIndicateurDefinition } from '@/app/app/pages/collectivite/Indicateurs/types';
 import PictoIndicateurVide from '@/app/ui/pictogrammes/PictoIndicateurVide';
-import { Button, EmptyCard, Select } from '@/ui';
+import { Button, EmptyCard } from '@/ui';
 import classNames from 'classnames';
 import { useState } from 'react';
 import DownloadIndicateurChartModal from '../../chart/DownloadIndicateurChart';
@@ -14,12 +14,6 @@ type Props = {
   buttonClassName?: string;
   isReadonly?: boolean;
   onAddValue?: () => void;
-};
-
-const SegmentationNames: Record<string, string> = {
-  secteur: 'Indicateurs sectoriels',
-  vecteur: 'Indicateurs vectoriels',
-  vecteur_filiere: 'Indicateurs vecteur x filière',
 };
 
 /**
@@ -38,31 +32,10 @@ const IndicateurDetailChart = ({
   /** Gère l'affichage de la modale */
   const [isChartOpen, setIsChartOpen] = useState(false);
 
-  const {
-    typesSegmentation,
-    segmentation,
-    setSegmentation,
-    hasValeur,
-    isLoading,
-    sourceFilter,
-  } = chartInfo;
+  const { hasValeur, isLoading, sourceFilter } = chartInfo;
 
   return hasValeur ? (
     <>
-      {
-        /* sélecteur de segmentation */
-        typesSegmentation?.length > 1 && (
-          <Select
-            values={segmentation}
-            options={typesSegmentation.map((type) => ({
-              label: SegmentationNames[type],
-              value: type,
-            }))}
-            onChange={(v) => v && setSegmentation(v as string)}
-          />
-        )
-      }
-
       <div
         data-test={`chart-${definition.id}`}
         className={classNames('w-full', className)}
