@@ -97,9 +97,12 @@ const prepareSegmentsDataset = (chartInfo: IndicateurChartInfo) => {
     const metadonnee = source.metadonnees?.find(
       (m) => m.sourceId === source.source
     );
+    const { id, name, color } = segmentItemParId.get(definition.id) || {};
 
     return {
-      ...(segmentItemParId.get(definition.id) || {}),
+      id,
+      name: `${name}${source.type === 'objectif' ? ' (objectifs)' : ''}`,
+      color,
       source: annees.map((annee) => {
         const valeur = source.valeurs.find((v) => v.annee === annee);
         // remplace les années manquantes par 0 pour améliorer l'affichage des surfaces empilées
