@@ -36,6 +36,7 @@ export type TextareaProps = DetailedHTMLProps<
   disabled?: boolean;
   /** Style custom du container */
   containerClassname?: string;
+  dataTest?: string;
 };
 
 export const Textarea = forwardRef(
@@ -47,6 +48,7 @@ export const Textarea = forwardRef(
       disabled = false,
       containerClassname,
       className,
+      dataTest,
       ...props
     }: TextareaProps,
     ref?: Ref<HTMLTextAreaElement>
@@ -65,6 +67,7 @@ export const Textarea = forwardRef(
       >
         <textarea
           {...props}
+          data-test={dataTest}
           ref={ref}
           disabled={disabled}
           className={classNames(
