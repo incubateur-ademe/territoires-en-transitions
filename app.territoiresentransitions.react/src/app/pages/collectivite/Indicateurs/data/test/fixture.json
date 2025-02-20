@@ -40,7 +40,9 @@
               "objectif": 13,
               "objectifCommentaire": "commentaire objectif 2021"
             }
-          ]
+          ],
+          "libelle": "",
+          "ordreAffichage": -1
         },
         "citepa": {
           "source": "citepa",
@@ -56,7 +58,9 @@
               "dateValeur": "2022-01-01",
               "resultat": 12.2
             }
-          ]
+          ],
+          "libelle": "CITEPA",
+          "ordreAffichage": 3
         },
         "pcaet": {
           "source": "pcaet",
@@ -72,7 +76,9 @@
               "dateValeur": "2021-01-01",
               "objectif": 10
             }
-          ]
+          ],
+          "libelle": "Territoires & Climat",
+          "ordreAffichage": 1
         }
       }
     }
