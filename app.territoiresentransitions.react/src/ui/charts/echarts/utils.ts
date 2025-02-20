@@ -15,8 +15,20 @@ const NumFormat = Intl.NumberFormat('fr', { maximumFractionDigits: 3 });
 const DOWNLOAD_ICON =
   'path://M11 22S23 22 23 22 23 23.33 23 23.33 11 23.33 11 23.33 11 22 11 22ZM17.67 15.33S22.33 15.33 22.33 15.33 17 20.67 17 20.67 11.67 15.33 11.67 15.33 16.33 15.33 16.33 15.33 16.33 10 16.33 10 17.67 10 17.67 10 17.67 15.33 17.67 15.33Z';
 
+// texture pour les surfaces "objectif"
+const DOTTED_AREA: LineSeriesOption['itemStyle'] = {decal: {
+  symbol: 'circle',
+  symbolSize: 0.3,
+  dashArrayX: [
+    [18, 18],
+    [0, 18, 18, 0],
+  ],
+  dashArrayY: [9, 0],
+}};
+
 export type Dataset = DatasetComponentOption & {
   color?: string;
+  typeSource?: string;
 };
 
 // génère le paramétrage de séries de données sous forme de surfaces empilées
@@ -38,6 +50,7 @@ export const makeStackedSeries = (dataset: Dataset[]): LineSeriesOption[] =>
     stack: 'total',
     symbol: 'none',
     areaStyle: {},
+    itemStyle: ds.typeSource === 'objectif' ? DOTTED_AREA : undefined,
     lineStyle: { width: 0 },
   }));
 
