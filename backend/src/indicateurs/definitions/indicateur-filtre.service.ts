@@ -3,7 +3,6 @@ import { PermissionService } from '@/backend/auth/authorizations/permission.serv
 import { ResourceType } from '@/backend/auth/authorizations/resource-type.enum';
 import { ficheActionAxeTable } from '@/backend/plans/fiches/shared/models/fiche-action-axe.table';
 import { serviceTagTable } from '@/domain/collectivites';
-import { axeTable, ficheActionIndicateurTable } from '@/domain/plans/fiches';
 import { Injectable } from '@nestjs/common';
 import { getTableName, sql } from 'drizzle-orm';
 import { intersection, isNil } from 'es-toolkit';
@@ -12,7 +11,7 @@ import CollectivitesService from '../../collectivites/services/collectivites.ser
 import { groupementCollectiviteTable } from '../../collectivites/shared/models/groupement-collectivite.table';
 import { categorieTagTable } from '../../collectivites/tags/categorie-tag.table';
 import { ficheActionTable } from '../../plans/fiches/shared/models/fiche-action.table';
-import { DatabaseService } from '../../utils/database/database.service';
+import { DatabaseService } from '@/backend/utils/database/database.service';
 import { indicateurActionTable } from '../shared/models/indicateur-action.table';
 import { indicateurCategorieTagTable } from '../shared/models/indicateur-categorie-tag.table';
 import { indicateurCollectiviteTable } from '../shared/models/indicateur-collectivite.table';
@@ -27,6 +26,8 @@ import {
   GetFilteredIndicateursRequestOptionType,
 } from './get-filtered-indicateurs.request';
 import { GetFilteredIndicateurResponseType } from './get-filtered-indicateurs.response';
+import { axeTable } from '@/backend/plans/fiches/shared/models/axe.table';
+import { ficheActionIndicateurTable } from '@/backend/plans/fiches/shared/models/fiche-action-indicateur.table';
 
 export type RequestResultIndicateursRaw = {
   id: number;

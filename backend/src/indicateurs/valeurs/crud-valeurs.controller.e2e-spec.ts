@@ -3,8 +3,8 @@ import { DatabaseService } from '@/backend/utils';
 import { INestApplication } from '@nestjs/common';
 import { eq } from 'drizzle-orm';
 import { default as request } from 'supertest';
-import { collectiviteTable } from '../../collectivites';
 import { UpsertIndicateursValeursRequest } from '../shared/models/upsert-indicateurs-valeurs.request';
+import { collectiviteTable } from '@/domain/collectivites';
 
 const collectiviteId = 3;
 
