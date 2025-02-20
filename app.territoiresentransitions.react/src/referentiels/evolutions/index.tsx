@@ -97,6 +97,7 @@ export const ScoreEvolutions = () => {
             )}
             chartSize="lg"
             referentielId={referentielId}
+            isDownloadable
           />
         </div>
       </>

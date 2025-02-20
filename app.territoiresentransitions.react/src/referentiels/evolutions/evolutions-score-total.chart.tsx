@@ -52,10 +52,12 @@ export const ScoreTotalEvolutionsChart = ({
   allSnapshots,
   referentielId,
   chartSize = 'lg',
+  isDownloadable = false,
 }: {
   allSnapshots: SnapshotDetails[];
   referentielId: ReferentielId;
   chartSize: 'sm' | 'lg';
+  isDownloadable?: boolean;
 }) => {
   const snapshots = sortSnapshots(allSnapshots, true);
 
@@ -241,7 +243,8 @@ export const ScoreTotalEvolutionsChart = ({
         },
       },
     ],
-    toolbox: {
+    toolbox: isDownloadable
+      ? {
       ...TOOLBOX_BASE,
       feature: {
         saveAsImage: {
@@ -249,7 +252,8 @@ export const ScoreTotalEvolutionsChart = ({
           name: `${referentielId}_referentiel_progression-total`,
         },
       },
-    },
+        }
+      : undefined,
     series,
   };
 
