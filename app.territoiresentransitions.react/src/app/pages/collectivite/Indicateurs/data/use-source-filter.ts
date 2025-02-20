@@ -20,9 +20,9 @@ const FILTRES_SOURCE = [
 export type FiltresSource = (typeof FILTRES_SOURCE)[number];
 
 const filtreToLabel: Record<FiltresSource, string> = {
-  snbc: 'SNBC',
+  snbc: 'Objectifs SNBC',
+  pcaet: 'Objectifs Territoires & Climat',
   opendata: 'Résultats Open data',
-  pcaet: 'Territoires & Climat',
   collectivite: 'Données de la collectivité',
   /*
    moyenne: 'Moyenne',
