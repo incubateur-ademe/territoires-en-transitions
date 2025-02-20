@@ -7,7 +7,7 @@ import {
 export const ImportPlanButton = ({ collectiviteId }: ImportPlanProps) => {
   return (
     <ImportPlanModal collectiviteId={collectiviteId}>
-      <Button icon="import-line" variant="primary" size="sm" className="whitespace-nowrap">
+      <Button variant="primary" size="sm" className="whitespace-nowrap">
         Importer un plan
       </Button>
     </ImportPlanModal>
