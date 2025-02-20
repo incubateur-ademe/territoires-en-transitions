@@ -1,11 +1,11 @@
-import { Injectable } from '@nestjs/common';
 import { DatabaseService } from '@/backend/utils';
 import {
   SousThematique,
   sousThematiqueTable,
   Thematique,
   thematiqueTable,
-} from '@/backend/shared';
+} from '@/domain/shared';
+import { Injectable } from '@nestjs/common';
 
 @Injectable()
 export class ThematiqueService {

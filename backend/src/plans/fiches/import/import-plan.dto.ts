@@ -1,13 +1,18 @@
 import { TagEnum, TagType } from '@/backend/collectivites/tags/tag.table-base';
-import { Cible, ParticipationCitoyenne, Priorite, Statut } from '@/backend/plans/fiches';
+import {
+  Cible,
+  ParticipationCitoyenne,
+  Priorite,
+  Statut,
+} from '@/domain/plans/fiches';
 
-export const ficheTagTypes =
-  [TagEnum.Partenaire,
-    TagEnum.Service,
-    TagEnum.Structure,
-    TagEnum.Financeur,
-    TagEnum.Personne];
-
+export const ficheTagTypes = [
+  TagEnum.Partenaire,
+  TagEnum.Service,
+  TagEnum.Structure,
+  TagEnum.Financeur,
+  TagEnum.Personne,
+];
 
 export type TagImport = {
   nom: string;
@@ -70,12 +75,12 @@ export type AxeImport = {
 };
 
 export type MemoryImport = {
-  plan : AxeImport;
+  plan: AxeImport;
   axes: Set<AxeImport>;
   tags: Set<TagImport>;
   fiches: Set<FicheImport>;
-  effetsAttendu : Record<string, number>;
-  members : Record<string, string>;
-  thematiques : Record<string, number>;
-  sousThematiques : Record<string, number>;
+  effetsAttendu: Record<string, number>;
+  members: Record<string, string>;
+  thematiques: Record<string, number>;
+  sousThematiques: Record<string, number>;
 };

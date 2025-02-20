@@ -1,3 +1,10 @@
+import {
+  AuthenticatedUser,
+  PermissionOperation,
+  ResourceType,
+} from '@/domain/auth';
+import { categorieTagTable } from '@/domain/collectivites';
+import { thematiqueTable } from '@/domain/shared';
 import { Injectable, Logger } from '@nestjs/common';
 import {
   aliasedTable,
@@ -11,16 +18,9 @@ import {
   sql,
 } from 'drizzle-orm';
 import { objectToCamel } from 'ts-case-convert';
-import {
-  AuthenticatedUser,
-  PermissionOperation,
-  ResourceType,
-} from '../../auth';
 import { PermissionService } from '../../auth/authorizations/permission.service';
-import { categorieTagTable } from '../../collectivites';
 import { groupementCollectiviteTable } from '../../collectivites/shared/models/groupement-collectivite.table';
 import { groupementTable } from '../../collectivites/shared/models/groupement.table';
-import { thematiqueTable } from '../../shared';
 import { DatabaseService } from '../../utils/database/database.service';
 import {
   indicateurSourceMetadonneeTable,

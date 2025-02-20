@@ -1,9 +1,8 @@
-import { dcpTable } from '@/backend/auth';
 import { PermissionOperation } from '@/backend/auth/authorizations/permission-operation.enum';
 import { PermissionService } from '@/backend/auth/authorizations/permission.service';
 import { ResourceType } from '@/backend/auth/authorizations/resource-type.enum';
+import { RoleUpdateService } from '@/backend/auth/authorizations/roles/role-update.service';
 import { AuthenticatedUser } from '@/backend/auth/models/auth.models';
-import { collectiviteTable } from '@/backend/collectivites';
 import {
   getAuthUser,
   getTestApp,
@@ -11,9 +10,10 @@ import {
   YOULOU_DOUDOU,
 } from '@/backend/test';
 import { DatabaseService } from '@/backend/utils';
+import { dcpTable } from '@/domain/auth';
+import { collectiviteTable } from '@/domain/collectivites';
 import { INestApplication } from '@nestjs/common';
 import { eq } from 'drizzle-orm';
-import { RoleUpdateService } from '@/backend/auth/authorizations/roles/role-update.service';
 
 describe('Gestion des droits', () => {
   let app: INestApplication;
@@ -21,12 +21,12 @@ describe('Gestion des droits', () => {
   let yoloDodoUser: AuthenticatedUser;
   let youlouDoudouUser: AuthenticatedUser;
   let databaseService: DatabaseService;
-  let roleUpdateService : RoleUpdateService;
+  let roleUpdateService: RoleUpdateService;
 
   beforeAll(async () => {
     app = await getTestApp();
     permissionService = app.get(PermissionService);
-    roleUpdateService  = app.get(RoleUpdateService);
+    roleUpdateService = app.get(RoleUpdateService);
     yoloDodoUser = await getAuthUser();
     youlouDoudouUser = await getAuthUser(YOULOU_DOUDOU);
     databaseService = await getTestDatabase(app);
@@ -58,7 +58,7 @@ describe('Gestion des droits', () => {
 
       onTestFinished(async () => {
         try {
-          await roleUpdateService.setIsVerified(yoloDodoUser.id, true)
+          await roleUpdateService.setIsVerified(yoloDodoUser.id, true);
         } catch (error) {
           console.error('Erreur lors de la remise à zéro des données.', error);
         }
@@ -105,7 +105,7 @@ describe('Gestion des droits', () => {
     });
 
     test('Utilisateur non vérifié sur sa collectivité -> OK', async () => {
-      await roleUpdateService.setIsVerified(yoloDodoUser.id, false)
+      await roleUpdateService.setIsVerified(yoloDodoUser.id, false);
       expect(
         await permissionService.isAllowed(
           yoloDodoUser,
@@ -118,7 +118,7 @@ describe('Gestion des droits', () => {
 
       onTestFinished(async () => {
         try {
-          await roleUpdateService.setIsVerified(yoloDodoUser.id, true)
+          await roleUpdateService.setIsVerified(yoloDodoUser.id, true);
         } catch (error) {
           console.error('Erreur lors de la remise à zéro des données.', error);
         }
@@ -150,7 +150,7 @@ describe('Gestion des droits', () => {
 
       onTestFinished(async () => {
         try {
-          await roleUpdateService.setIsSupport(yoloDodoUser.id, false)
+          await roleUpdateService.setIsSupport(yoloDodoUser.id, false);
         } catch (error) {
           console.error('Erreur lors de la remise à zéro des données.', error);
         }

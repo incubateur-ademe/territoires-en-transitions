@@ -1,6 +1,6 @@
 import { Injectable } from '@nestjs/common';
 import { TagImport } from '@/backend/plans/fiches/import/import-plan.dto';
-import { TagType } from '@/backend/collectivites';
+import { TagType } from '@/domain/collectivites';
 import { EffetAttenduService } from '@/backend/shared/effet-attendu/effet-attendu.service';
 import { TagService } from '@/backend/collectivites/tags/tag.service';
 import { CollectiviteMembresService } from '@/backend/collectivites/membres/membres.service';
@@ -12,7 +12,7 @@ export class ImportPlanFetchService {
     private readonly effetAttenduService: EffetAttenduService,
     private readonly tagService: TagService,
     private readonly memberService: CollectiviteMembresService,
-    private readonly thematiqueService : ThematiqueService,
+    private readonly thematiqueService: ThematiqueService
   ) {}
 
   async tags(collectiviteId: number, tagType: TagType): Promise<TagImport[]> {
@@ -41,12 +41,12 @@ export class ImportPlanFetchService {
     );
   }
 
-  async thematiques() : Promise<Record<string, number>> {
+  async thematiques(): Promise<Record<string, number>> {
     const result = await this.thematiqueService.getThematiques();
     return Object.fromEntries(result.map(({ nom, id }) => [nom, id]));
   }
 
-  async sousThematiques() : Promise<Record<string, number>> {
+  async sousThematiques(): Promise<Record<string, number>> {
     const result = await this.thematiqueService.getSousThematiques();
     return Object.fromEntries(result.map(({ nom, id }) => [nom, id]));
   }

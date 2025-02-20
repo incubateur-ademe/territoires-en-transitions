@@ -1,7 +1,7 @@
 import {
   deleteFicheActionNoteSchema,
   upsertFicheActionNoteSchema,
-} from '@/backend/plans/fiches';
+} from '@/domain/plans/fiches';
 import { z } from 'zod';
 
 export const upsertFicheActionNotesRequestSchema = z
