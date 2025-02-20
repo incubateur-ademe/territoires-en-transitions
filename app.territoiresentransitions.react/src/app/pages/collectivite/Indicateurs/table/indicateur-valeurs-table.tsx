@@ -22,6 +22,7 @@ type IndicateurValeursTable = {
   confidentiel?: boolean;
   data: PreparedData | null;
   type: SourceType;
+  disableComments: boolean;
 };
 
 /**
@@ -34,6 +35,7 @@ export const IndicateurValeursTable = ({
   type,
   readonly,
   confidentiel,
+  disableComments,
 }: IndicateurValeursTable) => {
   const { annees, sources, donneesCollectivite, valeursExistantes } =
     data || {};
@@ -133,30 +135,32 @@ export const IndicateurValeursTable = ({
             </TRow>
           ))}
           {/* ligne pour les boutons "commentaire" */}
-          <TRow>
-            <TCell>&nbsp;</TCell>
-            {annees?.map((annee) => {
-              const entry = donneesCollectivite?.valeurs.find(
-                (v) => v.annee === annee
-              );
+          {!disableComments && (
+            <TRow>
+              <TCell>&nbsp;</TCell>
+              {annees?.map((annee) => {
+                const entry = donneesCollectivite?.valeurs.find(
+                  (v) => v.annee === annee
+                );
 
-              const commentaire = entry?.commentaire ?? '';
+                const commentaire = entry?.commentaire ?? '';
 
-              return (
-                <TCell key={annee}>
-                  <div className="flex justify-center">
-                    <Button
-                      size="xs"
-                      variant="outlined"
-                      icon="question-answer-fill"
-                      notification={commentaire ? { number: 1 } : undefined}
-                      onClick={() => setCommentaireValeur(entry ?? { annee })}
-                    />
-                  </div>
-                </TCell>
-              );
-            })}
-          </TRow>
+                return (
+                  <TCell key={annee}>
+                    <div className="flex justify-center">
+                      <Button
+                        size="xs"
+                        variant="outlined"
+                        icon="question-answer-fill"
+                        notification={commentaire ? { number: 1 } : undefined}
+                        onClick={() => setCommentaireValeur(entry ?? { annee })}
+                      />
+                    </div>
+                  </TCell>
+                );
+              })}
+            </TRow>
+          )}
         </TBody>
       </Table>
       {commentaireValeur && (
