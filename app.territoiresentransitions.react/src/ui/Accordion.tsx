@@ -1,6 +1,6 @@
 import classNames from 'classnames';
 import DOMPurify from 'dompurify';
-import {useEffect, useState} from 'react';
+import { useEffect, useState } from 'react';
 
 export type TAccordionProps = {
   className?: string;
@@ -30,7 +30,7 @@ export type TAccordionProps = {
  */
 
 export const Accordion = (props: TAccordionProps) => {
-  const {initialState, ...other} = props;
+  const { initialState, ...other } = props;
   const [expanded, setExpanded] = useState(initialState ?? false);
 
   useEffect(() => setExpanded(initialState ?? false), [initialState]);
@@ -49,8 +49,7 @@ export const AccordionControlled = (
     setExpanded: (value: boolean) => void;
   }
 ) => {
-  const {className, id, dataTest, titre, html, expanded, setExpanded, icon} =
-    props;
+  const { className, id, dataTest, titre, html, expanded, setExpanded } = props;
 
   const contentClassName = classNames({
     'fr-collapse--expanded py-3 px-4': expanded,
@@ -66,7 +65,6 @@ export const AccordionControlled = (
           aria-expanded={expanded}
           onClick={() => setExpanded(!expanded)}
         >
-          {!!icon && <i className={`${icon} text-tDefaultInfo fr-mr-3v`} />}
           {titre}
         </button>
       </h3>
@@ -74,7 +72,7 @@ export const AccordionControlled = (
         <div
           className={contentClassName}
           id={id}
-          dangerouslySetInnerHTML={{__html: DOMPurify.sanitize(html)}}
+          dangerouslySetInnerHTML={{ __html: DOMPurify.sanitize(html) }}
         />
       ) : (
         <div className={contentClassName} id={id}>

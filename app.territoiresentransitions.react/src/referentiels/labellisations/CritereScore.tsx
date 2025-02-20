@@ -1,6 +1,7 @@
 import { makeReferentielUrl } from '@/app/app/paths';
 import { TLabellisationParcours } from '@/app/referentiels/labellisations/types';
 import { toLocaleFixed } from '@/app/utils/toFixed';
+import { Button } from '@/ui';
 import { CritereRempli } from './CritereRempli';
 
 export type TCritereScoreProps = {
@@ -27,17 +28,19 @@ export const CritereScore = (props: TCritereScoreProps) => {
       {atteint ? (
         <CritereRempli />
       ) : (
-        <a
-          className="fr-link fr-link--icon-right fr-fi-arrow-right-line fr-mb-2w"
-          target="_blank"
+        <Button
+          variant="underlined"
+          size="sm"
+          icon="arrow-right-line"
+          iconPosition="right"
+          external
           href={makeReferentielUrl({
             collectiviteId,
             referentielId,
           })}
-          rel="noreferrer"
         >
           Mettre à jour
-        </a>
+        </Button>
       )}
     </>
   );

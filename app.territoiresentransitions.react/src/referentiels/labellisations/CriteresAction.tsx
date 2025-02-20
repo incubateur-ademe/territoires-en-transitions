@@ -1,6 +1,7 @@
 import { referentielToName } from '@/app/app/labels';
 import { makeReferentielTacheUrl } from '@/app/app/paths';
 import { TLabellisationParcours } from '@/app/referentiels/labellisations/types';
+import { Icon } from '@/ui';
 import classNames from 'classnames';
 import './CriteresAction.css';
 
@@ -86,10 +87,12 @@ const CritereActionRow = (
   return (
     <tr>
       <td className="text-center w-[56px]">
-        <span
-          className={classNames('fr-icon fr-icon-checkbox-circle-fill', {
+        <Icon
+          icon="checkbox-circle-fill"
+          size="lg"
+          className={classNames({
             'text-success': rempli,
-            'text-[#eee]': !rempli,
+            'text-grey-4': !rempli,
           })}
         />
       </td>

@@ -74,7 +74,7 @@ const LabellisationInfo = ({
         <ScoreShow
           score={score.programmes / score.max_personnalise}
           percent
-          icon="fr-icon-calendar-line"
+          icon="calendar-line"
           legend="Score programmé"
           size="sm"
           bold="value"

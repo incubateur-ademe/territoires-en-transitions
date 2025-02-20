@@ -6,9 +6,8 @@ import {
 } from '@/app/referentiels/actions/sub-action-statut.dropdown';
 import ScoreProgressBar from '@/app/referentiels/scores/score.progress-bar';
 import ScoreShow from '@/app/referentiels/scores/score.show';
-import { ExpandToggle } from '@/app/ui/icons/ExpandToggle';
 import { StatutAvancement } from '@/domain/referentiels';
-import { InfoTooltip } from '@/ui';
+import { Icon, InfoTooltip } from '@/ui';
 import classNames from 'classnames';
 import DOMPurify from 'dompurify';
 import { useEffect, useState } from 'react';
@@ -76,7 +75,13 @@ const SubActionHeader = ({
           'font-bold': isSubAction,
         })}
       >
-        {isSubAction && <ExpandToggle open={open} />}
+        {isSubAction && (
+          <Icon
+            icon={open ? 'arrow-down-s-line' : 'arrow-right-s-line'}
+            size="lg"
+            className="text-primary-10"
+          />
+        )}
         {actionDefinition.identifiant}
       </div>
 
@@ -148,17 +153,13 @@ const SubActionHeader = ({
       )}
       {displayActionCommentaire && (
         <div className="col-span-full" onClick={(evt) => evt.stopPropagation()}>
-          <ActionCommentaire
-            action={actionDefinition}
-            backgroundClassName="!bg-[#f6f6f6] group-hover:!bg-[#eee]"
-          />
+          <ActionCommentaire action={actionDefinition} />
           {actionDefinition.referentiel === 'cae' &&
           actionAvancement === 'detaille' &&
           actionDefinition.children?.length ? (
             <ActionJustification
               action={actionDefinition}
               className="mt-10"
-              backgroundClassName="!bg-[#f6f6f6] group-hover:!bg-[#eee]"
               title="Justification de l’ajustement manuel du score"
             />
           ) : null}

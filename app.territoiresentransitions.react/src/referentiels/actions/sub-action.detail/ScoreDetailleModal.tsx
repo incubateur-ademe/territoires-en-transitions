@@ -8,7 +8,7 @@ import {
 import { useTasksScoreRepartition } from '@/app/referentiels/actions/use-task-scores';
 import ProgressBarWithTooltip from '@/app/referentiels/scores/progress-bar-with-tooltip';
 import Modal from '@/app/ui/shared/floating-ui/Modal';
-import { Button } from '@/ui';
+import { Button, Icon } from '@/ui';
 import { Dispatch, SetStateAction, useEffect, useState } from 'react';
 import {
   AVANCEMENT_DETAILLE_PAR_STATUT,
@@ -131,9 +131,10 @@ const ScoreDetailleModal = ({
                 <p className="mb-0">
                   Pour faciliter la relecture, vous pouvez préciser les raisons
                   de cette répartition en cliquant sur le bouton{' '}
-                  <span
-                    className="fr-icon-pencil-line text-bf500"
-                    aria-hidden="true"
+                  <Icon
+                    icon="pencil-line"
+                    size="lg"
+                    className="text-primary-9"
                   />{' '}
                   situé sous l&apos;intitulé de la tâche.
                 </p>

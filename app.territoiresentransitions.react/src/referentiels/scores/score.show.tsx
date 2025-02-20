@@ -1,5 +1,5 @@
-import { IconDoubleCheck } from '@/app/ui/icons/IconDoubleCheck';
 import { toLocaleFixed } from '@/app/utils/toFixed';
+import { Icon } from '@/ui';
 import classNames from 'classnames';
 
 type ScoreDisplayProps = {
@@ -46,15 +46,9 @@ const ScoreShow = ({
       )}
     >
       {icon === 'check' ? (
-        <IconDoubleCheck className="h-4 inline-block mr-1" />
+        <Icon icon="check-double-line" className="mr-1.5 text-success" />
       ) : (
-        <div
-          className={classNames(
-            'h-4 inline-block scale-75 -mt-1 before:text-[#417DC4]',
-            icon,
-            'mr-1'
-          )}
-        />
+        <Icon icon={icon} className="mr-1.5 text-primary" />
       )}
 
       <div>
