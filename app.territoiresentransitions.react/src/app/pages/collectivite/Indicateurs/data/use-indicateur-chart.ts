@@ -228,7 +228,7 @@ function prepareEnfantsParSegmentation(
       (s) => s.source === bestSource
     );
 
-    if (sourceValeursEnfant) {
+    if (sourceValeursEnfant?.valeurs?.length) {
       // segmentations auxquelles est rattaché l'indicateur
       const segmentations = intersection(enfant.categories, SEGMENTATIONS);
 
