@@ -2,7 +2,7 @@ import { UserDetails } from '@/api/users/user-details.fetch.server';
 import { signOutUser } from '@/api/utils/supabase/sign-out-user.server';
 import { monComptePath } from '@/app/app/paths';
 import DropdownFloater from '@/app/ui/shared/floating-ui/DropdownFloater';
-import { Button } from '@/ui';
+import { Button, Icon } from '@/ui';
 import classNames from 'classnames';
 import Link from 'next/link';
 import { usePathname } from 'next/navigation';
@@ -85,8 +85,10 @@ const MenuUtilisateurBtn = forwardRef(
       aria-expanded={isOpen}
     >
       <span className="line-clamp-1">{user.prenom}</span>
-      <i
-        className={classNames('fr-fi-arrow-down-s-line ml-2 transition-all', {
+      <Icon
+        icon="arrow-down-s-line"
+        size="sm"
+        className={classNames('ml-2 transition-all', {
           'rotate-180': isOpen,
         })}
       />

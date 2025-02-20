@@ -1,4 +1,5 @@
 import { ToastFloater } from '@/app/ui/shared/floating-ui/ToastFloater';
+import { Icon } from '@/ui';
 import classNames from 'classnames';
 import { useState } from 'react';
 
@@ -36,29 +37,37 @@ export const useBaseToast = () => {
   /**
    * Assure le rendu du composant (affiche le message quand `setToast` a été appelé)
    */
-  const renderToast = () => (
-    <ToastFloater
-      open={status !== null && message !== null}
-      onClose={() => close()}
-      className={classNames('!text-white', {
-        '!bg-success': status === 'success',
-        '!bg-error-1': status === 'error',
-        '!bg-warning-1': status === 'info',
-      })}
-      autoHideDuration={duration}
-    >
-      <div className="flex items-center" data-test={`toast-${status}`}>
-        <div
-          className={`flex mr-3 ${classNames({
-            'fr-icon-check-line': status === 'success',
-            'fr-icon-close-line': status === 'error',
-            'fr-icon-information-line': status === 'info',
-          })}`}
-        ></div>
-        {message}
-      </div>
-    </ToastFloater>
-  );
+  const renderToast = () => {
+    const getIcon = (status: ToastStatus) => {
+      switch (status) {
+        case 'success':
+          return 'check-line';
+        case 'error':
+          return 'close-line';
+        case 'info':
+          return 'information-line';
+        default:
+          return '';
+      }
+    };
+    return (
+      <ToastFloater
+        open={status !== null && message !== null}
+        onClose={() => close()}
+        className={classNames('!text-white', {
+          '!bg-success': status === 'success',
+          '!bg-error-1': status === 'error',
+          '!bg-warning-1': status === 'info',
+        })}
+        autoHideDuration={duration}
+      >
+        <div className="flex items-center" data-test={`toast-${status}`}>
+          {status && <Icon icon={getIcon(status)} size="lg" className="mr-3" />}
+          {message}
+        </div>
+      </ToastFloater>
+    );
+  };
 
   return { renderToast, setToast };
 };

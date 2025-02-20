@@ -3,6 +3,7 @@ import classNames from 'classnames';
 import MultiSelectDropdown, {
   TMultiSelectDropdownProps,
 } from '@/app/ui/shared/select/MultiSelectDropdown';
+import { Icon } from '@/ui';
 import { getIsAllSelected, ITEM_ALL } from '../filters/commons';
 import { getOptions } from './commons';
 
@@ -81,13 +82,12 @@ export type TMultiSelectFilterTitleProps = {
 export const MultiSelectFilterTitle = (props: TMultiSelectFilterTitleProps) => {
   const { values, label } = props;
   return (
-    <span
-      className={classNames(
-        'fr-fi--sm w-full text-center text-bf500 font-bold mt-1',
-        { 'fr-fi-filter-fill': !values.includes(ITEM_ALL) },
-        { 'fr-fi-filter-line': values.includes(ITEM_ALL) }
-      )}
-    >
+    <span className="text-center font-bold mt-1">
+      <Icon
+        size="sm"
+        className="text-primary-9"
+        icon={values.includes(ITEM_ALL) ? 'filter-line' : 'filter-fill'}
+      />
       &nbsp;{label}
     </span>
   );

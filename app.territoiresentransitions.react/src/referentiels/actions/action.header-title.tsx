@@ -1,3 +1,4 @@
+import { Icon } from '@/ui';
 import classNames from 'classnames';
 import { ActionDefinitionSummary } from '../ActionDefinitionSummaryReadEndpoint';
 
@@ -10,21 +11,19 @@ export const ActionHeaderTitle = ({
 }) => {
   return (
     <div className="flex flex-row align-middle items-center font-bold gap-2 mr-2">
-      <div>
-        <div
-          className={classNames(
-            'duration-300 text-2xl',
-            {
-              'rotate-90': isOpen,
-              'rotate-0': !isOpen,
-            },
-            action.type === 'sous-axe' ? 'text-grey-6' : ''
-          )}
-          aria-hidden={true}
-        >
-          <span className="fr-fi-arrow-right-s-line" aria-hidden={true} />
-        </div>
-      </div>
+      <Icon
+        icon="arrow-right-s-line"
+        aria-hidden={true}
+        size="lg"
+        className={classNames(
+          'duration-300',
+          {
+            'rotate-90': isOpen,
+            'rotate-0': !isOpen,
+          },
+          action.type === 'sous-axe' ? 'text-grey-6' : ''
+        )}
+      />
       <div>
         <span className={action.type === 'sous-axe' ? 'text-grey-6' : ''}>
           {action.type === 'axe'
@@ -33,7 +32,7 @@ export const ActionHeaderTitle = ({
         </span>
         &nbsp;
         <span
-          className={`fr-text--lg ${
+          className={`text-lg ${
             action.type === 'sous-axe' ? 'text-grey-6' : ''
           }`}
         >
