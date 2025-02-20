@@ -6,11 +6,11 @@ import {
 } from '@/app/referentiels/preuves/Bibliotheque/types';
 import { usePreuvesParType } from '@/app/referentiels/preuves/usePreuves';
 import { TrackPageView } from '@/ui';
+import PageContainer from '@/ui/components/layout/page-container';
 import { pick } from 'es-toolkit';
 import { AddRapportVisite } from './AddRapportVisite';
 import { PreuvesLabellisation } from './PreuveLabellisation';
 import { PreuvesTabs } from './PreuvesTabs';
-import PageContainer from '@/ui/components/layout/page-container';
 
 type TBibliothequeDocsProps = {
   labellisationEtAudit?: TPreuveAuditEtLabellisation[];
@@ -23,17 +23,15 @@ export const BibliothequeDocs = ({
 }: TBibliothequeDocsProps) => {
   return (
     <PageContainer dataTest="BibliothequeDocs" bgColor="white">
-      <h1 className="text-center fr-mt-4w fr-mb-4w">
-        Bibliothèque de documents
-      </h1>
+      <h1 className="text-center mb-16">Bibliothèque de documents</h1>
 
       {labellisationEtAudit?.length ? (
-        <section className="fr-mt-4w" data-test="labellisation">
+        <section data-test="labellisation">
           <PreuvesLabellisation preuves={labellisationEtAudit} />
         </section>
       ) : null}
 
-      <section className="fr-mt-4w" data-test="rapports">
+      <section data-test="rapports">
         <h2>Rapports de visite annuelle</h2>
         <AddRapportVisite />
         {rapports?.map((preuve) => (
@@ -43,7 +41,7 @@ export const BibliothequeDocs = ({
         ))}
       </section>
 
-      <section className="fr-mt-4w">
+      <section className="mt-8">
         <h2>Documents</h2>
         <PreuvesTabs />
       </section>
