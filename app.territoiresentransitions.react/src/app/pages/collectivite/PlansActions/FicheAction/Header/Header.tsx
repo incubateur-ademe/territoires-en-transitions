@@ -4,7 +4,7 @@ import { FicheAction } from '@/api/plan-actions';
 
 import { Divider, Icon } from '@/ui';
 
-import ExportFicheActionModal from '@/app/app/pages/collectivite/PlansActions/ExportPdf/export-pdf-fa.modal';
+import ExportFicheActionModal from '@/app/app/pages/collectivite/PlansActions/ExportPdf/ExportModal/export-fa-modal';
 import CheminsFiche from './CheminsFiche';
 import TitreFiche from './TitreFiche';
 import ModaleEmplacement from './actions/EmplacementFiche/ModaleEmplacement';
