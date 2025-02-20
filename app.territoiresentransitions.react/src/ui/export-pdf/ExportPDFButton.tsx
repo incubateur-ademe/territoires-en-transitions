@@ -18,6 +18,7 @@ export type ExportPDFButtonType = Pick<
   requestData?: () => void;
   /** Action supplémentaire au click */
   onClick?: () => void;
+  onDownloadEnd?: () => void;
 };
 
 const ExportPDFButton = ({
@@ -31,6 +32,7 @@ const ExportPDFButton = ({
   iconPosition = 'left',
   requestData,
   onClick,
+  onDownloadEnd,
 }: ExportPDFButtonType) => {
   const [instance, updateInstance] = usePDF({ document: undefined });
   const [isDownloadRequested, setIsDownloadRequested] = useState(false);
@@ -58,6 +60,7 @@ const ExportPDFButton = ({
         saveBlob(instance.blob, `${fileName}.pdf`);
       }
       setIsDownloadRequested(false);
+      onDownloadEnd?.();
     }
   }, [instance.blob]);
 
