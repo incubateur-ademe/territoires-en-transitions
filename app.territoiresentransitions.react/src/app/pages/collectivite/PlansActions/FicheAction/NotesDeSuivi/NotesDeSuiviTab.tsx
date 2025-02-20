@@ -59,9 +59,9 @@ const NotesDeSuiviTab = ({ fiche, isReadonly }: NotesDeSuiviTabProps) => {
           </div>
 
           <div className="flex flex-col gap-3">
-            {notes.map((note) => (
+            {notes.map((note, index) => (
               <NoteSuiviCard
-                key={note.dateNote}
+                key={`${note.dateNote}-${index}`}
                 note={note}
                 onEdit={updateNotes}
                 onDelete={deleteNote}
