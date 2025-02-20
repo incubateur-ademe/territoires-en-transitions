@@ -8,6 +8,7 @@ import { TIndicateurDefinition } from '../types';
 import DescriptionIndicateurInput from './DescriptionIndicateurInput';
 import { IndicateurSourcesSelect } from './indicateur-sources.select';
 import ThematiquesIndicateurInput from './ThematiquesIndicateurInput';
+import { TypeSegmentationSelect } from './type-segmentation.select';
 import UniteIndicateurInput from './UniteIndicateurInput';
 
 type Props = {
@@ -34,21 +35,30 @@ const DonneesIndicateur = ({
     definition,
   });
 
+  const { sourceFilter, typesSegmentation } = chartInfo;
+
   return (
     <div className="flex flex-col gap-7 bg-white p-10 border border-grey-3 rounded-xl">
-      {/* Unité personnalisée - à metttre à jour */}
-      {isPerso && (
-        <UniteIndicateurInput
-          unite={unite}
-          updateUnite={updateUnite}
-          disabled={isReadonly}
-        />
-      )}
+      <div className="flex flex-row gap-4">
+        {/* Unité personnalisée */}
+        {isPerso && (
+          <UniteIndicateurInput
+            unite={unite}
+            updateUnite={updateUnite}
+            disabled={isReadonly}
+          />
+        )}
 
-      {/** Sélecteur de sources de données */}
-      {!isPerso && chartInfo.sourceFilter.availableOptions.length > 1 && (
-        <IndicateurSourcesSelect sourceFilter={chartInfo.sourceFilter} />
-      )}
+        {/** Sélecteur de sources de données */}
+        {!isPerso && sourceFilter.availableOptions.length > 1 && (
+          <IndicateurSourcesSelect sourceFilter={sourceFilter} />
+        )}
+
+        {/* sélecteur de segmentation */}
+        {typesSegmentation?.length > 1 && (
+          <TypeSegmentationSelect chartInfo={chartInfo} />
+        )}
+      </div>
 
       {/* Graphe */}
       <IndicateurDetailChart
