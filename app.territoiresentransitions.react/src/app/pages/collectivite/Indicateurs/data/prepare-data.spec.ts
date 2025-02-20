@@ -3,18 +3,21 @@ import fixture from './test/fixture.json';
 
 describe('prepareData', () => {
   test('Extrait les années pour lesquelles il y a au moins une valeur de définie', () => {
-    const objectifs = prepareData(fixture.indicateurs[0], 'objectif');
+    const objectifs = prepareData(fixture.indicateurs[0], 'objectif', false);
     expect(objectifs.annees).toEqual([2020, 2021]);
 
-    const resultats = prepareData(fixture.indicateurs[0], 'resultat');
+    const resultats = prepareData(fixture.indicateurs[0], 'resultat', false);
     expect(resultats.annees).toEqual([2020, 2021, 2022]);
   });
 
   test('Extrait les données "objectifs"', () => {
-    const objectifs = prepareData(fixture.indicateurs[0], 'objectif');
+    const objectifs = prepareData(fixture.indicateurs[0], 'objectif', false);
     const expectedDonneesCollectivite = {
       metadonnees: [],
       source: 'collectivite',
+      libelle: '',
+      ordreAffichage: -1,
+      type: 'objectif',
       valeurs: [
         {
           id: 1,
@@ -39,18 +42,23 @@ describe('prepareData', () => {
       {
         metadonnees: [],
         source: 'pcaet',
+        libelle: 'Territoires & Climat',
+        ordreAffichage: 1,
+        type: 'objectif',
         valeurs: [
           {
             id: 5,
             annee: 2020,
             valeur: 19,
             anneeISO: '2020-01-01T00:00:00.000Z',
+            commentaire: undefined,
           },
           {
             id: 6,
             annee: 2021,
             valeur: 10,
             anneeISO: '2021-01-01T00:00:00.000Z',
+            commentaire: undefined,
           },
         ],
       },
@@ -58,11 +66,14 @@ describe('prepareData', () => {
   });
 
   test('Extrait les données "résultats"', () => {
-    const resultats = prepareData(fixture.indicateurs[0], 'resultat');
+    const resultats = prepareData(fixture.indicateurs[0], 'resultat', false);
 
     const expectedDonneesCollectivite = {
       metadonnees: [],
       source: 'collectivite',
+      libelle: '',
+      ordreAffichage: -1,
+      type: 'resultat',
       valeurs: [
         {
           id: 1,
@@ -76,6 +87,7 @@ describe('prepareData', () => {
           annee: 2021,
           valeur: 12,
           anneeISO: '2021-01-01T00:00:00.000Z',
+          commentaire: undefined,
         },
       ],
     };
@@ -86,6 +98,9 @@ describe('prepareData', () => {
       {
         metadonnees: [],
         source: 'citepa',
+        libelle: 'CITEPA',
+        ordreAffichage: 3,
+        type: 'resultat',
         valeurs: [
           {
             id: 3,
@@ -105,15 +120,15 @@ describe('prepareData', () => {
   });
 
   test('Extrait la dernière année pour laquelle le résultat peut être en mode privé', () => {
-    const resultats = prepareData(fixture.indicateurs[0], 'resultat');
+    const resultats = prepareData(fixture.indicateurs[0], 'resultat', false);
     expect(resultats.anneeModePrive).toBe(2021);
-    const objectifs = prepareData(fixture.indicateurs[0], 'objectif');
+    const objectifs = prepareData(fixture.indicateurs[0], 'objectif', false);
     expect(objectifs.anneeModePrive).toBeUndefined();
   });
 
   test('Extrait les lignes existantes des données collectivité', () => {
-    const objectifs = prepareData(fixture.indicateurs[0], 'objectif');
-    const resultats = prepareData(fixture.indicateurs[0], 'resultat');
+    const objectifs = prepareData(fixture.indicateurs[0], 'objectif', false);
+    const resultats = prepareData(fixture.indicateurs[0], 'resultat', false);
     expect(objectifs.valeursExistantes).toEqual(resultats.valeursExistantes);
     expect(objectifs.valeursExistantes).toEqual([
       {
