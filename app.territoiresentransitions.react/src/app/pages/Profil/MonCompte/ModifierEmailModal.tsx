@@ -1,7 +1,7 @@
 import { Dispatch, SetStateAction, SyntheticEvent } from 'react';
 
-import Modal from '@/app/ui/shared/floating-ui/Modal';
 import { useUpdateEmail } from '@/app/users/use-update-email';
+import { Modal, ModalFooterOKCancel } from '@/ui';
 
 type ModifierEmailModalProps = {
   isOpen: boolean;
@@ -18,46 +18,36 @@ const ModifierEmailModal = ({
 }: ModifierEmailModalProps) => {
   const { handleUpdateEmail } = useUpdateEmail();
 
-  const handleAnnuler = () => {
-    setOpen(false);
-    resetEmail();
-  };
-
   return (
     <Modal
-      size="lg"
-      externalOpen={isOpen}
-      setExternalOpen={handleAnnuler}
-      render={({ labelId, descriptionId }) => (
-        <div data-test="modification-email-modal">
-          <h4 id={labelId} className="fr-h4">
-            Modifier mon adresse email
-          </h4>
-          <p id={descriptionId}>
-            Cette modification sera effective quand vous aurez cliqué sur le
-            lien de validation du message envoyé à la nouvelle adresse associée
-            à votre compte <span className="font-bold">{email}</span>
-          </p>
-          <div className="mt-2 fr-btns-group fr-btns-group--left fr-btns-group--inline-reverse fr-btns-group--inline-lg">
-            <button
-              onClick={handleAnnuler}
-              className="fr-btn fr-btn--secondary"
-              aria-label="Annuler"
-            >
-              Annuler
-            </button>
-            <button
-              onClick={() => {
-                handleUpdateEmail({ email: email });
-                setOpen(false);
-              }}
-              aria-label="Confirmer"
-              className="fr-btn"
-            >
-              Confirmer
-            </button>
-          </div>
-        </div>
+      dataTest="modification-email-modal"
+      openState={{ isOpen, setIsOpen: setOpen }}
+      title="Modifier mon adresse email"
+      render={({ descriptionId }) => (
+        <p id={descriptionId} className="mb-0 text-center">
+          Cette modification sera effective quand vous aurez cliqué sur le lien
+          de validation du message envoyé à la nouvelle adresse associée à votre
+          compte <span className="font-bold">{email}</span>
+        </p>
+      )}
+      renderFooter={() => (
+        <ModalFooterOKCancel
+          btnCancelProps={{
+            onClick: () => {
+              setOpen(false);
+              resetEmail();
+            },
+            'aria-label': 'Annuler',
+          }}
+          btnOKProps={{
+            children: 'Confirmer',
+            onClick: () => {
+              handleUpdateEmail({ email: email });
+              setOpen(false);
+            },
+            'aria-label': 'Confirmer',
+          }}
+        />
       )}
     />
   );

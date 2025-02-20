@@ -1,6 +1,5 @@
 import { ActionDefinitionSummary } from '@/app/referentiels/ActionDefinitionSummaryReadEndpoint';
-import Textarea from '@/app/ui/shared/form/Textarea';
-import { Field } from '@/ui';
+import { AutoResizedTextarea, Checkbox, Field } from '@/ui';
 import React, { ChangeEvent, useState } from 'react';
 import { TActionAuditStatut } from './types';
 import { useActionAuditStatut } from './useActionAuditStatut';
@@ -26,17 +25,15 @@ export const ActionAuditDetailBase = (props: TActionAuditDetailBaseProps) => {
   const [avis, setAvis] = useState(avisInitial);
 
   return (
-    <div className="fr-mt-2w">
+    <div className="mt-4">
       <Field
         className="mb-6"
         title="Notes de l’auditeur, auditrice"
         hint="Remarques sur l’action, questions pour la séance d’audit"
       >
-        <Textarea
-          data-test="avis"
-          className="fr-input !outline-none"
+        <AutoResizedTextarea
+          dataTest="avis"
           value={avis}
-          onInputChange={() => null}
           onChange={(event: React.ChangeEvent<HTMLTextAreaElement>) =>
             setAvis(event.currentTarget.value)
           }
@@ -46,24 +43,19 @@ export const ActionAuditDetailBase = (props: TActionAuditDetailBaseProps) => {
           disabled={readonly}
         />
       </Field>
-      <div className="fr-checkbox-group fr-checkbox-inline">
-        <input
-          type="checkbox"
-          id="ordre_du_jour"
-          name="ordre_du_jour"
-          checked={ordre_du_jour}
-          disabled={readonly}
-          onChange={(evt: ChangeEvent<HTMLInputElement>) => {
-            onChange({
-              avis,
-              ordre_du_jour: evt.currentTarget.checked,
-            });
-          }}
-        />
-        <label htmlFor="ordre_du_jour">
-          Ajouter cette action à l’ordre du jour de la séance d’audit
-        </label>
-      </div>
+      <Checkbox
+        id="ordre_du_jour"
+        className="w-6 h-6"
+        label="Ajouter cette action à l’ordre du jour de la séance d’audit"
+        checked={ordre_du_jour}
+        disabled={readonly}
+        onChange={(evt: ChangeEvent<HTMLInputElement>) => {
+          onChange({
+            avis,
+            ordre_du_jour: evt.currentTarget.checked,
+          });
+        }}
+      />
     </div>
   );
 };

@@ -4,14 +4,13 @@ import {
   useActionCommentaire,
   useSaveActionCommentaire,
 } from '@/app/referentiels/use-action-commentaire';
-import Textarea from '@/app/ui/shared/form/Textarea';
+import { AutoResizedTextarea } from '@/ui';
 import classNames from 'classnames';
 import React, { useEffect, useState } from 'react';
 
 type ActionCommentaireProps = {
   action: ActionDefinitionSummary;
   className?: string;
-  backgroundClassName?: string;
   autoFocus?: boolean;
   onSave?: () => void;
 };
@@ -19,7 +18,6 @@ type ActionCommentaireProps = {
 export const ActionCommentaire = ({
   action,
   className,
-  backgroundClassName,
   autoFocus,
   onSave,
 }: ActionCommentaireProps) => {
@@ -32,7 +30,6 @@ export const ActionCommentaire = ({
       {!isLoading && (
         <ActionCommentaireField
           dataTest={`comm-${action.id}`}
-          backgroundClassName={backgroundClassName}
           action={action}
           initialValue={actionCommentaire?.commentaire || ''}
           title={
@@ -53,7 +50,6 @@ export const ActionCommentaire = ({
 
 export type ActionCommentaireFieldProps = {
   dataTest: string;
-  backgroundClassName?: string;
   action: ActionDefinitionSummary;
   initialValue: string;
   title?: string;
@@ -72,7 +68,6 @@ export type ActionCommentaireFieldProps = {
 
 export const ActionCommentaireField = ({
   dataTest,
-  backgroundClassName,
   action,
   initialValue,
   title,
@@ -91,14 +86,10 @@ export const ActionCommentaireField = ({
     <>
       {!!title && <p className="text-neutral-900 !mb-2">{title}</p>}
       {!!subtitle && <p className="text-[#666] !mb-2 text-xs">{subtitle}</p>}
-      <Textarea
-        data-test={dataTest}
-        className={classNames('fr-input !outline-none', backgroundClassName, {
-          '!bg-[#f6f6f6]': !backgroundClassName,
-        })}
-        minHeight={action.type === 'tache' ? undefined : '5rem'}
+      <AutoResizedTextarea
+        dataTest={dataTest}
+        className={classNames({ 'min-h-20': action.type !== 'tache' })}
         value={commentaire}
-        onInputChange={() => null}
         onChange={(event: React.ChangeEvent<HTMLTextAreaElement>) => {
           setCommentaire(event.currentTarget.value);
           onChange?.(event.currentTarget.value);

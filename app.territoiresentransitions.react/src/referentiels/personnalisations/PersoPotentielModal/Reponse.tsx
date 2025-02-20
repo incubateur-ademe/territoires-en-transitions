@@ -4,6 +4,8 @@ import {
   TReponse,
 } from '@/app/referentiels/personnalisations/personnalisation.types';
 import { useDebouncedInput } from '@/app/ui/shared/useDebouncedInput';
+import { Button, Field } from '@/ui';
+import { InputNumber } from '@/ui/design-system/Input/InputNumber';
 import classNames from 'classnames';
 import { FC, ReactNode } from 'react';
 import { TQuestionReponseProps } from './PersoPotentielQR';
@@ -89,20 +91,20 @@ const ReponseProportion = ({ qr, onChange }: TQuestionReponseProps) => {
 
   return collectivite ? (
     <ReponseContainer className="flex-col">
-      <label className="fr-label" htmlFor={questionId}>
-        Part en pourcentage
-      </label>
-      <input
-        type="number"
-        disabled={collectivite.isReadOnly}
-        min={min}
-        max={max}
-        id={questionId}
-        style={{ width: 224 }}
-        className="fr-input"
-        value={value === null ? '' : String(value)}
-        onChange={handleChange}
-      />
+      <Field
+        title="Part en pourcentage"
+        htmlFor={questionId}
+        className="max-w-56"
+      >
+        <InputNumber
+          disabled={collectivite.isReadOnly}
+          min={min}
+          max={max}
+          id={questionId}
+          value={value === null ? '' : String(value)}
+          onChange={handleChange}
+        />
+      </Field>
     </ReponseContainer>
   ) : null;
 };
@@ -155,8 +157,8 @@ const RadioButton = ({
   const eltId = `${questionId}-${choiceId}`;
 
   return (
-    <>
-      <div className="fr-fieldset__element fr-fieldset__element--inline">
+    <div className="flex items-center gap-6 mb-4">
+      <div className="fr-fieldset__element fr-fieldset__element--inline mb-0">
         <div className="fr-radio-group fr-radio-group--sm">
           <input
             type="radio"
@@ -172,16 +174,17 @@ const RadioButton = ({
         </div>
       </div>
       {hasReponse && (
-        <button
-          className="fr-link fr-link--icon-left fr-icon-edit-line fr-ml-3w fr-mb-2w !max-w-fit"
-          onClick={(e) => {
-            e.preventDefault();
+        <Button
+          variant="underlined"
+          size="sm"
+          icon="edit-line"
+          onClick={() => {
             onChange(null);
           }}
         >
           Modifier
-        </button>
+        </Button>
       )}
-    </>
+    </div>
   );
 };
