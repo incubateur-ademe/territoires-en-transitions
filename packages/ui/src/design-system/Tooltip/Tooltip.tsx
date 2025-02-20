@@ -1,6 +1,7 @@
 import { preset } from '@/ui/tailwind-preset';
 import {
   FloatingArrow,
+  FloatingPortal,
   Placement,
   ReferenceType,
   arrow,
@@ -113,44 +114,46 @@ export const Tooltip = ({
     <>
       {cloneElement(children, getReferenceProps({ ref, ...children.props }))}
       {isOpen && (
-        <div
-          ref={refs.setFloating}
-          {...getFloatingProps()}
-          style={{
-            position: strategy,
-            top: y,
-            left: x,
-            zIndex: preset.theme.extend.zIndex.tooltip,
-          }}
-          className={classNames(
-            'p-2 text-primary-10 border-primary rounded bg-white shadow-lg text-xs [&_*]:text-xs [&_*]:mb-0',
-            {
-              'border-b': context.placement.startsWith('top'),
-              'border-t': context.placement.startsWith('bottom'),
-              'border-r': context.placement.startsWith('left'),
-              'border-l': context.placement.startsWith('right'),
-            },
-            className
-          )}
-        >
-          {withArrow && (
-            <FloatingArrow
-              ref={arrowRef}
-              context={context}
-              staticOffset={getStaticOffset()}
-              width={8}
-              height={4}
-              fill={'white'}
-              strokeWidth={1}
-              stroke={colorTheme.primary.DEFAULT}
-            />
-          )}
-          {typeof label === 'string' ? (
-            <p className="w-fit max-w-sm font-normal">{label}</p>
-          ) : (
-            label
-          )}
-        </div>
+        <FloatingPortal>
+          <div
+            ref={refs.setFloating}
+            {...getFloatingProps()}
+            style={{
+              position: strategy,
+              top: y,
+              left: x,
+              zIndex: preset.theme.extend.zIndex.tooltip,
+            }}
+            className={classNames(
+              'p-2 text-primary-10 border-primary rounded bg-white shadow-lg text-xs [&_*]:text-xs [&_*]:mb-0',
+              {
+                'border-b': context.placement.startsWith('top'),
+                'border-t': context.placement.startsWith('bottom'),
+                'border-r': context.placement.startsWith('left'),
+                'border-l': context.placement.startsWith('right'),
+              },
+              className
+            )}
+          >
+            {withArrow && (
+              <FloatingArrow
+                ref={arrowRef}
+                context={context}
+                staticOffset={getStaticOffset()}
+                width={8}
+                height={4}
+                fill={'white'}
+                strokeWidth={1}
+                stroke={colorTheme.primary.DEFAULT}
+              />
+            )}
+            {typeof label === 'string' ? (
+              <p className="w-fit max-w-sm font-normal">{label}</p>
+            ) : (
+              label
+            )}
+          </div>
+        </FloatingPortal>
       )}
     </>
   );
