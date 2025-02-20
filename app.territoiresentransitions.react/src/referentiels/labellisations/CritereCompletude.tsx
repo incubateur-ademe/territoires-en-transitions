@@ -1,5 +1,6 @@
 import { makeReferentielUrl } from '@/app/app/paths';
 import { TLabellisationParcours } from '@/app/referentiels/labellisations/types';
+import { Button } from '@/ui';
 import { CritereRempli } from './CritereRempli';
 
 export type TCritereScoreProps = {
@@ -17,22 +18,24 @@ export const CritereCompletude = (props: TCritereScoreProps) => {
 
   return (
     <>
-      <li className="fr-mb-1w">Renseigner tous les statuts du référentiel</li>
+      <li className="mb-2">Renseigner tous les statuts du référentiel</li>
       {completude_ok ? (
         <CritereRempli />
       ) : (
-        <a
-          className="fr-link fr-link--icon-right fr-fi-arrow-right-line fr-mb-2w"
-          target="_blank"
+        <Button
+          variant="underlined"
+          size="sm"
+          icon="arrow-right-line"
+          iconPosition="right"
+          external
           href={makeReferentielUrl({
             collectiviteId,
             referentielId,
             referentielTab: 'detail',
           })}
-          rel="noreferrer"
         >
           Mettre à jour
-        </a>
+        </Button>
       )}
     </>
   );

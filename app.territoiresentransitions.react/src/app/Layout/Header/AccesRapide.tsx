@@ -8,7 +8,7 @@ export const AccesRapide = (props: HeaderPropsWithModalState) => {
   const { user, setModalOpened } = props;
 
   return (
-    <ul className="fr-btns-group">
+    <ul className="flex max-lg:flex-col mb-0">
       <li onClick={() => setModalOpened(false)}>
         <Aide />
       </li>

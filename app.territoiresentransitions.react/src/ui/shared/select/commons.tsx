@@ -72,8 +72,8 @@ export const buttonDisplayedPlaceholderClassname =
 /** Affiche une marque de sélection (ou seulement son emplacement) devant un
  * item de la liste */
 export const Checkmark = ({ isSelected }: { isSelected: boolean }) => (
-  <div className="w-6 mr-2 shrink-0">
-    {isSelected ? <span className="block fr-fi-check-line scale-75" /> : null}
+  <div className="w-6 mr-2 shrink-0 flex">
+    {isSelected && <Icon icon="check-line" />}
   </div>
 );
 
