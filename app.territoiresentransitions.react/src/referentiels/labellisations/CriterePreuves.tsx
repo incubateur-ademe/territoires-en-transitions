@@ -34,7 +34,7 @@ export const CriterePreuves = (props: TCriterePreuvesProps) => {
   return (
     <>
       <MessageCriterePreuve {...props} />
-      {rempli ? <CritereRempli className="fr-mb-2w" /> : null}
+      {rempli ? <CritereRempli className="mb-4" /> : null}
       <AddDocsButton />
       {demande ? <LabellisationPreuves {...props} /> : null}
     </>
@@ -65,9 +65,7 @@ const MessageECi2Plus = (props: TCriterePreuvesProps) => {
   const { referentiel } = props.parcours;
   return (
     <>
-      <li className="fr-mb-1w">
-        Ajouter les documents officiels de candidature
-      </li>
+      <li className="mb-2">Ajouter les documents officiels de candidature</li>
       <ul>
         <li>
           <b>Courrier d’acte de candidature</b> : motivation et palier visé,
@@ -89,9 +87,7 @@ const MessageECi2Plus = (props: TCriterePreuvesProps) => {
 const MessageCAE35Plus = () => {
   return (
     <>
-      <li className="fr-mb-1w">
-        Ajouter les documents officiels de candidature
-      </li>
+      <li className="mb-2">Ajouter les documents officiels de candidature</li>
       <ul>
         <li>
           <b>Dossier de demande de labellisation</b> (et Request for Award pour
@@ -111,7 +107,7 @@ const MessageCAE35Plus = () => {
 const MessageParDefaut = (props: TCriterePreuvesProps) => {
   const { referentiel } = props.parcours;
   return (
-    <li className="fr-mb-1w">
+    <li className="mb-2">
       Signer un{' '}
       <a href="/Acte_engagement.docx" target="_blank" rel="noopener">
         acte d’engagement

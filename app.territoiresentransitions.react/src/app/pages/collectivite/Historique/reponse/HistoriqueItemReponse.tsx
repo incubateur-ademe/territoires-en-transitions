@@ -54,7 +54,7 @@ const HistoriqueItemReponseDetails = (props: THistoriqueItemProps) => {
         {formatReponseValue(reponse, question_type)}
       </DetailNouvelleModificationWrapper>
       {justification && (
-        <p className="fr-mt-2w">
+        <p className="mt-4">
           Justification (lors de la réponse) : {justification}
         </p>
       )}

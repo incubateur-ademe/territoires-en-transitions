@@ -1,5 +1,3 @@
-import classNames from 'classnames';
-
 import MultiSelectDropdown, {
   TMultiSelectDropdownProps,
 } from '@/app/ui/shared/select/MultiSelectDropdown';
@@ -55,13 +53,7 @@ export const MultiSelectFilter = <T extends string>({
         renderOption ? (
           renderOption(option)
         ) : (
-          <span
-            className={classNames('pr-4 py-1', {
-              'fr-text-mention--grey': option.label === ITEM_ALL,
-            })}
-          >
-            {option.label}
-          </span>
+          <span className="pr-4 py-1">{option.label}</span>
         )
       }
       renderSelection={renderSelection}

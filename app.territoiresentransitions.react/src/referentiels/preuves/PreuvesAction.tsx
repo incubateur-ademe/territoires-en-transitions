@@ -72,7 +72,7 @@ export const PreuvesAction = (props: TPreuvesActionProps) => {
           <div className="border-solid border-t border-[#FCC63A] my-4" />
         </>
       ) : (
-        <p className="fr-text--sm !mb-0 py-4">
+        <p className="!mb-0 py-4 text-sm">
           {`Il n'y a pas de document attendu pour cette ${
             withSubActions ? 'action' : 'sous-action'
           } du référentiel.`}

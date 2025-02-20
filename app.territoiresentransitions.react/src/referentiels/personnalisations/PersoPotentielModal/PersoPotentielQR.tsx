@@ -107,8 +107,8 @@ const QuestionReponse = (props: TQuestionReponseProps) => {
   return (
     <div
       className={classNames({
-        'border rounded-md fr-p-2w fr-mb-1w': variant !== 'modal',
-        'fr-my-2w': variant === 'modal',
+        'border rounded-md p-4 mb-2': variant !== 'modal',
+        'my-4': variant === 'modal',
       })}
     >
       <legend
@@ -120,10 +120,10 @@ const QuestionReponse = (props: TQuestionReponseProps) => {
         )}
         dangerouslySetInnerHTML={{ __html: DOMPurify.sanitize(formulation) }}
       />
-      <div className="fr-pl-2w">
+      <div className="pl-4">
         {description ? (
           <Accordion
-            className="fr-mb-3w"
+            className="mb-6"
             id={`accordion-${id}`}
             titre="En savoir plus"
             html={description}
@@ -134,7 +134,7 @@ const QuestionReponse = (props: TQuestionReponseProps) => {
         <Justification {...props} />
         {hasProportionDescription ? (
           <Accordion
-            className="fr-mt-3w"
+            className="mt-6"
             id={`accordion-part-${id}`}
             titre="Comment calculer la part ?"
             html="La part se rapporte au nombre d'habitants (nombre d'habitants de la

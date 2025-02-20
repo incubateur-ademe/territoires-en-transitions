@@ -114,6 +114,7 @@ const ActionShow = ({
     <PageContainer
       dataTest={`Action-${actionDefinition.identifiant}`}
       bgColor="white"
+      innerContainerClassName="!pt-0"
     >
       <ActionHeader
         actionDefinition={actionDefinition}
@@ -143,7 +144,7 @@ const ActionShow = ({
       <Tabs
         defaultActiveTab={activeTab}
         onChange={handleChange}
-        className="fr-mt-9v bg-white"
+        className="mt-9 bg-white"
       >
         <Tab label="Suivi de l'action" icon="seedling">
           <ActionDetail action={actionDefinition} auditStatus={auditStatus} />

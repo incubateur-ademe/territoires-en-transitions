@@ -26,17 +26,17 @@ export const ActionInfoDetail = ({
 
   return (
     <>
-      <p className="bg-[#433EBA] text-white font-bold fr-text--sm fr-px-3w fr-py-3v !m-0">
+      <p className="bg-primary text-white font-bold text-sm px-6 py-3 !m-0">
         {titre}
       </p>
-      <div ref={ref} className="overflow-y-auto fr-px-3w fr-py-2w">
+      <div ref={ref} className="overflow-y-auto px-6 py-4">
         {data ? (
           <div
-            className="fr-text--sm"
+            className="text-sm"
             dangerouslySetInnerHTML={{
               __html: addTargetToContentAnchors(data).replaceAll(
                 '<p>',
-                '<p class="fr-text--sm">'
+                '<p class="text-sm">'
               ),
             }}
           />

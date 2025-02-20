@@ -37,7 +37,7 @@ export const PreuvesLabellisation = ({
                     key={id}
                     preuves={docs}
                     info={info}
-                    className={index ? 'fr-mt-3w' : undefined}
+                    className={index ? 'mt-6' : undefined}
                   />
                 );
               })}
