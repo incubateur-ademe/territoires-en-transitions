@@ -200,8 +200,8 @@ export const ScoreTotalEvolutionsChart = ({
       },
     },
     grid: {
-      left: '3%',
-      right: '4%',
+      left: '0%',
+      right: '0%',
       bottom: '15%',
       containLabel: true,
     },
@@ -245,13 +245,13 @@ export const ScoreTotalEvolutionsChart = ({
     ],
     toolbox: isDownloadable
       ? {
-      ...TOOLBOX_BASE,
-      feature: {
-        saveAsImage: {
-          ...TOOLBOX_BASE.feature.saveAsImage,
-          name: `${referentielId}_referentiel_progression-total`,
-        },
-      },
+          ...TOOLBOX_BASE,
+          feature: {
+            saveAsImage: {
+              ...TOOLBOX_BASE.feature.saveAsImage,
+              name: `${referentielId}_referentiel_progression-total`,
+            },
+          },
         }
       : undefined,
     series,

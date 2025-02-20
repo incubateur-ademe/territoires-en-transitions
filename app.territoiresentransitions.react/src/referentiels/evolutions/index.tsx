@@ -73,7 +73,7 @@ export const ScoreEvolutions = () => {
 
   if (hasSavedSnapshots) {
     return (
-      <>
+      <div className="px-4">
         <div>
           <label className="mb-2">Sélectionner les versions à afficher :</label>
           <div className="flex items-center justify-between">
@@ -90,7 +90,7 @@ export const ScoreEvolutions = () => {
             <Badge title="Score total" />
           </div>
         </div>
-        <div>
+        <div className="mt-8 pt-4 border-t border-gray-200">
           <ScoreTotalEvolutionsChart
             allSnapshots={getSnapshotsFromSelectedSnapsNames(
               selectedSnapsNames
@@ -100,7 +100,7 @@ export const ScoreEvolutions = () => {
             isDownloadable
           />
         </div>
-      </>
+      </div>
     );
   }
 
