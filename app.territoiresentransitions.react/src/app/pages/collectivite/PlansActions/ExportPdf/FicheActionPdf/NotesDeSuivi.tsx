@@ -52,10 +52,18 @@ const NotesDeSuiviCard = ({ noteSuivi }: NotesDeSuiviCardProps) => {
 
 type NotesDeSuiviProps = {
   notesSuivi: FicheActionNote[] | undefined;
+  years: number[] | undefined;
 };
 
-const NotesDeSuivi = ({ notesSuivi }: NotesDeSuiviProps) => {
+const NotesDeSuivi = ({ notesSuivi, years }: NotesDeSuiviProps) => {
   if (!notesSuivi || notesSuivi.length === 0) return null;
+
+  const filteredNotes =
+    years === undefined || !years.length || years.includes(0)
+      ? notesSuivi
+      : notesSuivi.filter((note) => years.includes(parseInt(note.dateNote)));
+
+  if (filteredNotes.length === 0) return null;
 
   return (
     <Card wrap={false}>
@@ -63,7 +71,7 @@ const NotesDeSuivi = ({ notesSuivi }: NotesDeSuiviProps) => {
         Notes de suivi et points de vigilance
       </Title>
       <Stack gap={3} direction="row" className="flex-wrap">
-        {notesSuivi.map((note) => (
+        {filteredNotes.map((note) => (
           <NotesDeSuiviCard key={note.dateNote} noteSuivi={note} />
         ))}
       </Stack>

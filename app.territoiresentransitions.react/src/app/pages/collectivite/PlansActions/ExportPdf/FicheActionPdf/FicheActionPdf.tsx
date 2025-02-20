@@ -90,7 +90,9 @@ const FicheActionPdf = ({
       {sections.etapes.isChecked && <Etapes etapes={etapes} />}
 
       {/* Notes de suivi */}
-      {sections.suivi.isChecked && <NotesDeSuivi notesSuivi={notesSuivi} />}
+      {sections.suivi.isChecked && (
+        <NotesDeSuivi notesSuivi={notesSuivi} years={sections.suivi.values} />
+      )}
 
       {/* Budget */}
       {sections.budget.isChecked && <Budget fiche={fiche} />}

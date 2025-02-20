@@ -24,12 +24,20 @@ export const keyToTitle: Record<PdfSectionKey, string> = {
   notes: 'Notes et documents',
 };
 
-export type TSectionsValues = { [key: string]: { isChecked: boolean } };
+export type TSectionsValues = {
+  [key: string]: { isChecked: boolean; values: number[] | undefined };
+};
 
 export const sectionsInitValue: TSectionsValues = Object.keys(
   keyToTitle
 ).reduce(
-  (newObj, currKey) => ({ ...newObj, [currKey]: { isChecked: true } }),
+  (newObj, currKey) => ({
+    ...newObj,
+    [currKey]: {
+      isChecked: true,
+      values: currKey === 'suivi' ? [0] : undefined,
+    },
+  }),
   {}
 );
 
