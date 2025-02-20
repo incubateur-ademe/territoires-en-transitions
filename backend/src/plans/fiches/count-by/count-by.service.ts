@@ -1,3 +1,25 @@
+import { countByDateSlots } from '@/backend/plans/fiches/count-by/count-by-date-slots.enum';
+import {
+  GetFichesActionFilterRequestType,
+  TypePeriodeEnumType,
+} from '@/backend/plans/fiches/shared/fetch-fiches-filter.request';
+import { ficheActionReferentTable } from '@/backend/plans/fiches/shared/models/fiche-action-referent.table';
+import { DatabaseService } from '@/backend/utils';
+import {
+  CountByRecordGeneralType,
+  CountByResponseType,
+} from '@/backend/utils/count-by.dto';
+import { getModifiedSinceDate } from '@/backend/utils/modified-since.enum';
+import { dcpTable } from '@/domain/auth';
+import {
+  financeurTagTable,
+  libreTagTable,
+  partenaireTagTable,
+  personneTagTable,
+  serviceTagTable,
+  structureTagTable,
+} from '@/domain/collectivites';
+import { indicateurDefinitionTable } from '@/domain/indicateurs';
 import {
   axeTable,
   ciblesEnumValues,
@@ -29,29 +51,7 @@ import {
   SANS_STRUCTURE_TAG_LABEL,
   SANS_THEMATIQUE_LABEL,
   statutsEnumValues,
-} from '@/backend/plans/fiches';
-import { countByDateSlots } from '@/backend/plans/fiches/count-by/count-by-date-slots.enum';
-import {
-  GetFichesActionFilterRequestType,
-  TypePeriodeEnumType,
-} from '@/backend/plans/fiches/shared/fetch-fiches-filter.request';
-import { ficheActionReferentTable } from '@/backend/plans/fiches/shared/models/fiche-action-referent.table';
-import { DatabaseService } from '@/backend/utils';
-import {
-  CountByRecordGeneralType,
-  CountByResponseType,
-} from '@/backend/utils/count-by.dto';
-import { getModifiedSinceDate } from '@/backend/utils/modified-since.enum';
-import { dcpTable } from '@/domain/auth';
-import {
-  financeurTagTable,
-  libreTagTable,
-  partenaireTagTable,
-  personneTagTable,
-  serviceTagTable,
-  structureTagTable,
-} from '@/domain/collectivites';
-import { indicateurDefinitionTable } from '@/domain/indicateurs';
+} from '@/domain/plans/fiches';
 import {
   effetAttenduTable,
   sousThematiqueTable,

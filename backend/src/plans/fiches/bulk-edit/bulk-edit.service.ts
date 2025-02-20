@@ -2,13 +2,13 @@ import { PermissionOperation } from '@/backend/auth/authorizations/permission-op
 import { PermissionService } from '@/backend/auth/authorizations/permission.service';
 import { ResourceType } from '@/backend/auth/authorizations/resource-type.enum';
 import { AuthUser } from '@/backend/auth/models/auth.models';
+import { editFicheRequestSchema } from '@/backend/plans/fiches/shared/edit-fiche.request';
+import { DatabaseService } from '@/backend/utils';
 import {
   ficheActionLibreTagTable,
   ficheActionTable,
   ficheSchema,
-} from '@/backend/plans/fiches';
-import { editFicheRequestSchema } from '@/backend/plans/fiches/shared/edit-fiche.request';
-import { DatabaseService } from '@/backend/utils';
+} from '@/domain/plans/fiches';
 import { Injectable } from '@nestjs/common';
 import { and, inArray, or } from 'drizzle-orm';
 import z from 'zod';

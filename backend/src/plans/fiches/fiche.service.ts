@@ -1,7 +1,13 @@
-import { dcpTable } from '@/backend/auth';
 import { PermissionOperation } from '@/backend/auth/authorizations/permission-operation.enum';
 import { PermissionService } from '@/backend/auth/authorizations/permission.service';
 import { ResourceType } from '@/backend/auth/authorizations/resource-type.enum';
+import { ficheActionFinanceurTagTable } from '@/backend/plans/fiches/shared/models/fiche-action-financeur-tag.table';
+import { ficheActionPiloteTable } from '@/backend/plans/fiches/shared/models/fiche-action-pilote.table';
+import { ficheActionReferentTable } from '@/backend/plans/fiches/shared/models/fiche-action-referent.table';
+import { ficheActionServiceTagTable } from '@/backend/plans/fiches/shared/models/fiche-action-service-tag.table';
+import { ficheActionStructureTagTable } from '@/backend/plans/fiches/shared/models/fiche-action-structure-tag.table';
+import { Transaction } from '@/backend/utils/database/transaction.utils';
+import { dcpTable } from '@/domain/auth';
 import { Injectable, Logger } from '@nestjs/common';
 import { aliasedTable, desc, eq } from 'drizzle-orm';
 import { AuthenticatedUser } from '../../auth/models/auth.models';
@@ -18,12 +24,6 @@ import {
   FicheCreate,
   ficheActionTable,
 } from './shared/models/fiche-action.table';
-import { ficheActionStructureTagTable } from '@/backend/plans/fiches/shared/models/fiche-action-structure-tag.table';
-import { ficheActionServiceTagTable } from '@/backend/plans/fiches/shared/models/fiche-action-service-tag.table';
-import { ficheActionFinanceurTagTable } from '@/backend/plans/fiches/shared/models/fiche-action-financeur-tag.table';
-import { ficheActionPiloteTable } from '@/backend/plans/fiches/shared/models/fiche-action-pilote.table';
-import { ficheActionReferentTable } from '@/backend/plans/fiches/shared/models/fiche-action-referent.table';
-import { Transaction } from '@/backend/utils/database/transaction.utils';
 
 @Injectable()
 export default class FicheService {

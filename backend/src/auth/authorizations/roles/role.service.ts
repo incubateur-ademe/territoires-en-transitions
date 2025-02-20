@@ -1,11 +1,11 @@
+import { ResourceType } from '@/backend/auth/authorizations/resource-type.enum';
+import { Role } from '@/backend/auth/authorizations/roles/role.enum';
+import { DatabaseService } from '@/backend/utils';
 import {
   dcpTable,
   utilisateurDroitTable,
   UtilisateurDroitType,
-} from '@/backend/auth';
-import { ResourceType } from '@/backend/auth/authorizations/resource-type.enum';
-import { Role } from '@/backend/auth/authorizations/roles/role.enum';
-import { DatabaseService } from '@/backend/utils';
+} from '@/domain/auth';
 import { Injectable, Logger } from '@nestjs/common';
 import { and, eq, sql } from 'drizzle-orm';
 import { AuthRole, AuthUser } from '../../models/auth.models';

@@ -1,5 +1,5 @@
-import { dcpTable } from '@/backend/auth';
 import { utilisateurDroitTable } from '@/backend/auth/authorizations/roles/private-utilisateur-droit.table';
+import { dcpTable } from '@/domain/auth';
 import { Injectable, Logger } from '@nestjs/common';
 import { and, eq, sql } from 'drizzle-orm';
 import { unionAll } from 'drizzle-orm/pg-core';

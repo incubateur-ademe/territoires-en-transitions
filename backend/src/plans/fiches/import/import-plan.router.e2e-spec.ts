@@ -1,14 +1,12 @@
-import { AppRouter, TrpcRouter } from '@/backend/utils/trpc/trpc.router';
+import { RoleUpdateService } from '@/backend/auth/authorizations/roles/role-update.service';
 import { getAuthUser, getTestApp, getTestRouter } from '@/backend/test';
-import { AuthenticatedUser } from '@/backend/auth';
+import { AppRouter, TrpcRouter } from '@/backend/utils/trpc/trpc.router';
+import { AuthenticatedUser } from '@/domain/auth';
+import { inferProcedureInput } from '@trpc/server';
 import * as fs from 'node:fs';
 import path from 'path';
-import { RoleUpdateService } from '@/backend/auth/authorizations/roles/role-update.service';
-import { inferProcedureInput } from '@trpc/server';
 
-type inputType = inferProcedureInput<
-  AppRouter['plans']['fiches']['import']
->;
+type inputType = inferProcedureInput<AppRouter['plans']['fiches']['import']>;
 
 const pathToInput = async (pathName: string): Promise<inputType> => {
   const filePath = path.resolve(__dirname, pathName);
@@ -17,7 +15,7 @@ const pathToInput = async (pathName: string): Promise<inputType> => {
     collectiviteId: 1,
     planName: 'import test',
     planType: 1,
-    file: buff.toString('base64')
+    file: buff.toString('base64'),
   };
 };
 

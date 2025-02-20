@@ -1,4 +1,9 @@
-import { Injectable } from '@nestjs/common';
+import {
+  PersonneImport,
+  TagImport,
+} from '@/backend/plans/fiches/import/import-plan.dto';
+import { getFuse } from '@/backend/utils/fuse/fuse.utils';
+import { TagEnum, TagType } from '@/domain/collectivites';
 import {
   Cible,
   ciblesEnumValues,
@@ -8,13 +13,8 @@ import {
   prioriteEnumValues,
   Statut,
   statutsEnumValues,
-} from '@/backend/plans/fiches';
-import { TagEnum, TagType } from '@/backend/collectivites';
-import {
-  PersonneImport,
-  TagImport,
-} from '@/backend/plans/fiches/import/import-plan.dto';
-import { getFuse } from '@/backend/utils/fuse/fuse.utils';
+} from '@/domain/plans/fiches';
+import { Injectable } from '@nestjs/common';
 
 /** Regex to detect spaces */
 const regexEspace = /\\t|\\r|\\n/;
@@ -133,7 +133,10 @@ export class ImportPlanCleanService {
     const toReturn: PersonneImport[] = [];
     const tab: string[] = String(personnes).split(regexSplit);
     const Fuse = await getFuse();
-    const fuse = new Fuse(Array.from(Object.keys(members)), {threshold: 0.3, distance: 100});
+    const fuse = new Fuse(Array.from(Object.keys(members)), {
+      threshold: 0.3,
+      distance: 100,
+    });
     for (const element of tab) {
       const cleaned = this.text(element);
       if (cleaned && !cleaned.match(regexSplit)) {

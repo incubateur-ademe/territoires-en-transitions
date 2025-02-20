@@ -1,6 +1,6 @@
-import { Injectable, Logger } from '@nestjs/common';
-import { DatabaseService } from '@/backend/utils';
-import ExcelJS from 'exceljs';
+import { ImportPlanCleanService } from '@/backend/plans/fiches/import/import-plan-clean.service';
+import { ImportPlanFetchService } from '@/backend/plans/fiches/import/import-plan-fetch.service';
+import { ImportPlanSaveService } from '@/backend/plans/fiches/import/import-plan-save.service';
 import {
   AxeImport,
   FicheImport,
@@ -9,10 +9,10 @@ import {
   MemoryImport,
   TagImport,
 } from '@/backend/plans/fiches/import/import-plan.dto';
-import { TagEnum, TagType } from '@/backend/collectivites';
-import { ImportPlanFetchService } from '@/backend/plans/fiches/import/import-plan-fetch.service';
-import { ImportPlanSaveService } from '@/backend/plans/fiches/import/import-plan-save.service';
-import { ImportPlanCleanService } from '@/backend/plans/fiches/import/import-plan-clean.service';
+import { DatabaseService } from '@/backend/utils';
+import { TagEnum, TagType } from '@/domain/collectivites';
+import { Injectable, Logger } from '@nestjs/common';
+import ExcelJS from 'exceljs';
 
 /** Column names ordered (order is important) */
 enum ColumnNames {
@@ -94,11 +94,12 @@ export class ImportPlanService {
     planName: string,
     planType?: number
   ): Promise<boolean> {
-
-    this.logger.log(`Début de l'import ${planName} avec le type ${planType} pour la collectivité ${collectiviteId}`);
+    this.logger.log(
+      `Début de l'import ${planName} avec le type ${planType} pour la collectivité ${collectiviteId}`
+    );
     const plan: AxeImport = {
       nom: planName,
-      type: (planType && !Number.isNaN(planType)) ? planType : undefined,
+      type: planType && !Number.isNaN(planType) ? planType : undefined,
       enfants: new Set<AxeImport>(),
       fiches: [],
     };
@@ -164,7 +165,10 @@ export class ImportPlanService {
    */
   private checkColumns(worksheet: ExcelJS.Worksheet, row: any[]): boolean {
     for (let columnId = 0; columnId < OrderedColumnNames.length; columnId++) {
-      if (OrderedColumnNames[columnId].trim() !== String(row[columnId] ?? '').trim()) {
+      if (
+        OrderedColumnNames[columnId].trim() !==
+        String(row[columnId] ?? '').trim()
+      ) {
         const columnExcel = worksheet.getColumn(columnId + 1).letter;
         throw new Error(
           `<strong>Erreur rencontrée dans le fichier Excel :</strong><br>

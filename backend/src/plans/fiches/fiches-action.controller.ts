@@ -1,5 +1,5 @@
-import { ficheActionNoteSchema } from '@/backend/plans/fiches';
 import { countSyntheseValeurSchema } from '@/backend/utils/count-by.dto';
+import { ficheActionNoteSchema } from '@/domain/plans/fiches';
 import { createZodDto } from '@anatine/zod-nestjs';
 import {
   Body,
