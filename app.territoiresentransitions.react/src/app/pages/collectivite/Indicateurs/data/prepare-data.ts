@@ -40,6 +40,7 @@ export const prepareData = (
         };
       }),
     metadonnees: sourceData.metadonnees || [],
+    type,
   }));
 
   // fusionne les tableaux de valeurs de toutes les sources
@@ -69,6 +70,7 @@ export const prepareData = (
       metadonnees: [],
       ordreAffichage: -1,
       libelle: '',
+      type,
     };
     sources.unshift(donneesCollectivite);
   }

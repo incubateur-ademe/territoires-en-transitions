@@ -101,6 +101,7 @@ const prepareSegmentsDataset = (chartInfo: IndicateurChartInfo) => {
       dimensions: ['anneeISO', 'valeur'],
       metadonnee,
       nomSource: source.libelle,
+      typeSource: source.type,
     };
   });
 };
