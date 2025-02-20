@@ -23,14 +23,35 @@ export const IndicateurTable = (props: IndicateurTableProps) => {
   const { chartInfo, collectiviteId, definition, readonly, openModalState } =
     props;
   const [type, setType] = useState<SourceType>('resultat');
-  const valeurs = chartInfo.data.valeurs;
-  const data = type === 'resultat' ? valeurs.resultats : valeurs.objectifs;
+  const { resultats, objectifs } = chartInfo.data.valeurs;
+  const data = type === 'resultat' ? resultats : objectifs;
 
   const [isOpen, setIsOpen] = useState(openModalState?.isOpen ?? false);
 
   useEffect(() => {
     setIsOpen(openModalState?.isOpen ?? false);
   }, [openModalState?.isOpen]);
+
+  // compte les données disponibles pour chaque type
+  const sourcesCount = {
+    objectif: objectifs.sources.length,
+    resultat: resultats.sources.length,
+  };
+
+  // détermine si il y a des données pour l'onglet sélectionné
+  const typeInverse = type === 'resultat' ? 'objectif' : 'resultat';
+  const shouldChange = !sourcesCount[type] && sourcesCount[typeInverse];
+
+  // change d'onglet si il n'y a pas de données à afficher
+  // mais qu'il y a des données pour l'autre onglet
+  useEffect(() => {
+    if (shouldChange && !chartInfo.isLoading) {
+      setType(typeInverse);
+    }
+  }, [shouldChange, typeInverse, chartInfo.isLoading]);
+
+  // n'affiche rien si il n'y a pas de données
+  if (!sourcesCount[type] && !sourcesCount[typeInverse]) return;
 
   return (
     <div className="flex flex-col gap-4">
@@ -43,11 +64,13 @@ export const IndicateurTable = (props: IndicateurTableProps) => {
             {
               id: 'resultat',
               children: 'Résultats',
+              disabled: !sourcesCount.resultat,
               onClick: () => setType('resultat'),
             },
             {
               id: 'objectif',
               children: 'Objectifs',
+              disabled: !sourcesCount.objectif,
               onClick: () => setType('objectif'),
             },
           ]}
