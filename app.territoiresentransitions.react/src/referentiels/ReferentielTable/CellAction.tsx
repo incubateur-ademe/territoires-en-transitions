@@ -133,7 +133,7 @@ const Expand = ({ row, referentielId }: TCellProps) => {
   const { depth } = original;
   const invertColor = depth < (referentielId === 'cae' ? 3 : 2);
   const className = [
-    'fr-mr-1w hover:!bg-transparent',
+    'mr-2 hover:!bg-transparent',
     isExpanded ? 'arrow-down' : 'arrow-right',
     invertColor ? 'before:bg-white' : 'before:bg-black',
   ].join(' ');

@@ -186,7 +186,7 @@ const CarteDocument = ({
 
               {/* Date de visite */}
               {!!dateVisite && (
-                <p className="text-xs fr-text-mention--grey mb-1 pl-2">
+                <p className="text-xs text-grey-8 font-normal mb-1 pl-2">
                   Visite effectuée le{' '}
                   {getTextFormattedDate({ date: dateVisite })}
                 </p>

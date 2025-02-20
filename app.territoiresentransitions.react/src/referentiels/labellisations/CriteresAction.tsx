@@ -20,7 +20,7 @@ export const CriteresAction = (props: TCriteresActionProps) => {
 
   return (
     <>
-      <li className=" fr-mt-2w fr-mb-1w">
+      <li className=" mt-4 mb-2">
         Être une collectivité engagée dans une politique{' '}
         {referentielToName[referentiel]} et le prouver (via les documents
         preuves ou un texte justificatif)
@@ -38,7 +38,7 @@ export const CritereActionTable = (props: TCriteresActionTable) => {
   const { criteres_action } = parcours;
 
   return (
-    <div className="critere-action-table fr-my-4">
+    <div className="critere-action-table">
       <table>
         <thead>
           <tr>

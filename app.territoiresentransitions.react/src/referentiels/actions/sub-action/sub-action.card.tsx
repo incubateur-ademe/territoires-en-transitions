@@ -152,7 +152,7 @@ const SubActionCard = ({
             (subAction.description || subAction.have_exemples) && (
               <Accordion
                 id={`Description-${subAction.id}`}
-                className="fr-mb-3w"
+                className="mb-6"
                 titre="Description"
                 html={<SubActionDescription subAction={subAction} />}
               />
@@ -163,7 +163,7 @@ const SubActionCard = ({
             <Accordion
               id={`Tâches-${subAction.id}`}
               dataTest={`TâchesPanel-${subAction.identifiant}`}
-              className="fr-mb-3w"
+              className="mb-6"
               titre="Tâches"
               html={
                 <SubActionTasksList

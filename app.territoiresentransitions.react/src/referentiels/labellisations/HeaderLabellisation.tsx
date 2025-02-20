@@ -3,7 +3,7 @@
  */
 import { Button } from '@/ui';
 import PageContainer from '@/ui/components/layout/page-container';
-import { ReactNode, useState } from 'react';
+import { useState } from 'react';
 import { ValiderAudit } from '../audits/ValiderAudit';
 import { TAuditeur, useAuditeurs } from '../audits/useAudit';
 import { useReferentielId } from '../referentiel-context';
@@ -101,7 +101,9 @@ export const HeaderLabellisation = (props: THeaderLabellisationProps) => {
           </Button>
         ) : null}
         {!!headerMessageContent && (
-          <HeaderMessage>{headerMessageContent}</HeaderMessage>
+          <p className="text-grey-8" data-test="HeaderMessage">
+            {headerMessageContent}
+          </p>
         )}
         {status === 'audit_en_cours' && isAuditeur ? (
           <ValiderAudit
@@ -162,12 +164,6 @@ const getHeaderMessageContent = (
   // pas de message dans les autres cas
   return null;
 };
-
-const HeaderMessage = ({ children }: { children: ReactNode }) => (
-  <p className="m-0 fr-text-mention--grey" data-test="HeaderMessage">
-    {children}
-  </p>
-);
 
 /** Message  "<n-ième> étoile depuis le <date obtention>" */
 const DerniereLabellisation = ({

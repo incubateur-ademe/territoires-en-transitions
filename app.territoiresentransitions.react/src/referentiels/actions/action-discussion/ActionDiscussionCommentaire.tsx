@@ -57,7 +57,7 @@ const ActionDiscussionCommentaire = ({ commentaire, discussion }: Props) => {
           </span>
         </div>
         <p
-          className="text-sm whitespace-pre-wrap fr-mb-0"
+          className="text-sm whitespace-pre-wrap mb-0"
           style={{ overflowWrap: 'anywhere' }}
         >
           {commentaire.message}

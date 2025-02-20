@@ -69,7 +69,7 @@ export const PersoPotentiel = ({ actionDef }: TPersoPotentielButtonProps) => {
         render={() => (
           <div className="p-7 flex flex-col" data-test="PersoPotentielDlg">
             <h3>Personnaliser le potentiel de points</h3>
-            <span className="fr-text--md font-bold">
+            <span className="mb-6 font-bold">
               {type[0].toUpperCase() + type.slice(1)} {identifiant} : {nom}
             </span>
             <div className="w-full">

@@ -30,7 +30,7 @@ export const ActionHeader = ({
   const FLAG_isSnapshotEnabled = useSnapshotFlagEnabled();
   return (
     <>
-      <div className="flex flex-col justify-between bg-primary text-white fr-px-5w fr-py-3w -mt-12">
+      <div className="flex flex-col justify-between gap-4 bg-primary text-white px-10 py-6">
         <p className="text-white font-bold !mb-0 text-[1.375rem]">
           {actionDefinition.identifiant} {actionDefinition.nom}
         </p>
@@ -41,11 +41,11 @@ export const ActionHeader = ({
         />
       </div>
 
-      <div className="flex justify-between items-center fr-text--sm my-4 !py-0">
-        <div className="flex gap-4 items-center fr-pl-1v text-grey425">
+      <div className="flex justify-between items-center my-4 !py-0">
+        <div className="flex gap-4 items-center text-grey-7">
           <ScoreProgressBar
             actionDefinition={actionDefinition}
-            className="border-r border-r-[#ddd] fr-pr-5v"
+            className="border-r border-r-[#ddd] pr-6"
             // TODO(temporary): Temporary patch to display percentage
             TEMP_displayValue={true}
           />
@@ -71,7 +71,7 @@ export const ActionHeader = ({
             </>
           )}
           {actionDefinition.have_questions && (
-            <div className="border-l border-l-[#ddd] fr-pl-3v">
+            <div className="border-l border-l-[#ddd] pl-3">
               <PersoPotentiel actionDef={actionDefinition} />
             </div>
           )}
