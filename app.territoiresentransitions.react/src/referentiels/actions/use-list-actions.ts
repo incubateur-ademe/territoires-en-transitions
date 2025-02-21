@@ -19,17 +19,20 @@ export function useListActions(params?: { actionIds?: string[] }) {
 export type ActionWithStatut =
   RouterOutput['referentiels']['actions']['listActionsWithStatuts'][number];
 
-export function useListActionsWithStatuts({
-  actionIds,
-}: {
-  actionIds?: string[];
-}) {
+export function useListActionsWithStatuts(
+  {
+    actionIds,
+  }: {
+    actionIds?: string[];
+  },
+  requested = true
+) {
   const collectiviteId = useCollectiviteId();
   return trpc.referentiels.actions.listActionsWithStatuts.useQuery(
     {
       collectiviteId,
       actionIds,
     },
-    DISABLE_AUTO_REFETCH
+    { ...DISABLE_AUTO_REFETCH, enabled: requested }
   );
 }
