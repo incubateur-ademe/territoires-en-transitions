@@ -1,32 +1,32 @@
-import type { Schema, Attribute } from '@strapi/strapi';
+import type { Attribute, Schema } from '@strapi/strapi';
 
 export interface BlocAccompagnement extends Schema.Component {
   collectionName: 'components_bloc_accompagnements';
   info: {
-    displayName: 'Accompagnement';
     description: '';
+    displayName: 'Accompagnement';
   };
   attributes: {
+    Compte: Attribute.Component<'bloc.description-avec-image'> &
+      Attribute.Required;
+    Description: Attribute.Text &
+      Attribute.DefaultTo<'Votre territoire est unique. Avancez \u00E9tape par \u00E9tape dans la transition \u00E9cologique selon vos comp\u00E9tences et vos moyens avec le programme Territoire Engag\u00E9 Transition \u00C9cologique.'>;
+    Programme: Attribute.Component<'bloc.description-avec-image'> &
+      Attribute.Required;
     Titre: Attribute.String &
       Attribute.Required &
       Attribute.SetMinMaxLength<{
         maxLength: 200;
       }> &
       Attribute.DefaultTo<'B\u00E9n\u00E9ficiez d\u2019un accompagnement adapt\u00E9 \u00E0 vos besoins'>;
-    Description: Attribute.Text &
-      Attribute.DefaultTo<'Votre territoire est unique. Avancez \u00E9tape par \u00E9tape dans la transition \u00E9cologique selon vos comp\u00E9tences et vos moyens avec le programme Territoire Engag\u00E9 Transition \u00C9cologique.'>;
-    Programme: Attribute.Component<'bloc.description-avec-image'> &
-      Attribute.Required;
-    Compte: Attribute.Component<'bloc.description-avec-image'> &
-      Attribute.Required;
   };
 }
 
 export interface BlocCompte extends Schema.Component {
   collectionName: 'components_bloc_comptes';
   info: {
-    displayName: 'Compte';
     description: '';
+    displayName: 'Compte';
   };
   attributes: {
     Description: Attribute.Text &
@@ -38,49 +38,52 @@ export interface BlocCompte extends Schema.Component {
   };
 }
 
-export interface BlocDescriptionAvecImage extends Schema.Component {
-  collectionName: 'components_bloc_description_avec_images';
-  info: {
-    displayName: 'DescriptionAvecImage';
-    description: '';
-  };
-  attributes: {
-    Titre: Attribute.String &
-      Attribute.Required &
-      Attribute.SetMinMaxLength<{
-        maxLength: 200;
-      }>;
-    Description: Attribute.Text &
-      Attribute.Required &
-      Attribute.SetMinMaxLength<{
-        maxLength: 200;
-      }>;
-    Image: Attribute.Media & Attribute.Required;
-  };
-}
-
 export interface BlocDescription extends Schema.Component {
   collectionName: 'components_bloc_descriptions';
   info: {
     displayName: 'Description';
   };
   attributes: {
+    Description: Attribute.Text;
     Titre: Attribute.String &
       Attribute.Required &
       Attribute.SetMinMaxLength<{
         maxLength: 255;
       }>;
-    Description: Attribute.Text;
+  };
+}
+
+export interface BlocDescriptionAvecImage extends Schema.Component {
+  collectionName: 'components_bloc_description_avec_images';
+  info: {
+    description: '';
+    displayName: 'DescriptionAvecImage';
+  };
+  attributes: {
+    Description: Attribute.Text &
+      Attribute.Required &
+      Attribute.SetMinMaxLength<{
+        maxLength: 200;
+      }>;
+    Image: Attribute.Media<'images'> & Attribute.Required;
+    Titre: Attribute.String &
+      Attribute.Required &
+      Attribute.SetMinMaxLength<{
+        maxLength: 200;
+      }>;
   };
 }
 
 export interface BlocRessources extends Schema.Component {
   collectionName: 'components_bloc_ressources';
   info: {
-    displayName: 'Ressources';
     description: '';
+    displayName: 'Ressources';
   };
   attributes: {
+    AnnuaireURL: Attribute.String &
+      Attribute.Required &
+      Attribute.DefaultTo<'https://territoireengagetransitionecologique.ademe.fr/wp-content/uploads/2023/05/ADEME_Liste-conseillers_TE-CAE-2023_mai.pdf'>;
     Description: Attribute.Text &
       Attribute.Required &
       Attribute.SetMinMaxLength<{
@@ -93,58 +96,58 @@ export interface BlocRessources extends Schema.Component {
     ReglementEciURL: Attribute.String &
       Attribute.Required &
       Attribute.DefaultTo<'https://territoireengagetransitionecologique.ademe.fr/wp-content/uploads/2022/03/Reglement_label_ECi_20220316.pdf.pdf'>;
-    AnnuaireURL: Attribute.String &
-      Attribute.Required &
-      Attribute.DefaultTo<'https://territoireengagetransitionecologique.ademe.fr/wp-content/uploads/2023/05/ADEME_Liste-conseillers_TE-CAE-2023_mai.pdf'>;
   };
 }
 
 export interface BlocTexteAvecImage extends Schema.Component {
   collectionName: 'components_contenu_texte_avec_images';
   info: {
-    displayName: 'TexteAvecImage';
     description: '';
+    displayName: 'TexteAvecImage';
   };
   attributes: {
-    Texte: Attribute.RichText & Attribute.Required;
-    Image: Attribute.Media;
+    Image: Attribute.Media<'images'>;
     LegendeVisible: Attribute.Boolean & Attribute.DefaultTo<false>;
+    Texte: Attribute.RichText & Attribute.Required;
   };
 }
 
 export interface ContenuGallerie extends Schema.Component {
   collectionName: 'components_contenu_galleries';
   info: {
+    description: '';
     displayName: 'Gallerie';
     icon: 'grid';
-    description: '';
   };
   attributes: {
-    Gallerie: Attribute.Media & Attribute.Required;
-    NombreColonnes: Attribute.Integer &
-      Attribute.Required &
-      Attribute.SetMinMax<{
-        min: 1;
-        max: 4;
-      }> &
-      Attribute.DefaultTo<2>;
+    Gallerie: Attribute.Media<'images', true> & Attribute.Required;
     Legende: Attribute.String &
       Attribute.SetMinMaxLength<{
         maxLength: 255;
       }>;
     LegendeVisible: Attribute.Boolean & Attribute.DefaultTo<false>;
+    NombreColonnes: Attribute.Integer &
+      Attribute.Required &
+      Attribute.SetMinMax<
+        {
+          max: 4;
+          min: 1;
+        },
+        number
+      > &
+      Attribute.DefaultTo<2>;
   };
 }
 
 export interface ContenuImage extends Schema.Component {
   collectionName: 'components_contenu_images';
   info: {
+    description: '';
     displayName: 'Image';
     icon: 'landscape';
-    description: '';
   };
   attributes: {
-    Image: Attribute.Media & Attribute.Required;
+    Image: Attribute.Media<'images'> & Attribute.Required;
     LegendeVisible: Attribute.Boolean & Attribute.DefaultTo<false>;
   };
 }
@@ -152,24 +155,24 @@ export interface ContenuImage extends Schema.Component {
 export interface ContenuIndicateur extends Schema.Component {
   collectionName: 'components_contenu_indicateurs';
   info: {
-    displayName: 'Indicateur';
     description: '';
+    displayName: 'Indicateur';
   };
   attributes: {
+    description: Attribute.Text & Attribute.Required;
+    description_encadre: Attribute.Text & Attribute.Required;
+    details: Attribute.RichText;
+    illustration_encadre: Attribute.Media<'images'> & Attribute.Required;
     titre: Attribute.String &
       Attribute.Required &
       Attribute.SetMinMaxLength<{
         maxLength: 255;
       }>;
-    description: Attribute.Text & Attribute.Required;
     titre_encadre: Attribute.String &
       Attribute.Required &
       Attribute.SetMinMaxLength<{
         maxLength: 255;
       }>;
-    description_encadre: Attribute.Text & Attribute.Required;
-    illustration_encadre: Attribute.Media & Attribute.Required;
-    details: Attribute.RichText;
   };
 }
 
@@ -187,48 +190,48 @@ export interface ContenuInfo extends Schema.Component {
 export interface ContenuParagraphe extends Schema.Component {
   collectionName: 'components_contenu_paragraphes';
   info: {
-    displayName: 'Paragraphe';
     description: '';
+    displayName: 'Paragraphe';
     icon: 'file';
   };
   attributes: {
-    Titre: Attribute.String &
-      Attribute.SetMinMaxLength<{
-        maxLength: 255;
-      }>;
-    Texte: Attribute.RichText;
-    Image: Attribute.Media;
     AlignementImage: Attribute.Enumeration<
       ['Gauche', 'Droite', 'Centre Bas', 'Centre Haut']
     > &
       Attribute.DefaultTo<'Centre Bas'>;
+    Image: Attribute.Media<'images'>;
     LegendeVisible: Attribute.Boolean & Attribute.DefaultTo<false>;
+    Texte: Attribute.RichText;
+    Titre: Attribute.String &
+      Attribute.SetMinMaxLength<{
+        maxLength: 255;
+      }>;
   };
 }
 
 export interface ContenuTexteCollectivite extends Schema.Component {
   collectionName: 'components_contenu_texte_collectivites';
   info: {
-    displayName: 'TexteCollectivite';
     description: '';
+    displayName: 'TexteCollectivite';
   };
   attributes: {
+    contenu: Attribute.RichText & Attribute.Required;
+    image: Attribute.Media<'images'>;
     titre: Attribute.String &
       Attribute.Required &
       Attribute.SetMinMaxLength<{
         maxLength: 255;
       }>;
-    contenu: Attribute.RichText & Attribute.Required;
-    image: Attribute.Media;
   };
 }
 
 export interface ContenuVideo extends Schema.Component {
   collectionName: 'components_contenu_videos';
   info: {
+    description: '';
     displayName: 'Video';
     icon: 'play';
-    description: '';
   };
   attributes: {
     URL: Attribute.String & Attribute.Required;
@@ -238,50 +241,60 @@ export interface ContenuVideo extends Schema.Component {
 export interface ServicesCarte extends Schema.Component {
   collectionName: 'components_services_cartes';
   info: {
+    description: '';
     displayName: 'carte';
     icon: 'grid';
-    description: '';
   };
   attributes: {
     icone: Attribute.String & Attribute.CustomField<'plugin::react-icons.icon'>;
+    image: Attribute.Media<'images'>;
     pre_titre: Attribute.String &
       Attribute.SetMinMaxLength<{
         maxLength: 255;
       }>;
+    texte: Attribute.RichText & Attribute.Required;
     titre: Attribute.String &
       Attribute.SetMinMaxLength<{
         maxLength: 255;
       }>;
-    texte: Attribute.RichText & Attribute.Required;
-    image: Attribute.Media;
   };
 }
 
 export interface ServicesInfo extends Schema.Component {
   collectionName: 'components_services_infos';
   info: {
+    description: '';
     displayName: 'info';
     icon: 'information';
-    description: '';
   };
   attributes: {
+    boutons: Attribute.Component<'shared.bouton', true>;
     titre: Attribute.String &
       Attribute.Required &
       Attribute.SetMinMaxLength<{
         maxLength: 255;
       }>;
-    boutons: Attribute.Component<'shared.bouton', true>;
   };
 }
 
 export interface ServicesListe extends Schema.Component {
   collectionName: 'components_services_listes';
   info: {
+    description: '';
     displayName: 'liste';
     icon: 'bulletList';
-    description: '';
   };
   attributes: {
+    disposition_cartes: Attribute.Enumeration<
+      ['Gallerie', 'Grille', 'Verticale', 'Vignettes']
+    > &
+      Attribute.Required;
+    introduction: Attribute.RichText;
+    liste: Attribute.Component<'services.carte', true>;
+    sous_titre: Attribute.String &
+      Attribute.SetMinMaxLength<{
+        maxLength: 255;
+      }>;
     taille_liste: Attribute.Enumeration<['md', 'lg']> &
       Attribute.DefaultTo<'lg'>;
     titre: Attribute.String &
@@ -289,44 +302,34 @@ export interface ServicesListe extends Schema.Component {
       Attribute.SetMinMaxLength<{
         maxLength: 255;
       }>;
-    sous_titre: Attribute.String &
-      Attribute.SetMinMaxLength<{
-        maxLength: 255;
-      }>;
-    introduction: Attribute.RichText;
-    liste: Attribute.Component<'services.carte', true>;
-    disposition_cartes: Attribute.Enumeration<
-      ['Gallerie', 'Grille', 'Verticale', 'Vignettes']
-    > &
-      Attribute.Required;
   };
 }
 
 export interface ServicesParagraphe extends Schema.Component {
   collectionName: 'components_services_paragraphes';
   info: {
+    description: '';
     displayName: 'paragraphe';
     icon: 'layer';
-    description: '';
   };
   attributes: {
+    alignement_image_droite: Attribute.Boolean & Attribute.DefaultTo<false>;
+    image_titre: Attribute.Media<'images'>;
+    images: Attribute.Media<'images', true>;
+    sous_titre: Attribute.String &
+      Attribute.SetMinMaxLength<{
+        maxLength: 255;
+      }>;
+    taille_image_titre: Attribute.Enumeration<['sm', 'md', 'lg']> &
+      Attribute.DefaultTo<'sm'>;
     taille_paragraphe: Attribute.Enumeration<['md', 'lg']> &
       Attribute.DefaultTo<'lg'>;
+    texte: Attribute.RichText;
     titre: Attribute.String &
       Attribute.SetMinMaxLength<{
         maxLength: 255;
       }>;
     titre_centre: Attribute.Boolean & Attribute.DefaultTo<false>;
-    image_titre: Attribute.Media;
-    taille_image_titre: Attribute.Enumeration<['sm', 'md', 'lg']> &
-      Attribute.DefaultTo<'sm'>;
-    sous_titre: Attribute.String &
-      Attribute.SetMinMaxLength<{
-        maxLength: 255;
-      }>;
-    texte: Attribute.RichText;
-    alignement_image_droite: Attribute.Boolean & Attribute.DefaultTo<false>;
-    images: Attribute.Media;
   };
 }
 
@@ -355,37 +358,37 @@ export interface SharedParagraphe extends Schema.Component {
     icon: 'layer';
   };
   attributes: {
+    contenu: Attribute.RichText & Attribute.Required;
     titre: Attribute.String &
       Attribute.Required &
       Attribute.SetMinMaxLength<{
         maxLength: 255;
       }>;
-    contenu: Attribute.RichText & Attribute.Required;
   };
 }
 
 export interface SharedSeo extends Schema.Component {
   collectionName: 'components_shared_seos';
   info: {
+    description: '';
     displayName: 'seo';
     icon: 'search';
-    description: '';
   };
   attributes: {
-    metaTitle: Attribute.String;
     metaDescription: Attribute.String &
       Attribute.SetMinMaxLength<{
         minLength: 50;
       }>;
-    metaImage: Attribute.Media;
+    metaImage: Attribute.Media<'images'>;
+    metaTitle: Attribute.String;
   };
 }
 
 export interface SharedTemoignage extends Schema.Component {
   collectionName: 'components_shared_temoignages';
   info: {
-    displayName: 'temoignage';
     description: '';
+    displayName: 'temoignage';
     icon: 'discuss';
   };
   attributes: {
@@ -394,6 +397,7 @@ export interface SharedTemoignage extends Schema.Component {
       Attribute.SetMinMaxLength<{
         maxLength: 100;
       }>;
+    portrait: Attribute.Media<'images'>;
     role: Attribute.String &
       Attribute.Required &
       Attribute.SetMinMaxLength<{
@@ -404,66 +408,6 @@ export interface SharedTemoignage extends Schema.Component {
       Attribute.SetMinMaxLength<{
         maxLength: 700;
       }>;
-    portrait: Attribute.Media;
-  };
-}
-
-export interface SharedVignetteAvecCta extends Schema.Component {
-  collectionName: 'components_shared_vignette_avec_ctas';
-  info: {
-    displayName: 'vignette_avec_cta';
-  };
-  attributes: {
-    titre: Attribute.String &
-      Attribute.SetMinMaxLength<{
-        maxLength: 255;
-      }>;
-    legende: Attribute.RichText & Attribute.Required;
-    image: Attribute.Media & Attribute.Required;
-    cta: Attribute.String &
-      Attribute.Required &
-      Attribute.SetMinMaxLength<{
-        maxLength: 50;
-      }>;
-  };
-}
-
-export interface SharedVignetteAvecMarkdown extends Schema.Component {
-  collectionName: 'components_shared_vignette_avec_markdowns';
-  info: {
-    displayName: 'vignette_avec_markdown';
-    icon: 'layout';
-    description: '';
-  };
-  attributes: {
-    titre: Attribute.String &
-      Attribute.SetMinMaxLength<{
-        maxLength: 255;
-      }>;
-    legende: Attribute.RichText & Attribute.Required;
-    image: Attribute.Media & Attribute.Required;
-  };
-}
-
-export interface SharedVignetteAvecTitre extends Schema.Component {
-  collectionName: 'components_shared_vignette_avec_titres';
-  info: {
-    displayName: 'vignette_avec_titre';
-    icon: 'landscape';
-    description: '';
-  };
-  attributes: {
-    titre: Attribute.String &
-      Attribute.Required &
-      Attribute.SetMinMaxLength<{
-        maxLength: 255;
-      }>;
-    legende: Attribute.String &
-      Attribute.Required &
-      Attribute.SetMinMaxLength<{
-        maxLength: 255;
-      }>;
-    image: Attribute.Media;
   };
 }
 
@@ -474,12 +418,71 @@ export interface SharedVignette extends Schema.Component {
     icon: 'landscape';
   };
   attributes: {
+    image: Attribute.Media<'images'> & Attribute.Required;
     legende: Attribute.String &
       Attribute.Required &
       Attribute.SetMinMaxLength<{
         maxLength: 255;
       }>;
-    image: Attribute.Media & Attribute.Required;
+  };
+}
+
+export interface SharedVignetteAvecCta extends Schema.Component {
+  collectionName: 'components_shared_vignette_avec_ctas';
+  info: {
+    displayName: 'vignette_avec_cta';
+  };
+  attributes: {
+    cta: Attribute.String &
+      Attribute.Required &
+      Attribute.SetMinMaxLength<{
+        maxLength: 50;
+      }>;
+    image: Attribute.Media<'images'> & Attribute.Required;
+    legende: Attribute.RichText & Attribute.Required;
+    titre: Attribute.String &
+      Attribute.SetMinMaxLength<{
+        maxLength: 255;
+      }>;
+  };
+}
+
+export interface SharedVignetteAvecMarkdown extends Schema.Component {
+  collectionName: 'components_shared_vignette_avec_markdowns';
+  info: {
+    description: '';
+    displayName: 'vignette_avec_markdown';
+    icon: 'layout';
+  };
+  attributes: {
+    image: Attribute.Media<'images'> & Attribute.Required;
+    legende: Attribute.RichText & Attribute.Required;
+    titre: Attribute.String &
+      Attribute.SetMinMaxLength<{
+        maxLength: 255;
+      }>;
+  };
+}
+
+export interface SharedVignetteAvecTitre extends Schema.Component {
+  collectionName: 'components_shared_vignette_avec_titres';
+  info: {
+    description: '';
+    displayName: 'vignette_avec_titre';
+    icon: 'landscape';
+  };
+  attributes: {
+    image: Attribute.Media<'images'>;
+    legende: Attribute.String &
+      Attribute.Required &
+      Attribute.SetMinMaxLength<{
+        maxLength: 255;
+      }>;
+    titre: Attribute.String &
+      Attribute.Required &
+      Attribute.SetMinMaxLength<{
+        maxLength: 255;
+      }>;
   };
 }
 
@@ -488,8 +491,8 @@ declare module '@strapi/types' {
     export interface Components {
       'bloc.accompagnement': BlocAccompagnement;
       'bloc.compte': BlocCompte;
-      'bloc.description-avec-image': BlocDescriptionAvecImage;
       'bloc.description': BlocDescription;
+      'bloc.description-avec-image': BlocDescriptionAvecImage;
       'bloc.ressources': BlocRessources;
       'bloc.texte-avec-image': BlocTexteAvecImage;
       'contenu.gallerie': ContenuGallerie;
@@ -507,10 +510,10 @@ declare module '@strapi/types' {
       'shared.paragraphe': SharedParagraphe;
       'shared.seo': SharedSeo;
       'shared.temoignage': SharedTemoignage;
+      'shared.vignette': SharedVignette;
       'shared.vignette-avec-cta': SharedVignetteAvecCta;
       'shared.vignette-avec-markdown': SharedVignetteAvecMarkdown;
       'shared.vignette-avec-titre': SharedVignetteAvecTitre;
-      'shared.vignette': SharedVignette;
     }
   }
 }
