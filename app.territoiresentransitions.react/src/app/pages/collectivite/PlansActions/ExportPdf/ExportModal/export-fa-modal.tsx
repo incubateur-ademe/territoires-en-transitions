@@ -45,6 +45,7 @@ const ExportFicheActionModal = ({
             <ExportFicheActionButton
               fiche={fiche}
               options={options}
+              disabled={!Object.values(options).find((opt) => opt.isChecked)}
               onDownloadEnd={() => {
                 close();
                 setOptions(sectionsInitValue);
@@ -55,6 +56,7 @@ const ExportFicheActionModal = ({
             <ExportFicheActionGroupeesButton
               fichesIds={fichesIds}
               options={options}
+              disabled={!Object.values(options).find((opt) => opt.isChecked)}
               onDownloadEnd={() => {
                 close();
                 setOptions(sectionsInitValue);

@@ -33,12 +33,14 @@ const FicheActionPdfWrapper = ({
 type Props = {
   fichesIds: number[];
   options?: TSectionsValues;
+  disabled?: boolean;
   onDownloadEnd?: () => void;
 };
 
 const ExportFicheActionGroupeesButton = ({
   fichesIds,
   options,
+  disabled = false,
   onDownloadEnd,
 }: Props) => {
   const { collectiviteId, niveauAcces, role } = useCurrentCollectivite()!;
@@ -65,6 +67,7 @@ const ExportFicheActionGroupeesButton = ({
         requestData={() => setIsDataRequested(true)}
         size="md"
         variant="primary"
+        disabled={disabled}
         onClick={() =>
           tracker('export_PDF_telechargement_groupe', {
             collectiviteId,
