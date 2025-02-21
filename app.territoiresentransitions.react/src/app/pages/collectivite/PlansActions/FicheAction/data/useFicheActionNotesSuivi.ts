@@ -5,10 +5,10 @@ import { useQuery } from 'react-query';
 /**
  * Charge les notes de suivi d'une fiche action
  */
-export const useFicheActionNotesSuivi = ({
-  id: ficheId,
-  collectiviteId,
-}: Pick<FicheAction, 'id' | 'collectiviteId'>) => {
+export const useFicheActionNotesSuivi = (
+  { id: ficheId, collectiviteId }: Pick<FicheAction, 'id' | 'collectiviteId'>,
+  requested = true
+) => {
   const api = useApiClient();
 
   return useQuery(
@@ -18,6 +18,7 @@ export const useFicheActionNotesSuivi = ({
       return api.get<FicheActionNote[]>({
         route: `/collectivites/${collectiviteId}/fiches-action/${ficheId}/notes`,
       });
-    }
+    },
+    { enabled: requested }
   );
 };
