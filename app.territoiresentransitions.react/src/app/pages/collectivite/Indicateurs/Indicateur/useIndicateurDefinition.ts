@@ -16,8 +16,11 @@ export const useIndicateurDefinition = (indicateurId: number | string) => {
 };
 
 /** Charge la définition détaillée de plusieurs indicateurs */
-export const useIndicateurDefinitions = (indicateurIds: number[]) => {
-  const collectiviteId = useCollectiviteId();
+export const useIndicateurDefinitions = (
+  indicateurIds: number[],
+  requested = true
+) => {
+  const collectiviteId = useCollectiviteId()!;
 
   return trpc.indicateurs.definitions.list.useQuery(
     {
@@ -25,7 +28,7 @@ export const useIndicateurDefinitions = (indicateurIds: number[]) => {
       indicateurIds,
     },
     {
-      enabled: !!indicateurIds?.length,
+      enabled: !!indicateurIds?.length && requested,
     }
   );
 };

@@ -9,7 +9,7 @@ import { useFicheActionNotesSuivi } from '../FicheAction/data/useFicheActionNote
 import { useFichesActionLiees } from '../FicheAction/data/useFichesActionLiees';
 import { useFicheActionChemins } from '../PlanAction/data/usePlanActionChemin';
 import FicheActionPdf from './FicheActionPdf/FicheActionPdf';
-import { TSectionsValues } from './utils';
+import { TSectionsValues, sectionsInitValue } from './utils';
 
 type FicheActionPdfContentProps = {
   fiche: FicheAction;
@@ -19,7 +19,7 @@ type FicheActionPdfContentProps = {
 
 export const FicheActionPdfContent = ({
   fiche,
-  options,
+  options = sectionsInitValue,
   generateContent,
 }: FicheActionPdfContentProps) => {
   const { data: axes, isLoading: isLoadingAxes } = useFicheActionChemins(
@@ -27,25 +27,34 @@ export const FicheActionPdfContent = ({
   );
 
   const { data: indicateursListe, isLoading: isLoadingIndicateurs } =
-    useIndicateurDefinitions((fiche.indicateurs ?? []).map((ind) => ind.id));
+    useIndicateurDefinitions(
+      (fiche.indicateurs ?? []).map((ind) => ind.id),
+      options.indicateurs.isChecked
+    );
 
   const { data: fichesLiees, isLoading: isLoadingFichesLiees } =
-    useFichesActionLiees(fiche.id);
+    useFichesActionLiees(fiche.id, options.fiches.isChecked);
 
   const { data: actionsLiees, isLoading: isLoadignActionsListe } =
-    useListActionsWithStatuts({
-      actionIds: fiche?.actions?.map((action) => action.id) ?? [],
-    });
+    useListActionsWithStatuts(
+      {
+        actionIds: fiche?.actions?.map((action) => action.id) ?? [],
+      },
+      options.actions.isChecked
+    );
 
   const { data: annexes, isLoading: isLoadingAnnexes } =
-    useAnnexesFicheActionInfos(fiche.id);
+    useAnnexesFicheActionInfos(fiche.id, options.notes.isChecked);
 
   const { data: notesSuivi, isLoading: isLoadingNotesSuivi } =
-    useFicheActionNotesSuivi(fiche);
+    useFicheActionNotesSuivi(fiche, options.suivi.isChecked);
 
-  const { data: etapes, isLoading: isLoadingEtapes } = useGetEtapes({
-    id: fiche.id,
-  });
+  const { data: etapes, isLoading: isLoadingEtapes } = useGetEtapes(
+    {
+      id: fiche.id,
+    },
+    options.etapes.isChecked
+  );
 
   const isLoading =
     isLoadingIndicateurs ||

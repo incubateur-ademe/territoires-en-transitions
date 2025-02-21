@@ -7,7 +7,7 @@ import { useMutation, useQuery, useQueryClient } from 'react-query';
 /**
  * Charge la liste des fiches action liées à une autre fiche action
  */
-export const useFichesActionLiees = (ficheId: number) => {
+export const useFichesActionLiees = (ficheId: number, requested = true) => {
   const collectiviteId = useCollectiviteId()!;
   const supabase = useSupabase();
   const trpcUtils = trpc.useUtils();
@@ -20,7 +20,8 @@ export const useFichesActionLiees = (ficheId: number) => {
         trpcUtils,
         collectiviteId,
         options: { filtre: { linkedFicheActionIds: [ficheId] } },
-      })
+      }),
+    { enabled: requested }
   );
   return { data: data?.data ?? [], ...other };
 };
