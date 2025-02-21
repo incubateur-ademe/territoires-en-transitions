@@ -46,49 +46,6 @@ export const statutParAvancement = (
 };
 
 /**
- * Détermine l'avancement "étendu" d'une action (inclus le "non concerné")
- */
-export const getAvancementExt = ({
-  avancement,
-  desactive,
-  concerne,
-}: {
-  avancement: StatutAvancement | undefined;
-  desactive: boolean | undefined;
-  concerne: boolean | undefined;
-}): StatutAvancementIncludingNonConcerne | undefined => {
-  // affiche le statut "non concerné" quand l'action est désactivée par la
-  // personnalisation ou que l'option "non concerné" a été sélectionnée
-  // explicitement par l'utilisateur
-  if (desactive || concerne === false) {
-    return 'non_concerne';
-  } else if (avancement === undefined) {
-    return 'non_renseigne';
-  }
-  return avancement;
-};
-
-/**
- * Détermine le statut "étendu" d'une action : inclus le "non concerné" et prend
- * en compte l'avancement des tâches pour déterminer le statut à la sous-action
- */
-export const getActionStatut = (action: {
-  avancement: StatutAvancement | undefined;
-  desactive: boolean | undefined;
-  concerne: boolean | undefined;
-  avancementDescendants: StatutAvancement[] | undefined;
-}) => {
-  const avancementExt = getAvancementExt(action);
-
-  return (!avancementExt || avancementExt === 'non_renseigne') &&
-    action.avancementDescendants?.find((av) => !!av && av !== 'non_renseigne')
-    ? // Une sous-action "non renseigné" mais avec au moins une tâche renseignée a
-      // le statut "détaillé"
-      'detaille'
-    : avancementExt || 'non_renseigne';
-};
-
-/**
  * Renvoie le statut en fonction de l'index dans le tableau avancement détaillé
  */
 export const getStatusFromIndex = (index: number): StatutAvancement => {

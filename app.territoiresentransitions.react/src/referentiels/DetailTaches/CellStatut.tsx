@@ -1,5 +1,5 @@
-import { SelectActionStatut } from '@/app/referentiels/actions/action-statut.select';
-import { useEditActionStatutIsDisabled } from '@/app/referentiels/use-action-statut';
+import { SelectActionStatut } from '@/app/referentiels/actions/action-statut/action-statut.select';
+import { useEditActionStatutIsDisabled } from '@/app/referentiels/actions/action-statut/use-action-statut';
 import { statutAvancementEnumSchema } from '@/domain/referentiels';
 import { useCallback } from 'react';
 import { TCellProps } from './DetailTacheTable';

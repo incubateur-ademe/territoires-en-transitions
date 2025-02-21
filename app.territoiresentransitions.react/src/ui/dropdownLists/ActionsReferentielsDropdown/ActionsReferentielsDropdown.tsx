@@ -1,6 +1,6 @@
-import { TActionRelationInsert, TActionStatutsRow } from '@/app/types/alias';
+import { useListActions } from '@/app/referentiels/actions/use-list-actions';
+import { TActionRelationInsert } from '@/app/types/alias';
 import { OptionValue, SelectFilter, SelectMultipleProps } from '@/ui';
-import { useActionsReferentielsListe } from './useActionsReferentielsListe';
 
 type ActionsReferentielsDropdownProps = Omit<
   SelectMultipleProps,
@@ -20,16 +20,16 @@ const ActionsReferentielsDropdown = ({
   ...props
 }: ActionsReferentielsDropdownProps) => {
   // Liste de toutes les actions
-  const { data: actionListe } = useActionsReferentielsListe();
+  const { data: actionListe } = useListActions();
 
   // Formattage des valeurs sélectionnées pour les renvoyer au composant parent
   const getSelectedActions = (values?: OptionValue[]) => {
-    const selectedActions = (actionListe ?? []).filter(
-      (action: TActionStatutsRow) => values?.some((v) => v === action.action_id)
+    const selectedActions = (actionListe ?? []).filter((action) =>
+      values?.some((v) => v === action.actionId)
     );
     const formatedActions: TActionRelationInsert[] = selectedActions.map(
       (action) => ({
-        id: action.action_id,
+        id: action.actionId,
         referentiel: action.referentiel,
       })
     );
@@ -38,7 +38,7 @@ const ActionsReferentielsDropdown = ({
 
   // Calcul de la liste des options pour le select
   const options = (actionListe ?? []).map((action) => ({
-    value: action.action_id,
+    value: action.actionId,
     label: `${action.referentiel} ${action.identifiant} - ${action.nom}`,
   }));
 

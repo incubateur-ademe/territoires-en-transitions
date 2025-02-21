@@ -1,4 +1,4 @@
-import { ScoreFields } from '@/domain/referentiels';
+import { ScoreFinalFields } from '@/domain/referentiels';
 import { ActionDefinitionEssential, TreeNode } from '../action-definition.dto';
 import {
   ActionCategorieEnum,
@@ -10,7 +10,7 @@ type ActionDefinitionFields = ActionDefinitionEssential &
   Partial<Pick<ActionDefinition, 'identifiant' | 'nom' | 'categorie'>>;
 
 export const deeperReferentielScoring: TreeNode<
-  ActionDefinitionFields & ScoreFields
+  ActionDefinitionFields & ScoreFinalFields
 > = {
   actionId: 'eci',
   points: 100,

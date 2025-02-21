@@ -1,12 +1,12 @@
+import ActionLinkedCard from '@/app/referentiels/actions/action.linked-card';
+import { useListActionsWithStatuts } from '@/app/referentiels/actions/use-list-actions';
 import SpinnerLoader from '@/app/ui/shared/SpinnerLoader';
 import classNames from 'classnames';
 import { useEffect } from 'react';
-import ActionLinkedCard from '../../../../../../referentiels/actions/action.linked-card';
-import { useActionListe } from '../data/options/useActionListe';
 
 type ActionsLieesListeProps = {
   isReadonly?: boolean;
-  actionsIds: string[];
+  actionIds: string[];
   className?: string;
   onLoad?: (isLoading: boolean) => void;
   onUnlink?: (actionId: string) => void;
@@ -14,12 +14,14 @@ type ActionsLieesListeProps = {
 
 const ActionsLieesListe = ({
   isReadonly,
-  actionsIds,
+  actionIds,
   className,
   onLoad,
   onUnlink,
 }: ActionsLieesListeProps) => {
-  const { data: actionsLiees, isLoading } = useActionListe(actionsIds);
+  const { data: actionsLiees, isLoading } = useListActionsWithStatuts({
+    actionIds,
+  });
 
   useEffect(() => onLoad?.(isLoading), [isLoading]);
 
@@ -40,10 +42,10 @@ const ActionsLieesListe = ({
       >
         {actionsLiees.map((action) => (
           <ActionLinkedCard
-            key={action.action_id}
+            key={action.actionId}
             isReadonly={isReadonly}
             action={action}
-            onUnlink={onUnlink ? () => onUnlink(action.action_id) : undefined}
+            onUnlink={onUnlink ? () => onUnlink(action.actionId) : undefined}
             openInNewTab
           />
         ))}

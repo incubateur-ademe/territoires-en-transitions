@@ -25,7 +25,7 @@ import {
   getAxeFromActionId,
   getLevelFromActionId,
 } from '../referentiels.utils';
-import ReferentielsScoringSnapshotsService from '../snapshots/referentiels-scoring-snapshots.service';
+import { ReferentielsScoringSnapshotsService } from '../snapshots/referentiels-scoring-snapshots.service';
 
 type ActionDefinitionFields = ActionDefinitionEssential &
   Partial<Pick<ActionDefinition, 'identifiant' | 'nom' | 'categorie'>>;

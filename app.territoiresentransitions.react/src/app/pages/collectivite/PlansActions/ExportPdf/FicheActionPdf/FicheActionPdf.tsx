@@ -1,5 +1,5 @@
 import { FicheAction, FicheActionNote, FicheResume } from '@/api/plan-actions';
-import { TActionStatutsRow, TAxeRow } from '@/app/types/alias';
+import { TAxeRow } from '@/app/types/alias';
 import { Divider, Stack, Title } from '@/app/ui/export-pdf/components';
 import { AnnexeInfo } from '../../FicheAction/data/useAnnexesFicheActionInfos';
 
@@ -19,6 +19,7 @@ import Notes from './Notes';
 import NotesDeSuivi from './NotesDeSuivi';
 import Pilotes from './Pilotes';
 import Planning from './Planning';
+import { ActionWithStatut } from '@/app/referentiels/actions/use-list-actions';
 
 export type FicheActionPdfProps = {
   fiche: FicheAction;
@@ -29,7 +30,7 @@ export type FicheActionPdfExtendedProps = FicheActionPdfProps & {
   indicateursListe: TIndicateurDefinition[] | undefined | null;
   etapes?: RouterOutput['plans']['fiches']['etapes']['list'];
   fichesLiees: FicheResume[];
-  actionsLiees: TActionStatutsRow[];
+  actionsLiees: ActionWithStatut[];
   annexes: AnnexeInfo[] | undefined;
   notesSuivi: FicheActionNote[] | undefined;
 };

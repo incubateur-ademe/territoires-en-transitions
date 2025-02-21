@@ -33,7 +33,7 @@ import {
   SNAPSHOT_REF_PARAM_KEY,
 } from '../models/referentiel-api.constants';
 import { ReferentielId } from '../models/referentiel-id.enum';
-import ReferentielsScoringSnapshotsService from '../snapshots/referentiels-scoring-snapshots.service';
+import { ReferentielsScoringSnapshotsService } from '../snapshots/referentiels-scoring-snapshots.service';
 import { actionStatutsByActionIdSchema } from './action-statuts-by-action-id.dto';
 import {
   getReferentielScoresResponseSchema,

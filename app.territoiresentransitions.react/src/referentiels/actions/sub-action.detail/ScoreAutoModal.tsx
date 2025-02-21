@@ -5,7 +5,7 @@ import Modal from '@/app/ui/shared/floating-ui/Modal';
 import { StatutAvancement } from '@/domain/referentiels';
 import { Alert, Button } from '@/ui';
 import { Dispatch, SetStateAction, useState } from 'react';
-import { useTasksStatus } from '../../use-action-statut';
+import { useTasksStatus } from '../action-statut/use-action-statut';
 import { StatusToSavePayload } from '../sub-action-statut.dropdown';
 
 /**

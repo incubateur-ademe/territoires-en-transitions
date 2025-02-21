@@ -1,8 +1,8 @@
 import { ActionDefinitionSummary } from '@/app/referentiels/ActionDefinitionSummaryReadEndpoint';
 import { ActionCommentaire } from '@/app/referentiels/actions/action-commentaire';
+import { useActionStatut } from '@/app/referentiels/actions/action-statut/use-action-statut';
 import { TCycleLabellisationStatus } from '@/app/referentiels/labellisations/useCycleLabellisation';
 import { useActionSummaryChildren } from '@/app/referentiels/referentiel-hooks';
-import { useActionStatut } from '@/app/referentiels/use-action-statut';
 import { Accordion } from '@/app/ui/Accordion';
 import { useEffect, useRef, useState } from 'react';
 import ActionJustification from './sub-action-justification';

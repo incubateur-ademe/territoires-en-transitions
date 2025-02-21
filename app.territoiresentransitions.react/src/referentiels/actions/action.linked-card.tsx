@@ -1,15 +1,13 @@
 import { referentielToName } from '@/app/app/labels';
 import { makeReferentielTacheUrl } from '@/app/app/paths';
-import { useCollectiviteId } from '@/app/core-logic/hooks/params';
-import ActionStatutBadge from '@/app/referentiels/actions/action-statut.badge';
-import { getActionStatut } from '@/app/referentiels/utils';
-import { TActionStatutsRow } from '@/app/types/alias';
+import { useCollectiviteId } from '@/app/collectivites/collectivite-context';
+import ActionStatutBadge from '@/app/referentiels/actions/action-statut/action-statut.badge';
+import { ActionWithStatut } from '@/app/referentiels/actions/use-list-actions';
 import { Button, Card } from '@/ui';
-import { objectToCamel } from 'ts-case-convert';
 
 type ActionCardProps = {
   isReadonly?: boolean;
-  action: TActionStatutsRow;
+  action: ActionWithStatut;
   openInNewTab?: boolean;
   onUnlink?: () => void;
 };
@@ -20,9 +18,8 @@ const ActionLinkedCard = ({
   openInNewTab = false,
   onUnlink,
 }: ActionCardProps) => {
-  const collectiviteId = useCollectiviteId()!;
-  const { action_id: actionId, identifiant, nom, referentiel } = action;
-  const statut = getActionStatut(objectToCamel(action));
+  const collectiviteId = useCollectiviteId();
+  const { actionId, identifiant, nom, referentiel, statut } = action;
 
   const link = makeReferentielTacheUrl({
     collectiviteId,
@@ -46,7 +43,7 @@ const ActionLinkedCard = ({
 
       <Card
         dataTest="ActionCarte"
-        id={`action-${action.action_id}`}
+        id={`action-${actionId}`}
         className="h-full px-4 py-[1.125rem] !gap-3 text-grey-8 hover:border-primary-3 hover:!bg-primary-1 !shadow-none transition"
         href={link}
         external={openInNewTab}

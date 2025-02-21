@@ -1,10 +1,10 @@
-import ActionStatutBadge from '@/app/referentiels/actions/action-statut.badge';
+import ActionStatutBadge from '@/app/referentiels/actions/action-statut/action-statut.badge';
 import {
   MultiSelectFilter,
   MultiSelectFilterTitle,
 } from '@/app/ui/shared/select/MultiSelectFilter';
 
-import { DEFAULT_OPTIONS } from '@/app/referentiels/actions/action-statut.select';
+import { DEFAULT_OPTIONS } from '@/app/referentiels/actions/action-statut/action-statut.select';
 import { ITEM_ALL } from '@/app/ui/shared/filters/commons';
 import { StatutAvancementIncludingNonConcerne } from '@/domain/referentiels';
 import { TFiltreProps } from './filters';

@@ -73,7 +73,7 @@ import { postAuditScoresTable } from '../models/post-audit-scores.table';
 import { preAuditScoresTable } from '../models/pre-audit-scores.table';
 import { ReferentielId } from '../models/referentiel-id.enum';
 import { getParentIdFromActionId } from '../referentiels.utils';
-import ReferentielsScoringSnapshotsService from '../snapshots/referentiels-scoring-snapshots.service';
+import { ReferentielsScoringSnapshotsService } from '../snapshots/referentiels-scoring-snapshots.service';
 import { SnapshotJalon } from '../snapshots/snapshot-jalon.enum';
 import { ActionStatutsByActionId } from './action-statuts-by-action-id.dto';
 import { GetReferentielScoresResponseType } from './get-referentiel-scores.response';
@@ -114,14 +114,24 @@ export default class ReferentielsScoringService {
     referentielId: ReferentielId,
     forceRecalculScoreCourant?: boolean
   ) {
-    let currentScore = forceRecalculScoreCourant
-      ? null
-      : await this.referentielsScoringSnapshotsService.get(
+    let currentScore = null;
+
+    if (!forceRecalculScoreCourant) {
+      try {
+        currentScore = await this.referentielsScoringSnapshotsService.get(
           collectiviteId,
           referentielId,
-          ReferentielsScoringSnapshotsService.SCORE_COURANT_SNAPSHOT_REF,
-          true
+          ReferentielsScoringSnapshotsService.SCORE_COURANT_SNAPSHOT_REF
         );
+      } catch (e) {
+        if (e instanceof NotFoundException) {
+          // Snapshot not found, we will compute the score, do nothing
+        } else {
+          throw e;
+        }
+      }
+    }
+
     if (!currentScore) {
       currentScore = await this.computeScoreForCollectivite(
         referentielId,
