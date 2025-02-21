@@ -91,12 +91,14 @@ export const FicheActionPdfContent = ({
 type ExportFicheActionButtonProps = {
   fiche: FicheAction;
   options?: TSectionsValues;
+  disabled?: boolean;
   onDownloadEnd?: () => void;
 };
 
 const ExportFicheActionButton = ({
   fiche,
   options,
+  disabled = false,
   onDownloadEnd,
 }: ExportFicheActionButtonProps) => {
   const [isDataRequested, setIsDataRequested] = useState(false);
@@ -111,6 +113,7 @@ const ExportFicheActionButton = ({
         requestData={() => setIsDataRequested(true)}
         size="md"
         variant="primary"
+        disabled={disabled}
         onDownloadEnd={onDownloadEnd}
       >
         Exporter au format PDF
