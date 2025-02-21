@@ -29,12 +29,12 @@ import { ReferentielId } from '../models/referentiel-id.enum';
 import { SnapshotJalon } from './snapshot-jalon.enum';
 import {
   CreateScoreSnapshotType,
-  scoreSnapshotTable,
   ScoreSnapshotType,
+  snapshotTable,
 } from './snapshot.table';
 
 @Injectable()
-export class ReferentielsScoringSnapshotsService {
+export class SnapshotsService {
   static SCORE_COURANT_SNAPSHOT_REF = 'score-courant';
   static SCORE_COURANT_SNAPSHOT_NOM = 'Score courant';
   static PRE_AUDIT_SNAPSHOT_REF_PREFIX = 'pre-audit-';
@@ -50,9 +50,7 @@ export class ReferentielsScoringSnapshotsService {
     SnapshotJalon.VISITE_ANNUELLE,
   ];
 
-  private readonly logger = new Logger(
-    ReferentielsScoringSnapshotsService.name
-  );
+  private readonly logger = new Logger(SnapshotsService.name);
 
   constructor(
     private readonly databaseService: DatabaseService,
@@ -100,29 +98,29 @@ export class ReferentielsScoringSnapshotsService {
 
     switch (scoreResponse.jalon) {
       case SnapshotJalon.PRE_AUDIT:
-        scoreResponse.snapshot.ref = `${ReferentielsScoringSnapshotsService.PRE_AUDIT_SNAPSHOT_REF_PREFIX}${scoreResponse.anneeAudit}`;
-        scoreResponse.snapshot.nom = `${scoreResponse.anneeAudit}${ReferentielsScoringSnapshotsService.PRE_AUDIT_SNAPSHOT_NOM_SUFFIX}`;
+        scoreResponse.snapshot.ref = `${SnapshotsService.PRE_AUDIT_SNAPSHOT_REF_PREFIX}${scoreResponse.anneeAudit}`;
+        scoreResponse.snapshot.nom = `${scoreResponse.anneeAudit}${SnapshotsService.PRE_AUDIT_SNAPSHOT_NOM_SUFFIX}`;
         break;
       case SnapshotJalon.POST_AUDIT:
-        scoreResponse.snapshot.ref = `${ReferentielsScoringSnapshotsService.POST_AUDIT_SNAPSHOT_REF_PREFIX}${scoreResponse.anneeAudit}`;
-        scoreResponse.snapshot.nom = `${scoreResponse.anneeAudit}${ReferentielsScoringSnapshotsService.POST_AUDIT_SNAPSHOT_NOM_SUFFIX}`;
+        scoreResponse.snapshot.ref = `${SnapshotsService.POST_AUDIT_SNAPSHOT_REF_PREFIX}${scoreResponse.anneeAudit}`;
+        scoreResponse.snapshot.nom = `${scoreResponse.anneeAudit}${SnapshotsService.POST_AUDIT_SNAPSHOT_NOM_SUFFIX}`;
         break;
       case SnapshotJalon.SCORE_COURANT:
         scoreResponse.snapshot.ref = scoreResponse.snapshot.nom
           ? `${
-              ReferentielsScoringSnapshotsService.SCORE_PERSONNALISE_REF_PREFIX
+              SnapshotsService.SCORE_PERSONNALISE_REF_PREFIX
             }${this.slugifyName(scoreResponse.snapshot.nom)}`
-          : ReferentielsScoringSnapshotsService.SCORE_COURANT_SNAPSHOT_REF;
+          : SnapshotsService.SCORE_COURANT_SNAPSHOT_REF;
         scoreResponse.snapshot.nom =
           scoreResponse.snapshot.nom ||
-          ReferentielsScoringSnapshotsService.SCORE_COURANT_SNAPSHOT_NOM;
+          SnapshotsService.SCORE_COURANT_SNAPSHOT_NOM;
         break;
       case SnapshotJalon.JOUR_AUTO:
         scoreResponse.snapshot.ref = `${
-          ReferentielsScoringSnapshotsService.JOUR_SNAPSHOT_REF_PREFIX
+          SnapshotsService.JOUR_SNAPSHOT_REF_PREFIX
         }${dateTime.toISODate()}`;
         scoreResponse.snapshot.nom = `${dateTime.year}${
-          ReferentielsScoringSnapshotsService.JOUR_SNAPSHOT_NOM_PREFIX
+          SnapshotsService.JOUR_SNAPSHOT_NOM_PREFIX
         }${dateTime.toFormat('dd/MM/yyyy')}`;
         break;
       case SnapshotJalon.DATE_PERSONNALISEE:
@@ -181,36 +179,34 @@ export class ReferentielsScoringSnapshotsService {
     createScoreSnapshot: CreateScoreSnapshotType
   ): Promise<ScoreSnapshotType[]> {
     return (await this.databaseService.db
-      .insert(scoreSnapshotTable)
+      .insert(snapshotTable)
       .values(createScoreSnapshot)
       .onConflictDoUpdate({
         target: [
-          scoreSnapshotTable.collectiviteId,
-          scoreSnapshotTable.referentielId,
-          scoreSnapshotTable.ref,
+          snapshotTable.collectiviteId,
+          snapshotTable.referentielId,
+          snapshotTable.ref,
         ],
         set: {
-          date: sql.raw(`excluded.${scoreSnapshotTable.date.name}`),
-          pointFait: sql.raw(`excluded.${scoreSnapshotTable.pointFait.name}`),
+          date: sql.raw(`excluded.${snapshotTable.date.name}`),
+          pointFait: sql.raw(`excluded.${snapshotTable.pointFait.name}`),
           pointPotentiel: sql.raw(
-            `excluded.${scoreSnapshotTable.pointPotentiel.name}`
+            `excluded.${snapshotTable.pointPotentiel.name}`
           ),
           pointProgramme: sql.raw(
-            `excluded.${scoreSnapshotTable.pointProgramme.name}`
+            `excluded.${snapshotTable.pointProgramme.name}`
           ),
-          pointPasFait: sql.raw(
-            `excluded.${scoreSnapshotTable.pointPasFait.name}`
-          ),
+          pointPasFait: sql.raw(`excluded.${snapshotTable.pointPasFait.name}`),
           referentielScores: sql.raw(
-            `excluded.${scoreSnapshotTable.referentielScores.name}`
+            `excluded.${snapshotTable.referentielScores.name}`
           ),
           personnalisationReponses: sql.raw(
-            `excluded.${scoreSnapshotTable.personnalisationReponses.name}`
+            `excluded.${snapshotTable.personnalisationReponses.name}`
           ),
           referentielVersion: sql.raw(
-            `excluded.${scoreSnapshotTable.referentielVersion.name}`
+            `excluded.${snapshotTable.referentielVersion.name}`
           ),
-          modifiedBy: sql.raw(`excluded.${scoreSnapshotTable.modifiedBy.name}`),
+          modifiedBy: sql.raw(`excluded.${snapshotTable.modifiedBy.name}`),
         },
       })
       .returning()) as ScoreSnapshotType[];
@@ -225,40 +221,32 @@ export class ReferentielsScoringSnapshotsService {
     createScoreSnapshot: CreateScoreSnapshotType
   ): Promise<ScoreSnapshotType[]> {
     return (await this.databaseService.db
-      .insert(scoreSnapshotTable)
+      .insert(snapshotTable)
       .values(createScoreSnapshot)
       .onConflictDoUpdate({
         // Only allow to update current score
-        target: [
-          scoreSnapshotTable.collectiviteId,
-          scoreSnapshotTable.referentielId,
-        ],
-        targetWhere: eq(
-          scoreSnapshotTable.typeJalon,
-          SnapshotJalon.SCORE_COURANT
-        ),
+        target: [snapshotTable.collectiviteId, snapshotTable.referentielId],
+        targetWhere: eq(snapshotTable.typeJalon, SnapshotJalon.SCORE_COURANT),
         set: {
-          date: sql.raw(`excluded.${scoreSnapshotTable.date.name}`),
-          pointFait: sql.raw(`excluded.${scoreSnapshotTable.pointFait.name}`),
+          date: sql.raw(`excluded.${snapshotTable.date.name}`),
+          pointFait: sql.raw(`excluded.${snapshotTable.pointFait.name}`),
           pointPotentiel: sql.raw(
-            `excluded.${scoreSnapshotTable.pointPotentiel.name}`
+            `excluded.${snapshotTable.pointPotentiel.name}`
           ),
           pointProgramme: sql.raw(
-            `excluded.${scoreSnapshotTable.pointProgramme.name}`
+            `excluded.${snapshotTable.pointProgramme.name}`
           ),
-          pointPasFait: sql.raw(
-            `excluded.${scoreSnapshotTable.pointPasFait.name}`
-          ),
+          pointPasFait: sql.raw(`excluded.${snapshotTable.pointPasFait.name}`),
           referentielScores: sql.raw(
-            `excluded.${scoreSnapshotTable.referentielScores.name}`
+            `excluded.${snapshotTable.referentielScores.name}`
           ),
           personnalisationReponses: sql.raw(
-            `excluded.${scoreSnapshotTable.personnalisationReponses.name}`
+            `excluded.${snapshotTable.personnalisationReponses.name}`
           ),
           referentielVersion: sql.raw(
-            `excluded.${scoreSnapshotTable.referentielVersion.name}`
+            `excluded.${snapshotTable.referentielVersion.name}`
           ),
-          modifiedBy: sql.raw(`excluded.${scoreSnapshotTable.modifiedBy.name}`),
+          modifiedBy: sql.raw(`excluded.${snapshotTable.modifiedBy.name}`),
         },
       })
       .returning()) as ScoreSnapshotType[];
@@ -287,7 +275,7 @@ export class ReferentielsScoringSnapshotsService {
       nom: scoreResponse.snapshot!.nom!,
       typeJalon:
         scoreResponse.snapshot?.ref !==
-          ReferentielsScoringSnapshotsService.SCORE_COURANT_SNAPSHOT_REF &&
+          SnapshotsService.SCORE_COURANT_SNAPSHOT_REF &&
         scoreResponse.jalon === SnapshotJalon.SCORE_COURANT
           ? SnapshotJalon.DATE_PERSONNALISEE
           : scoreResponse.jalon,
@@ -364,37 +352,35 @@ export class ReferentielsScoringSnapshotsService {
     const { typesJalon } = parameters ?? {};
 
     const baseConditions = [
-      eq(scoreSnapshotTable.collectiviteId, collectiviteId),
-      eq(scoreSnapshotTable.referentielId, referentielId),
+      eq(snapshotTable.collectiviteId, collectiviteId),
+      eq(snapshotTable.referentielId, referentielId),
     ];
 
     const whereConditions = [
       ...baseConditions,
-      ...(typesJalon
-        ? [inArray(scoreSnapshotTable.typeJalon, typesJalon)]
-        : []),
+      ...(typesJalon ? [inArray(snapshotTable.typeJalon, typesJalon)] : []),
     ];
 
     const snapshotList = await this.databaseService.db
       .select({
-        ref: scoreSnapshotTable.ref,
-        nom: scoreSnapshotTable.nom,
-        date: scoreSnapshotTable.date,
-        typeJalon: scoreSnapshotTable.typeJalon,
-        pointFait: scoreSnapshotTable.pointFait,
-        pointProgramme: scoreSnapshotTable.pointProgramme,
-        pointPasFait: scoreSnapshotTable.pointPasFait,
-        pointPotentiel: scoreSnapshotTable.pointPotentiel,
-        referentielVersion: scoreSnapshotTable.referentielVersion,
-        auditId: scoreSnapshotTable.auditId,
-        createdAt: scoreSnapshotTable.createdAt,
-        createdBy: scoreSnapshotTable.createdBy,
-        modifiedAt: scoreSnapshotTable.modifiedAt,
-        modifiedBy: scoreSnapshotTable.modifiedBy,
+        ref: snapshotTable.ref,
+        nom: snapshotTable.nom,
+        date: snapshotTable.date,
+        typeJalon: snapshotTable.typeJalon,
+        pointFait: snapshotTable.pointFait,
+        pointProgramme: snapshotTable.pointProgramme,
+        pointPasFait: snapshotTable.pointPasFait,
+        pointPotentiel: snapshotTable.pointPotentiel,
+        referentielVersion: snapshotTable.referentielVersion,
+        auditId: snapshotTable.auditId,
+        createdAt: snapshotTable.createdAt,
+        createdBy: snapshotTable.createdBy,
+        modifiedAt: snapshotTable.modifiedAt,
+        modifiedBy: snapshotTable.modifiedBy,
       })
-      .from(scoreSnapshotTable)
+      .from(snapshotTable)
       .where(and(...whereConditions))
-      .orderBy(asc(scoreSnapshotTable.date));
+      .orderBy(asc(snapshotTable.date));
 
     const response: GetScoreSnapshotsResponseType = {
       collectiviteId: parseInt(collectiviteId as unknown as string),
@@ -423,27 +409,27 @@ export class ReferentielsScoringSnapshotsService {
   ): Promise<ScoreSnapshotInfoType | null> {
     const result = await this.databaseService.db
       .select({
-        ref: scoreSnapshotTable.ref,
-        nom: scoreSnapshotTable.nom,
-        date: scoreSnapshotTable.date,
-        typeJalon: scoreSnapshotTable.typeJalon,
-        pointFait: scoreSnapshotTable.pointFait,
-        pointProgramme: scoreSnapshotTable.pointProgramme,
-        pointPasFait: scoreSnapshotTable.pointPasFait,
-        pointPotentiel: scoreSnapshotTable.pointPotentiel,
-        referentielVersion: scoreSnapshotTable.referentielVersion,
-        auditId: scoreSnapshotTable.auditId,
-        createdAt: scoreSnapshotTable.createdAt,
-        createdBy: scoreSnapshotTable.createdBy,
-        modifiedAt: scoreSnapshotTable.modifiedAt,
-        modifiedBy: scoreSnapshotTable.modifiedBy,
+        ref: snapshotTable.ref,
+        nom: snapshotTable.nom,
+        date: snapshotTable.date,
+        typeJalon: snapshotTable.typeJalon,
+        pointFait: snapshotTable.pointFait,
+        pointProgramme: snapshotTable.pointProgramme,
+        pointPasFait: snapshotTable.pointPasFait,
+        pointPotentiel: snapshotTable.pointPotentiel,
+        referentielVersion: snapshotTable.referentielVersion,
+        auditId: snapshotTable.auditId,
+        createdAt: snapshotTable.createdAt,
+        createdBy: snapshotTable.createdBy,
+        modifiedAt: snapshotTable.modifiedAt,
+        modifiedBy: snapshotTable.modifiedBy,
       })
-      .from(scoreSnapshotTable)
+      .from(snapshotTable)
       .where(
         and(
-          eq(scoreSnapshotTable.collectiviteId, collectiviteId),
-          eq(scoreSnapshotTable.referentielId, referentielId),
-          eq(scoreSnapshotTable.ref, snapshotRef)
+          eq(snapshotTable.collectiviteId, collectiviteId),
+          eq(snapshotTable.referentielId, referentielId),
+          eq(snapshotTable.ref, snapshotRef)
         )
       );
 
@@ -458,16 +444,16 @@ export class ReferentielsScoringSnapshotsService {
   async get(
     collectiviteId: number,
     referentielId: ReferentielId,
-    snapshotRef: string = ReferentielsScoringSnapshotsService.SCORE_COURANT_SNAPSHOT_REF
+    snapshotRef: string = SnapshotsService.SCORE_COURANT_SNAPSHOT_REF
   ): Promise<GetReferentielScoresResponseType> {
     const result = (await this.databaseService.db
       .select()
-      .from(scoreSnapshotTable)
+      .from(snapshotTable)
       .where(
         and(
-          eq(scoreSnapshotTable.collectiviteId, collectiviteId),
-          eq(scoreSnapshotTable.referentielId, referentielId),
-          eq(scoreSnapshotTable.ref, snapshotRef)
+          eq(snapshotTable.collectiviteId, collectiviteId),
+          eq(snapshotTable.referentielId, referentielId),
+          eq(snapshotTable.ref, snapshotRef)
         )
       )) as ScoreSnapshotType[];
 
@@ -509,25 +495,25 @@ export class ReferentielsScoringSnapshotsService {
       snapshotRef
     );
     if (
-      !ReferentielsScoringSnapshotsService.USER_DELETION_ALLOWED_SNAPSHOT_TYPES.includes(
+      !SnapshotsService.USER_DELETION_ALLOWED_SNAPSHOT_TYPES.includes(
         snapshotInfo!.typeJalon
       ) &&
       tokenInfo.role !== AuthRole.SERVICE_ROLE
     ) {
       throw new UnauthorizedException(
-        `Uniquement les snaphots de type ${ReferentielsScoringSnapshotsService.USER_DELETION_ALLOWED_SNAPSHOT_TYPES.join(
+        `Uniquement les snaphots de type ${SnapshotsService.USER_DELETION_ALLOWED_SNAPSHOT_TYPES.join(
           ','
         )} peuvent être supprimés par un utilisateur.`
       );
     }
 
     const result = await this.databaseService.db
-      .delete(scoreSnapshotTable)
+      .delete(snapshotTable)
       .where(
         and(
-          eq(scoreSnapshotTable.collectiviteId, collectiviteId),
-          eq(scoreSnapshotTable.referentielId, referentielId),
-          eq(scoreSnapshotTable.ref, snapshotRef)
+          eq(snapshotTable.collectiviteId, collectiviteId),
+          eq(snapshotTable.referentielId, referentielId),
+          eq(snapshotTable.ref, snapshotRef)
         )
       );
 

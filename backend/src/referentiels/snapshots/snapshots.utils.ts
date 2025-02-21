@@ -6,7 +6,7 @@ import {
   ReferentielException,
 } from '../referentiels.utils';
 import { ReferentielId } from './../models/referentiel-id.enum';
-import { ReferentielsScoringSnapshotsService } from './referentiels-scoring-snapshots.service';
+import { SnapshotsService } from './snapshots.service';
 
 /**
  * @returns a function that takes an action and returns the action with additional computed status fields
@@ -17,7 +17,7 @@ export function getExtendActionWithComputedStatutsFields(
   getSnapshot: (
     collectiviteId: number,
     referentielId: ReferentielId
-  ) => ReturnType<ReferentielsScoringSnapshotsService['get']>
+  ) => ReturnType<SnapshotsService['get']>
 ) {
   const getCurrentSnapshot = memoize((referentielId: ReferentielId) =>
     getSnapshot(collectiviteId, referentielId)

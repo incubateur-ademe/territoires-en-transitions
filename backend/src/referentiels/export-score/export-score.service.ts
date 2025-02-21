@@ -4,7 +4,7 @@ import { NextFunction, Response } from 'express';
 import { PreuveEssential } from '../../collectivites/documents/models/preuve.dto';
 import * as Utils from '../../utils/excel/export-excel.utils';
 import { GetReferentielScoresResponseType } from '../compute-score/get-referentiel-scores.response';
-import ReferentielsScoringService from '../compute-score/referentiels-scoring.service';
+import ScoresService from '../compute-score/scores.service';
 import { GetReferentielService } from '../get-referentiel/get-referentiel.service';
 import { ActionDefinition, ScoreFinalFields } from '../index-domain';
 import {
@@ -25,7 +25,7 @@ import {
   getAxeFromActionId,
   getLevelFromActionId,
 } from '../referentiels.utils';
-import { ReferentielsScoringSnapshotsService } from '../snapshots/referentiels-scoring-snapshots.service';
+import { SnapshotsService } from '../snapshots/snapshots.service';
 
 type ActionDefinitionFields = ActionDefinitionEssential &
   Partial<Pick<ActionDefinition, 'identifiant' | 'nom' | 'categorie'>>;
@@ -33,8 +33,8 @@ type ActionDefinitionFields = ActionDefinitionEssential &
 type ActionWithScore = TreeNode<ActionDefinitionFields & ScoreFinalFields>;
 
 @Injectable()
-export default class ExportReferentielScoreService {
-  private readonly logger = new Logger(ExportReferentielScoreService.name);
+export default class ExportScoreService {
+  private readonly logger = new Logger(ExportScoreService.name);
 
   // index (base 1) de toutes les colonnes
   private readonly COL_INDEX = {
@@ -87,8 +87,8 @@ export default class ExportReferentielScoreService {
 
   constructor(
     private readonly referentielService: GetReferentielService,
-    private readonly referentielsScoringService: ReferentielsScoringService,
-    private readonly referentielsScoringSnapshotsService: ReferentielsScoringSnapshotsService
+    private readonly referentielsScoringService: ScoresService,
+    private readonly referentielsScoringSnapshotsService: SnapshotsService
   ) {}
 
   // couleurs de fond des lignes par axe et sous-axe
@@ -411,10 +411,7 @@ export default class ExportReferentielScoreService {
     snapshotRef: string,
     forceRecalculScoreCourant?: boolean
   ) {
-    if (
-      snapshotRef ===
-      ReferentielsScoringSnapshotsService.SCORE_COURANT_SNAPSHOT_REF
-    ) {
+    if (snapshotRef === SnapshotsService.SCORE_COURANT_SNAPSHOT_REF) {
       return this.referentielsScoringService.getOrCreateCurrentScore(
         collectiviteId,
         referentielId,

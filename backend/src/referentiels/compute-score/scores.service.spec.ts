@@ -28,20 +28,20 @@ import { caeReferentiel } from '../models/samples/cae-referentiel';
 import { deeperReferentiel } from '../models/samples/deeper-referentiel';
 import { eciReferentiel } from '../models/samples/eci-referentiel';
 import { simpleReferentiel } from '../models/samples/simple-referentiel';
-import {ReferentielsScoringSnapshotsService} from '../snapshots/referentiels-scoring-snapshots.service';
+import { SnapshotsService } from '../snapshots/snapshots.service';
 import { ActionStatutsByActionId } from './action-statuts-by-action-id.dto';
-import ReferentielsScoringService from './referentiels-scoring.service';
 import { ScoreFields, ScoreWithOnlyPoints } from './score.dto';
+import ScoresService from './scores.service';
 
 describe('ReferentielsScoringService', () => {
-  let referentielsScoringService: ReferentielsScoringService;
+  let referentielsScoringService: ScoresService;
   let personnalisationService: PersonnalisationsService;
 
   beforeEach(async () => {
     const moduleRef = await Test.createTestingModule({
       providers: [
-        ReferentielsScoringService,
-        ReferentielsScoringSnapshotsService,
+        ScoresService,
+        SnapshotsService,
         PersonnalisationsService,
         ExpressionParserService,
         GetReferentielService,
@@ -63,7 +63,7 @@ describe('ReferentielsScoringService', () => {
       })
       .compile();
 
-    referentielsScoringService = moduleRef.get(ReferentielsScoringService);
+    referentielsScoringService = moduleRef.get(ScoresService);
     personnalisationService = moduleRef.get(PersonnalisationsService);
   });
 

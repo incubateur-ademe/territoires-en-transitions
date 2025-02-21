@@ -16,7 +16,7 @@ import { NextFunction, Request, Response } from 'express';
 import { AllowAnonymousAccess } from '../../auth/decorators/allow-anonymous-access.decorator';
 import { TokenInfo } from '../../auth/decorators/token-info.decorators';
 import { AuthenticatedUser, AuthUser } from '../../auth/models/auth.models';
-import ExportReferentielScoreService from '../export-score/export-referentiel-score.service';
+import ExportScoreService from '../export-score/export-score.service';
 import { checkMultipleReferentielScoresRequestSchema } from '../models/check-multiple-referentiel-scores.request';
 import { CheckReferentielScoresRequestType } from '../models/check-referentiel-scores.request';
 import { getActionStatutsRequestSchema } from '../models/get-action-statuts.request';
@@ -33,13 +33,13 @@ import {
   SNAPSHOT_REF_PARAM_KEY,
 } from '../models/referentiel-api.constants';
 import { ReferentielId } from '../models/referentiel-id.enum';
-import { ReferentielsScoringSnapshotsService } from '../snapshots/referentiels-scoring-snapshots.service';
+import { SnapshotsService } from '../snapshots/snapshots.service';
 import { actionStatutsByActionIdSchema } from './action-statuts-by-action-id.dto';
 import {
   getReferentielScoresResponseSchema,
   GetReferentielScoresResponseType,
 } from './get-referentiel-scores.response';
-import ReferentielsScoringService from './referentiels-scoring.service';
+import ScoresService from './scores.service';
 
 class GetReferentielScoresRequestClass extends createZodDto(
   getReferentielScoresRequestSchema
@@ -86,9 +86,9 @@ export class ReferentielsScoringController {
   private readonly logger = new Logger(ReferentielsScoringController.name);
 
   constructor(
-    private readonly referentielsScoringService: ReferentielsScoringService,
-    private readonly referentielsScoringSnapshotsService: ReferentielsScoringSnapshotsService,
-    private readonly exportReferentielScoreService: ExportReferentielScoreService
+    private readonly referentielsScoringService: ScoresService,
+    private readonly referentielsScoringSnapshotsService: SnapshotsService,
+    private readonly exportReferentielScoreService: ExportScoreService
   ) {}
 
   @AllowAnonymousAccess()
@@ -191,10 +191,7 @@ export class ReferentielsScoringController {
     @Query() parameters: GetScoreSnapshotRequestClass,
     @TokenInfo() tokenInfo: AuthenticatedUser
   ) {
-    if (
-      snapshotRef ===
-      ReferentielsScoringSnapshotsService.SCORE_COURANT_SNAPSHOT_REF
-    ) {
+    if (snapshotRef === SnapshotsService.SCORE_COURANT_SNAPSHOT_REF) {
       return this.referentielsScoringService.getOrCreateCurrentScore(
         collectiviteId,
         referentielId,
