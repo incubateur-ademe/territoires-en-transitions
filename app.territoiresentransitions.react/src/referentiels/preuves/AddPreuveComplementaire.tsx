@@ -77,6 +77,7 @@ export const AddPreuveComplementaire = (props: TAddPreuveButtonProps) => {
         variant="outlined"
         size="xs"
         icon="add-line"
+        className="leading-none"
         onClick={() => setOpened(true)}
       >
         Ajouter un document complémentaire
