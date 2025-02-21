@@ -10,6 +10,7 @@ import {
 import { intersection } from 'es-toolkit';
 import { useMutation, useQuery, useQueryClient } from 'react-query';
 import { TableOptions } from 'react-table';
+import { useSaveActionStatut } from '../actions/action-statut/use-action-statut';
 import {
   actionNewToDeprecated,
   ProgressionRow,
@@ -19,7 +20,6 @@ import {
   NEW_useTable,
   useReferentiel,
 } from '../ReferentielTable/useReferentiel';
-import { useSaveActionStatut } from '../use-action-statut';
 import { useSnapshotFlagEnabled } from '../use-snapshot';
 import { initialFilters, nameToShortNames, TFilters } from './filters';
 import {

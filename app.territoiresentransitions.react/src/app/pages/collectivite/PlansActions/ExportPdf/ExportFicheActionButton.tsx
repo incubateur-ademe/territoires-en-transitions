@@ -3,12 +3,12 @@ import { useGetEtapes } from '@/app/app/pages/collectivite/PlansActions/FicheAct
 import ExportPDFButton from '@/app/ui/export-pdf/ExportPDFButton';
 import { createElement, useEffect, useState } from 'react';
 import { useIndicateurDefinitions } from '../../Indicateurs/Indicateur/useIndicateurDefinition';
-import { useActionListe } from '../FicheAction/data/options/useActionListe';
 import { useAnnexesFicheActionInfos } from '../FicheAction/data/useAnnexesFicheActionInfos';
 import { useFicheActionNotesSuivi } from '../FicheAction/data/useFicheActionNotesSuivi';
 import { useFichesActionLiees } from '../FicheAction/data/useFichesActionLiees';
 import { useFicheActionChemins } from '../PlanAction/data/usePlanActionChemin';
 import FicheActionPdf from './FicheActionPdf/FicheActionPdf';
+import { useListActionsWithStatuts } from '@/app/referentiels/actions/use-list-actions';
 
 type FicheActionPdfContentProps = {
   fiche: FicheAction;
@@ -29,8 +29,10 @@ export const FicheActionPdfContent = ({
   const { data: fichesLiees, isLoading: isLoadingFichesLiees } =
     useFichesActionLiees(fiche.id);
 
-  const { data: actionListe, isLoading: isLoadignActionsListe } =
-    useActionListe();
+  const { data: actionsLiees, isLoading: isLoadignActionsListe } =
+    useListActionsWithStatuts({
+      actionIds: fiche?.actions?.map((action) => action.id) ?? [],
+    });
 
   const { data: annexes, isLoading: isLoadingAnnexes } =
     useAnnexesFicheActionInfos(fiche.id);
@@ -53,12 +55,6 @@ export const FicheActionPdfContent = ({
 
   useEffect(() => {
     if (!isLoading) {
-      const { actions } = fiche;
-      const actionsIds = (actions ?? []).map((action) => action.id);
-      const actionsLiees = (actionListe ?? []).filter((action) =>
-        actionsIds.some((id) => id === action.action_id)
-      );
-
       generateContent(
         createElement(FicheActionPdf, {
           fiche,
@@ -68,7 +64,7 @@ export const FicheActionPdfContent = ({
           indicateursListe,
           etapes,
           fichesLiees,
-          actionsLiees,
+          actionsLiees: actionsLiees ?? [],
           annexes,
           notesSuivi,
         })

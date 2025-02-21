@@ -1,6 +1,5 @@
 import { referentielToName } from '@/app/app/labels';
-import { getActionStatut } from '@/app/referentiels/utils';
-import { TActionStatutsRow } from '@/app/types/alias';
+import { ActionWithStatut } from '@/app/referentiels/actions/use-list-actions';
 import {
   BadgeStatutAction,
   Card,
@@ -8,20 +7,18 @@ import {
   Stack,
   Title,
 } from '@/app/ui/export-pdf/components';
-import { objectToCamel } from 'ts-case-convert';
 
 type ActionLieeCardProps = {
-  action: TActionStatutsRow;
+  action: ActionWithStatut;
 };
 
 const ActionLieeCard = ({ action }: ActionLieeCardProps) => {
   const { identifiant, nom, referentiel } = action;
-  const statut = getActionStatut(objectToCamel(action));
 
   return (
     <Card wrap={false} gap={1.5} className="w-[32%] p-3">
       {/* Avancement */}
-      <BadgeStatutAction statut={statut} size="sm" />
+      <BadgeStatutAction statut={action.statut} size="sm" />
 
       <Stack gap={1}>
         {/* Référentiel associé */}
@@ -39,7 +36,7 @@ const ActionLieeCard = ({ action }: ActionLieeCardProps) => {
 };
 
 type ActionsLieesProps = {
-  actionsLiees: TActionStatutsRow[];
+  actionsLiees: ActionWithStatut[];
 };
 
 const ActionsLiees = ({ actionsLiees }: ActionsLieesProps) => {
@@ -53,7 +50,7 @@ const ActionsLiees = ({ actionsLiees }: ActionsLieesProps) => {
       {actionsLiees.length > 0 && (
         <Stack gap={3} direction="row" className="flex-wrap">
           {actionsLiees.map((action) => (
-            <ActionLieeCard key={action.action_id} action={action} />
+            <ActionLieeCard key={action.actionId} action={action} />
           ))}
         </Stack>
       )}

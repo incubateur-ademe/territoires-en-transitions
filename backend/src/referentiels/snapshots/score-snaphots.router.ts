@@ -3,11 +3,11 @@ import { Injectable } from '@nestjs/common';
 import z from 'zod';
 import ReferentielsScoringService from '../compute-score/referentiels-scoring.service';
 import { ComputeScoreMode } from '../models/compute-scores-mode.enum';
+import { DEFAULT_SNAPSHOT_JALONS } from '../models/get-score-snapshots.request';
 import { referentielIdEnumSchema } from '../models/referentiel-id.enum';
-import ReferentielsScoringSnapshotsService from './referentiels-scoring-snapshots.service';
+import { ReferentielsScoringSnapshotsService } from './referentiels-scoring-snapshots.service';
 import { SnapshotJalon } from './snapshot-jalon.enum';
 import { upsertSnapshotRequestSchema } from './upsert-snapshot.request';
-import { DEFAULT_SNAPSHOT_JALONS } from '../models/get-score-snapshots.request';
 
 export const getScoreSnapshotInfosTrpcRequestSchema = z.object({
   referentielId: referentielIdEnumSchema,

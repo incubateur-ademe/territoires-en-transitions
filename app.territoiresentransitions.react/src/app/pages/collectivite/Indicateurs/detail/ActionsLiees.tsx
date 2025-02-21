@@ -9,13 +9,17 @@ type Props = {
 const ActionsLiees = ({ actionsIds }: Props) => {
   const isEmpty = actionsIds.length === 0;
 
-  return isEmpty ? (
-    <EmptyCard
-      picto={(props) => <ActionPicto {...props} />}
-      title="Aucune action des référentiels n'est liée !"
-      size="xs"
-    />
-  ) : (
+  if (isEmpty) {
+    return (
+      <EmptyCard
+        picto={(props) => <ActionPicto {...props} />}
+        title="Aucune action des référentiels n'est liée !"
+        size="xs"
+      />
+    );
+  }
+
+  return (
     <div className="bg-white p-10 border border-grey-3 rounded-xl">
       <div className="w-full border-b border-primary-3 mb-6">
         <h6 className="text-lg h-[2.125rem] mb-5">
@@ -23,7 +27,7 @@ const ActionsLiees = ({ actionsIds }: Props) => {
         </h6>
       </div>
       <ActionsLieesListe
-        actionsIds={actionsIds}
+        actionIds={actionsIds}
         className="sm:grid-cols-2 md:grid-cols-3"
       />
     </div>

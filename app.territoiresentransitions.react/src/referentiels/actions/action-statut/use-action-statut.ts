@@ -9,14 +9,14 @@ import {
 import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
 import { omit } from 'es-toolkit';
 import { objectToCamel, objectToSnake } from 'ts-case-convert';
-import { useCollectiviteId } from '../collectivites/collectivite-context';
-import { useCurrentCollectivite } from '../core-logic/hooks/useCurrentCollectivite';
-import { useActionScore } from './DEPRECATED_score-hooks';
+import { useCollectiviteId } from '../../../collectivites/collectivite-context';
+import { useCurrentCollectivite } from '../../../core-logic/hooks/useCurrentCollectivite';
+import { useActionScore } from '../../DEPRECATED_score-hooks';
 import {
   useScore,
   useSnapshotComputeAndUpdate,
   useSnapshotFlagEnabled,
-} from './use-snapshot';
+} from '../../use-snapshot';
 
 /**
  * Charge le statut d'une action

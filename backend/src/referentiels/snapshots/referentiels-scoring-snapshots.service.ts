@@ -34,7 +34,7 @@ import {
 } from './snapshot.table';
 
 @Injectable()
-export default class ReferentielsScoringSnapshotsService {
+export class ReferentielsScoringSnapshotsService {
   static SCORE_COURANT_SNAPSHOT_REF = 'score-courant';
   static SCORE_COURANT_SNAPSHOT_NOM = 'Score courant';
   static PRE_AUDIT_SNAPSHOT_REF_PREFIX = 'pre-audit-';
@@ -458,9 +458,8 @@ export default class ReferentielsScoringSnapshotsService {
   async get(
     collectiviteId: number,
     referentielId: ReferentielId,
-    snapshotRef: string,
-    doNotThrowIfNotFound?: boolean
-  ): Promise<GetReferentielScoresResponseType | null> {
+    snapshotRef: string = ReferentielsScoringSnapshotsService.SCORE_COURANT_SNAPSHOT_REF
+  ): Promise<GetReferentielScoresResponseType> {
     const result = (await this.databaseService.db
       .select()
       .from(scoreSnapshotTable)
@@ -473,13 +472,9 @@ export default class ReferentielsScoringSnapshotsService {
       )) as ScoreSnapshotType[];
 
     if (!result.length) {
-      if (!doNotThrowIfNotFound) {
-        throw new NotFoundException(
-          `Aucun snapshot de score avec la référence ${snapshotRef} n'a été trouvé pour la collectivité ${collectiviteId} et le referentiel ${referentielId}`
-        );
-      } else {
-        return null;
-      }
+      throw new NotFoundException(
+        `Aucun snapshot de score avec la référence ${snapshotRef} n'a été trouvé pour la collectivité ${collectiviteId} et le referentiel ${referentielId}`
+      );
     }
 
     const fullScores = result[0].referentielScores;
@@ -491,6 +486,7 @@ export default class ReferentielsScoringSnapshotsService {
       modifiedAt: result[0].modifiedAt,
       modifiedBy: result[0].modifiedBy,
     };
+
     return fullScores;
   }
 

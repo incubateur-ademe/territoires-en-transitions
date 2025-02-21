@@ -3,7 +3,7 @@ import ReferentielsScoringService from '../compute-score/referentiels-scoring.se
 import { GetReferentielService } from '../get-referentiel/get-referentiel.service';
 import { deeperReferentielScoring } from '../models/samples/deeper-referentiel-scoring.sample';
 import { simpleReferentielScoring } from '../models/samples/simple-referentiel-scoring.sample';
-import ReferentielsScoringSnapshotsService from '../snapshots/referentiels-scoring-snapshots.service';
+import { ReferentielsScoringSnapshotsService } from '../snapshots/referentiels-scoring-snapshots.service';
 import ExportReferentielScoreService from './export-referentiel-score.service';
 
 describe('ExportReferentielScoreService', () => {

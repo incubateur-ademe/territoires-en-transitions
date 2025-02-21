@@ -2,16 +2,17 @@ import { avancementToLabel } from '@/app/app/labels';
 import { actionAvancementColors } from '@/app/app/theme';
 import { useCurrentCollectivite } from '@/app/core-logic/hooks/useCurrentCollectivite';
 import { ActionDefinitionSummary } from '@/app/referentiels/ActionDefinitionSummaryReadEndpoint';
-import { SelectActionStatut } from '@/app/referentiels/actions/action-statut.select';
-import { useScoreRealise } from '@/app/referentiels/actions/DEPRECATED_useScoreRealise';
-import ProgressBarWithTooltip from '@/app/referentiels/scores/progress-bar-with-tooltip';
+import { SelectActionStatut } from '@/app/referentiels/actions/action-statut/action-statut.select';
 import {
   useActionStatut,
   useEditActionStatutIsDisabled,
   useSaveActionStatut,
-} from '@/app/referentiels/use-action-statut';
+} from '@/app/referentiels/actions/action-statut/use-action-statut';
+import { useScoreRealise } from '@/app/referentiels/actions/DEPRECATED_useScoreRealise';
+import ProgressBarWithTooltip from '@/app/referentiels/scores/progress-bar-with-tooltip';
 import {
   ActionStatutInsert,
+  getStatutAvancement,
   statutAvancementEnumSchema,
   StatutAvancementIncludingNonConcerne,
   statutAvancementIncludingNonConcerneEnumSchema,
@@ -21,11 +22,7 @@ import classNames from 'classnames';
 import { useEffect, useState } from 'react';
 import ScoreProgressBar from '../scores/score.progress-bar';
 import { useScore, useSnapshotFlagEnabled } from '../use-snapshot';
-import {
-  getAvancementExt,
-  getStatusFromIndex,
-  statutParAvancement,
-} from '../utils';
+import { getStatusFromIndex, statutParAvancement } from '../utils';
 import ScoreAutoModal from './sub-action.detail/ScoreAutoModal';
 import ScoreDetailleModal from './sub-action.detail/ScoreDetailleModal';
 
@@ -68,8 +65,12 @@ export const SubActionStatutDropdown = ({
 
   const desactive = score?.desactive;
 
-  const avancementExt = getAvancementExt({
-    avancement,
+  /**
+   * @deprecated Supprimer cette logique du front pour la faire uniquement côté back
+   * Le `useActionStatut` devrait déjà renvoyer le bon statut à manipuler directement dans le front
+   */
+  const avancementExt = getStatutAvancement({
+    avancement: avancement,
     desactive,
     concerne,
   });

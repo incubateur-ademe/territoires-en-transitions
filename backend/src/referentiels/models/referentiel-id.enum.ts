@@ -1,14 +1,15 @@
+import { getEnumValues } from '@/domain/utils';
 import { pgEnum } from 'drizzle-orm/pg-core';
 import z from 'zod';
 
-// export enum ReferentielId {
-//   ECI = 'eci',
-//   CAE = 'cae',
-//   TE = 'te',
-//   TE_TEST = 'te-test',
-// }
+export const ReferentielIdEnum = {
+  CAE: 'cae',
+  ECI: 'eci',
+  TE: 'te',
+  TE_TEST: 'te-test',
+} as const;
 
-export const referentielIdEnumValues = ['cae', 'eci', 'te', 'te-test'] as const;
+export const referentielIdEnumValues = getEnumValues(ReferentielIdEnum);
 
 export const referentielIdEnumSchema = z.enum(referentielIdEnumValues);
 

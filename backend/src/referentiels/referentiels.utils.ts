@@ -1,5 +1,10 @@
+import { memoize } from 'es-toolkit';
+import { StatutAvancement, StatutAvancementEnum } from './index-domain';
 import { ActionTypeIncludingExemple } from './models/action-type.enum';
-import { referentielIdEnumSchema } from './models/referentiel-id.enum';
+import {
+  ReferentielId,
+  referentielIdEnumSchema,
+} from './models/referentiel-id.enum';
 
 export class ReferentielException extends Error {
   constructor(message: string) {
@@ -94,6 +99,63 @@ export function getParentIdFromActionId(actionId: string): string | null {
 }
 
 /**
+ * Détermine le statut d'avancement d'une action (inclus le "non concerné")
+ * en fonction des autres propriétés provenant du score calculé de l'action.
+ * C'est à dire après le calcul des points tenant compte de la personnalisation.
+ */
+export function getStatutAvancement({
+  avancement,
+  desactive,
+  concerne,
+}: {
+  avancement?: StatutAvancement;
+  desactive: boolean | undefined;
+  concerne: boolean | undefined;
+}) {
+  // statut "non concerné" quand l'action est désactivée par la personnalisation
+  // ou que l'option "non concerné" a été sélectionnée explicitement par l'utilisateur
+  if (desactive || concerne === false) {
+    return StatutAvancementEnum.NON_CONCERNE;
+  }
+
+  if (avancement === undefined) {
+    return StatutAvancementEnum.NON_RENSEIGNE;
+  }
+
+  return avancement;
+}
+
+/**
+ * Détermine le statut d'avancement d'une action en incluant le statut "non concerné"
+ * et en fonction des avancements des actions enfants.
+ */
+export const getStatutAvancementBasedOnChildren = (
+  action: {
+    avancement?: StatutAvancement;
+    desactive: boolean;
+    concerne: boolean;
+  },
+  childrenStatuts: StatutAvancement[] | undefined
+) => {
+  const statutEtendu = getStatutAvancement(action);
+
+  const hasAtLeastOneChildWithStatutRenseigne = childrenStatuts?.some(
+    (statut) => statut && statut !== StatutAvancementEnum.NON_RENSEIGNE
+  );
+
+  const isStatutNonRenseigne =
+    !statutEtendu || statutEtendu === StatutAvancementEnum.NON_RENSEIGNE;
+
+  // Une sous-action "non renseigné" mais avec au moins une tâche renseignée a
+  // le statut "détaillé"
+  if (hasAtLeastOneChildWithStatutRenseigne && isStatutNonRenseigne) {
+    return StatutAvancementEnum.DETAILLE;
+  }
+
+  return statutEtendu ?? StatutAvancementEnum.NON_RENSEIGNE;
+};
+
+/**
  * Equivalent to a `reduce` function but for a list of actions and their children.
  */
 export function reduceActions<A extends { actionsEnfant?: A[] }, T>(
@@ -119,4 +181,24 @@ export function flatMapActionsEnfants<A extends { actionsEnfant?: A[] }>(
     ...allActionsEnfants,
     action,
   ]);
+}
+
+export function findActionInTree<A extends { actionsEnfant?: A[] }>(
+  actions: A[],
+  predicate: (action: A) => boolean
+): A | undefined {
+  for (const action of actions) {
+    if (predicate(action)) {
+      return action;
+    }
+
+    if (action.actionsEnfant) {
+      const foundAction = findActionInTree(action.actionsEnfant, predicate);
+      if (foundAction) {
+        return foundAction;
+      }
+    }
+  }
+
+  return undefined;
 }
