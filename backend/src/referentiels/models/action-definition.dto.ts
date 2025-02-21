@@ -3,10 +3,15 @@ import z, { SomeZodObject } from 'zod';
 import { actionDefinitionSchema } from './action-definition.table';
 import { actionTypeIncludingExempleSchema } from './action-type.enum';
 
-export type TreeNode<T> = T & {
-  // value: T;
-  actionsEnfant: TreeNode<T>[];
-};
+type Increment<N extends number> = N extends infer R
+  ? [...Array<R>, unknown]['length']
+  : never;
+
+export type TreeNode<T, Depth extends number = 0> = Depth extends 5
+  ? T
+  : T & {
+      actionsEnfant: TreeNode<T, Increment<Depth>>[];
+    };
 
 export function treeNodeSchema<T extends SomeZodObject>(
   schema: T
