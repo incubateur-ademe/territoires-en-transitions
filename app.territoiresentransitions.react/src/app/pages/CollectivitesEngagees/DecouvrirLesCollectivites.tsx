@@ -39,7 +39,7 @@ const DecouvrirLesCollectivites = () => {
           className="border-b border-b-info-3"
           footer={
             <Button
-              data-test="btn-AssocierCollectivite"
+              dataTest="btn-AssocierCollectivite"
               size="sm"
               href={getRejoindreCollectivitePath(document.location.origin)}
             >

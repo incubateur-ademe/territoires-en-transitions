@@ -63,10 +63,7 @@ const SelectDate = ({ setDate }: { setDate: (value: string) => void }) => {
 
   return (
     <>
-      <Field
-        data-test="date-visite"
-        title="Date de la visite annuelle (obligatoire)"
-      >
+      <Field title="Date de la visite annuelle (obligatoire)">
         <InputDate
           ref={inputRef}
           pattern="\d{4}-\d{2}-\d{2}"
@@ -76,7 +73,11 @@ const SelectDate = ({ setDate }: { setDate: (value: string) => void }) => {
           }}
         />
       </Field>
-      <Button disabled={!isValid} onClick={() => value && setDate(value)}>
+      <Button
+        dataTest="date-visite"
+        disabled={!isValid}
+        onClick={() => value && setDate(value)}
+      >
         Ajouter le rapport
       </Button>
     </>
