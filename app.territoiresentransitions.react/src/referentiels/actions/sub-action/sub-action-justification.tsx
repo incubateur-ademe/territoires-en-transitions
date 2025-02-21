@@ -9,7 +9,6 @@ import {
 type ActionJustificationProps = {
   action: ActionDefinitionSummary;
   className?: string;
-  backgroundClassName?: string;
   title?: string;
   subtitle?: string;
   autoFocus?: boolean;
@@ -25,7 +24,6 @@ type ActionJustificationProps = {
 const ActionJustification = ({
   action,
   className,
-  backgroundClassName,
   title,
   subtitle,
   autoFocus,
@@ -73,7 +71,6 @@ const ActionJustification = ({
     <div className={className}>
       <ActionCommentaireField
         dataTest={`just-${action.id}`}
-        backgroundClassName={backgroundClassName}
         action={action}
         initialValue={initialValue}
         title={title}
