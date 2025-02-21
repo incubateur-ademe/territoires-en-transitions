@@ -4,7 +4,7 @@ import { PermissionOperation, ResourceType } from '@/domain/auth';
 import { Injectable } from '@nestjs/common';
 import z from 'zod';
 import { ListActionDefinitionsService } from '../list-action-definitions/list-action-definitions.service';
-import { ReferentielsScoringSnapshotsService } from '../snapshots/referentiels-scoring-snapshots.service';
+import { SnapshotsService } from '../snapshots/snapshots.service';
 import { getExtendActionWithComputedStatutsFields } from '../snapshots/snapshots.utils';
 import { ActionTypeEnum, actionTypeSchema } from './../models/action-type.enum';
 
@@ -22,7 +22,7 @@ export class ListActionsRouter {
   constructor(
     private readonly trpc: TrpcService,
     private readonly permissions: PermissionService,
-    private readonly snapshotService: ReferentielsScoringSnapshotsService,
+    private readonly snapshotService: SnapshotsService,
     private readonly listActionDefinitionsService: ListActionDefinitionsService
   ) {}
 

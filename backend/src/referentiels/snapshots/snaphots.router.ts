@@ -1,12 +1,12 @@
 import { TrpcService } from '@/backend/utils/trpc/trpc.service';
 import { Injectable } from '@nestjs/common';
 import z from 'zod';
-import ReferentielsScoringService from '../compute-score/referentiels-scoring.service';
+import ScoresService from '../compute-score/scores.service';
 import { ComputeScoreMode } from '../models/compute-scores-mode.enum';
 import { DEFAULT_SNAPSHOT_JALONS } from '../models/get-score-snapshots.request';
 import { referentielIdEnumSchema } from '../models/referentiel-id.enum';
-import { ReferentielsScoringSnapshotsService } from './referentiels-scoring-snapshots.service';
 import { SnapshotJalon } from './snapshot-jalon.enum';
+import { SnapshotsService } from './snapshots.service';
 import { upsertSnapshotRequestSchema } from './upsert-snapshot.request';
 
 export const getScoreSnapshotInfosTrpcRequestSchema = z.object({
@@ -30,11 +30,11 @@ export const getFullScoreSnapshotTrpcRequestSchema = z.object({
 });
 
 @Injectable()
-export class ScoreSnapshotsRouter {
+export class SnapshotsRouter {
   constructor(
     private readonly trpc: TrpcService,
-    private readonly service: ReferentielsScoringSnapshotsService,
-    private readonly referentielsScoringService: ReferentielsScoringService
+    private readonly service: SnapshotsService,
+    private readonly referentielsScoringService: ScoresService
   ) {}
 
   router = this.trpc.router({
@@ -96,10 +96,7 @@ export class ScoreSnapshotsRouter {
     get: this.trpc.authedProcedure
       .input(getFullScoreSnapshotTrpcRequestSchema)
       .query(({ input, ctx }) => {
-        if (
-          input.snapshotRef ===
-          ReferentielsScoringSnapshotsService.SCORE_COURANT_SNAPSHOT_REF
-        ) {
+        if (input.snapshotRef === SnapshotsService.SCORE_COURANT_SNAPSHOT_REF) {
           return this.referentielsScoringService.getOrCreateCurrentScore(
             input.collectiviteId,
             input.referentielId

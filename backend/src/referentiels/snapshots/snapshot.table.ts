@@ -38,7 +38,7 @@ const scoreJalonEnumValues = pgEnum('type_jalon', [
   SnapshotJalon.JOUR_AUTO,
 ]);
 
-export const scoreSnapshotTable = pgTable(
+export const snapshotTable = pgTable(
   'score_snapshot',
   {
     collectiviteId: integer('collectivite_id').notNull(),
@@ -91,16 +91,14 @@ export const scoreSnapshotTable = pgTable(
   }
 );
 
-export const scoreSnapshotSchema = createSelectSchema(
-  scoreSnapshotTable
-).extend({
+export const scoreSnapshotSchema = createSelectSchema(snapshotTable).extend({
   referentielScores: getReferentielScoresResponseSchema,
   personnalisationReponses: getPersonnalitionReponsesResponseSchema,
 });
 export type ScoreSnapshotType = z.infer<typeof scoreSnapshotSchema>;
 
 export const createScoreSnapshotSchema = createInsertSchema(
-  scoreSnapshotTable
+  snapshotTable
 ).extend({
   referentielScores: getReferentielScoresResponseSchema,
   personnalisationReponses: getPersonnalitionReponsesResponseSchema,

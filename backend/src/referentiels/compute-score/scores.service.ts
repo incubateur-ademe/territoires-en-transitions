@@ -73,8 +73,8 @@ import { postAuditScoresTable } from '../models/post-audit-scores.table';
 import { preAuditScoresTable } from '../models/pre-audit-scores.table';
 import { ReferentielId } from '../models/referentiel-id.enum';
 import { getParentIdFromActionId } from '../referentiels.utils';
-import { ReferentielsScoringSnapshotsService } from '../snapshots/referentiels-scoring-snapshots.service';
 import { SnapshotJalon } from '../snapshots/snapshot-jalon.enum';
+import { SnapshotsService } from '../snapshots/snapshots.service';
 import { ActionStatutsByActionId } from './action-statuts-by-action-id.dto';
 import { GetReferentielScoresResponseType } from './get-referentiel-scores.response';
 import {
@@ -89,8 +89,8 @@ import {
 type ActionWithScore = TreeNode<ActionDefinitionEssential & ScoreFields>;
 
 @Injectable()
-export default class ReferentielsScoringService {
-  private readonly logger = new Logger(ReferentielsScoringService.name);
+export default class ScoresService {
+  private readonly logger = new Logger(ScoresService.name);
 
   private static DEFAULT_ROUNDING_DIGITS = 3;
   private static MULTIPLE_COLLECTIVITE_CHUNK_SIZE = 10;
@@ -102,7 +102,7 @@ export default class ReferentielsScoringService {
     private readonly collectivitesService: CollectivitesService,
     private readonly databaseService: DatabaseService,
     private readonly referentielsService: GetReferentielService,
-    private readonly referentielsScoringSnapshotsService: ReferentielsScoringSnapshotsService,
+    private readonly referentielsScoringSnapshotsService: SnapshotsService,
     private readonly personnalisationService: PersonnalisationsService,
     private readonly expressionParserService: ExpressionParserService,
     private readonly labellisationService: LabellisationService,
@@ -121,7 +121,7 @@ export default class ReferentielsScoringService {
         currentScore = await this.referentielsScoringSnapshotsService.get(
           collectiviteId,
           referentielId,
-          ReferentielsScoringSnapshotsService.SCORE_COURANT_SNAPSHOT_REF
+          SnapshotsService.SCORE_COURANT_SNAPSHOT_REF
         );
       } catch (e) {
         if (e instanceof NotFoundException) {
@@ -804,7 +804,7 @@ export default class ReferentielsScoringService {
 
   private appliqueRounding(
     referentielActionAvecScore: ActionWithScore,
-    ndigits: number = ReferentielsScoringService.DEFAULT_ROUNDING_DIGITS
+    ndigits: number = ScoresService.DEFAULT_ROUNDING_DIGITS
   ) {
     referentielActionAvecScore.actionsEnfant.forEach((actionEnfant) => {
       this.appliqueRounding(actionEnfant, ndigits);
@@ -1065,7 +1065,7 @@ export default class ReferentielsScoringService {
 
     const collectiviteChunks = chunk(
       parameters.collectiviteIds,
-      ReferentielsScoringService.MULTIPLE_COLLECTIVITE_CHUNK_SIZE
+      ScoresService.MULTIPLE_COLLECTIVITE_CHUNK_SIZE
     );
     for (const collectiviteChunk of collectiviteChunks) {
       const collectiviteScores = await Promise.all(
@@ -1418,7 +1418,7 @@ export default class ReferentielsScoringService {
     action: TreeNode<
       ActionDefinitionEssential & ScoreFields & CorrelatedActionsWithScoreFields
     >,
-    roundingDigits = ReferentielsScoringService.DEFAULT_ROUNDING_DIGITS
+    roundingDigits = ScoresService.DEFAULT_ROUNDING_DIGITS
   ) {
     const initialScore = action.score;
     const origineActions = action.actionsOrigine;
@@ -1609,7 +1609,7 @@ export default class ReferentielsScoringService {
           consolidatedScore,
           scoreEnfant,
           true,
-          ReferentielsScoringService.DEFAULT_ROUNDING_DIGITS
+          ScoresService.DEFAULT_ROUNDING_DIGITS
         );
         action.scoresTag[tag] = consolidatedScore;
       }
@@ -2116,7 +2116,7 @@ export default class ReferentielsScoringService {
 
     const lastChangesChunks = chunk(
       lastChanges,
-      ReferentielsScoringService.MULTIPLE_COLLECTIVITE_CHUNK_SIZE
+      ScoresService.MULTIPLE_COLLECTIVITE_CHUNK_SIZE
     );
     const checkScorePromises: Promise<GetCheckScoresResponseType>[] = [];
     let iChunk = 0;
@@ -2372,7 +2372,7 @@ export default class ReferentielsScoringService {
 
     const allScoresChunks = chunk(
       allScores,
-      ReferentielsScoringService.MULTIPLE_COLLECTIVITE_CHUNK_SIZE
+      ScoresService.MULTIPLE_COLLECTIVITE_CHUNK_SIZE
     );
     const insertPromises: Promise<GetReferentielScoresResponseType | null>[] =
       [];
@@ -2472,16 +2472,8 @@ export default class ReferentielsScoringService {
               ) {
                 const diff = Math.abs(savedScore[key] - computedScore[key]);
                 const diffThreshold =
-                  1 /
-                    Math.pow(
-                      10,
-                      ReferentielsScoringService.DEFAULT_ROUNDING_DIGITS
-                    ) +
-                  1 /
-                    Math.pow(
-                      10,
-                      ReferentielsScoringService.DEFAULT_ROUNDING_DIGITS + 1
-                    );
+                  1 / Math.pow(10, ScoresService.DEFAULT_ROUNDING_DIGITS) +
+                  1 / Math.pow(10, ScoresService.DEFAULT_ROUNDING_DIGITS + 1);
 
                 if (diff <= diffThreshold) {
                   hasDiff = false;

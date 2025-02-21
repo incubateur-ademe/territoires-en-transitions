@@ -9,7 +9,7 @@ import z from 'zod';
 import { AuthenticatedUser } from '../../auth/models/auth.models';
 import { getErrorWithCode } from '../../utils/nest/errors.utils';
 import { PgIntegrityConstraintViolation } from '../../utils/postgresql-error-codes.enum';
-import ReferentielsScoringService from '../compute-score/referentiels-scoring.service';
+import ScoresService from '../compute-score/scores.service';
 import { GetReferentielService } from '../get-referentiel/get-referentiel.service';
 import {
   actionStatutSchemaInsert,
@@ -35,7 +35,7 @@ export class UpdateActionStatutService {
     private readonly databaseService: DatabaseService,
     private readonly permissionService: PermissionService,
     private readonly referentielService: GetReferentielService,
-    private readonly referentielScoringService: ReferentielsScoringService
+    private readonly referentielScoringService: ScoresService
   ) {}
 
   async upsertActionStatut(

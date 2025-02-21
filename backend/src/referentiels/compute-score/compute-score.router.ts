@@ -3,7 +3,7 @@ import { Injectable } from '@nestjs/common';
 import z from 'zod';
 import { getReferentielScoresRequestSchema } from '../models/get-referentiel-scores.request';
 import { referentielIdEnumSchema } from '../models/referentiel-id.enum';
-import ReferentielsScoringService from './referentiels-scoring.service';
+import ScoresService from './scores.service';
 
 export const computeScoreRequestSchema = z.object({
   referentielId: referentielIdEnumSchema,
@@ -15,7 +15,7 @@ export const computeScoreRequestSchema = z.object({
 export class ComputeScoreRouter {
   constructor(
     private readonly trpc: TrpcService,
-    private readonly service: ReferentielsScoringService
+    private readonly service: ScoresService
   ) {}
 
   router = this.trpc.router({
