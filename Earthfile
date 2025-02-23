@@ -407,8 +407,9 @@ front-deps-builder:
     DO +BUILD_IF_NO_IMG --IMG_NAME=front-deps --IMG_TAG=$FRONT_DEPS_TAG --BUILD_TARGET=front-deps
 
 
-# APP ENTRYPOINTS
 # ---------------
+# APP ENTRYPOINTS
+# ↓ ----------- ↓
 
 app-docker:
   BUILD --pass-args ./app.territoiresentransitions.react+docker
@@ -419,6 +420,10 @@ app-test-docker:
 app-deploy:
   ARG --required KOYEB_API_KEY
   BUILD --pass-args ./app.territoiresentransitions.react+deploy
+
+app-run:
+  LOCALLY
+  BUILD --pass-args ./app.territoiresentransitions.react+run
 
 
 # BACKEND ENTRYPOINTS
@@ -504,19 +509,7 @@ site-run: ## construit et lance l'image du site en local
         --publish 3001:80 \
         $SITE_IMG_NAME
 
-app-run: ## construit et lance l'image de l'app en local
-    ARG --required ANON_KEY
-    ARG --required API_URL
-    ARG network=supabase_network_tet
-    LOCALLY
-    # DO +BUILD_IF_NO_IMG --IMG_NAME=front-deps --IMG_TAG=$FRONT_DEPS_TAG --BUILD_TARGET=front-deps
-    DO +BUILD_IF_NO_IMG --IMG_NAME=app --IMG_TAG=$APP_TAG --BUILD_TARGET=app-docker
-    ARG kong_url=http://supabase_kong_tet:8000
-    RUN docker run -d --rm \
-        --name app_tet \
-        --network $network \
-        --publish 3000:3000 \
-        $APP_IMG_NAME
+
 
 app-test-build: ## construit une image pour exécuter les tests unitaires de l'app
     FROM +front-deps
@@ -593,13 +586,19 @@ auth-build: ## construit l'image du module d'authentification
     SAVE IMAGE --cache-from=$AUTH_IMG_NAME --push $AUTH_IMG_NAME
 
 auth-run: ## construit et lance l'image du module d'authentification en local
-    ARG network=supabase_network_tet
     LOCALLY
-    RUN docker run -d --rm \
+    ARG network=supabase_network_tet
+
+    WITH DOCKER --load +auth-build
+      RUN docker run -d --rm \
         --name auth_tet \
         --network $network \
         --publish 3003:80 \
+        --env NEXT_PUBLIC_SUPABASE_ANON_KEY=$ANON_KEY \
+        --env NEXT_PUBLIC_SUPABASE_URL=$API_URL \
+        --env NEXT_PUBLIC_APP_URL=http://app_tet:3000 \
         $AUTH_IMG_NAME
+    END
 
 package-ui-storybook-test:
     ARG PLATFORM
@@ -686,15 +685,6 @@ api-crud-test:
       --env SUPABASE_URL=$API_URL \
       --env SUPABASE_ANON_KEY=$ANON_KEY \
       api-test:latest test -A tests/crud/crud.test.ts --location 'http://localhost' -- elements:axe
-
-cypress-wip:
-    FROM cypress/included:12.3.0
-    ENV ELECTRON_EXTRA_LAUNCH_ARGS="--disable-gpu"
-    WORKDIR /e2e
-    COPY ./e2e/package.json /e2e/package.json
-    RUN npm install
-    COPY ./e2e/ /e2e
-    RUN npm test
 
 gen-types: ## génère le typage à partir de la base de données
     LOCALLY
@@ -799,6 +789,25 @@ dev:
     END
 
     RUN earthly +refresh-views --DB_URL=$DB_URL
+
+e2e-run:
+  LOCALLY
+  # --stop=no --datalayer=yes --business=yes --app=yes --auth=yes --eco=yes --faster=yes --version=HEAD
+  ARG --required DB_URL
+  ARG --required API_URL
+  ARG --required ANON_KEY
+  ARG --required SERVICE_ROLE_KEY
+
+  BUILD +restore-db --pull=yes
+  RUN supabase start --exclude vector,postgres-meta,imgproxy,studio
+
+  BUILD +business --SERVICE_ROLE_KEY=$SERVICE_ROLE_KEY
+  BUILD +update-scores --DB_URL=$DB_URL
+
+  BUILD --pass-args +app-run
+  BUILD --pass-args +auth-run
+
+  BUILD +refresh-views --DB_URL=$DB_URL
 
 BUILD_IF_NO_IMG:
     FUNCTION
