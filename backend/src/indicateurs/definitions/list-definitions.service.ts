@@ -1,8 +1,4 @@
-import {
-  AuthenticatedUser,
-  PermissionOperation,
-  ResourceType,
-} from '@/domain/auth';
+import { AuthUser, PermissionOperation, ResourceType } from '@/domain/auth';
 import { categorieTagTable } from '@/domain/collectivites';
 import { thematiqueTable } from '@/domain/shared';
 import { Injectable, Logger } from '@nestjs/common';
@@ -141,7 +137,7 @@ export default class ListDefinitionsService {
    */
   async getDefinitionsDetaillees(
     data: ListDefinitionsRequest,
-    tokenInfo: AuthenticatedUser
+    tokenInfo: AuthUser
   ) {
     const { collectiviteId, indicateurIds, identifiantsReferentiel } = data;
 
@@ -335,7 +331,7 @@ export default class ListDefinitionsService {
   /**
    * Donne le chemin d'un indicateur à partir de son id
    */
-  async getPath(data: GetPathRequest, tokenInfo: AuthenticatedUser) {
+  async getPath(data: GetPathRequest, tokenInfo: AuthUser) {
     const { collectiviteId, indicateurId } = data;
     await this.permissionService.isAllowed(
       tokenInfo,
@@ -394,10 +390,7 @@ export default class ListDefinitionsService {
   }
 
   /** Donne le nombre d'indicateurs favoris de la collectivité */
-  async getFavorisCount(
-    data: GetFavorisCountRequest,
-    tokenInfo: AuthenticatedUser
-  ) {
+  async getFavorisCount(data: GetFavorisCountRequest, tokenInfo: AuthUser) {
     const { collectiviteId } = data;
     await this.permissionService.isAllowed(
       tokenInfo,

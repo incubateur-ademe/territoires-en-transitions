@@ -1,0 +1,87 @@
+import { DatabaseService } from '@/backend/utils';
+import { AuthUser, authUsersTable, dcpTable } from '@/domain/auth';
+import { Injectable, UnauthorizedException } from '@nestjs/common';
+import { eq } from 'drizzle-orm';
+import { pick } from 'es-toolkit';
+import z from 'zod';
+import { RoleService } from '../authorizations/roles/role.service';
+import { utilisateurSupportTable } from '../authorizations/roles/utilisateur-support.table';
+import { utilisateurVerifieTable } from '../authorizations/roles/utilisateur-verifie.table';
+import { UserInfoResponseType } from './user-info.response';
+
+@Injectable()
+export class UsersService {
+  private db = this.database.db;
+  constructor(
+    private readonly database: DatabaseService,
+    private readonly roleService: RoleService
+  ) {}
+
+  readonly getInputSchema = z.object({
+    email: z.string(),
+  });
+
+  async getUserWithAccess(
+    { email }: z.infer<typeof this.getInputSchema>,
+    tokenInfo: AuthUser
+  ) {
+    if (tokenInfo.role !== 'service_role') {
+      throw new UnauthorizedException(
+        'Uniquement accessible pour les comptes de service'
+      );
+    }
+
+    let userInfo: UserInfoResponseType | null = null;
+    if (email) {
+      userInfo = await this.getUserWithAccessByEmail(email);
+    }
+    return { user: userInfo };
+  }
+
+  async getUserInfoByEmail(email: string) {
+    const foundUsers = await this.db
+      .select({
+        userId: dcpTable.userId,
+        email: dcpTable.email,
+        nom: dcpTable.nom,
+        prenom: dcpTable.prenom,
+        telephone: dcpTable.telephone,
+        verifie: utilisateurVerifieTable.verifie,
+        support: utilisateurSupportTable.support,
+      })
+      .from(authUsersTable)
+      .innerJoin(dcpTable, eq(dcpTable.userId, authUsersTable.id))
+      .leftJoin(
+        utilisateurSupportTable,
+        eq(utilisateurSupportTable.userId, authUsersTable.id)
+      )
+      .leftJoin(
+        utilisateurVerifieTable,
+        eq(utilisateurVerifieTable.userId, authUsersTable.id)
+      )
+      .where(eq(dcpTable.email, email));
+
+    if (foundUsers.length === 0) {
+      return null;
+    }
+    return foundUsers[0];
+  }
+
+  async getUserWithAccessByEmail(email: string) {
+    const userInfo: UserInfoResponseType | null = await this.getUserInfoByEmail(
+      email
+    );
+    if (!userInfo) {
+      return null;
+    }
+
+    const droits = (
+      await this.roleService.getNiveauAccesToutesCollectivites(userInfo.userId)
+    ).map((access) =>
+      pick(access, ['collectiviteId', 'active', 'niveauAcces'])
+    );
+    userInfo.droits = droits;
+
+    return userInfo;
+  }
+}

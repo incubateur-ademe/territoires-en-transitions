@@ -92,6 +92,15 @@ export class RoleService {
     return roles;
   }
 
+  async getNiveauAccesToutesCollectivites(
+    userId: string
+  ): Promise<UtilisateurDroitType[]> {
+    return this.databaseService.db
+      .select()
+      .from(utilisateurDroitTable)
+      .where(eq(utilisateurDroitTable.userId, userId));
+  }
+
   private async getNiveauAccesUserInCollectivite(
     userId: string,
     collectiviteId: number

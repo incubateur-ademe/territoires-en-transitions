@@ -5,8 +5,8 @@ import { FicheActionEtapeRouter } from '@/backend/plans/fiches/fiche-action-etap
 import { ImportPlanRouter } from '@/backend/plans/fiches/import/import-plan.router';
 import { ReferentielsRouter } from '@/backend/referentiels/referentiels.router';
 import { INestApplication, Injectable, Logger } from '@nestjs/common';
-import { JwtService } from '@nestjs/jwt';
 import { createExpressMiddleware } from '@trpc/server/adapters/express';
+import { UsersRouter } from '../../auth/users/users.router';
 import { IndicateurFiltreRouter } from '../../indicateurs/definitions/indicateur-filtre.router';
 import { IndicateurDefinitionsRouter } from '../../indicateurs/definitions/list-definitions.router';
 import { IndicateurSourcesRouter } from '../../indicateurs/sources/indicateur-sources.router';
@@ -20,8 +20,6 @@ export class TrpcRouter {
   private readonly logger = new Logger(TrpcRouter.name);
 
   constructor(
-    private readonly jwtService: JwtService,
-    private readonly backendConfigurationService: ConfigurationService,
     private readonly trpc: TrpcService,
     private readonly supabase: SupabaseService,
     private readonly trajectoiresRouter: TrajectoiresRouter,
@@ -34,10 +32,12 @@ export class TrpcRouter {
     private readonly bulkEditRouter: BulkEditRouter,
     private readonly collectivitesRouter: CollectivitesRouter,
     private readonly referentielsRouter: ReferentielsRouter,
-    private readonly importRouter: ImportPlanRouter
+    private readonly importRouter: ImportPlanRouter,
+    private readonly usersRouter: UsersRouter
   ) {}
 
   appRouter = this.trpc.router({
+    utilisateurs: this.usersRouter.router,
     collectivites: this.collectivitesRouter.router,
     indicateurs: {
       trajectoires: this.trajectoiresRouter.router,
@@ -66,13 +66,7 @@ export class TrpcRouter {
       createExpressMiddleware({
         router: this.appRouter,
         createContext: (opts) =>
-          createContext(
-            this.supabase.client,
-            opts,
-            this.jwtService,
-            this.backendConfigurationService.get('SUPABASE_JWT_SECRET'),
-            this.logger
-          ),
+          this.trpc.createContext(this.supabase.client, opts),
         onError: (opts) => {
           const { error, type, path, input, ctx, req } = opts;
           this.logger.error(error);
