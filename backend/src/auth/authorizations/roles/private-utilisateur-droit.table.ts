@@ -1,6 +1,7 @@
 import { createdAt, modifiedAt } from '@/domain/utils';
 import { InferSelectModel } from 'drizzle-orm';
 import { boolean, integer, pgTable, serial, uuid } from 'drizzle-orm/pg-core';
+import { createSelectSchema } from 'drizzle-zod';
 import { collectiviteTable } from '../../../collectivites/shared/models/collectivite.table';
 import { invitationTable } from '../../models/invitation.table';
 import { NiveauAcces, niveauAccessEnum } from './niveau-acces.enum';
@@ -19,6 +20,8 @@ export const utilisateurDroitTable = pgTable('private_utilisateur_droit', {
     .default(NiveauAcces.LECTURE),
   invitationId: uuid('invitation_id').references(() => invitationTable.id),
 });
+
+export const utilisateurDroitSchema = createSelectSchema(utilisateurDroitTable);
 
 export type UtilisateurDroitType = InferSelectModel<
   typeof utilisateurDroitTable
