@@ -5,9 +5,9 @@ import { useCycleLabellisation } from '@/app/referentiels/labellisations/useCycl
 import { useActionSummaryChildren } from '@/app/referentiels/referentiel-hooks';
 import { Accordion } from '@/app/ui/Accordion';
 import { useEffect, useRef, useState } from 'react';
+import SubActionTasksList from '../sub-action-task/sub-action-task.list';
 import ActionJustification from './sub-action-justification';
 import SubActionPreuvesAccordion from './sub-action-preuves.accordion';
-import SubActionTasksList from './sub-action-task.list';
 import SubActionDescription from './sub-action.description';
 import SubActionHeader from './sub-action.header';
 
@@ -168,6 +168,7 @@ const SubActionCard = ({
               titre="Tâches"
               html={
                 <SubActionTasksList
+                  className="mt-2"
                   tasks={tasks}
                   hideStatus={shouldHideTasksStatus}
                   statusWarningMessage={

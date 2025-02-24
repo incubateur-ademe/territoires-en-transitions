@@ -1,9 +1,8 @@
 import { ActionDefinitionSummary } from '@/app/referentiels/ActionDefinitionSummaryReadEndpoint';
-import SubActionTasksList from '@/app/referentiels/actions/sub-action/sub-action-task.list';
+import SubActionTasksList from '@/app/referentiels/actions/sub-action-task/sub-action-task.list';
 import { useActionSummaryChildren } from '@/app/referentiels/referentiel-hooks';
-import Modal from '@/app/ui/shared/floating-ui/Modal';
 import { StatutAvancement } from '@/domain/referentiels';
-import { Alert, Button } from '@/ui';
+import { Alert, Button, Modal } from '@/ui';
 import { Dispatch, SetStateAction, useState } from 'react';
 import { useTasksStatus } from '../action-statut/use-action-statut';
 import { StatusToSavePayload } from '../sub-action-statut.dropdown';
@@ -104,69 +103,62 @@ const ScoreAutoModal = ({
   return (
     <Modal
       size="xl"
-      externalOpen={externalOpen}
-      setExternalOpen={setExternalOpen}
+      title="Détailler l'avancement"
+      subTitle={`${actionDefinition.id.split('_')[1]} ${actionDefinition.nom}`}
+      openState={{ isOpen: externalOpen, setIsOpen: setExternalOpen }}
       render={() => {
         return (
-          <>
-            <h4>
-              {`Détailler l'avancement : ${actionDefinition.id.split('_')[1]}`}
-            </h4>
+          <div className="w-full">
+            <SubActionTasksList
+              tasks={tasks}
+              onSaveStatus={handleChangeStatus}
+            />
 
-            <hr className="p-1" />
-
-            <div className="w-full -mt-1">
-              <SubActionTasksList
-                tasks={tasks}
-                onSaveStatus={handleChangeStatus}
-              />
-
-              {actionDefinition.referentiel === 'cae' &&
-                !isCustomScoreGranted(tasks, tasksStatus, localStatus) && (
-                  <Alert
-                    state="warning"
-                    className="my-12"
-                    title="Pour activer l’ajustement manuel, vous devez renseigner un
+            {actionDefinition.referentiel === 'cae' &&
+              !isCustomScoreGranted(tasks, tasksStatus, localStatus) && (
+                <Alert
+                  state="warning"
+                  className="my-12"
+                  title="Pour activer l’ajustement manuel, vous devez renseigner un
                   statut pour chaque tâche."
-                  />
-                )}
+                />
+              )}
 
-              <div className="w-full flex justify-end gap-4 mt-12 mb-4">
-                {actionDefinition.referentiel === 'eci' && (
-                  <Button
-                    onClick={() => setExternalOpen(false)}
-                    variant="outlined"
-                    size="sm"
-                  >
-                    Annuler
-                  </Button>
-                )}
-                <Button onClick={handleSaveScoreAuto} size="sm">
-                  {actionDefinition.referentiel === 'eci'
-                    ? 'Enregistrer ce score'
-                    : 'Enregistrer le score automatique'}
+            <div className="w-full flex justify-end gap-4 mt-12 mb-4">
+              {actionDefinition.referentiel === 'eci' && (
+                <Button
+                  onClick={() => setExternalOpen(false)}
+                  variant="outlined"
+                  size="sm"
+                >
+                  Annuler
                 </Button>
-                {actionDefinition.referentiel === 'cae' && (
-                  <Button
-                    variant="outlined"
-                    icon="arrow-right-line"
-                    iconPosition="right"
-                    onClick={() => {
-                      if (JSON.stringify(localStatus) !== '{}')
-                        handleSaveScoreAuto(); // Sauvegarde du score auto s'il y a eu des modifications
-                      if (onOpenScorePerso) onOpenScorePerso();
-                      setExternalOpen(false);
-                    }}
-                    disabled={
-                      !isCustomScoreGranted(tasks, tasksStatus, localStatus)
-                    }
-                  >
-                    Personnaliser ce score
-                  </Button>
-                )}
-              </div>
+              )}
+              <Button onClick={handleSaveScoreAuto} size="sm">
+                {actionDefinition.referentiel === 'eci'
+                  ? 'Enregistrer ce score'
+                  : 'Enregistrer le score automatique'}
+              </Button>
+              {actionDefinition.referentiel === 'cae' && (
+                <Button
+                  variant="outlined"
+                  icon="arrow-right-line"
+                  iconPosition="right"
+                  onClick={() => {
+                    if (JSON.stringify(localStatus) !== '{}')
+                      handleSaveScoreAuto(); // Sauvegarde du score auto s'il y a eu des modifications
+                    if (onOpenScorePerso) onOpenScorePerso();
+                    setExternalOpen(false);
+                  }}
+                  disabled={
+                    !isCustomScoreGranted(tasks, tasksStatus, localStatus)
+                  }
+                >
+                  Personnaliser ce score
+                </Button>
+              )}
             </div>
-          </>
+          </div>
         );
       }}
     />
