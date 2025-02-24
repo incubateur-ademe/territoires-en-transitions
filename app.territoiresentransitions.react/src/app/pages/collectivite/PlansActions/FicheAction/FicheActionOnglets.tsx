@@ -1,6 +1,6 @@
 import { FicheAction } from '@/api/plan-actions';
 import { Tab, Tabs } from '@/ui';
-import { LesCommuns } from '@betagouv/les-communs-widget';
+import { ServicesWidget } from '@betagouv/les-communs-widget';
 import { useFeatureFlagEnabled } from 'posthog-js/react';
 import ActionsLieesTab from './ActionsLiees/ActionsLieesTab';
 import BudgetTab from './Budget/BudgetTab';
@@ -95,7 +95,7 @@ const FicheActionOnglets = ({
 
       {widgetCommunsFlagEnabled ? (
         <Tab label="Services liés">
-          <LesCommuns projectId="123" isStagingEnv={true} />
+          <ServicesWidget projectId="123" isStagingEnv debug />
         </Tab>
       ) : undefined}
     </Tabs>
