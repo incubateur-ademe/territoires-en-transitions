@@ -90,10 +90,7 @@ export const ActionCard = ({
         {/** Score */}
         <div className="mt-auto">
           <ScoreRatioBadge actionId={action.id} className={'mb-3'} />
-          <ScoreProgressBar
-            actionDefinition={action}
-            progressBarStyleOptions={{ fullWidth: true }}
-          />
+          <ScoreProgressBar actionDefinition={action} className="w-full" />
         </div>
 
         {/** Pilotes et services */}

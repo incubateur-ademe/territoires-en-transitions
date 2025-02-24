@@ -1,8 +1,8 @@
+import { ActionDefinitionSummary } from '@/app/referentiels/ActionDefinitionSummaryReadEndpoint';
+import { ProgressionRow } from '@/app/referentiels/DEPRECATED_scores.types';
 import { PersoPotentiel } from '@/app/referentiels/personnalisations/PersoPotentielModal/PersoPotentiel';
 import { ScoreProgressBar } from '@/app/referentiels/scores/score.progress-bar';
 import ScoreShow from '@/app/referentiels/scores/score.show';
-import { ActionDefinitionSummary } from '@/app/referentiels/ActionDefinitionSummaryReadEndpoint';
-import { ProgressionRow } from '@/app/referentiels/DEPRECATED_scores.types';
 import {
   ActionDetailed,
   useSnapshotFlagEnabled,
@@ -21,8 +21,7 @@ const Score = ({ actionDefinition, action, DEPRECATED_actionScore }: Props) => {
       <ScoreProgressBar
         actionDefinition={actionDefinition}
         className="border-r border-r-[#ddd] pr-6"
-        // TODO(temporary): Temporary patch to display percentage
-        TEMP_displayValue={true}
+        displayDoneValue
       />
       {FLAG_isSnapshotEnabled ? (
         <>

@@ -66,11 +66,7 @@ export const AxeWithChildrenExpandableTree = ({
           >
             <ActionHeaderTitle action={action} isOpen={isOpen} />
             <div className="flex items-center">
-              <ScoreProgressBar
-                actionDefinition={action}
-                progressBarStyleOptions={{ fullWidth: true }}
-                className="w-48"
-              />
+              <ScoreProgressBar actionDefinition={action} className="w-48" />
               <ScoreRatioBadge
                 actionId={action.id}
                 className="justify-end w-64"
