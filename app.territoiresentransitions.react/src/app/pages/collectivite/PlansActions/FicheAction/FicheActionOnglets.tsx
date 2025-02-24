@@ -95,7 +95,7 @@ const FicheActionOnglets = ({
 
       {widgetCommunsFlagEnabled ? (
         <Tab label="Services liés">
-          <ServicesWidget projectId="123" isStagingEnv debug />
+          <ServicesWidget projectId={fiche.id} isStagingEnv debug />
         </Tab>
       ) : undefined}
     </Tabs>
