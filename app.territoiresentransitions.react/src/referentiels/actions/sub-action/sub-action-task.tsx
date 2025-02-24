@@ -1,11 +1,11 @@
 import { ActionDefinitionSummary } from '@/app/referentiels/ActionDefinitionSummaryReadEndpoint';
-import { ActionCommentaire } from '@/app/referentiels/actions/action-commentaire';
 import { StatusToSavePayload } from '@/app/referentiels/actions/sub-action-statut.dropdown';
 import { useActionCommentaire } from '@/app/referentiels/use-action-commentaire';
-import { Button } from '@/ui';
+import Markdown from '@/app/ui/Markdown';
+import { Button, InfoTooltip } from '@/ui';
 import { useEffect, useRef, useState } from 'react';
+import { ActionCommentaire } from '../action-commentaire';
 import { getHashFromUrl } from './sub-action.card';
-import SubActionHeader from './sub-action.header';
 
 type SubActionTaskProps = {
   task: ActionDefinitionSummary;
@@ -44,17 +44,36 @@ const SubActionTask = ({
   }, [hash, ref, task.id]);
 
   return (
-    <div data-test={`task-${task.id}`} ref={ref}>
+    <div
+      data-test={`task-${task.id}`}
+      ref={ref}
+      className="p-4 border border-grey-3 rounded-xl flex flex-col gap-2"
+    >
       {/* Première ligne */}
-      <SubActionHeader
+      {/* <SubActionHeader
         actionDefinition={task}
         hideStatus={hideStatus}
         statusWarningMessage={statusWarningMessage}
         onSaveStatus={onSaveStatus}
-      />
+      /> */}
+      <h6 className="text-base mb-0">
+        {task.identifiant} {task.nom}{' '}
+        {task.description && (
+          <InfoTooltip
+            label={
+              <Markdown
+                content={task.description}
+                className="max-w-sm font-normal"
+              />
+            }
+            activatedBy="click"
+            iconClassName="ml-2"
+          />
+        )}
+      </h6>
 
       {/* Ajout de commentaire */}
-      <div className="p-0 pb-4">
+      <div className="p-0">
         {openCommentaire || !!actionCommentaire?.commentaire ? (
           <ActionCommentaire
             action={task}

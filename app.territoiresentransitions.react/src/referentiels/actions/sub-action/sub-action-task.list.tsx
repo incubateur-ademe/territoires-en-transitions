@@ -20,7 +20,7 @@ const SubActionTasksList = ({
   onSaveStatus,
 }: SubActionTasksListProps): JSX.Element => {
   return (
-    <div className="divide-y divide-[#ddd]">
+    <div className="flex flex-col gap-4">
       {tasks.map((task) => (
         <SubActionTask
           key={task.id}

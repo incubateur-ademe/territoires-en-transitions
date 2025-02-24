@@ -3,8 +3,8 @@ import { useSupabase } from '@/api/utils/supabase/use-supabase';
 import { useAudit, useIsAuditeur } from '@/app/referentiels/audits/useAudit';
 import {
   ActionStatutInsert,
-  getReferentielIdFromActionId,
   StatutAvancement,
+  getReferentielIdFromActionId,
 } from '@/domain/referentiels';
 import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
 import { omit } from 'es-toolkit';
@@ -147,21 +147,23 @@ export const useEditActionStatutIsDisabled = (actionId: string) => {
   const FLAG_isSnapshotEnabled = useSnapshotFlagEnabled();
   const NEW_score = useScore(actionId);
 
-  if (FLAG_isSnapshotEnabled) {
-    return Boolean(
-      !collectivite ||
-        collectivite.isReadOnly ||
-        !NEW_score ||
-        NEW_score.desactive ||
-        (audit && (!isAuditeur || audit.valide))
-    );
-  } else {
-    return Boolean(
-      !collectivite ||
-        collectivite.isReadOnly ||
-        !DEPRECATED_score ||
-        DEPRECATED_score.desactive ||
-        (audit && (!isAuditeur || audit.valide))
-    );
-  }
+  return false;
+
+  // if (FLAG_isSnapshotEnabled) {
+  //   return Boolean(
+  //     !collectivite ||
+  //       collectivite.isReadOnly ||
+  //       !NEW_score ||
+  //       NEW_score.desactive ||
+  //       (audit && (!isAuditeur || audit.valide))
+  //   );
+  // } else {
+  //   return Boolean(
+  //     !collectivite ||
+  //       collectivite.isReadOnly ||
+  //       !DEPRECATED_score ||
+  //       DEPRECATED_score.desactive ||
+  //       (audit && (!isAuditeur || audit.valide))
+  //   );
+  // }
 };
