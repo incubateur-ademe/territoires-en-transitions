@@ -53,4 +53,6 @@ export const typeCollectiviteOptions: TOption[] = [
   { value: 'METRO', label: 'Métropole' },
   { value: 'PETR', label: 'Pôle d’équilibre territorial rural' },
   { value: 'syndicat', label: 'Syndicat' },
+  { value: 'departement', label: 'Département'},
+  { value: 'region', label: 'Région'}
 ];
