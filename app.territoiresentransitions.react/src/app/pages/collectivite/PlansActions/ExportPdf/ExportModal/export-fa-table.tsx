@@ -21,48 +21,50 @@ const ExportFicheActionTable = ({ options, setOptions }: Props) => {
   };
 
   return (
-    <Table className="border-[0.5px] border-primary-4">
-      {/* En-tête du tableau */}
-      <THead>
-        <TRow className="bg-primary-2 text-primary-9 font-bold text-sm">
-          <TCell>Sections</TCell>
-          <TCell className="min-w-80">Personnaliser la section</TCell>
-          <TCell className="min-w-52">Ajouter à l’export PDF</TCell>
-        </TRow>
-      </THead>
-
-      {/* Contenu du tableau */}
-      <TBody>
-        {sectionsList.map((section) => (
-          <TRow key={section.key}>
-            {/* Sections */}
-            <TCell className="text-primary-10 font-bold text-sm">
-              {section.title}
-            </TCell>
-
-            {/* Personnalisation */}
-            <TCell className="!px-3 !py-1">
-              {section.key === 'suivi' ? (
-                <ExportSuiviSelect {...{ options, setOptions }} />
-              ) : (
-                ''
-              )}
-            </TCell>
-
-            {/* Sélection */}
-            <TCell>
-              <Checkbox
-                className="mx-auto"
-                checked={options[section.key].isChecked}
-                onChange={(evt) =>
-                  handleOnCheck(section.key, evt.currentTarget.checked)
-                }
-              />
-            </TCell>
+    <div className="w-full max-w-full overflow-x-auto">
+      <Table className="border-[0.5px] border-primary-4">
+        {/* En-tête du tableau */}
+        <THead>
+          <TRow className="bg-primary-2 text-primary-9 font-bold text-sm">
+            <TCell className="min-w-80">Sections</TCell>
+            <TCell className="min-w-80">Personnaliser la section</TCell>
+            <TCell className="min-w-52">Ajouter à l’export PDF</TCell>
           </TRow>
-        ))}
-      </TBody>
-    </Table>
+        </THead>
+
+        {/* Contenu du tableau */}
+        <TBody>
+          {sectionsList.map((section) => (
+            <TRow key={section.key}>
+              {/* Sections */}
+              <TCell className="text-primary-10 font-bold text-sm">
+                {section.title}
+              </TCell>
+
+              {/* Personnalisation */}
+              <TCell className="!px-3 !py-1">
+                {section.key === 'suivi' ? (
+                  <ExportSuiviSelect {...{ options, setOptions }} />
+                ) : (
+                  ''
+                )}
+              </TCell>
+
+              {/* Sélection */}
+              <TCell>
+                <Checkbox
+                  className="mx-auto"
+                  checked={options[section.key].isChecked}
+                  onChange={(evt) =>
+                    handleOnCheck(section.key, evt.currentTarget.checked)
+                  }
+                />
+              </TCell>
+            </TRow>
+          ))}
+        </TBody>
+      </Table>
+    </div>
   );
 };
 
