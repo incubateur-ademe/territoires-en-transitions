@@ -2,28 +2,27 @@ import { TweenText } from '@/app/ui/shared/TweenText';
 import { toFixed } from '@/app/utils/toFixed';
 import classNames from 'classnames';
 
-export type ProgressBarStyleOptions = {
-  fullWidth?: boolean;
-};
-
 export type ProgressBarType = {
+  dataTest?: string;
   score: { label: string; value: number; color: string }[];
   total: number;
   defaultScore: { label: string; color: string };
   valueToDisplay?: string;
+  valuePosition?: 'left' | 'right';
   percent?: boolean;
-  progressBarStyleOptions?: ProgressBarStyleOptions;
+  className?: string;
 };
 
 const ProgressBar = ({
+  dataTest,
   score,
   total,
   defaultScore,
   valueToDisplay,
+  valuePosition = 'left',
   percent = false,
-  progressBarStyleOptions = { fullWidth: false },
+  className,
 }: ProgressBarType): JSX.Element => {
-  const { fullWidth } = progressBarStyleOptions;
   const barClasses = 'transition-width duration-500 ease-in-out rounded-[4px]';
 
   const percentageAgainstTotal = (x: number): number => (100 * x) / total;
@@ -44,10 +43,18 @@ const ProgressBar = ({
       : null;
 
   return (
-    <div className="flex gap-3 items-center">
+    <div
+      data-test={dataTest}
+      className={classNames('flex gap-3 items-center w-full', className)}
+    >
       {/* Légende à gauche de la barre de progression */}
       {displayedValue !== undefined && displayedValue !== null && (
-        <div className="text-sm font-bold">
+        <div
+          className={classNames('text-sm font-bold', {
+            'order-first': valuePosition === 'left',
+            'order-last': valuePosition === 'right',
+          })}
+        >
           <TweenText text={`${toFixed(displayedValue)} %`} align-right />
         </div>
       )}
@@ -55,9 +62,8 @@ const ProgressBar = ({
       <div
         style={{ backgroundColor: defaultScore.color }}
         className={classNames(
-          'relative flex pt-1 min-w-[100px] min-h-[10px]',
-          barClasses,
-          fullWidth && 'w-full'
+          'relative flex pt-1 min-w-[100px] min-h-[10px] w-full',
+          barClasses
         )}
       >
         {localData.map((d, idx) => (
