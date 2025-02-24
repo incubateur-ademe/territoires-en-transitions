@@ -95,7 +95,8 @@ Fonctionnalité: Créer un compte
     Alors le "formulaire de création de compte" est visible
 
     # étape 1 : saisie email/mdp
-    Quand je remplis le "formulaire de création de compte" avec les valeurs suivantes :
+    Quand je clique sur le bouton "Compte sans mot de passe"
+    Et que je remplis le "formulaire de création de compte" avec les valeurs suivantes :
       | Champ | Valeur        |
       | email | nono@dodo.com |
     Et que je clique sur le bouton "Valider" du "formulaire de création de compte"
@@ -145,7 +146,8 @@ Fonctionnalité: Créer un compte
     Alors le "formulaire de création de compte" est visible
 
     # étape 1 : saisie email/mdp
-    Quand je remplis le "formulaire de création de compte" avec les valeurs suivantes :
+    Quand je clique sur le bouton "Compte sans mot de passe"
+    Et que je remplis le "formulaire de création de compte" avec les valeurs suivantes :
       | Champ | Valeur        |
       | email | yolo@dodo.com |
     Et que je clique sur le bouton "Valider" du "formulaire de création de compte"
