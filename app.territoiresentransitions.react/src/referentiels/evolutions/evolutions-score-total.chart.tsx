@@ -246,6 +246,8 @@ export const ScoreTotalEvolutionsChart = ({
     toolbox: isDownloadable
       ? {
           ...TOOLBOX_BASE,
+          top: 1,
+          right: 3,
           feature: {
             saveAsImage: {
               ...TOOLBOX_BASE.feature.saveAsImage,
