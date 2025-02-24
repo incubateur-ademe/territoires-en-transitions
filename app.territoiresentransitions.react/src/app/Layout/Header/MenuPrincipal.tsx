@@ -7,8 +7,8 @@ import classNames from 'classnames';
 import Link from 'next/link';
 import { usePathname } from 'next/navigation';
 import { useEffect } from 'react';
-import { makeNavItems, makeSecondaryNavItems } from './makeNavItems';
 import { SelectCollectivite } from './SelectCollectivite';
+import { makeNavItems, makeSecondaryNavItems } from './makeNavItems';
 import {
   HeaderPropsWithModalState,
   TNavDropdown,
@@ -94,11 +94,7 @@ export const MenuPrincipal = (props: HeaderPropsWithModalState) => {
             <NavDropdown key={i} item={item as TNavDropdown} {...props} />
           )
         )}
-        {user?.collectivites ? (
-          <li>
-            <SelectCollectivite {...props} />
-          </li>
-        ) : null}
+        {user?.collectivites ? <SelectCollectivite {...props} /> : null}
       </ul>
     </nav>
   );

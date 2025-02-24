@@ -3,8 +3,8 @@ import PageContainer from '@/ui/components/layout/page-container';
 
 export default function Loading() {
   return (
-    <PageContainer>
-      <SpinnerLoader />
+    <PageContainer containerClassName="grow flex flex-col justify-center">
+      <SpinnerLoader className="m-auto" />
     </PageContainer>
   );
 }
