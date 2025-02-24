@@ -1,7 +1,7 @@
 import { PermissionOperation } from '@/backend/auth/authorizations/permission-operation.enum';
 import { PermissionService } from '@/backend/auth/authorizations/permission.service';
 import { ResourceType } from '@/backend/auth/authorizations/resource-type.enum';
-import { NiveauAcces } from '@/backend/auth/authorizations/roles/niveau-acces.enum';
+import { PermissionLevel } from '@/backend/auth/authorizations/roles/niveau-acces.enum';
 import { PreuveDto } from '@/backend/collectivites/documents/models/preuve.dto';
 import DocumentService from '@/backend/collectivites/documents/services/document.service';
 import {
@@ -153,13 +153,13 @@ export default class ScoresService {
     collectiviteId: number,
     referentielId: ReferentielId,
     tokenInfo?: InternalAuthUser,
-    niveauAccesMinimum = NiveauAcces.LECTURE
+    niveauAccesMinimum = PermissionLevel.LECTURE
   ): Promise<CollectiviteAvecType> {
     // Check read access if a date is given (historical data)
     if (tokenInfo) {
       await this.permissionService.isAllowed(
         tokenInfo,
-        niveauAccesMinimum === NiveauAcces.LECTURE
+        niveauAccesMinimum === PermissionLevel.LECTURE
           ? PermissionOperation.REFERENTIELS_LECTURE
           : PermissionOperation.REFERENTIELS_EDITION,
         ResourceType.COLLECTIVITE,
@@ -1188,13 +1188,13 @@ export default class ScoresService {
       }
     }
 
-    let niveauAccess: NiveauAcces = NiveauAcces.LECTURE;
+    let niveauAccess: PermissionLevel = PermissionLevel.LECTURE;
     if (parameters.snapshot) {
-      niveauAccess = NiveauAcces.EDITION;
+      niveauAccess = PermissionLevel.EDITION;
     }
 
     let collectiviteInfo: undefined | CollectiviteAvecType;
-    if (!noCheck && niveauAccess !== NiveauAcces.LECTURE) {
+    if (!noCheck && niveauAccess !== PermissionLevel.LECTURE) {
       // Lecture allowed for anonymous access
       collectiviteInfo = await this.checkCollectiviteAndReferentielWithAccess(
         collectiviteId,

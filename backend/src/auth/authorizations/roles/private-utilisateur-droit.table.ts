@@ -1,12 +1,11 @@
 import { createdAt, modifiedAt } from '@/domain/utils';
-import { InferSelectModel } from 'drizzle-orm';
 import { boolean, integer, pgTable, serial, uuid } from 'drizzle-orm/pg-core';
 import { createSelectSchema } from 'drizzle-zod';
 import { collectiviteTable } from '../../../collectivites/shared/models/collectivite.table';
 import { invitationTable } from '../../models/invitation.table';
-import { NiveauAcces, niveauAccessEnum } from './niveau-acces.enum';
+import { PermissionLevel, niveauAccessEnum } from './niveau-acces.enum';
 
-export const utilisateurDroitTable = pgTable('private_utilisateur_droit', {
+export const utilisateurPermissionTable = pgTable('private_utilisateur_droit', {
   id: serial('id').primaryKey(),
   userId: uuid('user_id').notNull(), // TODO: reference user table
   collectiviteId: integer('collectivite_id')
@@ -14,15 +13,16 @@ export const utilisateurDroitTable = pgTable('private_utilisateur_droit', {
     .references(() => collectiviteTable.id),
   createdAt,
   modifiedAt,
-  active: boolean('active').notNull(),
-  niveauAcces: niveauAccessEnum('niveau_acces')
+  isActive: boolean('active').notNull(),
+  niveau: niveauAccessEnum('niveau_acces')
     .notNull()
-    .default(NiveauAcces.LECTURE),
+    .default(PermissionLevel.LECTURE),
   invitationId: uuid('invitation_id').references(() => invitationTable.id),
 });
 
-export const utilisateurDroitSchema = createSelectSchema(utilisateurDroitTable);
+export const utilisateurPermissionSchema = createSelectSchema(
+  utilisateurPermissionTable
+);
 
-export type UtilisateurDroitType = InferSelectModel<
-  typeof utilisateurDroitTable
->;
+export type UtilisateurPermission =
+  typeof utilisateurPermissionTable.$inferSelect;

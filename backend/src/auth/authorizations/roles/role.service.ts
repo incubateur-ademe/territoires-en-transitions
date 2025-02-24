@@ -3,13 +3,13 @@ import { Role } from '@/backend/auth/authorizations/roles/role.enum';
 import { DatabaseService } from '@/backend/utils';
 import {
   dcpTable,
-  utilisateurDroitTable,
-  UtilisateurDroitType,
+  UtilisateurPermission,
+  utilisateurPermissionTable,
 } from '@/domain/auth';
 import { Injectable, Logger } from '@nestjs/common';
 import { and, eq, sql } from 'drizzle-orm';
 import { AuthRole, AuthUser } from '../../models/auth.models';
-import { NiveauAcces } from './niveau-acces.enum';
+import { PermissionLevel } from './niveau-acces.enum';
 import { utilisateurSupportTable } from './utilisateur-support.table';
 import { utilisateurVerifieTable } from './utilisateur-verifie.table';
 
@@ -53,19 +53,20 @@ export class RoleService {
 
       // LECTURE, EDITION, ou ADMIN
       if (resourceType === ResourceType.COLLECTIVITE && resourceId) {
-        const droits = await this.getNiveauAccesUserInCollectivite(
-          user.id,
-          resourceId
-        );
+        const droits = await this.getPermissions({
+          userId: user.id,
+          collectiviteId: resourceId,
+        });
+
         for (const droit of droits) {
-          switch (droit.niveauAcces) {
-            case NiveauAcces.LECTURE:
+          switch (droit.niveau) {
+            case PermissionLevel.LECTURE:
               if (!roles.includes(Role.LECTURE)) roles.push(Role.LECTURE);
               break;
-            case NiveauAcces.EDITION:
+            case PermissionLevel.EDITION:
               if (!roles.includes(Role.EDITION)) roles.push(Role.EDITION);
               break;
-            case NiveauAcces.ADMIN:
+            case PermissionLevel.ADMIN:
               if (!roles.includes(Role.ADMIN)) roles.push(Role.ADMIN);
               break;
           }
@@ -92,28 +93,29 @@ export class RoleService {
     return roles;
   }
 
-  async getNiveauAccesToutesCollectivites(
-    userId: string
-  ): Promise<UtilisateurDroitType[]> {
-    return this.databaseService.db
+  async getPermissions({
+    userId,
+    collectiviteId,
+  }: {
+    userId: string;
+    collectiviteId?: number;
+  }): Promise<UtilisateurPermission[]> {
+    const query = this.databaseService.db
       .select()
-      .from(utilisateurDroitTable)
-      .where(eq(utilisateurDroitTable.userId, userId));
-  }
+      .from(utilisateurPermissionTable);
 
-  private async getNiveauAccesUserInCollectivite(
-    userId: string,
-    collectiviteId: number
-  ): Promise<UtilisateurDroitType[]> {
-    return this.databaseService.db
-      .select()
-      .from(utilisateurDroitTable)
-      .where(
+    if (collectiviteId) {
+      query.where(
         and(
-          eq(utilisateurDroitTable.userId, userId),
-          eq(utilisateurDroitTable.collectiviteId, collectiviteId)
+          eq(utilisateurPermissionTable.userId, userId),
+          eq(utilisateurPermissionTable.collectiviteId, collectiviteId)
         )
       );
+    } else {
+      query.where(eq(utilisateurPermissionTable.userId, userId));
+    }
+
+    return query;
   }
 
   /**

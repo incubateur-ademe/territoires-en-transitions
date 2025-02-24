@@ -66,3 +66,12 @@ export function getAnonUser(): AuthUser<AuthRole.ANON> {
     jwtToken: { role: AuthRole.ANON },
   };
 }
+
+export function getServiceRoleUser(): AuthUser<AuthRole.SERVICE_ROLE> {
+  return {
+    id: null,
+    role: AuthRole.SERVICE_ROLE,
+    isAnonymous: true,
+    jwtToken: { role: AuthRole.SERVICE_ROLE },
+  };
+}
