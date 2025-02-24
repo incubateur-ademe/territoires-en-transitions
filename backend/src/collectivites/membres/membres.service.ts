@@ -1,5 +1,4 @@
-import { utilisateurDroitTable } from '@/backend/auth/authorizations/roles/private-utilisateur-droit.table';
-import { dcpTable } from '@/domain/auth';
+import { dcpTable, utilisateurPermissionTable } from '@/domain/auth';
 import { Injectable, Logger } from '@nestjs/common';
 import { and, eq, sql } from 'drizzle-orm';
 import { unionAll } from 'drizzle-orm/pg-core';
@@ -45,31 +44,37 @@ export class CollectiviteMembresService {
     // sous-requête pour les membres déjà rattachés
     const membres = this.databaseService.db
       .select({
-        userId: utilisateurDroitTable.userId,
+        userId: utilisateurPermissionTable.userId,
         prenom: dcpTable.prenom,
         nom: dcpTable.nom,
         email: dcpTable.email,
         telephone: dcpTable.telephone,
-        niveauAcces: utilisateurDroitTable.niveauAcces,
+        niveauAcces: utilisateurPermissionTable.niveau,
         fonction: membreTable.fonction,
         detailsFonction: membreTable.detailsFonction,
         champIntervention: membreTable.champIntervention,
         estReferent: membreTable.estReferent,
         invitationId: sql<string>`null`.as('invitation_id'),
       })
-      .from(utilisateurDroitTable)
-      .leftJoin(dcpTable, eq(dcpTable.userId, utilisateurDroitTable.userId))
+      .from(utilisateurPermissionTable)
+      .leftJoin(
+        dcpTable,
+        eq(dcpTable.userId, utilisateurPermissionTable.userId)
+      )
       .leftJoin(
         membreTable,
         and(
-          eq(membreTable.userId, utilisateurDroitTable.userId),
-          eq(membreTable.collectiviteId, utilisateurDroitTable.collectiviteId)
+          eq(membreTable.userId, utilisateurPermissionTable.userId),
+          eq(
+            membreTable.collectiviteId,
+            utilisateurPermissionTable.collectiviteId
+          )
         )
       )
       .where(
         and(
-          eq(utilisateurDroitTable.collectiviteId, collectiviteId),
-          eq(utilisateurDroitTable.active, true),
+          eq(utilisateurPermissionTable.collectiviteId, collectiviteId),
+          eq(utilisateurPermissionTable.isActive, true),
           fonction !== undefined
             ? eq(membreTable.fonction, fonction)
             : undefined,

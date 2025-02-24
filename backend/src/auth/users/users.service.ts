@@ -21,7 +21,7 @@ export class UsersService {
     email: z.string(),
   });
 
-  async getUserWithAccess(
+  async getUserWithPermissions(
     { email }: z.infer<typeof this.getInputSchema>,
     tokenInfo: AuthUser
   ) {
@@ -46,8 +46,8 @@ export class UsersService {
         nom: dcpTable.nom,
         prenom: dcpTable.prenom,
         telephone: dcpTable.telephone,
-        verifie: utilisateurVerifieTable.verifie,
-        support: utilisateurSupportTable.support,
+        isVerified: utilisateurVerifieTable.verifie,
+        isSupport: utilisateurSupportTable.support,
       })
       .from(authUsersTable)
       .innerJoin(dcpTable, eq(dcpTable.userId, authUsersTable.id))
@@ -71,16 +71,16 @@ export class UsersService {
     const userInfo: UserInfoResponseType | null = await this.getUserInfoByEmail(
       email
     );
+
     if (!userInfo) {
       return null;
     }
 
-    const droits = (
-      await this.roleService.getNiveauAccesToutesCollectivites(userInfo.userId)
-    ).map((access) =>
-      pick(access, ['collectiviteId', 'active', 'niveauAcces'])
-    );
-    userInfo.droits = droits;
+    const permissions = (
+      await this.roleService.getPermissions({ userId: userInfo.userId })
+    ).map((access) => pick(access, ['collectiviteId', 'isActive', 'niveau']));
+
+    userInfo.permissions = permissions;
 
     return userInfo;
   }

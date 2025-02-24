@@ -13,7 +13,7 @@ export class UsersRouter {
     get: this.trpc.authedProcedure
       .input(this.service.getInputSchema)
       .query(({ input, ctx }) =>
-        this.service.getUserWithAccess(input, ctx.user)
+        this.service.getUserWithPermissions(input, ctx.user)
       ),
   });
 }

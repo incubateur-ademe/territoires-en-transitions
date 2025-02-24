@@ -1,6 +1,6 @@
 import { personneTagTable } from '@/backend/collectivites/tags/personne-tag.table';
 import { DatabaseService } from '@/backend/utils';
-import { dcpTable, utilisateurDroitTable } from '@/domain/auth';
+import { dcpTable, utilisateurPermissionTable } from '@/domain/auth';
 import { Injectable } from '@nestjs/common';
 import { and, eq, sql } from 'drizzle-orm';
 import { union } from 'drizzle-orm/pg-core';
@@ -29,7 +29,7 @@ export class PersonnesService {
         collectiviteId: personneTagTable.collectiviteId,
         nom: personneTagTable.nom,
         tagId: personneTagTable.id,
-        userId: sql`null::uuid`.mapWith(utilisateurDroitTable.userId),
+        userId: sql`null::uuid`.mapWith(utilisateurPermissionTable.userId),
         ...(request.filter.activeOnly ? {} : { active: sql<boolean>`null` }),
       })
       .from(personneTagTable)
@@ -37,26 +37,35 @@ export class PersonnesService {
 
     const selectUsers = this.db
       .select({
-        collectiviteId: utilisateurDroitTable.collectiviteId,
+        collectiviteId: utilisateurPermissionTable.collectiviteId,
         nom: sql`(${dcpTable.prenom} || ' ' || ${dcpTable.nom})::text`.mapWith(
           personneTagTable.nom
         ),
         tagId: sql`null::integer`.mapWith(personneTagTable.id),
-        userId: utilisateurDroitTable.userId,
+        userId: utilisateurPermissionTable.userId,
         ...(request.filter.activeOnly
           ? {}
-          : { active: utilisateurDroitTable.active }),
+          : { active: utilisateurPermissionTable.isActive }),
       })
-      .from(utilisateurDroitTable)
+      .from(utilisateurPermissionTable)
       // Inner join pour ne pas inclure les utilisateurs sans DCP
-      .innerJoin(dcpTable, eq(dcpTable.userId, utilisateurDroitTable.userId))
+      .innerJoin(
+        dcpTable,
+        eq(dcpTable.userId, utilisateurPermissionTable.userId)
+      )
       .where(
         request.filter.activeOnly
           ? and(
-              eq(utilisateurDroitTable.collectiviteId, request.collectiviteId),
-              eq(utilisateurDroitTable.active, true)
+              eq(
+                utilisateurPermissionTable.collectiviteId,
+                request.collectiviteId
+              ),
+              eq(utilisateurPermissionTable.isActive, true)
             )
-          : eq(utilisateurDroitTable.collectiviteId, request.collectiviteId)
+          : eq(
+              utilisateurPermissionTable.collectiviteId,
+              request.collectiviteId
+            )
       );
 
     const result = await union(selectPersonneTags, selectUsers);
