@@ -21,7 +21,7 @@ export const ListElement = ({
       {...props}
     >
       <Text style={tw('ml-1 mr-2')}>•</Text>
-      <Text>{children}</Text>
+      <Text style={tw('w-[98%]')}>{children}</Text>
     </View>
   );
 };
