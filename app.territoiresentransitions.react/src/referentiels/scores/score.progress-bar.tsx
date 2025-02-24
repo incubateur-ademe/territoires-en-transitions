@@ -4,22 +4,20 @@ import { ActionDefinitionSummary } from '@/app/referentiels/ActionDefinitionSumm
 import { useActionScore } from '@/app/referentiels/DEPRECATED_score-hooks';
 import ProgressBarWithTooltip from '@/app/referentiels/scores/progress-bar-with-tooltip';
 import { useScore, useSnapshotFlagEnabled } from '../use-snapshot';
-import { ProgressBarStyleOptions } from './progress-bar';
+
+type ScoreProgressBarProps = {
+  actionDefinition: ActionDefinitionSummary;
+  className?: string;
+  displayDoneValue?: boolean;
+  valuePosition?: 'left' | 'right';
+};
 
 export const ScoreProgressBar = ({
   actionDefinition,
   className,
-  progressBarStyleOptions,
-  // TODO(temporary): This prop is a temporary patch to only display percentage
-  // in ActionHeader and SubActionHeader components. Should be revisited during
-  // the score display refactoring.
-  TEMP_displayValue = false,
-}: {
-  actionDefinition: ActionDefinitionSummary;
-  className?: string;
-  progressBarStyleOptions?: ProgressBarStyleOptions;
-  TEMP_displayValue?: boolean; // TEMP: see comment above
-}) => {
+  displayDoneValue = false,
+  valuePosition,
+}: ScoreProgressBarProps) => {
   const isSnapshotEnabled = useSnapshotFlagEnabled();
   const score = useActionScore(actionDefinition.id, !isSnapshotEnabled);
   const isReglementaire = actionDefinition.identifiant.split('.').includes('0');
@@ -28,9 +26,9 @@ export const ScoreProgressBar = ({
     return (
       <ActionProgressBar_Snapshot
         actionDefinition={actionDefinition}
+        displayDoneValue={displayDoneValue}
+        valuePosition={valuePosition}
         className={className}
-        progressBarStyleOptions={progressBarStyleOptions}
-        TEMP_displayValue={TEMP_displayValue}
       />
     );
   }
@@ -67,43 +65,42 @@ export const ScoreProgressBar = ({
   ];
 
   return (
-    <div data-test={`score-${score.action_id}`} className={className}>
-      <ProgressBarWithTooltip
-        score={progressScore}
-        total={
-          isReglementaire
-            ? score.total_taches_count - score.pas_concerne_taches_avancement
-            : score.point_potentiel
-        }
-        defaultScore={{
-          label: avancementToLabel.non_renseigne,
-          color: actionAvancementColors.non_renseigne,
-        }}
-        percent={actionDefinition.type === 'tache'}
-        progressBarStyleOptions={progressBarStyleOptions}
-        valueToDisplay={TEMP_displayValue ? avancementToLabel.fait : undefined}
-      />
-    </div>
+    <ProgressBarWithTooltip
+      dataTest={`score-${score.action_id}`}
+      score={progressScore}
+      total={
+        isReglementaire
+          ? score.total_taches_count - score.pas_concerne_taches_avancement
+          : score.point_potentiel
+      }
+      defaultScore={{
+        label: avancementToLabel.non_renseigne,
+        color: actionAvancementColors.non_renseigne,
+      }}
+      percent={actionDefinition.type === 'tache'}
+      className={className}
+      valueToDisplay={displayDoneValue ? avancementToLabel.fait : undefined}
+      valuePosition={valuePosition}
+    />
   );
 };
 
 export default ScoreProgressBar;
 
+type ActionProgressBarProps = {
+  actionDefinition: ActionDefinitionSummary;
+  className?: string;
+  displayDoneValue?: boolean;
+  valuePosition?: 'left' | 'right';
+};
+
 // TODO-FLAG promot this component to replace the old one when snapshots will be validated in production
 function ActionProgressBar_Snapshot({
   actionDefinition,
-  progressBarStyleOptions,
   className,
-  TEMP_displayValue = false,
-}: {
-  actionDefinition: ActionDefinitionSummary;
-  progressBarStyleOptions?: ProgressBarStyleOptions;
-  className?: string;
-  // TODO(temporary): This prop is a temporary patch to only display percentage
-  // in ActionHeader and SubActionHeader components. Should be revisited during
-  // the score display refactoring.
-  TEMP_displayValue?: boolean; // TEMP: see comment above
-}) {
+  displayDoneValue = false,
+  valuePosition,
+}: ActionProgressBarProps) {
   const score = useScore(actionDefinition.id);
   const isReglementaire = actionDefinition.identifiant.split('.').includes('0');
 
@@ -142,22 +139,22 @@ function ActionProgressBar_Snapshot({
   ];
 
   return (
-    <div data-test={`score-${score.actionId}`} className={className}>
-      <ProgressBarWithTooltip
-        score={progressScore}
-        total={
-          isReglementaire
-            ? score.totalTachesCount - (score.pasConcerneTachesAvancement ?? 0)
-            : score.pointPotentiel ?? 0
-        }
-        defaultScore={{
-          label: avancementToLabel.non_renseigne,
-          color: actionAvancementColors.non_renseigne,
-        }}
-        valueToDisplay={TEMP_displayValue ? avancementToLabel.fait : undefined}
-        percent={actionDefinition.type === 'tache'}
-        progressBarStyleOptions={progressBarStyleOptions}
-      />
-    </div>
+    <ProgressBarWithTooltip
+      dataTest={`score-${score.actionId}`}
+      score={progressScore}
+      total={
+        isReglementaire
+          ? score.totalTachesCount - (score.pasConcerneTachesAvancement ?? 0)
+          : score.pointPotentiel ?? 0
+      }
+      defaultScore={{
+        label: avancementToLabel.non_renseigne,
+        color: actionAvancementColors.non_renseigne,
+      }}
+      valueToDisplay={displayDoneValue ? avancementToLabel.fait : undefined}
+      valuePosition={valuePosition}
+      percent={actionDefinition.type === 'tache'}
+      className={className}
+    />
   );
 }

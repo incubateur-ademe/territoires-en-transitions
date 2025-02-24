@@ -12,6 +12,7 @@ type ActionCommentaireProps = {
   action: ActionDefinitionSummary;
   className?: string;
   autoFocus?: boolean;
+  placeholder?: string;
   onSave?: () => void;
 };
 
@@ -19,6 +20,7 @@ export const ActionCommentaire = ({
   action,
   className,
   autoFocus,
+  placeholder,
   onSave,
 }: ActionCommentaireProps) => {
   const { actionCommentaire, isLoading } = useActionCommentaire(action.id);
@@ -42,6 +44,7 @@ export const ActionCommentaire = ({
             saveActionCommentaire(payload);
             onSave && onSave();
           }}
+          placeholder={placeholder}
         />
       )}
     </div>
@@ -56,6 +59,7 @@ export type ActionCommentaireFieldProps = {
   subtitle?: string;
   autoFocus?: boolean;
   disabled?: boolean;
+  placeholder?: string;
   onSave: (payload: {
     action_id: string;
     collectivite_id: number;
@@ -74,6 +78,7 @@ export const ActionCommentaireField = ({
   subtitle,
   autoFocus = false,
   disabled = false,
+  placeholder,
   onSave,
   onChange,
 }: ActionCommentaireFieldProps) => {
@@ -84,8 +89,8 @@ export const ActionCommentaireField = ({
 
   return collectivite ? (
     <>
-      {!!title && <p className="text-neutral-900 !mb-2">{title}</p>}
-      {!!subtitle && <p className="text-[#666] !mb-2 text-xs">{subtitle}</p>}
+      {!!title && <p className="text-grey-10 !mb-2">{title}</p>}
+      {!!subtitle && <p className="text-grey-8 !mb-2 text-xs">{subtitle}</p>}
       <AutoResizedTextarea
         dataTest={dataTest}
         className={classNames({ 'min-h-20': action.type !== 'tache' })}
@@ -104,6 +109,7 @@ export const ActionCommentaireField = ({
         }}
         disabled={collectivite.isReadOnly || disabled}
         autoFocus={autoFocus}
+        placeholder={placeholder}
       />
     </>
   ) : null;

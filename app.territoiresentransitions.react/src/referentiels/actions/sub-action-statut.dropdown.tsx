@@ -1,28 +1,24 @@
-import { avancementToLabel } from '@/app/app/labels';
-import { actionAvancementColors } from '@/app/app/theme';
 import { useCurrentCollectivite } from '@/app/core-logic/hooks/useCurrentCollectivite';
 import { ActionDefinitionSummary } from '@/app/referentiels/ActionDefinitionSummaryReadEndpoint';
+import { useScoreRealise } from '@/app/referentiels/actions/DEPRECATED_useScoreRealise';
 import { SelectActionStatut } from '@/app/referentiels/actions/action-statut/action-statut.select';
 import {
   useActionStatut,
   useEditActionStatutIsDisabled,
   useSaveActionStatut,
 } from '@/app/referentiels/actions/action-statut/use-action-statut';
-import { useScoreRealise } from '@/app/referentiels/actions/DEPRECATED_useScoreRealise';
-import ProgressBarWithTooltip from '@/app/referentiels/scores/progress-bar-with-tooltip';
 import {
   ActionStatutInsert,
+  StatutAvancementIncludingNonConcerne,
   getStatutAvancement,
   statutAvancementEnumSchema,
-  StatutAvancementIncludingNonConcerne,
   statutAvancementIncludingNonConcerneEnumSchema,
 } from '@/domain/referentiels';
 import { Button, Tooltip } from '@/ui';
 import classNames from 'classnames';
 import { useEffect, useState } from 'react';
-import ScoreProgressBar from '../scores/score.progress-bar';
 import { useScore, useSnapshotFlagEnabled } from '../use-snapshot';
-import { getStatusFromIndex, statutParAvancement } from '../utils';
+import { statutParAvancement } from '../utils';
 import ScoreAutoModal from './sub-action.detail/ScoreAutoModal';
 import ScoreDetailleModal from './sub-action.detail/ScoreDetailleModal';
 
@@ -36,21 +32,38 @@ export type StatusToSavePayload = {
 export const SubActionStatutDropdown = ({
   actionDefinition,
   statusWarningMessage = false,
+  openScoreDetailleState,
   onSaveStatus,
 }: {
   actionDefinition: ActionDefinitionSummary;
   statusWarningMessage?: boolean;
+  /** Permet le contrôle externe de la modale de score détaillé */
+  openScoreDetailleState?: {
+    openScoreDetaille: boolean;
+    setOpenScoreDetaille: (value: boolean) => void;
+  };
   onSaveStatus?: (payload: StatusToSavePayload) => void;
 }) => {
   const FLAG_isSnapshotEnabled = useSnapshotFlagEnabled();
-  const DEPRECATED_actionScores = useScoreRealise(actionDefinition, !FLAG_isSnapshotEnabled);
+  const DEPRECATED_actionScores = useScoreRealise(
+    actionDefinition,
+    !FLAG_isSnapshotEnabled
+  );
   const NEW_score = useScore(actionDefinition.id);
 
   const collectivite = useCurrentCollectivite();
 
   const [openScoreAuto, setOpenScoreAuto] = useState(false);
-  const [openScoreDetaille, setOpenScoreDetaille] = useState(false);
+  const [openScoreDetaille, setOpenScoreDetaille] = useState(
+    openScoreDetailleState?.openScoreDetaille ?? false
+  );
   const [openScorePerso, setOpenScorePerso] = useState(false);
+
+  useEffect(
+    () =>
+      setOpenScoreDetaille(openScoreDetailleState?.openScoreDetaille ?? false),
+    [openScoreDetailleState?.openScoreDetaille]
+  );
 
   const args = {
     actionId: actionDefinition.id,
@@ -126,6 +139,7 @@ export const SubActionStatutDropdown = ({
         setOpenScoreAuto(true);
       } else {
         setOpenScoreDetaille(true);
+        openScoreDetailleState?.setOpenScoreDetaille(true);
       }
     } else {
       // Mise à jour dans les cas de statuts autres que détaillé
@@ -207,6 +221,7 @@ export const SubActionStatutDropdown = ({
   // de score perso
   const handleSaveScoreDetaille = (values: number[]) => {
     setOpenScoreDetaille(false);
+    openScoreDetailleState?.setOpenScoreDetaille(false);
 
     // Si la jauge est à 100% dans un des statuts, le statut
     // est mis à jour automatiquement
@@ -214,10 +229,10 @@ export const SubActionStatutDropdown = ({
       values[0] === 1
         ? 'fait'
         : values[1] === 1
-          ? 'programme'
-          : values[2] === 1
-            ? 'pas_fait'
-            : 'detaille';
+        ? 'programme'
+        : values[2] === 1
+        ? 'pas_fait'
+        : 'detaille';
 
     setLocalAvancement(avancement);
     setLocalAvancementDetaille(values);
@@ -248,7 +263,7 @@ export const SubActionStatutDropdown = ({
 
   return (
     <div
-      className="flex flex-col justify-between items-end gap-2 h-full w-fit ml-auto"
+      className="flex flex-col justify-between items-end gap-2 h-full w-fit shrink-0 ml-auto"
       onClick={(evt) => evt.stopPropagation()}
     >
       {/* Dropdown avec suppression de l'option "non renseigné" sur les sous-actions
@@ -268,8 +283,8 @@ export const SubActionStatutDropdown = ({
           <SelectActionStatut
             items={
               actionDefinition.type === 'sous-action' &&
-                localAvancement !== 'non_renseigne' &&
-                filled
+              localAvancement !== 'non_renseigne' &&
+              filled
                 ? statutAvancementEnumSchema.options
                 : statutAvancementIncludingNonConcerneEnumSchema.options
             }
@@ -281,55 +296,34 @@ export const SubActionStatutDropdown = ({
         </div>
       </Tooltip>
       {/* Cas particulier des statuts "détaillé" */}
-      {localAvancement === 'detaille' && !desactive && (
-        <div className="flex flex-col gap-3 items-end w-full pr-1">
-          {/* Affichage de la jauge de score sur les tâches */}
-          {actionDefinition.type === 'tache' &&
-            (onSaveStatus === undefined ? (
-              <ScoreProgressBar actionDefinition={actionDefinition} />
-            ) : (
-              <ProgressBarWithTooltip
-                score={
-                  localAvancementDetaille?.map((a, idx) => ({
-                    value: a,
-                    label: avancementToLabel[getStatusFromIndex(idx)],
-                    color: actionAvancementColors[getStatusFromIndex(idx)],
-                  })) ?? []
-                }
-                total={
-                  (FLAG_isSnapshotEnabled
-                    ? NEW_score?.pointReferentiel
-                    : DEPRECATED_actionScores[actionDefinition.id]
-                      ?.points_max_referentiel) ?? 0
-                }
-                defaultScore={{
-                  label: avancementToLabel.non_renseigne,
-                  color: actionAvancementColors.non_renseigne,
+      {localAvancement === 'detaille' &&
+        !desactive &&
+        actionDefinition.type !== 'tache' && (
+          <div className="flex flex-col gap-3 items-end w-full pr-1">
+            {/* Bouton d'ouverture de la modale pour détailler le score */}
+            {!disabled && (
+              <Button
+                variant="underlined"
+                size="sm"
+                onClick={() => {
+                  if (
+                    actionDefinition.type === 'sous-action' &&
+                    actionDefinition.children.length > 0
+                  ) {
+                    avancement === 'detaille'
+                      ? setOpenScorePerso(true)
+                      : setOpenScoreAuto(true);
+                  } else {
+                    setOpenScoreDetaille(true);
+                    openScoreDetailleState?.setOpenScoreDetaille(true);
+                  }
                 }}
-                valueToDisplay={avancementToLabel.fait}
-                percent
-              />
-            ))}
-
-          {/* Bouton d'ouverture de la modale pour détailler le score */}
-          {!disabled && (
-            <Button
-              variant="underlined"
-              size="sm"
-              onClick={() => {
-                actionDefinition.type === 'sous-action' &&
-                  actionDefinition.children.length > 0
-                  ? avancement === 'detaille'
-                    ? setOpenScorePerso(true)
-                    : setOpenScoreAuto(true)
-                  : setOpenScoreDetaille(true);
-              }}
-            >
-              Détailler l&apos;avancement
-            </Button>
-          )}
-        </div>
-      )}
+              >
+                Détailler l&apos;avancement
+              </Button>
+            )}
+          </div>
+        )}
       {/* Modale de score auto / par tâche (pour les sous-actions) */}
       {openScoreAuto && (
         <ScoreAutoModal
@@ -349,8 +343,10 @@ export const SubActionStatutDropdown = ({
           saveAtValidation={onSaveStatus === undefined}
           isScorePerso={openScorePerso}
           setExternalOpen={(value) => {
-            if (openScoreDetaille) setOpenScoreDetaille(value);
-            else setOpenScorePerso(value);
+            if (openScoreDetaille) {
+              setOpenScoreDetaille(value);
+              openScoreDetailleState?.setOpenScoreDetaille(value as boolean);
+            } else setOpenScorePerso(value);
           }}
           onSaveScore={handleSaveScoreDetaille}
           onOpenScoreAuto={() => setOpenScoreAuto(true)}

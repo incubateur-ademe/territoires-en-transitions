@@ -7,8 +7,7 @@ import {
 } from '@/app/referentiels/actions/sub-action/use-justification';
 import { useTasksScoreRepartition } from '@/app/referentiels/actions/use-task-scores';
 import ProgressBarWithTooltip from '@/app/referentiels/scores/progress-bar-with-tooltip';
-import Modal from '@/app/ui/shared/floating-ui/Modal';
-import { Button, Icon } from '@/ui';
+import { Button, Divider, Icon, Modal } from '@/ui';
 import { Dispatch, SetStateAction, useEffect, useState } from 'react';
 import {
   AVANCEMENT_DETAILLE_PAR_STATUT,
@@ -72,51 +71,40 @@ const ScoreDetailleModal = ({
   return (
     <Modal
       size="lg"
-      externalOpen={externalOpen}
-      setExternalOpen={setExternalOpen}
+      title={isScorePerso ? 'Personnaliser le score' : "Détailler l'avancement"}
+      subTitle={`${actionDefinition.id.split('_')[1]} ${actionDefinition.nom}`}
+      openState={{ isOpen: externalOpen, setIsOpen: setExternalOpen }}
       render={() => {
         return (
           <>
-            {/* Titre de la modale */}
-            <h4>
-              {isScorePerso
-                ? 'Personnaliser le score'
-                : `Détailler l'avancement de cette
-              ${
-                actionDefinition.type === 'tache'
-                  ? 'tâche'
-                  : actionDefinition.type
-              }`}{' '}
-              : {actionDefinition.id.split('_')[1]}
-            </h4>
-
             {/* Score automatique */}
             {isScorePerso &&
             scores &&
             scores.tasksScores.filter((task) => task.concerne).length &&
             scores.avancementDetaille &&
             scores.scoreMax ? (
-              <div className="flex items-start mt-2 mb-6">
-                <p className="mb-0 text-sm mr-4">Score automatique</p>
-                <ProgressBarWithTooltip
-                  score={
-                    scores.avancementDetaille?.map((a, idx) => ({
-                      value: a,
-                      label: avancementToLabel[getStatusFromIndex(idx)],
-                      color: actionAvancementColors[getStatusFromIndex(idx)],
-                    })) ?? []
-                  }
-                  total={scores.scoreMax ?? 0}
-                  defaultScore={{
-                    label: avancementToLabel.non_renseigne,
-                    color: actionAvancementColors.non_renseigne,
-                  }}
-                  valueToDisplay={avancementToLabel.fait}
-                />
-              </div>
+              <>
+                <div className="flex items-start mt-2 mb-6">
+                  <p className="mb-0 text-sm mr-4">Score automatique</p>
+                  <ProgressBarWithTooltip
+                    score={
+                      scores.avancementDetaille?.map((a, idx) => ({
+                        value: a,
+                        label: avancementToLabel[getStatusFromIndex(idx)],
+                        color: actionAvancementColors[getStatusFromIndex(idx)],
+                      })) ?? []
+                    }
+                    total={scores.scoreMax ?? 0}
+                    defaultScore={{
+                      label: avancementToLabel.non_renseigne,
+                      color: actionAvancementColors.non_renseigne,
+                    }}
+                    valueToDisplay={avancementToLabel.fait}
+                  />
+                </div>
+                <Divider />
+              </>
             ) : null}
-
-            <hr className="p-1" />
 
             <div className="w-full flex flex-col">
               {/* Slider du statut avancé*/}
