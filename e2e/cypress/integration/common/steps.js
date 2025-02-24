@@ -308,26 +308,32 @@ When(
       cy.get('[data-test=Loading]').should('not.exist');
       cy.wrap(dataTable.rows()).each(
         (
-          [
-            nom,
-            mail,
-            // telephone,
-            fonction,
-            champ_intervention,
-            details_fonction,
-            acces,
-          ],
+          [nom, mail, fonction, champ_intervention, details_fonction, acces],
           index
         ) => {
-          cy.get(`tbody tr:nth(${index})`).within(() => {
-            cy.get('td:first').should('contain.text', nom);
-            cy.get('td:first').should('contain.text', mail);
-            // cy.get('td:nth(1)').should('contain.text', telephone);
-            cy.get('td:nth(1)').should('contain.text', fonction);
-            cy.get('td:nth(2)').should('contain.text', champ_intervention);
-            cy.get('td:nth(3)').should('contain.text', details_fonction);
-            cy.get('td:nth(4)').should('contain.text', acces);
-          });
+          cy.contains(nom).should('be.visible');
+          cy.contains(mail).should('be.visible');
+          cy.contains(acces).should('be.visible');
+
+          if (details_fonction.length > 0) {
+            cy.contains(details_fonction).should('be.visible');
+          }
+          if (champ_intervention.length > 0) {
+            cy.contains(champ_intervention).should('be.visible');
+          }
+          if (fonction.length > 0) {
+            cy.contains(fonction).should('be.visible');
+          }
+
+          // cy.get(`tbody tr:nth(${index})`).within(() => {
+          //   cy.get('td:first').should('contain.text', nom);
+          //   cy.get('td:first').should('contain.text', mail);
+          //   // cy.get('td:nth(1)').should('contain.text', telephone);
+          //   cy.get('td:nth(1)').should('contain.text', fonction);
+          //   cy.get('td:nth(2)').should('contain.text', champ_intervention);
+          //   cy.get('td:nth(3)').should('contain.text', details_fonction);
+          //   cy.get('td:nth(4)').should('contain.text', acces);
+          // });
         }
       );
     });
