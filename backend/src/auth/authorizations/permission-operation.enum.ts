@@ -2,6 +2,7 @@ export enum PermissionOperation {
   // Collectivités
   COLLECTIVITES_VISITE = 'collectivites.visite',
   COLLECTIVITES_LECTURE = 'collectivites.lecture',
+  COLLECTIVITES_EDITION = 'collectivites.edition',
   // TABLEAU DE BORD
   COLLECTIVITES_TABLEAU_DE_BORD_EDITION = 'collectivites.tableau-de-bord.edition',
   // Référentiels

@@ -1,9 +1,9 @@
 import { PermissionService } from '@/backend/auth/authorizations/permission.service';
 import { Injectable, Logger } from '@nestjs/common';
-import { desc, eq, sql } from 'drizzle-orm';
+import { desc, sql } from 'drizzle-orm';
 import z from 'zod';
 import { DatabaseService } from '../../utils/database/database.service';
-import { collectiviteTable, communeTable, epciTable } from '../index-domain';
+import { collectiviteTable } from '../index-domain';
 
 export const inputSchema = z
   .object({
@@ -31,30 +31,27 @@ export default class ListCollectivitesService {
   async listCollectivites(input: z.infer<typeof inputSchema>) {
     const db = this.db.db;
 
-    const collectiviteNom =
-      sql`COALESCE(${epciTable.nom}, ${communeTable.nom})`.mapWith(
-        epciTable.nom
-      );
-
     const request = db
       .select({
         id: collectiviteTable.id,
-        nom: collectiviteNom,
+        nom: collectiviteTable.nom,
       })
-      .from(collectiviteTable)
-      .leftJoin(epciTable, eq(epciTable.collectiviteId, collectiviteTable.id))
-      .leftJoin(
-        communeTable,
-        eq(communeTable.collectiviteId, collectiviteTable.id)
-      );
+      .from(collectiviteTable);
 
     if (input?.text) {
       request.where(
-        sql`unaccent(${collectiviteNom}) % unaccent(${input.text})`
+        sql`unaccent
+          (${collectiviteTable.nom})
+          % unaccent(
+          ${input.text}
+          )`
       );
 
       // Le plus pertinent en premier
-      request.orderBy(desc(sql`similarity(${collectiviteNom}, ${input.text})`));
+      request.orderBy(
+        desc(sql`similarity
+        (${collectiviteTable.nom}, ${input.text})`)
+      );
     }
 
     if (input?.limit) {

@@ -9,7 +9,6 @@ import * as _ from 'lodash';
 import slugify from 'slugify';
 import { AuthUser } from '../../auth/models/auth.models';
 import GroupementsService from '../../collectivites/services/groupements.service';
-import { EpciType } from '../../collectivites/shared/models/epci.table';
 import ConfigurationService from '../../utils/config/configuration.service';
 import SheetService from '../../utils/google-sheets/sheet.service';
 import ListDefinitionsService from '../definitions/list-definitions.service';
@@ -26,6 +25,7 @@ import { CalculTrajectoireResult } from './calcul-trajectoire.response';
 import { DonneesCalculTrajectoireARemplirType } from './donnees-calcul-trajectoire-a-remplir.dto';
 import TrajectoiresDataService from './trajectoires-data.service';
 import { VerificationTrajectoireStatus } from './verification-trajectoire.response';
+import { CollectiviteResume } from '@/backend/collectivites/shared/models/collectivite.table';
 
 @Injectable()
 export default class TrajectoiresSpreadsheetService {
@@ -50,7 +50,7 @@ export default class TrajectoiresSpreadsheetService {
     return this.configService.get('TRAJECTOIRE_SNBC_RESULT_FOLDER_ID');
   }
 
-  getNomFichierTrajectoire(epci: EpciType) {
+  getNomFichierTrajectoire(epci: CollectiviteResume) {
     return slugify(`Trajectoire SNBC - ${epci.siren} - ${epci.nom}`, {
       replacement: ' ',
       remove: /[*+~.()'"!:@]/g,
@@ -60,7 +60,7 @@ export default class TrajectoiresSpreadsheetService {
   async calculeTrajectoireSnbc(
     request: CalculTrajectoireRequestType,
     tokenInfo: AuthUser,
-    epci?: EpciType
+    epci?: CollectiviteResume
   ): Promise<CalculTrajectoireResult> {
     let mode: CalculTrajectoireResultatMode =
       CalculTrajectoireResultatMode.NOUVEAU_SPREADSHEET;

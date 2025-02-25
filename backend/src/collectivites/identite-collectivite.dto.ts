@@ -1,8 +1,6 @@
 import { pgEnum } from 'drizzle-orm/pg-core';
 import { z } from 'zod';
 import { collectiviteSchema } from './shared/models/collectivite.table';
-import { communeSchema } from './shared/models/commune.table';
-import { epciSchema } from './shared/models/epci.table';
 
 export enum CollectiviteTypeEnum {
   EPCI = 'EPCI',
@@ -22,6 +20,7 @@ export enum CollectivitePopulationTypeEnum {
   PLUS_DE_20000 = 'plus_de_20000',
   PLUS_DE_100000 = 'plus_de_100000',
 }
+
 export const typePopulationEnum = pgEnum('type_population', [
   CollectivitePopulationTypeEnum.MOINS_DE_5000,
   CollectivitePopulationTypeEnum.MOINS_DE_10000,
@@ -36,6 +35,7 @@ export enum CollectiviteLocalisationTypeEnum {
   DOM = 'DOM',
   METROPOLE = 'Metropole',
 }
+
 export const typeLocalisationEnum = pgEnum('type_localisation', [
   CollectiviteLocalisationTypeEnum.DOM,
   CollectiviteLocalisationTypeEnum.METROPOLE,
@@ -51,12 +51,8 @@ export const identiteCollectiviteSchema = z.object({
 
 export type IdentiteCollectivite = z.infer<typeof identiteCollectiviteSchema>;
 
-export const collectiviteAvecTypeSchema = collectiviteSchema
-  .merge(communeSchema.partial())
-  .merge(epciSchema.partial())
-  .merge(identiteCollectiviteSchema)
-  .omit({
-    collectiviteId: true,
-  });
+export const collectiviteAvecTypeSchema = collectiviteSchema.merge(
+  identiteCollectiviteSchema
+);
 
 export type CollectiviteAvecType = z.infer<typeof collectiviteAvecTypeSchema>;
