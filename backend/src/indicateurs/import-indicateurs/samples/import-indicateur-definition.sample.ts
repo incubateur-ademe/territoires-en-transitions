@@ -21,3 +21,24 @@ export const sampleImportIndicateurDefinition: ImportIndicateurDefinitionType =
     borneMax: null,
     version: '1.0.0',
   };
+
+export const sampleImportIndicateurDefinition2: ImportIndicateurDefinitionType =
+  {
+    identifiantReferentiel: 'cae_1.b',
+    description:
+      "<p>Indicateur &quot;Emissions de gaz \u00e0 effet de serre territoriale&quot; divis\u00e9 par la population totale du territoire pour l'ann\u00e9e concern\u00e9e (source: INSEE).</p>\n",
+    titre: 'Emissions de gaz \u00e0 effet de serre par habitant',
+    parents: ['cae_1.a'],
+    participationScore: false,
+    categories: ['cae', 'crte'],
+    sansValeurUtilisateur: false,
+    thematiques: [],
+    titreCourt: null,
+    titreLong:
+      'Emissions de gaz \u00e0 effet de serre du territoire par habitant',
+    unite: 'teq CO2/hab',
+    valeurCalcule: null,
+    borneMin: null,
+    borneMax: null,
+    version: '1.0.0',
+  };

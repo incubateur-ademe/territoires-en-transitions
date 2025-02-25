@@ -23,13 +23,16 @@ import { indicateurDefinitionTable } from '@/domain/indicateurs';
 import { actionRelationTable } from '@/domain/referentiels';
 import { CreateThematiqueType, thematiqueTable } from '@/domain/shared';
 import { HttpException, HttpStatus, Injectable, Logger } from '@nestjs/common';
+import { DepGraph } from 'dependency-graph';
 import { inArray } from 'drizzle-orm';
 import { omit } from 'lodash';
 import BaseSpreadsheetImporterService from '../../shared/services/base-spreadsheet-importer.service';
 import ConfigurationService from '../../utils/config/configuration.service';
 import { buildConflictUpdateColumns } from '../../utils/database/conflict.utils';
 import SheetService from '../../utils/google-sheets/sheet.service';
+import { getErrorMessage } from '../../utils/nest/errors.utils';
 import ListDefinitionsService from '../definitions/list-definitions.service';
+import IndicateurValeurExpressionParserService from '../valeurs/indicateur-valeur-expression-parser.service';
 import {
   importIndicateurDefinitionSchema,
   ImportIndicateurDefinitionType,
@@ -66,6 +69,7 @@ export default class ImportIndicateurDefinitionService extends BaseSpreadsheetIm
   constructor(
     private readonly configurationService: ConfigurationService,
     private readonly indicateurDefinitionService: ListDefinitionsService,
+    private readonly indicateurValeurExpressionParserService: IndicateurValeurExpressionParserService,
     private readonly databaseService: DatabaseService,
     sheetService: SheetService
   ) {
@@ -181,9 +185,93 @@ export default class ImportIndicateurDefinitionService extends BaseSpreadsheetIm
     return this.upsertIndicateurDefinitions(indicateurDefinitionsData.data);
   }
 
+  async checkIndicateurDefinitions(
+    indicateurDefinitions: ImportIndicateurDefinitionType[]
+  ): Promise<void> {
+    const graph = new DepGraph();
+    indicateurDefinitions.forEach((indicateur) => {
+      if (indicateur.valeurCalcule) {
+        try {
+          const neededSourceIndicateurs =
+            this.indicateurValeurExpressionParserService.extractNeededSourceIndicateursFromFormula(
+              indicateur.valeurCalcule
+            );
+          if (
+            neededSourceIndicateurs.find(
+              (sourceIndicateur) =>
+                sourceIndicateur.identifiant ===
+                indicateur.identifiantReferentiel
+            )
+          ) {
+            throw new HttpException(
+              `Indicateur ${indicateur.identifiantReferentiel} cannot depend on itself in formula`,
+              HttpStatus.BAD_REQUEST
+            );
+          }
+
+          neededSourceIndicateurs.forEach((sourceIndicateur) => {
+            const foundIndicateur = indicateurDefinitions.find(
+              (ind) =>
+                ind.identifiantReferentiel === sourceIndicateur.identifiant
+            );
+            if (!foundIndicateur) {
+              throw new HttpException(
+                `Indicateur ${indicateur.identifiantReferentiel} depends on unknown indicateur ${sourceIndicateur.identifiant}`,
+                HttpStatus.BAD_REQUEST
+              );
+            }
+          });
+
+          this.indicateurValeurExpressionParserService.parseExpression(
+            indicateur.valeurCalcule
+          );
+
+          if (!graph.hasNode(indicateur.identifiantReferentiel)) {
+            graph.addNode(indicateur.identifiantReferentiel, {
+              formula: indicateur.valeurCalcule,
+            });
+          }
+          neededSourceIndicateurs.forEach((sourceIndicateur) => {
+            if (!graph.hasNode(sourceIndicateur.identifiant)) {
+              graph.addNode(sourceIndicateur.identifiant);
+            }
+            graph.addDependency(
+              indicateur.identifiantReferentiel,
+              sourceIndicateur.identifiant
+            );
+          });
+        } catch (e) {
+          throw new HttpException(
+            `Error parsing formula ${indicateur.valeurCalcule} for indicateur ${
+              indicateur.identifiantReferentiel
+            }: ${getErrorMessage(e)}`,
+            HttpStatus.BAD_REQUEST
+          );
+        }
+      }
+    });
+
+    try {
+      // overallOrder() will throw an error if a cycle exists
+      const order = graph.overallOrder();
+      this.logger.log(
+        `No circular dependencies detected. Order: ${order.join(', ')}`
+      );
+    } catch (e) {
+      throw new HttpException(
+        `Circular dependency detected in indicateur definitions: ${getErrorMessage(
+          e
+        )}`,
+        HttpStatus.BAD_REQUEST
+      );
+    }
+  }
+
   async upsertIndicateurDefinitions(
     indicateurDefinitions: ImportIndicateurDefinitionType[]
   ): Promise<GetReferentielIndicateurDefinitionsReturnType> {
+    await this.checkIndicateurDefinitions(indicateurDefinitions);
+
     const thematiques = await this.databaseService.db
       .select()
       .from(thematiqueTable);
@@ -199,12 +287,18 @@ export default class ImportIndicateurDefinitionService extends BaseSpreadsheetIm
     const thematiquesToCreate: CreateThematiqueType[] = [];
     indicateurDefinitions.forEach((indicateur) => {
       indicateur.thematiques?.forEach((thematique) => {
-        if (!thematiques.find((th) => thematique === th.mdId)) {
+        if (
+          !thematiques.find((th) => thematique === th.mdId) &&
+          !thematiquesToCreate.find((th) => thematique === th.mdId)
+        ) {
           thematiquesToCreate.push({ nom: thematique, mdId: thematique });
         }
       });
       indicateur.categories?.forEach((categorie) => {
-        if (!categories.find((cat) => categorie === cat.nom)) {
+        if (
+          !categories.find((cat) => categorie === cat.nom) &&
+          !categoriesToCreate.find((cat) => categorie === cat.nom)
+        ) {
           // Ok to create new categories automatically
           categoriesToCreate.push({ nom: categorie });
         }
@@ -258,10 +352,6 @@ export default class ImportIndicateurDefinitionService extends BaseSpreadsheetIm
       );
 
       // Recreate action relationships
-      await tx
-        .delete(indicateurActionTable)
-        .where(inArray(indicateurActionTable.indicateurId, indicateurIds));
-
       const indicateurActionValues: CreateIndicateurActionType[] = [];
       indicateurDefinitions.forEach((indicateur) => {
         indicateur.actionIds?.forEach((actionId) => {
@@ -274,16 +364,20 @@ export default class ImportIndicateurDefinitionService extends BaseSpreadsheetIm
           });
         });
       });
+      this.logger.log(
+        `Recreating ${indicateurActionValues.length} indicateur action relations`
+      );
+      await tx
+        .delete(indicateurActionTable)
+        .where(inArray(indicateurActionTable.indicateurId, indicateurIds));
       await tx.insert(indicateurActionTable).values(indicateurActionValues);
 
       // Recreate category relationships
-      await tx
-        .delete(indicateurCategorieTagTable)
-        .where(
-          inArray(indicateurCategorieTagTable.indicateurId, indicateurIds)
-        );
       // Add missing categories
       if (categoriesToCreate.length) {
+        this.logger.log(
+          `Creating ${categoriesToCreate.length} missing categories`
+        );
         const createdCategories = await tx
           .insert(categorieTagTable)
           .values(categoriesToCreate)
@@ -312,16 +406,24 @@ export default class ImportIndicateurDefinitionService extends BaseSpreadsheetIm
           });
         });
       });
+      this.logger.log(
+        `Recreating ${indicateurCategorieValues.length} indicateur categorie relations`
+      );
+      await tx
+        .delete(indicateurCategorieTagTable)
+        .where(
+          inArray(indicateurCategorieTagTable.indicateurId, indicateurIds)
+        );
       await tx
         .insert(indicateurCategorieTagTable)
         .values(indicateurCategorieValues);
 
       // Recreate thematiques relationships
-      await tx
-        .delete(indicateurThematiqueTable)
-        .where(inArray(indicateurThematiqueTable.indicateurId, indicateurIds));
       // Add missing thematiques
       if (thematiquesToCreate.length) {
+        this.logger.log(
+          `Creating ${thematiquesToCreate.length} missing thematiques`
+        );
         const createdThematiques = await tx
           .insert(thematiqueTable)
           .values(thematiquesToCreate)
@@ -350,14 +452,17 @@ export default class ImportIndicateurDefinitionService extends BaseSpreadsheetIm
           });
         });
       });
+      this.logger.log(
+        `Recreating ${indicateurThematiqueValues.length} indicateur thematique relations`
+      );
+      await tx
+        .delete(indicateurThematiqueTable)
+        .where(inArray(indicateurThematiqueTable.indicateurId, indicateurIds));
       await tx
         .insert(indicateurThematiqueTable)
         .values(indicateurThematiqueValues);
 
       // Recreate parents relationships
-      await tx
-        .delete(indicateurGroupeTable)
-        .where(inArray(indicateurGroupeTable.enfant, indicateurIds));
       const indicateurGroupeValues: CreateIndicateurGroupe[] = [];
       indicateurDefinitions.forEach((indicateur) => {
         indicateur.parents?.forEach((parent) => {
@@ -372,6 +477,12 @@ export default class ImportIndicateurDefinitionService extends BaseSpreadsheetIm
           });
         });
       });
+      this.logger.log(
+        `Recreating ${indicateurGroupeValues.length} indicateur parent relations`
+      );
+      await tx
+        .delete(indicateurGroupeTable)
+        .where(inArray(indicateurGroupeTable.enfant, indicateurIds));
       await tx.insert(indicateurGroupeTable).values(indicateurGroupeValues);
     });
 

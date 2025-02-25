@@ -40,45 +40,6 @@ describe('Indicateurs → crud-valeurs.service', () => {
     indicateurService = moduleRef.get(CrudValeursService);
   });
 
-  describe('extractNeededSourceIndicateursFromFormula', () => {
-    test('Test simple formula', async () => {
-      const formula = 'val(cae_1.e ) + val( cae_1.f)';
-      const neededSourceIndicateurs =
-        indicateurService.extractNeededSourceIndicateursFromFormula(formula);
-      expect(neededSourceIndicateurs).toEqual([
-        { identifiant: 'cae_1.e', optional: false },
-        { identifiant: 'cae_1.f', optional: false },
-      ]);
-    });
-
-    test('Simple formula with optional value', async () => {
-      const formula = 'val(cae_1.e ) + opt_val( cae_1.f)';
-      const neededSourceIndicateurs =
-        indicateurService.extractNeededSourceIndicateursFromFormula(formula);
-      expect(neededSourceIndicateurs).toEqual([
-        { identifiant: 'cae_1.e', optional: false },
-        { identifiant: 'cae_1.f', optional: true },
-      ]);
-    });
-
-    test('No indicateurs', async () => {
-      const formula = '10 + 30';
-      const neededSourceIndicateurs =
-        indicateurService.extractNeededSourceIndicateursFromFormula(formula);
-      expect(neededSourceIndicateurs).toEqual([]);
-    });
-
-    test('Same indicateur twice', async () => {
-      const formula = '(val(cae_1.e) + val(cae_1.f)) / val(cae_1.e)';
-      const neededSourceIndicateurs =
-        indicateurService.extractNeededSourceIndicateursFromFormula(formula);
-      expect(neededSourceIndicateurs).toEqual([
-        { identifiant: 'cae_1.e', optional: false },
-        { identifiant: 'cae_1.f', optional: false },
-      ]);
-    });
-  });
-
   describe('groupeIndicateursValeursParIndicateur', () => {
     it('Groupe les valeurs par indicateur, trie par date croissante les valeurs', async () => {
       const indicateurDefinitions: IndicateurDefinition[] = [

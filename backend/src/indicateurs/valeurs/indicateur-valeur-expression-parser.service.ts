@@ -451,9 +451,81 @@ const visitor = new IndicateurValeurExpressionVisitor();
 
 @Injectable()
 export default class IndicateurValeurExpressionParserService {
+  private readonly FORMULA_MANDATORY_INDICATEUR_REGEX =
+    /[^_]val\(\s?([a-z1-9_.]*)\s?(?:,\s?([a-z1-9_.]*)\s?)?\)/g;
+
+  private readonly FORMULA_OPTIONAL_INDICATEUR_REGEX =
+    /[^_]opt_val\(\s?([a-z1-9_.]*)\s?(?:,\s?([a-z1-9_.]*)\s?)?\)/g;
+
   private readonly logger = new Logger(
     IndicateurValeurExpressionParserService.name
   );
+
+  extractNeededSourceIndicateursFromFormula(formula: string): {
+    identifiant: string;
+    optional?: boolean;
+    source?: string;
+  }[] {
+    const neededSourceIndicateurs: {
+      identifiant: string;
+      optional?: boolean;
+      source?: string;
+    }[] = [];
+    const formulaWithSpaces = ` ${formula.toLowerCase()} `;
+    const allMandatoryMatches = formulaWithSpaces.matchAll(
+      this.FORMULA_MANDATORY_INDICATEUR_REGEX
+    );
+    for (const match of allMandatoryMatches) {
+      const indicateurIdentifiant = match[1];
+      const indicateurSource = match.length >= 3 ? match[2] : undefined;
+      if (
+        !neededSourceIndicateurs.find(
+          (ind) => ind.identifiant === indicateurIdentifiant
+        )
+      ) {
+        const detectedIndicateur: {
+          identifiant: string;
+          optional?: boolean;
+          source?: string;
+        } = {
+          identifiant: indicateurIdentifiant,
+          optional: false,
+        };
+        if (indicateurSource) {
+          detectedIndicateur.source = indicateurSource;
+        }
+        neededSourceIndicateurs.push(detectedIndicateur);
+      }
+    }
+
+    const allOptionalMatches = formulaWithSpaces.matchAll(
+      this.FORMULA_OPTIONAL_INDICATEUR_REGEX
+    );
+    for (const match of allOptionalMatches) {
+      const indicateurIdentifiant = match[1];
+      const indicateurSource = match.length >= 3 ? match[2] : undefined;
+      if (
+        !neededSourceIndicateurs.find(
+          (ind) => ind.identifiant === indicateurIdentifiant
+        )
+      ) {
+        const detectedIndicateur: {
+          identifiant: string;
+          optional?: boolean;
+          source?: string;
+        } = {
+          identifiant: indicateurIdentifiant,
+          optional: true,
+        };
+        if (indicateurSource) {
+          detectedIndicateur.source = indicateurSource;
+        }
+
+        neededSourceIndicateurs.push(detectedIndicateur);
+      }
+    }
+    return neededSourceIndicateurs;
+  }
 
   parseExpression(inputText: string): CstNode {
     const lexingResult = indicateurValeurExprLexer.tokenize(inputText);

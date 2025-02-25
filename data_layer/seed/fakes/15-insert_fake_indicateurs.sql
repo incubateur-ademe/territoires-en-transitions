@@ -47,6 +47,21 @@ INSERT INTO public.indicateur_source (id, libelle) VALUES ('aldo', 'ALDO');
 INSERT INTO public.indicateur_source_metadonnee (id, source_id, date_version, nom_donnees, diffuseur, producteur, methodologie, limites)
 VALUES (4, 'aldo', '2024-09-01T00:00:00.000Z', '', 'CGDD', '', '', '');
 
+-- Insertion de la source Insee
+INSERT INTO public.indicateur_source(id, libelle, ordre_affichage) VALUES ('insee', 'INSEE', 1) ON CONFLICT DO NOTHING;
+INSERT INTO public.indicateur_source_metadonnee (id, source_id, date_version, nom_donnees, diffuseur, producteur, methodologie, limites)
+VALUES (5, 'insee', '2020-01-01 00:00:00.000', '', 'CGDD', '', '', '');
+
+-- Insertion de la valeur de population
+insert into public.indicateur_valeur (indicateur_id, collectivite_id, date_valeur, metadonnee_id, resultat,
+                                      resultat_commentaire, objectif, objectif_commentaire)
+values
+((select id from indicateur_definition where identifiant_referentiel = 'terr_1' limit 1),
+     (select collectivite_id from epci where siren = '200043495' limit 1),
+        '2015-01-01', 
+    (select id from public.indicateur_source_metadonnee where source_id = 'insee' and date_version = '2020-01-01T00:00:00.000Z' limit 1),
+     41739, null, null, null);
+
 -- Insertion pour le calcul de la trajectoire snbc. Cas du pays du Laon
 insert into public.indicateur_valeur (indicateur_id, collectivite_id, date_valeur, metadonnee_id, resultat,
                                       resultat_commentaire, objectif, objectif_commentaire)
@@ -99,7 +114,7 @@ values
     ((select id from indicateur_definition where identifiant_referentiel = 'cae_1.c' limit 1),
      (select collectivite_id from epci where siren = '246700488' limit 1),
         '2015-01-01', (select id from public.indicateur_source_metadonnee where source_id = 'rare' and date_version = '2024-07-18T00:00:00.000Z' limit 1), 447.868, null, null, null),
-    ((select id from indicateur_definition where identifiant_referentiel = 'cae_1.d' limit 1),
+    ((select id from indicateur_definition where identifiant_referentiel = 'cae_1.a' limit 1),
      (select collectivite_id from epci where siren = '246700488' limit 1),
         '2015-01-01', (select id from public.indicateur_source_metadonnee where source_id = 'rare' and date_version = '2024-07-18T00:00:00.000Z' limit 1), 471.107, null, null, null),
     ((select id from indicateur_definition where identifiant_referentiel = 'cae_1.i' limit 1),

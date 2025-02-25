@@ -59,6 +59,7 @@ export type IndicateurValeur = InferSelectModel<typeof indicateurValeurTable>;
 
 export type IndicateurValeurWithIdentifiant = IndicateurValeur & {
   indicateurIdentifiant?: string | null;
+  sourceId?: string | null;
 };
 
 export const indicateurValeurSchemaInsert = createInsertSchema(
