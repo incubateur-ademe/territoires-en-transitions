@@ -341,19 +341,19 @@ When(
 );
 
 When(/je clique sur l'onglet "([^"]+)"$/, (tabName) => {
-  cy.get('.fr-tabs__tab').contains(tabName).click();
+  cy.get('ul[role=tablist]').contains(tabName).click();
 });
 
 When(/je vois (\d+) onglets?/, (count) =>
-  cy.get('.fr-tabs__tab').should('have.length', count)
+  cy.get('ul[role=tablist]').should('have.length', count)
 );
 When('je ne vois aucun onglet', () =>
-  cy.get('.fr-tabs__tab').should('have.length', 0)
+  cy.get('ul[role=tablist]').should('have.length', 0)
 );
 
 When(/l'onglet "([^"]+)" est sélectionné/, (tabName) =>
   cy
-    .get('.fr-tabs__tab')
+    .get('ul[role=tablist]')
     .contains(tabName)
     .should('have.attr', 'aria-selected', 'true')
 );

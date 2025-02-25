@@ -1,9 +1,9 @@
-import {When} from '@badeball/cypress-cucumber-preprocessor';
-import {LocalSelectors} from './selectors';
+import { When } from '@badeball/cypress-cucumber-preprocessor';
+import { LocalSelectors } from './selectors';
 
 // enregistre les définitions locales
 beforeEach(() => {
-  cy.wrap(LocalSelectors).as('LocalSelectors', {type: 'static'});
+  cy.wrap(LocalSelectors).as('LocalSelectors', { type: 'static' });
 });
 
 When("aucun score n'est affiché", () => {
@@ -18,7 +18,7 @@ When('tous les scores sont à 0', () => {
 });
 */
 
-When('les scores sont affichés avec les valeurs suivantes :', dataTable => {
+When('les scores sont affichés avec les valeurs suivantes :', (dataTable) => {
   cy.wrap(dataTable.rows()).each(([action, score]) => {
     cy.get(`[data-test="score-${action}"]`).should('contain.text', score);
   });
@@ -52,7 +52,7 @@ When("l'état d'avancement des tâches est éditable", () => {
   const taches = '[data-test^="task-"]';
   cy.get(taches)
     .its('length')
-    .then(tasksCount => {
+    .then((tasksCount) => {
       expect(tasksCount).to.be.greaterThan(0);
       // et vérifie qu'il y a autant de select que de tâches
       cy.get(`${taches} [data-test=SelectStatut]`).should(
@@ -75,7 +75,9 @@ When(
   /je saisi "([^"]+)" dans le champ "Précisions" de la tâche "([^"]+)"/,
   (commentaire, tache) => {
     // clique pour afficher le champ de saisie
-    cy.get(`[data-test="task-${tache}"] button.fr-icon-pencil-line`).click();
+    cy.get(
+      `[data-test="task-${tache}"] button[data-test=btn-commentaire]`
+    ).click();
     // puis saisi la valeur voulue
     cy.get(`[data-test="task-${tache}"] textarea`)
       .type('{selectall}{backspace}' + commentaire)
@@ -88,7 +90,7 @@ When("aucun historique n'est affiché", () => {
   cy.get('[data-test=empty_history]').should('be.visible');
 });
 
-When(/l'historique contient (\d+) entrées?/, count => {
+When(/l'historique contient (\d+) entrées?/, (count) => {
   cy.get('[data-test=empty_history]').should('not.exist');
   cy.get('[data-test=Historique] [data-test=item]').should(
     'have.length',
@@ -103,14 +105,14 @@ When(
       .should('exist')
       .within(() => {
         const lines = dataTable.raw();
-        cy.wrap(lines).each(line =>
+        cy.wrap(lines).each((line) =>
           cy.get('[data-test=desc]').should('contain.text', line[0])
         );
       });
   }
 );
 
-When(/le détail de l'entrée (\d+) de l'historique n'est pas affiché/, num => {
+When(/le détail de l'entrée (\d+) de l'historique n'est pas affiché/, (num) => {
   cy.get(
     `[data-test=Historique] [data-test=item]:nth(${
       num - 1
@@ -139,15 +141,18 @@ When(
   }
 );
 
-When(/je clique sur le bouton "Afficher le détail" de l'entrée (\d+)/, num => {
-  cy.get(
-    `[data-test=Historique] [data-test=item]:nth(${
-      num - 1
-    }) [data-test=detail-off] button`
-  ).click();
-});
+When(
+  /je clique sur le bouton "Afficher le détail" de l'entrée (\d+)/,
+  (num) => {
+    cy.get(
+      `[data-test=Historique] [data-test=item]:nth(${
+        num - 1
+      }) [data-test=detail-off] button`
+    ).click();
+  }
+);
 
-When(/je clique sur le bouton "Masquer le détail" de l'entrée (\d+)/, num => {
+When(/je clique sur le bouton "Masquer le détail" de l'entrée (\d+)/, (num) => {
   cy.get(
     `[data-test=Historique] [data-test=item]:nth(${
       num - 1
@@ -167,7 +172,7 @@ When(
   }
 );
 
-When(/je filtre l'historique avec comme date de fin "([^"]+)"/, date => {
+When(/je filtre l'historique avec comme date de fin "([^"]+)"/, (date) => {
   cy.get('[data-test=filtre-end-date]').type(date);
 });
 

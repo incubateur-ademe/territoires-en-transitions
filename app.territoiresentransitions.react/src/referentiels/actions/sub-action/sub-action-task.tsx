@@ -63,6 +63,7 @@ const SubActionTask = ({
           />
         ) : (
           <Button
+            dataTest="btn-commentaire"
             icon="pencil-line"
             title="Explications sur l'état d'avancement"
             onClick={() => setOpenCommentaire(true)}
