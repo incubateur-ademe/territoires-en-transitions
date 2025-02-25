@@ -2,9 +2,12 @@ import { DatabaseService } from '@/backend/utils';
 import { INestApplication } from '@nestjs/common';
 import { DateTime } from 'luxon';
 import { default as request } from 'supertest';
-import { getTestApp, getTestDatabase } from '../../../test/app-utils';
-import { getAuthToken } from '../../../test/auth-utils';
-import { getCollectiviteIdBySiren } from '../../../test/collectivites-utils';
+import {
+  getAuthToken,
+  getCollectiviteIdBySiren,
+  getTestApp,
+  getTestDatabase,
+} from '@/backend/test';
 import { HttpErrorResponse } from '../../utils/nest/http-error.response';
 import { ActionStatut, referentielIdEnumSchema } from '../index-domain';
 import { ActionTypeEnum } from '../models/action-type.enum';
@@ -62,8 +65,7 @@ describe('Referentiels scoring routes', () => {
       .set('Authorization', `Bearer ${process.env.SUPABASE_ANON_KEY}`)
       .expect(404)
       .expect({
-        message:
-          "Commune avec l'identifiant de collectivite 10000000 introuvable",
+        message: "Collectivité avec l'identifiant 10000000 introuvable",
         error: 'Not Found',
         statusCode: 404,
       });
@@ -174,8 +176,7 @@ describe('Referentiels scoring routes', () => {
       .set('Authorization', `Bearer ${process.env.SUPABASE_ANON_KEY}`)
       .expect(404)
       .expect({
-        message:
-          "Commune avec l'identifiant de collectivite 10000000 introuvable",
+        message: "Collectivité avec l'identifiant 10000000 introuvable",
         error: 'Not Found',
         statusCode: 404,
       });
