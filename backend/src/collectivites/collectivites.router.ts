@@ -5,6 +5,7 @@ import { ListCollectivitesRouter } from './list-collectivites/list-collectivites
 import { CollectiviteMembresRouter } from './membres/membres.router';
 import { PersonnesRouter } from './personnes.router';
 import { TableauDeBordCollectiviteRouter } from './tableau-de-bord/tableau-de-bord-collectivite.router';
+import { CollectiviteCrudRouter } from '@/backend/collectivites/collectivite-crud/collectivite-crud.router';
 
 @Injectable()
 export class CollectivitesRouter {
@@ -14,7 +15,8 @@ export class CollectivitesRouter {
     private readonly membresRouter: CollectiviteMembresRouter,
     private readonly tableauBordRouter: TableauDeBordCollectiviteRouter,
     private readonly categoriesRouter: ListCategoriesRouter,
-    private readonly listCollectivitesRouter: ListCollectivitesRouter
+    private readonly listCollectivitesRouter: ListCollectivitesRouter,
+    private readonly upsertRouter : CollectiviteCrudRouter
   ) {}
 
   router = this.trpc.router({
@@ -22,6 +24,9 @@ export class CollectivitesRouter {
     membres: this.membresRouter.router,
     tableauDeBord: this.tableauBordRouter.router,
     categories: this.categoriesRouter.router,
-    collectivites: this.listCollectivitesRouter.router,
+    collectivites: this.trpc.mergeRouters(
+      this.listCollectivitesRouter.router,
+      this.upsertRouter.router
+    )
   });
 }

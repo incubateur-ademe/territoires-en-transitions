@@ -11,7 +11,6 @@ import * as _ from 'lodash';
 import { DateTime } from 'luxon';
 import { AuthenticatedUser, AuthUser } from '../../auth/models/auth.models';
 import CollectivitesService from '../../collectivites/services/collectivites.service';
-import { EpciType } from '../../collectivites/shared/models/epci.table';
 import {
   SourceMetadonnee,
   SourceMetadonneeInsert,
@@ -31,6 +30,7 @@ import {
   VerificationTrajectoireResultType,
   VerificationTrajectoireStatus,
 } from './verification-trajectoire.response';
+import { CollectiviteResume, collectiviteTypeEnum } from '@/backend/collectivites/shared/models/collectivite.table';
 
 @Injectable()
 export default class TrajectoiresDataService {
@@ -612,7 +612,7 @@ export default class TrajectoiresDataService {
   async verificationDonneesSnbc(
     request: VerificationTrajectoireRequestType,
     tokenInfo: AuthUser,
-    epci?: EpciType,
+    epci?: CollectiviteResume,
     forceRecuperationDonneesUniquementPourLecture = false
   ): Promise<VerificationTrajectoireResultType> {
     // Vérification des droits pour lire les données
@@ -636,11 +636,17 @@ export default class TrajectoiresDataService {
       const collectivite = await this.collectivitesService.getCollectivite(
         request.collectiviteId
       );
-      if (collectivite.commune || !collectivite.epci) {
+      if (collectivite.collectivite.type != collectiviteTypeEnum.EPCI) {
+        // TODO région et département ?
         response.status = VerificationTrajectoireStatus.COMMUNE_NON_SUPPORTEE;
         return response;
       }
-      response.epci = collectivite.epci;
+      response.epci = {
+        id: collectivite.collectivite.id,
+        nom: collectivite.collectivite.nom,
+        natureInsee: collectivite.collectivite.natureInsee,
+        siren: collectivite.collectivite.siren,
+      };
     } else {
       response.epci = epci;
     }

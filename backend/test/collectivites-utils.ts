@@ -1,5 +1,5 @@
 import { DatabaseService } from '@/backend/utils';
-import { epciTable } from '@/domain/collectivites';
+import { collectiviteTable } from '@/domain/collectivites';
 import { eq } from 'drizzle-orm';
 
 export const getCollectiviteIdBySiren = async (
@@ -8,10 +8,10 @@ export const getCollectiviteIdBySiren = async (
 ): Promise<number> => {
   const result = await databaseService.db
     .select({
-      id: epciTable.collectiviteId,
+      id: collectiviteTable.id,
     })
-    .from(epciTable)
-    .where(eq(epciTable.siren, siren));
+    .from(collectiviteTable)
+    .where(eq(collectiviteTable.siren, siren));
   if (result.length === 0) {
     throw new Error(`Epci with siren ${siren} not found`);
   }
