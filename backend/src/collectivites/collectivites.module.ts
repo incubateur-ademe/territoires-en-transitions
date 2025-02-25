@@ -14,6 +14,8 @@ import GroupementsService from './services/groupements.service';
 import { PersonnesService } from './services/personnes.service';
 import { TagService } from '@/backend/collectivites/tags/tag.service';
 import { TableauDeBordModule } from './tableau-de-bord/tableau-de-bord.module';
+import CollectiviteUpsertService from '@/backend/collectivites/collectivite-upsert/collectivite-upsert.service';
+import { CollectiviteUpsertRouter } from '@/backend/collectivites/collectivite-upsert/collectivite-upsert.router';
 
 @Module({
   imports: [TableauDeBordModule],
@@ -31,6 +33,8 @@ import { TableauDeBordModule } from './tableau-de-bord/tableau-de-bord.module';
     TagService,
     ListCollectivitesRouter,
     ListCollectivitesService,
+    CollectiviteUpsertService,
+    CollectiviteUpsertRouter,
   ],
   exports: [
     CollectivitesRouter,
@@ -43,6 +47,8 @@ import { TableauDeBordModule } from './tableau-de-bord/tableau-de-bord.module';
     ListCategoriesRouter,
     DocumentService,
     TagService,
+    CollectiviteUpsertService,
+    CollectiviteUpsertRouter,
   ],
   controllers: [CollectiviteController],
 })
