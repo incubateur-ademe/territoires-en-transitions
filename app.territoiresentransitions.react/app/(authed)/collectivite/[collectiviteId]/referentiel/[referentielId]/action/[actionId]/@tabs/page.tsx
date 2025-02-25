@@ -1,26 +1,32 @@
+'use client';
+
 import { ActionDefinitionSummary } from '@/app/referentiels/ActionDefinitionSummaryReadEndpoint';
 import { ActionCommentaire } from '@/app/referentiels/actions/action-commentaire';
-import { TCycleLabellisationStatus } from '@/app/referentiels/labellisations/useCycleLabellisation';
+import { DEPRECATED_useActionDefinition } from '@/app/referentiels/actions/action-context';
+import SubActionCard from '@/app/referentiels/actions/sub-action/sub-action.card';
+import { useCycleLabellisation } from '@/app/referentiels/labellisations/useCycleLabellisation';
 import { useSortedActionSummaryChildren } from '@/app/referentiels/referentiel-hooks';
 import { phaseToLabel } from '@/app/referentiels/utils';
 import { Button } from '@/ui';
 import { useState } from 'react';
-import SubActionCard from './sub-action/sub-action.card';
 
-type ActionFollowUpProps = {
-  action: ActionDefinitionSummary;
-  auditStatus: TCycleLabellisationStatus;
-};
+export default function Page() {
+  const action = DEPRECATED_useActionDefinition();
+
+  if (!action) {
+    return null;
+  }
+
+  return <ActionDetailPage action={action} />;
+}
 
 /**
  * Contenu de l'onglet "Suivi de l'action" du menu
  * "Référentiel CAE / ECI" de la page "Etat des lieux"
  */
+function ActionDetailPage({ action }: { action: ActionDefinitionSummary }) {
+  const { status: auditStatus } = useCycleLabellisation(action.referentiel);
 
-const ActionDetail = ({
-  action,
-  auditStatus,
-}: ActionFollowUpProps): JSX.Element => {
   const subActions = useSortedActionSummaryChildren(action);
 
   // Etat du bouton "Tout déplier" / "Tout replier"
@@ -88,6 +94,4 @@ const ActionDetail = ({
       </div>
     </section>
   );
-};
-
-export default ActionDetail;
+}
