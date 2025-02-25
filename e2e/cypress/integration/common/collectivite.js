@@ -2,8 +2,8 @@
  * Génère une collectivité et diverses données de test (utilisateur, scores, etc.)
  */
 import { When } from '@badeball/cypress-cucumber-preprocessor';
-import { Views, CollectivitePages } from './views';
-import { waitForApp, logout } from './shared';
+import { logout, waitForApp } from './shared';
+import { CollectivitePages } from './views';
 
 // crée une collectivité de test
 When('une collectivité nommée {string}', createCollectivite);
@@ -62,6 +62,7 @@ function login({ email, password }) {
     await supabase.auth.signOut();
     await supabase.auth.signInWithPassword({ email, password });
   });
+  cy.reload();
 }
 
 // ajoute un auditeur et le connecte

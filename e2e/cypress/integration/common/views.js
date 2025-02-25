@@ -15,7 +15,7 @@ export const Views = {
 
 export const CollectivitePages = {
   'Personnalisation des référentiels': {
-    route: 'personnalisation',
+    route: 'referentiel/personnalisation',
     selector: '[data-test=personnalisation]',
   },
   'Gestion des membres': {
@@ -35,15 +35,15 @@ export const CollectivitePages = {
     selector: '[data-test=BibliothequeDocs]',
   },
   'Labellisation CAE': {
-    route: 'labellisation/cae',
+    route: 'referentiel/cae/labellisation/suivi',
     selector: '[data-test=labellisation-cae]',
   },
   'Labellisation ECi': {
-    route: 'labellisation/eci',
+    route: 'referentiel/eci/labellisation/suivi',
     selector: '[data-test=labellisation-eci]',
   },
   'Action ECI': {
-    route: 'action/eci/eci_3.1/',
+    route: 'referentiel/eci/action/eci_3.1',
     selector: '[data-test^=Action]',
   },
   'Synthèse plans action': {
