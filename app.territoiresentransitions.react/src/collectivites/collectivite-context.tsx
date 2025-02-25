@@ -1,4 +1,5 @@
 'use client';
+
 import { createContext, ReactNode, useContext } from 'react';
 import { z } from 'zod';
 
@@ -18,9 +19,7 @@ export function CollectiviteProvider({
   const collectiviteId = z.coerce.number().parse(unsafeCollectiviteId);
 
   return (
-    <CollectiviteContext.Provider
-      value={{ collectiviteId: z.coerce.number().parse(collectiviteId) }}
-    >
+    <CollectiviteContext.Provider value={{ collectiviteId }}>
       {children}
     </CollectiviteContext.Provider>
   );

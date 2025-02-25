@@ -3,7 +3,7 @@
 import classNames from 'classnames';
 import { Route } from 'next';
 import Link from 'next/link';
-import { usePathname, useRouter } from 'next/navigation';
+import { usePathname } from 'next/navigation';
 import { createContext, ReactNode, useContext } from 'react';
 import { Icon, IconValue } from '../Icon';
 import { TabSize } from './Tabs';
@@ -37,8 +37,6 @@ export function Tabs({
   // onChange,
   ...props
 }: TabsProps) {
-  const router = useRouter();
-
   return (
     <TabsProvider {...props}>
       <div className={classNames(className)} data-test={dataTest}>
@@ -139,10 +137,6 @@ export const TabsTab = (props: TabProps) => {
     </li>
   );
 };
-
-// type Panelprops = {
-//   asd: string;
-// };
 
 export const TabsPanel = ({ children }: { children: ReactNode }) => {
   return (

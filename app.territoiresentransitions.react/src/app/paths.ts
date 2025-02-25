@@ -48,8 +48,8 @@ export type IndicateurViewParamOption =
 type ReferentielTab = 'progression' | 'priorisation' | 'detail' | 'evolutions';
 
 export type ActionTabParamOption =
-  | 'suivi'
-  | 'preuves'
+  | ''
+  | 'documents'
   | 'indicateurs'
   | 'fiches'
   | 'historique';
@@ -70,7 +70,7 @@ const referentielVueParam = 'referentielVue';
 
 const referentielRootPath = `${collectivitePath}/referentiel`;
 const referentielPath = `${referentielRootPath}/:${referentielIdParam}/:${referentielVueParam}`;
-const referentielActionPath = `${referentielRootPath}/:${referentielIdParam}/action/:${actionParam}/:${actionVueParam}?`;
+const referentielActionPath = `${referentielRootPath}/:${referentielIdParam}/action/:${actionParam}`;
 const referentielLabellisationRootPath = `${referentielRootPath}/:${referentielIdParam}/labellisation`;
 const referentielLabellisationPath = `${referentielLabellisationRootPath}/:${labellisationVueParam}?`;
 const referentielPersonnalisationPath = `${referentielRootPath}/personnalisation`;
@@ -225,7 +225,7 @@ export const makeReferentielActionUrl = ({
     .replace(`:${collectiviteParam}`, collectiviteId.toString())
     .replace(`:${referentielIdParam}`, referentielId)
     .replace(`:${actionParam}`, actionId)
-    .replace(`:${actionVueParam}`, actionVue || '');
+    .concat(actionVue ? `/${actionVue}` : '');
 
 export const makeReferentielTacheUrl = ({
   collectiviteId,

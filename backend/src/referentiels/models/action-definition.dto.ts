@@ -17,7 +17,9 @@ export function treeNodeSchema<T extends SomeZodObject>(
   schema: T
 ): z.ZodType<TreeNode<z.infer<T>>> {
   return schema.extend({
-    actionsEnfant: z.lazy(() => treeNodeSchema(schema).array()),
+    actionsEnfant: z.lazy(() =>
+      z.array(treeNodeSchema(schema) as z.ZodType<TreeNode<z.infer<T>, 1>>)
+    ),
   }) as z.ZodType<TreeNode<z.infer<T>>>;
 }
 

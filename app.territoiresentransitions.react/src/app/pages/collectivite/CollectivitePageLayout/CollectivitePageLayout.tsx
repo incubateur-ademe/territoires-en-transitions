@@ -1,3 +1,5 @@
+'use client';
+
 import classNames from 'classnames';
 import React, { useEffect, useMemo, useState } from 'react';
 import Panel from './Panel/Panel';
