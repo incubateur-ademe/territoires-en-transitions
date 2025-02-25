@@ -1,8 +1,6 @@
 import { INestApplication } from '@nestjs/common';
 import { default as request } from 'supertest';
-import { getTestApp } from '../../../test/app-utils';
-import { signInWith } from '../../../test/auth-utils';
-import { YOLO_DODO } from '../../../test/test-users.samples';
+import { getTestApp, signInWith, YOLO_DODO } from '@/backend/test';
 import { CalculTrajectoireResultatMode } from './calcul-trajectoire.request';
 import { CalculTrajectoireResponse } from './calcul-trajectoire.response';
 import {
@@ -72,11 +70,10 @@ describe('Calcul de trajectoire SNBC', () => {
     const verifcationReponseAttendue: VerificationTrajectoireResponseType = {
       status: VerificationTrajectoireStatus.DONNEES_MANQUANTES,
       epci: {
-        id: 2,
-        collectiviteId: 3812,
+        id: 3812,
         nom: 'CA du Bassin de Bourg-en-Bresse',
         siren: '200071751',
-        nature: 'CA',
+        natureInsee: 'CA',
       },
       donneesEntree: {
         sources: [],
@@ -312,11 +309,10 @@ describe('Calcul de trajectoire SNBC', () => {
     const verifcationReponseAttendue: VerificationTrajectoireResponseType = {
       status: VerificationTrajectoireStatus.PRET_A_CALCULER,
       epci: {
-        id: 1126,
-        collectiviteId: 4936,
+        id: 4936,
         nom: 'Eurométropole de Strasbourg',
         siren: '246700488',
-        nature: 'METRO',
+        natureInsee: 'METRO',
       },
       donneesEntree: {
         sources: ['rare', 'aldo'],

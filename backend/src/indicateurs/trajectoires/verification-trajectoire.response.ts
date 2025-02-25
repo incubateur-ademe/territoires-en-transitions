@@ -1,7 +1,7 @@
 import { z } from 'zod';
-import { epciSchema } from '../../collectivites/shared/models/epci.table';
 import { IndicateurValeur } from '../shared/models/indicateur-valeur.table';
 import { donneesCalculTrajectoireARemplirSchema } from './donnees-calcul-trajectoire-a-remplir.dto';
+import { collectiviteResumeSchema } from '@/backend/collectivites/shared/models/collectivite.table';
 
 export enum VerificationTrajectoireStatus {
   COMMUNE_NON_SUPPORTEE = 'commune_non_supportee',
@@ -21,7 +21,9 @@ export const verificationTrajectoireResponseSchema = z.object({
     .describe(
       'Données qui seront utilisées pour le calcul de la trajectoire SNBC.'
     ),
-  epci: epciSchema.optional().describe("Informations de l'EPCI"),
+  epci: collectiviteResumeSchema
+    .optional()
+    .describe("Informations de l'EPCI"),
   sourcesDonneesEntree: z
     .string()
     .array()
