@@ -68,7 +68,7 @@ export default class ExportIndicateursService {
     // génère le nom du fichier
     const filename = this.getFilename(
       definitions,
-      collectivite?.epci?.nom || collectivite?.commune?.nom || ''
+      collectivite.collectivite.nom || ''
     );
     if (!filename) return null;
 

@@ -8,13 +8,13 @@ import { NextFunction, Response } from 'express';
 import { default as XlsxTemplate } from 'xlsx-template';
 import { AuthenticatedUser } from '../../auth/models/auth.models';
 import { CollectiviteRequestType } from '../../collectivites/collectivite.request';
-import { EpciType } from '../../collectivites/shared/models/epci.table';
 import BackendConfigurationService from '../../utils/config/configuration.service';
 import SheetService from '../../utils/google-sheets/sheet.service';
 import { DonneesCalculTrajectoireARemplirType } from './donnees-calcul-trajectoire-a-remplir.dto';
 import { ModeleTrajectoireTelechargementRequestType } from './modele-trajectoire-telechargement.request';
 import TrajectoiresDataService from './trajectoires-data.service';
 import { VerificationTrajectoireStatus } from './verification-trajectoire.response';
+import { CollectiviteResume } from '@/backend/collectivites/shared/models/collectivite.table';
 
 @Injectable()
 export default class TrajectoiresXlsxService {
@@ -35,7 +35,7 @@ export default class TrajectoiresXlsxService {
     return this.configService.get('TRAJECTOIRE_SNBC_XLSX_ID');
   }
 
-  getNomFichierTrajectoire(epci: EpciType) {
+  getNomFichierTrajectoire(epci: CollectiviteResume) {
     return `Trajectoire SNBC - ${epci.siren} - ${epci.nom}`;
   }
 
@@ -254,7 +254,7 @@ export default class TrajectoiresXlsxService {
       const xlsxBuffer = await this.getXlsxModeleBuffer();
 
       const sirenData = {
-        siren: parseInt(epci.siren),
+        siren: parseInt(epci.siren!),
       };
 
       const generatedData = await this.generationXlsxDonneesSubstituees(

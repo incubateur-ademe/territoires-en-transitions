@@ -162,5 +162,12 @@ describe('ScoreSnapshotsRouter', () => {
     expect(result.snapshot?.ref).toBe(
       `${snapshotNom.toLowerCase().replace(/\s+/g, '-')}`
     );
+
+    // delete the snapshot
+    await caller.referentiels.snapshots.delete({
+      collectiviteId: 1,
+      referentielId: referentielIdEnumSchema.enum.cae,
+      snapshotRef: 'test-snapshot-avec-date',
+    });
   });
 });
