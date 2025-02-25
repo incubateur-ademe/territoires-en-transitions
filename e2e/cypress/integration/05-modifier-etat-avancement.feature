@@ -109,7 +109,7 @@ Fonctionnalité: Modifier l'état d'avancement et visualiser l'évolution des sc
     Quand je filtre l'historique avec le filtre "type" par l'option "Action : statut"
     Alors l'historique contient 1 entrée
 
-    Quand je filtre l'historique avec le filtre "type" par l'option "Tous"
+    Quand je filtre l'historique avec le filtre "type" par l'option "Désélectionner les options"
     Alors l'historique contient 2 entrées
 
     Quand je filtre l'historique avec comme date de fin "2022-01-01"
