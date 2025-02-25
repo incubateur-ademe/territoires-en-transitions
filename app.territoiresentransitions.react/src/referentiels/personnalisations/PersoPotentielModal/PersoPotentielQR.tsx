@@ -3,21 +3,20 @@
  */
 
 import { ActionDefinitionSummary } from '@/app/referentiels/ActionDefinitionSummaryReadEndpoint';
-import { useActionScore } from '@/app/referentiels/DEPRECATED_score-hooks';
 import {
   TChangeReponse,
   TQuestionReponse,
   TReponse,
 } from '@/app/referentiels/personnalisations/personnalisation.types';
-import {
-  useScore,
-  useSnapshotFlagEnabled,
-} from '@/app/referentiels/use-snapshot';
+import { useSnapshotFlagEnabled } from '@/app/referentiels/use-snapshot';
 import { Accordion } from '@/app/ui/Accordion';
 import classNames from 'classnames';
 import DOMPurify from 'dompurify';
 import { Justification } from './Justification';
-import { PointsPotentiels } from './PointsPotentiels';
+import {
+  DEPRECATED_PointsPotentiels,
+  NEW_PointsPotentiels,
+} from './PointsPotentiels';
 import { reponseParType } from './Reponse';
 
 export type TPersoPotentielQRProps = {
@@ -38,13 +37,7 @@ export const PersoPotentielQR = ({
   questionReponses,
   onChange,
 }: TPersoPotentielQRProps) => {
-  const DEPRECATED_actionScore = useActionScore(actionDef.id);
   const FLAG_isSnapshotEnabled = useSnapshotFlagEnabled();
-  const NEW_score = useScore(actionDef.id);
-
-  if (!DEPRECATED_actionScore || !NEW_score) {
-    return null;
-  }
 
   const color = 'var(--yellow-moutarde-850-200)';
   return (
@@ -61,23 +54,11 @@ export const PersoPotentielQR = ({
           border: `1px solid ${color}`,
         }}
       >
-        <PointsPotentiels
-          score={
-            FLAG_isSnapshotEnabled
-              ? {
-                  ...NEW_score,
-                }
-              : {
-                  pointPotentiel: DEPRECATED_actionScore.point_potentiel,
-                  pointPotentielPerso:
-                    DEPRECATED_actionScore.point_potentiel_perso === undefined
-                      ? null
-                      : DEPRECATED_actionScore.point_potentiel_perso,
-                  pointReferentiel: DEPRECATED_actionScore.point_referentiel,
-                  desactive: DEPRECATED_actionScore.desactive,
-                }
-          }
-        />
+        {FLAG_isSnapshotEnabled ? (
+          <NEW_PointsPotentiels actionId={actionDef.id} />
+        ) : (
+          <DEPRECATED_PointsPotentiels actionId={actionDef.id} />
+        )}
       </div>
       <QuestionReponseList
         questionReponses={questionReponses}
