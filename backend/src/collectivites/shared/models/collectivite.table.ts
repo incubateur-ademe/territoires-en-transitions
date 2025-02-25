@@ -7,7 +7,7 @@ import {
   text,
   varchar,
 } from 'drizzle-orm/pg-core';
-import { createSelectSchema } from 'drizzle-zod';
+import { createInsertSchema, createSelectSchema } from 'drizzle-zod';
 import { createdAt, modifiedAt } from '../../../utils/column.utils';
 import { collectiviteTypeTable } from '@/backend/collectivites/shared/models/collectivite-type.table';
 import { collectiviteBanaticTypeTable } from '@/backend/collectivites/shared/models/collectivite-banatic-type.table';
@@ -19,7 +19,7 @@ export const collectiviteTable = pgTable('collectivite', {
   createdAt,
   accessRestreint: boolean('access_restreint'),
   nom: text('nom'),
-  typeId: text('type_id').references(() => collectiviteTypeTable.id),
+  typeId: text('type_id').references(() => collectiviteTypeTable.id).notNull(),
   communeCode: varchar('commune_code', { length: 5 }),
   siren: varchar('siren', { length: 9 }),
   departementCode: varchar('departement_code', { length: 3 }),
@@ -36,5 +36,7 @@ export const collectiviteResumeSchema = collectiviteSchema.pick({
   siren: true,
   natureInsee: true,
 });
+export const collectiviteUpsertSchema = createInsertSchema(collectiviteTable);
 export type Collectivite = InferSelectModel<typeof collectiviteTable>;
 export type CollectiviteResume = z.infer<typeof collectiviteResumeSchema>;
+export type CollectiviteUpsert = z.infer<typeof collectiviteUpsertSchema>;
