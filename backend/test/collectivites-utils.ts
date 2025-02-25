@@ -5,7 +5,7 @@ export const getCollectiviteIdBySiren = async (
 ): Promise<number> => {
   const supabaseClient = getSupabaseClient();
   const epci = await supabaseClient
-    .from('epci')
+    .from('collectivite')
     .select('id')
     .eq('siren', siren)
     .single();
