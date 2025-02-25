@@ -8,6 +8,7 @@ import {
   pgTable,
   serial,
   text,
+  varchar,
 } from 'drizzle-orm/pg-core';
 import { createInsertSchema, createSelectSchema } from 'drizzle-zod';
 import { z } from 'zod';
@@ -15,6 +16,7 @@ import { indicateurCollectiviteSchema } from './indicateur-collectivite.table';
 
 export const indicateurDefinitionTable = pgTable('indicateur_definition', {
   id: serial('id').primaryKey(),
+  version: varchar('version', { length: 16 }).notNull().default('1.0.0'),
   groupementId: integer('groupement_id'), // TODO: references
   collectiviteId: integer('collectivite_id').references(
     () => collectiviteTable.id,

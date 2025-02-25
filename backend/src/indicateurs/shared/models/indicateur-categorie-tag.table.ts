@@ -1,4 +1,5 @@
 import { categorieTagTable } from '@/domain/collectivites';
+import { InferInsertModel, InferSelectModel } from 'drizzle-orm';
 import { integer, pgTable, primaryKey } from 'drizzle-orm/pg-core';
 import { indicateurDefinitionTable } from './indicateur-definition.table';
 
@@ -24,3 +25,10 @@ export const indicateurCategorieTagTable = pgTable(
     };
   }
 );
+
+export type IndicateurCategorieTag = InferSelectModel<
+  typeof indicateurCategorieTagTable
+>;
+export type CreateIndicateurCategorieTag = InferInsertModel<
+  typeof indicateurCategorieTagTable
+>;

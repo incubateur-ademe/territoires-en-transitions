@@ -2,15 +2,9 @@
 
 BEGIN;
 
-drop trigger modified_by on indicateur_valeur;
+drop table if exists public.indicateur_source_source_calcul;
 
-drop function public.optional_enforce_modified_by;
-
-create trigger modified_by
-    before insert or update
-    on indicateur_valeur
-    for each row
-execute procedure enforce_modified_by();
-
+alter table public.indicateur_definition
+  drop column if exists version;
 
 COMMIT;

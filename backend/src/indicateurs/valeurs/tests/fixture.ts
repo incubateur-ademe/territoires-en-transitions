@@ -2,6 +2,7 @@ import { IndicateurDefinition } from '../../index-domain';
 
 export const indicateur1: IndicateurDefinition = {
   id: 456,
+  version: '1.0.0',
   groupementId: null,
   collectiviteId: null,
   identifiantReferentiel: 'cae_1.c',
@@ -23,6 +24,7 @@ export const indicateur1: IndicateurDefinition = {
 
 export const indicateur2: IndicateurDefinition = {
   id: 457,
+  version: '1.0.0',
   groupementId: null,
   collectiviteId: null,
   identifiantReferentiel: 'cae_1.d',
@@ -44,6 +46,7 @@ export const indicateur2: IndicateurDefinition = {
 
 export const indicateur3: IndicateurDefinition = {
   id: 458,
+  version: '1.0.0',
   groupementId: null,
   collectiviteId: null,
   identifiantReferentiel: 'cae_1.e',

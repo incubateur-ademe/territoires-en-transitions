@@ -1,4 +1,5 @@
 import { PermissionService } from '@/backend/auth/authorizations/permission.service';
+import ListDefinitionsService from '@/backend/indicateurs/definitions/list-definitions.service';
 import { Test } from '@nestjs/testing';
 import * as _ from 'lodash';
 import CollectivitesService from '../../collectivites/services/collectivites.service';
@@ -13,6 +14,7 @@ import {
 import CrudValeursService, {
   IndicateurAvecValeursParSource,
 } from './crud-valeurs.service';
+import IndicateurValeurExpressionParserService from './indicateur-valeur-expression-parser.service';
 import { indicateur1, indicateur2, indicateur3 } from './tests/fixture';
 
 describe('Indicateurs → crud-valeurs.service', () => {
@@ -26,7 +28,9 @@ describe('Indicateurs → crud-valeurs.service', () => {
         if (
           token === DatabaseService ||
           token === PermissionService ||
-          token === CollectivitesService
+          token === CollectivitesService ||
+          token === ListDefinitionsService ||
+          token === IndicateurValeurExpressionParserService
         ) {
           return {};
         }
@@ -284,6 +288,7 @@ describe('Indicateurs → crud-valeurs.service', () => {
               createdAt: '2024-08-12T12:07:14.638Z',
               modifiedBy: null,
               createdBy: null,
+              version: '1.0.0',
             },
             sources: {
               rare: {
@@ -349,6 +354,7 @@ describe('Indicateurs → crud-valeurs.service', () => {
               createdAt: '2024-08-12T12:07:14.638Z',
               modifiedBy: null,
               createdBy: null,
+              version: '1.0.0',
             },
             sources: {
               snbc: {
@@ -425,6 +431,8 @@ describe('Indicateurs → crud-valeurs.service', () => {
             createdAt: '2024-08-27T11:54:51.791Z',
             modifiedBy: null,
             createdBy: null,
+            version: '1.0.0',
+            titreCourt: null,
           },
           indicateur_source_metadonnee: {
             id: 1,
@@ -473,6 +481,8 @@ describe('Indicateurs → crud-valeurs.service', () => {
             createdAt: '2024-08-27T11:54:51.791Z',
             modifiedBy: null,
             createdBy: null,
+            version: '1.0.0',
+            titreCourt: null,
           },
           indicateur_source_metadonnee: {
             id: 2,
@@ -538,6 +548,8 @@ describe('Indicateurs → crud-valeurs.service', () => {
             createdAt: '2024-08-27T11:54:51.791Z',
             modifiedBy: null,
             createdBy: null,
+            version: '1.0.0',
+            titreCourt: null,
           },
           indicateur_source_metadonnee: {
             id: 1,
@@ -585,6 +597,8 @@ describe('Indicateurs → crud-valeurs.service', () => {
             createdAt: '2024-08-27T11:54:51.791Z',
             modifiedBy: null,
             createdBy: null,
+            version: '1.0.0',
+            titreCourt: null,
           },
           indicateur_source_metadonnee: {
             id: 1,
@@ -650,6 +664,8 @@ describe('Indicateurs → crud-valeurs.service', () => {
             createdAt: '2024-08-27T11:54:51.791Z',
             modifiedBy: null,
             createdBy: null,
+            version: '1.0.0',
+            titreCourt: null,
           },
           indicateur_source_metadonnee: {
             id: 1,
@@ -698,6 +714,8 @@ describe('Indicateurs → crud-valeurs.service', () => {
             createdAt: '2024-08-27T11:54:51.791Z',
             modifiedBy: null,
             createdBy: null,
+            version: '1.0.0',
+            titreCourt: null,
           },
           indicateur_source_metadonnee: null,
         },
@@ -754,6 +772,8 @@ describe('Indicateurs → crud-valeurs.service', () => {
             createdAt: '2024-08-27T11:54:51.791Z',
             modifiedBy: null,
             createdBy: null,
+            version: '1.0.0',
+            titreCourt: null,
           },
           indicateur_source_metadonnee: {
             id: 1,
@@ -802,6 +822,8 @@ describe('Indicateurs → crud-valeurs.service', () => {
             createdAt: '2024-08-27T11:54:51.791Z',
             modifiedBy: null,
             createdBy: null,
+            version: '1.0.0',
+            titreCourt: null,
           },
           indicateur_source_metadonnee: {
             id: 1,
@@ -867,6 +889,8 @@ describe('Indicateurs → crud-valeurs.service', () => {
             createdAt: '2024-08-27T11:54:51.791Z',
             modifiedBy: null,
             createdBy: null,
+            version: '1.0.0',
+            titreCourt: null,
           },
           indicateur_source_metadonnee: {
             id: 1,
@@ -915,6 +939,8 @@ describe('Indicateurs → crud-valeurs.service', () => {
             createdAt: '2024-08-27T11:54:51.791Z',
             modifiedBy: null,
             createdBy: null,
+            version: '1.0.0',
+            titreCourt: null,
           },
           indicateur_source_metadonnee: {
             id: 1,
@@ -978,6 +1004,8 @@ describe('Indicateurs → crud-valeurs.service', () => {
           createdAt: '2024-08-27T11:54:51.791Z',
           modifiedBy: null,
           createdBy: null,
+          version: '1.0.0',
+          titreCourt: null,
         },
         indicateur_source_metadonnee: {
           id: 1,
@@ -1025,6 +1053,8 @@ describe('Indicateurs → crud-valeurs.service', () => {
           createdAt: '2024-08-27T11:54:51.791Z',
           modifiedBy: null,
           createdBy: null,
+          version: '1.0.0',
+          titreCourt: null,
         },
         indicateur_source_metadonnee: {
           id: 2,
@@ -1099,6 +1129,8 @@ describe('Indicateurs → crud-valeurs.service', () => {
           createdAt: '2024-08-27T11:54:51.791Z',
           modifiedBy: null,
           createdBy: null,
+          version: '1.0.0',
+          titreCourt: null,
         },
         indicateur_source_metadonnee: {
           id: 1,

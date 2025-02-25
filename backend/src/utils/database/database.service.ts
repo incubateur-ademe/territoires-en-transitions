@@ -22,7 +22,15 @@ export class DatabaseService implements OnApplicationShutdown {
   });
 
   constructor(private readonly configService: ConfigurationService) {
-    this.logger.log(`Initializing database service`);
+    if (process.env.NODE_ENV === 'production') {
+      this.logger.log(`Initializing database service`);
+    } else {
+      this.logger.log(
+        `Initializing database service with url: ${this.configService.get(
+          'SUPABASE_DATABASE_URL'
+        )}`
+      );
+    }
   }
 
   // Taken from https://orm.drizzle.team/docs/rls
