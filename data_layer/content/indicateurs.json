@@ -967,7 +967,7 @@
       "description": "<p>L'indicateur mesure les d\u00e9penses d\u2019\u00e9nergie pay\u00e9es directement par la collectivit\u00e9, c\u2019est-\u00e0-dire celles pay\u00e9es par la collectivit\u00e9 aux fournisseurs et aux exploitants (uniquement le poste combustibles P1 dans ce dernier cas) pour le patrimoine b\u00e2ti, l\u2019\u00e9clairage public et les carburants des v\u00e9hicules.</p>\n<p>Rapport\u00e9es au nombre d'habitants, pour les communes, les valeurs peuvent-\u00eatre compar\u00e9es avec des valeurs de r\u00e9f\u00e9rences tir\u00e9es de l'enqu\u00eate ADEME, 2019 &quot;De\u0301penses e\u0301nerge\u0301tiques des collectivite\u0301s locales&quot;.</p>\n",
       "id": "cae_13.a",
       "identifiant": "13.a",
-      "nom": "Budget \u00e9nergie",
+      "nom": "Budget \u00e9nergie de la collectivit\u00e9",
       "parent": null,
       "participation_score": false,
       "programmes": [
@@ -1275,7 +1275,7 @@
       "description": "<p>Pour les b\u00e2timents et \u00e9quipements publics, l'indicateur mesure le rapport de la consommation de chaleur/rafraichissement issue d\u2019energie renouvelable et de r\u00e9cup\u00e9ration sur la consommation totale d'\u00e9nergie pour les usages thermiques (chauffage, eau chaude sanitaire, climatisation-rafraichissement) en \u00e9nergie finale. Le patrimoine en DSP est inclus si possible. Les consommations thermiques des services publics eau/assainissement/d\u00e9chets sont prises en compte lorsqu'ils sont de la comp\u00e9tence de la collectivit\u00e9. Pour les collectivit\u00e9s comp\u00e9tentes, la r\u00e9cup\u00e9ration de chaleur des UIOM ainsi que sur les eaux us\u00e9es/\u00e9pur\u00e9es peut ainsi \u00eatre prise en compte pour la part autoconsomm\u00e9e sur place (b\u00e2timents de la collectivit\u00e9 et process).</p>\n<p>Les pompes \u00e0 chaleur prise en compte sont les pompes \u00e0 chaleur eau/eau, sol/eau, sol/sol  avec une efficacit\u00e9 \u00e9nerg\u00e9tique \u2265 126 % (PAC basse temp\u00e9rature) et une efficacit\u00e9 \u00e9nerg\u00e9tique \u2265 111 % (PAC moyenne ou haute temp\u00e9rature).</p>\n<p>Pour les b\u00e2timents publics desservis par des r\u00e9seaux de chaleur, le taux d\u2019EnR&amp;R du r\u00e9seau est d\u00e9fini r\u00e9glementairement et s\u2019appr\u00e9cie au regard du bulletin officiel des imp\u00f4ts vis-a-vis de la TVA r\u00e9duite (BOI-TVA-LIQ-30 chapitre 2.140). La co-g\u00e9n\u00e9ration fossile n\u2019est pas prise en compte.</p>\n",
       "id": "cae_16.b",
       "identifiant": "16.b",
-      "nom": "Couverture des besoins en chaleur et froid par les ENR&R - patrimoine collectivit\u00e9",
+      "nom": "Part des besoins couverts en chaleur et froid par les ENR&R - patrimoine collectivit\u00e9",
       "parent": null,
       "participation_score": true,
       "programmes": [
@@ -1288,7 +1288,7 @@
         "energie_et_climat"
       ],
       "titre_court": null,
-      "titre_long": "Taux de couverture des besoins en chaleur et rafraichissement par les \u00e9nergies renouvelables et de r\u00e9cup\u00e9ration (ENR&R) - patrimoine collectivit\u00e9",
+      "titre_long": "Part des besoins couverts en chaleur et rafraichissement par les \u00e9nergies renouvelables et de r\u00e9cup\u00e9ration (ENR&R) - patrimoine collectivit\u00e9",
       "type": null,
       "unite": "%",
       "valeur_indicateur": null
@@ -2294,7 +2294,7 @@
       "description": "<p>Il s'agit de mesurer la part d'\u00e9nergie renouvelable et de r\u00e9cup\u00e9ration (ENR&amp;R) du r\u00e9seau de chaleur de la collectivit\u00e9. La m\u00e9thodologie de calcul doit \u00eatre conforme \u00e0 celle \u00e9labor\u00e9e par le SNCU, reprise r\u00e9glementairement dans le cadre de l'instruction fiscale ou le classement du r\u00e9seau de chaleur. En pr\u00e9sence de plusieurs r\u00e9seaux de chaleur, une moyenne doit \u00eatre r\u00e9alis\u00e9e.</p>\n<p>La valeur cible est fix\u00e9e \u00e0 75%.</p>\n",
       "id": "cae_22",
       "identifiant": 22,
-      "nom": "Energie renouvelable et de r\u00e9cup\u00e9ration des r\u00e9seaux de chaleur",
+      "nom": "Part d'\u00e9nergie renouvelable et de r\u00e9cup\u00e9ration des r\u00e9seaux de chaleur",
       "parent": null,
       "participation_score": true,
       "programmes": [
@@ -2307,7 +2307,7 @@
         "energie_et_climat"
       ],
       "titre_court": null,
-      "titre_long": "Taux d'\u00e9nergie renouvelable et de r\u00e9cup\u00e9ration (ENR&R) des r\u00e9seaux de chaleur sur le territoire",
+      "titre_long": "Part d'\u00e9nergie renouvelable et de r\u00e9cup\u00e9ration (ENR&R) des r\u00e9seaux de chaleur sur le territoire",
       "type": null,
       "unite": "%",
       "valeur_indicateur": null
@@ -2319,7 +2319,7 @@
       "description": "<p>Cet indicateur est le ratio entre la consommation d'\u00e9nergie pour le chauffage assur\u00e9e par le(s) r\u00e9seau(x) de chaleur aliment\u00e9(s) en \u00e9nergie renouvelable et de r\u00e9cup\u00e9ration (ENR&amp;R) et la consommation totale d'\u00e9nergie pour le chauffage du territoire (pour le r\u00e9sidentiel et le tertiaire, donc hors industrie).</p>\n<p>Les r\u00e9seaux de chaleur 100% fossiles ne sont pas donc pris en compte ici.</p>\n<p>La valeur limite (10%) est bas\u00e9e sur le taux moyen de couverture des besoins de chaleur par les r\u00e9seaux de chaleur en Europe (source : AMORCE).</p>\n",
       "id": "cae_23",
       "identifiant": 23,
-      "nom": "Couverture des besoins de chaleur du territoire par les r\u00e9seaux de chaleur ENR&R",
+      "nom": "Part des besoins de chaleur du territoire couverts par les r\u00e9seaux de chaleur ENR&R",
       "parent": null,
       "participation_score": true,
       "programmes": [
@@ -2332,7 +2332,7 @@
         "energie_et_climat"
       ],
       "titre_court": null,
-      "titre_long": "Taux de couverture des besoins de chaleur du territoire (r\u00e9sidentiel et tertiaire) par les r\u00e9seaux de chaleur ENR&R",
+      "titre_long": "Part des besoins de chaleur du territoire (r\u00e9sidentiel et tertiaire) couverts par les r\u00e9seaux de chaleur ENR&R",
       "type": null,
       "unite": "%",
       "valeur_indicateur": null
@@ -2368,10 +2368,10 @@
       "action_ids": [
         "cae_3.2.2"
       ],
-      "description": "<p>Cet indicateur mesure la production de chaleur et de rafraichissement  renouvelable sur le territoire (initiative publique et priv\u00e9e), divis\u00e9e par les consommations totales de chaleur et de froid du territoire (en \u00e9nergie finale). Les \u00e9nergies renouvelables prise en compte sont celles cit\u00e9es selon les fili\u00e8res cit\u00e9es dans le D\u00e9cret n\u00b0 2016-849 du 28 juin 2016  relatif au plan climat-air-\u00e9nergie territorial :  biomasse  solide,  pompes  \u00e0  chaleur,  g\u00e9othermie,  solaire  thermique,  biogaz.</p>\n<p>Par convention, 50 % de la chaleur produite par l\u2019incin\u00e9ration des d\u00e9chets est consid\u00e9r\u00e9e issue de d\u00e9chets urbains renouvelables (source DGEC, dans ses bilans). Les pompes \u00e0 chaleur prise en compte sont les pompes \u00e0 chaleur eau/eau, sol/eau, sol/sol  avec une efficacit\u00e9 \u00e9nerg\u00e9tique \u2265 126 % (PAC basse temp\u00e9rature) et une efficacit\u00e9 \u00e9nerg\u00e9tique \u2265 111 % (PAC moyenne ou haute temp\u00e9rature) (exigences du cr\u00e9dit d\u2019imp\u00f4t pour la transition \u00e9nerg\u00e9tique 2018).</p>\n<p>La cog\u00e9n\u00e9ration \u00e0 partir d'\u00e9nergie fossile n'est pas prise en compte.</p>\n<p>Pour conna\u00eetre cet indicateur, la collectivit\u00e9 doit avoir effectu\u00e9 un bilan de ses consommations et production d'ENR tel que d\u00e9crit \u00e0 l'action 1.1.2 - R\u00e9aliser le diagnostic Climat-Air-Energie du territoire</p>\n<p>Valeur limite : 10 %</p>\n<p>Valeur cible : 38 % en M\u00e9tropole, 75 % dans les DOM</p>\n",
+      "description": "<p>Cet indicateur mesure la production de chaleur et de rafraichissement renouvelable sur le territoire (initiative publique et priv\u00e9e), divis\u00e9e par les consommations totales de chaleur et de froid du territoire (en \u00e9nergie finale). Les \u00e9nergies renouvelables prise en compte sont celles cit\u00e9es selon les fili\u00e8res cit\u00e9es dans le D\u00e9cret n\u00b0 2016-849 du 28 juin 2016  relatif au plan climat-air-\u00e9nergie territorial :  biomasse  solide,  pompes  \u00e0  chaleur,  g\u00e9othermie,  solaire  thermique,  biogaz.</p>\n<p>Par convention, 50 % de la chaleur produite par l\u2019incin\u00e9ration des d\u00e9chets est consid\u00e9r\u00e9e issue de d\u00e9chets urbains renouvelables (source DGEC, dans ses bilans). Les pompes \u00e0 chaleur prise en compte sont les pompes \u00e0 chaleur eau/eau, sol/eau, sol/sol  avec une efficacit\u00e9 \u00e9nerg\u00e9tique \u2265 126 % (PAC basse temp\u00e9rature) et une efficacit\u00e9 \u00e9nerg\u00e9tique \u2265 111 % (PAC moyenne ou haute temp\u00e9rature) (exigences du cr\u00e9dit d\u2019imp\u00f4t pour la transition \u00e9nerg\u00e9tique 2018).</p>\n<p>La cog\u00e9n\u00e9ration \u00e0 partir d'\u00e9nergie fossile n'est pas prise en compte.</p>\n<p>Pour conna\u00eetre cet indicateur, la collectivit\u00e9 doit avoir effectu\u00e9 un bilan de ses consommations et production d'ENR tel que d\u00e9crit \u00e0 l'action 1.1.2 - R\u00e9aliser le diagnostic Climat-Air-Energie du territoire</p>\n<p>Valeur limite : 10 %</p>\n<p>Valeur cible : 38 % en M\u00e9tropole, 75 % dans les DOM</p>\n",
       "id": "cae_24.b",
       "identifiant": "24.b",
-      "nom": "Taux de production d'\u00e9nergie renouvelable chaleur/froid",
+      "nom": "Part de la production d'\u00e9nergie renouvelable chaleur/froid sur la consommation chaleur/froid",
       "parent": null,
       "participation_score": true,
       "programmes": [
@@ -2384,7 +2384,7 @@
         "energie_et_climat"
       ],
       "titre_court": null,
-      "titre_long": "Taux de production d'\u00e9nergie renouvelable pour la chaleur et le rafra\u00eechissement sur le territoire",
+      "titre_long": "Part de la production d'\u00e9nergie renouvelable pour la chaleur et le rafra\u00eechissement sur la consommation totale de chaleur/froid du territoire",
       "type": null,
       "unite": "%",
       "valeur_indicateur": null
@@ -2423,7 +2423,7 @@
       "description": "<p>Cet indicateur mesure la production d'\u00e9lectricit\u00e9 renouvelable sur le territoire, par la collectivit\u00e9, ses partenaires et les particuliers, rapport\u00e9 \u00e0 la consommation totale d'\u00e9lectricit\u00e9 du territoire (\u00e9nergie finale). Les \u00e9nergies renouvelables consid\u00e9r\u00e9es sont celles cit\u00e9es dans le d\u00e9cret D\u00e9cret n\u00b0 2016-849 du 28 juin 2016  relatif au plan climat-air-\u00e9nergie territorial  (\u00e9olien  terrestre,  solaire  photovolta\u00efque,  solaire  thermodynamique,  hydraulique,  biomasse  solide, biogaz,  g\u00e9othermie). L'\u00e9lectricit\u00e9 produite par cog\u00e9n\u00e9ration via incin\u00e9ration des d\u00e9chets en m\u00e9lange compte pour 50% comme une \u00e9nergie renouvelable (biomasse solide). La cog\u00e9n\u00e9ration \u00e0 partir d'\u00e9nergie fossile n'est pas prise en compte.</p>\n<p>La collectivit\u00e9 doit avoir effectu\u00e9 un bilan de ses consommations et productions d'ENR tel que d\u00e9crit \u00e0 l'action 1.1.2 - R\u00e9aliser le diagnostic Climat-Air-Energie du territoire</p>\n<ul>\n<li>\n<p>Valeur cible pour les territoires sans potentiel \u00e9olien et hydraulique : 16%</p>\n</li>\n<li>\n<p>Valeur cible pour les territoires \u00e0 fort potentiel : 40%</p>\n</li>\n<li>\n<p>Valeur cible pour les DOM : 75%</p>\n</li>\n</ul>\n",
       "id": "cae_25.b",
       "identifiant": "25.b",
-      "nom": "Taux de production d'\u00e9lectricit\u00e9 renouvelable",
+      "nom": "Part de la production d'\u00e9lectricit\u00e9 renouvelable sur la consommation d'\u00e9lectricit\u00e9",
       "parent": null,
       "participation_score": true,
       "programmes": [
@@ -2436,7 +2436,7 @@
         "energie_et_climat"
       ],
       "titre_court": null,
-      "titre_long": "Taux de production d'\u00e9lectricit\u00e9 renouvelable sur le territoire",
+      "titre_long": "Part de la production d'\u00e9lectricit\u00e9 renouvelable sur la consommation totale d'\u00e9lectricit\u00e9 sur le territoire",
       "type": null,
       "unite": "%",
       "valeur_indicateur": null
@@ -2956,7 +2956,7 @@
     },
     {
       "action_ids": [],
-      "description": "<p>Cet indicateur est sp\u00e9cifique \u00e0 la r\u00e9gion Occitanie.</p>\n",
+      "description": "<p>Cet indicateur est sp\u00e9cifique \u00e0 certains EPCIs.</p>\n",
       "id": "cae_3.ap",
       "identifiant": "3.ap",
       "nom": "Production d\u2019\u00e9nergie renouvelable - Thermique - Autre fili\u00e8re",
@@ -3009,7 +3009,7 @@
       "description": "<p>Cet indicateur mesure la production d\u2019\u00e9nergie renouvelable totale sur le territoire ramen\u00e9 \u00e0 la consommation \u00e9nerg\u00e9tique globale du territoire.</p>\n",
       "id": "cae_3.b",
       "identifiant": "3.b",
-      "nom": "Production d\u2019\u00e9nergie renouvelable / consommation \u00e9nerg\u00e9tique",
+      "nom": "Part de la production d\u2019\u00e9nergie renouvelable sur la consommation \u00e9nerg\u00e9tique",
       "parent": null,
       "participation_score": false,
       "programmes": [
@@ -3022,7 +3022,7 @@
         "energie_et_climat"
       ],
       "titre_court": null,
-      "titre_long": "Production d\u2019\u00e9nergie renouvelable globale du territoire par rapport \u00e0 la consommation \u00e9nerg\u00e9tique globale",
+      "titre_long": "Part de la production d\u2019\u00e9nergie renouvelable globale du territoire sur la consommation \u00e9nerg\u00e9tique globale",
       "type": null,
       "unite": "%",
       "valeur_indicateur": null
@@ -4636,7 +4636,7 @@
       "action_ids": [
         "cae_4.1.2"
       ],
-      "description": "<p>L'indicateur mesure la consommation d'\u00e9nergie en kWh (gazole, essence, GPL, GNV, \u00e9lectricit\u00e9, biogaz, agro-carburants...) des v\u00e9hicules de type &quot;v\u00e9hicule particulier&quot; pour le fonctionnement de la collectivit\u00e9.</p>\n<p>Facteurs de conversion simplifi\u00e9s : gazole et essence 10 kWh/L, GPL 7 kWh/L, GNV 11 kWh/m3.</p>\n<p>L'indicateur est ensuite divis\u00e9 par le nombre d'agents et/ou par kilom\u00e8tre effectu\u00e9 pour faciliter les comparaisons avec d'autres collectivit\u00e9s.</p>\n",
+      "description": "<p>L'indicateur mesure la consommation d'\u00e9nergie en kWh (gazole, essence, GPL, GNV, \u00e9lectricit\u00e9, biogaz, agro-carburants...) des v\u00e9hicules de type &quot;v\u00e9hicule particulier&quot; pour le fonctionnement de la collectivit\u00e9.</p>\n<p>Facteurs de conversion simplifi\u00e9s : gazole et essence 10 kWh/L, GPL 7 kWh/L, GNV 11 kWh/m3.</p>\n<p>L'indicateur est ensuite divis\u00e9 par le nombre d'agents et/ou par kilom\u00e8tre effectu\u00e9 pour faciliter les comparaisons avec d'autres collectivit\u00e9s.</p>\n<p>Le service\nMobili\u2019Pro\nde l\u2019ADEME vous aide \u00e0 optimiser la mobilit\u00e9 professionnelle au sein de votre collectivit\u00e9.</p>\n",
       "id": "cae_40",
       "identifiant": 40,
       "nom": "Consommation annuelle d'\u00e9nergie des v\u00e9hicules",
@@ -5684,7 +5684,7 @@
       "action_ids": [
         "cae_6.4.1"
       ],
-      "description": "<p>L\u2019indicateur mesure la part des achats (en euros) labellis\u00e9s \u00ab\u00a0agriculture biologique\u00a0\u00bb dans les achats totaux d\u2019alimentation de la restauration collective publique (ma\u00eetris\u00e9e par la collectivit\u00e9).  Pour la France m\u00e9tropole, la valeur limite est bas\u00e9e sur la part nationale des achats biologiques dans la restauration collective \u00e0 caract\u00e8re social en 2015 (3,2% - Agence Bio) et la valeur cible sur l\u2019objectif 2022 du projet de loi pour l\u2019\u00e9quilibre des relations commerciales dans le secteur agricole et alimentaire et une alimentation saine et durable (20%).</p>\n",
+      "description": "<p>L\u2019indicateur mesure la part des achats (en euros) labellis\u00e9s \u00ab\u00a0agriculture biologique\u00a0\u00bb dans les achats totaux d\u2019alimentation de la restauration collective publique (ma\u00eetris\u00e9e par la collectivit\u00e9).  Pour la France m\u00e9tropole, la valeur limite est bas\u00e9e sur la part nationale des achats biologiques dans la restauration collective \u00e0 caract\u00e8re social en 2023 (7% - Agence Bio) et la valeur cible sur l\u2019objectif 2022 du projet de loi pour l\u2019\u00e9quilibre des relations commerciales dans le secteur agricole et alimentaire et une alimentation saine et durable (20%).</p>\n",
       "id": "cae_60",
       "identifiant": 60,
       "nom": "Produits biologiques dans la restauration collective publique",
@@ -6843,7 +6843,7 @@
     },
     {
       "action_ids": [],
-      "description": "<p>Quantit\u00e9 de d\u00e9chets alimentaires produits par la restauration collective publique du territoire (d'apr\u00e8s l'enqu\u00eate INSEE sur les d\u00e9chets non-dangereux en restauration collective) / nombre de repas servis par  la restauration collective publique du territoire. Objectif l\u00e9gal AGEC et Climat et R\u00e9silience.</p>\n",
+      "description": "<p>Quantit\u00e9 de d\u00e9chets alimentaires produits par la restauration collective publique du territoire (d'apr\u00e8s l'enqu\u00eate INSEE sur les d\u00e9chets non-dangereux en restauration collective) / nombre de repas servis par  la restauration collective publique du territoire.</p>\n<p>Objectif l\u00e9gal AGEC et Climat et R\u00e9silience : r\u00e9duction du gaspillage alimentaire de 50% d'ici 2025 par rapport \u00e0 son niveau de 2015.</p>\n",
       "id": "eci_21",
       "identifiant": 21,
       "nom": "Gaspillage alimentaire dans la restauration collective publique",
@@ -6866,10 +6866,10 @@
     },
     {
       "action_ids": [],
-      "description": "<p>Nombre restaurants collectifs engag\u00e9s dans une d\u00e9marche de r\u00e9duction du gaspillage alimentaire / Nombre de restaurants collectifs total. Pour affiner son action la collectivit\u00e9 peut choisir de distinguer le type d'\u00e9tablissement (\u00e9coles, EPHAD, h\u00f4pital, etc.).</p>\n",
+      "description": "<p>Nombre de restaurants collectifs engag\u00e9s dans une d\u00e9marche de r\u00e9duction du gaspillage alimentaire / Nombre de restaurants collectifs total. Pour affiner son action la collectivit\u00e9 peut choisir de distinguer le type d'\u00e9tablissement (\u00e9coles, EPHAD, h\u00f4pital, etc.).</p>\n",
       "id": "eci_22",
       "identifiant": 22,
-      "nom": "R\u00e9duction du gaspillage alimentaire dans la restauration collective publique",
+      "nom": "Part des restaurants collectifs engag\u00e9s dans la r\u00e9duction du gaspillage alimentaire",
       "parent": "restauration_collective",
       "participation_score": false,
       "programmes": [
@@ -6877,7 +6877,7 @@
       ],
       "sans_valeur": false,
       "selection": false,
-      "source": "<p>Les restaurants collectifs dont la collectivit\u00e9 a la charge</p>\n<p>Cet indicateur est propos\u00e9 par le SYDEV pour le suivi des PCAET.</p>\n",
+      "source": "<p>Les restaurants collectifs dont la collectivit\u00e9 a la charge</p>\n",
       "thematiques": [
         "activites_economiques"
       ],
