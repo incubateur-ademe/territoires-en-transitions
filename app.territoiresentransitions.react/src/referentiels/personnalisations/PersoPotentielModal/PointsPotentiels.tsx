@@ -1,6 +1,8 @@
 import { TweenText } from '@/app/ui/shared/TweenText';
 import { toLocaleFixed } from '@/app/utils/toFixed';
 import { ScoreFinal } from '@/domain/referentiels';
+import { useScore } from '../../use-snapshot';
+import { useActionScore } from '../../DEPRECATED_score-hooks';
 
 type ScorePartial = Pick<
   ScoreFinal,
@@ -16,6 +18,42 @@ export const PointsPotentiels = ({ score }: { score: ScorePartial }) => {
     </div>
   );
 };
+
+export function NEW_PointsPotentiels({ actionId }: { actionId: string }) {
+  const NEW_score = useScore(actionId);
+
+  if (!NEW_score) {
+    return null;
+  }
+
+  return <PointsPotentiels score={NEW_score} />;
+}
+
+export function DEPRECATED_PointsPotentiels({
+  actionId,
+}: {
+  actionId: string;
+}) {
+  const DEPRECATED_actionScore = useActionScore(actionId);
+
+  if (!DEPRECATED_actionScore) {
+    return null;
+  }
+
+  return (
+    <PointsPotentiels
+      score={{
+        pointPotentiel: DEPRECATED_actionScore.point_potentiel,
+        pointPotentielPerso:
+          DEPRECATED_actionScore.point_potentiel_perso === undefined
+            ? null
+            : DEPRECATED_actionScore.point_potentiel_perso,
+        pointReferentiel: DEPRECATED_actionScore.point_referentiel,
+        desactive: DEPRECATED_actionScore.desactive,
+      }}
+    />
+  );
+}
 
 const getLabel = (actionScore: ScorePartial): string => {
   const { pointReferentiel, pointPotentiel, pointPotentielPerso, desactive } =

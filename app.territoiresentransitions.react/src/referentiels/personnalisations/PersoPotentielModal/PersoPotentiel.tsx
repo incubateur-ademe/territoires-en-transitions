@@ -1,16 +1,15 @@
 import { useCollectiviteId } from '@/app/collectivites/collectivite-context';
 import { ActionDefinitionSummary } from '@/app/referentiels/ActionDefinitionSummaryReadEndpoint';
-import { useActionScore } from '@/app/referentiels/DEPRECATED_score-hooks';
-import {
-  useScore,
-  useSnapshotFlagEnabled,
-} from '@/app/referentiels/use-snapshot';
+import { useSnapshotFlagEnabled } from '@/app/referentiels/use-snapshot';
 import Modal from '@/app/ui/shared/floating-ui/Modal';
 import { getReferentielIdFromActionId } from '@/domain/referentiels';
 import { Button } from '@/ui';
 import { useQuestionsReponses } from '../PersoReferentielThematique/useQuestionsReponses';
 import { PersoPotentielTabs } from './PersoPotentielTabs';
-import { PointsPotentiels } from './PointsPotentiels';
+import {
+  DEPRECATED_PointsPotentiels,
+  NEW_PointsPotentiels,
+} from './PointsPotentiels';
 import { useChangeReponseHandler } from './useChangeReponseHandler';
 import { useRegles } from './useRegles';
 
@@ -33,13 +32,7 @@ export const PersoPotentiel = ({ actionDef }: TPersoPotentielButtonProps) => {
     getReferentielIdFromActionId(actionId),
   ]);
 
-  const DEPRECATED_actionScore = useActionScore(actionId);
   const FLAG_isSnapshotEnabled = useSnapshotFlagEnabled();
-  const NEW_score = useScore(actionId);
-
-  if (!DEPRECATED_actionScore || !NEW_score) {
-    return null;
-  }
 
   return (
     <div
@@ -47,23 +40,11 @@ export const PersoPotentiel = ({ actionDef }: TPersoPotentielButtonProps) => {
       className="flex items-center"
       onClick={(event) => event.stopPropagation()}
     >
-      <PointsPotentiels
-        score={
-          FLAG_isSnapshotEnabled
-            ? {
-                ...NEW_score,
-              }
-            : {
-                pointPotentiel: DEPRECATED_actionScore.point_potentiel,
-                pointPotentielPerso:
-                  DEPRECATED_actionScore.point_potentiel_perso === undefined
-                    ? null
-                    : DEPRECATED_actionScore.point_potentiel_perso,
-                pointReferentiel: DEPRECATED_actionScore.point_referentiel,
-                desactive: DEPRECATED_actionScore.desactive,
-              }
-        }
-      />
+      {FLAG_isSnapshotEnabled ? (
+        <NEW_PointsPotentiels actionId={actionId} />
+      ) : (
+        <DEPRECATED_PointsPotentiels actionId={actionId} />
+      )}
       <Modal
         size="lg"
         render={() => (
