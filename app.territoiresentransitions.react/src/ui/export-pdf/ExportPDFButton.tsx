@@ -8,7 +8,13 @@ const TEST_MODE = false;
 
 export type ExportPDFButtonType = Pick<
   ButtonProps,
-  'children' | 'title' | 'variant' | 'size' | 'icon' | 'iconPosition'
+  | 'children'
+  | 'title'
+  | 'variant'
+  | 'size'
+  | 'icon'
+  | 'iconPosition'
+  | 'disabled'
 > & {
   /** Content of the pdf - Content shouldn't be undefined if requestData isn't used */
   content: JSX.Element | JSX.Element[] | undefined;
@@ -18,6 +24,7 @@ export type ExportPDFButtonType = Pick<
   requestData?: () => void;
   /** Action supplémentaire au click */
   onClick?: () => void;
+  onDownloadEnd?: () => void;
 };
 
 const ExportPDFButton = ({
@@ -29,8 +36,10 @@ const ExportPDFButton = ({
   size = 'xs',
   icon = 'download-fill',
   iconPosition = 'left',
+  disabled,
   requestData,
   onClick,
+  onDownloadEnd,
 }: ExportPDFButtonType) => {
   const [instance, updateInstance] = usePDF({ document: undefined });
   const [isDownloadRequested, setIsDownloadRequested] = useState(false);
@@ -58,13 +67,14 @@ const ExportPDFButton = ({
         saveBlob(instance.blob, `${fileName}.pdf`);
       }
       setIsDownloadRequested(false);
+      onDownloadEnd?.();
     }
   }, [instance.blob]);
 
   return (
     <Button
       loading={instance.loading}
-      disabled={!requestData && !content}
+      disabled={disabled || (!requestData && !content)}
       onClick={() => {
         handleDownloadRequest();
         if (!requestData && content)

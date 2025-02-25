@@ -1,6 +1,6 @@
 import { Placement } from '@floating-ui/react';
 import classNames from 'classnames';
-import { Ref, forwardRef, useEffect, useState, Fragment } from 'react';
+import { Fragment, Ref, forwardRef, useEffect, useState } from 'react';
 import { useDebouncedCallback } from 'use-debounce';
 
 import { Badge } from '@/ui/design-system/Badge';
@@ -300,7 +300,11 @@ const SelectButton = forwardRef(
               }
               key={value.toString()}
               title={getOptionLabel(value, getFlatOptions(options)) ?? ''}
-              onClose={() => !disabled && onChange(value)}
+              onClose={
+                !disabled && !firstValue?.disabled
+                  ? () => onChange(value)
+                  : undefined
+              }
             />
           )
         );
