@@ -11,6 +11,7 @@ import posthog from 'posthog-js';
 import { ReactNode } from 'react';
 import { QueryClient, QueryClientProvider } from 'react-query';
 import { ReactQueryDevtools } from 'react-query/devtools';
+import { DemoModeProvider } from '@/app/users/demo-mode-support-provider';
 
 const queryClient = new QueryClient();
 
@@ -44,13 +45,15 @@ export default function AppProviders({
     >
       <TRPCProvider>
         <QueryClientProvider client={queryClient}>
-          <Toasters />
-          <ScoreListenerProvider>
-            <VisitTracker />
-            <AccepterCGUModal />
-            <ReactQueryDevtools initialIsOpen={false} />
-            {children}
-          </ScoreListenerProvider>
+          <DemoModeProvider>
+            <Toasters />
+            <ScoreListenerProvider>
+              <VisitTracker />
+              <AccepterCGUModal />
+              <ReactQueryDevtools initialIsOpen={false} />
+              {children}
+            </ScoreListenerProvider>
+          </DemoModeProvider>
         </QueryClientProvider>
       </TRPCProvider>
     </UserProvider>
