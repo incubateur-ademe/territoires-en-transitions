@@ -424,6 +424,9 @@ app-deploy:
 # BACKEND ENTRYPOINTS
 # -------------------
 
+backend-local-seed:
+  BUILD --pass-args ./backend+local-seed
+
 backend-docker:
   BUILD --pass-args ./backend+docker
 
@@ -774,6 +777,13 @@ dev:
             RUN earthly +db-deploy --to @$version --DB_URL=$DB_URL
 
             RUN earthly +load-json --SERVICE_ROLE_KEY=$SERVICE_ROLE_KEY --API_URL=$API_URL
+
+            # Seed des indicateurs et des referentiels à partir des spreadsheets
+            IF [ "$CI" = "true" ]
+                
+            ELSE
+                RUN earthly +backend-local-seed
+            END
 
             # Seed si aucune collectivité en base
             RUN docker run --rm \

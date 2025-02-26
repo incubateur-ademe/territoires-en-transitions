@@ -9,14 +9,19 @@ import {
   eq,
   getTableColumns,
   inArray,
+  isNotNull,
   isNull,
+  like,
   or,
+  SQL,
   sql,
+  SQLWrapper,
 } from 'drizzle-orm';
 import { objectToCamel } from 'ts-case-convert';
 import { PermissionService } from '../../auth/authorizations/permission.service';
 import { groupementCollectiviteTable } from '../../collectivites/shared/models/groupement-collectivite.table';
 import { groupementTable } from '../../collectivites/shared/models/groupement.table';
+import { actionDefinitionTable } from '../../referentiels/models/action-definition.table';
 import { DatabaseService } from '../../utils/database/database.service';
 import {
   indicateurSourceMetadonneeTable,
@@ -46,21 +51,160 @@ export default class ListDefinitionsService {
     private readonly permissionService: PermissionService
   ) {}
 
-  async getReferentielIndicateurDefinitions(identifiantsReferentiel: string[]) {
+  private getIndicateurDefinitionThematiquesQuery() {
+    return this.databaseService.db
+      .select({
+        indicateur_id: indicateurThematiqueTable.indicateurId,
+        thematique_ids: sql<
+          number[]
+        >`array_agg(${indicateurThematiqueTable.thematiqueId})`.as(
+          'thematique_ids'
+        ),
+        thematique_mids: sql<string[]>`array_agg(${thematiqueTable.mdId})`.as(
+          'thematique_mids'
+        ),
+        thematiques: sql<
+          { id: number; nom: string; mdId?: string }[]
+        >`array_agg(json_build_object('id', ${indicateurThematiqueTable.thematiqueId}, 'nom', ${thematiqueTable.nom}, 'mdId', ${thematiqueTable.mdId} ))`.as(
+          'thematiques'
+        ),
+      })
+      .from(indicateurThematiqueTable)
+      .leftJoin(
+        thematiqueTable,
+        eq(thematiqueTable.id, indicateurThematiqueTable.thematiqueId)
+      )
+      .groupBy(indicateurThematiqueTable.indicateurId)
+      .as('indicateurThematiques');
+  }
+
+  private getIndicateurDefinitionParentsQuery() {
+    const parentDefinition = aliasedTable(
+      indicateurDefinitionTable,
+      'parentDefinition'
+    );
+
+    return this.databaseService.db
+      .select({
+        indicateur_id: indicateurGroupeTable.enfant,
+        parent_ids: sql<
+          string[]
+        >`array_agg(${indicateurGroupeTable.parent})`.as('parent_ids'),
+        parents: sql<
+          { id: string; identifiantReferentiel: string; titre: string }[]
+        >`array_agg(json_build_object('id', ${indicateurGroupeTable.parent}, 'identifiantReferentiel', ${parentDefinition.identifiantReferentiel}, 'titre', ${parentDefinition.titre} ))`.as(
+          'parents'
+        ),
+      })
+      .from(indicateurGroupeTable)
+      .leftJoin(
+        parentDefinition,
+        eq(parentDefinition.id, indicateurGroupeTable.parent)
+      )
+      .groupBy(indicateurGroupeTable.enfant)
+      .as('indicateurParents');
+  }
+
+  private getIndicateurDefinitionActionIdsQuery() {
+    return this.databaseService.db
+      .select({
+        indicateur_id: indicateurActionTable.indicateurId,
+        action_ids: sql<
+          string[]
+        >`array_agg(${indicateurActionTable.actionId})`.as('action_ids'),
+        actions: sql<
+          { id: string; nom: string }[]
+        >`array_agg(json_build_object('id', ${indicateurActionTable.actionId}, 'nom', ${actionDefinitionTable.nom} ))`.as(
+          'actions'
+        ),
+      })
+      .from(indicateurActionTable)
+      .leftJoin(
+        actionDefinitionTable,
+        eq(actionDefinitionTable.actionId, indicateurActionTable.actionId)
+      )
+      .groupBy(indicateurActionTable.indicateurId)
+      .as('indicateurActionIds');
+  }
+
+  private getIndicateurDefinitionCategoriesQuery() {
+    return this.databaseService.db
+      .select({
+        indicateur_id: indicateurCategorieTagTable.indicateurId,
+        categorie_ids: sql<
+          number[]
+        >`array_agg(${indicateurCategorieTagTable.categorieTagId})`.as(
+          'categorie_ids'
+        ),
+        categories: sql<
+          { id: number; nom: string }[]
+        >`array_agg(json_build_object('id', ${indicateurCategorieTagTable.categorieTagId}, 'nom', ${categorieTagTable.nom} ))`.as(
+          'categories'
+        ),
+      })
+      .from(indicateurCategorieTagTable)
+      .leftJoin(
+        categorieTagTable,
+        eq(categorieTagTable.id, indicateurCategorieTagTable.categorieTagId)
+      )
+      .groupBy(indicateurCategorieTagTable.indicateurId)
+      .as('indicateurCategories');
+  }
+
+  async getReferentielIndicateurDefinitions(
+    identifiantsReferentiel?: string[]
+  ) {
     this.logger.log(
-      `Récupération des définitions des indicateurs ${identifiantsReferentiel.join(
+      `Récupération des définitions des indicateurs ${identifiantsReferentiel?.join(
         ','
       )}`
     );
-    const definitions = await this.databaseService.db
-      .select()
-      .from(indicateurDefinitionTable)
-      .where(
+    const conditions: (SQLWrapper | SQL)[] = [
+      isNotNull(indicateurDefinitionTable.identifiantReferentiel),
+      isNull(indicateurDefinitionTable.collectiviteId),
+    ];
+    if (identifiantsReferentiel) {
+      conditions.push(
         inArray(
           indicateurDefinitionTable.identifiantReferentiel,
           identifiantsReferentiel
         )
       );
+    }
+
+    const indicateurThematiques =
+      this.getIndicateurDefinitionThematiquesQuery();
+    const indicateurCategories = this.getIndicateurDefinitionCategoriesQuery();
+    const indicateurActionIds = this.getIndicateurDefinitionActionIdsQuery();
+    const indicateurParents = this.getIndicateurDefinitionParentsQuery();
+
+    const definitions = await this.databaseService.db
+      .select({
+        ...getTableColumns(indicateurDefinitionTable),
+        thematiques: indicateurThematiques.thematiques,
+        categories: indicateurCategories.categories,
+        actions: indicateurActionIds.actions,
+        parents: indicateurParents.parents,
+      })
+      .from(indicateurDefinitionTable)
+      .leftJoin(
+        indicateurThematiques,
+        eq(indicateurThematiques.indicateur_id, indicateurDefinitionTable.id)
+      )
+      .leftJoin(
+        indicateurCategories,
+        eq(indicateurCategories.indicateur_id, indicateurDefinitionTable.id)
+      )
+      .leftJoin(
+        indicateurActionIds,
+        eq(indicateurActionIds.indicateur_id, indicateurDefinitionTable.id)
+      )
+      .leftJoin(
+        indicateurParents,
+        eq(indicateurParents.indicateur_id, indicateurDefinitionTable.id)
+      )
+      .where(and(...conditions))
+      .orderBy(indicateurDefinitionTable.identifiantReferentiel);
     this.logger.log(`${definitions.length} définitions trouvées`);
     return definitions;
   }
@@ -70,7 +214,7 @@ export default class ListDefinitionsService {
    * ainsi que les définitions des indicateurs "enfant" associés.
    * (utilisé pour l'export)
    */
-  async getIndicateurDefinitions(
+  async getIndicateurDefinitionsAvecEnfants(
     collectiviteId: number,
     indicateurIds: number[]
   ): Promise<IndicateurDefinitionAvecEnfantsType[]> {
@@ -129,6 +273,54 @@ export default class ListDefinitionsService {
         };
       }
     );
+  }
+
+  async getIndicateurDefinitions(indicateurIds: number[]) {
+    const indicateurDefinitions = await this.databaseService.db
+      .select()
+      .from(indicateurDefinitionTable)
+      .where(inArray(indicateurDefinitionTable.id, indicateurIds));
+    return indicateurDefinitions;
+  }
+
+  getIndicateurIdToIdentifiant(
+    indicateurDefinitions: IndicateurDefinition[]
+  ): Record<number, string> {
+    return indicateurDefinitions.reduce((acc, def) => {
+      if (!def.identifiantReferentiel) {
+        return acc;
+      } else {
+        return { ...acc, [def.id]: def.identifiantReferentiel };
+      }
+    }, {});
+  }
+
+  async getComputedIndicateurDefinitions(
+    sourceIndicateurIdentifiants: string[]
+  ): Promise<IndicateurDefinition[]> {
+    const sqlConditions: (SQLWrapper | SQL)[] =
+      sourceIndicateurIdentifiants.map((identifiant) =>
+        like(indicateurDefinitionTable.valeurCalcule, `%${identifiant}%`)
+      );
+
+    const computedIndicateurDefinitions = await this.databaseService.db
+      .select()
+      .from(indicateurDefinitionTable)
+      .where(
+        and(
+          isNotNull(indicateurDefinitionTable.valeurCalcule),
+          or(...sqlConditions)
+        )
+      );
+    this.logger.log(
+      `Found ${
+        computedIndicateurDefinitions.length
+      } computed indicateur definitions: ${computedIndicateurDefinitions
+        .map((def) => def.identifiantReferentiel || `${def.id}`)
+        .join(',')} for indicateurs ${sourceIndicateurIdentifiants.join(',')}`
+    );
+
+    return computedIndicateurDefinitions;
   }
 
   /**
