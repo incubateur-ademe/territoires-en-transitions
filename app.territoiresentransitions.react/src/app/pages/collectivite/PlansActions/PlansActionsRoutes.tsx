@@ -26,6 +26,7 @@ import { Button, useEventTracker } from '@/ui';
 import { useCurrentCollectivite } from '@/app/core-logic/hooks/useCurrentCollectivite';
 import { ImportPlanButton } from '@/app/app/pages/collectivite/PlansActions/ParcoursCreationPlan/Import/import-plan.button';
 import { useUser } from '@/api/users/user-provider';
+import { useDemoMode } from '@/app/users/demo-mode-support-provider';
 
 type Props = {
   collectivite_id: number;
@@ -38,6 +39,7 @@ type Props = {
 export const PlansActionsRoutes = ({ collectivite_id, readonly }: Props) => {
   const collectivite = useCurrentCollectivite()!;
   const user = useUser();
+  const { isDemoMode } = useDemoMode();
 
   const { data: axes } = usePlansNavigation();
   const { data: fichesNonClasseesListe } =
@@ -116,7 +118,7 @@ export const PlansActionsRoutes = ({ collectivite_id, readonly }: Props) => {
                 </li>
               </>
             )}
-            {user.isSupport && (
+            {user.isSupport && !isDemoMode && (
               <li className="mt-4 p-0 list-none">
                 <ImportPlanButton
                   collectiviteId={collectivite.collectiviteId}
