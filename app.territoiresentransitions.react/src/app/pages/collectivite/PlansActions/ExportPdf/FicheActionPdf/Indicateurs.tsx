@@ -15,20 +15,36 @@ type IndicateurCardProps = {
 };
 
 const IndicateurCard = ({ indicateur }: IndicateurCardProps) => {
-  const { titre, unite, participationScore } = indicateur;
+  const { titre, unite, participationScore, estPerso, hasOpenData } =
+    indicateur;
 
   return (
-    <Card wrap={false} gap={1.5} className="w-[32%] p-3">
-      <Title variant="h6" className="leading-5 text-primary-8">
+    <Card wrap={false} gap={1.5} className="w-[49%] p-3">
+      <Title variant="h6" className="leading-5 text-primary-10">
         {titre}
-        <Paragraph className="text-grey-6 text-[0.7rem] font-normal">
-          {' '}
-          ({unite})
-        </Paragraph>
       </Title>
+      <Paragraph className="text-grey-6 text-[0.7rem] font-normal">
+        ({unite})
+      </Paragraph>
+
+      <Stack gap={1} direction="row">
+        {estPerso && (
+          <Badge
+            title="Indicateur personnalisé"
+            state="success"
+            size="sm"
+            light
+            uppercase
+          />
+        )}
+
+        {hasOpenData && (
+          <Badge title="Open Data" state="standard" size="sm" light uppercase />
+        )}
+      </Stack>
 
       {participationScore && (
-        <Stack gap={2} className="mt-auto">
+        <Stack gap={1} className="mt-auto">
           <Divider className="h-[0.5px]" />
           <Paragraph className="text-[0.65rem] text-grey-6">
             Participe au score Climat Air Énergie
