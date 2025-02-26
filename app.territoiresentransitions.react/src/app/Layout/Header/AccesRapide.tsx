@@ -1,14 +1,28 @@
 import { signInPath, signUpPath } from '@/app/app/paths';
-import { Button } from '@/ui';
+import { Button, Checkbox } from '@/ui';
 import MenuUtilisateur from './MenuUtilisateur';
 import { HeaderPropsWithModalState } from './types';
+import { useDemoMode } from '@/app/users/demo-mode-support-provider';
 
 /** liens en "accès rapide" */
 export const AccesRapide = (props: HeaderPropsWithModalState) => {
   const { user, setModalOpened } = props;
+  const { isDemoMode, toggleDemoMode } = useDemoMode();
 
   return (
     <ul className="flex max-lg:flex-col mb-0">
+      {user?.isSupport && (
+        <li>
+          <Checkbox
+            variant="switch"
+            label="Mode démo"
+            containerClassname="px-6 py-2.5"
+            labelClassname="text-primary-9 hover:text-primary-8 text-sm font-bold"
+            checked={isDemoMode}
+            onChange={toggleDemoMode}
+          />
+        </li>
+      )}
       <li onClick={() => setModalOpened(false)}>
         <Aide />
       </li>
