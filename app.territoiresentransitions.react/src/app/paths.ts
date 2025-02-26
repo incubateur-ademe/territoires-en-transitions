@@ -20,6 +20,7 @@ export const recherchesLandingPath = `${recherchesPath}/:${recherchesParam}`;
 export const recherchesCollectivitesUrl = `${recherchesPath}/collectivites`;
 export const finaliserMonInscriptionUrl = `/finaliser-mon-inscription`;
 export const recherchesPlansUrl = `${recherchesPath}/plans`;
+export const ajouterCollectiviteUrl = `/ajouter-collectivite`;
 
 export const ancienRecherchesPath = '/toutes_collectivites';
 
@@ -64,6 +65,7 @@ export const collectiviteIndicateursCollectivitePath = `${collectiviteIndicateur
 export const collectiviteIndicateurPath = `${collectiviteIndicateursBasePath}/:${indicateurViewParam}/:${indicateurIdParam}?`;
 export const collectiviteTrajectoirePath = `${collectivitePath}/trajectoire`;
 export const collectiviteAccueilPath = `${collectivitePath}/accueil`;
+export const collectiviteModifierPath = `${collectivitePath}/modifier`;
 
 const referentielIdParam = 'referentielId';
 const referentielVueParam = 'referentielVue';
@@ -474,6 +476,16 @@ export const makeCollectiviteJournalUrl = ({
   collectiviteId: number;
 }) =>
   collectiviteJournalPath.replace(
+    `:${collectiviteParam}`,
+    collectiviteId.toString()
+  );
+
+export const makeCollectiviteModifierUrl = ({
+  collectiviteId,
+}: {
+  collectiviteId: number;
+}) =>
+  collectiviteModifierPath.replace(
     `:${collectiviteParam}`,
     collectiviteId.toString()
   );
