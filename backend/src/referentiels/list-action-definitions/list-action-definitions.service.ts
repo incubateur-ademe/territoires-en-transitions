@@ -2,7 +2,11 @@ import { DatabaseService } from '@/backend/utils';
 import { Injectable } from '@nestjs/common';
 import { and, asc, eq, getTableColumns, inArray, sql } from 'drizzle-orm';
 import z from 'zod';
-import { actionDefinitionTable, actionTypeSchema } from '../index-domain';
+import {
+  actionDefinitionTable,
+  actionTypeSchema,
+  ReferentielIdEnum,
+} from '../index-domain';
 import { referentielDefinitionTable } from '../models/referentiel-definition.table';
 
 export const inputSchema = z.object({
@@ -29,27 +33,13 @@ export class ListActionDefinitionsService {
 
     const request = this.db.with(subQuery).select().from(subQuery);
 
-    // const request = this.db
-    //   .select({
-    //     ...pick(getTableColumns(actionDefinitionTable), [
-    //       'actionId',
-    //       'nom',
-    //       'referentiel',
-    //       'identifiant',
-    //       'points',
-    //     ]),
-    //   })
-    //   .from(actionDefinitionTable);
-
-    // .leftJoin(
-    //   actionStatutTable,
-    //   and(
-    //     eq(actionStatutTable.collectiviteId, collectiviteId),
-    //     eq(actionStatutTable.actionId, actionDefinitionTable.actionId)
-    //   )
-    // )
-
-    const filters = [];
+    const filters = [
+      // On inclut uniquement les actions des référentiels CAE et ECI pour le moment
+      inArray(subQuery.referentielId, [
+        ReferentielIdEnum.CAE,
+        ReferentielIdEnum.ECI,
+      ]),
+    ];
 
     if (actionIds?.length) {
       filters.push(inArray(subQuery.actionId, actionIds));
