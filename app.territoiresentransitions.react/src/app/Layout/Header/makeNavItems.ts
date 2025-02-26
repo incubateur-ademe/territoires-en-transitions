@@ -1,9 +1,11 @@
 import { UserDetails } from '@/api/users/user-details.fetch.server';
 import {
+  ajouterCollectiviteUrl,
   makeCollectiviteAccueilUrl,
   makeCollectiviteBibliothequeUrl,
   makeCollectiviteIndicateursCollectiviteUrl,
   makeCollectiviteJournalUrl,
+  makeCollectiviteModifierUrl,
   makeCollectivitePanierUrl,
   makeCollectivitePersoRefUrl,
   makeCollectivitePlansActionsLandingUrl,
@@ -25,9 +27,12 @@ import { TNavDropdown, TNavItem, TNavItemsList } from './types';
 export const makeNavItems = (
   collectivite: CurrentCollectivite,
   user: UserDetails | null,
-  panierId: string | undefined
+  panierId: string | undefined,
+  isDemoMode: boolean
 ): TNavItemsList => {
-  return filtreItems(makeNavItemsBase(collectivite, user, panierId));
+  return filtreItems(
+    makeNavItemsBase(collectivite, user, panierId, isDemoMode)
+  );
 };
 
 const isVisiteur = ({
@@ -44,11 +49,15 @@ const isVisiteur = ({
 const makeNavItemsBase = (
   collectivite: CurrentCollectivite,
   user: UserDetails | null,
-  panierId: string | undefined
+  panierId: string | undefined,
+  isDemoMode: boolean
 ): TNavItemsList => {
   const collectiviteId = collectivite.collectiviteId;
+  const notSupport = !user?.isSupport || isDemoMode;
   const confidentiel =
-    collectivite.accesRestreint && collectivite.niveauAcces === null;
+    collectivite.accesRestreint &&
+    collectivite.niveauAcces === null &&
+    notSupport;
   const hideToVisitor = isVisiteur({ user, collectivite });
 
   // items communs qque soient les droits de l'utilisateur courant
@@ -261,12 +270,16 @@ const filtreItems = (items: TNavItemsList): TNavItemsList =>
 
 /** Génère les liens de navigation secondaires pour une collectivité donnée */
 export const makeSecondaryNavItems = (
-  collectivite: CurrentCollectivite
+  collectivite: CurrentCollectivite,
+  user: UserDetails | null,
+  isDemoMode: boolean
 ): TNavItemsList => {
   const collectiviteId = collectivite.collectiviteId;
-
+  const notSupport = !user?.isSupport || isDemoMode;
   const confidentiel =
-    collectivite.accesRestreint && collectivite.niveauAcces === null;
+    collectivite.accesRestreint &&
+    collectivite.niveauAcces === null &&
+    notSupport;
 
   return filtreItems([
     {
@@ -298,4 +311,33 @@ export const makeSecondaryNavItems = (
       ],
     },
   ]);
+};
+
+export const makeSupportNavItems = (
+  collectivite: CurrentCollectivite,
+  user: UserDetails | null,
+  isDemoMode: boolean
+): TNavItemsList => {
+  const collectiviteId = collectivite.collectiviteId;
+  const support = user?.isSupport && !isDemoMode;
+
+  return support
+    ? [
+        {
+          title: 'Support',
+          items: [
+            {
+              label: 'Ajouter une collectivité',
+              to: ajouterCollectiviteUrl,
+            },
+            {
+              label: 'Modifier la collectivité',
+              to: makeCollectiviteModifierUrl({
+                collectiviteId,
+              }),
+            },
+          ],
+        },
+      ]
+    : [];
 };

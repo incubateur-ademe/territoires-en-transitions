@@ -1,6 +1,6 @@
 import {
   finaliserMonInscriptionUrl,
-  recherchesCollectivitesUrl,
+  recherchesCollectivitesUrl
 } from '@/app/app/paths';
 import { useId } from '@floating-ui/react';
 import classNames from 'classnames';
@@ -8,13 +8,14 @@ import Link from 'next/link';
 import { usePathname } from 'next/navigation';
 import { useEffect } from 'react';
 import { SelectCollectivite } from './SelectCollectivite';
-import { makeNavItems, makeSecondaryNavItems } from './makeNavItems';
+import { makeNavItems, makeSecondaryNavItems, makeSupportNavItems } from './makeNavItems';
 import {
   HeaderPropsWithModalState,
   TNavDropdown,
   TNavItem,
   TNavItemsList,
 } from './types';
+import { useDemoMode } from '@/app/users/demo-mode-support-provider';
 
 /**
  * Affiche la nvaigation principale et le sélecteur de collectivité
@@ -22,6 +23,7 @@ import {
 export const MenuPrincipal = (props: HeaderPropsWithModalState) => {
   const { currentCollectivite, panierId, modalOpened, setOpenedId, user } =
     props;
+  const { isDemoMode } = useDemoMode();
 
   // enregistre un écouteur d'événements pour fermer un éventuel sous-menu ouvert
   // quand on clique en dehors
@@ -40,10 +42,16 @@ export const MenuPrincipal = (props: HeaderPropsWithModalState) => {
 
   let items = [] as TNavItemsList;
   let secondaryItems = [] as TNavItemsList;
+  let supportItems = [] as TNavItemsList;
   if (currentCollectivite) {
     // récupère la liste des items à afficher dans le menu
-    items = makeNavItems(currentCollectivite, user, panierId);
-    secondaryItems = makeSecondaryNavItems(currentCollectivite);
+    items = makeNavItems(currentCollectivite, user, panierId, isDemoMode);
+    secondaryItems = makeSecondaryNavItems(
+      currentCollectivite,
+      user,
+      isDemoMode
+    );
+    supportItems = makeSupportNavItems(currentCollectivite, user, isDemoMode);
   }
 
   return (
@@ -84,6 +92,13 @@ export const MenuPrincipal = (props: HeaderPropsWithModalState) => {
               {...props}
             />
           </>
+        )}
+        {supportItems.map((item, i) =>
+          Object.prototype.hasOwnProperty.call(item, 'to') ? (
+            <NavItem key={i} item={item as TNavItem} {...props} />
+          ) : (
+            <NavDropdown key={i} item={item as TNavDropdown} {...props} />
+          )
         )}
       </ul>
       <ul className="fr-nav__list">
