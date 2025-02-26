@@ -1,7 +1,7 @@
 import { HeaderProps } from './Header';
 
 export type TNavItem = {
-  label: string;
+  label?: string;
   to: string;
   dataTest?: string;
   urlPrefix?: string[];
@@ -11,6 +11,8 @@ export type TNavItem = {
   confidentiel?: boolean;
   /** indique que l'item n'est pas affiché quand l'utilisateur est un visiteur */
   hideToVisitor?: boolean;
+  /** indique que l'item n'est pas affiché quand l'utilisateur n'est pas du support */
+  notSupport?: boolean;
 };
 
 export type TNavDropdown = {
@@ -23,6 +25,8 @@ export type TNavDropdown = {
   confidentiel?: boolean;
   // indique que l'item n'est pas affiché quand l'utilisateur est un visiteur
   hideToVisitor?: boolean;
+  // indique que l'item n'est pas affiché quand l'utilisateur n'est pas du support
+  notSupport?: boolean;
 };
 
 export type TNavItemsList = (TNavItem | TNavDropdown)[];
