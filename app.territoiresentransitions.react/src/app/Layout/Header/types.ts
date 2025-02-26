@@ -1,7 +1,7 @@
 import { HeaderProps } from './Header';
 
 export type TNavItem = {
-  label: string;
+  label?: string;
   to: string;
   dataTest?: string;
   urlPrefix?: string[];
