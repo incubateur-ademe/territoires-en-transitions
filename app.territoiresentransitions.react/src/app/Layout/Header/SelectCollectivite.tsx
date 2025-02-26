@@ -31,74 +31,69 @@ export const SelectCollectivite = (props: HeaderPropsWithModalState) => {
   );
 
   return (
-    <ul className="fr-nav__list" data-test={ID}>
-      <li className="fr-nav__item !relative">
-        <Tooltip label={currentCollectivite.nom} withArrow={false}>
-          <button
-            data-test="nav-select-collectivite"
-            className={classNames(
-              {
-                'fr-nav__btn': listCollectivites.length,
-                'fr-nav__link': !listCollectivites.length,
-              },
-              'min-w-[15rem] flex items-center'
-            )}
-            aria-controls={ID}
-            aria-expanded={opened}
-            onClick={() =>
-              listCollectivites.length && setOpenedId(opened ? null : ID)
-            }
-          >
-            <b
-              className={classNames(
-                'mr-auto pointer-events-none whitespace-nowrap text-ellipsis overflow-hidden',
-                { 'md:max-w-[25vw] lg:max-w-[28vw]': !modalOpened }
-              )}
-            >
-              {currentCollectivite.nom}
-            </b>
-            <BadgeNiveauAcces
-              acces={currentCollectivite.niveauAcces}
-              isAuditeur={currentCollectivite.role === 'auditeur'}
-              className="ml-4"
-            />
-          </button>
-        </Tooltip>
-        <div
-          className={classNames('fr-menu right-0', {
-            'fr-collapse': !opened,
-          })}
-          id={ID}
+    <li className="fr-nav__item !relative" data-test={ID}>
+      <Tooltip label={currentCollectivite.nom} withArrow={false}>
+        <button
+          data-test="nav-select-collectivite"
+          className={classNames(
+            {
+              'fr-nav__btn': listCollectivites.length,
+              'fr-nav__link': !listCollectivites.length,
+            },
+            'min-w-[15rem] flex items-center'
+          )}
+          aria-controls={ID}
+          aria-expanded={opened}
+          onClick={() =>
+            listCollectivites.length && setOpenedId(opened ? null : ID)
+          }
         >
-          <ul
-            className="fr-menu__list"
-            onClickCapture={() => setOpenedId(null)}
-          >
-            {listCollectivites.map(
-              ({ collectivite_id, nom, niveau_acces, est_auditeur }) => (
-                <li className="fr-nav__item" key={collectivite_id}>
-                  <Link
-                    href={makeCollectiviteAccueilUrl({
-                      collectiviteId: collectivite_id!,
-                    })}
-                    target="_self"
-                    className="fr-nav__link"
-                    aria-controls="modal-header__menu"
-                    onClick={() => setModalOpened(false)}
-                  >
-                    {nom}
-                    <BadgeNiveauAcces
-                      acces={niveau_acces}
-                      isAuditeur={est_auditeur || false}
-                      className="float-right"
-                    />
-                  </Link>
-                </li>
-              )
+          <b
+            className={classNames(
+              'mr-auto pointer-events-none whitespace-nowrap text-ellipsis overflow-hidden',
+              { 'md:max-w-[25vw] lg:max-w-[28vw]': !modalOpened }
             )}
-          </ul>
-        </div>
-      </li>
-    </ul>
+          >
+            {currentCollectivite.nom}
+          </b>
+          <BadgeNiveauAcces
+            acces={currentCollectivite.niveauAcces}
+            isAuditeur={currentCollectivite.role === 'auditeur'}
+            className="ml-4"
+          />
+        </button>
+      </Tooltip>
+      <div
+        className={classNames('fr-menu px-0 right-4', {
+          'fr-collapse': !opened,
+        })}
+        id={ID}
+      >
+        <ul className="fr-menu__list" onClickCapture={() => setOpenedId(null)}>
+          {listCollectivites.map(
+            ({ collectivite_id, nom, niveau_acces, est_auditeur }) => (
+              <li className="fr-nav__item" key={collectivite_id}>
+                <Link
+                  href={makeCollectiviteAccueilUrl({
+                    collectiviteId: collectivite_id!,
+                  })}
+                  target="_self"
+                  className="fr-nav__link"
+                  aria-controls="modal-header__menu"
+                  onClick={() => setModalOpened(false)}
+                >
+                  {nom}
+                  <BadgeNiveauAcces
+                    acces={niveau_acces}
+                    isAuditeur={est_auditeur || false}
+                    className="float-right"
+                  />
+                </Link>
+              </li>
+            )
+          )}
+        </ul>
+      </div>
+    </li>
   );
 };
