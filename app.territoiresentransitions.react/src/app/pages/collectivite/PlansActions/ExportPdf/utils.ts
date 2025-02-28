@@ -4,11 +4,11 @@ export type PdfSectionKey =
   | 'acteurs'
   | 'indicateurs'
   | 'etapes'
-  | 'suivi'
+  | 'notes_suivi'
   | 'budget'
   | 'fiches'
   | 'actions'
-  | 'notes';
+  | 'notes_docs';
 
 export const keyToTitle: Record<PdfSectionKey, string> = {
   intro:
@@ -17,11 +17,11 @@ export const keyToTitle: Record<PdfSectionKey, string> = {
   acteurs: 'Acteurs',
   indicateurs: 'Indicateurs de suivi',
   etapes: 'Étapes',
-  suivi: 'Notes de suivi',
+  notes_suivi: 'Notes de suivi',
   budget: 'Budget',
   fiches: 'Fiches des plans liés',
   actions: 'Actions des référentiels liés',
-  notes: 'Notes et documents',
+  notes_docs: 'Notes et documents',
 };
 
 export type TSectionsValues = {
