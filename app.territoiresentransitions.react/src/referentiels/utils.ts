@@ -21,7 +21,7 @@ export const AVANCEMENT_DETAILLE_PAR_STATUT: Record<
   fait: [1, 0, 0],
   programme: [0, 1, 0],
   pas_fait: [0, 0, 1],
-  detaille: [0.25, 0.5, 0.25],
+  detaille: [0.5, 0.25, 0.25],
 };
 
 // Génère les propriétés de l'objet statut à écrire lors du changement de l'avancement
