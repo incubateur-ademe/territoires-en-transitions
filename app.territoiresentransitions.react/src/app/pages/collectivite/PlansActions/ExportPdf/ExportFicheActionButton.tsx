@@ -1,7 +1,9 @@
 import { FicheAction } from '@/api/plan-actions';
 import { useGetEtapes } from '@/app/app/pages/collectivite/PlansActions/FicheAction/etapes/use-get-etapes';
+import { useCurrentCollectivite } from '@/app/core-logic/hooks/useCurrentCollectivite';
 import { useListActionsWithStatuts } from '@/app/referentiels/actions/use-list-actions';
 import ExportPDFButton from '@/app/ui/export-pdf/ExportPDFButton';
+import { useEventTracker } from '@/ui';
 import { createElement, useEffect, useState } from 'react';
 import { useIndicateurDefinitions } from '../../Indicateurs/Indicateur/useIndicateurDefinition';
 import { useAnnexesFicheActionInfos } from '../FicheAction/data/useAnnexesFicheActionInfos';
@@ -13,13 +15,13 @@ import { TSectionsValues, sectionsInitValue } from './utils';
 
 type FicheActionPdfContentProps = {
   fiche: FicheAction;
-  options?: TSectionsValues;
+  options: TSectionsValues;
   generateContent: (content: JSX.Element) => void;
 };
 
 export const FicheActionPdfContent = ({
   fiche,
-  options = sectionsInitValue,
+  options,
   generateContent,
 }: FicheActionPdfContentProps) => {
   const { data: axes, isLoading: isLoadingAxes } = useFicheActionChemins(
@@ -44,10 +46,10 @@ export const FicheActionPdfContent = ({
     );
 
   const { data: annexes, isLoading: isLoadingAnnexes } =
-    useAnnexesFicheActionInfos(fiche.id, options.notes.isChecked);
+    useAnnexesFicheActionInfos(fiche.id, options.notes_docs.isChecked);
 
   const { data: notesSuivi, isLoading: isLoadingNotesSuivi } =
-    useFicheActionNotesSuivi(fiche, options.suivi.isChecked);
+    useFicheActionNotesSuivi(fiche, options.notes_suivi.isChecked);
 
   const { data: etapes, isLoading: isLoadingEtapes } = useGetEtapes(
     {
@@ -97,14 +99,21 @@ type ExportFicheActionButtonProps = {
 
 const ExportFicheActionButton = ({
   fiche,
-  options,
+  options = sectionsInitValue,
   disabled = false,
   onDownloadEnd,
 }: ExportFicheActionButtonProps) => {
+  const { collectiviteId, niveauAcces, role } = useCurrentCollectivite()!;
+  const tracker = useEventTracker('app/fiche-action');
+
   const [isDataRequested, setIsDataRequested] = useState(false);
   const [content, setContent] = useState<JSX.Element | undefined>(undefined);
 
   const fileName = `fiche-action-${fiche.id}`;
+
+  const selectedOptions = Object.keys(options).filter(
+    (k) => options[k].isChecked === true
+  );
 
   return (
     <>
@@ -114,6 +123,14 @@ const ExportFicheActionButton = ({
         size="md"
         variant="primary"
         disabled={disabled}
+        onClick={() =>
+          tracker('export_PDF', {
+            collectiviteId,
+            niveauAcces,
+            role,
+            sections: selectedOptions,
+          })
+        }
         onDownloadEnd={onDownloadEnd}
       >
         Exporter au format PDF
