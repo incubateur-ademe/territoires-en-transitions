@@ -23,7 +23,7 @@ export const ActionHeader = ({
 }: {
   actionDefinition: ActionDefinitionSummary;
   DEPRECATED_actionScore: ProgressionRow;
-  action: ActionDetailed;
+  action?: ActionDetailed;
   nextActionLink: string | undefined;
   prevActionLink: string | undefined;
 }) => {
@@ -52,8 +52,8 @@ export const ActionHeader = ({
           {FLAG_isSnapshotEnabled ? (
             <>
               <ScoreShow
-                score={action.score.pointFait ?? null}
-                scoreMax={action.score.pointPotentiel ?? null}
+                score={action?.score.pointFait ?? null}
+                scoreMax={action?.score.pointPotentiel ?? null}
                 legend="Score réalisé"
                 size="sm"
               />

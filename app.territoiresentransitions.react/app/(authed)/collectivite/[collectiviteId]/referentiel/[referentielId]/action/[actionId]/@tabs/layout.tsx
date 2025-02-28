@@ -76,17 +76,13 @@ function ActionLayout({
       innerContainerClassName="!pt-0"
     >
       <CollectivitePageLayout>
-        {NEW_action && (
-          <ActionHeader
-            actionDefinition={actionDefinition}
-            DEPRECATED_actionScore={
-              DEPRECATED_actionScores[actionDefinition.id]
-            }
-            action={NEW_action}
-            nextActionLink={nextActionLink}
-            prevActionLink={prevActionLink}
-          />
-        )}
+        <ActionHeader
+          actionDefinition={actionDefinition}
+          DEPRECATED_actionScore={DEPRECATED_actionScores[actionDefinition.id]}
+          action={NEW_action}
+          nextActionLink={nextActionLink}
+          prevActionLink={prevActionLink}
+        />
 
         <ActionBreadcrumb action={actionDefinition} />
         <ActionAuditStatut action={actionDefinition} />
