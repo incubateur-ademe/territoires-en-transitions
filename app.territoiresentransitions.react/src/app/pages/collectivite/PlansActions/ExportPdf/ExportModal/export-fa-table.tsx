@@ -43,7 +43,7 @@ const ExportFicheActionTable = ({ options, setOptions }: Props) => {
 
               {/* Personnalisation */}
               <TCell className="!px-3 !py-1">
-                {section.key === 'suivi' ? (
+                {section.key === 'notes_suivi' ? (
                   <ExportSuiviSelect {...{ options, setOptions }} />
                 ) : (
                   ''

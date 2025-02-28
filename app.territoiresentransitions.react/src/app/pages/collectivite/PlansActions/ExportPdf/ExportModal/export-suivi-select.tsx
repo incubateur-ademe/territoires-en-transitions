@@ -12,7 +12,7 @@ const ExportSuiviSelect = ({ options, setOptions }: Props) => {
     {
       value: 0,
       label: 'Toutes les années',
-      disabled: options.suivi.values?.includes(0),
+      disabled: options.notes_suivi.values?.includes(0),
     },
     ...getYearsOptions().yearsOptions,
   ];
@@ -42,9 +42,9 @@ const ExportSuiviSelect = ({ options, setOptions }: Props) => {
     <SelectMultiple
       maxBadgesToShow={2}
       options={optionsList}
-      values={options.suivi.values}
+      values={options.notes_suivi.values}
       onChange={({ values }) => handleOnChange(values)}
-      disabled={!options.suivi.isChecked}
+      disabled={!options.notes_suivi.isChecked}
       small
     />
   );

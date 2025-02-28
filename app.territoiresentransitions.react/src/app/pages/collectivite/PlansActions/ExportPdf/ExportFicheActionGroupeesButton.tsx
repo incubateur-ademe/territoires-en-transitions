@@ -4,11 +4,11 @@ import { useEventTracker } from '@/ui';
 import { useEffect, useState } from 'react';
 import { useFicheAction } from '../FicheAction/data/useFicheAction';
 import { FicheActionPdfContent } from './ExportFicheActionButton';
-import { TSectionsValues } from './utils';
+import { TSectionsValues, sectionsInitValue } from './utils';
 
 type FicheActionPdfWrapperProps = {
   ficheId: number;
-  options?: TSectionsValues;
+  options: TSectionsValues;
   generateContent: (content: JSX.Element) => void;
 };
 
@@ -39,7 +39,7 @@ type Props = {
 
 const ExportFicheActionGroupeesButton = ({
   fichesIds,
-  options,
+  options = sectionsInitValue,
   disabled = false,
   onDownloadEnd,
 }: Props) => {
@@ -50,6 +50,10 @@ const ExportFicheActionGroupeesButton = ({
   const [content, setContent] = useState<JSX.Element[] | undefined>(undefined);
 
   const fileName = `fiches-actions-${collectiviteId}`;
+
+  const selectedOptions = Object.keys(options).filter(
+    (k) => options[k].isChecked === true
+  );
 
   useEffect(() => {
     if (content?.length === fichesIds.length) {
@@ -73,6 +77,7 @@ const ExportFicheActionGroupeesButton = ({
             collectiviteId,
             niveauAcces,
             role,
+            sections: selectedOptions,
           })
         }
         onDownloadEnd={onDownloadEnd}
