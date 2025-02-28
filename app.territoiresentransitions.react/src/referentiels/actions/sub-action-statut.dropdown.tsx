@@ -19,8 +19,8 @@ import classNames from 'classnames';
 import { useEffect, useState } from 'react';
 import { useScore, useSnapshotFlagEnabled } from '../use-snapshot';
 import { statutParAvancement } from '../utils';
-import ScoreAutoModal from './sub-action.detail/ScoreAutoModal';
 import ScoreDetailleModal from './sub-action.detail/ScoreDetailleModal';
+import SubActionModal from './sub-action/sub-action.modal';
 
 export type StatusToSavePayload = {
   actionId: string;
@@ -307,9 +307,7 @@ export const SubActionStatutDropdown = ({
                     actionDefinition.type === 'sous-action' &&
                     actionDefinition.children.length > 0
                   ) {
-                    avancement === 'detaille'
-                      ? setOpenScorePerso(true)
-                      : setOpenScoreAuto(true);
+                    setOpenScoreAuto(true);
                   } else {
                     setOpenScoreDetaille(true);
                     openScoreDetailleState?.setOpenScoreDetaille(true);
@@ -323,12 +321,10 @@ export const SubActionStatutDropdown = ({
         )}
       {/* Modale de score auto / par tâche (pour les sous-actions) */}
       {openScoreAuto && (
-        <ScoreAutoModal
+        <SubActionModal
           actionDefinition={actionDefinition}
-          externalOpen={openScoreAuto}
-          setExternalOpen={setOpenScoreAuto}
-          onSaveScore={handleSaveScoreAuto}
-          onOpenScorePerso={() => setOpenScorePerso(true)}
+          openState={{ isOpen: openScoreAuto, setIsOpen: setOpenScoreAuto }}
+          onSaveScoreDetaille={handleSaveScoreDetaille}
         />
       )}
       {/* Modale de personnalisation du score (avec jauge manuelle) */}
