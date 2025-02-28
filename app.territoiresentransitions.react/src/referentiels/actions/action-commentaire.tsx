@@ -4,7 +4,7 @@ import {
   useActionCommentaire,
   useSaveActionCommentaire,
 } from '@/app/referentiels/use-action-commentaire';
-import { AutoResizedTextarea } from '@/ui';
+import { AutoResizedTextarea, Field } from '@/ui';
 import classNames from 'classnames';
 import React, { useEffect, useState } from 'react';
 
@@ -88,9 +88,7 @@ export const ActionCommentaireField = ({
   useEffect(() => setCommentaire(initialValue), [initialValue]);
 
   return collectivite ? (
-    <>
-      {!!title && <p className="text-grey-10 !mb-2">{title}</p>}
-      {!!subtitle && <p className="text-grey-8 !mb-2 text-xs">{subtitle}</p>}
+    <Field title={title} hint={subtitle}>
       <AutoResizedTextarea
         dataTest={dataTest}
         className={classNames({ 'min-h-20': action.type !== 'tache' })}
@@ -111,6 +109,6 @@ export const ActionCommentaireField = ({
         autoFocus={autoFocus}
         placeholder={placeholder}
       />
-    </>
+    </Field>
   ) : null;
 };
