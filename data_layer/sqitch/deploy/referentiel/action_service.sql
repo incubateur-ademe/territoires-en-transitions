@@ -2,31 +2,42 @@
 
 BEGIN;
 
-create table action_service
-(
-    collectivite_id     integer references collectivite         ON DELETE CASCADE not null,
-    action_id           action_id references action_relation    ON DELETE CASCADE not null,
-    service_tag_id      integer references service_tag          ON DELETE CASCADE not null,
-
-    primary key (collectivite_id, action_id)
+CREATE TABLE "public"."action_service" (
+    "collectivite_id" integer NOT NULL,
+    "action_id" action_id NOT NULL,
+    "service_tag_id" integer NOT NULL,
+    FOREIGN KEY ("collectivite_id")
+        REFERENCES "public"."collectivite"("id"),
+    FOREIGN KEY ("action_id")
+        REFERENCES "public"."action_relation"("id"),
+    FOREIGN KEY ("service_tag_id")
+        REFERENCES "public"."service_tag"("id")
+        ON DELETE CASCADE,
+    PRIMARY KEY ("collectivite_id", "action_id")
 );
-comment on table action_service is 'In référentiel, we keep "action" as a technical name, but use "mesure" in the UI.';
 
-create policy allow_read
-    on action_service
-    using (can_read_acces_restreint(collectivite_id));
+COMMENT ON TABLE "public"."action_service"
+    IS 'In référentiel, we keep "action" as a technical name, but use "mesure" in the UI.';
 
-create policy allow_insert
-    on action_service
-    for insert with check(have_edition_acces(collectivite_id));
+CREATE POLICY allow_read
+    ON "public"."action_service"
+    FOR SELECT
+    USING (can_read_acces_restreint(collectivite_id));
 
-create policy allow_update
-    on action_service
-    for update using(have_edition_acces(collectivite_id));
+CREATE POLICY allow_insert
+    ON "public"."action_service"
+    FOR INSERT
+    WITH CHECK (have_edition_acces(collectivite_id));
 
-create policy allow_delete
-    on action_service
-    for delete using(have_edition_acces(collectivite_id));
+CREATE POLICY allow_update
+    ON "public"."action_service"
+    FOR UPDATE
+    USING (have_edition_acces(collectivite_id));
+
+CREATE POLICY allow_delete
+    ON "public"."action_service"
+    FOR DELETE
+    USING (have_edition_acces(collectivite_id));
 
 COMMIT;
 
