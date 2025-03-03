@@ -281,6 +281,7 @@ export interface TrackingPlan extends Record<never, Page> {
       validation_modale_planning_fa: {};
       cta_indicateur_perso_fa: {};
       cta_fa_fai: {};
+      export_PDF: { sections: string[] };
     };
   };
 
@@ -305,7 +306,7 @@ export interface TrackingPlan extends Record<never, Page> {
       associer_priorite_groupe: {};
       associer_planning_groupe: {};
       associer_tags_perso_groupe: {};
-      export_PDF_telechargement_groupe: {};
+      export_PDF_telechargement_groupe: { sections: string[] };
     };
   };
 
