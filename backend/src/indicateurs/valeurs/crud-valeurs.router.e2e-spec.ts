@@ -273,4 +273,33 @@ describe("Route de lecture/écriture des valeurs d'indicateurs", () => {
     const resultAfter = await caller.indicateurs.valeurs.list(inputBefore);
     expect(resultAfter.indicateurs.length).toBe(0);
   });
+
+  test('Donne la moyenne des valeurs pour un indicateur', async () => {
+    const caller = router.createCaller({ user: yoloDodoUser });
+    const result = await caller.indicateurs.valeurs.average({
+      collectiviteId: 3895,
+      indicateurId: 73,
+    });
+    expect(result).toStrictEqual({
+      typeCollectivite: 'CA',
+      valeurs: [
+        {
+          dateValeur: '2014-01-01',
+          valeur: 7.39,
+        },
+        {
+          dateValeur: '2015-01-01',
+          valeur: 0,
+        },
+        {
+          dateValeur: '2016-01-01',
+          valeur: 7.47,
+        },
+        {
+          dateValeur: '2017-01-01',
+          valeur: 7.48,
+        },
+      ],
+    });
+  });
 });
