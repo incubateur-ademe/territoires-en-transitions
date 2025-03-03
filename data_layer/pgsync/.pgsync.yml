@@ -54,6 +54,7 @@ groups:
     - action_definition_tag
     - action_origine
     - preuve_reglementaire_definition
+    - question_thematique
     - question
     - question_action
     - question_choix
@@ -129,6 +130,7 @@ groups:
     - plan_action_type
     - axe # Axe reference panier
     - fiche_action
+    - fiche_action_action
     - fiche_action_axe
     - fiche_action_thematique
     - fiche_action_sous_thematique
