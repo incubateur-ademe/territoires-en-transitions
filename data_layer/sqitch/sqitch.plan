@@ -821,3 +821,5 @@ collectivite/fusion 2025-02-17T15:25:15Z Amandine <contact@jacquelinamandine.fr>
 @v4.41.0 2025-03-12T17:39:43Z Amandine <contact@jacquelinamandine.fr> # Ajoute les collectivités département et région
 
 indicateur/cible_et_seuil 2025-03-06T14:10:28Z Marc Rutkowski <marc@attractive-media.fr> # Ajoute les colonnes et la table pour stocker les valeurs cible et seuil
+referentiel/action_pilote 2025-02-24T17:05:23Z System Administrator <root@MacBook-Air-de-Eli.local> # Crée une liaison entre une mesure (nom technique : action) du référentiel et un pilote
+referentiel/action_service 2025-03-03T15:22:07Z System Administrator <root@MacBook-Air-de-Eli.local> # Crée une liaison entre une mesure (nom technique : action) du référentiel et un service
