@@ -21,6 +21,7 @@ import { TrajectoiresRouter } from './trajectoires/trajectoires.router';
 import { IndicateursController } from './valeurs/crud-valeurs.controller';
 import { IndicateurValeursRouter } from './valeurs/crud-valeurs.router';
 import CrudValeursService from './valeurs/crud-valeurs.service';
+import ValeursCalculeesService from './valeurs/valeurs-calculees.service';
 
 @Module({
   imports: [AuthModule, CollectivitesModule, SheetModule],
@@ -33,6 +34,7 @@ import CrudValeursService from './valeurs/crud-valeurs.service';
     IndicateurValeurExpressionParserService,
     ImportIndicateurDefinitionService,
     CrudValeursService,
+    ValeursCalculeesService,
     IndicateurFiltreService,
     IndicateurFiltreRouter,
     IndicateurValeursRouter,
@@ -48,6 +50,7 @@ import CrudValeursService from './valeurs/crud-valeurs.service';
     IndicateurDefinitionsRouter,
     IndicateurSourcesRouter,
     CrudValeursService,
+    ValeursCalculeesService,
     TrajectoiresRouter,
     IndicateurFiltreService,
     IndicateurFiltreRouter,
