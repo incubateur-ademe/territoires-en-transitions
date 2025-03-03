@@ -828,3 +828,5 @@ collectivite/collectivite [collectivite/collectivite@v4.41.0] 2025-03-14T10:22:1
 
 labellisation/labellisation [labellisation/labellisation@v4.38.0] 2025-03-03T13:31:49Z Frederic Arnoux <frederic.arnoux@beta.gouv.fr> # Ajoute des RLS à etoile_meta
 referentiel/justification_ajustement [referentiel/justification_ajustement@v4.38.0] 2025-02-25T14:58:57Z Frederic Arnoux <frederic.arnoux@beta.gouv.fr> # Supprime les justifications des actions de referentiel
+referentiel/action_pilote 2025-02-24T17:05:23Z System Administrator <root@MacBook-Air-de-Eli.local> # Crée une liaison entre une mesure (nom technique : action) du référentiel et un pilote
+referentiel/action_service 2025-03-03T15:22:07Z System Administrator <root@MacBook-Air-de-Eli.local> # Crée une liaison entre une mesure (nom technique : action) du référentiel et un service
