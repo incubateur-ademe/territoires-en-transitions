@@ -69,7 +69,7 @@ export const DemandeAuditModalContent = (
             state="success"
             className="mb-4"
             title={
-              etoiles === '1' && !isCOT
+              etoiles === 1 && !isCOT
                 ? submittedEtoile1
                 : submittedAutresEtoiles
             }
@@ -112,7 +112,7 @@ export const DemandeAuditModalContent = (
                   sujet &&
                   envoiDemande({
                     collectivite_id: collectivite_id!,
-                    etoiles: etoiles || null,
+                    etoiles: etoiles ?? null,
                     referentiel: referentiel!,
                     sujet,
                   })

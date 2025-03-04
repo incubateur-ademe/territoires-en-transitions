@@ -90,6 +90,17 @@ export function useSnapshotComputeAndUpdate() {
   };
 }
 
+export function useEtatLieuxHasStarted(referentielId: ReferentielId) {
+  const { data: snapshot } = useSnapshot({ actionId: referentielId });
+
+  if (!snapshot) {
+    return false;
+  }
+
+  const { score } = snapshot.scores;
+  return score.completedTachesCount > 0;
+}
+
 // TODO-SNAPSHOT: remove this after successful and validated release
 export function useSnapshotFlagEnabled() {
   return useFeatureFlagEnabled('is-referentiel-on-snapshot-enabled');

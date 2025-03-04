@@ -8,7 +8,7 @@ export const MessageCompletudeECi = ({
 }) => {
   const { referentiel, etoiles } = parcours || {};
 
-  return referentiel === 'eci' && etoiles !== '1' ? (
+  return referentiel === 'eci' && etoiles !== 1 ? (
     <Alert
       state="warning"
       className="mb-8"

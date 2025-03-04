@@ -10,7 +10,8 @@ import { GetReferentielController } from './get-referentiel/get-referentiel.cont
 import { GetReferentielService } from './get-referentiel/get-referentiel.service';
 import { ImportReferentielController } from './import-referentiel/import-referentiel.controller';
 import ImportReferentielService from './import-referentiel/import-referentiel.service';
-import { LabellisationService } from './labellisation.service';
+import { GetLabellisationRouter } from './labellisations/get-labellisation.router';
+import { LabellisationService } from './labellisations/labellisation.service';
 import { ListActionDefinitionsService } from './list-action-definitions/list-action-definitions.service';
 import { ListActionsRouter } from './list-actions/list-actions.router';
 import { ReferentielsRouter } from './referentiels.router';
@@ -23,6 +24,7 @@ import { UpdateActionStatutService } from './update-action-statut/update-action-
   imports: [CollectivitesModule, SheetModule, PersonnalisationsModule],
   providers: [
     GetReferentielService,
+    ImportReferentielService,
 
     ListActionDefinitionsService,
     ListActionsRouter,
@@ -31,23 +33,18 @@ import { UpdateActionStatutService } from './update-action-statut/update-action-
     UpdateActionStatutRouter,
 
     LabellisationService,
+    GetLabellisationRouter,
+
     SnapshotsService,
+    SnapshotsRouter,
 
     ScoresService,
+    ExportScoreService,
     ComputeScoreRouter,
-    SnapshotsRouter,
+
     ReferentielsRouter,
-    ExportScoreService,
-    ImportReferentielService,
   ],
-  exports: [
-    ReferentielsRouter,
-    LabellisationService,
-    SnapshotsService,
-    ScoresService,
-    UpdateActionStatutService,
-    ExportScoreService,
-  ],
+  exports: [ReferentielsRouter],
   controllers: [
     GetReferentielController,
     ImportReferentielController,
