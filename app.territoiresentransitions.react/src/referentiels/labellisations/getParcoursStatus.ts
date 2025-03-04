@@ -5,7 +5,7 @@ import { TCycleLabellisationStatus } from './useCycleLabellisation';
 type TDemandeEtOuAudit = Pick<TLabellisationParcours, 'demande' | 'audit'>;
 
 export const getParcoursStatus = (
-  demandeEtOuAudit: TDemandeEtOuAudit | null
+  demandeEtOuAudit: TDemandeEtOuAudit | null | undefined
 ): TCycleLabellisationStatus => {
   if (!demandeEtOuAudit) {
     return 'non_demandee';

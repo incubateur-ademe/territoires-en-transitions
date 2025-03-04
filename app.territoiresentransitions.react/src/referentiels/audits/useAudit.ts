@@ -18,7 +18,7 @@ const fetch = async (
   // lit le statut de l'audit en cours (s'il existe)
   const { data, error } = await supabase
     .from('audit_en_cours')
-    .select('*,auditeurs:audit_auditeur (id:auditeur)')
+    .select('*')
     .match({ collectivite_id, referentiel })
     .limit(1);
 
