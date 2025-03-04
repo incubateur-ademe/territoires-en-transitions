@@ -810,3 +810,7 @@ pg_trgm_extension 2025-02-13T09:46:04Z Frederic Arnoux <frederic.arnoux@beta.gou
 collectivite/collectivite [collectivite/collectivite@v4.37.0] 2025-02-13T14:43:13Z Frederic Arnoux <frederic.arnoux@beta.gouv.fr> # Supprime la vue named_collectivite
 @v4.38.0 2025-02-14T14:00:37Z Frederic Arnoux <frederic.arnoux@beta.gouv.fr> # Tag en 4.38.0
 
+
+referentiel/action_pilote 2025-02-24T17:05:23Z System Administrator <root@MacBook-Air-de-Eli.local> # Crée une liaison entre une mesure (nom technique : action) du référentiel et un pilote
+referentiel/action_service 2025-03-03T15:22:07Z System Administrator <root@MacBook-Air-de-Eli.local> # Crée une liaison entre une mesure (nom technique : action) du référentiel et un service
+@v4.39.0 2025-03-03T16:28:28Z System Administrator <root@MacBook-Air-de-Eli.local> # Tag en v4.39.0
