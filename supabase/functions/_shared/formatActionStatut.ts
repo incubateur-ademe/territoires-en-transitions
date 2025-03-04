@@ -1,5 +1,5 @@
-import { Enums } from './typeUtils.ts';
 import { TActionReferentiel } from '../_shared/fetchActionsReferentiel.ts';
+import { Enums } from './typeUtils.ts';
 
 export type TScore = {
   avancement: Enums<'avancement'> | null;
@@ -40,7 +40,9 @@ export const formatActionStatut = (
   // pour éviter d'afficher "non renseigné" pour une sous-action dont au moins une tâche est renseignée
   if (
     action.type === 'sous-action' &&
-    avancement === null &&
+    (avancement === null ||
+      avancement === 'non_renseigne' ||
+      avancement === 'detaille') &&
     avancement_descendants?.filter((s) => s !== 'non_renseigne').length
   ) {
     return avancementToLabel['detaille'];
