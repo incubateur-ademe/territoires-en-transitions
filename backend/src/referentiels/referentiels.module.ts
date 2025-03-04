@@ -2,6 +2,8 @@ import { Module } from '@nestjs/common';
 import { CollectivitesModule } from '../collectivites/collectivites.module';
 import { PersonnalisationsModule } from '../personnalisations/personnalisations.module';
 import { SheetModule } from '../utils/google-sheets/sheet.module';
+import { AssignPilotesRouter } from './assign-pilotes/assign-pilotes.router';
+import { AssignPilotesService } from './assign-pilotes/assign-pilotes.service';
 import { ReferentielsScoringController } from './compute-score/scores.controller';
 import ScoresService from './compute-score/scores.service';
 import { ExportScoreController } from './export-score/export-score.controller';
@@ -54,6 +56,9 @@ import { UpdateActionStatutService } from './update-action-statut/update-action-
     StartAuditRouter,
     ValidateAuditService,
     ValidateAuditRouter,
+
+    AssignPilotesService,
+    AssignPilotesRouter,
   ],
   exports: [ReferentielsRouter],
   controllers: [
