@@ -1,7 +1,7 @@
 import { InferInsertModel, InferSelectModel } from 'drizzle-orm';
 import { boolean, integer, text, varchar } from 'drizzle-orm/pg-core';
 import { createInsertSchema, createSelectSchema } from 'drizzle-zod';
-import { labellisationSchema } from '../../../referentiels/models/labellisation.schema';
+import { labellisationSchema } from '../../../referentiels/labellisations/labellisation.schema';
 
 export const bibliothequeFichierTable = labellisationSchema.table(
   'bibliotheque_fichier',

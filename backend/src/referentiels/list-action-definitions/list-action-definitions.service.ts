@@ -20,6 +20,8 @@ export type ActionDefinition = Awaited<
   ReturnType<ListActionDefinitionsService['listActionDefinitions']>
 >[0];
 
+// TODO maybe see PG view `action_hierachy` to get children and parents
+
 @Injectable()
 export class ListActionDefinitionsService {
   constructor(private readonly databaseService: DatabaseService) {}

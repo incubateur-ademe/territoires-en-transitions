@@ -5,9 +5,13 @@ import { makeReferentielUrl } from '@/app/app/paths';
 import { useCollectiviteId } from '@/app/collectivites/collectivite-context';
 import HeaderLabellisationConnected from '@/app/referentiels/labellisations/HeaderLabellisation';
 import { useCycleLabellisation } from '@/app/referentiels/labellisations/useCycleLabellisation';
-import { useIsUnchangedReferentiel } from '@/app/referentiels/labellisations/useIsUnchangedReferentiel';
+import { DEPRECATED_useIsUnchangedReferentiel } from '@/app/referentiels/labellisations/useIsUnchangedReferentiel';
 import { ReferentielOfIndicateur } from '@/app/referentiels/litterals';
 import { useReferentielId } from '@/app/referentiels/referentiel-context';
+import {
+  useEtatLieuxHasStarted,
+  useSnapshotFlagEnabled,
+} from '@/app/referentiels/use-snapshot';
 import { ReferentielId } from '@/domain/referentiels';
 import { Button } from '@/ui';
 import PageContainer from '@/ui/components/layout/page-container';
@@ -16,14 +20,21 @@ import { ReactNode } from 'react';
 export default function Layout({ tabs }: { tabs: ReactNode }) {
   const collectiviteId = useCollectiviteId();
   const referentielId = useReferentielId();
-  const { parcours } = useCycleLabellisation(referentielId);
-  const isUnchangedReferentiel = useIsUnchangedReferentiel(
+  const parcoursLabellisation = useCycleLabellisation(referentielId);
+  const { parcours } = parcoursLabellisation;
+
+  const isUnchangedReferentiel = DEPRECATED_useIsUnchangedReferentiel(
     collectiviteId,
     referentielId
   );
 
+  const FLAG_isSnapshotEnabled = useSnapshotFlagEnabled();
+  const NEW_etatLieuxHasStarted = useEtatLieuxHasStarted(referentielId);
+
   // cas particulier : le référentiel n'est pas du tout renseigné
-  if (isUnchangedReferentiel) {
+  if (
+    FLAG_isSnapshotEnabled ? !NEW_etatLieuxHasStarted : isUnchangedReferentiel
+  ) {
     return (
       <>
         <Title referentielId={referentielId} />
@@ -59,7 +70,9 @@ export default function Layout({ tabs }: { tabs: ReactNode }) {
     <div className="grow bg-grey-2 -mb-8 py-12 px-4 lg:px-6 2xl:px-0">
       <div className="m-auto xl:max-w-[90rem] 2xl:px-6">
         <Title referentielId={parcours.referentiel} />
-        <HeaderLabellisationConnected />
+        <HeaderLabellisationConnected
+          parcoursLabellisation={parcoursLabellisation}
+        />
         <PageContainer
           dataTest={`labellisation-${parcours.referentiel}`}
           bgColor="white"

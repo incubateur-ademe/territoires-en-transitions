@@ -18,7 +18,7 @@ import MattermostNotificationService from '../../utils/mattermost-notification.s
 import { roundTo } from '../../utils/number.utils';
 import { CorrelatedActionsWithScoreFields } from '../correlated-actions/correlated-actions.dto';
 import { GetReferentielService } from '../get-referentiel/get-referentiel.service';
-import { LabellisationService } from '../labellisation.service';
+import { LabellisationService } from '../labellisations/labellisation.service';
 import {
   ActionDefinitionEssential,
   TreeNode,
