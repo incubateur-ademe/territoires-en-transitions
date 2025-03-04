@@ -1,16 +1,9 @@
-import { avancementToLabel } from '@/app/app/labels';
-import { actionAvancementColors } from '@/app/app/theme';
 import { ActionDefinitionSummary } from '@/app/referentiels/ActionDefinitionSummaryReadEndpoint';
-import {
-  StatusToSavePayload,
-  SubActionStatutDropdown,
-} from '@/app/referentiels/actions/sub-action-statut.dropdown';
+import { SubActionStatutDropdown } from '@/app/referentiels/actions/sub-action-statut.dropdown';
 import Markdown from '@/app/ui/Markdown';
 import { Button, InfoTooltip } from '@/ui';
 import { useState } from 'react';
-import ProgressBarWithTooltip from '../../scores/progress-bar-with-tooltip';
 import ScoreProgressBar from '../../scores/score.progress-bar';
-import { getStatusFromIndex } from '../../utils';
 import {
   useActionStatut,
   useEditActionStatutIsDisabled,
@@ -20,21 +13,14 @@ type TaskHeaderProps = {
   task: ActionDefinitionSummary;
   hideStatus: boolean;
   statusWarningMessage: boolean;
-  onSaveStatus?: (payload: StatusToSavePayload) => void;
 };
 
 const TaskHeader = ({
   task,
   hideStatus,
   statusWarningMessage,
-  onSaveStatus,
 }: TaskHeaderProps) => {
   const [openScoreDetaille, setOpenScoreDetaille] = useState(false);
-  // localStatus permet de mettre à jour l'affichage lorsque pas de sauvegarde auto
-  // comportement à revoir quand il n'y aura plus de modale pour l'édition des tâches
-  const [localStatus, setLocalStatus] = useState<StatusToSavePayload | null>(
-    null
-  );
 
   const { statut } = useActionStatut(task.id);
   const disabled = useEditActionStatutIsDisabled(task.id);
@@ -69,61 +55,25 @@ const TaskHeader = ({
               actionDefinition={task}
               statusWarningMessage={statusWarningMessage}
               openScoreDetailleState={{
-                openScoreDetaille,
-                setOpenScoreDetaille,
+                isOpen: openScoreDetaille,
+                setIsOpen: setOpenScoreDetaille,
               }}
-              onSaveStatus={
-                onSaveStatus
-                  ? (payload) => {
-                      onSaveStatus(payload);
-                      setLocalStatus(payload);
-                    }
-                  : undefined
-              }
             />
           </div>
         )}
       </div>
 
       {/* Deuxième ligne (optionnelle) : jauge + cta détailler l'avancement */}
-      {((!disabled &&
-        statut?.avancement === 'detaille' &&
-        localStatus === null) ||
-        localStatus?.avancement === 'detaille') &&
-        !hideStatus && (
-          <div className="flex justify-between">
-            {localStatus === null ? (
-              <ScoreProgressBar
-                actionDefinition={task}
-                displayDoneValue
-                valuePosition="right"
-                className="w-full max-w-60"
-              />
-            ) : (
-              <ProgressBarWithTooltip
-                valuePosition="right"
-                className="w-full max-w-60"
-                score={
-                  localStatus.avancementDetaille?.map((a, idx) => ({
-                    value: a,
-                    label: avancementToLabel[getStatusFromIndex(idx)],
-                    color: actionAvancementColors[getStatusFromIndex(idx)],
-                  })) ?? []
-                }
-                total={
-                  localStatus.avancementDetaille?.reduce(
-                    (sum, currValue) => sum + currValue
-                  ) ?? 0
-                }
-                defaultScore={{
-                  label: avancementToLabel.non_renseigne,
-                  color: actionAvancementColors.non_renseigne,
-                }}
-                valueToDisplay={avancementToLabel.fait}
-                percent
-              />
-            )}
+      {statut?.avancement === 'detaille' && !hideStatus && (
+        <div className="flex justify-between">
+          <ScoreProgressBar
+            actionDefinition={task}
+            displayDoneValue
+            valuePosition="right"
+            className="w-full max-w-60"
+          />
 
+          {!disabled && (
             <Button
               variant="underlined"
               size="sm"
@@ -134,8 +84,9 @@ const TaskHeader = ({
             >
               Détailler l'avancement
             </Button>
-          </div>
-        )}
+          )}
+        </div>
+      )}
     </div>
   );
 };

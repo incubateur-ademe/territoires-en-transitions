@@ -23,6 +23,10 @@ type Props = {
   className?: string;
 };
 
+/**
+ * Slider d'ajustement manuel du score avec sauvegarde auto
+ */
+
 const AvancementDetailleSliderAutoSave = ({
   actionId,
   conditionnalDisplay = false,
