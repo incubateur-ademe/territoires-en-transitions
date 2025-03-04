@@ -90,7 +90,7 @@ export const RejoindreUneCollectivite = (
               options={
                 collectivites?.map((c) => ({
                   value: c.id,
-                  label: c.nom,
+                  label: c.nom ?? '',
                 })) || []
               }
               values={collectiviteId ? collectiviteId : undefined}
