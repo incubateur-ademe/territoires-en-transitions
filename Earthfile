@@ -1028,13 +1028,16 @@ app-deploy-test: ## Déploie une app de test et crée une app Koyeb si nécessai
 
 app-destroy-test: ## Supprime l'app de test
     ARG --required KOYEB_API_KEY
+    ARG --required BRANCH_NAME
     LOCALLY
-    ARG name=$(git rev-parse --abbrev-ref HEAD | sed 's/[^a-zA-Z0-9]//g' | head -c 14 | tr '[:upper:]' '[:lower:]')
+    ARG name=$(echo $BRANCH_NAME | sed 's/[^a-zA-Z0-9]//g' | head -c 14 | tr '[:upper:]' '[:lower:]')
     FROM +koyeb
     RUN ./koyeb apps list  # Le IF suivant ne fonctionne pas sans lister avant.
     IF [ "./koyeb apps list | grep test-app-$name" ]
         RUN echo "Test app already deployed on Koyeb at test-app-$name, deleting..."
         RUN /koyeb apps delete test-app-$name
+    ELSE
+        RUN echo "Test app not found on Koyeb at test-app-$name, nothing to delete..."
     END
 
 help: ## affiche ce message d'aide
