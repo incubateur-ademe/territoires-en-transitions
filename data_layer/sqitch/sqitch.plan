@@ -825,3 +825,5 @@ evaluation/contenu_json [evaluation/contenu_json@v4.41.0] 2025-03-13T11:25:13Z M
 evaluation/seuils_de_population [evaluation/seuils_de_population@v4.41.0] 2025-03-13T14:56:28Z Marc Rutkowski <marc@attractive-media.fr> # Ajoute de nouveaux seuils de population pour les formules des valeurs cible/seuil des indicateurs
 collectivite/collectivite [collectivite/collectivite@v4.41.0] 2025-03-14T10:22:16Z Marc Rutkowski <marc@attractive-media.fr> # Ajoute le statut "dans l'aire urbaine"
 @v4.42.0 2025-03-20T08:39:29Z Marc Rutkowski <marc@attractive-media.fr> # Gère les valeurs cible et seuil
+
+labellisation/labellisation [labellisation/labellisation@v4.38.0] 2025-03-03T13:31:49Z Frederic Arnoux <frederic.arnoux@beta.gouv.fr> # Ajoute des RLS à etoile_meta
