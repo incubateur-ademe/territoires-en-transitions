@@ -35,7 +35,7 @@ const SubActionModal = ({ actionDefinition, openState }: Props) => {
           <AvancementDetailleSliderAutoSave
             className="my-8 px-12"
             actionId={actionId}
-            conditionnalDisplay
+            conditionnalDisplay={tasks.length > 0}
             onAvancementUpdate={(avancement) =>
               avancement === 'detaille'
                 ? setDisplayWarningMessage(true)
@@ -44,10 +44,12 @@ const SubActionModal = ({ actionDefinition, openState }: Props) => {
           />
 
           {/* Liste des tâches */}
-          <SubActionTasksList
-            tasks={tasks}
-            statusWarningMessage={displayWarningMessage}
-          />
+          {tasks.length > 0 && (
+            <SubActionTasksList
+              tasks={tasks}
+              statusWarningMessage={displayWarningMessage}
+            />
+          )}
         </div>
       )}
       renderFooter={({ close }) => (
