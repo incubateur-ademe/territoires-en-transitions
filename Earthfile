@@ -424,6 +424,12 @@ app-deploy:
 # BACKEND ENTRYPOINTS
 # -------------------
 
+backend-local-seed:
+  BUILD --pass-args ./backend+local-seed
+
+backend-seed:
+  BUILD --pass-args ./backend+seed
+
 backend-docker:
   BUILD --pass-args ./backend+docker
 
@@ -439,6 +445,7 @@ backend-test:
   ARG --required TRAJECTOIRE_SNBC_XLSX_ID
   ARG --required TRAJECTOIRE_SNBC_RESULT_FOLDER_ID
   ARG --required REFERENTIEL_TE_SHEET_ID
+  ARG --required INDICATEUR_DEFINITIONS_SHEET_ID
   ARG --required GCLOUD_SERVICE_ACCOUNT_KEY
   ARG --required SUPABASE_DATABASE_URL
   ARG --required SUPABASE_URL
@@ -727,6 +734,11 @@ dev:
     ARG --required API_URL
     ARG --required ANON_KEY
     ARG --required SERVICE_ROLE_KEY
+    ARG JWT_SECRET
+    ARG REFERENTIEL_TE_SHEET_ID
+    ARG INDICATEUR_DEFINITIONS_SHEET_ID
+    ARG TRAJECTOIRE_SNBC_XLSX_ID
+    ARG GCLOUD_SERVICE_ACCOUNT_KEY
     ARG network=host
     ARG stop=yes
     ARG datalayer=yes
@@ -774,6 +786,26 @@ dev:
             RUN earthly +db-deploy --to @$version --DB_URL=$DB_URL
 
             RUN earthly +load-json --SERVICE_ROLE_KEY=$SERVICE_ROLE_KEY --API_URL=$API_URL
+
+            # Seed des indicateurs et des referentiels à partir des spreadsheets
+            IF [ "$CI" = "true" ]
+                RUN earthly  +backend-seed \
+                    --REFERENTIEL_TE_SHEET_ID=$REFERENTIEL_TE_SHEET_ID \
+                    --INDICATEUR_DEFINITIONS_SHEET_ID=$INDICATEUR_DEFINITIONS_SHEET_ID \
+                    --GCLOUD_SERVICE_ACCOUNT_KEY=$GCLOUD_SERVICE_ACCOUNT_KEY \
+                    --SUPABASE_DATABASE_URL=$DB_URL \
+                    --SUPABASE_ANON_KEY=$ANON_KEY \
+                    --SUPABASE_SERVICE_ROLE_KEY=$SERVICE_ROLE_KEY \
+                    --SUPABASE_JWT_SECRET=$JWT_SECRET \
+                    --SUPABASE_URL=$API_URL \
+                    --TRAJECTOIRE_SNBC_XLSX_ID=$TRAJECTOIRE_SNBC_XLSX_ID \
+                    --BREVO_API_KEY=fake \
+                    --DIRECTUS_API_KEY=fake \
+                    --TRAJECTOIRE_SNBC_SHEET_ID=fake \
+                    --TRAJECTOIRE_SNBC_RESULT_FOLDER_ID=fake
+            ELSE
+                RUN earthly +backend-local-seed
+            END
 
             # Seed si aucune collectivité en base
             RUN docker run --rm \
@@ -887,6 +919,11 @@ prepare-faster:
      ARG --required SERVICE_ROLE_KEY
      ARG --required API_URL
      ARG --required ANON_KEY
+     ARG --required JWT_SECRET
+     ARG --required REFERENTIEL_TE_SHEET_ID
+     ARG --required INDICATEUR_DEFINITIONS_SHEET_ID
+     ARG --required TRAJECTOIRE_SNBC_XLSX_ID
+     ARG --required GCLOUD_SERVICE_ACCOUNT_KEY
      LOCALLY
      IF [ "$push" = "yes" ]
         RUN docker pull $DB_SAVE_IMG_NAME || echo "Image $DB_SAVE_IMG_NAME not found in registry"
@@ -897,7 +934,15 @@ prepare-faster:
          RUN echo "Image $DB_SAVE_IMG_NAME not found, start datalayer"
          RUN earthly +dev \
             --stop=$stop --business=no --app=no --fast=no \
-            --DB_URL=$DB_URL --ANON_KEY=$ANON_KEY --SERVICE_ROLE_KEY=$SERVICE_ROLE_KEY --API_URL=$API_URL
+            --DB_URL=$DB_URL \
+            --ANON_KEY=$ANON_KEY \ 
+            --SERVICE_ROLE_KEY=$SERVICE_ROLE_KEY \
+            --JWT_SECRET=$JWT_SECRET \
+            --API_URL=$API_URL \
+            --REFERENTIEL_TE_SHEET_ID=$REFERENTIEL_TE_SHEET_ID \
+            --INDICATEUR_DEFINITIONS_SHEET_ID=$INDICATEUR_DEFINITIONS_SHEET_ID \
+            --TRAJECTOIRE_SNBC_XLSX_ID=$TRAJECTOIRE_SNBC_XLSX_ID \
+            --GCLOUD_SERVICE_ACCOUNT_KEY=$GCLOUD_SERVICE_ACCOUNT_KEY
          RUN earthly +save-db --push=$push
      END
 

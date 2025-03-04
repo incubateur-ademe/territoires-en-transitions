@@ -1,6 +1,11 @@
+import { DatabaseService } from '@/backend/utils';
 import { inferProcedureInput } from '@trpc/server';
 import { DateTime } from 'luxon';
-import { getTestRouter } from '../../../test/app-utils';
+import {
+  getTestApp,
+  getTestDatabase,
+  getTestRouter,
+} from '../../../test/app-utils';
 import { getAuthUser } from '../../../test/auth-utils';
 import { getCollectiviteIdBySiren } from '../../../test/collectivites-utils';
 import { AuthenticatedUser } from '../../auth/models/auth.models';
@@ -17,11 +22,17 @@ describe('ScoreSnapshotsRouter', () => {
   let router: TrpcRouter;
   let yoloDodoUser: AuthenticatedUser;
   let rhoneAggloCollectiviteId: number;
+  let databaseService: DatabaseService;
 
   beforeAll(async () => {
-    router = await getTestRouter();
+    const app = await getTestApp();
+    router = await getTestRouter(app);
+    databaseService = await getTestDatabase(app);
     yoloDodoUser = await getAuthUser();
-    rhoneAggloCollectiviteId = await getCollectiviteIdBySiren('200072015');
+    rhoneAggloCollectiviteId = await getCollectiviteIdBySiren(
+      databaseService,
+      '200072015'
+    );
   });
 
   test("Création d'un snapshot: not authenticated", async () => {

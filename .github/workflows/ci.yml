@@ -152,6 +152,11 @@ jobs:
           --SERVICE_ROLE_KEY=${{ secrets.SERVICE_ROLE_KEY }}
           --ANON_KEY=${{ secrets.ANON_KEY }}
           --API_URL=${{ secrets.API_URL }}
+          --JWT_SECRET=${{ secrets.JWT_SECRET }}
+          --REFERENTIEL_TE_SHEET_ID=${{ vars.REFERENTIEL_TE_SHEET_ID }}
+          --INDICATEUR_DEFINITIONS_SHEET_ID=${{ vars.INDICATEUR_DEFINITIONS_SHEET_ID }}
+          --TRAJECTOIRE_SNBC_XLSX_ID=${{ vars.TRAJECTOIRE_SNBC_XLSX_ID }}
+          --GCLOUD_SERVICE_ACCOUNT_KEY=${{ secrets.GCLOUD_SERVICE_ACCOUNT_KEY }}
 
   test-api:
     needs:
@@ -185,6 +190,11 @@ jobs:
           --SERVICE_ROLE_KEY=${{ secrets.SERVICE_ROLE_KEY }}
           --ANON_KEY=${{ secrets.ANON_KEY }}
           --API_URL=${{ secrets.API_URL }}
+          --JWT_SECRET=${{ secrets.JWT_SECRET }}
+          --REFERENTIEL_TE_SHEET_ID=${{ vars.REFERENTIEL_TE_SHEET_ID }}
+          --INDICATEUR_DEFINITIONS_SHEET_ID=${{ vars.INDICATEUR_DEFINITIONS_SHEET_ID }}
+          --TRAJECTOIRE_SNBC_XLSX_ID=${{ vars.TRAJECTOIRE_SNBC_XLSX_ID }}
+          --GCLOUD_SERVICE_ACCOUNT_KEY=${{ secrets.GCLOUD_SERVICE_ACCOUNT_KEY }}
 
       - name: Reset de postgrest
         run: docker restart supabase_rest_tet
@@ -238,6 +248,11 @@ jobs:
           --SERVICE_ROLE_KEY=${{ secrets.SERVICE_ROLE_KEY }}
           --ANON_KEY=${{ secrets.ANON_KEY }}
           --API_URL=${{ secrets.API_URL }}
+          --JWT_SECRET=${{ secrets.JWT_SECRET }}
+          --REFERENTIEL_TE_SHEET_ID=${{ vars.REFERENTIEL_TE_SHEET_ID }}
+          --INDICATEUR_DEFINITIONS_SHEET_ID=${{ vars.INDICATEUR_DEFINITIONS_SHEET_ID }}
+          --TRAJECTOIRE_SNBC_XLSX_ID=${{ vars.TRAJECTOIRE_SNBC_XLSX_ID }}
+          --GCLOUD_SERVICE_ACCOUNT_KEY=${{ secrets.GCLOUD_SERVICE_ACCOUNT_KEY }}
 
       - name: Reset de postgrest
         run: docker restart supabase_rest_tet
@@ -293,6 +308,11 @@ jobs:
           --SERVICE_ROLE_KEY=${{ secrets.SERVICE_ROLE_KEY }}
           --ANON_KEY=${{ secrets.ANON_KEY }}
           --API_URL=${{ secrets.API_URL }}
+          --JWT_SECRET=${{ secrets.JWT_SECRET }}
+          --REFERENTIEL_TE_SHEET_ID=${{ vars.REFERENTIEL_TE_SHEET_ID }}
+          --INDICATEUR_DEFINITIONS_SHEET_ID=${{ vars.INDICATEUR_DEFINITIONS_SHEET_ID }}
+          --TRAJECTOIRE_SNBC_XLSX_ID=${{ vars.TRAJECTOIRE_SNBC_XLSX_ID }}
+          --GCLOUD_SERVICE_ACCOUNT_KEY=${{ secrets.GCLOUD_SERVICE_ACCOUNT_KEY }}
 
       - name: Reset de postgrest
         run: docker restart supabase_rest_tet
@@ -317,6 +337,7 @@ jobs:
           --TRAJECTOIRE_SNBC_XLSX_ID=${{ vars.TRAJECTOIRE_SNBC_XLSX_ID }}
           --TRAJECTOIRE_SNBC_RESULT_FOLDER_ID=${{ vars.TRAJECTOIRE_SNBC_RESULT_FOLDER_ID }}
           --REFERENTIEL_TE_SHEET_ID=${{ vars.REFERENTIEL_TE_SHEET_ID }}
+          --INDICATEUR_DEFINITIONS_SHEET_ID=${{ vars.INDICATEUR_DEFINITIONS_SHEET_ID }}
           --BREVO_API_KEY=${{ secrets.BREVO_API_KEY }}
           --DIRECTUS_API_KEY=${{ secrets.DIRECTUS_API_KEY }}
           --GCLOUD_SERVICE_ACCOUNT_KEY=${{ secrets.GCLOUD_SERVICE_ACCOUNT_KEY }}
@@ -370,6 +391,11 @@ jobs:
           --SERVICE_ROLE_KEY=${{ secrets.SERVICE_ROLE_KEY }}
           --ANON_KEY=${{ secrets.ANON_KEY }}
           --API_URL=${{ secrets.API_URL }}
+          --JWT_SECRET=${{ secrets.JWT_SECRET }}
+          --REFERENTIEL_TE_SHEET_ID=${{ vars.REFERENTIEL_TE_SHEET_ID }}
+          --INDICATEUR_DEFINITIONS_SHEET_ID=${{ vars.INDICATEUR_DEFINITIONS_SHEET_ID }}
+          --TRAJECTOIRE_SNBC_XLSX_ID=${{ vars.TRAJECTOIRE_SNBC_XLSX_ID }}
+          --GCLOUD_SERVICE_ACCOUNT_KEY=${{ secrets.GCLOUD_SERVICE_ACCOUNT_KEY }}
 
       - name: Reset de postgrest
         run: docker restart supabase_rest_tet
@@ -447,6 +473,11 @@ jobs:
           --SERVICE_ROLE_KEY=${{ secrets.SERVICE_ROLE_KEY }}
           --ANON_KEY=${{ secrets.ANON_KEY }}
           --API_URL=${{ secrets.API_URL }}
+          --JWT_SECRET=${{ secrets.JWT_SECRET }}
+          --REFERENTIEL_TE_SHEET_ID=${{ vars.REFERENTIEL_TE_SHEET_ID }}
+          --INDICATEUR_DEFINITIONS_SHEET_ID=${{ vars.INDICATEUR_DEFINITIONS_SHEET_ID }}
+          --TRAJECTOIRE_SNBC_XLSX_ID=${{ vars.TRAJECTOIRE_SNBC_XLSX_ID }}
+          --GCLOUD_SERVICE_ACCOUNT_KEY=${{ secrets.GCLOUD_SERVICE_ACCOUNT_KEY }}
 
       - name: Test curl
         run: >
@@ -493,6 +524,12 @@ jobs:
           --SERVICE_ROLE_KEY=${{ secrets.SERVICE_ROLE_KEY }}
           --ANON_KEY=${{ secrets.ANON_KEY }}
           --API_URL=${{ secrets.API_URL }}
+          --JWT_SECRET=${{ secrets.JWT_SECRET }}
+          --REFERENTIEL_TE_SHEET_ID=${{ vars.REFERENTIEL_TE_SHEET_ID }}
+          --INDICATEUR_DEFINITIONS_SHEET_ID=${{ vars.INDICATEUR_DEFINITIONS_SHEET_ID }}
+          --TRAJECTOIRE_SNBC_XLSX_ID=${{ vars.TRAJECTOIRE_SNBC_XLSX_ID }}
+          --GCLOUD_SERVICE_ACCOUNT_KEY=${{ secrets.GCLOUD_SERVICE_ACCOUNT_KEY }}
+
 
       - name: Test Deploy
         run: >
@@ -552,6 +589,11 @@ jobs:
           --SERVICE_ROLE_KEY=${{ secrets.SERVICE_ROLE_KEY }}
           --API_URL=${{ secrets.API_URL }}
           --ANON_KEY=${{ secrets.ANON_KEY }}
+          --JWT_SECRET=${{ secrets.JWT_SECRET }}
+          --REFERENTIEL_TE_SHEET_ID=${{ vars.REFERENTIEL_TE_SHEET_ID }}
+          --INDICATEUR_DEFINITIONS_SHEET_ID=${{ vars.INDICATEUR_DEFINITIONS_SHEET_ID }}
+          --TRAJECTOIRE_SNBC_XLSX_ID=${{ vars.TRAJECTOIRE_SNBC_XLSX_ID }}
+          --GCLOUD_SERVICE_ACCOUNT_KEY=${{ secrets.GCLOUD_SERVICE_ACCOUNT_KEY }}
 
       - run: docker restart supabase_rest_tet
 
