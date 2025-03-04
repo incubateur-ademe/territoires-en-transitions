@@ -1,4 +1,5 @@
 import { useState } from 'react';
+import { useIndicateurMoyenne } from './use-indicateur-moyenne';
 import {
   GetAvailableSourcesInput,
   useIndicateurAvailableSources,
@@ -10,8 +11,8 @@ const FILTRES_SOURCE = [
   'pcaet',
   'opendata',
   'collectivite',
-  /*
   'moyenne',
+  /*
   'cible',
   'seuil',
   */
@@ -24,8 +25,8 @@ const filtreToLabel: Record<FiltresSource, string> = {
   pcaet: 'Objectifs Territoires & Climat',
   opendata: 'Résultats Open data',
   collectivite: 'Données de la collectivité',
+  moyenne: 'Moyenne des collectivités de même type',
   /*
-   moyenne: 'Moyenne',
    cible: 'Valeur cible',
    seuil: 'Valeur seuil',
    */
@@ -39,7 +40,12 @@ export const useSourceFilter = (input: GetAvailableSourcesInput) => {
   // conserve les filtres sur les sources de données
   const [filtresSource, setFiltresSource] = useState<FiltresSource[]>([]);
 
-  const { data, isLoading } = useIndicateurAvailableSources(input);
+  const { data, isLoading: isLoadingSources } =
+    useIndicateurAvailableSources(input);
+
+  // on charge systématiquement la moyenne pour savoir si on doit l'afficher dans le filtre
+  const { data: moyenne, isLoading: isLoadingMoyenne } =
+    useIndicateurMoyenne(input);
 
   // génère la liste des options possibles en fonction des sources disponibles
   const options: FiltresSource[] = [];
@@ -56,6 +62,9 @@ export const useSourceFilter = (input: GetAvailableSourcesInput) => {
       options.push('opendata');
     }
     options.push('collectivite');
+  }
+  if (moyenne?.valeurs?.length) {
+    options.push('moyenne');
   }
   const availableOptions = options.map((value) => ({
     value,
@@ -80,6 +89,11 @@ export const useSourceFilter = (input: GetAvailableSourcesInput) => {
     if (filtresSource.includes('collectivite')) {
       sources.push('collectivite');
     }
+    // ce filtre sur les valeurs a pour seul but d'éviter de charger toutes les
+    // valeurs quand seule la moyenne est sélectionnée
+    if (filtresSource.includes('moyenne')) {
+      sources.push('moyenne');
+    }
   }
 
   // indique si les données de la collectivité doivent être incluses
@@ -92,13 +106,17 @@ export const useSourceFilter = (input: GetAvailableSourcesInput) => {
     filtresSource.length === 1 && filtresSource[0] === 'snbc';
 
   return {
-    isLoading,
+    isLoading: isLoadingSources || isLoadingMoyenne,
     availableOptions,
     filtresSource,
     setFiltresSource,
     sources: sources.length ? sources : undefined,
     avecDonneesCollectivite,
     avecSecteursSNBC,
+    moyenne:
+      !filtresSource.length || filtresSource.includes('moyenne')
+        ? moyenne
+        : undefined,
   };
 };
 
