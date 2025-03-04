@@ -13,6 +13,8 @@ type ActionCommentaireProps = {
   className?: string;
   autoFocus?: boolean;
   placeholder?: string;
+  title?: string;
+  subtitle?: string;
   onSave?: () => void;
 };
 
@@ -21,6 +23,8 @@ export const ActionCommentaire = ({
   className,
   autoFocus,
   placeholder,
+  title,
+  subtitle,
   onSave,
 }: ActionCommentaireProps) => {
   const { actionCommentaire, isLoading } = useActionCommentaire(action.id);
@@ -35,10 +39,13 @@ export const ActionCommentaire = ({
           action={action}
           initialValue={actionCommentaire?.commentaire || ''}
           title={
-            action.type !== 'tache'
+            title
+              ? title
+              : action.type !== 'tache'
               ? "Explications sur l'état d'avancement"
               : undefined
           }
+          subtitle={subtitle}
           autoFocus={autoFocus}
           onSave={(payload) => {
             saveActionCommentaire(payload);

@@ -1,6 +1,5 @@
 import { useCurrentCollectivite } from '@/app/core-logic/hooks/useCurrentCollectivite';
 import { ActionDefinitionSummary } from '@/app/referentiels/ActionDefinitionSummaryReadEndpoint';
-import { StatusToSavePayload } from '@/app/referentiels/actions/sub-action-statut.dropdown';
 import { useEffect, useRef } from 'react';
 import { useActionCommentaire } from '../../use-action-commentaire';
 import { ActionCommentaire } from '../action-commentaire';
@@ -11,7 +10,6 @@ type SubActionTaskProps = {
   task: ActionDefinitionSummary;
   hideStatus?: boolean;
   statusWarningMessage?: boolean;
-  onSaveStatus?: (payload: StatusToSavePayload) => void;
 };
 
 /**
@@ -22,7 +20,6 @@ const SubActionTask = ({
   task,
   hideStatus = false,
   statusWarningMessage = false,
-  onSaveStatus,
 }: SubActionTaskProps): JSX.Element => {
   const ref = useRef<HTMLDivElement>(null);
   const collectivite = useCurrentCollectivite();
@@ -50,9 +47,7 @@ const SubActionTask = ({
       className="p-4 border border-grey-3 rounded-xl flex flex-col gap-4"
     >
       {/* Header */}
-      <TaskHeader
-        {...{ task, hideStatus, statusWarningMessage, onSaveStatus }}
-      />
+      <TaskHeader {...{ task, hideStatus, statusWarningMessage }} />
 
       {/* Ajout de commentaire */}
       {!collectivite?.isReadOnly ? (

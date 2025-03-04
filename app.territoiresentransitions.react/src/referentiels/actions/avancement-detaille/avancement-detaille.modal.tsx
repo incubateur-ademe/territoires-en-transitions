@@ -1,62 +1,53 @@
-import { useState } from 'react';
-
 import { ActionDefinitionSummary } from '@/app/referentiels/ActionDefinitionSummaryReadEndpoint';
-import { Button, Modal, ModalFooterOKCancel } from '@/ui';
-
-import { AVANCEMENT_DETAILLE_PAR_STATUT } from '@/app/referentiels/utils';
-import AvancementDetailleSlider, {
-  AvancementValues,
-} from './avancement-detaille.slider';
+import { Modal, ModalFooterOKCancel } from '@/ui';
+import { OpenState } from '@/ui/utils/types';
+import { ActionCommentaire } from '../action-commentaire';
+import AvancementDetailleSliderAutoSave from './avancement-detaille.slider.auto-save';
 
 type Props = {
-  action: ActionDefinitionSummary;
-  avancementDetaille?: AvancementValues | null;
+  actionDefinition: ActionDefinitionSummary;
+  openState: OpenState;
 };
 
-const AvancementDetailleModal = ({ action, avancementDetaille }: Props) => {
-  const [avancement, setAvancement] = useState(
-    (avancementDetaille ??
-      AVANCEMENT_DETAILLE_PAR_STATUT.detaille) as AvancementValues
-  );
+/**
+ * Modale permettant l'ajustement manuel de l'avancement détaillé
+ * + l'ajout d'un texte justificatif
+ */
 
-  const handleValidate = (avancementValues: AvancementValues) => {
-    // TODO
-  };
+const AvancementDetailleModal = ({ actionDefinition, openState }: Props) => {
+  const { id: actionId, nom: actionName } = actionDefinition;
 
   return (
     <Modal
-      size="lg"
-      disableDismiss
+      size="xl"
       title="Détailler l'avancement"
-      subTitle={`${action.id.split('_')[1]} ${action.nom}`}
+      subTitle={`${actionId.split('_')[1]} ${actionName}`}
+      openState={openState}
       render={() => (
-        <div className="mt-4">
-          <AvancementDetailleSlider
-            avancement={avancement}
-            onChange={(newValues) => setAvancement(newValues)}
+        <div className="flex flex-col gap-8">
+          {/* Slider pour détailler le score manuellement */}
+          <AvancementDetailleSliderAutoSave
+            className="my-8 px-12"
+            actionId={actionId}
+          />
+
+          {/* Raisons de la répartition */}
+          <ActionCommentaire
+            action={actionDefinition}
+            subtitle="Pour faciliter la relecture, vous pouvez préciser ici les raisons de cette répartition"
           />
         </div>
       )}
       renderFooter={({ close }) => (
         <ModalFooterOKCancel
-          btnCancelProps={{
-            onClick: () => close(),
-          }}
           btnOKProps={{
-            'aria-label': 'Valider la répartition',
-            children: 'Valider la répartition',
-            onClick: () => {
-              handleValidate(avancement);
-              close();
-            },
+            variant: 'outlined',
+            children: 'Fermer',
+            onClick: close,
           }}
         />
       )}
-    >
-      <Button size="sm" variant="underlined">
-        Détailler l&apos;avancement
-      </Button>
-    </Modal>
+    />
   );
 };
 
