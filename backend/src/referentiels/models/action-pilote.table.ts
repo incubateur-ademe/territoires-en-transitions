@@ -13,6 +13,8 @@ import {
 import { sql } from 'drizzle-orm';
 import { actionRelationTable } from './action-relation.table';
 import { dcpTable } from '../../auth/index-domain';
+import { createSelectSchema } from 'drizzle-zod';
+import z from 'zod';
 
 export const actionPiloteTable = pgTable(
   'action_pilote',
@@ -49,3 +51,6 @@ export const actionPiloteTable = pgTable(
     };
   }
 );
+
+export const actionPiloteSchema = createSelectSchema(actionPiloteTable);
+export type ActionPiloteType = z.infer<typeof actionPiloteSchema>;
