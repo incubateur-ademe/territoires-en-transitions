@@ -1,4 +1,4 @@
-import { Worksheet } from 'https://esm.sh/exceljs@4.3.0';
+import Excel from 'https://esm.sh/exceljs@4.3.0';
 import { Enums } from '../_shared/typeUtils.ts';
 
 // regex pour extraire les identifiants
@@ -6,7 +6,7 @@ const RE_IDENTIFIANT = /(\d+\.?)+/;
 
 // extrait l'identifiant d'une ligne du tableau
 export const getActionIdentifiant = (
-  worksheet: Worksheet,
+  worksheet: Excel.Worksheet,
   row: number,
   col: string
 ) => {

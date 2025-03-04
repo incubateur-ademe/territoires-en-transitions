@@ -1,17 +1,17 @@
 /**
  * Export des indicateurs au format XLSX
  */
-import { Workbook, Worksheet } from 'https://esm.sh/exceljs@4.3.0';
-import { convert } from 'https://esm.sh/html-to-text@9.0.5';
 import {
-  BlobWriter,
   BlobReader,
+  BlobWriter,
   ZipWriter,
 } from 'https://deno.land/x/zipjs@v2.7.29/index.js';
-import { TSupabaseClient } from '../_shared/getSupabaseClient.ts';
+import Excel from 'https://esm.sh/exceljs@4.3.0';
+import { convert } from 'https://esm.sh/html-to-text@9.0.5';
 import * as Utils from '../_shared/exportUtils.ts';
-import { TExportArgs, TIndicateurId } from './types.ts';
+import { TSupabaseClient } from '../_shared/getSupabaseClient.ts';
 import { fetchData, TExportData } from './fetchData.ts';
+import { TExportArgs, TIndicateurId } from './types.ts';
 
 /**
  * Génère et renvoi sous forme de blob, un fichier xlsx par indicateur à
@@ -67,7 +67,7 @@ const genIndicateurWorkbook = async (id: TIndicateurId, data: TExportData) => {
   const { definitions, definitionsPersos, valeurs, valeursPersos } = data;
 
   // crée le classeur
-  const workbook = new Workbook();
+  const workbook = new Excel.Workbook();
 
   // date d'export
   const exportedAt = Utils.formatDate(new Date(), 'yyyy-MM-dd');
@@ -97,7 +97,7 @@ const genIndicateurWorkbook = async (id: TIndicateurId, data: TExportData) => {
 
 /** Ajoute les feuilles de définition et des données d'un indicateur à un classeur */
 const addIndicateurToWorkbook = (
-  workbook: Workbook,
+  workbook: Excel.Workbook,
   definition: TExportData['definitions'][0],
   valeurs: TExportData['valeurs']
 ) => {
@@ -133,7 +133,7 @@ const addIndicateurToWorkbook = (
 
 /** Ajoute les feuilles de définition et des données d'un indicateur perso. à un classeur */
 const addIndicateurPersoToWorkbook = (
-  workbook: Workbook,
+  workbook: Excel.Workbook,
   definition: TExportData['definitionsPersos'][0],
   valeurs: TExportData['valeurs']
 ) => {
@@ -155,7 +155,7 @@ const addIndicateurPersoToWorkbook = (
 
 /** Ajoute la feuille de définition d'un indicateur à un classeur */
 const addDefinitionWorksheet = (
-  workbook: Workbook,
+  workbook: Excel.Workbook,
   nom: string,
   description: string
 ) => {
@@ -173,7 +173,7 @@ const addDefinitionWorksheet = (
 
 /** Ajoute la feuille des données d'un indicateur à un classeur */
 const addIndicateurDataToWorksheet = (
-  wsData: Worksheet,
+  wsData: Excel.Worksheet,
   definition: { id: number | string; unite: string },
   valeurs: TExportData['valeurs']
 ) => {
