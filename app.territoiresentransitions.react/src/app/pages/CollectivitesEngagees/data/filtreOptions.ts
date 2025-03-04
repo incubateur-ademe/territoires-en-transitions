@@ -52,5 +52,6 @@ export const typeCollectiviteOptions: TOption[] = [
   { value: 'EPT', label: 'Établissement public territorial' },
   { value: 'METRO', label: 'Métropole' },
   { value: 'PETR', label: 'Pôle d’équilibre territorial rural' },
+  { value: 'POLEM', label: 'Pôle métropolitain' },
   { value: 'syndicat', label: 'Syndicat' },
 ];

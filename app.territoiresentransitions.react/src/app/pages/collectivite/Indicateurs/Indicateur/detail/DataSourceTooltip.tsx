@@ -63,7 +63,11 @@ export const DataSourceTooltipContent = ({
         Producteur : <b>{metadonnee.producteur}</b>
       </p>
     )}
-    Version : <b>{new Date(metadonnee.dateVersion).getFullYear()}</b>
+    {!!metadonnee.dateVersion && (
+      <p>
+        Version : <b>{new Date(metadonnee.dateVersion).getFullYear()}</b>
+      </p>
+    )}
     {!!metadonnee.methodologie && (
       <p>
         Méthodologie / Périmètre :{' '}

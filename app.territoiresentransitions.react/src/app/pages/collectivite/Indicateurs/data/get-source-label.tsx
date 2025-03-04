@@ -13,6 +13,8 @@ export const getSourceLabel = (
       return `${label} de la collectivité`;
     case 'snbc':
       return `${label} SNBC territorialisée`;
+    case 'moyenne':
+      return libelle;
     default:
       return `${label} ${libelle}`;
   }

@@ -2,9 +2,11 @@ import { useCollectiviteId } from '@/app/collectivites/collectivite-context';
 import { intersection } from 'es-toolkit';
 import { useEffect, useState } from 'react';
 import { PALETTE_LIGHT } from '../../../../../ui/charts/echarts';
+import { typeCollectiviteOptions } from '../../../CollectivitesEngagees/data/filtreOptions';
 import { useIndicateurDefinitions } from '../Indicateur/useIndicateurDefinition';
 import { TIndicateurDefinition } from '../types';
 import { prepareData, PreparedData } from './prepare-data';
+import { IndicateurMoyenneOutput } from './use-indicateur-moyenne';
 import {
   ListIndicateurValeursOutput,
   useIndicateurValeurs,
@@ -105,11 +107,6 @@ export const useIndicateurChartInfo = ({
       ({ segmentation: segment }) => segment === segmentation
     )?.indicateurs || [];
 
-  const data = {
-    unite,
-    valeurs: { objectifs, resultats, segments },
-  };
-
   // extrait les types de segmentation disponibles
   const typesSegmentation = enfantsParSegmentation.map(
     ({ segmentation }) => segmentation
@@ -142,11 +139,25 @@ export const useIndicateurChartInfo = ({
       (resultats.donneesCollectivite?.valeurs.length ?? 0) >
     0;
 
+  const data = {
+    unite,
+    valeurs: { objectifs, resultats, segments },
+  };
+
+  // ajoute une entrée dans le tableau des sources "résultats" pour la moyenne
+  const moyenne = prepareMoyenne(sourceFilter.moyenne);
+  if (moyenne) {
+    resultats.sources.push(moyenne);
+  }
+
   // détermine si l'indicateur a au moins une valeur
   const hasValeur =
-    objectifs.annees.length + resultats.annees.length > 0 || !!segments?.length;
+    objectifs.annees.length + resultats.annees.length > 0 ||
+    !!segments?.length ||
+    !!moyenne?.valeurs?.length;
 
   const isLoading = isLoadingValeurs || isLoadingSegments || isLoadingEnfants;
+
   return {
     definition,
     typesSegmentation,
@@ -160,6 +171,43 @@ export const useIndicateurChartInfo = ({
     isLoading,
   };
 };
+
+function prepareMoyenne(moyenne: IndicateurMoyenneOutput | undefined) {
+  if (!moyenne) return null;
+
+  const libelleType =
+    typeCollectiviteOptions.find((tc) => tc.value === moyenne.typeCollectivite)
+      ?.label || moyenne.typeCollectivite;
+
+  return {
+    libelle: 'Moyenne des collectivités de même type',
+    type: 'resultat' as const,
+    metadonnees: [
+      {
+        id: -1,
+        sourceId: 'moyenne',
+        dateVersion: '',
+        nomDonnees: `Moyenne basée sur l’open data des collectivités de type "${libelleType}", inscrites sur Territoires en Transitions`,
+        diffuseur: null,
+        producteur: null,
+        methodologie: null,
+        limites: null,
+      },
+    ],
+    ordreAffichage: null,
+    source: 'moyenne',
+    valeurs: moyenne.valeurs.map((v) => {
+      const annee = new Date(v.dateValeur).getFullYear();
+      return {
+        id: -1,
+        commentaire: null,
+        annee,
+        anneeISO: `${annee}-01-01T00:00:00.000Z`,
+        valeur: v.valeur,
+      };
+    }),
+  };
+}
 
 // groupe les indicateurs enfants par type de segmentation
 function prepareEnfantsParSegmentation(
