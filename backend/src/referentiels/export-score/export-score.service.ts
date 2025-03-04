@@ -177,7 +177,9 @@ export default class ExportScoreService {
     );
     if (
       actionScore.actionType === ActionTypeEnum.SOUS_ACTION &&
-      !actionScore.score.avancement &&
+      (!actionScore.score.avancement ||
+        actionScore.score.avancement === 'non_renseigne' ||
+        actionScore.score.avancement === 'detaille') &&
       hasChildrenAvancement
     ) {
       return this.AVANCEMENT_TO_LABEL['detaille'];
