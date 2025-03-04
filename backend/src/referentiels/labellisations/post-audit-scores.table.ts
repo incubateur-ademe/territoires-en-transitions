@@ -8,8 +8,8 @@ import {
   timestamp,
 } from 'drizzle-orm/pg-core';
 import { createInsertSchema, createSelectSchema } from 'drizzle-zod';
-import { labellisationAuditTable } from './labellisation-audit.table';
-import { referentielIdPgEnum } from './referentiel-id.enum';
+import { referentielIdPgEnum } from '../models/referentiel-id.enum';
+import { auditTable } from './audit.table';
 
 export const postAuditScoresTable = pgTable(
   'post_audit_scores',
@@ -29,7 +29,7 @@ export const postAuditScoresTable = pgTable(
     return {
       postAuditScoresAuditIdFkey: foreignKey({
         columns: [table.auditId],
-        foreignColumns: [labellisationAuditTable.id],
+        foreignColumns: [auditTable.id],
         name: 'post_audit_scores_audit_id_fkey',
       }).onDelete('cascade'),
       postAuditScoresPkey: primaryKey({

@@ -45,6 +45,9 @@ export class DatabaseService implements OnApplicationShutdown {
           set local role ${sql.raw(user.jwtToken.role ?? 'anon')};
           `);
           return await transaction(tx);
+        } catch (e) {
+          this.logger.error(e);
+          throw e;
         } finally {
           await tx.execute(sql`
             -- reset

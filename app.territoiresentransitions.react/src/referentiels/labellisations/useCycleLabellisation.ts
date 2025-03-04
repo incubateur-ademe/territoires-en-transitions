@@ -1,3 +1,4 @@
+import { useCollectiviteId } from '@/app/collectivites/collectivite-context';
 import { useCurrentCollectivite } from '@/app/core-logic/hooks/useCurrentCollectivite';
 import { TLabellisationParcours } from '@/app/referentiels/labellisations/types';
 import { TPreuveLabellisation } from '@/app/referentiels/preuves/Bibliotheque/types';
@@ -34,20 +35,21 @@ export const useCycleLabellisation = (
   referentielId: ReferentielId
 ): TCycleLabellisation => {
   const collectivite = useCurrentCollectivite();
-  const collectivite_id = collectivite?.collectiviteId || null;
+  const collectiviteId = useCollectiviteId();
   const isAuditeur = useIsAuditeur();
-  const identite = useCarteIdentite(collectivite_id);
+  const identite = useCarteIdentite(collectiviteId);
 
   // charge les données du parcours
   const parcours = useLabellisationParcours({
-    collectivite_id,
-    referentiel: referentielId,
+    collectiviteId,
+    referentielId,
   });
+
   const { completude_ok, rempli, etoiles } = parcours || {};
 
   // vérifie si l'utilisateur courant peut commencer l'audit
   const peutCommencerAudit = usePeutCommencerAudit({
-    collectiviteId: collectivite_id as number,
+    collectiviteId: collectiviteId as number,
     referentielId,
   });
 
@@ -69,7 +71,7 @@ export const useCycleLabellisation = (
   );
 
   // on peut soumettre une demande de labellisation si...
-  const labellisable = peutDemanderEtoile && etoiles !== '1';
+  const labellisable = peutDemanderEtoile && etoiles !== 1;
 
   return {
     parcours,

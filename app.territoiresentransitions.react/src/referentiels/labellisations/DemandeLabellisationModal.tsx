@@ -51,10 +51,10 @@ const getMessage = (parcours: TCycleLabellisation['parcours']) => {
   if (!etoiles) {
     return null;
   }
-  if (etoiles === '1') {
+  if (etoiles === 1) {
     return messageEtoile_1;
   }
-  if (etoiles === '5') {
+  if (etoiles === 5) {
     return messageEtoile_5;
   }
   if (referentiel === 'eci') {
@@ -106,7 +106,7 @@ export const DemandeLabellisationModalContent = (
   return (
     <div className="p-7 flex flex-col" data-test="DemandeLabellisationModal">
       <h3>
-        {etoiles === '1'
+        {etoiles === 1
           ? 'Demander la première étoile'
           : `Demander un audit pour la ${numLabels[etoiles!]} étoile`}
       </h3>
@@ -116,7 +116,7 @@ export const DemandeLabellisationModalContent = (
           <Alert
             state="success"
             className="mb-4"
-            title={etoiles === '1' ? submittedEtoile1 : submittedAutresEtoiles}
+            title={etoiles === 1 ? submittedEtoile1 : submittedAutresEtoiles}
           />
         ) : null}
         {status === 'non_demandee' && !isLoading ? (
@@ -142,7 +142,7 @@ export const DemandeLabellisationModalContent = (
               >
                 Envoyer ma demande
               </Button>
-              {etoiles !== '1' && (
+              {etoiles !== 1 && (
                 <Button variant="outlined" size="sm" onClick={onClose}>
                   Revenir à la préparation de l’audit
                 </Button>

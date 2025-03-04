@@ -22,7 +22,7 @@ import {
   TIMESTAMP_OPTIONS,
 } from '../../utils/column.utils';
 import { getReferentielScoresResponseSchema } from '../compute-score/get-referentiel-scores.response';
-import { labellisationAuditTable } from '../models/labellisation-audit.table';
+import { auditTable } from '../labellisations/audit.table';
 import {
   referentielDefinitionTable,
   referentielIdVarchar,
@@ -78,7 +78,7 @@ export const snapshotTable = pgTable(
       }),
       scoreSnapshotAuditIdFkey: foreignKey({
         columns: [table.auditId],
-        foreignColumns: [labellisationAuditTable.id],
+        foreignColumns: [auditTable.id],
         name: 'score_snapshot_audit_id_fkey',
       }).onDelete('cascade'),
       scoreSnapshotUnique: unique().on(

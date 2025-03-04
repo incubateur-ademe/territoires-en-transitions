@@ -27,7 +27,7 @@ export const CriterePreuves = (props: TCriterePreuvesProps) => {
   // critère nécessitant l'ajout d'une ou plusieurs preuves
   const rempli = preuves.length > 0;
 
-  if (isCOT && etoiles === '1') {
+  if (isCOT && etoiles === 1) {
     return null;
   }
 
@@ -45,7 +45,7 @@ const MessageCriterePreuve = (props: TCriterePreuvesProps) => {
   const { parcours } = props;
   const { referentiel, etoiles } = parcours;
 
-  if (referentiel === 'eci' && etoiles !== '1') {
+  if (referentiel === 'eci' && etoiles !== 1) {
     return (
       <>
         <MessageECi2Plus {...props} />

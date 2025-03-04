@@ -1,34 +1,64 @@
 import { DBClient } from '@/api';
 import { useSupabase } from '@/api/utils/supabase/use-supabase';
+import { trpc } from '@/api/utils/trpc/client';
+import { ReferentielId } from '@/domain/referentiels';
 import { useQuery } from 'react-query';
-import { TLabellisationParcours } from './types';
 import { useSnapshotFlagEnabled } from '../use-snapshot';
+import { TLabellisationParcours } from './types';
 
 /**
  * charge les données du parcours
  * @deprecated use score from snapshots instead
  */
 export const useLabellisationParcours = ({
-  collectivite_id,
-  referentiel,
+  collectiviteId,
+  referentielId,
 }: {
-  collectivite_id: number | null;
-  referentiel: string | null;
+  collectiviteId: number;
+  referentielId: ReferentielId;
 }) => {
   const FLAG_isSnapshotEnabled = useSnapshotFlagEnabled();
 
-  // charge les données du parcours
-  const { data: parcoursList } = useAllLabellisationsParcours(collectivite_id);
+  // Nouvelle méthode : charge les données du parcours depuis le snapshot
+  const { data: parcoursListFromSnapshot } =
+    trpc.referentiels.labellisations.getParcours.useQuery(
+      {
+        collectiviteId,
+        referentielId,
+      },
+      { enabled: FLAG_isSnapshotEnabled, refetchOnWindowFocus: true }
+    );
+
+  // @deprecated charge les données du parcours depuis client_scores
+  const { data: parcoursList } = useAllLabellisationsParcours(
+    collectiviteId,
+    !FLAG_isSnapshotEnabled
+  );
+
+  if (FLAG_isSnapshotEnabled) {
+    return parcoursListFromSnapshot
+      ? {
+          ...parcoursListFromSnapshot,
+          collectivite_id: collectiviteId,
+          referentiel: referentielId,
+        }
+      : null;
+  }
 
   // extrait le parcours correspondant au référentiel courant
-  return getReferentielParcours(parcoursList, referentiel);
+  return getReferentielParcours(parcoursList, referentielId);
 };
 
 // charge les données des parcours de tous les référentiels
-const useAllLabellisationsParcours = (collectivite_id: number | null) => {
+const useAllLabellisationsParcours = (
+  collectivite_id: number | null,
+  enabled = true
+) => {
   const supabase = useSupabase();
-  return useQuery(['labellisation_parcours', collectivite_id], () =>
-    fetchParcours(supabase, collectivite_id)
+  return useQuery(
+    ['labellisation_parcours', collectivite_id],
+    () => fetchParcours(supabase, collectivite_id),
+    { enabled }
   );
 };
 
@@ -50,10 +80,22 @@ const fetchParcours = async (
   if (error || !data) {
     return null;
   }
-  return data.map((d) => ({
-    ...d,
-    collectivite_id, // on ajoute l'id qui n'est pas redonné par la vue
-  })) as TLabellisationParcours[];
+  return data.map((p: unknown) => {
+    const d = p as TLabellisationParcours;
+    return {
+      ...d,
+      etoiles: parseInt(d.etoiles as unknown as string),
+      critere_score: {
+        ...d.critere_score,
+        etoiles: parseInt(d.critere_score.etoiles as unknown as string),
+      },
+      criteres_action: d.criteres_action.map((c) => ({
+        ...c,
+        etoile: parseInt(c.etoile as unknown as string),
+      })),
+      collectivite_id, // on ajoute l'id qui n'est pas redonné par la vue
+    } as TLabellisationParcours;
+  });
 };
 
 const getReferentielParcours = (
