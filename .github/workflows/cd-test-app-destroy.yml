@@ -27,3 +27,5 @@ jobs:
           --use-inline-cache
           +app-destroy-test
           --KOYEB_API_KEY=${{ secrets.KOYEB_API_KEY }}
+          --BRANCH_NAME=${{ github.event.pull_request.head.ref }}
+
