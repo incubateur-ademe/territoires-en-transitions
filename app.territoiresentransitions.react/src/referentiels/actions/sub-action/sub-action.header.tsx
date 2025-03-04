@@ -1,9 +1,6 @@
 import { ActionDefinitionSummary } from '@/app/referentiels/ActionDefinitionSummaryReadEndpoint';
 import { ActionCommentaire } from '@/app/referentiels/actions/action-commentaire';
-import {
-  StatusToSavePayload,
-  SubActionStatutDropdown,
-} from '@/app/referentiels/actions/sub-action-statut.dropdown';
+import { SubActionStatutDropdown } from '@/app/referentiels/actions/sub-action-statut.dropdown';
 import ScoreProgressBar from '@/app/referentiels/scores/score.progress-bar';
 import ScoreShow from '@/app/referentiels/scores/score.show';
 import { StatutAvancement } from '@/domain/referentiels';
@@ -24,7 +21,6 @@ type SubActionHeaderProps = {
   displayActionCommentaire?: boolean;
   openSubAction?: boolean;
   onToggleOpen?: () => void;
-  onSaveStatus?: (payload: StatusToSavePayload) => void;
 };
 
 /**
@@ -40,7 +36,6 @@ const SubActionHeader = ({
   displayActionCommentaire = false,
   openSubAction = false,
   onToggleOpen,
-  onSaveStatus,
 }: SubActionHeaderProps): JSX.Element => {
   const FLAG_isSnapshotEnabled = useSnapshotFlagEnabled();
   const DEPRECATED_actionScores = useScoreRealise(actionDefinition, !FLAG_isSnapshotEnabled);
@@ -147,7 +142,6 @@ const SubActionHeader = ({
         <SubActionStatutDropdown
           actionDefinition={actionDefinition}
           statusWarningMessage={statusWarningMessage}
-          onSaveStatus={onSaveStatus}
         />
       )}
       {displayActionCommentaire && (

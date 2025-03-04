@@ -73,17 +73,6 @@ const ScoreAutoModal = ({
   const [localStatus, setLocalStatus] = useState<{
     [key: string]: StatusToSavePayload;
   }>({});
-  const handleChangeStatus = (payload: StatusToSavePayload) => {
-    setLocalStatus((prevState) => ({
-      ...prevState,
-      [payload.actionId]: {
-        actionId: payload.actionId,
-        statut: payload.statut,
-        avancement: payload.avancement,
-        avancementDetaille: payload.avancementDetaille,
-      },
-    }));
-  };
 
   const handleSaveScoreAuto = () => {
     const newStatus = [];
@@ -109,10 +98,7 @@ const ScoreAutoModal = ({
       render={() => {
         return (
           <div className="w-full">
-            <SubActionTasksList
-              tasks={tasks}
-              onSaveStatus={handleChangeStatus}
-            />
+            <SubActionTasksList tasks={tasks} />
 
             {actionDefinition.referentiel === 'cae' &&
               !isCustomScoreGranted(tasks, tasksStatus, localStatus) && (
