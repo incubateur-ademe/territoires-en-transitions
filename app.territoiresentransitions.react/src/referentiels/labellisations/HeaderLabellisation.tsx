@@ -6,15 +6,11 @@ import PageContainer from '@/ui/components/layout/page-container';
 import { useState } from 'react';
 import { ValiderAudit } from '../audits/ValiderAudit';
 import { TAuditeur, useAuditeurs } from '../audits/useAudit';
-import { useReferentielId } from '../referentiel-context';
 import { DemandeAuditModal } from './DemandeAuditModal';
 import { DemandeLabellisationModal } from './DemandeLabellisationModal';
 import { numLabels } from './numLabels';
 import { TEtoiles } from './types';
-import {
-  TCycleLabellisation,
-  useCycleLabellisation,
-} from './useCycleLabellisation';
+import { TCycleLabellisation } from './useCycleLabellisation';
 import { TStartAudit, useStartAudit } from './useStartAudit';
 import { TValidateAudit, useValidateAudit } from './useValidateAudit';
 
@@ -36,6 +32,7 @@ export const HeaderLabellisation = (props: THeaderLabellisationProps) => {
     peutDemanderEtoile,
     peutCommencerAudit,
   } = parcoursLabellisation;
+
   const { data: auditeurs } = useAuditeurs();
 
   if (!parcours) {
@@ -61,7 +58,7 @@ export const HeaderLabellisation = (props: THeaderLabellisationProps) => {
         <h2 className="mb-4">Objectif : {numLabels[etoiles]} étoile</h2>
         {status === 'non_demandee' && !isAuditeur ? (
           <>
-            {etoiles === '1' && isCOT ? (
+            {etoiles === 1 && isCOT ? (
               <Button
                 dataTest="1ereEtoileCOT"
                 size="sm"
@@ -77,7 +74,7 @@ export const HeaderLabellisation = (props: THeaderLabellisationProps) => {
               disabled={!canSubmitDemande}
               onClick={() => setOpened(true)}
             >
-              {etoiles === '1' && !isCOT
+              {etoiles === 1 && !isCOT
                 ? 'Demander la première étoile'
                 : 'Demander un audit'}
             </Button>
@@ -119,7 +116,7 @@ export const HeaderLabellisation = (props: THeaderLabellisationProps) => {
               opened={opened}
               setOpened={setOpened}
             />
-            {etoiles === '1' && isCOT ? (
+            {etoiles === 1 && isCOT ? (
               <DemandeLabellisationModal
                 parcoursLabellisation={parcoursLabellisation}
                 opened={opened_1ereEtoileCOT}
@@ -192,9 +189,11 @@ const DerniereLabellisation = ({
   );
 };
 
-const HeaderLabellisationConnected = () => {
-  const referentiel = useReferentielId();
-  const parcoursLabellisation = useCycleLabellisation(referentiel);
+const HeaderLabellisationConnected = ({
+  parcoursLabellisation,
+}: {
+  parcoursLabellisation: TCycleLabellisation;
+}) => {
   const { mutate: onStartAudit } = useStartAudit();
   const { mutate: onValidateAudit } = useValidateAudit();
 

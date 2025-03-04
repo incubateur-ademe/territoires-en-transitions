@@ -12,8 +12,8 @@ import {
 } from 'drizzle-orm/pg-core';
 import { authUsersTable } from '../../auth/models/auth-users.table';
 import { collectiviteTable } from '../../collectivites/shared/models/collectivite.table';
-import { actionIdReference } from './action-relation.table';
-import { labellisationAuditTable } from './labellisation-audit.table';
+import { actionIdReference } from '../models/action-relation.table';
+import { auditTable } from './audit.table';
 import { labellisationSchema } from './labellisation.schema';
 
 export enum AuditStatutEnumType {
@@ -46,7 +46,7 @@ export const labellisationActionAuditStateTable = labellisationSchema.table(
     return {
       actionAuditStateAuditIdFkey: foreignKey({
         columns: [table.auditId],
-        foreignColumns: [labellisationAuditTable.id],
+        foreignColumns: [auditTable.id],
         name: 'action_audit_state_audit_id_fkey',
       }),
       actionAuditStateCollectiviteIdFkey: foreignKey({

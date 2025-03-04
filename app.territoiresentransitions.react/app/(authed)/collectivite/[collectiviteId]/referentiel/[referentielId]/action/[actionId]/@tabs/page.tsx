@@ -4,7 +4,6 @@ import { ActionDefinitionSummary } from '@/app/referentiels/ActionDefinitionSumm
 import { ActionCommentaire } from '@/app/referentiels/actions/action-commentaire';
 import { DEPRECATED_useActionDefinition } from '@/app/referentiels/actions/action-context';
 import SubActionCard from '@/app/referentiels/actions/sub-action/sub-action.card';
-import { useCycleLabellisation } from '@/app/referentiels/labellisations/useCycleLabellisation';
 import { useSortedActionSummaryChildren } from '@/app/referentiels/referentiel-hooks';
 import { phaseToLabel } from '@/app/referentiels/utils';
 import { Button } from '@/ui';
@@ -25,8 +24,6 @@ export default function Page() {
  * "Référentiel CAE / ECI" de la page "Etat des lieux"
  */
 function ActionDetailPage({ action }: { action: ActionDefinitionSummary }) {
-  const { status: auditStatus } = useCycleLabellisation(action.referentiel);
-
   const subActions = useSortedActionSummaryChildren(action);
 
   // Etat du bouton "Tout déplier" / "Tout replier"
@@ -83,7 +80,6 @@ function ActionDetailPage({ action }: { action: ActionDefinitionSummary }) {
                   <SubActionCard
                     key={subAction.id}
                     subAction={subAction}
-                    auditStatus={auditStatus}
                     forceOpen={openAll}
                     onOpenSubAction={updateOpenedSubActionsCount}
                   />

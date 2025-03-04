@@ -1,10 +1,12 @@
-import { memoize } from 'es-toolkit';
-import { StatutAvancement, StatutAvancementEnum } from './index-domain';
-import { ActionTypeIncludingExemple } from './models/action-type.enum';
+import { divisionOrZero } from '../utils/number.utils';
 import {
-  ReferentielId,
-  referentielIdEnumSchema,
-} from './models/referentiel-id.enum';
+  Score,
+  ScoreFinal,
+  StatutAvancement,
+  StatutAvancementEnum,
+} from './index-domain';
+import { ActionTypeIncludingExemple } from './models/action-type.enum';
+import { referentielIdEnumSchema } from './models/referentiel-id.enum';
 
 export class ReferentielException extends Error {
   constructor(message: string) {
@@ -153,6 +155,24 @@ export const getStatutAvancementBasedOnChildren = (
   return statutEtendu ?? StatutAvancementEnum.NON_RENSEIGNE;
 };
 
+export function getScoreRatios({
+  pointFait,
+  pointProgramme,
+  pointPasFait,
+  pointNonRenseigne,
+  pointPotentiel,
+  completedTachesCount,
+  totalTachesCount,
+}: ScoreFinal) {
+  return {
+    ratioFait: divisionOrZero(pointFait, pointPotentiel),
+    ratioProgramme: divisionOrZero(pointProgramme, pointPotentiel),
+    ratioPasFait: divisionOrZero(pointPasFait, pointPotentiel),
+    ratioNonRenseigne: divisionOrZero(pointNonRenseigne, pointPotentiel),
+    ratioTachesCount: divisionOrZero(completedTachesCount, totalTachesCount),
+  };
+}
+
 /**
  * Equivalent to a `reduce` function but for a list of actions and their children.
  */
@@ -199,4 +219,21 @@ export function findActionInTree<A extends { actionsEnfant?: A[] }>(
   }
 
   return undefined;
+}
+
+export function findActionById<
+  A extends { actionId: string; actionsEnfant?: A[] }
+>(actionTree: A, actionId: string): A {
+  const action = findActionInTree(
+    [actionTree],
+    (action) => action.actionId === actionId
+  );
+
+  if (!action) {
+    throw new ReferentielException(
+      `Action with id ${actionId} not found in action tree`
+    );
+  }
+
+  return action;
 }
