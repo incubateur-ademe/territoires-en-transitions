@@ -19,7 +19,7 @@ import classNames from 'classnames';
 import { useEffect, useState } from 'react';
 import { useScore, useSnapshotFlagEnabled } from '../use-snapshot';
 import { statutParAvancement } from '../utils';
-import ScoreDetailleModal from './sub-action.detail/ScoreDetailleModal';
+import ScoreDetailleModal from './avancement-detaille/ScoreDetailleModal';
 import SubActionModal from './sub-action/sub-action.modal';
 
 export type StatusToSavePayload = {
@@ -327,7 +327,6 @@ export const SubActionStatutDropdown = ({
         <SubActionModal
           actionDefinition={actionDefinition}
           openState={{ isOpen: openScoreAuto, setIsOpen: setOpenScoreAuto }}
-          onSaveScoreDetaille={handleSaveScoreDetaille}
         />
       )}
       {/* Modale de personnalisation du score (avec jauge manuelle) */}
