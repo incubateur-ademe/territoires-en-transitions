@@ -5,25 +5,26 @@
 
 BEGIN;
 
-create table if not exists labellisation
-(
-    id              serial primary key,
-    collectivite_id integer references collectivite,
-    referentiel     referentiel not null,
-    obtenue_le      timestamp   not null,
-    annee           float generated always as (date_part('year', obtenue_le)) stored,
-    etoiles         integer     not null,
-    score_realise   float,
-    score_programme float,
-    unique (collectivite_id, annee)
-);
+-- Enable access to `etoile_meta`.
+-- Code taken from https://supabase.com/docs/guides/api/using-custom-schemas
 
-alter table labellisation
-    enable row level security;
+GRANT USAGE ON SCHEMA labellisation TO anon, authenticated, service_role;
 
-create policy allow_read
-    on labellisation
-    for select
-    using (is_authenticated());
+GRANT ALL ON ALL TABLES IN SCHEMA labellisation TO anon, authenticated, service_role;
+GRANT ALL ON ALL ROUTINES IN SCHEMA labellisation TO anon, authenticated, service_role;
+GRANT ALL ON ALL SEQUENCES IN SCHEMA labellisation TO anon, authenticated, service_role;
+
+ALTER DEFAULT PRIVILEGES FOR ROLE postgres IN SCHEMA labellisation GRANT ALL ON TABLES TO anon, authenticated, service_role;
+ALTER DEFAULT PRIVILEGES FOR ROLE postgres IN SCHEMA labellisation GRANT ALL ON ROUTINES TO anon, authenticated, service_role;
+ALTER DEFAULT PRIVILEGES FOR ROLE postgres IN SCHEMA labellisation GRANT ALL ON SEQUENCES TO anon, authenticated, service_role;
+
+
+ALTER TABLE labellisation.etoile_meta
+  ENABLE ROW LEVEL SECURITY;
+
+CREATE POLICY allow_read
+  ON labellisation.etoile_meta
+  FOR SELECT
+  USING (is_authenticated());
 
 COMMIT;
