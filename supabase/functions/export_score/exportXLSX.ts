@@ -1,16 +1,16 @@
 /**
  * Export des scores et statut au format Excel
  */
-import { Workbook } from 'https://esm.sh/exceljs@4.3.0';
-import { TSupabaseClient } from '../_shared/getSupabaseClient.ts';
-import { Enums } from '../_shared/typeUtils.ts';
+import Excel from 'https://esm.sh/exceljs@4.3.0';
 import * as Utils from '../_shared/exportUtils.ts';
-import * as Constants from './constants.ts';
-import { formatActionStatut } from '../_shared/formatActionStatut.ts';
 import {
   TActionReferentiel,
   TPreuve,
 } from '../_shared/fetchActionsReferentiel.ts';
+import { formatActionStatut } from '../_shared/formatActionStatut.ts';
+import { TSupabaseClient } from '../_shared/getSupabaseClient.ts';
+import { Enums } from '../_shared/typeUtils.ts';
+import * as Constants from './constants.ts';
 import { fetchData, TExportData } from './fetchData.ts';
 
 export type TExportArgs = {
@@ -34,7 +34,7 @@ export const exportXLSX = async (
   } = data;
 
   // crée le classeur et la feuille de calcul
-  const workbook = new Workbook();
+  const workbook = new Excel.Workbook();
   const worksheet = workbook.addWorksheet(
     `Export référentiel ${referentiel.toUpperCase()}`
   );

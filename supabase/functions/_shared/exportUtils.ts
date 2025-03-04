@@ -1,18 +1,9 @@
 /**
  * Fonctions utilitaires pour les exports
  */
-import {
-  Alignment,
-  Border,
-  Cell,
-  CellValue,
-  Fill,
-  Row,
-  Style,
-  Worksheet,
-} from 'https://esm.sh/exceljs@4.3.0';
 import { format, isValid } from 'https://esm.sh/date-fns@2.30.0';
 import { fr } from 'https://esm.sh/date-fns@2.30.0/locale';
+import Excel from 'https://esm.sh/exceljs@4.3.0';
 import { TActionReferentiel, TPreuve } from './fetchActionsReferentiel.ts';
 import { Enums } from './typeUtils.ts';
 
@@ -27,17 +18,17 @@ export const SCORE_HEADER_LABELS = [
 ];
 
 // bordures
-export const BORDER_MEDIUM = { style: 'medium' } as Partial<Border>;
+export const BORDER_MEDIUM = { style: 'medium' } as Partial<Excel.Border>;
 
 // alignements
 export const ALIGN_CENTER = {
   vertical: 'middle',
   horizontal: 'center',
-} as Partial<Alignment>;
+} as Partial<Excel.Alignment>;
 export const ALIGN_LEFT_WRAP = {
   horizontal: 'left',
   wrapText: true,
-} as Partial<Alignment>;
+} as Partial<Excel.Alignment>;
 export const ALIGN_CENTER_WRAP = {
   ...ALIGN_CENTER,
   wrapText: true,
@@ -60,13 +51,16 @@ export const formatDate = (
 };
 
 /** Fixe le formatage d'une cellule contenant un montant en euros */
-export const setEuroValue = (cell: Cell, value: number | undefined | null) => {
+export const setEuroValue = (
+  cell: Excel.Cell,
+  value: number | undefined | null
+) => {
   cell.numFmt = '#,##0.00 [$€-1]';
   cell.value = value || null;
 };
 
 /** Fixe le formatage numérique d'une cellule en fonction de sa valeur */
-export const setCellNumFormat = (cell: Cell, numFmt?: string) => {
+export const setCellNumFormat = (cell: Excel.Cell, numFmt?: string) => {
   cell.style = {
     ...cell.style,
     alignment: { horizontal: 'center' },
@@ -76,7 +70,7 @@ export const setCellNumFormat = (cell: Cell, numFmt?: string) => {
 
 /* Fixe la valeur et le formatage numérique d'une cellule */
 export const setNumValue = (
-  cell: Cell,
+  cell: Excel.Cell,
   value: number | null,
   numFmt?: string
 ) => {
@@ -86,7 +80,7 @@ export const setNumValue = (
 
 /** Génère le format utilisé pour les nombres */
 export const FORMAT_PERCENT = 'percent';
-export const getNumberFormat = (value: CellValue, numFmt?: string) => {
+export const getNumberFormat = (value: Excel.CellValue, numFmt?: string) => {
   const suffix = numFmt === FORMAT_PERCENT ? '%' : '';
 
   // pas de virgule si le nombre est entier (ou null => forcé à 0)
@@ -107,11 +101,11 @@ export const makeSolidFill = (color: string) =>
     type: 'pattern',
     pattern: 'solid',
     fgColor: { argb: color },
-  } as Fill);
+  } as Excel.Fill);
 
 /** Applique un style à plusieurs cellules */
 export const setCellsStyle = (
-  worksheet: Worksheet,
+  worksheet: Excel.Worksheet,
   /** index (base-1) de la ligne à traiter */
   rowIndex: number,
   /** index (base-1) de la colonne de début */
@@ -119,7 +113,7 @@ export const setCellsStyle = (
   /** nombre des colonnes à traiter */
   colEnd: number,
   /** styles à appliquer */
-  style: Partial<Style>
+  style: Partial<Excel.Style>
 ) => {
   const row = worksheet.getRow(rowIndex);
   for (let c = colStart; c <= colEnd; c++) {
@@ -140,7 +134,7 @@ export const capitalize = (s: string | undefined | null) => {
 };
 
 /** applique le formatage numérique aux colonnes points/scores à partir de l'index (base 1) donné */
-export const setScoreFormats = (row: Row, colIndex: number) => {
+export const setScoreFormats = (row: Excel.Row, colIndex: number) => {
   setCellNumFormat(row.getCell(colIndex));
   setCellNumFormat(row.getCell(colIndex + 1));
   setCellNumFormat(row.getCell(colIndex + 2), FORMAT_PERCENT);
@@ -179,12 +173,12 @@ export const HEADING1 = {
     left: BORDER_MEDIUM,
     right: BORDER_MEDIUM,
   },
-} as Partial<Style>;
+} as Partial<Excel.Style>;
 
 export const HEADING2 = {
   font: BOLD,
   alignment: { vertical: 'middle', horizontal: 'center', wrapText: true },
-} as Partial<Style>;
+} as Partial<Excel.Style>;
 
 export const HEADING_SCORES = {
   ...HEADING2,
