@@ -34,6 +34,7 @@ export const useGetColorBySourceId = () => {
     if (!sourceId || sourceId === 'collectivite')
       return LAYERS[`${type}s`].color;
     if (sourceId === 'snbc') return LAYERS.trajectoire.color;
+    if (sourceId === 'moyenne') return LAYERS.moyenne.color;
     return colorBySourceId[sourceId];
   };
 };
