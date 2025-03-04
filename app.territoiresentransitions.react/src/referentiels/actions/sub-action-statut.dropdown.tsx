@@ -9,6 +9,7 @@ import {
 } from '@/app/referentiels/actions/action-statut/use-action-statut';
 import {
   ActionStatutInsert,
+  ActionTypeEnum,
   StatutAvancementIncludingNonConcerne,
   getStatutAvancement,
   statutAvancementEnumSchema,
@@ -18,8 +19,8 @@ import { Button, Tooltip } from '@/ui';
 import classNames from 'classnames';
 import { useEffect, useState } from 'react';
 import { useScore, useSnapshotFlagEnabled } from '../use-snapshot';
-import { statutParAvancement } from '../utils';
-import ScoreDetailleModal from './avancement-detaille/ScoreDetailleModal';
+import { AVANCEMENT_DETAILLE_PAR_STATUT, statutParAvancement } from '../utils';
+import AvancementDetailleModal from './avancement-detaille/avancement-detaille.modal';
 import SubActionModal from './sub-action/sub-action.modal';
 
 export type StatusToSavePayload = {
@@ -29,21 +30,21 @@ export type StatusToSavePayload = {
   avancementDetaille?: number[];
 };
 
-export const SubActionStatutDropdown = ({
-  actionDefinition,
-  statusWarningMessage = false,
-  openScoreDetailleState,
-  onSaveStatus,
-}: {
+type Props = {
   actionDefinition: ActionDefinitionSummary;
   statusWarningMessage?: boolean;
   /** Permet le contrôle externe de la modale de score détaillé */
   openScoreDetailleState?: {
-    openScoreDetaille: boolean;
-    setOpenScoreDetaille: (value: boolean) => void;
+    isOpen: boolean;
+    setIsOpen: (value: boolean) => void;
   };
-  onSaveStatus?: (payload: StatusToSavePayload) => void;
-}) => {
+};
+
+export const SubActionStatutDropdown = ({
+  actionDefinition,
+  statusWarningMessage = false,
+  openScoreDetailleState,
+}: Props) => {
   const FLAG_isSnapshotEnabled = useSnapshotFlagEnabled();
   const DEPRECATED_actionScores = useScoreRealise(
     actionDefinition,
@@ -53,16 +54,14 @@ export const SubActionStatutDropdown = ({
 
   const collectivite = useCurrentCollectivite();
 
-  const [openScoreAuto, setOpenScoreAuto] = useState(false);
+  const [openSubActionModal, setOpenSubActionModal] = useState(false);
   const [openScoreDetaille, setOpenScoreDetaille] = useState(
-    openScoreDetailleState?.openScoreDetaille ?? false
+    openScoreDetailleState?.isOpen ?? false
   );
-  const [openScorePerso, setOpenScorePerso] = useState(false);
 
   useEffect(
-    () =>
-      setOpenScoreDetaille(openScoreDetailleState?.openScoreDetaille ?? false),
-    [openScoreDetailleState?.openScoreDetaille]
+    () => setOpenScoreDetaille(openScoreDetailleState?.isOpen ?? false),
+    [openScoreDetailleState?.isOpen]
   );
 
   const args = {
@@ -129,145 +128,62 @@ export const SubActionStatutDropdown = ({
     } = statutParAvancement(value);
 
     if (avancement === 'detaille') {
-      // Si "détaillé" est sélectionné sur une sous-action
-      // qui contient des tâches, on ouvre simplement la modale associée
-      // et la mise à jour se fera à la validation / fermeture de la modale
-      if (
-        actionDefinition.type === 'sous-action' &&
-        actionDefinition.children.length > 0
-      ) {
-        setOpenScoreAuto(true);
+      if (actionDefinition.type === ActionTypeEnum.SOUS_ACTION) {
+        if (actionDefinition.children.length === 0) {
+          setLocalAvancement('detaille');
+          setLocalAvancementDetaille(AVANCEMENT_DETAILLE_PAR_STATUT.detaille);
+
+          saveActionStatut({
+            ...args,
+            ...statut,
+            avancement,
+            avancementDetaille: AVANCEMENT_DETAILLE_PAR_STATUT.detaille,
+            concerne,
+          });
+        }
+        setOpenSubActionModal(true);
       } else {
+        setLocalAvancement('detaille');
+        setLocalAvancementDetaille(AVANCEMENT_DETAILLE_PAR_STATUT.detaille);
+
+        saveActionStatut({
+          ...args,
+          ...statut,
+          avancement,
+          avancementDetaille: AVANCEMENT_DETAILLE_PAR_STATUT.detaille,
+          concerne,
+        });
+
         setOpenScoreDetaille(true);
-        openScoreDetailleState?.setOpenScoreDetaille(true);
+        openScoreDetailleState?.setIsOpen(true);
       }
     } else {
       // Mise à jour dans les cas de statuts autres que détaillé
       setLocalAvancement(value);
       setLocalAvancementDetaille(avancement_detaille);
 
-      // Différencie la sauvegarde auto dans la page
-      // de la mise à jour depuis la modale de score auto
-      if (onSaveStatus) {
-        onSaveStatus({
-          actionId: actionDefinition.id,
-          statut,
-          avancement: value,
-          avancementDetaille: avancement_detaille,
-        });
-      } else {
-        saveActionStatut({
-          ...args,
-          ...statut,
-          avancement,
-          avancementDetaille:
-            actionDefinition.type === 'sous-action'
-              ? localAvancementDetaille
-              : avancement_detaille,
-          concerne,
-        });
-      }
-    }
-  };
-
-  // Mise à jour des statuts des tâches d'une sous-action
-  // à la validation dans la modale de score auto
-  const handleSaveScoreAuto = (newStatus: StatusToSavePayload[]) => {
-    setOpenScoreAuto(false);
-
-    if (newStatus.length) {
-      setLocalAvancement('detaille');
-      setLocalAvancementDetaille(undefined);
-
-      // Sauvegarde des statuts des tâches
-      newStatus.forEach((element) => {
-        const { avancement, concerne } = statutParAvancement(
-          element.avancement
-        );
-
-        saveActionStatut({
-          actionId: element.actionId,
-          avancement,
-          avancementDetaille: element.avancementDetaille,
-          collectiviteId: args.collectiviteId,
-          concerne,
-        });
-      });
-
-      // Si "détaillé" est sélectionné sur une sous-action
-      // cela correspond en base à un statut "non renseigné"
-      // avec statuts au niveau des tâches
-      // Si aucune tâche n'est remplie, le statut de la sous-action
-      // passe à "non renseigné"
-      // Le setTimeout évite des problèmes de raffraichissement de la jauge
-      setTimeout(() => {
-        saveActionStatut({
-          ...args,
-          avancement: 'non_renseigne',
-          avancementDetaille: localAvancementDetaille,
-          concerne: true,
-        });
-      }, 100);
-    } else if (actionDefinition.type === 'sous-action') {
+      // Sauvegarde du nouveau statut
       saveActionStatut({
         ...args,
-        avancement: 'non_renseigne',
-        concerne: true,
-      });
-    }
-  };
-
-  // Mise à jour du statut à la validation dans la modale
-  // de score perso
-  const handleSaveScoreDetaille = (values: number[]) => {
-    setOpenScoreDetaille(false);
-    openScoreDetailleState?.setOpenScoreDetaille(false);
-
-    // Si la jauge est à 100% dans un des statuts, le statut
-    // est mis à jour automatiquement
-    const avancement =
-      values[0] === 1
-        ? 'fait'
-        : values[1] === 1
-        ? 'programme'
-        : values[2] === 1
-        ? 'pas_fait'
-        : 'detaille';
-
-    setLocalAvancement(avancement);
-    setLocalAvancementDetaille(values);
-
-    // Différencie la sauvegarde auto dans la page
-    // de la mise à jour depuis la modale de score auto
-    if (onSaveStatus) {
-      onSaveStatus({
-        actionId: actionDefinition.id,
-        statut,
-        avancement,
-        avancementDetaille: values,
-      });
-    } else {
-      saveActionStatut({
         ...statut,
-        ...args,
         avancement,
-        avancementDetaille: values,
-        concerne: true,
+        avancementDetaille:
+          actionDefinition.type === ActionTypeEnum.SOUS_ACTION
+            ? localAvancementDetaille
+            : avancement_detaille,
+        concerne,
       });
     }
   };
 
-  if (!collectivite) {
-    return null;
-  }
+  if (!collectivite) return null;
 
   return (
     <div
       className="flex flex-col justify-between items-end gap-2 h-full w-fit shrink-0 ml-auto"
       onClick={(evt) => evt.stopPropagation()}
     >
-      {/* Dropdown avec suppression de l'option "non renseigné" sur les sous-actions
-      quand au moins une des tâches a un statut */}
+      {/* Message d'avertissement lorsque le staut de la sous-action est détaillé */}
       <Tooltip
         label={
           <p className="w-96">
@@ -280,9 +196,11 @@ export const SubActionStatutDropdown = ({
         className={classNames({ hidden: !statusWarningMessage })}
       >
         <div>
+          {/* Dropdown avec suppression de l'option "non renseigné" sur les sous-actions
+          quand au moins une des tâches a un statut */}
           <SelectActionStatut
             items={
-              actionDefinition.type === 'sous-action' &&
+              actionDefinition.type === ActionTypeEnum.SOUS_ACTION &&
               localAvancement !== 'non_renseigne' &&
               filled
                 ? statutAvancementEnumSchema.options
@@ -295,59 +213,49 @@ export const SubActionStatutDropdown = ({
           />
         </div>
       </Tooltip>
-      {/* Cas particulier des statuts "détaillé" */}
+
+      {/* Cas particulier des statuts "détaillé" pour les sous-actions */}
       {localAvancement === 'detaille' &&
-        !desactive &&
-        actionDefinition.type !== 'tache' && (
+        actionDefinition.type === ActionTypeEnum.SOUS_ACTION &&
+        !desactive && (
           <div className="flex flex-col gap-3 items-end w-full pr-1">
             {/* Bouton d'ouverture de la modale pour détailler le score */}
             {!disabled && (
               <Button
                 variant="underlined"
                 size="sm"
-                onClick={() => {
-                  if (
-                    actionDefinition.type === 'sous-action' &&
-                    actionDefinition.children.length > 0
-                  ) {
-                    setOpenScoreAuto(true);
-                  } else {
-                    setOpenScoreDetaille(true);
-                    openScoreDetailleState?.setOpenScoreDetaille(true);
-                  }
-                }}
+                onClick={() => setOpenSubActionModal(true)}
               >
                 Détailler l&apos;avancement
               </Button>
             )}
           </div>
         )}
-      {/* Modale de score auto / par tâche (pour les sous-actions) */}
-      {openScoreAuto && (
+
+      {/* Modale de détail de la sous-action (liste des tâches + jaude de score détaillé) */}
+      {openSubActionModal && (
         <SubActionModal
           actionDefinition={actionDefinition}
-          openState={{ isOpen: openScoreAuto, setIsOpen: setOpenScoreAuto }}
-        />
-      )}
-      {/* Modale de personnalisation du score (avec jauge manuelle) */}
-      {(openScoreDetaille || openScorePerso) && (
-        <ScoreDetailleModal
-          actionDefinition={actionDefinition}
-          avancementDetaille={localAvancementDetaille}
-          externalOpen={openScoreDetaille || openScorePerso}
-          saveAtValidation={onSaveStatus === undefined}
-          isScorePerso={openScorePerso}
-          setExternalOpen={(value) => {
-            if (openScoreDetaille) {
-              setOpenScoreDetaille(value);
-              openScoreDetailleState?.setOpenScoreDetaille(value as boolean);
-            } else setOpenScorePerso(value);
+          openState={{
+            isOpen: openSubActionModal,
+            setIsOpen: setOpenSubActionModal,
           }}
-          onSaveScore={handleSaveScoreDetaille}
-          onOpenScoreAuto={() => setOpenScoreAuto(true)}
         />
       )}
-      {/* <AvancementDetailleModal action={actionDefinition} /> */}
+
+      {/* Modale de score détaillé */}
+      {openScoreDetaille && (
+        <AvancementDetailleModal
+          actionDefinition={actionDefinition}
+          openState={{
+            isOpen: openScoreDetaille,
+            setIsOpen: (value) => {
+              setOpenScoreDetaille(value);
+              openScoreDetailleState?.setIsOpen(value);
+            },
+          }}
+        />
+      )}
     </div>
   );
 };

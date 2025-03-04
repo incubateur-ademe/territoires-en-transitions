@@ -1,5 +1,4 @@
 import { ActionDefinitionSummary } from '@/app/referentiels/ActionDefinitionSummaryReadEndpoint';
-import { StatusToSavePayload } from '@/app/referentiels/actions/sub-action-statut.dropdown';
 import classNames from 'classnames';
 import SubActionTask from './sub-action-task';
 
@@ -8,7 +7,6 @@ type SubActionTasksListProps = {
   hideStatus?: boolean;
   statusWarningMessage?: boolean;
   className?: string;
-  onSaveStatus?: (payload: StatusToSavePayload) => void;
 };
 
 /**
@@ -20,7 +18,6 @@ const SubActionTasksList = ({
   hideStatus = false,
   statusWarningMessage = false,
   className,
-  onSaveStatus,
 }: SubActionTasksListProps): JSX.Element => {
   return (
     <div className={classNames('flex flex-col gap-5', className)}>
@@ -30,7 +27,6 @@ const SubActionTasksList = ({
           task={task}
           hideStatus={hideStatus}
           statusWarningMessage={statusWarningMessage}
-          onSaveStatus={onSaveStatus}
         />
       ))}
     </div>
