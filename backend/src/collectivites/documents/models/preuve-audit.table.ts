@@ -2,7 +2,7 @@ import { collectiviteTable } from '@/domain/collectivites';
 import { InferInsertModel, InferSelectModel } from 'drizzle-orm';
 import { foreignKey, index, integer, pgTable } from 'drizzle-orm/pg-core';
 import { createInsertSchema, createSelectSchema } from 'drizzle-zod';
-import { labellisationAuditTable } from '../../../referentiels/models/labellisation-audit.table';
+import { auditTable } from '../../../referentiels/labellisations/audit.table';
 import { DocumentBase } from './document.basetable';
 
 export const preuveAuditTable = pgTable(
@@ -19,7 +19,7 @@ export const preuveAuditTable = pgTable(
       ),
       preuveAuditAuditIdFkey: foreignKey({
         columns: [table.auditId],
-        foreignColumns: [labellisationAuditTable.id],
+        foreignColumns: [auditTable.id],
         name: 'preuve_audit_audit_id_fkey',
       }),
       preuveCollectiviteId: foreignKey({

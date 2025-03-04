@@ -45,7 +45,11 @@ import { CorrelatedActionWithScore } from '../correlated-actions/referentiel-act
 import { GetReferentielResponseType } from '../get-referentiel/get-referentiel.response';
 import { GetReferentielService } from '../get-referentiel/get-referentiel.service';
 import { ActionDefinition } from '../index-domain';
-import { LabellisationService } from '../labellisation.service';
+import { Audit } from '../labellisations/audit.table';
+import { EtoileDefinition } from '../labellisations/etoile-definition.table';
+import { LabellisationService } from '../labellisations/labellisation.service';
+import { postAuditScoresTable } from '../labellisations/post-audit-scores.table';
+import { preAuditScoresTable } from '../labellisations/pre-audit-scores.table';
 import { actionCommentaireTable } from '../models/action-commentaire.table';
 import {
   ActionDefinitionEssential,
@@ -70,10 +74,6 @@ import { GetReferentielScoresRequestType } from '../models/get-referentiel-score
 import { ScoreSnapshotInfoType } from '../models/get-score-snapshots.response';
 import { historiqueActionCommentaireTable } from '../models/historique-action-commentaire.table';
 import { historiqueActionStatutTable } from '../models/historique-action-statut.table';
-import { LabellisationAuditType } from '../models/labellisation-audit.table';
-import { LabellisationEtoileMetaType } from '../models/labellisation-etoile.table';
-import { postAuditScoresTable } from '../models/post-audit-scores.table';
-import { preAuditScoresTable } from '../models/pre-audit-scores.table';
 import { ReferentielId } from '../models/referentiel-id.enum';
 import { getParentIdFromActionId } from '../referentiels.utils';
 import { SnapshotJalon } from '../snapshots/snapshot-jalon.enum';
@@ -775,7 +775,7 @@ export default class ScoresService {
 
   private computeEtoiles(
     action: ActionWithScore,
-    etoilesDefinition: LabellisationEtoileMetaType[],
+    etoilesDefinition: EtoileDefinition[],
     recursive = false
   ) {
     // Compute etoiles only for root level by default
@@ -791,7 +791,7 @@ export default class ScoresService {
 
   private fillEtoilesInScore(
     score: Score,
-    etoilesDefinition: LabellisationEtoileMetaType[]
+    etoilesDefinition: EtoileDefinition[]
   ) {
     // WARNING the etoiles definition is supposed to have been sorted by minRealisePercentage desc
     for (const etoileDefinition of etoilesDefinition) {
@@ -799,7 +799,7 @@ export default class ScoresService {
         ? ((score.pointFait || 0) * 100) / score.pointPotentiel
         : 0;
       if (scorePercentage >= etoileDefinition.minRealisePercentage) {
-        score.etoiles = parseInt(etoileDefinition.etoile);
+        score.etoiles = etoileDefinition.etoile;
         break;
       }
     }
@@ -1133,7 +1133,7 @@ export default class ScoresService {
         }
 
         // Audits are sorted by date desc
-        let audit: LabellisationAuditType | undefined = audits[0];
+        let audit: Audit | undefined = audits[0];
         if (parameters.anneeAudit) {
           audit = audits.find(
             (a) =>
@@ -1670,7 +1670,7 @@ export default class ScoresService {
         CorrelatedActionsWithScoreFields
     >,
     personnalisationConsequences: PersonnalisationConsequencesByActionId,
-    etoilesDefinitions?: LabellisationEtoileMetaType[]
+    etoilesDefinitions?: EtoileDefinition[]
   ) {
     const actionsOrigineMap: {
       [origineActionId: string]: CorrelatedActionWithScore;
@@ -1823,7 +1823,7 @@ export default class ScoresService {
     actionLevel: number,
     actionStatutExplications?: GetActionStatutExplicationsResponseType,
     actionPreuves?: { [actionId: string]: PreuveDto[] },
-    etoilesDefinitions?: LabellisationEtoileMetaType[]
+    etoilesDefinitions?: EtoileDefinition[]
   ) {
     const actionStatutsKeys = Object.keys(actionStatuts);
     for (const actionStatutKey of actionStatutsKeys) {
@@ -1903,7 +1903,7 @@ export default class ScoresService {
     auditId: number,
     statutExplications?: GetActionStatutExplicationsResponseType,
     actionPreuves?: { [actionId: string]: PreuveDto[] },
-    etoiles?: LabellisationEtoileMetaType[]
+    etoiles?: EtoileDefinition[]
   ): Promise<{
     date: string;
     actionWithScore: TreeNode<
@@ -1964,7 +1964,7 @@ export default class ScoresService {
   private async getClientScoresForCollectivite(
     referentielId: ReferentielId,
     collectiviteId: number,
-    etoilesDefinition?: LabellisationEtoileMetaType[]
+    etoilesDefinition?: EtoileDefinition[]
   ): Promise<{
     date: string;
     scoresMap: ScoresByActionId;
@@ -1988,7 +1988,7 @@ export default class ScoresService {
 
   private async getFirstDatabaseScoreFromJsonb(
     scoreRecords: ClientScoresType[],
-    etoilesDefinition?: LabellisationEtoileMetaType[]
+    etoilesDefinition?: EtoileDefinition[]
   ): Promise<{
     date: string;
     scoresMap: ScoresByActionId;
@@ -2031,7 +2031,7 @@ export default class ScoresService {
     referentielId: ReferentielId,
     collectiviteId: number,
     auditId?: number,
-    etoilesDefinition?: LabellisationEtoileMetaType[]
+    etoilesDefinition?: EtoileDefinition[]
   ): Promise<{
     date: string;
     scoresMap: ScoresByActionId;
@@ -2060,7 +2060,7 @@ export default class ScoresService {
     referentielId: ReferentielId,
     collectiviteId: number,
     auditId?: number,
-    etoilesDefinition?: LabellisationEtoileMetaType[]
+    etoilesDefinition?: EtoileDefinition[]
   ): Promise<{
     date: string;
     scoresMap: ScoresByActionId;

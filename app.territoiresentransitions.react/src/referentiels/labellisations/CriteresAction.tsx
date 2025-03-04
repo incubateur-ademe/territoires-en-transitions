@@ -1,6 +1,7 @@
 import { referentielToName } from '@/app/app/labels';
 import { makeReferentielTacheUrl } from '@/app/app/paths';
 import { TLabellisationParcours } from '@/app/referentiels/labellisations/types';
+import { getIdentifiantFromActionId } from '@/domain/referentiels';
 import { Icon } from '@/ui';
 import classNames from 'classnames';
 import './CriteresAction.css';
@@ -70,13 +71,7 @@ const CritereActionRow = (
   const { collectiviteId, rowIndex, parcours } = props;
   const { criteres_action, referentiel } = parcours;
   const action = criteres_action[rowIndex];
-  const {
-    action_id,
-    action_identifiant,
-    formulation,
-    statut_ou_score,
-    rempli,
-  } = action;
+  const { action_id, formulation, statut_ou_score, rempli } = action;
 
   const pathname = makeReferentielTacheUrl({
     collectiviteId,
@@ -97,7 +92,7 @@ const CritereActionRow = (
         />
       </td>
       <td className="text-right text-xs w-[40px] text-grey-6">
-        <span>{action_identifiant}</span>
+        <span>{getIdentifiantFromActionId(action_id)}</span>
       </td>
       <td className="pl-4 pr-8">
         <a

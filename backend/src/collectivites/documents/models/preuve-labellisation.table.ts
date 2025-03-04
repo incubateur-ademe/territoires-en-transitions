@@ -2,7 +2,7 @@ import { collectiviteTable } from '@/domain/collectivites';
 import { InferInsertModel, InferSelectModel } from 'drizzle-orm';
 import { foreignKey, index, integer, pgTable } from 'drizzle-orm/pg-core';
 import { createInsertSchema, createSelectSchema } from 'drizzle-zod';
-import { labellisationDemandeTable } from '../../../referentiels/models/labellisation-demande.table';
+import { labellisationDemandeTable } from '../../../referentiels/labellisations/labellisation-demande.table';
 import { DocumentBase } from './document.basetable';
 
 export const preuveLabellisationTable = pgTable(
