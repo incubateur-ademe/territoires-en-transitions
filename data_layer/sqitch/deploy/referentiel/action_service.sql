@@ -13,7 +13,7 @@ CREATE TABLE "public"."action_service" (
     FOREIGN KEY ("service_tag_id")
         REFERENCES "public"."service_tag"("id")
         ON DELETE CASCADE,
-    PRIMARY KEY ("collectivite_id", "action_id")
+    PRIMARY KEY ("collectivite_id", "action_id", "service_tag_id")
 );
 
 COMMENT ON TABLE "public"."action_service"
