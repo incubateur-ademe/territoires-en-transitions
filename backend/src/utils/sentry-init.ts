@@ -1,3 +1,4 @@
+import { ApplicationContext } from '@/backend/utils/context/application-context.dto';
 import * as Sentry from '@sentry/nestjs';
 import { nodeProfilingIntegration } from '@sentry/profiling-node';
 
@@ -21,3 +22,23 @@ Sentry.init({
   // This is relative to tracesSampleRate
   profilesSampleRate: 1.0,
 });
+
+export const getSentryContextFromApplicationContext = (
+  context: ApplicationContext
+): Sentry.Scope => {
+  const scopeContext = new Sentry.Scope();
+  scopeContext.setTag('source', context.source);
+  scopeContext.setTag('service', context.service);
+  scopeContext.setTag('version', context.version);
+  scopeContext.setTag('environment', context.environment);
+  scopeContext.setTag('correlation_id', context.correlationId);
+  if (context?.userId) {
+    scopeContext.setUser({ id: context.userId });
+  }
+  if (context.requestPath) {
+    scopeContext.setTransactionName(context.requestPath);
+  }
+  scopeContext.setTags(context.scope as any);
+
+  return scopeContext;
+};

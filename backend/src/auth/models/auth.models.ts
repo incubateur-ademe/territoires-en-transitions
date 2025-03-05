@@ -30,7 +30,7 @@ export function isServiceRoleUser(
 export function isAuthenticatedUser(
   user: AuthUser | null
 ): user is AuthenticatedUser {
-  return user?.role === AuthRole.AUTHENTICATED && user.isAnonymous === false;
+  return user?.role === AuthRole.AUTHENTICATED && user?.isAnonymous === false;
 }
 
 export interface AuthJwtPayload<Role extends AuthRole = AuthRole>
