@@ -5,7 +5,7 @@ import { PALETTE_LIGHT } from '../../../../../ui/charts/echarts';
 import { typeCollectiviteOptions } from '../../../CollectivitesEngagees/data/filtreOptions';
 import { useIndicateurDefinitions } from '../Indicateur/useIndicateurDefinition';
 import { TIndicateurDefinition } from '../types';
-import { prepareData, PreparedData } from './prepare-data';
+import { getAnneesDistinctes, prepareData, PreparedData } from './prepare-data';
 import { IndicateurMoyenneOutput } from './use-indicateur-moyenne';
 import {
   ListIndicateurValeursOutput,
@@ -139,20 +139,26 @@ export const useIndicateurChartInfo = ({
       (resultats.donneesCollectivite?.valeurs.length ?? 0) >
     0;
 
-  const data = {
-    unite,
-    valeurs: { objectifs, resultats, segments },
-  };
-
   // ajoute une entrée dans le tableau des sources "résultats" pour la moyenne
   const moyenne = prepareMoyenne(sourceFilter.moyenne);
   if (moyenne) {
     resultats.sources.push(moyenne);
   }
 
+  const data = {
+    unite,
+    valeurs: {
+      objectifs: { ...objectifs, annees: getAnneesDistinctes(objectifs) },
+      resultats: { ...resultats, annees: getAnneesDistinctes(resultats) },
+      segments,
+    },
+  };
+
   // détermine si l'indicateur a au moins une valeur
   const hasValeur =
-    objectifs.annees.length + resultats.annees.length > 0 ||
+    data.valeurs.objectifs.annees.length +
+      data.valeurs.resultats.annees.length >
+      0 ||
     !!segments?.length ||
     !!moyenne?.valeurs?.length;
 

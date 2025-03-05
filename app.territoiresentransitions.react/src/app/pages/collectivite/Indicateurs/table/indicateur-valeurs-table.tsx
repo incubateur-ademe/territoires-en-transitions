@@ -20,7 +20,7 @@ type IndicateurValeursTable = {
   definition: TIndicateurDefinition;
   readonly?: boolean;
   confidentiel?: boolean;
-  data: PreparedData | null;
+  data: (PreparedData & { annees: number[] }) | null;
   type: SourceType;
   disableComments: boolean;
 };

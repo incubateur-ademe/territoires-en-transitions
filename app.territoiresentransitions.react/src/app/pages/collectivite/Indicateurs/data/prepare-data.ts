@@ -41,14 +41,6 @@ export const prepareData = (
     type,
   }));
 
-  // fusionne les tableaux de valeurs de toutes les sources
-  const toutesValeurs = sourcesEtValeursModifiees.flatMap(
-    (sourceData) => sourceData.valeurs
-  );
-
-  // extrait les années (pour créer les colonnes)
-  const annees = uniq(toutesValeurs.map((v) => v.annee)).sort();
-
   // trie les sources par ordre alphabétique
   // et place les données de la collectivité en premier
   const sources = sourcesEtValeursModifiees.sort((a, b) => {
@@ -92,13 +84,20 @@ export const prepareData = (
 
   return {
     indicateurId: data?.definition.id,
-    annees,
     anneeModePrive,
     sources,
     donneesCollectivite,
     valeursExistantes,
   };
 };
+
+export function getAnneesDistinctes({ sources }: PreparedData) {
+  // fusionne les tableaux de valeurs de toutes les sources
+  const toutesValeurs = sources.flatMap((sourceData) => sourceData.valeurs);
+
+  // extrait les années (pour créer les colonnes)
+  return uniq(toutesValeurs.map((v) => v.annee)).sort();
+}
 
 export type PreparedData = ReturnType<typeof prepareData>;
 export type PreparedValue = PreparedData['valeursExistantes'][number];
