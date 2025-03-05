@@ -9,7 +9,10 @@ import {
 } from '../../auth/index-domain';
 import { collectiviteCardView } from '../../collectivites/shared/models/collectivite-card.view';
 import { DatabaseService } from '../../utils/database/database.service';
-import { indicateurSourceMetadonneeTable } from '../index-domain';
+import {
+  indicateurSourceMetadonneeTable,
+  indicateurSourceTable,
+} from '../index-domain';
 import { indicateurValeurTable } from '../shared/models/indicateur-valeur.table';
 import { GetAverageValuesRequest } from './get-average-values.request';
 
@@ -69,6 +72,7 @@ export default class ValeursCalculeesService {
 
     const iv = aliasedTable(indicateurValeurTable, 'iv');
     const ism = aliasedTable(indicateurSourceMetadonneeTable, 'ism');
+    const s = aliasedTable(indicateurSourceTable, 's');
 
     // TODO: à changer pour ne plus utiliser la vue `collectivite_card`
     const typeCollectivite = await this.getTypeCollectivite(collectiviteId);
@@ -77,25 +81,43 @@ export default class ValeursCalculeesService {
     }
     const cc = aliasedTable(collectiviteCardView, 'cc');
 
-    const valeurs = await this.databaseService.db
-      .select({
-        dateValeur: iv.dateValeur,
-        valeur: sql`avg(${iv.resultat})`.mapWith(Number),
-      })
-      .from(iv)
-      .leftJoin(cc, eq(cc.collectiviteId, iv.collectiviteId))
-      .leftJoin(ism, eq(iv.metadonneeId, ism.id))
-      .where(
-        and(
-          eq(cc.typeCollectivite, typeCollectivite),
-          isNotNull(iv.resultat),
-          isNotNull(iv.metadonneeId),
-          ne(ism.sourceId, 'snbc'),
-          eq(iv.indicateurId, indicateurId)
+    // sous-requête pour avoir que la première source par ordre d'affichage
+    const filteredSources = this.databaseService.db.$with('filteredSources').as(
+      this.databaseService.db
+        .select({
+          dateValeur: iv.dateValeur,
+          resultat: iv.resultat,
+          sourceId: ism.sourceId,
+          ordreAffichage: s.ordreAffichage,
+          rank: sql<number>`rank() over (partition by ${iv.indicateurId}, ${iv.dateValeur} order by ${s.ordreAffichage})`.as(
+            'rank'
+          ),
+        })
+        .from(iv)
+        .leftJoin(cc, eq(cc.collectiviteId, iv.collectiviteId))
+        .leftJoin(ism, eq(iv.metadonneeId, ism.id))
+        .leftJoin(s, eq(s.id, ism.sourceId))
+        .where(
+          and(
+            eq(cc.typeCollectivite, typeCollectivite),
+            isNotNull(iv.resultat),
+            isNotNull(iv.metadonneeId),
+            ne(ism.sourceId, 'snbc'),
+            eq(iv.indicateurId, indicateurId)
+          )
         )
-      )
-      .groupBy(iv.dateValeur)
-      .orderBy(asc(iv.dateValeur));
+    );
+
+    const valeurs = await this.databaseService.db
+      .with(filteredSources)
+      .select({
+        dateValeur: filteredSources.dateValeur,
+        valeur: sql`avg(${filteredSources.resultat})`.mapWith(Number),
+      })
+      .from(filteredSources)
+      .where(eq(filteredSources.rank, 1))
+      .groupBy(filteredSources.dateValeur)
+      .orderBy(asc(filteredSources.dateValeur));
 
     this.logger.log(
       `Récupération de ${valeurs.length} valeurs moyenne d'indicateur`
