@@ -24,6 +24,7 @@
       "@/api/*": ["./packages/api/src/*"],
       "@/app/*": ["./app.territoiresentransitions.react/src/*"],
       "@/auth/*": ["./packages/auth/*"],
+      "@/tools-automation-api/*": ["./apps/tools-automation-api/src/*"],
       "@/backend/*": ["./backend/src/*"],
       "@/backend/test": ["./backend/test/index"],
       "@/domain/*": ["./backend/src/*/index-domain"],

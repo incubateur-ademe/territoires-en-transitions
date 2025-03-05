@@ -40,6 +40,7 @@
     "@radix-ui/react-slider": "^1.2.3",
     "@react-pdf/renderer": "^4.0.0",
     "@react-spring/web": "^9.7.4",
+    "@sentry/core": "^9.4.0",
     "@sentry/nestjs": "^8.54.0",
     "@sentry/nextjs": "^8.54.0",
     "@sentry/profiling-node": "^8.54.0",
