@@ -1,11 +1,11 @@
 import { Module } from '@nestjs/common';
 
 import { ConfigModule } from '@nestjs/config';
-import { VersionController } from './common/version.controller';
 import configuration from './config/configuration';
 import { ConfigurationModule } from './config/configuration.module';
 import { CrispModule } from './crisp/crisp.module';
 import { NotionModule } from './notion/notion.module';
+import { UtilsModule } from './utils/utils.module';
 
 @Module({
   imports: [
@@ -15,10 +15,11 @@ import { NotionModule } from './notion/notion.module';
       load: [configuration],
     }),
     ConfigurationModule,
+    UtilsModule,
     NotionModule,
     CrispModule,
   ],
-  controllers: [VersionController],
+  controllers: [],
   providers: [],
 })
 export class AppModule {}

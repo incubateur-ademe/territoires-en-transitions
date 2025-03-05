@@ -27,6 +27,11 @@ export const toolsAutomationApiConfigurationSchema = z.object({
     .string()
     .min(1)
     .describe('ID du template de bug Notion'),
+  TET_API_TOKEN: z
+    .string()
+    .min(1)
+    .describe("Token pour l'authentification à l'API TeT"),
+  TET_API_URL: z.string().min(1).describe("Url de l'API TeT"),
 });
 export type ToolsAutomationApiConfigurationType = z.infer<
   typeof toolsAutomationApiConfigurationSchema

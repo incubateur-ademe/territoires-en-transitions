@@ -43,7 +43,9 @@ deploy: ## Déploie le backend dans une app Koyeb existante
     --env NOTION_TOKEN=@NOTION_TOKEN_$ENV_NAME \
     --env NOTION_BUG_DATABASE_ID=@NOTION_BUG_DATABASE_ID_$ENV_NAME \
     --env NOTION_BUG_EPIC_ID=@NOTION_BUG_EPIC_ID_$ENV_NAME \
-    --env NOTION_BUG_TEMPLATE_ID=@NOTION_BUG_TEMPLATE_ID_$ENV_NAME
+    --env NOTION_BUG_TEMPLATE_ID=@NOTION_BUG_TEMPLATE_ID_$ENV_NAME \
+    --env TET_API_URL=@TET_API_URL_$ENV_NAME \
+    --env TET_API_KEY=@SUPABASE_JWT_SECRET_$ENV_NAME
 
 test-build: ## construit une image pour exécuter les tests du backend
     FROM ../../+front-deps
