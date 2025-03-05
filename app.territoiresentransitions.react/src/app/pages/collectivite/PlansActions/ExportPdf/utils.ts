@@ -35,7 +35,7 @@ export const sectionsInitValue: TSectionsValues = Object.keys(
     ...newObj,
     [currKey]: {
       isChecked: true,
-      values: currKey === 'suivi' ? [0] : undefined,
+      values: currKey === 'notes_suivi' ? [0] : undefined,
     },
   }),
   {}
