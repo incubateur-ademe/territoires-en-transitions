@@ -5,7 +5,7 @@ import { SourceType } from '../types';
 
 type CellAnneeListProps = {
   confidentiel?: boolean;
-  data: PreparedData;
+  data: PreparedData & { annees: number[] };
   readonly?: boolean;
   type: SourceType;
   onDelete: (valeur: PreparedValue) => void;

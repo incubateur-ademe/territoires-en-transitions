@@ -2,14 +2,6 @@ import { prepareData } from './prepare-data';
 import fixture from './test/fixture.json';
 
 describe('prepareData', () => {
-  test('Extrait les années pour lesquelles il y a au moins une valeur de définie', () => {
-    const objectifs = prepareData(fixture.indicateurs[0], 'objectif', false);
-    expect(objectifs.annees).toEqual([2020, 2021]);
-
-    const resultats = prepareData(fixture.indicateurs[0], 'resultat', false);
-    expect(resultats.annees).toEqual([2020, 2021, 2022]);
-  });
-
   test('Extrait les données "objectifs"', () => {
     const objectifs = prepareData(fixture.indicateurs[0], 'objectif', false);
     const expectedDonneesCollectivite = {

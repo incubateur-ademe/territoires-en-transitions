@@ -19,7 +19,9 @@
         "createdAt": "2025-01-07 13:36:56.274496+00",
         "modifiedAt": "2025-01-07 14:43:06.928657+00",
         "createdBy": null,
-        "modifiedBy": null
+        "modifiedBy": null,
+        "precision": 2,
+        "version": ""
       },
       "sources": {
         "collectivite": {
