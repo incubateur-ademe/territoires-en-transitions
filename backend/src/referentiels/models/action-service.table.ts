@@ -4,6 +4,8 @@ import {
   serviceTagTable,
 } from '../../collectivites/index-domain';
 import { actionRelationTable } from './action-relation.table';
+import { createSelectSchema } from 'drizzle-zod';
+import z from 'zod';
 
 export const actionServiceTable = pgTable(
   'action_service',
@@ -26,3 +28,6 @@ export const actionServiceTable = pgTable(
     };
   }
 );
+
+export const actionServiceSchema = createSelectSchema(actionServiceTable);
+export type ActionServiceType = z.infer<typeof actionServiceSchema>;
