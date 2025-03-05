@@ -6,6 +6,7 @@
 import { Logger } from '@nestjs/common';
 import { NestFactory } from '@nestjs/core';
 
+import { json } from 'express';
 import { AppModule } from './app.module';
 
 async function bootstrap() {
@@ -14,6 +15,7 @@ async function bootstrap() {
   app.setGlobalPrefix(globalPrefix, {
     exclude: ['version'],
   });
+  app.use(json({ limit: '10mb' })); // Sentry payload can be large
   const port = process.env.PORT || 8081;
   await app.listen(port);
   Logger.log(

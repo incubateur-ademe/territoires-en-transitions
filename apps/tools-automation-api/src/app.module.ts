@@ -5,7 +5,9 @@ import configuration from './config/configuration';
 import { ConfigurationModule } from './config/configuration.module';
 import { CrispModule } from './crisp/crisp.module';
 import { NotionModule } from './notion/notion.module';
+import { SentryModule } from './sentry/sentry.module';
 import { UtilsModule } from './utils/utils.module';
+import { VersionController } from './utils/version/version.controller';
 
 @Module({
   imports: [
@@ -18,8 +20,9 @@ import { UtilsModule } from './utils/utils.module';
     UtilsModule,
     NotionModule,
     CrispModule,
+    SentryModule,
   ],
-  controllers: [],
+  controllers: [VersionController],
   providers: [],
 })
 export class AppModule {}
