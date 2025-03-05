@@ -32,6 +32,10 @@ export const toolsAutomationApiConfigurationSchema = z.object({
     .min(1)
     .describe("Token pour l'authentification à l'API TeT"),
   TET_API_URL: z.string().min(1).describe("Url de l'API TeT"),
+  MATTERMOST_NOTIFICATIONS_WEBHOOK_URL: z
+    .string()
+    .min(1)
+    .describe('Url du webhook pour les notifications Mattermost'),
 });
 export type ToolsAutomationApiConfigurationType = z.infer<
   typeof toolsAutomationApiConfigurationSchema
