@@ -179,7 +179,7 @@ export const useIndicateurChartInfo = ({
 };
 
 function prepareMoyenne(moyenne: IndicateurMoyenneOutput | undefined) {
-  if (!moyenne) return null;
+  if (!moyenne?.valeurs?.length) return null;
 
   const libelleType =
     typeCollectiviteOptions.find((tc) => tc.value === moyenne.typeCollectivite)
