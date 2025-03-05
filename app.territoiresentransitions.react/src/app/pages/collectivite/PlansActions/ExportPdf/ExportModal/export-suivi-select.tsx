@@ -18,11 +18,11 @@ const ExportSuiviSelect = ({ options, setOptions }: Props) => {
   ];
 
   const handleOnChange = (values: OptionValue[] | undefined) => {
-    const prevValues = options.suivi.values;
+    const prevValues = options.notes_suivi.values;
     const isPrevSelectAll = prevValues?.includes(0) ?? false;
 
     const newValue = {
-      ...options.suivi,
+      ...options.notes_suivi,
       values: isPrevSelectAll
         ? (values?.filter((v) => v !== 0) as number[] | undefined)
         : values?.includes(0) || values === undefined || !values.length
@@ -32,7 +32,7 @@ const ExportSuiviSelect = ({ options, setOptions }: Props) => {
 
     const newOptions = {
       ...options,
-      suivi: newValue,
+      notes_suivi: newValue,
     };
 
     setOptions(newOptions);
