@@ -23,11 +23,22 @@ const nextConfig = {
   async rewrites() {
     return [
       {
-        source: '/ingest/:path*',
-        destination: 'https://eu.posthog.com/:path*',
+        source: "/ingest/static/:path*",
+        destination: "https://eu-assets.i.posthog.com/static/:path*",
+      },
+      {
+        source: "/ingest/:path*",
+        destination: "https://eu.i.posthog.com/:path*",
+      },
+      {
+        source: "/ingest/decide",
+        destination: "https://eu.i.posthog.com/decide",
       },
     ];
   },
+
+  // This is required to support PostHog trailing slash API requests
+  skipTrailingSlashRedirect: true,
 };
 
 const sentryConfig = {
