@@ -3,6 +3,8 @@ import { ApiOkResponse } from '@nestjs/swagger';
 
 @Controller()
 export class VersionController {
+  constructor() {}
+
   @Get('version')
   @ApiOkResponse({
     description:
