@@ -7,12 +7,21 @@ import {
 } from '../models/action-pilote.table';
 import { personneTagTable } from '../../collectivites/index-domain';
 import { dcpTable } from '../../auth/index-domain';
+import { PermissionService } from '../../auth/authorizations/permission.service';
+import {
+  AuthUser,
+  PermissionOperation,
+  ResourceType,
+} from '../../auth/index-domain';
 
 @Injectable()
 export class AssignPilotesService {
   private readonly logger = new Logger(AssignPilotesService.name);
 
-  constructor(private readonly databaseService: DatabaseService) {}
+  constructor(
+    private readonly databaseService: DatabaseService,
+    private readonly permissionService: PermissionService
+  ) {}
 
   async listPilotes(
     collectiviteId: number,
@@ -58,13 +67,14 @@ export class AssignPilotesService {
   async upsertPilotes(
     collectiviteId: number,
     actionId: string,
-    pilotes: { userId?: string; tagId?: number }[]
+    pilotes: { userId?: string; tagId?: number }[],
+    tokenInfo: AuthUser
   ): Promise<(ActionPiloteType & { nom: string | null })[]> {
     if (pilotes.length === 0) {
       throw new Error('La liste des pilotes ne peut pas être vide');
     }
 
-    await this.deletePilotes(collectiviteId, actionId);
+    await this.deletePilotes(collectiviteId, actionId, tokenInfo);
 
     this.logger.log(
       `Mise à jour des pilotes pour la collectivité ${collectiviteId} et la mesure ${actionId}`
@@ -79,40 +89,21 @@ export class AssignPilotesService {
       }))
     );
 
-    return await this.databaseService.db
-      .select({
-        collectiviteId: actionPiloteTable.collectiviteId,
-        actionId: actionPiloteTable.actionId,
-        userId: actionPiloteTable.userId,
-        tagId: actionPiloteTable.tagId,
-        nom: sql<
-          string | null
-        >`COALESCE(${dcpTable.nom}, ${personneTagTable.nom})`,
-      })
-      .from(actionPiloteTable)
-      .leftJoin(
-        personneTagTable,
-        and(
-          eq(personneTagTable.id, actionPiloteTable.tagId),
-          isNull(actionPiloteTable.userId)
-        )
-      )
-      .leftJoin(
-        dcpTable,
-        and(
-          eq(dcpTable.userId, actionPiloteTable.userId),
-          isNull(actionPiloteTable.tagId)
-        )
-      )
-      .where(
-        and(
-          eq(actionPiloteTable.collectiviteId, collectiviteId),
-          eq(actionPiloteTable.actionId, actionId)
-        )
-      );
+    return await this.listPilotes(collectiviteId, actionId);
   }
 
-  async deletePilotes(collectiviteId: number, actionId: string): Promise<void> {
+  async deletePilotes(
+    collectiviteId: number,
+    actionId: string,
+    tokenInfo: AuthUser
+  ): Promise<void> {
+    await this.permissionService.isAllowed(
+      tokenInfo,
+      PermissionOperation.REFERENTIELS_EDITION,
+      ResourceType.COLLECTIVITE,
+      collectiviteId
+    );
+
     this.logger.log(
       `Suppression des pilotes pour la collectivité ${collectiviteId} et la mesure ${actionId}`
     );

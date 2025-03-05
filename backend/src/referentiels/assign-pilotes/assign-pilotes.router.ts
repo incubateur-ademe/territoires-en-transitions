@@ -33,18 +33,23 @@ export class AssignPilotesRouter {
 
     upsertPilotes: this.trpc.authedProcedure
       .input(upsertPilotesSchema)
-      .mutation(({ input }) => {
+      .mutation(({ input, ctx }) => {
         return this.service.upsertPilotes(
           input.collectiviteId,
           input.actionId,
-          input.pilotes
+          input.pilotes,
+          ctx.user
         );
       }),
 
     deletePilotes: this.trpc.authedProcedure
       .input(actionIdentifierSchema)
-      .mutation(({ input }) => {
-        return this.service.deletePilotes(input.collectiviteId, input.actionId);
+      .mutation(({ input, ctx }) => {
+        return this.service.deletePilotes(
+          input.collectiviteId,
+          input.actionId,
+          ctx.user
+        );
       }),
   });
 }
