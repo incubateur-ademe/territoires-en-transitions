@@ -27,7 +27,8 @@ import { SnapshotsRouter } from './snapshots/snapshots.router';
 import { SnapshotsService } from './snapshots/snapshots.service';
 import { UpdateActionStatutRouter } from './update-action-statut/update-action-statut.router';
 import { UpdateActionStatutService } from './update-action-statut/update-action-statut.service';
-
+import { AssignServicesService } from './assign-services/assign-services.service';
+import { AssignServicesRouter } from './assign-services/assign-services.router';
 @Module({
   imports: [CollectivitesModule, SheetModule, PersonnalisationsModule],
   providers: [
@@ -59,6 +60,9 @@ import { UpdateActionStatutService } from './update-action-statut/update-action-
 
     AssignPilotesService,
     AssignPilotesRouter,
+
+    AssignServicesService,
+    AssignServicesRouter,
   ],
   exports: [ReferentielsRouter],
   controllers: [
