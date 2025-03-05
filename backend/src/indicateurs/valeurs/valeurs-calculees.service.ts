@@ -1,7 +1,17 @@
 import { PermissionService } from '@/backend/auth/authorizations/permission.service';
 import CollectivitesService from '@/backend/collectivites/services/collectivites.service';
 import { Injectable, Logger } from '@nestjs/common';
-import { aliasedTable, and, asc, eq, isNotNull, ne, sql } from 'drizzle-orm';
+import {
+  aliasedTable,
+  and,
+  asc,
+  countDistinct,
+  eq,
+  isNotNull,
+  max,
+  ne,
+  sql,
+} from 'drizzle-orm';
 import {
   AuthUser,
   PermissionOperation,
@@ -81,10 +91,13 @@ export default class ValeursCalculeesService {
     }
     const cc = aliasedTable(collectiviteCardView, 'cc');
 
-    // sous-requête pour avoir que la première source par ordre d'affichage
+    // sous-requête pour avoir toutes les valeurs disponibles pour les
+    // collectivités de même type, et le rang d'affichage de la source associée
+    // à chaque valeur
     const filteredSources = this.databaseService.db.$with('filteredSources').as(
       this.databaseService.db
         .select({
+          collectiviteId: iv.collectiviteId,
           dateValeur: iv.dateValeur,
           resultat: iv.resultat,
           sourceId: ism.sourceId,
@@ -108,17 +121,52 @@ export default class ValeursCalculeesService {
         )
     );
 
-    const valeurs = await this.databaseService.db
-      .with(filteredSources)
-      .select({
-        dateValeur: filteredSources.dateValeur,
-        valeur: sql`avg(${filteredSources.resultat})`.mapWith(Number),
-      })
-      .from(filteredSources)
-      .where(eq(filteredSources.rank, 1))
-      .groupBy(filteredSources.dateValeur)
-      .orderBy(asc(filteredSources.dateValeur));
+    // sous-requête pour avoir les résultats pour la meilleure source disponible
+    // (celle avec le rang 1)
+    const results = this.databaseService.db.$with('results').as(
+      this.databaseService.db
+        .select({
+          dateValeur: filteredSources.dateValeur,
+          valeur: sql`avg(${filteredSources.resultat})`
+            .mapWith(Number)
+            .as('valeur'),
+          nbCollectivites: countDistinct(filteredSources.collectiviteId).as(
+            'nbCollectivites'
+          ),
+        })
+        .from(filteredSources)
+        .where(eq(filteredSources.rank, 1))
+        .groupBy(filteredSources.dateValeur)
+        .orderBy(asc(filteredSources.dateValeur))
+    );
 
+    // sous-requête pour avoir le nombre de collectivités de l'année la plus renseignée
+    const mostCompleted = this.databaseService.db.$with('mostCompleted').as(
+      this.databaseService.db
+        .select({
+          total: max(results.nbCollectivites).as('total'),
+        })
+        .from(results)
+    );
+
+    // filtre les résultats pour conserver que ceux avec des données renseignées
+    // pour au moins 75% du nb de collectivités pour l’année la plus renseignée
+    const query = this.databaseService.db
+      .with(filteredSources, results, mostCompleted)
+      .select({
+        dateValeur: results.dateValeur,
+        valeur: results.valeur,
+      })
+      //---
+      // équivalent à `from results, mostCompleted`
+      .from(results)
+      .leftJoin(mostCompleted, sql`true`)
+      //---
+      .where(
+        sql`(${results.nbCollectivites}/${mostCompleted.total}::float) > 0.75`
+      );
+
+    const valeurs = await query;
     this.logger.log(
       `Récupération de ${valeurs.length} valeurs moyenne d'indicateur`
     );
