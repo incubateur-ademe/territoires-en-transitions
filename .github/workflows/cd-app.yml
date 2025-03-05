@@ -45,8 +45,6 @@ jobs:
           --PANIER_URL=${{ vars.PANIER_URL }}
           --SENTRY_DSN=${{ vars.SENTRY_DSN }}
           --CRISP_WEBSITE_ID=${{ vars.CRISP_WEBSITE_ID }}
-          --POSTHOG_HOST=${{ secrets.POSTHOG_HOST }}
-          --POSTHOG_KEY=${{ secrets.POSTHOG_KEY }}
 
   build-test-app:
     name: Build l'app de test # TODO: only on variable change, improve to avoid duplicate
@@ -77,8 +75,6 @@ jobs:
           --PANIER_URL=${{ vars.PANIER_URL }}
           --SENTRY_DSN=${{ vars.SENTRY_DSN }}
           --CRISP_WEBSITE_ID=${{ vars.CRISP_WEBSITE_ID }}
-          --POSTHOG_HOST=${{ secrets.POSTHOG_HOST }}
-          --POSTHOG_KEY=${{ secrets.POSTHOG_KEY }}
 
   deploy-app:
     name: Déploie l'app

@@ -14,24 +14,6 @@ const nextConfig = {
   // See https://nextjs.org/docs/app/api-reference/next-config-js/output#automatically-copying-traced-files
   output: 'standalone',
 
-  // active le mode strict pour détecter les problèmes en dev
-  reactStrictMode: true,
-  // active la minification
-  swcMinify: true,
-  experimental: {
-    // permet le chargement de nivo
-    esmExternals: 'loose',
-  },
-  // surcharge la config webpack
-  webpack: (config) => {
-    // pour le chargement des fontes au format woff2
-    config.module.rules.push({
-      test: /\.woff2$/,
-      type: 'asset/resource',
-    });
-
-    return config;
-  },
   // en-têtes http
   headers: async () => [
     {
@@ -45,15 +27,27 @@ const nextConfig = {
       ],
     },
   ],
+
   // Reverse Proxy vers PostHog : https://posthog.com/docs/advanced/proxy/nextjs
   async rewrites() {
     return [
       {
-        source: '/ingest/:path*',
-        destination: 'https://eu.posthog.com/:path*',
+        source: "/ingest/static/:path*",
+        destination: "https://eu-assets.i.posthog.com/static/:path*",
+      },
+      {
+        source: "/ingest/:path*",
+        destination: "https://eu.i.posthog.com/:path*",
+      },
+      {
+        source: "/ingest/decide",
+        destination: "https://eu.i.posthog.com/decide",
       },
     ];
   },
+
+  // This is required to support PostHog trailing slash API requests
+  skipTrailingSlashRedirect: true,
 };
 
 const plugins = [

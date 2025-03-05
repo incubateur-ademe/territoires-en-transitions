@@ -83,7 +83,12 @@ export default async function RootLayout({
         <div id="root">
           <SupabaseProvider cookieOptions={supabaseCookieOptions}>
             <E2EProvider />
-            <TrackingProvider>
+            <TrackingProvider
+              config={{
+                host: process.env.POSTHOG_HOST,
+                key: process.env.POSTHOG_KEY,
+              }}
+            >
               {/* L'utilisation de overflow-hidden ou overflow-auto sur le container
               /* empêche l'utilisation de la propriété sticky dans l'app */}
               <div id="main" className="min-h-screen flex flex-col">
