@@ -20,6 +20,8 @@ import { UpdateActionStatutRouter } from './update-action-statut/update-action-s
 import { UpdateActionStatutService } from './update-action-statut/update-action-statut.service';
 import { AssignPilotesRouter } from './assign-pilotes/assign-pilotes.router';
 import { AssignPilotesService } from './assign-pilotes/assign-pilotes.service';
+import { AssignServicesService } from './assign-services/assign-services.service';
+import { AssignServicesRouter } from './assign-services/assign-services.router';
 @Module({
   imports: [CollectivitesModule, SheetModule, PersonnalisationsModule],
   providers: [
@@ -43,6 +45,9 @@ import { AssignPilotesService } from './assign-pilotes/assign-pilotes.service';
 
     AssignPilotesService,
     AssignPilotesRouter,
+
+    AssignServicesService,
+    AssignServicesRouter,
   ],
   exports: [
     ReferentielsRouter,
