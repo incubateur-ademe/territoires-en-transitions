@@ -9,7 +9,12 @@ export const StoreProvider = async ({
   children: React.ReactNode;
 }) => {
   return (
-    <PHProvider>
+    <PHProvider
+      config={{
+        host: process.env.POSTHOG_HOST,
+        key: process.env.POSTHOG_KEY,
+      }}
+    >
       <CollectiviteProvider>
         <UserProvider>
           <PanierProvider>{children}</PanierProvider>
