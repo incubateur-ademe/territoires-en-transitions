@@ -30,7 +30,7 @@ const variantToHeight: Record<ChartVariant, number> = {
 const variantToGrid: Record<ChartVariant, GridComponentOption> = {
   thumbnail: { bottom: 0, right: '5%' },
   modal: {},
-  detail: { left: 32, right: 32, bottom: '14%' },
+  detail: { left: 32, right: 32, bottom: 80 },
 };
 
 /** Data issues de l'api pour générer les données formatées pour echarts */
