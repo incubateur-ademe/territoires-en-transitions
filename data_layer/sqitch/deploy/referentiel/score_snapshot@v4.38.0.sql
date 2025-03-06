@@ -3,6 +3,9 @@
 BEGIN;
 
 -- ↓↓ DROP ↓↓ - Drop unecessary triggers
+DROP TRIGGER IF EXISTS after_save_snapshot ON client_scores;
+DROP FUNCTION IF EXISTS public.after_client_scores_save_snapshot();
+
 DROP TRIGGER IF EXISTS after_save_snapshot ON post_audit_scores;
 DROP FUNCTION IF EXISTS public.after_post_audit_scores_save_snapshot();
 
@@ -22,6 +25,11 @@ DROP function automatisation.save_score_snapshot(
 	audit_id integer,
   out status integer
 );
+-- ↑↑ DROP ↑↑
+
+
+-- ↓↓ DROP ↓↓ - Drop deprecated and unused functions
+DROP FUNCTION IF EXISTS public.action_preuve(id action_id, OUT id action_id, OUT preuve text);
 -- ↑↑ DROP ↑↑
 
 COMMIT;

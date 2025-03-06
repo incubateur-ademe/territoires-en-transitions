@@ -2,6 +2,20 @@
 
 BEGIN;
 
+-- Recrée la fonction supprimée
+
+CREATE OR REPLACE FUNCTION public.action_preuve(id action_id, OUT id action_id, OUT preuve text)
+ RETURNS record
+ LANGUAGE sql
+ STABLE
+AS $function$
+select action_definition.action_id, action_definition.preuve
+from action_definition
+where action_definition.action_id = action_preuve.id
+  and est_verifie()
+$function$
+;
+
 -- Recrée la function initiale
 create or replace function automatisation.save_score_snapshot(
 	collectivite_id integer,
@@ -38,6 +52,28 @@ $$
 comment on function automatisation.save_score_snapshot
     is 'Sauvegarde des scores dans la table score_snapshot';
 
+
+-- Recrée l'ancien trigger sur la table `client_scores`
+
+CREATE OR REPLACE FUNCTION public.after_client_scores_save_snapshot()
+ RETURNS trigger
+ LANGUAGE plpgsql
+ SECURITY DEFINER
+AS $function$
+begin
+    perform automatisation.save_score_snapshot(new.collectivite_id, new.referentiel, 'score_courant', 0);
+    return new;
+exception -- si l'appel lève une erreur on continue.
+    when others then return new;
+end
+$function$
+;
+
+create trigger after_save_snapshot
+    after insert or update
+    on client_scores
+    for each row
+execute procedure after_client_scores_save_snapshot();
 
 
 -- Recrée l'ancien trigger sur la table `post_audit_scores`
@@ -84,6 +120,5 @@ create trigger after_save_snapshot
     on pre_audit_scores
     for each row
 execute procedure after_pre_audit_scores_save_snapshot();
-
 
 COMMIT;
