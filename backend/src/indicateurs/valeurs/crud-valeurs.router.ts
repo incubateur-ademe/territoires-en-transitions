@@ -4,15 +4,15 @@ import { deleteValeurIndicateurSchema } from '../shared/models/delete-valeur-ind
 import { getIndicateursValeursRequestSchema } from '../shared/models/get-indicateurs.request';
 import { upsertValeurIndicateurSchema } from '../shared/models/upsert-valeur-indicateur.request';
 import IndicateurValeursService from './crud-valeurs.service';
-import { getAverageValuesRequestSchema } from './get-average-values.request';
-import ValeursCalculeesService from './valeurs-calculees.service';
+import { getMoyenneCollectivitesRequestSchema } from './get-moyenne-collectivites.request';
+import ValeursMoyenneService from './valeurs-moyenne.service';
 
 @Injectable()
 export class IndicateurValeursRouter {
   constructor(
     private readonly trpc: TrpcService,
     private readonly service: IndicateurValeursService,
-    private readonly valeursCalculees: ValeursCalculeesService
+    private readonly valeursCalculees: ValeursMoyenneService
   ) {}
 
   router = this.trpc.router({
@@ -32,9 +32,9 @@ export class IndicateurValeursRouter {
         return this.service.deleteValeurIndicateur(input, ctx.user);
       }),
     average: this.trpc.authedProcedure
-      .input(getAverageValuesRequestSchema)
+      .input(getMoyenneCollectivitesRequestSchema)
       .query(({ ctx, input }) => {
-        return this.valeursCalculees.getAverageValues(input, ctx.user);
+        return this.valeursCalculees.getMoyenneCollectivites(input, ctx.user);
       }),
   });
 }

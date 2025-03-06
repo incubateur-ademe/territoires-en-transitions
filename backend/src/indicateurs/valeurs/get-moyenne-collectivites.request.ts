@@ -1,6 +1,6 @@
 import { z } from 'zod';
 
-export const getAverageValuesRequestSchema = z
+export const getMoyenneCollectivitesRequestSchema = z
   .object({
     collectiviteId: z.coerce
       .number()
@@ -13,4 +13,4 @@ export const getAverageValuesRequestSchema = z
   })
   .describe("Donne la moyenne par date d'un indicateur pour les collectivités de même type");
 
-export type GetAverageValuesRequest = z.infer<typeof getAverageValuesRequestSchema>;
+export type GetMoyenneCollectivitesRequest = z.infer<typeof getMoyenneCollectivitesRequestSchema>;

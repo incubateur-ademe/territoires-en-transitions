@@ -24,11 +24,11 @@ import {
   indicateurSourceTable,
 } from '../index-domain';
 import { indicateurValeurTable } from '../shared/models/indicateur-valeur.table';
-import { GetAverageValuesRequest } from './get-average-values.request';
+import { GetMoyenneCollectivitesRequest } from './get-moyenne-collectivites.request';
 
 @Injectable()
-export default class ValeursCalculeesService {
-  private readonly logger = new Logger(ValeursCalculeesService.name);
+export default class ValeursMoyenneService {
+  private readonly logger = new Logger(ValeursMoyenneService.name);
 
   constructor(
     private readonly databaseService: DatabaseService,
@@ -55,8 +55,8 @@ export default class ValeursCalculeesService {
   /**
    * Donne la moyenne par date d'un indicateur pour les collectivités de même type
    */
-  async getAverageValues(
-    options: GetAverageValuesRequest,
+  async getMoyenneCollectivites(
+    options: GetMoyenneCollectivitesRequest,
     tokenInfo: AuthUser
   ) {
     const { collectiviteId, indicateurId } = options;
