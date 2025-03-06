@@ -185,6 +185,8 @@ function prepareMoyenne(moyenne: IndicateurMoyenneOutput | undefined) {
     typeCollectiviteOptions.find((tc) => tc.value === moyenne.typeCollectivite)
       ?.label || moyenne.typeCollectivite;
 
+  const source = moyenne.valeurs[0]?.sourceLibelle;
+
   return {
     libelle: 'Moyenne des collectivités de même type',
     type: 'resultat' as const,
@@ -193,7 +195,9 @@ function prepareMoyenne(moyenne: IndicateurMoyenneOutput | undefined) {
         id: -1,
         sourceId: 'moyenne',
         dateVersion: '',
-        nomDonnees: `Moyenne basée sur l’open data des collectivités de type "${libelleType}", inscrites sur Territoires en Transitions`,
+        nomDonnees: `Moyenne basée sur l’open data ${
+          source ?? ''
+        } des collectivités de type "${libelleType}", inscrites sur Territoires en Transitions`,
         diffuseur: null,
         producteur: null,
         methodologie: null,
