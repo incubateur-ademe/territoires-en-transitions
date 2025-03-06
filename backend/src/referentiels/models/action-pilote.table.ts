@@ -32,24 +32,22 @@ export const actionPiloteTable = pgTable(
       onDelete: 'cascade',
     }),
   },
-  (table) => {
-    return {
-      oneUserPerAction: uniqueIndex('one_user_per_action').on(
-        table.collectiviteId,
-        table.actionId,
-        table.userId
-      ),
-      oneTagPerAction: uniqueIndex('one_tag_per_action').on(
-        table.collectiviteId,
-        table.actionId,
-        table.tagId
-      ),
-      eitherUserOrTagNotNull: check(
-        'either_user_or_tag_not_null',
-        sql`${table.userId} IS NOT NULL OR ${table.tagId} IS NOT NULL`
-      ),
-    };
-  }
+  (table) => [
+    uniqueIndex('one_user_per_action').on(
+      table.collectiviteId,
+      table.actionId,
+      table.userId
+    ),
+    uniqueIndex('one_tag_per_action').on(
+      table.collectiviteId,
+      table.actionId,
+      table.tagId
+    ),
+    check(
+      'either_user_or_tag_not_null',
+      sql`${table.userId} IS NOT NULL OR ${table.tagId} IS NOT NULL`
+    ),
+  ]
 );
 
 export const actionPiloteSchema = createSelectSchema(actionPiloteTable);

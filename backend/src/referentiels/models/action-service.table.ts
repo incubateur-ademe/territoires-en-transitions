@@ -20,13 +20,11 @@ export const actionServiceTable = pgTable(
       .references(() => serviceTagTable.id, { onDelete: 'cascade' })
       .notNull(),
   },
-  (table) => {
-    return {
-      pk: primaryKey({
-        columns: [table.collectiviteId, table.actionId],
-      }),
-    };
-  }
+  (table) => [
+    primaryKey({
+      columns: [table.collectiviteId, table.actionId],
+    }),
+  ]
 );
 
 export const actionServiceSchema = createSelectSchema(actionServiceTable);
