@@ -34,5 +34,5 @@ jobs:
           --use-inline-cache --save-inline-cache --push
           --platform=linux/amd64
           +db-sync
-          --FROM_DB_URL=${{ secrets.DB_URL }}
+          --FROM_DB_URL=${{ secrets.PROD_DB_URL }}
           --TO_DB_URL=${{ secrets.STAGING_DB_URL }}
