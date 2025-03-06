@@ -1,22 +1,22 @@
-import { TAudit } from '@/app/referentiels/audits/types';
 import PreuveDoc from '@/app/referentiels/preuves/Bibliotheque/PreuveDoc';
 import { Button, Modal, RenderProps } from '@/ui';
+import { useValidateAudit } from '../labellisations/useValidateAudit';
 import { AddRapportButton } from './AddRapportButton';
 import { useRapportsAudit } from './useAudit';
 
-export type TValiderAuditProps = {
-  audit: TAudit;
-  onValidate: (audit?: TAudit) => void;
+type TValiderAuditProps = {
+  auditId: number;
+  demandeId: number | null;
 };
 
 /**
  * Affiche le bouton permettant d'ouvrir la modale de validation d'un audit
  */
-export const ValiderAudit = (props: TValiderAuditProps) => (
+export const ValiderAuditButton = ({ auditId, demandeId }: TValiderAuditProps) => (
   <Modal
     size="lg"
     disableDismiss
-    render={(modalProps) => <ValiderAuditModal {...modalProps} {...props} />}
+    render={(modalProps) => <ValiderAuditModal {...modalProps} auditId={auditId} demandeId={demandeId} />}
   >
     <Button dataTest="ValiderAuditBtn" size="sm">
       {"Valider l'audit"}
@@ -32,23 +32,22 @@ const auditLabellisation =
 /**
  * Affiche la modale de validation d'un audit
  */
-export const ValiderAuditModal = (props: RenderProps & TValiderAuditProps) => {
-  const { audit, close, onValidate } = props;
-  const { id: audit_id, demande_id } = audit;
+export const ValiderAuditModal = ({ auditId, demandeId, close }: RenderProps & TValiderAuditProps) => {
+  const { mutate: onValidateAudit } = useValidateAudit();
 
   // on peut valider seulement si au moins un rapport a été attaché à l'audit
-  const rapports = useRapportsAudit(audit_id!);
+  const rapports = useRapportsAudit(auditId);
   const canValidate = Boolean(rapports?.length);
 
   return (
     <div data-test="ValiderAuditModal">
-      <h4>Valider l'audit</h4>
+      <h4>{"Valider l'audit"}</h4>
       <p>
         Pour clôturer l’audit, merci de joindre votre rapport définitif
         (disponible dans la bibliothèque de documents et visible par les membres
         de la communauté).
       </p>
-      <AddRapportButton audit_id={audit_id!} />
+      <AddRapportButton audit_id={auditId} />
       {rapports?.length ? (
         <div data-test="rapports-audit">
           {rapports.map((rapport) => (
@@ -57,14 +56,14 @@ export const ValiderAuditModal = (props: RenderProps & TValiderAuditProps) => {
         </div>
       ) : null}
       <p className="mt-4">
-        {demande_id ? auditLabellisation : auditSansLabellisation}
+        {demandeId ? auditLabellisation : auditSansLabellisation}
       </p>
       <div className="flex gap-4">
         <Button
           dataTest="validate"
           size="sm"
           onClick={() => {
-            onValidate(audit);
+            onValidateAudit({ auditId });
             close();
           }}
           disabled={!canValidate}
