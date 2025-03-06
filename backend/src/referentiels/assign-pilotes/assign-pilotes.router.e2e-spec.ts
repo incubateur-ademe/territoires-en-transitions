@@ -70,8 +70,6 @@ describe('AssignPilotesRouter', () => {
       pilotesInput
     );
 
-    console.log('Created pilotes:', JSON.stringify(createdPilotes, null, 2));
-
     expect(createdPilotes).toHaveLength(2);
     expect(createdPilotes).toEqual(
       expect.arrayContaining([
@@ -107,11 +105,14 @@ describe('AssignPilotesRouter', () => {
       updatedPilotesInput
     );
     expect(updatedPilotes).toHaveLength(1);
-    expect(updatedPilotes[0]).toHaveProperty(
-      'userId',
-      '4ecc7d3a-7484-4a1c-8ac8-930cdacd2561'
+    expect(updatedPilotes).toEqual(
+      expect.arrayContaining([
+        expect.objectContaining({
+          userId: '4ecc7d3a-7484-4a1c-8ac8-930cdacd2561',
+          tagId: null,
+        }),
+      ])
     );
-    expect(updatedPilotes[0]).toHaveProperty('tagId', null);
 
     // Delete pilotes
     await caller.referentiels.actions.deletePilotes({
