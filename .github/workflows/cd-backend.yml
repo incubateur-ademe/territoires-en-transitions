@@ -95,4 +95,5 @@ jobs:
           --TRAJECTOIRE_SNBC_XLSX_ID=${{ vars.TRAJECTOIRE_SNBC_XLSX_ID }}
           --TRAJECTOIRE_SNBC_RESULT_FOLDER_ID=${{ vars.TRAJECTOIRE_SNBC_RESULT_FOLDER_ID }}
           --REFERENTIEL_TE_SHEET_ID=${{ vars.REFERENTIEL_TE_SHEET_ID }}
+          --INDICATEUR_DEFINITIONS_SHEET_ID=${{ vars.INDICATEUR_DEFINITIONS_SHEET_ID }}
           --SERVICE_NAME=test-${{ github.event.inputs.target }}-backend
