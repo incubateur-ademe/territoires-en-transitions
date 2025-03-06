@@ -9,9 +9,9 @@ import { IndicateurDefinitionsRouter } from './definitions/list-definitions.rout
 import ListDefinitionsService from './definitions/list-definitions.service';
 import { ExportIndicateursController } from './export-indicateurs/export-indicateurs.controller';
 import ExportIndicateursService from './export-indicateurs/export-indicateurs.service';
-import { IndicateurSourcesRouter } from './sources/indicateur-sources.router';
 import { ImportIndicateurDefinitionController } from './import-indicateurs/import-indicateur-definition.controller';
 import ImportIndicateurDefinitionService from './import-indicateurs/import-indicateur-definition.service';
+import { IndicateurSourcesRouter } from './sources/indicateur-sources.router';
 import IndicateurSourcesService from './sources/indicateur-sources.service';
 import TrajectoiresDataService from './trajectoires/trajectoires-data.service';
 import TrajectoiresSpreadsheetService from './trajectoires/trajectoires-spreadsheet.service';
@@ -21,7 +21,7 @@ import { TrajectoiresRouter } from './trajectoires/trajectoires.router';
 import { IndicateursController } from './valeurs/crud-valeurs.controller';
 import { IndicateurValeursRouter } from './valeurs/crud-valeurs.router';
 import CrudValeursService from './valeurs/crud-valeurs.service';
-import ValeursCalculeesService from './valeurs/valeurs-calculees.service';
+import ValeursMoyenneService from './valeurs/valeurs-moyenne.service';
 
 @Module({
   imports: [AuthModule, CollectivitesModule, SheetModule],
@@ -34,7 +34,7 @@ import ValeursCalculeesService from './valeurs/valeurs-calculees.service';
     IndicateurValeurExpressionParserService,
     ImportIndicateurDefinitionService,
     CrudValeursService,
-    ValeursCalculeesService,
+    ValeursMoyenneService,
     IndicateurFiltreService,
     IndicateurFiltreRouter,
     IndicateurValeursRouter,
@@ -50,7 +50,7 @@ import ValeursCalculeesService from './valeurs/valeurs-calculees.service';
     IndicateurDefinitionsRouter,
     IndicateurSourcesRouter,
     CrudValeursService,
-    ValeursCalculeesService,
+    ValeursMoyenneService,
     TrajectoiresRouter,
     IndicateurFiltreService,
     IndicateurFiltreRouter,
