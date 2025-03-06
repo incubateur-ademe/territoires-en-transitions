@@ -67,7 +67,7 @@ export class SnapshotsService {
     return name;
   }
 
-  fillDefaultSnapshotNomRef(
+  private fillDefaultSnapshotNomRef(
     scoreResponse: Pick<
       GetReferentielScoresResponseType,
       'snapshot' | 'jalon' | 'anneeAudit' | 'date'

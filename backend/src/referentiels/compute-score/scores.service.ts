@@ -1120,11 +1120,11 @@ export default class ScoresService {
           parameters.jalon === SnapshotJalon.POST_AUDIT) &&
         !parameters.avecReferentielsOrigine
       ) {
-        const audits = await this.labellisationService.getAuditsForCollectivite(
+        const audits = await this.labellisationService.listAudits({
           collectiviteId,
           referentielId,
-          true
-        );
+        });
+
         if (!audits.length) {
           throw new HttpException(
             `Aucun audit trouvé pour la collectivité ${collectiviteId} (auditId: ${parameters.auditId})`,

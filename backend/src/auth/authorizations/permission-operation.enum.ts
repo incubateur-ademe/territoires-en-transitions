@@ -7,6 +7,7 @@ export enum PermissionOperation {
   // Référentiels
   REFERENTIELS_LECTURE = 'referentiels.lecture',
   REFERENTIELS_EDITION = 'referentiels.edition',
+  REFERENTIELS_AUDIT = 'referentiels.audit',
   // Fiches actions
   PLANS_FICHES_EDITION = 'plans.fiches.edition',
   PLANS_FICHES_LECTURE = 'plans.fiches.lecture',

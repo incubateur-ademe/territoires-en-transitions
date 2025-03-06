@@ -1,5 +1,6 @@
 import { ResourceType } from '@/backend/auth/authorizations/resource-type.enum';
 import { Role } from '@/backend/auth/authorizations/roles/role.enum';
+import { auditeurTable } from '@/backend/referentiels/labellisations/auditeur.table';
 import { DatabaseService } from '@/backend/utils';
 import {
   dcpTable,
@@ -51,7 +52,7 @@ export class RoleService {
         roles.push(Role.ADEME);
       }
 
-      // LECTURE, EDITION, ou ADMIN
+      // Resource COLLECTIVITE : Rôles LECTURE, EDITION, ADMIN
       if (resourceType === ResourceType.COLLECTIVITE && resourceId) {
         const droits = await this.getPermissions({
           userId: user.id,
@@ -73,17 +74,19 @@ export class RoleService {
         }
       }
 
-      // AUDITEUR
-      if (resourceType === ResourceType.COLLECTIVITE && resourceId) {
-        const estAuditeur = await this.isAuditeurCollectivite(
-          user.id,
-          resourceId
-        );
-        if (estAuditeur) {
+      // Resource AUDIT : AUDITEUR
+      if (resourceType === ResourceType.AUDIT && resourceId) {
+        const isAuditeurForAudit = await this.isAuditeurForAudit({
+          userId: user.id,
+          auditId: resourceId,
+        });
+
+        if (isAuditeurForAudit) {
           roles.push(Role.AUDITEUR);
         }
       }
     }
+
     this.logger.log(
       `L'utilisateur ${
         user.id
@@ -166,7 +169,7 @@ export class RoleService {
    * @param userId identifiant de l'utilisateur
    * @param collectiviteId identifiant de la collectivité
    */
-  private async isAuditeurCollectivite(
+  private async isAuditeurForCollectivite(
     userId: string,
     collectiviteId: number
   ): Promise<boolean> {
@@ -174,12 +177,32 @@ export class RoleService {
       sql`SELECT *
           FROM audit_auditeur aa
                  JOIN labellisation.audit a ON aa.audit_id = a.id
-          WHERE a.date_debut IS NOT NULL
-            AND a.clos IS FALSE
+          WHERE a.clos IS FALSE
             AND a.collectivite_id = ${collectiviteId}
             AND aa.auditeur = ${userId}`
     );
 
     return (result?.rowCount && result.rowCount > 0) || false;
+  }
+
+  /**
+   * Vérifie que l'utilisateur est un auditeur pour un audit donné
+   */
+  private async isAuditeurForAudit({
+    userId,
+    auditId,
+  }: {
+    userId: string;
+    auditId: number;
+  }) {
+    return this.databaseService.db
+      .$count(
+        auditeurTable,
+        and(
+          eq(auditeurTable.auditId, auditId),
+          eq(auditeurTable.auditeur, userId)
+        )
+      )
+      .then((count) => count > 0);
   }
 }

@@ -806,18 +806,17 @@ where not ss.desactive
     return etoileCible;
   }
 
-  async getAuditsForCollectivite(
-    collectiviteId: number,
-    referentiel: ReferentielId,
-    onlyEnded = false
-  ): Promise<Audit[]> {
-    const filter: (SQLWrapper | SQL)[] = [
+  async listAudits({
+    collectiviteId,
+    referentielId,
+  }: {
+    collectiviteId: number;
+    referentielId: ReferentielId;
+  }): Promise<Audit[]> {
+    const filter = [
       eq(auditTable.collectiviteId, collectiviteId),
-      eq(auditTable.referentiel, referentiel),
+      eq(auditTable.referentiel, referentielId),
     ];
-    if (onlyEnded) {
-      filter.push(isNotNull(auditTable.dateFin));
-    }
 
     const audits = await this.databaseService.db
       .select()
@@ -826,7 +825,7 @@ where not ss.desactive
       .orderBy(desc(auditTable.dateDebut));
 
     this.logger.log(
-      `Found ${audits.length} audits for collectivite ${collectiviteId} and referentiel ${referentiel}`
+      `Found ${audits.length} audits for collectivite ${collectiviteId} and referentiel ${referentielId}`
     );
 
     return audits;
