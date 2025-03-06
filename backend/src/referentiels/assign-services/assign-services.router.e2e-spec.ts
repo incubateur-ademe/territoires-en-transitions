@@ -66,9 +66,18 @@ describe('AssignServicesRouter', () => {
     const createdServices = await caller.referentiels.actions.upsertServices(
       servicesInput
     );
+
     expect(createdServices).toHaveLength(2);
-    expect(createdServices[0]).toHaveProperty('serviceTagId', 1);
-    expect(createdServices[1]).toHaveProperty('serviceTagId', 2);
+    expect(createdServices).toEqual(
+      expect.arrayContaining([
+        expect.objectContaining({
+          serviceTagId: 1,
+        }),
+        expect.objectContaining({
+          serviceTagId: 2,
+        }),
+      ])
+    );
 
     // List services
     const listedServices = await caller.referentiels.actions.listServices({
@@ -89,7 +98,13 @@ describe('AssignServicesRouter', () => {
       updatedServicesInput
     );
     expect(updatedServices).toHaveLength(1);
-    expect(updatedServices[0]).toHaveProperty('serviceTagId', 3);
+    expect(updatedServices).toEqual(
+      expect.arrayContaining([
+        expect.objectContaining({
+          serviceTagId: 3,
+        }),
+      ])
+    );
 
     // Delete services
     await caller.referentiels.actions.deleteServices({
