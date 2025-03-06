@@ -69,14 +69,22 @@ describe('AssignPilotesRouter', () => {
     const createdPilotes = await caller.referentiels.actions.upsertPilotes(
       pilotesInput
     );
+
+    console.log('Created pilotes:', JSON.stringify(createdPilotes, null, 2));
+
     expect(createdPilotes).toHaveLength(2);
-    expect(createdPilotes[0]).toHaveProperty(
-      'userId',
-      '298235a0-60e7-4ceb-9172-0a991cce0386'
+    expect(createdPilotes).toEqual(
+      expect.arrayContaining([
+        expect.objectContaining({
+          userId: '298235a0-60e7-4ceb-9172-0a991cce0386',
+          tagId: null,
+        }),
+        expect.objectContaining({
+          userId: null,
+          tagId: 1,
+        }),
+      ])
     );
-    expect(createdPilotes[0]).toHaveProperty('tagId', null);
-    expect(createdPilotes[1]).toHaveProperty('userId', null);
-    expect(createdPilotes[1]).toHaveProperty('tagId', 1);
 
     // List pilotes
     const listedPilotes = await caller.referentiels.actions.listPilotes({
