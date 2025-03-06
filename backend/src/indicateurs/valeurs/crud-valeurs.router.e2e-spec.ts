@@ -286,18 +286,17 @@ describe("Route de lecture/écriture des valeurs d'indicateurs", () => {
         {
           dateValeur: '2014-01-01',
           valeur: 7.39,
-        },
-        {
-          dateValeur: '2015-01-01',
-          valeur: 0,
+          sourceLibelle: 'RARE-OREC',
         },
         {
           dateValeur: '2016-01-01',
           valeur: 7.47,
+          sourceLibelle: 'RARE-OREC',
         },
         {
           dateValeur: '2017-01-01',
           valeur: 7.48,
+          sourceLibelle: 'RARE-OREC',
         },
       ],
     });

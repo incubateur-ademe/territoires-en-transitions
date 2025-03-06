@@ -101,6 +101,7 @@ export default class ValeursCalculeesService {
           dateValeur: iv.dateValeur,
           resultat: iv.resultat,
           sourceId: ism.sourceId,
+          sourceLibelle: s.libelle,
           ordreAffichage: s.ordreAffichage,
           rank: sql<number>`rank() over (partition by ${iv.indicateurId}, ${iv.dateValeur} order by ${s.ordreAffichage})`.as(
             'rank'
@@ -126,6 +127,7 @@ export default class ValeursCalculeesService {
     const results = this.databaseService.db.$with('results').as(
       this.databaseService.db
         .select({
+          sourceLibelle: filteredSources.sourceLibelle,
           dateValeur: filteredSources.dateValeur,
           valeur: sql`avg(${filteredSources.resultat})`
             .mapWith(Number)
@@ -136,7 +138,7 @@ export default class ValeursCalculeesService {
         })
         .from(filteredSources)
         .where(eq(filteredSources.rank, 1))
-        .groupBy(filteredSources.dateValeur)
+        .groupBy(filteredSources.dateValeur, filteredSources.sourceLibelle)
         .orderBy(asc(filteredSources.dateValeur))
     );
 
@@ -149,11 +151,13 @@ export default class ValeursCalculeesService {
         .from(results)
     );
 
-    // filtre les résultats pour conserver que ceux avec des données renseignées
-    // pour au moins 75% du nb de collectivités pour l’année la plus renseignée
+    // exécute la requête complète et filtre les résultats pour conserver que
+    // ceux avec des données renseignées pour au moins 75% du nb de
+    // collectivités pour l’année la plus renseignée
     const query = this.databaseService.db
       .with(filteredSources, results, mostCompleted)
       .select({
+        sourceLibelle: results.sourceLibelle,
         dateValeur: results.dateValeur,
         valeur: results.valeur,
       })
