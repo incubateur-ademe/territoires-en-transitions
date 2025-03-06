@@ -1,5 +1,5 @@
 import { Injectable, Logger } from '@nestjs/common';
-import { eq, and, isNull, sql } from 'drizzle-orm';
+import { eq, and, sql } from 'drizzle-orm';
 import { DatabaseService } from '../../utils/database/database.service';
 import {
   actionPiloteTable,
@@ -14,6 +14,10 @@ import {
   ResourceType,
 } from '../../auth/index-domain';
 
+type ActionPiloteWithName = ActionPiloteType & {
+  nom: string | null;
+};
+
 @Injectable()
 export class AssignPilotesService {
   private readonly logger = new Logger(AssignPilotesService.name);
@@ -26,7 +30,7 @@ export class AssignPilotesService {
   async listPilotes(
     collectiviteId: number,
     actionId: string
-  ): Promise<(ActionPiloteType & { nom: string | null })[]> {
+  ): Promise<ActionPiloteWithName[]> {
     this.logger.log(
       `Récupération des pilotes pour la collectivité ${collectiviteId} et la mesure ${actionId}`
     );
@@ -37,24 +41,18 @@ export class AssignPilotesService {
         actionId: actionPiloteTable.actionId,
         userId: actionPiloteTable.userId,
         tagId: actionPiloteTable.tagId,
-        nom: sql<
-          string | null
-        >`COALESCE(${dcpTable.nom}, ${personneTagTable.nom})`,
+        nom: sql<string | null>`
+          CASE
+            WHEN ${actionPiloteTable.userId} IS NOT NULL THEN ${dcpTable.nom}
+            ELSE ${personneTagTable.nom}
+          END
+        `,
       })
       .from(actionPiloteTable)
+      .leftJoin(dcpTable, eq(dcpTable.userId, actionPiloteTable.userId))
       .leftJoin(
         personneTagTable,
-        and(
-          eq(personneTagTable.id, actionPiloteTable.tagId),
-          isNull(actionPiloteTable.userId)
-        )
-      )
-      .leftJoin(
-        dcpTable,
-        and(
-          eq(dcpTable.userId, actionPiloteTable.userId),
-          isNull(actionPiloteTable.tagId)
-        )
+        eq(personneTagTable.id, actionPiloteTable.tagId)
       )
       .where(
         and(
@@ -69,7 +67,7 @@ export class AssignPilotesService {
     actionId: string,
     pilotes: { userId?: string; tagId?: number }[],
     tokenInfo: AuthUser
-  ): Promise<(ActionPiloteType & { nom: string | null })[]> {
+  ): Promise<ActionPiloteWithName[]> {
     if (pilotes.length === 0) {
       throw new Error('La liste des pilotes ne peut pas être vide');
     }

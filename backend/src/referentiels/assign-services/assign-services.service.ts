@@ -13,6 +13,10 @@ import {
   ResourceType,
 } from '../../auth/index-domain';
 
+type ActionServiceWithName = ActionServiceType & {
+  nom: string | null;
+};
+
 @Injectable()
 export class AssignServicesService {
   private readonly logger = new Logger(AssignServicesService.name);
@@ -25,7 +29,7 @@ export class AssignServicesService {
   async listServices(
     collectiviteId: number,
     actionId: string
-  ): Promise<(ActionServiceType & { nom: string | null })[]> {
+  ): Promise<ActionServiceWithName[]> {
     this.logger.log(
       `Récupération des services pour la collectivité ${collectiviteId} et la mesure ${actionId}`
     );
@@ -55,7 +59,7 @@ export class AssignServicesService {
     actionId: string,
     services: { serviceTagId: number }[],
     tokenInfo: AuthUser
-  ): Promise<(ActionServiceType & { nom: string | null })[]> {
+  ): Promise<ActionServiceWithName[]> {
     await this.permissionService.isAllowed(
       tokenInfo,
       PermissionOperation.REFERENTIELS_EDITION,
