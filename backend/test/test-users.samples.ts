@@ -6,7 +6,7 @@ export const YOLO_DODO = {
     admin: 1,
     edition: 2,
   },
-};
+} as const;
 
 export const YULU_DUDU = {
   email: 'yulu@dudu.com',

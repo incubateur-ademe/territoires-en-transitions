@@ -73,6 +73,7 @@ export const Permission: Record<Role, PermissionOperation[]> = {
     PermissionOperation.COLLECTIVITES_LECTURE,
     PermissionOperation.REFERENTIELS_LECTURE,
     PermissionOperation.REFERENTIELS_EDITION,
+    PermissionOperation.REFERENTIELS_AUDIT,
     PermissionOperation.PLANS_FICHES_VISITE,
     PermissionOperation.PLANS_FICHES_LECTURE,
     PermissionOperation.INDICATEURS_VISITE,

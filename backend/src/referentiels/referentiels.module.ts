@@ -12,6 +12,10 @@ import { ImportReferentielController } from './import-referentiel/import-referen
 import ImportReferentielService from './import-referentiel/import-referentiel.service';
 import { GetLabellisationRouter } from './labellisations/get-labellisation.router';
 import { LabellisationService } from './labellisations/labellisation.service';
+import { StartAuditRouter } from './labellisations/start-audit/start-audit.router';
+import { StartAuditService } from './labellisations/start-audit/start-audit.service';
+import { ValidateAuditRouter } from './labellisations/validate-audit/validate-audit.router';
+import { ValidateAuditService } from './labellisations/validate-audit/validate-audit.service';
 import { ListActionDefinitionsService } from './list-action-definitions/list-action-definitions.service';
 import { ListActionsRouter } from './list-actions/list-actions.router';
 import { ReferentielsRouter } from './referentiels.router';
@@ -32,8 +36,13 @@ import { UpdateActionStatutService } from './update-action-statut/update-action-
     UpdateActionStatutService,
     UpdateActionStatutRouter,
 
+    // Labellisation
     LabellisationService,
     GetLabellisationRouter,
+    StartAuditService,
+    StartAuditRouter,
+    ValidateAuditService,
+    ValidateAuditRouter,
 
     SnapshotsService,
     SnapshotsRouter,
