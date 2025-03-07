@@ -11,17 +11,12 @@ import { TrpcRouter } from '@/backend/utils/trpc/trpc.router';
 import { ReferentielIdEnum } from '@/domain/referentiels';
 import { AppRouter } from '@/domain/trpc-router';
 import { INestApplication } from '@nestjs/common';
-import { inferProcedureInput } from '@trpc/server';
 import { eq } from 'drizzle-orm';
 import { SnapshotJalon } from '../../snapshots/snapshot-jalon.enum';
 import { snapshotTable } from '../../snapshots/snapshot.table';
 import { auditTable } from '../audit.table';
 import { auditeurTable } from '../auditeur.table';
 import { labellisationDemandeTable } from '../labellisation-demande.table';
-
-type Input = inferProcedureInput<
-  AppRouter['referentiels']['labellisations']['startAudit']
->;
 
 const COLLECTIVITE_ID = YOLO_DODO.collectiviteId.edition;
 
@@ -90,14 +85,9 @@ describe('StartAuditRouter', () => {
       // Delete snapshot is not needed, it will be deleted by the cascade
     });
 
-    const input: Input = {
-      collectiviteId: COLLECTIVITE_ID,
+    const startedAudit = await caller.referentiels.labellisations.startAudit({
       auditId: audit.id,
-    };
-
-    const startedAudit = await caller.referentiels.labellisations.startAudit(
-      input
-    );
+    });
 
     // On vérifie que l'audit est bien demarré
     expect(startedAudit).toBeDefined();
@@ -121,13 +111,10 @@ describe('StartAuditRouter', () => {
   test("un non auditeur ne peut pas lancer d'audit", async () => {
     const caller = router.createCaller({ user: yoloDodoUser });
 
-    const input: Input = {
-      collectiviteId: COLLECTIVITE_ID,
-      auditId: 456, // random audit id
-    };
-
     await expect(
-      caller.referentiels.labellisations.startAudit(input)
+      caller.referentiels.labellisations.startAudit({
+        auditId: 456, // random audit id
+      })
     ).rejects.toThrow(/Droits insuffisants/i);
   });
 });
