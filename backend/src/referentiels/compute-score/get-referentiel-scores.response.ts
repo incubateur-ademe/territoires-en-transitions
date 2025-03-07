@@ -7,7 +7,7 @@ import {
 } from '../models/action-definition.dto';
 import { ComputeScoreMode } from '../models/compute-scores-mode.enum';
 import { referentielIdEnumSchema } from '../models/referentiel-id.enum';
-import { SnapshotJalon } from '../snapshots/snapshot-jalon.enum';
+import { snapshotJalonEnumSchema } from '../snapshots/snapshot.table';
 import { scoreFinalFieldsSchema } from './score.dto';
 
 export const getReferentielScoresResponseSnapshotInfoSchema = z.object({
@@ -32,7 +32,7 @@ export const getReferentielScoresResponseSchema = z
         .merge(actionDefinitionEssentialSchema)
         .merge(scoreFinalFieldsSchema)
     ),
-    jalon: z.nativeEnum(SnapshotJalon),
+    jalon: snapshotJalonEnumSchema,
     auditId: z.number().optional(),
     anneeAudit: z.number().optional(),
     snapshot: getReferentielScoresResponseSnapshotInfoSchema.optional(),

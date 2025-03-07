@@ -76,7 +76,7 @@ import { historiqueActionCommentaireTable } from '../models/historique-action-co
 import { historiqueActionStatutTable } from '../models/historique-action-statut.table';
 import { ReferentielId } from '../models/referentiel-id.enum';
 import { getParentIdFromActionId } from '../referentiels.utils';
-import { SnapshotJalon } from '../snapshots/snapshot-jalon.enum';
+import { SnapshotJalon, SnapshotJalonEnum } from '../snapshots/snapshot.table';
 import { SnapshotsService } from '../snapshots/snapshots.service';
 import { ActionStatutsByActionId } from './action-statuts-by-action-id.dto';
 import { GetReferentielScoresResponseType } from './get-referentiel-scores.response';
@@ -1116,8 +1116,8 @@ export default class ScoresService {
       }
       // Later we can have snapshots for other jalon
       if (
-        (parameters.jalon === SnapshotJalon.PRE_AUDIT ||
-          parameters.jalon === SnapshotJalon.POST_AUDIT) &&
+        (parameters.jalon === SnapshotJalonEnum.PRE_AUDIT ||
+          parameters.jalon === SnapshotJalonEnum.POST_AUDIT) &&
         !parameters.avecReferentielsOrigine
       ) {
         const audits = await this.labellisationService.listAudits({
@@ -1161,7 +1161,7 @@ export default class ScoresService {
         }
         auditId = audit.id;
         parameters.date =
-          (parameters.jalon === SnapshotJalon.PRE_AUDIT
+          (parameters.jalon === SnapshotJalonEnum.PRE_AUDIT
             ? audit.dateDebut
             : audit.dateFin) || undefined;
 
@@ -1171,15 +1171,15 @@ export default class ScoresService {
       }
     } else {
       parameters.jalon = parameters.date
-        ? SnapshotJalon.DATE_PERSONNALISEE
-        : SnapshotJalon.SCORE_COURANT;
+        ? SnapshotJalonEnum.DATE_PERSONNALISEE
+        : SnapshotJalonEnum.SCORE_COURANT;
     }
 
     if (parameters.snapshotNom) {
       parameters.snapshot = true;
       if (
-        parameters.jalon !== SnapshotJalon.SCORE_COURANT &&
-        parameters.jalon !== SnapshotJalon.DATE_PERSONNALISEE
+        parameters.jalon !== SnapshotJalonEnum.SCORE_COURANT &&
+        parameters.jalon !== SnapshotJalonEnum.DATE_PERSONNALISEE
       ) {
         throw new HttpException(
           `Un nom de snapshot ne peut être défini que pour le score courant ou une date personnalisée`,
@@ -1712,7 +1712,7 @@ export default class ScoresService {
           `Une date ne doit pas être fournie lorsqu'on veut récupérer les scores depuis une sauvegarde`,
           400
         );
-      } else if (parameters.jalon === SnapshotJalon.SCORE_COURANT) {
+      } else if (parameters.jalon === SnapshotJalonEnum.SCORE_COURANT) {
         // Get scores from sauvegarde
         referentielsOrigine.forEach((referentielOrigine) => {
           referentielsOriginePromiseScores.push(
@@ -1723,7 +1723,7 @@ export default class ScoresService {
             )
           );
         });
-      } else if (parameters.jalon === SnapshotJalon.PRE_AUDIT) {
+      } else if (parameters.jalon === SnapshotJalonEnum.PRE_AUDIT) {
         // Get scores from sauvegarde
         referentielsOrigine.forEach((referentielOrigine) => {
           referentielsOriginePromiseScores.push(
@@ -1735,7 +1735,7 @@ export default class ScoresService {
             )
           );
         });
-      } else if (parameters.jalon === SnapshotJalon.POST_AUDIT) {
+      } else if (parameters.jalon === SnapshotJalonEnum.POST_AUDIT) {
         // Get scores from sauvegarde
         referentielsOrigine.forEach((referentielOrigine) => {
           referentielsOriginePromiseScores.push(
@@ -1919,20 +1919,20 @@ export default class ScoresService {
           scoresMap: ScoresByActionId;
         }
       | undefined = undefined;
-    if (jalon === SnapshotJalon.SCORE_COURANT) {
+    if (jalon === SnapshotJalonEnum.SCORE_COURANT) {
       scoresResult = await this.getClientScoresForCollectivite(
         referentielId,
         collectiviteId,
         etoiles
       );
-    } else if (jalon === SnapshotJalon.PRE_AUDIT) {
+    } else if (jalon === SnapshotJalonEnum.PRE_AUDIT) {
       scoresResult = await this.getPreAuditScoresForCollectivite(
         referentielId,
         collectiviteId,
         auditId,
         etoiles
       );
-    } else if (jalon === SnapshotJalon.POST_AUDIT) {
+    } else if (jalon === SnapshotJalonEnum.POST_AUDIT) {
       scoresResult = await this.getPostAuditScoresForCollectivite(
         referentielId,
         collectiviteId,
@@ -2334,7 +2334,7 @@ export default class ScoresService {
       collectiviteId: score.collectiviteId,
       referentiel: score.referentiel,
       auditId: score.auditId,
-      jalon: SnapshotJalon.POST_AUDIT,
+      jalon: SnapshotJalonEnum.POST_AUDIT,
     }));
     this.logger.log(`Found ${postAuditScores.length} post audit scores`);
 
@@ -2351,7 +2351,7 @@ export default class ScoresService {
       collectiviteId: score.collectiviteId,
       referentiel: score.referentiel,
       auditId: score.auditId,
-      jalon: SnapshotJalon.PRE_AUDIT,
+      jalon: SnapshotJalonEnum.PRE_AUDIT,
     }));
     this.logger.log(`Found ${preAuditScores.length} post audit scores`);
 
@@ -2367,7 +2367,7 @@ export default class ScoresService {
       collectiviteId: score.collectiviteId,
       referentiel: score.referentiel,
       auditId: undefined,
-      jalon: SnapshotJalon.SCORE_COURANT,
+      jalon: SnapshotJalonEnum.SCORE_COURANT,
     }));
     this.logger.log(`Found ${preAuditScores.length} client current scores`);
 

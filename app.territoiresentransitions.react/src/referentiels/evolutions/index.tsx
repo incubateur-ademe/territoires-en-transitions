@@ -1,13 +1,13 @@
 'use client';
-import { useState, useEffect } from 'react';
-import { EmptyCard, Badge } from '@/ui';
-import { ScoreTotalEvolutionsChart } from './evolutions-score-total.chart';
-import PictoDashboard from '../../ui/pictogrammes/PictoDashboard';
-import { SnapshotDetails, useSnapshotList } from '../use-snapshot';
 import { useCurrentCollectivite } from '@/app/core-logic/hooks/useCurrentCollectivite';
-import { SnapshotsDropdown } from './evolutions-snapshots.dropdown';
-import { useReferentielId } from '../referentiel-context';
+import { Badge, EmptyCard } from '@/ui';
+import { useEffect, useState } from 'react';
 import SaveScoreButton from '../../app/pages/collectivite/Referentiels/SaveScore/save-score.button';
+import PictoDashboard from '../../ui/pictogrammes/PictoDashboard';
+import { useReferentielId } from '../referentiel-context';
+import { SnapshotDetails, useSnapshotList } from '../use-snapshot';
+import { ScoreTotalEvolutionsChart } from './evolutions-score-total.chart';
+import { SnapshotsDropdown } from './evolutions-snapshots.dropdown';
 
 const removeScoreCourant = (snapshots: SnapshotDetails[]) => {
   return snapshots.filter((snap) => snap?.nom !== 'Score courant');
@@ -69,7 +69,7 @@ export const ScoreEvolutions = () => {
     if (initialDisplaySnapsNames.length > 0) {
       setSelectedSnapsNames(initialDisplaySnapsNames);
     }
-  }, [snapshotList]);
+  }, [initialDisplaySnapsNames, snapshotList]);
 
   if (hasSavedSnapshots) {
     return (
@@ -114,6 +114,7 @@ export const ScoreEvolutions = () => {
           isReadonly={collectivite?.isReadOnly}
           actions={[
             <SaveScoreButton
+              key="before"
               referentielId={referentielId}
               collectiviteId={collectiviteId as number}
               label="Figer l'état des lieux à une date antérieure"
@@ -121,6 +122,7 @@ export const ScoreEvolutions = () => {
               variant="outlined"
             />,
             <SaveScoreButton
+              key="after"
               referentielId={referentielId}
               collectiviteId={collectiviteId as number}
               label="Figer l'état des lieux"
