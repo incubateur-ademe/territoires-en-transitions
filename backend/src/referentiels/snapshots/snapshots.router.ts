@@ -3,25 +3,13 @@ import { Injectable } from '@nestjs/common';
 import z from 'zod';
 import ScoresService from '../compute-score/scores.service';
 import { ComputeScoreMode } from '../models/compute-scores-mode.enum';
-import { DEFAULT_SNAPSHOT_JALONS } from '../models/get-score-snapshots.request';
 import { referentielIdEnumSchema } from '../models/referentiel-id.enum';
-import { SnapshotJalon } from './snapshot-jalon.enum';
+import {
+  listInputSchema,
+  ListSnapshotsService,
+} from './list-snapshots/list-snapshots.service';
 import { SnapshotsService } from './snapshots.service';
 import { upsertSnapshotRequestSchema } from './upsert-snapshot.request';
-
-export const getScoreSnapshotInfosTrpcRequestSchema = z.object({
-  referentielId: referentielIdEnumSchema,
-  collectiviteId: z.number().int(),
-  parameters: z
-    .object({
-      typesJalon: z
-        .nativeEnum(SnapshotJalon)
-        .array()
-        .optional()
-        .default(DEFAULT_SNAPSHOT_JALONS),
-    })
-    .optional(),
-});
 
 export const getFullScoreSnapshotTrpcRequestSchema = z.object({
   referentielId: referentielIdEnumSchema,
@@ -33,19 +21,22 @@ export const getFullScoreSnapshotTrpcRequestSchema = z.object({
 export class SnapshotsRouter {
   constructor(
     private readonly trpc: TrpcService,
-    private readonly service: SnapshotsService,
-    private readonly referentielsScoringService: ScoresService
+    private readonly snapshots: SnapshotsService,
+    private readonly listSnapshots: ListSnapshotsService,
+    private readonly scores: ScoresService
   ) {}
 
   router = this.trpc.router({
     list: this.trpc.authedProcedure
-      .input(getScoreSnapshotInfosTrpcRequestSchema)
+      .input(listInputSchema)
       .query(({ input }) => {
-        return this.service.list(
-          input.collectiviteId,
-          input.referentielId,
-          input.parameters
-        );
+        return this.listSnapshots.list(input);
+      }),
+
+    listWithScores: this.trpc.authedProcedure
+      .input(listInputSchema)
+      .query(({ input }) => {
+        return this.listSnapshots.listWithScores(input);
       }),
 
     computeAndSave: this.trpc.authedProcedure
@@ -56,7 +47,7 @@ export class SnapshotsRouter {
         })
       )
       .mutation(({ input }) => {
-        return this.referentielsScoringService.getOrCreateCurrentScore(
+        return this.scores.getOrCreateCurrentScore(
           input.collectiviteId,
           input.referentielId,
           true
@@ -66,7 +57,7 @@ export class SnapshotsRouter {
     upsert: this.trpc.authedProcedure
       .input(upsertSnapshotRequestSchema)
       .mutation(({ input, ctx }) => {
-        return this.referentielsScoringService.computeScoreForCollectivite(
+        return this.scores.computeScoreForCollectivite(
           input.referentiel,
           input.collectiviteId,
           {
@@ -87,7 +78,7 @@ export class SnapshotsRouter {
         })
       )
       .query(({ input, ctx }) => {
-        return this.referentielsScoringService.getOrCreateCurrentScore(
+        return this.scores.getOrCreateCurrentScore(
           input.collectiviteId,
           input.referentielId
         );
@@ -97,12 +88,12 @@ export class SnapshotsRouter {
       .input(getFullScoreSnapshotTrpcRequestSchema)
       .query(({ input, ctx }) => {
         if (input.snapshotRef === SnapshotsService.SCORE_COURANT_SNAPSHOT_REF) {
-          return this.referentielsScoringService.getOrCreateCurrentScore(
+          return this.scores.getOrCreateCurrentScore(
             input.collectiviteId,
             input.referentielId
           );
         } else {
-          return this.service.get(
+          return this.snapshots.get(
             input.collectiviteId,
             input.referentielId,
             input.snapshotRef
@@ -112,7 +103,7 @@ export class SnapshotsRouter {
     delete: this.trpc.authedProcedure
       .input(getFullScoreSnapshotTrpcRequestSchema)
       .query(({ input, ctx }) => {
-        return this.service.delete(
+        return this.snapshots.delete(
           input.collectiviteId,
           input.referentielId,
           input.snapshotRef,
@@ -120,4 +111,6 @@ export class SnapshotsRouter {
         );
       }),
   });
+
+  createCaller = this.trpc.createCallerFactory(this.router);
 }

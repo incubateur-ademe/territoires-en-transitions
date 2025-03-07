@@ -1,3 +1,4 @@
+import { getEnumValues } from '@/domain/utils';
 import {
   doublePrecision,
   foreignKey,
@@ -27,15 +28,27 @@ import {
   referentielDefinitionTable,
   referentielIdVarchar,
 } from '../models/referentiel-definition.table';
-import { SnapshotJalon } from './snapshot-jalon.enum';
 
-const scoreJalonEnumValues = pgEnum('type_jalon', [
-  SnapshotJalon.PRE_AUDIT,
-  SnapshotJalon.POST_AUDIT,
-  SnapshotJalon.SCORE_COURANT,
-  SnapshotJalon.VISITE_ANNUELLE,
-  SnapshotJalon.DATE_PERSONNALISEE,
-  SnapshotJalon.JOUR_AUTO,
+export const SnapshotJalonEnum = {
+  SCORE_COURANT: 'score_courant', // Score courant
+  DATE_PERSONNALISEE: 'date_personnalisee', // Date personnalisée
+  PRE_AUDIT: 'pre_audit',
+  POST_AUDIT: 'post_audit',
+  VISITE_ANNUELLE: 'visite_annuelle',
+  JOUR_AUTO: 'jour_auto',
+} as const;
+
+export const snapshotJalonEnumSchema = z.enum(getEnumValues(SnapshotJalonEnum));
+
+export type SnapshotJalon = z.infer<typeof snapshotJalonEnumSchema>;
+
+const snapshotJalonPgEnum = pgEnum('type_jalon', [
+  SnapshotJalonEnum.PRE_AUDIT,
+  SnapshotJalonEnum.POST_AUDIT,
+  SnapshotJalonEnum.SCORE_COURANT,
+  SnapshotJalonEnum.VISITE_ANNUELLE,
+  SnapshotJalonEnum.DATE_PERSONNALISEE,
+  SnapshotJalonEnum.JOUR_AUTO,
 ]);
 
 export const snapshotTable = pgTable(
@@ -48,59 +61,55 @@ export const snapshotTable = pgTable(
     date: timestamp('date', TIMESTAMP_OPTIONS).notNull(),
     ref: varchar('ref', { length: 30 }),
     nom: varchar('nom', { length: 300 }).notNull(),
-    typeJalon: scoreJalonEnumValues('type_jalon').notNull(), // not an enum in the database but in order to type it
+    typeJalon: snapshotJalonPgEnum('type_jalon').notNull(), // not an enum in the database but in order to type it
     pointFait: doublePrecision('point_fait').notNull(),
     pointProgramme: doublePrecision('point_programme').notNull(),
     pointPasFait: doublePrecision('point_pas_fait').notNull(),
     pointPotentiel: doublePrecision('point_potentiel').notNull(),
-    referentielScores: jsonb('referentiel_scores').notNull(),
+    scores: jsonb('referentiel_scores').notNull(),
     personnalisationReponses: jsonb('personnalisation_reponses').notNull(),
     createdBy,
     createdAt,
     modifiedAt,
     modifiedBy,
   },
-  (table) => {
-    return {
-      scoreSnapshotCollectiviteIdReferentielIdRefPkey: primaryKey({
-        columns: [table.collectiviteId, table.referentielId, table.ref],
-        name: 'score_snapshot_collectivite_id_referentiel_id_ref_pkey',
-      }),
-      scoreSnapshotCollectiviteIdFkey: foreignKey({
-        columns: [table.collectiviteId],
-        foreignColumns: [collectiviteTable.id],
-        name: 'score_snapshot_collectivite_id_fkey',
-      }),
-      scoreSnapshotReferentielIdFkey: foreignKey({
-        columns: [table.referentielId],
-        foreignColumns: [referentielDefinitionTable.id],
-        name: 'score_snapshot_referentiel_id_fkey',
-      }),
-      scoreSnapshotAuditIdFkey: foreignKey({
-        columns: [table.auditId],
-        foreignColumns: [auditTable.id],
-        name: 'score_snapshot_audit_id_fkey',
-      }).onDelete('cascade'),
-      scoreSnapshotUnique: unique().on(
-        table.collectiviteId,
-        table.referentielId,
-        table.typeJalon,
-        table.date
-      ),
-    };
-  }
+  (table) => [
+    primaryKey({
+      columns: [table.collectiviteId, table.referentielId, table.ref],
+      name: 'score_snapshot_collectivite_id_referentiel_id_ref_pkey',
+    }),
+    foreignKey({
+      columns: [table.collectiviteId],
+      foreignColumns: [collectiviteTable.id],
+      name: 'score_snapshot_collectivite_id_fkey',
+    }),
+    foreignKey({
+      columns: [table.referentielId],
+      foreignColumns: [referentielDefinitionTable.id],
+      name: 'score_snapshot_referentiel_id_fkey',
+    }),
+    foreignKey({
+      columns: [table.auditId],
+      foreignColumns: [auditTable.id],
+      name: 'score_snapshot_audit_id_fkey',
+    }).onDelete('cascade'),
+    unique().on(
+      table.collectiviteId,
+      table.referentielId,
+      table.typeJalon,
+      table.date
+    ),
+  ]
 );
 
-export const scoreSnapshotSchema = createSelectSchema(snapshotTable).extend({
-  referentielScores: getReferentielScoresResponseSchema,
+export const snapshotSchema = createSelectSchema(snapshotTable).extend({
+  scores: getReferentielScoresResponseSchema,
   personnalisationReponses: getPersonnalitionReponsesResponseSchema,
 });
-export type ScoreSnapshotType = z.infer<typeof scoreSnapshotSchema>;
+export type ScoreSnapshotType = z.infer<typeof snapshotSchema>;
 
-export const createScoreSnapshotSchema = createInsertSchema(
-  snapshotTable
-).extend({
-  referentielScores: getReferentielScoresResponseSchema,
+export const snapshotSchemaInsert = createInsertSchema(snapshotTable).extend({
+  scores: getReferentielScoresResponseSchema,
   personnalisationReponses: getPersonnalitionReponsesResponseSchema,
 });
-export type CreateScoreSnapshotType = z.infer<typeof createScoreSnapshotSchema>;
+export type SnapshotInsert = z.infer<typeof snapshotSchemaInsert>;

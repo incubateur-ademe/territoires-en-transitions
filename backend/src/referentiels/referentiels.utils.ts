@@ -1,6 +1,5 @@
 import { divisionOrZero } from '../utils/number.utils';
 import {
-  Score,
   ScoreFinal,
   StatutAvancement,
   StatutAvancementEnum,

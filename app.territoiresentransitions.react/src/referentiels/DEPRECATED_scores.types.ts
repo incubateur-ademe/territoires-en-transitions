@@ -1,5 +1,6 @@
 import {
   ActionCategorie,
+  getReferentielIdFromActionId,
   ReferentielId,
   StatutAvancement,
   StatutAvancementEnum,
@@ -78,7 +79,7 @@ export type ProgressionRow = ActionReferentiel &
   >;
 
 export function actionNewToDeprecated(action: ActionDetailed) {
-  const DEPRECATED_action: ProgressionRow = {
+  const DEPRECATED_action = {
     action_id: action.actionId,
     identifiant: action.identifiant,
     nom: action.nom,
@@ -128,10 +129,15 @@ export function actionNewToDeprecated(action: ActionDetailed) {
           ...action.actionsEnfant.flatMap((a) => a.score.avancement ?? []),
         ]
       : action.actionsEnfant.flatMap((a) => a.score.avancement ?? []),
-  };
+  } satisfies ProgressionRow;
 
   return {
     ...DEPRECATED_action,
+    referentiel: getReferentielIdFromActionId(action.actionId),
+    score_realise_plus_programme: divisionOrZero(
+      action.score.pointFait + action.score.pointProgramme,
+      action.score.pointPotentiel
+    ),
     sourceAction: action,
   };
 }

@@ -5,7 +5,7 @@ import { GetLabellisationRouter } from './labellisations/get-labellisation.route
 import { StartAuditRouter } from './labellisations/start-audit/start-audit.router';
 import { ValidateAuditRouter } from './labellisations/validate-audit/validate-audit.router';
 import { ListActionsRouter } from './list-actions/list-actions.router';
-import { SnapshotsRouter } from './snapshots/snaphots.router';
+import { SnapshotsRouter } from './snapshots/snapshots.router';
 import { UpdateActionStatutRouter } from './update-action-statut/update-action-statut.router';
 
 @Injectable()
@@ -36,4 +36,6 @@ export class ReferentielsRouter {
       this.getLabellisation.router
     ),
   });
+
+  createCaller = this.trpc.createCallerFactory(this.router);
 }

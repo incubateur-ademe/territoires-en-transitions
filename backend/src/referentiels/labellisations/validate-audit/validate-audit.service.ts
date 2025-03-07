@@ -3,7 +3,7 @@ import { Injectable, NotFoundException } from '@nestjs/common';
 import { eq } from 'drizzle-orm';
 import ScoresService from '../../compute-score/scores.service';
 import { ComputeScoreMode } from '../../models/compute-scores-mode.enum';
-import { SnapshotJalon } from '../../snapshots/snapshot-jalon.enum';
+import { SnapshotJalonEnum } from '../../snapshots/snapshot.table';
 import { Audit, auditTable } from '../audit.table';
 
 @Injectable()
@@ -40,7 +40,7 @@ export class ValidateAuditService {
       {
         mode: ComputeScoreMode.RECALCUL,
         auditId: audit.id,
-        jalon: SnapshotJalon.POST_AUDIT,
+        jalon: SnapshotJalonEnum.POST_AUDIT,
         snapshot: true,
         snapshotForceUpdate: true,
       },

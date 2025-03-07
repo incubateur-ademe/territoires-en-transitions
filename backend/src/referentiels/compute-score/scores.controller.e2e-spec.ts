@@ -10,7 +10,7 @@ import { ActionStatut, referentielIdEnumSchema } from '../index-domain';
 import { ActionTypeEnum } from '../models/action-type.enum';
 import { GetScoreSnapshotsResponseType } from '../models/get-score-snapshots.response';
 import { HistoriqueActionStatutType } from '../models/historique-action-statut.table';
-import { SnapshotJalon } from '../snapshots/snapshot-jalon.enum';
+import { SnapshotJalonEnum } from '../snapshots/snapshot.table';
 import { ActionStatutsByActionId } from './action-statuts-by-action-id.dto';
 import { GetReferentielScoresResponseType } from './get-referentiel-scores.response';
 import { Score } from './score.dto';
@@ -249,7 +249,7 @@ describe('Referentiels scoring routes', () => {
     const expectedCurrentSnapshotList: GetScoreSnapshotsResponseType = {
       collectiviteId: 1,
       referentielId: referentielIdEnumSchema.enum.cae,
-      typesJalon: [SnapshotJalon.SCORE_COURANT],
+      typesJalon: [SnapshotJalonEnum.SCORE_COURANT],
       snapshots: [
         {
           auditId: null,
@@ -273,7 +273,7 @@ describe('Referentiels scoring routes', () => {
           pointProgramme: 0.21,
           ref: 'score-courant',
           referentielVersion: '1.0.0',
-          typeJalon: SnapshotJalon.SCORE_COURANT,
+          typeJalon: SnapshotJalonEnum.SCORE_COURANT,
         },
       ],
     };
@@ -302,13 +302,13 @@ describe('Referentiels scoring routes', () => {
     const expectedSnapshotList: GetScoreSnapshotsResponseType = {
       collectiviteId: 1,
       referentielId: referentielIdEnumSchema.enum.cae,
-      typesJalon: [SnapshotJalon.DATE_PERSONNALISEE],
+      typesJalon: [SnapshotJalonEnum.DATE_PERSONNALISEE],
       snapshots: [
         {
           date: expect.toEqualDate(getReferentielScoresResponseType.date),
           nom: 'test à accent',
           ref: 'user-test-a-accent',
-          typeJalon: SnapshotJalon.DATE_PERSONNALISEE,
+          typeJalon: SnapshotJalonEnum.DATE_PERSONNALISEE,
           modifiedAt: getReferentielScoresResponseType.snapshot!.modifiedAt,
           createdAt: getReferentielScoresResponseType.snapshot!.createdAt,
           referentielVersion: '1.0.0',
