@@ -1,9 +1,8 @@
 import z from 'zod';
-import { SnapshotJalon } from '../snapshots/snapshot-jalon.enum';
-import { scoreSnapshotSchema } from '../snapshots/snapshot.table';
+import { SnapshotJalonEnum, snapshotSchema } from '../snapshots/snapshot.table';
 import { referentielIdEnumSchema } from './referentiel-id.enum';
 
-export const scoreSnapshotInfo = scoreSnapshotSchema
+export const scoreSnapshotInfo = snapshotSchema
   .pick({
     ref: true,
     nom: true,
@@ -26,7 +25,7 @@ export const scoreSnapshotInfo = scoreSnapshotSchema
 
 export type ScoreSnapshotInfoType = z.infer<typeof scoreSnapshotInfo>;
 
-export const scoreSnapshotCollectiviteInfo = scoreSnapshotSchema
+export const scoreSnapshotCollectiviteInfo = snapshotSchema
   .pick({
     collectiviteId: true,
     referentielId: true,
@@ -57,7 +56,7 @@ export const getScoreSnapshotsResponseSchema = z
   .object({
     collectiviteId: z.number(),
     referentielId: referentielIdEnumSchema,
-    typesJalon: z.nativeEnum(SnapshotJalon).array(),
+    typesJalon: z.nativeEnum(SnapshotJalonEnum).array(),
     snapshots: scoreSnapshotInfo.array(),
   })
   .describe(

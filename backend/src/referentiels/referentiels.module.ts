@@ -19,10 +19,11 @@ import { ValidateAuditService } from './labellisations/validate-audit/validate-a
 import { ListActionDefinitionsService } from './list-action-definitions/list-action-definitions.service';
 import { ListActionsRouter } from './list-actions/list-actions.router';
 import { ReferentielsRouter } from './referentiels.router';
-import { SnapshotsRouter } from './snapshots/snaphots.router';
+import { SnapshotsRouter } from './snapshots/snapshots.router';
 import { SnapshotsService } from './snapshots/snapshots.service';
 import { UpdateActionStatutRouter } from './update-action-statut/update-action-statut.router';
 import { UpdateActionStatutService } from './update-action-statut/update-action-statut.service';
+import { ListSnapshotsService } from './snapshots/list-snapshots/list-snapshots.service';
 
 @Module({
   imports: [CollectivitesModule, SheetModule, PersonnalisationsModule],
@@ -46,6 +47,7 @@ import { UpdateActionStatutService } from './update-action-statut/update-action-
 
     SnapshotsService,
     SnapshotsRouter,
+    ListSnapshotsService,
 
     ScoresService,
     ExportScoreService,
