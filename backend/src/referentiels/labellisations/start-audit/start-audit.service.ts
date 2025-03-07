@@ -7,7 +7,7 @@ import {
 import { eq, sql } from 'drizzle-orm';
 import ScoresService from '../../compute-score/scores.service';
 import { ComputeScoreMode } from '../../models/compute-scores-mode.enum';
-import { SnapshotJalon } from '../../snapshots/snapshot-jalon.enum';
+import { SnapshotJalonEnum } from '../../snapshots/snapshot.table';
 import { Audit, auditTable } from '../audit.table';
 import { labellisationDemandeTable } from '../labellisation-demande.table';
 
@@ -64,7 +64,7 @@ export class StartAuditService {
       {
         mode: ComputeScoreMode.RECALCUL,
         auditId: startedAudit.id,
-        jalon: SnapshotJalon.PRE_AUDIT,
+        jalon: SnapshotJalonEnum.PRE_AUDIT,
         snapshot: true,
         snapshotForceUpdate: true,
       },

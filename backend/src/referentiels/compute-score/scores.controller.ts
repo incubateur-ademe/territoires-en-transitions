@@ -33,6 +33,7 @@ import {
   SNAPSHOT_REF_PARAM_KEY,
 } from '../models/referentiel-api.constants';
 import { ReferentielId } from '../models/referentiel-id.enum';
+import { ListSnapshotsService } from '../snapshots/list-snapshots/list-snapshots.service';
 import { SnapshotsService } from '../snapshots/snapshots.service';
 import { actionStatutsByActionIdSchema } from './action-statuts-by-action-id.dto';
 import {
@@ -88,6 +89,7 @@ export class ReferentielsScoringController {
   constructor(
     private readonly referentielsScoringService: ScoresService,
     private readonly referentielsScoringSnapshotsService: SnapshotsService,
+    private readonly listSnapshots: ListSnapshotsService,
     private readonly exportReferentielScoreService: ExportScoreService
   ) {}
 
@@ -170,14 +172,15 @@ export class ReferentielsScoringController {
   async list(
     @Param(COLLECTIVITE_ID_PARAM_KEY) collectiviteId: number,
     @Param(REFERENTIEL_ID_PARAM_KEY) referentielId: ReferentielId,
-    @Query() parameters: GetScoreSnapshotsRequestClass,
-    @TokenInfo() tokenInfo: AuthUser
+    @Query() options: GetScoreSnapshotsRequestClass
   ): Promise<GetScoreSnapshotsResponseClass> {
-    return this.referentielsScoringSnapshotsService.list(
+    return this.listSnapshots.list({
       collectiviteId,
       referentielId,
-      parameters
-    );
+      options: {
+        jalons: options.typesJalon,
+      },
+    });
   }
 
   @AllowAnonymousAccess()
