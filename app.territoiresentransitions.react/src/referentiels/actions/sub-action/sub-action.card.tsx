@@ -6,7 +6,6 @@ import { useActionSummaryChildren } from '@/app/referentiels/referentiel-hooks';
 import { Accordion } from '@/app/ui/Accordion';
 import { useEffect, useRef, useState } from 'react';
 import SubActionTasksList from '../sub-action-task/sub-action-task.list';
-import ActionJustification from './sub-action-justification';
 import SubActionPreuvesAccordion from './sub-action-preuves.accordion';
 import SubActionDescription from './sub-action.description';
 import SubActionHeader from './sub-action.header';
@@ -134,18 +133,7 @@ const SubActionCard = ({
         <div className="p-6">
           {/* Commentaire associé à la sous-action */}
           {(auditStatus !== 'audit_en_cours' || openSubAction) && (
-            <>
-              <ActionCommentaire action={subAction} className="mb-10" />
-              {subAction.referentiel === 'cae' &&
-              avancement === 'detaille' &&
-              subAction.children?.length ? (
-                <ActionJustification
-                  action={subAction}
-                  className="mb-10"
-                  title="Justification de l’ajustement manuel du score"
-                />
-              ) : null}
-            </>
+            <ActionCommentaire action={subAction} className="mb-10" />
           )}
 
           {/* Section Description et Exemples */}
