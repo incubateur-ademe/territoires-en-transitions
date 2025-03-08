@@ -10,7 +10,6 @@ import DOMPurify from 'dompurify';
 import { useEffect, useState } from 'react';
 import { useScore, useSnapshotFlagEnabled } from '../../use-snapshot';
 import { useScoreRealise } from '../DEPRECATED_useScoreRealise';
-import ActionJustification from './sub-action-justification';
 
 type SubActionHeaderProps = {
   actionDefinition: ActionDefinitionSummary;
@@ -38,7 +37,10 @@ const SubActionHeader = ({
   onToggleOpen,
 }: SubActionHeaderProps): JSX.Element => {
   const FLAG_isSnapshotEnabled = useSnapshotFlagEnabled();
-  const DEPRECATED_actionScores = useScoreRealise(actionDefinition, !FLAG_isSnapshotEnabled);
+  const DEPRECATED_actionScores = useScoreRealise(
+    actionDefinition,
+    !FLAG_isSnapshotEnabled
+  );
   const NEW_score = useScore(actionDefinition.id);
 
   const [open, setOpen] = useState(openSubAction);
@@ -147,15 +149,6 @@ const SubActionHeader = ({
       {displayActionCommentaire && (
         <div className="col-span-full" onClick={(evt) => evt.stopPropagation()}>
           <ActionCommentaire action={actionDefinition} />
-          {actionDefinition.referentiel === 'cae' &&
-            actionAvancement === 'detaille' &&
-            actionDefinition.children?.length ? (
-            <ActionJustification
-              action={actionDefinition}
-              className="mt-10"
-              title="Justification de l’ajustement manuel du score"
-            />
-          ) : null}
         </div>
       )}
     </div>
