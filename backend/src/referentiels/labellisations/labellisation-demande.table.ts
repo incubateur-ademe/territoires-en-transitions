@@ -9,22 +9,25 @@ import {
 } from 'drizzle-orm/pg-core';
 import { authUsersTable } from '../../auth/models/auth-users.table';
 import { collectiviteTable } from '../../collectivites/shared/models/collectivite.table';
-import { labellisationEtoileEnum } from './labellisation-etoile.table';
+import { referentielIdPgEnum } from '../models/referentiel-id.enum';
+import { etoilePgEnum } from './etoile-definition.table';
 import { labellisationSchema } from './labellisation.schema';
-import { referentielIdPgEnum } from './referentiel-id.enum';
 
-export enum LabellisationSujetDemandeEnumType {
-  LABELLISATION = 'labellisation',
-  LABELLISATION_COT = 'labellisation_cot',
-  COT = 'cot',
-}
+export const SujetDemandeEnum = {
+  LABELLISATION: 'labellisation',
+  LABELLISATION_COT: 'labellisation_cot',
+  COT: 'cot',
+} as const;
+
+export type SujetDemande =
+  (typeof SujetDemandeEnum)[keyof typeof SujetDemandeEnum];
 
 export const labellisationSujetDemandeEnum = labellisationSchema.enum(
   'sujet_demande',
   [
-    LabellisationSujetDemandeEnumType.LABELLISATION,
-    LabellisationSujetDemandeEnumType.LABELLISATION_COT,
-    LabellisationSujetDemandeEnumType.COT,
+    SujetDemandeEnum.LABELLISATION,
+    SujetDemandeEnum.LABELLISATION_COT,
+    SujetDemandeEnum.COT,
   ]
 );
 
@@ -36,7 +39,7 @@ export const labellisationDemandeTable = labellisationSchema.table(
     collectiviteId: integer('collectivite_id').notNull(),
     // TODO: change later to use the referentiel definition table
     referentiel: referentielIdPgEnum('referentiel').notNull(),
-    etoiles: labellisationEtoileEnum('etoiles'),
+    etoiles: etoilePgEnum('etoiles'),
     date: timestamp('date', TIMESTAMP_OPTIONS).defaultNow().notNull(),
     sujet: labellisationSujetDemandeEnum('sujet'),
     modifiedAt: timestamp('modified_at', {
@@ -61,3 +64,6 @@ export const labellisationDemandeTable = labellisationSchema.table(
     };
   }
 );
+
+export type LabellisationDemande =
+  typeof labellisationDemandeTable.$inferSelect;

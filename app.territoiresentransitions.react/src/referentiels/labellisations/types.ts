@@ -1,5 +1,6 @@
 import { Database, Tables } from '@/api';
 import { TAudit } from '@/app/referentiels/audits/types';
+import { Etoile } from '@/domain/referentiels/labellisations';
 
 export type TEtoiles = Database['labellisation']['Enums']['etoile'];
 export type TSujetDemande = Database['labellisation']['Enums']['sujet_demande'];
@@ -21,7 +22,7 @@ export type TLabellisationParcours = {
   /** Référentiel concerné */
   referentiel: Database['public']['Enums']['referentiel'];
   /** Nombre d'étoiles atteignables */
-  etoiles: TEtoiles;
+  etoiles: Etoile;
   /** Vrai si le critère de remplissage du référentiel est rempli */
   completude_ok: boolean;
   /** Critères liés aux actions à remplir */
@@ -30,10 +31,6 @@ export type TLabellisationParcours = {
   critere_score: TCritereScore;
   /** Indique que les critères action, score et fichiers de labellisation sont tous atteints */
   rempli: boolean;
-  /** Dates des prochaines sessions d'audit (exemple: Les prochaines sessions
-   d’audit sont planifiées du 23 avril au 23 juin 2022 et du 5 novembre 2022
-   au 5 janvier 2023.) */
-  calendrier: string;
   /** Demande de labellisation associée au parcours */
   demande: TDemandeAudit | null;
   /** Dernière labellisation obtenue */
@@ -52,19 +49,17 @@ type TCritereAction = {
   prio: number;
   /** Identifiant de l'action (exemple: eci_1.1.1.1) */
   action_id: string;
-  /** Identifiant de l'action dans le référentiel (exemple: 1.1.1.1) */
-  action_identifiant: string;
   /** Statut ou score requis pour que le critère soit rempli (exemple: "Programmé
       ou fait") */
   statut_ou_score: string;
   /** Etoile pour laquelle le critère est requis */
-  etoile: TEtoiles;
+  etoile: Etoile;
 };
 
 /** Critère lié au score de la collectivité pour un référentiel */
 type TCritereScore = {
   atteint: boolean;
-  etoiles: TEtoiles;
+  etoiles: Etoile;
   score_fait: number;
   score_a_realiser: number;
 };

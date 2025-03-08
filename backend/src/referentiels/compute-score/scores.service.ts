@@ -45,7 +45,11 @@ import { CorrelatedActionWithScore } from '../correlated-actions/referentiel-act
 import { GetReferentielResponseType } from '../get-referentiel/get-referentiel.response';
 import { GetReferentielService } from '../get-referentiel/get-referentiel.service';
 import { ActionDefinition } from '../index-domain';
-import { LabellisationService } from '../labellisation.service';
+import { Audit } from '../labellisations/audit.table';
+import { EtoileDefinition } from '../labellisations/etoile-definition.table';
+import { LabellisationService } from '../labellisations/labellisation.service';
+import { postAuditScoresTable } from '../labellisations/post-audit-scores.table';
+import { preAuditScoresTable } from '../labellisations/pre-audit-scores.table';
 import { actionCommentaireTable } from '../models/action-commentaire.table';
 import {
   ActionDefinitionEssential,
@@ -70,13 +74,9 @@ import { GetReferentielScoresRequestType } from '../models/get-referentiel-score
 import { ScoreSnapshotInfoType } from '../models/get-score-snapshots.response';
 import { historiqueActionCommentaireTable } from '../models/historique-action-commentaire.table';
 import { historiqueActionStatutTable } from '../models/historique-action-statut.table';
-import { LabellisationAuditType } from '../models/labellisation-audit.table';
-import { LabellisationEtoileMetaType } from '../models/labellisation-etoile.table';
-import { postAuditScoresTable } from '../models/post-audit-scores.table';
-import { preAuditScoresTable } from '../models/pre-audit-scores.table';
 import { ReferentielId } from '../models/referentiel-id.enum';
 import { getParentIdFromActionId } from '../referentiels.utils';
-import { SnapshotJalon } from '../snapshots/snapshot-jalon.enum';
+import { SnapshotJalon, SnapshotJalonEnum } from '../snapshots/snapshot.table';
 import { SnapshotsService } from '../snapshots/snapshots.service';
 import { ActionStatutsByActionId } from './action-statuts-by-action-id.dto';
 import { GetReferentielScoresResponseType } from './get-referentiel-scores.response';
@@ -775,7 +775,7 @@ export default class ScoresService {
 
   private computeEtoiles(
     action: ActionWithScore,
-    etoilesDefinition: LabellisationEtoileMetaType[],
+    etoilesDefinition: EtoileDefinition[],
     recursive = false
   ) {
     // Compute etoiles only for root level by default
@@ -791,7 +791,7 @@ export default class ScoresService {
 
   private fillEtoilesInScore(
     score: Score,
-    etoilesDefinition: LabellisationEtoileMetaType[]
+    etoilesDefinition: EtoileDefinition[]
   ) {
     // WARNING the etoiles definition is supposed to have been sorted by minRealisePercentage desc
     for (const etoileDefinition of etoilesDefinition) {
@@ -799,7 +799,7 @@ export default class ScoresService {
         ? ((score.pointFait || 0) * 100) / score.pointPotentiel
         : 0;
       if (scorePercentage >= etoileDefinition.minRealisePercentage) {
-        score.etoiles = parseInt(etoileDefinition.etoile);
+        score.etoiles = etoileDefinition.etoile;
         break;
       }
     }
@@ -1116,15 +1116,15 @@ export default class ScoresService {
       }
       // Later we can have snapshots for other jalon
       if (
-        (parameters.jalon === SnapshotJalon.PRE_AUDIT ||
-          parameters.jalon === SnapshotJalon.POST_AUDIT) &&
+        (parameters.jalon === SnapshotJalonEnum.PRE_AUDIT ||
+          parameters.jalon === SnapshotJalonEnum.POST_AUDIT) &&
         !parameters.avecReferentielsOrigine
       ) {
-        const audits = await this.labellisationService.getAuditsForCollectivite(
+        const audits = await this.labellisationService.listAudits({
           collectiviteId,
           referentielId,
-          true
-        );
+        });
+
         if (!audits.length) {
           throw new HttpException(
             `Aucun audit trouvé pour la collectivité ${collectiviteId} (auditId: ${parameters.auditId})`,
@@ -1133,7 +1133,7 @@ export default class ScoresService {
         }
 
         // Audits are sorted by date desc
-        let audit: LabellisationAuditType | undefined = audits[0];
+        let audit: Audit | undefined = audits[0];
         if (parameters.anneeAudit) {
           audit = audits.find(
             (a) =>
@@ -1161,7 +1161,7 @@ export default class ScoresService {
         }
         auditId = audit.id;
         parameters.date =
-          (parameters.jalon === SnapshotJalon.PRE_AUDIT
+          (parameters.jalon === SnapshotJalonEnum.PRE_AUDIT
             ? audit.dateDebut
             : audit.dateFin) || undefined;
 
@@ -1171,15 +1171,15 @@ export default class ScoresService {
       }
     } else {
       parameters.jalon = parameters.date
-        ? SnapshotJalon.DATE_PERSONNALISEE
-        : SnapshotJalon.SCORE_COURANT;
+        ? SnapshotJalonEnum.DATE_PERSONNALISEE
+        : SnapshotJalonEnum.SCORE_COURANT;
     }
 
     if (parameters.snapshotNom) {
       parameters.snapshot = true;
       if (
-        parameters.jalon !== SnapshotJalon.SCORE_COURANT &&
-        parameters.jalon !== SnapshotJalon.DATE_PERSONNALISEE
+        parameters.jalon !== SnapshotJalonEnum.SCORE_COURANT &&
+        parameters.jalon !== SnapshotJalonEnum.DATE_PERSONNALISEE
       ) {
         throw new HttpException(
           `Un nom de snapshot ne peut être défini que pour le score courant ou une date personnalisée`,
@@ -1670,7 +1670,7 @@ export default class ScoresService {
         CorrelatedActionsWithScoreFields
     >,
     personnalisationConsequences: PersonnalisationConsequencesByActionId,
-    etoilesDefinitions?: LabellisationEtoileMetaType[]
+    etoilesDefinitions?: EtoileDefinition[]
   ) {
     const actionsOrigineMap: {
       [origineActionId: string]: CorrelatedActionWithScore;
@@ -1712,7 +1712,7 @@ export default class ScoresService {
           `Une date ne doit pas être fournie lorsqu'on veut récupérer les scores depuis une sauvegarde`,
           400
         );
-      } else if (parameters.jalon === SnapshotJalon.SCORE_COURANT) {
+      } else if (parameters.jalon === SnapshotJalonEnum.SCORE_COURANT) {
         // Get scores from sauvegarde
         referentielsOrigine.forEach((referentielOrigine) => {
           referentielsOriginePromiseScores.push(
@@ -1723,7 +1723,7 @@ export default class ScoresService {
             )
           );
         });
-      } else if (parameters.jalon === SnapshotJalon.PRE_AUDIT) {
+      } else if (parameters.jalon === SnapshotJalonEnum.PRE_AUDIT) {
         // Get scores from sauvegarde
         referentielsOrigine.forEach((referentielOrigine) => {
           referentielsOriginePromiseScores.push(
@@ -1735,7 +1735,7 @@ export default class ScoresService {
             )
           );
         });
-      } else if (parameters.jalon === SnapshotJalon.POST_AUDIT) {
+      } else if (parameters.jalon === SnapshotJalonEnum.POST_AUDIT) {
         // Get scores from sauvegarde
         referentielsOrigine.forEach((referentielOrigine) => {
           referentielsOriginePromiseScores.push(
@@ -1823,7 +1823,7 @@ export default class ScoresService {
     actionLevel: number,
     actionStatutExplications?: GetActionStatutExplicationsResponseType,
     actionPreuves?: { [actionId: string]: PreuveDto[] },
-    etoilesDefinitions?: LabellisationEtoileMetaType[]
+    etoilesDefinitions?: EtoileDefinition[]
   ) {
     const actionStatutsKeys = Object.keys(actionStatuts);
     for (const actionStatutKey of actionStatutsKeys) {
@@ -1903,7 +1903,7 @@ export default class ScoresService {
     auditId: number,
     statutExplications?: GetActionStatutExplicationsResponseType,
     actionPreuves?: { [actionId: string]: PreuveDto[] },
-    etoiles?: LabellisationEtoileMetaType[]
+    etoiles?: EtoileDefinition[]
   ): Promise<{
     date: string;
     actionWithScore: TreeNode<
@@ -1919,20 +1919,20 @@ export default class ScoresService {
           scoresMap: ScoresByActionId;
         }
       | undefined = undefined;
-    if (jalon === SnapshotJalon.SCORE_COURANT) {
+    if (jalon === SnapshotJalonEnum.SCORE_COURANT) {
       scoresResult = await this.getClientScoresForCollectivite(
         referentielId,
         collectiviteId,
         etoiles
       );
-    } else if (jalon === SnapshotJalon.PRE_AUDIT) {
+    } else if (jalon === SnapshotJalonEnum.PRE_AUDIT) {
       scoresResult = await this.getPreAuditScoresForCollectivite(
         referentielId,
         collectiviteId,
         auditId,
         etoiles
       );
-    } else if (jalon === SnapshotJalon.POST_AUDIT) {
+    } else if (jalon === SnapshotJalonEnum.POST_AUDIT) {
       scoresResult = await this.getPostAuditScoresForCollectivite(
         referentielId,
         collectiviteId,
@@ -1964,7 +1964,7 @@ export default class ScoresService {
   private async getClientScoresForCollectivite(
     referentielId: ReferentielId,
     collectiviteId: number,
-    etoilesDefinition?: LabellisationEtoileMetaType[]
+    etoilesDefinition?: EtoileDefinition[]
   ): Promise<{
     date: string;
     scoresMap: ScoresByActionId;
@@ -1988,7 +1988,7 @@ export default class ScoresService {
 
   private async getFirstDatabaseScoreFromJsonb(
     scoreRecords: ClientScoresType[],
-    etoilesDefinition?: LabellisationEtoileMetaType[]
+    etoilesDefinition?: EtoileDefinition[]
   ): Promise<{
     date: string;
     scoresMap: ScoresByActionId;
@@ -2031,7 +2031,7 @@ export default class ScoresService {
     referentielId: ReferentielId,
     collectiviteId: number,
     auditId?: number,
-    etoilesDefinition?: LabellisationEtoileMetaType[]
+    etoilesDefinition?: EtoileDefinition[]
   ): Promise<{
     date: string;
     scoresMap: ScoresByActionId;
@@ -2060,7 +2060,7 @@ export default class ScoresService {
     referentielId: ReferentielId,
     collectiviteId: number,
     auditId?: number,
-    etoilesDefinition?: LabellisationEtoileMetaType[]
+    etoilesDefinition?: EtoileDefinition[]
   ): Promise<{
     date: string;
     scoresMap: ScoresByActionId;
@@ -2334,7 +2334,7 @@ export default class ScoresService {
       collectiviteId: score.collectiviteId,
       referentiel: score.referentiel,
       auditId: score.auditId,
-      jalon: SnapshotJalon.POST_AUDIT,
+      jalon: SnapshotJalonEnum.POST_AUDIT,
     }));
     this.logger.log(`Found ${postAuditScores.length} post audit scores`);
 
@@ -2351,7 +2351,7 @@ export default class ScoresService {
       collectiviteId: score.collectiviteId,
       referentiel: score.referentiel,
       auditId: score.auditId,
-      jalon: SnapshotJalon.PRE_AUDIT,
+      jalon: SnapshotJalonEnum.PRE_AUDIT,
     }));
     this.logger.log(`Found ${preAuditScores.length} post audit scores`);
 
@@ -2367,7 +2367,7 @@ export default class ScoresService {
       collectiviteId: score.collectiviteId,
       referentiel: score.referentiel,
       auditId: undefined,
-      jalon: SnapshotJalon.SCORE_COURANT,
+      jalon: SnapshotJalonEnum.SCORE_COURANT,
     }));
     this.logger.log(`Found ${preAuditScores.length} client current scores`);
 

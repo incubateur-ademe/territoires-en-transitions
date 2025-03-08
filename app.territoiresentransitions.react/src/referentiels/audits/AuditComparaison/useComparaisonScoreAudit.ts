@@ -1,18 +1,83 @@
 import { DBClient } from '@/api';
 import { useSupabase } from '@/api/utils/supabase/use-supabase';
+import { RouterOutput, trpc } from '@/api/utils/trpc/client';
+import {
+  findActionById,
+  flatMapActionsEnfants,
+  ReferentielId,
+  SnapshotJalonEnum,
+} from '@/domain/referentiels';
 import { useQuery } from 'react-query';
+import { actionNewToDeprecated } from '../../DEPRECATED_scores.types';
+import { useSnapshotFlagEnabled } from '../../use-snapshot';
 import { TComparaisonScoreAudit } from './types';
+
+type Snapshot =
+  RouterOutput['referentiels']['snapshots']['listWithScores']['snapshots'][number];
 
 // charge les comparaisons de potentiels/scores avant/après audit
 export const useComparaisonScoreAudit = (
-  collectivite_id: number | null,
-  referentiel: string | null
+  collectiviteId: number,
+  referentielId: ReferentielId
 ) => {
   const supabase = useSupabase();
-  return useQuery(
-    ['comparaison_scores_audit', collectivite_id, referentiel],
-    () => fetchComparaisonScoreAudit(supabase, collectivite_id, referentiel)
+
+  const FLAG_isSnapshotEnabled = useSnapshotFlagEnabled();
+
+  const DEPRECATED_query = useQuery(
+    ['comparaison_scores_audit', collectiviteId, referentielId],
+    () => fetchComparaisonScoreAudit(supabase, collectiviteId, referentielId),
+    {
+      enabled: !FLAG_isSnapshotEnabled,
+    }
   );
+
+  const NEW_query = trpc.referentiels.snapshots.listWithScores.useQuery(
+    {
+      collectiviteId,
+      referentielId,
+      options: {
+        jalons: [SnapshotJalonEnum.PRE_AUDIT, SnapshotJalonEnum.SCORE_COURANT],
+      },
+    },
+    {
+      enabled: FLAG_isSnapshotEnabled,
+      select({ snapshots }) {
+        const currentSnapshot = snapshots.find(
+          (snap) => snap.typeJalon === SnapshotJalonEnum.SCORE_COURANT
+        );
+
+        const preAuditSnapshot = snapshots.find(
+          (snap) => snap.typeJalon === SnapshotJalonEnum.PRE_AUDIT
+        );
+
+        if (!currentSnapshot || !preAuditSnapshot) {
+          return [];
+        }
+
+        const scores: Snapshot['scores'] = currentSnapshot.scores;
+
+        const result = flatMapActionsEnfants(scores).map((currentAction) => {
+          const preAuditAction = findActionById(
+            preAuditSnapshot.scores,
+            currentAction.actionId
+          );
+
+          return {
+            collectivite_id: collectiviteId,
+            referentiel: referentielId,
+            action_id: currentAction.actionId,
+            courant: actionNewToDeprecated(currentAction),
+            pre_audit: actionNewToDeprecated(preAuditAction),
+          };
+        });
+
+        return result as TComparaisonScoreAudit[];
+      },
+    }
+  );
+
+  return FLAG_isSnapshotEnabled ? NEW_query : DEPRECATED_query;
 };
 
 export const fetchComparaisonScoreAudit = async (

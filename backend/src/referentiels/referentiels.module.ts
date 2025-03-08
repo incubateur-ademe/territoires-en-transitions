@@ -10,19 +10,26 @@ import { GetReferentielController } from './get-referentiel/get-referentiel.cont
 import { GetReferentielService } from './get-referentiel/get-referentiel.service';
 import { ImportReferentielController } from './import-referentiel/import-referentiel.controller';
 import ImportReferentielService from './import-referentiel/import-referentiel.service';
-import { LabellisationService } from './labellisation.service';
+import { GetLabellisationRouter } from './labellisations/get-labellisation.router';
+import { LabellisationService } from './labellisations/labellisation.service';
+import { StartAuditRouter } from './labellisations/start-audit/start-audit.router';
+import { StartAuditService } from './labellisations/start-audit/start-audit.service';
+import { ValidateAuditRouter } from './labellisations/validate-audit/validate-audit.router';
+import { ValidateAuditService } from './labellisations/validate-audit/validate-audit.service';
 import { ListActionDefinitionsService } from './list-action-definitions/list-action-definitions.service';
 import { ListActionsRouter } from './list-actions/list-actions.router';
 import { ReferentielsRouter } from './referentiels.router';
-import { SnapshotsRouter } from './snapshots/snaphots.router';
+import { SnapshotsRouter } from './snapshots/snapshots.router';
 import { SnapshotsService } from './snapshots/snapshots.service';
 import { UpdateActionStatutRouter } from './update-action-statut/update-action-statut.router';
 import { UpdateActionStatutService } from './update-action-statut/update-action-statut.service';
+import { ListSnapshotsService } from './snapshots/list-snapshots/list-snapshots.service';
 
 @Module({
   imports: [CollectivitesModule, SheetModule, PersonnalisationsModule],
   providers: [
     GetReferentielService,
+    ImportReferentielService,
 
     ListActionDefinitionsService,
     ListActionsRouter,
@@ -30,24 +37,25 @@ import { UpdateActionStatutService } from './update-action-statut/update-action-
     UpdateActionStatutService,
     UpdateActionStatutRouter,
 
+    // Labellisation
     LabellisationService,
+    GetLabellisationRouter,
+    StartAuditService,
+    StartAuditRouter,
+    ValidateAuditService,
+    ValidateAuditRouter,
+
     SnapshotsService,
+    SnapshotsRouter,
+    ListSnapshotsService,
 
     ScoresService,
+    ExportScoreService,
     ComputeScoreRouter,
-    SnapshotsRouter,
+
     ReferentielsRouter,
-    ExportScoreService,
-    ImportReferentielService,
   ],
-  exports: [
-    ReferentielsRouter,
-    LabellisationService,
-    SnapshotsService,
-    ScoresService,
-    UpdateActionStatutService,
-    ExportScoreService,
-  ],
+  exports: [ReferentielsRouter],
   controllers: [
     GetReferentielController,
     ImportReferentielController,

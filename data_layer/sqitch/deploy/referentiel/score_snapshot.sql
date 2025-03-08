@@ -2,34 +2,88 @@
 
 BEGIN;
 
--- ↓↓ DROP ↓↓ - Drop unecessary triggers
-DROP TRIGGER IF EXISTS after_save_snapshot ON client_scores;
-DROP FUNCTION IF EXISTS public.after_client_scores_save_snapshot();
-
-DROP TRIGGER IF EXISTS after_save_snapshot ON post_audit_scores;
-DROP FUNCTION IF EXISTS public.after_post_audit_scores_save_snapshot();
-
-DROP TRIGGER IF EXISTS after_save_snapshot ON pre_audit_scores;
-DROP FUNCTION IF EXISTS public.after_pre_audit_scores_save_snapshot();
--- ↑↑ DROP ↑↑
-
-
--- ↓↓ DROP ↓↓ - Drop unecessary function
--- La function PG de recalcul du score (avec l'option "depuis_sauvegarde") n'est plus nécessaire car
--- le recalcul du score est désormais fait côté code lors de la mise à jour des statuts des actions
--- ou de la personnalisation
-DROP function automatisation.save_score_snapshot(
+-- Recrée la function initiale
+create or replace function automatisation.save_score_snapshot(
 	collectivite_id integer,
 	referentiel referentiel,
 	jalon varchar,
 	audit_id integer,
-  out status integer
-);
--- ↑↑ DROP ↑↑
+    out status integer
+)
+as
+$$
+with configuration as (select
+                        CONCAT(service_url,'/api/v1/collectivites/',collectivite_id::text,'/referentiels/', referentiel, '/scores?mode=depuis_sauvegarde&snapshot=true&snapshotForceUpdate=true&jalon=', jalon, '&auditId=', audit_id) as full_url,
+                        jsonb_build_object(
+                            'Authorization', CONCAT('Bearer ', token)
+                        ) as headers
+                       from config.service_configurations as config
+                       where service_key = 'backend'
+                       order by config.created_at desc
+                       limit 1)
+select post.*
+from configuration -- si il n'y a aucune configuration on ne fait pas d'appel
+         left join lateral (select *
+                            from net.http_get(
+                                    configuration.full_url,
+                                    '{}'::jsonb,
+                                    configuration.headers
+                                )
+    ) as post on true
+$$
+    language sql
+    security definer
+    -- permet au trigger d'utiliser l'extension http.
+    set search_path = public, extensions;
+comment on function automatisation.save_score_snapshot
+    is 'Sauvegarde des scores dans la table score_snapshot';
 
 
--- ↓↓ DROP ↓↓ - Drop deprecated and unused functions
-DROP FUNCTION IF EXISTS public.action_preuve(id action_id, OUT id action_id, OUT preuve text);
--- ↑↑ DROP ↑↑
+
+-- Recrée l'ancien trigger sur la table `post_audit_scores`
+
+CREATE OR REPLACE FUNCTION public.after_post_audit_scores_save_snapshot()
+ RETURNS trigger
+ LANGUAGE plpgsql
+ SECURITY DEFINER
+AS $function$
+begin
+    perform automatisation.save_score_snapshot(new.collectivite_id, new.referentiel, 'post_audit', new.audit_id);
+    return new;
+exception -- si l'appel lève une erreur on continue.
+    when others then return new;
+end
+$function$
+;
+
+create trigger after_save_snapshot
+    after insert or update
+    on post_audit_scores
+    for each row
+execute procedure after_post_audit_scores_save_snapshot();
+
+
+-- Recrée l'ancien trigger sur la table `pre_audit_scores`
+
+CREATE OR REPLACE FUNCTION public.after_pre_audit_scores_save_snapshot()
+ RETURNS trigger
+ LANGUAGE plpgsql
+ SECURITY DEFINER
+AS $function$
+begin
+    perform automatisation.save_score_snapshot(new.collectivite_id, new.referentiel, 'pre_audit', new.audit_id);
+    return new;
+exception -- si l'appel lève une erreur on continue.
+    when others then return new;
+end
+$function$
+;
+
+create trigger after_save_snapshot
+    after insert or update
+    on pre_audit_scores
+    for each row
+execute procedure after_pre_audit_scores_save_snapshot();
+
 
 COMMIT;

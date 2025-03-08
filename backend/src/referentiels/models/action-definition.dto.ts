@@ -8,9 +8,9 @@ type Increment<N extends number> = N extends infer R
   : never;
 
 export type TreeNode<T, Depth extends number = 0> = Depth extends 5
-  ? T
+  ? never
   : T & {
-      actionsEnfant: TreeNode<T, Increment<Depth>>[];
+      actionsEnfant: NonNullable<TreeNode<T, Increment<Depth>>>[];
     };
 
 export function treeNodeSchema<T extends SomeZodObject>(

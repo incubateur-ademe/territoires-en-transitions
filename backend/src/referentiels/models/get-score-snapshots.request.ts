@@ -1,19 +1,15 @@
 import { z } from 'zod';
-import { SnapshotJalon } from '../snapshots/snapshot-jalon.enum';
+import { SnapshotJalonEnum } from '../snapshots/snapshot.table';
 
 export const DEFAULT_SNAPSHOT_JALONS = [
-  SnapshotJalon.PRE_AUDIT,
-  SnapshotJalon.POST_AUDIT,
-  SnapshotJalon.DATE_PERSONNALISEE,
-  SnapshotJalon.SCORE_COURANT,
-  SnapshotJalon.VISITE_ANNUELLE,
-];
+  SnapshotJalonEnum.PRE_AUDIT,
+  SnapshotJalonEnum.POST_AUDIT,
+  SnapshotJalonEnum.DATE_PERSONNALISEE,
+  SnapshotJalonEnum.SCORE_COURANT,
+  SnapshotJalonEnum.VISITE_ANNUELLE,
+] as const;
 
-export const typesJalonEnumValues = Object.values(SnapshotJalon) as [
-  SnapshotJalon,
-  ...SnapshotJalon[]
-];
-export const typesJalonEnumSchema = z.enum(typesJalonEnumValues);
+const typesJalonEnumSchema = z.enum(DEFAULT_SNAPSHOT_JALONS);
 
 export const getScoreSnapshotsRequestSchema = z
   .object({

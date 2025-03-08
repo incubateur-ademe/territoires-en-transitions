@@ -1,5 +1,5 @@
-import { Meta} from '@storybook/react';
-import {ValiderAuditModal} from './ValiderAudit';
+import { Meta } from '@storybook/react';
+import { ValiderAuditModal } from './valider-audit.button';
 
 export default {
   component: ValiderAuditModal,
@@ -7,12 +7,13 @@ export default {
 
 export const AuditLabellisation = {
   args: {
-    audit: {id: 1, demande_id: 2},
+    auditId: 1,
+    demandeId: 2
   },
 };
 
 export const AuditSansLabellisation = {
   args: {
-    audit: {id: 1},
+    auditId: 1
   },
 };

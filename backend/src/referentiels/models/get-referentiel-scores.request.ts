@@ -1,5 +1,5 @@
 import { z } from 'zod';
-import { SnapshotJalon } from '../snapshots/snapshot-jalon.enum';
+import { SnapshotJalonEnum } from '../snapshots/snapshot.table';
 import { ComputeScoreMode } from './compute-scores-mode.enum';
 
 export const getReferentielScoresRequestSchema = z
@@ -28,7 +28,7 @@ export const getReferentielScoresRequestSchema = z
         `Par défaut, le score est recalculé. Il est également possible de récupérer le score tel qu'il a été sauvegardé s'il s'agit du score courant ou de jalons spécifiques. Cela n'est pas possible lorsqu'une date précise est spécifiée.`
       ),
     jalon: z
-      .nativeEnum(SnapshotJalon)
+      .nativeEnum(SnapshotJalonEnum)
       .optional()
       .describe(
         `Définit la date par rapport à un jalon spécifique. Prioritaire par rapport à la date. Peut être complété par anneeAudit pour spécifier un audit spécifique`

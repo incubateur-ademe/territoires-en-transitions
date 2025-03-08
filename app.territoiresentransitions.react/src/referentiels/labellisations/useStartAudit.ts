@@ -1,41 +1,29 @@
-import { Enums } from '@/api';
-import { useSupabase } from '@/api/utils/supabase/use-supabase';
-import { useMutation, useQueryClient } from 'react-query';
-
-export type TStartAudit = ReturnType<typeof useStartAudit>['mutate'];
+import { trpc } from '@/api/utils/trpc/client';
+import { useQueryClient } from 'react-query';
 
 /** Démarrer un audit */
 export const useStartAudit = () => {
   const queryClient = useQueryClient();
-  const supabase = useSupabase();
+  const trpcUtils = trpc.useUtils();
 
-  return useMutation(
-    async ({
-      audit_id,
-    }: {
-      collectivite_id: number;
-      referentiel: Enums<'referentiel'>;
-      audit_id: number;
-    }) =>
-      supabase.rpc('labellisation_commencer_audit', { audit_id } as {
-        audit_id: number;
-        date_debut: string;
-      }),
-    {
-      mutationKey: 'startAudit',
-      onSuccess: (data, variables) => {
-        const { collectivite_id, referentiel } = variables;
-        queryClient.invalidateQueries(['audit', collectivite_id, referentiel]);
-        queryClient.invalidateQueries([
-          'peut_commencer_audit',
-          collectivite_id,
-          referentiel,
-        ]);
-        queryClient.invalidateQueries([
-          'labellisation_parcours',
-          collectivite_id,
-        ]);
-      },
-    }
-  );
+  return trpc.referentiels.labellisations.startAudit.useMutation({
+    onSuccess: (audit) => {
+      const { collectiviteId, referentiel: referentielId } = audit;
+
+      queryClient.invalidateQueries(['audit', collectiviteId, referentielId]);
+
+      queryClient.invalidateQueries([
+        'peut_commencer_audit',
+        collectiviteId,
+        referentielId,
+      ]);
+
+      queryClient.invalidateQueries(['labellisation_parcours', collectiviteId]);
+
+      trpcUtils.referentiels.labellisations.getParcours.invalidate({
+        collectiviteId,
+        referentielId,
+      });
+    },
+  });
 };

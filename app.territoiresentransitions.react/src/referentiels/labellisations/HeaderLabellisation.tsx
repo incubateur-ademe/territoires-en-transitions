@@ -4,30 +4,24 @@
 import { Button } from '@/ui';
 import PageContainer from '@/ui/components/layout/page-container';
 import { useState } from 'react';
-import { ValiderAudit } from '../audits/ValiderAudit';
 import { TAuditeur, useAuditeurs } from '../audits/useAudit';
-import { useReferentielId } from '../referentiel-context';
+import { ValiderAuditButton } from '../audits/valider-audit.button';
 import { DemandeAuditModal } from './DemandeAuditModal';
 import { DemandeLabellisationModal } from './DemandeLabellisationModal';
 import { numLabels } from './numLabels';
 import { TEtoiles } from './types';
-import {
-  TCycleLabellisation,
-  useCycleLabellisation,
-} from './useCycleLabellisation';
-import { TStartAudit, useStartAudit } from './useStartAudit';
-import { TValidateAudit, useValidateAudit } from './useValidateAudit';
+import { TCycleLabellisation } from './useCycleLabellisation';
+import { useStartAudit } from './useStartAudit';
 
 export type THeaderLabellisationProps = {
   parcoursLabellisation: TCycleLabellisation;
-  onStartAudit: TStartAudit;
-  onValidateAudit: TValidateAudit;
 };
 
 export const HeaderLabellisation = (props: THeaderLabellisationProps) => {
   const [opened, setOpened] = useState(false);
   const [opened_1ereEtoileCOT, setOpened_1ereEtoileCOT] = useState(false);
-  const { parcoursLabellisation, onStartAudit, onValidateAudit } = props;
+  const { mutate: onStartAudit } = useStartAudit();
+  const { parcoursLabellisation } = props;
   const {
     parcours,
     status,
@@ -36,6 +30,7 @@ export const HeaderLabellisation = (props: THeaderLabellisationProps) => {
     peutDemanderEtoile,
     peutCommencerAudit,
   } = parcoursLabellisation;
+
   const { data: auditeurs } = useAuditeurs();
 
   if (!parcours) {
@@ -46,8 +41,7 @@ export const HeaderLabellisation = (props: THeaderLabellisationProps) => {
     parcoursLabellisation,
     auditeurs
   );
-  const { collectivite_id, referentiel, etoiles, audit, completude_ok } =
-    parcours;
+  const { etoiles, audit, completude_ok } = parcours;
   const canSubmitDemande = peutDemanderEtoile || (isCOT && completude_ok);
   const DemandeModal = isCOT ? DemandeAuditModal : DemandeLabellisationModal;
 
@@ -61,7 +55,7 @@ export const HeaderLabellisation = (props: THeaderLabellisationProps) => {
         <h2 className="mb-4">Objectif : {numLabels[etoiles]} étoile</h2>
         {status === 'non_demandee' && !isAuditeur ? (
           <>
-            {etoiles === '1' && isCOT ? (
+            {etoiles === 1 && isCOT ? (
               <Button
                 dataTest="1ereEtoileCOT"
                 size="sm"
@@ -77,23 +71,19 @@ export const HeaderLabellisation = (props: THeaderLabellisationProps) => {
               disabled={!canSubmitDemande}
               onClick={() => setOpened(true)}
             >
-              {etoiles === '1' && !isCOT
+              {etoiles === 1 && !isCOT
                 ? 'Demander la première étoile'
                 : 'Demander un audit'}
             </Button>
           </>
         ) : null}
-        {peutCommencerAudit ? (
+        {audit && peutCommencerAudit ? (
           <Button
             dataTest="StartAuditBtn"
             size="sm"
             onClick={() =>
-              audit &&
-              referentiel &&
               onStartAudit({
-                collectivite_id,
-                referentiel,
-                audit_id: audit.id!,
+                auditId: audit.id!,
               })
             }
           >
@@ -105,10 +95,10 @@ export const HeaderLabellisation = (props: THeaderLabellisationProps) => {
             {headerMessageContent}
           </p>
         )}
-        {status === 'audit_en_cours' && isAuditeur ? (
-          <ValiderAudit
-            audit={audit!}
-            onValidate={(audit) => onValidateAudit(audit!)}
+        {audit && status === 'audit_en_cours' && isAuditeur ? (
+          <ValiderAuditButton
+            auditId={audit.id!}
+            demandeId={audit.demande_id}
           />
         ) : null}
         {status === 'non_demandee' || status === 'demande_envoyee' ? (
@@ -119,7 +109,7 @@ export const HeaderLabellisation = (props: THeaderLabellisationProps) => {
               opened={opened}
               setOpened={setOpened}
             />
-            {etoiles === '1' && isCOT ? (
+            {etoiles === 1 && isCOT ? (
               <DemandeLabellisationModal
                 parcoursLabellisation={parcoursLabellisation}
                 opened={opened_1ereEtoileCOT}
@@ -192,17 +182,14 @@ const DerniereLabellisation = ({
   );
 };
 
-const HeaderLabellisationConnected = () => {
-  const referentiel = useReferentielId();
-  const parcoursLabellisation = useCycleLabellisation(referentiel);
-  const { mutate: onStartAudit } = useStartAudit();
-  const { mutate: onValidateAudit } = useValidateAudit();
-
+const HeaderLabellisationConnected = ({
+  parcoursLabellisation,
+}: {
+  parcoursLabellisation: TCycleLabellisation;
+}) => {
   return parcoursLabellisation?.parcours ? (
     <HeaderLabellisation
       parcoursLabellisation={parcoursLabellisation}
-      onStartAudit={onStartAudit}
-      onValidateAudit={onValidateAudit}
     />
   ) : null;
 };
