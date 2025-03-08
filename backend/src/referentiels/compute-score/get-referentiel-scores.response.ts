@@ -1,14 +1,25 @@
 import { z } from 'zod';
-import { collectiviteAvecTypeSchema } from '../../collectivites/identite-collectivite.dto';
-import { actionDefinitionSchema } from '../index-domain';
 import {
+  CollectiviteAvecType,
+  collectiviteAvecTypeSchema,
+} from '../../collectivites/identite-collectivite.dto';
+import { ActionDefinition, actionDefinitionSchema } from '../index-domain';
+import {
+  ActionDefinitionEssential,
   actionDefinitionEssentialSchema,
+  TreeNode,
   treeNodeSchema,
 } from '../models/action-definition.dto';
 import { ComputeScoreMode } from '../models/compute-scores-mode.enum';
-import { referentielIdEnumSchema } from '../models/referentiel-id.enum';
-import { snapshotJalonEnumSchema } from '../snapshots/snapshot.table';
-import { scoreFinalFieldsSchema } from './score.dto';
+import {
+  ReferentielId,
+  referentielIdEnumSchema,
+} from '../models/referentiel-id.enum';
+import {
+  SnapshotJalon,
+  snapshotJalonEnumSchema,
+} from '../snapshots/snapshot.table';
+import { ScoreFinalFields, scoreFinalFieldsSchema } from './score.dto';
 
 export const getReferentielScoresResponseSnapshotInfoSchema = z.object({
   ref: z.string(),
@@ -40,6 +51,27 @@ export const getReferentielScoresResponseSchema = z
   })
   .describe('Score de la collectivité pour un référentiel et la date donnée');
 
-export type GetReferentielScoresResponseType = z.infer<
-  typeof getReferentielScoresResponseSchema
->;
+export type GetReferentielScoresResponseType = {
+  collectiviteId: number;
+  referentielId: ReferentielId;
+  referentielVersion: string;
+  collectiviteInfo: CollectiviteAvecType;
+  date: string;
+  scores: TreeNode<
+    Pick<ActionDefinition, 'nom' | 'identifiant' | 'categorie'> &
+      ActionDefinitionEssential &
+      ScoreFinalFields
+  >;
+  jalon: SnapshotJalon;
+  auditId?: number;
+  anneeAudit?: number;
+  snapshot?: {
+    ref: string;
+    nom: string;
+    createdAt: string;
+    createdBy: string | null;
+    modifiedAt: string;
+    modifiedBy: string | null;
+  };
+  mode: ComputeScoreMode;
+};
