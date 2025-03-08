@@ -12,14 +12,13 @@ import {
   ActionTypeEnum,
   StatutAvancementIncludingNonConcerne,
   getStatutAvancement,
-  statutAvancementEnumSchema,
   statutAvancementIncludingNonConcerneEnumSchema,
 } from '@/domain/referentiels';
 import { Button, Tooltip } from '@/ui';
 import classNames from 'classnames';
 import { useEffect, useState } from 'react';
 import { useScore, useSnapshotFlagEnabled } from '../use-snapshot';
-import { AVANCEMENT_DETAILLE_PAR_STATUT, statutParAvancement } from '../utils';
+import { statutParAvancement } from '../utils';
 import AvancementDetailleModal from './avancement-detaille/avancement-detaille.modal';
 import SubActionModal from './sub-action/sub-action.modal';
 
@@ -127,32 +126,34 @@ export const SubActionStatutDropdown = ({
       avancementDetaille: avancement_detaille,
     } = statutParAvancement(value);
 
-    if (avancement === 'detaille') {
-      if (actionDefinition.type === ActionTypeEnum.SOUS_ACTION) {
-        if (actionDefinition.children.length === 0) {
-          setLocalAvancement('detaille');
-          setLocalAvancementDetaille(AVANCEMENT_DETAILLE_PAR_STATUT.detaille);
+    const argsToSave = {
+      ...args,
+      ...statut,
+      avancement,
+      avancementDetaille: avancement_detaille,
+      concerne,
+    };
 
-          saveActionStatut({
-            ...args,
-            ...statut,
-            avancement,
-            avancementDetaille: AVANCEMENT_DETAILLE_PAR_STATUT.detaille,
-            concerne,
-          });
-        }
+    // Logique de sauvegarde à revoir si remplacement
+    // de la modale <SubActionModal /> par un panneau latéral
+    if (avancement === 'detaille') {
+      if (
+        actionDefinition.type === ActionTypeEnum.SOUS_ACTION &&
+        actionDefinition.children.length > 0
+      ) {
+        setLocalAvancement('detaille');
+        setLocalAvancementDetaille(undefined);
+        saveActionStatut({
+          ...argsToSave,
+          avancement: 'non_renseigne',
+          avancementDetaille: undefined,
+        });
+
         setOpenSubActionModal(true);
       } else {
         setLocalAvancement('detaille');
-        setLocalAvancementDetaille(AVANCEMENT_DETAILLE_PAR_STATUT.detaille);
-
-        saveActionStatut({
-          ...args,
-          ...statut,
-          avancement,
-          avancementDetaille: AVANCEMENT_DETAILLE_PAR_STATUT.detaille,
-          concerne,
-        });
+        setLocalAvancementDetaille(avancement_detaille);
+        saveActionStatut(argsToSave);
 
         setOpenScoreDetaille(true);
         openScoreDetailleState?.setIsOpen(true);
@@ -164,14 +165,11 @@ export const SubActionStatutDropdown = ({
 
       // Sauvegarde du nouveau statut
       saveActionStatut({
-        ...args,
-        ...statut,
-        avancement,
+        ...argsToSave,
         avancementDetaille:
           actionDefinition.type === ActionTypeEnum.SOUS_ACTION
             ? localAvancementDetaille
             : avancement_detaille,
-        concerne,
       });
     }
   };
@@ -203,7 +201,9 @@ export const SubActionStatutDropdown = ({
               actionDefinition.type === ActionTypeEnum.SOUS_ACTION &&
               localAvancement !== 'non_renseigne' &&
               filled
-                ? statutAvancementEnumSchema.options
+                ? statutAvancementIncludingNonConcerneEnumSchema.options.filter(
+                    (item) => item !== 'non_renseigne'
+                  )
                 : statutAvancementIncludingNonConcerneEnumSchema.options
             }
             disabled={disabled}

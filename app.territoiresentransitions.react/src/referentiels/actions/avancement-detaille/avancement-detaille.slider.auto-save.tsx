@@ -55,6 +55,14 @@ const AvancementDetailleSliderAutoSave = ({
 
   useEffect(() => {
     onAvancementUpdate?.(avancement);
+
+    if (avancement == 'detaille') {
+      setCurrentAvancement(
+        (isScoreDetailleFilled
+          ? avancementDetaille
+          : AVANCEMENT_DETAILLE_PAR_STATUT.detaille) as AvancementValues
+      );
+    }
   }, [avancement]);
 
   // Switch entre les deux types de remplissage de l'avancement
