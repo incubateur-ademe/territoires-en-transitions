@@ -18,11 +18,27 @@ type ComputeScoreInput = inferProcedureInput<
   AppRouter['referentiels']['scores']['computeScore']
 >;
 
+type UpsertSnapshotInput = inferProcedureInput<
+  AppRouter['referentiels']['snapshots']['upsert']
+>;
+
+type UpdateSnapshotNameInput = inferProcedureInput<
+  AppRouter['referentiels']['snapshots']['updateName']
+>;
+
 describe('ScoreSnapshotsRouter', () => {
   let router: TrpcRouter;
   let yoloDodoUser: AuthenticatedUser;
   let rhoneAggloCollectiviteId: number;
   let databaseService: DatabaseService;
+
+  const cleanUp = async (caller: any, snapshotRef: string) => {
+    await caller.referentiels.snapshots.delete({
+      collectiviteId: 1,
+      referentielId: referentielIdEnumSchema.enum.cae,
+      snapshotRef,
+    });
+  };
 
   beforeAll(async () => {
     const app = await getTestApp();
@@ -131,26 +147,7 @@ describe('ScoreSnapshotsRouter', () => {
     }).toEqual(expectedSnapshot);
 
     // delete the snapshot
-    await caller.referentiels.snapshots.delete({
-      collectiviteId: 1,
-      referentielId: referentielIdEnumSchema.enum.cae,
-      snapshotRef: 'user-test-trpc',
-    });
-
-    // get the list of snapshots; the snapshot should not be there
-    const responseSnapshotListAfterDelete =
-      await caller.referentiels.snapshots.list({
-        collectiviteId: 1,
-        referentielId: referentielIdEnumSchema.enum.cae,
-        parameters: {
-          typesJalon: [SnapshotJalon.DATE_PERSONNALISEE],
-        },
-      });
-    const foundSnapshotAfterDelete =
-      responseSnapshotListAfterDelete.snapshots.find(
-        (snapshot) => snapshot.ref === 'user-test-trpc'
-      );
-    expect(foundSnapshotAfterDelete).toBeUndefined();
+    await cleanUp(caller, 'user-test-trpc');
   });
 
   test("Création d'un snapshot avec nom et date spécifique", async () => {
@@ -158,7 +155,7 @@ describe('ScoreSnapshotsRouter', () => {
     const snapshotDate = '2024-09-21T21:59:00.000Z';
     const snapshotNom = 'Test snapshot avec date';
 
-    const input = {
+    const input: UpsertSnapshotInput = {
       referentielId: referentielIdEnumSchema.enum.cae,
       collectiviteId: 1,
       snapshotNom,
@@ -173,5 +170,38 @@ describe('ScoreSnapshotsRouter', () => {
     expect(result.snapshot?.ref).toBe(
       `${snapshotNom.toLowerCase().replace(/\s+/g, '-')}`
     );
+
+    // delete the snapshot
+    await cleanUp(caller, 'test-snapshot-avec-date');
+  });
+
+  test("Mise à jour du nom d'un snapshot", async () => {
+    const caller = router.createCaller({ user: yoloDodoUser });
+
+    const input: UpsertSnapshotInput = {
+      referentielId: referentielIdEnumSchema.enum.cae,
+      collectiviteId: 1,
+      snapshotNom: 'Test avec un nom',
+      date: '2024-09-21T21:59:00.000Z',
+    };
+
+    await caller.referentiels.snapshots.upsert(input);
+
+    const inputWithNewName: UpdateSnapshotNameInput = {
+      collectiviteId: 1,
+      referentielId: referentielIdEnumSchema.enum.cae,
+      snapshotRef: 'test-avec-un-nom',
+      newName: 'Nouveau nom',
+    };
+
+    const snapshot = await caller.referentiels.snapshots.updateName(
+      inputWithNewName
+    );
+
+    expect(snapshot).toBeDefined();
+    expect(snapshot[0].nom).toBe(inputWithNewName.newName);
+
+    // delete the snapshot
+    await cleanUp(caller, 'test-avec-un-nom');
   });
 });
