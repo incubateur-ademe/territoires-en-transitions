@@ -159,7 +159,7 @@ describe('ScoreSnapshotsRouter', () => {
     const snapshotNom = 'Test snapshot avec date';
 
     const input = {
-      referentiel: referentielIdEnumSchema.enum.cae,
+      referentielId: referentielIdEnumSchema.enum.cae,
       collectiviteId: 1,
       snapshotNom,
       date: snapshotDate,

@@ -3,7 +3,7 @@ import { collectiviteRequestSchema } from '../../collectivites/collectivite.requ
 import { referentielIdEnumSchema } from '../models/referentiel-id.enum';
 
 export const upsertSnapshotRequestSchema = collectiviteRequestSchema.extend({
-  referentiel: referentielIdEnumSchema,
+  referentielId: referentielIdEnumSchema,
   snapshotNom: z.string(),
   date: z.string().datetime().optional(),
 });

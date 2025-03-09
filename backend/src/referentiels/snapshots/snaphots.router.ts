@@ -67,7 +67,7 @@ export class SnapshotsRouter {
       .input(upsertSnapshotRequestSchema)
       .mutation(({ input, ctx }) => {
         return this.referentielsScoringService.computeScoreForCollectivite(
-          input.referentiel,
+          input.referentielId,
           input.collectiviteId,
           {
             mode: ComputeScoreMode.RECALCUL,
