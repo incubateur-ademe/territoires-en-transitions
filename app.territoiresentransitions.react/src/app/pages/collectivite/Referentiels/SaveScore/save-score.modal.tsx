@@ -64,7 +64,7 @@ const SaveScoreModal = ({
   const displayedYear = getDisplayedYear(selectedButton, dateVersion);
   const finalNomVersion = `${displayedYear} - ${nomVersion?.trim()}`;
 
-  const { mutate: upsertSnapshot, isPending: isSaving } = useSaveScore();
+  const { mutate: upsertSnapshot } = useSaveScore();
 
   const handleSave = async () => {
     if (!nomVersion.trim()) return;
@@ -72,7 +72,7 @@ const SaveScoreModal = ({
     upsertSnapshot(
       {
         collectiviteId,
-        referentiel: referentielId as ComputeScoreType['referentielId'],
+        referentielId: referentielId as ComputeScoreType['referentielId'],
         snapshotNom: finalNomVersion,
         date: dateVersion ? generateBeforeDate(dateVersion) : undefined,
       },

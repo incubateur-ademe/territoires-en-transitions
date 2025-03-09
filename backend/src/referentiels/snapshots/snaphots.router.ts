@@ -29,6 +29,13 @@ export const getFullScoreSnapshotTrpcRequestSchema = z.object({
   snapshotRef: z.string(),
 });
 
+export const updateSnapshotNameTrpcRequestSchema = z.object({
+  collectiviteId: z.number().int(),
+  referentielId: referentielIdEnumSchema,
+  snapshotRef: z.string(),
+  newName: z.string(),
+});
+
 @Injectable()
 export class SnapshotsRouter {
   constructor(
@@ -67,7 +74,7 @@ export class SnapshotsRouter {
       .input(upsertSnapshotRequestSchema)
       .mutation(({ input, ctx }) => {
         return this.referentielsScoringService.computeScoreForCollectivite(
-          input.referentiel,
+          input.referentielId,
           input.collectiviteId,
           {
             mode: ComputeScoreMode.RECALCUL,
@@ -76,6 +83,17 @@ export class SnapshotsRouter {
             date: input.date,
           },
           ctx.user
+        );
+      }),
+
+    updateName: this.trpc.authedProcedure
+      .input(updateSnapshotNameTrpcRequestSchema)
+      .mutation(({ input, ctx }) => {
+        return this.service.updateName(
+          input.collectiviteId,
+          input.referentielId,
+          input.snapshotRef,
+          input.newName
         );
       }),
 
