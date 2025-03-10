@@ -784,24 +784,20 @@ dev:
             RUN earthly +load-json --SERVICE_ROLE_KEY=$SERVICE_ROLE_KEY --API_URL=$API_URL
 
             # Seed des indicateurs et des referentiels à partir des spreadsheets
-            IF [ "$CI" = "true" ]
-                RUN earthly  +backend-seed \
-                    --REFERENTIEL_TE_SHEET_ID=$REFERENTIEL_TE_SHEET_ID \
-                    --INDICATEUR_DEFINITIONS_SHEET_ID=$INDICATEUR_DEFINITIONS_SHEET_ID \
-                    --GCLOUD_SERVICE_ACCOUNT_KEY=$GCLOUD_SERVICE_ACCOUNT_KEY \
-                    --SUPABASE_DATABASE_URL=$DB_URL \
-                    --SUPABASE_ANON_KEY=$ANON_KEY \
-                    --SUPABASE_SERVICE_ROLE_KEY=$SERVICE_ROLE_KEY \
-                    --SUPABASE_JWT_SECRET=$JWT_SECRET \
-                    --SUPABASE_URL=$API_URL \
-                    --TRAJECTOIRE_SNBC_XLSX_ID=$TRAJECTOIRE_SNBC_XLSX_ID \
-                    --BREVO_API_KEY=fake \
-                    --DIRECTUS_API_KEY=fake \
-                    --TRAJECTOIRE_SNBC_SHEET_ID=fake \
-                    --TRAJECTOIRE_SNBC_RESULT_FOLDER_ID=fake
-            ELSE
-                RUN earthly +backend-local-seed
-            END
+            RUN earthly  +backend-seed \
+                --REFERENTIEL_TE_SHEET_ID=$REFERENTIEL_TE_SHEET_ID \
+                --INDICATEUR_DEFINITIONS_SHEET_ID=$INDICATEUR_DEFINITIONS_SHEET_ID \
+                --GCLOUD_SERVICE_ACCOUNT_KEY=$GCLOUD_SERVICE_ACCOUNT_KEY \
+                --SUPABASE_DATABASE_URL=$DB_URL \
+                --SUPABASE_ANON_KEY=$ANON_KEY \
+                --SUPABASE_SERVICE_ROLE_KEY=$SERVICE_ROLE_KEY \
+                --SUPABASE_JWT_SECRET=$JWT_SECRET \
+                --SUPABASE_URL=$API_URL \
+                --TRAJECTOIRE_SNBC_XLSX_ID=$TRAJECTOIRE_SNBC_XLSX_ID \
+                --BREVO_API_KEY=fake \
+                --DIRECTUS_API_KEY=fake \
+                --TRAJECTOIRE_SNBC_SHEET_ID=fake \
+                --TRAJECTOIRE_SNBC_RESULT_FOLDER_ID=fake
 
             # Seed si aucune collectivité en base
             RUN docker run --rm \
