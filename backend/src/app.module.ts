@@ -1,3 +1,5 @@
+import { ImportPlanModule } from '@/backend/plans/fiches/import/import-plan.module';
+import { SharedModule } from '@/backend/shared/shared.module';
 import { EchartsModule } from '@/backend/utils/echarts/echarts.module';
 import { Module } from '@nestjs/common';
 import { ConfigModule } from '@nestjs/config';
@@ -15,8 +17,6 @@ import { SheetModule } from './utils/google-sheets/sheet.module';
 import { TrpcModule } from './utils/trpc/trpc.module';
 import { TrpcRouter } from './utils/trpc/trpc.router';
 import { UtilsModule } from './utils/utils.module';
-import { SharedModule } from '@/backend/shared/shared.module';
-import { ImportPlanModule } from '@/backend/plans/fiches/import/import-plan.module';
 
 @Module({
   imports: [

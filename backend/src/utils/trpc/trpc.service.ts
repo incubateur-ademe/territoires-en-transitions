@@ -13,6 +13,7 @@ import {
   jwtToUser,
 } from '../../auth/models/auth.models';
 import ConfigurationService from '../../utils/config/configuration.service';
+import { ContextStoreService } from '../context/context.service';
 
 @Injectable()
 export class TrpcService {
@@ -20,7 +21,8 @@ export class TrpcService {
 
   constructor(
     private readonly jwtService: JwtService,
-    private readonly config: ConfigurationService
+    private readonly config: ConfigurationService,
+    private readonly contextStoreService: ContextStoreService
   ) {}
 
   trpc = initTRPC
@@ -36,15 +38,25 @@ export class TrpcService {
    * Create an unprotected public procedure
    * @see https://trpc.io/docs/v11/procedures
    **/
-  publicProcedure = this.trpc.procedure;
+  publicProcedure = this.trpc.procedure.use(
+    this.trpc.middleware(async ({ next, ctx, getRawInput }) => {
+      const rawInput = await getRawInput();
+      this.contextStoreService.autoSetContextFromPayload(rawInput);
+
+      return next({ ctx: ctx });
+    })
+  );
 
   /**
    * Create an anonymous procedure
    * @see https://trpc.io/docs/v11/procedures
    **/
   anonProcedure = this.trpc.procedure.use(
-    this.trpc.middleware(({ next, ctx }) => {
+    this.trpc.middleware(async ({ next, ctx, getRawInput }) => {
       const user = ctx.user;
+
+      const rawInput = await getRawInput();
+      this.contextStoreService.autoSetContextFromPayload(rawInput);
 
       if (isAnonymousUser(user) || isAuthenticatedUser(user)) {
         return next({ ctx: { user } });
@@ -62,8 +74,11 @@ export class TrpcService {
    * @see https://trpc.io/docs/v11/procedures
    **/
   authedProcedure = this.trpc.procedure.use(
-    this.trpc.middleware(({ next, ctx }) => {
+    this.trpc.middleware(async ({ next, ctx, getRawInput }) => {
       const user = ctx.user;
+
+      const rawInput = await getRawInput();
+      this.contextStoreService.autoSetContextFromPayload(rawInput);
 
       if (isAuthenticatedUser(user) || isServiceRoleUser(user)) {
         return next({

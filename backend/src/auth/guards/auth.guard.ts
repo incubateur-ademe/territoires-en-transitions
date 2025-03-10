@@ -9,6 +9,7 @@ import { Reflector } from '@nestjs/core';
 import { JwtService } from '@nestjs/jwt';
 import { Request } from 'express';
 import BackendConfigurationService from '../../utils/config/configuration.service';
+import { ContextStoreService } from '../../utils/context/context.service';
 import { getErrorMessage } from '../../utils/nest/errors.utils';
 import { AllowAnonymousAccess } from '../decorators/allow-anonymous-access.decorator';
 import { AllowPublicAccess } from '../decorators/allow-public-access.decorator';
@@ -31,7 +32,8 @@ export class AuthGuard implements CanActivate {
   constructor(
     private jwtService: JwtService,
     private reflector: Reflector,
-    private backendConfigurationService: BackendConfigurationService
+    private backendConfigurationService: BackendConfigurationService,
+    private contextStoreService: ContextStoreService
   ) {}
 
   async canActivate(context: ExecutionContext): Promise<boolean> {
@@ -71,6 +73,11 @@ export class AuthGuard implements CanActivate {
       this.logger.error(`Failed to convert token: ${getErrorMessage(err)}`);
       throw new UnauthorizedException();
     }
+
+    this.contextStoreService.updateContext({
+      userId: user.id || undefined,
+      authRole: user.role,
+    });
 
     // 💡 We're assigning the user to the request object here so that we can access it in our route handlers
     // @ts-expect-error force attach a new property to the request object
