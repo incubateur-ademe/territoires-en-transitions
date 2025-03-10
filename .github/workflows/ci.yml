@@ -325,22 +325,39 @@ jobs:
           --ANON_KEY=${{ secrets.ANON_KEY }}
           --API_URL=${{ secrets.API_URL }}
 
-      - name: Test backend API
-        run: >
-          earthly --use-inline-cache +backend-test
-          --SUPABASE_SERVICE_ROLE_KEY=${{ secrets.SERVICE_ROLE_KEY }}
-          --SUPABASE_ANON_KEY=${{ secrets.ANON_KEY }}
-          --SUPABASE_URL=${{ secrets.API_URL }}
-          --SUPABASE_DATABASE_URL=${{ secrets.DATABASE_URL }}
-          --SUPABASE_JWT_SECRET=${{ secrets.SUPABASE_JWT_SECRET }}
-          --TRAJECTOIRE_SNBC_SHEET_ID=${{ vars.TRAJECTOIRE_SNBC_SHEET_ID }}
-          --TRAJECTOIRE_SNBC_XLSX_ID=${{ vars.TRAJECTOIRE_SNBC_XLSX_ID }}
-          --TRAJECTOIRE_SNBC_RESULT_FOLDER_ID=${{ vars.TRAJECTOIRE_SNBC_RESULT_FOLDER_ID }}
-          --REFERENTIEL_TE_SHEET_ID=${{ vars.REFERENTIEL_TE_SHEET_ID }}
-          --INDICATEUR_DEFINITIONS_SHEET_ID=${{ vars.INDICATEUR_DEFINITIONS_SHEET_ID }}
-          --BREVO_API_KEY=${{ secrets.BREVO_API_KEY }}
-          --DIRECTUS_API_KEY=${{ secrets.DIRECTUS_API_KEY }}
-          --GCLOUD_SERVICE_ACCOUNT_KEY=${{ secrets.GCLOUD_SERVICE_ACCOUNT_KEY }}
+      - uses: pnpm/action-setup@v4
+        name: Install pnpm
+        with:
+          run_install: false
+
+      - name: Install Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: 20
+          cache: 'pnpm'
+
+      - name: Install dependencies
+        run: pnpm install
+
+      - name: 'Create env file'
+        run: |
+          touch backend/.env
+          echo SUPABASE_SERVICE_ROLE_KEY=${{ secrets.SERVICE_ROLE_KEY }} >> backend/.env
+          echo SUPABASE_ANON_KEY=${{ secrets.ANON_KEY }} >> backend/.env
+          echo SUPABASE_URL=${{ secrets.API_URL }} >> backend/.env
+          echo SUPABASE_DATABASE_URL=${{ secrets.DATABASE_URL }} >> backend/.env
+          echo SUPABASE_JWT_SECRET=${{ secrets.SUPABASE_JWT_SECRET }} >> backend/.env
+          echo TRAJECTOIRE_SNBC_SHEET_ID=${{ vars.TRAJECTOIRE_SNBC_SHEET_ID }} >> backend/.env
+          echo TRAJECTOIRE_SNBC_XLSX_ID=${{ vars.TRAJECTOIRE_SNBC_XLSX_ID }} >> backend/.env
+          echo TRAJECTOIRE_SNBC_RESULT_FOLDER_ID=${{ vars.TRAJECTOIRE_SNBC_RESULT_FOLDER_ID }} >> backend/.env
+          echo REFERENTIEL_TE_SHEET_ID=${{ vars.REFERENTIEL_TE_SHEET_ID }} >> backend/.env
+          echo INDICATEUR_DEFINITIONS_SHEET_ID=${{ vars.INDICATEUR_DEFINITIONS_SHEET_ID }} >> backend/.env
+          echo BREVO_API_KEY=${{ secrets.BREVO_API_KEY }} >> backend/.env
+          echo DIRECTUS_API_KEY=${{ secrets.DIRECTUS_API_KEY }} >> backend/.env
+          echo GCLOUD_SERVICE_ACCOUNT_KEY=${{ secrets.GCLOUD_SERVICE_ACCOUNT_KEY }} >> backend/.env
+
+      - name: Execute tests
+        run: pnpm test:backend
 
   test-package-ui:
     environment: dev
