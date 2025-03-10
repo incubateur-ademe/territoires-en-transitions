@@ -1,5 +1,6 @@
 import ListDefinitionsService from '@/backend/indicateurs/definitions/list-definitions.service';
 import ImportIndicateurDefinitionService from '@/backend/indicateurs/import-indicateurs/import-indicateur-definition.service';
+import CrudValeursService from '@/backend/indicateurs/valeurs/crud-valeurs.service';
 import IndicateurValeurExpressionParserService from '@/backend/indicateurs/valeurs/indicateur-valeur-expression-parser.service';
 import ConfigurationService from '@/backend/utils/config/configuration.service';
 import SheetService from '@/backend/utils/google-sheets/sheet.service';
@@ -26,7 +27,8 @@ describe('Indicateurs → import-indicateur-definition.service', () => {
           token === DatabaseService ||
           token === ConfigurationService ||
           token === ListDefinitionsService ||
-          token === SheetService
+          token === SheetService ||
+          token === CrudValeursService
         ) {
           return {};
         }

@@ -1,16 +1,33 @@
+import { PermissionOperation } from '@/backend/auth/authorizations/permission-operation.enum';
+import { Permission } from '@/backend/auth/authorizations/permission.models';
+import { ResourceType } from '@/backend/auth/authorizations/resource-type.enum';
+import { Role } from '@/backend/auth/authorizations/roles/role.enum';
 import { Injectable, Logger, UnauthorizedException } from '@nestjs/common';
 import { AuthRole, AuthUser } from '../models/auth.models';
 import { RoleService } from './roles/role.service';
-import { PermissionOperation } from '@/backend/auth/authorizations/permission-operation.enum';
-import { ResourceType } from '@/backend/auth/authorizations/resource-type.enum';
-import { Permission } from '@/backend/auth/authorizations/permission.models';
-import { Role } from '@/backend/auth/authorizations/roles/role.enum';
 
 @Injectable()
 export class PermissionService {
   private readonly logger = new Logger(PermissionService.name);
 
   constructor(private readonly roleService: RoleService) {}
+
+  hasServiceRole(
+    user: AuthUser | null | undefined,
+    doNotThrow?: boolean
+  ): boolean {
+    if (user?.role !== AuthRole.SERVICE_ROLE) {
+      if (!doNotThrow) {
+        throw new UnauthorizedException(
+          `Droits insuffisants, l'utilisateur n'a pas le rôle ${AuthRole.SERVICE_ROLE}`
+        );
+      } else {
+        return false;
+      }
+    } else {
+      return true;
+    }
+  }
 
   /**
    * Vérifie l'autorisation de l'utilisateur sur une ressource
@@ -72,12 +89,12 @@ export class PermissionService {
       this.logger.log(
         `L'utilisateur ${user.id} ne possède pas l'autorisation ${operation} sur la ressource ${resourceType} ${resourceId}`
       );
-      if(!doNotThrow){
+      if (!doNotThrow) {
         throw new UnauthorizedException(
           `Droits insuffisants, l'utilisateur ${user.id} n'a pas l'autorisation ${operation} sur la ressource ${resourceType} ${resourceId}`
         );
       }
-    }else{
+    } else {
       this.logger.log(
         `L'utilisateur ${user.id} possède l'autorisation ${operation} sur la ressource ${resourceType} ${resourceId}`
       );

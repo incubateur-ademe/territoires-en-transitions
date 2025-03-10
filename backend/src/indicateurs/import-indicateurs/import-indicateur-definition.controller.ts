@@ -1,8 +1,8 @@
-import { Controller, Get, Logger, Post } from '@nestjs/common';
+import { Controller, Get, Logger } from '@nestjs/common';
 import { ApiHideProperty, ApiTags } from '@nestjs/swagger';
 import { AllowAnonymousAccess } from '../../auth/decorators/allow-anonymous-access.decorator';
 import { TokenInfo } from '../../auth/decorators/token-info.decorators';
-import { AuthRole, AuthUser } from '../../auth/models/auth.models';
+import { AuthUser } from '../../auth/models/auth.models';
 import ImportIndicateurDefinitionService from './import-indicateur-definition.service';
 
 @ApiTags('Indicateurs')
@@ -24,30 +24,9 @@ export class ImportIndicateurDefinitionController {
    * @returns
    */
   @AllowAnonymousAccess()
-  @Get('import')
-  //@ApiResponse({ type: GetReferentielResponseClass }) // TODO
-  async importIndicateurDefinitions(
-    @TokenInfo() tokenInfo: AuthUser
-  ): Promise<any> {
-    // TODO
-    return this.importIndicateurService.importIndicateurDefinitions();
-  }
-
-  /**
-   * Only to initialize the spreadsheet with the definitions.
-   * @param tokenInfo
-   * @returns
-   */
-  @Post('fill-spreadsheet')
   @ApiHideProperty()
-  async fillSpreadsheetWithIndicateurDefinitions(
-    @TokenInfo() tokenInfo: AuthUser
-  ) {
-    if (tokenInfo.role !== AuthRole.SERVICE_ROLE) {
-      throw new Error(
-        'Only service account can fill the spreadsheet with indicateur definitions'
-      );
-    }
-    return this.importIndicateurService.fillSpreadsheetWithIndicateurDefinitions();
+  @Get('import')
+  async importIndicateurDefinitions(@TokenInfo() tokenInfo: AuthUser) {
+    return this.importIndicateurService.importIndicateurDefinitions();
   }
 }
