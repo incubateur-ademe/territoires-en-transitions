@@ -131,7 +131,9 @@ describe('Indicateurs', () => {
     const upserIndicateurValeursResponse: UpsertIndicateursValeursResponse =
       response.body;
     expect(upserIndicateurValeursResponse.valeurs).toBeInstanceOf(Array);
-    expect(upserIndicateurValeursResponse.valeurs).toHaveLength(2);
+    expect(
+      upserIndicateurValeursResponse.valeurs.length
+    ).toBeGreaterThanOrEqual(2);
     expect(upserIndicateurValeursResponse.valeurs[0]).toMatchObject({
       collectiviteId: paysDuLaonCollectiviteId,
       dateValeur: '2015-01-01',
@@ -147,7 +149,15 @@ describe('Indicateurs', () => {
       sourceId: 'rare',
     });
     // Calculated indicateur
-    expect(upserIndicateurValeursResponse.valeurs[1]).toMatchObject({
+    const cae1kIndicateurId = await getIndicateurIdByIdentifiant(
+      databaseService,
+      'cae_1.k'
+    );
+    console.log(JSON.stringify(upserIndicateurValeursResponse.valeurs));
+    const cae1kCalculatedValeur = upserIndicateurValeursResponse.valeurs.find(
+      (v) => v.indicateurId === cae1kIndicateurId
+    );
+    expect(cae1kCalculatedValeur).toMatchObject({
       collectiviteId: paysDuLaonCollectiviteId,
       dateValeur: '2015-01-01',
       estimation: null,

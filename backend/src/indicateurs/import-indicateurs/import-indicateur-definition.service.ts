@@ -14,6 +14,7 @@ import {
   CreateIndicateurThematique,
   indicateurThematiqueTable,
 } from '@/backend/indicateurs/shared/models/indicateur-thematique.table';
+import CrudValeursService from '@/backend/indicateurs/valeurs/crud-valeurs.service';
 import { DatabaseService } from '@/backend/utils';
 import {
   categorieTagTable,
@@ -54,11 +55,6 @@ const turndownService = new TurndownService({
 
 @Injectable()
 export default class ImportIndicateurDefinitionService extends BaseSpreadsheetImporterService {
-  /**
-   * Number of decimal in order to round the value
-   */
-  static DEFAULT_ROUNDING_PRECISION = 2;
-
   private readonly INDICATEUR_DEFINITIONS_SPREADSHEET_NAME =
     'Indicateur definitions';
 
@@ -87,6 +83,7 @@ export default class ImportIndicateurDefinitionService extends BaseSpreadsheetIm
     private readonly indicateurDefinitionService: ListDefinitionsService,
     private readonly indicateurValeurExpressionParserService: IndicateurValeurExpressionParserService,
     private readonly databaseService: DatabaseService,
+    private readonly crudValeursService: CrudValeursService,
     sheetService: SheetService
   ) {
     super(new Logger(ImportIndicateurDefinitionService.name), sheetService);
@@ -105,68 +102,10 @@ export default class ImportIndicateurDefinitionService extends BaseSpreadsheetIm
     return spreadsheetId;
   }
 
-  async fillSpreadsheetWithIndicateurDefinitions(): Promise<{
-    data: ImportIndicateurDefinitionType[];
+  async importIndicateurDefinitions(): Promise<{
+    definitions: GetReferentielIndicateurDefinitionsReturnType;
+    identifiantsRecalcules: string[];
   }> {
-    const indicateurDefinitions =
-      await this.indicateurDefinitionService.getReferentielIndicateurDefinitions();
-    const importIndicateurDefinitions = indicateurDefinitions.map(
-      (indicateur) => {
-        const importIndicateurDefinitions: ImportIndicateurDefinitionType =
-          omit(
-            indicateur,
-            'thematiques',
-            'actions',
-            'categories',
-            'parents',
-            'groupementId',
-            'collectiviteId',
-            'modifiedAt',
-            'modifiedBy',
-            'createdAt',
-            'createdBy',
-            'id'
-          ) as ImportIndicateurDefinitionType; // we are sure in this case that identifiantReferentiel is defined
-
-        if (importIndicateurDefinitions.description) {
-          importIndicateurDefinitions.description = turndownService.turndown(
-            importIndicateurDefinitions.description
-          );
-        }
-        const thematiqueMids: string[] = indicateur.thematiques
-          ?.filter((thematique) => Boolean(thematique.mdId))
-          .map((thematique) => thematique.mdId) as string[];
-        importIndicateurDefinitions.thematiques = thematiqueMids;
-
-        const categories: string[] = indicateur.categories?.map(
-          (categorie) => categorie.nom
-        );
-        importIndicateurDefinitions.categories = categories;
-
-        const actionIds: string[] = indicateur.actions?.map(
-          (action) => action.id
-        );
-        importIndicateurDefinitions.actionIds = actionIds;
-
-        const parents: string[] = indicateur.parents?.map(
-          (ind) => ind.identifiantReferentiel
-        );
-        importIndicateurDefinitions.parents = parents;
-        return importIndicateurDefinitions;
-      }
-    );
-
-    await this.sheetService.overwriteTypedDataToSheet<ImportIndicateurDefinitionType>(
-      this.getSpreadsheetId(),
-      this.INDICATEUR_DEFINITIONS_SPREADSHEET_HEADER,
-      importIndicateurDefinitions,
-      this.INDICATEUR_DEFINITIONS_SPREADSHEET_NAME
-    );
-
-    return { data: importIndicateurDefinitions };
-  }
-
-  async importIndicateurDefinitions(): Promise<GetReferentielIndicateurDefinitionsReturnType> {
     const indicateurDefinitions =
       await this.indicateurDefinitionService.getReferentielIndicateurDefinitions(
         ['cae_1.a']
@@ -190,8 +129,11 @@ export default class ImportIndicateurDefinitionService extends BaseSpreadsheetIm
       borneMin: null,
       borneMax: null,
       valeurCalcule: null,
-      precision: ImportIndicateurDefinitionService.DEFAULT_ROUNDING_PRECISION,
+      precision: CrudValeursService.DEFAULT_ROUNDING_PRECISION,
     };
+
+    const existingDefinitionsData =
+      await this.indicateurDefinitionService.getReferentielIndicateurDefinitions();
 
     const indicateurDefinitionsData =
       await this.sheetService.getDataFromSheet<ImportIndicateurDefinitionType>(
@@ -205,7 +147,47 @@ export default class ImportIndicateurDefinitionService extends BaseSpreadsheetIm
       `Found ${indicateurDefinitionsData.data.length} indicateur definitions`
     );
 
-    return this.upsertIndicateurDefinitions(indicateurDefinitionsData.data);
+    const upsertedIndicateurDefinitions =
+      await this.upsertIndicateurDefinitions(indicateurDefinitionsData.data);
+
+    // Find definitions for which the formula has changed
+    const updatedIndicateurDefinitionFormulas =
+      upsertedIndicateurDefinitions.filter((upsertedIndicateurDefinition) => {
+        const existingDefinition = existingDefinitionsData.find(
+          (def) =>
+            def.identifiantReferentiel ===
+            upsertedIndicateurDefinition.identifiantReferentiel
+        );
+        return (
+          upsertedIndicateurDefinition.valeurCalcule &&
+          upsertedIndicateurDefinition.valeurCalcule.trim().toLowerCase() !==
+            existingDefinition?.valeurCalcule?.trim().toLowerCase()
+        );
+      });
+    this.logger.log(
+      `Found ${updatedIndicateurDefinitionFormulas.length} updated indicateur definitions formulas`
+    );
+    const identifiantsRecalcules: string[] = [];
+    if (updatedIndicateurDefinitionFormulas.length) {
+      const recomputeResults =
+        await this.crudValeursService.recomputeAllCalculatedIndicateurValeurs(
+          null,
+          updatedIndicateurDefinitionFormulas,
+          true
+        );
+      recomputeResults.forEach((result) => {
+        result.identifiants.forEach((identifiant) => {
+          if (!identifiantsRecalcules.includes(identifiant)) {
+            identifiantsRecalcules.push(identifiant);
+          }
+        });
+      });
+    }
+
+    return {
+      definitions: upsertedIndicateurDefinitions,
+      identifiantsRecalcules,
+    };
   }
 
   async checkIndicateurDefinitions(
