@@ -1,6 +1,7 @@
 import { useSaveSnapshot } from '@/app/app/pages/collectivite/Referentiels/SaveScore/useSaveScore';
 import { getIsoFormattedDate } from '@/app/utils/formatUtils';
 import { ReferentielId } from '@/domain/referentiels';
+import { useCurrentCollectivite } from '@/app/core-logic/hooks/useCurrentCollectivite';
 import {
   Alert,
   ButtonGroup,
@@ -37,7 +38,6 @@ const getDisplayedYear = (
   return new Date().getFullYear().toString();
 };
 
-
 export type SaveScoreProps = {
   referentielId: ReferentielId;
   collectiviteId: number;
@@ -53,10 +53,10 @@ const SaveScoreModal = ({
   when?: 'now' | 'before';
 }) => {
   const [selectedButton, setSelectedButton] = useState<string>(when);
-  const tracker = useEventTracker('app/referentiel');
-  // const { niveauAcces, role } = useCurrentCollectivite()!;
+  const { niveauAcces, role } = useCurrentCollectivite()!;
   const [nomVersion, setNomVersion] = useState<string>('');
   const [dateVersion, setDateVersion] = useState<string>('');
+  const tracker = useEventTracker('app/referentiel');
 
   const ref = useRef<HTMLInputElement>(null);
 
@@ -153,12 +153,12 @@ Une sauvegarde sera automatiquement réalisée lors du démarrage d'un audit et 
             btnOKProps={{
               children: `Figer l'état des lieux`,
               onClick: () => {
-                // tracker('referentiels:scores:sauvegarde', {
-                //   collectiviteId,
-                //   niveauAcces,
-                //   role,
-                //   dateDuJour: selectedButton === 'now',
-                // });
+                tracker('referentiels:scores:sauvegarde', {
+                  collectiviteId,
+                  niveauAcces,
+                  role,
+                  dateDuJour: selectedButton === 'now',
+                });
                 handleSave();
                 close();
               },
