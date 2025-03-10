@@ -36,5 +36,8 @@ export class IndicateurValeursRouter {
       .query(({ ctx, input }) => {
         return this.valeursCalculees.getMoyenneCollectivites(input, ctx.user);
       }),
+    recompute: this.trpc.authedProcedure.query(({ ctx, input }) => {
+      return this.service.recomputeAllCalculatedIndicateurValeurs(ctx.user);
+    }),
   });
 }
