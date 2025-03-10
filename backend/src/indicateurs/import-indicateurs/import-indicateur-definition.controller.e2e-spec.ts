@@ -29,9 +29,9 @@ describe('import-indicateur-definition.controller.e2e-spec', () => {
     const response = await request(app.getHttpServer())
       .get(`/indicateurs/import`)
       .set('Authorization', `Bearer ${process.env.SUPABASE_ANON_KEY}`);
-    expect(response.body).toBeInstanceOf(Array);
+    expect(response.body.definitions).toBeInstanceOf(Array);
     expect(response.status).toBe(200);
-    expect(response.body.length).toBeGreaterThan(0);
+    expect(response.body.definitions.length).toBeGreaterThan(0);
 
     // Import a second time the definitions, must be refused because the version is the same
     const errorResponse = await request(app.getHttpServer())

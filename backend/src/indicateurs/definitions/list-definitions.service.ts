@@ -296,28 +296,32 @@ export default class ListDefinitionsService {
   }
 
   async getComputedIndicateurDefinitions(
-    sourceIndicateurIdentifiants: string[]
+    sourceIndicateurIdentifiants?: string[]
   ): Promise<IndicateurDefinition[]> {
-    const sqlConditions: (SQLWrapper | SQL)[] =
-      sourceIndicateurIdentifiants.map((identifiant) =>
+    const sourceIndicateurSqlConditions: (SQLWrapper | SQL)[] | undefined =
+      sourceIndicateurIdentifiants?.map((identifiant) =>
         like(indicateurDefinitionTable.valeurCalcule, `%${identifiant}%`)
       );
+
+    const sqlConditions: (SQLWrapper | SQL)[] = [
+      isNotNull(indicateurDefinitionTable.valeurCalcule),
+    ];
+    if (sourceIndicateurSqlConditions) {
+      sqlConditions.push(or(...sourceIndicateurSqlConditions)!);
+    }
 
     const computedIndicateurDefinitions = await this.databaseService.db
       .select()
       .from(indicateurDefinitionTable)
-      .where(
-        and(
-          isNotNull(indicateurDefinitionTable.valeurCalcule),
-          or(...sqlConditions)
-        )
-      );
+      .where(and(...sqlConditions));
     this.logger.log(
       `Found ${
         computedIndicateurDefinitions.length
       } computed indicateur definitions: ${computedIndicateurDefinitions
         .map((def) => def.identifiantReferentiel || `${def.id}`)
-        .join(',')} for indicateurs ${sourceIndicateurIdentifiants.join(',')}`
+        .join(',')} for source indicateurs: ${
+        sourceIndicateurIdentifiants?.join(',') || 'all'
+      }`
     );
 
     return computedIndicateurDefinitions;
