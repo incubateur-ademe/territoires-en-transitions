@@ -1,20 +1,24 @@
 import { Injectable, Logger, NotFoundException } from '@nestjs/common';
-import { aliasedTable, eq, or } from 'drizzle-orm';
+import { and, eq } from 'drizzle-orm';
 import { isNil } from 'es-toolkit';
-import { DatabaseService } from '../../utils/database/database.service';
 import {
   CollectiviteAvecType,
   CollectivitePopulationTypeEnum,
   CollectiviteSousTypeEnum,
   CollectiviteTypeEnum,
 } from '../identite-collectivite.dto';
-import { collectiviteTestTable } from '../shared/models/collectivite-test.table';
-import { collectiviteTable } from '../shared/models/collectivite.table';
-import { communeTable, CommuneType } from '../shared/models/commune.table';
-import { epciTable, EpciType } from '../shared/models/epci.table';
-import { banaticTable } from '../shared/models/imports-banatic.table';
-import { importCommuneTable } from '../shared/models/imports-commune.table';
+import {
+  Collectivite,
+  collectiviteTable,
+  collectiviteTypeEnum,
+} from '../shared/models/collectivite.table';
 import { regionTable } from '../shared/models/imports-region.table';
+import {
+  collectiviteBanaticSubType,
+  CollectiviteBanaticType,
+  collectiviteBanaticTypeTable,
+} from '@/backend/collectivites/shared/models/collectivite-banatic-type.table';
+import { DatabaseService } from '@/backend/utils';
 
 @Injectable()
 export default class CollectivitesService {
@@ -48,19 +52,17 @@ export default class CollectivitesService {
     return populationTags;
   }
 
-  getCollectiviteSousType(collectivite: {
-    epci: EpciType | null;
-    commune: CommuneType | null;
-  }): CollectiviteSousTypeEnum | null {
-    if (collectivite.epci) {
-      if (
-        collectivite.epci.nature === 'SMF' ||
-        collectivite.epci.nature === 'SIVOM' ||
-        collectivite.epci.nature === 'SMO' ||
-        collectivite.epci.nature === 'SIVU'
-      ) {
-        return CollectiviteSousTypeEnum.SYNDICAT;
-      }
+  getCollectiviteSousType(
+    collectivite: Collectivite,
+    typeBanatic: CollectiviteBanaticType | null
+  ): CollectiviteSousTypeEnum | null {
+    if (
+      collectivite.type == collectiviteTypeEnum.EPCI &&
+      typeBanatic &&
+      (typeBanatic.type == collectiviteBanaticSubType.SyndicatMixte ||
+        typeBanatic.type == collectiviteBanaticSubType.SyndicatCommunes)
+    ) {
+      return CollectiviteSousTypeEnum.SYNDICAT;
     }
     return null;
   }
@@ -70,54 +72,32 @@ export default class CollectivitesService {
   ): Promise<CollectiviteAvecType> {
     const collectivite = await this.getCollectivite(collectiviteId);
 
-    let collectivitePopulation: number | undefined = undefined;
-    // We are using the if else to set population to differentiate between 0 values and undefined values
-    if (!isNil(collectivite.commune?.population)) {
-      collectivitePopulation = collectivite.commune.population;
-      // @ts-ignore: TODO: fix this, pourquoi manque dans drizzle à cause de la jointure?
-    } else if (!isNil(collectivite.import_commune?.population)) {
-      // @ts-ignore: TODO: fix this, pourquoi manque dans drizzle à cause de la jointure?
-      collectivitePopulation = collectivite.import_commune.population;
-    } else if (!isNil(collectivite.banatic?.population)) {
-      collectivitePopulation = collectivite.banatic.population;
-    }
+    const collectivitePopulation: number | undefined =
+      collectivite.collectivite.population ?? undefined;
+
+    const collectiviteTest: boolean =
+      collectivite.collectivite.type == collectiviteTypeEnum.Test;
+
+    const collectiviteEPCI: boolean =
+      collectivite.collectivite.type == collectiviteTypeEnum.EPCI;
 
     return {
-      ...collectivite.banatic,
-      // @ts-ignore: TODO: fix this, pourquoi manque dans drizzle à cause de la jointure?
-      ...collectivite.import_commune,
-      ...collectivite.commune,
-      ...collectivite.epci,
       ...collectivite.collectivite,
-      nom:
-        collectivite.commune?.nom ||
-        collectivite.epci?.nom ||
-        collectivite.collectivite_test?.nom,
-      regionCode:
-        collectivite.commune?.regionCode ||
-        collectivite.banatic?.regionCode ||
-        // @ts-ignore: TODO: fix this, pourquoi manque dans drizzle à cause de la jointure?
-        collectivite.import_commune?.regionCode,
-      departementCode:
-        collectivite.commune?.departementCode ||
-        collectivite.banatic?.departementCode ||
-        // @ts-ignore: TODO: fix this, pourquoi manque dans drizzle à cause de la jointure?
-        collectivite.import_commune?.departementCode,
-      population:
-        collectivite.commune?.population ||
-        // @ts-ignore: TODO: fix this, pourquoi manque dans drizzle à cause de la jointure?
-        collectivite.import_commune?.population ||
-        collectivite.banatic?.population,
-      type: collectivite.commune
-        ? CollectiviteTypeEnum.COMMUNE
-        : CollectiviteTypeEnum.EPCI, // By default, it's an EPCI
-      soustype: this.getCollectiviteSousType(collectivite),
+      // TODO "doublon" avec typeId
+      type:
+        collectiviteTest || collectiviteEPCI
+          ? CollectiviteTypeEnum.EPCI
+          : CollectiviteTypeEnum.COMMUNE,
+      soustype: this.getCollectiviteSousType(
+        collectivite.collectivite,
+        collectivite.collectivite_banatic_type
+      ),
       populationTags: this.getPopulationTags(collectivitePopulation),
       // A bit weird, but it's the same as sql for now: if collectivite test, metropole if epci, null if commune
       drom:
         collectivite.region?.drom ||
-        (collectivite.collectivite_test && !collectivite.epci ? null : false),
-      test: Boolean(collectivite.collectivite_test),
+        (collectiviteTest && !collectiviteEPCI ? null : false),
+      test: collectiviteTest,
     };
   }
 
@@ -126,45 +106,21 @@ export default class CollectivitesService {
       `Récupération de la collectivite avec l'identifiant ${collectiviteId}`
     );
 
-    const importCommuneAliasedTable = aliasedTable(
-      importCommuneTable,
-      'import_commune'
-    );
     const collectiviteByIdResult = await this.databaseService.db
       .select()
       .from(collectiviteTable)
       .leftJoin(
-        communeTable,
-        eq(communeTable.collectiviteId, collectiviteTable.id)
+        collectiviteBanaticTypeTable,
+        eq(collectiviteTable.natureInsee, collectiviteBanaticTypeTable.id)
       )
-      .leftJoin(epciTable, eq(epciTable.collectiviteId, collectiviteTable.id))
-      .leftJoin(
-        collectiviteTestTable,
-        eq(collectiviteTestTable.collectiviteId, collectiviteTable.id)
-      )
-      .leftJoin(banaticTable, eq(banaticTable.siren, epciTable.siren))
-      .leftJoin(
-        importCommuneAliasedTable,
-        eq(importCommuneAliasedTable.code, communeTable.code)
-      )
-      .leftJoin(
-        regionTable,
-        or(
-          eq(regionTable.code, banaticTable.regionCode),
-          eq(regionTable.code, importCommuneAliasedTable.regionCode)
-        )
-      )
+      .leftJoin(regionTable, eq(collectiviteTable.regionCode, regionTable.code))
       .where(eq(collectiviteTable.id, collectiviteId));
 
     if (!collectiviteByIdResult?.length) {
       throw new NotFoundException(
-        `Commune avec l'identifiant de collectivite ${collectiviteId} introuvable`
+        `Collectivité avec l'identifiant ${collectiviteId} introuvable`
       );
     }
-
-    this.logger.log(
-      `Commune trouvé avec l'id ${collectiviteByIdResult[0].collectivite.id}`
-    );
     return collectiviteByIdResult[0];
   }
 
@@ -174,8 +130,13 @@ export default class CollectivitesService {
     );
     const epciByIdResult = await this.databaseService.db
       .select()
-      .from(epciTable)
-      .where(eq(epciTable.collectiviteId, collectiviteId));
+      .from(collectiviteTable)
+      .where(
+        and(
+          eq(collectiviteTable.id, collectiviteId),
+          eq(collectiviteTable.type, collectiviteTypeEnum.EPCI)
+        )
+      );
     if (!epciByIdResult?.length) {
       throw new NotFoundException(
         `EPCI avec l'identifiant de collectivite ${collectiviteId} introuvable`
@@ -190,8 +151,13 @@ export default class CollectivitesService {
     this.logger.log(`Récupération de l'epci à partir du siren ${siren}`);
     const epciBySirenResult = await this.databaseService.db
       .select()
-      .from(epciTable)
-      .where(eq(epciTable.siren, siren));
+      .from(collectiviteTable)
+      .where(
+        and(
+          eq(collectiviteTable.siren, siren),
+          eq(collectiviteTable.type, collectiviteTypeEnum.EPCI)
+        )
+      );
     if (!epciBySirenResult?.length) {
       throw new NotFoundException(`EPCI avec le siren ${siren} introuvable`);
     }
