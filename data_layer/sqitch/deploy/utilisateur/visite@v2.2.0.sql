@@ -68,7 +68,7 @@ create policy can_write on visite for insert with check (
         (user_id = auth.uid() or user_id is null) -- on vérifie que l'id est celui de l'utilisateur ou qu'il est absent
     );
 
-select create_hypertable('visite', 'time');
+--select create_hypertable('visite', 'time');
 create index ix_page_time on visite (page, time desc);
 
 COMMIT;

@@ -4,7 +4,7 @@ BEGIN;
 
 create materialized view stats.evolution_usage_fonction
 as
-select time_bucket('1 day', time) as jour,
+select date_trunc('day', time, 'Europe/Paris') as jour,
        fonction,
        action,
        page,
@@ -15,7 +15,7 @@ order by jour;
 
 create materialized view stats.evolution_visite
 as
-select time_bucket('1 day', time) as jour,
+select date_trunc('day', time, 'Europe/Paris') as jour,
        page,
        tag,
        onglet,
@@ -26,7 +26,7 @@ order by jour;
 
 create materialized view stats.evolution_utilisateur_unique_quotidien
 as
-with daily_users as (select time_bucket('1 day', time) as jour,
+with daily_users as (select date_trunc('day', time, 'Europe/Paris') as jour,
                             user_id
                      from visite
                      group by jour, user_id
@@ -38,7 +38,7 @@ group by jour;
 
 create materialized view stats.evolution_utilisateur_unique_mensuel
 as
-with daily_users as (select time_bucket('1 month', time) as mois,
+with daily_users as (select date_trunc('month', time, 'Europe/Paris') as mois,
                             user_id
                      from visite
                      group by mois, user_id
