@@ -71,8 +71,11 @@ function ActionLayout({
   const preuvesCount = useActionPreuvesCount(actionDefinition.id);
 
   return (
-    <PageContainer dataTest={`Action-${actionDefinition.identifiant}`}>
-      <CollectivitePageLayout>
+    <PageContainer
+      dataTest={`Action-${actionDefinition.identifiant}`}
+      innerContainerClassName="px-4 !pt-0"
+    >
+      <CollectivitePageLayout className="!px-0">
         <ActionHeader
           actionDefinition={actionDefinition}
           DEPRECATED_actionScore={DEPRECATED_actionScores[actionDefinition.id]}
