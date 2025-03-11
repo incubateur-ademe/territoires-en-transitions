@@ -13,13 +13,40 @@
 
 # define groups
 groups:
+
+  technical_group:
+    - evaluation.service_configuration
+    - automatisation.supabase_function_url
+    - config.service_configurations
+    #- cron.job # Need rights
+    - storage.buckets
+    - storage.objects
+
+  stats_group:
+    - public.visite
+    - public.usage
+    - stats.commune_geojson
+    - stats.departement_geojson
+    - stats.epci_geojson
+    - stats.iso_3166
+    - stats.region_geojson
+    
   collectivites_group:
+    - imports.region
+    - imports.departement
+    - imports.banatic
+    - imports.commune
+    - imports.competence_banatic
+    - imports.labellisation
+    - banatic_competence
     - collectivite
     - collectivite_banatic_competence
     - commune
     - epci
     - collectivite_test
+    - collectivite_bucket
     - auth.users
+    - site_contact # Not used anymore
     - dcp
     - utilisateur.invitation
     - utilisateur_support
@@ -42,8 +69,11 @@ groups:
     - thematique
     - sous_thematique
     - categorie_tag
+    - effet_attendu
+    - filtre_intervalle
     - tableau_de_bord_module
     # Part of other group bu done here because shared by groups
+    - referentiel_definition
     - action_relation
     - action_definition
     - indicateur_definition
@@ -68,6 +98,13 @@ groups:
     - action_commentaire
     - justification
     - justification_ajustement
+    - historique.reponse_choix
+    - historique.reponse_binaire
+    - historique.reponse_proportion
+    - historique.action_precision
+    - historique.action_statut
+    - historique.justification
+    - historique.justification_ajustement
     - labellisation.preuve_base
     - labellisation.bibliotheque_fichier
     - labellisation.action_audit_state
@@ -82,7 +119,7 @@ groups:
     - labellisation_action_critere
     - labellisation_calendrier
     - labellisation_fichier_critere
-    - score_snapshot
+    #- score_snapshot: timeout for now
     # A supprimer lorsqu'on utilisera uniquement le nouveau moteur
     - personnalisation_consequence
     - action_computed_points
@@ -103,11 +140,18 @@ groups:
     - indicateur_collectivite
     - indicateur_artificialisation # utilise par quoi ?
     - indicateur_source
+    - indicateur_source_source_calcul
     - indicateur_source_metadonnee
     - indicateur_valeur
 
   pai_group:
+    - action_impact_complexite
     - action_impact_typologie
+    - action_impact_tier
+    - categorie_fnv
+    - action_impact_temps_de_mise_en_oeuvre
+    - action_impact_fourchette_budgetaire
+    - action_impact_categorie
     - action_impact
     - panier
     - action_impact_panier
@@ -115,7 +159,6 @@ groups:
     - action_impact_sous_thematique
     - action_impact_banatic_competence
     - action_impact_categorie_fnv
-    - action_impact_action
     - action_impact_effet_attendu
     - action_impact_statut
     - fiche_action
@@ -130,6 +173,7 @@ groups:
     - plan_action_type
     - axe # Axe reference panier
     - fiche_action
+    - fiche_action_import_csv
     - fiche_action_action
     - fiche_action_axe
     - fiche_action_thematique
@@ -146,6 +190,9 @@ groups:
     - fiche_action_etape
     - fiche_action_referent
     - fiche_action_pilote
+    - annexe
+    - historique.fiche_action
+    - historique.fiche_action_pilote
 
 # protect sensitive information
 data_rules:
