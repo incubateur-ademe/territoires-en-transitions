@@ -14,9 +14,10 @@ type Props = {
   children: React.ReactNode;
   sideNav?: SideNavContainerProps;
   dataTest?: string;
+  className?: string;
 };
 
-const PageLayout = ({ children, sideNav, dataTest }: Props) => {
+const PageLayout = ({ children, sideNav, dataTest, className }: Props) => {
   const [isSideNavOpen, setIsSideNavOpen] = useState(true);
 
   const panelState = usePanelState();
@@ -64,7 +65,10 @@ const PageLayout = ({ children, sideNav, dataTest }: Props) => {
   return (
     <div
       data-test={dataTest}
-      className={`grid ${gridCols} mx-auto xl:max-w-[90rem] 2xl:px-6`}
+      className={classNames(
+        `grid ${gridCols} mx-auto xl:max-w-[90rem] 2xl:px-6`,
+        className
+      )}
     >
       {/** Side nav */}
       {sideNav && (

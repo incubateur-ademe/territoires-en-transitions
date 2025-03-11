@@ -32,7 +32,7 @@ export const ActionHeader = ({
   return (
     <>
       {/** Titre */}
-      <h1 className="mb-3 text-4xl">
+      <h1 className="mt-12 mb-3 text-4xl">
         {actionDefinition.identifiant} {actionDefinition.nom}
       </h1>
 
