@@ -47,7 +47,7 @@ create policy can_write on usage for insert with check (
         (user_id = auth.uid() or user_id is null) -- on vérifie que l'id est celui de l'utilisateur ou qu'il est absent
     );
 
-select create_hypertable('usage', 'time');
+--select create_hypertable('usage', 'time');
 create index ix_fonction_time on usage (fonction, time desc);
 
 COMMIT;
