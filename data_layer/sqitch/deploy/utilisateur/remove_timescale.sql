@@ -28,8 +28,6 @@ CREATE TABLE IF NOT EXISTS public.visite_backup (
 	user_id uuid NULL,
 	collectivite_id int4 NULL
 );
-CREATE INDEX IF NOT EXISTS idx_page_visite_time ON public.visite_backup USING btree (page, "time" DESC);
-CREATE INDEX IF NOT EXISTS idx_visite_time ON public.visite_backup USING btree ("time" DESC);
 
 INSERT INTO visite_backup
 SELECT * FROM visite;
@@ -46,8 +44,6 @@ CREATE TABLE IF NOT EXISTS public.usage_backup (
 	user_id uuid NULL,
 	collectivite_id int4 NULL
 );
-CREATE INDEX IF NOT EXISTS idx_usage_fonction_time ON public.usage_backup USING btree (fonction, "time" DESC);
-CREATE INDEX IF NOT EXISTS idx_usage_time ON public.usage_backup USING btree ("time" DESC);
 
 INSERT INTO usage_backup
 SELECT * FROM usage;
@@ -56,8 +52,16 @@ drop table if exists  usage;
 
 drop extension if exists timescaledb;
 
-ALTER TABLE IF EXISTS visite_backup RENAME TO visite;
-ALTER TABLE IF EXISTS usage_backup RENAME TO usage;
+CREATE TABLE public.visite AS
+SELECT * FROM public.visite_backup;
+CREATE INDEX IF NOT EXISTS idx_page_visite_time ON public.visite USING btree (page, "time" DESC);
+CREATE INDEX IF NOT EXISTS idx_visite_time ON public.visite USING btree ("time" DESC);
+
+CREATE TABLE public.usage AS
+SELECT * FROM public.usage_backup;
+CREATE INDEX IF NOT EXISTS idx_usage_fonction_time ON public.usage USING btree (fonction, "time" DESC);
+CREATE INDEX IF NOT EXISTS idx_usage_time ON public.usage USING btree ("time" DESC);
+
 
 -- Recreate all materialized views
 create materialized view if not exists stats.evolution_usage_fonction
