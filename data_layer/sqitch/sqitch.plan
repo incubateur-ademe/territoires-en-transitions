@@ -815,3 +815,5 @@ indicateur/fusion [indicateur/fusion@v4.37.0] 2025-02-12T11:04:46Z System Admini
 
 utilisateur/remove_timescale 2025-03-07T08:01:59Z System Administrator <root@MacBook-Air-de-Thibaut-2.local> # Supprime timescale
 @v4.40.0 2025-03-11T10:58:20Z System Administrator <root@MacBook-Air-de-Thibaut-2.local> # Suppression de timescaledb
+
+labellisation/import 2025-03-11T16:13:00Z System Administrator <root@MacBook-Air-de-Thibaut-2.local> # ajout de la table d'import pour sauvegarder les données de la prod
