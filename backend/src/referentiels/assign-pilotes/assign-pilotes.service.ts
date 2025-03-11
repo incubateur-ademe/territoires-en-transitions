@@ -47,6 +47,11 @@ export class AssignPilotesService {
             ELSE ${personneTagTable.nom}
           END
         `,
+        prenom: sql<string | null>`
+          CASE
+            WHEN ${actionPiloteTable.userId} IS NOT NULL THEN ${dcpTable.prenom}
+          END
+        `,
       })
       .from(actionPiloteTable)
       .leftJoin(dcpTable, eq(dcpTable.userId, actionPiloteTable.userId))
