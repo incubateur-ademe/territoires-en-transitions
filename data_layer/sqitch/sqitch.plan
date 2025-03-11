@@ -814,3 +814,4 @@ indicateur/fusion [indicateur/fusion@v4.37.0] 2025-02-12T11:04:46Z System Admini
 @v4.39.0 2025-03-05T15:47:38Z System Administrator <root@MacBook-Air-de-Thibaut-2.local> # Ajout de la version, precision dans les definitions d'indicateur. Capacite à définir comment les sources peuvent être combinées entre elles.
 
 utilisateur/remove_timescale 2025-03-07T08:01:59Z System Administrator <root@MacBook-Air-de-Thibaut-2.local> # Supprime timescale
+@v4.40.0 2025-03-11T10:58:20Z System Administrator <root@MacBook-Air-de-Thibaut-2.local> # Suppression de timescaledb
