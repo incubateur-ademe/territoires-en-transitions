@@ -1,5 +1,4 @@
 import { ActionDefinitionSummary } from '@/app/referentiels/ActionDefinitionSummaryReadEndpoint';
-import { ActionTopNav } from '@/app/referentiels/actions/action.nav';
 import { ActionSidePanelToolbar } from '@/app/referentiels/actions/action.side-panel.toolbar';
 import { ProgressionRow } from '@/app/referentiels/DEPRECATED_scores.types';
 import { PersoPotentiel } from '@/app/referentiels/personnalisations/PersoPotentielModal/PersoPotentiel';
@@ -9,6 +8,8 @@ import {
   ActionDetailed,
   useSnapshotFlagEnabled,
 } from '@/app/referentiels/use-snapshot';
+import { Button } from '@/ui';
+import { ActionBreadcrumb } from './action.breadcrumb';
 
 /**
  * Affiche la partie de l'en-tête de la page Action sensible à la position du
@@ -30,18 +31,16 @@ export const ActionHeader = ({
   const FLAG_isSnapshotEnabled = useSnapshotFlagEnabled();
   return (
     <>
-      <div className="flex flex-col justify-between gap-4 bg-primary text-white px-10 py-6">
-        <p className="text-white font-bold !mb-0 text-[1.375rem]">
-          {actionDefinition.identifiant} {actionDefinition.nom}
-        </p>
+      {/** Titre */}
+      <h1 className="mb-3 text-4xl">
+        {actionDefinition.identifiant} {actionDefinition.nom}
+      </h1>
 
-        <ActionTopNav
-          prevActionLink={prevActionLink}
-          nextActionLink={nextActionLink}
-        />
-      </div>
+      {/** Breadcrumb */}
+      <ActionBreadcrumb action={actionDefinition} />
 
-      <div className="flex justify-between items-center my-4 !py-0">
+      {/** Score & options */}
+      <div className="flex justify-between items-center my-3 !py-0">
         <div className="flex gap-4 items-center text-grey-7">
           <ScoreProgressBar
             actionDefinition={actionDefinition}
@@ -77,6 +76,33 @@ export const ActionHeader = ({
           )}
         </div>
         <ActionSidePanelToolbar action={actionDefinition} />
+      </div>
+
+      {/** Action précédente / suivante */}
+      <div className="flex justify-between py-2 border-y border-y-primary-3">
+        {!!prevActionLink && (
+          <Button
+            className="border-b-transparent hover:text-primary-9"
+            variant="underlined"
+            icon="arrow-left-line"
+            size="sm"
+            href={prevActionLink}
+          >
+            Action précédente
+          </Button>
+        )}
+        {!!nextActionLink && (
+          <Button
+            className="border-b-transparent hover:text-primary-9"
+            variant="underlined"
+            icon="arrow-right-line"
+            iconPosition="right"
+            size="sm"
+            href={nextActionLink}
+          >
+            Action suivante
+          </Button>
+        )}
       </div>
     </>
   );

@@ -31,7 +31,7 @@ export const ActionBreadcrumb = (props: {
   return (
     <Breadcrumbs
       size="sm"
-      className="py-2 border-y border-grey-3"
+      className="pb-3 border-b border-primary-3"
       items={parents.map((parent) => {
         if (parent.type === 'referentiel') {
           return {
