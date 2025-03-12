@@ -122,7 +122,7 @@ export const config = {
      */
     {
       source:
-        '/((?!api|ingest|_next/static|_next/image|favicon.ico|.*\\.(?:svg|png|jpg|jpeg|gif|webp)$).*)',
+        '/((?!api|ingest|_next/static|_next/image|favicon.ico|.*\\.(?:svg|png|jpg|jpeg|gif|webp|woff2)$).*)',
 
       missing: [
         { type: 'header', key: 'next-router-prefetch' },

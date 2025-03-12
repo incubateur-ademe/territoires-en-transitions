@@ -23,6 +23,10 @@ function PageView() {
         url += `?${searchParams.toString()}`;
       }
 
+      if (params.collectiviteId) {
+        posthog.group('collectivite', params.collectiviteId as string);
+      }
+
       posthog.capture('$pageview', { $current_url: url, ...params });
     }
   }, [pathname, params, searchParams, posthog]);
