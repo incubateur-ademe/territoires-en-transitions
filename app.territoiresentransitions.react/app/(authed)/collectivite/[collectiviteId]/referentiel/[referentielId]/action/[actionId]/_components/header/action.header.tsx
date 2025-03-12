@@ -95,7 +95,8 @@ export const ActionHeader = ({
         )}
         {action && isEditModalOpen && (
           <ActionEditModal
-            action={action}
+            actionId={action.actionId}
+            actionTitle={`${action.identifiant} ${action.nom}`}
             openState={{
               isOpen: isEditModalOpen,
               setIsOpen: setIsEditModalOpen,
