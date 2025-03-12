@@ -2,7 +2,7 @@ import { PermissionService } from '@/backend/auth/authorizations/permission.serv
 import { Test } from '@nestjs/testing';
 import CollectivitesService from '../../collectivites/services/collectivites.service';
 import SheetService from '../../utils/google-sheets/sheet.service';
-import ListDefinitionsService from '../definitions/list-definitions.service';
+import { ListDefinitionsService } from '../list-definitions/list-definitions.service';
 import { IndicateurValeur } from '../shared/models/indicateur-valeur.table';
 import IndicateurSourcesService from '../sources/indicateur-sources.service';
 import CrudValeursService from '../valeurs/crud-valeurs.service';
