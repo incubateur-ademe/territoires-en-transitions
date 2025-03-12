@@ -26,11 +26,9 @@ export const indicateurCollectiviteTable = pgTable(
     confidentiel: boolean('confidentiel').default(false).notNull(),
     favoris: boolean('favoris').default(false).notNull(),
   },
-  (table) => {
-    return {
-      pk: primaryKey({ columns: [table.collectiviteId, table.indicateurId] }),
-    };
-  }
+  (table) => [
+    primaryKey({ columns: [table.collectiviteId, table.indicateurId] }),
+  ]
 );
 
 export const indicateurCollectiviteSchema = createSelectSchema(

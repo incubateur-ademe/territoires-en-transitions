@@ -1,9 +1,9 @@
 import { divisionOrZero } from '../utils/number.utils';
+import { ScoreFinal } from './compute-score/score.dto';
 import {
-  ScoreFinal,
   StatutAvancement,
   StatutAvancementEnum,
-} from './index-domain';
+} from './models/action-statut.table';
 import { ActionTypeIncludingExemple } from './models/action-type.enum';
 import { referentielIdEnumSchema } from './models/referentiel-id.enum';
 

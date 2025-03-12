@@ -1,4 +1,3 @@
-import ListDefinitionsService from '@/backend/indicateurs/definitions/list-definitions.service';
 import ImportIndicateurDefinitionService from '@/backend/indicateurs/import-indicateurs/import-indicateur-definition.service';
 import CrudValeursService from '@/backend/indicateurs/valeurs/crud-valeurs.service';
 import IndicateurValeurExpressionParserService from '@/backend/indicateurs/valeurs/indicateur-valeur-expression-parser.service';
@@ -11,6 +10,7 @@ import {
   sampleImportIndicateurDefinition,
   sampleImportIndicateurDefinition2,
 } from './samples/import-indicateur-definition.sample';
+import { ListDefinitionsService } from '../list-definitions/list-definitions.service';
 
 describe('Indicateurs → import-indicateur-definition.service', () => {
   let importIndicateurDefinitionService: ImportIndicateurDefinitionService;

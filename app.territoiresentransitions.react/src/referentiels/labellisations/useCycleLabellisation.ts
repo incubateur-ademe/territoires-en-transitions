@@ -6,7 +6,6 @@ import { usePreuves } from '@/app/referentiels/preuves/usePreuves';
 import { ReferentielId } from '@/domain/referentiels';
 import { useIsAuditeur } from '../audits/useAudit';
 import { useCarteIdentite } from '../personnalisations/PersoReferentielThematique/useCarteIdentite';
-import { getParcoursStatus } from './getParcoursStatus';
 import { useLabellisationParcours } from './useLabellisationParcours';
 import { usePeutCommencerAudit } from './usePeutCommencerAudit';
 
@@ -90,3 +89,24 @@ export const usePreuvesLabellisation = (demande_id?: number) =>
     demande_id,
     preuve_types: ['labellisation'],
   }) as TPreuveLabellisation[];
+// détermine l'état consolidé du cycle
+type TDemandeEtOuAudit = Pick<TLabellisationParcours, 'demande' | 'audit'>;
+
+export const getParcoursStatus = (
+  demandeEtOuAudit: TDemandeEtOuAudit | null | undefined
+): TCycleLabellisationStatus => {
+  if (!demandeEtOuAudit) {
+    return 'non_demandee';
+  }
+  const { demande, audit } = demandeEtOuAudit;
+  if (audit?.valide) {
+    return 'audit_valide';
+  }
+  if (audit?.date_debut && !audit?.valide) {
+    return 'audit_en_cours';
+  }
+  if (demande && !demande.en_cours) {
+    return 'demande_envoyee';
+  }
+  return 'non_demandee';
+};

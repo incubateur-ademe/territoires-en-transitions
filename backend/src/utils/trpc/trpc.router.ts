@@ -1,4 +1,5 @@
 import { CollectivitesRouter } from '@/backend/collectivites/collectivites.router';
+import { IndicateurDefinitionsRouter } from '@/backend/indicateurs/list-definitions/list-definitions.router';
 import { BulkEditRouter } from '@/backend/plans/fiches/bulk-edit/bulk-edit.router';
 import { CountByRouter } from '@/backend/plans/fiches/count-by/count-by.router';
 import { FicheActionEtapeRouter } from '@/backend/plans/fiches/fiche-action-etape/fiche-action-etape.router';
@@ -17,7 +18,6 @@ import { createExpressMiddleware } from '@trpc/server/adapters/express';
 import z from 'zod';
 import { UsersRouter } from '../../auth/users/users.router';
 import { IndicateurFiltreRouter } from '../../indicateurs/definitions/indicateur-filtre.router';
-import { IndicateurDefinitionsRouter } from '../../indicateurs/definitions/list-definitions.router';
 import { IndicateurSourcesRouter } from '../../indicateurs/sources/indicateur-sources.router';
 import { TrajectoiresRouter } from '../../indicateurs/trajectoires/trajectoires.router';
 import { IndicateurValeursRouter } from '../../indicateurs/valeurs/crud-valeurs.router';

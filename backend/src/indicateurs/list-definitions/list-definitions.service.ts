@@ -23,6 +23,8 @@ import { groupementCollectiviteTable } from '../../collectivites/shared/models/g
 import { groupementTable } from '../../collectivites/shared/models/groupement.table';
 import { actionDefinitionTable } from '../../referentiels/models/action-definition.table';
 import { DatabaseService } from '../../utils/database/database.service';
+import { GetFavorisCountRequest } from '../definitions/get-favoris-count.request';
+import { GetPathRequest } from '../definitions/get-path.request';
 import {
   indicateurSourceMetadonneeTable,
   indicateurValeurTable,
@@ -33,17 +35,15 @@ import { indicateurCollectiviteTable } from '../shared/models/indicateur-collect
 import {
   IndicateurDefinition,
   IndicateurDefinitionAvecEnfantsType,
-  IndicateurDefinitionDetaillee,
   indicateurDefinitionTable,
 } from '../shared/models/indicateur-definition.table';
 import { indicateurGroupeTable } from '../shared/models/indicateur-groupe.table';
 import { indicateurThematiqueTable } from '../shared/models/indicateur-thematique.table';
-import { GetFavorisCountRequest } from './get-favoris-count.request';
-import { GetPathRequest } from './get-path.request';
 import { ListDefinitionsRequest } from './list-definitions.request';
+import { IndicateurDefinitionDetaillee } from './list-definitions.response';
 
 @Injectable()
-export default class ListDefinitionsService {
+export class ListDefinitionsService {
   private readonly logger = new Logger(ListDefinitionsService.name);
 
   constructor(
