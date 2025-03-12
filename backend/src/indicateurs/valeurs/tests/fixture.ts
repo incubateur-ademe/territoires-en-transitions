@@ -21,6 +21,9 @@ export const indicateur1: IndicateurDefinition = {
   modifiedBy: null,
   createdBy: null,
   precision: 2,
+  exprCible: null,
+  exprSeuil: null,
+  libelleCibleSeuil: null,
 };
 
 export const indicateur2: IndicateurDefinition = {
@@ -44,6 +47,9 @@ export const indicateur2: IndicateurDefinition = {
   modifiedBy: null,
   createdBy: null,
   precision: 2,
+  exprCible: null,
+  exprSeuil: null,
+  libelleCibleSeuil: null,
 };
 
 export const indicateur3: IndicateurDefinition = {
@@ -68,4 +74,7 @@ export const indicateur3: IndicateurDefinition = {
   modifiedBy: null,
   createdBy: null,
   precision: 2,
+  exprCible: null,
+  exprSeuil: null,
+  libelleCibleSeuil: null,
 };
