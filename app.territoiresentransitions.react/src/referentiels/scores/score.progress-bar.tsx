@@ -20,10 +20,10 @@ export const ScoreProgressBar = ({
   progressBarStyleOptions?: ProgressBarStyleOptions;
   TEMP_displayValue?: boolean; // TEMP: see comment above
 }) => {
-  const score = useActionScore(actionDefinition.id);
+  const isSnapshotEnabled = useSnapshotFlagEnabled();
+  const score = useActionScore(actionDefinition.id, !isSnapshotEnabled);
   const isReglementaire = actionDefinition.identifiant.split('.').includes('0');
 
-  const isSnapshotEnabled = useSnapshotFlagEnabled();
   if (isSnapshotEnabled) {
     return (
       <ActionProgressBar_Snapshot

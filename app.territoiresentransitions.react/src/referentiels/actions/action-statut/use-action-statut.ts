@@ -143,8 +143,8 @@ export const useEditActionStatutIsDisabled = (actionId: string) => {
   const { data: audit } = useAudit();
   const isAuditeur = useIsAuditeur();
 
-  const DEPRECATED_score = useActionScore(actionId);
   const FLAG_isSnapshotEnabled = useSnapshotFlagEnabled();
+  const DEPRECATED_score = useActionScore(actionId, !FLAG_isSnapshotEnabled);
   const NEW_score = useScore(actionId);
 
   if (FLAG_isSnapshotEnabled) {
