@@ -8,7 +8,6 @@ import ServicesPilotesDropdown from '@/app/ui/dropdownLists/ServicesPilotesDropd
 import { Tag } from '@/domain/collectivites';
 import { Field, Modal, ModalFooterOKCancel } from '@/ui';
 import { OpenState } from '@/ui/utils/types';
-import { ActionDetailed } from '@/app/referentiels/use-snapshot';
 import {
   useActionPilotesList,
   useActionPilotesUpsert,
@@ -22,18 +21,19 @@ import {
 import { useCollectiviteId } from '@/app/collectivites/collectivite-context';
 
 type Props = {
-  action: ActionDetailed;
+  actionId: string;
+  actionTitle?: string;
   openState?: OpenState;
 };
 
-const ActionEditModal = ({ action, openState }: Props) => {
+const ActionEditModal = ({ actionId, actionTitle, openState }: Props) => {
   const collectiviteId = useCollectiviteId();
 
-  const { data: pilotes } = useActionPilotesList(action.actionId);
+  const { data: pilotes } = useActionPilotesList(actionId);
   const { mutate: upsertPilotes } = useActionPilotesUpsert();
   const { mutate: deletePilotes } = useActionPilotesDelete();
 
-  const { data: services } = useActionServicesPilotesList(action.actionId);
+  const { data: services } = useActionServicesPilotesList(actionId);
   const { mutate: upsertServicesPilotes } = useActionServicesPilotesUpsert();
   const { mutate: deleteServicesPilotes } = useActionServicesPilotesDelete();
 
@@ -58,14 +58,11 @@ const ActionEditModal = ({ action, openState }: Props) => {
       )
     ) {
       if (editedPilotes?.length === 0) {
-        deletePilotes({
-          collectiviteId,
-          actionId: action.actionId,
-        });
+        deletePilotes({ collectiviteId, actionId });
       } else {
         upsertPilotes({
           collectiviteId,
-          actionId: action.actionId,
+          actionId,
           pilotes: (editedPilotes ?? []).map((pilote) => ({
             tagId: pilote.tagId ?? undefined,
             userId: pilote.userId ?? undefined,
@@ -82,14 +79,11 @@ const ActionEditModal = ({ action, openState }: Props) => {
       )
     ) {
       if (editedServices?.length === 0) {
-        deleteServicesPilotes({
-          collectiviteId,
-          actionId: action.actionId,
-        });
+        deleteServicesPilotes({ collectiviteId, actionId });
       } else {
         upsertServicesPilotes({
           collectiviteId,
-          actionId: action.actionId,
+          actionId,
           services: (editedServices ?? []).map((s) => ({ serviceTagId: s.id })),
         });
       }
@@ -100,7 +94,7 @@ const ActionEditModal = ({ action, openState }: Props) => {
     <Modal
       openState={openState}
       title="Modifier l'action"
-      subTitle={`${action.identifiant} ${action.nom}`}
+      subTitle={actionTitle}
       render={() => (
         <>
           {/* Personnes pilote */}
