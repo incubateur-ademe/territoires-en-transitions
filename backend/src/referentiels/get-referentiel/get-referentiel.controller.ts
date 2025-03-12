@@ -1,14 +1,27 @@
-import { createZodDto } from '@anatine/zod-nestjs';
 import { Controller, Get, Logger, Param } from '@nestjs/common';
 import { ApiResponse, ApiTags } from '@nestjs/swagger';
 import { AllowPublicAccess } from '../../auth/decorators/allow-public-access.decorator';
+import { CorrelatedActionsFields } from '../correlated-actions/correlated-actions.dto';
+import {
+  ActionDefinitionEssential,
+  ActionTypeEnum,
+  TreeNode,
+} from '../index-domain';
 import { ReferentielId } from '../models/referentiel-id.enum';
-import { getReferentielResponseSchema } from './get-referentiel.response';
-import { GetReferentielService } from './get-referentiel.service';
+import {
+  GetReferentielService,
+  ReferentielResponse,
+} from './get-referentiel.service';
 
-class GetReferentielResponseClass extends createZodDto(
-  getReferentielResponseSchema
-) {}
+class ReferentielResponseClass implements ReferentielResponse {
+  constructor(
+    public version: string,
+    public orderedItemTypes: ActionTypeEnum[],
+    public itemsTree: TreeNode<
+      ActionDefinitionEssential & CorrelatedActionsFields
+    >
+  ) {}
+}
 
 @ApiTags('Referentiels')
 @Controller('referentiels')
@@ -19,10 +32,8 @@ export class GetReferentielController {
 
   @AllowPublicAccess()
   @Get(':referentiel_id')
-  @ApiResponse({ type: GetReferentielResponseClass })
-  async getReferentiel(
-    @Param('referentiel_id') referentielId: ReferentielId
-  ): Promise<GetReferentielResponseClass> {
+  @ApiResponse({ type: ReferentielResponseClass })
+  async getReferentiel(@Param('referentiel_id') referentielId: ReferentielId) {
     return this.getReferentielService.getReferentielTree(referentielId, true);
   }
 }

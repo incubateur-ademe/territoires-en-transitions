@@ -1,20 +1,15 @@
 import { DatabaseService } from '@/backend/utils';
-import {
-  ActionDefinition,
-  ActionDefinitionEssential,
-  referentielIdEnumSchema,
-  ScoreFinalFields,
-  TreeNode,
-} from '@/domain/referentiels';
+import { ReferentielId, referentielIdEnumSchema } from '@/domain/referentiels';
 import { roundTo } from '@/domain/utils';
 import { Injectable } from '@nestjs/common';
 import { and, asc, eq, inArray } from 'drizzle-orm';
 import z from 'zod';
 import {
+  SnapshotJalon,
   SnapshotJalonEnum,
   snapshotJalonEnumSchema,
 } from '../snapshot-jalon.enum';
-import { snapshotTable } from '../snapshot.table';
+import { Snapshot, snapshotTable } from '../snapshot.table';
 
 const DEFAULT_JALONS = [
   SnapshotJalonEnum.PRE_AUDIT,
@@ -42,17 +37,12 @@ export const listInputSchema = z.object({
 
 type ListInput = z.output<typeof listInputSchema>;
 
-type ListOutput = Awaited<ReturnType<ListSnapshotsService['list']>>;
-
-type ListWithScoresOutput = ListOutput & {
+type ListOutput = {
+  collectiviteId: number;
+  referentielId: ReferentielId;
+  typesJalon: SnapshotJalon[];
   snapshots: Array<
-    ListOutput['snapshots'][number] & {
-      scores: TreeNode<
-        Pick<ActionDefinition, 'nom' | 'identifiant' | 'categorie'> &
-          ActionDefinitionEssential &
-          ScoreFinalFields
-      >;
-    }
+    Omit<Snapshot, 'scoresPayload' | 'personnalisationReponses'>
   >;
 };
 
@@ -64,23 +54,30 @@ export class ListSnapshotsService {
   async listWithScores({
     collectiviteId,
     referentielId,
-    options,
-  }: ListInput): Promise<ListWithScoresOutput> {
-    return this.list({
-      collectiviteId,
-      referentielId,
-      options,
-      additionalSelectColumns: {
-        scores: snapshotTable.scoresPayload,
-      } as const,
-    }) as Promise<ListWithScoresOutput>;
+    options: { jalons },
+  }: ListInput): Promise<Snapshot[]> {
+    const filters = [
+      eq(snapshotTable.collectiviteId, collectiviteId),
+      eq(snapshotTable.referentielId, referentielId),
+    ];
+
+    if (jalons) {
+      filters.push(inArray(snapshotTable.jalon, jalons));
+    }
+
+    const snapshots = await this.databaseService.db
+      .select()
+      .from(snapshotTable)
+      .where(and(...filters))
+      .orderBy(asc(snapshotTable.date));
+
+    return snapshots as Snapshot[];
   }
 
   async list({
     collectiviteId,
     referentielId,
     options: { jalons },
-    additionalSelectColumns = {},
   }: ListInput & {
     additionalSelectColumns?: Parameters<DatabaseService['db']['select']>[0];
   }) {
@@ -109,7 +106,6 @@ export class ListSnapshotsService {
       createdBy: snapshotTable.createdBy,
       modifiedAt: snapshotTable.modifiedAt,
       modifiedBy: snapshotTable.modifiedBy,
-      ...additionalSelectColumns,
     } as const;
 
     const snapshotList = await this.databaseService.db

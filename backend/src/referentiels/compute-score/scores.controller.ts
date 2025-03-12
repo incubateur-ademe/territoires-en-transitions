@@ -1,8 +1,7 @@
 import { createZodDto } from '@anatine/zod-nestjs';
-import { Controller, Get, Logger, Param, Query, Req } from '@nestjs/common';
+import { Controller, Get, Param, Query, Req } from '@nestjs/common';
 import { ApiExcludeEndpoint, ApiResponse, ApiTags } from '@nestjs/swagger';
 import { Request } from 'express';
-import z from 'zod';
 import { AllowAnonymousAccess } from '../../auth/decorators/allow-anonymous-access.decorator';
 import { TokenInfo } from '../../auth/decorators/token-info.decorators';
 import { AuthenticatedUser } from '../../auth/models/auth.models';
@@ -11,31 +10,9 @@ import { CheckReferentielScoresRequestType } from '../models/check-referentiel-s
 import { getActionStatutsRequestSchema } from '../models/get-action-statuts.request';
 import { GetCheckScoresResponseType } from '../models/get-check-scores.response';
 import { GetMultipleCheckScoresResponseType } from '../models/get-multiple-check-scores.response';
-import { getReferentielMultipleScoresRequestSchema } from '../models/get-referentiel-multiple-scores.request';
-import { getReferentielMultipleScoresResponseSchema } from '../models/get-referentiel-multiple-scores.response';
-import {
-  ReferentielId,
-  referentielIdEnumSchema,
-} from '../models/referentiel-id.enum';
-import { snapshotJalonEnumSchema } from '../snapshots/snapshot-jalon.enum';
-import { snapshotWithoutPayloadsSchema } from '../snapshots/snapshot.table';
+import { ReferentielId } from '../models/referentiel-id.enum';
 import { actionStatutsByActionIdSchema } from './action-statuts-by-action-id.dto';
 import ScoresService from './scores.service';
-
-// class GetReferentielScoresRequestClass extends createZodDto(
-//   getReferentielScoresRequestSchema
-// ) {}
-// class GetReferentielScoresResponseClass extends createZodDto(
-//   scoresPayloadSchema
-// ) {}
-
-class GetReferentielMultipleScoresRequestClass extends createZodDto(
-  getReferentielMultipleScoresRequestSchema
-) {}
-
-class GetReferentielMultipleScoresResponseClass extends createZodDto(
-  getReferentielMultipleScoresResponseSchema
-) {}
 
 class GetActionStatutsRequestClass extends createZodDto(
   getActionStatutsRequestSchema
@@ -48,34 +25,6 @@ class GetActionStatutsResponseClass extends createZodDto(
 class CheckMultipleReferentielScoresRequestClass extends createZodDto(
   checkMultipleReferentielScoresRequestSchema
 ) {}
-
-// class GetScoreSnapshotsRequestClass extends createZodDto(
-//   getScoreSnapshotsRequestSchema
-// ) {}
-
-const getScoreSnapshotsResponseSchema = z
-  .object({
-    collectiviteId: z.number(),
-    referentielId: referentielIdEnumSchema,
-    typesJalon: snapshotJalonEnumSchema.array(),
-    snapshots: snapshotWithoutPayloadsSchema
-      .omit({
-        referentielId: true,
-        collectiviteId: true,
-      })
-      .array(),
-  })
-  .describe(
-    'Liste des snapshots de score pour une collectivité et un référentiel'
-  );
-
-export type GetScoreSnapshotsResponseType = z.infer<
-  typeof getScoreSnapshotsResponseSchema
->;
-
-// class GetScoreSnapshotsResponseClass extends createZodDto(
-//   getScoreSnapshotsResponseSchema
-// ) {}
 
 @ApiTags('Referentiels')
 @Controller('')
