@@ -1,15 +1,10 @@
 import { ActionDefinitionSummary } from '@/app/referentiels/ActionDefinitionSummaryReadEndpoint';
 import { ActionSidePanelToolbar } from '@/app/referentiels/actions/action.side-panel.toolbar';
 import { ProgressionRow } from '@/app/referentiels/DEPRECATED_scores.types';
-import { PersoPotentiel } from '@/app/referentiels/personnalisations/PersoPotentielModal/PersoPotentiel';
-import { ScoreProgressBar } from '@/app/referentiels/scores/score.progress-bar';
-import ScoreShow from '@/app/referentiels/scores/score.show';
-import {
-  ActionDetailed,
-  useSnapshotFlagEnabled,
-} from '@/app/referentiels/use-snapshot';
+import { ActionDetailed } from '@/app/referentiels/use-snapshot';
 import { Button } from '@/ui';
-import { ActionBreadcrumb } from './action.breadcrumb';
+import Breadcrumb from './breadcrumb';
+import Score from './score';
 
 /**
  * Affiche la partie de l'en-tête de la page Action sensible à la position du
@@ -28,7 +23,6 @@ export const ActionHeader = ({
   nextActionLink: string | undefined;
   prevActionLink: string | undefined;
 }) => {
-  const FLAG_isSnapshotEnabled = useSnapshotFlagEnabled();
   return (
     <>
       {/** Titre */}
@@ -37,44 +31,16 @@ export const ActionHeader = ({
       </h1>
 
       {/** Breadcrumb */}
-      <ActionBreadcrumb action={actionDefinition} />
+      <Breadcrumb action={actionDefinition} />
 
-      {/** Score & options */}
-      <div className="flex justify-between items-center my-3 !py-0">
-        <div className="flex gap-4 items-center text-grey-7">
-          <ScoreProgressBar
-            actionDefinition={actionDefinition}
-            className="border-r border-r-[#ddd] pr-6"
-            // TODO(temporary): Temporary patch to display percentage
-            TEMP_displayValue={true}
+      {/** Score | Informations | Options */}
+      <div className="flex items-center gap-4 my-3 !py-0 text-sm text-grey-7">
+        <Score
+          action={action}
+          actionDefinition={actionDefinition}
+          DEPRECATED_actionScore={DEPRECATED_actionScore}
+        />
           />
-          {FLAG_isSnapshotEnabled ? (
-            <>
-              <ScoreShow
-                score={action?.score.pointFait ?? null}
-                scoreMax={action?.score.pointPotentiel ?? null}
-                legend="Score réalisé"
-                size="sm"
-              />
-            </>
-          ) : (
-            <>
-              <ScoreShow
-                score={DEPRECATED_actionScore?.points_realises ?? null}
-                scoreMax={
-                  DEPRECATED_actionScore?.points_max_personnalises ?? null
-                }
-                legend="Score réalisé"
-                size="sm"
-              />
-            </>
-          )}
-          {actionDefinition.have_questions && (
-            <div className="border-l border-l-[#ddd] pl-3">
-              <PersoPotentiel actionDef={actionDefinition} />
-            </div>
-          )}
-        </div>
         <ActionSidePanelToolbar action={actionDefinition} />
       </div>
 
