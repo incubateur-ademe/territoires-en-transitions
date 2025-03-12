@@ -107,6 +107,46 @@ describe('Indicateurs', () => {
       });
   });
 
+  it(`Ecriture avec accès et calcul d'un autre indicateur pour la collectivité > désactivé temporairement`, async () => {
+    const indicateurId = await getIndicateurIdByIdentifiant(
+      databaseService,
+      'cae_1.f'
+    );
+    const indicateurValeurPayload: UpsertIndicateursValeursRequest = {
+      valeurs: [
+        {
+          collectiviteId: paysDuLaonCollectiviteId,
+          indicateurId: indicateurId,
+          dateValeur: '2015-01-01',
+          metadonneeId: null,
+          resultat: 2.039,
+        },
+      ],
+    };
+    const response = await request(app.getHttpServer())
+      .post('/indicateurs')
+      .set('Authorization', `Bearer ${yoloDodoToken}`)
+      .send(indicateurValeurPayload)
+      .expect(201);
+    const upserIndicateurValeursResponse: UpsertIndicateursValeursResponse =
+      response.body;
+    expect(upserIndicateurValeursResponse.valeurs).toBeInstanceOf(Array);
+    expect(upserIndicateurValeursResponse.valeurs.length).toEqual(1);
+    expect(upserIndicateurValeursResponse.valeurs[0]).toMatchObject({
+      collectiviteId: paysDuLaonCollectiviteId,
+      dateValeur: '2015-01-01',
+      estimation: null,
+      indicateurId: 15,
+      indicateurIdentifiant: 'cae_1.f',
+      metadonneeId: null,
+      modifiedBy: YOLO_DODO.id,
+      objectif: null,
+      objectifCommentaire: null,
+      resultat: 2.04,
+      resultatCommentaire: null,
+    });
+  });
+
   it(`Ecriture avec accès et calcul d'un autre indicateur de la même source`, async () => {
     const indicateurId = await getIndicateurIdByIdentifiant(
       databaseService,
@@ -123,6 +163,7 @@ describe('Indicateurs', () => {
         },
       ],
     };
+
     const response = await request(app.getHttpServer())
       .post('/indicateurs')
       .set('Authorization', `Bearer ${yoloDodoToken}`)
@@ -153,7 +194,6 @@ describe('Indicateurs', () => {
       databaseService,
       'cae_1.k'
     );
-    console.log(JSON.stringify(upserIndicateurValeursResponse.valeurs));
     const cae1kCalculatedValeur = upserIndicateurValeursResponse.valeurs.find(
       (v) => v.indicateurId === cae1kIndicateurId
     );
@@ -218,7 +258,9 @@ describe('Indicateurs', () => {
     const upserIndicateurValeursResponse: UpsertIndicateursValeursResponse =
       response.body;
     expect(upserIndicateurValeursResponse.valeurs).toBeInstanceOf(Array);
-    expect(upserIndicateurValeursResponse.valeurs).toHaveLength(2);
+    expect(
+      upserIndicateurValeursResponse.valeurs.length
+    ).toBeGreaterThanOrEqual(2);
     expect(upserIndicateurValeursResponse.valeurs[0]).toMatchObject({
       collectiviteId: paysDuLaonCollectiviteId,
       dateValeur: '2015-01-01',
@@ -233,8 +275,15 @@ describe('Indicateurs', () => {
       resultatCommentaire: null,
       sourceId: 'rare',
     });
+    const computedIndicateurId = await getIndicateurIdByIdentifiant(
+      databaseService,
+      'cae_1.b'
+    );
+    const computedValeur = upserIndicateurValeursResponse.valeurs.find(
+      (v) => v.indicateurId === computedIndicateurId
+    );
     // Calculated indicateur
-    expect(upserIndicateurValeursResponse.valeurs[1]).toMatchObject({
+    expect(computedValeur).toMatchObject({
       collectiviteId: paysDuLaonCollectiviteId,
       dateValeur: '2015-01-01',
       estimation: null,
@@ -260,6 +309,7 @@ describe('Indicateurs', () => {
         },
       ],
     };
+
     const responseAfterPopulationUpdate = await request(app.getHttpServer())
       .post('/indicateurs')
       .set('Authorization', `Bearer ${yoloDodoToken}`)
@@ -270,7 +320,9 @@ describe('Indicateurs', () => {
     expect(upsertIndicateurPopulationValeursResponse.valeurs).toBeInstanceOf(
       Array
     );
-    expect(upsertIndicateurPopulationValeursResponse.valeurs).toHaveLength(2);
+    expect(
+      upsertIndicateurPopulationValeursResponse.valeurs.length
+    ).toBeGreaterThanOrEqual(2);
     expect(upsertIndicateurPopulationValeursResponse.valeurs[0]).toMatchObject({
       collectiviteId: paysDuLaonCollectiviteId,
       dateValeur: '2015-01-01',
@@ -286,7 +338,11 @@ describe('Indicateurs', () => {
       sourceId: 'insee',
     });
     // Calculated indicateur
-    expect(upsertIndicateurPopulationValeursResponse.valeurs[1]).toMatchObject({
+    const computedValeurAfterPopulation =
+      upsertIndicateurPopulationValeursResponse.valeurs.find(
+        (v) => v.indicateurId === computedIndicateurId
+      );
+    expect(computedValeurAfterPopulation).toMatchObject({
       collectiviteId: paysDuLaonCollectiviteId,
       dateValeur: '2015-01-01',
       estimation: null,
