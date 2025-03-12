@@ -9,7 +9,6 @@ import TaskHeader from './sub-action-task.header';
 type SubActionTaskProps = {
   task: ActionDefinitionSummary;
   hideStatus?: boolean;
-  statusWarningMessage?: boolean;
 };
 
 /**
@@ -19,7 +18,6 @@ type SubActionTaskProps = {
 const SubActionTask = ({
   task,
   hideStatus = false,
-  statusWarningMessage = false,
 }: SubActionTaskProps): JSX.Element => {
   const ref = useRef<HTMLDivElement>(null);
   const collectivite = useCurrentCollectivite();
@@ -47,7 +45,7 @@ const SubActionTask = ({
       className="p-4 border border-grey-3 rounded-xl flex flex-col gap-4"
     >
       {/* Header */}
-      <TaskHeader {...{ task, hideStatus, statusWarningMessage }} />
+      <TaskHeader {...{ task, hideStatus }} />
 
       {/* Ajout de commentaire */}
       {!collectivite?.isReadOnly ? (
