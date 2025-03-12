@@ -1,4 +1,5 @@
 import { useCollectiviteId } from '@/app/collectivites/collectivite-context';
+import { getAnnee, PALETTE_LIGHT } from '@/app/ui/charts/echarts';
 import { intersection } from 'es-toolkit';
 import { useEffect, useState } from 'react';
 import { PALETTE_LIGHT } from '../../../../../ui/charts/echarts';
@@ -207,12 +208,12 @@ function prepareMoyenne(moyenne: IndicateurMoyenneOutput | undefined) {
     ordreAffichage: null,
     source: 'moyenne',
     valeurs: moyenne.valeurs.map((v) => {
-      const annee = new Date(v.dateValeur).getFullYear();
+      const { annee, anneeISO } = getAnnee(v.dateValeur);
       return {
         id: -1,
         commentaire: null,
         annee,
-        anneeISO: `${annee}-01-01T00:00:00.000Z`,
+        anneeISO,
         valeur: v.valeur,
       };
     }),
