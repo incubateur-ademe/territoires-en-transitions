@@ -92,21 +92,22 @@ export const makeLineSeries = (dataset: Dataset[]): LineSeriesOption[] =>
 export const makeLegendData = (
   series: LineSeriesOption[]
 ): LegendComponentOption['data'] =>
-  // @ts-expect-error
   series.map((serie) =>
     serie.stack
-      ? serie.name
+      ? (serie.name as string)
       : {
-          name: serie.name,
+          name: serie.name as string,
           icon: 'line',
           itemStyle: Object.assign(
             {
-              borderColor: serie.color,
+              borderColor: serie.color as string,
               borderWidth: 2,
             },
-            estLignePointillee(serie)
-              ? { borderDashOffset: 1, borderType: 'dashed' }
-              : { borderType: 'solid' }
+            serie.id?.toString().startsWith('cible') || serie.id === 'seuil'
+              ? { borderType: 'dotted' as const }
+              : estLignePointillee(serie)
+              ? { borderDashOffset: 1, borderType: 'dashed' as const }
+              : { borderType: 'solid' as const }
           ),
         }
   );
@@ -209,16 +210,16 @@ export const makeOption = ({
       },
     },
     yAxis: {
-      type: 'value',
+      type: 'value' as const,
       axisLabel: {
         color: colors.primary['9'],
-        formatter: (value) => NumFormat.format(value),
+        formatter: (value: number) => NumFormat.format(value),
       },
     },
     title: {
       text: titre,
       subtext: unite,
-      itemGap: !!titre ? 15 : 0,
+      itemGap: titre ? 15 : 0,
       textStyle: {
         color: colors.primary['9'],
       },
