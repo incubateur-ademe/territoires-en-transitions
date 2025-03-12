@@ -33,7 +33,10 @@ const fetchScore = async (
  * Renvoie les scores réalisés et max d'une action donnée
  * @deprecated in favor of `useScore()` using data from snpashot
  */
-export const useScoreRealise = (action: ActionDefinitionSummary) => {
+export const useScoreRealise = (
+  action: ActionDefinitionSummary,
+  enabled: boolean
+) => {
   const collectiviteId = useCollectiviteId();
   const supabase = useSupabase();
 
@@ -44,7 +47,8 @@ export const useScoreRealise = (action: ActionDefinitionSummary) => {
       action.id,
       action.depth,
     ],
-    () => fetchScore(supabase, collectiviteId, action.referentiel, action.id)
+    () => fetchScore(supabase, collectiviteId, action.referentiel, action.id),
+    { enabled }
   );
 
   return (data && indexBy(data, 'action_id')) || {};

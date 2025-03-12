@@ -1,5 +1,6 @@
 'use client';
 
+import { useCollectiviteId } from '@/app/collectivites/collectivite-context';
 import { useCurrentCollectivite } from '@/app/core-logic/hooks/useCurrentCollectivite';
 import { ActionCard } from '@/app/referentiels/actions/action.card';
 import { AxeWithChildrenExpandableTree } from '@/app/referentiels/actions/axe-with-children.expandable-tree';
@@ -13,6 +14,7 @@ import { useState } from 'react';
 
 export const ActionsList = () => {
   const referentielId = useReferentielId();
+  const collectiviteId = useCollectiviteId();
 
   const actions = useReferentielDownToAction(referentielId as ReferentielId);
   const axes = actions.filter((a) => a.type === 'axe');
@@ -21,7 +23,7 @@ export const ActionsList = () => {
   const collectivite = useCurrentCollectivite();
   const { mutate: exportScore, isLoading } = useExportScore(
     referentielId,
-    collectivite
+    collectiviteId
   );
   const [isDescriptionOn, setIsDescriptionOn] = useState(false);
   const [displayOption, setDisplayOption] = useState<OptionValue>('axe');
@@ -79,9 +81,8 @@ export const ActionsList = () => {
       {displayOption === 'action' && (
         <div>
           <div
-            className={`grid grid-cols-1 ${
-              !isDescriptionOn ? 'sm:grid-cols-2 lg:grid-cols-3' : ''
-            } gap-4 grid-rows-1`}
+            className={`grid grid-cols-1 ${!isDescriptionOn ? 'sm:grid-cols-2 lg:grid-cols-3' : ''
+              } gap-4 grid-rows-1`}
           >
             {actions
               .filter((action) => action.type === 'action')
