@@ -1,10 +1,10 @@
 import { z } from 'zod';
-import { getReferentielScoresResponseSchema } from '../compute-score/get-referentiel-scores.response';
+import { scoresPayloadSchema } from '../snapshots/scores-payload.dto';
 
 export const getReferentielMultipleScoresResponseSchema = z
   .object({
     referentielVersion: z.string(),
-    collectiviteScores: getReferentielScoresResponseSchema.array(),
+    collectiviteScores: scoresPayloadSchema.array(),
   })
   .describe('Score des différentes collectivités pour un référentiel');
 export type GetReferentielMultipleScoresResponseType = z.infer<

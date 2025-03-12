@@ -4,7 +4,7 @@ import { PermissionOperation, ResourceType } from '@/domain/auth';
 import { Injectable } from '@nestjs/common';
 import z from 'zod';
 import { referentielIdEnumSchema } from '../index-domain';
-import { LabellisationService } from './labellisation.service';
+import { GetLabellisationService } from './get-labellisation.service';
 
 export const inputSchema = z.object({
   collectiviteId: z.number(),
@@ -16,7 +16,7 @@ export class GetLabellisationRouter {
   constructor(
     private readonly trpc: TrpcService,
     private readonly permissions: PermissionService,
-    private readonly labellisations: LabellisationService
+    private readonly labellisations: GetLabellisationService
   ) {}
 
   router = this.trpc.router({

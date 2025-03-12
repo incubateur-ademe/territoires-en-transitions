@@ -1,6 +1,6 @@
 import { z } from 'zod';
-import { SnapshotJalonEnum } from '../snapshots/snapshot.table';
-import { ComputeScoreMode } from './compute-scores-mode.enum';
+import { ComputeScoreMode } from '../compute-score/compute-score-mode.enum';
+import { SnapshotJalonEnum } from '../snapshots/snapshot-jalon.enum';
 
 export const getReferentielScoresRequestSchema = z
   .object({

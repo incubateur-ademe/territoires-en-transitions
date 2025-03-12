@@ -13,14 +13,14 @@ import z from 'zod';
 import {
   SnapshotJalonEnum,
   snapshotJalonEnumSchema,
-  snapshotTable,
-} from '../snapshot.table';
+} from '../snapshot-jalon.enum';
+import { snapshotTable } from '../snapshot.table';
 
 const DEFAULT_JALONS = [
   SnapshotJalonEnum.PRE_AUDIT,
   SnapshotJalonEnum.POST_AUDIT,
   SnapshotJalonEnum.DATE_PERSONNALISEE,
-  SnapshotJalonEnum.SCORE_COURANT,
+  SnapshotJalonEnum.COURANT,
   SnapshotJalonEnum.VISITE_ANNUELLE,
 ];
 
@@ -47,7 +47,11 @@ type ListOutput = Awaited<ReturnType<ListSnapshotsService['list']>>;
 type ListWithScoresOutput = ListOutput & {
   snapshots: Array<
     ListOutput['snapshots'][number] & {
-      scores: TreeNode<Pick<ActionDefinition, "nom" | "identifiant" | "categorie"> & ActionDefinitionEssential & ScoreFinalFields>;
+      scores: TreeNode<
+        Pick<ActionDefinition, 'nom' | 'identifiant' | 'categorie'> &
+          ActionDefinitionEssential &
+          ScoreFinalFields
+      >;
     }
   >;
 };
@@ -66,7 +70,9 @@ export class ListSnapshotsService {
       collectiviteId,
       referentielId,
       options,
-      additionalSelectColumns: { scores: snapshotTable.scores } as const,
+      additionalSelectColumns: {
+        scores: snapshotTable.scoresPayload,
+      } as const,
     }) as Promise<ListWithScoresOutput>;
   }
 
@@ -84,7 +90,7 @@ export class ListSnapshotsService {
     ];
 
     if (jalons) {
-      filters.push(inArray(snapshotTable.typeJalon, jalons));
+      filters.push(inArray(snapshotTable.jalon, jalons));
     }
 
     // Dynamically build the selection based on withScores flag
@@ -92,7 +98,7 @@ export class ListSnapshotsService {
       ref: snapshotTable.ref,
       nom: snapshotTable.nom,
       date: snapshotTable.date,
-      typeJalon: snapshotTable.typeJalon,
+      jalon: snapshotTable.jalon,
       pointFait: snapshotTable.pointFait,
       pointProgramme: snapshotTable.pointProgramme,
       pointPasFait: snapshotTable.pointPasFait,

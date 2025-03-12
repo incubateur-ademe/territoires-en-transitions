@@ -6,7 +6,7 @@ import {
   IdentiteCollectivite,
 } from '../../collectivites/identite-collectivite.dto';
 import CollectivitesService from '../../collectivites/services/collectivites.service';
-import { GetPersonnalisationReponsesResponseType } from '../../personnalisations/models/get-personnalisation-reponses.response';
+import { PersonnalisationReponsesPayload } from '../../personnalisations/models/get-personnalisation-reponses.response';
 import { PersonnalisationConsequencesByActionId } from '../../personnalisations/models/personnalisation-consequence.dto';
 import { caePersonnalisationRegles } from '../../personnalisations/models/samples/cae-personnalisation-regles.sample';
 import ExpressionParserService from '../../personnalisations/services/expression-parser.service';
@@ -2007,7 +2007,7 @@ describe('ReferentielsScoringService', () => {
     });
 
     it('cae_321_when_recuperation_cogeneration_is_NON', async () => {
-      const reponses: GetPersonnalisationReponsesResponseType = {
+      const reponses: PersonnalisationReponsesPayload = {
         recuperation_cogeneration: false,
       };
       const collectiviteInfo: IdentiteCollectivite = {
@@ -2047,7 +2047,7 @@ describe('ReferentielsScoringService', () => {
     });
 
     it('cae_631_when_dev_eco_2_is_0', async () => {
-      const reponses: GetPersonnalisationReponsesResponseType = {
+      const reponses: PersonnalisationReponsesPayload = {
         dev_eco_2: 0.0,
       };
       const collectiviteInfo: IdentiteCollectivite = {
@@ -2093,7 +2093,7 @@ describe('ReferentielsScoringService', () => {
       - 6.3.1.5 proportion 20% => 32.5%
       */
 
-      const reponses: GetPersonnalisationReponsesResponseType = {
+      const reponses: PersonnalisationReponsesPayload = {
         dev_eco_4: false,
       };
       const collectiviteInfo: IdentiteCollectivite = {
@@ -2164,7 +2164,7 @@ describe('ReferentielsScoringService', () => {
         - 6.4.1.8 passe de 15% à 10%
       */
 
-      const reponses: GetPersonnalisationReponsesResponseType = {
+      const reponses: PersonnalisationReponsesPayload = {
         SAU: true,
       };
       const collectiviteInfo: IdentiteCollectivite = {
@@ -2248,7 +2248,7 @@ describe('ReferentielsScoringService', () => {
      - cae 6.2.1 est réduite à 2 points et on lui ajoute 1 point, donc a un potentiel de 3 points
      */
 
-      const reponsesCas1: GetPersonnalisationReponsesResponseType = {
+      const reponsesCas1: PersonnalisationReponsesPayload = {
         habitat_3: true,
         habitat_2: 0.1,
       };
@@ -2275,7 +2275,7 @@ describe('ReferentielsScoringService', () => {
        - cae 6.2.1 est réduite de 50% et on lui ajoute 1 point, donc a un potentiel de 6 points
        */
 
-      const reponsesCas2: GetPersonnalisationReponsesResponseType = {
+      const reponsesCas2: PersonnalisationReponsesPayload = {
         habitat_3: true,
         habitat_2: 0.5,
       };
@@ -2301,7 +2301,7 @@ describe('ReferentielsScoringService', () => {
        - cae 6.2.1 est réduite à 2 points et on ne lui rajoute pas de points, donc a un potentiel de 2 points
        */
 
-      const reponsesCas3: GetPersonnalisationReponsesResponseType = {
+      const reponsesCas3: PersonnalisationReponsesPayload = {
         habitat_3: false,
         habitat_2: 0.1,
       };
@@ -2386,7 +2386,7 @@ describe('ReferentielsScoringService', () => {
         },
       };
 
-      const reponsesCas1: GetPersonnalisationReponsesResponseType = {
+      const reponsesCas1: PersonnalisationReponsesPayload = {
         dechets_1: false,
         dechets_2: true,
         dechets_3: false,
@@ -2424,7 +2424,7 @@ describe('ReferentielsScoringService', () => {
         },
       };
 
-      const reponsesCas2: GetPersonnalisationReponsesResponseType = {
+      const reponsesCas2: PersonnalisationReponsesPayload = {
         dechets_2: true,
       };
       const personnalisationConsequencesCas2 =
@@ -2478,7 +2478,7 @@ describe('ReferentielsScoringService', () => {
         },
       };
 
-      const reponsesCas3: GetPersonnalisationReponsesResponseType = {
+      const reponsesCas3: PersonnalisationReponsesPayload = {
         dechets_1: true,
         dechets_2: false,
         dechets_4: 0.1,
@@ -2529,7 +2529,7 @@ describe('ReferentielsScoringService', () => {
         };
       }
 
-      const reponsesCas4: GetPersonnalisationReponsesResponseType = {
+      const reponsesCas4: PersonnalisationReponsesPayload = {
         dechets_2: false,
         dechets_4: 0.1,
       };

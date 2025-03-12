@@ -1,4 +1,4 @@
-import { ReferentielId } from '@/domain/referentiels';
+import type { ReferentielId } from '@/domain/referentiels';
 
 export const signInPath = `/login`;
 export const signUpPath = `/signup`;
