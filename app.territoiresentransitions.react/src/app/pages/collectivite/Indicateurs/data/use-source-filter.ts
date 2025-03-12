@@ -49,10 +49,10 @@ export const useSourceFilter = (input: GetAvailableSourcesInput) => {
     useIndicateurMoyenne(input);
 
   // ainsi que le valeurs de référence (cible/seuil)
-  const { data: valeursReference, isLoading: isLoadingReference } =
+  const { data: references, isLoading: isLoadingReference } =
     useIndicateurReference(input);
-  const avecValeurCible = hasValeurCible(valeursReference);
-  const avecValeurSeuil = hasValeurSeuil(valeursReference);
+  const avecValeurCible = hasValeurCible(references);
+  const avecValeurSeuil = hasValeurSeuil(references);
 
   // génère la liste des options possibles en fonction des sources disponibles
   const options: FiltresSource[] = [];
@@ -112,6 +112,23 @@ export const useSourceFilter = (input: GetAvailableSourcesInput) => {
   const avecSecteursSNBC =
     filtresSource.length === 1 && filtresSource[0] === 'snbc';
 
+  // faleurs références à afficher en fonction du filtre
+  const valeursReference = !filtresSource.length
+    ? references
+    : {
+        cible: filtresSource.includes('cible')
+          ? references?.cible ?? null
+          : null,
+        objectifs: filtresSource.includes('cible')
+          ? references?.objectifs ?? null
+          : null,
+        seuil: filtresSource.includes('seuil')
+          ? references?.seuil ?? null
+          : null,
+        libelle: references?.libelle ?? null,
+        drom: references?.drom ?? false,
+      };
+
   return {
     isLoading: isLoadingSources || isLoadingMoyenne || isLoadingReference,
     availableOptions,
@@ -124,23 +141,7 @@ export const useSourceFilter = (input: GetAvailableSourcesInput) => {
       !filtresSource.length || filtresSource.includes('moyenne')
         ? moyenne
         : undefined,
-    avecValeurCible,
-    avecValeurSeuil,
-    valeursReference: !filtresSource.length
-      ? valeursReference
-      : {
-          cible: filtresSource.includes('cible')
-            ? valeursReference?.cible ?? null
-            : null,
-          objectifs: filtresSource.includes('cible')
-            ? valeursReference?.objectifs ?? null
-            : null,
-          seuil: filtresSource.includes('seuil')
-            ? valeursReference?.seuil ?? null
-            : null,
-          libelle: valeursReference?.libelle ?? null,
-          drom: valeursReference?.drom ?? false,
-        },
+    valeursReference,
   };
 };
 
