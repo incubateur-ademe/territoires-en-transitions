@@ -61,7 +61,7 @@ export class ExportScoreController {
       res.set('Access-Control-Expose-Headers', 'Content-Disposition');
 
       // Send the workbook.
-      res.send(content.writeBuffer());
+      res.send(await content.writeBuffer());
     } catch (error) {
       next(error);
     }
