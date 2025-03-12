@@ -1,4 +1,3 @@
-import { GetReferentielResponseType } from '@/backend/referentiels/get-referentiel/get-referentiel.response';
 import { referentielDefinitionTable } from '@/backend/referentiels/models/referentiel-definition.table';
 import { getTestApp, getTestDatabase } from '@/backend/test';
 import { DatabaseService } from '@/backend/utils';
@@ -6,6 +5,7 @@ import { ReferentielIdEnum } from '@/domain/referentiels';
 import { INestApplication } from '@nestjs/common';
 import { eq } from 'drizzle-orm';
 import { default as request } from 'supertest';
+import { ReferentielResponse } from '../get-referentiel/get-referentiel.service';
 
 describe('import-referentiel.controller.e2e-spec', () => {
   let app: INestApplication;
@@ -33,7 +33,7 @@ describe('import-referentiel.controller.e2e-spec', () => {
       .get(importPath)
       .set('Authorization', `Bearer ${process.env.SUPABASE_ANON_KEY}`)
       .expect(200);
-    const getReferentielResponse: GetReferentielResponseType = response.body;
+    const getReferentielResponse: ReferentielResponse = response.body;
     expect(getReferentielResponse.itemsTree.actionId).toBe(
       ReferentielIdEnum.TE
     );

@@ -65,8 +65,12 @@ export type ActionDefinitionInsert = typeof actionDefinitionTable.$inferInsert;
 export const actionDefinitionSeulementIdObligatoireSchema =
   actionDefinitionSchema.partial();
 
-export const actionDefinitionMinimalWithTypeLevel =
+export const actionDefinitionMinimalWithTypeAndLevel =
   actionDefinitionSchema.extend({
     level: z.number(),
     actionType: actionTypeIncludingExempleSchema,
   });
+
+export type ActionDefinitionMinimalWithTypeAndLevel = z.infer<
+  typeof actionDefinitionMinimalWithTypeAndLevel
+>;

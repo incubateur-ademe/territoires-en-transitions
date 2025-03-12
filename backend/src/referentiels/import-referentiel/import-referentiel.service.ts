@@ -31,7 +31,10 @@ import {
   ActionOrigineInsert,
   actionOrigineTable,
 } from '../correlated-actions/action-origine.table';
-import { GetReferentielService } from '../get-referentiel/get-referentiel.service';
+import {
+  GetReferentielService,
+  ReferentielResponse,
+} from '../get-referentiel/get-referentiel.service';
 import {
   ActionCategorieEnum,
   ActionDefinitionInsert,
@@ -97,7 +100,7 @@ const ACTION_ID_REGEXP = /^[a-zA-Z]+_\d+(\.\d+)*$/;
 const ORIGIN_NEW_ACTION_PREFIX = 'nouvelle';
 
 @Injectable()
-export default class ImportReferentielService {
+export class ImportReferentielService {
   private readonly logger = new Logger(ImportReferentielService.name);
 
   constructor(
@@ -108,7 +111,9 @@ export default class ImportReferentielService {
     private readonly referentielService: GetReferentielService
   ) {}
 
-  async importReferentiel(referentielId: ReferentielId) {
+  async importReferentiel(
+    referentielId: ReferentielId
+  ): Promise<ReferentielResponse> {
     const spreadsheetId = this.getReferentielSpreadsheetId(referentielId);
 
     const referentielDefinitions =

@@ -13,10 +13,7 @@ import {
 import { createInsertSchema, createSelectSchema } from 'drizzle-zod';
 import z from 'zod';
 import { collectiviteTable } from '../../collectivites/shared/models/collectivite.table';
-import {
-  PersonnalisationReponsesPayload,
-  personnalisationReponsesPayloadSchema,
-} from '../../personnalisations/models/get-personnalisation-reponses.response';
+import { PersonnalisationReponsesPayload } from '../../personnalisations/models/get-personnalisation-reponses.response';
 import {
   createdAt,
   createdBy,
@@ -25,12 +22,13 @@ import {
   TIMESTAMP_OPTIONS,
 } from '../../utils/column.utils';
 import { auditTable } from '../labellisations/audit.table';
+import { referentielDefinitionTable } from '../models/referentiel-definition.table';
 import {
-  referentielDefinitionTable,
-  referentielIdVarchar,
-} from '../models/referentiel-definition.table';
-import { ScoresPayload, scoresPayloadSchema } from './scores-payload.dto';
-import { snapshotJalonEnumSchema } from './snapshot-jalon.enum';
+  ReferentielId,
+  referentielIdPgEnum,
+} from '../models/referentiel-id.enum';
+import { ScoresPayload } from './scores-payload.dto';
+import { SnapshotJalon, snapshotJalonEnumSchema } from './snapshot-jalon.enum';
 
 const snapshotJalonPgEnum = pgEnum(
   'type_jalon',
@@ -41,7 +39,7 @@ export const snapshotTable = pgTable(
   'score_snapshot',
   {
     collectiviteId: integer('collectivite_id').notNull(),
-    referentielId: referentielIdVarchar.notNull(),
+    referentielId: referentielIdPgEnum('referentiel_id').notNull(),
     referentielVersion: varchar('referentiel_version', { length: 16 }),
     auditId: integer('audit_id'),
     date: timestamp('date', TIMESTAMP_OPTIONS).notNull(),
@@ -52,7 +50,7 @@ export const snapshotTable = pgTable(
     pointProgramme: doublePrecision('point_programme').notNull(),
     pointPasFait: doublePrecision('point_pas_fait').notNull(),
     pointPotentiel: doublePrecision('point_potentiel').notNull(),
-    scoresPayload: jsonb('referentiel_scores').$type<ScoresPayload>().notNull(),
+    scoresPayload: jsonb('referentiel_scores').notNull().$type<ScoresPayload>(),
     personnalisationReponses: jsonb('personnalisation_reponses')
       .$type<PersonnalisationReponsesPayload>()
       .notNull(),
@@ -90,19 +88,35 @@ export const snapshotTable = pgTable(
   ]
 );
 
-export const snapshotSchema = createSelectSchema(snapshotTable).extend({
-  scoresPayload: scoresPayloadSchema,
-  personnalisationReponses: personnalisationReponsesPayloadSchema,
-});
+const snapshotSchema = createSelectSchema(snapshotTable);
 
-export type Snapshot = z.infer<typeof snapshotSchema>;
+export type Snapshot = {
+  collectiviteId: number;
+  referentielId: ReferentielId;
+  jalon: SnapshotJalon;
+  date: string;
+  ref: string;
+  nom: string;
+  pointFait: number;
+  pointProgramme: number;
+  pointPasFait: number;
+  pointPotentiel: number;
+  referentielVersion: string | null;
+  auditId: number | null;
+  createdAt: string;
+  createdBy: string | null;
+  modifiedAt: string;
+  modifiedBy: string | null;
+  scoresPayload: ScoresPayload;
+  personnalisationReponses: PersonnalisationReponsesPayload;
+};
 
-export const snapshotSchemaInsert = createInsertSchema(snapshotTable).extend({
-  scoresPayload: scoresPayloadSchema,
-  personnalisationReponses: personnalisationReponsesPayloadSchema,
-});
+const snapshotSchemaInsert = createInsertSchema(snapshotTable);
 
-export type SnapshotInsert = z.infer<typeof snapshotSchemaInsert>;
+export type SnapshotInsert = z.infer<typeof snapshotSchemaInsert> & {
+  scoresPayload: ScoresPayload;
+  personnalisationReponses: PersonnalisationReponsesPayload;
+};
 
 // All fields except JSON payloads (action scores and personnalisation reponses)
 export const snapshotWithoutPayloadsSchema = snapshotSchema
