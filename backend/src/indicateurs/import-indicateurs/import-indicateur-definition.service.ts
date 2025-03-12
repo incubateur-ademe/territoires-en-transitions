@@ -37,11 +37,16 @@ import { buildConflictUpdateColumns } from '../../utils/database/conflict.utils'
 import SheetService from '../../utils/google-sheets/sheet.service';
 import { getErrorMessage } from '../../utils/nest/errors.utils';
 import ListDefinitionsService from '../definitions/list-definitions.service';
+import { indicateurObjectifTable } from '../shared/models/indicateur-objectif.table';
 import IndicateurValeurExpressionParserService from '../valeurs/indicateur-valeur-expression-parser.service';
 import {
   importIndicateurDefinitionSchema,
   ImportIndicateurDefinitionType,
 } from './import-indicateur-definition.dto';
+import {
+  importObjectifSchema,
+  ImportObjectifType,
+} from './import-indicateur-objectif.dto';
 
 type GetReferentielIndicateurDefinitionsReturnType = Awaited<
   ReturnType<ListDefinitionsService['getReferentielIndicateurDefinitions']>
@@ -76,7 +81,14 @@ export default class ImportIndicateurDefinitionService extends BaseSpreadsheetIm
       'borneMax',
       'precision',
       'description',
+      'exprCible',
+      'exprSeuil',
+      'libelleCibleSeuil',
     ];
+
+  private readonly INDICATEUR_OBJECTIFS_SPREADSHEET_NAME = 'Objectifs';
+  private readonly INDICATEUR_OBJECTIFS_SPREADSHEET_HEADER: (keyof ImportObjectifType)[] =
+    ['identifiantReferentiel', 'dateValeur', 'formule'];
 
   constructor(
     private readonly configurationService: ConfigurationService,
@@ -130,6 +142,9 @@ export default class ImportIndicateurDefinitionService extends BaseSpreadsheetIm
       borneMax: null,
       valeurCalcule: null,
       precision: CrudValeursService.DEFAULT_ROUNDING_PRECISION,
+      exprCible: null,
+      exprSeuil: null,
+      libelleCibleSeuil: null,
     };
 
     const existingDefinitionsData =
@@ -184,10 +199,53 @@ export default class ImportIndicateurDefinitionService extends BaseSpreadsheetIm
       });
     }
 
+    // importe les objectifs
+    const objectifs = await this.importObjectifs(upsertedIndicateurDefinitions);
+    if (objectifs.length) {
+      await this.databaseService.db
+        .insert(indicateurObjectifTable)
+        .values(objectifs)
+        .onConflictDoUpdate({
+          target: [
+            indicateurObjectifTable.indicateurId,
+            indicateurObjectifTable.dateValeur,
+          ],
+          set: buildConflictUpdateColumns(indicateurObjectifTable, ['formule']),
+        });
+
+      this.logger.log(`Upsert ${objectifs.length} indicateur objectifs`);
+    }
+
     return {
       definitions: upsertedIndicateurDefinitions,
       identifiantsRecalcules,
     };
+  }
+
+  async importObjectifs(
+    definitions: GetReferentielIndicateurDefinitionsReturnType
+  ) {
+    const spreadsheetId = this.getSpreadsheetId();
+    const sheetRange = this.sheetService.getDefaultRangeFromHeader(
+      this.INDICATEUR_OBJECTIFS_SPREADSHEET_HEADER,
+      this.INDICATEUR_OBJECTIFS_SPREADSHEET_NAME
+    );
+
+    const objectifsData =
+      await this.sheetService.getDataFromSheet<ImportObjectifType>(
+        spreadsheetId,
+        importObjectifSchema,
+        sheetRange
+      );
+
+    return objectifsData.data
+      .map(({ identifiantReferentiel, ...other }) => {
+        const indicateurId = definitions.find(
+          (d) => d.identifiantReferentiel === identifiantReferentiel
+        )?.id;
+        return indicateurId ? { indicateurId, ...other } : null;
+      })
+      .filter((row) => row !== null);
   }
 
   async checkIndicateurDefinitions(
@@ -352,6 +410,9 @@ export default class ImportIndicateurDefinitionService extends BaseSpreadsheetIm
             'description',
             //'groupementId',
             'valeurCalcule',
+            'exprCible',
+            'exprSeuil',
+            'libelleCibleSeuil',
             'modifiedAt',
             'modifiedBy',
             'version',
