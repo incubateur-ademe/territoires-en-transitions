@@ -158,9 +158,9 @@ const SubActionCard = ({
                 <SubActionTasksList
                   className="mt-2"
                   tasks={tasks}
-                  hideStatus={shouldHideTasksStatus}
-                  statusWarningMessage={
-                    statut !== null && statut?.avancement === 'detaille'
+                  hideStatus={
+                    shouldHideTasksStatus ||
+                    (statut !== null && statut?.avancement === 'detaille')
                   }
                 />
               }

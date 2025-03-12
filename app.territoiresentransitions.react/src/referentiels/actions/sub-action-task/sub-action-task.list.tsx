@@ -5,7 +5,6 @@ import SubActionTask from './sub-action-task';
 type SubActionTasksListProps = {
   tasks: ActionDefinitionSummary[];
   hideStatus?: boolean;
-  statusWarningMessage?: boolean;
   className?: string;
 };
 
@@ -16,18 +15,12 @@ type SubActionTasksListProps = {
 const SubActionTasksList = ({
   tasks,
   hideStatus = false,
-  statusWarningMessage = false,
   className,
 }: SubActionTasksListProps): JSX.Element => {
   return (
     <div className={classNames('flex flex-col gap-5', className)}>
       {tasks.map((task) => (
-        <SubActionTask
-          key={task.id}
-          task={task}
-          hideStatus={hideStatus}
-          statusWarningMessage={statusWarningMessage}
-        />
+        <SubActionTask key={task.id} task={task} hideStatus={hideStatus} />
       ))}
     </div>
   );
