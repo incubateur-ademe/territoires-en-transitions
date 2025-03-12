@@ -16,7 +16,8 @@ export const DOWNLOAD_ICON =
   'path://M11 22S23 22 23 22 23 23.33 23 23.33 11 23.33 11 23.33 11 22 11 22ZM17.67 15.33S22.33 15.33 22.33 15.33 17 20.67 17 20.67 11.67 15.33 11.67 15.33 16.33 15.33 16.33 15.33 16.33 10 16.33 10 17.67 10 17.67 10 17.67 15.33 17.67 15.33Z';
 
 // texture pour les surfaces "objectif"
-const DOTTED_AREA: LineSeriesOption['itemStyle'] = {decal: {
+const DOTTED_AREA: LineSeriesOption['itemStyle'] = {
+  decal: {
   symbol: 'circle',
   symbolSize: 0.3,
   dashArrayX: [
@@ -24,12 +25,26 @@ const DOTTED_AREA: LineSeriesOption['itemStyle'] = {decal: {
     [0, 18, 18, 0],
   ],
   dashArrayY: [9, 0],
-}};
+  },
+};
 
 export type Dataset = DatasetComponentOption & {
   color?: string;
   typeSource?: string;
 };
+
+// formate une date pour un axe `type='time'`
+export const getAnnee = (date?: Date | string) => {
+  const annee = getYear(date);
+  return {
+    annee,
+    anneeISO: getAnneeISO(annee),
+  };
+};
+
+export const getYear = (date?: Date | string | number) =>
+  new Date(date || Date.now()).getFullYear();
+export const getAnneeISO = (annee: number) => `${annee}-01-01T00:00:00.000Z`;
 
 // génère le paramétrage de séries de données sous forme de surfaces empilées
 export const makeStackedSeries = (dataset: Dataset[]): LineSeriesOption[] =>
