@@ -132,6 +132,15 @@ describe('IndicateurValeurExpressionParserService', () => {
       ).toEqual(100);
     });
 
+    test('opt_val(cae_1.e) + opt_val(cae_1.f) with all missing optional value', async () => {
+      expect(
+        indicateurValeurExpressionParserService.parseAndEvaluateExpression(
+          'opt_val(cae_1.e) + opt_val(cae_1.f)',
+          {}
+        )
+      ).toEqual(null);
+    });
+
     test('1 + val(cae_1.f) / val(cae_1.e)', async () => {
       expect(
         indicateurValeurExpressionParserService.parseAndEvaluateExpression(
