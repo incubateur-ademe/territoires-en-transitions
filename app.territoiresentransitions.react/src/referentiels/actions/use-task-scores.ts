@@ -6,8 +6,8 @@ import { useAction, useSnapshotFlagEnabled } from '../use-snapshot';
  * @deprecated use snapshot insteaad
  */
 export const useTasksScoreRepartition = (actionId: string) => {
-  const DEPRECATED_scores = useScores();
   const FLAG_isSnapshotEnabled = useSnapshotFlagEnabled();
+  const DEPRECATED_scores = useScores({ enabled: !FLAG_isSnapshotEnabled });
   const { data: NEW_subAction } = useAction(actionId);
 
   if (FLAG_isSnapshotEnabled && NEW_subAction) {

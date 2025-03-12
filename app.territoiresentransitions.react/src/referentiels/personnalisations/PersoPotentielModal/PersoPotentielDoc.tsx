@@ -22,8 +22,8 @@ export const PersoPotentielDoc = ({
   actionDef,
   regles,
 }: TPersoPotentielDocProps) => {
-  const DEPRECATED_score = useActionScore(actionDef.id);
   const FLAG_isSnapshotEnabled = useSnapshotFlagEnabled();
+  const DEPRECATED_score = useActionScore(actionDef.id, !FLAG_isSnapshotEnabled);
   const NEW_score = useScore(actionDef.id);
 
   const pointReferentiel = FLAG_isSnapshotEnabled
