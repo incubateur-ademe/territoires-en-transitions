@@ -12,14 +12,9 @@ import {
 type TaskHeaderProps = {
   task: ActionDefinitionSummary;
   hideStatus: boolean;
-  statusWarningMessage: boolean;
 };
 
-const TaskHeader = ({
-  task,
-  hideStatus,
-  statusWarningMessage,
-}: TaskHeaderProps) => {
+const TaskHeader = ({ task, hideStatus }: TaskHeaderProps) => {
   const [openScoreDetaille, setOpenScoreDetaille] = useState(false);
 
   const { statut } = useActionStatut(task.id);
@@ -53,7 +48,6 @@ const TaskHeader = ({
           <div className="min-w-40 ml-auto">
             <SubActionStatutDropdown
               actionDefinition={task}
-              statusWarningMessage={statusWarningMessage}
               openScoreDetailleState={{
                 isOpen: openScoreDetaille,
                 setIsOpen: setOpenScoreDetaille,
