@@ -2,7 +2,6 @@ import { useCollectiviteId } from '@/app/collectivites/collectivite-context';
 import { getAnnee, PALETTE_LIGHT } from '@/app/ui/charts/echarts';
 import { intersection } from 'es-toolkit';
 import { useEffect, useState } from 'react';
-import { PALETTE_LIGHT } from '../../../../../ui/charts/echarts';
 import { typeCollectiviteOptions } from '../../../CollectivitesEngagees/data/filtreOptions';
 import { useIndicateurDefinitions } from '../Indicateur/useIndicateurDefinition';
 import { TIndicateurDefinition } from '../types';
@@ -161,7 +160,9 @@ export const useIndicateurChartInfo = ({
       data.valeurs.resultats.annees.length >
       0 ||
     !!segments?.length ||
-    !!moyenne?.valeurs?.length;
+    !!moyenne?.valeurs?.length ||
+    sourceFilter.avecValeurCible ||
+    sourceFilter.avecValeurSeuil;
 
   const isLoading = isLoadingValeurs || isLoadingSegments || isLoadingEnfants;
 
