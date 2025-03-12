@@ -51,11 +51,13 @@ const IndicateurHeader = ({
           />
 
           {/* Actions sur l'indicateur */}
-          <IndicateurToolbar
-            {...{ definition, isPerso, isReadonly }}
-            collectiviteId={collectiviteId!}
-            className="ml-auto"
-          />
+          {!isReadonly && (
+            <IndicateurToolbar
+              {...{ definition, isPerso }}
+              collectiviteId={collectiviteId}
+              className="ml-auto"
+            />
+          )}
         </div>
 
         {/* Chemin de l'indicateur */}
@@ -65,7 +67,13 @@ const IndicateurHeader = ({
 
         {/* Infos générales sur l'indicateur */}
         <IndicateurInfos
-          {...{ collectiviteId, definition, isPerso, composeSansAgregation }}
+          {...{
+            collectiviteId,
+            definition,
+            isPerso,
+            composeSansAgregation,
+            isReadonly,
+          }}
         />
       </div>
     </div>
