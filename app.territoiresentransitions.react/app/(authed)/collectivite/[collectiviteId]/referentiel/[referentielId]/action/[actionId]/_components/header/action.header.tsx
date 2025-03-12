@@ -1,3 +1,5 @@
+import { useState } from 'react';
+
 import { ActionDefinitionSummary } from '@/app/referentiels/ActionDefinitionSummaryReadEndpoint';
 import { ActionSidePanelToolbar } from '@/app/referentiels/actions/action.side-panel.toolbar';
 import { ProgressionRow } from '@/app/referentiels/DEPRECATED_scores.types';
@@ -5,6 +7,8 @@ import { ActionDetailed } from '@/app/referentiels/use-snapshot';
 import { Button } from '@/ui';
 import Breadcrumb from './breadcrumb';
 import Score from './score';
+import Infos from './infos';
+import ActionEditModal from '@/app/referentiels/actions/action-edit.modal';
 
 /**
  * Affiche la partie de l'en-tête de la page Action sensible à la position du
@@ -23,12 +27,24 @@ export const ActionHeader = ({
   nextActionLink: string | undefined;
   prevActionLink: string | undefined;
 }) => {
+  const [isEditModalOpen, setIsEditModalOpen] = useState(false);
+
   return (
     <>
       {/** Titre */}
-      <h1 className="mt-12 mb-3 text-4xl">
-        {actionDefinition.identifiant} {actionDefinition.nom}
-      </h1>
+      <div className="flex gap-8 items-start mt-12 mb-3">
+        <h1 className="mb-0 text-4xl">
+          {actionDefinition.identifiant} {actionDefinition.nom}
+        </h1>
+        <Button
+          className="mt-2"
+          variant="grey"
+          size="sm"
+          onClick={() => setIsEditModalOpen(true)}
+        >
+          Modifier
+        </Button>
+      </div>
 
       {/** Breadcrumb */}
       <Breadcrumb action={actionDefinition} />
@@ -40,7 +56,15 @@ export const ActionHeader = ({
           actionDefinition={actionDefinition}
           DEPRECATED_actionScore={DEPRECATED_actionScore}
         />
+        {action && (
+          <Infos
+            actionId={action.actionId}
+            openState={{
+              isOpen: isEditModalOpen,
+              setIsOpen: setIsEditModalOpen,
+            }}
           />
+        )}
         <ActionSidePanelToolbar action={actionDefinition} />
       </div>
 
@@ -68,6 +92,15 @@ export const ActionHeader = ({
           >
             Action suivante
           </Button>
+        )}
+        {action && isEditModalOpen && (
+          <ActionEditModal
+            action={action}
+            openState={{
+              isOpen: isEditModalOpen,
+              setIsOpen: setIsEditModalOpen,
+            }}
+          />
         )}
       </div>
     </>
