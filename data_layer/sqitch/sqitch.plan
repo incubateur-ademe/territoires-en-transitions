@@ -817,5 +817,5 @@ utilisateur/remove_timescale 2025-03-07T08:01:59Z System Administrator <root@Mac
 @v4.40.0 2025-03-11T10:58:20Z System Administrator <root@MacBook-Air-de-Thibaut-2.local> # Suppression de timescaledb
 
 labellisation/import 2025-03-11T16:13:00Z System Administrator <root@MacBook-Air-de-Thibaut-2.local> # ajout de la table d'import pour sauvegarder les données de la prod
-
 collectivite/fusion 2025-02-17T15:25:15Z Amandine <contact@jacquelinamandine.fr> # Ajoute la possibilité d'avoir des collectivités région et département et simplifie le fonctionnement des collectivités
+@v4.41.0 2025-03-12T17:39:43Z Amandine <contact@jacquelinamandine.fr> # Ajoute les collectivités département et région
