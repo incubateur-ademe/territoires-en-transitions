@@ -16,6 +16,7 @@ import {
 
 type ActionPiloteWithName = ActionPiloteType & {
   nom: string | null;
+  prenom: string | null;
 };
 
 @Injectable()
