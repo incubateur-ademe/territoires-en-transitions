@@ -1,6 +1,6 @@
 import { DBClient } from '@/api';
 import { useSupabase } from '@/api/utils/supabase/use-supabase';
-import { RouterOutput, trpc } from '@/api/utils/trpc/client';
+import { trpc } from '@/api/utils/trpc/client';
 import {
   findActionById,
   flatMapActionsEnfants,
@@ -11,9 +11,6 @@ import { useQuery } from 'react-query';
 import { actionNewToDeprecated } from '../../DEPRECATED_scores.types';
 import { useSnapshotFlagEnabled } from '../../use-snapshot';
 import { TComparaisonScoreAudit } from './types';
-
-type Snapshot =
-  RouterOutput['referentiels']['snapshots']['listWithScores']['snapshots'][number];
 
 // charge les comparaisons de potentiels/scores avant/après audit
 export const useComparaisonScoreAudit = (
@@ -42,7 +39,7 @@ export const useComparaisonScoreAudit = (
     },
     {
       enabled: FLAG_isSnapshotEnabled,
-      select({ snapshots }) {
+      select(snapshots) {
         const currentSnapshot = snapshots.find(
           (snap) => snap.jalon === SnapshotJalonEnum.COURANT
         );
@@ -55,11 +52,11 @@ export const useComparaisonScoreAudit = (
           return [];
         }
 
-        const scores: Snapshot['scores'] = currentSnapshot.scores;
+        const { scores } = currentSnapshot.scoresPayload;
 
         const result = flatMapActionsEnfants(scores).map((currentAction) => {
           const preAuditAction = findActionById(
-            preAuditSnapshot.scores,
+            preAuditSnapshot.scoresPayload.scores,
             currentAction.actionId
           );
 

@@ -43,8 +43,10 @@ import { roundTo } from '../../utils/number.utils';
 import { sleep } from '../../utils/sleep.utils';
 import { CorrelatedActionsWithScoreFields } from '../correlated-actions/correlated-actions.dto';
 import { CorrelatedActionWithScore } from '../correlated-actions/referentiel-action-origine-with-score.dto';
-import { GetReferentielResponseType } from '../get-referentiel/get-referentiel.response';
-import { GetReferentielService } from '../get-referentiel/get-referentiel.service';
+import {
+  GetReferentielService,
+  ReferentielResponse,
+} from '../get-referentiel/get-referentiel.service';
 import { ActionDefinition } from '../index-domain';
 import { Audit } from '../labellisations/audit.table';
 import { EtoileDefinition } from '../labellisations/etoile-definition.table';
@@ -69,7 +71,6 @@ import { GetActionStatutExplicationsResponseType } from '../models/get-action-st
 import { GetCheckScoresResponseType } from '../models/get-check-scores.response';
 import { GetMultipleCheckScoresResponseType } from '../models/get-multiple-check-scores.response';
 import { GetReferentielMultipleScoresRequestType } from '../models/get-referentiel-multiple-scores.request';
-import { GetReferentielMultipleScoresResponseType } from '../models/get-referentiel-multiple-scores.response';
 import { GetReferentielScoresRequestType } from '../models/get-referentiel-scores.request';
 import { historiqueActionCommentaireTable } from '../models/historique-action-commentaire.table';
 import { historiqueActionStatutTable } from '../models/historique-action-statut.table';
@@ -1009,7 +1010,10 @@ export default class ScoresService {
     referentielId: ReferentielId,
     parameters: GetReferentielMultipleScoresRequestType,
     tokenInfo?: AuthenticatedUser
-  ): Promise<GetReferentielMultipleScoresResponseType> {
+  ): Promise<{
+    referentielVersion: string;
+    collectiviteScores: ScoresPayload[];
+  }> {
     this.logger.log(
       `Calcul des scores pour les collectivités ${parameters.collectiviteIds.join(
         ','
@@ -1024,11 +1028,10 @@ export default class ScoresService {
       parameters.avecReferentielsOrigine
     );
 
-    const getReferentielMultipleScoresResponseType: GetReferentielMultipleScoresResponseType =
-      {
-        referentielVersion: referentiel.version,
-        collectiviteScores: [],
-      };
+    const getReferentielMultipleScoresResponse = {
+      referentielVersion: referentiel.version,
+      collectiviteScores: [] as ScoresPayload[],
+    };
 
     const collectiviteChunks = chunk(
       parameters.collectiviteIds,
@@ -1047,12 +1050,12 @@ export default class ScoresService {
           ).then((result) => result.scoresPayload)
         )
       );
-      getReferentielMultipleScoresResponseType.collectiviteScores.push(
+      getReferentielMultipleScoresResponse.collectiviteScores.push(
         ...collectiviteScores
       );
     }
 
-    return getReferentielMultipleScoresResponseType;
+    return getReferentielMultipleScoresResponse;
   }
 
   async computeScoreForCollectivite(
@@ -1060,7 +1063,7 @@ export default class ScoresService {
     collectiviteId: number,
     parameters: GetReferentielScoresRequestType,
     user?: InternalAuthUser,
-    referentiel?: GetReferentielResponseType,
+    referentiel?: ReferentielResponse,
     noCheck?: boolean
   ): Promise<{
     scoresPayload: ScoresPayload;
@@ -1243,7 +1246,11 @@ export default class ScoresService {
       } else {
         this.logger.log(`Recalcul des scores `);
         referentielWithScore = this.computeScore(
-          referentiel.itemsTree,
+          referentiel.itemsTree as TreeNode<
+            ActionDefinitionEssential &
+              Partial<ScoreFields> &
+              CorrelatedActionsWithScoreFields
+          >,
           personnalisationConsequencesResult.consequences,
           actionStatuts,
           actionLevel,
@@ -1292,7 +1299,11 @@ export default class ScoresService {
       const scores = await this.computeScoreFromReferentielsOrigine(
         collectiviteId,
         parameters,
-        referentiel.itemsTree,
+        referentiel.itemsTree as TreeNode<
+          ActionDefinitionEssential &
+            Partial<ScoreFields> &
+            CorrelatedActionsWithScoreFields
+        >,
         personnalisationConsequencesResult.consequences,
         etoilesDefinitions
       );

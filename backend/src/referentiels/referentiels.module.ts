@@ -9,7 +9,7 @@ import { ExportScoreService } from './export-score/export-score.service';
 import { GetReferentielController } from './get-referentiel/get-referentiel.controller';
 import { GetReferentielService } from './get-referentiel/get-referentiel.service';
 import { ImportReferentielController } from './import-referentiel/import-referentiel.controller';
-import ImportReferentielService from './import-referentiel/import-referentiel.service';
+import { ImportReferentielService } from './import-referentiel/import-referentiel.service';
 import { GetLabellisationRouter } from './labellisations/get-labellisation.router';
 import { GetLabellisationService } from './labellisations/get-labellisation.service';
 import { LabellisationService } from './labellisations/labellisation.service';
