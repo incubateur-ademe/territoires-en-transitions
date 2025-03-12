@@ -9,6 +9,7 @@ import Breadcrumb from './breadcrumb';
 import Score from './score';
 import Infos from './infos';
 import ActionEditModal from '@/app/referentiels/actions/action-edit.modal';
+import { useCurrentCollectivite } from '@/app/core-logic/hooks/useCurrentCollectivite';
 
 /**
  * Affiche la partie de l'en-tête de la page Action sensible à la position du
@@ -27,6 +28,7 @@ export const ActionHeader = ({
   nextActionLink: string | undefined;
   prevActionLink: string | undefined;
 }) => {
+  const { isReadOnly } = useCurrentCollectivite()!;
   const [isEditModalOpen, setIsEditModalOpen] = useState(false);
 
   return (
@@ -36,14 +38,16 @@ export const ActionHeader = ({
         <h1 className="mb-0 text-4xl">
           {actionDefinition.identifiant} {actionDefinition.nom}
         </h1>
-        <Button
-          className="mt-2"
-          variant="grey"
-          size="sm"
-          onClick={() => setIsEditModalOpen(true)}
-        >
-          Modifier
-        </Button>
+        {!isReadOnly && (
+          <Button
+            className="mt-2"
+            variant="grey"
+            size="sm"
+            onClick={() => setIsEditModalOpen(true)}
+          >
+            Modifier
+          </Button>
+        )}
       </div>
 
       {/** Breadcrumb */}
@@ -63,6 +67,7 @@ export const ActionHeader = ({
               isOpen: isEditModalOpen,
               setIsOpen: setIsEditModalOpen,
             }}
+            isReadOnly={isReadOnly}
           />
         )}
         <ActionSidePanelToolbar action={actionDefinition} />
