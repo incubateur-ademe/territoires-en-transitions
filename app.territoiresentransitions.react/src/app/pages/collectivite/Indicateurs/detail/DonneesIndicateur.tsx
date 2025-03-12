@@ -1,7 +1,11 @@
+import { useCollectiviteId } from '@/app/collectivites/collectivite-context';
+import { QuestionReponseList } from '@/app/referentiels/personnalisations/PersoPotentielModal/PersoPotentielQR';
+import { useChangeReponseHandler } from '@/app/referentiels/personnalisations/PersoPotentielModal/useChangeReponseHandler';
 import { Divider } from '@/ui';
 import classNames from 'classnames';
 import { useState } from 'react';
 import { useIndicateurChartInfo } from '../data/use-indicateur-chart';
+import { useIndicateurPersonnalisation } from '../data/use-indicateur-personnalisation';
 import IndicateurDetailChart from '../Indicateur/detail/IndicateurDetailChart';
 import { IndicateurValuesTabs } from '../Indicateur/detail/IndicateurValuesTabs';
 import { TIndicateurDefinition } from '../types';
@@ -37,6 +41,13 @@ const DonneesIndicateur = ({
 
   const { sourceFilter, typesSegmentation } = chartInfo;
 
+  const questionReponses = useIndicateurPersonnalisation(
+    definition.identifiant,
+    chartInfo.sourceFilter.valeursReference?.drom ?? false
+  );
+  const collectiviteId = useCollectiviteId();
+  const handleChange = useChangeReponseHandler(collectiviteId, []);
+
   return (
     <div className="flex flex-col gap-7 bg-white p-10 border border-grey-3 rounded-xl">
       <div className="flex flex-row gap-4">
@@ -59,6 +70,14 @@ const DonneesIndicateur = ({
           <TypeSegmentationSelect chartInfo={chartInfo} />
         )}
       </div>
+
+      {/** Q/R personnalisation */}
+      {questionReponses && (
+        <QuestionReponseList
+          questionReponses={questionReponses}
+          onChange={handleChange}
+        />
+      )}
 
       {/* Graphe */}
       <IndicateurDetailChart
