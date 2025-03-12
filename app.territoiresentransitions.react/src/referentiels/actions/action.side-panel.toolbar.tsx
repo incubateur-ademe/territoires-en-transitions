@@ -11,7 +11,7 @@ import {
 import ActionDiscussionsPanel from './action-discussion/ActionDiscussionsPanel';
 import { ActionInfoPanel } from './action-information/action-information.panel';
 
-export type Props = {
+type Props = {
   action: ActionDefinitionSummary;
 };
 
@@ -95,7 +95,7 @@ type ToolbarProps = {
 
 const Toolbar = ({ panelId, onClick, isReadonly }: ToolbarProps) => {
   return (
-    <div className="flex gap-4">
+    <div className="flex gap-4 ml-auto">
       <ToolbarButton
         panelId="info"
         isActive={panelId === 'info'}
