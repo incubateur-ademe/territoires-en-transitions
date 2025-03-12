@@ -16,10 +16,9 @@ export const LAYERS = {
   objectifs: { color: '#F5895B', label: 'Mes objectifs' },
   resultats: { color: '#6A6AF4', label: 'Mes résultats' },
   trajectoire: { color: '#1E98C6', label: 'SNBC territorialisée' },
-  moyenne: {
-    color: '#41E6FF',
-    label: 'Moyenne des collectivités de même type',
-  },
+  moyenne: { color: '#41E6FF' },
+  cible: { color: '#48A775' },
+  seuil: { color: '#EB633E' },
 };
 
 export const PALETTE = [

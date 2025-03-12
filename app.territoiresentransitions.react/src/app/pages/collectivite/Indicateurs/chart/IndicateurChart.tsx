@@ -1,11 +1,14 @@
 import {
+  LAYERS,
   ReactECharts,
   makeLegendData,
   makeLineSeries,
   makeOption,
+  makeReferenceSeries,
   makeStackedSeries,
 } from '@/app/ui/charts/echarts';
 import { renderToString } from '@/app/ui/charts/echarts/renderToString';
+import { getAnnee, getYear } from '@/app/ui/charts/echarts/utils';
 import SpinnerLoader from '@/app/ui/shared/SpinnerLoader';
 import { GridComponentOption } from 'echarts';
 import { uniq } from 'es-toolkit';
@@ -32,6 +35,9 @@ const variantToGrid: Record<ChartVariant, GridComponentOption> = {
   modal: {},
   detail: { left: 32, right: 32, bottom: 80 },
 };
+
+const TooltipContainerClassname =
+  'max-w-80 break-words whitespace-normal text-xs [&_*]:text-xs [&_*]:mb-0';
 
 /** Data issues de l'api pour générer les données formatées pour echarts */
 type IndicateurChartData = {
@@ -116,6 +122,88 @@ const prepareSegmentsDataset = (chartInfo: IndicateurChartInfo) => {
   });
 };
 
+// id des dataser pour les valeurs de référence
+const DATASET_REFERENCE = ['cible', 'seuil', 'cible-objectifs'];
+
+const makeReferenceDataset = (
+  id: 'cible' | 'seuil',
+  valeur: number,
+  unite: string,
+  anneeISO: string,
+  libelle: string | null
+) => ({
+  color: LAYERS[id].color,
+  id,
+  name: `Valeur ${id} : ${valeur} ${unite}`,
+  source: [{ anneeISO, valeur }],
+  dimensions: ['anneeISO', 'valeur'],
+  metadonnee: null,
+  nomSource: libelle,
+});
+
+const getObjectifReferenceName = (
+  valeurs: { valeur: number; dateValeur: string }[],
+  unite: string,
+  libelle: string | null
+) => {
+  if (valeurs.length === 1) {
+    const { dateValeur, valeur } = valeurs[0];
+    const annee = getYear(dateValeur);
+    return `Objectif ${annee} : ${valeur} ${unite}`;
+  }
+
+  return libelle ?? 'Objectifs';
+};
+
+const makeReferenceObjectifsDataset = (
+  valeurs: { valeur: number; dateValeur: string }[],
+  unite: string,
+  libelle: string | null
+) => ({
+  color: LAYERS.cible.color,
+  id: 'cible-objectifs',
+  name: getObjectifReferenceName(valeurs, unite, libelle),
+  source: valeurs.map(({ valeur, dateValeur }) => ({
+    ...getAnnee(dateValeur),
+    valeur,
+  })),
+  dimensions: ['anneeISO', 'valeur'],
+  metadonnee: null,
+  nomSource: libelle,
+});
+
+// prépare les données pour l'affichage des valeurs références (cible/seuil)
+const prepareReferenceDataset = (chartInfo: IndicateurChartInfo) => {
+  const {
+    data,
+    sourceFilter: { valeursReference },
+  } = chartInfo;
+  if (!valeursReference) return [];
+
+  const { cible, seuil, objectifs, libelle } = valeursReference;
+  const { anneeISO } = getAnnee();
+  const dataset = [];
+
+  // les valeurs cible/seuil n'ont pas d'année
+  // alors on ajoute un point uniquement pour l'année courante
+  if (cible !== null) {
+    dataset.push(
+      makeReferenceDataset('cible', cible, data.unite ?? '', anneeISO, libelle)
+    );
+  }
+  if (seuil !== null) {
+    dataset.push(
+      makeReferenceDataset('seuil', seuil, data.unite ?? '', anneeISO, libelle)
+    );
+  }
+  if (objectifs?.length) {
+    dataset.push(
+      makeReferenceObjectifsDataset(objectifs, data.unite ?? '', libelle)
+    );
+  }
+  return dataset;
+};
+
 /** Props du graphique générique Indicateur */
 export type IndicateurChartProps = {
   /** Données pour le graphe */
@@ -138,13 +226,8 @@ const IndicateurChart = ({
   className,
 }: IndicateurChartProps) => {
   const { data } = chartInfo;
-  const { objectifs, resultats } = data.valeurs;
-
-  const noData = objectifs.sources?.length + resultats.sources?.length === 0;
 
   const getColorBySourceId = useGetColorBySourceId();
-
-  if (noData) return null;
 
   const donneesResultatObjectif = [
     ...prepareDataset(data, 'resultat', getColorBySourceId),
@@ -152,8 +235,15 @@ const IndicateurChart = ({
   ];
 
   const donneesSegments = prepareSegmentsDataset(chartInfo);
+  const references = prepareReferenceDataset(chartInfo);
 
-  const dataset = [...donneesResultatObjectif, ...donneesSegments];
+  const dataset = [
+    ...donneesResultatObjectif,
+    ...donneesSegments,
+    ...references,
+  ];
+
+  if (!dataset.length) return null;
 
   const style = { height: variantToHeight[variant] };
 
@@ -162,7 +252,9 @@ const IndicateurChart = ({
   const series = [
     ...makeLineSeries(donneesResultatObjectif),
     ...makeStackedSeries(donneesSegments),
+    ...makeReferenceSeries(references),
   ];
+
   const option = makeOption({
     option: {
       dataset,
@@ -182,12 +274,20 @@ const IndicateurChart = ({
           show: true,
           formatter: (params) => {
             const item = dataset?.find((s) => s.name === params.name);
+            if (
+              item &&
+              item.nomSource &&
+              DATASET_REFERENCE.includes(item.id as string)
+            ) {
+              return `<div class="${TooltipContainerClassname}">${item.nomSource}</div>`;
+            }
+
             return item?.metadonnee
               ? renderToString(
                   <DataSourceTooltipContent
                     metadonnee={item.metadonnee}
                     nomSource={item.nomSource}
-                    className="max-w-80 break-words whitespace-normal text-xs [&_*]:text-xs [&_*]:mb-0"
+                    className={TooltipContainerClassname}
                   />
                 )
               : '';
