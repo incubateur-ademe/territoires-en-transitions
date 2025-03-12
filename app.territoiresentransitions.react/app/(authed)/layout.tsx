@@ -2,6 +2,7 @@ import { fetchUserDetails } from '@/api/users/user-details.fetch.server';
 import { getAuthUser } from '@/api/utils/supabase/auth-user.server';
 import Header from '@/app/app/Layout/Header';
 import { getErrorDisplayComponent } from '@/app/shared/error-display';
+import NextPostHogPageView from '@/ui/components/tracking/NextPostHogPageView';
 import { redirect } from 'next/navigation';
 import { ReactNode } from 'react';
 import { ErrorBoundary } from 'react-error-boundary';
@@ -22,6 +23,7 @@ export default async function Layout({ children }: { children: ReactNode }) {
       <ErrorBoundary fallbackRender={getErrorDisplayComponent}>
         {children}
       </ErrorBoundary>
+      <NextPostHogPageView />
     </AppProviders>
   );
 }
