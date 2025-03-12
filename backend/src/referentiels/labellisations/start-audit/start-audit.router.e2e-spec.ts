@@ -11,10 +11,8 @@ import { TrpcRouter } from '@/backend/utils/trpc/trpc.router';
 import { ReferentielIdEnum } from '@/domain/referentiels';
 import { INestApplication } from '@nestjs/common';
 import { eq } from 'drizzle-orm';
-import {
-  SnapshotJalonEnum,
-  snapshotTable,
-} from '../../snapshots/snapshot.table';
+import { SnapshotJalonEnum } from '../../snapshots/snapshot-jalon.enum';
+import { snapshotTable } from '../../snapshots/snapshot.table';
 import { auditTable } from '../audit.table';
 import { auditeurTable } from '../auditeur.table';
 import { labellisationDemandeTable } from '../labellisation-demande.table';
@@ -105,7 +103,7 @@ describe('StartAuditRouter', () => {
 
     // On vérifie que le snapshot associé à l'audit est bien créé
     expect(snapshot).toBeDefined();
-    expect(snapshot.typeJalon).toBe(SnapshotJalonEnum.PRE_AUDIT);
+    expect(snapshot.jalon).toBe(SnapshotJalonEnum.PRE_AUDIT);
     expect(snapshot.date).toBe(startedAudit.dateDebut);
   });
 

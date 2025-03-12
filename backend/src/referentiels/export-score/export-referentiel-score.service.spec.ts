@@ -4,7 +4,7 @@ import { GetReferentielService } from '../get-referentiel/get-referentiel.servic
 import { deeperReferentielScoring } from '../models/samples/deeper-referentiel-scoring.sample';
 import { simpleReferentielScoring } from '../models/samples/simple-referentiel-scoring.sample';
 import { SnapshotsService } from '../snapshots/snapshots.service';
-import ExportScoreService from './export-score.service';
+import { ExportScoreService } from './export-score.service';
 
 describe('ExportReferentielScoreService', () => {
   let exportReferentielScoreService: ExportScoreService;

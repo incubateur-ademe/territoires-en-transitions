@@ -1,11 +1,11 @@
 import { z } from 'zod';
-import { SnapshotJalonEnum } from '../snapshots/snapshot.table';
+import { SnapshotJalonEnum } from './snapshot-jalon.enum';
 
 export const DEFAULT_SNAPSHOT_JALONS = [
   SnapshotJalonEnum.PRE_AUDIT,
   SnapshotJalonEnum.POST_AUDIT,
   SnapshotJalonEnum.DATE_PERSONNALISEE,
-  SnapshotJalonEnum.SCORE_COURANT,
+  SnapshotJalonEnum.COURANT,
   SnapshotJalonEnum.VISITE_ANNUELLE,
 ] as const;
 

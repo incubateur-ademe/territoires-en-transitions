@@ -1,6 +1,5 @@
-import { PermissionOperation } from '@/backend/auth/authorizations/permission-operation.enum';
 import { PermissionService } from '@/backend/auth/authorizations/permission.service';
-import { ResourceType } from '@/backend/auth/authorizations/resource-type.enum';
+import { toSlug } from '@/domain/utils';
 import {
   BadRequestException,
   Injectable,
@@ -9,39 +8,55 @@ import {
   NotFoundException,
   UnauthorizedException,
 } from '@nestjs/common';
-import { and, eq, sql } from 'drizzle-orm';
+import { and, eq, getTableColumns, sql } from 'drizzle-orm';
+import { omit } from 'es-toolkit';
 import { DateTime } from 'luxon';
-import slugify from 'slugify';
+import { z } from 'zod';
 import { AuthRole, AuthUser } from '../../auth/models/auth.models';
-import { GetPersonnalisationReponsesResponseType } from '../../personnalisations/models/get-personnalisation-reponses.response';
+import { PersonnalisationReponsesPayload } from '../../personnalisations/models/get-personnalisation-reponses.response';
 import { DatabaseService } from '../../utils/database/database.service';
 import { getErrorWithCode } from '../../utils/nest/errors.utils';
 import { PgIntegrityConstraintViolation } from '../../utils/postgresql-error-codes.enum';
-import { GetReferentielScoresResponseType } from '../compute-score/get-referentiel-scores.response';
-import {
-  ScoreSnapshotCollectiviteInfoType,
-  ScoreSnapshotInfoType,
-} from '../models/get-score-snapshots.response';
+import { ComputeScoreMode } from '../compute-score/compute-score-mode.enum';
+import ScoresService from '../compute-score/scores.service';
 import { ReferentielId } from '../models/referentiel-id.enum';
+import { ScoresPayload } from './scores-payload.dto';
+import { SnapshotJalon, SnapshotJalonEnum } from './snapshot-jalon.enum';
 import {
-  ScoreSnapshotType,
+  Snapshot,
   SnapshotInsert,
-  SnapshotJalon,
-  SnapshotJalonEnum,
   snapshotTable,
+  SnapshotWithoutPayloads,
 } from './snapshot.table';
+import { upsertSnapshotRequestSchema } from './upsert-snapshot.request';
+
+// const computeSnapshotOptionsSchema = z.discriminatedUnion('jalon', [
+//   z.object({
+//     jalon: z.literal(SnapshotJalonEnum.COURANT),
+//   }),
+//   z.object({
+//     jalon: z
+//       .literal(SnapshotJalonEnum.PRE_AUDIT)
+//       .or(z.literal(SnapshotJalonEnum.POST_AUDIT)),
+//     auditId: z.number(),
+//   }),
+//   z.object({
+//     jalon: z.literal(SnapshotJalonEnum.DATE_PERSONNALISEE),
+//     date: z.string().datetime(),
+//   }),
+// ]);
 
 @Injectable()
 export class SnapshotsService {
-  static SCORE_COURANT_SNAPSHOT_REF = 'score-courant';
-  static SCORE_COURANT_SNAPSHOT_NOM = 'Score courant';
-  static PRE_AUDIT_SNAPSHOT_REF_PREFIX = 'pre-audit-';
-  static PRE_AUDIT_SNAPSHOT_NOM_SUFFIX = ' - avant audit ';
-  static POST_AUDIT_SNAPSHOT_REF_PREFIX = 'post-audit-';
-  static POST_AUDIT_SNAPSHOT_NOM_SUFFIX = ' - audit ';
-  static JOUR_SNAPSHOT_REF_PREFIX = 'jour-';
-  static SCORE_PERSONNALISE_REF_PREFIX = 'user-';
-  static JOUR_SNAPSHOT_NOM_PREFIX = ' - jour du ';
+  static readonly SCORE_COURANT_SNAPSHOT_REF = 'score-courant';
+  static readonly SCORE_COURANT_SNAPSHOT_NOM = 'Score courant';
+  static readonly PRE_AUDIT_SNAPSHOT_REF_PREFIX = 'pre-audit-';
+  static readonly PRE_AUDIT_SNAPSHOT_NOM_SUFFIX = ' - avant audit ';
+  static readonly POST_AUDIT_SNAPSHOT_REF_PREFIX = 'post-audit-';
+  static readonly POST_AUDIT_SNAPSHOT_NOM_SUFFIX = ' - audit ';
+  static readonly JOUR_SNAPSHOT_REF_PREFIX = 'jour-';
+  static readonly SCORE_PERSONNALISE_REF_PREFIX = 'user-';
+  static readonly JOUR_SNAPSHOT_NOM_PREFIX = ' - jour du ';
 
   static USER_DELETION_ALLOWED_SNAPSHOT_TYPES: SnapshotJalon[] = [
     SnapshotJalonEnum.DATE_PERSONNALISEE,
@@ -52,133 +67,118 @@ export class SnapshotsService {
 
   constructor(
     private readonly databaseService: DatabaseService,
-    private readonly permissionService: PermissionService
+    private readonly permissionService: PermissionService,
+    private readonly scoresService: ScoresService
   ) {}
 
-  slugifyName(name: string): string {
-    if (name) {
-      return slugify(name.toLowerCase(), {
-        replacement: '-',
-        remove: /[*+~.()'"!:@]/g,
-      });
-    }
-    return name;
-  }
-
-  private fillDefaultSnapshotNomRef(
-    scoreResponse: Pick<
-      GetReferentielScoresResponseType,
-      'snapshot' | 'jalon' | 'anneeAudit' | 'date'
-    >,
-    snapshotNom?: string
-  ) {
-    if (!scoreResponse.snapshot) {
-      scoreResponse.snapshot = {
-        ref: '',
-        nom: snapshotNom || '',
-        createdAt: '',
-        createdBy: '',
-        modifiedAt: '',
-        modifiedBy: '',
-      };
-    }
+  private getDefaultSnapshotMetadata({
+    nom: snapshotNom,
+    jalon,
+    anneeAudit,
+    date,
+  }: {
+    nom?: string;
+    jalon?: SnapshotJalon;
+    anneeAudit?: number;
+    date: string;
+  }) {
+    let ref = '',
+      nom = snapshotNom || '';
 
     if (
-      (scoreResponse.jalon === SnapshotJalonEnum.PRE_AUDIT ||
-        scoreResponse.jalon === SnapshotJalonEnum.POST_AUDIT) &&
-      !scoreResponse.anneeAudit
+      (jalon === SnapshotJalonEnum.PRE_AUDIT ||
+        jalon === SnapshotJalonEnum.POST_AUDIT) &&
+      !anneeAudit
     ) {
       throw new InternalServerErrorException(
-        `L'année de l'audit doit être définie pour le jalon ${scoreResponse.jalon}`
+        `L'année de l'audit doit être définie pour le jalon ${jalon}`
       );
     }
-    const dateTime = DateTime.fromISO(scoreResponse.date);
 
-    switch (scoreResponse.jalon) {
+    switch (jalon) {
       case SnapshotJalonEnum.PRE_AUDIT:
-        scoreResponse.snapshot.ref = `${SnapshotsService.PRE_AUDIT_SNAPSHOT_REF_PREFIX}${scoreResponse.anneeAudit}`;
-        scoreResponse.snapshot.nom = `${scoreResponse.anneeAudit}${SnapshotsService.PRE_AUDIT_SNAPSHOT_NOM_SUFFIX}`;
+        ref = `${SnapshotsService.PRE_AUDIT_SNAPSHOT_REF_PREFIX}${anneeAudit}`;
+        nom = `${anneeAudit}${SnapshotsService.PRE_AUDIT_SNAPSHOT_NOM_SUFFIX}`;
         break;
+
       case SnapshotJalonEnum.POST_AUDIT:
-        scoreResponse.snapshot.ref = `${SnapshotsService.POST_AUDIT_SNAPSHOT_REF_PREFIX}${scoreResponse.anneeAudit}`;
-        scoreResponse.snapshot.nom = `${scoreResponse.anneeAudit}${SnapshotsService.POST_AUDIT_SNAPSHOT_NOM_SUFFIX}`;
+        ref = `${SnapshotsService.POST_AUDIT_SNAPSHOT_REF_PREFIX}${anneeAudit}`;
+        nom = `${anneeAudit}${SnapshotsService.POST_AUDIT_SNAPSHOT_NOM_SUFFIX}`;
         break;
-      case SnapshotJalonEnum.SCORE_COURANT:
-        scoreResponse.snapshot.ref = scoreResponse.snapshot.nom
-          ? `${
-              SnapshotsService.SCORE_PERSONNALISE_REF_PREFIX
-            }${this.slugifyName(scoreResponse.snapshot.nom)}`
+
+      case SnapshotJalonEnum.COURANT:
+        ref = nom
+          ? `${SnapshotsService.SCORE_PERSONNALISE_REF_PREFIX}${toSlug(nom)}`
           : SnapshotsService.SCORE_COURANT_SNAPSHOT_REF;
-        scoreResponse.snapshot.nom =
-          scoreResponse.snapshot.nom ||
-          SnapshotsService.SCORE_COURANT_SNAPSHOT_NOM;
+        nom = nom || SnapshotsService.SCORE_COURANT_SNAPSHOT_NOM;
         break;
-      case SnapshotJalonEnum.JOUR_AUTO:
-        scoreResponse.snapshot.ref = `${
+
+      case SnapshotJalonEnum.JOUR_AUTO: {
+        const dateTime = DateTime.fromISO(date);
+        ref = `${
           SnapshotsService.JOUR_SNAPSHOT_REF_PREFIX
         }${dateTime.toISODate()}`;
-        scoreResponse.snapshot.nom = `${dateTime.year}${
+        nom = `${dateTime.year}${
           SnapshotsService.JOUR_SNAPSHOT_NOM_PREFIX
         }${dateTime.toFormat('dd/MM/yyyy')}`;
         break;
+      }
+
       case SnapshotJalonEnum.DATE_PERSONNALISEE:
-        scoreResponse.snapshot.ref = scoreResponse.snapshot.nom
-          ? this.slugifyName(scoreResponse.snapshot.nom)
-          : '';
+        ref = nom ? toSlug(nom) : '';
         break;
 
       default:
         throw new InternalServerErrorException(
-          `Un nom de snapshot doit être défini pour le jalon ${scoreResponse.jalon}`
+          `Un nom de snapshot doit être défini pour le jalon ${jalon}`
         );
     }
-    scoreResponse.snapshot.ref = scoreResponse.snapshot.ref.slice(0, 30);
 
-    this.logger.log(
-      `Snapshot ref: ${scoreResponse.snapshot.ref}, nom: ${scoreResponse.snapshot.nom}`
-    );
+    ref = ref.slice(0, 30);
 
-    if (!scoreResponse.snapshot.nom || !scoreResponse.snapshot.ref) {
+    this.logger.log(`Snapshot ref: ${ref}, nom: ${nom}`);
+
+    if (!nom || !ref) {
       throw new InternalServerErrorException(
-        `Un nom de snapshot doit être défini pour le jalon ${scoreResponse.jalon}`
+        `Un nom de snapshot doit être défini pour le jalon ${jalon}`
       );
     }
+
+    return { ref, nom };
   }
 
-  getSnapshotInfoFromScoreResponse(
-    scoreResponse: GetReferentielScoresResponseType
-  ): ScoreSnapshotCollectiviteInfoType {
-    return {
-      collectiviteId: scoreResponse.collectiviteId,
-      referentielId: scoreResponse.referentielId,
-      ref: scoreResponse.snapshot!.ref!,
-      nom: scoreResponse.snapshot!.nom,
-      date: scoreResponse.date,
-      typeJalon: scoreResponse.jalon,
-      pointFait: scoreResponse.scores.score.pointFait || 0,
-      pointProgramme: scoreResponse.scores.score.pointProgramme || 0,
-      pointPasFait: scoreResponse.scores.score.pointPasFait || 0,
-      pointPotentiel: scoreResponse.scores.score.pointPotentiel || 0,
-      referentielVersion: scoreResponse.referentielVersion,
-      auditId: scoreResponse.auditId || null,
-      createdAt: scoreResponse.snapshot!.createdAt,
-      createdBy: scoreResponse.snapshot!.createdBy,
-      modifiedAt: scoreResponse.snapshot!.modifiedAt,
-      modifiedBy: scoreResponse.snapshot!.modifiedBy,
-    };
-  }
+  // getSnapshotInfoFromScoreResponse(
+  //   scoreResponse: ActionScoresPayload
+  // ): ScoreSnapshotCollectiviteInfoType {
+  //   return {
+  //     collectiviteId: scoreResponse.collectiviteId,
+  //     referentielId: scoreResponse.referentielId,
+  //     ref: scoreResponse.snapshot!.ref!,
+  //     nom: scoreResponse.snapshot!.nom,
+  //     date: scoreResponse.date,
+  //     jalon: scoreResponse.jalon,
+  //     pointFait: scoreResponse.scores.score.pointFait || 0,
+  //     pointProgramme: scoreResponse.scores.score.pointProgramme || 0,
+  //     pointPasFait: scoreResponse.scores.score.pointPasFait || 0,
+  //     pointPotentiel: scoreResponse.scores.score.pointPotentiel || 0,
+  //     referentielVersion: scoreResponse.referentielVersion,
+  //     auditId: scoreResponse.auditId || null,
+  //     createdAt: scoreResponse.snapshot!.createdAt,
+  //     createdBy: scoreResponse.snapshot!.createdBy,
+  //     modifiedAt: scoreResponse.snapshot!.modifiedAt,
+  //     modifiedBy: scoreResponse.snapshot!.modifiedBy,
+  //   };
+  // }
 
   /**
    * Upsert score snapshot: update always allowed
-   * @param createScoreSnapshot
+   * @param snapshot
    * @returns
    */
-  async upsertScoreSnapshot(
-    createScoreSnapshot: SnapshotInsert
-  ): Promise<ScoreSnapshotType[]> {
-    return (await this.databaseService.db
+  async upsertScoreSnapshot(snapshot: SnapshotInsert): Promise<Snapshot> {
+    return await this.databaseService.db
       .insert(snapshotTable)
-      .values(createScoreSnapshot)
+      .values(snapshot)
       .onConflictDoUpdate({
         target: [
           snapshotTable.collectiviteId,
@@ -195,7 +195,9 @@ export class SnapshotsService {
             `excluded.${snapshotTable.pointProgramme.name}`
           ),
           pointPasFait: sql.raw(`excluded.${snapshotTable.pointPasFait.name}`),
-          scores: sql.raw(`excluded.${snapshotTable.scores.name}`),
+          scoresPayload: sql.raw(
+            `excluded.${snapshotTable.scoresPayload.name}`
+          ),
           personnalisationReponses: sql.raw(
             `excluded.${snapshotTable.personnalisationReponses.name}`
           ),
@@ -205,27 +207,23 @@ export class SnapshotsService {
           modifiedBy: sql.raw(`excluded.${snapshotTable.modifiedBy.name}`),
         },
       })
-      .returning()) as ScoreSnapshotType[];
+      .returning()
+      .then((result) => result[0]);
   }
 
   /**
    * Insert with upsert only allowed if jalon is current score
-   * @param createScoreSnapshot
-   * @returns
    */
-  async insertScoreSnapshotWithAllowedCurrentScoreUpdate(
-    createScoreSnapshot: SnapshotInsert
-  ): Promise<ScoreSnapshotType[]> {
-    return (await this.databaseService.db
+  async insertSnapshotOrUpsertIfCurrentJalon(
+    snapshot: SnapshotInsert
+  ): Promise<Snapshot> {
+    return this.databaseService.db
       .insert(snapshotTable)
-      .values(createScoreSnapshot)
+      .values(snapshot)
       .onConflictDoUpdate({
         // Only allow to update current score
         target: [snapshotTable.collectiviteId, snapshotTable.referentielId],
-        targetWhere: eq(
-          snapshotTable.typeJalon,
-          SnapshotJalonEnum.SCORE_COURANT
-        ),
+        targetWhere: eq(snapshotTable.jalon, SnapshotJalonEnum.COURANT),
         set: {
           date: sql.raw(`excluded.${snapshotTable.date.name}`),
           pointFait: sql.raw(`excluded.${snapshotTable.pointFait.name}`),
@@ -236,7 +234,9 @@ export class SnapshotsService {
             `excluded.${snapshotTable.pointProgramme.name}`
           ),
           pointPasFait: sql.raw(`excluded.${snapshotTable.pointPasFait.name}`),
-          scores: sql.raw(`excluded.${snapshotTable.scores.name}`),
+          scoresPayload: sql.raw(
+            `excluded.${snapshotTable.scoresPayload.name}`
+          ),
           personnalisationReponses: sql.raw(
             `excluded.${snapshotTable.personnalisationReponses.name}`
           ),
@@ -246,73 +246,110 @@ export class SnapshotsService {
           modifiedBy: sql.raw(`excluded.${snapshotTable.modifiedBy.name}`),
         },
       })
-      .returning()) as ScoreSnapshotType[];
+      .returning()
+      .then((result) => result[0]);
+  }
+
+  async computeAndUpsert({
+    collectiviteId,
+    referentielId,
+    nom,
+    date,
+    jalon,
+    auditId,
+    user,
+  }: z.infer<typeof upsertSnapshotRequestSchema> & {
+    user?: AuthUser;
+  }): Promise<Snapshot> {
+    const { scoresPayload, personnalisationReponsesPayload } =
+      await this.scoresService.computeScoreForCollectivite(
+        referentielId,
+        collectiviteId,
+        {
+          mode: ComputeScoreMode.RECALCUL,
+          date,
+          jalon,
+          auditId,
+          snapshotNom: nom,
+        },
+        user
+      );
+
+    const snapshot = await this.saveSnapshotForScoreResponse(
+      scoresPayload,
+      personnalisationReponsesPayload,
+      nom,
+      true,
+      user?.id
+    );
+
+    return snapshot;
   }
 
   async saveSnapshotForScoreResponse(
-    scoreResponse: GetReferentielScoresResponseType,
-    personnalisationResponses: GetPersonnalisationReponsesResponseType,
+    scoresPayload: ScoresPayload,
+    personnalisationResponses: PersonnalisationReponsesPayload,
     snapshotNom?: string,
     snapshotForceUpdate?: boolean,
     userId?: string | null
-  ): Promise<ScoreSnapshotType> {
-    const scoreDate = scoreResponse.date;
+  ): Promise<Snapshot> {
+    const { ref, nom } = this.getDefaultSnapshotMetadata({
+      nom: snapshotNom,
+      jalon: scoresPayload.jalon,
+      anneeAudit: scoresPayload.anneeAudit,
+      date: scoresPayload.date,
+    });
 
-    if (!scoreResponse.snapshot?.ref || !scoreResponse.snapshot?.nom) {
-      this.fillDefaultSnapshotNomRef(scoreResponse, snapshotNom);
-    }
-
-    const createScoreSnapshot: SnapshotInsert = {
-      collectiviteId: scoreResponse.collectiviteId,
-      referentielId: scoreResponse.referentielId,
-      referentielVersion: scoreResponse.referentielVersion,
-      auditId: scoreResponse.auditId,
-      date: scoreDate,
-      ref: scoreResponse.snapshot!.ref!,
-      nom: scoreResponse.snapshot!.nom!,
-      typeJalon:
-        scoreResponse.snapshot?.ref !==
-          SnapshotsService.SCORE_COURANT_SNAPSHOT_REF &&
-        scoreResponse.jalon === SnapshotJalonEnum.SCORE_COURANT
+    const createScoreSnapshot = {
+      collectiviteId: scoresPayload.collectiviteId,
+      referentielId: scoresPayload.referentielId,
+      referentielVersion: scoresPayload.referentielVersion,
+      auditId: scoresPayload.auditId,
+      date: scoresPayload.date,
+      ref,
+      nom,
+      jalon:
+        ref !== SnapshotsService.SCORE_COURANT_SNAPSHOT_REF &&
+        scoresPayload.jalon === SnapshotJalonEnum.COURANT
           ? SnapshotJalonEnum.DATE_PERSONNALISEE
-          : scoreResponse.jalon,
-      pointFait: scoreResponse.scores.score.pointFait || 0,
-      pointProgramme: scoreResponse.scores.score.pointProgramme || 0,
-      pointPasFait: scoreResponse.scores.score.pointPasFait || 0,
-      pointPotentiel: scoreResponse.scores.score.pointPotentiel || 0,
-      scores: scoreResponse,
+          : scoresPayload.jalon,
+      pointFait: scoresPayload.scores.score.pointFait || 0,
+      pointProgramme: scoresPayload.scores.score.pointProgramme || 0,
+      pointPasFait: scoresPayload.scores.score.pointPasFait || 0,
+      pointPotentiel: scoresPayload.scores.score.pointPotentiel || 0,
+      scoresPayload: scoresPayload,
       personnalisationReponses: personnalisationResponses,
       createdBy: userId,
       modifiedBy: userId,
-    };
+    } satisfies SnapshotInsert;
+
     this.logger.log(
-      `Saving score snapshot with ref ${createScoreSnapshot.ref} and type ${createScoreSnapshot.typeJalon} for collectivite ${createScoreSnapshot.collectiviteId} and referentiel ${createScoreSnapshot.referentielId} (force update: ${snapshotForceUpdate})`
+      `Saving score snapshot with ref ${createScoreSnapshot.ref} and type ${createScoreSnapshot.jalon} for collectivite ${createScoreSnapshot.collectiviteId} and referentiel ${createScoreSnapshot.referentielId} (force update: ${snapshotForceUpdate})`
     );
 
-    let scoreSnapshots: ScoreSnapshotType[] = [];
+    let scoreSnapshot: Snapshot;
     try {
       if (snapshotForceUpdate) {
-        const existingSnapshot = await this.getSummary(
+        const existingSnapshot = await this.getSnapshotWithoutPayloads(
           createScoreSnapshot.collectiviteId,
           createScoreSnapshot.referentielId as ReferentielId,
-          createScoreSnapshot.ref!,
-          true
+          createScoreSnapshot.ref
         );
+
         if (
           existingSnapshot &&
-          existingSnapshot.typeJalon !== createScoreSnapshot.typeJalon
+          existingSnapshot.jalon !== createScoreSnapshot.jalon
         ) {
           throw new BadRequestException(
-            `Impossible de mettre à jour le snapshot de score avec la référence ${createScoreSnapshot.ref} pour la collectivite ${createScoreSnapshot.collectiviteId} et le referentiel ${createScoreSnapshot.referentielId} car le type de jalon est différent (existant: ${existingSnapshot?.typeJalon}, nouveau: ${createScoreSnapshot.typeJalon})`
+            `Impossible de mettre à jour le snapshot de score avec la référence ${createScoreSnapshot.ref} pour la collectivite ${createScoreSnapshot.collectiviteId} et le referentiel ${createScoreSnapshot.referentielId} car le type de jalon est différent (existant: ${existingSnapshot?.jalon}, nouveau: ${createScoreSnapshot.jalon})`
           );
         }
 
-        scoreSnapshots = await this.upsertScoreSnapshot(createScoreSnapshot);
+        scoreSnapshot = await this.upsertScoreSnapshot(createScoreSnapshot);
       } else {
-        scoreSnapshots =
-          await this.insertScoreSnapshotWithAllowedCurrentScoreUpdate(
-            createScoreSnapshot
-          );
+        scoreSnapshot = await this.insertSnapshotOrUpsertIfCurrentJalon(
+          createScoreSnapshot
+        );
       }
     } catch (error) {
       const errorWithCode = getErrorWithCode(error);
@@ -327,43 +364,32 @@ export class SnapshotsService {
       throw error;
     }
 
-    if (!scoreSnapshots.length) {
+    if (!scoreSnapshot) {
       throw new InternalServerErrorException(
         'Impossible de sauvegarder le snapshot de score'
       );
     }
-    const scoreSnapshot = scoreSnapshots[0] as ScoreSnapshotType;
-    scoreResponse.snapshot!.createdBy = scoreSnapshot.createdBy;
-    scoreResponse.snapshot!.createdAt = scoreSnapshot.createdAt;
-    scoreResponse.snapshot!.modifiedBy = scoreSnapshot.modifiedBy;
-    scoreResponse.snapshot!.modifiedAt = scoreSnapshot.modifiedAt;
+
+    // scoreResponse.snapshot!.createdBy = scoreSnapshot.createdBy;
+    // scoreResponse.snapshot!.createdAt = scoreSnapshot.createdAt;
+    // scoreResponse.snapshot!.modifiedBy = scoreSnapshot.modifiedBy;
+    // scoreResponse.snapshot!.modifiedAt = scoreSnapshot.modifiedAt;
 
     return scoreSnapshot;
   }
 
-  async getSummary(
+  private async getSnapshotWithoutPayloads(
     collectiviteId: number,
     referentielId: ReferentielId,
-    snapshotRef: string,
-    doNotThrowIfNotFound = false
-  ): Promise<ScoreSnapshotInfoType | null> {
+    snapshotRef: string
+  ): Promise<SnapshotWithoutPayloads | null> {
     const result = await this.databaseService.db
-      .select({
-        ref: snapshotTable.ref,
-        nom: snapshotTable.nom,
-        date: snapshotTable.date,
-        typeJalon: snapshotTable.typeJalon,
-        pointFait: snapshotTable.pointFait,
-        pointProgramme: snapshotTable.pointProgramme,
-        pointPasFait: snapshotTable.pointPasFait,
-        pointPotentiel: snapshotTable.pointPotentiel,
-        referentielVersion: snapshotTable.referentielVersion,
-        auditId: snapshotTable.auditId,
-        createdAt: snapshotTable.createdAt,
-        createdBy: snapshotTable.createdBy,
-        modifiedAt: snapshotTable.modifiedAt,
-        modifiedBy: snapshotTable.modifiedBy,
-      })
+      .select(
+        omit(getTableColumns(snapshotTable), [
+          'scoresPayload',
+          'personnalisationReponses',
+        ])
+      )
       .from(snapshotTable)
       .where(
         and(
@@ -373,20 +399,16 @@ export class SnapshotsService {
         )
       );
 
-    if (!result.length && !doNotThrowIfNotFound) {
-      throw new NotFoundException(
-        `Aucun snapshot de score avec la référence ${snapshotRef} n'a été trouvé pour la collectivité ${collectiviteId} et le referentiel ${referentielId}`
-      );
-    }
     return result.length ? result[0] : null;
   }
 
   async get(
     collectiviteId: number,
     referentielId: ReferentielId,
-    snapshotRef: string = SnapshotsService.SCORE_COURANT_SNAPSHOT_REF
-  ): Promise<GetReferentielScoresResponseType> {
-    const result = (await this.databaseService.db
+    snapshotRef: string = SnapshotsService.SCORE_COURANT_SNAPSHOT_REF,
+    user?: AuthUser
+  ): Promise<Snapshot> {
+    let snapshot = await this.databaseService.db
       .select()
       .from(snapshotTable)
       .where(
@@ -395,50 +417,55 @@ export class SnapshotsService {
           eq(snapshotTable.referentielId, referentielId),
           eq(snapshotTable.ref, snapshotRef)
         )
-      )) as ScoreSnapshotType[];
+      )
+      .limit(1)
+      .then((result) => result[0]);
 
-    if (!result.length) {
+    if (
+      !snapshot &&
+      snapshotRef === SnapshotsService.SCORE_COURANT_SNAPSHOT_REF
+    ) {
+      // compute the score then save it into current snapshot
+      snapshot = await this.computeAndUpsert({
+        collectiviteId,
+        referentielId,
+        jalon: SnapshotJalonEnum.COURANT,
+        user,
+      });
+    }
+
+    if (!snapshot) {
       throw new NotFoundException(
         `Aucun snapshot de score avec la référence ${snapshotRef} n'a été trouvé pour la collectivité ${collectiviteId} et le referentiel ${referentielId}`
       );
     }
 
-    const fullScores = result[0].scores;
-    fullScores.snapshot = {
-      ref: result[0].ref!,
-      nom: result[0].nom,
-      createdAt: result[0].createdAt,
-      createdBy: result[0].createdBy,
-      modifiedAt: result[0].modifiedAt,
-      modifiedBy: result[0].modifiedBy,
-    };
-
-    return fullScores;
+    return snapshot;
   }
 
   async delete(
     collectiviteId: number,
     referentielId: ReferentielId,
     snapshotRef: string,
-    tokenInfo: AuthUser
+    user: AuthUser
   ): Promise<void> {
-    await this.permissionService.isAllowed(
-      tokenInfo,
-      PermissionOperation.REFERENTIELS_EDITION,
-      ResourceType.COLLECTIVITE,
-      collectiviteId
-    );
-
-    const snapshotInfo = await this.getSummary(
+    const snapshot = await this.getSnapshotWithoutPayloads(
       collectiviteId,
       referentielId,
       snapshotRef
     );
+
+    if (!snapshot) {
+      throw new NotFoundException(
+        `Aucun snapshot de score avec la référence ${snapshotRef} n'a été trouvé pour la collectivité ${collectiviteId} et le referentiel ${referentielId}`
+      );
+    }
+
     if (
       !SnapshotsService.USER_DELETION_ALLOWED_SNAPSHOT_TYPES.includes(
-        snapshotInfo!.typeJalon
+        snapshot.jalon
       ) &&
-      tokenInfo.role !== AuthRole.SERVICE_ROLE
+      user.role !== AuthRole.SERVICE_ROLE
     ) {
       throw new UnauthorizedException(
         `Uniquement les snaphots de type ${SnapshotsService.USER_DELETION_ALLOWED_SNAPSHOT_TYPES.join(

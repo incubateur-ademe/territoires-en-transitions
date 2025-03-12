@@ -1,11 +1,7 @@
 import { Injectable, Logger } from '@nestjs/common';
 import { Row, Workbook } from 'exceljs';
-import { NextFunction, Response } from 'express';
 import { PreuveEssential } from '../../collectivites/documents/models/preuve.dto';
 import * as Utils from '../../utils/excel/export-excel.utils';
-import { GetReferentielScoresResponseType } from '../compute-score/get-referentiel-scores.response';
-import ScoresService from '../compute-score/scores.service';
-import { GetReferentielService } from '../get-referentiel/get-referentiel.service';
 import { ActionDefinition, ScoreFinalFields } from '../index-domain';
 import {
   ActionDefinitionEssential,
@@ -16,7 +12,6 @@ import {
   StatutAvancementEnum,
 } from '../models/action-statut.table';
 import { ActionTypeEnum } from '../models/action-type.enum';
-import { GetScoreSnapshotRequestType } from '../models/get-score-snapshot.request';
 import {
   ReferentielId,
   referentielIdEnumSchema,
@@ -25,6 +20,7 @@ import {
   getAxeFromActionId,
   getLevelFromActionId,
 } from '../referentiels.utils';
+import { ScoresPayload } from '../snapshots/scores-payload.dto';
 import { SnapshotsService } from '../snapshots/snapshots.service';
 
 type ActionDefinitionFields = ActionDefinitionEssential &
@@ -33,7 +29,7 @@ type ActionDefinitionFields = ActionDefinitionEssential &
 type ActionWithScore = TreeNode<ActionDefinitionFields & ScoreFinalFields>;
 
 @Injectable()
-export default class ExportScoreService {
+export class ExportScoreService {
   private readonly logger = new Logger(ExportScoreService.name);
 
   // index (base 1) de toutes les colonnes
@@ -85,11 +81,7 @@ export default class ExportScoreService {
   private readonly EXPORT_TITLE = 'Export référentiel';
   private readonly EXPORT_SUBTITLE = 'Évaluation dans la plateforme';
 
-  constructor(
-    private readonly referentielService: GetReferentielService,
-    private readonly referentielsScoringService: ScoresService,
-    private readonly referentielsScoringSnapshotsService: SnapshotsService
-  ) {}
+  constructor(private readonly snapshotsService: SnapshotsService) {}
 
   // couleurs de fond des lignes par axe et sous-axe
   BG_COLORS: Record<number, string[]> = {
@@ -259,9 +251,7 @@ export default class ExportScoreService {
     return rowValues;
   }
 
-  async exportReferentielScore(
-    referentielScore: GetReferentielScoresResponseType
-  ) {
+  private async exportScoreToXlsx(referentielScore: ScoresPayload) {
     // crée le classeur et la feuille de calcul
     const workbook = new Workbook();
     const worksheet = workbook.addWorksheet(
@@ -404,69 +394,36 @@ export default class ExportScoreService {
     });
 
     // exporte le fichier modifié
-    return workbook.xlsx.writeBuffer();
+    return workbook.xlsx;
   }
 
-  async getReferentielScoreSnapshot(
-    collectiviteId: number,
-    referentielId: ReferentielId,
-    snapshotRef: string,
-    forceRecalculScoreCourant?: boolean
-  ) {
-    if (snapshotRef === SnapshotsService.SCORE_COURANT_SNAPSHOT_REF) {
-      return this.referentielsScoringService.getOrCreateCurrentScore(
-        collectiviteId,
-        referentielId,
-        forceRecalculScoreCourant
-      );
-    } else {
-      return this.referentielsScoringSnapshotsService.get(
-        collectiviteId,
-        referentielId,
-        snapshotRef
-      ) as Promise<GetReferentielScoresResponseType>;
-    }
-  }
-
-  getExportFileName(referentielScore: GetReferentielScoresResponseType) {
+  getExportFileName(referentielScore: ScoresPayload) {
     const filename = `Export_${referentielScore.referentielId?.toUpperCase()}_${
       referentielScore.collectiviteInfo?.nom
     }_${referentielScore.date.substring(0, 10)}.xlsx`;
     return filename;
   }
 
-  async sendExportReferentielScore(
+  async exportCurrentSnapshotScore(
     collectiviteId: number,
     referentielId: ReferentielId,
-    snapshotRef: string,
-    parameters: GetScoreSnapshotRequestType,
-    res: Response,
-    next: NextFunction
-  ): Promise<void> {
+    snapshotRef: string
+  ) {
     this.logger.log(
-      `Export du score du référentiel ${referentielId} pour la collectivité ${collectiviteId} et le snapshot ${snapshotRef} (parameters: ${JSON.stringify(
-        parameters
-      )})`
+      `Export du score du référentiel ${referentielId} pour la collectivité ${collectiviteId} et le snapshot ${snapshotRef}`
     );
 
-    try {
-      const referentielScore = await this.getReferentielScoreSnapshot(
-        collectiviteId,
-        referentielId,
-        snapshotRef,
-        parameters.forceRecalculScoreCourant
-      );
+    const snapshot = await this.snapshotsService.get(
+      collectiviteId,
+      referentielId,
+      snapshotRef
+    );
 
-      const buffer = await this.exportReferentielScore(referentielScore);
-      // send buffer
+    const referentielScore = snapshot.scoresPayload;
 
-      res.attachment(this.getExportFileName(referentielScore).normalize('NFD'));
-      res.set('Access-Control-Expose-Headers', 'Content-Disposition');
-
-      // Send the workbook.
-      res.send(buffer);
-    } catch (error) {
-      next(error);
-    }
+    return {
+      fileName: this.getExportFileName(referentielScore).normalize('NFD'),
+      content: await this.exportScoreToXlsx(referentielScore),
+    };
   }
 }

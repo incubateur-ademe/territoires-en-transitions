@@ -1,16 +1,15 @@
 import { DatabaseService } from '@/backend/utils';
 import { Injectable, NotFoundException } from '@nestjs/common';
 import { eq } from 'drizzle-orm';
-import ScoresService from '../../compute-score/scores.service';
-import { ComputeScoreMode } from '../../models/compute-scores-mode.enum';
-import { SnapshotJalonEnum } from '../../snapshots/snapshot.table';
+import { SnapshotJalonEnum } from '../../snapshots/snapshot-jalon.enum';
+import { SnapshotsService } from '../../snapshots/snapshots.service';
 import { Audit, auditTable } from '../audit.table';
 
 @Injectable()
 export class ValidateAuditService {
   constructor(
     private readonly databaseService: DatabaseService,
-    private readonly scoresService: ScoresService
+    private readonly snapshotsService: SnapshotsService
   ) {}
 
   private readonly db = this.databaseService.db;
@@ -34,20 +33,23 @@ export class ValidateAuditService {
     // it would be better for consistency but maybe it's too big an operation?
 
     // Crée un snapshot de 'post_audit'
-    await this.scoresService.computeScoreForCollectivite(
-      audit.referentiel,
-      audit.collectiviteId,
-      {
-        mode: ComputeScoreMode.RECALCUL,
-        auditId: audit.id,
-        jalon: SnapshotJalonEnum.POST_AUDIT,
-        snapshot: true,
-        snapshotForceUpdate: true,
-      },
-      undefined,
-      undefined,
-      true
-    );
+    await this.snapshotsService.computeAndUpsert({
+      collectiviteId: audit.collectiviteId,
+      referentielId: audit.referentiel,
+      jalon: SnapshotJalonEnum.POST_AUDIT,
+      auditId: audit.id,
+    });
+
+    //     mode: ComputeScoreMode.RECALCUL,
+    //     auditId: audit.id,
+    //     jalon: SnapshotJalonEnum.POST_AUDIT,
+    //     snapshot: true,
+    //     snapshotForceUpdate: true,
+    //   },
+    //   undefined,
+    //   undefined,
+    //   true
+    // );
 
     return audit;
   }

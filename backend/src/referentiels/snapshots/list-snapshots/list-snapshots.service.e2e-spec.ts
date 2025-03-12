@@ -1,9 +1,9 @@
 import { getAuthUser, getTestApp } from '@/backend/test';
 import { AuthenticatedUser } from '@/domain/auth';
-import { ReferentielIdEnum, SnapshotJalonEnum } from '@/domain/referentiels';
+import { ReferentielIdEnum } from '@/domain/referentiels';
 import { DateTime } from 'luxon';
-import { ScoreSnapshotInfoType } from '../../models/get-score-snapshots.response';
 import { ReferentielsRouter } from '../../referentiels.router';
+import { SnapshotJalonEnum } from '../snapshot-jalon.enum';
 
 describe('ListSnapshotsService', () => {
   let router: ReferentielsRouter;
@@ -17,19 +17,18 @@ describe('ListSnapshotsService', () => {
   test("Création d'un snapshot, liste des snapshots existants suppression", async () => {
     const caller = router.createCaller({ user: yoloDodoUser });
 
-    const referentielScore = await caller.scores.computeScore({
+    const snapshot = await caller.snapshots.computeAndUpsert({
       referentielId: ReferentielIdEnum.CAE,
       collectiviteId: 1,
-      parameters: {
-        snapshot: true,
-        snapshotNom: 'Test trpc',
-        snapshotForceUpdate: true,
-      },
+      nom: 'Test trpc',
     });
-    expect(referentielScore.snapshot?.ref).toEqual('user-test-trpc');
+
+    const referentielScore = snapshot.scoresPayload;
+
+    expect(snapshot.ref).toEqual('user-test-trpc');
 
     // get the list of snapshots
-    const snapshots = await caller.snapshots.list({
+    const { snapshots } = await caller.snapshots.list({
       collectiviteId: 1,
       referentielId: ReferentielIdEnum.CAE,
       options: {
@@ -37,7 +36,7 @@ describe('ListSnapshotsService', () => {
       },
     });
 
-    const foundSnapshot = snapshots.snapshots.find(
+    const foundSnapshot = snapshots.find(
       (snapshot) => snapshot.ref === 'user-test-trpc'
     );
 
@@ -45,17 +44,17 @@ describe('ListSnapshotsService', () => {
       expect.fail();
     }
 
-    const expectedSnapshot: ScoreSnapshotInfoType = {
+    const expectedSnapshot = {
       date: DateTime.fromISO(referentielScore.date).toISO() as string,
       nom: 'Test trpc',
       ref: 'user-test-trpc',
-      typeJalon: SnapshotJalonEnum.DATE_PERSONNALISEE,
-      modifiedAt: referentielScore.snapshot!.modifiedAt,
-      createdAt: referentielScore.snapshot!.createdAt,
+      jalon: SnapshotJalonEnum.DATE_PERSONNALISEE,
+      modifiedAt: snapshot.modifiedAt,
+      createdAt: snapshot.createdAt,
       referentielVersion: '1.0.0',
       auditId: null,
-      createdBy: '17440546-f389-4d4f-bfdb-b0c94a1bd0f9',
-      modifiedBy: '17440546-f389-4d4f-bfdb-b0c94a1bd0f9',
+      createdBy: yoloDodoUser.id,
+      modifiedBy: yoloDodoUser.id,
       pointFait: 0.36,
       pointPasFait: 0.03,
       pointNonRenseigne: 490.3,
@@ -83,10 +82,12 @@ describe('ListSnapshotsService', () => {
         jalons: [SnapshotJalonEnum.DATE_PERSONNALISEE],
       },
     });
+
     const foundSnapshotAfterDelete =
       responseSnapshotListAfterDelete.snapshots.find(
         (snapshot) => snapshot.ref === 'user-test-trpc'
       );
+
     expect(foundSnapshotAfterDelete).toBeUndefined();
   });
 });
