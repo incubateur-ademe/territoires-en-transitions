@@ -5,14 +5,17 @@ import { getIndicateursValeursRequestSchema } from '../shared/models/get-indicat
 import { upsertValeurIndicateurSchema } from '../shared/models/upsert-valeur-indicateur.request';
 import IndicateurValeursService from './crud-valeurs.service';
 import { getMoyenneCollectivitesRequestSchema } from './get-moyenne-collectivites.request';
+import { getValeursReferenceRequestSchema } from './get-valeurs-reference.request';
 import ValeursMoyenneService from './valeurs-moyenne.service';
+import ValeursReferenceService from './valeurs-reference.service';
 
 @Injectable()
 export class IndicateurValeursRouter {
   constructor(
     private readonly trpc: TrpcService,
     private readonly service: IndicateurValeursService,
-    private readonly valeursCalculees: ValeursMoyenneService
+    private readonly valeursMoyenne: ValeursMoyenneService,
+    private readonly valeursReference: ValeursReferenceService
   ) {}
 
   router = this.trpc.router({
@@ -34,7 +37,12 @@ export class IndicateurValeursRouter {
     average: this.trpc.authedProcedure
       .input(getMoyenneCollectivitesRequestSchema)
       .query(({ ctx, input }) => {
-        return this.valeursCalculees.getMoyenneCollectivites(input, ctx.user);
+        return this.valeursMoyenne.getMoyenneCollectivites(input, ctx.user);
+      }),
+    reference: this.trpc.authedProcedure
+      .input(getValeursReferenceRequestSchema)
+      .query(({ ctx, input }) => {
+        return this.valeursReference.getValeursReference(input, ctx.user);
       }),
     recompute: this.trpc.authedProcedure.query(({ ctx, input }) => {
       return this.service.recomputeAllCalculatedIndicateurValeurs(ctx.user);
