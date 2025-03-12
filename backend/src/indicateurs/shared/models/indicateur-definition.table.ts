@@ -38,6 +38,9 @@ export const indicateurDefinitionTable = pgTable('indicateur_definition', {
     .default(false)
     .notNull(),
   valeurCalcule: text('valeur_calcule'),
+  exprCible: text('expr_cible'),
+  exprSeuil: text('expr_seuil'),
+  libelleCibleSeuil: text('libelle_cible_seuil'),
   createdAt,
   modifiedAt,
   createdBy,
