@@ -1146,7 +1146,7 @@ WITH info AS (SELECT c.id                                  as collectivite_id,
                      LEFT JOIN collectivite_banatic_type t ON c.nature_insee = t.id
                      LEFT JOIN imports.region ir ON c.region_code::text = ir.code::text
                      LEFT JOIN imports.departement id ON c.departement_code::text = id.code::text
-              WHERE NOT c.type != 'test')
+              WHERE NOT c.type = 'test')
 SELECT info.collectivite_id,
        info.nom,
        info.type_collectivite,
