@@ -662,7 +662,15 @@ export default class CrudValeursService {
   private getSourceIndicateurKeyForCalculatedIndicateurValeur(
     indicateurValeur: IndicateurValeurWithIdentifiant,
     forceSourceId?: string
-  ) {
+  ): string | null {
+    if (
+      !indicateurValeur.sourceId ||
+      indicateurValeur.sourceId === CrudValeursService.NULL_SOURCE_ID
+    ) {
+      // Disabled for collectivite value for now
+      // TODO: to be reenabled when ready
+      return null;
+    }
     return `${indicateurValeur.collectiviteId}_${indicateurValeur.dateValeur}_${
       forceSourceId ||
       indicateurValeur.sourceId ||
@@ -716,79 +724,86 @@ export default class CrudValeursService {
         .forEach((v) => {
           const collectiviteIdDateSourceIdKey =
             this.getSourceIndicateurKeyForCalculatedIndicateurValeur(v);
-          if (
-            !relatedSourceIndicateurValeursByDate[
-              collectiviteIdDateSourceIdKey
-            ] &&
-            allowToAddEntry
-          ) {
-            relatedSourceIndicateurValeursByDate[
-              collectiviteIdDateSourceIdKey
-            ] = {
-              collectiviteId: v.collectiviteId,
-              valeurs: [],
-              sourceId: v.sourceId,
-              metadonneeId: v.metadonneeId,
-              date: v.dateValeur,
-              missingIdentifiants: [],
-            };
-          }
-
-          if (
-            relatedSourceIndicateurValeursByDate[collectiviteIdDateSourceIdKey]
-          ) {
-            const dateRelatedSourceIndicateurValeurs =
+          if (collectiviteIdDateSourceIdKey) {
+            if (
+              !relatedSourceIndicateurValeursByDate[
+                collectiviteIdDateSourceIdKey
+              ] &&
+              allowToAddEntry
+            ) {
               relatedSourceIndicateurValeursByDate[
                 collectiviteIdDateSourceIdKey
-              ];
-            if (!dateRelatedSourceIndicateurValeurs.metadonneeId) {
-              dateRelatedSourceIndicateurValeurs.metadonneeId = v.metadonneeId;
+              ] = {
+                collectiviteId: v.collectiviteId,
+                valeurs: [],
+                sourceId: v.sourceId,
+                metadonneeId: v.metadonneeId,
+                date: v.dateValeur,
+                missingIdentifiants: [],
+              };
             }
-            dateRelatedSourceIndicateurValeurs.valeurs.push(v);
-          }
 
-          // Also add the valeur to other sources if the source can be used to calculate other source
-          for (const source of allowedExtraSourcesForCalculatedValues) {
             if (
-              source.sourceCalculIds.includes(
-                v.sourceId || CrudValeursService.NULL_SOURCE_ID
-              )
+              relatedSourceIndicateurValeursByDate[
+                collectiviteIdDateSourceIdKey
+              ]
             ) {
-              this.logger.log(
-                `Value of indicateur ${v.indicateurIdentifiant} for source ${v.sourceId} can be used to calculate source ${source.sourceId}`
-              );
-
-              const collectiviteIdDateSourceIdKey =
-                this.getSourceIndicateurKeyForCalculatedIndicateurValeur(
-                  v,
-                  source.sourceId
-                );
-              if (
-                !relatedSourceIndicateurValeursByDate[
-                  collectiviteIdDateSourceIdKey
-                ] &&
-                allowToAddEntry
-              ) {
+              const dateRelatedSourceIndicateurValeurs =
                 relatedSourceIndicateurValeursByDate[
                   collectiviteIdDateSourceIdKey
-                ] = {
-                  collectiviteId: v.collectiviteId,
-                  valeurs: [],
-                  sourceId: source.sourceId,
-                  metadonneeId: null,
-                  date: v.dateValeur,
-                  missingIdentifiants: [],
-                };
+                ];
+              if (!dateRelatedSourceIndicateurValeurs.metadonneeId) {
+                dateRelatedSourceIndicateurValeurs.metadonneeId =
+                  v.metadonneeId;
               }
+              dateRelatedSourceIndicateurValeurs.valeurs.push(v);
+            }
 
+            // Also add the valeur to other sources if the source can be used to calculate other source
+            for (const source of allowedExtraSourcesForCalculatedValues) {
               if (
-                relatedSourceIndicateurValeursByDate[
-                  collectiviteIdDateSourceIdKey
-                ]
+                source.sourceCalculIds.includes(
+                  v.sourceId || CrudValeursService.NULL_SOURCE_ID
+                )
               ) {
-                relatedSourceIndicateurValeursByDate[
-                  collectiviteIdDateSourceIdKey
-                ].valeurs.push(v);
+                this.logger.log(
+                  `Value of indicateur ${v.indicateurIdentifiant} for source ${v.sourceId} can be used to calculate source ${source.sourceId}`
+                );
+
+                const collectiviteIdDateSourceIdKey =
+                  this.getSourceIndicateurKeyForCalculatedIndicateurValeur(
+                    v,
+                    source.sourceId
+                  );
+                if (collectiviteIdDateSourceIdKey) {
+                  if (
+                    !relatedSourceIndicateurValeursByDate[
+                      collectiviteIdDateSourceIdKey
+                    ] &&
+                    allowToAddEntry
+                  ) {
+                    relatedSourceIndicateurValeursByDate[
+                      collectiviteIdDateSourceIdKey
+                    ] = {
+                      collectiviteId: v.collectiviteId,
+                      valeurs: [],
+                      sourceId: source.sourceId,
+                      metadonneeId: null,
+                      date: v.dateValeur,
+                      missingIdentifiants: [],
+                    };
+                  }
+
+                  if (
+                    relatedSourceIndicateurValeursByDate[
+                      collectiviteIdDateSourceIdKey
+                    ]
+                  ) {
+                    relatedSourceIndicateurValeursByDate[
+                      collectiviteIdDateSourceIdKey
+                    ].valeurs.push(v);
+                  }
+                }
               }
             }
           }

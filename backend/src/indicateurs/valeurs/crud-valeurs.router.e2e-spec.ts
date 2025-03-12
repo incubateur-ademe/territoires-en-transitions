@@ -216,13 +216,9 @@ describe("Route de lecture/écriture des valeurs d'indicateurs", () => {
     expect(result?.resultat).toBe(2.04);
 
     // vérifie le nombre de valeurs après insertion
+    // Indicateur calculé désactivé pour le moment pour les collectivités
     const resultAfter = await caller.indicateurs.valeurs.list(inputBefore);
-    expect(resultAfter.indicateurs[0].sources.collectivite.valeurs.length).toBe(
-      1
-    );
-    expect(
-      resultAfter.indicateurs[0].sources.collectivite.valeurs[0].resultat
-    ).toBe(2.04);
+    expect(resultAfter.indicateurs.length).toBe(0);
   });
 
   test("Ne permet pas d'insérer une valeur si on n'a pas le droit requis", async () => {

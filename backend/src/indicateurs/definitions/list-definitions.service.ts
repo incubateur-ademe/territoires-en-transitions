@@ -318,7 +318,12 @@ export default class ListDefinitionsService {
       `Found ${
         computedIndicateurDefinitions.length
       } computed indicateur definitions: ${computedIndicateurDefinitions
-        .map((def) => def.identifiantReferentiel || `${def.id}`)
+        .map(
+          (def) =>
+            `${def.identifiantReferentiel || `${def.id}`} (formula: ${
+              def.valeurCalcule
+            })`
+        )
         .join(',')} for source indicateurs: ${
         sourceIndicateurIdentifiants?.join(',') || 'all'
       }`

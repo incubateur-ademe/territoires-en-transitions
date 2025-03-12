@@ -8,7 +8,7 @@ import {
   Logger,
 } from '@nestjs/common';
 import { BaseExceptionFilter } from '@nestjs/core';
-import Sentry from '@sentry/nestjs';
+import * as Sentry from '@sentry/nestjs';
 import { Request, Response } from 'express';
 import { getErrorWithCode } from './errors.utils';
 import { HttpErrorResponse } from './http-error.response';
