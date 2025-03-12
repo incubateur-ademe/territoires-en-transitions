@@ -83,7 +83,7 @@ export const ActionHeader = ({
         )}
         {!!nextActionLink && (
           <Button
-            className="border-b-transparent hover:text-primary-9"
+            className="ml-auto border-b-transparent hover:text-primary-9"
             variant="underlined"
             icon="arrow-right-line"
             iconPosition="right"
