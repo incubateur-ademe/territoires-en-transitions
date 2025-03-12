@@ -66,3 +66,11 @@ type: binaire
 thematique_id: energie
 actions: [cae_3.2.1]
 ```
+
+# La collectivité dispose-t-elle de potentiel éolien ou hydraulique ?
+```yaml
+id: potentiel_eolien_ou_hydro
+type: binaire
+thematique_id: energie
+actions: [cae_3.2.3.2.3]
+```
