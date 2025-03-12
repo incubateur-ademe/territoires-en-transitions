@@ -7,12 +7,12 @@ import PersonnalisationsService from '../personnalisations/services/personnalisa
 import { SheetModule } from '../utils/google-sheets/sheet.module';
 import { IndicateurFiltreRouter } from './definitions/indicateur-filtre.router';
 import IndicateurFiltreService from './definitions/indicateur-filtre.service';
-import { IndicateurDefinitionsRouter } from './definitions/list-definitions.router';
-import ListDefinitionsService from './definitions/list-definitions.service';
 import { ExportIndicateursController } from './export-indicateurs/export-indicateurs.controller';
 import ExportIndicateursService from './export-indicateurs/export-indicateurs.service';
 import { ImportIndicateurDefinitionController } from './import-indicateurs/import-indicateur-definition.controller';
 import ImportIndicateurDefinitionService from './import-indicateurs/import-indicateur-definition.service';
+import { IndicateurDefinitionsRouter } from './list-definitions/list-definitions.router';
+import { ListDefinitionsService } from './list-definitions/list-definitions.service';
 import { IndicateurSourcesRouter } from './sources/indicateur-sources.router';
 import IndicateurSourcesService from './sources/indicateur-sources.service';
 import TrajectoiresDataService from './trajectoires/trajectoires-data.service';

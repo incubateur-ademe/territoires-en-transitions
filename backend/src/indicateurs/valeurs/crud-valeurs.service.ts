@@ -2,7 +2,6 @@ import { PermissionOperation } from '@/backend/auth/authorizations/permission-op
 import { PermissionService } from '@/backend/auth/authorizations/permission.service';
 import { ResourceType } from '@/backend/auth/authorizations/resource-type.enum';
 import CollectivitesService from '@/backend/collectivites/services/collectivites.service';
-import ListDefinitionsService from '@/backend/indicateurs/definitions/list-definitions.service';
 import { indicateurSourceSourceCalculTable } from '@/backend/indicateurs/shared/models/indicateur-source-source-calcul.table';
 import IndicateurSourcesService from '@/backend/indicateurs/sources/indicateur-sources.service';
 import IndicateurValeurExpressionParserService from '@/backend/indicateurs/valeurs/indicateur-valeur-expression-parser.service';
@@ -34,6 +33,7 @@ import {
 } from '../../auth/models/auth.models';
 import { DatabaseService } from '../../utils/database/database.service';
 import { indicateurSourceTable, Source } from '../index-domain';
+import { ListDefinitionsService } from '../list-definitions/list-definitions.service';
 import { DeleteIndicateursValeursRequestType } from '../shared/models/delete-indicateurs.request';
 import { DeleteValeurIndicateur } from '../shared/models/delete-valeur-indicateur.request';
 import { GetIndicateursValeursRequestType } from '../shared/models/get-indicateurs.request';
@@ -1200,7 +1200,7 @@ export default class CrudValeursService {
       valeursCount: number;
       identifiants: string[];
     }>[] = [];
-    let totalComputedIndicateurValeursCount: number = 0;
+    let totalComputedIndicateurValeursCount = 0;
     let iChunk = 0;
     for (const collectiviteIdsChunk of collectiviteIdsChunks) {
       collectiviteIdsChunk.forEach((collectiviteId) => {
