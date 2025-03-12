@@ -58,18 +58,18 @@ export function TRPCProvider({
         links: [
           splitLink({
             condition(op) {
-              // check for context property `skipBatch`
-              return Boolean(op.context.skipBatch);
+              // check for context property `batching`
+              return Boolean(op.context.batching);
             },
             // when condition is true, use normal request
-            true: httpLink({
+            false: httpLink({
               url: getUrl(),
               headers() {
                 return headers;
               },
             }),
             // when condition is false, use batching
-            false: httpBatchLink({
+            true: httpBatchLink({
               // transformer: superjson, <-- if you use a data transformer
               url: getUrl(),
               headers() {
