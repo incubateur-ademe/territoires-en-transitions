@@ -6,6 +6,7 @@ import {
   Lexer,
   tokenMatcher,
 } from 'chevrotain';
+import { isNil } from 'es-toolkit';
 import * as _ from 'lodash';
 
 // Define all the tokens used in the grammar
@@ -549,6 +550,12 @@ export default class IndicateurValeurExpressionParserService {
     inputText: string,
     sourceIndicateurValeurs: { [key: string]: number | null }
   ): number | null {
+    const atLeastOneValue = Object.values(sourceIndicateurValeurs).some(
+      (v) => !isNil(v)
+    );
+    if (!atLeastOneValue) {
+      return null;
+    }
     const cst = this.parseExpression(inputText);
     visitor.sourceIndicateurValeurs = sourceIndicateurValeurs;
     const result = visitor.visit(cst);
