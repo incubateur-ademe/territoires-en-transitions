@@ -6,9 +6,10 @@ import { OpenState } from '@/ui/utils/types';
 type Props = {
   actionId: string;
   openState: OpenState;
+  isReadOnly: boolean;
 };
 
-const Infos = ({ actionId, openState }: Props) => {
+const Infos = ({ actionId, openState, isReadOnly }: Props) => {
   const { data: pilotes } = useActionPilotesList(actionId);
   const { data: services } = useActionServicesPilotesList(actionId);
 
@@ -17,30 +18,33 @@ const Infos = ({ actionId, openState }: Props) => {
 
   return (
     (hasPilotes || hasServices) && (
-      <div className="flex gap-4">
+      <div className="flex gap-2 pl-2 border-l border-primary-3">
         {hasPilotes && (
-          <div className="px-4 border-x border-primary-3">
-            <ListWithTooltip
-              title="Pilotes"
-              list={pilotes.map((p) =>
-                p.tagId ? p.nom ?? '' : `${p.prenom} ${p.nom}`
-              )}
-              icon="user-line"
-              hoveringColor="grey"
-              onClick={() => openState.setIsOpen(true)}
-            />
-          </div>
+          <ListWithTooltip
+            className="!mx-0"
+            title="Pilotes"
+            list={pilotes.map((p) =>
+              p.tagId ? p.nom ?? '' : `${p.prenom} ${p.nom}`
+            )}
+            icon="user-line"
+            hoveringColor="grey"
+            onClick={() => openState.setIsOpen(true)}
+            disabled={isReadOnly}
+          />
+        )}
+        {hasPilotes && hasServices && (
+          <div className="w-px grow bg-primary-3" />
         )}
         {hasServices && (
-          <div className="pr-4">
-            <ListWithTooltip
-              title="Direction ou service pilote"
-              list={services.map((s) => s.nom ?? '')}
-              icon="leaf-line"
-              hoveringColor="grey"
-              onClick={() => openState.setIsOpen(true)}
-            />
-          </div>
+          <ListWithTooltip
+            className="mx-0"
+            title="Direction ou service pilote"
+            list={services.map((s) => s.nom ?? '')}
+            icon="leaf-line"
+            hoveringColor="grey"
+            onClick={() => openState.setIsOpen(true)}
+            disabled={isReadOnly}
+          />
         )}
       </div>
     )

@@ -7,6 +7,8 @@ type Props = {
   icon?: IconValue;
   hoveringColor?: 'grey' | 'primary';
   onClick?: () => void;
+  className?: string;
+  disabled?: boolean;
 };
 
 const ListWithTooltip = ({
@@ -15,19 +17,26 @@ const ListWithTooltip = ({
   icon,
   hoveringColor = 'primary',
   onClick,
+  className,
+  disabled,
 }: Props) => {
+  const isClickable = !!onClick && !disabled;
+
   if (list.length === 0) return null;
 
   return (
     <span
       title={title}
-      onClick={onClick}
-      className={classNames({
-        'cursor-pointer py-1 px-2 rounded-md -mx-2 -my-1 transition-colors':
-          !!onClick,
-        'hover:bg-grey-3': !!onClick && hoveringColor === 'grey',
-        'hover:bg-primary-2': !!onClick && hoveringColor === 'primary',
-      })}
+      onClick={isClickable ? onClick : undefined}
+      className={classNames(
+        {
+          'cursor-pointer py-1 px-2 rounded-md -mx-2 -my-1 transition-colors':
+            isClickable,
+          'hover:bg-grey-3': isClickable && hoveringColor === 'grey',
+          'hover:bg-primary-2': isClickable && hoveringColor === 'primary',
+        },
+        className
+      )}
     >
       {!!icon && <Icon icon={icon} size="sm" className="mr-1" />}
       {list[0]}
