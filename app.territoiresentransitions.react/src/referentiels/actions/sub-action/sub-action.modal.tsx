@@ -21,7 +21,7 @@ const SubActionModal = ({ actionDefinition, openState }: Props) => {
   const { id: actionId, nom: actionName } = actionDefinition;
   const tasks = useActionSummaryChildren(actionDefinition);
 
-  const [displayWarningMessage, setDisplayWarningMessage] = useState(false);
+  const [hideStatus, setHideStatus] = useState(false);
 
   return (
     <Modal
@@ -38,17 +38,14 @@ const SubActionModal = ({ actionDefinition, openState }: Props) => {
             conditionnalDisplay={tasks.length > 0}
             onAvancementUpdate={(avancement) =>
               avancement === 'detaille'
-                ? setDisplayWarningMessage(true)
-                : setDisplayWarningMessage(false)
+                ? setHideStatus(true)
+                : setHideStatus(false)
             }
           />
 
           {/* Liste des tâches */}
           {tasks.length > 0 && (
-            <SubActionTasksList
-              tasks={tasks}
-              statusWarningMessage={displayWarningMessage}
-            />
+            <SubActionTasksList tasks={tasks} hideStatus={hideStatus} />
           )}
         </div>
       )}
