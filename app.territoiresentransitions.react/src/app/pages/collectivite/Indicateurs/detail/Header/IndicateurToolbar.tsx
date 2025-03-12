@@ -11,7 +11,6 @@ type Props = {
   definition: TIndicateurDefinition;
   collectiviteId: number;
   isPerso?: boolean;
-  isReadonly?: boolean;
   className?: string;
 };
 
@@ -19,7 +18,6 @@ const IndicateurToolbar = ({
   definition,
   collectiviteId,
   isPerso = false,
-  isReadonly = false,
   className,
 }: Props) => {
   const [isEditModalOpen, setIsEditModalOpen] = useState(false);
@@ -32,25 +30,23 @@ const IndicateurToolbar = ({
   const isFavori = definition.favoris;
 
   const { mutate: toggleFavori } = useUpdateIndicateurFavoriCollectivite(
-    collectiviteId!,
+    collectiviteId,
     definition.id
   );
 
   return (
     <>
       <div className={classNames('flex gap-4 lg:mt-3.5', className)}>
-        {!isReadonly && (
-          <Button
-            disabled={isLoading}
-            title="Modifier l'indicateur"
-            aria-label="Modifier l'indicateur"
-            size="xs"
-            variant="grey"
-            onClick={() => setIsEditModalOpen(true)}
-          >
-            Modifier
-          </Button>
-        )}
+        <Button
+          disabled={isLoading}
+          title="Modifier l'indicateur"
+          aria-label="Modifier l'indicateur"
+          size="xs"
+          variant="grey"
+          onClick={() => setIsEditModalOpen(true)}
+        >
+          Modifier
+        </Button>
 
         <Tooltip
           label={
@@ -80,9 +76,7 @@ const IndicateurToolbar = ({
           onClick={() => exportIndicateurs()}
         />
 
-        {!isReadonly && isPerso && (
-          <DeleteModal {...{ definition, isLoading }} />
-        )}
+        {isPerso && <DeleteModal {...{ definition, isLoading }} />}
       </div>
 
       {isEditModalOpen && (
