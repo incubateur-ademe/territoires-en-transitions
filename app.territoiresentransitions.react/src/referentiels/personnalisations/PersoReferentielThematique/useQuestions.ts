@@ -7,6 +7,7 @@ import { useQuery } from 'react-query';
 export type TFilters = {
   action_ids?: string[];
   thematique_id?: string;
+  questionIds?: string[];
 };
 
 /**
@@ -33,13 +34,17 @@ const fetchQuestions = async (
     .select()
     .eq('collectivite_id', collectivite_id);
 
-  const { action_ids, thematique_id } = filters || {};
+  const { action_ids, thematique_id, questionIds } = filters || {};
   if (action_ids) {
     query.contains('action_ids', action_ids);
   }
 
   if (thematique_id) {
     query.eq('thematique_id', thematique_id);
+  }
+
+  if (questionIds) {
+    query.in('id', questionIds);
   }
 
   // attends les données
