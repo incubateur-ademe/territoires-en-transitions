@@ -30,7 +30,7 @@ const TableauDeBord = () => {
       <Route exact path={collectiviteTDBPersonnelPath}>
         <View
           view={'personnel'}
-          title="Mon tableau de bord"
+          title="Mon suivi personnel"
           description="Ce tableau de bord est personnel afin de suivre mes plans d'action."
         >
           {isEmpty ? <TdbVide /> : <Personnel />}
