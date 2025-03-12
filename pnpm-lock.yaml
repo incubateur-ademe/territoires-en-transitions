@@ -275,6 +275,9 @@ importers:
       react-dom:
         specifier: 18.3.1
         version: 18.3.1(react@18.3.1)
+      react-error-boundary:
+        specifier: ^5.0.0
+        version: 5.0.0(react@18.3.1)
       react-hook-form:
         specifier: ^7.51.1
         version: 7.53.0(react@18.3.1)
@@ -12691,6 +12694,11 @@ packages:
       react: ^0.14.8 || ^15.0.1 || ^16.0.0 || ^17.0.1 || ^18.0.0
       react-dom: ^0.14.8 || ^15.0.1 || ^16.0.0 || ^17.0.1 || ^18.0.0
 
+  react-error-boundary@5.0.0:
+    resolution: {integrity: sha512-tnjAxG+IkpLephNcePNA7v6F/QpWLH8He65+DmedchDwg162JZqx4NmbXj0mlAYVVEd81OW7aFhmbsScYfiAFQ==}
+    peerDependencies:
+      react: '>=16.13.1'
+
   react-error-overlay@6.0.11:
     resolution: {integrity: sha512-/6UZ2qgEyH2aqzYZgQPxEnz33NJ2gNsnHA2o5+o4wW9bLM/JYQitNP9xPhsXwC08hMMovfGe/8retsdDsczPRg==}
 
@@ -18062,7 +18070,7 @@ snapshots:
   '@emotion/babel-plugin@11.12.0':
     dependencies:
       '@babel/helper-module-imports': 7.24.7
-      '@babel/runtime': 7.25.6
+      '@babel/runtime': 7.26.7
       '@emotion/hash': 0.9.2
       '@emotion/memoize': 0.9.0
       '@emotion/serialize': 1.3.2
@@ -20813,7 +20821,7 @@ snapshots:
 
   '@react-pdf/font@3.0.0(encoding@0.1.13)':
     dependencies:
-      '@babel/runtime': 7.25.6
+      '@babel/runtime': 7.26.7
       '@react-pdf/types': 2.7.0
       cross-fetch: 3.1.8(encoding@0.1.13)
       fontkit: 2.0.4
@@ -20858,7 +20866,7 @@ snapshots:
 
   '@react-pdf/layout@4.0.0(encoding@0.1.13)':
     dependencies:
-      '@babel/runtime': 7.25.6
+      '@babel/runtime': 7.26.7
       '@react-pdf/fns': 3.0.0
       '@react-pdf/image': 3.0.0(encoding@0.1.13)
       '@react-pdf/pdfkit': 4.0.0
@@ -20885,7 +20893,7 @@ snapshots:
 
   '@react-pdf/pdfkit@4.0.0':
     dependencies:
-      '@babel/runtime': 7.25.6
+      '@babel/runtime': 7.26.7
       '@react-pdf/png-js': 3.0.0
       browserify-zlib: 0.2.0
       crypto-js: 4.2.0
@@ -20920,7 +20928,7 @@ snapshots:
 
   '@react-pdf/render@4.0.0':
     dependencies:
-      '@babel/runtime': 7.25.6
+      '@babel/runtime': 7.26.7
       '@react-pdf/fns': 3.0.0
       '@react-pdf/primitives': 4.0.0
       '@react-pdf/textkit': 5.0.0
@@ -20933,7 +20941,7 @@ snapshots:
 
   '@react-pdf/renderer@3.4.5(encoding@0.1.13)(react@18.3.1)':
     dependencies:
-      '@babel/runtime': 7.25.6
+      '@babel/runtime': 7.26.7
       '@react-pdf/font': 2.5.2(encoding@0.1.13)
       '@react-pdf/layout': 3.13.0(encoding@0.1.13)
       '@react-pdf/pdfkit': 3.2.0
@@ -22288,7 +22296,7 @@ snapshots:
   '@testing-library/dom@10.4.0':
     dependencies:
       '@babel/code-frame': 7.24.7
-      '@babel/runtime': 7.25.6
+      '@babel/runtime': 7.26.7
       '@types/aria-query': 5.0.4
       aria-query: 5.3.0
       chalk: 4.1.2
@@ -23919,7 +23927,7 @@ snapshots:
 
   broadcast-channel@3.7.0:
     dependencies:
-      '@babel/runtime': 7.25.6
+      '@babel/runtime': 7.26.7
       detect-node: 2.1.0
       js-sha3: 0.8.0
       microseconds: 0.2.0
@@ -27154,7 +27162,7 @@ snapshots:
 
   history@4.10.1:
     dependencies:
-      '@babel/runtime': 7.25.6
+      '@babel/runtime': 7.26.7
       loose-envify: 1.4.0
       resolve-pathname: 3.0.0
       tiny-invariant: 1.3.3
@@ -29242,7 +29250,7 @@ snapshots:
 
   match-sorter@6.3.4:
     dependencies:
-      '@babel/runtime': 7.25.6
+      '@babel/runtime': 7.26.7
       remove-accents: 0.5.0
 
   math-intrinsics@1.1.0: {}
@@ -31731,6 +31739,11 @@ snapshots:
       react-dom: 18.3.1(react@18.3.1)
       react-is: 18.1.0
 
+  react-error-boundary@5.0.0(react@18.3.1):
+    dependencies:
+      '@babel/runtime': 7.26.7
+      react: 18.3.1
+
   react-error-overlay@6.0.11: {}
 
   react-fast-compare@2.0.4: {}
@@ -31824,7 +31837,7 @@ snapshots:
 
   react-router@5.3.4(react@18.3.1):
     dependencies:
-      '@babel/runtime': 7.25.6
+      '@babel/runtime': 7.26.7
       history: 4.10.1
       hoist-non-react-statics: 3.3.2
       loose-envify: 1.4.0
