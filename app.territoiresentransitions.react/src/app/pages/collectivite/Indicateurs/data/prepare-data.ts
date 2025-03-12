@@ -1,6 +1,7 @@
 /** Transforme les données pour l'affichage dans le tableau */
 
 import { RouterOutput } from '@/api/utils/trpc/client';
+import { getAnnee } from '@/app/ui/charts/echarts';
 import { uniq } from 'es-toolkit';
 import { SourceType } from '../types';
 
@@ -28,11 +29,11 @@ export const prepareData = (
   const sourcesEtValeursModifiees = sourcesFiltrees.map((sourceData) => ({
     ...sourceData,
     valeurs: sourceData.valeurs.map((v) => {
-      const annee = new Date(v.dateValeur).getFullYear();
+      const { annee, anneeISO } = getAnnee(v.dateValeur);
       return {
         id: v.id,
         annee,
-        anneeISO: `${annee}-01-01T00:00:00.000Z`,
+        anneeISO,
         valeur: v[type],
         commentaire: v[`${type}Commentaire`],
       };
