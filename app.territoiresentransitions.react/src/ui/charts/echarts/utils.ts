@@ -18,13 +18,13 @@ export const DOWNLOAD_ICON =
 // texture pour les surfaces "objectif"
 const DOTTED_AREA: LineSeriesOption['itemStyle'] = {
   decal: {
-  symbol: 'circle',
-  symbolSize: 0.3,
-  dashArrayX: [
-    [18, 18],
-    [0, 18, 18, 0],
-  ],
-  dashArrayY: [9, 0],
+    symbol: 'circle',
+    symbolSize: 0.3,
+    dashArrayX: [
+      [18, 18],
+      [0, 18, 18, 0],
+    ],
+    dashArrayY: [9, 0],
   },
 };
 
@@ -86,6 +86,32 @@ export const makeLineSeries = (dataset: Dataset[]): LineSeriesOption[] =>
     lineStyle: estLignePointillee(ds)
       ? { type: 'dashed', width: 2 }
       : { width: 2 },
+  }));
+
+// génère le paramétrage des séries pour les valeurs de référence (cible/seuil/objectifs)
+export const makeReferenceSeries = (dataset: Dataset[]): LineSeriesOption[] =>
+  dataset.map((ds) => ({
+    id: ds.id,
+    datasetId: ds.id,
+    name: ds.name,
+    color: ds.color,
+    type: 'line',
+    smooth: true,
+    emphasis: { focus: 'series' },
+    symbol: ds.id === 'cible-objectifs' ? 'circle' : 'none',
+    lineStyle: { type: 'dotted', width: 2 },
+    animation: false,
+    markLine:
+      ds.source?.length === 1
+        ? {
+            animation: false,
+            silent: true,
+            //            label: { show: false },
+            symbol: 'none',
+            lineStyle: { width: 2, type: 'dotted' },
+            data: [{ type: 'max' }],
+          }
+        : undefined,
   }));
 
 // génère le paramétrage des données de la légende à partir des paramètres des lignes
