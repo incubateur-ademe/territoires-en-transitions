@@ -12,7 +12,7 @@ import CollectivitesService from '../../collectivites/services/collectivites.ser
 import { DatabaseService } from '../../utils/database/database.service';
 import { GetPersonnalisationConsequencesRequestType } from '../models/get-personnalisation-consequences.request';
 import { GetPersonnalisationReglesResponseType } from '../models/get-personnalisation-regles.response';
-import { GetPersonnalisationReponsesResponseType } from '../models/get-personnalisation-reponses.response';
+import { PersonnalisationReponsesPayload } from '../models/get-personnalisation-reponses.response';
 import { historiqueReponseBinaireTable } from '../models/historique-reponse-binaire.table';
 import { historiqueReponseChoixTable } from '../models/historique-reponse-choix.table';
 import { historiqueReponseProportionTable } from '../models/historique-reponse-proportion.table';
@@ -70,7 +70,7 @@ export default class PersonnalisationsService {
   private async fillPersonnalisationReponsesForTable(
     table: ReponseTables,
     collectiviteId: number,
-    reponses: GetPersonnalisationReponsesResponseType,
+    reponses: PersonnalisationReponsesPayload,
     reponsesDate?: string
   ): Promise<void> {
     const reponsesTable = await this.getPersonnalisationReponsesForTable(
@@ -90,8 +90,8 @@ export default class PersonnalisationsService {
     collectiviteId: number,
     reponsesDate?: string,
     tokenInfo?: AuthenticatedUser
-  ): Promise<GetPersonnalisationReponsesResponseType> {
-    const reponses: GetPersonnalisationReponsesResponseType = {};
+  ): Promise<PersonnalisationReponsesPayload> {
+    const reponses: PersonnalisationReponsesPayload = {};
 
     this.logger.log(
       `Getting responses for collectivite ${collectiviteId} and date ${reponsesDate}`
@@ -163,7 +163,7 @@ export default class PersonnalisationsService {
     tokenInfo?: AuthenticatedUser,
     collectiviteInfo?: CollectiviteAvecType
   ): Promise<{
-    reponses: GetPersonnalisationReponsesResponseType;
+    reponses: PersonnalisationReponsesPayload;
     consequences: PersonnalisationConsequencesByActionId;
   }> {
     // Seulement les personnes ayant l'accès en lecture à la collectivité peuvent voir les réponses historiques
@@ -199,7 +199,7 @@ export default class PersonnalisationsService {
 
   async getPersonnalisationConsequences(
     regles: GetPersonnalisationReglesResponseType,
-    reponses: GetPersonnalisationReponsesResponseType,
+    reponses: PersonnalisationReponsesPayload,
     collectiviteInfo: IdentiteCollectivite
   ): Promise<PersonnalisationConsequencesByActionId> {
     const consequences: PersonnalisationConsequencesByActionId = {};

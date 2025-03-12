@@ -9,18 +9,18 @@ import { useFeatureFlagEnabled } from 'posthog-js/react';
 import { useCollectiviteId } from '../collectivites/collectivite-context';
 
 export type Snapshot =
-  RouterOutput['referentiels']['snapshots']['getCurrentFullScore'];
+  RouterOutput['referentiels']['snapshots']['getCurrent'];
 
 export type SnapshotDetails =
   RouterOutput['referentiels']['snapshots']['list']['snapshots'][number];
 
-export type ActionDetailed = Snapshot['scores'];
+export type ActionDetailed = Snapshot['scoresPayload']['scores'];
 
 export function useSnapshot({ actionId }: { actionId: string }) {
   const collectiviteId = useCollectiviteId();
   const referentielId = getReferentielIdFromActionId(actionId);
 
-  return trpc.referentiels.snapshots.getCurrentFullScore.useQuery(
+  return trpc.referentiels.snapshots.getCurrent.useQuery(
     {
       collectiviteId,
       referentielId,
@@ -42,7 +42,7 @@ export function useAction(actionId: string) {
   const { data: snapshot, ...rest } = useSnapshot({ actionId });
 
   const toAction = (snapshot: Snapshot) => {
-    const subAction = findByActionId(snapshot.scores, actionId);
+    const subAction = findByActionId(snapshot.scoresPayload.scores, actionId);
 
     if (subAction === null) {
       throw new ReferentielException(`Action not found: '${actionId}'`);
@@ -75,10 +75,9 @@ export function useSnapshotComputeAndUpdate() {
   const trpcUtils = trpc.useUtils();
 
   const { mutate: computeScoreAndUpdateCurrentSnapshot } =
-    trpc.referentiels.snapshots.computeAndSave.useMutation({
+    trpc.referentiels.snapshots.computeAndUpsert.useMutation({
       onSuccess: (snapshot, inputParams) => {
-        // trpcUtils.referentiels.snapshots.getCurrentFullScore.invalidate();
-        trpcUtils.referentiels.snapshots.getCurrentFullScore.setData(
+        trpcUtils.referentiels.snapshots.getCurrent.setData(
           inputParams,
           snapshot
         );
@@ -97,13 +96,13 @@ export function useEtatLieuxHasStarted(referentielId: ReferentielId) {
     return false;
   }
 
-  const { score } = snapshot.scores;
+  const { score } = snapshot.scoresPayload.scores;
   return score.completedTachesCount > 0;
 }
 
 // TODO-SNAPSHOT: remove this after successful and validated release
 export function useSnapshotFlagEnabled() {
-  return useFeatureFlagEnabled('is-referentiel-on-snapshot-enabled');
+  return useFeatureFlagEnabled('is-referentiel-on-snapshot-enabled') || true;
 }
 
 // TODO move this in an helper function in shared domain

@@ -45,7 +45,7 @@ describe('Indicateurs → import-indicateur-definition.service', () => {
       const indicateurDefinition = cloneDeep(sampleImportIndicateurDefinition);
       indicateurDefinition.valeurCalcule = `val(${indicateurDefinition.identifiantReferentiel}) + val(cae_1.b)`;
 
-      expect(async () =>
+      await expect(async () =>
         importIndicateurDefinitionService.checkIndicateurDefinitions([
           indicateurDefinition,
         ])
@@ -56,7 +56,7 @@ describe('Indicateurs → import-indicateur-definition.service', () => {
       const indicateurDefinition = cloneDeep(sampleImportIndicateurDefinition);
       indicateurDefinition.valeurCalcule = `val(cae_1.b) / 10`;
 
-      expect(async () =>
+      await expect(async () =>
         importIndicateurDefinitionService.checkIndicateurDefinitions([
           indicateurDefinition,
         ])
@@ -71,7 +71,7 @@ describe('Indicateurs → import-indicateur-definition.service', () => {
       indicateurDefinition.valeurCalcule = `val(${indicateurDefinition2.identifiantReferentiel}) / 10`;
       indicateurDefinition2.valeurCalcule = `val(${indicateurDefinition.identifiantReferentiel}) * 10`;
 
-      expect(async () =>
+      await expect(async () =>
         importIndicateurDefinitionService.checkIndicateurDefinitions([
           indicateurDefinition,
           indicateurDefinition2,
@@ -86,7 +86,7 @@ describe('Indicateurs → import-indicateur-definition.service', () => {
       );
       indicateurDefinition.valeurCalcule = `val(${indicateurDefinition2.identifiantReferentiel}) / 10`;
 
-      expect(
+      await expect(
         importIndicateurDefinitionService.checkIndicateurDefinitions([
           indicateurDefinition,
           indicateurDefinition2,

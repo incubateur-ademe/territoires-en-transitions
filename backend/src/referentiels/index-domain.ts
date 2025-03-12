@@ -9,4 +9,3 @@ export * from './models/action-statut.table';
 export * from './models/action-type.enum';
 export * from './models/referentiel-id.enum';
 export * from './referentiels.utils';
-export * from './snapshots/snapshot.table';

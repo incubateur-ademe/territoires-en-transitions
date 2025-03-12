@@ -1,6 +1,5 @@
 import { Injectable } from '@nestjs/common';
 import { TrpcService } from '../utils/trpc/trpc.service';
-import { ComputeScoreRouter } from './compute-score/compute-score.router';
 import { GetLabellisationRouter } from './labellisations/get-labellisation.router';
 import { StartAuditRouter } from './labellisations/start-audit/start-audit.router';
 import { ValidateAuditRouter } from './labellisations/validate-audit/validate-audit.router';
@@ -15,7 +14,6 @@ export class ReferentielsRouter {
     private readonly updateActionStatutRouter: UpdateActionStatutRouter,
     private readonly listActionStatutRouter: ListActionsRouter,
     private readonly scoreSnapshotsRouter: SnapshotsRouter,
-    private readonly computeScoreRouter: ComputeScoreRouter,
     private readonly getLabellisation: GetLabellisationRouter,
     private readonly startAudit: StartAuditRouter,
     private readonly validateAudit: ValidateAuditRouter
@@ -28,7 +26,6 @@ export class ReferentielsRouter {
     ),
 
     snapshots: this.scoreSnapshotsRouter.router,
-    scores: this.computeScoreRouter.router,
 
     labellisations: this.trpc.mergeRouters(
       this.startAudit.router,

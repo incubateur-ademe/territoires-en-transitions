@@ -5,8 +5,8 @@ import {
   findActionById,
   flatMapActionsEnfants,
   ReferentielId,
-  SnapshotJalonEnum,
 } from '@/domain/referentiels';
+import { SnapshotJalonEnum } from '@/domain/referentiels/snapshots';
 import { useQuery } from 'react-query';
 import { actionNewToDeprecated } from '../../DEPRECATED_scores.types';
 import { useSnapshotFlagEnabled } from '../../use-snapshot';
@@ -37,18 +37,18 @@ export const useComparaisonScoreAudit = (
       collectiviteId,
       referentielId,
       options: {
-        jalons: [SnapshotJalonEnum.PRE_AUDIT, SnapshotJalonEnum.SCORE_COURANT],
+        jalons: [SnapshotJalonEnum.PRE_AUDIT, SnapshotJalonEnum.COURANT],
       },
     },
     {
       enabled: FLAG_isSnapshotEnabled,
       select({ snapshots }) {
         const currentSnapshot = snapshots.find(
-          (snap) => snap.typeJalon === SnapshotJalonEnum.SCORE_COURANT
+          (snap) => snap.jalon === SnapshotJalonEnum.COURANT
         );
 
         const preAuditSnapshot = snapshots.find(
-          (snap) => snap.typeJalon === SnapshotJalonEnum.PRE_AUDIT
+          (snap) => snap.jalon === SnapshotJalonEnum.PRE_AUDIT
         );
 
         if (!currentSnapshot || !preAuditSnapshot) {

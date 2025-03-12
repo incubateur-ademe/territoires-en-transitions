@@ -1,8 +1,9 @@
+import { PermissionService } from '@/backend/auth/authorizations/permission.service';
 import { TrpcService } from '@/backend/utils/trpc/trpc.service';
+import { PermissionOperation, ResourceType } from '@/domain/auth';
 import { Injectable } from '@nestjs/common';
 import z from 'zod';
 import ScoresService from '../compute-score/scores.service';
-import { ComputeScoreMode } from '../models/compute-scores-mode.enum';
 import { referentielIdEnumSchema } from '../models/referentiel-id.enum';
 import {
   listInputSchema,
@@ -11,7 +12,7 @@ import {
 import { SnapshotsService } from './snapshots.service';
 import { upsertSnapshotRequestSchema } from './upsert-snapshot.request';
 
-export const getFullScoreSnapshotTrpcRequestSchema = z.object({
+export const snapshotInputSchema = z.object({
   referentielId: referentielIdEnumSchema,
   collectiviteId: z.number().int(),
   snapshotRef: z.string(),
@@ -23,7 +24,8 @@ export class SnapshotsRouter {
     private readonly trpc: TrpcService,
     private readonly snapshots: SnapshotsService,
     private readonly listSnapshots: ListSnapshotsService,
-    private readonly scores: ScoresService
+    private readonly scores: ScoresService,
+    private readonly permissionService: PermissionService
   ) {}
 
   router = this.trpc.router({
@@ -39,70 +41,65 @@ export class SnapshotsRouter {
         return this.listSnapshots.listWithScores(input);
       }),
 
-    computeAndSave: this.trpc.authedProcedure
-      .input(
-        z.object({
-          collectiviteId: z.number().int(),
-          referentielId: referentielIdEnumSchema,
-        })
-      )
-      .mutation(({ input }) => {
-        return this.scores.getOrCreateCurrentScore(
-          input.collectiviteId,
-          input.referentielId,
-          true
+    computeAndUpsert: this.trpc.authedProcedure
+      .input(upsertSnapshotRequestSchema)
+      .mutation(async ({ input, ctx }) => {
+        await this.permissionService.isAllowed(
+          ctx.user,
+          PermissionOperation.REFERENTIELS_EDITION,
+          ResourceType.COLLECTIVITE,
+          input.collectiviteId
         );
+
+        return this.snapshots.computeAndUpsert({
+          ...input,
+          user: ctx.user,
+        });
       }),
 
-    upsert: this.trpc.authedProcedure
-      .input(upsertSnapshotRequestSchema)
-      .mutation(({ input, ctx }) => {
-        return this.scores.computeScoreForCollectivite(
-          input.referentiel,
+    getCurrent: this.trpc.anonProcedure
+      .input(
+        z.object({
+          referentielId: referentielIdEnumSchema,
+          collectiviteId: z.number().int(),
+        })
+      )
+      .query(({ input, ctx }) => {
+        return this.snapshots.get(
           input.collectiviteId,
-          {
-            mode: ComputeScoreMode.RECALCUL,
-            snapshot: true,
-            snapshotNom: input.snapshotNom,
-            date: input.date,
-          },
+          input.referentielId,
+          undefined,
           ctx.user
         );
       }),
 
-    getCurrentFullScore: this.trpc.authedProcedure
-      .input(
-        z.object({
-          referentielId: referentielIdEnumSchema,
-          collectiviteId: z.number().int(),
-        })
-      )
-      .query(({ input, ctx }) => {
-        return this.scores.getOrCreateCurrentScore(
-          input.collectiviteId,
-          input.referentielId
-        );
-      }),
+    // get: this.trpc.authedProcedure
+    //   .input(getFullScoreSnapshotTrpcRequestSchema)
+    //   .query(({ input, ctx }) => {
+    //     if (input.snapshotRef === SnapshotsService.SCORE_COURANT_SNAPSHOT_REF) {
+    //       return this.scores.getOrCreateCurrentScore(
+    //         input.collectiviteId,
+    //         input.referentielId
+    //       );
+    //     } else {
+    //       return this.snapshots.get(
+    //         input.collectiviteId,
+    //         input.referentielId,
+    //         input.snapshotRef
+    //       );
+    //     }
+    //   }),
 
-    get: this.trpc.authedProcedure
-      .input(getFullScoreSnapshotTrpcRequestSchema)
-      .query(({ input, ctx }) => {
-        if (input.snapshotRef === SnapshotsService.SCORE_COURANT_SNAPSHOT_REF) {
-          return this.scores.getOrCreateCurrentScore(
-            input.collectiviteId,
-            input.referentielId
-          );
-        } else {
-          return this.snapshots.get(
-            input.collectiviteId,
-            input.referentielId,
-            input.snapshotRef
-          );
-        }
-      }),
     delete: this.trpc.authedProcedure
-      .input(getFullScoreSnapshotTrpcRequestSchema)
-      .query(({ input, ctx }) => {
+      .input(snapshotInputSchema)
+      .query(async ({ input, ctx }) => {
+        await this.permissionService.isAllowed(
+          ctx.user,
+          PermissionOperation.REFERENTIELS_EDITION,
+          ResourceType.COLLECTIVITE,
+          input.collectiviteId
+        );
+
         return this.snapshots.delete(
           input.collectiviteId,
           input.referentielId,

@@ -1,3 +1,4 @@
+import { collectiviteBanaticTypeTable } from '@/backend/collectivites/shared/models/collectivite-banatic-type.table';
 import { InferSelectModel } from 'drizzle-orm';
 import {
   boolean,
@@ -8,9 +9,8 @@ import {
   varchar,
 } from 'drizzle-orm/pg-core';
 import { createInsertSchema, createSelectSchema } from 'drizzle-zod';
-import { createdAt, modifiedAt } from '../../../utils/column.utils';
-import { collectiviteBanaticTypeTable } from '@/backend/collectivites/shared/models/collectivite-banatic-type.table';
 import { z } from 'zod';
+import { createdAt, modifiedAt } from '../../../utils/column.utils';
 
 export const collectiviteTypeEnum = {
   Region: 'region',

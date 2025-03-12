@@ -5,9 +5,8 @@ import {
   NotFoundException,
 } from '@nestjs/common';
 import { eq, sql } from 'drizzle-orm';
-import ScoresService from '../../compute-score/scores.service';
-import { ComputeScoreMode } from '../../models/compute-scores-mode.enum';
-import { SnapshotJalonEnum } from '../../snapshots/snapshot.table';
+import { SnapshotJalonEnum } from '../../snapshots/snapshot-jalon.enum';
+import { SnapshotsService } from '../../snapshots/snapshots.service';
 import { Audit, auditTable } from '../audit.table';
 import { labellisationDemandeTable } from '../labellisation-demande.table';
 
@@ -15,7 +14,7 @@ import { labellisationDemandeTable } from '../labellisation-demande.table';
 export class StartAuditService {
   constructor(
     private readonly databaseService: DatabaseService,
-    private readonly scoresService: ScoresService
+    private readonly snapshotsService: SnapshotsService
   ) {}
 
   private readonly db = this.databaseService.db;
@@ -58,20 +57,23 @@ export class StartAuditService {
     // it would be better for consistency but maybe it's too big an operation?
 
     // Crée un snapshot de 'pre_audit'
-    await this.scoresService.computeScoreForCollectivite(
-      startedAudit.referentiel,
-      startedAudit.collectiviteId,
-      {
-        mode: ComputeScoreMode.RECALCUL,
-        auditId: startedAudit.id,
-        jalon: SnapshotJalonEnum.PRE_AUDIT,
-        snapshot: true,
-        snapshotForceUpdate: true,
-      },
-      undefined,
-      undefined,
-      true
-    );
+    await this.snapshotsService.computeAndUpsert({
+      collectiviteId: startedAudit.collectiviteId,
+      referentielId: startedAudit.referentiel,
+      jalon: SnapshotJalonEnum.PRE_AUDIT,
+      auditId: startedAudit.id,
+    });
+
+    //     mode: ComputeScoreMode.RECALCUL,
+    //     auditId: startedAudit.id,
+    //     jalon: SnapshotJalonEnum.PRE_AUDIT,
+    //     snapshot: true,
+    //     snapshotForceUpdate: true,
+    //   },
+    //   undefined,
+    //   undefined,
+    //   true
+    // );
 
     return startedAudit;
   }
