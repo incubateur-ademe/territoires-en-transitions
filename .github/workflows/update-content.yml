@@ -11,6 +11,7 @@ jobs:
     name: Lecture et conversion des fichiers Markdown en JSON
     runs-on: ubuntu-latest
     timeout-minutes: 30
+    environment: dev
 
     steps:
       - uses: actions/checkout@v4
@@ -29,7 +30,18 @@ jobs:
         run: earthly +setup-env
 
       - name: Lance le projet
-        run: earthly +dev
+        run: >
+          earthly --use-inline-cache +dev
+          --stop=no --datalayer=yes --business=yes --app=no --auth=no --version=HEAD
+          --DB_URL=${{ secrets.DB_URL }}
+          --SERVICE_ROLE_KEY=${{ secrets.SERVICE_ROLE_KEY }}
+          --API_URL=${{ secrets.API_URL }}
+          --ANON_KEY=${{ secrets.ANON_KEY }}
+          --JWT_SECRET=${{ secrets.JWT_SECRET }}
+          --REFERENTIEL_TE_SHEET_ID=${{ vars.REFERENTIEL_TE_SHEET_ID }}
+          --INDICATEUR_DEFINITIONS_SHEET_ID=${{ vars.INDICATEUR_DEFINITIONS_SHEET_ID }}
+          --TRAJECTOIRE_SNBC_XLSX_ID=${{ vars.TRAJECTOIRE_SNBC_XLSX_ID }}
+          --GCLOUD_SERVICE_ACCOUNT_KEY=${{ secrets.GCLOUD_SERVICE_ACCOUNT_KEY }}
 
       - name: Lance les tests business
         run: earthly +business-test
