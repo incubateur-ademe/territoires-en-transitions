@@ -1,4 +1,5 @@
 import { Indicateurs } from '@/api';
+import { trpc } from '@/api/utils/trpc/client';
 import { useApiClient } from '@/app/core-logic/api/useApiClient';
 import { useCurrentCollectivite } from '@/app/core-logic/hooks/useCurrentCollectivite';
 import { useEventTracker } from '@/ui';
@@ -36,6 +37,7 @@ export const useCalculTrajectoire = (args?: { nouveauCalcul: boolean }) => {
   const { collectiviteId, niveauAcces, role } = useCurrentCollectivite()!;
   const api = useApiClient();
   const queryClient = useQueryClient();
+  const utils = trpc.useUtils();
   const trackEvent = useEventTracker('app/trajectoires/snbc');
 
   return useMutation(
@@ -66,6 +68,9 @@ export const useCalculTrajectoire = (args?: { nouveauCalcul: boolean }) => {
       onSuccess: (data) => {
         // met à jour le cache
         queryClient.setQueryData(getKey(collectiviteId), data);
+
+        utils.indicateurs.valeurs.list.invalidate({ collectiviteId });
+        utils.indicateurs.sources.available.invalidate({ collectiviteId });
       },
     }
   );
