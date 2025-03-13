@@ -7,13 +7,13 @@ import { Checkbox } from '@/ui';
 import SpinnerLoader from '@/app/ui/shared/SpinnerLoader';
 
 import { Textarea, useUpsertEtape } from './etape';
-import { useGetEtapes } from './use-get-etapes';
-import EtapesList from './etapes-list';
 import {
   EtapesProvider,
   useEtapesDispatch,
   useEtapesState,
 } from './etapes-context';
+import EtapesList from './etapes-list';
+import { useGetEtapes } from './use-get-etapes';
 
 type Props = {
   fiche: FicheAction;
@@ -95,8 +95,9 @@ const EtapesWithContext = ({ fiche, isReadonly }: Props) => {
       <h5 className="mb-3 text-primary-8">
         Étapes {etapes.length > 0 && `${etapesRealiseesCount}/${etapes.length}`}
       </h5>
-      <p className="mb-0 text-sm text-grey-6">
-        Ici, vous pouvez découper votre action comme vous le souhaitez !
+      <p className="mb-0 text-sm text-primary-6">
+        Dans cette section, vous pouvez découper votre action comme vous le
+        souhaitez !
       </p>
       <div className="h-[1px] w-full my-4 bg-grey-3" />
       <EtapesList ficheId={fiche.id} etapes={etapes} isReadonly={isReadonly} />
@@ -106,7 +107,7 @@ const EtapesWithContext = ({ fiche, isReadonly }: Props) => {
           <Checkbox />
           <Textarea
             ref={createRef}
-            placeholder="Ajouter une étape"
+            placeholder="Commencer à écrire pour ajouter une étape"
             disabled={isReadonly || isPending}
             onBlur={handleCreateEtape}
           />
