@@ -76,7 +76,7 @@ export type TQuestionReponseProps = {
   onChange: (reponse: TReponse) => void;
   /** Variante suivant que la liste est affichée dans une page Personnalisation
    * ou dans la modale de personnalisation (depuis une action) */
-  variant?: 'modal' | undefined;
+  variant?: 'modal' | 'indicateur' | undefined;
 };
 
 /** Affiche une question/réponse et son éventuel libellé d'aide */
@@ -112,7 +112,7 @@ const QuestionReponse = (props: TQuestionReponseProps) => {
           />
         ) : null}
         <Reponse {...props} />
-        <Justification {...props} />
+        {variant !== 'indicateur' && <Justification {...props} />}
         {hasProportionDescription ? (
           <Accordion
             className="mt-6"
@@ -140,7 +140,7 @@ export type TQuestionReponseListProps = {
   onChange: TChangeReponse;
   /** Variante suivant que la liste est affichée dans une page Personnalisation
    * ou dans la modale de personnalisation (depuis une action) */
-  variant?: 'modal' | undefined;
+  variant?: 'modal' | 'indicateur' | undefined;
 };
 
 /** Affiche la liste de questions/réponses */

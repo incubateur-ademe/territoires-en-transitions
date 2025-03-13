@@ -75,6 +75,7 @@ const DonneesIndicateur = ({
       {questionReponses && (
         <QuestionReponseList
           questionReponses={questionReponses}
+          variant="indicateur"
           onChange={handleChange}
         />
       )}
