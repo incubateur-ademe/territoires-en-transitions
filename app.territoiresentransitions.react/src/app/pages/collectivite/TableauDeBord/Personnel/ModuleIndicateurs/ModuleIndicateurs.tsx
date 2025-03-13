@@ -100,7 +100,7 @@ const ModuleIndicateurs = ({ view, module }: Props) => {
                   key={definition.id}
                   definition={definition}
                   href={makeCollectiviteIndicateursUrl({
-                    collectiviteId: collectiviteId!,
+                    collectiviteId,
                     indicateurView: getIndicateurGroup(definition.identifiant),
                     indicateurId: definition.id,
                     identifiantReferentiel: definition.identifiant,
