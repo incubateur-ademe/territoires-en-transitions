@@ -636,7 +636,8 @@ export default class TrajectoiresDataService {
       const collectivite = await this.collectivitesService.getCollectivite(
         request.collectiviteId
       );
-      if (collectivite.collectivite.type != collectiviteTypeEnum.EPCI) {
+      if (collectivite.collectivite.type != collectiviteTypeEnum.EPCI
+        && collectivite.collectivite.type != collectiviteTypeEnum.Test) {
         // TODO région et département ?
         response.status = VerificationTrajectoireStatus.COMMUNE_NON_SUPPORTEE;
         return response;
