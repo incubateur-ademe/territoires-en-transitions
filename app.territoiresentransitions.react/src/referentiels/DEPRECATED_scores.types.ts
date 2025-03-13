@@ -1,5 +1,6 @@
 import {
   ActionCategorie,
+  getIdentifiantFromActionId,
   ReferentielId,
   StatutAvancement,
   StatutAvancementEnum,
@@ -80,7 +81,7 @@ export type ProgressionRow = ActionReferentiel &
 export function actionNewToDeprecated(action: ActionDetailed) {
   const DEPRECATED_action: ProgressionRow = {
     action_id: action.actionId,
-    identifiant: action.identifiant,
+    identifiant: getIdentifiantFromActionId(action.actionId) ?? '',
     nom: action.nom,
     depth: action.level,
     type: action.actionType,

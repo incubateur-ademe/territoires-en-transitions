@@ -62,13 +62,11 @@ export function getActionTypeFromActionId(
   return orderedActionTypes[level];
 }
 
-export function getIdentifiantFromActionId(actionId: string): string {
+export function getIdentifiantFromActionId(actionId: string): string | null {
   const actionParts = actionId.split('_');
 
   if (actionParts.length !== 2) {
-    throw new ReferentielException(
-      `Invalid actionId '${actionId}', identifiant not found`
-    );
+    return null;
   }
 
   return actionParts[1];
