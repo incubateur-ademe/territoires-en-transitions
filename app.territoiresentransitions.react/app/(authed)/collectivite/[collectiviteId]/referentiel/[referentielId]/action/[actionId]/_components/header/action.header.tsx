@@ -1,15 +1,15 @@
 import { useState } from 'react';
 
+import { useCurrentCollectivite } from '@/app/core-logic/hooks/useCurrentCollectivite';
 import { ActionDefinitionSummary } from '@/app/referentiels/ActionDefinitionSummaryReadEndpoint';
+import ActionEditModal from '@/app/referentiels/actions/action-edit.modal';
 import { ActionSidePanelToolbar } from '@/app/referentiels/actions/action.side-panel.toolbar';
 import { ProgressionRow } from '@/app/referentiels/DEPRECATED_scores.types';
 import { ActionDetailed } from '@/app/referentiels/use-snapshot';
 import { Button } from '@/ui';
 import Breadcrumb from './breadcrumb';
-import Score from './score';
 import Infos from './infos';
-import ActionEditModal from '@/app/referentiels/actions/action-edit.modal';
-import { useCurrentCollectivite } from '@/app/core-logic/hooks/useCurrentCollectivite';
+import Score from './score';
 
 /**
  * Affiche la partie de l'en-tête de la page Action sensible à la position du
@@ -40,7 +40,7 @@ export const ActionHeader = ({
         </h1>
         {!isReadOnly && (
           <Button
-            className="mt-2"
+            className="mt-2 ml-auto"
             variant="grey"
             size="sm"
             onClick={() => setIsEditModalOpen(true)}
