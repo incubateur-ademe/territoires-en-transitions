@@ -1,3 +1,4 @@
+import { PersonalDefaultModuleKeys } from '@/api/plan-actions/dashboards/personal-dashboard/domain/module.schema';
 import ModuleFichesActions from '@/app/app/pages/collectivite/TableauDeBord/Personnel/ModuleFichesActions/ModuleFichesActions';
 import ModuleIndicateurs from '@/app/app/pages/collectivite/TableauDeBord/Personnel/ModuleIndicateurs/ModuleIndicateurs';
 import SpinnerLoader from '@/app/ui/shared/SpinnerLoader';
@@ -27,22 +28,34 @@ const Personnel = () => {
     );
   }
 
-  return modules.map((module) => {
-    if (module.type === 'indicateur.list') {
+  const orderedModules: PersonalDefaultModuleKeys[] = [
+    'actions-dont-je-suis-pilote',
+    'indicateurs-de-suivi-de-mes-plans',
+    'actions-recemment-modifiees',
+  ];
+
+  return orderedModules.map((key) => {
+    const mod = modules.find((m) => m.defaultKey === key);
+
+    if (!mod) {
+      return null;
+    }
+
+    if (mod.type === 'indicateur.list') {
       return (
         <ModuleIndicateurs
-          key={module.defaultKey}
+          key={mod.defaultKey}
           view={'personnel'}
-          module={module}
+          module={mod}
         />
       );
     }
-    if (module.type === 'fiche_action.list') {
+    if (mod.type === 'fiche_action.list') {
       return (
         <ModuleFichesActions
-          key={module.defaultKey}
+          key={mod.defaultKey}
           view={'personnel'}
-          module={module}
+          module={mod}
         />
       );
     }
