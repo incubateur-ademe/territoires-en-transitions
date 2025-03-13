@@ -1,3 +1,9 @@
+import {
+  collectiviteBanaticSubType,
+  CollectiviteBanaticType,
+  collectiviteBanaticTypeTable,
+} from '@/backend/collectivites/shared/models/collectivite-banatic-type.table';
+import { DatabaseService } from '@/backend/utils';
 import { Injectable, Logger, NotFoundException } from '@nestjs/common';
 import { and, eq } from 'drizzle-orm';
 import { isNil } from 'es-toolkit';
@@ -13,19 +19,17 @@ import {
   collectiviteTypeEnum,
 } from '../shared/models/collectivite.table';
 import { regionTable } from '../shared/models/imports-region.table';
-import {
-  collectiviteBanaticSubType,
-  CollectiviteBanaticType,
-  collectiviteBanaticTypeTable,
-} from '@/backend/collectivites/shared/models/collectivite-banatic-type.table';
-import { DatabaseService } from '@/backend/utils';
 
 @Injectable()
 export default class CollectivitesService {
   private readonly logger = new Logger(CollectivitesService.name);
 
-  private readonly POPULATION_BORNES_SUP = [10000, 20000, 50000, 100000];
-  private readonly POPULATION_BORNES_INF = [20000, 100000];
+  private readonly POPULATION_BORNES_SUP = [
+    3000, 5000, 10000, 20000, 50000, 100000,
+  ];
+  private readonly POPULATION_BORNES_INF = [
+    3000, 20000, 50000, 100000, 300000, 800000,
+  ];
   readonly TEST_COLLECTIVITE_SIREN = '000000000';
 
   constructor(private readonly databaseService: DatabaseService) {}
@@ -49,6 +53,7 @@ export default class CollectivitesService {
         );
       }
     });
+
     return populationTags;
   }
 
