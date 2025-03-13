@@ -38,7 +38,6 @@ import PersonnalisationsService from '../../personnalisations/services/personnal
 import ConfigurationService from '../../utils/config/configuration.service';
 import { DatabaseService } from '../../utils/database/database.service';
 import MattermostNotificationService from '../../utils/mattermost-notification.service';
-import { getErrorMessage } from '../../utils/nest/errors.utils';
 import { roundTo } from '../../utils/number.utils';
 import { sleep } from '../../utils/sleep.utils';
 import { CorrelatedActionsWithScoreFields } from '../correlated-actions/correlated-actions.dto';
@@ -2308,117 +2307,6 @@ export default class ScoresService {
     }
 
     return getReferentielScores;
-  }
-
-  async saveLastReferentielsScoreToNewTable() {
-    // Save post audit scores to new table
-    const postAuditScores = (
-      await this.databaseService.db
-        .select({
-          collectiviteId: postAuditScoresTable.collectiviteId,
-          referentiel: postAuditScoresTable.referentiel,
-          auditId: postAuditScoresTable.auditId,
-        })
-        .from(postAuditScoresTable)
-        .orderBy(desc(postAuditScoresTable.payloadTimestamp))
-    ).map((score) => ({
-      collectiviteId: score.collectiviteId,
-      referentiel: score.referentiel,
-      auditId: score.auditId,
-      jalon: SnapshotJalonEnum.POST_AUDIT,
-    }));
-    this.logger.log(`Found ${postAuditScores.length} post audit scores`);
-
-    const preAuditScores = (
-      await this.databaseService.db
-        .select({
-          collectiviteId: preAuditScoresTable.collectiviteId,
-          referentiel: preAuditScoresTable.referentiel,
-          auditId: preAuditScoresTable.auditId,
-        })
-        .from(preAuditScoresTable)
-        .orderBy(desc(preAuditScoresTable.payloadTimestamp))
-    ).map((score) => ({
-      collectiviteId: score.collectiviteId,
-      referentiel: score.referentiel,
-      auditId: score.auditId,
-      jalon: SnapshotJalonEnum.PRE_AUDIT,
-    }));
-    this.logger.log(`Found ${preAuditScores.length} post audit scores`);
-
-    // const clientScores = (
-    //   await this.databaseService.db
-    //     .select({
-    //       collectiviteId: clientScoresTable.collectiviteId,
-    //       referentiel: clientScoresTable.referentiel,
-    //     })
-    //     .from(clientScoresTable)
-    //     .orderBy(desc(clientScoresTable.payloadTimestamp))
-    // ).map((score) => ({
-    //   collectiviteId: score.collectiviteId,
-    //   referentiel: score.referentiel,
-    //   auditId: undefined,
-    //   jalon: SnapshotJalonEnum.COURANT,
-    // }));
-    // this.logger.log(`Found ${preAuditScores.length} client current scores`);
-
-    const allScores = [...postAuditScores, ...preAuditScores];
-
-    const allScoresChunks = chunk(
-      allScores,
-      ScoresService.MULTIPLE_COLLECTIVITE_CHUNK_SIZE
-    );
-    const insertPromises: Promise<ScoresPayload | null>[] = [];
-    let iChunk = 0;
-
-    const parameters: GetReferentielScoresRequestType = {
-      mode: ComputeScoreMode.DEPUIS_SAUVEGARDE,
-      snapshot: true,
-      snapshotForceUpdate: true,
-    };
-
-    const allSnapshotsInfo = [];
-    for (const allScoresChunk of allScoresChunks) {
-      this.logger.log(
-        `Chunk ${iChunk}/${allScoresChunk.length} de ${allScoresChunks.length} enregistrements`
-      );
-      insertPromises.push(
-        ...allScoresChunk.map((score) =>
-          this.computeScoreForCollectivite(
-            score.referentiel,
-            score.collectiviteId,
-            { ...parameters, jalon: score.jalon, auditId: score.auditId },
-            undefined,
-            undefined,
-            true
-          )
-            .then((result) => result.scoresPayload)
-            .catch((error) => {
-              this.logger.error(error);
-              this.logger.error(
-                `Error computing score for collectivite ${
-                  score.collectiviteId
-                } and referentiel ${score.referentiel}: ${getErrorMessage(
-                  error
-                )}`
-              );
-              return null;
-            })
-        )
-      );
-
-      const snapshots = (await Promise.all(insertPromises)).filter((response) =>
-        Boolean(response)
-      );
-
-      allSnapshotsInfo.push(...snapshots);
-      insertPromises.length = 0;
-      iChunk++;
-    }
-
-    return {
-      snapshots: allSnapshotsInfo,
-    };
   }
 
   getScoreDiff(

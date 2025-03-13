@@ -11,9 +11,9 @@ import { getActionStatutsRequestSchema } from '../models/get-action-statuts.requ
 import { GetCheckScoresResponseType } from '../models/get-check-scores.response';
 import { GetMultipleCheckScoresResponseType } from '../models/get-multiple-check-scores.response';
 import { ReferentielId } from '../models/referentiel-id.enum';
+import { SnapshotsService } from '../snapshots/snapshots.service';
 import { actionStatutsByActionIdSchema } from './action-statuts-by-action-id.dto';
 import ScoresService from './scores.service';
-
 class GetActionStatutsRequestClass extends createZodDto(
   getActionStatutsRequestSchema
 ) {}
@@ -29,7 +29,10 @@ class CheckMultipleReferentielScoresRequestClass extends createZodDto(
 @ApiTags('Referentiels')
 @Controller('')
 export class ReferentielsScoringController {
-  constructor(private readonly scoresService: ScoresService) {}
+  constructor(
+    private readonly scoresService: ScoresService,
+    private readonly snapshotsService: SnapshotsService
+  ) {}
 
   @AllowAnonymousAccess()
   @Get(
@@ -193,6 +196,6 @@ export class ReferentielsScoringController {
   @Get('referentiels/all/save-last-scores')
   async saveLastReferentielsScoreNewTable() {
     // TODO: endpoint to be removed, only used during migration
-    return await this.scoresService.saveLastReferentielsScoreToNewTable();
+    return await this.snapshotsService.convertOldScoresToSnapshots();
   }
 }
