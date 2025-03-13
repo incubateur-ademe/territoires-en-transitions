@@ -822,3 +822,4 @@ collectivite/fusion 2025-02-17T15:25:15Z Amandine <contact@jacquelinamandine.fr>
 
 indicateur/cible_et_seuil 2025-03-06T14:10:28Z Marc Rutkowski <marc@attractive-media.fr> # Ajoute les colonnes et la table pour stocker les valeurs cible et seuil
 evaluation/contenu_json [evaluation/contenu_json@v4.41.0] 2025-03-13T11:25:13Z Marc Rutkowski <marc@attractive-media.fr> # Répare l'insertion des questions de personnalisation
+evaluation/seuils_de_population [evaluation/seuils_de_population@v4.41.0] 2025-03-13T14:56:28Z Marc Rutkowski <marc@attractive-media.fr> # Ajoute de nouveaux seuils de population pour les formules des valeurs cible/seuil des indicateurs
