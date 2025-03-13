@@ -1,6 +1,7 @@
 import {
   ActionCategorie,
   getIdentifiantFromActionId,
+  getReferentielIdFromActionId,
   ReferentielId,
   StatutAvancement,
   StatutAvancementEnum,
