@@ -12,6 +12,7 @@ import PlansActionDropdown from '@/app/ui/dropdownLists/PlansActionDropdown';
 import ServicesPilotesDropdown from '@/app/ui/dropdownLists/ServicesPilotesDropdown/ServicesPilotesDropdown';
 import ThematiquesDropdown from '@/app/ui/dropdownLists/ThematiquesDropdown/ThematiquesDropdown';
 import {
+  Alert,
   Field,
   FormSection,
   Modal,
@@ -62,77 +63,80 @@ const ModalIndicateursSuiviPlan = ({
       openState={openState}
       title={module.titre}
       render={() => (
-        <FormSection title="Filtrer sur :" className="!grid-cols-1">
-          <Field title="Nom du plan :">
-            <PlansActionDropdown
-              type="multiple"
-              values={filtreState?.planActionIds}
-              onChange={({ plans, selectedPlan }) =>
-                ((filtreState?.planActionIds?.length === 1 &&
-                  selectedPlan !== filtreState?.planActionIds[0]) ||
-                  (filtreState?.planActionIds &&
-                    filtreState?.planActionIds.length > 1)) &&
-                setFiltreState({
-                  ...filtreState,
-                  planActionIds: plans as number[],
-                })
-              }
-            />
-          </Field>
-          <Field title="Pilote de l'indicateur :">
-            <PersonnesDropdown
-              values={pilotes.length ? pilotes : undefined}
-              onChange={({ personnes }) =>
-                setFiltreState({
-                  ...filtreState,
-                  ...splitPilotePersonnesAndUsers(personnes),
-                })
-              }
-            />
-          </Field>
-          <Field title="Direction ou service pilote de l'indicateur :">
-            <ServicesPilotesDropdown
-              values={filtreState?.servicePiloteIds}
-              onChange={({ services }) => {
-                setFiltreState({
-                  ...filtreState,
-                  servicePiloteIds: services.map((s) => s.id),
-                });
-              }}
-            />
-          </Field>
-          <Field title="Thématique de l'indicateur :">
-            <ThematiquesDropdown
-              values={filtreState?.thematiqueIds}
-              onChange={({ thematiques }) =>
-                setFiltreState({
-                  ...filtreState,
-                  thematiqueIds: thematiques.map((t) => t.id),
-                })
-              }
-            />
-          </Field>
-          <Field title="Indicateur complété par la collectivité :">
-            <IndicateurCompletsDropdown
-              values={
-                filtreState?.estComplet === undefined
-                  ? undefined
-                  : filtreState?.estComplet
-                  ? 'rempli'
-                  : 'incomplet'
-              }
-              onChange={(value) => {
-                setFiltreState({
-                  ...filtreState,
-                  estComplet:
-                    value === undefined || value.length === 0
-                      ? undefined
-                      : value === 'rempli',
-                });
-              }}
-            />
-          </Field>
-        </FormSection>
+        <>
+          <FormSection title="Filtrer sur :" className="!grid-cols-1">
+            <Field title="Nom du plan :">
+              <PlansActionDropdown
+                type="multiple"
+                values={filtreState?.planActionIds}
+                onChange={({ plans, selectedPlan }) =>
+                  ((filtreState?.planActionIds?.length === 1 &&
+                    selectedPlan !== filtreState?.planActionIds[0]) ||
+                    (filtreState?.planActionIds &&
+                      filtreState?.planActionIds.length > 1)) &&
+                  setFiltreState({
+                    ...filtreState,
+                    planActionIds: plans as number[],
+                  })
+                }
+              />
+            </Field>
+            <Field title="Pilote de l'indicateur :">
+              <PersonnesDropdown
+                values={pilotes.length ? pilotes : undefined}
+                onChange={({ personnes }) =>
+                  setFiltreState({
+                    ...filtreState,
+                    ...splitPilotePersonnesAndUsers(personnes),
+                  })
+                }
+              />
+            </Field>
+            <Field title="Direction ou service pilote de l'indicateur :">
+              <ServicesPilotesDropdown
+                values={filtreState?.servicePiloteIds}
+                onChange={({ services }) => {
+                  setFiltreState({
+                    ...filtreState,
+                    servicePiloteIds: services.map((s) => s.id),
+                  });
+                }}
+              />
+            </Field>
+            <Field title="Thématique de l'indicateur :">
+              <ThematiquesDropdown
+                values={filtreState?.thematiqueIds}
+                onChange={({ thematiques }) =>
+                  setFiltreState({
+                    ...filtreState,
+                    thematiqueIds: thematiques.map((t) => t.id),
+                  })
+                }
+              />
+            </Field>
+            <Field title="Indicateur complété par la collectivité :">
+              <IndicateurCompletsDropdown
+                values={
+                  filtreState?.estComplet === undefined
+                    ? undefined
+                    : filtreState?.estComplet
+                    ? 'rempli'
+                    : 'incomplet'
+                }
+                onChange={(value) => {
+                  setFiltreState({
+                    ...filtreState,
+                    estComplet:
+                      value === undefined || value.length === 0
+                        ? undefined
+                        : value === 'rempli',
+                  });
+                }}
+              />
+            </Field>
+          </FormSection>
+          <Alert title="Seuls les indicateurs rattachés à des fiches actions sont considérés dans ce module" />
+        </>
       )}
       renderFooter={({ close }) => (
         <ModalFooterOKCancel
