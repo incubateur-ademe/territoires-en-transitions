@@ -1,9 +1,6 @@
 import { ActionDefinitionSummary } from '@/app/referentiels/ActionDefinitionSummaryReadEndpoint';
 import { ActionCommentaire } from '@/app/referentiels/actions/action-commentaire';
-import {
-  StatusToSavePayload,
-  SubActionStatutDropdown,
-} from '@/app/referentiels/actions/sub-action-statut.dropdown';
+import { SubActionStatutDropdown } from '@/app/referentiels/actions/sub-action-statut.dropdown';
 import ScoreProgressBar from '@/app/referentiels/scores/score.progress-bar';
 import ScoreShow from '@/app/referentiels/scores/score.show';
 import { StatutAvancement } from '@/domain/referentiels';
@@ -13,7 +10,6 @@ import DOMPurify from 'dompurify';
 import { useEffect, useState } from 'react';
 import { useScore, useSnapshotFlagEnabled } from '../../use-snapshot';
 import { useScoreRealise } from '../DEPRECATED_useScoreRealise';
-import ActionJustification from './sub-action-justification';
 
 type SubActionHeaderProps = {
   actionDefinition: ActionDefinitionSummary;
@@ -24,7 +20,6 @@ type SubActionHeaderProps = {
   displayActionCommentaire?: boolean;
   openSubAction?: boolean;
   onToggleOpen?: () => void;
-  onSaveStatus?: (payload: StatusToSavePayload) => void;
 };
 
 /**
@@ -40,7 +35,6 @@ const SubActionHeader = ({
   displayActionCommentaire = false,
   openSubAction = false,
   onToggleOpen,
-  onSaveStatus,
 }: SubActionHeaderProps): JSX.Element => {
   const DEPRECATED_actionScores = useScoreRealise(actionDefinition);
   const NEW_score = useScore(actionDefinition.id);
@@ -133,10 +127,9 @@ const SubActionHeader = ({
 
             {displayProgressBar && (
               <div className="flex justify-end w-[155px]">
-                {/* TODO(temporary): Temporary patch to display percentage */}
                 <ScoreProgressBar
                   actionDefinition={actionDefinition}
-                  TEMP_displayValue={true}
+                  displayDoneValue
                 />
               </div>
             )}
@@ -148,21 +141,11 @@ const SubActionHeader = ({
         <SubActionStatutDropdown
           actionDefinition={actionDefinition}
           statusWarningMessage={statusWarningMessage}
-          onSaveStatus={onSaveStatus}
         />
       )}
       {displayActionCommentaire && (
         <div className="col-span-full" onClick={(evt) => evt.stopPropagation()}>
           <ActionCommentaire action={actionDefinition} />
-          {actionDefinition.referentiel === 'cae' &&
-          actionAvancement === 'detaille' &&
-          actionDefinition.children?.length ? (
-            <ActionJustification
-              action={actionDefinition}
-              className="mt-10"
-              title="Justification de l’ajustement manuel du score"
-            />
-          ) : null}
         </div>
       )}
     </div>
