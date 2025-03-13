@@ -9,8 +9,8 @@ import Module from '@/app/app/pages/collectivite/TableauDeBord/components/Module
 import ModalIndicateursSuiviPlan from '@/app/app/pages/collectivite/TableauDeBord/Personnel/ModuleIndicateurs/ModalIndicateursSuiviPlan';
 import {
   TDBViewParam,
+  makeCollectiviteIndicateursCollectiviteUrl,
   makeCollectiviteIndicateursUrl,
-  makeCollectiviteTousLesIndicateursUrl,
   makeTableauBordModuleUrl,
 } from '@/app/app/paths';
 import { useCurrentCollectivite } from '@/app/core-logic/hooks/useCurrentCollectivite';
@@ -59,25 +59,23 @@ const ModuleIndicateurs = ({ view, module }: Props) => {
       footerButtons={
         <>
           <Button
+            variant="grey"
             size="sm"
             onClick={() =>
               router.push(
-                makeCollectiviteTousLesIndicateursUrl({
-                  collectiviteId: collectiviteId!,
-                })
+                makeCollectiviteIndicateursCollectiviteUrl({ collectiviteId })
               )
             }
           >
-            Voir tous les indicateurs
+            Voir les indicateurs de la collectivité
           </Button>
           {data && data.length > 3 && (
             <Button
-              variant="grey"
               size="sm"
               onClick={() =>
                 router.push(
                   makeTableauBordModuleUrl({
-                    collectiviteId: collectiviteId!,
+                    collectiviteId,
                     view,
                     module: module.defaultKey,
                   })
