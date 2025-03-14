@@ -252,7 +252,7 @@ const IndicateurChart = ({
   const series = [
     ...makeLineSeries(donneesResultatObjectif),
     ...makeStackedSeries(donneesSegments),
-    ...makeReferenceSeries(references),
+    ...makeReferenceSeries(references, variant !== 'thumbnail'),
   ];
 
   const option = makeOption({
