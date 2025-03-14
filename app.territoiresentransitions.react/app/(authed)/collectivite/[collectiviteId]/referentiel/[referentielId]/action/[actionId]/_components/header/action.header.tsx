@@ -34,7 +34,7 @@ export const ActionHeader = ({
   return (
     <>
       {/** Titre */}
-      <div className="flex gap-8 items-start mt-12 mb-3">
+      <div className="flex max-sm:flex-col gap-8 items-start mt-12 mb-3">
         <h1 className="mb-0 text-4xl">
           {actionDefinition.identifiant} {actionDefinition.nom}
         </h1>
@@ -42,7 +42,7 @@ export const ActionHeader = ({
           <Button
             className="mt-2 ml-auto"
             variant="grey"
-            size="sm"
+            size="xs"
             onClick={() => setIsEditModalOpen(true)}
           >
             Modifier
