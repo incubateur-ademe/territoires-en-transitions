@@ -1,7 +1,7 @@
 import { useCollectiviteId } from '@/app/collectivites/collectivite-context';
+import { getAnnee, PALETTE_LIGHT } from '@/app/ui/charts/echarts';
 import { intersection } from 'es-toolkit';
 import { useEffect, useState } from 'react';
-import { PALETTE_LIGHT } from '../../../../../ui/charts/echarts';
 import { typeCollectiviteOptions } from '../../../CollectivitesEngagees/data/filtreOptions';
 import { useIndicateurDefinitions } from '../Indicateur/useIndicateurDefinition';
 import { TIndicateurDefinition } from '../types';
@@ -160,7 +160,10 @@ export const useIndicateurChartInfo = ({
       data.valeurs.resultats.annees.length >
       0 ||
     !!segments?.length ||
-    !!moyenne?.valeurs?.length;
+    !!moyenne?.valeurs?.length ||
+    sourceFilter.valeursReference?.cible !== null ||
+    sourceFilter.valeursReference?.seuil !== null ||
+    sourceFilter.valeursReference?.objectifs?.length;
 
   const isLoading = isLoadingValeurs || isLoadingSegments || isLoadingEnfants;
 
@@ -207,12 +210,12 @@ function prepareMoyenne(moyenne: IndicateurMoyenneOutput | undefined) {
     ordreAffichage: null,
     source: 'moyenne',
     valeurs: moyenne.valeurs.map((v) => {
-      const annee = new Date(v.dateValeur).getFullYear();
+      const { annee, anneeISO } = getAnnee(v.dateValeur);
       return {
         id: -1,
         commentaire: null,
         annee,
-        anneeISO: `${annee}-01-01T00:00:00.000Z`,
+        anneeISO,
         valeur: v.valeur,
       };
     }),

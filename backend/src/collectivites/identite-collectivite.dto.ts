@@ -12,23 +12,33 @@ export enum CollectiviteSousTypeEnum {
 }
 
 export enum CollectivitePopulationTypeEnum {
+  MOINS_DE_3000 = 'moins_de_3000',
   MOINS_DE_5000 = 'moins_de_5000',
   MOINS_DE_10000 = 'moins_de_10000',
   MOINS_DE_20000 = 'moins_de_20000',
   MOINS_DE_50000 = 'moins_de_50000',
   MOINS_DE_100000 = 'moins_de_100000',
+  PLUS_DE_3000 = 'plus_de_3000',
   PLUS_DE_20000 = 'plus_de_20000',
+  PLUS_DE_50000 = 'plus_de_50000',
   PLUS_DE_100000 = 'plus_de_100000',
+  PLUS_DE_300000 = 'plus_de_300000',
+  PLUS_DE_800000 = 'plus_de_800000',
 }
 
 export const typePopulationEnum = pgEnum('type_population', [
+  CollectivitePopulationTypeEnum.MOINS_DE_3000,
   CollectivitePopulationTypeEnum.MOINS_DE_5000,
   CollectivitePopulationTypeEnum.MOINS_DE_10000,
   CollectivitePopulationTypeEnum.MOINS_DE_20000,
   CollectivitePopulationTypeEnum.MOINS_DE_50000,
   CollectivitePopulationTypeEnum.MOINS_DE_100000,
+  CollectivitePopulationTypeEnum.PLUS_DE_3000,
   CollectivitePopulationTypeEnum.PLUS_DE_20000,
+  CollectivitePopulationTypeEnum.PLUS_DE_50000,
   CollectivitePopulationTypeEnum.PLUS_DE_100000,
+  CollectivitePopulationTypeEnum.PLUS_DE_300000,
+  CollectivitePopulationTypeEnum.PLUS_DE_800000,
 ]);
 
 export enum CollectiviteLocalisationTypeEnum {

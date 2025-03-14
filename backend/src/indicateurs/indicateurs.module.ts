@@ -2,6 +2,8 @@ import IndicateurValeurExpressionParserService from '@/backend/indicateurs/valeu
 import { Module } from '@nestjs/common';
 import { AuthModule } from '../auth/auth.module';
 import { CollectivitesModule } from '../collectivites/collectivites.module';
+import ExpressionParserService from '../personnalisations/services/expression-parser.service';
+import PersonnalisationsService from '../personnalisations/services/personnalisations-service';
 import { SheetModule } from '../utils/google-sheets/sheet.module';
 import { IndicateurFiltreRouter } from './definitions/indicateur-filtre.router';
 import IndicateurFiltreService from './definitions/indicateur-filtre.service';
@@ -22,6 +24,7 @@ import { IndicateursController } from './valeurs/crud-valeurs.controller';
 import { IndicateurValeursRouter } from './valeurs/crud-valeurs.router';
 import CrudValeursService from './valeurs/crud-valeurs.service';
 import ValeursMoyenneService from './valeurs/valeurs-moyenne.service';
+import ValeursReferenceService from './valeurs/valeurs-reference.service';
 
 @Module({
   imports: [AuthModule, CollectivitesModule, SheetModule],
@@ -35,6 +38,7 @@ import ValeursMoyenneService from './valeurs/valeurs-moyenne.service';
     CrudValeursService,
     ImportIndicateurDefinitionService,
     ValeursMoyenneService,
+    ValeursReferenceService,
     IndicateurFiltreService,
     IndicateurFiltreRouter,
     IndicateurValeursRouter,
@@ -43,6 +47,8 @@ import ValeursMoyenneService from './valeurs/valeurs-moyenne.service';
     TrajectoiresSpreadsheetService,
     TrajectoiresXlsxService,
     TrajectoiresRouter,
+    PersonnalisationsService,
+    ExpressionParserService,
   ],
   exports: [
     IndicateurSourcesService,
@@ -51,6 +57,7 @@ import ValeursMoyenneService from './valeurs/valeurs-moyenne.service';
     IndicateurSourcesRouter,
     CrudValeursService,
     ValeursMoyenneService,
+    ValeursReferenceService,
     TrajectoiresRouter,
     IndicateurFiltreService,
     IndicateurFiltreRouter,

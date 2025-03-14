@@ -1,6 +1,11 @@
 import { useState } from 'react';
 import { useIndicateurMoyenne } from './use-indicateur-moyenne';
 import {
+  hasValeurCible,
+  hasValeurSeuil,
+  useIndicateurReference,
+} from './use-indicateur-reference';
+import {
   GetAvailableSourcesInput,
   useIndicateurAvailableSources,
 } from './use-indicateur-sources';
@@ -12,10 +17,8 @@ const FILTRES_SOURCE = [
   'opendata',
   'collectivite',
   'moyenne',
-  /*
   'cible',
   'seuil',
-  */
 ] as const;
 
 export type FiltresSource = (typeof FILTRES_SOURCE)[number];
@@ -26,10 +29,8 @@ const filtreToLabel: Record<FiltresSource, string> = {
   opendata: 'Résultats Open data',
   collectivite: 'Données de la collectivité',
   moyenne: 'Moyenne des collectivités de même type',
-  /*
-   cible: 'Valeur cible',
-   seuil: 'Valeur seuil',
-   */
+  cible: 'Valeur cible',
+  seuil: 'Valeur limite',
 };
 
 /**
@@ -47,6 +48,12 @@ export const useSourceFilter = (input: GetAvailableSourcesInput) => {
   const { data: moyenne, isLoading: isLoadingMoyenne } =
     useIndicateurMoyenne(input);
 
+  // ainsi que le valeurs de référence (cible/seuil)
+  const { data: references, isLoading: isLoadingReference } =
+    useIndicateurReference(input);
+  const avecValeurCible = hasValeurCible(references);
+  const avecValeurSeuil = hasValeurSeuil(references);
+
   // génère la liste des options possibles en fonction des sources disponibles
   const options: FiltresSource[] = [];
   if (data?.length) {
@@ -61,11 +68,18 @@ export const useSourceFilter = (input: GetAvailableSourcesInput) => {
     if (availableSourceIds.length > options.length) {
       options.push('opendata');
     }
-    options.push('collectivite');
   }
+  options.push('collectivite');
   if (moyenne?.valeurs?.length) {
     options.push('moyenne');
   }
+  if (avecValeurCible) {
+    options.push('cible');
+  }
+  if (avecValeurSeuil) {
+    options.push('seuil');
+  }
+
   const availableOptions = options.map((value) => ({
     value,
     label: filtreToLabel[value],
@@ -73,26 +87,19 @@ export const useSourceFilter = (input: GetAvailableSourcesInput) => {
 
   // détermine le filtre sur les sources à appliquer pour la lecture des valeurs
   const sources: Array<string> = [];
-  if (filtresSource.length && data?.length) {
-    if (filtresSource.includes('snbc')) {
-      sources.push('snbc');
-    }
-    if (filtresSource.includes('pcaet')) {
-      sources.push('pcaet');
-    }
+  if (filtresSource.length) {
     if (filtresSource.includes('opendata')) {
-      const openSourcesId = data
-        .filter((s) => !FILTRES_SOURCE.includes(s.id as FiltresSource))
-        .map((s) => s.id);
-      sources.push(...openSourcesId);
-    }
-    if (filtresSource.includes('collectivite')) {
-      sources.push('collectivite');
-    }
-    // ce filtre sur les valeurs a pour seul but d'éviter de charger toutes les
-    // valeurs quand seule la moyenne est sélectionnée
-    if (filtresSource.includes('moyenne')) {
-      sources.push('moyenne');
+      if (data?.length) {
+        const openSourcesId = data
+          .filter((s) => !FILTRES_SOURCE.includes(s.id as FiltresSource))
+          .map((s) => s.id);
+        sources.push(
+          ...openSourcesId,
+          ...filtresSource.filter((s) => s !== 'opendata')
+        );
+      }
+    } else {
+      sources.push(...filtresSource);
     }
   }
 
@@ -105,8 +112,25 @@ export const useSourceFilter = (input: GetAvailableSourcesInput) => {
   const avecSecteursSNBC =
     filtresSource.length === 1 && filtresSource[0] === 'snbc';
 
+  // faleurs références à afficher en fonction du filtre
+  const valeursReference = !filtresSource.length
+    ? references
+    : {
+        cible: filtresSource.includes('cible')
+          ? references?.cible ?? null
+          : null,
+        objectifs: filtresSource.includes('cible')
+          ? references?.objectifs ?? null
+          : null,
+        seuil: filtresSource.includes('seuil')
+          ? references?.seuil ?? null
+          : null,
+        libelle: references?.libelle ?? null,
+        drom: references?.drom ?? false,
+      };
+
   return {
-    isLoading: isLoadingSources || isLoadingMoyenne,
+    isLoading: isLoadingSources || isLoadingMoyenne || isLoadingReference,
     availableOptions,
     filtresSource,
     setFiltresSource,
@@ -117,6 +141,7 @@ export const useSourceFilter = (input: GetAvailableSourcesInput) => {
       !filtresSource.length || filtresSource.includes('moyenne')
         ? moyenne
         : undefined,
+    valeursReference,
   };
 };
 

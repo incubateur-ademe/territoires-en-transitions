@@ -292,6 +292,9 @@ describe('Indicateurs → crud-valeurs.service', () => {
               createdBy: null,
               precision: 2,
               version: '1.0.0',
+              exprCible: null,
+              exprSeuil: null,
+              libelleCibleSeuil: null,
             },
             sources: {
               rare: {
@@ -359,6 +362,9 @@ describe('Indicateurs → crud-valeurs.service', () => {
               createdBy: null,
               precision: 2,
               version: '1.0.0',
+              exprCible: null,
+              exprSeuil: null,
+              libelleCibleSeuil: null,
             },
             sources: {
               snbc: {

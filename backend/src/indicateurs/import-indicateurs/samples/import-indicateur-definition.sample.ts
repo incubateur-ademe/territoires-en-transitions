@@ -21,6 +21,9 @@ export const sampleImportIndicateurDefinition: ImportIndicateurDefinitionType =
     borneMax: null,
     version: '1.0.0',
     precision: 2,
+    exprCible: null,
+    exprSeuil: null,
+    libelleCibleSeuil: null,
   };
 
 export const sampleImportIndicateurDefinition2: ImportIndicateurDefinitionType =
@@ -43,4 +46,7 @@ export const sampleImportIndicateurDefinition2: ImportIndicateurDefinitionType =
     borneMax: null,
     version: '1.0.0',
     precision: 2,
+    exprCible: null,
+    exprSeuil: null,
+    libelleCibleSeuil: null,
   };

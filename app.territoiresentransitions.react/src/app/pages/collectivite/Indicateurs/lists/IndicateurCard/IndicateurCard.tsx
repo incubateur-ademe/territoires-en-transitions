@@ -140,7 +140,7 @@ export const IndicateurCardBase = ({
             isFavoriCollectivite={definition.favoris}
             otherMenuActions={otherMenuActions}
             chartDownloadSettings={{
-              showTrigger: showChart && hasValeur,
+              showTrigger: Boolean(showChart && hasValeur),
               openModal: () => setIsDownloadChartOpen(true),
             }}
           />
