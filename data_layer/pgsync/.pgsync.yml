@@ -119,7 +119,7 @@ groups:
     - labellisation_action_critere
     - labellisation_calendrier
     - labellisation_fichier_critere
-    #- score_snapshot: timeout for now
+    - score_snapshot
     # A supprimer lorsqu'on utilisera uniquement le nouveau moteur
     - personnalisation_consequence
     - action_computed_points
