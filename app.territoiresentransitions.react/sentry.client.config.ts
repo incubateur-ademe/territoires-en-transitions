@@ -5,6 +5,8 @@
 import { ENV } from '@/api/environmentVariables';
 import * as Sentry from '@sentry/nextjs';
 
+console.log(`Initializing Sentry with DSN: ${ENV.sentry_dsn}`);
+
 Sentry.init({
   dsn: ENV.sentry_dsn,
   environment: ENV.node_env,
