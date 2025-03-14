@@ -30,7 +30,7 @@ const filtreToLabel: Record<FiltresSource, string> = {
   collectivite: 'Données de la collectivité',
   moyenne: 'Moyenne des collectivités de même type',
   cible: 'Valeur cible',
-  seuil: 'Valeur seuil',
+  seuil: 'Valeur limite',
 };
 
 /**

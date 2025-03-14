@@ -134,7 +134,7 @@ const makeReferenceDataset = (
 ) => ({
   color: LAYERS[id].color,
   id,
-  name: `Valeur ${id} : ${valeur} ${unite}`,
+  name: `Valeur ${id === 'seuil' ? 'limite' : id} : ${valeur} ${unite}`,
   source: [{ anneeISO, valeur }],
   dimensions: ['anneeISO', 'valeur'],
   metadonnee: null,
