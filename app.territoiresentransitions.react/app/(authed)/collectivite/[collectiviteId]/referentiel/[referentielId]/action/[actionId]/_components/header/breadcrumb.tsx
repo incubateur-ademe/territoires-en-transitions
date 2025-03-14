@@ -7,12 +7,9 @@ import { Breadcrumbs } from '@/ui';
 import { uniq } from 'es-toolkit';
 
 /**
- * The nav bar at the top of an orientation page, made of several
- * OrientationSwitcher
+ * Fil d'ariane localisation d'une action dans le référentiel
  */
-export const ActionBreadcrumb = (props: {
-  action: ActionDefinitionSummary;
-}) => {
+const Breadcrumb = (props: { action: ActionDefinitionSummary }) => {
   const { action } = props;
   const collectiviteId = useCollectiviteId();
 
@@ -31,7 +28,7 @@ export const ActionBreadcrumb = (props: {
   return (
     <Breadcrumbs
       size="sm"
-      className="py-2 border-y border-grey-3"
+      className="pb-3 border-b border-primary-3"
       items={parents.map((parent) => {
         if (parent.type === 'referentiel') {
           return {
@@ -50,3 +47,5 @@ export const ActionBreadcrumb = (props: {
     />
   );
 };
+
+export default Breadcrumb;
