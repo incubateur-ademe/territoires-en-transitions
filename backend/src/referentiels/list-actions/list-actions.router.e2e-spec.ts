@@ -20,20 +20,14 @@ describe('ActionStatutListRouter', () => {
 
     const caller = router.createCaller({ user: yoloDodoUser });
 
-    await caller.referentiels.scores.computeScore({
+    await caller.referentiels.snapshots.computeAndUpsert({
       referentielId: ReferentielIdEnum.CAE,
       collectiviteId: YOLO_DODO.collectiviteId.edition,
-      parameters: {
-        snapshot: true,
-      },
     });
 
-    await caller.referentiels.scores.computeScore({
+    await caller.referentiels.snapshots.computeAndUpsert({
       referentielId: ReferentielIdEnum.ECI,
       collectiviteId: YOLO_DODO.collectiviteId.edition,
-      parameters: {
-        snapshot: true,
-      },
     });
   });
 

@@ -34,7 +34,7 @@ export function DEPRECATED_PointsPotentiels({
 }: {
   actionId: string;
 }) {
-  const DEPRECATED_actionScore = useActionScore(actionId);
+  const DEPRECATED_actionScore = useActionScore(actionId, true);
 
   if (!DEPRECATED_actionScore) {
     return null;

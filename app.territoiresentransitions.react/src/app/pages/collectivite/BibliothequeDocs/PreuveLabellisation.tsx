@@ -1,10 +1,10 @@
 import { referentielToName } from '@/app/app/labels';
+import { getParcoursStatus } from '@/app/referentiels/labellisations/useCycleLabellisation';
 import PreuveDoc from '@/app/referentiels/preuves/Bibliotheque/PreuveDoc';
 import { TPreuveAuditEtLabellisation } from '@/app/referentiels/preuves/Bibliotheque/types';
 import { ReferentielId } from '@/domain/referentiels';
 import { Fragment } from 'react';
 import { useIsAuditAuditeur } from '../../../../referentiels/audits/useAudit';
-import { getParcoursStatus } from '../../../../referentiels/labellisations/getParcoursStatus';
 import { numLabels } from '../../../../referentiels/labellisations/numLabels';
 import { groupeParReferentielEtDemande } from './groupeParReferentielEtDemande';
 

@@ -131,17 +131,17 @@ describe('UpdateActionStatutRouter', () => {
       desactive: false,
       renseigne: false,
     };
-    expect(currentFullScoreStatutUpdateResponse.scores.score).toEqual(
-      expectedCaeRootScoreAfterStatutUpdate
-    );
+    expect(
+      currentFullScoreStatutUpdateResponse.scoresPayload.scores.score
+    ).toEqual(expectedCaeRootScoreAfterStatutUpdate);
 
     // Check that the current score has been correctly updated & saved
     const currentFullCurentScore =
-      await caller.referentiels.snapshots.getCurrentFullScore({
+      await caller.referentiels.snapshots.getCurrent({
         referentielId: referentielIdEnumSchema.enum.cae,
         collectiviteId: 1,
       });
-    expect(currentFullCurentScore.scores.score).toEqual(
+    expect(currentFullCurentScore.scoresPayload.scores.score).toEqual(
       expectedCaeRootScoreAfterStatutUpdate
     );
 
@@ -179,8 +179,8 @@ describe('UpdateActionStatutRouter', () => {
       desactive: false,
       renseigne: false,
     };
-    expect(currentFullScoreStatutRestoreResponse.scores.score).toEqual(
-      expectedCaeRootScoreAfterStatutRestore
-    );
+    expect(
+      currentFullScoreStatutRestoreResponse.scoresPayload.scores.score
+    ).toEqual(expectedCaeRootScoreAfterStatutRestore);
   });
 });

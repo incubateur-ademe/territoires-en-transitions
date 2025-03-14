@@ -38,7 +38,7 @@ export const CriteresLabellisation = (props: TCriteresLabellisationProps) => {
         sont conditionnées à un audit réalisé par une personne experte mandatée
         par l’ADEME.
       </p>
-      {etoiles !== '1' && atteint ? (
+      {etoiles !== 1 && atteint ? (
         <Alert
           className="mb-4"
           title={`Bravo, vous avez plus de ${Math.round(
@@ -51,7 +51,7 @@ export const CriteresLabellisation = (props: TCriteresLabellisationProps) => {
       <h2>Critères de labellisation</h2>
       <ul>
         <CritereCompletude {...props} />
-        {etoiles !== '1' ? <CritereScore {...props} /> : null}
+        {etoiles !== 1 ? <CritereScore {...props} /> : null}
         <CriteresAction {...props} />
         <CriterePreuves {...props} />
       </ul>

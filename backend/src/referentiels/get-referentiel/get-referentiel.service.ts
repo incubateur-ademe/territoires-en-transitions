@@ -19,6 +19,7 @@ import {
 } from '../models/action-definition.dto';
 import {
   ActionDefinition,
+  ActionDefinitionMinimalWithTypeAndLevel,
   actionDefinitionTable,
 } from '../models/action-definition.table';
 import { actionRelationTable } from '../models/action-relation.table';
@@ -27,7 +28,6 @@ import {
   referentielDefinitionTable,
 } from '../models/referentiel-definition.table';
 import { ReferentielId } from '../models/referentiel-id.enum';
-import { GetReferentielResponseType } from './get-referentiel.response';
 
 export type ActionDefinitionAvecParent = Pick<
   ActionDefinition,
@@ -36,6 +36,17 @@ export type ActionDefinitionAvecParent = Pick<
   Partial<ActionDefinition> & {
     parentActionId: string | null;
   };
+
+/**
+ * Représentation du referentiel sous forme de liste, map ou hierarchie
+ */
+export interface ReferentielResponse {
+  version: string;
+  orderedItemTypes: Array<ActionTypeIncludingExemple>;
+  itemsTree: TreeNode<ActionDefinitionEssential & CorrelatedActionsFields>;
+  itemsList?: Array<ActionDefinitionMinimalWithTypeAndLevel>;
+  itemsMap?: Record<string, ActionDefinitionMinimalWithTypeAndLevel>;
+}
 
 @Injectable()
 export class GetReferentielService {
@@ -127,7 +138,7 @@ export class GetReferentielService {
     referentielId: ReferentielId,
     onlyForScoring?: boolean,
     getActionsOrigine?: boolean
-  ): Promise<GetReferentielResponseType> {
+  ): Promise<ReferentielResponse> {
     this.logger.log(`Get referentiel ${referentielId}`);
 
     const referentielDefinition = await this.getReferentielDefinition(

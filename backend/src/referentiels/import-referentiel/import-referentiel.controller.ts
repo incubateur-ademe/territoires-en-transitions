@@ -1,14 +1,25 @@
-import { createZodDto } from '@anatine/zod-nestjs';
 import { Controller, Get, Logger, Param } from '@nestjs/common';
 import { ApiResponse, ApiTags } from '@nestjs/swagger';
 import { AllowAnonymousAccess } from '../../auth/decorators/allow-anonymous-access.decorator';
-import { getReferentielResponseSchema } from '../get-referentiel/get-referentiel.response';
+import { CorrelatedActionsFields } from '../correlated-actions/correlated-actions.dto';
+import { ReferentielResponse } from '../get-referentiel/get-referentiel.service';
+import {
+  ActionDefinitionEssential,
+  ActionTypeEnum,
+  TreeNode,
+} from '../index-domain';
 import { ReferentielId } from '../models/referentiel-id.enum';
-import ImportReferentielService from './import-referentiel.service';
+import { ImportReferentielService } from './import-referentiel.service';
 
-class GetReferentielResponseClass extends createZodDto(
-  getReferentielResponseSchema
-) {}
+class ImportReferentielResponse implements ReferentielResponse {
+  constructor(
+    public version: string,
+    public orderedItemTypes: ActionTypeEnum[],
+    public itemsTree: TreeNode<
+      ActionDefinitionEssential & CorrelatedActionsFields
+    >
+  ) {}
+}
 
 @ApiTags('Referentiels')
 @Controller('referentiels')
@@ -19,10 +30,10 @@ export class ImportReferentielController {
 
   @AllowAnonymousAccess()
   @Get(':referentiel_id/import')
-  @ApiResponse({ type: GetReferentielResponseClass })
+  @ApiResponse({ type: ImportReferentielResponse })
   async importReferentiel(
     @Param('referentiel_id') referentielId: ReferentielId
-  ): Promise<GetReferentielResponseClass> {
+  ) {
     return this.importService.importReferentiel(referentielId);
   }
 }

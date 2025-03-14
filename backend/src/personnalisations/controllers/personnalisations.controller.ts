@@ -9,7 +9,7 @@ import { getPersonnalisationConsequencesRequestSchema } from '../models/get-pers
 import { getPersonnalisationReglesRequestSchema } from '../models/get-personnalisation-regles.request';
 import { getPersonnalisationReglesResponseSchema } from '../models/get-personnalisation-regles.response';
 import { getPersonnalisationReponsesRequestSchema } from '../models/get-personnalisation-reponses.request';
-import { getPersonnalitionReponsesResponseSchema } from '../models/get-personnalisation-reponses.response';
+import { personnalisationReponsesPayloadSchema } from '../models/get-personnalisation-reponses.response';
 import { personnalisationConsequencesByActionIdSchema } from '../models/personnalisation-consequence.dto';
 import PersonnalisationService from '../services/personnalisations-service';
 
@@ -17,7 +17,7 @@ import PersonnalisationService from '../services/personnalisations-service';
  * Création des classes de requête/réponse à partir du schema pour générer automatiquement la documentation OpenAPI et la validation des entrées
  */
 class GetPersonnalitionReponsesResponseClass extends createZodDto(
-  getPersonnalitionReponsesResponseSchema
+  personnalisationReponsesPayloadSchema
 ) {}
 class GetPersonnalitionReponsesQueryClass extends createZodDto(
   getPersonnalisationReponsesRequestSchema

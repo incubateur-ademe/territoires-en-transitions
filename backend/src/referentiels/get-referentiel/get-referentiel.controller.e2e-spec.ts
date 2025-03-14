@@ -2,7 +2,7 @@ import { getTestApp } from '@/backend/test';
 import { INestApplication } from '@nestjs/common';
 import { default as request } from 'supertest';
 import { ActionTypeEnum } from '../models/action-type.enum';
-import { GetReferentielResponseType } from './get-referentiel.response';
+import { ReferentielResponse } from './get-referentiel.service';
 
 describe('Referentiels routes', () => {
   let app: INestApplication;
@@ -15,7 +15,7 @@ describe('Referentiels routes', () => {
     const response = await request(app.getHttpServer())
       .get('/referentiels/cae')
       .expect(200);
-    const referentiel = response.body as GetReferentielResponseType;
+    const referentiel = response.body as ReferentielResponse;
 
     expect(referentiel.orderedItemTypes).toEqual([
       ActionTypeEnum.REFERENTIEL,

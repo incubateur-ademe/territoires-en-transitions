@@ -229,7 +229,6 @@ export const NEW_useTableData: UseTableData = () => {
     total,
     sousActionsTotal,
     updateStatut: (actionId: string, avancement: string) => {
-      console.log('updateStatut', actionId, avancement);
       saveActionStatut({
         collectiviteId,
         actionId,

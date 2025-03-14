@@ -11,7 +11,7 @@ import { AuthUser } from '../../auth/models/auth.models';
 import GroupementsService from '../../collectivites/services/groupements.service';
 import ConfigurationService from '../../utils/config/configuration.service';
 import SheetService from '../../utils/google-sheets/sheet.service';
-import ListDefinitionsService from '../definitions/list-definitions.service';
+import { ListDefinitionsService } from '../list-definitions/list-definitions.service';
 import { IndicateurDefinition } from '../shared/models/indicateur-definition.table';
 import { IndicateurValeurInsert } from '../shared/models/indicateur-valeur.table';
 import IndicateurSourcesService from '../sources/indicateur-sources.service';

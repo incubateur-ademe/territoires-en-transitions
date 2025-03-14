@@ -1,3 +1,4 @@
+import { useCollectiviteId } from '@/app/collectivites/collectivite-context';
 import { useCurrentCollectivite } from '@/app/core-logic/hooks/useCurrentCollectivite';
 import { TLabellisationParcours } from '@/app/referentiels/labellisations/types';
 import { TPreuveLabellisation } from '@/app/referentiels/preuves/Bibliotheque/types';
@@ -5,7 +6,6 @@ import { usePreuves } from '@/app/referentiels/preuves/usePreuves';
 import { ReferentielId } from '@/domain/referentiels';
 import { useIsAuditeur } from '../audits/useAudit';
 import { useCarteIdentite } from '../personnalisations/PersoReferentielThematique/useCarteIdentite';
-import { getParcoursStatus } from './getParcoursStatus';
 import { useLabellisationParcours } from './useLabellisationParcours';
 import { usePeutCommencerAudit } from './usePeutCommencerAudit';
 
@@ -34,20 +34,21 @@ export const useCycleLabellisation = (
   referentielId: ReferentielId
 ): TCycleLabellisation => {
   const collectivite = useCurrentCollectivite();
-  const collectivite_id = collectivite?.collectiviteId || null;
+  const collectiviteId = useCollectiviteId();
   const isAuditeur = useIsAuditeur();
-  const identite = useCarteIdentite(collectivite_id);
+  const identite = useCarteIdentite(collectiviteId);
 
   // charge les données du parcours
   const parcours = useLabellisationParcours({
-    collectivite_id,
-    referentiel: referentielId,
+    collectiviteId,
+    referentielId,
   });
+
   const { completude_ok, rempli, etoiles } = parcours || {};
 
   // vérifie si l'utilisateur courant peut commencer l'audit
   const peutCommencerAudit = usePeutCommencerAudit({
-    collectiviteId: collectivite_id as number,
+    collectiviteId: collectiviteId as number,
     referentielId,
   });
 
@@ -69,7 +70,7 @@ export const useCycleLabellisation = (
   );
 
   // on peut soumettre une demande de labellisation si...
-  const labellisable = peutDemanderEtoile && etoiles !== '1';
+  const labellisable = peutDemanderEtoile && etoiles !== 1;
 
   return {
     parcours,
@@ -88,3 +89,24 @@ export const usePreuvesLabellisation = (demande_id?: number) =>
     demande_id,
     preuve_types: ['labellisation'],
   }) as TPreuveLabellisation[];
+// détermine l'état consolidé du cycle
+type TDemandeEtOuAudit = Pick<TLabellisationParcours, 'demande' | 'audit'>;
+
+export const getParcoursStatus = (
+  demandeEtOuAudit: TDemandeEtOuAudit | null | undefined
+): TCycleLabellisationStatus => {
+  if (!demandeEtOuAudit) {
+    return 'non_demandee';
+  }
+  const { demande, audit } = demandeEtOuAudit;
+  if (audit?.valide) {
+    return 'audit_valide';
+  }
+  if (audit?.date_debut && !audit?.valide) {
+    return 'audit_en_cours';
+  }
+  if (demande && !demande.en_cours) {
+    return 'demande_envoyee';
+  }
+  return 'non_demandee';
+};

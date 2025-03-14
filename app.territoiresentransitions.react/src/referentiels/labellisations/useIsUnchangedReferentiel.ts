@@ -4,8 +4,9 @@ import { useQuery } from 'react-query';
 /**
  * Détermine si un référentiel n'a pas encore été édité
  * @deprecated stop using `action_statuts` PG view
+ * Better check if there is any existing snapshot to determine if a referentiel is unchanged
  */
-export const useIsUnchangedReferentiel = (
+export const DEPRECATED_useIsUnchangedReferentiel = (
   collectivite_id: number | null,
   referentiel: string | null
 ) => {

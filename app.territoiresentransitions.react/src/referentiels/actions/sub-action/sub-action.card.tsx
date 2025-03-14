@@ -1,7 +1,7 @@
 import { ActionDefinitionSummary } from '@/app/referentiels/ActionDefinitionSummaryReadEndpoint';
 import { ActionCommentaire } from '@/app/referentiels/actions/action-commentaire';
 import { useActionStatut } from '@/app/referentiels/actions/action-statut/use-action-statut';
-import { TCycleLabellisationStatus } from '@/app/referentiels/labellisations/useCycleLabellisation';
+import { useCycleLabellisation } from '@/app/referentiels/labellisations/useCycleLabellisation';
 import { useActionSummaryChildren } from '@/app/referentiels/referentiel-hooks';
 import { Accordion } from '@/app/ui/Accordion';
 import { useEffect, useRef, useState } from 'react';
@@ -24,7 +24,6 @@ export const getHashFromUrl = () => {
 
 type SubActionCardProps = {
   subAction: ActionDefinitionSummary;
-  auditStatus: TCycleLabellisationStatus;
   forceOpen: boolean;
   onOpenSubAction: (isOpen: boolean) => void;
 };
@@ -37,7 +36,7 @@ type SubActionCardProps = {
 
 const SubActionCard = ({
   subAction,
-  auditStatus,
+
   forceOpen,
   onOpenSubAction,
 }: SubActionCardProps): JSX.Element => {
@@ -48,6 +47,8 @@ const SubActionCard = ({
   const { statut, filled } = useActionStatut(subAction.id);
   const { avancement, concerne } = statut || {};
   const tasks = useActionSummaryChildren(subAction);
+
+  const { status: auditStatus } = useCycleLabellisation(subAction.referentiel);
 
   const shouldDisplayProgressBar =
     concerne !== false &&

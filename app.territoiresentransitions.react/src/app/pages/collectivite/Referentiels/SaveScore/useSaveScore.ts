@@ -1,21 +1,14 @@
 import { trpc } from '@/api/utils/trpc/client';
 
-type MutationOptions = Parameters<
-  typeof trpc.referentiels.snapshots.upsert.useMutation
->[0];
-
-export const useSaveScore = (mutationOptions?: MutationOptions) => {
+export const useSaveSnapshot = () => {
   const utils = trpc.useUtils();
 
-  return trpc.referentiels.snapshots.upsert.useMutation({
-    ...mutationOptions,
-    onSuccess: (data, variables, context) => {
+  return trpc.referentiels.snapshots.computeAndUpsert.useMutation({
+    onSuccess: (_, { collectiviteId, referentielId }) => {
       utils.referentiels.snapshots.list.invalidate({
-        collectiviteId: data.collectiviteId,
-        referentielId: data.referentielId,
+        collectiviteId,
+        referentielId,
       });
-
-      mutationOptions?.onSuccess?.(data, variables, context);
     },
     meta: {
       success: 'État des lieux figé avec succès',

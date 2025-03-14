@@ -1,6 +1,6 @@
-import { RouterInput } from '@/api/utils/trpc/client';
-import { useSaveScore } from '@/app/app/pages/collectivite/Referentiels/SaveScore/useSaveScore';
+import { useSaveSnapshot } from '@/app/app/pages/collectivite/Referentiels/SaveScore/useSaveScore';
 import { getIsoFormattedDate } from '@/app/utils/formatUtils';
+import { ReferentielId } from '@/domain/referentiels';
 import {
   Alert,
   ButtonGroup,
@@ -37,10 +37,9 @@ const getDisplayedYear = (
   return new Date().getFullYear().toString();
 };
 
-type ComputeScoreType = RouterInput['referentiels']['scores']['computeScore'];
 
 export type SaveScoreProps = {
-  referentielId: string;
+  referentielId: ReferentielId;
   collectiviteId: number;
 };
 
@@ -64,16 +63,16 @@ const SaveScoreModal = ({
   const displayedYear = getDisplayedYear(selectedButton, dateVersion);
   const finalNomVersion = `${displayedYear} - ${nomVersion?.trim()}`;
 
-  const { mutate: upsertSnapshot, isPending: isSaving } = useSaveScore();
+  const { mutate: saveSnapshot } = useSaveSnapshot();
 
   const handleSave = async () => {
     if (!nomVersion.trim()) return;
 
-    upsertSnapshot(
+    saveSnapshot(
       {
         collectiviteId,
-        referentiel: referentielId as ComputeScoreType['referentielId'],
-        snapshotNom: finalNomVersion,
+        referentielId,
+        nom: finalNomVersion,
         date: dateVersion ? generateBeforeDate(dateVersion) : undefined,
       },
       {

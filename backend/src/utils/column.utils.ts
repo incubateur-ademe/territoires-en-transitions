@@ -2,7 +2,7 @@
  * Définitions usuelles de colonnes
  */
 import { sql } from 'drizzle-orm';
-import { timestamp, uuid } from 'drizzle-orm/pg-core';
+import { serial, timestamp, uuid } from 'drizzle-orm/pg-core';
 
 export const TIMESTAMP_OPTIONS = {
   withTimezone: true,
@@ -25,3 +25,7 @@ const SQL_AUTH_UID = sql`auth.uid()`;
 export const createdBy = uuid('created_by').default(SQL_AUTH_UID);
 
 export const modifiedBy = uuid('modified_by').default(SQL_AUTH_UID);
+
+export const serialIdPrimaryKey = {
+  id: serial('id').primaryKey().notNull(),
+};

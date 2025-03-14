@@ -9,8 +9,8 @@ type Props = {
 };
 
 export const ScoreRatioBadge = ({ actionId, className }: Props) => {
-  const DEPRECATED_score = useActionScore(actionId);
   const isSnapshotEnabled = useSnapshotFlagEnabled();
+  const DEPRECATED_score = useActionScore(actionId, !isSnapshotEnabled);
   const NEW_score = useScore(actionId);
 
   if (

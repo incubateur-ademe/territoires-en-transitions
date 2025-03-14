@@ -18,6 +18,7 @@ import ActionAuditStatut from '@/app/referentiels/audits/ActionAuditStatut';
 import { useShowDescIntoInfoPanel } from '@/app/referentiels/audits/useAudit';
 import { useActionPreuvesCount } from '@/app/referentiels/preuves/usePreuves';
 import { useReferentielId } from '@/app/referentiels/referentiel-context';
+import { useSnapshotFlagEnabled } from '@/app/referentiels/use-snapshot';
 import ScrollTopButton from '@/app/ui/buttons/ScrollTopButton';
 import SpinnerLoader from '@/app/ui/shared/SpinnerLoader';
 import { addTargetToContentAnchors } from '@/app/utils/content';
@@ -58,8 +59,9 @@ function ActionLayout({
   const collectiviteId = useCollectiviteId();
   const referentielId = useReferentielId();
   const actionId = useActionId();
+  const FLAG_isSnapshotEnabled = useSnapshotFlagEnabled();
 
-  const DEPRECATED_actionScores = useScoreRealise(actionDefinition);
+  const DEPRECATED_actionScores = useScoreRealise(actionDefinition, !FLAG_isSnapshotEnabled);
   const { data: NEW_action } = useAction();
 
   const showDescIntoInfoPanel = useShowDescIntoInfoPanel();
@@ -123,9 +125,8 @@ function ActionLayout({
                 actionId,
                 actionVue: 'documents',
               })}
-              label={`Documents${
-                preuvesCount !== undefined ? ` (${preuvesCount})` : ''
-              }`}
+              label={`Documents${preuvesCount !== undefined ? ` (${preuvesCount})` : ''
+                }`}
               icon="file-line"
             />
 

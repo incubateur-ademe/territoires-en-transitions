@@ -27,7 +27,9 @@ export function NEW_useTable({
   });
 
   // Uniquement les actions de niveau 1 (axes)
-  const axesOnly = snapshot?.scores.actionsEnfant.map(actionNewToDeprecated);
+  const axesOnly = snapshot?.scoresPayload.scores.actionsEnfant.map(
+    actionNewToDeprecated
+  );
 
   const getRowId = useCallback((row: any) => row.identifiant, []);
 
@@ -58,7 +60,7 @@ export function NEW_useTable({
   };
 
   const tachesTotalCount = reduceActions(
-    snapshot?.scores.actionsEnfant ?? [],
+    snapshot?.scoresPayload.scores.actionsEnfant ?? [],
     0,
     (count, action) => {
       if (action.actionType === 'tache') {
@@ -69,7 +71,7 @@ export function NEW_useTable({
   );
 
   const sousActionsTotalCount = reduceActions(
-    snapshot?.scores.actionsEnfant ?? [],
+    snapshot?.scoresPayload.scores.actionsEnfant ?? [],
     0,
     (count, action) => {
       if (action.actionType === 'sous-action') {

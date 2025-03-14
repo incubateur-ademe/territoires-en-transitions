@@ -1,41 +1,31 @@
-import { useSupabase } from '@/api/utils/supabase/use-supabase';
-import { CurrentCollectivite } from '@/app/core-logic/hooks/useCurrentCollectivite';
 import { useFonctionTracker } from '@/app/core-logic/hooks/useFonctionTracker';
 import { saveBlob } from '@/app/referentiels/preuves/Bibliotheque/saveBlob';
-import { format as formatDate } from 'date-fns';
+import { ReferentielId } from '@/domain/referentiels';
 import { useMutation } from 'react-query';
+import { useApiClient } from '../core-logic/api/useApiClient';
 
 export const useExportScore = (
-  referentiel: string | null,
-  collectivite: CurrentCollectivite | null
+  referentielId: ReferentielId,
+  collectiviteId: number
 ) => {
   const tracker = useFonctionTracker();
-  const supabase = useSupabase();
-  const collectivite_id = collectivite?.collectiviteId;
+  const apiClient = useApiClient();
 
   return useMutation(
-    ['export_score', collectivite_id, referentiel],
+    ['export_score', collectiviteId, referentielId],
     async () => {
-      if (!collectivite_id) return;
-      const { data } = await supabase.functions.invoke('export_score', {
-        body: { collectivite_id, referentiel },
+      tracker({
+        page: 'referentiel',
+        action: 'telechargement',
+        fonction: 'export_xlsx',
       });
 
-      if (data) {
-        // on génère le nom du fichier car l'en-tête "content-disposition" de la
-        // fonction edge ne semble pas être transmis correctement au client...
-        const exportedAt = formatDate(new Date(), 'yyyy-MM-dd');
-        // Export_ECI_Ambérieu-en-Bugey_2023-09-20
-        const filename = `Export_${referentiel?.toUpperCase()}_${
-          collectivite.nom
-        }_${exportedAt}.xlsx`;
-        saveBlob(data, filename);
+      const { blob, filename } = await apiClient.getAsBlob({
+        route: `/collectivites/${collectiviteId}/referentiels/${referentielId}/score-snapshots/score-courant/export`,
+      });
 
-        tracker({
-          page: 'referentiel',
-          action: 'telechargement',
-          fonction: 'export_xlsx',
-        });
+      if (blob) {
+        await saveBlob(blob, filename as string);
       }
     },
     {

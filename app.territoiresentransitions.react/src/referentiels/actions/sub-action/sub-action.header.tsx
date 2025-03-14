@@ -42,9 +42,9 @@ const SubActionHeader = ({
   onToggleOpen,
   onSaveStatus,
 }: SubActionHeaderProps): JSX.Element => {
-  const DEPRECATED_actionScores = useScoreRealise(actionDefinition);
-  const NEW_score = useScore(actionDefinition.id);
   const FLAG_isSnapshotEnabled = useSnapshotFlagEnabled();
+  const DEPRECATED_actionScores = useScoreRealise(actionDefinition, !FLAG_isSnapshotEnabled);
+  const NEW_score = useScore(actionDefinition.id);
 
   const [open, setOpen] = useState(openSubAction);
   const isSubAction = actionDefinition.type === 'sous-action';
@@ -155,8 +155,8 @@ const SubActionHeader = ({
         <div className="col-span-full" onClick={(evt) => evt.stopPropagation()}>
           <ActionCommentaire action={actionDefinition} />
           {actionDefinition.referentiel === 'cae' &&
-          actionAvancement === 'detaille' &&
-          actionDefinition.children?.length ? (
+            actionAvancement === 'detaille' &&
+            actionDefinition.children?.length ? (
             <ActionJustification
               action={actionDefinition}
               className="mt-10"

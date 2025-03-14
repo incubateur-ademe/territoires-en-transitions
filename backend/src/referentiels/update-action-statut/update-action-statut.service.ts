@@ -10,14 +10,13 @@ import z from 'zod';
 import { getErrorWithCode } from '../../utils/nest/errors.utils';
 import { PgIntegrityConstraintViolation } from '../../utils/postgresql-error-codes.enum';
 import ScoresService from '../compute-score/scores.service';
-import { GetReferentielService } from '../get-referentiel/get-referentiel.service';
 import {
   actionStatutSchemaInsert,
   actionStatutTable,
 } from '../models/action-statut.table';
-import { ComputeScoreMode } from '../models/compute-scores-mode.enum';
-import { GetReferentielScoresRequestType } from '../models/get-referentiel-scores.request';
 import { getReferentielIdFromActionId } from '../referentiels.utils';
+import { Snapshot } from '../snapshots/snapshot.table';
+import { SnapshotsService } from '../snapshots/snapshots.service';
 
 export const upsertActionStatutRequestSchema = z.object({
   actionStatut: actionStatutSchemaInsert,
@@ -34,11 +33,14 @@ export class UpdateActionStatutService {
   constructor(
     private readonly databaseService: DatabaseService,
     private readonly permissionService: PermissionService,
-    private readonly referentielService: GetReferentielService,
-    private readonly referentielScoringService: ScoresService
+    private readonly scoresService: ScoresService,
+    private readonly snapshotsService: SnapshotsService
   ) {}
 
-  async upsertActionStatut(request: UpsertActionStatutRequest, user: AuthUser) {
+  async upsertActionStatut(
+    request: UpsertActionStatutRequest,
+    user: AuthUser
+  ): Promise<Snapshot> {
     // Check user access
     await this.permissionService.isAllowed(
       user,
@@ -51,7 +53,7 @@ export class UpdateActionStatutService {
       request.actionStatut.actionId
     );
 
-    request.actionStatut.modifiedBy = user?.id;
+    request.actionStatut.modifiedBy = user.id;
     try {
       await this.databaseService.db
         .insert(actionStatutTable)
@@ -92,18 +94,10 @@ export class UpdateActionStatutService {
       throw error;
     }
 
-    // TODO: support for different response format depending on the front
-    const parameters: GetReferentielScoresRequestType = {
-      snapshot: true,
-      snapshotForceUpdate: true,
-      mode: ComputeScoreMode.RECALCUL,
-    };
-    // TODO: once the route is used by the front, we need to remove the trigger
-    return this.referentielScoringService.computeScoreForCollectivite(
+    return this.snapshotsService.computeAndUpsert({
+      collectiviteId: request.actionStatut.collectiviteId,
       referentielId,
-      request.actionStatut.collectiviteId,
-      parameters,
-      undefined // No need to check user access, it has already been done
-    );
+      user,
+    });
   }
 }

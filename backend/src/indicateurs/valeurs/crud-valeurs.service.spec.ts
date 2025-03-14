@@ -1,9 +1,9 @@
 import { PermissionService } from '@/backend/auth/authorizations/permission.service';
-import ListDefinitionsService from '@/backend/indicateurs/definitions/list-definitions.service';
 import { Test } from '@nestjs/testing';
 import * as _ from 'lodash';
 import CollectivitesService from '../../collectivites/services/collectivites.service';
 import { DatabaseService } from '../../utils/database/database.service';
+import { ListDefinitionsService } from '../list-definitions/list-definitions.service';
 import { IndicateurDefinition } from '../shared/models/indicateur-definition.table';
 import { SourceMetadonnee } from '../shared/models/indicateur-source-metadonnee.table';
 import {

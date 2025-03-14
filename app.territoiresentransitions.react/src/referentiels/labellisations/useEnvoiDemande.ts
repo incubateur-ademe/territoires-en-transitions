@@ -1,5 +1,7 @@
 import { Database } from '@/api';
 import { useSupabase } from '@/api/utils/supabase/use-supabase';
+import { ReferentielId } from '@/domain/referentiels';
+import { Etoile } from '@/domain/referentiels/labellisations';
 import { useMutation, useQueryClient } from 'react-query';
 import { TLabellisationParcours } from './types';
 
@@ -8,7 +10,12 @@ export const useEnvoiDemande = () => {
   const supabase = useSupabase();
 
   const { isLoading, mutate: envoiDemande } = useMutation(
-    async (args: TLabellisationSubmitDemande): Promise<boolean> => {
+    async (args: {
+      collectivite_id: number;
+      referentiel: ReferentielId;
+      etoiles: Etoile | null;
+      sujet: 'labellisation' | 'cot' | 'labellisation_cot';
+    }): Promise<boolean> => {
       const { collectivite_id, referentiel, etoiles, sujet } = args;
       if (!collectivite_id || !referentiel || !sujet) {
         return false;
@@ -20,8 +27,8 @@ export const useEnvoiDemande = () => {
         collectivite_id,
         referentiel,
         sujet,
-        etoiles: etoileDemandee,
-      } as TLabellisationSubmitDemandeArgs);
+        etoiles: (etoileDemandee ? etoileDemandee.toString() : null) as Database['public']['Functions']['labellisation_submit_demande']['Args']['etoiles'],
+      });
       if (error) {
         return false;
       }
@@ -76,15 +83,4 @@ export const useEnvoiDemande = () => {
     isLoading,
     envoiDemande,
   };
-};
-
-// surcharge le type exporté des arguments de `labellisation_submit_demande` pour
-// rendre le champ `etoiles` nullable (cas audit cot SANS labellisation)
-type TLabellisationSubmitDemandeArgs =
-  Database['public']['Functions']['labellisation_submit_demande']['Args'];
-type TLabellisationSubmitDemande = Omit<
-  TLabellisationSubmitDemandeArgs,
-  'etoiles'
-> & {
-  etoiles: TLabellisationSubmitDemandeArgs['etoiles'] | null;
 };

@@ -1,4 +1,5 @@
 export enum ResourceType {
   PLATEFORME = 'Plateforme',
-  COLLECTIVITE = 'Collectivité'
+  COLLECTIVITE = 'Collectivité',
+  AUDIT = 'Audit',
 }

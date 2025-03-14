@@ -33,7 +33,8 @@ const fetchScoresForCollectiviteAndReferentiel = async (
 
 // donne accès aux scores d'un référentiel
 const useReferentielScores = (
-  referentiel: Exclude<ReferentielId, 'te' | 'te-test'>
+  referentiel: Exclude<ReferentielId, 'te' | 'te-test'>,
+  enabled: boolean
 ) => {
   const collectiviteId = useCollectiviteId();
 
@@ -50,20 +51,30 @@ const useReferentielScores = (
     // on ne refetch pas trop systématiquement car il peut y avoir beaucoup
     // d'instances de ce hook et que l'update est fait lors de la réception des
     // notifications `client_scores_update`
-    { refetchOnMount: false }
+    { refetchOnMount: false, enabled }
   );
 };
 
 // donne accès aux scores de chaque référentiel
-export const useScores = (): ReferentielsActionScores => {
-  const { data: cae } = useReferentielScores('cae');
-  const { data: eci } = useReferentielScores('eci');
+export const useScores = ({
+  enabled,
+}: {
+  enabled: boolean;
+}): ReferentielsActionScores => {
+  const { data: cae } = useReferentielScores('cae', enabled);
+  const { data: eci } = useReferentielScores('eci', enabled);
 
   return { cae: cae || [], eci: eci || [], te: [], 'te-test': [] };
 };
 
-export const useActionScore = (actionId: string): ActionScore | null => {
-  const scores = useScores();
+/**
+ * @deprecated use `useScore()` instead
+ */
+export const useActionScore = (
+  actionId: string,
+  enabled: boolean
+): ActionScore | null => {
+  const scores = useScores({ enabled });
   const score = scores[getReferentielIdFromActionId(actionId)].find(
     (score) => score.action_id === actionId
   );

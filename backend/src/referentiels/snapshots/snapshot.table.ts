@@ -13,7 +13,7 @@ import {
 import { createInsertSchema, createSelectSchema } from 'drizzle-zod';
 import z from 'zod';
 import { collectiviteTable } from '../../collectivites/shared/models/collectivite.table';
-import { getPersonnalitionReponsesResponseSchema } from '../../personnalisations/models/get-personnalisation-reponses.response';
+import { PersonnalisationReponsesPayload } from '../../personnalisations/models/get-personnalisation-reponses.response';
 import {
   createdAt,
   createdBy,
@@ -21,86 +21,113 @@ import {
   modifiedBy,
   TIMESTAMP_OPTIONS,
 } from '../../utils/column.utils';
-import { getReferentielScoresResponseSchema } from '../compute-score/get-referentiel-scores.response';
-import { labellisationAuditTable } from '../models/labellisation-audit.table';
+import { auditTable } from '../labellisations/audit.table';
+import { referentielDefinitionTable } from '../models/referentiel-definition.table';
 import {
-  referentielDefinitionTable,
-  referentielIdVarchar,
-} from '../models/referentiel-definition.table';
-import { SnapshotJalon } from './snapshot-jalon.enum';
+  ReferentielId,
+  referentielIdPgEnum,
+} from '../models/referentiel-id.enum';
+import { ScoresPayload } from './scores-payload.dto';
+import { SnapshotJalon, snapshotJalonEnumSchema } from './snapshot-jalon.enum';
 
-const scoreJalonEnumValues = pgEnum('type_jalon', [
-  SnapshotJalon.PRE_AUDIT,
-  SnapshotJalon.POST_AUDIT,
-  SnapshotJalon.SCORE_COURANT,
-  SnapshotJalon.VISITE_ANNUELLE,
-  SnapshotJalon.DATE_PERSONNALISEE,
-  SnapshotJalon.JOUR_AUTO,
-]);
+const snapshotJalonPgEnum = pgEnum(
+  'type_jalon',
+  snapshotJalonEnumSchema.options
+);
 
 export const snapshotTable = pgTable(
   'score_snapshot',
   {
     collectiviteId: integer('collectivite_id').notNull(),
-    referentielId: referentielIdVarchar.notNull(),
+    referentielId: referentielIdPgEnum('referentiel_id').notNull(),
     referentielVersion: varchar('referentiel_version', { length: 16 }),
     auditId: integer('audit_id'),
     date: timestamp('date', TIMESTAMP_OPTIONS).notNull(),
-    ref: varchar('ref', { length: 30 }),
+    jalon: snapshotJalonPgEnum('type_jalon').notNull(), // not an enum in the database but in order to type it
+    ref: varchar('ref', { length: 30 }).notNull(),
     nom: varchar('nom', { length: 300 }).notNull(),
-    typeJalon: scoreJalonEnumValues('type_jalon').notNull(), // not an enum in the database but in order to type it
     pointFait: doublePrecision('point_fait').notNull(),
     pointProgramme: doublePrecision('point_programme').notNull(),
     pointPasFait: doublePrecision('point_pas_fait').notNull(),
     pointPotentiel: doublePrecision('point_potentiel').notNull(),
-    referentielScores: jsonb('referentiel_scores').notNull(),
-    personnalisationReponses: jsonb('personnalisation_reponses').notNull(),
+    scoresPayload: jsonb('referentiel_scores').notNull().$type<ScoresPayload>(),
+    personnalisationReponses: jsonb('personnalisation_reponses')
+      .$type<PersonnalisationReponsesPayload>()
+      .notNull(),
     createdBy,
     createdAt,
     modifiedAt,
     modifiedBy,
   },
-  (table) => {
-    return {
-      scoreSnapshotCollectiviteIdReferentielIdRefPkey: primaryKey({
-        columns: [table.collectiviteId, table.referentielId, table.ref],
-        name: 'score_snapshot_collectivite_id_referentiel_id_ref_pkey',
-      }),
-      scoreSnapshotCollectiviteIdFkey: foreignKey({
-        columns: [table.collectiviteId],
-        foreignColumns: [collectiviteTable.id],
-        name: 'score_snapshot_collectivite_id_fkey',
-      }),
-      scoreSnapshotReferentielIdFkey: foreignKey({
-        columns: [table.referentielId],
-        foreignColumns: [referentielDefinitionTable.id],
-        name: 'score_snapshot_referentiel_id_fkey',
-      }),
-      scoreSnapshotAuditIdFkey: foreignKey({
-        columns: [table.auditId],
-        foreignColumns: [labellisationAuditTable.id],
-        name: 'score_snapshot_audit_id_fkey',
-      }).onDelete('cascade'),
-      scoreSnapshotUnique: unique().on(
-        table.collectiviteId,
-        table.referentielId,
-        table.typeJalon,
-        table.date
-      ),
-    };
-  }
+  (table) => [
+    primaryKey({
+      columns: [table.collectiviteId, table.referentielId, table.ref],
+      name: 'score_snapshot_collectivite_id_referentiel_id_ref_pkey',
+    }),
+    foreignKey({
+      columns: [table.collectiviteId],
+      foreignColumns: [collectiviteTable.id],
+      name: 'score_snapshot_collectivite_id_fkey',
+    }),
+    foreignKey({
+      columns: [table.referentielId],
+      foreignColumns: [referentielDefinitionTable.id],
+      name: 'score_snapshot_referentiel_id_fkey',
+    }),
+    foreignKey({
+      columns: [table.auditId],
+      foreignColumns: [auditTable.id],
+      name: 'score_snapshot_audit_id_fkey',
+    }).onDelete('cascade'),
+    unique().on(
+      table.collectiviteId,
+      table.referentielId,
+      table.jalon,
+      table.date
+    ),
+  ]
 );
 
-export const scoreSnapshotSchema = createSelectSchema(snapshotTable).extend({
-  referentielScores: getReferentielScoresResponseSchema,
-  personnalisationReponses: getPersonnalitionReponsesResponseSchema,
-});
-export type ScoreSnapshotType = z.infer<typeof scoreSnapshotSchema>;
+const snapshotSchema = createSelectSchema(snapshotTable);
 
-export const createScoreSnapshotSchema = createInsertSchema(
-  snapshotTable
-).extend({
-  referentielScores: getReferentielScoresResponseSchema,
-  personnalisationReponses: getPersonnalitionReponsesResponseSchema,
-});
-export type CreateScoreSnapshotType = z.infer<typeof createScoreSnapshotSchema>;
+export type Snapshot = {
+  collectiviteId: number;
+  referentielId: ReferentielId;
+  jalon: SnapshotJalon;
+  date: string;
+  ref: string;
+  nom: string;
+  pointFait: number;
+  pointProgramme: number;
+  pointPasFait: number;
+  pointPotentiel: number;
+  referentielVersion: string | null;
+  auditId: number | null;
+  createdAt: string;
+  createdBy: string | null;
+  modifiedAt: string;
+  modifiedBy: string | null;
+  scoresPayload: ScoresPayload;
+  personnalisationReponses: PersonnalisationReponsesPayload;
+};
+
+const snapshotSchemaInsert = createInsertSchema(snapshotTable);
+
+export type SnapshotInsert = z.infer<typeof snapshotSchemaInsert> & {
+  scoresPayload: ScoresPayload;
+  personnalisationReponses: PersonnalisationReponsesPayload;
+};
+
+// All fields except JSON payloads (action scores and personnalisation reponses)
+export const snapshotWithoutPayloadsSchema = snapshotSchema
+  .omit({
+    scoresPayload: true,
+    personnalisationReponses: true,
+  })
+  .extend({
+    pointNonRenseigne: z.number().optional().describe('Points non renseignés'),
+  });
+
+export type SnapshotWithoutPayloads = z.infer<
+  typeof snapshotWithoutPayloadsSchema
+>;

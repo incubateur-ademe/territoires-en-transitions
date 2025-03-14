@@ -17,5 +17,5 @@ export function logout() {
 
 // clic en-dehors d'une boîte de dialogue
 export function clickOutside() {
-  cy.get('body').click(1, 1);
+  cy.get('[data-floating-ui-portal] div').first().click(1, 1);
 }

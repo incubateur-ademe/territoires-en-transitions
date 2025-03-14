@@ -1,9 +1,9 @@
 import { TrpcService } from '@/backend/utils/trpc/trpc.service';
 import { Injectable } from '@nestjs/common';
-import { getFavorisCountRequestSchema } from './get-favoris-count.request';
-import { getPathRequestSchema } from './get-path.request';
+import { getFavorisCountRequestSchema } from '../definitions/get-favoris-count.request';
+import { getPathRequestSchema } from '../definitions/get-path.request';
 import { listDefinitionsRequestSchema } from './list-definitions.request';
-import ListDefinitionsService from './list-definitions.service';
+import { ListDefinitionsService } from './list-definitions.service';
 
 @Injectable()
 export class IndicateurDefinitionsRouter {

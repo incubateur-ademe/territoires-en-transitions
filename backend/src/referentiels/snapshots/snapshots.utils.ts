@@ -26,7 +26,9 @@ export function getExtendActionWithComputedStatutsFields(
   return async <A extends { actionId: string; referentiel: ReferentielId }>(
     action: A
   ) => {
-    const { scores: scoresTree } = await getCurrentSnapshot(action.referentiel);
+    const {
+      scoresPayload: { scores: scoresTree },
+    } = await getCurrentSnapshot(action.referentiel);
 
     const actionWithScore = findActionInTree(
       [scoresTree],

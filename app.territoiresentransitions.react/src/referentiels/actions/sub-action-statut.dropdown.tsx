@@ -42,9 +42,9 @@ export const SubActionStatutDropdown = ({
   statusWarningMessage?: boolean;
   onSaveStatus?: (payload: StatusToSavePayload) => void;
 }) => {
-  const DEPRECATED_actionScores = useScoreRealise(actionDefinition);
-  const NEW_score = useScore(actionDefinition.id);
   const FLAG_isSnapshotEnabled = useSnapshotFlagEnabled();
+  const DEPRECATED_actionScores = useScoreRealise(actionDefinition, !FLAG_isSnapshotEnabled);
+  const NEW_score = useScore(actionDefinition.id);
 
   const collectivite = useCurrentCollectivite();
 
@@ -214,10 +214,10 @@ export const SubActionStatutDropdown = ({
       values[0] === 1
         ? 'fait'
         : values[1] === 1
-        ? 'programme'
-        : values[2] === 1
-        ? 'pas_fait'
-        : 'detaille';
+          ? 'programme'
+          : values[2] === 1
+            ? 'pas_fait'
+            : 'detaille';
 
     setLocalAvancement(avancement);
     setLocalAvancementDetaille(values);
@@ -268,8 +268,8 @@ export const SubActionStatutDropdown = ({
           <SelectActionStatut
             items={
               actionDefinition.type === 'sous-action' &&
-              localAvancement !== 'non_renseigne' &&
-              filled
+                localAvancement !== 'non_renseigne' &&
+                filled
                 ? statutAvancementEnumSchema.options
                 : statutAvancementIncludingNonConcerneEnumSchema.options
             }
@@ -300,7 +300,7 @@ export const SubActionStatutDropdown = ({
                   (FLAG_isSnapshotEnabled
                     ? NEW_score?.pointReferentiel
                     : DEPRECATED_actionScores[actionDefinition.id]
-                        ?.points_max_referentiel) ?? 0
+                      ?.points_max_referentiel) ?? 0
                 }
                 defaultScore={{
                   label: avancementToLabel.non_renseigne,
@@ -318,7 +318,7 @@ export const SubActionStatutDropdown = ({
               size="sm"
               onClick={() => {
                 actionDefinition.type === 'sous-action' &&
-                actionDefinition.children.length > 0
+                  actionDefinition.children.length > 0
                   ? avancement === 'detaille'
                     ? setOpenScorePerso(true)
                     : setOpenScoreAuto(true)
