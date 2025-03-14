@@ -89,7 +89,10 @@ export const makeLineSeries = (dataset: Dataset[]): LineSeriesOption[] =>
   }));
 
 // génère le paramétrage des séries pour les valeurs de référence (cible/seuil/objectifs)
-export const makeReferenceSeries = (dataset: Dataset[]): LineSeriesOption[] =>
+export const makeReferenceSeries = (
+  dataset: Dataset[],
+  showMarkLineLabel: boolean
+): LineSeriesOption[] =>
   dataset.map((ds) => ({
     id: ds.id,
     datasetId: ds.id,
@@ -106,7 +109,7 @@ export const makeReferenceSeries = (dataset: Dataset[]): LineSeriesOption[] =>
         ? {
             animation: false,
             silent: true,
-            //            label: { show: false },
+            label: { show: showMarkLineLabel },
             symbol: 'none',
             lineStyle: { width: 2, type: 'dotted' },
             data: [{ type: 'max' }],
