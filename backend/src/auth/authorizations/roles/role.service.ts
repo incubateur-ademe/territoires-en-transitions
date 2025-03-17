@@ -8,7 +8,8 @@ import {
   utilisateurPermissionTable,
 } from '@/domain/auth';
 import { Injectable, Logger } from '@nestjs/common';
-import { and, eq, sql } from 'drizzle-orm';
+import { and, count, eq, not } from 'drizzle-orm';
+import { auditTable } from '../../../referentiels/labellisations/audit.table';
 import { AuthRole, AuthUser } from '../../models/auth.models';
 import { PermissionLevel } from './niveau-acces.enum';
 import { utilisateurSupportTable } from './utilisateur-support.table';
@@ -71,6 +72,19 @@ export class RoleService {
               if (!roles.includes(Role.ADMIN)) roles.push(Role.ADMIN);
               break;
           }
+        }
+      }
+
+      // TODO: find a way to check the referentiel too
+      if (resourceType === ResourceType.COLLECTIVITE && resourceId) {
+        const isAuditeurForCollectivite =
+          await this.isCurrentAuditeurForCollectivite({
+            userId: user.id,
+            collectiviteId: resourceId,
+          });
+
+        if (isAuditeurForCollectivite) {
+          roles.push(Role.AUDITEUR);
         }
       }
 
@@ -165,24 +179,27 @@ export class RoleService {
   }
 
   /**
-   * Vérifie que l'utilisateur est un auditeur de la collectivité
-   * @param userId identifiant de l'utilisateur
-   * @param collectiviteId identifiant de la collectivité
+   * Vérifie que l'utilisateur est un auditeur pour un audit donné
    */
-  private async isAuditeurForCollectivite(
-    userId: string,
-    collectiviteId: number
-  ): Promise<boolean> {
-    const result = await this.databaseService.db.execute(
-      sql`SELECT *
-          FROM audit_auditeur aa
-                 JOIN labellisation.audit a ON aa.audit_id = a.id
-          WHERE a.clos IS FALSE
-            AND a.collectivite_id = ${collectiviteId}
-            AND aa.auditeur = ${userId}`
-    );
-
-    return (result?.rowCount && result.rowCount > 0) || false;
+  private async isCurrentAuditeurForCollectivite({
+    userId,
+    collectiviteId,
+  }: {
+    userId: string;
+    collectiviteId: number;
+  }) {
+    return this.databaseService.db
+      .select({ count: count() })
+      .from(auditTable)
+      .leftJoin(auditeurTable, eq(auditeurTable.auditId, auditTable.id))
+      .where(
+        and(
+          eq(auditTable.collectiviteId, collectiviteId),
+          not(auditTable.clos),
+          eq(auditeurTable.auditeur, userId)
+        )
+      )
+      .then((data) => data[0].count > 0);
   }
 
   /**
