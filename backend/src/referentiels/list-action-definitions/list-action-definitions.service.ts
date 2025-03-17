@@ -222,13 +222,9 @@ export class ListActionDefinitionsService {
         tagId: actionPiloteTable.tagId,
         nom: sql<string | null>`
           CASE
-            WHEN ${actionPiloteTable.userId} IS NOT NULL THEN ${dcpTable.nom}
+            WHEN ${actionPiloteTable.userId} IS NOT NULL THEN
+              CONCAT(${dcpTable.prenom}, ' ', ${dcpTable.nom})
             ELSE ${personneTagTable.nom}
-          END
-        `,
-        prenom: sql<string | null>`
-          CASE
-            WHEN ${actionPiloteTable.userId} IS NOT NULL THEN ${dcpTable.prenom}
           END
         `,
       })
