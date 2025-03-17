@@ -51,7 +51,7 @@ const SubActionTask = ({
       {!collectivite?.isReadOnly ? (
         <ActionCommentaire
           action={task}
-          placeholder="Ajouter une description"
+          placeholder="Ce champ est facultatif : il ne sera pas considéré lors de l’audit"
         />
       ) : (
         !!actionCommentaire && (
