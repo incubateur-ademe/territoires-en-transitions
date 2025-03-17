@@ -42,6 +42,8 @@ const fetchQuestions = async (
     query.eq('thematique_id', thematique_id);
   }
 
+  query.order('ordonnancement', { ascending: true });
+
   // attends les données
   const { error, data } = await query;
 
