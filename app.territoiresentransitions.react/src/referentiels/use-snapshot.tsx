@@ -1,9 +1,9 @@
 import { DISABLE_AUTO_REFETCH } from '@/api/utils/react-query/query-options';
 import { RouterOutput, trpc } from '@/api/utils/trpc/client';
 import {
-  getReferentielIdFromActionId,
   ReferentielException,
   ReferentielId,
+  getReferentielIdFromActionId,
 } from '@/domain/referentiels';
 import { useFeatureFlagEnabled } from 'posthog-js/react';
 import { useCollectiviteId } from '../collectivites/collectivite-context';
