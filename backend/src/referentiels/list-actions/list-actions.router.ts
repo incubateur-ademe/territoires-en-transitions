@@ -15,15 +15,19 @@ export const inputSchema = z.object({
     .array()
     .optional()
     .default([ActionTypeEnum.ACTION, ActionTypeEnum.SOUS_ACTION]),
-  pilotes: z
-    .array(
-      z.union([
-        z.object({ userId: z.string() }),
-        z.object({ tagId: z.number() }),
-      ])
-    )
+  relationFilters: z
+    .object({
+      pilotes: z
+        .array(
+          z.union([
+            z.object({ userId: z.string() }),
+            z.object({ tagId: z.number() }),
+          ])
+        )
+        .optional(),
+      services: z.array(z.object({ serviceTagId: z.number() })).optional(),
+    })
     .optional(),
-  services: z.array(z.object({ serviceTagId: z.number() })).optional(),
 });
 
 @Injectable()
@@ -40,7 +44,7 @@ export class ListActionsRouter {
       .input(inputSchema)
       .query(
         async ({
-          input: { collectiviteId, actionIds, actionTypes, pilotes, services },
+          input: { collectiviteId, actionIds, actionTypes, relationFilters },
           ctx: { user },
         }) => {
           await this.permissions.isAllowed(
@@ -53,8 +57,7 @@ export class ListActionsRouter {
           return this.listActionDefinitionsService.listActionDefinitions({
             actionIds,
             actionTypes,
-            pilotes,
-            services,
+            relationFilters,
           });
         }
       ),
