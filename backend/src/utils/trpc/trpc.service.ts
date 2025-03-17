@@ -147,6 +147,11 @@ export class TrpcService {
       return { user: null };
     }
 
+    this.contextStoreService.updateContext({
+      userId: user.id || undefined,
+      authRole: user.role,
+    });
+
     if (!user) {
       return { user: null, decodedToken: jwtPayload };
     }
