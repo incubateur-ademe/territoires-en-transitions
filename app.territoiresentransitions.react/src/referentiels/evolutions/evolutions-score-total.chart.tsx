@@ -5,6 +5,7 @@ import { SnapshotDetails } from '../use-snapshot';
 import { sortByDate } from './utils';
 import { theme as importedTheme } from '../../ui/charts/chartsTheme';
 import { ReferentielId } from '@/domain/referentiels';
+import { useEventTracker } from '@/ui';
 
 const theme = importedTheme;
 
@@ -59,6 +60,8 @@ export const ScoreTotalEvolutionsChart = ({
   chartSize: 'sm' | 'lg';
   isDownloadable?: boolean;
 }) => {
+  const trackEvent = useEventTracker('app/referentiel');
+
   const snapshots = sortSnapshots(allSnapshots, true);
 
   const nameLabels = snapshots?.map((snapshot) => {
@@ -252,6 +255,13 @@ export const ScoreTotalEvolutionsChart = ({
             saveAsImage: {
               ...TOOLBOX_BASE.feature.saveAsImage,
               name: `${referentielId}_referentiel_progression-total`,
+              onclick: () => {
+                trackEvent('referentiels:scores:export_graph_sauvegardes_EDL', {
+                  referentielId,
+                  type: 'total',
+                  howManySnapshots: snapshots.length,
+                });
+              },
             },
           },
         }

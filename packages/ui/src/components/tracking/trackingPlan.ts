@@ -384,6 +384,11 @@ export interface TrackingPlan extends Record<never, Page> {
     onglets: never;
     events: {
       'referentiels:scores:sauvegarde': { dateDuJour: boolean };
+      'referentiels:scores:export_graph_sauvegardes_EDL': {
+        referentiel: string;
+        type: 'total' | 'axe';
+        howManySnapshots: number;
+      };
     };
   };
 
