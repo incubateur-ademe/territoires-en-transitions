@@ -1,25 +1,7 @@
 import { ReferentielId } from '@/domain/referentiels';
 import { ScoreTotalEvolutionsChart } from '../../evolutions/evolutions-score-total.chart';
-import { SnapshotDetails, useSnapshotList } from '../../use-snapshot';
+import { useListSnapshots } from '../../use-snapshot';
 import { GraphCard } from './EtatDesLieuxGraphs';
-
-const organizeSnaps = (snapshots: SnapshotDetails[]) => {
-  const invertedSnapshots = snapshots.reverse();
-  const limitedSnapshots = limitSnapshots(invertedSnapshots);
-  return limitedSnapshots;
-};
-
-const removeScoreCourant = (snapshots: SnapshotDetails[]) => {
-  return snapshots.filter((snap) => snap?.nom !== 'Score courant');
-};
-
-const limitSnapshots = (snapshots: SnapshotDetails[]) => {
-  const HOW_MANY_SNAPSHOTS_TO_SHOW_BY_DEFAULT = 4;
-  if (snapshots.length > HOW_MANY_SNAPSHOTS_TO_SHOW_BY_DEFAULT) {
-    return snapshots.slice(0, HOW_MANY_SNAPSHOTS_TO_SHOW_BY_DEFAULT);
-  }
-  return snapshots;
-};
 
 type ScoreEvolutionsGraphsProps = {
   referentiel: ReferentielId;
@@ -33,18 +15,14 @@ export const ScoreEvolutionsGraphs = ({
   title,
   subTitle,
   href,
-}: ScoreEvolutionsGraphsProps): JSX.Element => {
-  const { data: snapshotList } = useSnapshotList(referentiel);
+}: ScoreEvolutionsGraphsProps) => {
+  const { data } = useListSnapshots(referentiel);
 
-  const snapshotWithoutScoreCourant = removeScoreCourant(
-    snapshotList?.snapshots ?? []
-  );
-
-  if (!snapshotWithoutScoreCourant?.length) {
+  if (!data?.length) {
     return <></>;
   }
 
-  const snapshots = organizeSnaps(snapshotWithoutScoreCourant);
+  const last4Snapshots = data.slice(0, 4);
 
   return (
     <GraphCard
@@ -53,7 +31,7 @@ export const ScoreEvolutionsGraphs = ({
       href={href}
       renderGraph={() => (
         <ScoreTotalEvolutionsChart
-          allSnapshots={snapshots}
+          snapshots={last4Snapshots}
           chartSize="sm"
           referentielId={referentiel}
         />

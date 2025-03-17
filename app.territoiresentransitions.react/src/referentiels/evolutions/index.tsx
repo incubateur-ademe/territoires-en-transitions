@@ -1,77 +1,39 @@
 'use client';
+
+import { useCollectiviteId } from '@/app/collectivites/collectivite-context';
 import { useCurrentCollectivite } from '@/app/core-logic/hooks/useCurrentCollectivite';
+import SpinnerLoader from '@/app/ui/shared/SpinnerLoader';
 import { Badge, EmptyCard } from '@/ui';
 import { useEffect, useState } from 'react';
 import SaveScoreButton from '../../app/pages/collectivite/Referentiels/SaveScore/save-score.button';
 import PictoDashboard from '../../ui/pictogrammes/PictoDashboard';
 import { useReferentielId } from '../referentiel-context';
-import { SnapshotDetails, useSnapshotList } from '../use-snapshot';
+import { useListSnapshots } from '../use-snapshot';
 import { ScoreTotalEvolutionsChart } from './evolutions-score-total.chart';
 import { SnapshotsDropdown } from './evolutions-snapshots.dropdown';
 
-const removeScoreCourant = (snapshots: SnapshotDetails[]) => {
-  return snapshots.filter((snap) => snap?.nom !== 'Score courant');
-};
-
-const organizeSnaps = (snapshots: SnapshotDetails[]) => {
-  const invertedSnapshots = snapshots.reverse();
-  const limitedSnapshots = limitSnapshots(invertedSnapshots);
-  return limitedSnapshots;
-};
-
-const limitSnapshots = (snapshots: SnapshotDetails[]) => {
-  const HOW_MANY_SNAPSHOTS_TO_SHOW_BY_DEFAULT = 4;
-  if (snapshots.length > HOW_MANY_SNAPSHOTS_TO_SHOW_BY_DEFAULT) {
-    return snapshots.slice(0, HOW_MANY_SNAPSHOTS_TO_SHOW_BY_DEFAULT);
-  }
-  return snapshots;
-};
-
 export const ScoreEvolutions = () => {
   const referentielId = useReferentielId();
+  const collectiviteId = useCollectiviteId();
   const collectivite = useCurrentCollectivite();
-  const collectiviteId = collectivite?.collectiviteId;
 
-  const { data: snapshotList } = useSnapshotList(referentielId);
+  const { data: snapshots } = useListSnapshots(referentielId);
 
-  // We don't want to display current score in the chart
-  const snapshots = removeScoreCourant(snapshotList?.snapshots ?? []);
-
-  const hasSavedSnapshots = !!snapshots?.length;
-
-  /** Snapshots processing for the dropdown **/
-
-  const allSnapsNames = snapshots?.map((snap) => snap?.nom);
-  const dropdownOptions =
-    allSnapsNames?.map((snap, index) => ({
-      value: snap ?? '',
-      label: snap ?? '',
-      date: snapshots[index]?.date ?? '',
-    })) ?? [];
-
-  /** Snapshots processing for the chart **/
-
-  const initialDisplaySnapsNames = organizeSnaps(snapshots)?.map(
-    (snap) => snap?.nom
-  );
-
-  const getSnapshotsFromSelectedSnapsNames = (names: string[]) => {
-    return names
-      ?.map((name) => snapshots.find((snap) => snap?.nom === name) ?? null)
-      .filter((snap): snap is SnapshotDetails => snap !== null);
-  };
-
-  /** State management for the dropdown and the chart **/
-
-  const [selectedSnapsNames, setSelectedSnapsNames] = useState<string[]>([]);
+  // State management for the dropdown and the chart
+  const [selectedSnapshots, setSelectedSnapshots] = useState<typeof snapshots>([]);
 
   useEffect(() => {
-    if (initialDisplaySnapsNames.length > 0) {
-      setSelectedSnapsNames(initialDisplaySnapsNames);
+    if (snapshots) {
+      setSelectedSnapshots(snapshots.slice(0, 4));
     }
-  }, [snapshotList]);
+  }, [snapshots]);
 
-  if (hasSavedSnapshots) {
+  if (!snapshots) {
+    return <SpinnerLoader />;
+  }
+
+
+  if (snapshots.length) {
     return (
       <div className="px-4">
         <div>
@@ -79,11 +41,9 @@ export const ScoreEvolutions = () => {
           <div className="flex items-center justify-between">
             <div className="w-full max-w-6xl">
               <SnapshotsDropdown
-                values={selectedSnapsNames ?? []}
-                onChange={({ snapshots }) => {
-                  setSelectedSnapsNames(snapshots);
-                }}
-                options={dropdownOptions}
+                values={selectedSnapshots ?? []}
+                onChange={setSelectedSnapshots}
+                options={snapshots}
                 maxBadgesToShow={3}
               />
             </div>
@@ -92,9 +52,7 @@ export const ScoreEvolutions = () => {
         </div>
         <div className="mt-8 pt-4 border-t border-gray-200">
           <ScoreTotalEvolutionsChart
-            allSnapshots={getSnapshotsFromSelectedSnapsNames(
-              selectedSnapsNames
-            )}
+            snapshots={selectedSnapshots ?? []}
             chartSize="lg"
             referentielId={referentielId}
             isDownloadable
@@ -105,32 +63,32 @@ export const ScoreEvolutions = () => {
   }
 
   return (
-    <>
-      <div className="flex items-center justify-center">
-        <EmptyCard
-          picto={(props) => <PictoDashboard {...props} />}
-          title="Aucune version du référentiel n'est figée."
-          description="Figer l'état des lieux vous permet de sauvegarder une version à une date donnée, afin de pouvoir comparer l'évolution du score sur plusieurs versions."
-          isReadonly={collectivite?.isReadOnly}
-          actions={[
-            <SaveScoreButton
-              key="before"
-              referentielId={referentielId}
-              collectiviteId={collectiviteId as number}
-              label="Figer l'état des lieux à une date antérieure"
-              when="before"
-              variant="outlined"
-            />,
-            <SaveScoreButton
-              key="after"
-              referentielId={referentielId}
-              collectiviteId={collectiviteId as number}
-              label="Figer l'état des lieux"
-              variant="primary"
-            />,
-          ]}
-        />
-      </div>
-    </>
+
+    <div className="flex items-center justify-center">
+      <EmptyCard
+        picto={(props) => <PictoDashboard {...props} />}
+        title="Aucune version du référentiel n'est figée."
+        description="Figer l'état des lieux vous permet de sauvegarder une version à une date donnée, afin de pouvoir comparer l'évolution du score sur plusieurs versions."
+        isReadonly={collectivite?.isReadOnly}
+        actions={[
+          <SaveScoreButton
+            key="before"
+            referentielId={referentielId}
+            collectiviteId={collectiviteId}
+            label="Figer l'état des lieux à une date antérieure"
+            when="before"
+            variant="outlined"
+          />,
+          <SaveScoreButton
+            key="after"
+            referentielId={referentielId}
+            collectiviteId={collectiviteId}
+            label="Figer l'état des lieux"
+            variant="primary"
+          />,
+        ]}
+      />
+    </div>
+
   );
 };

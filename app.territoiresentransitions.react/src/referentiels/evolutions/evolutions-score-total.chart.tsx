@@ -1,10 +1,10 @@
-import { ReactECharts, TOOLBOX_BASE } from '@/app/ui/charts/echarts';
-import type { EChartsOption } from 'echarts';
 import { actionAvancementColors } from '@/app/app/theme';
+import { ReactECharts, TOOLBOX_BASE } from '@/app/ui/charts/echarts';
+import { ReferentielId } from '@/domain/referentiels';
+import type { EChartsOption } from 'echarts';
+import { theme as importedTheme } from '../../ui/charts/chartsTheme';
 import { SnapshotDetails } from '../use-snapshot';
 import { sortByDate } from './utils';
-import { theme as importedTheme } from '../../ui/charts/chartsTheme';
-import { ReferentielId } from '@/domain/referentiels';
 
 const theme = importedTheme;
 
@@ -49,12 +49,12 @@ const adjustXAxisLabelWidth = (
 };
 
 export const ScoreTotalEvolutionsChart = ({
-  allSnapshots,
+  snapshots: allSnapshots,
   referentielId,
   chartSize = 'lg',
   isDownloadable = false,
 }: {
-  allSnapshots: SnapshotDetails[];
+  snapshots: SnapshotDetails[];
   referentielId: ReferentielId;
   chartSize: 'sm' | 'lg';
   isDownloadable?: boolean;
@@ -181,9 +181,8 @@ export const ScoreTotalEvolutionsChart = ({
             break;
         }
 
-        return `${circle}${params.seriesName}: ${
-          params.value
-        }% (${troncateIfZero(points.toFixed(1))} pts)`;
+        return `${circle}${params.seriesName}: ${params.value
+          }% (${troncateIfZero(points.toFixed(1))} pts)`;
       },
       textStyle: {
         fontFamily: theme.fontFamily,
@@ -245,16 +244,16 @@ export const ScoreTotalEvolutionsChart = ({
     ],
     toolbox: isDownloadable
       ? {
-          ...TOOLBOX_BASE,
-          top: 1,
-          right: 3,
-          feature: {
-            saveAsImage: {
-              ...TOOLBOX_BASE.feature.saveAsImage,
-              name: `${referentielId}_referentiel_progression-total`,
-            },
+        ...TOOLBOX_BASE,
+        top: 1,
+        right: 3,
+        feature: {
+          saveAsImage: {
+            ...TOOLBOX_BASE.feature.saveAsImage,
+            name: `${referentielId}_referentiel_progression-total`,
           },
-        }
+        },
+      }
       : undefined,
     series,
   };

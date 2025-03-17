@@ -5,7 +5,7 @@ import {
 import { DatabaseService } from '@/backend/utils';
 import { roundTo } from '@/backend/utils/index-domain';
 import { Injectable } from '@nestjs/common';
-import { and, asc, eq, inArray } from 'drizzle-orm';
+import { and, asc, desc, eq, inArray } from 'drizzle-orm';
 import z from 'zod';
 import {
   SnapshotJalon,
@@ -18,7 +18,6 @@ const DEFAULT_JALONS = [
   SnapshotJalonEnum.PRE_AUDIT,
   SnapshotJalonEnum.POST_AUDIT,
   SnapshotJalonEnum.DATE_PERSONNALISEE,
-  SnapshotJalonEnum.COURANT,
   SnapshotJalonEnum.VISITE_ANNUELLE,
 ];
 
@@ -72,7 +71,7 @@ export class ListSnapshotsService {
       .select()
       .from(snapshotTable)
       .where(and(...filters))
-      .orderBy(asc(snapshotTable.date));
+      .orderBy(desc(snapshotTable.date));
 
     return snapshots as Snapshot[];
   }

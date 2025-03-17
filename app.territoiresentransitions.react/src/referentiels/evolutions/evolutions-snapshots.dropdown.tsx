@@ -1,54 +1,38 @@
 import { SelectMultiple, SelectMultipleProps } from '@/ui';
-import { sortByDate } from './utils';
 
 export type SnapshotOption = {
-  value: string;
-  label: string;
+  ref: string;
+  nom: string;
   date: string;
 };
 
-type SnapshotsDropdownProps = Omit<
+type SnapshotsDropdownProps<T extends SnapshotOption> = Omit<
   SelectMultipleProps,
   'values' | 'onChange' | 'options'
 > & {
-  values: Array<string>;
-  options: Array<SnapshotOption>;
-  onChange: ({
-    snapshots,
-    selectedSnapshot,
-  }: {
-    snapshots: Array<string>;
-    selectedSnapshot: string;
-  }) => void;
+  values: T[];
+  options: T[];
+  onChange: (selectedSnapshots: T[]) => void;
   maxBadgesToShow: number;
 };
 
-export const SnapshotsDropdown = (props: SnapshotsDropdownProps) => {
-  const values = props.values ?? [];
-
-  /**
-   * Needed to always display a value in its right date order
-   */
-  const sortedValues = values
-    .map((value) => props.options.find((opt) => opt.value === value))
-    .filter((option): option is SnapshotOption => option !== undefined)
-    .sort((a, b) => sortByDate(a.date, b.date))
-    .map((option) => option.value);
+export function SnapshotsDropdown<T extends SnapshotOption>({ values = [], options, onChange, maxBadgesToShow, ...props }: SnapshotsDropdownProps<T>) {
 
   return (
     <SelectMultiple
       {...props}
-      maxBadgesToShow={props.maxBadgesToShow}
-      options={props.options}
+      maxBadgesToShow={maxBadgesToShow}
+      options={options.map((option) => ({
+        value: option.ref,
+        label: option.nom,
+      }))}
       placeholder={
         props.placeholder ?? 'Sélectionnez une ou plusieurs versions'
       }
-      values={sortedValues}
-      onChange={({ values, selectedValue }) => {
-        props.onChange({
-          snapshots: values as string[],
-          selectedSnapshot: selectedValue as string,
-        });
+      values={values.map((value) => value.ref)}
+      onChange={({ values }) => {
+        const selectedSnapshots = options.filter((option) => values?.includes(option.ref));
+        onChange(selectedSnapshots);
       }}
     />
   );
