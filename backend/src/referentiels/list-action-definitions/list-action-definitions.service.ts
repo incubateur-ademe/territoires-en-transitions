@@ -1,6 +1,6 @@
 import { DatabaseService } from '@/backend/utils';
 import { Injectable } from '@nestjs/common';
-import { and, asc, eq, getTableColumns, inArray, sql } from 'drizzle-orm';
+import { and, asc, eq, getTableColumns, inArray, or, sql } from 'drizzle-orm';
 import z from 'zod';
 import {
   actionDefinitionTable,
@@ -8,10 +8,26 @@ import {
   ReferentielIdEnum,
 } from '../index-domain';
 import { referentielDefinitionTable } from '../models/referentiel-definition.table';
+import { actionPiloteTable } from '../models/action-pilote.table';
+import {
+  personneTagTable,
+  serviceTagTable,
+} from '../../collectivites/index-domain';
+import { dcpTable } from '../../auth/index-domain';
+import { actionServiceTable } from '../models/action-service.table';
 
 export const inputSchema = z.object({
   actionIds: z.string().array().optional(),
   actionTypes: actionTypeSchema.array().optional(),
+  pilotes: z
+    .array(
+      z.union([
+        z.object({ userId: z.string() }),
+        z.object({ tagId: z.number() }),
+      ])
+    )
+    .optional(),
+  services: z.array(z.object({ serviceTagId: z.number() })).optional(),
 });
 
 type Input = z.infer<typeof inputSchema>;
@@ -28,7 +44,12 @@ export class ListActionDefinitionsService {
 
   private db = this.databaseService.db;
 
-  async listActionDefinitions({ actionIds, actionTypes }: Input) {
+  async listActionDefinitions({
+    actionIds,
+    actionTypes,
+    pilotes,
+    services,
+  }: Input) {
     const subQuery = this.db
       .$with('action_definition_with_depth_and_type')
       .as(this.listWithDepthAndType());
@@ -51,13 +72,57 @@ export class ListActionDefinitionsService {
       filters.push(inArray(subQuery.actionType, actionTypes));
     }
 
-    if (filters.length) {
-      request.where(and(...filters));
+    if (pilotes?.length) {
+      const tagIds = pilotes.flatMap((p) => ('tagId' in p ? [p.tagId] : []));
+      const userIds = pilotes.flatMap((p) => ('userId' in p ? [p.userId] : []));
+
+      const pilotesSubQuery = this.db
+        .select({ actionId: actionPiloteTable.actionId })
+        .from(actionPiloteTable)
+        .where(
+          or(
+            tagIds.length
+              ? inArray(actionPiloteTable.tagId, tagIds)
+              : undefined,
+            userIds.length
+              ? inArray(actionPiloteTable.userId, userIds)
+              : undefined
+          )
+        )
+        .groupBy(actionPiloteTable.actionId);
+
+      filters.push(inArray(subQuery.actionId, pilotesSubQuery));
     }
 
+    if (services?.length) {
+      const servicesSubQuery = this.db
+        .select({ actionId: actionServiceTable.actionId })
+        .from(actionServiceTable)
+        .where(
+          inArray(
+            actionServiceTable.serviceTagId,
+            services.map((s) => s.serviceTagId)
+          )
+        )
+        .groupBy(actionServiceTable.actionId);
+
+      filters.push(inArray(subQuery.actionId, servicesSubQuery));
+    }
+
+    request.where(and(...filters));
     request.orderBy(asc(subQuery.actionId));
 
-    return request;
+    let actions = await request;
+
+    if (pilotes?.length) {
+      actions = await this.enrichWithPilotesDetails(actions);
+    }
+
+    if (services?.length) {
+      actions = await this.enrichWithServicesDetails(actions);
+    }
+
+    return actions;
   }
 
   private listWithDepth() {
@@ -119,5 +184,82 @@ export class ListActionDefinitionsService {
           eq(referentielDefinitionTable.version, subQuery.referentielVersion)
         )
       );
+  }
+
+  private async enrichWithPilotesDetails(actions: any[]) {
+    const pilotesWithDetails = await this.db
+      .select({
+        actionId: actionPiloteTable.actionId,
+        piloteId: actionPiloteTable.userId,
+        tagId: actionPiloteTable.tagId,
+        nom: sql<string | null>`
+          CASE
+            WHEN ${actionPiloteTable.userId} IS NOT NULL THEN ${dcpTable.nom}
+            ELSE ${personneTagTable.nom}
+          END
+        `,
+        prenom: sql<string | null>`
+          CASE
+            WHEN ${actionPiloteTable.userId} IS NOT NULL THEN ${dcpTable.prenom}
+          END
+        `,
+      })
+      .from(actionPiloteTable)
+      .leftJoin(dcpTable, eq(dcpTable.userId, actionPiloteTable.userId))
+      .leftJoin(
+        personneTagTable,
+        eq(personneTagTable.id, actionPiloteTable.tagId)
+      )
+      .where(
+        inArray(
+          actionPiloteTable.actionId,
+          actions.map((a) => a.actionId)
+        )
+      );
+
+    const pilotesByAction: Record<string, typeof pilotesWithDetails> = {};
+    for (const pilote of pilotesWithDetails) {
+      if (!pilote.actionId) continue;
+      pilotesByAction[pilote.actionId] = pilotesByAction[pilote.actionId] || [];
+      pilotesByAction[pilote.actionId].push(pilote);
+    }
+
+    return actions.map((action) => ({
+      ...action,
+      pilotes: pilotesByAction[action.actionId] || [],
+    }));
+  }
+
+  private async enrichWithServicesDetails(actions: any[]) {
+    const servicesWithDetails = await this.db
+      .select({
+        actionId: actionServiceTable.actionId,
+        serviceId: actionServiceTable.serviceTagId,
+        nom: serviceTagTable.nom,
+      })
+      .from(actionServiceTable)
+      .leftJoin(
+        serviceTagTable,
+        eq(serviceTagTable.id, actionServiceTable.serviceTagId)
+      )
+      .where(
+        inArray(
+          actionServiceTable.actionId,
+          actions.map((a) => a.actionId)
+        )
+      );
+
+    const servicesByAction: Record<string, typeof servicesWithDetails> = {};
+    for (const service of servicesWithDetails) {
+      if (!service.actionId) continue;
+      servicesByAction[service.actionId] =
+        servicesByAction[service.actionId] || [];
+      servicesByAction[service.actionId].push(service);
+    }
+
+    return actions.map((action) => ({
+      ...action,
+      services: servicesByAction[action.actionId] || [],
+    }));
   }
 }
