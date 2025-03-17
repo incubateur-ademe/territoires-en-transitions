@@ -1,6 +1,15 @@
 import { DatabaseService } from '@/backend/utils';
 import { Injectable } from '@nestjs/common';
-import { and, asc, eq, getTableColumns, inArray, or, sql } from 'drizzle-orm';
+import {
+  and,
+  asc,
+  eq,
+  getTableColumns,
+  inArray,
+  or,
+  SQL,
+  sql,
+} from 'drizzle-orm';
 import z from 'zod';
 import {
   ReferentielIdEnum,
@@ -16,18 +25,27 @@ import {
 import { dcpTable } from '../../auth/index-domain';
 import { actionServiceTable } from '../models/action-service.table';
 
+type RelationFilters = {
+  pilotes?: Array<{ userId: string } | { tagId: number }>;
+  services?: Array<{ serviceTagId: number }>;
+};
+
 export const inputSchema = z.object({
   actionIds: z.string().array().optional(),
   actionTypes: actionTypeSchema.array().optional(),
-  pilotes: z
-    .array(
-      z.union([
-        z.object({ userId: z.string() }),
-        z.object({ tagId: z.number() }),
-      ])
-    )
+  relationFilters: z
+    .object({
+      pilotes: z
+        .array(
+          z.union([
+            z.object({ userId: z.string() }),
+            z.object({ tagId: z.number() }),
+          ])
+        )
+        .optional(),
+      services: z.array(z.object({ serviceTagId: z.number() })).optional(),
+    })
     .optional(),
-  services: z.array(z.object({ serviceTagId: z.number() })).optional(),
 });
 
 type Input = z.infer<typeof inputSchema>;
@@ -47,8 +65,7 @@ export class ListActionDefinitionsService {
   async listActionDefinitions({
     actionIds,
     actionTypes,
-    pilotes,
-    services,
+    relationFilters,
   }: Input) {
     const subQuery = this.db
       .$with('action_definition_with_depth_and_type')
@@ -57,7 +74,6 @@ export class ListActionDefinitionsService {
     const request = this.db.with(subQuery).select().from(subQuery);
 
     const filters = [
-      // On inclut uniquement les actions des référentiels CAE et ECI pour le moment
       inArray(subQuery.referentielId, [
         ReferentielIdEnum.CAE,
         ReferentielIdEnum.ECI,
@@ -71,6 +87,33 @@ export class ListActionDefinitionsService {
     if (actionTypes?.length) {
       filters.push(inArray(subQuery.actionType, actionTypes));
     }
+
+    if (relationFilters) {
+      this.applyRelationFilters(filters, subQuery, relationFilters);
+    }
+
+    request.where(and(...filters));
+    request.orderBy(asc(subQuery.actionId));
+
+    let actions = await request;
+
+    if (relationFilters?.pilotes?.length) {
+      actions = await this.enrichWithPilotesDetails(actions);
+    }
+
+    if (relationFilters?.services?.length) {
+      actions = await this.enrichWithServicesDetails(actions);
+    }
+
+    return actions;
+  }
+
+  private applyRelationFilters(
+    filters: SQL[],
+    subQuery: any,
+    relationFilters: RelationFilters
+  ) {
+    const { pilotes, services } = relationFilters;
 
     if (pilotes?.length) {
       const tagIds = pilotes.flatMap((p) => ('tagId' in p ? [p.tagId] : []));
@@ -108,21 +151,6 @@ export class ListActionDefinitionsService {
 
       filters.push(inArray(subQuery.actionId, servicesSubQuery));
     }
-
-    request.where(and(...filters));
-    request.orderBy(asc(subQuery.actionId));
-
-    let actions = await request;
-
-    if (pilotes?.length) {
-      actions = await this.enrichWithPilotesDetails(actions);
-    }
-
-    if (services?.length) {
-      actions = await this.enrichWithServicesDetails(actions);
-    }
-
-    return actions;
   }
 
   private listWithDepth() {
