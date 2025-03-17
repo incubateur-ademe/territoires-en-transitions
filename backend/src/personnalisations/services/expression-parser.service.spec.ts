@@ -657,4 +657,49 @@ sinon si identite(type, EPCI) et reponse(dechets_2, NON) alors min(score(cae_1.2
       ).toBe(null);
     });
   });
+
+
+  it('Permet de tester si la collectivité a le flag `dansAireUrbaine`', async () => {
+    const expression = `si identite(dans_aire_urbaine, oui) alors 1 sinon 2\n`;
+
+    const collectivite = {
+      type: CollectiviteTypeEnum.COMMUNE,
+      soustype: null,
+      populationTags: [CollectivitePopulationTypeEnum.MOINS_DE_20000],
+      drom: false,
+    };
+    expect(
+      expressionParserService.parseAndEvaluateExpression(
+        expression,
+        undefined,
+        {
+          ...collectivite,
+          dansAireUrbaine: true,
+        }
+      )
+    ).toBe(1);
+
+    expect(
+      expressionParserService.parseAndEvaluateExpression(
+        expression,
+        undefined,
+        {
+          ...collectivite,
+          dansAireUrbaine: false,
+        }
+      )
+    ).toBe(2);
+
+    expect(
+      expressionParserService.parseAndEvaluateExpression(
+        expression,
+        undefined,
+        {
+          ...collectivite,
+          dansAireUrbaine: null,
+        }
+      )
+    ).toBe(2);
+  });
+
 });
