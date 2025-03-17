@@ -455,7 +455,8 @@ class CollectiviteExpressionVisitor extends BaseCSTVisitor {
     const identifier = this.visit(ctx.identifier) as
       | 'type'
       | 'population'
-      | 'localisation';
+      | 'localisation'
+      | 'dans_aire_urbaine';
     const primary = this.visit(ctx.primary);
     if (!this.identiteCollectivite) {
       throw new Error(
@@ -472,6 +473,8 @@ class CollectiviteExpressionVisitor extends BaseCSTVisitor {
     } else if (identifier === 'localisation') {
       const drom = primary === 'DOM';
       return this.identiteCollectivite.drom === drom;
+    } else if (identifier === 'dans_aire_urbaine') {
+      return this.identiteCollectivite.dansAireUrbaine === primary;
     }
   }
 

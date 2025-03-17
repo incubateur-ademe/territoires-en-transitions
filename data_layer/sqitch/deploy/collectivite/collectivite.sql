@@ -2,12 +2,29 @@
 
 BEGIN;
 
+alter table collectivite
+  add column dans_aire_urbaine boolean;
 
--- Create a GIN index for faster trigram searches (enabled by the extension `pg_trgm`)
--- (slower to update but faster to search than a GIST index)
-CREATE INDEX epci_nom_gin_trgm_ops_idx ON epci USING gin (nom gin_trgm_ops);
-CREATE INDEX commune_nom_gin_trgm_ops_idx ON commune USING gin (nom gin_trgm_ops);
+-- pour importer le statut d'unité urbaine de la commune
+-- source : https://www.insee.fr/fr/information/4802589
+create table imports.unite_urbaine
+(
+    code             codegeo primary key,
+    statut_com_uu    varchar(1)  not null
+);
 
+-- insère le statut dans la table collectivité (à lancer manuellement apràs avoir importé le csv)
+update collectivite
+set dans_aire_urbaine = (
+  case
+    when i.statut_com_uu = 'C' then true
+    when i.statut_com_uu = 'B' then true
+    when i.statut_com_uu = 'I' then true
+    when i.statut_com_uu = 'H' then false
+    else null
+  end
+)
+from (select * from imports.unite_urbaine) as i
+where collectivite.commune_code = i.code;
 
 COMMIT;
-

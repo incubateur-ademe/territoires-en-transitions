@@ -2,7 +2,11 @@
 
 BEGIN;
 
-DROP INDEX epci_nom_gin_trgm_ops_idx;
-DROP INDEX commune_nom_gin_trgm_ops_idx;
+
+alter table collectivite
+  drop column dans_aire_urbaine;
+
+drop table imports.unite_urbaine;
 
 COMMIT;
+
