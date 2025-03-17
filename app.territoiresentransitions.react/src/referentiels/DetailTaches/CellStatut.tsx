@@ -1,18 +1,18 @@
 import { SelectActionStatut } from '@/app/referentiels/actions/action-statut/action-statut.select';
 import { useEditActionStatutIsDisabled } from '@/app/referentiels/actions/action-statut/use-action-statut';
-import { statutAvancementEnumSchema } from '@/domain/referentiels';
+import { statutAvancementIncludingNonConcerneEnumSchema } from '@/domain/referentiels';
 import { useCallback } from 'react';
 import { TCellProps } from './DetailTacheTable';
 
 /** Affiche le sélecteur permettant de mettre à jour le statut d'une tâche */
 export const CellStatut = ({ row, value, updateStatut }: TCellProps) => {
-  const { action_id, type } = row.original;
+  const { action_id, type, concerne } = row.original;
   const isDisabled = useEditActionStatutIsDisabled(action_id);
   const filled =
     row.original.avancement_descendants?.filter((av) => av !== 'non_renseigne')
       .length > 0;
 
-  let items = [...statutAvancementEnumSchema.options];
+  let items = [...statutAvancementIncludingNonConcerneEnumSchema.options];
 
   if (type === 'sous-action' && value !== 'non_renseigne' && filled) {
     items = items.filter((item) => item !== 'non_renseigne');
@@ -51,7 +51,7 @@ export const CellStatut = ({ row, value, updateStatut }: TCellProps) => {
       <SelectActionStatut
         items={items}
         disabled={isDisabled}
-        value={value}
+        value={concerne === false ? 'non_concerne' : value}
         onChange={handleChange}
       />
     </div>
