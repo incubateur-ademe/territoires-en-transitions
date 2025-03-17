@@ -7,7 +7,6 @@ import {
   StatutAvancement,
   StatutAvancementEnum,
 } from '@/domain/referentiels';
-import { intersection } from 'es-toolkit';
 import { useMutation, useQuery, useQueryClient } from 'react-query';
 import { TableOptions } from 'react-table';
 import { useSaveActionStatut } from '../actions/action-statut/use-action-statut';
@@ -97,82 +96,153 @@ export const NEW_useTableData: UseTableData = () => {
 
     const { statut: statuts } = filters;
 
+    // Filtre tous les statuts
     if (statuts.includes('tous')) {
       return true;
     }
 
-    if (statuts.includes('non_renseigne') && !action.score.renseigne) {
-      return true;
+    switch (action.actionType) {
+      case 'axe':
+      case 'sous-axe':
+      case 'action':
+        // Axe / Sous-axe / Action qui contient
+        // une sous-action ou une tâche non concernée
+        if (
+          statuts.includes('non_concerne') &&
+          flatMapActionsEnfants(action).some((a) => a.score.concerne === false)
+        ) {
+          return true;
+        }
+        // Axe / Sous-axe / Action qui contient
+        // une sous-action ou une tâche non renseignée
+        // (si au moins une tâche d'une sous-action est non
+        // renseignée, alors la sous-action est non renseignée)
+        if (
+          statuts.includes('non_renseigne') &&
+          flatMapActionsEnfants(action).some(
+            (act) =>
+              act.actionType === 'sous-action' &&
+              act.score.concerne === true &&
+              act.score.renseigne === false &&
+              act.actionsEnfant.some(
+                (a) => a.score.concerne === true && a.score.renseigne === false
+              )
+          )
+        ) {
+          return true;
+        }
+        // Axe / Sous-axe / Action qui contient
+        // une sous-action ou une tâche détaillée
+        // (une sous-action peut être considérée détaillée si
+        // elle est non renseignée mais avec au moins une tâche renseignée)
+        if (
+          statuts.includes('detaille') &&
+          flatMapActionsEnfants(action).some(
+            (act) =>
+              act.score.avancement === 'detaille' ||
+              (act.actionType === 'sous-action' &&
+                act.score.concerne === true &&
+                act.score.renseigne === false &&
+                act.actionsEnfant.some(
+                  (a) => a.score.concerne === true && a.score.renseigne === true
+                ))
+          )
+        ) {
+          return true;
+        }
+        // Axe / Sous-axe / Action qui contient une sous-action
+        // ou une tâche de statut égal à un des filtres
+        // (hors sous-actions / tâches non concernées non renseignées)
+        if (
+          flatMapActionsEnfants(action).some(
+            (a) =>
+              a.score.concerne === true &&
+              a.score.renseigne === true &&
+              a.score.avancement !== 'non_renseigne' &&
+              statuts.includes(a.score.avancement ?? '')
+          )
+        ) {
+          return true;
+        }
+        return false;
+      case 'sous-action':
+        // Sous-action non concernée, ou contenant une tâche non concernée
+        if (
+          statuts.includes('non_concerne') &&
+          (action.score.concerne === false ||
+            action.actionsEnfant.some((a) => a.score.concerne === false))
+        ) {
+          return true;
+        }
+        // Sous-action non renseignée, ou contenant une tâche non renseignée
+        // (si au moins une tâche d'une sous-action est non
+        // renseignée, alors la sous-action est non renseignée)
+        if (
+          statuts.includes('non_renseigne') &&
+          action.score.concerne === true &&
+          action.score.renseigne === false
+        ) {
+          return true;
+        }
+        // Sous action détaillée
+        // - avec statut détaillé
+        // - OU avec statut non renseigné, et des tâches renseignées
+        // ou sous-action contenant une tâche au statut détaillé
+        if (
+          statuts.includes('detaille') &&
+          (action.score.avancement === 'detaille' ||
+            action.actionsEnfant.some(
+              (a) => a.score.avancement === 'detaille'
+            ) ||
+            (action.score.concerne === true &&
+              action.score.renseigne === false &&
+              action.actionsEnfant.some(
+                (a) => a.score.concerne === true && a.score.renseigne === true
+              )))
+        ) {
+          return true;
+        }
+        // Sous action dont le statut est égal à un des filtres
+        // ou contenant une tâche de statut égal à un des filtres
+        if (
+          action.score.concerne === true &&
+          action.score.renseigne === true &&
+          action.score.avancement !== 'non_renseigne' &&
+          (statuts.includes(action.score.avancement ?? '') ||
+            action.actionsEnfant.some((a) =>
+              statuts.includes(a.score.avancement ?? '')
+            ))
+        ) {
+          return true;
+        }
+        return false;
+      case 'tache':
+        // Tâche non concernée
+        if (
+          statuts.includes('non_concerne') &&
+          action.score.concerne === false
+        ) {
+          return true;
+        }
+        if (
+          statuts.includes('non_renseigne') &&
+          action.score.concerne === true &&
+          action.score.renseigne === false
+        ) {
+          return true;
+        }
+        // Tâche concernée, de statut égal à un des filtres
+        if (
+          statuts.includes(action.score.avancement ?? '') &&
+          action.score.concerne === true &&
+          action.score.renseigne === true
+        ) {
+          return true;
+        }
+        return false;
+      default:
+        return false;
     }
-
-    if (statuts.includes('detaille')) {
-      if (
-        action.actionType === 'tache' &&
-        action.score.avancement === 'detaille'
-      ) {
-        return true;
-      }
-
-      if (
-        action.actionType === 'sous-action' &&
-        action.score.avancement === 'non_renseigne' &&
-        intersection(
-          action.actionsEnfant.map((a) => a.score.avancement),
-          ['fait', 'programme', 'pas_fait', 'detaille']
-        ).length > 0
-      ) {
-        return true;
-      }
-
-      if (
-        ['axe', 'sous-axe', 'action'].includes(action.actionType) &&
-        intersection(
-          action.actionsEnfant.map((a) => a.score.avancement),
-          ['fait', 'programme', 'pas_fait', 'detaille']
-        ).length > 0 &&
-        intersection(
-          action.actionsEnfant.map((a) => a.score.avancement),
-          ['non_renseigne']
-        ).length > 0
-      ) {
-        return true;
-      }
-    }
-
-    // On affiche les sous-actions/tâches avec un statut qui correspond aux filtres
-    if (
-      ['sous-action', 'tache'].includes(action.actionType) &&
-      statuts.includes(action.score.avancement ?? '')
-    ) {
-      return true;
-    }
-
-    // On affiche aussi la sous-action si jamais elle a un statut 'non_renseigné'
-    // mais que des tâches ont un statut qui correspond aux filtres
-    if (
-      action.actionType === 'sous-action' &&
-      action.score.avancement === 'non_renseigne' &&
-      intersection(
-        flatMapActionsEnfants(action).map((a) => a.score.avancement),
-        statuts
-      ).length > 0
-    ) {
-      return true;
-    }
-
-    // On affiche les axes/sous-axes/actions seulement si elles ont
-    // des sous-actions ou tâches renseignées avec un statut qui correspond aux filtres
-    if (
-      ['axe', 'sous-axe', 'action'].includes(action.actionType) &&
-      intersection(
-        flatMapActionsEnfants(action).map((a) => a.score.avancement),
-        statuts
-      ).length > 0
-    ) {
-      return true;
-    }
-
-    return false;
   };
 
   const getSubRows = (row: any) => {
@@ -232,10 +302,13 @@ export const NEW_useTableData: UseTableData = () => {
       saveActionStatut({
         collectiviteId,
         actionId,
-        avancement: avancement as StatutAvancement,
+        avancement:
+          avancement === 'non_concerne'
+            ? 'non_renseigne'
+            : (avancement as StatutAvancement),
         avancementDetaille:
           avancement === 'detaille' ? [0.25, 0.5, 0.25] : undefined,
-        concerne: true,
+        concerne: avancement === 'non_concerne' ? false : true,
       });
     },
   };
