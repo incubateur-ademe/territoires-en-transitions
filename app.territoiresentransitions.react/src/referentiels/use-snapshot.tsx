@@ -29,12 +29,16 @@ export function useSnapshot({ actionId }: { actionId: string }) {
   );
 }
 
-export function useSnapshotList(referentielId: ReferentielId) {
+export function useListSnapshots(referentielId: ReferentielId) {
   const collectiviteId = useCollectiviteId();
 
   return trpc.referentiels.snapshots.list.useQuery({
     collectiviteId,
     referentielId,
+  }, {
+    select({ snapshots }) {
+      return snapshots
+    },
   });
 }
 
