@@ -1,4 +1,10 @@
 import { modifiedSinceSchema } from '@/backend/utils/modified-since.enum';
+import {
+  getZodQueryEnum,
+  zodQueryBoolean,
+  zodQueryNumberArray,
+  zodQueryStringArray,
+} from '@/domain/utils';
 import { z } from 'zod';
 import {
   ciblesEnumSchema,
@@ -16,269 +22,93 @@ export type TypePeriodeEnumType = (typeof typePeriodeEnumValues)[number];
 
 export const typePeriodeEnumSchema = z.enum(typePeriodeEnumValues);
 
-/**
- * TODO
- * export const filtreSchema = filtreRessourceLieesSchema
-  .pick({
-    ficheActionIds: true,
-    planActionIds: true,
-    referentielActionIds: true,
-    linkedFicheActionIds: true,
-    utilisateurPiloteIds: true,
-    personnePiloteIds: true,
-    utilisateurReferentIds: true,
-    partenaireIds: true,
-    personneReferenteIds: true,
-    structurePiloteIds: true,
-    servicePiloteIds: true,
-    thematiqueIds: true,
-    financeurIds: true,
-  })
-  .merge(filtreSpecifiqueSchema);
- */
-
 export const fetchFichesFilterRequestSchema = z
   .object({
-    noPilote: z
-      .union([
-        z.enum(['true', 'false']).transform((value) => value === 'true'),
-        z.boolean(),
-      ])
+    noPilote: zodQueryBoolean
       .optional()
       .describe(
         `Aucun utilisateur ou personne pilote n'est associé à la fiche`
       ),
-    budgetPrevisionnel: z
-      .union([
-        z.enum(['true', 'false']).transform((value) => value === 'true'),
-        z.boolean(),
-      ])
+    budgetPrevisionnel: zodQueryBoolean
       .optional()
       .describe(`A un budget prévisionnel`),
-    hasIndicateurLies: z
-      .union([
-        z.enum(['true', 'false']).transform((value) => value === 'true'),
-        z.boolean(),
-      ])
+    hasIndicateurLies: zodQueryBoolean
       .optional()
       .describe(`A indicateur(s) associé(s)`),
-    ameliorationContinue: z
-      .union([
-        z.enum(['true', 'false']).transform((value) => value === 'true'),
-        z.boolean(),
-      ])
+    ameliorationContinue: zodQueryBoolean
       .optional()
       .describe(`Est en amélioration continue`),
-    restreint: z
-      .union([
-        z.enum(['true', 'false']).transform((value) => value === 'true'),
-        z.boolean(),
-      ])
+    restreint: zodQueryBoolean
       .optional()
       .describe(`Fiche action en mode privé`),
-    noServicePilote: z
-      .union([
-        z.enum(['true', 'false']).transform((value) => value === 'true'),
-        z.boolean(),
-      ])
+    noServicePilote: zodQueryBoolean
       .optional()
       .describe(`Aucune direction ou service pilote n'est associée à la fiche`),
-    noStatut: z
-      .union([
-        z.enum(['true', 'false']).transform((value) => value === 'true'),
-        z.boolean(),
-      ])
-      .optional()
-      .describe(`Aucun statut`),
-    statuts: z
-      .union([
-        z
-          .string()
-          .transform((value) =>
-            typeof value === 'string' ? value.split(',') : value
-          )
-          .pipe(statutsEnumSchema.array()),
-        statutsEnumSchema.array(),
-      ])
+    noStatut: zodQueryBoolean.optional().describe(`Aucun statut`),
+    statuts: getZodQueryEnum(statutsEnumSchema)
       .optional()
       .describe('Liste des statuts séparés par des virgules'),
-    noPriorite: z
-      .union([
-        z.enum(['true', 'false']).transform((value) => value === 'true'),
-        z.boolean(),
-      ])
-      .optional()
-      .describe(`Aucune priorité`),
-    priorites: z
-      .union([
-        z
-          .string()
-          .transform((value) =>
-            typeof value === 'string' ? value.split(',') : value
-          )
-          .pipe(prioriteEnumSchema.array()),
-        prioriteEnumSchema.array(),
-      ])
+    noPriorite: zodQueryBoolean.optional().describe(`Aucune priorité`),
+    priorites: getZodQueryEnum(prioriteEnumSchema)
       .optional()
       .describe('Liste des priorités séparés par des virgules'),
-    cibles: z
-      .union([
-        z
-          .string()
-          .transform((value) =>
-            typeof value === 'string' ? value.split(',') : value
-          )
-          .pipe(ciblesEnumSchema.array()),
-        ciblesEnumSchema.array(),
-      ])
+    cibles: getZodQueryEnum(ciblesEnumSchema)
       .optional()
       .describe('Liste des cibles séparées par des virgules'),
-    partenaireIds: z
-      .union([
-        z
-          .string()
-          .transform((value) =>
-            typeof value === 'string' ? value.split(',') : value
-          )
-          .pipe(z.coerce.number().array()),
-        z.number().array(),
-      ])
+    partenaireIds: zodQueryNumberArray
       .optional()
       .describe(
         'Liste des identifiants de tags de partenaires séparés par des virgules'
       ),
-    financeurIds: z
-      .union([
-        z
-          .string()
-          .transform((value) =>
-            typeof value === 'string' ? value.split(',') : value
-          )
-          .pipe(z.coerce.number().array()),
-        z.number().array(),
-      ])
+    financeurIds: zodQueryNumberArray
       .optional()
       .describe(
         'Liste des identifiants de tags de financeur séparés par des virgules'
       ),
-    thematiqueIds: z
-      .union([
-        z
-          .string()
-          .transform((value) =>
-            typeof value === 'string' ? value.split(',') : value
-          )
-          .pipe(z.coerce.number().array()),
-        z.number().array(),
-      ])
+    thematiqueIds: zodQueryNumberArray
       .optional()
       .describe(
         'Liste des identifiants de thématiques séparés par des virgules'
       ),
-    sousThematiqueIds: z
-      .union([
-        z
-          .string()
-          .transform((value) =>
-            typeof value === 'string' ? value.split(',') : value
-          )
-          .pipe(z.coerce.number().array()),
-        z.number().array(),
-      ])
+    sousThematiqueIds: zodQueryNumberArray
       .optional()
       .describe(
         'Liste des identifiants de sous-thématiques séparés par des virgules'
       ),
-    personnePiloteIds: z
-      .union([
-        z
-          .string()
-          .transform((value) =>
-            typeof value === 'string' ? value.split(',') : value
-          )
-          .pipe(z.coerce.number().array()),
-        z.number().array(),
-      ])
+    personnePiloteIds: zodQueryNumberArray
       .optional()
       .describe(
         'Liste des identifiants de tags des personnes pilote séparées par des virgules'
       ),
-    utilisateurPiloteIds: z
-      .union([
-        z
-          .string()
-          .transform((value) =>
-            typeof value === 'string' ? value.split(',') : value
-          ),
-        z.string().array(),
-      ])
+    utilisateurPiloteIds: zodQueryStringArray
       .optional()
       .describe(
         'Liste des identifiants des utilisateurs pilote séparées par des virgules'
       ),
-    personneReferenteIds: z
-      .union([
-        z
-          .string()
-          .transform((value) =>
-            typeof value === 'string' ? value.split(',') : value
-          )
-          .pipe(z.coerce.number().array()),
-        z.number().array(),
-      ])
+    libreTagsIds: zodQueryNumberArray
+      .optional()
+      .describe(
+        'Liste des identifiants des tags libres séparées par des virgules'
+      ),
+    personneReferenteIds: zodQueryNumberArray
       .optional()
       .describe(
         'Liste des identifiants de tags des personnes pilote séparées par des virgules'
       ),
-    utilisateurReferentIds: z
-      .union([
-        z
-          .string()
-          .transform((value) =>
-            typeof value === 'string' ? value.split(',') : value
-          ),
-        z.string().array(),
-      ])
+    utilisateurReferentIds: zodQueryStringArray
       .optional()
       .describe(
         'Liste des identifiants des utilisateurs pilote séparées par des virgules'
       ),
-    servicePiloteIds: z
-      .union([
-        z
-          .string()
-          .transform((value) =>
-            typeof value === 'string' ? value.split(',') : value
-          )
-          .pipe(z.coerce.number().array()),
-        z.number().array(),
-      ])
+    servicePiloteIds: zodQueryNumberArray
       .optional()
       .describe(
         'Liste des identifiants de tags de services séparés par des virgules'
       ),
-    structurePiloteIds: z
-      .union([
-        z
-          .string()
-          .transform((value) =>
-            typeof value === 'string' ? value.split(',') : value
-          )
-          .pipe(z.coerce.number().array()),
-        z.number().array(),
-      ])
+    structurePiloteIds: zodQueryNumberArray
       .optional()
       .describe('Liste des identifiants de structure séparés par des virgules'),
-    planActionIds: z
-      .union([
-        z
-          .string()
-          .transform((value) =>
-            typeof value === 'string' ? value.split(',') : value
-          )
-          .pipe(z.coerce.number().array()),
-        z.number().array(),
-      ])
+    planActionIds: zodQueryNumberArray
       .optional()
       .describe(
         "Liste des identifiants des plans d'action séparés par des virgules"
