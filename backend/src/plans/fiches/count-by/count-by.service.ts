@@ -431,13 +431,13 @@ export class CountByService {
   private getFicheActionSousThematiquesQuery() {
     return this.databaseService.db
       .select({
-        fiche_id: ficheActionSousThematiqueTable.ficheId,
-        sous_thematique_ids: sql<
+        ficheId: ficheActionSousThematiqueTable.ficheId,
+        sousThematiqueIds: sql<
           number[]
         >`array_agg(${ficheActionSousThematiqueTable.thematiqueId})`.as(
           'sous_thematique_ids'
         ),
-        sous_thematiques: sql<
+        sousThematiques: sql<
           { id: number; nom: string }[]
         >`array_agg(json_build_object('id', ${ficheActionSousThematiqueTable.thematiqueId}, 'nom', ${sousThematiqueTable.nom} ))`.as(
           'sous_thematiques'
@@ -455,8 +455,8 @@ export class CountByService {
   private getFicheActionThematiquesQuery() {
     return this.databaseService.db
       .select({
-        fiche_id: ficheActionThematiqueTable.ficheId,
-        thematique_ids: sql<
+        ficheId: ficheActionThematiqueTable.ficheId,
+        thematiqueIds: sql<
           number[]
         >`array_agg(${ficheActionThematiqueTable.thematiqueId})`.as(
           'thematique_ids'
@@ -479,8 +479,8 @@ export class CountByService {
   private getFicheActionIndicateursQuery() {
     return this.databaseService.db
       .select({
-        fiche_id: ficheActionIndicateurTable.ficheId,
-        thematique_ids: sql<
+        ficheId: ficheActionIndicateurTable.ficheId,
+        thematiqueIds: sql<
           number[]
         >`array_agg(${ficheActionIndicateurTable.indicateurId})`.as(
           'indicateur_ids'
@@ -506,13 +506,13 @@ export class CountByService {
   private getFicheActionReferentTagsQuery() {
     return this.databaseService.db
       .select({
-        fiche_id: ficheActionReferentTable.ficheId,
-        referent_tag_ids: sql<
+        ficheId: ficheActionReferentTable.ficheId,
+        referentTagIds: sql<
           number[]
         >`array_remove(array_agg(${ficheActionReferentTable.tagId}), NULL)`.as(
           'referent_tag_ids'
         ),
-        referent_user_ids: sql<
+        referentUserIds: sql<
           string[]
         >`array_remove(array_agg(${ficheActionReferentTable.userId}::text), NULL)`.as(
           'referent_user_ids'
@@ -542,13 +542,13 @@ export class CountByService {
   private getFicheActionEffetsAttendusQuery() {
     return this.databaseService.db
       .select({
-        fiche_id: ficheActionEffetAttenduTable.ficheId,
-        effet_attendu_ids: sql<
+        ficheId: ficheActionEffetAttenduTable.ficheId,
+        effetAttenduIds: sql<
           number[]
         >`array_agg(${ficheActionEffetAttenduTable.effetAttenduId})`.as(
           'effet_attendu_ids'
         ),
-        effets_attendus: sql<
+        effetsAttendus: sql<
           { id: number; nom: string }[]
         >`array_agg(json_build_object('id', ${ficheActionEffetAttenduTable.effetAttenduId}, 'nom', ${effetAttenduTable.nom} ))`.as(
           'effets_attendus'
@@ -566,13 +566,13 @@ export class CountByService {
   private getFicheActionFinanceurTagsQuery() {
     return this.databaseService.db
       .select({
-        fiche_id: ficheActionFinanceurTagTable.ficheId,
-        financeur_tag_ids: sql<
+        ficheId: ficheActionFinanceurTagTable.ficheId,
+        financeurTagIds: sql<
           number[]
         >`array_agg(${ficheActionFinanceurTagTable.financeurTagId})`.as(
           'financeur_tag_ids'
         ),
-        financeur_tags: sql<
+        financeurTags: sql<
           { id: number; nom: string }[]
         >`array_agg(json_build_object('id', ${ficheActionFinanceurTagTable.financeurTagId}, 'nom', ${financeurTagTable.nom} ))`.as(
           'financeur_tags'
@@ -590,13 +590,13 @@ export class CountByService {
   private getFicheActionLibreTagsQuery() {
     return this.databaseService.db
       .select({
-        fiche_id: ficheActionLibreTagTable.ficheId,
-        libre_tag_ids: sql<
+        ficheId: ficheActionLibreTagTable.ficheId,
+        libreTagIds: sql<
           number[]
         >`array_agg(${ficheActionLibreTagTable.libreTagId})`.as(
           'libre_tag_ids'
         ),
-        libre_tags: sql<
+        libreTags: sql<
           { id: number; nom: string }[]
         >`array_agg(json_build_object('id', ${ficheActionLibreTagTable.libreTagId}, 'nom', ${libreTagTable.nom} ))`.as(
           'libre_tags'
@@ -614,13 +614,13 @@ export class CountByService {
   private getFicheActionStructureTagsQuery() {
     return this.databaseService.db
       .select({
-        fiche_id: ficheActionStructureTagTable.ficheId,
-        structure_tag_ids: sql<
+        ficheId: ficheActionStructureTagTable.ficheId,
+        structureTagIds: sql<
           number[]
         >`array_agg(${ficheActionStructureTagTable.structureTagId})`.as(
           'structure_tag_ids'
         ),
-        structure_tags: sql<
+        structureTags: sql<
           { id: number; nom: string }[]
         >`array_agg(json_build_object('id', ${ficheActionStructureTagTable.structureTagId}, 'nom', ${structureTagTable.nom} ))`.as(
           'structure_tags'
@@ -638,13 +638,13 @@ export class CountByService {
   private getFicheActionPartenaireTagsQuery() {
     return this.databaseService.db
       .select({
-        fiche_id: ficheActionPartenaireTagTable.ficheId,
-        partenaire_tag_ids: sql<
+        ficheId: ficheActionPartenaireTagTable.ficheId,
+        partenaireTagIds: sql<
           number[]
         >`array_agg(${ficheActionPartenaireTagTable.partenaireTagId})`.as(
           'partenaire_tag_ids'
         ),
-        partenaire_tags: sql<
+        partenaireTags: sql<
           { id: number; nom: string }[]
         >`array_agg(json_build_object('id', ${ficheActionPartenaireTagTable.partenaireTagId}, 'nom', ${partenaireTagTable.nom} ))`.as(
           'partenaire_tags'
@@ -665,8 +665,8 @@ export class CountByService {
 
     return this.databaseService.db
       .select({
-        fiche_id: ficheActionAxeTable.ficheId,
-        axe_ids: sql<number[]>`array_agg(${ficheActionAxeTable.axeId})`.as(
+        ficheId: ficheActionAxeTable.ficheId,
+        axeIds: sql<number[]>`array_agg(${ficheActionAxeTable.axeId})`.as(
           'axe_ids'
         ),
         axes: sql<
@@ -679,7 +679,7 @@ export class CountByService {
         >`array_agg(json_build_object('id', ${ficheActionAxeTable.axeId}, 'nom', ${axeTable.nom}, 'parentId', ${parentAxeTable.id}, 'parentNom', ${parentAxeTable.nom}))`.as(
           'axes'
         ),
-        plan_ids: sql<
+        planIds: sql<
           number[]
         >`array_agg(COALESCE(${axeTable.plan}, ${axeTable.id}))`.as('plan_ids'),
         plans: sql<
@@ -705,13 +705,13 @@ export class CountByService {
   private getFicheActionServiceTagsQuery() {
     return this.databaseService.db
       .select({
-        fiche_id: ficheActionServiceTagTable.ficheId,
-        service_tag_ids: sql<
+        ficheId: ficheActionServiceTagTable.ficheId,
+        serviceTagIds: sql<
           number[]
         >`array_agg(${ficheActionServiceTagTable.serviceTagId})`.as(
           'service_tag_ids'
         ),
-        service_tags: sql<
+        serviceTags: sql<
           { id: number; nom: string }[]
         >`array_agg(json_build_object('id', ${ficheActionServiceTagTable.serviceTagId}, 'nom', ${serviceTagTable.nom} ))`.as(
           'service_tags'
@@ -729,13 +729,13 @@ export class CountByService {
   private getFicheActionPilotesQuery() {
     return this.databaseService.db
       .select({
-        fiche_id: ficheActionPiloteTable.ficheId,
-        pilote_tag_ids: sql<
+        ficheId: ficheActionPiloteTable.ficheId,
+        piloteTagIds: sql<
           number[]
         >`array_remove(array_agg(${ficheActionPiloteTable.tagId}), NULL)`.as(
           'pilote_tag_ids'
         ),
-        pilote_user_ids: sql<
+        piloteUserIds: sql<
           string[]
         >`array_remove(array_agg(${ficheActionPiloteTable.userId}), NULL)`.as(
           'pilote_user_ids'
@@ -791,68 +791,68 @@ export class CountByService {
     const fichesActionQuery = this.databaseService.db
       .select({
         ...getTableColumns(ficheActionTable),
-        partenaires: ficheActionPartenaireTags.partenaire_tags,
+        partenaires: ficheActionPartenaireTags.partenaireTags,
         pilotes: ficheActionPilotes.pilotes,
-        tags: ficheActionLibreTags.libre_tags,
+        tags: ficheActionLibreTags.libreTags,
         thematiques: ficheActionThematiques.thematiques,
         indicateurs: ficheActionIndicateurs.indicateurs,
-        sousThematiques: ficheActionSousThematiques.sous_thematiques,
-        structures: ficheActionStructureTags.structure_tags,
-        financeurs: ficheActionFinanceurTags.financeur_tags,
-        effetsAttendus: ficheActionEffetsAttendus.effets_attendus,
+        sousThematiques: ficheActionSousThematiques.sousThematiques,
+        structures: ficheActionStructureTags.structureTags,
+        financeurs: ficheActionFinanceurTags.financeurTags,
+        effetsAttendus: ficheActionEffetsAttendus.effetsAttendus,
         referents: ficheActionReferent.referents,
-        services: ficheActionServiceTags.service_tags,
+        services: ficheActionServiceTags.serviceTags,
         axes: ficheActionAxes.axes,
         plans: ficheActionAxes.plans,
       })
       .from(ficheActionTable)
       .leftJoin(
         ficheActionPartenaireTags,
-        eq(ficheActionPartenaireTags.fiche_id, ficheActionTable.id)
+        eq(ficheActionPartenaireTags.ficheId, ficheActionTable.id)
       )
       .leftJoin(
         ficheActionReferent,
-        eq(ficheActionReferent.fiche_id, ficheActionTable.id)
+        eq(ficheActionReferent.ficheId, ficheActionTable.id)
       )
       .leftJoin(
         ficheActionIndicateurs,
-        eq(ficheActionIndicateurs.fiche_id, ficheActionTable.id)
+        eq(ficheActionIndicateurs.ficheId, ficheActionTable.id)
       )
       .leftJoin(
         ficheActionEffetsAttendus,
-        eq(ficheActionEffetsAttendus.fiche_id, ficheActionTable.id)
+        eq(ficheActionEffetsAttendus.ficheId, ficheActionTable.id)
       )
       .leftJoin(
         ficheActionStructureTags,
-        eq(ficheActionStructureTags.fiche_id, ficheActionTable.id)
+        eq(ficheActionStructureTags.ficheId, ficheActionTable.id)
       )
       .leftJoin(
         ficheActionFinanceurTags,
-        eq(ficheActionFinanceurTags.fiche_id, ficheActionTable.id)
+        eq(ficheActionFinanceurTags.ficheId, ficheActionTable.id)
       )
       .leftJoin(
         ficheActionLibreTags,
-        eq(ficheActionLibreTags.fiche_id, ficheActionTable.id)
+        eq(ficheActionLibreTags.ficheId, ficheActionTable.id)
       )
       .leftJoin(
         ficheActionThematiques,
-        eq(ficheActionThematiques.fiche_id, ficheActionTable.id)
+        eq(ficheActionThematiques.ficheId, ficheActionTable.id)
       )
       .leftJoin(
         ficheActionSousThematiques,
-        eq(ficheActionSousThematiques.fiche_id, ficheActionTable.id)
+        eq(ficheActionSousThematiques.ficheId, ficheActionTable.id)
       )
       .leftJoin(
         ficheActionPilotes,
-        eq(ficheActionPilotes.fiche_id, ficheActionTable.id)
+        eq(ficheActionPilotes.ficheId, ficheActionTable.id)
       )
       .leftJoin(
         ficheActionServiceTags,
-        eq(ficheActionServiceTags.fiche_id, ficheActionTable.id)
+        eq(ficheActionServiceTags.ficheId, ficheActionTable.id)
       )
       .leftJoin(
         ficheActionAxes,
-        eq(ficheActionAxes.fiche_id, ficheActionTable.id)
+        eq(ficheActionAxes.ficheId, ficheActionTable.id)
       )
       .where(and(...conditions));
 
@@ -980,6 +980,13 @@ export class CountByService {
         conditions,
         sql`structure_tag_ids`,
         filter.structurePiloteIds
+      );
+    }
+    if (filter.libreTagsIds?.length) {
+      this.addArrayOverlapsConditionForIntArray(
+        conditions,
+        sql`libre_tag_ids`,
+        filter.libreTagsIds
       );
     }
     if (filter.planActionIds?.length) {
