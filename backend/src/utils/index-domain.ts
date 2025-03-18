@@ -9,3 +9,4 @@ export * from './nest/errors.utils';
 export * from './number.utils';
 export * from './pagination.schema';
 export * from './string.utils';
+export * from './zod.utils';
