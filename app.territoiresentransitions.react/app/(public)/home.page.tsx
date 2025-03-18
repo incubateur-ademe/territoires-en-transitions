@@ -37,10 +37,10 @@ export const HomePage = () => {
           En savoir plus sur l’outil
         </Button>
         <div className="flex gap-3 mb-12">
-          <Button href={signUpPath} variant="outlined">
+          <Button href={signUpPath} prefetch={false} variant="outlined">
             Créer un compte
           </Button>
-          <Button href={signInPath}>Se connecter</Button>
+          <Button href={signInPath} prefetch={false}>Se connecter</Button>
         </div>
         <Image
           className="rounded-t-3xl border-t border-l border-r border-primary-4"

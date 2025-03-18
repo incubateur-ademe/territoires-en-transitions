@@ -1,8 +1,8 @@
 import { signInPath, signUpPath } from '@/app/app/paths';
+import { useDemoMode } from '@/app/users/demo-mode-support-provider';
 import { Button, Checkbox } from '@/ui';
 import MenuUtilisateur from './MenuUtilisateur';
 import { HeaderPropsWithModalState } from './types';
-import { useDemoMode } from '@/app/users/demo-mode-support-provider';
 
 /** liens en "accès rapide" */
 export const AccesRapide = (props: HeaderPropsWithModalState) => {
@@ -40,6 +40,7 @@ export const AccesRapide = (props: HeaderPropsWithModalState) => {
               size="sm"
               icon="add-circle-line"
               href={signUpPath}
+              prefetch={false}
               onClick={() => setModalOpened(false)}
             >
               Créer un compte
@@ -53,6 +54,7 @@ export const AccesRapide = (props: HeaderPropsWithModalState) => {
               size="sm"
               icon="user-line"
               href={signInPath}
+              prefetch={false}
               onClick={() => setModalOpened(false)}
             >
               Se connecter
