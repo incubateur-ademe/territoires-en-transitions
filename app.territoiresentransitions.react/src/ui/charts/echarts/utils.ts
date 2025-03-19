@@ -109,7 +109,13 @@ export const makeReferenceSeries = (
         ? {
             animation: false,
             silent: true,
-            label: { show: showMarkLineLabel },
+            label: {
+              show: showMarkLineLabel,
+              formatter: (params) =>
+                typeof params.value === 'number'
+                  ? NumFormat.format(params.value)
+                  : '',
+            },
             symbol: 'none',
             lineStyle: { width: 2, type: 'dotted' },
             data: [{ type: 'max' }],
