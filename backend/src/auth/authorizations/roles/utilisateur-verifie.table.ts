@@ -1,4 +1,4 @@
-import { dcpTable } from '@/domain/auth';
+import { dcpTable } from '@/backend/auth/index-domain';
 import { boolean, pgTable, uuid } from 'drizzle-orm/pg-core';
 
 export const utilisateurVerifieTable = pgTable('utilisateur_verifie', {

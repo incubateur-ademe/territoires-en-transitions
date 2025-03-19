@@ -1,4 +1,9 @@
 import { PermissionService } from '@/backend/auth/authorizations/permission.service';
+import {
+  AuthUser,
+  PermissionOperation,
+  ResourceType,
+} from '@/backend/auth/index-domain';
 import { collectiviteDefaultModuleKeysSchema } from '@/backend/collectivites/tableau-de-bord/collectivite-default-module-keys.schema';
 import { collectiviteModuleEnumTypeSchema } from '@/backend/collectivites/tableau-de-bord/collectivite-module-type.schema';
 import {
@@ -10,7 +15,6 @@ import { GetTableauDeBordModuleRequestType } from '@/backend/collectivites/table
 import { tableauDeBordModuleTable } from '@/backend/collectivites/tableau-de-bord/tableau-de-bord-module.table';
 import PlanActionsService from '@/backend/plans/fiches/plan-actions.service';
 import { DatabaseService } from '@/backend/utils';
-import { AuthUser, PermissionOperation, ResourceType } from '@/domain/auth';
 import { Injectable, Logger, NotFoundException } from '@nestjs/common';
 import { and, eq, isNull, sql, SQL, SQLWrapper } from 'drizzle-orm';
 import { DateTime } from 'luxon';

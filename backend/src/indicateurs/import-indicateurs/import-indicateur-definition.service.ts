@@ -1,4 +1,9 @@
 import {
+  categorieTagTable,
+  CreateCategorieTagType,
+} from '@/backend/collectivites/index-domain';
+import { indicateurDefinitionTable } from '@/backend/indicateurs/index-domain';
+import {
   CreateIndicateurActionType,
   indicateurActionTable,
 } from '@/backend/indicateurs/shared/models/indicateur-action.table';
@@ -15,14 +20,12 @@ import {
   indicateurThematiqueTable,
 } from '@/backend/indicateurs/shared/models/indicateur-thematique.table';
 import CrudValeursService from '@/backend/indicateurs/valeurs/crud-valeurs.service';
-import { DatabaseService } from '@/backend/utils';
+import { actionRelationTable } from '@/backend/referentiels/index-domain';
 import {
-  categorieTagTable,
-  CreateCategorieTagType,
-} from '@/domain/collectivites';
-import { indicateurDefinitionTable } from '@/domain/indicateurs';
-import { actionRelationTable } from '@/domain/referentiels';
-import { CreateThematiqueType, thematiqueTable } from '@/domain/shared';
+  CreateThematiqueType,
+  thematiqueTable,
+} from '@/backend/shared/index-domain';
+import { DatabaseService } from '@/backend/utils';
 import { HttpException, HttpStatus, Injectable, Logger } from '@nestjs/common';
 import { DepGraph } from 'dependency-graph';
 import DOMPurify from 'dompurify';

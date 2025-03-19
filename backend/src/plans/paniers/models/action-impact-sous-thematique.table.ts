@@ -1,4 +1,4 @@
-import { sousThematiqueTable } from '@/domain/shared';
+import { sousThematiqueTable } from '@/backend/shared/index-domain';
 import { InferSelectModel } from 'drizzle-orm';
 import { integer, pgTable, primaryKey } from 'drizzle-orm/pg-core';
 import { actionImpactTable } from './action-impact.table';

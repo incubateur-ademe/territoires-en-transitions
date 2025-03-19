@@ -21,6 +21,9 @@
   "targetDefaults": {
     "build": {
       "dependsOn": [""]
+    },
+    "@nx/js:tsc": {
+      "cache": true
     }
   },
   "plugins": [

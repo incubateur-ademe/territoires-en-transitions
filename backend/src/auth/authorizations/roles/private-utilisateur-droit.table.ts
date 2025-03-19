@@ -1,4 +1,4 @@
-import { createdAt, modifiedAt } from '@/domain/utils';
+import { createdAt, modifiedAt } from '@/backend/utils/index-domain';
 import { boolean, integer, pgTable, serial, uuid } from 'drizzle-orm/pg-core';
 import { createSelectSchema } from 'drizzle-zod';
 import { collectiviteTable } from '../../../collectivites/shared/models/collectivite.table';

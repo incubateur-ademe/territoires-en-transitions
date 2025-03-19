@@ -1,5 +1,9 @@
+import {
+  AuthUser,
+  authUsersTable,
+  dcpTable,
+} from '@/backend/auth/index-domain';
 import { DatabaseService } from '@/backend/utils';
-import { AuthUser, authUsersTable, dcpTable } from '@/domain/auth';
 import { Injectable, UnauthorizedException } from '@nestjs/common';
 import { eq } from 'drizzle-orm';
 import { pick } from 'es-toolkit';

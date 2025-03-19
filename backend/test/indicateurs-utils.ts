@@ -1,4 +1,4 @@
-import { indicateurValeurTable } from '@/domain/indicateurs';
+import { indicateurValeurTable } from '@/backend/indicateurs/index-domain';
 import { and, eq, inArray } from 'drizzle-orm';
 import { indicateurDefinitionTable } from '../src/indicateurs/shared/models/indicateur-definition.table';
 import { DatabaseService } from '../src/utils/database/database.service';

@@ -1,4 +1,4 @@
-import { actionRelationTable } from '@/domain/referentiels';
+import { actionRelationTable } from '@/backend/referentiels/index-domain';
 import { InferSelectModel } from 'drizzle-orm';
 import { integer, pgTable, primaryKey, text } from 'drizzle-orm/pg-core';
 import { actionImpactTable } from './action-impact.table';

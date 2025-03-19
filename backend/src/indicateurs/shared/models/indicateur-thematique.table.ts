@@ -1,4 +1,4 @@
-import { thematiqueTable } from '@/domain/shared';
+import { thematiqueTable } from '@/backend/shared/index-domain';
 import { InferInsertModel, InferSelectModel } from 'drizzle-orm';
 import { integer, pgTable, primaryKey } from 'drizzle-orm/pg-core';
 import { indicateurDefinitionTable } from './indicateur-definition.table';

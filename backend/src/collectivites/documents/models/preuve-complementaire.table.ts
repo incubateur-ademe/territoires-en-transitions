@@ -1,4 +1,4 @@
-import { collectiviteTable } from '@/domain/collectivites';
+import { collectiviteTable } from '@/backend/collectivites/index-domain';
 import { InferInsertModel, InferSelectModel } from 'drizzle-orm';
 import { foreignKey, index, pgTable, text } from 'drizzle-orm/pg-core';
 import { createSelectSchema } from 'drizzle-zod';

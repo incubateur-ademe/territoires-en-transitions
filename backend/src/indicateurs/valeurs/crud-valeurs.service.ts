@@ -6,7 +6,7 @@ import { indicateurSourceSourceCalculTable } from '@/backend/indicateurs/shared/
 import IndicateurSourcesService from '@/backend/indicateurs/sources/indicateur-sources.service';
 import IndicateurValeurExpressionParserService from '@/backend/indicateurs/valeurs/indicateur-valeur-expression-parser.service';
 import { buildConflictUpdateColumns } from '@/backend/utils/database/conflict.utils';
-import { roundTo } from '@/domain/utils';
+import { roundTo } from '@/backend/utils/index-domain';
 import { createZodDto } from '@anatine/zod-nestjs';
 import { extendApi } from '@anatine/zod-openapi';
 import { BadRequestException, Injectable, Logger } from '@nestjs/common';

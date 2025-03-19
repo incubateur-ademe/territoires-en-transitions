@@ -1,3 +1,4 @@
+import { TagEnum, TagType } from '@/backend/collectivites/index-domain';
 import { ImportPlanCleanService } from '@/backend/plans/fiches/import/import-plan-clean.service';
 import { ImportPlanFetchService } from '@/backend/plans/fiches/import/import-plan-fetch.service';
 import { ImportPlanSaveService } from '@/backend/plans/fiches/import/import-plan-save.service';
@@ -10,7 +11,6 @@ import {
   TagImport,
 } from '@/backend/plans/fiches/import/import-plan.dto';
 import { DatabaseService } from '@/backend/utils';
-import { TagEnum, TagType } from '@/domain/collectivites';
 import { Injectable, Logger } from '@nestjs/common';
 import ExcelJS from 'exceljs';
 

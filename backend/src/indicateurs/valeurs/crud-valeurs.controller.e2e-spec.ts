@@ -1,3 +1,4 @@
+import { collectiviteTable } from '@/backend/collectivites/index-domain';
 import {
   getAuthToken,
   getCollectiviteIdBySiren,
@@ -7,7 +8,6 @@ import {
   YOLO_DODO,
 } from '@/backend/test';
 import { DatabaseService } from '@/backend/utils';
-import { collectiviteTable } from '@/domain/collectivites';
 import { INestApplication } from '@nestjs/common';
 import { eq } from 'drizzle-orm';
 import { default as request } from 'supertest';

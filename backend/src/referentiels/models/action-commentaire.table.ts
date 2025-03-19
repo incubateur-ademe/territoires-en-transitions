@@ -1,4 +1,4 @@
-import { modifiedAt, modifiedBy } from '@/domain/utils';
+import { modifiedAt, modifiedBy } from '@/backend/utils/index-domain';
 import { InferInsertModel, InferSelectModel } from 'drizzle-orm';
 import {
   foreignKey,

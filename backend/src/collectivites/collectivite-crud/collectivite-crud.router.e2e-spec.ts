@@ -1,20 +1,20 @@
-import { AppRouter, TrpcRouter } from '@/domain/trpc-router';
-import { inferProcedureInput } from '@trpc/server';
+import { RoleUpdateService } from '@/backend/auth/authorizations/roles/role-update.service';
 import { AuthenticatedUser } from '@/backend/auth/models/auth.models';
-import { DatabaseService } from '@/backend/utils';
+import { collectiviteBucketTable } from '@/backend/collectivites/shared/models/collectivite-bucket.table';
+import {
+  collectiviteTable,
+  collectiviteTypeEnum,
+} from '@/backend/collectivites/shared/models/collectivite.table';
 import {
   getAuthUser,
   getTestApp,
   getTestDatabase,
   getTestRouter,
 } from '@/backend/test';
-import { RoleUpdateService } from '@/backend/auth/authorizations/roles/role-update.service';
-import {
-  collectiviteTable,
-  collectiviteTypeEnum,
-} from '@/backend/collectivites/shared/models/collectivite.table';
+import { DatabaseService } from '@/backend/utils';
+import { AppRouter, TrpcRouter } from '@/backend/utils/trpc/trpc.router';
+import { inferProcedureInput } from '@trpc/server';
 import { eq } from 'drizzle-orm';
-import { collectiviteBucketTable } from '@/backend/collectivites/shared/models/collectivite-bucket.table';
 
 type upsertInput = inferProcedureInput<
   AppRouter['collectivites']['collectivites']['upsert']
@@ -104,7 +104,10 @@ describe('Test upsert collectivite', () => {
         type: collectiviteTypeEnum.EPCI,
         siren: sirenEPCI,
       };
-      const result = await caller.collectivites.collectivites.getAdditionalInformation(input);
+      const result =
+        await caller.collectivites.collectivites.getAdditionalInformation(
+          input
+        );
       expect(result).toEqual({
         type: collectiviteTypeEnum.EPCI,
         siren: sirenEPCI,
@@ -130,7 +133,10 @@ describe('Test upsert collectivite', () => {
         type: collectiviteTypeEnum.Commune,
         communeCode: '01001',
       };
-      const result = await caller.collectivites.collectivites.getAdditionalInformation(input);
+      const result =
+        await caller.collectivites.collectivites.getAdditionalInformation(
+          input
+        );
       expect(result).toEqual({
         type: collectiviteTypeEnum.Commune,
         communeCode: '01001',
@@ -155,7 +161,10 @@ describe('Test upsert collectivite', () => {
         type: collectiviteTypeEnum.Departement,
         departementCode: '31',
       };
-      const result = await caller.collectivites.collectivites.getAdditionalInformation(input);
+      const result =
+        await caller.collectivites.collectivites.getAdditionalInformation(
+          input
+        );
       expect(result).toEqual({
         type: collectiviteTypeEnum.Departement,
         departementCode: '31',
@@ -179,7 +188,10 @@ describe('Test upsert collectivite', () => {
         type: collectiviteTypeEnum.Region,
         regionCode: '76',
       };
-      const result = await caller.collectivites.collectivites.getAdditionalInformation(input);
+      const result =
+        await caller.collectivites.collectivites.getAdditionalInformation(
+          input
+        );
       expect(result).toEqual({
         type: collectiviteTypeEnum.Region,
         regionCode: '76',

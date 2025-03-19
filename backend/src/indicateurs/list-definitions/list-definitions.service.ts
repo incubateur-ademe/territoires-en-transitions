@@ -1,6 +1,10 @@
-import { AuthUser, PermissionOperation, ResourceType } from '@/domain/auth';
-import { categorieTagTable } from '@/domain/collectivites';
-import { thematiqueTable } from '@/domain/shared';
+import {
+  AuthUser,
+  PermissionOperation,
+  ResourceType,
+} from '@/backend/auth/index-domain';
+import { categorieTagTable } from '@/backend/collectivites/index-domain';
+import { thematiqueTable } from '@/backend/shared/index-domain';
 import { Injectable, Logger } from '@nestjs/common';
 import {
   aliasedTable,

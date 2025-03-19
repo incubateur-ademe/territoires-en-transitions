@@ -1,5 +1,4 @@
-import { DatabaseService } from '@/backend/utils';
-import { AuthUser } from '@/domain/auth';
+import { AuthUser } from '@/backend/auth/index-domain';
 import {
   findActionById,
   getParentIdFromActionId,
@@ -7,7 +6,8 @@ import {
   ReferentielId,
   ScoreFinal,
   StatutAvancementEnum,
-} from '@/domain/referentiels';
+} from '@/backend/referentiels/index-domain';
+import { DatabaseService } from '@/backend/utils';
 import { Injectable, Logger } from '@nestjs/common';
 import { and, desc, eq, getTableColumns, lte, sql } from 'drizzle-orm';
 import { objectToSnake } from 'ts-case-convert';

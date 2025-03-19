@@ -1,5 +1,5 @@
 import { PermissionService } from '@/backend/auth/authorizations/permission.service';
-import { toSlug } from '@/domain/utils';
+import { toSlug } from '@/backend/utils/index-domain';
 import {
   BadRequestException,
   Injectable,

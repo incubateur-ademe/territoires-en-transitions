@@ -1,4 +1,9 @@
-import { createdAt, createdBy, modifiedAt, modifiedBy } from '@/domain/utils';
+import {
+  createdAt,
+  createdBy,
+  modifiedAt,
+  modifiedBy,
+} from '@/backend/utils/index-domain';
 import { InferSelectModel } from 'drizzle-orm';
 import { date, integer, pgTable, serial, text } from 'drizzle-orm/pg-core';
 import { createInsertSchema, createSelectSchema } from 'drizzle-zod';

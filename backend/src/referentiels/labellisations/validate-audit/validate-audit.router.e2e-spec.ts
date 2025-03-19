@@ -1,4 +1,5 @@
 import { AuthenticatedUser } from '@/backend/auth/models/auth.models';
+import { ReferentielIdEnum } from '@/backend/referentiels/index-domain';
 import {
   getAuthUser,
   getTestApp,
@@ -8,7 +9,6 @@ import {
 } from '@/backend/test';
 import { DatabaseService } from '@/backend/utils/database/database.service';
 import { TrpcRouter } from '@/backend/utils/trpc/trpc.router';
-import { ReferentielIdEnum } from '@/domain/referentiels';
 import { INestApplication } from '@nestjs/common';
 import { eq } from 'drizzle-orm';
 import { SnapshotJalonEnum } from '../../snapshots/snapshot-jalon.enum';

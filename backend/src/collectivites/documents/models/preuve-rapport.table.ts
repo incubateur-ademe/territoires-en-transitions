@@ -1,5 +1,5 @@
-import { collectiviteTable } from '@/domain/collectivites';
-import { TIMESTAMP_OPTIONS } from '@/domain/utils';
+import { collectiviteTable } from '@/backend/collectivites/index-domain';
+import { TIMESTAMP_OPTIONS } from '@/backend/utils/index-domain';
 import { InferInsertModel, InferSelectModel } from 'drizzle-orm';
 import { foreignKey, index, pgTable, timestamp } from 'drizzle-orm/pg-core';
 import { createInsertSchema, createSelectSchema } from 'drizzle-zod';

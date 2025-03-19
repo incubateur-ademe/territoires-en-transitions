@@ -1,6 +1,9 @@
+import {
+  dcpTable,
+  utilisateurPermissionTable,
+} from '@/backend/auth/index-domain';
 import { personneTagTable } from '@/backend/collectivites/tags/personne-tag.table';
 import { DatabaseService } from '@/backend/utils';
-import { dcpTable, utilisateurPermissionTable } from '@/domain/auth';
 import { Injectable } from '@nestjs/common';
 import { and, eq, sql } from 'drizzle-orm';
 import { union } from 'drizzle-orm/pg-core';

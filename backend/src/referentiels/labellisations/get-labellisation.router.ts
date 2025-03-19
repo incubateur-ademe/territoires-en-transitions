@@ -1,6 +1,6 @@
 import { PermissionService } from '@/backend/auth/authorizations/permission.service';
+import { PermissionOperation, ResourceType } from '@/backend/auth/index-domain';
 import { TrpcService } from '@/backend/utils/trpc/trpc.service';
-import { PermissionOperation, ResourceType } from '@/domain/auth';
 import { Injectable } from '@nestjs/common';
 import z from 'zod';
 import { referentielIdEnumSchema } from '../index-domain';

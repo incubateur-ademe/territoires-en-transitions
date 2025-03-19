@@ -1,4 +1,4 @@
-import { effetAttenduTable } from '@/domain/shared';
+import { effetAttenduTable } from '@/backend/shared/index-domain';
 import { sql } from 'drizzle-orm';
 import { integer, pgPolicy, pgTable, primaryKey } from 'drizzle-orm/pg-core';
 import { authenticatedRole } from 'drizzle-orm/supabase';

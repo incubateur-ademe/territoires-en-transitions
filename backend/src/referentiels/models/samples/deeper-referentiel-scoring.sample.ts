@@ -1,4 +1,4 @@
-import { ScoreFinalFields } from '@/domain/referentiels';
+import { ScoreFinalFields } from '@/backend/referentiels/index-domain';
 import { ActionDefinitionEssential, TreeNode } from '../action-definition.dto';
 import {
   ActionCategorieEnum,
