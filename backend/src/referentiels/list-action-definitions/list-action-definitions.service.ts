@@ -76,7 +76,7 @@ export class ListActionDefinitionsService {
 
     const request = this.db.with(subQuery).select().from(subQuery);
 
-    const filters = [];
+    const filters = [inArray(subQuery.referentielId, referentielIds)];
 
     if (actionIds !== undefined) {
       filters.push(inArray(subQuery.actionId, actionIds));
@@ -84,10 +84,6 @@ export class ListActionDefinitionsService {
 
     if (actionTypes?.length) {
       filters.push(inArray(subQuery.actionType, actionTypes));
-    }
-
-    if (referentielIds?.length) {
-      filters.push(inArray(subQuery.referentielId, referentielIds));
     }
 
     if (relationFilters) {
