@@ -1,12 +1,12 @@
 import { ResourceType } from '@/backend/auth/authorizations/resource-type.enum';
 import { Role } from '@/backend/auth/authorizations/roles/role.enum';
-import { auditeurTable } from '@/backend/referentiels/labellisations/auditeur.table';
-import { DatabaseService } from '@/backend/utils';
 import {
   dcpTable,
   UtilisateurPermission,
   utilisateurPermissionTable,
-} from '@/domain/auth';
+} from '@/backend/auth/index-domain';
+import { auditeurTable } from '@/backend/referentiels/labellisations/auditeur.table';
+import { DatabaseService } from '@/backend/utils';
 import { Injectable, Logger } from '@nestjs/common';
 import { and, count, eq, not } from 'drizzle-orm';
 import { auditTable } from '../../../referentiels/labellisations/audit.table';

@@ -1,4 +1,4 @@
-import { modifiedAt } from '@/domain/utils';
+import { modifiedAt } from '@/backend/utils/index-domain';
 import {
   doublePrecision,
   pgEnum,

@@ -1,10 +1,10 @@
-import { modifiedSinceSchema } from '@/backend/utils/modified-since.enum';
 import {
   getZodQueryEnum,
   zodQueryBoolean,
   zodQueryNumberArray,
   zodQueryStringArray,
-} from '@/domain/utils';
+} from '@/backend/utils/index-domain';
+import { modifiedSinceSchema } from '@/backend/utils/modified-since.enum';
 import { z } from 'zod';
 import {
   ciblesEnumSchema,

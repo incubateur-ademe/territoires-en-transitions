@@ -1,4 +1,7 @@
-import { dcpTable, utilisateurPermissionTable } from '@/domain/auth';
+import {
+  dcpTable,
+  utilisateurPermissionTable,
+} from '@/backend/auth/index-domain';
 import { Injectable, Logger } from '@nestjs/common';
 import { and, eq, sql } from 'drizzle-orm';
 import { unionAll } from 'drizzle-orm/pg-core';

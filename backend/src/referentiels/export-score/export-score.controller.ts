@@ -1,8 +1,8 @@
 import { PermissionService } from '@/backend/auth/authorizations/permission.service';
 import { AllowAnonymousAccess } from '@/backend/auth/decorators/allow-anonymous-access.decorator';
 import { TokenInfo } from '@/backend/auth/decorators/token-info.decorators';
+import { AuthUser } from '@/backend/auth/index-domain';
 import { COLLECTIVITE_ID_PARAM_KEY } from '@/backend/collectivites/shared/models/collectivite-api.constants';
-import { AuthUser } from '@/domain/auth';
 import { Controller, Get, Logger, Next, Param, Res } from '@nestjs/common';
 import { ApiTags } from '@nestjs/swagger';
 import { NextFunction, Response } from 'express';

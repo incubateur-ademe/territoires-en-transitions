@@ -1,4 +1,4 @@
-import { getPaginationSchema } from '@/domain/utils';
+import { getPaginationSchema } from '@/backend/utils/index-domain';
 import { filtreRessourceLieesSchema } from './filtre-ressource-liees.schema';
 
 /**

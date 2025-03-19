@@ -1,5 +1,5 @@
 import { COLLECTIVITE_ID_ROUTE_PARAM } from '@/backend/collectivites/shared/models/collectivite-api.constants';
-import { ReferentielId } from '@/domain/referentiels';
+import { ReferentielId } from '@/backend/referentiels/index-domain';
 import { Injectable, Logger } from '@nestjs/common';
 import {
   and,

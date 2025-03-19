@@ -1,5 +1,8 @@
 import { collectiviteId } from '@/backend/collectivites/collectivite-id.column';
-import { serialIdPrimaryKey, TIMESTAMP_OPTIONS } from '@/domain/utils';
+import {
+  serialIdPrimaryKey,
+  TIMESTAMP_OPTIONS,
+} from '@/backend/utils/index-domain';
 import {
   doublePrecision,
   integer,

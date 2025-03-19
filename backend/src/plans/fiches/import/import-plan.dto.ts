@@ -4,7 +4,7 @@ import {
   ParticipationCitoyenne,
   Priorite,
   Statut,
-} from '@/domain/plans/fiches';
+} from '@/backend/plans/fiches/index-domain';
 
 export const ficheTagTypes = [
   TagEnum.Partenaire,

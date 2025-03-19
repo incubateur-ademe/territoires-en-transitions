@@ -4,7 +4,20 @@
   "sourceRoot": "app.territoiresentransitions.react",
   "projectType": "application",
   "tags": [],
-  "implicitDependencies": ["ui", "api"],
+  "implicitDependencies": ["ui", "api", "backend"],
   "// targets": "to see all targets run: nx show project app --web",
-  "targets": {}
+  "targets": {
+    "dev": {
+      "dependsOn": [{
+        "projects": "backend",
+        "target": "types"
+      }]
+    },
+    "build": {
+      "dependsOn": [{
+        "projects": "backend",
+        "target": "types"
+      }]
+    }
+  }
 }

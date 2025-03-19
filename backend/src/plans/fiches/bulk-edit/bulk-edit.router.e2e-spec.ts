@@ -1,5 +1,5 @@
 import { AuthenticatedUser } from '@/backend/auth/models/auth.models';
-import { libreTagTable } from '@/domain/collectivites';
+import { libreTagTable } from '@/backend/collectivites/index-domain';
 import {
   getAuthUser,
   getTestApp,

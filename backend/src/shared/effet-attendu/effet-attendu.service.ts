@@ -1,6 +1,6 @@
-import { Injectable } from '@nestjs/common';
+import { EffetAttendu, effetAttenduTable } from '@/backend/shared/index-domain';
 import { DatabaseService } from '@/backend/utils';
-import { EffetAttendu, effetAttenduTable } from '@/domain/shared';
+import { Injectable } from '@nestjs/common';
 
 @Injectable()
 export class EffetAttenduService {

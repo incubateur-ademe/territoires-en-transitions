@@ -1,4 +1,4 @@
-import { libreTagTable } from '@/domain/collectivites';
+import { libreTagTable } from '@/backend/collectivites/index-domain';
 import { INestApplication } from '@nestjs/common';
 import { eq } from 'drizzle-orm';
 import { default as request } from 'supertest';

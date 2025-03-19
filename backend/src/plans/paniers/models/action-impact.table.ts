@@ -4,7 +4,7 @@ import {
   tempsDeMiseEnOeuvreTable,
   thematiqueSchema,
   ThematiqueType,
-} from '@/domain/shared';
+} from '@/backend/shared/index-domain';
 import { createZodDto } from '@anatine/zod-nestjs';
 import { InferSelectModel } from 'drizzle-orm';
 import {

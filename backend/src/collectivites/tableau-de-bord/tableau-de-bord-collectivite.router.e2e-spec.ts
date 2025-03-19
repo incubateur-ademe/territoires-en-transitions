@@ -1,11 +1,11 @@
 import { AuthenticatedUser } from '@/backend/auth/models/auth.models';
-import { collectiviteDefaultModuleKeysSchema } from '@/backend/collectivites/tableau-de-bord/collectivite-default-module-keys.schema';
-import { getAuthUser, getTestRouter } from '@/backend/test';
-import { TrpcRouter } from '@/backend/utils/trpc/trpc.router';
 import {
   CreateModuleFicheActionCountByType,
   ModuleFicheActionCountByType,
-} from '@/domain/collectivites';
+} from '@/backend/collectivites/index-domain';
+import { collectiviteDefaultModuleKeysSchema } from '@/backend/collectivites/tableau-de-bord/collectivite-default-module-keys.schema';
+import { getAuthUser, getTestRouter } from '@/backend/test';
+import { TrpcRouter } from '@/backend/utils/trpc/trpc.router';
 import { cloneDeep } from 'es-toolkit';
 
 export const moduleNew: CreateModuleFicheActionCountByType = {

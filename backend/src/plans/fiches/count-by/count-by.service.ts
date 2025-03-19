@@ -1,16 +1,4 @@
-import { countByDateSlots } from '@/backend/plans/fiches/count-by/count-by-date-slots.enum';
-import {
-  GetFichesActionFilterRequestType,
-  TypePeriodeEnumType,
-} from '@/backend/plans/fiches/shared/fetch-fiches-filter.request';
-import { ficheActionReferentTable } from '@/backend/plans/fiches/shared/models/fiche-action-referent.table';
-import { DatabaseService } from '@/backend/utils';
-import {
-  CountByRecordGeneralType,
-  CountByResponseType,
-} from '@/backend/utils/count-by.dto';
-import { getModifiedSinceDate } from '@/backend/utils/modified-since.enum';
-import { dcpTable } from '@/domain/auth';
+import { dcpTable } from '@/backend/auth/index-domain';
 import {
   financeurTagTable,
   libreTagTable,
@@ -18,8 +6,9 @@ import {
   personneTagTable,
   serviceTagTable,
   structureTagTable,
-} from '@/domain/collectivites';
-import { indicateurDefinitionTable } from '@/domain/indicateurs';
+} from '@/backend/collectivites/index-domain';
+import { indicateurDefinitionTable } from '@/backend/indicateurs/index-domain';
+import { countByDateSlots } from '@/backend/plans/fiches/count-by/count-by-date-slots.enum';
 import {
   axeTable,
   ciblesEnumValues,
@@ -51,12 +40,23 @@ import {
   SANS_STRUCTURE_TAG_LABEL,
   SANS_THEMATIQUE_LABEL,
   statutsEnumValues,
-} from '@/domain/plans/fiches';
+} from '@/backend/plans/fiches/index-domain';
+import {
+  GetFichesActionFilterRequestType,
+  TypePeriodeEnumType,
+} from '@/backend/plans/fiches/shared/fetch-fiches-filter.request';
+import { ficheActionReferentTable } from '@/backend/plans/fiches/shared/models/fiche-action-referent.table';
 import {
   effetAttenduTable,
   sousThematiqueTable,
   thematiqueTable,
-} from '@/domain/shared';
+} from '@/backend/shared/index-domain';
+import { DatabaseService } from '@/backend/utils';
+import {
+  CountByRecordGeneralType,
+  CountByResponseType,
+} from '@/backend/utils/count-by.dto';
+import { getModifiedSinceDate } from '@/backend/utils/modified-since.enum';
 import { Injectable, Logger, NotImplementedException } from '@nestjs/common';
 import {
   aliasedTable,

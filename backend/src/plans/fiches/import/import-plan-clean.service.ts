@@ -1,9 +1,8 @@
+import { TagEnum, TagType } from '@/backend/collectivites/index-domain';
 import {
   PersonneImport,
   TagImport,
 } from '@/backend/plans/fiches/import/import-plan.dto';
-import { getFuse } from '@/backend/utils/fuse/fuse.utils';
-import { TagEnum, TagType } from '@/domain/collectivites';
 import {
   Cible,
   ciblesEnumValues,
@@ -13,7 +12,8 @@ import {
   prioriteEnumValues,
   Statut,
   statutsEnumValues,
-} from '@/domain/plans/fiches';
+} from '@/backend/plans/fiches/index-domain';
+import { getFuse } from '@/backend/utils/fuse/fuse.utils';
 import { Injectable } from '@nestjs/common';
 
 /** Regex to detect spaces */

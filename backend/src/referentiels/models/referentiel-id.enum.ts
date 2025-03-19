@@ -1,4 +1,4 @@
-import { getEnumValues } from '@/domain/utils';
+import { getEnumValues } from '@/backend/utils/index-domain';
 import { pgEnum } from 'drizzle-orm/pg-core';
 import z from 'zod';
 

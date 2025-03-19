@@ -2,6 +2,7 @@
 
 # compiled output
 dist
+packages/domain
 tmp
 /out-tsc
 

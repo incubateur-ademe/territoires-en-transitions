@@ -1,4 +1,4 @@
-import { getPaginationSchema } from '@/domain/utils';
+import { getPaginationSchema } from '@/backend/utils/index-domain';
 import { z } from 'zod';
 
 export const getFilteredIndicateursRequestOptionsSchema = z.object({

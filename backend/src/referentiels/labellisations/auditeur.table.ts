@@ -1,5 +1,5 @@
-import { authUsersTable } from '@/domain/auth';
-import { createdAt } from '@/domain/utils';
+import { authUsersTable } from '@/backend/auth/index-domain';
+import { createdAt } from '@/backend/utils/index-domain';
 import { integer, pgTable, primaryKey, uuid } from 'drizzle-orm/pg-core';
 import { auditTable } from './audit.table';
 

@@ -1,8 +1,8 @@
 import { PermissionService } from '@/backend/auth/authorizations/permission.service';
+import { PermissionOperation, ResourceType } from '@/backend/auth/index-domain';
 import { importRequestSchema } from '@/backend/plans/fiches/import/import-plan.request';
 import { ImportPlanService } from '@/backend/plans/fiches/import/import-plan.service';
 import { TrpcService } from '@/backend/utils/trpc/trpc.service';
-import { PermissionOperation, ResourceType } from '@/domain/auth';
 import { Injectable } from '@nestjs/common';
 
 @Injectable()

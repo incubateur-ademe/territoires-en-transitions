@@ -1,5 +1,5 @@
+import { ReferentielId } from '@/backend/referentiels/index-domain';
 import { DatabaseService } from '@/backend/utils';
-import { ReferentielId } from '@/domain/referentiels';
 import { Injectable, Logger } from '@nestjs/common';
 import { and, desc, eq, getTableColumns, lte, sql } from 'drizzle-orm';
 import { Audit, auditTable } from './audit.table';

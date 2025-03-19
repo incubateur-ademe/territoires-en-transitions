@@ -1,4 +1,4 @@
-import { indicateurDefinitionTable } from '@/domain/indicateurs';
+import { indicateurDefinitionTable } from '@/backend/indicateurs/index-domain';
 import { integer, pgTable, primaryKey } from 'drizzle-orm/pg-core';
 import { ficheActionTable } from './fiche-action.table';
 

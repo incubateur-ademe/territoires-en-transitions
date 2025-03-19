@@ -2,6 +2,7 @@ import { PermissionOperation } from '@/backend/auth/authorizations/permission-op
 import { PermissionService } from '@/backend/auth/authorizations/permission.service';
 import { ResourceType } from '@/backend/auth/authorizations/resource-type.enum';
 import { RoleUpdateService } from '@/backend/auth/authorizations/roles/role-update.service';
+import { dcpTable } from '@/backend/auth/index-domain';
 import { AuthenticatedUser } from '@/backend/auth/models/auth.models';
 import {
   getAuthUser,
@@ -10,7 +11,6 @@ import {
   YOULOU_DOUDOU,
 } from '@/backend/test';
 import { DatabaseService } from '@/backend/utils';
-import { dcpTable } from '@/domain/auth';
 import { INestApplication } from '@nestjs/common';
 import { eq } from 'drizzle-orm';
 

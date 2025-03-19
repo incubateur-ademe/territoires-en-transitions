@@ -1,4 +1,4 @@
-import { modifiedAt, modifiedBy } from '@/domain/utils';
+import { modifiedAt, modifiedBy } from '@/backend/utils/index-domain';
 import { sql } from 'drizzle-orm';
 import { foreignKey, integer, jsonb, text } from 'drizzle-orm/pg-core';
 import { authUsersTable } from '../../auth/models/auth-users.table';

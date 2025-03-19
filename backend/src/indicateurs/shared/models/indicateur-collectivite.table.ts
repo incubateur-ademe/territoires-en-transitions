@@ -1,4 +1,4 @@
-import { collectiviteTable } from '@/domain/collectivites';
+import { collectiviteTable } from '@/backend/collectivites/index-domain';
 import {
   boolean,
   integer,

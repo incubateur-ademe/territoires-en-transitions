@@ -1,5 +1,5 @@
+import { collectiviteTable } from '@/backend/collectivites/index-domain';
 import { DatabaseService } from '@/backend/utils';
-import { collectiviteTable } from '@/domain/collectivites';
 import { eq } from 'drizzle-orm';
 
 export const getCollectiviteIdBySiren = async (
