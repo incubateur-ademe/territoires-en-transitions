@@ -15,6 +15,7 @@ import {
   ReferentielIdEnum,
   actionDefinitionTable,
   actionTypeSchema,
+  referentielIdEnumSchema,
 } from '../index-domain';
 import { referentielDefinitionTable } from '../models/referentiel-definition.table';
 import { actionPiloteTable } from '../models/action-pilote.table';
@@ -46,6 +47,7 @@ export const inputSchema = z.object({
       services: z.array(z.object({ serviceTagId: z.number() })).optional(),
     })
     .optional(),
+  referentielIds: referentielIdEnumSchema.array().optional(),
 });
 
 type Input = z.infer<typeof inputSchema>;
@@ -66,6 +68,7 @@ export class ListActionDefinitionsService {
     actionIds,
     actionTypes,
     relationFilters,
+    referentielIds = [ReferentielIdEnum.CAE, ReferentielIdEnum.ECI],
   }: Input) {
     const subQuery = this.db
       .$with('action_definition_with_depth_and_type')
@@ -73,12 +76,7 @@ export class ListActionDefinitionsService {
 
     const request = this.db.with(subQuery).select().from(subQuery);
 
-    const filters = [
-      inArray(subQuery.referentielId, [
-        ReferentielIdEnum.CAE,
-        ReferentielIdEnum.ECI,
-      ]),
-    ];
+    const filters = [];
 
     if (actionIds !== undefined) {
       filters.push(inArray(subQuery.actionId, actionIds));
@@ -86,6 +84,10 @@ export class ListActionDefinitionsService {
 
     if (actionTypes?.length) {
       filters.push(inArray(subQuery.actionType, actionTypes));
+    }
+
+    if (referentielIds?.length) {
+      filters.push(inArray(subQuery.referentielId, referentielIds));
     }
 
     if (relationFilters) {
@@ -218,7 +220,7 @@ export class ListActionDefinitionsService {
     const pilotesWithDetails = await this.db
       .select({
         actionId: actionPiloteTable.actionId,
-        piloteId: actionPiloteTable.userId,
+        userId: actionPiloteTable.userId,
         tagId: actionPiloteTable.tagId,
         nom: sql<string | null>`
           CASE
@@ -241,11 +243,17 @@ export class ListActionDefinitionsService {
         )
       );
 
-    const pilotesByAction: Record<string, typeof pilotesWithDetails> = {};
-    for (const pilote of pilotesWithDetails) {
-      if (!pilote.actionId) continue;
-      pilotesByAction[pilote.actionId] = pilotesByAction[pilote.actionId] || [];
-      pilotesByAction[pilote.actionId].push(pilote);
+    const pilotesByAction: Record<
+      string,
+      Array<Omit<(typeof pilotesWithDetails)[0], 'actionId'>>
+    > = {};
+    for (const piloteWithActionId of pilotesWithDetails) {
+      if (!piloteWithActionId.actionId) continue;
+
+      const { actionId, ...pilote } = piloteWithActionId;
+
+      pilotesByAction[actionId] = pilotesByAction[actionId] || [];
+      pilotesByAction[actionId].push(pilote);
     }
 
     return actions.map((action) => ({
@@ -258,8 +266,9 @@ export class ListActionDefinitionsService {
     const servicesWithDetails = await this.db
       .select({
         actionId: actionServiceTable.actionId,
-        serviceId: actionServiceTable.serviceTagId,
+        id: actionServiceTable.serviceTagId,
         nom: serviceTagTable.nom,
+        collectiviteId: actionServiceTable.collectiviteId,
       })
       .from(actionServiceTable)
       .leftJoin(
@@ -273,12 +282,17 @@ export class ListActionDefinitionsService {
         )
       );
 
-    const servicesByAction: Record<string, typeof servicesWithDetails> = {};
-    for (const service of servicesWithDetails) {
-      if (!service.actionId) continue;
-      servicesByAction[service.actionId] =
-        servicesByAction[service.actionId] || [];
-      servicesByAction[service.actionId].push(service);
+    const servicesByAction: Record<
+      string,
+      Array<Omit<(typeof servicesWithDetails)[0], 'actionId'>>
+    > = {};
+    for (const serviceWithActionId of servicesWithDetails) {
+      if (!serviceWithActionId.actionId) continue;
+
+      const { actionId, ...service } = serviceWithActionId;
+
+      servicesByAction[actionId] = servicesByAction[actionId] || [];
+      servicesByAction[actionId].push(service);
     }
 
     return actions.map((action) => ({
