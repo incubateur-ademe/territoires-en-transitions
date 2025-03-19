@@ -1,6 +1,15 @@
 import { useListActions } from '@/app/referentiels/actions/use-list-actions';
 import { TActionRelationInsert } from '@/app/types/alias';
-import { OptionValue, SelectFilter, SelectMultipleProps } from '@/ui';
+import {
+  OptionValue,
+  SelectFilter,
+  SelectMultipleProps,
+  SelectOption,
+} from '@/ui';
+import Fuse from 'fuse.js';
+import { useEffect, useState } from 'react';
+
+const ACTION_ID_REGEXP = /(?:(cae|eci|te)?\s*)(\d(?:\.\d+){1,4})/i;
 
 type ActionsReferentielsDropdownProps = Omit<
   SelectMultipleProps,
@@ -22,6 +31,8 @@ const ActionsReferentielsDropdown = ({
   // Liste de toutes les actions
   const { data: actionListe } = useListActions();
 
+  const [filteredOptions, setFilteredOptions] = useState<SelectOption[]>([]);
+
   // Formattage des valeurs sélectionnées pour les renvoyer au composant parent
   const getSelectedActions = (values?: OptionValue[]) => {
     const selectedActions = (actionListe ?? []).filter((action) =>
@@ -36,17 +47,55 @@ const ActionsReferentielsDropdown = ({
     return formatedActions;
   };
 
+  const onSearch = (search: string) => {
+    let actionListeFiltered = actionListe ?? [];
+    if (search) {
+      const matches = search.match(ACTION_ID_REGEXP);
+      let referentiel: string | null = null;
+      let identifiant: string | null = null;
+      if (matches) {
+        referentiel = matches[1];
+        identifiant = matches[2];
+      }
+
+      if (!identifiant) {
+        const fuse = new Fuse(actionListeFiltered, {
+          keys: ['nom'],
+          threshold: 0.5,
+          shouldSort: false,
+        });
+
+        actionListeFiltered = fuse.search(search).map((r) => r.item);
+      } else {
+        actionListeFiltered = actionListeFiltered.filter((action) => {
+          return (
+            action.identifiant.startsWith(identifiant) &&
+            (!referentiel || referentiel.toLowerCase() === action.referentielId)
+          );
+        });
+      }
+    }
+
+    const options = actionListeFiltered.map((action) => ({
+      value: action.actionId,
+      label: `${action.referentiel} ${action.identifiant} - ${action.nom}`,
+    }));
+
+    setFilteredOptions(options);
+  };
+
+  useEffect(() => {
+    onSearch('');
+  }, [actionListe]);
+
   // Calcul de la liste des options pour le select
-  const options = (actionListe ?? []).map((action) => ({
-    value: action.actionId,
-    label: `${action.referentiel} ${action.identifiant} - ${action.nom}`,
-  }));
 
   return (
     <SelectFilter
       {...props}
       isSearcheable
-      options={options}
+      options={filteredOptions}
+      onSearch={onSearch}
       placeholder={props.placeholder ?? 'Recherchez par mots-clés'}
       onChange={({ values, selectedValue }) =>
         props.onChange({
