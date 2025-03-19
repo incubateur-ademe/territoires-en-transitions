@@ -50,8 +50,8 @@ export class ListActionsRouter {
             collectiviteId,
             actionIds,
             actionTypes,
-            referentielIds,
             relationFilters,
+            referentielIds,
           },
           ctx: { user },
         }) => {
