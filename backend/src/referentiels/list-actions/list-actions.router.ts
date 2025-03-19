@@ -7,6 +7,7 @@ import { ListActionDefinitionsService } from '../list-action-definitions/list-ac
 import { SnapshotsService } from '../snapshots/snapshots.service';
 import { getExtendActionWithComputedStatutsFields } from '../snapshots/snapshots.utils';
 import { ActionTypeEnum, actionTypeSchema } from './../models/action-type.enum';
+import { referentielIdEnumSchema } from '../index-domain';
 
 export const inputSchema = z.object({
   collectiviteId: z.number(),
@@ -28,6 +29,7 @@ export const inputSchema = z.object({
       services: z.array(z.object({ serviceTagId: z.number() })).optional(),
     })
     .optional(),
+  referentielIds: referentielIdEnumSchema.array().optional(),
 });
 
 @Injectable()
@@ -44,7 +46,13 @@ export class ListActionsRouter {
       .input(inputSchema)
       .query(
         async ({
-          input: { collectiviteId, actionIds, actionTypes, relationFilters },
+          input: {
+            collectiviteId,
+            actionIds,
+            actionTypes,
+            referentielIds,
+            relationFilters,
+          },
           ctx: { user },
         }) => {
           await this.permissions.isAllowed(
@@ -58,6 +66,7 @@ export class ListActionsRouter {
             actionIds,
             actionTypes,
             relationFilters,
+            referentielIds,
           });
         }
       ),
