@@ -8,6 +8,7 @@ import { useIndicateurSummary } from './useIndicateurSummary';
 import { useOpenDataIndicateursCount } from './useOpenDataIndicateurs';
 
 type IndicateursCardProps = {
+  isReadonly: boolean;
   collectiviteId: number;
   referentielId: ReferentielId;
 };
@@ -16,6 +17,7 @@ type IndicateursCardProps = {
  * Carte "indicateurs" de la synthèse de l'état des lieux.
  */
 const IndicateursCard = ({
+  isReadonly,
   collectiviteId,
   referentielId,
 }: IndicateursCardProps) => {
@@ -56,7 +58,7 @@ const IndicateursCard = ({
           })}?cat=${referentielId}`}
           size="sm"
         >
-          Compléter mes indicateurs
+          {isReadonly ? 'Voir les indicateurs' : 'Compléter mes indicateurs'}
         </Button>
         {/* TO DO: change tracker ? */}
         {openDataIndicateursCount !== 0 && (
