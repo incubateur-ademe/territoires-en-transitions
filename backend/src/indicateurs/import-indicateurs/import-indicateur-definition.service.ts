@@ -36,7 +36,7 @@ import ConfigurationService from '../../utils/config/configuration.service';
 import { buildConflictUpdateColumns } from '../../utils/database/conflict.utils';
 import SheetService from '../../utils/google-sheets/sheet.service';
 import { getErrorMessage } from '../../utils/nest/errors.utils';
-import ListDefinitionsService from '../definitions/list-definitions.service';
+import { ListDefinitionsService } from '../list-definitions/list-definitions.service';
 import { indicateurObjectifTable } from '../shared/models/indicateur-objectif.table';
 import IndicateurValeurExpressionParserService from '../valeurs/indicateur-valeur-expression-parser.service';
 import {
