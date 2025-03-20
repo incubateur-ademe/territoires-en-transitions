@@ -4,6 +4,7 @@ import { QueryKey } from 'react-query';
 import { useDeleteFicheAction } from '../../data/useDeleteFicheAction';
 
 type ModaleSuppressionProps = {
+  isReadonly?: boolean;
   ficheId: number | null;
   title: string | null;
   isInMultipleAxes: boolean;
@@ -19,6 +20,7 @@ type ModaleSuppressionProps = {
  * Bouton + modale de suppression d'une fiche action
  */
 const ModaleSuppression = ({
+  isReadonly = true,
   ficheId,
   title,
   isInMultipleAxes,
@@ -79,6 +81,7 @@ const ModaleSuppression = ({
         variant={buttonVariant}
         size="xs"
         className={buttonClassName}
+        disabled={isReadonly}
       />
     </Modal>
   );
