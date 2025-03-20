@@ -26,7 +26,7 @@ build:
 
   RUN pnpm --version
 
-  RUN pnpm build:app --excludeTaskDependencies
+  RUN pnpm build:app
 
   SAVE ARTIFACT ./app.territoiresentransitions.react/.next
   SAVE ARTIFACT ./app.territoiresentransitions.react/public

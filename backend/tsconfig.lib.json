@@ -9,7 +9,12 @@
     "vitest.config.mts",
     "src/**/*.spec.ts",
     "src/**/*.e2e-spec.ts",
-    "src/**/*.test.ts"
+    "src/**/*.test.ts",
+    "src/utils/echarts/echarts.service.ts", // ignore to avoid needing canvas
+    "src/utils/echarts/echarts.module.ts",
+    "src/utils/echarts/echarts.controller.ts",
+    "src/app.module.ts",
+    "src/main.ts"
   ],
   "include": ["src/**/*.ts"]
 }
