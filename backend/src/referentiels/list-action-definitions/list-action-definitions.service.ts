@@ -1,21 +1,11 @@
 import { DatabaseService } from '@/backend/utils';
 import { Injectable } from '@nestjs/common';
-import {
-  and,
-  asc,
-  eq,
-  getTableColumns,
-  inArray,
-  or,
-  SQL,
-  sql,
-} from 'drizzle-orm';
+import { and, asc, eq, getTableColumns, inArray, SQL, sql } from 'drizzle-orm';
 import z from 'zod';
 import {
   actionDefinitionTable,
   actionTypeSchema,
   ReferentielIdEnum,
-  referentielIdEnumSchema,
 } from '../index-domain';
 import { referentielDefinitionTable } from '../models/referentiel-definition.table';
 import { actionPiloteTable } from '../models/action-pilote.table';
@@ -25,29 +15,11 @@ import {
 } from '../../collectivites/index-domain';
 import { dcpTable } from '../../auth/index-domain';
 import { actionServiceTable } from '../models/action-service.table';
-
-type RelationFilters = {
-  pilotes?: Array<{ userId: string } | { tagId: number }>;
-  services?: Array<{ serviceTagId: number }>;
-};
+import { listActionsWithDetailsRequestSchema } from '../list-actions/list-actions.request';
 
 export const inputSchema = z.object({
   actionIds: z.string().array().optional(),
   actionTypes: actionTypeSchema.array().optional(),
-  relationFilters: z
-    .object({
-      pilotes: z
-        .array(
-          z.union([
-            z.object({ userId: z.string() }),
-            z.object({ tagId: z.number() }),
-          ])
-        )
-        .optional(),
-      services: z.array(z.object({ serviceTagId: z.number() })).optional(),
-    })
-    .optional(),
-  referentielIds: referentielIdEnumSchema.array().optional(),
 });
 
 type Input = z.infer<typeof inputSchema>;
@@ -55,6 +27,10 @@ type Input = z.infer<typeof inputSchema>;
 export type ActionDefinition = Awaited<
   ReturnType<ListActionDefinitionsService['listActionDefinitions']>
 >[0];
+
+type ListActionDefinitionsWithDetailsInput = z.infer<
+  typeof listActionsWithDetailsRequestSchema
+>;
 
 // TODO maybe see PG view `action_hierachy` to get children and parents
 
@@ -64,19 +40,20 @@ export class ListActionDefinitionsService {
 
   private db = this.databaseService.db;
 
-  async listActionDefinitions({
-    actionIds,
-    actionTypes,
-    relationFilters,
-    referentielIds = [ReferentielIdEnum.CAE, ReferentielIdEnum.ECI],
-  }: Input) {
+  async listActionDefinitions({ actionIds, actionTypes }: Input) {
     const subQuery = this.db
       .$with('action_definition_with_depth_and_type')
       .as(this.listWithDepthAndType());
 
     const request = this.db.with(subQuery).select().from(subQuery);
 
-    const filters = [inArray(subQuery.referentielId, referentielIds)];
+    const filters = [
+      // On inclut uniquement les actions des référentiels CAE et ECI pour le moment
+      inArray(subQuery.referentielId, [
+        ReferentielIdEnum.CAE,
+        ReferentielIdEnum.ECI,
+      ]),
+    ];
 
     if (actionIds?.length) {
       filters.push(inArray(subQuery.actionId, actionIds));
@@ -86,69 +63,101 @@ export class ListActionDefinitionsService {
       filters.push(inArray(subQuery.actionType, actionTypes));
     }
 
-    if (relationFilters) {
-      this.applyRelationFilters(filters, subQuery, relationFilters);
+    if (filters.length) {
+      request.where(and(...filters));
     }
 
-    request.where(and(...filters));
     request.orderBy(asc(subQuery.actionId));
 
-    let actions = await request;
-
-    if (relationFilters?.pilotes?.length) {
-      actions = await this.enrichWithPilotesDetails(actions);
-    }
-
-    if (relationFilters?.services?.length) {
-      actions = await this.enrichWithServicesDetails(actions);
-    }
-
-    return actions;
+    return request;
   }
 
-  private applyRelationFilters(
-    filters: SQL[],
-    subQuery: any,
-    relationFilters: RelationFilters
-  ) {
-    const { pilotes, services } = relationFilters;
+  async listActionDefinitionsWithDetails({
+    collectiviteId,
+    filters,
+  }: ListActionDefinitionsWithDetailsInput) {
+    const subQuery = this.db
+      .$with('action_definition_with_depth_and_type_and_details')
+      .as(this.listWithDepthTypeAndDetails(collectiviteId));
 
-    if (pilotes?.length) {
-      const tagIds = pilotes.flatMap((p) => ('tagId' in p ? [p.tagId] : []));
-      const userIds = pilotes.flatMap((p) => ('userId' in p ? [p.userId] : []));
+    const request = this.db.with(subQuery).select().from(subQuery);
 
-      const pilotesSubQuery = this.db
-        .select({ actionId: actionPiloteTable.actionId })
+    const queryFilters: SQL[] = [];
+
+    if (filters?.actionIds && filters.actionIds.length > 0) {
+      queryFilters.push(inArray(subQuery.actionId, filters.actionIds));
+    }
+
+    if (filters?.actionTypes && filters.actionTypes.length > 0) {
+      queryFilters.push(inArray(subQuery.actionType, filters.actionTypes));
+    }
+
+    if (
+      filters?.utilisateurPiloteIds &&
+      filters.utilisateurPiloteIds.length > 0
+    ) {
+      const pilotesCountSubquery = this.db
+        .select({
+          count: sql`COUNT(DISTINCT ${actionPiloteTable.userId})`,
+        })
         .from(actionPiloteTable)
         .where(
-          or(
-            tagIds.length
-              ? inArray(actionPiloteTable.tagId, tagIds)
-              : undefined,
-            userIds.length
-              ? inArray(actionPiloteTable.userId, userIds)
-              : undefined
+          and(
+            eq(actionPiloteTable.actionId, subQuery.actionId),
+            eq(actionPiloteTable.collectiviteId, collectiviteId),
+            inArray(actionPiloteTable.userId, filters.utilisateurPiloteIds)
           )
-        )
-        .groupBy(actionPiloteTable.actionId);
-
-      filters.push(inArray(subQuery.actionId, pilotesSubQuery));
+        );
+      queryFilters.push(
+        eq(pilotesCountSubquery, filters.utilisateurPiloteIds.length)
+      );
     }
 
-    if (services?.length) {
-      const servicesSubQuery = this.db
-        .select({ actionId: actionServiceTable.actionId })
+    if (filters?.personnePiloteIds && filters.personnePiloteIds.length > 0) {
+      const personnesCountSubquery = this.db
+        .select({
+          count: sql`COUNT(DISTINCT ${actionPiloteTable.tagId})`,
+        })
+        .from(actionPiloteTable)
+        .where(
+          and(
+            eq(actionPiloteTable.actionId, subQuery.actionId),
+            eq(actionPiloteTable.collectiviteId, collectiviteId),
+            inArray(actionPiloteTable.tagId, filters.personnePiloteIds)
+          )
+        );
+      queryFilters.push(
+        eq(personnesCountSubquery, filters.personnePiloteIds.length)
+      );
+    }
+
+    if (filters?.servicePiloteIds && filters.servicePiloteIds.length > 0) {
+      const servicesCountSubquery = this.db
+        .select({
+          count: sql`COUNT(DISTINCT ${actionServiceTable.serviceTagId})`,
+        })
         .from(actionServiceTable)
         .where(
-          inArray(
-            actionServiceTable.serviceTagId,
-            services.map((s) => s.serviceTagId)
+          and(
+            eq(actionServiceTable.actionId, subQuery.actionId),
+            inArray(actionServiceTable.serviceTagId, filters.servicePiloteIds)
           )
-        )
-        .groupBy(actionServiceTable.actionId);
-
-      filters.push(inArray(subQuery.actionId, servicesSubQuery));
+        );
+      queryFilters.push(
+        eq(servicesCountSubquery, filters.servicePiloteIds.length)
+      );
     }
+
+    if (filters?.referentielIds && filters.referentielIds.length > 0) {
+      queryFilters.push(
+        inArray(subQuery.referentielId, filters.referentielIds)
+      );
+    }
+
+    request.where(and(...queryFilters));
+    request.orderBy(asc(subQuery.actionId));
+
+    return await request;
   }
 
   private listWithDepth() {
@@ -212,88 +221,95 @@ export class ListActionDefinitionsService {
       );
   }
 
-  private async enrichWithPilotesDetails(actions: any[]) {
-    const pilotesWithDetails = await this.db
+  private listWithDepthTypeAndDetails(collectiviteId: number) {
+    const subQuery = this.db
+      .$with('action_definition_with_depth_and_type')
+      .as(this.listWithDepthAndType());
+
+    return this.db
+      .with(subQuery)
       .select({
-        actionId: actionPiloteTable.actionId,
-        userId: actionPiloteTable.userId,
-        tagId: actionPiloteTable.tagId,
-        nom: sql<string | null>`
-          CASE
-            WHEN ${actionPiloteTable.userId} IS NOT NULL THEN
-              CONCAT(${dcpTable.prenom}, ' ', ${dcpTable.nom})
-            ELSE ${personneTagTable.nom}
-          END
-        `,
+        modifiedAt: subQuery.modifiedAt,
+        actionId: subQuery.actionId,
+        referentiel: subQuery.referentiel,
+        identifiant: subQuery.identifiant,
+        nom: subQuery.nom,
+        description: subQuery.description,
+        contexte: subQuery.contexte,
+        exemples: subQuery.exemples,
+        ressources: subQuery.ressources,
+        reductionPotentiel: subQuery.reductionPotentiel,
+        perimetreEvaluation: subQuery.perimetreEvaluation,
+        preuve: subQuery.preuve,
+        points: subQuery.points,
+        pourcentage: subQuery.pourcentage,
+        categorie: subQuery.categorie,
+        referentielId: subQuery.referentielId,
+        referentielVersion: subQuery.referentielVersion,
+        depth: subQuery.depth,
+        actionType: subQuery.actionType,
+
+        pilotes: sql<string[]>`
+          array_remove(
+            array_agg(DISTINCT
+              CASE
+                WHEN ${actionPiloteTable.userId} IS NOT NULL THEN
+                  CONCAT(${dcpTable.prenom}, ' ', ${dcpTable.nom})
+                ELSE ${personneTagTable.nom}
+              END
+            ),
+            null
+          )
+        `.as('pilotes'),
+
+        services: sql<string[]>`
+          array_remove(
+            array_agg(DISTINCT ${serviceTagTable.nom}),
+            null
+          )
+        `.as('services'),
       })
-      .from(actionPiloteTable)
+      .from(subQuery)
+      .leftJoin(
+        actionPiloteTable,
+        and(
+          eq(actionPiloteTable.actionId, subQuery.actionId),
+          eq(actionPiloteTable.collectiviteId, collectiviteId)
+        )
+      )
       .leftJoin(dcpTable, eq(dcpTable.userId, actionPiloteTable.userId))
       .leftJoin(
         personneTagTable,
         eq(personneTagTable.id, actionPiloteTable.tagId)
       )
-      .where(
-        inArray(
-          actionPiloteTable.actionId,
-          actions.map((a) => a.actionId)
-        )
-      );
-
-    const pilotesByAction: Record<
-      string,
-      Array<Omit<(typeof pilotesWithDetails)[0], 'actionId'>>
-    > = {};
-    for (const piloteWithActionId of pilotesWithDetails) {
-      if (!piloteWithActionId.actionId) continue;
-
-      const { actionId, ...pilote } = piloteWithActionId;
-
-      pilotesByAction[actionId] = pilotesByAction[actionId] || [];
-      pilotesByAction[actionId].push(pilote);
-    }
-
-    return actions.map((action) => ({
-      ...action,
-      pilotes: pilotesByAction[action.actionId] || [],
-    }));
-  }
-
-  private async enrichWithServicesDetails(actions: any[]) {
-    const servicesWithDetails = await this.db
-      .select({
-        actionId: actionServiceTable.actionId,
-        id: actionServiceTable.serviceTagId,
-        nom: serviceTagTable.nom,
-        collectiviteId: actionServiceTable.collectiviteId,
-      })
-      .from(actionServiceTable)
+      .leftJoin(
+        actionServiceTable,
+        eq(actionServiceTable.actionId, subQuery.actionId)
+      )
       .leftJoin(
         serviceTagTable,
         eq(serviceTagTable.id, actionServiceTable.serviceTagId)
       )
-      .where(
-        inArray(
-          actionServiceTable.actionId,
-          actions.map((a) => a.actionId)
-        )
+      .groupBy(
+        subQuery.modifiedAt,
+        subQuery.actionId,
+        subQuery.referentiel,
+        subQuery.identifiant,
+        subQuery.nom,
+        subQuery.description,
+        subQuery.contexte,
+        subQuery.exemples,
+        subQuery.ressources,
+        subQuery.reductionPotentiel,
+        subQuery.perimetreEvaluation,
+        subQuery.preuve,
+        subQuery.points,
+        subQuery.pourcentage,
+        subQuery.categorie,
+        subQuery.referentielId,
+        subQuery.referentielVersion,
+        subQuery.depth,
+        subQuery.actionType
       );
-
-    const servicesByAction: Record<
-      string,
-      Array<Omit<(typeof servicesWithDetails)[0], 'actionId'>>
-    > = {};
-    for (const serviceWithActionId of servicesWithDetails) {
-      if (!serviceWithActionId.actionId) continue;
-
-      const { actionId, ...service } = serviceWithActionId;
-
-      servicesByAction[actionId] = servicesByAction[actionId] || [];
-      servicesByAction[actionId].push(service);
-    }
-
-    return actions.map((action) => ({
-      ...action,
-      services: servicesByAction[action.actionId] || [],
-    }));
   }
 }
