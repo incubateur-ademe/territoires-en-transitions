@@ -18,6 +18,7 @@ import { getAggregatedScore } from '../utils';
 import LabellisationInfo from './LabellisationInfo';
 
 type ScoreRempliProps = {
+  isReadonly: boolean;
   collectiviteId: number;
   referentiel: ReferentielId;
   title: string;
@@ -30,6 +31,7 @@ type ScoreRempliProps = {
 
 /** Carte "état des lieux" avec au moins 1 statut renseigné */
 export const ScoreRempli = ({
+  isReadonly,
   collectiviteId,
   referentiel,
   title,
@@ -89,7 +91,9 @@ export const ScoreRempli = ({
           disabled={status === 'audit_en_cours' || status === 'demande_envoyee'}
           size="sm"
         >
-          {status === 'audit_en_cours' || status === 'demande_envoyee'
+          {isReadonly
+            ? 'Suivre la labellisation'
+            : status === 'audit_en_cours' || status === 'demande_envoyee'
             ? 'Demande envoyée'
             : 'Décrocher les étoiles'}
         </Button>
@@ -99,6 +103,7 @@ export const ScoreRempli = ({
 };
 
 type ScoreVideProps = {
+  isReadonly: boolean;
   collectiviteId: number;
   referentiel: ReferentielId;
   title: string;
@@ -107,6 +112,7 @@ type ScoreVideProps = {
 
 /** Carte "état des lieux" avec 0 statut renseigné */
 export const ScoreVide = ({
+  isReadonly,
   collectiviteId,
   referentiel,
   title,
@@ -158,7 +164,7 @@ export const ScoreVide = ({
             referentielTab: 'progression',
           })}
         >
-          {"Commencer l'état des lieux"}
+          {isReadonly ? "Voir l'état des lieux" : "Commencer l'état des lieux"}
         </Button>
         <Button
           size="sm"
@@ -167,7 +173,9 @@ export const ScoreVide = ({
           }
           href={makeCollectivitePersoRefUrl({ collectiviteId })}
         >
-          Personnaliser le référentiel
+          {isReadonly
+            ? 'Voir la personnalisation du référentiel'
+            : 'Personnaliser le référentiel'}
         </Button>
       </div>
     </AccueilCard>
