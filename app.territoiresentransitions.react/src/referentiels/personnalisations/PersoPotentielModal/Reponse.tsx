@@ -173,7 +173,7 @@ const RadioButton = ({
           </label>
         </div>
       </div>
-      {hasReponse && (
+      {!disabled && hasReponse && (
         <Button
           variant="underlined"
           size="sm"
