@@ -9,9 +9,13 @@ import NouvelEmplacementFiche from './NouvelEmplacement/NouvelEmplacementFiche';
  */
 type ModaleEmplacementProps = {
   fiche: FicheAction;
+  isReadonly?: boolean;
 };
 
-const ModaleEmplacement = ({ fiche }: ModaleEmplacementProps) => {
+const ModaleEmplacement = ({
+  fiche,
+  isReadonly = true,
+}: ModaleEmplacementProps) => {
   const nbEmplacements = fiche.axes?.length ?? 0;
   const [activeTab, setActiveTab] = useState(nbEmplacements > 0 ? 0 : 1);
 
@@ -45,6 +49,7 @@ const ModaleEmplacement = ({ fiche }: ModaleEmplacementProps) => {
         variant="grey"
         size="xs"
         className="h-fit"
+        disabled={isReadonly}
       >
         Ranger
       </Button>
