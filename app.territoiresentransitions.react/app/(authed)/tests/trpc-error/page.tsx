@@ -5,7 +5,7 @@ import { useEffect } from 'react';
 
 export default function Page() {
 
-  const throwResult = trpc.error.throw.useQuery({
+  const throwResult = trpc.throwError.useQuery({
   });
 
   useEffect(() => {

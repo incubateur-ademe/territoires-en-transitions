@@ -47,13 +47,11 @@ export class TrpcRouter {
   ) {}
 
   appRouter = this.trpc.router({
-    error: this.trpc.router({
-      throw: this.trpc.anonProcedure
-        .input(z.object({}))
-        .query(async ({ input, ctx }) => {
-          throw new HttpException('A test trpc error occured', 500);
-        }),
-    }),
+    throwError: this.trpc.anonProcedure
+      .input(z.object({}))
+      .query(async ({ input, ctx }) => {
+        throw new HttpException('A test trpc error occured', 500);
+      }),
     utilisateurs: this.usersRouter.router,
     collectivites: this.collectivitesRouter.router,
     indicateurs: {
