@@ -80,6 +80,7 @@ const AccueilNonConfidentielle = ({
           <div className="grid lg:grid-cols-2 gap-6">
             {/** Climat Air Énergie */}
             <ReferentielCard
+              isReadonly={readonly}
               collectiviteId={collectiviteId}
               progressionScore={caeProgressionScore}
               repartitionPhases={caeRepartitionPhases}
@@ -89,6 +90,7 @@ const AccueilNonConfidentielle = ({
             />
             {/** Écomomie circulaire */}
             <ReferentielCard
+              isReadonly={readonly}
               collectiviteId={collectiviteId}
               progressionScore={eciProgressionScore}
               repartitionPhases={eciRepartitionPhases}
