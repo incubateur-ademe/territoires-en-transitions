@@ -15,11 +15,13 @@ import { PreuvesTabs } from './PreuvesTabs';
 type TBibliothequeDocsProps = {
   labellisationEtAudit?: TPreuveAuditEtLabellisation[];
   rapports?: TPreuveRapport[];
+  isReadOnly: boolean;
 };
 
 export const BibliothequeDocs = ({
   labellisationEtAudit,
   rapports,
+  isReadOnly,
 }: TBibliothequeDocsProps) => {
   return (
     <PageContainer dataTest="BibliothequeDocs" bgColor="white">
@@ -33,7 +35,10 @@ export const BibliothequeDocs = ({
 
       <section data-test="rapports">
         <h2>Rapports de visite annuelle</h2>
-        <AddRapportVisite />
+        {!isReadOnly && <AddRapportVisite />}
+        {isReadOnly && (!rapports || rapports.length === 0) && (
+          <p>Aucun rapport de visite annuelle n'a été ajouté.</p>
+        )}
         {rapports?.map((preuve) => (
           <div className="py-4" key={preuve.id}>
             <PreuveDoc preuve={preuve} />
@@ -54,6 +59,7 @@ const BibliothequeDocsConnected = () => {
   const preuves = usePreuvesParType({
     preuve_types: ['audit', 'labellisation', 'rapport'],
   });
+  const isReadOnly = collectivite.isReadOnly ?? true;
 
   const { labellisation, rapport, audit } = preuves;
   const labellisationEtAudit = [...(labellisation || []), ...(audit || [])];
@@ -71,6 +77,7 @@ const BibliothequeDocsConnected = () => {
       <BibliothequeDocs
         labellisationEtAudit={labellisationEtAudit}
         rapports={rapport}
+        isReadOnly={isReadOnly}
       />
     </>
   );
