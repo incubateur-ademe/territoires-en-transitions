@@ -4,11 +4,9 @@ import { FicheAction } from '@/api/plan-actions';
 
 import { Divider, Icon } from '@/ui';
 
-import ExportFicheActionModal from '@/app/app/pages/collectivite/PlansActions/ExportPdf/ExportModal/export-fa-modal';
 import CheminsFiche from './CheminsFiche';
 import TitreFiche from './TitreFiche';
-import ModaleEmplacement from './actions/EmplacementFiche/ModaleEmplacement';
-import ModaleSuppression from './actions/ModaleSuppression';
+import Toolbar from './actions/toolbar';
 
 type FicheActionHeaderProps = {
   fiche: FicheAction;
@@ -44,17 +42,7 @@ const Header = ({ fiche, updateTitle, isReadonly }: FicheActionHeaderProps) => {
         />
 
         {/* Actions génériques de la fiche action */}
-        <div className="flex gap-4 lg:mt-3.5">
-          <ModaleEmplacement fiche={fiche} />
-          <ExportFicheActionModal fiche={fiche} />
-          <ModaleSuppression
-            ficheId={fiche.id}
-            title={titre}
-            isInMultipleAxes={!!axes && axes.length > 1}
-            buttonClassName="!border-error-1 hover:!border-error-1"
-            redirect
-          />
-        </div>
+        <Toolbar {...{ fiche, isReadonly }} />
       </div>
 
       {/* Fils d'ariane avec emplacements de la fiche */}
