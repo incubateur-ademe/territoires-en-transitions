@@ -10,7 +10,7 @@ import {
 import ExpressionParserService from '../../personnalisations/services/expression-parser.service';
 import PersonnalisationsService from '../../personnalisations/services/personnalisations-service';
 import { DatabaseService } from '../../utils/database/database.service';
-import ListDefinitionsService from '../definitions/list-definitions.service';
+import { ListDefinitionsService } from '../list-definitions/list-definitions.service';
 import { indicateurObjectifTable } from '../shared/models/indicateur-objectif.table';
 import { GetMoyenneCollectivitesRequest } from './get-moyenne-collectivites.request';
 
@@ -117,7 +117,7 @@ export default class ValeursReferenceService {
       objectifs: objectifs?.length ? objectifs : null,
       // info nécessaire pour savoir si la question de personnalisation de
       // l'indicateur cae_25.b doit être affichée
-      drom: collectiviteInfo?.drom
+      drom: collectiviteInfo?.drom,
     };
   }
 }
