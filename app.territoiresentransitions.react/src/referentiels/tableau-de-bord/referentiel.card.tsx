@@ -2,11 +2,12 @@ import { actionIdToLabel } from '@/app/app/labels';
 import { ReferentielId } from '@/domain/referentiels';
 import { TableOptions } from 'react-table';
 import { ProgressionRow } from '../DEPRECATED_scores.types';
-import { EtatDesLieuxGraphs } from './graphs/EtatDesLieuxGraphs';
 import IndicateursCard from './IndicateursCard';
+import { EtatDesLieuxGraphs } from './graphs/EtatDesLieuxGraphs';
 import { ScoreRempli, ScoreVide } from './labellisation/Scores';
 
 type Props = {
+  isReadonly: boolean;
   collectiviteId: number;
   progressionScore: Pick<
     TableOptions<ProgressionRow>,
@@ -20,6 +21,7 @@ type Props = {
 
 /** Colonne "état des lieux" */
 export const ReferentielCard = ({
+  isReadonly,
   collectiviteId,
   progressionScore,
   repartitionPhases,
@@ -37,6 +39,7 @@ export const ReferentielCard = ({
       {displayEtatDesLieux ? (
         <>
           <ScoreRempli
+            isReadonly={isReadonly}
             collectiviteId={collectiviteId}
             referentiel={referentiel}
             title={title}
@@ -44,6 +47,7 @@ export const ReferentielCard = ({
             potentiel={potentiel}
           />
           <IndicateursCard
+            isReadonly={isReadonly}
             collectiviteId={collectiviteId}
             referentielId={referentiel}
           />
@@ -58,6 +62,7 @@ export const ReferentielCard = ({
       ) : (
         <>
           <ScoreVide
+            isReadonly={isReadonly}
             collectiviteId={collectiviteId}
             referentiel={referentiel}
             title={title}
@@ -67,6 +72,7 @@ export const ReferentielCard = ({
             }))}
           />
           <IndicateursCard
+            isReadonly={isReadonly}
             collectiviteId={collectiviteId}
             referentielId={referentiel}
           />
