@@ -69,4 +69,10 @@ thematique_id: identite
 actions: [cae_1.2.2]
 ```
 
-
+# La collectivité possède-t-elle un potentiel de développement des énergies hydraulique ou éolienne ?
+```yaml
+id: potentiel_ENR
+type: binaire
+thematique_id: identite
+indicateurs: [cae_25.b]
+```
