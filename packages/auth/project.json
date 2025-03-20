@@ -4,12 +4,22 @@
   "sourceRoot": "packages/auth",
   "projectType": "application",
   "tags": [],
-  "implicitDependencies": ["ui"],
+  "implicitDependencies": ["ui", "backend"],
   "targets": {
     "dev": {
       "options": {
         "port": 3003
-      }
+      },
+      "dependsOn": [{
+        "projects": "backend",
+        "target": "types"
+      }]
+    },
+    "build": {
+      "dependsOn": [{
+        "projects": "backend",
+        "target": "types"
+      }]
     }
   }
 }
