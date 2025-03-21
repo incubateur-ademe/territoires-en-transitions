@@ -1,3 +1,4 @@
+import { Badge } from '@/ui';
 import DoubleCheckIcon from '@/ui/assets/DoubleCheckIcon';
 import { action } from '@storybook/addon-actions';
 import { Meta, StoryObj } from '@storybook/react';
@@ -26,16 +27,9 @@ export const ControlleOuvert = () => (
   />
 );
 
-export const ContenuStyle: Story = {
-  args: {
-    content: 'Contenu stylé',
-    contentClassname: 'border border-dashed',
-  },
-};
-
 export const ContenuPersonnalise: Story = {
   args: {
-    content: <p className="font-bold border p-8">Contenu personnalisé</p>,
+    content: <p className="font-bold border p-16">Contenu personnalisé</p>,
   },
 };
 
@@ -58,6 +52,13 @@ export const AvecIconeSVG: Story = {
   },
 };
 
+export const AvecContenuAdditionnelHeader: Story = {
+  args: {
+    icon: <DoubleCheckIcon className="fill-primary-7" />,
+    headerContent: <Badge title="Badge" state="info" />,
+  },
+};
+
 export const AvecSousTitre: Story = {
   args: {
     icon: 'lock-line',
@@ -69,10 +70,26 @@ export const AvecSousTitre: Story = {
 export const CompletTitreLong: Story = {
   args: {
     icon: 'lock-line',
-    iconPosition: 'right',
     title:
       'Titre long qui prend plusieurs lignes, qui est vraiment très long et qui ne finit pas de finir',
     subtitle:
       'Cette section est visible uniquement par les membres de votre collectivité',
+    headerContent: <Badge title="Badge" state="info" />,
+  },
+};
+
+export const CustomHeaderAndContent: Story = {
+  args: {
+    icon: 'lock-line',
+    title:
+      'Titre long qui prend plusieurs lignes, qui est vraiment très long et qui ne finit pas de finir',
+    headerContent: <Badge title="Badge" state="info" className="!h-12" />,
+    containerClassname: 'border border-primary-3 rounded-xl',
+    headerClassname: 'px-6',
+    content: (
+      <div className="mx-6 border-t border-primary-3">
+        <div className="p-12 font-bold">Contenu personnalisé</div>
+      </div>
+    ),
   },
 };
