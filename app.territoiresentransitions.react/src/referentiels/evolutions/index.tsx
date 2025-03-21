@@ -69,7 +69,7 @@ export const ScoreEvolutions = () => {
     if (initialDisplaySnapsNames.length > 0) {
       setSelectedSnapsNames(initialDisplaySnapsNames);
     }
-  }, [initialDisplaySnapsNames, snapshotList]);
+  }, [snapshotList]);
 
   if (hasSavedSnapshots) {
     return (
