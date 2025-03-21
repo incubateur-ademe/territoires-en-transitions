@@ -1,3 +1,4 @@
+import { useBaseToast } from '@/app/core-logic/hooks/useBaseToast';
 import { Button, ButtonProps } from '@/ui';
 import { usePDF } from '@react-pdf/renderer';
 import { useEffect, useState } from 'react';
@@ -43,6 +44,9 @@ const ExportPDFButton = ({
 }: ExportPDFButtonType) => {
   const [instance, updateInstance] = usePDF({ document: undefined });
   const [isDownloadRequested, setIsDownloadRequested] = useState(false);
+  const [isLoading, setIsLoading] = useState(false);
+
+  const { setToast, renderToast } = useBaseToast();
 
   const handleDownloadRequest = () => {
     setIsDownloadRequested(true);
@@ -71,20 +75,35 @@ const ExportPDFButton = ({
     }
   }, [instance.blob]);
 
+  useEffect(() => {
+    setIsLoading(instance.loading);
+  }, [instance.loading]);
+
+  useEffect(() => {
+    if (instance.error !== null) {
+      setToast('error', "Une erreur est survenue lors de l'export");
+      setIsLoading(false);
+    }
+  }, [instance.error]);
+
   return (
-    <Button
-      loading={instance.loading}
-      disabled={disabled || (!requestData && !content)}
-      onClick={() => {
-        handleDownloadRequest();
-        if (!requestData && content)
-          updateInstance(<DocumentToExport content={content} />);
-        onClick?.();
-      }}
-      {...{ title, variant, size, icon, iconPosition }}
-    >
-      {children}
-    </Button>
+    <>
+      <Button
+        loading={isLoading}
+        disabled={disabled || (!requestData && !content)}
+        onClick={() => {
+          setIsLoading(true);
+          handleDownloadRequest();
+          if (!requestData && content)
+            updateInstance(<DocumentToExport content={content} />);
+          onClick?.();
+        }}
+        {...{ title, variant, size, icon, iconPosition }}
+      >
+        {children}
+      </Button>
+      {renderToast()}
+    </>
   );
 };
 

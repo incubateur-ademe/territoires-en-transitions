@@ -3,9 +3,9 @@ import { Injectable } from '@nestjs/common';
 import { and, asc, eq, getTableColumns, inArray, sql } from 'drizzle-orm';
 import z from 'zod';
 import {
+  ReferentielIdEnum,
   actionDefinitionTable,
   actionTypeSchema,
-  ReferentielIdEnum,
 } from '../index-domain';
 import { referentielDefinitionTable } from '../models/referentiel-definition.table';
 
@@ -43,7 +43,7 @@ export class ListActionDefinitionsService {
       ]),
     ];
 
-    if (actionIds?.length) {
+    if (actionIds !== undefined) {
       filters.push(inArray(subQuery.actionId, actionIds));
     }
 
