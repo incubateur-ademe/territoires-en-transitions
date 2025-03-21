@@ -10,8 +10,6 @@ import {
   useAction,
   useActionId,
 } from '@/app/referentiels/actions/action-context';
-import { ActionBreadcrumb } from '@/app/referentiels/actions/action.breadcrumb';
-import { ActionBottomNav } from '@/app/referentiels/actions/action.nav';
 import { usePrevAndNextActionLinks } from '@/app/referentiels/actions/use-prev-and-next-action-links';
 import { ActionAuditDetail } from '@/app/referentiels/audits/ActionAuditDetail';
 import ActionAuditStatut from '@/app/referentiels/audits/ActionAuditStatut';
@@ -22,7 +20,7 @@ import { useSnapshotFlagEnabled } from '@/app/referentiels/use-snapshot';
 import ScrollTopButton from '@/app/ui/buttons/ScrollTopButton';
 import SpinnerLoader from '@/app/ui/shared/SpinnerLoader';
 import { addTargetToContentAnchors } from '@/app/utils/content';
-import { Alert } from '@/ui';
+import { Alert, Button } from '@/ui';
 import PageContainer from '@/ui/components/layout/page-container';
 import {
   Tabs,
@@ -31,7 +29,7 @@ import {
   TabsTab,
 } from '@/ui/design-system/Tabs/Tabs.next';
 import { ReactNode } from 'react';
-import { ActionHeader } from './action.header';
+import { ActionHeader } from '../_components/header/action.header';
 
 export default function Layout({ children }: { children: ReactNode }) {
   const actionDefinition = DEPRECATED_useActionDefinition();
@@ -75,9 +73,9 @@ function ActionLayout({
   return (
     <PageContainer
       dataTest={`Action-${actionDefinition.identifiant}`}
-      innerContainerClassName="!pt-0"
+      innerContainerClassName="px-4 !pt-0"
     >
-      <CollectivitePageLayout>
+      <CollectivitePageLayout className="!px-0">
         <ActionHeader
           actionDefinition={actionDefinition}
           DEPRECATED_actionScore={DEPRECATED_actionScores[actionDefinition.id]}
@@ -86,7 +84,6 @@ function ActionLayout({
           prevActionLink={prevActionLink}
         />
 
-        <ActionBreadcrumb action={actionDefinition} />
         <ActionAuditStatut action={actionDefinition} />
         <ActionAuditDetail action={actionDefinition} />
 
@@ -167,10 +164,29 @@ function ActionLayout({
           <TabsPanel>{children}</TabsPanel>
         </Tabs>
 
-        <ActionBottomNav
-          prevActionLink={prevActionLink}
-          nextActionLink={nextActionLink}
-        />
+        {/** Action précédente / suivante */}
+        <div className="flex justify-end mt-8 gap-4">
+          {!!prevActionLink && (
+            <Button
+              variant="outlined"
+              icon="arrow-left-line"
+              size="sm"
+              href={prevActionLink}
+            >
+              Action précédente
+            </Button>
+          )}
+          {!!nextActionLink && (
+            <Button
+              icon="arrow-right-line"
+              iconPosition="right"
+              size="sm"
+              href={nextActionLink}
+            >
+              Action suivante
+            </Button>
+          )}
+        </div>
 
         <ScrollTopButton className="mt-8" />
       </CollectivitePageLayout>

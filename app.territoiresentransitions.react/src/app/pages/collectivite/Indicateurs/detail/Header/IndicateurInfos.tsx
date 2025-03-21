@@ -16,6 +16,7 @@ type Props = {
   definition: TIndicateurDefinition;
   isPerso: boolean;
   composeSansAgregation: boolean;
+  isReadonly: boolean;
 };
 
 const IndicateurInfos = ({
@@ -23,6 +24,7 @@ const IndicateurInfos = ({
   definition,
   isPerso,
   composeSansAgregation,
+  isReadonly,
 }: Props) => {
   const [isEditModalOpen, setIsEditModalOpen] = useState(false);
 
@@ -65,6 +67,7 @@ const IndicateurInfos = ({
               icon="user-line"
               hoveringColor="grey"
               onClick={() => setIsEditModalOpen(true)}
+              disabled={isReadonly}
             />
           </>
         )}
@@ -81,6 +84,7 @@ const IndicateurInfos = ({
               icon="leaf-line"
               hoveringColor="grey"
               onClick={() => setIsEditModalOpen(true)}
+              disabled={isReadonly}
             />
           </>
         )}
