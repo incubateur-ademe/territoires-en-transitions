@@ -1,7 +1,4 @@
-import {
-  ActionDefinitionSummary,
-  actionDefinitionSummaryReadEndpoint,
-} from '@/app/referentiels/ActionDefinitionSummaryReadEndpoint';
+import { ActionDefinitionSummary } from '@/app/referentiels/ActionDefinitionSummaryReadEndpoint';
 import { parentId } from '@/app/referentiels/actions.utils';
 import {
   actionDownToTache,
@@ -113,23 +110,4 @@ export const useSortedActionSummaryChildren = (
   });
 
   return { sortedActions, count: actions.length };
-};
-
-/**
- * Returns an action summary.
- */
-export const useActionSummary = (
-  referentiel: ReferentielId,
-  identifiant: string
-): ActionDefinitionSummary | null => {
-  const [actionSummary, setActionSummary] =
-    useState<ActionDefinitionSummary | null>();
-
-  useEffect(() => {
-    actionDefinitionSummaryReadEndpoint
-      .getBy({ referentiel, identifiant })
-      .then((list) => setActionSummary(list.length === 0 ? null : list[0]));
-  }, [referentiel, identifiant]);
-
-  return actionSummary ?? null;
 };
