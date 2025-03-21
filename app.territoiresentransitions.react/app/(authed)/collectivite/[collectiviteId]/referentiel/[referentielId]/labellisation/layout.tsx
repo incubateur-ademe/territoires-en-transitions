@@ -3,6 +3,7 @@
 import { referentielToName } from '@/app/app/labels';
 import { makeReferentielUrl } from '@/app/app/paths';
 import { useCollectiviteId } from '@/app/collectivites/collectivite-context';
+import { useCurrentCollectivite } from '@/app/core-logic/hooks/useCurrentCollectivite';
 import HeaderLabellisationConnected from '@/app/referentiels/labellisations/HeaderLabellisation';
 import { useCycleLabellisation } from '@/app/referentiels/labellisations/useCycleLabellisation';
 import { DEPRECATED_useIsUnchangedReferentiel } from '@/app/referentiels/labellisations/useIsUnchangedReferentiel';
@@ -18,6 +19,8 @@ import PageContainer from '@/ui/components/layout/page-container';
 import { ReactNode } from 'react';
 
 export default function Layout({ tabs }: { tabs: ReactNode }) {
+  const { isReadOnly = false } = useCurrentCollectivite() ?? {}; // à mettre à jour à
+  // la suppression définitive de la version deprecated de useCollectiviteId
   const collectiviteId = useCollectiviteId();
   const referentielId = useReferentielId();
   const parcoursLabellisation = useCycleLabellisation(referentielId);
@@ -55,7 +58,9 @@ export default function Layout({ tabs }: { tabs: ReactNode }) {
               referentielId,
             })}
           >
-            Mettre à jour le référentiel
+            {isReadOnly
+              ? 'Voir le référentiel'
+              : 'Mettre à jour le référentiel'}
           </Button>
         </PageContainer>
       </>
