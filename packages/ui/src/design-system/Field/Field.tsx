@@ -51,7 +51,7 @@ export const Field = ({
         className
       )}
     >
-      {(title !== undefined || hint !== undefined) && (
+      {(!!title?.trim() || !!hint?.trim()) && (
         <label htmlFor={htmlFor} className="ml-0 mb-0">
           {/** Title */}
           {title !== undefined && (
