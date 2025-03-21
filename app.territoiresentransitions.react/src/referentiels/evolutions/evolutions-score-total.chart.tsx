@@ -5,6 +5,7 @@ import { SnapshotDetails } from '../use-snapshot';
 import { sortByDate } from './utils';
 import { theme as importedTheme } from '../../ui/charts/chartsTheme';
 import { ReferentielId } from '@/domain/referentiels';
+import { useCurrentCollectivite } from '@/app/core-logic/hooks/useCurrentCollectivite';
 import { useEventTracker } from '@/ui';
 
 const theme = importedTheme;
@@ -60,7 +61,8 @@ export const ScoreTotalEvolutionsChart = ({
   chartSize: 'sm' | 'lg';
   isDownloadable?: boolean;
 }) => {
-  const trackEvent = useEventTracker('app/referentiel');
+  const { collectiviteId, niveauAcces, role } = useCurrentCollectivite()!;
+  const tracker = useEventTracker('app/referentiel');
 
   const snapshots = sortSnapshots(allSnapshots, true);
 
@@ -256,7 +258,10 @@ export const ScoreTotalEvolutionsChart = ({
               ...TOOLBOX_BASE.feature.saveAsImage,
               name: `${referentielId}_referentiel_progression-total`,
               onclick: () => {
-                trackEvent('referentiels:scores:export_graph_sauvegardes_EDL', {
+                tracker('referentiels:scores:export_graph_sauvegardes_EDL', {
+                  collectiviteId,
+                  niveauAcces,
+                  role,
                   referentielId,
                   type: 'total',
                   howManySnapshots: snapshots.length,

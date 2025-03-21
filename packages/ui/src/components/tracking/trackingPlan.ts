@@ -385,7 +385,7 @@ export interface TrackingPlan extends Record<never, Page> {
     events: {
       'referentiels:scores:sauvegarde': { dateDuJour: boolean };
       'referentiels:scores:export_graph_sauvegardes_EDL': {
-        referentiel: string;
+        referentielId: string;
         type: 'total' | 'axe';
         howManySnapshots: number;
       };
