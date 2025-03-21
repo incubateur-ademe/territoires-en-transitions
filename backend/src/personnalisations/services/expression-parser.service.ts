@@ -518,7 +518,7 @@ export default class ExpressionParserService {
     parser.input = lexingResult.tokens;
     const cst = parser.statement();
 
-    if (parser.errors.length > 0) {
+    if (parser.errors && parser.errors.length > 0) {
       this.logger.error(
         `Parsing errors detected: ${JSON.stringify(parser.errors)}`
       );

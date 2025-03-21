@@ -2,6 +2,7 @@ import { PermissionService } from '@/backend/auth/authorizations/permission.serv
 import CollectivitesService from '@/backend/collectivites/services/collectivites.service';
 import { Injectable, Logger } from '@nestjs/common';
 import { eq } from 'drizzle-orm';
+import { isNil } from 'es-toolkit';
 import {
   AuthUser,
   PermissionOperation,
@@ -77,21 +78,23 @@ export default class ValeursReferenceService {
     let seuil = null;
     let objectifs = null;
 
-    if (exprCible !== null) {
+    if (!isNil(exprCible)) {
+      this.logger.log(`Parsing de l'expression cible : ${exprCible}`);
       cible = this.expressionParserService.parseAndEvaluateExpression(
         exprCible,
         reponses,
         collectiviteInfo
       );
     }
-    if (exprSeuil !== null) {
+    if (!isNil(exprSeuil)) {
+      this.logger.log(`Parsing de l'expression de seuil : ${exprSeuil}`);
       seuil = this.expressionParserService.parseAndEvaluateExpression(
         exprSeuil,
         reponses,
         collectiviteInfo
       );
     }
-    if (valeurObjectifs.length) {
+    if (valeurObjectifs?.length) {
       objectifs = valeurObjectifs
         .map(({ formule, ...other }) => {
           const valeur =
