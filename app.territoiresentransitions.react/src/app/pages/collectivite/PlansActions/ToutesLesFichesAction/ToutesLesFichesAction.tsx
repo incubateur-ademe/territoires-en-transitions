@@ -153,7 +153,7 @@ const ToutesLesFichesAction = () => {
             />
           </ButtonMenu>
         )}
-        enableGroupedActions={!isReadOnly}
+        enableGroupedActions
         isReadOnly={isReadOnly}
         displayEditionMenu
       />
