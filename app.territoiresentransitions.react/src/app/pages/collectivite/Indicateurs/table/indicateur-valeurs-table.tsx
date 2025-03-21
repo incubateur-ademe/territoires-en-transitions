@@ -152,6 +152,7 @@ export const IndicateurValeursTable = ({
                         size="xs"
                         variant="outlined"
                         icon="question-answer-fill"
+                        disabled={!commentaire && readonly}
                         notification={commentaire ? { number: 1 } : undefined}
                         onClick={() => setCommentaireValeur(entry ?? { annee })}
                       />
@@ -182,6 +183,7 @@ export const IndicateurValeursTable = ({
               [`${type}Commentaire`]: newComment,
             });
           }}
+          isReadonly={readonly}
         />
       )}
       {toBeDeleted && (
