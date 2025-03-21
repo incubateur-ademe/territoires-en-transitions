@@ -18,7 +18,6 @@ export class ReferentielsRouter {
     private readonly getLabellisation: GetLabellisationRouter,
     private readonly startAudit: StartAuditRouter,
     private readonly validateAudit: ValidateAuditRouter,
-    private readonly computeScoreRouter: ComputeScoreRouter,
     private readonly assignPilotesRouter: AssignPilotesRouter,
     private readonly assignServicesRouter: AssignServicesRouter
   ) {}
