@@ -18,7 +18,7 @@ describe("Route de test d'erreur", () => {
   test(`Renvoi une erreur`, async () => {
     const caller = router.createCaller({ user: yoloDodoUser });
 
-    await expect(() => caller.error.throw({})).rejects.toThrowError(
+    await expect(() => caller.throwError({})).rejects.toThrowError(
       /A test trpc error occured/i
     );
   });
