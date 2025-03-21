@@ -1,9 +1,4 @@
-import { DatabaseService } from '@/backend/utils';
-import {
-  getTestApp,
-  getTestDatabase,
-  getTestRouter,
-} from '../../../test/app-utils';
+import { getTestApp, getTestRouter } from '../../../test/app-utils';
 import { getAuthUser } from '../../../test/auth-utils';
 import { AuthenticatedUser } from '../../auth/models/auth.models';
 import { TrpcRouter } from '../../utils/trpc/trpc.router';
@@ -11,12 +6,10 @@ import { TrpcRouter } from '../../utils/trpc/trpc.router';
 describe('AssignServicesRouter', () => {
   let router: TrpcRouter;
   let yoloDodoUser: AuthenticatedUser;
-  let databaseService: DatabaseService;
 
   beforeAll(async () => {
     const app = await getTestApp();
     router = await getTestRouter(app);
-    databaseService = await getTestDatabase(app);
     yoloDodoUser = await getAuthUser();
   });
 
