@@ -282,7 +282,7 @@ const FichesActionListe = ({
             </div>
 
             {/* Apperçu du nombre de fiches sélectionnées */}
-            {enableGroupedActions && (
+            {enableGroupedActions && !isReadOnly && (
               <div
                 className={classNames(
                   'relative flex justify-between py-5 border-b border-primary-3 transition-all duration-500',
