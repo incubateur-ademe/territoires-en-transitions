@@ -46,8 +46,7 @@ export const ActionHeader = ({
           <ScoreProgressBar
             actionDefinition={actionDefinition}
             className="border-r border-r-[#ddd] pr-6"
-            // TODO(temporary): Temporary patch to display percentage
-            TEMP_displayValue={true}
+            displayDoneValue
           />
           {FLAG_isSnapshotEnabled ? (
             <>

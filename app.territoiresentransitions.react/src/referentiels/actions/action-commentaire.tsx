@@ -4,7 +4,7 @@ import {
   useActionCommentaire,
   useSaveActionCommentaire,
 } from '@/app/referentiels/use-action-commentaire';
-import { AutoResizedTextarea } from '@/ui';
+import { AutoResizedTextarea, Field } from '@/ui';
 import classNames from 'classnames';
 import React, { useEffect, useState } from 'react';
 
@@ -12,6 +12,9 @@ type ActionCommentaireProps = {
   action: ActionDefinitionSummary;
   className?: string;
   autoFocus?: boolean;
+  placeholder?: string;
+  title?: string;
+  subtitle?: string;
   onSave?: () => void;
 };
 
@@ -19,6 +22,9 @@ export const ActionCommentaire = ({
   action,
   className,
   autoFocus,
+  placeholder,
+  title,
+  subtitle,
   onSave,
 }: ActionCommentaireProps) => {
   const { actionCommentaire, isLoading } = useActionCommentaire(action.id);
@@ -33,15 +39,19 @@ export const ActionCommentaire = ({
           action={action}
           initialValue={actionCommentaire?.commentaire || ''}
           title={
-            action.type !== 'tache'
+            title
+              ? title
+              : action.type !== 'tache'
               ? "Explications sur l'état d'avancement"
               : undefined
           }
+          subtitle={subtitle}
           autoFocus={autoFocus}
           onSave={(payload) => {
             saveActionCommentaire(payload);
             onSave && onSave();
           }}
+          placeholder={placeholder}
         />
       )}
     </div>
@@ -56,6 +66,7 @@ export type ActionCommentaireFieldProps = {
   subtitle?: string;
   autoFocus?: boolean;
   disabled?: boolean;
+  placeholder?: string;
   onSave: (payload: {
     action_id: string;
     collectivite_id: number;
@@ -74,6 +85,7 @@ export const ActionCommentaireField = ({
   subtitle,
   autoFocus = false,
   disabled = false,
+  placeholder,
   onSave,
   onChange,
 }: ActionCommentaireFieldProps) => {
@@ -83,9 +95,7 @@ export const ActionCommentaireField = ({
   useEffect(() => setCommentaire(initialValue), [initialValue]);
 
   return collectivite ? (
-    <>
-      {!!title && <p className="text-neutral-900 !mb-2">{title}</p>}
-      {!!subtitle && <p className="text-[#666] !mb-2 text-xs">{subtitle}</p>}
+    <Field title={title} hint={subtitle}>
       <AutoResizedTextarea
         dataTest={dataTest}
         className={classNames({ 'min-h-20': action.type !== 'tache' })}
@@ -104,7 +114,8 @@ export const ActionCommentaireField = ({
         }}
         disabled={collectivite.isReadOnly || disabled}
         autoFocus={autoFocus}
+        placeholder={placeholder}
       />
-    </>
+    </Field>
   ) : null;
 };
