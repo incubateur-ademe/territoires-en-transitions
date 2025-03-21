@@ -1,4 +1,11 @@
-import { AutoResizedTextarea, Field, Modal, ModalFooterOKCancel } from '@/ui';
+import {
+  AutoResizedTextarea,
+  Button,
+  Field,
+  Modal,
+  ModalFooter,
+  ModalFooterOKCancel,
+} from '@/ui';
 import { OpenState } from '@/ui/utils/types';
 import { useState } from 'react';
 import { getSourceTypeLabel } from '../constants';
@@ -11,6 +18,7 @@ export type EditCommentaireModalProps = {
   type: SourceType;
   openState: OpenState;
   onChange: (commentaire: string) => void;
+  isReadonly?: boolean;
 };
 
 /**
@@ -24,6 +32,7 @@ export const EditCommentaireModal = (props: EditCommentaireModalProps) => {
     type,
     openState,
     onChange,
+    isReadonly = false,
   } = props;
   const [commentaire, setCommentaire] = useState<string | null>(
     commentaireInitial
@@ -41,21 +50,30 @@ export const EditCommentaireModal = (props: EditCommentaireModalProps) => {
               rows={10}
               value={commentaire ?? ''}
               onChange={(e) => setCommentaire(e.target.value)}
+              disabled={isReadonly}
             />
           </Field>
         );
       }}
-      renderFooter={({ close }) => (
-        <ModalFooterOKCancel
-          btnOKProps={{
-            onClick: () => {
-              onChange(commentaire ?? '');
-              close();
-            },
-          }}
-          btnCancelProps={{ onClick: close }}
-        />
-      )}
+      renderFooter={({ close }) =>
+        !isReadonly ? (
+          <ModalFooterOKCancel
+            btnOKProps={{
+              onClick: () => {
+                onChange(commentaire ?? '');
+                close();
+              },
+            }}
+            btnCancelProps={{ onClick: close }}
+          />
+        ) : (
+          <ModalFooter>
+            <Button type="button" variant="outlined" onClick={close}>
+              Fermer
+            </Button>
+          </ModalFooter>
+        )
+      }
     />
   );
 };
