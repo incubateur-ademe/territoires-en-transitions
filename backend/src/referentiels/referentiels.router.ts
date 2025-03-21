@@ -6,7 +6,8 @@ import { ValidateAuditRouter } from './labellisations/validate-audit/validate-au
 import { ListActionsRouter } from './list-actions/list-actions.router';
 import { SnapshotsRouter } from './snapshots/snapshots.router';
 import { UpdateActionStatutRouter } from './update-action-statut/update-action-statut.router';
-
+import { AssignPilotesRouter } from './assign-pilotes/assign-pilotes.router';
+import { AssignServicesRouter } from './assign-services/assign-services.router';
 @Injectable()
 export class ReferentielsRouter {
   constructor(
@@ -16,13 +17,17 @@ export class ReferentielsRouter {
     private readonly scoreSnapshotsRouter: SnapshotsRouter,
     private readonly getLabellisation: GetLabellisationRouter,
     private readonly startAudit: StartAuditRouter,
-    private readonly validateAudit: ValidateAuditRouter
+    private readonly validateAudit: ValidateAuditRouter,
+    private readonly assignPilotesRouter: AssignPilotesRouter,
+    private readonly assignServicesRouter: AssignServicesRouter
   ) {}
 
   router = this.trpc.router({
     actions: this.trpc.mergeRouters(
       this.updateActionStatutRouter.router,
-      this.listActionStatutRouter.router
+      this.listActionStatutRouter.router,
+      this.assignPilotesRouter.router,
+      this.assignServicesRouter.router
     ),
 
     snapshots: this.scoreSnapshotsRouter.router,
