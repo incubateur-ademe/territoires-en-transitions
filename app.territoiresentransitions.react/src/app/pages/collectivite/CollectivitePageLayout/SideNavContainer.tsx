@@ -1,7 +1,7 @@
 import { useFonctionTracker } from '@/app/core-logic/hooks/useFonctionTracker';
+import { Button } from '@/ui';
 import classNames from 'classnames';
 import SideNav, { SideNavLinks } from './SideNav';
-import { Button } from '@/ui';
 
 export type SideNavContainerProps = {
   links: SideNavLinks;
@@ -44,10 +44,8 @@ const SideNavContainer = ({ isOpen, setIsOpen, sideNav }: Props) => {
               }}
             />
           )}
+          {actions}
           <SideNav links={links} />
-          <div className={classNames('mb-8', { 'pt-8': links.length > 0 })}>
-            {actions}
-          </div>
         </div>
       ) : (
         <Button
