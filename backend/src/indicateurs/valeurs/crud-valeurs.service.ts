@@ -89,6 +89,8 @@ export default class CrudValeursService {
 
   public readonly UNKOWN_SOURCE_ID = 'unknown';
 
+  private readonly PARALLEL_COLLECTIVITE_COMPUTE_VALEURS = 10;
+
   /**
    * Number of decimal in order to round the value
    */
@@ -1194,7 +1196,10 @@ export default class CrudValeursService {
       valeursCount: number;
       identifiants: string[];
     }[] = [];
-    const collectiviteIdsChunks = chunk(collectiviteIds, 100);
+    const collectiviteIdsChunks = chunk(
+      collectiviteIds,
+      this.PARALLEL_COLLECTIVITE_COMPUTE_VALEURS
+    );
     const recomputeResult: Promise<{
       collectiviteId: number;
       valeursCount: number;

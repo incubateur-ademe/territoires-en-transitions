@@ -26,7 +26,13 @@ import {
   thematiqueTable,
 } from '@/backend/shared/index-domain';
 import { DatabaseService } from '@/backend/utils';
-import { HttpException, HttpStatus, Injectable, Logger } from '@nestjs/common';
+import {
+  BadRequestException,
+  HttpException,
+  HttpStatus,
+  Injectable,
+  Logger,
+} from '@nestjs/common';
 import { DepGraph } from 'dependency-graph';
 import DOMPurify from 'dompurify';
 import { inArray } from 'drizzle-orm';
@@ -205,18 +211,27 @@ export default class ImportIndicateurDefinitionService extends BaseSpreadsheetIm
     // importe les objectifs
     const objectifs = await this.importObjectifs(upsertedIndicateurDefinitions);
     if (objectifs.length) {
-      await this.databaseService.db
-        .insert(indicateurObjectifTable)
-        .values(objectifs)
-        .onConflictDoUpdate({
-          target: [
-            indicateurObjectifTable.indicateurId,
-            indicateurObjectifTable.dateValeur,
-          ],
-          set: buildConflictUpdateColumns(indicateurObjectifTable, ['formule']),
-        });
+      try {
+        await this.databaseService.db
+          .insert(indicateurObjectifTable)
+          .values(objectifs)
+          .onConflictDoUpdate({
+            target: [
+              indicateurObjectifTable.indicateurId,
+              indicateurObjectifTable.dateValeur,
+            ],
+            set: buildConflictUpdateColumns(indicateurObjectifTable, [
+              'formule',
+            ]),
+          });
 
-      this.logger.log(`Upsert ${objectifs.length} indicateur objectifs`);
+        this.logger.log(`Upsert ${objectifs.length} indicateur objectifs`);
+      } catch (e) {
+        throw new HttpException(
+          `Error upserting indicateur objectifs: ${getErrorMessage(e)}`,
+          HttpStatus.INTERNAL_SERVER_ERROR
+        );
+      }
     }
 
     return {
@@ -255,7 +270,23 @@ export default class ImportIndicateurDefinitionService extends BaseSpreadsheetIm
     indicateurDefinitions: ImportIndicateurDefinitionType[]
   ): Promise<void> {
     const graph = new DepGraph();
+
+    const indicateurDefinitionsMap = new Map<
+      string,
+      ImportIndicateurDefinitionType
+    >();
+
     indicateurDefinitions.forEach((indicateur) => {
+      if (indicateurDefinitionsMap.has(indicateur.identifiantReferentiel)) {
+        throw new BadRequestException(
+          `Duplicate indicateur identifiantReferentiel ${indicateur.identifiantReferentiel}`
+        );
+      }
+      indicateurDefinitionsMap.set(
+        indicateur.identifiantReferentiel,
+        indicateur
+      );
+
       if (indicateur.valeurCalcule) {
         try {
           const neededSourceIndicateurs =
