@@ -23,3 +23,6 @@ method = "post"
 [sinks.hook.request.headers]
 DD-API-KEY = "${DATADOG_API_KEY}"
 Content-Type = "application/json"
+
+[api]
+enabled = true
