@@ -2,6 +2,7 @@ import { FicheResume } from '@/api/plan-actions';
 import { useCurrentCollectivite } from '@/app/core-logic/hooks/useCurrentCollectivite';
 import { DragOverlay, useDraggable } from '@dnd-kit/core';
 import classNames from 'classnames';
+import { useState } from 'react';
 import { createPortal } from 'react-dom';
 import { QueryKey } from 'react-query';
 import FicheActionCard from '../../FicheAction/Carte/FicheActionCard';
@@ -27,6 +28,8 @@ const Fiche = ({ planId, axeId, url, fiche, editKeysToInvalidate }: Props) => {
     collectivite?.niveauAcces === 'admin' ||
     collectivite?.niveauAcces === 'edition';
 
+  const [isDisabled, setIsDisabled] = useState(!canDrag);
+
   const {
     active,
     attributes,
@@ -39,7 +42,7 @@ const Fiche = ({ planId, axeId, url, fiche, editKeysToInvalidate }: Props) => {
       type: 'fiche',
       fiche,
     },
-    disabled: !canDrag,
+    disabled: isDisabled,
   });
 
   const isDragging =
@@ -60,7 +63,7 @@ const Fiche = ({ planId, axeId, url, fiche, editKeysToInvalidate }: Props) => {
         )}
       {!active && (
         <div
-          className={classNames('h-full', { 'cursor-default': !canDrag })}
+          className={classNames('h-full', { 'cursor-default': isDisabled })}
           ref={draggableRef}
           {...listeners}
           {...attributes}
@@ -72,6 +75,7 @@ const Fiche = ({ planId, axeId, url, fiche, editKeysToInvalidate }: Props) => {
             link={url}
             isEditable
             editKeysToInvalidate={editKeysToInvalidate}
+            onToggleOpen={(isOpen) => setIsDisabled(isOpen)}
           />
         </div>
       )}

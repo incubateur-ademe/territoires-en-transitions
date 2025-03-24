@@ -31,6 +31,8 @@ type FicheActionCardProps = {
   onUnlink?: () => void;
   /** Sélection de la fiche action */
   onSelect?: (isSelected: boolean) => void;
+  /** Exécuté à l'ouverture et à la fermeture de la fiche action */
+  onToggleOpen?: (isOpen: boolean) => void;
 };
 
 const FicheActionCard = ({
@@ -43,6 +45,7 @@ const FicheActionCard = ({
   isSelected = false,
   onUnlink,
   onSelect,
+  onToggleOpen,
 }: FicheActionCardProps) => {
   const collectivite = useCurrentCollectivite();
 
@@ -52,6 +55,11 @@ const FicheActionCard = ({
 
   const isNotClickable =
     collectivite?.niveauAcces === null && !!ficheAction.restreint;
+
+  const toggleOpen = (isOpen: boolean) => {
+    setIsEditOpen(isOpen);
+    onToggleOpen?.(isOpen);
+  };
 
   return (
     <div className="relative group h-full">
@@ -75,7 +83,7 @@ const FicheActionCard = ({
                     initialFiche={ficheAction}
                     axeId={axeIdToInvalidate}
                     isOpen={isEditOpen}
-                    setIsOpen={() => setIsEditOpen(!isEditOpen)}
+                    setIsOpen={() => toggleOpen(!isEditOpen)}
                     keysToInvalidate={editKeysToInvalidate}
                   />
                 )}
@@ -86,7 +94,7 @@ const FicheActionCard = ({
                   title="Modifier la fiche"
                   variant="grey"
                   size="xs"
-                  onClick={() => setIsEditOpen(!isEditOpen)}
+                  onClick={() => toggleOpen(!isEditOpen)}
                 />
               </>
               <ModaleSuppression
