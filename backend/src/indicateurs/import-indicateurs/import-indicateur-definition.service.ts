@@ -206,6 +206,11 @@ export default class ImportIndicateurDefinitionService extends BaseSpreadsheetIm
           }
         });
       });
+      this.logger.log(
+        `Recomputed valeurs for identifiants: ${identifiantsRecalcules.join(
+          ', '
+        )}`
+      );
     }
 
     // importe les objectifs

@@ -5,6 +5,7 @@ import { patchNestjsSwagger } from '@anatine/zod-nestjs';
 import { HttpAdapterHost, NestFactory } from '@nestjs/core';
 import { DocumentBuilder, SwaggerModule } from '@nestjs/swagger';
 import { NextFunction, Request, Response } from 'express';
+import v8 from 'v8';
 import { AppModule } from './app.module';
 import { ContextRouteParametersInterceptor } from './utils/context/context-route-parameters.interceptor';
 import { ContextStoreService } from './utils/context/context.service';
@@ -28,7 +29,11 @@ async function bootstrap() {
     contextStoreService,
     getDefaultLoggerOptions()
   );
-  logger.log(`Launching NestJS app on port ${port}`);
+
+  const heapSize = v8.getHeapStatistics().heap_size_limit / (1024 * 1024);
+  logger.log(
+    `Launching NestJS app on port ${port} with heap size ${heapSize}MB`
+  );
   app.useLogger(logger);
   const withContextMiddleWare = (
     req: Request,
