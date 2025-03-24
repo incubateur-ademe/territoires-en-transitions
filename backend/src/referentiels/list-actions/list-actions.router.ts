@@ -5,18 +5,10 @@ import { Injectable } from '@nestjs/common';
 import { ListActionDefinitionsService } from '../list-action-definitions/list-action-definitions.service';
 import { SnapshotsService } from '../snapshots/snapshots.service';
 import { getExtendActionWithComputedStatutsFields } from '../snapshots/snapshots.utils';
-import { ActionTypeEnum, actionTypeSchema } from '../index-domain';
-import z from 'zod';
-import { listActionsWithDetailsRequestSchema } from './list-actions.request';
-
-export const inputSchema = z.object({
-  collectiviteId: z.number(),
-  actionIds: z.string().array().optional(),
-  actionTypes: actionTypeSchema
-    .array()
-    .optional()
-    .default([ActionTypeEnum.ACTION, ActionTypeEnum.SOUS_ACTION]),
-});
+import {
+  listActionsRequestSchema,
+  listActionsWithStatusRequestSchema,
+} from './list-actions.request';
 
 @Injectable()
 export class ListActionsRouter {
@@ -29,28 +21,7 @@ export class ListActionsRouter {
 
   router = this.trpc.router({
     listActions: this.trpc.authedProcedure
-      .input(inputSchema)
-      .query(
-        async ({
-          input: { collectiviteId, actionIds, actionTypes },
-          ctx: { user },
-        }) => {
-          await this.permissions.isAllowed(
-            user,
-            PermissionOperation.REFERENTIELS_LECTURE,
-            ResourceType.COLLECTIVITE,
-            collectiviteId
-          );
-
-          return this.listActionDefinitionsService.listActionDefinitions({
-            actionIds,
-            actionTypes,
-          });
-        }
-      ),
-
-    listActionsWithDetails: this.trpc.authedProcedure
-      .input(listActionsWithDetailsRequestSchema)
+      .input(listActionsRequestSchema)
       .query(async ({ input, ctx: { user } }) => {
         const { collectiviteId, filters } = input;
 
@@ -61,16 +32,22 @@ export class ListActionsRouter {
           collectiviteId
         );
 
-        return this.listActionDefinitionsService.listActionDefinitionsWithDetails(
-          {
+        const actionDefinitions =
+          await this.listActionDefinitionsService.listActionDefinitions({
             collectiviteId,
             filters,
-          }
+          });
+
+        const extendActionWithScores = getExtendActionWithComputedStatutsFields(
+          collectiviteId,
+          this.snapshotService.get.bind(this.snapshotService)
         );
+
+        return Promise.all(actionDefinitions.map(extendActionWithScores));
       }),
 
     listActionsWithStatuts: this.trpc.authedProcedure
-      .input(inputSchema)
+      .input(listActionsWithStatusRequestSchema)
       .query(
         async ({
           input: { collectiviteId, actionIds, actionTypes },
@@ -85,8 +62,11 @@ export class ListActionsRouter {
 
           const actionDefinitions =
             await this.listActionDefinitionsService.listActionDefinitions({
-              actionIds,
-              actionTypes,
+              collectiviteId,
+              filters: {
+                actionIds,
+                actionTypes,
+              },
             });
 
           const extendActionWithScores =
