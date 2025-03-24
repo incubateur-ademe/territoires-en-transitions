@@ -1,5 +1,7 @@
+import { useUser } from '@/api/users/user-provider';
 import { useCreateFicheAction } from '@/app/app/pages/collectivite/PlansActions/FicheAction/data/useCreateFicheAction';
 import FichesNonClassees from '@/app/app/pages/collectivite/PlansActions/FichesNonClassees';
+import { ImportPlanButton } from '@/app/app/pages/collectivite/PlansActions/ParcoursCreationPlan/Import/import-plan.button';
 import {
   collectiviteFichesNonClasseesPath,
   collectivitePlanActionAxePath,
@@ -11,6 +13,9 @@ import {
   makeCollectivitePlanActionUrl,
   makeCollectivitePlansActionsNouveauUrl,
 } from '@/app/app/paths';
+import { useCurrentCollectivite } from '@/app/core-logic/hooks/useCurrentCollectivite';
+import { useDemoMode } from '@/app/users/demo-mode-support-provider';
+import { Button, useEventTracker } from '@/ui';
 import { Redirect, Route } from 'react-router-dom';
 import CollectivitePageLayout from '../CollectivitePageLayout/CollectivitePageLayout';
 import { useFichesNonClasseesListe } from './FicheAction/data/useFichesNonClasseesListe';
@@ -22,11 +27,6 @@ import {
   generatePlanActionNavigationLinks,
   usePlansNavigation,
 } from './PlanAction/data/usePlansNavigation';
-import { Button, useEventTracker } from '@/ui';
-import { useCurrentCollectivite } from '@/app/core-logic/hooks/useCurrentCollectivite';
-import { ImportPlanButton } from '@/app/app/pages/collectivite/PlansActions/ParcoursCreationPlan/Import/import-plan.button';
-import { useUser } from '@/api/users/user-provider';
-import { useDemoMode } from '@/app/users/demo-mode-support-provider';
 
 type Props = {
   collectivite_id: number;
@@ -84,34 +84,12 @@ export const PlansActionsRoutes = ({ collectivite_id, readonly }: Props) => {
                     href={makeCollectivitePlansActionsNouveauUrl({
                       collectiviteId: collectivite_id,
                     })}
-                    onClick={() => {
+                    onClick={() =>
                       trackEvent(
                         'plansAction:side-nav-ajouter-plan-click',
                         collectivite
-                      );
-                      $crisp.push(['do', 'chat:open']);
-                      $crisp.push([
-                        'do',
-                        'message:show',
-                        [
-                          'text',
-                          'On est là pour vous aider à mettre en ligne vos plans d’action. Si vous hésitez entre les options de mise en ligne ou que vous avez des questions, contactez-nous !',
-                        ],
-                      ]);
-                      $crisp.push([
-                        'do',
-                        'message:show',
-                        [
-                          'text',
-                          "Vous trouverez aussi des infos utiles dans notre [Centre d'aide](https://aide.territoiresentransitions.fr/fr/article/comment-mettre-en-ligne-votre-plan-daction-1skcwdw/)",
-                        ],
-                      ]);
-                      $crisp.push([
-                        'do',
-                        'message:show',
-                        ['text', 'À bientôt 😄'],
-                      ]);
-                    }}
+                      )
+                    }
                   >
                     Ajouter un plan d&apos;action
                   </Button>
