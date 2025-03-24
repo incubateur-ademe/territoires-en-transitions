@@ -64,46 +64,38 @@ export const PlansActionsRoutes = ({ collectivite_id, readonly }: Props) => {
           axes
         ),
         actions: (
-          <>
+          <div className="flex flex-col gap-2 mb-6 -mt-6">
             {!readonly && (
               <>
-                <li className="p-0 list-none">
-                  <Button
-                    data-test="CreerFicheAction"
-                    variant="outlined"
-                    size="sm"
-                    onClick={() => createFicheAction()}
-                  >
-                    Créer une fiche action
-                  </Button>
-                </li>
-                <li className="mt-4 p-0 list-none">
-                  <Button
-                    data-test="AjouterPlanAction"
-                    size="sm"
-                    href={makeCollectivitePlansActionsNouveauUrl({
-                      collectiviteId: collectivite_id,
-                    })}
-                    onClick={() =>
-                      trackEvent(
-                        'plansAction:side-nav-ajouter-plan-click',
-                        collectivite
-                      )
-                    }
-                  >
-                    Ajouter un plan d&apos;action
-                  </Button>
-                </li>
+                <Button
+                  data-test="CreerFicheAction"
+                  variant="outlined"
+                  size="sm"
+                  onClick={() => createFicheAction()}
+                >
+                  Créer une fiche action
+                </Button>
+                <Button
+                  data-test="AjouterPlanAction"
+                  size="sm"
+                  href={makeCollectivitePlansActionsNouveauUrl({
+                    collectiviteId: collectivite_id,
+                  })}
+                  onClick={() =>
+                    trackEvent(
+                      'plansAction:side-nav-ajouter-plan-click',
+                      collectivite
+                    )
+                  }
+                >
+                  Ajouter un plan d&apos;action
+                </Button>
               </>
             )}
             {user.isSupport && !isDemoMode && (
-              <li className="mt-4 p-0 list-none">
-                <ImportPlanButton
-                  collectiviteId={collectivite.collectiviteId}
-                />
-              </li>
+              <ImportPlanButton collectiviteId={collectivite.collectiviteId} />
             )}
-          </>
+          </div>
         ),
       }}
     >
