@@ -10,7 +10,7 @@ import {
 import { BaseExceptionFilter } from '@nestjs/core';
 import * as Sentry from '@sentry/nestjs';
 import { Request, Response } from 'express';
-import { getErrorWithCode } from './errors.utils';
+import { getErrorMessage, getErrorWithCode } from './errors.utils';
 import { HttpErrorResponse } from './http-error.response';
 
 export const getHttpErrorResponse = (exception: unknown): HttpErrorResponse => {
@@ -43,6 +43,7 @@ export class AllExceptionsFilter extends BaseExceptionFilter {
     const ctx = host.switchToHttp();
     const response = ctx.getResponse<Response>();
     const request = ctx.getRequest<Request>();
+    this.logger.error(getErrorMessage(exception));
     this.logger.error(exception);
 
     // report it to sentry with context

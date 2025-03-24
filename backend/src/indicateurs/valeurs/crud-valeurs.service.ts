@@ -6,7 +6,7 @@ import { indicateurSourceSourceCalculTable } from '@/backend/indicateurs/shared/
 import IndicateurSourcesService from '@/backend/indicateurs/sources/indicateur-sources.service';
 import IndicateurValeurExpressionParserService from '@/backend/indicateurs/valeurs/indicateur-valeur-expression-parser.service';
 import { buildConflictUpdateColumns } from '@/backend/utils/database/conflict.utils';
-import { roundTo } from '@/backend/utils/index-domain';
+import { getErrorMessage, roundTo } from '@/backend/utils/index-domain';
 import { createZodDto } from '@anatine/zod-nestjs';
 import { extendApi } from '@anatine/zod-openapi';
 import { BadRequestException, Injectable, Logger } from '@nestjs/common';
@@ -498,10 +498,10 @@ export default class CrudValeursService {
     indicateurValeurs: IndicateurValeurInsert[],
     tokenInfo: AuthenticatedUser | undefined
   ): Promise<IndicateurValeur[]> {
+    const collectiviteIds = [
+      ...new Set(indicateurValeurs.map((v) => v.collectiviteId)),
+    ];
     if (tokenInfo) {
-      const collectiviteIds = [
-        ...new Set(indicateurValeurs.map((v) => v.collectiviteId)),
-      ];
       for (const collectiviteId of collectiviteIds) {
         await this.permissionService.isAllowed(
           tokenInfo,
@@ -566,89 +566,116 @@ export default class CrudValeursService {
           ),
         ].join(',')}`
       );
-      const indicateurValeursAvecMetadonneesResultat =
-        await this.databaseService.db
-          .insert(indicateurValeurTable)
-          .values(indicateurValeursAvecMetadonnees)
-          .onConflictDoUpdate({
-            target: [
-              indicateurValeurTable.indicateurId,
-              indicateurValeurTable.collectiviteId,
-              indicateurValeurTable.dateValeur,
-              indicateurValeurTable.metadonneeId,
-            ],
-            targetWhere: isNotNull(indicateurValeurTable.metadonneeId),
-            set: {
-              resultat: sql.raw(
-                `excluded.${indicateurValeurTable.resultat.name}`
-              ),
-              resultatCommentaire: sql.raw(
-                `excluded.${indicateurValeurTable.resultatCommentaire.name}`
-              ),
-              objectif: sql.raw(
-                `excluded.${indicateurValeurTable.objectif.name}`
-              ),
-              objectifCommentaire: sql.raw(
-                `excluded.${indicateurValeurTable.objectifCommentaire.name}`
-              ),
-              modifiedBy: sql.raw(
-                `excluded.${indicateurValeurTable.modifiedBy.name}`
-              ),
-            },
-          })
-          .returning();
-      indicateurValeursResultat.push(
-        ...indicateurValeursAvecMetadonneesResultat
-      );
+      try {
+        const indicateurValeursAvecMetadonneesResultat =
+          await this.databaseService.db
+            .insert(indicateurValeurTable)
+            .values(indicateurValeursAvecMetadonnees)
+            .onConflictDoUpdate({
+              target: [
+                indicateurValeurTable.indicateurId,
+                indicateurValeurTable.collectiviteId,
+                indicateurValeurTable.dateValeur,
+                indicateurValeurTable.metadonneeId,
+              ],
+              targetWhere: isNotNull(indicateurValeurTable.metadonneeId),
+              set: {
+                resultat: sql.raw(
+                  `excluded.${indicateurValeurTable.resultat.name}`
+                ),
+                resultatCommentaire: sql.raw(
+                  `excluded.${indicateurValeurTable.resultatCommentaire.name}`
+                ),
+                objectif: sql.raw(
+                  `excluded.${indicateurValeurTable.objectif.name}`
+                ),
+                objectifCommentaire: sql.raw(
+                  `excluded.${indicateurValeurTable.objectifCommentaire.name}`
+                ),
+                modifiedBy: sql.raw(
+                  `excluded.${indicateurValeurTable.modifiedBy.name}`
+                ),
+              },
+            })
+            .returning();
+        indicateurValeursResultat.push(
+          ...indicateurValeursAvecMetadonneesResultat
+        );
+      } catch (e) {
+        this.logger.error(
+          `Erreur lors de l'upsert des valeurs avec métadonnées pour les collectivités ${collectiviteIds} : ${getErrorMessage(
+            e
+          )}`
+        );
+        this.logger.log(
+          `Données en erreur : ${JSON.stringify(
+            indicateurValeursAvecMetadonnees
+          )}`
+        );
+        throw e;
+      }
     }
 
     if (indicateurValeursSansMetadonnees.length) {
-      this.logger.log(
-        `Upsert des ${
-          indicateurValeursSansMetadonnees.length
-        } valeurs sans métadonnées des indicateurs ${[
-          ...new Set(
-            indicateurValeursSansMetadonnees.map((v) => v.indicateurId)
-          ),
-        ].join(',')} pour les collectivités ${[
-          ...new Set(
-            indicateurValeursSansMetadonnees.map((v) => v.collectiviteId)
-          ),
-        ].join(',')}`
-      );
-      const indicateurValeursSansMetadonneesResultat =
-        await this.databaseService.db
-          .insert(indicateurValeurTable)
-          .values(indicateurValeursSansMetadonnees)
-          .onConflictDoUpdate({
-            target: [
-              indicateurValeurTable.indicateurId,
-              indicateurValeurTable.collectiviteId,
-              indicateurValeurTable.dateValeur,
-            ],
-            targetWhere: isNull(indicateurValeurTable.metadonneeId),
-            set: {
-              resultat: sql.raw(
-                `excluded.${indicateurValeurTable.resultat.name}`
-              ),
-              resultatCommentaire: sql.raw(
-                `excluded.${indicateurValeurTable.resultatCommentaire.name}`
-              ),
-              objectif: sql.raw(
-                `excluded.${indicateurValeurTable.objectif.name}`
-              ),
-              objectifCommentaire: sql.raw(
-                `excluded.${indicateurValeurTable.objectifCommentaire.name}`
-              ),
-              modifiedBy: sql.raw(
-                `excluded.${indicateurValeurTable.modifiedBy.name}`
-              ),
-            },
-          })
-          .returning();
-      indicateurValeursResultat.push(
-        ...indicateurValeursSansMetadonneesResultat
-      );
+      try {
+        this.logger.log(
+          `Upsert des ${
+            indicateurValeursSansMetadonnees.length
+          } valeurs sans métadonnées des indicateurs ${[
+            ...new Set(
+              indicateurValeursSansMetadonnees.map((v) => v.indicateurId)
+            ),
+          ].join(',')} pour les collectivités ${[
+            ...new Set(
+              indicateurValeursSansMetadonnees.map((v) => v.collectiviteId)
+            ),
+          ].join(',')}`
+        );
+        const indicateurValeursSansMetadonneesResultat =
+          await this.databaseService.db
+            .insert(indicateurValeurTable)
+            .values(indicateurValeursSansMetadonnees)
+            .onConflictDoUpdate({
+              target: [
+                indicateurValeurTable.indicateurId,
+                indicateurValeurTable.collectiviteId,
+                indicateurValeurTable.dateValeur,
+              ],
+              targetWhere: isNull(indicateurValeurTable.metadonneeId),
+              set: {
+                resultat: sql.raw(
+                  `excluded.${indicateurValeurTable.resultat.name}`
+                ),
+                resultatCommentaire: sql.raw(
+                  `excluded.${indicateurValeurTable.resultatCommentaire.name}`
+                ),
+                objectif: sql.raw(
+                  `excluded.${indicateurValeurTable.objectif.name}`
+                ),
+                objectifCommentaire: sql.raw(
+                  `excluded.${indicateurValeurTable.objectifCommentaire.name}`
+                ),
+                modifiedBy: sql.raw(
+                  `excluded.${indicateurValeurTable.modifiedBy.name}`
+                ),
+              },
+            })
+            .returning();
+        indicateurValeursResultat.push(
+          ...indicateurValeursSansMetadonneesResultat
+        );
+      } catch (e) {
+        this.logger.error(
+          `Erreur lors de l'upsert des valeurs sans métadonnées pour les collectivités ${collectiviteIds} : ${getErrorMessage(
+            e
+          )}`
+        );
+        this.logger.log(
+          `Données en erreur : ${JSON.stringify(
+            indicateurValeursSansMetadonnees
+          )}`
+        );
+      }
     }
 
     const calculatedIndicateursResultat =
