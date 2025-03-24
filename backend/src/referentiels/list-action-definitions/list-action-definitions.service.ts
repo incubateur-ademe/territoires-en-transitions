@@ -2,11 +2,7 @@ import { DatabaseService } from '@/backend/utils';
 import { Injectable } from '@nestjs/common';
 import { and, asc, eq, getTableColumns, inArray, SQL, sql } from 'drizzle-orm';
 import z from 'zod';
-import {
-  actionDefinitionTable,
-  actionTypeSchema,
-  ReferentielIdEnum,
-} from '../index-domain';
+import { actionDefinitionTable, actionTypeSchema } from '../index-domain';
 import { referentielDefinitionTable } from '../models/referentiel-definition.table';
 import { actionPiloteTable } from '../models/action-pilote.table';
 import {
@@ -15,22 +11,16 @@ import {
 } from '../../collectivites/index-domain';
 import { dcpTable } from '../../auth/index-domain';
 import { actionServiceTable } from '../models/action-service.table';
-import { listActionsWithDetailsRequestSchema } from '../list-actions/list-actions.request';
+import { ListActionsRequestType } from '../list-actions/list-actions.request';
 
 export const inputSchema = z.object({
   actionIds: z.string().array().optional(),
   actionTypes: actionTypeSchema.array().optional(),
 });
 
-type Input = z.infer<typeof inputSchema>;
-
 export type ActionDefinition = Awaited<
   ReturnType<ListActionDefinitionsService['listActionDefinitions']>
 >[0];
-
-type ListActionDefinitionsWithDetailsInput = z.infer<
-  typeof listActionsWithDetailsRequestSchema
->;
 
 // TODO maybe see PG view `action_hierachy` to get children and parents
 
@@ -40,45 +30,13 @@ export class ListActionDefinitionsService {
 
   private db = this.databaseService.db;
 
-  async listActionDefinitions({ actionIds, actionTypes }: Input) {
-    const subQuery = this.db
-      .$with('action_definition_with_depth_and_type')
-      .as(this.listWithDepthAndType());
-
-    const request = this.db.with(subQuery).select().from(subQuery);
-
-    const filters = [
-      // On inclut uniquement les actions des référentiels CAE et ECI pour le moment
-      inArray(subQuery.referentielId, [
-        ReferentielIdEnum.CAE,
-        ReferentielIdEnum.ECI,
-      ]),
-    ];
-
-    if (actionIds?.length) {
-      filters.push(inArray(subQuery.actionId, actionIds));
-    }
-
-    if (actionTypes?.length) {
-      filters.push(inArray(subQuery.actionType, actionTypes));
-    }
-
-    if (filters.length) {
-      request.where(and(...filters));
-    }
-
-    request.orderBy(asc(subQuery.actionId));
-
-    return request;
-  }
-
-  async listActionDefinitionsWithDetails({
+  async listActionDefinitions({
     collectiviteId,
     filters,
-  }: ListActionDefinitionsWithDetailsInput) {
+  }: ListActionsRequestType) {
     const subQuery = this.db
-      .$with('action_definition_with_depth_and_type_and_details')
-      .as(this.listWithDepthTypeAndDetails(collectiviteId));
+      .$with('action_definition_with_details')
+      .as(this.listWithDetails(collectiviteId));
 
     const request = this.db.with(subQuery).select().from(subQuery);
 
@@ -176,7 +134,7 @@ export class ListActionDefinitionsService {
       .from(actionDefinitionTable);
   }
 
-  private listWithDepthAndType() {
+  private listWithDetails(collectiviteId: number) {
     const subQuery = this.db
       .$with('action_definition_with_depth')
       .as(this.listWithDepth());
@@ -201,7 +159,6 @@ export class ListActionDefinitionsService {
         categorie: subQuery.categorie,
         referentielId: subQuery.referentielId,
         referentielVersion: subQuery.referentielVersion,
-
         depth: subQuery.depth,
 
         // Add the action type from the `referentiel_definition.hierarchie` array
@@ -210,44 +167,6 @@ export class ListActionDefinitionsService {
           sql`${referentielDefinitionTable.hierarchie}[${subQuery.depth} + 1]`.as(
             'actionType'
           ),
-      })
-      .from(subQuery)
-      .innerJoin(
-        referentielDefinitionTable,
-        and(
-          eq(referentielDefinitionTable.id, subQuery.referentielId),
-          eq(referentielDefinitionTable.version, subQuery.referentielVersion)
-        )
-      );
-  }
-
-  private listWithDepthTypeAndDetails(collectiviteId: number) {
-    const subQuery = this.db
-      .$with('action_definition_with_depth_and_type')
-      .as(this.listWithDepthAndType());
-
-    return this.db
-      .with(subQuery)
-      .select({
-        modifiedAt: subQuery.modifiedAt,
-        actionId: subQuery.actionId,
-        referentiel: subQuery.referentiel,
-        identifiant: subQuery.identifiant,
-        nom: subQuery.nom,
-        description: subQuery.description,
-        contexte: subQuery.contexte,
-        exemples: subQuery.exemples,
-        ressources: subQuery.ressources,
-        reductionPotentiel: subQuery.reductionPotentiel,
-        perimetreEvaluation: subQuery.perimetreEvaluation,
-        preuve: subQuery.preuve,
-        points: subQuery.points,
-        pourcentage: subQuery.pourcentage,
-        categorie: subQuery.categorie,
-        referentielId: subQuery.referentielId,
-        referentielVersion: subQuery.referentielVersion,
-        depth: subQuery.depth,
-        actionType: subQuery.actionType,
 
         pilotes: sql<string[]>`
           array_remove(
@@ -270,6 +189,13 @@ export class ListActionDefinitionsService {
         `.as('services'),
       })
       .from(subQuery)
+      .innerJoin(
+        referentielDefinitionTable,
+        and(
+          eq(referentielDefinitionTable.id, subQuery.referentielId),
+          eq(referentielDefinitionTable.version, subQuery.referentielVersion)
+        )
+      )
       .leftJoin(
         actionPiloteTable,
         and(
@@ -309,7 +235,7 @@ export class ListActionDefinitionsService {
         subQuery.referentielId,
         subQuery.referentielVersion,
         subQuery.depth,
-        subQuery.actionType
+        referentielDefinitionTable.hierarchie
       );
   }
 }
