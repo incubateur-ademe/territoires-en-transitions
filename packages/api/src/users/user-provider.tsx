@@ -65,6 +65,8 @@ export const UserProvider = ({
       if (event === 'INITIAL_SESSION' || event === 'SIGNED_IN') {
         setSession(session);
         onInitialSession?.(user as UserDetails, session as Session);
+      } else if (event === 'TOKEN_REFRESHED') {
+        setSession(session);
       } else if (event === 'SIGNED_OUT') {
         setSession(null);
         onSignedOut?.();
