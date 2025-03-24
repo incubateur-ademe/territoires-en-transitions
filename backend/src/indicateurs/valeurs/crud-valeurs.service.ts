@@ -89,7 +89,7 @@ export default class CrudValeursService {
 
   public readonly UNKOWN_SOURCE_ID = 'unknown';
 
-  private readonly PARALLEL_COLLECTIVITE_COMPUTE_VALEURS = 10;
+  private readonly PARALLEL_COLLECTIVITE_COMPUTE_VALEURS = 5;
 
   /**
    * Number of decimal in order to round the value
@@ -1187,9 +1187,6 @@ export default class CrudValeursService {
           )
         )
     ).map((c) => c.id);
-    this.logger.log(
-      `Found ${collectiviteIds.length} collectivites with values for these source indicateur identifiants`
-    );
 
     const allComputedIndicateurValeurs: {
       collectiviteId: number;
@@ -1200,6 +1197,10 @@ export default class CrudValeursService {
       collectiviteIds,
       this.PARALLEL_COLLECTIVITE_COMPUTE_VALEURS
     );
+    this.logger.log(
+      `Found ${collectiviteIds.length} collectivites with values for these source indicateur identifiants (${collectiviteIdsChunks.length} chunks of ${this.PARALLEL_COLLECTIVITE_COMPUTE_VALEURS} collectivites)`
+    );
+
     const recomputeResult: Promise<{
       collectiviteId: number;
       valeursCount: number;
