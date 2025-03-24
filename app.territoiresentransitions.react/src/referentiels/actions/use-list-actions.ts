@@ -7,10 +7,13 @@ export type Action =
 
 export function useListActions(params?: { actionIds?: string[] }) {
   const collectiviteId = useCollectiviteId();
+
   return trpc.referentiels.actions.listActions.useQuery(
     {
       collectiviteId,
-      actionIds: params?.actionIds,
+      filters: {
+        actionIds: params?.actionIds, // actuellement undefined, à voir en amont pourquoi
+      },
     },
     DISABLE_AUTO_REFETCH
   );
