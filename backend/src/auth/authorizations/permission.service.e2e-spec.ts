@@ -13,6 +13,8 @@ import {
 import { DatabaseService } from '@/backend/utils';
 import { INestApplication } from '@nestjs/common';
 import { eq } from 'drizzle-orm';
+import { collectiviteTable } from '@/backend/collectivites/shared/models/collectivite.table';
+import CollectivitesService from '@/backend/collectivites/services/collectivites.service';
 
 describe('Gestion des droits', () => {
   let app: INestApplication;
@@ -21,11 +23,13 @@ describe('Gestion des droits', () => {
   let youlouDoudouUser: AuthenticatedUser;
   let databaseService: DatabaseService;
   let roleUpdateService: RoleUpdateService;
+  let collectiviteService : CollectivitesService;
 
   beforeAll(async () => {
     app = await getTestApp();
     permissionService = app.get(PermissionService);
     roleUpdateService = app.get(RoleUpdateService);
+    collectiviteService = app.get(CollectivitesService);
     yoloDodoUser = await getAuthUser();
     youlouDoudouUser = await getAuthUser(YOULOU_DOUDOU);
     databaseService = await getTestDatabase(app);
@@ -63,16 +67,19 @@ describe('Gestion des droits', () => {
         }
       });
     });
-    /* TODO: to be repaired
     test('Collectivité en accès restreint -> NOK', async () => {
       await databaseService.db
         .update(collectiviteTable)
         .set({ accessRestreint: true })
         .where(eq(collectiviteTable.id, 20));
+
+      const collectivitePrivate = await collectiviteService.isPrivate(20);
       expect(
         await permissionService.isAllowed(
           yoloDodoUser,
-          PermissionOperation.COLLECTIVITES_VISITE,
+          collectivitePrivate
+            ? PermissionOperation.COLLECTIVITES_LECTURE
+            : PermissionOperation.COLLECTIVITES_VISITE,
           ResourceType.COLLECTIVITE,
           20,
           true
@@ -89,7 +96,7 @@ describe('Gestion des droits', () => {
           console.error('Erreur lors de la remise à zéro des données.', error);
         }
       });
-    });*/
+    });
   });
   describe('Droit en lecture sur une collectivité -> NOK', async () => {
     test('Utilisateur vérifié sur sa collectivité -> OK', async () => {
