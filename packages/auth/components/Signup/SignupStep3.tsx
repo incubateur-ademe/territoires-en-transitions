@@ -93,10 +93,7 @@ export const SignupStep3 = (props: SignupPropsWithState) => {
             title="Numéro de téléphone professionnel *"
             htmlFor="telephone"
             state={errors.telephone ? 'error' : 'info'}
-            message={
-              errors.telephone?.message?.toString() ||
-              "L'accès à votre numéro est réservé à l'équipe ADEME de l'outil et le contact par mail restera privilégié"
-            }
+            message={errors.telephone?.message?.toString()}
           >
             <Input id="telephone" type="tel" {...register('telephone')} />
           </Field>
