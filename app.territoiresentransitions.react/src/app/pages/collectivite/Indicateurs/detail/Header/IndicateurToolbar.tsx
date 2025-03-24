@@ -48,25 +48,23 @@ const IndicateurToolbar = ({
           Modifier
         </Button>
 
-        {!isReadonly && (
-          <Tooltip
-            label={
-              isFavori
-                ? 'Retirer de ma collectivité'
-                : 'Ajouter à ma collectivité'
-            }
-          >
-            <Button
-              icon={isFavori ? 'star-fill' : 'star-line'}
-              size="xs"
-              variant="grey"
-              className={classNames({
-                'text-warning-1 hover:text-warning-1': isFavori,
-              })}
-              onClick={() => toggleFavori(!isFavori)}
-            />
-          </Tooltip>
-        )}
+        <Tooltip
+          label={
+            isFavori
+              ? 'Retirer de ma collectivité'
+              : 'Ajouter à ma collectivité'
+          }
+        >
+          <Button
+            icon={isFavori ? 'star-fill' : 'star-line'}
+            size="xs"
+            variant="grey"
+            className={classNames({
+              'text-warning-1 hover:text-warning-1': isFavori,
+            })}
+            onClick={() => toggleFavori(!isFavori)}
+          />
+        </Tooltip>
 
         <Button
           loading={isLoading}
