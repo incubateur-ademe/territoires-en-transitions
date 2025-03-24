@@ -27,29 +27,28 @@ const Fiches = ({ isDndActive, isAxePage, ficheIds, planId, axeId }: Props) => {
         ? ficheIds.map((id) => <FicheActionCardSkeleton key={id} />)
         : data &&
           data.map((fiche) => {
-            if (fiche.id! < 0) {
+            if (fiche.id < 0) {
               return <FicheActionCardSkeleton key={fiche.id} />;
             } else {
               return (
                 <Fiche
                   key={fiche.id}
                   axeId={axeId}
-                  planId={planId}
                   fiche={fiche}
                   editKeysToInvalidate={[['axe_fiches', axeId, ficheIds]]}
                   url={
                     fiche.id
                       ? isAxePage
                         ? makeCollectivitePlanActionAxeFicheUrl({
-                            collectiviteId: fiche.collectiviteId!,
+                            collectiviteId: fiche.collectiviteId,
                             planActionUid: planId.toString(),
                             ficheUid: fiche.id.toString(),
                             axeUid: axeId.toString(),
                           })
                         : makeCollectivitePlanActionFicheUrl({
-                            collectiviteId: fiche.collectiviteId!,
+                            collectiviteId: fiche.collectiviteId,
                             planActionUid: planId.toString(),
-                            ficheUid: fiche.id!.toString(),
+                            ficheUid: fiche.id.toString(),
                           })
                       : undefined
                   }
