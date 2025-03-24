@@ -14,14 +14,13 @@ export type FicheDndData = {
 };
 
 type Props = {
-  planId: number;
   axeId: number;
   url?: string;
   fiche: FicheResume;
   editKeysToInvalidate?: QueryKey[];
 };
 
-const Fiche = ({ planId, axeId, url, fiche, editKeysToInvalidate }: Props) => {
+const Fiche = ({ axeId, url, fiche, editKeysToInvalidate }: Props) => {
   const collectivite = useCurrentCollectivite();
 
   const canDrag =
@@ -36,7 +35,7 @@ const Fiche = ({ planId, axeId, url, fiche, editKeysToInvalidate }: Props) => {
     listeners,
     setNodeRef: draggableRef,
   } = useDraggable({
-    id: fiche.id!,
+    id: fiche.id,
     data: {
       axeId,
       type: 'fiche',
