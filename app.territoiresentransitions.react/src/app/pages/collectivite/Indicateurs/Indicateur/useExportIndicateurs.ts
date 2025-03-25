@@ -27,7 +27,7 @@ export const useExportIndicateurs = (
       const indicateurIds = definitions.map((d) => d.id);
       const { blob, filename } = await apiClient.getAsBlob(
         {
-          route: '/indicateurs/xlsx',
+          route: '/indicateur-definitions/xlsx',
           params: { collectiviteId, indicateurIds },
         },
         'POST'

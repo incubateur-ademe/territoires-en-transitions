@@ -77,6 +77,7 @@ export type IndicateurValeurInsert = InferInsertModel<
 export const indicateurValeurGroupeeSchema = indicateurValeurSchema
   .pick({
     id: true,
+    collectiviteId: true,
     dateValeur: true,
     resultat: true,
     resultatCommentaire: true,

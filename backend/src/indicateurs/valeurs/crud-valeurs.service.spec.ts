@@ -122,11 +122,13 @@ describe('Indicateurs → crud-valeurs.service', () => {
           valeurs: [
             {
               dateValeur: '2015-01-01',
+              collectiviteId: 4936,
               id: 10263,
               objectif: 513.79,
             },
             {
               dateValeur: '2016-01-01',
+              collectiviteId: 4936,
               id: 10264,
               objectif: 527.25,
             },
@@ -145,6 +147,7 @@ describe('Indicateurs → crud-valeurs.service', () => {
           },
           valeurs: [
             {
+              collectiviteId: 4936,
               dateValeur: '2016-01-01',
               id: 10300,
               objectif: 423.08,
@@ -318,12 +321,14 @@ describe('Indicateurs → crud-valeurs.service', () => {
                     id: 10263,
                     dateValeur: '2015-01-01',
                     objectif: 513.79,
+                    collectiviteId: 4936,
                     metadonneeId: 2,
                   },
                   {
                     id: 10264,
                     dateValeur: '2016-01-01',
                     objectif: 527.25,
+                    collectiviteId: 4936,
                     metadonneeId: 2,
                   },
                 ],
@@ -334,7 +339,12 @@ describe('Indicateurs → crud-valeurs.service', () => {
                 ordreAffichage: null,
                 metadonnees: [],
                 valeurs: [
-                  { id: 10264, dateValeur: '2015-01-01', resultat: 625 },
+                  {
+                    id: 10264,
+                    dateValeur: '2015-01-01',
+                    resultat: 625,
+                    collectiviteId: 4936,
+                  },
                 ],
               },
             },
@@ -388,6 +398,7 @@ describe('Indicateurs → crud-valeurs.service', () => {
                     id: 10300,
                     dateValeur: '2016-01-01',
                     objectif: 423.08,
+                    collectiviteId: 4936,
                     metadonneeId: 3,
                   },
                 ],
@@ -444,6 +455,9 @@ describe('Indicateurs → crud-valeurs.service', () => {
             version: '1.0.0',
             precision: 2,
             titreCourt: null,
+            exprCible: null,
+            exprSeuil: null,
+            libelleCibleSeuil: null,
           },
           indicateur_source_metadonnee: {
             id: 1,
@@ -495,6 +509,9 @@ describe('Indicateurs → crud-valeurs.service', () => {
             version: '1.0.0',
             precision: 2,
             titreCourt: null,
+            exprCible: null,
+            exprSeuil: null,
+            libelleCibleSeuil: null,
           },
           indicateur_source_metadonnee: {
             id: 2,
@@ -563,6 +580,9 @@ describe('Indicateurs → crud-valeurs.service', () => {
             version: '1.0.0',
             precision: 2,
             titreCourt: null,
+            exprCible: null,
+            exprSeuil: null,
+            libelleCibleSeuil: null,
           },
           indicateur_source_metadonnee: {
             id: 1,
@@ -613,6 +633,9 @@ describe('Indicateurs → crud-valeurs.service', () => {
             version: '1.0.0',
             precision: 2,
             titreCourt: null,
+            exprCible: null,
+            exprSeuil: null,
+            libelleCibleSeuil: null,
           },
           indicateur_source_metadonnee: {
             id: 1,
@@ -681,6 +704,9 @@ describe('Indicateurs → crud-valeurs.service', () => {
             version: '1.0.0',
             precision: 2,
             titreCourt: null,
+            exprCible: null,
+            exprSeuil: null,
+            libelleCibleSeuil: null,
           },
           indicateur_source_metadonnee: {
             id: 1,
@@ -732,6 +758,9 @@ describe('Indicateurs → crud-valeurs.service', () => {
             version: '1.0.0',
             precision: 2,
             titreCourt: null,
+            exprCible: null,
+            exprSeuil: null,
+            libelleCibleSeuil: null,
           },
           indicateur_source_metadonnee: null,
         },
@@ -791,6 +820,9 @@ describe('Indicateurs → crud-valeurs.service', () => {
             version: '1.0.0',
             precision: 2,
             titreCourt: null,
+            exprCible: null,
+            exprSeuil: null,
+            libelleCibleSeuil: null,
           },
           indicateur_source_metadonnee: {
             id: 1,
@@ -842,6 +874,9 @@ describe('Indicateurs → crud-valeurs.service', () => {
             version: '1.0.0',
             precision: 2,
             titreCourt: null,
+            exprCible: null,
+            exprSeuil: null,
+            libelleCibleSeuil: null,
           },
           indicateur_source_metadonnee: {
             id: 1,
@@ -910,6 +945,9 @@ describe('Indicateurs → crud-valeurs.service', () => {
             version: '1.0.0',
             precision: 2,
             titreCourt: null,
+            exprCible: null,
+            exprSeuil: null,
+            libelleCibleSeuil: null,
           },
           indicateur_source_metadonnee: {
             id: 1,
@@ -961,6 +999,9 @@ describe('Indicateurs → crud-valeurs.service', () => {
             version: '1.0.0',
             precision: 2,
             titreCourt: null,
+            exprCible: null,
+            exprSeuil: null,
+            libelleCibleSeuil: null,
           },
           indicateur_source_metadonnee: {
             id: 1,
@@ -1027,6 +1068,9 @@ describe('Indicateurs → crud-valeurs.service', () => {
           version: '1.0.0',
           precision: 2,
           titreCourt: null,
+          exprCible: null,
+          exprSeuil: null,
+          libelleCibleSeuil: null,
         },
         indicateur_source_metadonnee: {
           id: 1,
@@ -1077,6 +1121,9 @@ describe('Indicateurs → crud-valeurs.service', () => {
           version: '1.0.0',
           precision: 2,
           titreCourt: null,
+          exprCible: null,
+          exprSeuil: null,
+          libelleCibleSeuil: null,
         },
         indicateur_source_metadonnee: {
           id: 2,
@@ -1154,6 +1201,9 @@ describe('Indicateurs → crud-valeurs.service', () => {
           version: '1.0.0',
           precision: 2,
           titreCourt: null,
+          exprCible: null,
+          exprSeuil: null,
+          libelleCibleSeuil: null,
         },
         indicateur_source_metadonnee: {
           id: 1,

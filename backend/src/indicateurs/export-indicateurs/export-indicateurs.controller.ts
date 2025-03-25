@@ -12,7 +12,7 @@ class GetExportIndicateursRequestClass extends createZodDto(
 ) {}
 
 @ApiTags('Indicateurs')
-@Controller('indicateurs')
+@Controller('indicateur-definitions')
 export class ExportIndicateursController {
   constructor(private readonly exportService: ExportIndicateursService) {}
 

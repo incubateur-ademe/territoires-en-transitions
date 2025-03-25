@@ -30,7 +30,7 @@ describe('Indicateurs', () => {
     const indicateurId = rows[0].id;
 
     const response = await request(app.getHttpServer())
-      .post('/indicateurs/xlsx')
+      .post('/indicateur-definitions/xlsx')
       .set('Authorization', `Bearer ${yoloDodoToken}`)
       .send({ collectiviteId: 1, indicateurIds: [indicateurId] })
       .expect(201)
