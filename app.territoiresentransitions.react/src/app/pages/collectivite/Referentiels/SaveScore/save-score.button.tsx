@@ -1,4 +1,5 @@
-import SaveScoreModal, {
+import {
+  SaveScoreModal,
   SaveScoreProps,
 } from '@/app/app/pages/collectivite/Referentiels/SaveScore/save-score.modal';
 import { Button } from '@/ui';
