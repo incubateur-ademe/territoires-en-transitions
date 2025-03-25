@@ -3,7 +3,6 @@ import { ActionCommentaire } from '@/app/referentiels/actions/action-commentaire
 import { SubActionStatutDropdown } from '@/app/referentiels/actions/sub-action-statut.dropdown';
 import ScoreProgressBar from '@/app/referentiels/scores/score.progress-bar';
 import ScoreShow from '@/app/referentiels/scores/score.show';
-import { StatutAvancement } from '@/domain/referentiels';
 import { Icon, InfoTooltip } from '@/ui';
 import classNames from 'classnames';
 import DOMPurify from 'dompurify';
@@ -13,7 +12,6 @@ import { useScoreRealise } from '../DEPRECATED_useScoreRealise';
 
 type SubActionHeaderProps = {
   actionDefinition: ActionDefinitionSummary;
-  actionAvancement?: StatutAvancement;
   hideStatus?: boolean;
   statusWarningMessage?: boolean;
   displayProgressBar?: boolean;
@@ -28,7 +26,6 @@ type SubActionHeaderProps = {
 
 const SubActionHeader = ({
   actionDefinition,
-  actionAvancement,
   hideStatus = false,
   statusWarningMessage = false,
   displayProgressBar = false,
