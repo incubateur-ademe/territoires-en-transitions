@@ -18,6 +18,10 @@ export const snapshotInputSchema = z.object({
   snapshotRef: z.string(),
 });
 
+export const updateSnapshotNameInputSchema = snapshotInputSchema.extend({
+  newName: z.string(),
+});
+
 @Injectable()
 export class SnapshotsRouter {
   constructor(
@@ -109,6 +113,24 @@ export class SnapshotsRouter {
     //       );
     //     }
     //   }),
+
+    updateName: this.trpc.authedProcedure
+      .input(updateSnapshotNameInputSchema)
+      .mutation(async ({ input, ctx }) => {
+        await this.permissionService.isAllowed(
+          ctx.user,
+          PermissionOperation.REFERENTIELS_EDITION,
+          ResourceType.COLLECTIVITE,
+          input.collectiviteId
+        );
+
+        return this.snapshots.updateName(
+          input.collectiviteId,
+          input.referentielId,
+          input.snapshotRef,
+          input.newName
+        );
+      }),
 
     delete: this.trpc.authedProcedure
       .input(snapshotInputSchema)
