@@ -1,4 +1,6 @@
 import { SelectMultiple, SelectMultipleProps } from '@/ui';
+import { DeleteSnapshotButton } from './deleteSnapshot/delete-snapshot.button';
+import { UpdateSnapshotNameButton } from './updateSnapshotName/update-snapshot-name.button';
 
 export type SnapshotOption = {
   ref: string;
@@ -16,7 +18,28 @@ type SnapshotsDropdownProps<T extends SnapshotOption> = Omit<
   maxBadgesToShow: number;
 };
 
-export function SnapshotsDropdown<T extends SnapshotOption>({ values = [], options, onChange, maxBadgesToShow, ...props }: SnapshotsDropdownProps<T>) {
+export function SnapshotsDropdown<T extends SnapshotOption>({
+  values = [],
+  options,
+  onChange,
+  maxBadgesToShow,
+  ...props
+}: SnapshotsDropdownProps<T>) {
+  const renderOptionWithIcons = (option: any) => {
+    const isActive = values.some((v) => v.ref === option.value);
+    return (
+      <div className="flex items-center justify-between w-full">
+        <span className={`mr-8 ${isActive ? 'text-primary-7' : 'text-grey-8'}`}>
+          {option.label}
+        </span>
+        <UpdateSnapshotNameButton
+          snapshotRef={option.value}
+          snapshotName={option.label}
+        />
+        <DeleteSnapshotButton snapshotRef={option.value} />
+      </div>
+    );
+  };
 
   return (
     <SelectMultiple
@@ -31,9 +54,15 @@ export function SnapshotsDropdown<T extends SnapshotOption>({ values = [], optio
       }
       values={values.map((value) => value.ref)}
       onChange={({ values }) => {
-        const selectedSnapshots = options.filter((option) => values?.includes(option.ref));
+        const selectedSnapshots = options.filter((option) =>
+          values?.includes(option.ref)
+        );
         onChange(selectedSnapshots);
       }}
+      customItem={(option) => {
+        return renderOptionWithIcons(option);
+      }}
+      showCustomItemInBadges={false}
     />
   );
-};
+}
