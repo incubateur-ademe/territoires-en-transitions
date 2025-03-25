@@ -1,5 +1,5 @@
 import z from 'zod';
-import { dcpSchema, utilisateurPermissionSchema } from '../index-domain';
+import { dcpSchema, utilisateurPermissionAvecNomSchema } from '../index-domain';
 
 export const userInfoResponseSchema = dcpSchema
   .pick({
@@ -12,11 +12,12 @@ export const userInfoResponseSchema = dcpSchema
   .extend({
     isVerified: z.boolean().optional().nullable(),
     isSupport: z.boolean().optional().nullable(),
-    permissions: utilisateurPermissionSchema
+    permissions: utilisateurPermissionAvecNomSchema
       .pick({
         collectiviteId: true,
         isActive: true,
         niveau: true,
+        collectiviteNom: true,
       })
       .array()
       .optional(),

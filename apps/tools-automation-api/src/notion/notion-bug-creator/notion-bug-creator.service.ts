@@ -23,6 +23,7 @@ import {
   CrispSessionMessageType,
 } from '../../crisp/models/get-crisp-session-messages.response';
 import { CrispSession } from '../../crisp/models/get-crisp-session.response';
+import { TrpcClientService } from '../../utils/trpc/trpc-client.service';
 
 export type PropertyValueType = CreatePageParameters['properties'][string];
 
@@ -34,7 +35,10 @@ export class NotionBugCreatorService {
   readonly CRISP_DATA_TICKET_PREFIX = 'ticket-';
   readonly CRISP_DATA_TICKET_URL = 'ticket-url';
 
-  constructor(private configurationService: ConfigurationService) {
+  constructor(
+    private readonly configurationService: ConfigurationService,
+    private readonly trpcClientService: TrpcClientService
+  ) {
     this.notion = new Client({
       auth: configurationService.get('NOTION_TOKEN'),
     });
@@ -247,7 +251,8 @@ export class NotionBugCreatorService {
 
   getNotionBugFromCrispSession(
     session: CrispSession,
-    database: GetDatabaseResponse
+    database: GetDatabaseResponse,
+    collectiviteId: number | null
   ): CreatePageParameters {
     const createPageParameters: CreatePageParameters = {
       icon: {
@@ -289,6 +294,15 @@ export class NotionBugCreatorService {
         ),
       },
     };
+
+    if (collectiviteId) {
+      createPageParameters.properties['ID Collectivité'] =
+        this.getNotionPropertyValue(
+          database,
+          'ID Collectivité',
+          collectiviteId
+        );
+    }
 
     const metadataKeys = Object.keys(session.meta.data);
     metadataKeys.forEach((metadataKey) => {
@@ -338,6 +352,7 @@ export class NotionBugCreatorService {
     block: BlockObjectRequest,
     templateBlockId: string,
     session: CrispSession,
+    collectivitesString: string | null,
     isParentInfoBlock?: boolean
   ) {
     if (block.type !== 'table') {
@@ -393,6 +408,15 @@ export class NotionBugCreatorService {
               },
             },
           ];
+        } else if (collectivitesString && infoName === 'id collectivité') {
+          tableRow.table_row.cells[1] = [
+            {
+              type: 'text',
+              text: {
+                content: collectivitesString,
+              },
+            },
+          ];
         }
       }
     });
@@ -402,6 +426,7 @@ export class NotionBugCreatorService {
     parentBlockId: string,
     templateBlockIdToCopy: string,
     session: CrispSession,
+    collectivitesString: string | null,
     isParentInfoBlock = false
   ) {
     const templateBlocksResponse = await this.notion.blocks.children.list({
@@ -437,6 +462,7 @@ export class NotionBugCreatorService {
             block,
             templateBlock.id,
             session,
+            collectivitesString,
             isParentInfoBlock
           )
         );
@@ -474,6 +500,7 @@ export class NotionBugCreatorService {
               block.id,
               templateBlock.id,
               session,
+              collectivitesString,
               parentInfoBlock
             )
           );
@@ -504,6 +531,42 @@ export class NotionBugCreatorService {
       ),
     });
 
+    const userEmail = session.meta.email;
+    let collectiviteId: number | null = null;
+    let collectivitesString: string | null = null;
+    if (userEmail) {
+      this.logger.log(`Looking for user with email ${userEmail}`);
+      const userWithPermissions = await this.trpcClientService
+        .getClient()
+        .utilisateurs.get.query({ email: userEmail });
+
+      collectivitesString =
+        userWithPermissions.user?.permissions
+          ?.map(
+            (permission) =>
+              `${permission.collectiviteId} (${permission.collectiviteNom})`
+          )
+          .join(', ') || null;
+      if (userWithPermissions.user?.permissions?.length === 1) {
+        collectiviteId = userWithPermissions.user.permissions[0].collectiviteId;
+        this.logger.log(
+          `Only one permission, extracted collectivite id ${collectiviteId}`
+        );
+      } else if (
+        userWithPermissions.user?.permissions?.length &&
+        userWithPermissions.user.permissions.length > 1
+      ) {
+        this.logger.log(
+          `Permissions: ${JSON.stringify(userWithPermissions.user.permissions)}`
+        );
+        this.logger.log(
+          `Multiple permissions, too risky to guess the right collectivite id`
+        );
+      }
+    } else {
+      this.logger.warn(`No email found in session, skipping user lookup`);
+    }
+
     let createdOrExistingBug: PageObjectResponse;
     if (existingBugs.results.length > 0) {
       createdOrExistingBug = existingBugs.results[0] as PageObjectResponse;
@@ -511,10 +574,17 @@ export class NotionBugCreatorService {
         `Bug already exists for session ${session.session_id}, returning existing bug with url ${createdOrExistingBug.url}`
       );
     } else {
-      const notionBug = this.getNotionBugFromCrispSession(session, database);
+      const notionBug = this.getNotionBugFromCrispSession(
+        session,
+        database,
+        collectiviteId
+      );
       createdOrExistingBug = (await this.notion.pages.create(
         notionBug
       )) as PageObjectResponse;
+      this.logger.log(
+        `Bug created for session ${session.session_id} with url ${createdOrExistingBug.url}`
+      );
     }
 
     const existingBlocksResponse = await this.notion.blocks.children.list({
@@ -530,7 +600,8 @@ export class NotionBugCreatorService {
       existingBlocks = await this.createBlocksFromTemplate(
         createdOrExistingBug.id,
         this.configurationService.get('NOTION_BUG_TEMPLATE_ID'),
-        session
+        session,
+        collectivitesString
       );
     }
 

@@ -81,8 +81,13 @@ export class UsersService {
     }
 
     const permissions = (
-      await this.roleService.getPermissions({ userId: userInfo.userId })
-    ).map((access) => pick(access, ['collectiviteId', 'isActive', 'niveau']));
+      await this.roleService.getPermissions({
+        userId: userInfo.userId,
+        addCollectiviteNom: true,
+      })
+    ).map((access) =>
+      pick(access, ['collectiviteId', 'isActive', 'niveau', 'collectiviteNom'])
+    );
 
     userInfo.permissions = permissions;
 
