@@ -7,5 +7,6 @@ import { VersionController } from './version/version.controller';
   imports: [ConfigurationModule],
   controllers: [VersionController],
   providers: [TrpcClientService],
+  exports: [TrpcClientService],
 })
 export class UtilsModule {}

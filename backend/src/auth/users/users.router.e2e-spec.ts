@@ -54,7 +54,6 @@ describe('UserRouter', () => {
     const input: Input = {
       email: 'youlou@doudou.com',
     };
-
     const userInfoResponse = await caller.utilisateurs.get(input);
 
     const expectedUserInfoResponse: UserInfoResponseType = {
@@ -69,11 +68,13 @@ describe('UserRouter', () => {
         {
           isActive: true,
           collectiviteId: 1,
+          collectiviteNom: 'Ambérieu-en-Bugey',
           niveau: PermissionLevel.EDITION,
         },
         {
           isActive: true,
           collectiviteId: 2,
+          collectiviteNom: 'Arbent',
           niveau: PermissionLevel.EDITION,
         },
       ],

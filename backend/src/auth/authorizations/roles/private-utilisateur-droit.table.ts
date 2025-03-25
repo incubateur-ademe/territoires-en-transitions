@@ -1,6 +1,7 @@
 import { createdAt, modifiedAt } from '@/backend/utils/index-domain';
 import { boolean, integer, pgTable, serial, uuid } from 'drizzle-orm/pg-core';
 import { createSelectSchema } from 'drizzle-zod';
+import z from 'zod';
 import { collectiviteTable } from '../../../collectivites/shared/models/collectivite.table';
 import { invitationTable } from '../../models/invitation.table';
 import { PermissionLevel, niveauAccessEnum } from './niveau-acces.enum';
@@ -24,5 +25,11 @@ export const utilisateurPermissionSchema = createSelectSchema(
   utilisateurPermissionTable
 );
 
-export type UtilisateurPermission =
-  typeof utilisateurPermissionTable.$inferSelect;
+export const utilisateurPermissionAvecNomSchema =
+  utilisateurPermissionSchema.extend({
+    collectiviteNom: z.string().optional(),
+  });
+
+export type UtilisateurPermission = z.infer<
+  typeof utilisateurPermissionAvecNomSchema
+>;

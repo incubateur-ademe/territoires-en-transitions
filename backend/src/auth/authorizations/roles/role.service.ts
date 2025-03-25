@@ -5,10 +5,11 @@ import {
   UtilisateurPermission,
   utilisateurPermissionTable,
 } from '@/backend/auth/index-domain';
+import { collectiviteTable } from '@/backend/collectivites/index-domain';
 import { auditeurTable } from '@/backend/referentiels/labellisations/auditeur.table';
 import { DatabaseService } from '@/backend/utils';
 import { Injectable, Logger } from '@nestjs/common';
-import { and, count, eq, not } from 'drizzle-orm';
+import { and, count, eq, getTableColumns, not } from 'drizzle-orm';
 import { auditTable } from '../../../referentiels/labellisations/audit.table';
 import { AuthRole, AuthUser } from '../../models/auth.models';
 import { PermissionLevel } from './niveau-acces.enum';
@@ -113,13 +114,31 @@ export class RoleService {
   async getPermissions({
     userId,
     collectiviteId,
+    addCollectiviteNom,
   }: {
     userId: string;
     collectiviteId?: number;
+    addCollectiviteNom?: boolean;
   }): Promise<UtilisateurPermission[]> {
     const query = this.databaseService.db
-      .select()
+      .select(
+        addCollectiviteNom
+          ? {
+              ...getTableColumns(utilisateurPermissionTable),
+              collectiviteNom: collectiviteTable.nom,
+            }
+          : {
+              ...getTableColumns(utilisateurPermissionTable),
+            }
+      )
       .from(utilisateurPermissionTable);
+
+    if (addCollectiviteNom) {
+      query.leftJoin(
+        collectiviteTable,
+        eq(collectiviteTable.id, utilisateurPermissionTable.collectiviteId)
+      );
+    }
 
     if (collectiviteId) {
       query.where(
