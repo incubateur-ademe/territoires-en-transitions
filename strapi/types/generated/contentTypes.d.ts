@@ -374,6 +374,11 @@ export interface ApiActualiteActualite extends Schema.CollectionType {
     draftAndPublish: true;
   };
   attributes: {
+    categories: Attribute.Relation<
+      'api::actualite.actualite',
+      'oneToMany',
+      'api::actualites-categorie.actualites-categorie'
+    >;
     Couverture: Attribute.Media<'images'> & Attribute.Required;
     createdAt: Attribute.DateTime;
     createdBy: Attribute.Relation<
@@ -407,6 +412,37 @@ export interface ApiActualiteActualite extends Schema.CollectionType {
     updatedAt: Attribute.DateTime;
     updatedBy: Attribute.Relation<
       'api::actualite.actualite',
+      'oneToOne',
+      'admin::user'
+    > &
+      Attribute.Private;
+  };
+}
+
+export interface ApiActualitesCategorieActualitesCategorie
+  extends Schema.CollectionType {
+  collectionName: 'actualites_categories';
+  info: {
+    displayName: 'Actualit\u00E9s Cat\u00E9gories';
+    pluralName: 'actualites-categories';
+    singularName: 'actualites-categorie';
+  };
+  options: {
+    draftAndPublish: true;
+  };
+  attributes: {
+    createdAt: Attribute.DateTime;
+    createdBy: Attribute.Relation<
+      'api::actualites-categorie.actualites-categorie',
+      'oneToOne',
+      'admin::user'
+    > &
+      Attribute.Private;
+    nom: Attribute.String;
+    publishedAt: Attribute.DateTime;
+    updatedAt: Attribute.DateTime;
+    updatedBy: Attribute.Relation<
+      'api::actualites-categorie.actualites-categorie',
       'oneToOne',
       'admin::user'
     > &
@@ -1832,6 +1868,7 @@ declare module '@strapi/types' {
       'admin::transfer-token-permission': AdminTransferTokenPermission;
       'admin::user': AdminUser;
       'api::actualite.actualite': ApiActualiteActualite;
+      'api::actualites-categorie.actualites-categorie': ApiActualitesCategorieActualitesCategorie;
       'api::collectivite.collectivite': ApiCollectiviteCollectivite;
       'api::conseiller.conseiller': ApiConseillerConseiller;
       'api::faq.faq': ApiFaqFaq;
