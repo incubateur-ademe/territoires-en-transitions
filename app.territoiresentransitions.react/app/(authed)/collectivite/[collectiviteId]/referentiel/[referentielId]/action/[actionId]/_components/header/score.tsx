@@ -19,7 +19,9 @@ const Score = ({ actionDefinition, action, DEPRECATED_actionScore }: Props) => {
   return (
     <div className="flex gap-4 items-center text-grey-7">
       <ScoreProgressBar
-        actionDefinition={actionDefinition}
+        id={actionDefinition.id}
+        identifiant={actionDefinition.identifiant}
+        type={actionDefinition.type}
         className="border-r border-r-[#ddd] pr-6"
         displayDoneValue
       />
