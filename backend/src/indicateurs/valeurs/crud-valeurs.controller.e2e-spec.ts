@@ -50,13 +50,17 @@ describe('Indicateurs', () => {
 
   it(`Lecture sans acces`, async () => {
     // on peut lire les valeurs en mode visite
-    await request(app.getHttpServer())
-      .get(`/indicateurs?collectiviteId=${collectiviteId}`)
+    const response = await request(app.getHttpServer())
+      .get(
+        `/indicateurs?collectiviteId=${collectiviteId}&identifiantsReferentiel=cae_1.a`
+      )
       .set('Authorization', `Bearer ${yoloDodoToken}`)
-      .expect(200)
-      .expect({
-        indicateurs: [],
-      });
+      .expect(200);
+
+    expect(response.body).toMatchObject({
+      count: expect.any(Number),
+      indicateurs: expect.any(Array),
+    });
 
     // mais pas si la collectivité est en accès restreint
     await databaseService.db
@@ -74,6 +78,30 @@ describe('Indicateurs', () => {
         statusCode: 401,
       });
   });
+
+  it(`Lecture sans collectivite nécessite un accès service role`, async () => {
+    // on peut lire les valeurs en mode visite
+    await request(app.getHttpServer())
+      .get(`/indicateurs?identifiantsReferentiel=cae_1.a`)
+      .set('Authorization', `Bearer ${yoloDodoToken}`)
+      .expect(401)
+      .expect({
+        error: 'Unauthorized',
+        message:
+          "Droits insuffisants, l'utilisateur n'a pas le rôle service_role",
+        statusCode: 401,
+      });
+
+    const response = await request(app.getHttpServer())
+      .get(`/indicateurs?identifiantsReferentiel=cae_1.a&sources=collectivite`)
+      .set('Authorization', `Bearer ${process.env.SUPABASE_SERVICE_ROLE_KEY}`)
+      .expect(200);
+
+    expect(response.body).toMatchObject({
+      count: expect.any(Number),
+      indicateurs: expect.any(Array),
+    });
+  }, 10000);
 
   it(`Ecriture sans acces (uniquement lecture sur un des deux)`, () => {
     const indicateurValeurPayload: UpsertIndicateursValeursRequest = {

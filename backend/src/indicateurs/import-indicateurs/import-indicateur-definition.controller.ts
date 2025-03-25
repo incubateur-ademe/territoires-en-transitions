@@ -6,7 +6,7 @@ import { AuthUser } from '../../auth/models/auth.models';
 import ImportIndicateurDefinitionService from './import-indicateur-definition.service';
 
 @ApiTags('Indicateurs')
-@Controller('indicateurs')
+@Controller('indicateur-definitions')
 export class ImportIndicateurDefinitionController {
   private readonly logger = new Logger(
     ImportIndicateurDefinitionController.name

@@ -108,9 +108,12 @@ export default class CrudValeursService {
   private getIndicateurValeursSqlConditions(
     options: GetIndicateursValeursRequestType
   ): (SQLWrapper | SQL)[] {
-    const conditions: (SQLWrapper | SQL)[] = [
-      eq(indicateurValeurTable.collectiviteId, options.collectiviteId),
-    ];
+    const conditions: (SQLWrapper | SQL)[] = [];
+    if (options.collectiviteId) {
+      conditions.push(
+        eq(indicateurValeurTable.collectiviteId, options.collectiviteId)
+      );
+    }
     if (
       options.identifiantsReferentiel &&
       options.identifiantsReferentiel.length > 0
@@ -244,20 +247,28 @@ export default class CrudValeursService {
     const { collectiviteId, indicateurIds, identifiantsReferentiel } = options;
 
     // Vérifie les droits
-    const collectivitePrivate = await this.collectiviteService.isPrivate(
-      collectiviteId
-    );
-    await this.permissionService.isAllowed(
-      tokenInfo,
-      collectivitePrivate
-        ? PermissionOperation.INDICATEURS_LECTURE
-        : PermissionOperation.INDICATEURS_VISITE,
-      ResourceType.COLLECTIVITE,
-      collectiviteId
-    );
+    if (collectiviteId) {
+      const collectivitePrivate = await this.collectiviteService.isPrivate(
+        collectiviteId
+      );
+      await this.permissionService.isAllowed(
+        tokenInfo,
+        collectivitePrivate
+          ? PermissionOperation.INDICATEURS_LECTURE
+          : PermissionOperation.INDICATEURS_VISITE,
+        ResourceType.COLLECTIVITE,
+        collectiviteId
+      );
+    } else {
+      // Check if has service role
+      this.permissionService.hasServiceRole(tokenInfo);
+    }
 
-    if (!indicateurIds?.length && !identifiantsReferentiel?.length)
-      return Promise.resolve({ indicateurs: [] });
+    if (!indicateurIds?.length && !identifiantsReferentiel?.length) {
+      throw new BadRequestException(
+        `indicateurIds or identifiantsReferentiel required`
+      );
+    }
 
     const indicateurValeurs = await this.getIndicateursValeurs(options);
     const indicateurValeursSeules = indicateurValeurs.map(
@@ -337,7 +348,10 @@ export default class CrudValeursService {
         sources,
         false
       );
-    return { indicateurs: indicateurValeurGroupeesParSource };
+    return {
+      count: indicateurValeurs.length,
+      indicateurs: indicateurValeurGroupeesParSource,
+    };
   }
 
   async getReferentielIndicateurDefinitions(identifiantsReferentiel: string[]) {
@@ -1582,6 +1596,7 @@ export default class CrudValeursService {
           .map((v) => {
             const indicateurValeurGroupee: IndicateurValeurGroupee = {
               id: v.id,
+              collectiviteId: v.collectiviteId,
               dateValeur: v.dateValeur,
               resultat: v.resultat,
               objectif: v.objectif,
@@ -1640,6 +1655,7 @@ export default class CrudValeursService {
           .map((v) => {
             const indicateurValeurGroupee: IndicateurValeurGroupee = {
               id: v.id,
+              collectiviteId: v.collectiviteId,
               dateValeur: v.dateValeur,
               resultat: v.resultat,
               resultatCommentaire: v.resultatCommentaire,
