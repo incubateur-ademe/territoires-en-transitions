@@ -8,8 +8,7 @@ import {
 import { useFeatureFlagEnabled } from 'posthog-js/react';
 import { useCollectiviteId } from '../collectivites/collectivite-context';
 
-export type Snapshot =
-  RouterOutput['referentiels']['snapshots']['getCurrent'];
+export type Snapshot = RouterOutput['referentiels']['snapshots']['getCurrent'];
 
 export type SnapshotDetails =
   RouterOutput['referentiels']['snapshots']['list']['snapshots'][number];
@@ -32,14 +31,17 @@ export function useSnapshot({ actionId }: { actionId: string }) {
 export function useListSnapshots(referentielId: ReferentielId) {
   const collectiviteId = useCollectiviteId();
 
-  return trpc.referentiels.snapshots.list.useQuery({
-    collectiviteId,
-    referentielId,
-  }, {
-    select({ snapshots }) {
-      return snapshots
+  return trpc.referentiels.snapshots.list.useQuery(
+    {
+      collectiviteId,
+      referentielId,
     },
-  });
+    {
+      select({ snapshots }) {
+        return snapshots;
+      },
+    }
+  );
 }
 
 export function useAction(actionId: string) {
@@ -94,6 +96,24 @@ export function useSnapshotComputeAndUpdate() {
   return {
     computeScoreAndUpdateCurrentSnapshot,
   };
+}
+
+export function useSnapshotUpdateName() {
+  const trpcUtils = trpc.useUtils();
+  return trpc.referentiels.snapshots.updateName.useMutation({
+    onSuccess: () => {
+      trpcUtils.referentiels.snapshots.list.invalidate();
+    },
+  });
+}
+
+export function useSnapshotDelete() {
+  const trpcUtils = trpc.useUtils();
+  return trpc.referentiels.snapshots.delete.useMutation({
+    onSuccess: () => {
+      trpcUtils.referentiels.snapshots.list.invalidate();
+    },
+  });
 }
 
 export function useEtatLieuxHasStarted(referentielId: ReferentielId) {
