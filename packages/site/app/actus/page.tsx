@@ -3,7 +3,6 @@
 import BlogCard from '@/site/components/cards/BlogCard';
 import MasonryGallery from '@/site/components/galleries/MasonryGallery';
 import Section from '@/site/components/sections/Section';
-import { StrapiImage } from '@/site/components/strapiImage/StrapiImage';
 import { fetchCollection } from '@/site/src/strapi/strapi';
 import { StrapiItem } from '@/site/src/strapi/StrapiItem';
 import { convertNameToSlug } from '@/site/src/utils/convertNameToSlug';
@@ -88,20 +87,11 @@ const Actualites = async () => {
         data={data.map((actu) => (
           <BlogCard
             key={actu.id}
-            backgroundColor="#f5f5fe"
             title={actu.titre}
             date={actu.dateCreation}
             description={actu.resume}
-            image={
-              actu.couverture ? (
-                <StrapiImage
-                  data={actu.couverture}
-                  className="w-full"
-                  displayCaption={false}
-                />
-              ) : undefined
-            }
-            badge={actu.epingle ? 'A la une' : undefined}
+            image={actu.couverture}
+            badge={actu.epingle ? 'À la une' : undefined}
             href={`/actus/${actu.id}/${convertNameToSlug(actu.titre)}`}
           />
         ))}
