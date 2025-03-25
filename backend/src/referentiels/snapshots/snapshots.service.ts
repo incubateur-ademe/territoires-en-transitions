@@ -216,6 +216,28 @@ export class SnapshotsService {
       .then((result) => result[0]);
   }
 
+  async updateName(
+    collectiviteId: number,
+    referentielId: ReferentielId,
+    snapshotRef: string,
+    newName: string
+  ): Promise<Snapshot[]> {
+    this.logger.log(
+      `Mise à jour du nom du snapshot ref: ${snapshotRef}, pour la collectivité ${collectiviteId} et le référentiel ${referentielId}. Nouveau nom: ${newName}.`
+    );
+    return await this.databaseService.db
+      .update(snapshotTable)
+      .set({ nom: newName })
+      .where(
+        and(
+          eq(snapshotTable.collectiviteId, collectiviteId),
+          eq(snapshotTable.referentielId, referentielId),
+          eq(snapshotTable.ref, snapshotRef)
+        )
+      )
+      .returning();
+  }
+
   /**
    * Insert with upsert only allowed if jalon is current score
    */

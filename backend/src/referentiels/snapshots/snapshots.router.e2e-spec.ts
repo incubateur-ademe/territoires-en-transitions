@@ -8,7 +8,7 @@ import {
 import { getAnonUser, getAuthUser } from '../../../test/auth-utils';
 import { getCollectiviteIdBySiren } from '../../../test/collectivites-utils';
 import { AuthenticatedUser } from '../../auth/models/auth.models';
-import { TrpcRouter } from '../../utils/trpc/trpc.router';
+import { AppRouter, TrpcRouter } from '../../utils/trpc/trpc.router';
 import {
   ActionTypeEnum,
   ReferentielId,
@@ -20,6 +20,10 @@ import { SnapshotsRouter } from './snapshots.router';
 
 type ComputeScoreInput = inferProcedureInput<
   SnapshotsRouter['router']['computeAndUpsert']
+>;
+
+type UpdateSnapshotNameInput = inferProcedureInput<
+  AppRouter['referentiels']['snapshots']['updateName']
 >;
 
 describe('SnapshotsRouter', () => {
@@ -373,5 +377,42 @@ describe('SnapshotsRouter', () => {
     };
 
     expect(referentielScoreWithoutActionsEnfant).toEqual(expectedCaeRoot);
+  });
+
+  test("Mise à jour du nom d'un snapshot", async () => {
+    const caller = router.createCaller({ user: yoloDodoUser });
+
+    const input: ComputeScoreInput = {
+      referentielId: referentielIdEnumSchema.enum.cae,
+      collectiviteId: 1,
+      nom: 'Test avec un nom',
+      date: '2024-09-21T21:59:00.000Z',
+    };
+
+    const snapshot = await caller.referentiels.snapshots.computeAndUpsert(
+      input
+    );
+
+    const inputWithNewName: UpdateSnapshotNameInput = {
+      collectiviteId: 1,
+      referentielId: referentielIdEnumSchema.enum.cae,
+      snapshotRef: snapshot.ref,
+      newName: 'Nouveau nom',
+    };
+
+    const updatedSnapshot = await caller.referentiels.snapshots.updateName(
+      inputWithNewName
+    );
+
+    onTestFinished(async () => {
+      await caller.referentiels.snapshots.delete({
+        collectiviteId: 1,
+        referentielId: ReferentielIdEnum.CAE,
+        snapshotRef: snapshot.ref,
+      });
+    });
+
+    expect(updatedSnapshot).toBeDefined();
+    expect(updatedSnapshot[0].nom).toBe(inputWithNewName.newName);
   });
 });
