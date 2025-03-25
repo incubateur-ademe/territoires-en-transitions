@@ -55,7 +55,12 @@ export const Header = ({ referentielId }: { referentielId: ReferentielId }) => {
 
       {referentiel && (
         <div className="flex items-center gap-4 pb-4 mb-4 border-b border-primary-3">
-          <ScoreProgressBar actionDefinition={referentiel} className="grow" />
+          <ScoreProgressBar
+            className="grow"
+            id={referentiel.id}
+            identifiant={referentiel.identifiant}
+            type={referentiel.type}
+          />
           <ScoreRatioBadge actionId={referentiel.id} className="ml-auto" />
         </div>
       )}

@@ -61,7 +61,9 @@ const TaskHeader = ({ task, hideStatus }: TaskHeaderProps) => {
       {statut?.avancement === 'detaille' && !hideStatus && (
         <div className="flex justify-between">
           <ScoreProgressBar
-            actionDefinition={task}
+            id={task.id}
+            identifiant={task.identifiant}
+            type={task.type}
             displayDoneValue
             valuePosition="right"
             className="w-full max-w-60"
@@ -76,7 +78,7 @@ const TaskHeader = ({ task, hideStatus }: TaskHeaderProps) => {
                 setOpenScoreDetaille(true);
               }}
             >
-              Détailler l'avancement
+              Détailler l&apos;avancement
             </Button>
           )}
         </div>
