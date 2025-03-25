@@ -86,6 +86,9 @@ export function useSnapshotComputeAndUpdate() {
           snapshot
         );
       },
+      meta: {
+        disableToast: true,
+      },
     });
 
   return {
