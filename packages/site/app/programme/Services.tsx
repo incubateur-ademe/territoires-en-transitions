@@ -1,4 +1,4 @@
-import BlogCard from '@/site/components/cards/BlogCard';
+import BlogCardDSFR from '@/site/components/cards/BlogCardDSFR';
 import CardsWrapper from '@/site/components/cards/CardsWrapper';
 import Section from '@/site/components/sections/Section';
 import { StrapiImage } from '@/site/components/strapiImage/StrapiImage';
@@ -28,7 +28,7 @@ const Services = ({ titre, contenu }: ServicesProps) => {
       <CardsWrapper cols={3}>
         {contenu.length > 0 &&
           contenu.map((c) => (
-            <BlogCard
+            <BlogCardDSFR
               key={c.id}
               title={c.titre}
               description={c.description}
