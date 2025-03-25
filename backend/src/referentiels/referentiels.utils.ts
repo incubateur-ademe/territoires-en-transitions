@@ -162,10 +162,18 @@ export function getScoreRatios({
   pointPotentiel,
   completedTachesCount,
   totalTachesCount,
+  faitTachesAvancement,
+  programmeTachesAvancement,
 }: ScoreFinal) {
   return {
-    ratioFait: divisionOrZero(pointFait, pointPotentiel),
-    ratioProgramme: divisionOrZero(pointProgramme, pointPotentiel),
+    ratioFait:
+      pointPotentiel === 0 && faitTachesAvancement === totalTachesCount
+        ? 100
+        : divisionOrZero(pointFait, pointPotentiel),
+    ratioProgramme:
+      pointPotentiel === 0 && programmeTachesAvancement === totalTachesCount
+        ? 100
+        : divisionOrZero(pointProgramme, pointPotentiel),
     ratioPasFait: divisionOrZero(pointPasFait, pointPotentiel),
     ratioNonRenseigne: divisionOrZero(pointNonRenseigne, pointPotentiel),
     ratioTachesCount: divisionOrZero(completedTachesCount, totalTachesCount),
