@@ -43,7 +43,7 @@ export type SaveScoreProps = {
   collectiviteId: number;
 };
 
-const SaveScoreModal = ({
+export const SaveScoreModal = ({
   referentielId,
   collectiviteId,
   openState,
@@ -169,5 +169,3 @@ Une sauvegarde sera automatiquement réalisée lors du démarrage d'un audit et 
     </>
   );
 };
-
-export default SaveScoreModal;
