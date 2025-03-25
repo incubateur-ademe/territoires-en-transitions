@@ -22,6 +22,7 @@ type ActuCard = {
   titre: string;
   dateCreation: Date;
   epingle: boolean;
+  categories: { id: number; name: string }[];
   resume?: string;
   couverture: StrapiItem;
 };
@@ -29,6 +30,7 @@ type ActuCard = {
 const getData = async () => {
   const { data, meta } = await fetchCollection('actualites', [
     ['populate[0]', 'Couverture'],
+    ['populate[1]', 'categories'],
     ['sort[0]', 'createdAt:desc'],
     ['pagination[start]', '0'],
     ['pagination[limit]', `${LIMIT}`],
@@ -41,6 +43,7 @@ const getData = async () => {
   while (page < Math.ceil(pagination.total / pagination.limit)) {
     const { data } = await fetchCollection('actualites', [
       ['populate[0]', 'Couverture'],
+      ['populate[1]', 'categories'],
       ['sort[0]', 'createdAt:desc'],
       ['pagination[start]', `${page * LIMIT}`],
       ['pagination[limit]', `${LIMIT}`],
@@ -57,6 +60,12 @@ const getData = async () => {
           (d.attributes.DateCreation as unknown as Date) ??
           (d.attributes.createdAt as unknown as Date),
         epingle: (d.attributes.Epingle as unknown as boolean) ?? false,
+        categories: (
+          (d.attributes.categories.data as unknown as StrapiItem[]) ?? []
+        ).map((d) => ({
+          id: d.id,
+          name: d.attributes.nom as unknown as string,
+        })),
         resume: (d.attributes.Resume as unknown as string) ?? undefined,
         couverture: d.attributes.Couverture.data as unknown as StrapiItem,
       }))
@@ -92,6 +101,7 @@ const Actualites = async () => {
             description={actu.resume}
             image={actu.couverture}
             badge={actu.epingle ? 'À la une' : undefined}
+            categories={actu.categories}
             href={`/actus/${actu.id}/${convertNameToSlug(actu.titre)}`}
           />
         ))}

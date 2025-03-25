@@ -35,6 +35,11 @@
       "required": true,
       "allowedTypes": ["images"]
     },
+    "categories": {
+      "type": "relation",
+      "relation": "oneToMany",
+      "target": "api::actualites-categorie.actualites-categorie"
+    },
     "Resume": {
       "type": "string",
       "required": false,

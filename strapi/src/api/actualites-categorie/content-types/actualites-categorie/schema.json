@@ -1,0 +1,18 @@
+{
+  "kind": "collectionType",
+  "collectionName": "actualites_categories",
+  "info": {
+    "singularName": "actualites-categorie",
+    "pluralName": "actualites-categories",
+    "displayName": "Actualités Catégories"
+  },
+  "options": {
+    "draftAndPublish": true
+  },
+  "pluginOptions": {},
+  "attributes": {
+    "nom": {
+      "type": "string"
+    }
+  }
+}
