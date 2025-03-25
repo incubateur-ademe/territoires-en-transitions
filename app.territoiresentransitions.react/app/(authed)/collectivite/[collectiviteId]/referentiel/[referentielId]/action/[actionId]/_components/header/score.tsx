@@ -26,23 +26,19 @@ const Score = ({ actionDefinition, action, DEPRECATED_actionScore }: Props) => {
         displayDoneValue
       />
       {FLAG_isSnapshotEnabled ? (
-        <>
-          <ScoreShow
-            score={action?.score.pointFait ?? null}
-            scoreMax={action?.score.pointPotentiel ?? null}
-            legend="Score réalisé"
-            size="sm"
-          />
-        </>
+        <ScoreShow
+          score={action?.score.pointFait ?? null}
+          scoreMax={action?.score.pointPotentiel ?? null}
+          legend="Score réalisé"
+          size="sm"
+        />
       ) : (
-        <>
-          <ScoreShow
-            score={DEPRECATED_actionScore?.points_realises ?? null}
-            scoreMax={DEPRECATED_actionScore?.points_max_personnalises ?? null}
-            legend="Score réalisé"
-            size="sm"
-          />
-        </>
+        <ScoreShow
+          score={DEPRECATED_actionScore?.points_realises ?? null}
+          scoreMax={DEPRECATED_actionScore?.points_max_personnalises ?? null}
+          legend="Score réalisé"
+          size="sm"
+        />
       )}
       {actionDefinition.have_questions && (
         <div className="border-l border-l-[#ddd] pl-3">
