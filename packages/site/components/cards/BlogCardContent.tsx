@@ -11,6 +11,7 @@ const BlogCardContent = ({
   description,
   image,
   badge,
+  categories,
   href,
 }: Omit<BlogCardProps, 'externalPage'>) => {
   const imgClassName =
@@ -51,10 +52,23 @@ const BlogCardContent = ({
         )}
       </div>
 
-      {/* Date, titre et description */}
+      {/* Date, catégories, titre et description */}
       <div className="p-6 flex flex-col gap-2">
         {!!date && (
           <p className="mb-0 text-grey-6 text-sm">{getLocalDateString(date)}</p>
+        )}
+        {!!categories && categories.length > 0 && (
+          <div className="flex flex-wrap gap-2">
+            {categories.map((category, idx) => (
+              <Badge
+                key={`${idx}-${category}`}
+                title={category}
+                state="info"
+                size="sm"
+                light
+              />
+            ))}
+          </div>
         )}
         <h5 className="mb-0 text-xl leading-8">{title}</h5>
         {!!description && <p className="mb-0 paragraphe-16">{description}</p>}
