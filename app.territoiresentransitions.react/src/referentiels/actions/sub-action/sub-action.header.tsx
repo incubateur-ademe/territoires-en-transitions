@@ -131,7 +131,9 @@ const SubActionHeader = ({
             {displayProgressBar && (
               <div className="flex justify-end w-[155px]">
                 <ScoreProgressBar
-                  actionDefinition={actionDefinition}
+                  id={actionDefinition.id}
+                  identifiant={actionDefinition.identifiant}
+                  type={actionDefinition.type}
                   displayDoneValue
                 />
               </div>
