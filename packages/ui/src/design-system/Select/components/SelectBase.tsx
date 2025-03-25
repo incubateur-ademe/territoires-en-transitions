@@ -53,8 +53,13 @@ export type SelectProps = {
   disabled?: boolean;
   /** Texte affiché quand rien n'est sélectionné */
   placeholder?: string;
+
   /** Permet de customiser l'item (label) d'une option */
   customItem?: (option: Option) => React.ReactElement;
+  /** Si true, affiche l'item customisé dans les badges et dans la liste des options.
+   * Si false, affiche l'item customisé seulement dans la liste des options */
+  showCustomItemInBadges?: boolean;
+
   isBadgeItem?: boolean;
   /** Texte affiché quand aucune option ne correspond à la recherche */
   emptySearchPlaceholder?: string;
@@ -101,6 +106,7 @@ export const SelectBase = (props: SelectProps) => {
     isSearcheable = false,
     isLoading = false,
     customItem,
+    showCustomItemInBadges = true,
     isBadgeItem = false,
     parentId,
     containerWidthMatchButton = true,
@@ -234,6 +240,7 @@ export const SelectBase = (props: SelectProps) => {
         createProps={createProps}
         multiple={multiple}
         customItem={customItem}
+        showCustomItemInBadges={showCustomItemInBadges}
         placeholder={placeholder}
         disabled={disabled}
         small={small}
@@ -265,6 +272,7 @@ const SelectButton = forwardRef(
       createProps,
       multiple,
       customItem,
+      showCustomItemInBadges,
       placeholder,
       disabled,
       small,
@@ -285,7 +293,7 @@ const SelectButton = forwardRef(
       const badgesToDisplay = values
         .slice(0, maxBadgesToShow)
         .map((value) =>
-          customItem && firstValue ? (
+          customItem && firstValue && showCustomItemInBadges ? (
             <Fragment key={value.toString()}>{customItem(firstValue)}</Fragment>
           ) : (
             <Badge
