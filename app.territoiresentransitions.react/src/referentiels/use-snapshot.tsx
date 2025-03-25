@@ -98,6 +98,24 @@ export function useSnapshotComputeAndUpdate() {
   };
 }
 
+export function useSnapshotUpdateName() {
+  const trpcUtils = trpc.useUtils();
+  return trpc.referentiels.snapshots.updateName.useMutation({
+    onSuccess: () => {
+      trpcUtils.referentiels.snapshots.list.invalidate();
+    },
+  });
+}
+
+export function useSnapshotDelete() {
+  const trpcUtils = trpc.useUtils();
+  return trpc.referentiels.snapshots.delete.useMutation({
+    onSuccess: () => {
+      trpcUtils.referentiels.snapshots.list.invalidate();
+    },
+  });
+}
+
 export function useEtatLieuxHasStarted(referentielId: ReferentielId) {
   const {
     data: snapshot,
