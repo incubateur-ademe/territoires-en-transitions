@@ -1,8 +1,11 @@
 import { useState } from 'react';
 
 import { makeReferentielActionUrl } from '@/app/app/paths';
-import { useCurrentCollectivite } from '@/app/collectivites/collectivite-context';
+import { useCollectiviteId } from '@/app/collectivites/collectivite-context';
+import { useCurrentCollectivite } from '@/app/core-logic/hooks/useCurrentCollectivite';
 import ActionEditModal from '@/app/referentiels/actions/action-edit.modal';
+import { useActionPilotesList } from '@/app/referentiels/actions/use-action-pilotes';
+import { useActionServicesPilotesList } from '@/app/referentiels/actions/use-action-services-pilotes';
 import { Action } from '@/app/referentiels/actions/use-list-actions';
 import ListWithTooltip from '@/app/ui/lists/ListWithTooltip';
 import {
@@ -21,9 +24,13 @@ type ActionCardProps = {
 
 export const ActionCard = ({ action, showDescription }: ActionCardProps) => {
   const { actionId: id, identifiant, nom: title, description } = action;
-  const { collectiviteId, isReadOnly } = useCurrentCollectivite();
 
+  const { isReadOnly } = useCurrentCollectivite()!;
+  const collectiviteId = useCollectiviteId();
   const referentiel = getReferentielIdFromActionId(id);
+
+  const { data: pilotes } = useActionPilotesList(id);
+  const { data: services } = useActionServicesPilotesList(id);
 
   const [isEditOpen, setIsEditOpen] = useState(false);
 
@@ -35,8 +42,6 @@ export const ActionCard = ({ action, showDescription }: ActionCardProps) => {
           <ActionEditModal
             actionId={id}
             actionTitle={`${identifiant} ${title}`}
-            pilotes={action.pilotes}
-            services={action.services}
             openState={{
               isOpen: isEditOpen,
               setIsOpen: setIsEditOpen,
