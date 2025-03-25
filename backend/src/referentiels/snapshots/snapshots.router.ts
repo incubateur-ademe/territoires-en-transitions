@@ -134,7 +134,7 @@ export class SnapshotsRouter {
 
     delete: this.trpc.authedProcedure
       .input(snapshotInputSchema)
-      .query(async ({ input, ctx }) => {
+      .mutation(async ({ input, ctx }) => {
         await this.permissionService.isAllowed(
           ctx.user,
           PermissionOperation.REFERENTIELS_EDITION,
