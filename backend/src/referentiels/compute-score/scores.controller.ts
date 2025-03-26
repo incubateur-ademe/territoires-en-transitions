@@ -1,3 +1,5 @@
+import ActionStatutHistoryService from '@/backend/referentiels/compute-score/action-statut-history.service';
+import { getReferentielScoresRequestSchema } from '@/backend/referentiels/models/get-referentiel-scores.request';
 import { createZodDto } from '@anatine/zod-nestjs';
 import { Controller, Get, Param, Query, Req } from '@nestjs/common';
 import { ApiExcludeEndpoint, ApiResponse, ApiTags } from '@nestjs/swagger';
@@ -26,12 +28,17 @@ class CheckMultipleReferentielScoresRequestClass extends createZodDto(
   checkMultipleReferentielScoresRequestSchema
 ) {}
 
+class GetReferentielScoresRequestClass extends createZodDto(
+  getReferentielScoresRequestSchema
+) {}
+
 @ApiTags('Referentiels')
 @Controller('')
 export class ReferentielsScoringController {
   constructor(
     private readonly scoresService: ScoresService,
-    private readonly snapshotsService: SnapshotsService
+    private readonly snapshotsService: SnapshotsService,
+    private readonly actionStatutHistoryService: ActionStatutHistoryService
   ) {}
 
   @AllowAnonymousAccess()
@@ -70,24 +77,21 @@ export class ReferentielsScoringController {
   //   );
   // }
 
-  // TODO: À priori non utilisé. À supprimer après confirmation en prod.
-  //
-  // @AllowAnonymousAccess()
-  // @Get('collectivites/:collectivite_id/referentiels/:referentiel_id/scores')
-  // @ApiResponse({ type: GetReferentielScoresResponseClass })
-  // async getReferentielScoring(
-  //   @Param('collectivite_id') collectiviteId: number,
-  //   @Param('referentiel_id') referentielId: ReferentielId,
-  //   @Query() parameters: GetReferentielScoresRequestClass,
-  //   @TokenInfo() tokenInfo: AuthenticatedUser
-  // ): Promise<GetReferentielScoresResponseClass> {
-  //   return await this.scoresService.computeScoreForCollectivite(
-  //     referentielId,
-  //     collectiviteId,
-  //     parameters,
-  //     tokenInfo
-  //   );
-  // }
+  @AllowAnonymousAccess()
+  @Get('collectivites/:collectivite_id/referentiels/:referentiel_id/scores')
+  async getReferentielScoring(
+    @Param('collectivite_id') collectiviteId: number,
+    @Param('referentiel_id') referentielId: ReferentielId,
+    @Query() parameters: GetReferentielScoresRequestClass,
+    @TokenInfo() tokenInfo: AuthenticatedUser
+  ) {
+    return await this.scoresService.computeScoreForCollectivite(
+      referentielId,
+      collectiviteId,
+      parameters,
+      tokenInfo
+    );
+  }
 
   @AllowAnonymousAccess()
   @ApiExcludeEndpoint() // Not in documentation
@@ -197,5 +201,13 @@ export class ReferentielsScoringController {
   async saveLastReferentielsScoreNewTable() {
     // TODO: endpoint to be removed, only used during migration
     return await this.snapshotsService.convertOldScoresToSnapshots();
+  }
+
+  @AllowAnonymousAccess()
+  @ApiExcludeEndpoint() // Not in documentation
+  @Get('referentiels/all/fix-action-statuts-history')
+  async fixActionStatutsHistory() {
+    // TODO: endpoint to be removed once we are confident that all action statuts history are fixed
+    return await this.actionStatutHistoryService.fixMissingActionStatutsHistory();
   }
 }

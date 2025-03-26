@@ -42,10 +42,10 @@ export const historiqueActionStatutTable = historiqueSchema.table(
   }
 );
 
-export type HistoriqueActionStatutType = InferSelectModel<
+export type HistoriqueActionStatut = InferSelectModel<
   typeof historiqueActionStatutTable
 >;
-export type CreateHistoriqueActionStatutTypeType = InferInsertModel<
+export type HistoriqueActionStatutInsert = InferInsertModel<
   typeof historiqueActionStatutTable
 >;
 
