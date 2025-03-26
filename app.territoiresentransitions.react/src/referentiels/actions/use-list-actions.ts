@@ -1,19 +1,20 @@
 import { DISABLE_AUTO_REFETCH } from '@/api/utils/react-query/query-options';
-import { RouterOutput, trpc } from '@/api/utils/trpc/client';
+import { RouterInput, RouterOutput, trpc } from '@/api/utils/trpc/client';
 import { useCollectiviteId } from '@/app/collectivites/collectivite-context';
 
 export type Action =
   RouterOutput['referentiels']['actions']['listActions'][number];
 
-export function useListActions(params?: { actionIds?: string[] }) {
+export type ActionListFilters =
+  RouterInput['referentiels']['actions']['listActions']['filters'];
+
+export function useListActions(filters?: ActionListFilters) {
   const collectiviteId = useCollectiviteId();
 
   return trpc.referentiels.actions.listActions.useQuery(
     {
       collectiviteId,
-      filters: {
-        actionIds: params?.actionIds, // actuellement undefined, à voir en amont pourquoi
-      },
+      filters,
     },
     DISABLE_AUTO_REFETCH
   );
