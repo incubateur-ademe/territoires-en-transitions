@@ -5,6 +5,7 @@ import { StrapiItem } from '@/site/src/strapi/StrapiItem';
 export type ArticleData = {
   titre: string;
   couverture: StrapiItem;
+  categories: string[];
   dateCreation: Date;
   dateEdition: Date;
   contenu: SectionArticleData[];
