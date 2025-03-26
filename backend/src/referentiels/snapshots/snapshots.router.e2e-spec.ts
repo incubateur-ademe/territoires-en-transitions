@@ -379,6 +379,21 @@ describe('SnapshotsRouter', () => {
     expect(referentielScoreWithoutActionsEnfant).toEqual(expectedCaeRoot);
   });
 
+  test("Mise à jour du nom d'un snapshot: not authorized, accès en lecture uniquement", async () => {
+    const caller = router.createCaller({ user: yoloDodoUser });
+
+    const input: UpdateSnapshotNameInput = {
+      collectiviteId: rhoneAggloCollectiviteId,
+      referentielId: referentielIdEnumSchema.enum.cae,
+      snapshotRef: 'some-ref',
+      newName: 'Nouveau nom',
+    };
+
+    await expect(() =>
+      caller.referentiels.snapshots.updateName(input)
+    ).rejects.toThrowError(/Droits insuffisants/i);
+  });
+
   test("Mise à jour du nom d'un snapshot", async () => {
     const caller = router.createCaller({ user: yoloDodoUser });
 
