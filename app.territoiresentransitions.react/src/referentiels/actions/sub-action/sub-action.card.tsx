@@ -119,7 +119,6 @@ const SubActionCard = ({
       {/* En-tête */}
       <SubActionHeader
         actionDefinition={subAction}
-        actionAvancement={avancement}
         displayProgressBar={shouldDisplayProgressBar}
         displayActionCommentaire={
           auditStatus === 'audit_en_cours' && !openSubAction
