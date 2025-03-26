@@ -49,8 +49,8 @@ export const DeleteSnapshotModal = ({
 export const DeleteSnapshotModalContent = () => {
   return (
     <Alert
-      title="Supprimer une version figée du référentiel"
-      description="Cette version sera définitivement supprimée. Êtes-vous sûr de vouloir supprimer cette sauvegarde du référentiel ?"
+      title="Supprimer une sauvegarde figée du référentiel"
+      description="Cette sauvegarde sera définitivement supprimée. Êtes-vous sûr de vouloir supprimer cette sauvegarde du référentiel ?"
       state="info"
       className="mt-4 py-2"
     />

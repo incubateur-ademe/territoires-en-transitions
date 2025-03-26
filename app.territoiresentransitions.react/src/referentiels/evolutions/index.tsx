@@ -20,7 +20,9 @@ export const ScoreEvolutions = () => {
   const { data: snapshots } = useListSnapshots(referentielId);
 
   // State management for the dropdown and the chart
-  const [selectedSnapshots, setSelectedSnapshots] = useState<typeof snapshots>([]);
+  const [selectedSnapshots, setSelectedSnapshots] = useState<typeof snapshots>(
+    []
+  );
 
   useEffect(() => {
     if (snapshots) {
@@ -32,12 +34,13 @@ export const ScoreEvolutions = () => {
     return <SpinnerLoader />;
   }
 
-
   if (snapshots.length) {
     return (
       <div className="px-4">
         <div>
-          <label className="mb-2">Sélectionner les versions à afficher :</label>
+          <label className="mb-2">
+            Sélectionner les sauvegardes à afficher :
+          </label>
           <div className="flex items-center justify-between">
             <div className="w-full max-w-6xl">
               <SnapshotsDropdown
@@ -63,7 +66,6 @@ export const ScoreEvolutions = () => {
   }
 
   return (
-
     <div className="flex items-center justify-center">
       <EmptyCard
         picto={(props) => <PictoDashboard {...props} />}
@@ -89,6 +91,5 @@ export const ScoreEvolutions = () => {
         ]}
       />
     </div>
-
   );
 };
