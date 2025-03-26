@@ -51,7 +51,9 @@ describe('Indicateurs', () => {
   it(`Lecture sans acces`, async () => {
     // on peut lire les valeurs en mode visite
     const response = await request(app.getHttpServer())
-      .get(`/indicateurs?collectiviteId=${collectiviteId}`)
+      .get(
+        `/indicateurs?collectiviteId=${collectiviteId}&identifiantsReferentiel=cae_1.a`
+      )
       .set('Authorization', `Bearer ${yoloDodoToken}`)
       .expect(200);
 
@@ -67,7 +69,9 @@ describe('Indicateurs', () => {
       .where(eq(collectiviteTable.id, collectiviteId));
 
     return request(app.getHttpServer())
-      .get(`/indicateurs?collectiviteId=${collectiviteId}`)
+      .get(
+        `/indicateurs?collectiviteId=${collectiviteId}&identifiantsReferentiel=cae_1.a`
+      )
       .set('Authorization', `Bearer ${yoloDodoToken}`)
       .expect(401)
       .expect({
