@@ -101,23 +101,13 @@ const ProgressBarTooltipElement = ({
 }: ProgressBarTooltipElementProps): JSX.Element => {
   return (
     <div key={label} className="flex flex-row items-center">
-      <Square size={16} color={color} />
+      <svg width={16} height={16}>
+        <rect fill={color} stroke="white" width={16} height={16} />
+      </svg>
       <div className="pl-2 whitespace-nowrap">{`${label} : ${value} %`}</div>
     </div>
   );
 };
-
-const Square = ({
-  size,
-  color,
-}: {
-  size: number;
-  color: string;
-}): JSX.Element => (
-  <svg width={size} height={size}>
-    <rect fill={color} stroke="white" width={size} height={size} />
-  </svg>
-);
 
 const formatAvancementScore = (
   avancementPoint: number,
