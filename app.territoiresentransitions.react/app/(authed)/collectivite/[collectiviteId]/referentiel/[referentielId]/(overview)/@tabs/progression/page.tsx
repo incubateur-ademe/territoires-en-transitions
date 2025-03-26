@@ -1,5 +1,5 @@
-import { ActionsList } from './actions.list';
+import ActionList from './_components/action.list';
 
 export default async function Page() {
-  return <ActionsList />;
+  return <ActionList />;
 }
