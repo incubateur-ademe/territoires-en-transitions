@@ -1,10 +1,10 @@
-import ApplicationDomains from '../application-domains.enum';
+import { ApplicationDomainsType } from '../application-domains.enum';
 
 /**
  *
  */
 export interface ApplicationScopeContext {
-  domain?: ApplicationDomains;
+  domain?: ApplicationDomainsType;
 
   collectiviteId?: number;
 

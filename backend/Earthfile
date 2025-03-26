@@ -61,7 +61,8 @@ deploy: ## Déploie le backend dans une app Koyeb existante
     --env BREVO_API_KEY=@BREVO_API_KEY \
     --env DIRECTUS_API_KEY=@DIRECTUS_API_KEY \
     --env REFERENTIEL_TE_SHEET_ID=$REFERENTIEL_TE_SHEET_ID \
-    --env INDICATEUR_DEFINITIONS_SHEET_ID=$INDICATEUR_DEFINITIONS_SHEET_ID
+    --env INDICATEUR_DEFINITIONS_SHEET_ID=$INDICATEUR_DEFINITIONS_SHEET_ID \
+    --env QUEUE_REDIS_HOST=@QUEUE_REDIS_HOST_$ENV_NAME
 
 test-build: ## construit une image pour exécuter les tests du backend
     FROM ../+front-deps

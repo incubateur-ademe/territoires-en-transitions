@@ -1,6 +1,7 @@
 // `index-domain.ts` file must only contain exports that are shareable with client-side apps.
 // Exports from this file can be imported with `@/domain/*` alias path.
 
+export * from './bullmq/queue-names.constants';
 export * from './column.utils';
 export * from './count-by.dto';
 export * from './echarts/chart-render.request';

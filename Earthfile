@@ -723,6 +723,10 @@ setup-env:
     RUN export $(cat .arg | xargs) && sh ./make_dot_env.sh
     RUN earthly +stop
 
+start-redis:
+    LOCALLY
+    RUN docker stop redis_tet || true && docker rm redis_tet || true
+    RUN docker run -d --name redis_tet -p 6379:6379 redis
 
 dev:
     LOCALLY

@@ -36,6 +36,16 @@ export const toolsAutomationApiConfigurationSchema = z.object({
     .string()
     .min(1)
     .describe('Url du webhook pour les notifications Mattermost'),
+  QUEUE_REDIS_HOST: z
+    .string()
+    .min(1)
+    .describe('Host du serveur Redis pour les queues Bull'),
+  QUEUE_REDIS_PORT: z.coerce
+    .number()
+    .int()
+    .positive()
+    .default(6379)
+    .describe('Port du serveur Redis pour les queues Bull'),
 });
 export type ToolsAutomationApiConfigurationType = z.infer<
   typeof toolsAutomationApiConfigurationSchema
