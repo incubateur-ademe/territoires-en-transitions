@@ -64,20 +64,21 @@ const ProgressBar = ({
           barClasses
         )}
       >
-        {localData.map((d, idx) => (
-          <div
-            key={d.label}
-            style={{
-              minWidth: `${d.value}%`,
-              backgroundColor: d.color,
-              zIndex: 100 - idx,
-            }}
-            className={classNames(
-              'absolute min-h-full top-0 left-0',
-              barClasses
-            )}
-          />
-        ))}
+        {localData
+          .sort((a, b) => b.value - a.value) // Permet d'afficher les plus grandes barres en premières afin d'avoir un effet de stacking et ne pas utiliser de z-index
+          .map((d) => (
+            <div
+              key={d.label}
+              style={{
+                minWidth: `${d.value}%`,
+                backgroundColor: d.color,
+              }}
+              className={classNames(
+                'absolute min-h-full top-0 left-0',
+                barClasses
+              )}
+            />
+          ))}
       </div>
     </div>
   );
