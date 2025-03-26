@@ -1,8 +1,7 @@
-import { TweenText } from '@/app/ui/shared/TweenText';
 import { toLocaleFixed } from '@/app/utils/toFixed';
 import { ScoreFinal } from '@/domain/referentiels';
-import { useScore } from '../../use-snapshot';
 import { useActionScore } from '../../DEPRECATED_score-hooks';
+import { useScore } from '../../use-snapshot';
 
 type ScorePartial = Pick<
   ScoreFinal,
@@ -14,7 +13,7 @@ type ScorePartial = Pick<
 export const PointsPotentiels = ({ score }: { score: ScorePartial }) => {
   return (
     <div data-test="PointsPotentiels">
-      <TweenText text={getLabel(score)} align-left />
+      <div>{getLabel(score)}</div>
     </div>
   );
 };
