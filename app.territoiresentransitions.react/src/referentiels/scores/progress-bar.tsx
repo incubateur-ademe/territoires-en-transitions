@@ -36,10 +36,9 @@ const ProgressBar = ({
     });
   });
 
-  const displayedValue =
-    valueToDisplay !== undefined
-      ? localData.find((d) => d.label === valueToDisplay)?.value
-      : null;
+  const displayedValue = valueToDisplay
+    ? localData.find((d) => d.label === valueToDisplay)?.value
+    : undefined;
 
   return (
     <div
@@ -47,7 +46,7 @@ const ProgressBar = ({
       className={classNames('flex gap-3 items-center w-full', className)}
     >
       {/* Légende à gauche de la barre de progression */}
-      {displayedValue !== undefined && displayedValue !== null && (
+      {!!displayedValue && (
         <div
           className={classNames('text-sm font-bold whitespace-nowrap', {
             'order-first': valuePosition === 'left',
