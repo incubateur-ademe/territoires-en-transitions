@@ -62,7 +62,7 @@ const BlogCardContent = ({
             {categories.map((category, idx) => (
               <Badge
                 key={`${idx}-${category}`}
-                title={category.name}
+                title={category.label}
                 state="info"
                 size="sm"
                 light

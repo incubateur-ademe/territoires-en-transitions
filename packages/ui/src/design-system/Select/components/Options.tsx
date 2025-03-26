@@ -56,7 +56,7 @@ const Options = ({
           /** Section */
           if (isOptionSection(option)) {
             return (
-              <Fragment key={option.title + i}>
+              <Fragment key={`${i}-${option.title}`}>
                 <div className="first:hidden h-[1px] mx-6 bg-grey-4" />
                 <div>
                   {/** titre */}
@@ -64,9 +64,9 @@ const Options = ({
                     {option.title}
                   </div>
                   {/** options */}
-                  {option.options.map((option) => (
+                  {option.options.map((option, idx) => (
                     <Option
-                      key={option.value}
+                      key={`${i}-${idx}-${option.value}`}
                       option={option}
                       values={values}
                       onChange={onChange}
@@ -82,7 +82,7 @@ const Options = ({
           } else {
             return (
               <Option
-                key={option.value}
+                key={`${i}-${option.value}`}
                 option={option}
                 values={values}
                 onChange={onChange}

@@ -1,4 +1,4 @@
-import {StrapiItem} from './StrapiItem';
+import { StrapiItem } from './StrapiItem';
 
 const baseURL = process.env.NEXT_PUBLIC_STRAPI_URL;
 const apiKey = process.env.NEXT_PUBLIC_STRAPI_KEY;
@@ -10,6 +10,7 @@ const headers = {
 
 type Collection =
   | 'actualites'
+  | 'actualites-categories'
   | 'collectivites'
   | 'conseillers'
   | 'faqs'
@@ -27,16 +28,16 @@ type Single =
 
 export async function fetchCollection(
   path: Collection,
-  params: [string, string][] = [['populate', '*']],
+  params: [string, string][] = [['populate', '*']]
 ): Promise<{
   data: Array<StrapiItem>;
-  meta: {pagination: {start: number; limit: number; total: number}};
+  meta: { pagination: { start: number; limit: number; total: number } };
 }> {
   const url = new URL(`${baseURL}/api/${path}`);
-  params.forEach(p => url.searchParams.append(...p));
+  params.forEach((p) => url.searchParams.append(...p));
 
   const response = await fetch(`${url}`, {
-    next: {revalidate: 3600},
+    next: { revalidate: 3600 },
     method: 'GET',
     headers,
   });
@@ -46,10 +47,10 @@ export async function fetchCollection(
 
 export const fetchSingle = async (
   path: Single,
-  params: [string, string][] = [['populate', '*']],
+  params: [string, string][] = [['populate', '*']]
 ): Promise<StrapiItem> => {
   const url = new URL(`${baseURL}/api/${path}`);
-  params.forEach(p => url.searchParams.append(...p));
+  params.forEach((p) => url.searchParams.append(...p));
 
   const response = await fetch(`${url}`, {
     cache: 'no-store',
@@ -63,13 +64,13 @@ export const fetchSingle = async (
 export async function fetchItem(
   path: string,
   id: number,
-  params: [string, string][] = [['populate', '*']],
+  params: [string, string][] = [['populate', '*']]
 ): Promise<StrapiItem> {
   const url = new URL(`${baseURL}/api/${path}/${id}`);
-  params.forEach(p => url.searchParams.append(...p));
+  params.forEach((p) => url.searchParams.append(...p));
 
   const response = await fetch(`${url}`, {
-    next: {revalidate: 3600},
+    next: { revalidate: 3600 },
     method: 'GET',
     headers,
   });
