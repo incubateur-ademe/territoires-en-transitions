@@ -265,11 +265,9 @@ export default class CrudValeursService {
     }
 
     if (!indicateurIds?.length && !identifiantsReferentiel?.length) {
-      // TODO: trow an error instead
-      return {
-        count: 0,
-        indicateurs: [],
-      };
+      throw new BadRequestException(
+        `indicateurIds or identifiantsReferentiel required`
+      );
     }
 
     const indicateurValeurs = await this.getIndicateursValeurs(options);
