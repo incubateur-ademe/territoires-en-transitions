@@ -4,6 +4,7 @@ import { StrapiImage } from '@/site/components/strapiImage/StrapiImage';
 import EmbededVideo from '@/site/components/video/EmbededVideo';
 import { getLocalDateString } from '@/site/src/utils/getLocalDateString';
 import { getUpdatedMetadata } from '@/site/src/utils/getUpdatedMetadata';
+import { Badge } from '@/ui';
 import { Metadata, ResolvingMetadata } from 'next';
 import { notFound } from 'next/navigation';
 import { GallerieArticleData, ImageArticleData } from '../../../types';
@@ -62,11 +63,26 @@ const Article = async ({ params }: { params: Promise<{ id: string }> }) => {
         </div>
 
         <div>
+          {/* Catégories */}
+          {!!data.categories && data.categories.length > 0 && (
+            <div className="flex flex-wrap gap-2 mb-4">
+              {data.categories.map((category, idx) => (
+                <Badge
+                  key={`${idx}-${category}`}
+                  title={category}
+                  state="info"
+                  size="sm"
+                  light
+                />
+              ))}
+            </div>
+          )}
+
           {/* Titre */}
           <h1>{data.titre}</h1>
 
           {/* Date de création et date d'édition */}
-          <p className="text-sm text-[#666]">
+          <p className="text-sm text-[#666] mb-0">
             Le {getLocalDateString(data.dateCreation)}
             {data.dateEdition &&
             getLocalDateString(data.dateCreation) !==

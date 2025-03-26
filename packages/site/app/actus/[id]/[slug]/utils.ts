@@ -2,8 +2,8 @@ import {
   ParagrapheCustomArticleData,
   ParagrapheCustomFetchedData,
 } from '@/site/app/types';
-import { fetchCollection, fetchItem } from '@/site/src/strapi/strapi';
 import { StrapiItem } from '@/site/src/strapi/StrapiItem';
+import { fetchCollection, fetchItem } from '@/site/src/strapi/strapi';
 import {
   ArticleData,
   ContenuArticleFetchedData,
@@ -55,9 +55,10 @@ export const getMetaData = async (id: number) => {
 export const getData = async (id: number) => {
   const data = await fetchItem('actualites', id, [
     ['populate[0]', 'Couverture'],
-    ['populate[1]', 'Sections'],
-    ['populate[2]', 'Sections.Image'],
-    ['populate[3]', 'Sections.Gallerie'],
+    ['populate[1]', 'categories'],
+    ['populate[2]', 'Sections'],
+    ['populate[3]', 'Sections.Image'],
+    ['populate[4]', 'Sections.Gallerie'],
   ]);
 
   if (data) {
@@ -128,6 +129,9 @@ export const getData = async (id: number) => {
         (data.attributes.createdAt as unknown as Date),
       dateEdition: data.attributes.updatedAt as unknown as Date,
       couverture: data.attributes.Couverture.data as unknown as StrapiItem,
+      categories: (
+        (data.attributes.categories.data as unknown as StrapiItem[]) ?? []
+      ).map((d) => d.attributes.nom as unknown as string),
       contenu: (
         data.attributes.Sections as unknown as ContenuArticleFetchedData
       ).map((section) => {
