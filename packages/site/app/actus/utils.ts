@@ -6,7 +6,7 @@ export type ActuCard = {
   titre: string;
   dateCreation: Date;
   epingle: boolean;
-  categories: { value: number; label: string }[];
+  categories: string[];
   resume?: string;
   couverture: StrapiItem;
 };
@@ -53,10 +53,7 @@ export const getData = async ({
         epingle: (d.attributes.Epingle as unknown as boolean) ?? false,
         categories: (
           (d.attributes.categories.data as unknown as StrapiItem[]) ?? []
-        ).map((d) => ({
-          value: d.id,
-          label: d.attributes.nom as unknown as string,
-        })),
+        ).map((d) => d.attributes.nom as unknown as string),
         resume: (d.attributes.Resume as unknown as string) ?? undefined,
         couverture: d.attributes.Couverture.data as unknown as StrapiItem,
       }))
