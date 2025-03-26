@@ -29,14 +29,35 @@ serve(async (req) => {
 
   let allData = data;
 
+  const handleError = (error) => {
+    console.log(JSON.stringify({ error, table }));
+
+    return new Response(
+      JSON.stringify({
+        status: 500,
+        error,
+      }),
+      {
+        headers: { 'Content-Type': 'application/json' },
+      }
+    );
+  };
+
+  if (error) {
+    return handleError(error);
+  }
+
   if (count > 5000) {
-    const { data: dataOver5000 } = await supabase
+    const { error, data: dataOver5000 } = await supabase
       .from(table)
       .select('*')
       .range(5000, 9999)
       .csv();
 
     allData += '\n' + dataOver5000.replace(/.*\n/, '') /* remove header */;
+    if (error) {
+      return handleError(error);
+    }
   }
 
   // Envoie les données à Airtable vers l'endpoint sync.
@@ -48,6 +69,13 @@ serve(async (req) => {
     },
     body: allData,
   });
+
+  if (!syncResponse.ok) {
+    return handleError({
+      status: syncResponse.status,
+      statusText: syncResponse.statusText,
+    });
+  }
 
   const { success } = await syncResponse.json();
   console.log(
