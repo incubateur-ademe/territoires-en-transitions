@@ -1,4 +1,3 @@
-import { TweenText } from '@/app/ui/shared/TweenText';
 import { toFixed } from '@/app/utils/toFixed';
 import classNames from 'classnames';
 
@@ -50,12 +49,12 @@ const ProgressBar = ({
       {/* Légende à gauche de la barre de progression */}
       {displayedValue !== undefined && displayedValue !== null && (
         <div
-          className={classNames('text-sm font-bold', {
+          className={classNames('text-sm font-bold whitespace-nowrap', {
             'order-first': valuePosition === 'left',
             'order-last': valuePosition === 'right',
           })}
         >
-          <TweenText text={`${toFixed(displayedValue)} %`} align-right />
+          {`${toFixed(displayedValue)} %`}
         </div>
       )}
       {/* Barre de progression */}
