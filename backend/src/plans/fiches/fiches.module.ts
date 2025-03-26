@@ -1,3 +1,5 @@
+import AxeService from '@/backend/plans/fiches/axe.service';
+import FicheActionListService from '@/backend/plans/fiches/fiches-action-list.service';
 import PlanActionsService from '@/backend/plans/fiches/plan-actions.service';
 import { forwardRef, Module } from '@nestjs/common';
 import { CollectivitesModule } from '../../collectivites/collectivites.module';
@@ -10,7 +12,6 @@ import { FicheActionEtapeService } from './fiche-action-etape/fiche-action-etape
 import FicheService from './fiche.service';
 import FichesActionUpdateService from './fiches-action-update.service';
 import { FichesActionController } from './fiches-action.controller';
-import AxeService from '@/backend/plans/fiches/axe.service';
 
 @Module({
   imports: [forwardRef(() => CollectivitesModule)],
@@ -18,6 +19,7 @@ import AxeService from '@/backend/plans/fiches/axe.service';
     PlanActionsService,
     FicheService,
     AxeService,
+    FicheActionListService,
     CountByService,
     CountByRouter,
     BulkEditService,
@@ -30,6 +32,7 @@ import AxeService from '@/backend/plans/fiches/axe.service';
     FicheService,
     AxeService,
     PlanActionsService,
+    FicheActionListService,
     CountByService,
     CountByRouter,
     FicheActionEtapeService,

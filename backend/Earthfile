@@ -61,7 +61,8 @@ deploy: ## Déploie le backend dans une app Koyeb existante
     --env BREVO_API_KEY=@BREVO_API_KEY \
     --env DIRECTUS_API_KEY=@DIRECTUS_API_KEY \
     --env REFERENTIEL_TE_SHEET_ID=$REFERENTIEL_TE_SHEET_ID \
-    --env INDICATEUR_DEFINITIONS_SHEET_ID=$INDICATEUR_DEFINITIONS_SHEET_ID
+    --env INDICATEUR_DEFINITIONS_SHEET_ID=$INDICATEUR_DEFINITIONS_SHEET_ID \
+    --env QUEUE_REDIS_HOST=@QUEUE_REDIS_HOST_$ENV_NAME
 
 test-build: ## construit une image pour exécuter les tests du backend
     FROM ../+front-deps
@@ -85,6 +86,7 @@ test: ## lance les tests
     ARG --required SUPABASE_JWT_SECRET
     ARG --required BREVO_API_KEY
     ARG --required DIRECTUS_API_KEY
+    ARG --required QUEUE_REDIS_HOST
     ARG network=host
     LOCALLY
     RUN earthly +test-build
@@ -104,6 +106,7 @@ test: ## lance les tests
         --env SUPABASE_JWT_SECRET=$SUPABASE_JWT_SECRET \
         --env BREVO_API_KEY=$BREVO_API_KEY \
         --env DIRECTUS_API_KEY=$DIRECTUS_API_KEY \
+        --env QUEUE_REDIS_HOST=$QUEUE_REDIS_HOST \
         backend-test:latest
 
 seed-build: ## construit une image pour exécuter les tests du backend
@@ -128,6 +131,7 @@ seed: ## lance le seed
     ARG --required SUPABASE_JWT_SECRET
     ARG --required BREVO_API_KEY
     ARG --required DIRECTUS_API_KEY
+    ARG --required QUEUE_REDIS_HOST
     ARG network=host
     LOCALLY
     RUN earthly +seed-build
@@ -147,5 +151,6 @@ seed: ## lance le seed
         --env SUPABASE_JWT_SECRET=$SUPABASE_JWT_SECRET \
         --env BREVO_API_KEY=$BREVO_API_KEY \
         --env DIRECTUS_API_KEY=$DIRECTUS_API_KEY \
+        --env QUEUE_REDIS_HOST=$QUEUE_REDIS_HOST \
         backend-seed:latest
 

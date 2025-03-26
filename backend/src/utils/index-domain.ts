@@ -1,6 +1,8 @@
 // `index-domain.ts` file must only contain exports that are shareable with client-side apps.
 // Exports from this file can be imported with `@/domain/*` alias path.
 
+export * from './application-domains.enum';
+export * from './bullmq/queue-names.constants';
 export * from './column.utils';
 export * from './count-by.dto';
 export * from './echarts/chart-render.request';
@@ -9,4 +11,9 @@ export * from './nest/errors.utils';
 export * from './number.utils';
 export * from './pagination.schema';
 export * from './string.utils';
+export * from './webhooks/webhook-authentication-method.enum';
+export * from './webhooks/webhook-configuration.table';
+export * from './webhooks/webhook-message.table';
+export * from './webhooks/webhook-payload-format.enum';
+export * from './webhooks/webhook-status.enum';
 export * from './zod.utils';

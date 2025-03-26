@@ -2,6 +2,11 @@ import { PermissionOperation } from '@/backend/auth/authorizations/permission-op
 import { PermissionService } from '@/backend/auth/authorizations/permission.service';
 import { ResourceType } from '@/backend/auth/authorizations/resource-type.enum';
 import {
+  Collectivite,
+  CollectiviteResume,
+  collectiviteTypeEnum,
+} from '@/backend/collectivites/shared/models/collectivite.table';
+import {
   Injectable,
   InternalServerErrorException,
   Logger,
@@ -30,7 +35,6 @@ import {
   VerificationTrajectoireResultType,
   VerificationTrajectoireStatus,
 } from './verification-trajectoire.response';
-import { CollectiviteResume, collectiviteTypeEnum } from '@/backend/collectivites/shared/models/collectivite.table';
 
 @Injectable()
 export default class TrajectoiresDataService {
@@ -633,20 +637,22 @@ export default class TrajectoiresDataService {
 
     if (!epci) {
       // Vérifie si la collectivité est une commune :
-      const collectivite = await this.collectivitesService.getCollectivite(
-        request.collectiviteId
-      );
-      if (collectivite.collectivite.type != collectiviteTypeEnum.EPCI
-        && collectivite.collectivite.type != collectiviteTypeEnum.Test) {
+      const collectiviteResult =
+        await this.collectivitesService.getCollectivite(request.collectiviteId);
+      const collectivite = collectiviteResult.collectivite as Collectivite;
+      if (
+        collectivite.type != collectiviteTypeEnum.EPCI &&
+        collectivite.type != collectiviteTypeEnum.TEST
+      ) {
         // TODO région et département ?
         response.status = VerificationTrajectoireStatus.COMMUNE_NON_SUPPORTEE;
         return response;
       }
       response.epci = {
-        id: collectivite.collectivite.id,
-        nom: collectivite.collectivite.nom,
-        natureInsee: collectivite.collectivite.natureInsee,
-        siren: collectivite.collectivite.siren,
+        id: collectivite.id,
+        nom: collectivite.nom,
+        natureInsee: collectivite.natureInsee,
+        siren: collectivite.siren,
       };
     } else {
       response.epci = epci;

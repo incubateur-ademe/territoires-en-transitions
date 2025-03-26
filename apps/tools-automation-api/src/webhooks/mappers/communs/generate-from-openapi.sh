@@ -1,0 +1,1 @@
+npx openapi-ts -f openapi-ts.ts
