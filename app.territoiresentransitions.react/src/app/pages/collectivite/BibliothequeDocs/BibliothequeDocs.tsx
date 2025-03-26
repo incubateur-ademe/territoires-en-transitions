@@ -55,25 +55,27 @@ export const BibliothequeDocs = ({
 };
 
 const BibliothequeDocsConnected = () => {
-  const collectivite = useCurrentCollectivite()!;
+  const collectivite = useCurrentCollectivite();
   const preuves = usePreuvesParType({
     preuve_types: ['audit', 'labellisation', 'rapport'],
   });
-  const isReadOnly = collectivite.isReadOnly ?? true;
+  const isReadOnly = collectivite?.isReadOnly ?? true;
 
   const { labellisation, rapport, audit } = preuves;
   const labellisationEtAudit = [...(labellisation || []), ...(audit || [])];
 
   return (
     <>
-      <TrackPageView
-        pageName="app/parametres/bibliotheque"
-        properties={pick(collectivite, [
-          'collectiviteId',
-          'niveauAcces',
-          'role',
-        ])}
-      />
+      {!!collectivite && (
+        <TrackPageView
+          pageName="app/parametres/bibliotheque"
+          properties={pick(collectivite, [
+            'collectiviteId',
+            'niveauAcces',
+            'role',
+          ])}
+        />
+      )}
       <BibliothequeDocs
         labellisationEtAudit={labellisationEtAudit}
         rapports={rapport}
