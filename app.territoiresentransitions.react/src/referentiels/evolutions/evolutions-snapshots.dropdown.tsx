@@ -1,4 +1,5 @@
 import { Icon, SelectMultiple, SelectMultipleProps } from '@/ui';
+import { useCurrentCollectivite } from '../../core-logic/hooks/useCurrentCollectivite';
 import { DeleteSnapshotButton } from './deleteSnapshot/delete-snapshot.button';
 import { UpdateSnapshotNameButton } from './updateSnapshotName/update-snapshot-name.button';
 
@@ -30,6 +31,8 @@ export function SnapshotsDropdown<T extends SnapshotOption>({
   maxBadgesToShow,
   ...props
 }: SnapshotsDropdownProps<T>) {
+  const { isReadOnly } = useCurrentCollectivite()!;
+
   const renderOptionWithIcons = (option: any) => {
     const isActive = values.some((v) => v.ref === option.value);
     const isAuditSnapshot = checkAudit(option.value);
@@ -42,7 +45,7 @@ export function SnapshotsDropdown<T extends SnapshotOption>({
         <span className={`mr-8 ${isActive ? 'text-primary-7' : 'text-grey-8'}`}>
           {option.label}
         </span>
-        {!isAuditSnapshot && (
+        {!isAuditSnapshot && !isReadOnly && (
           <>
             <UpdateSnapshotNameButton
               snapshotRef={option.value}
