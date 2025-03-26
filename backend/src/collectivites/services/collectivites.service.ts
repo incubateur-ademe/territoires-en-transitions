@@ -81,20 +81,20 @@ export default class CollectivitesService {
       collectivite.collectivite.population ?? undefined;
 
     const collectiviteTest: boolean =
-      collectivite.collectivite.type == collectiviteTypeEnum.Test;
+      collectivite.collectivite.type === collectiviteTypeEnum.TEST;
 
     const collectiviteEPCI: boolean =
-      collectivite.collectivite.type == collectiviteTypeEnum.EPCI;
+      collectivite.collectivite.type === collectiviteTypeEnum.EPCI;
 
     return {
-      ...collectivite.collectivite,
+      ...(collectivite.collectivite as Collectivite),
       // TODO "doublon" avec typeId
       type:
         collectiviteTest || collectiviteEPCI
           ? CollectiviteTypeEnum.EPCI
           : CollectiviteTypeEnum.COMMUNE,
       soustype: this.getCollectiviteSousType(
-        collectivite.collectivite,
+        collectivite.collectivite as Collectivite,
         collectivite.collectivite_banatic_type
       ),
       populationTags: this.getPopulationTags(collectivitePopulation),

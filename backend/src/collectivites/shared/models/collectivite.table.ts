@@ -1,5 +1,8 @@
-import { collectiviteBanaticTypeTable } from '@/backend/collectivites/shared/models/collectivite-banatic-type.table';
-import { InferSelectModel } from 'drizzle-orm';
+import {
+  collectiviteBanaticTypeTable,
+  collectiviteNature,
+} from '@/backend/collectivites/shared/models/collectivite-banatic-type.table';
+import { createEnumObject } from '@/backend/utils/enum.utils';
 import {
   boolean,
   integer,
@@ -12,13 +15,15 @@ import { createInsertSchema, createSelectSchema } from 'drizzle-zod';
 import { z } from 'zod';
 import { createdAt, modifiedAt } from '../../../utils/column.utils';
 
-export const collectiviteTypeEnum = {
-  Region: 'region',
-  Departement: 'departement',
-  EPCI: 'epci',
-  Commune: 'commune',
-  Test: 'test',
-};
+export const collectiviteType = [
+  'region',
+  'departement',
+  'epci',
+  'commune',
+  'test',
+] as const;
+
+export const collectiviteTypeEnum = createEnumObject(collectiviteType);
 
 export const collectiviteTable = pgTable('collectivite', {
   id: serial('id').primaryKey(),
@@ -36,7 +41,12 @@ export const collectiviteTable = pgTable('collectivite', {
   ),
   population: integer('population'),
 });
-export const collectiviteSchema = createSelectSchema(collectiviteTable);
+export const collectiviteSchema = createSelectSchema(collectiviteTable, {
+  type: z.enum(collectiviteType).describe('Type de collectivité'),
+  natureInsee: z
+    .enum(collectiviteNature)
+    .describe('Nature de la collectivité tel que défini dans la base Banatic'),
+});
 export const collectiviteResumeSchema = collectiviteSchema.pick({
   id: true,
   nom: true,
@@ -44,6 +54,6 @@ export const collectiviteResumeSchema = collectiviteSchema.pick({
   natureInsee: true,
 });
 export const collectiviteUpsertSchema = createInsertSchema(collectiviteTable);
-export type Collectivite = InferSelectModel<typeof collectiviteTable>;
+export type Collectivite = z.infer<typeof collectiviteSchema>;
 export type CollectiviteResume = z.infer<typeof collectiviteResumeSchema>;
 export type CollectiviteUpsert = z.infer<typeof collectiviteUpsertSchema>;

@@ -55,6 +55,9 @@ export const fetchFichesFilterRequestSchema = z
     cibles: getZodQueryEnum(ciblesEnumSchema)
       .optional()
       .describe('Liste des cibles séparées par des virgules'),
+    ficheIds: zodQueryNumberArray
+      .optional()
+      .describe('Liste des identifiants des fiches séparés par des virgules'),
     partenaireIds: zodQueryNumberArray
       .optional()
       .describe(

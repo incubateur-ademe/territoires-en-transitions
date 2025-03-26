@@ -1,16 +1,16 @@
-import { Injectable, Logger } from '@nestjs/common';
 import {
   Collectivite,
   CollectiviteUpsert,
   collectiviteTable,
   collectiviteTypeEnum,
 } from '@/backend/collectivites/shared/models/collectivite.table';
-import { DatabaseService } from '@/backend/utils';
 import { banaticTable } from '@/backend/collectivites/shared/models/imports-banatic.table';
-import { and, eq } from 'drizzle-orm';
 import { importCommuneTable } from '@/backend/collectivites/shared/models/imports-commune.table';
 import { departementTable } from '@/backend/collectivites/shared/models/imports-departement.table';
 import { regionTable } from '@/backend/collectivites/shared/models/imports-region.table';
+import { DatabaseService } from '@/backend/utils';
+import { Injectable, Logger } from '@nestjs/common';
+import { and, eq } from 'drizzle-orm';
 
 type colInfo = {
   nom: string | null;
@@ -36,7 +36,7 @@ export default class CollectiviteCrudService {
           `La collectivité ${col.nom} existe déjà sous l'identifiant ${col.id}`
         );
     }
-    const [result] = await this.databaseService.db
+    const [result] = (await this.databaseService.db
       .insert(collectiviteTable)
       .values(collectivite)
       .onConflictDoUpdate({
@@ -46,7 +46,7 @@ export default class CollectiviteCrudService {
           modifiedAt: new Date().toISOString(),
         },
       })
-      .returning();
+      .returning()) as Collectivite[];
     return result;
   }
 
@@ -77,7 +77,7 @@ export default class CollectiviteCrudService {
         break;
 
       // Get more info from imports.commune
-      case collectiviteTypeEnum.Commune:
+      case collectiviteTypeEnum.COMMUNE:
         if (collectivite.communeCode) {
           [info] = await this.databaseService.db
             .select({
@@ -92,7 +92,7 @@ export default class CollectiviteCrudService {
         break;
 
       // Get more info from imports.departement
-      case collectiviteTypeEnum.Departement:
+      case collectiviteTypeEnum.DEPARTEMENT:
         if (collectivite.departementCode) {
           [info] = await this.databaseService.db
             .select({
@@ -107,7 +107,7 @@ export default class CollectiviteCrudService {
         break;
 
       // Get more info from imports.region
-      case collectiviteTypeEnum.Region:
+      case collectiviteTypeEnum.REGION:
         if (collectivite.regionCode) {
           [info] = await this.databaseService.db
             .select({
@@ -145,37 +145,37 @@ export default class CollectiviteCrudService {
         condition.push(eq(collectiviteTable.siren, collectivite.siren));
         break;
 
-      case collectiviteTypeEnum.Commune:
+      case collectiviteTypeEnum.COMMUNE:
         if (!collectivite.communeCode) return null;
         condition.push(
           eq(collectiviteTable.communeCode, collectivite.communeCode)
         );
         break;
 
-      case collectiviteTypeEnum.Departement:
+      case collectiviteTypeEnum.DEPARTEMENT:
         if (!collectivite.departementCode) return null;
         condition.push(
           eq(collectiviteTable.departementCode, collectivite.departementCode)
         );
         break;
 
-      case collectiviteTypeEnum.Region:
+      case collectiviteTypeEnum.REGION:
         if (!collectivite.regionCode) return null;
         condition.push(
           eq(collectiviteTable.regionCode, collectivite.regionCode)
         );
         break;
 
-      case collectiviteTypeEnum.Test:
+      case collectiviteTypeEnum.TEST:
         if (!collectivite.nom) return null;
         condition.push(eq(collectiviteTable.nom, collectivite.nom));
         break;
     }
-    const [result] = await this.databaseService.db
+    const [result] = (await this.databaseService.db
       .select()
       .from(collectiviteTable)
       .where(and(...condition))
-      .limit(1);
+      .limit(1)) as Collectivite[];
     return result ?? null;
   }
 
@@ -184,11 +184,11 @@ export default class CollectiviteCrudService {
    * @param collectiviteId
    */
   async select(collectiviteId: number): Promise<Collectivite | null> {
-    const [result] = await this.databaseService.db
+    const [result] = (await this.databaseService.db
       .select()
       .from(collectiviteTable)
       .where(eq(collectiviteTable.id, collectiviteId))
-      .limit(1);
+      .limit(1)) as Collectivite[];
     return result ?? null;
   }
 }
