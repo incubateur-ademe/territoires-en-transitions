@@ -8,7 +8,7 @@ export type BlogCardProps = {
   description?: string;
   image?: StrapiItem | undefined;
   badge?: string;
-  categories: { id: number; name: string }[];
+  categories: { value: number; label: string }[];
   href?: string;
   externalPage?: boolean;
 };
