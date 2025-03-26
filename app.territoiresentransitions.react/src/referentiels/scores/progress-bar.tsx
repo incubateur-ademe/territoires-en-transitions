@@ -28,11 +28,15 @@ const ProgressBar = ({
 
   const localData: { label: string; value: number; color: string }[] = [];
   score.forEach((s, idx) => {
+    if (s.value === 0) {
+      return localData.push({ ...s, value: 0 });
+    }
+
+    const value = percent ? s.value * 100 : percentageAgainstTotal(s.value);
+
     localData.push({
       ...s,
-      value:
-        (percent ? s.value * 100 : percentageAgainstTotal(s.value)) +
-        (idx >= 1 ? localData[idx - 1].value : 0),
+      value: value + (idx >= 1 ? localData[idx - 1].value : 0),
     });
   });
 
