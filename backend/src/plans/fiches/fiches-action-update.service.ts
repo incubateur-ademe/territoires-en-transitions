@@ -1,4 +1,8 @@
+import FicheActionListService from '@/backend/plans/fiches/fiches-action-list.service';
 import { DatabaseService } from '@/backend/utils';
+import { ApplicationSousScopesEnum } from '@/backend/utils/application-domains.enum';
+import { Transaction } from '@/backend/utils/database/transaction.utils';
+import { WebhookService } from '@/backend/utils/webhooks/webhook.service';
 import { Injectable, Logger, NotFoundException } from '@nestjs/common';
 import {
   and,
@@ -37,7 +41,6 @@ import {
   ficheActionTable,
   ficheSchemaUpdate,
 } from './shared/models/fiche-action.table';
-import { Transaction } from '@/backend/utils/database/transaction.utils';
 
 type ColumnType = Column<
   ColumnBaseConfig<ColumnDataType, string>,
@@ -64,7 +67,9 @@ export default class FichesActionUpdateService {
 
   constructor(
     private readonly databaseService: DatabaseService,
-    private readonly ficheService: FicheService
+    private readonly ficheService: FicheService,
+    private readonly webhookService: WebhookService,
+    private readonly ficheActionListService: FicheActionListService
   ) {}
 
   async updateFicheAction(
@@ -341,7 +346,7 @@ export default class FichesActionUpdateService {
         }
       }
 
-      return {
+      const finalFicheAction = {
         ...(updatedFicheAction?.[0] || {}),
         axes: updatedAxes,
         thematiques: updatedThematiques,
@@ -358,6 +363,21 @@ export default class FichesActionUpdateService {
         resultatsAttendus: updatedResultatsAttendus,
         libresTag: updatedLibresTag,
       };
+
+      // TODO: return ficheActionWithRelation to have full object
+      const ficheActionWithRelation =
+        await this.ficheActionListService.getFicheActionById(
+          ficheActionId,
+          true
+        );
+
+      await this.webhookService.sendWebhookNotification(
+        ApplicationSousScopesEnum.FICHES,
+        `${ficheActionId}`,
+        ficheActionWithRelation
+      );
+
+      return finalFicheAction;
     });
   }
 

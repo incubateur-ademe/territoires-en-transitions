@@ -1,3 +1,4 @@
+import { stringToJSON } from '@/domain/utils';
 import { z } from 'zod';
 
 export const toolsAutomationApiConfigurationSchema = z.object({
@@ -36,6 +37,23 @@ export const toolsAutomationApiConfigurationSchema = z.object({
     .string()
     .min(1)
     .describe('Url du webhook pour les notifications Mattermost'),
+  QUEUE_REDIS_HOST: z
+    .string()
+    .min(1)
+    .describe('Host du serveur Redis pour les queues Bull'),
+  QUEUE_REDIS_PORT: z.coerce
+    .number()
+    .int()
+    .positive()
+    .default(6379)
+    .describe('Port du serveur Redis pour les queues Bull'),
+  SUPABASE_DATABASE_URL: z
+    .string()
+    .min(1)
+    .describe('Database url to be able to persist webhook events'),
+  EXTERNAL_SYSTEM_SECRET_MAP: stringToJSON().describe(
+    `Clé valeur contenant les accès pour les appels vers les systèmes externes`
+  ),
 });
 export type ToolsAutomationApiConfigurationType = z.infer<
   typeof toolsAutomationApiConfigurationSchema

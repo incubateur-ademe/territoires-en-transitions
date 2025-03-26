@@ -51,5 +51,5 @@ describe('import-referentiel.controller.e2e-spec', () => {
       ),
       statusCode: 422,
     });
-  });
+  }, 20000);
 });

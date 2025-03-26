@@ -1,7 +1,8 @@
 import { ImportPlanModule } from '@/backend/plans/fiches/import/import-plan.module';
 import { SharedModule } from '@/backend/shared/shared.module';
 import { EchartsModule } from '@/backend/utils/echarts/echarts.module';
-import { Module } from '@nestjs/common';
+import { BullModule } from '@nestjs/bullmq';
+import { Logger, Module } from '@nestjs/common';
 import { ConfigModule } from '@nestjs/config';
 import { SentryModule } from '@sentry/nestjs/setup';
 import { AuthModule } from './auth/auth.module';
@@ -12,11 +13,14 @@ import { FichesActionModule } from './plans/fiches/fiches.module';
 import { ReferentielsModule } from './referentiels/referentiels.module';
 import configuration from './utils/config/configuration';
 import { ConfigurationModule } from './utils/config/configuration.module';
+import ConfigurationService from './utils/config/configuration.service';
 import { DatabaseModule } from './utils/database/database.module';
 import { SheetModule } from './utils/google-sheets/sheet.module';
 import { TrpcModule } from './utils/trpc/trpc.module';
 import { TrpcRouter } from './utils/trpc/trpc.router';
 import { UtilsModule } from './utils/utils.module';
+
+const appLogger = new Logger('AppModule');
 
 @Module({
   imports: [
@@ -27,6 +31,23 @@ import { UtilsModule } from './utils/utils.module';
       load: [configuration],
     }),
     ConfigurationModule,
+    BullModule.forRootAsync({
+      imports: [ConfigurationModule],
+      useFactory: async (config: ConfigurationService) => {
+        const host = config.get('QUEUE_REDIS_HOST');
+        const port = config.get('QUEUE_REDIS_PORT');
+
+        appLogger.log(`Connecting to Redis at ${host}:${port}`);
+
+        return {
+          connection: {
+            host: host,
+            port: port,
+          },
+        };
+      },
+      inject: [ConfigurationService],
+    }),
     // Test without
     UtilsModule,
     EchartsModule,
