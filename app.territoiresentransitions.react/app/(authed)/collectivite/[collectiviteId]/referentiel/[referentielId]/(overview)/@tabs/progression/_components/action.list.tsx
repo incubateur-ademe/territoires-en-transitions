@@ -114,6 +114,7 @@ const ActionList = () => {
 
       <List
         filters={filters}
+        toggleFilters={() => setIsFilterOpen(!isFilterOpen)}
         display={displayOption}
         showDescriptionOn={showDescriptionOn}
       />
