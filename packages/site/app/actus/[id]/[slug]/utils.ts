@@ -66,7 +66,8 @@ export const getData = async (id: number) => {
       ['fields[0]', 'DateCreation'],
       ['fields[1]', 'createdAt'],
       ['fields[2]', 'Epingle'],
-      ['sort[0]', 'createdAt:desc'],
+      ['sort[0]', 'Epingle:desc'],
+      ['sort[1]', 'createdAt:desc'],
       ['pagination[start]', '0'],
       ['pagination[limit]', `${LIMIT}`],
     ]);
@@ -80,7 +81,8 @@ export const getData = async (id: number) => {
         ['fields[0]', 'DateCreation'],
         ['fields[1]', 'createdAt'],
         ['fields[2]', 'Epingle'],
-        ['sort[0]', 'createdAt:desc'],
+        ['sort[0]', 'Epingle:desc'],
+        ['sort[1]', 'createdAt:desc'],
         ['pagination[start]', `${page * LIMIT}`],
         ['pagination[limit]', `${LIMIT}`],
       ]);
