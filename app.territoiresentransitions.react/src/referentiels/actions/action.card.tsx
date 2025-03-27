@@ -4,8 +4,6 @@ import { makeReferentielActionUrl } from '@/app/app/paths';
 import { useCollectiviteId } from '@/app/collectivites/collectivite-context';
 import { useCurrentCollectivite } from '@/app/core-logic/hooks/useCurrentCollectivite';
 import ActionEditModal from '@/app/referentiels/actions/action-edit.modal';
-import { useActionPilotesList } from '@/app/referentiels/actions/use-action-pilotes';
-import { useActionServicesPilotesList } from '@/app/referentiels/actions/use-action-services-pilotes';
 import { Action } from '@/app/referentiels/actions/use-list-actions';
 import ListWithTooltip from '@/app/ui/lists/ListWithTooltip';
 import {
@@ -28,9 +26,6 @@ export const ActionCard = ({ action, showDescription }: ActionCardProps) => {
   const { isReadOnly } = useCurrentCollectivite()!;
   const collectiviteId = useCollectiviteId();
   const referentiel = getReferentielIdFromActionId(id);
-
-  const { data: pilotes } = useActionPilotesList(id);
-  const { data: services } = useActionServicesPilotesList(id);
 
   const [isEditOpen, setIsEditOpen] = useState(false);
 
@@ -94,29 +89,23 @@ export const ActionCard = ({ action, showDescription }: ActionCardProps) => {
         </div>
 
         {/** Pilotes et services */}
-        {((pilotes && pilotes.length > 0) ||
-          (services && services.length > 0)) && (
+        {(action.pilotes.length > 0 || action.services.length > 0) && (
           <div className="flex flex-wrap items-center gap-x-3 gap-y-1 text-sm text-primary-10">
-            {pilotes && pilotes.length > 0 && (
+            {action.pilotes.length > 0 && (
               <ListWithTooltip
                 icon="user-line"
                 title="Pilotes"
-                list={pilotes.map((p) =>
-                  p.tagId ? p.nom ?? '' : `${p.prenom} ${p.nom}`
-                )}
+                list={action.pilotes}
               />
             )}
-            {pilotes &&
-              pilotes.length > 0 &&
-              services &&
-              services.length > 0 && (
-                <div className="w-[0.5px] h-4 bg-grey-5" />
-              )}
-            {services && services.length > 0 && (
+            {action.pilotes.length > 0 && action.services.length > 0 && (
+              <div className="w-[0.5px] h-4 bg-grey-5" />
+            )}
+            {action.services.length > 0 && (
               <ListWithTooltip
                 icon="leaf-line"
                 title="Direction ou service pilote"
-                list={services.map((s) => s.nom ?? '')}
+                list={action.services}
               />
             )}
           </div>
