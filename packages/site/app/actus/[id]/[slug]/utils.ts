@@ -132,7 +132,7 @@ export const getData = async (id: number) => {
       dateEdition: data.attributes.updatedAt as unknown as Date,
       couverture: data.attributes.Couverture.data as unknown as StrapiItem,
       categories: (
-        (data.attributes.categories.data as unknown as StrapiItem[]) ?? []
+        (data.attributes.categories?.data as unknown as StrapiItem[]) ?? []
       ).map((d) => d.attributes.nom as unknown as string),
       contenu: (
         data.attributes.Sections as unknown as ContenuArticleFetchedData

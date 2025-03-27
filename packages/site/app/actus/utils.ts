@@ -53,7 +53,7 @@ export const getData = async ({
           (d.attributes.createdAt as unknown as Date),
         epingle: (d.attributes.Epingle as unknown as boolean) ?? false,
         categories: (
-          (d.attributes.categories.data as unknown as StrapiItem[]) ?? []
+          (d.attributes.categories?.data as unknown as StrapiItem[]) ?? []
         ).map((d) => d.attributes.nom as unknown as string),
         resume: (d.attributes.Resume as unknown as string) ?? undefined,
         couverture: d.attributes.Couverture.data as unknown as StrapiItem,
