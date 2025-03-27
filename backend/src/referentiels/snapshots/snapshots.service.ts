@@ -225,6 +225,41 @@ export class SnapshotsService {
     this.logger.log(
       `Mise à jour du nom du snapshot ref: ${snapshotRef}, pour la collectivité ${collectiviteId} et le référentiel ${referentielId}. Nouveau nom: ${newName}.`
     );
+
+    const snapshot = await this.databaseService.db
+      .select()
+      .from(snapshotTable)
+      .where(
+        and(
+          eq(snapshotTable.collectiviteId, collectiviteId),
+          eq(snapshotTable.referentielId, referentielId),
+          eq(snapshotTable.ref, snapshotRef)
+        )
+      )
+      .then((result) => result[0]);
+
+    if (!snapshot) {
+      throw new NotFoundException(
+        `Aucun snapshot de score avec la référence ${snapshotRef} n'a été trouvé pour la collectivité ${collectiviteId} et le referentiel ${referentielId}`
+      );
+    }
+
+    const LABELLISATION_REF = /^\d{4}-labellisation-EMT$/;
+
+    if (snapshot.jalon === SnapshotJalonEnum.POST_AUDIT) {
+      throw new BadRequestException(
+        `Impossible de modifier le nom d'un snapshot issu d'un audit`
+      );
+    }
+
+    // Snapshots with references like "2024-labellisation-EMT" are non editable
+    // TODO: replace with jalon check when labellisation jalons will be implemented
+    if (LABELLISATION_REF.test(snapshot.ref)) {
+      throw new BadRequestException(
+        `Impossible de modifier le nom d'un snapshot issu d'une labellisation`
+      );
+    }
+
     return await this.databaseService.db
       .update(snapshotTable)
       .set({ nom: newName })
