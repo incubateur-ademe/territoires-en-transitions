@@ -36,7 +36,8 @@ export const getData = async ({
   if (filterCondition) fetchOptions.push(...filterCondition);
 
   fetchOptions.push(
-    ['sort[0]', 'createdAt:desc'],
+    ['sort[0]', 'Epingle:desc'],
+    ['sort[1]', 'createdAt:desc'],
     ['pagination[start]', `${(page - 1) * limit}`],
     ['pagination[limit]', `${limit}`]
   );
