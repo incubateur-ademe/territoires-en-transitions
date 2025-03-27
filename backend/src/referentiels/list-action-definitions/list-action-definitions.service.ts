@@ -2,16 +2,16 @@ import { DatabaseService } from '@/backend/utils';
 import { Injectable } from '@nestjs/common';
 import { and, asc, eq, getTableColumns, inArray, SQL, sql } from 'drizzle-orm';
 import z from 'zod';
-import { actionDefinitionTable, actionTypeSchema } from '../index-domain';
-import { referentielDefinitionTable } from '../models/referentiel-definition.table';
-import { actionPiloteTable } from '../models/action-pilote.table';
+import { dcpTable } from '../../auth/index-domain';
 import {
   personneTagTable,
   serviceTagTable,
 } from '../../collectivites/index-domain';
-import { dcpTable } from '../../auth/index-domain';
-import { actionServiceTable } from '../models/action-service.table';
+import { actionDefinitionTable, actionTypeSchema } from '../index-domain';
 import { ListActionsRequestType } from '../list-actions/list-actions.request';
+import { actionPiloteTable } from '../models/action-pilote.table';
+import { actionServiceTable } from '../models/action-service.table';
+import { referentielDefinitionTable } from '../models/referentiel-definition.table';
 
 export const inputSchema = z.object({
   actionIds: z.string().array().optional(),
@@ -170,11 +170,22 @@ export class ListActionDefinitionsService {
 
         pilotes: sql<string[]>`
           array_remove(
-            array_agg(DISTINCT
+            array_agg(
               CASE
                 WHEN ${actionPiloteTable.userId} IS NOT NULL THEN
-                  CONCAT(${dcpTable.prenom}, ' ', ${dcpTable.nom})
-                ELSE ${personneTagTable.nom}
+                  jsonb_build_object(
+                    'collectiviteId', ${actionPiloteTable.collectiviteId},
+                    'userId', ${actionPiloteTable.userId},
+                    'tagId', null,
+                    'nom', CONCAT(${dcpTable.prenom}, ' ', ${dcpTable.nom})
+                  )
+                WHEN ${personneTagTable.id} IS NOT NULL THEN
+                  jsonb_build_object(
+                    'collectiviteId', ${actionPiloteTable.collectiviteId},
+                    'userId', null,
+                    'tagId', ${personneTagTable.id},
+                    'nom', ${personneTagTable.nom}
+                  )
               END
             ),
             null
@@ -183,7 +194,13 @@ export class ListActionDefinitionsService {
 
         services: sql<string[]>`
           array_remove(
-            array_agg(DISTINCT ${serviceTagTable.nom}),
+            array_agg(
+              jsonb_build_object(
+                'collectiviteId', ${actionServiceTable.collectiviteId},
+                'nom', ${serviceTagTable.nom},
+                'id', ${actionServiceTable.serviceTagId}
+              )
+            ),
             null
           )
         `.as('services'),
