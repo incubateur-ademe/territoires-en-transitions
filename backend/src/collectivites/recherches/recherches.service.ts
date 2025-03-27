@@ -1,34 +1,34 @@
-import { Injectable, Logger } from '@nestjs/common';
-import { DatabaseService } from '@/backend/utils';
-import { FiltersRequest } from '@/backend/collectivites/recherches/filters.request';
-import { RecherchesCollectivite } from '@/backend/collectivites/recherches/collectivites.response';
-import { RecherchesReferentiel } from '@/backend/collectivites/recherches/referentiels.response';
-import { RecherchesPlan } from '@/backend/collectivites/recherches/plans.response';
-import {
-  collectiviteTable,
-  collectiviteTypeEnum,
-} from '@/backend/collectivites/shared/models/collectivite.table';
-import { getTableName, sql } from 'drizzle-orm';
-import { labellisationTable } from '@/backend/referentiels/labellisations/labellisation.table';
-import { dcpTable } from '@/backend/auth/models/dcp.table';
-import { membreTable } from '@/backend/collectivites/shared/models/membre.table';
-import { utilisateurPermissionTable } from '@/backend/auth/authorizations/roles/private-utilisateur-droit.table';
-import { indicateurValeurTable } from '@/backend/indicateurs/shared/models/indicateur-valeur.table';
-import { axeTable } from '@/backend/plans/fiches/shared/models/axe.table';
 import { PermissionLevel } from '@/backend/auth/authorizations/roles/niveau-acces.enum';
-import { snapshotTable } from '@/backend/referentiels/snapshots/snapshot.table';
-import { SnapshotJalonEnum } from '@/backend/referentiels/snapshots/snapshot-jalon.enum';
-import { planActionTypeTable } from '@/backend/plans/fiches/shared/models/plan-action-type.table';
-import { ficheActionPiloteTable } from '@/backend/plans/fiches/shared/models/fiche-action-pilote.table';
-import { ficheActionAxeTable } from '@/backend/plans/fiches/shared/models/fiche-action-axe.table';
+import { utilisateurPermissionTable } from '@/backend/auth/authorizations/roles/private-utilisateur-droit.table';
+import { dcpTable } from '@/backend/auth/models/dcp.table';
+import { RecherchesCollectivite } from '@/backend/collectivites/recherches/collectivites.response';
+import { FiltersRequest } from '@/backend/collectivites/recherches/filters.request';
+import {
+  filtreIntervalleTable,
+  typeIntervalle,
+} from '@/backend/collectivites/recherches/filtre-intervalle.table';
+import { RecherchesPlan } from '@/backend/collectivites/recherches/plans.response';
+import { RecherchesReferentiel } from '@/backend/collectivites/recherches/referentiels.response';
 import {
   collectiviteBanaticSubType,
   collectiviteBanaticTypeTable,
 } from '@/backend/collectivites/shared/models/collectivite-banatic-type.table';
 import {
-  filtreIntervalleTable,
-  typeIntervalle,
-} from '@/backend/collectivites/recherches/filtre-intervalle.table';
+  collectiviteTable,
+  collectiviteTypeEnum,
+} from '@/backend/collectivites/shared/models/collectivite.table';
+import { membreTable } from '@/backend/collectivites/shared/models/membre.table';
+import { indicateurValeurTable } from '@/backend/indicateurs/shared/models/indicateur-valeur.table';
+import { axeTable } from '@/backend/plans/fiches/shared/models/axe.table';
+import { ficheActionAxeTable } from '@/backend/plans/fiches/shared/models/fiche-action-axe.table';
+import { ficheActionPiloteTable } from '@/backend/plans/fiches/shared/models/fiche-action-pilote.table';
+import { planActionTypeTable } from '@/backend/plans/fiches/shared/models/plan-action-type.table';
+import { labellisationTable } from '@/backend/referentiels/labellisations/labellisation.table';
+import { SnapshotJalonEnum } from '@/backend/referentiels/snapshots/snapshot-jalon.enum';
+import { snapshotTable } from '@/backend/referentiels/snapshots/snapshot.table';
+import { DatabaseService } from '@/backend/utils';
+import { Injectable, Logger } from '@nestjs/common';
+import { getTableName, sql } from 'drizzle-orm';
 
 /** Projection for contacts */
 const contactsProjection = ` COALESCE(
@@ -220,7 +220,9 @@ export default class RecherchesService {
     // Add conditions
     // Condition collectivite type
     if (filters.typesCollectivite.length > 0) {
-      const types = filters.typesCollectivite.map((type) => `'${type}'`).join(', ');
+      const types = filters.typesCollectivite
+        .map((type) => `'${type}'`)
+        .join(', ');
       query = `${query}
       AND c.collectiviteType IN (${types})`;
     }
