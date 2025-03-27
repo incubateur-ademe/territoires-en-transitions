@@ -27,7 +27,7 @@ const checkNonEditable = (snapshotRef: string, options: SnapshotOption[]) => {
   const AUDIT_JALON = 'post_audit';
 
   // Snapshots with references like "2024-labellisation-EMT" are non editable
-  // TODO: replace with jalon check when labellisation will be implemented
+  // TODO: replace with jalon check when labellisation jalons will be implemented
   const LABELLISATION_REF = /^\d{4}-labellisation-EMT$/;
 
   return jalon === AUDIT_JALON || LABELLISATION_REF.test(snapshotRef);
