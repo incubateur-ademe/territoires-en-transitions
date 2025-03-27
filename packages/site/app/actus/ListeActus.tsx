@@ -51,15 +51,17 @@ const ListeActus = ({ categories }: ListeActusProps) => {
 
   return (
     <>
-      <Field title="Catégorie" className="w-full sm:w-96 ml-auto mb-6" small>
-        <SelectFilter
-          values={selectedCategories}
-          options={categories}
-          onChange={({ values }) => setSelectedCategories(values)}
-          placeholder="Sélectionner une ou plusieurs catégories"
-          small
-        />
-      </Field>
+      {categories.length > 0 && (
+        <Field title="Catégorie" className="w-full sm:w-96 ml-auto mb-6" small>
+          <SelectFilter
+            values={selectedCategories}
+            options={categories}
+            onChange={({ values }) => setSelectedCategories(values)}
+            placeholder="Sélectionner une ou plusieurs catégories"
+            small
+          />
+        </Field>
+      )}
 
       {!!data && (
         <>
