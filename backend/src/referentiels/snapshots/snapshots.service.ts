@@ -1,5 +1,5 @@
 import { PermissionService } from '@/backend/auth/authorizations/permission.service';
-import { toSlug } from '@/backend/utils/index-domain';
+import { roundTo, toSlug } from '@/backend/utils/index-domain';
 import {
   BadRequestException,
   Injectable,
@@ -259,6 +259,7 @@ export class SnapshotsService {
     collectiviteId,
     referentielId,
     nom,
+    ref,
     date,
     jalon,
     auditId,
@@ -285,7 +286,8 @@ export class SnapshotsService {
       personnalisationReponsesPayload,
       nom,
       true,
-      user?.id
+      user?.id,
+      ref
     );
 
     return snapshot;
@@ -296,14 +298,23 @@ export class SnapshotsService {
     personnalisationResponses: PersonnalisationReponsesPayload,
     snapshotNom?: string,
     snapshotForceUpdate?: boolean,
-    userId?: string | null
+    userId?: string | null,
+    snapshotRef?: string
   ): Promise<Snapshot> {
-    const { ref, nom } = this.getDefaultSnapshotMetadata({
-      nom: snapshotNom,
-      jalon: scoresPayload.jalon,
-      anneeAudit: scoresPayload.anneeAudit,
-      date: scoresPayload.date,
-    });
+    if (!snapshotRef) {
+      const { ref, nom } = this.getDefaultSnapshotMetadata({
+        nom: snapshotNom,
+        jalon: scoresPayload.jalon,
+        anneeAudit: scoresPayload.anneeAudit,
+        date: scoresPayload.date,
+      });
+      snapshotRef = ref;
+      snapshotNom = nom;
+    } else {
+      if (!snapshotNom) {
+        snapshotNom = snapshotRef;
+      }
+    }
 
     const createScoreSnapshot = {
       collectiviteId: scoresPayload.collectiviteId,
@@ -311,10 +322,10 @@ export class SnapshotsService {
       referentielVersion: scoresPayload.referentielVersion,
       auditId: scoresPayload.auditId,
       date: scoresPayload.date,
-      ref,
-      nom,
+      ref: snapshotRef,
+      nom: snapshotNom,
       jalon:
-        ref !== SnapshotsService.SCORE_COURANT_SNAPSHOT_REF &&
+        snapshotRef !== SnapshotsService.SCORE_COURANT_SNAPSHOT_REF &&
         scoresPayload.jalon === SnapshotJalonEnum.COURANT
           ? SnapshotJalonEnum.DATE_PERSONNALISEE
           : scoresPayload.jalon,
@@ -446,6 +457,85 @@ export class SnapshotsService {
     }
 
     return snapshot;
+  }
+
+  async forceRecompute(
+    collectiviteId: number,
+    referentielId: ReferentielId,
+    snapshotRef: string,
+    user?: AuthUser
+  ): Promise<Snapshot> {
+    this.logger.log(
+      `Forcing recompute of snapshot ${snapshotRef} for collectivite ${collectiviteId} and referentiel ${referentielId}`
+    );
+    // Only allowed for service role
+    if (user) {
+      this.permissionService.hasServiceRole(user);
+    }
+
+    const snapshot = await this.getSnapshotWithoutPayloads(
+      collectiviteId,
+      referentielId,
+      snapshotRef
+    );
+
+    if (!snapshot) {
+      throw new NotFoundException(
+        `Aucun snapshot de score avec la référence ${snapshotRef} n'a été trouvé pour la collectivité ${collectiviteId} et le referentiel ${referentielId}`
+      );
+    }
+    this.logger.log(
+      `Snapshot ${snapshotRef} modified at ${snapshot.modifiedAt}, score: ${
+        snapshot.pointFait
+      }/${snapshot.pointPotentiel} = ${roundTo(
+        (snapshot.pointFait * 100) / snapshot.pointPotentiel,
+        2
+      )}%`
+    );
+
+    let updatedSnapshot: Snapshot;
+    if (snapshot.jalon === SnapshotJalonEnum.COURANT) {
+      updatedSnapshot = await this.computeAndUpsert({
+        collectiviteId,
+        referentielId,
+        ref: snapshotRef,
+        user,
+      });
+    } else if (
+      snapshot.jalon === SnapshotJalonEnum.POST_AUDIT ||
+      snapshot.jalon === SnapshotJalonEnum.PRE_AUDIT
+    ) {
+      updatedSnapshot = await this.computeAndUpsert({
+        collectiviteId,
+        referentielId,
+        ref: snapshotRef,
+        jalon: snapshot.jalon,
+        auditId: snapshot.auditId || undefined,
+        user,
+      });
+    } else {
+      updatedSnapshot = await this.computeAndUpsert({
+        collectiviteId,
+        referentielId,
+        ref: snapshotRef,
+        date: snapshot.date,
+        nom: snapshot.nom,
+        user,
+      });
+    }
+
+    this.logger.log(
+      `Snapshot ${snapshotRef} updated at ${
+        updatedSnapshot.modifiedAt
+      }, score: ${updatedSnapshot.pointFait}/${
+        updatedSnapshot.pointPotentiel
+      } = ${roundTo(
+        (updatedSnapshot.pointFait * 100) / updatedSnapshot.pointPotentiel,
+        2
+      )}%`
+    );
+
+    return updatedSnapshot;
   }
 
   async delete(
