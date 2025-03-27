@@ -6,6 +6,7 @@ import { snapshotJalonEnumSchema } from './snapshot-jalon.enum';
 export const upsertSnapshotRequestSchema = collectiviteRequestSchema.extend({
   referentielId: referentielIdEnumSchema,
   nom: z.string().optional(),
+  ref: z.string().optional(),
   date: z.string().datetime().optional(),
   jalon: snapshotJalonEnumSchema.optional(),
   auditId: z.number().int().optional(),

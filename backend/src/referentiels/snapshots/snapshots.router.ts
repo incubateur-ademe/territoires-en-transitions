@@ -73,6 +73,26 @@ export class SnapshotsRouter {
         );
       }),
 
+    forceRecompute: this.trpc.authedProcedure
+      .input(
+        z.object({
+          referentielId: referentielIdEnumSchema,
+          collectiviteId: z.number().int(),
+          snapshotRef: z.string(),
+        })
+      )
+      .query(async ({ input, ctx }) => {
+        // Only allowed for service role
+        this.permissionService.hasServiceRole(ctx.user);
+
+        return this.snapshots.forceRecompute(
+          input.collectiviteId,
+          input.referentielId,
+          input.snapshotRef,
+          ctx.user
+        );
+      }),
+
     // get: this.trpc.authedProcedure
     //   .input(getFullScoreSnapshotTrpcRequestSchema)
     //   .query(({ input, ctx }) => {
