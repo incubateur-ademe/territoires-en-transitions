@@ -19,6 +19,9 @@ export const useActionPilotesUpsert = () => {
         collectiviteId: variables.collectiviteId,
         actionId: variables.actionId,
       });
+      utils.referentiels.actions.listActions.invalidate({
+        collectiviteId: variables.collectiviteId,
+      });
     },
   });
 };
@@ -31,6 +34,9 @@ export const useActionPilotesDelete = () => {
       utils.referentiels.actions.listPilotes.invalidate({
         collectiviteId: variables.collectiviteId,
         actionId: variables.actionId,
+      });
+      utils.referentiels.actions.listActions.invalidate({
+        collectiviteId: variables.collectiviteId,
       });
     },
   });
