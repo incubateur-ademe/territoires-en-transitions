@@ -7,6 +7,7 @@ import {
 } from '@/domain/referentiels';
 import { useFeatureFlagEnabled } from 'posthog-js/react';
 import { useCollectiviteId } from '../collectivites/collectivite-context';
+import { useReferentielId } from './referentiel-context';
 
 export type Snapshot = RouterOutput['referentiels']['snapshots']['getCurrent'];
 
@@ -100,18 +101,30 @@ export function useSnapshotComputeAndUpdate() {
 
 export function useSnapshotUpdateName() {
   const trpcUtils = trpc.useUtils();
+  const collectiviteId = useCollectiviteId();
+  const referentielId = useReferentielId();
+
   return trpc.referentiels.snapshots.updateName.useMutation({
     onSuccess: () => {
-      trpcUtils.referentiels.snapshots.list.invalidate();
+      trpcUtils.referentiels.snapshots.list.invalidate({
+        collectiviteId,
+        referentielId,
+      });
     },
   });
 }
 
 export function useSnapshotDelete() {
   const trpcUtils = trpc.useUtils();
+  const collectiviteId = useCollectiviteId();
+  const referentielId = useReferentielId();
+
   return trpc.referentiels.snapshots.delete.useMutation({
     onSuccess: () => {
-      trpcUtils.referentiels.snapshots.list.invalidate();
+      trpcUtils.referentiels.snapshots.list.invalidate({
+        collectiviteId,
+        referentielId,
+      });
     },
   });
 }
