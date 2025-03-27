@@ -7,9 +7,9 @@ import {
 } from '@/domain/referentiels';
 import { useFeatureFlagEnabled } from 'posthog-js/react';
 import { useCollectiviteId } from '../collectivites/collectivite-context';
+import { useReferentielId } from './referentiel-context';
 
-export type Snapshot =
-  RouterOutput['referentiels']['snapshots']['getCurrent'];
+export type Snapshot = RouterOutput['referentiels']['snapshots']['getCurrent'];
 
 export type SnapshotDetails =
   RouterOutput['referentiels']['snapshots']['list']['snapshots'][number];
@@ -32,14 +32,17 @@ export function useSnapshot({ actionId }: { actionId: string }) {
 export function useListSnapshots(referentielId: ReferentielId) {
   const collectiviteId = useCollectiviteId();
 
-  return trpc.referentiels.snapshots.list.useQuery({
-    collectiviteId,
-    referentielId,
-  }, {
-    select({ snapshots }) {
-      return snapshots
+  return trpc.referentiels.snapshots.list.useQuery(
+    {
+      collectiviteId,
+      referentielId,
     },
-  });
+    {
+      select({ snapshots }) {
+        return snapshots;
+      },
+    }
+  );
 }
 
 export function useAction(actionId: string) {
@@ -94,6 +97,36 @@ export function useSnapshotComputeAndUpdate() {
   return {
     computeScoreAndUpdateCurrentSnapshot,
   };
+}
+
+export function useSnapshotUpdateName() {
+  const trpcUtils = trpc.useUtils();
+  const collectiviteId = useCollectiviteId();
+  const referentielId = useReferentielId();
+
+  return trpc.referentiels.snapshots.updateName.useMutation({
+    onSuccess: () => {
+      trpcUtils.referentiels.snapshots.list.invalidate({
+        collectiviteId,
+        referentielId,
+      });
+    },
+  });
+}
+
+export function useSnapshotDelete() {
+  const trpcUtils = trpc.useUtils();
+  const collectiviteId = useCollectiviteId();
+  const referentielId = useReferentielId();
+
+  return trpc.referentiels.snapshots.delete.useMutation({
+    onSuccess: () => {
+      trpcUtils.referentiels.snapshots.list.invalidate({
+        collectiviteId,
+        referentielId,
+      });
+    },
+  });
 }
 
 export function useEtatLieuxHasStarted(referentielId: ReferentielId) {
