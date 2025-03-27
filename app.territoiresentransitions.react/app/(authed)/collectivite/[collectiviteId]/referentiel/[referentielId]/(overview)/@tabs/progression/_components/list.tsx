@@ -14,11 +14,17 @@ import { buildReferentiel } from './utils';
 
 type Props = {
   filters: ActionListFilters;
+  toggleFilters: () => void;
   display?: DisplayOption;
   showDescriptionOn: boolean;
 };
 
-const List = ({ filters, display = 'action', showDescriptionOn }: Props) => {
+const List = ({
+  filters,
+  toggleFilters,
+  display = 'action',
+  showDescriptionOn,
+}: Props) => {
   const { data: actionList, isLoading: isLoadingActions } = useListActions({
     ...filters,
     actionTypes:
@@ -41,6 +47,13 @@ const List = ({ filters, display = 'action', showDescriptionOn }: Props) => {
       <EmptyCard
         picto={(props) => <PictoDocument {...props} />}
         title="Aucun résultat pour ce filtre !"
+        actions={[
+          {
+            children: 'Modifier le filtre',
+            onClick: toggleFilters,
+            size: 'sm',
+          },
+        ]}
       />
     );
   }
