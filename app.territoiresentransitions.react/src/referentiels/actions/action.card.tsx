@@ -4,8 +4,6 @@ import { makeReferentielActionUrl } from '@/app/app/paths';
 import { useCollectiviteId } from '@/app/collectivites/collectivite-context';
 import { useCurrentCollectivite } from '@/app/core-logic/hooks/useCurrentCollectivite';
 import ActionEditModal from '@/app/referentiels/actions/action-edit.modal';
-import { useActionPilotesList } from '@/app/referentiels/actions/use-action-pilotes';
-import { useActionServicesPilotesList } from '@/app/referentiels/actions/use-action-services-pilotes';
 import { Action } from '@/app/referentiels/actions/use-list-actions';
 import ListWithTooltip from '@/app/ui/lists/ListWithTooltip';
 import {
@@ -28,9 +26,6 @@ export const ActionCard = ({ action, showDescription }: ActionCardProps) => {
   const { isReadOnly } = useCurrentCollectivite()!;
   const collectiviteId = useCollectiviteId();
   const referentiel = getReferentielIdFromActionId(id);
-
-  const { data: pilotes } = useActionPilotesList(id);
-  const { data: services } = useActionServicesPilotesList(id);
 
   const [isEditOpen, setIsEditOpen] = useState(false);
 
