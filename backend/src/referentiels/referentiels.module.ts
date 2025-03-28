@@ -5,8 +5,6 @@ import { PersonnalisationsModule } from '../personnalisations/personnalisations.
 import { SheetModule } from '../utils/google-sheets/sheet.module';
 import { AssignPilotesRouter } from './assign-pilotes/assign-pilotes.router';
 import { AssignPilotesService } from './assign-pilotes/assign-pilotes.service';
-import { AssignServicesRouter } from './assign-services/assign-services.router';
-import { AssignServicesService } from './assign-services/assign-services.service';
 import { ReferentielsScoringController } from './compute-score/scores.controller';
 import ScoresService from './compute-score/scores.service';
 import { ExportScoreController } from './export-score/export-score.controller';
@@ -30,7 +28,8 @@ import { SnapshotsRouter } from './snapshots/snapshots.router';
 import { SnapshotsService } from './snapshots/snapshots.service';
 import { UpdateActionStatutRouter } from './update-action-statut/update-action-statut.router';
 import { UpdateActionStatutService } from './update-action-statut/update-action-statut.service';
-
+import { AssignServicesService } from './assign-services/assign-services.service';
+import { AssignServicesRouter } from './assign-services/assign-services.router';
 @Module({
   imports: [CollectivitesModule, SheetModule, PersonnalisationsModule],
   providers: [
