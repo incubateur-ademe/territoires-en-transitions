@@ -97,12 +97,20 @@ export const NEW_useTableData: UseTableData = () => {
 
     const { statut: statuts } = filters;
 
-    if (action.score.concerne === false) {
-      return false;
-    }
-
     if (statuts.includes('tous')) {
       return true;
+    }
+
+    console.log(statuts, statuts.includes('non_concerne'));
+
+    if (action.actionId === 'eci_1.1.1.2') {
+      console.log(action, action.score.concerne === false);
+    }
+
+    if (statuts.includes('non_concerne')) {
+      if (action.score.concerne === false) return true;
+    } else {
+      if (action.score.concerne === false) return false;
     }
 
     if (statuts.includes('non_renseigne') && !action.score.renseigne) {
@@ -249,10 +257,13 @@ export const NEW_useTableData: UseTableData = () => {
       saveActionStatut({
         collectiviteId,
         actionId,
-        avancement: avancement as StatutAvancement,
+        avancement:
+          avancement === 'non_concerne'
+            ? 'non_renseigne'
+            : (avancement as StatutAvancement),
         avancementDetaille:
           avancement === 'detaille' ? [0.25, 0.5, 0.25] : undefined,
-        concerne: true,
+        concerne: avancement === 'non_concerne' ? false : true,
       });
     },
   };
