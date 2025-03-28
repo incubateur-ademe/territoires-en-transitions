@@ -7,11 +7,12 @@ import { Toasters } from '@/app/app/Toasters';
 import { VisitTracker } from '@/app/app/VisitTracker';
 import AccepterCGUModal from '@/app/app/pages/Auth/AccepterCGUModal';
 import { ScoreListenerProvider } from '@/app/referentiels/DEPRECATED_use-score-listener';
+import { DemoModeProvider } from '@/app/users/demo-mode-support-provider';
+import { setUser } from '@sentry/nextjs';
 import posthog from 'posthog-js';
 import { ReactNode } from 'react';
 import { QueryClient, QueryClientProvider } from 'react-query';
 import { ReactQueryDevtools } from 'react-query/devtools';
-import { DemoModeProvider } from '@/app/users/demo-mode-support-provider';
 
 const queryClient = new QueryClient();
 
@@ -31,6 +32,10 @@ export default function AppProviders({
           user_id: session?.user.id,
         });
 
+        setUser({
+          id: session?.user.id,
+        })
+
         setCrispUserData(user);
 
         if (process.env.NODE_ENV === 'production') {
@@ -41,6 +46,8 @@ export default function AppProviders({
       onSignedOut={() => {
         posthog.reset();
         clearCrispUserData();
+
+        setUser(null);
       }}
     >
       <TRPCProvider>
