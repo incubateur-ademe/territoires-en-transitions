@@ -28,7 +28,9 @@ export const ActionHeader = ({
   nextActionLink: string | undefined;
   prevActionLink: string | undefined;
 }) => {
-  const { isReadOnly } = useCurrentCollectivite()!;
+  
+  const collectivite = useCurrentCollectivite();
+  const isReadOnly = !collectivite || collectivite?.isReadOnly;
   const [isEditModalOpen, setIsEditModalOpen] = useState(false);
 
   return (
