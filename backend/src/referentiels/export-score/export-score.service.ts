@@ -222,11 +222,11 @@ export class ExportScoreService {
       // score et statut
       actionScore.score.pointPotentiel,
       actionScore.score.pointFait,
-      actionScore.score.pointFait ||
-        0 / (actionScore.score.pointPotentiel || 1),
+      (actionScore.score.pointFait || 0) /
+        (actionScore.score.pointPotentiel || 1),
       actionScore.score.pointProgramme,
-      actionScore.score.pointProgramme ||
-        0 / (actionScore.score.pointPotentiel || 1),
+      (actionScore.score.pointProgramme || 0) /
+        (actionScore.score.pointPotentiel || 1),
       this.formatActionStatut(actionScore, parentActionScore),
 
       // commentaires et documents,
