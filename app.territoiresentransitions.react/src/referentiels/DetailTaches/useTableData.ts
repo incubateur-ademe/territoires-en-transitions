@@ -97,6 +97,10 @@ export const NEW_useTableData: UseTableData = () => {
 
     const { statut: statuts } = filters;
 
+    if (action.score.concerne === false) {
+      return false;
+    }
+
     if (statuts.includes('tous')) {
       return true;
     }
