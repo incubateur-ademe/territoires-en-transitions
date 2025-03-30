@@ -117,7 +117,7 @@ export class GetLabellisationService {
       score_programme: number | null;
       score_realise: number | null;
 
-      nextEtoile: number | null;
+      prochaine_etoile: number | null;
     };
 
     const currentLabellisation = this.getCurrentLabellisationQuery({
@@ -358,7 +358,7 @@ from s_etoile s
         score_realise: labellisationTable.scoreRealise,
         score_programme: labellisationTable.scoreProgramme,
 
-        nextEtoile: etoileDefinitionTable.prochaineEtoile,
+        prochaine_etoile: etoileDefinitionTable.prochaineEtoile,
       })
       .from(labellisationTable)
       .innerJoin(
@@ -698,7 +698,7 @@ where not ss.desactive
 
     const etoileCible = await this.getEtoileCible({
       currentEtoile: labellisation?.etoiles,
-      nextEtoile: labellisation?.nextEtoile ?? undefined,
+      nextEtoile: labellisation?.prochaine_etoile ?? undefined,
       scoreFait: labellisation?.score_realise,
     });
 
@@ -743,7 +743,7 @@ where not ss.desactive
     };
   }
 
-  async getEtoileCible({
+  private async getEtoileCible({
     currentEtoile = EtoileEnum.PREMIERE_ETOILE,
     nextEtoile = EtoileEnum.PREMIERE_ETOILE,
     scoreFait,
