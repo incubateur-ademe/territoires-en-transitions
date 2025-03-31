@@ -83,6 +83,7 @@ export const makeLineSeries = (dataset: Dataset[]): LineSeriesOption[] =>
     smooth: true,
     emphasis: { focus: 'series' },
     symbol: ds.id === 'trajectoire' ? 'none' : 'circle',
+    symbolSize: ds.id?.toString().startsWith('resultat') ? 8 : 4,
     lineStyle: estLignePointillee(ds)
       ? { type: 'dashed', width: 2 }
       : { width: 2 },
