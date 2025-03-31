@@ -162,20 +162,30 @@ export function getScoreRatios({
   pointPotentiel,
   completedTachesCount,
   totalTachesCount,
+  pasFaitTachesAvancement,
   faitTachesAvancement,
   programmeTachesAvancement,
 }: ScoreFinal) {
   return {
     ratioFait:
-      pointPotentiel === 0 && faitTachesAvancement === totalTachesCount
-        ? 100
+      pointPotentiel === 0
+        ? divisionOrZero(faitTachesAvancement, totalTachesCount)
         : divisionOrZero(pointFait, pointPotentiel),
     ratioProgramme:
-      pointPotentiel === 0 && programmeTachesAvancement === totalTachesCount
-        ? 100
+      pointPotentiel === 0
+        ? divisionOrZero(programmeTachesAvancement, totalTachesCount)
         : divisionOrZero(pointProgramme, pointPotentiel),
-    ratioPasFait: divisionOrZero(pointPasFait, pointPotentiel),
-    ratioNonRenseigne: divisionOrZero(pointNonRenseigne, pointPotentiel),
+    ratioPasFait:
+      pointPotentiel === 0
+        ? divisionOrZero(pasFaitTachesAvancement, totalTachesCount)
+        : divisionOrZero(pointPasFait, pointPotentiel),
+    ratioNonRenseigne:
+      pointPotentiel === 0
+        ? divisionOrZero(
+            totalTachesCount - completedTachesCount,
+            totalTachesCount
+          )
+        : divisionOrZero(pointNonRenseigne, pointPotentiel),
     ratioTachesCount: divisionOrZero(completedTachesCount, totalTachesCount),
   };
 }
