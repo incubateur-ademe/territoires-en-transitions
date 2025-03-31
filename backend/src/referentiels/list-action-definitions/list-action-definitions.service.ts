@@ -168,7 +168,14 @@ export class ListActionDefinitionsService {
             'actionType'
           ),
 
-        pilotes: sql<string[]>`
+        pilotes: sql<
+          Array<{
+            collectiviteId: number | null;
+            userId: number | null;
+            tagId: number | null;
+            nom: string | null;
+          }>
+        >`
           array_remove(
             array_agg(
               CASE
@@ -192,14 +199,26 @@ export class ListActionDefinitionsService {
           )
         `.as('pilotes'),
 
-        services: sql<string[]>`
+        services: sql<
+          Array<{
+            collectiviteId: number;
+            nom: string | null;
+            id: number;
+          }>
+        >`
           array_remove(
             array_agg(
-              jsonb_build_object(
-                'collectiviteId', ${actionServiceTable.collectiviteId},
-                'nom', ${serviceTagTable.nom},
-                'id', ${actionServiceTable.serviceTagId}
-              )
+              CASE
+                WHEN ${actionServiceTable.collectiviteId} IS NOT NULL
+                  OR ${serviceTagTable.nom} IS NOT NULL
+                  OR ${actionServiceTable.serviceTagId} IS NOT NULL
+                THEN
+                  jsonb_build_object(
+                    'collectiviteId', ${actionServiceTable.collectiviteId},
+                    'nom', ${serviceTagTable.nom},
+                    'id', ${actionServiceTable.serviceTagId}
+                  )
+              END
             ),
             null
           )
