@@ -244,11 +244,16 @@ export class SnapshotsService {
       );
     }
 
-    const LABELLISATION_REF = /^\d{4}-labellisation-EMT$/;
+    const AUDIT_JALONS: SnapshotJalon[] = [
+      SnapshotJalonEnum.PRE_AUDIT,
+      SnapshotJalonEnum.POST_AUDIT,
+    ];
 
-    if (snapshot.jalon === SnapshotJalonEnum.POST_AUDIT) {
+    const LABELLISATION_REF = /^\d{4}-labellisation-(?:EMT|emt)$/;
+
+    if (snapshot.jalon && AUDIT_JALONS.includes(snapshot.jalon)) {
       throw new BadRequestException(
-        `Impossible de modifier le nom d'un snapshot issu d'un audit`
+        `Impossible de modifier le nom d'un snapshot lié à un audit`
       );
     }
 
