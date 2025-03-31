@@ -1,5 +1,6 @@
 import { Database } from '@/api';
 import { useSupabase } from '@/api/utils/supabase/use-supabase';
+import { trpc } from '@/api/utils/trpc/client';
 import { ReferentielId } from '@/domain/referentiels';
 import { Etoile } from '@/domain/referentiels/labellisations';
 import { useMutation, useQueryClient } from 'react-query';
@@ -7,6 +8,7 @@ import { TLabellisationParcours } from './types';
 
 export const useEnvoiDemande = () => {
   const queryClient = useQueryClient();
+  const utils = trpc.useUtils();
   const supabase = useSupabase();
 
   const { isLoading, mutate: envoiDemande } = useMutation(
@@ -27,7 +29,9 @@ export const useEnvoiDemande = () => {
         collectivite_id,
         referentiel,
         sujet,
-        etoiles: (etoileDemandee ? etoileDemandee.toString() : null) as Database['public']['Functions']['labellisation_submit_demande']['Args']['etoiles'],
+        etoiles: (etoileDemandee
+          ? etoileDemandee.toString()
+          : null) as Database['public']['Functions']['labellisation_submit_demande']['Args']['etoiles'],
       });
       if (error) {
         return false;
@@ -48,7 +52,7 @@ export const useEnvoiDemande = () => {
         ) as TLabellisationParcours[];
 
         // crée la nouvelle valeur à partir des entrées
-        const newValue = [...previousCacheValue];
+        const newValue = [...(previousCacheValue || [])];
         const index = newValue.findIndex((p) => p.referentiel === referentiel);
         if (index !== -1) {
           newValue[index].demande!.en_cours = false;
@@ -56,6 +60,12 @@ export const useEnvoiDemande = () => {
 
         // et écrit cette valeur dans le cache
         queryClient.setQueryData(queryKey, newValue);
+
+        // Invalidate trpc as well
+        utils.referentiels.labellisations.getParcours.invalidate({
+          collectiviteId: collectivite_id,
+          referentielId: referentiel,
+        });
 
         // renvoi un objet `context` avec la valeur précédente du cache et la
         // clé correspondante
