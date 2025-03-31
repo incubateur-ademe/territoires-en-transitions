@@ -244,21 +244,16 @@ export class SnapshotsService {
       );
     }
 
-    const AUDIT_JALONS: SnapshotJalon[] = [
-      SnapshotJalonEnum.PRE_AUDIT,
-      SnapshotJalonEnum.POST_AUDIT,
-    ];
-
-    const LABELLISATION_REF = /^\d{4}-labellisation-(?:EMT|emt)$/;
-
-    if (snapshot.jalon && AUDIT_JALONS.includes(snapshot.jalon)) {
+    if (snapshot.jalon !== SnapshotJalonEnum.DATE_PERSONNALISEE) {
       throw new BadRequestException(
-        `Impossible de modifier le nom d'un snapshot lié à un audit`
+        `Seuls les noms des snapshots de type ${SnapshotJalonEnum.DATE_PERSONNALISEE} peuvent être modifiés`
       );
     }
 
     // Snapshots with references like "2024-labellisation-EMT" are non editable
     // TODO: replace with jalon check when labellisation jalons will be implemented
+    const LABELLISATION_REF = /^\d{4}-labellisation-EMT$/i;
+
     if (LABELLISATION_REF.test(snapshot.ref)) {
       throw new BadRequestException(
         `Impossible de modifier le nom d'un snapshot issu d'une labellisation`
