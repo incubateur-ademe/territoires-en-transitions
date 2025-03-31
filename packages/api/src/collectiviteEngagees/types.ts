@@ -38,3 +38,44 @@ export type PlanType = Omit<
 export type CollectiviteCarte = NonNullableFields<
   Database['public']['Views']['collectivite_card']['Row']
 >;
+
+export type RecherchesContact = {
+  prenom: string;
+  nom: string;
+  fonction?: string;
+  detailFonction?: string;
+  telephone?: string;
+  email: string;
+};
+
+export type RecherchesCollectivite = {
+  collectiviteId: number;
+  collectiviteNom: string;
+  nbIndicateurs: number;
+  nbPlans: number;
+  etoilesEci: number;
+  etoilesCae: number;
+  contacts: RecherchesContact[];
+};
+
+export type RecherchesReferentiel = {
+  collectiviteId: number;
+  collectiviteNom: string;
+  collectiviteType: string;
+  etoilesCae: number;
+  scoreFaitCae: number;
+  scoreProgrammeCae: number;
+  etoilesEci: number;
+  scoreFaitEci: number;
+  scoreProgrammeEci: number;
+  contacts: RecherchesContact[];
+};
+
+export type RecherchesPlan = {
+  collectiviteId: number;
+  collectiviteNom: string;
+  planId: number;
+  planNom: string;
+  planType?: string;
+  contacts: RecherchesContact[];
+};
