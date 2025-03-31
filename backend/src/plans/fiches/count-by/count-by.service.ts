@@ -924,8 +924,8 @@ export class CountByService {
     if (filter.ameliorationContinue) {
       conditions.push(eq(ficheActionTable.ameliorationContinue, true));
     }
-    if (filter.restreint) {
-      conditions.push(eq(ficheActionTable.restreint, true));
+    if (filter.restreint !== undefined) {
+      conditions.push(eq(ficheActionTable.restreint, filter.restreint));
     }
     if (filter.hasIndicateurLies) {
       conditions.push(isNotNull(sql`indicateur_ids`));
