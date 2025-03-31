@@ -188,9 +188,7 @@ const HeaderLabellisationConnected = ({
   parcoursLabellisation: TCycleLabellisation;
 }) => {
   return parcoursLabellisation?.parcours ? (
-    <HeaderLabellisation
-      parcoursLabellisation={parcoursLabellisation}
-    />
+    <HeaderLabellisation parcoursLabellisation={parcoursLabellisation} />
   ) : null;
 };
 
