@@ -238,7 +238,13 @@ describe('FichesActionUpdateService', () => {
       const body = Object.fromEntries(
         Object.entries(unFilteredBody).filter(
           ([key]) =>
-            !['id', 'createdAt', 'modifiedAt', 'modifiedBy'].includes(key)
+            ![
+              'id',
+              'createdAt',
+              'createdBy',
+              'modifiedAt',
+              'modifiedBy',
+            ].includes(key)
         )
       );
 
