@@ -3,13 +3,13 @@ import Link from 'next/link';
 
 import { Badge } from '@/ui';
 
-import { CollectiviteEngagee } from '@/api';
 import { generateTitle } from '@/app/app/pages/collectivite/PlansActions/FicheAction/data/utils';
 import { makeCollectivitePlanActionUrl } from '@/app/app/paths';
 import { useFonctionTracker } from '@/app/core-logic/hooks/useFonctionTracker';
+import { RecherchesPlan } from '@/api/collectiviteEngagees';
 
 type Props = {
-  plan: CollectiviteEngagee.TPlanCarte;
+  plan: RecherchesPlan;
   canUserClickCard: boolean;
 };
 
@@ -31,8 +31,8 @@ export const PlanCarte = ({ plan, canUserClickCard }: Props) => {
       href={
         canUserClickCard
           ? makeCollectivitePlanActionUrl({
-              collectiviteId: plan.collectivite_id,
-              planActionUid: plan.id.toString(),
+              collectiviteId: plan.collectiviteId,
+              planActionUid: plan.planId.toString(),
             })
           : '#'
       }
@@ -45,16 +45,16 @@ export const PlanCarte = ({ plan, canUserClickCard }: Props) => {
       )}
     >
       <div className="text-lg font-bold text-primary-9">
-        {plan.collectivite.nom}
+        {plan.collectiviteNom}
       </div>
-      {plan.type && (
+      {plan.planType && (
         <Badge
-          title={generateTitle(plan.type.type)}
+          title={generateTitle(plan.planType)}
           size="sm"
           state="standard"
         />
       )}
-      <div className="text-sm text-grey-6">{generateTitle(plan.nom)}</div>
+      <div className="text-sm text-grey-6">{generateTitle(plan.planNom)}</div>
     </Link>
   );
 };
