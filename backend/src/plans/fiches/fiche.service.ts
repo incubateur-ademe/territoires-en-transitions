@@ -21,6 +21,7 @@ import { ficheActionPartenaireTagTable } from './shared/models/fiche-action-part
 import { ficheActionSousThematiqueTable } from './shared/models/fiche-action-sous-thematique.table';
 import { ficheActionThematiqueTable } from './shared/models/fiche-action-thematique.table';
 import {
+  FicheAction,
   ficheActionTable,
   FicheCreate,
 } from './shared/models/fiche-action.table';
@@ -47,13 +48,22 @@ export default class FicheService {
   async canReadFiche(ficheId: number, tokenInfo: AuthUser): Promise<boolean> {
     const fiche = await this.getFicheFromId(ficheId);
     if (fiche === null) return false;
-    return await this.permissionService.isAllowed(
+    return this.hasReadFichePermission(fiche, tokenInfo);
+  }
+
+  hasReadFichePermission(
+    fiche: Pick<FicheAction, 'collectiviteId' | 'restreint'>,
+    tokenInfo: AuthUser,
+    doNotThrow?: boolean
+  ): Promise<boolean> {
+    return this.permissionService.isAllowed(
       tokenInfo,
       fiche.restreint
         ? PermissionOperation.PLANS_FICHES_LECTURE
         : PermissionOperation.PLANS_FICHES_VISITE,
       ResourceType.COLLECTIVITE,
-      fiche.collectiviteId
+      fiche.collectiviteId,
+      doNotThrow
     );
   }
 
