@@ -3,6 +3,9 @@ import z from 'zod';
 import { ficheSchema } from './fiche-action.table';
 
 export const ficheActionWithRelationsSchema = ficheSchema.extend({
+  createdByName: z.string(),
+  modifiedByName: z.string().nullish(),
+  tempsDeMiseEnOeuvreNom: z.string().nullish(),
   partenaires: z
     .object({
       id: z.number(),
@@ -47,6 +50,7 @@ export const ficheActionWithRelationsSchema = ficheSchema.extend({
     .object({
       id: z.number(),
       nom: z.string(),
+      montantTtc: z.number().optional(),
     })
     .array()
     .nullable()
@@ -117,6 +121,44 @@ export const ficheActionWithRelationsSchema = ficheSchema.extend({
     .array()
     .nullable()
     .describe("Plans d'action"),
+  etapes: z
+    .object({
+      nom: z.string(),
+      realise: z.boolean(),
+      ordre: z.number(),
+    })
+    .array()
+    .describe('Etapes'),
+  notes: z
+    .object({
+      note: z.string(),
+      dateNote: z.string(),
+    })
+    .array()
+    .describe('Notes de suivi et points de vigilance'),
+  mesures: z
+    .object({
+      identifiant: z.string(),
+      nom: z.string(),
+      referentiel: z.string(),
+    })
+    .array()
+    .describe('Mesures des référentiels liées'),
+  fichesLiees: z
+    .object({
+      id: z.number(),
+      nom: z.string(),
+    })
+    .array()
+    .describe('Fiches des plans liées'),
+  docs: z
+    .object({
+      id: z.number(),
+      filename: z.string().optional(),
+      url: z.string().optional(),
+    })
+    .array()
+    .describe('Documents liés'),
 });
 
 export type FicheActionWithRelationsType = z.infer<
