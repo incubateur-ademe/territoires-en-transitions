@@ -708,9 +708,9 @@ where not ss.desactive
         etoileCible: etoileCible.etoile,
       });
 
-    const criteresAction = actionConditionDefinitions.map(
-      addIsScoreConditionSatisfied(snapshot.scoresPayload.scores)
-    );
+    const criteresAction = actionConditionDefinitions
+      .map(addIsScoreConditionSatisfied(snapshot.scoresPayload.scores))
+      .filter((c) => c !== null);
 
     // Équivalent de la fonction PG `labellisation.critere_score_global()`, basée sur `client_scores`.
     const critereScore = {
@@ -805,6 +805,11 @@ function addIsScoreConditionSatisfied<
       ...action.score,
       ...getScoreRatios(action.score),
     };
+
+    // Automatique non concerné (par la personnalisation) > ne doit pas être affiché
+    if (action.score.desactive) {
+      return null;
+    }
 
     const actionSatisfyRatioFait =
       actionScore.ratioFait * 100 >= actionCondition.minRealisePercentage;
