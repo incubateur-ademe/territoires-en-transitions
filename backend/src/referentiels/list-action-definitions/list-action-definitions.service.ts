@@ -208,11 +208,17 @@ export class ListActionDefinitionsService {
         >`
           array_remove(
             array_agg(
-              jsonb_build_object(
-                'collectiviteId', ${actionServiceTable.collectiviteId},
-                'nom', ${serviceTagTable.nom},
-                'id', ${actionServiceTable.serviceTagId}
-              )
+              CASE
+                WHEN ${actionServiceTable.collectiviteId} IS NOT NULL
+                  OR ${serviceTagTable.nom} IS NOT NULL
+                  OR ${actionServiceTable.serviceTagId} IS NOT NULL
+                THEN
+                  jsonb_build_object(
+                    'collectiviteId', ${actionServiceTable.collectiviteId},
+                    'nom', ${serviceTagTable.nom},
+                    'id', ${actionServiceTable.serviceTagId}
+                  )
+              END
             ),
             null
           )
