@@ -1,10 +1,15 @@
+import { RouterOutput } from '@/api/utils/trpc/client';
 import { actionAvancementColors } from '@/app/app/theme';
 import { ReactECharts, TOOLBOX_BASE } from '@/app/ui/charts/echarts';
 import { ReferentielId } from '@/domain/referentiels';
+import { SnapshotJalonEnum } from '@/domain/referentiels/snapshots';
 import type { EChartsOption } from 'echarts';
 import { theme as importedTheme } from '../../ui/charts/chartsTheme';
 import { SnapshotDetails } from '../use-snapshot';
-import { isAuditOrEMT, sortByDate } from './utils';
+import { sortByDate } from './utils';
+
+export type SnapshotJalon =
+  RouterOutput['referentiels']['snapshots']['updateName'][number]['jalon'];
 
 const theme = importedTheme;
 
@@ -46,6 +51,25 @@ const adjustXAxisLabelWidth = (
     return MEDIUM_FIXED_WIDTH;
   }
   return sizeOptions.chartSize[chartSize]?.xAxisLabelWidth;
+};
+
+export const isAuditOrEMT = (jalon: SnapshotJalon, snapshotRef: string) => {
+  // Snapshots with jalon pre-audit or post-audit
+  const AUDIT_JALONS = [
+    SnapshotJalonEnum.PRE_AUDIT,
+    SnapshotJalonEnum.POST_AUDIT,
+  ] as const;
+
+  // Snapshots with references like "2024-labellisation-EMT" are non editable
+  // TODO: replace with jalon check when labellisation jalons will be implemented
+  const LABELLISATION_REF = /^\d{4}-labellisation-EMT$/i;
+
+  return (
+    (jalon &&
+      (jalon === SnapshotJalonEnum.PRE_AUDIT ||
+        jalon === SnapshotJalonEnum.POST_AUDIT)) ||
+    LABELLISATION_REF.test(snapshotRef)
+  );
 };
 
 export const ScoreTotalEvolutionsChart = ({
