@@ -3,9 +3,9 @@ import View, {
   CollectivitesEngageesView,
 } from '@/app/app/pages/CollectivitesEngagees/Views/View';
 import {
-  TCollectiviteCarte,
   useFilteredCollectivites,
 } from '@/app/app/pages/CollectivitesEngagees/data/useFilteredCollectivites';
+import { RecherchesReferentiel } from '@/api/collectiviteEngagees';
 
 const CollectivitesView = (props: CollectivitesEngageesView) => {
   /** Data */
@@ -20,10 +20,10 @@ const CollectivitesView = (props: CollectivitesEngageesView) => {
       dataCount={collectivitesCount}
       isLoading={isLoading}
       renderCard={(data) => {
-        const collectivite = data as TCollectiviteCarte;
+        const collectivite = data as RecherchesReferentiel;
         return (
           <CollectiviteCarte
-            key={collectivite.collectivite_id}
+            key={collectivite.collectiviteId}
             collectivite={collectivite}
             canUserClickCard={props.canUserClickCard}
           />
