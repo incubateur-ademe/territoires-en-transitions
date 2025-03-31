@@ -194,7 +194,13 @@ export class ListActionDefinitionsService {
 
         services: sql<string[]>`
           array_remove(
-            array_agg(DISTINCT to_jsonb(${serviceTagTable})),
+            array_agg(
+              jsonb_build_object(
+                'collectiviteId', ${actionServiceTable.collectiviteId},
+                'nom', ${serviceTagTable.nom},
+                'id', ${actionServiceTable.serviceTagId}
+              )
+            ),
             null
           )
         `.as('services'),
