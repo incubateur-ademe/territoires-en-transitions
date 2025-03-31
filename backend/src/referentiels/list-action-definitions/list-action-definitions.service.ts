@@ -6,7 +6,9 @@ import { dcpTable } from '../../auth/index-domain';
 import {
   personneTagTable,
   serviceTagTable,
+  Tag,
 } from '../../collectivites/index-domain';
+import { PersonneTagOrUser } from '../../collectivites/personne-tag-or-user.dto';
 import { actionDefinitionTable, actionTypeSchema } from '../index-domain';
 import { ListActionsRequestType } from '../list-actions/list-actions.request';
 import { actionPiloteTable } from '../models/action-pilote.table';
@@ -168,16 +170,10 @@ export class ListActionDefinitionsService {
             'actionType'
           ),
 
-        pilotes: sql<
-          Array<{
-            collectiviteId: number | null;
-            userId: number | null;
-            tagId: number | null;
-            nom: string | null;
-          }>
-        >`
+        pilotes: sql<Array<PersonneTagOrUser>>`
           array_remove(
             array_agg(
+              DISTINCT
               CASE
                 WHEN ${actionPiloteTable.userId} IS NOT NULL THEN
                   jsonb_build_object(
@@ -199,15 +195,10 @@ export class ListActionDefinitionsService {
           )
         `.as('pilotes'),
 
-        services: sql<
-          Array<{
-            collectiviteId: number;
-            nom: string | null;
-            id: number;
-          }>
-        >`
+        services: sql<Array<Tag>>`
           array_remove(
             array_agg(
+              DISTINCT
               CASE
                 WHEN ${actionServiceTable.collectiviteId} IS NOT NULL
                   OR ${serviceTagTable.nom} IS NOT NULL
