@@ -4,7 +4,7 @@ import { ReferentielId } from '@/domain/referentiels';
 import type { EChartsOption } from 'echarts';
 import { theme as importedTheme } from '../../ui/charts/chartsTheme';
 import { SnapshotDetails } from '../use-snapshot';
-import { sortByDate } from './utils';
+import { isAuditOrEMT, sortByDate } from './utils';
 
 const theme = importedTheme;
 
@@ -64,6 +64,9 @@ export const ScoreTotalEvolutionsChart = ({
   const nameLabels = snapshots?.map((snapshot) => {
     if (!snapshot.nom) {
       return 'Sans nom';
+    }
+    if (isAuditOrEMT(snapshot.jalon, snapshot.ref)) {
+      return `\u2605 ${snapshot.nom}`;
     }
     return `${snapshot.nom}`;
   });
@@ -181,8 +184,9 @@ export const ScoreTotalEvolutionsChart = ({
             break;
         }
 
-        return `${circle}${params.seriesName}: ${params.value
-          }% (${troncateIfZero(points.toFixed(1))} pts)`;
+        return `${circle}${params.seriesName}: ${
+          params.value
+        }% (${troncateIfZero(points.toFixed(1))} pts)`;
       },
       textStyle: {
         fontFamily: theme.fontFamily,
@@ -244,16 +248,16 @@ export const ScoreTotalEvolutionsChart = ({
     ],
     toolbox: isDownloadable
       ? {
-        ...TOOLBOX_BASE,
-        top: 1,
-        right: 3,
-        feature: {
-          saveAsImage: {
-            ...TOOLBOX_BASE.feature.saveAsImage,
-            name: `${referentielId}_referentiel_progression-total`,
+          ...TOOLBOX_BASE,
+          top: 1,
+          right: 3,
+          feature: {
+            saveAsImage: {
+              ...TOOLBOX_BASE.feature.saveAsImage,
+              name: `${referentielId}_referentiel_progression-total`,
+            },
           },
-        },
-      }
+        }
       : undefined,
     series,
   };
