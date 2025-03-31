@@ -1,4 +1,4 @@
-import { InferInsertModel } from 'drizzle-orm';
+import { InferInsertModel, InferSelectModel } from 'drizzle-orm';
 import {
   boolean,
   integer,
@@ -221,3 +221,5 @@ export const ficheSchemaUpdate = ficheSchemaCreate
     modifiedBy: true,
   })
   .partial();
+
+export type FicheAction = InferSelectModel<typeof ficheActionTable>;
