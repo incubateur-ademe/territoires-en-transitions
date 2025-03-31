@@ -1,13 +1,18 @@
+import { RouterOutput } from '@/api/utils/trpc/client';
 import { Icon, SelectMultiple, SelectMultipleProps } from '@/ui';
 import { useCurrentCollectivite } from '../../core-logic/hooks/useCurrentCollectivite';
 import { DeleteSnapshotButton } from './deleteSnapshot/delete-snapshot.button';
 import { UpdateSnapshotNameButton } from './updateSnapshotName/update-snapshot-name.button';
+import { isAuditOrEMT } from './utils';
+
+export type SnapshotJalon =
+  RouterOutput['referentiels']['snapshots']['updateName'][number]['jalon'];
 
 export type SnapshotOption = {
   ref: string;
   nom: string;
   date: string;
-  jalon?: string;
+  jalon?: SnapshotJalon;
 };
 
 type SnapshotsDropdownProps<T extends SnapshotOption> = Omit<
@@ -23,17 +28,13 @@ type SnapshotsDropdownProps<T extends SnapshotOption> = Omit<
 const checkNonEditable = (snapshotRef: string, options: SnapshotOption[]) => {
   const jalon = getSnapshotJalonFromRef(snapshotRef, options);
 
-  // Snapshots with jalon post-audit
-  const AUDIT_JALON = 'post_audit';
-
-  // Snapshots with references like "2024-labellisation-EMT" are non editable
-  // TODO: replace with jalon check when labellisation jalons will be implemented
-  const LABELLISATION_REF = /^\d{4}-labellisation-EMT$/;
-
-  return jalon === AUDIT_JALON || LABELLISATION_REF.test(snapshotRef);
+  return jalon ? isAuditOrEMT(jalon, snapshotRef) : false;
 };
 
-const getSnapshotJalonFromRef = (ref: string, options: SnapshotOption[]) => {
+const getSnapshotJalonFromRef = (
+  ref: string,
+  options: SnapshotOption[]
+): SnapshotJalon | undefined => {
   return options?.find((option) => option.ref === ref)?.jalon;
 };
 
