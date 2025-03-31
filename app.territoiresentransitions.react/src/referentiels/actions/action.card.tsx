@@ -5,7 +5,6 @@ import { useCollectiviteId } from '@/app/collectivites/collectivite-context';
 import { useCurrentCollectivite } from '@/app/core-logic/hooks/useCurrentCollectivite';
 import ActionEditModal from '@/app/referentiels/actions/action-edit.modal';
 import { Action } from '@/app/referentiels/actions/use-list-actions';
-import ListWithTooltip from '@/app/ui/lists/ListWithTooltip';
 import {
   ActionType,
   getReferentielIdFromActionId,
@@ -89,7 +88,7 @@ export const ActionCard = ({ action, showDescription }: ActionCardProps) => {
         </div>
 
         {/** Pilotes et services */}
-        {(action.pilotes.length > 0 || action.services.length > 0) && (
+        {/* {(action.pilotes.length > 0 || action.services.length > 0) && (
           <div className="flex flex-wrap items-center gap-x-3 gap-y-1 text-sm text-primary-10">
             {action.pilotes.length > 0 && (
               <ListWithTooltip
@@ -109,7 +108,7 @@ export const ActionCard = ({ action, showDescription }: ActionCardProps) => {
               />
             )}
           </div>
-        )}
+        )} */}
       </Card>
     </div>
   );
