@@ -1,9 +1,9 @@
-import { CollectiviteEngagee } from '@/api';
 import { PlanCarte } from '@/app/app/pages/CollectivitesEngagees/Views/PlanCarte';
 import View, {
   CollectivitesEngageesView,
 } from '@/app/app/pages/CollectivitesEngagees/Views/View';
 import { useFilteredPlans } from '@/app/app/pages/CollectivitesEngagees/data/useFilteredPlans';
+import { RecherchesPlan } from '@/api/collectiviteEngagees';
 
 const PlansView = (props: CollectivitesEngageesView) => {
   /** Data */
@@ -17,10 +17,10 @@ const PlansView = (props: CollectivitesEngageesView) => {
       dataCount={plansCount}
       isLoading={isLoading}
       renderCard={(data) => {
-        const plan = data as CollectiviteEngagee.TPlanCarte;
+        const plan = data as RecherchesPlan;
         return (
           <PlanCarte
-            key={plan.id}
+            key={plan.planId}
             plan={plan}
             canUserClickCard={props.canUserClickCard}
           />

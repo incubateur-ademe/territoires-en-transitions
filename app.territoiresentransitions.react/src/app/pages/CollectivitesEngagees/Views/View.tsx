@@ -13,7 +13,7 @@ import {
 } from '@/app/app/paths';
 import { useRouter, useSearchParams } from 'next/navigation';
 import { getNumberOfActiveFilters, SetFilters } from '../data/filters';
-import { TCollectiviteCarte } from '../data/useFilteredCollectivites';
+import { RecherchesCollectivite, RecherchesPlan, RecherchesReferentiel } from '@/api/collectiviteEngagees';
 
 export type CollectivitesEngageesView = {
   initialFilters: CollectiviteEngagee.Filters;
@@ -23,7 +23,7 @@ export type CollectivitesEngageesView = {
   isConnected: boolean;
 };
 
-export type Data = TCollectiviteCarte | CollectiviteEngagee.TPlanCarte;
+export type Data = RecherchesCollectivite | RecherchesReferentiel | RecherchesPlan;
 
 type ViewProps = CollectivitesEngageesView & {
   view: RecherchesViewParam;
