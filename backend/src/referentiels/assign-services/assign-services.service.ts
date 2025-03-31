@@ -1,21 +1,14 @@
 import { Injectable, Logger } from '@nestjs/common';
-import { eq, and } from 'drizzle-orm';
-import { DatabaseService } from '../../utils/database/database.service';
-import {
-  actionServiceTable,
-  ActionServiceType,
-} from '../models/action-service.table';
-import { serviceTagTable } from '../../collectivites/index-domain';
+import { and, eq } from 'drizzle-orm';
 import { PermissionService } from '../../auth/authorizations/permission.service';
 import {
   AuthUser,
   PermissionOperation,
   ResourceType,
 } from '../../auth/index-domain';
-
-type ActionServiceWithName = ActionServiceType & {
-  nom: string | null;
-};
+import { serviceTagTable, Tag } from '../../collectivites/index-domain';
+import { DatabaseService } from '../../utils/database/database.service';
+import { actionServiceTable } from '../models/action-service.table';
 
 @Injectable()
 export class AssignServicesService {
@@ -26,10 +19,7 @@ export class AssignServicesService {
     private readonly permissionService: PermissionService
   ) {}
 
-  async listServices(
-    collectiviteId: number,
-    actionId: string
-  ): Promise<ActionServiceWithName[]> {
+  async listServices(collectiviteId: number, actionId: string): Promise<Tag[]> {
     this.logger.log(
       `Récupération des services pour la collectivité ${collectiviteId} et la mesure ${actionId}`
     );
@@ -37,12 +27,11 @@ export class AssignServicesService {
     return await this.databaseService.db
       .select({
         collectiviteId: actionServiceTable.collectiviteId,
-        actionId: actionServiceTable.actionId,
-        serviceTagId: actionServiceTable.serviceTagId,
+        id: actionServiceTable.serviceTagId,
         nom: serviceTagTable.nom,
       })
       .from(actionServiceTable)
-      .leftJoin(
+      .innerJoin(
         serviceTagTable,
         eq(serviceTagTable.id, actionServiceTable.serviceTagId)
       )
@@ -59,7 +48,7 @@ export class AssignServicesService {
     actionId: string,
     services: { serviceTagId: number }[],
     tokenInfo: AuthUser
-  ): Promise<ActionServiceWithName[]> {
+  ): Promise<Tag[]> {
     await this.permissionService.isAllowed(
       tokenInfo,
       PermissionOperation.REFERENTIELS_EDITION,

@@ -1,23 +1,18 @@
 import { Injectable, Logger } from '@nestjs/common';
-import { eq, and, sql } from 'drizzle-orm';
-import { DatabaseService } from '../../utils/database/database.service';
-import {
-  actionPiloteTable,
-  ActionPiloteType,
-} from '../models/action-pilote.table';
-import { personneTagTable } from '../../collectivites/index-domain';
-import { dcpTable } from '../../auth/index-domain';
+import { and, eq, sql } from 'drizzle-orm';
 import { PermissionService } from '../../auth/authorizations/permission.service';
 import {
   AuthUser,
+  dcpTable,
   PermissionOperation,
   ResourceType,
 } from '../../auth/index-domain';
-
-type ActionPiloteWithName = ActionPiloteType & {
-  nom: string | null;
-  prenom: string | null;
-};
+import {
+  PersonneTagOrUser,
+  personneTagTable,
+} from '../../collectivites/index-domain';
+import { DatabaseService } from '../../utils/database/database.service';
+import { actionPiloteTable } from '../models/action-pilote.table';
 
 @Injectable()
 export class AssignPilotesService {
@@ -31,7 +26,7 @@ export class AssignPilotesService {
   async listPilotes(
     collectiviteId: number,
     actionId: string
-  ): Promise<ActionPiloteWithName[]> {
+  ): Promise<PersonneTagOrUser[]> {
     this.logger.log(
       `Récupération des pilotes pour la collectivité ${collectiviteId} et la mesure ${actionId}`
     );
@@ -44,13 +39,8 @@ export class AssignPilotesService {
         tagId: actionPiloteTable.tagId,
         nom: sql<string | null>`
           CASE
-            WHEN ${actionPiloteTable.userId} IS NOT NULL THEN ${dcpTable.nom}
+            WHEN ${actionPiloteTable.userId} IS NOT NULL THEN CONCAT(${dcpTable.prenom}, ' ', ${dcpTable.nom})
             ELSE ${personneTagTable.nom}
-          END
-        `,
-        prenom: sql<string | null>`
-          CASE
-            WHEN ${actionPiloteTable.userId} IS NOT NULL THEN ${dcpTable.prenom}
           END
         `,
       })
@@ -73,7 +63,14 @@ export class AssignPilotesService {
     actionId: string,
     pilotes: { userId?: string; tagId?: number }[],
     tokenInfo: AuthUser
-  ): Promise<ActionPiloteWithName[]> {
+  ): Promise<PersonneTagOrUser[]> {
+    await this.permissionService.isAllowed(
+      tokenInfo,
+      PermissionOperation.REFERENTIELS_EDITION,
+      ResourceType.COLLECTIVITE,
+      collectiviteId
+    );
+
     if (pilotes.length === 0) {
       throw new Error('La liste des pilotes ne peut pas être vide');
     }
