@@ -1,4 +1,5 @@
 import { DBClient } from '@/api';
+import { useUserSession } from '@/api/users/user-provider';
 import { useSupabase } from '@/api/utils/supabase/use-supabase';
 import { trpc } from '@/api/utils/trpc/client';
 import { ReferentielId } from '@/domain/referentiels';
@@ -18,6 +19,7 @@ export const useLabellisationParcours = ({
   referentielId: ReferentielId;
 }) => {
   const FLAG_isSnapshotEnabled = useSnapshotFlagEnabled();
+  const session = useUserSession();
 
   // Nouvelle méthode : charge les données du parcours depuis le snapshot
   const { data: parcoursListFromSnapshot } =
@@ -26,7 +28,13 @@ export const useLabellisationParcours = ({
         collectiviteId,
         referentielId,
       },
-      { enabled: FLAG_isSnapshotEnabled, refetchOnWindowFocus: true }
+      {
+        enabled:
+          FLAG_isSnapshotEnabled &&
+          Boolean(session?.user) &&
+          !session!.user.is_anonymous,
+        refetchOnWindowFocus: true,
+      }
     );
 
   // @deprecated charge les données du parcours depuis client_scores

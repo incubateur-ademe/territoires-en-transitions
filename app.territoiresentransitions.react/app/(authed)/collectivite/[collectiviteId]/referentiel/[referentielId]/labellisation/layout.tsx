@@ -13,6 +13,7 @@ import {
   useEtatLieuxHasStarted,
   useSnapshotFlagEnabled,
 } from '@/app/referentiels/use-snapshot';
+import SpinnerLoader from '@/app/ui/shared/SpinnerLoader';
 import { ReferentielId } from '@/domain/referentiels';
 import { Button } from '@/ui';
 import PageContainer from '@/ui/components/layout/page-container';
@@ -32,7 +33,25 @@ export default function Layout({ tabs }: { tabs: ReactNode }) {
   );
 
   const FLAG_isSnapshotEnabled = useSnapshotFlagEnabled();
-  const NEW_etatLieuxHasStarted = useEtatLieuxHasStarted(referentielId);
+  const { started: NEW_etatLieuxHasStarted, isLoading } =
+    useEtatLieuxHasStarted(referentielId);
+
+  if (isLoading) {
+    return (
+      <>
+        <Title referentielId={referentielId} />
+        <PageContainer
+          dataTest={`labellisation-${referentielId}`}
+          bgColor="white"
+          innerContainerClassName="pt-8 pb-16"
+        >
+          <div className="flex justify-center items-center h-[calc(100vh-400px)]">
+            <SpinnerLoader className="w-8 h-8" />
+          </div>
+        </PageContainer>
+      </>
+    );
+  }
 
   // cas particulier : le référentiel n'est pas du tout renseigné
   if (

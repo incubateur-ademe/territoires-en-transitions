@@ -8,8 +8,7 @@ import {
 import { useFeatureFlagEnabled } from 'posthog-js/react';
 import { useCollectiviteId } from '../collectivites/collectivite-context';
 
-export type Snapshot =
-  RouterOutput['referentiels']['snapshots']['getCurrent'];
+export type Snapshot = RouterOutput['referentiels']['snapshots']['getCurrent'];
 
 export type SnapshotDetails =
   RouterOutput['referentiels']['snapshots']['list']['snapshots'][number];
@@ -32,14 +31,17 @@ export function useSnapshot({ actionId }: { actionId: string }) {
 export function useListSnapshots(referentielId: ReferentielId) {
   const collectiviteId = useCollectiviteId();
 
-  return trpc.referentiels.snapshots.list.useQuery({
-    collectiviteId,
-    referentielId,
-  }, {
-    select({ snapshots }) {
-      return snapshots
+  return trpc.referentiels.snapshots.list.useQuery(
+    {
+      collectiviteId,
+      referentielId,
     },
-  });
+    {
+      select({ snapshots }) {
+        return snapshots;
+      },
+    }
+  );
 }
 
 export function useAction(actionId: string) {
@@ -97,14 +99,18 @@ export function useSnapshotComputeAndUpdate() {
 }
 
 export function useEtatLieuxHasStarted(referentielId: ReferentielId) {
-  const { data: snapshot } = useSnapshot({ actionId: referentielId });
+  const {
+    data: snapshot,
+    isLoading,
+    isError,
+  } = useSnapshot({ actionId: referentielId });
 
-  if (!snapshot) {
-    return false;
+  if (isLoading || isError || !snapshot) {
+    return { started: false, isLoading, isError };
   }
 
   const { score } = snapshot.scoresPayload.scores;
-  return score.completedTachesCount > 0;
+  return { started: score.completedTachesCount > 0, isLoading, isError };
 }
 
 // TODO-SNAPSHOT: remove this after successful and validated release
