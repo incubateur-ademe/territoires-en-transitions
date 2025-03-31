@@ -1,4 +1,6 @@
 import { dcpTable } from '@/backend/auth/index-domain';
+import { annexeTable } from '@/backend/collectivites/documents/models/annexe.table';
+import { bibliothequeFichierTable } from '@/backend/collectivites/documents/models/bibliotheque-fichier.table';
 import {
   Collectivite,
   financeurTagTable,
@@ -16,6 +18,8 @@ import {
   ficheActionFinanceurTagTable,
   ficheActionIndicateurTable,
   ficheActionLibreTagTable,
+  ficheActionLienTable,
+  ficheActionNoteTable,
   ficheActionPartenaireTagTable,
   ficheActionServiceTagTable,
   ficheActionSousThematiqueTable,
@@ -28,9 +32,11 @@ import {
   TypePeriodeEnumType,
 } from '@/backend/plans/fiches/shared/fetch-fiches-filter.request';
 import { ficheActionReferentTable } from '@/backend/plans/fiches/shared/models/fiche-action-referent.table';
+import { actionDefinitionTable } from '@/backend/referentiels/index-domain';
 import {
   effetAttenduTable,
   sousThematiqueTable,
+  tempsDeMiseEnOeuvreTable,
   thematiqueTable,
 } from '@/backend/shared/index-domain';
 import { DatabaseService } from '@/backend/utils';
@@ -53,6 +59,8 @@ import {
   SQLWrapper,
 } from 'drizzle-orm';
 import { isNil } from 'es-toolkit';
+import { ficheActionEtapeTable } from './fiche-action-etape/fiche-action-etape.table';
+import { ficheActionActionTable } from './shared/models/fiche-action-action.table';
 import { ficheActionAxeTable } from './shared/models/fiche-action-axe.table';
 import { ficheActionPiloteTable } from './shared/models/fiche-action-pilote.table';
 import {
@@ -215,8 +223,8 @@ export default class FicheActionListService {
           'financeur_tag_ids'
         ),
         financeurTags: sql<
-          { id: number; nom: string }[]
-        >`array_agg(json_build_object('id', ${ficheActionFinanceurTagTable.financeurTagId}, 'nom', ${financeurTagTable.nom} ))`.as(
+          { id: number; nom: string; montantTtc?: number }[]
+        >`array_agg(json_build_object('id', ${ficheActionFinanceurTagTable.financeurTagId}, 'nom', ${financeurTagTable.nom}, 'montantTtc', ${ficheActionFinanceurTagTable.montantTtc} ))`.as(
           'financeur_tags'
         ),
       })
@@ -405,6 +413,93 @@ export default class FicheActionListService {
       .as('ficheActionPilotes');
   }
 
+  private getFicheActionEtapesQuery() {
+    return this.databaseService.db
+      .select({
+        ficheId: ficheActionEtapeTable.ficheId,
+        etapes: sql<
+          { nom: string; realise: boolean; ordre: number }[]
+        >`array_agg(json_build_object('nom', ${ficheActionEtapeTable.nom}, 'realise', ${ficheActionEtapeTable.realise}, 'ordre', ${ficheActionEtapeTable.ordre}))`.as(
+          'etapes'
+        ),
+      })
+      .from(ficheActionEtapeTable)
+      .groupBy(ficheActionEtapeTable.ficheId)
+      .as('ficheActionEtapes');
+  }
+
+  private getFicheActionNotesQuery() {
+    return this.databaseService.db
+      .select({
+        ficheId: ficheActionNoteTable.ficheId,
+        notes: sql<
+          { note: string; dateNote: string }[]
+        >`array_agg(json_build_object('note', ${ficheActionNoteTable.note}, 'dateNote', ${ficheActionNoteTable.dateNote}))`.as(
+          'notes'
+        ),
+      })
+      .from(ficheActionNoteTable)
+      .groupBy(ficheActionNoteTable.ficheId)
+      .as('ficheActionNotes');
+  }
+
+  private getFicheActionMesuresQuery() {
+    return this.databaseService.db
+      .select({
+        ficheId: ficheActionActionTable.ficheId,
+        mesures: sql<
+          { identifiant: string; nom: string; referentiel: string }[]
+        >`array_agg(json_build_object('identifiant', ${actionDefinitionTable.identifiant}, 'nom', ${actionDefinitionTable.nom}, 'referentiel', ${actionDefinitionTable.referentiel}))`.as(
+          'mesures'
+        ),
+      })
+      .from(ficheActionActionTable)
+      .leftJoin(
+        actionDefinitionTable,
+        eq(actionDefinitionTable.actionId, ficheActionActionTable.actionId)
+      )
+      .groupBy(ficheActionActionTable.ficheId)
+      .as('ficheActionMesures');
+  }
+
+  private getFicheActionFichesLieesQuery() {
+    return this.databaseService.db
+      .select({
+        ficheId: ficheActionLienTable.ficheUne,
+        fichesLiees: sql<
+          { id: number; nom: string }[]
+        >`array_agg(json_build_object('id', ${ficheActionTable.id}, 'nom', ${ficheActionTable.titre}))`.as(
+          'fichesLiees'
+        ),
+      })
+      .from(ficheActionLienTable)
+      .leftJoin(
+        ficheActionTable,
+        eq(ficheActionTable.id, ficheActionLienTable.ficheDeux)
+      )
+      .groupBy(ficheActionLienTable.ficheUne)
+      .as('ficheActionFichesLiees');
+  }
+
+  private getFicheActionsDocsQuery() {
+    return this.databaseService.db
+      .select({
+        ficheId: annexeTable.ficheId,
+        docs: sql<
+          { id: number; filename?: string; url?: string }[]
+        >`array_agg(json_build_object('id', ${annexeTable.id}, 'filename', ${bibliothequeFichierTable.filename}, 'url', ${annexeTable.url}))`.as(
+          'docs'
+        ),
+      })
+      .from(annexeTable)
+      .leftJoin(
+        bibliothequeFichierTable,
+        eq(bibliothequeFichierTable.id, annexeTable.fichierId)
+      )
+      .groupBy(annexeTable.ficheId)
+      .as('ficheActionDocs');
+  }
+
   async getFicheActionById(
     ficheActionId: number,
     addCollectiviteData?: boolean
@@ -456,12 +551,21 @@ export default class FicheActionListService {
     const ficheActionPilotes = this.getFicheActionPilotesQuery();
     const ficheActionServiceTags = this.getFicheActionServiceTagsQuery();
     const ficheActionAxes = this.getFicheActionAxesQuery();
+    const ficheActionEtapes = this.getFicheActionEtapesQuery();
+    const ficheActionNotes = this.getFicheActionNotesQuery();
+    const ficheActionMesures = this.getFicheActionMesuresQuery();
+    const ficheActionFichesLiees = this.getFicheActionFichesLieesQuery();
+    const ficheActionDocs = this.getFicheActionsDocsQuery();
 
     const conditions = this.getConditions(collectiviteId, filter);
+    const dcpModifiedBy = aliasedTable(dcpTable, 'dcpModifiedBy');
 
     const fichesActionQuery = this.databaseService.db
       .select({
         ...getTableColumns(ficheActionTable),
+        createdByName: sql<string>`(${dcpTable.prenom} || ' ' || ${dcpTable.nom})::text`,
+        modifiedByName: sql<string>`(${dcpModifiedBy.prenom} || ' ' || ${dcpModifiedBy.nom})::text`,
+        tempsDeMiseEnOeuvreNom: tempsDeMiseEnOeuvreTable.nom,
         partenaires: ficheActionPartenaireTags.partenaireTags,
         pilotes: ficheActionPilotes.pilotes,
         tags: ficheActionLibreTags.libreTags,
@@ -475,6 +579,11 @@ export default class FicheActionListService {
         services: ficheActionServiceTags.serviceTags,
         axes: ficheActionAxes.axes,
         plans: ficheActionAxes.plans,
+        etapes: ficheActionEtapes.etapes,
+        notes: ficheActionNotes.notes,
+        mesures: ficheActionMesures.mesures,
+        fichesLiees: ficheActionFichesLiees.fichesLiees,
+        docs: ficheActionDocs.docs,
       })
       .from(ficheActionTable)
       .leftJoin(
@@ -524,6 +633,35 @@ export default class FicheActionListService {
       .leftJoin(
         ficheActionAxes,
         eq(ficheActionAxes.ficheId, ficheActionTable.id)
+      )
+      .leftJoin(
+        ficheActionEtapes,
+        eq(ficheActionEtapes.ficheId, ficheActionTable.id)
+      )
+      .leftJoin(
+        ficheActionNotes,
+        eq(ficheActionNotes.ficheId, ficheActionTable.id)
+      )
+      .leftJoin(
+        ficheActionMesures,
+        eq(ficheActionMesures.ficheId, ficheActionTable.id)
+      )
+      .leftJoin(
+        ficheActionFichesLiees,
+        eq(ficheActionFichesLiees.ficheId, ficheActionTable.id)
+      )
+      .leftJoin(
+        ficheActionDocs,
+        eq(ficheActionDocs.ficheId, ficheActionTable.id)
+      )
+      .leftJoin(dcpTable, eq(dcpTable.userId, ficheActionTable.createdBy))
+      .leftJoin(
+        dcpModifiedBy,
+        eq(dcpModifiedBy.userId, ficheActionTable.modifiedBy)
+      )
+      .leftJoin(
+        tempsDeMiseEnOeuvreTable,
+        eq(tempsDeMiseEnOeuvreTable.id, ficheActionTable.tempsDeMiseEnOeuvre)
       )
       .where(and(...conditions));
 
