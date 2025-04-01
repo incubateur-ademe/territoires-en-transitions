@@ -69,7 +69,10 @@ export const StrapiImage = ({
   }, [size, attributes]);
 
   return (
-    <div className={containerClassName} style={containerStyle}>
+    <div
+      className={classNames('relative', containerClassName)}
+      style={containerStyle}
+    >
       <img
         className={classNames('block', className)}
         src={src}
@@ -81,9 +84,9 @@ export const StrapiImage = ({
       />
 
       {displayCaption && !!attributes.caption && (
-        <p className="!text-sm text-[#666] mt-2 mb-0 w-full text-center">
+        <div className="text-right text-grey-1 !text-sm !leading-4 py-1 px-2 absolute right-0 bottom-0 bg-grey-8/50 rounded-tl-sm">
           {`${attributes.caption}`}
-        </p>
+        </div>
       )}
     </div>
   );
