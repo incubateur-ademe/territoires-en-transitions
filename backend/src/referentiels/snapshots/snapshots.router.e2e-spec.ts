@@ -1,5 +1,7 @@
+import { snapshotTable } from '@/backend/referentiels/snapshots/snapshot.table';
 import { DatabaseService } from '@/backend/utils';
 import { inferProcedureInput } from '@trpc/server';
+import { eq } from 'drizzle-orm';
 import {
   getTestApp,
   getTestDatabase,
@@ -394,7 +396,7 @@ describe('SnapshotsRouter', () => {
     ).rejects.toThrowError(/Droits insuffisants/i);
   });
 
-  test("Mise à jour du nom d'un snapshot autre que date_personnalisee: not authorized", async () => {
+  test("Mise à jour du nom d'un snapshot autre que date_personnalisee: score_courant, not authorized", async () => {
     const caller = router.createCaller({ user: yoloDodoUser });
 
     const input: ComputeScoreInput = {
@@ -406,6 +408,12 @@ describe('SnapshotsRouter', () => {
     const snapshot = await caller.referentiels.snapshots.computeAndUpsert(
       input
     );
+
+    onTestFinished(async () => {
+      await databaseService.db
+        .delete(snapshotTable)
+        .where(eq(snapshotTable.ref, snapshot.ref));
+    });
 
     const inputWithNewName: UpdateSnapshotNameInput = {
       collectiviteId: 1,
