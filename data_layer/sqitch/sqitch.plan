@@ -832,4 +832,4 @@ referentiel/action_pilote 2025-02-24T17:05:23Z System Administrator <root@MacBoo
 referentiel/action_service 2025-03-03T15:22:07Z System Administrator <root@MacBook-Air-de-Eli.local> # Crée une liaison entre une mesure (nom technique : action) du référentiel et un service
 @v4.43.0 2025-03-24T10:53:44Z System Administrator <root@MacBook-Air-de-Thibaut-2.local> # Suppression de la justification ajustement et lier des pilotes/services aux actions
 
-
+plan_action/fiches [plan_action/fiches@v4.43.0] 2025-04-01T08:18:27Z Amandine <contact@jacquelinamandine.fr> # Ajoute des triggers pour étendre le modified_at vers la fiche
