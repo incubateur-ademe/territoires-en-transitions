@@ -7,7 +7,12 @@ import { Field } from '@/ui/design-system/Field';
 import { SelectFilter } from '@/ui/design-system/Select/SelectFilter';
 import { SelectBase } from '@/ui/design-system/Select/components/SelectBase';
 import { Select, SelectMultiple } from '.';
-import { OptionValue, SelectOption, getFlatOptions } from './utils';
+import {
+  OptionValue,
+  SelectOption,
+  getFlatOptions,
+  isSingleOption,
+} from './utils';
 
 const singleOptions: SelectOption[] = [
   { value: 'option1', label: 'Option 1' },
@@ -92,7 +97,7 @@ export const Disabled: Story = {
   args: { options: singleOptions, onChange: () => null, disabled: true },
 };
 
-export const CustomItem: Story = {
+export const CustomItemDisplay: Story = {
   args: { options: singleOptions },
   render: (args) => {
     const [value, setValue] = useState<OptionValue | undefined>();
@@ -391,6 +396,43 @@ export const MultiSelectWithMaxBadges: Story = {
           setValues(values);
         }}
       />
+    );
+  },
+};
+
+export const CustomItemDisplayInBadgesAndInOptions: Story = {
+  args: { options: singleOptions },
+  render: (args) => {
+    const [value, setValue] = useState<OptionValue | undefined>(
+      isSingleOption(singleOptions[0]) ? singleOptions[0].value : undefined
+    );
+    return (
+      <div className="flex flex-col gap-6">
+        <Select
+          {...args}
+          values={value}
+          onChange={(v) => {
+            setValue(v);
+            action('onChange');
+          }}
+          customItem={(option) => (
+            <div className="text-blue-300">{option.label}</div>
+          )}
+          showCustomItemInBadges={true}
+        />
+        <Select
+          {...args}
+          values={value}
+          onChange={(v) => {
+            setValue(v);
+            action('onChange');
+          }}
+          customItem={(option) => (
+            <div className="text-blue-300">{option.label}</div>
+          )}
+          showCustomItemInBadges={false}
+        />
+      </div>
     );
   },
 };
