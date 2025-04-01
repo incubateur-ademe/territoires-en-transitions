@@ -4,11 +4,11 @@ import { and, asc, eq, getTableColumns, inArray, SQL, sql } from 'drizzle-orm';
 import z from 'zod';
 import { dcpTable } from '../../auth/index-domain';
 import {
+  PersonneTagOrUser,
   personneTagTable,
   serviceTagTable,
   Tag,
 } from '../../collectivites/index-domain';
-import { PersonneTagOrUser } from '../../collectivites/personne-tag-or-user.dto';
 import { actionDefinitionTable, actionTypeSchema } from '../index-domain';
 import { ListActionsRequestType } from '../list-actions/list-actions.request';
 import { actionPiloteTable } from '../models/action-pilote.table';
