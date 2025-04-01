@@ -33,7 +33,9 @@
       "type": "media",
       "multiple": false,
       "required": true,
-      "allowedTypes": ["images"]
+      "allowedTypes": [
+        "images"
+      ]
     },
     "categories": {
       "type": "relation",
@@ -52,6 +54,7 @@
         "contenu.image",
         "contenu.gallerie",
         "contenu.video",
+        "contenu.bouton-groupe",
         "contenu.info"
       ],
       "required": false

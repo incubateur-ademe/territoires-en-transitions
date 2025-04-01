@@ -1,4 +1,6 @@
 import {
+  BoutonsArticleData,
+  BoutonsFetchedData,
   ParagrapheCustomArticleData,
   ParagrapheCustomFetchedData,
 } from '@/site/app/types';
@@ -22,20 +24,27 @@ export const getMetaData = async (id: number) => {
     ['populate[2]', 'Couverture'],
   ]);
 
+  const article = data.attributes;
+  const {
+    seo,
+    DateCreation: dateCreation,
+    createdAt,
+    updatedAt,
+    Couverture: { data: couverture },
+    Titre: titre,
+    Resume: resume,
+  } = article;
+
   const image =
-    (data?.attributes.seo?.metaImage?.data as unknown as StrapiItem)
-      ?.attributes ??
-    (data?.attributes.Couverture.data as unknown as StrapiItem)?.attributes;
+    (seo?.metaImage?.data as unknown as StrapiItem)?.attributes ??
+    (couverture as unknown as StrapiItem)?.attributes;
 
   return {
     title:
-      (data?.attributes.seo?.metaTitle as unknown as string) ??
-      (data?.attributes.Titre as unknown as string) ??
-      undefined,
+      (seo?.metaTitle as unknown as string) ?? (titre as unknown as string),
     description:
-      (data?.attributes.seo?.metaDescription as unknown as string) ??
-      (data?.attributes.Resume as unknown as string) ??
-      undefined,
+      (seo?.metaDescription as unknown as string) ??
+      (resume as unknown as string),
     image: image
       ? {
           url: image.url as unknown as string,
@@ -46,9 +55,8 @@ export const getMetaData = async (id: number) => {
         }
       : undefined,
     publishedAt:
-      (data.attributes.DateCreation as unknown as string) ??
-      (data.attributes.createdAt as unknown as string),
-    updatedAt: data.attributes.updatedAt as unknown as string,
+      (dateCreation as unknown as string) ?? (createdAt as unknown as string),
+    updatedAt: updatedAt as unknown as string,
   };
 };
 
@@ -59,6 +67,7 @@ export const getData = async (id: number) => {
     ['populate[2]', 'Sections'],
     ['populate[3]', 'Sections.Image'],
     ['populate[4]', 'Sections.Gallerie'],
+    ['populate[5]', 'Sections.boutons'],
   ]);
 
   if (data) {
@@ -124,62 +133,84 @@ export const getData = async (id: number) => {
         : null
       : null;
 
+    const article = data.attributes;
+    const {
+      DateCreation: dateCreation,
+      createdAt,
+      updatedAt,
+      Couverture: { data: couverture },
+      Titre: titre,
+      categories,
+      Sections: sections,
+    } = article;
+
     const formattedData: ArticleData = {
-      titre: data.attributes.Titre as unknown as string,
+      titre: titre as unknown as string,
       dateCreation:
-        (data.attributes.DateCreation as unknown as Date) ??
-        (data.attributes.createdAt as unknown as Date),
-      dateEdition: data.attributes.updatedAt as unknown as Date,
-      couverture: data.attributes.Couverture.data as unknown as StrapiItem,
-      categories: (
-        (data.attributes.categories?.data as unknown as StrapiItem[]) ?? []
-      ).map((d) => d.attributes.nom as unknown as string),
-      contenu: (
-        data.attributes.Sections as unknown as ContenuArticleFetchedData
-      ).map((section) => {
-        if (section.__component === 'contenu.paragraphe') {
-          return {
-            type: 'paragraphe',
-            data: {
-              titre: (section as ParagrapheCustomFetchedData).Titre,
-              texte: (section as ParagrapheCustomFetchedData).Texte,
-              image: (section as ParagrapheCustomFetchedData).Image.data,
-              alignementImage: (section as ParagrapheCustomFetchedData)
-                .AlignementImage,
-              legendeVisible: (section as ParagrapheCustomFetchedData)
-                .LegendeVisible,
-            } as ParagrapheCustomArticleData,
-          };
-        } else if (section.__component === 'contenu.image') {
-          return {
-            type: 'image',
-            data: {
-              data: (section as ImageFetchedData).Image.data,
-              legendeVisible: (section as ImageFetchedData).LegendeVisible,
-            },
-          };
-        } else if (section.__component === 'contenu.gallerie') {
-          return {
-            type: 'gallerie',
-            data: {
-              data: (section as GallerieFetchedData).Gallerie.data,
-              colonnes: (section as GallerieFetchedData).NombreColonnes,
-              legende: (section as GallerieFetchedData).Legende,
-              legendeVisible: (section as GallerieFetchedData).LegendeVisible,
-            },
-          };
-        } else if (section.__component === 'contenu.video') {
-          return {
-            type: 'video',
-            data: (section as VideoFetchedData).URL,
-          };
-        } else if (section.__component === 'contenu.info') {
-          return {
-            type: 'info',
-            data: (section as InfoFetchedData).Texte,
-          };
-        } else return { type: 'paragraphe', data: {} };
-      }),
+        (dateCreation as unknown as Date) ?? (createdAt as unknown as Date),
+      dateEdition: updatedAt as unknown as Date,
+      couverture: couverture as unknown as StrapiItem,
+      categories: ((categories?.data as unknown as StrapiItem[]) ?? []).map(
+        (d) => d.attributes.nom as unknown as string
+      ),
+      contenu: (sections as unknown as ContenuArticleFetchedData).map(
+        (section) => {
+          switch (section.__component) {
+            case 'contenu.paragraphe':
+              const paragraphe = section as ParagrapheCustomFetchedData;
+              return {
+                type: 'paragraphe',
+                data: {
+                  titre: paragraphe.Titre,
+                  texte: paragraphe.Texte,
+                  image: paragraphe.Image.data,
+                  alignementImage: paragraphe.AlignementImage,
+                  legendeVisible: paragraphe.LegendeVisible,
+                } as ParagrapheCustomArticleData,
+              };
+            case 'contenu.image':
+              const image = section as ImageFetchedData;
+              return {
+                type: 'image',
+                data: {
+                  data: image.Image.data,
+                  legendeVisible: image.LegendeVisible,
+                },
+              };
+            case 'contenu.gallerie':
+              const gallerie = section as GallerieFetchedData;
+              return {
+                type: 'gallerie',
+                data: {
+                  data: gallerie.Gallerie.data,
+                  colonnes: gallerie.NombreColonnes,
+                  legende: gallerie.Legende,
+                  legendeVisible: gallerie.LegendeVisible,
+                },
+              };
+            case 'contenu.video':
+              const video = section as VideoFetchedData;
+              return {
+                type: 'video',
+                data: video.URL,
+              };
+            case 'contenu.bouton-groupe':
+              const listeBoutons = section as BoutonsFetchedData;
+              return {
+                type: 'boutons',
+                data: listeBoutons.boutons as BoutonsArticleData,
+              };
+            case 'contenu.info':
+              const info = section as InfoFetchedData;
+              return {
+                type: 'info',
+                data: info.Texte,
+              };
+            default:
+              return { type: 'paragraphe', data: {} };
+          }
+        }
+      ),
       prevId,
       nextId,
     };
