@@ -19,6 +19,7 @@ const DEFAULT_JALONS = [
   SnapshotJalonEnum.POST_AUDIT,
   SnapshotJalonEnum.DATE_PERSONNALISEE,
   SnapshotJalonEnum.VISITE_ANNUELLE,
+  SnapshotJalonEnum.LABELLISATION_EMT,
 ];
 
 export const listInputSchema = z.object({
