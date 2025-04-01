@@ -18,7 +18,6 @@ const DEFAULT_JALONS = [
   SnapshotJalonEnum.PRE_AUDIT,
   SnapshotJalonEnum.POST_AUDIT,
   SnapshotJalonEnum.DATE_PERSONNALISEE,
-  SnapshotJalonEnum.VISITE_ANNUELLE,
   SnapshotJalonEnum.LABELLISATION_EMT,
 ];
 

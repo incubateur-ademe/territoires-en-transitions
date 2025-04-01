@@ -6,7 +6,6 @@ export const DEFAULT_SNAPSHOT_JALONS = [
   SnapshotJalonEnum.POST_AUDIT,
   SnapshotJalonEnum.DATE_PERSONNALISEE,
   SnapshotJalonEnum.COURANT,
-  SnapshotJalonEnum.VISITE_ANNUELLE,
 ] as const;
 
 const typesJalonEnumSchema = z.enum(DEFAULT_SNAPSHOT_JALONS);
