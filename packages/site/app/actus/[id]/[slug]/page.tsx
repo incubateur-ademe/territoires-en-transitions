@@ -1,4 +1,7 @@
-import { ParagrapheCustomArticleData } from '@/site/app/types';
+import {
+  BoutonsArticleData,
+  ParagrapheCustomArticleData,
+} from '@/site/app/types';
 import Section from '@/site/components/sections/Section';
 import { StrapiImage } from '@/site/components/strapiImage/StrapiImage';
 import EmbededVideo from '@/site/components/video/EmbededVideo';
@@ -8,6 +11,7 @@ import { Badge } from '@/ui';
 import { Metadata, ResolvingMetadata } from 'next';
 import { notFound } from 'next/navigation';
 import { GallerieArticleData, ImageArticleData } from '../../../types';
+import BoutonsArticle from './BoutonsArticle';
 import GallerieArticle from './GallerieArticle';
 import InfoArticle from './InfoArticle';
 import ParagrapheArticle from './ParagrapheArticle';
@@ -129,6 +133,9 @@ const Article = async ({ params }: { params: Promise<{ id: string }> }) => {
                 url={section.data as string}
                 className="mb-6 lg:w-4/5"
               />
+            ) : // Contenu de type liste de boutons
+            section.type === 'boutons' ? (
+              <BoutonsArticle boutons={section.data as BoutonsArticleData} />
             ) : // Contenu de type info (dans un cadre bleu)
             section.type === 'info' ? (
               <InfoArticle texte={section.data as string} />
