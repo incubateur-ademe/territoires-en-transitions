@@ -1,3 +1,7 @@
+import { CollectiviteCrudRouter } from '@/backend/collectivites/collectivite-crud/collectivite-crud.router';
+import CollectiviteCrudService from '@/backend/collectivites/collectivite-crud/collectivite-crud.service';
+import { DocumentController } from '@/backend/collectivites/documents/services/document.controller';
+import { TagService } from '@/backend/collectivites/tags/tag.service';
 import { Module } from '@nestjs/common';
 import { CollectiviteController } from './collectivite.controller';
 import { CollectivitesRouter } from './collectivites.router';
@@ -12,10 +16,7 @@ import { PersonnesRouter } from './personnes.router';
 import CollectivitesService from './services/collectivites.service';
 import GroupementsService from './services/groupements.service';
 import { PersonnesService } from './services/personnes.service';
-import { TagService } from '@/backend/collectivites/tags/tag.service';
 import { TableauDeBordModule } from './tableau-de-bord/tableau-de-bord.module';
-import CollectiviteCrudService from '@/backend/collectivites/collectivite-crud/collectivite-crud.service';
-import { CollectiviteCrudRouter } from '@/backend/collectivites/collectivite-crud/collectivite-crud.router';
 
 @Module({
   imports: [TableauDeBordModule],
@@ -50,6 +51,6 @@ import { CollectiviteCrudRouter } from '@/backend/collectivites/collectivite-cru
     CollectiviteCrudService,
     CollectiviteCrudRouter,
   ],
-  controllers: [CollectiviteController],
+  controllers: [CollectiviteController, DocumentController],
 })
 export class CollectivitesModule {}
