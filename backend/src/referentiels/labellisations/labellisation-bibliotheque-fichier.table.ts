@@ -7,6 +7,7 @@ import {
   unique,
   varchar,
 } from 'drizzle-orm/pg-core';
+import { createSelectSchema } from 'drizzle-zod';
 import { collectiviteTable } from '../../collectivites/shared/models/collectivite.table';
 import { labellisationSchema } from './labellisation.schema';
 
@@ -31,4 +32,11 @@ export const labellisationBibliothequeFichierTable = labellisationSchema.table(
       ).on(table.collectiviteId, table.hash),
     };
   }
+);
+
+export type LabellisationBibliothequeFichier =
+  typeof labellisationBibliothequeFichierTable.$inferSelect;
+
+export const labellisationBibliothequeFichierSchema = createSelectSchema(
+  labellisationBibliothequeFichierTable
 );

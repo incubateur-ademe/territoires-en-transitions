@@ -1,6 +1,14 @@
 import { COLLECTIVITE_ID_ROUTE_PARAM } from '@/backend/collectivites/shared/models/collectivite-api.constants';
+import { collectiviteBucketTable } from '@/backend/collectivites/shared/models/collectivite-bucket.table';
 import { ReferentielId } from '@/backend/referentiels/index-domain';
-import { Injectable, Logger } from '@nestjs/common';
+import SupabaseService from '@/backend/utils/database/supabase.service';
+import { getErrorMessage } from '@/backend/utils/index-domain';
+import {
+  Injectable,
+  InternalServerErrorException,
+  Logger,
+  NotFoundException,
+} from '@nestjs/common';
 import {
   and,
   asc,
@@ -25,15 +33,82 @@ import { PreuveDto } from '../models/preuve.dto';
 @Injectable()
 export default class DocumentService {
   private readonly logger = new Logger(DocumentService.name);
-  private static DOWNLOAD_ROUTE = `collectivites/${COLLECTIVITE_ID_ROUTE_PARAM}/documents/${DOCUMENT_ID_ROUTE_PARAM}/download`;
+  static DOWNLOAD_ROUTE = `collectivites/${COLLECTIVITE_ID_ROUTE_PARAM}/documents/${DOCUMENT_ID_ROUTE_PARAM}/download`;
 
-  constructor(private readonly databaseService: DatabaseService) {}
+  constructor(
+    private readonly databaseService: DatabaseService,
+    private readonly supabaseService: SupabaseService
+  ) {}
 
-  getDownloadUrl(host: string, collectiviteId: number, fichierId: number) {
-    return `${host}/api/v1/${DocumentService.DOWNLOAD_ROUTE.replace(
+  getDownloadUrl(
+    host: string,
+    collectiviteId: number,
+    hashId: string,
+    token?: string
+  ) {
+    if (!host.startsWith('http')) {
+      if (host.startsWith('localhost')) {
+        host = `http://${host}`;
+      } else {
+        host = `https://${host}`;
+      }
+    }
+
+    const url = `${host}/api/v1/${DocumentService.DOWNLOAD_ROUTE.replace(
       COLLECTIVITE_ID_ROUTE_PARAM,
       collectiviteId.toString()
-    ).replace(DOCUMENT_ID_ROUTE_PARAM, fichierId.toString())}`;
+    ).replace(DOCUMENT_ID_ROUTE_PARAM, hashId)}`;
+    if (token) {
+      return `${url}?token=${token}`;
+    }
+    return url;
+  }
+
+  async downloadFile(
+    collectiviteId: number,
+    hashId: string
+  ): Promise<{ fileName: string; blob: Blob }> {
+    const fichier = await this.databaseService.db
+      .select({
+        ...getTableColumns(bibliothequeFichierTable),
+        bucketId: collectiviteBucketTable.bucketId,
+      })
+      .from(bibliothequeFichierTable)
+      .leftJoin(
+        collectiviteBucketTable,
+        eq(collectiviteBucketTable.collectiviteId, collectiviteId)
+      )
+      .where(
+        and(
+          eq(bibliothequeFichierTable.collectiviteId, collectiviteId),
+          eq(bibliothequeFichierTable.hash, hashId)
+        )
+      );
+    if (!fichier.length) {
+      throw new NotFoundException(
+        `Document non trouvé pour la collectivité ${collectiviteId} et le hash ${hashId}`
+      );
+    }
+
+    const bucketId = fichier[0].bucketId || '';
+    this.logger.log(`Downloading file ${hashId} from bucket ${bucketId}`);
+
+    const { data, error } = await this.supabaseService.client.storage
+      .from(bucketId)
+      .download(hashId);
+    if (!data || error) {
+      this.logger.error(JSON.stringify(error));
+      this.logger.error(error);
+      this.logger.error(`Error downloading file: ${getErrorMessage(error)}`);
+      throw new InternalServerErrorException(
+        `Error downloading file: ${getErrorMessage(error)}`
+      );
+    }
+
+    return {
+      fileName: fichier[0].filename || hashId,
+      blob: data,
+    };
   }
 
   async getActionPreuves(

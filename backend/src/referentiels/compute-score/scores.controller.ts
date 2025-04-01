@@ -1,9 +1,21 @@
 import ActionStatutHistoryService from '@/backend/referentiels/compute-score/action-statut-history.service';
+import ScoresAnalysisService from '@/backend/referentiels/compute-score/scores-analysis.service';
 import { getReferentielScoresRequestSchema } from '@/backend/referentiels/models/get-referentiel-scores.request';
+import { getErrorMessage } from '@/backend/utils/index-domain';
 import { createZodDto } from '@anatine/zod-nestjs';
-import { Controller, Get, Param, Query, Req } from '@nestjs/common';
+import {
+  Controller,
+  Get,
+  Headers,
+  Logger,
+  Next,
+  Param,
+  Query,
+  Req,
+  Res,
+} from '@nestjs/common';
 import { ApiExcludeEndpoint, ApiResponse, ApiTags } from '@nestjs/swagger';
-import { Request } from 'express';
+import { NextFunction, Request, Response } from 'express';
 import { AllowAnonymousAccess } from '../../auth/decorators/allow-anonymous-access.decorator';
 import { TokenInfo } from '../../auth/decorators/token-info.decorators';
 import { AuthenticatedUser } from '../../auth/models/auth.models';
@@ -35,10 +47,13 @@ class GetReferentielScoresRequestClass extends createZodDto(
 @ApiTags('Referentiels')
 @Controller('')
 export class ReferentielsScoringController {
+  private readonly logger = new Logger(ReferentielsScoringController.name);
+
   constructor(
     private readonly scoresService: ScoresService,
     private readonly snapshotsService: SnapshotsService,
-    private readonly actionStatutHistoryService: ActionStatutHistoryService
+    private readonly actionStatutHistoryService: ActionStatutHistoryService,
+    private readonly scoreAnalysisService: ScoresAnalysisService
   ) {}
 
   @AllowAnonymousAccess()
@@ -209,5 +224,34 @@ export class ReferentielsScoringController {
   async fixActionStatutsHistory() {
     // TODO: endpoint to be removed once we are confident that all action statuts history are fixed
     return await this.actionStatutHistoryService.fixMissingActionStatutsHistory();
+  }
+
+  @AllowAnonymousAccess()
+  @ApiExcludeEndpoint() // Not in documentation
+  @Get('referentiels/all/compare-saved-score-to-report-score')
+  async compareSavedScoreToAuditReportScore(
+    @Query('format') format: 'json' | 'xlsx' = 'json',
+    @Query('collectiviteId') collectiviteId: number | undefined,
+    @Headers('host') host: string,
+    @TokenInfo() tokenInfo: AuthenticatedUser,
+    @Res() res: Response,
+    @Next() next: NextFunction
+  ) {
+    // TODO: endpoint to be removed once we are confident that all action statuts history are fixed
+    try {
+      this.scoreAnalysisService.compareSavedScoreToAuditReportScore(
+        format,
+        collectiviteId,
+        host,
+        res
+      );
+    } catch (error) {
+      this.logger.error(
+        `Error while comparing saved score to audit report score: ${getErrorMessage(
+          error
+        )}`
+      );
+      next(error);
+    }
   }
 }

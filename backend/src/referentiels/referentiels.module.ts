@@ -1,4 +1,5 @@
 import ActionStatutHistoryService from '@/backend/referentiels/compute-score/action-statut-history.service';
+import ScoresAnalysisService from '@/backend/referentiels/compute-score/scores-analysis.service';
 import { Module } from '@nestjs/common';
 import { CollectivitesModule } from '../collectivites/collectivites.module';
 import { PersonnalisationsModule } from '../personnalisations/personnalisations.module';
@@ -47,6 +48,7 @@ import { UpdateActionStatutService } from './update-action-statut/update-action-
 
     ScoresService,
     ExportScoreService,
+    ScoresAnalysisService,
 
     SnapshotsService,
     SnapshotsRouter,
