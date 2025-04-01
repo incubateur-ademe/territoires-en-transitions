@@ -10,16 +10,13 @@ const GallerieArticle = ({
   data: { data, colonnes, legende, legendeVisible },
 }: GallerieArticleProps) => {
   return (
-    <div className="flex flex-col mb-6 items-center mx-auto">
+    <div className="flex flex-col items-center mx-auto w-full lg:w-4/5">
       <div
-        className={classNames(
-          'grid grid-cols-1 w-full lg:w-4/5 mx-auto gap-6',
-          {
-            'md:grid-cols-2': colonnes >= 2,
-            'lg:grid-cols-3': colonnes >= 3,
-            'xl:grid-cols-4': colonnes === 4,
-          }
-        )}
+        className={classNames('grid grid-cols-1 gap-6', {
+          'md:grid-cols-2': colonnes >= 2,
+          'lg:grid-cols-3': colonnes >= 3,
+          'xl:grid-cols-4': colonnes === 4,
+        })}
       >
         {data.map((image, index) => (
           <StrapiImage
@@ -33,9 +30,9 @@ const GallerieArticle = ({
         ))}
       </div>
       {!!legende && !!legendeVisible && (
-        <span className="!text-sm text-[#666] mt-4 w-full text-center">
+        <div className="mt-4 text-center text-grey-8 !text-sm !leading-4 py-1 px-2 bg-grey-3/50 rounded-sm">
           {legende}
-        </span>
+        </div>
       )}
     </div>
   );
