@@ -699,7 +699,7 @@ where not ss.desactive
     const etoileCible = await this.getEtoileCible({
       currentEtoile: labellisation?.etoiles,
       nextEtoile: labellisation?.prochaine_etoile ?? undefined,
-      scoreFait: labellisation?.score_realise,
+      scoreFait: scoreRatios?.ratioFait,
     });
 
     const actionConditionDefinitions =
@@ -755,11 +755,11 @@ where not ss.desactive
     const etoilesDefinitions =
       await this.labellisationService.getEtoileDefinitions();
 
+    // Etoiles are sorted from 5 to 1
     const maxEligibleEtoile = scoreFait
       ? // Find the last item where minRealiseScore < scoreFait
-        etoilesDefinitions.findLast(
-          (etoile) => etoile.minRealiseScore <= scoreFait
-        )?.etoile ?? EtoileEnum.PREMIERE_ETOILE
+        etoilesDefinitions.find((etoile) => etoile.minRealiseScore <= scoreFait)
+          ?.etoile ?? EtoileEnum.PREMIERE_ETOILE
       : EtoileEnum.PREMIERE_ETOILE;
 
     const nbEtoilesCibles = Math.max(
