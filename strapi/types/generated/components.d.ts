@@ -112,6 +112,24 @@ export interface BlocTexteAvecImage extends Schema.Component {
   };
 }
 
+export interface ContenuBoutonGroupe extends Schema.Component {
+  collectionName: 'components_shared_bouton_groupes';
+  info: {
+    description: '';
+    displayName: 'Boutons';
+    icon: 'link';
+  };
+  attributes: {
+    boutons: Attribute.Component<'shared.bouton', true> &
+      Attribute.SetMinMax<
+        {
+          min: 1;
+        },
+        number
+      >;
+  };
+}
+
 export interface ContenuGallerie extends Schema.Component {
   collectionName: 'components_contenu_galleries';
   info: {
@@ -495,6 +513,7 @@ declare module '@strapi/types' {
       'bloc.description-avec-image': BlocDescriptionAvecImage;
       'bloc.ressources': BlocRessources;
       'bloc.texte-avec-image': BlocTexteAvecImage;
+      'contenu.bouton-groupe': ContenuBoutonGroupe;
       'contenu.gallerie': ContenuGallerie;
       'contenu.image': ContenuImage;
       'contenu.indicateur': ContenuIndicateur;

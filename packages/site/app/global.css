@@ -71,7 +71,7 @@ ol {
   font-size: 18px;
 }
 
-.article a {
+.article a:not(.button) {
   color: var(--text-action-high-blue-france);
 }
 
