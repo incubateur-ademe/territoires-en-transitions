@@ -8,6 +8,7 @@ export const SnapshotJalonEnum = {
   POST_AUDIT: 'post_audit',
   VISITE_ANNUELLE: 'visite_annuelle',
   JOUR_AUTO: 'jour_auto',
+  LABELLISATION_EMT : 'labellisation_emt', // Viens d'un import manuel des labellisations EMT
 } as const;
 
 export const snapshotJalonEnumSchema = z.enum(getEnumValues(SnapshotJalonEnum));
