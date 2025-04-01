@@ -65,7 +65,6 @@ export class SnapshotsService {
 
   static USER_DELETION_ALLOWED_SNAPSHOT_TYPES: SnapshotJalon[] = [
     SnapshotJalonEnum.DATE_PERSONNALISEE,
-    SnapshotJalonEnum.VISITE_ANNUELLE,
   ];
 
   private readonly logger = new Logger(SnapshotsService.name);
