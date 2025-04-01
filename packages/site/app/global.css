@@ -68,11 +68,16 @@ ol {
 
 /** contenu des pages articles */
 .article *:not(h1, h2, h3, h4, h5, h6) {
-  font-size: 18px;
+  @apply text-lg;
+  @apply leading-7;
 }
 
 .article a:not(.button) {
-  color: var(--text-action-high-blue-france);
+  @apply text-primary-8;
+}
+
+.article a:not(.button):disabled {
+  @apply text-primary-3;
 }
 
 /* classes utilisées sur les textes générés par remark */
