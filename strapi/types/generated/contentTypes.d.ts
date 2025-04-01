@@ -400,6 +400,7 @@ export interface ApiActualiteActualite extends Schema.CollectionType {
         'contenu.image',
         'contenu.gallerie',
         'contenu.video',
+        'contenu.bouton-groupe',
         'contenu.info'
       ]
     >;

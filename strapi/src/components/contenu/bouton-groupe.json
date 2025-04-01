@@ -1,0 +1,17 @@
+{
+  "collectionName": "components_shared_bouton_groupes",
+  "info": {
+    "displayName": "Boutons",
+    "icon": "link",
+    "description": ""
+  },
+  "options": {},
+  "attributes": {
+    "boutons": {
+      "type": "component",
+      "repeatable": true,
+      "component": "shared.bouton",
+      "min": 1
+    }
+  }
+}
