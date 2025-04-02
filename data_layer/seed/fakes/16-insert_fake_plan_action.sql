@@ -77,7 +77,7 @@ select private.ajouter_sous_thematique(12, 1);
 select private.ajouter_sous_thematique(13, 1);
 
 insert into fiche_action_axe(fiche_id, axe_id)
-values 
+values
 (1, 9),
 (2, 6),
 (3, 10),
@@ -142,13 +142,11 @@ select private.ajouter_service(11, (select pt.*::service_tag from (select null a
 select private.ajouter_service(12, (select pt.*::service_tag from (select null as id, 'Ultra service' as nom, 1 as collectivite_id) pt limit 1));
 select private.ajouter_service(13, (select pt.*::service_tag from (select null as id, 'Giga service' as nom, 1 as collectivite_id) pt limit 1));
 
-alter table fiche_action_pilote disable trigger save_history;
 select private.ajouter_pilote(1, (select pe.*::personne from (select 'Lou Piote' as nom, 1 as collectivite_id, null as tag_id, null as user_id) pe limit 1));
 select private.ajouter_pilote(1, (select pe.*::personne from (select null as nom, 1 as collectivite_id, null as tag_id, '17440546-f389-4d4f-bfdb-b0c94a1bd0f9' as user_id) pe limit 1));
 select private.ajouter_pilote(2, (select pe.*::personne from (select 'Lou Piote' as nom, 1 as collectivite_id, null as tag_id, null as user_id) pe limit 1));
 select private.ajouter_pilote(3, (select pe.*::personne from (select 'Harry Cot' as nom, 1 as collectivite_id, null as tag_id, null as user_id) pe limit 1));
 select private.ajouter_pilote(4, (select pe.*::personne from (select 'Harry Cot' as nom, 1 as collectivite_id, null as tag_id, null as user_id) pe limit 1));
-alter table fiche_action_pilote enable trigger save_history;
 
 select private.ajouter_referent(1, (select pe.*::personne from (select 'Harry Cot' as nom, 1 as collectivite_id, null as tag_id, null as user_id) pe limit 1));
 select private.ajouter_referent(2, (select pe.*::personne from (select null as nom, 1 as collectivite_id, null as tag_id, '17440546-f389-4d4f-bfdb-b0c94a1bd0f9' as user_id) pe limit 1));
