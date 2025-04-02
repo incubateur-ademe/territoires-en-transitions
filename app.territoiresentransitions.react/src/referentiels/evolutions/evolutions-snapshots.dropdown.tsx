@@ -26,16 +26,8 @@ type SnapshotsDropdownProps<T extends SnapshotOption> = Omit<
 };
 
 const checkNonEditable = (snapshotRef: string, options: SnapshotOption[]) => {
-  // Snapshots with references like "2024-labellisation-EMT" are non editable
-  // TODO: replace with jalon check when labellisation jalons will be implemented
-  const LABELLISATION_REF = /^\d{4}-labellisation-EMT$/i;
-
   const jalon = getSnapshotJalonFromRef(snapshotRef, options);
-
-  return (
-    jalon !== SnapshotJalonEnum.DATE_PERSONNALISEE ||
-    LABELLISATION_REF.test(snapshotRef)
-  );
+  return jalon !== SnapshotJalonEnum.DATE_PERSONNALISEE;
 };
 
 const getSnapshotJalonFromRef = (

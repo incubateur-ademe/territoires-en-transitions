@@ -249,16 +249,6 @@ export class SnapshotsService {
       );
     }
 
-    // Snapshots with references like "2024-labellisation-EMT" are non editable
-    // TODO: replace with jalon check when labellisation jalons will be implemented
-    const LABELLISATION_REF = /^\d{4}-labellisation-EMT$/i;
-
-    if (LABELLISATION_REF.test(snapshot.ref)) {
-      throw new BadRequestException(
-        `Impossible de modifier le nom d'un snapshot issu d'une labellisation`
-      );
-    }
-
     return await this.databaseService.db
       .update(snapshotTable)
       .set({ nom: newName })
