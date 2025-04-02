@@ -1,4 +1,5 @@
 import AxeService from '@/backend/plans/fiches/axe.service';
+import { ExportPlanController } from '@/backend/plans/fiches/export/export-plan.controller';
 import PlanActionsService from '@/backend/plans/fiches/plan-actions.service';
 import { forwardRef, Module } from '@nestjs/common';
 import { CollectivitesModule } from '../../collectivites/collectivites.module';
@@ -38,6 +39,6 @@ import { FichesActionController } from './fiches-action.controller';
     FicheActionEtapeRouter,
     BulkEditRouter,
   ],
-  controllers: [FichesActionController],
+  controllers: [FichesActionController, ExportPlanController],
 })
 export class FichesActionModule {}
