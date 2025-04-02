@@ -101,8 +101,33 @@ export const NEW_useTableData: UseTableData = () => {
       return true;
     }
 
+    console.log(statuts, statuts.includes('non_concerne'));
+
+    if (action.actionId === 'eci_1.1.1.2') {
+      console.log(action, action.score.concerne === false);
+    }
+
+    if (statuts.includes('non_concerne')) {
+      if (action.score.concerne === false) return true;
+    } else {
+      if (action.score.concerne === false) return false;
+    }
+
     if (statuts.includes('non_renseigne') && !action.score.renseigne) {
       return true;
+    }
+
+    // Les sous-actions avec un statut "non renseigné", mais avec
+    // des tâches renseignées, apparaissent comme "détaillé" en front
+    // On ne souhaite pas les afficher si aucune de leur tâche correspond
+    // au filtre "non renseigné" (sous-action entièrement renseignée)
+    if (
+      statuts.includes('non_renseigne') &&
+      action.actionType === 'sous-action' &&
+      action.score.avancement === 'non_renseigne' &&
+      action.score.renseigne
+    ) {
+      return false;
     }
 
     if (statuts.includes('detaille')) {
@@ -232,10 +257,13 @@ export const NEW_useTableData: UseTableData = () => {
       saveActionStatut({
         collectiviteId,
         actionId,
-        avancement: avancement as StatutAvancement,
+        avancement:
+          avancement === 'non_concerne'
+            ? 'non_renseigne'
+            : (avancement as StatutAvancement),
         avancementDetaille:
           avancement === 'detaille' ? [0.25, 0.5, 0.25] : undefined,
-        concerne: true,
+        concerne: avancement === 'non_concerne' ? false : true,
       });
     },
   };
