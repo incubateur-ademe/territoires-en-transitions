@@ -454,6 +454,7 @@ backend-test:
   ARG --required SUPABASE_JWT_SECRET
   ARG --required BREVO_API_KEY
   ARG --required DIRECTUS_API_KEY
+  ARG --required QUEUE_REDIS_HOST
   BUILD --pass-args ./backend+test
 
 
@@ -776,6 +777,8 @@ dev:
             RUN pnpx supabase start
         END
 
+        RUN earthly +start-redis
+
         IF [ "$eco" = "yes" ]
             RUN docker stop supabase_imgproxy_tet
             RUN docker stop supabase_studio_tet
@@ -801,7 +804,8 @@ dev:
                 --BREVO_API_KEY=fake \
                 --DIRECTUS_API_KEY=fake \
                 --TRAJECTOIRE_SNBC_SHEET_ID=fake \
-                --TRAJECTOIRE_SNBC_RESULT_FOLDER_ID=fake
+                --TRAJECTOIRE_SNBC_RESULT_FOLDER_ID=fake \
+                --QUEUE_REDIS_HOST=localhost
 
             # Seed si aucune collectivité en base
             RUN docker run --rm \
