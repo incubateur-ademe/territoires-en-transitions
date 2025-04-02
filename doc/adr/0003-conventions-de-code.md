@@ -81,6 +81,12 @@ Les conventions de nommage et d'architecture choisies suivent les standards par 
   - `fiche-action.list.tsx`
   - `fiche-action.list-item.tsx`
 
+- **Attributs `data-test`**
+
+  Sur le même principe que pour le nommage des fichiers, on préfixe les attributs `data-test` avec le "type". Ceci afin de contextualiser l'attribut.
+
+  Exemple : `data-test="referentiels.snapshots.figer-referentiel-button"`
+
 - **`index.ts` au niveau des sous-scopes**, si besoin, pour rassembler tous les exports associés et simplifier les imports.
 
   Exemple : `src/plans/fiches/index.ts`

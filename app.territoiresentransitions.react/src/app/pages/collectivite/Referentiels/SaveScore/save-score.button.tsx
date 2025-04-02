@@ -27,7 +27,7 @@ const SaveScoreButton = ({
         size="sm"
         className="whitespace-nowrap"
         onClick={() => setIsOpen(true)}
-        data-test="figer-referentiel"
+        data-test="referentiels.snapshots.figer-referentiel-button"
       >
         {label}
       </Button>
