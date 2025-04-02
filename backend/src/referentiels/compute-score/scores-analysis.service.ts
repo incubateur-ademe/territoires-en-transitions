@@ -30,7 +30,8 @@ import {
 import { chunk } from 'es-toolkit';
 import { Workbook } from 'exceljs';
 import { Response } from 'express';
-import pdf from 'pdf-parse';
+// @ts-ignore
+import pdf from 'pdf-parse-debugging-disabled';
 
 @Injectable()
 export default class ScoresAnalysisService {
