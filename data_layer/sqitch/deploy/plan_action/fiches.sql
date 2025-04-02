@@ -10,22 +10,23 @@ $$
 declare
   table_name text := TG_TABLE_NAME;
 begin
+  alter table fiche_action disable trigger set_modified_at_before_fiche_action;
+  alter table fiche_action disable trigger set_modified_by_before_fiche_action;
   if (table_name = 'fiche_action_lien') then
     update fiche_action
-    set modified_at = now(),
-        modified_by = auth.uid()
+    set modified_at = now()
     where id = coalesce(new.fiche_une, old.fiche_une);
 
     update fiche_action
-    set modified_at = now(),
-        modified_by = auth.uid()
+    set modified_at = now()
     where id = coalesce(new.fiche_deux, old.fiche_deux);
   else
     update fiche_action
-    set modified_at = now(),
-        modified_by = auth.uid()
+    set modified_at = now()
     where id = coalesce(new.fiche_id, old.fiche_id);
   end if;
+  alter table fiche_action enable trigger set_modified_by_before_fiche_action;
+  alter table fiche_action enable trigger set_modified_at_before_fiche_action;
   return coalesce(new, old);
 end ;
 $$;
