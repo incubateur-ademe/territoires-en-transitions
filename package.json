@@ -7,7 +7,7 @@
   "dependencies": {
     "@anatine/zod-nestjs": "^2.0.9",
     "@anatine/zod-openapi": "^2.2.6",
-    "@betagouv/les-communs-widget": "^0.1.2",
+    "@betagouv/les-communs-widget": "^0.1.6",
     "@bull-board/api": "^6.7.10",
     "@bull-board/express": "^6.7.10",
     "@bull-board/nestjs": "^6.7.10",
