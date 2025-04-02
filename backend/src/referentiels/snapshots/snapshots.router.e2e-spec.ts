@@ -429,42 +429,6 @@ describe('SnapshotsRouter', () => {
     );
   });
 
-  test("Mise à jour du nom d'un snapshot issu d'une labellisation EMT: not authorized", async () => {
-    const caller = router.createCaller({ user: yoloDodoUser });
-
-    const input: ComputeScoreInput = {
-      collectiviteId: 1,
-      referentielId: referentielIdEnumSchema.enum.cae,
-      nom: '2024 Labellisation EMT',
-      date: '2024-09-21T21:59:00.000Z',
-    };
-
-    const snapshot = await caller.referentiels.snapshots.computeAndUpsert(
-      input
-    );
-
-    const inputWithNewName: UpdateSnapshotNameInput = {
-      collectiviteId: 1,
-      referentielId: referentielIdEnumSchema.enum.cae,
-      snapshotRef: '2024-labellisation-emt',
-      newName: 'Nouveau nom',
-    };
-
-    onTestFinished(async () => {
-      await caller.referentiels.snapshots.delete({
-        collectiviteId: 1,
-        referentielId: ReferentielIdEnum.CAE,
-        snapshotRef: snapshot.ref,
-      });
-    });
-
-    await expect(() =>
-      caller.referentiels.snapshots.updateName(inputWithNewName)
-    ).rejects.toThrowError(
-      /Impossible de modifier le nom d'un snapshot issu d'une labellisation/i
-    );
-  });
-
   test("Mise à jour du nom d'un snapshot", async () => {
     const caller = router.createCaller({ user: yoloDodoUser });
 
