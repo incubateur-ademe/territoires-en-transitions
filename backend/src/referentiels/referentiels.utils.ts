@@ -254,3 +254,9 @@ export function findActionById<
 
   return action;
 }
+
+export function parseSnapshotName(snapshotName: string) {
+  if (!snapshotName.length) return null;
+  const [year, name] = snapshotName.split(' - ');
+  return year && name ? { year, name } : null;
+}
