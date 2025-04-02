@@ -142,6 +142,8 @@
   "devDependencies": {
     "@babel/core": "^7.14.5",
     "@babel/preset-react": "^7.14.5",
+    "@hey-api/client-fetch": "^0.10.0",
+    "@hey-api/openapi-ts": "^0.66.1",
     "@nestjs/cli": "^10.4.5",
     "@nestjs/schematics": "^10.1.4",
     "@nestjs/testing": "^10.4.4",
@@ -227,7 +229,6 @@
     "ts-loader": "^9.5.1",
     "ts-node": "10.9.1",
     "tsconfig-paths-webpack-plugin": "^4.1.0",
-    "typed-openapi": "^0.10.1",
     "typescript": "^5.6.2",
     "unplugin-swc": "^1.5.1",
     "vite": "~6.0.9",

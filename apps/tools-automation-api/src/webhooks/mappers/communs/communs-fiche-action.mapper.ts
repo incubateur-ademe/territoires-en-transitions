@@ -5,17 +5,13 @@ import { WebhookPayloadFormatEnum } from '@/backend/utils/index-domain';
 import { AbstractEntityMapper } from '@/tools-automation-api/webhooks/mappers/AbstractEntityMapper';
 import { Logger } from '@nestjs/common';
 import { DateTime } from 'luxon';
-import { Schemas } from './communs.types';
+import { CreateProjetRequest } from './client/types.gen';
 
-type NoUndefinedField<T> = {
-  [P in keyof T]-?: NoUndefinedField<NonNullable<T[P]>>;
-};
-type CreateProjetRequest = NoUndefinedField<Schemas.CreateProjetRequest>;
-type CompetenceType = CreateProjetRequest['competences'][number];
+type CompetenceType = NonNullable<CreateProjetRequest['competences']>[number];
 
 export class CommunsFicheActionMapper extends AbstractEntityMapper<
   FicheActionWithRelationsAndCollectiviteType,
-  Schemas.CreateProjetRequest
+  CreateProjetRequest
 > {
   private readonly logger = new Logger(CommunsFicheActionMapper.name);
 
@@ -40,10 +36,10 @@ export class CommunsFicheActionMapper extends AbstractEntityMapper<
   }
 
   getPhaseAndStatut(data: FicheActionWithRelationsAndCollectiviteType): {
-    phase: Schemas.CreateProjetRequest['phase'] | null;
-    phaseStatut: Schemas.CreateProjetRequest['phaseStatut'] | null;
+    phase: CreateProjetRequest['phase'] | undefined;
+    phaseStatut: CreateProjetRequest['phaseStatut'] | undefined;
   } {
-    let phaseStatut: Schemas.CreateProjetRequest['phaseStatut'] | null = null;
+    let phaseStatut: CreateProjetRequest['phaseStatut'] | undefined = undefined;
     switch (data.statut) {
       case 'A discuter':
         phaseStatut = 'En cours';
@@ -70,18 +66,18 @@ export class CommunsFicheActionMapper extends AbstractEntityMapper<
         phaseStatut = 'En cours';
         break;
       default:
-        phaseStatut = null;
+        phaseStatut = undefined;
     }
 
     return {
-      phase: data.statut ? 'Opération' : null,
+      phase: data.statut ? 'Opération' : undefined,
       phaseStatut,
     };
   }
 
   map(
     data: FicheActionWithRelationsAndCollectiviteType
-  ): Schemas.CreateProjetRequest | null {
+  ): CreateProjetRequest | null {
     let bugetPrevisionnel = data.budgetPrevisionnel
       ? parseFloat(data.budgetPrevisionnel)
       : null;
@@ -96,7 +92,7 @@ export class CommunsFicheActionMapper extends AbstractEntityMapper<
         this.SUPPORTED_EPCI_NATURE.includes(data.collectivite.natureInsee))
     ) {
       // Implement the mapping logic here
-      const createProjectRequest: Schemas.CreateProjetRequest = {
+      const createProjectRequest: CreateProjetRequest = {
         nom: data.titre || '',
         externalId: `${data.id}`,
         description: data.description || '',
@@ -122,6 +118,7 @@ export class CommunsFicheActionMapper extends AbstractEntityMapper<
           referentNom: data.referents[0].nom,
           referentPrenom: data.referents[0].prenom,
           referentTelephone: data.referents[0].telephone,
+          referentEmail: data.referents[0].email,
         };
       }
 

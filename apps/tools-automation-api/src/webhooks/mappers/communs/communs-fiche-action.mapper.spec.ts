@@ -1,6 +1,6 @@
 import { FicheActionWithRelationsAndCollectiviteType } from '@/backend/plans/fiches/shared/models/fiche-action-with-relations.dto';
+import { CreateProjetRequest } from './client/types.gen';
 import { CommunsFicheActionMapper } from './communs-fiche-action.mapper';
-import { Schemas } from './communs.types';
 
 describe('CommunsFicheActionMapper', () => {
   test('Standard mapping', async () => {
@@ -100,7 +100,7 @@ describe('CommunsFicheActionMapper', () => {
     const mapper = new CommunsFicheActionMapper();
     const communProjet = mapper.map(ficheAction);
 
-    const expectedCommunProjet: Schemas.CreateProjetRequest = {
+    const expectedCommunProjet: CreateProjetRequest = {
       budgetPrevisionnel: 12000,
       collectivites: [
         {
@@ -117,6 +117,7 @@ describe('CommunsFicheActionMapper', () => {
       phaseStatut: 'En retard',
       porteur: {
         referentNom: 'Caroline Cordary',
+        referentEmail: null,
         referentPrenom: null,
         referentTelephone: null,
       },
