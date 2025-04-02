@@ -144,7 +144,14 @@ export async function ficheResumesFetch({
   }
 
   if (filtre.referentielActionIds?.length) {
-    query.in('fiche_action_action.action_id', filtre.referentielActionIds);
+    query.or(
+      filtre.referentielActionIds
+        .map((id) => `action_id.like.${id}%`)
+        .join(','),
+      {
+        referencedTable: 'fiche_action_action',
+      }
+    );
   }
 
   if (filtre.linkedFicheActionIds?.length) {
