@@ -834,3 +834,5 @@ referentiel/action_service 2025-03-03T15:22:07Z System Administrator <root@MacBo
 
 plan_action/fiches [plan_action/fiches@v4.43.0] 2025-04-01T08:18:27Z Amandine <contact@jacquelinamandine.fr> # Ajoute des triggers pour étendre le modified_at vers la fiche
 @v4.45.0 2025-04-02T12:30:16Z Amandine <contact@jacquelinamandine.fr> # Ajoute un trigger aux éléments liés aux fiches actions pour mettre à jour ces dernières lors d'une modification
+
+plan_action/fiches [plan_action/fiches@v4.45.0] 2025-04-02T15:25:29Z Amandine <contact@jacquelinamandine.fr> # Enlève les triggers modified_at et modified_by des éléments des fiches actions car ça fait conflit avec le backend
