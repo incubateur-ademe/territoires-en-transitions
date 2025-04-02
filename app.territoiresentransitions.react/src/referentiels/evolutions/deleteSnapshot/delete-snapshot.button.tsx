@@ -14,8 +14,7 @@ export const DeleteSnapshotButton = ({
     <>
       <button
         className="text-sm text-grey-8"
-        onClick={(e) => {
-          e.stopPropagation();
+        onClick={() => {
           setIsOpen(true);
         }}
       >
