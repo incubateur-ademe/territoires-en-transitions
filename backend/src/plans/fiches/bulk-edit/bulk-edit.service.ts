@@ -61,11 +61,15 @@ export class BulkEditService {
     const { pilotes, libreTags, ...plainValues } = params;
 
     await this.db.transaction(async (tx) => {
-      // Update plain values
-      if (Object.keys(plainValues).length) {
+      // Update modified and plain values
+      if (pilotes !== undefined || libreTags !== undefined || Object.keys(plainValues).length >0) {
         await tx
           .update(ficheActionTable)
-          .set(plainValues)
+          .set({
+            ...plainValues,
+            modifiedBy: user.id,
+            modifiedAt: new Date().toISOString(),
+          })
           .where(inArray(ficheActionTable.id, ficheIds));
       }
 

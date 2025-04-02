@@ -132,12 +132,11 @@ export default class FichesActionUpdateService {
       if (Object.keys(body).length > 0) {
         updatedFicheAction = await tx
           .update(ficheActionTable)
-          // `modifiedBy` in the fiche_action table is automatically updated
-          // via a PG trigger (using the current authenticated user of `db.rls()`).
-          // But we also set it here so that when the updating object `ficheAction` is empty,
-          // the trigger can be well… triggered (corresponding to updates only affecting
-          // related tables, and not directly the fiche_action main table)
-          .set({ ...ficheAction, modifiedBy: user.id })
+          .set({
+            ...ficheAction,
+            modifiedBy: user.id,
+            modifiedAt: new Date().toISOString(),
+          })
           .where(eq(ficheActionTable.id, ficheActionId))
           .returning();
       }
@@ -468,25 +467,35 @@ export default class FichesActionUpdateService {
     if (!canWrite) return false;
 
     this.logger.log(`Met à jour les notes de la fiche ${ficheId}`);
-    return this.databaseService.db
-      .insert(ficheActionNoteTable)
-      .values(
-        notes.map((note) => ({
-          ...note,
-          ficheId,
-          createdBy: tokenInfo.id,
-          modifiedBy: tokenInfo.id,
-        }))
-      )
-      .onConflictDoUpdate({
-        target: [ficheActionNoteTable.id],
-        set: buildConflictUpdateColumns(ficheActionNoteTable, [
-          'dateNote',
-          'note',
-          'modifiedAt',
-          'modifiedBy',
-        ]),
-      });
+    return this.databaseService.db.transaction(async (trx) => {
+      await trx
+        .update(ficheActionTable)
+        .set({
+          modifiedBy: tokenInfo?.id,
+          modifiedAt: new Date().toISOString(),
+        })
+        .where(eq(ficheActionTable.id, ficheId));
+
+      return trx
+        .insert(ficheActionNoteTable)
+        .values(
+          notes.map((note) => ({
+            ...note,
+            ficheId,
+            createdBy: tokenInfo.id,
+            modifiedBy: tokenInfo.id,
+          }))
+        )
+        .onConflictDoUpdate({
+          target: [ficheActionNoteTable.id],
+          set: buildConflictUpdateColumns(ficheActionNoteTable, [
+            'dateNote',
+            'note',
+            'modifiedAt',
+            'modifiedBy',
+          ]),
+        });
+    });
   }
 
   /** Supprime une note */
@@ -503,13 +512,22 @@ export default class FichesActionUpdateService {
     if (!canWrite) return false;
 
     this.logger.log(`Supprime la note ${noteId} de la fiche ${ficheId}`);
-    return this.databaseService.db
-      .delete(ficheActionNoteTable)
-      .where(
-        and(
-          eq(ficheActionNoteTable.ficheId, ficheId),
-          eq(ficheActionNoteTable.id, noteId)
-        )
-      );
+    return this.databaseService.db.transaction(async (trx) => {
+      await trx
+        .update(ficheActionTable)
+        .set({
+          modifiedBy: tokenInfo?.id,
+          modifiedAt: new Date().toISOString(),
+        })
+        .where(eq(ficheActionTable.id, ficheId));
+      return trx
+        .delete(ficheActionNoteTable)
+        .where(
+          and(
+            eq(ficheActionNoteTable.ficheId, ficheId),
+            eq(ficheActionNoteTable.id, noteId)
+          )
+        );
+    });
   }
 }

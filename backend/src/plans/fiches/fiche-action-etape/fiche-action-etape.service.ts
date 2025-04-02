@@ -8,6 +8,7 @@ import {
   FicheActionEtapeType,
   UpsertFicheActionEtapeType,
 } from './fiche-action-etape.table';
+import { ficheActionTable } from '@/backend/plans/fiches/shared/models/fiche-action.table';
 
 @Injectable()
 export class FicheActionEtapeService {
@@ -117,6 +118,13 @@ export class FicheActionEtapeService {
           },
         })
         .returning();
+
+      // Met à jour la table fiche action
+      await trx
+        .update(ficheActionTable)
+        .set({ modifiedBy: userId, modifiedAt: new Date().toISOString() })
+        .where(eq(ficheActionTable.id, ficheId));
+
       return result;
     });
   }
@@ -160,6 +168,15 @@ export class FicheActionEtapeService {
             gte(ficheActionEtapeTable.ordre, deletedOrder)
           )
         );
+
+      // Met à jour la table fiche action
+      await trx
+        .update(ficheActionTable)
+        .set({
+          modifiedBy: tokenInfo?.id,
+          modifiedAt: new Date().toISOString(),
+        })
+        .where(eq(ficheActionTable.id, ficheId));
     });
   }
 
