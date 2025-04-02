@@ -17,7 +17,6 @@ export const UpdateSnapshotNameButton = ({
       <button
         className="text-sm text-grey-8"
         onClick={(e) => {
-          e.stopPropagation();
           setIsOpen(true);
         }}
       >
