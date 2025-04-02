@@ -1,3 +1,4 @@
+import { parseSnapshotName } from '@/domain/referentiels';
 import { Field, Input, Modal, ModalFooterOKCancel } from '@/ui';
 import { OpenState } from '@/ui/utils/types';
 import { useState } from 'react';
@@ -19,13 +20,14 @@ export const UpdateSnapshotNameModal = ({
   const collectiviteId = useCollectiviteId();
   const referentielId = useReferentielId();
 
-  const year = snapshotName.split(' - ')[0];
-  const name = snapshotName.split(' - ')[1];
+  const parsedName = parseSnapshotName(snapshotName);
+  if (!parsedName) return null;
+  const { year, name } = parsedName;
 
   const [editedSnapshotName, setEditedSnapshotName] = useState<string>(name);
 
   const { mutate: renameSnapshot } = useSnapshotUpdateName();
-  const handleRenameSnapshot = (snapshotRef: string, newName: string) => {
+  const handleRenameSnapshot = (snapshotRef: string) => {
     renameSnapshot({
       collectiviteId,
       referentielId,
@@ -64,7 +66,7 @@ export const UpdateSnapshotNameModal = ({
             btnOKProps={{
               children: `Valider`,
               onClick: () => {
-                handleRenameSnapshot(snapshotRef, editedSnapshotName);
+                handleRenameSnapshot(snapshotRef);
                 close();
               },
             }}
