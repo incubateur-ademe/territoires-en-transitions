@@ -6,7 +6,7 @@ import PlanActionFooter from './PlanActionFooter';
 import PlanActionHeader from './PlanActionHeader/PlanActionHeader';
 
 import { makeCollectivitePlanActionUrl } from '@/app/app/paths';
-import { useCurrentCollectivite } from '@/app/core-logic/hooks/useCurrentCollectivite';
+import { useCurrentCollectivite } from '@/app/collectivites/collectivite-context';
 import { Breadcrumbs } from '@/ui';
 import { useRouter } from 'next/navigation';
 import { useParams } from 'react-router-dom';
@@ -26,9 +26,8 @@ type PlanActionProps = {
 
 export const PlanAction = ({ plan, axe, axes }: PlanActionProps) => {
   const router = useRouter();
-  const collectivite = useCurrentCollectivite();
 
-  const isReadonly = collectivite?.isReadOnly ?? false;
+  const { collectiviteId, isReadOnly } = useCurrentCollectivite();
 
   // Permet de différentier une page axe d'une page plan
   const isAxePage = axe.depth === 1;
@@ -41,13 +40,13 @@ export const PlanAction = ({ plan, axe, axes }: PlanActionProps) => {
     <div data-test={isAxePage ? 'PageAxe' : 'PlanAction'} className="w-full">
       {/** Header */}
       <PlanActionHeader
-        collectivite_id={collectivite?.collectiviteId!}
+        collectivite_id={collectiviteId}
         plan={plan}
         axe={axe}
         axes={axes}
         isAxePage={isAxePage}
         axeHasFiches={axeHasFiche}
-        isReadonly={isReadonly}
+        isReadonly={isReadOnly}
       />
       <div className="mx-auto px-10">
         {/** Lien plan d'action page axe */}
@@ -61,7 +60,7 @@ export const PlanAction = ({ plan, axe, axes }: PlanActionProps) => {
                   onClick: () =>
                     router.push(
                       makeCollectivitePlanActionUrl({
-                        collectiviteId: collectivite?.collectiviteId!,
+                        collectiviteId,
                         planActionUid: axe.id.toString(),
                       })
                     ),
@@ -90,7 +89,7 @@ export const PlanAction = ({ plan, axe, axes }: PlanActionProps) => {
             axe={axe}
             axes={axes}
             isAxePage={isAxePage}
-            isReadonly={isReadonly}
+            isReadonly={isReadOnly}
           />
         )}
         {/** Footer */}
