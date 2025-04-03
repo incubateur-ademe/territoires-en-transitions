@@ -16,8 +16,6 @@ export type Enums<T extends keyof Database['public']['Enums']> =
   Database['public']['Enums'][T];
 export type TablesInsert<T extends TableName> =
   Database['public']['Tables'][T]['Insert'];
-export type TablesUpdate<T extends TableName> =
-  Database['public']['Tables'][T]['Update'];
 export type CompositeTypes<
   T extends keyof Database['public']['CompositeTypes']
 > = Database['public']['CompositeTypes'][T];
@@ -25,8 +23,6 @@ export type CompositeTypes<
 // un exemple de type d'objet tag associé à une collectivité
 export type CollectiviteTag =
   Database['public']['Tables']['partenaire_tag']['Insert'];
-
-export type LibreTag = Database['public']['Tables']['libre_tag']['Insert'];
 
 // la liste des tables correspondant au schéma CollectiviteTag
 // utilise le "key remapping" et les types conditionnels
