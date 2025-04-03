@@ -1,9 +1,9 @@
+import { RecherchesPlan } from '@/api/collectiviteEngagees';
 import { PlanCarte } from '@/app/app/pages/CollectivitesEngagees/Views/PlanCarte';
 import View, {
   CollectivitesEngageesView,
 } from '@/app/app/pages/CollectivitesEngagees/Views/View';
 import { useFilteredPlans } from '@/app/app/pages/CollectivitesEngagees/data/useFilteredPlans';
-import { RecherchesPlan } from '@/api/collectiviteEngagees';
 
 const PlansView = (props: CollectivitesEngageesView) => {
   /** Data */

@@ -3,10 +3,10 @@ import Link from 'next/link';
 
 import { Badge } from '@/ui';
 
+import { RecherchesPlan } from '@/api/collectiviteEngagees';
 import { generateTitle } from '@/app/app/pages/collectivite/PlansActions/FicheAction/data/utils';
 import { makeCollectivitePlanActionUrl } from '@/app/app/paths';
 import { useFonctionTracker } from '@/app/core-logic/hooks/useFonctionTracker';
-import { RecherchesPlan } from '@/api/collectiviteEngagees';
 
 type Props = {
   plan: RecherchesPlan;
@@ -40,7 +40,7 @@ export const PlanCarte = ({ plan, canUserClickCard }: Props) => {
         'flex flex-col gap-3 p-8 !bg-none bg-white rounded-xl border border-primary-3',
         {
           'cursor-default, pointer-events-none': !canUserClickCard,
-          'hover:!bg-primary-2': canUserClickCard,
+          'hover:!bg-primary-0': canUserClickCard,
         }
       )}
     >

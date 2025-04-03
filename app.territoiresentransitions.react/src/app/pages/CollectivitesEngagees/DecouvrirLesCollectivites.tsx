@@ -1,6 +1,5 @@
 import PlansView from '@/app/app/pages/CollectivitesEngagees/Views/PlansView';
 import { Route } from 'react-router-dom';
-import Filters from './Filters/FiltersColonne';
 import CollectivitesView from './Views/CollectivitesView';
 
 import { useUser } from '@/api/users/user-provider';
@@ -13,7 +12,6 @@ import {
 } from '@/app/app/paths';
 import { useSansCollectivite } from '@/app/core-logic/hooks/useSansCollectivite';
 import { Alert, Button } from '@/ui';
-import PageContainer from '@/ui/components/layout/page-container';
 import { initialFilters, nameToShortNames } from './data/filters';
 
 const DecouvrirLesCollectivites = () => {
@@ -40,7 +38,7 @@ const DecouvrirLesCollectivites = () => {
           footer={
             <Button
               dataTest="btn-AssocierCollectivite"
-              size="sm"
+              size="xs"
               href={getRejoindreCollectivitePath(document.location.origin)}
             >
               Rejoindre une collectivité
@@ -48,34 +46,25 @@ const DecouvrirLesCollectivites = () => {
           }
         />
       )}
-      <PageContainer dataTest="ToutesLesCollectivites" bgColor="primary">
-        <div className="md:flex md:gap-6 xl:gap-12">
-          <Route path={recherchesCollectivitesUrl}>
-            <Filters
-              vue="collectivites"
-              filters={filters}
-              setFilters={setFilters}
-            />
-            <CollectivitesView
-              initialFilters={initialFilters}
-              filters={filters}
-              setFilters={setFilters}
-              isConnected={isConnected}
-              canUserClickCard={!sansCollectivite && isConnected}
-            />
-          </Route>
-          <Route path={recherchesPlansUrl}>
-            <Filters vue="plans" filters={filters} setFilters={setFilters} />
-            <PlansView
-              initialFilters={initialFilters}
-              filters={{ ...filters, trierPar: ['nom'] }}
-              setFilters={setFilters}
-              isConnected={isConnected}
-              canUserClickCard={!sansCollectivite && isConnected}
-            />
-          </Route>
-        </div>
-      </PageContainer>
+
+      <Route path={recherchesCollectivitesUrl}>
+        <CollectivitesView
+          initialFilters={initialFilters}
+          filters={filters}
+          setFilters={setFilters}
+          isConnected={isConnected}
+          canUserClickCard={!sansCollectivite && isConnected}
+        />
+      </Route>
+      <Route path={recherchesPlansUrl}>
+        <PlansView
+          initialFilters={initialFilters}
+          filters={{ ...filters, trierPar: ['nom'] }}
+          setFilters={setFilters}
+          isConnected={isConnected}
+          canUserClickCard={!sansCollectivite && isConnected}
+        />
+      </Route>
     </>
   );
 };
