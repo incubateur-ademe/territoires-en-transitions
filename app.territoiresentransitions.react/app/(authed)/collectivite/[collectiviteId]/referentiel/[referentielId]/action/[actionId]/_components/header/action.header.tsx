@@ -1,6 +1,6 @@
 import { useState } from 'react';
 
-import { useCurrentCollectivite } from '@/app/core-logic/hooks/useCurrentCollectivite';
+import { useCurrentCollectivite } from '@/app/collectivites/collectivite-context';
 import { ActionDefinitionSummary } from '@/app/referentiels/ActionDefinitionSummaryReadEndpoint';
 import ActionEditModal from '@/app/referentiels/actions/action-edit.modal';
 import { ActionSidePanelToolbar } from '@/app/referentiels/actions/action.side-panel.toolbar';
@@ -28,9 +28,8 @@ export const ActionHeader = ({
   nextActionLink: string | undefined;
   prevActionLink: string | undefined;
 }) => {
-  
-  const collectivite = useCurrentCollectivite();
-  const isReadOnly = !collectivite || collectivite?.isReadOnly;
+  const { isReadOnly } = useCurrentCollectivite();
+
   const [isEditModalOpen, setIsEditModalOpen] = useState(false);
 
   return (

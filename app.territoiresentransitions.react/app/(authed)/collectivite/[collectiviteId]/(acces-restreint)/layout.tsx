@@ -1,15 +1,14 @@
 'use client';
 
-import { useUser } from "@/api/users/user-provider";
-import { useCurrentCollectivite } from "@/app/core-logic/hooks/useCurrentCollectivite";
-import { ReactNode } from "react";
+import { ReactNode } from 'react';
+
+import { useUser } from '@/api/users/user-provider';
+import { useCurrentCollectivite } from '@/app/collectivites/collectivite-context';
 
 export default function Layout({ children }: { children: ReactNode }) {
   const collectivite = useCurrentCollectivite();
 
   const user = useUser();
-
-  if (!collectivite?.collectiviteId) return <></>;
 
   /** Vérifie que l'utilisateur peut accéder à la collectivité */
   const hasNoAccessToCollectivite =

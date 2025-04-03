@@ -2,7 +2,7 @@
 
 import { referentielToName } from '@/app/app/labels';
 import SaveScoreButton from '@/app/app/pages/collectivite/Referentiels/SaveScore/save-score.button';
-import { useCurrentCollectivite } from '@/app/core-logic/hooks/useCurrentCollectivite';
+import { useCurrentCollectivite } from '@/app/collectivites/collectivite-context';
 import { ReferentielOfIndicateur } from '@/app/referentiels/litterals';
 import { useReferentielDownToAction } from '@/app/referentiels/referentiel-hooks';
 import ScoreProgressBar from '@/app/referentiels/scores/score.progress-bar';
@@ -10,14 +10,13 @@ import { ScoreRatioBadge } from '@/app/referentiels/scores/score.ratio-badge';
 import { ReferentielId } from '@/domain/referentiels';
 
 export const Header = ({ referentielId }: { referentielId: ReferentielId }) => {
-  const actions = useReferentielDownToAction(referentielId);
-  const referentiel = actions.find((a) => a.type === 'referentiel')!;
+  const { collectiviteId, niveauAcces } = useCurrentCollectivite();
 
-  const collectivite = useCurrentCollectivite();
-  const collectiviteId = collectivite?.collectiviteId;
-  const haveEditionAccess =
-    collectivite?.niveauAcces == 'edition' ||
-    collectivite?.niveauAcces == 'admin';
+  const haveEditionAccess = niveauAcces == 'edition' || niveauAcces == 'admin';
+
+  const actions = useReferentielDownToAction(referentielId);
+
+  const referentiel = actions.find((a) => a.type === 'referentiel');
 
   return (
     <>
@@ -45,7 +44,7 @@ export const Header = ({ referentielId }: { referentielId: ReferentielId }) => {
           {/*     For future use: end                    */}
           {/*                                            */}
           {/**********************************************/}
-          {collectiviteId && haveEditionAccess && (
+          {haveEditionAccess && (
             <SaveScoreButton
               referentielId={referentielId}
               collectiviteId={collectiviteId}
