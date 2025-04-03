@@ -1,3 +1,4 @@
+import { RecherchesReferentiel } from '@/api/collectiviteEngagees';
 import { referentielToName } from '@/app/app/labels';
 import { makeCollectiviteAccueilUrl } from '@/app/app/paths';
 import { NIVEAUX } from '@/app/referentiels/tableau-de-bord/labellisation/LabellisationInfo';
@@ -10,7 +11,6 @@ import { ReferentielId } from '@/domain/referentiels';
 import { Icon } from '@/ui';
 import classNames from 'classnames';
 import Link from 'next/link';
-import { RecherchesReferentiel } from '@/api/collectiviteEngagees';
 
 type Props = {
   collectivite: RecherchesReferentiel;
@@ -42,7 +42,7 @@ export const CollectiviteCarte = ({
         'p-8 !bg-none bg-white rounded-xl border border-primary-3',
         {
           'cursor-default, pointer-events-none': !canUserClickCard,
-          'hover:!bg-primary-2': canUserClickCard,
+          'hover:!bg-primary-0': canUserClickCard,
         }
       )}
     >
