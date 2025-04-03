@@ -1,11 +1,9 @@
+import { RecherchesReferentiel } from '@/api/collectiviteEngagees';
 import { CollectiviteCarte } from '@/app/app/pages/CollectivitesEngagees/Views/CollectiviteCarte';
 import View, {
   CollectivitesEngageesView,
 } from '@/app/app/pages/CollectivitesEngagees/Views/View';
-import {
-  useFilteredCollectivites,
-} from '@/app/app/pages/CollectivitesEngagees/data/useFilteredCollectivites';
-import { RecherchesReferentiel } from '@/api/collectiviteEngagees';
+import { useFilteredCollectivites } from '@/app/app/pages/CollectivitesEngagees/data/useFilteredCollectivites';
 
 const CollectivitesView = (props: CollectivitesEngageesView) => {
   /** Data */

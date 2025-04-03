@@ -1,19 +1,18 @@
-import classNames from 'classnames';
-
-import { Button, Pagination, Select } from '@/ui';
+import { Pagination } from '@/ui';
 
 import { CollectiviteEngagee } from '@/api';
-import { Grid } from '@/app/app/pages/CollectivitesEngagees/Views/Grid';
-import { trierParOptions } from '@/app/app/pages/CollectivitesEngagees/data/filtreOptions';
-import { NB_CARDS_PER_PAGE } from '@/app/app/pages/CollectivitesEngagees/data/utils';
 import {
-  recherchesCollectivitesUrl,
-  recherchesPlansUrl,
-  RecherchesViewParam,
-} from '@/app/app/paths';
-import { useRouter, useSearchParams } from 'next/navigation';
-import { getNumberOfActiveFilters, SetFilters } from '../data/filters';
-import { RecherchesCollectivite, RecherchesPlan, RecherchesReferentiel } from '@/api/collectiviteEngagees';
+  RecherchesCollectivite,
+  RecherchesPlan,
+  RecherchesReferentiel,
+} from '@/api/collectiviteEngagees';
+import { Grid } from '@/app/app/pages/CollectivitesEngagees/Views/Grid';
+import { NB_CARDS_PER_PAGE } from '@/app/app/pages/CollectivitesEngagees/data/utils';
+import { RecherchesViewParam } from '@/app/app/paths';
+import PageContainer from '@/ui/components/layout/page-container';
+import FiltersColonne from '../Filters/FiltersColonne';
+import { SetFilters } from '../data/filters';
+import CollectivitesHeader from '../header/collectivites-header';
 
 export type CollectivitesEngageesView = {
   initialFilters: CollectiviteEngagee.Filters;
@@ -23,7 +22,10 @@ export type CollectivitesEngageesView = {
   isConnected: boolean;
 };
 
-export type Data = RecherchesCollectivite | RecherchesReferentiel | RecherchesPlan;
+export type Data =
+  | RecherchesCollectivite
+  | RecherchesReferentiel
+  | RecherchesPlan;
 
 type ViewProps = CollectivitesEngageesView & {
   view: RecherchesViewParam;
@@ -45,127 +47,50 @@ const View = ({
   renderCard,
   isConnected,
 }: ViewProps) => {
-  const router = useRouter();
-  const search = useSearchParams();
-
-  const viewToText: Record<RecherchesViewParam, string> = {
-    collectivites: 'collectivité',
-    plans: 'plan',
-  };
-
-  const getTrierParOptions = () => {
-    const options = [{ value: 'nom', label: 'Ordre alphabétique' }];
-    return view === 'collectivites' ? trierParOptions : options;
-  };
-
   return (
-    <div className="grow flex flex-col">
-      <div className="flex flex-col gap-8 mb-8">
-        <div className="flex flex-col-reverse gap-6 xl:flex-row xl:justify-between">
-          {/** Trier par filtre */}
-          <div className="mr-auto">
-            <Select
-              options={getTrierParOptions()}
-              onChange={(value) => {
-                value &&
-                  setFilters({
-                    ...filters,
-                    trierPar: [value as string],
-                  });
-              }}
-              values={filters.trierPar?.[0]}
-              customItem={(v) => <span className="text-grey-9">{v.label}</span>}
-              disabled={view === 'plans'}
+    <PageContainer dataTest="ToutesLesCollectivites" bgColor="primary">
+      {/* Header */}
+      <CollectivitesHeader
+        view={view}
+        initialFilters={initialFilters}
+        filters={filters}
+        dataCount={dataCount}
+        isLoading={isLoading}
+        setFilters={setFilters}
+      />
+
+      {/* Page */}
+      <div className="md:flex md:gap-6 xl:gap-12">
+        {/* Filtres */}
+        <FiltersColonne vue={view} filters={filters} setFilters={setFilters} />
+
+        {/* Données */}
+        <div className="grow flex flex-col">
+          {/** Grille des résultats */}
+          <div className="grow">
+            <Grid
+              view={view}
+              isLoading={isLoading}
+              data={data}
+              renderCard={renderCard}
+              isConected={isConnected}
             />
           </div>
-          {/** Change view (collectivite | plan) */}
-          <div className="flex items-center">
-            <Button
-              data-test="ToggleVueCollectivite"
-              variant="outlined"
-              icon="layout-grid-line"
-              className={classNames('rounded-r-none', {
-                '!bg-primary-2': view === 'collectivites',
-              })}
-              onClick={() => {
-                setFilters({ ...filters, page: 1 });
-                router.push(
-                  `${recherchesCollectivitesUrl}?${search.toString()}`
-                );
-              }}
-            >
-              Collectivités
-            </Button>
-            <Button
-              data-test="ToggleVuePlan"
-              disabled={!isConnected}
-              variant="outlined"
-              icon="list-unordered"
-              className={classNames('rounded-l-none border-l-0', {
-                '!bg-primary-2': view === 'plans',
-              })}
-              onClick={() => {
-                setFilters({ ...filters, page: 1 });
-                router.push(`${recherchesPlansUrl}?${search.toString()}`);
-              }}
-            >
-              Plans d'action
-            </Button>
-          </div>
-        </div>
-        {/** Nombre de résultats | Désactiver les filtres */}
-        <div className="flex flex-col gap-6 xl:flex-row xl:justify-between xl:items-center">
-          <div className="grow min-h-[2.625rem] flex items-center">
-            {dataCount > 0 && (
-              <h4 className="mb-0 text-center leading-10 text-gray-500 md:text-left">
-                <span className="text-primary-7">
-                  {dataCount === 1
-                    ? `1 ${viewToText[view]}`
-                    : `${dataCount} ${viewToText[view]}s`}{' '}
-                </span>
-                <span className="text-primary-10">
-                  {dataCount === 1 ? 'correspond' : 'correspondent'} à votre
-                  recherche
-                </span>
-              </h4>
-            )}
-          </div>
-          {getNumberOfActiveFilters(filters) > 0 && (
-            <Button
-              data-test="desactiver-les-filtres"
-              onClick={() => setFilters(initialFilters)}
-              icon="close-circle-fill"
-              variant="outlined"
-              size="sm"
-              disabled={isLoading}
-            >
-              {isLoading ? 'Chargement...' : 'Désactiver tous les filtres'}
-            </Button>
-          )}
+
+          {/** Pagination */}
+          <Pagination
+            className="mt-6 md:mt-12 mx-auto"
+            selectedPage={filters.page ?? 1}
+            nbOfElements={dataCount}
+            maxElementsPerPage={NB_CARDS_PER_PAGE}
+            onChange={(selected) => {
+              setFilters({ ...filters, page: selected });
+            }}
+            idToScrollTo="app-header"
+          />
         </div>
       </div>
-      {/** Grille des résultats */}
-      <div className="grow">
-        <Grid
-          view={view}
-          isLoading={isLoading}
-          data={data}
-          renderCard={renderCard}
-          isConected={isConnected}
-        />
-      </div>
-      {/** Pagination */}
-      <Pagination
-        className="mt-6 md:mt-12 mx-auto"
-        selectedPage={filters.page ?? 1}
-        nbOfElements={dataCount}
-        maxElementsPerPage={NB_CARDS_PER_PAGE}
-        onChange={(selected) => {
-          setFilters({ ...filters, page: selected });
-        }}
-        idToScrollTo="app-header"
-      />
-    </div>
+    </PageContainer>
   );
 };
 
