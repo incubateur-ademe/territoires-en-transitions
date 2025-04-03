@@ -355,6 +355,7 @@ jobs:
           echo BREVO_API_KEY=${{ secrets.BREVO_API_KEY }} >> backend/.env
           echo DIRECTUS_API_KEY=${{ secrets.DIRECTUS_API_KEY }} >> backend/.env
           echo GCLOUD_SERVICE_ACCOUNT_KEY=${{ secrets.GCLOUD_SERVICE_ACCOUNT_KEY }} >> backend/.env
+          echo QUEUE_REDIS_HOST=localhost >> backend/.env
 
       - name: Execute tests
         run: pnpm test:backend

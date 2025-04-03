@@ -1,3 +1,4 @@
+import FicheActionListService from '@/backend/plans/fiches/fiches-action-list.service';
 import { ficheActionNoteSchema } from '@/backend/plans/fiches/index-domain';
 import { countSyntheseValeurSchema } from '@/backend/utils/count-by.dto';
 import { createZodDto } from '@anatine/zod-nestjs';
@@ -65,6 +66,7 @@ export class FichesActionController {
   constructor(
     private readonly ficheService: FicheService,
     private readonly fichesActionSyntheseService: CountByService,
+    private readonly ficheActionListService: FicheActionListService,
     private readonly fichesActionUpdateService: FichesActionUpdateService
   ) {}
 
@@ -97,7 +99,7 @@ export class FichesActionController {
     @Query() request: GetFichesActionFilterRequestClass,
     @TokenInfo() tokenInfo: AuthenticatedUser
   ): Promise<GetFichesActionResponseClass> {
-    const fiches = await this.fichesActionSyntheseService.getFichesAction(
+    const fiches = await this.ficheActionListService.getFichesAction(
       collectiviteId,
       request
     );

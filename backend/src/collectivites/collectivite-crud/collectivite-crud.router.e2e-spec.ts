@@ -130,7 +130,7 @@ describe('Test upsert collectivite', () => {
       await roleUpdateService.setIsSupport(yoloDodoUser.id, true);
       const caller = router.createCaller({ user: yoloDodoUser });
       const input: upsertInput = {
-        type: collectiviteTypeEnum.Commune,
+        type: collectiviteTypeEnum.COMMUNE,
         communeCode: '01001',
       };
       const result =
@@ -138,7 +138,7 @@ describe('Test upsert collectivite', () => {
           input
         );
       expect(result).toEqual({
-        type: collectiviteTypeEnum.Commune,
+        type: collectiviteTypeEnum.COMMUNE,
         communeCode: '01001',
         nom: "L' Abergement-Clémenciat",
         regionCode: '84',
@@ -158,7 +158,7 @@ describe('Test upsert collectivite', () => {
       await roleUpdateService.setIsSupport(yoloDodoUser.id, true);
       const caller = router.createCaller({ user: yoloDodoUser });
       const input: upsertInput = {
-        type: collectiviteTypeEnum.Departement,
+        type: collectiviteTypeEnum.DEPARTEMENT,
         departementCode: '31',
       };
       const result =
@@ -166,7 +166,7 @@ describe('Test upsert collectivite', () => {
           input
         );
       expect(result).toEqual({
-        type: collectiviteTypeEnum.Departement,
+        type: collectiviteTypeEnum.DEPARTEMENT,
         departementCode: '31',
         nom: 'Haute-Garonne',
         regionCode: '76',
@@ -185,7 +185,7 @@ describe('Test upsert collectivite', () => {
       await roleUpdateService.setIsSupport(yoloDodoUser.id, true);
       const caller = router.createCaller({ user: yoloDodoUser });
       const input: upsertInput = {
-        type: collectiviteTypeEnum.Region,
+        type: collectiviteTypeEnum.REGION,
         regionCode: '76',
       };
       const result =
@@ -193,7 +193,7 @@ describe('Test upsert collectivite', () => {
           input
         );
       expect(result).toEqual({
-        type: collectiviteTypeEnum.Region,
+        type: collectiviteTypeEnum.REGION,
         regionCode: '76',
         nom: 'Occitanie',
         population: 6057827,
