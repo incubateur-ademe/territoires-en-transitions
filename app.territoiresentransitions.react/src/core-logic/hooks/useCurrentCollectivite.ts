@@ -5,6 +5,9 @@ import { useCollectiviteId } from '@/app/core-logic/hooks/params';
 import { TNiveauAcces } from '@/app/types/alias';
 import { useQuery } from 'react-query';
 
+/**
+ * @deprecated: use Types from `use-get-current-collectivite.ts` instead
+ */
 export type CurrentCollectivite = {
   collectiviteId: number;
   nom: string;
@@ -47,6 +50,9 @@ function toCurrentCollectivite(collectivite: any): CurrentCollectivite {
 // charge la collectivité courante (à partir de son id)
 // et détermine si elle est en lecture seule pour l'utilisateur courant ou non
 // la requête est rechargée quand le user id ou le collectivite id changent
+/**
+ * @deprecated: use hook from collectivite-context.tsx instead
+ */
 export const useCurrentCollectivite = () => {
   const user = useUser();
   const collectiviteId = useCollectiviteId();
