@@ -11,6 +11,8 @@ import FicheService from './fiche.service';
 import FichesActionUpdateService from './fiches-action-update.service';
 import { FichesActionController } from './fiches-action.controller';
 import AxeService from '@/backend/plans/fiches/axe.service';
+import { FicheActionBudgetService } from '@/backend/plans/fiches/fiche-action-budget/fiche-action-budget.service';
+import { FicheActionBudgetRouter } from '@/backend/plans/fiches/fiche-action-budget/fiche-action-budget.router';
 
 @Module({
   imports: [forwardRef(() => CollectivitesModule)],
@@ -25,6 +27,8 @@ import AxeService from '@/backend/plans/fiches/axe.service';
     FichesActionUpdateService,
     FicheActionEtapeService,
     FicheActionEtapeRouter,
+    FicheActionBudgetService,
+    FicheActionBudgetRouter,
   ],
   exports: [
     FicheService,
@@ -35,6 +39,8 @@ import AxeService from '@/backend/plans/fiches/axe.service';
     FicheActionEtapeService,
     FicheActionEtapeRouter,
     BulkEditRouter,
+    FicheActionBudgetService,
+    FicheActionBudgetRouter,
   ],
   controllers: [FichesActionController],
 })
