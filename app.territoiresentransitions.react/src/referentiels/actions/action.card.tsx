@@ -1,17 +1,16 @@
 import { useState } from 'react';
 
 import { makeReferentielActionUrl } from '@/app/app/paths';
+import { useCurrentCollectivite } from '@/app/collectivites/collectivite-context';
+import ActionEditModal from '@/app/referentiels/actions/action-edit.modal';
+import { useActionPilotesList } from '@/app/referentiels/actions/use-action-pilotes';
+import { useActionServicesPilotesList } from '@/app/referentiels/actions/use-action-services-pilotes';
+import ListWithTooltip from '@/app/ui/lists/ListWithTooltip';
 import { getReferentielIdFromActionId } from '@/domain/referentiels';
 import { Button, Card } from '@/ui';
 import { ActionDefinitionSummary } from '../ActionDefinitionSummaryReadEndpoint';
 import ScoreProgressBar from '../scores/score.progress-bar';
 import { ScoreRatioBadge } from '../scores/score.ratio-badge';
-import { useCollectiviteId } from '@/app/collectivites/collectivite-context';
-import ListWithTooltip from '@/app/ui/lists/ListWithTooltip';
-import { useActionPilotesList } from '@/app/referentiels/actions/use-action-pilotes';
-import { useActionServicesPilotesList } from '@/app/referentiels/actions/use-action-services-pilotes';
-import ActionEditModal from '@/app/referentiels/actions/action-edit.modal';
-import { useCurrentCollectivite } from '@/app/core-logic/hooks/useCurrentCollectivite';
 
 /** Carte générique d'une mesure du référentiel */
 type ReferentielCardProps = {
@@ -23,7 +22,7 @@ export const ActionCard = ({
   action,
   isDescriptionOn,
 }: ReferentielCardProps) => {
-  const { collectiviteId, isReadOnly } = useCurrentCollectivite()!;
+  const { collectiviteId, isReadOnly } = useCurrentCollectivite();
 
   const referentiel = getReferentielIdFromActionId(action.id);
 
