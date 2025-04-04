@@ -8,9 +8,8 @@ import {
 } from '@/app/referentiels/tableau-de-bord/labellisation/Star';
 import { toPercentString } from '@/app/utils/to-percent-string';
 import { ReferentielId } from '@/domain/referentiels';
-import { Icon } from '@/ui';
+import { Card, Icon } from '@/ui';
 import classNames from 'classnames';
-import Link from 'next/link';
 
 type Props = {
   collectivite: RecherchesReferentiel;
@@ -28,45 +27,53 @@ export const CollectiviteCarte = ({
   collectivite,
   canUserClickCard,
 }: Props) => {
+  const {
+    collectiviteId,
+    collectiviteNom,
+    collectiviteType,
+    etoilesCae,
+    scoreFaitCae,
+    scoreProgrammeCae,
+    etoilesEci,
+    scoreFaitEci,
+    scoreProgrammeEci,
+  } = collectivite;
+
   return (
-    <Link
+    <Card
       data-test="CollectiviteCarte"
+      className={classNames('!border-primary-3 !py-5 !px-6 !gap-3', {
+        'hover:!bg-primary-0': canUserClickCard,
+      })}
       href={
         canUserClickCard
           ? makeCollectiviteAccueilUrl({
-              collectiviteId: collectivite.collectiviteId,
+              collectiviteId: collectiviteId,
             })
-          : '#'
+          : undefined
       }
-      className={classNames(
-        'p-8 !bg-none bg-white rounded-xl border border-primary-3',
-        {
-          'cursor-default, pointer-events-none': !canUserClickCard,
-          'hover:!bg-primary-0': canUserClickCard,
-        }
-      )}
     >
-      <div className="mb-4 text-lg font-bold text-primary-9">
-        {collectivite.collectiviteNom}
+      <div className="mb-0 text-lg font-bold text-primary-9">
+        {collectiviteNom}
       </div>
       <div className="flex justify-between gap-4 sm:gap-8 xl:gap-8">
         <ReferentielCol
           referentiel={'cae'}
-          etoiles={collectivite.etoilesCae}
-          scoreRealise={collectivite.scoreFaitCae}
-          scoreProgramme={collectivite.scoreProgrammeCae}
-          concerne={collectivite.collectiviteType !== 'syndicat'}
+          etoiles={etoilesCae}
+          scoreRealise={scoreFaitCae}
+          scoreProgramme={scoreProgrammeCae}
+          concerne={collectiviteType !== 'syndicat'}
         />
-        <div className="w-px mx-auto flex-shrink-0 bg-gray-200"></div>
+        <div className="w-[0.5px] mx-auto flex-shrink-0 bg-grey-4"></div>
         <ReferentielCol
           referentiel={'eci'}
-          etoiles={collectivite.etoilesEci}
-          scoreRealise={collectivite.scoreFaitEci}
-          scoreProgramme={collectivite.scoreProgrammeEci}
+          etoiles={etoilesEci}
+          scoreRealise={scoreFaitEci}
+          scoreProgramme={scoreProgrammeEci}
           concerne={true}
         />
       </div>
-    </Link>
+    </Card>
   );
 };
 
@@ -81,32 +88,38 @@ export type TReferentielColProps = {
 /**
  * Une colonne avec les éléments de score pour la carte collectivité.
  */
-export const ReferentielCol = (props: TReferentielColProps) => {
+export const ReferentielCol = ({
+  referentiel,
+  concerne,
+  etoiles,
+  scoreRealise,
+  scoreProgramme,
+}: TReferentielColProps) => {
   return (
-    <div className="flex flex-col gap-3 flex-1">
+    <div className="flex flex-col gap-2 flex-1">
       <div className="text-sm font-bold text-primary-7">
-        {referentielToName[props.referentiel]}
+        {referentielToName[referentiel]}
       </div>
-      {props.concerne ? (
+      {concerne ? (
         <>
-          <CinqEtoiles etoiles={props.etoiles} />
-          <div className="flex items-center text-xs text-grey-6">
+          <CinqEtoiles etoiles={etoiles} />
+          <div className="flex items-center text-xs text-grey-9 font-normal">
             <Icon icon="line-chart-line" size="sm" className="mr-1.5" />
-            <span className="mr-1 font-semibold">
-              {toPercentString(props.scoreRealise)}
+            <span className="mr-1 font-bold">
+              {toPercentString(scoreRealise)}
             </span>
             réalisé courant
           </div>
-          <div className="flex items-center text-xs text-grey-6">
+          <div className="flex items-center text-xs text-grey-9 font-normal">
             <Icon icon="calendar-line" size="sm" className="mr-1.5" />
-            <span className="mr-1 font-semibold">
-              {toPercentString(props.scoreProgramme)}
+            <span className="mr-1 font-bold">
+              {toPercentString(scoreProgramme)}
             </span>
             programmé
           </div>
         </>
       ) : (
-        <div className="my-auto mr-auto font-light italic text-grey-6">
+        <div className="my-auto mr-auto font-light italic text-xs text-grey-6">
           Non concerné
         </div>
       )}
@@ -124,12 +137,11 @@ export type TCinqEtoilesProps = {
  */
 const CinqEtoiles = ({ etoiles }: TCinqEtoilesProps) => {
   return (
-    <div className="flex gap-2">
-      {/* <div className="flex -space-x-3 first:-m-1 sm:-space-x-1 lg:-space-x-2 xl:-space-x-1"> */}
+    <div className="flex gap-2 mb-1">
       {NIVEAUX.map((niveau) => {
         const obtenue = etoiles >= niveau;
         const Star = obtenue ? RedStar : GreyStar;
-        return <Star key={niveau} className="!w-6 !h-6" />;
+        return <Star key={niveau} className="!w-5 !h-5" />;
       })}
     </div>
   );
