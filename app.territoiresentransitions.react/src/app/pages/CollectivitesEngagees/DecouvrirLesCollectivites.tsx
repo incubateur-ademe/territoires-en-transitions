@@ -1,15 +1,12 @@
 import PlansView from '@/app/app/pages/CollectivitesEngagees/Views/PlansView';
 import { Route } from 'react-router-dom';
-import CollectivitesView from './Views/CollectivitesView';
+import ReferentielsView from './Views/ReferentielsView';
 
 import { useUser } from '@/api/users/user-provider';
 import { useSearchParams } from '@/app/core-logic/hooks/query';
 
 import { CollectiviteEngagee, getRejoindreCollectivitePath } from '@/api';
-import {
-  recherchesCollectivitesUrl,
-  recherchesPlansUrl,
-} from '@/app/app/paths';
+import { recherchesPlansUrl, recherchesReferentielsUrl } from '@/app/app/paths';
 import { useSansCollectivite } from '@/app/core-logic/hooks/useSansCollectivite';
 import { Alert, Button } from '@/ui';
 import { initialFilters, nameToShortNames } from './data/filters';
@@ -22,7 +19,7 @@ const DecouvrirLesCollectivites = () => {
 
   /** Filters */
   const [filters, setFilters] = useSearchParams<CollectiviteEngagee.Filters>(
-    recherchesCollectivitesUrl,
+    recherchesReferentielsUrl,
     initialFilters,
     nameToShortNames
   );
@@ -47,8 +44,8 @@ const DecouvrirLesCollectivites = () => {
         />
       )}
 
-      <Route path={recherchesCollectivitesUrl}>
-        <CollectivitesView
+      <Route path={recherchesReferentielsUrl}>
+        <ReferentielsView
           initialFilters={initialFilters}
           filters={filters}
           setFilters={setFilters}
