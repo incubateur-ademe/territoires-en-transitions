@@ -25,15 +25,15 @@ export const Star = ({
   </svg>
 );
 
-export const GreyStar = (props: {title?: string; className?: string}) => (
-  <Star {...props} fill="#DDDDDD" />
+export const GreyStar = (props: { title?: string; className?: string }) => (
+  <Star {...props} fill="#C5C5C5" />
 );
-export const BlueStar = (props: {title?: string; className?: string}) => (
+export const BlueStar = (props: { title?: string; className?: string }) => (
   <Star {...props} fill="#0063CB" />
 );
-export const GreenStar = (props: {title?: string; className?: string}) => (
+export const GreenStar = (props: { title?: string; className?: string }) => (
   <Star {...props} fill="#00A95F" />
 );
-export const RedStar = (props: {title?: string; className?: string}) => (
-  <Star {...props} fill="#FF5655" />
+export const RedStar = (props: { title?: string; className?: string }) => (
+  <Star {...props} fill="#E40D18" />
 );
