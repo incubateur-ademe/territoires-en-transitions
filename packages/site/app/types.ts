@@ -5,6 +5,7 @@ import { StrapiItem } from '@/site/src/strapi/StrapiItem';
 export type ArticleData = {
   titre: string;
   couverture: StrapiItem;
+  categories: string[];
   dateCreation: Date;
   dateEdition: Date;
   contenu: SectionArticleData[];
@@ -19,11 +20,12 @@ export type CollectiviteData = {
 };
 
 export type SectionArticleData = {
-  type: 'paragraphe' | 'image' | 'gallerie' | 'video' | 'info';
+  type: 'paragraphe' | 'image' | 'gallerie' | 'video' | 'boutons' | 'info';
   data:
     | ParagrapheCustomArticleData
     | ImageArticleData
     | GallerieArticleData
+    | BoutonsArticleData
     | string;
 };
 
@@ -43,6 +45,7 @@ export type SectionCollectiviteData = {
     | ParagrapheCustomArticleData
     | ImageArticleData
     | GallerieArticleData
+    | BoutonsArticleData
     | string;
 };
 
@@ -69,6 +72,8 @@ export type GallerieArticleData = {
   legendeVisible?: boolean;
 };
 
+export type BoutonsArticleData = { id: number; label: string; url: string }[];
+
 export type CitationCollectiviteData = {
   texte: string;
   auteur: string;
@@ -80,6 +85,7 @@ export type ContenuArticleFetchedData = (
   | ImageFetchedData
   | GallerieFetchedData
   | VideoFetchedData
+  | BoutonsFetchedData
   | InfoFetchedData
 )[];
 
@@ -164,6 +170,11 @@ export type GallerieFetchedData = {
 export type VideoFetchedData = {
   __component: string;
   URL: string;
+};
+
+export type BoutonsFetchedData = {
+  __component: string;
+  boutons: { id: number; label: string; url: string }[];
 };
 
 export type InfoFetchedData = {

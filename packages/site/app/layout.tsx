@@ -1,7 +1,7 @@
 import AppHeader from '@/site/components/layout/AppHeader';
 import Footer from '@/site/components/layout/Footer';
-import { Trackers } from '@/site/providers/posthog';
 import { Metadata, Viewport } from 'next';
+import { Trackers } from '../providers/posthog';
 import './global.css';
 import { getMetaData } from './utils';
 
@@ -70,16 +70,16 @@ export async function generateMetadata(): Promise<Metadata> {
 
 export default function RootLayout({ children }: { children: JSX.Element }) {
   return (
-    <Trackers>
-      <html>
-        <body className="min-h-screen flex flex-col justify-between">
+    <html>
+      <body className="min-h-screen flex flex-col justify-between">
+        <Trackers>
           <div className="grow flex flex-col">
             <AppHeader />
             <div className="grow flex flex-col">{children}</div>
           </div>
           <Footer />
-        </body>
-      </html>
-    </Trackers>
+        </Trackers>
+      </body>
+    </html>
   );
 }
