@@ -1,7 +1,6 @@
 import classNames from 'classnames';
-import Link from 'next/link';
 
-import { Badge } from '@/ui';
+import { Badge, Card } from '@/ui';
 
 import { RecherchesPlan } from '@/api/collectiviteEngagees';
 import { generateTitle } from '@/app/app/pages/collectivite/PlansActions/FicheAction/data/utils';
@@ -23,8 +22,11 @@ export const PlanCarte = ({ plan, canUserClickCard }: Props) => {
   const tracker = useFonctionTracker();
 
   return (
-    <Link
+    <Card
       data-test="PlanCarte"
+      className={classNames('!border-primary-3 !py-5 !px-6 !gap-3', {
+        'hover:!bg-primary-0': canUserClickCard,
+      })}
       onClick={() =>
         tracker({ fonction: 'collectivite_carte', action: 'clic' })
       }
@@ -34,15 +36,8 @@ export const PlanCarte = ({ plan, canUserClickCard }: Props) => {
               collectiviteId: plan.collectiviteId,
               planActionUid: plan.planId.toString(),
             })
-          : '#'
+          : undefined
       }
-      className={classNames(
-        'flex flex-col gap-3 p-8 !bg-none bg-white rounded-xl border border-primary-3',
-        {
-          'cursor-default, pointer-events-none': !canUserClickCard,
-          'hover:!bg-primary-0': canUserClickCard,
-        }
-      )}
     >
       <div className="text-lg font-bold text-primary-9">
         {plan.collectiviteNom}
@@ -54,7 +49,9 @@ export const PlanCarte = ({ plan, canUserClickCard }: Props) => {
           state="standard"
         />
       )}
-      <div className="text-sm text-grey-6">{generateTitle(plan.planNom)}</div>
-    </Link>
+      <div className="text-xs text-grey-6 font-bold">
+        {generateTitle(plan.planNom)}
+      </div>
+    </Card>
   );
 };
