@@ -5,8 +5,8 @@ import {
 } from '@/app/app/pages/CollectivitesEngagees/data/filters';
 import { trierParOptions } from '@/app/app/pages/CollectivitesEngagees/data/filtreOptions';
 import {
-  recherchesCollectivitesUrl,
   recherchesPlansUrl,
+  recherchesReferentielsUrl,
   RecherchesViewParam,
 } from '@/app/app/paths';
 import { DeleteFiltersButton } from '@/app/ui/lists/filter-badges/delete-filters.button';
@@ -16,6 +16,7 @@ import { useRouter, useSearchParams } from 'next/navigation';
 
 const viewToText: Record<RecherchesViewParam, string> = {
   collectivites: 'collectivité',
+  referentiels: 'collectivité',
   plans: 'plan',
 };
 
@@ -41,7 +42,7 @@ const CollectivitesHeader = ({
 
   const getTrierParOptions = () => {
     const options = [{ value: 'nom', label: 'Ordre alphabétique' }];
-    return view === 'collectivites' ? trierParOptions : options;
+    return view === 'referentiels' ? trierParOptions : options;
   };
 
   return (
@@ -84,14 +85,14 @@ const CollectivitesHeader = ({
             activeButtonId={view as string}
             buttons={[
               {
-                id: 'collectivites',
+                id: 'referentiels',
                 'data-test': 'ToggleVueCollectivite',
-                children: 'Collectivités',
-                icon: 'layout-grid-line',
+                children: 'Référentiels',
+                icon: 'star-line',
                 onClick: () => {
                   setFilters({ ...filters, page: 1 });
                   router.push(
-                    `${recherchesCollectivitesUrl}?${search.toString()}`
+                    `${recherchesReferentielsUrl}?${search.toString()}`
                   );
                 },
               },
