@@ -1,6 +1,6 @@
 import { RecherchesReferentiel } from '@/api/collectiviteEngagees';
 import { referentielToName } from '@/app/app/labels';
-import { makeCollectiviteAccueilUrl } from '@/app/app/paths';
+import { makeReferentielRootUrl } from '@/app/app/paths';
 import { NIVEAUX } from '@/app/referentiels/tableau-de-bord/labellisation/LabellisationInfo';
 import {
   GreyStar,
@@ -44,7 +44,7 @@ export const ReferentielCarte = ({ collectivite, canUserClickCard }: Props) => {
       })}
       href={
         canUserClickCard
-          ? makeCollectiviteAccueilUrl({
+          ? makeReferentielRootUrl({
               collectiviteId: collectiviteId,
             })
           : undefined
