@@ -15,10 +15,11 @@ export const mesCollectivitesPath = `${profilPath}/mes-collectivites`;
 
 export const recherchesPath = '/recherches';
 export const recherchesParam = 'recherchesId';
-export type RecherchesViewParam = 'collectivites' | 'plans';
+export type RecherchesViewParam = 'collectivites' | 'referentiels' | 'plans';
 export const recherchesLandingPath = `${recherchesPath}/:${recherchesParam}`;
 export const recherchesCollectivitesUrl = `${recherchesPath}/collectivites`;
 export const finaliserMonInscriptionUrl = `/finaliser-mon-inscription`;
+export const recherchesReferentielsUrl = `${recherchesPath}/referentiels`;
 export const recherchesPlansUrl = `${recherchesPath}/plans`;
 export const ajouterCollectiviteUrl = `/ajouter-collectivite`;
 

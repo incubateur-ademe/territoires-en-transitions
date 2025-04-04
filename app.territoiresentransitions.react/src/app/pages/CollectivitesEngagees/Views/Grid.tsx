@@ -21,6 +21,7 @@ export const Grid = ({
 }: Props) => {
   const viewToText: Record<RecherchesViewParam, string> = {
     collectivites: 'aucune collectivité',
+    referentiels: 'aucun référentiel',
     plans: 'aucun plan',
   };
 

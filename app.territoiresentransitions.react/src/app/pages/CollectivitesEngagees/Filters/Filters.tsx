@@ -1,7 +1,7 @@
 import { Field, Input, SelectFilter } from '@/ui';
 
 import { CollectiviteEngagee } from '@/api';
-import { usePlanTypeListe } from '@/app/app/pages/collectivite/PlansActions/PlanAction/data/usePlanTypeListe';
+import { MultiSelectCheckboxes } from '@/app/app/pages/CollectivitesEngagees/Filters/MultiSelectCheckboxes';
 import { SetFilters } from '@/app/app/pages/CollectivitesEngagees/data/filters';
 import {
   niveauLabellisationCollectiviteOptions,
@@ -10,7 +10,7 @@ import {
   tauxRemplissageCollectiviteOptions,
   typeCollectiviteOptions,
 } from '@/app/app/pages/CollectivitesEngagees/data/filtreOptions';
-import { MultiSelectCheckboxes } from '@/app/app/pages/CollectivitesEngagees/Filters/MultiSelectCheckboxes';
+import { usePlanTypeListe } from '@/app/app/pages/collectivite/PlansActions/PlanAction/data/usePlanTypeListe';
 import { RecherchesViewParam } from '@/app/app/paths';
 import SpinnerLoader from '@/app/ui/shared/SpinnerLoader';
 import { useEffect, useState } from 'react';
@@ -34,6 +34,7 @@ export const Filters = ({ vue, filters, setFilters }: Props) => {
 
   // Afin de réinitialiser la recherche à la désactivation des filtres
   useEffect(() => {
+    console.log(filters.nom);
     setSearch(filters.nom);
   }, [filters.nom]);
 
@@ -179,7 +180,7 @@ export const Filters = ({ vue, filters, setFilters }: Props) => {
               small
             />
           </Field>
-          {vue === 'collectivites' && (
+          {vue === 'referentiels' && (
             <>
               <MultiSelectCheckboxes
                 htmlId="ref"

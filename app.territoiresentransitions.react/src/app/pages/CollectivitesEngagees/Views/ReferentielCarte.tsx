@@ -23,10 +23,7 @@ type Props = {
  * Affiche le nom et des éléments de scores.
  * Lien vers le tableau de bord de la collectivité.
  */
-export const CollectiviteCarte = ({
-  collectivite,
-  canUserClickCard,
-}: Props) => {
+export const ReferentielCarte = ({ collectivite, canUserClickCard }: Props) => {
   const {
     collectiviteId,
     collectiviteNom,
