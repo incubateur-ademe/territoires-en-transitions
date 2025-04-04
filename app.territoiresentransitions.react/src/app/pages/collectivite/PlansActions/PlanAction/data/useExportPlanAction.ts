@@ -1,5 +1,7 @@
 import { DBClient } from '@/api';
 import { useSupabase } from '@/api/utils/supabase/use-supabase';
+import { useCollectiviteId } from '@/app/collectivites/collectivite-context';
+import { useApiClient } from '@/app/core-logic/api/useApiClient';
 import { useFonctionTracker } from '@/app/core-logic/hooks/useFonctionTracker';
 import { saveBlob } from '@/app/referentiels/preuves/Bibliotheque/saveBlob';
 import { format as formatDate } from 'date-fns';
@@ -8,11 +10,34 @@ import { useMutation } from 'react-query';
 export const useExportPlanAction = (planId: number) => {
   const tracker = useFonctionTracker();
   const supabase = useSupabase();
+  const apiClient = useApiClient();
+  const collectiviteId = useCollectiviteId();
 
   return useMutation(
     ['export_plan_action', planId],
     async (format: 'xlsx' | 'docx') => {
       const titre = await fetchPlansActionsTitle(supabase, planId);
+      if (format === 'xlsx') {
+        const { blob, filename } = await apiClient.getAsBlob(
+          {
+            route: '/plan/export',
+            params: { collectiviteId, planId, format },
+          },
+          'POST'
+        );
+
+        if (filename && blob) {
+          saveBlob(blob, filename);
+          tracker({
+            page: 'plan',
+            action: 'telechargement',
+            fonction: `export_${format}`,
+          });
+        }
+        return;
+      }
+
+      // TODO: à supprimer après avoir migré l'export docx
       const { data } = await supabase.functions.invoke('export_plan_action', {
         body: { planId, format },
       });

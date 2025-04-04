@@ -1,4 +1,4 @@
-import { InferInsertModel } from 'drizzle-orm';
+import { InferInsertModel, InferSelectModel } from 'drizzle-orm';
 import {
   boolean,
   integer,
@@ -16,6 +16,7 @@ import { collectiviteTable } from '../../../../collectivites/shared/models/colle
 import { tempsDeMiseEnOeuvreTable } from '../../../../shared/models/temps-de-mise-en-oeuvre.table';
 import {
   createdAt,
+  createdBy,
   modifiedAt,
   modifiedBy,
   TIMESTAMP_OPTIONS,
@@ -176,6 +177,7 @@ export const ficheActionTable = pgTable('fiche_action', {
     .notNull()
     .references(() => collectiviteTable.id),
   createdAt,
+  createdBy,
   modifiedAt,
   modifiedBy,
   restreint: boolean('restreint').default(false),
@@ -211,5 +213,13 @@ export const ficheSchemaCreate = createInsertSchema(ficheActionTable, {
 export type FicheCreate = InferInsertModel<typeof ficheActionTable>;
 
 export const ficheSchemaUpdate = ficheSchemaCreate
-  .omit({ id: true, createdAt: true, modifiedAt: true, modifiedBy: true })
+  .omit({
+    id: true,
+    createdAt: true,
+    createdBy: true,
+    modifiedAt: true,
+    modifiedBy: true,
+  })
   .partial();
+
+export type FicheAction = InferSelectModel<typeof ficheActionTable>;
