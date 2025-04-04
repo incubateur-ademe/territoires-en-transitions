@@ -1,34 +1,31 @@
 import { useState } from 'react';
 
 import { makeReferentielActionUrl } from '@/app/app/paths';
-import { getReferentielIdFromActionId } from '@/domain/referentiels';
+import { useCollectiviteId } from '@/app/collectivites/collectivite-context';
+import { useCurrentCollectivite } from '@/app/core-logic/hooks/useCurrentCollectivite';
+import ActionEditModal from '@/app/referentiels/actions/action-edit.modal';
+import { Action } from '@/app/referentiels/actions/use-list-actions';
+import ListWithTooltip from '@/app/ui/lists/ListWithTooltip';
+import {
+  ActionType,
+  getReferentielIdFromActionId,
+} from '@/domain/referentiels';
 import { Button, Card } from '@/ui';
-import { ActionDefinitionSummary } from '../ActionDefinitionSummaryReadEndpoint';
 import ScoreProgressBar from '../scores/score.progress-bar';
 import { ScoreRatioBadge } from '../scores/score.ratio-badge';
-import { useCollectiviteId } from '@/app/collectivites/collectivite-context';
-import ListWithTooltip from '@/app/ui/lists/ListWithTooltip';
-import { useActionPilotesList } from '@/app/referentiels/actions/use-action-pilotes';
-import { useActionServicesPilotesList } from '@/app/referentiels/actions/use-action-services-pilotes';
-import ActionEditModal from '@/app/referentiels/actions/action-edit.modal';
-import { useCurrentCollectivite } from '@/app/core-logic/hooks/useCurrentCollectivite';
 
 /** Carte générique d'une mesure du référentiel */
-type ReferentielCardProps = {
-  action: ActionDefinitionSummary;
-  isDescriptionOn: boolean;
+type ActionCardProps = {
+  action: Action;
+  showDescription?: boolean;
 };
 
-export const ActionCard = ({
-  action,
-  isDescriptionOn,
-}: ReferentielCardProps) => {
-  const { collectiviteId, isReadOnly } = useCurrentCollectivite()!;
+export const ActionCard = ({ action, showDescription }: ActionCardProps) => {
+  const { actionId: id, identifiant, nom: title, description } = action;
 
-  const referentiel = getReferentielIdFromActionId(action.id);
-
-  const { data: pilotes } = useActionPilotesList(action.id);
-  const { data: services } = useActionServicesPilotesList(action.id);
+  const { isReadOnly } = useCurrentCollectivite()!;
+  const collectiviteId = useCollectiviteId();
+  const referentiel = getReferentielIdFromActionId(id);
 
   const [isEditOpen, setIsEditOpen] = useState(false);
 
@@ -38,8 +35,8 @@ export const ActionCard = ({
       <div className="invisible group-hover:visible absolute top-4 right-4 flex gap-2">
         {isEditOpen && (
           <ActionEditModal
-            actionId={action.id}
-            actionTitle={`${action.identifiant} ${action.nom}`}
+            actionId={id}
+            actionTitle={`${identifiant} ${title}`}
             openState={{
               isOpen: isEditOpen,
               setIsOpen: setIsEditOpen,
@@ -60,28 +57,21 @@ export const ActionCard = ({
         href={makeReferentielActionUrl({
           collectiviteId,
           referentielId: referentiel,
-          actionId: action.id,
+          actionId: id,
         })}
         className="font-normal h-full"
       >
-        {/** Compétence (For future use) */}
-        {/**
-          <div className="flex items-center gap-3">
-            <Badge state="standard" title="Compétence 1" size="sm" />
-          </div>
-         */}
-
         {/** Title + description */}
         <div className="flex-grow">
           <span className="text-lg font-bold text-primary-9">
-            {action.identifiant} {action.nom}
+            {identifiant} {title}
           </span>
 
-          {isDescriptionOn && action.description && (
+          {showDescription && description && (
             <p
               className="htmlContent text-sm text-grey-9 font-light my-6"
               dangerouslySetInnerHTML={{
-                __html: action.description,
+                __html: description,
               }}
             />
           )}
@@ -89,34 +79,33 @@ export const ActionCard = ({
 
         {/** Score */}
         <div className="mt-auto">
-          <ScoreRatioBadge actionId={action.id} className={'mb-3'} />
-          <ScoreProgressBar actionDefinition={action} className="w-full" />
+          <ScoreRatioBadge actionId={id} className={'mb-3'} />
+          <ScoreProgressBar
+            id={id}
+            identifiant={identifiant}
+            type={'action' as ActionType}
+            className="w-full"
+          />
         </div>
 
         {/** Pilotes et services */}
-        {((pilotes && pilotes.length > 0) ||
-          (services && services.length > 0)) && (
+        {(action.pilotes.length > 0 || action.services.length > 0) && (
           <div className="flex flex-wrap items-center gap-x-3 gap-y-1 text-sm text-primary-10">
-            {pilotes && pilotes.length > 0 && (
+            {action.pilotes.length > 0 && (
               <ListWithTooltip
                 icon="user-line"
                 title="Pilotes"
-                list={pilotes.map((p) =>
-                  p.tagId ? p.nom ?? '' : `${p.prenom} ${p.nom}`
-                )}
+                list={action.pilotes}
               />
             )}
-            {pilotes &&
-              pilotes.length > 0 &&
-              services &&
-              services.length > 0 && (
-                <div className="w-[0.5px] h-4 bg-grey-5" />
-              )}
-            {services && services.length > 0 && (
+            {action.pilotes.length > 0 && action.services.length > 0 && (
+              <div className="w-[0.5px] h-4 bg-grey-5" />
+            )}
+            {action.services.length > 0 && (
               <ListWithTooltip
                 icon="leaf-line"
                 title="Direction ou service pilote"
-                list={services.map((s) => s.nom ?? '')}
+                list={action.services}
               />
             )}
           </div>

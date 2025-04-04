@@ -19,28 +19,26 @@ const Score = ({ actionDefinition, action, DEPRECATED_actionScore }: Props) => {
   return (
     <div className="flex gap-4 items-center text-grey-7">
       <ScoreProgressBar
-        actionDefinition={actionDefinition}
+        id={actionDefinition.id}
+        identifiant={actionDefinition.identifiant}
+        type={actionDefinition.type}
         className="border-r border-r-[#ddd] pr-6"
         displayDoneValue
       />
       {FLAG_isSnapshotEnabled ? (
-        <>
-          <ScoreShow
-            score={action?.score.pointFait ?? null}
-            scoreMax={action?.score.pointPotentiel ?? null}
-            legend="Score réalisé"
-            size="sm"
-          />
-        </>
+        <ScoreShow
+          score={action?.score.pointFait ?? null}
+          scoreMax={action?.score.pointPotentiel ?? null}
+          legend="Score réalisé"
+          size="sm"
+        />
       ) : (
-        <>
-          <ScoreShow
-            score={DEPRECATED_actionScore?.points_realises ?? null}
-            scoreMax={DEPRECATED_actionScore?.points_max_personnalises ?? null}
-            legend="Score réalisé"
-            size="sm"
-          />
-        </>
+        <ScoreShow
+          score={DEPRECATED_actionScore?.points_realises ?? null}
+          scoreMax={DEPRECATED_actionScore?.points_max_personnalises ?? null}
+          legend="Score réalisé"
+          size="sm"
+        />
       )}
       {actionDefinition.have_questions && (
         <div className="border-l border-l-[#ddd] pl-3">

@@ -1,20 +1,18 @@
+import { sql } from 'drizzle-orm';
 import {
   check,
   integer,
-  uuid,
   pgTable,
-  varchar,
   uniqueIndex,
+  uuid,
+  varchar,
 } from 'drizzle-orm/pg-core';
+import { dcpTable } from '../../auth/index-domain';
 import {
   collectiviteTable,
   personneTagTable,
 } from '../../collectivites/index-domain';
-import { sql } from 'drizzle-orm';
 import { actionRelationTable } from './action-relation.table';
-import { dcpTable } from '../../auth/index-domain';
-import { createSelectSchema } from 'drizzle-zod';
-import z from 'zod';
 
 export const actionPiloteTable = pgTable(
   'action_pilote',
@@ -49,6 +47,3 @@ export const actionPiloteTable = pgTable(
     ),
   ]
 );
-
-export const actionPiloteSchema = createSelectSchema(actionPiloteTable);
-export type ActionPiloteType = z.infer<typeof actionPiloteSchema>;
