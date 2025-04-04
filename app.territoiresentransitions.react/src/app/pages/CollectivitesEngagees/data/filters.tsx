@@ -32,7 +32,7 @@ export const initialFilters: CollectiviteEngagee.Filters = {
   niveauDeLabellisation: [],
   realiseCourant: [],
   tauxDeRemplissage: [],
-  trierPar: ['score'],
+  trierPar: ['nom'],
 };
 // mapping nom des filtres => params dans l'url
 export const nameToShortNames = {

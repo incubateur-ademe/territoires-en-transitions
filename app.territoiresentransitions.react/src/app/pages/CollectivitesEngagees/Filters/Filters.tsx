@@ -34,7 +34,6 @@ export const Filters = ({ vue, filters, setFilters }: Props) => {
 
   // Afin de réinitialiser la recherche à la désactivation des filtres
   useEffect(() => {
-    console.log(filters.nom);
     setSearch(filters.nom);
   }, [filters.nom]);
 

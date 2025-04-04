@@ -53,7 +53,7 @@ export const ReferentielCarte = ({ collectivite, canUserClickCard }: Props) => {
       <div className="mb-0 text-lg font-bold text-primary-9">
         {collectiviteNom}
       </div>
-      <div className="flex justify-between gap-4 sm:gap-8 xl:gap-8">
+      <div className="flex justify-between gap-4 sm:gap-6 xl:gap-8">
         <ReferentielCol
           referentiel={'cae'}
           etoiles={etoilesCae}
@@ -100,25 +100,25 @@ export const ReferentielCol = ({
       {concerne ? (
         <>
           <CinqEtoiles etoiles={etoiles} />
-          <div className="flex items-center text-xs text-grey-9 font-normal">
+          <span className="text-xs text-grey-9 font-normal">
             <Icon icon="line-chart-line" size="sm" className="mr-1.5" />
-            <span className="mr-1 font-bold">
+            <span className="font-bold">
               {toPercentString(scoreRealise)}
-            </span>
+            </span>{' '}
             réalisé courant
-          </div>
-          <div className="flex items-center text-xs text-grey-9 font-normal">
+          </span>
+          <span className="text-xs text-grey-9 font-normal">
             <Icon icon="calendar-line" size="sm" className="mr-1.5" />
-            <span className="mr-1 font-bold">
+            <span className="font-bold">
               {toPercentString(scoreProgramme)}
-            </span>
+            </span>{' '}
             programmé
-          </div>
+          </span>
         </>
       ) : (
-        <div className="my-auto mr-auto font-light italic text-xs text-grey-6">
+        <span className="font-light italic text-xs text-grey-6">
           Non concerné
-        </div>
+        </span>
       )}
     </div>
   );
