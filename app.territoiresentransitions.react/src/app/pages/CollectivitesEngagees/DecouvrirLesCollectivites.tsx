@@ -6,9 +6,14 @@ import { useUser } from '@/api/users/user-provider';
 import { useSearchParams } from '@/app/core-logic/hooks/query';
 
 import { CollectiviteEngagee, getRejoindreCollectivitePath } from '@/api';
-import { recherchesPlansUrl, recherchesReferentielsUrl } from '@/app/app/paths';
+import {
+  recherchesCollectivitesUrl,
+  recherchesPlansUrl,
+  recherchesReferentielsUrl,
+} from '@/app/app/paths';
 import { useSansCollectivite } from '@/app/core-logic/hooks/useSansCollectivite';
 import { Alert, Button } from '@/ui';
+import CollectivitesView from './Views/CollectivitesView';
 import { initialFilters, nameToShortNames } from './data/filters';
 
 const DecouvrirLesCollectivites = () => {
@@ -19,7 +24,7 @@ const DecouvrirLesCollectivites = () => {
 
   /** Filters */
   const [filters, setFilters] = useSearchParams<CollectiviteEngagee.Filters>(
-    recherchesReferentielsUrl,
+    recherchesCollectivitesUrl,
     initialFilters,
     nameToShortNames
   );
@@ -44,6 +49,15 @@ const DecouvrirLesCollectivites = () => {
         />
       )}
 
+      <Route path={recherchesCollectivitesUrl}>
+        <CollectivitesView
+          initialFilters={initialFilters}
+          filters={filters}
+          setFilters={setFilters}
+          isConnected={isConnected}
+          canUserClickCard={!sansCollectivite && isConnected}
+        />
+      </Route>
       <Route path={recherchesReferentielsUrl}>
         <ReferentielsView
           initialFilters={initialFilters}

@@ -5,6 +5,7 @@ import {
 } from '@/app/app/pages/CollectivitesEngagees/data/filters';
 import { trierParOptions } from '@/app/app/pages/CollectivitesEngagees/data/filtreOptions';
 import {
+  recherchesCollectivitesUrl,
   recherchesPlansUrl,
   recherchesReferentielsUrl,
   RecherchesViewParam,
@@ -49,7 +50,7 @@ const CollectivitesHeader = ({
     <div className="flex flex-col">
       <h1 className="mb-4">Collectivités</h1>
       <div className="flex max-lg:flex-col gap-3 items-center justify-between py-3 border-y border-primary-3">
-        <div className="flex max-md:flex-col items-center gap-3 max-md:w-full">
+        <div className="flex flex-wrap max-md:flex-col items-center gap-3 max-md:w-full">
           <div className="w-full md:w-60">
             {/* Ordre d'affichage */}
             <Select
@@ -63,7 +64,7 @@ const CollectivitesHeader = ({
               }}
               values={filters.trierPar?.[0]}
               customItem={(v) => <span className="text-grey-9">{v.label}</span>}
-              disabled={view === 'plans'}
+              disabled={view === 'plans' || view === 'collectivites'}
               small
             />
           </div>
@@ -78,12 +79,23 @@ const CollectivitesHeader = ({
           </span>
         </div>
 
-        <div className="max-lg:order-first">
+        <div className="max-lg:order-first shrink-0">
           {/* Sélection de la vue */}
           <ButtonGroup
             size="sm"
             activeButtonId={view as string}
             buttons={[
+              {
+                id: 'collectivites',
+                children: 'Collectivités',
+                icon: 'layout-grid-line',
+                onClick: () => {
+                  setFilters({ ...filters, page: 1 });
+                  router.push(
+                    `${recherchesCollectivitesUrl}?${search.toString()}`
+                  );
+                },
+              },
               {
                 id: 'referentiels',
                 'data-test': 'ToggleVueCollectivite',
