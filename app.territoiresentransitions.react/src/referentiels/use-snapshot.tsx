@@ -151,7 +151,7 @@ export function useSnapshotFlagEnabled() {
 
 // TODO move this in an helper function in shared domain
 // (also check it doesn't exist already)
-function findByActionId(
+export function findByActionId(
   action: ActionDetailed | undefined,
   actionId: string
 ): ActionDetailed | null {
