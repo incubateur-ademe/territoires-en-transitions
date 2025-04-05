@@ -6,10 +6,11 @@ import { AnnexeInfo } from '../../FicheAction/data/useAnnexesFicheActionInfos';
 import { RouterOutput } from '@/api/utils/trpc/client';
 import Etapes from '@/app/app/pages/collectivite/PlansActions/ExportPdf/FicheActionPdf/Etapes';
 import { ActionWithStatut } from '@/app/referentiels/actions/use-list-actions';
+import { Score } from '@/domain/referentiels';
 import { TIndicateurDefinition } from '../../../Indicateurs/types';
 import { TSectionsValues, sectionsInitValue } from '../utils';
 import Acteurs from './Acteurs';
-import ActionsLiees from './ActionsLiees';
+import ActionsLiees from './actions-liees/ActionsLiees';
 import Budget from './Budget';
 import Chemins from './Chemins';
 import CreationFiche from './CreationFiche';
@@ -32,7 +33,7 @@ export type FicheActionPdfExtendedProps = FicheActionPdfProps & {
   indicateursListe: TIndicateurDefinition[] | undefined | null;
   etapes?: RouterOutput['plans']['fiches']['etapes']['list'];
   fichesLiees: FicheResume[];
-  actionsLiees: ActionWithStatut[];
+  actionsLiees: (ActionWithStatut & { score: Score })[];
   annexes: AnnexeInfo[] | undefined;
   notesSuivi: FicheActionNote[] | undefined;
 };
@@ -91,7 +92,10 @@ const FicheActionPdf = ({
 
       {/* Notes de suivi */}
       {sections.notes_suivi.isChecked && (
-        <NotesDeSuivi notesSuivi={notesSuivi} years={sections.notes_suivi.values} />
+        <NotesDeSuivi
+          notesSuivi={notesSuivi}
+          years={sections.notes_suivi.values}
+        />
       )}
 
       {/* Budget */}
