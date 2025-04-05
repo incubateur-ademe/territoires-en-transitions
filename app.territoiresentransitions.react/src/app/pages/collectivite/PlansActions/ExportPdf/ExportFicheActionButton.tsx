@@ -74,7 +74,9 @@ export const FicheActionPdfContent = ({
           indicateursListe,
           etapes,
           fichesLiees,
-          actionsLiees,
+          actionsLiees: actionsLiees.filter(
+            (action) => action.score !== undefined
+          ),
           annexes,
           notesSuivi,
         })
