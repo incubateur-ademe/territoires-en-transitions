@@ -9,6 +9,7 @@ import { TIndicateurDefinition } from '../../../Indicateurs/types';
 import { TSectionsValues, sectionsInitValue } from '../utils';
 import Acteurs from './Acteurs';
 import ActionsLiees from './actions-liees/ActionsLiees';
+import { ActionWithStatutAndScore } from './actions-liees/types';
 import Budget from './Budget';
 import Chemins from './Chemins';
 import CreationFiche from './CreationFiche';
@@ -31,8 +32,7 @@ export type FicheActionPdfExtendedProps = FicheActionPdfProps & {
   indicateursListe: TIndicateurDefinition[] | undefined | null;
   etapes?: RouterOutput['plans']['fiches']['etapes']['list'];
   fichesLiees: FicheResume[];
-  // actionsLiees: (ActionWithStatut & { score: Score })[];
-  actionsLiees: any;
+  actionsLiees: ActionWithStatutAndScore[];
   annexes: AnnexeInfo[] | undefined;
   notesSuivi: FicheActionNote[] | undefined;
 };

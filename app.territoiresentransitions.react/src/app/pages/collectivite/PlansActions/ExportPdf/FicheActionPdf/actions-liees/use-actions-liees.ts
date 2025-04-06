@@ -35,7 +35,10 @@ export const useActionsLiees = (actionIds: string[]) => {
       )?.score,
     })) ?? [];
 
-  return { actions: actionsWithScores, isLoading: false };
+  const actionsWithValidScores = actionsWithScores.filter(
+    (action): action is ActionWithStatutAndScore => action.score !== undefined
+  );
+
 };
 
 const useSnapshotConditional = (actionId: string, condition: boolean) => {

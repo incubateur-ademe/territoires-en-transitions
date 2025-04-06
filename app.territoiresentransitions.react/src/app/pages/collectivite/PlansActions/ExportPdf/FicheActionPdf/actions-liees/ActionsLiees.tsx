@@ -10,11 +10,10 @@ import {
   Stack,
   Title,
 } from '@/app/ui/export-pdf/components';
-import { Score } from '@/domain/referentiels';
-import classNames from 'classnames';
+import { ActionWithStatutAndScore } from './types';
 
 type ActionLieeCardProps = {
-  action: ActionWithStatut & { score: Score };
+  action: ActionWithStatutAndScore;
 };
 
 const ActionLieeCard = ({ action }: ActionLieeCardProps) => {
@@ -144,7 +143,7 @@ const ActionLieeCard = ({ action }: ActionLieeCardProps) => {
 };
 
 type ActionsLieesProps = {
-  actionsLiees: (ActionWithStatut & { score: Score })[];
+  actionsLiees: ActionWithStatutAndScore[];
 };
 
 const ActionsLiees = ({ actionsLiees }: ActionsLieesProps) => {
