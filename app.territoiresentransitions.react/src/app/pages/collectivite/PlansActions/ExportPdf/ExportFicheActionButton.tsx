@@ -38,7 +38,7 @@ export const FicheActionPdfContent = ({
     useFichesActionLiees(fiche.id, options.fiches.isChecked);
 
   const { actions: actionsLiees, isLoading: isLoadingActionsLiees } =
-    useActionsLiees(fiche?.actions?.map((action) => action.id) ?? []);
+    useActionsLiees(fiche?.actions?.map((action) => action.id));
 
   const { data: annexes, isLoading: isLoadingAnnexes } =
     useAnnexesFicheActionInfos(fiche.id, options.notes_docs.isChecked);

@@ -1,7 +1,17 @@
+import { ActionWithStatutAndScore } from '@/app/app/pages/collectivite/PlansActions/ExportPdf/FicheActionPdf/actions-liees/types';
 import { useListActionsWithStatuts } from '@/app/referentiels/actions/use-list-actions';
 import { findByActionId, useSnapshot } from '@/app/referentiels/use-snapshot';
 
-export const useActionsLiees = (actionIds: string[]) => {
+export const useActionsLiees = (
+  actionIds: string[] | undefined
+): {
+  actions: ActionWithStatutAndScore[];
+  isLoading: boolean;
+} => {
+  if (!actionIds) {
+    return { actions: [], isLoading: false };
+  }
+
   const actionsByReferentiel = {
     cae: actionIds.filter((id) => id.startsWith('cae_')),
     eci: actionIds.filter((id) => id.startsWith('eci_')),
@@ -39,8 +49,8 @@ export const useActionsLiees = (actionIds: string[]) => {
     (action): action is ActionWithStatutAndScore => action.score !== undefined
   );
 
+  return { actions: actionsWithValidScores, isLoading: false };
 };
-
 const useSnapshotConditional = (actionId: string, condition: boolean) => {
   const snapshot = useSnapshot({ actionId });
 
