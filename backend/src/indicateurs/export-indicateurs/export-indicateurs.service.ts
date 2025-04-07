@@ -11,7 +11,7 @@ import {
   adjustColumnWidth,
   BOLD,
   normalizeWorksheetName,
-} from '../../utils/excel/excel.utils';
+} from '../../utils/excel/export-excel.utils';
 import { ListDefinitionsService } from '../list-definitions/list-definitions.service';
 import { ExportIndicateursRequestType } from '../shared/models/export-indicateurs.request';
 import {

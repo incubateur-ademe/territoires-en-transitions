@@ -1,6 +1,7 @@
 /**
  * Fonctions utilitaires pour les exports
  */
+import { format } from 'date-fns';
 import {
   Alignment,
   Border,
@@ -33,8 +34,9 @@ export const BOLD = { bold: true };
 export const ITALIC = { italic: true };
 
 /** Fixe le formatage d'une cellule contenant un montant en euros */
+export const NUM_FORMAT_EURO = '#,##0.00 [$€-1]';
 export const setEuroValue = (cell: Cell, value: number | undefined | null) => {
-  cell.numFmt = '#,##0.00 [$€-1]';
+  cell.numFmt = NUM_FORMAT_EURO;
   cell.value = value || null;
 };
 
@@ -114,6 +116,7 @@ export const capitalize = (s: string | undefined | null) => {
 
 /** Couleurs de remplissage */
 export const FILL = {
+  primary: makeSolidFill('6A6AF4'),
   grey: makeSolidFill('d8d8d8'),
   lightgrey: makeSolidFill('f2f2f2'),
   yellow: makeSolidFill('fffed6'),
@@ -139,4 +142,27 @@ export const HEADING_SCORES = {
   ...HEADING2,
   border: { top: BORDER_MEDIUM, bottom: BORDER_MEDIUM },
   fill: FILL.grey,
+};
+
+// ajuste la largeur des colonnes à leur contenu
+// Ref: https://stackoverflow.com/a/69287841
+export const adjustColumnWidth = (worksheet: Worksheet) => {
+  worksheet.columns.forEach((column) => {
+    const lengths = column.values?.map((v) => v?.toString().length);
+    if (lengths) {
+      const maxLength = Math.max(
+        ...lengths.filter((v) => typeof v === 'number')
+      );
+      column.width = maxLength + 2;
+    }
+  });
+};
+
+// normalise le nom des feuilles qui ne doivent pas contenir certains caractères
+const RE_WS_FORBIDDEN_CHARS = /[*?:\\/[\]]/g;
+export const normalizeWorksheetName = (name: string) =>
+  name.replaceAll(RE_WS_FORBIDDEN_CHARS, '-');
+
+export const formatDate = (dateStr: Date | string | null | undefined) => {
+  return dateStr ? format(new Date(dateStr), 'dd/MM/yyyy') : '';
 };
