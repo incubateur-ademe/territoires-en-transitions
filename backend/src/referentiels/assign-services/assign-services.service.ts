@@ -60,21 +60,30 @@ export class AssignServicesService {
       throw new Error('La liste des services ne peut pas être vide');
     }
 
-    await this.deleteServices(collectiviteId, actionId, tokenInfo);
-
     this.logger.log(
       `Mise à jour des services pour la collectivité ${collectiviteId} et la mesure ${actionId}`
     );
 
-    await this.databaseService.db.insert(actionServiceTable).values(
-      services.map((service) => ({
-        collectiviteId,
-        actionId,
-        serviceTagId: service.serviceTagId,
-      }))
-    );
+    return await this.databaseService.db.transaction(async (tx) => {
+      await tx
+        .delete(actionServiceTable)
+        .where(
+          and(
+            eq(actionServiceTable.collectiviteId, collectiviteId),
+            eq(actionServiceTable.actionId, actionId)
+          )
+        );
 
-    return await this.listServices(collectiviteId, actionId);
+      await tx.insert(actionServiceTable).values(
+        services.map((service) => ({
+          collectiviteId,
+          actionId,
+          serviceTagId: service.serviceTagId,
+        }))
+      );
+
+      return await this.listServices(collectiviteId, actionId);
+    });
   }
 
   async deleteServices(
