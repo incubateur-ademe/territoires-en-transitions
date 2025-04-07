@@ -14,7 +14,7 @@ export const buildReferentiel = (actions: Action[]): TAxe[] => {
       }
     }
     if (a.actionType === 'action') {
-      // Ajoût à un sous-axe
+      // Ajout à un sous-axe
       const parentSousAxe = parentAxe?.children?.find((sousAxe) =>
         a.actionId.startsWith(sousAxe.actionId)
       );
