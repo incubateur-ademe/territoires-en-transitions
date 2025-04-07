@@ -1,5 +1,5 @@
 import ActionLinkedCard from '@/app/referentiels/actions/action.linked-card';
-import { useListActionsWithStatuts } from '@/app/referentiels/actions/use-list-actions';
+import { useListActions } from '@/app/referentiels/actions/use-list-actions';
 import SpinnerLoader from '@/app/ui/shared/SpinnerLoader';
 import classNames from 'classnames';
 import { useEffect } from 'react';
@@ -19,7 +19,7 @@ const ActionsLieesListe = ({
   onLoad,
   onUnlink,
 }: ActionsLieesListeProps) => {
-  const { data: actionsLiees, isLoading } = useListActionsWithStatuts({
+  const { data: actionsLiees, isLoading } = useListActions({
     actionIds,
   });
 
