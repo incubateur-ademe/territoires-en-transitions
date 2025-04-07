@@ -21,13 +21,20 @@ export const useSearchParams = <T extends TParams>(
   viewName: string,
   initialParams: T,
   nameToShortName: TNamesMap
-): [params: T, setParams: (newParams: T) => void, paramsCount: number] => {
+): [
+  params: T,
+  setParams: (newParams: T) => void,
+  paramsCount: number,
+  setView: (newView: string) => void
+] => {
   const router = useRouter();
   const pathname = usePathname();
   const shortNameToName = useMemo(
     () => invertKeyValues(nameToShortName),
     [nameToShortName]
   );
+
+  const [view, setView] = useState(viewName);
 
   // extrait les paramètres de l'url si ils sont disponibles (ou utilise les
   // valeurs par défaut pour l'initialisation)
@@ -45,7 +52,7 @@ export const useSearchParams = <T extends TParams>(
   // synchronise l'url à partir de l'état interne
   useEffect(() => {
     const search = objectToSearchParams(params, nameToShortName);
-    if (pathname.endsWith(viewName) && searchParams.toString() !== search) {
+    if (pathname.endsWith(view) && searchParams.toString() !== search) {
       router.replace(`${pathname}?${search.toString()}`);
     }
   }, [params, pathname]);
@@ -55,7 +62,7 @@ export const useSearchParams = <T extends TParams>(
     setParams(currentParamsFromURL);
   }, [pathname]);
 
-  return [params, setParams, paramsCount];
+  return [params, setParams, paramsCount, setView];
 };
 
 // converti les paramètres de recherche d'une URL en un objet
