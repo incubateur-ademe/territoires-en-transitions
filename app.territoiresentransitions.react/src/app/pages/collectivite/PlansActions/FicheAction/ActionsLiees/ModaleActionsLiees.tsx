@@ -32,10 +32,10 @@ const ModaleActionsLiees = ({
   return (
     <Modal
       openState={{ isOpen, setIsOpen }}
-      title="Lier une action des référentiels"
+      title="Lier une mesure des référentiels"
       size="lg"
       render={({ descriptionId }) => (
-        <Field fieldId={descriptionId} title="Actions des référentiels liées">
+        <Field fieldId={descriptionId} title="Mesures des référentiels liées">
           <ActionsReferentielsDropdown
             values={editedFiche.actions?.map((action) => action.id)}
             onChange={({ actions }) =>
