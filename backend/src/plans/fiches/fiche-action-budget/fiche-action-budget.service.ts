@@ -6,7 +6,7 @@ import {
   ficheActionBudgetTable,
 } from '@/backend/plans/fiches/fiche-action-budget/fiche-action-budget.table';
 import { AuthUser } from '@/backend/auth/models/auth.models';
-import FicheService from '@/backend/plans/fiches/fiche.service';
+import FicheActionPermissionsService from '@/backend/plans/fiches/fiche-action-permissions.service';
 import { ficheActionTable } from '@/backend/plans/fiches/shared/models/fiche-action.table';
 import { and, eq, isNotNull, isNull } from 'drizzle-orm';
 import { getBudgetsRequest } from '@/backend/plans/fiches/fiche-action-budget/get-budgets.request';
@@ -16,7 +16,7 @@ import { Injectable } from '@nestjs/common';
 export class FicheActionBudgetService {
   constructor(
     private readonly databaseService: DatabaseService,
-    private readonly ficheService: FicheService
+    private readonly ficheService: FicheActionPermissionsService
   ) {}
 
   async upsert(

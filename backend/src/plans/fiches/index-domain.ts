@@ -9,7 +9,7 @@ export * from './shared/models/fiche-action-financeur-tag.table';
 export * from './shared/models/fiche-action-indicateur.table';
 export * from './shared/models/fiche-action-libre-tag.table';
 export * from './shared/models/fiche-action-lien.table';
-export * from './shared/models/fiche-action-note.table';
+export * from './fiche-action-note/fiche-action-note.table';
 export * from './shared/models/fiche-action-partenaire-tag.table';
 export * from './shared/models/fiche-action-service-tag.table';
 export * from './shared/models/fiche-action-sous-thematique.table';

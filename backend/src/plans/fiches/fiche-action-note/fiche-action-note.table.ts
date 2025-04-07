@@ -8,7 +8,7 @@ import { InferSelectModel } from 'drizzle-orm';
 import { date, integer, pgTable, serial, text } from 'drizzle-orm/pg-core';
 import { createInsertSchema, createSelectSchema } from 'drizzle-zod';
 import { z } from 'zod';
-import { ficheActionTable } from './fiche-action.table';
+import { ficheActionTable } from '../shared/models/fiche-action.table';
 
 export const ficheActionNoteTable = pgTable('fiche_action_note', {
   id: serial('id').primaryKey(),

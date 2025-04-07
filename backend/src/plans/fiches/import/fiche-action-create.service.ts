@@ -1,7 +1,3 @@
-import { PermissionOperation } from '@/backend/auth/authorizations/permission-operation.enum';
-import { PermissionService } from '@/backend/auth/authorizations/permission.service';
-import { ResourceType } from '@/backend/auth/authorizations/resource-type.enum';
-import { dcpTable } from '@/backend/auth/index-domain';
 import { ficheActionFinanceurTagTable } from '@/backend/plans/fiches/shared/models/fiche-action-financeur-tag.table';
 import { ficheActionPiloteTable } from '@/backend/plans/fiches/shared/models/fiche-action-pilote.table';
 import { ficheActionReferentTable } from '@/backend/plans/fiches/shared/models/fiche-action-referent.table';
@@ -9,76 +5,25 @@ import { ficheActionServiceTagTable } from '@/backend/plans/fiches/shared/models
 import { ficheActionStructureTagTable } from '@/backend/plans/fiches/shared/models/fiche-action-structure-tag.table';
 import { Transaction } from '@/backend/utils/database/transaction.utils';
 import { Injectable, Logger } from '@nestjs/common';
-import { aliasedTable, desc, eq } from 'drizzle-orm';
-import { AuthenticatedUser, AuthUser } from '../../auth/models/auth.models';
-import { DatabaseService } from '../../utils/database/database.service';
-import { ficheActionActionImpactTable } from './shared/models/fiche-action-action-impact.table';
-import { ficheActionActionTable } from './shared/models/fiche-action-action.table';
-import { ficheActionEffetAttenduTable } from './shared/models/fiche-action-effet-attendu.table';
-import { ficheActionIndicateurTable } from './shared/models/fiche-action-indicateur.table';
-import { ficheActionNoteTable } from './shared/models/fiche-action-note.table';
-import { ficheActionPartenaireTagTable } from './shared/models/fiche-action-partenaire-tag.table';
-import { ficheActionSousThematiqueTable } from './shared/models/fiche-action-sous-thematique.table';
-import { ficheActionThematiqueTable } from './shared/models/fiche-action-thematique.table';
+import { ficheActionBudgetTable } from '@/backend/plans/fiches/fiche-action-budget/fiche-action-budget.table';
+import { DatabaseService } from '@/backend/utils';
 import {
-  FicheAction,
   ficheActionTable,
   FicheCreate,
-} from './shared/models/fiche-action.table';
-import { ficheActionBudgetTable } from '@/backend/plans/fiches/fiche-action-budget/fiche-action-budget.table';
+} from '@/backend/plans/fiches/shared/models/fiche-action.table';
+import { ficheActionThematiqueTable } from '@/backend/plans/fiches/shared/models/fiche-action-thematique.table';
+import { ficheActionSousThematiqueTable } from '@/backend/plans/fiches/shared/models/fiche-action-sous-thematique.table';
+import { ficheActionIndicateurTable } from '@/backend/plans/fiches/shared/models/fiche-action-indicateur.table';
+import { ficheActionEffetAttenduTable } from '@/backend/plans/fiches/shared/models/fiche-action-effet-attendu.table';
+import { ficheActionPartenaireTagTable } from '@/backend/plans/fiches/shared/models/fiche-action-partenaire-tag.table';
+import { ficheActionActionTable } from '@/backend/plans/fiches/shared/models/fiche-action-action.table';
+import { ficheActionActionImpactTable } from '@/backend/plans/fiches/shared/models/fiche-action-action-impact.table';
 
 @Injectable()
-export default class FicheService {
-  private readonly logger = new Logger(FicheService.name);
+export default class FicheActionCreateService {
+  private readonly logger = new Logger(FicheActionCreateService.name);
 
-  constructor(
-    private readonly permissionService: PermissionService,
-    private readonly databaseService: DatabaseService
-  ) {}
-
-  /** Renvoi une fiche à partir de son id */
-  async getFicheFromId(ficheId: number) {
-    const rows = await this.databaseService.db
-      .select()
-      .from(ficheActionTable)
-      .where(eq(ficheActionTable.id, ficheId));
-    return rows?.[0] ?? null;
-  }
-
-  /** Détermine si un utilisateur peut lire une fiche */
-  async canReadFiche(ficheId: number, tokenInfo: AuthUser): Promise<boolean> {
-    const fiche = await this.getFicheFromId(ficheId);
-    if (fiche === null) return false;
-    return this.hasReadFichePermission(fiche, tokenInfo);
-  }
-
-  hasReadFichePermission(
-    fiche: Pick<FicheAction, 'collectiviteId' | 'restreint'>,
-    tokenInfo: AuthUser,
-    doNotThrow?: boolean
-  ): Promise<boolean> {
-    return this.permissionService.isAllowed(
-      tokenInfo,
-      fiche.restreint
-        ? PermissionOperation.PLANS_FICHES_LECTURE
-        : PermissionOperation.PLANS_FICHES_VISITE,
-      ResourceType.COLLECTIVITE,
-      fiche.collectiviteId,
-      doNotThrow
-    );
-  }
-
-  /** Détermine si un utilisateur peut modifier une fiche */
-  async canWriteFiche(ficheId: number, tokenInfo: AuthUser): Promise<boolean> {
-    const fiche = await this.getFicheFromId(ficheId);
-    if (fiche === null) return false;
-    return await this.permissionService.isAllowed(
-      tokenInfo,
-      PermissionOperation.PLANS_FICHES_EDITION,
-      ResourceType.COLLECTIVITE,
-      fiche.collectiviteId
-    );
-  }
+  constructor(private readonly databaseService: DatabaseService) {}
 
   /**
    * Crée une fiche action
@@ -337,53 +282,17 @@ export default class FicheService {
   }
 
   async addBudgetPrevisionnel(
-    ficheId : number,
-    budget : string,
-    tx? : Transaction
-  ) : Promise<void> {
+    ficheId: number,
+    budget: string,
+    tx?: Transaction
+  ): Promise<void> {
     await (tx ?? this.databaseService.db)
       .insert(ficheActionBudgetTable)
       .values({
-        ficheId : ficheId,
-        type : 'investissement',
-        unite : 'HT',
-        budgetPrevisionnel : budget
+        ficheId: ficheId,
+        type: 'investissement',
+        unite: 'HT',
+        budgetPrevisionnel: budget,
       });
-  }
-
-  /** Lit les notes de suivi attachées à la fiche */
-  async getNotes(ficheId: number, tokenInfo: AuthenticatedUser) {
-    const canRead = await this.canReadFiche(ficheId, tokenInfo);
-    if (!canRead) return false;
-
-    const createdByDCP = aliasedTable(dcpTable, 'createdByDCP');
-    const modifiedByDCP = aliasedTable(dcpTable, 'modifiedByDCP');
-    const rows = await this.databaseService.db
-      .select({
-        id: ficheActionNoteTable.id,
-        note: ficheActionNoteTable.note,
-        dateNote: ficheActionNoteTable.dateNote,
-        createdAt: ficheActionNoteTable.createdAt,
-        modifiedAt: ficheActionNoteTable.modifiedAt,
-        createdByDCP,
-        modifiedByDCP,
-      })
-      .from(ficheActionNoteTable)
-      .leftJoin(
-        createdByDCP,
-        eq(createdByDCP.userId, ficheActionNoteTable.createdBy)
-      )
-      .leftJoin(
-        modifiedByDCP,
-        eq(modifiedByDCP.userId, ficheActionNoteTable.modifiedBy)
-      )
-      .where(eq(ficheActionNoteTable.ficheId, ficheId))
-      .orderBy(desc(ficheActionNoteTable.dateNote));
-
-    return rows.map(({ createdByDCP, modifiedByDCP, ...otherCols }) => ({
-      ...otherCols,
-      createdBy: `${createdByDCP?.prenom} ${createdByDCP?.nom}`,
-      modifiedBy: `${modifiedByDCP?.prenom} ${modifiedByDCP?.nom}`,
-    }));
   }
 }
