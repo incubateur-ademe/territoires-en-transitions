@@ -25,6 +25,7 @@ import {
   ficheActionTable,
   FicheCreate,
 } from './shared/models/fiche-action.table';
+import { ficheActionBudgetTable } from '@/backend/plans/fiches/fiche-action-budget/fiche-action-budget.table';
 
 @Injectable()
 export default class FicheService {
@@ -332,6 +333,21 @@ export default class FicheService {
       .values({
         ficheId: ficheId,
         actionImpactId: actionId,
+      });
+  }
+
+  async addBudgetPrevisionnel(
+    ficheId : number,
+    budget : string,
+    tx? : Transaction
+  ) : Promise<void> {
+    await (tx ?? this.databaseService.db)
+      .insert(ficheActionBudgetTable)
+      .values({
+        ficheId : ficheId,
+        type : 'investissement',
+        unite : 'HT',
+        budgetPrevisionnel : budget
       });
   }
 
