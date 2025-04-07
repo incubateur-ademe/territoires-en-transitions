@@ -10,6 +10,7 @@ import { toPercentString } from '@/app/utils/to-percent-string';
 import { ReferentielId } from '@/domain/referentiels';
 import { Card, Icon } from '@/ui';
 import classNames from 'classnames';
+import ContactsDisplay from '../contacts/contacts-display';
 
 type Props = {
   collectivite: RecherchesReferentiel;
@@ -34,43 +35,52 @@ export const ReferentielCarte = ({ collectivite, canUserClickCard }: Props) => {
     etoilesEci,
     scoreFaitEci,
     scoreProgrammeEci,
+    contacts,
   } = collectivite;
 
   return (
-    <Card
-      data-test="CollectiviteCarte"
-      className={classNames('!border-primary-3 !py-5 !px-6 !gap-3', {
-        'hover:!bg-primary-0': canUserClickCard,
-      })}
-      href={
-        canUserClickCard
-          ? makeReferentielRootUrl({
-              collectiviteId: collectiviteId,
-            })
-          : undefined
-      }
-    >
-      <div className="mb-0 text-lg font-bold text-primary-9">
-        {collectiviteNom}
-      </div>
-      <div className="flex justify-between gap-4 sm:gap-6 xl:gap-8">
-        <ReferentielCol
-          referentiel={'cae'}
-          etoiles={etoilesCae}
-          scoreRealise={scoreFaitCae}
-          scoreProgramme={scoreProgrammeCae}
-          concerne={collectiviteType !== 'syndicat'}
-        />
-        <div className="w-[0.5px] mx-auto flex-shrink-0 bg-grey-4"></div>
-        <ReferentielCol
-          referentiel={'eci'}
-          etoiles={etoilesEci}
-          scoreRealise={scoreFaitEci}
-          scoreProgramme={scoreProgrammeEci}
-          concerne={true}
-        />
-      </div>
-    </Card>
+    <div className="relative h-full">
+      <ContactsDisplay
+        contacts={contacts}
+        collectiviteName={collectiviteNom}
+        buttonClassName="!absolute top-4 right-4"
+      />
+
+      <Card
+        data-test="CollectiviteCarte"
+        className={classNames('h-full !border-primary-3 !py-5 !px-6 !gap-3', {
+          'hover:!bg-primary-0': canUserClickCard,
+        })}
+        href={
+          canUserClickCard
+            ? makeReferentielRootUrl({
+                collectiviteId: collectiviteId,
+              })
+            : undefined
+        }
+      >
+        <div className="mb-0 text-lg font-bold text-primary-9">
+          {collectiviteNom}
+        </div>
+        <div className="flex justify-between gap-4 sm:gap-6 xl:gap-8">
+          <ReferentielCol
+            referentiel={'cae'}
+            etoiles={etoilesCae}
+            scoreRealise={scoreFaitCae}
+            scoreProgramme={scoreProgrammeCae}
+            concerne={collectiviteType !== 'syndicat'}
+          />
+          <div className="w-[0.5px] mx-auto flex-shrink-0 bg-grey-4"></div>
+          <ReferentielCol
+            referentiel={'eci'}
+            etoiles={etoilesEci}
+            scoreRealise={scoreFaitEci}
+            scoreProgramme={scoreProgrammeEci}
+            concerne={true}
+          />
+        </div>
+      </Card>
+    </div>
   );
 };
 
