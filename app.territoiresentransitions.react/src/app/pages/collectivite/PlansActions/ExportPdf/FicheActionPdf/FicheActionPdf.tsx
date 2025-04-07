@@ -103,7 +103,7 @@ const FicheActionPdf = ({
       {/* Fiches des plans liées */}
       {sections.fiches.isChecked && <FichesLiees fichesLiees={fichesLiees} />}
 
-      {/* Actions des référentiels liées */}
+      {/* Mesures des référentiels liées */}
       {sections.actions.isChecked && (
         <ActionsLiees actionsLiees={actionsLiees} />
       )}
