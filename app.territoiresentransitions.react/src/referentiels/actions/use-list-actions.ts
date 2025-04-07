@@ -11,13 +11,10 @@ export type ActionListFilters =
 export function useListActions(filters?: ActionListFilters) {
   const collectiviteId = useCollectiviteId();
 
-  return trpc.referentiels.actions.listActions.useQuery(
-    {
-      collectiviteId,
-      filters,
-    },
-    DISABLE_AUTO_REFETCH
-  );
+  return trpc.referentiels.actions.listActions.useQuery({
+    collectiviteId,
+    filters,
+  });
 }
 
 export type ActionWithStatut =
