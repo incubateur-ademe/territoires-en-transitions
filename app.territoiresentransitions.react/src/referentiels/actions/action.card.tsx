@@ -35,6 +35,8 @@ export const ActionCard = ({ action, showDescription }: ActionCardProps) => {
           <ActionEditModal
             actionId={id}
             actionTitle={`${identifiant} ${title}`}
+            pilotes={action.pilotes}
+            services={action.services}
             openState={{
               isOpen: isEditOpen,
               setIsOpen: setIsEditOpen,
@@ -103,7 +105,7 @@ export const ActionCard = ({ action, showDescription }: ActionCardProps) => {
               <ListWithTooltip
                 icon="leaf-line"
                 title="Direction ou service pilote"
-                list={action.services}
+                list={action.services.map((s) => s.nom ?? '')}
               />
             )}
           </div>

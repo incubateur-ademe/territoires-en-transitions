@@ -1,52 +1,51 @@
-import { useState } from 'react';
 import { isEqual } from 'es-toolkit';
+import { useState } from 'react';
 
-import { Personne } from '@/api/collectivites';
+import { useCollectiviteId } from '@/app/collectivites/collectivite-context';
+import {
+  useActionPilotesDelete,
+  useActionPilotesUpsert,
+} from '@/app/referentiels/actions/use-action-pilotes';
+import {
+  useActionServicesPilotesDelete,
+  useActionServicesPilotesUpsert,
+} from '@/app/referentiels/actions/use-action-services-pilotes';
 import PersonnesDropdown from '@/app/ui/dropdownLists/PersonnesDropdown/PersonnesDropdown';
 import { getPersonneStringId } from '@/app/ui/dropdownLists/PersonnesDropdown/utils';
 import ServicesPilotesDropdown from '@/app/ui/dropdownLists/ServicesPilotesDropdown/ServicesPilotesDropdown';
-import { Tag } from '@/domain/collectivites';
+import { PersonneTagOrUser, Tag } from '@/domain/collectivites';
 import { Field, Modal, ModalFooterOKCancel } from '@/ui';
 import { OpenState } from '@/ui/utils/types';
-import {
-  useActionPilotesList,
-  useActionPilotesUpsert,
-  useActionPilotesDelete,
-} from '@/app/referentiels/actions/use-action-pilotes';
-import {
-  useActionServicesPilotesList,
-  useActionServicesPilotesUpsert,
-  useActionServicesPilotesDelete,
-} from '@/app/referentiels/actions/use-action-services-pilotes';
-import { useCollectiviteId } from '@/app/collectivites/collectivite-context';
 
 type Props = {
   actionId: string;
   actionTitle?: string;
   openState?: OpenState;
+  pilotes?: PersonneTagOrUser[];
+  services?: Tag[];
 };
 
-const ActionEditModal = ({ actionId, actionTitle, openState }: Props) => {
+const ActionEditModal = ({
+  actionId,
+  actionTitle,
+  openState,
+  pilotes,
+  services,
+}: Props) => {
   const collectiviteId = useCollectiviteId();
 
-  const { data: pilotes } = useActionPilotesList(actionId);
   const { mutate: upsertPilotes } = useActionPilotesUpsert();
   const { mutate: deletePilotes } = useActionPilotesDelete();
 
-  const { data: services } = useActionServicesPilotesList(actionId);
   const { mutate: upsertServicesPilotes } = useActionServicesPilotesUpsert();
   const { mutate: deleteServicesPilotes } = useActionServicesPilotesDelete();
 
-  const [editedPilotes, setEditedPilotes] = useState<Personne[] | undefined>(
-    pilotes
-  );
+  const [editedPilotes, setEditedPilotes] = useState<
+    PersonneTagOrUser[] | undefined
+  >(pilotes);
 
   const [editedServices, setEditedServices] = useState<Tag[] | undefined>(
-    services?.map((s) => ({
-      id: s.serviceTagId,
-      nom: s.nom ?? '',
-      collectiviteId: s.collectiviteId,
-    }))
+    services
   );
 
   const handleSave = () => {
@@ -74,7 +73,7 @@ const ActionEditModal = ({ actionId, actionTitle, openState }: Props) => {
     // Services pilotes
     if (
       !isEqual(
-        services?.map((s) => s.serviceTagId),
+        services?.map((s) => s.id),
         editedServices?.map((s) => s.id)
       )
     ) {
