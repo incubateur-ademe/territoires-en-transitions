@@ -1,13 +1,15 @@
 import { Personne } from '@/api/collectivites';
 import { Filtre } from '@/api/plan-actions/fiche-resumes.list/domain/fetch-options.schema';
+import { PersonneTagOrUser } from '@/domain/collectivites';
 
 /**
  * Renvoie l'id en string d'un type Personne qui est soit un tag_id number ou un user_id string
  * @param personne
  * @returns id as string
  */
-export const getPersonneStringId = (personne: Personne): string =>
-  personne.tagId ? personne.tagId.toString() : personne.userId!;
+export const getPersonneStringId = (
+  personne: Personne | PersonneTagOrUser
+): string => (personne.tagId ? personne.tagId.toString() : personne.userId!);
 
 /** Renvoie un object avec les utilisateurs et les tags séparés pilotes */
 export const splitPilotePersonnesAndUsers = (personnes: Personne[]) => {

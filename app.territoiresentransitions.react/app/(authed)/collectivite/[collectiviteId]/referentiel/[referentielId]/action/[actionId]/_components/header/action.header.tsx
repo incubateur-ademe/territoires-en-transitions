@@ -4,6 +4,8 @@ import { useCurrentCollectivite } from '@/app/collectivites/collectivite-context
 import { ActionDefinitionSummary } from '@/app/referentiels/ActionDefinitionSummaryReadEndpoint';
 import ActionEditModal from '@/app/referentiels/actions/action-edit.modal';
 import { ActionSidePanelToolbar } from '@/app/referentiels/actions/action.side-panel.toolbar';
+import { useActionPilotesList } from '@/app/referentiels/actions/use-action-pilotes';
+import { useActionServicesPilotesList } from '@/app/referentiels/actions/use-action-services-pilotes';
 import { ProgressionRow } from '@/app/referentiels/DEPRECATED_scores.types';
 import { ActionDetailed } from '@/app/referentiels/use-snapshot';
 import { Button } from '@/ui';
@@ -24,11 +26,14 @@ export const ActionHeader = ({
 }: {
   actionDefinition: ActionDefinitionSummary;
   DEPRECATED_actionScore: ProgressionRow;
-  action?: ActionDetailed;
+  action: ActionDetailed;
   nextActionLink: string | undefined;
   prevActionLink: string | undefined;
 }) => {
   const { isReadOnly } = useCurrentCollectivite();
+
+  const { data: pilotes } = useActionPilotesList(action.actionId);
+  const { data: services } = useActionServicesPilotesList(action.actionId);
 
   const [isEditModalOpen, setIsEditModalOpen] = useState(false);
 
@@ -37,7 +42,7 @@ export const ActionHeader = ({
       {/** Titre */}
       <div className="flex max-sm:flex-col gap-8 items-start mt-12 mb-3">
         <h1 className="mb-0 text-4xl">
-          {actionDefinition.identifiant} {actionDefinition.nom}
+          {action.identifiant} {action.nom}
         </h1>
         {!isReadOnly && (
           <Button
@@ -63,11 +68,12 @@ export const ActionHeader = ({
         />
         {action && (
           <Infos
-            actionId={action.actionId}
             openState={{
               isOpen: isEditModalOpen,
               setIsOpen: setIsEditModalOpen,
             }}
+            pilotes={pilotes}
+            services={services}
             isReadOnly={isReadOnly}
           />
         )}
@@ -103,6 +109,8 @@ export const ActionHeader = ({
           <ActionEditModal
             actionId={action.actionId}
             actionTitle={`${action.identifiant} ${action.nom}`}
+            pilotes={pilotes}
+            services={services}
             openState={{
               isOpen: isEditModalOpen,
               setIsOpen: setIsEditModalOpen,
