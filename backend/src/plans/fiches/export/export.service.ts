@@ -4,8 +4,7 @@ import { Injectable, Logger } from '@nestjs/common';
 import { format as formatDate } from 'date-fns';
 import z from 'zod';
 import PlanActionsService from '../plan-actions.service';
-//import { exportPlanDOCX } from './export-plan.docx';
-import { exportPlanDOCX } from '@/backend/plans/fiches/export/export-plan.docx';
+import { exportPlanDOCX } from './export-plan.docx';
 import { exportPlanXLSX } from './export-plan.xlsx';
 
 export const exportRequestSchema = z.object({

@@ -67,4 +67,31 @@ describe('Export plan', () => {
       'Yolo Dodo',
     ]);
   });
+
+  test('Exporte un plan au format DOCX', async () => {
+    const response = await request(app.getHttpServer())
+      .post('/plan/export')
+      .set('Authorization', `Bearer ${yoloDodoToken}`)
+      .send({ collectiviteId: 1, planId: 12, format: 'docx' })
+      .expect(201)
+      .responseType('blob');
+
+    const fileName = decodeURI(
+      response.headers['content-disposition']
+        .split('filename=')[1]
+        .split(';')[0]
+        .split('"')[1]
+    );
+
+    const body = response.body as Buffer;
+    // décommenter pour écrire le fichier (et vérifier son contenu manuellement)
+    //writeFileSync(fileName, body);
+
+    expect(fileName).toMatch(
+      /^Export_Plan Vélo 2024-2028_\d{4}-\d{2}-\d{2}.*\.docx$/
+    );
+    // poids approximitatif du fichier attendu car la date de génération peut le faire un peu varier
+    expect(body.byteLength).toBeGreaterThanOrEqual(10200);
+    expect(body.byteLength).toBeLessThanOrEqual(10400);
+  });
 });
