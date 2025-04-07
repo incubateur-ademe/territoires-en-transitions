@@ -59,8 +59,11 @@ function ActionLayout({
   const actionId = useActionId();
   const FLAG_isSnapshotEnabled = useSnapshotFlagEnabled();
 
-  const DEPRECATED_actionScores = useScoreRealise(actionDefinition, !FLAG_isSnapshotEnabled);
-  const { data: NEW_action } = useAction();
+  const DEPRECATED_actionScores = useScoreRealise(
+    actionDefinition,
+    !FLAG_isSnapshotEnabled
+  );
+  const { data: NEW_action, isLoading } = useAction();
 
   const showDescIntoInfoPanel = useShowDescIntoInfoPanel();
 
@@ -69,6 +72,16 @@ function ActionLayout({
   );
 
   const preuvesCount = useActionPreuvesCount(actionDefinition.id);
+
+  if (isLoading) {
+    return (
+      <div className="flex justify-center items-center h-[70vh]">
+        <SpinnerLoader />
+      </div>
+    );
+  }
+
+  if (!NEW_action) return null;
 
   return (
     <PageContainer
@@ -122,8 +135,9 @@ function ActionLayout({
                 actionId,
                 actionVue: 'documents',
               })}
-              label={`Documents${preuvesCount !== undefined ? ` (${preuvesCount})` : ''
-                }`}
+              label={`Documents${
+                preuvesCount !== undefined ? ` (${preuvesCount})` : ''
+              }`}
               icon="file-line"
             />
 
