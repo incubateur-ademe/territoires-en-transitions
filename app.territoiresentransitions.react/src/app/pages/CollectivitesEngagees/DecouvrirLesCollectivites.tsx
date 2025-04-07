@@ -23,11 +23,12 @@ const DecouvrirLesCollectivites = () => {
   const sansCollectivite = useSansCollectivite();
 
   /** Filters */
-  const [filters, setFilters] = useSearchParams<CollectiviteEngagee.Filters>(
-    recherchesCollectivitesUrl,
-    initialFilters,
-    nameToShortNames
-  );
+  const [filters, setFilters, _count, setView] =
+    useSearchParams<CollectiviteEngagee.Filters>(
+      recherchesCollectivitesUrl,
+      initialFilters,
+      nameToShortNames
+    );
 
   return (
     <>
@@ -54,6 +55,7 @@ const DecouvrirLesCollectivites = () => {
           initialFilters={initialFilters}
           filters={filters}
           setFilters={setFilters}
+          setView={setView}
           isConnected={isConnected}
           canUserClickCard={!sansCollectivite && isConnected}
         />
@@ -63,6 +65,7 @@ const DecouvrirLesCollectivites = () => {
           initialFilters={initialFilters}
           filters={filters}
           setFilters={setFilters}
+          setView={setView}
           isConnected={isConnected}
           canUserClickCard={!sansCollectivite && isConnected}
         />
@@ -70,8 +73,9 @@ const DecouvrirLesCollectivites = () => {
       <Route path={recherchesPlansUrl}>
         <PlansView
           initialFilters={initialFilters}
-          filters={{ ...filters, trierPar: ['nom'] }}
+          filters={{ ...filters }}
           setFilters={setFilters}
+          setView={setView}
           isConnected={isConnected}
           canUserClickCard={!sansCollectivite && isConnected}
         />
