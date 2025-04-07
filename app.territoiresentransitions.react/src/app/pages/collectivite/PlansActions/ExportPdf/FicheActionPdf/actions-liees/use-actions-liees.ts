@@ -1,5 +1,5 @@
 import { ActionWithStatutAndScore } from '@/app/app/pages/collectivite/PlansActions/ExportPdf/FicheActionPdf/actions-liees/types';
-import { useListActionsWithStatuts } from '@/app/referentiels/actions/use-list-actions';
+import { useListActions } from '@/app/referentiels/actions/use-list-actions';
 import { findByActionId, useSnapshot } from '@/app/referentiels/use-snapshot';
 
 export const useActionsLiees = (
@@ -26,10 +26,11 @@ export const useActionsLiees = (
     actionsByReferentiel.eci.length > 0
   );
 
-  const { data: detailedActions, isLoading: isLoadingActions } =
-    useListActionsWithStatuts({
+  const { data: detailedActions, isLoading: isLoadingActions } = useListActions(
+    {
       actionIds,
-    });
+    }
+  );
 
   const isLoading = isLoadingCae || isLoadingEci || isLoadingActions;
   if (isLoading) {
