@@ -1,18 +1,15 @@
-import { useActionPilotesList } from '@/app/referentiels/actions/use-action-pilotes';
-import { useActionServicesPilotesList } from '@/app/referentiels/actions/use-action-services-pilotes';
 import ListWithTooltip from '@/app/ui/lists/ListWithTooltip';
+import { PersonneTagOrUser, Tag } from '@/domain/collectivites';
 import { OpenState } from '@/ui/utils/types';
 
 type Props = {
-  actionId: string;
   openState: OpenState;
-  isReadOnly: boolean;
+  pilotes?: PersonneTagOrUser[];
+  services?: Tag[];
+  isReadOnly?: boolean;
 };
 
-const Infos = ({ actionId, openState, isReadOnly }: Props) => {
-  const { data: pilotes } = useActionPilotesList(actionId);
-  const { data: services } = useActionServicesPilotesList(actionId);
-
+const Infos = ({ openState, pilotes, services, isReadOnly }: Props) => {
   const hasPilotes = pilotes && pilotes.length > 0;
   const hasServices = services && services.length > 0;
 
@@ -23,9 +20,7 @@ const Infos = ({ actionId, openState, isReadOnly }: Props) => {
           <ListWithTooltip
             className="!mx-0"
             title="Pilotes"
-            list={pilotes.map((p) =>
-              p.tagId ? p.nom ?? '' : `${p.prenom} ${p.nom}`
-            )}
+            list={pilotes.map((p) => p.nom ?? '')}
             icon="user-line"
             hoveringColor="grey"
             onClick={() => openState.setIsOpen(true)}
