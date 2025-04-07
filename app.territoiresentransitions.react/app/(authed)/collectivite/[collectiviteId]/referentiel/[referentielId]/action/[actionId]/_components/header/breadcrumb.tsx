@@ -2,6 +2,7 @@ import { makeReferentielUrl } from '@/app/app/paths';
 import { useCollectiviteId } from '@/app/collectivites/collectivite-context';
 import { ActionDefinitionSummary } from '@/app/referentiels/ActionDefinitionSummaryReadEndpoint';
 import { useReferentielDownToAction } from '@/app/referentiels/referentiel-hooks';
+import { ActionDetailed } from '@/app/referentiels/use-snapshot';
 import { getReferentielIdFromActionId } from '@/domain/referentiels';
 import { Breadcrumbs } from '@/ui';
 import { uniq } from 'es-toolkit';
@@ -9,18 +10,21 @@ import { uniq } from 'es-toolkit';
 /**
  * Fil d'ariane localisation d'une action dans le référentiel
  */
-const Breadcrumb = (props: { action: ActionDefinitionSummary }) => {
-  const { action } = props;
+const Breadcrumb = ({ action }: { action: ActionDetailed }) => {
+  const { actionId } = action;
+
   const collectiviteId = useCollectiviteId();
 
-  const referentiel = useReferentielDownToAction(action.referentiel);
+  const referentiel = useReferentielDownToAction(
+    getReferentielIdFromActionId(actionId)
+  );
 
   const getParent = (id: string) =>
     referentiel.find((e) => e.children.includes(id)) ?? null;
 
   const parents = uniq(
     referentiel.reduce((path) => {
-      const parent = getParent(path[0]?.id ?? action.id);
+      const parent = getParent(path[0]?.id ?? actionId);
       return parent ? [parent, ...path] : path;
     }, [] as ActionDefinitionSummary[])
   );
@@ -35,7 +39,7 @@ const Breadcrumb = (props: { action: ActionDefinitionSummary }) => {
             label: parent.nom,
             href: makeReferentielUrl({
               collectiviteId,
-              referentielId: getReferentielIdFromActionId(action.id),
+              referentielId: getReferentielIdFromActionId(actionId),
             }),
           };
         } else {

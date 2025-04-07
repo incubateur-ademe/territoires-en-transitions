@@ -57,7 +57,7 @@ export const ActionHeader = ({
       </div>
 
       {/** Breadcrumb */}
-      <Breadcrumb action={actionDefinition} />
+      <Breadcrumb action={action} />
 
       {/** Score | Informations | Options */}
       <div className="flex items-center gap-4 my-3 !py-0 text-sm text-grey-7">
