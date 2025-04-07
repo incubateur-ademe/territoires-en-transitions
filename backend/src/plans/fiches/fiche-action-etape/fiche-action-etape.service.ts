@@ -2,7 +2,7 @@ import { AuthUser } from '@/backend/auth/models/auth.models';
 import { DatabaseService } from '@/backend/utils';
 import { Injectable } from '@nestjs/common';
 import { and, eq, gt, gte, lt, lte, sql } from 'drizzle-orm';
-import FicheService from '../fiche.service';
+import FicheActionPermissionsService from '../fiche-action-permissions.service';
 import {
   ficheActionEtapeTable,
   FicheActionEtapeType,
@@ -14,7 +14,7 @@ import { ficheActionTable } from '@/backend/plans/fiches/shared/models/fiche-act
 export class FicheActionEtapeService {
   constructor(
     private readonly databaseService: DatabaseService,
-    private readonly ficheService: FicheService
+    private readonly ficheService: FicheActionPermissionsService
   ) {}
 
   /**

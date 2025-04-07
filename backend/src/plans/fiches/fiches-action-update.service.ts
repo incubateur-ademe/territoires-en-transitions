@@ -5,7 +5,6 @@ import { Transaction } from '@/backend/utils/database/transaction.utils';
 import { WebhookService } from '@/backend/utils/webhooks/webhook.service';
 import { Injectable, Logger, NotFoundException } from '@nestjs/common';
 import {
-  and,
   Column,
   ColumnBaseConfig,
   ColumnDataType,
@@ -16,8 +15,7 @@ import {
 import { PgTable } from 'drizzle-orm/pg-core';
 import { toCamel } from 'ts-case-convert';
 import { AuthenticatedUser } from '../../auth/models/auth.models';
-import { buildConflictUpdateColumns } from '../../utils/database/conflict.utils';
-import FicheService from './fiche.service';
+import FicheActionPermissionsService from './fiche-action-permissions.service';
 import { UpdateFicheActionRequestType } from './shared/edit-fiche.request';
 import { ficheActionActionTable } from './shared/models/fiche-action-action.table';
 import { ficheActionAxeTable } from './shared/models/fiche-action-axe.table';
@@ -26,10 +24,6 @@ import { ficheActionFinanceurTagTable } from './shared/models/fiche-action-finan
 import { ficheActionIndicateurTable } from './shared/models/fiche-action-indicateur.table';
 import { ficheActionLibreTagTable } from './shared/models/fiche-action-libre-tag.table';
 import { ficheActionLienTable } from './shared/models/fiche-action-lien.table';
-import {
-  ficheActionNoteTable,
-  UpsertFicheActionNoteType,
-} from './shared/models/fiche-action-note.table';
 import { ficheActionPartenaireTagTable } from './shared/models/fiche-action-partenaire-tag.table';
 import { ficheActionPiloteTable } from './shared/models/fiche-action-pilote.table';
 import { ficheActionReferentTable } from './shared/models/fiche-action-referent.table';
@@ -41,6 +35,7 @@ import {
   ficheActionTable,
   ficheSchemaUpdate,
 } from './shared/models/fiche-action.table';
+import { Transaction } from '@/backend/utils/database/transaction.utils';
 
 type ColumnType = Column<
   ColumnBaseConfig<ColumnDataType, string>,
@@ -67,9 +62,9 @@ export default class FichesActionUpdateService {
 
   constructor(
     private readonly databaseService: DatabaseService,
-    private readonly ficheService: FicheService,
     private readonly webhookService: WebhookService,
     private readonly ficheActionListService: FicheActionListService
+    private readonly ficheService: FicheActionPermissionsService
   ) {}
 
   async updateFicheAction(
@@ -472,83 +467,5 @@ export default class FichesActionUpdateService {
       financeurTagId: financeur.financeurTag.id,
       montantTtc: financeur.montantTtc,
     }));
-  }
-
-  /** Insère ou met à jour des notes de suivi */
-  async upsertNotes(
-    ficheId: number,
-    notes: UpsertFicheActionNoteType[],
-    tokenInfo: AuthenticatedUser
-  ) {
-    this.logger.log(
-      `Vérifie les droits avant de mettre à jour les notes de la fiche ${ficheId}`
-    );
-
-    const canWrite = await this.ficheService.canWriteFiche(ficheId, tokenInfo);
-    if (!canWrite) return false;
-
-    this.logger.log(`Met à jour les notes de la fiche ${ficheId}`);
-    return this.databaseService.db.transaction(async (trx) => {
-      await trx
-        .update(ficheActionTable)
-        .set({
-          modifiedBy: tokenInfo?.id,
-          modifiedAt: new Date().toISOString(),
-        })
-        .where(eq(ficheActionTable.id, ficheId));
-
-      return trx
-        .insert(ficheActionNoteTable)
-        .values(
-          notes.map((note) => ({
-            ...note,
-            ficheId,
-            createdBy: tokenInfo.id,
-            modifiedBy: tokenInfo.id,
-          }))
-        )
-        .onConflictDoUpdate({
-          target: [ficheActionNoteTable.id],
-          set: buildConflictUpdateColumns(ficheActionNoteTable, [
-            'dateNote',
-            'note',
-            'modifiedAt',
-            'modifiedBy',
-          ]),
-        });
-    });
-  }
-
-  /** Supprime une note */
-  async deleteNote(
-    ficheId: number,
-    noteId: number,
-    tokenInfo: AuthenticatedUser
-  ) {
-    this.logger.log(
-      `Vérifie les droits avant de supprimer la note ${noteId} de la fiche ${ficheId}`
-    );
-
-    const canWrite = await this.ficheService.canWriteFiche(ficheId, tokenInfo);
-    if (!canWrite) return false;
-
-    this.logger.log(`Supprime la note ${noteId} de la fiche ${ficheId}`);
-    return this.databaseService.db.transaction(async (trx) => {
-      await trx
-        .update(ficheActionTable)
-        .set({
-          modifiedBy: tokenInfo?.id,
-          modifiedAt: new Date().toISOString(),
-        })
-        .where(eq(ficheActionTable.id, ficheId));
-      return trx
-        .delete(ficheActionNoteTable)
-        .where(
-          and(
-            eq(ficheActionNoteTable.ficheId, ficheId),
-            eq(ficheActionNoteTable.id, noteId)
-          )
-        );
-    });
   }
 }
