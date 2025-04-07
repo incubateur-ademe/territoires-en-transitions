@@ -75,22 +75,31 @@ export class AssignPilotesService {
       throw new Error('La liste des pilotes ne peut pas être vide');
     }
 
-    await this.deletePilotes(collectiviteId, actionId, tokenInfo);
-
     this.logger.log(
       `Mise à jour des pilotes pour la collectivité ${collectiviteId} et la mesure ${actionId}`
     );
 
-    await this.databaseService.db.insert(actionPiloteTable).values(
-      pilotes.map((pilote) => ({
-        collectiviteId,
-        actionId,
-        userId: pilote.userId,
-        tagId: pilote.tagId,
-      }))
-    );
+    return await this.databaseService.db.transaction(async (tx) => {
+      await tx
+        .delete(actionPiloteTable)
+        .where(
+          and(
+            eq(actionPiloteTable.collectiviteId, collectiviteId),
+            eq(actionPiloteTable.actionId, actionId)
+          )
+        );
 
-    return await this.listPilotes(collectiviteId, actionId);
+      await tx.insert(actionPiloteTable).values(
+        pilotes.map((pilote) => ({
+          collectiviteId,
+          actionId,
+          userId: pilote.userId,
+          tagId: pilote.tagId,
+        }))
+      );
+
+      return await this.listPilotes(collectiviteId, actionId);
+    });
   }
 
   async deletePilotes(
