@@ -14,11 +14,18 @@ import { DeleteFiltersButton } from '@/app/ui/lists/filter-badges/delete-filters
 import { ButtonGroup, Select } from '@/ui';
 import classNames from 'classnames';
 import { useRouter, useSearchParams } from 'next/navigation';
+import { useEffect } from 'react';
 
 const viewToText: Record<RecherchesViewParam, string> = {
   collectivites: 'collectivité',
   referentiels: 'collectivité',
   plans: 'plan',
+};
+
+const viewToUrl: Record<RecherchesViewParam, string> = {
+  collectivites: recherchesCollectivitesUrl,
+  referentiels: recherchesReferentielsUrl,
+  plans: recherchesPlansUrl,
 };
 
 type CollectivitesHeaderProps = {
@@ -28,6 +35,7 @@ type CollectivitesHeaderProps = {
   dataCount?: number;
   isLoading: boolean;
   setFilters: SetFilters;
+  setView: (newView: string) => void;
 };
 
 const CollectivitesHeader = ({
@@ -37,6 +45,7 @@ const CollectivitesHeader = ({
   dataCount,
   isLoading,
   setFilters,
+  setView,
 }: CollectivitesHeaderProps) => {
   const router = useRouter();
   const search = useSearchParams();
@@ -45,6 +54,19 @@ const CollectivitesHeader = ({
     const options = [{ value: 'nom', label: 'Ordre alphabétique' }];
     return view === 'referentiels' ? trierParOptions : options;
   };
+
+  const handleChangeView = (view: RecherchesViewParam) => {
+    setFilters({ ...filters, page: 1 });
+    router.push(`${viewToUrl[view]}?${search.toString()}`);
+  };
+
+  useEffect(() => {
+    setView(viewToUrl[view]);
+    setFilters({
+      ...filters,
+      trierPar: view === 'referentiels' ? ['score'] : ['nom'],
+    });
+  }, [view]);
 
   return (
     <div className="flex flex-col">
@@ -64,7 +86,6 @@ const CollectivitesHeader = ({
               }}
               values={filters.trierPar?.[0]}
               customItem={(v) => <span className="text-grey-9">{v.label}</span>}
-              disabled={view === 'plans' || view === 'collectivites'}
               small
             />
           </div>
@@ -89,34 +110,21 @@ const CollectivitesHeader = ({
                 id: 'collectivites',
                 children: 'Collectivités',
                 icon: 'layout-grid-line',
-                onClick: () => {
-                  setFilters({ ...filters, page: 1 });
-                  router.push(
-                    `${recherchesCollectivitesUrl}?${search.toString()}`
-                  );
-                },
+                onClick: () => handleChangeView('collectivites'),
               },
               {
                 id: 'referentiels',
                 'data-test': 'ToggleVueCollectivite',
                 children: 'Référentiels',
                 icon: 'star-line',
-                onClick: () => {
-                  setFilters({ ...filters, page: 1 });
-                  router.push(
-                    `${recherchesReferentielsUrl}?${search.toString()}`
-                  );
-                },
+                onClick: () => handleChangeView('referentiels'),
               },
               {
                 id: 'plans',
                 'data-test': 'ToggleVuePlan',
                 children: "Plans d'action",
                 icon: 'list-unordered',
-                onClick: () => {
-                  setFilters({ ...filters, page: 1 });
-                  router.push(`${recherchesPlansUrl}?${search.toString()}`);
-                },
+                onClick: () => handleChangeView('plans'),
               },
             ]}
           />
@@ -126,7 +134,12 @@ const CollectivitesHeader = ({
       {/* Suppression des filtres */}
       <DeleteFiltersButton
         dataTest="desactiver-les-filtres"
-        onClick={() => setFilters(initialFilters)}
+        onClick={() =>
+          setFilters({
+            ...initialFilters,
+            trierPar: view === 'referentiels' ? ['score'] : ['nom'],
+          })
+        }
         disabled={isLoading}
         className={classNames('ml-auto my-4', {
           invisible: getNumberOfActiveFilters(filters) === 0,

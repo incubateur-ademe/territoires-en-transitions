@@ -18,6 +18,7 @@ export type CollectivitesEngageesView = {
   initialFilters: CollectiviteEngagee.Filters;
   filters: CollectiviteEngagee.Filters;
   setFilters: SetFilters;
+  setView: (newView: string) => void;
   canUserClickCard: boolean;
   isConnected: boolean;
 };
@@ -41,6 +42,7 @@ const View = ({
   initialFilters,
   filters,
   setFilters,
+  setView,
   data,
   dataCount,
   isLoading,
@@ -57,6 +59,7 @@ const View = ({
         dataCount={dataCount}
         isLoading={isLoading}
         setFilters={setFilters}
+        setView={setView}
       />
 
       {/* Page */}
