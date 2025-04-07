@@ -51,7 +51,7 @@ const ActionsLiees = ({ actionsLiees }: ActionsLieesProps) => {
   return (
     <Card wrap={false}>
       <Title variant="h4" className="text-primary-8">
-        Actions des référentiels liées
+        Mesures des référentiels liées
       </Title>
 
       <Stack gap={3} direction="row" className="flex-wrap">

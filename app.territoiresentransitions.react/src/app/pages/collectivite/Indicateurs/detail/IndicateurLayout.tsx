@@ -20,7 +20,11 @@ const IndicateurLayout = ({
   definition,
   isPerso = false,
 }: IndicateurLayoutProps) => {
-  const { enfants, sansValeurUtilisateur:sansValeur, description } = definition;
+  const {
+    enfants,
+    sansValeurUtilisateur: sansValeur,
+    description,
+  } = definition;
 
   const { mutate: updateDefinition } = useUpdateIndicateurDefinition();
 
@@ -122,9 +126,9 @@ const IndicateurLayout = ({
                   </Tab>
                 ) : undefined}
 
-                {/* Actions des référentiels liées */}
+                {/* Mesures des référentiels liées */}
                 {!isPerso ? (
-                  <Tab label="Actions des référentiels liées">
+                  <Tab label="Mesures des référentiels liées">
                     <ActionsLiees actionsIds={definition.actions ?? []} />
                   </Tab>
                 ) : undefined}
