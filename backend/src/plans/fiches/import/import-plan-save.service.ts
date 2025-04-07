@@ -6,15 +6,15 @@ import {
 } from '@/backend/plans/fiches/import/import-plan.dto';
 import { TagService } from '@/backend/collectivites/tags/tag.service';
 import AxeService from '../axe.service';
-import FicheService from '@/backend/plans/fiches/fiche.service';
 import { Transaction } from '@/backend/utils/database/transaction.utils';
+import FicheActionCreateService from '@/backend/plans/fiches/import/fiche-action-create.service';
 
 @Injectable()
 export class ImportPlanSaveService {
   constructor(
     private readonly tagService: TagService,
     private readonly axeService: AxeService,
-    private readonly ficheService: FicheService
+    private readonly ficheService: FicheActionCreateService
   ) {}
 
   /**
