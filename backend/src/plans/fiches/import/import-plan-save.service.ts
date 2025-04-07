@@ -65,7 +65,7 @@ export class ImportPlanSaveService {
           cibles: fiche?.cibles ? [fiche?.cibles] : [],
           ressources: fiche.resources,
           financements: fiche.financements,
-          budgetPrevisionnel: fiche.budget?.toString(),
+          budgetPrevisionnel: fiche.budget?.toString(), // deprecated
           statut: fiche.statut,
           priorite: fiche.priorite,
           dateDebut: fiche.dateDebut,
@@ -135,6 +135,15 @@ export class ImportPlanSaveService {
             tx
           );
       }
+      // Save "budget"
+      if(fiche.budget){
+        await this.ficheService.addBudgetPrevisionnel(
+          ficheId,
+          fiche.budget?.toString(),
+          tx
+        )
+      }
+
     }
   }
 
