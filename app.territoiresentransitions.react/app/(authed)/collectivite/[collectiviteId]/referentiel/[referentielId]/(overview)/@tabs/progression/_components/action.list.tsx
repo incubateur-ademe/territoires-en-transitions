@@ -58,9 +58,10 @@ const ActionList = () => {
               { value: 'axe', label: 'Par axe' },
               { value: 'action', label: 'Par mesure' },
             ]}
-            onChange={(value) =>
-              setDisplayOption((value as DisplayOption) ?? 'action')
-            }
+            onChange={(value) => {
+              setDisplayOption((value as DisplayOption) ?? 'action');
+              setFilters(initialFilters);
+            }}
             values={[displayOption]}
             customItem={(v) => (
               <span className="text-grey-8 font-normal">{v.label}</span>
