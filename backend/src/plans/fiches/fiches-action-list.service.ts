@@ -135,8 +135,8 @@ export default class FicheActionListService {
           'indicateur_ids'
         ),
         indicateurs: sql<
-          { id: number; nom: string }[]
-        >`array_agg(json_build_object('id', ${ficheActionIndicateurTable.indicateurId}, 'nom', ${indicateurDefinitionTable.titre} ))`.as(
+          { id: number; nom: string; unite: string }[]
+        >`array_agg(json_build_object('id', ${ficheActionIndicateurTable.indicateurId}, 'nom', ${indicateurDefinitionTable.titre}, 'unite', ${indicateurDefinitionTable.unite} ))`.as(
           'indicateurs'
         ),
       })
