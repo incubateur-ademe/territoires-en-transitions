@@ -1,4 +1,3 @@
-/* eslint-disable react/no-unescaped-entities */
 'use client';
 
 import { Divider } from '@/ui';
@@ -10,11 +9,9 @@ import FiltreEtoiles from './FiltreEtoiles';
 import FiltreLabels from './FiltreLabels';
 
 const CarteAvecFiltres = () => {
-  const [filtre, setFiltre] = useState<FiltresLabels | null>(null);
+  const [filtre, setFiltre] = useState<FiltresLabels>('toutes');
   const [etoiles, setEtoiles] = useState<number[]>([1, 2, 3, 4, 5]);
   const [windowWidth, setWindowWidth] = useState<number | undefined>();
-
-  useEffect(() => setFiltre('toutes'), []);
 
   useEffect(() => {
     setWindowWidth(window.innerWidth);
@@ -37,7 +34,8 @@ const CarteAvecFiltres = () => {
       ),
     }
   );
-  return filtre ? (
+
+  return (
     <div className="flex flex-col lg:flex-row justify-between mt-8">
       <div
         className="w-full md:w-[700px] md:h-[700px] lg:w-[550px] lg:h-[550px] xl:w-[700px] xl:h-[700px] mx-auto"
@@ -99,7 +97,7 @@ const CarteAvecFiltres = () => {
         </div>
       </div>
     </div>
-  ) : null;
+  );
 };
 
 export default CarteAvecFiltres;
