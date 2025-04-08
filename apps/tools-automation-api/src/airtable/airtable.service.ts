@@ -73,8 +73,6 @@ export class AirtableService {
       } else {
         this.logger.warn(`User ${userEmail} not found in Airtable`);
       }
-
-      feedbackRecord.fields['Personnes'] = [userEmail];
     }
 
     if (operator?.email) {

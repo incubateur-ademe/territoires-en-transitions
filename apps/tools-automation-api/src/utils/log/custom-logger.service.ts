@@ -76,7 +76,7 @@ export class CustomLogger implements LoggerService {
   private getDefaultContext(): ApplicationContext {
     const defaultContext: ApplicationContext = {
       source: 'nestjs',
-      service: process.env.APPLICATION_NAME || 'backend',
+      service: process.env.APPLICATION_NAME || 'tools-automation-api',
       version: process.env.APPLICATION_VERSION || 'dev',
       environment: process.env.ENV_NAME || 'local',
     };
