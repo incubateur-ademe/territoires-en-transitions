@@ -1,18 +1,19 @@
-import { makeSearchString } from '@/api';
 import { supabase } from '@/site/app/initSupabase';
+import Fuse from 'fuse.js';
 import useSWR from 'swr';
 
 export const useFilteredCollectivites = (search: string) => {
   return useSWR(`site_labellisation-filtered-${search}`, async () => {
     const query = supabase
       .from('site_labellisation')
-      .select()
-      .order('nom')
-      .limit(10);
+      .select('collectivite_id, nom, code_siren_insee')
+      .order('nom');
 
-    const processedSearch = makeSearchString(search, 'nom');
-    if (processedSearch) {
-      query.or(processedSearch);
+    // Nous devons charger la liste entière pour pouvoir utiliser la recherche fuse.
+    // Nous limitons la liste à 10 résultats quand l'utilisateur n'a pas encore
+    // commencé sa recherche, pour éviter de charger trop de données.
+    if (search.length === 0) {
+      query.limit(10);
     }
 
     const { error, data } = await query;
@@ -20,10 +21,24 @@ export const useFilteredCollectivites = (search: string) => {
     if (error) {
       throw new Error(`site_labellisation-filtered-${search}`);
     }
+
     if (!data || !data.length) {
       return null;
     }
 
-    return { filteredCollectivites: data || [] };
+    if (search.length) {
+      const fuse = new Fuse(data, {
+        keys: ['nom'],
+        threshold: 0.3,
+        shouldSort: false,
+      });
+      return {
+        filteredCollectivites: fuse.search(search).map((r) => r.item) || [],
+      };
+    }
+
+    return {
+      filteredCollectivites: data || [],
+    };
   });
 };
