@@ -8,6 +8,7 @@ import { VisitTracker } from '@/app/app/VisitTracker';
 import AccepterCGUModal from '@/app/app/pages/Auth/AccepterCGUModal';
 import { ScoreListenerProvider } from '@/app/referentiels/DEPRECATED_use-score-listener';
 import { DemoModeProvider } from '@/app/users/demo-mode-support-provider';
+import { datadogLogs } from '@datadog/browser-logs';
 import { setUser } from '@sentry/nextjs';
 import posthog from 'posthog-js';
 import { ReactNode } from 'react';
@@ -32,9 +33,11 @@ export default function AppProviders({
           user_id: session?.user.id,
         });
 
+        datadogLogs.setUser({ id: session?.user.id });
+
         setUser({
           id: session?.user.id,
-        })
+        });
 
         setCrispUserData(user);
 
@@ -46,6 +49,8 @@ export default function AppProviders({
       onSignedOut={() => {
         posthog.reset();
         clearCrispUserData();
+
+        datadogLogs.clearUser();
 
         setUser(null);
       }}

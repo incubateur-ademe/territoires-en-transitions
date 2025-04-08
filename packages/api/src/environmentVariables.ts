@@ -13,4 +13,5 @@ export const ENV = {
   application_version: process.env.NEXT_PUBLIC_APPLICATION_VERSION,
   application_env: process.env.NEXT_PUBLIC_ENV_NAME,
   deployment_timestamp: process.env.DEPLOYMENT_TIMESTAMP,
+  datadog_client_token: process.env.NEXT_PUBLIC_DATADOG_CLIENT_TOKEN,
 };

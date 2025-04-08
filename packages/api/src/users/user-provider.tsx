@@ -1,6 +1,7 @@
 'use client';
 
 import { useSupabase } from '@/api/utils/supabase/use-supabase';
+import { datadogLogs } from '@datadog/browser-logs';
 import { Session } from '@supabase/supabase-js';
 import { usePostHog } from 'posthog-js/react';
 import {
@@ -60,7 +61,7 @@ export const UserProvider = ({
     const {
       data: { subscription },
     } = supabase.auth.onAuthStateChange(async (event, session) => {
-      console.log('onAuthStateChange', event, session?.user);
+      datadogLogs.logger.info(`onAuthStateChange: ${event}`, session?.user);
 
       if (event === 'INITIAL_SESSION' || event === 'SIGNED_IN') {
         setSession(session);
