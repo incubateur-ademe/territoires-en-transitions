@@ -10,6 +10,7 @@ build:
   ARG BACKEND_URL
   ARG CRISP_WEBSITE_ID
   ARG SENTRY_DSN
+  ARG SENTRY_AUTH_TOKEN
 
   COPY . ./app.territoiresentransitions.react
 
