@@ -222,7 +222,10 @@ const INDICATEURS: Section = {
     },
     {
       colLabel: 'Indicateurs liés',
-      cellValue: ({ fiche }) => getNames(fiche?.indicateurs),
+      cellValue: ({ fiche }) =>
+        fiche?.indicateurs?.map(
+          ({ nom, unite }) => nom + (unite ? ` (${unite})` : '')
+        ),
     },
   ],
 };
