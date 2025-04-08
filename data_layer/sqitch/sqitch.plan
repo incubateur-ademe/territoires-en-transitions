@@ -836,6 +836,8 @@ plan_action/fiches [plan_action/fiches@v4.43.0] 2025-04-01T08:18:27Z Amandine <c
 @v4.45.0 2025-04-02T12:30:16Z Amandine <contact@jacquelinamandine.fr> # Ajoute un trigger aux éléments liés aux fiches actions pour mettre à jour ces dernières lors d'une modification
 
 plan_action/fiches [plan_action/fiches@v4.45.0] 2025-04-02T15:25:29Z Amandine <contact@jacquelinamandine.fr> # Enlève les triggers modified_at et modified_by des éléments des fiches actions car ça fait conflit avec le backend
-@v4.46.0 2025-04-03T07:42:34Z Amandine <contact@jacquelinamandine.fr> #  Enlève les triggers modified_at et modified_by des éléments des fiches actions car ça fait conflit avec le backend sauf pour fiche_action_lien et annexe
+@v4.46.0 2025-04-03T07:42:34Z Amandine <contact@jacquelinamandine.fr> # Enlève les triggers modified_at et modified_by des éléments des fiches actions car ça fait conflit avec le backend sauf pour fiche_action_lien et annexe
 
 webhooks/webhooks 2025-04-01T14:27:59Z System Administrator <root@MacBook-Air-de-Thibaut-2.local> # Ajout de la table de configuration des webhooks et des messages envoyés
+@v4.47.0 2025-04-08T19:51:50Z System Administrator <root@MacBook-Air-de-Thibaut-2.local> # Ajout des tables pour les webhooks
+
