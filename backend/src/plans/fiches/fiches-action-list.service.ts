@@ -52,6 +52,7 @@ import {
   SQL,
   SQLWrapper,
 } from 'drizzle-orm';
+import { isNil } from 'es-toolkit';
 import { ficheActionAxeTable } from './shared/models/fiche-action-axe.table';
 import { ficheActionPiloteTable } from './shared/models/fiche-action-pilote.table';
 import {
@@ -600,8 +601,8 @@ export default class FicheActionListService {
     if (filter.ameliorationContinue) {
       conditions.push(eq(ficheActionTable.ameliorationContinue, true));
     }
-    if (filter.restreint) {
-      conditions.push(eq(ficheActionTable.restreint, true));
+    if (!isNil(filter.restreint)) {
+      conditions.push(eq(ficheActionTable.restreint, filter.restreint));
     }
     if (filter.hasIndicateurLies) {
       conditions.push(isNotNull(sql`indicateur_ids`));
