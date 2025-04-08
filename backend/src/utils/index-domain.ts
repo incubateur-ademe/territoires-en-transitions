@@ -16,4 +16,5 @@ export * from './webhooks/webhook-configuration.table';
 export * from './webhooks/webhook-message.table';
 export * from './webhooks/webhook-payload-format.enum';
 export * from './webhooks/webhook-status.enum';
+export * from './version/version.models';
 export * from './zod.utils';

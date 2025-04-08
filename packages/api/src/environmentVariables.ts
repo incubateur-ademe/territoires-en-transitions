@@ -8,4 +8,9 @@ export const ENV = {
   sentry_dsn: process.env.NEXT_PUBLIC_SENTRY_DSN,
   crisp_website_id: process.env.NEXT_PUBLIC_CRISP_WEBSITE_ID,
   app_url: process.env.NEXT_PUBLIC_APP_URL,
+  git_short_sha: process.env.NEXT_PUBLIC_GIT_COMMIT_SHORT_SHA,
+  git_commit_timestamp: process.env.NEXT_PUBLIC_GIT_COMMIT_TIMESTAMP,
+  application_version: process.env.NEXT_PUBLIC_APPLICATION_VERSION,
+  application_env: process.env.NEXT_PUBLIC_ENV_NAME,
+  deployment_timestamp: process.env.DEPLOYMENT_TIMESTAMP,
 };
