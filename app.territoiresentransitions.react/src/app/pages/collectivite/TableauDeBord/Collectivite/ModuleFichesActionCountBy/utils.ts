@@ -101,12 +101,15 @@ const getFicheActionFiltreKeyValue = (
       } else {
         return null;
       }
+      /*
+      TODO à remplacer avec les nouveaux filtres des budgets
     case 'budgetPrevisionnel':
       if (propertyValue) {
         return { key: 'budgetPrevisionnel', value: true };
       } else {
         return null;
       }
+       */
 
     // Not supported for now
     case 'participationCitoyenneType':
