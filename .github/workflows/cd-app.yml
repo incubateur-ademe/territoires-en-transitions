@@ -43,6 +43,7 @@ jobs:
           --AUTH_URL=${{ vars.AUTH_URL }}
           --BACKEND_URL=${{ vars.BACKEND_URL }}
           --PANIER_URL=${{ vars.PANIER_URL }}
+          --SENTRY_AUTH_TOKEN=${{ secrets.SENTRY_AUTH_TOKEN }}
           --SENTRY_DSN=${{ vars.SENTRY_DSN }}
           --CRISP_WEBSITE_ID=${{ vars.CRISP_WEBSITE_ID }}
 
