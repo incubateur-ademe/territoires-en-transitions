@@ -5,11 +5,11 @@ import { and, eq, isNull, sql } from 'drizzle-orm';
 import { uniq } from 'es-toolkit';
 import z from 'zod';
 import { DatabaseService } from '../../utils/database/database.service';
-import FicheService from './fiche.service';
 import { FicheAction, ficheActionTable } from './index-domain';
 import { axeTable, AxeType } from './shared/models/axe.table';
 import { ficheActionAxeTable } from './shared/models/fiche-action-axe.table';
 import { FicheActionWithRelationsType } from './shared/models/fiche-action-with-relations.dto';
+import FicheActionPermissionsService from '@/backend/plans/fiches/fiche-action-permissions.service';
 
 const getPlanRequestSchema = z.object({
   collectiviteId: z.number(),
@@ -34,7 +34,7 @@ export default class PlanActionsService {
 
   constructor(
     private readonly databaseService: DatabaseService,
-    private readonly ficheService: FicheService,
+    private readonly ficheService: FicheActionPermissionsService,
     private readonly fichesListService: FicheActionListService
   ) {}
 
