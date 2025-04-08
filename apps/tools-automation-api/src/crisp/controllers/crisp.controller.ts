@@ -8,6 +8,6 @@ export class CrispController {
 
   @Post('sessions/callback')
   handleSessionChange(@Body() body: any) {
-    return this.crispService.handleSessionChange(body);
+    return this.crispService.handleMessageReceived(body);
   }
 }

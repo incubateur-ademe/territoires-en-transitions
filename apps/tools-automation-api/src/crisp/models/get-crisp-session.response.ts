@@ -1,8 +1,7 @@
-export interface GetCrispSessionResponse {
-  error: boolean;
-  reason: string;
-  data: CrispSession;
-}
+import { BaseCrispResponse } from '@/tools-automation-api/crisp/models/base-crisp.response';
+
+export interface GetCrispSessionResponse
+  extends BaseCrispResponse<CrispSession> {}
 
 export interface CrispSession {
   session_url?: string;

@@ -252,7 +252,8 @@ export class NotionBugCreatorService {
   getNotionBugFromCrispSession(
     session: CrispSession,
     database: GetDatabaseResponse,
-    collectiviteId: number | null
+    collectiviteId: number | null,
+    ticketTitle: string | null
   ): CreatePageParameters {
     const createPageParameters: CreatePageParameters = {
       icon: {
@@ -290,7 +291,7 @@ export class NotionBugCreatorService {
         Name: this.getNotionPropertyValue(
           database,
           'Name',
-          session.meta.subject
+          ticketTitle || session.meta.subject
         ),
       },
     };
@@ -514,9 +515,11 @@ export class NotionBugCreatorService {
     return [];
   }
 
-  async createOrUpdateBugFromCrispSession(
+  async createBugFromCrispSession(
     session: CrispSession,
-    messages: CrispSessionMessage[]
+    messages: CrispSessionMessage[],
+    ticketTitle: string | null,
+    checkExistingBug: boolean = true
   ) {
     const database = await this.notion.databases.retrieve({
       database_id: this.configurationService.get('NOTION_BUG_DATABASE_ID'),
@@ -567,47 +570,49 @@ export class NotionBugCreatorService {
       this.logger.warn(`No email found in session, skipping user lookup`);
     }
 
-    let createdOrExistingBug: PageObjectResponse;
-    if (existingBugs.results.length > 0) {
-      createdOrExistingBug = existingBugs.results[0] as PageObjectResponse;
+    if (checkExistingBug && existingBugs.results.length > 0) {
+      const existingBug = existingBugs.results[0] as PageObjectResponse;
       this.logger.log(
-        `Bug already exists for session ${session.session_id}, returning existing bug with url ${createdOrExistingBug.url}`
+        `Bug already exists for session ${session.session_id}, returning existing bug with url ${existingBug.url}`
       );
+
+      return { bug: existingBug, created: false };
     } else {
       const notionBug = this.getNotionBugFromCrispSession(
         session,
         database,
-        collectiviteId
+        collectiviteId,
+        ticketTitle
       );
-      createdOrExistingBug = (await this.notion.pages.create(
+      const createdBug = (await this.notion.pages.create(
         notionBug
       )) as PageObjectResponse;
       this.logger.log(
-        `Bug created for session ${session.session_id} with url ${createdOrExistingBug.url}`
+        `Bug created for session ${session.session_id} with url ${createdBug.url}`
       );
+
+      const existingBlocksResponse = await this.notion.blocks.children.list({
+        block_id: createdBug.id,
+      });
+      let existingBlocks: BlockObjectResponse[] =
+        existingBlocksResponse.results as BlockObjectResponse[];
+      this.logger.log(`Found ${existingBlocks.length} existing blocks`);
+
+      if (existingBlocks.length === 0) {
+        this.logger.log(`The bug is empty, creating a copy from the template`);
+
+        existingBlocks = await this.createBlocksFromTemplate(
+          createdBug.id,
+          this.configurationService.get('NOTION_BUG_TEMPLATE_ID'),
+          session,
+          collectivitesString
+        );
+      }
+
+      await this.fillMessageBlock(existingBlocks, messages);
+
+      return { bug: createdBug, created: true };
     }
-
-    const existingBlocksResponse = await this.notion.blocks.children.list({
-      block_id: createdOrExistingBug.id,
-    });
-    let existingBlocks: BlockObjectResponse[] =
-      existingBlocksResponse.results as BlockObjectResponse[];
-    this.logger.log(`Found ${existingBlocks.length} existing blocks`);
-
-    if (existingBlocks.length === 0) {
-      this.logger.log(`The bug is empty, creating a copy from the template`);
-
-      existingBlocks = await this.createBlocksFromTemplate(
-        createdOrExistingBug.id,
-        this.configurationService.get('NOTION_BUG_TEMPLATE_ID'),
-        session,
-        collectivitesString
-      );
-    }
-
-    await this.fillMessageBlock(existingBlocks, messages);
-
-    return createdOrExistingBug;
   }
 
   async fillMessageBlock(
@@ -675,7 +680,7 @@ export class NotionBugCreatorService {
                     {
                       type: 'text' as const,
                       text: {
-                        content: message.user.nickname,
+                        content: message.user?.nickname || '',
                       },
                     },
                   ],
