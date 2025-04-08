@@ -6,6 +6,8 @@ describe('CommunsFicheActionMapper', () => {
   test('Standard mapping', async () => {
     const ficheAction: FicheActionWithRelationsAndCollectiviteType = {
       id: 10108,
+      createdBy: '3fb7dbe4-6af2-4f8d-a199-fe381014d85e',
+      createdByName: 'Caroline Cordary',
       axes: [
         {
           id: 10820,
@@ -95,6 +97,11 @@ describe('CommunsFicheActionMapper', () => {
       notesComplementaires: null,
       participationCitoyenne: null,
       participationCitoyenneType: null,
+      etapes: null,
+      notes: null,
+      docs: null,
+      fichesLiees: null,
+      mesures: null,
     };
 
     const mapper = new CommunsFicheActionMapper();

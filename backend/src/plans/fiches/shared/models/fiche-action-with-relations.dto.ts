@@ -129,6 +129,7 @@ export const ficheActionWithRelationsSchema = ficheSchema.extend({
       ordre: z.number(),
     })
     .array()
+    .nullable()
     .describe('Etapes'),
   notes: z
     .object({
@@ -136,6 +137,7 @@ export const ficheActionWithRelationsSchema = ficheSchema.extend({
       dateNote: z.string(),
     })
     .array()
+    .nullable()
     .describe('Notes de suivi et points de vigilance'),
   mesures: z
     .object({
@@ -144,6 +146,7 @@ export const ficheActionWithRelationsSchema = ficheSchema.extend({
       referentiel: z.string(),
     })
     .array()
+    .nullable()
     .describe('Mesures des référentiels liées'),
   fichesLiees: z
     .object({
@@ -151,6 +154,7 @@ export const ficheActionWithRelationsSchema = ficheSchema.extend({
       nom: z.string(),
     })
     .array()
+    .nullable()
     .describe('Fiches des plans liées'),
   docs: z
     .object({
@@ -159,6 +163,7 @@ export const ficheActionWithRelationsSchema = ficheSchema.extend({
       url: z.string().optional(),
     })
     .array()
+    .nullable()
     .describe('Documents liés'),
 });
 

@@ -12,7 +12,7 @@ export interface CrispSessionMessage {
   from: From;
   origin: Delivered;
   content: CrispSessionMessageContent | string;
-  user: User;
+  user: CrispUser;
   original?: Original;
   delivered: Delivered;
   read: Delivered;
@@ -63,8 +63,9 @@ export enum CrispSessionMessageType {
   Text = 'text',
 }
 
-export interface User {
+export interface CrispUser {
   user_id?: string;
   nickname: string;
   type?: string;
+  email?: string;
 }

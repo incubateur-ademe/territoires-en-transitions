@@ -54,6 +54,26 @@ export const toolsAutomationApiConfigurationSchema = z.object({
   EXTERNAL_SYSTEM_SECRET_MAP: stringToJSON().describe(
     `Clé valeur contenant les accès pour les appels vers les systèmes externes`
   ),
+  AIRTABLE_PERSONAL_ACCESS_TOKEN: z
+    .string()
+    .min(1)
+    .describe('Airtable personal access token'),
+  AIRTABLE_IMPORT_DATABASE_ID: z
+    .string()
+    .min(1)
+    .describe('Airtable import database id'),
+  AIRTABLE_CRM_DATABASE_ID: z
+    .string()
+    .min(1)
+    .describe('Airtable CRM database id'),
+  AIRTABLE_CRM_FEEDBACKS_TABLE_ID: z
+    .string()
+    .min(1)
+    .describe('Airtable CRM Feedbacks table id'),
+  AIRTABLE_CRM_USERS_TABLE_ID: z
+    .string()
+    .min(1)
+    .describe('Airtable CRM Users table id'),
 });
 export type ToolsAutomationApiConfigurationType = z.infer<
   typeof toolsAutomationApiConfigurationSchema
