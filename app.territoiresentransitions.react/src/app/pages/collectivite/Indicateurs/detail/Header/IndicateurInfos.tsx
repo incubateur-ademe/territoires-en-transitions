@@ -63,7 +63,7 @@ const IndicateurInfos = ({
             {!!modifiedAt && <div className="w-[1px] h-5 bg-grey-5" />}
             <ListWithTooltip
               title="Pilotes"
-              list={pilotes.map((p) => p.nom!)}
+              list={pilotes.map((p) => p?.nom).filter((nom) => Boolean(nom)) as string[]}
               icon="user-line"
               hoveringColor="grey"
               onClick={() => setIsEditModalOpen(true)}
