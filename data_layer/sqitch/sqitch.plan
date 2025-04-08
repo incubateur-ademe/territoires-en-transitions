@@ -848,3 +848,4 @@ plan_action/budget 2025-04-01T15:33:43Z Amandine <contact@jacquelinamandine.fr> 
 indicateur/calcul_indicateur 2025-04-14T12:28:50Z System Administrator <root@MacBook-Air-de-Thibaut-2.local> # Ajout de colonnes pour savoir si une valeur d'indicateur a été calculée et si il manque des données de calcul
 @v4.49.0 2025-04-25T12:09:53Z System Administrator <root@MacBook-Air-de-Thibaut-2.local> # Ajout de colonnes pour savoir si une valeur d'indicateur a été calculée et si il manque des données de calcul
 
+collectivite/code_siren_commune 2025-04-08T13:23:45Z Marc Rutkowski <marc@attractive-media.fr> # Importe les codes SIREN des communes
