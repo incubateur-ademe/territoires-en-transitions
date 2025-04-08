@@ -162,9 +162,8 @@ const ETAPES: Section = {
           ?.sort((a, b) => a.ordre - b.ordre)
           .map(
             ({ nom, realise }) =>
-              `${nom} : ${realise ? 'réalisé' : 'non réalisé'} `
-          )
-          .join('\n') || '',
+              `${nom} : ${realise ? 'réalisé' : 'non réalisé'}`
+          ),
     },
   ],
 };
