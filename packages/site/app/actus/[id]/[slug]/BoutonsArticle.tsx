@@ -13,10 +13,11 @@ const BoutonsArticle = ({ boutons }: BoutonsArticleProps) => {
       {boutons.map((bouton, idx) => (
         <Button
           key={`${bouton.id}-${bouton.label}`}
-          href={bouton.url}
+          href={bouton.url ?? undefined}
           className="button"
           variant={idx === 0 ? 'primary' : 'outlined'}
           external={bouton.url?.startsWith('http')}
+          disabled={!bouton.url || bouton.url.trim().length === 0}
         >
           {bouton.label}
         </Button>

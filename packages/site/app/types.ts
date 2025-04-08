@@ -72,7 +72,11 @@ export type GallerieArticleData = {
   legendeVisible?: boolean;
 };
 
-export type BoutonsArticleData = { id: number; label: string; url: string }[];
+export type BoutonsArticleData = {
+  id: number;
+  label: string;
+  url: string | null;
+}[];
 
 export type CitationCollectiviteData = {
   texte: string;
