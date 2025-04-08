@@ -57,7 +57,7 @@ const FicheActionFooterInfo = ({
           )}
           <ListWithTooltip
             title="Pilotes"
-            list={pilotes.map((p) => p.nom!)}
+            list={pilotes.map((p) => p?.nom).filter((nom) => Boolean(nom)) as string[]}
             icon="user-line"
           />
         </>
