@@ -15,3 +15,12 @@ export function useListActions(filters?: ActionListFilters) {
     filters,
   });
 }
+
+export function useListActionsWithScores(filters?: ActionListFilters) {
+  const collectiviteId = useCollectiviteId();
+
+  return trpc.referentiels.actions.listActionsWithScores.useQuery({
+    collectiviteId,
+    filters,
+  });
+}
