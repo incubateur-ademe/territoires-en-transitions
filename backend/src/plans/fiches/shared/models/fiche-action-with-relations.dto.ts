@@ -83,6 +83,7 @@ export const ficheActionWithRelationsSchema = ficheSchema.extend({
     .object({
       id: z.number(),
       nom: z.string(),
+      unite: z.string(),
     })
     .array()
     .nullable()
