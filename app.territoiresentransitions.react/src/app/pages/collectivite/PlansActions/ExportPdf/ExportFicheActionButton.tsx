@@ -1,6 +1,7 @@
 import { FicheAction } from '@/api/plan-actions';
 import { useGetEtapes } from '@/app/app/pages/collectivite/PlansActions/FicheAction/etapes/use-get-etapes';
 import { useCurrentCollectivite } from '@/app/core-logic/hooks/useCurrentCollectivite';
+import { useListActionsWithScores } from '@/app/referentiels/actions/use-list-actions';
 import ExportPDFButton from '@/app/ui/export-pdf/ExportPDFButton';
 import { useEventTracker } from '@/ui';
 import { createElement, useEffect, useState } from 'react';
@@ -9,7 +10,6 @@ import { useAnnexesFicheActionInfos } from '../FicheAction/data/useAnnexesFicheA
 import { useFicheActionNotesSuivi } from '../FicheAction/data/useFicheActionNotesSuivi';
 import { useFichesActionLiees } from '../FicheAction/data/useFichesActionLiees';
 import { useFicheActionChemins } from '../PlanAction/data/usePlanActionChemin';
-import { useActionsLiees } from './FicheActionPdf/actions-liees/use-actions-liees';
 import FicheActionPdf from './FicheActionPdf/FicheActionPdf';
 import { TSectionsValues, sectionsInitValue } from './utils';
 
@@ -37,8 +37,10 @@ export const FicheActionPdfContent = ({
   const { data: fichesLiees, isLoading: isLoadingFichesLiees } =
     useFichesActionLiees(fiche.id, options.fiches.isChecked);
 
-  const { actions: actionsLiees, isLoading: isLoadingActionsLiees } =
-    useActionsLiees(fiche?.actions?.map((action) => action.id));
+  const { data: actionsLiees, isLoading: isLoadingActionsLiees } =
+    useListActionsWithScores({
+      actionIds: fiche?.actions?.map((action) => action.id),
+    });
 
   const { data: annexes, isLoading: isLoadingAnnexes } =
     useAnnexesFicheActionInfos(fiche.id, options.notes_docs.isChecked);

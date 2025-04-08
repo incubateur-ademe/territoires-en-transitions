@@ -17,7 +17,8 @@ export function getExtendActionWithComputedStatutsFields(
   getSnapshot: (
     collectiviteId: number,
     referentielId: ReferentielId
-  ) => ReturnType<SnapshotsService['get']>
+  ) => ReturnType<SnapshotsService['get']>,
+  includeOptions: ('statut' | 'score')[] = ['statut', 'score']
 ) {
   const getCurrentSnapshot = memoize((referentielId: ReferentielId) =>
     getSnapshot(collectiviteId, referentielId)
@@ -45,16 +46,19 @@ export function getExtendActionWithComputedStatutsFields(
 
     return {
       ...action,
-
-      desactive: score.desactive,
-      concerne: score.concerne,
-
-      statut: getStatutAvancementBasedOnChildren(
-        score,
-        flatMapActionsEnfants(actionWithScore)
-          .map((a) => a.score.avancement)
-          .filter((a) => a !== undefined)
-      ),
+      ...(includeOptions.includes('score') ? { score } : {}),
+      ...(includeOptions.includes('statut')
+        ? {
+            desactive: score.desactive,
+            concerne: score.concerne,
+            statut: getStatutAvancementBasedOnChildren(
+              score,
+              flatMapActionsEnfants(actionWithScore)
+                .map((a) => a.score.avancement)
+                .filter((a) => a !== undefined)
+            ),
+          }
+        : {}),
     };
   };
 }

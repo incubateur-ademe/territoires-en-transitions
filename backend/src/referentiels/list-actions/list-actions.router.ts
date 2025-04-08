@@ -45,7 +45,35 @@ export class ListActionsRouter {
 
         const extendActionWithScores = getExtendActionWithComputedStatutsFields(
           collectiviteId,
-          this.snapshotService.get.bind(this.snapshotService)
+          this.snapshotService.get.bind(this.snapshotService),
+          ['statut']
+        );
+
+        return Promise.all(actionDefinitions.map(extendActionWithScores));
+      }),
+
+    listActionsWithScores: this.trpc.authedProcedure
+      .input(listActionsRequestSchema)
+      .query(async ({ input, ctx: { user } }) => {
+        const { collectiviteId, filters } = input;
+
+        await this.permissions.isAllowed(
+          user,
+          PermissionOperation.REFERENTIELS_LECTURE,
+          ResourceType.COLLECTIVITE,
+          collectiviteId
+        );
+
+        const actionDefinitions =
+          await this.listActionDefinitionsService.listActionDefinitions({
+            collectiviteId,
+            filters,
+          });
+
+        const extendActionWithScores = getExtendActionWithComputedStatutsFields(
+          collectiviteId,
+          this.snapshotService.get.bind(this.snapshotService),
+          ['statut', 'score']
         );
 
         return Promise.all(actionDefinitions.map(extendActionWithScores));
