@@ -1,6 +1,7 @@
 import { collectiviteSchema } from '@/backend/collectivites/index-domain';
 import z from 'zod';
 import { ficheSchema } from './fiche-action.table';
+import { ficheActionBudgetSchema } from '@/backend/plans/fiches/fiche-action-budget/fiche-action-budget.table';
 
 export const ficheActionWithRelationsSchema = ficheSchema.extend({
   createdByName: z.string(),
@@ -165,6 +166,46 @@ export const ficheActionWithRelationsSchema = ficheSchema.extend({
     .array()
     .nullable()
     .describe('Documents liés'),
+  budgetsPrevisionnelInvestissementTotal:
+    ficheActionBudgetSchema
+    .array()
+      .nullable()
+    .describe(`Budget d'investissement prévisionnel total (non détaillé par année)`),
+  budgetsPrevisionnelInvestissementParAnnee:
+    ficheActionBudgetSchema
+      .array()
+      .nullable()
+      .describe(`Budget d'investissement prévisionnel par année`),
+  budgetsDepenseInvestissementTotal:
+    ficheActionBudgetSchema
+      .array()
+      .nullable()
+      .describe(`Budget d'investissement dépensé total (non détaillé par année)`),
+  budgetsDepenseInvestissementParAnnee:
+    ficheActionBudgetSchema
+      .array()
+      .nullable()
+      .describe(`Budget d'investissement dépensé par année`),
+  budgetsPrevisionnelFonctionnementTotal:
+    ficheActionBudgetSchema
+      .array()
+      .nullable()
+      .describe(`Budget de fonctionnement prévisionnel total (non détaillé par année)`),
+  budgetsPrevisionnelFonctionnementParAnnee:
+    ficheActionBudgetSchema
+      .array()
+      .nullable()
+      .describe(`Budget de fonctionnement prévisionnel par année`),
+  budgetsDepenseFonctionnementTotal:
+    ficheActionBudgetSchema
+      .array()
+      .nullable()
+      .describe(`Budget de fonctionnement dépensé total (non détaillé par année)`),
+  budgetsDepenseFonctionnementParAnnee:
+    ficheActionBudgetSchema
+      .array()
+      .nullable()
+      .describe(`Budget de fonctionnement dépensé par année`),
 });
 
 export type FicheActionWithRelationsType = z.infer<

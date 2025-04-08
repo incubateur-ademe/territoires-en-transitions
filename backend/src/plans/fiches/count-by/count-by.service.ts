@@ -103,14 +103,23 @@ export class CountByService {
     countByProperty: CountByPropertyEnumType,
     countByMap: CountByRecordGeneralType
   ) {
-    if (countByProperty === 'budgetPrevisionnel') {
+    if (
+      countByProperty === 'budgetsPrevisionnelInvestissementTotal' ||
+      countByProperty === 'budgetsPrevisionnelInvestissementParAnnee' ||
+      countByProperty === 'budgetsDepenseInvestissementTotal' ||
+      countByProperty === 'budgetsDepenseInvestissementParAnnee' ||
+      countByProperty === 'budgetsPrevisionnelFonctionnementTotal' ||
+      countByProperty === 'budgetsPrevisionnelFonctionnementParAnnee' ||
+      countByProperty === 'budgetsDepenseFonctionnementTotal' ||
+      countByProperty === 'budgetsDepenseFonctionnementParAnnee'
+    ) {
       countByMap['true'] = {
-        label: 'Avec budget prévisionnel renseigné',
+        label: 'Avec budget renseigné',
         value: true,
         count: 0,
       };
       countByMap['false'] = {
-        label: 'Sans budget prévisionnel renseigné',
+        label: 'Sans budget renseigné',
         value: false,
         count: 0,
       };
@@ -208,7 +217,14 @@ export class CountByService {
       }
       countByMap[valueKey].count++;
     } else if (
-      countByProperty === 'budgetPrevisionnel' ||
+      countByProperty === 'budgetsPrevisionnelInvestissementTotal' ||
+      countByProperty === 'budgetsPrevisionnelInvestissementParAnnee' ||
+      countByProperty === 'budgetsDepenseInvestissementTotal' ||
+      countByProperty === 'budgetsDepenseInvestissementParAnnee' ||
+      countByProperty === 'budgetsPrevisionnelFonctionnementTotal' ||
+      countByProperty === 'budgetsPrevisionnelFonctionnementParAnnee' ||
+      countByProperty === 'budgetsDepenseFonctionnementTotal' ||
+      countByProperty === 'budgetsDepenseFonctionnementParAnnee' ||
       countByProperty === 'restreint' ||
       countByProperty === 'ameliorationContinue' ||
       countByProperty === 'indicateurs'

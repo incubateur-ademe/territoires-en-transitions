@@ -67,6 +67,7 @@ import {
   FicheActionWithRelationsAndCollectiviteType,
   FicheActionWithRelationsType,
 } from './shared/models/fiche-action-with-relations.dto';
+import { ficheActionBudgetTable } from '@/backend/plans/fiches/fiche-action-budget/fiche-action-budget.table';
 
 @Injectable()
 export default class FicheActionListService {
@@ -500,6 +501,66 @@ export default class FicheActionListService {
       .as('ficheActionDocs');
   }
 
+  private getFicheActionBudgetsQuery(
+    previsionnel: boolean,
+    investissement: boolean,
+    total: boolean
+  ) {
+    const nom = `budget${previsionnel ? 'Pre' : 'Dep'}${
+      investissement ? 'Inv' : 'Fon'
+    }${total ? 'Tot' : 'An'}`;
+    const nomColonne = `budgets${previsionnel ? 'Previsionnel' : 'Depense'}${
+      investissement ? 'Investissement' : 'Fonctionnement'
+    }${total ? 'Total' : 'ParAnnee'}`;
+    const conditions: (SQLWrapper | SQL)[] = [];
+    conditions.push(
+      isNotNull(
+        previsionnel
+          ? ficheActionBudgetTable.budgetPrevisionnel
+          : ficheActionBudgetTable.budgetReel
+      )
+    );
+    conditions.push(
+      eq(
+        ficheActionBudgetTable.type,
+        investissement ? 'investissement' : 'fonctionnement'
+      )
+    );
+    if (total) {
+      conditions.push(isNull(ficheActionBudgetTable.annee));
+    } else {
+      conditions.push(isNotNull(ficheActionBudgetTable.annee));
+    }
+    return this.databaseService.db
+      .select({
+        ficheId: ficheActionBudgetTable.ficheId,
+        [nomColonne]: sql<
+          {
+            id?: number;
+            ficheId : number;
+            type: string;
+            unite: string;
+            annee?: number | null;
+            budgetPrevisionnel?: string | null;
+            budgetReel?: string | null;
+            estEtale?: boolean;
+          }[]
+        >`array_agg
+        (json_build_object(
+          'id', ${ficheActionBudgetTable.id},
+          'type', ${ficheActionBudgetTable.type},
+          'unite', ${ficheActionBudgetTable.type},
+          'annee', ${ficheActionBudgetTable.annee},
+          'budgetPrevisionnel', ${ficheActionBudgetTable.budgetPrevisionnel},
+          'budgetReel', ${ficheActionBudgetTable.budgetReel},
+          'estEtale', ${ficheActionBudgetTable.estEtale}))`.as(nomColonne),
+      })
+      .from(ficheActionBudgetTable)
+      .where(and(...conditions))
+      .groupBy(ficheActionBudgetTable.ficheId)
+      .as(nom);
+  }
+
   async getFicheActionById(
     ficheActionId: number,
     addCollectiviteData?: boolean
@@ -556,6 +617,14 @@ export default class FicheActionListService {
     const ficheActionMesures = this.getFicheActionMesuresQuery();
     const ficheActionFichesLiees = this.getFicheActionFichesLieesQuery();
     const ficheActionDocs = this.getFicheActionsDocsQuery();
+    const budgetPreInvTot = this.getFicheActionBudgetsQuery(true, true, true);
+    const budgetPreInvAn = this.getFicheActionBudgetsQuery(true, true, false);
+    const budgetDepInvTot = this.getFicheActionBudgetsQuery(false, true, true);
+    const budgetDepInvAn = this.getFicheActionBudgetsQuery(false, true, false);
+    const budgetPreFonTot = this.getFicheActionBudgetsQuery(true, false, true);
+    const budgetPreFonAn = this.getFicheActionBudgetsQuery(true, false, false);
+    const budgetDepFonTot = this.getFicheActionBudgetsQuery(false, false, true);
+    const budgetDepFonAn = this.getFicheActionBudgetsQuery(false, false, false);
 
     const conditions = this.getConditions(collectiviteId, filter);
     const dcpModifiedBy = aliasedTable(dcpTable, 'dcpModifiedBy');
@@ -584,6 +653,14 @@ export default class FicheActionListService {
         mesures: ficheActionMesures.mesures,
         fichesLiees: ficheActionFichesLiees.fichesLiees,
         docs: ficheActionDocs.docs,
+        budgetsPrevisionnelInvestissementTotal: budgetPreInvTot.budgetsPrevisionnelInvestissementTotal,
+        budgetsPrevisionnelInvestissementParAnnee: budgetPreInvAn.budgetsPrevisionnelInvestissementParAnnee,
+        budgetsDepenseInvestissementTotal: budgetDepInvTot.budgetsDepenseInvestissementTotal,
+        budgetsDepenseInvestissementParAnnee: budgetDepInvAn.budgetsDepenseInvestissementParAnnee,
+        budgetsPrevisionnelFonctionnementTotal: budgetPreFonTot.budgetsPrevisionnelFonctionnementTotal,
+        budgetsPrevisionnelFonctionnementParAnnee: budgetPreFonAn.budgetsPrevisionnelFonctionnementParAnnee,
+        budgetsDepenseFonctionnementTotal: budgetDepFonTot.budgetsDepenseFonctionnementTotal,
+        budgetsDepenseFonctionnementParAnnee: budgetDepFonAn.budgetsDepenseFonctionnementParAnnee,
       })
       .from(ficheActionTable)
       .leftJoin(
@@ -654,6 +731,26 @@ export default class FicheActionListService {
         ficheActionDocs,
         eq(ficheActionDocs.ficheId, ficheActionTable.id)
       )
+      .leftJoin(
+        budgetPreInvTot,
+        eq(budgetPreInvTot.ficheId, ficheActionTable.id)
+      )
+      .leftJoin(budgetPreInvAn, eq(budgetPreInvAn.ficheId, ficheActionTable.id))
+      .leftJoin(
+        budgetDepInvTot,
+        eq(budgetDepInvTot.ficheId, ficheActionTable.id)
+      )
+      .leftJoin(budgetDepInvAn, eq(budgetDepInvAn.ficheId, ficheActionTable.id))
+      .leftJoin(
+        budgetPreFonTot,
+        eq(budgetPreFonTot.ficheId, ficheActionTable.id)
+      )
+      .leftJoin(budgetPreFonAn, eq(budgetPreFonAn.ficheId, ficheActionTable.id))
+      .leftJoin(
+        budgetDepFonTot,
+        eq(budgetDepFonTot.ficheId, ficheActionTable.id)
+      )
+      .leftJoin(budgetDepFonAn, eq(budgetDepFonAn.ficheId, ficheActionTable.id))
       .leftJoin(dcpTable, eq(dcpTable.userId, ficheActionTable.createdBy))
       .leftJoin(
         dcpModifiedBy,
