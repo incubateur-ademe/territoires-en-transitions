@@ -2,7 +2,6 @@ import z from 'zod';
 import { ficheActionWithRelationsSchema } from '../shared/models/fiche-action-with-relations.dto';
 
 export const ficheActionForCountBySchema = ficheActionWithRelationsSchema.pick({
-  budgetPrevisionnel: true,
   restreint: true,
   ameliorationContinue: true,
   cibles: true,
@@ -25,6 +24,14 @@ export const ficheActionForCountBySchema = ficheActionWithRelationsSchema.pick({
   dateFin: true,
   createdAt: true,
   modifiedAt: true,
+  budgetsPrevisionnelInvestissementTotal : true,
+  budgetsPrevisionnelInvestissementParAnnee : true,
+  budgetsDepenseInvestissementTotal : true,
+  budgetsDepenseInvestissementParAnnee : true,
+  budgetsPrevisionnelFonctionnementTotal : true,
+  budgetsPrevisionnelFonctionnementParAnnee : true,
+  budgetsDepenseFonctionnementTotal : true,
+  budgetsDepenseFonctionnementParAnnee : true,
 });
 
 export const countByPropertyOptions =
