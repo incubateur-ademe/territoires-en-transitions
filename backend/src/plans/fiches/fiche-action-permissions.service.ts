@@ -4,7 +4,10 @@ import { ResourceType } from '@/backend/auth/authorizations/resource-type.enum';
 import { Injectable, Logger } from '@nestjs/common';
 import { eq } from 'drizzle-orm';
 import { AuthUser } from '../../auth/models/auth.models';
-import { ficheActionTable } from './shared/models/fiche-action.table';
+import {
+  FicheAction,
+  ficheActionTable,
+} from './shared/models/fiche-action.table';
 import { DatabaseService } from '@/backend/utils';
 
 @Injectable()
@@ -29,13 +32,22 @@ export default class FicheActionPermissionsService {
   async canReadFiche(ficheId: number, tokenInfo: AuthUser): Promise<boolean> {
     const fiche = await this.getFicheFromId(ficheId);
     if (fiche === null) return false;
-    return await this.permissionService.isAllowed(
+    return this.hasReadFichePermission(fiche, tokenInfo);
+  }
+
+  hasReadFichePermission(
+    fiche: Pick<FicheAction, 'collectiviteId' | 'restreint'>,
+    tokenInfo: AuthUser,
+    doNotThrow?: boolean
+  ): Promise<boolean> {
+    return this.permissionService.isAllowed(
       tokenInfo,
       fiche.restreint
         ? PermissionOperation.PLANS_FICHES_LECTURE
         : PermissionOperation.PLANS_FICHES_VISITE,
       ResourceType.COLLECTIVITE,
-      fiche.collectiviteId
+      fiche.collectiviteId,
+      doNotThrow
     );
   }
 
