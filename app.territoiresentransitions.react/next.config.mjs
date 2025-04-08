@@ -1,4 +1,5 @@
 import { composePlugins, withNx } from '@nx/next';
+import { uuid4 } from '@sentry/core';
 import { withSentryConfig } from '@sentry/nextjs';
 
 /**
@@ -18,6 +19,11 @@ const nextConfig = {
   // Useful for self-hosting in a Docker container
   // See https://nextjs.org/docs/app/api-reference/next-config-js/output#automatically-copying-traced-files
   output: 'standalone',
+
+  generateBuildId: async () => {
+    // Git hash
+    return process.env.EARTHLY_GIT_SHORT_HASH || uuid4();
+  },
 
   // Reverse Proxy vers PostHog : https://posthog.com/docs/advanced/proxy/nextjs
   async rewrites() {
