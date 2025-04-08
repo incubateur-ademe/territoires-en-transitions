@@ -105,6 +105,7 @@ export class AirtableService {
   ): Promise<AirtableFetchRecordsResponse<TFields>> {
     const url = `${this.BASE_API_URL}/${databaseId}/${tableIdOrName}/listRecords`;
     const headers = {
+      'Content-Type': 'application/json',
       Authorization: `Bearer ${this.configService.get(
         'AIRTABLE_PERSONAL_ACCESS_TOKEN'
       )}`,
