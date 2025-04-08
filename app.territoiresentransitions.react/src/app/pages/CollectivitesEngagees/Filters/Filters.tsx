@@ -60,6 +60,7 @@ export const Filters = ({ vue, filters, setFilters }: Props) => {
             /** Type plan d'action */
             <Field title="Type de plan" small>
               <SelectFilter
+                dropdownZindex={600} // nécessaire pour le menu mobile
                 options={planTypeOptions ?? []}
                 onChange={({ values }) => {
                   setFilters({
@@ -78,6 +79,7 @@ export const Filters = ({ vue, filters, setFilters }: Props) => {
           {/** Région */}
           <Field title="Région" small>
             <SelectFilter
+              dropdownZindex={600} // nécessaire pour le menu mobile
               options={regions.map(({ code, libelle }) => ({
                 value: code,
                 label: libelle,
@@ -130,6 +132,7 @@ export const Filters = ({ vue, filters, setFilters }: Props) => {
           {/** Départements */}
           <Field title="Département" small>
             <SelectFilter
+              dropdownZindex={600} // nécessaire pour le menu mobile
               options={departements
                 .filter(
                   (dep) =>
@@ -154,6 +157,7 @@ export const Filters = ({ vue, filters, setFilters }: Props) => {
           {/** Type de collectivité */}
           <Field title="Type de collectivité" small>
             <SelectFilter
+              dropdownZindex={600} // nécessaire pour le menu mobile
               options={typeCollectiviteOptions}
               onChange={({ values }) => {
                 setFilters({
@@ -168,6 +172,7 @@ export const Filters = ({ vue, filters, setFilters }: Props) => {
           {/** Population */}
           <Field title="Population" small>
             <SelectFilter
+              dropdownZindex={600} // nécessaire pour le menu mobile
               options={populationCollectiviteOptions}
               onChange={({ values }) => {
                 setFilters({
@@ -202,6 +207,7 @@ export const Filters = ({ vue, filters, setFilters }: Props) => {
               {/** Taux de remplissage */}
               <Field title="Taux de remplissage" small>
                 <SelectFilter
+                  dropdownZindex={600} // nécessaire pour le menu mobile
                   options={tauxRemplissageCollectiviteOptions}
                   onChange={({ values }) => {
                     setFilters({
