@@ -71,9 +71,9 @@ const CollectivitesHeader = ({
   return (
     <div className="flex flex-col">
       <h1 className="mb-4">Collectivités</h1>
-      <div className="flex max-lg:flex-col gap-3 items-center justify-between py-3 border-y border-primary-3">
+      <div className="flex max-md:flex-col gap-3 items-start justify-between py-3 border-y border-primary-3">
         <div className="flex flex-wrap max-md:flex-col items-center gap-3 max-md:w-full">
-          <div className="w-full md:w-60">
+          <div className="w-[500px] md:w-60 max-w-full">
             {/* Ordre d'affichage */}
             <Select
               options={getTrierParOptions()}
@@ -100,7 +100,7 @@ const CollectivitesHeader = ({
           </span>
         </div>
 
-        <div className="max-lg:order-first shrink-0">
+        <div className="max-md:order-first max-md:mx-auto shrink-0">
           {/* Sélection de la vue */}
           <ButtonGroup
             size="sm"
@@ -109,21 +109,24 @@ const CollectivitesHeader = ({
               {
                 id: 'collectivites',
                 children: 'Collectivités',
-                icon: 'layout-grid-line',
+                icon:
+                  view === 'collectivites'
+                    ? 'layout-grid-fill'
+                    : 'layout-grid-line',
                 onClick: () => handleChangeView('collectivites'),
               },
               {
                 id: 'referentiels',
                 'data-test': 'ToggleVueCollectivite',
                 children: 'Référentiels',
-                icon: 'star-line',
+                icon: view === 'referentiels' ? 'star-fill' : 'star-line',
                 onClick: () => handleChangeView('referentiels'),
               },
               {
                 id: 'plans',
                 'data-test': 'ToggleVuePlan',
                 children: "Plans d'action",
-                icon: 'list-unordered',
+                icon: view === 'plans' ? 'list-check' : 'list-unordered',
                 onClick: () => handleChangeView('plans'),
               },
             ]}
