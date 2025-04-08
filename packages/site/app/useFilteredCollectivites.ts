@@ -30,7 +30,7 @@ export const useFilteredCollectivites = (search: string) => {
       const fuse = new Fuse(data, {
         keys: ['nom'],
         threshold: 0.3,
-        shouldSort: false,
+        shouldSort: true,
       });
       return {
         filteredCollectivites: fuse.search(search).map((r) => r.item) || [],
