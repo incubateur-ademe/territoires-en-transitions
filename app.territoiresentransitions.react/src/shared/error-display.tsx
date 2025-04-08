@@ -4,6 +4,7 @@ import { getErrorMessage } from '@/domain/utils';
 import { EmptyCard } from '@/ui';
 import PageContainer from '@/ui/components/layout/page-container';
 import { PictoWarning } from '@/ui/design-system/Picto/PictoWarning';
+import { datadogLogs } from '@datadog/browser-logs';
 import * as Sentry from '@sentry/nextjs';
 import { FallbackProps } from 'react-error-boundary';
 
@@ -15,7 +16,9 @@ export const getErrorDisplayComponent = ({
   if (error) {
     const scopeContext = new Sentry.Scope();
     scopeContext.setTag('crash_id', crashId);
-    console.error(`Reporting error to Sentry: ${getErrorMessage(error)}`);
+    datadogLogs.logger.error(
+      `Reporting error to Sentry: ${getErrorMessage(error)}`
+    );
     Sentry.captureException(error, scopeContext);
   }
 

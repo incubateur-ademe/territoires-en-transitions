@@ -2,6 +2,7 @@ import { getCookieOptions } from '@/api/utils/supabase/cookie-options';
 import { SupabaseProvider } from '@/api/utils/supabase/use-supabase';
 import { E2EProvider } from '@/app/app/E2E';
 import Footer from '@/app/app/Layout/Footer';
+import DataDogInit from '@/app/lib/datadog.init';
 import { TrackingProvider } from '@/ui';
 import { Metadata } from 'next';
 import nextDynamic from 'next/dynamic';
@@ -99,6 +100,7 @@ export default async function RootLayout({
           </SupabaseProvider>
         </div>
         <CrispWithNoSSR />
+        <DataDogInit />
         <StonlyWidget />
       </body>
     </html>

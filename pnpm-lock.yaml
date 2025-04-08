@@ -29,6 +29,9 @@ importers:
       '@codegouvfr/react-dsfr':
         specifier: ^1.17.0
         version: 1.17.0
+      '@datadog/browser-logs':
+        specifier: ^6.6.3
+        version: 6.6.3
       '@dnd-kit/core':
         specifier: ^6.0.8
         version: 6.1.0(react-dom@18.3.1(react@18.3.1))(react@18.3.1)
@@ -2333,6 +2336,17 @@ packages:
     engines: {node: ^14 || ^16 || >=18}
     peerDependencies:
       postcss-selector-parser: ^6.0.10
+
+  '@datadog/browser-core@6.6.3':
+    resolution: {integrity: sha512-ywuDDWpDwfygFfCAeV9DJEPbKc7kldHPfHlJl/7uqqOQ4NabiFSSH92hSRZIe1F1tKKmf23IX7wvZKATeNeAEA==}
+
+  '@datadog/browser-logs@6.6.3':
+    resolution: {integrity: sha512-i9exVpTKU8f58Y0v76+N02irPOHYjcUunpVP37zu2KW182Sh8JmsYW3u7OhWqeitZrhICzbleafEqYxXVRggFQ==}
+    peerDependencies:
+      '@datadog/browser-rum': 6.6.3
+    peerDependenciesMeta:
+      '@datadog/browser-rum':
+        optional: true
 
   '@discoveryjs/json-ext@0.5.7':
     resolution: {integrity: sha512-dBVuXR082gk3jsFp7Rd/JI4kytwGHecnCoTtXFb7DB6CNHp4rg5k1bhg0nWdLGLnOV71lmDzGQaLMy8iPLY0pw==}
@@ -18940,6 +18954,12 @@ snapshots:
   '@csstools/selector-specificity@2.2.0(postcss-selector-parser@6.1.2)':
     dependencies:
       postcss-selector-parser: 6.1.2
+
+  '@datadog/browser-core@6.6.3': {}
+
+  '@datadog/browser-logs@6.6.3':
+    dependencies:
+      '@datadog/browser-core': 6.6.3
 
   '@discoveryjs/json-ext@0.5.7': {}
 

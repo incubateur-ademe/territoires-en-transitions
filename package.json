@@ -12,6 +12,7 @@
     "@bull-board/express": "^6.7.10",
     "@bull-board/nestjs": "^6.7.10",
     "@codegouvfr/react-dsfr": "^1.17.0",
+    "@datadog/browser-logs": "^6.6.3",
     "@dnd-kit/core": "^6.0.8",
     "@dnd-kit/sortable": "^10.0.0",
     "@dnd-kit/utilities": "^3.2.2",
