@@ -49,12 +49,15 @@ export const listActionsRequestOptionsSchema = z.object({
     ),
 });
 
+export const listActionsEmbedSchema = z.array(z.enum(['statut', 'score']));
+
 export const listActionsRequestSchema = z.object({
   collectiviteId: z.number(),
   filters: listActionsRequestOptionsSchema.default({
     actionTypes: [ActionTypeEnum.ACTION, ActionTypeEnum.SOUS_ACTION],
     referentielIds: [ReferentielIdEnum.CAE, ReferentielIdEnum.ECI],
   }),
+  embed: listActionsEmbedSchema.optional(),
 });
 
 export const listActionsWithStatusRequestSchema = z.object({
