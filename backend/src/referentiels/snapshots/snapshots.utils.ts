@@ -9,10 +9,11 @@ import { ReferentielId } from './../models/referentiel-id.enum';
 import { SnapshotsService } from './snapshots.service';
 
 /**
- * @returns a function that takes an action and returns the action with additional computed status fields
+ * @returns a function that takes an action and returns the action
+ * with additional computed status fields and/or scores
  * This returned function aims to be used in actions.map()
  */
-export function getExtendActionWithComputedStatutsFields(
+export function getExtendActionWithComputedFields(
   collectiviteId: number,
   getSnapshot: (
     collectiviteId: number,

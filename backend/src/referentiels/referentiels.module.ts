@@ -6,6 +6,8 @@ import { PersonnalisationsModule } from '../personnalisations/personnalisations.
 import { SheetModule } from '../utils/google-sheets/sheet.module';
 import { AssignPilotesRouter } from './assign-pilotes/assign-pilotes.router';
 import { AssignPilotesService } from './assign-pilotes/assign-pilotes.service';
+import { AssignServicesRouter } from './assign-services/assign-services.router';
+import { AssignServicesService } from './assign-services/assign-services.service';
 import { ReferentielsScoringController } from './compute-score/scores.controller';
 import ScoresService from './compute-score/scores.service';
 import { ExportScoreController } from './export-score/export-score.controller';
@@ -21,16 +23,14 @@ import { StartAuditRouter } from './labellisations/start-audit/start-audit.route
 import { StartAuditService } from './labellisations/start-audit/start-audit.service';
 import { ValidateAuditRouter } from './labellisations/validate-audit/validate-audit.router';
 import { ValidateAuditService } from './labellisations/validate-audit/validate-audit.service';
-import { ListActionDefinitionsService } from './list-action-definitions/list-action-definitions.service';
 import { ListActionsRouter } from './list-actions/list-actions.router';
+import { ListActionsService } from './list-actions/list-actions.service';
 import { ReferentielsRouter } from './referentiels.router';
 import { ListSnapshotsService } from './snapshots/list-snapshots/list-snapshots.service';
 import { SnapshotsRouter } from './snapshots/snapshots.router';
 import { SnapshotsService } from './snapshots/snapshots.service';
 import { UpdateActionStatutRouter } from './update-action-statut/update-action-statut.router';
 import { UpdateActionStatutService } from './update-action-statut/update-action-statut.service';
-import { AssignServicesService } from './assign-services/assign-services.service';
-import { AssignServicesRouter } from './assign-services/assign-services.router';
 @Module({
   imports: [CollectivitesModule, SheetModule, PersonnalisationsModule],
   providers: [
@@ -39,7 +39,7 @@ import { AssignServicesRouter } from './assign-services/assign-services.router';
     ImportReferentielService,
     ReferentielsRouter,
 
-    ListActionDefinitionsService,
+    ListActionsService,
     ListActionsRouter,
 
     UpdateActionStatutService,

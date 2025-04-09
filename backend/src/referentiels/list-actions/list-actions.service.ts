@@ -1,8 +1,8 @@
+import { dcpTable } from '@/backend/auth/index-domain';
 import { DatabaseService } from '@/backend/utils';
 import { Injectable } from '@nestjs/common';
 import { and, asc, eq, getTableColumns, inArray, SQL, sql } from 'drizzle-orm';
 import z from 'zod';
-import { dcpTable } from '../../auth/index-domain';
 import {
   PersonneTagOrUser,
   personneTagTable,
@@ -10,31 +10,35 @@ import {
   Tag,
 } from '../../collectivites/index-domain';
 import { actionDefinitionTable, actionTypeSchema } from '../index-domain';
-import { ListActionsRequestType } from '../list-actions/list-actions.request';
 import { actionPiloteTable } from '../models/action-pilote.table';
 import { actionServiceTable } from '../models/action-service.table';
 import { referentielDefinitionTable } from '../models/referentiel-definition.table';
+import { SnapshotsService } from '../snapshots/snapshots.service';
+import { getExtendActionWithComputedFields } from '../snapshots/snapshots.utils';
+import { ListActionsRequestType } from './list-actions.request';
+
+export type ListActionsEmbed = ('statut' | 'score')[];
 
 export const inputSchema = z.object({
   actionIds: z.string().array().optional(),
   actionTypes: actionTypeSchema.array().optional(),
 });
 
-export type ActionDefinition = Awaited<
-  ReturnType<ListActionDefinitionsService['listActionDefinitions']>
->[0];
-
 // TODO maybe see PG view `action_hierachy` to get children and parents
 
 @Injectable()
-export class ListActionDefinitionsService {
-  constructor(private readonly databaseService: DatabaseService) {}
+export class ListActionsService {
+  constructor(
+    private readonly databaseService: DatabaseService,
+    private readonly snapshotService: SnapshotsService
+  ) {}
 
   private db = this.databaseService.db;
 
-  async listActionDefinitions({
+  async listActions({
     collectiviteId,
     filters,
+    embed,
   }: ListActionsRequestType) {
     const subQuery = this.db
       .$with('action_definition_with_details')
@@ -118,7 +122,15 @@ export class ListActionDefinitionsService {
     request.where(and(...queryFilters));
     request.orderBy(asc(subQuery.actionId));
 
-    return await request;
+    const actions = await request;
+
+    const extendActionWithComputedFields = getExtendActionWithComputedFields(
+      collectiviteId,
+      this.snapshotService.get.bind(this.snapshotService),
+      embed
+    );
+
+    return Promise.all(actions.map(extendActionWithComputedFields));
   }
 
   private listWithDepth() {
