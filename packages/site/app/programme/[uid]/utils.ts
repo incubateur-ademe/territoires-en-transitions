@@ -73,7 +73,6 @@ export const getServiceStrapiData = async (uid: string) => {
               introduction: listeData.introduction,
               liste: listeData.liste.map((ct) => ({
                 id: ct.id,
-                icone: ct.icone,
                 preTitre: ct.pre_titre,
                 titre: ct.titre,
                 texte: ct.texte,
