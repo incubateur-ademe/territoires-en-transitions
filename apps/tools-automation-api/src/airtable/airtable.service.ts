@@ -36,7 +36,33 @@ export class AirtableService {
     session: CrispSession,
     messages: CrispSessionMessage[],
     operator?: CrispUser
-  ): Promise<AirtableRowDto<AirtableFeedbackRecord>> {
+  ): Promise<{
+    feedback: AirtableRowDto<AirtableFeedbackRecord>;
+    created: boolean;
+  }> {
+    if (session.session_url) {
+      this.logger.log(
+        `Searching for existing feedbacks for session ${session.session_url}`
+      );
+      const existingFeedbacks = await this.getRecords<AirtableFeedbackRecord>(
+        this.configService.get('AIRTABLE_CRM_DATABASE_ID'),
+        this.configService.get('AIRTABLE_CRM_FEEDBACKS_TABLE_ID'),
+        {
+          filterByFormula: `SourceUrl='${session.session_url}'`,
+        }
+      );
+      if (existingFeedbacks.records.length) {
+        this.logger.log(
+          `Found existing feedbacks for session ${session.session_url}`
+        );
+        return { feedback: existingFeedbacks.records[0], created: false };
+      } else {
+        this.logger.log(
+          `No existing feedbacks found for session ${session.session_url}`
+        );
+      }
+    }
+
     const CR = messages
       .map((message) => {
         return `${message.from}: ${message.content}`;
@@ -52,6 +78,7 @@ export class AirtableService {
         ...this.BASE_FEEDBACK_RECORD,
         Date: feedbackDateFormatted,
         CR,
+        SourceUrl: session.session_url,
       },
     };
     const userEmail = session.meta?.email;
@@ -95,7 +122,7 @@ export class AirtableService {
     this.logger.log(
       `Created feedback record: ${JSON.stringify(createdFeedbackRecord)}`
     );
-    return createdFeedbackRecord;
+    return { feedback: createdFeedbackRecord, created: true };
   }
 
   async getRecords<TFields>(
