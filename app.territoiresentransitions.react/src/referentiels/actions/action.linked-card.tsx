@@ -2,12 +2,15 @@ import { referentielToName } from '@/app/app/labels';
 import { makeReferentielTacheUrl } from '@/app/app/paths';
 import { useCollectiviteId } from '@/app/collectivites/collectivite-context';
 import ActionStatutBadge from '@/app/referentiels/actions/action-statut/action-statut.badge';
-import { ActionWithStatut } from '@/app/referentiels/actions/use-list-actions';
+import { Action } from '@/app/referentiels/actions/use-list-actions';
+import { ActionType } from '@/domain/referentiels';
 import { Button, Card } from '@/ui';
+import ScoreProgressBar from '../scores/score.progress-bar';
+import { ScoreRatioBadge } from '../scores/score.ratio-badge';
 
 type ActionCardProps = {
   isReadonly?: boolean;
-  action: ActionWithStatut;
+  action: Action;
   openInNewTab?: boolean;
   onUnlink?: () => void;
 };
@@ -61,6 +64,17 @@ const ActionLinkedCard = ({
         <span className="text-base font-bold text-primary-9">
           {identifiant} {nom}
         </span>
+
+        {/** Score */}
+        <div className="mt-auto">
+          <ScoreRatioBadge actionId={actionId} className={'mb-3'} />
+          <ScoreProgressBar
+            id={actionId}
+            identifiant={identifiant}
+            type={'action' as ActionType}
+            className="w-full"
+          />
+        </div>
       </Card>
     </div>
   );

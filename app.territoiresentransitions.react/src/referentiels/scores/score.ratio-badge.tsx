@@ -20,10 +20,10 @@ export const ScoreRatioBadge = ({ actionId, className }: Props) => {
     return null;
   }
 
-  const pointsFait = isSnapshotEnabled
+  const pointFait = isSnapshotEnabled
     ? NEW_score!.pointFait
     : DEPRECATED_score!.point_fait;
-  const pointsPotentiel = isSnapshotEnabled
+  const pointPotentiel = isSnapshotEnabled
     ? NEW_score!.pointPotentiel
     : DEPRECATED_score!.point_potentiel;
 
@@ -39,17 +39,17 @@ export const ScoreRatioBadge = ({ actionId, className }: Props) => {
     return troncateIfZero(percentage);
   };
 
-  const roundPointFait = troncateIfZero(pointsFait.toFixed(1));
-  const roundPointPotentiel = troncateIfZero(pointsPotentiel.toFixed(1));
+  const roundPointFait = troncateIfZero(pointFait.toFixed(1));
+  const roundPointPotentiel = troncateIfZero(pointPotentiel.toFixed(1));
 
   return (
     <div className={classNames('flex', className)}>
-      {pointsPotentiel === 0 ? (
+      {pointPotentiel === 0 ? (
         <Badge title="0 point" state="grey" uppercase={false} />
       ) : (
         <>
           <Badge
-            title={`${calculatePercentage(pointsFait, pointsPotentiel)} %`}
+            title={`${calculatePercentage(pointFait, pointPotentiel)} %`}
             state="success"
             uppercase={false}
             className="!rounded-r-none border-2 border-r-0"

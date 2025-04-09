@@ -4,9 +4,13 @@ import { getTestRouter } from '../../../test/app-utils';
 import { getAnonUser, getAuthUser } from '../../../test/auth-utils';
 import { AuthenticatedUser } from '../../auth/models/auth.models';
 import { type AppRouter, TrpcRouter } from '../../utils/trpc/trpc.router';
-import { ReferentielIdEnum } from '../index-domain';
+import { ActionTypeEnum, ReferentielIdEnum } from '../index-domain';
+import {
+  ListActionsRequestOptionsType,
+  listActionsRequestSchema,
+} from './list-actions.request';
 
-type Input = inferProcedureInput<
+type ListActionsInput = inferProcedureInput<
   AppRouter['referentiels']['actions']['listActions']
 >;
 
@@ -34,9 +38,11 @@ describe('ActionStatutListRouter', () => {
   test('not authenticated = no access', async () => {
     const caller = router.createCaller({ user: getAnonUser() });
 
-    const input: Input = {
+    const input: ListActionsInput = {
       collectiviteId: 1,
-      actionIds: ['cae_1.1.1'],
+      filters: {
+        actionIds: ['cae_1.1.1'],
+      },
     };
 
     await expect(
@@ -49,14 +55,16 @@ describe('ActionStatutListRouter', () => {
 
     const input = {
       collectiviteId: 1,
-      actionIds: ['cae_1.1.1'],
-    } satisfies Input;
+      filters: {
+        actionIds: ['cae_1.1.1'],
+      },
+    } satisfies ListActionsInput;
 
     const result = await caller.referentiels.actions.listActions(input);
-    expect(result.length).toEqual(input.actionIds.length);
+    expect(result.length).toEqual(input.filters.actionIds.length);
 
     for (const action of result) {
-      expect(input.actionIds).toContain(action.actionId);
+      expect(input.filters.actionIds).toContain(action.actionId);
 
       expect(action.referentiel).toBeDefined();
       expect(action.nom).toBeDefined();
@@ -64,7 +72,12 @@ describe('ActionStatutListRouter', () => {
       expect(action.depth).toBeDefined();
       expect(action.actionType).toBeDefined();
 
-      expect(action).not.toHaveProperty('statut');
+      expect(action.statut).toBeDefined();
+      expect(action.desactive).toBeDefined();
+      expect(action.concerne).toBeDefined();
+
+      expect(Array.isArray(action.pilotes)).toBe(true);
+      expect(Array.isArray(action.services)).toBe(true);
     }
   });
 
@@ -73,14 +86,16 @@ describe('ActionStatutListRouter', () => {
 
     const input = {
       collectiviteId: 1,
-      actionIds: ['cae_1.1.1', 'eci_1.3.2'],
-    } satisfies Input;
+      filters: {
+        actionIds: ['cae_1.1.1', 'eci_1.3.2'],
+      },
+    } satisfies ListActionsInput;
 
     const result = await caller.referentiels.actions.listActions(input);
-    expect(result.length).toEqual(input.actionIds.length);
+    expect(result.length).toEqual(input.filters.actionIds.length);
 
     for (const action of result) {
-      expect(input.actionIds).toContain(action.actionId);
+      expect(input.filters.actionIds).toContain(action.actionId);
     }
   });
 
@@ -89,24 +104,80 @@ describe('ActionStatutListRouter', () => {
 
     const input = {
       collectiviteId: 1,
-      actionIds: ['cae_1.1.1', 'eci_1.3.2'],
-    } satisfies Input;
+      filters: {
+        actionIds: ['cae_1.1.1', 'eci_1.3.2'],
+      },
+    } satisfies ListActionsInput;
 
-    const result = await caller.referentiels.actions.listActionsWithStatuts(
-      input
-    );
-    expect(result.length).toEqual(input.actionIds.length);
+    const result = await caller.referentiels.actions.listActions(input);
+
+    expect(result.length).toEqual(input.filters.actionIds.length);
 
     for (const action of result) {
-      expect(input.actionIds).toContain(action.actionId);
+      expect(input.filters.actionIds).toContain(action.actionId);
 
       expect(action.depth).toBeDefined();
       expect(action.actionType).toBeDefined();
 
-      // Specific fields when `withStatuts` is true
       expect(action.statut).toBeDefined();
       expect(action.desactive).toBeDefined();
       expect(action.concerne).toBeDefined();
     }
+  });
+
+  test('List actions with scores', async () => {
+    const caller = router.createCaller({ user: yoloDodoUser });
+
+    const input = {
+      collectiviteId: 1,
+      filters: {
+        actionIds: ['cae_1.1.1'],
+      },
+    } satisfies ListActionsInput;
+
+    const result = await caller.referentiels.actions.listActionsWithScores(
+      input
+    );
+
+    expect(result.length).toEqual(input.filters.actionIds.length);
+
+    for (const action of result) {
+      expect(input.filters.actionIds).toContain(action.actionId);
+
+      expect(action.score).toBeDefined();
+    }
+  });
+
+  test(`Request executes without filters`, async () => {
+    const caller = router.createCaller({ user: yoloDodoUser });
+
+    const input: ListActionsInput = {
+      collectiviteId: 1,
+    };
+    const result = await caller.referentiels.actions.listActions(input);
+    expect(result.length).not.toBe(0);
+    const toCheck = listActionsRequestSchema.safeParse(result);
+    expect(toCheck.success).toBeTruthy;
+  });
+
+  test(`Request executes with filters`, async () => {
+    const caller = router.createCaller({ user: yoloDodoUser });
+
+    const filters: ListActionsRequestOptionsType = {
+      actionIds: ['cae_1.1.1', 'eci_1.3.2'],
+      actionTypes: [ActionTypeEnum.ACTION, ActionTypeEnum.SOUS_ACTION],
+      utilisateurPiloteIds: [yoloDodoUser.id],
+      personnePiloteIds: [1],
+      servicePiloteIds: [1],
+      referentielIds: [ReferentielIdEnum.CAE, ReferentielIdEnum.ECI],
+    };
+
+    const input: ListActionsInput = {
+      collectiviteId: 1,
+      filters: filters,
+    };
+
+    const result = await caller.referentiels.actions.listActions(input);
+    expect(result.length).toBe(0);
   });
 });

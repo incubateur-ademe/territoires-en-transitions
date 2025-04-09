@@ -1,7 +1,6 @@
 import { Enums } from '@/api';
 import {
   Accordion,
-  ACCORDION_CONTENT_STYLE,
   Checkbox,
   Field,
   FieldMessage,
@@ -106,8 +105,10 @@ export const RejoindreUneCollectivite = (
               title="Aide"
               icon="question-line"
               iconPosition="right"
+              containerClassname="border border-primary-3 rounded-xl"
+              headerClassname="px-6 !py-4"
               content={
-                <div className={ACCORDION_CONTENT_STYLE}>
+                <div className="p-6 border-t border-primary-3 text-grey-8">
                   <div className="italic mb-2">
                     Vous ne trouvez pas la collectivité que vous recherchez ?
                   </div>

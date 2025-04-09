@@ -48,7 +48,7 @@ const ActionsLieesTab = ({
           {/* Titre et bouton d'édition */}
           <div className="flex justify-between">
             <h5 className="text-primary-8 mb-0">
-              Actions des référentiels liées
+              Mesures des référentiels liées
             </h5>
             {!isReadonly && !isLoading && (
               <Button
@@ -59,12 +59,12 @@ const ActionsLieesTab = ({
                 onClick={() => setIsModalOpen(true)}
               >
                 {isEditLoading && <SpinnerLoader className="!h-4" />}
-                Lier une action des référentiels
+                Lier une mesure des référentiels
               </Button>
             )}
           </div>
 
-          {/* Liste des actions des référentiels liées */}
+          {/* Liste des mesures des référentiels liées */}
           <ActionsLieesListe
             isReadonly={isReadonly}
             actionIds={actions?.map((action) => action.id)}

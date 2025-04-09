@@ -23,15 +23,14 @@ import { StartAuditRouter } from './labellisations/start-audit/start-audit.route
 import { StartAuditService } from './labellisations/start-audit/start-audit.service';
 import { ValidateAuditRouter } from './labellisations/validate-audit/validate-audit.router';
 import { ValidateAuditService } from './labellisations/validate-audit/validate-audit.service';
-import { ListActionDefinitionsService } from './list-action-definitions/list-action-definitions.service';
 import { ListActionsRouter } from './list-actions/list-actions.router';
+import { ListActionsService } from './list-actions/list-actions.service';
 import { ReferentielsRouter } from './referentiels.router';
 import { ListSnapshotsService } from './snapshots/list-snapshots/list-snapshots.service';
 import { SnapshotsRouter } from './snapshots/snapshots.router';
 import { SnapshotsService } from './snapshots/snapshots.service';
 import { UpdateActionStatutRouter } from './update-action-statut/update-action-statut.router';
 import { UpdateActionStatutService } from './update-action-statut/update-action-statut.service';
-
 @Module({
   imports: [CollectivitesModule, SheetModule, PersonnalisationsModule],
   providers: [
@@ -40,7 +39,7 @@ import { UpdateActionStatutService } from './update-action-statut/update-action-
     ImportReferentielService,
     ReferentielsRouter,
 
-    ListActionDefinitionsService,
+    ListActionsService,
     ListActionsRouter,
 
     UpdateActionStatutService,

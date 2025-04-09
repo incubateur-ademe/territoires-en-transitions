@@ -1,6 +1,8 @@
 import { preuveSchemaEssential } from '@/backend/collectivites/documents/models/preuve.dto';
+import { scoreFinalSchema } from '@/backend/referentiels/compute-score/score.dto';
 import z from 'zod';
 import { actionDefinitionSchema } from './action-definition.table';
+import { statutAvancementIncludingNonConcerneEnumSchema } from './action-statut.table';
 import { actionTypeIncludingExempleSchema } from './action-type.enum';
 
 // type Increment<N extends number> = N extends infer R
@@ -50,4 +52,20 @@ export const actionDefinitionEssentialSchema = actionDefinitionSchema
 
 export type ActionDefinitionEssential = z.infer<
   typeof actionDefinitionEssentialSchema
+>;
+
+/**
+ * Combines an action with its status and score,
+ * which is what we need for the PDF export.
+ */
+
+const actionWithStatutAndScoreSchema = actionDefinitionSchema.extend({
+  statut: statutAvancementIncludingNonConcerneEnumSchema,
+  desactive: z.boolean().optional(),
+  concerne: z.boolean().optional(),
+  score: scoreFinalSchema.optional(),
+});
+
+export type ActionWithStatutAndScore = z.infer<
+  typeof actionWithStatutAndScoreSchema
 >;

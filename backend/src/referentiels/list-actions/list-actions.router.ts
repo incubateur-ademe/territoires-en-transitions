@@ -2,80 +2,54 @@ import { PermissionService } from '@/backend/auth/authorizations/permission.serv
 import { PermissionOperation, ResourceType } from '@/backend/auth/index-domain';
 import { TrpcService } from '@/backend/utils/trpc/trpc.service';
 import { Injectable } from '@nestjs/common';
-import z from 'zod';
-import { ListActionDefinitionsService } from '../list-action-definitions/list-action-definitions.service';
-import { SnapshotsService } from '../snapshots/snapshots.service';
-import { getExtendActionWithComputedStatutsFields } from '../snapshots/snapshots.utils';
-import { ActionTypeEnum, actionTypeSchema } from './../models/action-type.enum';
-
-export const inputSchema = z.object({
-  collectiviteId: z.number(),
-  actionIds: z.string().array().optional(),
-  actionTypes: actionTypeSchema
-    .array()
-    .optional()
-    .default([ActionTypeEnum.ACTION, ActionTypeEnum.SOUS_ACTION]),
-});
+import { listActionsRequestSchema } from './list-actions.request';
+import { ListActionsService } from './list-actions.service';
 
 @Injectable()
 export class ListActionsRouter {
   constructor(
     private readonly trpc: TrpcService,
     private readonly permissions: PermissionService,
-    private readonly snapshotService: SnapshotsService,
-    private readonly listActionDefinitionsService: ListActionDefinitionsService
+    private readonly listActionsService: ListActionsService
   ) {}
 
   router = this.trpc.router({
     listActions: this.trpc.authedProcedure
-      .input(inputSchema)
-      .query(
-        async ({
-          input: { collectiviteId, actionIds, actionTypes },
-          ctx: { user },
-        }) => {
-          await this.permissions.isAllowed(
-            user,
-            PermissionOperation.REFERENTIELS_LECTURE,
-            ResourceType.COLLECTIVITE,
-            collectiviteId
-          );
+      .input(listActionsRequestSchema)
+      .query(async ({ input, ctx: { user } }) => {
+        const { collectiviteId, filters } = input;
 
-          return this.listActionDefinitionsService.listActionDefinitions({
-            actionIds,
-            actionTypes,
-          });
-        }
-      ),
+        await this.permissions.isAllowed(
+          user,
+          PermissionOperation.REFERENTIELS_LECTURE,
+          ResourceType.COLLECTIVITE,
+          collectiviteId
+        );
 
-    listActionsWithStatuts: this.trpc.authedProcedure
-      .input(inputSchema)
-      .query(
-        async ({
-          input: { collectiviteId, actionIds, actionTypes },
-          ctx: { user },
-        }) => {
-          await this.permissions.isAllowed(
-            user,
-            PermissionOperation.REFERENTIELS_LECTURE,
-            ResourceType.COLLECTIVITE,
-            collectiviteId
-          );
+        return this.listActionsService.listActions({
+          collectiviteId,
+          filters,
+          embed: ['statut'],
+        });
+      }),
 
-          const actionDefinitions =
-            await this.listActionDefinitionsService.listActionDefinitions({
-              actionIds,
-              actionTypes,
-            });
+    listActionsWithScores: this.trpc.authedProcedure
+      .input(listActionsRequestSchema)
+      .query(async ({ input, ctx: { user } }) => {
+        const { collectiviteId, filters } = input;
 
-          const extendActionWithScores =
-            getExtendActionWithComputedStatutsFields(
-              collectiviteId,
-              this.snapshotService.get.bind(this.snapshotService)
-            );
+        await this.permissions.isAllowed(
+          user,
+          PermissionOperation.REFERENTIELS_LECTURE,
+          ResourceType.COLLECTIVITE,
+          collectiviteId
+        );
 
-          return Promise.all(actionDefinitions.map(extendActionWithScores));
-        }
-      ),
+        return this.listActionsService.listActions({
+          collectiviteId,
+          filters,
+          embed: ['statut', 'score'],
+        });
+      }),
   });
 }

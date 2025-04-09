@@ -1,3 +1,4 @@
+import { ListActionsEmbed } from '@/backend/referentiels/list-actions/list-actions.service';
 import { memoize } from 'es-toolkit';
 import {
   findActionInTree,
@@ -9,15 +10,17 @@ import { ReferentielId } from './../models/referentiel-id.enum';
 import { SnapshotsService } from './snapshots.service';
 
 /**
- * @returns a function that takes an action and returns the action with additional computed status fields
+ * @returns a function that takes an action and returns the action
+ * with additional computed status fields and/or scores
  * This returned function aims to be used in actions.map()
  */
-export function getExtendActionWithComputedStatutsFields(
+export function getExtendActionWithComputedFields(
   collectiviteId: number,
   getSnapshot: (
     collectiviteId: number,
     referentielId: ReferentielId
-  ) => ReturnType<SnapshotsService['get']>
+  ) => ReturnType<SnapshotsService['get']>,
+  embed: ListActionsEmbed
 ) {
   const getCurrentSnapshot = memoize((referentielId: ReferentielId) =>
     getSnapshot(collectiviteId, referentielId)
@@ -45,16 +48,19 @@ export function getExtendActionWithComputedStatutsFields(
 
     return {
       ...action,
-
-      desactive: score.desactive,
-      concerne: score.concerne,
-
-      statut: getStatutAvancementBasedOnChildren(
-        score,
-        flatMapActionsEnfants(actionWithScore)
-          .map((a) => a.score.avancement)
-          .filter((a) => a !== undefined)
-      ),
+      ...(embed.includes('score') ? { score } : {}),
+      ...(embed.includes('statut')
+        ? {
+            desactive: score.desactive,
+            concerne: score.concerne,
+            statut: getStatutAvancementBasedOnChildren(
+              score,
+              flatMapActionsEnfants(actionWithScore)
+                .map((a) => a.score.avancement)
+                .filter((a) => a !== undefined)
+            ),
+          }
+        : {}),
     };
   };
 }
