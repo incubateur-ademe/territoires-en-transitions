@@ -6,7 +6,7 @@ import { useEffect, useState } from 'react';
 import { saveBlob } from '../../referentiels/preuves/Bibliotheque/saveBlob';
 import DocumentToExport from './DocumentToExport';
 
-const TEST_MODE = true;
+const TEST_MODE = false;
 
 export type ExportPDFButtonType = Pick<
   ButtonProps,
