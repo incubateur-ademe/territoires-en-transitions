@@ -69,6 +69,11 @@ export class CommunsFicheActionMapper extends AbstractEntityMapper<
   map(
     data: FicheActionWithRelationsAndCollectiviteType
   ): CreateProjetRequest | null {
+    if (data.restreint) {
+      this.logger.log(`Do not send restricted fiche action ${data.id}`);
+      return null;
+    }
+
     let bugetPrevisionnel = data.budgetPrevisionnel
       ? parseFloat(data.budgetPrevisionnel)
       : null;
@@ -84,7 +89,7 @@ export class CommunsFicheActionMapper extends AbstractEntityMapper<
     ) {
       // Implement the mapping logic here
       const createProjectRequest: CreateProjetRequest = {
-        nom: data.titre || '',
+        nom: data.titre || 'Sans titre', // TODO: to be checked, otherwise do not send it
         externalId: `${data.id}`,
         description: data.description || '',
         collectivites: [
