@@ -1,3 +1,4 @@
+import { ListActionsEmbed } from '@/backend/referentiels/list-actions/list-actions.service';
 import { memoize } from 'es-toolkit';
 import {
   findActionInTree,
@@ -19,7 +20,7 @@ export function getExtendActionWithComputedFields(
     collectiviteId: number,
     referentielId: ReferentielId
   ) => ReturnType<SnapshotsService['get']>,
-  includeOptions: ('statut' | 'score')[] = ['statut', 'score']
+  embed: ListActionsEmbed
 ) {
   const getCurrentSnapshot = memoize((referentielId: ReferentielId) =>
     getSnapshot(collectiviteId, referentielId)
@@ -47,8 +48,8 @@ export function getExtendActionWithComputedFields(
 
     return {
       ...action,
-      ...(includeOptions.includes('score') ? { score } : {}),
-      ...(includeOptions.includes('statut')
+      ...(embed.includes('score') ? { score } : {}),
+      ...(embed.includes('statut')
         ? {
             desactive: score.desactive,
             concerne: score.concerne,

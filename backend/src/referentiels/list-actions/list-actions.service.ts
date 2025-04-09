@@ -2,29 +2,24 @@ import { dcpTable } from '@/backend/auth/index-domain';
 import { DatabaseService } from '@/backend/utils';
 import { Injectable } from '@nestjs/common';
 import { and, asc, eq, getTableColumns, inArray, SQL, sql } from 'drizzle-orm';
-import z from 'zod';
 import {
   PersonneTagOrUser,
   personneTagTable,
   serviceTagTable,
   Tag,
 } from '../../collectivites/index-domain';
-import { actionDefinitionTable, actionTypeSchema } from '../index-domain';
+import { actionDefinitionTable } from '../index-domain';
 import { actionPiloteTable } from '../models/action-pilote.table';
 import { actionServiceTable } from '../models/action-service.table';
 import { referentielDefinitionTable } from '../models/referentiel-definition.table';
 import { SnapshotsService } from '../snapshots/snapshots.service';
 import { getExtendActionWithComputedFields } from '../snapshots/snapshots.utils';
 import { ListActionsRequestType } from './list-actions.request';
-
 export type ListActionsEmbed = ('statut' | 'score')[];
 
-export const inputSchema = z.object({
-  actionIds: z.string().array().optional(),
-  actionTypes: actionTypeSchema.array().optional(),
-});
-
-// TODO maybe see PG view `action_hierachy` to get children and parents
+type ListInput = ListActionsRequestType & {
+  embed: ListActionsEmbed;
+};
 
 @Injectable()
 export class ListActionsService {
@@ -35,11 +30,7 @@ export class ListActionsService {
 
   private db = this.databaseService.db;
 
-  async listActions({
-    collectiviteId,
-    filters,
-    embed,
-  }: ListActionsRequestType) {
+  async listActions({ collectiviteId, filters, embed }: ListInput) {
     const subQuery = this.db
       .$with('action_definition_with_details')
       .as(this.listWithDetails(collectiviteId));
