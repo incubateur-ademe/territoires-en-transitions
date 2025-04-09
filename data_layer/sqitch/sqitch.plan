@@ -841,3 +841,5 @@ plan_action/fiches [plan_action/fiches@v4.45.0] 2025-04-02T15:25:29Z Amandine <c
 webhooks/webhooks 2025-04-01T14:27:59Z System Administrator <root@MacBook-Air-de-Thibaut-2.local> # Ajout de la table de configuration des webhooks et des messages envoyés
 @v4.47.0 2025-04-08T19:51:50Z System Administrator <root@MacBook-Air-de-Thibaut-2.local> # Ajout des tables pour les webhooks
 
+
+cron/delete_score_cron 2025-04-09T06:54:22Z System Administrator <root@MacBook-Air-de-Thibaut-2.local> # Delete update_late_scores and verification_scores cron
