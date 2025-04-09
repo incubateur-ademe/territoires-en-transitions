@@ -101,284 +101,285 @@ export default class FichesActionUpdateService {
       ...unsafeFicheAction
     } = body;
 
-    return await this.databaseService.rls(user)(async (tx) => {
-      const existingFicheAction = await this.databaseService.db
-        .select()
-        .from(ficheActionTable)
-        .where(eq(ficheActionTable.id, ficheActionId));
+    const updatedFicheAction = await this.databaseService.rls(user)(
+      async (tx) => {
+        const existingFicheAction = await this.databaseService.db
+          .select()
+          .from(ficheActionTable)
+          .where(eq(ficheActionTable.id, ficheActionId));
 
-      if (existingFicheAction.length === 0) {
-        throw new NotFoundException('Fiche action not found');
-      }
+        if (existingFicheAction.length === 0) {
+          throw new NotFoundException('Fiche action not found');
+        }
 
-      // Removes all props that are not in the schema
-      const ficheAction = ficheSchemaUpdate.parse(unsafeFicheAction);
+        // Removes all props that are not in the schema
+        const ficheAction = ficheSchemaUpdate.parse(unsafeFicheAction);
 
-      let updatedFicheAction;
-      let updatedAxes;
-      let updatedThematiques;
-      let updatedSousThematiques;
-      let updatedPartenaires;
-      let updatedStructures;
-      let updatedPilotes;
-      let updatedReferents;
-      let updatedActions;
-      let updatedIndicateurs;
-      let updatedServices;
-      let updatedFinanceurs;
-      let updatedFichesLiees;
-      let updatedResultatsAttendus;
-      let updatedLibresTag;
+        let updatedFicheAction;
+        let updatedAxes;
+        let updatedThematiques;
+        let updatedSousThematiques;
+        let updatedPartenaires;
+        let updatedStructures;
+        let updatedPilotes;
+        let updatedReferents;
+        let updatedActions;
+        let updatedIndicateurs;
+        let updatedServices;
+        let updatedFinanceurs;
+        let updatedFichesLiees;
+        let updatedResultatsAttendus;
+        let updatedLibresTag;
 
-      /**
-       * Updates fiche action properties
-       */
+        /**
+         * Updates fiche action properties
+         */
 
-      if (Object.keys(body).length > 0) {
-        updatedFicheAction = await tx
-          .update(ficheActionTable)
-          .set({
-            ...ficheAction,
-            modifiedBy: user.id,
-            modifiedAt: new Date().toISOString(),
-          })
-          .where(eq(ficheActionTable.id, ficheActionId))
-          .returning();
-      }
+        if (Object.keys(body).length > 0) {
+          updatedFicheAction = await tx
+            .update(ficheActionTable)
+            .set({
+              ...ficheAction,
+              modifiedBy: user.id,
+              modifiedAt: new Date().toISOString(),
+            })
+            .where(eq(ficheActionTable.id, ficheActionId))
+            .returning();
+        }
 
-      /**
-       * Updates junction tables
-       */
+        /**
+         * Updates junction tables
+         */
 
-      if (axes !== undefined) {
-        updatedAxes = await this.updateRelations(
-          ficheActionId,
-          axes,
-          tx,
-          ficheActionAxeTable,
-          ['id'],
-          ficheActionAxeTable.ficheId,
-          [ficheActionAxeTable.axeId]
-        );
-      }
-
-      if (thematiques !== undefined) {
-        updatedThematiques = await this.updateRelations(
-          ficheActionId,
-          thematiques,
-          tx,
-          ficheActionThematiqueTable,
-          ['id'],
-          ficheActionThematiqueTable.ficheId,
-          [ficheActionThematiqueTable.thematiqueId]
-        );
-      }
-
-      if (sousThematiques !== undefined) {
-        updatedSousThematiques = await this.updateRelations(
-          ficheActionId,
-          sousThematiques,
-          tx,
-          ficheActionSousThematiqueTable,
-          ['id'],
-          ficheActionSousThematiqueTable.ficheId,
-          [ficheActionSousThematiqueTable.thematiqueId]
-        );
-      }
-
-      if (partenaires !== undefined) {
-        updatedPartenaires = await this.updateRelations(
-          ficheActionId,
-          partenaires,
-          tx,
-          ficheActionPartenaireTagTable,
-          ['id'],
-          ficheActionPartenaireTagTable.ficheId,
-          [ficheActionPartenaireTagTable.partenaireTagId]
-        );
-      }
-
-      if (structures !== undefined) {
-        updatedStructures = await this.updateRelations(
-          ficheActionId,
-          structures,
-          tx,
-          ficheActionStructureTagTable,
-          ['id'],
-          ficheActionStructureTagTable.ficheId,
-          [ficheActionStructureTagTable.structureTagId]
-        );
-      }
-
-      if (pilotes !== undefined) {
-        updatedPilotes = await this.updateRelations(
-          ficheActionId,
-          pilotes,
-          tx,
-          ficheActionPiloteTable,
-          ['tagId', 'userId'],
-          ficheActionPiloteTable.ficheId,
-          [ficheActionPiloteTable.tagId, ficheActionPiloteTable.userId]
-        );
-      }
-
-      if (referents !== undefined) {
-        updatedReferents = await this.updateRelations(
-          ficheActionId,
-          referents,
-          tx,
-          ficheActionReferentTable,
-          ['tagId', 'userId'],
-          ficheActionReferentTable.ficheId,
-          [ficheActionReferentTable.tagId, ficheActionReferentTable.userId]
-        );
-      }
-
-      if (actions !== undefined) {
-        updatedActions = await this.updateRelations(
-          ficheActionId,
-          actions,
-          tx,
-          ficheActionActionTable,
-          ['id'],
-          ficheActionActionTable.ficheId,
-          [ficheActionActionTable.actionId]
-        );
-      }
-
-      if (indicateurs !== undefined) {
-        updatedIndicateurs = await this.updateRelations(
-          ficheActionId,
-          indicateurs,
-          tx,
-          ficheActionIndicateurTable,
-          ['id'],
-          ficheActionIndicateurTable.ficheId,
-          [ficheActionIndicateurTable.indicateurId]
-        );
-      }
-
-      if (services !== undefined) {
-        updatedServices = await this.updateRelations(
-          ficheActionId,
-          services,
-          tx,
-          ficheActionServiceTagTable,
-          ['id'],
-          ficheActionServiceTagTable.ficheId,
-          [ficheActionServiceTagTable.serviceTagId]
-        );
-      }
-
-      if (financeurs !== undefined) {
-        const flatFinanceurs = this.extractIdsAndMontants(financeurs);
-        updatedFinanceurs = await this.updateRelations(
-          ficheActionId,
-          flatFinanceurs,
-          tx,
-          ficheActionFinanceurTagTable,
-          ['financeurTagId', 'montantTtc'],
-          ficheActionFinanceurTagTable.ficheId,
-          [
-            ficheActionFinanceurTagTable.financeurTagId,
-            ficheActionFinanceurTagTable.montantTtc,
-          ]
-        );
-      }
-
-      if (fichesLiees !== undefined) {
-        // Deletes all existing relations linked to fiche action
-        await tx
-          .delete(ficheActionLienTable)
-          .where(
-            or(
-              eq(ficheActionLienTable.ficheUne, ficheActionId),
-              eq(ficheActionLienTable.ficheDeux, ficheActionId)
-            )
+        if (axes !== undefined) {
+          updatedAxes = await this.updateRelations(
+            ficheActionId,
+            axes,
+            tx,
+            ficheActionAxeTable,
+            ['id'],
+            ficheActionAxeTable.ficheId,
+            [ficheActionAxeTable.axeId]
           );
-
-        // Adds new relations to fiche action
-        if (fichesLiees !== null && fichesLiees.length > 0) {
-          updatedFichesLiees = await tx
-            .insert(ficheActionLienTable)
-            .values(
-              fichesLiees.map((fiche) => ({
-                ficheUne: ficheActionId,
-                ficheDeux: fiche.id,
-              }))
-            )
-            .returning();
         }
-      }
 
-      if (resultatsAttendus !== undefined) {
-        updatedResultatsAttendus = await this.updateRelations(
-          ficheActionId,
-          resultatsAttendus,
-          tx,
-          ficheActionEffetAttenduTable,
-          ['id'],
-          ficheActionEffetAttenduTable.ficheId,
-          [ficheActionEffetAttenduTable.effetAttenduId]
-        );
-      }
-
-      if (libresTag !== undefined) {
-        // Delete existing relations
-        await tx
-          .delete(ficheActionLibreTagTable)
-          .where(eq(ficheActionLibreTagTable.ficheId, ficheActionId));
-
-        // Insert new relations
-        if (libresTag !== null && libresTag.length > 0) {
-          updatedLibresTag = await tx
-            .insert(ficheActionLibreTagTable)
-            .values(
-              libresTag.map((relation) => ({
-                ficheId: ficheActionId,
-                libreTagId: relation.id,
-                createdBy: user.id,
-              }))
-            )
-            .returning();
-        } else {
-          updatedLibresTag = [];
+        if (thematiques !== undefined) {
+          updatedThematiques = await this.updateRelations(
+            ficheActionId,
+            thematiques,
+            tx,
+            ficheActionThematiqueTable,
+            ['id'],
+            ficheActionThematiqueTable.ficheId,
+            [ficheActionThematiqueTable.thematiqueId]
+          );
         }
+
+        if (sousThematiques !== undefined) {
+          updatedSousThematiques = await this.updateRelations(
+            ficheActionId,
+            sousThematiques,
+            tx,
+            ficheActionSousThematiqueTable,
+            ['id'],
+            ficheActionSousThematiqueTable.ficheId,
+            [ficheActionSousThematiqueTable.thematiqueId]
+          );
+        }
+
+        if (partenaires !== undefined) {
+          updatedPartenaires = await this.updateRelations(
+            ficheActionId,
+            partenaires,
+            tx,
+            ficheActionPartenaireTagTable,
+            ['id'],
+            ficheActionPartenaireTagTable.ficheId,
+            [ficheActionPartenaireTagTable.partenaireTagId]
+          );
+        }
+
+        if (structures !== undefined) {
+          updatedStructures = await this.updateRelations(
+            ficheActionId,
+            structures,
+            tx,
+            ficheActionStructureTagTable,
+            ['id'],
+            ficheActionStructureTagTable.ficheId,
+            [ficheActionStructureTagTable.structureTagId]
+          );
+        }
+
+        if (pilotes !== undefined) {
+          updatedPilotes = await this.updateRelations(
+            ficheActionId,
+            pilotes,
+            tx,
+            ficheActionPiloteTable,
+            ['tagId', 'userId'],
+            ficheActionPiloteTable.ficheId,
+            [ficheActionPiloteTable.tagId, ficheActionPiloteTable.userId]
+          );
+        }
+
+        if (referents !== undefined) {
+          updatedReferents = await this.updateRelations(
+            ficheActionId,
+            referents,
+            tx,
+            ficheActionReferentTable,
+            ['tagId', 'userId'],
+            ficheActionReferentTable.ficheId,
+            [ficheActionReferentTable.tagId, ficheActionReferentTable.userId]
+          );
+        }
+
+        if (actions !== undefined) {
+          updatedActions = await this.updateRelations(
+            ficheActionId,
+            actions,
+            tx,
+            ficheActionActionTable,
+            ['id'],
+            ficheActionActionTable.ficheId,
+            [ficheActionActionTable.actionId]
+          );
+        }
+
+        if (indicateurs !== undefined) {
+          updatedIndicateurs = await this.updateRelations(
+            ficheActionId,
+            indicateurs,
+            tx,
+            ficheActionIndicateurTable,
+            ['id'],
+            ficheActionIndicateurTable.ficheId,
+            [ficheActionIndicateurTable.indicateurId]
+          );
+        }
+
+        if (services !== undefined) {
+          updatedServices = await this.updateRelations(
+            ficheActionId,
+            services,
+            tx,
+            ficheActionServiceTagTable,
+            ['id'],
+            ficheActionServiceTagTable.ficheId,
+            [ficheActionServiceTagTable.serviceTagId]
+          );
+        }
+
+        if (financeurs !== undefined) {
+          const flatFinanceurs = this.extractIdsAndMontants(financeurs);
+          updatedFinanceurs = await this.updateRelations(
+            ficheActionId,
+            flatFinanceurs,
+            tx,
+            ficheActionFinanceurTagTable,
+            ['financeurTagId', 'montantTtc'],
+            ficheActionFinanceurTagTable.ficheId,
+            [
+              ficheActionFinanceurTagTable.financeurTagId,
+              ficheActionFinanceurTagTable.montantTtc,
+            ]
+          );
+        }
+
+        if (fichesLiees !== undefined) {
+          // Deletes all existing relations linked to fiche action
+          await tx
+            .delete(ficheActionLienTable)
+            .where(
+              or(
+                eq(ficheActionLienTable.ficheUne, ficheActionId),
+                eq(ficheActionLienTable.ficheDeux, ficheActionId)
+              )
+            );
+
+          // Adds new relations to fiche action
+          if (fichesLiees !== null && fichesLiees.length > 0) {
+            updatedFichesLiees = await tx
+              .insert(ficheActionLienTable)
+              .values(
+                fichesLiees.map((fiche) => ({
+                  ficheUne: ficheActionId,
+                  ficheDeux: fiche.id,
+                }))
+              )
+              .returning();
+          }
+        }
+
+        if (resultatsAttendus !== undefined) {
+          updatedResultatsAttendus = await this.updateRelations(
+            ficheActionId,
+            resultatsAttendus,
+            tx,
+            ficheActionEffetAttenduTable,
+            ['id'],
+            ficheActionEffetAttenduTable.ficheId,
+            [ficheActionEffetAttenduTable.effetAttenduId]
+          );
+        }
+
+        if (libresTag !== undefined) {
+          // Delete existing relations
+          await tx
+            .delete(ficheActionLibreTagTable)
+            .where(eq(ficheActionLibreTagTable.ficheId, ficheActionId));
+
+          // Insert new relations
+          if (libresTag !== null && libresTag.length > 0) {
+            updatedLibresTag = await tx
+              .insert(ficheActionLibreTagTable)
+              .values(
+                libresTag.map((relation) => ({
+                  ficheId: ficheActionId,
+                  libreTagId: relation.id,
+                  createdBy: user.id,
+                }))
+              )
+              .returning();
+          } else {
+            updatedLibresTag = [];
+          }
+        }
+
+        const finalFicheAction = {
+          ...(updatedFicheAction?.[0] || {}),
+          axes: updatedAxes,
+          thematiques: updatedThematiques,
+          sousThematiques: updatedSousThematiques,
+          partenaires: updatedPartenaires,
+          structures: updatedStructures,
+          pilotes: updatedPilotes,
+          referents: updatedReferents,
+          actions: updatedActions,
+          indicateurs: updatedIndicateurs,
+          services: updatedServices,
+          financeurs: updatedFinanceurs,
+          fichesLiees: updatedFichesLiees,
+          resultatsAttendus: updatedResultatsAttendus,
+          libresTag: updatedLibresTag,
+        };
+
+        return finalFicheAction;
       }
+    );
 
-      const finalFicheAction = {
-        ...(updatedFicheAction?.[0] || {}),
-        axes: updatedAxes,
-        thematiques: updatedThematiques,
-        sousThematiques: updatedSousThematiques,
-        partenaires: updatedPartenaires,
-        structures: updatedStructures,
-        pilotes: updatedPilotes,
-        referents: updatedReferents,
-        actions: updatedActions,
-        indicateurs: updatedIndicateurs,
-        services: updatedServices,
-        financeurs: updatedFinanceurs,
-        fichesLiees: updatedFichesLiees,
-        resultatsAttendus: updatedResultatsAttendus,
-        libresTag: updatedLibresTag,
-      };
+    // TODO: return ficheActionWithRelation to have full object
+    const ficheActionWithRelation =
+      await this.ficheActionListService.getFicheActionById(ficheActionId, true);
 
-      // TODO: return ficheActionWithRelation to have full object
-      const ficheActionWithRelation =
-        await this.ficheActionListService.getFicheActionById(
-          ficheActionId,
-          true
-        );
+    await this.webhookService.sendWebhookNotification(
+      ApplicationSousScopesEnum.FICHES,
+      `${ficheActionId}`,
+      ficheActionWithRelation
+    );
 
-      await this.webhookService.sendWebhookNotification(
-        ApplicationSousScopesEnum.FICHES,
-        `${ficheActionId}`,
-        ficheActionWithRelation
-      );
-
-      return finalFicheAction;
-    });
+    return updatedFicheAction;
   }
 
   /**
