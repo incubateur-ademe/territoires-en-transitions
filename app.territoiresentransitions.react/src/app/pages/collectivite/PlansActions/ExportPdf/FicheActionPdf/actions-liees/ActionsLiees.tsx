@@ -9,7 +9,7 @@ import {
   Stack,
   Title,
 } from '@/app/ui/export-pdf/components';
-import { ActionWithStatutAndScore } from './types';
+import { ActionWithStatutAndScore } from '@/domain/referentiels';
 
 type ActionLieeCardProps = {
   action: ActionWithStatutAndScore;
@@ -33,9 +33,9 @@ const ActionLieeCard = ({ action }: ActionLieeCardProps) => {
           {identifiant} {nom}
         </Title>
         {/* Badge de score */}
-        <ScoreRatioBadge score={action.score} />
+        {action.score && <ScoreRatioBadge score={action.score} />}
         {/* Barre de progression */}
-        <ScoreProgressBar score={action.score} />
+        {action.score && <ScoreProgressBar score={action.score} />}
       </Stack>
     </Card>
   );

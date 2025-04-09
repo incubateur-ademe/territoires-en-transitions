@@ -5,11 +5,11 @@ import { AnnexeInfo } from '../../FicheAction/data/useAnnexesFicheActionInfos';
 
 import { RouterOutput } from '@/api/utils/trpc/client';
 import Etapes from '@/app/app/pages/collectivite/PlansActions/ExportPdf/FicheActionPdf/Etapes';
+import { ActionWithStatutAndScore } from '@/domain/referentiels';
 import { TIndicateurDefinition } from '../../../Indicateurs/types';
 import { TSectionsValues, sectionsInitValue } from '../utils';
 import Acteurs from './Acteurs';
 import ActionsLiees from './actions-liees/ActionsLiees';
-import { ActionWithStatutAndScore } from './actions-liees/types';
 import Budget from './Budget';
 import Chemins from './Chemins';
 import CreationFiche from './CreationFiche';
