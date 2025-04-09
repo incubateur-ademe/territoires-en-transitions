@@ -6,8 +6,8 @@ import { DateTime } from 'luxon';
 import ConfigurationService from '../../config/configuration.service';
 
 @Injectable()
-export class SentryService {
-  private readonly logger = new Logger(SentryService.name);
+export class SentryNotificationService {
+  private readonly logger = new Logger(SentryNotificationService.name);
 
   private readonly DATADOG_URL = 'https://app.datadoghq.eu/logs';
   constructor(

@@ -7,21 +7,22 @@ import { BullBoardModule } from '@bull-board/nestjs';
 import { BullModule } from '@nestjs/bullmq';
 import { ConfigModule } from '@nestjs/config';
 import { uuid4 } from '@sentry/core';
+import { SentryModule } from '@sentry/nestjs/setup';
 import basicAuth from 'express-basic-auth';
 import configuration from './config/configuration';
 import { ConfigurationModule } from './config/configuration.module';
 import ConfigurationService from './config/configuration.service';
 import { CrispModule } from './crisp/crisp.module';
 import { NotionModule } from './notion/notion.module';
-import { SentryModule } from './sentry/sentry.module';
+import { SentryNotificationModule } from './sentry/sentry-notification.module';
 import { DatabaseModule } from './utils/database/database.module';
 import { UtilsModule } from './utils/utils.module';
-import { VersionController } from './utils/version/version.controller';
 
 const appLogger = new Logger('AppModule');
 
 @Module({
   imports: [
+    SentryModule.forRoot(),
     ConfigModule.forRoot({
       ignoreEnvFile: process.env.NODE_ENV === 'production', // In production, environment variables are set by the deployment
       load: [configuration],
@@ -56,11 +57,11 @@ const appLogger = new Logger('AppModule');
     DatabaseModule,
     NotionModule,
     CrispModule,
-    SentryModule,
+    SentryNotificationModule,
     WebhookModule,
     AirtableModule,
   ],
-  controllers: [VersionController],
+  controllers: [],
   providers: [],
 })
 export class AppModule {}
