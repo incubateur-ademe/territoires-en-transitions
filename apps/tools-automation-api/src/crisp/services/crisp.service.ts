@@ -272,30 +272,36 @@ export class CrispService {
         );
       }
 
-      const feedback =
+      const { feedback, created } =
         await this.airtableService.createFeedbackFromCrispSession(
           session,
           filteredMessages,
           operator
         );
 
-      this.logger.log(
-        `Sending feedback note for session ${sessionId} on website ${websiteId} with feedback URL ${
-          feedback.url || feedback.id
-        }`
-      );
-      await this.crispClient.website.sendMessageInConversation(
-        websiteId,
-        sessionId,
-        {
-          type: 'note',
-          from: 'operator',
-          origin: 'chat',
-          content: `Url du feedback: ${feedback.url || feedback.id}`,
-        }
-      );
+      if (created) {
+        this.logger.log(
+          `Sending feedback note for session ${sessionId} on website ${websiteId} with feedback URL ${
+            feedback.url || feedback.id
+          }`
+        );
+        await this.crispClient.website.sendMessageInConversation(
+          websiteId,
+          sessionId,
+          {
+            type: 'note',
+            from: 'operator',
+            origin: 'chat',
+            content: `Url du feedback: ${feedback.url || feedback.id}`,
+          }
+        );
+      } else {
+        this.logger.log(
+          `Feedback already exists for session ${sessionId} on website ${websiteId}: ${feedback.url}, do not send note`
+        );
+      }
 
-      return { type: 'feedback', url: feedback.url };
+      return { type: 'feedback', url: feedback.url, created };
     } catch (error) {
       this.logger.error(error);
       this.logger.error(

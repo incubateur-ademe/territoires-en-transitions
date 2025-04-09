@@ -24,6 +24,8 @@ export interface AirtableFeedbackRecord {
   'Contacts (auto) (from Utilisateurs hors PF (from Collectivités))'?: string[];
   Région?: string[];
 
+  SourceUrl?: string;
+
   /**
    * A lot more fields
    */
