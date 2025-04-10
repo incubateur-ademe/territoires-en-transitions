@@ -23,11 +23,11 @@ export const PlanCarte = ({ plan, canUserClickCard }: Props) => {
   const tracker = useFonctionTracker();
 
   return (
-    <div className="relative h-full">
+    <div className="relative h-full group">
       <ContactsDisplay
         contacts={plan.contacts}
         collectiviteName={plan.collectiviteNom}
-        buttonClassName="!absolute top-4 right-4"
+        buttonClassName="!absolute top-4 right-4 invisible group-hover:visible"
       />
 
       <Card
