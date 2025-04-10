@@ -103,16 +103,7 @@ export class CountByService {
     countByProperty: CountByPropertyEnumType,
     countByMap: CountByRecordGeneralType
   ) {
-    if (
-      countByProperty === 'budgetsPrevisionnelInvestissementTotal' ||
-      countByProperty === 'budgetsPrevisionnelInvestissementParAnnee' ||
-      countByProperty === 'budgetsDepenseInvestissementTotal' ||
-      countByProperty === 'budgetsDepenseInvestissementParAnnee' ||
-      countByProperty === 'budgetsPrevisionnelFonctionnementTotal' ||
-      countByProperty === 'budgetsPrevisionnelFonctionnementParAnnee' ||
-      countByProperty === 'budgetsDepenseFonctionnementTotal' ||
-      countByProperty === 'budgetsDepenseFonctionnementParAnnee'
-    ) {
+    if (countByProperty.startsWith('budgets')) {
       countByMap['true'] = {
         label: 'Avec budget renseigné',
         value: true,
@@ -203,7 +194,34 @@ export class CountByService {
     countByProperty: CountByPropertyEnumType,
     countByMap: CountByRecordGeneralType
   ) {
-    if (
+    if (countByProperty.startsWith('budgets')) {
+      const budgets = fiche.budgets || [];
+
+      const valueKey = budgets.some(
+        (budget) => {
+          const isTypeMatch =
+            budget.type === (countByProperty.includes('Investissement') ? 'investissement' : 'fonctionnement');
+
+          const isPrevisionnel = countByProperty.includes('Previsionnel')
+            ? budget.budgetPrevisionnel !== null && budget.budgetPrevisionnel !== undefined
+            : budget.budgetReel !== null && budget.budgetReel !== undefined;
+
+          const isTotal = countByProperty.includes('Total')
+            ? budget.annee === null || budget.annee === undefined
+            : budget.annee !== null && budget.annee !== undefined;
+
+          return isTypeMatch && isPrevisionnel && isTotal;
+        }
+      );
+      if (!countByMap[valueKey.toString()]) {
+        countByMap[valueKey.toString()] = {
+          value: valueKey,
+          count: 0,
+        };
+      }
+      countByMap[valueKey.toString()].count++;
+
+    } else if (
       countByProperty === 'statut' ||
       countByProperty === 'priorite' ||
       countByProperty === 'participationCitoyenneType'
@@ -217,14 +235,6 @@ export class CountByService {
       }
       countByMap[valueKey].count++;
     } else if (
-      countByProperty === 'budgetsPrevisionnelInvestissementTotal' ||
-      countByProperty === 'budgetsPrevisionnelInvestissementParAnnee' ||
-      countByProperty === 'budgetsDepenseInvestissementTotal' ||
-      countByProperty === 'budgetsDepenseInvestissementParAnnee' ||
-      countByProperty === 'budgetsPrevisionnelFonctionnementTotal' ||
-      countByProperty === 'budgetsPrevisionnelFonctionnementParAnnee' ||
-      countByProperty === 'budgetsDepenseFonctionnementTotal' ||
-      countByProperty === 'budgetsDepenseFonctionnementParAnnee' ||
       countByProperty === 'restreint' ||
       countByProperty === 'ameliorationContinue' ||
       countByProperty === 'indicateurs'
