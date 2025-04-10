@@ -536,7 +536,7 @@ export default class RecherchesService {
                'email', dcp.${dcpTable.email.name}
              ) AS contact
       FROM ${getTableName(utilisateurPermissionTable)} pud
-      JOIN ${getTableName(membreTable)} pcm
+      LEFT JOIN ${getTableName(membreTable)} pcm
         ON pud.${utilisateurPermissionTable.collectiviteId.name} = pcm.${
       membreTable.collectiviteId.name
     }
