@@ -1,4 +1,10 @@
 import { RecherchesContact } from '@/api/collectiviteEngagees';
+import {
+  membreFonctionToLabel,
+  membreFonctionToTeteFonction,
+} from '@/app/app/labels';
+import { RecherchesViewParam } from '@/app/app/paths';
+import { TMembreFonction } from '@/app/types/alias';
 import { Icon, Modal, Tooltip, useCopyToClipboard } from '@/ui';
 import { OpenState } from '@/ui/utils/types';
 import classNames from 'classnames';
@@ -17,14 +23,14 @@ const getFormattedPhone = (phoneNumber: string | undefined) => {
 
 type Props = {
   contacts: RecherchesContact[];
-  title?: string;
+  view: RecherchesViewParam;
   collectiviteName: string;
   openState: OpenState;
 };
 
 const ContactsModal = ({
   contacts,
-  title,
+  view,
   collectiviteName,
   openState,
 }: Props) => {
@@ -39,7 +45,11 @@ const ContactsModal = ({
     <Modal
       openState={openState}
       size="xl"
-      title={title ?? 'Liste des contacts'}
+      title={
+        view === 'referentiels'
+          ? 'Liste des référents du programme T.E.T.E'
+          : 'Liste des contacts'
+      }
       subTitle={collectiviteName}
       render={() => (
         <table>
@@ -76,7 +86,13 @@ const ContactsModal = ({
                   {contact.prenom} {contact.nom}
                 </td>
                 <td className={bodyCellClassName}>
-                  {contact.fonction}
+                  {contact.fonction
+                    ? view === 'referentiels'
+                      ? membreFonctionToTeteFonction[contact.fonction]
+                      : membreFonctionToLabel[
+                          contact.fonction as TMembreFonction
+                        ]
+                    : ''}
                   {contact.fonction ? <br /> : ''}
                   {contact.detailFonction}
                 </td>
