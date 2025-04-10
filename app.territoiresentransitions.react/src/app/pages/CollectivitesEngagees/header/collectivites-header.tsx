@@ -71,24 +71,28 @@ const CollectivitesHeader = ({
   return (
     <div className="flex flex-col">
       <h1 className="mb-4">Collectivités</h1>
-      <div className="flex max-md:flex-col gap-3 items-start justify-between py-3 border-y border-primary-3">
+      <div className="flex max-md:flex-col gap-3 items-start md:items-center justify-between py-3 border-y border-primary-3">
         <div className="flex flex-wrap max-md:flex-col items-center gap-3 max-md:w-full">
-          <div className="w-[500px] md:w-60 max-w-full">
-            {/* Ordre d'affichage */}
-            <Select
-              options={getTrierParOptions()}
-              onChange={(value) => {
-                value &&
-                  setFilters({
-                    ...filters,
-                    trierPar: [value as string],
-                  });
-              }}
-              values={filters.trierPar?.[0]}
-              customItem={(v) => <span className="text-grey-9">{v.label}</span>}
-              small
-            />
-          </div>
+          {view === 'referentiels' && (
+            <div className="w-[500px] md:w-60 max-w-full">
+              {/* Ordre d'affichage */}
+              <Select
+                options={getTrierParOptions()}
+                onChange={(value) => {
+                  value &&
+                    setFilters({
+                      ...filters,
+                      trierPar: [value as string],
+                    });
+                }}
+                values={filters.trierPar?.[0]}
+                customItem={(v) => (
+                  <span className="text-grey-9">{v.label}</span>
+                )}
+                small
+              />
+            </div>
+          )}
 
           {/* Nombre de résultats filtrés */}
           <span className="mb-0 text-grey-6 text-sm">

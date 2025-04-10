@@ -17,11 +17,17 @@ const getFormattedPhone = (phoneNumber: string | undefined) => {
 
 type Props = {
   contacts: RecherchesContact[];
+  title?: string;
   collectiviteName: string;
   openState: OpenState;
 };
 
-const ContactsModal = ({ contacts, collectiviteName, openState }: Props) => {
+const ContactsModal = ({
+  contacts,
+  title,
+  collectiviteName,
+  openState,
+}: Props) => {
   const [displayCopyMsg, setDisplayCopyMsg] = useState(false);
   const { copy } = useCopyToClipboard();
 
@@ -33,7 +39,7 @@ const ContactsModal = ({ contacts, collectiviteName, openState }: Props) => {
     <Modal
       openState={openState}
       size="xl"
-      title="Liste des contacts"
+      title={title ?? 'Liste des contacts'}
       subTitle={collectiviteName}
       render={() => (
         <table>
@@ -49,7 +55,7 @@ const ContactsModal = ({ contacts, collectiviteName, openState }: Props) => {
                 Intitulé du poste
               </td>
               <td className={classNames('min-w-28', headCellClassName)}>
-                Tél. professionnel
+                Téléphone professionnel
               </td>
               <td className={classNames('min-w-48', headCellClassName)}>
                 Email

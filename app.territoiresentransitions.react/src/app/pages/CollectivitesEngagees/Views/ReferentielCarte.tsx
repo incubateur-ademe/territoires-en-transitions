@@ -39,11 +39,12 @@ export const ReferentielCarte = ({ collectivite, canUserClickCard }: Props) => {
   } = collectivite;
 
   return (
-    <div className="relative h-full">
+    <div className="relative h-full group">
       <ContactsDisplay
         contacts={contacts}
+        title="Liste des référents du programme T.E.T.E"
         collectiviteName={collectiviteNom}
-        buttonClassName="!absolute top-4 right-4"
+        buttonClassName="!absolute top-4 right-4 invisible group-hover:visible"
       />
 
       <Card
