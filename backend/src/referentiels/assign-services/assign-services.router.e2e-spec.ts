@@ -64,10 +64,14 @@ describe('AssignServicesRouter', () => {
     expect(createdServices).toEqual(
       expect.arrayContaining([
         expect.objectContaining({
-          serviceTagId: 1,
+          collectiviteId: 1,
+          id: 1,
+          nom: expect.any(String),
         }),
         expect.objectContaining({
-          serviceTagId: 2,
+          collectiviteId: 1,
+          id: 2,
+          nom: expect.any(String),
         }),
       ])
     );
@@ -94,7 +98,9 @@ describe('AssignServicesRouter', () => {
     expect(updatedServices).toEqual(
       expect.arrayContaining([
         expect.objectContaining({
-          serviceTagId: 3,
+          collectiviteId: 1,
+          id: 3,
+          nom: expect.any(String),
         }),
       ])
     );

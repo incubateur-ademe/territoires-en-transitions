@@ -69,10 +69,14 @@ describe('AssignPilotesRouter', () => {
         expect.objectContaining({
           userId: '298235a0-60e7-4ceb-9172-0a991cce0386',
           tagId: null,
+          collectiviteId: 1,
+          nom: expect.any(String),
         }),
         expect.objectContaining({
           userId: null,
           tagId: 1,
+          collectiviteId: 1,
+          nom: expect.any(String),
         }),
       ])
     );
@@ -103,6 +107,8 @@ describe('AssignPilotesRouter', () => {
         expect.objectContaining({
           userId: '4ecc7d3a-7484-4a1c-8ac8-930cdacd2561',
           tagId: null,
+          collectiviteId: 1,
+          nom: expect.any(String),
         }),
       ])
     );
