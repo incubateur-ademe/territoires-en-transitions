@@ -3,25 +3,16 @@ import { useState } from 'react';
 import ContactButton from './contacts-button';
 import ContactsModal from './contacts-modal';
 
-const getFormattedPhone = (phoneNumber: string | undefined) => {
-  if (!phoneNumber) return '';
-  if (phoneNumber.length === 10) {
-    return phoneNumber.replace(
-      /(\d{2})(\d{2})(\d{2})(\d{2})(\d{2})/,
-      '$1 $2 $3 $4 $5'
-    );
-  }
-  return phoneNumber;
-};
-
 type Props = {
   contacts: RecherchesContact[];
+  title?: string;
   collectiviteName: string;
   buttonClassName?: string;
 };
 
 const ContactsDisplay = ({
   contacts,
+  title,
   collectiviteName,
   buttonClassName,
 }: Props) => {
@@ -32,6 +23,7 @@ const ContactsDisplay = ({
       {isOpen && (
         <ContactsModal
           contacts={contacts}
+          title={title}
           collectiviteName={collectiviteName}
           openState={{ isOpen, setIsOpen }}
         />

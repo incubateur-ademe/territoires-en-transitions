@@ -31,11 +31,11 @@ export const CollectiviteCarte = ({
   } = collectivite;
 
   return (
-    <div className="relative h-full">
+    <div className="relative h-full group">
       <ContactsDisplay
         contacts={contacts}
         collectiviteName={collectiviteNom}
-        buttonClassName="!absolute top-4 right-4"
+        buttonClassName="!absolute top-4 right-4 invisible group-hover:visible"
       />
 
       <Card
