@@ -23,6 +23,7 @@ import { TrajectoiresRouter } from '../../indicateurs/trajectoires/trajectoires.
 import { IndicateurValeursRouter } from '../../indicateurs/valeurs/crud-valeurs.router';
 import SupabaseService from '../database/supabase.service';
 import { TrpcService } from './trpc.service';
+import { FicheActionBudgetRouter } from '@/backend/plans/fiches/fiche-action-budget/fiche-action-budget.router';
 
 @Injectable()
 export class TrpcRouter {
@@ -43,7 +44,8 @@ export class TrpcRouter {
     private readonly collectivitesRouter: CollectivitesRouter,
     private readonly referentielsRouter: ReferentielsRouter,
     private readonly importRouter: ImportPlanRouter,
-    private readonly usersRouter: UsersRouter
+    private readonly usersRouter: UsersRouter,
+    private readonly ficheActionBudgetRouter : FicheActionBudgetRouter,
   ) {}
 
   appRouter = this.trpc.router({
@@ -66,7 +68,8 @@ export class TrpcRouter {
         this.countByRouter.router,
         this.bulkEditRouter.router,
         this.ficheActionEtapeRouter.router,
-        this.importRouter.router
+        this.importRouter.router,
+        this.ficheActionBudgetRouter.router,
       ),
     },
     referentiels: this.referentielsRouter.router,

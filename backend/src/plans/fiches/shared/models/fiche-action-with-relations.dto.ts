@@ -1,6 +1,7 @@
 import { collectiviteSchema } from '@/backend/collectivites/index-domain';
 import z from 'zod';
 import { ficheSchema } from './fiche-action.table';
+import { ficheActionBudgetSchema } from '@/backend/plans/fiches/fiche-action-budget/fiche-action-budget.table';
 
 export const ficheActionWithRelationsSchema = ficheSchema.extend({
   createdByName: z.string(),
@@ -165,6 +166,20 @@ export const ficheActionWithRelationsSchema = ficheSchema.extend({
     .array()
     .nullable()
     .describe('Documents liés'),
+  budgets: z
+    .object({
+      id: z.number(),
+      ficheId : z.number(),
+      type: z.string(),
+      unite: z.string(),
+      annee: z.number().nullable().optional(),
+      budgetPrevisionnel: z.string().nullable().optional(),
+      budgetReel: z.string().nullable().optional(),
+      estEtale: z.boolean().optional(),
+    })
+    .array()
+      .nullable()
+    .describe(`Budgets de la fiche action`),
 });
 
 export type FicheActionWithRelationsType = z.infer<

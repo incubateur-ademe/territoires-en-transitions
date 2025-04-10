@@ -67,6 +67,7 @@ import {
   FicheActionWithRelationsAndCollectiviteType,
   FicheActionWithRelationsType,
 } from './shared/models/fiche-action-with-relations.dto';
+import { ficheActionBudgetTable } from '@/backend/plans/fiches/fiche-action-budget/fiche-action-budget.table';
 
 @Injectable()
 export default class FicheActionListService {
@@ -500,6 +501,36 @@ export default class FicheActionListService {
       .as('ficheActionDocs');
   }
 
+  private getFicheActionBudgetsQuery() {
+    return this.databaseService.db
+      .select({
+        ficheId: ficheActionBudgetTable.ficheId,
+        budgets: sql<
+          {
+            id: number;
+            ficheId : number;
+            type: string;
+            unite: string;
+            annee?: number | null;
+            budgetPrevisionnel?: string | null;
+            budgetReel?: string | null;
+            estEtale?: boolean;
+          }[]
+        >`array_agg
+        (json_build_object(
+          'id', ${ficheActionBudgetTable.id},
+          'type', ${ficheActionBudgetTable.type},
+          'unite', ${ficheActionBudgetTable.type},
+          'annee', ${ficheActionBudgetTable.annee},
+          'budgetPrevisionnel', ${ficheActionBudgetTable.budgetPrevisionnel},
+          'budgetReel', ${ficheActionBudgetTable.budgetReel},
+          'estEtale', ${ficheActionBudgetTable.estEtale}))`.as('budgets'),
+      })
+      .from(ficheActionBudgetTable)
+      .groupBy(ficheActionBudgetTable.ficheId)
+      .as('ficheActionBudgets');
+  }
+
   async getFicheActionById(
     ficheActionId: number,
     addCollectiviteData?: boolean
@@ -556,6 +587,7 @@ export default class FicheActionListService {
     const ficheActionMesures = this.getFicheActionMesuresQuery();
     const ficheActionFichesLiees = this.getFicheActionFichesLieesQuery();
     const ficheActionDocs = this.getFicheActionsDocsQuery();
+    const ficheActionBudgets = this.getFicheActionBudgetsQuery();
 
     const conditions = this.getConditions(collectiviteId, filter);
     const dcpModifiedBy = aliasedTable(dcpTable, 'dcpModifiedBy');
@@ -584,6 +616,7 @@ export default class FicheActionListService {
         mesures: ficheActionMesures.mesures,
         fichesLiees: ficheActionFichesLiees.fichesLiees,
         docs: ficheActionDocs.docs,
+        budgets: ficheActionBudgets.budgets,
       })
       .from(ficheActionTable)
       .leftJoin(
@@ -653,6 +686,10 @@ export default class FicheActionListService {
       .leftJoin(
         ficheActionDocs,
         eq(ficheActionDocs.ficheId, ficheActionTable.id)
+      )
+      .leftJoin(
+        ficheActionBudgets,
+        eq(ficheActionBudgets.ficheId, ficheActionTable.id)
       )
       .leftJoin(dcpTable, eq(dcpTable.userId, ficheActionTable.createdBy))
       .leftJoin(

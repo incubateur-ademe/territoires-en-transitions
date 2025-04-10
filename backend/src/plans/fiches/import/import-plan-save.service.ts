@@ -6,15 +6,15 @@ import {
 } from '@/backend/plans/fiches/import/import-plan.dto';
 import { TagService } from '@/backend/collectivites/tags/tag.service';
 import AxeService from '../axe.service';
-import FicheService from '@/backend/plans/fiches/fiche.service';
 import { Transaction } from '@/backend/utils/database/transaction.utils';
+import FicheActionCreateService from '@/backend/plans/fiches/import/fiche-action-create.service';
 
 @Injectable()
 export class ImportPlanSaveService {
   constructor(
     private readonly tagService: TagService,
     private readonly axeService: AxeService,
-    private readonly ficheService: FicheService
+    private readonly ficheService: FicheActionCreateService
   ) {}
 
   /**
@@ -65,7 +65,7 @@ export class ImportPlanSaveService {
           cibles: fiche?.cibles ? [fiche?.cibles] : [],
           ressources: fiche.resources,
           financements: fiche.financements,
-          budgetPrevisionnel: fiche.budget?.toString(),
+          budgetPrevisionnel: fiche.budget?.toString(), // deprecated
           statut: fiche.statut,
           priorite: fiche.priorite,
           dateDebut: fiche.dateDebut,
@@ -135,6 +135,15 @@ export class ImportPlanSaveService {
             tx
           );
       }
+      // Save "budget"
+      if(fiche.budget){
+        await this.ficheService.addBudgetPrevisionnel(
+          ficheId,
+          fiche.budget?.toString(),
+          tx
+        )
+      }
+
     }
   }
 

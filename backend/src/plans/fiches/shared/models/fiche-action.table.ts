@@ -155,7 +155,7 @@ export const ficheActionTable = pgTable('fiche_action', {
   budgetPrevisionnel: numeric('budget_previsionnel', {
     precision: 12,
     scale: 0,
-  }),
+  }), // budgetPrevisionnel deprecated
   statut: statutsPgEnum('statut').default(statutsEnumSchema.enum['À venir']),
   priorite: prioritePgEnum('niveau_priorite'),
   dateDebut: timestamp('date_debut', TIMESTAMP_OPTIONS),
