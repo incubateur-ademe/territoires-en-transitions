@@ -25,6 +25,7 @@ export const PlanCarte = ({ plan, canUserClickCard }: Props) => {
   return (
     <div className="relative h-full group">
       <ContactsDisplay
+        view="plans"
         contacts={plan.contacts}
         collectiviteName={plan.collectiviteNom}
         buttonClassName="!absolute top-4 right-4 invisible group-hover:visible"
