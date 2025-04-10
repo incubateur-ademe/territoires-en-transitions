@@ -1,18 +1,19 @@
 import { RecherchesContact } from '@/api/collectiviteEngagees';
+import { RecherchesViewParam } from '@/app/app/paths';
 import { useState } from 'react';
 import ContactButton from './contacts-button';
 import ContactsModal from './contacts-modal';
 
 type Props = {
+  view: RecherchesViewParam;
   contacts: RecherchesContact[];
-  title?: string;
   collectiviteName: string;
   buttonClassName?: string;
 };
 
 const ContactsDisplay = ({
   contacts,
-  title,
+  view,
   collectiviteName,
   buttonClassName,
 }: Props) => {
@@ -23,7 +24,7 @@ const ContactsDisplay = ({
       {isOpen && (
         <ContactsModal
           contacts={contacts}
-          title={title}
+          view={view}
           collectiviteName={collectiviteName}
           openState={{ isOpen, setIsOpen }}
         />

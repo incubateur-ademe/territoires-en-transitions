@@ -33,6 +33,7 @@ export const CollectiviteCarte = ({
   return (
     <div className="relative h-full group">
       <ContactsDisplay
+        view="collectivites"
         contacts={contacts}
         collectiviteName={collectiviteNom}
         buttonClassName="!absolute top-4 right-4 invisible group-hover:visible"
