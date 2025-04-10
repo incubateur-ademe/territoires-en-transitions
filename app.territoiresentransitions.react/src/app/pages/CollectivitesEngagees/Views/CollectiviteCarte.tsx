@@ -1,5 +1,4 @@
 import { referentielToName } from '@/app/app/labels';
-import { TCollectiviteCarte } from '@/app/app/pages/CollectivitesEngagees/data/useFilteredCollectivites';
 import { makeCollectiviteAccueilUrl } from '@/app/app/paths';
 import { NIVEAUX } from '@/app/referentiels/tableau-de-bord/labellisation/LabellisationInfo';
 import {
@@ -11,9 +10,10 @@ import { ReferentielId } from '@/domain/referentiels';
 import { Icon } from '@/ui';
 import classNames from 'classnames';
 import Link from 'next/link';
+import { RecherchesReferentiel } from '@/api/collectiviteEngagees';
 
 type Props = {
-  collectivite: TCollectiviteCarte;
+  collectivite: RecherchesReferentiel;
   canUserClickCard: boolean;
 };
 
@@ -34,7 +34,7 @@ export const CollectiviteCarte = ({
       href={
         canUserClickCard
           ? makeCollectiviteAccueilUrl({
-              collectiviteId: collectivite.collectivite_id,
+              collectiviteId: collectivite.collectiviteId,
             })
           : '#'
       }
@@ -47,22 +47,22 @@ export const CollectiviteCarte = ({
       )}
     >
       <div className="mb-4 text-lg font-bold text-primary-9">
-        {collectivite.nom}
+        {collectivite.collectiviteNom}
       </div>
       <div className="flex justify-between gap-4 sm:gap-8 xl:gap-8">
         <ReferentielCol
           referentiel={'cae'}
-          etoiles={collectivite.etoiles_cae}
-          scoreRealise={collectivite.score_fait_cae}
-          scoreProgramme={collectivite.score_programme_cae}
-          concerne={collectivite.type_collectivite !== 'syndicat'}
+          etoiles={collectivite.etoilesCae}
+          scoreRealise={collectivite.scoreFaitCae}
+          scoreProgramme={collectivite.scoreProgrammeCae}
+          concerne={collectivite.collectiviteType !== 'syndicat'}
         />
         <div className="w-px mx-auto flex-shrink-0 bg-gray-200"></div>
         <ReferentielCol
           referentiel={'eci'}
-          etoiles={collectivite.etoiles_eci}
-          scoreRealise={collectivite.score_fait_eci}
-          scoreProgramme={collectivite.score_programme_eci}
+          etoiles={collectivite.etoilesEci}
+          scoreRealise={collectivite.scoreFaitEci}
+          scoreProgramme={collectivite.scoreProgrammeEci}
           concerne={true}
         />
       </div>
