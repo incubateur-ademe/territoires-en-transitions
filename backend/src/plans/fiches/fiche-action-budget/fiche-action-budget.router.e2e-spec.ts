@@ -9,8 +9,12 @@ import {
   getTestRouter,
 } from '@/backend/test';
 import { onTestFinished } from 'vitest';
-import { ficheActionBudgetTable } from '@/backend/plans/fiches/fiche-action-budget/fiche-action-budget.table';
+import {
+  BudgetType, BudgetUnite,
+  ficheActionBudgetTable
+} from '@/backend/plans/fiches/fiche-action-budget/fiche-action-budget.table';
 import { eq } from 'drizzle-orm';
+import { ficheActionTable } from '@/backend/plans/fiches/shared/models/fiche-action.table';
 
 type upsertInput = inferProcedureInput<
   AppRouter['plans']['fiches']['budgets']['upsert']
@@ -28,6 +32,67 @@ describe('Route CRUD des budgets des fiches actions', () => {
     databaseService = await getTestDatabase(app);
   });
 
+  test(`Test droit`, async () => {
+    const caller = router.createCaller({ user: yoloDodoUser });
+    const collectiviteId = 20;
+
+    // Ajout fiche dans une collectivité où yoloDodoUser n'est pas
+    const [fiche] = await databaseService.db
+      .insert(ficheActionTable)
+      .values({ titre: 'test', collectiviteId: collectiviteId })
+      .returning();
+
+    const budgetToInsert = {
+      ficheId: fiche.id,
+      type: 'investissement' as BudgetType,
+      unite: 'HT' as BudgetUnite,
+      annee: 2020,
+      budgetPrevisionnel: '5000',
+      budgetReel: '5000',
+    };
+
+    // Test ajout
+    await expect(() =>
+      caller.plans.fiches.budgets.upsert(budgetToInsert)
+    ).rejects.toThrowError();
+
+    // Ajout budget sur la fiche créé plus tôt
+    const [budget] = await databaseService.db
+      .insert(ficheActionBudgetTable)
+      .values(budgetToInsert)
+      .returning();
+
+    // Passe la fiche en accès restreint
+    await databaseService.db
+      .update(ficheActionTable)
+      .set({ restreint: true })
+      .where(eq(ficheActionTable.id, fiche.id));
+
+    // Test selection
+    await expect(() =>
+      caller.plans.fiches.budgets.list({ ficheId: fiche.id })
+    ).rejects.toThrowError();
+
+    await databaseService.db
+      .update(ficheActionTable)
+      .set({ restreint: false })
+      .where(eq(ficheActionTable.id, fiche.id));
+
+    // Test suppression
+    await expect(() =>
+      caller.plans.fiches.budgets.delete({ budgetId: budget.id })
+    ).rejects.toThrowError();
+
+    onTestFinished(async () => {
+      try {
+        await databaseService.db
+          .delete(ficheActionTable)
+          .where(eq(ficheActionTable.collectiviteId, collectiviteId));
+      } catch (error) {
+        console.error('Erreur lors de la suppression:', error);
+      }
+    });
+  });
   test(`Tests CRUD`, async () => {
     const caller = router.createCaller({ user: yoloDodoUser });
 
@@ -94,7 +159,7 @@ describe('Route CRUD des budgets des fiches actions', () => {
     expect(result1Tot.length).toBe(1);
     expect(result1Tot[0].budgetPrevisionnel).toBe('5000');
 
-    // Ajout conflits
+    // Test l'unicité
     await expect(() =>
       caller.plans.fiches.budgets.upsert(budgetHTInvTotBis)
     ).rejects.toThrowError();

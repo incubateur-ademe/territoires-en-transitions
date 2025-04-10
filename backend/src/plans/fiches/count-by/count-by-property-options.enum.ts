@@ -1,38 +1,74 @@
 import z from 'zod';
 import { ficheActionWithRelationsSchema } from '../shared/models/fiche-action-with-relations.dto';
+import { ficheActionBudgetSchema } from '@/backend/plans/fiches/fiche-action-budget/fiche-action-budget.table';
 
-export const ficheActionForCountBySchema = ficheActionWithRelationsSchema.pick({
-  restreint: true,
-  ameliorationContinue: true,
-  cibles: true,
-  statut: true,
-  priorite: true,
-  partenaires: true,
-  structures: true,
-  pilotes: true,
-  services: true,
-  tags: true,
-  financeurs: true,
-  thematiques: true,
-  plans: true,
-  referents: true,
-  participationCitoyenneType: true,
-  effetsAttendus: true,
-  sousThematiques: true,
-  indicateurs: true,
-  dateDebut: true,
-  dateFin: true,
-  createdAt: true,
-  modifiedAt: true,
-  budgetsPrevisionnelInvestissementTotal : true,
-  budgetsPrevisionnelInvestissementParAnnee : true,
-  budgetsDepenseInvestissementTotal : true,
-  budgetsDepenseInvestissementParAnnee : true,
-  budgetsPrevisionnelFonctionnementTotal : true,
-  budgetsPrevisionnelFonctionnementParAnnee : true,
-  budgetsDepenseFonctionnementTotal : true,
-  budgetsDepenseFonctionnementParAnnee : true,
-});
+export const ficheActionForCountBySchema = ficheActionWithRelationsSchema
+  .pick({
+    restreint: true,
+    ameliorationContinue: true,
+    cibles: true,
+    statut: true,
+    priorite: true,
+    partenaires: true,
+    structures: true,
+    pilotes: true,
+    services: true,
+    tags: true,
+    financeurs: true,
+    thematiques: true,
+    plans: true,
+    referents: true,
+    participationCitoyenneType: true,
+    effetsAttendus: true,
+    sousThematiques: true,
+    indicateurs: true,
+    dateDebut: true,
+    dateFin: true,
+    createdAt: true,
+    modifiedAt: true,
+  })
+  .extend({
+    budgetsPrevisionnelInvestissementTotal: ficheActionBudgetSchema
+      .array()
+      .nullable()
+      .describe(
+        `Budget d'investissement prévisionnel total (non détaillé par année)`
+      ),
+    budgetsPrevisionnelInvestissementParAnnee: ficheActionBudgetSchema
+      .array()
+      .nullable()
+      .describe(`Budget d'investissement prévisionnel par année`),
+    budgetsDepenseInvestissementTotal: ficheActionBudgetSchema
+      .array()
+      .nullable()
+      .describe(
+        `Budget d'investissement dépensé total (non détaillé par année)`
+      ),
+    budgetsDepenseInvestissementParAnnee: ficheActionBudgetSchema
+      .array()
+      .nullable()
+      .describe(`Budget d'investissement dépensé par année`),
+    budgetsPrevisionnelFonctionnementTotal: ficheActionBudgetSchema
+      .array()
+      .nullable()
+      .describe(
+        `Budget de fonctionnement prévisionnel total (non détaillé par année)`
+      ),
+    budgetsPrevisionnelFonctionnementParAnnee: ficheActionBudgetSchema
+      .array()
+      .nullable()
+      .describe(`Budget de fonctionnement prévisionnel par année`),
+    budgetsDepenseFonctionnementTotal: ficheActionBudgetSchema
+      .array()
+      .nullable()
+      .describe(
+        `Budget de fonctionnement dépensé total (non détaillé par année)`
+      ),
+    budgetsDepenseFonctionnementParAnnee: ficheActionBudgetSchema
+      .array()
+      .nullable()
+      .describe(`Budget de fonctionnement dépensé par année`),
+  });
 
 export const countByPropertyOptions =
   ficheActionForCountBySchema.keyof().options;

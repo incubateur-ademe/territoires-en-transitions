@@ -1,7 +1,7 @@
 import { DatabaseService } from '@/backend/utils';
 import {
-  budgetTypeSchema,
-  budgetUniteSchema,
+  BudgetType,
+  BudgetUnite,
   FicheActionBudget,
   ficheActionBudgetTable,
 } from '@/backend/plans/fiches/fiche-action-budget/fiche-action-budget.table';
@@ -24,18 +24,6 @@ export class FicheActionBudgetService {
     user: AuthUser
   ): Promise<FicheActionBudget> {
     await this.ficheService.canWriteFiche(budget.ficheId, user);
-    if (budgetTypeSchema.safeParse(budget.type).error) {
-      throw new Error(
-        `Le type de budget ${budget.type} n'existe pas.
-        Les types possibles sont ${budgetTypeSchema.options}`
-      );
-    }
-    if (budgetUniteSchema.safeParse(budget.unite).error) {
-      throw new Error(
-        `L'unité du budget en ${budget.unite} n'est pas disponible.
-        Les unités possibles sont ${budgetUniteSchema.options}`
-      );
-    }
     return await this.databaseService.db.transaction(async (trx) => {
       // Insertion ou mise à jour du budget avec `RETURNING`
       const [result] = await trx
@@ -59,7 +47,11 @@ export class FicheActionBudgetService {
         .set({ modifiedBy: user.id, modifiedAt: new Date().toISOString() })
         .where(eq(ficheActionTable.id, budget.ficheId));
 
-      return result;
+      return {
+        ...result,
+        type: result.type as BudgetType, // Format text en BDD
+        unite: result.unite as BudgetUnite, // Format text en BDD
+      };
     });
   }
 
@@ -122,6 +114,13 @@ export class FicheActionBudgetService {
       query.orderBy(ficheActionBudgetTable.annee);
     }
 
-    return query;
+    const result = await query;
+    return result.map((budget) => {
+      return {
+        ...budget,
+        type: budget.type as BudgetType, // Format text en BDD
+        unite: budget.unite as BudgetUnite, // Format text en BDD
+      };
+    });
   }
 }

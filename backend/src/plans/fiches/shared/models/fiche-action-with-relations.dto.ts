@@ -166,46 +166,20 @@ export const ficheActionWithRelationsSchema = ficheSchema.extend({
     .array()
     .nullable()
     .describe('Documents liés'),
-  budgetsPrevisionnelInvestissementTotal:
-    ficheActionBudgetSchema
+  budgets: z
+    .object({
+      id: z.number(),
+      ficheId : z.number(),
+      type: z.string(),
+      unite: z.string(),
+      annee: z.number().nullable().optional(),
+      budgetPrevisionnel: z.string().nullable().optional(),
+      budgetReel: z.string().nullable().optional(),
+      estEtale: z.boolean().optional(),
+    })
     .array()
       .nullable()
-    .describe(`Budget d'investissement prévisionnel total (non détaillé par année)`),
-  budgetsPrevisionnelInvestissementParAnnee:
-    ficheActionBudgetSchema
-      .array()
-      .nullable()
-      .describe(`Budget d'investissement prévisionnel par année`),
-  budgetsDepenseInvestissementTotal:
-    ficheActionBudgetSchema
-      .array()
-      .nullable()
-      .describe(`Budget d'investissement dépensé total (non détaillé par année)`),
-  budgetsDepenseInvestissementParAnnee:
-    ficheActionBudgetSchema
-      .array()
-      .nullable()
-      .describe(`Budget d'investissement dépensé par année`),
-  budgetsPrevisionnelFonctionnementTotal:
-    ficheActionBudgetSchema
-      .array()
-      .nullable()
-      .describe(`Budget de fonctionnement prévisionnel total (non détaillé par année)`),
-  budgetsPrevisionnelFonctionnementParAnnee:
-    ficheActionBudgetSchema
-      .array()
-      .nullable()
-      .describe(`Budget de fonctionnement prévisionnel par année`),
-  budgetsDepenseFonctionnementTotal:
-    ficheActionBudgetSchema
-      .array()
-      .nullable()
-      .describe(`Budget de fonctionnement dépensé total (non détaillé par année)`),
-  budgetsDepenseFonctionnementParAnnee:
-    ficheActionBudgetSchema
-      .array()
-      .nullable()
-      .describe(`Budget de fonctionnement dépensé par année`),
+    .describe(`Budgets de la fiche action`),
 });
 
 export type FicheActionWithRelationsType = z.infer<
