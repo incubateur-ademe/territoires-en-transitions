@@ -264,7 +264,6 @@ export interface ServicesCarte extends Schema.Component {
     icon: 'grid';
   };
   attributes: {
-    icone: Attribute.String & Attribute.CustomField<'plugin::react-icons.icon'>;
     image: Attribute.Media<'images'>;
     pre_titre: Attribute.String &
       Attribute.SetMinMaxLength<{
