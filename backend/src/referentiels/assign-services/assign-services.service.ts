@@ -1,3 +1,4 @@
+import { Transaction } from '@/backend/utils/database/transaction.utils';
 import { Injectable, Logger } from '@nestjs/common';
 import { and, eq } from 'drizzle-orm';
 import { PermissionService } from '../../auth/authorizations/permission.service';
@@ -19,12 +20,18 @@ export class AssignServicesService {
     private readonly permissionService: PermissionService
   ) {}
 
-  async listServices(collectiviteId: number, actionId: string): Promise<Tag[]> {
+  async listServices(
+    collectiviteId: number,
+    actionId: string,
+    tx?: Transaction
+  ): Promise<Tag[]> {
     this.logger.log(
       `Récupération des services pour la collectivité ${collectiviteId} et la mesure ${actionId}`
     );
 
-    return await this.databaseService.db
+    const db = tx || this.databaseService.db;
+
+    return await db
       .select({
         collectiviteId: actionServiceTable.collectiviteId,
         id: actionServiceTable.serviceTagId,
@@ -82,7 +89,7 @@ export class AssignServicesService {
         }))
       );
 
-      return await this.listServices(collectiviteId, actionId);
+      return await this.listServices(collectiviteId, actionId, tx);
     });
   }
 

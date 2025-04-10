@@ -1,3 +1,4 @@
+import { Transaction } from '@/backend/utils/database/transaction.utils';
 import { Injectable, Logger } from '@nestjs/common';
 import { and, eq, sql } from 'drizzle-orm';
 import { PermissionService } from '../../auth/authorizations/permission.service';
@@ -25,13 +26,16 @@ export class AssignPilotesService {
 
   async listPilotes(
     collectiviteId: number,
-    actionId: string
+    actionId: string,
+    tx?: Transaction
   ): Promise<PersonneTagOrUser[]> {
     this.logger.log(
       `Récupération des pilotes pour la collectivité ${collectiviteId} et la mesure ${actionId}`
     );
 
-    return await this.databaseService.db
+    const db = tx || this.databaseService.db;
+
+    return await db
       .select({
         collectiviteId: actionPiloteTable.collectiviteId,
         actionId: actionPiloteTable.actionId,
@@ -98,7 +102,7 @@ export class AssignPilotesService {
         }))
       );
 
-      return await this.listPilotes(collectiviteId, actionId);
+      return await this.listPilotes(collectiviteId, actionId, tx);
     });
   }
 
