@@ -19,8 +19,6 @@ import CollectivitesService from './services/collectivites.service';
 import GroupementsService from './services/groupements.service';
 import { PersonnesService } from './services/personnes.service';
 import { TableauDeBordModule } from './tableau-de-bord/tableau-de-bord.module';
-import RecherchesService from '@/backend/collectivites/recherches/recherches.service';
-import { RecherchesRouter } from '@/backend/collectivites/recherches/recherches.router';
 
 @Module({
   imports: [TableauDeBordModule],
