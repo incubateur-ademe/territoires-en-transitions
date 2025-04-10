@@ -7,10 +7,6 @@
   },
   "options": {},
   "attributes": {
-    "icone": {
-      "type": "customField",
-      "customField": "plugin::react-icons.icon"
-    },
     "pre_titre": {
       "type": "string",
       "maxLength": 255

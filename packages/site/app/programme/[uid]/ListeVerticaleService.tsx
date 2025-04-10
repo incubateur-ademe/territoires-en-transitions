@@ -1,5 +1,4 @@
 import Markdown from '@/site/components/markdown/Markdown';
-import ReactIcon from '@/site/components/react-icons/ReactIcon';
 import { StrapiImage } from '@/site/components/strapiImage/StrapiImage';
 import { Liste } from './types';
 
@@ -19,12 +18,7 @@ const ListeVerticaleService = ({ liste }: { liste: Liste }) => {
             />
           )}
           <div className="flex flex-col gap-4">
-            <div className="flex items-center gap-2">
-              {!!l.icone && (
-                <ReactIcon icon={l.icone} className="text-3xl text-primary-9" />
-              )}
-              {!!l.titre && <h4 className="mb-0">{l.titre}</h4>}
-            </div>
+            {!!l.titre && <h4 className="mb-0">{l.titre}</h4>}
 
             <Markdown texte={l.texte} className="paragraphe-16 -mb-6" />
           </div>

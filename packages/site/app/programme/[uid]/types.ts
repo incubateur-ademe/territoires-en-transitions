@@ -40,7 +40,6 @@ export type ListeFetchedData = {
   introduction?: string;
   liste: {
     id: number;
-    icone?: string;
     pre_titre?: string;
     titre?: string;
     texte: string;
@@ -52,7 +51,6 @@ export type ListeFetchedData = {
 export type Liste = {
   id: number;
   preTitre?: string;
-  icone?: string;
   titre?: string;
   texte: string;
   image?: StrapiItem;
