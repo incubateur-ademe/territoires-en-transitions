@@ -27,18 +27,17 @@ const ProgressBar = ({
   const percentageAgainstTotal = (x: number): number => (100 * x) / total;
 
   const localData: { label: string; value: number; color: string }[] = [];
-  score.forEach((s, idx) => {
-    if (s.value === 0) {
-      return localData.push({ ...s, value: 0 });
-    }
 
-    const value = percent ? s.value * 100 : percentageAgainstTotal(s.value);
+  score
+    .filter((s) => s.value > 0)
+    .forEach((s, idx) => {
+      const value = percent ? s.value * 100 : percentageAgainstTotal(s.value);
 
-    localData.push({
-      ...s,
-      value: value + (idx >= 1 ? localData[idx - 1].value : 0),
+      localData.push({
+        ...s,
+        value: value + (idx >= 1 ? localData[idx - 1].value : 0),
+      });
     });
-  });
 
   const displayedValue = valueToDisplay
     ? localData.find((d) => d.label === valueToDisplay)?.value
