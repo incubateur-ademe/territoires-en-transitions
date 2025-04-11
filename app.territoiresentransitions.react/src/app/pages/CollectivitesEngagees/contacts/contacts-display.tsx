@@ -9,6 +9,7 @@ type Props = {
   contacts: RecherchesContact[];
   collectiviteName: string;
   buttonClassName?: string;
+  onButtonClick?: () => void;
 };
 
 const ContactsDisplay = ({
@@ -16,6 +17,7 @@ const ContactsDisplay = ({
   view,
   collectiviteName,
   buttonClassName,
+  onButtonClick,
 }: Props) => {
   const [isOpen, setIsOpen] = useState(false);
 
@@ -33,7 +35,10 @@ const ContactsDisplay = ({
       <ContactButton
         disabled={contacts.length === 0}
         className={buttonClassName}
-        onClick={() => setIsOpen(true)}
+        onClick={() => {
+          setIsOpen(true);
+          onButtonClick?.();
+        }}
       />
     </>
   );

@@ -1,11 +1,11 @@
 import classNames from 'classnames';
 
-import { Badge, Card } from '@/ui';
+import { Badge, Card, useEventTracker } from '@/ui';
 
 import { RecherchesPlan } from '@/api/collectiviteEngagees';
 import { generateTitle } from '@/app/app/pages/collectivite/PlansActions/FicheAction/data/utils';
 import { makeCollectivitePlanActionUrl } from '@/app/app/paths';
-import { useFonctionTracker } from '@/app/core-logic/hooks/useFonctionTracker';
+import { useCurrentCollectivite } from '@/app/core-logic/hooks/useCurrentCollectivite';
 import ContactsDisplay from '../contacts/contacts-display';
 
 type Props = {
@@ -20,7 +20,8 @@ type Props = {
  * Lien vers la page du plan.
  */
 export const PlanCarte = ({ plan, canUserClickCard }: Props) => {
-  const tracker = useFonctionTracker();
+  const currentCollectivite = useCurrentCollectivite();
+  const tracker = useEventTracker('app/recherches', 'plans');
 
   return (
     <div className="relative h-full group">
@@ -29,6 +30,13 @@ export const PlanCarte = ({ plan, canUserClickCard }: Props) => {
         contacts={plan.contacts}
         collectiviteName={plan.collectiviteNom}
         buttonClassName="!absolute top-4 right-4 invisible group-hover:visible"
+        onButtonClick={() =>
+          tracker('collectivites:voir_contacts_click', {
+            collectiviteId: currentCollectivite?.collectiviteId ?? 0,
+            niveauAcces: currentCollectivite?.niveauAcces ?? null,
+            role: currentCollectivite?.role ?? null,
+          })
+        }
       />
 
       <Card
@@ -37,7 +45,11 @@ export const PlanCarte = ({ plan, canUserClickCard }: Props) => {
           'hover:!bg-primary-0': canUserClickCard,
         })}
         onClick={() =>
-          tracker({ fonction: 'collectivite_carte', action: 'clic' })
+          tracker('collectivites_onglet_pa:cartes_click', {
+            collectiviteId: currentCollectivite?.collectiviteId ?? 0,
+            niveauAcces: currentCollectivite?.niveauAcces ?? null,
+            role: currentCollectivite?.role ?? null,
+          })
         }
         href={
           canUserClickCard
