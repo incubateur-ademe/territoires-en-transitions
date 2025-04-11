@@ -1,6 +1,7 @@
 import { RecherchesReferentiel } from '@/api/collectiviteEngagees';
 import { referentielToName } from '@/app/app/labels';
 import { makeReferentielRootUrl } from '@/app/app/paths';
+import { useCurrentCollectivite } from '@/app/core-logic/hooks/useCurrentCollectivite';
 import { NIVEAUX } from '@/app/referentiels/tableau-de-bord/labellisation/LabellisationInfo';
 import {
   GreyStar,
@@ -8,7 +9,7 @@ import {
 } from '@/app/referentiels/tableau-de-bord/labellisation/Star';
 import { toPercentString } from '@/app/utils/to-percent-string';
 import { ReferentielId } from '@/domain/referentiels';
-import { Card, Icon } from '@/ui';
+import { Card, Icon, useEventTracker } from '@/ui';
 import classNames from 'classnames';
 import ContactsDisplay from '../contacts/contacts-display';
 
@@ -38,6 +39,9 @@ export const ReferentielCarte = ({ collectivite, canUserClickCard }: Props) => {
     contacts,
   } = collectivite;
 
+  const currentCollectivite = useCurrentCollectivite();
+  const tracker = useEventTracker('app/recherches', 'referentiels');
+
   return (
     <div className="relative h-full group">
       <ContactsDisplay
@@ -45,6 +49,13 @@ export const ReferentielCarte = ({ collectivite, canUserClickCard }: Props) => {
         contacts={contacts}
         collectiviteName={collectiviteNom}
         buttonClassName="!absolute top-4 right-4 invisible group-hover:visible"
+        onButtonClick={() =>
+          tracker('collectivites:voir_contacts_click', {
+            collectiviteId,
+            niveauAcces: currentCollectivite?.niveauAcces ?? null,
+            role: currentCollectivite?.role ?? null,
+          })
+        }
       />
 
       <Card
@@ -58,6 +69,13 @@ export const ReferentielCarte = ({ collectivite, canUserClickCard }: Props) => {
                 collectiviteId: collectiviteId,
               })
             : undefined
+        }
+        onClick={() =>
+          tracker('collectivites_onglet_referentiels:cartes_click', {
+            collectiviteId,
+            niveauAcces: currentCollectivite?.niveauAcces ?? null,
+            role: currentCollectivite?.role ?? null,
+          })
         }
       >
         <div className="mb-0 text-lg font-bold text-primary-9">
