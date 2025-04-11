@@ -43,3 +43,10 @@ export const membreFonctionToLabel = membreFonctions.reduce(
   (acc, { value, label }) => ({ ...acc, [value]: label }),
   {} as Record<TMembreFonction, string>
 );
+
+export const membreFonctionToTeteFonction: Record<string, string> = {
+  technique: 'Chef·fe de projet',
+  politique: 'Élu·e',
+  conseiller: 'Conseiller·ère',
+  partenaire: 'Partenaire',
+};
