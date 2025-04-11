@@ -3,6 +3,7 @@ import SelectDropdown from '@/app/ui/shared/select/SelectDropdown';
 import {
   statutAvancementEnumSchema,
   StatutAvancementIncludingNonConcerne,
+  statutAvancementIncludingNonConcerneEnumSchema,
 } from '@/domain/referentiels';
 import classNames from 'classnames';
 import ActionStatutBadge from './action-statut.badge';
@@ -24,6 +25,10 @@ const getOptions = (items: StatutAvancementIncludingNonConcerne[]) =>
   items.map((value) => ({ value, label: avancementToLabel[value] }));
 
 export const DEFAULT_OPTIONS = getOptions(statutAvancementEnumSchema.options);
+
+export const DEFAULT_OPTIONS_WITH_NON_CONCERNE = getOptions(
+  statutAvancementIncludingNonConcerneEnumSchema.options
+);
 
 /**
  * Affiche le sélecteur de statut d'une action
