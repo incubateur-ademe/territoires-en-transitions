@@ -4,7 +4,11 @@ import { getTestRouter } from '../../../test/app-utils';
 import { getAnonUser, getAuthUser } from '../../../test/auth-utils';
 import { AuthenticatedUser } from '../../auth/models/auth.models';
 import { type AppRouter, TrpcRouter } from '../../utils/trpc/trpc.router';
-import { ActionTypeEnum, ReferentielIdEnum } from '../index-domain';
+import {
+  ActionAndScore,
+  ActionTypeEnum,
+  ReferentielIdEnum,
+} from '../index-domain';
 import {
   ListActionsRequestOptionsType,
   listActionsRequestSchema,
@@ -135,9 +139,9 @@ describe('ActionStatutListRouter', () => {
       },
     } satisfies ListActionsInput;
 
-    const result = await caller.referentiels.actions.listActionsWithScores(
+    const result = (await caller.referentiels.actions.listActionsWithScores(
       input
-    );
+    )) as ActionAndScore[];
 
     expect(result.length).toEqual(input.filters.actionIds.length);
 
