@@ -34,6 +34,7 @@ export const collectiviteTable = pgTable('collectivite', {
   type: text('type').notNull(), // TODO check collectiviteType
   communeCode: varchar('commune_code', { length: 5 }),
   siren: varchar('siren', { length: 9 }),
+  nic: varchar('nic', { length: 5 }),
   departementCode: varchar('departement_code', { length: 3 }),
   regionCode: varchar('region_code', { length: 2 }),
   natureInsee: text('nature_insee').references(
@@ -57,3 +58,12 @@ export const collectiviteUpsertSchema = createInsertSchema(collectiviteTable);
 export type Collectivite = z.infer<typeof collectiviteSchema>;
 export type CollectiviteResume = z.infer<typeof collectiviteResumeSchema>;
 export type CollectiviteUpsert = z.infer<typeof collectiviteUpsertSchema>;
+
+export const collectiviteUpdateNICSchema = z
+  .object({
+    siren: z.string(),
+    nic: z.string(),
+  })
+  .array();
+
+export type CollectiviteUpdateNIC = z.infer<typeof collectiviteUpdateNICSchema>;
