@@ -14,6 +14,7 @@ export const IndicateurSourcesSelect = ({ sourceFilter }: Props) => {
   return (
     <SelectMultiple
       isLoading={isLoading}
+      dataTest="indicateurs.sources-select"
       maxBadgesToShow={availableOptions.length}
       options={availableOptions}
       values={filtresSource}

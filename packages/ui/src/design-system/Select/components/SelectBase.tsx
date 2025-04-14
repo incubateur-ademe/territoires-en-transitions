@@ -6,6 +6,7 @@ import { useDebouncedCallback } from 'use-debounce';
 import { Badge } from '@/ui/design-system/Badge';
 import { Icon } from '@/ui/design-system/Icon';
 import { DropdownFloater } from '@/ui/design-system/Select/components/DropdownFloater';
+import * as Sentry from '@sentry/nextjs';
 
 import {
   Option,
@@ -14,6 +15,7 @@ import {
   filterOptions,
   getFlatOptions,
   getOptionLabel,
+  isOptionSection,
   sortOptionByAlphabet,
 } from '../utils';
 import Options from './Options';
@@ -152,11 +154,35 @@ export const SelectBase = (props: SelectProps) => {
     ? options
     : filterOptions(options, inputValue);
 
+  useEffect(() => {
+    options.forEach((option) => {
+      if (isOptionSection(option)) {
+        option.options.forEach((subopt) => {
+          if (!subopt.label) {
+            const error = new Error(
+              `Option with value ${subopt.value} has no label for select ${dataTest}`
+            );
+            console.error(error);
+            Sentry.captureException(error);
+          }
+        });
+      } else {
+        if (!option.label) {
+          const error = new Error(
+            `Option with value ${option.value} has no label for select ${dataTest}`
+          );
+          console.error(error);
+          Sentry.captureException(error);
+        }
+      }
+    });
+  }, [options]);
+
   /** Compare la valeur de l'input de recherche avec la première option de la liste
    * pour afficher le bouton de création d'une option */
   const isNotSimilar =
     inputValue.toLowerCase().trim() !==
-    getFlatOptions(filteredOptions)[0]?.label.toLowerCase().trim();
+    getFlatOptions(filteredOptions)[0]?.label?.toLowerCase().trim();
 
   /** Transforme une valeur simple en tableau, qui est plus facile à traiter dans les sous composants */
   const arrayValues = values
