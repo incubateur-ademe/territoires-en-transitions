@@ -1344,7 +1344,6 @@ export interface ApiServiceService extends Schema.CollectionType {
       'admin::user'
     > &
       Attribute.Private;
-    description: Attribute.String & Attribute.Required;
     description_markdown: Attribute.RichText &
       Attribute.Required &
       Attribute.SetMinMaxLength<{
