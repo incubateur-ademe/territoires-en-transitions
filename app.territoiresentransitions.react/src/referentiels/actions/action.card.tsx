@@ -3,9 +3,9 @@ import { useState } from 'react';
 import { makeReferentielActionUrl } from '@/app/app/paths';
 import { useCurrentCollectivite } from '@/app/collectivites/collectivite-context';
 import ActionEditModal from '@/app/referentiels/actions/action-edit.modal';
-import { Action } from '@/app/referentiels/actions/use-list-actions';
 import ListWithTooltip from '@/app/ui/lists/ListWithTooltip';
 import {
+  Action,
   ActionType,
   getReferentielIdFromActionId,
 } from '@/domain/referentiels';
