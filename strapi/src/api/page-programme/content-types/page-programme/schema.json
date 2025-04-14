@@ -117,49 +117,6 @@
       "allowedTypes": [
         "images"
       ]
-    },
-    "Objectifs": {
-      "type": "component",
-      "repeatable": false,
-      "component": "bloc.description",
-      "required": true
-    },
-    "objectifs_liste": {
-      "type": "component",
-      "repeatable": true,
-      "component": "shared.vignette-avec-markdown"
-    },
-    "Services": {
-      "type": "component",
-      "repeatable": false,
-      "component": "bloc.description",
-      "required": true
-    },
-    "Compte": {
-      "displayName": "Compte",
-      "type": "component",
-      "repeatable": false,
-      "component": "bloc.compte",
-      "required": true
-    },
-    "Etapes": {
-      "type": "component",
-      "repeatable": false,
-      "component": "bloc.description",
-      "required": true
-    },
-    "Ressources": {
-      "displayName": "Ressources",
-      "type": "component",
-      "repeatable": false,
-      "component": "bloc.ressources",
-      "required": true
-    },
-    "Benefices": {
-      "type": "component",
-      "repeatable": false,
-      "component": "bloc.description",
-      "required": true
     }
   }
 }

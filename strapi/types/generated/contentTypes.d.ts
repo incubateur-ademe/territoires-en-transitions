@@ -1053,7 +1053,6 @@ export interface ApiPageProgrammePageProgramme extends Schema.SingleType {
     draftAndPublish: true;
   };
   attributes: {
-    Benefices: Attribute.Component<'bloc.description'> & Attribute.Required;
     benefices_liste: Attribute.Component<'shared.vignette-avec-titre', true>;
     benefices_titre: Attribute.String &
       Attribute.Required &
@@ -1073,7 +1072,6 @@ export interface ApiPageProgrammePageProgramme extends Schema.SingleType {
         maxLength: 255;
       }> &
       Attribute.DefaultTo<'De nombreuses collectivit\u00E9s d\u00E9j\u00E0 engag\u00E9es'>;
-    Compte: Attribute.Component<'bloc.compte'> & Attribute.Required;
     compte_cta: Attribute.String &
       Attribute.Required &
       Attribute.SetMinMaxLength<{
@@ -1111,7 +1109,6 @@ export interface ApiPageProgrammePageProgramme extends Schema.SingleType {
       Attribute.Private;
     Description: Attribute.Text &
       Attribute.DefaultTo<"L'outil op\u00E9rationnel de planification \u00E9cologique qui met \u00E0 votre disposition une ing\u00E9nierie territoriale et un accompagnement personnalis\u00E9.">;
-    Etapes: Attribute.Component<'bloc.description'> & Attribute.Required;
     etapes_cta: Attribute.String &
       Attribute.Required &
       Attribute.SetMinMaxLength<{
@@ -1125,12 +1122,8 @@ export interface ApiPageProgrammePageProgramme extends Schema.SingleType {
         maxLength: 255;
       }> &
       Attribute.DefaultTo<'Les \u00E9tapes '>;
-    Objectifs: Attribute.Component<'bloc.description'> & Attribute.Required;
-    objectifs_liste: Attribute.Component<'shared.vignette-avec-markdown', true>;
     publishedAt: Attribute.DateTime;
-    Ressources: Attribute.Component<'bloc.ressources'> & Attribute.Required;
     seo: Attribute.Component<'shared.seo'>;
-    Services: Attribute.Component<'bloc.description'> & Attribute.Required;
     services_liste_rel: Attribute.Relation<
       'api::page-programme.page-programme',
       'oneToMany',
