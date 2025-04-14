@@ -1,76 +1,5 @@
 import type { Attribute, Schema } from '@strapi/strapi';
 
-export interface BlocAccompagnement extends Schema.Component {
-  collectionName: 'components_bloc_accompagnements';
-  info: {
-    description: '';
-    displayName: 'Accompagnement';
-  };
-  attributes: {
-    Compte: Attribute.Component<'bloc.description-avec-image'> &
-      Attribute.Required;
-    Description: Attribute.Text &
-      Attribute.DefaultTo<'Votre territoire est unique. Avancez \u00E9tape par \u00E9tape dans la transition \u00E9cologique selon vos comp\u00E9tences et vos moyens avec le programme Territoire Engag\u00E9 Transition \u00C9cologique.'>;
-    Programme: Attribute.Component<'bloc.description-avec-image'> &
-      Attribute.Required;
-    Titre: Attribute.String &
-      Attribute.Required &
-      Attribute.SetMinMaxLength<{
-        maxLength: 200;
-      }> &
-      Attribute.DefaultTo<'B\u00E9n\u00E9ficiez d\u2019un accompagnement adapt\u00E9 \u00E0 vos besoins'>;
-  };
-}
-
-export interface BlocDescription extends Schema.Component {
-  collectionName: 'components_bloc_descriptions';
-  info: {
-    displayName: 'Description';
-  };
-  attributes: {
-    Description: Attribute.Text;
-    Titre: Attribute.String &
-      Attribute.Required &
-      Attribute.SetMinMaxLength<{
-        maxLength: 255;
-      }>;
-  };
-}
-
-export interface BlocDescriptionAvecImage extends Schema.Component {
-  collectionName: 'components_bloc_description_avec_images';
-  info: {
-    description: '';
-    displayName: 'DescriptionAvecImage';
-  };
-  attributes: {
-    Description: Attribute.Text &
-      Attribute.Required &
-      Attribute.SetMinMaxLength<{
-        maxLength: 200;
-      }>;
-    Image: Attribute.Media<'images'> & Attribute.Required;
-    Titre: Attribute.String &
-      Attribute.Required &
-      Attribute.SetMinMaxLength<{
-        maxLength: 200;
-      }>;
-  };
-}
-
-export interface BlocTexteAvecImage extends Schema.Component {
-  collectionName: 'components_contenu_texte_avec_images';
-  info: {
-    description: '';
-    displayName: 'TexteAvecImage';
-  };
-  attributes: {
-    Image: Attribute.Media<'images'>;
-    LegendeVisible: Attribute.Boolean & Attribute.DefaultTo<false>;
-    Texte: Attribute.RichText & Attribute.Required;
-  };
-}
-
 export interface ContenuBoutonGroupe extends Schema.Component {
   collectionName: 'components_shared_bouton_groupes';
   info: {
@@ -466,10 +395,6 @@ export interface SharedVignetteAvecTitre extends Schema.Component {
 declare module '@strapi/types' {
   export module Shared {
     export interface Components {
-      'bloc.accompagnement': BlocAccompagnement;
-      'bloc.description': BlocDescription;
-      'bloc.description-avec-image': BlocDescriptionAvecImage;
-      'bloc.texte-avec-image': BlocTexteAvecImage;
       'contenu.bouton-groupe': ContenuBoutonGroupe;
       'contenu.gallerie': ContenuGallerie;
       'contenu.image': ContenuImage;
