@@ -46,7 +46,7 @@ const IndicateurArtificialisationSols = ({
       boxTitle={getBoxTitle(data.total, decimals, defaultData.titre_encadre)}
       graphTitle="Répartition du flux de consommation d'espaces, par destination entre 2009 et 2022."
       source="Cerema, Consommation d'espaces naturels, agricoles et forestiers"
-      unit="ha"
+      unit={defaultData.titre_encadre}
       unitSingular={true}
       decimals={decimals}
     />
