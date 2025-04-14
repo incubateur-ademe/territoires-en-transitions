@@ -8,7 +8,12 @@ import {
   serviceTagTable,
   Tag,
 } from '../../collectivites/index-domain';
-import { actionDefinitionTable } from '../index-domain';
+import {
+  Action,
+  ActionAndScore,
+  actionDefinitionTable,
+  ActionType,
+} from '../index-domain';
 import { actionPiloteTable } from '../models/action-pilote.table';
 import { actionServiceTable } from '../models/action-service.table';
 import { referentielDefinitionTable } from '../models/referentiel-definition.table';
@@ -30,7 +35,11 @@ export class ListActionsService {
 
   private db = this.databaseService.db;
 
-  async listActions({ collectiviteId, filters, embed }: ListInput) {
+  async listActions({
+    collectiviteId,
+    filters,
+    embed,
+  }: ListInput): Promise<Action[] | ActionAndScore[]> {
     const subQuery = this.db
       .$with('action_definition_with_details')
       .as(this.listWithDetails(collectiviteId));
@@ -132,7 +141,7 @@ export class ListActionsService {
         // Add a column with the depth of the action depending on the number of dots in the identifiant
         // Ex: 1.1   => depth 2
         //     1.1.1 => depth 3
-        depth: sql`CASE
+        depth: sql<number>`CASE
           WHEN ${actionDefinitionTable.identifiant} IS NULL OR ${actionDefinitionTable.identifiant} LIKE '' THEN 0
           ELSE REGEXP_COUNT(${actionDefinitionTable.identifiant}, '\\.') + 1
           END`.as('depth'),
@@ -170,7 +179,7 @@ export class ListActionsService {
         // Add the action type from the `referentiel_definition.hierarchie` array
         // Ex: 'axe', 'sous-axe', etc
         actionType:
-          sql`${referentielDefinitionTable.hierarchie}[${subQuery.depth} + 1]`.as(
+          sql<ActionType>`${referentielDefinitionTable.hierarchie}[${subQuery.depth} + 1]`.as(
             'actionType'
           ),
 

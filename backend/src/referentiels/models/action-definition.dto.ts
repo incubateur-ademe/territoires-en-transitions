@@ -1,9 +1,16 @@
 import { preuveSchemaEssential } from '@/backend/collectivites/documents/models/preuve.dto';
+import {
+  personneTagOrUserSchema,
+  tagSchema,
+} from '@/backend/collectivites/index-domain';
 import { scoreFinalSchema } from '@/backend/referentiels/compute-score/score.dto';
 import z from 'zod';
 import { actionDefinitionSchema } from './action-definition.table';
 import { statutAvancementIncludingNonConcerneEnumSchema } from './action-statut.table';
-import { actionTypeIncludingExempleSchema } from './action-type.enum';
+import {
+  actionTypeIncludingExempleSchema,
+  actionTypeSchema,
+} from './action-type.enum';
 
 // type Increment<N extends number> = N extends infer R
 //   ? [...Array<R>, unknown]['length']
@@ -54,18 +61,25 @@ export type ActionDefinitionEssential = z.infer<
   typeof actionDefinitionEssentialSchema
 >;
 
+export const actionSchema = actionDefinitionSchema.extend({
+  statut: statutAvancementIncludingNonConcerneEnumSchema.optional(),
+  desactive: z.boolean().optional(),
+  concerne: z.boolean().optional(),
+  pilotes: personneTagOrUserSchema.array().optional(),
+  services: tagSchema.array().optional(),
+  depth: z.number().optional(),
+  actionType: actionTypeSchema.optional(),
+});
+
+export type Action = z.infer<typeof actionSchema>;
+
 /**
  * Combines an action with its status and score,
  * which is what we need for the PDF export.
  */
 
-const actionWithStatutAndScoreSchema = actionDefinitionSchema.extend({
-  statut: statutAvancementIncludingNonConcerneEnumSchema,
-  desactive: z.boolean().optional(),
-  concerne: z.boolean().optional(),
+const actionAndScoreSchema = actionSchema.extend({
   score: scoreFinalSchema.optional(),
 });
 
-export type ActionWithStatutAndScore = z.infer<
-  typeof actionWithStatutAndScoreSchema
->;
+export type ActionAndScore = z.infer<typeof actionAndScoreSchema>;
