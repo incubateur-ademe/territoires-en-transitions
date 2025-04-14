@@ -26,10 +26,6 @@
       "type": "string",
       "required": true
     },
-    "description": {
-      "type": "string",
-      "required": true
-    },
     "description_markdown": {
       "type": "richtext",
       "required": true,
@@ -39,7 +35,9 @@
       "type": "media",
       "multiple": false,
       "required": true,
-      "allowedTypes": ["images"]
+      "allowedTypes": [
+        "images"
+      ]
     },
     "sous_page": {
       "type": "boolean",
@@ -47,7 +45,11 @@
     },
     "contenu": {
       "type": "dynamiczone",
-      "components": ["services.paragraphe", "services.liste", "services.info"]
+      "components": [
+        "services.paragraphe",
+        "services.liste",
+        "services.info"
+      ]
     }
   }
 }
