@@ -581,7 +581,7 @@ export default class CrudValeursService {
   async upsertIndicateurValeurs(
     indicateurValeurs: IndicateurValeurInsert[],
     tokenInfo: AuthenticatedUser | undefined
-  ): Promise<IndicateurValeur[]> {
+  ): Promise<IndicateurValeurWithIdentifiant[]> {
     const collectiviteIds = [
       ...new Set(indicateurValeurs.map((v) => v.collectiviteId)),
     ];
@@ -633,9 +633,9 @@ export default class CrudValeursService {
     });
 
     // On doit distinguer les valeurs avec et sans métadonnées car la clause d'unicité est différente (onConflictDoUpdate)
-    const [indicateurValeursAvecMetadonnees, indicateurValeursSansMetadonnees] =
+    let [indicateurValeursAvecMetadonnees, indicateurValeursSansMetadonnees] =
       partition(indicateurValeurs, (v) => Boolean(v.metadonneeId));
-    const indicateurValeursResultat: IndicateurValeur[] = [];
+    const indicateurValeursResultat: IndicateurValeurWithIdentifiant[] = [];
     if (indicateurValeursAvecMetadonnees.length) {
       this.logger.log(
         `Upsert des ${
@@ -676,6 +676,12 @@ export default class CrudValeursService {
                 objectifCommentaire: sql.raw(
                   `excluded.${indicateurValeurTable.objectifCommentaire.name}`
                 ),
+                calculAuto: sql.raw(
+                  `excluded.${indicateurValeurTable.calculAuto.name}`
+                ),
+                calculAutoIdentifiantsManquants: sql.raw(
+                  `excluded.${indicateurValeurTable.calculAutoIdentifiantsManquants.name}`
+                ),
                 modifiedBy: sql.raw(
                   `excluded.${indicateurValeurTable.modifiedBy.name}`
                 ),
@@ -701,74 +707,146 @@ export default class CrudValeursService {
     }
 
     if (indicateurValeursSansMetadonnees.length) {
-      try {
-        this.logger.log(
-          `Upsert des ${
-            indicateurValeursSansMetadonnees.length
-          } valeurs sans métadonnées des indicateurs ${[
-            ...new Set(
-              indicateurValeursSansMetadonnees.map((v) => v.indicateurId)
-            ),
-          ].join(',')} pour les collectivités ${[
-            ...new Set(
-              indicateurValeursSansMetadonnees.map((v) => v.collectiviteId)
-            ),
-          ].join(',')}`
-        );
-        const indicateurValeursSansMetadonneesResultat =
+      let indicateurValeursSansMetadonneesToInsert: IndicateurValeurInsert[] =
+        indicateurValeursSansMetadonnees;
+
+      // Vérifie si les données à insérer sont autocalculées, si c'est le cas, on ne doit pas écraser les données des collectivités saisies manuellement
+      const indicateurValeursAutocalculees =
+        indicateurValeursSansMetadonneesToInsert.filter((v) => v.calculAuto);
+      if (indicateurValeursAutocalculees.length) {
+        const indicateurValeursAutocalculeesConditions: (SQLWrapper | SQL)[] =
+          [];
+        indicateurValeursAutocalculees.forEach((v) => {
+          indicateurValeursAutocalculeesConditions.push(
+            and(
+              eq(indicateurValeurTable.indicateurId, v.indicateurId),
+              eq(indicateurValeurTable.collectiviteId, v.collectiviteId),
+              eq(indicateurValeurTable.dateValeur, v.dateValeur),
+              isNull(indicateurValeurTable.metadonneeId),
+              or(
+                isNull(indicateurValeurTable.calculAuto),
+                eq(indicateurValeurTable.calculAuto, false)
+              )
+            )!
+          );
+        });
+        const valeursSaisiesManuellementExistantes =
           await this.databaseService.db
-            .insert(indicateurValeurTable)
-            .values(indicateurValeursSansMetadonnees)
-            .onConflictDoUpdate({
-              target: [
-                indicateurValeurTable.indicateurId,
-                indicateurValeurTable.collectiviteId,
-                indicateurValeurTable.dateValeur,
-              ],
-              targetWhere: isNull(indicateurValeurTable.metadonneeId),
-              set: {
-                resultat: sql.raw(
-                  `excluded.${indicateurValeurTable.resultat.name}`
-                ),
-                resultatCommentaire: sql.raw(
-                  `excluded.${indicateurValeurTable.resultatCommentaire.name}`
-                ),
-                objectif: sql.raw(
-                  `excluded.${indicateurValeurTable.objectif.name}`
-                ),
-                objectifCommentaire: sql.raw(
-                  `excluded.${indicateurValeurTable.objectifCommentaire.name}`
-                ),
-                modifiedBy: sql.raw(
-                  `excluded.${indicateurValeurTable.modifiedBy.name}`
-                ),
-              },
-            })
-            .returning();
-        indicateurValeursResultat.push(
-          ...indicateurValeursSansMetadonneesResultat
-        );
-      } catch (e) {
-        this.logger.error(
-          `Erreur lors de l'upsert des valeurs sans métadonnées pour les collectivités ${collectiviteIds} : ${getErrorMessage(
-            e
-          )}`
-        );
+            .select()
+            .from(indicateurValeurTable)
+            .where(or(...indicateurValeursAutocalculeesConditions));
         this.logger.log(
-          `Données en erreur : ${JSON.stringify(
-            indicateurValeursSansMetadonnees
-          )}`
+          `${valeursSaisiesManuellementExistantes.length} valeurs saisies manuellement existantes pour les indicateurs`
         );
-        throw e;
+        if (valeursSaisiesManuellementExistantes.length) {
+          indicateurValeursSansMetadonneesToInsert =
+            indicateurValeursSansMetadonneesToInsert.filter((v) => {
+              const valeurSaisiesManuellementExistante =
+                valeursSaisiesManuellementExistantes.find(
+                  (v2) =>
+                    v2.indicateurId === v.indicateurId &&
+                    v2.collectiviteId === v.collectiviteId &&
+                    v2.dateValeur === v.dateValeur
+                );
+              return !valeurSaisiesManuellementExistante;
+            });
+          this.logger.log(
+            `${indicateurValeursSansMetadonneesToInsert.length} valeurs à insérer après filtrage des données saisies manuellement`
+          );
+        }
+      }
+      if (indicateurValeursSansMetadonneesToInsert.length) {
+        try {
+          this.logger.log(
+            `Upsert des ${
+              indicateurValeursSansMetadonneesToInsert.length
+            } valeurs sans métadonnées des indicateurs ${[
+              ...new Set(
+                indicateurValeursSansMetadonneesToInsert.map(
+                  (v) => v.indicateurId
+                )
+              ),
+            ].join(',')} pour les collectivités ${[
+              ...new Set(
+                indicateurValeursSansMetadonneesToInsert.map(
+                  (v) => v.collectiviteId
+                )
+              ),
+            ].join(',')}`
+          );
+
+          const indicateurValeursSansMetadonneesResultat =
+            await this.databaseService.db
+              .insert(indicateurValeurTable)
+              .values(indicateurValeursSansMetadonneesToInsert)
+              .onConflictDoUpdate({
+                target: [
+                  indicateurValeurTable.indicateurId,
+                  indicateurValeurTable.collectiviteId,
+                  indicateurValeurTable.dateValeur,
+                ],
+                targetWhere: isNull(indicateurValeurTable.metadonneeId),
+                set: {
+                  resultat: sql.raw(
+                    `excluded.${indicateurValeurTable.resultat.name}`
+                  ),
+                  resultatCommentaire: sql.raw(
+                    `excluded.${indicateurValeurTable.resultatCommentaire.name}`
+                  ),
+                  objectif: sql.raw(
+                    `excluded.${indicateurValeurTable.objectif.name}`
+                  ),
+                  objectifCommentaire: sql.raw(
+                    `excluded.${indicateurValeurTable.objectifCommentaire.name}`
+                  ),
+                  calculAuto: sql.raw(
+                    `excluded.${indicateurValeurTable.calculAuto.name}`
+                  ),
+                  calculAutoIdentifiantsManquants: sql.raw(
+                    `excluded.${indicateurValeurTable.calculAutoIdentifiantsManquants.name}`
+                  ),
+                  modifiedBy: sql.raw(
+                    `excluded.${indicateurValeurTable.modifiedBy.name}`
+                  ),
+                },
+              })
+              .returning();
+          indicateurValeursResultat.push(
+            ...indicateurValeursSansMetadonneesResultat
+          );
+        } catch (e) {
+          this.logger.error(
+            `Erreur lors de l'upsert des valeurs sans métadonnées pour les collectivités ${collectiviteIds} : ${getErrorMessage(
+              e
+            )}`
+          );
+          this.logger.log(
+            `Données en erreur : ${JSON.stringify(
+              indicateurValeursSansMetadonneesToInsert
+            )}`
+          );
+          throw e;
+        }
       }
     }
+    indicateurValeursResultat.forEach((v) => {
+      if (
+        !v.indicateurIdentifiant &&
+        indicateurDefinitionsById[`${v.indicateurId}`]
+      ) {
+        v.indicateurIdentifiant =
+          indicateurDefinitionsById[`${v.indicateurId}`].identifiantReferentiel;
+      }
+    });
 
-    const calculatedIndicateursResultat =
-      await this.updateCalculatedIndicateurValeurs(indicateurValeursResultat);
-    this.logger.log(
-      `${calculatedIndicateursResultat.length} valeurs d'indicateurs calculées`
-    );
-    indicateurValeursResultat.push(...calculatedIndicateursResultat);
+    if (indicateurValeursResultat.length) {
+      const calculatedIndicateursResultat =
+        await this.updateCalculatedIndicateurValeurs(indicateurValeursResultat);
+      this.logger.log(
+        `${calculatedIndicateursResultat.length} valeurs d'indicateurs calculées`
+      );
+      indicateurValeursResultat.push(...calculatedIndicateursResultat);
+    }
 
     return indicateurValeursResultat;
   }
@@ -777,14 +855,6 @@ export default class CrudValeursService {
     indicateurValeur: IndicateurValeurWithIdentifiant,
     forceSourceId?: string
   ): string | null {
-    if (
-      !indicateurValeur.sourceId ||
-      indicateurValeur.sourceId === CrudValeursService.NULL_SOURCE_ID
-    ) {
-      // Disabled for collectivite value for now
-      // TODO: to be reenabled when ready
-      return null;
-    }
     return `${indicateurValeur.collectiviteId}_${indicateurValeur.dateValeur}_${
       forceSourceId ||
       indicateurValeur.sourceId ||
@@ -1007,6 +1077,15 @@ export default class CrudValeursService {
               )
           )
           .map((ind) => ind.identifiant);
+        const missingOptionalIndicateurIdentifiants = neededSourceIndicateurs
+          .filter(
+            (neededIndicateur) =>
+              neededIndicateur.optional &&
+              !relatedSourceIndicateurInfo.valeurs.find(
+                (v) => v.indicateurIdentifiant === neededIndicateur.identifiant
+              )
+          )
+          .map((ind) => ind.identifiant);
         if (missingMandatoryIndicateurIdentifiants.length) {
           this.logger.warn(
             `Missing mandatory values (identifiants: ${missingMandatoryIndicateurIdentifiants.join(
@@ -1021,7 +1100,7 @@ export default class CrudValeursService {
           );
         } else {
           this.logger.log(
-            `All needed values are present to compute ${targetIndicateurDefinition.identifiantReferentiel} (${targetIndicateurDefinition.id}) for collectivite ${relatedSourceIndicateurInfo.collectiviteId} at date ${relatedSourceIndicateurInfo.date} with sourceId ${relatedSourceIndicateurInfo.sourceId}`
+            `All mandatory values are present to compute ${targetIndicateurDefinition.identifiantReferentiel} (${targetIndicateurDefinition.id}) for collectivite ${relatedSourceIndicateurInfo.collectiviteId} at date ${relatedSourceIndicateurInfo.date} with sourceId ${relatedSourceIndicateurInfo.sourceId}`
           );
           const resultatSourceValues: {
             [indicateurIdentifiant: string]: number | null;
@@ -1095,6 +1174,9 @@ export default class CrudValeursService {
             resultat: roundTo(computedResultat, indicateurPrecision),
             objectif: roundTo(computedObjectif, indicateurPrecision),
             metadonneeId: relatedSourceIndicateurInfo.metadonneeId,
+            calculAuto: true,
+            calculAutoIdentifiantsManquants:
+              missingOptionalIndicateurIdentifiants,
           };
           computedIndicateurValeurs.push(indicateurValeur);
         }
@@ -1459,6 +1541,17 @@ export default class CrudValeursService {
         await this.indicateurDefinitionService.getIndicateurDefinitions(
           indicateurIds
         );
+    } else {
+      const missingIds = indicateurIds.filter(
+        (id) => !sourceIndicateurDefinitions!.find((d) => d.id === id)
+      );
+      if (missingIds.length) {
+        const missingIndicateurDefinitions =
+          await this.indicateurDefinitionService.getIndicateurDefinitions(
+            missingIds
+          );
+        sourceIndicateurDefinitions.push(...missingIndicateurDefinitions);
+      }
     }
     const indicateurIdToIdentifiant =
       this.indicateurDefinitionService.getIndicateurIdToIdentifiant(
@@ -1543,7 +1636,7 @@ export default class CrudValeursService {
         }
       });
       this.logger.log(
-        `Neet to retrieve missing indicateur valeurs (${allMissingIndicateurValeurs.length} sets) to compute calculated indicateur valeurs`
+        `Need to retrieve missing indicateur valeurs (${allMissingIndicateurValeurs.length} sets) to compute calculated indicateur valeurs`
       );
       const retrievedMissingIndicateurValeurs =
         allMissingIndicateurValeurs.length
@@ -1588,7 +1681,15 @@ export default class CrudValeursService {
             )
           : [];
       insertedIndicateurValeurs.forEach((v) => {
-        v.indicateurIdentifiant = indicateurIdToIdentifiant[v.indicateurId];
+        if (!v.indicateurIdentifiant) {
+          if (!indicateurIdToIdentifiant[v.indicateurId]) {
+            this.logger.warn(
+              `Indicateur identifiant for id ${v.indicateurId} not found`
+            );
+          } else {
+            v.indicateurIdentifiant = indicateurIdToIdentifiant[v.indicateurId];
+          }
+        }
       });
 
       return insertedIndicateurValeurs;
@@ -1734,7 +1835,11 @@ export default class CrudValeursService {
               objectifCommentaire: v.objectifCommentaire,
               metadonneeId: v.metadonneeId,
               confidentiel: v.confidentiel,
+              calculAuto: v.calculAuto ? v.calculAuto : undefined,
+              calculAutoIdentifiantsManquants:
+                v.calculAutoIdentifiantsManquants,
             };
+
             return _.omitBy(
               indicateurValeurGroupee,
               _.isNil

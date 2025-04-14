@@ -5,8 +5,9 @@ import {
   modifiedAt,
   modifiedBy,
 } from '@/backend/utils/index-domain';
-import { InferInsertModel, InferSelectModel } from 'drizzle-orm';
+import { InferInsertModel } from 'drizzle-orm';
 import {
+  boolean,
   date,
   doublePrecision,
   integer,
@@ -53,14 +54,23 @@ export const indicateurValeurTable = pgTable('indicateur_valeur', {
   objectif: doublePrecision('objectif'),
   objectifCommentaire: text('objectif_commentaire'),
   estimation: doublePrecision('estimation'),
+  calculAuto: boolean('calcul_auto').default(false),
+  calculAutoIdentifiantsManquants: text(
+    'calcul_auto_identifiants_manquants'
+  ).array(),
   createdAt,
   modifiedAt,
   createdBy,
   modifiedBy,
 });
 
-export const indicateurValeurSchema = createSelectSchema(indicateurValeurTable);
-export type IndicateurValeur = InferSelectModel<typeof indicateurValeurTable>;
+export const indicateurValeurSchema = createSelectSchema(
+  indicateurValeurTable,
+  {
+    calculAutoIdentifiantsManquants: z.string().array(),
+  }
+);
+export type IndicateurValeur = z.infer<typeof indicateurValeurSchema>;
 
 export type IndicateurValeurWithIdentifiant = IndicateurValeur & {
   indicateurIdentifiant?: string | null;
@@ -68,7 +78,10 @@ export type IndicateurValeurWithIdentifiant = IndicateurValeur & {
 };
 
 export const indicateurValeurSchemaInsert = createInsertSchema(
-  indicateurValeurTable
+  indicateurValeurTable,
+  {
+    calculAutoIdentifiantsManquants: z.string().array(),
+  }
 );
 export type IndicateurValeurInsert = InferInsertModel<
   typeof indicateurValeurTable
@@ -84,6 +97,8 @@ export const indicateurValeurGroupeeSchema = indicateurValeurSchema
     objectif: true,
     objectifCommentaire: true,
     metadonneeId: true,
+    calculAuto: true,
+    calculAutoIdentifiantsManquants: true,
   })
   .partial({
     resultat: true,
@@ -91,6 +106,8 @@ export const indicateurValeurGroupeeSchema = indicateurValeurSchema
     objectif: true,
     objectifCommentaire: true,
     metadonneeId: true,
+    calculAuto: true,
+    calculAutoIdentifiantsManquants: true,
   })
   .extend({
     confidentiel: z.boolean().nullish(),

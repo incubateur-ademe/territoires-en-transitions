@@ -844,3 +844,5 @@ webhooks/webhooks 2025-04-01T14:27:59Z System Administrator <root@MacBook-Air-de
 cron/delete_score_cron 2025-04-09T06:54:22Z System Administrator <root@MacBook-Air-de-Thibaut-2.local> # Delete update_late_scores and verification_scores cron
 plan_action/budget 2025-04-01T15:33:43Z Amandine <contact@jacquelinamandine.fr> # Ajoute la table fiche_action_budget
 @v4.48.0 2025-04-15T07:55:03Z Amandine <contact@jacquelinamandine.fr> # Supprime update_late_scores et verification_scores, et ajout fiche_action_budget
+
+indicateur/calcul_indicateur 2025-04-14T12:28:50Z System Administrator <root@MacBook-Air-de-Thibaut-2.local> # Ajout de colonnes pour savoir si une valeur d'indicateur a été calculée et si il manque des données de calcul
