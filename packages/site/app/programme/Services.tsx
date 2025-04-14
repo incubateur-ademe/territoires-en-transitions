@@ -1,7 +1,6 @@
-import BlogCardDSFR from '@/site/components/cards/BlogCardDSFR';
+import BlogCard from '@/site/components/cards/BlogCard';
 import CardsWrapper from '@/site/components/cards/CardsWrapper';
 import Section from '@/site/components/sections/Section';
-import { StrapiImage } from '@/site/components/strapiImage/StrapiImage';
 import { StrapiItem } from '@/site/src/strapi/StrapiItem';
 
 type ServicesProps = {
@@ -28,20 +27,14 @@ const Services = ({ titre, contenu }: ServicesProps) => {
       <CardsWrapper cols={3}>
         {contenu.length > 0 &&
           contenu.map((c) => (
-            <BlogCardDSFR
+            <BlogCard
               key={c.id}
               title={c.titre}
               description={c.description}
-              image={
-                c.image ? (
-                  <StrapiImage
-                    data={c.image}
-                    className="w-full"
-                    displayCaption={false}
-                  />
-                ) : undefined
-              }
+              image={c.image}
               href={c.sousPage && c.uid ? `/programme/${c.uid}` : undefined}
+              background="light"
+              fullHeight
             />
           ))}
       </CardsWrapper>
