@@ -51,7 +51,7 @@ const ListeService = ({
         {!!introduction && (
           <Markdown
             texte={introduction}
-            className={classNames('-mb-6', {
+            className={classNames({
               'paragraphe-22': tailleListe === 'lg' || !tailleListe,
               'paragraphe-18': tailleListe === 'md',
               'mb-8 text-center': dispositionCartes === 'Vignettes',

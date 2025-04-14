@@ -1,12 +1,12 @@
 'use client';
 
 import classNames from 'classnames';
-import {Fragment, ReactNode, useEffect, useState} from 'react';
+import { Fragment, ReactNode, useEffect, useState } from 'react';
 
 type MasonryGalleryProps = {
   data: ReactNode[];
   maxCols?: 1 | 2 | 3;
-  breakpoints?: {md: number; lg: number};
+  breakpoints?: { md: number; lg: number };
   gap?: string;
   className?: string;
 };
@@ -14,7 +14,7 @@ type MasonryGalleryProps = {
 const MasonryGallery = ({
   data,
   maxCols = 3,
-  breakpoints = {md: 768, lg: 1280},
+  breakpoints = { md: 768, lg: 1024 },
   gap = 'gap-8',
   className,
 }: MasonryGalleryProps) => {
@@ -30,7 +30,7 @@ const MasonryGallery = ({
     window.addEventListener('resize', () => setWindowWidth(window.innerWidth));
     return () =>
       window.removeEventListener('resize', () =>
-        setWindowWidth(window.innerWidth),
+        setWindowWidth(window.innerWidth)
       );
   }, []);
 
@@ -53,7 +53,7 @@ const MasonryGallery = ({
 
     if (data) {
       data
-        .filter(d => d !== null)
+        .filter((d) => d !== null)
         .forEach((element, index) => {
           newGalleryContent[index % columns].push(element);
         });
@@ -72,7 +72,7 @@ const MasonryGallery = ({
           'xl:grid-cols-3': maxCols === 3,
         },
         gap,
-        className,
+        className
       )}
     >
       {dataGallery.map((column, index) => (

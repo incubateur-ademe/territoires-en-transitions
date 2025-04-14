@@ -1,5 +1,5 @@
-import { fetchCollection } from '@/site/src/strapi/strapi';
 import { StrapiItem } from '@/site/src/strapi/StrapiItem';
+import { fetchCollection } from '@/site/src/strapi/strapi';
 import {
   InfoData,
   InfoFetchedData,
@@ -20,7 +20,8 @@ export const getServiceStrapiData = async (uid: string) => {
     ['populate[4]', 'contenu.images'],
     ['populate[5]', 'contenu.liste'],
     ['populate[6]', 'contenu.liste.image'],
-    ['populate[7]', 'contenu.boutons'],
+    ['populate[7]', 'contenu.liste.boutons'],
+    ['populate[8]', 'contenu.boutons'],
   ]);
 
   if (data && data.length > 0 && data[0].attributes.contenu) {
@@ -78,6 +79,7 @@ export const getServiceStrapiData = async (uid: string) => {
                 titre: ct.titre,
                 texte: ct.texte,
                 image: ct.image?.data,
+                boutons: ct.boutons,
               })),
               dispositionCartes: listeData.disposition_cartes,
             } as ListeData;

@@ -152,6 +152,13 @@ export interface ServicesCarte extends Schema.Component {
     icon: 'grid';
   };
   attributes: {
+    boutons: Attribute.Component<'shared.bouton', true> &
+      Attribute.SetMinMax<
+        {
+          max: 2;
+        },
+        number
+      >;
     icone: Attribute.String & Attribute.CustomField<'plugin::react-icons.icon'>;
     image: Attribute.Media<'images'>;
     pre_titre: Attribute.String &
