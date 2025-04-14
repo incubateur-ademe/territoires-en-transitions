@@ -8,8 +8,10 @@ export type BlogCardProps = {
   description?: string;
   image?: StrapiItem | undefined;
   badge?: string;
-  categories: string[];
+  categories?: string[];
   href?: string;
+  background?: 'light' | 'medium';
+  fullHeight?: boolean;
   externalPage?: boolean;
 };
 
