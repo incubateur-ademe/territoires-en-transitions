@@ -9,10 +9,10 @@ import {
   Stack,
   Title,
 } from '@/app/ui/export-pdf/components';
-import { ActionAndScore } from '@/domain/referentiels';
+import { ActionWithScore } from '@/domain/referentiels';
 
 type ActionLieeCardProps = {
-  action: ActionAndScore;
+  action: ActionWithScore;
 };
 
 const ActionLieeCard = ({ action }: ActionLieeCardProps) => {
@@ -21,7 +21,7 @@ const ActionLieeCard = ({ action }: ActionLieeCardProps) => {
   return (
     <Card wrap={false} gap={1.5} className="w-[32%] p-3">
       {/* Avancement */}
-      <BadgeStatutAction statut={statut} size="sm" />
+      {statut && <BadgeStatutAction statut={statut} size="sm" />}
 
       <Stack gap={1}>
         {/* Référentiel associé */}
@@ -42,7 +42,7 @@ const ActionLieeCard = ({ action }: ActionLieeCardProps) => {
 };
 
 type ActionsLieesProps = {
-  actionsLiees: ActionAndScore[];
+  actionsLiees: ActionWithScore[];
 };
 
 const ActionsLiees = ({ actionsLiees }: ActionsLieesProps) => {
