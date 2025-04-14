@@ -60,7 +60,7 @@ export default class RecherchesService {
    */
   async collectivites(
     filters: FiltersRequest
-  ): Promise<RecherchesCollectivite[]> {
+  ): Promise<{ count: number; items: RecherchesCollectivite[] }> {
     // Create the query
     const query = `WITH ${this.getFilteredCollectivitesQuery(
       filters,
@@ -88,15 +88,15 @@ export default class RecherchesService {
             c.etoilesCae as "etoilesCae",
             ${contactsProjection}
     FROM filteredCollectivites c
-    ORDER BY ${this.getOrderBy(filters, tabEnum.Collectivite)}
-    LIMIT ${filters.nbCards}
-    OFFSET ${filters.page ? (filters.page - 1) * filters.nbCards : 0}`;
+    ORDER BY ${this.getOrderBy(filters, tabEnum.Collectivite)}`;
 
     // Execute the query
     const result = await this.databaseService.db.execute(sql.raw(query));
-    return result.rows.map((row) => ({
+    const allRows = result.rows.map((row) => ({
       ...row,
     })) as RecherchesCollectivite[];
+
+    return this.paginate(allRows, filters.nbCards, filters.page);
   }
 
   /**
@@ -105,7 +105,7 @@ export default class RecherchesService {
    */
   async referentiels(
     filters: FiltersRequest
-  ): Promise<RecherchesReferentiel[]> {
+  ): Promise<{ count: number; items: RecherchesReferentiel[] }> {
     // Create the query
     const query = `WITH ${this.getFilteredCollectivitesQuery(
       filters,
@@ -123,22 +123,24 @@ export default class RecherchesService {
            c.scoreProgrammeEci as "scoreProgrammeEci",
            ${contactsProjection}
     FROM filteredCollectivites c
-    ORDER BY ${this.getOrderBy(filters, tabEnum.Referentiel)}
-    LIMIT ${filters.nbCards}
-    OFFSET ${filters.page ? (filters.page - 1) * filters.nbCards : 0}`;
+    ORDER BY ${this.getOrderBy(filters, tabEnum.Referentiel)}`;
 
     // Execute the query
     const result = await this.databaseService.db.execute(sql.raw(query));
-    return result.rows.map((row) => ({
+    const allRows = result.rows.map((row) => ({
       ...row,
     })) as RecherchesReferentiel[];
+
+    return this.paginate(allRows, filters.nbCards, filters.page);
   }
 
   /**
    * Get view for "Plans d'action" tab
    * @param filters
    */
-  async plans(filters: FiltersRequest): Promise<RecherchesPlan[]> {
+  async plans(
+    filters: FiltersRequest
+  ): Promise<{ count: number; items: RecherchesPlan[] }> {
     // Create the where condition for contacts
     const whereConditionContacts = `(pud.${
       utilisateurPermissionTable.niveau.name
@@ -173,15 +175,15 @@ export default class RecherchesService {
            ${contactsProjection}
     FROM filteredCollectivites c
     JOIN plans p ON c.collectiviteId = p.collectiviteId
-    ORDER BY ${this.getOrderBy(filters, tabEnum.Plan)}
-    LIMIT ${filters.nbCards}
-    OFFSET ${filters.page ? (filters.page - 1) * filters.nbCards : 0}`;
+    ORDER BY ${this.getOrderBy(filters, tabEnum.Plan)}`;
 
     // Execute the query
     const result = await this.databaseService.db.execute(sql.raw(query));
-    return result.rows.map((row) => ({
+    const allRows = result.rows.map((row) => ({
       ...row,
     })) as RecherchesPlan[];
+
+    return this.paginate(allRows, filters.nbCards, filters.page);
   }
 
   /**
@@ -601,5 +603,14 @@ export default class RecherchesService {
       default:
         return `c.collectiviteNom`;
     }
+  }
+
+  private paginate<T>(
+    data: T[],
+    limit: number,
+    page: number | undefined | null
+  ): { count: number; items: T[] } {
+    const offset = page ? (page - 1) * limit : 0;
+    return { count: data.length, items: data.slice(offset, offset + limit) };
   }
 }

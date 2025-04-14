@@ -15,7 +15,7 @@ export const useFilteredPlans = (args: CollectiviteEngagee.Filters) => {
 
   return {
     isLoading,
-    plans: data ?? [],
-    plansCount: data?.length || 0,
+    plans: data?.items || [],
+    plansCount: data?.count || 0,
   };
 };

@@ -22,7 +22,7 @@ const input: inputType = {
 
 const inputWithCondition: inputType = {
   typesPlan: [1, 2],
-  nom : 'test avec condition',
+  nom: 'test avec condition',
   regions: ['27'],
   departments: ['51', '31'],
   typesCollectivite: ['syndicat'],
@@ -31,8 +31,8 @@ const inputWithCondition: inputType = {
   niveauDeLabellisation: ['1', '2'],
   realiseCourant: ['50-64', '35-49'],
   tauxDeRemplissage: ['80-99'],
-  trierPar : ['score'],
-  page : 2,
+  trierPar: ['score'],
+  page: 2,
   nbCards: 2,
 };
 
@@ -51,36 +51,42 @@ describe('Test recherches collectivite', () => {
   test('Test tab "Collectivités"', async () => {
     const caller = router.createCaller({ user: yoloDodoUser });
     const result = await caller.collectivites.recherches.collectivites(input);
-    expect(result.length).toEqual(2);
+    expect(result.items.length).toEqual(2);
   });
 
   test('Test tab "Collectivités" avec conditions', async () => {
     const caller = router.createCaller({ user: yoloDodoUser });
-    const result = await caller.collectivites.recherches.collectivites(inputWithCondition);
-    expect(result.length).toEqual(0);
+    const result = await caller.collectivites.recherches.collectivites(
+      inputWithCondition
+    );
+    expect(result.items.length).toEqual(0);
   });
 
   test('Test tab "Référentiels"', async () => {
     const caller = router.createCaller({ user: yoloDodoUser });
     const result = await caller.collectivites.recherches.referentiels(input);
-    expect(result.length).toEqual(2);
+    expect(result.items.length).toEqual(2);
   });
 
   test('Test tab "Référentiels" avec conditions', async () => {
     const caller = router.createCaller({ user: yoloDodoUser });
-    const result = await caller.collectivites.recherches.referentiels(inputWithCondition);
-    expect(result.length).toEqual(0);
+    const result = await caller.collectivites.recherches.referentiels(
+      inputWithCondition
+    );
+    expect(result.items.length).toEqual(0);
   });
 
   test('Test tab "Plans d action"', async () => {
     const caller = router.createCaller({ user: yoloDodoUser });
     const result = await caller.collectivites.recherches.plans(input);
-    expect(result.length).toEqual(2);
+    expect(result.items.length).toEqual(2);
   });
 
   test('Test tab "Plans d action" avec conditions', async () => {
     const caller = router.createCaller({ user: yoloDodoUser });
-    const result = await caller.collectivites.recherches.plans(inputWithCondition);
-    expect(result.length).toEqual(0);
+    const result = await caller.collectivites.recherches.plans(
+      inputWithCondition
+    );
+    expect(result.items.length).toEqual(0);
   });
 });
