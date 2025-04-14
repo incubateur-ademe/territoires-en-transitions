@@ -6,7 +6,7 @@ import {
   unique,
   uuid,
 } from 'drizzle-orm/pg-core';
-import { createInsertSchema } from 'drizzle-zod';
+import { createInsertSchema, createSelectSchema } from 'drizzle-zod';
 import { authUsersTable } from '../../../auth/models/auth-users.table';
 import { referentielIdPgEnum } from '../../../referentiels/models/referentiel-id.enum';
 import { createdAt, modifiedAt } from '../../../utils/column.utils';
@@ -35,5 +35,7 @@ export const membreTable = pgTable(
     ).on(table.collectiviteId, table.userId),
   })
 );
+
+export const membreSchema = createSelectSchema(membreTable);
 
 export const insertMembreSchema = createInsertSchema(membreTable);

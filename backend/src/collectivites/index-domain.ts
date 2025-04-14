@@ -1,6 +1,7 @@
 // `index-domain.ts` file must only contain exports that are shareable with client-side apps.
 // Exports from this file can be imported with `@/domain/*` alias path.
 
+export * from './membres/export-connect.table';
 export * from './shared/models/collectivite-banatic-type.table';
 export * from './shared/models/collectivite.table';
 export * from './shared/models/personne-tag-or-user.dto';
@@ -18,3 +19,4 @@ export * from './tags/personne-tag.table';
 export * from './tags/service-tag.table';
 export * from './tags/structure-tag.table';
 export * from './tags/tag.table-base';
+

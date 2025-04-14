@@ -1,6 +1,7 @@
 import { CollectiviteCrudRouter } from '@/backend/collectivites/collectivite-crud/collectivite-crud.router';
 import CollectiviteCrudService from '@/backend/collectivites/collectivite-crud/collectivite-crud.service';
 import { DocumentController } from '@/backend/collectivites/documents/services/document.controller';
+import { ExportConnectService } from '@/backend/collectivites/membres/export-connect.service';
 import { TagService } from '@/backend/collectivites/tags/tag.service';
 import { Module } from '@nestjs/common';
 import { CollectiviteController } from './collectivite.controller';
@@ -36,6 +37,7 @@ import { TableauDeBordModule } from './tableau-de-bord/tableau-de-bord.module';
     ListCollectivitesService,
     CollectiviteCrudService,
     CollectiviteCrudRouter,
+    ExportConnectService,
   ],
   exports: [
     CollectivitesRouter,
