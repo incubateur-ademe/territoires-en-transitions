@@ -15,7 +15,7 @@ export const useFilteredCollectivites = (args: CollectiviteEngagee.Filters) => {
 
   return {
     isLoading,
-    collectivites: data ?? [],
-    collectivitesCount: data?.length || 0,
+    collectivites: data?.items || [],
+    collectivitesCount: data?.count || 0,
   };
 };
