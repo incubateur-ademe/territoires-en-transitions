@@ -1,5 +1,7 @@
 import { ListActionsEmbed } from '@/backend/referentiels/list-actions/list-actions.service';
 import { memoize } from 'es-toolkit';
+
+import { StatutAvancementEnum } from '@/backend/referentiels/index-domain';
 import {
   findActionInTree,
   flatMapActionsEnfants,
@@ -53,12 +55,13 @@ export function getExtendActionWithComputedFields(
         ? {
             desactive: score.desactive,
             concerne: score.concerne,
-            statut: getStatutAvancementBasedOnChildren(
-              score,
-              flatMapActionsEnfants(actionWithScore)
-                .map((a) => a.score.avancement)
-                .filter((a) => a !== undefined)
-            ),
+            statut:
+              getStatutAvancementBasedOnChildren(
+                score,
+                flatMapActionsEnfants(actionWithScore)
+                  .map((a) => a.score.avancement)
+                  .filter((a) => a !== undefined)
+              ) ?? StatutAvancementEnum.NON_RENSEIGNE,
           }
         : {}),
     };
