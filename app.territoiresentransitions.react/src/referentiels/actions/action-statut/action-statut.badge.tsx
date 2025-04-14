@@ -31,15 +31,21 @@ const ActionStatutBadge = ({
   size = 'sm',
 }: Props) => {
   return (
-    <Badge
-      dataTest="ActionStatutBadge"
-      title={avancementToLabel[statut]}
-      size={size}
-      state={statusToState[statut]}
-      light={statut === 'non_renseigne'}
-      trim={false}
-      className={classNames('min-w-fit', { 'line-through': barre }, className)}
-    />
+    statut && (
+      <Badge
+        dataTest="ActionStatutBadge"
+        title={avancementToLabel[statut]}
+        size={size}
+        state={statusToState[statut]}
+        light={statut === 'non_renseigne'}
+        trim={false}
+        className={classNames(
+          'min-w-fit',
+          { 'line-through': barre },
+          className
+        )}
+      />
+    )
   );
 };
 

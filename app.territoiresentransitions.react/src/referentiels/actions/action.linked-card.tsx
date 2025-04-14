@@ -50,10 +50,7 @@ const ActionLinkedCard = ({
         className="h-full px-4 py-[1.125rem] !gap-3 text-grey-8 hover:border-primary-3 hover:!bg-primary-1 !shadow-none transition"
         href={link}
         external={openInNewTab}
-        header={
-          // Statut de l'action
-          <ActionStatutBadge statut={statut} />
-        }
+        header={statut ? <ActionStatutBadge statut={statut} /> : null}
       >
         {/* Référentiel de l'action */}
         <span className="text-grey-8 text-sm font-medium">

@@ -62,11 +62,11 @@ export type ActionDefinitionEssential = z.infer<
 >;
 
 export const actionSchema = actionDefinitionSchema.extend({
+  pilotes: personneTagOrUserSchema.array(),
+  services: tagSchema.array(),
   statut: statutAvancementIncludingNonConcerneEnumSchema.optional(),
   desactive: z.boolean().optional(),
   concerne: z.boolean().optional(),
-  pilotes: personneTagOrUserSchema.array().optional(),
-  services: tagSchema.array().optional(),
   depth: z.number().optional(),
   actionType: actionTypeSchema.optional(),
 });
@@ -78,8 +78,8 @@ export type Action = z.infer<typeof actionSchema>;
  * which is what we need for the PDF export.
  */
 
-const actionAndScoreSchema = actionSchema.extend({
+const actionWithScoreSchema = actionSchema.extend({
   score: scoreFinalSchema.optional(),
 });
 
-export type ActionAndScore = z.infer<typeof actionAndScoreSchema>;
+export type ActionWithScore = z.infer<typeof actionWithScoreSchema>;
