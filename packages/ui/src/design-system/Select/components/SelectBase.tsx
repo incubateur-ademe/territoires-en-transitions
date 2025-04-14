@@ -156,7 +156,7 @@ export const SelectBase = (props: SelectProps) => {
    * pour afficher le bouton de création d'une option */
   const isNotSimilar =
     inputValue.toLowerCase().trim() !==
-    getFlatOptions(filteredOptions)[0]?.label.toLowerCase().trim();
+    getFlatOptions(filteredOptions)[0]?.label?.toLowerCase().trim();
 
   /** Transforme une valeur simple en tableau, qui est plus facile à traiter dans les sous composants */
   const arrayValues = values
