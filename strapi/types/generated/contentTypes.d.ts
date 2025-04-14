@@ -650,8 +650,6 @@ export interface ApiPageAccueilPageAccueil extends Schema.SingleType {
     draftAndPublish: true;
   };
   attributes: {
-    Accompagnement: Attribute.Component<'bloc.accompagnement'> &
-      Attribute.Required;
     accueil_description: Attribute.String &
       Attribute.Required &
       Attribute.SetMinMaxLength<{
@@ -688,7 +686,6 @@ export interface ApiPageAccueilPageAccueil extends Schema.SingleType {
         maxLength: 255;
       }> &
       Attribute.DefaultTo<"Vous souhaitez agir mais n'\u00EAtes pas s\u00FBr de ce qu'il vous faut ?">;
-    Couverture: Attribute.Media<'images'>;
     couverture_desktop: Attribute.Media<'images'> & Attribute.Required;
     couverture_mobile: Attribute.Media<'images'>;
     createdAt: Attribute.DateTime;
@@ -698,14 +695,12 @@ export interface ApiPageAccueilPageAccueil extends Schema.SingleType {
       'admin::user'
     > &
       Attribute.Private;
-    Informations: Attribute.Component<'bloc.description'> & Attribute.Required;
     linkedin_btn: Attribute.String &
       Attribute.Required &
       Attribute.SetMinMaxLength<{
         maxLength: 50;
       }> &
       Attribute.DefaultTo<'Voir la page Linkedin'>;
-    Newsletter: Attribute.Component<'bloc.description'> & Attribute.Required;
     newsletter_btn: Attribute.String &
       Attribute.Required &
       Attribute.SetMinMaxLength<{
@@ -748,7 +743,6 @@ export interface ApiPageAccueilPageAccueil extends Schema.SingleType {
       Attribute.Required;
     publishedAt: Attribute.DateTime;
     seo: Attribute.Component<'shared.seo'>;
-    Temoignages: Attribute.Component<'bloc.description'> & Attribute.Required;
     temoignages_liste: Attribute.Relation<
       'api::page-accueil.page-accueil',
       'oneToMany',
@@ -760,12 +754,6 @@ export interface ApiPageAccueilPageAccueil extends Schema.SingleType {
         maxLength: 255;
       }> &
       Attribute.DefaultTo<'Rejoignez une communaut\u00E9 de collectivit\u00E9s engag\u00E9es'>;
-    Titre: Attribute.String &
-      Attribute.Required &
-      Attribute.SetMinMaxLength<{
-        maxLength: 100;
-      }> &
-      Attribute.DefaultTo<'Acc\u00E9l\u00E9rez la transition \u00E9cologique de votre collectivit\u00E9'>;
     updatedAt: Attribute.DateTime;
     updatedBy: Attribute.Relation<
       'api::page-accueil.page-accueil',
