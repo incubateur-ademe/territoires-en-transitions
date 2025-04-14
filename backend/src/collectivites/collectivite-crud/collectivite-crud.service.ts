@@ -1,8 +1,9 @@
 import {
   Collectivite,
-  CollectiviteUpsert,
   collectiviteTable,
   collectiviteTypeEnum,
+  CollectiviteUpdateNIC,
+  CollectiviteUpsert,
 } from '@/backend/collectivites/shared/models/collectivite.table';
 import { banaticTable } from '@/backend/collectivites/shared/models/imports-banatic.table';
 import { importCommuneTable } from '@/backend/collectivites/shared/models/imports-commune.table';
@@ -10,7 +11,7 @@ import { departementTable } from '@/backend/collectivites/shared/models/imports-
 import { regionTable } from '@/backend/collectivites/shared/models/imports-region.table';
 import { DatabaseService } from '@/backend/utils';
 import { Injectable, Logger } from '@nestjs/common';
-import { and, eq } from 'drizzle-orm';
+import { and, eq, inArray, sql, SQL } from 'drizzle-orm';
 
 type colInfo = {
   nom: string | null;
@@ -190,5 +191,31 @@ export default class CollectiviteCrudService {
       .where(eq(collectiviteTable.id, collectiviteId))
       .limit(1)) as Collectivite[];
     return result ?? null;
+  }
+
+  /**
+   * Met à jour le NIC de chaque collectivité à partir de son SIREN
+   */
+  async updateNIC(inputs: CollectiviteUpdateNIC) {
+    if (!inputs.length) {
+      return;
+    }
+
+    const sqlChunks: SQL[] = [];
+    const siren: string[] = [];
+    sqlChunks.push(sql`(case`);
+    for (const input of inputs) {
+      sqlChunks.push(
+        sql`when ${collectiviteTable.siren} = ${input.siren} then ${input.nic}`
+      );
+      siren.push(input.siren);
+    }
+    sqlChunks.push(sql`end)`);
+    const finalSql: SQL = sql.join(sqlChunks, sql.raw(' '));
+
+    return this.databaseService.db
+      .update(collectiviteTable)
+      .set({ nic: finalSql })
+      .where(inArray(collectiviteTable.siren, siren));
   }
 }
