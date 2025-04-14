@@ -42,6 +42,14 @@ export async function fetchCollection(
     headers,
   });
   const body = await response.json();
+  if (!response.ok) {
+    // TODO: plug sentry & report error with sentry
+    console.error(
+      `Error ${
+        response.status
+      } fetching collection from Strapi: ${JSON.stringify(body)}`
+    );
+  }
   return body;
 }
 
@@ -58,6 +66,14 @@ export const fetchSingle = async (
     headers,
   });
   const body = await response.json();
+  if (!response.ok) {
+    // TODO: plug sentry & report error with sentry
+    console.error(
+      `Error ${
+        response.status
+      } fetching single data from Strapi: ${JSON.stringify(body)}`
+    );
+  }
   return body.data;
 };
 
@@ -75,5 +91,13 @@ export async function fetchItem(
     headers,
   });
   const body = await response.json();
+  if (!response.ok) {
+    // TODO: plug sentry & report error with sentry
+    console.error(
+      `Error ${response.status} fetching item from Strapi: ${JSON.stringify(
+        body
+      )}`
+    );
+  }
   return body['data'];
 }
