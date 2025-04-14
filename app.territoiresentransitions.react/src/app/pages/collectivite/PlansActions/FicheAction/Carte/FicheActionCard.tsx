@@ -100,6 +100,7 @@ const FicheActionCard = ({
               <ModaleSuppression
                 ficheId={ficheAction.id}
                 title={ficheAction.titre}
+                isReadonly={!isEditable}
                 isInMultipleAxes={
                   !!ficheAction.plans && ficheAction.plans.length > 1
                 }
