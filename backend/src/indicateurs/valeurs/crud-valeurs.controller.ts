@@ -1,3 +1,4 @@
+import { UpsertIndicateursValeursResponse } from '@/backend/indicateurs/shared/models/upsert-indicateurs-valeurs.response';
 import { createZodDto } from '@anatine/zod-nestjs';
 import { Body, Controller, Get, Logger, Post, Query } from '@nestjs/common';
 import { ApiCreatedResponse, ApiResponse, ApiTags } from '@nestjs/swagger';
@@ -5,10 +6,7 @@ import { TokenInfo } from '../../auth/decorators/token-info.decorators';
 import type { AuthenticatedUser } from '../../auth/models/auth.models';
 import { getIndicateursValeursRequestSchema } from '../shared/models/get-indicateurs.request';
 import { getIndicateursValeursResponseSchema } from '../shared/models/get-indicateurs.response';
-import {
-  UpsertIndicateursValeursRequest,
-  UpsertIndicateursValeursResponse,
-} from '../shared/models/upsert-indicateurs-valeurs.request';
+import { UpsertIndicateursValeursRequest } from '../shared/models/upsert-indicateurs-valeurs.request';
 import CrudValeursService from './crud-valeurs.service';
 
 /**

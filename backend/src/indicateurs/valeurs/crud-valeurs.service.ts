@@ -606,6 +606,12 @@ export default class CrudValeursService {
                 objectifCommentaire: sql.raw(
                   `excluded.${indicateurValeurTable.objectifCommentaire.name}`
                 ),
+                calculAuto: sql.raw(
+                  `excluded.${indicateurValeurTable.calculAuto.name}`
+                ),
+                calculAutoIdentifiantsManquants: sql.raw(
+                  `excluded.${indicateurValeurTable.calculAutoIdentifiantsManquants.name}`
+                ),
                 modifiedBy: sql.raw(
                   `excluded.${indicateurValeurTable.modifiedBy.name}`
                 ),
@@ -668,6 +674,12 @@ export default class CrudValeursService {
                 ),
                 objectifCommentaire: sql.raw(
                   `excluded.${indicateurValeurTable.objectifCommentaire.name}`
+                ),
+                calculAuto: sql.raw(
+                  `excluded.${indicateurValeurTable.calculAuto.name}`
+                ),
+                calculAutoIdentifiantsManquants: sql.raw(
+                  `excluded.${indicateurValeurTable.calculAutoIdentifiantsManquants.name}`
                 ),
                 modifiedBy: sql.raw(
                   `excluded.${indicateurValeurTable.modifiedBy.name}`
@@ -937,6 +949,15 @@ export default class CrudValeursService {
               )
           )
           .map((ind) => ind.identifiant);
+        const missingOptionalIndicateurIdentifiants = neededSourceIndicateurs
+          .filter(
+            (neededIndicateur) =>
+              neededIndicateur.optional &&
+              !relatedSourceIndicateurInfo.valeurs.find(
+                (v) => v.indicateurIdentifiant === neededIndicateur.identifiant
+              )
+          )
+          .map((ind) => ind.identifiant);
         if (missingMandatoryIndicateurIdentifiants.length) {
           this.logger.warn(
             `Missing mandatory values (identifiants: ${missingMandatoryIndicateurIdentifiants.join(
@@ -951,7 +972,7 @@ export default class CrudValeursService {
           );
         } else {
           this.logger.log(
-            `All needed values are present to compute ${targetIndicateurDefinition.identifiantReferentiel} (${targetIndicateurDefinition.id}) for collectivite ${relatedSourceIndicateurInfo.collectiviteId} at date ${relatedSourceIndicateurInfo.date} with sourceId ${relatedSourceIndicateurInfo.sourceId}`
+            `All mandatory values are present to compute ${targetIndicateurDefinition.identifiantReferentiel} (${targetIndicateurDefinition.id}) for collectivite ${relatedSourceIndicateurInfo.collectiviteId} at date ${relatedSourceIndicateurInfo.date} with sourceId ${relatedSourceIndicateurInfo.sourceId}`
           );
           const resultatSourceValues: {
             [indicateurIdentifiant: string]: number | null;
@@ -1025,6 +1046,9 @@ export default class CrudValeursService {
             resultat: roundTo(computedResultat, indicateurPrecision),
             objectif: roundTo(computedObjectif, indicateurPrecision),
             metadonneeId: relatedSourceIndicateurInfo.metadonneeId,
+            calculAuto: true,
+            calculAutoIdentifiantsManquants:
+              missingOptionalIndicateurIdentifiants,
           };
           computedIndicateurValeurs.push(indicateurValeur);
         }
@@ -1389,6 +1413,17 @@ export default class CrudValeursService {
         await this.indicateurDefinitionService.getIndicateurDefinitions(
           indicateurIds
         );
+    } else {
+      const missingIds = indicateurIds.filter(
+        (id) => !sourceIndicateurDefinitions!.find((d) => d.id === id)
+      );
+      if (missingIds.length) {
+        const missingIndicateurDefinitions =
+          await this.indicateurDefinitionService.getIndicateurDefinitions(
+            missingIds
+          );
+        sourceIndicateurDefinitions.push(...missingIndicateurDefinitions);
+      }
     }
     const indicateurIdToIdentifiant =
       this.indicateurDefinitionService.getIndicateurIdToIdentifiant(
@@ -1418,12 +1453,28 @@ export default class CrudValeursService {
       await this.indicateurDefinitionService.getComputedIndicateurDefinitions(
         indicateurIdentifiants
       );
+    console.log(
+      `Computed indicateur definitions: ${computedIndicateurDefinitions
+        .map((d) => `${d.identifiantReferentiel} (${d.id})`)
+        .join(',')}`
+    );
 
     if (computedIndicateurDefinitions.length) {
       // Fill the map (used at the end)
       computedIndicateurDefinitions.forEach((def) => {
         if (def.identifiantReferentiel) {
+          console.log(
+            `Indicateur definition ${
+              def.id
+            } (typeof ${typeof def.id}) with identifiant ${
+              def.identifiantReferentiel
+            }`
+          );
           indicateurIdToIdentifiant[def.id] = def.identifiantReferentiel;
+        } else {
+          console.warn(
+            `Indicateur definition ${def.id} has no identifiantReferentiel`
+          );
         }
       });
 
@@ -1517,7 +1568,13 @@ export default class CrudValeursService {
               undefined
             )
           : [];
+      console.log(JSON.stringify(indicateurIdToIdentifiant, null, 2));
       insertedIndicateurValeurs.forEach((v) => {
+        if (!indicateurIdToIdentifiant[v.indicateurId]) {
+          console.warn(
+            `Indicateur identifiant for id ${v.indicateurId} not found`
+          );
+        }
         v.indicateurIdentifiant = indicateurIdToIdentifiant[v.indicateurId];
       });
 

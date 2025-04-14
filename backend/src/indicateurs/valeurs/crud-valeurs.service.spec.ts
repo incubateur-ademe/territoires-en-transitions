@@ -67,6 +67,8 @@ describe('Indicateurs → crud-valeurs.service', () => {
           createdAt: '2024-08-14T14:10:18.891Z',
           modifiedBy: null,
           createdBy: null,
+          calculAuto: false,
+          calculAutoIdentifiantsManquants: null,
         },
         {
           id: 10263,
@@ -83,6 +85,8 @@ describe('Indicateurs → crud-valeurs.service', () => {
           createdAt: '2024-08-14T14:10:18.891Z',
           modifiedBy: null,
           createdBy: null,
+          calculAuto: false,
+          calculAutoIdentifiantsManquants: null,
         },
         {
           id: 10300,
@@ -99,6 +103,8 @@ describe('Indicateurs → crud-valeurs.service', () => {
           createdAt: '2024-08-14T14:10:18.891Z',
           modifiedBy: null,
           createdBy: null,
+          calculAuto: false,
+          calculAutoIdentifiantsManquants: null,
         },
       ];
       const indicateurValeursGroupees =
@@ -210,6 +216,8 @@ describe('Indicateurs → crud-valeurs.service', () => {
           createdAt: '2024-08-14T14:10:18.891Z',
           modifiedBy: null,
           createdBy: null,
+          calculAuto: false,
+          calculAutoIdentifiantsManquants: null,
         },
         {
           id: 10263,
@@ -226,6 +234,8 @@ describe('Indicateurs → crud-valeurs.service', () => {
           createdAt: '2024-08-14T14:10:18.891Z',
           modifiedBy: null,
           createdBy: null,
+          calculAuto: false,
+          calculAutoIdentifiantsManquants: null,
         },
         {
           id: 10264,
@@ -242,6 +252,8 @@ describe('Indicateurs → crud-valeurs.service', () => {
           createdAt: '2024-08-14T14:10:18.891Z',
           modifiedBy: null,
           createdBy: null,
+          calculAuto: false,
+          calculAutoIdentifiantsManquants: null,
         },
         {
           id: 10300,
@@ -258,6 +270,8 @@ describe('Indicateurs → crud-valeurs.service', () => {
           createdAt: '2024-08-14T14:10:18.891Z',
           modifiedBy: null,
           createdBy: null,
+          calculAuto: false,
+          calculAutoIdentifiantsManquants: null,
         },
       ];
       const indicateurValeursGroupees =
@@ -432,6 +446,8 @@ describe('Indicateurs → crud-valeurs.service', () => {
             createdAt: '2024-08-27T11:55:09.325Z',
             modifiedBy: null,
             createdBy: null,
+            calculAuto: false,
+            calculAutoIdentifiantsManquants: null,
           },
           indicateur_definition: {
             id: 4,
@@ -486,6 +502,8 @@ describe('Indicateurs → crud-valeurs.service', () => {
             createdAt: '2024-08-27T11:57:28.686Z',
             modifiedBy: null,
             createdBy: null,
+            calculAuto: false,
+            calculAutoIdentifiantsManquants: null,
           },
           indicateur_definition: {
             id: 4,
@@ -557,6 +575,8 @@ describe('Indicateurs → crud-valeurs.service', () => {
             createdAt: '2024-08-27T11:55:09.325Z',
             modifiedBy: null,
             createdBy: null,
+            calculAuto: false,
+            calculAutoIdentifiantsManquants: null,
           },
           indicateur_definition: {
             id: 4,
@@ -611,6 +631,8 @@ describe('Indicateurs → crud-valeurs.service', () => {
             createdAt: '2024-08-27T11:55:09.325Z',
             modifiedBy: null,
             createdBy: null,
+            calculAuto: false,
+            calculAutoIdentifiantsManquants: null,
           },
           indicateur_definition: {
             id: 9,
@@ -681,6 +703,8 @@ describe('Indicateurs → crud-valeurs.service', () => {
             createdAt: '2024-08-27T11:55:09.325Z',
             modifiedBy: null,
             createdBy: null,
+            calculAuto: false,
+            calculAutoIdentifiantsManquants: null,
           },
           indicateur_definition: {
             id: 4,
@@ -735,6 +759,8 @@ describe('Indicateurs → crud-valeurs.service', () => {
             createdAt: '2024-08-27T11:57:28.686Z',
             modifiedBy: null,
             createdBy: null,
+            calculAuto: false,
+            calculAutoIdentifiantsManquants: null,
           },
           indicateur_definition: {
             id: 4,
@@ -797,6 +823,8 @@ describe('Indicateurs → crud-valeurs.service', () => {
             createdAt: '2024-08-27T11:55:09.325Z',
             modifiedBy: null,
             createdBy: null,
+            calculAuto: false,
+            calculAutoIdentifiantsManquants: null,
           },
           indicateur_definition: {
             id: 4,
@@ -851,6 +879,8 @@ describe('Indicateurs → crud-valeurs.service', () => {
             createdAt: '2024-08-27T11:57:28.686Z',
             modifiedBy: null,
             createdBy: null,
+            calculAuto: false,
+            calculAutoIdentifiantsManquants: null,
           },
           indicateur_definition: {
             id: 4,
@@ -922,6 +952,8 @@ describe('Indicateurs → crud-valeurs.service', () => {
             createdAt: '2024-08-27T11:55:09.325Z',
             modifiedBy: null,
             createdBy: null,
+            calculAuto: false,
+            calculAutoIdentifiantsManquants: null,
           },
           indicateur_definition: {
             id: 4,
@@ -976,6 +1008,8 @@ describe('Indicateurs → crud-valeurs.service', () => {
             createdAt: '2024-08-27T11:57:28.686Z',
             modifiedBy: null,
             createdBy: null,
+            calculAuto: false,
+            calculAutoIdentifiantsManquants: null,
           },
           indicateur_definition: {
             id: 4,
@@ -1046,6 +1080,8 @@ describe('Indicateurs → crud-valeurs.service', () => {
           createdAt: '2024-08-27T11:55:09.325Z',
           modifiedBy: null,
           createdBy: null,
+          calculAuto: false,
+          calculAutoIdentifiantsManquants: null,
         },
         indicateur_definition: {
           id: 4,
@@ -1099,6 +1135,8 @@ describe('Indicateurs → crud-valeurs.service', () => {
           createdAt: '2024-08-27T11:57:28.686Z',
           modifiedBy: null,
           createdBy: null,
+          calculAuto: false,
+          calculAutoIdentifiantsManquants: null,
         },
         indicateur_definition: {
           id: 4,
@@ -1179,6 +1217,8 @@ describe('Indicateurs → crud-valeurs.service', () => {
           createdAt: '2024-08-27T11:55:09.325Z',
           modifiedBy: null,
           createdBy: null,
+          calculAuto: false,
+          calculAutoIdentifiantsManquants: null,
         },
         indicateur_definition: {
           id: 4,

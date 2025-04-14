@@ -1,4 +1,5 @@
 import { collectiviteTable } from '@/backend/collectivites/index-domain';
+import { UpsertIndicateursValeursResponse } from '@/backend/indicateurs/shared/models/upsert-indicateurs-valeurs.response';
 import {
   getAuthToken,
   getCollectiviteIdBySiren,
@@ -11,10 +12,7 @@ import { DatabaseService } from '@/backend/utils';
 import { INestApplication } from '@nestjs/common';
 import { eq } from 'drizzle-orm';
 import { default as request } from 'supertest';
-import {
-  UpsertIndicateursValeursRequest,
-  UpsertIndicateursValeursResponse,
-} from '../shared/models/upsert-indicateurs-valeurs.request';
+import { UpsertIndicateursValeursRequest } from '../shared/models/upsert-indicateurs-valeurs.request';
 
 const collectiviteId = 3;
 
@@ -209,7 +207,7 @@ describe('Indicateurs', () => {
       collectiviteId: paysDuLaonCollectiviteId,
       dateValeur: '2015-01-01',
       estimation: null,
-      indicateurId: 15,
+      indicateurId: indicateurId,
       indicateurIdentifiant: 'cae_1.f',
       metadonneeId: 2,
       modifiedBy: YOLO_DODO.id,
@@ -231,7 +229,7 @@ describe('Indicateurs', () => {
       collectiviteId: paysDuLaonCollectiviteId,
       dateValeur: '2015-01-01',
       estimation: null,
-      indicateurId: 30,
+      indicateurId: cae1kCalculatedValeur,
       indicateurIdentifiant: 'cae_1.k',
       metadonneeId: 2,
       objectif: null,
@@ -239,6 +237,74 @@ describe('Indicateurs', () => {
       resultat: 104.09,
       resultatCommentaire: null,
       sourceId: 'rare',
+      calculAuto: true,
+    });
+  });
+
+  it(`Ecriture avec accès et calcul d'un autre indicateur de la même source ayant des valeurs manquantes`, async () => {
+    const indicateurId = await getIndicateurIdByIdentifiant(
+      databaseService,
+      'cae_1.ca'
+    );
+    const indicateurValeurPayload: UpsertIndicateursValeursRequest = {
+      valeurs: [
+        {
+          collectiviteId: paysDuLaonCollectiviteId,
+          indicateurId: indicateurId,
+          dateValeur: '2015-01-01',
+          metadonneeId: 2,
+          resultat: 2.039,
+        },
+      ],
+    };
+
+    const response = await request(app.getHttpServer())
+      .post('/indicateurs')
+      .set('Authorization', `Bearer ${yoloDodoToken}`)
+      .send(indicateurValeurPayload)
+      .expect(201);
+    const upserIndicateurValeursResponse: UpsertIndicateursValeursResponse =
+      response.body;
+    expect(upserIndicateurValeursResponse.valeurs).toBeInstanceOf(Array);
+    expect(
+      upserIndicateurValeursResponse.valeurs.length
+    ).toBeGreaterThanOrEqual(2);
+    expect(upserIndicateurValeursResponse.valeurs[0]).toMatchObject({
+      collectiviteId: paysDuLaonCollectiviteId,
+      dateValeur: '2015-01-01',
+      estimation: null,
+      indicateurId: indicateurId,
+      indicateurIdentifiant: 'cae_1.ca',
+      metadonneeId: 2,
+      modifiedBy: YOLO_DODO.id,
+      objectif: null,
+      objectifCommentaire: null,
+      resultat: 2.04,
+      resultatCommentaire: null,
+      sourceId: 'rare',
+    });
+    // Calculated indicateur
+    const cae1cIndicateurId = await getIndicateurIdByIdentifiant(
+      databaseService,
+      'cae_1.c'
+    );
+    const cae1cCalculatedValeur = upserIndicateurValeursResponse.valeurs.find(
+      (v) => v.indicateurId === cae1cIndicateurId
+    );
+    expect(cae1cCalculatedValeur).toMatchObject({
+      collectiviteId: paysDuLaonCollectiviteId,
+      dateValeur: '2015-01-01',
+      estimation: null,
+      indicateurId: cae1cIndicateurId,
+      indicateurIdentifiant: 'cae_1.c',
+      metadonneeId: 2,
+      objectif: null,
+      objectifCommentaire: null,
+      resultat: 2.04,
+      resultatCommentaire: null,
+      sourceId: 'rare',
+      calculAuto: true,
+      calculAutoIdentifiantsManquants: ['cae_1.cb', 'cae_1.cc'],
     });
   });
 
@@ -317,7 +383,7 @@ describe('Indicateurs', () => {
       collectiviteId: paysDuLaonCollectiviteId,
       dateValeur: '2015-01-01',
       estimation: null,
-      indicateurId: 3,
+      indicateurId: computedIndicateurId,
       indicateurIdentifiant: 'cae_1.b',
       metadonneeId: 2,
       objectif: null,
