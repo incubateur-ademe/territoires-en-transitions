@@ -12,6 +12,8 @@ const BlogCardContent = ({
   image,
   badge,
   categories,
+  background = 'medium',
+  fullHeight,
   href,
 }: Omit<BlogCardProps, 'externalPage'>) => {
   const imgClassName =
@@ -20,12 +22,17 @@ const BlogCardContent = ({
   return (
     <div
       className={classNames(
-        'group rounded-lg bg-primary-2 hover:bg-primary-3 border border-primary-2 duration-700',
-        { 'cursor-pointer': !!href }
+        'group rounded-lg border border-primary-2 duration-700 flex flex-col',
+        {
+          'cursor-pointer': !!href,
+          'bg-primary-2 hover:bg-primary-3': background === 'medium',
+          'bg-primary-0 hover:bg-primary-1': background === 'light',
+          'h-full': fullHeight,
+        }
       )}
     >
       {/* Image de la carte */}
-      <div className="rounded-t-lg overflow-hidden relative">
+      <div className="rounded-t-lg overflow-hidden relative shrink-0">
         {image ? (
           <StrapiImage
             data={image}
@@ -53,31 +60,36 @@ const BlogCardContent = ({
       </div>
 
       {/* Date, catégories, titre et description */}
-      <div className="p-6 flex flex-col gap-2">
-        {!!date && (
-          <p className="mb-0 text-grey-6 text-sm">{getLocalDateString(date)}</p>
-        )}
-        {!!categories && categories.length > 0 && (
-          <div className="flex flex-wrap gap-2">
-            {categories.map((category, idx) => (
-              <Badge
-                key={`${idx}-${category}`}
-                title={category}
-                state="info"
-                size="sm"
-                light
-              />
-            ))}
-          </div>
-        )}
-        <h5 className="mb-0 text-xl leading-8">{title}</h5>
-        {!!description && <p className="mb-0 paragraphe-16">{description}</p>}
+      <div className="p-6 h-full flex flex-col gap-4 justify-between">
+        <div className="flex flex-col gap-2">
+          {!!date && (
+            <p className="mb-0 text-grey-6 text-sm">
+              {getLocalDateString(date)}
+            </p>
+          )}
+          {!!categories && categories.length > 0 && (
+            <div className="flex flex-wrap gap-2">
+              {categories.map((category, idx) => (
+                <Badge
+                  key={`${idx}-${category}`}
+                  title={category}
+                  state="info"
+                  size="sm"
+                  light
+                />
+              ))}
+            </div>
+          )}
+          <h5 className="mb-0 text-xl leading-8">{title}</h5>
+          {!!description && <p className="mb-0 paragraphe-16">{description}</p>}
+        </div>
+
         {!!href && (
           <Button
             icon="arrow-right-line"
             size="sm"
             variant="outlined"
-            className="ml-auto mt-4"
+            className="ml-auto"
           />
         )}
       </div>
