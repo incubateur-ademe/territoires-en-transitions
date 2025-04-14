@@ -3,6 +3,7 @@ import { Logger, Module } from '@nestjs/common';
 import { AirtableModule } from '@/tools-automation-api/airtable/airtable.module';
 import { CalendlyModule } from '@/tools-automation-api/calendly/calendly.module';
 import { CronModule } from '@/tools-automation-api/cron/cron.module';
+import { SireneModule } from '@/tools-automation-api/sirene/sirene.module';
 import { WebhookModule } from '@/tools-automation-api/webhooks/webhook.module';
 import { ExpressAdapter } from '@bull-board/express';
 import { BullBoardModule } from '@bull-board/nestjs';
@@ -66,6 +67,7 @@ const appLogger = new Logger('AppModule');
     WebhookModule,
     AirtableModule,
     CalendlyModule,
+    SireneModule,
   ],
   controllers: [],
   providers: [],
