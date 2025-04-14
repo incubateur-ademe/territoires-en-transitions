@@ -32,7 +32,7 @@ const Contact = async () => {
   }
 
   return (
-    <Section className="gap-6">
+    <Section className="gap-6" containerClassName="bg-primary-0">
       <h1 className="text-primary-8 mb-0">
         {data.titre ?? "Contacter l'équipe"}
       </h1>
