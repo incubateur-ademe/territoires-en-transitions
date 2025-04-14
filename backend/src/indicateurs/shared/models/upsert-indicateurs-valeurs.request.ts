@@ -17,5 +17,3 @@ export type UpsertIndicateursValeursRequestType = z.infer<
 export class UpsertIndicateursValeursRequest extends createZodDto(
   upsertIndicateursValeursRequestSchema
 ) {}
-
-export type UpsertIndicateursValeursResponse = UpsertIndicateursValeursRequest;
