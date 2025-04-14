@@ -10,9 +10,9 @@ import {
 } from '../../collectivites/index-domain';
 import {
   Action,
-  ActionAndScore,
   actionDefinitionTable,
   ActionType,
+  ActionWithScore,
 } from '../index-domain';
 import { actionPiloteTable } from '../models/action-pilote.table';
 import { actionServiceTable } from '../models/action-service.table';
@@ -39,7 +39,7 @@ export class ListActionsService {
     collectiviteId,
     filters,
     embed,
-  }: ListInput): Promise<Action[] | ActionAndScore[]> {
+  }: ListInput): Promise<Action[] | ActionWithScore[]> {
     const subQuery = this.db
       .$with('action_definition_with_details')
       .as(this.listWithDetails(collectiviteId));
