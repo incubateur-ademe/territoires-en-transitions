@@ -13,6 +13,7 @@ import basicAuth from 'express-basic-auth';
 import configuration from './config/configuration';
 import { ConfigurationModule } from './config/configuration.module';
 import ConfigurationService from './config/configuration.service';
+import { ConnectModule } from './connect/connect.module';
 import { CrispModule } from './crisp/crisp.module';
 import { NotionModule } from './notion/notion.module';
 import { SentryNotificationModule } from './sentry/sentry-notification.module';
@@ -61,6 +62,7 @@ const appLogger = new Logger('AppModule');
     SentryNotificationModule,
     WebhookModule,
     AirtableModule,
+    ConnectModule,
     SireneModule,
   ],
   controllers: [],
