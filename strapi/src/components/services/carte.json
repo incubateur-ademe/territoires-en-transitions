@@ -28,7 +28,15 @@
       "type": "media",
       "multiple": false,
       "required": false,
-      "allowedTypes": ["images"]
+      "allowedTypes": [
+        "images"
+      ]
+    },
+    "boutons": {
+      "type": "component",
+      "repeatable": true,
+      "component": "shared.bouton",
+      "max": 2
     }
   }
 }

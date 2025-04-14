@@ -1,3 +1,4 @@
+import ButtonsList from '@/site/components/buttons/ButtonsList';
 import Markdown from '@/site/components/markdown/Markdown';
 import ReactIcon from '@/site/components/react-icons/ReactIcon';
 import { StrapiImage } from '@/site/components/strapiImage/StrapiImage';
@@ -26,7 +27,13 @@ const ListeVerticaleService = ({ liste }: { liste: Liste }) => {
               {!!l.titre && <h4 className="mb-0">{l.titre}</h4>}
             </div>
 
-            <Markdown texte={l.texte} className="paragraphe-16 -mb-6" />
+            <Markdown texte={l.texte} className="paragraphe-16" />
+
+            <ButtonsList
+              boutons={l.boutons}
+              buttonsSize="sm"
+              className="mt-2"
+            />
           </div>
         </div>
       ))}

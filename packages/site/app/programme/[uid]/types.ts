@@ -45,6 +45,7 @@ export type ListeFetchedData = {
     titre?: string;
     texte: string;
     image?: { data: StrapiItem };
+    boutons: { id: number; label: string; url: string }[];
   }[];
   disposition_cartes: 'Gallerie' | 'Grille' | 'Verticale' | 'Vignettes';
 };
@@ -56,6 +57,7 @@ export type Liste = {
   titre?: string;
   texte: string;
   image?: StrapiItem;
+  boutons: { id: number; label: string; url: string }[];
 }[];
 
 export type ListeData = {
