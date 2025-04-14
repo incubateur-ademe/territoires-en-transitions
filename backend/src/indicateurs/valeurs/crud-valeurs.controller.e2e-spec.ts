@@ -1,4 +1,6 @@
 import { collectiviteTable } from '@/backend/collectivites/index-domain';
+import { indicateurValeurTable } from '@/backend/indicateurs/index-domain';
+import { UpsertIndicateursValeursResponse } from '@/backend/indicateurs/shared/models/upsert-indicateurs-valeurs.response';
 import {
   getAuthToken,
   getCollectiviteIdBySiren,
@@ -9,12 +11,9 @@ import {
 } from '@/backend/test';
 import { DatabaseService } from '@/backend/utils';
 import { INestApplication } from '@nestjs/common';
-import { eq } from 'drizzle-orm';
+import { and, eq, isNull } from 'drizzle-orm';
 import { default as request } from 'supertest';
-import {
-  UpsertIndicateursValeursRequest,
-  UpsertIndicateursValeursResponse,
-} from '../shared/models/upsert-indicateurs-valeurs.request';
+import { UpsertIndicateursValeursRequest } from '../shared/models/upsert-indicateurs-valeurs.request';
 
 const collectiviteId = 3;
 
@@ -137,19 +136,47 @@ describe('Indicateurs', () => {
       });
   });
 
-  it(`Ecriture avec accès et calcul d'un autre indicateur pour la collectivité > désactivé temporairement`, async () => {
-    const indicateurId = await getIndicateurIdByIdentifiant(
+  it(`Ecriture avec accès et calcul d'un autre indicateur pour la collectivité > ok si pas de valeur déja saisie manuellement, sinon pas de valeur calculée`, async () => {
+    const cae1fIndicateurId = await getIndicateurIdByIdentifiant(
       databaseService,
       'cae_1.f'
     );
+    const cae1eIndicateurId = await getIndicateurIdByIdentifiant(
+      databaseService,
+      'cae_1.e'
+    );
+    const cae1kIndicateurId = await getIndicateurIdByIdentifiant(
+      databaseService,
+      'cae_1.k'
+    );
+
+    // Delete existing
+    await databaseService.db
+      .delete(indicateurValeurTable)
+      .where(
+        and(
+          eq(indicateurValeurTable.collectiviteId, paysDuLaonCollectiviteId),
+          eq(indicateurValeurTable.indicateurId, cae1kIndicateurId),
+          eq(indicateurValeurTable.dateValeur, '2015-01-01'),
+          isNull(indicateurValeurTable.metadonneeId)
+        )
+      );
+
     const indicateurValeurPayload: UpsertIndicateursValeursRequest = {
       valeurs: [
         {
           collectiviteId: paysDuLaonCollectiviteId,
-          indicateurId: indicateurId,
+          indicateurId: cae1fIndicateurId,
           dateValeur: '2015-01-01',
           metadonneeId: null,
           resultat: 2.039,
+        },
+        {
+          collectiviteId: paysDuLaonCollectiviteId,
+          indicateurId: cae1eIndicateurId,
+          dateValeur: '2015-01-01',
+          metadonneeId: null,
+          resultat: 100,
         },
       ],
     };
@@ -161,18 +188,128 @@ describe('Indicateurs', () => {
     const upserIndicateurValeursResponse: UpsertIndicateursValeursResponse =
       response.body;
     expect(upserIndicateurValeursResponse.valeurs).toBeInstanceOf(Array);
-    expect(upserIndicateurValeursResponse.valeurs.length).toEqual(1);
+    expect(upserIndicateurValeursResponse.valeurs.length).greaterThanOrEqual(3);
     expect(upserIndicateurValeursResponse.valeurs[0]).toMatchObject({
       collectiviteId: paysDuLaonCollectiviteId,
       dateValeur: '2015-01-01',
       estimation: null,
-      indicateurId: 15,
+      indicateurId: cae1fIndicateurId,
       indicateurIdentifiant: 'cae_1.f',
       metadonneeId: null,
       modifiedBy: YOLO_DODO.id,
       objectif: null,
       objectifCommentaire: null,
       resultat: 2.04,
+      resultatCommentaire: null,
+    });
+    expect(upserIndicateurValeursResponse.valeurs[1]).toMatchObject({
+      collectiviteId: paysDuLaonCollectiviteId,
+      dateValeur: '2015-01-01',
+      estimation: null,
+      indicateurId: cae1eIndicateurId,
+      indicateurIdentifiant: 'cae_1.e',
+      metadonneeId: null,
+      modifiedBy: YOLO_DODO.id,
+      objectif: null,
+      objectifCommentaire: null,
+      resultat: 100,
+      resultatCommentaire: null,
+    });
+
+    // Calculated indicateur
+    const cae1kCalculatedValeur = upserIndicateurValeursResponse.valeurs.find(
+      (v) => v.indicateurId === cae1kIndicateurId
+    );
+
+    expect(cae1kCalculatedValeur).toMatchObject({
+      collectiviteId: paysDuLaonCollectiviteId,
+      dateValeur: '2015-01-01',
+      estimation: null,
+      indicateurId: cae1kIndicateurId,
+      indicateurIdentifiant: 'cae_1.k',
+      metadonneeId: null,
+      objectif: null,
+      objectifCommentaire: null,
+      resultat: 102.04,
+      resultatCommentaire: null,
+      calculAuto: true,
+      calculAutoIdentifiantsManquants: [],
+    });
+
+    // Now we insert manually the cae_1.k value
+    const indicateurValeurCae1kPayload: UpsertIndicateursValeursRequest = {
+      valeurs: [
+        {
+          collectiviteId: paysDuLaonCollectiviteId,
+          indicateurId: cae1kIndicateurId,
+          dateValeur: '2015-01-01',
+          metadonneeId: null,
+          resultat: 106,
+        },
+      ],
+    };
+    const responseCae1k = await request(app.getHttpServer())
+      .post('/indicateurs')
+      .set('Authorization', `Bearer ${yoloDodoToken}`)
+      .send(indicateurValeurCae1kPayload)
+      .expect(201);
+    expect(responseCae1k.body.valeurs[0]).toMatchObject({
+      collectiviteId: paysDuLaonCollectiviteId,
+      dateValeur: '2015-01-01',
+      estimation: null,
+      indicateurId: cae1kIndicateurId,
+      indicateurIdentifiant: 'cae_1.k',
+      metadonneeId: null,
+      objectif: null,
+      objectifCommentaire: null,
+      resultat: 106,
+      resultatCommentaire: null,
+      calculAuto: false,
+      calculAutoIdentifiantsManquants: null,
+    });
+
+    // now if we write again the cae_1.f value, we should not have the cae_1.k value
+    const responseAfterManualInsert = await request(app.getHttpServer())
+      .post('/indicateurs')
+      .set('Authorization', `Bearer ${yoloDodoToken}`)
+      .send(indicateurValeurPayload)
+      .expect(201);
+    const upserIndicateurValeursResponseAfterManualInsert: UpsertIndicateursValeursResponse =
+      responseAfterManualInsert.body;
+    expect(
+      upserIndicateurValeursResponseAfterManualInsert.valeurs
+    ).toBeInstanceOf(Array);
+    expect(
+      upserIndicateurValeursResponseAfterManualInsert.valeurs.length
+    ).toEqual(2);
+    expect(
+      upserIndicateurValeursResponseAfterManualInsert.valeurs[0]
+    ).toMatchObject({
+      collectiviteId: paysDuLaonCollectiviteId,
+      dateValeur: '2015-01-01',
+      estimation: null,
+      indicateurId: cae1fIndicateurId,
+      indicateurIdentifiant: 'cae_1.f',
+      metadonneeId: null,
+      modifiedBy: YOLO_DODO.id,
+      objectif: null,
+      objectifCommentaire: null,
+      resultat: 2.04,
+      resultatCommentaire: null,
+    });
+    expect(
+      upserIndicateurValeursResponseAfterManualInsert.valeurs[1]
+    ).toMatchObject({
+      collectiviteId: paysDuLaonCollectiviteId,
+      dateValeur: '2015-01-01',
+      estimation: null,
+      indicateurId: cae1eIndicateurId,
+      indicateurIdentifiant: 'cae_1.e',
+      metadonneeId: null,
+      modifiedBy: YOLO_DODO.id,
+      objectif: null,
+      objectifCommentaire: null,
+      resultat: 100,
       resultatCommentaire: null,
     });
   });
@@ -209,7 +346,7 @@ describe('Indicateurs', () => {
       collectiviteId: paysDuLaonCollectiviteId,
       dateValeur: '2015-01-01',
       estimation: null,
-      indicateurId: 15,
+      indicateurId: indicateurId,
       indicateurIdentifiant: 'cae_1.f',
       metadonneeId: 2,
       modifiedBy: YOLO_DODO.id,
@@ -231,7 +368,7 @@ describe('Indicateurs', () => {
       collectiviteId: paysDuLaonCollectiviteId,
       dateValeur: '2015-01-01',
       estimation: null,
-      indicateurId: 30,
+      indicateurId: cae1kIndicateurId,
       indicateurIdentifiant: 'cae_1.k',
       metadonneeId: 2,
       objectif: null,
@@ -239,6 +376,74 @@ describe('Indicateurs', () => {
       resultat: 104.09,
       resultatCommentaire: null,
       sourceId: 'rare',
+      calculAuto: true,
+    });
+  });
+
+  it(`Ecriture avec accès et calcul d'un autre indicateur de la même source ayant des valeurs manquantes`, async () => {
+    const indicateurId = await getIndicateurIdByIdentifiant(
+      databaseService,
+      'cae_1.ca'
+    );
+    const indicateurValeurPayload: UpsertIndicateursValeursRequest = {
+      valeurs: [
+        {
+          collectiviteId: paysDuLaonCollectiviteId,
+          indicateurId: indicateurId,
+          dateValeur: '2015-01-01',
+          metadonneeId: 2,
+          resultat: 2.039,
+        },
+      ],
+    };
+
+    const response = await request(app.getHttpServer())
+      .post('/indicateurs')
+      .set('Authorization', `Bearer ${yoloDodoToken}`)
+      .send(indicateurValeurPayload)
+      .expect(201);
+    const upserIndicateurValeursResponse: UpsertIndicateursValeursResponse =
+      response.body;
+    expect(upserIndicateurValeursResponse.valeurs).toBeInstanceOf(Array);
+    expect(
+      upserIndicateurValeursResponse.valeurs.length
+    ).toBeGreaterThanOrEqual(2);
+    expect(upserIndicateurValeursResponse.valeurs[0]).toMatchObject({
+      collectiviteId: paysDuLaonCollectiviteId,
+      dateValeur: '2015-01-01',
+      estimation: null,
+      indicateurId: indicateurId,
+      indicateurIdentifiant: 'cae_1.ca',
+      metadonneeId: 2,
+      modifiedBy: YOLO_DODO.id,
+      objectif: null,
+      objectifCommentaire: null,
+      resultat: 2.04,
+      resultatCommentaire: null,
+      sourceId: 'rare',
+    });
+    // Calculated indicateur
+    const cae1cIndicateurId = await getIndicateurIdByIdentifiant(
+      databaseService,
+      'cae_1.c'
+    );
+    const cae1cCalculatedValeur = upserIndicateurValeursResponse.valeurs.find(
+      (v) => v.indicateurId === cae1cIndicateurId
+    );
+    expect(cae1cCalculatedValeur).toMatchObject({
+      collectiviteId: paysDuLaonCollectiviteId,
+      dateValeur: '2015-01-01',
+      estimation: null,
+      indicateurId: cae1cIndicateurId,
+      indicateurIdentifiant: 'cae_1.c',
+      metadonneeId: 2,
+      objectif: null,
+      objectifCommentaire: null,
+      resultat: 2.04,
+      resultatCommentaire: null,
+      sourceId: 'rare',
+      calculAuto: true,
+      calculAutoIdentifiantsManquants: ['cae_1.cb', 'cae_1.cc'],
     });
   });
 
@@ -317,7 +522,7 @@ describe('Indicateurs', () => {
       collectiviteId: paysDuLaonCollectiviteId,
       dateValeur: '2015-01-01',
       estimation: null,
-      indicateurId: 3,
+      indicateurId: computedIndicateurId,
       indicateurIdentifiant: 'cae_1.b',
       metadonneeId: 2,
       objectif: null,

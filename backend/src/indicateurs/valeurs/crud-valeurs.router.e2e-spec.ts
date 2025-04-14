@@ -11,7 +11,7 @@ import { getAuthUser } from '../../../test/auth-utils';
 import { AuthenticatedUser } from '../../auth/models/auth.models';
 import { DatabaseService } from '../../utils';
 import { AppRouter, TrpcRouter } from '../../utils/trpc/trpc.router';
-import { indicateurValeurTable } from '../index-domain';
+import { IndicateurValeur, indicateurValeurTable } from '../index-domain';
 import { getIndicateursValeursResponseSchema } from '../shared/models/get-indicateurs.response';
 
 type InputList = inferProcedureInput<
@@ -180,7 +180,11 @@ describe("Route de lecture/écriture des valeurs d'indicateurs", () => {
   test("Valeurs calculées lors de l'insertion d'une valeur", async () => {
     const caller = router.createCaller({ user: yoloDodoUser });
 
-    const indicateurUpsertId = await getIndicateurIdByIdentifiant(
+    const cae1eIndicateurId = await getIndicateurIdByIdentifiant(
+      databaseService,
+      'cae_1.e'
+    );
+    const cae1fIndicateurId = await getIndicateurIdByIdentifiant(
       databaseService,
       'cae_1.f'
     );
@@ -192,7 +196,7 @@ describe("Route de lecture/écriture des valeurs d'indicateurs", () => {
     await deleteIndicateurValeursForCollectivite(
       databaseService,
       paysDuLaonCollectiviteId,
-      [indicateurCalculeId]
+      [indicateurCalculeId, cae1fIndicateurId]
     );
 
     // vérifie le nombre de valeurs avant insertion
@@ -205,20 +209,28 @@ describe("Route de lecture/écriture des valeurs d'indicateurs", () => {
     expect(resultBefore.indicateurs.length).toBe(0);
 
     // insère une valeur
-    const input: InputUpsert = {
+    const inputCae1e: InputUpsert = {
       collectiviteId: paysDuLaonCollectiviteId,
-      indicateurId: indicateurUpsertId,
+      indicateurId: cae1eIndicateurId,
       dateValeur: '2015-01-01',
-      resultat: 2.039,
+      resultat: 102.04,
     };
-    const result = await caller.indicateurs.valeurs.upsert(input);
-    expect(result).not.toBe(null);
-    expect(result?.resultat).toBe(2.04);
+    const resultCae1e = await caller.indicateurs.valeurs.upsert(inputCae1e);
+    expect(resultCae1e).not.toBe(null);
+    expect(resultCae1e?.resultat).toBe(102.04);
 
     // vérifie le nombre de valeurs après insertion
-    // Indicateur calculé désactivé pour le moment pour les collectivités
     const resultAfter = await caller.indicateurs.valeurs.list(inputBefore);
-    expect(resultAfter.indicateurs.length).toBe(0);
+    expect(resultAfter.indicateurs[0].sources.collectivite.valeurs.length).toBe(
+      1
+    );
+    const indicateurCalculeValeur = resultAfter.indicateurs[0].sources
+      .collectivite.valeurs[0] as IndicateurValeur;
+    expect(indicateurCalculeValeur.resultat).toBe(102.04);
+    expect(indicateurCalculeValeur.calculAuto).toBe(true);
+    expect(
+      indicateurCalculeValeur.calculAutoIdentifiantsManquants
+    ).toStrictEqual(['cae_1.f']);
   });
 
   test("Ne permet pas d'insérer une valeur si on n'a pas le droit requis", async () => {
