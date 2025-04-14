@@ -5,11 +5,11 @@ import { AnnexeInfo } from '../../FicheAction/data/useAnnexesFicheActionInfos';
 
 import { RouterOutput } from '@/api/utils/trpc/client';
 import Etapes from '@/app/app/pages/collectivite/PlansActions/ExportPdf/FicheActionPdf/Etapes';
-import { ActionAndScore } from '@/domain/referentiels';
+import { ActionWithScore } from '@/domain/referentiels';
 import { TIndicateurDefinition } from '../../../Indicateurs/types';
 import { TSectionsValues, sectionsInitValue } from '../utils';
 import Acteurs from './Acteurs';
-import ActionsLiees from './actions-liees/ActionsLiees';
+import ActionsLiees from './ActionsLiees';
 import Budget from './Budget';
 import Chemins from './Chemins';
 import CreationFiche from './CreationFiche';
@@ -32,7 +32,7 @@ export type FicheActionPdfExtendedProps = FicheActionPdfProps & {
   indicateursListe: TIndicateurDefinition[] | undefined | null;
   etapes?: RouterOutput['plans']['fiches']['etapes']['list'];
   fichesLiees: FicheResume[];
-  actionsLiees: ActionAndScore[];
+  actionsLiees: ActionWithScore[];
   annexes: AnnexeInfo[] | undefined;
   notesSuivi: FicheActionNote[] | undefined;
 };
