@@ -846,3 +846,4 @@ plan_action/budget 2025-04-01T15:33:43Z Amandine <contact@jacquelinamandine.fr> 
 @v4.48.0 2025-04-15T07:55:03Z Amandine <contact@jacquelinamandine.fr> # Supprime update_late_scores et verification_scores, et ajout fiche_action_budget
 
 collectivite/code_siren_commune 2025-04-08T13:23:45Z Marc Rutkowski <marc@attractive-media.fr> # Importe les codes SIREN des communes
+collectivite/nic 2025-04-14T08:50:47Z Marc Rutkowski <marc@attractive-media.fr> # Ajoute une colonne pour enregistrer le NIC du siège d'une collectivité
