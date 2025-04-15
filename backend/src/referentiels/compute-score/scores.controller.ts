@@ -212,14 +212,6 @@ export class ReferentielsScoringController {
 
   @AllowAnonymousAccess()
   @ApiExcludeEndpoint() // Not in documentation
-  @Get('referentiels/all/save-last-scores')
-  async saveLastReferentielsScoreNewTable() {
-    // TODO: endpoint to be removed, only used during migration
-    return await this.snapshotsService.convertOldScoresToSnapshots();
-  }
-
-  @AllowAnonymousAccess()
-  @ApiExcludeEndpoint() // Not in documentation
   @Get('referentiels/all/fix-action-statuts-history')
   async fixActionStatutsHistory() {
     // TODO: endpoint to be removed once we are confident that all action statuts history are fixed
