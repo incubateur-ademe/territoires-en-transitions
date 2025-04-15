@@ -91,6 +91,9 @@ export const indicateurValeurGroupeeSchema = indicateurValeurSchema
     objectif: true,
     objectifCommentaire: true,
     metadonneeId: true,
+  })
+  .extend({
+    confidentiel: z.boolean().nullish(),
   });
 
 export const indicateurAvecValeursSchema = z
@@ -125,4 +128,6 @@ export interface IndicateurValeurAvecMetadonnesDefinition {
   indicateur_definition: IndicateurDefinition | null;
 
   indicateur_source_metadonnee: SourceMetadonnee | null;
+
+  confidentiel: boolean | null;
 }
