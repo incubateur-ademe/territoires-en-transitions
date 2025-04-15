@@ -2,6 +2,7 @@ import { PermissionOperation } from '@/backend/auth/authorizations/permission-op
 import { PermissionService } from '@/backend/auth/authorizations/permission.service';
 import { ResourceType } from '@/backend/auth/authorizations/resource-type.enum';
 import CollectivitesService from '@/backend/collectivites/services/collectivites.service';
+import { indicateurCollectiviteTable } from '@/backend/indicateurs/shared/models/indicateur-collectivite.table';
 import { indicateurSourceSourceCalculTable } from '@/backend/indicateurs/shared/models/indicateur-source-source-calcul.table';
 import IndicateurSourcesService from '@/backend/indicateurs/sources/indicateur-sources.service';
 import IndicateurValeurExpressionParserService from '@/backend/indicateurs/valeurs/indicateur-valeur-expression-parser.service';
@@ -9,7 +10,12 @@ import { buildConflictUpdateColumns } from '@/backend/utils/database/conflict.ut
 import { getErrorMessage, roundTo } from '@/backend/utils/index-domain';
 import { createZodDto } from '@anatine/zod-nestjs';
 import { extendApi } from '@anatine/zod-openapi';
-import { BadRequestException, Injectable, Logger } from '@nestjs/common';
+import {
+  BadRequestException,
+  Injectable,
+  Logger,
+  UnauthorizedException,
+} from '@nestjs/common';
 import {
   and,
   eq,
@@ -178,7 +184,14 @@ export default class CrudValeursService {
     const conditions = this.getIndicateurValeursSqlConditions(options);
 
     let result = await this.databaseService.db
-      .select()
+      .select({
+        indicateur_valeur: getTableColumns(indicateurValeurTable),
+        indicateur_definition: getTableColumns(indicateurDefinitionTable),
+        indicateur_source_metadonnee: getTableColumns(
+          indicateurSourceMetadonneeTable
+        ),
+        confidentiel: indicateurCollectiviteTable.confidentiel,
+      })
       .from(indicateurValeurTable)
       .leftJoin(
         indicateurDefinitionTable,
@@ -189,6 +202,13 @@ export default class CrudValeursService {
         eq(
           indicateurValeurTable.metadonneeId,
           indicateurSourceMetadonneeTable.id
+        )
+      )
+      .leftJoin(
+        indicateurCollectiviteTable,
+        eq(
+          indicateurCollectiviteTable.indicateurId,
+          indicateurDefinitionTable.id
         )
       )
       .where(and(...conditions));
@@ -247,21 +267,41 @@ export default class CrudValeursService {
     const { collectiviteId, indicateurIds, identifiantsReferentiel } = options;
 
     // Vérifie les droits
+    let hasPermissionLecture;
     if (collectiviteId) {
       const collectivitePrivate = await this.collectiviteService.isPrivate(
         collectiviteId
       );
-      await this.permissionService.isAllowed(
+      hasPermissionLecture = await this.permissionService.isAllowed(
         tokenInfo,
-        collectivitePrivate
-          ? PermissionOperation.INDICATEURS_LECTURE
-          : PermissionOperation.INDICATEURS_VISITE,
+        PermissionOperation.INDICATEURS_LECTURE,
         ResourceType.COLLECTIVITE,
-        collectiviteId
+        collectiviteId,
+        true
       );
+      const hasPermissionVisite = await this.permissionService.isAllowed(
+        tokenInfo,
+        PermissionOperation.INDICATEURS_VISITE,
+        ResourceType.COLLECTIVITE,
+        collectiviteId,
+        true
+      );
+      const accesRestreintRequis = collectivitePrivate && !hasPermissionLecture;
+      if (accesRestreintRequis || !hasPermissionVisite) {
+        throw new UnauthorizedException(
+          `Droits insuffisants, l'utilisateur ${
+            tokenInfo.id
+          } n'a pas l'autorisation ${
+            accesRestreintRequis
+              ? PermissionOperation.INDICATEURS_LECTURE
+              : PermissionOperation.INDICATEURS_VISITE
+          } sur la ressource Collectivité ${collectiviteId}`
+        );
+      }
     } else {
       // Check if has service role
       this.permissionService.hasServiceRole(tokenInfo);
+      hasPermissionLecture = true;
     }
 
     if (!indicateurIds?.length && !identifiantsReferentiel?.length) {
@@ -271,9 +311,10 @@ export default class CrudValeursService {
     }
 
     const indicateurValeurs = await this.getIndicateursValeurs(options);
-    const indicateurValeursSeules = indicateurValeurs.map(
-      (v) => v.indicateur_valeur
-    );
+    const indicateurValeursSeules = indicateurValeurs.map((v) => ({
+      ...v.indicateur_valeur,
+      confidentiel: v.confidentiel,
+    }));
     const initialDefinitionsAcc: { [key: string]: IndicateurDefinition } = {};
     let uniqueIndicateurDefinitions: IndicateurDefinition[];
     if (!options.identifiantsReferentiel?.length) {
@@ -348,6 +389,35 @@ export default class CrudValeursService {
         sources,
         false
       );
+
+    // Filtre la dernière valeur résultat d'un indicateur confidentiel quand
+    // l'utilisateur n'a pas le droit requis
+    if (!hasPermissionLecture) {
+      indicateurValeurGroupeesParSource.forEach((indicateur) => {
+        const sourceCollectivite =
+          indicateur.sources[CrudValeursService.NULL_SOURCE_ID];
+        if (sourceCollectivite?.valeurs?.[0]?.confidentiel) {
+          // recherche la date la plus récente avec un résultat
+          const timeDerniereValeur = Math.max(
+            ...sourceCollectivite.valeurs
+              .filter((v) => !isNil(v.resultat))
+              .map((v) =>
+                v.dateValeur ? new Date(v.dateValeur as string).getTime() : 0
+              )
+          );
+          sourceCollectivite.valeurs = sourceCollectivite.valeurs.map((v) => ({
+            ...v,
+            // masque le résultat si nécessaire
+            resultat:
+              !isNil(v.resultat) &&
+              v.dateValeur &&
+              new Date(v.dateValeur as string).getTime() === timeDerniereValeur
+                ? null
+                : v.resultat,
+          }));
+        }
+      });
+    }
     return {
       count: indicateurValeurs.length,
       indicateurs: indicateurValeurGroupeesParSource,
@@ -1629,7 +1699,7 @@ export default class CrudValeursService {
   }
 
   groupeIndicateursValeursParIndicateurEtSource(
-    indicateurValeurs: IndicateurValeur[],
+    indicateurValeurs: (IndicateurValeur & { confidentiel: boolean | null })[],
     indicateurDefinitions: IndicateurDefinition[],
     indicateurMetadonnees: SourceMetadonnee[],
     sources: Source[],
@@ -1663,6 +1733,7 @@ export default class CrudValeursService {
               objectif: v.objectif,
               objectifCommentaire: v.objectifCommentaire,
               metadonneeId: v.metadonneeId,
+              confidentiel: v.confidentiel,
             };
             return _.omitBy(
               indicateurValeurGroupee,
