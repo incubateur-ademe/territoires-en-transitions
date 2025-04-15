@@ -13,8 +13,14 @@ import {
 } from './use-indicateur-valeurs';
 import { useSourceFilter } from './use-source-filter';
 
-const SEGMENTATIONS = ['secteur', 'vecteur', 'vecteur_filiere'];
-const SEGMENTATION_PAR_DEFAUT = 'parDefaut';
+const SEGMENTATIONS = [
+  'secteur',
+  'vecteur',
+  'vecteur_filiere',
+  'filiere',
+  'autre',
+];
+const SEGMENTATION_PAR_DEFAUT = 'autre';
 
 export type IndicateurChartInfo = ReturnType<typeof useIndicateurChartInfo>;
 
