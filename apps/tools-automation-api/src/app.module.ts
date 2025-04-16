@@ -17,6 +17,7 @@ import { NotionModule } from './notion/notion.module';
 import { SentryNotificationModule } from './sentry/sentry-notification.module';
 import { DatabaseModule } from './utils/database/database.module';
 import { UtilsModule } from './utils/utils.module';
+import { PosthogModule } from '@/tools-automation-api/posthog/posthog.module';
 
 const appLogger = new Logger('AppModule');
 
@@ -60,6 +61,7 @@ const appLogger = new Logger('AppModule');
     SentryNotificationModule,
     WebhookModule,
     AirtableModule,
+    PosthogModule,
   ],
   controllers: [],
   providers: [],

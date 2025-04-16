@@ -74,6 +74,14 @@ export const toolsAutomationApiConfigurationSchema = z.object({
     .string()
     .min(1)
     .describe('Airtable CRM Users table id'),
+  POSTHOG_API_KEY : z
+    .string()
+    .min(1)
+    .describe(`Token key pour l'authentification à l'API Posthog`),
+  POSTHOG_API_URL : z
+    .string()
+    .min(1)
+    .describe(`URL de l'API Posthog`),
 });
 export type ToolsAutomationApiConfigurationType = z.infer<
   typeof toolsAutomationApiConfigurationSchema
