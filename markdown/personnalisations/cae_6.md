@@ -240,7 +240,7 @@ action_id: cae_6.4.2
 ```formule
 si reponse(foret, OUI) alors 0.5
 ```
-Pour les collectivités possédant moins de 10 % de surfaces agricoles, le score de la 6.4.2 est réduit de 50 %.
+Pour les collectivités possédant moins de 10 % de surfaces forestières, le score de la 6.4.2 est réduit de 50 %.
 
 # Désactivation cae 6.5.2.5 liee a publicite
 ```yaml

@@ -51,7 +51,7 @@ const IndicateurGazEffetSerre = ({
       }${defaultData.titre_encadre}`}
       graphTitle={`Répartition des émissions de gaz à effet de serre (hors puits) par secteur en ${lastYear}`}
       source={lastYearData?.[0].source ?? ''}
-      unit="t CO₂eq"
+      unit={defaultData.titre_encadre}
       unitSingular={true}
       decimals={0}
     />
