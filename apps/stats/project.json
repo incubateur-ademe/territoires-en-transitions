@@ -1,0 +1,55 @@
+{
+  "name": "stats",
+  "$schema": "../../node_modules/nx/schemas/project-schema.json",
+  "sourceRoot": "apps/stats/src",
+  "projectType": "application",
+  "implicitDependencies": [
+    "backend",
+    "tools-automation-api"
+  ],
+  "tags": [],
+  "targets": {
+    "dev": {
+      "command": "nest start --watch",
+      "// debug": "nest start --debug --watch",
+      "options": {
+        "cwd": "apps/stats"
+      },
+      "dependsOn": [
+        {
+          "projects": "backend",
+          "target": "types"
+        }
+      ]
+    },
+    "build": {
+      "command": "nest build",
+      "options": {
+        "cwd": "apps/stats"
+      },
+      "dependsOn": [
+        {
+          "projects": "tools-automation-api",
+          "target": "build"
+        },
+        {
+          "projects": "backend",
+          "target": "types"
+        }
+      ]
+    },
+    "test": {
+      "executor": "@nx/vite:test",
+      "outputs": [
+        "{workspaceRoot}/coverage/apps/stats"
+      ],
+      "options": {
+        "passWithNoTests": true,
+        "reporters": [
+          "default"
+        ],
+        "testEnvironment": "node"
+      }
+    }
+  }
+}
