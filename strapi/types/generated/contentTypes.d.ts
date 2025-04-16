@@ -605,6 +605,39 @@ export interface ApiFaqFaq extends Schema.CollectionType {
   };
 }
 
+export interface ApiLegalLegal extends Schema.CollectionType {
+  collectionName: 'legals';
+  info: {
+    description: '';
+    displayName: 'Legals';
+    pluralName: 'legals';
+    singularName: 'legal';
+  };
+  options: {
+    draftAndPublish: true;
+  };
+  attributes: {
+    contenu: Attribute.RichText;
+    createdAt: Attribute.DateTime;
+    createdBy: Attribute.Relation<
+      'api::legal.legal',
+      'oneToOne',
+      'admin::user'
+    > &
+      Attribute.Private;
+    publishedAt: Attribute.DateTime;
+    slug: Attribute.UID<'api::legal.legal', 'titre'> & Attribute.Required;
+    titre: Attribute.String & Attribute.Required;
+    updatedAt: Attribute.DateTime;
+    updatedBy: Attribute.Relation<
+      'api::legal.legal',
+      'oneToOne',
+      'admin::user'
+    > &
+      Attribute.Private;
+  };
+}
+
 export interface ApiPageAccueilPageAccueil extends Schema.SingleType {
   collectionName: 'page_accueils';
   info: {
@@ -1873,6 +1906,7 @@ declare module '@strapi/types' {
       'api::collectivite.collectivite': ApiCollectiviteCollectivite;
       'api::conseiller.conseiller': ApiConseillerConseiller;
       'api::faq.faq': ApiFaqFaq;
+      'api::legal.legal': ApiLegalLegal;
       'api::page-accueil.page-accueil': ApiPageAccueilPageAccueil;
       'api::page-budget.page-budget': ApiPageBudgetPageBudget;
       'api::page-collectivite.page-collectivite': ApiPageCollectivitePageCollectivite;
