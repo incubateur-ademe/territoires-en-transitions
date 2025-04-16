@@ -93,6 +93,12 @@
       "required": true,
       "maxLength": 50
     },
+    "annuaire_cta": {
+      "type": "string",
+      "maxLength": 50,
+      "required": true,
+      "default": "Parcourir l’annuaire des conseillers⸱ères"
+    },
     "compte_titre": {
       "type": "string",
       "default": "Créer un compte gratuitement sur notre service numérique",
@@ -114,9 +120,7 @@
       "type": "media",
       "multiple": false,
       "required": false,
-      "allowedTypes": [
-        "images"
-      ]
+      "allowedTypes": ["images"]
     }
   }
 }
