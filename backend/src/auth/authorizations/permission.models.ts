@@ -5,6 +5,7 @@ export const Permission: Record<Role, PermissionOperation[]> = {
   [Role.CONNECTE]: [],
   [Role.VERIFIE]: [
     PermissionOperation.COLLECTIVITES_VISITE,
+    PermissionOperation.REFERENTIELS_VISITE,
     PermissionOperation.PLANS_FICHES_VISITE,
     PermissionOperation.INDICATEURS_VISITE,
   ],
@@ -12,6 +13,7 @@ export const Permission: Record<Role, PermissionOperation[]> = {
     PermissionOperation.COLLECTIVITES_VISITE,
     PermissionOperation.COLLECTIVITES_LECTURE,
     PermissionOperation.COLLECTIVITES_EDITION,
+    PermissionOperation.REFERENTIELS_VISITE,
     PermissionOperation.REFERENTIELS_LECTURE,
     PermissionOperation.PLANS_FICHES_VISITE,
     PermissionOperation.PLANS_FICHES_LECTURE,
@@ -31,6 +33,7 @@ export const Permission: Record<Role, PermissionOperation[]> = {
   [Role.LECTURE]: [
     PermissionOperation.COLLECTIVITES_VISITE,
     PermissionOperation.COLLECTIVITES_LECTURE,
+    PermissionOperation.REFERENTIELS_VISITE,
     PermissionOperation.REFERENTIELS_LECTURE,
     PermissionOperation.PLANS_FICHES_VISITE,
     PermissionOperation.PLANS_FICHES_LECTURE,
@@ -42,6 +45,7 @@ export const Permission: Record<Role, PermissionOperation[]> = {
   [Role.EDITION]: [
     PermissionOperation.COLLECTIVITES_VISITE,
     PermissionOperation.COLLECTIVITES_LECTURE,
+    PermissionOperation.REFERENTIELS_VISITE,
     PermissionOperation.REFERENTIELS_LECTURE,
     PermissionOperation.REFERENTIELS_EDITION,
     PermissionOperation.PLANS_FICHES_VISITE,

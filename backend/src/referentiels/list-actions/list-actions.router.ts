@@ -1,5 +1,6 @@
 import { PermissionService } from '@/backend/auth/authorizations/permission.service';
 import { PermissionOperation, ResourceType } from '@/backend/auth/index-domain';
+import CollectivitesService from '@/backend/collectivites/services/collectivites.service';
 import { TrpcService } from '@/backend/utils/trpc/trpc.service';
 import { Injectable } from '@nestjs/common';
 import { ListActionDefinitionsService } from '../list-action-definitions/list-action-definitions.service';
@@ -16,7 +17,8 @@ export class ListActionsRouter {
     private readonly trpc: TrpcService,
     private readonly permissions: PermissionService,
     private readonly snapshotService: SnapshotsService,
-    private readonly listActionDefinitionsService: ListActionDefinitionsService
+    private readonly listActionDefinitionsService: ListActionDefinitionsService,
+    private readonly collectivite: CollectivitesService
   ) {}
 
   router = this.trpc.router({
@@ -25,9 +27,15 @@ export class ListActionsRouter {
       .query(async ({ input, ctx: { user } }) => {
         const { collectiviteId, filters } = input;
 
+        const collectivitePrivate = await this.collectivite.isPrivate(
+          collectiviteId
+        );
+
         await this.permissions.isAllowed(
           user,
-          PermissionOperation.REFERENTIELS_LECTURE,
+          collectivitePrivate
+            ? PermissionOperation.REFERENTIELS_LECTURE
+            : PermissionOperation.REFERENTIELS_VISITE,
           ResourceType.COLLECTIVITE,
           collectiviteId
         );

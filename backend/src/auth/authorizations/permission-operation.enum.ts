@@ -7,6 +7,7 @@ export enum PermissionOperation {
   COLLECTIVITES_TABLEAU_DE_BORD_EDITION = 'collectivites.tableau-de-bord.edition',
   // Référentiels
   REFERENTIELS_LECTURE = 'referentiels.lecture',
+  REFERENTIELS_VISITE = 'referentiels.visite',
   REFERENTIELS_EDITION = 'referentiels.edition',
   REFERENTIELS_AUDIT = 'referentiels.audit',
   // Fiches actions
