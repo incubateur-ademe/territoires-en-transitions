@@ -1781,7 +1781,7 @@
       "description": "",
       "regles": [
         {
-          "description": "<p>Pour les collectivit\u00e9s poss\u00e9dant moins de 10 % de surfaces agricoles, le score de la 6.4.2 est r\u00e9duit de 50 %.</p>\n",
+          "description": "<p>Pour les collectivit\u00e9s poss\u00e9dant moins de 10 % de surfaces foresti\u00e8res, le score de la 6.4.2 est r\u00e9duit de 50 %.</p>\n",
           "formule": "si reponse(foret, OUI) alors 0.5\n",
           "type": "reduction"
         }
