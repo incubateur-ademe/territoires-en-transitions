@@ -1086,6 +1086,12 @@ export interface ApiPageProgrammePageProgramme extends Schema.SingleType {
     draftAndPublish: true;
   };
   attributes: {
+    annuaire_cta: Attribute.String &
+      Attribute.Required &
+      Attribute.SetMinMaxLength<{
+        maxLength: 50;
+      }> &
+      Attribute.DefaultTo<'Parcourir l\u2019annuaire des conseillers\u2E31\u00E8res'>;
     benefices_liste: Attribute.Component<'shared.vignette-avec-titre', true>;
     benefices_titre: Attribute.String &
       Attribute.Required &

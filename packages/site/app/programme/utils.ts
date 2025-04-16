@@ -109,7 +109,8 @@ export const getStrapiData = async () => {
       },
       collectivites: {
         titre: programmeData.collectivites_titre as unknown as string,
-        cta: programmeData.collectivites_cta as unknown as string,
+        ctaCollectivites: programmeData.collectivites_cta as unknown as string,
+        ctaAnnuaire: programmeData.annuaire_cta as unknown as string,
       },
       compte: {
         titre: programmeData.compte_titre as unknown as string,
