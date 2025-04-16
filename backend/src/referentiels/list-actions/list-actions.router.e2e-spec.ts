@@ -4,7 +4,11 @@ import { getTestRouter } from '../../../test/app-utils';
 import { getAnonUser, getAuthUser } from '../../../test/auth-utils';
 import { AuthenticatedUser } from '../../auth/models/auth.models';
 import { type AppRouter, TrpcRouter } from '../../utils/trpc/trpc.router';
-import { ActionTypeEnum, ReferentielIdEnum } from '../index-domain';
+import {
+  ActionAndScore,
+  ActionTypeEnum,
+  ReferentielIdEnum,
+} from '../index-domain';
 import {
   ListActionsRequestOptionsType,
   listActionsRequestSchema,
@@ -12,10 +16,6 @@ import {
 
 type ListActionsInput = inferProcedureInput<
   AppRouter['referentiels']['actions']['listActions']
->;
-
-type ListActionsWithStatutsInput = inferProcedureInput<
-  AppRouter['referentiels']['actions']['listActionsWithStatuts']
 >;
 
 describe('ActionStatutListRouter', () => {
@@ -108,24 +108,47 @@ describe('ActionStatutListRouter', () => {
 
     const input = {
       collectiviteId: 1,
-      actionIds: ['cae_1.1.1', 'eci_1.3.2'],
-    } satisfies ListActionsWithStatutsInput;
+      filters: {
+        actionIds: ['cae_1.1.1', 'eci_1.3.2'],
+      },
+    } satisfies ListActionsInput;
 
-    const result = await caller.referentiels.actions.listActionsWithStatuts(
-      input
-    );
-    expect(result.length).toEqual(input.actionIds.length);
+    const result = await caller.referentiels.actions.listActions(input);
+
+    expect(result.length).toEqual(input.filters.actionIds.length);
 
     for (const action of result) {
-      expect(input.actionIds).toContain(action.actionId);
+      expect(input.filters.actionIds).toContain(action.actionId);
 
       expect(action.depth).toBeDefined();
       expect(action.actionType).toBeDefined();
 
-      // Specific fields when `withStatuts` is true
       expect(action.statut).toBeDefined();
       expect(action.desactive).toBeDefined();
       expect(action.concerne).toBeDefined();
+    }
+  });
+
+  test('List actions with scores', async () => {
+    const caller = router.createCaller({ user: yoloDodoUser });
+
+    const input = {
+      collectiviteId: 1,
+      filters: {
+        actionIds: ['cae_1.1.1'],
+      },
+    } satisfies ListActionsInput;
+
+    const result = (await caller.referentiels.actions.listActionsWithScores(
+      input
+    )) as ActionAndScore[];
+
+    expect(result.length).toEqual(input.filters.actionIds.length);
+
+    for (const action of result) {
+      expect(input.filters.actionIds).toContain(action.actionId);
+
+      expect(action.score).toBeDefined();
     }
   });
 

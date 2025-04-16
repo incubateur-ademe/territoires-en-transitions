@@ -1,4 +1,4 @@
-import { Action } from '@/app/referentiels/actions/use-list-actions';
+import { Action } from '@/domain/referentiels';
 import { TAxe } from './axe';
 
 export const buildReferentiel = (actions: Action[]): TAxe[] => {
@@ -22,7 +22,7 @@ export const buildReferentiel = (actions: Action[]): TAxe[] => {
         parentSousAxe.children = parentSousAxe.children || [];
         parentSousAxe.children.push(a);
       } else {
-        // Ajoût à un axe
+        // Ajout à un axe
         if (parentAxe) {
           parentAxe.children = parentAxe.children || [];
           parentAxe.children.push(a);
