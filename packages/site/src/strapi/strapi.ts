@@ -15,6 +15,7 @@ type Collection =
   | 'conseillers'
   | 'faqs'
   | 'services'
+  | 'legals'
   | 'temoignages';
 
 type Single =
