@@ -16,7 +16,7 @@ export default defineConfig(({ mode }) => ({
     fileParallelism: false,
     watch: false,
     globals: true,
-    env: loadEnv(mode, process.cwd(), ''),
+    env: loadEnv(mode, __dirname, ''),
 
     include: [
       'src/**/*.{test,spec,e2e-spec}.{js,mjs,cjs,ts,mts,cts,jsx,tsx}',
