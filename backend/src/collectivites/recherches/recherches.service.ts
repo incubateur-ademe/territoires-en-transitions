@@ -30,14 +30,6 @@ import { DatabaseService } from '@/backend/utils';
 import { Injectable, Logger } from '@nestjs/common';
 import { getTableName, sql } from 'drizzle-orm';
 
-/** Projection for contacts */
-const contactsProjection = ` COALESCE(
-              (
-                 SELECT jsonb_agg(contact)
-                 FROM contacts
-                 WHERE contacts.collectiviteId = c.collectiviteId
-              ),'[]'
-            ) AS "contacts"`;
 
 /** Type of view */
 const tabEnum = {
@@ -86,7 +78,7 @@ export default class RecherchesService {
             ) AS "nbPlans",
             c.etoilesEci as "etoilesEci",
             c.etoilesCae as "etoilesCae",
-            ${contactsProjection}
+            ${this.getContactsProjection()}
     FROM filteredCollectivites c
     ORDER BY ${this.getOrderBy(filters, tabEnum.Collectivite)}`;
 
@@ -121,7 +113,7 @@ export default class RecherchesService {
            c.etoilesEci as "etoilesEci",
            c.scoreFaitEci as "scoreFaitEci",
            c.scoreProgrammeEci as "scoreProgrammeEci",
-           ${contactsProjection}
+           ${this.getContactsProjection()}
     FROM filteredCollectivites c
     ORDER BY ${this.getOrderBy(filters, tabEnum.Referentiel)}`;
 
@@ -146,19 +138,7 @@ export default class RecherchesService {
       utilisateurPermissionTable.niveau.name
     } = '${PermissionLevel.ADMIN}' OR pud.${
       utilisateurPermissionTable.niveau.name
-    } = '${PermissionLevel.EDITION}')
-              AND pud.${utilisateurPermissionTable.userId.name} IN (
-                SELECT DISTINCT fap.${ficheActionPiloteTable.userId.name}
-                FROM ${getTableName(ficheActionPiloteTable)} fap
-                JOIN ${getTableName(ficheActionAxeTable)} faa
-                  ON fap.${ficheActionPiloteTable.ficheId.name} = faa.${
-      ficheActionAxeTable.ficheId.name
-    }
-                JOIN ${getTableName(axeTable)} a on faa.${
-      ficheActionAxeTable.axeId.name
-    } = a.${axeTable.id.name}
-                JOIN plans p on a.${axeTable.plan.name} = p.planId
-              )`;
+    } = '${PermissionLevel.EDITION}')`;
 
     // Create the query
     const query = `WITH ${this.getFilteredCollectivitesQuery(
@@ -166,13 +146,13 @@ export default class RecherchesService {
       tabEnum.Plan
     )},
     ${this.getPlansQuery(filters)},
-    ${this.getContactsQuery(whereConditionContacts)}
+    ${this.getContactsQuery(whereConditionContacts, true)}
     SELECT c.collectiviteId as "collectiviteId",
            c.collectiviteNom as "collectiviteNom",
            p.planId as "planId",
            p.planNom as "planNom",
            p.planType as "planType",
-           ${contactsProjection}
+           ${this.getContactsProjection(true)}
     FROM filteredCollectivites c
     JOIN plans p ON c.collectiviteId = p.collectiviteId
     ORDER BY ${this.getOrderBy(filters, tabEnum.Plan)}`;
@@ -523,14 +503,16 @@ export default class RecherchesService {
    * Get WITH subquery for contacts
    * Need WITH subquery for filtered collectivites before
    * @param whereCondition condition according to the tab
+   * @param forPlan true if for plan tab
    * @private
    */
-  private getContactsQuery(whereCondition: string) {
+  private getContactsQuery(whereCondition: string, forPlan?: boolean) {
     // Crate and return the query
     return `contacts AS (
       SELECT pud.${
         utilisateurPermissionTable.collectiviteId.name
       } as collectiviteId,
+      ${forPlan?`p.planId,`: ''}
              jsonb_build_object(
                'prenom', dcp.${dcpTable.prenom.name},
                'nom', dcp.${dcpTable.nom.name},
@@ -555,9 +537,36 @@ export default class RecherchesService {
         ON pud.${
           utilisateurPermissionTable.collectiviteId.name
         } = c.collectiviteId
+      ${forPlan?`JOIN ${getTableName(ficheActionPiloteTable)} fap
+      ON pud.${utilisateurPermissionTable.userId.name} = fap.${ficheActionPiloteTable.userId.name}
+      JOIN ${getTableName(ficheActionAxeTable)} faa
+                  ON fap.${ficheActionPiloteTable.ficheId.name} = faa.${
+      ficheActionAxeTable.ficheId.name
+    }
+                JOIN ${getTableName(axeTable)} a on faa.${
+      ficheActionAxeTable.axeId.name
+    } = a.${axeTable.id.name}
+                JOIN plans p on a.${axeTable.plan.name} = p.planId`:''}
        WHERE pud.${utilisateurPermissionTable.isActive.name} IS true
        AND ${whereCondition}
     )`;
+  }
+
+  /**
+   * Get projection for contacts
+   * @param forPlan true if for plan tab
+   * @private
+   */
+  private getContactsProjection(forPlan? : boolean){
+    /** Projection for contacts */
+    return `COALESCE(
+              (
+                 SELECT jsonb_agg(distinct contact)
+                 FROM contacts
+                 WHERE contacts.collectiviteId = c.collectiviteId
+                 ${forPlan?`AND contacts.planId = p.planId`:''}
+              ),'[]'
+            ) AS "contacts"`;
   }
 
   /**
@@ -605,6 +614,13 @@ export default class RecherchesService {
     }
   }
 
+  /**
+   * Paginate an array
+   * @param data
+   * @param limit
+   * @param page
+   * @private
+   */
   private paginate<T>(
     data: T[],
     limit: number,
