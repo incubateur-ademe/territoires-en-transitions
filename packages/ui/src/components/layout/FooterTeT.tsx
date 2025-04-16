@@ -59,7 +59,7 @@ export const FooterTeT = ({
         },
         {
           label: 'Mentions légales',
-          href: `${SITE_BASE_URL}/mentions-legales`,
+          href: `${SITE_BASE_URL}/legal/mentions-legales`,
         },
         {
           label: 'Données personnelles',
@@ -68,7 +68,15 @@ export const FooterTeT = ({
         },
         {
           label: 'Politique des cookies',
-          href: `${SITE_BASE_URL}/politique-des-cookies`,
+          href: `${SITE_BASE_URL}/legal/politique-des-cookies`,
+        },
+        {
+          label: 'Politique de confidentialité',
+          href: `${SITE_BASE_URL}/legal/politique-de-confidentialite`,
+        },
+        {
+          label: 'Conditions générales d’utilisation',
+          href: `${SITE_BASE_URL}/legal/cgu`,
         },
         {
           label: 'Statistiques',
@@ -87,10 +95,6 @@ export const FooterTeT = ({
           label: 'Feuille de route',
           href: 'https://feuille-de-route.territoiresentransitions.fr/fr/roadmap',
           external: true,
-        },
-        {
-          label: 'Conditions générales d’utilisation',
-          href: `${SITE_BASE_URL}/cgu`,
         },
         ...(customLinks ?? []),
       ]}
