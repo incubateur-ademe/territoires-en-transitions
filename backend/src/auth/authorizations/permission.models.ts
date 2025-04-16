@@ -25,6 +25,7 @@ export const Permission: Record<Role, PermissionOperation[]> = {
   ],
   [Role.ADEME]: [
     PermissionOperation.COLLECTIVITES_VISITE,
+    PermissionOperation.REFERENTIELS_VISITE,
     PermissionOperation.PLANS_FICHES_VISITE,
     PermissionOperation.INDICATEURS_VISITE,
     PermissionOperation.INDICATEURS_TRAJECTOIRES_LECTURE,
@@ -61,6 +62,7 @@ export const Permission: Record<Role, PermissionOperation[]> = {
     PermissionOperation.COLLECTIVITES_VISITE,
     PermissionOperation.COLLECTIVITES_LECTURE,
     PermissionOperation.COLLECTIVITES_TABLEAU_DE_BORD_EDITION,
+    PermissionOperation.REFERENTIELS_VISITE,
     PermissionOperation.REFERENTIELS_LECTURE,
     PermissionOperation.REFERENTIELS_EDITION,
     PermissionOperation.PLANS_FICHES_VISITE,
@@ -75,6 +77,7 @@ export const Permission: Record<Role, PermissionOperation[]> = {
   [Role.AUDITEUR]: [
     PermissionOperation.COLLECTIVITES_VISITE,
     PermissionOperation.COLLECTIVITES_LECTURE,
+    PermissionOperation.REFERENTIELS_VISITE,
     PermissionOperation.REFERENTIELS_LECTURE,
     PermissionOperation.REFERENTIELS_EDITION,
     PermissionOperation.REFERENTIELS_AUDIT,
