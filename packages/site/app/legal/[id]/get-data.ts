@@ -8,10 +8,10 @@ export const getLegalData = async (slug: string) => {
   const legalData = data[0].attributes;
 
   return {
-    id: legalData.slug as string,
-    titre: legalData.titre as string,
-    contenu: legalData.contenu as string,
-    updatedAt: legalData.updatedAt as string,
-    createdAt: legalData.createdAt as string,
+    id: legalData.slug as unknown as string,
+    titre: legalData.titre as unknown as string,
+    contenu: legalData.contenu as unknown as string,
+    updatedAt: legalData.updatedAt as unknown as string,
+    createdAt: legalData.createdAt as unknown as string,
   };
 };
