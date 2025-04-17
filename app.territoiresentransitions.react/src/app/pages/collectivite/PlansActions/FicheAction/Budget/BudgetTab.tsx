@@ -1,12 +1,13 @@
 import { FicheAction } from '@/api/plan-actions';
+import FinanceursModal from '@/app/app/pages/collectivite/PlansActions/FicheAction/Budget/modals/financeurs-modal';
 import { useGetBudget } from '@/app/app/pages/collectivite/PlansActions/FicheAction/Budget/use-get-budget';
 import SpinnerLoader from '@/app/ui/shared/SpinnerLoader';
 import { Button, EmptyCard } from '@/ui';
 import classNames from 'classnames';
 import { useState } from 'react';
 import FinanceursListe from './FinanceursListe';
-import ModaleBudget from './ModaleBudget';
 import MoneyPicto from './MoneyPicto';
+import ModaleBudget from './modals/ModaleBudget';
 
 type BudgetTabProps = {
   isReadonly: boolean;
@@ -16,6 +17,7 @@ type BudgetTabProps = {
 
 const BudgetTab = ({ isReadonly, fiche, updateFiche }: BudgetTabProps) => {
   const [isModalOpen, setIsModalOpen] = useState(false);
+  const [isFinanceursModalOpen, setIsFinanceursModalOpen] = useState(false);
 
   const { financeurs, financements } = fiche;
 
@@ -52,7 +54,7 @@ const BudgetTab = ({ isReadonly, fiche, updateFiche }: BudgetTabProps) => {
             {
               children: 'Ajouter des financeurs',
               variant: 'outlined',
-              onClick: () => setIsModalOpen(true),
+              onClick: () => setIsFinanceursModalOpen(true),
             },
             {
               children: 'Détailler les financements',
@@ -139,6 +141,19 @@ const BudgetTab = ({ isReadonly, fiche, updateFiche }: BudgetTabProps) => {
         fiche={fiche}
         updateFiche={updateFiche}
       />
+
+      {isFinanceursModalOpen && (
+        <FinanceursModal
+          openState={{
+            isOpen: isFinanceursModalOpen,
+            setIsOpen: setIsFinanceursModalOpen,
+          }}
+          financeurs={fiche.financeurs}
+          updateFinanceurs={(financeurs) =>
+            updateFiche({ ...fiche, financeurs })
+          }
+        />
+      )}
     </>
   );
 };
