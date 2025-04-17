@@ -100,6 +100,7 @@ export class ListActionDefinitionsService {
         .where(
           and(
             eq(actionServiceTable.actionId, subQuery.actionId),
+            eq(actionServiceTable.collectiviteId, collectiviteId),
             inArray(actionServiceTable.serviceTagId, filters.servicePiloteIds)
           )
         );
@@ -237,7 +238,10 @@ export class ListActionDefinitionsService {
       )
       .leftJoin(
         actionServiceTable,
-        eq(actionServiceTable.actionId, subQuery.actionId)
+        and(
+          eq(actionServiceTable.actionId, subQuery.actionId),
+          eq(actionServiceTable.collectiviteId, collectiviteId)
+        )
       )
       .leftJoin(
         serviceTagTable,
