@@ -1,17 +1,15 @@
 import FinanceursDropdown from '@/app/ui/dropdownLists/FinanceursDropdown/FinanceursDropdown';
-import { Financeur, FinanceurUpdate } from '@/domain/plans/fiches';
+import { FinanceurUpdate } from '@/domain/plans/fiches';
 import { Button, Field, Input } from '@/ui';
-
-type FinanceurPartial = Omit<Financeur, 'id' | 'ficheId' | 'financeurTagId'>;
 
 type FinanceursInputProps = {
   financeurs: FinanceurUpdate[] | null | undefined;
-  onUpdate: (financeurs: FinanceurUpdate[]) => void;
+  onUpdate: (financeurs: FinanceurUpdate[] | null | undefined) => void;
 };
 
 const FinanceursInput = ({ financeurs, onUpdate }: FinanceursInputProps) => {
   return (
-    <>
+    <div className="flex flex-col gap-6">
       {/* Liste des financeurs */}
       {(financeurs ?? []).map((financeur, index) => (
         <div
@@ -29,12 +27,12 @@ const FinanceursInput = ({ financeurs, onUpdate }: FinanceursInputProps) => {
               onChange={() => ({})}
             />
           </Field>
-          <Field title="Montant engagé" className="col-span-4">
+          <Field title="Montant de subvention obtenu" className="col-span-4">
             <div className="flex gap-4 justify-between">
               <Input
                 containerClassname="w-full"
                 type="number"
-                icon={{ text: 'TTC' }}
+                icon={{ text: 'HT' }}
                 value={financeur.montantTtc?.toString() ?? ''}
                 placeholder="Ajouter un montant"
                 onValueChange={(values) =>
@@ -73,7 +71,7 @@ const FinanceursInput = ({ financeurs, onUpdate }: FinanceursInputProps) => {
         <Field title="Ajouter un financeur" className="col-span-3">
           <FinanceursDropdown
             key={(financeurs ?? []).length}
-            placeholder="Rechercher par mots-clés ou créer un tag"
+            placeholder="Sélectionnez ou créez un tag"
             values={undefined}
             disabledOptionsIds={(financeurs ?? []).map(
               (f) => f.financeurTag.id
@@ -85,7 +83,7 @@ const FinanceursInput = ({ financeurs, onUpdate }: FinanceursInputProps) => {
                 {
                   financeurTag: selectedFinanceur,
                   financeurTagId: selectedFinanceur.id,
-                  ficheId: financeurs?.[0].ficheId ?? 0,
+                  ficheId: financeurs?.[0]?.ficheId ?? 0,
                   montantTtc: null,
                 },
               ])
@@ -93,7 +91,7 @@ const FinanceursInput = ({ financeurs, onUpdate }: FinanceursInputProps) => {
           />
         </Field>
       </div>
-    </>
+    </div>
   );
 };
 
