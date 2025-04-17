@@ -21,6 +21,7 @@ export const Grid = ({
 }: Props) => {
   const viewToText: Record<RecherchesViewParam, string> = {
     collectivites: 'aucune collectivité',
+    referentiels: 'aucun référentiel',
     plans: 'aucun plan',
   };
 
@@ -69,8 +70,10 @@ export const Grid = ({
         </div>
       ) : (
         // Grille des cartes
-        <div className="grid xl:grid-cols-2 gap-6">
-          {data.map((data) => renderCard(data))}
+        <div>
+          <div className="grid xl:grid-cols-2 gap-6">
+            {data.map((data) => renderCard(data))}
+          </div>
         </div>
       )}
     </>

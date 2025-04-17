@@ -1,19 +1,12 @@
-import { referentielToName } from '@/app/app/labels';
-import { TCollectiviteCarte } from '@/app/app/pages/CollectivitesEngagees/data/useFilteredCollectivites';
+import { RecherchesCollectivite } from '@/api/collectiviteEngagees';
 import { makeCollectiviteAccueilUrl } from '@/app/app/paths';
-import { NIVEAUX } from '@/app/referentiels/tableau-de-bord/labellisation/LabellisationInfo';
-import {
-  GreyStar,
-  RedStar,
-} from '@/app/referentiels/tableau-de-bord/labellisation/Star';
-import { toPercentString } from '@/app/utils/to-percent-string';
-import { ReferentielId } from '@/domain/referentiels';
-import { Icon } from '@/ui';
+import { useCurrentCollectivite } from '@/app/core-logic/hooks/useCurrentCollectivite';
+import { Card, Icon, useEventTracker } from '@/ui';
 import classNames from 'classnames';
-import Link from 'next/link';
+import ContactsDisplay from '../contacts/contacts-display';
 
 type Props = {
-  collectivite: TCollectiviteCarte;
+  collectivite: RecherchesCollectivite;
   canUserClickCard: boolean;
 };
 
@@ -28,109 +21,103 @@ export const CollectiviteCarte = ({
   collectivite,
   canUserClickCard,
 }: Props) => {
+  const {
+    collectiviteId,
+    collectiviteNom,
+    nbIndicateurs,
+    nbPlans,
+    etoilesCae,
+    etoilesEci,
+    contacts,
+  } = collectivite;
+
+  const currentCollectivite = useCurrentCollectivite();
+  const tracker = useEventTracker('app/recherches', 'collectivites');
+
   return (
-    <Link
-      data-test="CollectiviteCarte"
-      href={
-        canUserClickCard
-          ? makeCollectiviteAccueilUrl({
-              collectiviteId: collectivite.collectivite_id,
-            })
-          : '#'
-      }
-      className={classNames(
-        'p-8 !bg-none bg-white rounded-xl border border-primary-3',
-        {
-          'cursor-default, pointer-events-none': !canUserClickCard,
-          'hover:!bg-primary-2': canUserClickCard,
+    <div className="relative h-full group">
+      <ContactsDisplay
+        view="collectivites"
+        contacts={contacts}
+        collectiviteName={collectiviteNom}
+        buttonClassName="!absolute top-4 right-4 invisible group-hover:visible"
+        onButtonClick={() =>
+          tracker('collectivites:voir_contacts_click', {
+            collectiviteId,
+            niveauAcces: currentCollectivite?.niveauAcces ?? null,
+            role: currentCollectivite?.role ?? null,
+          })
         }
-      )}
-    >
-      <div className="mb-4 text-lg font-bold text-primary-9">
-        {collectivite.nom}
-      </div>
-      <div className="flex justify-between gap-4 sm:gap-8 xl:gap-8">
-        <ReferentielCol
-          referentiel={'cae'}
-          etoiles={collectivite.etoiles_cae}
-          scoreRealise={collectivite.score_fait_cae}
-          scoreProgramme={collectivite.score_programme_cae}
-          concerne={collectivite.type_collectivite !== 'syndicat'}
-        />
-        <div className="w-px mx-auto flex-shrink-0 bg-gray-200"></div>
-        <ReferentielCol
-          referentiel={'eci'}
-          etoiles={collectivite.etoiles_eci}
-          scoreRealise={collectivite.score_fait_eci}
-          scoreProgramme={collectivite.score_programme_eci}
-          concerne={true}
-        />
-      </div>
-    </Link>
-  );
-};
+      />
 
-export type TReferentielColProps = {
-  referentiel: ReferentielId;
-  etoiles: number;
-  scoreRealise: number;
-  scoreProgramme: number;
-  concerne: boolean;
-};
-
-/**
- * Une colonne avec les éléments de score pour la carte collectivité.
- */
-export const ReferentielCol = (props: TReferentielColProps) => {
-  return (
-    <div className="flex flex-col gap-3 flex-1">
-      <div className="text-sm font-bold text-primary-7">
-        {referentielToName[props.referentiel]}
-      </div>
-      {props.concerne ? (
-        <>
-          <CinqEtoiles etoiles={props.etoiles} />
-          <div className="flex items-center text-xs text-grey-6">
-            <Icon icon="line-chart-line" size="sm" className="mr-1.5" />
-            <span className="mr-1 font-semibold">
-              {toPercentString(props.scoreRealise)}
-            </span>
-            réalisé courant
-          </div>
-          <div className="flex items-center text-xs text-grey-6">
-            <Icon icon="calendar-line" size="sm" className="mr-1.5" />
-            <span className="mr-1 font-semibold">
-              {toPercentString(props.scoreProgramme)}
-            </span>
-            programmé
-          </div>
-        </>
-      ) : (
-        <div className="my-auto mr-auto font-light italic text-grey-6">
-          Non concerné
+      <Card
+        className={classNames('h-full !border-primary-3 !py-5 !px-6 !gap-3', {
+          'hover:!bg-primary-0': canUserClickCard,
+        })}
+        href={
+          canUserClickCard
+            ? makeCollectiviteAccueilUrl({
+                collectiviteId: collectiviteId,
+              })
+            : undefined
+        }
+        onClick={() =>
+          tracker('collectivites_onglet_collectivites:cartes_click', {
+            collectiviteId,
+            niveauAcces: currentCollectivite?.niveauAcces ?? null,
+            role: currentCollectivite?.role ?? null,
+          })
+        }
+      >
+        <div className="mb-0 text-lg font-bold text-primary-9">
+          {collectiviteNom}
         </div>
-      )}
-    </div>
-  );
-};
 
-export type TCinqEtoilesProps = {
-  etoiles: number;
-};
+        <div className="flex justify-between gap-4 sm:gap-6 xl:gap-8">
+          {/* Indicateurs / plans */}
+          <div className="flex flex-col gap-3 flex-1">
+            <div>
+              <span className="text-xs text-grey-9 font-normal">
+                <Icon icon="line-chart-line" size="sm" className="mr-1.5" />
+                <span className="font-bold">{nbIndicateurs}</span>{' '}
+                {nbIndicateurs > 1
+                  ? 'indicateurs renseignés'
+                  : 'indicateur renseigné'}
+              </span>
+              <div className="text-grey-7 italic text-xs font-normal">
+                (open data et indicateurs renseignés par la collectivité)
+              </div>
+            </div>
 
-/**
- * Les étoiles affichées dans la colonne des informations relative au
- * référentiel.
- */
-const CinqEtoiles = ({ etoiles }: TCinqEtoilesProps) => {
-  return (
-    <div className="flex gap-2">
-      {/* <div className="flex -space-x-3 first:-m-1 sm:-space-x-1 lg:-space-x-2 xl:-space-x-1"> */}
-      {NIVEAUX.map((niveau) => {
-        const obtenue = etoiles >= niveau;
-        const Star = obtenue ? RedStar : GreyStar;
-        return <Star key={niveau} className="!w-6 !h-6" />;
-      })}
+            <span className="text-xs text-grey-9 font-normal">
+              <Icon icon="folders-line" size="sm" className="mr-1.5" />
+              <span className="font-bold">{nbPlans}</span>{' '}
+              {nbPlans > 1 ? "plans d'action" : "plan d'action"}
+            </span>
+          </div>
+
+          {/* Séparateur */}
+          <div className="w-[0.5px] mx-auto flex-shrink-0 bg-grey-4" />
+
+          {/* Etoiles */}
+          <div className="flex flex-col gap-3 flex-1">
+            <span className="text-xs text-grey-9 font-normal">
+              <Icon icon="star-line" size="sm" className="mr-1.5" />
+              <span className="font-bold">
+                {etoilesCae} {etoilesCae > 1 ? 'étoiles' : 'étoile'}
+              </span>{' '}
+              Climat Air Énergie
+            </span>
+            <span className="text-xs text-grey-9 font-normal">
+              <Icon icon="star-line" size="sm" className="mr-1.5" />
+              <span className="font-bold">
+                {etoilesEci} {etoilesEci > 1 ? 'étoiles' : 'étoile'}
+              </span>{' '}
+              Économie Circulaire
+            </span>
+          </div>
+        </div>
+      </Card>
     </div>
   );
 };

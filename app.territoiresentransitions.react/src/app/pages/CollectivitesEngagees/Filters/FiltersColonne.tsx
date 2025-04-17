@@ -23,39 +23,48 @@ const FiltersColonne = ({ vue, filters, setFilters }: Props) => {
     <>
       <div
         className={classNames(
-          'flex flex-col shrink-0 h-min bg-white md:py-10 md:px-8 md:rounded-xl md:!block md:w-5/12 lg:w-4/12 xl:w-3/12',
+          `
+          flex flex-col shrink-0
+          bg-white md:rounded-xl
+          max-md:fixed md:!block
+          h-screen md:h-min w-full md:w-5/12 xl:w-3/12
+          p-4 pb-6 md:py-10 md:px-8
+          max-md:inset-0 max-md:overflow-y-auto max-md:z-[500]
+          `,
           {
             hidden: !isMobileFilterOpen,
-            'fixed inset-0 h-screen p-4 pb-6 overflow-y-auto':
-              isMobileFilterOpen,
           }
         )}
       >
-        {isMobileFilterOpen && (
-          <>
-            {/* Close filters on mobile */}
-            <Button
-              onClick={() => setIsMobileFilterOpen(false)}
-              className="ml-auto mb-8"
-              icon="close-line"
-              iconPosition="right"
-              variant="outlined"
-              size="sm"
-            />
-            <h4>Filtrer</h4>
-          </>
-        )}
-        <Filters vue={vue} filters={filters} setFilters={setFilters} />
-        {isMobileFilterOpen && (
-          /* Display results button on mobile */
+        {/* Close filters on mobile */}
+        <div
+          className={classNames('md:hidden', { hidden: !isMobileFilterOpen })}
+        >
           <Button
-            className="mt-8 mx-auto"
             onClick={() => setIsMobileFilterOpen(false)}
-          >
-            Afficher les résultats
-          </Button>
-        )}
+            className="ml-auto mb-8"
+            icon="close-line"
+            iconPosition="right"
+            variant="outlined"
+            size="sm"
+          />
+          <h4>Filtrer</h4>
+        </div>
+
+        {/* Filtres */}
+        <Filters vue={vue} filters={filters} setFilters={setFilters} />
+
+        {/* Display results button on mobile */}
+        <Button
+          className={classNames('mt-8 mx-auto md:hidden', {
+            hidden: !isMobileFilterOpen,
+          })}
+          onClick={() => setIsMobileFilterOpen(false)}
+        >
+          Afficher les résultats
+        </Button>
       </div>
+
       {/* Trigger filters on mobile */}
       {!isMobileFilterOpen && (
         <div className="fixed bottom-0 inset-x-0 z-[1000] md:hidden">

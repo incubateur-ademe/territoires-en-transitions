@@ -1,4 +1,4 @@
-import { CollectiviteEngagee } from '@/api';
+import { RecherchesPlan } from '@/api/collectiviteEngagees';
 import { PlanCarte } from '@/app/app/pages/CollectivitesEngagees/Views/PlanCarte';
 import View, {
   CollectivitesEngageesView,
@@ -17,10 +17,10 @@ const PlansView = (props: CollectivitesEngageesView) => {
       dataCount={plansCount}
       isLoading={isLoading}
       renderCard={(data) => {
-        const plan = data as CollectiviteEngagee.TPlanCarte;
+        const plan = data as RecherchesPlan;
         return (
           <PlanCarte
-            key={plan.id}
+            key={plan.planId}
             plan={plan}
             canUserClickCard={props.canUserClickCard}
           />

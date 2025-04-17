@@ -1,26 +1,26 @@
-import { RecherchesCollectivite } from '@/api/collectiviteEngagees';
+import { RecherchesReferentiel } from '@/api/collectiviteEngagees';
 import View, {
   CollectivitesEngageesView,
 } from '@/app/app/pages/CollectivitesEngagees/Views/View';
-import { useFilteredCollectivites } from '../data/useFilteredCollectivites';
-import { CollectiviteCarte } from './CollectiviteCarte';
+import { useFilteredReferentiels } from '@/app/app/pages/CollectivitesEngagees/data/useFilteredReferentiels';
+import { ReferentielCarte } from './ReferentielCarte';
 
-const CollectivitesView = (props: CollectivitesEngageesView) => {
+const ReferentielsView = (props: CollectivitesEngageesView) => {
   /** Data */
   const { collectivites, collectivitesCount, isLoading } =
-    useFilteredCollectivites(props.filters);
+    useFilteredReferentiels(props.filters);
 
   return (
     <View
       {...props}
-      view="collectivites"
+      view="referentiels"
       data={collectivites}
       dataCount={collectivitesCount}
       isLoading={isLoading}
       renderCard={(data) => {
-        const collectivite = data as RecherchesCollectivite;
+        const collectivite = data as RecherchesReferentiel;
         return (
-          <CollectiviteCarte
+          <ReferentielCarte
             key={collectivite.collectiviteId}
             collectivite={collectivite}
             canUserClickCard={props.canUserClickCard}
@@ -31,4 +31,4 @@ const CollectivitesView = (props: CollectivitesEngageesView) => {
   );
 };
 
-export default CollectivitesView;
+export default ReferentielsView;

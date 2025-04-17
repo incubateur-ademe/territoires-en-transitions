@@ -1,7 +1,6 @@
 import PlansView from '@/app/app/pages/CollectivitesEngagees/Views/PlansView';
 import { Route } from 'react-router-dom';
-import Filters from './Filters/FiltersColonne';
-import CollectivitesView from './Views/CollectivitesView';
+import ReferentielsView from './Views/ReferentielsView';
 
 import { useUser } from '@/api/users/user-provider';
 import { useSearchParams } from '@/app/core-logic/hooks/query';
@@ -10,10 +9,11 @@ import { CollectiviteEngagee, getRejoindreCollectivitePath } from '@/api';
 import {
   recherchesCollectivitesUrl,
   recherchesPlansUrl,
+  recherchesReferentielsUrl,
 } from '@/app/app/paths';
 import { useSansCollectivite } from '@/app/core-logic/hooks/useSansCollectivite';
 import { Alert, Button } from '@/ui';
-import PageContainer from '@/ui/components/layout/page-container';
+import CollectivitesView from './Views/CollectivitesView';
 import { initialFilters, nameToShortNames } from './data/filters';
 
 const DecouvrirLesCollectivites = () => {
@@ -23,11 +23,12 @@ const DecouvrirLesCollectivites = () => {
   const sansCollectivite = useSansCollectivite();
 
   /** Filters */
-  const [filters, setFilters] = useSearchParams<CollectiviteEngagee.Filters>(
-    recherchesCollectivitesUrl,
-    initialFilters,
-    nameToShortNames
-  );
+  const [filters, setFilters, _count, setView] =
+    useSearchParams<CollectiviteEngagee.Filters>(
+      recherchesCollectivitesUrl,
+      initialFilters,
+      nameToShortNames
+    );
 
   return (
     <>
@@ -40,7 +41,7 @@ const DecouvrirLesCollectivites = () => {
           footer={
             <Button
               dataTest="btn-AssocierCollectivite"
-              size="sm"
+              size="xs"
               href={getRejoindreCollectivitePath(document.location.origin)}
             >
               Rejoindre une collectivité
@@ -48,34 +49,37 @@ const DecouvrirLesCollectivites = () => {
           }
         />
       )}
-      <PageContainer dataTest="ToutesLesCollectivites" bgColor="primary">
-        <div className="md:flex md:gap-6 xl:gap-12">
-          <Route path={recherchesCollectivitesUrl}>
-            <Filters
-              vue="collectivites"
-              filters={filters}
-              setFilters={setFilters}
-            />
-            <CollectivitesView
-              initialFilters={initialFilters}
-              filters={filters}
-              setFilters={setFilters}
-              isConnected={isConnected}
-              canUserClickCard={!sansCollectivite && isConnected}
-            />
-          </Route>
-          <Route path={recherchesPlansUrl}>
-            <Filters vue="plans" filters={filters} setFilters={setFilters} />
-            <PlansView
-              initialFilters={initialFilters}
-              filters={{ ...filters, trierPar: ['nom'] }}
-              setFilters={setFilters}
-              isConnected={isConnected}
-              canUserClickCard={!sansCollectivite && isConnected}
-            />
-          </Route>
-        </div>
-      </PageContainer>
+
+      <Route path={recherchesCollectivitesUrl}>
+        <CollectivitesView
+          initialFilters={initialFilters}
+          filters={filters}
+          setFilters={setFilters}
+          setView={setView}
+          isConnected={isConnected}
+          canUserClickCard={!sansCollectivite && isConnected}
+        />
+      </Route>
+      <Route path={recherchesReferentielsUrl}>
+        <ReferentielsView
+          initialFilters={initialFilters}
+          filters={filters}
+          setFilters={setFilters}
+          setView={setView}
+          isConnected={isConnected}
+          canUserClickCard={!sansCollectivite && isConnected}
+        />
+      </Route>
+      <Route path={recherchesPlansUrl}>
+        <PlansView
+          initialFilters={initialFilters}
+          filters={{ ...filters }}
+          setFilters={setFilters}
+          setView={setView}
+          isConnected={isConnected}
+          canUserClickCard={!sansCollectivite && isConnected}
+        />
+      </Route>
     </>
   );
 };

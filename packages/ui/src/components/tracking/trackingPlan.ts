@@ -36,6 +36,8 @@ export type PanierOngletName =
   | 'en cours'
   | 'importees';
 
+type RecherchesOngletName = 'collectivites' | 'referentiels' | 'plans';
+
 /** Pour le tracking de page sans données additionnelles */
 type NoProps = {
   properties: undefined;
@@ -354,6 +356,22 @@ export interface TrackingPlan extends Record<never, Page> {
       cta_lancer_calcul: { source: 'open_data' | 'collectivite' };
       cta_download: { file: 'modele' | 'donnees' | 'methodo' };
       selection_secteur: { secteur: string };
+    };
+  };
+
+  /** Page toutes les collectivités */
+  'app/recherches': {
+    properties: CollectiviteDefaultProps;
+    onglets: RecherchesOngletName;
+    events: {
+      'collectivites:voir_contacts_click': {};
+      'collectivites_onglet_collectivites:cartes_click': {};
+      'collectivites_onglet_referentiels:cartes_click': {};
+      'collectivites_onglet_referentiels:filtre_labellisation_select': {
+        labellisation: string[];
+      };
+      'collectivites_onglet_pa:cartes_click': {};
+      'collectivites_onglet_pa:filtre_type_pa_select': { plan: string[] };
     };
   };
 

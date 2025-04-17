@@ -1,7 +1,13 @@
-import { Field, Input, SelectFilter } from '@/ui';
+import {
+  Field,
+  Input,
+  SelectFilter,
+  getFlatOptions,
+  useEventTracker,
+} from '@/ui';
 
 import { CollectiviteEngagee } from '@/api';
-import { usePlanTypeListe } from '@/app/app/pages/collectivite/PlansActions/PlanAction/data/usePlanTypeListe';
+import { MultiSelectCheckboxes } from '@/app/app/pages/CollectivitesEngagees/Filters/MultiSelectCheckboxes';
 import { SetFilters } from '@/app/app/pages/CollectivitesEngagees/data/filters';
 import {
   niveauLabellisationCollectiviteOptions,
@@ -10,8 +16,9 @@ import {
   tauxRemplissageCollectiviteOptions,
   typeCollectiviteOptions,
 } from '@/app/app/pages/CollectivitesEngagees/data/filtreOptions';
-import { MultiSelectCheckboxes } from '@/app/app/pages/CollectivitesEngagees/Filters/MultiSelectCheckboxes';
+import { usePlanTypeListe } from '@/app/app/pages/collectivite/PlansActions/PlanAction/data/usePlanTypeListe';
 import { RecherchesViewParam } from '@/app/app/paths';
+import { useCurrentCollectivite } from '@/app/core-logic/hooks/useCurrentCollectivite';
 import SpinnerLoader from '@/app/ui/shared/SpinnerLoader';
 import { useEffect, useState } from 'react';
 import { useDepartements } from '../data/useDepartements';
@@ -24,6 +31,9 @@ type Props = {
 };
 
 export const Filters = ({ vue, filters, setFilters }: Props) => {
+  const currentCollectivite = useCurrentCollectivite();
+  const tracker = useEventTracker('app/recherches', vue);
+
   const { regions, isLoading: isRegionsLoading } = useRegions();
   const { departements, isLoading: isDepartementsLoading } = useDepartements();
   const { options: planTypeOptions } = usePlanTypeListe();
@@ -60,11 +70,20 @@ export const Filters = ({ vue, filters, setFilters }: Props) => {
             /** Type plan d'action */
             <Field title="Type de plan" small>
               <SelectFilter
+                dropdownZindex={600} // nécessaire pour le menu mobile
                 options={planTypeOptions ?? []}
                 onChange={({ values }) => {
                   setFilters({
                     ...filters,
                     typesPlan: (values as number[]) ?? [],
+                  });
+                  tracker('collectivites_onglet_pa:filtre_type_pa_select', {
+                    collectiviteId: currentCollectivite?.collectiviteId ?? 0,
+                    niveauAcces: currentCollectivite?.niveauAcces ?? null,
+                    role: currentCollectivite?.role ?? null,
+                    plan: getFlatOptions(planTypeOptions ?? [])
+                      .filter((p) => values?.includes(p.value))
+                      .map((plan) => plan.label),
                   });
                 }}
                 values={filters.typesPlan}
@@ -78,6 +97,7 @@ export const Filters = ({ vue, filters, setFilters }: Props) => {
           {/** Région */}
           <Field title="Région" small>
             <SelectFilter
+              dropdownZindex={600} // nécessaire pour le menu mobile
               options={regions.map(({ code, libelle }) => ({
                 value: code,
                 label: libelle,
@@ -130,6 +150,7 @@ export const Filters = ({ vue, filters, setFilters }: Props) => {
           {/** Départements */}
           <Field title="Département" small>
             <SelectFilter
+              dropdownZindex={600} // nécessaire pour le menu mobile
               options={departements
                 .filter(
                   (dep) =>
@@ -154,6 +175,7 @@ export const Filters = ({ vue, filters, setFilters }: Props) => {
           {/** Type de collectivité */}
           <Field title="Type de collectivité" small>
             <SelectFilter
+              dropdownZindex={600} // nécessaire pour le menu mobile
               options={typeCollectiviteOptions}
               onChange={({ values }) => {
                 setFilters({
@@ -168,6 +190,7 @@ export const Filters = ({ vue, filters, setFilters }: Props) => {
           {/** Population */}
           <Field title="Population" small>
             <SelectFilter
+              dropdownZindex={600} // nécessaire pour le menu mobile
               options={populationCollectiviteOptions}
               onChange={({ values }) => {
                 setFilters({
@@ -179,7 +202,7 @@ export const Filters = ({ vue, filters, setFilters }: Props) => {
               small
             />
           </Field>
-          {vue === 'collectivites' && (
+          {vue === 'referentiels' && (
             <>
               <MultiSelectCheckboxes
                 htmlId="ref"
@@ -196,12 +219,22 @@ export const Filters = ({ vue, filters, setFilters }: Props) => {
                 options={niveauLabellisationCollectiviteOptions}
                 onChange={(selected) => {
                   setFilters({ ...filters, niveauDeLabellisation: selected });
+                  tracker(
+                    'collectivites_onglet_referentiels:filtre_labellisation_select',
+                    {
+                      collectiviteId: currentCollectivite?.collectiviteId ?? 0,
+                      niveauAcces: currentCollectivite?.niveauAcces ?? null,
+                      role: currentCollectivite?.role ?? null,
+                      labellisation: selected,
+                    }
+                  );
                 }}
                 selected={filters.niveauDeLabellisation}
               />
               {/** Taux de remplissage */}
               <Field title="Taux de remplissage" small>
                 <SelectFilter
+                  dropdownZindex={600} // nécessaire pour le menu mobile
                   options={tauxRemplissageCollectiviteOptions}
                   onChange={({ values }) => {
                     setFilters({
