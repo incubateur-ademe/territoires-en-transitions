@@ -1,30 +1,68 @@
-import { Button, ButtonProps, ButtonSize } from '@/ui';
+import { Badge, BadgeSize, Button, ButtonProps, ButtonSize } from '@/ui';
 import classNames from 'classnames';
 import React from 'react';
 
 type EmptyCardSize = 'xs' | 'md' | 'xl';
 
+type PictoProps = {
+  className: string;
+  width: string;
+  height: string;
+};
+
+const sizeClasses = {
+  xs: {
+    container: 'gap-4',
+    title: 'text-lg leading-5',
+    subtitle: 'text-sm leading-5',
+    description: 'text-sm',
+    badgeSize: 'sm' as BadgeSize,
+    buttonSize: 'xs' as ButtonSize,
+    picto: { width: '100px', height: '100px' },
+  },
+  md: {
+    container: 'gap-4',
+    title: 'text-2xl',
+    subtitle: 'text-lg leading-6',
+    description: 'text-lg',
+    badgeSize: 'sm' as BadgeSize,
+    buttonSize: 'xs' as ButtonSize,
+    picto: { width: '100px', height: '100px' },
+  },
+  xl: {
+    container: 'gap-5',
+    title: 'text-3xl',
+    subtitle: 'text-xl leading-7',
+    description: 'text-lg',
+    badgeSize: 'md' as BadgeSize,
+    buttonSize: 'xl' as ButtonSize,
+    picto: { width: '160px', height: '160px' },
+  },
+};
+
 type EmptyCardProps = {
-  picto: (props: {
-    className?: string;
-    width?: string;
-    height?: string;
-  }) => React.ReactNode;
+  /** Pictogramme en en-tête de la carte */
+  picto: (props: PictoProps) => React.ReactNode;
+  /** Titre de la carte */
   title?: string;
+  /** Sous-titre de la carte */
   subTitle?: string;
+  /** Texte descriptif, affiché sous le titre et le sous-titre */
   description?: string;
-  additionalContent?: React.ReactNode;
-  isReadonly?: boolean;
-  /**
-   * @description The actions to display in the card.
-   * @description Can be a a Button component or a ButtonProps object.
-   */
-  actions?: (ButtonProps | React.ReactElement)[];
-  className?: string;
-  dataTest?: string;
-  background?: 'bg-primary-0' | 'bg-transparent';
-  border?: 'border-primary-4' | 'border-transparent';
+  /** Liste de tags, affichés sous la description */
+  tags?: string[];
+  /** Conditionne le background et le border color de la carte */
+  variant?: 'primary' | 'transparent';
+  /** Conditionne la taille de la carte et de ses éléments */
   size?: EmptyCardSize;
+  /** CTAs de la carte, liste de boutons ou d'objets ButtonProps  */
+  actions?: (ButtonProps | React.ReactElement)[];
+  /** Conditionne l'affichage des CTA */
+  isReadonly?: boolean;
+  /** Permet l'ajout de classNames custom */
+  className?: string;
+  /** Permet l'ajout d'un data-test id */
+  dataTest?: string;
 };
 
 export const EmptyCard = ({
@@ -32,108 +70,106 @@ export const EmptyCard = ({
   title,
   subTitle,
   description,
-  additionalContent,
-  isReadonly = false,
+  tags,
+  variant = 'primary',
+  size = 'md',
   actions = [],
+  isReadonly = false,
   className,
   dataTest,
-  background = 'bg-primary-0',
-  border = 'border-primary-4',
-  size = 'md',
 }: EmptyCardProps) => {
-  const sizeClasses = {
-    xs: {
-      container: 'py-4 px-4 gap-2',
-      title: 'text-lg',
-      subtitle: 'text-sm',
-      description: 'text-sm',
-      buttonSize: 'xs' as ButtonSize,
-      actionsContainer: 'mt-2 gap-2',
-      picto: { width: '100px', height: '100px' },
-    },
-    md: {
-      container: 'py-7 lg:py-8 xl:py-10 px-5 lg:px-6 xl:px-8 gap-3',
-      title: 'text-2xl',
-      subtitle: 'text-lg',
-      description: 'text-lg',
-      buttonSize: 'md' as ButtonSize,
-      actionsContainer: 'mt-3 gap-4',
-      picto: { width: '100px', height: '100px' },
-    },
-    xl: {
-      container: 'py-10 lg:py-12 xl:py-14 px-6 lg:px-8 xl:px-10 gap-4',
-      title: 'text-3xl',
-      subtitle: 'text-xl',
-      description: 'text-lg',
-      buttonSize: 'xl' as ButtonSize,
-      actionsContainer: 'mt-4 gap-4',
-      picto: { width: '160px', height: '160px' },
-    },
-  };
-
   return (
     <div
       className={classNames(
-        `${background} border ${border} rounded-lg flex flex-col items-center justify-center`,
+        'flex flex-col items-center justify-center py-7 px-5 lg:py-8 lg:px-6 xl:py-10 xl:px-8 rounded-lg border',
+        {
+          'bg-primary-0 border-primary-4': variant === 'primary',
+          'bg-transparent border-transparent': variant === 'transparent',
+        },
         sizeClasses[size].container,
         className
       )}
       data-test={dataTest}
     >
+      {/* Pictogramme */}
       {picto({
         className: 'mx-auto',
         width: sizeClasses[size].picto.width,
         height: sizeClasses[size].picto.height,
       })}
-      {!!title && (
+
+      <div
+        className={classNames('flex flex-col gap-2', {
+          hidden: !title && !subTitle && !description,
+        })}
+      >
+        {/* Titre */}
         <h6
           className={classNames(
-            'leading-5 text-center text-primary-8 mb-0 px-2',
+            'text-center mb-0',
+            { hidden: !title },
             sizeClasses[size].title
           )}
         >
           {title}
         </h6>
-      )}
-      {!!subTitle && (
+
+        {/* Sous-titre */}
         <p
           className={classNames(
-            'text-primary-9 text-center mb-0',
+            'text-primary-7 font-normal text-center mb-0',
+            { hidden: !subTitle },
             sizeClasses[size].subtitle
           )}
         >
           {subTitle}
         </p>
-      )}
-      {!!description && (
+
+        {/* Desciption */}
         <p
           className={classNames(
-            'text-primary-9 text-center mb-0 w-[70%]',
+            'text-primary-9 text-center mb-0',
+            { hidden: !description },
             sizeClasses[size].description
           )}
         >
           {description}
         </p>
-      )}
-      {!!additionalContent && additionalContent}
+      </div>
+
+      {/* Liste de tags */}
+      <div
+        className={classNames('flex flex-wrap gap-2', {
+          hidden: !tags || tags.length === 0,
+        })}
+      >
+        {tags?.map((tag) => (
+          <Badge
+            title={tag}
+            state="standard"
+            size={sizeClasses[size].badgeSize}
+          />
+        ))}
+      </div>
+
+      {/* Boutons */}
       {!isReadonly && (
-        <div
-          className={classNames(
-            'flex justify-center items-center',
-            sizeClasses[size].actionsContainer
-          )}
-        >
-          {actions.map((action, index) => {
-            return React.isValidElement(action) ? (
-              <React.Fragment key={index}>{action}</React.Fragment>
-            ) : (
-              <Button
-                key={index}
-                size={sizeClasses[size].buttonSize}
-                {...(action as ButtonProps)}
-              />
-            );
-          })}
+        <div className="flex flex-wrap justify-center items-center gap-x-4 gap-y-2">
+          {actions.map((action, index) => (
+            <React.Fragment key={index}>
+              {React.isValidElement(action) ? (
+                action
+              ) : (
+                <Button
+                  size={sizeClasses[size].buttonSize}
+                  {...(action as ButtonProps)}
+                />
+              )}
+              {index % 2 !== 0 && index !== actions.length - 1 && (
+                <div className="basis-full h-0" />
+              )}
+            </React.Fragment>
+          ))}
         </div>
       )}
     </div>
