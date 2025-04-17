@@ -249,8 +249,7 @@ const IndicateursListe = ({
               onClick: () => setIsSettingsOpen(true),
             },
           ]}
-          background="bg-transparent"
-          border="border-transparent"
+          variant="transparent"
         />
       ) : (
         /** Liste des indicateurs */

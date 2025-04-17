@@ -15,6 +15,8 @@ export type BadgeState =
   | 'grey'
   | 'custom';
 
+export type BadgeSize = 'sm' | 'md';
+
 export type BadgeProps = {
   /** Id pour les tests e2e */
   dataTest?: string;
@@ -23,7 +25,7 @@ export type BadgeProps = {
   /** État */
   state?: BadgeState;
   /** Taille du badge */
-  size?: 'sm' | 'md';
+  size?: BadgeSize;
   /** Affiche le badge en style light */
   light?: boolean;
   /** Icône à afficher dans le badge */

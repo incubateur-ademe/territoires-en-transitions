@@ -203,8 +203,7 @@ const FichesActionListe = ({
                 onClick: () => createFicheAction(),
               },
             ]}
-            background="bg-transparent"
-            border="border-transparent"
+            variant="transparent"
           />
         </div>
       )}
@@ -327,8 +326,7 @@ const FichesActionListe = ({
                   onClick: () => setIsSettingsOpen(true),
                 },
               ]}
-              background="bg-transparent"
-              border="border-transparent"
+              variant="transparent"
             />
           ) : (
             /** Liste des fiches actions */
