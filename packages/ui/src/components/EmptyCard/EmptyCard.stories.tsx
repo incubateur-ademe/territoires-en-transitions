@@ -1,6 +1,6 @@
+import { Button } from '@/ui/design-system/Button';
 import type { Meta, StoryObj } from '@storybook/react';
 import { EmptyCard } from './EmptyCard';
-import { Button } from '@/ui/design-system/Button';
 
 const DemoIcon = (
   className: string,
@@ -51,8 +51,7 @@ export const Default: Story = {
     subTitle: 'Sous-titre optionnel',
     description:
       'Description optionnelle qui explique plus en détail le contexte',
-    background: 'bg-primary-0',
-    border: 'border-primary-4',
+    variant: 'primary',
     size: 'md',
     actions: [
       {
@@ -90,17 +89,6 @@ export const Large: Story = {
   },
 };
 
-export const WithBadges: Story = {
-  args: {
-    ...Default.args,
-    additionalContent: (
-      <div>
-        <DemoBadges />
-      </div>
-    ),
-  },
-};
-
 export const ReadOnly: Story = {
   args: {
     ...Default.args,
@@ -111,8 +99,7 @@ export const ReadOnly: Story = {
 export const Transparent: Story = {
   args: {
     ...Default.args,
-    background: 'bg-transparent',
-    border: 'border-transparent',
+    variant: 'transparent',
   },
 };
 

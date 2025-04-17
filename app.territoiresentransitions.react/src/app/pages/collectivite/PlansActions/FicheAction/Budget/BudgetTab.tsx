@@ -1,8 +1,9 @@
 import { FicheAction } from '@/api/plan-actions';
+import { useGetBudget } from '@/app/app/pages/collectivite/PlansActions/FicheAction/Budget/use-get-budget';
+import SpinnerLoader from '@/app/ui/shared/SpinnerLoader';
 import { Button, EmptyCard } from '@/ui';
 import classNames from 'classnames';
 import { useState } from 'react';
-import BudgetBadge from './BudgetBadge';
 import FinanceursListe from './FinanceursListe';
 import ModaleBudget from './ModaleBudget';
 import MoneyPicto from './MoneyPicto';
@@ -16,10 +17,20 @@ type BudgetTabProps = {
 const BudgetTab = ({ isReadonly, fiche, updateFiche }: BudgetTabProps) => {
   const [isModalOpen, setIsModalOpen] = useState(false);
 
-  const { budgetPrevisionnel, financeurs, financements } = fiche;
+  const { financeurs, financements } = fiche;
+
+  const { data: budget, isLoading: isBudgetLoading } = useGetBudget({
+    ficheId: fiche.id,
+  });
+
+  if (isBudgetLoading) {
+    return <SpinnerLoader className="mx-auto my-8" />;
+  }
 
   const isEmpty =
-    budgetPrevisionnel === null &&
+    !isBudgetLoading &&
+    !!budget &&
+    budget.length === 0 &&
     (!financeurs || financeurs.length === 0) &&
     !financements;
 
@@ -28,12 +39,25 @@ const BudgetTab = ({ isReadonly, fiche, updateFiche }: BudgetTabProps) => {
       {isEmpty ? (
         <EmptyCard
           picto={(props) => <MoneyPicto {...props} />}
-          title="Budget non renseigné !"
-          subTitle="Renseignez le budget prévisionnel de l'action, ainsi que les détails de financements"
+          title="Budget : montants prévisionnels et dépensés !"
           isReadonly={isReadonly}
           actions={[
             {
-              children: 'Renseigner un budget',
+              children: 'Compléter le budget d’investissement',
+              onClick: () => setIsModalOpen(true),
+            },
+            {
+              children: 'Compléter le budget de fonctionnement',
+              onClick: () => setIsModalOpen(true),
+            },
+            {
+              children: 'Ajouter des financeurs',
+              variant: 'outlined',
+              onClick: () => setIsModalOpen(true),
+            },
+            {
+              children: 'Détailler les financements',
+              variant: 'outlined',
               onClick: () => setIsModalOpen(true),
             },
           ]}
@@ -60,13 +84,13 @@ const BudgetTab = ({ isReadonly, fiche, updateFiche }: BudgetTabProps) => {
             <span className="uppercase text-primary-9 text-sm font-bold leading-7">
               Budget prévisionnel total :
             </span>
-            {budgetPrevisionnel ? (
+            {/* {budgetPrevisionnel ? (
               <BudgetBadge budgetPrevisionnel={budgetPrevisionnel} />
             ) : (
               <span className="text-sm text-grey-7 leading-7">
                 Non renseigné
               </span>
-            )}
+            )} */}
           </div>
 
           {/* Financeurs */}
