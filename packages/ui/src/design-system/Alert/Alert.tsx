@@ -22,6 +22,8 @@ export type AlertProps = {
   fullPageWidth?: boolean;
   /** Arrondi des angles de la div */
   rounded?: boolean;
+  /** Ajoute une bordure en ton sur ton */
+  withBorder?: boolean;
   /** Classname custom */
   className?: string;
   /** Détecte la fermeture du bloc */
@@ -42,6 +44,7 @@ export const Alert = ({
   isOpen = true,
   fullPageWidth = false,
   rounded = false,
+  withBorder = false,
   className,
   onClose,
 }: AlertProps) => {
@@ -53,7 +56,11 @@ export const Alert = ({
   return (
     <div
       className={classNames(
-        { 'w-full px-4 lg:px-6': fullPageWidth, 'rounded-lg': rounded },
+        {
+          'w-full px-4 lg:px-6': fullPageWidth,
+          'rounded-lg': rounded,
+          [styles.border]: withBorder,
+        },
         styles.background,
         className
       )}

@@ -18,10 +18,9 @@ const FinanceursListe = ({ financeurs }: FinanceursListeProps) => {
       <Badge
         title={
           f.montantTtc ? (
-            <div className="flex items-start gap-1">
-              <div>{getFormattedNumber(f.montantTtc)} € </div>
-              <div className="text-[0.5rem] leading-[0.6rem]">TTC</div>
-            </div>
+            <span>
+              {getFormattedNumber(f.montantTtc)} € <sup>HT</sup>
+            </span>
           ) : (
             'Non renseigné'
           )
