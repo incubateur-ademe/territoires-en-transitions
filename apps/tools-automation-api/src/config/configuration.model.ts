@@ -74,6 +74,21 @@ export const toolsAutomationApiConfigurationSchema = z.object({
     .string()
     .min(1)
     .describe('Airtable CRM Users table id'),
+  SIRENE_API_KEY: z.string().min(1).describe("Clé pour accéder à l'API SIRENE"),
+  SIRENE_API_URL: z.string().min(1).describe("URL de l'API SIRENE"),
+  SIRENE_AUTH_URL: z
+    .string()
+    .min(1)
+    .describe("URL d'authentification à l'API SIRENE"),
+  CONNECT_URL: z.string().min(1).describe("Adresse de l'API Connect"),
+  CONNECT_CLIENT_ID: z
+    .string()
+    .min(1)
+    .describe("Identifiant de connexion à l'API Connect"),
+  CONNECT_CLIENT_SECRET: z
+    .string()
+    .min(1)
+    .describe("Clé de connexion à l'API Connect"),
 });
 export type ToolsAutomationApiConfigurationType = z.infer<
   typeof toolsAutomationApiConfigurationSchema

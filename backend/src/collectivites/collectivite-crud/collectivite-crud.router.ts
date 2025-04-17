@@ -1,10 +1,13 @@
-import { Injectable } from '@nestjs/common';
-import { TrpcService } from '@/backend/utils/trpc/trpc.service';
-import CollectiviteCrudService from '@/backend/collectivites/collectivite-crud/collectivite-crud.service';
-import { collectiviteUpsertSchema } from '@/backend/collectivites/shared/models/collectivite.table';
 import { PermissionOperation } from '@/backend/auth/authorizations/permission-operation.enum';
-import { ResourceType } from '@/backend/auth/authorizations/resource-type.enum';
 import { PermissionService } from '@/backend/auth/authorizations/permission.service';
+import { ResourceType } from '@/backend/auth/authorizations/resource-type.enum';
+import CollectiviteCrudService from '@/backend/collectivites/collectivite-crud/collectivite-crud.service';
+import {
+  collectiviteUpdateNICSchema,
+  collectiviteUpsertSchema,
+} from '@/backend/collectivites/shared/models/collectivite.table';
+import { TrpcService } from '@/backend/utils/trpc/trpc.service';
+import { Injectable } from '@nestjs/common';
 import { z } from 'zod';
 
 @Injectable()
@@ -26,6 +29,17 @@ export class CollectiviteCrudRouter {
           null
         );
         return this.service.upsert(input);
+      }),
+    updateNIC: this.trpc.authedProcedure
+      .input(collectiviteUpdateNICSchema)
+      .mutation(async ({ ctx, input }) => {
+        await this.permission.isAllowed(
+          ctx.user,
+          PermissionOperation.COLLECTIVITES_EDITION,
+          ResourceType.PLATEFORME,
+          null
+        );
+        return this.service.updateNIC(input);
       }),
     getAdditionalInformation: this.trpc.authedProcedure
       .input(collectiviteUpsertSchema)

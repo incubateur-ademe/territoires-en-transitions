@@ -1,6 +1,7 @@
 import { Logger, Module } from '@nestjs/common';
 
 import { AirtableModule } from '@/tools-automation-api/airtable/airtable.module';
+import { SireneModule } from '@/tools-automation-api/sirene/sirene.module';
 import { WebhookModule } from '@/tools-automation-api/webhooks/webhook.module';
 import { ExpressAdapter } from '@bull-board/express';
 import { BullBoardModule } from '@bull-board/nestjs';
@@ -12,6 +13,7 @@ import basicAuth from 'express-basic-auth';
 import configuration from './config/configuration';
 import { ConfigurationModule } from './config/configuration.module';
 import ConfigurationService from './config/configuration.service';
+import { ConnectModule } from './connect/connect.module';
 import { CrispModule } from './crisp/crisp.module';
 import { NotionModule } from './notion/notion.module';
 import { SentryNotificationModule } from './sentry/sentry-notification.module';
@@ -60,6 +62,8 @@ const appLogger = new Logger('AppModule');
     SentryNotificationModule,
     WebhookModule,
     AirtableModule,
+    ConnectModule,
+    SireneModule,
   ],
   controllers: [],
   providers: [],
