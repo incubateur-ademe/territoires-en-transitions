@@ -14,8 +14,8 @@ const Markdown = ({ texte, className }: MarkdownProps) => (
     remarkPlugins={[remarkGfm]}
     className={classNames(
       `
-      [&_ul]:list-disc [&_ul]:list-inside [&_ul]:pl-4
-      [&_ol]:list-inside [&_ol]:pl-4
+      [&_ul]:list-disc [&_ul]:pl-6
+      [&_ol]:pl-6
       [&>*:last-child]:mb-0
       `,
       className

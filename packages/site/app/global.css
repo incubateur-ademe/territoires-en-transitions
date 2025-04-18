@@ -60,12 +60,6 @@ nav.md-toc ~ h2:before {
   content: counter(h2counter) '.\0000a0';
 }
 
-/** listes ul / ol */
-ul:not(.fr-btns-group),
-ol {
-  list-style: inside;
-}
-
 /** contenu des pages articles */
 .article *:not(h1, h2, h3, h4, h5, h6) {
   @apply text-lg;
