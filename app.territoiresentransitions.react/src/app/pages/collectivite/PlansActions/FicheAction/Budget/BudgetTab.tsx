@@ -1,4 +1,5 @@
 import { FicheAction } from '@/api/plan-actions';
+import FinancementsModal from '@/app/app/pages/collectivite/PlansActions/FicheAction/Budget/modals/financements-modal';
 import FinanceursModal from '@/app/app/pages/collectivite/PlansActions/FicheAction/Budget/modals/financeurs-modal';
 import { useGetBudget } from '@/app/app/pages/collectivite/PlansActions/FicheAction/Budget/use-get-budget';
 import SpinnerLoader from '@/app/ui/shared/SpinnerLoader';
@@ -18,6 +19,7 @@ type BudgetTabProps = {
 const BudgetTab = ({ isReadonly, fiche, updateFiche }: BudgetTabProps) => {
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [isFinanceursModalOpen, setIsFinanceursModalOpen] = useState(false);
+  const [isFinancementsModalOpen, setIsFinancementsModalOpen] = useState(false);
 
   const { financeurs, financements } = fiche;
 
@@ -60,7 +62,7 @@ const BudgetTab = ({ isReadonly, fiche, updateFiche }: BudgetTabProps) => {
             {
               children: 'Détailler les financements',
               variant: 'outlined',
-              onClick: () => setIsModalOpen(true),
+              onClick: () => setIsFinancementsModalOpen(true),
             },
           ]}
           size="xs"
@@ -152,6 +154,19 @@ const BudgetTab = ({ isReadonly, fiche, updateFiche }: BudgetTabProps) => {
           financeurs={fiche.financeurs}
           updateFinanceurs={(financeurs) =>
             updateFiche({ ...fiche, financeurs })
+          }
+        />
+      )}
+
+      {isFinancementsModalOpen && (
+        <FinancementsModal
+          openState={{
+            isOpen: isFinancementsModalOpen,
+            setIsOpen: setIsFinancementsModalOpen,
+          }}
+          financements={fiche.financements}
+          updateFinancements={(financements) =>
+            updateFiche({ ...fiche, financements })
           }
         />
       )}
