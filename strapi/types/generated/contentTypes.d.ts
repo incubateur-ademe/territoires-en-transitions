@@ -617,8 +617,6 @@ export interface ApiPageAccueilPageAccueil extends Schema.SingleType {
     draftAndPublish: true;
   };
   attributes: {
-    Accompagnement: Attribute.Component<'bloc.accompagnement'> &
-      Attribute.Required;
     accueil_description: Attribute.String &
       Attribute.Required &
       Attribute.SetMinMaxLength<{
@@ -655,7 +653,6 @@ export interface ApiPageAccueilPageAccueil extends Schema.SingleType {
         maxLength: 255;
       }> &
       Attribute.DefaultTo<"Vous souhaitez agir mais n'\u00EAtes pas s\u00FBr de ce qu'il vous faut ?">;
-    Couverture: Attribute.Media<'images'>;
     couverture_desktop: Attribute.Media<'images'> & Attribute.Required;
     couverture_mobile: Attribute.Media<'images'>;
     createdAt: Attribute.DateTime;
@@ -665,14 +662,12 @@ export interface ApiPageAccueilPageAccueil extends Schema.SingleType {
       'admin::user'
     > &
       Attribute.Private;
-    Informations: Attribute.Component<'bloc.description'> & Attribute.Required;
     linkedin_btn: Attribute.String &
       Attribute.Required &
       Attribute.SetMinMaxLength<{
         maxLength: 50;
       }> &
       Attribute.DefaultTo<'Voir la page Linkedin'>;
-    Newsletter: Attribute.Component<'bloc.description'> & Attribute.Required;
     newsletter_btn: Attribute.String &
       Attribute.Required &
       Attribute.SetMinMaxLength<{
@@ -715,7 +710,6 @@ export interface ApiPageAccueilPageAccueil extends Schema.SingleType {
       Attribute.Required;
     publishedAt: Attribute.DateTime;
     seo: Attribute.Component<'shared.seo'>;
-    Temoignages: Attribute.Component<'bloc.description'> & Attribute.Required;
     temoignages_liste: Attribute.Relation<
       'api::page-accueil.page-accueil',
       'oneToMany',
@@ -727,12 +721,6 @@ export interface ApiPageAccueilPageAccueil extends Schema.SingleType {
         maxLength: 255;
       }> &
       Attribute.DefaultTo<'Rejoignez une communaut\u00E9 de collectivit\u00E9s engag\u00E9es'>;
-    Titre: Attribute.String &
-      Attribute.Required &
-      Attribute.SetMinMaxLength<{
-        maxLength: 100;
-      }> &
-      Attribute.DefaultTo<'Acc\u00E9l\u00E9rez la transition \u00E9cologique de votre collectivit\u00E9'>;
     updatedAt: Attribute.DateTime;
     updatedBy: Attribute.Relation<
       'api::page-accueil.page-accueil',
@@ -1065,7 +1053,12 @@ export interface ApiPageProgrammePageProgramme extends Schema.SingleType {
     draftAndPublish: true;
   };
   attributes: {
-    Benefices: Attribute.Component<'bloc.description'> & Attribute.Required;
+    annuaire_cta: Attribute.String &
+      Attribute.Required &
+      Attribute.SetMinMaxLength<{
+        maxLength: 50;
+      }> &
+      Attribute.DefaultTo<'Parcourir l\u2019annuaire des conseillers\u2E31\u00E8res'>;
     benefices_liste: Attribute.Component<'shared.vignette-avec-titre', true>;
     benefices_titre: Attribute.String &
       Attribute.Required &
@@ -1085,7 +1078,6 @@ export interface ApiPageProgrammePageProgramme extends Schema.SingleType {
         maxLength: 255;
       }> &
       Attribute.DefaultTo<'De nombreuses collectivit\u00E9s d\u00E9j\u00E0 engag\u00E9es'>;
-    Compte: Attribute.Component<'bloc.compte'> & Attribute.Required;
     compte_cta: Attribute.String &
       Attribute.Required &
       Attribute.SetMinMaxLength<{
@@ -1123,7 +1115,6 @@ export interface ApiPageProgrammePageProgramme extends Schema.SingleType {
       Attribute.Private;
     Description: Attribute.Text &
       Attribute.DefaultTo<"L'outil op\u00E9rationnel de planification \u00E9cologique qui met \u00E0 votre disposition une ing\u00E9nierie territoriale et un accompagnement personnalis\u00E9.">;
-    Etapes: Attribute.Component<'bloc.description'> & Attribute.Required;
     etapes_cta: Attribute.String &
       Attribute.Required &
       Attribute.SetMinMaxLength<{
@@ -1137,12 +1128,8 @@ export interface ApiPageProgrammePageProgramme extends Schema.SingleType {
         maxLength: 255;
       }> &
       Attribute.DefaultTo<'Les \u00E9tapes '>;
-    Objectifs: Attribute.Component<'bloc.description'> & Attribute.Required;
-    objectifs_liste: Attribute.Component<'shared.vignette-avec-markdown', true>;
     publishedAt: Attribute.DateTime;
-    Ressources: Attribute.Component<'bloc.ressources'> & Attribute.Required;
     seo: Attribute.Component<'shared.seo'>;
-    Services: Attribute.Component<'bloc.description'> & Attribute.Required;
     services_liste_rel: Attribute.Relation<
       'api::page-programme.page-programme',
       'oneToMany',
@@ -1330,7 +1317,6 @@ export interface ApiServiceService extends Schema.CollectionType {
       'admin::user'
     > &
       Attribute.Private;
-    description: Attribute.String & Attribute.Required;
     description_markdown: Attribute.RichText &
       Attribute.Required &
       Attribute.SetMinMaxLength<{

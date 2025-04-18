@@ -21,13 +21,17 @@
       "type": "media",
       "multiple": false,
       "required": true,
-      "allowedTypes": ["images"]
+      "allowedTypes": [
+        "images"
+      ]
     },
     "couverture_mobile": {
       "type": "media",
       "multiple": false,
       "required": false,
-      "allowedTypes": ["images"]
+      "allowedTypes": [
+        "images"
+      ]
     },
     "accueil_titre": {
       "type": "string",
@@ -125,42 +129,6 @@
       "required": true,
       "maxLength": 50,
       "default": "S'inscrire"
-    },
-    "Titre": {
-      "type": "string",
-      "required": true,
-      "default": "Accélérez la transition écologique de votre collectivité",
-      "maxLength": 100
-    },
-    "Couverture": {
-      "type": "media",
-      "multiple": false,
-      "required": false,
-      "allowedTypes": ["images"]
-    },
-    "Accompagnement": {
-      "type": "component",
-      "repeatable": false,
-      "component": "bloc.accompagnement",
-      "required": true
-    },
-    "Temoignages": {
-      "type": "component",
-      "repeatable": false,
-      "component": "bloc.description",
-      "required": true
-    },
-    "Informations": {
-      "type": "component",
-      "repeatable": false,
-      "component": "bloc.description",
-      "required": true
-    },
-    "Newsletter": {
-      "type": "component",
-      "repeatable": false,
-      "component": "bloc.description",
-      "required": true
     }
   }
 }

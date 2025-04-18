@@ -1,3 +1,4 @@
+import ButtonsList from '@/site/components/buttons/ButtonsList';
 import Markdown from '@/site/components/markdown/Markdown';
 import ReactIcon from '@/site/components/react-icons/ReactIcon';
 import { StrapiImage } from '@/site/components/strapiImage/StrapiImage';
@@ -30,12 +31,19 @@ const ListeGrilleService = ({ liste }: { liste: Liste }) => {
               )}
               <Markdown
                 texte={l.texte}
-                className="paragraphe-16 paragraphe-primary-9 -mb-6"
+                className="paragraphe-16 paragraphe-primary-9"
               />
+
+              <ButtonsList
+                boutons={l.boutons}
+                buttonsSize="sm"
+                className="mt-6"
+              />
+
               {!!l.image && (
                 <StrapiImage
                   data={l.image}
-                  className="max-h-[300px] max-w-full mx-auto"
+                  className="max-h-[300px] max-w-full mx-auto mt-8"
                 />
               )}
             </div>

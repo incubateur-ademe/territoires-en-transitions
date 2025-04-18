@@ -1,7 +1,7 @@
-import {
-  BoutonsArticleData,
-  ParagrapheCustomArticleData,
-} from '@/site/app/types';
+import { ParagrapheCustomArticleData } from '@/site/app/types';
+import ButtonsList, {
+  ButtonsListType,
+} from '@/site/components/buttons/ButtonsList';
 import Section from '@/site/components/sections/Section';
 import { StrapiImage } from '@/site/components/strapiImage/StrapiImage';
 import EmbededVideo from '@/site/components/video/EmbededVideo';
@@ -11,7 +11,6 @@ import { Badge, Button } from '@/ui';
 import { Metadata, ResolvingMetadata } from 'next';
 import { notFound } from 'next/navigation';
 import { GallerieArticleData, ImageArticleData } from '../../../types';
-import BoutonsArticle from './BoutonsArticle';
 import GallerieArticle from './GallerieArticle';
 import InfoArticle from './InfoArticle';
 import ParagrapheArticle from './ParagrapheArticle';
@@ -126,7 +125,10 @@ const Article = async ({ params }: { params: Promise<{ id: string }> }) => {
                 />
               ) : // Contenu de type liste de boutons
               section.type === 'boutons' ? (
-                <BoutonsArticle boutons={section.data as BoutonsArticleData} />
+                <ButtonsList
+                  boutons={section.data as ButtonsListType}
+                  className="mx-auto"
+                />
               ) : // Contenu de type info (dans un cadre bleu)
               section.type === 'info' ? (
                 <InfoArticle texte={section.data as string} />

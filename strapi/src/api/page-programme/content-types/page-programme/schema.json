@@ -93,6 +93,12 @@
       "required": true,
       "maxLength": 50
     },
+    "annuaire_cta": {
+      "type": "string",
+      "maxLength": 50,
+      "required": true,
+      "default": "Parcourir l’annuaire des conseillers⸱ères"
+    },
     "compte_titre": {
       "type": "string",
       "default": "Créer un compte gratuitement sur notre service numérique",
@@ -114,52 +120,7 @@
       "type": "media",
       "multiple": false,
       "required": false,
-      "allowedTypes": [
-        "images"
-      ]
-    },
-    "Objectifs": {
-      "type": "component",
-      "repeatable": false,
-      "component": "bloc.description",
-      "required": true
-    },
-    "objectifs_liste": {
-      "type": "component",
-      "repeatable": true,
-      "component": "shared.vignette-avec-markdown"
-    },
-    "Services": {
-      "type": "component",
-      "repeatable": false,
-      "component": "bloc.description",
-      "required": true
-    },
-    "Compte": {
-      "displayName": "Compte",
-      "type": "component",
-      "repeatable": false,
-      "component": "bloc.compte",
-      "required": true
-    },
-    "Etapes": {
-      "type": "component",
-      "repeatable": false,
-      "component": "bloc.description",
-      "required": true
-    },
-    "Ressources": {
-      "displayName": "Ressources",
-      "type": "component",
-      "repeatable": false,
-      "component": "bloc.ressources",
-      "required": true
-    },
-    "Benefices": {
-      "type": "component",
-      "repeatable": false,
-      "component": "bloc.description",
-      "required": true
+      "allowedTypes": ["images"]
     }
   }
 }
