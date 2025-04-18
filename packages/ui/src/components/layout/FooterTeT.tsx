@@ -62,11 +62,6 @@ export const FooterTeT = ({
           href: `${SITE_BASE_URL}/legal/mentions-legales`,
         },
         {
-          label: 'Données personnelles',
-          href: 'https://www.ademe.fr/donnees-personnelles/',
-          external: true,
-        },
-        {
           label: 'Politique des cookies',
           href: `${SITE_BASE_URL}/legal/politique-des-cookies`,
         },
