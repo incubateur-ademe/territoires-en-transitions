@@ -20,7 +20,7 @@ import {
   makeReferentielUrl,
   makeTableauBordUrl,
 } from '@/app/app/paths';
-import { CurrentCollectivite } from '@/app/core-logic/hooks/useCurrentCollectivite';
+import { CurrentCollectivite } from '@/app/collectivites/use-get-current-collectivite';
 import { TNavDropdown, TNavItem, TNavItemsList } from './types';
 
 /** Génère les liens de navigation pour une collectivité donnée */
@@ -58,7 +58,7 @@ const makeNavItemsBase = (
     collectivite.accesRestreint &&
     collectivite.niveauAcces === null &&
     notSupport;
-  const hideToVisitor = isVisiteur({ user, collectivite });
+  const hideFromVisitor = isVisiteur({ user, collectivite });
 
   // items communs qque soient les droits de l'utilisateur courant
   return [
@@ -187,6 +187,7 @@ const makeNavItemsBase = (
           urlPrefix: ['/tableau-de-bord/collectivite'],
         },
         {
+          hideFromVisitor,
           label: 'Mon suivi personnel',
           dataTest: 'pa-tdb-perso',
           to: makeTableauBordUrl({
@@ -194,7 +195,6 @@ const makeNavItemsBase = (
             view: 'personnel',
           }),
           urlPrefix: ['/tableau-de-bord/personnel'],
-          hideToVisitor,
         },
         {
           label: "Tous les plans d'action",
@@ -211,7 +211,7 @@ const makeNavItemsBase = (
           }),
         },
         {
-          confidentiel,
+          hideFromVisitor,
           label: 'Actions à Impact',
           dataTest: 'pa-ai',
           to: makeCollectivitePanierUrl({
@@ -258,7 +258,7 @@ const makeNavItemsBase = (
 const filtreItems = (items: TNavItemsList): TNavItemsList =>
   items
     ?.filter((item) => !item.confidentiel)
-    .filter((item) => !item.hideToVisitor)
+    .filter((item) => !item.hideFromVisitor)
     .map((item) => {
       return Object.prototype.hasOwnProperty.call(item, 'items')
         ? {

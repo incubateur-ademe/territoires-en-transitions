@@ -10,7 +10,7 @@ export type TNavItem = {
   /** indique que l'item n'est pas affiché quand la collectivité est confidentielle */
   confidentiel?: boolean;
   /** indique que l'item n'est pas affiché quand l'utilisateur est un visiteur */
-  hideToVisitor?: boolean;
+  hideFromVisitor?: boolean;
 };
 
 export type TNavDropdown = {
@@ -22,7 +22,7 @@ export type TNavDropdown = {
   // indique que l'item n'est pas affiché quand la collectivité est confidentielle
   confidentiel?: boolean;
   // indique que l'item n'est pas affiché quand l'utilisateur est un visiteur
-  hideToVisitor?: boolean;
+  hideFromVisitor?: boolean;
 };
 
 export type TNavItemsList = (TNavItem | TNavDropdown)[];
