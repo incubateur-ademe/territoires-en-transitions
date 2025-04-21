@@ -1,12 +1,17 @@
-import { BudgetType } from '@/app/app/pages/collectivite/PlansActions/FicheAction/Budget/BudgetTab';
+import { BudgetType } from '@/app/app/pages/collectivite/PlansActions/FicheAction/Budget/hooks/use-get-budget';
 import { Input } from '@/ui';
 
 type YearlyBudgetInputProps = {
-  isEuros: boolean;
   budget?: BudgetType;
+  isEuros: boolean;
+  onUpdate: (budget: BudgetType) => void;
 };
 
-const YearlyBudgetInput = ({ isEuros, budget }: YearlyBudgetInputProps) => {
+const YearlyBudgetInput = ({
+  budget,
+  isEuros,
+  onUpdate,
+}: YearlyBudgetInputProps) => {
   return (
     <div className="flex flex-col gap-6">
       <div className="p-4 bg-primary-1 rounded-md flex justify-between items-center">
@@ -16,9 +21,14 @@ const YearlyBudgetInput = ({ isEuros, budget }: YearlyBudgetInputProps) => {
         <Input
           type="number"
           icon={{ text: isEuros ? '€ HT' : 'ETP' }}
-          value={budget ? budget.budgetPrevisionnel : undefined}
+          value={budget ? budget.budgetPrevisionnel ?? '' : undefined}
           placeholder="Ajouter un montant"
-          onValueChange={(values) => {}}
+          onValueChange={(values) =>
+            onUpdate({
+              ...budget,
+              budgetPrevisionnel: values.value ? values.value : undefined,
+            } as BudgetType)
+          }
         />
       </div>
 
@@ -29,9 +39,14 @@ const YearlyBudgetInput = ({ isEuros, budget }: YearlyBudgetInputProps) => {
         <Input
           type="number"
           icon={{ text: isEuros ? '€ HT' : 'ETP' }}
-          value={budget ? budget.budgetReel : undefined}
+          value={budget ? budget.budgetReel ?? '' : undefined}
           placeholder="Ajouter un montant"
-          onValueChange={(values) => {}}
+          onValueChange={(values) =>
+            onUpdate({
+              ...budget,
+              budgetReel: values.value ? values.value : undefined,
+            } as BudgetType)
+          }
         />
       </div>
     </div>

@@ -1,64 +1,122 @@
-import { BudgetType } from '@/app/app/pages/collectivite/PlansActions/FicheAction/Budget/BudgetTab';
+import { BudgetType } from '@/app/app/pages/collectivite/PlansActions/FicheAction/Budget/hooks/use-get-budget';
 import { getYearsOptions } from '@/app/app/pages/collectivite/PlansActions/FicheAction/utils';
 import { Button, Field, Input, Select } from '@/ui';
 
 type DetailledBudgetInputProps = {
-  isEuros: boolean;
   budgets: BudgetType[];
+  ficheId: number;
+  type: 'investissement' | 'fonctionnement';
+  unite: 'HT' | 'ETP';
+  onUpdate: (budgets: BudgetType[]) => void;
 };
 
 const DetailledBudgetInput = ({
   budgets,
-  isEuros,
+  ficheId,
+  type,
+  unite,
+  onUpdate,
 }: DetailledBudgetInputProps) => {
   const { yearsOptions } = getYearsOptions();
 
   return (
     <div className="flex flex-col gap-6">
       {/* Liste des budgets */}
-      {(budgets ?? []).map((budget, index) => (
-        <div key={budget.id} className="flex items-end gap-4">
-          <Field title="Année" className="w-52 grow-0 shrink-0">
-            <Select
-              options={yearsOptions}
-              values={budget.annee}
-              disabled={true}
-              onChange={() => ({})}
-            />
-          </Field>
-          <Field title={`${isEuros ? 'Montant ' : 'ETP '} prévisionnel`}>
-            <Input
-              type="number"
-              icon={{ text: isEuros ? '€ HT' : 'ETP' }}
-              value={budget.budgetPrevisionnel}
-              placeholder={
-                isEuros ? 'Ajouter un montant' : 'Ajouter une valeur'
+      {(budgets ?? [])
+        .sort((a, b) => (a.annee ?? 0) - (b.annee ?? 0))
+        .map((budget, index) => (
+          <div
+            key={`${budget.annee}-${index}`}
+            className="flex items-end gap-4"
+          >
+            <Field title="Année" className="w-52 grow-0 shrink-0">
+              <Select
+                options={yearsOptions}
+                values={budget.annee}
+                disabled={true}
+                onChange={() => ({})}
+              />
+            </Field>
+            <Field
+              title={`${unite === 'HT' ? 'Montant ' : 'ETP '} prévisionnel`}
+            >
+              <Input
+                type="number"
+                icon={{ text: unite === 'HT' ? '€ HT' : 'ETP' }}
+                value={budget.budgetPrevisionnel}
+                placeholder={
+                  unite === 'HT' ? 'Ajouter un montant' : 'Ajouter une valeur'
+                }
+                onValueChange={(values) =>
+                  onUpdate(
+                    (budgets ?? []).map((elt) =>
+                      elt.annee === budget.annee
+                        ? {
+                            ...elt,
+                            budgetPrevisionnel: values.value
+                              ? values.value
+                              : undefined,
+                          }
+                        : elt
+                    )
+                  )
+                }
+              />
+            </Field>
+            <Field title={unite === 'HT' ? 'Montant dépensé' : 'ETP réel'}>
+              <Input
+                type="number"
+                icon={{ text: unite === 'HT' ? '€ HT' : 'ETP' }}
+                value={budget.budgetReel}
+                placeholder={
+                  unite === 'HT' ? 'Ajouter un montant' : 'Ajouter une valeur'
+                }
+                onValueChange={(values) =>
+                  onUpdate(
+                    (budgets ?? []).map((elt) =>
+                      elt.annee === budget.annee
+                        ? {
+                            ...elt,
+                            budgetReel: values.value ? values.value : undefined,
+                          }
+                        : elt
+                    )
+                  )
+                }
+              />
+            </Field>
+            <Button
+              icon="delete-bin-line"
+              variant="grey"
+              onClick={() =>
+                onUpdate(
+                  (budgets ?? []).filter((elt) => elt.annee !== budget.annee)
+                )
               }
-              onValueChange={(values) => {}}
             />
-          </Field>
-          <Field title={isEuros ? 'Montant dépensé' : 'ETP réel'}>
-            <Input
-              type="number"
-              icon={{ text: isEuros ? '€ HT' : 'ETP' }}
-              value={budget.budgetReel}
-              placeholder={
-                isEuros ? 'Ajouter un montant' : 'Ajouter une valeur'
-              }
-              onValueChange={(values) => {}}
-            />
-          </Field>
-          <Button icon="delete-bin-line" variant="grey" onClick={() => {}} />
-        </div>
-      ))}
+          </div>
+        ))}
 
       {/* Nouveau budget */}
       <Field title="Ajouter une année" className="w-52">
         <Select
           key={(budgets ?? []).length}
-          options={yearsOptions}
+          options={yearsOptions.filter(
+            (year) => !budgets.find((elt) => elt.annee === year.value)
+          )}
           values={undefined}
-          onChange={() => ({})}
+          onChange={(selectedYear) =>
+            selectedYear &&
+            onUpdate([
+              ...(budgets ?? []),
+              {
+                ficheId,
+                type,
+                unite,
+                annee: selectedYear as number,
+              },
+            ])
+          }
           placeholder="Sélectionner une année"
         />
       </Field>
