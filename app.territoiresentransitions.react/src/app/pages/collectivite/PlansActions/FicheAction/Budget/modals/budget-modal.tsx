@@ -1,4 +1,6 @@
-import { BudgetType } from '@/app/app/pages/collectivite/PlansActions/FicheAction/Budget/BudgetTab';
+import { useDeleteBudgets } from '@/app/app/pages/collectivite/PlansActions/FicheAction/Budget/hooks/use-delete-budgets';
+import { BudgetType } from '@/app/app/pages/collectivite/PlansActions/FicheAction/Budget/hooks/use-get-budget';
+import { useUpsertBudgets } from '@/app/app/pages/collectivite/PlansActions/FicheAction/Budget/hooks/use-upsert-budgets';
 import DetailledBudgetInput from '@/app/app/pages/collectivite/PlansActions/FicheAction/Budget/modals/detailled-budget-input';
 import YearlyBudgetInput from '@/app/app/pages/collectivite/PlansActions/FicheAction/Budget/modals/yearly-budget-input';
 import {
@@ -29,13 +31,13 @@ const getDefaultData = (
   } as BudgetType;
 };
 
-const getInitDetailledState = (
-  budget: BudgetType[],
+const getInitExtendedState = (
+  budgets: BudgetType[],
   ficheId: number,
   type: 'investissement' | 'fonctionnement',
   unite: 'HT' | 'ETP'
 ) => {
-  const filteredBudget = budget.filter(
+  const filteredBudget = budgets.filter(
     (elt) => elt.unite === unite && !elt.annee
   );
   if (filteredBudget.length > 0) return filteredBudget[0];
@@ -46,37 +48,66 @@ type BudgetModalProps = {
   openState: OpenState;
   ficheId: number;
   type: 'investissement' | 'fonctionnement';
-  budget: BudgetType[];
+  budgets: BudgetType[];
 };
 
 const BudgetModal = ({
   openState,
   ficheId,
   type,
-  budget,
+  budgets,
 }: BudgetModalProps) => {
   // Options avec checkbox
-  const [isDetailled, setIsDetailled] = useState(true);
+  const [isDetailled, setIsDetailled] = useState(budgets[0]?.annee);
   const [isEuros, setIsEuros] = useState(true);
 
   // Budget en euros
   const [euroDetailledBudget, setEuroDetailledBudget] = useState(
-    budget.filter((elt) => elt.unite === 'HT' && !!elt.annee)
+    budgets.filter((elt) => elt.unite === 'HT' && !!elt.annee)
   );
   const [euroExtendedBudget, setEuroExtendedBudget] = useState(
-    getInitDetailledState(budget, ficheId, type, 'HT')
+    getInitExtendedState(budgets, ficheId, type, 'HT')
   );
 
   // Budget en ETP
   const [etpDetailledBudget, setEtpDetailledBudget] = useState(
-    budget.filter((elt) => elt.unite === 'ETP' && !!elt.annee)
+    budgets.filter((elt) => elt.unite === 'ETP' && !!elt.annee)
   );
   const [etpExtendedBudget, setEtpExtendedBudget] = useState(
-    getInitDetailledState(budget, ficheId, type, 'ETP')
+    getInitExtendedState(budgets, ficheId, type, 'ETP')
   );
 
+  const { mutate: createBudget } = useUpsertBudgets();
+  const { mutate: deleteBudget } = useDeleteBudgets();
+
   const handleSave = () => {
-    //
+    if (isDetailled) {
+      const budgetToDelete = budgets.filter(
+        (elt) =>
+          !euroDetailledBudget.find((b) => b.id === elt.id) &&
+          !etpDetailledBudget.find((b) => b.id === elt.id)
+      );
+
+      budgetToDelete.forEach((elt) => deleteBudget({ budgetId: elt.id }));
+
+      euroDetailledBudget.forEach((elt) => {
+        createBudget(elt);
+      });
+
+      etpDetailledBudget.forEach((elt) => {
+        createBudget(elt);
+      });
+    } else {
+      const budgetToDelete = budgets.filter(
+        (elt) =>
+          euroExtendedBudget.id !== elt.id && etpExtendedBudget.id !== elt.id
+      );
+
+      budgetToDelete.forEach((elt) => deleteBudget({ budgetId: elt.id }));
+
+      createBudget(euroExtendedBudget);
+      createBudget(etpExtendedBudget);
+    }
   };
 
   return (
@@ -135,14 +166,25 @@ const BudgetModal = ({
 
             {isDetailled ? (
               <DetailledBudgetInput
-                isEuros={isEuros}
+                {...{ ficheId, type }}
+                unite={isEuros ? 'HT' : 'ETP'}
                 budgets={isEuros ? euroDetailledBudget : etpDetailledBudget}
+                onUpdate={(budgets) =>
+                  isEuros
+                    ? setEuroDetailledBudget(budgets)
+                    : setEtpDetailledBudget(budgets)
+                }
               />
             ) : (
               <>
                 <YearlyBudgetInput
                   isEuros={isEuros}
                   budget={isEuros ? euroExtendedBudget : etpExtendedBudget}
+                  onUpdate={(budget) =>
+                    isEuros
+                      ? setEuroExtendedBudget(budget)
+                      : setEtpExtendedBudget(budget)
+                  }
                 />
                 <Divider className="-mb-6" />
                 <Checkbox

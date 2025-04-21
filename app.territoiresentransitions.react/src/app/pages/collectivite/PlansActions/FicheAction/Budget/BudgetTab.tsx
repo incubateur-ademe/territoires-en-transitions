@@ -1,10 +1,10 @@
 import { FicheAction } from '@/api/plan-actions';
+import { useGetBudget } from '@/app/app/pages/collectivite/PlansActions/FicheAction/Budget/hooks/use-get-budget';
 import BudgetModal from '@/app/app/pages/collectivite/PlansActions/FicheAction/Budget/modals/budget-modal';
 import FinancementsModal from '@/app/app/pages/collectivite/PlansActions/FicheAction/Budget/modals/financements-modal';
 import FinanceursModal from '@/app/app/pages/collectivite/PlansActions/FicheAction/Budget/modals/financeurs-modal';
-import { useGetBudget } from '@/app/app/pages/collectivite/PlansActions/FicheAction/Budget/use-get-budget';
 import SpinnerLoader from '@/app/ui/shared/SpinnerLoader';
-import { EmptyCard } from '@/ui';
+import { Button, EmptyCard } from '@/ui';
 import classNames from 'classnames';
 import { useState } from 'react';
 import FinanceursListe from './FinanceursListe';
@@ -86,6 +86,15 @@ const BudgetTab = ({ isReadonly, fiche, updateFiche }: BudgetTabProps) => {
           {/* Titre et bouton d'édition */}
           <div className="flex justify-between">
             <h5 className="text-primary-8 mb-0">Budget</h5>
+            {!isReadonly && (
+              <Button
+                title="Modifier le budget"
+                icon="edit-line"
+                size="xs"
+                variant="grey"
+                onClick={() => setIsInvestissementModalOpen(true)}
+              />
+            )}
           </div>
 
           {/* Budget prévisionnel total */}
@@ -154,7 +163,7 @@ const BudgetTab = ({ isReadonly, fiche, updateFiche }: BudgetTabProps) => {
           }}
           ficheId={fiche.id}
           type={isInvestissementModalOpen ? 'investissement' : 'fonctionnement'}
-          budget={(budget as BudgetType[]).filter(
+          budgets={(budget as BudgetType[]).filter(
             (elt) =>
               elt.type ===
               (isInvestissementModalOpen ? 'investissement' : 'fonctionnement')
