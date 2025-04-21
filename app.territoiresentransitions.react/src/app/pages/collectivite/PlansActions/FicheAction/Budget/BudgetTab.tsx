@@ -1,14 +1,25 @@
 import { FicheAction } from '@/api/plan-actions';
+import BudgetModal from '@/app/app/pages/collectivite/PlansActions/FicheAction/Budget/modals/budget-modal';
 import FinancementsModal from '@/app/app/pages/collectivite/PlansActions/FicheAction/Budget/modals/financements-modal';
 import FinanceursModal from '@/app/app/pages/collectivite/PlansActions/FicheAction/Budget/modals/financeurs-modal';
 import { useGetBudget } from '@/app/app/pages/collectivite/PlansActions/FicheAction/Budget/use-get-budget';
 import SpinnerLoader from '@/app/ui/shared/SpinnerLoader';
-import { Button, EmptyCard } from '@/ui';
+import { EmptyCard } from '@/ui';
 import classNames from 'classnames';
 import { useState } from 'react';
 import FinanceursListe from './FinanceursListe';
 import MoneyPicto from './MoneyPicto';
-import ModaleBudget from './modals/ModaleBudget';
+
+export type BudgetType = {
+  id?: number;
+  ficheId: number;
+  type: 'investissement' | 'fonctionnement';
+  unite: 'HT' | 'ETP';
+  annee?: number;
+  budgetPrevisionnel?: string;
+  budgetReel?: string;
+  estEtale?: boolean;
+};
 
 type BudgetTabProps = {
   isReadonly: boolean;
@@ -17,7 +28,10 @@ type BudgetTabProps = {
 };
 
 const BudgetTab = ({ isReadonly, fiche, updateFiche }: BudgetTabProps) => {
-  const [isModalOpen, setIsModalOpen] = useState(false);
+  const [isInvestissementModalOpen, setIsInvestissementModalOpen] =
+    useState(false);
+  const [isFonctionnementModalOpen, setIsFonctionnementModalOpen] =
+    useState(false);
   const [isFinanceursModalOpen, setIsFinanceursModalOpen] = useState(false);
   const [isFinancementsModalOpen, setIsFinancementsModalOpen] = useState(false);
 
@@ -48,11 +62,11 @@ const BudgetTab = ({ isReadonly, fiche, updateFiche }: BudgetTabProps) => {
           actions={[
             {
               children: 'Compléter le budget d’investissement',
-              onClick: () => setIsModalOpen(true),
+              onClick: () => setIsInvestissementModalOpen(true),
             },
             {
               children: 'Compléter le budget de fonctionnement',
-              onClick: () => setIsModalOpen(true),
+              onClick: () => setIsFonctionnementModalOpen(true),
             },
             {
               children: 'Ajouter des financeurs',
@@ -72,15 +86,6 @@ const BudgetTab = ({ isReadonly, fiche, updateFiche }: BudgetTabProps) => {
           {/* Titre et bouton d'édition */}
           <div className="flex justify-between">
             <h5 className="text-primary-8 mb-0">Budget</h5>
-            {!isReadonly && (
-              <Button
-                title="Modifier le budget"
-                icon="edit-line"
-                size="xs"
-                variant="grey"
-                onClick={() => setIsModalOpen(true)}
-              />
-            )}
           </div>
 
           {/* Budget prévisionnel total */}
@@ -138,12 +143,24 @@ const BudgetTab = ({ isReadonly, fiche, updateFiche }: BudgetTabProps) => {
         </div>
       )}
 
-      <ModaleBudget
-        isOpen={isModalOpen && !isReadonly}
-        setIsOpen={setIsModalOpen}
-        fiche={fiche}
-        updateFiche={updateFiche}
-      />
+      {(isInvestissementModalOpen || isFonctionnementModalOpen) && (
+        <BudgetModal
+          openState={{
+            isOpen: isInvestissementModalOpen || isFonctionnementModalOpen,
+            setIsOpen: (state) => {
+              setIsInvestissementModalOpen(state);
+              setIsFonctionnementModalOpen(state);
+            },
+          }}
+          ficheId={fiche.id}
+          type={isInvestissementModalOpen ? 'investissement' : 'fonctionnement'}
+          budget={(budget as BudgetType[]).filter(
+            (elt) =>
+              elt.type ===
+              (isInvestissementModalOpen ? 'investissement' : 'fonctionnement')
+          )}
+        />
+      )}
 
       {isFinanceursModalOpen && (
         <FinanceursModal
