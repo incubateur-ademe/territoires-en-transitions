@@ -1,3 +1,4 @@
+import { getYearsOptions } from '@/app/app/pages/collectivite/PlansActions/FicheAction/utils';
 import {
   Alert,
   Button,
@@ -10,19 +11,6 @@ import {
 } from '@/ui';
 import { useState } from 'react';
 import { EditedNote } from '../data/useUpsertNoteSuivi';
-
-export const getYearsOptions = () => {
-  const currentYear = new Date().getFullYear();
-  const startingYear = 1990;
-  const yearsOptions = Array.from(
-    { length: currentYear - startingYear + 2 },
-    (_, i) => i + startingYear
-  )
-    .reverse()
-    .map((y) => ({ value: y, label: y.toString() }));
-
-  return { yearsOptions, currentYear };
-};
 
 type ModaleCreationNoteProps = {
   isOpen: boolean;
