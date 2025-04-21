@@ -13,11 +13,17 @@ export function useListActions(filters?: ActionListFilters) {
   });
 }
 
-export function useListActionsWithScores(filters?: ActionListFilters) {
+export function useListActionsWithScores(
+  filters?: ActionListFilters,
+  requested = true
+) {
   const collectiviteId = useCollectiviteId();
 
-  return trpc.referentiels.actions.listActionsWithScores.useQuery({
-    collectiviteId,
-    filters,
-  });
+  return trpc.referentiels.actions.listActionsWithScores.useQuery(
+    {
+      collectiviteId,
+      filters,
+    },
+    { enabled: requested }
+  );
 }

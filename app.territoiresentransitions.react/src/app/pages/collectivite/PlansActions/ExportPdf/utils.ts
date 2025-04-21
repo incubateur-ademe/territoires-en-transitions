@@ -7,7 +7,7 @@ export type PdfSectionKey =
   | 'notes_suivi'
   | 'budget'
   | 'fiches'
-  | 'actions'
+  | 'actionsLiees'
   | 'notes_docs';
 
 export const keyToTitle: Record<PdfSectionKey, string> = {
@@ -20,7 +20,7 @@ export const keyToTitle: Record<PdfSectionKey, string> = {
   notes_suivi: 'Notes de suivi',
   budget: 'Budget',
   fiches: 'Fiches des plans liés',
-  actions: 'Mesures des référentiels liées',
+  actionsLiees: 'Mesures des référentiels liées',
   notes_docs: 'Notes et documents',
 };
 
