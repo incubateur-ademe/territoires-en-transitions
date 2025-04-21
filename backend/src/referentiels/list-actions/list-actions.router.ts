@@ -1,5 +1,6 @@
 import { PermissionService } from '@/backend/auth/authorizations/permission.service';
 import { PermissionOperation, ResourceType } from '@/backend/auth/index-domain';
+import CollectivitesService from '@/backend/collectivites/services/collectivites.service';
 import { TrpcService } from '@/backend/utils/trpc/trpc.service';
 import { Injectable } from '@nestjs/common';
 import { listActionsRequestSchema } from './list-actions.request';
@@ -10,6 +11,7 @@ export class ListActionsRouter {
   constructor(
     private readonly trpc: TrpcService,
     private readonly permissions: PermissionService,
+    private readonly collectivite: CollectivitesService,
     private readonly listActionsService: ListActionsService
   ) {}
 
