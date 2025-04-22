@@ -9,7 +9,7 @@ export const dcpFetch = async ({
 }) => {
   const { data } = await dbClient
     .from('dcp')
-    .select('user_id,nom,prenom,telephone,cgu_acceptees_le')
+    .select('user_id,nom,prenom,telephone,cgu_acceptees_le,email')
     .match({ user_id });
 
   return data?.length ? data[0] : null;

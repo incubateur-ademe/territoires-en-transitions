@@ -3,12 +3,17 @@ import { Injectable } from '@nestjs/common';
 import { ApikeysRouter } from './apikeys/apikeys.router';
 import { InvitationsRouter } from './invitations/invitations.router';
 import { ListUsersService } from './users/list-users/list-users.service';
+import {
+  updateUserInputSchema,
+  UpdateUserService,
+} from './users/update-user/update-user.service';
 
 @Injectable()
 export class UsersRouter {
   constructor(
     private readonly trpc: TrpcService,
-    private readonly service: ListUsersService,
+    private readonly listUsersService: ListUsersService,
+    private readonly updateUserService: UpdateUserService,
     private readonly invitationRouter: InvitationsRouter,
     private readonly apikeysRouter: ApikeysRouter
   ) {}
@@ -18,11 +23,21 @@ export class UsersRouter {
     apikeys: this.apikeysRouter.router,
 
     get: this.trpc.serviceRoleProcedure
-      .input(this.service.getInputSchema)
-      .query(({ input }) => this.service.getUserWithPermissions(input)),
+      .input(this.listUsersService.getInputSchema)
+      .query(({ input }) =>
+        this.listUsersService.getUserWithPermissions(input)
+      ),
 
     getAll: this.trpc.serviceRoleProcedure
-      .input(this.service.getAllInputSchema)
-      .query(({ input }) => this.service.usersInfoByEmail(input)),
+      .input(this.listUsersService.getAllInputSchema)
+      .query(({ input }) => this.listUsersService.usersInfoByEmail(input)),
+
+    update: this.trpc.authedProcedure
+      .input(updateUserInputSchema)
+      .mutation(({ input, ctx: { user } }) =>
+        this.updateUserService.updateUser(input, user)
+      ),
   });
+
+  createCaller = this.trpc.createCallerFactory(this.router);
 }

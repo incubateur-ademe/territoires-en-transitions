@@ -16,6 +16,7 @@ import { ConvertJwtToAuthUserService } from './convert-jwt-to-auth-user.service'
 import { AuthGuard } from './guards/auth.guard';
 import { UsersRouter } from './users.router';
 import { ListUsersService } from './users/list-users/list-users.service';
+import { UpdateUserService } from './users/update-user/update-user.service';
 
 @Global()
 @Module({
@@ -39,11 +40,16 @@ import { ListUsersService } from './users/list-users/list-users.service';
     PermissionService,
     RoleService,
     RoleUpdateService,
+
     ListUsersService,
+    UpdateUserService,
     UsersRouter,
+
     ConvertJwtToAuthUserService,
+
     ApikeysService,
     ApikeysRouter,
+
     InvitationService,
     InvitationsRouter,
   ],

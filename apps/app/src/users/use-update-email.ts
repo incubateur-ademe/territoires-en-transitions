@@ -1,5 +1,6 @@
 import { useSupabase } from '@/api/utils/supabase/use-supabase';
 import { useMutation } from '@tanstack/react-query';
+import { useRouter } from 'next/navigation';
 
 export interface UpdateEmailParams {
   email: string;
@@ -10,11 +11,15 @@ export interface UpdateEmailParams {
  */
 export const useUpdateEmail = () => {
   const supabase = useSupabase();
+  const router = useRouter();
 
-  const { mutate } = useMutation({
+  const { mutate, isPending } = useMutation({
     mutationFn: async ({ email }: UpdateEmailParams) => {
       const { error } = await supabase.auth.updateUser({ email });
       if (error) throw error?.message;
+    },
+    onSuccess: () => {
+      router.refresh();
     },
   });
 
@@ -22,5 +27,5 @@ export const useUpdateEmail = () => {
     mutate(email);
   };
 
-  return { handleUpdateEmail };
+  return { handleUpdateEmail, isPending };
 };
