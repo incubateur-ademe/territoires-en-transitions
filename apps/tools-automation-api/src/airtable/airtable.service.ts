@@ -4,6 +4,7 @@ import { AirtableFetchRecordsRequest } from '@/tools-automation-api/airtable/air
 import { AirtableFetchRecordsResponse } from '@/tools-automation-api/airtable/airtable-fetch-records.response';
 import { AirtableInsertRecordsRequest } from '@/tools-automation-api/airtable/airtable-insert-records.request';
 import { AirtableInsertRecordsResponse } from '@/tools-automation-api/airtable/airtable-insert-records.response';
+import { AirtableProspectRecord } from '@/tools-automation-api/airtable/airtable-prospect.record';
 import { AirtableRowInsertDto } from '@/tools-automation-api/airtable/airtable-row-insert.dto';
 import { AirtableRowDto } from '@/tools-automation-api/airtable/airtable-row.dto';
 import { AirtableUserRecord } from '@/tools-automation-api/airtable/airtable-user.record';
@@ -141,6 +142,41 @@ export class AirtableService {
       );
     } else {
       this.logger.warn(`User(s) ${emails.join(',')} not found in Airtable`);
+    }
+    return users.records;
+  }
+
+  async getProspectsByEmail(emails: string[]) {
+    if (!emails.length) {
+      return [];
+    }
+    const formula =
+      emails.length > 1
+        ? `OR(${emails.map((email) => `email='${email}'`).join(',')})`
+        : `email='${emails[0]}'`;
+
+    this.logger.log(
+      `Searching for prospect(s) ${emails.join(',')} in Airtable`
+    );
+
+    const users = await this.getRecords<AirtableProspectRecord>(
+      this.configService.get('AIRTABLE_CRM_DATABASE_ID'),
+      this.configService.get('AIRTABLE_CRM_PROSPECTS_TABLE_ID'),
+      {
+        filterByFormula: formula,
+      }
+    );
+
+    if (users.records.length) {
+      this.logger.log(
+        `Found prospects(s) in Airtable ${users.records
+          .map((u) => `${u.fields.Email} => ${u.id}`)
+          .join(',')}`
+      );
+    } else {
+      this.logger.warn(
+        `Prospects(s) ${emails.join(',')} not found in Airtable`
+      );
     }
     return users.records;
   }
