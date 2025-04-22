@@ -2,4 +2,5 @@ import { AirtableRowInsertDto } from '@/tools-automation-api/airtable/airtable-r
 
 export interface AirtableInsertRecordsRequest<TFields> {
   records: AirtableRowInsertDto<TFields>[];
+  performUpsert?: { fieldsToMergeOn: string[] };
 }

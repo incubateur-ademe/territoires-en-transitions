@@ -226,7 +226,8 @@ export class AirtableService {
   async insertRecords<TFields>(
     databaseId: string,
     tableIdOrName: string,
-    records: AirtableRowInsertDto<TFields>[]
+    records: AirtableRowInsertDto<TFields>[],
+    performUpsert?: { fieldsToMergeOn: string[] }
   ): Promise<AirtableRowDto<TFields>[]> {
     const url = `${this.BASE_API_URL}/${databaseId}/${tableIdOrName}`;
     const headers = {
@@ -238,10 +239,11 @@ export class AirtableService {
 
     const body: AirtableInsertRecordsRequest<TFields> = {
       records,
+      performUpsert,
     };
 
     const insertResult = await fetch(url, {
-      method: 'POST',
+      method: performUpsert ? 'PATCH' : 'POST',
       headers,
       body: JSON.stringify(body),
     });
