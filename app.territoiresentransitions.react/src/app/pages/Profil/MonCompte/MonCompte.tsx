@@ -1,100 +1,81 @@
 'use client';
 
-import { Form, Formik } from 'formik';
-import React, { useState } from 'react';
-import * as Yup from 'yup';
-
-import FormikInput from '@/app/ui/shared/form/formik/FormikInput';
-import ModifierEmailModal from './ModifierEmailModal';
-
+import { getRejoindreCollectivitePath } from '@/api';
 import { UserDetails } from '@/api/users/user-details.fetch.server';
 import { useUser } from '@/api/users/user-provider';
-import { useUpdatePersonalDetails } from '@/app/users/use-update-personal-details';
-
-interface ModifierCompteData {
-  prenom: string;
-  nom: string;
-  email: string;
-}
-
-const validation = Yup.object({
-  prenom: Yup.string().required('Champ requis'),
-  nom: Yup.string().required('Champ requis'),
-  email: Yup.string()
-    .email("Cette adresse email n'est pas valide")
-    .required('Champ requis'),
-});
+import ModifierCompteModal from '@/app/app/pages/Profil/MonCompte/modifier-compte.modal';
+import { Button } from '@/ui';
+import PageContainer from '@/ui/components/layout/page-container';
+import { isAfter } from 'date-fns';
 
 export const MonCompte = ({ user }: { user: UserDetails }) => {
-  const { handleUpdateDCP } = useUpdatePersonalDetails(user.id);
+  if (!user.email) {
+    return null;
+  }
 
-  const [isEmailModalOpen, setIsEmailModalOpen] = useState(false);
+  const isEmailConfirmed =
+    // TODO : vérifier si on ne peut pas uniquement utilser user.new_email,
+    // si après la confirmation, le champ new_email disparaît de UserDetails
+
+    // soit il n'y a que la confirmation initiale sans jamais avoir eu de changements
+    // soit il y a déjà eu une demande de changement d'email en plus de la confirmation initiale
+    (!!user.email_confirmed_at && !user.email_change_sent_at) ||
+    (!!user.email_confirmed_at &&
+      !!user.email_change_sent_at &&
+      isAfter(
+        new Date(user.email_confirmed_at),
+        new Date(user.email_change_sent_at)
+      ));
 
   return (
-    <div data-test="MonCompte">
-      <h1 className="!mb-8 md:!mb-14">Mon compte</h1>
-      <div
-        data-test="modification-compte-formulaire"
-        className="p-4 md:p-14 lg:px-24 bg-gray-100"
-      >
-        <p className="text-sm">Information requises</p>
-        <Formik<ModifierCompteData>
-          initialValues={{
-            prenom: user.prenom,
-            nom: user.nom,
-            email: user.email ?? '',
-          }}
-          validationSchema={validation}
-          onSubmit={() => undefined}
+    <PageContainer dataTest="MonCompte">
+      <div className="flex flex-wrap items-center justify-between gap-6 mb-12 pb-8 border-b border-primary-3">
+        <h1 className="mb-0">Mon compte</h1>
+        <Button
+          href={getRejoindreCollectivitePath(document.location.origin)}
+          size="sm"
         >
-          {({ values, isValid, handleBlur, resetForm }) => (
-            <Form className="flex flex-col gap-6">
-              <FormikInput
-                data-test="prenom"
-                name="prenom"
-                label="Prénom"
-                onBlur={(evt: React.FocusEvent) => {
-                  handleBlur(evt);
-                  isValid &&
-                    user.prenom !== values.prenom &&
-                    handleUpdateDCP({ prenom: values.prenom });
-                }}
-              />
-              <FormikInput
-                data-test="nom"
-                name="nom"
-                label="Nom"
-                onBlur={(evt: React.FocusEvent) => {
-                  handleBlur(evt);
-                  isValid &&
-                    user.nom !== values.nom &&
-                    handleUpdateDCP({ nom: values.nom });
-                }}
-              />
-              <FormikInput
-                data-test="email"
-                name="email"
-                label="Email"
-                onBlur={(evt: React.FocusEvent) => {
-                  handleBlur(evt);
-                  isValid &&
-                    user.email !== values.email &&
-                    setIsEmailModalOpen(true);
-                }}
-              />
-              <ModifierEmailModal
-                isOpen={isEmailModalOpen}
-                setOpen={setIsEmailModalOpen}
-                resetEmail={() =>
-                  resetForm({ values: { ...values, email: user.email! } })
-                }
-                email={values.email}
-              />
-            </Form>
-          )}
-        </Formik>
+          Rejoindre une collectivité
+        </Button>
       </div>
-    </div>
+      {/** Bloc informations du compte */}
+      <div className="flex flex-col gap-6 max-w-xl p-8 font-medium rounded-xl border border-grey-3 bg-white">
+        <div className="flex flex-wrap justify-between items-center gap-6">
+          <span className="text-lg font-bold">Informations de mon compte</span>
+          <ModifierCompteModal user={user} isEmailConfirmed={isEmailConfirmed}>
+            <Button size="xs" variant="grey" icon="pencil-line">
+              Modifier
+            </Button>
+          </ModifierCompteModal>
+        </div>
+        <div className="h-px w-full bg-grey-3" />
+        <div className="flex flex-col gap-2">
+          <span className="text-sm text-grey-7">Prénom et nom</span>
+          <span>
+            {user.prenom} {user.nom}
+          </span>
+        </div>
+        <div className="flex flex-col gap-2">
+          <span className="text-sm text-grey-7">Email</span>
+          <div className="flex items-baseline gap-4">
+            <span>{user.new_email ? user.new_email : user.email}</span>
+            {!isEmailConfirmed && (
+              <span className="text-info-1 italic text-sm font-normal">
+                En attente de confirmation, consulter vos mails
+              </span>
+            )}
+          </div>
+        </div>
+        <div className="flex flex-col gap-2">
+          <span className="text-sm text-grey-7">Numéro de téléphone</span>
+          {user.phone ? (
+            <span>{user.phone}</span>
+          ) : (
+            <span className="text-grey-8 italic">Non renseigné</span>
+          )}
+        </div>
+      </div>
+    </PageContainer>
   );
 };
 
