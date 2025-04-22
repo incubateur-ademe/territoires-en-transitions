@@ -13,7 +13,7 @@ export const fakeUserData: UserDetails = {
   last_sign_in_at: '2022-07-26T12:38:32.0722822Z',
   prenom: 'Yolo',
   nom: 'Dodo',
-  phone: '',
+  telephone: '',
   role: 'authenticated',
   updated_at: '2022-07-26T12:38:33.382147Z',
   user_metadata: {},
