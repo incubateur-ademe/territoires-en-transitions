@@ -1,6 +1,7 @@
 import { Logger, Module } from '@nestjs/common';
 
 import { AirtableModule } from '@/tools-automation-api/airtable/airtable.module';
+import { CalendlyModule } from '@/tools-automation-api/calendly/calendly.module';
 import { WebhookModule } from '@/tools-automation-api/webhooks/webhook.module';
 import { ExpressAdapter } from '@bull-board/express';
 import { BullBoardModule } from '@bull-board/nestjs';
@@ -60,6 +61,7 @@ const appLogger = new Logger('AppModule');
     SentryNotificationModule,
     WebhookModule,
     AirtableModule,
+    CalendlyModule,
   ],
   controllers: [],
   providers: [],
