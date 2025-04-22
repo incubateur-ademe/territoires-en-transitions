@@ -15,5 +15,11 @@ export class UsersRouter {
       .query(({ input, ctx }) =>
         this.service.getUserWithPermissions(input, ctx.user)
       ),
+
+    getAll: this.trpc.authedProcedure
+      .input(this.service.getAllInputSchema)
+      .query(({ input, ctx }) =>
+        this.service.usersInfoByEmail(input, ctx.user)
+      ),
   });
 }

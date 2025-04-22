@@ -5,7 +5,7 @@ import {
 } from '@/backend/auth/index-domain';
 import { DatabaseService } from '@/backend/utils';
 import { Injectable, UnauthorizedException } from '@nestjs/common';
-import { eq } from 'drizzle-orm';
+import { eq, inArray } from 'drizzle-orm';
 import { pick } from 'es-toolkit';
 import z from 'zod';
 import { RoleService } from '../authorizations/roles/role.service';
@@ -43,7 +43,12 @@ export class UsersService {
   }
 
   async getUserInfoByEmail(email: string) {
-    const foundUsers = await this.db
+    const users = await this.getUsersInfoByEmail([email]);
+    return users?.[0] || null;
+  }
+
+  async getUsersInfoByEmail(emails: string[]) {
+    return this.db
       .select({
         userId: dcpTable.userId,
         email: dcpTable.email,
@@ -63,12 +68,23 @@ export class UsersService {
         utilisateurVerifieTable,
         eq(utilisateurVerifieTable.userId, authUsersTable.id)
       )
-      .where(eq(dcpTable.email, email));
+      .where(inArray(dcpTable.email, emails));
+  }
 
-    if (foundUsers.length === 0) {
-      return null;
+  readonly getAllInputSchema = z.object({
+    emails: z.string().array(),
+  });
+
+  async usersInfoByEmail(
+    { emails }: z.infer<typeof this.getAllInputSchema>,
+    user: AuthUser
+  ) {
+    if (user.role !== 'service_role') {
+      throw new UnauthorizedException(
+        'Uniquement accessible pour les comptes de service'
+      );
     }
-    return foundUsers[0];
+    return this.getUsersInfoByEmail(emails);
   }
 
   async getUserWithAccessByEmail(email: string) {
