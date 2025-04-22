@@ -74,6 +74,14 @@ export const toolsAutomationApiConfigurationSchema = z.object({
     .string()
     .min(1)
     .describe('Airtable CRM Users table id'),
+  AIRTABLE_CRM_PROSPECTS_TABLE_ID: z
+    .string()
+    .min(1)
+    .describe('Airtable CRM Prospects table id'),
+  CALENDLY_ACCESS_TOKEN: z
+    .string()
+    .min(1)
+    .describe("Jeton d'accès à l'API Calendly"),
 });
 export type ToolsAutomationApiConfigurationType = z.infer<
   typeof toolsAutomationApiConfigurationSchema
