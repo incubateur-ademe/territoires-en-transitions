@@ -85,20 +85,9 @@ export class AirtableService {
     if (userEmail) {
       this.logger.log(`Searching for user ${userEmail} in Airtable`);
 
-      const users = await this.getRecords<AirtableUserRecord>(
-        this.configService.get('AIRTABLE_CRM_DATABASE_ID'),
-        this.configService.get('AIRTABLE_CRM_USERS_TABLE_ID'),
-        {
-          filterByFormula: `email='${userEmail}'`,
-        }
-      );
-      if (users.records.length) {
-        this.logger.log(
-          `Found user ${userEmail} in Airtable with id ${users.records[0].id}`
-        );
-        feedbackRecord.fields['Personnes'] = [users.records[0].id];
-      } else {
-        this.logger.warn(`User ${userEmail} not found in Airtable`);
+      const users = await this.getUsersByEmail([userEmail]);
+      if (users?.length) {
+        feedbackRecord.fields['Personnes'] = [users[0].id];
       }
     }
 
@@ -123,6 +112,37 @@ export class AirtableService {
       `Created feedback record: ${JSON.stringify(createdFeedbackRecord)}`
     );
     return { feedback: createdFeedbackRecord, created: true };
+  }
+
+  async getUsersByEmail(emails: string[]) {
+    if (!emails.length) {
+      return [];
+    }
+    const formula =
+      emails.length > 1
+        ? `OR(${emails.map((email) => `email='${email}'`).join(',')})`
+        : `email='${emails[0]}'`;
+
+    this.logger.log(`Searching for user(s) ${emails.join(',')} in Airtable`);
+
+    const users = await this.getRecords<AirtableUserRecord>(
+      this.configService.get('AIRTABLE_CRM_DATABASE_ID'),
+      this.configService.get('AIRTABLE_CRM_USERS_TABLE_ID'),
+      {
+        filterByFormula: formula,
+      }
+    );
+
+    if (users.records.length) {
+      this.logger.log(
+        `Found user(s) in Airtable ${users.records
+          .map((u) => `${u.fields.email} => ${u.id}`)
+          .join(',')}`
+      );
+    } else {
+      this.logger.warn(`User(s) ${emails.join(',')} not found in Airtable`);
+    }
+    return users.records;
   }
 
   async getRecords<TFields>(
