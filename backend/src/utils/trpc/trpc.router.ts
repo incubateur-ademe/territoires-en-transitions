@@ -4,6 +4,7 @@ import { BulkEditRouter } from '@/backend/plans/fiches/bulk-edit/bulk-edit.route
 import { CountByRouter } from '@/backend/plans/fiches/count-by/count-by.router';
 import { FicheActionEtapeRouter } from '@/backend/plans/fiches/fiche-action-etape/fiche-action-etape.router';
 import { ImportPlanRouter } from '@/backend/plans/fiches/import/import-plan.router';
+import { FicheActionListRouter } from '@/backend/plans/fiches/list-fiches/list-fiches.router';
 import { ReferentielsRouter } from '@/backend/referentiels/referentiels.router';
 import { ContextStoreService } from '@/backend/utils/context/context.service';
 import { getSentryContextFromApplicationContext } from '@/backend/utils/sentry-init';
@@ -34,6 +35,7 @@ export class TrpcRouter {
     private readonly trpc: TrpcService,
     private readonly supabase: SupabaseService,
     private readonly trajectoiresRouter: TrajectoiresRouter,
+    private readonly ficheActionListRouter: FicheActionListRouter,
     private readonly countByRouter: CountByRouter,
     private readonly ficheActionEtapeRouter: FicheActionEtapeRouter,
     private readonly indicateurFiltreRouter: IndicateurFiltreRouter,
@@ -65,6 +67,7 @@ export class TrpcRouter {
     },
     plans: {
       fiches: this.trpc.mergeRouters(
+        this.ficheActionListRouter.router,
         this.countByRouter.router,
         this.bulkEditRouter.router,
         this.ficheActionEtapeRouter.router,

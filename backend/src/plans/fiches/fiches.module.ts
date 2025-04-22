@@ -1,6 +1,12 @@
 import AxeService from '@/backend/plans/fiches/axe.service';
 import { ExportPlanController } from '@/backend/plans/fiches/export/export-plan.controller';
+import { FicheActionBudgetRouter } from '@/backend/plans/fiches/fiche-action-budget/fiche-action-budget.router';
+import { FicheActionBudgetService } from '@/backend/plans/fiches/fiche-action-budget/fiche-action-budget.service';
+import { FicheActionNoteController } from '@/backend/plans/fiches/fiche-action-note/fiche-action-note.controller';
+import FicheActionNoteService from '@/backend/plans/fiches/fiche-action-note/fiche-action-note.service';
 import FicheActionListService from '@/backend/plans/fiches/fiches-action-list.service';
+import FicheActionCreateService from '@/backend/plans/fiches/import/fiche-action-create.service';
+import { FicheActionListRouter } from '@/backend/plans/fiches/list-fiches/list-fiches.router';
 import PlanActionsService from '@/backend/plans/fiches/plan-actions.service';
 import { forwardRef, Module } from '@nestjs/common';
 import { CollectivitesModule } from '../../collectivites/collectivites.module';
@@ -14,11 +20,6 @@ import { FicheActionEtapeService } from './fiche-action-etape/fiche-action-etape
 import FicheActionPermissionsService from './fiche-action-permissions.service';
 import FichesActionUpdateService from './fiches-action-update.service';
 import { FichesActionController } from './fiches-action.controller';
-import { FicheActionBudgetService } from '@/backend/plans/fiches/fiche-action-budget/fiche-action-budget.service';
-import { FicheActionBudgetRouter } from '@/backend/plans/fiches/fiche-action-budget/fiche-action-budget.router';
-import FicheActionNoteService from '@/backend/plans/fiches/fiche-action-note/fiche-action-note.service';
-import FicheActionCreateService from '@/backend/plans/fiches/import/fiche-action-create.service';
-import { FicheActionNoteController } from '@/backend/plans/fiches/fiche-action-note/fiche-action-note.controller';
 
 @Module({
   imports: [forwardRef(() => CollectivitesModule)],
@@ -27,6 +28,7 @@ import { FicheActionNoteController } from '@/backend/plans/fiches/fiche-action-n
     FicheActionPermissionsService,
     AxeService,
     FicheActionListService,
+    FicheActionListRouter,
     CountByService,
     CountByRouter,
     BulkEditService,
@@ -38,7 +40,7 @@ import { FicheActionNoteController } from '@/backend/plans/fiches/fiche-action-n
     FicheActionBudgetService,
     FicheActionBudgetRouter,
     FicheActionNoteService,
-    FicheActionCreateService
+    FicheActionCreateService,
   ],
   exports: [
     FicheActionPermissionsService,
@@ -53,8 +55,13 @@ import { FicheActionNoteController } from '@/backend/plans/fiches/fiche-action-n
     FicheActionBudgetService,
     FicheActionBudgetRouter,
     FicheActionNoteService,
-    FicheActionCreateService
+    FicheActionCreateService,
+    FicheActionListRouter,
   ],
-  controllers: [FichesActionController, ExportPlanController, FicheActionNoteController],
+  controllers: [
+    FichesActionController,
+    ExportPlanController,
+    FicheActionNoteController,
+  ],
 })
 export class FichesActionModule {}
