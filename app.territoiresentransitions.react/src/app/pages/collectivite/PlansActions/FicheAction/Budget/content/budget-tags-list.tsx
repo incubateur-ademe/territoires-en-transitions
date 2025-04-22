@@ -1,0 +1,48 @@
+import { getFormattedNumber } from '@/app/utils/formatUtils';
+import { Badge } from '@/ui';
+
+type BudgetTagsListProps = {
+  tags?: { name: string; amount: number | null | undefined }[];
+  unit?: 'HT' | 'ETP';
+};
+
+const BudgetTagsList = ({ tags, unit = 'HT' }: BudgetTagsListProps) => {
+  return (
+    <>
+      {(tags ?? []).map((tag, index) => (
+        <div key={`${tag.name}-${index}`} className="flex">
+          <Badge
+            title={tag.name}
+            state="standard"
+            uppercase={false}
+            className="!rounded-r-none"
+          />
+          <Badge
+            title={
+              tag.amount ? (
+                <span>
+                  {getFormattedNumber(tag.amount)}{' '}
+                  {unit === 'HT' ? (
+                    <>
+                      € <sup>HT</sup>
+                    </>
+                  ) : (
+                    'ETP'
+                  )}
+                </span>
+              ) : (
+                'Non renseigné'
+              )
+            }
+            state="standard"
+            light
+            uppercase={false}
+            className="!rounded-l-none"
+          />
+        </div>
+      ))}
+    </>
+  );
+};
+
+export default BudgetTagsList;
