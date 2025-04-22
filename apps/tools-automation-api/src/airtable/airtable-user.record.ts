@@ -4,6 +4,7 @@ export interface AirtableUserRecord {
   prenom: string;
   nom: string;
   email: string;
+  telephone: string;
   'domaine email': string;
   'Nb de collectivités rattachées': number;
 }
