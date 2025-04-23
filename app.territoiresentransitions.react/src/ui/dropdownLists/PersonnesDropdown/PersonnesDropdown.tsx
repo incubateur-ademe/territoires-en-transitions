@@ -1,15 +1,15 @@
 import { useEffect } from 'react';
 
-import { useCollectiviteId } from '@/app/core-logic/hooks/params';
 import { useTagCreate } from '@/app/ui/dropdownLists/tags/useTagCreate';
 import { useDeleteTag } from '@/app/ui/dropdownLists/tags/useTagDelete';
 import { useTagUpdate } from '@/app/ui/dropdownLists/tags/useTagUpdate';
 import { Option, OptionValue, SelectFilter, SelectMultipleProps } from '@/ui';
 
-import { Personne } from '@/api/collectivites';
+import { useCollectiviteId } from '@/app/collectivites/collectivite-context';
+import { PersonneTagOrUser } from '@/backend/collectivites/index-domain';
+import { QueryKey } from 'react-query';
 import { usePersonneListe } from './usePersonneListe';
 import { getPersonneStringId } from './utils';
-import { QueryKey } from 'react-query';
 
 type Props = Omit<SelectMultipleProps, 'values' | 'onChange' | 'options'> & {
   values?: string[];
@@ -17,8 +17,8 @@ type Props = Omit<SelectMultipleProps, 'values' | 'onChange' | 'options'> & {
     personnes,
     selectedPersonne,
   }: {
-    personnes: Personne[];
-    selectedPersonne: Personne;
+    personnes: PersonneTagOrUser[];
+    selectedPersonne: PersonneTagOrUser;
   }) => void;
   disabledOptionsIds?: string[];
   disableEdition?: boolean;
@@ -77,8 +77,7 @@ const PersonnesDropdown = (props: Props) => {
    * du tag créé afin d'appliquer le onChange */
   useEffect(() => {
     if (newTag?.data) {
-      const tag: Personne = {
-        collectiviteId: collectiviteId!,
+      const tag: PersonneTagOrUser = {
         nom: newTag.data[0].nom,
         tagId: newTagId ?? null,
         userId: null,
