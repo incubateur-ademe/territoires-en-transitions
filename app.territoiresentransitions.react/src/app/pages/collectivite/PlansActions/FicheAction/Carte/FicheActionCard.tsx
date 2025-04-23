@@ -105,7 +105,6 @@ const FicheActionCard = ({
                   !!ficheAction.plans && ficheAction.plans.length > 1
                 }
                 axeId={axeIdToInvalidate || null}
-                keysToInvalidate={editKeysToInvalidate}
               />
             </>
           )}

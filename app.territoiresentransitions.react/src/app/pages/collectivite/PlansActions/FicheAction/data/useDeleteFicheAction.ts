@@ -1,12 +1,13 @@
 import { FicheResume } from '@/api/plan-actions';
 import { useSupabase } from '@/api/utils/supabase/use-supabase';
+import { trpc } from '@/api/utils/trpc/client';
 import {
   makeCollectivitePlanActionUrl,
   makeCollectiviteToutesLesFichesUrl,
 } from '@/app/app/paths';
-import { useCollectiviteId } from '@/app/core-logic/hooks/params';
+import { useCollectiviteId } from '@/app/collectivites/collectivite-context';
 import { useRouter } from 'next/navigation';
-import { QueryKey, useMutation, useQueryClient } from 'react-query';
+import { useMutation, useQueryClient } from 'react-query';
 import { useParams } from 'react-router-dom';
 import { PlanNode } from '../../PlanAction/data/types';
 
@@ -14,7 +15,6 @@ type Args = {
   ficheId: number;
   /** Invalider la cle axe_fiches */
   axeId: number | null;
-  keysToInvalidate?: QueryKey[];
   /** Redirige vers le plan ou la page toutes les fiches action à la suppression de la fiche */
   redirect?: boolean;
 };
@@ -27,6 +27,9 @@ export const useDeleteFicheAction = (args: Args) => {
   const queryClient = useQueryClient();
   const router = useRouter();
   const supabase = useSupabase();
+  const utils = trpc.useUtils();
+
+  const collectiviteId = useCollectiviteId();
 
   const { planUid } = useParams<{ planUid: string }>();
 
@@ -81,11 +84,12 @@ export const useDeleteFicheAction = (args: Args) => {
         );
       },
       onSuccess: () => {
-        args.keysToInvalidate?.forEach((key) =>
-          queryClient.invalidateQueries(key)
-        );
+        utils.plans.fiches.listResumes.invalidate({
+          collectiviteId,
+        });
         queryClient.invalidateQueries(axe_fiches_key);
         queryClient.invalidateQueries(flat_axes_Key);
+
         if (args.redirect) {
           if (planUid) {
             router.push(
