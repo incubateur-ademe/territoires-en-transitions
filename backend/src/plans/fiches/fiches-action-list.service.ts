@@ -955,6 +955,21 @@ export default class FicheActionListService {
       }
     }
 
+    const textSearchConditions: (SQLWrapper | SQL)[] = [];
+    if (filters.texteNomOuDescription) {
+      this.addTextSearchCondition(
+        textSearchConditions,
+        sql`${ficheActionTable.titre}`,
+        filters.texteNomOuDescription
+      );
+      this.addTextSearchCondition(
+        textSearchConditions,
+        sql`${ficheActionTable.description}`,
+        filters.texteNomOuDescription
+      );
+      conditions.push(or(...textSearchConditions)!);
+    }
+
     return conditions;
   }
 
