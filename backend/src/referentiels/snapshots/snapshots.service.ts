@@ -484,9 +484,13 @@ export class SnapshotsService {
       .then((result) => result[0]);
 
     if (
-      !snapshot &&
-      snapshotRef === SnapshotsService.SCORE_COURANT_SNAPSHOT_REF
+      snapshotRef === SnapshotsService.SCORE_COURANT_SNAPSHOT_REF &&
+      (!snapshot || snapshot.scoresPayload.mode !== ComputeScoreMode.RECALCUL)
     ) {
+      this.logger.log(
+        `Force compute of current score for '${referentielId}' and CT ${collectiviteId}`
+      );
+
       // compute the score then save it into current snapshot
       snapshot = await this.computeAndUpsert({
         collectiviteId,
