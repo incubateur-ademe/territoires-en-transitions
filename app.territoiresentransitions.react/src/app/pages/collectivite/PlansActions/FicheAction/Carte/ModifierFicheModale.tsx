@@ -10,7 +10,6 @@ import {
   ModalFooterOKCancel,
 } from '@/ui';
 
-import { FicheResume } from '@/api/plan-actions/domain';
 import {
   useFicheActionAddPilote,
   useFicheActionRemoveTagPilote,
@@ -42,7 +41,7 @@ const ModifierFicheModale = ({
   setIsOpen,
   keysToInvalidate,
 }: Props) => {
-  const { mutate: updateFiche } = useUpdateFicheResume(keysToInvalidate);
+  const { mutate: updateFiche } = useUpdateFicheResume();
 
   const { mutate: addPilotes } = useFicheActionAddPilote(keysToInvalidate);
   const { mutate: removeUserPilotes } =
@@ -115,14 +114,14 @@ const ModifierFicheModale = ({
                   ref={refDatefin}
                   type="date"
                   value={
-                    fiche.dateFinProvisoire
-                      ? format(new Date(fiche.dateFinProvisoire), 'yyyy-MM-dd')
+                    fiche.dateFin
+                      ? format(new Date(fiche.dateFin), 'yyyy-MM-dd')
                       : ''
                   }
                   onChange={(e) =>
                     setFiche({
                       ...fiche,
-                      dateFinProvisoire:
+                      dateFin:
                         e.target.value.length !== 0 ? e.target.value : null,
                     })
                   }
@@ -136,7 +135,7 @@ const ModifierFicheModale = ({
                       setFiche({
                         ...fiche,
                         ameliorationContinue: !fiche.ameliorationContinue,
-                        dateFinProvisoire: null,
+                        dateFin: null,
                       });
                     }}
                     checked={!!fiche.ameliorationContinue}
