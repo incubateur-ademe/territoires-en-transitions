@@ -38,6 +38,11 @@ const config: StorybookConfig = {
           // configFile: path.resolve(__dirname, '../tsconfig.json'),
         }),
       ];
+      // évite une erreur de compilation
+      config.resolve.fallback = {
+        ...config.resolve.fallback,
+        zlib: false,
+      };
     }
     return config;
   },
