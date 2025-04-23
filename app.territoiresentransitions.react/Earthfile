@@ -109,7 +109,6 @@ deploy:
   RUN ./koyeb services update $ENV_NAME-app/front \
     --docker $DOCKER_IMAGE \
     --docker-private-registry-secret ghcr \
-    --env POSTHOG_HOST=@POSTHOG_HOST \
     --env POSTHOG_KEY=@POSTHOG_KEY \
     --env DEPLOYMENT_TIMESTAMP=$DEPLOYMENT_TIMESTAMP
 
