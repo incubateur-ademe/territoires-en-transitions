@@ -15,7 +15,8 @@ import {
   makeCollectivitePlanActionFicheUrl,
   makeTableauBordModuleUrl,
 } from '@/app/app/paths';
-import { useCurrentCollectivite } from '@/app/core-logic/hooks/useCurrentCollectivite';
+
+import { useCurrentCollectivite } from '@/app/collectivites/collectivite-context';
 import PictoExpert from '@/app/ui/pictogrammes/PictoExpert';
 import { useRouter } from 'next/navigation';
 
@@ -46,8 +47,10 @@ const ModuleFichesActions = ({ view, module }: Props) => {
   };
 
   const { data, isLoading } = useFicheResumesFetch({
-    options: {
-      ...module.options,
+    filters: {
+      ...module.options.filtre,
+    },
+    queryOptions: {
       sort: getSort(),
     },
   });

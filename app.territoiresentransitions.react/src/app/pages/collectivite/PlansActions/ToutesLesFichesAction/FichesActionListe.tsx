@@ -2,7 +2,6 @@ import classNames from 'classnames';
 import { useEffect, useRef, useState } from 'react';
 
 import {
-  FetchOptions,
   Filtre,
   SortFichesAction,
   SortFichesActionValue,
@@ -13,7 +12,10 @@ import SpinnerLoader from '@/app/ui/shared/SpinnerLoader';
 import { Checkbox, EmptyCard, Input, Pagination, Select } from '@/ui';
 import { OpenState } from '@/ui/utils/types';
 
-import { useFicheResumesFetch } from '@/app/app/pages/collectivite/PlansActions/FicheAction/data/useFicheResumesFetch';
+import {
+  GetFichesOptions,
+  useFicheResumesFetch,
+} from '@/app/app/pages/collectivite/PlansActions/FicheAction/data/useFicheResumesFetch';
 import {
   makeCollectiviteFicheNonClasseeUrl,
   makeCollectivitePlanActionFicheUrl,
@@ -23,8 +25,8 @@ import FilterBadges, {
   CustomFilterBadges,
   useFiltersToBadges,
 } from '@/app/ui/lists/filter-badges';
+import { FicheActionResumeType } from '@/domain/plans/fiches';
 import { isEqual } from 'es-toolkit';
-import { FicheResume } from 'packages/api/src/plan-actions';
 import ActionsGroupeesMenu from '../ActionsGroupees/ActionsGroupeesMenu';
 import EmptyFichePicto from '../FicheAction/FichesLiees/EmptyFichePicto';
 import { useCreateFicheAction } from '../FicheAction/data/useCreateFicheAction';
@@ -96,7 +98,9 @@ const FichesActionListe = ({
 
   const [isSettingsOpen, setIsSettingsOpen] = useState(false);
   const [isGroupedActionsOn, setIsGroupedActionsOn] = useState(false);
-  const [selectedFiches, setSelectedFiches] = useState<FicheResume[]>([]);
+  const [selectedFiches, setSelectedFiches] = useState<FicheActionResumeType[]>(
+    []
+  );
 
   const { mutate: createFicheAction } = useCreateFicheAction();
   const { mutate: createPlanAction } = useCreatePlanAction();
@@ -132,28 +136,34 @@ const FichesActionListe = ({
   const [debouncedSearch, setDebouncedSearch] = useState<string>();
 
   /** Options données à la fonction de récupération des fiches action */
-  const ficheResumesOptions: FetchOptions = {
-    filtre: {
+  const ficheResumesOptions: GetFichesOptions = {
+    filters: {
       ...filtres,
-      texteNomOuDescription: debouncedSearch,
     },
-    page: currentPage,
-    limit: maxNbOfCards,
-    sort: [
-      {
-        field: sort.field,
-        direction: sort.direction,
-      },
-    ],
+    queryOptions: {
+      page: currentPage,
+      limit: maxNbOfCards,
+      sort: [
+        {
+          field: sort.field,
+          direction: sort.direction,
+        },
+      ],
+    },
   };
 
-  const { data, isLoading } = useFicheResumesFetch({
-    options: ficheResumesOptions,
-  });
+  if (debouncedSearch) {
+    ficheResumesOptions.filters = {
+      ...ficheResumesOptions.filters,
+      texteNomOuDescription: debouncedSearch,
+    };
+  }
+
+  const { data, isLoading } = useFicheResumesFetch(ficheResumesOptions);
   const { count: hasFiches } = useFicheActionCount();
 
   /** Gère les fiches sélectionnées pour les actions groupées */
-  const handleSelectFiche = (fiche: FicheResume) => {
+  const handleSelectFiche = (fiche: FicheActionResumeType) => {
     if (selectedFiches.find((f) => f.id === fiche.id)) {
       setSelectedFiches(selectedFiches.filter((f) => f.id !== fiche.id));
     } else {
