@@ -1,7 +1,7 @@
-import { FicheResume } from '@/api/plan-actions/domain';
-import { useCurrentCollectivite } from '@/app/core-logic/hooks/useCurrentCollectivite';
+import { useCurrentCollectivite } from '@/app/collectivites/collectivite-context';
 import ListWithTooltip from '@/app/ui/lists/ListWithTooltip';
 import { getModifiedSince } from '@/app/utils/formatUtils';
+import { FicheActionResumeType } from '@/backend/plans/fiches/shared/models/fiche-action-with-relations.dto';
 import { Button, Card, Checkbox, Notification, Tooltip } from '@/ui';
 import classNames from 'classnames';
 import { useState } from 'react';
@@ -15,7 +15,7 @@ import ModifierFicheModale from './ModifierFicheModale';
 
 type FicheActionCardProps = {
   /** Contenu de la carte fiche action */
-  ficheAction: FicheResume;
+  ficheAction: FicheActionResumeType;
   /** Lien vers la fiche action */
   link?: string;
   /** Doit ouvrir la fiche action dans un nouvel onglet */
@@ -169,7 +169,7 @@ const FicheActionCard = ({
             {/* Personnes pilote et date de fin prévisionnelle */}
             <FicheActionFooterInfo
               pilotes={ficheAction.pilotes}
-              dateDeFin={ficheAction.dateFinProvisoire}
+              dateDeFin={ficheAction.dateFin}
               services={ficheAction.services}
               ameliorationContinue={ficheAction.ameliorationContinue}
             />

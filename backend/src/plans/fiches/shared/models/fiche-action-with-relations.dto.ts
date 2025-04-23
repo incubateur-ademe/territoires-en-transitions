@@ -195,3 +195,30 @@ export const ficheActionWithRelationsAndCollectiviteSchema =
 export type FicheActionWithRelationsAndCollectiviteType = z.infer<
   typeof ficheActionWithRelationsAndCollectiviteSchema
 >;
+
+export const ficheActionResumeSchema = ficheActionWithRelationsSchema
+  .pick({
+    id: true,
+    collectiviteId: true,
+    modifiedAt: true,
+    titre: true,
+    statut: true,
+    ameliorationContinue: true,
+    dateDebut: true,
+    dateFin: true,
+    priorite: true,
+    restreint: true,
+    pilotes: true,
+    plans: true,
+    services: true,
+  })
+  .extend({
+    plans: axeSchema
+      .pick({ id: true, collectiviteId: true, nom: true })
+      .array()
+      .nullish(),
+    planId: z.number().nullish(),
+    actionImpactId: z.number().nullish(),
+  });
+
+export type FicheActionResumeType = z.infer<typeof ficheActionResumeSchema>;
