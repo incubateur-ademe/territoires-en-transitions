@@ -583,21 +583,23 @@ export default class FicheActionListService {
     const ficheActionBudgets = this.getFicheActionBudgetsQuery();
 
     let conditions: (SQLWrapper | SQL)[] = [];
+    if (collectiviteId) {
+      conditions.push(eq(ficheActionTable.collectiviteId, collectiviteId));
+    }
 
     if (filters) {
       this.logger.log(
-        `Récupération des fiches action pour la collectivité ${collectiviteId}: filtre ${JSON.stringify(
+        `Récupération des fiches action pour la collectivité ${collectiviteId}: filtres ${JSON.stringify(
           filters
         )}`
       );
-      conditions = this.getConditions(collectiviteId, filters);
-    } else if (collectiviteId) {
-      // BOF, à modifier ?
-      conditions.push(eq(ficheActionTable.collectiviteId, collectiviteId));
+      conditions.push(...this.getConditions(filters));
+    } else {
       this.logger.log(
         `Récupération des toutes les fiches action pour la collectivité ${collectiviteId}`
       );
     }
+
     const dcpModifiedBy = aliasedTable(dcpTable, 'dcpModifiedBy');
 
     const query = this.databaseService.db
@@ -787,14 +789,9 @@ export default class FicheActionListService {
   }
 
   private getConditions(
-    collectiviteId: number | null,
     filters: GetFilteredFichesRequestType
   ): (SQLWrapper | SQL)[] {
     const conditions: (SQLWrapper | SQL)[] = [];
-
-    if (collectiviteId) {
-      conditions.push(eq(ficheActionTable.collectiviteId, collectiviteId));
-    }
 
     if (filters.ficheIds?.length) {
       conditions.push(inArray(ficheActionTable.id, filters.ficheIds));
