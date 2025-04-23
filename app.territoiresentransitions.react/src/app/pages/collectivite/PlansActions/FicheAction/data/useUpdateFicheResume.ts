@@ -1,53 +1,37 @@
-import { FicheResume } from '@/api/plan-actions';
 import { useSupabase } from '@/api/utils/supabase/use-supabase';
-import { QueryKey, useMutation, useQueryClient } from 'react-query';
+import { trpc } from '@/api/utils/trpc/client';
+import { useCollectiviteId } from '@/app/collectivites/collectivite-context';
+
+import { FicheActionResumeType } from '@/backend/plans/fiches/shared/models/fiche-action-with-relations.dto';
+import { useMutation } from 'react-query';
 
 /**
  * Édite une fiche résumé
  */
-export const useUpdateFicheResume = (invalidationKeys?: QueryKey[]) => {
-  const queryClient = useQueryClient();
+export const useUpdateFicheResume = () => {
   const supabase = useSupabase();
+  const utils = trpc.useUtils();
+  const collectiviteId = useCollectiviteId();
 
   return useMutation(
-    async (fiche: FicheResume) => {
-      const {
-        titre,
-        statut,
-        priorite,
-        dateFinProvisoire,
-        ameliorationContinue,
-      } = fiche;
+    async (fiche: FicheActionResumeType) => {
+      const { titre, statut, priorite, dateFin, ameliorationContinue } = fiche;
       await supabase
         .from('fiche_action')
         .update({
           titre,
           statut,
           niveau_priorite: priorite,
-          date_fin_provisoire: dateFinProvisoire,
+          date_fin_provisoire: dateFin,
           amelioration_continue: ameliorationContinue,
         })
         .eq('id', fiche.id);
     },
     {
-      onMutate: async () => {
-        if (invalidationKeys) {
-          const previousData = [
-            ...invalidationKeys.map((key) => [
-              key,
-              queryClient.getQueryData(key),
-            ]),
-          ];
-          return previousData;
-        }
-      },
-      onError: (err, args, previousData) => {
-        previousData?.forEach(([key, data]) =>
-          queryClient.setQueryData(key as string[], data)
-        );
-      },
       onSuccess: () => {
-        invalidationKeys?.forEach((key) => queryClient.invalidateQueries(key));
+        utils.plans.fiches.listResumes.invalidate({
+          collectiviteId,
+        });
       },
     }
   );
