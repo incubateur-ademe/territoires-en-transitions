@@ -7,11 +7,9 @@ export type GetFichesOptions = Omit<GetFichesRequestType, 'collectiviteId'>;
 export const useFicheResumesFetch = (options?: GetFichesOptions) => {
   const collectiviteId = useCollectiviteId();
 
-  const result = trpc.plans.fiches.listResumes.useQuery({
+  return trpc.plans.fiches.listResumes.useQuery({
     collectiviteId: collectiviteId,
     filters: options?.filters,
     queryOptions: options?.queryOptions,
   });
-
-  return result;
 };
