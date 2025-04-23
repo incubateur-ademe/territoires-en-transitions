@@ -6,12 +6,15 @@ import {
   financeurTagTable,
   libreTagTable,
   partenaireTagTable,
+  PersonneTagOrUser,
   personneTagTable,
   serviceTagTable,
   structureTagTable,
+  TagWithOptionalCollectivite,
 } from '@/backend/collectivites/index-domain';
 import CollectivitesService from '@/backend/collectivites/services/collectivites.service';
 import { indicateurDefinitionTable } from '@/backend/indicateurs/index-domain';
+import { ficheActionBudgetTable } from '@/backend/plans/fiches/fiche-action-budget/fiche-action-budget.table';
 import {
   axeTable,
   ficheActionEffetAttenduTable,
@@ -28,10 +31,12 @@ import {
   ficheActionThematiqueTable,
 } from '@/backend/plans/fiches/index-domain';
 import {
-  GetFichesActionFilterRequestType,
+  GetFilteredFichesRequestQueryOptionsType,
+  GetFilteredFichesRequestType,
   TypePeriodeEnumType,
 } from '@/backend/plans/fiches/shared/fetch-fiches-filter.request';
 import { ficheActionReferentTable } from '@/backend/plans/fiches/shared/models/fiche-action-referent.table';
+import { actionImpactActionTable } from '@/backend/plans/paniers/models/action-impact-action.table';
 import { actionDefinitionTable } from '@/backend/referentiels/index-domain';
 import {
   effetAttenduTable,
@@ -46,6 +51,7 @@ import {
   aliasedTable,
   and,
   arrayOverlaps,
+  desc,
   eq,
   getTableColumns,
   gte,
@@ -64,10 +70,10 @@ import { ficheActionActionTable } from './shared/models/fiche-action-action.tabl
 import { ficheActionAxeTable } from './shared/models/fiche-action-axe.table';
 import { ficheActionPiloteTable } from './shared/models/fiche-action-pilote.table';
 import {
+  FicheActionResumeType,
   FicheActionWithRelationsAndCollectiviteType,
   FicheActionWithRelationsType,
 } from './shared/models/fiche-action-with-relations.dto';
-import { ficheActionBudgetTable } from '@/backend/plans/fiches/fiche-action-budget/fiche-action-budget.table';
 
 @Injectable()
 export default class FicheActionListService {
@@ -112,7 +118,7 @@ export default class FicheActionListService {
           'thematique_ids'
         ),
         thematiques: sql<
-          { id: number; nom: string }[]
+          TagWithOptionalCollectivite[]
         >`array_agg(json_build_object('id', ${ficheActionThematiqueTable.thematiqueId}, 'nom', ${thematiqueTable.nom} ))`.as(
           'thematiques'
         ),
@@ -168,14 +174,7 @@ export default class FicheActionListService {
           'referent_user_ids'
         ),
         referents: sql<
-          {
-            tagId: number | null;
-            userId: string | null;
-            nom: string;
-            prenom?: string;
-            email?: string;
-            telephone?: string;
-          }[]
+          PersonneTagOrUser[]
         >`array_agg(json_build_object('tagId', ${ficheActionReferentTable.tagId}, 'userId', ${ficheActionReferentTable.userId}, 'nom', COALESCE(${personneTagTable.nom}, ${dcpTable.nom}), 'prenom',  ${dcpTable.prenom}, 'email', ${dcpTable.email}, 'telephone', ${dcpTable.telephone}))`.as(
           'referents'
         ),
@@ -200,7 +199,7 @@ export default class FicheActionListService {
           'effet_attendu_ids'
         ),
         effetsAttendus: sql<
-          { id: number; nom: string }[]
+          TagWithOptionalCollectivite[]
         >`array_agg(json_build_object('id', ${ficheActionEffetAttenduTable.effetAttenduId}, 'nom', ${effetAttenduTable.nom} ))`.as(
           'effets_attendus'
         ),
@@ -248,7 +247,7 @@ export default class FicheActionListService {
           'libre_tag_ids'
         ),
         libreTags: sql<
-          { id: number; nom: string }[]
+          TagWithOptionalCollectivite[]
         >`array_agg(json_build_object('id', ${ficheActionLibreTagTable.libreTagId}, 'nom', ${libreTagTable.nom} ))`.as(
           'libre_tags'
         ),
@@ -272,7 +271,7 @@ export default class FicheActionListService {
           'structure_tag_ids'
         ),
         structureTags: sql<
-          { id: number; nom: string }[]
+          TagWithOptionalCollectivite[]
         >`array_agg(json_build_object('id', ${ficheActionStructureTagTable.structureTagId}, 'nom', ${structureTagTable.nom} ))`.as(
           'structure_tags'
         ),
@@ -296,7 +295,7 @@ export default class FicheActionListService {
           'partenaire_tag_ids'
         ),
         partenaireTags: sql<
-          { id: number; nom: string }[]
+          TagWithOptionalCollectivite[]
         >`array_agg(json_build_object('id', ${ficheActionPartenaireTagTable.partenaireTagId}, 'nom', ${partenaireTagTable.nom} ))`.as(
           'partenaire_tags'
         ),
@@ -334,7 +333,7 @@ export default class FicheActionListService {
           number[]
         >`array_agg(COALESCE(${axeTable.plan}, ${axeTable.id}))`.as('plan_ids'),
         plans: sql<
-          { id: number; nom: string }[]
+          TagWithOptionalCollectivite[]
         >`array_agg(json_build_object('id', COALESCE(${axeTable.plan}, ${axeTable.id}), 'nom', COALESCE(${planTable.nom}, ${axeTable.nom})))`.as(
           'plans'
         ),
@@ -353,7 +352,7 @@ export default class FicheActionListService {
       .as('ficheActionAxes');
   }
 
-  private getFicheActionServiceTagsQuery() {
+  private getFicheActionServicesQuery() {
     return this.databaseService.db
       .select({
         ficheId: ficheActionServiceTagTable.ficheId,
@@ -362,10 +361,10 @@ export default class FicheActionListService {
         >`array_agg(${ficheActionServiceTagTable.serviceTagId})`.as(
           'service_tag_ids'
         ),
-        serviceTags: sql<
-          { id: number; nom: string }[]
-        >`array_agg(json_build_object('id', ${ficheActionServiceTagTable.serviceTagId}, 'nom', ${serviceTagTable.nom} ))`.as(
-          'service_tags'
+        services: sql<
+          TagWithOptionalCollectivite[]
+        >`array_agg(json_build_object('id', ${serviceTagTable.id}, 'nom', ${serviceTagTable.nom}, 'collectiviteId', ${serviceTagTable.collectiviteId}))`.as(
+          'services'
         ),
       })
       .from(ficheActionServiceTagTable)
@@ -392,14 +391,7 @@ export default class FicheActionListService {
           'pilote_user_ids'
         ),
         pilotes: sql<
-          {
-            tagId: number | null;
-            userId: string | null;
-            nom: string;
-            prenom?: string;
-            email?: string;
-            telephone?: string;
-          }[]
+          PersonneTagOrUser[]
         >`array_agg(json_build_object('tagId', ${ficheActionPiloteTable.tagId}, 'userId', ${ficheActionPiloteTable.userId}, 'nom', COALESCE(${personneTagTable.nom}, ${dcpTable.nom}), 'prenom',  ${dcpTable.prenom}, 'email', ${dcpTable.email}, 'telephone', ${dcpTable.telephone}))`.as(
           'pilotes'
         ),
@@ -468,7 +460,7 @@ export default class FicheActionListService {
       .select({
         ficheId: ficheActionLienTable.ficheUne,
         fichesLiees: sql<
-          { id: number; nom: string }[]
+          TagWithOptionalCollectivite[]
         >`array_agg(json_build_object('id', ${ficheActionTable.id}, 'nom', ${ficheActionTable.titre}))`.as(
           'fichesLiees'
         ),
@@ -508,7 +500,7 @@ export default class FicheActionListService {
         budgets: sql<
           {
             id: number;
-            ficheId : number;
+            ficheId: number;
             type: string;
             unite: string;
             annee?: number | null;
@@ -559,16 +551,11 @@ export default class FicheActionListService {
     return ficheAction;
   }
 
-  async getFichesAction(
+  async getFichesActionQuery(
     collectiviteId: number | null,
-    filter: GetFichesActionFilterRequestType
-  ): Promise<FicheActionWithRelationsType[]> {
-    this.logger.log(
-      `Récupération des fiches action pour la collectivité ${collectiviteId}: filtre ${JSON.stringify(
-        filter
-      )}`
-    );
-
+    filters?: GetFilteredFichesRequestType,
+    queryOptions?: GetFilteredFichesRequestQueryOptionsType
+  ) {
     const ficheActionPartenaireTags = this.getFicheActionPartenaireTagsQuery();
     const ficheActionThematiques = this.getFicheActionThematiquesQuery();
     const ficheActionSousThematiques =
@@ -580,7 +567,7 @@ export default class FicheActionListService {
     const ficheActionStructureTags = this.getFicheActionStructureTagsQuery();
     const ficheActionLibreTags = this.getFicheActionLibreTagsQuery();
     const ficheActionPilotes = this.getFicheActionPilotesQuery();
-    const ficheActionServiceTags = this.getFicheActionServiceTagsQuery();
+    const ficheActionServices = this.getFicheActionServicesQuery();
     const ficheActionAxes = this.getFicheActionAxesQuery();
     const ficheActionEtapes = this.getFicheActionEtapesQuery();
     const ficheActionNotes = this.getFicheActionNotesQuery();
@@ -589,12 +576,28 @@ export default class FicheActionListService {
     const ficheActionDocs = this.getFicheActionsDocsQuery();
     const ficheActionBudgets = this.getFicheActionBudgetsQuery();
 
-    const conditions = this.getConditions(collectiviteId, filter);
+    let conditions: (SQLWrapper | SQL)[] = [];
+
+    if (filters) {
+      this.logger.log(
+        `Récupération des fiches action pour la collectivité ${collectiviteId}: filtre ${JSON.stringify(
+          filters
+        )}`
+      );
+      conditions = this.getConditions(collectiviteId, filters);
+    } else if (collectiviteId) {
+      // BOF, à modifier ?
+      conditions.push(eq(ficheActionTable.collectiviteId, collectiviteId));
+      this.logger.log(
+        `Récupération des toutes les fiches action pour la collectivité ${collectiviteId}`
+      );
+    }
     const dcpModifiedBy = aliasedTable(dcpTable, 'dcpModifiedBy');
 
-    const fichesActionQuery = this.databaseService.db
+    const query = this.databaseService.db
       .select({
         ...getTableColumns(ficheActionTable),
+        count: sql<number>`count(*) over()`,
         createdByName: sql<string>`(${dcpTable.prenom} || ' ' || ${dcpTable.nom})::text`,
         modifiedByName: sql<string>`(${dcpModifiedBy.prenom} || ' ' || ${dcpModifiedBy.nom})::text`,
         tempsDeMiseEnOeuvreNom: tempsDeMiseEnOeuvreTable.nom,
@@ -608,7 +611,7 @@ export default class FicheActionListService {
         financeurs: ficheActionFinanceurTags.financeurTags,
         effetsAttendus: ficheActionEffetsAttendus.effetsAttendus,
         referents: ficheActionReferent.referents,
-        services: ficheActionServiceTags.serviceTags,
+        services: ficheActionServices.services,
         axes: ficheActionAxes.axes,
         plans: ficheActionAxes.plans,
         etapes: ficheActionEtapes.etapes,
@@ -617,6 +620,7 @@ export default class FicheActionListService {
         fichesLiees: ficheActionFichesLiees.fichesLiees,
         docs: ficheActionDocs.docs,
         budgets: ficheActionBudgets.budgets,
+        actionImpactId: actionImpactActionTable.actionImpactId,
       })
       .from(ficheActionTable)
       .leftJoin(
@@ -660,8 +664,8 @@ export default class FicheActionListService {
         eq(ficheActionPilotes.ficheId, ficheActionTable.id)
       )
       .leftJoin(
-        ficheActionServiceTags,
-        eq(ficheActionServiceTags.ficheId, ficheActionTable.id)
+        ficheActionServices,
+        eq(ficheActionServices.ficheId, ficheActionTable.id)
       )
       .leftJoin(
         ficheActionAxes,
@@ -700,9 +704,31 @@ export default class FicheActionListService {
         tempsDeMiseEnOeuvreTable,
         eq(tempsDeMiseEnOeuvreTable.id, ficheActionTable.tempsDeMiseEnOeuvre)
       )
+      .leftJoin(
+        actionImpactActionTable,
+        eq(actionImpactActionTable.actionId, sql`${ficheActionTable.id}::text`)
+      )
       .where(and(...conditions));
 
-    return await fichesActionQuery;
+    if (queryOptions?.sort) {
+      queryOptions.sort.forEach((sort) => {
+        const column =
+          sort.field === 'modified_at'
+            ? ficheActionTable.modifiedAt
+            : sort.field === 'created_at'
+            ? ficheActionTable.createdAt
+            : ficheActionTable.titre;
+        query.orderBy(sort.direction === 'asc' ? column : desc(column));
+      });
+    }
+
+    if (queryOptions?.page && queryOptions?.limit) {
+      query
+        .limit(queryOptions.limit)
+        .offset((queryOptions.page - 1) * queryOptions.limit);
+    }
+
+    return query;
   }
 
   private addArrayOverlapsConditionForStringArray(
@@ -744,9 +770,19 @@ export default class FicheActionListService {
     }
   }
 
+  private addTextSearchCondition(
+    conditions: (SQLWrapper | SQL)[],
+    column: SQL,
+    searchText?: string
+  ) {
+    if (searchText) {
+      conditions.push(sql`${column} ilike ${`%${searchText}%`}`);
+    }
+  }
+
   private getConditions(
     collectiviteId: number | null,
-    filter: GetFichesActionFilterRequestType
+    filters: GetFilteredFichesRequestType
   ): (SQLWrapper | SQL)[] {
     const conditions: (SQLWrapper | SQL)[] = [];
 
@@ -754,138 +790,138 @@ export default class FicheActionListService {
       conditions.push(eq(ficheActionTable.collectiviteId, collectiviteId));
     }
 
-    if (filter.ficheIds?.length) {
-      conditions.push(inArray(ficheActionTable.id, filter.ficheIds));
+    if (filters.ficheIds?.length) {
+      conditions.push(inArray(ficheActionTable.id, filters.ficheIds));
     }
 
-    if (filter.noStatut) {
+    if (filters.noStatut) {
       conditions.push(isNull(ficheActionTable.statut));
     }
-    if (filter.statuts?.length) {
-      conditions.push(inArray(ficheActionTable.statut, filter.statuts));
+    if (filters.statuts?.length) {
+      conditions.push(inArray(ficheActionTable.statut, filters.statuts));
     }
-    if (filter.noPriorite) {
+    if (filters.noPriorite) {
       conditions.push(isNull(ficheActionTable.priorite));
     }
-    if (filter.priorites?.length) {
-      conditions.push(inArray(ficheActionTable.priorite, filter.priorites));
+    if (filters.priorites?.length) {
+      conditions.push(inArray(ficheActionTable.priorite, filters.priorites));
     }
-    if (filter.budgetPrevisionnel) {
+    if (filters.budgetPrevisionnel) {
       conditions.push(isNotNull(ficheActionTable.budgetPrevisionnel));
     }
-    if (filter.ameliorationContinue) {
+    if (filters.ameliorationContinue) {
       conditions.push(eq(ficheActionTable.ameliorationContinue, true));
     }
-    if (!isNil(filter.restreint)) {
-      conditions.push(eq(ficheActionTable.restreint, filter.restreint));
+    if (!isNil(filters.restreint)) {
+      conditions.push(eq(ficheActionTable.restreint, filters.restreint));
     }
-    if (filter.hasIndicateurLies) {
+    if (filters.hasIndicateurLies) {
       conditions.push(isNotNull(sql`indicateur_ids`));
     }
 
-    if (filter.cibles?.length) {
-      conditions.push(arrayOverlaps(ficheActionTable.cibles, filter.cibles));
+    if (filters.cibles?.length) {
+      conditions.push(arrayOverlaps(ficheActionTable.cibles, filters.cibles));
     }
-    if (filter.modifiedSince) {
-      const modifiedSinceDate = getModifiedSinceDate(filter.modifiedSince);
+    if (filters.modifiedSince) {
+      const modifiedSinceDate = getModifiedSinceDate(filters.modifiedSince);
       conditions.push(gte(ficheActionTable.modifiedAt, modifiedSinceDate));
     }
-    if (filter.modifiedAfter) {
-      conditions.push(gte(ficheActionTable.modifiedAt, filter.modifiedAfter));
+    if (filters.modifiedAfter) {
+      conditions.push(gte(ficheActionTable.modifiedAt, filters.modifiedAfter));
     }
 
-    if (filter.debutPeriode) {
+    if (filters.debutPeriode) {
       conditions.push(
-        gte(this.getTimeColumn(filter.typePeriode), filter.debutPeriode)
+        gte(this.getTimeColumn(filters.typePeriode), filters.debutPeriode)
       );
     }
 
-    if (filter.finPeriode) {
+    if (filters.finPeriode) {
       conditions.push(
-        lte(this.getTimeColumn(filter.typePeriode), filter.finPeriode)
+        lte(this.getTimeColumn(filters.typePeriode), filters.finPeriode)
       );
     }
 
-    if (filter.partenaireIds?.length) {
+    if (filters.partenaireIds?.length) {
       this.addArrayOverlapsConditionForIntArray(
         conditions,
         sql`partenaire_tag_ids`,
-        filter.partenaireIds
+        filters.partenaireIds
       );
     }
-    if (filter.financeurIds?.length) {
+    if (filters.financeurIds?.length) {
       this.addArrayOverlapsConditionForIntArray(
         conditions,
         sql`financeur_tag_ids`,
-        filter.financeurIds
+        filters.financeurIds
       );
     }
-    if (filter.servicePiloteIds?.length) {
+    if (filters.servicePiloteIds?.length) {
       this.addArrayOverlapsConditionForIntArray(
         conditions,
         sql`service_tag_ids`,
-        filter.servicePiloteIds
+        filters.servicePiloteIds
       );
     }
-    if (filter.structurePiloteIds?.length) {
+    if (filters.structurePiloteIds?.length) {
       this.addArrayOverlapsConditionForIntArray(
         conditions,
         sql`structure_tag_ids`,
-        filter.structurePiloteIds
+        filters.structurePiloteIds
       );
     }
-    if (filter.libreTagsIds?.length) {
+    if (filters.libreTagsIds?.length) {
       this.addArrayOverlapsConditionForIntArray(
         conditions,
         sql`libre_tag_ids`,
-        filter.libreTagsIds
+        filters.libreTagsIds
       );
     }
-    if (filter.planActionIds?.length) {
+    if (filters.planActionIds?.length) {
       this.addArrayOverlapsConditionForIntArray(
         conditions,
         sql`plan_ids`,
-        filter.planActionIds
+        filters.planActionIds
       );
     }
-    if (filter.thematiqueIds?.length) {
+    if (filters.thematiqueIds?.length) {
       this.addArrayOverlapsConditionForIntArray(
         conditions,
         sql`thematique_ids`,
-        filter.thematiqueIds
+        filters.thematiqueIds
       );
     }
-    if (filter.sousThematiqueIds?.length) {
+    if (filters.sousThematiqueIds?.length) {
       this.addArrayOverlapsConditionForIntArray(
         conditions,
         sql`sous_thematique_ids`,
-        filter.sousThematiqueIds
+        filters.sousThematiqueIds
       );
     }
-    if (filter.noPilote) {
+    if (filters.noPilote) {
       const condition = and(
         isNull(sql`pilote_user_ids`),
         isNull(sql`pilote_tag_ids`)
       );
       conditions.push(condition!);
     }
-    if (filter.noServicePilote) {
+    if (filters.noServicePilote) {
       conditions.push(isNull(sql`service_tag_ids`));
     }
 
     const piloteConditions: (SQLWrapper | SQL)[] = [];
-    if (filter.utilisateurPiloteIds?.length) {
+    if (filters.utilisateurPiloteIds?.length) {
       this.addArrayOverlapsConditionForStringArray(
         piloteConditions,
         sql`pilote_user_ids`,
-        filter.utilisateurPiloteIds
+        filters.utilisateurPiloteIds
       );
     }
-    if (filter.personnePiloteIds?.length) {
+    if (filters.personnePiloteIds?.length) {
       this.addArrayOverlapsConditionForIntArray(
         piloteConditions,
         sql`pilote_tag_ids`,
-        filter.personnePiloteIds
+        filters.personnePiloteIds
       );
     }
     if (piloteConditions.length) {
@@ -897,18 +933,18 @@ export default class FicheActionListService {
     }
 
     const referentConditions: (SQLWrapper | SQL)[] = [];
-    if (filter.utilisateurReferentIds?.length) {
+    if (filters.utilisateurReferentIds?.length) {
       this.addArrayOverlapsConditionForStringArray(
         referentConditions,
         sql`referent_user_ids`,
-        filter.utilisateurReferentIds
+        filters.utilisateurReferentIds
       );
     }
-    if (filter.personneReferenteIds?.length) {
+    if (filters.personneReferenteIds?.length) {
       this.addArrayOverlapsConditionForIntArray(
         referentConditions,
         sql`referent_tag_ids`,
-        filter.personneReferenteIds
+        filters.personneReferenteIds
       );
     }
     if (referentConditions.length) {
@@ -920,5 +956,104 @@ export default class FicheActionListService {
     }
 
     return conditions;
+  }
+
+  /**
+   * Get fiches actions from the collectivity matching the given filters.
+   * @param collectiviteId ID of the collectivity
+   * @param filters filters to apply
+   * @param queryOptions sorting, limit and pagination options
+   * @return an array of fiches actions
+   */
+  async getFichesAction(
+    collectiviteId: number | null,
+    filters?: GetFilteredFichesRequestType,
+    queryOptions?: GetFilteredFichesRequestQueryOptionsType
+  ): Promise<FicheActionWithRelationsType[]> {
+    return this.getFichesActionQuery(collectiviteId, filters, queryOptions);
+  }
+
+  /**
+   * Get fiches actions from the collectivity matching the given filters.
+   * Also returns the total count of fiches actions.
+   * @param collectiviteId ID of the collectivity
+   * @param filters filters to apply
+   * @param queryOptions sorting, limit and pagination options
+   * @return an array of fiches actions with count
+   */
+  async getFichesActionWithCount(
+    collectiviteId: number | null,
+    filters?: GetFilteredFichesRequestType,
+    queryOptions?: GetFilteredFichesRequestQueryOptionsType
+  ): Promise<{ data: FicheActionWithRelationsType[]; count: number }> {
+    const query = this.getFichesActionQuery(
+      collectiviteId,
+      filters,
+      queryOptions
+    );
+    const result = await query;
+    return {
+      data: result.map((r) => ({ ...r, count: undefined })),
+      count: result[0]?.count ?? 0,
+    };
+  }
+
+  /**
+   * Get fiches actions resumes from the collectivity matching the given filters.
+   * Also returns the total count of fiches actions.
+   * @param collectiviteId ID of the collectivity
+   * @param filters filters to apply
+   * @param queryOptions sorting, limit and pagination options
+   * @return an array of summarized fiches actions with count
+   */
+  async getFichesActionResumes(
+    collectiviteId: number,
+    filters?: GetFilteredFichesRequestType,
+    queryOptions?: GetFilteredFichesRequestQueryOptionsType
+  ): Promise<{
+    count: number;
+    nextPage: number | null;
+    nbOfPages: number;
+    data: FicheActionResumeType[];
+  }> {
+    const { data: fiches, count } = await this.getFichesActionWithCount(
+      collectiviteId,
+      filters,
+      queryOptions
+    );
+
+    const page = queryOptions?.page ?? 1;
+    const limit = queryOptions?.limit ?? 10;
+
+    const nextPage = count > page * limit ? page + 1 : null;
+    const nbOfPages = Math.ceil(count / limit);
+
+    return {
+      count,
+      nextPage,
+      nbOfPages,
+      data: fiches.map((fiche) => ({
+        id: fiche.id,
+        collectiviteId: fiche.collectiviteId,
+        modifiedAt: fiche.modifiedAt,
+        titre: fiche.titre,
+        statut: fiche.statut,
+        ameliorationContinue: fiche.ameliorationContinue,
+        dateDebut: fiche.dateDebut,
+        dateFin: fiche.dateFin,
+        priorite: fiche.priorite,
+        restreint: fiche.restreint,
+        pilotes: fiche.pilotes,
+        plans:
+          fiche.plans?.map((plan) => ({
+            id: plan.id,
+            nom: plan.nom,
+            collectiviteId: plan.collectiviteId ?? fiche.collectiviteId,
+          })) ?? null,
+        services: fiche.services,
+        planId: fiche.axes?.[0]?.id ?? null,
+        actionImpactId: fiche.actionImpactId,
+      })),
+    };
   }
 }
