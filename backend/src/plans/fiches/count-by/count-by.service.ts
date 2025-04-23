@@ -21,7 +21,7 @@ import {
   SANS_THEMATIQUE_LABEL,
   statutsEnumValues,
 } from '@/backend/plans/fiches/index-domain';
-import { GetFichesActionFilterRequestType } from '@/backend/plans/fiches/shared/fetch-fiches-filter.request';
+import { GetFilteredFichesRequestType } from '@/backend/plans/fiches/shared/fetch-fiches-filter.request';
 import {
   CountByRecordGeneralType,
   CountByResponseType,
@@ -345,13 +345,11 @@ export class CountByService {
       const valueArray = fiche[countByProperty] || [];
       if (valueArray.length) {
         valueArray.forEach((value) => {
-          const valueKey = `${value.tagId || value.userId}`;
+          const valueKey = `${value.tagId || value.userId || null}`;
           if (!countByMap[valueKey]) {
             countByMap[valueKey] = {
-              value: value.tagId || value.userId,
-              label: value.prenom
-                ? `${value.prenom} ${value.nom}`
-                : value.nom || '',
+              value: value.tagId || value.userId || null,
+              label: value.nom || '',
               count: 0,
             };
           }
@@ -376,7 +374,7 @@ export class CountByService {
   async countByProperty(
     collectiviteId: number,
     countByProperty: CountByPropertyEnumType,
-    filter: GetFichesActionFilterRequestType
+    filter: GetFilteredFichesRequestType
   ) {
     this.logger.log(
       `Calcul du count by ${countByProperty} des fiches action pour la collectivité ${collectiviteId}: filtre ${JSON.stringify(

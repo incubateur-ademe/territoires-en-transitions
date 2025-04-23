@@ -1,4 +1,5 @@
 import {
+  getPaginationSchema,
   getZodQueryEnum,
   zodQueryBoolean,
   zodQueryNumberArray,
@@ -22,7 +23,7 @@ export type TypePeriodeEnumType = (typeof typePeriodeEnumValues)[number];
 
 export const typePeriodeEnumSchema = z.enum(typePeriodeEnumValues);
 
-export const fetchFichesFilterRequestSchema = z
+export const getFilteredFichesRequestSchema = z
   .object({
     noPilote: zodQueryBoolean
       .optional()
@@ -129,9 +130,28 @@ export const fetchFichesFilterRequestSchema = z
       .describe(
         'Filtre sur la date de modification en utilisant des valeurs prédéfinies'
       ),
+    texteNomOuDescription: z.string().optional(),
   })
   .describe('Filtre de récupération des fiches action');
 
-export type GetFichesActionFilterRequestType = z.infer<
-  typeof fetchFichesFilterRequestSchema
+export type GetFilteredFichesRequestType = z.infer<
+  typeof getFilteredFichesRequestSchema
 >;
+
+const getFilteredFichesRequestQueryOptionsSchema = getPaginationSchema([
+  'modified_at',
+  'created_at',
+  'titre',
+]);
+
+export type GetFilteredFichesRequestQueryOptionsType = z.infer<
+  typeof getFilteredFichesRequestQueryOptionsSchema
+>;
+
+export const getFichesRequestSchema = z.object({
+  collectiviteId: z.coerce.number(),
+  filters: getFilteredFichesRequestSchema.optional(),
+  queryOptions: getFilteredFichesRequestQueryOptionsSchema.partial().optional(),
+});
+
+export type GetFichesRequestType = z.infer<typeof getFichesRequestSchema>;
