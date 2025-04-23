@@ -390,11 +390,17 @@ export default class FicheActionListService {
         >`array_remove(array_agg(${ficheActionPiloteTable.userId}), NULL)`.as(
           'pilote_user_ids'
         ),
-        pilotes: sql<
-          PersonneTagOrUser[]
-        >`array_agg(json_build_object('tagId', ${ficheActionPiloteTable.tagId}, 'userId', ${ficheActionPiloteTable.userId}, 'nom', COALESCE(${personneTagTable.nom}, ${dcpTable.nom}), 'prenom',  ${dcpTable.prenom}, 'email', ${dcpTable.email}, 'telephone', ${dcpTable.telephone}))`.as(
-          'pilotes'
-        ),
+        pilotes: sql<PersonneTagOrUser[]>`array_agg(
+            json_build_object(
+              'tagId', ${ficheActionPiloteTable.tagId},
+              'userId', ${ficheActionPiloteTable.userId},
+              'nom',
+              CASE
+                WHEN ${ficheActionPiloteTable.userId} IS NOT NULL THEN CONCAT(${dcpTable.prenom}, ' ', ${dcpTable.nom})
+                ELSE ${personneTagTable.nom}
+              END
+            )
+          )`.as('pilotes'),
       })
       .from(ficheActionPiloteTable)
       .leftJoin(
