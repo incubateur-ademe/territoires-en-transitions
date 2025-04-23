@@ -2,6 +2,7 @@
 // Exports from this file can be imported with `@/domain/*` alias path.
 
 export * from './count-by/count-by-property-options.enum';
+export * from './shared/fetch-fiches-filter.request';
 export * from './shared/models//fiche-action-with-relations.dto';
 export * from './shared/models/axe.table';
 export * from './shared/models/fiche-action-effet-attendu.table';
