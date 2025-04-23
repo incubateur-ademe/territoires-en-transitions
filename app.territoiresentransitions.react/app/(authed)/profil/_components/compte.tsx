@@ -1,24 +1,23 @@
 'use client';
 
-import { getRejoindreCollectivitePath } from '@/api';
-import { UserDetails } from '@/api/users/user-details.fetch.server';
-import { useUser } from '@/api/users/user-provider';
-import ModifierCompteModal from '@/app/app/pages/Profil/MonCompte/modifier-compte.modal';
-import { Button } from '@/ui';
-import PageContainer from '@/ui/components/layout/page-container';
 import { isAfter } from 'date-fns';
 
-export const MonCompte = ({ user }: { user: UserDetails }) => {
-  if (!user.email) {
-    return null;
-  }
+import { getRejoindreCollectivitePath } from '@/api';
+import { Button } from '@/ui';
+import PageContainer from '@/ui/components/layout/page-container';
 
+import { useUser } from '@/api/users/user-provider';
+import ModifierCompteModal from './modifier-compte.modal';
+
+export const Compte = () => {
+  const user = useUser();
+
+  // TODO : vérifier si on ne peut pas uniquement utilser user.new_email,
+  // si après la confirmation, le champ new_email disparaît de UserDetails
+
+  // soit il n'y a que la confirmation initiale sans jamais avoir eu de changements
+  // soit il y a déjà eu une demande de changement d'email en plus de la confirmation initiale
   const isEmailConfirmed =
-    // TODO : vérifier si on ne peut pas uniquement utilser user.new_email,
-    // si après la confirmation, le champ new_email disparaît de UserDetails
-
-    // soit il n'y a que la confirmation initiale sans jamais avoir eu de changements
-    // soit il y a déjà eu une demande de changement d'email en plus de la confirmation initiale
     (!!user.email_confirmed_at && !user.email_change_sent_at) ||
     (!!user.email_confirmed_at &&
       !!user.email_change_sent_at &&
@@ -79,10 +78,4 @@ export const MonCompte = ({ user }: { user: UserDetails }) => {
   );
 };
 
-const MonCompteConnected = () => {
-  const user = useUser();
-
-  return user && <MonCompte user={user} />;
-};
-
-export default MonCompteConnected;
+export default Compte;
