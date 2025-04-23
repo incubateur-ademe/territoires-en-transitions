@@ -1,4 +1,4 @@
-'use client';
+'use client'; // Error boundaries must be Client Components
 
 import { getErrorMessage } from '@/domain/utils';
 import { EmptyCard } from '@/ui';
@@ -6,21 +6,28 @@ import PageContainer from '@/ui/components/layout/page-container';
 import { PictoWarning } from '@/ui/design-system/Picto/PictoWarning';
 import { datadogLogs } from '@datadog/browser-logs';
 import * as Sentry from '@sentry/nextjs';
-import { FallbackProps } from 'react-error-boundary';
+import { useEffect, useState } from 'react';
 
-export const getErrorDisplayComponent = ({
+export default function Error({
   error,
-  resetErrorBoundary,
-}: FallbackProps) => {
-  const crashId = crypto.randomUUID();
-  if (error) {
-    const scopeContext = new Sentry.Scope();
-    scopeContext.setTag('crash_id', crashId);
-    datadogLogs.logger.error(
-      `Reporting error to Sentry: ${getErrorMessage(error)}`
-    );
-    Sentry.captureException(error, scopeContext);
-  }
+  reset,
+}: {
+  error: Error & { digest?: string };
+  reset: () => void;
+}) {
+  const [crashId] = useState(crypto.randomUUID());
+
+  useEffect(() => {
+    // Log the error to an error reporting service
+    if (error) {
+      const scopeContext = new Sentry.Scope();
+      scopeContext.setTag('crash_id', crashId);
+      datadogLogs.logger.error(
+        `Reporting error to Sentry: ${getErrorMessage(error)}`
+      );
+      Sentry.captureException(error, scopeContext);
+    }
+  }, [crashId, error]);
 
   return (
     <PageContainer>
@@ -32,11 +39,11 @@ export const getErrorDisplayComponent = ({
         actions={[
           {
             children: 'Recharger la page',
-            onClick: () => resetErrorBoundary(),
+            onClick: () => reset(),
             variant: 'outlined',
           },
         ]}
       ></EmptyCard>
     </PageContainer>
   );
-};
+}
