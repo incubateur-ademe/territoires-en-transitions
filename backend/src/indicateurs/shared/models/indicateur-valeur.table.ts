@@ -146,5 +146,5 @@ export interface IndicateurValeurAvecMetadonnesDefinition {
 
   indicateur_source_metadonnee: SourceMetadonnee | null;
 
-  confidentiel: boolean | null;
+  confidentiel?: boolean | null;
 }
