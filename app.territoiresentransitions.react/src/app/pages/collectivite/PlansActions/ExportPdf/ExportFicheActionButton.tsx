@@ -79,7 +79,7 @@ export const FicheActionPdfContent = ({
           indicateursListe,
           etapes,
           fichesLiees,
-          actionsLiees: actionsLiees ?? [],
+          actionsLiees: fiche?.actions?.length ? actionsLiees ?? [] : [],
           annexes,
           notesSuivi,
         })
