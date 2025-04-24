@@ -7,20 +7,24 @@ export const calculatePaginationArray = ({
   isMobile,
   nbOfPages,
   currentPage,
+  small,
 }: {
   isMobile: boolean;
   nbOfPages: number;
   currentPage: number;
+  small: boolean;
 }) => {
+  const isSmallSize = isMobile || small;
+
   // Nombre maximum de boutons visibles sur la pagination
-  const maxPages = isMobile ? 5 : 7;
+  const maxPages = isSmallSize ? 5 : 7;
 
   // Affiche la totalité des boutons
   const displayAllPages = nbOfPages <= maxPages;
 
   // Nombre maximum de boutons visibles sur les extrémités
-  const leftLimit = isMobile ? 2 : 3;
-  const rightLimit = isMobile ? nbOfPages - 1 : nbOfPages - 2;
+  const leftLimit = isSmallSize ? 2 : 3;
+  const rightLimit = isSmallSize ? nbOfPages - 1 : nbOfPages - 2;
 
   // Adapte les limites gauche et droite en fonction de la page actuelle
   let leftMaxLimit = leftLimit;
@@ -38,7 +42,7 @@ export const calculatePaginationArray = ({
   const isMiddlePage = currentPage > leftLimit && currentPage < rightLimit;
 
   // Nombre de boutons visibles autour d'une page centrale
-  const middleRangeGap = isMobile ? 0 : 1;
+  const middleRangeGap = isSmallSize ? 0 : 1;
 
   // Boutons au milieu de la pagination (ou totalité des boutons si nbOfPages <= maxPages)
   const middleRange =

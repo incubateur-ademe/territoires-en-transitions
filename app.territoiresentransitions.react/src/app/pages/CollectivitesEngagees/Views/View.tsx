@@ -90,6 +90,7 @@ const View = ({
               setFilters({ ...filters, page: selected });
             }}
             idToScrollTo="app-header"
+            small
           />
         </div>
       </div>
