@@ -1,5 +1,4 @@
-import { inferProcedureInput } from '@trpc/server';
-import { AppRouter, TrpcRouter } from '@/backend/utils/trpc/trpc.router';
+import { TrpcRouter } from '@/backend/utils/trpc/trpc.router';
 import { AuthenticatedUser } from '@/backend/auth/models/auth.models';
 import { DatabaseService } from '@/backend/utils';
 import {
@@ -10,15 +9,13 @@ import {
 } from '@/backend/test';
 import { onTestFinished } from 'vitest';
 import {
-  BudgetType, BudgetUnite,
-  ficheActionBudgetTable
+  BudgetType,
+  BudgetUnite,
+  FicheActionBudget,
+  ficheActionBudgetTable,
 } from '@/backend/plans/fiches/fiche-action-budget/fiche-action-budget.table';
 import { eq } from 'drizzle-orm';
 import { ficheActionTable } from '@/backend/plans/fiches/shared/models/fiche-action.table';
-
-type upsertInput = inferProcedureInput<
-  AppRouter['plans']['fiches']['budgets']['upsert']
->;
 
 describe('Route CRUD des budgets des fiches actions', () => {
   let router: TrpcRouter;
@@ -42,7 +39,7 @@ describe('Route CRUD des budgets des fiches actions', () => {
       .values({ titre: 'test', collectiviteId: collectiviteId })
       .returning();
 
-    const budgetToInsert = {
+    const budgetToInsert: FicheActionBudget = {
       ficheId: fiche.id,
       type: 'investissement' as BudgetType,
       unite: 'HT' as BudgetUnite,
@@ -53,7 +50,7 @@ describe('Route CRUD des budgets des fiches actions', () => {
 
     // Test ajout
     await expect(() =>
-      caller.plans.fiches.budgets.upsert(budgetToInsert)
+      caller.plans.fiches.budgets.upsert([budgetToInsert])
     ).rejects.toThrowError();
 
     // Ajout budget sur la fiche créé plus tôt
@@ -80,7 +77,7 @@ describe('Route CRUD des budgets des fiches actions', () => {
 
     // Test suppression
     await expect(() =>
-      caller.plans.fiches.budgets.delete({ budgetId: budget.id })
+      caller.plans.fiches.budgets.delete([budget])
     ).rejects.toThrowError();
 
     onTestFinished(async () => {
@@ -98,18 +95,18 @@ describe('Route CRUD des budgets des fiches actions', () => {
 
     // Crée jeu de test
     const ficheId = 1;
-    const budgetHTInvTot: upsertInput = {
+    const budgetHTInvTot: FicheActionBudget = {
       ficheId: ficheId,
       type: 'investissement',
       unite: 'HT',
       budgetPrevisionnel: '5000',
       estEtale: true,
     };
-    const budgetHTInvTotBis: upsertInput = {
+    const budgetHTInvTotBis: FicheActionBudget = {
       ...budgetHTInvTot,
       estEtale: false,
     };
-    const budgetHTInv2020: upsertInput = {
+    const budgetHTInv2020: FicheActionBudget = {
       ficheId: ficheId,
       type: 'investissement',
       unite: 'HT',
@@ -117,38 +114,42 @@ describe('Route CRUD des budgets des fiches actions', () => {
       budgetPrevisionnel: '5000',
       budgetReel: '5000',
     };
-    const budgetHTInv2021: upsertInput = {
+    const budgetHTInv2021: FicheActionBudget = {
       ...budgetHTInv2020,
       annee: 2021,
     };
 
-    const budgetHTFon2020: upsertInput = {
+    const budgetHTFon2020: FicheActionBudget = {
       ...budgetHTInv2020,
       type: 'fonctionnement',
     };
 
-    const budgetETPInv2020: upsertInput = {
+    const budgetETPInv2020: FicheActionBudget = {
       ...budgetHTInv2020,
       unite: 'ETP',
     };
 
-    const budgetHTInv2020Bis: upsertInput = {
+    const budgetHTInv2020Bis: FicheActionBudget = {
       ...budgetHTInv2020,
       budgetReel: '6000',
     };
 
     // Ajoute jeu de test
-    const upsertTot = await caller.plans.fiches.budgets.upsert(budgetHTInvTot);
+    const [upsertTot] = await caller.plans.fiches.budgets.upsert([
+      budgetHTInvTot,
+    ]);
     expect(upsertTot.id).not.toBeNull();
     expect(upsertTot.estEtale).toBe(true);
-    const upsert2020 = await caller.plans.fiches.budgets.upsert(
-      budgetHTInv2020
-    );
+    const [upsert2020] = await caller.plans.fiches.budgets.upsert([
+      budgetHTInv2020,
+    ]);
     expect(upsert2020.id).not.toBeNull();
     expect(upsert2020.budgetReel).toBe('5000');
-    await caller.plans.fiches.budgets.upsert(budgetHTInv2021);
-    await caller.plans.fiches.budgets.upsert(budgetHTFon2020);
-    await caller.plans.fiches.budgets.upsert(budgetETPInv2020);
+    await caller.plans.fiches.budgets.upsert([
+      budgetHTInv2021,
+      budgetHTFon2020,
+      budgetETPInv2020,
+    ]);
 
     const result1 = await caller.plans.fiches.budgets.list({ ficheId });
     expect(result1.length).toBe(5);
@@ -161,26 +162,30 @@ describe('Route CRUD des budgets des fiches actions', () => {
 
     // Test l'unicité
     await expect(() =>
-      caller.plans.fiches.budgets.upsert(budgetHTInvTotBis)
+      caller.plans.fiches.budgets.upsert([budgetHTInvTotBis])
     ).rejects.toThrowError();
     await expect(() =>
-      caller.plans.fiches.budgets.upsert(budgetHTInv2020Bis)
+      caller.plans.fiches.budgets.upsert([budgetHTInv2020Bis])
     ).rejects.toThrowError();
 
     const result2 = await caller.plans.fiches.budgets.list({ ficheId });
     expect(result2.length).toBe(5);
 
     // Update avec id
-    const upsertTotBis = await caller.plans.fiches.budgets.upsert({
-      ...upsertTot,
-      estEtale: false,
-    });
+    const [upsertTotBis] = await caller.plans.fiches.budgets.upsert([
+      {
+        ...upsertTot,
+        estEtale: false,
+      },
+    ]);
     expect(upsertTotBis.id).toBe(upsertTot.id);
     expect(upsertTotBis.estEtale).toBe(false);
-    const upsert2020Bis = await caller.plans.fiches.budgets.upsert({
-      ...upsert2020,
-      budgetReel: 6000,
-    });
+    const [upsert2020Bis] = await caller.plans.fiches.budgets.upsert([
+      {
+        ...upsert2020,
+        budgetReel: 6000,
+      },
+    ]);
     expect(upsert2020Bis.id).toBe(upsert2020.id);
     expect(upsert2020Bis.budgetReel).toBe('6000');
 
@@ -237,11 +242,10 @@ describe('Route CRUD des budgets des fiches actions', () => {
     ).rejects.toThrowError();
 
     // Suppression
-    await caller.plans.fiches.budgets.delete({ budgetId: upsertTot.id });
-    await caller.plans.fiches.budgets.delete({ budgetId: upsert2020.id });
+    await caller.plans.fiches.budgets.delete([upsertTot, upsert2020]);
 
     await expect(() =>
-      caller.plans.fiches.budgets.delete({ budgetId: 2000 })
+      caller.plans.fiches.budgets.delete([{ ...upsertTot, id: null }])
     ).rejects.toThrowError();
 
     const result4 = await caller.plans.fiches.budgets.list({ ficheId });
