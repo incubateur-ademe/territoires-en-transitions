@@ -27,7 +27,7 @@ const FiltersColonne = ({ vue, filters, setFilters }: Props) => {
           flex flex-col shrink-0
           bg-white md:rounded-xl
           max-md:fixed md:!block
-          h-screen md:h-min w-full md:w-5/12 xl:w-3/12
+          md:h-min w-full md:w-5/12 xl:w-3/12
           p-4 pb-6 md:py-10 md:px-8
           max-md:inset-0 max-md:overflow-y-auto max-md:z-[500]
           `,
@@ -67,7 +67,7 @@ const FiltersColonne = ({ vue, filters, setFilters }: Props) => {
 
       {/* Trigger filters on mobile */}
       {!isMobileFilterOpen && (
-        <div className="fixed bottom-0 inset-x-0 z-[1000] md:hidden">
+        <div className="fixed bottom-0 inset-x-0 z-[1000] w-screen md:hidden">
           <Button
             className="w-full justify-center rounded-none"
             icon={numberOfActiveFilters > 0 ? 'filter-fill' : 'filter-line'}

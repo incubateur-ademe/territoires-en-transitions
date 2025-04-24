@@ -74,7 +74,7 @@ const CollectivitesHeader = ({
       <div className="flex max-md:flex-col gap-3 items-start md:items-center justify-between py-3 border-y border-primary-3">
         <div className="flex flex-wrap max-md:flex-col items-center gap-3 max-md:w-full">
           {view === 'referentiels' && (
-            <div className="w-[500px] md:w-60 max-w-full">
+            <div className="w-full md:w-60 max-w-full">
               {/* Ordre d'affichage */}
               <Select
                 options={getTrierParOptions()}
@@ -104,10 +104,11 @@ const CollectivitesHeader = ({
           </span>
         </div>
 
-        <div className="max-md:order-first max-md:mx-auto shrink-0">
+        <div className="max-md:order-first max-md:mx-auto shrink-0 max-md:w-full">
           {/* Sélection de la vue */}
           <ButtonGroup
             size="sm"
+            className="max-md:hidden"
             activeButtonId={view as string}
             buttons={[
               {
@@ -135,6 +136,23 @@ const CollectivitesHeader = ({
               },
             ]}
           />
+
+          {/* Sélection de la vue - petit écran */}
+          <div className="w-full md:hidden">
+            <Select
+              options={[
+                { label: 'Collectivités', value: 'collectivites' },
+                { label: 'Référentiels', value: 'referentiels' },
+                { label: "Plans d'action", value: 'plans' },
+              ]}
+              onChange={(value) =>
+                value && handleChangeView(value as RecherchesViewParam)
+              }
+              values={view}
+              customItem={(v) => <span className="text-grey-9">{v.label}</span>}
+              small
+            />
+          </div>
         </div>
       </div>
 
