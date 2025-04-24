@@ -1,25 +1,41 @@
+import { isAuthenticatedUser } from '@/backend/auth/index-domain';
+import {
+  updateUserInputSchema,
+  UpdateUserService,
+} from '@/backend/auth/users/update-user.service';
 import { TrpcService } from '@/backend/utils/trpc/trpc.service';
-import { Injectable } from '@nestjs/common';
+import { Injectable, UnauthorizedException } from '@nestjs/common';
 import { UsersService } from './users.service';
 
 @Injectable()
 export class UsersRouter {
   constructor(
     private readonly trpc: TrpcService,
-    private readonly service: UsersService
+    private readonly getUserService: UsersService,
+    private readonly updateUserService: UpdateUserService
   ) {}
 
   router = this.trpc.router({
     get: this.trpc.authedProcedure
-      .input(this.service.getInputSchema)
+      .input(this.getUserService.getInputSchema)
       .query(({ input, ctx }) =>
-        this.service.getUserWithPermissions(input, ctx.user)
+        this.getUserService.getUserWithPermissions(input, ctx.user)
       ),
 
     getAll: this.trpc.authedProcedure
-      .input(this.service.getAllInputSchema)
+      .input(this.getUserService.getAllInputSchema)
       .query(({ input, ctx }) =>
-        this.service.usersInfoByEmail(input, ctx.user)
+        this.getUserService.usersInfoByEmail(input, ctx.user)
       ),
+
+    update: this.trpc.authedProcedure
+      .input(updateUserInputSchema)
+      .mutation(({ input, ctx: { user } }) => {
+        if (!isAuthenticatedUser(user)) {
+          throw new UnauthorizedException("L'utilisateur n'est pas connecté");
+        }
+
+        this.updateUserService.updateUser(input, user);
+      }),
   });
 }
