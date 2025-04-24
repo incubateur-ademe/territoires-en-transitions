@@ -82,6 +82,7 @@ export const toolsAutomationApiConfigurationSchema = z.object({
     .string()
     .min(1)
     .describe("Jeton d'accès à l'API Calendly"),
+  ENABLE_CRON_JOBS: z.coerce.boolean().describe('Activer les cron jobs'),
 });
 export type ToolsAutomationApiConfigurationType = z.infer<
   typeof toolsAutomationApiConfigurationSchema

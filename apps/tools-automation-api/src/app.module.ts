@@ -2,11 +2,13 @@ import { Logger, Module } from '@nestjs/common';
 
 import { AirtableModule } from '@/tools-automation-api/airtable/airtable.module';
 import { CalendlyModule } from '@/tools-automation-api/calendly/calendly.module';
+import { CronModule } from '@/tools-automation-api/cron/cron.module';
 import { WebhookModule } from '@/tools-automation-api/webhooks/webhook.module';
 import { ExpressAdapter } from '@bull-board/express';
 import { BullBoardModule } from '@bull-board/nestjs';
 import { BullModule } from '@nestjs/bullmq';
 import { ConfigModule } from '@nestjs/config';
+import { ScheduleModule } from '@nestjs/schedule';
 import { uuid4 } from '@sentry/core';
 import { SentryModule } from '@sentry/nestjs/setup';
 import basicAuth from 'express-basic-auth';
@@ -24,11 +26,13 @@ const appLogger = new Logger('AppModule');
 @Module({
   imports: [
     SentryModule.forRoot(),
+    ScheduleModule.forRoot(),
     ConfigModule.forRoot({
       ignoreEnvFile: process.env.NODE_ENV === 'production', // In production, environment variables are set by the deployment
       load: [configuration],
     }),
     ConfigurationModule,
+    CronModule,
     BullModule.forRootAsync({
       imports: [ConfigurationModule],
       useFactory: async (config: ConfigurationService) => {
