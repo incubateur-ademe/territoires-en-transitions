@@ -15,6 +15,8 @@ type PaginationProps = {
   idToScrollTo?: string;
   /** Détecte le changement de page sélectionnée */
   onChange?: (selectedPage: number) => void;
+  /** Format réduit */
+  small?: boolean;
   /** Classnames custom */
   className?: string;
 };
@@ -28,6 +30,7 @@ export const Pagination = ({
   maxElementsPerPage,
   idToScrollTo,
   onChange,
+  small = false,
   className,
 }: PaginationProps) => {
   const [nbOfPages, setNbOfPages] = useState(
@@ -71,6 +74,7 @@ export const Pagination = ({
       isMobile,
       nbOfPages,
       currentPage,
+      small,
     });
 
     setPageButtons(paginationArray);
