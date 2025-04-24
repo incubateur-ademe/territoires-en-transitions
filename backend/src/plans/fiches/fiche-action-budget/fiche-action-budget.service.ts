@@ -20,60 +20,76 @@ export class FicheActionBudgetService {
   ) {}
 
   async upsert(
-    budget: FicheActionBudget,
+    budgets: FicheActionBudget[],
     user: AuthUser
-  ): Promise<FicheActionBudget> {
-    await this.ficheService.canWriteFiche(budget.ficheId, user);
+  ): Promise<FicheActionBudget[]> {
+    // Check que les budgets ont la même fiche action
+    if(budgets.length===0){
+      return []
+    }
+    const ficheId = budgets[0].ficheId;
+    if(!budgets.every(budget => budget.ficheId === ficheId)){
+      throw new Error('Budgets from the same call must have the same ficheId.')
+    }
+
+    await this.ficheService.canWriteFiche(ficheId, user);
     return await this.databaseService.db.transaction(async (trx) => {
-      // Insertion ou mise à jour du budget avec `RETURNING`
-      const [result] = await trx
-        .insert(ficheActionBudgetTable)
-        .values({
-          ...budget,
-        })
-        .onConflictDoUpdate({
-          target: [ficheActionBudgetTable.id],
-          set: {
-            budgetPrevisionnel: budget.budgetPrevisionnel,
-            budgetReel: budget.budgetReel,
-            estEtale: budget.estEtale,
-          },
-        })
-        .returning();
+      const budgetsToReturn = [];
+      for(const budget of budgets) {
+        // Insertion ou mise à jour du budget avec `RETURNING`
+        const [result] = await trx
+          .insert(ficheActionBudgetTable)
+          .values({
+            ...budget,
+          })
+          .onConflictDoUpdate({
+            target: [ficheActionBudgetTable.id],
+            set: {
+              budgetPrevisionnel: budget.budgetPrevisionnel,
+              budgetReel: budget.budgetReel,
+              estEtale: budget.estEtale,
+            },
+          })
+          .returning();
+        budgetsToReturn.push({
+          ...result,
+          type: result.type as BudgetType, // Format text en BDD
+          unite: result.unite as BudgetUnite, // Format text en BDD
+        });
+      }
 
       // Met à jour la table fiche action
       await trx
         .update(ficheActionTable)
         .set({ modifiedBy: user.id, modifiedAt: new Date().toISOString() })
-        .where(eq(ficheActionTable.id, budget.ficheId));
+        .where(eq(ficheActionTable.id, ficheId));
 
-      return {
-        ...result,
-        type: result.type as BudgetType, // Format text en BDD
-        unite: result.unite as BudgetUnite, // Format text en BDD
-      };
+      return budgetsToReturn;
     });
+
   }
 
-  async delete(budgetId: number, user: AuthUser) {
+  async delete(budgets: FicheActionBudget[], user: AuthUser) {
+    // Check que les budgets ont la même fiche action
+    if(budgets.length===0){
+      return;
+    }
+    const ficheId = budgets[0].ficheId;
+    if(!budgets.every(budget => budget.ficheId === ficheId)){
+      throw new Error('Budgets from the same call must have the same ficheId.')
+    }
+
     return this.databaseService.db.transaction(async (trx) => {
-      const budgetToDelete = await trx
-        .select({
-          ficheId: ficheActionBudgetTable.ficheId,
-        })
-        .from(ficheActionBudgetTable)
-        .where(eq(ficheActionBudgetTable.id, budgetId))
-        .then((res) => res[0]);
-
-      if (!budgetToDelete) {
-        throw new Error('Budget not found');
+      await this.ficheService.canWriteFiche(ficheId, user);
+      for(const budget of budgets){
+        if(budget.id){
+          await trx
+            .delete(ficheActionBudgetTable)
+            .where(eq(ficheActionBudgetTable.id, budget.id));
+        }else{
+          throw new Error('A given budget has no identifier')
+        }
       }
-
-      await this.ficheService.canWriteFiche(budgetToDelete.ficheId, user);
-
-      await trx
-        .delete(ficheActionBudgetTable)
-        .where(eq(ficheActionBudgetTable.id, budgetId));
 
       // Met à jour la table fiche action
       await trx
@@ -82,7 +98,7 @@ export class FicheActionBudgetService {
           modifiedBy: user?.id,
           modifiedAt: new Date().toISOString(),
         })
-        .where(eq(ficheActionTable.id, budgetToDelete.ficheId));
+        .where(eq(ficheActionTable.id, ficheId));
     });
   }
 
