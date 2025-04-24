@@ -42,7 +42,7 @@ export class UsersService {
     return { user: userInfo };
   }
 
-  async getUserInfoByEmail(email: string) {
+  private async getUserInfoByEmail(email: string) {
     const foundUsers = await this.db
       .select({
         userId: dcpTable.userId,
@@ -71,7 +71,7 @@ export class UsersService {
     return foundUsers[0];
   }
 
-  async getUserWithAccessByEmail(email: string) {
+  private async getUserWithAccessByEmail(email: string) {
     const userInfo: UserInfoResponseType | null = await this.getUserInfoByEmail(
       email
     );
