@@ -42,12 +42,12 @@ export class UsersService {
     return { user: userInfo };
   }
 
-  async getUserInfoByEmail(email: string) {
+  private async getUserInfoByEmail(email: string) {
     const users = await this.getUsersInfoByEmail([email]);
     return users?.[0] || null;
   }
 
-  async getUsersInfoByEmail(emails: string[]) {
+  private async getUsersInfoByEmail(emails: string[]) {
     return this.db
       .select({
         userId: dcpTable.userId,
@@ -87,7 +87,7 @@ export class UsersService {
     return this.getUsersInfoByEmail(emails);
   }
 
-  async getUserWithAccessByEmail(email: string) {
+  private async getUserWithAccessByEmail(email: string) {
     const userInfo: UserInfoResponseType | null = await this.getUserInfoByEmail(
       email
     );
