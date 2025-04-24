@@ -93,8 +93,9 @@ export default class DocumentService {
     const bucketId = fichier[0].bucketId || '';
     this.logger.log(`Downloading file ${hashId} from bucket ${bucketId}`);
 
-    const { data, error } = await this.supabaseService.client.storage
-      .from(bucketId)
+    const { data, error } = await this.supabaseService
+      .getServiceRoleClient()
+      .storage.from(bucketId)
       .download(hashId);
     if (!data || error) {
       this.logger.error(JSON.stringify(error));

@@ -118,21 +118,18 @@ export class TrpcService {
     { req }: CreateExpressContextOptions
   ) {
     // Extract Supabase session from cookies or headers
-    const supabaseToken = req.headers.authorization?.split('Bearer ')[1];
+    const jwtToken = req.headers.authorization?.split('Bearer ')[1];
 
-    if (!supabaseToken) {
+    if (!jwtToken) {
       return { user: null };
     }
 
     // Validate JWT token and extract payload
     let jwtPayload: AuthJwtPayload;
     try {
-      jwtPayload = await this.jwtService.verifyAsync<AuthJwtPayload>(
-        supabaseToken,
-        {
-          secret: this.config.get('SUPABASE_JWT_SECRET'),
-        }
-      );
+      jwtPayload = await this.jwtService.verifyAsync<AuthJwtPayload>(jwtToken, {
+        secret: this.config.get('SUPABASE_JWT_SECRET'),
+      });
     } catch (err) {
       this.logger.error(`Failed to validate token: ${getErrorMessage(err)}`);
       return { user: null };
@@ -141,7 +138,11 @@ export class TrpcService {
     // Convert JWT payload to user
     let user: AuthUser;
     try {
-      user = jwtToUser(jwtPayload);
+      user = {
+        ...jwtToUser(jwtPayload),
+        jwtPayload,
+        jwtToken,
+      };
     } catch (err) {
       this.logger.error(`Failed to convert token: ${getErrorMessage(err)}`);
       return { user: null };
@@ -151,10 +152,6 @@ export class TrpcService {
       userId: user.id || undefined,
       authRole: user.role,
     });
-
-    if (!user) {
-      return { user: null, decodedToken: jwtPayload };
-    }
 
     return {
       user,

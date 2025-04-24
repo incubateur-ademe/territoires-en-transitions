@@ -68,7 +68,11 @@ export class AuthGuard implements CanActivate {
     // Convert JWT payload to user
     let user: AuthUser;
     try {
-      user = jwtToUser(jwtPayload);
+      user = {
+        ...jwtToUser(jwtPayload),
+        jwtPayload,
+        jwtToken,
+      };
     } catch (err) {
       this.logger.error(`Failed to convert token: ${getErrorMessage(err)}`);
       throw new UnauthorizedException();
