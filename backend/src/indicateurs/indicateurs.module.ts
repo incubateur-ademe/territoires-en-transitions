@@ -1,3 +1,4 @@
+import ComputeValeursService from '@/backend/indicateurs/valeurs/compute-valeurs.service';
 import IndicateurValeurExpressionParserService from '@/backend/indicateurs/valeurs/indicateur-valeur-expression-parser.service';
 import { Module } from '@nestjs/common';
 import { AuthModule } from '../auth/auth.module';
@@ -49,6 +50,7 @@ import ValeursReferenceService from './valeurs/valeurs-reference.service';
     TrajectoiresRouter,
     PersonnalisationsService,
     ExpressionParserService,
+    ComputeValeursService,
   ],
   exports: [
     IndicateurSourcesService,

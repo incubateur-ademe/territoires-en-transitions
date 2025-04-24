@@ -1,4 +1,5 @@
 import { PermissionService } from '@/backend/auth/authorizations/permission.service';
+import ComputeValeursService from '@/backend/indicateurs/valeurs/compute-valeurs.service';
 import { Test } from '@nestjs/testing';
 import * as _ from 'lodash';
 import CollectivitesService from '../../collectivites/services/collectivites.service';
@@ -32,7 +33,8 @@ describe('Indicateurs → crud-valeurs.service', () => {
           token === CollectivitesService ||
           token === ListDefinitionsService ||
           token === IndicateurValeurExpressionParserService ||
-          token === IndicateurSourcesService
+          token === IndicateurSourcesService ||
+          token === ComputeValeursService
         ) {
           return {};
         }

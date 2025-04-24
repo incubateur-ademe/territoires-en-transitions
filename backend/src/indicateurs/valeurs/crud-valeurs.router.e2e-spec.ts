@@ -196,7 +196,7 @@ describe("Route de lecture/écriture des valeurs d'indicateurs", () => {
     await deleteIndicateurValeursForCollectivite(
       databaseService,
       paysDuLaonCollectiviteId,
-      [indicateurCalculeId, cae1fIndicateurId]
+      [indicateurCalculeId, cae1fIndicateurId, cae1eIndicateurId]
     );
 
     // vérifie le nombre de valeurs avant insertion

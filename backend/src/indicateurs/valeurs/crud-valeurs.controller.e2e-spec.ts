@@ -315,7 +315,11 @@ describe('Indicateurs', () => {
   });
 
   it(`Ecriture avec accès et calcul d'un autre indicateur de la même source`, async () => {
-    const indicateurId = await getIndicateurIdByIdentifiant(
+    const indicateurCae1eId = await getIndicateurIdByIdentifiant(
+      databaseService,
+      'cae_1.e'
+    );
+    const indicateurCae1fId = await getIndicateurIdByIdentifiant(
       databaseService,
       'cae_1.f'
     );
@@ -323,10 +327,17 @@ describe('Indicateurs', () => {
       valeurs: [
         {
           collectiviteId: paysDuLaonCollectiviteId,
-          indicateurId: indicateurId,
+          indicateurId: indicateurCae1fId,
           dateValeur: '2015-01-01',
           metadonneeId: 2,
           resultat: 2.039,
+        },
+        {
+          collectiviteId: paysDuLaonCollectiviteId,
+          indicateurId: indicateurCae1eId,
+          dateValeur: '2015-01-01',
+          metadonneeId: 2,
+          resultat: 100,
         },
       ],
     };
@@ -341,18 +352,32 @@ describe('Indicateurs', () => {
     expect(upserIndicateurValeursResponse.valeurs).toBeInstanceOf(Array);
     expect(
       upserIndicateurValeursResponse.valeurs.length
-    ).toBeGreaterThanOrEqual(2);
+    ).toBeGreaterThanOrEqual(3);
     expect(upserIndicateurValeursResponse.valeurs[0]).toMatchObject({
       collectiviteId: paysDuLaonCollectiviteId,
       dateValeur: '2015-01-01',
       estimation: null,
-      indicateurId: indicateurId,
+      indicateurId: indicateurCae1fId,
       indicateurIdentifiant: 'cae_1.f',
       metadonneeId: 2,
       modifiedBy: YOLO_DODO.id,
       objectif: null,
       objectifCommentaire: null,
       resultat: 2.04,
+      resultatCommentaire: null,
+      sourceId: 'rare',
+    });
+    expect(upserIndicateurValeursResponse.valeurs[1]).toMatchObject({
+      collectiviteId: paysDuLaonCollectiviteId,
+      dateValeur: '2015-01-01',
+      estimation: null,
+      indicateurId: indicateurCae1eId,
+      indicateurIdentifiant: 'cae_1.e',
+      metadonneeId: 2,
+      modifiedBy: YOLO_DODO.id,
+      objectif: null,
+      objectifCommentaire: null,
+      resultat: 100,
       resultatCommentaire: null,
       sourceId: 'rare',
     });
@@ -373,7 +398,7 @@ describe('Indicateurs', () => {
       metadonneeId: 2,
       objectif: null,
       objectifCommentaire: null,
-      resultat: 104.09,
+      resultat: 102.04,
       resultatCommentaire: null,
       sourceId: 'rare',
       calculAuto: true,
