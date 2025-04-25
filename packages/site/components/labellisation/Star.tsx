@@ -3,7 +3,7 @@ type StarProps = {
   className?: string;
 };
 
-const Star = ({fill, className}: StarProps) => (
+export const Star = ({ fill, className }: StarProps) => (
   <svg
     className={className}
     width="17"
@@ -19,10 +19,10 @@ const Star = ({fill, className}: StarProps) => (
   </svg>
 );
 
-export const GreyStar = (props: {className?: string}) => (
+export const GreyStar = (props: { className?: string }) => (
   <Star {...props} fill="#C5C5C5" />
 );
 
-export const RedStar = (props: {className?: string}) => (
+export const RedStar = (props: { className?: string }) => (
   <Star {...props} fill="#E40D18" />
 );

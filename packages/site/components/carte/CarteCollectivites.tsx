@@ -1,14 +1,13 @@
 'use client';
 
+import { useEffect, useState } from 'react';
+import CarteContainer from './CarteContainer';
 import CollectiviteFeature from './CollectiviteFeature';
 import RegionFeature from './RegionFeature';
-import CarteContainer from './CarteContainer';
 import {
+  CollectivitesCarteFrance,
   labellisation_w_geojson,
-  region_w_geojson,
-  useCarteCollectivitesEngagees,
 } from './useCarteCollectivitesEngagees';
-import { useEffect, useState } from 'react';
 
 export type FiltresLabels =
   | 'toutes'
@@ -21,14 +20,15 @@ type CarteCollectivitesProps = {
   filtre: FiltresLabels;
   etoiles: number[];
   forcedZoom?: number;
+  data: CollectivitesCarteFrance;
 };
 
 const CarteCollectivites = ({
   filtre,
   etoiles,
   forcedZoom,
+  data,
 }: CarteCollectivitesProps) => {
-  const { data, isLoading } = useCarteCollectivitesEngagees();
   const [localData, setLocalData] = useState(data);
 
   const sortCollectivites = (collectivites: labellisation_w_geojson[]) => {
@@ -52,15 +52,7 @@ const CarteCollectivites = ({
   };
 
   useEffect(() => {
-    const processData = (
-      data:
-        | {
-            collectivites: labellisation_w_geojson[];
-            regions: region_w_geojson[];
-          }
-        | null
-        | undefined
-    ) => {
+    const processData = (data: CollectivitesCarteFrance) => {
       if (data) {
         return {
           collectivites: sortCollectivites(data.collectivites),
@@ -74,39 +66,28 @@ const CarteCollectivites = ({
   }, [data]);
 
   useEffect(() => {
-    if (data) {
-      let tempCollectivites = data.collectivites;
-      if (filtre === 'labellisees_cae')
-        tempCollectivites = tempCollectivites.filter(
-          (c) => c.cae_etoiles && etoiles.includes(c.cae_etoiles)
-        );
-      if (filtre === 'labellisees_eci')
-        tempCollectivites = tempCollectivites.filter(
-          (c) => c.eci_etoiles && etoiles.includes(c.eci_etoiles)
-        );
-      if (filtre === 'cot_non_labellisees')
-        tempCollectivites = tempCollectivites.filter(
-          (c) => c.cot === true && c.labellisee === false
-        );
-      setLocalData((prevData) => {
-        if (!prevData) return prevData;
-        else
-          return {
-            ...prevData,
-            collectivites: sortCollectivites(tempCollectivites),
-          };
-      });
-    }
+    let tempCollectivites = data.collectivites;
+    if (filtre === 'labellisees_cae')
+      tempCollectivites = tempCollectivites.filter(
+        (c) => c.cae_etoiles && etoiles.includes(c.cae_etoiles)
+      );
+    if (filtre === 'labellisees_eci')
+      tempCollectivites = tempCollectivites.filter(
+        (c) => c.eci_etoiles && etoiles.includes(c.eci_etoiles)
+      );
+    if (filtre === 'cot_non_labellisees')
+      tempCollectivites = tempCollectivites.filter(
+        (c) => c.cot === true && c.labellisee === false
+      );
+    setLocalData((prevData) => {
+      if (!prevData) return prevData;
+      else
+        return {
+          ...prevData,
+          collectivites: sortCollectivites(tempCollectivites),
+        };
+    });
   }, [filtre, etoiles, data]);
-
-  if (isLoading)
-    return (
-      <div className="text-grey-8 flex items-center justify-center mx-auto max-md:my-9 md:my-20">
-        <p>Chargement...</p>
-      </div>
-    );
-
-  if (!localData) return null;
 
   return (
     <CarteContainer forcedZoom={forcedZoom}>
