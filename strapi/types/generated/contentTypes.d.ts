@@ -479,6 +479,7 @@ export interface ApiCollectiviteCollectivite extends Schema.CollectionType {
       'admin::user'
     > &
       Attribute.Private;
+    est_a_la_une: Attribute.Boolean & Attribute.DefaultTo<false>;
     logo: Attribute.Media<'images'>;
     nom: Attribute.String & Attribute.Required & Attribute.Unique;
     publishedAt: Attribute.DateTime;
