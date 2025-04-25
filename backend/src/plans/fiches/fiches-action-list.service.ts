@@ -1018,7 +1018,7 @@ export default class FicheActionListService {
 
   /**
    * Get fiches actions resumes from the collectivity matching the given filters.
-   * Also returns the total count of fiches actions.
+   * Also returns additional data about fetched fiches actions.
    * @param collectiviteId ID of the collectivity
    * @param filters filters to apply
    * @param queryOptions sorting, limit and pagination options
@@ -1034,6 +1034,11 @@ export default class FicheActionListService {
     nbOfPages: number;
     data: FicheActionResumeType[];
   }> {
+    this.logger.log(
+      `Récupération des fiches actions résumées pour la collectivité ${collectiviteId} avec les filtres ${JSON.stringify(
+        filters
+      )}`
+    );
     const { data: fiches, count } = await this.getFichesActionWithCount(
       collectiviteId,
       filters,
