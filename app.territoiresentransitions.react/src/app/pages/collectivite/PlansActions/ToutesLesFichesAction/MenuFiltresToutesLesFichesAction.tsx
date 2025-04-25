@@ -331,6 +331,17 @@ const MenuFiltresToutesLesFichesAction = ({
               });
             }}
           />
+          <Checkbox
+            label="Actions avec mesure(s) des référentiels liée(s)"
+            checked={filters.hasMesuresLiees}
+            onChange={() => {
+              const { hasMesuresLiees, ...rest } = filters;
+              setFilters({
+                ...rest,
+                ...(!hasMesuresLiees ? { hasMesuresLiees: true } : {}),
+              });
+            }}
+          />
         </div>
         <div className="flex flex-col gap-4">
           <Checkbox
