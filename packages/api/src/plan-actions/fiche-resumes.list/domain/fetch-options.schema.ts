@@ -25,6 +25,7 @@ export const filtreSpecifiqueSchema = z.object({
   budgetPrevisionnel: z.coerce.boolean().default(false).optional(),
   restreint: z.coerce.boolean().default(false).optional(),
   hasIndicateurLies: z.coerce.boolean().default(false).optional(),
+  hasMesuresLiees: z.coerce.boolean().default(false).optional(),
   noPilote: z.coerce.boolean().default(false).optional(),
   noServicePilote: z.coerce.boolean().default(false).optional(),
   noStatut: z.coerce.boolean().default(false).optional(),
