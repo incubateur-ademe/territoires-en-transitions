@@ -67,6 +67,10 @@
       "repeatable": true,
       "component": "contenu.texte-collectivite",
       "min": 1
+    },
+    "est_a_la_une": {
+      "type": "boolean",
+      "default": false
     }
   }
 }
