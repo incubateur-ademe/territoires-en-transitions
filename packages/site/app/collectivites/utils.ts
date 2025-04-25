@@ -241,3 +241,10 @@ export const getStrapiDefaultData = async () => {
     };
   } else return null;
 };
+
+export const getCollectivitesALaUne = async () =>
+  await fetchCollection('collectivites', [
+    ['filters[est_a_la_une]', 'true'],
+    ['pagination[pageSize]', '6'],
+    ['populate[0]', 'couverture'],
+  ]);

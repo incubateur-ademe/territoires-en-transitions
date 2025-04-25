@@ -37,7 +37,7 @@ export async function fetchCollection(
   const url = new URL(`${baseURL}/api/${path}`);
   params.forEach((p) => url.searchParams.append(...p));
 
-  const response = await fetch(`${url}`, {
+  const response = await fetch(url.toString(), {
     next: { revalidate: 3600 },
     method: 'GET',
     headers,
