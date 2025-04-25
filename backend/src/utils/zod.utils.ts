@@ -13,8 +13,8 @@ export const zodQueryStringArray = Zod.z.union([
  * support for both string query param and native type
  */
 export const zodQueryBoolean = Zod.z.union([
-  Zod.z.enum(['true', 'false']).transform((value) => value === 'true'),
   Zod.z.boolean(),
+  Zod.z.array(Zod.z.string()).transform((value) => value[0] === 'true'),
 ]);
 
 export const zodQueryNumberArray = Zod.z.union([
