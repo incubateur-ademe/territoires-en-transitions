@@ -36,6 +36,9 @@ export const getFilteredFichesRequestSchema = z
     hasIndicateurLies: zodQueryBoolean
       .optional()
       .describe(`A indicateur(s) associé(s)`),
+    hasMesuresLiees: zodQueryBoolean
+      .optional()
+      .describe(`A mesure(s) des référentiels associée(s)`),
     ameliorationContinue: zodQueryBoolean
       .optional()
       .describe(`Est en amélioration continue`),
