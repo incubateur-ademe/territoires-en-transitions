@@ -1,5 +1,7 @@
-import { countSyntheseValeurSchema } from '@/backend/utils/count-by.dto';
+import { ficheActionNoteSchema } from '@/backend/plans/fiches/fiche-action-note/fiche-action-note.table';
 import FicheActionListService from '@/backend/plans/fiches/fiches-action-list.service';
+import { countSyntheseValeurSchema } from '@/backend/utils/count-by.dto';
+import { LIMIT_DEFAULT, PAGE_DEFAULT } from '@/backend/utils/pagination.schema';
 import { createZodDto } from '@anatine/zod-nestjs';
 import { Body, Controller, Get, Param, Put, Query } from '@nestjs/common';
 import { ApiOkResponse, ApiTags } from '@nestjs/swagger';
@@ -11,8 +13,18 @@ import { CountByService } from './count-by/count-by.service';
 import FicheActionPermissionsService from './fiche-action-permissions.service';
 import FichesActionUpdateService from './fiches-action-update.service';
 import { editFicheRequestSchema } from './shared/edit-fiche.request';
-import { fetchFichesFilterRequestSchema } from './shared/fetch-fiches-filter.request';
-import { GetFichesActionResponseClass } from '@/backend/plans/fiches/fiche-action-note/fiche-action-note.controller';
+import {
+  getFichesRequestSchema,
+  getFilteredFichesRequestSchema,
+} from './shared/fetch-fiches-filter.request';
+import {
+  getFichesActionResponseSchema,
+  getFichesActionResumeResponseSchema,
+} from './shared/models/get-fiche-actions.response';
+import {
+  deleteFicheActionNotesRequestSchema,
+  upsertFicheActionNotesRequestSchema,
+} from './shared/upsert-fiche-action-note.request';
 
 /**
  * Création des classes de réponse à partir du schema pour générer automatiquement la documentation OpenAPI
@@ -24,7 +36,7 @@ export class GetFichesActionSyntheseResponseClass extends createZodDto(
 ) {}
 
 export class GetFichesActionFilterRequestClass extends createZodDto(
-  fetchFichesFilterRequestSchema
+  getFilteredFichesRequestSchema
 ) {}
 
 export class UpdateFicheActionRequestClass extends createZodDto(
@@ -32,6 +44,28 @@ export class UpdateFicheActionRequestClass extends createZodDto(
     (schema) => Object.keys(schema).length > 0,
     'Body cannot be empty'
   )
+) {}
+
+export class GetFicheActionNotesResponseClass extends createZodDto(
+  z.array(ficheActionNoteSchema)
+) {}
+export class UpsertFicheActionNotesRequestClass extends createZodDto(
+  upsertFicheActionNotesRequestSchema
+) {}
+export class DeleteFicheActionNotesRequestClass extends createZodDto(
+  deleteFicheActionNotesRequestSchema
+) {}
+
+export class GetFichesActionResponseClass extends createZodDto(
+  getFichesActionResponseSchema
+) {}
+
+export class GetFichesActionResumeResponseClass extends createZodDto(
+  getFichesActionResumeResponseSchema
+) {}
+
+export class GetFichesResumeRequestClass extends createZodDto(
+  getFichesRequestSchema.omit({ collectiviteId: true })
 ) {}
 
 @ApiTags('Fiches action')
@@ -70,14 +104,20 @@ export class FichesActionController {
   })
   async getFichesAction(
     @Param('collectivite_id') collectiviteId: number,
-    @Query() request: GetFichesActionFilterRequestClass,
+    @Query() request: GetFichesResumeRequestClass,
     @TokenInfo() tokenInfo: AuthenticatedUser
   ): Promise<GetFichesActionResponseClass> {
-    const fiches = await this.ficheActionListService.getFichesAction(
+    const { filters, queryOptions } = request;
+
+    return await this.ficheActionListService.getFichesActionWithCount(
       collectiviteId,
-      request
+      filters,
+      {
+        page: queryOptions?.page ?? PAGE_DEFAULT,
+        limit: queryOptions?.limit ?? LIMIT_DEFAULT,
+        sort: queryOptions?.sort,
+      }
     );
-    return { count: fiches.length, data: fiches };
   }
 
   @Put(':id')
