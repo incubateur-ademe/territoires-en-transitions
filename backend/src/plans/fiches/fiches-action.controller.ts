@@ -1,4 +1,8 @@
 import { ficheActionNoteSchema } from '@/backend/plans/fiches/fiche-action-note/fiche-action-note.table';
+import {
+  deleteFicheActionNotesRequestSchema,
+  upsertFicheActionNotesRequestSchema,
+} from '@/backend/plans/fiches/fiche-action-note/upsert-fiche-action-note.request';
 import FicheActionListService from '@/backend/plans/fiches/fiches-action-list.service';
 import { countSyntheseValeurSchema } from '@/backend/utils/count-by.dto';
 import { LIMIT_DEFAULT, PAGE_DEFAULT } from '@/backend/utils/pagination.schema';
@@ -21,10 +25,6 @@ import {
   getFichesActionResponseSchema,
   getFichesActionResumeResponseSchema,
 } from './shared/models/get-fiche-actions.response';
-import {
-  deleteFicheActionNotesRequestSchema,
-  upsertFicheActionNotesRequestSchema,
-} from './shared/upsert-fiche-action-note.request';
 
 /**
  * Création des classes de réponse à partir du schema pour générer automatiquement la documentation OpenAPI
