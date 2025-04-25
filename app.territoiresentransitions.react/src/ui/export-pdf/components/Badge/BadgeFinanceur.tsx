@@ -2,7 +2,8 @@ import { Badge, BadgeBudget, Stack } from '@/app/ui/export-pdf/components';
 
 type BadgeFinanceurProps = {
   nom: string;
-  montantTtc: number | undefined | null;
+  montant: number | undefined | null;
+  unite?: 'HT' | 'ETP';
   size?: 'sm' | 'md';
   uppercase?: boolean;
   className?: string;
@@ -10,7 +11,8 @@ type BadgeFinanceurProps = {
 
 export const BadgeFinanceur = ({
   nom,
-  montantTtc,
+  montant,
+  unite = 'HT',
   size,
   uppercase,
   className,
@@ -25,7 +27,8 @@ export const BadgeFinanceur = ({
         className="rounded-r-none"
       />
       <BadgeBudget
-        montantTtc={montantTtc}
+        montant={montant}
+        unite={unite}
         size={size}
         className="rounded-l-none border-l-0"
       />

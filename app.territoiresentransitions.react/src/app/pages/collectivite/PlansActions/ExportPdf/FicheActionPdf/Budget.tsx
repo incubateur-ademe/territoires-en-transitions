@@ -1,5 +1,7 @@
+import { FicheAction } from '@/api/plan-actions';
+import BudgetContent from '@/app/app/pages/collectivite/PlansActions/ExportPdf/FicheActionPdf/BudgetContent';
+import { BudgetType } from '@/app/app/pages/collectivite/PlansActions/FicheAction/Budget/hooks/use-get-budget';
 import {
-  BadgeBudget,
   BadgeFinanceur,
   Card,
   Paragraph,
@@ -7,16 +9,26 @@ import {
   Title,
 } from '@/app/ui/export-pdf/components';
 import classNames from 'classnames';
-import { FicheActionPdfProps } from './FicheActionPdf';
 
-const Budget = ({ fiche }: FicheActionPdfProps) => {
-  const { budgetPrevisionnel, financeurs, financements } = fiche;
+type BudgetProps = {
+  fiche: FicheAction;
+  budgets: BudgetType[] | undefined;
+};
 
-  const emptyBudgetPrevisionnel = !budgetPrevisionnel;
+const Budget = ({ fiche, budgets = [] }: BudgetProps) => {
+  const { financeurs, financements } = fiche;
+
   const emptyFinancements = !financements;
   const emptyFinanceurs = !financeurs || financeurs.length === 0;
 
-  if (emptyBudgetPrevisionnel && emptyFinancements && emptyFinanceurs) {
+  const budgetInvestissement = budgets.filter(
+    (elt) => elt.type === 'investissement'
+  );
+  const budgetFonctionnement = budgets.filter(
+    (elt) => elt.type === 'fonctionnement'
+  );
+
+  if (budgets.length === 0 && emptyFinancements && emptyFinanceurs) {
     return null;
   }
 
@@ -26,27 +38,16 @@ const Budget = ({ fiche }: FicheActionPdfProps) => {
         Budget
       </Title>
 
-      {/* Budget prévisionnel total */}
-      <Stack
-        gap={emptyBudgetPrevisionnel ? 'px' : 2}
-        direction="row"
-        className="flex-wrap items-center"
-      >
-        <Paragraph className="text-primary-9 font-bold uppercase">
-          Budget prévisionnel total :{' '}
-        </Paragraph>
-        {emptyBudgetPrevisionnel ? (
-          <Paragraph className="text-grey-7">Non renseigné</Paragraph>
-        ) : (
-          <BadgeBudget montantTtc={budgetPrevisionnel} />
-        )}
-      </Stack>
+      {/* Budget*/}
+      <BudgetContent type="investissement" budgets={budgetInvestissement} />
+
+      <BudgetContent type="fonctionnement" budgets={budgetFonctionnement} />
 
       {/* Financeurs */}
       <Stack
+        direction={emptyFinanceurs ? 'row' : 'col'}
         gap={emptyFinanceurs ? 'px' : 2}
-        direction="row"
-        className="flex-wrap items-center"
+        className="flex-wrap"
       >
         <Paragraph className="text-primary-9 font-bold uppercase">
           Financeurs :{' '}
@@ -54,23 +55,31 @@ const Budget = ({ fiche }: FicheActionPdfProps) => {
         {emptyFinanceurs ? (
           <Paragraph className="text-grey-7">Non renseignés</Paragraph>
         ) : (
-          financeurs.map((f) => (
-            <BadgeFinanceur
-              key={f.financeurTag.id}
-              nom={f.financeurTag.nom}
-              montantTtc={f.montantTtc}
-            />
-          ))
+          <Stack direction="row" gap={2}>
+            {financeurs.map((f) => (
+              <BadgeFinanceur
+                key={f.financeurTag.id}
+                nom={f.financeurTag.nom}
+                montant={f.montantTtc}
+              />
+            ))}
+          </Stack>
         )}
       </Stack>
 
       {/* Financements */}
-      <Paragraph className={classNames({ 'text-grey-7': emptyFinancements })}>
+      <Stack
+        direction={emptyFinancements ? 'row' : 'col'}
+        gap={emptyFinancements ? 'px' : 1}
+        className="flex-wrap"
+      >
         <Paragraph className="text-primary-9 font-bold uppercase">
           Financements :{' '}
         </Paragraph>
-        {!emptyFinancements ? financements : 'Non renseignés '}
-      </Paragraph>
+        <Paragraph className={classNames({ 'text-grey-7': emptyFinancements })}>
+          {!emptyFinancements ? financements : 'Non renseignés '}
+        </Paragraph>
+      </Stack>
     </Card>
   );
 };
