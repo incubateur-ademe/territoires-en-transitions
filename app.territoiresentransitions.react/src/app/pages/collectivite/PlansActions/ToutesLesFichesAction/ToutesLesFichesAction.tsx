@@ -3,8 +3,8 @@ import { useCreateFicheAction } from '@/app/app/pages/collectivite/PlansActions/
 import FichesActionListe from '@/app/app/pages/collectivite/PlansActions/ToutesLesFichesAction/FichesActionListe';
 import MenuFiltresToutesLesFichesAction from '@/app/app/pages/collectivite/PlansActions/ToutesLesFichesAction/MenuFiltresToutesLesFichesAction';
 import { makeCollectiviteToutesLesFichesUrl } from '@/app/app/paths';
+import { useCurrentCollectivite } from '@/app/collectivites/collectivite-context';
 import { useSearchParams } from '@/app/core-logic/hooks/query';
-import { useCurrentCollectivite } from '@/app/core-logic/hooks/useCurrentCollectivite';
 import { Button, ButtonMenu, useEventTracker } from '@/ui';
 import { OpenState } from '@/ui/utils/types';
 import { useFicheActionCount } from '../FicheAction/data/useFicheActionCount';
@@ -18,6 +18,7 @@ export type FicheActionParam =
   | 'bp'
   | 'r'
   | 'il'
+  | 'ml'
   | 'fa'
   | 'pa'
   | 'ra'
@@ -61,6 +62,7 @@ export const nameToparams: Record<
   budgetPrevisionnel: 'bp',
   restreint: 'r',
   hasIndicateurLies: 'il',
+  hasMesuresLiees: 'ml',
   planActionIds: 'pa',
   ficheActionIds: 'fa',
   referentielActionIds: 'ra',
@@ -98,7 +100,7 @@ export const nameToparams: Record<
 /** Page de listing de toutes les fiches actions de la collectivité */
 const ToutesLesFichesAction = () => {
   const { collectiviteId, niveauAcces, role, isReadOnly } =
-    useCurrentCollectivite()!;
+    useCurrentCollectivite();
 
   const { count } = useFicheActionCount();
 
