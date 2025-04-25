@@ -846,3 +846,5 @@ plan_action/budget 2025-04-01T15:33:43Z Amandine <contact@jacquelinamandine.fr> 
 @v4.48.0 2025-04-15T07:55:03Z Amandine <contact@jacquelinamandine.fr> # Supprime update_late_scores et verification_scores, et ajout fiche_action_budget
 
 indicateur/calcul_indicateur 2025-04-14T12:28:50Z System Administrator <root@MacBook-Air-de-Thibaut-2.local> # Ajout de colonnes pour savoir si une valeur d'indicateur a été calculée et si il manque des données de calcul
+@v4.49.0 2025-04-25T12:09:53Z System Administrator <root@MacBook-Air-de-Thibaut-2.local> # Ajout de colonnes pour savoir si une valeur d'indicateur a été calculée et si il manque des données de calcul
+
