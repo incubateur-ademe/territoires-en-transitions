@@ -1,8 +1,7 @@
-import { Personne } from '@/api/collectivites';
 import PersonnesDropdown from '@/app/ui/dropdownLists/PersonnesDropdown/PersonnesDropdown';
 import { getPersonneStringId } from '@/app/ui/dropdownLists/PersonnesDropdown/utils';
 import ServicesPilotesDropdown from '@/app/ui/dropdownLists/ServicesPilotesDropdown/ServicesPilotesDropdown';
-import { Tag } from '@/domain/collectivites';
+import { PersonneTagOrUser, Tag } from '@/domain/collectivites';
 import { Field, FormSectionGrid, Modal, ModalFooterOKCancel } from '@/ui';
 import { OpenState } from '@/ui/utils/types';
 import { isEqual } from 'es-toolkit';
@@ -25,7 +24,9 @@ type Props = {
 };
 
 const EditModal = ({ openState, collectiviteId, definition }: Props) => {
-  const [editedPilotes, setEditedPilotes] = useState<Personne[] | undefined>();
+  const [editedPilotes, setEditedPilotes] = useState<
+    PersonneTagOrUser[] | undefined
+  >();
   const [editedServices, setEditedServices] = useState<Tag[] | undefined>();
 
   const { data: pilotes } = useIndicateurPilotes(definition.id);
@@ -39,7 +40,9 @@ const EditModal = ({ openState, collectiviteId, definition }: Props) => {
     definition.id
   );
 
-  useEffect(() => setEditedPilotes(pilotes), [pilotes]);
+  // Forcing type because useIndicateurPilotes still uses Supabase call
+  // and returns an outdated type
+  useEffect(() => setEditedPilotes(pilotes as PersonneTagOrUser[]), [pilotes]);
 
   useEffect(
     () =>
