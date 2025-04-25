@@ -73,11 +73,6 @@ export const actionSchema = actionDefinitionSchema.extend({
 
 export type Action = z.infer<typeof actionSchema>;
 
-/**
- * Combines an action with its status and score,
- * which is what we need for the PDF export.
- */
-
 const actionWithScoreSchema = actionSchema.extend({
   score: scoreFinalSchema.optional(),
 });
