@@ -9,7 +9,6 @@ import {
   Tag,
 } from '../../collectivites/index-domain';
 import {
-  Action,
   actionDefinitionTable,
   ActionType,
   ActionWithScore,
@@ -20,11 +19,6 @@ import { referentielDefinitionTable } from '../models/referentiel-definition.tab
 import { SnapshotsService } from '../snapshots/snapshots.service';
 import { getExtendActionWithComputedFields } from '../snapshots/snapshots.utils';
 import { ListActionsRequestType } from './list-actions.request';
-export type ListActionsEmbed = ('statut' | 'score')[];
-
-type ListInput = ListActionsRequestType & {
-  embed: ListActionsEmbed;
-};
 
 @Injectable()
 export class ListActionsService {
@@ -38,8 +32,7 @@ export class ListActionsService {
   async listActions({
     collectiviteId,
     filters,
-    embed,
-  }: ListInput): Promise<Action[] | ActionWithScore[]> {
+  }: ListActionsRequestType): Promise<ActionWithScore[]> {
     const subQuery = this.db
       .$with('action_definition_with_details')
       .as(this.listWithDetails(collectiviteId));
@@ -126,8 +119,7 @@ export class ListActionsService {
 
     const extendActionWithComputedFields = getExtendActionWithComputedFields(
       collectiviteId,
-      this.snapshotService.get.bind(this.snapshotService),
-      embed
+      this.snapshotService.get.bind(this.snapshotService)
     );
 
     return Promise.all(actions.map(extendActionWithComputedFields));

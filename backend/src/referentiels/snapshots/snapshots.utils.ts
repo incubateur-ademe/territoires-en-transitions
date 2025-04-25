@@ -1,4 +1,3 @@
-import { ListActionsEmbed } from '@/backend/referentiels/list-actions/list-actions.service';
 import { memoize } from 'es-toolkit';
 
 import { StatutAvancementEnum } from '@/backend/referentiels/index-domain';
@@ -21,8 +20,7 @@ export function getExtendActionWithComputedFields(
   getSnapshot: (
     collectiviteId: number,
     referentielId: ReferentielId
-  ) => ReturnType<SnapshotsService['get']>,
-  embed: ListActionsEmbed
+  ) => ReturnType<SnapshotsService['get']>
 ) {
   const getCurrentSnapshot = memoize((referentielId: ReferentielId) =>
     getSnapshot(collectiviteId, referentielId)
@@ -50,20 +48,18 @@ export function getExtendActionWithComputedFields(
 
     return {
       ...action,
-      ...(embed.includes('score') ? { score } : {}),
-      ...(embed.includes('statut')
-        ? {
-            desactive: score.desactive,
-            concerne: score.concerne,
-            statut:
-              getStatutAvancementBasedOnChildren(
-                score,
-                flatMapActionsEnfants(actionWithScore)
-                  .map((a) => a.score.avancement)
-                  .filter((a) => a !== undefined)
-              ) ?? StatutAvancementEnum.NON_RENSEIGNE,
-          }
-        : {}),
+      ...{ score },
+      ...{
+        desactive: score.desactive,
+        concerne: score.concerne,
+        statut:
+          getStatutAvancementBasedOnChildren(
+            score,
+            flatMapActionsEnfants(actionWithScore)
+              .map((a) => a.score.avancement)
+              .filter((a) => a !== undefined)
+          ) ?? StatutAvancementEnum.NON_RENSEIGNE,
+      },
     };
   };
 }

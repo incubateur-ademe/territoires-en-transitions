@@ -1,7 +1,7 @@
 import { FicheAction } from '@/api/plan-actions';
 import { useGetEtapes } from '@/app/app/pages/collectivite/PlansActions/FicheAction/etapes/use-get-etapes';
-import { useCurrentCollectivite } from '@/app/core-logic/hooks/useCurrentCollectivite';
-import { useListActionsWithScores } from '@/app/referentiels/actions/use-list-actions';
+import { useCurrentCollectivite } from '@/app/collectivites/collectivite-context';
+import { useListActions } from '@/app/referentiels/actions/use-list-actions';
 import ExportPDFButton from '@/app/ui/export-pdf/ExportPDFButton';
 import { useEventTracker } from '@/ui';
 import { createElement, useEffect, useState } from 'react';
@@ -38,7 +38,7 @@ export const FicheActionPdfContent = ({
     useFichesActionLiees(fiche.id, options.fiches.isChecked);
 
   const { data: actionsLiees, isLoading: isLoadingActionsLiees } =
-    useListActionsWithScores(
+    useListActions(
       {
         actionIds: fiche?.actions?.map((action) => action.id),
       },

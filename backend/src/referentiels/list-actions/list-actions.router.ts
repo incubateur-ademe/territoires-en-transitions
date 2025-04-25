@@ -37,26 +37,6 @@ export class ListActionsRouter {
         return this.listActionsService.listActions({
           collectiviteId,
           filters,
-          embed: ['statut'],
-        });
-      }),
-
-    listActionsWithScores: this.trpc.authedProcedure
-      .input(listActionsRequestSchema)
-      .query(async ({ input, ctx: { user } }) => {
-        const { collectiviteId, filters } = input;
-
-        await this.permissions.isAllowed(
-          user,
-          PermissionOperation.REFERENTIELS_LECTURE,
-          ResourceType.COLLECTIVITE,
-          collectiviteId
-        );
-
-        return this.listActionsService.listActions({
-          collectiviteId,
-          filters,
-          embed: ['statut', 'score'],
         });
       }),
   });

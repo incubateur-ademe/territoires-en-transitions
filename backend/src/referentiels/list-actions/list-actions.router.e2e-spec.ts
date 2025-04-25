@@ -4,11 +4,7 @@ import { getTestRouter } from '../../../test/app-utils';
 import { getAnonUser, getAuthUser } from '../../../test/auth-utils';
 import { AuthenticatedUser } from '../../auth/models/auth.models';
 import { type AppRouter, TrpcRouter } from '../../utils/trpc/trpc.router';
-import {
-  ActionAndScore,
-  ActionTypeEnum,
-  ReferentielIdEnum,
-} from '../index-domain';
+import { ActionTypeEnum, ReferentielIdEnum } from '../index-domain';
 import {
   ListActionsRequestOptionsType,
   listActionsRequestSchema,
@@ -103,7 +99,7 @@ describe('ActionStatutListRouter', () => {
     }
   });
 
-  test('List actions with statuts', async () => {
+  test('List actions with statuts and scores', async () => {
     const caller = router.createCaller({ user: yoloDodoUser });
 
     const input = {
@@ -126,27 +122,6 @@ describe('ActionStatutListRouter', () => {
       expect(action.statut).toBeDefined();
       expect(action.desactive).toBeDefined();
       expect(action.concerne).toBeDefined();
-    }
-  });
-
-  test('List actions with scores', async () => {
-    const caller = router.createCaller({ user: yoloDodoUser });
-
-    const input = {
-      collectiviteId: 1,
-      filters: {
-        actionIds: ['cae_1.1.1'],
-      },
-    } satisfies ListActionsInput;
-
-    const result = (await caller.referentiels.actions.listActionsWithScores(
-      input
-    )) as ActionAndScore[];
-
-    expect(result.length).toEqual(input.filters.actionIds.length);
-
-    for (const action of result) {
-      expect(input.filters.actionIds).toContain(action.actionId);
 
       expect(action.score).toBeDefined();
     }
