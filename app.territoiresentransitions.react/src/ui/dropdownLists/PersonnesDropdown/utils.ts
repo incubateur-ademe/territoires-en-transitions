@@ -12,7 +12,9 @@ export const getPersonneStringId = (
 ): string => (personne.tagId ? personne.tagId.toString() : personne.userId!);
 
 /** Renvoie un object avec les utilisateurs et les tags séparés pilotes */
-export const splitPilotePersonnesAndUsers = (personnes: Personne[]) => {
+export const splitPilotePersonnesAndUsers = (
+  personnes: PersonneTagOrUser[]
+) => {
   const personnePiloteIds: number[] = [];
   const utilisateurPiloteIds: string[] = [];
   personnes.forEach((p) => {
