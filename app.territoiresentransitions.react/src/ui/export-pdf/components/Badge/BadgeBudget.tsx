@@ -5,23 +5,31 @@ import classNames from 'classnames';
 import { tw } from '../../utils';
 
 type BadgeBudgetProps = {
-  montantTtc: number | undefined | null;
+  montant: number | undefined | null;
+  unite?: 'HT' | 'ETP';
   size?: 'sm' | 'md';
   className?: string;
 };
 
 export const BadgeBudget = ({
-  montantTtc,
+  montant,
+  unite = 'HT',
   className,
   ...props
 }: BadgeBudgetProps) => {
   return (
     <Badge
       title={
-        montantTtc ? (
+        montant ? (
           <Text>
-            {getFormattedNumber(montantTtc)} €{' '}
-            <Text style={tw('text-[0.5rem] leading-[0.6rem]')}>TTC</Text>
+            {getFormattedNumber(montant)}{' '}
+            {unite === 'HT' ? (
+              <>
+                € <Text style={tw('text-[0.5rem] leading-[0.6rem]')}>HT</Text>
+              </>
+            ) : (
+              <>ETP</>
+            )}
           </Text>
         ) : (
           'Non renseigné'

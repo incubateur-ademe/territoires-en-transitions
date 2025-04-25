@@ -5,6 +5,7 @@ import { AnnexeInfo } from '../../FicheAction/data/useAnnexesFicheActionInfos';
 
 import { RouterOutput } from '@/api/utils/trpc/client';
 import Etapes from '@/app/app/pages/collectivite/PlansActions/ExportPdf/FicheActionPdf/Etapes';
+import { BudgetType } from '@/app/app/pages/collectivite/PlansActions/FicheAction/Budget/hooks/use-get-budget';
 import { ActionWithScore } from '@/domain/referentiels';
 import { TIndicateurDefinition } from '../../../Indicateurs/types';
 import { TSectionsValues, sectionsInitValue } from '../utils';
@@ -35,6 +36,7 @@ export type FicheActionPdfExtendedProps = FicheActionPdfProps & {
   actionsLiees: ActionWithScore[];
   annexes: AnnexeInfo[] | undefined;
   notesSuivi: FicheActionNote[] | undefined;
+  budgets: BudgetType[] | undefined;
 };
 
 const FicheActionPdf = ({
@@ -47,6 +49,7 @@ const FicheActionPdf = ({
   actionsLiees,
   annexes,
   notesSuivi,
+  budgets,
 }: FicheActionPdfExtendedProps) => {
   const { titre } = fiche;
 
@@ -98,7 +101,7 @@ const FicheActionPdf = ({
       )}
 
       {/* Budget */}
-      {sections.budget.isChecked && <Budget fiche={fiche} />}
+      {sections.budget.isChecked && <Budget fiche={fiche} budgets={budgets} />}
 
       {/* Fiches des plans liées */}
       {sections.fiches.isChecked && <FichesLiees fichesLiees={fichesLiees} />}
