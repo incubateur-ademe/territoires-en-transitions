@@ -821,6 +821,9 @@ export default class FicheActionListService {
     if (filters.hasIndicateurLies) {
       conditions.push(isNotNull(sql`indicateur_ids`));
     }
+    if (filters.hasMesuresLiees) {
+      conditions.push(isNotNull(sql`mesures`));
+    }
 
     if (filters.cibles?.length) {
       conditions.push(arrayOverlaps(ficheActionTable.cibles, filters.cibles));
