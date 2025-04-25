@@ -6,7 +6,6 @@ import { tagWithOptionalCollectiviteSchema } from '@/backend/collectivites/tags/
 import { axeSchema } from '@/backend/plans/fiches/shared/models/axe.table';
 import z from 'zod';
 import { ficheSchema } from './fiche-action.table';
-import { ficheActionBudgetSchema } from '@/backend/plans/fiches/fiche-action-budget/fiche-action-budget.table';
 
 export const ficheActionWithRelationsSchema = ficheSchema.extend({
   createdByName: z.string(),
@@ -126,7 +125,7 @@ export const ficheActionWithRelationsSchema = ficheSchema.extend({
   budgets: z
     .object({
       id: z.number(),
-      ficheId : z.number(),
+      ficheId: z.number(),
       type: z.string(),
       unite: z.string(),
       annee: z.number().nullable().optional(),
@@ -135,8 +134,9 @@ export const ficheActionWithRelationsSchema = ficheSchema.extend({
       estEtale: z.boolean().optional(),
     })
     .array()
-      .nullable()
+    .nullable()
     .describe(`Budgets de la fiche action`),
+  actionImpactId: z.number().nullish(),
 });
 
 export type FicheActionWithRelationsType = z.infer<
