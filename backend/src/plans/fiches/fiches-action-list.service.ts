@@ -1022,7 +1022,7 @@ export default class FicheActionListService {
    * @param collectiviteId ID of the collectivity
    * @param filters filters to apply
    * @param queryOptions sorting, limit and pagination options
-   * @return an array of summarized fiches actions with count
+   * @return an array of summarized fiches actions with count, next page, number of pages and data
    */
   async getFichesActionResumes(
     collectiviteId: number,
