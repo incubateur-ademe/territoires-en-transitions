@@ -10,7 +10,8 @@ export interface AuthUser<Role extends AuthRole = AuthRole> {
   id: Role extends AuthRole.AUTHENTICATED ? string : null;
   role: Role;
   isAnonymous: Role extends AuthRole.AUTHENTICATED ? false : true;
-  jwtToken: AuthJwtPayload<Role>;
+  jwtPayload: AuthJwtPayload<Role>;
+  jwtToken: string;
 }
 
 export type AnonymousUser = AuthUser<AuthRole.ANON>;
@@ -38,7 +39,9 @@ export interface AuthJwtPayload<Role extends AuthRole = AuthRole>
   role: Role;
 }
 
-export function jwtToUser(jwt: AuthJwtPayload): AuthUser {
+export function jwtToUser(
+  jwt: AuthJwtPayload
+): Pick<AuthUser, 'id' | 'role' | 'isAnonymous'> {
   if (jwt.role === AuthRole.AUTHENTICATED) {
     if (jwt.sub === undefined) {
       throw new Error(`JWT sub claim is missing: ${JSON.stringify(jwt)}`);
@@ -48,7 +51,6 @@ export function jwtToUser(jwt: AuthJwtPayload): AuthUser {
       id: jwt.sub,
       role: AuthRole.AUTHENTICATED,
       isAnonymous: false,
-      jwtToken: jwt,
     };
   }
 
@@ -57,7 +59,6 @@ export function jwtToUser(jwt: AuthJwtPayload): AuthUser {
       id: null,
       role: AuthRole.ANON,
       isAnonymous: true,
-      jwtToken: jwt,
     };
   }
 
@@ -66,7 +67,6 @@ export function jwtToUser(jwt: AuthJwtPayload): AuthUser {
       id: null,
       role: AuthRole.SERVICE_ROLE,
       isAnonymous: true,
-      jwtToken: jwt,
     };
   }
 
