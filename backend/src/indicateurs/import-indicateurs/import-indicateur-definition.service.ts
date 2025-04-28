@@ -195,6 +195,7 @@ export default class ImportIndicateurDefinitionService extends BaseSpreadsheetIm
     if (updatedIndicateurDefinitionFormulas.length) {
       const recomputeResults =
         await this.crudValeursService.recomputeAllCalculatedIndicateurValeurs(
+          undefined,
           null,
           updatedIndicateurDefinitionFormulas,
           true

@@ -248,7 +248,7 @@ describe("Route de lecture/écriture des valeurs d'indicateurs", () => {
   test('Ne permet pas de recalculer si on utilise pas un compte de service', async () => {
     const caller = router.createCaller({ user: yoloDodoUser });
 
-    await expect(caller.indicateurs.valeurs.recompute()).rejects.toThrow();
+    await expect(caller.indicateurs.valeurs.recompute({})).rejects.toThrow();
   });
 
   test('Permet de supprimer une valeur', async () => {
