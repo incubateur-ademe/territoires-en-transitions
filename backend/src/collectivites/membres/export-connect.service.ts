@@ -205,7 +205,16 @@ export class ExportConnectService {
       .from(collectivites)
       .leftJoin(utilisateurs, eq(utilisateurs.userId, collectivites.userId))
       .leftJoin(dcpTable, eq(dcpTable.userId, utilisateurs.userId))
-      .leftJoin(membreTable, eq(membreTable.userId, utilisateurs.userId))
+      .leftJoin(
+        membreTable,
+        and(
+          eq(membreTable.userId, utilisateurs.userId),
+          eq(
+            membreTable.collectiviteId,
+            sql`any(${collectivites.collectiviteIds})`
+          )
+        )
+      )
       .leftJoin(
         collectiviteTable,
         eq(collectiviteTable.id, sql`any(${collectivites.collectiviteIds})`)
