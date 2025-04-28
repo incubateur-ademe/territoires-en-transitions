@@ -2,7 +2,6 @@ import classNames from 'classnames';
 import { useEffect, useRef, useState } from 'react';
 
 import {
-  Filtre,
   SortFichesAction,
   SortFichesActionValue,
 } from '@/api/plan-actions/fiche-resumes.list/domain/fetch-options.schema';
@@ -25,7 +24,10 @@ import FilterBadges, {
   CustomFilterBadges,
   useFiltersToBadges,
 } from '@/app/ui/lists/filter-badges';
-import { FicheActionResumeType } from '@/domain/plans/fiches';
+import {
+  FicheActionResumeType,
+  GetFilteredFichesRequestType as Filtres,
+} from '@/domain/plans/fiches';
 import { isEqual } from 'es-toolkit';
 import ActionsGroupeesMenu from '../ActionsGroupees/ActionsGroupeesMenu';
 import EmptyFichePicto from '../FicheAction/FichesLiees/EmptyFichePicto';
@@ -64,7 +66,7 @@ const sortByOptions: sortByOptionsType[] = [
 
 type Props = {
   settings?: (openState: OpenState) => React.ReactNode;
-  filtres: Filtre;
+  filtres: Filtres;
   customFilterBadges?: CustomFilterBadges;
   resetFilters?: () => void;
   maxNbOfCards?: number;

@@ -1,23 +1,26 @@
-import { FicheResume } from '@/api/plan-actions';
 import { useSupabase } from '@/api/utils/supabase/use-supabase';
-import { useCollectiviteId } from '@/app/core-logic/hooks/params';
+import { trpc } from '@/api/utils/trpc/client';
+import { useCollectiviteId } from '@/app/collectivites/collectivite-context';
+
 import { diff } from '@/app/utils/diff';
-import { useMutation, useQueryClient } from 'react-query';
+import { FicheActionResumeType } from '@/domain/plans/fiches';
+import { useMutation } from 'react-query';
 
 type TUpdateFichesActionLieesArgs = {
   /** liste courante des fiches associées à l'action */
-  fiches: FicheResume[];
+  fiches: FicheActionResumeType[];
   /** liste mise à jour des fiches associées à l'action */
-  fiches_liees: FicheResume[];
+  fiches_liees: FicheActionResumeType[];
 };
 
 /**
  * Met à jour la liste des fiches action liées à une action
  */
 export const useUpdateFichesActionLiees = (action_id: string) => {
-  const queryClient = useQueryClient();
-  const collectivite_id = useCollectiviteId();
+  const collectiviteId = useCollectiviteId();
   const supabase = useSupabase();
+
+  const utils = trpc.useUtils();
 
   return useMutation(
     async ({ fiches, fiches_liees }: TUpdateFichesActionLieesArgs) => {
@@ -47,7 +50,9 @@ export const useUpdateFichesActionLiees = (action_id: string) => {
     },
     {
       onSuccess: () => {
-        queryClient.invalidateQueries(['fiche_action_liees', collectivite_id]);
+        utils.plans.fiches.listResumes.invalidate({
+          collectiviteId,
+        });
       },
     }
   );
