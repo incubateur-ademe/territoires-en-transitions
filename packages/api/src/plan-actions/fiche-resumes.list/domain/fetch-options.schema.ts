@@ -61,6 +61,11 @@ export const filtreSchema = filtreRessourceLieesSchema
   })
   .merge(filtreSpecifiqueSchema);
 
+export const Filtre = filtreSchema;
+
+/**
+ * @deprecated Use GetFilteredFichesRequestType instead
+ */
 export type Filtre = z.infer<typeof filtreSchema>;
 
 const sortValues = ['modified_at', 'created_at', 'titre'] as const;
