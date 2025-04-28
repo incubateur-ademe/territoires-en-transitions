@@ -1,5 +1,6 @@
 import { BudgetType } from '@/app/app/pages/collectivite/PlansActions/FicheAction/Budget/hooks/use-get-budget';
 import { getYearsOptions } from '@/app/app/pages/collectivite/PlansActions/FicheAction/utils';
+import { getFormattedNumber } from '@/app/utils/formatUtils';
 import { Button, Field, Input, Select } from '@/ui';
 
 type DetailledBudgetInputProps = {
@@ -27,7 +28,7 @@ const DetailledBudgetInput = ({
         .map((budget, index) => (
           <div
             key={`${budget.annee}-${index}`}
-            className="flex items-end gap-4"
+            className="flex items-start gap-4"
           >
             <Field title="Année" className="w-52 grow-0 shrink-0">
               <Select
@@ -37,6 +38,8 @@ const DetailledBudgetInput = ({
                 onChange={() => ({})}
               />
             </Field>
+
+            {/* Budget prévisionnel */}
             <Field
               title={`${unite === 'HT' ? 'Montant ' : 'ETP '} prévisionnel`}
             >
@@ -62,7 +65,23 @@ const DetailledBudgetInput = ({
                   )
                 }
               />
+              {/* Total budget prévisionnel */}
+              {budgets.length > 1 && index === budgets.length - 1 && (
+                <div className="uppercase text-primary-10 text-lg font-bold ml-auto mt-6 mr-1">
+                  Total :{' '}
+                  {getFormattedNumber(
+                    budgets.reduce(
+                      (sum, currValue) =>
+                        sum + parseInt(currValue.budgetPrevisionnel ?? 0),
+                      0
+                    )
+                  )}{' '}
+                  {unite === 'HT' ? '€ HT' : 'ETP'}
+                </div>
+              )}
             </Field>
+
+            {/* Budget réel */}
             <Field title={unite === 'HT' ? 'Montant dépensé' : 'ETP réel'}>
               <Input
                 type="number"
@@ -84,10 +103,25 @@ const DetailledBudgetInput = ({
                   )
                 }
               />
+              {/* Total budget réel */}
+              {budgets.length > 1 && index === budgets.length - 1 && (
+                <div className="uppercase text-primary-10 text-lg font-bold ml-auto mt-6 mr-1">
+                  Total :{' '}
+                  {getFormattedNumber(
+                    budgets.reduce(
+                      (sum, currValue) =>
+                        sum + parseInt(currValue.budgetReel ?? 0),
+                      0
+                    )
+                  )}{' '}
+                  {unite === 'HT' ? '€ HT' : 'ETP'}
+                </div>
+              )}
             </Field>
             <Button
               icon="delete-bin-line"
               variant="grey"
+              className="mt-8"
               onClick={() =>
                 onUpdate(
                   (budgets ?? []).filter((elt) => elt.annee !== budget.annee)
