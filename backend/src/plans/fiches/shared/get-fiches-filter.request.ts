@@ -120,6 +120,11 @@ export const getFilteredFichesRequestSchema = z
       .describe(
         "Liste des identifiants des plans d'action séparés par des virgules"
       ),
+    mesureIds: zodQueryStringArray
+      .optional()
+      .describe(
+        'Liste des identifiants des mesures du référentiel séparés par des virgules'
+      ),
     modifiedAfter: z
       .string()
       .datetime()

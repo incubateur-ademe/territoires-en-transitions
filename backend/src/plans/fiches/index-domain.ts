@@ -2,7 +2,8 @@
 // Exports from this file can be imported with `@/domain/*` alias path.
 
 export * from './count-by/count-by-property-options.enum';
-export * from './shared/fetch-fiches-filter.request';
+export * from './fiche-action-note/fiche-action-note.table';
+export * from './shared/get-fiches-filter.request';
 export * from './shared/models//fiche-action-with-relations.dto';
 export * from './shared/models/axe.table';
 export * from './shared/models/fiche-action-effet-attendu.table';
@@ -10,7 +11,6 @@ export * from './shared/models/fiche-action-financeur-tag.table';
 export * from './shared/models/fiche-action-indicateur.table';
 export * from './shared/models/fiche-action-libre-tag.table';
 export * from './shared/models/fiche-action-lien.table';
-export * from './fiche-action-note/fiche-action-note.table';
 export * from './shared/models/fiche-action-partenaire-tag.table';
 export * from './shared/models/fiche-action-service-tag.table';
 export * from './shared/models/fiche-action-sous-thematique.table';
