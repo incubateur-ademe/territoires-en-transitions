@@ -58,7 +58,7 @@ const FichesLiees = ({ definition, isReadonly }: Props) => {
             )}
           </div>
           <FichesActionListe
-            filtres={{ ficheActionIds: fichesLiees }}
+            filtres={{ ficheIds: fichesLiees }}
             sortSettings={{
               defaultSort: 'titre',
             }}
