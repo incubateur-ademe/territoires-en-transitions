@@ -23,6 +23,6 @@ export class CronConsumerService extends WorkerHost {
 
   async process(job: Job<unknown, unknown, JobName>): Promise<unknown> {
     this.logger.log(`Traitement du job "${job.name}"`);
-    return this.calendlySynchroService.process();
+    return this.handlers[job.name]();
   }
 }
