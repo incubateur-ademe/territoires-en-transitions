@@ -20,7 +20,7 @@ import { editFicheRequestSchema } from './shared/edit-fiche.request';
 import {
   getFichesRequestSchema,
   getFilteredFichesRequestSchema,
-} from './shared/fetch-fiches-filter.request';
+} from './shared/get-fiches-filter.request';
 import {
   getFichesActionResponseSchema,
   getFichesActionResumeResponseSchema,

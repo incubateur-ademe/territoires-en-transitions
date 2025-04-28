@@ -1,4 +1,4 @@
-import { getFichesRequestSchema } from '@/backend/plans/fiches/shared/fetch-fiches-filter.request';
+import { getFichesRequestSchema } from '@/backend/plans/fiches/shared/get-fiches-filter.request';
 import { LIMIT_DEFAULT, PAGE_DEFAULT } from '@/backend/utils/pagination.schema';
 import { TrpcService } from '@/backend/utils/trpc/trpc.service';
 import { Injectable } from '@nestjs/common';

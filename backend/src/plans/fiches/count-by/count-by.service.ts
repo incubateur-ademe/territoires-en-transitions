@@ -21,7 +21,7 @@ import {
   SANS_THEMATIQUE_LABEL,
   statutsEnumValues,
 } from '@/backend/plans/fiches/index-domain';
-import { GetFilteredFichesRequestType } from '@/backend/plans/fiches/shared/fetch-fiches-filter.request';
+import { GetFilteredFichesRequestType } from '@/backend/plans/fiches/shared/get-fiches-filter.request';
 import {
   CountByRecordGeneralType,
   CountByResponseType,
@@ -197,22 +197,24 @@ export class CountByService {
     if (countByProperty.startsWith('budgets')) {
       const budgets = fiche.budgets || [];
 
-      const valueKey = budgets.some(
-        (budget) => {
-          const isTypeMatch =
-            budget.type === (countByProperty.includes('Investissement') ? 'investissement' : 'fonctionnement');
+      const valueKey = budgets.some((budget) => {
+        const isTypeMatch =
+          budget.type ===
+          (countByProperty.includes('Investissement')
+            ? 'investissement'
+            : 'fonctionnement');
 
-          const isPrevisionnel = countByProperty.includes('Previsionnel')
-            ? budget.budgetPrevisionnel !== null && budget.budgetPrevisionnel !== undefined
-            : budget.budgetReel !== null && budget.budgetReel !== undefined;
+        const isPrevisionnel = countByProperty.includes('Previsionnel')
+          ? budget.budgetPrevisionnel !== null &&
+            budget.budgetPrevisionnel !== undefined
+          : budget.budgetReel !== null && budget.budgetReel !== undefined;
 
-          const isTotal = countByProperty.includes('Total')
-            ? budget.annee === null || budget.annee === undefined
-            : budget.annee !== null && budget.annee !== undefined;
+        const isTotal = countByProperty.includes('Total')
+          ? budget.annee === null || budget.annee === undefined
+          : budget.annee !== null && budget.annee !== undefined;
 
-          return isTypeMatch && isPrevisionnel && isTotal;
-        }
-      );
+        return isTypeMatch && isPrevisionnel && isTotal;
+      });
       if (!countByMap[valueKey.toString()]) {
         countByMap[valueKey.toString()] = {
           value: valueKey,
@@ -220,7 +222,6 @@ export class CountByService {
         };
       }
       countByMap[valueKey.toString()].count++;
-
     } else if (
       countByProperty === 'statut' ||
       countByProperty === 'priorite' ||
