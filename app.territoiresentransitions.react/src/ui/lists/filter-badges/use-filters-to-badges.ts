@@ -170,6 +170,8 @@ export const useFiltersToBadges = ({ filters, customValues }: Args) => {
         mergedFilters[key] && badgeValues.push('Confidentialité');
       } else if (key === 'hasIndicateurLies') {
         mergedFilters[key] && badgeValues.push('Indicateur(s) associé(s)');
+      } else if (key === 'hasMesuresLiees') {
+        mergedFilters[key] && badgeValues.push('Mesure(s) associée(s)');
       } else if (key === 'ameliorationContinue') {
         mergedFilters[key] && badgeValues.push('Se répète tous les ans');
       } else if (key === 'priorites') {
