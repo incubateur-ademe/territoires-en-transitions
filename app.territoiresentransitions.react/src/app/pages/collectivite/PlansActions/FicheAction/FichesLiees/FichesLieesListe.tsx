@@ -1,14 +1,14 @@
-import { FicheResume } from '@/api/plan-actions';
 import {
   makeCollectiviteFicheNonClasseeUrl,
   makeCollectivitePlanActionFicheUrl,
 } from '@/app/app/paths';
-import { useCollectiviteId } from '@/app/core-logic/hooks/params';
+import { useCollectiviteId } from '@/app/collectivites/collectivite-context';
+import { FicheActionResumeType } from '@/backend/plans/fiches/shared/models/fiche-action-with-relations.dto';
 import classNames from 'classnames';
 import FicheActionCard from '../Carte/FicheActionCard';
 
 type FichesLieesListeProps = {
-  fiches: FicheResume[];
+  fiches: FicheActionResumeType[];
   className?: string;
   onUnlink?: (ficheId: number) => void;
 };
