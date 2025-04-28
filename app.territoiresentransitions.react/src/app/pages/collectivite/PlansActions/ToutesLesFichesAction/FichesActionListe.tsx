@@ -19,7 +19,8 @@ import {
   makeCollectiviteFicheNonClasseeUrl,
   makeCollectivitePlanActionFicheUrl,
 } from '@/app/app/paths';
-import { useCollectiviteId } from '@/app/core-logic/hooks/params';
+import { useCollectiviteId } from '@/app/collectivites/collectivite-context';
+
 import FilterBadges, {
   CustomFilterBadges,
   useFiltersToBadges,
@@ -161,7 +162,8 @@ const FichesActionListe = ({
     };
   }
 
-  const { data, isLoading } = useFicheResumesFetch(ficheResumesOptions);
+  const { data: ficheResumes, isLoading } =
+    useFicheResumesFetch(ficheResumesOptions);
   const { count: hasFiches } = useFicheActionCount();
 
   /** Gère les fiches sélectionnées pour les actions groupées */
@@ -184,7 +186,7 @@ const FichesActionListe = ({
     setCurrentPage(1);
   }, [debouncedSearch]);
 
-  const countTotal = data?.count || 0;
+  const countTotal = ficheResumes?.count || 0;
 
   const { data: filterBadges } = useFiltersToBadges({
     filters: filtres,
@@ -328,7 +330,7 @@ const FichesActionListe = ({
               <SpinnerLoader className="w-8 h-8" />
             </div>
           ) : /** État vide  */
-          data?.data?.length === 0 ? (
+          ficheResumes?.data?.length === 0 ? (
             <EmptyCard
               picto={(props) => <PictoExpert {...props} />}
               title="Aucune fiche action ne correspond à votre recherche"
@@ -345,7 +347,7 @@ const FichesActionListe = ({
             // besoin de cette div car `grid` semble rentrer en conflit avec le container `flex` sur Safari
             <div>
               <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
-                {data?.data?.map((fiche) => (
+                {ficheResumes?.data?.map((fiche) => (
                   <FicheActionCard
                     key={fiche.id}
                     ficheAction={fiche}
