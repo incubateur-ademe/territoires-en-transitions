@@ -49,10 +49,12 @@ export type FicheActionParam =
   | 'st'
   | 'ea'
   | 'pc'
-  | 'ax';
+  | 'ax'
+  | 'np'
+  | 'ma';
 
 export const nameToparams: Record<
-  keyof Filtre | 'sort' | 'page',
+  keyof Filtres | 'sort' | 'page',
   FicheActionParam
 > = {
   statuts: 's',
@@ -64,9 +66,10 @@ export const nameToparams: Record<
   hasIndicateurLies: 'il',
   hasMesuresLiees: 'ml',
   planActionIds: 'pa',
-  ficheActionIds: 'fa',
-  referentielActionIds: 'ra',
-  linkedFicheActionIds: 'lfa',
+  ficheIds: 'fa',
+  mesureIds: 'ra',
+  // Not relevant anymore?
+  // linkedFicheActionIds: 'lfa',
   utilisateurPiloteIds: 'up',
   personnePiloteIds: 'pp',
   utilisateurReferentIds: 'ur',
@@ -78,8 +81,6 @@ export const nameToparams: Record<
   thematiqueIds: 't',
   financeurIds: 'f',
   cibles: 'c',
-  dateDebut: 'dd',
-  dateFin: 'df',
   ameliorationContinue: 'ac',
   page: 'p',
   sort: 'sort',
@@ -91,10 +92,14 @@ export const nameToparams: Record<
   finPeriode: 'fp',
   // Not supported for now in filters
   //piliersEci: 'pe',
-  // sousThematiques: 'st',
   //effetsAttendus: 'ea',
   //participationCitoyenneType: 'pc',
   //axes: 'ax',
+  sousThematiqueIds: 'st',
+  // Exist in filters, but not supported in UI for now
+  // Keep or remove?
+  noPriorite: 'np',
+  modifiedAfter: 'ma',
 };
 
 /** Page de listing de toutes les fiches actions de la collectivité */
@@ -104,7 +109,7 @@ const ToutesLesFichesAction = () => {
 
   const { count } = useFicheActionCount();
 
-  const [filterParams, setFilterParams] = useSearchParams<Filtre>(
+  const [filterParams, setFilterParams] = useSearchParams<Filtres>(
     makeCollectiviteToutesLesFichesUrl({
       collectiviteId,
     }),
@@ -165,16 +170,16 @@ const ToutesLesFichesAction = () => {
 
 export default ToutesLesFichesAction;
 
-/** Converti les paramètres d'URL en filtres */
-const convertParamsToFilters = (paramFilters: Filtre) => {
+/** Convertit les paramètres d'URL en filtres */
+const convertParamsToFilters = (paramFilters: Filtres) => {
   if (paramFilters.modifiedSince && Array.isArray(paramFilters.modifiedSince)) {
     paramFilters.modifiedSince = paramFilters.modifiedSince[0];
   }
-  if (paramFilters.dateDebut && Array.isArray(paramFilters.dateDebut)) {
-    paramFilters.dateDebut = paramFilters.dateDebut[0];
+  if (paramFilters.debutPeriode && Array.isArray(paramFilters.debutPeriode)) {
+    paramFilters.debutPeriode = paramFilters.debutPeriode[0];
   }
-  if (paramFilters.dateFin && Array.isArray(paramFilters.dateFin)) {
-    paramFilters.dateFin = paramFilters.dateFin[0];
+  if (paramFilters.finPeriode && Array.isArray(paramFilters.finPeriode)) {
+    paramFilters.finPeriode = paramFilters.finPeriode[0];
   }
   if (paramFilters.typePeriode && Array.isArray(paramFilters.typePeriode)) {
     paramFilters.typePeriode = paramFilters.typePeriode[0];
