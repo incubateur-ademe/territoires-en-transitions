@@ -15,6 +15,8 @@ import ThematiquesDropdown from '@/app/ui/dropdownLists/ThematiquesDropdown/Them
 import CiblesDropdown from '@/app/ui/dropdownLists/ficheAction/CiblesDropdown/CiblesDropdown';
 import PrioritesFilterDropdown from '@/app/ui/dropdownLists/ficheAction/priorites/PrioritesFilterDropdown';
 import StatutsFilterDropdown from '@/app/ui/dropdownLists/ficheAction/statuts/StatutsFilterDropdown';
+
+import { GetFilteredFichesRequestType as Filtres } from '@/backend/plans/fiches/index-domain';
 import {
   Checkbox,
   Field,
@@ -29,8 +31,8 @@ import TagsSuiviPersoDropdown from '../../../../../ui/dropdownLists/TagsSuiviPer
 
 type Props = {
   title?: string;
-  filters: Filtre;
-  setFilters: (filters: Filtre) => void;
+  filters: Filtres;
+  setFilters: (filters: Filtres) => void;
 };
 
 const MenuFiltresToutesLesFichesAction = ({
