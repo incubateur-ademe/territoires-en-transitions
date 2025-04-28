@@ -78,6 +78,7 @@ const prepareDataset = (
       return {
         color: getColorBySourceId(source, type),
         id: `${type}-${source}`,
+        calculAuto: Boolean(valeurs.some((v) => v.calculAuto)),
         name: getSourceLabel(source, libelle, type),
         source: valeurs,
         dimensions: ['anneeISO', 'valeur'],
@@ -109,6 +110,7 @@ const prepareSegmentsDataset = (chartInfo: IndicateurChartInfo) => {
       id,
       name: `${name}${source.type === 'objectif' ? ' (objectifs)' : ''}`,
       color,
+      calculAuto: Boolean(source.valeurs.some((v) => v.calculAuto)),
       source: annees.map((annee) => {
         const valeur = source.valeurs.find((v) => v.annee === annee);
         // remplace les années manquantes par 0 pour améliorer l'affichage des surfaces empilées
@@ -134,6 +136,7 @@ const makeReferenceDataset = (
 ) => ({
   color: LAYERS[id].color,
   id,
+  calculAuto: false,
   name: `Valeur ${id === 'seuil' ? 'limite' : id} : ${valeur} ${unite}`,
   source: [{ anneeISO, valeur }],
   dimensions: ['anneeISO', 'valeur'],
@@ -285,6 +288,7 @@ const IndicateurChart = ({
             return item?.metadonnee
               ? renderToString(
                   <DataSourceTooltipContent
+                    calculAuto={item.calculAuto}
                     metadonnee={item.metadonnee}
                     nomSource={item.nomSource}
                     className={TooltipContainerClassname}

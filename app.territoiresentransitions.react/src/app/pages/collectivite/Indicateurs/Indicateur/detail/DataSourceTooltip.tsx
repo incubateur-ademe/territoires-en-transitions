@@ -4,6 +4,7 @@ import { Tooltip } from '@/ui';
 
 type DataSourceTooltipProps = {
   metadonnee: NonNullable<Valeur['source']>;
+  calculAuto: boolean;
   nomSource: string;
   children: JSX.Element;
 };
@@ -15,6 +16,7 @@ type DataSourceTooltipProps = {
 export const DataSourceTooltip = ({
   metadonnee,
   nomSource,
+  calculAuto,
   children,
 }: DataSourceTooltipProps) => {
   return (
@@ -25,6 +27,7 @@ export const DataSourceTooltip = ({
           className="font-normal"
           metadonnee={metadonnee}
           nomSource={nomSource}
+          calculAuto={calculAuto}
         />
       }
     >
@@ -37,10 +40,12 @@ export const DataSourceTooltipContent = ({
   metadonnee,
   nomSource,
   className,
+  calculAuto,
 }: {
   metadonnee: DataSourceTooltipProps['metadonnee'];
   nomSource: string;
   className?: string;
+  calculAuto: boolean;
 }) => (
   <div className={className}>
     {!!nomSource && (
@@ -71,14 +76,18 @@ export const DataSourceTooltipContent = ({
     {!!metadonnee.methodologie && (
       <p>
         Méthodologie / Périmètre :{' '}
-        <Markdown
-          content={metadonnee.methodologie}
-          as="b"
-          options={{ disallowedElements: ['p'], unwrapDisallowed: true }}
-        />
+        {calculAuto ? (
+          'Indicateur calculé automatiquement à partir des données disponibles sur Territoires en Transitions.'
+        ) : (
+          <Markdown
+            content={metadonnee.methodologie}
+            as="b"
+            options={{ disallowedElements: ['p'], unwrapDisallowed: true }}
+          />
+        )}
       </p>
     )}
-    {!!metadonnee.limites && (
+    {!calculAuto && !!metadonnee.limites && (
       <p>
         Points d’attention / Limites : <b>{metadonnee.limites}</b>
       </p>

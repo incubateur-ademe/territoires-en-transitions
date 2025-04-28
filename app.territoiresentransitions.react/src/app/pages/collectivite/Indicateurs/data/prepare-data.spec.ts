@@ -6,6 +6,7 @@ describe('prepareData', () => {
     const objectifs = prepareData(fixture.indicateurs[0], 'objectif', false);
     const expectedDonneesCollectivite = {
       metadonnees: [],
+      calculAuto: false,
       source: 'collectivite',
       libelle: '',
       ordreAffichage: -1,
@@ -13,6 +14,7 @@ describe('prepareData', () => {
       valeurs: [
         {
           id: 1,
+          calculAuto: false,
           annee: 2020,
           valeur: 21,
           anneeISO: '2020-01-01T00:00:00.000Z',
@@ -20,6 +22,7 @@ describe('prepareData', () => {
         },
         {
           id: 2,
+          calculAuto: false,
           annee: 2021,
           valeur: 13,
           commentaire: 'commentaire objectif 2021',
@@ -33,6 +36,7 @@ describe('prepareData', () => {
       expectedDonneesCollectivite,
       {
         metadonnees: [],
+        calculAuto: false,
         source: 'pcaet',
         libelle: 'Territoires & Climat',
         ordreAffichage: 1,
@@ -40,6 +44,7 @@ describe('prepareData', () => {
         valeurs: [
           {
             id: 5,
+            calculAuto: false,
             annee: 2020,
             valeur: 19,
             anneeISO: '2020-01-01T00:00:00.000Z',
@@ -47,6 +52,7 @@ describe('prepareData', () => {
           },
           {
             id: 6,
+            calculAuto: false,
             annee: 2021,
             valeur: 10,
             anneeISO: '2021-01-01T00:00:00.000Z',
@@ -62,6 +68,7 @@ describe('prepareData', () => {
 
     const expectedDonneesCollectivite = {
       metadonnees: [],
+      calculAuto: false,
       source: 'collectivite',
       libelle: '',
       ordreAffichage: -1,
@@ -69,6 +76,7 @@ describe('prepareData', () => {
       valeurs: [
         {
           id: 1,
+          calculAuto: false,
           annee: 2020,
           valeur: 20,
           commentaire: 'commentaire résultat 2020',
@@ -76,6 +84,7 @@ describe('prepareData', () => {
         },
         {
           id: 2,
+          calculAuto: false,
           annee: 2021,
           valeur: 12,
           anneeISO: '2021-01-01T00:00:00.000Z',
@@ -89,6 +98,7 @@ describe('prepareData', () => {
       expectedDonneesCollectivite,
       {
         metadonnees: [],
+        calculAuto: false,
         source: 'citepa',
         libelle: 'CITEPA',
         ordreAffichage: 3,
@@ -96,12 +106,14 @@ describe('prepareData', () => {
         valeurs: [
           {
             id: 3,
+            calculAuto: false,
             annee: 2020,
             valeur: 20.1,
             anneeISO: '2020-01-01T00:00:00.000Z',
           },
           {
             id: 4,
+            calculAuto: false,
             annee: 2022,
             valeur: 12.2,
             anneeISO: '2022-01-01T00:00:00.000Z',
