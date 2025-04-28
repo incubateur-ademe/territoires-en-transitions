@@ -34,7 +34,7 @@ import {
   GetFilteredFichesRequestQueryOptionsType,
   GetFilteredFichesRequestType,
   TypePeriodeEnumType,
-} from '@/backend/plans/fiches/shared/fetch-fiches-filter.request';
+} from '@/backend/plans/fiches/shared/get-fiches-filter.request';
 import { ficheActionReferentTable } from '@/backend/plans/fiches/shared/models/fiche-action-referent.table';
 import { actionImpactActionTable } from '@/backend/plans/paniers/models/action-impact-action.table';
 import { actionDefinitionTable } from '@/backend/referentiels/index-domain';
@@ -446,6 +446,9 @@ export default class FicheActionListService {
     return this.databaseService.db
       .select({
         ficheId: ficheActionActionTable.ficheId,
+        mesureId: sql<
+          string[]
+        >`array_agg(${ficheActionActionTable.actionId})`.as('mesure_ids'),
         mesures: sql<
           { identifiant: string; nom: string; referentiel: string }[]
         >`array_agg(json_build_object('identifiant', ${actionDefinitionTable.identifiant}, 'nom', ${actionDefinitionTable.nom}, 'referentiel', ${actionDefinitionTable.referentiel}))`.as(
@@ -890,6 +893,14 @@ export default class FicheActionListService {
         filters.planActionIds
       );
     }
+    if (filters.mesureIds?.length) {
+      this.addArrayOverlapsConditionForStringArray(
+        conditions,
+        sql`mesure_ids`,
+        filters.mesureIds
+      );
+    }
+
     if (filters.thematiqueIds?.length) {
       this.addArrayOverlapsConditionForIntArray(
         conditions,
