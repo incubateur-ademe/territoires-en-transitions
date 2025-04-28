@@ -97,7 +97,7 @@
     "lodash": "^4.17.21",
     "luxon": "^3.5.0",
     "marked": "^15.0.7",
-    "next": "^14.2.25",
+    "next": "^14.2.26",
     "nodemailer": "^6.9.14",
     "pdf-parse-debugging-disabled": "^1.1.1",
     "pg": "^8.11.1",
