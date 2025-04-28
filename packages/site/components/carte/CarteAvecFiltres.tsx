@@ -11,11 +11,10 @@ import FiltreEtoiles from './FiltreEtoiles';
 import FiltreLabels from './FiltreLabels';
 
 type Props = {
-  isLoading: boolean;
   data?: CollectivitesCarteFrance | null;
 };
 
-const CarteAvecFiltres = ({ data, isLoading }: Props) => {
+const CarteAvecFiltres = ({ data }: Props) => {
   const [filtre, setFiltre] = useState<FiltresLabels>('toutes');
   const [etoiles, setEtoiles] = useState<number[]>([1, 2, 3, 4, 5]);
   const [windowWidth, setWindowWidth] = useState<number | undefined>();
