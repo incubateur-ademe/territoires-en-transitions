@@ -1,3 +1,4 @@
+import { partialCollectiviteRequestSchema } from '@/backend/collectivites/collectivite.request';
 import { TrpcService } from '@/backend/utils/trpc/trpc.service';
 import { Injectable } from '@nestjs/common';
 import { deleteValeurIndicateurSchema } from '../shared/models/delete-valeur-indicateur.request';
@@ -44,8 +45,13 @@ export class IndicateurValeursRouter {
       .query(({ ctx, input }) => {
         return this.valeursReference.getValeursReference(input, ctx.user);
       }),
-    recompute: this.trpc.authedProcedure.query(({ ctx, input }) => {
-      return this.service.recomputeAllCalculatedIndicateurValeurs(ctx.user);
-    }),
+    recompute: this.trpc.authedProcedure
+      .input(partialCollectiviteRequestSchema)
+      .query(({ ctx, input }) => {
+        return this.service.recomputeAllCalculatedIndicateurValeurs(
+          input.collectiviteId,
+          ctx.user
+        );
+      }),
   });
 }

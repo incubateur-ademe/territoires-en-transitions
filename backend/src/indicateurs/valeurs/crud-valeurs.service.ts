@@ -871,6 +871,7 @@ export default class CrudValeursService {
   }
 
   async recomputeAllCalculatedIndicateurValeurs(
+    onlyForCollectiviteId: number | undefined,
     user: AuthUser | null,
     forComputedIndicateurDefinitions?: IndicateurDefinition[],
     doNotCheckRights?: boolean
@@ -884,6 +885,13 @@ export default class CrudValeursService {
       forComputedIndicateurDefinitions =
         await this.indicateurDefinitionService.getComputedIndicateurDefinitions();
     }
+    this.logger.log(
+      `Recompute all calculated indicateur valeurs for collectivite ${
+        onlyForCollectiviteId || 'all'
+      } and identifiants ${forComputedIndicateurDefinitions
+        .map((d) => d.identifiantReferentiel)
+        .join(',')}`
+    );
 
     const allSourceIdentifiants =
       await this.computeValeursService.getAllSourceIdentifiants(
@@ -894,21 +902,27 @@ export default class CrudValeursService {
       await this.computeValeursService.getSourcesCalcul();
 
     // Identify all collectivites which have some values for these source identifiants
-    const collectiviteIds = (
-      await this.databaseService.db
-        .selectDistinct({ id: indicateurValeurTable.collectiviteId })
-        .from(indicateurValeurTable)
-        .leftJoin(
-          indicateurDefinitionTable,
-          eq(indicateurValeurTable.indicateurId, indicateurDefinitionTable.id)
-        )
-        .where(
-          inArray(
-            indicateurDefinitionTable.identifiantReferentiel,
-            allSourceIdentifiants
-          )
-        )
-    ).map((c) => c.id);
+
+    const collectiviteIds = onlyForCollectiviteId
+      ? [onlyForCollectiviteId]
+      : (
+          await this.databaseService.db
+            .selectDistinct({ id: indicateurValeurTable.collectiviteId })
+            .from(indicateurValeurTable)
+            .leftJoin(
+              indicateurDefinitionTable,
+              eq(
+                indicateurValeurTable.indicateurId,
+                indicateurDefinitionTable.id
+              )
+            )
+            .where(
+              inArray(
+                indicateurDefinitionTable.identifiantReferentiel,
+                allSourceIdentifiants
+              )
+            )
+        ).map((c) => c.id);
 
     const allComputedIndicateurValeurs: {
       collectiviteId: number;
@@ -962,7 +976,7 @@ export default class CrudValeursService {
 
   private async recomputeCollectiviteCalculatedIndicateurValeurs(
     collectiviteId: number,
-    computedIndicateurDefinitions: IndicateurDefinition[],
+    computedIndicateurDefinitions: IndicateurDefinition[] | undefined,
     sourceIdentifiants: string[],
     allowedExtraSourcesForCalculatedValues: {
       sourceId: string;
@@ -972,6 +986,11 @@ export default class CrudValeursService {
     this.logger.log(
       `Recompute calculated indicateur valeurs for collectivite ${collectiviteId}`
     );
+
+    if (!computedIndicateurDefinitions) {
+      computedIndicateurDefinitions =
+        await this.indicateurDefinitionService.getComputedIndicateurDefinitions();
+    }
 
     const computedIndicateurValeurs =
       await this.computeValeursService.recomputeCollectiviteCalculatedIndicateurValeurs(
