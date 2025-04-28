@@ -101,23 +101,30 @@ export class ConnectApiService {
 
   /** Lit les données d'un contact existant */
   async getContact(email: string) {
-    const response = await fetch(this.getUrl(email), {
-      method: 'GET',
-      headers: this.headers,
-    });
+    this.logger.log(`Connect: récupération du contact ${email}`);
+    try {
+      const response = await fetch(this.getUrl(email), {
+        method: 'GET',
+        headers: this.headers,
+      });
 
-    if (!response.ok) {
+      if (!response.ok) {
+        this.logger.log(
+          `Connect: contact non trouvé (${response.status}: ${response.statusText})`
+        );
+        return null;
+      }
+
+      const content = await response.json();
       this.logger.log(
-        `Connect: contact non trouvé (${response.status}: ${response.statusText})`
+        `Connect: ${content.message} (${response.status}: ${response.statusText})`
       );
-      return null;
+      const { data: contact, success } = contactSchema.safeParse(
+        content.contact
+      );
+      return success ? contact : null;
+    } catch (error) {
+      this.logger.log(`Connect: erreur de récupération du contact ${error}`);
     }
-
-    const content = await response.json();
-    this.logger.log(
-      `Connect: ${content.message} (${response.status}: ${response.statusText})`
-    );
-    const { data: contact, success } = contactSchema.safeParse(content.contact);
-    return success ? contact : null;
   }
 }
