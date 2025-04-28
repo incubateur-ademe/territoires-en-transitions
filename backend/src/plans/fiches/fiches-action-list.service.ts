@@ -590,7 +590,7 @@ export default class FicheActionListService {
       conditions.push(eq(ficheActionTable.collectiviteId, collectiviteId));
     }
 
-    if (filters) {
+    if (filters && Object.keys(filters).length > 0) {
       this.logger.log(
         `Récupération des fiches action pour la collectivité ${collectiviteId}: filtres ${JSON.stringify(
           filters
