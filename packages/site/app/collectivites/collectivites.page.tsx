@@ -63,7 +63,7 @@ const CollectivitesPage = ({ collectivitesStrapi }: Props) => {
           ))
         )}
       </div>
-      <CarteAvecFiltres data={data} isLoading={isLoading} />
+      <CarteAvecFiltres data={data} />
     </PageContainer>
   );
 };
