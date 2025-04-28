@@ -22,6 +22,7 @@ const BudgetTable = ({ budgets }: BudgetTableProps) => {
 
   return (
     <Table className="rounded-none">
+      {/* En-tête */}
       <THead className="bg-white">
         <TRow>
           <THeadCell className={headCellClassname}>Année</THeadCell>
@@ -33,11 +34,16 @@ const BudgetTable = ({ budgets }: BudgetTableProps) => {
           <THeadCell className={headCellClassname}>ETP réel</THeadCell>
         </TRow>
       </THead>
+
+      {/* Data */}
       <TBody>
         {formattedBudget.map((budget, idx) => {
           return (
             <TRow key={budget.annee}>
-              <TCell variant="title" className={bodyCellClassname(idx)}>
+              <TCell
+                variant="title"
+                className={classNames(bodyCellClassname(idx), 'text-primary-9')}
+              >
                 {budget.annee}
               </TCell>
               <TCell className={bodyCellClassname(idx)}>
@@ -102,6 +108,95 @@ const BudgetTable = ({ budgets }: BudgetTableProps) => {
             </TRow>
           );
         })}
+
+        {/* Total */}
+        <TRow>
+          <TCell
+            variant="title"
+            className={bodyCellClassname(formattedBudget.length)}
+          >
+            Total
+          </TCell>
+          <TCell className={bodyCellClassname(formattedBudget.length)}>
+            <Badge
+              title={
+                <span>
+                  {getFormattedNumber(
+                    formattedBudget.reduce(
+                      (sum, currVal) =>
+                        sum +
+                        (currVal.eurosPrevisionnel
+                          ? parseInt(currVal.eurosPrevisionnel)
+                          : 0),
+                      0
+                    )
+                  )}{' '}
+                  € <sup>HT</sup>
+                </span>
+              }
+              state="standard"
+              className="mx-auto"
+            />
+          </TCell>
+          <TCell className={bodyCellClassname(formattedBudget.length)}>
+            <Badge
+              title={
+                <span>
+                  {getFormattedNumber(
+                    formattedBudget.reduce(
+                      (sum, currVal) =>
+                        sum +
+                        (currVal.eurosReel ? parseInt(currVal.eurosReel) : 0),
+                      0
+                    )
+                  )}{' '}
+                  € <sup>HT</sup>
+                </span>
+              }
+              state="standard"
+              className="mx-auto"
+            />
+          </TCell>
+          <TCell className={bodyCellClassname(formattedBudget.length)}>
+            <Badge
+              title={
+                <span>
+                  {getFormattedNumber(
+                    formattedBudget.reduce(
+                      (sum, currVal) =>
+                        sum +
+                        (currVal.etpPrevisionnel
+                          ? parseInt(currVal.etpPrevisionnel)
+                          : 0),
+                      0
+                    )
+                  )}{' '}
+                  ETP
+                </span>
+              }
+              state="standard"
+              className="mx-auto"
+            />
+          </TCell>
+          <TCell className={bodyCellClassname(formattedBudget.length)}>
+            <Badge
+              title={
+                <span>
+                  {getFormattedNumber(
+                    formattedBudget.reduce(
+                      (sum, currVal) =>
+                        sum + (currVal.etpReel ? parseInt(currVal.etpReel) : 0),
+                      0
+                    )
+                  )}{' '}
+                  ETP
+                </span>
+              }
+              state="standard"
+              className="mx-auto"
+            />
+          </TCell>
+        </TRow>
       </TBody>
     </Table>
   );
