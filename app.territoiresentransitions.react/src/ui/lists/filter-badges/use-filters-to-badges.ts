@@ -6,11 +6,11 @@ import {
   FiltreValues,
 } from '@/api/collectivites/shared/domain/filtre-ressource-liees.schema';
 import { FetchFiltre as FiltreIndicateurs } from '@/api/indicateurs';
-import { Filtre as FiltreFicheActions } from '@/api/plan-actions/fiche-resumes.list';
 import { useSupabase } from '@/api/utils/supabase/use-supabase';
 import { generateTitle } from '@/app/app/pages/collectivite/PlansActions/FicheAction/data/utils';
 import { useCollectiviteId } from '@/app/core-logic/hooks/params';
 import { getCategorieLabel } from '@/app/ui/dropdownLists/indicateur/utils';
+import { GetFilteredFichesRequestType as FiltreFicheActions } from '@/backend/plans/fiches/index-domain';
 
 /**
  * Types de tous les filtres passables au hook `useFiltersToBadges`.
@@ -56,6 +56,7 @@ export const useFiltersToBadges = ({ filters, customValues }: Args) => {
     }
 
     /** Valeurs des filtres pour les champs où l'on ne connait que les ids */
+    // Change this?
     const { data } = await filtreValuesFetch({
       dbClient: supabase,
       collectiviteId,
@@ -177,10 +178,6 @@ export const useFiltersToBadges = ({ filters, customValues }: Args) => {
         badgeValues.push(`Statut : ${mergedFilters[key]?.join(', ')}`);
       } else if (key === 'cibles') {
         badgeValues.push(`Cible : ${mergedFilters[key]?.join(', ')}`);
-      } else if (key === 'dateDebut') {
-        badgeValues.push(`Date de début : ${mergedFilters[key]}`);
-      } else if (key === 'dateFin') {
-        badgeValues.push(`Date de fin prévisionnelle : ${mergedFilters[key]}`);
       } else if (key === 'noStatut') {
         mergedFilters[key] && badgeValues.push('Sans statut');
       } else if (key === 'noPilote') {
