@@ -2,10 +2,8 @@ import {
   FetchFiltre as FiltreIndicateurs,
   fetchOptionsSchema as indicateursFetchOptionsSchema,
 } from '@/api/indicateurs';
-import {
-  fetchOptionsSchema as fichesFetchOptionsSchema,
-  Filtre as FiltreFicheActions,
-} from '@/api/plan-actions/fiche-resumes.list';
+import { fetchOptionsSchema as fichesFetchOptionsSchema } from '@/api/plan-actions/fiche-resumes.list';
+import { GetFilteredFichesRequestType as FiltreFicheActions } from '@/backend/plans/fiches/index-domain';
 import { z } from 'zod';
 
 const moduleTypeSchema = z.enum(['indicateur.list', 'fiche_action.list']);

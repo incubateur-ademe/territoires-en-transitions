@@ -1,4 +1,4 @@
-import { Filtre } from '@/api/plan-actions/fiche-resumes.list/domain/fetch-options.schema';
+import { GetFilteredFichesRequestType as Filtres } from '@/backend/plans/fiches/index-domain';
 import { PersonneTagOrUser } from '@/domain/collectivites';
 
 /**
@@ -27,7 +27,7 @@ export const splitPilotePersonnesAndUsers = (
 };
 
 /** Renvoie les valeurs de tous les pilotes d'après les filtres des fiches action résumées */
-export const getPilotesValues = (filtreState: Filtre) => {
+export const getPilotesValues = (filtreState: Filtres) => {
   const pilotes = [];
   if (filtreState.utilisateurPiloteIds) {
     pilotes.push(...filtreState.utilisateurPiloteIds);
@@ -39,7 +39,7 @@ export const getPilotesValues = (filtreState: Filtre) => {
 };
 
 /** Renvoie les valeurs de tous les référents d'après les filtres des fiches action résumées */
-export const getReferentsValues = (filtreState: Filtre) => {
+export const getReferentsValues = (filtreState: Filtres) => {
   const referents = [];
   if (filtreState.utilisateurReferentIds) {
     referents.push(...filtreState.utilisateurReferentIds);
