@@ -1,6 +1,8 @@
 import { UpsertExportConnect } from '@/domain/collectivites';
 import { SireneService } from '@/tools-automation-api/sirene/sirene.service';
+import { sleep } from '@/tools-automation-api/utils/sleep.utils';
 import { Injectable, Logger } from '@nestjs/common';
+import { chunk } from 'es-toolkit';
 import { TrpcClientService } from '../utils/trpc/trpc-client.service';
 import { ConnectApiService } from './connect-api.service';
 
@@ -8,6 +10,7 @@ import { ConnectApiService } from './connect-api.service';
 export class ConnectSynchroService {
   private readonly logger = new Logger(ConnectSynchroService.name);
   private readonly trpcClient = this.trpcClientService.getClient();
+  private readonly CHUNK_SIZE = 10;
 
   constructor(
     private readonly trpcClientService: TrpcClientService,
@@ -20,6 +23,7 @@ export class ConnectSynchroService {
     // liste les membres à synchroniser
     let membres =
       await this.trpcClient.collectivites.membres.listExportConnect.query();
+    this.logger.log(`${membres.length} membre(s) à synchroniser`);
 
     // liste les collectivités pour lesquelles il manque le NIC
     const listSiren: string[] = [];
@@ -47,15 +51,22 @@ export class ConnectSynchroService {
     // envoi chaque membre sur connect
     const exported: UpsertExportConnect = [];
     await Promise.all(
-      membres.map(async (membre) => {
-        const isExported = await this.connectApiService.upsertContact(membre);
-        if (isExported) {
-          exported.push({
-            userId: membre.userId,
-            exportId: membre.email,
-            checksum: membre.checksum,
-          });
-        }
+      chunk(membres, this.CHUNK_SIZE).flatMap(async (page) => {
+        await sleep(100);
+        return Promise.all(
+          page.map(async (membre) => {
+            const isExported = await this.connectApiService.upsertContact(
+              membre
+            );
+            if (isExported) {
+              exported.push({
+                userId: membre.userId,
+                exportId: membre.email,
+                checksum: membre.checksum,
+              });
+            }
+          })
+        );
       })
     );
 
