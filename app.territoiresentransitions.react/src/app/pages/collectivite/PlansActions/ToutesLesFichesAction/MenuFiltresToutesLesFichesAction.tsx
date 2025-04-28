@@ -1,4 +1,3 @@
-import { Filtre } from '@/api/plan-actions/fiche-resumes.list/domain/fetch-options.schema';
 import FinanceursDropdown from '@/app/ui/dropdownLists/FinanceursDropdown/FinanceursDropdown';
 import PartenairesDropdown from '@/app/ui/dropdownLists/PartenairesDropdown/PartenairesDropdown';
 import PersonnesDropdown from '@/app/ui/dropdownLists/PersonnesDropdown/PersonnesDropdown';
@@ -94,7 +93,7 @@ const MenuFiltresToutesLesFichesAction = ({
                 const { servicePiloteIds, ...rest } = filters;
                 setFilters({
                   ...rest,
-                  ...(services
+                  ...(services.length > 0
                     ? { servicePiloteIds: services.map((s) => s.id) }
                     : {}),
                 });
@@ -109,7 +108,7 @@ const MenuFiltresToutesLesFichesAction = ({
                 const { structurePiloteIds, ...rest } = filters;
                 setFilters({
                   ...rest,
-                  ...(structures
+                  ...(structures.length > 0
                     ? { structurePiloteIds: structures.map((s) => s.id) }
                     : {}),
                 });
@@ -124,7 +123,7 @@ const MenuFiltresToutesLesFichesAction = ({
                 const { libreTagsIds, ...rest } = filters;
                 setFilters({
                   ...rest,
-                  ...(libresTag
+                  ...(libresTag.length > 0
                     ? { libreTagsIds: libresTag.map((t) => t.id) }
                     : {}),
                 });
@@ -205,7 +204,7 @@ const MenuFiltresToutesLesFichesAction = ({
                 const { financeurIds, ...rest } = filters;
                 setFilters({
                   ...rest,
-                  ...(financeurs
+                  ...(financeurs.length > 0
                     ? { financeurIds: financeurs.map((f) => f.id!) }
                     : {}),
                 });
@@ -219,7 +218,7 @@ const MenuFiltresToutesLesFichesAction = ({
                 const { partenaireIds, ...rest } = filters;
                 setFilters({
                   ...rest,
-                  ...(partenaires
+                  ...(partenaires.length > 0
                     ? { partenaireIds: partenaires.map((p) => p.id) }
                     : {}),
                 });
@@ -251,7 +250,7 @@ const MenuFiltresToutesLesFichesAction = ({
             onChange={(value) => {
               return setFilters({
                 ...filters,
-                typePeriode: value as Filtre['typePeriode'],
+                typePeriode: value as Filtres['typePeriode'],
                 ...(value
                   ? {}
                   : { debutPeriode: undefined, finPeriode: undefined }),
@@ -387,7 +386,7 @@ const MenuFiltresToutesLesFichesAction = ({
 
 // options pour le filtrage par plage de dates
 const OPTIONS_FILTRE_DATE: Array<{
-  value: Filtre['typePeriode'];
+  value: Filtres['typePeriode'];
   label: string;
 }> = [
   { value: 'creation', label: 'de création' },
