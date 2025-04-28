@@ -23,13 +23,12 @@ export const TrackingProvider = ({
       ui_host: 'https://eu.posthog.com',
       // create profiles for authenticated users only
       person_profiles: 'identified_only',
-      persistence: getConsent() ? 'cookie' : 'memory',
+      persistence: getConsent() ? 'localStorage+cookie' : 'memory',
       capture_pageview: false, // on utilise PostHogPageView pour capturer les `page views`
 
       loaded: (posthog) => {
         if (process.env.NODE_ENV === 'development') posthog.debug();
       },
-
     });
 
     onClientInit?.(posthog);
