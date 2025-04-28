@@ -49,33 +49,30 @@ export class ConnectSynchroService {
     }
 
     // envoi chaque membre sur connect
-    const exported: UpsertExportConnect = [];
-    await Promise.all(
-      chunk(membres, this.CHUNK_SIZE).flatMap(async (page) => {
-        await sleep(100);
-        return Promise.all(
-          page.map(async (membre) => {
-            const isExported = await this.connectApiService.upsertContact(
-              membre
-            );
-            if (isExported) {
-              exported.push({
-                userId: membre.userId,
-                exportId: membre.email,
-                checksum: membre.checksum,
-              });
-            }
-          })
-        );
-      })
-    );
-
-    // et enregistre les membres exportés pour ne pas les ré-exporter si il n'y
-    // a pas eu de changements
-    if (exported.length) {
-      await this.trpcClient.collectivites.membres.upsertExportConnect.mutate(
-        exported
+    const membreChunks: Array<typeof membres> = chunk(membres, this.CHUNK_SIZE);
+    for (const membreChunk of membreChunks) {
+      await sleep(100);
+      const exported: UpsertExportConnect = [];
+      await Promise.all(
+        membreChunk.map(async (membre) => {
+          const isExported = await this.connectApiService.upsertContact(membre);
+          if (isExported) {
+            exported.push({
+              userId: membre.userId,
+              exportId: membre.email,
+              checksum: membre.checksum,
+            });
+          }
+        })
       );
+      // et enregistre les membres exportés pour ne pas les ré-exporter si il n'y
+      // a pas eu de changements
+      if (exported.length) {
+        this.logger.log(`Enregistre ${exported.length} membres exportés`);
+        await this.trpcClient.collectivites.membres.upsertExportConnect.mutate(
+          exported
+        );
+      }
     }
   }
 }
