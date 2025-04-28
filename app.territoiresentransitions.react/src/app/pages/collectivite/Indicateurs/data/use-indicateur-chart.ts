@@ -201,6 +201,7 @@ function prepareMoyenne(moyenne: IndicateurMoyenneOutput | undefined) {
   return {
     libelle: 'Moyenne des collectivités de même type',
     type: 'resultat' as const,
+    calculAuto: true,
     metadonnees: [
       {
         id: -1,
@@ -222,6 +223,7 @@ function prepareMoyenne(moyenne: IndicateurMoyenneOutput | undefined) {
       return {
         id: -1,
         commentaire: null,
+        calculAuto: true,
         annee,
         anneeISO,
         valeur: v.valeur,
@@ -326,7 +328,6 @@ const parOrdreAffichage = (
   { ordreAffichage: a }: ItemSource,
   { ordreAffichage: b }: ItemSource
 ) => (a === null ? 1 : b === null ? -1 : a - b);
-
 
 export type IndicateursParSegment = ReturnType<
   typeof prepareEnfantsParSegmentation

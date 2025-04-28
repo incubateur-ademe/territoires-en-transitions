@@ -28,7 +28,11 @@ export const CellSourceName = ({
         {getSourceLabel(source.source, source.libelle, type)}
         <sup className="text-primary-9 leading-tight">({unite})</sup>
         {!!metadonnee && (
-          <DataSourceTooltip nomSource={source.libelle} metadonnee={metadonnee}>
+          <DataSourceTooltip
+            nomSource={source.libelle}
+            metadonnee={metadonnee}
+            calculAuto={source.calculAuto}
+          >
             <Icon
               icon="information-line"
               className="text-primary float-right"

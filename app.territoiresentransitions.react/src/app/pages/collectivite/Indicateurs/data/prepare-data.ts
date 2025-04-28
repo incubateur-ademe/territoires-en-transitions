@@ -28,10 +28,12 @@ export const prepareData = (
   // transforme les valeurs de chaque source
   const sourcesEtValeursModifiees = sourcesFiltrees.map((sourceData) => ({
     ...sourceData,
+    calculAuto: sourceData.valeurs.some((v) => v.calculAuto) || false,
     valeurs: sourceData.valeurs.map((v) => {
       const { annee, anneeISO } = getAnnee(v.dateValeur);
       return {
         id: v.id,
+        calculAuto: Boolean(v.calculAuto),
         annee,
         anneeISO,
         valeur: v[type],
@@ -57,6 +59,7 @@ export const prepareData = (
   if (!donneesCollectivite && avecDonneesCollectiviteVides) {
     donneesCollectivite = {
       source: 'collectivite',
+      calculAuto: false,
       valeurs: [],
       metadonnees: [],
       ordreAffichage: -1,
