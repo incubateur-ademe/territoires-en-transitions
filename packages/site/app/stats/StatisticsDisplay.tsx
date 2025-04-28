@@ -1,6 +1,7 @@
 /* eslint-disable react/no-unescaped-entities */
 'use client';
 
+import { useCarteCollectivitesEngagees } from '@/site/components/carte/useCarteCollectivitesEngagees';
 import Section from '@/site/components/sections/Section';
 import dynamic from 'next/dynamic';
 import ActiveUsers from './ActiveUsers';
@@ -31,6 +32,8 @@ const StatisticsDisplay = ({
   regionCode,
   departmentCode,
 }: StatisticsDisplayProps) => {
+  const { data } = useCarteCollectivitesEngagees();
+
   const nationalStats: boolean = !regionCode && !departmentCode;
 
   const CarteCollectivites = dynamic(
@@ -75,11 +78,14 @@ const StatisticsDisplay = ({
             <div className="fr-col-xs-12 fr-col-sm-12 fr-col-md-4 fr-col-lg-4 fr-ratio-1x1">
               <ChartTitle>Collectivités actives</ChartTitle>
               <div className="w-[420px] h-[420px] mt-14">
-                <CarteCollectivites
-                  filtre={'toutes'}
-                  etoiles={[1, 2, 3, 4, 5]}
-                  forcedZoom={5.3}
-                />
+                {data && (
+                  <CarteCollectivites
+                    filtre={'toutes'}
+                    etoiles={[1, 2, 3, 4, 5]}
+                    forcedZoom={5.3}
+                    data={data}
+                  />
+                )}
               </div>
             </div>
           )}
