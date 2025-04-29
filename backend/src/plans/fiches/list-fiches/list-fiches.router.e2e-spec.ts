@@ -1,20 +1,34 @@
 import { AuthenticatedUser } from '@/backend/auth/models/auth.models';
-import { statutsEnumSchema } from '@/backend/plans/fiches/index-domain';
-import { getAuthUser, getTestRouter, YOLO_DODO } from '@/backend/test';
+import {
+  ficheActionLienTable,
+  statutsEnumSchema,
+} from '@/backend/plans/fiches/index-domain';
+import {
+  getAuthUser,
+  getTestApp,
+  getTestDatabase,
+  getTestRouter,
+  YOLO_DODO,
+} from '@/backend/test';
+import { DatabaseService } from '@/backend/utils';
 import { TrpcRouter } from '@/backend/utils/trpc/trpc.router';
+import { eq } from 'drizzle-orm';
 
 let router: TrpcRouter;
-let yoloDodoUser: AuthenticatedUser;
+let yoloDodo: AuthenticatedUser;
+let db: DatabaseService;
 
 const COLLECTIVITE_ID = YOLO_DODO.collectiviteId.admin;
 
 beforeAll(async () => {
-  router = await getTestRouter();
-  yoloDodoUser = await getAuthUser(YOLO_DODO);
+  const app = await getTestApp();
+  router = await getTestRouter(app);
+  db = await getTestDatabase(app);
+  yoloDodo = await getAuthUser(YOLO_DODO);
 });
 
 test('Fetch sans filtre', async () => {
-  const caller = router.createCaller({ user: yoloDodoUser });
+  const caller = router.createCaller({ user: yoloDodo });
 
   const { data } = await caller.plans.fiches.listResumes({
     collectiviteId: COLLECTIVITE_ID,
@@ -28,7 +42,7 @@ test('Fetch sans filtre', async () => {
 });
 
 test('Fetch avec filtre sur une personne', async () => {
-  const caller = router.createCaller({ user: yoloDodoUser });
+  const caller = router.createCaller({ user: yoloDodo });
 
   const { data } = await caller.plans.fiches.listResumes({
     collectiviteId: COLLECTIVITE_ID,
@@ -51,12 +65,12 @@ test('Fetch avec filtre sur une personne', async () => {
 });
 
 test('Fetch avec filtre sur un utilisateur', async () => {
-  const caller = router.createCaller({ user: yoloDodoUser });
+  const caller = router.createCaller({ user: yoloDodo });
 
   const { data } = await caller.plans.fiches.listResumes({
     collectiviteId: COLLECTIVITE_ID,
     filters: {
-      utilisateurPiloteIds: [yoloDodoUser.id],
+      utilisateurPiloteIds: [yoloDodo.id],
     },
   });
 
@@ -68,7 +82,7 @@ test('Fetch avec filtre sur un utilisateur', async () => {
     expect(fiche).toMatchObject({
       pilotes: expect.arrayContaining([
         expect.objectContaining({
-          userId: yoloDodoUser.id,
+          userId: yoloDodo.id,
           nom: 'Yolo Dodo',
           tagId: null,
         }),
@@ -78,12 +92,12 @@ test('Fetch avec filtre sur un utilisateur', async () => {
 });
 
 test('Fetch avec filtre sur un utilisateur et sur personne. Le filtre doit être un OU.', async () => {
-  const caller = router.createCaller({ user: yoloDodoUser });
+  const caller = router.createCaller({ user: yoloDodo });
 
   const { data } = await caller.plans.fiches.listResumes({
     collectiviteId: COLLECTIVITE_ID,
     filters: {
-      utilisateurPiloteIds: [yoloDodoUser.id],
+      utilisateurPiloteIds: [yoloDodo.id],
       personnePiloteIds: [1],
     },
   });
@@ -100,7 +114,7 @@ test('Fetch avec filtre sur un utilisateur et sur personne. Le filtre doit être
 });
 
 test('Fetch avec filtre sur un service', async () => {
-  const caller = router.createCaller({ user: yoloDodoUser });
+  const caller = router.createCaller({ user: yoloDodo });
 
   const { data } = await caller.plans.fiches.listResumes({
     collectiviteId: COLLECTIVITE_ID,
@@ -123,7 +137,7 @@ test('Fetch avec filtre sur un service', async () => {
 });
 
 test('Fetch avec filtre sur un plan', async () => {
-  const caller = router.createCaller({ user: yoloDodoUser });
+  const caller = router.createCaller({ user: yoloDodo });
 
   const { data } = await caller.plans.fiches.listResumes({
     collectiviteId: COLLECTIVITE_ID,
@@ -146,7 +160,7 @@ test('Fetch avec filtre sur un plan', async () => {
 
 test('Fetch avec filtre sur une action du referentiel associée', async () => {
   // Test avec une action associée à plusieurs fiches
-  const caller = router.createCaller({ user: yoloDodoUser });
+  const caller = router.createCaller({ user: yoloDodo });
 
   const { data: fichesWithAction } = await caller.plans.fiches.listResumes({
     collectiviteId: COLLECTIVITE_ID,
@@ -176,52 +190,54 @@ test('Fetch avec filtre sur une action du referentiel associée', async () => {
   expect(noFichesFound).toHaveLength(0);
 });
 
-// test('Fetch avec filtre sur une fiche liée', async () => {
-//   await dbAdmin.from('fiche_action_lien').insert([
-//     { fiche_une: 1, fiche_deux: 5 },
-//     { fiche_une: 5, fiche_deux: 3 },
-//   ]);
+test('Fetch avec filtre sur une fiche liée', async () => {
+  await db.db.insert(ficheActionLienTable).values([
+    { ficheUne: 1, ficheDeux: 5 },
+    { ficheUne: 5, ficheDeux: 3 },
+  ]);
 
-//   onTestFinished(async () => {
-//     await dbAdmin.from('fiche_action_lien').delete().match({ fiche_une: 1 });
-//     await dbAdmin.from('fiche_action_lien').delete().match({ fiche_une: 5 });
-//   });
+  onTestFinished(async () => {
+    await db.db
+      .delete(ficheActionLienTable)
+      .where(eq(ficheActionLienTable.ficheUne, 1));
+    await db.db
+      .delete(ficheActionLienTable)
+      .where(eq(ficheActionLienTable.ficheUne, 5));
+  });
 
-//   // Test avec une action associée à plusieurs fiches
-//   const { data: fichesWithAction } = await ficheResumesFetch({
-//     ...params,
-//     options: {
-//       filtre: {
-//         linkedFicheActionIds: [5],
-//       },
-//     },
-//   });
+  const caller = router.createCaller({ user: yoloDodo });
 
-//   if (!fichesWithAction) {
-//     expect.fail();
-//   }
+  // Test avec une fiche associée à plusieurs fiches
+  const { data: fichesWithFiche } = await caller.plans.fiches.listResumes({
+    collectiviteId: COLLECTIVITE_ID,
+    filters: {
+      linkedFicheActionIds: [5],
+    },
+  });
 
-//   expect(fichesWithAction).toHaveLength(2);
+  if (!fichesWithFiche) {
+    expect.fail();
+  }
 
-//   // Test avec une fiche associée à aucune autre fiche
-//   const { data: noFichesFound } = await ficheResumesFetch({
-//     ...params,
-//     options: {
-//       filtre: {
-//         linkedFicheActionIds: [10],
-//       },
-//     },
-//   });
+  expect(fichesWithFiche).toHaveLength(2);
 
-//   if (!noFichesFound) {
-//     expect.fail();
-//   }
+  // Test avec une fiche associée à aucune autre fiche
+  const { data: noFichesFound } = await caller.plans.fiches.listResumes({
+    collectiviteId: COLLECTIVITE_ID,
+    filters: {
+      linkedFicheActionIds: [10],
+    },
+  });
 
-//   expect(noFichesFound).toHaveLength(0);
-// });
+  if (!noFichesFound) {
+    expect.fail();
+  }
+
+  expect(noFichesFound).toHaveLength(0);
+});
 
 test('Fetch avec filtre sur un statut', async () => {
-  const caller = router.createCaller({ user: yoloDodoUser });
+  const caller = router.createCaller({ user: yoloDodo });
   const { data: emptyData } = await caller.plans.fiches.listResumes({
     collectiviteId: COLLECTIVITE_ID,
     filters: {
@@ -247,7 +263,7 @@ test('Fetch avec filtre sur un statut', async () => {
 });
 
 test('Fetch avec filtre sur la date de modification', async () => {
-  const caller = router.createCaller({ user: yoloDodoUser });
+  const caller = router.createCaller({ user: yoloDodo });
 
   const { data } = await caller.plans.fiches.listResumes({
     collectiviteId: COLLECTIVITE_ID,
