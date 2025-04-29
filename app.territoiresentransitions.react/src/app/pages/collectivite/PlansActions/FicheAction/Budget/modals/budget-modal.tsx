@@ -44,6 +44,14 @@ const getInitExtendedState = (
   return getDefaultData(ficheId, type, unite);
 };
 
+const getInitFullPlanState = (budgets: BudgetType[]) => {
+  const filteredBudget = budgets.filter((elt) => !elt.annee);
+  if (filteredBudget.length > 0) {
+    return filteredBudget[0].estEtale;
+  }
+  return false;
+};
+
 type BudgetModalProps = {
   openState: OpenState;
   ficheId: number;
@@ -58,8 +66,9 @@ const BudgetModal = ({
   budgets,
 }: BudgetModalProps) => {
   // Options avec checkbox
-  const [isDetailled, setIsDetailled] = useState(budgets[0]?.annee);
+  const [isDetailled, setIsDetailled] = useState(!!budgets[0]?.annee);
   const [isEuros, setIsEuros] = useState(true);
+  const [isFullPlan, setIsFullPlan] = useState(getInitFullPlanState(budgets));
 
   // Budget en euros
   const [euroDetailledBudget, setEuroDetailledBudget] = useState(
@@ -77,37 +86,36 @@ const BudgetModal = ({
     getInitExtendedState(budgets, ficheId, type, 'ETP')
   );
 
-  const { mutate: createBudget } = useUpsertBudgets();
-  const { mutate: deleteBudget } = useDeleteBudgets();
+  // Sauvegardes
+  const { mutate: createBudgets } = useUpsertBudgets();
+  const { mutate: deleteBudgets } = useDeleteBudgets();
 
   const handleSave = () => {
+    const newBudgets: BudgetType[] = [];
+
     if (isDetailled) {
-      const budgetToDelete = budgets.filter(
-        (elt) =>
-          !euroDetailledBudget.find((b) => b.id === elt.id) &&
-          !etpDetailledBudget.find((b) => b.id === elt.id)
-      );
-
-      budgetToDelete.forEach((elt) => deleteBudget({ budgetId: elt.id }));
-
-      euroDetailledBudget.forEach((elt) => {
-        createBudget(elt);
-      });
-
-      etpDetailledBudget.forEach((elt) => {
-        createBudget(elt);
-      });
+      newBudgets.push(...euroDetailledBudget, ...etpDetailledBudget);
     } else {
-      const budgetToDelete = budgets.filter(
-        (elt) =>
-          euroExtendedBudget.id !== elt.id && etpExtendedBudget.id !== elt.id
-      );
-
-      budgetToDelete.forEach((elt) => deleteBudget({ budgetId: elt.id }));
-
-      createBudget(euroExtendedBudget);
-      createBudget(etpExtendedBudget);
+      if (
+        euroExtendedBudget.budgetPrevisionnel ||
+        euroExtendedBudget.budgetReel
+      ) {
+        newBudgets.push({ ...euroExtendedBudget, estEtale: isFullPlan });
+      }
+      if (
+        etpExtendedBudget.budgetPrevisionnel ||
+        etpExtendedBudget.budgetReel
+      ) {
+        newBudgets.push({ ...etpExtendedBudget, estEtale: isFullPlan });
+      }
     }
+
+    const budgetsToDelete = budgets.filter(
+      (elt) => !newBudgets.find((b) => b.id === elt.id)
+    );
+
+    if (budgetsToDelete.length > 0) deleteBudgets(budgetsToDelete);
+    if (newBudgets.length > 0) createBudgets(newBudgets);
   };
 
   return (
@@ -189,22 +197,8 @@ const BudgetModal = ({
                 <Divider className="-mb-6" />
                 <Checkbox
                   label="Le budget prévisionnel total renseigné s’étale sur toute la durée du plan d’action"
-                  checked={
-                    isEuros
-                      ? euroExtendedBudget.estEtale
-                      : etpExtendedBudget.estEtale
-                  }
-                  onChange={(evt) =>
-                    isEuros
-                      ? setEuroExtendedBudget({
-                          ...euroExtendedBudget,
-                          estEtale: evt.currentTarget.checked,
-                        })
-                      : setEtpExtendedBudget({
-                          ...etpExtendedBudget,
-                          estEtale: evt.currentTarget.checked,
-                        })
-                  }
+                  checked={isFullPlan}
+                  onChange={(evt) => setIsFullPlan(evt.currentTarget.checked)}
                 />
               </>
             )}
