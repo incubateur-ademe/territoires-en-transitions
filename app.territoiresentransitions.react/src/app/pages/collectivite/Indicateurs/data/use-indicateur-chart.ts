@@ -13,13 +13,13 @@ import {
 } from './use-indicateur-valeurs';
 import { useSourceFilter } from './use-source-filter';
 
-const SEGMENTATIONS = [
+export const SEGMENTATIONS = [
+  'vecteur_filiere',
   'secteur',
   'vecteur',
-  'vecteur_filiere',
   'filiere',
   'autre',
-];
+] as const;
 const SEGMENTATION_PAR_DEFAUT = 'autre';
 
 export type IndicateurChartInfo = ReturnType<typeof useIndicateurChartInfo>;
@@ -95,9 +95,13 @@ export const useIndicateurChartInfo = ({
     }
   });
 
-  // conserve le type de segmentation sélectionné
+  // la segmentation par défaut est la 1ère segmentation disponible dans l'ordre d'affichage voulu
   const segmentationParDefaut =
-    enfantsParSegmentation?.[0]?.segmentation ?? undefined;
+    SEGMENTATIONS.find((s) =>
+      enfantsParSegmentation?.find((e) => e.segmentation === s)
+    ) ?? undefined;
+
+  // conserve le type de segmentation sélectionné
   const [segmentation, setSegmentation] = useState<string | undefined>(
     segmentationParDefaut
   );
