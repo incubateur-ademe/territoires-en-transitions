@@ -125,6 +125,11 @@ export const getFilteredFichesRequestSchema = z
       .describe(
         'Liste des identifiants des mesures du référentiel séparés par des virgules'
       ),
+    linkedFicheActionIds: zodQueryNumberArray
+      .optional()
+      .describe(
+        'Liste des identifiants des fiches action liées séparés par des virgules'
+      ),
     modifiedAfter: z
       .string()
       .datetime()
