@@ -37,77 +37,74 @@ const BudgetTable = ({ budgets }: BudgetTableProps) => {
 
       {/* Data */}
       <TBody>
-        {formattedBudget.map((budget, idx) => {
-          return (
-            <TRow key={budget.annee}>
-              <TCell
-                variant="title"
-                className={classNames(bodyCellClassname(idx), 'text-primary-9')}
-              >
-                {budget.annee}
-              </TCell>
-              <TCell className={bodyCellClassname(idx)}>
-                {budget.eurosPrevisionnel && (
-                  <Badge
-                    title={
-                      <span>
-                        {getFormattedNumber(parseInt(budget.eurosPrevisionnel))}{' '}
-                        € <sup>HT</sup>
-                      </span>
-                    }
-                    state="standard"
-                    light
-                    className="mx-auto"
-                  />
-                )}
-              </TCell>
-              <TCell className={bodyCellClassname(idx)}>
-                {budget.eurosReel && (
-                  <Badge
-                    title={
-                      <span>
-                        {getFormattedNumber(parseInt(budget.eurosReel))} €{' '}
-                        <sup>HT</sup>
-                      </span>
-                    }
-                    state="standard"
-                    light
-                    className="mx-auto"
-                  />
-                )}
-              </TCell>
-              <TCell className={bodyCellClassname(idx)}>
-                {budget.etpPrevisionnel && (
-                  <Badge
-                    title={
-                      <span>
-                        {getFormattedNumber(parseInt(budget.etpPrevisionnel))}{' '}
-                        ETP
-                      </span>
-                    }
-                    state="standard"
-                    light
-                    className="mx-auto"
-                  />
-                )}
-              </TCell>
-              <TCell className={bodyCellClassname(idx)}>
-                {budget.etpReel && (
-                  <Badge
-                    title={
-                      <span>
-                        {getFormattedNumber(parseInt(budget.etpReel))} ETP
-                      </span>
-                    }
-                    state="standard"
-                    light
-                    className="mx-auto"
-                  />
-                )}
-              </TCell>
-            </TRow>
-          );
-        })}
+        {formattedBudget.map((budget, idx) => (
+          <TRow key={budget.annee}>
+            <TCell
+              variant="title"
+              className={classNames(bodyCellClassname(idx), 'text-primary-9')}
+            >
+              {budget.annee}
+            </TCell>
+            <TCell className={bodyCellClassname(idx)}>
+              {budget.eurosPrevisionnel && (
+                <Badge
+                  title={
+                    <span>
+                      {getFormattedNumber(parseInt(budget.eurosPrevisionnel))} €{' '}
+                      <sup>HT</sup>
+                    </span>
+                  }
+                  state="standard"
+                  light
+                  className="mx-auto"
+                />
+              )}
+            </TCell>
+            <TCell className={bodyCellClassname(idx)}>
+              {budget.eurosReel && (
+                <Badge
+                  title={
+                    <span>
+                      {getFormattedNumber(parseInt(budget.eurosReel))} €{' '}
+                      <sup>HT</sup>
+                    </span>
+                  }
+                  state="standard"
+                  light
+                  className="mx-auto"
+                />
+              )}
+            </TCell>
+            <TCell className={bodyCellClassname(idx)}>
+              {budget.etpPrevisionnel && (
+                <Badge
+                  title={
+                    <span>
+                      {getFormattedNumber(parseInt(budget.etpPrevisionnel))} ETP
+                    </span>
+                  }
+                  state="standard"
+                  light
+                  className="mx-auto"
+                />
+              )}
+            </TCell>
+            <TCell className={bodyCellClassname(idx)}>
+              {budget.etpReel && (
+                <Badge
+                  title={
+                    <span>
+                      {getFormattedNumber(parseInt(budget.etpReel))} ETP
+                    </span>
+                  }
+                  state="standard"
+                  light
+                  className="mx-auto"
+                />
+              )}
+            </TCell>
+          </TRow>
+        ))}
 
         {/* Total */}
         <TRow>

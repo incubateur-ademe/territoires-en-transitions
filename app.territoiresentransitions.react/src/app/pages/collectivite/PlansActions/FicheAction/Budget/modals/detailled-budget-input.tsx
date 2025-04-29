@@ -58,7 +58,7 @@ const DetailledBudgetInput = ({
                             ...elt,
                             budgetPrevisionnel: values.value
                               ? values.value
-                              : undefined,
+                              : null,
                           }
                         : elt
                     )
@@ -96,7 +96,7 @@ const DetailledBudgetInput = ({
                       elt.annee === budget.annee
                         ? {
                             ...elt,
-                            budgetReel: values.value ? values.value : undefined,
+                            budgetReel: values.value ? values.value : null,
                           }
                         : elt
                     )

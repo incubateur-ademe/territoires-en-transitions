@@ -21,12 +21,12 @@ const YearlyBudgetInput = ({
         <Input
           type="number"
           icon={{ text: isEuros ? '€ HT' : 'ETP' }}
-          value={budget ? budget.budgetPrevisionnel ?? '' : undefined}
+          value={budget ? budget.budgetPrevisionnel ?? '' : null}
           placeholder="Ajouter un montant"
           onValueChange={(values) =>
             onUpdate({
               ...budget,
-              budgetPrevisionnel: values.value ? values.value : undefined,
+              budgetPrevisionnel: values.value ? values.value : null,
             } as BudgetType)
           }
         />
@@ -39,12 +39,12 @@ const YearlyBudgetInput = ({
         <Input
           type="number"
           icon={{ text: isEuros ? '€ HT' : 'ETP' }}
-          value={budget ? budget.budgetReel ?? '' : undefined}
+          value={budget ? budget.budgetReel ?? '' : null}
           placeholder="Ajouter un montant"
           onValueChange={(values) =>
             onUpdate({
               ...budget,
-              budgetReel: values.value ? values.value : undefined,
+              budgetReel: values.value ? values.value : null,
             } as BudgetType)
           }
         />
