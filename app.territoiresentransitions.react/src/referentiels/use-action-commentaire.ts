@@ -82,11 +82,13 @@ export const useSaveActionCommentaire = () => {
     {
       mutationKey: 'action_commentaire',
       onSuccess: (data, variables) => {
-        queryClient.refetchQueries([
-          'action_commentaire',
-          variables.collectivite_id,
-          getReferentielIdFromActionId(variables.action_id),
-        ]);
+        if (!data.error) {
+          return queryClient.refetchQueries([
+            'action_commentaire',
+            variables.collectivite_id,
+            getReferentielIdFromActionId(variables.action_id),
+          ]);
+        }
       },
     }
   );
