@@ -11,9 +11,7 @@ export const Table = ({ children, className, ...props }: TableProps) => {
 
   return (
     <View
-      style={tw(
-        `table border-t-[0.5px] border-l-[0.5px] border-primary-4${style}`
-      )}
+      style={tw(`border-t-[0.5px] border-l-[0.5px] border-primary-4${style}`)}
       {...props}
     >
       {children}

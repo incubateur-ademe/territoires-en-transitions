@@ -36,7 +36,7 @@ const BudgetTable = ({ budgets }: BudgetTableProps) => {
 
       {/* Data */}
       {formattedBudget.map((budget, index) => (
-        <TRow index={index} key={index}>
+        <TRow index={index} key={budget.annee}>
           <TCell colsNumber={5} variant="title">
             {budget.annee}
           </TCell>

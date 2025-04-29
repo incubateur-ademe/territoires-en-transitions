@@ -5,6 +5,7 @@ import {
   Paragraph,
   Stack,
 } from '@/app/ui/export-pdf/components';
+import { Fragment } from 'react';
 
 type BudgetContentProps = {
   type: 'investissement' | 'fonctionnement';
@@ -32,7 +33,7 @@ const BudgetContent = ({ type, budgets }: BudgetContentProps) => {
           </Paragraph>
           <Stack direction="row" gap={2} className="flex-wrap">
             {extendedBudget.map((b) => (
-              <>
+              <Fragment key={b.id}>
                 <BadgeFinanceur
                   key={`${b.annee}-previsionnel`}
                   nom={
@@ -51,7 +52,7 @@ const BudgetContent = ({ type, budgets }: BudgetContentProps) => {
                   montant={b.budgetReel ? parseInt(b.budgetReel) : null}
                   unite={b.unite}
                 />
-              </>
+              </Fragment>
             ))}
           </Stack>
         </>
