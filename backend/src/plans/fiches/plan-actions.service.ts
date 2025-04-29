@@ -1,5 +1,6 @@
 import { AuthUser } from '@/backend/auth/models/auth.models';
-import FicheActionListService from '@/backend/plans/fiches/fiches-action-list.service';
+import FicheActionPermissionsService from '@/backend/plans/fiches/fiche-action-permissions.service';
+import FicheActionListService from '@/backend/plans/fiches/list-fiches/list-fiches.service';
 import { Injectable, Logger } from '@nestjs/common';
 import { and, eq, isNull, sql } from 'drizzle-orm';
 import { uniq } from 'es-toolkit';
@@ -9,7 +10,6 @@ import { FicheAction, ficheActionTable } from './index-domain';
 import { axeTable, AxeType } from './shared/models/axe.table';
 import { ficheActionAxeTable } from './shared/models/fiche-action-axe.table';
 import { FicheActionWithRelationsType } from './shared/models/fiche-action-with-relations.dto';
-import FicheActionPermissionsService from '@/backend/plans/fiches/fiche-action-permissions.service';
 
 const getPlanRequestSchema = z.object({
   collectiviteId: z.number(),

@@ -4,9 +4,9 @@ import { FicheActionBudgetRouter } from '@/backend/plans/fiches/fiche-action-bud
 import { FicheActionBudgetService } from '@/backend/plans/fiches/fiche-action-budget/fiche-action-budget.service';
 import { FicheActionNoteController } from '@/backend/plans/fiches/fiche-action-note/fiche-action-note.controller';
 import FicheActionNoteService from '@/backend/plans/fiches/fiche-action-note/fiche-action-note.service';
-import FicheActionListService from '@/backend/plans/fiches/fiches-action-list.service';
 import FicheActionCreateService from '@/backend/plans/fiches/import/fiche-action-create.service';
 import { FicheActionListRouter } from '@/backend/plans/fiches/list-fiches/list-fiches.router';
+import FicheActionListService from '@/backend/plans/fiches/list-fiches/list-fiches.service';
 import PlanActionsService from '@/backend/plans/fiches/plan-actions.service';
 import { forwardRef, Module } from '@nestjs/common';
 import { CollectivitesModule } from '../../collectivites/collectivites.module';
