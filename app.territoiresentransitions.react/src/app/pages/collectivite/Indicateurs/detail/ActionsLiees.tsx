@@ -13,7 +13,7 @@ const ActionsLiees = ({ actionsIds }: Props) => {
     return (
       <EmptyCard
         picto={(props) => <ActionPicto {...props} />}
-        title="Aucune action des référentiels n'est liée !"
+        title="Aucune mesure des référentiels n'est liée !"
         size="xs"
       />
     );

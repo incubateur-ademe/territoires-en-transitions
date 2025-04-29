@@ -31,12 +31,12 @@ const ActionsLieesTab = ({
       {isEmpty ? (
         <EmptyCard
           picto={(props) => <ActionPicto {...props} />}
-          title="Aucune action des référentiels n'est liée !"
-          subTitle="Ici vous pouvez lier votre action avec une action des référentiels Climat Air Energie et Economie Circulaire de l’ADEME"
+          title="Aucune mesure des référentiels n'est liée !"
+          subTitle="Ici vous pouvez lier votre action avec une mesure des référentiels Climat Air Energie et Economie Circulaire de l’ADEME"
           isReadonly={isReadonly}
           actions={[
             {
-              children: 'Lier une action des référentiels',
+              children: 'Lier une mesure des référentiels',
               icon: 'link',
               onClick: () => setIsModalOpen(true),
             },
