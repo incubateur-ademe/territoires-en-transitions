@@ -2,7 +2,7 @@ import { getFichesRequestSchema } from '@/backend/plans/fiches/shared/get-fiches
 import { LIMIT_DEFAULT, PAGE_DEFAULT } from '@/backend/utils/pagination.schema';
 import { TrpcService } from '@/backend/utils/trpc/trpc.service';
 import { Injectable } from '@nestjs/common';
-import FicheActionListService from '../fiches-action-list.service';
+import FicheActionListService from './list-fiches.service';
 
 @Injectable()
 export class FicheActionListRouter {
