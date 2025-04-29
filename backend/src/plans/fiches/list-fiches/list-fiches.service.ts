@@ -59,6 +59,7 @@ import {
   isNotNull,
   isNull,
   lte,
+  not,
   or,
   sql,
   SQL,
@@ -695,6 +696,13 @@ export default class FicheActionListService {
         eq(ficheActionMesures.ficheId, ficheActionTable.id)
       )
       .leftJoin(
+        ficheActionLienTable,
+        or(
+          eq(ficheActionLienTable.ficheUne, ficheActionTable.id),
+          eq(ficheActionLienTable.ficheDeux, ficheActionTable.id)
+        )
+      )
+      .leftJoin(
         ficheActionFichesLiees,
         eq(ficheActionFichesLiees.ficheId, ficheActionTable.id)
       )
@@ -898,6 +906,23 @@ export default class FicheActionListService {
         conditions,
         sql`mesure_ids`,
         filters.mesureIds
+      );
+    }
+    if (filters.linkedFicheActionIds?.length) {
+      conditions.push(
+        or(
+          isNotNull(ficheActionLienTable.ficheUne),
+          isNotNull(ficheActionLienTable.ficheDeux)
+        )!
+      );
+      conditions.push(
+        or(
+          inArray(ficheActionLienTable.ficheDeux, filters.linkedFicheActionIds),
+          inArray(ficheActionLienTable.ficheUne, filters.linkedFicheActionIds)
+        )!
+      );
+      conditions.push(
+        not(inArray(ficheActionTable.id, filters.linkedFicheActionIds))
       );
     }
 
