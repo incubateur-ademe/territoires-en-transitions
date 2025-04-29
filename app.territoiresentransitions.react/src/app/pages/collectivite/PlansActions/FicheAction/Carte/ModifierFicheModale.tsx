@@ -20,7 +20,7 @@ import PersonnesDropdown from '@/app/ui/dropdownLists/PersonnesDropdown/Personne
 import { getPersonneStringId } from '@/app/ui/dropdownLists/PersonnesDropdown/utils';
 import PrioritesSelectDropdown from '@/app/ui/dropdownLists/ficheAction/priorites/PrioritesSelectDropdown';
 import StatutsSelectDropdown from '@/app/ui/dropdownLists/ficheAction/statuts/StatutsSelectDropdown';
-import { FicheActionResumeType } from '@/backend/plans/fiches/shared/models/fiche-action-with-relations.dto';
+import { FicheActionResumeType } from '@/domain/plans/fiches';
 import { format } from 'date-fns';
 
 type Props = {
