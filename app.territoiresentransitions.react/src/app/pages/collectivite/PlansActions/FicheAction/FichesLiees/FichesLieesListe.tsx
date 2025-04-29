@@ -3,7 +3,7 @@ import {
   makeCollectivitePlanActionFicheUrl,
 } from '@/app/app/paths';
 import { useCollectiviteId } from '@/app/collectivites/collectivite-context';
-import { FicheActionResumeType } from '@/backend/plans/fiches/shared/models/fiche-action-with-relations.dto';
+import { FicheActionResumeType } from '@/domain/plans/fiches';
 import classNames from 'classnames';
 import FicheActionCard from '../Carte/FicheActionCard';
 

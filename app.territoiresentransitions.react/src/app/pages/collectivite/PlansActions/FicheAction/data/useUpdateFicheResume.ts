@@ -2,7 +2,7 @@ import { useSupabase } from '@/api/utils/supabase/use-supabase';
 import { trpc } from '@/api/utils/trpc/client';
 import { useCollectiviteId } from '@/app/collectivites/collectivite-context';
 
-import { FicheActionResumeType } from '@/backend/plans/fiches/shared/models/fiche-action-with-relations.dto';
+import { FicheActionResumeType } from '@/domain/plans/fiches';
 import { useMutation } from 'react-query';
 
 /**

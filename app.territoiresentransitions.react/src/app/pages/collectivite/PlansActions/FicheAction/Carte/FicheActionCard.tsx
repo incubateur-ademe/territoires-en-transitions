@@ -1,7 +1,7 @@
 import { useCurrentCollectivite } from '@/app/collectivites/collectivite-context';
 import ListWithTooltip from '@/app/ui/lists/ListWithTooltip';
 import { getModifiedSince } from '@/app/utils/formatUtils';
-import { FicheActionResumeType } from '@/backend/plans/fiches/shared/models/fiche-action-with-relations.dto';
+import { FicheActionResumeType } from '@/domain/plans/fiches';
 import { Button, Card, Checkbox, Notification, Tooltip } from '@/ui';
 import classNames from 'classnames';
 import { useState } from 'react';

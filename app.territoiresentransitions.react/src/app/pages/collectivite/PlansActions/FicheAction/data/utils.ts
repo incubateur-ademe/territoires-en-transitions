@@ -1,5 +1,6 @@
 import { FicheAction, FicheResume } from '@/api/plan-actions';
 import { naturalSort } from '@/app/utils/naturalSort';
+import { FicheActionResumeType } from '@/domain/plans/fiches';
 
 /**
  * Formate un nouveau tag qui nécessite un type minimum collectivite_id, nom
