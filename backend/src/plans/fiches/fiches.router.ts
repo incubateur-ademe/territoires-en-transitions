@@ -1,4 +1,4 @@
-import FicheActionListService from '@/backend/plans/fiches/fiches-action-list.service';
+import FicheActionListService from '@/backend/plans/fiches/list-fiches/list-fiches.service';
 import { getFichesRequestSchema } from '@/backend/plans/fiches/shared/get-fiches-filter.request';
 import { TrpcService } from '@/backend/utils/trpc/trpc.service';
 import { Injectable } from '@nestjs/common';
