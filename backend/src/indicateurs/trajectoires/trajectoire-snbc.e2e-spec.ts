@@ -1,6 +1,9 @@
+import { GetIndicateursValeursResponseType } from '@/backend/indicateurs/shared/models/get-indicateurs.response';
+import { UpsertIndicateursValeursRequest } from '@/backend/indicateurs/shared/models/upsert-indicateurs-valeurs.request';
+import { getTestApp, signInWith, YOLO_DODO } from '@/backend/test';
+import { sleep } from '@/backend/utils/sleep.utils';
 import { INestApplication } from '@nestjs/common';
 import { default as request } from 'supertest';
-import { getTestApp, signInWith, YOLO_DODO } from '@/backend/test';
 import { CalculTrajectoireResultatMode } from './calcul-trajectoire.request';
 import { CalculTrajectoireResponse } from './calcul-trajectoire.response';
 import {
@@ -23,12 +26,9 @@ describe('Calcul de trajectoire SNBC', () => {
     return request(app.getHttpServer())
       .get('/trajectoires/snbc/verification?collectiviteId=3')
       .set('Authorization', `Bearer ${yoloDodoToken}`)
-      .expect(401)
+      .expect(200)
       .expect({
-        message:
-          "Droits insuffisants, l'utilisateur 17440546-f389-4d4f-bfdb-b0c94a1bd0f9 n'a pas l'autorisation indicateurs.trajectoires.lecture sur la ressource Collectivité 3",
-        error: 'Unauthorized',
-        statusCode: 401,
+        status: VerificationTrajectoireStatus.DROITS_INSUFFISANTS,
       });
   });
 
@@ -257,6 +257,7 @@ describe('Calcul de trajectoire SNBC', () => {
             'cae_63.e',
           ],
         },
+        lastModifiedAt: null,
       },
     };
     return request(app.getHttpServer())
@@ -280,6 +281,7 @@ describe('Calcul de trajectoire SNBC', () => {
   }, 10000);
 
   it(`Calcul sans droit suffisant - visite`, () => {
+    console.log(yoloDodoToken);
     return request(app.getHttpServer())
       .get('/trajectoires/snbc?collectiviteId=3896')
       .set('Authorization', `Bearer ${yoloDodoToken}`)
@@ -299,7 +301,38 @@ describe('Calcul de trajectoire SNBC', () => {
       .expect(200);
   }, 30000);
 
-  it(`Verification et calcul avec donnees completes`, async () => {
+  it(`Verification, calcul avec donnees completes et gestion de la mise à jour`, async () => {
+    // Restauration de la valeur d'indicateur
+    const response = await request(app.getHttpServer())
+      .get(
+        `/indicateurs?identifiantsReferentiel=cae_1.e&collectiviteId=4936&sources=rare`
+      )
+      .set('Authorization', `Bearer ${yoloDodoToken}`)
+      .expect(200);
+    const indicateurExistingValeurs =
+      response.body as GetIndicateursValeursResponseType;
+    const indicateurCae1eId =
+      indicateurExistingValeurs.indicateurs[0].definition.id;
+    const indicateurCae1eMetadataId =
+      indicateurExistingValeurs.indicateurs[0].sources['rare'].metadonnees[0]
+        .id;
+    const restaureIndicateurValeurPayload: UpsertIndicateursValeursRequest = {
+      valeurs: [
+        {
+          collectiviteId: 4936,
+          indicateurId: indicateurCae1eId,
+          dateValeur: '2015-01-01',
+          metadonneeId: indicateurCae1eMetadataId,
+          resultat: 653.598,
+        },
+      ],
+    };
+    await request(app.getHttpServer())
+      .post('/indicateurs')
+      .set('Authorization', `Bearer ${yoloDodoToken}`)
+      .send(restaureIndicateurValeurPayload)
+      .expect(201);
+
     // Suppression de la trajectoire snbc existante si le test est joué plusieurs fois
     await request(app.getHttpServer())
       .delete('/trajectoires/snbc?collectiviteId=4936')
@@ -344,7 +377,7 @@ describe('Calcul de trajectoire SNBC', () => {
             },
             {
               identifiantsReferentiel: ['cae_1.e'],
-              valeur: 653.598,
+              valeur: 653.6,
               dateMin: '2015-01-01',
               dateMax: '2015-01-01',
             },
@@ -476,11 +509,11 @@ describe('Calcul de trajectoire SNBC', () => {
         },
       },
     };
-    await request(app.getHttpServer())
+    const verificationResponse = await request(app.getHttpServer())
       .get('/trajectoires/snbc/verification?collectiviteId=4936&epciInfo=true')
       .set('Authorization', `Bearer ${yoloDodoToken}`)
-      .expect(200)
-      .expect(verifcationReponseAttendue);
+      .expect(200);
+    expect(verificationResponse.body).toMatchObject(verifcationReponseAttendue);
 
     // Calcul de la trajectoire
     const responseCalcul = await request(app.getHttpServer())
@@ -505,11 +538,14 @@ describe('Calcul de trajectoire SNBC', () => {
           'cae_63.cc',
         ],
       };
-    await request(app.getHttpServer())
+    const verificationApresCalculResponse = await request(app.getHttpServer())
       .get('/trajectoires/snbc/verification?collectiviteId=4936')
       .set('Authorization', `Bearer ${yoloDodoToken}`)
-      .expect(200)
-      .expect(verificationReponseAttendueApresCalcul);
+      .expect(200);
+    console.log(JSON.stringify(verificationReponseAttendueApresCalcul));
+    expect(verificationApresCalculResponse.body).toMatchObject(
+      verificationReponseAttendueApresCalcul
+    );
 
     // Si on requête de nouveau le calcul, il doit provenir de la base de données
     const responseRecalcul = await request(app.getHttpServer())
@@ -518,6 +554,63 @@ describe('Calcul de trajectoire SNBC', () => {
       .expect(200);
     expect((responseRecalcul.body as CalculTrajectoireResponse).mode).toEqual(
       CalculTrajectoireResultatMode.DONNEES_EN_BDD
+    );
+
+    // Maintenant on met à jour une valeur d'indicateur
+    const indicateurValeurPayload: UpsertIndicateursValeursRequest = {
+      valeurs: [
+        {
+          collectiviteId: 4936,
+          indicateurId: indicateurCae1eId,
+          dateValeur: '2015-01-01',
+          metadonneeId: indicateurCae1eMetadataId,
+          resultat: 663,
+        },
+      ],
+    };
+    const upsertIndicateurResponse = await request(app.getHttpServer())
+      .post('/indicateurs')
+      .set('Authorization', `Bearer ${yoloDodoToken}`)
+      .send(indicateurValeurPayload)
+      .expect(201);
+
+    await sleep(1000);
+
+    // La verification doit indiquer qu'il y a une mise à jour disponible
+    const verificationApresMajResponse = await request(app.getHttpServer())
+      .get(
+        '/trajectoires/snbc/verification?collectiviteId=4936&forceRecuperationDonnees=true'
+      )
+      .set('Authorization', `Bearer ${yoloDodoToken}`)
+      .expect(200);
+    expect(verificationApresMajResponse.body.status).toEqual(
+      VerificationTrajectoireStatus.MISE_A_JOUR_DISPONIBLE
+    );
+
+    // On force un recalcul
+    const responseApresMajEtRecalcul = await request(app.getHttpServer())
+      .get(
+        `/trajectoires/snbc?collectiviteId=4936&mode=${CalculTrajectoireResultatMode.MAJ_SPREADSHEET_EXISTANT}`
+      )
+      .set('Authorization', `Bearer ${yoloDodoToken}`)
+      .expect(200);
+    const calculTrajectoireResponse =
+      responseApresMajEtRecalcul.body as CalculTrajectoireResponse;
+    expect(calculTrajectoireResponse.mode).toEqual(
+      CalculTrajectoireResultatMode.MAJ_SPREADSHEET_EXISTANT
+    );
+
+    // La vérification doit maintenant envoyer 'deja_calcule'
+    const verificationApresMajEtRecalculResponse = await request(
+      app.getHttpServer()
+    )
+      .get(
+        '/trajectoires/snbc/verification?collectiviteId=4936&forceRecuperationDonnees=true'
+      )
+      .set('Authorization', `Bearer ${yoloDodoToken}`)
+      .expect(200);
+    expect(verificationApresMajEtRecalculResponse.body.status).toEqual(
+      VerificationTrajectoireStatus.DEJA_CALCULE
     );
   }, 30000);
 

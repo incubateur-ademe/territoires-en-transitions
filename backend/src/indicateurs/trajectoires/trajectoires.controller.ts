@@ -149,7 +149,10 @@ export class TrajectoiresController {
     const { valeurs, ...response } =
       await this.trajectoiresDataService.verificationDonneesSnbc(
         request,
-        tokenInfo
+        tokenInfo,
+        undefined,
+        undefined,
+        true
       );
     if (!request.epciInfo) {
       delete response.epci;

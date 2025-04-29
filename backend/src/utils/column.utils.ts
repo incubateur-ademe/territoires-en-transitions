@@ -1,8 +1,8 @@
 /**
  * Définitions usuelles de colonnes
  */
-import { sql } from 'drizzle-orm';
-import { serial, timestamp, uuid } from 'drizzle-orm/pg-core';
+import { sql, SQL } from 'drizzle-orm';
+import { PgColumn, serial, timestamp, uuid } from 'drizzle-orm/pg-core';
 
 export const TIMESTAMP_OPTIONS = {
   withTimezone: true,
@@ -29,3 +29,12 @@ export const modifiedBy = uuid('modified_by').default(SQL_AUTH_UID);
 export const serialIdPrimaryKey = {
   id: serial('id').primaryKey().notNull(),
 };
+
+/**
+ * See https://github.com/drizzle-team/drizzle-orm/issues/1757
+ * @param dateTimeColumn
+ * @returns
+ */
+export function getISOFormatDateQuery(dateTimeColumn: PgColumn): SQL<string> {
+  return sql<string>`to_char(${dateTimeColumn}, 'YYYY-MM-DD"T"HH24:MI:SS.MS"Z"')`;
+}
