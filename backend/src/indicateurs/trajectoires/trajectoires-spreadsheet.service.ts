@@ -1,3 +1,4 @@
+import { CollectiviteResume } from '@/backend/collectivites/shared/models/collectivite.table';
 import {
   Injectable,
   InternalServerErrorException,
@@ -25,7 +26,6 @@ import { CalculTrajectoireResult } from './calcul-trajectoire.response';
 import { DonneesCalculTrajectoireARemplirType } from './donnees-calcul-trajectoire-a-remplir.dto';
 import TrajectoiresDataService from './trajectoires-data.service';
 import { VerificationTrajectoireStatus } from './verification-trajectoire.response';
-import { CollectiviteResume } from '@/backend/collectivites/shared/models/collectivite.table';
 
 @Injectable()
 export default class TrajectoiresSpreadsheetService {
@@ -324,7 +324,8 @@ export default class TrajectoiresSpreadsheetService {
     const upsertedTrajectoireIndicateurValeurs =
       await this.valeursService.upsertIndicateurValeurs(
         indicateurValeursTrajectoireResultat,
-        undefined // we don't want to check permission, we have already checked it and it's not the same
+        undefined, // we don't want to check permission, we have already checked it and it's not the same
+        true // disable calcul auto
       );
 
     // Maintenant que les indicateurs ont été créés, on peut ajouter la collectivité au groupement

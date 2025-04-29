@@ -314,6 +314,7 @@ export default class TrajectoiresDataService {
       )}`
     );
 
+    let lastModifiedAt: string | null = null;
     const indicateurValeursEmissionsGes =
       await this.valeursService.getIndicateursValeurs({
         collectiviteId: collectiviteId,
@@ -322,6 +323,14 @@ export default class TrajectoiresDataService {
         ),
         sources: sources,
       });
+    indicateurValeursEmissionsGes.forEach((indicateurValeur) => {
+      if (
+        !lastModifiedAt ||
+        indicateurValeur.indicateur_valeur.modifiedAt > lastModifiedAt
+      ) {
+        lastModifiedAt = indicateurValeur.indicateur_valeur.modifiedAt;
+      }
+    });
     const emissionsGesSources = indicateurValeursEmissionsGes
       .map(
         (indicateurValeur) =>
@@ -344,6 +353,14 @@ export default class TrajectoiresDataService {
         ),
         sources: sources,
       });
+    indicateurValeursConsommationsFinales.forEach((indicateurValeur) => {
+      if (
+        !lastModifiedAt ||
+        indicateurValeur.indicateur_valeur.modifiedAt > lastModifiedAt
+      ) {
+        lastModifiedAt = indicateurValeur.indicateur_valeur.modifiedAt;
+      }
+    });
     const consommationsFinalesSources = indicateurValeursConsommationsFinales
       .map(
         (indicateurValeur) =>
@@ -366,6 +383,14 @@ export default class TrajectoiresDataService {
         ),
         sources: sources,
       });
+    indicateurValeursSequestration.forEach((indicateurValeur) => {
+      if (
+        !lastModifiedAt ||
+        indicateurValeur.indicateur_valeur.modifiedAt > lastModifiedAt
+      ) {
+        lastModifiedAt = indicateurValeur.indicateur_valeur.modifiedAt;
+      }
+    });
     const sequestrationSources = indicateurValeursSequestration
       .map(
         (indicateurValeur) =>
@@ -391,6 +416,7 @@ export default class TrajectoiresDataService {
       emissionsGes: donneesEmissionsGes,
       consommationsFinales: donneesConsommationsFinales,
       sequestrations: donneesSequestration,
+      lastModifiedAt: lastModifiedAt,
     };
   }
 
@@ -617,19 +643,25 @@ export default class TrajectoiresDataService {
     request: VerificationTrajectoireRequestType,
     tokenInfo: AuthUser,
     epci?: CollectiviteResume,
-    forceRecuperationDonneesUniquementPourLecture = false
+    forceRecuperationDonneesUniquementPourLecture = false,
+    doNotThrowIfUnauthorized?: boolean
   ): Promise<VerificationTrajectoireResultType> {
-    // Vérification des droits pour lire les données
-    await this.permissionService.isAllowed(
-      tokenInfo,
-      PermissionOperation.INDICATEURS_TRAJECTOIRES_LECTURE,
-      ResourceType.COLLECTIVITE,
-      request.collectiviteId
-    );
-
     const response: VerificationTrajectoireResultType = {
       status: VerificationTrajectoireStatus.COMMUNE_NON_SUPPORTEE,
     };
+
+    // Vérification des droits pour lire les données
+    const isAllowedToRead = await this.permissionService.isAllowed(
+      tokenInfo,
+      PermissionOperation.INDICATEURS_TRAJECTOIRES_LECTURE,
+      ResourceType.COLLECTIVITE,
+      request.collectiviteId,
+      doNotThrowIfUnauthorized
+    );
+    if (!isAllowedToRead) {
+      response.status = VerificationTrajectoireStatus.DROITS_INSUFFISANTS;
+      return response;
+    }
 
     if (request.forceRecuperationDonnees) {
       forceRecuperationDonneesUniquementPourLecture = true;
@@ -682,6 +714,12 @@ export default class TrajectoiresDataService {
         this.extractSourceIdentifiantManquantsFromCommentaire(
           premierCommentaire || ''
         );
+      if (!sourceIdentifiantManquants?.sources?.length) {
+        this.logger.warn(
+          `Aucune source trouvée dans le commentaire ${premierCommentaire} de la valeur d'indicateur ${response.valeurs[0].id}`
+        );
+      }
+      const dateCalcul = response.valeurs[0].modifiedAt;
       response.sourcesDonneesEntree = sourceIdentifiantManquants?.sources || [];
       this.logger.log(
         `Sources des données SNBC déjà calculées : ${response.sourcesDonneesEntree?.join(
@@ -691,18 +729,24 @@ export default class TrajectoiresDataService {
       response.indentifiantsReferentielManquantsDonneesEntree =
         sourceIdentifiantManquants?.identifiants_referentiel_manquants || [];
       response.status = VerificationTrajectoireStatus.DEJA_CALCULE;
+      response.modifiedAt = dateCalcul;
       if (!forceRecuperationDonneesUniquementPourLecture) {
         return response;
       }
     }
     if (!forceRecuperationDonneesUniquementPourLecture) {
       // Vérification des droits pour calculer les données
-      await this.permissionService.isAllowed(
+      const isAllowedToCompute = await this.permissionService.isAllowed(
         tokenInfo,
         PermissionOperation.INDICATEURS_TRAJECTOIRES_EDITION,
         ResourceType.COLLECTIVITE,
-        request.collectiviteId
+        request.collectiviteId,
+        doNotThrowIfUnauthorized
       );
+      if (!isAllowedToCompute) {
+        response.status = VerificationTrajectoireStatus.DROITS_INSUFFISANTS;
+        return response;
+      }
     }
     // sinon, vérifie s'il y a les données suffisantes pour lancer le calcul :
     // Si jamais les données ont déjà été calculées et que l'on a pas défini le flag forceUtilisationDonneesCollectivite, on utilise la meme source
@@ -726,6 +770,13 @@ export default class TrajectoiresDataService {
     if (donneesSuffisantes) {
       if (response.status !== VerificationTrajectoireStatus.DEJA_CALCULE) {
         response.status = VerificationTrajectoireStatus.PRET_A_CALCULER;
+      } else if (
+        response.status === VerificationTrajectoireStatus.DEJA_CALCULE &&
+        response.modifiedAt &&
+        response.donneesEntree?.lastModifiedAt &&
+        response.modifiedAt < response.donneesEntree.lastModifiedAt
+      ) {
+        response.status = VerificationTrajectoireStatus.MISE_A_JOUR_DISPONIBLE;
       }
       return response;
     }

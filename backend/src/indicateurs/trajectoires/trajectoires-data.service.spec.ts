@@ -54,6 +54,8 @@ describe('TrajectoiresDataService test', () => {
           createdAt: '2024-07-10T13:44:47.193Z',
           modifiedBy: null,
           createdBy: null,
+          calculAuto: false,
+          calculAutoIdentifiantsManquants: null,
         },
         {
           id: 640645,
@@ -70,6 +72,8 @@ describe('TrajectoiresDataService test', () => {
           createdAt: '2024-07-10T13:44:47.193Z',
           modifiedBy: null,
           createdBy: null,
+          calculAuto: false,
+          calculAutoIdentifiantsManquants: null,
         },
         {
           id: 640646,
@@ -86,6 +90,8 @@ describe('TrajectoiresDataService test', () => {
           createdAt: '2024-07-10T13:44:47.193Z',
           modifiedBy: null,
           createdBy: null,
+          calculAuto: false,
+          calculAutoIdentifiantsManquants: null,
         },
         {
           id: 640647,
@@ -102,6 +108,8 @@ describe('TrajectoiresDataService test', () => {
           createdAt: '2024-07-10T13:44:47.193Z',
           modifiedBy: null,
           createdBy: null,
+          calculAuto: false,
+          calculAutoIdentifiantsManquants: null,
         },
       ];
 
@@ -137,6 +145,8 @@ describe('TrajectoiresDataService test', () => {
           createdAt: '2024-07-10T13:44:47.193Z',
           modifiedBy: null,
           createdBy: null,
+          calculAuto: false,
+          calculAutoIdentifiantsManquants: null,
         },
         {
           id: 651924,
@@ -153,6 +163,8 @@ describe('TrajectoiresDataService test', () => {
           createdAt: '2024-07-10T13:44:47.193Z',
           modifiedBy: null,
           createdBy: null,
+          calculAuto: false,
+          calculAutoIdentifiantsManquants: null,
         },
         {
           id: 651925,
@@ -169,6 +181,8 @@ describe('TrajectoiresDataService test', () => {
           createdAt: '2024-07-10T13:44:47.193Z',
           modifiedBy: null,
           createdBy: null,
+          calculAuto: false,
+          calculAutoIdentifiantsManquants: null,
         },
       ];
 
@@ -206,6 +220,8 @@ describe('TrajectoiresDataService test', () => {
           createdAt: '2024-07-10T13:44:47.193Z',
           modifiedBy: null,
           createdBy: null,
+          calculAuto: false,
+          calculAutoIdentifiantsManquants: null,
         },
         {
           id: 640645,
@@ -222,6 +238,8 @@ describe('TrajectoiresDataService test', () => {
           createdAt: '2024-07-10T13:44:47.193Z',
           modifiedBy: null,
           createdBy: null,
+          calculAuto: false,
+          calculAutoIdentifiantsManquants: null,
         },
         {
           id: 640646,
@@ -238,6 +256,8 @@ describe('TrajectoiresDataService test', () => {
           createdAt: '2024-07-10T13:44:47.193Z',
           modifiedBy: null,
           createdBy: null,
+          calculAuto: false,
+          calculAutoIdentifiantsManquants: null,
         },
         {
           id: 640647,
@@ -254,6 +274,8 @@ describe('TrajectoiresDataService test', () => {
           createdAt: '2024-07-10T13:44:47.193Z',
           modifiedBy: null,
           createdBy: null,
+          calculAuto: false,
+          calculAutoIdentifiantsManquants: null,
         },
       ];
 

@@ -9,7 +9,11 @@ import {
   NULL_SOURCE_ID,
 } from '@/backend/indicateurs/valeurs/valeurs.constants';
 import { buildConflictUpdateColumns } from '@/backend/utils/database/conflict.utils';
-import { getErrorMessage, roundTo } from '@/backend/utils/index-domain';
+import {
+  getErrorMessage,
+  getISOFormatDateQuery,
+  roundTo,
+} from '@/backend/utils/index-domain';
 import { createZodDto } from '@anatine/zod-nestjs';
 import { extendApi } from '@anatine/zod-openapi';
 import {
@@ -32,7 +36,7 @@ import {
   SQL,
   SQLWrapper,
 } from 'drizzle-orm';
-import { chunk, groupBy, isNil, keyBy, partition } from 'es-toolkit';
+import { chunk, groupBy, isNil, keyBy, omit, partition } from 'es-toolkit';
 import * as _ from 'lodash';
 import {
   AuthenticatedUser,
@@ -182,8 +186,26 @@ export default class CrudValeursService {
     let result: IndicateurValeurAvecMetadonnesDefinition[] =
       await this.databaseService.db
         .select({
-          indicateur_valeur: getTableColumns(indicateurValeurTable),
-          indicateur_definition: getTableColumns(indicateurDefinitionTable),
+          indicateur_valeur: {
+            ...omit(getTableColumns(indicateurValeurTable), [
+              'createdAt',
+              'modifiedAt',
+            ]),
+            createdAt: getISOFormatDateQuery(indicateurValeurTable.createdAt),
+            modifiedAt: getISOFormatDateQuery(indicateurValeurTable.modifiedAt),
+          },
+          indicateur_definition: {
+            ...omit(getTableColumns(indicateurDefinitionTable), [
+              'createdAt',
+              'modifiedAt',
+            ]),
+            createdAt: getISOFormatDateQuery(
+              indicateurDefinitionTable.createdAt
+            ),
+            modifiedAt: getISOFormatDateQuery(
+              indicateurDefinitionTable.modifiedAt
+            ),
+          },
           indicateur_source_metadonnee: getTableColumns(
             indicateurSourceMetadonneeTable
           ),
@@ -308,6 +330,7 @@ export default class CrudValeursService {
     }
 
     const indicateurValeurs = await this.getIndicateursValeurs(options);
+
     const indicateurValeursSeules = indicateurValeurs.map((v) => ({
       ...v.indicateur_valeur,
       confidentiel: v.confidentiel,
@@ -415,6 +438,7 @@ export default class CrudValeursService {
         }
       });
     }
+
     return {
       count: indicateurValeurs.length,
       indicateurs: indicateurValeurGroupeesParSource,
@@ -428,7 +452,14 @@ export default class CrudValeursService {
       )}`
     );
     const definitions = await this.databaseService.db
-      .select()
+      .select({
+        ...omit(getTableColumns(indicateurDefinitionTable), [
+          'createdAt',
+          'modifiedAt',
+        ]),
+        createdAt: getISOFormatDateQuery(indicateurDefinitionTable.createdAt),
+        modifiedAt: getISOFormatDateQuery(indicateurDefinitionTable.modifiedAt),
+      })
       .from(indicateurDefinitionTable)
       .where(
         inArray(
@@ -588,7 +619,8 @@ export default class CrudValeursService {
 
   async upsertIndicateurValeurs(
     indicateurValeurs: IndicateurValeurInsert[],
-    tokenInfo: AuthenticatedUser | undefined
+    tokenInfo: AuthenticatedUser | undefined,
+    disableCalculAuto?: boolean
   ): Promise<IndicateurValeurWithIdentifiant[]> {
     const collectiviteIds = [
       ...new Set(indicateurValeurs.map((v) => v.collectiviteId)),
@@ -847,7 +879,7 @@ export default class CrudValeursService {
       }
     });
 
-    if (indicateurValeursResultat.length) {
+    if (indicateurValeursResultat.length && !disableCalculAuto) {
       const calculatedIndicateursResultatToUpsert =
         await this.computeValeursService.updateCalculatedIndicateurValeurs(
           indicateurValeursResultat
