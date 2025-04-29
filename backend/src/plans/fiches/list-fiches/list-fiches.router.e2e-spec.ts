@@ -1,4 +1,5 @@
 import { AuthenticatedUser } from '@/backend/auth/models/auth.models';
+import { statutsEnumSchema } from '@/backend/plans/fiches/index-domain';
 import { getAuthUser, getTestRouter, YOLO_DODO } from '@/backend/test';
 import { TrpcRouter } from '@/backend/utils/trpc/trpc.router';
 
@@ -221,14 +222,28 @@ test('Fetch avec filtre sur une action du referentiel associée', async () => {
 
 test('Fetch avec filtre sur un statut', async () => {
   const caller = router.createCaller({ user: yoloDodoUser });
-  const { data } = await caller.plans.fiches.listResumes({
+  const { data: emptyData } = await caller.plans.fiches.listResumes({
     collectiviteId: COLLECTIVITE_ID,
     filters: {
       statuts: ['En cours'],
     },
   });
 
-  expect(data).toMatchObject({});
+  expect(emptyData.length).toBe(0);
+
+  const { data: withData } = await caller.plans.fiches.listResumes({
+    collectiviteId: COLLECTIVITE_ID,
+    filters: {
+      statuts: ['En cours', 'À venir'],
+    },
+  });
+
+  expect(withData.length).toBeGreaterThan(0);
+
+  // Que des fiches avec un statut 'À venir' dans les seeds de base
+  for (const fiche of withData) {
+    expect(fiche.statut).toBe(statutsEnumSchema.enum['À venir']);
+  }
 });
 
 test('Fetch avec filtre sur la date de modification', async () => {
