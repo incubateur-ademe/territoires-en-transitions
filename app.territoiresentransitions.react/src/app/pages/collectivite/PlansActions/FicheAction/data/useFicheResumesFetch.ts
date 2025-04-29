@@ -4,12 +4,18 @@ import { GetFichesRequestType } from '@/backend/plans/fiches/shared/get-fiches-f
 
 export type GetFichesOptions = Omit<GetFichesRequestType, 'collectiviteId'>;
 
-export const useFicheResumesFetch = (options?: GetFichesOptions) => {
+export const useFicheResumesFetch = (
+  options?: GetFichesOptions,
+  requested = true
+) => {
   const collectiviteId = useCollectiviteId();
 
-  return trpc.plans.fiches.listResumes.useQuery({
-    collectiviteId,
-    filters: options?.filters,
-    queryOptions: options?.queryOptions,
-  });
+  return trpc.plans.fiches.listResumes.useQuery(
+    {
+      collectiviteId,
+      filters: options?.filters,
+      queryOptions: options?.queryOptions,
+    },
+    { enabled: requested }
+  );
 };

@@ -16,8 +16,10 @@ export const formatNewTag = (inputValue: string, collectivite_id: number) => ({
 export const generateTitle = (title?: string | null) => title || 'Sans titre';
 
 /** Ordonne les fiches résumé par titre */
-export const sortFichesResume = (fiches: FicheResume[]): FicheResume[] => {
-  return fiches.sort((a: FicheResume, b: FicheResume) => {
+export const sortFichesResume = (
+  fiches: FicheActionResumeType[]
+): FicheActionResumeType[] => {
+  return fiches.sort((a: FicheActionResumeType, b: FicheActionResumeType) => {
     if (!a.titre) return -1;
     if (!b.titre) return 1;
     return naturalSort(a.titre, b.titre);
