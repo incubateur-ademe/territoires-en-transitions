@@ -68,8 +68,7 @@ export const nameToparams: Record<
   planActionIds: 'pa',
   ficheIds: 'fa',
   mesureIds: 'ra',
-  // Not relevant anymore?
-  // linkedFicheActionIds: 'lfa',
+  linkedFicheActionIds: 'lfa',
   utilisateurPiloteIds: 'up',
   personnePiloteIds: 'pp',
   utilisateurReferentIds: 'ur',
@@ -98,6 +97,7 @@ export const nameToparams: Record<
   sousThematiqueIds: 'st',
   // Exist in filters, but not supported in UI for now
   // Keep or remove?
+  // TODO
   noPriorite: 'np',
   modifiedAfter: 'ma',
 };
