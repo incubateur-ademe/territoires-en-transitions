@@ -99,7 +99,12 @@ const ContactsModal = ({
                 <td className={classNames('font-bold', bodyCellClassName)}>
                   {getFormattedPhone(contact.telephone)}
                 </td>
-                <td className={classNames('font-bold', bodyCellClassName)}>
+                <td
+                  className={classNames(
+                    'font-bold shrink-0 whitespace-nowrap',
+                    bodyCellClassName
+                  )}
+                >
                   {contact.email}{' '}
                   <Tooltip
                     label={displayCopyMsg ? 'Copié !' : "Copier l'email"}

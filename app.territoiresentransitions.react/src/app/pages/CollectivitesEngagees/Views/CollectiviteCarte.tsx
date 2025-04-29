@@ -73,7 +73,7 @@ export const CollectiviteCarte = ({
           {collectiviteNom}
         </div>
 
-        <div className="flex justify-between gap-4 sm:gap-6 xl:gap-8">
+        <div className="flex justify-between gap-4 sm:gap-6 xl:gap-8 mt-auto">
           {/* Indicateurs / plans */}
           <div className="flex flex-col gap-3 flex-1">
             <div>
