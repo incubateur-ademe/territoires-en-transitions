@@ -3,7 +3,7 @@ import {
   deleteFicheActionNotesRequestSchema,
   upsertFicheActionNotesRequestSchema,
 } from '@/backend/plans/fiches/fiche-action-note/upsert-fiche-action-note.request';
-import FicheActionListService from '@/backend/plans/fiches/fiches-action-list.service';
+import FicheActionListService from '@/backend/plans/fiches/list-fiches/list-fiches.service';
 import { countSyntheseValeurSchema } from '@/backend/utils/count-by.dto';
 import { LIMIT_DEFAULT, PAGE_DEFAULT } from '@/backend/utils/pagination.schema';
 import { createZodDto } from '@anatine/zod-nestjs';

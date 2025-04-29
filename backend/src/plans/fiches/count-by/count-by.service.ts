@@ -1,5 +1,4 @@
 import { countByDateSlots } from '@/backend/plans/fiches/count-by/count-by-date-slots.enum';
-import FicheActionListService from '@/backend/plans/fiches/fiches-action-list.service';
 import {
   ciblesEnumValues,
   ficheActionResultatsAttenduValues,
@@ -21,6 +20,7 @@ import {
   SANS_THEMATIQUE_LABEL,
   statutsEnumValues,
 } from '@/backend/plans/fiches/index-domain';
+import FicheActionListService from '@/backend/plans/fiches/list-fiches/list-fiches.service';
 import { GetFilteredFichesRequestType } from '@/backend/plans/fiches/shared/get-fiches-filter.request';
 import {
   CountByRecordGeneralType,

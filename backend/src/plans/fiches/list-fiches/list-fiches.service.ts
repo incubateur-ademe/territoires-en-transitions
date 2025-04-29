@@ -65,15 +65,15 @@ import {
   SQLWrapper,
 } from 'drizzle-orm';
 import { isNil } from 'es-toolkit';
-import { ficheActionEtapeTable } from './fiche-action-etape/fiche-action-etape.table';
-import { ficheActionActionTable } from './shared/models/fiche-action-action.table';
-import { ficheActionAxeTable } from './shared/models/fiche-action-axe.table';
-import { ficheActionPiloteTable } from './shared/models/fiche-action-pilote.table';
+import { ficheActionEtapeTable } from '../fiche-action-etape/fiche-action-etape.table';
+import { ficheActionActionTable } from '../shared/models/fiche-action-action.table';
+import { ficheActionAxeTable } from '../shared/models/fiche-action-axe.table';
+import { ficheActionPiloteTable } from '../shared/models/fiche-action-pilote.table';
 import {
   FicheActionResumeType,
   FicheActionWithRelationsAndCollectiviteType,
   FicheActionWithRelationsType,
-} from './shared/models/fiche-action-with-relations.dto';
+} from '../shared/models/fiche-action-with-relations.dto';
 
 @Injectable()
 export default class FicheActionListService {
