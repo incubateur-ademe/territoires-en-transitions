@@ -13,7 +13,7 @@ const ActionsLiees = ({ actionsIds }: Props) => {
     return (
       <EmptyCard
         picto={(props) => <ActionPicto {...props} />}
-        title="Aucune action des référentiels n'est liée !"
+        title="Aucune mesure des référentiels n'est liée !"
         size="xs"
       />
     );
@@ -23,7 +23,7 @@ const ActionsLiees = ({ actionsIds }: Props) => {
     <div className="bg-white p-10 border border-grey-3 rounded-xl">
       <div className="w-full border-b border-primary-3 mb-6">
         <h6 className="text-lg h-[2.125rem] mb-5">
-          Actions des référentiels liées
+          Mesures des référentiels liées
         </h6>
       </div>
       <ActionsLieesListe

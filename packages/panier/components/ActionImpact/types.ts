@@ -33,7 +33,7 @@ export type ActionImpactProps = {
   subventions?: LinkType[] | null;
   /** Statut de l'action */
   statut?: ActionImpactStatut;
-  /** Actions des référentiels liées */
+  /** Mesures des référentiels liées */
   actionsLiees?: ActionReferentiel[] | null;
   /** Indique si l'action est mise dans le panier */
   panier: boolean;

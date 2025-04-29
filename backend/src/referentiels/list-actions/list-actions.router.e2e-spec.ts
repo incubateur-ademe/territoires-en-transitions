@@ -14,10 +14,6 @@ type ListActionsInput = inferProcedureInput<
   AppRouter['referentiels']['actions']['listActions']
 >;
 
-type ListActionsWithStatutsInput = inferProcedureInput<
-  AppRouter['referentiels']['actions']['listActionsWithStatuts']
->;
-
 describe('ActionStatutListRouter', () => {
   let router: TrpcRouter;
   let yoloDodoUser: AuthenticatedUser;
@@ -103,29 +99,31 @@ describe('ActionStatutListRouter', () => {
     }
   });
 
-  test('List actions with statuts', async () => {
+  test('List actions with statuts and scores', async () => {
     const caller = router.createCaller({ user: yoloDodoUser });
 
     const input = {
       collectiviteId: 1,
-      actionIds: ['cae_1.1.1', 'eci_1.3.2'],
-    } satisfies ListActionsWithStatutsInput;
+      filters: {
+        actionIds: ['cae_1.1.1', 'eci_1.3.2'],
+      },
+    } satisfies ListActionsInput;
 
-    const result = await caller.referentiels.actions.listActionsWithStatuts(
-      input
-    );
-    expect(result.length).toEqual(input.actionIds.length);
+    const result = await caller.referentiels.actions.listActions(input);
+
+    expect(result.length).toEqual(input.filters.actionIds.length);
 
     for (const action of result) {
-      expect(input.actionIds).toContain(action.actionId);
+      expect(input.filters.actionIds).toContain(action.actionId);
 
       expect(action.depth).toBeDefined();
       expect(action.actionType).toBeDefined();
 
-      // Specific fields when `withStatuts` is true
       expect(action.statut).toBeDefined();
       expect(action.desactive).toBeDefined();
       expect(action.concerne).toBeDefined();
+
+      expect(action.score).toBeDefined();
     }
   });
 

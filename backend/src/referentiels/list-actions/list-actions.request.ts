@@ -57,15 +57,6 @@ export const listActionsRequestSchema = z.object({
   }),
 });
 
-export const listActionsWithStatusRequestSchema = z.object({
-  collectiviteId: z.number(),
-  actionIds: z.string().array().optional(),
-  actionTypes: actionTypeSchema
-    .array()
-    .optional()
-    .default([ActionTypeEnum.ACTION, ActionTypeEnum.SOUS_ACTION]),
-});
-
 export type ListActionsRequestType = z.infer<typeof listActionsRequestSchema>;
 export type ListActionsRequestOptionsType = z.infer<
   typeof listActionsRequestOptionsSchema

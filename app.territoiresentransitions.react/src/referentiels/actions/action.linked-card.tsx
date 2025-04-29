@@ -2,12 +2,14 @@ import { referentielToName } from '@/app/app/labels';
 import { makeReferentielTacheUrl } from '@/app/app/paths';
 import { useCollectiviteId } from '@/app/collectivites/collectivite-context';
 import ActionStatutBadge from '@/app/referentiels/actions/action-statut/action-statut.badge';
-import { ActionWithStatut } from '@/app/referentiels/actions/use-list-actions';
+import { Action, ActionTypeEnum } from '@/domain/referentiels';
 import { Button, Card } from '@/ui';
+import ScoreProgressBar from '../scores/score.progress-bar';
+import { ScoreRatioBadge } from '../scores/score.ratio-badge';
 
 type ActionCardProps = {
   isReadonly?: boolean;
-  action: ActionWithStatut;
+  action: Action;
   openInNewTab?: boolean;
   onUnlink?: () => void;
 };
@@ -47,10 +49,7 @@ const ActionLinkedCard = ({
         className="h-full px-4 py-[1.125rem] !gap-3 text-grey-8 hover:border-primary-3 hover:!bg-primary-1 !shadow-none transition"
         href={link}
         external={openInNewTab}
-        header={
-          // Statut de l'action
-          <ActionStatutBadge statut={statut} />
-        }
+        header={statut ? <ActionStatutBadge statut={statut} /> : null}
       >
         {/* Référentiel de l'action */}
         <span className="text-grey-8 text-sm font-medium">
@@ -61,6 +60,17 @@ const ActionLinkedCard = ({
         <span className="text-base font-bold text-primary-9">
           {identifiant} {nom}
         </span>
+
+        {/** Score */}
+        <div className="mt-auto">
+          <ScoreRatioBadge actionId={actionId} className={'mb-3'} />
+          <ScoreProgressBar
+            id={actionId}
+            identifiant={identifiant}
+            type={ActionTypeEnum.ACTION}
+            className="w-full"
+          />
+        </div>
       </Card>
     </div>
   );

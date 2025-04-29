@@ -1,7 +1,7 @@
 import { FicheAction } from '@/api/plan-actions';
 import { useGetEtapes } from '@/app/app/pages/collectivite/PlansActions/FicheAction/etapes/use-get-etapes';
-import { useCurrentCollectivite } from '@/app/core-logic/hooks/useCurrentCollectivite';
-import { useListActionsWithStatuts } from '@/app/referentiels/actions/use-list-actions';
+import { useCurrentCollectivite } from '@/app/collectivites/collectivite-context';
+import { useListActions } from '@/app/referentiels/actions/use-list-actions';
 import ExportPDFButton from '@/app/ui/export-pdf/ExportPDFButton';
 import { useEventTracker } from '@/ui';
 import { createElement, useEffect, useState } from 'react';
@@ -37,12 +37,12 @@ export const FicheActionPdfContent = ({
   const { data: fichesLiees, isLoading: isLoadingFichesLiees } =
     useFichesActionLiees(fiche.id, options.fiches.isChecked);
 
-  const { data: actionsLiees, isLoading: isLoadignActionsListe } =
-    useListActionsWithStatuts(
+  const { data: actionsLiees, isLoading: isLoadingActionsLiees } =
+    useListActions(
       {
-        actionIds: fiche?.actions?.map((action) => action.id) ?? [],
+        actionIds: fiche?.actions?.map((action) => action.id),
       },
-      options.actions.isChecked
+      options.actionsLiees.isChecked
     );
 
   const { data: annexes, isLoading: isLoadingAnnexes } =
@@ -61,7 +61,7 @@ export const FicheActionPdfContent = ({
   const isLoading =
     isLoadingIndicateurs ||
     isLoadingFichesLiees ||
-    isLoadignActionsListe ||
+    isLoadingActionsLiees ||
     isLoadingAxes ||
     isLoadingAnnexes ||
     isLoadingNotesSuivi ||
