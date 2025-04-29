@@ -1,17 +1,17 @@
 import { BudgetType } from '@/app/app/pages/collectivite/PlansActions/FicheAction/Budget/hooks/use-get-budget';
 import { Input } from '@/ui';
 
-type YearlyBudgetInputProps = {
+type ExtendedBudgetInputProps = {
   budget?: BudgetType;
   isEuros: boolean;
   onUpdate: (budget: BudgetType) => void;
 };
 
-const YearlyBudgetInput = ({
+const ExtendedBudgetInput = ({
   budget,
   isEuros,
   onUpdate,
-}: YearlyBudgetInputProps) => {
+}: ExtendedBudgetInputProps) => {
   return (
     <div className="flex flex-col gap-6">
       <div className="p-4 bg-primary-1 rounded-md flex justify-between items-center">
@@ -53,4 +53,4 @@ const YearlyBudgetInput = ({
   );
 };
 
-export default YearlyBudgetInput;
+export default ExtendedBudgetInput;

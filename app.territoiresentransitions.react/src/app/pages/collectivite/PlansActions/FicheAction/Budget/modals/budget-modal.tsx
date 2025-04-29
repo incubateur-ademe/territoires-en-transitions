@@ -2,7 +2,7 @@ import { useDeleteBudgets } from '@/app/app/pages/collectivite/PlansActions/Fich
 import { BudgetType } from '@/app/app/pages/collectivite/PlansActions/FicheAction/Budget/hooks/use-get-budget';
 import { useUpsertBudgets } from '@/app/app/pages/collectivite/PlansActions/FicheAction/Budget/hooks/use-upsert-budgets';
 import DetailledBudgetInput from '@/app/app/pages/collectivite/PlansActions/FicheAction/Budget/modals/detailled-budget-input';
-import YearlyBudgetInput from '@/app/app/pages/collectivite/PlansActions/FicheAction/Budget/modals/yearly-budget-input';
+import ExtendedBudgetInput from '@/app/app/pages/collectivite/PlansActions/FicheAction/Budget/modals/extended-budget-input';
 import {
   Alert,
   ButtonGroup,
@@ -185,7 +185,7 @@ const BudgetModal = ({
               />
             ) : (
               <>
-                <YearlyBudgetInput
+                <ExtendedBudgetInput
                   isEuros={isEuros}
                   budget={isEuros ? euroExtendedBudget : etpExtendedBudget}
                   onUpdate={(budget) =>

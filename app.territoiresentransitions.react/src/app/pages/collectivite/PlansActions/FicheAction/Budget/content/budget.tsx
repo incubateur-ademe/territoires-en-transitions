@@ -50,6 +50,7 @@ const Budget = ({ ficheId, type, budgets, isReadonly }: BudgetProps) => {
               <div className="flex flex-wrap gap-x-3 gap-y-2">
                 {extendedBudget.map((b) => (
                   <BudgetTagsList
+                    key={b.id}
                     tags={[
                       {
                         name:
