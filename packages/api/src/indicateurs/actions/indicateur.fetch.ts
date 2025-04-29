@@ -240,6 +240,7 @@ export async function selectIndicateurThematiques(
 
 /**
  * Récupère les fiches résumées d'un indicateur
+ * @deprecated TODO: Utiliser le nouveau service backend `list-fiches` et le hook `useFicheResumesFetch`
  * @param dbClient client supabase
  * @param indicateurId identifiant de l'indicateur
  * @param collectiviteId identifiant de la collectivité
