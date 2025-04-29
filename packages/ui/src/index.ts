@@ -7,6 +7,7 @@ export { preset } from './tailwind-preset';
 
 // dossier hooks
 export * from './hooks/useCopyToClipboard';
+export * from './hooks/useOnlineStatus';
 
 // dossier composants
 export * from './components/EmptyCard/EmptyCard';
