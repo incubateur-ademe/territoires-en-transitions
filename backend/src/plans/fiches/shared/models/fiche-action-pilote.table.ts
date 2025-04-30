@@ -6,7 +6,7 @@ import {
   uniqueIndex,
   uuid,
 } from 'drizzle-orm/pg-core';
-import { personneTagTable } from '../../../../collectivites/tags/personne-tag.table';
+import { personneTagTable } from '../../../../collectivites/tags/personnes/personne-tag.table';
 import { ficheActionTable } from './fiche-action.table';
 
 export const ficheActionPiloteTable = pgTable(

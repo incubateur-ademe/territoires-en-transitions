@@ -8,6 +8,8 @@ import { CollectivitesModule } from '../collectivites/collectivites.module';
 import { AuthGuard } from './guards/auth.guard';
 import { UsersRouter } from './users/users.router';
 import { UsersService } from './users/users.service';
+import { InvitationService } from '@/backend/auth/invitation/invitation.service';
+import { InvitationRouter } from '@/backend/auth/invitation/invitation.router';
 
 @Global()
 @Module({
@@ -28,7 +30,16 @@ import { UsersService } from './users/users.service';
     RoleUpdateService,
     UsersService,
     UsersRouter,
+    InvitationService,
+    InvitationRouter,
   ],
-  exports: [PermissionService, RoleUpdateService, UsersService, UsersRouter],
+  exports: [
+    PermissionService,
+    RoleUpdateService,
+    UsersService,
+    UsersRouter,
+    InvitationService,
+    InvitationRouter,
+  ],
 })
 export class AuthModule {}

@@ -15,7 +15,7 @@ export * from './tags/categorie-tag.table';
 export * from './tags/financeur-tag.table';
 export * from './tags/libre-tag.table';
 export * from './tags/partenaire-tag.table';
-export * from './tags/personne-tag.table';
+export * from './tags/personnes/personne-tag.table';
 export * from './tags/service-tag.table';
 export * from './tags/structure-tag.table';
 export * from './tags/tag.table-base';
