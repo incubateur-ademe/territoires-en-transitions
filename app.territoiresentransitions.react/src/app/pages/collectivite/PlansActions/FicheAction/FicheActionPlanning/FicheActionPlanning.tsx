@@ -46,6 +46,14 @@ const FicheActionPlanning = ({
     !tempsDeMiseEnOeuvre &&
     !justificationCalendrier;
 
+  const emptyTags = [
+    'Date de début',
+    'Date de fin prévisionnelle',
+    'Temps de mise en œuvre',
+  ];
+  if (!statut) emptyTags.push('Statut');
+  if (!niveauPriorite) emptyTags.push('Niveau de priorité');
+
   const isLate =
     dateFinPrevisionnelle &&
     isBefore(new Date(dateFinPrevisionnelle), startOfToday());
@@ -201,9 +209,7 @@ const FicheActionPlanning = ({
             </>
           )}
           title="Aucun planning n'est renseigné !"
-          subTitle={`Date de début | Date de fin prévisionnelle | Temps de mise en œuvre${
-            !statut ? ' | Statut' : ''
-          }${!niveauPriorite ? ' | Niveau de priorité' : ''}`}
+          tags={emptyTags}
           isReadonly={isReadonly}
           actions={[
             {

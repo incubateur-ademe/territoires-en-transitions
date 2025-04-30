@@ -139,7 +139,7 @@ export const EmptyCard = ({
 
       {/* Liste de tags */}
       <div
-        className={classNames('flex flex-wrap gap-2', {
+        className={classNames('flex flex-wrap justify-center gap-2', {
           hidden: !tags || tags.length === 0,
         })}
       >
@@ -148,6 +148,7 @@ export const EmptyCard = ({
             title={tag}
             state="standard"
             size={sizeClasses[size].badgeSize}
+            uppercase={false}
           />
         ))}
       </div>
