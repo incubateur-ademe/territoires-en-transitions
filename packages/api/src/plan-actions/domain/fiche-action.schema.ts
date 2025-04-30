@@ -93,18 +93,6 @@ export const noteSuiviSchema = z.object({
 
 export type FicheActionNote = z.infer<typeof noteSuiviSchema>;
 
-export const ficheActionInsertSchema = ficheActionSchema.extend({
-  id: z.number().optional(),
-  modifiedAt: z.string().datetime().optional(),
-  titre: z.string().nullable(),
-  pilotes: personneSchema.array().optional(),
-  plans: axeSchema.pick({ id: true, collectiviteId: true }).array().nullish(),
-});
-
-export type FicheActionInsert = z.infer<typeof ficheActionInsertSchema>;
-
-export const ficheActionUpdateSchema = ficheActionSchema.extend({});
-
 export const ficheResumeSchema = ficheActionSchema
   .pick({
     id: true,

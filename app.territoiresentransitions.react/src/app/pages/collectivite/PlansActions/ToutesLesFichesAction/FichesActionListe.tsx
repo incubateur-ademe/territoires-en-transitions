@@ -15,7 +15,7 @@ import FilterBadges, {
 import PictoExpert from '@/app/ui/pictogrammes/PictoExpert';
 import SpinnerLoader from '@/app/ui/shared/SpinnerLoader';
 import {
-  FicheActionResume,
+  FicheResume,
   ListFichesRequestFilters as Filtres,
   ListFichesRequestQueryOptions,
   ListFichesSortValue,
@@ -98,7 +98,7 @@ const FichesActionListe = ({
 
   const [isSettingsOpen, setIsSettingsOpen] = useState(false);
   const [isGroupedActionsOn, setIsGroupedActionsOn] = useState(false);
-  const [selectedFiches, setSelectedFiches] = useState<FicheActionResume[]>([]);
+  const [selectedFiches, setSelectedFiches] = useState<FicheResume[]>([]);
 
   const { mutate: createFicheAction } = useCreateFicheAction();
   const { mutate: createPlanAction } = useCreatePlanAction();
@@ -162,7 +162,7 @@ const FichesActionListe = ({
   const { count: hasFiches } = useFicheActionCount();
 
   /** Gère les fiches sélectionnées pour les actions groupées */
-  const handleSelectFiche = (fiche: FicheActionResume) => {
+  const handleSelectFiche = (fiche: FicheResume) => {
     if (selectedFiches.find((f) => f.id === fiche.id)) {
       setSelectedFiches(selectedFiches.filter((f) => f.id !== fiche.id));
     } else {
