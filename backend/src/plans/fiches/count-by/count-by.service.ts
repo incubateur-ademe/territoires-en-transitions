@@ -20,8 +20,8 @@ import {
   SANS_THEMATIQUE_LABEL,
   statutsEnumValues,
 } from '@/backend/plans/fiches/index-domain';
+import { ListFichesRequestFilters } from '@/backend/plans/fiches/list-fiches/list-fiches.request';
 import FicheActionListService from '@/backend/plans/fiches/list-fiches/list-fiches.service';
-import { GetFilteredFichesRequestType } from '@/backend/plans/fiches/shared/get-fiches-filter.request';
 import {
   CountByRecordGeneralType,
   CountByResponseType,
@@ -375,7 +375,7 @@ export class CountByService {
   async countByProperty(
     collectiviteId: number,
     countByProperty: CountByPropertyEnumType,
-    filter: GetFilteredFichesRequestType
+    filter: ListFichesRequestFilters
   ) {
     this.logger.log(
       `Calcul du count by ${countByProperty} des fiches action pour la collectivité ${collectiviteId}: filtre ${JSON.stringify(

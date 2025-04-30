@@ -26,8 +26,8 @@ import FilterBadges, {
   useFiltersToBadges,
 } from '@/app/ui/lists/filter-badges';
 import {
-  FicheActionResumeType,
-  GetFilteredFichesRequestType as Filtres,
+  FicheActionResume,
+  ListFichesRequestFilters as Filtres,
 } from '@/domain/plans/fiches';
 import { isEqual } from 'es-toolkit';
 import ActionsGroupeesMenu from '../ActionsGroupees/ActionsGroupeesMenu';
@@ -101,9 +101,7 @@ const FichesActionListe = ({
 
   const [isSettingsOpen, setIsSettingsOpen] = useState(false);
   const [isGroupedActionsOn, setIsGroupedActionsOn] = useState(false);
-  const [selectedFiches, setSelectedFiches] = useState<FicheActionResumeType[]>(
-    []
-  );
+  const [selectedFiches, setSelectedFiches] = useState<FicheActionResume[]>([]);
 
   const { mutate: createFicheAction } = useCreateFicheAction();
   const { mutate: createPlanAction } = useCreatePlanAction();
@@ -167,7 +165,7 @@ const FichesActionListe = ({
   const { count: hasFiches } = useFicheActionCount();
 
   /** Gère les fiches sélectionnées pour les actions groupées */
-  const handleSelectFiche = (fiche: FicheActionResumeType) => {
+  const handleSelectFiche = (fiche: FicheActionResume) => {
     if (selectedFiches.find((f) => f.id === fiche.id)) {
       setSelectedFiches(selectedFiches.filter((f) => f.id !== fiche.id));
     } else {

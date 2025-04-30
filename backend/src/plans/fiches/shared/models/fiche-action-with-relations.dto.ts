@@ -178,4 +178,4 @@ export const ficheActionResumeSchema = ficheActionWithRelationsSchema
     actionImpactId: z.number().nullish(),
   });
 
-export type FicheActionResumeType = z.infer<typeof ficheActionResumeSchema>;
+export type FicheActionResume = z.infer<typeof ficheActionResumeSchema>;

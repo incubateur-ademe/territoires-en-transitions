@@ -10,7 +10,7 @@ import StatutsFilterDropdown from '@/app/ui/dropdownLists/ficheAction/statuts/St
 import PersonnesDropdown from '@/app/ui/dropdownLists/PersonnesDropdown/PersonnesDropdown';
 import { getPilotesValues } from '@/app/ui/dropdownLists/PersonnesDropdown/utils';
 import PlansActionDropdown from '@/app/ui/dropdownLists/PlansActionDropdown';
-import { GetFilteredFichesRequestType as FiltreFichesAction } from '@/backend/plans/fiches/index-domain';
+import { ListFichesRequestFilters as FiltreFichesAction } from '@/domain/plans/fiches';
 import {
   Field,
   FormSection,

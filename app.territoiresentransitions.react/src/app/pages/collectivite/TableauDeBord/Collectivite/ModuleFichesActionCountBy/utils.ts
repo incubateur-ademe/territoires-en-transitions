@@ -3,7 +3,7 @@ import { nameToparams } from '@/app/app/pages/collectivite/PlansActions/ToutesLe
 import { makeCollectiviteToutesLesFichesUrl } from '@/app/app/paths';
 import {
   CountByPropertyEnumType,
-  GetFilteredFichesRequestType as Filtres,
+  ListFichesRequestFilters as Filtres,
 } from '@/domain/plans/fiches';
 
 const getFicheActionFiltreKeyValue = (

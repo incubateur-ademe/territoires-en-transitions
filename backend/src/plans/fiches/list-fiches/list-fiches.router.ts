@@ -1,4 +1,4 @@
-import { getFichesRequestSchema } from '@/backend/plans/fiches/shared/get-fiches-filter.request';
+import { listFichesRequestSchema } from '@/backend/plans/fiches/list-fiches/list-fiches.request';
 import { LIMIT_DEFAULT, PAGE_DEFAULT } from '@/backend/utils/pagination.schema';
 import { TrpcService } from '@/backend/utils/trpc/trpc.service';
 import { Injectable } from '@nestjs/common';
@@ -13,7 +13,7 @@ export class FicheActionListRouter {
 
   router = this.trpc.router({
     list: this.trpc.authedProcedure
-      .input(getFichesRequestSchema)
+      .input(listFichesRequestSchema)
       .query(async ({ input }) => {
         const { collectiviteId, filters, queryOptions } = input;
 
@@ -25,7 +25,7 @@ export class FicheActionListRouter {
       }),
 
     listWithCount: this.trpc.authedProcedure
-      .input(getFichesRequestSchema)
+      .input(listFichesRequestSchema)
       .query(async ({ input }) => {
         const { collectiviteId, filters, queryOptions } = input;
 
@@ -41,7 +41,7 @@ export class FicheActionListRouter {
       }),
 
     listResumes: this.trpc.authedProcedure
-      .input(getFichesRequestSchema)
+      .input(listFichesRequestSchema)
       .query(async ({ input }) => {
         const { collectiviteId, filters, queryOptions } = input;
 
