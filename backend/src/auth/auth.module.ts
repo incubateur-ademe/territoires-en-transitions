@@ -9,6 +9,8 @@ import { ConvertJwtToAuthUserService } from './convert-jwt-to-auth-user.service'
 import { AuthGuard } from './guards/auth.guard';
 import { UsersRouter } from './users/users.router';
 import { UsersService } from './users/users.service';
+import { InvitationService } from '@/backend/auth/invitation/invitation.service';
+import { InvitationRouter } from '@/backend/auth/invitation/invitation.router';
 
 @Global()
 @Module({
@@ -30,6 +32,8 @@ import { UsersService } from './users/users.service';
     UsersService,
     UsersRouter,
     ConvertJwtToAuthUserService,
+    InvitationService,
+    InvitationRouter,
   ],
   exports: [
     PermissionService,
@@ -37,6 +41,8 @@ import { UsersService } from './users/users.service';
     UsersService,
     UsersRouter,
     ConvertJwtToAuthUserService,
+    InvitationService,
+    InvitationRouter,
   ],
 })
 export class AuthModule {}
