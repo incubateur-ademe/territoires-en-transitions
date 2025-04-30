@@ -15,8 +15,6 @@ import {
 import { useSnapshot } from '../use-snapshot';
 import { useModifierStateRef } from './useModifierStateRef';
 
-type Action = ReturnType<typeof actionNewToDeprecated>;
-
 export function NEW_useTable({
   referentielId,
 }: {

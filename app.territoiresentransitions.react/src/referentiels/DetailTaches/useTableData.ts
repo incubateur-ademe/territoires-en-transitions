@@ -302,6 +302,7 @@ export const NEW_useTableData: UseTableData = () => {
       saveActionStatut({
         collectiviteId,
         actionId,
+        // TODO: Move this logic to the backend
         avancement:
           avancement === 'non_concerne'
             ? 'non_renseigne'
