@@ -151,11 +151,11 @@ export type ListFichesRequestFilters = z.infer<
   typeof listFichesRequestFiltersSchema
 >;
 
-const listFichesRequestQueryOptionsSchema = getPaginationSchema([
-  'modified_at',
-  'created_at',
-  'titre',
-]);
+const sortValues = ['modified_at', 'created_at', 'titre'] as const;
+
+export type ListFichesSortValue = (typeof sortValues)[number];
+
+const listFichesRequestQueryOptionsSchema = getPaginationSchema(sortValues);
 
 export type ListFichesRequestQueryOptions = z.infer<
   typeof listFichesRequestQueryOptionsSchema
