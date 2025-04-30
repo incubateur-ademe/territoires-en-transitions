@@ -29,7 +29,7 @@ import {
 import { Injectable, Logger, NotImplementedException } from '@nestjs/common';
 import { isNil } from 'es-toolkit';
 import { DateTime } from 'luxon';
-import { FicheActionWithRelationsType } from '../shared/models/fiche-action-with-relations.dto';
+import { FicheWithRelations } from '../shared/models/fiche-action-with-relations.dto';
 import { CountByPropertyEnumType } from './count-by-property-options.enum';
 
 @Injectable()
@@ -190,7 +190,7 @@ export class CountByService {
   }
 
   fillCountByMapWithFiche(
-    fiche: FicheActionWithRelationsType,
+    fiche: FicheWithRelations,
     countByProperty: CountByPropertyEnumType,
     countByMap: CountByRecordGeneralType
   ) {

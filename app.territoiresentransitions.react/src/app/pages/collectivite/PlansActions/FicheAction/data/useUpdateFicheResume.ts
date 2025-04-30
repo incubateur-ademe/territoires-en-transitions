@@ -2,7 +2,7 @@ import { useSupabase } from '@/api/utils/supabase/use-supabase';
 import { trpc } from '@/api/utils/trpc/client';
 import { useCollectiviteId } from '@/app/collectivites/collectivite-context';
 
-import { FicheActionResume } from '@/domain/plans/fiches';
+import { FicheResume } from '@/domain/plans/fiches';
 import { useMutation } from 'react-query';
 
 /**
@@ -14,7 +14,7 @@ export const useUpdateFicheResume = () => {
   const collectiviteId = useCollectiviteId();
 
   return useMutation(
-    async (fiche: FicheActionResume) => {
+    async (fiche: FicheResume) => {
       const { titre, statut, priorite, dateFin, ameliorationContinue } = fiche;
       await supabase
         .from('fiche_action')

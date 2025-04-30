@@ -20,11 +20,11 @@ import PersonnesDropdown from '@/app/ui/dropdownLists/PersonnesDropdown/Personne
 import { getPersonneStringId } from '@/app/ui/dropdownLists/PersonnesDropdown/utils';
 import PrioritesSelectDropdown from '@/app/ui/dropdownLists/ficheAction/priorites/PrioritesSelectDropdown';
 import StatutsSelectDropdown from '@/app/ui/dropdownLists/ficheAction/statuts/StatutsSelectDropdown';
-import { FicheActionResume } from '@/domain/plans/fiches';
+import { FicheResume } from '@/domain/plans/fiches';
 import { format } from 'date-fns';
 
 type Props = {
-  initialFiche: FicheActionResume;
+  initialFiche: FicheResume;
   isOpen: boolean;
   setIsOpen: (isOpen: boolean) => void;
   axeId?: number;

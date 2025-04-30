@@ -1,6 +1,5 @@
 import { FicheAction, FicheResume } from '@/api/plan-actions';
 import { naturalSort } from '@/app/utils/naturalSort';
-import { FicheActionResume } from '@/domain/plans/fiches';
 
 /**
  * Formate un nouveau tag qui nécessite un type minimum collectivite_id, nom
@@ -16,10 +15,8 @@ export const formatNewTag = (inputValue: string, collectivite_id: number) => ({
 export const generateTitle = (title?: string | null) => title || 'Sans titre';
 
 /** Ordonne les fiches résumé par titre */
-export const sortFichesResume = (
-  fiches: FicheActionResume[]
-): FicheActionResume[] => {
-  return fiches.sort((a: FicheActionResume, b: FicheActionResume) => {
+export const sortFichesResume = (fiches: FicheResume[]): FicheResume[] => {
+  return fiches.sort((a: FicheResume, b: FicheResume) => {
     if (!a.titre) return -1;
     if (!b.titre) return 1;
     return naturalSort(a.titre, b.titre);

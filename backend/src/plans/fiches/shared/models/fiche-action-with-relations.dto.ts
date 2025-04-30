@@ -7,7 +7,7 @@ import { axeSchema } from '@/backend/plans/fiches/shared/models/axe.table';
 import z from 'zod';
 import { ficheSchema } from './fiche-action.table';
 
-export const ficheActionWithRelationsSchema = ficheSchema.extend({
+export const ficheWithRelationsSchema = ficheSchema.extend({
   createdByName: z.string(),
   modifiedByName: z.string().nullish(),
   tempsDeMiseEnOeuvreNom: z.string().nullish(),
@@ -139,21 +139,19 @@ export const ficheActionWithRelationsSchema = ficheSchema.extend({
   actionImpactId: z.number().nullish(),
 });
 
-export type FicheActionWithRelationsType = z.infer<
-  typeof ficheActionWithRelationsSchema
->;
+export type FicheWithRelations = z.infer<typeof ficheWithRelationsSchema>;
 
-export const ficheActionWithRelationsAndCollectiviteSchema =
-  ficheActionWithRelationsSchema.extend({
+export const ficheWithRelationsAndCollectiviteSchema =
+  ficheWithRelationsSchema.extend({
     collectivite: collectiviteSchema
       .optional()
       .describe('Collectivité à laquelle la fiche est rattachée'),
   });
-export type FicheActionWithRelationsAndCollectiviteType = z.infer<
-  typeof ficheActionWithRelationsAndCollectiviteSchema
+export type FicheWithRelationsAndCollectivite = z.infer<
+  typeof ficheWithRelationsAndCollectiviteSchema
 >;
 
-export const ficheActionResumeSchema = ficheActionWithRelationsSchema
+export const ficheResumeSchema = ficheWithRelationsSchema
   .pick({
     id: true,
     collectiviteId: true,
@@ -178,4 +176,4 @@ export const ficheActionResumeSchema = ficheActionWithRelationsSchema
     actionImpactId: z.number().nullish(),
   });
 
-export type FicheActionResume = z.infer<typeof ficheActionResumeSchema>;
+export type FicheResume = z.infer<typeof ficheResumeSchema>;

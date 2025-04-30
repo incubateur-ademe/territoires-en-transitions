@@ -1,14 +1,11 @@
 import { PermissionOperation } from '@/backend/auth/authorizations/permission-operation.enum';
 import { PermissionService } from '@/backend/auth/authorizations/permission.service';
 import { ResourceType } from '@/backend/auth/authorizations/resource-type.enum';
+import { DatabaseService } from '@/backend/utils';
 import { Injectable, Logger } from '@nestjs/common';
 import { eq } from 'drizzle-orm';
 import { AuthUser } from '../../auth/models/auth.models';
-import {
-  FicheAction,
-  ficheActionTable,
-} from './shared/models/fiche-action.table';
-import { DatabaseService } from '@/backend/utils';
+import { Fiche, ficheActionTable } from './shared/models/fiche-action.table';
 
 @Injectable()
 export default class FicheActionPermissionsService {
@@ -36,7 +33,7 @@ export default class FicheActionPermissionsService {
   }
 
   hasReadFichePermission(
-    fiche: Pick<FicheAction, 'collectiviteId' | 'restreint'>,
+    fiche: Pick<Fiche, 'collectiviteId' | 'restreint'>,
     tokenInfo: AuthUser,
     doNotThrow?: boolean
   ): Promise<boolean> {

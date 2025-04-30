@@ -1,7 +1,7 @@
 import { useFicheResumesFetch } from '@/app/app/pages/collectivite/PlansActions/FicheAction/data/useFicheResumesFetch';
 import { generateTitle } from '@/app/app/pages/collectivite/PlansActions/FicheAction/data/utils';
 import { naturalSort } from '@/app/utils/naturalSort';
-import { CreateAxeType, FicheActionResume } from '@/domain/plans/fiches';
+import { CreateAxeType, FicheResume } from '@/domain/plans/fiches';
 import {
   Option,
   OptionValue,
@@ -26,8 +26,8 @@ type FichesActionsDropdownProps = Omit<
     fiches,
     selectedFiche,
   }: {
-    fiches: FicheActionResume[];
-    selectedFiche: FicheActionResume;
+    fiches: FicheResume[];
+    selectedFiche: FicheResume;
   }) => void;
 };
 
@@ -118,10 +118,8 @@ const FichesActionsDropdown = ({
       placeholder={props.placeholder ?? 'Recherchez par mots-clés'}
       onChange={({ values, selectedValue }) =>
         props.onChange({
-          fiches: getSelectedFiches(values) as FicheActionResume[],
-          selectedFiche: getSelectedFiches([
-            selectedValue,
-          ])[0] as FicheActionResume,
+          fiches: getSelectedFiches(values) as FicheResume[],
+          selectedFiche: getSelectedFiches([selectedValue])[0] as FicheResume,
         })
       }
     />
