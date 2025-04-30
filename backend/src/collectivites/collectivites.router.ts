@@ -7,6 +7,7 @@ import { PersonnesRouter } from './personnes.router';
 import { TableauDeBordCollectiviteRouter } from './tableau-de-bord/tableau-de-bord-collectivite.router';
 import { CollectiviteCrudRouter } from '@/backend/collectivites/collectivite-crud/collectivite-crud.router';
 import { RecherchesRouter } from '@/backend/collectivites/recherches/recherches.router';
+import { TagRouter } from '@/backend/collectivites/tags/tag.router';
 
 @Injectable()
 export class CollectivitesRouter {
@@ -18,7 +19,8 @@ export class CollectivitesRouter {
     private readonly categoriesRouter: ListCategoriesRouter,
     private readonly listCollectivitesRouter: ListCollectivitesRouter,
     private readonly upsertRouter : CollectiviteCrudRouter,
-    private readonly recherchesRouter : RecherchesRouter
+    private readonly recherchesRouter : RecherchesRouter,
+    private readonly tagRouter : TagRouter,
   ) {}
 
   router = this.trpc.router({
@@ -30,6 +32,7 @@ export class CollectivitesRouter {
       this.listCollectivitesRouter.router,
       this.upsertRouter.router
     ),
-    recherches: this.recherchesRouter.router
+    recherches: this.recherchesRouter.router,
+    tags: this.tagRouter.router,
   });
 }
