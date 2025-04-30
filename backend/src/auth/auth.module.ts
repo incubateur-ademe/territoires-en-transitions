@@ -4,6 +4,8 @@ import { ApikeysService } from '@/backend/auth/apikeys/apikeys.service';
 import { PermissionService } from '@/backend/auth/authorizations/permission.service';
 import { RoleUpdateService } from '@/backend/auth/authorizations/roles/role-update.service';
 import { RoleService } from '@/backend/auth/authorizations/roles/role.service';
+import { InvitationRouter } from '@/backend/auth/invitation/invitation.router';
+import { InvitationService } from '@/backend/auth/invitation/invitation.service';
 import { UsersController } from '@/backend/auth/users/users.controller';
 import { Global, Module } from '@nestjs/common';
 import { APP_GUARD } from '@nestjs/core';
@@ -42,6 +44,8 @@ import { UsersService } from './users/users.service';
     ConvertJwtToAuthUserService,
     ApikeysService,
     ApikeysRouter,
+    InvitationService,
+    InvitationRouter,
   ],
   exports: [
     PermissionService,
@@ -50,6 +54,8 @@ import { UsersService } from './users/users.service';
     UsersRouter,
     ConvertJwtToAuthUserService,
     ApikeysRouter,
+    InvitationService,
+    InvitationRouter,
   ],
 })
 export class AuthModule {}
