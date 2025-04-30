@@ -333,7 +333,10 @@ export default class RecherchesService {
                                                           WHERE ${
                                                             utilisateurPermissionTable
                                                               .isActive.name
-                                                          } IS true)`;
+                                                          } IS true)
+                   AND c.${collectiviteTable.type.name} != '${
+      collectiviteTypeEnum.TEST
+    }'`;
 
     // Add conditions
     // Condition collectivite name
