@@ -1,8 +1,8 @@
-import { trpc } from '@/api/utils/trpc/client';
+import { RouterInput, trpc } from '@/api/utils/trpc/client';
 import { useCollectiviteId } from '@/app/collectivites/collectivite-context';
-import { GetFichesRequestType } from '@/backend/plans/fiches/shared/get-fiches-filter.request';
 
-export type GetFichesOptions = Omit<GetFichesRequestType, 'collectiviteId'>;
+type ListFichesRequest = RouterInput['plans']['fiches']['listResumes'];
+export type GetFichesOptions = Omit<ListFichesRequest, 'collectiviteId'>;
 
 export const useFicheResumesFetch = (
   options?: GetFichesOptions,
