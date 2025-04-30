@@ -16,11 +16,11 @@ import { CountByPropertyEnumType } from './count-by/count-by-property-options.en
 import { CountByService } from './count-by/count-by.service';
 import FicheActionPermissionsService from './fiche-action-permissions.service';
 import FichesActionUpdateService from './fiches-action-update.service';
-import { editFicheRequestSchema } from './shared/edit-fiche.request';
 import {
-  getFichesRequestSchema,
-  getFilteredFichesRequestSchema,
-} from './shared/get-fiches-filter.request';
+  listFichesRequestFiltersSchema,
+  listFichesRequestSchema,
+} from './list-fiches/list-fiches.request';
+import { editFicheRequestSchema } from './shared/edit-fiche.request';
 import {
   getFichesActionResponseSchema,
   getFichesActionResumeResponseSchema,
@@ -36,7 +36,7 @@ export class GetFichesActionSyntheseResponseClass extends createZodDto(
 ) {}
 
 export class GetFichesActionFilterRequestClass extends createZodDto(
-  getFilteredFichesRequestSchema
+  listFichesRequestFiltersSchema
 ) {}
 
 export class UpdateFicheActionRequestClass extends createZodDto(
@@ -65,7 +65,7 @@ export class GetFichesActionResumeResponseClass extends createZodDto(
 ) {}
 
 export class GetFichesResumeRequestClass extends createZodDto(
-  getFichesRequestSchema.omit({ collectiviteId: true })
+  listFichesRequestSchema.omit({ collectiviteId: true })
 ) {}
 
 @ApiTags('Fiches action')

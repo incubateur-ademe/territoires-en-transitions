@@ -31,10 +31,10 @@ import {
   ficheActionThematiqueTable,
 } from '@/backend/plans/fiches/index-domain';
 import {
-  GetFilteredFichesRequestQueryOptionsType,
-  GetFilteredFichesRequestType,
-  TypePeriodeEnumType,
-} from '@/backend/plans/fiches/shared/get-fiches-filter.request';
+  ListFichesRequestFilters,
+  ListFichesRequestQueryOptions,
+  TypePeriodeEnum,
+} from '@/backend/plans/fiches/list-fiches/list-fiches.request';
 import { ficheActionReferentTable } from '@/backend/plans/fiches/shared/models/fiche-action-referent.table';
 import { actionImpactActionTable } from '@/backend/plans/paniers/models/action-impact-action.table';
 import { actionDefinitionTable } from '@/backend/referentiels/index-domain';
@@ -71,7 +71,7 @@ import { ficheActionActionTable } from '../shared/models/fiche-action-action.tab
 import { ficheActionAxeTable } from '../shared/models/fiche-action-axe.table';
 import { ficheActionPiloteTable } from '../shared/models/fiche-action-pilote.table';
 import {
-  FicheActionResumeType,
+  FicheActionResume,
   FicheActionWithRelationsAndCollectiviteType,
   FicheActionWithRelationsType,
 } from '../shared/models/fiche-action-with-relations.dto';
@@ -563,8 +563,8 @@ export default class FicheActionListService {
 
   async getFichesActionQuery(
     collectiviteId: number | null,
-    filters?: GetFilteredFichesRequestType,
-    queryOptions?: GetFilteredFichesRequestQueryOptionsType
+    filters?: ListFichesRequestFilters,
+    queryOptions?: ListFichesRequestQueryOptions
   ) {
     const ficheActionPartenaireTags = this.getFicheActionPartenaireTagsQuery();
     const ficheActionThematiques = this.getFicheActionThematiquesQuery();
@@ -774,7 +774,7 @@ export default class FicheActionListService {
     }
   }
 
-  private getTimeColumn(typePeriode?: TypePeriodeEnumType) {
+  private getTimeColumn(typePeriode?: TypePeriodeEnum) {
     switch (typePeriode) {
       case 'creation':
         return ficheActionTable.createdAt;
@@ -800,7 +800,7 @@ export default class FicheActionListService {
   }
 
   private getConditions(
-    filters: GetFilteredFichesRequestType
+    filters: ListFichesRequestFilters
   ): (SQLWrapper | SQL)[] {
     const conditions: (SQLWrapper | SQL)[] = [];
 
@@ -1024,8 +1024,8 @@ export default class FicheActionListService {
    */
   async getFichesAction(
     collectiviteId: number | null,
-    filters?: GetFilteredFichesRequestType,
-    queryOptions?: GetFilteredFichesRequestQueryOptionsType
+    filters?: ListFichesRequestFilters,
+    queryOptions?: ListFichesRequestQueryOptions
   ): Promise<FicheActionWithRelationsType[]> {
     return this.getFichesActionQuery(collectiviteId, filters, queryOptions);
   }
@@ -1040,8 +1040,8 @@ export default class FicheActionListService {
    */
   async getFichesActionWithCount(
     collectiviteId: number | null,
-    filters?: GetFilteredFichesRequestType,
-    queryOptions?: GetFilteredFichesRequestQueryOptionsType
+    filters?: ListFichesRequestFilters,
+    queryOptions?: ListFichesRequestQueryOptions
   ): Promise<{ data: FicheActionWithRelationsType[]; count: number }> {
     const query = this.getFichesActionQuery(
       collectiviteId,
@@ -1065,13 +1065,13 @@ export default class FicheActionListService {
    */
   async getFichesActionResumes(
     collectiviteId: number,
-    filters?: GetFilteredFichesRequestType,
-    queryOptions?: GetFilteredFichesRequestQueryOptionsType
+    filters?: ListFichesRequestFilters,
+    queryOptions?: ListFichesRequestQueryOptions
   ): Promise<{
     count: number;
     nextPage: number | null;
     nbOfPages: number;
-    data: FicheActionResumeType[];
+    data: FicheActionResume[];
   }> {
     this.logger.log(
       `Récupération des fiches actions résumées pour la collectivité ${collectiviteId} avec les filtres ${JSON.stringify(

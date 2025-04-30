@@ -4,7 +4,7 @@ import MenuFiltresToutesLesFichesAction from '@/app/app/pages/collectivite/Plans
 import { makeCollectiviteToutesLesFichesUrl } from '@/app/app/paths';
 import { useCurrentCollectivite } from '@/app/collectivites/collectivite-context';
 import { useSearchParams } from '@/app/core-logic/hooks/query';
-import { GetFilteredFichesRequestType as Filtres } from '@/backend/plans/fiches/index-domain';
+import { ListFichesRequestFilters as Filtres } from '@/domain/plans/fiches';
 import { Button, ButtonMenu, useEventTracker } from '@/ui';
 import { OpenState } from '@/ui/utils/types';
 import { useFicheActionCount } from '../FicheAction/data/useFicheActionCount';

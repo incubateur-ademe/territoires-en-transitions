@@ -1,4 +1,4 @@
-import { getFilteredFichesRequestSchema } from '@/backend/plans/fiches/shared/get-fiches-filter.request';
+import { listFichesRequestFiltersSchema } from '@/backend/plans/fiches/list-fiches/list-fiches.request';
 import { TrpcService } from '@/backend/utils/trpc/trpc.service';
 import { Injectable } from '@nestjs/common';
 import { z } from 'zod';
@@ -8,7 +8,7 @@ import { CountByService } from './count-by.service';
 const inputSchema = z.object({
   collectiviteId: z.number(),
   countByProperty: countByPropertyEnumSchema,
-  filter: getFilteredFichesRequestSchema,
+  filter: listFichesRequestFiltersSchema,
 });
 
 @Injectable()

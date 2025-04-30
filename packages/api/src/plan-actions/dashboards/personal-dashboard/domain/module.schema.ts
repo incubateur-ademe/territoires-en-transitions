@@ -3,7 +3,7 @@ import {
   fetchOptionsSchema as indicateursFetchOptionsSchema,
 } from '@/api/indicateurs';
 import { fetchOptionsSchema as fichesFetchOptionsSchema } from '@/api/plan-actions/fiche-resumes.list';
-import { GetFilteredFichesRequestType as FiltreFicheActions } from '@/backend/plans/fiches/index-domain';
+import { ListFichesRequestFilters } from '@/domain/plans/fiches';
 import { z } from 'zod';
 
 const moduleTypeSchema = z.enum(['indicateur.list', 'fiche_action.list']);
@@ -72,7 +72,7 @@ export type PersonalDefaultModuleKeys = z.infer<
   typeof personalDefaultModuleKeysSchema
 >;
 
-export type Filtre = FiltreIndicateurs | FiltreFicheActions;
+export type Filtre = FiltreIndicateurs | ListFichesRequestFilters;
 
 type Props = {
   collectiviteId: number;

@@ -1,5 +1,5 @@
-import { GetFilteredFichesRequestType as Filtres } from '@/backend/plans/fiches/index-domain';
 import { PersonneTagOrUser } from '@/domain/collectivites';
+import { ListFichesRequestFilters as Filtres } from '@/domain/plans/fiches';
 
 /**
  * Renvoie l'id en string d'un type Personne qui est soit un tag_id number ou un user_id string

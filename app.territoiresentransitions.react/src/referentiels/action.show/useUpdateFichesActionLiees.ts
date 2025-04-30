@@ -3,14 +3,14 @@ import { trpc } from '@/api/utils/trpc/client';
 import { useCollectiviteId } from '@/app/collectivites/collectivite-context';
 
 import { diff } from '@/app/utils/diff';
-import { FicheActionResumeType } from '@/domain/plans/fiches';
+import { FicheActionResume } from '@/domain/plans/fiches';
 import { useMutation } from 'react-query';
 
 type TUpdateFichesActionLieesArgs = {
   /** liste courante des fiches associées à l'action */
-  fiches: FicheActionResumeType[];
+  fiches: FicheActionResume[];
   /** liste mise à jour des fiches associées à l'action */
-  fiches_liees: FicheActionResumeType[];
+  fiches_liees: FicheActionResume[];
 };
 
 /**
