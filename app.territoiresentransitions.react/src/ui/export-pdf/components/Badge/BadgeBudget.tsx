@@ -20,7 +20,9 @@ export const BadgeBudget = ({
   return (
     <Badge
       title={
-        montant ? (
+        !montant && montant !== 0 ? (
+          'Non renseigné'
+        ) : (
           <Text>
             {getFormattedNumber(montant)}{' '}
             {unite === 'HT' ? (
@@ -31,8 +33,6 @@ export const BadgeBudget = ({
               <>ETP</>
             )}
           </Text>
-        ) : (
-          'Non renseigné'
         )
       }
       state="standard"

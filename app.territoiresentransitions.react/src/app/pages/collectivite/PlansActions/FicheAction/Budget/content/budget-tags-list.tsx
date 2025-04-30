@@ -19,7 +19,9 @@ const BudgetTagsList = ({ tags, unit = 'HT' }: BudgetTagsListProps) => {
           />
           <Badge
             title={
-              tag.amount ? (
+              !tag.amount && tag.amount !== 0 ? (
+                'Non renseigné'
+              ) : (
                 <span>
                   {getFormattedNumber(tag.amount)}{' '}
                   {unit === 'HT' ? (
@@ -30,8 +32,6 @@ const BudgetTagsList = ({ tags, unit = 'HT' }: BudgetTagsListProps) => {
                     'ETP'
                   )}
                 </span>
-              ) : (
-                'Non renseigné'
               )
             }
             state="standard"
