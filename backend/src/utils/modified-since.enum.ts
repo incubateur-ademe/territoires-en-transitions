@@ -8,14 +8,14 @@ const modifiedSinceEnumValues = [
   'last-30-days',
   'last-15-days',
 ] as const;
-export type ModifiedSinceType = (typeof modifiedSinceEnumValues)[number];
+
+export type ModifiedSince = (typeof modifiedSinceEnumValues)[number];
+
 export const ModifiedSinceEnum = createEnumObject(modifiedSinceEnumValues);
 
 export const modifiedSinceSchema = z.enum(modifiedSinceEnumValues);
 
-export const getModifiedSinceDate = (
-  modifiedSince: ModifiedSinceType
-): string => {
+export const getModifiedSinceDate = (modifiedSince: ModifiedSince): string => {
   const now = DateTime.now();
   switch (modifiedSince) {
     case 'last-90-days':

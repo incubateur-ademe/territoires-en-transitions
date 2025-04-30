@@ -6,7 +6,7 @@ import { useTagUpdate } from '@/app/ui/dropdownLists/tags/useTagUpdate';
 import { Option, OptionValue, SelectFilter, SelectMultipleProps } from '@/ui';
 
 import { useCollectiviteId } from '@/app/collectivites/collectivite-context';
-import { PersonneTagOrUser } from '@/backend/collectivites/index-domain';
+import { PersonneTagOrUser } from '@/domain/collectivites';
 import { QueryKey } from 'react-query';
 import { usePersonneListe } from './usePersonneListe';
 import { getPersonneStringId } from './utils';

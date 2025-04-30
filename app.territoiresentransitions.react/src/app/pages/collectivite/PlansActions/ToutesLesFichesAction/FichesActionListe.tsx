@@ -1,16 +1,4 @@
-import classNames from 'classnames';
-import { useEffect, useRef, useState } from 'react';
-
-import {
-  SortFichesAction,
-  SortFichesActionValue,
-} from '@/api/plan-actions/fiche-resumes.list/domain/fetch-options.schema';
 import FicheActionCard from '@/app/app/pages/collectivite/PlansActions/FicheAction/Carte/FicheActionCard';
-import PictoExpert from '@/app/ui/pictogrammes/PictoExpert';
-import SpinnerLoader from '@/app/ui/shared/SpinnerLoader';
-import { Checkbox, EmptyCard, Input, Pagination, Select } from '@/ui';
-import { OpenState } from '@/ui/utils/types';
-
 import {
   GetFichesOptions,
   useFicheResumesFetch,
@@ -20,23 +8,32 @@ import {
   makeCollectivitePlanActionFicheUrl,
 } from '@/app/app/paths';
 import { useCollectiviteId } from '@/app/collectivites/collectivite-context';
-
 import FilterBadges, {
   CustomFilterBadges,
   useFiltersToBadges,
 } from '@/app/ui/lists/filter-badges';
+import PictoExpert from '@/app/ui/pictogrammes/PictoExpert';
+import SpinnerLoader from '@/app/ui/shared/SpinnerLoader';
 import {
   FicheActionResume,
   ListFichesRequestFilters as Filtres,
+  ListFichesRequestQueryOptions,
+  ListFichesSortValue,
 } from '@/domain/plans/fiches';
+import { Checkbox, EmptyCard, Input, Pagination, Select } from '@/ui';
+import { OpenState } from '@/ui/utils/types';
+import classNames from 'classnames';
 import { isEqual } from 'es-toolkit';
+import { useEffect, useRef, useState } from 'react';
 import ActionsGroupeesMenu from '../ActionsGroupees/ActionsGroupeesMenu';
 import EmptyFichePicto from '../FicheAction/FichesLiees/EmptyFichePicto';
 import { useCreateFicheAction } from '../FicheAction/data/useCreateFicheAction';
 import { useFicheActionCount } from '../FicheAction/data/useFicheActionCount';
 import { useCreatePlanAction } from '../PlanAction/data/useUpsertAxe';
 
-type sortByOptionsType = SortFichesAction & {
+type SortByOptions = NonNullable<
+  ListFichesRequestQueryOptions['sort']
+>[number] & {
   label: string;
 };
 
@@ -45,9 +42,9 @@ type SortSettings<T> = {
   sortOptionsDisplayed?: T[];
 };
 
-export type SortFicheActionSettings = SortSettings<SortFichesActionValue>;
+export type SortFicheActionSettings = SortSettings<ListFichesSortValue>;
 
-const sortByOptions: sortByOptionsType[] = [
+const sortByOptions: SortByOptions[] = [
   {
     label: 'Date de modification',
     field: 'modified_at',
