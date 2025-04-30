@@ -1,51 +1,20 @@
--- Deploy tet:utilisateur/invitation_v2 to pg
+-- Revert tet:utilisateur/invitation_v2 to pg
 -- requires: utilisateur/niveaux_acces
 
 BEGIN;
 
-create or replace function
-    consume_invitation(id uuid)
-    returns void
-as
-$$
-declare
-    invitation utilisateur.invitation;
-begin
-    if is_authenticated()
-    then
-        -- The current user is authenticated.
-        select *
-        from utilisateur.invitation i
-        where i.id = consume_invitation.id
-        into invitation;
+drop table utilisateur.invitation_personne_tag;
 
-        if invitation.pending
-        then
-            -- The invitation is still pending (hasn't been consumed).
-            -- Mark the invitation as consumed.
-            update utilisateur.invitation i
-            set accepted_at = now()
-            where i.id = invitation.id;
-
-            -- Associate the user to the collectivité.
-            perform utilisateur.associate(
-                    invitation.collectivite_id,
-                    auth.uid(),
-                    invitation.niveau,
-                    invitation.id
-                );
-
-            perform set_config('response.status', '201', true); -- 201: Created
-        else
-            -- The invitation is consumed.
-            perform set_config('response.status', '403', true); -- 403: Forbidden
-        end if;
-    else
-        -- Not authenticated.
-        perform set_config('response.status', '401', true); -- 401: Unauthorized
-    end if;
-end;
-$$ language plpgsql security definer;
+comment on function utilisateur.associate is
+  'Associe un utilisateur à une collectivité avec un niveau d''accès.';
+comment on function utilisateur.invite is
+  'Crée une invitation et renvoie son id.';
+comment on function add_user is
+  'Ajoute un utilisateur à une collectivité avec un niveau d''accès.
+      Si l''utilisateur
+      - est déjà associé à la collectivité renvoie une erreur 409.
+      - est dans la base, renvoie un message json {"added": true}.
+      - n''est pas dans la base, renvoie un message json { "invitation_id": uuid }.';
 comment on function consume_invitation is
     'Permet à l''utilisateur d''utiliser une invitation pour rejoindre une collectivité.'
         ' Renvoie un code 201 en cas de succès.'

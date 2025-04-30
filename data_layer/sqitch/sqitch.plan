@@ -778,8 +778,8 @@ referentiel/verification_score 2024-11-20T16:04:26Z System Administrator <root@M
 plan_action/fiches [plan_action/fiches@v4.28.0] 2024-11-25T17:04:51Z System Administrator <root@MacBook-Air-de-Eli.local> # Ajoute ON DELETE CASCADE à fiche_action_libre_tag
 @v4.28.1 2024-11-25T18:42:06Z System Administrator <root@MacBook-Air-de-Eli.local> # Tag en v4.28.1
 
-plan_action/fiche_action_etape 2024-11-21T13:40:26Z Amandine <ours@ours> # Ajoute des etapes aux fiches actions
-labellisation/audit [labellisation/audit@v4.27.1] 2024-11-20T13:56:04Z Amandine <ours@ours> # Corrige la fonction labellisation_peut_commencer_audit qui prenait à tord une demander 1ère étoile pour l'audit en cours
+plan_action/fiche_action_etape 2024-11-21T13:40:26Z Amandine <contact@jacquelinamandine.fr> # Ajoute des etapes aux fiches actions
+labellisation/audit [labellisation/audit@v4.27.1] 2024-11-20T13:56:04Z Amandine <contact@jacquelinamandine.fr> # Corrige la fonction labellisation_peut_commencer_audit qui prenait à tord une demander 1ère étoile pour l'audit en cours
 referentiel/score_snapshot 2024-11-25T11:25:21Z System Administrator <root@MacBook-Air-de-Thibaut-2.local> # Ajout de la table permettant de sauvegarder/figer des scores de referentiel
 plan_action/fiches [plan_action/fiches@v4.28.1] 2024-11-29T13:01:29Z Frederic Arnoux <frederic.arnoux@beta.gouv.fr> # Fix unicity constraint for fiche action pilotes
 @v4.29.0 2024-12-02T11:47:31Z Frederic Arnoux <frederic.arnoux@beta.gouv.fr> # Tag 4.29.0
@@ -854,3 +854,4 @@ utilisateur/export_connect 2025-04-14T08:55:12Z Marc Rutkowski <marc@attractive-
 @v4.50.0 2025-04-28T09:09:21Z Marc Rutkowski <marc@attractive-media.fr> # Ajoute la synchro vers Connect
 
 plan_action/budget [plan_action/budget@v4.50.0] 2025-05-05T16:10:22Z Amandine <contact@jacquelinamandine.fr> # Permet les décimales aux budgets.
+utilisateur/invitation_v2 [utilisateur/invitation_v2@v4.50.0] 2025-04-28T10:15:35Z Amandine <contact@jacquelinamandine.fr> # Ajoute les tags pilotes à l'invitation et met en deprecated les fonctions pgsql d'invitation qui vont passer dans le middleware
