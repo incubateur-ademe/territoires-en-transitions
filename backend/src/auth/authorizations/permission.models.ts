@@ -25,6 +25,9 @@ export const Permission: Record<Role, PermissionOperationType[]> = {
     PermissionOperationEnum['INDICATEURS.LECTURE'],
     PermissionOperationEnum['INDICATEURS.TRAJECTOIRES.LECTURE'],
     PermissionOperationEnum['INDICATEURS.TRAJECTOIRES.EDITION'],
+    PermissionOperationEnum['MEMBRES.EDITION'],
+    PermissionOperationEnum['MEMBRES.LECTURE'],
+    PermissionOperationEnum['TAGS.LECTURE'],
   ],
   [Role.ADEME]: [
     PermissionOperationEnum['COLLECTIVITES.VISITE'],
@@ -45,6 +48,8 @@ export const Permission: Record<Role, PermissionOperationType[]> = {
     PermissionOperationEnum['INDICATEURS.LECTURE'],
     PermissionOperationEnum['INDICATEURS.TRAJECTOIRES.LECTURE'],
     PermissionOperationEnum['INDICATEURS.TRAJECTOIRES.EDITION'],
+    PermissionOperationEnum['MEMBRES.LECTURE'],
+    PermissionOperationEnum['TAGS.LECTURE'],
   ],
   [Role.EDITION]: [
     PermissionOperationEnum['COLLECTIVITES.VISITE'],
@@ -60,6 +65,10 @@ export const Permission: Record<Role, PermissionOperationType[]> = {
     PermissionOperationEnum['INDICATEURS.EDITION'],
     PermissionOperationEnum['INDICATEURS.TRAJECTOIRES.LECTURE'],
     PermissionOperationEnum['INDICATEURS.TRAJECTOIRES.EDITION'],
+    PermissionOperationEnum['MEMBRES.EDITION'],
+    PermissionOperationEnum['MEMBRES.LECTURE'],
+    PermissionOperationEnum['TAGS.LECTURE'],
+    PermissionOperationEnum['TAGS.EDITION'],
   ],
   [Role.ADMIN]: [
     PermissionOperationEnum['COLLECTIVITES.VISITE'],
@@ -76,6 +85,10 @@ export const Permission: Record<Role, PermissionOperationType[]> = {
     PermissionOperationEnum['INDICATEURS.EDITION'],
     PermissionOperationEnum['INDICATEURS.TRAJECTOIRES.LECTURE'],
     PermissionOperationEnum['INDICATEURS.TRAJECTOIRES.EDITION'],
+    PermissionOperationEnum['MEMBRES.EDITION'],
+    PermissionOperationEnum['MEMBRES.LECTURE'],
+    PermissionOperationEnum['TAGS.LECTURE'],
+    PermissionOperationEnum['TAGS.EDITION'],
   ],
   [Role.AUDITEUR]: [
     PermissionOperationEnum['COLLECTIVITES.VISITE'],
@@ -90,5 +103,6 @@ export const Permission: Record<Role, PermissionOperationType[]> = {
     PermissionOperationEnum['INDICATEURS.LECTURE'],
     PermissionOperationEnum['INDICATEURS.EDITION'],
     PermissionOperationEnum['INDICATEURS.TRAJECTOIRES.LECTURE'],
+    PermissionOperationEnum['TAGS.LECTURE'],
   ],
 };
