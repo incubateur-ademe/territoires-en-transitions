@@ -1,7 +1,7 @@
-import { Personne } from '@/api/collectivites';
 import { useCurrentCollectivite } from '@/app/core-logic/hooks/useCurrentCollectivite';
 import PersonnesDropdown from '@/app/ui/dropdownLists/PersonnesDropdown/PersonnesDropdown';
 import { getPersonneStringId } from '@/app/ui/dropdownLists/PersonnesDropdown/utils';
+import { PersonneTagOrUser } from '@/domain/collectivites';
 import { Button, Field, useEventTracker } from '@/ui';
 import { OpenState } from '@/ui/utils/types';
 import { useState } from 'react';
@@ -17,9 +17,11 @@ const ModaleEditionPilote = ({
   openState,
   selectedIds,
 }: ModaleEditionPiloteProps) => {
-  const [pilotesToAdd, setPilotesToAdd] = useState<Personne[] | undefined>();
+  const [pilotesToAdd, setPilotesToAdd] = useState<
+    PersonneTagOrUser[] | undefined
+  >();
   const [pilotesToRemove, setPilotesToRemove] = useState<
-    Personne[] | undefined
+    PersonneTagOrUser[] | undefined
   >();
 
   const { collectiviteId, niveauAcces, role } = useCurrentCollectivite()!;
