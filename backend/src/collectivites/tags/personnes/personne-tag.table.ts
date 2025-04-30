@@ -1,7 +1,7 @@
 import { pgTable, uniqueIndex } from 'drizzle-orm/pg-core';
 import { createSelectSchema } from 'drizzle-zod';
 import z from 'zod';
-import { tagTableBase } from './tag.table-base';
+import { tagTableBase } from '../tag.table-base';
 
 export const personneTagTable = pgTable(
   'personne_tag',

@@ -4,7 +4,7 @@ import { AnyColumn, eq } from 'drizzle-orm';
 import { PgTable } from 'drizzle-orm/pg-core';
 import { Transaction } from '@/backend/utils/database/transaction.utils';
 import { financeurTagTable } from '@/backend/collectivites/tags/financeur-tag.table';
-import { personneTagTable } from '@/backend/collectivites/tags/personne-tag.table';
+import { personneTagTable } from '@/backend/collectivites/tags/personnes/personne-tag.table';
 import { partenaireTagTable } from '@/backend/collectivites/tags/partenaire-tag.table';
 import { serviceTagTable } from '@/backend/collectivites/tags/service-tag.table';
 import { structureTagTable } from '@/backend/collectivites/tags/structure-tag.table';
