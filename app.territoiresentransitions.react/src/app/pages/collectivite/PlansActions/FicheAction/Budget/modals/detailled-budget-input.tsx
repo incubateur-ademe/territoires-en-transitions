@@ -1,7 +1,7 @@
 import { BudgetType } from '@/app/app/pages/collectivite/PlansActions/FicheAction/Budget/hooks/use-get-budget';
 import { getYearsOptions } from '@/app/app/pages/collectivite/PlansActions/FicheAction/utils';
 import { getFormattedNumber } from '@/app/utils/formatUtils';
-import { Button, Field, Input, Select } from '@/ui';
+import { Button, Field, Input, OptionValue, Select } from '@/ui';
 
 type DetailledBudgetInputProps = {
   budgets: BudgetType[];
@@ -33,7 +33,9 @@ const DetailledBudgetInput = ({
             <Field title="Année" className="w-52 grow-0 shrink-0">
               <Select
                 options={yearsOptions}
-                values={budget.annee}
+                values={
+                  budget.annee ? (budget.annee as OptionValue) : undefined
+                }
                 disabled={true}
                 onChange={() => ({})}
               />
@@ -46,7 +48,7 @@ const DetailledBudgetInput = ({
               <Input
                 type="number"
                 icon={{ text: unite === 'HT' ? '€ HT' : 'ETP' }}
-                value={budget.budgetPrevisionnel}
+                value={budget.budgetPrevisionnel ?? undefined}
                 placeholder={
                   unite === 'HT' ? 'Ajouter un montant' : 'Ajouter une valeur'
                 }
@@ -72,7 +74,7 @@ const DetailledBudgetInput = ({
                   {getFormattedNumber(
                     budgets.reduce(
                       (sum, currValue) =>
-                        sum + parseInt(currValue.budgetPrevisionnel ?? 0),
+                        sum + parseInt(currValue.budgetPrevisionnel ?? '0'),
                       0
                     )
                   )}{' '}
@@ -86,7 +88,7 @@ const DetailledBudgetInput = ({
               <Input
                 type="number"
                 icon={{ text: unite === 'HT' ? '€ HT' : 'ETP' }}
-                value={budget.budgetReel}
+                value={budget.budgetReel ?? undefined}
                 placeholder={
                   unite === 'HT' ? 'Ajouter un montant' : 'Ajouter une valeur'
                 }
@@ -110,7 +112,7 @@ const DetailledBudgetInput = ({
                   {getFormattedNumber(
                     budgets.reduce(
                       (sum, currValue) =>
-                        sum + parseInt(currValue.budgetReel ?? 0),
+                        sum + parseInt(currValue.budgetReel ?? '0'),
                       0
                     )
                   )}{' '}
