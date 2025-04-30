@@ -56,6 +56,9 @@ const CollectivitesPage = ({ collectivitesStrapi }: Props) => {
             <LoadingCard />
             <LoadingCard />
             <LoadingCard />
+            <LoadingCard />
+            <LoadingCard />
+            <LoadingCard />
           </>
         ) : (
           collectivitesALaUne?.map((col) => (
