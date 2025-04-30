@@ -23,6 +23,12 @@ export const PermissionOperations = [
   'indicateurs.edition',
   'indicateurs.trajectoires.lecture',
   'indicateurs.trajectoires.edition',
+  // Membres
+  'membres.edition',
+  'membres.lecture',
+  // Tags
+  'tags.edition',
+  'tags.lecture',
 ] as const;
 
 export type PermissionOperationType = (typeof PermissionOperations)[number];
