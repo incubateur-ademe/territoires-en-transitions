@@ -38,13 +38,13 @@ const CollectiviteCard = ({
       className="flex flex-col items-center rounded-xl shadow overflow-hidden"
       href={`/collectivites/${siren}/${convertNameToSlug(nom)}`}
     >
-      <div className="relative aspect-[5/2] lg:aspect-[3/1] w-full">
+      <div className="relative w-full">
         <Image
-          src={cover?.attributes.url as unknown as string}
+          src={cover?.attributes.formats.medium.url as unknown as string}
+          width={cover?.attributes.formats.medium.width as unknown as number}
+          height={cover?.attributes.formats.medium.height as unknown as number}
           alt={nom ?? 'Image de la collectivité'}
-          fill
-          sizes="(max-width: 768px) 100vw, (max-width: 1200px) 50vw, 33vw"
-          className="object-cover"
+          className="object-cover aspect-[5/2] lg:aspect-[3/1]"
         />
         <div className="absolute -bottom-3 right-6 flex gap-4">
           {population && (
