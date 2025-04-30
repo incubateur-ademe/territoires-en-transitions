@@ -15,7 +15,7 @@ import CiblesDropdown from '@/app/ui/dropdownLists/ficheAction/CiblesDropdown/Ci
 import PrioritesFilterDropdown from '@/app/ui/dropdownLists/ficheAction/priorites/PrioritesFilterDropdown';
 import StatutsFilterDropdown from '@/app/ui/dropdownLists/ficheAction/statuts/StatutsFilterDropdown';
 
-import { ListFichesRequestFilters as Filtres } from '@/backend/plans/fiches/index-domain';
+import { ListFichesRequestFilters as Filtres } from '@/domain/plans/fiches';
 import {
   Checkbox,
   Field,
