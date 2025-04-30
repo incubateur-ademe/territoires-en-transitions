@@ -3,7 +3,7 @@ import { useState } from 'react';
 import { modulesSave } from '@/api/plan-actions/dashboards/personal-dashboard/actions/modules.save';
 import { ModuleFicheActionsSelect } from '@/api/plan-actions/dashboards/personal-dashboard/domain/module.schema';
 import { ModifiedSince } from '@/api/plan-actions/fiche-resumes.list/domain/fetch-options.schema';
-import { GetFilteredFichesRequestType as FiltreFichesAction } from '@/backend/plans/fiches/index-domain';
+import { ListFichesRequestFilters as FiltreFichesAction } from '@/domain/plans/fiches';
 
 import { useSupabase } from '@/api/utils/supabase/use-supabase';
 import { useCurrentCollectivite } from '@/app/collectivites/collectivite-context';

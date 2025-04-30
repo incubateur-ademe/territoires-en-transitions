@@ -3,12 +3,12 @@ import {
   makeCollectivitePlanActionFicheUrl,
 } from '@/app/app/paths';
 import { useCollectiviteId } from '@/app/collectivites/collectivite-context';
-import { FicheActionResumeType } from '@/domain/plans/fiches';
+import { FicheActionResume } from '@/domain/plans/fiches';
 import classNames from 'classnames';
 import FicheActionCard from '../Carte/FicheActionCard';
 
 type FichesLieesListeProps = {
-  fiches: FicheActionResumeType[];
+  fiches: FicheActionResume[];
   className?: string;
   onUnlink?: (ficheId: number) => void;
 };

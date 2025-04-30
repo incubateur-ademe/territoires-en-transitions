@@ -1,4 +1,4 @@
-import { FicheActionResumeType } from '@/domain/plans/fiches';
+import { FicheActionResume } from '@/domain/plans/fiches';
 import { Alert } from '@/ui';
 import classNames from 'classnames';
 import ExportFicheActionModal from '../ExportPdf/ExportModal/export-fa-modal';
@@ -10,7 +10,7 @@ import EditionTagsLibres from './EditionTagsLibres';
 
 type ActionsGroupeesMenuProps = {
   isGroupedActionsOn: boolean;
-  selectedFiches: FicheActionResumeType[];
+  selectedFiches: FicheActionResume[];
 };
 
 const ActionsGroupeesMenu = ({
