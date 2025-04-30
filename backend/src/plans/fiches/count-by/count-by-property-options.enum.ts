@@ -1,8 +1,8 @@
-import z from 'zod';
-import { ficheActionWithRelationsSchema } from '../shared/models/fiche-action-with-relations.dto';
 import { ficheActionBudgetSchema } from '@/backend/plans/fiches/fiche-action-budget/fiche-action-budget.table';
+import z from 'zod';
+import { ficheWithRelationsSchema } from '../shared/models/fiche-action-with-relations.dto';
 
-export const ficheActionForCountBySchema = ficheActionWithRelationsSchema
+export const ficheActionForCountBySchema = ficheWithRelationsSchema
   .pick({
     restreint: true,
     ameliorationContinue: true,

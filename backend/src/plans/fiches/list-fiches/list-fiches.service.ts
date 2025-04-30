@@ -71,9 +71,9 @@ import { ficheActionActionTable } from '../shared/models/fiche-action-action.tab
 import { ficheActionAxeTable } from '../shared/models/fiche-action-axe.table';
 import { ficheActionPiloteTable } from '../shared/models/fiche-action-pilote.table';
 import {
-  FicheActionResume,
-  FicheActionWithRelationsAndCollectiviteType,
-  FicheActionWithRelationsType,
+  FicheResume,
+  FicheWithRelations,
+  FicheWithRelationsAndCollectivite,
 } from '../shared/models/fiche-action-with-relations.dto';
 
 @Injectable()
@@ -536,11 +536,9 @@ export default class FicheActionListService {
   async getFicheActionById(
     ficheActionId: number,
     addCollectiviteData?: boolean
-  ): Promise<
-    FicheActionWithRelationsType | FicheActionWithRelationsAndCollectiviteType
-  > {
+  ): Promise<FicheWithRelations | FicheWithRelationsAndCollectivite> {
     this.logger.log(`Récupération de la fiche action ${ficheActionId}`);
-    const fichesAction: FicheActionWithRelationsAndCollectiviteType[] =
+    const fichesAction: FicheWithRelationsAndCollectivite[] =
       await this.getFichesAction(null, {
         ficheIds: [ficheActionId],
       });
@@ -561,7 +559,7 @@ export default class FicheActionListService {
     return ficheAction;
   }
 
-  async getFichesActionQuery(
+  private async getFichesActionQuery(
     collectiviteId: number | null,
     filters?: ListFichesRequestFilters,
     queryOptions?: ListFichesRequestQueryOptions
@@ -1026,7 +1024,7 @@ export default class FicheActionListService {
     collectiviteId: number | null,
     filters?: ListFichesRequestFilters,
     queryOptions?: ListFichesRequestQueryOptions
-  ): Promise<FicheActionWithRelationsType[]> {
+  ): Promise<FicheWithRelations[]> {
     return this.getFichesActionQuery(collectiviteId, filters, queryOptions);
   }
 
@@ -1042,7 +1040,7 @@ export default class FicheActionListService {
     collectiviteId: number | null,
     filters?: ListFichesRequestFilters,
     queryOptions?: ListFichesRequestQueryOptions
-  ): Promise<{ data: FicheActionWithRelationsType[]; count: number }> {
+  ): Promise<{ data: FicheWithRelations[]; count: number }> {
     const query = this.getFichesActionQuery(
       collectiviteId,
       filters,
@@ -1071,7 +1069,7 @@ export default class FicheActionListService {
     count: number;
     nextPage: number | null;
     nbOfPages: number;
-    data: FicheActionResume[];
+    data: FicheResume[];
   }> {
     this.logger.log(
       `Récupération des fiches actions résumées pour la collectivité ${collectiviteId} avec les filtres ${JSON.stringify(

@@ -1,7 +1,7 @@
 import { useCurrentCollectivite } from '@/app/collectivites/collectivite-context';
 import ListWithTooltip from '@/app/ui/lists/ListWithTooltip';
 import { getModifiedSince } from '@/app/utils/formatUtils';
-import { FicheActionResume } from '@/domain/plans/fiches';
+import { FicheResume } from '@/domain/plans/fiches';
 import { Button, Card, Checkbox, Notification, Tooltip } from '@/ui';
 import classNames from 'classnames';
 import { useState } from 'react';
@@ -15,7 +15,7 @@ import ModifierFicheModale from './ModifierFicheModale';
 
 type FicheActionCardProps = {
   /** Contenu de la carte fiche action */
-  ficheAction: FicheActionResume;
+  ficheAction: FicheResume;
   /** Lien vers la fiche action */
   link?: string;
   /** Doit ouvrir la fiche action dans un nouvel onglet */
