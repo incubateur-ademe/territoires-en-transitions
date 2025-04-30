@@ -21,4 +21,10 @@ export enum PermissionOperation {
   INDICATEURS_EDITION = 'indicateurs.edition',
   INDICATEURS_TRAJECTOIRES_LECTURE = 'indicateurs.trajectoires.lecture',
   INDICATEURS_TRAJECTOIRES_EDITION = 'indicateurs.trajectoires.edition',
+  // Membres
+  MEMBRES_EDITION = 'membres.edition',
+  MEMBRES_LECTURE = 'membres.lecture',
+  // Tags
+  TAGS_EDITION = 'tags.edition',
+  TAGS_LECTURE = 'tags.lecture',
 }
