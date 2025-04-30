@@ -1,14 +1,14 @@
 import { AuthenticatedUser, dcpTable } from '@/backend/auth/index-domain';
-import { Injectable, Logger } from '@nestjs/common';
-import { aliasedTable, and, desc, eq } from 'drizzle-orm';
-import { DatabaseService } from '@/backend/utils';
-import FicheActionPermissionsService from '@/backend/plans/fiches/fiche-action-permissions.service';
 import {
   ficheActionNoteTable,
-  UpsertFicheActionNoteType
+  UpsertFicheActionNote,
 } from '@/backend/plans/fiches/fiche-action-note/fiche-action-note.table';
+import FicheActionPermissionsService from '@/backend/plans/fiches/fiche-action-permissions.service';
 import { ficheActionTable } from '@/backend/plans/fiches/shared/models/fiche-action.table';
+import { DatabaseService } from '@/backend/utils';
 import { buildConflictUpdateColumns } from '@/backend/utils/database/conflict.utils';
+import { Injectable, Logger } from '@nestjs/common';
+import { aliasedTable, and, desc, eq } from 'drizzle-orm';
 
 @Injectable()
 export default class FicheActionNoteService {
@@ -19,18 +19,20 @@ export default class FicheActionNoteService {
     private readonly databaseService: DatabaseService
   ) {}
 
-
   /** Insère ou met à jour des notes de suivi */
   async upsertNotes(
     ficheId: number,
-    notes: UpsertFicheActionNoteType[],
+    notes: UpsertFicheActionNote[],
     tokenInfo: AuthenticatedUser
   ) {
     this.logger.log(
       `Vérifie les droits avant de mettre à jour les notes de la fiche ${ficheId}`
     );
 
-    const canWrite = await this.permissionService.canWriteFiche(ficheId, tokenInfo);
+    const canWrite = await this.permissionService.canWriteFiche(
+      ficheId,
+      tokenInfo
+    );
     if (!canWrite) return false;
 
     this.logger.log(`Met à jour les notes de la fiche ${ficheId}`);
@@ -75,7 +77,10 @@ export default class FicheActionNoteService {
       `Vérifie les droits avant de supprimer la note ${noteId} de la fiche ${ficheId}`
     );
 
-    const canWrite = await this.permissionService.canWriteFiche(ficheId, tokenInfo);
+    const canWrite = await this.permissionService.canWriteFiche(
+      ficheId,
+      tokenInfo
+    );
     if (!canWrite) return false;
 
     this.logger.log(`Supprime la note ${noteId} de la fiche ${ficheId}`);

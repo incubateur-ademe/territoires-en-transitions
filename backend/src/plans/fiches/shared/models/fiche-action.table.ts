@@ -222,4 +222,4 @@ export const ficheSchemaUpdate = ficheSchemaCreate
   })
   .partial();
 
-export type FicheAction = InferSelectModel<typeof ficheActionTable>;
+export type Fiche = InferSelectModel<typeof ficheActionTable>;

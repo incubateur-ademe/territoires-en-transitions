@@ -6,10 +6,10 @@ import { and, eq, isNull, sql } from 'drizzle-orm';
 import { uniq } from 'es-toolkit';
 import z from 'zod';
 import { DatabaseService } from '../../utils/database/database.service';
-import { FicheAction, ficheActionTable } from './index-domain';
+import { Fiche, ficheActionTable } from './index-domain';
 import { axeTable, AxeType } from './shared/models/axe.table';
 import { ficheActionAxeTable } from './shared/models/fiche-action-axe.table';
-import { FicheActionWithRelationsType } from './shared/models/fiche-action-with-relations.dto';
+import { FicheWithRelations } from './shared/models/fiche-action-with-relations.dto';
 
 const getPlanRequestSchema = z.object({
   collectiviteId: z.number(),
@@ -146,7 +146,7 @@ export default class PlanActionsService {
     depth = 0,
     rows: Array<
       Omit<AxeEtFicheIds, 'ficheIds'> & {
-        fiche: FicheActionWithRelationsType | null;
+        fiche: FicheWithRelations | null;
         path: string[];
         depth: number;
       }
@@ -192,7 +192,7 @@ export default class PlanActionsService {
         .select({
           axeId: ficheActionAxeTable.axeId,
           fiches: sql<
-            FicheAction['id'][]
+            Fiche['id'][]
           >`json_agg(${ficheActionTable.id}) FILTER (WHERE ${ficheActionTable.id} IS NOT NULL)`.as(
             'fiches'
           ),
