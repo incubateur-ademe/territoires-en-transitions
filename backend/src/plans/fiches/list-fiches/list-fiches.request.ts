@@ -11,7 +11,7 @@ import {
   ciblesEnumSchema,
   prioriteEnumSchema,
   statutsEnumSchema,
-} from './models/fiche-action.table';
+} from '../shared/models/fiche-action.table';
 
 export const typePeriodeEnumValues = [
   'creation',
@@ -19,11 +19,11 @@ export const typePeriodeEnumValues = [
   'debut',
   'fin',
 ] as const;
-export type TypePeriodeEnumType = (typeof typePeriodeEnumValues)[number];
+export type TypePeriodeEnum = (typeof typePeriodeEnumValues)[number];
 
 export const typePeriodeEnumSchema = z.enum(typePeriodeEnumValues);
 
-export const getFilteredFichesRequestSchema = z
+export const listFichesRequestFiltersSchema = z
   .object({
     noPilote: zodQueryBoolean
       .optional()
@@ -147,24 +147,24 @@ export const getFilteredFichesRequestSchema = z
   })
   .describe('Filtre de récupération des fiches action');
 
-export type GetFilteredFichesRequestType = z.infer<
-  typeof getFilteredFichesRequestSchema
+export type ListFichesRequestFilters = z.infer<
+  typeof listFichesRequestFiltersSchema
 >;
 
-const getFilteredFichesRequestQueryOptionsSchema = getPaginationSchema([
+const listFichesRequestQueryOptionsSchema = getPaginationSchema([
   'modified_at',
   'created_at',
   'titre',
 ]);
 
-export type GetFilteredFichesRequestQueryOptionsType = z.infer<
-  typeof getFilteredFichesRequestQueryOptionsSchema
+export type ListFichesRequestQueryOptions = z.infer<
+  typeof listFichesRequestQueryOptionsSchema
 >;
 
-export const getFichesRequestSchema = z.object({
+export const listFichesRequestSchema = z.object({
   collectiviteId: z.coerce.number(),
-  filters: getFilteredFichesRequestSchema.optional(),
-  queryOptions: getFilteredFichesRequestQueryOptionsSchema.partial().optional(),
+  filters: listFichesRequestFiltersSchema.optional(),
+  queryOptions: listFichesRequestQueryOptionsSchema.partial().optional(),
 });
 
-export type GetFichesRequestType = z.infer<typeof getFichesRequestSchema>;
+export type ListFichesRequest = z.infer<typeof listFichesRequestSchema>;

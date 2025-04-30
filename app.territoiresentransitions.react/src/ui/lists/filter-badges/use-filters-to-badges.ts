@@ -10,7 +10,7 @@ import { useSupabase } from '@/api/utils/supabase/use-supabase';
 import { generateTitle } from '@/app/app/pages/collectivite/PlansActions/FicheAction/data/utils';
 import { useCollectiviteId } from '@/app/core-logic/hooks/params';
 import { getCategorieLabel } from '@/app/ui/dropdownLists/indicateur/utils';
-import { GetFilteredFichesRequestType as FiltreFicheActions } from '@/backend/plans/fiches/index-domain';
+import { ListFichesRequestFilters as FiltreFicheActions } from '@/domain/plans/fiches';
 
 /**
  * Types de tous les filtres passables au hook `useFiltersToBadges`.
