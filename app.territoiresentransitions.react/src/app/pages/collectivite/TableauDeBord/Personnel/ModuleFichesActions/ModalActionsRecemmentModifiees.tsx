@@ -1,10 +1,5 @@
-import { useState } from 'react';
-
 import { modulesSave } from '@/api/plan-actions/dashboards/personal-dashboard/actions/modules.save';
 import { ModuleFicheActionsSelect } from '@/api/plan-actions/dashboards/personal-dashboard/domain/module.schema';
-import { ModifiedSince } from '@/api/plan-actions/fiche-resumes.list/domain/fetch-options.schema';
-import { ListFichesRequestFilters as FiltreFichesAction } from '@/domain/plans/fiches';
-
 import { useSupabase } from '@/api/utils/supabase/use-supabase';
 import { useCurrentCollectivite } from '@/app/collectivites/collectivite-context';
 import StatutsFilterDropdown from '@/app/ui/dropdownLists/ficheAction/statuts/StatutsFilterDropdown';
@@ -15,6 +10,8 @@ import {
   splitPilotePersonnesAndUsers,
 } from '@/app/ui/dropdownLists/PersonnesDropdown/utils';
 import PlansActionDropdown from '@/app/ui/dropdownLists/PlansActionDropdown';
+import { ListFichesRequestFilters } from '@/domain/plans/fiches';
+import { ModifiedSince } from '@/domain/utils';
 import {
   Field,
   FormSection,
@@ -23,6 +20,7 @@ import {
   ModalProps,
   useEventTracker,
 } from '@/ui';
+import { useState } from 'react';
 import { QueryKey, useQueryClient } from 'react-query';
 
 type Props = ModalProps & {
@@ -39,7 +37,7 @@ const ModalActionsRecemmentModifiees = ({
   const queryClient = useQueryClient();
   const supabase = useSupabase();
 
-  const [filtreState, setFiltreState] = useState<FiltreFichesAction>(
+  const [filtreState, setFiltreState] = useState<ListFichesRequestFilters>(
     module.options.filtre
   );
 

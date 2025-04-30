@@ -1,4 +1,3 @@
-// import { ficheResumesFetch } from '@/api/plan-actions';
 import { useSupabase } from '@/api/utils/supabase/use-supabase';
 import { useFicheResumesFetch } from '@/app/app/pages/collectivite/PlansActions/FicheAction/data/useFicheResumesFetch';
 import { useQuery } from 'react-query';
