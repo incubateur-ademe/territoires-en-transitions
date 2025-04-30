@@ -21,7 +21,7 @@ const ExtendedBudgetInput = ({
         <Input
           type="number"
           icon={{ text: isEuros ? '€ HT' : 'ETP' }}
-          value={budget ? budget.budgetPrevisionnel ?? '' : null}
+          value={budget ? budget.budgetPrevisionnel ?? '' : undefined}
           placeholder="Ajouter un montant"
           onValueChange={(values) =>
             onUpdate({
@@ -39,7 +39,7 @@ const ExtendedBudgetInput = ({
         <Input
           type="number"
           icon={{ text: isEuros ? '€ HT' : 'ETP' }}
-          value={budget ? budget.budgetReel ?? '' : null}
+          value={budget ? budget.budgetReel ?? '' : undefined}
           placeholder="Ajouter un montant"
           onValueChange={(values) =>
             onUpdate({
