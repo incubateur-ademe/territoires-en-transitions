@@ -6,8 +6,13 @@ export type labellisation_w_geojson = Views<'site_labellisation'> & {
   geojson?: Json;
 };
 
-export type region_w_geojson = Views<'site_region'> & {
+type region_w_geojson = Views<'site_region'> & {
   geojson?: Json;
+};
+
+export type CollectivitesCarteFrance = {
+  collectivites: labellisation_w_geojson[];
+  regions: region_w_geojson[];
 };
 
 export const useCarteCollectivitesEngagees = () => {
