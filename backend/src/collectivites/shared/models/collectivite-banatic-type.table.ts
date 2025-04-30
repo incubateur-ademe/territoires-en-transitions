@@ -1,6 +1,7 @@
 import { createEnumObject } from '@/backend/utils/enum.utils';
 import { InferSelectModel } from 'drizzle-orm';
 import { pgTable, serial, text } from 'drizzle-orm/pg-core';
+import z from 'zod';
 
 export const collectiviteBanaticSubType = {
   FiscalitePropre: 'EPCI à fiscalité propre',
@@ -22,6 +23,8 @@ export const collectiviteNature = [
   'PETR',
   'EPT',
 ] as const;
+
+export const collectiviteNatureEnumSchema = z.enum(collectiviteNature);
 
 export const collectiviteNatureEnum = createEnumObject(collectiviteNature);
 export type CollectiviteNatureType = (typeof collectiviteNature)[number];

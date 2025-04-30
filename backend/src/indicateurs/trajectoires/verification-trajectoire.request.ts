@@ -1,23 +1,18 @@
+import { zodQueryBoolean } from '@/backend/utils/zod.utils';
 import { z } from 'zod';
 import { collectiviteRequestSchema } from '../../collectivites/collectivite.request';
 
 export const verificationTrajectoireRequestSchema =
   collectiviteRequestSchema.extend({
-    forceRecuperationDonnees: z
-      .enum(['true', 'false'])
-      .transform((value) => value === 'true')
+    forceRecuperationDonnees: zodQueryBoolean
       .optional()
       .describe(
         'Récupère les données même si la trajectoire a déjà été calculée'
       ),
-    epciInfo: z
-      .enum(['true', 'false'])
-      .transform((value) => value === 'true')
+    epciInfo: zodQueryBoolean
       .optional()
       .describe("Retourne les informations de l'EPCI"),
-    forceUtilisationDonneesCollectivite: z
-      .enum(['true', 'false'])
-      .transform((value) => value === 'true')
+    forceUtilisationDonneesCollectivite: zodQueryBoolean
       .optional()
       .describe(
         "Force l'utilisation des données de la collectivité plutôt que celles du rare"

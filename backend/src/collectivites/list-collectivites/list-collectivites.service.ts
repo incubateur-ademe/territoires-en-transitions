@@ -1,14 +1,20 @@
 import { PermissionService } from '@/backend/auth/authorizations/permission.service';
 import { Injectable, Logger } from '@nestjs/common';
-import { desc, sql } from 'drizzle-orm';
+import { desc, eq, sql } from 'drizzle-orm';
 import z from 'zod';
 import { DatabaseService } from '../../utils/database/database.service';
-import { collectiviteTable } from '../index-domain';
+import {
+  collectiviteNatureEnumSchema,
+  collectiviteTable,
+  collectiviteTypeEnumSchema,
+} from '../index-domain';
 
 export const inputSchema = z
   .object({
     text: z.string().optional(),
     limit: z.number().optional(),
+    type: collectiviteTypeEnumSchema.optional(),
+    natureInsee: collectiviteNatureEnumSchema.optional(),
   })
   .optional()
   .default({ limit: 20 });
@@ -38,6 +44,14 @@ export default class ListCollectivitesService {
       })
       .from(collectiviteTable);
 
+    if (input?.type) {
+      request.where(eq(collectiviteTable.type, input.type));
+    }
+
+    if (input?.natureInsee) {
+      request.where(eq(collectiviteTable.natureInsee, input.natureInsee));
+    }
+
     if (input?.text) {
       request.where(
         sql`unaccent
@@ -54,7 +68,7 @@ export default class ListCollectivitesService {
       );
     }
 
-    if (input?.limit) {
+    if (input?.limit && input.limit > 0) {
       request.limit(input.limit);
     }
 

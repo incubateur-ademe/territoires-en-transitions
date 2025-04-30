@@ -1,5 +1,6 @@
 import { CalendlySynchroService } from '@/tools-automation-api/calendly/calendly-synchro.service';
 import { ConnectSynchroService } from '@/tools-automation-api/connect/connect-synchro.service';
+import { CronComputeTrajectoireService } from '@/tools-automation-api/indicateurs/trajectoires/cron-compute-trajectoire.service';
 import { Processor, WorkerHost } from '@nestjs/bullmq';
 import { Logger, NotFoundException } from '@nestjs/common';
 import { Job } from 'bullmq';
@@ -11,7 +12,8 @@ export class CronConsumerService extends WorkerHost {
 
   constructor(
     private readonly calendlySynchroService: CalendlySynchroService,
-    private readonly connectSynchroService: ConnectSynchroService
+    private readonly connectSynchroService: ConnectSynchroService,
+    private readonly cronComputeTrajectoireService: CronComputeTrajectoireService
   ) {
     super();
   }
@@ -23,6 +25,8 @@ export class CronConsumerService extends WorkerHost {
         return this.calendlySynchroService.process();
       case 'connect-synchro':
         return this.connectSynchroService.process();
+      case 'compute-all-outdated-trajectoires':
+        return this.cronComputeTrajectoireService.computeAllOutdatedTrajectoires();
       default:
         return this.handlerNotFound(job.name);
     }

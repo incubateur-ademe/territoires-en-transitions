@@ -14,7 +14,7 @@ import { NextFunction, Response } from 'express';
 import { AllowPublicAccess } from '../../auth/decorators/allow-public-access.decorator';
 import { TokenInfo } from '../../auth/decorators/token-info.decorators';
 import type { AuthenticatedUser } from '../../auth/models/auth.models';
-import { CollectiviteRequestClass } from '../../collectivites/collectivite.request';
+import { collectiviteRequestSchema } from '../../collectivites/collectivite.request';
 import { calculTrajectoireRequestSchema } from './calcul-trajectoire.request';
 import { calculTrajectoireResponseSchema } from './calcul-trajectoire.response';
 import { modeleTrajectoireTelechargementRequestSchema } from './modele-trajectoire-telechargement.request';
@@ -45,6 +45,10 @@ export class VerificationTrajectoireRequestClass extends createZodDto(
 
 export class VerificationTrajectoireResponseClass extends createZodDto(
   verificationTrajectoireResponseSchema
+) {}
+
+export class CollectiviteRequestClass extends createZodDto(
+  collectiviteRequestSchema
 ) {}
 
 @ApiTags('Trajectoires')
