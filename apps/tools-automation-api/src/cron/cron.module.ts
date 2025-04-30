@@ -2,6 +2,7 @@ import { CalendlyModule } from '@/tools-automation-api/calendly/calendly.module'
 import { ConnectModule } from '@/tools-automation-api/connect/connect.module';
 import { CronConsumerService } from '@/tools-automation-api/cron/cron-consumer.service';
 import { CRON_JOBS_QUEUE_NAME } from '@/tools-automation-api/cron/cron.config';
+import { ToolsIndicateursModule } from '@/tools-automation-api/indicateurs/tools-indicateurs.module';
 import { BullMQAdapter } from '@bull-board/api/bullMQAdapter';
 import { BullBoardModule } from '@bull-board/nestjs';
 import { BullModule } from '@nestjs/bullmq';
@@ -21,6 +22,7 @@ import { CronService } from './cron.service';
     ConfigurationModule,
     CalendlyModule,
     ConnectModule,
+    ToolsIndicateursModule,
   ],
   controllers: [],
   providers: [CronService, CronConsumerService],

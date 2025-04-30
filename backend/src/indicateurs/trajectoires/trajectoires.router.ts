@@ -1,28 +1,36 @@
+import { verificationTrajectoireRequestSchema } from '@/backend/indicateurs/index-domain';
+import { calculTrajectoireRequestSchema } from '@/backend/indicateurs/trajectoires/calcul-trajectoire.request';
+import TrajectoiresDataService from '@/backend/indicateurs/trajectoires/trajectoires-data.service';
 import { TrpcService } from '@/backend/utils/trpc/trpc.service';
 import { Injectable } from '@nestjs/common';
-import { z } from 'zod';
 import TrajectoiresSpreadsheetService from './trajectoires-spreadsheet.service';
 
 @Injectable()
 export class TrajectoiresRouter {
   constructor(
     private readonly trpc: TrpcService,
-    private readonly trajectoiresSpreadsheetService: TrajectoiresSpreadsheetService
+    private readonly trajectoiresSpreadsheetService: TrajectoiresSpreadsheetService,
+    private readonly trajectoiresDataService: TrajectoiresDataService
   ) {}
 
   router = this.trpc.router({
-    snbc: this.trpc.authedProcedure
-      .input(
-        z.object({
-          collectiviteId: z.number(),
-          conserve_fichier_temporaire: z.boolean().optional(),
-        })
-      )
-      .query(({ input, ctx }) => {
-        return this.trajectoiresSpreadsheetService.calculeTrajectoireSnbc(
-          input,
-          ctx.user
-        );
-      }),
+    snbc: this.trpc.router({
+      getOrCompute: this.trpc.authedProcedure
+        .input(calculTrajectoireRequestSchema)
+        .query(({ input, ctx }) => {
+          return this.trajectoiresSpreadsheetService.calculeTrajectoireSnbc(
+            input,
+            ctx.user
+          );
+        }),
+      checkStatus: this.trpc.authedProcedure
+        .input(verificationTrajectoireRequestSchema)
+        .query(({ input, ctx }) => {
+          return this.trajectoiresDataService.verificationDonneesSnbc(
+            input,
+            ctx.user
+          );
+        }),
+    }),
   });
 }

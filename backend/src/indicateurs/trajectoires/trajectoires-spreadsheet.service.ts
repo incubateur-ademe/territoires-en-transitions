@@ -324,8 +324,7 @@ export default class TrajectoiresSpreadsheetService {
     const upsertedTrajectoireIndicateurValeurs =
       await this.valeursService.upsertIndicateurValeurs(
         indicateurValeursTrajectoireResultat,
-        undefined, // we don't want to check permission, we have already checked it and it's not the same
-        true // disable calcul auto
+        undefined // we don't want to check permission, we have already checked it and it's not the same
       );
 
     // Maintenant que les indicateurs ont été créés, on peut ajouter la collectivité au groupement

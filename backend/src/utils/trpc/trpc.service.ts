@@ -57,7 +57,11 @@ export class TrpcService {
     this.contextStoreMiddleware.unstable_pipe(async ({ next, ctx }) => {
       const user = ctx.user;
 
-      if (isAnonymousUser(user) || isAuthenticatedUser(user)) {
+      if (
+        isAnonymousUser(user) ||
+        isAuthenticatedUser(user) ||
+        isServiceRoleUser(user)
+      ) {
         return next({ ctx: { user } });
       }
 

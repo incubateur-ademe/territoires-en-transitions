@@ -709,7 +709,11 @@ export default class TrajectoiresDataService {
       response.valeurs = valeurs.map((v) => v.indicateur_valeur);
       // Si jamais les données on déjà été calculées, on récupère la source depuis le commentaire
       // un peu un hack mais le plus simple aujourd'hui
-      const premierCommentaire = response.valeurs[0].objectifCommentaire;
+      const premierValeurAvecCommentaire = response.valeurs.find(
+        (v) => v.objectifCommentaire
+      );
+      const premierCommentaire =
+        premierValeurAvecCommentaire?.objectifCommentaire;
       const sourceIdentifiantManquants =
         this.extractSourceIdentifiantManquantsFromCommentaire(
           premierCommentaire || ''
@@ -719,7 +723,7 @@ export default class TrajectoiresDataService {
           `Aucune source trouvée dans le commentaire ${premierCommentaire} de la valeur d'indicateur ${response.valeurs[0].id}`
         );
       }
-      const dateCalcul = response.valeurs[0].modifiedAt;
+      const dateCalcul = premierValeurAvecCommentaire?.modifiedAt;
       response.sourcesDonneesEntree = sourceIdentifiantManquants?.sources || [];
       this.logger.log(
         `Sources des données SNBC déjà calculées : ${response.sourcesDonneesEntree?.join(

@@ -1,3 +1,4 @@
+import { zodQueryBoolean } from '@/backend/utils/zod.utils';
 import { z } from 'zod';
 import { collectiviteRequestSchema } from '../../collectivites/collectivite.request';
 
@@ -17,9 +18,7 @@ export const calculTrajectoireRequestSchema = collectiviteRequestSchema.extend({
     .nativeEnum(CalculTrajectoireReset)
     .optional()
     .describe('Mode pour forcer la recréation de la trajectoire'),
-  forceUtilisationDonneesCollectivite: z
-    .enum(['true', 'false'])
-    .transform((value) => value === 'true')
+  forceUtilisationDonneesCollectivite: zodQueryBoolean
     .optional()
     .describe(
       "Force l'utilisation des données de la collectivité plutôt que celles du rare"

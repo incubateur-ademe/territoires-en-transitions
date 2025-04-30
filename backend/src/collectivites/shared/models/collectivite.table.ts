@@ -23,6 +23,8 @@ export const collectiviteType = [
   'test',
 ] as const;
 
+export const collectiviteTypeEnumSchema = z.enum(collectiviteType);
+
 export const collectiviteTypeEnum = createEnumObject(collectiviteType);
 
 export const collectiviteTable = pgTable('collectivite', {

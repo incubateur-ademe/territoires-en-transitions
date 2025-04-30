@@ -13,6 +13,11 @@ export const JOBS_CONFIG = [
     cronExpression: CronExpression.EVERY_DAY_AT_1AM,
     data: {},
   },
+  {
+    name: 'compute-all-outdated-trajectoires',
+    cronExpression: CronExpression.EVERY_DAY_AT_1AM,
+    data: {},
+  },
 ] as const;
 
 export type JobConfig = (typeof JOBS_CONFIG)[number];
