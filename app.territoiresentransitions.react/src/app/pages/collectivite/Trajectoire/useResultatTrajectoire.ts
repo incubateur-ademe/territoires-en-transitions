@@ -1,6 +1,7 @@
-import { useApiClient } from '@/app/core-logic/api/useApiClient';
-import { useCollectiviteId } from '@/app/core-logic/hooks/params';
+import { trpc } from '@/api/utils/trpc/client';
+import { useCurrentCollectivite } from '@/app/collectivites/collectivite-context';
 import { COULEURS_SECTEUR, LAYERS } from '@/app/ui/charts/echarts/constants';
+import { IndicateurAvecValeurs } from '@/domain/indicateurs';
 import { useQuery } from 'react-query';
 import {
   DATE_FIN,
@@ -8,11 +9,7 @@ import {
   IndicateurTrajectoire,
   SourceIndicateur,
 } from './constants';
-import {
-  IndicateurAvecValeurs,
-  ResultatTrajectoire,
-  getKey,
-} from './useCalculTrajectoire';
+import { getKey } from './useCalculTrajectoire';
 import {
   IndicateurValeurGroupee,
   separeObjectifsEtResultats,
@@ -21,16 +18,15 @@ import {
 
 /** Charge la trajectoire */
 const useTrajectoire = () => {
-  const collectiviteId = useCollectiviteId();
-  const api = useApiClient();
+  const { collectiviteId } = useCurrentCollectivite();
+  const utils = trpc.useUtils();
 
   return useQuery(
     getKey(collectiviteId),
     async () =>
       collectiviteId
-        ? api.get<ResultatTrajectoire>({
-            route: '/trajectoires/snbc',
-            params: { collectiviteId },
+        ? utils.indicateurs.trajectoires.snbc.getOrCompute.fetch({
+            collectiviteId,
           })
         : null,
     {

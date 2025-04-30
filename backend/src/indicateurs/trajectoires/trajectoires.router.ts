@@ -28,7 +28,10 @@ export class TrajectoiresRouter {
         .query(({ input, ctx }) => {
           return this.trajectoiresDataService.verificationDonneesSnbc(
             input,
-            ctx.user
+            ctx.user,
+            undefined,
+            undefined,
+            true
           );
         }),
     }),

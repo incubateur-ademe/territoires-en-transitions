@@ -1,3 +1,4 @@
+import { VerificationTrajectoireStatus } from '@/domain/indicateurs';
 import { CountByPropertyEnumType } from '@/domain/plans/fiches';
 
 /* eslint-disable @typescript-eslint/ban-types */
@@ -335,11 +336,7 @@ export interface TrackingPlan extends Record<never, Page> {
     properties: CollectiviteDefaultProps &
       (
         | {
-            statut:
-              | 'commune_non_supportee'
-              | 'deja_calcule'
-              | 'pret_a_calculer'
-              | 'donnees_manquantes';
+            statut: VerificationTrajectoireStatus;
           }
         | { statut: 'error'; error?: string; statusCode?: number }
         | { statut?: undefined }

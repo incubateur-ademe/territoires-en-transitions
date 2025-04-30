@@ -1,5 +1,6 @@
 'use client';
 
+import { INDICATEUR_TRAJECTOIRE_IDENTFIANTS } from '@/app/app/pages/collectivite/Trajectoire/constants';
 import SpinnerLoader from '@/app/ui/shared/SpinnerLoader';
 import { useEffect } from 'react';
 import { useCalculTrajectoire } from '../../Trajectoire/useCalculTrajectoire';
@@ -25,7 +26,13 @@ export const IndicateurDetail = ({
     isLoading: isLoadingTrajectoire,
     isIdle,
   } = useCalculTrajectoire();
-  const { data: trajectoire } = useStatutTrajectoire();
+
+  const { data: trajectoire } = useStatutTrajectoire(
+    Boolean(
+      definition?.identifiant &&
+        INDICATEUR_TRAJECTOIRE_IDENTFIANTS.includes(definition.identifiant)
+    )
+  );
   const status = trajectoire?.status;
 
   // démarre le calcul de la trajectoire au chargement de la page
@@ -33,6 +40,8 @@ export const IndicateurDetail = ({
     if (
       !isPerso &&
       isIdle &&
+      definition?.identifiant &&
+      INDICATEUR_TRAJECTOIRE_IDENTFIANTS.includes(definition?.identifiant) &&
       status === 'pret_a_calculer' &&
       !isLoadingTrajectoire
     ) {

@@ -246,6 +246,12 @@ export const INDICATEURS_TRAJECTOIRE = [
   },
 ] as const;
 
+export const INDICATEUR_TRAJECTOIRE_IDENTFIANTS: string[] =
+  INDICATEURS_TRAJECTOIRE.flatMap((t) => [
+    t.identifiant,
+    ...t.secteurs.map((s) => s.identifiant),
+  ]);
+
 export const METHODO_PAR_SECTEUR = {
   Résidentiel: {
     snbc2: [
@@ -388,6 +394,9 @@ export type IndicateurTrajectoireId = IndicateurTrajectoire['id'];
 export type SecteurTrajectoire = IndicateurTrajectoire['secteurs'][number];
 
 // donne un indicateur trajectoire à partir de son id
-export const getIndicateurTrajectoire = (id: IndicateurTrajectoireId | typeof SEQUESTRATION_CARBONE.id) =>
-  id === SEQUESTRATION_CARBONE.id ? SEQUESTRATION_CARBONE : INDICATEURS_TRAJECTOIRE.find(t => t.id === id)!;
-
+export const getIndicateurTrajectoire = (
+  id: IndicateurTrajectoireId | typeof SEQUESTRATION_CARBONE.id
+) =>
+  id === SEQUESTRATION_CARBONE.id
+    ? SEQUESTRATION_CARBONE
+    : INDICATEURS_TRAJECTOIRE.find((t) => t.id === id)!;

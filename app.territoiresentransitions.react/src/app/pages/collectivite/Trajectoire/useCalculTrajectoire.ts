@@ -1,7 +1,9 @@
-import { Indicateurs } from '@/api';
 import { trpc } from '@/api/utils/trpc/client';
-import { useApiClient } from '@/app/core-logic/api/useApiClient';
-import { useCurrentCollectivite } from '@/app/core-logic/hooks/useCurrentCollectivite';
+import { useCurrentCollectivite } from '@/app/collectivites/collectivite-context';
+import {
+  CalculTrajectoireReset,
+  IndicateurAvecValeurs,
+} from '@/domain/indicateurs';
 import { useEventTracker } from '@/ui';
 import { useMutation, useQueryClient } from 'react-query';
 
@@ -13,20 +15,6 @@ export type ResultatTrajectoire = {
   };
 };
 
-export type IndicateurAvecValeurs = {
-  definition: Omit<
-    Indicateurs.domain.IndicateurDefinitionPredefini,
-    'identifiant'
-  > & { identifiantReferentiel: string };
-  valeurs: IndicateurValeurGroupee[];
-};
-
-type IndicateurValeurGroupee = {
-  id: number;
-  dateValeur: string;
-  objectif: number;
-};
-
 export const getKey = (collectiviteId: number | null) => [
   'snbc',
   collectiviteId,
@@ -34,8 +22,7 @@ export const getKey = (collectiviteId: number | null) => [
 
 /** Déclenche le calcul de la trajectoire */
 export const useCalculTrajectoire = (args?: { nouveauCalcul: boolean }) => {
-  const { collectiviteId, niveauAcces, role } = useCurrentCollectivite()!;
-  const api = useApiClient();
+  const { collectiviteId, niveauAcces, role } = useCurrentCollectivite();
   const queryClient = useQueryClient();
   const utils = trpc.useUtils();
   const trackEvent = useEventTracker('app/trajectoires/snbc');
@@ -50,17 +37,15 @@ export const useCalculTrajectoire = (args?: { nouveauCalcul: boolean }) => {
         role,
         source: args?.nouveauCalcul ? 'collectivite' : 'open_data',
       });
-      return api.get<ResultatTrajectoire>({
-        route: '/trajectoires/snbc',
-        params: {
-          collectiviteId,
-          ...(args?.nouveauCalcul
-            ? {
-                mode: 'maj_spreadsheet_existant',
-                forceUtilisationDonneesCollectivite: true,
-              }
-            : {}),
-        },
+
+      return utils.indicateurs.trajectoires.snbc.getOrCompute.fetch({
+        collectiviteId,
+        ...(args?.nouveauCalcul
+          ? {
+              mode: CalculTrajectoireReset.MAJ_SPREADSHEET_EXISTANT,
+              forceUtilisationDonneesCollectivite: true,
+            }
+          : {}),
       });
     },
     {
