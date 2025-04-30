@@ -49,12 +49,13 @@ export type FicheActionParam =
   | 'st'
   | 'ea'
   | 'pc'
-  | 'ax'
-  | 'np'
-  | 'ma';
+  | 'ax';
+
+// Exist in filters, but not supported in UI for now
+type PartialFiltres = Omit<Filtres, 'noPriorite' | 'modifiedAfter'>;
 
 export const nameToparams: Record<
-  keyof Filtres | 'sort' | 'page',
+  keyof PartialFiltres | 'sort' | 'page',
   FicheActionParam
 > = {
   statuts: 's',
@@ -95,11 +96,6 @@ export const nameToparams: Record<
   //participationCitoyenneType: 'pc',
   //axes: 'ax',
   sousThematiqueIds: 'st',
-  // Exist in filters, but not supported in UI for now
-  // Keep or remove?
-  // TODO
-  noPriorite: 'np',
-  modifiedAfter: 'ma',
 };
 
 /** Page de listing de toutes les fiches actions de la collectivité */
