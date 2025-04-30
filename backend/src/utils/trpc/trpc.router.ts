@@ -19,6 +19,7 @@ import { TrajectoiresRouter } from '../../indicateurs/trajectoires/trajectoires.
 import { IndicateurValeursRouter } from '../../indicateurs/valeurs/crud-valeurs.router';
 import { FichesRouter } from '../../plans/fiches/fiches.router';
 import { TrpcService } from './trpc.service';
+import { InvitationRouter } from '@/backend/auth/invitation/invitation.router';
 
 @Injectable()
 export class TrpcRouter {
@@ -36,6 +37,7 @@ export class TrpcRouter {
     private readonly referentielsRouter: ReferentielsRouter,
     private readonly usersRouter: UsersRouter,
     private readonly fichesRouter: FichesRouter
+    private readonly invitationRouter : InvitationRouter,
   ) {}
 
   appRouter = this.trpc.router({
@@ -57,6 +59,7 @@ export class TrpcRouter {
       fiches: this.fichesRouter.router,
     },
     referentiels: this.referentielsRouter.router,
+    invitations : this.invitationRouter.router,
   });
 
   createCaller = this.trpc.createCallerFactory(this.appRouter);

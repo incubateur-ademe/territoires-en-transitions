@@ -1,0 +1,251 @@
+import { Injectable } from '@nestjs/common';
+import { DatabaseService } from '@/backend/utils';
+import { Transaction } from '@/backend/utils/database/transaction.utils';
+import { personneTagTable } from '@/backend/collectivites/tags/personnes/personne-tag.table';
+import { and, AnyColumn, eq, inArray, sql } from 'drizzle-orm';
+import { PgTable } from 'drizzle-orm/pg-core';
+import { ficheActionPiloteTable } from '@/backend/plans/fiches/shared/models/fiche-action-pilote.table';
+import { ficheActionReferentTable } from '@/backend/plans/fiches/shared/models/fiche-action-referent.table';
+import { indicateurPiloteTable } from '@/backend/indicateurs/shared/models/indicateur-pilote.table';
+import { actionPiloteTable } from '@/backend/referentiels/models/action-pilote.table';
+import { AuthUser } from '@/backend/auth/models/auth.models';
+import { PermissionOperation } from '@/backend/auth/authorizations/permission-operation.enum';
+import { ResourceType } from '@/backend/auth/authorizations/resource-type.enum';
+import { PermissionService } from '@/backend/auth/authorizations/permission.service';
+import { utilisateurPermissionTable } from '@/backend/auth/authorizations/roles/private-utilisateur-droit.table';
+import { getPersonneTagsResponse } from '@/backend/collectivites/tags/personnes/getPersonneTags.response';
+import { invitationTable } from '@/backend/auth/models/invitation.table';
+import { invitationPersonneTagTable } from '@/backend/auth/invitation/invitation-personne-tag.table';
+
+/** Liste des tables ayant une référence vers personne_tag */
+const tables = [
+  ficheActionPiloteTable,
+  ficheActionReferentTable,
+  indicateurPiloteTable,
+  actionPiloteTable,
+];
+
+@Injectable()
+export class PersonneTagService {
+  constructor(
+    private readonly databaseService: DatabaseService,
+    private readonly permissionService: PermissionService
+  ) {}
+
+  /**
+   * Récupèrer les personne_tag demandés ainsi que leurs informations concernant les invitations
+   * @param collectiviteId
+   * @param tagIds
+   * @param user
+   */
+  async getPersonneTags(
+    collectiviteId: number,
+    tagIds: number[],
+    user: AuthUser
+  ): Promise<getPersonneTagsResponse[]> {
+    // Vérification des droits
+    await this.permissionService.isAllowed(
+      user,
+      PermissionOperation.TAGS_LECTURE,
+      ResourceType.COLLECTIVITE,
+      collectiviteId
+    );
+
+    // Créer les sous requêtes de count
+    // Compte le nombre de fiches par personne pilote
+    const fap = this.databaseService.db
+      .select({
+        tagId: ficheActionPiloteTable.tagId,
+        count: sql<number>`count
+          (${ficheActionPiloteTable.ficheId})`,
+      })
+      .from(ficheActionPiloteTable)
+      .groupBy(ficheActionPiloteTable.tagId)
+      .as('fap');
+
+    // Compte le nombre de fiches par personne référente
+    const far = this.databaseService.db
+      .select({
+        tagId: ficheActionReferentTable.tagId,
+        count: sql<number>`count
+          (${ficheActionReferentTable.ficheId})`,
+      })
+      .from(ficheActionReferentTable)
+      .groupBy(ficheActionReferentTable.tagId)
+      .as('far');
+
+    // Compte le nombre d'indicateurs par personne pilote
+    const ip = this.databaseService.db
+      .select({
+        tagId: indicateurPiloteTable.tagId,
+        count: sql<number>`count
+          (${indicateurPiloteTable.indicateurId})`,
+      })
+      .from(indicateurPiloteTable)
+      .groupBy(indicateurPiloteTable.tagId)
+      .as('ip');
+
+    // Compte le nombre d'actions par personne pilote
+    const ap = this.databaseService.db
+      .select({
+        tagId: actionPiloteTable.tagId,
+        count: sql<number>`count
+          (${actionPiloteTable.actionId})`,
+      })
+      .from(actionPiloteTable)
+      .groupBy(actionPiloteTable.tagId)
+      .as('ap');
+
+    // Crée les conditions
+    const conditionCol = eq(personneTagTable.collectiviteId, collectiviteId);
+    const conditionId = inArray(personneTagTable.id, tagIds);
+
+    // Crée et retourne la requête
+    return this.databaseService.db
+      .select({
+        tagId: personneTagTable.id,
+        tagNom: personneTagTable.nom,
+        email: invitationTable.email,
+        nbFicheActionPilotes: sql<number>`coalesce
+          (fap.count, 0)::int`,
+        nbFicheActionReferents: sql<number>`coalesce
+          (far.count, 0)::int`,
+        nbIndicateurPilotes: sql<number>`coalesce
+          (ip.count, 0)::int`,
+        nbActionPilotes: sql<number>`coalesce
+          (ap.count, 0)::int`,
+      })
+      .from(personneTagTable)
+      .leftJoin(
+        invitationPersonneTagTable,
+        and(
+          eq(invitationPersonneTagTable.tagId, personneTagTable.id),
+          eq(invitationPersonneTagTable.tagNom, personneTagTable.nom)
+        )
+      )
+      .leftJoin(
+        invitationTable,
+        eq(invitationPersonneTagTable.invitationId, invitationTable.id)
+      )
+      .leftJoin(fap, eq(fap.tagId, personneTagTable.id))
+      .leftJoin(far, eq(far.tagId, personneTagTable.id))
+      .leftJoin(ip, eq(ip.tagId, personneTagTable.id))
+      .leftJoin(ap, eq(ap.tagId, personneTagTable.id))
+      .where(tagIds.length > 0 ? and(conditionCol, conditionId) : conditionCol);
+  }
+
+  /**
+   * Attribue des tags à un utilisateur
+   * @param userId
+   * @param tagIds
+   * @param collectiviteId
+   * @param token
+   * @param trx
+   */
+  async tagsToUser(
+    userId: string,
+    tagIds: number[],
+    collectiviteId: number,
+    token: AuthUser,
+    trx?: Transaction
+  ) {
+    await this.permissionService.isAllowed(
+      token,
+      PermissionOperation.TAGS_EDITION,
+      ResourceType.COLLECTIVITE,
+      collectiviteId
+    );
+    if (tagIds.length == 0) {
+      return;
+    }
+    const execute = async (tx: Transaction) => {
+      // Vérifie que l'utilisateur donné appartienne à la collectivité
+      const [utilisateur] = await tx
+        .select()
+        .from(utilisateurPermissionTable)
+        .where(
+          and(
+            eq(utilisateurPermissionTable.userId, userId),
+            eq(utilisateurPermissionTable.isActive, true)
+          )
+        )
+        .limit(1);
+      if (!utilisateur) {
+        throw new Error(
+          `L'utilisateur ${userId} n'est pas rattaché à la collectivité ${collectiviteId}.`
+        );
+      }
+      // Vérifie que les tags existent
+      const tagsToAdd = await tx
+        .select()
+        .from(personneTagTable)
+        .where(inArray(personneTagTable.id, tagIds));
+
+      // Attribuer les tags
+      for (const tag of tagsToAdd) {
+        if (tag.collectiviteId != collectiviteId) {
+          throw new Error(
+            `Le tag "${tag.nom}" (${tag.id}) appartient à la collectivité ${tag.collectiviteId} et non à la collectivité donnée ${collectiviteId}`
+          );
+        }
+        await this.changeTagAndDelete(tx, tag.id, userId);
+      }
+    };
+    // Exécuter les requêtes dans la transaction trx donnée si elle existe
+    // Ou dans une nouvelle transaction si elle n'existe pas
+    if (trx) {
+      await execute(trx);
+    } else {
+      await this.databaseService.db.transaction(async (newTrx) => {
+        await execute(newTrx);
+      });
+    }
+  }
+
+  /**
+   * Change le tagId par userId dans toutes les tables liées puis supprime le tag
+   * @trx
+   * @tagId
+   * @userId
+   */
+  async changeTagAndDelete(trx: Transaction, tagId: number, userId: string) {
+    for (const table of tables) {
+      await this.changeTagToUser(trx, tagId, userId, table);
+    }
+    // Supprime le tag
+    await trx.delete(personneTagTable).where(eq(personneTagTable.id, tagId));
+  }
+
+  /**
+   * Change tagId par userId dans la table demandée
+   * @param trx
+   * @param tagId
+   * @param userId
+   * @param table
+   * @private
+   */
+  private async changeTagToUser(
+    trx: Transaction,
+    tagId: number,
+    userId: string,
+    table: PgTable & { tagId: AnyColumn }
+  ) {
+    // Récupère les enregistrements de la table
+    const tags = await trx.select().from(table).where(eq(table.tagId, tagId));
+
+    if (tags.length > 0) {
+      // Transforme les enregistrements pour mettre userId au lieu de tagId
+      const pilotesToAdd = tags.map(({ id, ...tag }) => ({
+        ...tag,
+        tagId: null,
+        userId: userId,
+      }));
+
+      // Ajoute les lignes transformées
+      await trx.insert(table).values(pilotesToAdd).onConflictDoNothing(); // Plusieurs tags peuvent être attribués à la même personne
+
+      // Supprime les anciens enregistrements ayant les tags
+      await trx.delete(table).where(eq(table.tagId, tagId));
+    }
+  }
+}
