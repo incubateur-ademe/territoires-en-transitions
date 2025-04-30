@@ -1,13 +1,13 @@
 'use client';
 
-import { useCollectiviteId } from '@/app/core-logic/hooks/params';
+import { useCurrentCollectivite } from '@/app/collectivites/collectivite-context';
 import SpinnerLoader from '@/app/ui/shared/SpinnerLoader';
+import { VerificationTrajectoireStatus } from '@/backend/indicateurs/index-domain';
 import { Alert, Button, Card, Modal, TrackPageView } from '@/ui';
 import PageContainer from '@/ui/components/layout/page-container';
 import { pick } from 'es-toolkit';
 import { useEffect } from 'react';
 import { useQueryClient } from 'react-query';
-import { useCurrentCollectivite } from '../../../../core-logic/hooks/useCurrentCollectivite';
 import { CommuneNonSupportee } from './CommuneNonSupportee';
 import { HELPDESK_URL } from './constants';
 import { ReactComponent as DbErrorPicto } from './db-error.svg';
@@ -15,11 +15,7 @@ import { DonneesCollectivite } from './DonneesCollectivite/DonneesCollectivite';
 import { ReactComponent as TrajectoirePicto } from './trajectoire.svg';
 import { TrajectoireCalculee } from './TrajectoireCalculee';
 import { useCalculTrajectoire } from './useCalculTrajectoire';
-import {
-  getStatusKey,
-  StatutTrajectoire,
-  useStatutTrajectoire,
-} from './useStatutTrajectoire';
+import { getStatusKey, useStatutTrajectoire } from './useStatutTrajectoire';
 
 /**
  * Affiche l'écran approprié en fonction du statut du calcul de la trajectoire SNBC
@@ -36,7 +32,7 @@ const TrajectoireContent = (props: {
     );
   }
 
-  if (error?.statusCode === 401) {
+  if (data?.status === VerificationTrajectoireStatus.DROITS_INSUFFISANTS) {
     return <ErreurDroits />;
   }
 
@@ -44,19 +40,19 @@ const TrajectoireContent = (props: {
     return <ErreurDeChargement />;
   }
 
-  if (data.status === StatutTrajectoire.DONNEES_MANQUANTES) {
+  if (data.status === VerificationTrajectoireStatus.DONNEES_MANQUANTES) {
     return <DonneesNonDispo />;
   }
 
-  if (data.status === StatutTrajectoire.COMMUNE_NON_SUPPORTEE) {
+  if (data.status === VerificationTrajectoireStatus.COMMUNE_NON_SUPPORTEE) {
     return <CommuneNonSupportee />;
   }
 
-  if (data.status === StatutTrajectoire.PRET_A_CALCULER) {
+  if (data.status === VerificationTrajectoireStatus.PRET_A_CALCULER) {
     return <Presentation />;
   }
 
-  if (data.status === StatutTrajectoire.DEJA_CALCULE) {
+  if (data.status === VerificationTrajectoireStatus.DEJA_CALCULE) {
     return <TrajectoireCalculee />;
   }
 
@@ -159,7 +155,7 @@ const Presentation = () => {
   }, []);
 
   const queryClient = useQueryClient();
-  const collectiviteId = useCollectiviteId();
+  const collectivite = useCurrentCollectivite();
 
   return (
     <div className="flex flex-col">
@@ -201,7 +197,9 @@ const Presentation = () => {
       {trajectoire ? (
         <Button
           onClick={() => {
-            queryClient.invalidateQueries(getStatusKey(collectiviteId));
+            queryClient.invalidateQueries(
+              getStatusKey(collectivite.collectiviteId)
+            );
           }}
         >
           J’accède à la trajectoire
@@ -236,12 +234,9 @@ const Presentation = () => {
 const Trajectoire = () => {
   const statutTrajectoire = useStatutTrajectoire();
   const { data, error, isLoading } = statutTrajectoire;
-  const collectivite = useCurrentCollectivite()!;
+  const collectivite = useCurrentCollectivite();
   const statut = isLoading ? undefined : data?.status ? data.status : 'error';
-  const errorProps =
-    statut === 'error'
-      ? { error: error?.message, statusCode: error?.statusCode }
-      : {};
+  const errorProps = statut === 'error' ? { error: error?.message } : {};
 
   return (
     collectivite.collectiviteId && (

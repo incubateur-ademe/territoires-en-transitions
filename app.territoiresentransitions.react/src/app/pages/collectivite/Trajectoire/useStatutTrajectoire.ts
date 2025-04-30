@@ -1,6 +1,6 @@
+import { trpc } from '@/api/utils/trpc/client';
 import { useCollectiviteId } from '@/app/collectivites/collectivite-context';
-import { ApiError, useApiClient } from '@/app/core-logic/api/useApiClient';
-import { useQuery } from 'react-query';
+import { useApiClient } from '@/app/core-logic/api/useApiClient';
 
 export enum StatutTrajectoire {
   COMMUNE_NON_SUPPORTEE = 'commune_non_supportee',
@@ -19,21 +19,16 @@ type ResponseType = {
 };
 
 /** Donne le statut du calcul de trajectoire d'une collectivité */
-export const useStatutTrajectoire = () => {
+export const useStatutTrajectoire = (enabled: boolean = true) => {
   const collectiviteId = useCollectiviteId();
   const api = useApiClient();
 
-  return useQuery<ResponseType | null, ApiError>(
-    getStatusKey(collectiviteId),
-    async () =>
-      collectiviteId
-        ? api.get<ResponseType>({
-            route: '/trajectoires/snbc/verification',
-            params: { collectiviteId },
-          })
-        : null,
+  return trpc.indicateurs.trajectoires.snbc.checkStatus.useQuery(
     {
-      retry: false,
+      collectiviteId,
+    },
+    {
+      enabled: enabled && !!collectiviteId,
     }
   );
 };
