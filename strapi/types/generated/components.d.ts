@@ -360,6 +360,28 @@ export interface SharedVignetteAvecCta extends Schema.Component {
   };
 }
 
+export interface SharedVignetteAvecDetails extends Schema.Component {
+  collectionName: 'components_shared_vignette_avec_details';
+  info: {
+    description: '';
+    displayName: 'vignette_avec_details';
+  };
+  attributes: {
+    details_cta: Attribute.Component<'shared.bouton'>;
+    details_texte: Attribute.RichText & Attribute.Required;
+    details_titre: Attribute.String &
+      Attribute.SetMinMaxLength<{
+        maxLength: 255;
+      }>;
+    image: Attribute.Media<'images'> & Attribute.Required;
+    legende: Attribute.RichText & Attribute.Required;
+    titre: Attribute.String &
+      Attribute.SetMinMaxLength<{
+        maxLength: 255;
+      }>;
+  };
+}
+
 export interface SharedVignetteAvecMarkdown extends Schema.Component {
   collectionName: 'components_shared_vignette_avec_markdowns';
   info: {
@@ -420,6 +442,7 @@ declare module '@strapi/types' {
       'shared.temoignage': SharedTemoignage;
       'shared.vignette': SharedVignette;
       'shared.vignette-avec-cta': SharedVignetteAvecCta;
+      'shared.vignette-avec-details': SharedVignetteAvecDetails;
       'shared.vignette-avec-markdown': SharedVignetteAvecMarkdown;
       'shared.vignette-avec-titre': SharedVignetteAvecTitre;
     }

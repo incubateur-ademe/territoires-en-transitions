@@ -1,0 +1,37 @@
+{
+  "collectionName": "components_shared_vignette_avec_details",
+  "info": {
+    "displayName": "vignette_avec_details",
+    "description": ""
+  },
+  "options": {},
+  "attributes": {
+    "titre": {
+      "type": "string",
+      "maxLength": 255
+    },
+    "legende": {
+      "type": "richtext",
+      "required": true
+    },
+    "image": {
+      "type": "media",
+      "multiple": false,
+      "required": true,
+      "allowedTypes": ["images"]
+    },
+    "details_titre": {
+      "type": "string",
+      "maxLength": 255
+    },
+    "details_texte": {
+      "type": "richtext",
+      "required": true
+    },
+    "details_cta": {
+      "type": "component",
+      "repeatable": false,
+      "component": "shared.bouton"
+    }
+  }
+}
