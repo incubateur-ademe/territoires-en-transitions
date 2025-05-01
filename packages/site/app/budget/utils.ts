@@ -1,3 +1,4 @@
+import { VignetteFetchedData } from '@/site/app/types';
 import { fetchSingle } from '@/site/src/strapi/strapi';
 import { StrapiItem } from '@/site/src/strapi/StrapiItem';
 
@@ -16,8 +17,8 @@ export const getStrapiData = async () => {
   const data = await fetchSingle('page-budget', [
     ['populate[0]', 'seo'],
     ['populate[1]', 'seo.metaImage'],
-    ['populate[2]', 'principes_liste'],
-    ['populate[3]', 'principes_liste.image'],
+    ['populate[2]', 'principes_liste_markdown'],
+    ['populate[3]', 'principes_liste_markdown.image'],
     ['populate[4]', 'description_liste'],
     ['populate[5]', 'description_liste.image'],
   ]);
@@ -57,14 +58,10 @@ export const getStrapiData = async () => {
         titre: budgetData.principes_titre as unknown as string,
         description: budgetData.principes_description as unknown as string,
         liste: (
-          budgetData.principes_liste as unknown as {
-            id: number;
-            legende: string;
-            image: { data: StrapiItem };
-          }[]
+          budgetData.principes_liste_markdown as unknown as VignetteFetchedData[]
         ).map((p) => ({
           ...p,
-          image: p.image.data,
+          image: p.image?.data,
         })),
       },
       budgetConsomme: {
@@ -77,15 +74,10 @@ export const getStrapiData = async () => {
         descriptionCouts: {
           titre: budgetData.description_titre as unknown as string,
           liste: (
-            budgetData.description_liste as unknown as {
-              id: number;
-              titre?: string;
-              legende: string;
-              image: { data: StrapiItem };
-            }[]
+            budgetData.description_liste as unknown as VignetteFetchedData[]
           ).map((d) => ({
             ...d,
-            image: d.image.data,
+            image: d.image?.data,
           })),
         },
         infoTva: {

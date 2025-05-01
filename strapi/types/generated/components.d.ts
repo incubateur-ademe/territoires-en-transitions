@@ -373,7 +373,7 @@ export interface SharedVignetteAvecDetails extends Schema.Component {
       Attribute.SetMinMaxLength<{
         maxLength: 255;
       }>;
-    image: Attribute.Media<'images'> & Attribute.Required;
+    image: Attribute.Media<'images'>;
     legende: Attribute.RichText & Attribute.Required;
     titre: Attribute.String &
       Attribute.SetMinMaxLength<{
@@ -390,8 +390,8 @@ export interface SharedVignetteAvecMarkdown extends Schema.Component {
     icon: 'layout';
   };
   attributes: {
-    image: Attribute.Media<'images'> & Attribute.Required;
-    legende: Attribute.RichText & Attribute.Required;
+    image: Attribute.Media<'images'>;
+    legende: Attribute.RichText;
     titre: Attribute.String &
       Attribute.SetMinMaxLength<{
         maxLength: 255;

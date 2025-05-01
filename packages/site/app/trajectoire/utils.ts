@@ -1,3 +1,4 @@
+import { VignetteFetchedData } from '@/site/app/types';
 import { fetchSingle } from '@/site/src/strapi/strapi';
 import { StrapiItem } from '@/site/src/strapi/StrapiItem';
 
@@ -8,8 +9,8 @@ export const getStrapiData = async () => {
     ['populate[2]', 'couverture'],
     ['populate[3]', 'bloc1_image'],
     ['populate[4]', 'bloc2_image'],
-    ['populate[5]', 'methode_exemples'],
-    ['populate[6]', 'methode_exemples.image'],
+    ['populate[5]', 'methode_exemples_markdown'],
+    ['populate[6]', 'methode_exemples_markdown.image'],
     ['populate[7]', 'methode_image'],
     ['populate[8]', 'calcul_liste'],
     ['populate[9]', 'calcul_liste.image'],
@@ -61,14 +62,9 @@ export const getStrapiData = async () => {
         titre: trajectoiresData.methode_titre as unknown as string,
         description: trajectoiresData.methode_description as unknown as string,
         exemples: (
-          trajectoiresData.methode_exemples as unknown as {
-            id: number;
-            legende: string;
-            image: { data: StrapiItem };
-          }[]
+          trajectoiresData.methode_exemples_markdown as unknown as VignetteFetchedData[]
         ).map((ex) => ({
-          id: ex.id,
-          legende: ex.legende,
+          ...ex,
           image: ex.image ? ex.image.data : undefined,
         })),
         image: trajectoiresData.methode_image.data as unknown as StrapiItem,
@@ -84,16 +80,9 @@ export const getStrapiData = async () => {
         titre: trajectoiresData.calcul_titre as unknown as string,
         description: trajectoiresData.calcul_description as unknown as string,
         liste: (
-          trajectoiresData.calcul_liste as unknown as {
-            id: number;
-            titre: string;
-            legende: string;
-            image: { data: StrapiItem };
-          }[]
+          trajectoiresData.calcul_liste as unknown as VignetteFetchedData[]
         ).map((c) => ({
-          id: c.id,
-          titre: c.titre,
-          legende: c.legende,
+          ...c,
           image: c.image ? c.image.data : undefined,
         })),
       },

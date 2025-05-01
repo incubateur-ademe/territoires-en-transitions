@@ -187,3 +187,57 @@ export type InfoFetchedData = {
 };
 
 export type EtoilesLabel = 0 | 1 | 2 | 3 | 4 | 5;
+
+// Composants Strapi
+
+export type VignetteFetchedData = {
+  id: number;
+  titre?: string;
+  legende?: string;
+  image?: { data: StrapiItem };
+};
+
+export type Vignette = {
+  id: number;
+  titre?: string;
+  legende?: string;
+  image?: StrapiItem;
+};
+
+export type VignetteAvecDetailsFetchedData = {
+  id: number;
+  titre?: string;
+  legende: string;
+  image?: { data: StrapiItem };
+  details_titre?: string;
+  details_texte: string;
+  details_cta?: { label: string; url?: string };
+};
+
+export type VignetteAvecDetails = {
+  id: number;
+  titre?: string;
+  legende: string;
+  image?: StrapiItem;
+  details: {
+    titre?: string;
+    contenu: string;
+    cta?: { label: string; url?: string };
+  };
+};
+
+export type VignetteAvecCtaFetchedData = {
+  id: number;
+  titre?: string;
+  legende: string;
+  image: { data: StrapiItem };
+  cta: string;
+};
+
+export type VignetteAvecCta = {
+  id: number;
+  titre?: string;
+  legende: string;
+  image: StrapiItem;
+  cta: string;
+};

@@ -53,9 +53,9 @@ const Card = ({
       )}
       onClick={onClick}
     >
-      {!!image && <div>{image}</div>}
+      {!!image && <div className="overflow-hidden">{image}</div>}
       <div
-        className={classNames('h-full flex flex-col justify-between', {
+        className={classNames('flex flex-col justify-between', {
           'col-span-2': !!image && imagePosition === 'left',
         })}
       >

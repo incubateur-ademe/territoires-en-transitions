@@ -1,21 +1,16 @@
 'use client';
 
+import { Vignette } from '@/site/app/types';
 import CardsWrapper from '@/site/components/cards/CardsWrapper';
 import Markdown from '@/site/components/markdown/Markdown';
 import Section from '@/site/components/sections/Section';
 import { StrapiImage } from '@/site/components/strapiImage/StrapiImage';
-import { StrapiItem } from '@/site/src/strapi/StrapiItem';
 import classNames from 'classnames';
 
 type CalculProps = {
   titre: string;
   description: string;
-  liste: {
-    id: number;
-    titre: string;
-    legende: string;
-    image?: StrapiItem;
-  }[];
+  liste: Vignette[];
   backgroundColor?: 'bg-primary-0' | 'bg-primary-1';
 };
 
@@ -54,12 +49,14 @@ const Calcul = ({
               />
             )}
             <div>
-              <h3 className="mb-4">{elt.titre}</h3>
+              {!!elt.titre && <h3 className="mb-4">{elt.titre}</h3>}
 
-              <Markdown
-                texte={elt.legende}
-                className="paragraphe-16 paragraphe-primary-9 markdown_style"
-              />
+              {!!elt.legende && (
+                <Markdown
+                  texte={elt.legende}
+                  className="paragraphe-16 paragraphe-primary-9 markdown_style"
+                />
+              )}
             </div>
           </div>
         ))}

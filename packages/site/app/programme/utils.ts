@@ -1,3 +1,4 @@
+import { VignetteFetchedData } from '@/site/app/types';
 import { fetchSingle } from '@/site/src/strapi/strapi';
 import { StrapiItem } from '@/site/src/strapi/StrapiItem';
 
@@ -6,8 +7,8 @@ export const getStrapiData = async () => {
   const data = await fetchSingle('page-programme', [
     ['populate[0]', 'seo'],
     ['populate[1]', 'seo.metaImage'],
-    ['populate[2]', 'benefices_liste'],
-    ['populate[3]', 'etapes_liste'],
+    ['populate[2]', 'benefices_liste_markdown.image'],
+    ['populate[3]', 'etapes_liste_markdown.image'],
     ['populate[4]', 'services_liste_rel.image'],
     ['populate[5]', 'compte_image'],
   ]);
@@ -44,18 +45,13 @@ export const getStrapiData = async () => {
       benefices: {
         titre: programmeData.benefices_titre as unknown as string,
         contenu:
-          !!programmeData.benefices_liste &&
-          programmeData.benefices_liste.length
+          !!programmeData.benefices_liste_markdown &&
+          programmeData.benefices_liste_markdown.length
             ? (
-                programmeData.benefices_liste as unknown as {
-                  id: number;
-                  titre: string;
-                  legende: string;
-                }[]
+                programmeData.benefices_liste_markdown as unknown as VignetteFetchedData[]
               ).map((benef) => ({
-                id: benef.id,
-                titre: benef.titre,
-                description: benef.legende,
+                ...benef,
+                image: benef.image?.data,
               }))
             : null,
       },
@@ -67,17 +63,13 @@ export const getStrapiData = async () => {
         titre: programmeData.etapes_titre as unknown as string,
         cta: programmeData.etapes_cta as unknown as string,
         contenu:
-          !!programmeData.etapes_liste && programmeData.etapes_liste.length
+          !!programmeData.etapes_liste_markdown &&
+          programmeData.etapes_liste_markdown.length
             ? (
-                programmeData.etapes_liste as unknown as {
-                  id: number;
-                  titre: string;
-                  legende: string;
-                }[]
+                programmeData.etapes_liste_markdown as unknown as VignetteFetchedData[]
               ).map((et) => ({
-                id: et.id,
-                titre: et.titre,
-                description: et.legende,
+                ...et,
+                image: et.image?.data,
               }))
             : null,
       },

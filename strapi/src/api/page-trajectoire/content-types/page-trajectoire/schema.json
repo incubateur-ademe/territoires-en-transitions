@@ -87,6 +87,13 @@
       "required": true,
       "min": 2
     },
+    "methode_exemples_markdown": {
+      "type": "component",
+      "repeatable": true,
+      "component": "shared.vignette-avec-markdown",
+      "required": true,
+      "min": 2
+    },
     "methode_image": {
       "type": "media",
       "multiple": false,

@@ -64,6 +64,13 @@
       "min": 2,
       "max": 4
     },
+    "avantages_liste": {
+      "type": "component",
+      "repeatable": true,
+      "component": "shared.vignette-avec-markdown",
+      "min": 2,
+      "max": 4
+    },
     "panier_titre": {
       "type": "string",
       "required": true,
