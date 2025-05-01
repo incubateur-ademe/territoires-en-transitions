@@ -17,8 +17,10 @@
     "image": {
       "type": "media",
       "multiple": false,
-      "required": true,
-      "allowedTypes": ["images"]
+      "required": false,
+      "allowedTypes": [
+        "images"
+      ]
     },
     "details_titre": {
       "type": "string",

@@ -824,6 +824,18 @@ export interface ApiPageBudgetPageBudget extends Schema.SingleType {
         },
         number
       >;
+    principes_liste_markdown: Attribute.Component<
+      'shared.vignette-avec-markdown',
+      true
+    > &
+      Attribute.Required &
+      Attribute.SetMinMax<
+        {
+          max: 5;
+          min: 1;
+        },
+        number
+      >;
     principes_titre: Attribute.String & Attribute.Required;
     publishedAt: Attribute.DateTime;
     repartition_titre: Attribute.String & Attribute.Required;
@@ -958,6 +970,17 @@ export interface ApiPageOutilsNumeriquePageOutilsNumerique
       }> &
       Attribute.DefaultTo<'D\u00E9couvrez ce service gratuit d\u00E9di\u00E9 \u00E0 accompagner votre collectivit\u00E9 ! '>;
     avantages: Attribute.Component<'shared.vignette', true> &
+      Attribute.SetMinMax<
+        {
+          max: 4;
+          min: 2;
+        },
+        number
+      >;
+    avantages_liste: Attribute.Component<
+      'shared.vignette-avec-markdown',
+      true
+    > &
       Attribute.SetMinMax<
         {
           max: 4;
@@ -1104,6 +1127,10 @@ export interface ApiPageProgrammePageProgramme extends Schema.SingleType {
       }> &
       Attribute.DefaultTo<'Parcourir l\u2019annuaire des conseillers\u2E31\u00E8res'>;
     benefices_liste: Attribute.Component<'shared.vignette-avec-titre', true>;
+    benefices_liste_markdown: Attribute.Component<
+      'shared.vignette-avec-markdown',
+      true
+    >;
     benefices_titre: Attribute.String &
       Attribute.Required &
       Attribute.SetMinMaxLength<{
@@ -1166,6 +1193,10 @@ export interface ApiPageProgrammePageProgramme extends Schema.SingleType {
       }> &
       Attribute.DefaultTo<'D\u00E9marrer maintenant'>;
     etapes_liste: Attribute.Component<'shared.vignette-avec-titre', true>;
+    etapes_liste_markdown: Attribute.Component<
+      'shared.vignette-avec-markdown',
+      true
+    >;
     etapes_titre: Attribute.String &
       Attribute.Required &
       Attribute.SetMinMaxLength<{
@@ -1286,6 +1317,17 @@ export interface ApiPageTrajectoirePageTrajectoire extends Schema.SingleType {
       Attribute.Required &
       Attribute.DefaultTo<'Exemple - pour le secteur r\u00E9sidentiel, les pivots de territorialisation sont :'>;
     methode_exemples: Attribute.Component<'shared.vignette', true> &
+      Attribute.Required &
+      Attribute.SetMinMax<
+        {
+          min: 2;
+        },
+        number
+      >;
+    methode_exemples_markdown: Attribute.Component<
+      'shared.vignette-avec-markdown',
+      true
+    > &
       Attribute.Required &
       Attribute.SetMinMax<
         {

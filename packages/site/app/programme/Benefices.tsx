@@ -1,11 +1,12 @@
+import { Vignette } from '@/site/app/types';
 import Card from '@/site/components/cards/Card';
 import CardsWrapper from '@/site/components/cards/CardsWrapper';
 import CardsSection from '@/site/components/sections/CardsSection';
-import { Content } from './types';
+import { StrapiImage } from '@/site/components/strapiImage/StrapiImage';
 
 type BeneficesProps = {
   titre: string;
-  contenu: Content[] | null;
+  contenu: Vignette[] | null;
 };
 
 const Benefices = ({ titre, contenu }: BeneficesProps) => {
@@ -19,7 +20,16 @@ const Benefices = ({ titre, contenu }: BeneficesProps) => {
             <Card
               key={c.id}
               title={c.titre ?? ''}
-              description={c.description}
+              description={c.legende ?? ''}
+              image={
+                c.image ? (
+                  <StrapiImage
+                    data={c.image}
+                    displayCaption={false}
+                    className="w-full h-[200px] object-cover"
+                  />
+                ) : undefined
+              }
             />
           ))}
         </CardsWrapper>

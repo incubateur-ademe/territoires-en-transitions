@@ -1,29 +1,17 @@
 'use client';
 
+import { VignetteAvecDetails } from '@/site/app/types';
 import Card from '@/site/components/cards/Card';
 import CardsWrapper from '@/site/components/cards/CardsWrapper';
 import Markdown from '@/site/components/markdown/Markdown';
 import CardsSection from '@/site/components/sections/CardsSection';
 import { StrapiImage } from '@/site/components/strapiImage/StrapiImage';
-import { StrapiItem } from '@/site/src/strapi/StrapiItem';
 import { Button, Modal } from '@/ui';
 import { Fragment, useState } from 'react';
 
 type ObjectifsProps = {
   titre: string;
-  contenu:
-    | {
-        id: number;
-        titre?: string;
-        description: string;
-        image: StrapiItem;
-        details: {
-          titre: string;
-          contenu: string;
-          cta: { label: string; url?: string };
-        };
-      }[]
-    | null;
+  contenu: VignetteAvecDetails[] | null;
 };
 
 const Objectifs = ({ titre, contenu }: ObjectifsProps) => {
@@ -41,7 +29,7 @@ const Objectifs = ({ titre, contenu }: ObjectifsProps) => {
               <Card
                 onClick={() => setOpenedContent(c.id)}
                 className="!border-primary-3 !gap-4 xl:!gap-5 !p-4 xl:!p-5 group cursor-pointer"
-                description={c.description}
+                description={c.legende}
                 textClassName="text-center small-text"
                 image={
                   <div className="relative">

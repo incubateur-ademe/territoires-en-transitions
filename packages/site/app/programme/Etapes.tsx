@@ -2,15 +2,16 @@
 
 import posthog from 'posthog-js';
 
+import { Vignette } from '@/site/app/types';
 import Card from '@/site/components/cards/Card';
 import CardsWrapper from '@/site/components/cards/CardsWrapper';
 import CardsSection from '@/site/components/sections/CardsSection';
+import { StrapiImage } from '@/site/components/strapiImage/StrapiImage';
 import { Button } from '@/ui';
-import { Content } from './types';
 
 type EtapesProps = {
   titre: string;
-  contenu: Content[] | null;
+  contenu: Vignette[] | null;
   cta: string;
 };
 
@@ -26,7 +27,16 @@ const Etapes = ({ titre, contenu, cta }: EtapesProps) => {
               key={c.id}
               step={index + 1}
               subtitle={c.titre ?? ''}
-              description={c.description}
+              description={c.legende ?? ''}
+              image={
+                c.image ? (
+                  <StrapiImage
+                    data={c.image}
+                    displayCaption={false}
+                    className="w-full h-[200px] object-cover"
+                  />
+                ) : undefined
+              }
             />
           ))}
         </CardsWrapper>

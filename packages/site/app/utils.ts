@@ -1,3 +1,4 @@
+import { VignetteAvecDetailsFetchedData } from '@/site/app/types';
 import { fetchSingle } from '@/site/src/strapi/strapi';
 import { StrapiItem } from '@/site/src/strapi/StrapiItem';
 
@@ -93,20 +94,12 @@ export const getData = async () => {
             !!accueilData.objectifs_liste_detaillee &&
             accueilData.objectifs_liste_detaillee.length
               ? (
-                  accueilData.objectifs_liste_detaillee as unknown as {
-                    id: number;
-                    titre?: string;
-                    legende: string;
-                    image: { data: StrapiItem };
-                    details_titre?: string;
-                    details_texte: string;
-                    details_cta?: { label: string; url?: string };
-                  }[]
+                  accueilData.objectifs_liste_detaillee as unknown as VignetteAvecDetailsFetchedData[]
                 ).map((obj) => ({
                   id: obj.id,
                   titre: obj.titre,
-                  description: obj.legende,
-                  image: obj.image.data,
+                  legende: obj.legende,
+                  image: obj.image?.data,
                   details: {
                     titre: obj.details_titre,
                     contenu: obj.details_texte,
