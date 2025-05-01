@@ -731,6 +731,17 @@ export interface ApiPageAccueilPageAccueil extends Schema.SingleType {
         },
         number
       >;
+    objectifs_liste_detaillee: Attribute.Component<
+      'shared.vignette-avec-details',
+      true
+    > &
+      Attribute.SetMinMax<
+        {
+          max: 5;
+          min: 3;
+        },
+        number
+      >;
     objectifs_titre: Attribute.String &
       Attribute.Required &
       Attribute.SetMinMaxLength<{

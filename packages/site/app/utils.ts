@@ -43,9 +43,10 @@ export const getData = async () => {
     ['populate[2]', 'couverture_mobile'],
     ['populate[3]', 'programme.image'],
     ['populate[4]', 'plateforme.image'],
-    ['populate[5]', 'objectifs_liste.image'],
-    ['populate[6]', 'temoignages_liste.temoignage'],
-    ['populate[7]', 'temoignages_liste.temoignage.portrait'],
+    ['populate[5]', 'objectifs_liste_detaillee.image'],
+    ['populate[6]', 'objectifs_liste_detaillee.details_cta'],
+    ['populate[7]', 'temoignages_liste.temoignage'],
+    ['populate[8]', 'temoignages_liste.temoignage.portrait'],
   ]);
 
   const accueilData = data.attributes;
@@ -89,17 +90,28 @@ export const getData = async () => {
         objectifs: {
           titre: accueilData.objectifs_titre as unknown as string,
           contenu:
-            !!accueilData.objectifs_liste && accueilData.objectifs_liste.length
+            !!accueilData.objectifs_liste_detaillee &&
+            accueilData.objectifs_liste_detaillee.length
               ? (
-                  accueilData.objectifs_liste as unknown as {
+                  accueilData.objectifs_liste_detaillee as unknown as {
                     id: number;
+                    titre?: string;
                     legende: string;
                     image: { data: StrapiItem };
+                    details_titre?: string;
+                    details_texte: string;
+                    details_cta?: { label: string; url?: string };
                   }[]
                 ).map((obj) => ({
                   id: obj.id,
+                  titre: obj.titre,
                   description: obj.legende,
                   image: obj.image.data,
+                  details: {
+                    titre: obj.details_titre,
+                    contenu: obj.details_texte,
+                    cta: obj.details_cta,
+                  },
                 }))
               : null,
         },

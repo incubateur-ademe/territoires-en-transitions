@@ -19,6 +19,7 @@ type CardProps = {
   imagePosition?: 'top' | 'left';
   className?: string;
   textClassName?: string;
+  onClick?: () => void;
 };
 
 /**
@@ -37,6 +38,7 @@ const Card = ({
   imagePosition = 'top',
   className,
   textClassName,
+  onClick,
 }: CardProps) => {
   return (
     <div
@@ -49,6 +51,7 @@ const Card = ({
         },
         className
       )}
+      onClick={onClick}
     >
       {!!image && <div>{image}</div>}
       <div
