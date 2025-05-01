@@ -13,12 +13,12 @@
     },
     "legende": {
       "type": "richtext",
-      "required": true
+      "required": false
     },
     "image": {
       "type": "media",
       "multiple": false,
-      "required": true,
+      "required": false,
       "allowedTypes": [
         "images"
       ]

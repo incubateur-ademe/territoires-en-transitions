@@ -41,6 +41,11 @@
       "repeatable": true,
       "component": "shared.vignette-avec-titre"
     },
+    "benefices_liste_markdown": {
+      "type": "component",
+      "repeatable": true,
+      "component": "shared.vignette-avec-markdown"
+    },
     "contact_description": {
       "type": "string",
       "required": true,
@@ -63,6 +68,11 @@
       "type": "component",
       "repeatable": true,
       "component": "shared.vignette-avec-titre"
+    },
+    "etapes_liste_markdown": {
+      "type": "component",
+      "repeatable": true,
+      "component": "shared.vignette-avec-markdown"
     },
     "etapes_cta": {
       "type": "string",

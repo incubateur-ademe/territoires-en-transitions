@@ -1,14 +1,10 @@
+import { Vignette } from '@/site/app/types';
 import { StrapiImage } from '@/site/components/strapiImage/StrapiImage';
-import { StrapiItem } from '@/site/src/strapi/StrapiItem';
 
 type PrincipesProps = {
   titre: string;
   description: string;
-  liste: {
-    id: number;
-    legende: string;
-    image: StrapiItem;
-  }[];
+  liste: Vignette[];
 };
 
 const Principes = ({ titre, description, liste }: PrincipesProps) => {
@@ -20,14 +16,18 @@ const Principes = ({ titre, description, liste }: PrincipesProps) => {
 
       {liste.map((principe) => (
         <div key={principe.id} className="flex items-center gap-5 mb-10">
-          <StrapiImage
-            data={principe.image}
-            containerClassName="bg-primary-1 rounded-2xl p-4 w-[77px] h-[77px] flex-none"
-            className="w-full f-full"
-          />
-          <div className="text-primary-11 text-base leading-6 font-bold">
-            {principe.legende}
-          </div>
+          {principe.image && (
+            <StrapiImage
+              data={principe.image}
+              containerClassName="bg-primary-1 rounded-2xl p-4 w-[77px] h-[77px] flex-none"
+              className="w-full f-full"
+            />
+          )}
+          {principe.titre && (
+            <div className="text-primary-11 text-base leading-6 font-bold">
+              {principe.titre}
+            </div>
+          )}
         </div>
       ))}
     </div>

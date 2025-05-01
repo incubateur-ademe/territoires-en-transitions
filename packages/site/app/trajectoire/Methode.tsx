@@ -1,5 +1,6 @@
 'use client';
 
+import { Vignette } from '@/site/app/types';
 import Card from '@/site/components/cards/Card';
 import CardsWrapper from '@/site/components/cards/CardsWrapper';
 import Markdown from '@/site/components/markdown/Markdown';
@@ -11,7 +12,7 @@ import classNames from 'classnames';
 type MethodeProps = {
   titre: string;
   description: string;
-  exemples: { id: number; legende: string; image?: StrapiItem }[];
+  exemples: Vignette[];
   image: StrapiItem;
 };
 
@@ -60,7 +61,8 @@ const Methode = ({ titre, description, exemples, image }: MethodeProps) => {
           <Card
             className="!gap-0"
             key={exemple.id}
-            description={exemple.legende}
+            subtitle={exemple.titre ?? ''}
+            description={exemple.legende ?? ''}
             image={
               exemple.image ? (
                 <StrapiImage

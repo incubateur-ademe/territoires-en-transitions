@@ -51,6 +51,14 @@
       "min": 1,
       "max": 5
     },
+    "principes_liste_markdown": {
+      "type": "component",
+      "required": true,
+      "repeatable": true,
+      "component": "shared.vignette-avec-markdown",
+      "min": 1,
+      "max": 5
+    },
     "budget_titre": {
       "type": "string",
       "required": true

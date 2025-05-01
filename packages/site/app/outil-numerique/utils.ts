@@ -1,3 +1,4 @@
+import { VignetteFetchedData } from '@/site/app/types';
 import { fetchSingle } from '@/site/src/strapi/strapi';
 import { StrapiItem } from '@/site/src/strapi/StrapiItem';
 
@@ -6,7 +7,7 @@ export const getStrapiData = async () => {
     ['populate[0]', 'seo'],
     ['populate[1]', 'seo.metaImage'],
     ['populate[2]', 'couverture'],
-    ['populate[3]', 'avantages.image'],
+    ['populate[3]', 'avantages_liste.image'],
     ['populate[4]', 'panier_image'],
     ['populate[5]', 'trajectoire_image'],
     ['populate[6]', 'temoignages_liste.temoignage'],
@@ -46,14 +47,10 @@ export const getStrapiData = async () => {
         couverture: outilData.couverture.data as unknown as StrapiItem,
       },
       avantages: (
-        outilData.avantages as unknown as {
-          id: number;
-          legende: string;
-          image: { data: StrapiItem };
-        }[]
+        outilData.avantages_liste as unknown as VignetteFetchedData[]
       ).map((av) => ({
         ...av,
-        image: av.image.data,
+        image: av.image?.data,
       })),
       panier: {
         titre: outilData.panier_titre as unknown as string,
