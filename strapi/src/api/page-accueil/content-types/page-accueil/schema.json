@@ -21,17 +21,13 @@
       "type": "media",
       "multiple": false,
       "required": true,
-      "allowedTypes": [
-        "images"
-      ]
+      "allowedTypes": ["images"]
     },
     "couverture_mobile": {
       "type": "media",
       "multiple": false,
       "required": false,
-      "allowedTypes": [
-        "images"
-      ]
+      "allowedTypes": ["images"]
     },
     "accueil_titre": {
       "type": "string",
@@ -70,6 +66,13 @@
       "required": true,
       "max": 5,
       "min": 5
+    },
+    "objectifs_liste_detaillee": {
+      "type": "component",
+      "repeatable": true,
+      "component": "shared.vignette-avec-details",
+      "max": 5,
+      "min": 3
     },
     "collectivites_titre": {
       "type": "string",
