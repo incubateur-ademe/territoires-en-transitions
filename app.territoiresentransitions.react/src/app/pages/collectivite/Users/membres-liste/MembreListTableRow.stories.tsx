@@ -1,11 +1,11 @@
-import {Meta} from '@storybook/react';
-import {action} from '@storybook/addon-actions';
-import {fakeAdmin, fakeEditeur, fakeLecteur} from './fakeData';
-import MembreListTableRow from './MembreListTableRow';
-import {TUpdateMembre} from '../types';
+import { action } from '@storybook/addon-actions';
+import { Meta } from '@storybook/react';
+import { fakeAdmin, fakeEditeur, fakeLecteur } from '../components/fakeData';
+import { TUpdateMembre } from '../types';
+import MembresListsTableRow from './membres-liste-table-row';
 
 export default {
-  component: MembreListTableRow,
+  component: MembresListsTableRow,
   args: {
     updateMembre: action('updateMembre') as TUpdateMembre,
     removeFromCollectivite: action('removeFromCollectivite'),
@@ -40,7 +40,7 @@ export const Lecteur = {
 export const Invite = {
   args: {
     currentUserId: '5',
-    membre: {email: 'invite@dodo.com', niveau_acces: 'lecture'},
+    membre: { email: 'invite@dodo.com', niveau_acces: 'lecture' },
     currentUserAccess: 'lecture',
   },
 };
