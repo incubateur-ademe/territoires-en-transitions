@@ -1,4 +1,4 @@
-import {ReactNode} from 'react';
+import { ReactNode } from 'react';
 
 export type TableProps = {
   children: ReactNode | ReactNode[];
@@ -25,4 +25,5 @@ export type TCellProps = {
   className?: string;
   /** Variante de styles prédéfinie */
   variant?: 'title' | 'number' | 'input';
+  colSpan?: number;
 };
