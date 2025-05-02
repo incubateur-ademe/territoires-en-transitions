@@ -26,7 +26,7 @@ const BudgetTagsList = ({ tags, unit = 'HT' }: BudgetTagsListProps) => {
                   {getFormattedNumber(tag.amount)}{' '}
                   {unit === 'HT' ? (
                     <>
-                      € <sup>HT</sup>
+                      € <sup className="-top-[0.4em]">HT</sup>
                     </>
                   ) : (
                     'ETP'
