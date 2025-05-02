@@ -21,7 +21,7 @@ export type BadgeProps = {
   /** Id pour les tests e2e */
   dataTest?: string;
   /** Libellé affiché dans le badge */
-  title: React.ReactNode;
+  title?: React.ReactNode;
   /** État */
   state?: BadgeState;
   /** Taille du badge */
@@ -76,17 +76,20 @@ export const Badge = ({
         className
       )}
     >
-      <span
-        className={classNames(styles.text, 'font-bold leading-4 text-left', {
-          'line-clamp-1': trim,
-          'text-xs': size === 'sm',
-          'mt-0.5 text-sm': size === 'md',
-          uppercase,
-        })}
-      >
-        {title}
-      </span>
-      {(onClose || icon) && !disabled && (
+      {!!title && (
+        <span
+          className={classNames(styles.text, 'font-bold leading-4 text-left', {
+            'line-clamp-1': trim,
+            'text-xs': size === 'sm',
+            'mt-0.5 text-sm': size === 'md',
+            uppercase,
+          })}
+        >
+          {title}
+        </span>
+      )}
+
+      {onClose && !disabled && (
         <div
           className="flex rounded-full cursor-pointer"
           onClick={(evt) => {
@@ -95,11 +98,19 @@ export const Badge = ({
           }}
         >
           <Icon
-            icon={icon ?? 'close-circle-fill'}
+            icon="close-circle-fill"
             size={size === 'sm' ? 'xs' : 'sm'}
-            className={classNames(styles.icon, { 'text-primary-7': !!onClose })}
+            className={classNames(styles.icon, 'text-primary-7')}
           />
         </div>
+      )}
+
+      {icon && !onClose && (
+        <Icon
+          icon={icon}
+          size={size === 'sm' ? 'xs' : 'sm'}
+          className={classNames(styles.icon)}
+        />
       )}
     </div>
   );
