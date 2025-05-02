@@ -285,7 +285,7 @@ export const makeSecondaryNavItems = (
       dataTest: 'nav-params',
       items: [
         {
-          label: 'Gestion des membres',
+          label: 'Gestion des utilisateurs',
           dataTest: 'params-membres',
           to: makeCollectiviteUsersUrl({
             collectiviteId,
