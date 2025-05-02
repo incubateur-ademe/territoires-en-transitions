@@ -1,37 +1,24 @@
 import { UserDetails } from '@/api/users/user-details.fetch.server';
 import { useUser } from '@/api/users/user-provider';
 import { Invite } from '@/app/app/pages/collectivite/Users/components/Invite';
-import MembreListTable from '@/app/app/pages/collectivite/Users/components/MembreListTable';
-import {
-  Membre,
-  TRemoveFromCollectivite,
-  TUpdateMembre,
-} from '@/app/app/pages/collectivite/Users/types';
+import MembreListTable from '@/app/app/pages/collectivite/Users/membres-liste/MembreListTable';
 import { useAddUserToCollectivite } from '@/app/app/pages/collectivite/Users/useAddUserToCollectivite';
-import {
-  PAGE_SIZE,
-  useCollectiviteMembres,
-} from '@/app/app/pages/collectivite/Users/useCollectiviteMembres';
-import { useRemoveFromCollectivite } from '@/app/app/pages/collectivite/Users/useRemoveFromCollectivite';
 import { useSendInvitation } from '@/app/app/pages/collectivite/Users/useSendInvitation';
-import { useUpdateCollectiviteMembre } from '@/app/app/pages/collectivite/Users/useUpdateCollectiviteMembre';
 import { useCollectiviteId } from '@/app/core-logic/hooks/params';
 import { useBaseToast } from '@/app/core-logic/hooks/useBaseToast';
 import {
   CurrentCollectivite,
   useCurrentCollectivite,
 } from '@/app/core-logic/hooks/useCurrentCollectivite';
-import { Button, Modal, Pagination } from '@/ui';
+import { TNiveauAcces } from '@/app/types/alias';
+import { Button, Divider, Modal } from '@/ui';
 import PageContainer from '@/ui/components/layout/page-container';
-import { useEffect, useState } from 'react';
+import { useEffect } from 'react';
 
 export type MembresProps = {
-  membres: Membre[];
   collectivite: CurrentCollectivite;
-  isLoading: boolean;
   currentUser: UserDetails;
-  updateMembre: TUpdateMembre;
-  removeFromCollectivite: TRemoveFromCollectivite;
+  niveauAcces?: TNiveauAcces;
 };
 
 /**
@@ -39,15 +26,12 @@ export type MembresProps = {
  * et le formulaire permettant d'envoyer des liens d'invitation
  */
 export const Membres = ({
-  membres,
   collectivite,
-  isLoading,
   currentUser,
-  updateMembre,
-  removeFromCollectivite,
+  niveauAcces = 'lecture',
 }: MembresProps) => {
-  const { niveauAcces } = collectivite;
   const canInvite = niveauAcces === 'admin' || niveauAcces === 'edition';
+
   const { data, mutate: addUser } = useAddUserToCollectivite(
     collectivite,
     currentUser
@@ -56,6 +40,7 @@ export const Membres = ({
     collectivite,
     currentUser
   );
+
   const { setToast, renderToast } = useBaseToast();
 
   // affichage des notifications après l'ajout ou l'envoi de l'invitation
@@ -83,41 +68,69 @@ export const Membres = ({
   }, [sendData?.sent, sendData?.email, sendData?.error]);
 
   return (
-    <PageContainer dataTest="Users" bgColor="white">
-      <h1 className="mb-10 lg:mb-14 lg:text-center flex flex-row justify-between">
-        Gestion des membres
-        {canInvite && (
-          <Modal
-            title="Inviter un membre"
-            render={({ close }) => (
-              <Invite
-                niveauAcces={niveauAcces}
-                onCancel={close}
-                onSubmit={(data) => {
-                  addUser(data);
-                  close();
-                }}
-              />
-            )}
-          >
-            <Button data-test="invite">Inviter un membre</Button>
-          </Modal>
-        )}
-      </h1>
+    <>
+      <PageContainer dataTest="Users" containerClassName="grow">
+        <div className="flex max-md:flex-col gap-y-4 justify-between md:items-center mb-4">
+          <h1 className="mb-0 max-md:order-2">Gestion des utilisateurs</h1>
 
-      <MembreListTable
-        currentUserId={currentUser.id}
-        currentUserAccess={
-          collectivite.niveauAcces ? collectivite.niveauAcces : 'lecture'
-        }
-        membres={membres}
-        isLoading={isLoading}
-        updateMembre={updateMembre}
-        removeFromCollectivite={removeFromCollectivite}
-        sendInvitation={sendInvitation}
-      />
-      {renderToast()}
-    </PageContainer>
+          {canInvite && (
+            <Modal
+              title="Inviter un membre"
+              render={({ close }) => (
+                <Invite
+                  niveauAcces={niveauAcces}
+                  onCancel={close}
+                  onSubmit={(data) => {
+                    addUser(data);
+                    close();
+                  }}
+                />
+              )}
+            >
+              <Button data-test="invite" size="sm" className="h-fit">
+                Inviter un membre
+              </Button>
+            </Modal>
+          )}
+        </div>
+
+        <Divider />
+        {/*
+        <Tabs tabsListClassName="!justify-start flex-nowrap overflow-x-auto">
+          <Tab
+            label="Informations utilisateurs"
+            icon="team-line"
+            iconClassName="text-primary-7 mr-2"
+          >
+            <div className="bg-white rounded-lg border border-grey-3 p-7">
+              <MembreListTable
+              currentUserId={currentUser.id}
+              currentUserAccess={niveauAcces}
+              sendInvitation={sendInvitation}
+          />
+            </div>
+          </Tab>
+
+          <Tab
+            label="Tags pilotes"
+            icon="account-circle-line"
+            iconClassName="text-primary-7 mr-2"
+          >
+            Tags
+          </Tab>
+        </Tabs> */}
+
+        <div className="bg-white rounded-lg border border-grey-3 p-7">
+          <MembreListTable
+            currentUserId={currentUser.id}
+            currentUserAccess={niveauAcces}
+            sendInvitation={sendInvitation}
+          />
+        </div>
+
+        {renderToast()}
+      </PageContainer>
+    </>
   );
 };
 
@@ -133,34 +146,14 @@ const MembresConnected = () => {
   const collectivite_id = useCollectiviteId();
   const collectivite = useCurrentCollectivite();
 
-  const [page, setPage] = useState(1);
-  const { data, isLoading } = useCollectiviteMembres(page);
-  const { updateMembre } = useUpdateCollectiviteMembre();
-  const { removeFromCollectivite } = useRemoveFromCollectivite();
-
   if (!user?.id || !collectivite_id || !collectivite) return null;
 
-  const { membres, count } = data;
-
   return (
-    <>
-      <Membres
-        currentUser={user}
-        membres={membres}
-        collectivite={collectivite}
-        updateMembre={updateMembre}
-        removeFromCollectivite={removeFromCollectivite}
-        isLoading={isLoading}
-      />
-      <Pagination
-        className="self-center"
-        selectedPage={page}
-        nbOfElements={count}
-        maxElementsPerPage={PAGE_SIZE}
-        idToScrollTo="app-header"
-        onChange={setPage}
-      />
-    </>
+    <Membres
+      currentUser={user}
+      collectivite={collectivite}
+      niveauAcces={collectivite.niveauAcces ?? undefined}
+    />
   );
 };
 

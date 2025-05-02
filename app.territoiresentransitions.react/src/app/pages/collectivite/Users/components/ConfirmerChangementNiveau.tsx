@@ -1,6 +1,6 @@
 import { Dispatch, SetStateAction } from 'react';
 
-import { TAccesDropdownOption } from '@/app/app/pages/collectivite/Users/components/MembreListTableRow';
+import { TAccesDropdownOption } from '@/app/app/pages/collectivite/Users/membres-liste/MembreListTableRow';
 import { Modal, ModalFooterOKCancel } from '@/ui';
 import { Membre, TUpdateMembre } from '../types';
 
