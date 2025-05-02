@@ -54,7 +54,7 @@ const BudgetTable = ({ budgets }: BudgetTableProps) => {
                     title={
                       <span>
                         {getFormattedNumber(parseInt(budget.eurosPrevisionnel))}{' '}
-                        € <sup>HT</sup>
+                        € <sup className="-top-[0.4em]">HT</sup>
                       </span>
                     }
                     state="standard"
@@ -69,7 +69,7 @@ const BudgetTable = ({ budgets }: BudgetTableProps) => {
                     title={
                       <span>
                         {getFormattedNumber(parseInt(budget.eurosReel))} €{' '}
-                        <sup>HT</sup>
+                        <sup className="-top-[0.4em]">HT</sup>
                       </span>
                     }
                     state="standard"
@@ -132,7 +132,7 @@ const BudgetTable = ({ budgets }: BudgetTableProps) => {
                         0
                       )
                     )}{' '}
-                    € <sup>HT</sup>
+                    € <sup className="-top-[0.4em]">HT</sup>
                   </span>
                 }
                 state="standard"
@@ -151,7 +151,7 @@ const BudgetTable = ({ budgets }: BudgetTableProps) => {
                         0
                       )
                     )}{' '}
-                    € <sup>HT</sup>
+                    € <sup className="-top-[0.4em]">HT</sup>
                   </span>
                 }
                 state="standard"
