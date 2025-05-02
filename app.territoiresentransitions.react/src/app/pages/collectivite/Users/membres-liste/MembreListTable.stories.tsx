@@ -1,8 +1,13 @@
-import {Meta} from '@storybook/react';
-import {action} from '@storybook/addon-actions';
-import {TUpdateMembre} from '../types';
-import MembreListTable, {MembreListTableProps} from './MembreListTable';
-import {fakeAdmin, fakeEditeur, fakeLecteur, fakeMembres} from './fakeData';
+import { action } from '@storybook/addon-actions';
+import { Meta } from '@storybook/react';
+import {
+  fakeAdmin,
+  fakeEditeur,
+  fakeLecteur,
+  fakeMembres,
+} from '../components/fakeData';
+import { TUpdateMembre } from '../types';
+import MembreListTable, { MembreListTableProps } from './MembreListTable';
 
 export default {
   component: MembreListTable,
