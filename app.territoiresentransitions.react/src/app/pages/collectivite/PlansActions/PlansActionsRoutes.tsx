@@ -42,8 +42,7 @@ export const PlansActionsRoutes = ({ collectivite_id, readonly }: Props) => {
   const { isDemoMode } = useDemoMode();
 
   const { data: axes } = usePlansNavigation();
-  const { data: fichesNonClasseesListe } =
-    useFichesNonClasseesListe(collectivite_id);
+  const { data: fichesNonClasseesListe } = useFichesNonClasseesListe();
 
   const { mutate: createFicheAction } = useCreateFicheAction();
 
