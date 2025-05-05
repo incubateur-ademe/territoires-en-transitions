@@ -13,7 +13,7 @@ import {
 } from '@/ui';
 import { OpenState } from '@/ui/utils/types';
 import classNames from 'classnames';
-import { useState } from 'react';
+import { ChangeEvent, useState } from 'react';
 
 const getDefaultData = (
   ficheId: number,
@@ -52,6 +52,22 @@ const getInitFullPlanState = (budgets: BudgetType[]) => {
   return false;
 };
 
+const getTotalBudget = (
+  budgets: BudgetType[],
+  budgetType: 'previsionnel' | 'reel'
+) => {
+  const key =
+    budgetType === 'previsionnel' ? 'budgetPrevisionnel' : 'budgetReel';
+
+  return budgets
+    .reduce(
+      (sum: number, currValue: BudgetType) =>
+        sum + parseInt(currValue[key] ?? '0'),
+      0
+    )
+    .toString();
+};
+
 type BudgetModalProps = {
   openState: OpenState;
   ficheId: number;
@@ -85,6 +101,41 @@ const BudgetModal = ({
   const [etpExtendedBudget, setEtpExtendedBudget] = useState(
     getInitExtendedState(budgets, ficheId, type, 'ETP')
   );
+
+  // Switch entre détaillé par année et budget total
+  const handleSwitchDetailled = (evt: ChangeEvent<HTMLInputElement>) => {
+    const newValue = evt.currentTarget.checked;
+    setIsDetailled(newValue);
+
+    if (newValue === false) {
+      if (
+        !euroExtendedBudget.budgetPrevisionnel &&
+        !euroExtendedBudget.budgetReel
+      ) {
+        setEuroExtendedBudget({
+          ...euroExtendedBudget,
+          budgetPrevisionnel: getTotalBudget(
+            euroDetailledBudget,
+            'previsionnel'
+          ),
+          budgetReel: getTotalBudget(euroDetailledBudget, 'reel'),
+        });
+      }
+      if (
+        !etpExtendedBudget.budgetPrevisionnel &&
+        !etpExtendedBudget.budgetReel
+      ) {
+        setEtpExtendedBudget({
+          ...etpExtendedBudget,
+          budgetPrevisionnel: getTotalBudget(
+            etpDetailledBudget,
+            'previsionnel'
+          ),
+          budgetReel: getTotalBudget(etpDetailledBudget, 'reel'),
+        });
+      }
+    }
+  };
 
   // Sauvegardes
   const { mutate: createBudgets } = useUpsertBudgets();
@@ -137,7 +188,7 @@ const BudgetModal = ({
               variant="switch"
               label="Détailler par année"
               checked={isDetailled}
-              onChange={(evt) => setIsDetailled(evt.currentTarget.checked)}
+              onChange={handleSwitchDetailled}
             />
             <div className="max-sm:order-first">
               <ButtonGroup
