@@ -2,6 +2,7 @@ import { UserDetails } from '@/api/users/user-details.fetch.server';
 import { useUser } from '@/api/users/user-provider';
 import { Invite } from '@/app/app/pages/collectivite/Users/components/Invite';
 import MembreListTable from '@/app/app/pages/collectivite/Users/membres-liste/MembreListTable';
+import TagsListeTable from '@/app/app/pages/collectivite/Users/tags-liste/tags-liste-table';
 import { useAddUserToCollectivite } from '@/app/app/pages/collectivite/Users/useAddUserToCollectivite';
 import { useSendInvitation } from '@/app/app/pages/collectivite/Users/useSendInvitation';
 import { useCollectiviteId } from '@/app/core-logic/hooks/params';
@@ -11,7 +12,7 @@ import {
   useCurrentCollectivite,
 } from '@/app/core-logic/hooks/useCurrentCollectivite';
 import { TNiveauAcces } from '@/app/types/alias';
-import { Button, Divider, Modal } from '@/ui';
+import { Alert, Button, Divider, Modal, Tab, Tabs } from '@/ui';
 import PageContainer from '@/ui/components/layout/page-container';
 import { useEffect } from 'react';
 
@@ -95,7 +96,7 @@ export const Membres = ({
         </div>
 
         <Divider />
-        {/*
+
         <Tabs tabsListClassName="!justify-start flex-nowrap overflow-x-auto">
           <Tab
             label="Informations utilisateurs"
@@ -104,10 +105,10 @@ export const Membres = ({
           >
             <div className="bg-white rounded-lg border border-grey-3 p-7">
               <MembreListTable
-              currentUserId={currentUser.id}
-              currentUserAccess={niveauAcces}
-              sendInvitation={sendInvitation}
-          />
+                currentUserId={currentUser.id}
+                currentUserAccess={niveauAcces}
+                sendInvitation={sendInvitation}
+              />
             </div>
           </Tab>
 
@@ -116,17 +117,17 @@ export const Membres = ({
             icon="account-circle-line"
             iconClassName="text-primary-7 mr-2"
           >
-            Tags
+            <Alert
+              rounded
+              state="info"
+              description="Dans cette vue, apparaissent uniquement les tags pilotes qui n’ont pas déjà été associés à des comptes utilisateurs. Si vous souhaitez modifier les informations d’un utilisateur, cela se fait dans l’onglet Informations utilisateurs."
+              className="mb-4"
+            />
+            <div className="bg-white rounded-lg border border-grey-3 p-7">
+              <TagsListeTable currentUserAccess={niveauAcces} />
+            </div>
           </Tab>
-        </Tabs> */}
-
-        <div className="bg-white rounded-lg border border-grey-3 p-7">
-          <MembreListTable
-            currentUserId={currentUser.id}
-            currentUserAccess={niveauAcces}
-            sendInvitation={sendInvitation}
-          />
-        </div>
+        </Tabs>
 
         {renderToast()}
       </PageContainer>
