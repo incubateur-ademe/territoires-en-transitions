@@ -1,6 +1,6 @@
 import { createZodDto } from '@anatine/zod-nestjs';
 import { Controller, Get, HttpException, HttpStatus } from '@nestjs/common';
-import { ApiHideProperty, ApiOkResponse, ApiTags } from '@nestjs/swagger';
+import { ApiExcludeEndpoint, ApiOkResponse, ApiTags } from '@nestjs/swagger';
 import { AllowAnonymousAccess } from '../../auth/decorators/allow-anonymous-access.decorator';
 import { AllowPublicAccess } from '../../auth/decorators/allow-public-access.decorator';
 import { versionResponseSchema } from './version.models';
@@ -18,7 +18,7 @@ export class VersionController {
   constructor(private readonly versionService: VersionService) {}
 
   @AllowAnonymousAccess()
-  @ApiHideProperty()
+  @ApiExcludeEndpoint()
   @Get('throw')
   async throw() {
     throw new HttpException(

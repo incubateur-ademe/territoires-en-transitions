@@ -1,3 +1,4 @@
+import { ApikeysRouter } from '@/backend/auth/apikeys/apikeys.router';
 import { CollectivitesRouter } from '@/backend/collectivites/collectivites.router';
 import { IndicateurDefinitionsRouter } from '@/backend/indicateurs/list-definitions/list-definitions.router';
 import { ReferentielsRouter } from '@/backend/referentiels/referentiels.router';
@@ -27,6 +28,7 @@ export class TrpcRouter {
   constructor(
     private readonly contextStoreService: ContextStoreService,
     private readonly trpc: TrpcService,
+    private readonly apikeysRouter: ApikeysRouter,
     private readonly trajectoiresRouter: TrajectoiresRouter,
     private readonly indicateurFiltreRouter: IndicateurFiltreRouter,
     private readonly indicateurValeursRouter: IndicateurValeursRouter,
@@ -39,6 +41,9 @@ export class TrpcRouter {
   ) {}
 
   appRouter = this.trpc.router({
+    auth: {
+      apikeys: this.apikeysRouter.router,
+    },
     throwError: this.trpc.anonProcedure
       .input(z.object({}))
       .query(async ({ input, ctx }) => {

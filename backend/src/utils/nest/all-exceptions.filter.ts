@@ -22,8 +22,14 @@ export const getHttpErrorResponse = (exception: unknown): HttpErrorResponse => {
     timestamp: new Date().toISOString(),
   };
   if (exception instanceof HttpException) {
-    const error = exception as HttpException;
-    httpErrorResponse.status = error.getStatus();
+    const reponse = exception.getResponse();
+    if (typeof reponse === 'object') {
+      // @ts-ignore
+      const { statusCode, ...responseWithoutCode } = reponse;
+      httpErrorResponse.details = responseWithoutCode;
+    }
+
+    httpErrorResponse.status = exception.getStatus();
   }
   return httpErrorResponse;
 };
