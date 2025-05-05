@@ -47,6 +47,13 @@ export type IndicateurViewParamOption =
   | 'cles'
   | 'selection';
 
+export type IndicateursListParamOption =
+  | 'cles'
+  | 'perso'
+  | 'collectivite' // favoris de la collectivité
+  | 'mes-indicateurs'
+  | 'tous';
+
 type ReferentielTab = 'progression' | 'priorisation' | 'detail' | 'evolutions';
 
 export type ActionTabParamOption =
@@ -61,9 +68,8 @@ type LabellisationTab = 'suivi' | 'cycles' | 'criteres';
 export const collectivitePath = `/collectivite/:${collectiviteParam}`;
 
 export const collectiviteIndicateursBasePath = `${collectivitePath}/indicateurs`;
-export const collectiviteTousLesIndicateursPath = `${collectiviteIndicateursBasePath}/tous-les-indicateurs`;
-export const collectiviteIndicateursCollectivitePath = `${collectiviteIndicateursBasePath}/collectivite`;
 export const collectiviteIndicateurPath = `${collectiviteIndicateursBasePath}/:${indicateurViewParam}/:${indicateurIdParam}?`;
+export const collectiviteIndicateursListPath = `${collectiviteIndicateursBasePath}/liste`;
 export const collectiviteTrajectoirePath = `${collectivitePath}/trajectoire`;
 export const collectiviteAccueilPath = `${collectivitePath}/accueil`;
 export const collectiviteModifierPath = `${collectivitePath}/modifier`;
@@ -141,20 +147,31 @@ export const makeCollectiviteTousLesIndicateursUrl = ({
 }: {
   collectiviteId: number;
 }) =>
-  collectiviteTousLesIndicateursPath.replace(
-    `:${collectiviteParam}`,
-    collectiviteId.toString()
-  );
+  makeCollectiviteIndicateursListUrl({
+    collectiviteId,
+    listId: 'tous',
+  });
 
 export const makeCollectiviteIndicateursCollectiviteUrl = ({
   collectiviteId,
 }: {
   collectiviteId: number;
 }) =>
-  collectiviteIndicateursCollectivitePath.replace(
-    `:${collectiviteParam}`,
-    collectiviteId.toString()
-  );
+  makeCollectiviteIndicateursListUrl({
+    collectiviteId,
+    listId: 'collectivite',
+  });
+
+export const makeCollectiviteIndicateursListUrl = ({
+  collectiviteId,
+  listId,
+}: {
+  collectiviteId: number;
+  listId?: IndicateursListParamOption;
+}) =>
+  collectiviteIndicateursListPath
+    .replace(`:${collectiviteParam}`, collectiviteId.toString())
+    .concat(listId ? `/${listId}` : '');
 
 export const makeCollectiviteIndicateursUrl = ({
   collectiviteId,
