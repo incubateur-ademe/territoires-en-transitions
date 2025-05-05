@@ -1,12 +1,11 @@
-import { useState } from 'react';
-
 import { FicheAction } from '@/api/plan-actions';
-import { Alert, Button } from '@/ui';
-import ColonneTableauEmplacement from './ColonneTableauEmplacement';
-import { usePlanActionProfondeur } from '@/app/app/pages/collectivite/PlansActions/PlanAction/data/usePlanActionProfondeur';
 import { useAddFicheToAxe } from '@/app/app/pages/collectivite/PlansActions/FicheAction/data/useAddFicheToAxe';
-import { checkAxeExistInPlanProfondeur } from '@/app/app/pages/collectivite/PlansActions/PlanAction/data/utils';
 import { TProfondeurAxe } from '@/app/app/pages/collectivite/PlansActions/PlanAction/data/types';
+import { usePlanActionProfondeur } from '@/app/app/pages/collectivite/PlansActions/PlanAction/data/usePlanActionProfondeur';
+import { checkAxeExistInPlanProfondeur } from '@/app/app/pages/collectivite/PlansActions/PlanAction/data/utils';
+import { Alert, Button } from '@/ui';
+import { useState } from 'react';
+import ColonneTableauEmplacement from './ColonneTableauEmplacement';
 
 type NouvelEmplacementFicheProps = {
   fiche: FicheAction;
@@ -102,7 +101,7 @@ const NouvelEmplacementFiche = ({
           />
 
           {selectedAxes.map((axe) => {
-            return !!axe.enfants ? (
+            return axe.enfants ? (
               <ColonneTableauEmplacement
                 key={axe.axe.id}
                 axesList={axe.enfants}
@@ -115,7 +114,7 @@ const NouvelEmplacementFiche = ({
         </div>
       ) : (
         <span className="text-primary-9 text-sm font-bold">
-          Il n'existe aucun plan auquel rattacher cette fiche
+          {"Il n'existe aucun plan auquel rattacher cette fiche"}
         </span>
       )}
 
