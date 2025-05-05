@@ -142,26 +142,19 @@ export interface TrackingPlan extends Record<never, Page> {
     events: EventsGraphReferentiel;
   };
 
-  /** Page "Tous les indicateurs" */
+  /** Page "Liste des indicateurs" */
   'app/indicateurs/tous': {
     properties: CollectiviteDefaultProps;
-    onglets: never;
+    onglets:
+      | 'cles'
+      | 'perso'
+      | 'collectivite' // favoris de la collectivité
+      | 'mes-indicateurs'
+      | 'tous';
     events: {
       toggle_graphique: { actif: boolean };
       export_xlsx_telechargement: {};
-      filtres: {
-        filtreValues: IndicateursFiltres;
-      };
-    };
-  };
-
-  /** Page "Indicateurs de la collectivité" */
-  'app/indicateurs/collectivite': {
-    properties: CollectiviteDefaultProps;
-    onglets: never;
-    events: {
       explorerIndicateursClick: {};
-      export_xlsx_telechargement: {};
       filtres: {
         filtreValues: IndicateursFiltres;
       };
