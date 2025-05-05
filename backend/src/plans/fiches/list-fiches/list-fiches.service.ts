@@ -533,18 +533,19 @@ export default class FicheActionListService {
       .as('ficheActionBudgets');
   }
 
-  async getFicheActionById(
-    ficheActionId: number,
+  async getFicheById(
+    ficheId: number,
     addCollectiviteData?: boolean
   ): Promise<FicheWithRelations | FicheWithRelationsAndCollectivite> {
-    this.logger.log(`Récupération de la fiche action ${ficheActionId}`);
+    this.logger.log(`Récupération de la fiche action ${ficheId}`);
     const fichesAction: FicheWithRelationsAndCollectivite[] =
-      await this.getFichesAction(null, {
-        ficheIds: [ficheActionId],
+      await this.listFichesQuery(null, {
+        ficheIds: [ficheId],
       });
+
     if (!fichesAction?.length) {
       throw new NotFoundException(
-        `Aucune fiche action trouvée avec l'id ${ficheActionId}`
+        `Aucune fiche action trouvée avec l'id ${ficheId}`
       );
     }
 
@@ -559,7 +560,7 @@ export default class FicheActionListService {
     return ficheAction;
   }
 
-  private async getFichesActionQuery(
+  private async listFichesQuery(
     collectiviteId: number | null,
     filters?: ListFichesRequestFilters,
     queryOptions?: ListFichesRequestQueryOptions
@@ -584,7 +585,7 @@ export default class FicheActionListService {
     const ficheActionDocs = this.getFicheActionsDocsQuery();
     const ficheActionBudgets = this.getFicheActionBudgetsQuery();
 
-    let conditions: (SQLWrapper | SQL)[] = [];
+    const conditions: (SQLWrapper | SQL | undefined)[] = [];
     if (collectiviteId) {
       conditions.push(eq(ficheActionTable.collectiviteId, collectiviteId));
     }
@@ -749,7 +750,7 @@ export default class FicheActionListService {
   }
 
   private addArrayOverlapsConditionForStringArray(
-    conditions: (SQLWrapper | SQL)[],
+    conditions: (SQLWrapper | SQL | undefined)[],
     column: SQL,
     filter?: string[]
   ) {
@@ -761,12 +762,12 @@ export default class FicheActionListService {
   }
 
   private addArrayOverlapsConditionForIntArray(
-    conditions: (SQLWrapper | SQL)[],
+    conditions: (SQLWrapper | SQL | undefined)[],
     column: SQL,
     filter?: number[]
   ) {
     if (filter?.length) {
-      // Vraiment étrange, probable bug de drizzle, on le peut pas lui donner le tableau directement
+      // Vraiment étrange, probable bug de drizzle, on ne peut pas lui donner le tableau directement
       const sqlNumberArray = `{${filter.join(',')}}`;
       conditions.push(arrayOverlaps(column, sql`${sqlNumberArray}`));
     }
@@ -788,7 +789,7 @@ export default class FicheActionListService {
   }
 
   private addTextSearchCondition(
-    conditions: (SQLWrapper | SQL)[],
+    conditions: (SQLWrapper | SQL | undefined)[],
     column: SQL,
     searchText?: string
   ) {
@@ -799,8 +800,8 @@ export default class FicheActionListService {
 
   private getConditions(
     filters: ListFichesRequestFilters
-  ): (SQLWrapper | SQL)[] {
-    const conditions: (SQLWrapper | SQL)[] = [];
+  ): (SQLWrapper | SQL | undefined)[] {
+    const conditions: (SQLWrapper | SQL | undefined)[] = [];
 
     if (filters.ficheIds?.length) {
       conditions.push(inArray(ficheActionTable.id, filters.ficheIds));
@@ -943,10 +944,13 @@ export default class FicheActionListService {
         isNull(sql`pilote_user_ids`),
         isNull(sql`pilote_tag_ids`)
       );
-      conditions.push(condition!);
+      conditions.push(condition);
     }
     if (filters.noServicePilote) {
       conditions.push(isNull(sql`service_tag_ids`));
+    }
+    if (filters.noPlan) {
+      conditions.push(isNull(sql`plans`));
     }
 
     const piloteConditions: (SQLWrapper | SQL)[] = [];
@@ -1021,11 +1025,11 @@ export default class FicheActionListService {
    * @return an array of fiches actions
    */
   async getFichesAction(
-    collectiviteId: number | null,
+    collectiviteId: number,
     filters?: ListFichesRequestFilters,
     queryOptions?: ListFichesRequestQueryOptions
   ): Promise<FicheWithRelations[]> {
-    return this.getFichesActionQuery(collectiviteId, filters, queryOptions);
+    return this.listFichesQuery(collectiviteId, filters, queryOptions);
   }
 
   /**
@@ -1037,15 +1041,11 @@ export default class FicheActionListService {
    * @return an array of fiches actions with count
    */
   async getFichesActionWithCount(
-    collectiviteId: number | null,
+    collectiviteId: number,
     filters?: ListFichesRequestFilters,
     queryOptions?: ListFichesRequestQueryOptions
   ): Promise<{ data: FicheWithRelations[]; count: number }> {
-    const query = this.getFichesActionQuery(
-      collectiviteId,
-      filters,
-      queryOptions
-    );
+    const query = this.listFichesQuery(collectiviteId, filters, queryOptions);
     const result = await query;
     return {
       data: result.map((r) => ({ ...r, count: undefined })),

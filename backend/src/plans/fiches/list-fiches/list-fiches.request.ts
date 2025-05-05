@@ -140,6 +140,7 @@ export const listFichesRequestFiltersSchema = z
       .array()
       .optional()
       .describe('Liste des identifiants de structure séparés par des virgules'),
+    noPlan: z.boolean().optional().describe(`Aucun plan`),
     planActionIds: z
       .number()
       .array()

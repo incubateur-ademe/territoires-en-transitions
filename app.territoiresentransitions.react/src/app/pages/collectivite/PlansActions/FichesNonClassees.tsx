@@ -6,7 +6,7 @@ import { useFichesNonClasseesListe } from './FicheAction/data/useFichesNonClasse
 const FichesNonClassees = () => {
   const collectivite_id = useCollectiviteId();
 
-  const { data } = useFichesNonClasseesListe(collectivite_id!);
+  const { data } = useFichesNonClasseesListe();
 
   if (!collectivite_id || !data) return null;
 

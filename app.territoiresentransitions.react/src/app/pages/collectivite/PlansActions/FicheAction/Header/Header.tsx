@@ -1,9 +1,6 @@
 import { format } from 'date-fns';
-
 import { FicheAction } from '@/api/plan-actions';
-
 import { Divider, Icon } from '@/ui';
-
 import CheminsFiche from './CheminsFiche';
 import TitreFiche from './TitreFiche';
 import Toolbar from './actions/toolbar';

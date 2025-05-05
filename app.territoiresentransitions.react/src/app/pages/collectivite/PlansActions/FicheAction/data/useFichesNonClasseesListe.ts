@@ -1,19 +1,12 @@
-import { FicheResume } from '@/api/plan-actions';
-import { useSupabase } from '@/api/utils/supabase/use-supabase';
-import { useQuery } from 'react-query';
-import { objectToCamel } from 'ts-case-convert';
-import { sortFichesResume } from './utils';
+import { useListFicheResumes } from '@/app/app/pages/collectivite/PlansActions/FicheAction/data/useFicheResumesFetch';
 
-export const useFichesNonClasseesListe = (collectivite_id: number) => {
-  const supabase = useSupabase();
-
-  return useQuery(['axe_fiches', null], async () => {
-    const { data } = await supabase
-      .from('fiche_resume')
-      .select('*', { count: 'exact' })
-      .eq('collectivite_id', collectivite_id)
-      .is('plans', null);
-
-    return data ? sortFichesResume(objectToCamel(data) as FicheResume[]) : [];
+/** @deprecated TODO: Supprimer ce hook et utiliser directement `useListFicheResumes` */
+export const useFichesNonClasseesListe = () => {
+  const { data: result } = useListFicheResumes({
+    filters: {
+      noPlan: true,
+    },
   });
+
+  return { data: result?.data };
 };
