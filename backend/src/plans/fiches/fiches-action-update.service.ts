@@ -365,7 +365,7 @@ export default class FichesActionUpdateService {
 
     // TODO: return ficheActionWithRelation to have full object
     const ficheActionWithRelation =
-      await this.ficheActionListService.getFicheActionById(ficheActionId, true);
+      await this.ficheActionListService.getFicheById(ficheActionId, true);
 
     await this.webhookService.sendWebhookNotification(
       ApplicationSousScopesEnum.FICHES,

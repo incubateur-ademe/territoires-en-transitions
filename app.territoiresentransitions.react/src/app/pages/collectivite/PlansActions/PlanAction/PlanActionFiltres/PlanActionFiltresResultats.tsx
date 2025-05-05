@@ -1,8 +1,7 @@
-import FicheActionCard from '../../FicheAction/Carte/FicheActionCard';
-
 import { makeCollectivitePlanActionFicheUrl } from '@/app/app/paths';
 import { useCollectiviteId } from '@/app/core-logic/hooks/params';
 import { DeleteFiltersButton } from '@/app/ui/lists/filter-badges/delete-filters.button';
+import FicheActionCard from '../../FicheAction/Carte/FicheActionCard';
 import { TFichesActionsListe } from '../../FicheAction/data/useFichesActionFiltresListe';
 
 type Props = {
