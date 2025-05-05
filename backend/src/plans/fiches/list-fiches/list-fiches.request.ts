@@ -1,10 +1,4 @@
-import {
-  getPaginationSchema,
-  getZodQueryEnum,
-  zodQueryBoolean,
-  zodQueryNumberArray,
-  zodQueryStringArray,
-} from '@/backend/utils/index-domain';
+import { getPaginationSchema } from '@/backend/utils/index-domain';
 import { modifiedSinceSchema } from '@/backend/utils/modified-since.enum';
 import { z } from 'zod';
 import {
@@ -25,107 +19,144 @@ export const typePeriodeEnumSchema = z.enum(typePeriodeEnumValues);
 
 export const listFichesRequestFiltersSchema = z
   .object({
-    noPilote: zodQueryBoolean
+    noPilote: z
+      .boolean()
       .optional()
       .describe(
         `Aucun utilisateur ou personne pilote n'est associé à la fiche`
       ),
-    budgetPrevisionnel: zodQueryBoolean
+    budgetPrevisionnel: z
+      .boolean()
       .optional()
       .describe(`A un budget prévisionnel`),
-    hasIndicateurLies: zodQueryBoolean
+    hasIndicateurLies: z
+      .boolean()
       .optional()
       .describe(`A indicateur(s) associé(s)`),
-    hasMesuresLiees: zodQueryBoolean
+    hasMesuresLiees: z
+      .boolean()
       .optional()
       .describe(`A mesure(s) des référentiels associée(s)`),
-    ameliorationContinue: zodQueryBoolean
+    ameliorationContinue: z
+      .boolean()
       .optional()
       .describe(`Est en amélioration continue`),
-    restreint: zodQueryBoolean
-      .optional()
-      .describe(`Fiche action en mode privé`),
-    noServicePilote: zodQueryBoolean
+    restreint: z.boolean().optional().describe(`Fiche action en mode privé`),
+    noServicePilote: z
+      .boolean()
       .optional()
       .describe(`Aucune direction ou service pilote n'est associée à la fiche`),
-    noStatut: zodQueryBoolean.optional().describe(`Aucun statut`),
-    statuts: getZodQueryEnum(statutsEnumSchema)
+    noStatut: z.boolean().optional().describe(`Aucun statut`),
+    statuts: z
+      .array(statutsEnumSchema)
       .optional()
       .describe('Liste des statuts séparés par des virgules'),
-    noPriorite: zodQueryBoolean.optional().describe(`Aucune priorité`),
-    priorites: getZodQueryEnum(prioriteEnumSchema)
+    noPriorite: z.boolean().optional().describe(`Aucune priorité`),
+    priorites: z
+      .array(prioriteEnumSchema)
       .optional()
       .describe('Liste des priorités séparés par des virgules'),
-    cibles: getZodQueryEnum(ciblesEnumSchema)
+    cibles: z
+      .array(ciblesEnumSchema)
       .optional()
       .describe('Liste des cibles séparées par des virgules'),
-    ficheIds: zodQueryNumberArray
+    ficheIds: z
+      .number()
+      .array()
       .optional()
       .describe('Liste des identifiants des fiches séparés par des virgules'),
-    partenaireIds: zodQueryNumberArray
+    partenaireIds: z
+      .number()
+      .array()
       .optional()
       .describe(
         'Liste des identifiants de tags de partenaires séparés par des virgules'
       ),
-    financeurIds: zodQueryNumberArray
+    financeurIds: z
+      .number()
+      .array()
       .optional()
       .describe(
         'Liste des identifiants de tags de financeur séparés par des virgules'
       ),
-    thematiqueIds: zodQueryNumberArray
+    thematiqueIds: z
+      .number()
+      .array()
       .optional()
       .describe(
         'Liste des identifiants de thématiques séparés par des virgules'
       ),
-    sousThematiqueIds: zodQueryNumberArray
+    sousThematiqueIds: z
+      .number()
+      .array()
       .optional()
       .describe(
         'Liste des identifiants de sous-thématiques séparés par des virgules'
       ),
-    personnePiloteIds: zodQueryNumberArray
+    personnePiloteIds: z
+      .number()
+      .array()
       .optional()
       .describe(
         'Liste des identifiants de tags des personnes pilote séparées par des virgules'
       ),
-    utilisateurPiloteIds: zodQueryStringArray
+    utilisateurPiloteIds: z
+      .string()
+      .array()
       .optional()
       .describe(
         'Liste des identifiants des utilisateurs pilote séparées par des virgules'
       ),
-    libreTagsIds: zodQueryNumberArray
+    libreTagsIds: z
+      .number()
+      .array()
       .optional()
       .describe(
         'Liste des identifiants des tags libres séparées par des virgules'
       ),
-    personneReferenteIds: zodQueryNumberArray
+    personneReferenteIds: z
+      .number()
+      .array()
       .optional()
       .describe(
         'Liste des identifiants de tags des personnes pilote séparées par des virgules'
       ),
-    utilisateurReferentIds: zodQueryStringArray
+    utilisateurReferentIds: z
+      .string()
+      .array()
       .optional()
       .describe(
         'Liste des identifiants des utilisateurs pilote séparées par des virgules'
       ),
-    servicePiloteIds: zodQueryNumberArray
+    servicePiloteIds: z
+      .number()
+      .array()
       .optional()
       .describe(
         'Liste des identifiants de tags de services séparés par des virgules'
       ),
-    structurePiloteIds: zodQueryNumberArray
+    structurePiloteIds: z
+      .number()
+      .array()
       .optional()
       .describe('Liste des identifiants de structure séparés par des virgules'),
-    planActionIds: zodQueryNumberArray
+    planActionIds: z
+      .number()
+      .array()
       .optional()
       .describe(
         "Liste des identifiants des plans d'action séparés par des virgules"
       ),
-    mesureIds: zodQueryStringArray
+    mesureIds: z
+      .string()
+      .array()
       .optional()
       .describe(
         'Liste des identifiants des mesures du référentiel séparés par des virgules'
       ),
-    linkedFicheActionIds: zodQueryNumberArray
+    linkedFicheActionIds: z
+      .number()
+      .array()
       .optional()
       .describe(
         'Liste des identifiants des fiches action liées séparés par des virgules'
