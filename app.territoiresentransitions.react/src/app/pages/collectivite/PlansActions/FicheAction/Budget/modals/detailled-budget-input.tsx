@@ -47,6 +47,7 @@ const DetailledBudgetInput = ({
             >
               <Input
                 type="number"
+                decimalScale={unite === 'HT' ? 0 : 2}
                 icon={{ text: unite === 'HT' ? '€ HT' : 'ETP' }}
                 value={budget.budgetPrevisionnel ?? undefined}
                 placeholder={
@@ -87,6 +88,7 @@ const DetailledBudgetInput = ({
             <Field title={unite === 'HT' ? 'Montant dépensé' : 'ETP réel'}>
               <Input
                 type="number"
+                decimalScale={unite === 'HT' ? 0 : 2}
                 icon={{ text: unite === 'HT' ? '€ HT' : 'ETP' }}
                 value={budget.budgetReel ?? undefined}
                 placeholder={

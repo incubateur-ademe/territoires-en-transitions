@@ -20,6 +20,7 @@ const ExtendedBudgetInput = ({
         </div>
         <Input
           type="number"
+          decimalScale={isEuros ? 0 : 2}
           icon={{ text: isEuros ? '€ HT' : 'ETP' }}
           value={budget ? budget.budgetPrevisionnel ?? '' : undefined}
           placeholder="Ajouter un montant"
@@ -38,6 +39,7 @@ const ExtendedBudgetInput = ({
         </div>
         <Input
           type="number"
+          decimalScale={isEuros ? 0 : 2}
           icon={{ text: isEuros ? '€ HT' : 'ETP' }}
           value={budget ? budget.budgetReel ?? '' : undefined}
           placeholder="Ajouter un montant"
