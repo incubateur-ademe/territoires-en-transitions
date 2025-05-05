@@ -5,6 +5,7 @@ import {
 import {
   ArgumentMetadata,
   Injectable,
+  Logger,
   Optional,
   PipeTransform,
 } from '@nestjs/common';
@@ -12,6 +13,8 @@ import { ContextStoreService } from '../context/context.service';
 
 @Injectable()
 export class CustomZodValidationPipe implements PipeTransform {
+  private readonly logger = new Logger(CustomZodValidationPipe.name);
+
   private readonly zodValidationPipe: ZodValidationPipe;
 
   constructor(
@@ -22,11 +25,21 @@ export class CustomZodValidationPipe implements PipeTransform {
   }
 
   public transform(value: unknown, metadata: ArgumentMetadata): unknown {
-    const transformedValue = this.zodValidationPipe.transform(value, metadata);
-    if (transformedValue) {
-      this.contextStoreService.autoSetContextFromPayload(transformedValue);
-    }
+    try {
+      const transformedValue = this.zodValidationPipe.transform(
+        value,
+        metadata
+      );
+      if (transformedValue) {
+        this.contextStoreService.autoSetContextFromPayload(transformedValue);
+      }
 
-    return transformedValue;
+      return transformedValue;
+    } catch (error) {
+      this.logger.error(
+        `Error in Zod validation pipe: ${JSON.stringify(error)}`
+      );
+      throw error;
+    }
   }
 }
