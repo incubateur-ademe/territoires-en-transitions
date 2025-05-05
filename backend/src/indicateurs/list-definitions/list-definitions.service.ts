@@ -4,8 +4,10 @@ import {
   ResourceType,
 } from '@/backend/auth/index-domain';
 import { categorieTagTable } from '@/backend/collectivites/index-domain';
+import { indicateurPiloteTable } from '@/backend/indicateurs/shared/models/indicateur-pilote.table';
 import { thematiqueTable } from '@/backend/shared/index-domain';
 import { Injectable, Logger } from '@nestjs/common';
+import assert from 'assert';
 import {
   aliasedTable,
   and,
@@ -615,6 +617,44 @@ export class ListDefinitionsService {
         and(
           eq(indicateurCollectiviteTable.collectiviteId, collectiviteId),
           eq(indicateurCollectiviteTable.favoris, true)
+        )
+      );
+    return rows[0]?.value ?? 0;
+  }
+
+  /** Donne le nombre d'indicateurs dont l'utilisateur est pilote */
+  async getMesIndicateursCount(
+    data: GetFavorisCountRequest,
+    tokenInfo: AuthUser
+  ) {
+    assert(tokenInfo.id, 'Id utilisateur non valide');
+    const { collectiviteId } = data;
+    await this.permissionService.isAllowed(
+      tokenInfo,
+      PermissionOperation.INDICATEURS_VISITE,
+      ResourceType.COLLECTIVITE,
+      collectiviteId
+    );
+
+    this.logger.log(
+      `Lecture du nombre d'indicateurs dont l'utilisateur ${tokenInfo.id} est pilote pour la collectivité ${collectiviteId}`
+    );
+
+    const rows = await this.databaseService.db
+      .select({ value: count(indicateurDefinitionTable.id) })
+      .from(indicateurPiloteTable)
+      .leftJoin(
+        indicateurDefinitionTable,
+        eq(indicateurDefinitionTable.id, indicateurPiloteTable.indicateurId)
+      )
+      .where(
+        and(
+          eq(indicateurPiloteTable.userId, tokenInfo.id),
+          eq(indicateurPiloteTable.collectiviteId, collectiviteId),
+          or(
+            eq(indicateurDefinitionTable.collectiviteId, collectiviteId),
+            isNull(indicateurDefinitionTable.collectiviteId)
+          )
         )
       );
     return rows[0]?.value ?? 0;
