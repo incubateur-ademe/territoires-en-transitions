@@ -28,5 +28,10 @@ export class IndicateurDefinitionsRouter {
       .query(({ ctx, input }) => {
         return this.service.getFavorisCount(input, ctx.user);
       }),
+    getMesIndicateursCount: this.trpc.authedProcedure
+      .input(getFavorisCountRequestSchema)
+      .query(({ ctx, input }) => {
+        return this.service.getMesIndicateursCount(input, ctx.user);
+      }),
   });
 }
