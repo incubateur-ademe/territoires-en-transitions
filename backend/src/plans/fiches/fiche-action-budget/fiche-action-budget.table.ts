@@ -27,12 +27,12 @@ export const ficheActionBudgetTable = pgTable('fiche_action_budget', {
   unite: text('unite').notNull(), // TODO check enum BudgetUnite
   annee: integer('annee'),
   budgetPrevisionnel: numeric('budget_previsionnel', {
-    precision: 12,
-    scale: 0,
+    precision: 14,
+    scale: 2,
   }),
   budgetReel: numeric('budget_reel', {
-    precision: 12,
-    scale: 0,
+    precision: 14,
+    scale: 2,
   }),
   estEtale: boolean('est_etale').notNull().default(false),
 });
