@@ -29,6 +29,11 @@ export interface ApplicationContext {
 
   userId?: string;
 
+  /**
+   *api key client id used to generate the JWT token
+   */
+  apiClientId?: string;
+
   // When authenticating with a service account
   serviceAccountId?: string;
 
