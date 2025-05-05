@@ -10,4 +10,6 @@ export interface HttpErrorResponse {
   timestamp?: string;
 
   path?: string;
+
+  details?: any;
 }

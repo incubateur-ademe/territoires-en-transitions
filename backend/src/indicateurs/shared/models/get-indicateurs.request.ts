@@ -8,9 +8,9 @@ export const getIndicateursValeursRequestSchema = z
       .optional()
       .describe('Identifiant de la collectivité'),
     indicateurIds: z.coerce
-      .number()
-      .int()
-      .array()
+      .string()
+      .transform((value) => value.split(','))
+      .pipe(z.coerce.number().array())
       .optional()
       .describe("Identifiant de l'indicateur"),
 
