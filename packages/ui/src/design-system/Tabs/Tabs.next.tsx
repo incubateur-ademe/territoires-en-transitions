@@ -1,5 +1,6 @@
 'use client';
 
+import { Tooltip } from '@/ui/design-system/Tooltip';
 import classNames from 'classnames';
 import { Route } from 'next';
 import Link from 'next/link';
@@ -76,13 +77,14 @@ export const TabsList = ({ children }: { children: ReactNode }) => {
   );
 };
 
-type TabProps = {
+export type TabProps = {
   label: string;
   href: Route;
   icon?: IconValue;
   iconClassName?: string;
   iconPosition?: 'left' | 'right';
   title?: string;
+  tooltip?: string;
 };
 
 export const TabsTab = (props: TabProps) => {
@@ -90,50 +92,57 @@ export const TabsTab = (props: TabProps) => {
   const pathname = usePathname();
   const isActive = pathname.endsWith(props.href);
 
+  const link = (
+    <Link
+      className={classNames(
+        // styles communs
+        'flex items-center px-3 py-1 font-bold w-max bg-none',
+        // variante au survol
+        'hover:rounded-md hover:shadow-button hover:!bg-primary-2 hover:text-primary-9',
+        {
+          // variante de taille
+          'text-md': size === 'md',
+          'text-sm': size === 'sm',
+          'text-xs': size === 'xs',
+          // variante pour l'onglet actif
+          'border border-grey-3 rounded-md shadow-button bg-white text-primary-9':
+            isActive,
+          // variante pour les onglets inactifs
+          'text-primary-10': !isActive,
+        }
+      )}
+      type="button"
+      role="tab"
+      id={`tab-${props.href}`}
+      aria-selected={isActive ? 'true' : 'false'}
+      title={props.title}
+      href={props.href}
+    >
+      {props.icon && (!props.iconPosition || props.iconPosition === 'left') && (
+        <Icon
+          icon={props.icon}
+          size={size}
+          className={classNames('mr-1', props.iconClassName)}
+        />
+      )}
+      {props.label}
+      {props.icon && props.iconPosition === 'right' ? (
+        <Icon
+          icon={props.icon}
+          size={size}
+          className={classNames('ml-1', props.iconClassName)}
+        />
+      ) : (
+        props.tooltip && (
+          <Icon icon="information-line" size={size} className="ml-1" />
+        )
+      )}
+    </Link>
+  );
+
   return (
     <li role="presentation" className="p-0">
-      <Link
-        className={classNames(
-          // styles communs
-          'flex items-center px-3 py-1 font-bold w-max bg-none',
-          // variante au survol
-          'hover:rounded-md hover:shadow-button hover:!bg-primary-2 hover:text-primary-9',
-          {
-            // variante de taille
-            'text-md': size === 'md',
-            'text-sm': size === 'sm',
-            'text-xs': size === 'xs',
-            // variante pour l'onglet actif
-            'border border-grey-3 rounded-md shadow-button bg-white text-primary-9':
-              isActive,
-            // variante pour les onglets inactifs
-            'text-primary-10': !isActive,
-          }
-        )}
-        type="button"
-        role="tab"
-        id={`tab-${props.href}`}
-        aria-selected={isActive ? 'true' : 'false'}
-        title={props.title}
-        href={props.href}
-      >
-        {props.icon &&
-          (!props.iconPosition || props.iconPosition === 'left') && (
-            <Icon
-              icon={props.icon}
-              size={size}
-              className={classNames('mr-1', props.iconClassName)}
-            />
-          )}
-        {props.label}
-        {props.icon && props.iconPosition === 'right' && (
-          <Icon
-            icon={props.icon}
-            size={size}
-            className={classNames('ml-1', props.iconClassName)}
-          />
-        )}
-      </Link>
+      {props.tooltip ? <Tooltip label={props.tooltip}>{link}</Tooltip> : link}
     </li>
   );
 };
