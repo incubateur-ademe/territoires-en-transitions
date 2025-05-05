@@ -5,7 +5,7 @@ import Markdown from '@/site/components/markdown/Markdown';
 import Section from '@/site/components/sections/Section';
 import { Alert, Button, Icon } from '@/ui';
 
-const PDF_FILENAME = 'ADEME-Methodo-Outil-trajectoire-reference-VF.pdf';
+const PDF_FILENAME = 'ADEME-Methodo-Outil-trajectoire-reference_VF_Nov2024.pdf';
 const XLSX_FILENAME = 'Trajectoire-GES-de-reference-V1-1-20240905.xlsx';
 
 type DocumentationProps = {
@@ -65,6 +65,7 @@ const Documentation = ({
               size="xs"
               href={`/outil-numerique/trajectoire/${PDF_FILENAME}`}
               download={PDF_FILENAME}
+              external
             >
               Télécharger le PDF
             </Button>

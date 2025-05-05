@@ -9,7 +9,8 @@ export const HELPDESK_URL =
   'https://aide.territoiresentransitions.fr/fr/article/la-trajectoire-snbc-territorialisee-bientot-disponible-sur-territoires-en-transitions-1g46muy/#3-comment-sera-t-elle-mise-a-votre-disposition';
 
 // fichier dans le dossier `public`
-export const DOC_METHODO = 'ADEME-Methodo-Outil-trajectoire-référence.pdf';
+export const DOC_METHODO =
+  'ADEME-Methodo-Outil-trajectoire-reference_VF_Nov2024.pdf';
 
 // sources utilisées
 export enum SourceIndicateur {
@@ -388,6 +389,9 @@ export type IndicateurTrajectoireId = IndicateurTrajectoire['id'];
 export type SecteurTrajectoire = IndicateurTrajectoire['secteurs'][number];
 
 // donne un indicateur trajectoire à partir de son id
-export const getIndicateurTrajectoire = (id: IndicateurTrajectoireId | typeof SEQUESTRATION_CARBONE.id) =>
-  id === SEQUESTRATION_CARBONE.id ? SEQUESTRATION_CARBONE : INDICATEURS_TRAJECTOIRE.find(t => t.id === id)!;
-
+export const getIndicateurTrajectoire = (
+  id: IndicateurTrajectoireId | typeof SEQUESTRATION_CARBONE.id
+) =>
+  id === SEQUESTRATION_CARBONE.id
+    ? SEQUESTRATION_CARBONE
+    : INDICATEURS_TRAJECTOIRE.find((t) => t.id === id)!;
