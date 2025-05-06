@@ -520,7 +520,7 @@ export default class FicheActionListService {
         (json_build_object(
           'id', ${ficheActionBudgetTable.id},
           'type', ${ficheActionBudgetTable.type},
-          'unite', ${ficheActionBudgetTable.type},
+          'unite', ${ficheActionBudgetTable.unite},
           'annee', ${ficheActionBudgetTable.annee},
           'budgetPrevisionnel', ${ficheActionBudgetTable.budgetPrevisionnel},
           'budgetReel', ${ficheActionBudgetTable.budgetReel},
