@@ -4,11 +4,12 @@ import { Fragment, Ref, forwardRef, useEffect, useState } from 'react';
 import { useDebouncedCallback } from 'use-debounce';
 
 import { Badge } from '@/ui/design-system/Badge';
-import { Icon } from '@/ui/design-system/Icon';
+import { Icon, IconValue } from '@/ui/design-system/Icon';
 import { DropdownFloater } from '@/ui/design-system/Select/components/DropdownFloater';
 import * as Sentry from '@sentry/nextjs';
 
 import {
+  CustomAction,
   Option,
   OptionValue,
   SelectOption,
@@ -26,6 +27,8 @@ export type CreateOption = {
   onCreate?: (inputValue: string) => void;
   onDelete?: (id: OptionValue) => void;
   onUpdate?: (id: OptionValue, inputValue: string) => void;
+  // Actions supplémentaires à ajouter au menu
+  actions?: CustomAction[];
 };
 
 export type SelectProps = {
@@ -39,6 +42,8 @@ export type SelectProps = {
   values?: OptionValue | OptionValue[];
   /** Permet de choisir combien de badges afficher et d'afficher un "+" avec le nombre de badges cachés */
   maxBadgesToShow?: number;
+  /** Permet d'ajouter des actions custom sur les options */
+  actions?: { label: string; icon: IconValue; action: () => void }[];
 
   /** Active la multi sélection */
   multiple?: boolean;
@@ -99,6 +104,7 @@ export const SelectBase = (props: SelectProps) => {
     maxBadgesToShow,
     options,
     onChange,
+    actions,
     createProps,
     onSearch,
     debounce = onSearch ? 250 : 0,
@@ -247,6 +253,7 @@ export const SelectBase = (props: SelectProps) => {
               }
             }}
             isLoading={loading}
+            actions={actions}
             createProps={createProps}
             customItem={customItem}
             isBadgeItem={isBadgeItem}
@@ -264,7 +271,7 @@ export const SelectBase = (props: SelectProps) => {
         isSearcheable={hasSearch}
         inputValue={inputValue}
         onSearch={handleInputChange}
-        createProps={createProps}
+        actions={actions}
         multiple={multiple}
         customItem={customItem}
         showCustomItemInBadges={showCustomItemInBadges}
