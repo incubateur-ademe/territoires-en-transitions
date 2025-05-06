@@ -7,9 +7,9 @@ import { useTagUpdate } from '@/app/ui/dropdownLists/tags/useTagUpdate';
 import { Option, OptionValue, SelectFilter, SelectMultipleProps } from '@/ui';
 
 import { Personne } from '@/api/collectivites';
+import { QueryKey } from 'react-query';
 import { usePersonneListe } from './usePersonneListe';
 import { getPersonneStringId } from './utils';
-import { QueryKey } from 'react-query';
 
 type Props = Omit<SelectMultipleProps, 'values' | 'onChange' | 'options'> & {
   values?: string[];
@@ -38,6 +38,8 @@ const PersonnesDropdown = (props: Props) => {
         disabled: props.disabledOptionsIds?.includes(
           getPersonneStringId(personne)
         ),
+        icon: personne.userId ? 'user-follow-line' : undefined,
+        iconClassname: personne.userId ? 'text-success-1' : undefined,
       }))
     : [];
 
