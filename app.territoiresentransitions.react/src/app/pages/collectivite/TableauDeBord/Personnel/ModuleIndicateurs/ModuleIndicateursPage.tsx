@@ -5,6 +5,10 @@ import {
   PersonalDefaultModuleKeys,
 } from '@/api/plan-actions/dashboards/personal-dashboard/domain/module.schema';
 import IndicateursListe from '@/app/app/pages/collectivite/Indicateurs/lists/indicateurs-list';
+import {
+  defaultListOptions,
+  useIndicateursListParams,
+} from '@/app/app/pages/collectivite/Indicateurs/lists/indicateurs-list/use-indicateurs-list-params';
 import { usePlanActionsCount } from '@/app/app/pages/collectivite/PlansActions/PlanAction/data/usePlanActionsCount';
 import ModulePage from '@/app/app/pages/collectivite/TableauDeBord/components/ModulePage';
 import ModalIndicateursSuiviPlan from '@/app/app/pages/collectivite/TableauDeBord/Personnel/ModuleIndicateurs/ModalIndicateursSuiviPlan';
@@ -13,8 +17,10 @@ import {
   usePersonalModuleFetch,
 } from '@/app/app/pages/collectivite/TableauDeBord/Personnel/usePersonalModuleFetch';
 import { TDBViewParam } from '@/app/app/paths';
-import { useCurrentCollectivite } from '@/app/core-logic/hooks/useCurrentCollectivite';
-import { pick } from 'es-toolkit';
+import { useCurrentCollectivite } from '@/app/collectivites/collectivite-context';
+import { isEqual, pick } from 'es-toolkit';
+import { usePathname } from 'next/navigation';
+import { useEffect } from 'react';
 
 type Props = {
   view: TDBViewParam;
@@ -34,6 +40,24 @@ const ModuleIndicateursPage = ({ view, defaultModuleKey }: Props) => {
   const pageName = 'app/tdb/personnel/indicateurs-de-suivi-de-mes-plans';
   const trackEvent = useEventTracker(pageName);
 
+  const pathName = usePathname();
+
+  const { searchParams, setSearchParams } = useIndicateursListParams(
+    pathName,
+    filtre || {},
+    defaultListOptions
+  );
+
+  // après une modification depuis la modale les paramètres du module sont
+  // enregistrés et rechargés : il faut alors remettre à jour les paramètres
+  // dans l'url
+  const syncRequired = filtre && !isEqual(filtre, searchParams);
+  useEffect(() => {
+    if (syncRequired) {
+      setSearchParams({ ...defaultListOptions, ...filtre });
+    }
+  }, [syncRequired, filtre, setSearchParams]);
+
   if (isModuleLoading || !module) {
     return null;
   }
@@ -42,7 +66,7 @@ const ModuleIndicateursPage = ({ view, defaultModuleKey }: Props) => {
     <ModulePage view={view} title={module.titre}>
       <TrackPageView
         pageName={`app/tdb/personnel/${defaultModuleKey}`}
-        properties={pick(collectivite!, [
+        properties={pick(collectivite, [
           'collectiviteId',
           'niveauAcces',
           'role',
@@ -50,13 +74,13 @@ const ModuleIndicateursPage = ({ view, defaultModuleKey }: Props) => {
       />
       <IndicateursListe
         pageName={pageName}
-        filtres={filtre}
-        sortSettings={{ defaultSort: 'estComplet' }}
+        searchParams={searchParams}
+        setSearchParams={setSearchParams}
         customFilterBadges={{
           planActions:
             filtre?.planActionIds?.length === count && 'Tous les plans',
         }}
-        settings={(openState) => (
+        renderSettings={(openState) => (
           <>
             <Button
               variant="outlined"
@@ -65,7 +89,7 @@ const ModuleIndicateursPage = ({ view, defaultModuleKey }: Props) => {
               onClick={() => {
                 openState.setIsOpen(true);
                 trackEvent('tdb_modifier_filtres_indicateurs', {
-                  ...collectivite!,
+                  ...collectivite,
                 });
               }}
             >
