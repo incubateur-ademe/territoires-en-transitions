@@ -36,6 +36,8 @@ const PersonnesDropdown = (props: Props) => {
         disabled: props.disabledOptionsIds?.includes(
           getPersonneStringId(personne)
         ),
+        icon: personne.userId ? 'user-follow-line' : undefined,
+        iconClassname: personne.userId ? 'text-success-1' : undefined,
       }))
     : [];
 

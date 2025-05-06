@@ -161,8 +161,8 @@ const OptionMenuButton = forwardRef((props, ref?: Ref<HTMLButtonElement>) => (
       ref={ref}
       icon="more-line"
       size="xs"
-      variant="white"
-      className="!p-1 m-auto"
+      variant="grey"
+      className="!p-1 !h-6 m-auto !text-grey-7"
     />
   </div>
 ));
