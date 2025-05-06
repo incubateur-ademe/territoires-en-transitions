@@ -1,3 +1,8 @@
+import {
+  defaultListOptions,
+  useIndicateursListParams,
+} from '@/app/app/pages/collectivite/Indicateurs/lists/indicateurs-list/use-indicateurs-list-params';
+import { usePathname } from 'next/navigation';
 import IndicateursListe from '../lists/indicateurs-list';
 
 type Props = {
@@ -6,17 +11,24 @@ type Props = {
 };
 
 const SousIndicateurs = ({ enfantsIds, isReadonly }: Props) => {
+  const pathName = usePathname();
+
+  const { searchParams, setSearchParams } = useIndicateursListParams(
+    pathName,
+    { indicateurIds: enfantsIds },
+    { ...defaultListOptions, sortBy: 'text' }
+  );
+
   if (!enfantsIds?.length) return null;
 
   return (
     <div className="bg-white p-10 border border-grey-3 rounded-xl">
       <IndicateursListe
-        filtres={{ indicateurIds: enfantsIds }}
-        sortSettings={{
-          defaultSort: 'text',
-        }}
-        menuContainerClassname="!border-0 pb-0"
+        pageName="app/indicateurs/predefini"
+        searchParams={searchParams}
+        setSearchParams={setSearchParams}
         isEditable={!isReadonly}
+        menuContainerClassname="!border-0 !pb-0"
       />
     </div>
   );
