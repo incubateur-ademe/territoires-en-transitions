@@ -1,4 +1,5 @@
-import { FetchFiltre } from '@/api/indicateurs';
+import { SearchParams } from '@/app/app/pages/collectivite/Indicateurs/lists/indicateurs-list/use-indicateurs-list-params';
+import { IndicateursListParamOption } from '@/app/app/paths';
 import PersonnesDropdown from '@/app/ui/dropdownLists/PersonnesDropdown/PersonnesDropdown';
 import {
   getPilotesValues,
@@ -12,11 +13,16 @@ import IndicateurCompletsDropdown from '@/app/ui/dropdownLists/indicateur/Indica
 import { Checkbox, Field, FormSection } from '@/ui';
 
 type Props = {
-  filters: FetchFiltre;
-  setFilters: (filters: FetchFiltre) => void;
+  searchParams: SearchParams;
+  setSearchParams: (prams: SearchParams) => void;
+  listId: IndicateursListParamOption;
 };
 
-const MenuFiltresTousLesIndicateurs = ({ filters, setFilters }: Props) => {
+const IndicateursListFilters = ({
+  searchParams: filters,
+  setSearchParams: setFilters,
+  listId,
+}: Props) => {
   return (
     <div className="w-96 md:w-[48rem] grid md:grid-cols-2 gap-8 lg:gap-12 p-4 lg:p-8">
       <FormSection title="Typologie :" className="!grid-cols-1">
@@ -92,6 +98,7 @@ const MenuFiltresTousLesIndicateurs = ({ filters, setFilters }: Props) => {
         <Checkbox
           label="Indicateur personnalisé"
           checked={filters.estPerso}
+          disabled={listId === 'perso'}
           onChange={() => {
             const { estPerso, ...rest } = filters;
             setFilters({
@@ -118,6 +125,7 @@ const MenuFiltresTousLesIndicateurs = ({ filters, setFilters }: Props) => {
         <Field title="Personne pilote">
           <PersonnesDropdown
             values={getPilotesValues(filters)}
+            disabled={listId === 'mes-indicateurs'}
             onChange={({ personnes }) => {
               const { personnePiloteIds, utilisateurPiloteIds, ...rest } =
                 filters;
@@ -168,4 +176,4 @@ const MenuFiltresTousLesIndicateurs = ({ filters, setFilters }: Props) => {
   );
 };
 
-export default MenuFiltresTousLesIndicateurs;
+export default IndicateursListFilters;
