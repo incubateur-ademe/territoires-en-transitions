@@ -30,6 +30,12 @@ export type OptionSection = {
 /** Type d'une option dans un sélecteur, peut être une simple option ou une liste d'options */
 export type SelectOption = Option | OptionSection;
 
+export type CustomAction = {
+  label: string;
+  icon: IconValue;
+  action: (id: OptionValue) => void;
+};
+
 /** Option section type guards */
 export function isOptionSection(option: SelectOption): option is OptionSection {
   return 'title' in option && option.title !== undefined;
