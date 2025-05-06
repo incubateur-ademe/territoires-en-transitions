@@ -1,5 +1,8 @@
 import { PermissionService } from '@/backend/auth/authorizations/permission.service';
-import { PermissionOperation, ResourceType } from '@/backend/auth/index-domain';
+import {
+  PermissionOperationEnum,
+  ResourceType,
+} from '@/backend/auth/index-domain';
 import { TrpcService } from '@/backend/utils/trpc/trpc.service';
 import { Injectable } from '@nestjs/common';
 import z from 'zod';
@@ -50,7 +53,7 @@ export class SnapshotsRouter {
       .mutation(async ({ input, ctx }) => {
         await this.permissionService.isAllowed(
           ctx.user,
-          PermissionOperation.REFERENTIELS_EDITION,
+          PermissionOperationEnum['REFERENTIELS.EDITION'],
           ResourceType.COLLECTIVITE,
           input.collectiviteId
         );
@@ -119,7 +122,7 @@ export class SnapshotsRouter {
       .mutation(async ({ input, ctx }) => {
         await this.permissionService.isAllowed(
           ctx.user,
-          PermissionOperation.REFERENTIELS_EDITION,
+          PermissionOperationEnum['REFERENTIELS.EDITION'],
           ResourceType.COLLECTIVITE,
           input.collectiviteId
         );
@@ -137,7 +140,7 @@ export class SnapshotsRouter {
       .mutation(async ({ input, ctx }) => {
         await this.permissionService.isAllowed(
           ctx.user,
-          PermissionOperation.REFERENTIELS_EDITION,
+          PermissionOperationEnum['REFERENTIELS.EDITION'],
           ResourceType.COLLECTIVITE,
           input.collectiviteId
         );
