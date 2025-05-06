@@ -3,13 +3,12 @@ import {
   ajouterCollectiviteUrl,
   makeCollectiviteAccueilUrl,
   makeCollectiviteBibliothequeUrl,
-  makeCollectiviteIndicateursCollectiviteUrl,
+  makeCollectiviteIndicateursListUrl,
   makeCollectiviteJournalUrl,
   makeCollectiviteModifierUrl,
   makeCollectivitePanierUrl,
   makeCollectivitePersoRefUrl,
   makeCollectivitePlansActionsLandingUrl,
-  makeCollectiviteTousLesIndicateursUrl,
   makeCollectiviteToutesLesFichesUrl,
   makeCollectiviteTrajectoirelUrl,
   makeCollectiviteUsersUrl,
@@ -229,18 +228,16 @@ const makeNavItemsBase = (
       urlPrefix: [`${collectivite.collectiviteId}/indicateurs/`],
       items: [
         {
-          label: 'Tous les indicateurs',
+          label: "Listes d'indicateurs",
           dataTest: 'ind-tous',
-          to: makeCollectiviteTousLesIndicateursUrl({
+          to: makeCollectiviteIndicateursListUrl({
             collectiviteId,
           }),
-        },
-        {
-          label: 'Indicateurs de la collectivité',
-          dataTest: 'ind-collectivite',
-          to: makeCollectiviteIndicateursCollectiviteUrl({
-            collectiviteId,
-          }),
+          urlPrefix: [
+            makeCollectiviteIndicateursListUrl({
+              collectiviteId,
+            }),
+          ],
         },
         {
           dataTest: 'ind-traj-snbc',
