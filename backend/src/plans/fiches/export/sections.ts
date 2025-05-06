@@ -8,6 +8,7 @@ import {
 } from '@/backend/plans/fiches/plan-actions.service';
 import { formatDate } from '@/backend/utils/excel/export-excel.utils';
 import { getDepthLabel, participationCitoyenneTypeToLabel } from './utils';
+import { formatBudgets } from '@/backend/plans/fiches/export/format';
 
 // l'export est organisé en sections ou groupes de colonnes
 type Section = {
@@ -187,13 +188,12 @@ const BUDGET: Section = {
       cellValue: ({ fiche }) => fiche?.financements,
     },
     {
-      colLabel: 'Budget prévisionnel total (TTC)', // TODO: à changer pour HT
-      cellValue: ({ fiche }) => {
-        // le type `numeric` pg doit être converti en nombre
-        const n = parseFloat(fiche?.budgetPrevisionnel ?? '');
-        return isNaN(n) ? '' : n;
-      },
-      format: 'euro',
+      colLabel: 'Budgets de fonctionnement',
+      cellValue: ({ fiche }) => formatBudgets(fiche, 'fonctionnement').join('\n'),
+    },
+    {
+      colLabel: `Budgets d'investissement`,
+      cellValue: ({ fiche }) => formatBudgets(fiche, 'investissement').join('\n'),
     },
     ...Array.from({ length: maxFinanceurs }).flatMap((_, i) => [
       {
