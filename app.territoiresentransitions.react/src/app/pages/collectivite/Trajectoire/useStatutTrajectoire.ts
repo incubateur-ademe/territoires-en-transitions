@@ -1,5 +1,5 @@
+import { useCollectiviteId } from '@/app/collectivites/collectivite-context';
 import { ApiError, useApiClient } from '@/app/core-logic/api/useApiClient';
-import { useCollectiviteId } from '@/app/core-logic/hooks/params';
 import { useQuery } from 'react-query';
 
 export enum StatutTrajectoire {

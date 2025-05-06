@@ -1,4 +1,4 @@
-import { useCurrentCollectivite } from '@/app/core-logic/hooks/useCurrentCollectivite';
+import { useCurrentCollectivite } from '@/app/collectivites/collectivite-context';
 import { Alert } from '@/ui';
 import { OpenState } from '@/ui/utils/types';
 import { IndicateurChartInfo } from '../../data/use-indicateur-chart';
@@ -18,13 +18,12 @@ export const IndicateurValuesTabs = ({
   chartInfo: IndicateurChartInfo;
   openModalState?: OpenState;
 }) => {
-  const collectivite = useCurrentCollectivite();
-  const isReadonly = !collectivite || collectivite.isReadOnly;
+  const { collectiviteId, isReadOnly } = useCurrentCollectivite();
   const { confidentiel } = definition;
 
   return (
     <>
-      {!isReadonly && (
+      {!isReadOnly && (
         <>
           {definition.identifiant?.startsWith(ID_SEQUESTRATION) && (
             <Alert
@@ -35,16 +34,14 @@ export const IndicateurValuesTabs = ({
           )}
         </>
       )}
-      {!!collectivite?.collectiviteId && (
-        <IndicateurTable
-          chartInfo={chartInfo}
-          collectiviteId={collectivite.collectiviteId}
-          definition={definition}
-          confidentiel={confidentiel}
-          readonly={!collectivite || collectivite.isReadOnly}
-          openModalState={openModalState}
-        />
-      )}
+      <IndicateurTable
+        chartInfo={chartInfo}
+        collectiviteId={collectiviteId}
+        definition={definition}
+        confidentiel={confidentiel}
+        readonly={isReadOnly}
+        openModalState={openModalState}
+      />
     </>
   );
 };

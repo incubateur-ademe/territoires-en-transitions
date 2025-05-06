@@ -1,4 +1,4 @@
-import { useCurrentCollectivite } from '@/app/core-logic/hooks/useCurrentCollectivite';
+import { useCurrentCollectivite } from '@/app/collectivites/collectivite-context';
 import Markdown from '@/app/ui/Markdown';
 import { Tab, Tabs } from '@/ui';
 import { useUpdateIndicateurDefinition } from '../Indicateur/useUpdateIndicateurDefinition';
@@ -28,10 +28,7 @@ const IndicateurLayout = ({
 
   const { mutate: updateDefinition } = useUpdateIndicateurDefinition();
 
-  const collectivite = useCurrentCollectivite();
-
-  const collectiviteId = collectivite?.collectiviteId;
-  const isReadonly = !collectivite || collectivite?.isReadOnly;
+  const { collectiviteId, isReadOnly } = useCurrentCollectivite();
 
   const composeSansAgregation = !!enfants && enfants.length > 0 && sansValeur;
   const composeAvecAgregation = !!enfants && enfants.length > 0 && !sansValeur;
@@ -79,9 +76,9 @@ const IndicateurLayout = ({
     <div className="bg-grey-2 grow">
       <div className="py-12">
         <IndicateurHeader
-          collectiviteId={collectiviteId!}
+          collectiviteId={collectiviteId}
           definition={definition}
-          isReadonly={isReadonly}
+          isReadonly={isReadOnly}
           isPerso={isPerso}
           composeSansAgregation={composeSansAgregation}
           onUpdate={handleTitreUpdate}
@@ -93,7 +90,7 @@ const IndicateurLayout = ({
               // Groupe d'indicateurs sans agrégation
               <SousIndicateurs
                 enfantsIds={enfantsIds}
-                isReadonly={isReadonly}
+                isReadonly={isReadOnly}
               />
             ) : (
               // Indicateur sans enfant, groupe d'indicateurs avec agrégation,
@@ -102,7 +99,7 @@ const IndicateurLayout = ({
                 {/* Données */}
                 <Tab label="Données">
                   <DonneesIndicateur
-                    {...{ definition, isPerso, isReadonly }}
+                    {...{ definition, isPerso, isReadOnly }}
                     updateUnite={handleUniteUpdate}
                     updateDescription={(value) =>
                       isPerso
@@ -121,7 +118,7 @@ const IndicateurLayout = ({
                   >
                     <SousIndicateurs
                       enfantsIds={enfantsIds}
-                      isReadonly={isReadonly}
+                      isReadonly={isReadOnly}
                     />
                   </Tab>
                 ) : undefined}
@@ -137,7 +134,7 @@ const IndicateurLayout = ({
                 <Tab label="Fiches des plans liées">
                   <FichesLiees
                     definition={definition}
-                    isReadonly={isReadonly}
+                    isReadonly={isReadOnly}
                   />
                 </Tab>
 
