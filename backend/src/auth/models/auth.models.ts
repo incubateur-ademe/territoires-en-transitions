@@ -44,7 +44,7 @@ export interface AuthJwtPayload<Role extends AuthRole = AuthRole>
    */
   client_id?: string;
 
-  restricted_permissions?: string[];
+  permissions?: string[];
 }
 
 export function jwtToUser(jwtPayload: AuthJwtPayload): AuthUser {

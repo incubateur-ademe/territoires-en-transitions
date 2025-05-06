@@ -1,4 +1,4 @@
-import { PermissionOperation } from '@/backend/auth/authorizations/permission-operation.enum';
+import { PermissionOperationEnum } from '@/backend/auth/authorizations/permission-operation.enum';
 import { PermissionService } from '@/backend/auth/authorizations/permission.service';
 import { ResourceType } from '@/backend/auth/authorizations/resource-type.enum';
 import { Injectable, Logger } from '@nestjs/common';
@@ -101,7 +101,7 @@ export default class PersonnalisationsService {
     if (reponsesDate && tokenInfo) {
       await this.permissionService.isAllowed(
         tokenInfo,
-        PermissionOperation.REFERENTIELS_LECTURE,
+        PermissionOperationEnum['REFERENTIELS.LECTURE'],
         ResourceType.COLLECTIVITE,
         collectiviteId
       );
@@ -170,7 +170,7 @@ export default class PersonnalisationsService {
     if (request.date && tokenInfo) {
       await this.permissionService.isAllowed(
         tokenInfo,
-        PermissionOperation.REFERENTIELS_LECTURE,
+        PermissionOperationEnum['REFERENTIELS.LECTURE'],
         ResourceType.COLLECTIVITE,
         collectiviteId
       );

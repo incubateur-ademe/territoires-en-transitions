@@ -1,4 +1,4 @@
-import { PermissionOperation } from '@/backend/auth/authorizations/permission-operation.enum';
+import { PermissionOperationEnum } from '@/backend/auth/authorizations/permission-operation.enum';
 import { PermissionService } from '@/backend/auth/authorizations/permission.service';
 import { ResourceType } from '@/backend/auth/authorizations/resource-type.enum';
 import CollectivitesService from '@/backend/collectivites/services/collectivites.service';
@@ -293,14 +293,14 @@ export default class CrudValeursService {
       );
       hasPermissionLecture = await this.permissionService.isAllowed(
         tokenInfo,
-        PermissionOperation.INDICATEURS_LECTURE,
+        PermissionOperationEnum['INDICATEURS.LECTURE'],
         ResourceType.COLLECTIVITE,
         collectiviteId,
         true
       );
       const hasPermissionVisite = await this.permissionService.isAllowed(
         tokenInfo,
-        PermissionOperation.INDICATEURS_VISITE,
+        PermissionOperationEnum['INDICATEURS.VISITE'],
         ResourceType.COLLECTIVITE,
         collectiviteId,
         true
@@ -312,8 +312,8 @@ export default class CrudValeursService {
             tokenInfo.id
           } n'a pas l'autorisation ${
             accesRestreintRequis
-              ? PermissionOperation.INDICATEURS_LECTURE
-              : PermissionOperation.INDICATEURS_VISITE
+              ? PermissionOperationEnum['INDICATEURS.LECTURE']
+              : PermissionOperationEnum['INDICATEURS.VISITE']
           } sur la ressource Collectivité ${collectiviteId}`
         );
       }
@@ -481,7 +481,7 @@ export default class CrudValeursService {
     const { collectiviteId } = data;
     await this.permissionService.isAllowed(
       tokenInfo,
-      PermissionOperation.INDICATEURS_EDITION,
+      PermissionOperationEnum['INDICATEURS.EDITION'],
       ResourceType.COLLECTIVITE,
       collectiviteId
     );
@@ -599,7 +599,7 @@ export default class CrudValeursService {
     const { collectiviteId, indicateurId, id } = data;
     await this.permissionService.isAllowed(
       tokenInfo,
-      PermissionOperation.INDICATEURS_EDITION,
+      PermissionOperationEnum['INDICATEURS.EDITION'],
       ResourceType.COLLECTIVITE,
       collectiviteId
     );
@@ -629,7 +629,7 @@ export default class CrudValeursService {
       for (const collectiviteId of collectiviteIds) {
         await this.permissionService.isAllowed(
           tokenInfo,
-          PermissionOperation.INDICATEURS_EDITION,
+          PermissionOperationEnum['INDICATEURS.EDITION'],
           ResourceType.COLLECTIVITE,
           collectiviteId
         );

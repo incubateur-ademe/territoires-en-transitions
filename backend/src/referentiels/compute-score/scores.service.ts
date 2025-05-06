@@ -1,4 +1,4 @@
-import { PermissionOperation } from '@/backend/auth/authorizations/permission-operation.enum';
+import { PermissionOperationEnum } from '@/backend/auth/authorizations/permission-operation.enum';
 import { PermissionService } from '@/backend/auth/authorizations/permission.service';
 import { ResourceType } from '@/backend/auth/authorizations/resource-type.enum';
 import { PermissionLevel } from '@/backend/auth/authorizations/roles/niveau-acces.enum';
@@ -124,8 +124,8 @@ export default class ScoresService {
       await this.permissionService.isAllowed(
         tokenInfo,
         niveauAccesMinimum === PermissionLevel.LECTURE
-          ? PermissionOperation.REFERENTIELS_LECTURE
-          : PermissionOperation.REFERENTIELS_EDITION,
+          ? PermissionOperationEnum['REFERENTIELS.LECTURE']
+          : PermissionOperationEnum['REFERENTIELS.EDITION'],
         ResourceType.COLLECTIVITE,
         collectiviteId
       );

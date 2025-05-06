@@ -2,6 +2,6 @@
 
 BEGIN;
 
-DROP TABLE IF EXISTS auth.user_api_key;
+DROP TABLE IF EXISTS public.user_api_key;
 
 COMMIT;

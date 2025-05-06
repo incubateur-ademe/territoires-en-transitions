@@ -14,7 +14,7 @@ import {
 } from 'drizzle-orm';
 import {
   AuthUser,
-  PermissionOperation,
+  PermissionOperationEnum,
   ResourceType,
 } from '../../auth/index-domain';
 import { collectiviteCardView } from '../../collectivites/shared/models/collectivite-card.view';
@@ -68,8 +68,8 @@ export default class ValeursMoyenneService {
     await this.permissionService.isAllowed(
       tokenInfo,
       collectivitePrivate
-        ? PermissionOperation.INDICATEURS_LECTURE
-        : PermissionOperation.INDICATEURS_VISITE,
+        ? PermissionOperationEnum['INDICATEURS.LECTURE']
+        : PermissionOperationEnum['INDICATEURS.VISITE'],
       ResourceType.COLLECTIVITE,
       collectiviteId
     );

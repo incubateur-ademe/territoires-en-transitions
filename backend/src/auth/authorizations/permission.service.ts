@@ -52,13 +52,13 @@ export class PermissionService {
       return true;
     }
 
-    if (user.jwtToken?.restricted_permissions) {
+    if (user.jwtPayload?.permissions) {
       this.logger.log(
-        `Checking restricted permissions for client_id ${user.jwtToken.client_id}`
+        `Checking restricted permissions for client_id ${user.jwtPayload.client_id}`
       );
-      if (!user.jwtToken.restricted_permissions.includes(operation)) {
+      if (!user.jwtPayload.permissions.includes(operation)) {
         this.logger.log(
-          `La clé d'api n'a pas l'autorisation ${operation}: restricted_permissions ${user.jwtToken.restricted_permissions.join(
+          `La clé d'api n'a pas l'autorisation ${operation}: permissions ${user.jwtPayload.permissions.join(
             ', '
           )}`
         );

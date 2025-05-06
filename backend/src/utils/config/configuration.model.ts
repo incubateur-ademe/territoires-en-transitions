@@ -101,6 +101,18 @@ export const backendConfigurationSchema = z.object({
     .positive()
     .default(6379)
     .describe('Port du serveur Redis pour les queues Bull'),
+  PUBLIC_API_THROTTLE_TTL: z.coerce
+    .number()
+    .int()
+    .positive()
+    .default(60000)
+    .describe('The throttle TTL in milliseconds'),
+  PUBLIC_API_THROTTLE_LIMIT: z.coerce
+    .number()
+    .int()
+    .positive()
+    .default(100)
+    .describe('The throttle limit'),
 });
 export type BackendConfigurationType = z.infer<
   typeof backendConfigurationSchema

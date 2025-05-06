@@ -1,6 +1,6 @@
 import {
   AuthUser,
-  PermissionOperation,
+  PermissionOperationEnum,
   ResourceType,
 } from '@/backend/auth/index-domain';
 import { categorieTagTable } from '@/backend/collectivites/index-domain';
@@ -386,7 +386,7 @@ export class ListDefinitionsService {
 
     await this.permissionService.isAllowed(
       tokenInfo,
-      PermissionOperation.INDICATEURS_VISITE,
+      PermissionOperationEnum['INDICATEURS.VISITE'],
       ResourceType.COLLECTIVITE,
       collectiviteId
     );
@@ -578,7 +578,7 @@ export class ListDefinitionsService {
     const { collectiviteId, indicateurId } = data;
     await this.permissionService.isAllowed(
       tokenInfo,
-      PermissionOperation.INDICATEURS_VISITE,
+      PermissionOperationEnum['INDICATEURS.VISITE'],
       ResourceType.COLLECTIVITE,
       collectiviteId
     );
@@ -637,7 +637,7 @@ export class ListDefinitionsService {
     const { collectiviteId } = data;
     await this.permissionService.isAllowed(
       tokenInfo,
-      PermissionOperation.INDICATEURS_VISITE,
+      PermissionOperationEnum['INDICATEURS.VISITE'],
       ResourceType.COLLECTIVITE,
       collectiviteId
     );
@@ -667,7 +667,7 @@ export class ListDefinitionsService {
     const { collectiviteId } = data;
     await this.permissionService.isAllowed(
       tokenInfo,
-      PermissionOperation.INDICATEURS_VISITE,
+      PermissionOperationEnum['INDICATEURS.VISITE'],
       ResourceType.COLLECTIVITE,
       collectiviteId
     );
