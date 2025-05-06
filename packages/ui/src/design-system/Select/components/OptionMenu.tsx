@@ -16,7 +16,7 @@ import { Button } from '@/ui/design-system/Button';
 import { Icon } from '@/ui/design-system/Icon';
 import { Modal } from '@/ui/design-system/Modal';
 
-import { Option, OptionValue } from '../utils';
+import { CustomAction, Option, OptionValue } from '../utils';
 
 type Props = {
   /** L'option à modifier */
@@ -25,10 +25,17 @@ type Props = {
   onDelete?: (id: OptionValue) => void;
   /** Fonction pour éditer l'option */
   onUpdate?: (id: OptionValue, inputValue: string) => void;
+  /** Fonctions customs ajoutées au menu */
+  customActions?: CustomAction[];
 };
 
 /** Menu affiché dans l'option d'un sélecteur */
-export const OptionMenu = ({ option, onDelete, onUpdate }: Props) => {
+export const OptionMenu = ({
+  option,
+  onDelete,
+  onUpdate,
+  customActions,
+}: Props) => {
   /** Gère l'état d'ouverture du menu */
   const [isOpen, setIsOpen] = useState(false);
 
@@ -69,11 +76,23 @@ export const OptionMenu = ({ option, onDelete, onUpdate }: Props) => {
               top: y,
               left: x,
             }}
-            className="flex flex-col divide-y divide-x-0 divide-solid divide-grey-3 rounded bg-white border border-grey-3"
+            className="flex flex-col divide-y divide-x-0 divide-solid divide-grey-3 rounded bg-white border border-grey-3 w-fit"
             onClick={(evt) => {
               evt.stopPropagation();
             }}
           >
+            {customActions &&
+              customActions.length &&
+              customActions.map((action) => (
+                <button
+                  key={action.label}
+                  onClick={() => action.action(option.value)}
+                  className="flex items-center w-full py-2 pr-4 pl-3 text-xs text-grey-8 shrink-0"
+                >
+                  <Icon icon={action.icon} size="xs" className="mr-2" />
+                  {action.label}
+                </button>
+              ))}
             {onUpdate && (
               <Modal
                 title="Éditer l'option"
@@ -108,8 +127,8 @@ export const OptionMenu = ({ option, onDelete, onUpdate }: Props) => {
                   );
                 }}
               >
-                <button className="flex items-center w-full py-2 pr-4 pl-3 text-sm text-grey-8">
-                  <Icon icon="edit-line" size="sm" className="mr-2" />
+                <button className="flex items-center w-full py-2 pr-4 pl-3 text-xs text-grey-8">
+                  <Icon icon="edit-line" size="xs" className="mr-2" />
                   Éditer
                 </button>
               </Modal>
@@ -139,8 +158,8 @@ export const OptionMenu = ({ option, onDelete, onUpdate }: Props) => {
                   );
                 }}
               >
-                <button className="flex items-center w-full py-2 pr-4 pl-3 text-sm text-grey-8">
-                  <Icon icon="delete-bin-6-line" size="sm" className="mr-2" />
+                <button className="flex items-center w-full py-2 pr-4 pl-3 text-xs text-grey-8">
+                  <Icon icon="delete-bin-6-line" size="xs" className="mr-2" />
                   Supprimer
                 </button>
               </Modal>

@@ -103,6 +103,13 @@ const PersonnesDropdown = (props: Props) => {
           selectedPersonne: getSelectedPersonnes([selectedValue])[0],
         })
       }
+      // actions={[
+      //   {
+      //     label: 'Associer ce compte à un tag',
+      //     icon: 'user-add-line',
+      //     action: () => alert('test !'),
+      //   },
+      // ]}
       createProps={
         !props.disableEdition
           ? {
@@ -133,6 +140,18 @@ const PersonnesDropdown = (props: Props) => {
                   collectiviteId: collectiviteId,
                   nom: inputValue,
                 }),
+              // actions: [
+              //   {
+              //     label: 'Inviter à créer un compte',
+              //     icon: 'mail-send-line',
+              //     action: () => alert('test !'),
+              //   },
+              //   {
+              //     label: 'Associer ce tag à un compte',
+              //     icon: 'user-add-line',
+              //     action: () => alert('test !'),
+              //   },
+              // ],
             }
           : undefined
       }
