@@ -1,7 +1,7 @@
 import { z } from 'zod';
 
 /**
- * Snake case in the oauth2 spec
+ * Snake case in the oauth2 spec, useful for swagger UI
  */
 export const generateTokenRequestSchema = z.object({
   grant_type: z.enum(['client_credentials']),

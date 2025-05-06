@@ -53,7 +53,7 @@ export class AuthGuard implements CanActivate {
     );
 
     this.contextStoreService.updateContext({
-      apiClientId: jwtPayload.client_id || undefined,
+      apiClientId: user.jwtPayload.client_id || undefined,
       userId: user.id || undefined,
       authRole: user.role,
     });

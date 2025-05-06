@@ -1,4 +1,4 @@
-import { PermissionOperation } from '@/backend/auth/authorizations/permission-operation.enum';
+import { PermissionOperationEnum } from '@/backend/auth/authorizations/permission-operation.enum';
 import { PermissionService } from '@/backend/auth/authorizations/permission.service';
 import { ResourceType } from '@/backend/auth/authorizations/resource-type.enum';
 import {
@@ -653,7 +653,7 @@ export default class TrajectoiresDataService {
     // Vérification des droits pour lire les données
     const isAllowedToRead = await this.permissionService.isAllowed(
       tokenInfo,
-      PermissionOperation.INDICATEURS_TRAJECTOIRES_LECTURE,
+      PermissionOperationEnum['INDICATEURS.TRAJECTOIRES.LECTURE'],
       ResourceType.COLLECTIVITE,
       request.collectiviteId,
       doNotThrowIfUnauthorized
@@ -742,7 +742,7 @@ export default class TrajectoiresDataService {
       // Vérification des droits pour calculer les données
       const isAllowedToCompute = await this.permissionService.isAllowed(
         tokenInfo,
-        PermissionOperation.INDICATEURS_TRAJECTOIRES_EDITION,
+        PermissionOperationEnum['INDICATEURS.TRAJECTOIRES.EDITION'],
         ResourceType.COLLECTIVITE,
         request.collectiviteId,
         doNotThrowIfUnauthorized
@@ -815,7 +815,7 @@ export default class TrajectoiresDataService {
     if (tokenInfo) {
       await this.permissionService.isAllowed(
         tokenInfo,
-        PermissionOperation.INDICATEURS_TRAJECTOIRES_EDITION,
+        PermissionOperationEnum['INDICATEURS.TRAJECTOIRES.EDITION'],
         ResourceType.COLLECTIVITE,
         collectiviteId
       );

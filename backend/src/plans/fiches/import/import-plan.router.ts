@@ -1,5 +1,8 @@
 import { PermissionService } from '@/backend/auth/authorizations/permission.service';
-import { PermissionOperation, ResourceType } from '@/backend/auth/index-domain';
+import {
+  PermissionOperationEnum,
+  ResourceType,
+} from '@/backend/auth/index-domain';
 import { importRequestSchema } from '@/backend/plans/fiches/import/import-plan.request';
 import { ImportPlanService } from '@/backend/plans/fiches/import/import-plan.service';
 import { TrpcService } from '@/backend/utils/trpc/trpc.service';
@@ -19,7 +22,7 @@ export class ImportPlanRouter {
       .mutation(async ({ input, ctx }) => {
         await this.permission.isAllowed(
           ctx.user,
-          PermissionOperation.PLANS_FICHES_IMPORT,
+          PermissionOperationEnum['PLANS.FICHES.IMPORT'],
           ResourceType.PLATEFORME,
           null
         );

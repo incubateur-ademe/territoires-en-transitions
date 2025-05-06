@@ -1,4 +1,4 @@
-import { PermissionOperation } from '@/backend/auth/authorizations/permission-operation.enum';
+import { PermissionOperationEnum } from '@/backend/auth/authorizations/permission-operation.enum';
 import { PermissionService } from '@/backend/auth/authorizations/permission.service';
 import { ResourceType } from '@/backend/auth/authorizations/resource-type.enum';
 import { AuthUser } from '@/backend/auth/models/auth.models';
@@ -54,7 +54,7 @@ export class BulkEditService {
     for (const c of collectiviteIds) {
       await this.permission.isAllowed(
         user,
-        PermissionOperation.PLANS_FICHES_EDITION,
+        PermissionOperationEnum['PLANS.FICHES.EDITION'],
         ResourceType.COLLECTIVITE,
         c.collectiviteId
       );

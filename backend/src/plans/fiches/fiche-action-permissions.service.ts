@@ -1,4 +1,4 @@
-import { PermissionOperation } from '@/backend/auth/authorizations/permission-operation.enum';
+import { PermissionOperationEnum } from '@/backend/auth/authorizations/permission-operation.enum';
 import { PermissionService } from '@/backend/auth/authorizations/permission.service';
 import { ResourceType } from '@/backend/auth/authorizations/resource-type.enum';
 import { DatabaseService } from '@/backend/utils';
@@ -40,8 +40,8 @@ export default class FicheActionPermissionsService {
     return this.permissionService.isAllowed(
       tokenInfo,
       fiche.restreint
-        ? PermissionOperation.PLANS_FICHES_LECTURE
-        : PermissionOperation.PLANS_FICHES_VISITE,
+        ? PermissionOperationEnum['PLANS.FICHES.LECTURE']
+        : PermissionOperationEnum['PLANS.FICHES.VISITE'],
       ResourceType.COLLECTIVITE,
       fiche.collectiviteId,
       doNotThrow
@@ -54,7 +54,7 @@ export default class FicheActionPermissionsService {
     if (fiche === null) return false;
     return await this.permissionService.isAllowed(
       tokenInfo,
-      PermissionOperation.PLANS_FICHES_EDITION,
+      PermissionOperationEnum['PLANS.FICHES.EDITION'],
       ResourceType.COLLECTIVITE,
       fiche.collectiviteId
     );

@@ -105,7 +105,7 @@ export class ApikeysService {
       clientSecretTruncated: clientSecret.substring(
         clientSecret.length - this.CLIENT_SECRET_TRUNCATED_LENGTH
       ),
-      restrictedPermissions: request.restrictedPermissions || null,
+      permissions: request.permissions || null,
     };
 
     const [insertedUserApiKey] = await this.databaseService.db
@@ -119,7 +119,7 @@ export class ApikeysService {
       userId: insertedUserApiKey.userId,
       clientId: insertedUserApiKey.clientId,
       clientSecret: clientSecret,
-      restrictedPermissions: insertedUserApiKey.restrictedPermissions,
+      permissions: insertedUserApiKey.permissions,
     };
 
     return generateApiKeyResponse;
@@ -191,8 +191,7 @@ export class ApikeysService {
       phone: apiKeyInfo.users.phone || undefined,
       app_metadata: appMetadata,
       client_id: request.client_id,
-      restricted_permissions:
-        apiKeyInfo.user_api_key.restrictedPermissions || undefined,
+      permissions: apiKeyInfo.user_api_key.permissions || undefined,
       is_anonymous: apiKeyInfo.users.isAnonymous || false,
     };
     const accessToken = await this.jwtService.signAsync(payload);

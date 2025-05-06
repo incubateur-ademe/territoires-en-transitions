@@ -3,10 +3,6 @@ import { z } from 'zod';
 
 export const generateApiKeyRequestSchema = z.object({
   userId: z.string().uuid(),
-  restrictedPermissions: z
-    .enum(PermissionOperations)
-    .array()
-    .nonempty()
-    .optional(),
+  permissions: z.enum(PermissionOperations).array().nonempty().optional(),
 });
 export type GenerateApiKeyRequest = z.infer<typeof generateApiKeyRequestSchema>;

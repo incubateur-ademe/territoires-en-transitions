@@ -1,4 +1,4 @@
-import { PermissionOperation } from '@/backend/auth/authorizations/permission-operation.enum';
+import { PermissionOperationEnum } from '@/backend/auth/authorizations/permission-operation.enum';
 import { PermissionService } from '@/backend/auth/authorizations/permission.service';
 import { ResourceType } from '@/backend/auth/authorizations/resource-type.enum';
 import { Injectable, Logger } from '@nestjs/common';
@@ -43,7 +43,7 @@ export default class ExportIndicateursService {
 
     await this.permissionService.isAllowed(
       tokenInfo,
-      PermissionOperation.PLANS_FICHES_LECTURE,
+      PermissionOperationEnum['PLANS.FICHES.LECTURE'],
       ResourceType.COLLECTIVITE,
       options.collectiviteId
     );

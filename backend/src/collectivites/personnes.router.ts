@@ -1,4 +1,4 @@
-import { PermissionOperation } from '@/backend/auth/authorizations/permission-operation.enum';
+import { PermissionOperationEnum } from '@/backend/auth/authorizations/permission-operation.enum';
 import { PermissionService } from '@/backend/auth/authorizations/permission.service';
 import { ResourceType } from '@/backend/auth/authorizations/resource-type.enum';
 import { Injectable } from '@nestjs/common';
@@ -31,8 +31,8 @@ export class PersonnesRouter {
         const authorized = await this.permission.isAllowed(
           ctx.user,
           collectivitePrivate
-            ? PermissionOperation.COLLECTIVITES_LECTURE
-            : PermissionOperation.COLLECTIVITES_VISITE,
+            ? PermissionOperationEnum['COLLECTIVITES.LECTURE']
+            : PermissionOperationEnum['COLLECTIVITES.VISITE'],
           ResourceType.COLLECTIVITE,
           input.collectiviteId,
           true

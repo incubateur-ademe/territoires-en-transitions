@@ -1,4 +1,4 @@
-import { PermissionOperation } from '@/backend/auth/authorizations/permission-operation.enum';
+import { PermissionOperationEnum } from '@/backend/auth/authorizations/permission-operation.enum';
 import { PermissionService } from '@/backend/auth/authorizations/permission.service';
 import { ResourceType } from '@/backend/auth/authorizations/resource-type.enum';
 import { serviceTagTable } from '@/backend/collectivites/index-domain';
@@ -131,8 +131,8 @@ export default class IndicateurFiltreService {
     await this.permissionService.isAllowed(
       tokenInfo,
       collectivitePrivate
-        ? PermissionOperation.COLLECTIVITES_LECTURE
-        : PermissionOperation.COLLECTIVITES_VISITE,
+        ? PermissionOperationEnum['COLLECTIVITES.LECTURE']
+        : PermissionOperationEnum['COLLECTIVITES.VISITE'],
       ResourceType.COLLECTIVITE,
       collectiviteId
     );
