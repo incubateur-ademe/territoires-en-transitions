@@ -150,8 +150,11 @@ const Option = ({
           ) : (createProps || isBadgeItem) && option.value !== ITEM_ALL ? (
             <Badge
               title={option.label}
-              state={disabled ? 'grey' : isUserCreated ? 'standard' : 'default'}
-              light={disabled ?? undefined}
+              icon={option.icon}
+              iconPosition="left"
+              iconClassname={option.iconClassname}
+              state={disabled ? 'grey' : 'default'}
+              light={true}
               size="sm"
               trim={false}
             />

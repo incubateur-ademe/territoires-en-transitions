@@ -1,5 +1,6 @@
 import Fuse from 'fuse.js';
 
+import { IconValue } from '@/ui/design-system/Icon';
 import {
   ITEM_ALL,
   itemAllOption,
@@ -14,7 +15,13 @@ import { naturalSort } from '../../utils/naturalSort';
 /** Type du champ valeur d'une option */
 export type OptionValue = number | string;
 /** Type de base d'une option générique */
-export type Option = { value: OptionValue; label: string; disabled?: boolean };
+export type Option = {
+  value: OptionValue;
+  label: string;
+  disabled?: boolean;
+  icon?: IconValue;
+  iconClassname?: string;
+};
 /** Type d'une liste d'options dans un sélecteur */
 export type OptionSection = {
   title: string;
@@ -45,6 +52,9 @@ export const getFlatOptions = (selectOptions: SelectOption[]): Option[] =>
 export const getOptionLabel = (optionValue: OptionValue, options: Option[]) =>
   options.find((v: Option) => v.value?.toString() === optionValue.toString())
     ?.label;
+
+export const getCurrentOption = (optionValue: OptionValue, options: Option[]) =>
+  options.find((v: Option) => v.value?.toString() === optionValue.toString());
 
 /** Tri de façon naturelle (1, 2, 11, 40, 'a', 'b') une liste d'options par ordre alpha-numérique */
 export const sortOptionByAlphabet = (
