@@ -1,7 +1,7 @@
 import { FetchOptions } from '@/api/indicateurs/domain';
 import { DISABLE_AUTO_REFETCH } from '@/api/utils/react-query/query-options';
 import { trpc } from '@/api/utils/trpc/client';
-import { useCollectiviteId } from '@/app/core-logic/hooks/params';
+import { useCollectiviteId } from '@/app/collectivites/collectivite-context';
 import Fuse from 'fuse.js';
 
 /**
@@ -36,7 +36,7 @@ export const useFilteredIndicateurDefinitions = (
 
   const { data, error, isLoading } = trpc.indicateurs.list.useQuery(
     {
-      collectiviteId: collectiviteId!,
+      collectiviteId,
       filtre: options.filtre ?? {},
       queryOptions: {
         page: options.page,
@@ -62,6 +62,7 @@ export const useFilteredIndicateurDefinitions = (
       keys: ['titre'],
       threshold: 0.3,
       shouldSort: false,
+      ignoreLocation: true,
     });
     return {
       ...returnedObject,

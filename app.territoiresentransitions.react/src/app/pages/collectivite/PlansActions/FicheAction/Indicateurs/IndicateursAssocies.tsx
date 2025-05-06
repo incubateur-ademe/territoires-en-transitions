@@ -3,7 +3,7 @@ import IndicateurCard from '@/app/app/pages/collectivite/Indicateurs/lists/Indic
 import { getIndicateurGroup } from '@/app/app/pages/collectivite/Indicateurs/lists/IndicateurCard/utils';
 import { TIndicateurListItem } from '@/app/app/pages/collectivite/Indicateurs/types';
 import { makeCollectiviteIndicateursUrl } from '@/app/app/paths';
-import { useCurrentCollectivite } from '@/app/core-logic/hooks/useCurrentCollectivite';
+import { useCurrentCollectivite } from '@/app/collectivites/collectivite-context';
 import SideMenu from '@/app/ui/layout/side-menu';
 import { Button, Divider, EmptyCard, useEventTracker } from '@/ui';
 import { useState } from 'react';
@@ -25,7 +25,7 @@ const IndicateursAssocies = ({
   fiche,
   updateFiche,
 }: IndicateursAssociesProps) => {
-  const { collectiviteId, niveauAcces, role } = useCurrentCollectivite()!;
+  const { collectiviteId, niveauAcces, role } = useCurrentCollectivite();
 
   const [isPanelOpen, setIsPanelOpen] = useState(false);
   const [isModalOpen, setIsModalOpen] = useState(false);

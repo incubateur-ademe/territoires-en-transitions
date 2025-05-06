@@ -20,7 +20,7 @@ export const useIndicateurDefinitions = (
   indicateurIds: number[],
   requested = true
 ) => {
-  const collectiviteId = useCollectiviteId()!;
+  const collectiviteId = useCollectiviteId();
 
   return trpc.indicateurs.definitions.list.useQuery(
     {

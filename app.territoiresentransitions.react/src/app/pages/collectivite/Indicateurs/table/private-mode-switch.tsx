@@ -1,4 +1,4 @@
-import { useCurrentCollectivite } from '@/app/core-logic/hooks/useCurrentCollectivite';
+import { useCurrentCollectivite } from '@/app/collectivites/collectivite-context';
 import { Checkbox, Tooltip } from '@/ui';
 import { useToggleIndicateurConfidentiel } from '../Indicateur/detail/useToggleIndicateurConfidentiel';
 import { TIndicateurDefinition } from '../types';
@@ -9,14 +9,13 @@ export const PrivateModeSwitch = ({
 }: {
   definition: TIndicateurDefinition;
 }) => {
-  const collectivite = useCurrentCollectivite();
-  const isReadonly = !collectivite || collectivite.isReadOnly;
+  const { isReadOnly } = useCurrentCollectivite();
   const { mutate: toggleIndicateurConfidentiel } =
     useToggleIndicateurConfidentiel(definition);
   const { confidentiel } = definition;
 
   return (
-    !isReadonly && (
+    !isReadOnly && (
       <div className="flex my-4">
         <Tooltip
           label="Si le mode privé est activé, le résultat le plus récent n'est plus
