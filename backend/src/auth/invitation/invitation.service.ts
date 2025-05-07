@@ -1,4 +1,4 @@
-import { Injectable } from '@nestjs/common';
+import { Injectable, Logger } from '@nestjs/common';
 import { DatabaseService } from '@/backend/utils';
 import { AuthRole, AuthUser } from '@/backend/auth/models/auth.models';
 import { invitationTable } from '@/backend/auth/models/invitation.table';
@@ -12,13 +12,17 @@ import { PermissionService } from '@/backend/auth/authorizations/permission.serv
 import { dcpTable } from '@/backend/auth/models/dcp.table';
 import { InvitationRequest } from '@/backend/auth/invitation/invitation.request';
 import { PersonneTagService } from '@/backend/collectivites/tags/personnes/personne-tag.service';
+import { CollectiviteMembresService } from '@/backend/collectivites/membres/membres.service';
 
 @Injectable()
 export class InvitationService {
+  private readonly logger = new Logger(InvitationService.name);
+
   constructor(
     private readonly databaseService: DatabaseService,
     private readonly permissionService: PermissionService,
-    private readonly personneTagService: PersonneTagService
+    private readonly personneTagService: PersonneTagService,
+    private readonly membresService : CollectiviteMembresService,
   ) {}
 
   /**
@@ -47,13 +51,9 @@ export class InvitationService {
 
     if (invitedUser) {
       // Si l'utilisateur existe déjà, vérifie s'il est déjà attaché à la collectivité
-      const [right] = await this.databaseService.db
-        .select()
-        .from(utilisateurPermissionTable)
-        .where(eq(utilisateurPermissionTable.userId, invitedUser.userId))
-        .limit(1);
+      const isMember = await this.membresService.isUserActiveMember(invitedUser.userId, invitation.collectiviteId);
       // S'il est déjà attaché, erreur, sinon, on le rattache ou le réactive
-      if (right && right.isActive) {
+      if (isMember) {
         throw new Error(
           `L'utilisateur ${invitation.email} est déjà associé à la collectivité ${invitation.collectiviteId}`
         );
@@ -106,6 +106,9 @@ export class InvitationService {
             createdBy: userId,
           })
           .returning();
+
+        this.logger.log(`Crée l'invitation ${invitationAdded.id} pour l'email ${invitation.email}`);
+
         // On associe les tags à l'invitation s'ils existent
         if (invitation.tagIds && invitation.tagIds.length > 0) {
           const tagsToAdd = await trx
@@ -154,6 +157,8 @@ export class InvitationService {
         .update(invitationTable)
         .set({ acceptedAt: new Date().toISOString() })
         .where(eq(invitationTable.id, invitationId));
+
+      this.logger.log(`Consomme l'invitation ${invitationId} par l'utilisateur ${userId}`);
 
       // Associe l'utilisateur à la collectivité
       await trx
