@@ -8,7 +8,6 @@ import { AssignPilotesRouter } from './assign-pilotes/assign-pilotes.router';
 import { AssignPilotesService } from './assign-pilotes/assign-pilotes.service';
 import { AssignServicesRouter } from './assign-services/assign-services.router';
 import { AssignServicesService } from './assign-services/assign-services.service';
-import { ReferentielsScoringController } from './compute-score/scores.controller';
 import ScoresService from './compute-score/scores.service';
 import { ExportScoreController } from './export-score/export-score.controller';
 import { ExportScoreService } from './export-score/export-score.service';
@@ -72,7 +71,6 @@ import { UpdateActionStatutService } from './update-action-statut/update-action-
   controllers: [
     GetReferentielController,
     ImportReferentielController,
-    ReferentielsScoringController,
     ExportScoreController,
   ],
 })
