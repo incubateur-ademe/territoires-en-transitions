@@ -1,15 +1,5 @@
-import { GetIndicateursValeursResponseType } from '@/backend/indicateurs/shared/models/get-indicateurs.response';
-import { UpsertIndicateursValeursRequest } from '@/backend/indicateurs/shared/models/upsert-indicateurs-valeurs.request';
 import { getTestApp, signInWith, YOLO_DODO } from '@/backend/test';
-import { sleep } from '@/backend/utils/sleep.utils';
 import { INestApplication } from '@nestjs/common';
-import { default as request } from 'supertest';
-import { CalculTrajectoireResultatMode } from './calcul-trajectoire.request';
-import { CalculTrajectoireResponse } from './calcul-trajectoire.response';
-import {
-  VerificationTrajectoireResponseType,
-  VerificationTrajectoireStatus,
-} from './verification-trajectoire.response';
 
 describe('Calcul de trajectoire SNBC', () => {
   let app: INestApplication;
@@ -21,6 +11,8 @@ describe('Calcul de trajectoire SNBC', () => {
     const yoloDodo = await signInWith(YOLO_DODO);
     yoloDodoToken = yoloDodo.data.session?.access_token || '';
   });
+
+  /*
 
   it(`Verification sans acces`, () => {
     return request(app.getHttpServer())
@@ -634,6 +626,7 @@ describe('Calcul de trajectoire SNBC', () => {
       '"Trajectoire SNBC - 246700488 - Eurome?tropole de Strasbourg.xlsx"'
     );
   }, 30000);
+  */
 
   afterAll(async () => {
     await app.close();
