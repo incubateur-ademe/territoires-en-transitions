@@ -34,7 +34,7 @@ const IndicateurCardMenu = ({
     const menuActions: MenuAction[] = [];
     if (isFavoriCollectivite) {
       menuActions.push({
-        label: 'Retirer de ma collectivité',
+        label: 'Retirer des favoris',
         onClick: () => {
           toggleFavori(false);
           openState.setIsOpen(false);
@@ -42,7 +42,7 @@ const IndicateurCardMenu = ({
       });
     } else {
       menuActions.push({
-        label: 'Ajouter à ma collectivité',
+        label: 'Ajouter aux favoris',
         onClick: () => {
           toggleFavori(true);
           openState.setIsOpen(false);

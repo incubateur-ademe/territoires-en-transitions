@@ -51,8 +51,8 @@ const IndicateurToolbar = ({
         <Tooltip
           label={
             isFavori
-              ? 'Retirer de ma collectivité'
-              : 'Ajouter à ma collectivité'
+              ? 'Retirer des favoris de ma collectivité'
+              : 'Ajouter aux favoris de ma collectivité'
           }
         >
           <Button
