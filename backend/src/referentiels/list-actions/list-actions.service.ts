@@ -55,7 +55,8 @@ export class ListActionsService {
     ) {
       const pilotesCountSubquery = this.db
         .select({
-          count: sql`COUNT(DISTINCT ${actionPiloteTable.userId})`,
+          count: sql`COUNT
+            (DISTINCT ${actionPiloteTable.userId})`,
         })
         .from(actionPiloteTable)
         .where(
@@ -73,7 +74,8 @@ export class ListActionsService {
     if (filters?.personnePiloteIds && filters.personnePiloteIds.length > 0) {
       const personnesCountSubquery = this.db
         .select({
-          count: sql`COUNT(DISTINCT ${actionPiloteTable.tagId})`,
+          count: sql`COUNT
+            (DISTINCT ${actionPiloteTable.tagId})`,
         })
         .from(actionPiloteTable)
         .where(
@@ -91,7 +93,8 @@ export class ListActionsService {
     if (filters?.servicePiloteIds && filters.servicePiloteIds.length > 0) {
       const servicesCountSubquery = this.db
         .select({
-          count: sql`COUNT(DISTINCT ${actionServiceTable.serviceTagId})`,
+          count: sql`COUNT
+            (DISTINCT ${actionServiceTable.serviceTagId})`,
         })
         .from(actionServiceTable)
         .where(
@@ -238,7 +241,10 @@ export class ListActionsService {
       .leftJoin(dcpTable, eq(dcpTable.userId, actionPiloteTable.userId))
       .leftJoin(
         personneTagTable,
-        eq(personneTagTable.id, actionPiloteTable.tagId)
+        and(
+          eq(personneTagTable.id, actionPiloteTable.tagId),
+          eq(personneTagTable.deleted, false)
+        )
       )
       .leftJoin(
         actionServiceTable,

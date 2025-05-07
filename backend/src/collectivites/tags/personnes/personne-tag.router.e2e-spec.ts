@@ -152,10 +152,10 @@ describe('Test PersonneTagService', () => {
         await databaseService.db
           .delete(ficheActionReferentTable)
           .where(ne(ficheActionReferentTable.ficheId, 2));
-        await databaseService.db.insert(personneTagTable).values([
-          { id: 1, nom: 'Lou Piote', collectiviteId: 1 },
-          { id: 3, nom: 'Harry Cot', collectiviteId: 1 },
-        ]);
+        await databaseService.db
+          .update(personneTagTable)
+          .set({ associatedUserId: null })
+          .where(inArray(personneTagTable.id, [1, 3]));
         await databaseService.db.insert(ficheActionPiloteTable).values([
           { ficheId: 1, tagId: 1 },
           { ficheId: 2, tagId: 1 },
