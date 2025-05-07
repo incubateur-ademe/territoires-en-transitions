@@ -631,7 +631,7 @@ export class ListDefinitionsService {
     const { collectiviteId } = data;
     await this.permissionService.isAllowed(
       tokenInfo,
-      PermissionOperation.INDICATEURS_VISITE,
+      PermissionOperationEnum['INDICATEURS.VISITE'],
       ResourceType.COLLECTIVITE,
       collectiviteId
     );
