@@ -7,9 +7,10 @@ import { and, eq, sql } from 'drizzle-orm';
 import { unionAll } from 'drizzle-orm/pg-core';
 import z from 'zod';
 import { invitationTable } from '../../auth/models/invitation.table';
-import { DatabaseService } from '../../utils/database/database.service';
+import { DatabaseService } from '@/backend/utils';
 import { MembreFonction } from '../shared/models/membre-fonction.enum';
 import { insertMembreSchema, membreTable } from '../shared/models/membre.table';
+import { Transaction } from '@/backend/utils/database/transaction.utils';
 
 @Injectable()
 export class CollectiviteMembresService {
@@ -154,5 +155,31 @@ export class CollectiviteMembresService {
           );
       })
     );
+  }
+
+  /**
+   * Check if the user is an active member of the collectivite
+   * @param userId user to check
+   * @param collectiviteId collectivite to check
+   * @param tx
+   */
+  async isUserActiveMember(
+    userId: string,
+    collectiviteId: number,
+    tx? : Transaction
+  ): Promise<boolean> {
+    const [utilisateur] = await (tx ?? this.databaseService.db)
+      .select()
+      .from(utilisateurPermissionTable)
+      .where(
+        and(
+          eq(utilisateurPermissionTable.userId, userId),
+          eq(utilisateurPermissionTable.isActive, true),
+          eq(utilisateurPermissionTable.collectiviteId, collectiviteId)
+        )
+      )
+      .limit(1);
+
+    return !!utilisateur;
   }
 }

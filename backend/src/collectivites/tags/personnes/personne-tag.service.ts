@@ -1,8 +1,8 @@
-import { Injectable } from '@nestjs/common';
+import { Injectable, Logger } from '@nestjs/common';
 import { DatabaseService } from '@/backend/utils';
 import { Transaction } from '@/backend/utils/database/transaction.utils';
 import { personneTagTable } from '@/backend/collectivites/tags/personnes/personne-tag.table';
-import { and, AnyColumn, eq, inArray, sql } from 'drizzle-orm';
+import { and, AnyColumn, eq, getTableName, inArray, sql } from 'drizzle-orm';
 import { PgTable } from 'drizzle-orm/pg-core';
 import { ficheActionPiloteTable } from '@/backend/plans/fiches/shared/models/fiche-action-pilote.table';
 import { ficheActionReferentTable } from '@/backend/plans/fiches/shared/models/fiche-action-referent.table';
@@ -12,10 +12,10 @@ import { AuthUser } from '@/backend/auth/models/auth.models';
 import { PermissionOperation } from '@/backend/auth/authorizations/permission-operation.enum';
 import { ResourceType } from '@/backend/auth/authorizations/resource-type.enum';
 import { PermissionService } from '@/backend/auth/authorizations/permission.service';
-import { utilisateurPermissionTable } from '@/backend/auth/authorizations/roles/private-utilisateur-droit.table';
 import { getPersonneTagsResponse } from '@/backend/collectivites/tags/personnes/getPersonneTags.response';
 import { invitationTable } from '@/backend/auth/models/invitation.table';
 import { invitationPersonneTagTable } from '@/backend/auth/invitation/invitation-personne-tag.table';
+import { CollectiviteMembresService } from '@/backend/collectivites/membres/membres.service';
 
 /** Liste des tables ayant une référence vers personne_tag */
 const tables = [
@@ -27,9 +27,11 @@ const tables = [
 
 @Injectable()
 export class PersonneTagService {
+  private readonly logger = new Logger(PersonneTagService.name);
   constructor(
     private readonly databaseService: DatabaseService,
-    private readonly permissionService: PermissionService
+    private readonly permissionService: PermissionService,
+    private readonly membresService : CollectiviteMembresService,
   ) {}
 
   /**
@@ -159,18 +161,9 @@ export class PersonneTagService {
       return;
     }
     const execute = async (tx: Transaction) => {
-      // Vérifie que l'utilisateur donné appartienne à la collectivité
-      const [utilisateur] = await tx
-        .select()
-        .from(utilisateurPermissionTable)
-        .where(
-          and(
-            eq(utilisateurPermissionTable.userId, userId),
-            eq(utilisateurPermissionTable.isActive, true)
-          )
-        )
-        .limit(1);
-      if (!utilisateur) {
+      // Vérifie que l'utilisateur donné appartient à la collectivité
+      const isMember = await this.membresService.isUserActiveMember(userId, collectiviteId, tx);
+      if (!isMember) {
         throw new Error(
           `L'utilisateur ${userId} n'est pas rattaché à la collectivité ${collectiviteId}.`
         );
@@ -188,6 +181,7 @@ export class PersonneTagService {
             `Le tag "${tag.nom}" (${tag.id}) appartient à la collectivité ${tag.collectiviteId} et non à la collectivité donnée ${collectiviteId}`
           );
         }
+        this.logger.log(`Remplace le tag ${tag.nom} (${tag.id}) de la collectivité ${tag.collectiviteId} par l'utilisateur ${userId} :`);
         await this.changeTagAndDelete(tx, tag.id, userId);
       }
     };
@@ -235,11 +229,13 @@ export class PersonneTagService {
 
     if (tags.length > 0) {
       // Transforme les enregistrements pour mettre userId au lieu de tagId
-      const pilotesToAdd = tags.map(({ id, ...tag }) => ({
+      const pilotesToAdd = tags.map(({ id, ...tag }) => {
+        this.logger.log(`- Tag ${tag.tagId} => Utilisateur ${userId} sur la table ${getTableName(table)} (${tag})`);
+        return {
         ...tag,
         tagId: null,
         userId: userId,
-      }));
+      }});
 
       // Ajoute les lignes transformées
       await trx.insert(table).values(pilotesToAdd).onConflictDoNothing(); // Plusieurs tags peuvent être attribués à la même personne
