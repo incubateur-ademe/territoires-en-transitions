@@ -4,8 +4,7 @@ import {
   TReponse,
 } from '@/app/referentiels/personnalisations/personnalisation.types';
 import { useDebouncedInput } from '@/app/ui/shared/useDebouncedInput';
-import { Button, Field } from '@/ui';
-import { InputNumber } from '@/ui/design-system/Input/InputNumber';
+import { Button, Field, Input, RadioButton as RadioButtonBase } from '@/ui';
 import classNames from 'classnames';
 import { FC, ReactNode } from 'react';
 import { TQuestionReponseProps } from './PersoPotentielQR';
@@ -96,7 +95,8 @@ const ReponseProportion = ({ qr, onChange }: TQuestionReponseProps) => {
         htmlFor={questionId}
         className="max-w-56"
       >
-        <InputNumber
+        <Input
+          type="number"
           disabled={collectivite.isReadOnly}
           min={min}
           max={max}
@@ -158,21 +158,16 @@ const RadioButton = ({
 
   return (
     <div className="flex items-center gap-6 mb-4">
-      <div className="fr-fieldset__element fr-fieldset__element--inline mb-0">
-        <div className="fr-radio-group fr-radio-group--sm">
-          <input
-            type="radio"
-            disabled={disabled}
-            id={eltId}
-            checked={reponse?.toString() === choiceId}
-            value={choiceId}
-            onChange={() => onChange(choiceId)}
-          />
-          <label className="fr-label" htmlFor={eltId}>
-            {label}
-          </label>
-        </div>
-      </div>
+      <RadioButtonBase
+        containerClassname="mr-4"
+        disabled={disabled}
+        id={eltId}
+        checked={reponse?.toString() === choiceId}
+        value={choiceId}
+        name={questionId}
+        onChange={() => onChange(choiceId)}
+        label={label}
+      />
       {!disabled && hasReponse && (
         <Button
           variant="underlined"
