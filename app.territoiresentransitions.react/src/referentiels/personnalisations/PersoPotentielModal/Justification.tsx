@@ -1,6 +1,5 @@
 import { useCurrentCollectivite } from '@/app/core-logic/hooks/useCurrentCollectivite';
-import { Accordion } from '@/app/ui/Accordion';
-import Textarea from '@/app/ui/shared/form/Textarea';
+import { Accordion, Textarea } from '@/ui';
 import { useEffect, useState } from 'react';
 import { TQuestionReponseProps } from './PersoPotentielQR';
 import { useUpdateJustification } from './useUpdateJustification';
@@ -30,16 +29,14 @@ export const Justification = (props: TQuestionReponseProps) => {
   return (
     <Accordion
       id={`j-${id}`}
-      className="mt-4"
-      titre="Justifier votre réponse (optionnel)"
-      icon="fr-icon-draft-line"
+      containerClassname="mt-4"
+      title="Justifier votre réponse (optionnel)"
+      icon="draft-line"
       initialState={hasValue}
-      html={
+      content={
         <Textarea
-          className="fr-input"
           value={value || ''}
           placeholder="Exemple : Cette compétence est transférée à Nom de la Collectivité par délibération du JJ-MM-AAAA OU Cette compétence est exercée par la collectivité sur 2/3 des communes soit 3/4 de la population"
-          onInputChange={() => null}
           onChange={(evt) => setValue(evt.currentTarget.value)}
           onBlur={() => {
             const newValue = value?.trim() || '';
