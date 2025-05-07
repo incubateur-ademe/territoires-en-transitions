@@ -1,7 +1,8 @@
 import { AuthUser } from '@/backend/auth/models/auth.models';
 import { Injectable, Logger, OnApplicationShutdown } from '@nestjs/common';
 import { drizzle } from 'drizzle-orm/node-postgres';
-import { sql } from 'drizzle-orm/sql';
+import { PgColumn, PgSelect } from 'drizzle-orm/pg-core';
+import { SQL, sql } from 'drizzle-orm/sql';
 import { Pool } from 'pg';
 import ConfigurationService from '../config/configuration.service';
 
@@ -66,6 +67,49 @@ export class DatabaseService implements OnApplicationShutdown {
         }
       }, ...rest);
     }) as typeof this.db.transaction;
+  }
+
+  async withPagination<T extends PgSelect>(
+    qb: T,
+    orderByColumn: PgColumn | SQL | SQL.Aliased,
+    page: number,
+    pageSize?: number
+  ) {
+    if (pageSize && pageSize > 0) {
+      const result = await qb
+        .orderBy(orderByColumn)
+        .limit(pageSize)
+        .offset((page - 1) * pageSize);
+
+      // @ts-ignore hack to override internals (not the ideal way)
+      qb.config.fields = { count: sql<number>`count(*)` };
+      // @ts-ignore
+      qb.config.orderBy = [];
+      // @ts-ignore
+      qb.config.limit = undefined;
+      // @ts-ignore
+      qb.config.offset = undefined;
+
+      const [total] = await qb;
+
+      const count = parseInt(total.count);
+      return {
+        data: result,
+        count: count,
+        page: page,
+        pageSize: pageSize,
+        pageCount: Math.ceil(count / pageSize),
+      };
+    } else {
+      const result = await qb.orderBy(orderByColumn);
+      return {
+        data: result,
+        count: result.length,
+        page: 1,
+        pageSize: result.length,
+        pageCount: 1,
+      };
+    }
   }
 
   async onApplicationShutdown(signal: string) {

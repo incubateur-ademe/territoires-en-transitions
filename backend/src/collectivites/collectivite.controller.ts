@@ -1,31 +1,50 @@
-import { Controller, Get, Param, Query } from '@nestjs/common';
-import { ApiOkResponse } from '@nestjs/swagger';
-import { AllowPublicAccess } from '../auth/decorators/allow-public-access.decorator';
-import CollectivitesService from './services/collectivites.service';
+import { AllowAnonymousAccess } from '@/backend/auth/decorators/allow-anonymous-access.decorator';
+import { listCollectiviteApiRequestSchema } from '@/backend/collectivites/list-collectivites/list-collectivites.api-request';
+import { listCollectiviteApiResponseSchema } from '@/backend/collectivites/list-collectivites/list-collectivites.api-response';
+import ListCollectivitesService from '@/backend/collectivites/list-collectivites/list-collectivites.service';
+import { ApiUsageEnum } from '@/backend/utils/api/api-usage-type.enum';
+import { ApiUsage } from '@/backend/utils/api/api-usage.decorator';
+import { createZodDto } from '@anatine/zod-nestjs';
+import { Controller, Get, Query } from '@nestjs/common';
+import {
+  ApiBearerAuth,
+  ApiOkResponse,
+  ApiOperation,
+  ApiTags,
+} from '@nestjs/swagger';
 
 /**
  * Création des classes de réponse à partir du schema pour générer automatiquement la documentation OpenAPI
  */
-//export class VersionResponseClass extends createZodDto(versionResponseSchema) {}
+export class ListCollectivitesApiRequestClass extends createZodDto(
+  listCollectiviteApiRequestSchema
+) {}
 
+export class ListCollectivitesApiResponseClass extends createZodDto(
+  listCollectiviteApiResponseSchema
+) {}
+
+@ApiTags('Collectivités')
+@ApiBearerAuth()
 @Controller()
 export class CollectiviteController {
-  constructor(private readonly collectiviteService: CollectivitesService) {}
+  constructor(
+    private readonly listCollectivitesService: ListCollectivitesService
+  ) {}
 
-  @AllowPublicAccess()
-  @Get('collectivites/:collectivite_id')
-  @ApiOkResponse({
-    //type: VersionResponseClass,
-    description: "Récupération des informations d'une collectivite",
+  @AllowAnonymousAccess()
+  @ApiUsage([ApiUsageEnum.EXTERNAL_API])
+  @Get('collectivites')
+  @ApiOperation({
+    summary: "Récupération des informations d'une ou plusieurs collectivités",
+    description:
+      "Récupération des informations (siren, etc.) d'une ou plusieurs collectivités. \n\nLes données sont publiques et donc accessibles **quelque soit les droits de l'utilisateur**.",
   })
-  async getCollectivite(
-    @Param('collectivite_id') collectiviteId: number,
-    @Query('avecType') avecType: string
-  ) {
-    if (avecType) {
-      return this.collectiviteService.getCollectiviteAvecType(collectiviteId);
-    } else {
-      return this.collectiviteService.getCollectivite(collectiviteId);
-    }
+  @ApiOkResponse({
+    type: ListCollectivitesApiResponseClass,
+    description: "Informations d'une ou plusieurs collectivités",
+  })
+  async getCollectivites(@Query() request: ListCollectivitesApiRequestClass) {
+    return this.listCollectivitesService.listCollectivites(request, 'public');
   }
 }

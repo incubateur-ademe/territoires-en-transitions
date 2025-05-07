@@ -29,8 +29,10 @@ export const IndicateurDetail = ({
 
   const { data: trajectoire } = useStatutTrajectoire(
     Boolean(
-      definition?.identifiant &&
-        INDICATEUR_TRAJECTOIRE_IDENTFIANTS.includes(definition.identifiant)
+      definition?.identifiantReferentiel &&
+        INDICATEUR_TRAJECTOIRE_IDENTFIANTS.includes(
+          definition.identifiantReferentiel
+        )
     )
   );
   const status = trajectoire?.status;
@@ -40,8 +42,10 @@ export const IndicateurDetail = ({
     if (
       !isPerso &&
       isIdle &&
-      definition?.identifiant &&
-      INDICATEUR_TRAJECTOIRE_IDENTFIANTS.includes(definition?.identifiant) &&
+      definition?.identifiantReferentiel &&
+      INDICATEUR_TRAJECTOIRE_IDENTFIANTS.includes(
+        definition?.identifiantReferentiel
+      ) &&
       status === 'pret_a_calculer' &&
       !isLoadingTrajectoire
     ) {

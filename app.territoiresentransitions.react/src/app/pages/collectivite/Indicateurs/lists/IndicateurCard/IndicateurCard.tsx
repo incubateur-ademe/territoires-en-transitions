@@ -163,7 +163,7 @@ export const IndicateurCardBase = ({
                   id: definition.id,
                   titre: definition.titre,
                   estPerso: definition.estPerso,
-                  identifiant: definition.identifiant || null,
+                  identifiant: definition.identifiantReferentiel || null,
                   // description: chartInfo?.titreLong ?? '',
                   // unite: chartInfo?.unite ?? '',
                   hasOpenData: definition.hasOpenData || false,

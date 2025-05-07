@@ -135,7 +135,11 @@ const IndicateurLayout = ({
                 {/* Mesures des référentiels liées */}
                 {!isPerso ? (
                   <Tab label="Mesures des référentiels liées">
-                    <ActionsLiees actionsIds={definition.actions ?? []} />
+                    <ActionsLiees
+                      actionsIds={
+                        definition.mesures?.map((mesure) => mesure.id) ?? []
+                      }
+                    />
                   </Tab>
                 ) : undefined}
 

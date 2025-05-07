@@ -40,17 +40,6 @@ export class ValidateAuditService {
       auditId: audit.id,
     });
 
-    //     mode: ComputeScoreMode.RECALCUL,
-    //     auditId: audit.id,
-    //     jalon: SnapshotJalonEnum.POST_AUDIT,
-    //     snapshot: true,
-    //     snapshotForceUpdate: true,
-    //   },
-    //   undefined,
-    //   undefined,
-    //   true
-    // );
-
     return audit;
   }
 }

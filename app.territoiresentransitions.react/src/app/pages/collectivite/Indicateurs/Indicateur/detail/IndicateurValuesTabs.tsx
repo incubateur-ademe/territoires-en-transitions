@@ -25,7 +25,7 @@ export const IndicateurValuesTabs = ({
     <>
       {!isReadOnly && (
         <>
-          {definition.identifiant?.startsWith(ID_SEQUESTRATION) && (
+          {definition.identifiantReferentiel?.startsWith(ID_SEQUESTRATION) && (
             <Alert
               className="mb-8"
               state="warning"

@@ -8,11 +8,22 @@ const sortSchema = z.object({
 export const PAGE_DEFAULT = 1;
 export const LIMIT_DEFAULT = 1000;
 
-const paginationSchema = z.object({
-  sort: sortSchema.array().optional(),
-  page: z.number().optional().default(PAGE_DEFAULT),
-  limit: z.number().min(1).max(LIMIT_DEFAULT).default(LIMIT_DEFAULT),
+export const paginationNoSortSchema = z.object({
+  page: z.coerce.number().optional().default(PAGE_DEFAULT),
+  limit: z.coerce.number().min(1).max(LIMIT_DEFAULT),
 });
+
+export const paginationNoSortSchemaOptionalLimit =
+  paginationNoSortSchema.partial({
+    limit: true,
+  });
+
+const paginationSchema = paginationNoSortSchema.extend({
+  sort: sortSchema.array().optional(),
+  limit: z.coerce.number().min(1).max(LIMIT_DEFAULT).default(LIMIT_DEFAULT),
+});
+
+
 
 export function getPaginationSchema<
   U extends string,

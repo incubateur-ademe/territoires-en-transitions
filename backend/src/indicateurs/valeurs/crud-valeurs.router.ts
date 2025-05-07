@@ -2,7 +2,7 @@ import { partialCollectiviteRequestSchema } from '@/backend/collectivites/collec
 import { TrpcService } from '@/backend/utils/trpc/trpc.service';
 import { Injectable } from '@nestjs/common';
 import { deleteValeurIndicateurSchema } from '../shared/models/delete-valeur-indicateur.request';
-import { getIndicateursValeursRequestSchema } from '../shared/models/get-indicateurs.request';
+import { getIndicateursValeursInputSchema } from '../shared/models/get-indicateurs.input';
 import { upsertValeurIndicateurSchema } from '../shared/models/upsert-valeur-indicateur.request';
 import IndicateurValeursService from './crud-valeurs.service';
 import { getMoyenneCollectivitesRequestSchema } from './get-moyenne-collectivites.request';
@@ -21,7 +21,7 @@ export class IndicateurValeursRouter {
 
   router = this.trpc.router({
     list: this.trpc.authedProcedure
-      .input(getIndicateursValeursRequestSchema)
+      .input(getIndicateursValeursInputSchema)
       .query(({ ctx, input }) => {
         return this.service.getIndicateurValeursGroupees(input, ctx.user);
       }),

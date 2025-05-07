@@ -1,3 +1,7 @@
+INSERT INTO labellisation.demande
+(en_cours, collectivite_id, "referentiel", etoiles, "date", sujet, envoyee_le, demandeur)
+VALUES(false, 1, 'cae'::public."referentiel", '1'::labellisation."etoile", now() - interval '2 day', 'labellisation'::labellisation."sujet_demande", now() - interval '2 day', '17440546-f389-4d4f-bfdb-b0c94a1bd0f9'::uuid);
+
 insert into labellisation.audit(collectivite_id, referentiel, date_debut)
 values (1, 'eci', now() - interval '1 day'),
        (10, 'cae', now() - interval '1 day');
@@ -5,6 +9,12 @@ values (1, 'eci', now() - interval '1 day'),
 insert into audit_auditeur (audit_id, auditeur)
 values (1, '5f407fc6-3634-45ff-a988-301e9088096a'),
        (2, '5f407fc6-3634-45ff-a988-301e9088096a');
+
+insert into labellisation.audit(collectivite_id, referentiel, date_debut, demande_id, valide_labellisation)
+values (1, 'cae', now() - interval '1 day', (select id as demande_id from labellisation.demande where collectivite_id = 1 and referentiel = 'cae' and etoiles = '1' limit 1), true);
+
+insert into audit_auditeur (audit_id, auditeur)
+values ((select id as audit_id from labellisation.audit where collectivite_id = 1 and referentiel = 'cae' and demande_id is not null limit 1), '5f407fc6-3634-45ff-a988-301e9088096a');
 
 insert into labellisation.action_audit_state(audit_id, action_id, collectivite_id, ordre_du_jour, avis, statut,
                                              modified_by)

@@ -9,7 +9,7 @@ import { collectiviteTable } from '@/backend/collectivites/index-domain';
 import { auditeurTable } from '@/backend/referentiels/labellisations/auditeur.table';
 import { DatabaseService } from '@/backend/utils';
 import { Injectable, Logger } from '@nestjs/common';
-import { and, count, eq, getTableColumns, not } from 'drizzle-orm';
+import { and, asc, count, eq, getTableColumns, not } from 'drizzle-orm';
 import { auditTable } from '../../../referentiels/labellisations/audit.table';
 import { AuthRole, AuthUser } from '../../models/auth.models';
 import { PermissionLevel } from './niveau-acces.enum';
@@ -151,7 +151,13 @@ export class RoleService {
       query.where(eq(utilisateurPermissionTable.userId, userId));
     }
 
-    return query;
+    return query.orderBy(
+      asc(
+        addCollectiviteNom
+          ? collectiviteTable.nom
+          : utilisateurPermissionTable.collectiviteId
+      )
+    );
   }
 
   /**
