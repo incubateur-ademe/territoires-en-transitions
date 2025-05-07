@@ -1,6 +1,6 @@
 import { z } from 'zod';
 
-export const getIndicateursValeursRequestSchema = z
+export const getIndicateursValeursApiRequestSchema = z
   .object({
     collectiviteId: z.coerce
       .number()
@@ -12,21 +12,23 @@ export const getIndicateursValeursRequestSchema = z
       .transform((value) => value.split(','))
       .pipe(z.coerce.number().array())
       .optional()
-      .describe("Identifiant de l'indicateur"),
+      .describe('Identifiants des indicateurs (séparés par des virgules)'),
 
     identifiantsReferentiel: z
       .string()
       .transform((value) => value.split(','))
       .pipe(z.string().array())
       .optional()
-      .describe('Identifiants du référentiel'),
+      .describe(
+        'Identifiants du référentiel si préféré aux identifiants numériques (séparés par des virgules)'
+      ),
     sources: z
       .string()
       .transform((value) => value.split(','))
       .pipe(z.string().array())
       .optional()
       .describe(
-        'Liste des sources (séparées par des virgules). collectivite pour les valeurs renseignées par la collectivité'
+        'Liste des sources (séparées par des virgules). Mot clé `collectivite` pour les valeurs renseignées par la collectivité'
       ),
     dateDebut: z
       .string()
@@ -38,19 +40,9 @@ export const getIndicateursValeursRequestSchema = z
       .length(10)
       .optional()
       .describe('Date de fin (format YYYY-MM-DD)'), // z.string().date() only supported in 3.23
-    ignoreDedoublonnage: z
-      .enum(['true', 'false'])
-      .transform((value) => value === 'true')
-      .optional()
-      .describe('Ignore le dédoublonnage'),
-    withoutDefinition: z
-      .enum(['true', 'false'])
-      .transform((value) => value === 'true')
-      .optional()
-      .describe("Exclue les définitions d'indicateur de la réponse"),
   })
   .describe('Filtre de récupération des valeurs des indicateurs');
 
-export type GetIndicateursValeursRequestType = z.infer<
-  typeof getIndicateursValeursRequestSchema
+export type GetIndicateursValeursApiRequestType = z.infer<
+  typeof getIndicateursValeursApiRequestSchema
 >;

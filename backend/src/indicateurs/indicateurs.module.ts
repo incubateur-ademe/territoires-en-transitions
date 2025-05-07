@@ -1,3 +1,4 @@
+import { IndicateursListDefinitionsController } from '@/backend/indicateurs/list-definitions/list-definitions.controller';
 import ComputeValeursService from '@/backend/indicateurs/valeurs/compute-valeurs.service';
 import IndicateurExpressionService from '@/backend/indicateurs/valeurs/indicateur-expression.service';
 import { Module } from '@nestjs/common';
@@ -21,7 +22,7 @@ import TrajectoiresSpreadsheetService from './trajectoires/trajectoires-spreadsh
 import TrajectoiresXlsxService from './trajectoires/trajectoires-xlsx.service';
 import { TrajectoiresController } from './trajectoires/trajectoires.controller';
 import { TrajectoiresRouter } from './trajectoires/trajectoires.router';
-import { IndicateursController } from './valeurs/crud-valeurs.controller';
+import { IndicateursValeursController } from './valeurs/crud-valeurs.controller';
 import { IndicateurValeursRouter } from './valeurs/crud-valeurs.router';
 import CrudValeursService from './valeurs/crud-valeurs.service';
 import ValeursMoyenneService from './valeurs/valeurs-moyenne.service';
@@ -67,7 +68,8 @@ import ValeursReferenceService from './valeurs/valeurs-reference.service';
     IndicateurValeursRouter,
   ],
   controllers: [
-    IndicateursController,
+    IndicateursValeursController,
+    IndicateursListDefinitionsController,
     ImportIndicateurDefinitionController,
     ExportIndicateursController,
     TrajectoiresController,

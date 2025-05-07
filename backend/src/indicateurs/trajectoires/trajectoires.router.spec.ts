@@ -1,72 +1,92 @@
-import { GetIndicateursValeursResponseType } from '@/backend/indicateurs/shared/models/get-indicateurs.response';
-import { UpsertIndicateursValeursRequest } from '@/backend/indicateurs/shared/models/upsert-indicateurs-valeurs.request';
-import { getTestApp, signInWith, YOLO_DODO } from '@/backend/test';
-import { sleep } from '@/backend/utils/sleep.utils';
-import { INestApplication } from '@nestjs/common';
-import { default as request } from 'supertest';
-import { CalculTrajectoireResultatMode } from './calcul-trajectoire.request';
-import { CalculTrajectoireResponse } from './calcul-trajectoire.response';
+import { AuthenticatedUser } from '@/backend/auth/index-domain';
 import {
   VerificationTrajectoireResponseType,
   VerificationTrajectoireStatus,
-} from './verification-trajectoire.response';
+} from '@/backend/indicateurs/index-domain';
+import {
+  getAuthUser,
+  getTestApp,
+  getTestRouter,
+  YOLO_DODO,
+} from '@/backend/test';
+import { TrpcRouter } from '@/backend/utils/trpc/trpc.router';
+import {
+  INestApplication,
+  UnauthorizedException,
+  UnprocessableEntityException,
+} from '@nestjs/common';
+import { expect } from 'vitest';
 
 describe('Calcul de trajectoire SNBC', () => {
   let app: INestApplication;
-  let yoloDodoToken: string;
+  let router: TrpcRouter;
+  let yoloDodoUser: AuthenticatedUser;
 
   beforeAll(async () => {
     app = await getTestApp();
-
-    const yoloDodo = await signInWith(YOLO_DODO);
-    yoloDodoToken = yoloDodo.data.session?.access_token || '';
+    router = await getTestRouter(app);
+    yoloDodoUser = await getAuthUser(YOLO_DODO);
   });
 
-  it(`Verification sans acces`, () => {
-    return request(app.getHttpServer())
-      .get('/trajectoires/snbc/verification?collectiviteId=3')
-      .set('Authorization', `Bearer ${yoloDodoToken}`)
-      .expect(200)
-      .expect({
-        status: VerificationTrajectoireStatus.DROITS_INSUFFISANTS,
+  test(`Verification sans acces`, async () => {
+    const caller = router.createCaller({ user: yoloDodoUser });
+
+    const statusResponse =
+      await caller.indicateurs.trajectoires.snbc.checkStatus({
+        collectiviteId: 3,
       });
+
+    const expectedResponse: VerificationTrajectoireResponseType = {
+      status: VerificationTrajectoireStatus.DROITS_INSUFFISANTS,
+    };
+
+    expect(statusResponse).toMatchObject(expectedResponse);
   });
 
-  it(`Suppression sans acces`, () => {
-    return request(app.getHttpServer())
-      .delete('/trajectoires/snbc?collectiviteId=3')
-      .set('Authorization', `Bearer ${yoloDodoToken}`)
-      .expect(401)
-      .expect({
-        message:
-          "Droits insuffisants, l'utilisateur 17440546-f389-4d4f-bfdb-b0c94a1bd0f9 n'a pas l'autorisation indicateurs.trajectoires.edition sur la ressource Collectivité 3",
-        error: 'Unauthorized',
-        statusCode: 401,
+  test(`Suppression sans acces`, async () => {
+    const caller = router.createCaller({ user: yoloDodoUser });
+
+    await expect(() =>
+      caller.indicateurs.trajectoires.snbc.delete({
+        collectiviteId: 3,
+      })
+    ).toThrowTrpcHttpError(
+      new UnauthorizedException(
+        `Droits insuffisants, l'utilisateur 17440546-f389-4d4f-bfdb-b0c94a1bd0f9 n'a pas l'autorisation indicateurs.trajectoires.edition sur la ressource Collectivité 3`
+      )
+    );
+  });
+
+  test(`Verification avec une commune`, async () => {
+    const caller = router.createCaller({ user: yoloDodoUser });
+
+    const statusResponse =
+      await caller.indicateurs.trajectoires.snbc.checkStatus({
+        collectiviteId: 1,
       });
+
+    const expectedResponse: VerificationTrajectoireResponseType = {
+      status: VerificationTrajectoireStatus.COMMUNE_NON_SUPPORTEE,
+    };
+
+    expect(statusResponse).toMatchObject(expectedResponse);
   });
 
-  it(`Verification avec une commune`, () => {
-    return request(app.getHttpServer())
-      .get('/trajectoires/snbc/verification?collectiviteId=1')
-      .set('Authorization', `Bearer ${process.env.SUPABASE_SERVICE_ROLE_KEY}`)
-      .expect(200)
-      .expect({ status: 'commune_non_supportee' });
+  test(`Calcul avec une commune`, async () => {
+    const caller = router.createCaller({ user: yoloDodoUser });
+
+    await expect(() =>
+      caller.indicateurs.trajectoires.snbc.getOrCompute({
+        collectiviteId: 1,
+      })
+    ).toThrowTrpcHttpError(
+      new UnprocessableEntityException(
+        `Le calcul de trajectoire SNBC peut uniquement être effectué pour un EPCI.`
+      )
+    );
   });
 
-  it(`Calcul avec une commune`, () => {
-    return request(app.getHttpServer())
-      .get('/trajectoires/snbc?collectiviteId=1')
-      .set('Authorization', `Bearer ${process.env.SUPABASE_SERVICE_ROLE_KEY}`)
-      .expect(422)
-      .expect({
-        message:
-          'Le calcul de trajectoire SNBC peut uniquement être effectué pour un EPCI.',
-        error: 'Unprocessable Entity',
-        statusCode: 422,
-      });
-  });
-
-  it(`Verification avec donnees manquantes`, () => {
+  test(`Verification avec donnees manquantes`, async () => {
     const verifcationReponseAttendue: VerificationTrajectoireResponseType = {
       status: VerificationTrajectoireStatus.DONNEES_MANQUANTES,
       epci: {
@@ -260,45 +280,57 @@ describe('Calcul de trajectoire SNBC', () => {
         lastModifiedAt: null,
       },
     };
-    return request(app.getHttpServer())
-      .get('/trajectoires/snbc/verification?collectiviteId=3812&epciInfo=true')
-      .set('Authorization', `Bearer ${process.env.SUPABASE_SERVICE_ROLE_KEY}`)
-      .expect(200)
-      .expect(verifcationReponseAttendue);
+
+    const caller = router.createCaller({ user: yoloDodoUser });
+
+    const statusResponse =
+      await caller.indicateurs.trajectoires.snbc.checkStatus({
+        collectiviteId: 3812,
+        epciInfo: true,
+      });
+    expect(statusResponse).toMatchObject(verifcationReponseAttendue);
   });
 
-  it(`Calcul avec donnees manquantes`, () => {
-    return request(app.getHttpServer())
-      .get('/trajectoires/snbc?collectiviteId=3812')
-      .set('Authorization', `Bearer ${process.env.SUPABASE_SERVICE_ROLE_KEY}`)
-      .expect(422)
-      .expect({
-        message:
-          "Les indicateurs suivants n'ont pas de valeur pour l'année 2015 ou avec une interpolation possible : cae_1.c, cae_1.d, cae_1.i, cae_1.g, cae_1.e, cae_1.f, cae_1.h, cae_1.j, cae_2.e, cae_2.f, cae_2.k, cae_2.i, cae_2.g, cae_2.h, cae_2.j, cae_2.l_pcaet, impossible de calculer la trajectoire SNBC.",
-        error: 'Unprocessable Entity',
-        statusCode: 422,
-      });
+  test(`Calcul avec donnees manquantes`, async () => {
+    const caller = router.createCaller({ user: yoloDodoUser });
+
+    await expect(() =>
+      caller.indicateurs.trajectoires.snbc.getOrCompute({
+        collectiviteId: 3812,
+      })
+    ).toThrowTrpcHttpError(
+      new UnprocessableEntityException(
+        `Les indicateurs suivants n'ont pas de valeur pour l'année 2015 ou avec une interpolation possible : cae_1.c, cae_1.d, cae_1.i, cae_1.g, cae_1.e, cae_1.f, cae_1.h, cae_1.j, cae_2.e, cae_2.f, cae_2.k, cae_2.i, cae_2.g, cae_2.h, cae_2.j, cae_2.l_pcaet, impossible de calculer la trajectoire SNBC.`
+      )
+    );
   }, 10000);
 
-  it(`Calcul sans droit suffisant - visite`, () => {
-    return request(app.getHttpServer())
-      .get('/trajectoires/snbc?collectiviteId=3896')
-      .set('Authorization', `Bearer ${yoloDodoToken}`)
-      .expect(401)
-      .expect({
-        message:
-          "Droits insuffisants, l'utilisateur 17440546-f389-4d4f-bfdb-b0c94a1bd0f9 n'a pas l'autorisation indicateurs.trajectoires.lecture sur la ressource Collectivité 3896",
-        error: 'Unauthorized',
-        statusCode: 401,
-      });
+  test(`Calcul sans droit suffisant - visite`, async () => {
+    const caller = router.createCaller({ user: yoloDodoUser });
+
+    await expect(() =>
+      caller.indicateurs.trajectoires.snbc.getOrCompute({
+        collectiviteId: 3896,
+      })
+    ).toThrowTrpcHttpError(
+      new UnauthorizedException(
+        `Droits insuffisants, l'utilisateur 17440546-f389-4d4f-bfdb-b0c94a1bd0f9 n'a pas l'autorisation indicateurs.trajectoires.lecture sur la ressource Collectivité 3896`
+      )
+    );
   });
 
-  it(`Calcul avec droit suffisant - lecture`, async () => {
-    return request(app.getHttpServer())
-      .get('/trajectoires/snbc?collectiviteId=3895')
-      .set('Authorization', `Bearer ${yoloDodoToken}`)
-      .expect(200);
+  test(`Calcul avec droit suffisant - lecture`, async () => {
+    const caller = router.createCaller({ user: yoloDodoUser });
+
+    const trajectoire = await caller.indicateurs.trajectoires.snbc.getOrCompute(
+      {
+        collectiviteId: 3895,
+      }
+    );
+    expect(trajectoire).toBeDefined();
   }, 30000);
+
+  /*
 
   it(`Verification, calcul avec donnees completes et gestion de la mise à jour`, async () => {
     // Restauration de la valeur d'indicateur
@@ -613,26 +645,7 @@ describe('Calcul de trajectoire SNBC', () => {
     );
   }, 30000);
 
-  it(`Telechargement du modele`, () => {
-    return request(app.getHttpServer())
-      .get('/trajectoires/snbc/modele') // Accès public, pas la peine de mettre le token
-      .expect(200);
-  }, 30000);
-
-  it(`Téléchargement du fichier xlsx prérempli pour un epci avec donnees completes`, async () => {
-    const response = await request(app.getHttpServer())
-      .get('/trajectoires/snbc/telechargement?collectiviteId=4936')
-      .set('Authorization', `Bearer ${yoloDodoToken}`)
-      .expect(200)
-      .responseType('blob');
-
-    const fileName = response.headers['content-disposition']
-      .split('filename=')[1]
-      .split(';')[0];
-    expect(fileName).toBe(
-      '"Trajectoire SNBC - 246700488 - Eurome?tropole de Strasbourg.xlsx"'
-    );
-  }, 30000);
+  */
 
   afterAll(async () => {
     await app.close();

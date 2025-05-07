@@ -1,4 +1,6 @@
 import { AllowAnonymousAccess } from '@/backend/auth/decorators/allow-anonymous-access.decorator';
+import { ApiUsageEnum } from '@/backend/utils/api/api-usage-type.enum';
+import { ApiUsage } from '@/backend/utils/api/api-usage.decorator';
 import { chartRenderRequestSchema } from '@/backend/utils/echarts/chart-render.request';
 import { EchartsService } from '@/backend/utils/echarts/echarts.service';
 import { createZodDto } from '@anatine/zod-nestjs';
@@ -16,6 +18,7 @@ export class EchartsController {
 
   @AllowAnonymousAccess()
   @Post('charts/render')
+  @ApiUsage([ApiUsageEnum.APP])
   @ApiOkResponse({
     description: 'The rendered chart either in svg or png format',
   })

@@ -1,5 +1,9 @@
 import { PermissionService } from '@/backend/auth/authorizations/permission.service';
-import { roundTo, toSlug } from '@/backend/utils/index-domain';
+import {
+  getISOFormatDateQuery,
+  roundTo,
+  toSlug,
+} from '@/backend/utils/index-domain';
 import {
   BadRequestException,
   Injectable,
@@ -116,17 +120,6 @@ export class SnapshotsService {
           : SnapshotsService.SCORE_COURANT_SNAPSHOT_REF;
         nom = nom || SnapshotsService.SCORE_COURANT_SNAPSHOT_NOM;
         break;
-
-      case SnapshotJalonEnum.JOUR_AUTO: {
-        const dateTime = DateTime.fromISO(date);
-        ref = `${
-          SnapshotsService.JOUR_SNAPSHOT_REF_PREFIX
-        }${dateTime.toISODate()}`;
-        nom = `${dateTime.year}${
-          SnapshotsService.JOUR_SNAPSHOT_NOM_PREFIX
-        }${dateTime.toFormat('dd/MM/yyyy')}`;
-        break;
-      }
 
       case SnapshotJalonEnum.DATE_PERSONNALISEE:
         ref = nom ? toSlug(nom) : '';
@@ -431,11 +424,13 @@ export class SnapshotsService {
         'Impossible de sauvegarder le snapshot de score'
       );
     }
-
-    // scoreResponse.snapshot!.createdBy = scoreSnapshot.createdBy;
-    // scoreResponse.snapshot!.createdAt = scoreSnapshot.createdAt;
-    // scoreResponse.snapshot!.modifiedBy = scoreSnapshot.modifiedBy;
-    // scoreResponse.snapshot!.modifiedAt = scoreSnapshot.modifiedAt;
+    scoreSnapshot.date = DateTime.fromSQL(scoreSnapshot.date).toISO() as string;
+    scoreSnapshot.createdAt = DateTime.fromSQL(
+      scoreSnapshot.createdAt
+    ).toISO() as string;
+    scoreSnapshot.modifiedAt = DateTime.fromSQL(
+      scoreSnapshot.modifiedAt
+    ).toISO() as string;
 
     return scoreSnapshot;
   }
@@ -471,7 +466,12 @@ export class SnapshotsService {
     user?: AuthUser
   ): Promise<Snapshot> {
     let snapshot = await this.databaseService.db
-      .select()
+      .select({
+        ...getTableColumns(snapshotTable),
+        date: getISOFormatDateQuery(snapshotTable.date),
+        createdAt: getISOFormatDateQuery(snapshotTable.createdAt),
+        modifiedAt: getISOFormatDateQuery(snapshotTable.modifiedAt),
+      })
       .from(snapshotTable)
       .where(
         and(

@@ -1,23 +1,26 @@
 import { PermissionService } from '@/backend/auth/authorizations/permission.service';
+import { ListCollectiviteApiResponse } from '@/backend/collectivites/list-collectivites/list-collectivites.api-response';
+import { ListCollectiviteInput } from '@/backend/collectivites/list-collectivites/list-collectivites.input';
+import { getISOFormatDateQuery } from '@/backend/utils/column.utils';
 import { Injectable, Logger } from '@nestjs/common';
-import { desc, eq, sql } from 'drizzle-orm';
-import z from 'zod';
+import {
+  and,
+  asc,
+  desc,
+  eq,
+  getTableColumns,
+  SQL,
+  sql,
+  SQLWrapper,
+} from 'drizzle-orm';
+import { omit } from 'es-toolkit';
 import { DatabaseService } from '../../utils/database/database.service';
 import {
-  collectiviteNatureEnumSchema,
+  CollectiviteNatureType,
   collectiviteTable,
-  collectiviteTypeEnumSchema,
+  CollectiviteType,
 } from '../index-domain';
-
-export const inputSchema = z
-  .object({
-    text: z.string().optional(),
-    limit: z.number().optional(),
-    type: collectiviteTypeEnumSchema.optional(),
-    natureInsee: collectiviteNatureEnumSchema.optional(),
-  })
-  .optional()
-  .default({ limit: 20 });
+import { ListCollectivitesFieldsMode } from './list-collectivites-fields-mode.enum';
 
 @Injectable()
 export default class ListCollectivitesService {
@@ -34,44 +37,82 @@ export default class ListCollectivitesService {
    * @param withPredefinedTags vrai pour inclure les tags prédéfinis par TeT
    * @param tokenInfo
    */
-  async listCollectivites(input: z.infer<typeof inputSchema>) {
+  async listCollectivites(
+    input: ListCollectiviteInput,
+    fieldsMode: ListCollectivitesFieldsMode = 'resume'
+  ): Promise<ListCollectiviteApiResponse> {
     const db = this.db.db;
 
     const request = db
-      .select({
-        id: collectiviteTable.id,
-        nom: collectiviteTable.nom,
-      })
+      .select(
+        fieldsMode === 'resume'
+          ? {
+              id: collectiviteTable.id,
+              nom: collectiviteTable.nom,
+              siren: collectiviteTable.siren,
+              natureInsee: sql<CollectiviteNatureType>`${collectiviteTable.natureInsee}`,
+            }
+          : omit(
+              {
+                ...getTableColumns(collectiviteTable),
+                createdAt: getISOFormatDateQuery(collectiviteTable.createdAt),
+                modifiedAt: getISOFormatDateQuery(collectiviteTable.modifiedAt),
+                type: sql<CollectiviteType>`${collectiviteTable.type}`,
+                natureInsee: sql<CollectiviteNatureType>`${collectiviteTable.natureInsee}`,
+              },
+              ['accessRestreint']
+            )
+      )
       .from(collectiviteTable);
 
+    const whereConditions: (SQLWrapper | SQL)[] = [];
+
+    if (input?.collectiviteId) {
+      whereConditions.push(eq(collectiviteTable.id, input.collectiviteId));
+    }
+
     if (input?.type) {
-      request.where(eq(collectiviteTable.type, input.type));
+      whereConditions.push(eq(collectiviteTable.type, input.type));
     }
 
     if (input?.natureInsee) {
-      request.where(eq(collectiviteTable.natureInsee, input.natureInsee));
+      whereConditions.push(
+        eq(collectiviteTable.natureInsee, input.natureInsee)
+      );
+    }
+
+    if (input?.siren) {
+      whereConditions.push(eq(collectiviteTable.siren, input.siren));
+    }
+
+    if (input?.communeCode) {
+      whereConditions.push(
+        eq(collectiviteTable.communeCode, input.communeCode)
+      );
     }
 
     if (input?.text) {
-      request.where(
+      whereConditions.push(
         sql`unaccent
           (${collectiviteTable.nom})
           % unaccent(
           ${input.text}
           )`
       );
-
-      // Le plus pertinent en premier
-      request.orderBy(
-        desc(sql`similarity
-        (${collectiviteTable.nom}, ${input.text})`)
-      );
     }
 
-    if (input?.limit && input.limit > 0) {
-      request.limit(input.limit);
+    if (whereConditions.length > 0) {
+      request.where(and(...whereConditions));
     }
 
-    return request;
+    return this.db.withPagination(
+      request.$dynamic(),
+      input.text
+        ? desc(sql`similarity
+      (${collectiviteTable.nom}, ${input.text})`)
+        : asc(collectiviteTable.nom),
+      input.page,
+      input.limit
+    );
   }
 }

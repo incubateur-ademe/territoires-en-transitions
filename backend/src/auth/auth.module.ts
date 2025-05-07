@@ -4,6 +4,7 @@ import { ApikeysService } from '@/backend/auth/apikeys/apikeys.service';
 import { PermissionService } from '@/backend/auth/authorizations/permission.service';
 import { RoleUpdateService } from '@/backend/auth/authorizations/roles/role-update.service';
 import { RoleService } from '@/backend/auth/authorizations/roles/role.service';
+import { UsersController } from '@/backend/auth/users/users.controller';
 import { Global, Module } from '@nestjs/common';
 import { APP_GUARD } from '@nestjs/core';
 import { JwtModule } from '@nestjs/jwt';
@@ -27,7 +28,7 @@ import { UsersService } from './users/users.service';
     }),
     CollectivitesModule,
   ],
-  controllers: [ApikeysController],
+  controllers: [ApikeysController, UsersController],
   providers: [
     {
       provide: APP_GUARD,

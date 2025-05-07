@@ -41,7 +41,7 @@ export const useIndicateurChartInfo = ({
   const { data: valeurs, isLoading: isLoadingValeurs } = useIndicateurValeurs({
     collectiviteId,
     indicateurIds: indicateurId ? [indicateurId] : undefined,
-    sources: sourceFilter.sources?.join(','),
+    sources: sourceFilter.sources,
   });
 
   // sépare objectifs et résultats
@@ -64,7 +64,7 @@ export const useIndicateurChartInfo = ({
     useIndicateurValeurs({
       collectiviteId,
       indicateurIds,
-      sources: sourceFilter.sources?.join(','),
+      sources: sourceFilter.sources,
     });
 
   // charge aussi les définitions détaillées des enfants pour avoir les
@@ -130,8 +130,8 @@ export const useIndicateurChartInfo = ({
   >();
   definitionEnfants
     ?.sort((a, b) =>
-      a.identifiant && b.identifiant
-        ? a.identifiant.localeCompare(b.identifiant)
+      a.identifiantReferentiel && b.identifiantReferentiel
+        ? a.identifiantReferentiel.localeCompare(b.identifiantReferentiel)
         : 0
     )
     .forEach(({ id, titreCourt, titre }, i) =>
@@ -305,7 +305,8 @@ function prepareEnfantsParSegmentation(
 
     if (sourceValeursEnfant?.valeurs?.length) {
       // segmentations auxquelles est rattaché l'indicateur
-      const segmentations = intersection(enfant.categories, SEGMENTATIONS);
+      const categorieNames = enfant.categories?.map((c) => c.nom) ?? [];
+      const segmentations = intersection(categorieNames, SEGMENTATIONS);
 
       // assigne l'indicateur au(x) segmentation(s) appropriée(s)
       const source = { definition: enfant, source: sourceValeursEnfant };

@@ -1,12 +1,12 @@
 import { Database, Enums, getCollectivitePath } from '@/api';
 import { useSupabase } from '@/api/utils/supabase/use-supabase';
-import { RouterOutput, trpc } from '@/api/utils/trpc/client';
+import { trpc } from '@/api/utils/trpc/client';
+import { CollectivitePublic } from '@/backend/collectivites/index-domain';
 import { useRouter } from 'next/navigation';
 import { useState } from 'react';
 
 export const NB_COLLECTIVITES_FETCH = 20;
-export type MatchingCollectivites =
-  RouterOutput['collectivites']['collectivites']['list'];
+export type MatchingCollectivites = Pick<CollectivitePublic, 'id' | 'nom'>[];
 
 export type RejoindreUneCollectiviteData = {
   collectiviteId?: number | null;

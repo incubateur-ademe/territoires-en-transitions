@@ -1,16 +1,23 @@
-import { ficheActionNoteSchema } from '@/backend/plans/fiches/index-domain';
-import { createZodDto } from '@anatine/zod-nestjs';
-import { Body, Controller, Delete, Get, Param, Put } from '@nestjs/common';
-import { ApiOkResponse, ApiTags } from '@nestjs/swagger';
-import { z } from 'zod';
+import { TokenInfo } from '@/backend/auth/decorators/token-info.decorators';
+import { AuthenticatedUser } from '@/backend/auth/models/auth.models';
+import FicheActionNoteService from '@/backend/plans/fiches/fiche-action-note/fiche-action-note.service';
 import {
   deleteFicheActionNotesRequestSchema,
   upsertFicheActionNotesRequestSchema,
 } from '@/backend/plans/fiches/fiche-action-note/upsert-fiche-action-note.request';
+import { ficheActionNoteSchema } from '@/backend/plans/fiches/index-domain';
 import { getFichesActionResponseSchema } from '@/backend/plans/fiches/shared/models/get-fiche-actions.response';
-import { TokenInfo } from '@/backend/auth/decorators/token-info.decorators';
-import { AuthenticatedUser } from '@/backend/auth/models/auth.models';
-import FicheActionNoteService from '@/backend/plans/fiches/fiche-action-note/fiche-action-note.service';
+import { ApiUsageEnum } from '@/backend/utils/api/api-usage-type.enum';
+import { ApiUsage } from '@/backend/utils/api/api-usage.decorator';
+import { createZodDto } from '@anatine/zod-nestjs';
+import { Body, Controller, Delete, Get, Param, Put } from '@nestjs/common';
+import {
+  ApiBearerAuth,
+  ApiExcludeController,
+  ApiOkResponse,
+  ApiTags,
+} from '@nestjs/swagger';
+import { z } from 'zod';
 
 /**
  * Création des classes de réponse à partir du schema pour générer automatiquement la documentation OpenAPI
@@ -32,12 +39,15 @@ export class GetFichesActionResponseClass extends createZodDto(
   getFichesActionResponseSchema
 ) {}
 
+@ApiExcludeController()
 @ApiTags('Fiches action')
+@ApiBearerAuth()
 @Controller('collectivites/:collectivite_id/fiches-action')
 export class FicheActionNoteController {
   constructor(private readonly ficheService: FicheActionNoteService) {}
 
   @Get(':id/notes')
+  @ApiUsage([ApiUsageEnum.APP])
   @ApiOkResponse({
     type: GetFicheActionNotesResponseClass,
     description: 'Charge les notes de suivi',
@@ -50,6 +60,7 @@ export class FicheActionNoteController {
   }
 
   @Put(':id/notes')
+  @ApiUsage([ApiUsageEnum.APP])
   @ApiOkResponse({
     type: UpsertFicheActionNotesRequestClass,
     description: 'Insère ou met à jour les notes de suivi',
@@ -63,6 +74,7 @@ export class FicheActionNoteController {
   }
 
   @Delete(':id/note')
+  @ApiUsage([ApiUsageEnum.APP])
   @ApiOkResponse({
     type: DeleteFicheActionNotesRequestClass,
     description: 'Supprime une note de suivi',

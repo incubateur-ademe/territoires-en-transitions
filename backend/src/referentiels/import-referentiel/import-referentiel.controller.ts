@@ -1,5 +1,7 @@
+import { ApiUsageEnum } from '@/backend/utils/api/api-usage-type.enum';
+import { ApiUsage } from '@/backend/utils/api/api-usage.decorator';
 import { Controller, Get, Logger, Param } from '@nestjs/common';
-import { ApiResponse, ApiTags } from '@nestjs/swagger';
+import { ApiExcludeController, ApiResponse, ApiTags } from '@nestjs/swagger';
 import { AllowAnonymousAccess } from '../../auth/decorators/allow-anonymous-access.decorator';
 import { CorrelatedActionsFields } from '../correlated-actions/correlated-actions.dto';
 import { ReferentielResponse } from '../get-referentiel/get-referentiel.service';
@@ -22,6 +24,7 @@ class ImportReferentielResponse implements ReferentielResponse {
 }
 
 @ApiTags('Referentiels')
+@ApiExcludeController()
 @Controller('referentiels')
 export class ImportReferentielController {
   private readonly logger = new Logger(ImportReferentielController.name);
@@ -30,6 +33,7 @@ export class ImportReferentielController {
 
   @AllowAnonymousAccess()
   @Get(':referentiel_id/import')
+  @ApiUsage([ApiUsageEnum.GOOGLE_SHEETS])
   @ApiResponse({ type: ImportReferentielResponse })
   async importReferentiel(
     @Param('referentiel_id') referentielId: ReferentielId

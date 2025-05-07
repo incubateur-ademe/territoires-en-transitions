@@ -74,3 +74,9 @@ Lancer uniquement les tests dont le chemin contient `referentiels` :
 ```sh
 nx test backend 'referentiels'
 ```
+
+## API
+
+Une documentation [Swagger / Open Api](https://swagger.io/specification/) est disponible [ici](https://api.territoiresentransitions.fr/api-docs/v1).
+
+Par ailleurs, un guide de démarrage rapide est disponible [ici](./QuickstartApi.md).

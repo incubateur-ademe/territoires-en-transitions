@@ -64,11 +64,32 @@ async function bootstrap() {
 
   const config = new DocumentBuilder()
     .setTitle('Api Territoires en Transitions')
+    .setContact(
+      'Equipe Territoires en Transitions',
+      '',
+      'contact@territoiresentransitions.fr'
+    )
+    .setDescription(
+      "L'API de Territoires en Transitions permet de consulter les données (score d'état des lieux, indicateurs, etc.) disponible dans la plateforme mais également d'y ajouter des données (ajout de valeurs d'indicateurs). Elle est amenée à être enrichie au fure et à mesure des demandes afin d'exposer progressivement les fonctionnalités de la plateforme (ex. Plan d'actions, etc.). \n\nVous devez disposer d'un clé d'API rattachée à votre compte pour y accéder. Pour cela veuillez contacter le support via le chat ou par mail à l'adresse **contact@territoiresentransitions.fr**. Une fois ces identifiants obtenus, vous devez en premier lieu générer un token d'authentification (JWT) à l'aide de la route `api/v1/oauth/token`.\n\nA noter également que certaines routes nécessitent un droit d'écriture sur les collectivités visées (ex: ecriture de valeurs d'indicateur).\n\nVous pouvez consulter le guide de démarrage rapide sur le dépot GitHub [https://github.com/incubateur-ademe/territoires-en-transitions](https://github.com/incubateur-ademe/territoires-en-transitions/blob/main/backend/QuickstartApi.md)."
+    )
     .setVersion(process.env.APPLICATION_VERSION || 'dev')
+    .addBearerAuth({
+      type: 'oauth2',
+      flows: {
+        clientCredentials: {
+          tokenUrl: '/api/v1/oauth/token',
+          scopes: {},
+        },
+      },
+    })
     .build();
   patchNestjsSwagger();
   const document = SwaggerModule.createDocument(app, config);
-  SwaggerModule.setup('api-docs/v1', app, document);
+  SwaggerModule.setup('api-docs/v1', app, document, {
+    swaggerOptions: {
+      tagsSorter: 'alpha',
+    },
+  });
 
   // Configure tRPC
   const trpc = app.get(TrpcRouter);
