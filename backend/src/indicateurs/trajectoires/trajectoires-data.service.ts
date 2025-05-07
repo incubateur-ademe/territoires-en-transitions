@@ -14,7 +14,7 @@ import {
 import { isNil } from 'es-toolkit';
 import * as _ from 'lodash';
 import { DateTime } from 'luxon';
-import { AuthenticatedUser, AuthUser } from '../../auth/models/auth.models';
+import { AuthUser } from '../../auth/models/auth.models';
 import CollectivitesService from '../../collectivites/services/collectivites.service';
 import {
   SourceMetadonnee,
@@ -792,7 +792,7 @@ export default class TrajectoiresDataService {
   async deleteTrajectoireSnbc(
     collectiviteId: number,
     snbcMetadonneesId?: number,
-    tokenInfo?: AuthenticatedUser
+    tokenInfo?: AuthUser
   ): Promise<void> {
     if (!snbcMetadonneesId) {
       const indicateurSourceMetadonnee =

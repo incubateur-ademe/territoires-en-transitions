@@ -1,11 +1,15 @@
+import { ApiUsageEnum } from '@/backend/utils/api/api-usage-type.enum';
+import { ApiUsage } from '@/backend/utils/api/api-usage.decorator';
 import { Controller, Get, Logger } from '@nestjs/common';
-import { ApiHideProperty, ApiTags } from '@nestjs/swagger';
+import { ApiBearerAuth, ApiExcludeController, ApiTags } from '@nestjs/swagger';
 import { AllowAnonymousAccess } from '../../auth/decorators/allow-anonymous-access.decorator';
 import { TokenInfo } from '../../auth/decorators/token-info.decorators';
 import { AuthUser } from '../../auth/models/auth.models';
 import ImportIndicateurDefinitionService from './import-indicateur-definition.service';
 
 @ApiTags('Indicateurs')
+@ApiBearerAuth()
+@ApiExcludeController()
 @Controller('indicateur-definitions')
 export class ImportIndicateurDefinitionController {
   private readonly logger = new Logger(
@@ -24,7 +28,7 @@ export class ImportIndicateurDefinitionController {
    * @returns
    */
   @AllowAnonymousAccess()
-  @ApiHideProperty()
+  @ApiUsage([ApiUsageEnum.GOOGLE_SHEETS])
   @Get('import')
   async importIndicateurDefinitions(@TokenInfo() tokenInfo: AuthUser) {
     return this.importIndicateurService.importIndicateurDefinitions();

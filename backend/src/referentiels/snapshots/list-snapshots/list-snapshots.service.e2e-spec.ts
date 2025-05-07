@@ -10,7 +10,8 @@ describe('ListSnapshotsService', () => {
   let yoloDodoUser: AuthenticatedUser;
 
   beforeAll(async () => {
-    router = (await getTestApp()).get(ReferentielsRouter);
+    const app = await getTestApp();
+    router = app.get(ReferentielsRouter);
     yoloDodoUser = await getAuthUser();
   });
 
@@ -62,10 +63,7 @@ describe('ListSnapshotsService', () => {
       pointProgramme: 0.21,
     };
 
-    expect({
-      ...foundSnapshot,
-      date: DateTime.fromSQL(foundSnapshot.date).toISO() as string,
-    }).toEqual(expectedSnapshot);
+    expect(foundSnapshot).toEqual(expectedSnapshot);
 
     // delete the snapshot
     await caller.snapshots.delete({

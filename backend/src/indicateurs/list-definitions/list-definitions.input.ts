@@ -1,10 +1,12 @@
+import { paginationNoSortSchemaOptionalLimit } from '@/backend/utils/pagination.schema';
 import { z } from 'zod';
 
-export const listDefinitionsRequestSchema = z
-  .object({
+export const listDefinitionsInputSchema = paginationNoSortSchemaOptionalLimit
+  .extend({
     collectiviteId: z.coerce
       .number()
       .int()
+      .optional()
       .describe('Identifiant de la collectivité'),
     indicateurIds: z.coerce
       .number()
@@ -18,8 +20,7 @@ export const listDefinitionsRequestSchema = z
       .optional()
       .describe('Identifiants du référentiel'),
   })
+  .optional()
   .describe('Filtre de récupération des définitions des indicateurs');
 
-export type ListDefinitionsRequest = z.infer<
-  typeof listDefinitionsRequestSchema
->;
+export type ListDefinitionsInput = z.infer<typeof listDefinitionsInputSchema>;

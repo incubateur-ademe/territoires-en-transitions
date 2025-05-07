@@ -5,10 +5,19 @@ const sortSchema = z.object({
   direction: z.enum(['asc', 'desc']).default('desc'),
 });
 
-const paginationSchema = z.object({
+export const paginationNoSortSchema = z.object({
+  page: z.coerce.number().optional().default(1),
+  limit: z.coerce.number().min(1).max(1000),
+});
+
+export const paginationNoSortSchemaOptionalLimit =
+  paginationNoSortSchema.partial({
+    limit: true,
+  });
+
+const paginationSchema = paginationNoSortSchema.extend({
   sort: sortSchema.array().optional(),
-  page: z.number().optional().default(1),
-  limit: z.number().min(1).max(1000).default(1000),
+  limit: z.coerce.number().min(1).max(1000).default(1000),
 });
 
 export function getPaginationSchema<

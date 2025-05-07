@@ -1,3 +1,5 @@
+import { ApiUsageEnum } from '@/backend/utils/api/api-usage-type.enum';
+import { ApiUsage } from '@/backend/utils/api/api-usage.decorator';
 import { createZodDto } from '@anatine/zod-nestjs';
 import { Controller, Get, HttpException, HttpStatus } from '@nestjs/common';
 import { ApiExcludeEndpoint, ApiOkResponse, ApiTags } from '@nestjs/swagger';
@@ -15,6 +17,7 @@ export class VersionResponseClass extends createZodDto(versionResponseSchema) {}
 @Controller()
 export class VersionController {
   @AllowAnonymousAccess()
+  @ApiUsage([ApiUsageEnum.DEBUG])
   @ApiExcludeEndpoint()
   @Get('throw')
   async throw() {
@@ -25,6 +28,8 @@ export class VersionController {
   }
 
   @AllowPublicAccess()
+  @ApiExcludeEndpoint()
+  @ApiUsage([ApiUsageEnum.DEBUG])
   @Get('version')
   @ApiOkResponse({
     type: VersionResponseClass,

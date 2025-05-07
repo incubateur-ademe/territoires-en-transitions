@@ -75,8 +75,9 @@ export const indicateurDefinitionSchemaUpdate = definitionSchema.pick({
   borneMax: true,
 });
 
-export type IndicateurDefinitionUpdate = z.input<typeof indicateurDefinitionSchemaUpdate>;
-
+export type IndicateurDefinitionUpdate = z.input<
+  typeof indicateurDefinitionSchemaUpdate
+>;
 
 /**
  * Schéma zod d'un élément d'une liste d'indicateurs

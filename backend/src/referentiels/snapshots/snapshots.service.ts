@@ -117,17 +117,6 @@ export class SnapshotsService {
         nom = nom || SnapshotsService.SCORE_COURANT_SNAPSHOT_NOM;
         break;
 
-      case SnapshotJalonEnum.JOUR_AUTO: {
-        const dateTime = DateTime.fromISO(date);
-        ref = `${
-          SnapshotsService.JOUR_SNAPSHOT_REF_PREFIX
-        }${dateTime.toISODate()}`;
-        nom = `${dateTime.year}${
-          SnapshotsService.JOUR_SNAPSHOT_NOM_PREFIX
-        }${dateTime.toFormat('dd/MM/yyyy')}`;
-        break;
-      }
-
       case SnapshotJalonEnum.DATE_PERSONNALISEE:
         ref = nom ? toSlug(nom) : '';
         break;
@@ -431,11 +420,12 @@ export class SnapshotsService {
         'Impossible de sauvegarder le snapshot de score'
       );
     }
-
-    // scoreResponse.snapshot!.createdBy = scoreSnapshot.createdBy;
-    // scoreResponse.snapshot!.createdAt = scoreSnapshot.createdAt;
-    // scoreResponse.snapshot!.modifiedBy = scoreSnapshot.modifiedBy;
-    // scoreResponse.snapshot!.modifiedAt = scoreSnapshot.modifiedAt;
+    scoreSnapshot.createdAt = DateTime.fromSQL(
+      scoreSnapshot.createdAt
+    ).toISO() as string;
+    scoreSnapshot.modifiedAt = DateTime.fromSQL(
+      scoreSnapshot.modifiedAt
+    ).toISO() as string;
 
     return scoreSnapshot;
   }

@@ -10,6 +10,7 @@ import {
   timestamp,
   unique,
 } from 'drizzle-orm/pg-core';
+import { createSelectSchema } from 'drizzle-zod';
 import { referentielIdPgEnum } from '../index-domain';
 import { Etoile } from './etoile-definition.table';
 
@@ -33,5 +34,7 @@ export const labellisationTable = pgTable(
     ),
   ]
 );
+
+export const labellisationTableSchema = createSelectSchema(labellisationTable);
 
 export type Labellisation = typeof labellisationTable.$inferSelect;

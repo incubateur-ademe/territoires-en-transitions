@@ -60,7 +60,7 @@ describe("Route de lecture/écriture des valeurs d'indicateurs", () => {
 
     const input: InputList = {
       collectiviteId,
-      identifiantsReferentiel: 'cae_8',
+      identifiantsReferentiel: ['cae_8'],
     };
     const result = await caller.indicateurs.valeurs.list(input);
     expect(result.indicateurs.length).not.toBe(0);
