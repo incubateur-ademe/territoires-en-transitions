@@ -1,4 +1,4 @@
-import { getFormattedNumber } from '@/app/utils/formatUtils';
+import { getFormattedFloat } from '@/app/utils/formatUtils';
 import { Badge } from '@/ui';
 
 type BudgetTagsListProps = {
@@ -23,7 +23,7 @@ const BudgetTagsList = ({ tags, unit = 'HT' }: BudgetTagsListProps) => {
                 'Non renseigné'
               ) : (
                 <span>
-                  {getFormattedNumber(tag.amount)}{' '}
+                  {getFormattedFloat(tag.amount)}{' '}
                   {unit === 'HT' ? (
                     <>
                       € <sup className="-top-[0.4em]">HT</sup>

@@ -1,5 +1,5 @@
 import { Badge } from '@/app/ui/export-pdf/components';
-import { getFormattedNumber } from '@/app/utils/formatUtils';
+import { getFormattedFloat } from '@/app/utils/formatUtils';
 import { Text } from '@react-pdf/renderer';
 import classNames from 'classnames';
 import { tw } from '../../utils';
@@ -24,7 +24,7 @@ export const BadgeBudget = ({
           'Non renseigné'
         ) : (
           <Text>
-            {getFormattedNumber(montant)}{' '}
+            {getFormattedFloat(montant)}{' '}
             {unite === 'HT' ? (
               <>
                 € <Text style={tw('text-[0.5rem] leading-[0.6rem]')}>HT</Text>
