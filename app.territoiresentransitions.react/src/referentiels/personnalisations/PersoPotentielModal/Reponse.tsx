@@ -1,4 +1,4 @@
-import { useCurrentCollectivite } from '@/app/core-logic/hooks/useCurrentCollectivite';
+import { useCurrentCollectivite } from '@/app/collectivites/collectivite-context';
 import {
   TListeChoix,
   TReponse,
@@ -27,7 +27,7 @@ const ReponseChoix = ({ qr, onChange }: TQuestionReponseProps) => {
   const choices = getFilteredChoices(reponse, choix || []);
   const collectivite = useCurrentCollectivite();
 
-  return collectivite ? (
+  return (
     <ReponseContainer className="flex-col">
       {choices?.map(({ id: choiceId, label }) => {
         return (
@@ -43,7 +43,7 @@ const ReponseChoix = ({ qr, onChange }: TQuestionReponseProps) => {
         );
       })}
     </ReponseContainer>
-  ) : null;
+  );
 };
 
 /** Affiche une réponse donnant le choix entre oui et non */
@@ -55,7 +55,7 @@ const ReponseBinaire = ({ qr, onChange }: TQuestionReponseProps) => {
   ]);
   const collectivite = useCurrentCollectivite();
 
-  return collectivite ? (
+  return (
     <ReponseContainer>
       {choices?.map(({ id: choiceId, label }) => (
         <RadioButton
@@ -69,7 +69,7 @@ const ReponseBinaire = ({ qr, onChange }: TQuestionReponseProps) => {
         />
       ))}
     </ReponseContainer>
-  ) : null;
+  );
 };
 
 /** Affiche une réponse donnant lieu à la saisie d'une valeur entre 0 et 100 */
@@ -88,7 +88,7 @@ const ReponseProportion = ({ qr, onChange }: TQuestionReponseProps) => {
   );
   const collectivite = useCurrentCollectivite();
 
-  return collectivite ? (
+  return (
     <ReponseContainer className="flex-col">
       <Field
         title="Part en pourcentage"
@@ -106,7 +106,7 @@ const ReponseProportion = ({ qr, onChange }: TQuestionReponseProps) => {
         />
       </Field>
     </ReponseContainer>
-  ) : null;
+  );
 };
 
 // parse une réponse saisie dans un champ proportion
