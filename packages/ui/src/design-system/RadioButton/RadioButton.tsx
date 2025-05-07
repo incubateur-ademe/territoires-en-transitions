@@ -1,5 +1,3 @@
-// TODO stories quand lancement storybook de nouveau possible
-
 import classNames from 'classnames';
 import { Ref, forwardRef, useId } from 'react';
 import { FieldMessage, FieldMessageProps } from '../Field';
@@ -48,8 +46,8 @@ export const RadioButton = forwardRef(
           className={classNames(
             `!appearance-none shrink-0 transition-all
             w-5 h-5 rounded-full border border-solid
-          border-grey-6 checked:!border-transparent checked:disabled:!border-grey-4 
-          bg-white checked:bg-primary checked:hover:bg-primary-8 checked:disabled:bg-primary-5 
+          border-grey-6 checked:!border-transparent checked:disabled:!border-grey-4
+          bg-white checked:bg-primary checked:hover:bg-primary-8 checked:disabled:bg-primary-5
             flex justify-center items-center
             checked:before:icon-circle-fill checked:before:block checked:before:w-fit checked:before:h-fit
             text-white text-[0.625rem] leading-[0.625rem]`,
