@@ -18,4 +18,9 @@ create table utilisateur.invitation_personne_tag
 comment on column utilisateur.invitation_personne_tag.tag_id is 'Référence vers l''identifiant du tag, pas de clé étrangère car le tag sera ensuite supprimé et on veut garder la trace.';
 comment on column utilisateur.invitation_personne_tag.tag_nom is 'Contenu du tag pour garder la trace une fois le tag supprimé';
 
+alter table personne_tag
+add column associated_user_id uuid references auth.users,
+add column deleted boolean generated always as (associated_user_id is not null) stored;
+comment on column personne_tag.deleted is 'On ne veut plus avoir accès au tag quand un utilisateur lui a été associé.';
+
 COMMIT;

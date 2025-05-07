@@ -99,8 +99,11 @@ export class PersonneTagService {
       .as('ap');
 
     // Crée les conditions
-    const conditionCol = eq(personneTagTable.collectiviteId, collectiviteId);
-    const conditionId = inArray(personneTagTable.id, tagIds);
+    const conditions = [];
+    conditions.push(eq(personneTagTable.collectiviteId, collectiviteId));
+    conditions.push(eq(personneTagTable.deleted, false));
+    if(tagIds.length > 0)
+      conditions.push(inArray(personneTagTable.id, tagIds));
 
     // Crée et retourne la requête
     return this.databaseService.db
@@ -133,7 +136,7 @@ export class PersonneTagService {
       .leftJoin(far, eq(far.tagId, personneTagTable.id))
       .leftJoin(ip, eq(ip.tagId, personneTagTable.id))
       .leftJoin(ap, eq(ap.tagId, personneTagTable.id))
-      .where(tagIds.length > 0 ? and(conditionCol, conditionId) : conditionCol);
+      .where(and(...conditions));
   }
 
   /**
@@ -206,8 +209,8 @@ export class PersonneTagService {
     for (const table of tables) {
       await this.changeTagToUser(trx, tagId, userId, table);
     }
-    // Supprime le tag
-    await trx.delete(personneTagTable).where(eq(personneTagTable.id, tagId));
+    // Passe le tag en supprimé
+    await trx.update(personneTagTable).set({associatedUserId : userId}).where(eq(personneTagTable.id, tagId));
   }
 
   /**

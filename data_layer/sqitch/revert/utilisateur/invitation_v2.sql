@@ -3,6 +3,10 @@
 
 BEGIN;
 
+alter table personne_tag
+  drop column deleted,
+  drop column associated_user_id;
+
 drop table utilisateur.invitation_personne_tag;
 
 comment on function utilisateur.associate is

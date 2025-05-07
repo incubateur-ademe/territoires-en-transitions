@@ -52,7 +52,10 @@ export class AssignPilotesService {
       .leftJoin(dcpTable, eq(dcpTable.userId, actionPiloteTable.userId))
       .leftJoin(
         personneTagTable,
-        eq(personneTagTable.id, actionPiloteTable.tagId)
+        and(
+          eq(personneTagTable.id, actionPiloteTable.tagId),
+          eq(personneTagTable.deleted, false)
+        )
       )
       .where(
         and(

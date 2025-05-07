@@ -125,8 +125,9 @@ describe('Test les invitations', () => {
           .delete(ficheActionReferentTable)
           .where(eq(ficheActionReferentTable.userId, yulu.userId));
         await databaseService.db
-          .insert(personneTagTable)
-          .values([{ id: 1, nom: 'Lou Piote', collectiviteId: 1 }]);
+          .update(personneTagTable)
+          .set({associatedUserId : null})
+          .where(eq(personneTagTable.id, 1));
         await databaseService.db.insert(ficheActionPiloteTable).values([
           { ficheId: 1, tagId: 1 },
           { ficheId: 2, tagId: 1 },
@@ -263,8 +264,9 @@ describe('Test les invitations', () => {
             )
           );
         await databaseService.db
-          .insert(personneTagTable)
-          .values([{ id: 1, nom: 'Lou Piote', collectiviteId: 1 }]);
+          .update(personneTagTable)
+          .set({associatedUserId : null})
+          .where(eq(personneTagTable.id, 1));
         await databaseService.db.insert(ficheActionPiloteTable).values([
           { ficheId: 1, tagId: 1 },
           { ficheId: 2, tagId: 1 },
